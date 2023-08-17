@@ -32,13 +32,13 @@ all-features = true
 [package.metadata.cargo-all-features]
 # Bench feature gets tested separately and is only relevant for CI.
 # logging enables a feature of a dependency that has no externally visible API changes
-denylist = ["bench", "logging", "cpp_default", "wasm_default"]
+denylist = ["bench", "cpp_default", "wasm_default", "provider_test"]
 # This has a lot of features, run a reduced test that is likely to catch 99% of bugs
 max_combination_size = 2
 
 # Please keep the features list in sync with the icu_capi_staticlib/icu_capi_cdylib crates (except for components features)
 [features]
-default = ["compiled_data", "default_components"]
+default = ["compiled_data", "default_components", "logging", "simple_logger"]
 any_provider = []
 buffer_provider = [
     "dep:icu_provider_blob",
@@ -61,19 +61,16 @@ buffer_provider = [
     "icu_timezone?/serde",
 ]
 provider_fs = ["dep:icu_provider_fs", "buffer_provider"]
-provider_test = []
 logging = ["icu_provider/logging", "dep:log"]
-# Use the env_logger functionality to log based on environment variables
-simple_logger = ["dep:simple_logger"]
+simple_logger = ["dep:simple_logger", "logging"]
 
-# meta feature for things we enable by default in C and C++
-cpp_default = ["logging", "simple_logger"]
-
-# meta feature for things we enable by default in wasm
+# Legacy features
+provider_test = ["compiled_data"]
+cpp_default = ["logging"]
 wasm_default = ["logging"]
 
 # Components
-default_components = ["icu_calendar", "icu_collator", "icu_datetime", "icu_decimal",
+default_components = ["icu_calendar", "icu_casemap", "icu_collator", "icu_datetime", "icu_decimal",
                       "icu_list", "icu_locid_transform",
                       "icu_normalizer", "icu_plurals", "icu_properties",
                       "icu_segmenter", "icu_timezone"]
@@ -121,7 +118,7 @@ writeable = { version = "0.5.1", path = "../../utils/writeable/" }
 # Optional ICU4X components and their dependent utils
 fixed_decimal = { version = "0.5.2", path = "../../utils/fixed_decimal", features = ["ryu"] , optional = true}
 icu_calendar = { version = "1.2.0", path = "../../components/calendar", default-features = false, optional = true }
-icu_casemap = { version = "0.7.2", path = "../../experimental/casemap", default-features = false, optional = true }
+icu_casemap = { version = "1.2.0", path = "../../components/casemap", default-features = false, optional = true }
 icu_collator = { version = "1.2.0", path = "../../components/collator", default-features = false, optional = true }
 icu_collections = { version = "1.2.0", path = "../../components/collections", default-features = false, optional = true }
 icu_datetime = { version = "1.2.0", path = "../../components/datetime/", default-features = false, optional = true }
@@ -147,14 +144,11 @@ serde = { version = "1.0", default-features = false, optional = true }
 diplomat = { git = "https://github.com/rust-diplomat/diplomat", rev = "8d125999893fedfdf30595e97334c21ec4b18da9" }
 diplomat-runtime = { git = "https://github.com/rust-diplomat/diplomat", rev = "8d125999893fedfdf30595e97334c21ec4b18da9" }
 
-
-[target.'cfg(not(target_arch = "wasm32"))'.dependencies]
-# Logging is automagical in wasm, we only need this for native
-simple_logger = { version = "4.1.0", optional = true }
 log = { version = "0.4", optional = true }
 
-[target.'cfg(target_arch = "wasm32")'.dependencies]
-log = "0.4"
+[target.'cfg(not(target_arch = "wasm32"))'.dependencies]
+# Logging uses diplomat_runtime bindings in wasm, we only need this for native
+simple_logger = { version = "4.1.0", optional = true }
 
 [target.'cfg(not(any(target_arch = "wasm32", target_os = "none")))'.dependencies]
 icu_provider_fs = { version = "1.2.0", path = "../../provider/fs/", optional = true }

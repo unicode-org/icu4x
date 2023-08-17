@@ -232,6 +232,38 @@ where
                 FixedDecimal::from(datetime.week_of_year()?.0.number),
                 field.length,
             )?,
+            Year::Cyclic => {
+                w.write_str("(cyclic year: ")?; // TODO(#3761): Add data for cyclic year names
+                format_number(
+                    w,
+                    fixed_decimal_format,
+                    FixedDecimal::from(
+                        datetime
+                            .datetime()
+                            .year()
+                            .ok_or(Error::MissingInputField(Some("year")))?
+                            .cyclic
+                            .ok_or(Error::MissingInputField(Some("cyclic")))?,
+                    ),
+                    field.length,
+                )?;
+                w.write_char(')')?;
+            }
+            Year::RelatedIso => {
+                format_number(
+                    w,
+                    fixed_decimal_format,
+                    FixedDecimal::from(
+                        datetime
+                            .datetime()
+                            .year()
+                            .ok_or(Error::MissingInputField(Some("year")))?
+                            .related_iso
+                            .ok_or(Error::MissingInputField(Some("related_iso")))?,
+                    ),
+                    field.length,
+                )?;
+            }
         },
         FieldSymbol::Month(month) => match field.length {
             FieldLength::One | FieldLength::TwoDigit => format_number(
@@ -247,18 +279,29 @@ where
                 field.length,
             )?,
             length => {
-                let symbol = date_symbols
+                let code = datetime
+                    .datetime()
+                    .month()
+                    .ok_or(Error::MissingInputField(Some("month")))?
+                    .code;
+
+                let symbols = date_symbols
                     .ok_or(Error::MissingDateSymbols)?
-                    .get_symbol_for_month(
-                        month,
-                        length,
-                        datetime
-                            .datetime()
-                            .month()
-                            .ok_or(Error::MissingInputField(Some("month")))?
-                            .code,
-                    )?;
-                w.write_str(symbol)?
+                    .get_symbols_for_month(month, length)?;
+
+                let symbol_option = symbols.get(code);
+                if symbol_option.is_some() {
+                    w.write_str(symbol_option.ok_or(Error::MissingMonthSymbol(code))?)?;
+                } else {
+                    let code = code
+                        .get_normal_if_leap()
+                        .ok_or(Error::MissingMonthSymbol(code))?;
+                    let symbols = date_symbols
+                        .ok_or(Error::MissingDateSymbols)?
+                        .get_symbols_for_month(month, length)?;
+                    w.write_str(symbols.get(code).ok_or(Error::MissingMonthSymbol(code))?)?;
+                    w.write_str("(leap)")?; // This is temporary; TODO(#3766) add support for leap months
+                }
             }
         },
         FieldSymbol::Week(week) => match week {

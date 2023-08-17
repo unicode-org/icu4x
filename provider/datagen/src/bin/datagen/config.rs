@@ -3,6 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 pub use icu_datagen::options::*;
+pub use icu_datagen::{CollationHanDatabase, TrieType};
 
 use icu_provider::prelude::*;
 use std::collections::HashSet;
@@ -97,9 +98,10 @@ pub enum Export {
         #[serde(default, skip_serializing_if = "is_default")]
         pretty: bool,
         #[serde(default, skip_serializing_if = "is_default")]
+        use_separate_crates: bool,
+        #[doc(hidden)]
+        #[serde(default, skip_serializing, skip_deserializing)]
         insert_feature_gates: bool,
-        #[serde(default, skip_serializing_if = "is_default")]
-        use_meta_crate: bool,
     },
 }
 

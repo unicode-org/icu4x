@@ -131,6 +131,7 @@ lazy_static::lazy_static! {
         // Individual calendars: Currently the main entry point is AnyCalendar
         "icu::calendar::buddhist",
         "icu::calendar::coptic",
+        "icu::calendar::dangi",
         "icu::calendar::ethiopian",
         "icu::calendar::indian",
         "icu::calendar::japanese",
@@ -139,6 +140,7 @@ lazy_static::lazy_static! {
         "icu::calendar::Date::try_new_gregorian_date",
         "icu::calendar::Date::try_new_buddhist_date",
         "icu::calendar::Date::try_new_coptic_date",
+        "icu::calendar::Date::try_new_dangi_date",
         "icu::calendar::Date::try_new_ethiopian_date",
         "icu::calendar::Date::try_new_indian_date",
         "icu::calendar::Date::try_new_japanese_date",
@@ -147,6 +149,7 @@ lazy_static::lazy_static! {
         "icu::calendar::DateTime::try_new_gregorian_datetime",
         "icu::calendar::DateTime::try_new_buddhist_datetime",
         "icu::calendar::DateTime::try_new_coptic_datetime",
+        "icu::calendar::DateTime::try_new_dangi_datetime",
         "icu::calendar::DateTime::try_new_ethiopian_datetime",
         "icu::calendar::DateTime::try_new_indian_datetime",
         "icu::calendar::DateTime::try_new_japanese_datetime",
@@ -429,6 +432,8 @@ lazy_static::lazy_static! {
 
         // Rust-specific trait abstraction, handled as individual types over FFI
         "icu::casemap::ClosureSink",
+        // Reexported
+        "icu::casemap::titlecase::TitlecaseMapper",
 
     ].iter().map(|s| s.split("::").map(str::to_owned).collect()).collect();
 }

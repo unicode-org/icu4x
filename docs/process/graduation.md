@@ -11,6 +11,7 @@ This document contains a checklist for the requirements to migrate a component f
   - [ ] All constructors should take arguments in the following order: Provider, Locale, Options
   - [ ] All constructors should have the standard set of overloads for provider types
   - [ ] Runtime dependencies should be minimal and able to be disabled with Cargo features if possible
+  - [ ] Any `TODO`, `FIXME`, `todo!`, `unimplemented!`, or other placeholders should either be resolved or link to an issue number. (It is okay to ship a small amount of code with tech debt comments, but anything having to do with code correctness should be resolved)
 - [ ] The crate should have a conventional Cargo.toml file:
   - [ ] Cargo.toml should use license, not license-file
   - [ ] The description should be useful
@@ -22,8 +23,10 @@ This document contains a checklist for the requirements to migrate a component f
   - [ ] Use `dep:` for enabling dependencies
 - [ ] The crate should be fully documented
   - [ ] Every exported function should have docs coverage
-  - [ ] There should be a crate-level example that illustrates a common use case for the component
-  - [ ] All options and conditional code paths should have a corresponding docs test
+  - [ ] There should be a crate-level example that illustrates a common use case for the component with the heading `# Examples`
+  - [ ] All options and conditional code paths should have a corresponding docs test with the heading `# Examples`
+  - [ ] All functions that are conditional on a Cargo feature should say so (last line before `# Examples`): ```✨ *Enabled with the `alloc` Cargo feature.*```
+  - [ ] Compiled data constructors should say "with compiled data" in the first sentence and should have a Cargo feature alert following the above syntax.
 - [ ] The data structs should fully follow ZeroVec style
   - [ ] Deserialization should not have a "zero-copy violation" in the [make-testdata](https://github.com/unicode-org/icu4x/blob/main/provider/datagen/tests/make-testdata.rs) test
   - [ ] Constructors should avoid allocating memory in the common case

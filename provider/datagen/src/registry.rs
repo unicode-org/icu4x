@@ -42,8 +42,10 @@ macro_rules! registry {
         /// );
         /// ```
         pub fn key<S: AsRef<str>>(string: S) -> Option<DataKey> {
-            lazy_static::lazy_static! {
-                static ref LOOKUP: std::collections::HashMap<&'static str, Result<DataKey, &'static str>> = [
+            use once_cell::sync::OnceCell;
+            static LOOKUP: OnceCell<std::collections::HashMap<&'static str, Result<DataKey, &'static str>>> = OnceCell::new();
+            let lookup = LOOKUP.get_or_init(|| {
+                [
                     ("core/helloworld@1", Ok(icu_provider::hello_world::HelloWorldV1Marker::KEY)),
                     $(
                         $(
@@ -55,10 +57,10 @@ macro_rules! registry {
                     )+
                 ]
                 .into_iter()
-                .collect();
-            }
+                .collect()
+            });
             let path = string.as_ref();
-            match LOOKUP.get(path).copied() {
+            match lookup.get(path).copied() {
                 None => {
                     log::warn!("Unknown key {path:?}");
                     None
@@ -137,9 +139,8 @@ registry!(
     icu_calendar::provider::JapaneseErasV1Marker = "calendar/japanese@1",
     icu_calendar::provider::JapaneseExtendedErasV1Marker = "calendar/japanext@1",
     icu_calendar::provider::WeekDataV1Marker = "datetime/week_data@1",
-    #[cfg(feature = "icu_casemap")]
+    #[cfg(any(all(), feature = "icu_casemap"))]
     icu_casemap::provider::CaseMapV1Marker = "props/casemap@1",
-    #[cfg(feature = "icu_casemap")]
     icu_casemap::provider::CaseMapUnfoldV1Marker = "props/casemap_unfold@1",
     #[cfg(any(all(), feature = "icu_collator"))]
     icu_collator::provider::CollationDataV1Marker = "collator/data@1",
@@ -156,8 +157,12 @@ registry!(
         "datetime/buddhist/datelengths@1",
     icu_datetime::provider::calendar::BuddhistDateSymbolsV1Marker =
         "datetime/buddhist/datesymbols@1",
+    icu_datetime::provider::calendar::ChineseDateLengthsV1Marker = "datetime/chinese/datelengths@1",
+    icu_datetime::provider::calendar::ChineseDateSymbolsV1Marker = "datetime/chinese/datesymbols@1",
     icu_datetime::provider::calendar::CopticDateLengthsV1Marker = "datetime/coptic/datelengths@1",
     icu_datetime::provider::calendar::CopticDateSymbolsV1Marker = "datetime/coptic/datesymbols@1",
+    icu_datetime::provider::calendar::DangiDateLengthsV1Marker = "datetime/dangi/datelengths@1",
+    icu_datetime::provider::calendar::DangiDateSymbolsV1Marker = "datetime/dangi/datesymbols@1",
     icu_datetime::provider::calendar::DateSkeletonPatternsV1Marker = "datetime/skeletons@1",
     icu_datetime::provider::calendar::EthiopianDateLengthsV1Marker =
         "datetime/ethiopic/datelengths@1",
@@ -177,6 +182,10 @@ registry!(
         "datetime/japanext/datelengths@1",
     icu_datetime::provider::calendar::JapaneseExtendedDateSymbolsV1Marker =
         "datetime/japanext/datesymbols@1",
+    icu_datetime::provider::calendar::HebrewDateLengthsV1Marker = "datetime/hebrew/datelengths@1",
+    icu_datetime::provider::calendar::HebrewDateSymbolsV1Marker = "datetime/hebrew/datesymbols@1",
+    icu_datetime::provider::calendar::IslamicDateLengthsV1Marker = "datetime/islamic/datelengths@1",
+    icu_datetime::provider::calendar::IslamicDateSymbolsV1Marker = "datetime/islamic/datesymbols@1",
     icu_datetime::provider::calendar::PersianDateLengthsV1Marker = "datetime/persian/datelengths@1",
     icu_datetime::provider::calendar::PersianDateSymbolsV1Marker = "datetime/persian/datesymbols@1",
     icu_datetime::provider::calendar::RocDateLengthsV1Marker = "datetime/roc/datelengths@1",
@@ -397,6 +406,8 @@ registry!(
         "relativetime/short/year@1",
     icu_relativetime::provider::NarrowYearRelativeTimeFormatDataV1Marker =
         "relativetime/narrow/year@1",
+    #[cfg(feature = "icu_singlenumberformatter")]
+    icu_singlenumberformatter::provider::CurrencyEssentialsV1Marker = "currency/essentials@1",
     icu_unitsconversion::provider::UnitsConstantsV1Maker = "units/constants@1",
     #[cfg(any(all(), feature = "icu_segmenter"))]
     icu_segmenter::provider::DictionaryForWordLineExtendedV1Marker =

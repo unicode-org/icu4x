@@ -1,0 +1,102 @@
+{
+  "months": {
+    "format": {
+      "abbreviated": {
+        "Other": {
+          "M01": "M01",
+          "M02": "M02",
+          "M03": "M03",
+          "M04": "M04",
+          "M05": "M05",
+          "M06": "M06",
+          "M07": "M07",
+          "M08": "M08",
+          "M09": "M09",
+          "M10": "M10",
+          "M11": "M11",
+          "M12": "M12"
+        }
+      },
+      "narrow": {
+        "Other": {
+          "M01": "1",
+          "M02": "2",
+          "M03": "3",
+          "M04": "4",
+          "M05": "5",
+          "M06": "6",
+          "M07": "7",
+          "M08": "8",
+          "M09": "9",
+          "M10": "10",
+          "M11": "11",
+          "M12": "12"
+        }
+      },
+      "short": null,
+      "wide": {
+        "Other": {
+          "M01": "M01",
+          "M02": "M02",
+          "M03": "M03",
+          "M04": "M04",
+          "M05": "M05",
+          "M06": "M06",
+          "M07": "M07",
+          "M08": "M08",
+          "M09": "M09",
+          "M10": "M10",
+          "M11": "M11",
+          "M12": "M12"
+        }
+      }
+    },
+    "stand_alone": null
+  },
+  "weekdays": {
+    "format": {
+      "abbreviated": [
+        "Lin",
+        "Lun",
+        "Mar",
+        "Miy",
+        "Huw",
+        "Biy",
+        "Sab"
+      ],
+      "narrow": [
+        "Lin",
+        "Lun",
+        "Mar",
+        "Miy",
+        "Huw",
+        "Biy",
+        "Sab"
+      ],
+      "short": [
+        "Li",
+        "Lu",
+        "Ma",
+        "Mi",
+        "Hu",
+        "Bi",
+        "Sa"
+      ],
+      "wide": [
+        "Linggo",
+        "Lunes",
+        "Martes",
+        "Miyerkules",
+        "Huwebes",
+        "Biyernes",
+        "Sabado"
+      ]
+    },
+    "stand_alone": null
+  },
+  "eras": {
+    "names": {},
+    "abbr": {},
+    "narrow": {}
+  }
+}

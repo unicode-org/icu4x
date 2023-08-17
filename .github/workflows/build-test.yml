@@ -121,13 +121,13 @@ jobs:
     - name: Show the selected Rust toolchain
       run: rustup show
 
-    # Job-specific dependencies
-    - name: Install rustfmt
-      run: rustup component add rustfmt
-
     # Actual job
     - name: Run `cargo make ci-job-test`
+      if: matrix.os != 'windows-latest'
       run: cargo make ci-job-test
+    - name: Run `cargo make ci-job-test-windows`
+      if: matrix.os == 'windows-latest'
+      run: cargo make ci-job-test-windows
 
   # ci-job-test-tutorials
   test-tutorials:
@@ -215,8 +215,6 @@ jobs:
       with:
         key: download-cache
         path: /tmp/icu4x-source-cache
-    - name: Install rustfmt
-      run: rustup component add rustfmt
 
     # Actual job
     - name: Run `cargo make ci-job-testdata`
@@ -538,6 +536,7 @@ jobs:
 
   # ci-job-fmt
   fmt:
+    if: github.event_name != 'schedule'
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v3
@@ -669,13 +668,8 @@ jobs:
       run: rustup component add clippy
 
     # Actual job
-    # Note: this does not use ci-job-clippy, as the GH Action can create code
-    # annotations (although not in PRs: https://github.com/actions-rs/clippy-check/issues/2)
-    - uses: actions-rs/clippy-check@v1.0.7
-      with:
-        token: ${{ secrets.GITHUB_TOKEN }}
-        # keep args in sync with `clippy-all` in .cargo/config.toml
-        args: --all-targets --all-features -- -D warnings
+    - name: Run `ci-job-clippy`
+      run: cargo make ci-job-clippy
 
   # ci-job-doc
   doc:

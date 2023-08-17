@@ -26,10 +26,14 @@ macro_rules! constructor {
             locale: include,
             style: ListLength,
             error: ListError,
-            #[doc = concat!("Creates a new [`ListFormatter`] that produces a ", $doc, "-type list.")]
+            #[doc = concat!("Creates a new [`ListFormatter`] that produces a ", $doc, "-type list using compiled data.")]
             ///
             /// See the [CLDR spec](https://unicode.org/reports/tr35/tr35-general.html#ListPatterns) for
             /// an explanation of the different types.
+            ///
+            /// ✨ *Enabled with the `compiled_data` Cargo feature.*
+            ///
+            /// [📚 Help choosing a constructor](icu_provider::constructors)
             functions: [
                 $name,
                 $name_any,
@@ -41,11 +45,11 @@ macro_rules! constructor {
 
         #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::$name)]
         pub fn $name_unstable(
-            data_provider: &(impl DataProvider<$marker> + ?Sized),
+            provider: &(impl DataProvider<$marker> + ?Sized),
             locale: &DataLocale,
             length: ListLength,
         ) -> Result<Self, ListError> {
-            let data = data_provider
+            let data = provider
                 .load(DataRequest {
                     locale,
                     metadata: Default::default(),
@@ -425,7 +429,7 @@ mod tests {
             "he",
             try_new_and_with_length,
             (["x", "יפו"], "x ויפו"),
-            (["x", "Ibiza"], "x ו-Ibiza"),
+            (["x", "Ibiza"], "x ו‑Ibiza"),
         );
     }
 }

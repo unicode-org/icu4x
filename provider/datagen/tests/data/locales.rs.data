@@ -49,7 +49,6 @@ const LOCALES: &[LanguageIdentifier] = &[
     // - Southern Europe
     // - Hightly inflected, many gramatical cases
     langid!("sr"),
-    langid!("sr-Cyrl"),
     langid!("sr-Latn"),
     // Thai:
     // - Complex word breaking

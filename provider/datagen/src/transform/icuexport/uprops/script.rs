@@ -25,7 +25,7 @@ impl DataProvider<ScriptWithExtensionsPropertyV1Marker> for crate::DatagenProvid
             .icuexport()?
             .read_and_parse_toml::<super::uprops_serde::script_extensions::Main>(&format!(
                 "uprops/{}/scx.toml",
-                self.source.options.trie_type,
+                self.source.trie_type,
             ))?
             .script_extensions
             .get(0)

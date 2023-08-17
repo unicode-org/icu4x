@@ -46,7 +46,7 @@ impl WeekCalculator {
         locale: include,
         options: skip,
         error: CalendarError,
-        /// Creates a new [`WeekCalculator`] from locale data.
+        /// Creates a new [`WeekCalculator`] from compiled locale data.
     );
 
     #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::try_new)]

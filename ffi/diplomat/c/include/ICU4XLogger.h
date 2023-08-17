@@ -20,6 +20,8 @@ extern "C" {
 #endif
 
 bool ICU4XLogger_init_simple_logger();
+
+bool ICU4XLogger_init_console_logger();
 void ICU4XLogger_destroy(ICU4XLogger* self);
 
 #ifdef __cplusplus

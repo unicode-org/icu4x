@@ -110,7 +110,7 @@ pub struct JapaneseDateInner {
 }
 
 impl Japanese {
-    /// Creates a new [`Japanese`] using only modern eras (post-meiji).
+    /// Creates a new [`Japanese`] using only modern eras (post-meiji) from compiled data.
     ///
     /// ✨ *Enabled with the `compiled_data` Cargo feature.*
     ///
@@ -136,10 +136,10 @@ impl Japanese {
 
     #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::new)]
     pub fn try_new_unstable<D: DataProvider<JapaneseErasV1Marker> + ?Sized>(
-        data_provider: &D,
+        provider: &D,
     ) -> Result<Self, CalendarError> {
         Ok(Self {
-            eras: data_provider.load(Default::default())?.take_payload()?,
+            eras: provider.load(Default::default())?.take_payload()?,
         })
     }
 
@@ -164,10 +164,12 @@ impl Japanese {
 
         self.new_japanese_date_inner(era, year, month, day)
     }
+
+    pub(crate) const DEBUG_NAME: &str = "Japanese";
 }
 
 impl JapaneseExtended {
-    /// Creates a new [`Japanese`] from using all eras (including pre-meiji).
+    /// Creates a new [`Japanese`] from using all eras (including pre-meiji) from compiled data.
     ///
     /// ✨ *Enabled with the `compiled_data` Cargo feature.*
     ///
@@ -193,15 +195,14 @@ impl JapaneseExtended {
 
     #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::new)]
     pub fn try_new_unstable<D: DataProvider<JapaneseExtendedErasV1Marker> + ?Sized>(
-        data_provider: &D,
+        provider: &D,
     ) -> Result<Self, CalendarError> {
         Ok(Self(Japanese {
-            eras: data_provider
-                .load(Default::default())?
-                .take_payload()?
-                .cast(),
+            eras: provider.load(Default::default())?.take_payload()?.cast(),
         }))
     }
+
+    pub(crate) const DEBUG_NAME: &str = "Japanese (histocial era data)";
 }
 
 impl Calendar for Japanese {
@@ -304,7 +305,7 @@ impl Calendar for Japanese {
     }
 
     fn debug_name(&self) -> &'static str {
-        "Japanese (Modern eras only)"
+        Self::DEBUG_NAME
     }
 
     fn any_calendar_kind(&self) -> Option<AnyCalendarKind> {
@@ -390,7 +391,7 @@ impl Calendar for JapaneseExtended {
     }
 
     fn debug_name(&self) -> &'static str {
-        "Japanese (With historical eras)"
+        Self::DEBUG_NAME
     }
 
     fn any_calendar_kind(&self) -> Option<AnyCalendarKind> {
@@ -931,7 +932,7 @@ mod tests {
             4,
             3,
             1,
-            CalendarError::UnknownEra("hakuho-672".parse().unwrap(), "Japanese (Modern eras only)"),
+            CalendarError::UnknownEra("hakuho-672".parse().unwrap(), "Japanese"),
         );
 
         // handle bce/ce

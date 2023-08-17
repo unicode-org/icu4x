@@ -23,7 +23,11 @@
 //! fn main() {
 //!     DatagenProvider::default()
 //!         .export(
-//!             [icu::list::provider::AndListV1Marker::KEY].into_iter().collect(),
+//!             {
+//!                 let mut options = options::Options::default();
+//!                 options.keys = [icu::list::provider::AndListV1Marker::KEY].into_iter().collect();
+//!                 options
+//!             },
 //!             BlobExporter::new_with_sink(Box::new(File::create("data.postcard").unwrap())),
 //!         )
 //!         .unwrap();
@@ -72,7 +76,10 @@ mod transform;
 pub use error::{is_missing_cldr_error, is_missing_icuexport_error};
 #[allow(deprecated)] // ugh
 pub use registry::{all_keys, all_keys_with_experimental, deserialize_and_measure, key};
+pub use source::CollationHanDatabase;
 pub use source::SourceData;
+#[doc(hidden)] // for CLI serde
+pub use source::TrieType;
 
 #[cfg(feature = "provider_baked")]
 pub mod baked_exporter;
@@ -95,19 +102,29 @@ pub mod prelude {
     // SEMVER GRAVEYARD
     #[cfg(feature = "legacy_api")]
     #[doc(hidden)]
-    pub use crate::options::{CollationHanDatabase, CoverageLevel};
+    pub use crate::options::CoverageLevel;
+    #[cfg(feature = "legacy_api")]
+    #[doc(hidden)]
+    pub use crate::source::CollationHanDatabase;
     #[cfg(feature = "legacy_api")]
     #[allow(deprecated)]
     #[doc(hidden)]
     pub use crate::{syntax, BakedOptions, CldrLocaleSubset, Out};
 }
 
-use icu_locid::subtags::Language;
+use icu_locid::LanguageIdentifier;
+use icu_locid_transform::fallback::LocaleFallbackIterator;
+use icu_locid_transform::fallback::LocaleFallbacker;
 use icu_provider::datagen::*;
 use icu_provider::prelude::*;
 use memchr::memmem;
+use once_cell::sync::Lazy;
+use options::{FallbackMode, LocaleInclude};
+use std::borrow::Cow;
+use std::collections::HashMap;
 use std::collections::HashSet;
 use std::path::Path;
+use writeable::Writeable;
 
 #[cfg(feature = "rayon")]
 pub(crate) use rayon::prelude as rayon_prelude;
@@ -138,108 +155,211 @@ pub struct DatagenProvider {
 }
 
 impl DatagenProvider {
-    /// Creates a new data provider with the given `source` and `options`.
-    ///
-    /// Fails if `options` is using CLDR locale sets and `source` does not contain CLDR data.
-    pub fn try_new(options: options::Options, mut source: SourceData) -> Result<Self, DataError> {
-        if source.options != Default::default() {
-            log::warn!("Trie type, collation database, or collations set on SourceData. These will be ignored in favor of options.");
-        }
-
-        source.options = options;
-
-        if matches!(source.options.fallback, options::FallbackMode::Expand)
-            && !matches!(source.options.locales, options::LocaleInclude::Explicit(_))
-        {
-            return Err(DataError::custom(
-                "FallbackMode::Expand requires LocaleInclude::Explicit",
-            ));
-        }
-
-        source.options.locales = match core::mem::take(&mut source.options.locales) {
-            options::LocaleInclude::None => options::LocaleInclude::Explicit(Default::default()),
-            options::LocaleInclude::CldrSet(levels) => options::LocaleInclude::Explicit(
-                source
-                    .locales(levels.iter().copied().collect::<Vec<_>>().as_slice())?
-                    .into_iter()
-                    .collect(),
-            ),
-            options::LocaleInclude::Explicit(set) => options::LocaleInclude::Explicit(set),
-            options::LocaleInclude::All => options::LocaleInclude::All,
-            options::LocaleInclude::Recommended => options::LocaleInclude::Explicit(
-                source
-                    .locales(&[
-                        options::CoverageLevel::Modern,
-                        options::CoverageLevel::Moderate,
-                        options::CoverageLevel::Basic,
-                    ])?
-                    .into_iter()
-                    .collect(),
-            ),
-        };
-
-        let mut provider = Self { source };
-
-        if provider.source.options.fallback == options::FallbackMode::Runtime {
-            provider.source.fallbacker =
-                Some(icu_locid_transform::fallback::LocaleFallbacker::try_new_unstable(&provider)?);
-        }
-
-        Ok(provider)
+    /// Creates a new data provider with the given `source`.
+    pub fn new(source: SourceData) -> Self {
+        Self { source }
     }
 
     #[cfg(test)]
     pub fn for_test() -> Self {
+        use once_cell::sync::OnceCell;
+
+        static TEST_PROVIDER: OnceCell<DatagenProvider> = OnceCell::new();
         // Singleton so that all instantiations share the same cache.
-        lazy_static::lazy_static! {
-            static ref TEST_PROVIDER: DatagenProvider = {
-                let data_root = std::path::Path::new(core::env!("CARGO_MANIFEST_DIR")).join("tests/data");
+        TEST_PROVIDER
+            .get_or_init(|| {
+                let data_root =
+                    std::path::Path::new(core::env!("CARGO_MANIFEST_DIR")).join("tests/data");
                 DatagenProvider {
                     // This is equivalent to `latest_tested` for the files defined in
                     // `tools/testdata-scripts/globs.rs.data`.
                     source: SourceData::offline()
-                        .with_cldr(data_root.join("cldr"), Default::default()).unwrap()
-                        .with_icuexport(data_root.join("icuexport")).unwrap(),
+                        .with_cldr(data_root.join("cldr"), Default::default())
+                        .unwrap()
+                        .with_icuexport(data_root.join("icuexport"))
+                        .unwrap(),
                 }
-            };
-        }
-        TEST_PROVIDER.clone()
+            })
+            .clone()
     }
 
-    pub(crate) fn filter_data_locales(
+    /// Selects the maximal set of locales to export based on a [`DataKey`] and this datagen
+    /// provider's options bag. The locales may be later optionally deduplicated for fallback.
+    pub(crate) fn select_locales_for_key(
         &self,
-        supported: Vec<icu_provider::DataLocale>,
-    ) -> Vec<icu_provider::DataLocale> {
-        match &self.source.options.locales {
-            options::LocaleInclude::All => supported,
-            options::LocaleInclude::Explicit(set) => supported
+        key: DataKey,
+        options: &options::Options,
+        fallbacker: &Lazy<
+            Result<LocaleFallbacker, DataError>,
+            impl FnOnce() -> Result<LocaleFallbacker, DataError>,
+        >,
+    ) -> Result<HashSet<icu_provider::DataLocale>, DataError> {
+        let mut locales = self
+            .supported_locales_for_key(key)
+            .map_err(|e| e.with_key(key))?
+            .into_iter()
+            .collect::<HashSet<DataLocale>>();
+
+        if key == icu_segmenter::provider::DictionaryForWordOnlyAutoV1Marker::KEY
+            || key == icu_segmenter::provider::DictionaryForWordLineExtendedV1Marker::KEY
+        {
+            // Segmenter: filter only by segmenter_models
+            return Ok(transform::segmenter::dictionary::filter_data_locales(
+                locales,
+                &options.segmenter_models,
+            ));
+        } else if key == icu_segmenter::provider::LstmForWordLineAutoV1Marker::KEY {
+            // Segmenter: filter only by segmenter_models
+            return Ok(transform::segmenter::lstm::filter_data_locales(
+                locales,
+                &options.segmenter_models,
+            ));
+        } else if key == icu_collator::provider::CollationDataV1Marker::KEY
+            || key == icu_collator::provider::CollationDiacriticsV1Marker::KEY
+            || key == icu_collator::provider::CollationJamoV1Marker::KEY
+            || key == icu_collator::provider::CollationMetadataV1Marker::KEY
+            || key == icu_collator::provider::CollationReorderingV1Marker::KEY
+            || key == icu_collator::provider::CollationSpecialPrimariesV1Marker::KEY
+        {
+            // Collator: filter by collations, but also by locales/fallback
+            locales =
+                transform::icuexport::collator::filter_data_locales(locales, &options.collations);
+        }
+
+        locales = match (&options.locales, options.fallback) {
+            // Case 1: `LocaleInclude::All` simply exports all supported locales for this key.
+            (LocaleInclude::All, _) => locales,
+            // Case 2: `FallbackMode::Preresolved` exports all supported locales whose langid matches
+            // one of the explicit locales. This ensures extensions are included. In addition, any
+            // explicit locales are added to the list, even if they themselves don't contain data;
+            // fallback should be performed upon exporting.
+            (LocaleInclude::Explicit(explicit), FallbackMode::Preresolved) => locales
                 .into_iter()
-                .filter(|l| {
-                    if let Some(fallbacker) = &self.source.fallbacker {
-                        // Include any UND-*
-                        if l.get_langid().language == Language::UND {
+                .chain(explicit.iter().map(|langid| langid.into()))
+                .filter(|locale| explicit.contains(&locale.get_langid()))
+                .collect(),
+            // Case 3: All other modes resolve to the "ancestors and descendants" strategy.
+            (LocaleInclude::Explicit(explicit), _) => {
+                let include_und = explicit.contains(&LanguageIdentifier::UND);
+                let explicit: HashSet<DataLocale> = explicit.iter().map(DataLocale::from).collect();
+                let mut implicit = HashSet::new();
+                // TODO: Make including the default locale configurable
+                implicit.insert(DataLocale::default());
+                let fallbacker = fallbacker.as_ref().map_err(|e| *e)?;
+                let fallbacker_with_config = fallbacker.for_config(key.fallback_config());
+
+                for locale in explicit.iter() {
+                    let mut iter = fallbacker_with_config.fallback_for(locale.clone());
+                    while !iter.get().is_empty() {
+                        implicit.insert(iter.get().clone());
+                        iter.step();
+                    }
+                }
+
+                locales
+                    .into_iter()
+                    .chain(explicit.iter().cloned())
+                    .filter(|locale| {
+                        if implicit.contains(locale) {
                             return true;
                         }
-                        let mut chain = fallbacker
-                            .for_config(Default::default())
-                            .fallback_for(l.clone());
-                        while !chain.get().is_empty() {
-                            if set.contains(&chain.get().get_langid()) {
+                        if explicit.contains(locale) {
+                            return true;
+                        }
+                        if locale.is_langid_und() && include_und {
+                            return true;
+                        }
+                        if locale.language().is_empty()
+                            && matches!(
+                                key.fallback_config().priority,
+                                icu_provider::FallbackPriority::Region
+                            )
+                        {
+                            return true;
+                        }
+                        // Special case: skeletons *require* the -u-ca keyword, so don't export locales that don't have it
+                        // This would get caught later on, but it makes datagen faster and quieter to catch it here
+                        if key
+                            == icu_datetime::provider::calendar::DateSkeletonPatternsV1Marker::KEY
+                            && !locale.has_unicode_ext()
+                        {
+                            return false;
+                        }
+                        let mut iter = fallbacker_with_config.fallback_for(locale.clone());
+                        while !iter.get().is_empty() {
+                            if explicit.contains(iter.get()) {
                                 return true;
                             }
-                            chain.step();
+                            iter.step();
                         }
+                        log::trace!("Filtered out: {key}/{locale}");
                         false
-                    } else {
-                        set.contains(&l.get_langid())
+                    })
+                    .collect()
+            }
+            _ => unreachable!("Pre-processed LocaleInclude has only 2 variants"),
+        };
+
+        Ok(locales)
+    }
+
+    /// Loads a `DataPayload<ExportMarker>` with locale fallback enabled.
+    fn load_with_fallback(
+        &self,
+        key: DataKey,
+        locale: &DataLocale,
+        fallbacker: &Lazy<
+            Result<LocaleFallbacker, DataError>,
+            impl FnOnce() -> Result<LocaleFallbacker, DataError>,
+        >,
+    ) -> Result<Option<DataPayload<ExportMarker>>, DataError> {
+        log::trace!("Generating key/locale: {key}/{locale:}");
+        let mut metadata = DataRequestMetadata::default();
+        metadata.silent = true;
+        // Lazy-compute the fallback iterator so that we don't always require CLDR data
+        let mut option_iter: Option<LocaleFallbackIterator> = None;
+        loop {
+            let req = DataRequest {
+                locale: match option_iter.as_ref() {
+                    Some(iter) => iter.get(),
+                    None => locale,
+                },
+                metadata,
+            };
+            let result = self.load_data(key, req);
+            match result {
+                Ok(data_response) => {
+                    if let Some(iter) = option_iter.as_ref() {
+                        if iter.get().is_empty() && !locale.is_empty() {
+                            log::debug!("Falling back to und: {key}/{locale}");
+                        }
                     }
-                })
-                .collect(),
-            _ => unreachable!("resolved"),
+                    return Ok(Some(data_response.take_payload()?));
+                }
+                Err(DataError {
+                    kind: DataErrorKind::MissingLocale,
+                    ..
+                }) => {
+                    if let Some(iter) = option_iter.as_mut() {
+                        if iter.get().is_empty() {
+                            log::debug!("Could not find data for: {key}/{locale}");
+                            return Ok(None);
+                        }
+                        iter.step();
+                    } else {
+                        let fallbacker = fallbacker.as_ref().map_err(|e| *e)?;
+                        let iter = fallbacker
+                            .for_config(key.fallback_config())
+                            .fallback_for(locale.clone());
+                        option_iter.replace(iter);
+                    }
+                }
+                Err(e) => return Err(e.with_req(key, req)),
+            }
         }
     }
 
-    /// Exports data for the set of keys to the given exporter.
+    /// Exports data for the given options to the given exporter.
     ///
     /// See
     /// [`BlobExporter`](icu_provider_blob::export),
@@ -247,122 +367,171 @@ impl DatagenProvider {
     /// and [`BakedExporter`](crate::baked_exporter).
     pub fn export(
         &self,
-        keys: HashSet<DataKey>,
+        mut options: options::Options,
         mut exporter: impl DataExporter,
     ) -> Result<(), DataError> {
-        if keys.is_empty() {
+        if options.keys.is_empty() {
             log::warn!("No keys selected");
         }
+
+        if !self.source.collations.is_empty()
+            && options.collations
+                != self
+                    .source
+                    .collations
+                    .iter()
+                    .cloned()
+                    .collect::<HashSet<_>>()
+        {
+            log::warn!("SourceData::with_collations was used and differs from Options#collations (which will be used).")
+        }
+
+        if matches!(options.fallback, options::FallbackMode::Preresolved)
+            && !matches!(options.locales, options::LocaleInclude::Explicit(_))
+        {
+            return Err(DataError::custom(
+                "FallbackMode::Preresolved requires LocaleInclude::Explicit",
+            ));
+        }
+
+        options.locales = match core::mem::take(&mut options.locales) {
+            options::LocaleInclude::None => options::LocaleInclude::Explicit(Default::default()),
+            options::LocaleInclude::CldrSet(levels) => options::LocaleInclude::Explicit(
+                self.source
+                    .locales(levels.iter().copied().collect::<Vec<_>>().as_slice())?
+                    .into_iter()
+                    .chain(core::iter::once(LanguageIdentifier::UND))
+                    .collect(),
+            ),
+            options::LocaleInclude::Explicit(set) => options::LocaleInclude::Explicit(set),
+            options::LocaleInclude::All => options::LocaleInclude::All,
+            options::LocaleInclude::Recommended => options::LocaleInclude::Explicit(
+                self.source
+                    .locales(&[
+                        options::CoverageLevel::Modern,
+                        options::CoverageLevel::Moderate,
+                        options::CoverageLevel::Basic,
+                    ])?
+                    .into_iter()
+                    .chain(core::iter::once(LanguageIdentifier::UND))
+                    .collect(),
+            ),
+        };
+
+        options.fallback = match options.fallback {
+            options::FallbackMode::PreferredForExporter => {
+                if exporter.supports_built_in_fallback() {
+                    options::FallbackMode::Runtime
+                } else {
+                    options::FallbackMode::Hybrid
+                }
+            }
+            f => f,
+        };
+
+        log::info!(
+            "Datagen configured with fallback mode {:?} and these locales: {}",
+            options.fallback,
+            match options.locales {
+                options::LocaleInclude::All => "ALL".to_string(),
+                options::LocaleInclude::Explicit(ref set) => {
+                    let mut list: Vec<Cow<str>> =
+                        set.iter().map(Writeable::write_to_string).collect();
+                    list.sort();
+                    format!("{:?}", list)
+                }
+                _ => unreachable!(),
+            }
+        );
 
         // Avoid multiple monomorphizations
         fn internal(
             provider: &DatagenProvider,
-            keys: HashSet<DataKey>,
+            mut options: options::Options,
             exporter: &mut dyn DataExporter,
         ) -> Result<(), DataError> {
             use rayon_prelude::*;
 
-            keys.into_par_iter().try_for_each(|key| {
-                log::info!("Generating key {key}");
+            let fallbacker =
+                once_cell::sync::Lazy::new(|| LocaleFallbacker::try_new_unstable(provider));
 
-                if key.metadata().singleton {
-                    let payload = provider
-                        .load_data(key, Default::default())
-                        .and_then(DataResponse::take_payload)
-                        .map_err(|e| e.with_req(key, Default::default()))?;
+            core::mem::take(&mut options.keys)
+                .into_par_iter()
+                .try_for_each(|key| {
+                    log::info!("Generating key {key}");
 
-                    return exporter.flush_singleton(key, &payload).map_err(|e| e.with_req(key, Default::default()));
-                }
+                    if key.metadata().singleton {
+                        let payload = provider
+                            .load_data(key, Default::default())
+                            .and_then(DataResponse::take_payload)
+                            .map_err(|e| e.with_req(key, Default::default()))?;
 
-                let mut supported_locales: HashSet<DataLocale> = provider
-                    .supported_locales_for_key(key)
-                    .map_err(|e| e.with_key(key))?.into_iter().collect();
-
-                match provider.source.options.fallback {
-                    options::FallbackMode::Legacy => {
-                        supported_locales
-                            .into_par_iter()
-                            .try_for_each(|locale| {
-                                log::trace!("Generating for key/locale: {key} {locale:?}");
-                                let req = DataRequest {
-                                    locale: &locale,
-                                    metadata: Default::default(),
-                                };
-                                let payload = provider
-                                    .load_data(key, req)
-                                    .and_then(DataResponse::take_payload)
-                                    .map_err(|e| e.with_req(key, req))?;
-                                exporter.put_payload(key, &locale, &payload)
-                            })
-                            .map_err(|e| e.with_key(key))?;
-
-                        exporter
-                            .flush_with_fallback(key, icu_provider::datagen::FallbackMode::None)
-                            .map_err(|e| e.with_key(key))
+                        return exporter
+                            .flush_singleton(key, &payload)
+                            .map_err(|e| e.with_req(key, Default::default()));
                     }
-                    options::FallbackMode::Runtime => {
-                        let payloads = supported_locales.into_par_iter()
-                            .map(|locale| {
-                                log::trace!("Generating for key/locale: {key} {locale:?}");
-                                let req = DataRequest {
-                                    locale: &locale,
-                                    metadata: Default::default(),
-                                };
-                                let payload = provider
-                                    .load_data(key, req)
-                                    .and_then(DataResponse::take_payload)
-                                    .map_err(|e| e.with_req(key, req))?;
-                                Ok::<_, DataError>((locale, payload))
-                            })
-                            .collect::<Result<std::collections::HashMap<_, _>, _>>().map_err(|e| e.with_key(key))?;
 
-                        // TODO(#2683): Figure out how to compare `DataPayload<ExportMarker>` for equality
-                        // to actually dedupe payloads
+                    let locales_to_export =
+                        provider.select_locales_for_key(key, &options, &fallbacker)?;
 
-                        payloads
-                            .into_par_iter()
-                            .try_for_each(|(locale, payload)| {
-                                exporter.put_payload(key, &locale, &payload).map_err(|e| e.with_key(key))
-                            })?;
-                        exporter
-                            .flush_with_fallback(key, icu_provider::datagen::FallbackMode::Full)
-                            .map_err(|e| e.with_key(key))
-                    }
-                    options::FallbackMode::Expand => match &provider.source.options.locales {
-                        options::LocaleInclude::Explicit(requested_locales) => {
-                            let provider = icu_provider_adapters::fallback::LocaleFallbackProvider::try_new_unstable(provider.clone())?;
-                            supported_locales.extend(requested_locales.iter().map(Into::into));
-                            supported_locales
+                    match options.fallback {
+                        options::FallbackMode::Runtime | options::FallbackMode::RuntimeManual => {
+                            let payloads = locales_to_export
                                 .into_par_iter()
-                                .try_for_each(|locale| {
-                                    log::trace!("Generating for key/locale: {key} {locale:?}");
-                                    let req = DataRequest {
-                                        locale: &locale,
-                                        metadata: Default::default(),
-                                    };
-                                    match provider
-                                        .load_data(key, req)
-                                        .and_then(DataResponse::take_payload) {
-                                            Err(DataError { kind: DataErrorKind::MissingLocale, ..}) => {
-                                                // well, we tried
-                                                Ok(())
-                                            },
-                                            Ok(payload) => exporter.put_payload(key, &locale, &payload),
-                                            e => e.map(|_| ())
+                                .flat_map(|locale| {
+                                    match provider.load_with_fallback(key, &locale, &fallbacker) {
+                                        Ok(Some(payload)) => Some(Ok((locale, Box::new(payload)))),
+                                        Ok(None) => None,
+                                        Err(e) => Some(Err(e)),
+                                    }
+                                })
+                                .collect::<Result<HashMap<_, _>, _>>()?;
+                            let fallbacker = fallbacker.as_ref().map_err(|e| *e)?;
+                            let fallbacker_with_config =
+                                fallbacker.for_config(key.fallback_config());
+                            'outer: for (locale, payload) in payloads.iter() {
+                                let mut iter = fallbacker_with_config.fallback_for(locale.clone());
+                                while !iter.get().is_empty() {
+                                    iter.step();
+                                    if let Some(parent_payload) = payloads.get(iter.get()) {
+                                        if parent_payload == payload && locale != iter.get() {
+                                            // Found a match: don't need to write anything
+                                            log::trace!(
+                                                "Deduplicating {key}/{locale} (inherits from {})",
+                                                iter.get()
+                                            );
+                                            continue 'outer;
                                         }
-                                        .map_err(|e| e.with_req(key, req))
-                                })?;
-                                exporter.flush_with_fallback(key, icu_provider::datagen::FallbackMode::None)
-                                .map_err(|e| e.with_key(key))
+                                    }
+                                }
+                                // Did not find a match: export this payload
+                                exporter.put_payload(key, locale, payload)?;
+                            }
                         }
-                        _ => unreachable!("checked in constructor"),
-                    },
-                }
-            })?;
+                        options::FallbackMode::Hybrid | options::FallbackMode::Preresolved => {
+                            locales_to_export.into_par_iter().try_for_each(|locale| {
+                                let payload =
+                                    provider.load_with_fallback(key, &locale, &fallbacker)?;
+                                if let Some(payload) = payload {
+                                    exporter.put_payload(key, &locale, &payload)?;
+                                }
+                                Ok::<(), DataError>(())
+                            })?;
+                        }
+                        options::FallbackMode::PreferredForExporter => unreachable!("resolved"),
+                    };
+
+                    match options.fallback {
+                        options::FallbackMode::Runtime => exporter
+                            .flush_with_built_in_fallback(key, BuiltInFallbackMode::Standard),
+                        _ => exporter.flush(key),
+                    }
+                    .map_err(|e| e.with_key(key))
+                })?;
 
             exporter.close()
         }
-        internal(self, keys, &mut exporter)
+        internal(self, options, &mut exporter)
     }
 }
 
@@ -506,8 +675,8 @@ pub enum Out {
     Module {
         mod_directory: std::path::PathBuf,
         pretty: bool,
-        insert_feature_gates: bool,
         use_separate_crates: bool,
+        insert_feature_gates: bool,
     },
 }
 
@@ -541,8 +710,8 @@ impl core::fmt::Debug for Out {
             Self::Module {
                 mod_directory,
                 pretty,
-                insert_feature_gates,
                 use_separate_crates,
+                insert_feature_gates,
             } => f
                 .debug_struct("Module")
                 .field("mod_directory", mod_directory)
@@ -575,8 +744,10 @@ pub fn datagen(
     outs: Vec<Out>,
 ) -> Result<(), DataError> {
     use options::*;
-    let provider = DatagenProvider::try_new(
+
+    DatagenProvider::new(source.clone()).export(
         Options {
+            keys: keys.iter().cloned().collect(),
             locales: locales
                 .map(|ls| {
                     LocaleInclude::Explicit(
@@ -607,17 +778,9 @@ pub fn datagen(
                     models
                 }),
             },
-            ..source.options.clone()
+            collations: source.collations.iter().cloned().collect(),
+            fallback: FallbackMode::Hybrid,
         },
-        {
-            let mut source = source.clone();
-            source.options = Default::default();
-            source
-        },
-    )?;
-
-    provider.export(
-        keys.iter().cloned().collect(),
         MultiExporter::new(
             outs.into_iter()
                 .map(|out| -> Result<Box<dyn DataExporter>, DataError> {
@@ -731,7 +894,7 @@ fn test_keys_from_bin() {
 
 #[cfg(feature = "legacy_api")]
 #[doc(hidden)]
-pub use source::{CollationHanDatabase, CoverageLevel};
+pub use source::CoverageLevel;
 
 #[cfg(feature = "legacy_api")]
 #[doc(hidden)]

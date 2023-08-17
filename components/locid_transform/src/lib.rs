@@ -114,16 +114,3 @@ pub enum TransformResult {
 
 #[doc(no_inline)]
 pub use LocaleTransformError as Error;
-
-#[cfg(feature = "compiled_data")]
-#[doc(hidden)]
-pub mod data {
-    use icu_locid_transform_data::*;
-
-    use crate as icu_locid_transform;
-    pub(crate) struct Provider;
-    impl_locid_transform_aliases_v1!(Provider);
-    impl_locid_transform_likelysubtags_l_v1!(Provider);
-    impl_locid_transform_likelysubtags_sr_v1!(Provider);
-    impl_locid_transform_likelysubtags_ext_v1!(Provider);
-}

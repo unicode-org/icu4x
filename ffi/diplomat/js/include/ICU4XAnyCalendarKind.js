@@ -12,6 +12,7 @@ export const ICU4XAnyCalendarKind_js_to_rust = {
   "EthiopianAmeteAlem": 6,
   "Indian": 7,
   "Coptic": 8,
+  "Dangi": 9,
 };
 
 export const ICU4XAnyCalendarKind_rust_to_js = {
@@ -24,6 +25,7 @@ export const ICU4XAnyCalendarKind_rust_to_js = {
   [6]: "EthiopianAmeteAlem",
   [7]: "Indian",
   [8]: "Coptic",
+  [9]: "Dangi",
 };
 
 export const ICU4XAnyCalendarKind = {
@@ -36,4 +38,5 @@ export const ICU4XAnyCalendarKind = {
   "EthiopianAmeteAlem": "EthiopianAmeteAlem",
   "Indian": "Indian",
   "Coptic": "Coptic",
+  "Dangi": "Dangi",
 };

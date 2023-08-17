@@ -1,0 +1,102 @@
+{
+  "months": {
+    "format": {
+      "abbreviated": {
+        "Other": {
+          "M01": "Mo1",
+          "M02": "Mo2",
+          "M03": "Mo3",
+          "M04": "Mo4",
+          "M05": "Mo5",
+          "M06": "Mo6",
+          "M07": "Mo7",
+          "M08": "Mo8",
+          "M09": "Mo9",
+          "M10": "Mo10",
+          "M11": "Mo11",
+          "M12": "Mo12"
+        }
+      },
+      "narrow": {
+        "Other": {
+          "M01": "1",
+          "M02": "2",
+          "M03": "3",
+          "M04": "4",
+          "M05": "5",
+          "M06": "6",
+          "M07": "7",
+          "M08": "8",
+          "M09": "9",
+          "M10": "10",
+          "M11": "11",
+          "M12": "12"
+        }
+      },
+      "short": null,
+      "wide": {
+        "Other": {
+          "M01": "First Month",
+          "M02": "Second Month",
+          "M03": "Third Month",
+          "M04": "Fourth Month",
+          "M05": "Fifth Month",
+          "M06": "Sixth Month",
+          "M07": "Seventh Month",
+          "M08": "Eighth Month",
+          "M09": "Ninth Month",
+          "M10": "Tenth Month",
+          "M11": "Eleventh Month",
+          "M12": "Twelfth Month"
+        }
+      }
+    },
+    "stand_alone": null
+  },
+  "weekdays": {
+    "format": {
+      "abbreviated": [
+        "Sun",
+        "Mon",
+        "Tue",
+        "Wed",
+        "Thu",
+        "Fri",
+        "Sat"
+      ],
+      "narrow": [
+        "S",
+        "M",
+        "T",
+        "W",
+        "T",
+        "F",
+        "S"
+      ],
+      "short": [
+        "Su",
+        "Mo",
+        "Tu",
+        "We",
+        "Th",
+        "Fr",
+        "Sa"
+      ],
+      "wide": [
+        "Sunday",
+        "Monday",
+        "Tuesday",
+        "Wednesday",
+        "Thursday",
+        "Friday",
+        "Saturday"
+      ]
+    },
+    "stand_alone": null
+  },
+  "eras": {
+    "names": {},
+    "abbr": {},
+    "narrow": {}
+  }
+}

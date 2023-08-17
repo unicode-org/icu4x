@@ -21,6 +21,8 @@ fn main() -> eyre::Result<()> {
     if matches.verbose {
         SimpleLogger::new()
             .with_level(log::LevelFilter::Trace)
+            // wasmer logging is very noisy
+            .with_module_level("wasmer", log::LevelFilter::Warn)
             .init()
             .unwrap()
     } else {
@@ -34,13 +36,24 @@ fn main() -> eyre::Result<()> {
     let config = matches.as_config()?;
 
     let mut options = options::Options::default();
+    options.keys = match config.keys {
+        config::KeyInclude::None => Default::default(),
+        config::KeyInclude::All => icu_datagen::all_keys().into_iter().collect(),
+        config::KeyInclude::Explicit(set) => set,
+        config::KeyInclude::ForBinary(path) => {
+            icu_datagen::keys_from_bin(path)?.into_iter().collect()
+        }
+    };
     options.locales = config.locales;
-    options.trie_type = config.trie_type;
-    options.collation_han_database = config.collation_han_database;
     options.collations = config.collations;
+    options.segmenter_models = config.segmenter_models;
     options.fallback = config.fallback;
 
     let mut source_data = SourceData::offline();
+    source_data = source_data.with_collation_han_database(config.collation_han_database);
+    if config.trie_type == crate::config::TrieType::Fast {
+        source_data = source_data.with_fast_tries();
+    }
     source_data = match config.cldr {
         config::PathOrTag::Path(path) => source_data.with_cldr(path, Default::default())?,
         #[cfg(feature = "networking")]
@@ -80,16 +93,7 @@ fn main() -> eyre::Result<()> {
         _ => eyre::bail!("Download data from tags requires the `networking` Cargo feature"),
     };
 
-    let provider = DatagenProvider::try_new(options, source_data)?;
-
-    let keys = match config.keys {
-        config::KeyInclude::None => Default::default(),
-        config::KeyInclude::All => icu_datagen::all_keys().into_iter().collect(),
-        config::KeyInclude::Explicit(set) => set,
-        config::KeyInclude::ForBinary(path) => {
-            icu_datagen::keys_from_bin(path)?.into_iter().collect()
-        }
-    };
+    let provider = DatagenProvider::new(source_data);
 
     match config.export {
         config::Export::Fs {
@@ -122,7 +126,7 @@ fn main() -> eyre::Result<()> {
                         options
                     },
                 )?;
-                Ok(provider.export(keys, exporter)?)
+                Ok(provider.export(options, exporter)?)
             }
         }
         config::Export::Blob { ref path } => {
@@ -142,14 +146,14 @@ fn main() -> eyre::Result<()> {
                         )
                     },
                 );
-                Ok(provider.export(keys, exporter)?)
+                Ok(provider.export(options, exporter)?)
             }
         }
         config::Export::Baked {
             path,
             pretty,
             insert_feature_gates,
-            use_meta_crate,
+            use_separate_crates,
         } => {
             #[cfg(not(feature = "provider_baked"))]
             eyre::bail!(
@@ -163,12 +167,12 @@ fn main() -> eyre::Result<()> {
                     let mut options = Options::default();
                     options.pretty = pretty;
                     options.insert_feature_gates = insert_feature_gates;
-                    options.use_separate_crates = !use_meta_crate;
+                    options.use_separate_crates = use_separate_crates;
                     options.overwrite = config.overwrite;
                     options
                 })?;
 
-                Ok(provider.export(keys, exporter)?)
+                Ok(provider.export(options, exporter)?)
             }
         }
     }

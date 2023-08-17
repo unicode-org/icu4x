@@ -53,6 +53,11 @@
         The kind of a Coptic calendar
 
 
+    .. cpp:enumerator:: Dangi
+
+        The kind of a Dangi calendar
+
+
     .. cpp:function:: static diplomat::result<ICU4XAnyCalendarKind, std::monostate> get_for_locale(const ICU4XLocale& locale)
 
         Read the calendar type off of the -u-ca- extension on a locale.

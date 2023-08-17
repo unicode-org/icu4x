@@ -38,23 +38,22 @@ impl DataProvider<ScriptDisplayNamesV1Marker> for crate::DatagenProvider {
 
 impl IterableDataProvider<ScriptDisplayNamesV1Marker> for crate::DatagenProvider {
     fn supported_locales(&self) -> Result<Vec<DataLocale>, DataError> {
-        Ok(self.filter_data_locales(
-            self.source
-                .cldr()?
-                .displaynames()
-                .list_langs()?
-                .filter(|langid| {
-                    // The directory might exist without scripts.json
-                    self.source
-                        .cldr()
-                        .unwrap()
-                        .displaynames()
-                        .file_exists(langid, "scripts.json")
-                        .unwrap_or_default()
-                })
-                .map(DataLocale::from)
-                .collect(),
-        ))
+        Ok(self
+            .source
+            .cldr()?
+            .displaynames()
+            .list_langs()?
+            .filter(|langid| {
+                // The directory might exist without scripts.json
+                self.source
+                    .cldr()
+                    .unwrap()
+                    .displaynames()
+                    .file_exists(langid, "scripts.json")
+                    .unwrap_or_default()
+            })
+            .map(DataLocale::from)
+            .collect())
     }
 }
 
@@ -70,13 +69,11 @@ impl TryFrom<&cldr_serde::displaynames::script::Resource> for ScriptDisplayNames
     fn try_from(other: &cldr_serde::displaynames::script::Resource) -> Result<Self, Self::Error> {
         let mut names = BTreeMap::new();
         let mut short_names = BTreeMap::new();
-        for lang_data_entry in other.main.0.iter() {
-            for entry in lang_data_entry.1.localedisplaynames.scripts.iter() {
-                if let Some(script) = entry.0.strip_suffix(ALT_SHORT_SUBSTRING) {
-                    short_names.insert(Script::from_str(script)?.into_tinystr(), entry.1.as_str());
-                } else if !entry.0.contains(ALT_SUBSTRING) {
-                    names.insert(Script::from_str(entry.0)?.into_tinystr(), entry.1.as_str());
-                }
+        for entry in other.main.value.localedisplaynames.scripts.iter() {
+            if let Some(script) = entry.0.strip_suffix(ALT_SHORT_SUBSTRING) {
+                short_names.insert(Script::from_str(script)?.into_tinystr(), entry.1.as_str());
+            } else if !entry.0.contains(ALT_SUBSTRING) {
+                names.insert(Script::from_str(entry.0)?.into_tinystr(), entry.1.as_str());
             }
         }
         Ok(Self {

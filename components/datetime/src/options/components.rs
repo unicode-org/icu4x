@@ -638,6 +638,7 @@ impl<'data> From<&PatternPlurals<'data>> for Bag {
                             FieldLength::TwoDigit => Year::TwoDigitWeekOf,
                             _ => Year::NumericWeekOf,
                         },
+                        _ => todo!("TODO(#3762): Add support for U and r"),
                     });
                 }
                 FieldSymbol::Month(_) => {

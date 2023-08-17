@@ -35,11 +35,11 @@ macro_rules! __impl_any_provider {
         #[clippy::msrv = "1.65"]
         impl icu_provider::AnyProvider for $provider {
             fn load_any(&self, key: icu_provider::DataKey, req: icu_provider::DataRequest) -> Result<icu_provider::AnyResponse, icu_provider::DataError> {
-                const PLURALS_CARDINAL_V1: icu_provider::DataKeyHash = <icu_plurals::provider::CardinalV1Marker as icu_provider::KeyedDataMarker>::KEY.hashed();
-                const PLURALS_ORDINAL_V1: icu_provider::DataKeyHash = <icu_plurals::provider::OrdinalV1Marker as icu_provider::KeyedDataMarker>::KEY.hashed();
+                const PLURALS_CARDINAL_V1: icu_provider::DataKeyHash = <icu::plurals::provider::CardinalV1Marker as icu_provider::KeyedDataMarker>::KEY.hashed();
+                const PLURALS_ORDINAL_V1: icu_provider::DataKeyHash = <icu::plurals::provider::OrdinalV1Marker as icu_provider::KeyedDataMarker>::KEY.hashed();
                 match key.hashed() {
-                    PLURALS_CARDINAL_V1 => icu_provider::DataProvider::<icu_plurals::provider::CardinalV1Marker>::load(self, req).and_then(|r| r.take_metadata_and_payload()).map(|(metadata, payload)| icu_provider::AnyResponse { payload: Some(payload.wrap_into_any_payload()), metadata }),
-                    PLURALS_ORDINAL_V1 => icu_provider::DataProvider::<icu_plurals::provider::OrdinalV1Marker>::load(self, req).and_then(|r| r.take_metadata_and_payload()).map(|(metadata, payload)| icu_provider::AnyResponse { payload: Some(payload.wrap_into_any_payload()), metadata }),
+                    PLURALS_CARDINAL_V1 => icu_provider::DataProvider::<icu::plurals::provider::CardinalV1Marker>::load(self, req).and_then(|r| r.take_metadata_and_payload()).map(|(metadata, payload)| icu_provider::AnyResponse { payload: Some(payload.wrap_into_any_payload()), metadata }),
+                    PLURALS_ORDINAL_V1 => icu_provider::DataProvider::<icu::plurals::provider::OrdinalV1Marker>::load(self, req).and_then(|r| r.take_metadata_and_payload()).map(|(metadata, payload)| icu_provider::AnyResponse { payload: Some(payload.wrap_into_any_payload()), metadata }),
                     _ => Err(icu_provider::DataErrorKind::MissingDataKey.with_req(key, req)),
                 }
             }
