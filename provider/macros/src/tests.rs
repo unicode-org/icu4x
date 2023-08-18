@@ -65,7 +65,7 @@ fn test_keyed_data_marker() {
                 const KEY: icu_provider::DataKey = icu_provider::data_key!(
                     "demo/bar@1",
                     icu_provider::DataKeyMetadata::construct_internal(
-                        icu_provider::FallbackPriority::const_default(),
+                        icu_provider::_internal::LocaleFallbackPriority::const_default(),
                         None,
                         None,
                         false,
@@ -104,7 +104,7 @@ fn test_multi_named_keyed_data_marker() {
                 const KEY: icu_provider::DataKey = icu_provider::data_key!(
                     "demo/bar@1",
                     icu_provider::DataKeyMetadata::construct_internal(
-                        icu_provider::FallbackPriority::const_default(),
+                        icu_provider::_internal::LocaleFallbackPriority::const_default(),
                         None,
                         None,
                         false,
@@ -119,7 +119,7 @@ fn test_multi_named_keyed_data_marker() {
                 const KEY: icu_provider::DataKey = icu_provider::data_key!(
                     "demo/baz@1",
                     icu_provider::DataKeyMetadata::construct_internal(
-                        icu_provider::FallbackPriority::const_default(),
+                        icu_provider::_internal::LocaleFallbackPriority::const_default(),
                         None,
                         None,
                         false,
@@ -151,7 +151,7 @@ fn test_databake() {
                 const KEY: icu_provider::DataKey = icu_provider::data_key!(
                     "demo/bar@1",
                     icu_provider::DataKeyMetadata::construct_internal(
-                        icu_provider::FallbackPriority::const_default(),
+                        icu_provider::_internal::LocaleFallbackPriority::const_default(),
                         None,
                         None,
                         false,
@@ -197,9 +197,9 @@ fn test_attributes() {
                 const KEY: icu_provider::DataKey = icu_provider::data_key!(
                     "demo/bar@1",
                     icu_provider::DataKeyMetadata::construct_internal(
-                        icu_provider::FallbackPriority::Region,
-                        Some(icu_provider::_internal::extensions_unicode_key!("ca")),
-                        Some(icu_provider::FallbackSupplement::Collation),
+                        icu_provider::_internal::LocaleFallbackPriority::Region,
+                        Some(icu_provider::_internal::locid::extensions::unicode::key!("ca")),
+                        Some(icu_provider::_internal::LocaleFallbackSupplement::Collation),
                         true,
                     ));
             }

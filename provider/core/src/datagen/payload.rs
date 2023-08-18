@@ -95,6 +95,28 @@ where
     }
 }
 
+impl<'a, P: super::ExportableProvider, M: KeyedDataMarker> DataProvider<M>
+    for super::DowncastingExportableDataProvider<'a, P>
+where
+    DataPayload<M>: Clone,
+{
+    fn load(&self, req: DataRequest) -> Result<DataResponse<M>, DataError> {
+        let (metadata, payload) = self.0.load_data(M::KEY, req)?.take_metadata_and_payload()?;
+        Ok(DataResponse {
+            payload: Some(
+                payload
+                    .get()
+                    .payload
+                    .as_any()
+                    .downcast_ref::<DataPayload<M>>()
+                    .ok_or_else(|| DataError::for_type::<M>())?
+                    .clone(),
+            ),
+            metadata,
+        })
+    }
+}
+
 impl DataPayload<ExportMarker> {
     /// Serializes this [`DataPayload`] into a serializer using Serde.
     ///

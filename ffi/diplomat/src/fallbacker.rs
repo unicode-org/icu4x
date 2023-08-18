@@ -5,9 +5,9 @@
 #[diplomat::bridge]
 pub mod ffi {
     use alloc::boxed::Box;
-    use icu_locid_transform::fallback::FallbackPriority;
     use icu_locid_transform::fallback::LocaleFallbackConfig;
     use icu_locid_transform::fallback::LocaleFallbackIterator;
+    use icu_locid_transform::fallback::LocaleFallbackPriority;
     use icu_locid_transform::fallback::LocaleFallbacker;
     use icu_locid_transform::fallback::LocaleFallbackerWithConfig;
 
@@ -26,10 +26,10 @@ pub mod ffi {
     pub struct ICU4XLocaleFallbacker(pub LocaleFallbacker);
 
     /// Priority mode for the ICU4X fallback algorithm.
-    #[diplomat::enum_convert(FallbackPriority, needs_wildcard)]
-    #[diplomat::rust_link(icu::locid_transform::fallback::FallbackPriority, Enum)]
+    #[diplomat::enum_convert(LocaleFallbackPriority, needs_wildcard)]
+    #[diplomat::rust_link(icu::locid_transform::fallback::LocaleFallbackPriority, Enum)]
     #[diplomat::rust_link(
-        icu::locid_transform::fallback::FallbackPriority::const_default,
+        icu::locid_transform::fallback::LocaleFallbackPriority::const_default,
         FnInEnum,
         hidden
     )]

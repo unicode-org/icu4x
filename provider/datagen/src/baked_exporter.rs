@@ -19,14 +19,10 @@
 //! let mut exporter = BakedExporter::new(demo_path.clone(), Default::default()).unwrap();
 //!
 //! // Export something
-//! DatagenProvider::default()
-//!     .export({
-//!             let mut options = options::Options::default();
-//!             options.keys = [icu_provider::hello_world::HelloWorldV1Marker::KEY].into_iter().collect();
-//!             options
-//!         },
-//!         exporter
-//!     ).unwrap();
+//! DatagenDriver::new()
+//!   .with_keys([icu_provider::hello_world::HelloWorldV1Marker::KEY])
+//!   .export(&DatagenProvider::latest_tested(), exporter)
+//!   .unwrap();
 //! #
 //! # let _ = std::fs::remove_dir_all(&demo_path);
 //! ```
@@ -99,12 +95,10 @@ type SyncTokenStream = String;
 pub struct Options {
     /// Whether to run `rustfmt` on the generated files.
     pub pretty: bool,
-    /// Whether to gate each key on its crate name. This allows using the module
-    /// even if some keys are not required and their dependencies are not included.
-    /// Requires use_separate_crates.
-    pub insert_feature_gates: bool,
-    /// Whether to use separate crates to name types instead of the `icu` metacrate
+    /// Whether to use separate crates to name types instead of the `icu` metacrate.
     pub use_separate_crates: bool,
+    #[doc(hidden)] // deprecated, used by legacy testdata
+    pub insert_feature_gates: bool,
     /// Whether to overwrite existing data. By default, errors if it is present.
     pub overwrite: bool,
 }
@@ -115,7 +109,7 @@ impl Default for Options {
         Self {
             pretty: false,
             insert_feature_gates: false,
-            use_separate_crates: true,
+            use_separate_crates: false,
             overwrite: false,
         }
     }
@@ -181,8 +175,8 @@ impl BakedExporter {
         Ok(Self {
             mod_directory,
             pretty,
-            insert_feature_gates: insert_feature_gates && use_separate_crates,
             use_separate_crates,
+            insert_feature_gates: insert_feature_gates && use_separate_crates,
             data: Default::default(),
             impl_data: Default::default(),
             dependencies: Default::default(),
@@ -535,8 +529,7 @@ impl BakedExporter {
                         } else {
                             const FALLBACKER: icu_locid_transform::fallback::LocaleFallbackerWithConfig<'static> =
                                 icu_locid_transform::fallback::LocaleFallbacker::new()
-                                    .for_config(icu_locid_transform::fallback::LocaleFallbackConfig::from_key(
-                                        <#marker as icu_provider::KeyedDataMarker>::KEY));
+                                    .for_config(<#marker as icu_provider::KeyedDataMarker>::KEY.fallback_config());
                             let mut fallback_iterator = FALLBACKER.fallback_for(req.locale.clone());
                             loop {
                                 #maybe_err

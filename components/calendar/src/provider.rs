@@ -28,7 +28,10 @@ pub struct Baked;
 
 #[cfg(feature = "compiled_data")]
 const _: () = {
-    use crate as icu_calendar;
+    pub mod icu {
+        pub use crate as calendar;
+        pub use icu_locid_transform as locid_transform;
+    }
     icu_calendar_data::impl_calendar_japanese_v1!(Baked);
     icu_calendar_data::impl_calendar_japanext_v1!(Baked);
     icu_calendar_data::impl_datetime_week_data_v1!(Baked);

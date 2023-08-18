@@ -52,7 +52,12 @@ const FIXED_PERSIAN_EPOCH: RataDie = Julian::fixed_from_julian_integers(622, 3, 
 /// [Persian Calendar]: https://en.wikipedia.org/wiki/Solar_Hijri_calendar
 ///
 /// # Era codes
+///
 /// This calendar supports only one era code, which starts from the year of the Hijra, designated as "ah".
+///
+/// # Month codes
+///
+/// This calendar supports 12 solar month codes (`"M01" - "M12"`)
 #[derive(Copy, Clone, Debug, Default, Hash, Eq, PartialEq, PartialOrd, Ord)]
 #[allow(clippy::exhaustive_structs)]
 pub struct Persian;
@@ -116,7 +121,7 @@ impl Calendar for Persian {
         month_code: types::MonthCode,
         day: u8,
     ) -> Result<Self::DateInner, CalendarError> {
-        let year = if era.0 == tinystr!(16, "ah") {
+        let year = if era.0 == tinystr!(16, "ah") || era.0 == tinystr!(16, "persian") {
             year
         } else {
             return Err(CalendarError::UnknownEra(era.0, self.debug_name()));

@@ -175,7 +175,7 @@ fn datetime_benches(c: &mut Criterion) {
         &mut group,
         "calendar/islamic/ummalqura",
         &fxs,
-        icu::calendar::islamic::UmmAlQura,
+        icu::calendar::islamic::IslamicUmmAlQura,
         |y, m, d, h, min, s| DateTime::try_new_ummalqura_datetime(y, m, d, h, min, s).unwrap(),
     );
 

@@ -23,7 +23,6 @@ impl crate::DatagenProvider {
         nsname: TinyAsciiStr<8>,
     ) -> Result<[char; 10], DataError> {
         let resource: &cldr_serde::numbering_systems::Resource = self
-            .source
             .cldr()?
             .core()
             .read_and_parse("supplemental/numberingSystems.json")?;
@@ -58,7 +57,6 @@ impl crate::DatagenProvider {
         langid: &LanguageIdentifier,
     ) -> Result<Vec<TinyAsciiStr<8>>, DataError> {
         let resource: &cldr_serde::numbers::Resource = self
-            .source
             .cldr()?
             .numbers()
             .read_and_parse(langid, "numbers.json")?;
@@ -76,7 +74,6 @@ impl crate::DatagenProvider {
 
     fn supported_locales(&self) -> Result<Vec<DataLocale>, DataError> {
         Ok(self
-            .source
             .cldr()?
             .numbers()
             .list_langs()?

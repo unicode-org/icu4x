@@ -72,6 +72,10 @@ use tinystr::{tinystr, TinyStr16};
 ///
 /// These eras are loaded from data, requiring a data provider capable of providing [`JapaneseErasV1Marker`]
 /// data (`calendar/japanese@1`).
+///
+/// # Month codes
+///
+/// This calendar supports 12 solar month codes (`"M01" - "M12"`)
 #[derive(Clone, Debug, Default)]
 pub struct Japanese {
     eras: DataPayload<JapaneseErasV1Marker>,
@@ -164,6 +168,8 @@ impl Japanese {
 
         self.new_japanese_date_inner(era, year, month, day)
     }
+
+    pub(crate) const DEBUG_NAME: &str = "Japanese";
 }
 
 impl JapaneseExtended {
@@ -199,6 +205,8 @@ impl JapaneseExtended {
             eras: provider.load(Default::default())?.take_payload()?.cast(),
         }))
     }
+
+    pub(crate) const DEBUG_NAME: &str = "Japanese (histocial era data)";
 }
 
 impl Calendar for Japanese {
@@ -301,7 +309,7 @@ impl Calendar for Japanese {
     }
 
     fn debug_name(&self) -> &'static str {
-        "Japanese (Modern eras only)"
+        Self::DEBUG_NAME
     }
 
     fn any_calendar_kind(&self) -> Option<AnyCalendarKind> {
@@ -387,7 +395,7 @@ impl Calendar for JapaneseExtended {
     }
 
     fn debug_name(&self) -> &'static str {
-        "Japanese (With historical eras)"
+        Self::DEBUG_NAME
     }
 
     fn any_calendar_kind(&self) -> Option<AnyCalendarKind> {
@@ -928,7 +936,7 @@ mod tests {
             4,
             3,
             1,
-            CalendarError::UnknownEra("hakuho-672".parse().unwrap(), "Japanese (Modern eras only)"),
+            CalendarError::UnknownEra("hakuho-672".parse().unwrap(), "Japanese"),
         );
 
         // handle bce/ce

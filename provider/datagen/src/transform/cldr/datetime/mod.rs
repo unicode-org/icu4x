@@ -27,21 +27,22 @@ pub static SUPPORTED_CALS: OnceCell<HashMap<icu_locid::extensions::unicode::Valu
 fn supported_cals() -> &'static HashMap<icu_locid::extensions::unicode::Value, &'static str> {
     SUPPORTED_CALS.get_or_init(|| {
         [
-            (value!("gregory"), "gregorian"),
             (value!("buddhist"), "buddhist"),
             (value!("chinese"), "chinese"),
-            (value!("japanese"), "japanese"),
-            (value!("japanext"), "japanese"),
             (value!("coptic"), "coptic"),
+            (value!("dangi"), "dangi"),
+            (value!("ethiopic"), "ethiopic"),
+            (value!("gregory"), "gregorian"),
+            (value!("hebrew"), "hebrew"),
             (value!("indian"), "indian"),
             (value!("islamic"), "islamic"),
             (value!("islamicc"), "islamic"),
-            (value!("umalqura"), "islamic"),
-            (value!("tbla"), "islamic"),
+            (value!("japanese"), "japanese"),
+            (value!("japanext"), "japanese"),
             (value!("persian"), "persian"),
-            (value!("hebrew"), "hebrew"),
-            (value!("ethiopic"), "ethiopic"),
             (value!("roc"), "roc"),
+            (value!("tbla"), "islamic"),
+            (value!("umalqura"), "islamic"),
         ]
         .into_iter()
         .collect()
@@ -49,23 +50,19 @@ fn supported_cals() -> &'static HashMap<icu_locid::extensions::unicode::Value, &
 }
 
 macro_rules! impl_data_provider {
-    ($marker:ident, $expr:expr, calendared = $calendared:expr) => {
+    ($marker:ident, $expr:expr, $calendar:expr) => {
         impl DataProvider<$marker> for crate::DatagenProvider {
             fn load(&self, req: DataRequest) -> Result<DataResponse<$marker>, DataError> {
                 self.check_req::<$marker>(req)?;
-                if $calendared == "locale" && req.locale.is_empty() {
-                    return Err(DataErrorKind::NeedsLocale.into_error());
-                }
 
                 let langid = req.locale.get_langid();
-                let calendar = if $calendared == "locale" {
+
+                let calendar = if DateSkeletonPatternsV1Marker::KEY == $marker::KEY {
                     req.locale
                         .get_unicode_ext(&key!("ca"))
-                        .ok_or_else(|| DataErrorKind::MissingLocale.into_error())?
-                } else if $calendared == "false" {
-                    value!("gregory")
+                        .ok_or_else(|| DataErrorKind::NeedsLocale.into_error())?
                 } else {
-                    value!($calendared)
+                    value!($calendar)
                 };
 
                 let cldr_cal = supported_cals()
@@ -73,7 +70,6 @@ macro_rules! impl_data_provider {
                     .ok_or_else(|| DataErrorKind::MissingLocale.into_error())?;
 
                 let resource: &cldr_serde::ca::Resource = self
-                    .source
                     .cldr()?
                     .dates(cldr_cal)
                     .read_and_parse(&langid, &format!("ca-{}.json", cldr_cal))?;
@@ -92,7 +88,6 @@ macro_rules! impl_data_provider {
                 // ethiopian.
                 if calendar == value!("ethiopic") {
                     let ethioaa: &cldr_serde::ca::Resource = self
-                        .source
                         .cldr()?
                         .dates("ethiopic")
                         .read_and_parse(&langid, "ca-ethiopic-amete-alem.json")?;
@@ -133,16 +128,18 @@ macro_rules! impl_data_provider {
                     // Filter out non-modern eras
                     if calendar != value!("japanext") {
                         let era_dates: &cldr_serde::japanese::Resource = self
-                            .source
                             .cldr()?
                             .core()
                             .read_and_parse("supplemental/calendarData.json")?;
                         let mut set = HashSet::<String>::new();
-                        for (era_index, date) in
-                            era_dates.supplemental.calendar_data.japanese.eras.iter()
-                        {
+                        for (era_index, date) in era_dates.supplemental.calendar_data.japanese.eras.iter() {
                             let start_date =
-                                EraStartDate::from_str(if let Some(start_date) = date.start.as_ref() { start_date } else { continue }).map_err(|_| {
+                                EraStartDate::from_str(if let Some(start_date) = date.start.as_ref() {
+                                    start_date
+                                } else {
+                                    continue;
+                                })
+                                .map_err(|_| {
                                     DataError::custom(
                                         "calendarData.json contains unparseable data for a japanese era",
                                     )
@@ -161,7 +158,6 @@ macro_rules! impl_data_provider {
 
                     // Splice in gregorian data for pre-meiji
                     let greg_resource: &cldr_serde::ca::Resource = self
-                        .source
                         .cldr()?
                         .dates("gregorian")
                         .read_and_parse(&langid, "ca-gregorian.json")?;
@@ -239,48 +235,34 @@ macro_rules! impl_data_provider {
         impl IterableDataProvider<$marker> for crate::DatagenProvider {
             fn supported_locales(&self) -> Result<Vec<DataLocale>, DataError> {
                 let mut r = Vec::new();
-                if $calendared == "locale" {
+                if DateSkeletonPatternsV1Marker::KEY == $marker::KEY {
                     for (cal_value, cldr_cal) in supported_cals() {
-                        r.extend(
-                            self.source
-                                .cldr()?
-                                .dates(cldr_cal)
-                                .list_langs()?
-                                .map(|lid| {
-                                    let mut locale: Locale = lid.into();
-                                    locale
-                                        .extensions
-                                        .unicode
-                                        .keywords
-                                        .set(key!("ca"), cal_value.clone());
-                                    DataLocale::from(locale)
-                                }),
-                        );
+                        r.extend(self.cldr()?.dates(cldr_cal).list_langs()?.map(|lid| {
+                            let mut locale: Locale = lid.into();
+                            locale
+                                .extensions
+                                .unicode
+                                .keywords
+                                .set(key!("ca"), cal_value.clone());
+                            DataLocale::from(locale)
+                        }));
                     }
                 } else {
-                    let calendar = if $calendared == "false" {
-                        value!("gregory")
-                    } else {
-                        value!($calendared)
-                    };
                     let cldr_cal = supported_cals()
-                        .get(&calendar)
+                        .get(&value!($calendar))
                         .ok_or_else(|| DataErrorKind::MissingLocale.into_error())?;
-                    r.extend(
-                        self.source
-                            .cldr()?
-                            .dates(cldr_cal)
-                            .list_langs()?
-                            .map(|lid| {
-                                let locale: Locale = lid.into();
-                                DataLocale::from(locale)
-                            }),
-                    );
+                    r.extend(self.cldr()?.dates(cldr_cal).list_langs()?.map(|lid| {
+                        let locale: Locale = lid.into();
+                        DataLocale::from(locale)
+                    }));
                 }
 
                 // TODO(#3212): Remove
                 if $marker::KEY == TimeLengthsV1Marker::KEY {
-                    r.retain(|l| l.get_langid() != icu_locid::langid!("byn") && l.get_langid() != icu_locid::langid!("ssy"));
+                    r.retain(|l| {
+                        l.get_langid() != icu_locid::langid!("byn")
+                            && l.get_langid() != icu_locid::langid!("ssy")
+                    });
                 }
 
                 Ok(r)
@@ -290,169 +272,131 @@ macro_rules! impl_data_provider {
 }
 
 impl_data_provider!(
-    GregorianDateSymbolsV1Marker,
-    symbols::convert_dates,
-    calendared = "gregory"
+    BuddhistDateLengthsV1Marker,
+    |dates, _| DateLengthsV1::from(dates),
+    "buddhist"
 );
 impl_data_provider!(
     BuddhistDateSymbolsV1Marker,
     symbols::convert_dates,
-    calendared = "buddhist"
-);
-impl_data_provider!(
-    ChineseDateSymbolsV1Marker,
-    symbols::convert_dates,
-    calendared = "chinese"
-);
-impl_data_provider!(
-    JapaneseDateSymbolsV1Marker,
-    symbols::convert_dates,
-    calendared = "japanese"
-);
-impl_data_provider!(
-    JapaneseExtendedDateSymbolsV1Marker,
-    symbols::convert_dates,
-    calendared = "japanext"
-);
-impl_data_provider!(
-    CopticDateSymbolsV1Marker,
-    symbols::convert_dates,
-    calendared = "coptic"
-);
-impl_data_provider!(
-    IndianDateSymbolsV1Marker,
-    symbols::convert_dates,
-    calendared = "indian"
-);
-impl_data_provider!(
-    IslamicObservationalDateSymbolsV1Marker,
-    symbols::convert_dates,
-    calendared = "islamic"
-);
-impl_data_provider!(
-    IslamicCivilDateSymbolsV1Marker,
-    symbols::convert_dates,
-    calendared = "islamicc"
-);
-impl_data_provider!(
-    UmmAlQuraDateSymbolsV1Marker,
-    symbols::convert_dates,
-    calendared = "umalqura"
-);
-impl_data_provider!(
-    IslamicTabularDateSymbolsV1Marker,
-    symbols::convert_dates,
-    calendared = "tbla"
-);
-impl_data_provider!(
-    PersianDateSymbolsV1Marker,
-    symbols::convert_dates,
-    calendared = "persian"
-);
-impl_data_provider!(
-    HebrewDateSymbolsV1Marker,
-    symbols::convert_dates,
-    calendared = "hebrew"
-);
-impl_data_provider!(
-    EthiopianDateSymbolsV1Marker,
-    symbols::convert_dates,
-    calendared = "ethiopic"
-);
-impl_data_provider!(
-    RocDateSymbolsV1Marker,
-    symbols::convert_dates,
-    calendared = "roc"
-);
-impl_data_provider!(
-    TimeSymbolsV1Marker,
-    |dates, _| { symbols::convert_times(dates) },
-    calendared = "false"
-);
-impl_data_provider!(
-    DateSkeletonPatternsV1Marker,
-    |dates, _| { DateSkeletonPatternsV1::from(dates) },
-    calendared = "locale"
-);
-impl_data_provider!(
-    GregorianDateLengthsV1Marker,
-    |dates, _| DateLengthsV1::from(dates),
-    calendared = "gregory"
-);
-impl_data_provider!(
-    BuddhistDateLengthsV1Marker,
-    |dates, _| DateLengthsV1::from(dates),
-    calendared = "buddhist"
+    "buddhist"
 );
 impl_data_provider!(
     ChineseDateLengthsV1Marker,
     |dates, _| DateLengthsV1::from(dates),
-    calendared = "chinese"
+    "chinese"
 );
 impl_data_provider!(
-    JapaneseDateLengthsV1Marker,
-    |dates, _| DateLengthsV1::from(dates),
-    calendared = "japanese"
-);
-impl_data_provider!(
-    JapaneseExtendedDateLengthsV1Marker,
-    |dates, _| DateLengthsV1::from(dates),
-    calendared = "japanext"
+    ChineseDateSymbolsV1Marker,
+    symbols::convert_dates,
+    "chinese"
 );
 impl_data_provider!(
     CopticDateLengthsV1Marker,
     |dates, _| DateLengthsV1::from(dates),
-    calendared = "coptic"
+    "coptic"
+);
+impl_data_provider!(CopticDateSymbolsV1Marker, symbols::convert_dates, "coptic");
+impl_data_provider!(
+    DangiDateLengthsV1Marker,
+    |dates, _| DateLengthsV1::from(dates),
+    "dangi"
+);
+impl_data_provider!(DangiDateSymbolsV1Marker, symbols::convert_dates, "dangi");
+impl_data_provider!(
+    EthiopianDateLengthsV1Marker,
+    |dates, _| DateLengthsV1::from(dates),
+    "ethiopic"
 );
 impl_data_provider!(
-    IndianDateLengthsV1Marker,
-    |dates, _| DateLengthsV1::from(dates),
-    calendared = "indian"
+    EthiopianDateSymbolsV1Marker,
+    symbols::convert_dates,
+    "ethiopic"
 );
 impl_data_provider!(
-    IslamicObservationalDateLengthsV1Marker,
+    GregorianDateLengthsV1Marker,
     |dates, _| DateLengthsV1::from(dates),
-    calendared = "islamic"
+    "gregory"
 );
 impl_data_provider!(
-    IslamicCivilDateLengthsV1Marker,
-    |dates, _| DateLengthsV1::from(dates),
-    calendared = "islamicc"
-);
-impl_data_provider!(
-    UmmAlQuraDateLengthsV1Marker,
-    |dates, _| DateLengthsV1::from(dates),
-    calendared = "umalqura"
-);
-impl_data_provider!(
-    IslamicTabularDateLengthsV1Marker,
-    |dates, _| DateLengthsV1::from(dates),
-    calendared = "tbla"
-);
-impl_data_provider!(
-    RocDateLengthsV1Marker,
-    |dates, _| DateLengthsV1::from(dates),
-    calendared = "roc"
-);
-impl_data_provider!(
-    PersianDateLengthsV1Marker,
-    |dates, _| DateLengthsV1::from(dates),
-    calendared = "persian"
+    GregorianDateSymbolsV1Marker,
+    symbols::convert_dates,
+    "gregory"
 );
 impl_data_provider!(
     HebrewDateLengthsV1Marker,
     |dates, _| DateLengthsV1::from(dates),
-    calendared = "hebrew"
+    "hebrew"
+);
+impl_data_provider!(HebrewDateSymbolsV1Marker, symbols::convert_dates, "hebrew");
+impl_data_provider!(
+    IndianDateLengthsV1Marker,
+    |dates, _| DateLengthsV1::from(dates),
+    "indian"
+);
+impl_data_provider!(IndianDateSymbolsV1Marker, symbols::convert_dates, "indian");
+impl_data_provider!(
+    IslamicDateLengthsV1Marker,
+    |dates, _| DateLengthsV1::from(dates),
+    "islamicc"
 );
 impl_data_provider!(
-    EthiopianDateLengthsV1Marker,
-    |dates, _| DateLengthsV1::from(dates),
-    calendared = "ethiopic"
+    IslamicDateSymbolsV1Marker,
+    symbols::convert_dates,
+    "islamicc"
 );
+impl_data_provider!(
+    JapaneseDateLengthsV1Marker,
+    |dates, _| DateLengthsV1::from(dates),
+    "japanese"
+);
+impl_data_provider!(
+    JapaneseDateSymbolsV1Marker,
+    symbols::convert_dates,
+    "japanese"
+);
+impl_data_provider!(
+    JapaneseExtendedDateLengthsV1Marker,
+    |dates, _| DateLengthsV1::from(dates),
+    "japanext"
+);
+impl_data_provider!(
+    JapaneseExtendedDateSymbolsV1Marker,
+    symbols::convert_dates,
+    "japanext"
+);
+impl_data_provider!(
+    PersianDateLengthsV1Marker,
+    |dates, _| DateLengthsV1::from(dates),
+    "persian"
+);
+impl_data_provider!(
+    PersianDateSymbolsV1Marker,
+    symbols::convert_dates,
+    "persian"
+);
+impl_data_provider!(
+    RocDateLengthsV1Marker,
+    |dates, _| DateLengthsV1::from(dates),
+    "roc"
+);
+impl_data_provider!(RocDateSymbolsV1Marker, symbols::convert_dates, "roc");
+
 impl_data_provider!(
     TimeLengthsV1Marker,
     |dates, _| TimeLengthsV1::from(dates),
-    calendared = "false"
+    "gregory"
+);
+impl_data_provider!(
+    TimeSymbolsV1Marker,
+    |dates, _| { symbols::convert_times(dates) },
+    "gregory"
+);
+
+impl_data_provider!(
+    DateSkeletonPatternsV1Marker,
+    |dates, _| { DateSkeletonPatternsV1::from(dates) },
+    "unused"
 );
 
 #[cfg(test)]
@@ -462,7 +406,7 @@ mod test {
 
     #[test]
     fn test_basic_patterns() {
-        let provider = crate::DatagenProvider::for_test();
+        let provider = crate::DatagenProvider::latest_tested_offline_subset();
 
         let locale: Locale = locale!("cs");
         let cs_dates: DataPayload<GregorianDateLengthsV1Marker> = provider
@@ -479,7 +423,7 @@ mod test {
 
     #[test]
     fn test_with_numbering_system() {
-        let provider = crate::DatagenProvider::for_test();
+        let provider = crate::DatagenProvider::latest_tested_offline_subset();
 
         let locale: Locale = locale!("haw");
         let cs_dates: DataPayload<GregorianDateLengthsV1Marker> = provider
@@ -502,7 +446,7 @@ mod test {
         use icu_plurals::PluralCategory;
         use std::convert::TryFrom;
 
-        let provider = crate::DatagenProvider::for_test();
+        let provider = crate::DatagenProvider::latest_tested_offline_subset();
 
         let locale: Locale = "fil-u-ca-gregory".parse().unwrap();
         let skeletons: DataPayload<DateSkeletonPatternsV1Marker> = provider
@@ -546,7 +490,7 @@ mod test {
     fn test_basic_symbols() {
         use icu_calendar::types::MonthCode;
         use tinystr::tinystr;
-        let provider = crate::DatagenProvider::for_test();
+        let provider = crate::DatagenProvider::latest_tested_offline_subset();
 
         let locale: Locale = locale!("cs");
         let cs_dates: DataPayload<GregorianDateSymbolsV1Marker> = provider
@@ -577,7 +521,7 @@ mod test {
 
     #[test]
     fn unalias_contexts() {
-        let provider = crate::DatagenProvider::for_test();
+        let provider = crate::DatagenProvider::latest_tested_offline_subset();
 
         let locale: Locale = locale!("cs");
         let cs_dates: DataPayload<GregorianDateSymbolsV1Marker> = provider

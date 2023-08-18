@@ -10,8 +10,10 @@ use icu_provider::prelude::*;
 
 #[doc(hidden)] // moved
 pub use icu_locid_transform::fallback::{
-    LocaleFallbackConfig, LocaleFallbackIterator, LocaleFallbacker, LocaleFallbackerWithConfig,
+    LocaleFallbackIterator, LocaleFallbacker, LocaleFallbackerWithConfig,
 };
+#[doc(hidden)] // moved
+pub use icu_provider::fallback::LocaleFallbackConfig;
 
 /// A data provider wrapper that performs locale fallback. This enables arbitrary locales to be
 /// handled at runtime.
@@ -200,7 +202,7 @@ impl<P> LocaleFallbackProvider<P> {
         }
         let mut fallback_iterator = self
             .fallbacker
-            .for_key(key)
+            .for_config(key.fallback_config())
             .fallback_for(base_req.locale.clone());
         let base_silent = core::mem::replace(&mut base_req.metadata.silent, true);
         loop {

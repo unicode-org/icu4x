@@ -1,23 +1,23 @@
 {
-    "keys": {
-      "Explicit": [
-        "core/helloworld@1"
-      ]
-    },
-    "locales": {
-      "Explicit": [
-        "de"
-      ]
-    },
-    "cldr": "None",
-    "icu_export": "None",
-    "segmenter_lstm": "None",
-    "export": {
-      "Fs": {
-        "path": "de",
-        "syntax": "Json"
-      }
-    },
-    "fallback": "Preresolved",
-    "overwrite": true
-  }
+  "keys": {
+    "explicit": [
+      "core/helloworld@1"
+    ]
+  },
+  "fallback": "preresolved",
+  "locales": {
+    "explicit": [
+      "de"
+    ]
+  },
+  "cldr": "none",
+  "icuExport": "none",
+  "segmenterLstm": "none",
+  "export": {
+    "fileSystem": {
+      "path": "de",
+      "syntax": "json"
+    }
+  },
+  "overwrite": true
+}

@@ -1784,6 +1784,7 @@ dependencies = [
  "displaydoc",
  "erased-serde",
  "icu_locid",
+ "icu_locid_transform",
  "icu_provider_adapters",
  "icu_provider_macros",
  "log",
@@ -1978,7 +1979,11 @@ dependencies = [
  "icu_collections",
  "icu_properties",
  "icu_provider",
+ "icu_transliteration",
  "icu_unicodeset_parser",
+ "log",
+ "zerofrom",
+ "zerovec",
 ]
 
 [[package]]

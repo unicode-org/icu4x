@@ -17,7 +17,6 @@ fn load<M: KeyedDataMarker<Yokeable = ListFormatterPatternsV1<'static>>>(
     let langid = req.locale.get_langid();
 
     let resource: &cldr_serde::list_patterns::Resource = selff
-        .source
         .cldr()?
         .misc()
         .read_and_parse(&langid, "listPatterns.json")?;
@@ -102,10 +101,10 @@ fn load<M: KeyedDataMarker<Yokeable = ListFormatterPatternsV1<'static>>>(
         // https://unicode.org/reports/tr35/tr35-general.html#:~:text=is%20not%20mute.-,Hebrew,AND,-Use%20%E2%80%98%2D%D7%95%E2%80%99%20instead
         patterns
             .make_conditional(
-                "{0} \u{05D5}{1}", // ״{0} ו {1}״
+                "{0} \u{05D5}{1}", // ״{0} ו{1}״
                 // Starts with a non-Hebrew letter
                 &non_hebrew,
-                "{0} \u{05D5}-{1}", // ״{0} ו- {1}״
+                "{0} \u{05D5}‑{1}", // ״{0} ו‑{1}״
             )
             .expect("valid pattern");
     }
@@ -129,7 +128,6 @@ macro_rules! implement {
         impl IterableDataProvider<$marker> for crate::DatagenProvider {
             fn supported_locales(&self) -> Result<Vec<DataLocale>, DataError> {
                 Ok(self
-                    .source
                     .cldr()?
                     .misc()
                     .list_langs()?

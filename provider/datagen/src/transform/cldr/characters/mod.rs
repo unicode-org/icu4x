@@ -26,7 +26,6 @@ macro_rules! exemplar_chars_impls {
                 let langid = req.locale.get_langid();
 
                 let data: &cldr_serde::exemplar_chars::Resource = self
-                    .source
                     .cldr()?
                     .misc()
                     .read_and_parse(&langid, "characters.json")?;
@@ -50,7 +49,6 @@ macro_rules! exemplar_chars_impls {
         impl IterableDataProvider<$data_marker_name> for crate::DatagenProvider {
             fn supported_locales(&self) -> Result<Vec<DataLocale>, DataError> {
                 Ok(self
-                    .source
                     .cldr()?
                     .misc()
                     .list_langs()?
@@ -467,7 +465,7 @@ mod tests {
 
     #[test]
     fn test_basic() {
-        let provider = crate::DatagenProvider::for_test();
+        let provider = crate::DatagenProvider::latest_tested_offline_subset();
 
         let data: DataPayload<ExemplarCharactersMainV1Marker> = provider
             .load(DataRequest {
