@@ -308,8 +308,7 @@ impl Hebrew {
     }
 
     // Converts a Biblical Hebrew Date to a Civil Hebrew Date
-    #[allow(clippy::unwrap_used)]
-    fn biblical_to_civil_date(biblical_date: BookHebrew) -> Date<Hebrew> {
+    fn biblical_to_civil_date(biblical_date: BookHebrew) -> HebrewDateInner {
         let biblical_month = biblical_date.month;
         let biblical_year = biblical_date.year;
         let mut civil_month;
@@ -323,7 +322,17 @@ impl Hebrew {
             civil_month += 1;
         }
 
-        Date::try_new_hebrew_date(biblical_year, civil_month, biblical_date.day).unwrap()
+        debug_assert!(ArithmeticDate::<Hebrew>::new_from_lunar_ordinals(
+            biblical_year,
+            civil_month,
+            biblical_date.day
+        )
+        .is_ok());
+        HebrewDateInner(ArithmeticDate::new_unchecked(
+            biblical_year,
+            civil_month,
+            biblical_date.day,
+        ))
     }
 
     // Converts a Civil Hebrew Date to a Biblical Hebrew Date
@@ -398,10 +407,9 @@ impl Hebrew {
         BookHebrew::fixed_from_book_hebrew(book_date)
     }
 
-    #[allow(clippy::unwrap_used)]
     fn civil_hebrew_from_fixed(date: RataDie) -> Date<Hebrew> {
         let book_hebrew = BookHebrew::book_hebrew_from_fixed(date);
-        Hebrew::biblical_to_civil_date(book_hebrew)
+        Date::from_raw(Hebrew::biblical_to_civil_date(book_hebrew), Hebrew)
     }
 
     fn year_as_hebrew(civil_year: i32) -> types::FormattableYear {
@@ -629,7 +637,6 @@ impl BookHebrew {
     }
 
     // Lisp code reference: https://github.com/EdReingold/calendar-code2/blob/main/calendar.l#L2352
-    #[allow(dead_code, clippy::unwrap_used)]
     fn book_hebrew_from_fixed(date: RataDie) -> BookHebrew {
         let approx = helpers::i64_to_i32(
             (div_rem_euclid_f64((date - FIXED_HEBREW_EPOCH) as f64, 35975351.0 / 98496.0).0) as i64, //  The value 35975351/98496, the average length of a BookHebrew year, can be approximated by 365.25
@@ -1098,8 +1105,7 @@ mod tests {
                 year: case.year,
                 month: case.month,
                 day: case.day,
-            })
-            .inner;
+            });
             let days_in_month =
                 Hebrew::last_day_of_civil_hebrew_month(civil_date.0.year, civil_date.0.month);
             assert_eq!(days_in_month, *expected);
@@ -1314,7 +1320,7 @@ mod tests {
                 civil_date_nums.0,
             ));
 
-            let book_to_civil = Hebrew::biblical_to_civil_date(book_date).inner;
+            let book_to_civil = Hebrew::biblical_to_civil_date(book_date);
             let civil_to_book = Hebrew::civil_to_biblical_date(civil_date);
 
             assert_eq!(civil_date, book_to_civil);
