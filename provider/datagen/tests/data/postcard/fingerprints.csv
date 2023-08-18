@@ -2047,6 +2047,7 @@ time_zone/specific_short@1, th, 31B, 4b7af6a019fab889
 time_zone/specific_short@1, tr, 31B, 4b7af6a019fab889
 time_zone/specific_short@1, und, 31B, 4b7af6a019fab889
 transliterator/rules@1, und+de-t-de-d0-ascii, 16788B, 5b7be5d4314bb189
+transliterator/rules@1, und+el-Latn-t-el-m0-bgn, 14560B, 1c6602c8adc0e9c3
 transliterator/rules@1, und+und-Arab-t-und-beng, 309B, 7ba39763bb20c4f6
 transliterator/rules@1, und+und-Latn-t-s0-ascii, 107B, f9a8622bf5db2e25
 transliterator/rules@1, und+und-t-d0-publish, 3682B, d3834cc1cfb5eb47
