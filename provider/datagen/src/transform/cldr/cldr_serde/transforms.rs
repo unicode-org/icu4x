@@ -58,6 +58,7 @@ pub struct Resource {
     pub target: String,
     #[serde(default)]
     pub variant: Option<String>,
+    #[serde(default)]
     pub alias: Vec<String>,
     #[serde(default)]
     #[serde(rename = "backwardAlias")]
