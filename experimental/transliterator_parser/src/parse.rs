@@ -209,10 +209,14 @@ pub(crate) struct HalfRule {
     pub(crate) post: Section,
 }
 
+/// The direction of a rule-based transliterator in respect to its source.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub(crate) enum Direction {
+pub enum Direction {
+    /// Forwards, i.e., left-to-right in the source.
     Forward,
+    /// Backwards, i.e., right-to-left in the source.
     Reverse,
+    /// Both forwards and backwards.
     Both,
 }
 

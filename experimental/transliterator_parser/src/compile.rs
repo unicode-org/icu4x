@@ -894,6 +894,21 @@ pub(crate) fn compile(
     Ok((forward_t, reverse_t))
 }
 
+/// Conversion from an unknown legacy ID to an internal ID is handled by this function.
+///
+/// Known legacy IDs, i.e., ones that have associated BCP47 IDs in their metadata, are simply
+/// that BCP47 ID. For unknown legacy IDs, the output is given by this function.
+#[doc(hidden)]
+pub fn legacy_id_to_internal_id(source: &str, target: &str, variant: Option<&str>) -> String {
+    // TODO(#3891): Decide representation for unknown BCP47 IDs
+    let mut id = format!("x-{source}-{target}");
+    if let Some(variant) = variant {
+        id.push_str("-");
+        id.push_str(variant);
+    }
+    id
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;

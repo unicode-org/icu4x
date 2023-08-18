@@ -27,11 +27,39 @@ impl<'de> Deserialize<'de> for Direction {
     }
 }
 
+#[derive(PartialEq, Debug, Default, Copy, Clone)]
+pub enum Visibility {
+    Internal,
+    #[default]
+    External,
+}
+
+impl<'de> Deserialize<'de> for Visibility {
+    fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
+    where
+        D: Deserializer<'de>,
+    {
+        let s = String::deserialize(deserializer)?;
+        match s.as_str() {
+            "internal" => Ok(Self::Internal),
+            "external" => Ok(Self::External),
+            _ => Err(D::Error::custom("unknown visibility")),
+        }
+    }
+}
+
 // cldr-transforms-full/main/<lang>/metadata.json
 #[derive(PartialEq, Debug, Deserialize)]
 pub struct Resource {
     pub direction: Direction,
+    #[serde(default)]
+    pub visibility: Visibility,
     pub source: String,
     pub target: String,
+    #[serde(default)]
+    pub variant: Option<String>,
     pub alias: Vec<String>,
+    #[serde(default)]
+    #[serde(rename = "backwardAlias")]
+    pub backward_alias: Vec<String>,
 }

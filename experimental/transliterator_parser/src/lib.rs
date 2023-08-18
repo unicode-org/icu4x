@@ -36,12 +36,17 @@ mod parse;
 pub use errors::ParseError;
 pub use errors::ParseErrorKind;
 
+pub use parse::Direction;
+
+pub use compile::legacy_id_to_internal_id;
+
 /// Parse a rule based transliterator definition into a `TransliteratorDataStruct`.
 ///
 /// See [UTS #35 - Transliterators](https://unicode.org/reports/tr35/tr35-general.html#Transforms) for more information.
 #[cfg(feature = "compiled_data")]
 pub fn parse(
     source: &str,
+    direction: Direction,
 ) -> Result<
     (
         Option<RuleBasedTransliterator<'static>>,
@@ -49,12 +54,13 @@ pub fn parse(
     ),
     ParseError,
 > {
-    parse_unstable(source, &icu_properties::provider::Baked)
+    parse_unstable(source, direction, &icu_properties::provider::Baked)
 }
 
 #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, parse())]
 pub fn parse_unstable<P>(
     source: &str,
+    direction: Direction,
     provider: &P,
 ) -> Result<
     (
@@ -123,7 +129,7 @@ where
 {
     let parsed = parse::parse_unstable(source, provider)?;
     // TODO(#3736): pass direction from metadata
-    compile::compile(parsed, parse::Direction::Both)
+    compile::compile(parsed, direction)
 }
 
 #[cfg(test)]

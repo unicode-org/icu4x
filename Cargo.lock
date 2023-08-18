@@ -1491,6 +1491,7 @@ dependencies = [
  "icu_singlenumberformatter",
  "icu_timezone",
  "icu_transliteration",
+ "icu_transliterator_parser",
  "itertools",
  "log",
  "memchr",
