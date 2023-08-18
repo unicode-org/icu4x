@@ -142,10 +142,11 @@ impl MutVarTable {
 
     fn standin_for_backref(&self, backref_num: u32) -> char {
         debug_assert!(backref_num > 0);
-        // TODO: move this step into fallible constructor, collect max_backref_num in pass1
-        debug_assert!(self.backref_base + backref_num - 1 <= Self::MAX_DYNAMIC);
-        #[allow(clippy::unwrap_used)] // debug asserts imply this is in range
-        char::try_from(self.backref_base + backref_num - 1).unwrap()
+        // -1 because backrefs are 1-indexed
+        let standin = self.backref_base + backref_num - 1;
+        debug_assert!(standin <= Self::MAX_DYNAMIC);
+        #[allow(clippy::unwrap_used)] // constructor checks this via num_totals
+        char::try_from(standin).unwrap()
     }
 
     fn finalize(&self) -> ds::VarTable<'static> {
@@ -219,7 +220,7 @@ impl<'a, 'p> Pass2<'a, 'p> {
     fn compile(
         &mut self,
         rule_groups: super::RuleGroups<'p>,
-        global_filter: Option<UnicodeSet>,
+        global_filter: Option<FilterSet>,
     ) -> Result<ds::RuleBasedTransliterator<'static>> {
         let mut compiled_transform_groups: Vec<VarZeroVec<'static, ds::SimpleIdULE>> = Vec::new();
         let mut compiled_conversion_groups: Vec<VarZeroVec<'static, ds::RuleULE>> = Vec::new();
@@ -227,7 +228,7 @@ impl<'a, 'p> Pass2<'a, 'p> {
         for (transform_group, conversion_group) in rule_groups {
             let compiled_transform_group: Vec<_> = transform_group
                 .into_iter()
-                .map(|id| self.compile_single_id(&id))
+                .map(|id| Pass2::compile_single_id(id.into_owned()))
                 .collect();
             compiled_transform_groups.push(VarZeroVec::from(&compiled_transform_group));
 
@@ -240,9 +241,7 @@ impl<'a, 'p> Pass2<'a, 'p> {
 
         let res = ds::RuleBasedTransliterator {
             visibility: true, // TODO(#3736): use metadata
-            filter: global_filter
-                .map(|f| f.code_points().clone())
-                .unwrap_or(CodePointInversionList::all()),
+            filter: global_filter.unwrap_or(CodePointInversionList::all()),
             id_group_list: VarZeroVec::from(&compiled_transform_groups),
             rule_group_list: VarZeroVec::from(&compiled_conversion_groups),
             variable_table: self.var_table.finalize(),
@@ -266,33 +265,10 @@ impl<'a, 'p> Pass2<'a, 'p> {
         }
     }
 
-    fn compile_single_id(&mut self, id: &parse::SingleId) -> ds::SimpleId<'static> {
-        // TODO(#3736): map legacy ID to internal ID and use here
-        let id_string = format!(
-            "{}-{}{}",
-            id.basic_id.source,
-            id.basic_id.target,
-            if id.basic_id.variant.is_empty() {
-                "".to_owned()
-            } else {
-                format!("/{}", id.basic_id.variant)
-            }
-        );
-
-        ds::SimpleId {
-            id: id_string.into(),
-            filter: id
-                .filter
-                .as_ref()
-                .map(|f| f.code_points().clone())
-                .unwrap_or(CodePointInversionList::all()),
-        }
-    }
-
     // returns the standin char
     fn compile_variable(&mut self, var: &str) -> char {
-        if let Some(c) = self.var_to_char.get(var) {
-            return *c;
+        if let Some(&c) = self.var_to_char.get(var) {
+            return c;
         }
         // the first pass ensures that all variables are defined
         #[allow(clippy::indexing_slicing)]
@@ -343,8 +319,8 @@ impl<'a, 'p> Pass2<'a, 'p> {
                 };
                 LiteralOrStandin::Standin(standin)
             }
-            parse::Element::BackRef(num) => {
-                LiteralOrStandin::Standin(self.var_table.standin_for_backref(*num))
+            &parse::Element::BackRef(num) => {
+                LiteralOrStandin::Standin(self.var_table.standin_for_backref(num))
             }
             parse::Element::AnchorEnd => {
                 LiteralOrStandin::Standin(MutVarTable::RESERVED_ANCHOR_END)
@@ -363,7 +339,7 @@ impl<'a, 'p> Pass2<'a, 'p> {
             }
             parse::Element::FunctionCall(id, inner) => {
                 let inner = self.compile_section(inner, loc);
-                let id = self.compile_single_id(id);
+                let id = Pass2::compile_single_id(id.clone());
                 let standin = self.var_table.insert_function_call(ds::FunctionCall {
                     translit: id,
                     arg: inner.into(),
@@ -374,6 +350,25 @@ impl<'a, 'p> Pass2<'a, 'p> {
                 // TODO(#3736): compile this
                 LiteralOrStandin::Literal("")
             }
+        }
+    }
+
+    fn compile_single_id(id: parse::SingleId) -> ds::SimpleId<'static> {
+        // TODO(#3736): map legacy ID to internal ID and use here
+        let id_string = format!(
+            "{}-{}{}",
+            id.basic_id.source,
+            id.basic_id.target,
+            if let Some(v) = id.basic_id.variant {
+                format!("/{}", v)
+            } else {
+                "".to_owned()
+            }
+        );
+
+        ds::SimpleId {
+            id: id_string.into(),
+            filter: id.filter.unwrap_or(CodePointInversionList::all()),
         }
     }
 }

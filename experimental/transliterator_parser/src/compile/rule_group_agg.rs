@@ -20,7 +20,6 @@ use std::borrow::Cow;
 use std::collections::VecDeque;
 
 // parse::Rule::Conversion but unidirectional
-#[allow(unused)] // TODO: remove annotation
 #[derive(Debug, Clone)]
 pub(crate) struct UniConversionRule<'p> {
     pub(crate) ante: &'p [parse::Element],
