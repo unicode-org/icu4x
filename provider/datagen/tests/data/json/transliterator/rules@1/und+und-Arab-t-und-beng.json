@@ -32,25 +32,25 @@
         "filter": [
           "\u0000-􏿿"
         ],
-        "id": "Any-NFD"
+        "id": "x-Any-NFD"
       },
       {
         "filter": [
           "\u0000-􏿿"
         ],
-        "id": "Bengali-InterIndic"
+        "id": "x-Bengali-InterIndic"
       },
       {
         "filter": [
           "\u0000-􏿿"
         ],
-        "id": "InterIndic-Arabic"
+        "id": "x-InterIndic-Arabic"
       },
       {
         "filter": [
           "\u0000-􏿿"
         ],
-        "id": "Any-NFC"
+        "id": "x-Any-NFC"
       }
     ]
   ],

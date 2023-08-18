@@ -592,7 +592,7 @@
         "filter": [
           "\u0000-􏿿"
         ],
-        "id": "Any-NFD"
+        "id": "x-Any-NFD"
       }
     ],
     [
@@ -600,7 +600,7 @@
         "filter": [
           "\u0000-􏿿"
         ],
-        "id": "Any-NFC"
+        "id": "x-Any-NFC"
       }
     ]
   ],
