@@ -9,7 +9,8 @@ use icu_provider::prelude::*;
 use icu_transliteration::provider::*;
 use std::collections::HashMap;
 
-// note: this could benefit from avoiding recomputation across `load` calls.
+// TODO(#3736): This could benefit from avoiding recomputation across `load` calls.
+//  Maybe a OnceCell?
 struct TransliteratorCollection<'a> {
     cldr_transforms: CldrDirTransform<'a>,
 }
