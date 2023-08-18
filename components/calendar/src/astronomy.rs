@@ -399,25 +399,15 @@ impl Astronomical {
     /// of the vernal equinox, which is the celestial coordinate point at which the ecliptic intersects the celestial
     /// equator marking spring in the northern hemisphere; analogous to longitude.
     ///
-    /// This will return None for an object at the ecliptic pole. Note that this is not when latitude = 90°,
-    /// since that point is 90° from the celestial equator, not from the plane of the ecliptic.
-    ///
     /// Based on functions from _Calendrical Calculations_ by Reingold & Dershowitz.
     /// Reference lisp code: https://github.com/EdReingold/calendar-code2/blob/9afc1f3/calendar.l#L3578-L3588
-    pub(crate) fn right_ascension(moment: Moment, beta: f64, lambda: f64) -> Option<f64> {
+    pub(crate) fn right_ascension(moment: Moment, beta: f64, lambda: f64) -> f64 {
         let varepsilon = Self::obliquity(moment);
         arctan_degrees(
             sin_degrees(lambda) * cos_degrees(varepsilon)
                 - tan_degrees(beta) * sin_degrees(varepsilon),
             cos_degrees(lambda),
         )
-
-        // The situation where arctan_degrees returns None is when both parameters are zero.
-        // For that to occur, λ must be ±90°, which reduces the problem to `cos(ε) = tan(β)sin(ε),
-        // giving β = 90° - ε
-        //
-        // This will happen for an object at the pole, since at λ = ±90° the ecliptic is the furthest from
-        // the celestial equator (an angle of ε). Adding β = 90° - ε to it will give a point at the celestial pole.
     }
 
     /// Local time from apparent solar time at a given location
@@ -1259,12 +1249,6 @@ impl Astronomical {
         let lambda = Self::lunar_longitude(c);
         let beta = Self::lunar_latitude(c);
         let alpha = Self::right_ascension(moment, beta, lambda);
-        // If the moon is at the celestial poles, we have a problem.
-        // We use a dummy value to avoid panicking
-        // In this case the declination will be ±90° anyway, so ultimately the value
-        // used here is irrelevant since the term involving alpha is multiplied by cos(delta)
-        debug_assert!(alpha.is_some(), "please put the moon back");
-        let alpha = alpha.unwrap_or(0.);
         let delta = Self::declination(moment, beta, lambda);
         let theta0 = Self::sidereal_from_moment(moment);
         let cap_h: f64 = div_rem_euclid_f64(theta0 + psi - alpha, 360.0).1;
