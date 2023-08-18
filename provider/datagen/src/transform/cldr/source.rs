@@ -263,7 +263,7 @@ impl<'a> CldrDirTransform<'a> {
     pub fn list_transforms(&self) -> Result<impl Iterator<Item = String> + '_, DataError> {
         let dir_suffix = self.0.dir_suffix()?;
         let path = format!("{}-{dir_suffix}/main", self.1);
-        Ok(self.0.serde_cache.list(&path)?)
+        self.0.serde_cache.list(&path)
     }
 
     pub fn file_exists(&self, transform: &str, file_name: &str) -> Result<bool, DataError> {

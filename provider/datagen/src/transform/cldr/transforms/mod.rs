@@ -2,34 +2,32 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use std::collections::HashMap;
-use crate::transform::cldr::cldr_serde;
 use crate::transform::cldr::cldr_serde::transforms;
-use icu_locid::locale;
+use crate::transform::cldr::source::CldrDirTransform;
 use icu_provider::datagen::IterableDataProvider;
 use icu_provider::prelude::*;
 use icu_transliteration::provider::*;
-use crate::transform::cldr::source::CldrDirTransform;
+use std::collections::HashMap;
 
+// note: this could benefit from avoiding recomputation across `load` calls.
 struct TransliteratorCollection<'a> {
     cldr_transforms: CldrDirTransform<'a>,
 }
 
 impl<'a> TransliteratorCollection<'a> {
     fn new(cldr_transforms: CldrDirTransform<'a>) -> Self {
-        Self {
-            cldr_transforms,
-        }
+        Self { cldr_transforms }
     }
 
     /// Given an internal ID for an existing transliterator, returns the directory name for a
     /// source that maps to the given internal ID. Additionally returns `true` if this is a
     /// forwards transliterator, or `false` if it is a backwards transliterator.
-    fn lookup_dir_from_internal_id(&self, internal_id: &str) -> Result<Option<(String, bool)>, DataError> {
+    fn lookup_dir_from_internal_id(
+        &self,
+        internal_id: &str,
+    ) -> Result<Option<(String, bool)>, DataError> {
         for transform in self.cldr_transforms.list_transforms()? {
-            let metadata = self
-                .cldr_transforms
-                .read_and_parse_metadata(&transform)?;
+            let metadata = self.cldr_transforms.read_and_parse_metadata(&transform)?;
             let (forwards, backwards) = internal_ids_from_metadata(metadata);
             if let Some(forwards) = forwards {
                 if forwards == internal_id {
@@ -52,9 +50,7 @@ impl<'a> TransliteratorCollection<'a> {
     fn generate_mapping(&self) -> Result<HashMap<String, String>, DataError> {
         let mut mapping = HashMap::new();
         for transform in self.cldr_transforms.list_transforms()? {
-            let metadata = self
-                .cldr_transforms
-                .read_and_parse_metadata(&transform)?;
+            let metadata = self.cldr_transforms.read_and_parse_metadata(&transform)?;
             let (forwards, backwards) = internal_ids_from_metadata(metadata);
             if let Some(forwards) = forwards {
                 // for all forwards aliases, map them to the internal ID
@@ -98,6 +94,9 @@ impl DataProvider<TransliteratorRulesV1Marker> for crate::DatagenProvider {
 
         let tc = TransliteratorCollection::new(self.cldr()?.transforms());
 
+        // TODO(#3736): Pass mapping to compiler
+        let _mapping = tc.generate_mapping()?;
+
         // our `supported_locales` use the same mapping mechanism as in lookup_dir_from_internal_id
         #[allow(clippy::unwrap_used)]
         let (transform, is_forwards) = tc.lookup_dir_from_internal_id(&internal_id)?.unwrap();
@@ -106,19 +105,18 @@ impl DataProvider<TransliteratorRulesV1Marker> for crate::DatagenProvider {
             .cldr()?
             .transforms()
             .read_and_parse_metadata(&transform)?;
-        let visibility = metadata.visibility;
+        // TODO(#3736): Pass visibility to compiler
+        let _visibility = metadata.visibility;
 
         let source = self.cldr()?.transforms().read_source(&transform)?;
-
-        let mapping = tc.generate_mapping()?;
-        eprintln!("mapping: {:?}", mapping);
 
         let dir = if is_forwards {
             icu_transliterator_parser::Direction::Forward
         } else {
             icu_transliterator_parser::Direction::Reverse
         };
-        let (forwards, backwards) = icu_transliterator_parser::parse_unstable(&source, dir, self).unwrap();
+        let (forwards, backwards) =
+            icu_transliterator_parser::parse_unstable(&source, dir, self).unwrap();
         let transliterator = if is_forwards {
             // the parser guarantees we receive this
             #[allow(clippy::unwrap_used)]
@@ -158,11 +156,13 @@ impl IterableDataProvider<TransliteratorRulesV1Marker> for crate::DatagenProvide
 
 /// Get the internal ICU4X ID for this transliterator from CLDR metadata.
 ///
-/// Returns (forwards, backwards) internal IDs.
-fn internal_ids_from_metadata(
-    metadata: &transforms::Resource,
-) -> (Option<String>, Option<String>) {
-    let forwards = if matches!(metadata.direction, transforms::Direction::Forward | transforms::Direction::Both) {
+/// Returns (forwards, backwards) internal IDs if the corresponding direction is supported according
+/// to the metadata.
+fn internal_ids_from_metadata(metadata: &transforms::Resource) -> (Option<String>, Option<String>) {
+    let forwards = if matches!(
+        metadata.direction,
+        transforms::Direction::Forward | transforms::Direction::Both
+    ) {
         Some(internal_id_from_parts(
             &metadata.alias,
             &metadata.source,
@@ -172,7 +172,10 @@ fn internal_ids_from_metadata(
     } else {
         None
     };
-    let backwards = if matches!(metadata.direction, transforms::Direction::Backward | transforms::Direction::Both) {
+    let backwards = if matches!(
+        metadata.direction,
+        transforms::Direction::Backward | transforms::Direction::Both
+    ) {
         Some(internal_id_from_parts(
             &metadata.backward_alias,
             &metadata.target,
@@ -186,7 +189,12 @@ fn internal_ids_from_metadata(
     (forwards, backwards)
 }
 
-fn internal_id_from_parts(aliases: &[String], source: &str, target: &str, variant: Option<&str>) -> String {
+fn internal_id_from_parts(
+    aliases: &[String],
+    source: &str,
+    target: &str,
+    variant: Option<&str>,
+) -> String {
     find_bcp47_in_list(aliases).unwrap_or_else(|| {
         icu_transliterator_parser::legacy_id_to_internal_id(source, target, variant)
     })

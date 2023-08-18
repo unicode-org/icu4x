@@ -903,7 +903,7 @@ pub fn legacy_id_to_internal_id(source: &str, target: &str, variant: Option<&str
     // TODO(#3891): Decide representation for unknown BCP47 IDs
     let mut id = format!("x-{source}-{target}");
     if let Some(variant) = variant {
-        id.push_str("-");
+        id.push('-');
         id.push_str(variant);
     }
     id

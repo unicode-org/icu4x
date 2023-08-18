@@ -883,7 +883,7 @@ impl AuxiliaryKeys {
         if builder.len() <= 23 {
             #[allow(clippy::unwrap_used)] // we just checked that the string is ascii
             Ok(Self {
-                value: AuxiliaryKeysInner::Stack(builder.parse().unwrap())
+                value: AuxiliaryKeysInner::Stack(builder.parse().unwrap()),
             })
         } else {
             Ok(Self {
@@ -900,7 +900,7 @@ impl AuxiliaryKeys {
             if s.len() <= 23 {
                 #[allow(clippy::unwrap_used)] // we just checked that the string is ascii
                 Ok(Self {
-                    value: AuxiliaryKeysInner::Stack(s.parse().unwrap())
+                    value: AuxiliaryKeysInner::Stack(s.parse().unwrap()),
                 })
             } else {
                 Ok(Self {

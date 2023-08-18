@@ -173,7 +173,7 @@ mod tests {
         :: InterIndic-Devanagari ;
         "#;
 
-        let (forward, reverse) = parse(source).expect("parsing failed");
+        let (forward, reverse) = parse(source, Direction::Both).expect("parsing failed");
         let forward = forward.expect("forward transliterator expected");
         let reverse = reverse.expect("reverse transliterator expected");
 
