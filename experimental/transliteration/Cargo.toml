@@ -26,7 +26,7 @@ all-features = true
 
 [dependencies]
 icu_provider = { path = "../../provider/core", features = ["macros"] }
-icu_collections = { version = "1.2.0", path = "../../components/collections", features = ["serde"] }
+icu_collections = { version = "1.2.0", path = "../../components/collections", features = ["serde", "databake"] }
 
 zerovec = { version = "0.9.4", path = "../../utils/zerovec", features = ["derive", "databake"] }
 zerofrom = { version = "0.1.1", path = "../../utils/zerofrom", features = ["derive"] }
