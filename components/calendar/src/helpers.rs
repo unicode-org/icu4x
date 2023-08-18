@@ -137,9 +137,7 @@ pub fn mod3(x: f64, a: f64, b: f64) -> f64 {
     }
 }
 
-// Arctan of y/x in degrees, handling zero cases
-//
-// Returns None if x and y are both 0
+// Arctangent of y/x in degrees, handling zero cases (using atan2)
 pub fn arctan_degrees(y: f64, x: f64) -> f64 {
     mod_degrees(libm::atan2(y, x) * 180.0 / PI)
 }
