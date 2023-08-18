@@ -2,7 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use std::{collections::HashMap, fs};
+use std::collections::HashMap;
 
 use criterion::{black_box, criterion_group, criterion_main, Criterion};
 
@@ -103,28 +103,10 @@ fn generate_zerohashmap() {
     println!("{buf:?}");
 }
 
-#[cfg(feature = "generate")]
-fn generate_test_data() {
-    let zeromap = build_zeromap(true);
-    let zeromap_bytes = postcard::to_stdvec(&zeromap).unwrap();
-    fs::write("large_zeromap.postcard", &zeromap_bytes).unwrap();
-
-    let hashmap = build_hashmap(true);
-    let hashmap_bytes = postcard::to_stdvec(&hashmap).unwrap();
-    fs::write("large_hashmap.postcard", &hashmap_bytes).unwrap();
-
-    let zerohashmap = build_zerohashmap(true);
-    let zerohashmap_bytes = postcard::to_stdvec(&zerohashmap).unwrap();
-    fs::write("large_zerohashmap.postcard", &zerohashmap_bytes).unwrap();
-}
-
 fn overview_bench(c: &mut Criterion) {
     bench_zeromap(c);
     bench_hashmap(c);
     bench_zerohashmap(c);
-
-    #[cfg(feature = "generate")]
-    generate_test_data();
 }
 
 fn bench_zeromap(c: &mut Criterion) {
@@ -132,8 +114,10 @@ fn bench_zeromap(c: &mut Criterion) {
     // generate_hashmap();
 
     bench_deserialize(c);
+    #[cfg(feature = "bench")]
     bench_deserialize_large(c);
     bench_lookup(c);
+    #[cfg(feature = "bench")]
     bench_lookup_large(c);
 }
 
@@ -161,8 +145,9 @@ fn bench_deserialize(c: &mut Criterion) {
     });
 }
 
+#[cfg(feature = "bench")]
 fn bench_deserialize_large(c: &mut Criterion) {
-    let buf = read_large_zeromap_postcard_bytes();
+    let buf = large_zeromap_postcard_bytes();
     c.bench_function("zeromap/deserialize/large", |b| {
         b.iter(|| {
             let map: ZeroMap<Index32Str, Index32Str> =
@@ -185,8 +170,9 @@ fn bench_lookup(c: &mut Criterion) {
     });
 }
 
+#[cfg(feature = "bench")]
 fn bench_lookup_large(c: &mut Criterion) {
-    let buf = read_large_zeromap_postcard_bytes();
+    let buf = large_zeromap_postcard_bytes();
     let map: ZeroMap<Index32Str, Index32Str> = postcard::from_bytes(&buf).unwrap();
     c.bench_function("zeromap/lookup/large", |b| {
         b.iter(|| {
@@ -199,12 +185,9 @@ fn bench_lookup_large(c: &mut Criterion) {
     });
 }
 
-fn read_large_zeromap_postcard_bytes() -> Vec<u8> {
-    let path = concat!(
-        env!("CARGO_MANIFEST_DIR"),
-        "/benches/testdata/large_zeromap.postcard"
-    );
-    fs::read(path).unwrap()
+#[cfg(feature = "bench")]
+fn large_zeromap_postcard_bytes() -> Vec<u8> {
+    postcard::to_stdvec(&build_zeromap(true)).unwrap()
 }
 
 fn bench_hashmap(c: &mut Criterion) {
@@ -212,8 +195,10 @@ fn bench_hashmap(c: &mut Criterion) {
     // generate_hashmap();
 
     bench_deserialize_hashmap(c);
+    #[cfg(feature = "bench")]
     bench_deserialize_large_hashmap(c);
     bench_lookup_hashmap(c);
+    #[cfg(feature = "bench")]
     bench_lookup_large_hashmap(c);
 }
 
@@ -241,8 +226,9 @@ fn bench_deserialize_hashmap(c: &mut Criterion) {
     });
 }
 
+#[cfg(feature = "bench")]
 fn bench_deserialize_large_hashmap(c: &mut Criterion) {
-    let buf = read_large_hashmap_postcard_bytes();
+    let buf = large_hashmap_postcard_bytes();
     c.bench_function("zeromap/deserialize/large/hashmap", |b| {
         b.iter(|| {
             let map: HashMap<String, String> = postcard::from_bytes(black_box(&buf)).unwrap();
@@ -261,8 +247,9 @@ fn bench_lookup_hashmap(c: &mut Criterion) {
     });
 }
 
+#[cfg(feature = "bench")]
 fn bench_lookup_large_hashmap(c: &mut Criterion) {
-    let buf = read_large_hashmap_postcard_bytes();
+    let buf = large_hashmap_postcard_bytes();
     let map: HashMap<String, String> = postcard::from_bytes(&buf).unwrap();
     c.bench_function("zeromap/lookup/large/hashmap", |b| {
         b.iter(|| {
@@ -272,12 +259,9 @@ fn bench_lookup_large_hashmap(c: &mut Criterion) {
     });
 }
 
-fn read_large_hashmap_postcard_bytes() -> Vec<u8> {
-    let path = concat!(
-        env!("CARGO_MANIFEST_DIR"),
-        "/benches/testdata/large_hashmap.postcard"
-    );
-    fs::read(path).unwrap()
+#[cfg(feature = "bench")]
+fn large_hashmap_postcard_bytes() -> Vec<u8> {
+    postcard::to_stdvec(&build_hashmap(true)).unwrap()
 }
 
 fn bench_zerohashmap(c: &mut Criterion) {
@@ -285,8 +269,10 @@ fn bench_zerohashmap(c: &mut Criterion) {
     // generate_zerohashmap();
 
     bench_deserialize_zerohashmap(c);
+    #[cfg(feature = "bench")]
     bench_deserialize_large_zerohashmap(c);
     bench_zerohashmap_lookup(c);
+    #[cfg(feature = "bench")]
     bench_zerohashmap_lookup_large(c);
 }
 
@@ -319,8 +305,9 @@ fn bench_deserialize_zerohashmap(c: &mut Criterion) {
     });
 }
 
+#[cfg(feature = "bench")]
 fn bench_deserialize_large_zerohashmap(c: &mut Criterion) {
-    let buf = read_large_zerohashmap_postcard_bytes();
+    let buf = large_zerohashmap_postcard_bytes();
     c.bench_function("zerohashmap/deserialize/large", |b| {
         b.iter(|| {
             let map: ZeroHashMap<Index32Str, Index32Str> =
@@ -348,8 +335,9 @@ fn bench_zerohashmap_lookup(c: &mut Criterion) {
     });
 }
 
+#[cfg(feature = "bench")]
 fn bench_zerohashmap_lookup_large(c: &mut Criterion) {
-    let buf = read_large_zerohashmap_postcard_bytes();
+    let buf = large_zerohashmap_postcard_bytes();
     let zero_hashmap: ZeroHashMap<Index32Str, Index32Str> = postcard::from_bytes(&buf).unwrap();
 
     c.bench_function("zerohashmap/lookup/large", |b| {
@@ -368,12 +356,9 @@ fn bench_zerohashmap_lookup_large(c: &mut Criterion) {
     });
 }
 
-fn read_large_zerohashmap_postcard_bytes() -> Vec<u8> {
-    let path = concat!(
-        env!("CARGO_MANIFEST_DIR"),
-        "/benches/testdata/large_zerohashmap.postcard"
-    );
-    fs::read(path).unwrap()
+#[cfg(feature = "bench")]
+fn large_zerohashmap_postcard_bytes() -> Vec<u8> {
+    postcard::to_stdvec(&build_zerohashmap(true)).unwrap()
 }
 
 criterion_group!(benches, overview_bench);
