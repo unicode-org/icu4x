@@ -194,7 +194,7 @@ impl DatagenDriver {
                 match provider.load_data(key, req) {
                     Ok(data_response) => {
                         if let Some(iter) = locale_iter.as_ref() {
-                            if iter.get().is_empty() && !locale.is_empty() {
+                            if iter.get().is_und() && !locale.is_und() {
                                 log::debug!("Falling back to und: {key}/{locale}");
                             }
                         }
@@ -209,7 +209,7 @@ impl DatagenDriver {
                         ..
                     }) => {
                         if let Some(iter) = locale_iter.as_mut() {
-                            if iter.get().is_empty() {
+                            if iter.get().is_und() {
                                 log::debug!("Could not find data for: {key}/{locale}");
                                 return None;
                             }
@@ -261,7 +261,7 @@ impl DatagenDriver {
                     let fallbacker_with_config = fallbacker.for_config(key.fallback_config());
                     payloads.iter().try_for_each(|(locale, payload)| {
                         let mut iter = fallbacker_with_config.fallback_for(locale.clone());
-                        while !iter.get().is_empty() {
+                        while !iter.get().is_und() {
                             iter.step();
                             if payloads.get(iter.get()) == Some(payload) {
                                 // Found a match: don't need to write anything
@@ -399,7 +399,7 @@ impl DatagenDriver {
 
                 for locale in explicit.iter() {
                     let mut iter = fallbacker_with_config.fallback_for(locale.clone());
-                    while !iter.get().is_empty() {
+                    while !iter.get().is_und() {
                         implicit.insert(iter.get().clone());
                         iter.step();
                     }
@@ -435,7 +435,7 @@ impl DatagenDriver {
                             return false;
                         }
                         let mut iter = fallbacker_with_config.fallback_for(locale.clone());
-                        while !iter.get().is_empty() {
+                        while !iter.get().is_und() {
                             if explicit.contains(iter.get()) {
                                 return true;
                             }
