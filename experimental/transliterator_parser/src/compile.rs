@@ -64,19 +64,7 @@
 //! offset of a given special construct when we encode an element. The precomputed lengths mean we
 //! never overflow into the indices of the following `VZV`.
 
-// more (data struct compatible) runtime optimization opportunities:
-// - deduplicate special constructs ($a = hello; $b = hello; should only generate one hello element)
-//   - especially important for equivalent unicodesets
-// - inline single-use variables ($a = x; $a > b; => x > b;)
-// - replace uses of single-element variables with the element itself ($a = [a-z]; $a > a; => [a-z] > a;)
-// - flatten single-element sets into literals ([a] > b; => a > b;)
-
-// TODO: add this optimization note somewhere:
-// the question whether variables should be inlined or not has a (relatively) simple answer from a data size perspective:
-// having a variable costs 2 + 4*n bytes, where n >= 1 is the number of uses. 2 bytes for the index
-// of the variable in the VZV (Index16), and 4 bytes for the PUP (15) code point in UTF-8 at every use site.
-// inlining a variable costs (n-1) * C bytes, where C is the number of bytes (UTF-8) of the variable's definition.
-// in other words, if 2 + 4*n > (n-1) * C, then it is cheaper to inline the variable at every use site.
+// TODO(#3825): Datagen optimizations (variable inlining, set flattening, deduplicating VarTable)
 
 /*
 Encoding example:
@@ -125,11 +113,10 @@ as described in the zero-copy format, and the maps here are just arrays)
     ]
 */
 
+use crate::errors::{Result, PEK};
 use crate::parse;
-use crate::parse::{ElementLocation as EL, HalfRule, QuantifierKind, UnicodeSet};
+use crate::parse::{FilterSet, HalfRule, QuantifierKind};
 use icu_transliteration::provider::RuleBasedTransliterator;
-use parse::Result;
-use parse::PEK;
 use std::collections::{HashMap, HashSet};
 
 mod pass2;
@@ -152,6 +139,9 @@ struct SpecialConstructCounts {
     num_segments: usize,
     num_unicode_sets: usize,
     num_function_calls: usize,
+    // backrefs have no data, they're simply an integer, so we only care about the maximum number
+    // we need to encode
+    max_backref_num: u32,
 }
 
 impl SpecialConstructCounts {
@@ -163,6 +153,7 @@ impl SpecialConstructCounts {
             + self.num_segments
             + self.num_unicode_sets
             + self.num_function_calls
+            + self.max_backref_num as usize
     }
 }
 
@@ -176,16 +167,14 @@ struct Pass1Data {
     used_transliterators: HashSet<parse::BasicId>,
 }
 
-#[allow(unused)] // TODO: remove annotation
 #[derive(Debug, Clone)]
 struct DirectedPass1Result<'p> {
     // data with dependencies resolved and counts summed
     data: Pass1Data,
     groups: RuleGroups<'p>,
-    filter: Option<UnicodeSet>,
+    filter: Option<FilterSet>,
 }
 
-#[allow(unused)] // TODO: remove annotation
 #[derive(Debug, Clone)]
 struct Pass1Result<'p> {
     forward_result: DirectedPass1Result<'p>,
@@ -201,8 +190,8 @@ struct Pass1<'p> {
     forward_data: Pass1Data,
     reverse_data: Pass1Data,
     variable_data: HashMap<String, Pass1Data>,
-    forward_filter: Option<UnicodeSet>,
-    reverse_filter: Option<UnicodeSet>,
+    forward_filter: Option<FilterSet>,
+    reverse_filter: Option<FilterSet>,
     forward_rule_group_agg: rule_group_agg::ForwardRuleGroupAggregator<'p>,
     reverse_rule_group_agg: rule_group_agg::ReverseRuleGroupAggregator<'p>,
     variable_definitions: HashMap<String, &'p [parse::Element]>,
@@ -268,9 +257,6 @@ impl<'p> Pass1<'p> {
     ) -> Result<&'a [parse::Rule]> {
         let rules = match rules {
             [parse::Rule::GlobalFilter(filter), rest @ ..] => {
-                if filter.has_strings() {
-                    return Err(PEK::GlobalFilterWithStrings.into());
-                }
                 self.forward_filter = Some(filter.clone());
 
                 rest
@@ -279,9 +265,6 @@ impl<'p> Pass1<'p> {
         };
         let rules = match rules {
             [rest @ .., parse::Rule::GlobalInverseFilter(filter)] => {
-                if filter.has_strings() {
-                    return Err(PEK::GlobalFilterWithStrings.into());
-                }
                 self.reverse_filter = Some(filter.clone());
 
                 rest
@@ -522,7 +505,7 @@ impl<'a, 'p, F: Fn(&str) -> bool> SourceValidator<'a, 'p, F> {
                 return Err(PEK::AnchorEndNotAtEnd.into());
             }
             elt => {
-                return Err(PEK::UnexpectedElement(elt.kind(), EL::Source).into());
+                return Err(PEK::UnexpectedElementInSource(elt.kind().debug_str()).into());
             }
         }
         Ok(())
@@ -627,6 +610,7 @@ impl<'a, 'p, F: Fn(&str) -> bool> TargetValidator<'a, 'p, F> {
                 if *num > self.num_segments {
                     return Err(PEK::BackReferenceOutOfRange.into());
                 }
+                self.data.counts.max_backref_num = self.data.counts.max_backref_num.max(*num);
             }
             parse::Element::FunctionCall(id, inner) => {
                 self.validate_section(inner, false)?;
@@ -648,7 +632,7 @@ impl<'a, 'p, F: Fn(&str) -> bool> TargetValidator<'a, 'p, F> {
                 // while anchors have no effect on the target side, they may still appear
             }
             elt => {
-                return Err(PEK::UnexpectedElement(elt.kind(), EL::Target).into());
+                return Err(PEK::UnexpectedElementInTarget(elt.kind().debug_str()).into());
             }
         }
         Ok(())
@@ -731,7 +715,9 @@ impl<'a, 'p, F: Fn(&str) -> bool> VariableDefinitionValidator<'a, 'p, F> {
                 self.data.counts.num_unicode_sets += 1;
             }
             elt => {
-                return Err(PEK::UnexpectedElement(elt.kind(), EL::VariableDefinition).into());
+                return Err(
+                    PEK::UnexpectedElementInVariableDefinition(elt.kind().debug_str()).into(),
+                );
             }
         }
         Ok(())
@@ -824,26 +810,28 @@ impl Pass1ResultGenerator {
         // will need to take into account recursive dependencies from `used_vars` as well
         let used_transliterators = seed_transliterators.clone();
 
-        let counts = used_variables
-            .iter()
-            .try_fold(seed_data.counts, |mut counts, var| {
-                // we check for unknown variables during the first pass, so these should exist
-                let var_data = var_data_map.get(var).ok_or(PEK::Internal)?;
-                counts.num_compounds += var_data.counts.num_compounds;
-                counts.num_segments += var_data.counts.num_segments;
-                counts.num_quantifiers_opt += var_data.counts.num_quantifiers_opt;
-                counts.num_quantifiers_kleene += var_data.counts.num_quantifiers_kleene;
-                counts.num_quantifiers_kleene_plus += var_data.counts.num_quantifiers_kleene_plus;
-                counts.num_unicode_sets += var_data.counts.num_unicode_sets;
-                counts.num_function_calls += var_data.counts.num_function_calls;
+        let mut combined_counts = seed_data.counts;
 
-                Ok::<_, crate::ParseError>(counts)
-            })?;
+        for var in &used_variables {
+            // we check for unknown variables during the first pass, so these should exist
+            let var_data = var_data_map.get(var).ok_or(PEK::Internal)?;
+            let var_counts: SpecialConstructCounts = var_data.counts;
+            combined_counts.num_compounds += var_counts.num_compounds;
+            combined_counts.num_segments += var_counts.num_segments;
+            combined_counts.num_quantifiers_opt += var_counts.num_quantifiers_opt;
+            combined_counts.num_quantifiers_kleene += var_counts.num_quantifiers_kleene;
+            combined_counts.num_quantifiers_kleene_plus += var_counts.num_quantifiers_kleene_plus;
+            combined_counts.num_unicode_sets += var_counts.num_unicode_sets;
+            combined_counts.num_function_calls += var_counts.num_function_calls;
+            combined_counts.max_backref_num = combined_counts
+                .max_backref_num
+                .max(var_counts.max_backref_num);
+        }
 
         Ok(Pass1Data {
             used_transliterators,
             used_variables,
-            counts,
+            counts: combined_counts,
         })
     }
 
@@ -873,8 +861,6 @@ impl Pass1ResultGenerator {
         Ok(())
     }
 }
-
-// TODO: define type FilterSet that is just a CPIL (without strings) and use that everywhere
 
 // returns (forward, backward) transliterators if they were requested
 pub(crate) fn compile(
@@ -929,7 +915,7 @@ mod tests {
     }
 
     fn pass1data_from_parts(
-        translit_deps: &[(&'static str, &'static str, &'static str)],
+        translit_deps: &[(&'static str, &'static str, Option<&'static str>)],
         var_deps: &[&'static str],
         counts: SpecialConstructCounts,
     ) -> Pass1Data {
@@ -941,7 +927,7 @@ mod tests {
             data.used_transliterators.insert(parse::BasicId {
                 source: source.into(),
                 target: target.into(),
-                variant: variant.into(),
+                variant: variant.map(|s| s.into()),
             });
         }
         for &var in var_deps {
@@ -990,14 +976,15 @@ mod tests {
                 num_segments: 1,
                 num_function_calls: 1,
                 num_unicode_sets: 1,
+                max_backref_num: 1,
                 ..Default::default()
             };
             let expected_fwd_data = pass1data_from_parts(
                 &[
-                    ("Bidi", "Dependency", "One"),
-                    ("Forward", "Dependency", ""),
-                    ("Any", "AnotherForwardDependency", ""),
-                    ("YetAnother", "ForwardDependency", ""),
+                    ("Bidi", "Dependency", Some("One")),
+                    ("Forward", "Dependency", None),
+                    ("Any", "AnotherForwardDependency", None),
+                    ("YetAnother", "ForwardDependency", None),
                 ],
                 &["used_both", "used_fwd", "literal1", "literal2"],
                 counts,
@@ -1011,16 +998,17 @@ mod tests {
                 num_quantifiers_kleene_plus: 2,
                 num_segments: 2,
                 num_function_calls: 3,
+                max_backref_num: 2,
                 ..Default::default()
             };
             let expected_rev_data = pass1data_from_parts(
                 &[
-                    ("Dependency", "Bidi", "One"),
-                    ("Backward", "Dependency", ""),
-                    ("Any", "AnotherBackwardDependency", ""),
-                    ("Any", "Many", ""),
-                    ("Any", "Backwardz", ""),
-                    ("Any", "Deps", ""),
+                    ("Dependency", "Bidi", Some("One")),
+                    ("Backward", "Dependency", None),
+                    ("Any", "AnotherBackwardDependency", None),
+                    ("Any", "Many", None),
+                    ("Any", "Backwardz", None),
+                    ("Any", "Deps", None),
                 ],
                 &["used_rev", "literal1", "literal2"],
                 counts,
@@ -1126,14 +1114,15 @@ mod tests {
                 num_unicode_sets: 3,
                 num_function_calls: 1,
                 num_segments: 1,
+                max_backref_num: 1,
                 ..Default::default()
             };
             let fwd_data = pass1data_from_parts(
                 &[
-                    ("Bidi", "Dependency", "One"),
-                    ("Forward", "Dependency", ""),
-                    ("Any", "AnotherForwardDependency", ""),
-                    ("YetAnother", "ForwardDependency", ""),
+                    ("Bidi", "Dependency", Some("One")),
+                    ("Forward", "Dependency", None),
+                    ("Any", "AnotherForwardDependency", None),
+                    ("YetAnother", "ForwardDependency", None),
                 ],
                 &["used_both", "used_fwd", "literal1", "literal2"],
                 fwd_counts,
@@ -1146,16 +1135,17 @@ mod tests {
                 num_quantifiers_opt: 1,
                 num_segments: 2,
                 num_function_calls: 3,
+                max_backref_num: 2,
                 ..Default::default()
             };
             let rev_data = pass1data_from_parts(
                 &[
-                    ("Dependency", "Bidi", "One"),
-                    ("Backward", "Dependency", ""),
-                    ("Any", "AnotherBackwardDependency", ""),
-                    ("Any", "Many", ""),
-                    ("Any", "Backwardz", ""),
-                    ("Any", "Deps", ""),
+                    ("Dependency", "Bidi", Some("One")),
+                    ("Backward", "Dependency", None),
+                    ("Any", "AnotherBackwardDependency", None),
+                    ("Any", "Many", None),
+                    ("Any", "Backwardz", None),
+                    ("Any", "Deps", None),
                 ],
                 &["used_both", "used_rev", "literal1", "literal2"],
                 rev_counts,
@@ -1307,8 +1297,6 @@ mod tests {
             (Pass, r":: [a-z];"),
             (Pass, r":: ([a-z]);"),
             (Pass, r":: [a-z] ; :: ([a-z]);"),
-            (Fail, r":: [{string}] ;"),
-            (Fail, r":: ([{string}]);"),
             (Fail, r":: [a-z] ; :: [a-z] ;"),
             (Fail, r":: ([a-z]) ; :: ([a-z]) ;"),
             (Fail, r":: ([a-z]) ; :: [a-z] ;"),

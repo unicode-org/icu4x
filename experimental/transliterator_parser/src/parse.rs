@@ -14,6 +14,8 @@ use icu_properties::sets::{load_pattern_white_space, load_xid_continue, load_xid
 use icu_provider::prelude::*;
 use icu_unicodeset_parser::{VariableMap, VariableValue};
 
+use crate::errors::{Result, PEK};
+
 /// An element that can appear in a rule. Used for error reporting in [`ParseError`].
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 #[non_exhaustive]
@@ -51,6 +53,21 @@ impl ElementKind {
             _ => false,
         }
     }
+
+    pub(crate) fn debug_str(&self) -> &'static str {
+        match self {
+            ElementKind::Literal => "literal",
+            ElementKind::VariableReference => "variable reference",
+            ElementKind::BackReference => "back reference",
+            ElementKind::Quantifier => "quantifier",
+            ElementKind::Segment => "segment",
+            ElementKind::UnicodeSet => "unicodeset",
+            ElementKind::FunctionCall => "function call",
+            ElementKind::Cursor => "cursor",
+            ElementKind::AnchorStart => "start anchor",
+            ElementKind::AnchorEnd => "end anchor",
+        }
+    }
 }
 
 /// The location in which an element can appear. Used for error reporting in [`ParseError`].
@@ -66,96 +83,10 @@ pub enum ElementLocation {
     VariableDefinition,
 }
 
-/// The kind of error that occurred.
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-#[non_exhaustive]
-pub enum ParseErrorKind {
-    /// An unexpected character was encountered. This variant implies the other variants
-    /// (notably `UnknownProperty` and `Unimplemented`) do not apply.
-    UnexpectedChar(char),
-    /// A reference to an unknown variable.
-    UnknownVariable,
-    /// The source is incomplete.
-    Eof,
-    /// Something unexpected went wrong with our code. Please file a bug report on GitHub.
-    Internal,
-    /// The provided syntax is not supported by us. Please file an issue on GitHub if you need
-    /// this feature.
-    Unimplemented,
-    /// The provided escape sequence is not a valid Unicode code point.
-    InvalidEscape,
-    /// The provided transform ID is invalid.
-    InvalidId,
-    /// The provided number is invalid, which likely means it's too big.
-    InvalidNumber,
-    /// Duplicate variable definition.
-    DuplicateVariable,
-    /// Invalid UnicodeSet syntax. See `icu_unicodeset_parser`'s [`ParseError`](icu_unicodeset_parser::ParseError).
-    UnicodeSetError(icu_unicodeset_parser::ParseError),
-
-    // errors originating from compilation step
-    /// A global filter (forward or backward) in an unexpected position.
-    UnexpectedGlobalFilter,
-    /// A global filter (forward or backward) may not contain strings.
-    GlobalFilterWithStrings,
-    /// An element of [`ElementKind`] appeared in the given [`ElementLocation`], but that is prohibited.
-    UnexpectedElement(ElementKind, ElementLocation),
-    /// The start anchor `^` was not placed at the beginning of a source.
-    AnchorStartNotAtStart,
-    /// The end anchor `$` was not placed at the end of a source.
-    AnchorEndNotAtEnd,
-    /// A variable that contains source-only matchers (e.g., UnicodeSets) was used on the target side.
-    SourceOnlyVariable,
-    /// No matching segment for this backreference was found.
-    BackReferenceOutOfRange,
-    /// The cursor is in an invalid position.
-    InvalidCursor,
-    /// Multiple cursors were defined.
-    DuplicateCursor,
-    /// There are too many special matchers/replacers/variables in the source.
-    TooManySpecials,
-}
-pub(crate) use ParseErrorKind as PEK;
-
-impl ParseErrorKind {
-    fn with_offset(self, offset: usize) -> ParseError {
-        ParseError {
-            offset: Some(offset),
-            kind: self,
-        }
-    }
-}
-
-/// The error type returned by the `parse` functions in this crate.
-#[allow(unused)] // TODO(#3736): remove when doing compilation
-#[derive(Debug, Clone, Copy)]
-pub struct ParseError {
-    // offset is the index to an arbitrary byte in the last character in the source that makes sense
-    // to display as location for the error, e.g., the unexpected character itself or
-    // for an unknown property name the last character of the name.
-    offset: Option<usize>,
-    kind: ParseErrorKind,
-}
-
-impl From<ParseErrorKind> for ParseError {
-    fn from(kind: ParseErrorKind) -> Self {
-        ParseError { offset: None, kind }
-    }
-}
-
-impl From<icu_unicodeset_parser::ParseError> for ParseError {
-    fn from(e: icu_unicodeset_parser::ParseError) -> Self {
-        ParseError {
-            offset: None,
-            kind: PEK::UnicodeSetError(e),
-        }
-    }
-}
-
-pub(crate) type Result<T, E = ParseError> = core::result::Result<T, E>;
-
 // the only UnicodeSets used in this crate are parsed, and thus 'static.
 pub(crate) type UnicodeSet = CodePointInversionListAndStringList<'static>;
+// UnicodeSets that are used as filters may not contain strings.
+pub(crate) type FilterSet = CodePointInversionList<'static>;
 
 #[derive(Debug, Clone, Copy)]
 pub(crate) enum QuantifierKind {
@@ -168,17 +99,16 @@ pub(crate) enum QuantifierKind {
 }
 
 // source-target/variant
-#[allow(unused)] // TODO(#3736): remove when doing compilation
 #[derive(Debug, Clone, Hash, PartialEq, Eq)]
 pub(crate) struct BasicId {
     pub(crate) source: String,
     pub(crate) target: String,
-    pub(crate) variant: String,
+    pub(crate) variant: Option<String>,
 }
 
 impl BasicId {
     pub(crate) fn is_null(&self) -> bool {
-        self.source == "Any" && self.target == "Null" && self.variant.is_empty()
+        self.source == "Any" && self.target == "Null" && self.variant.is_none()
     }
 
     pub(crate) fn reverse(self) -> Self {
@@ -200,16 +130,15 @@ impl Default for BasicId {
         Self {
             source: "Any".to_string(),
             target: "Null".to_string(),
-            variant: "".to_string(),
+            variant: None,
         }
     }
 }
 
 // [set] source-target/variant
-#[allow(unused)] // TODO(#3736): remove when doing compilation
 #[derive(Debug, Clone)]
 pub(crate) struct SingleId {
-    pub(crate) filter: Option<UnicodeSet>,
+    pub(crate) filter: Option<FilterSet>,
     pub(crate) basic_id: BasicId,
 }
 
@@ -273,7 +202,6 @@ impl Element {
 
 pub(crate) type Section = Vec<Element>;
 
-#[allow(unused)] // TODO(#3736): remove when doing compilation
 #[derive(Debug, Clone)]
 pub(crate) struct HalfRule {
     pub(crate) ante: Section,
@@ -302,8 +230,8 @@ impl Direction {
 #[derive(Debug, Clone)]
 #[allow(clippy::large_enum_variant)]
 pub(crate) enum Rule {
-    GlobalFilter(UnicodeSet),
-    GlobalInverseFilter(UnicodeSet),
+    GlobalFilter(FilterSet),
+    GlobalInverseFilter(FilterSet),
     // forward and backward IDs.
     // "A (B)" is Transform(A, Some(B)),
     // "(B)" is Transform(Null, Some(B)),
@@ -575,15 +503,15 @@ where
     fn parse_filter_or_transform_rule_parts(
         &mut self,
     ) -> Result<(
-        Option<UnicodeSet>,
+        Option<FilterSet>,
         Option<BasicId>,
-        Option<UnicodeSet>,
+        Option<FilterSet>,
         Option<BasicId>,
         bool,
     )> {
         // parse forward things, i.e., everything until Self::OPEN_PAREN
         self.skip_whitespace();
-        let forward_filter = self.try_parse_unicode_set()?;
+        let forward_filter = self.try_parse_filter_set()?;
         self.skip_whitespace();
         let forward_basic_id = self.try_parse_basic_id()?;
         self.skip_whitespace();
@@ -603,7 +531,7 @@ where
             // if we have a reverse, parse it
             self.consume(Self::OPEN_PAREN)?;
             self.skip_whitespace();
-            reverse_filter = self.try_parse_unicode_set()?;
+            reverse_filter = self.try_parse_filter_set()?;
             self.skip_whitespace();
             reverse_basic_id = self.try_parse_basic_id()?;
             self.skip_whitespace();
@@ -665,7 +593,7 @@ where
         // <unicodeset>? <basic-id>
 
         self.skip_whitespace();
-        let filter = self.try_parse_unicode_set()?;
+        let filter = self.try_parse_filter_set()?;
         self.skip_whitespace();
         let basic_id = self.parse_basic_id()?;
         Ok(SingleId { filter, basic_id })
@@ -702,7 +630,7 @@ where
         Ok(BasicId {
             source,
             target,
-            variant: variant_id.unwrap_or("".to_string()),
+            variant: variant_id,
         })
     }
 
@@ -867,7 +795,8 @@ where
             Self::CURSOR_PLACEHOLDER | Self::CURSOR => self.parse_cursor(),
             Self::QUOTE => Ok(Element::Literal(self.parse_quoted_literal()?)),
             _ if self.peek_is_unicode_set_start() => {
-                Ok(Element::UnicodeSet(self.parse_unicode_set()?))
+                let (_, set) = self.parse_unicode_set()?;
+                Ok(Element::UnicodeSet(set))
             }
             c if self.is_valid_unquoted_literal(c) => Ok(Element::Literal(self.parse_literal()?)),
             _ => self.unexpected_char_here(),
@@ -1061,24 +990,28 @@ where
         Ok(elt)
     }
 
-    fn try_parse_unicode_set(&mut self) -> Result<Option<UnicodeSet>> {
+    fn try_parse_filter_set(&mut self) -> Result<Option<FilterSet>> {
         if self.peek_is_unicode_set_start() {
-            return Ok(Some(self.parse_unicode_set()?));
+            let (offset, set) = self.parse_unicode_set()?;
+            if set.has_strings() {
+                return Err(PEK::GlobalFilterWithStrings.with_offset(offset));
+            }
+            return Ok(Some(set.code_points().clone()));
         }
         Ok(None)
     }
 
-    fn parse_unicode_set(&mut self) -> Result<UnicodeSet> {
+    fn parse_unicode_set(&mut self) -> Result<(usize, UnicodeSet)> {
         let pre_offset = self.must_peek_index()?;
         // pre_offset is a valid index because self.iter (used in must_peek_index)
         // was created from self.source
         #[allow(clippy::indexing_slicing)]
         let set_source = &self.source[pre_offset..];
-        let (set, consumed_bytes) = self.unicode_set_from_str(set_source).map_err(|mut e| {
-            e.offset.get_or_insert(pre_offset);
-            e
-        })?;
+        let (set, consumed_bytes) = self
+            .unicode_set_from_str(set_source)
+            .map_err(|e| e.or_with_offset(pre_offset))?;
 
+        let mut last_offset = pre_offset;
         // advance self.iter consumed_bytes bytes
         while let Some(offset) = self.peek_index() {
             // we can use equality because unicodeset_parser also lexes on char boundaries
@@ -1086,10 +1019,11 @@ where
             if offset == pre_offset + consumed_bytes {
                 break;
             }
+            last_offset = offset;
             self.iter.next();
         }
 
-        Ok(set)
+        Ok((last_offset, set))
     }
 
     fn get_dot_set(&mut self) -> Result<UnicodeSet> {
@@ -1417,7 +1351,7 @@ mod tests {
 
         ^ (start) { key ' key '+ $good_set } > $102 }  post\-context$;
         # contexts are optional
-        target < source ;
+        target < source [{set\ with\ string}];
         # contexts can be empty
         { 'source-or-target' } <> { 'target-or-source' } ;
 
@@ -1425,7 +1359,7 @@ mod tests {
 
         . > ;
 
-        :: ([{Inverse]-filter}]) ;
+        :: ([inverse-filter]) ;
         "##;
 
         if let Err(e) = parse(source) {
@@ -1566,6 +1500,8 @@ mod tests {
             r":: [a$-^\]] ;",
             r":: ( [] [] ) ;",
             r":: () [] ;",
+            r":: [{string}];",
+            r":: ([{string}]);",
         ];
 
         for source in sources {
@@ -1647,6 +1583,7 @@ mod tests {
             r":: a-z / ( [] a-z ) ;",
             r":: Latin-ASCII/BGN Arab-Greek/UNGEGN ;",
             r":: (Latin-ASCII/BGN Arab-Greek/UNGEGN) ;",
+            r":: [a-z{string}] Remove ;",
         ];
 
         for source in sources {
