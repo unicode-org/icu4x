@@ -3,6 +3,7 @@
     "source": "Latin",
     "target": "ASCII",
     "alias": [
+        "Any-Latin",
         "und-t-und-latn-d0-ascii"
     ],
     "backwardAlias": [

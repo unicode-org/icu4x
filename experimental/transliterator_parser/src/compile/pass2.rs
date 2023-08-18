@@ -193,6 +193,8 @@ impl<'a> Display for LiteralOrStandin<'a> {
 pub(super) struct Pass2<'a, 'p> {
     var_table: MutVarTable,
     var_definitions: &'a HashMap<String, &'p [parse::Element]>,
+    // transliterators available at datagen time exist in this mapping from legacy ID to internal ID
+    available_transliterators: &'a HashMap<String, String>,
     // the inverse of VarTable.compounds
     var_to_char: HashMap<String, char>,
 }
@@ -201,18 +203,25 @@ impl<'a, 'p> Pass2<'a, 'p> {
     pub(super) fn run(
         result: DirectedPass1Result<'p>,
         var_definitions: &'a HashMap<String, &'p [parse::Element]>,
+        available_transliterators: &'a HashMap<String, String>,
     ) -> Result<ds::RuleBasedTransliterator<'static>> {
-        let mut pass2 = Self::try_new(result.data.counts, var_definitions)?;
+        let mut pass2 = Self::try_new(
+            result.data.counts,
+            var_definitions,
+            available_transliterators,
+        )?;
         pass2.compile(result.groups, result.filter)
     }
 
     fn try_new(
         counts: SpecialConstructCounts,
         var_definitions: &'a HashMap<String, &'p [parse::Element]>,
+        available_transliterators: &'a HashMap<String, String>,
     ) -> Result<Self> {
         Ok(Pass2 {
             var_table: MutVarTable::try_new_from_counts(counts)?,
             var_definitions,
+            available_transliterators,
             var_to_char: HashMap::new(),
         })
     }
@@ -228,7 +237,7 @@ impl<'a, 'p> Pass2<'a, 'p> {
         for (transform_group, conversion_group) in rule_groups {
             let compiled_transform_group: Vec<_> = transform_group
                 .into_iter()
-                .map(|id| Pass2::compile_single_id(id.into_owned()))
+                .map(|id| self.compile_single_id(id.into_owned()))
                 .collect();
             compiled_transform_groups.push(VarZeroVec::from(&compiled_transform_group));
 
@@ -339,7 +348,7 @@ impl<'a, 'p> Pass2<'a, 'p> {
             }
             parse::Element::FunctionCall(id, inner) => {
                 let inner = self.compile_section(inner, loc);
-                let id = Pass2::compile_single_id(id.clone());
+                let id = self.compile_single_id(id.clone());
                 let standin = self.var_table.insert_function_call(ds::FunctionCall {
                     translit: id,
                     arg: inner.into(),
@@ -353,21 +362,21 @@ impl<'a, 'p> Pass2<'a, 'p> {
         }
     }
 
-    fn compile_single_id(id: parse::SingleId) -> ds::SimpleId<'static> {
-        // TODO(#3736): map legacy ID to internal ID and use here
-        let id_string = format!(
-            "{}-{}{}",
-            id.basic_id.source,
-            id.basic_id.target,
-            if let Some(v) = id.basic_id.variant {
-                format!("/{}", v)
+    fn compile_single_id(&self, id: parse::SingleId) -> ds::SimpleId<'static> {
+        let recombined_legacy_id = id.basic_id.to_string();
+        let internal_id =
+            if let Some(internal_id) = self.available_transliterators.get(&recombined_legacy_id) {
+                internal_id.clone()
             } else {
-                "".to_owned()
-            }
-        );
+                legacy_id_to_internal_id(
+                    &id.basic_id.source,
+                    &id.basic_id.target,
+                    id.basic_id.variant.as_deref(),
+                )
+            };
 
         ds::SimpleId {
-            id: id_string.into(),
+            id: internal_id.into(),
             filter: id.filter.unwrap_or(CodePointInversionList::all()),
         }
     }

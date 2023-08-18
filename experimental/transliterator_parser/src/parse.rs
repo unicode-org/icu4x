@@ -3,6 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use std::borrow::Cow;
+use std::fmt::{Display, Formatter};
 use std::{iter::Peekable, str::CharIndices};
 
 use icu_collections::{
@@ -132,6 +133,16 @@ impl Default for BasicId {
             target: "Null".to_string(),
             variant: None,
         }
+    }
+}
+
+impl Display for BasicId {
+    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
+        write!(f, "{}-{}", self.source, self.target)?;
+        if let Some(variant) = &self.variant {
+            write!(f, "/{}", variant)?;
+        }
+        Ok(())
     }
 }
 

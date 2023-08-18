@@ -28,6 +28,7 @@
 use icu_properties::provider::*;
 use icu_provider::prelude::*;
 use icu_transliteration::provider::RuleBasedTransliterator;
+use std::collections::HashMap;
 
 mod compile;
 mod errors;
@@ -43,10 +44,18 @@ pub use compile::legacy_id_to_internal_id;
 /// Parse a rule based transliterator definition into a `TransliteratorDataStruct`.
 ///
 /// See [UTS #35 - Transliterators](https://unicode.org/reports/tr35/tr35-general.html#Transforms) for more information.
+///
+/// Expects two [`Direction`]s. The first is directly from the metadata associated with the source.
+/// This is used to log warnings about the general structure of the rules. The second direction
+/// determines which of the returned options is populated. The first option will be populated
+/// if the direction is [`Forward`](Direction::Forward), the second if the direction is
+/// [`Reverse`](Direction::Reverse), and both if the direction is [`Both`](Direction::Both).
 #[cfg(feature = "compiled_data")]
 pub fn parse(
     source: &str,
-    direction: Direction,
+    metadata_direction: Direction,
+    gen_direction: Direction,
+    transliterator_map: HashMap<String, String>,
 ) -> Result<
     (
         Option<RuleBasedTransliterator<'static>>,
@@ -54,13 +63,21 @@ pub fn parse(
     ),
     ParseError,
 > {
-    parse_unstable(source, direction, &icu_properties::provider::Baked)
+    parse_unstable(
+        source,
+        metadata_direction,
+        gen_direction,
+        transliterator_map,
+        &icu_properties::provider::Baked,
+    )
 }
 
 #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, parse())]
 pub fn parse_unstable<P>(
     source: &str,
-    direction: Direction,
+    metadata_direction: Direction,
+    gen_direction: Direction,
+    transliterator_map: HashMap<String, String>,
     provider: &P,
 ) -> Result<
     (
@@ -129,7 +146,12 @@ where
 {
     let parsed = parse::parse_unstable(source, provider)?;
     // TODO(#3736): pass direction from metadata
-    compile::compile(parsed, direction)
+    compile::compile(
+        parsed,
+        metadata_direction,
+        gen_direction,
+        transliterator_map,
+    )
 }
 
 #[cfg(test)]
@@ -173,7 +195,11 @@ mod tests {
         :: InterIndic-Devanagari ;
         "#;
 
-        let (forward, reverse) = parse(source, Direction::Both).expect("parsing failed");
+        // TODO(this PR): Populate this map with sample data
+        let t_map = Default::default();
+
+        let (forward, reverse) =
+            parse(source, Direction::Both, Direction::Both, t_map).expect("parsing failed");
         let forward = forward.expect("forward transliterator expected");
         let reverse = reverse.expect("reverse transliterator expected");
 

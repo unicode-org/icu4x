@@ -330,23 +330,23 @@ impl<'p> Pass1<'p> {
         target: &HalfRule,
     ) -> Result<()> {
         // TODO(#3736): include source location/actual source text in these logs
-        // if !self.direction.permits(dir) {
-        //     // example: metadata defines this transliterator as forward, but a `<>` or `<` rule is found.
-        //     log::warn!(
-        //         "metadata for transliterator specifies direction {:?} but conversion rule specifies {:?}",
-        //         self.direction,
-        //         dir,
-        //     );
-        // }
-        // // logging for useless contexts
-        // if dir == parse::Direction::Forward && (!target.ante.is_empty() || !target.post.is_empty())
-        // {
-        //     log::warn!("forward conversion rule has ignored context on target side");
-        // }
-        // if dir == parse::Direction::Reverse && (!source.ante.is_empty() || !source.post.is_empty())
-        // {
-        //     log::warn!("reverse conversion rule has ignored context on target side");
-        // }
+        if !self.direction.permits(dir) {
+            // example: metadata defines this transliterator as forward, but a `<>` or `<` rule is found.
+            log::warn!(
+                "metadata for transliterator specifies direction {:?} but conversion rule specifies {:?}",
+                self.direction,
+                dir,
+            );
+        }
+        // logging for useless contexts
+        if dir == parse::Direction::Forward && (!target.ante.is_empty() || !target.post.is_empty())
+        {
+            log::warn!("forward conversion rule has ignored context on target side");
+        }
+        if dir == parse::Direction::Reverse && (!source.ante.is_empty() || !source.post.is_empty())
+        {
+            log::warn!("reverse conversion rule has ignored context on target side");
+        }
 
         if self.direction.permits(parse::Direction::Forward)
             && dir.permits(parse::Direction::Forward)
@@ -865,7 +865,9 @@ impl Pass1ResultGenerator {
 // returns (forward, backward) transliterators if they were requested
 pub(crate) fn compile(
     rules: Vec<parse::Rule>,
-    direction: parse::Direction,
+    metadata_direction: parse::Direction,
+    compile_direction: parse::Direction,
+    available_transliterators: HashMap<String, String>,
 ) -> Result<(
     Option<RuleBasedTransliterator<'static>>,
     Option<RuleBasedTransliterator<'static>>,
@@ -874,18 +876,26 @@ pub(crate) fn compile(
     //  example: transliterator with metadata-direction "forward", and a rule `[a-z] < b ;` (invalid)
     //  - if validation is dependent, this rule is valid because it's not used in the forward direction
     //  - if validation is independent, this rule is invalid because the reverse direction is also checked
-    let mut p1 = Pass1::new(direction);
+    let mut p1 = Pass1::new(metadata_direction);
     p1.run(&rules)?;
     let p1_result = p1.generate_result()?;
 
-    let forward_t = if direction.permits(parse::Direction::Forward) {
-        let t = Pass2::run(p1_result.forward_result, &p1_result.variable_definitions)?;
+    let forward_t = if compile_direction.permits(parse::Direction::Forward) {
+        let t = Pass2::run(
+            p1_result.forward_result,
+            &p1_result.variable_definitions,
+            &available_transliterators,
+        )?;
         Some(t)
     } else {
         None
     };
-    let reverse_t = if direction.permits(parse::Direction::Reverse) {
-        let t = Pass2::run(p1_result.reverse_result, &p1_result.variable_definitions)?;
+    let reverse_t = if compile_direction.permits(parse::Direction::Reverse) {
+        let t = Pass2::run(
+            p1_result.reverse_result,
+            &p1_result.variable_definitions,
+            &available_transliterators,
+        )?;
         Some(t)
     } else {
         None

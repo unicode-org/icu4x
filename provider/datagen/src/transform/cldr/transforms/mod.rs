@@ -94,8 +94,7 @@ impl DataProvider<TransliteratorRulesV1Marker> for crate::DatagenProvider {
 
         let tc = TransliteratorCollection::new(self.cldr()?.transforms());
 
-        // TODO(#3736): Pass mapping to compiler
-        let _mapping = tc.generate_mapping()?;
+        let mapping = tc.generate_mapping()?;
 
         // our `supported_locales` use the same mapping mechanism as in lookup_dir_from_internal_id
         #[allow(clippy::unwrap_used)]
@@ -107,6 +106,11 @@ impl DataProvider<TransliteratorRulesV1Marker> for crate::DatagenProvider {
             .read_and_parse_metadata(&transform)?;
         // TODO(#3736): Pass visibility to compiler
         let _visibility = metadata.visibility;
+        let metadata_dir = match metadata.direction {
+            transforms::Direction::Forward => icu_transliterator_parser::Direction::Forward,
+            transforms::Direction::Backward => icu_transliterator_parser::Direction::Reverse,
+            transforms::Direction::Both => icu_transliterator_parser::Direction::Both,
+        };
 
         let source = self.cldr()?.transforms().read_source(&transform)?;
 
@@ -115,10 +119,11 @@ impl DataProvider<TransliteratorRulesV1Marker> for crate::DatagenProvider {
         } else {
             icu_transliterator_parser::Direction::Reverse
         };
-        let (forwards, backwards) = icu_transliterator_parser::parse_unstable(&source, dir, self)
-            .map_err(|e| {
-            DataError::custom("transliterator parsing failed").with_debug_context(&e)
-        })?;
+        let (forwards, backwards) =
+            icu_transliterator_parser::parse_unstable(&source, metadata_dir, dir, mapping, self)
+                .map_err(|e| {
+                    DataError::custom("transliterator parsing failed").with_debug_context(&e)
+                })?;
         let transliterator = if is_forwards {
             // the parser guarantees we receive this
             #[allow(clippy::unwrap_used)]
