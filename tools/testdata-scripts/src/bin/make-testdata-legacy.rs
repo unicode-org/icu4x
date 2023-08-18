@@ -7,7 +7,7 @@ use std::fs::File;
 use std::io::Write;
 use std::path::Path;
 
-include!("../../../../provider/datagen/tests/data/locales.rs.data");
+include!("../../../../provider/datagen/tests/locales.rs.data");
 
 fn main() {
     #![allow(deprecated)] // want to keep old datagen code path covered
