@@ -1792,6 +1792,7 @@ dependencies = [
  "serde",
  "serde_json",
  "stable_deref_trait",
+ "tinystr",
  "writeable",
  "yoke",
  "zerofrom",

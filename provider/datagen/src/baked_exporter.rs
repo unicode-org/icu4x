@@ -69,6 +69,7 @@
 //! # }
 //! ```
 
+use crate::helpers::ZeroOneOrTwo;
 use databake::*;
 use icu_provider::datagen::*;
 use icu_provider::prelude::*;
@@ -467,7 +468,19 @@ impl BakedExporter {
             for (bake, locales) in values {
                 let first_locale = locales.iter().next().unwrap();
                 let anchor = syn::parse_str::<syn::Ident>(
-                    &first_locale.to_ascii_uppercase().replace('-', "_"),
+                    &first_locale
+                        .chars()
+                        .flat_map(|ch| {
+                            if ch == AuxiliaryKeys::separator() as char {
+                                // Replace the aux key separator with double-underscore
+                                ZeroOneOrTwo::Two('_', '_')
+                            } else if ch == '-' {
+                                ZeroOneOrTwo::One('_')
+                            } else {
+                                ZeroOneOrTwo::One(ch.to_ascii_uppercase())
+                            }
+                        })
+                        .collect::<String>(),
                 )
                 .unwrap();
                 let bake = bake.parse::<TokenStream>().unwrap();
@@ -514,7 +527,7 @@ impl BakedExporter {
                     } else {
                         // We have to manually break the loop
                         quote! {
-                            if fallback_iterator.get().is_empty() {
+                            if fallback_iterator.get().is_und() {
                                 return Err(icu_provider::DataErrorKind::MissingLocale.with_req(<#marker as icu_provider::KeyedDataMarker>::KEY, req));
                             }
                         }

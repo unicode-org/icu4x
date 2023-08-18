@@ -206,9 +206,9 @@ mod tests {
     fn check_sizes() {
         check_size_of!(5800 | 4632, DateFormatter);
         check_size_of!(6792 | 5504, DateTimeFormatter);
-        check_size_of!(7904 | 6528, ZonedDateTimeFormatter);
+        check_size_of!(7904 | 6552, ZonedDateTimeFormatter);
         check_size_of!(1496 | 1344, TimeFormatter);
-        check_size_of!(1112 | 1024, TimeZoneFormatter);
+        check_size_of!(1112 | 1048, TimeZoneFormatter);
         check_size_of!(5752 | 4584, TypedDateFormatter::<Gregorian>);
         check_size_of!(6744 | 5456, TypedDateTimeFormatter::<Gregorian>);
 
