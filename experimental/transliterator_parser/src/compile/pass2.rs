@@ -204,13 +204,14 @@ impl<'a, 'p> Pass2<'a, 'p> {
         result: DirectedPass1Result<'p>,
         var_definitions: &'a HashMap<String, &'p [parse::Element]>,
         available_transliterators: &'a HashMap<String, String>,
+        visible: bool,
     ) -> Result<ds::RuleBasedTransliterator<'static>> {
         let mut pass2 = Self::try_new(
             result.data.counts,
             var_definitions,
             available_transliterators,
         )?;
-        pass2.compile(result.groups, result.filter)
+        pass2.compile(result.groups, result.filter, visible)
     }
 
     fn try_new(
@@ -230,6 +231,7 @@ impl<'a, 'p> Pass2<'a, 'p> {
         &mut self,
         rule_groups: super::RuleGroups<'p>,
         global_filter: Option<FilterSet>,
+        visible: bool,
     ) -> Result<ds::RuleBasedTransliterator<'static>> {
         let mut compiled_transform_groups: Vec<VarZeroVec<'static, ds::SimpleIdULE>> = Vec::new();
         let mut compiled_conversion_groups: Vec<VarZeroVec<'static, ds::RuleULE>> = Vec::new();
@@ -249,7 +251,7 @@ impl<'a, 'p> Pass2<'a, 'p> {
         }
 
         let res = ds::RuleBasedTransliterator {
-            visibility: true, // TODO(#3736): use metadata
+            visibility: visible,
             filter: global_filter.unwrap_or(CodePointInversionList::all()),
             id_group_list: VarZeroVec::from(&compiled_transform_groups),
             rule_group_list: VarZeroVec::from(&compiled_conversion_groups),

@@ -865,8 +865,8 @@ impl Pass1ResultGenerator {
 // returns (forward, backward) transliterators if they were requested
 pub(crate) fn compile(
     rules: Vec<parse::Rule>,
-    metadata_direction: parse::Direction,
     compile_direction: parse::Direction,
+    metadata: Metadata,
     available_transliterators: HashMap<String, String>,
 ) -> Result<(
     Option<RuleBasedTransliterator<'static>>,
@@ -876,7 +876,7 @@ pub(crate) fn compile(
     //  example: transliterator with metadata-direction "forward", and a rule `[a-z] < b ;` (invalid)
     //  - if validation is dependent, this rule is valid because it's not used in the forward direction
     //  - if validation is independent, this rule is invalid because the reverse direction is also checked
-    let mut p1 = Pass1::new(metadata_direction);
+    let mut p1 = Pass1::new(metadata.direction);
     p1.run(&rules)?;
     let p1_result = p1.generate_result()?;
 
@@ -885,6 +885,7 @@ pub(crate) fn compile(
             p1_result.forward_result,
             &p1_result.variable_definitions,
             &available_transliterators,
+            metadata.visible,
         )?;
         Some(t)
     } else {
@@ -895,6 +896,7 @@ pub(crate) fn compile(
             p1_result.reverse_result,
             &p1_result.variable_definitions,
             &available_transliterators,
+            metadata.visible,
         )?;
         Some(t)
     } else {
@@ -917,6 +919,15 @@ pub fn legacy_id_to_internal_id(source: &str, target: &str, variant: Option<&str
         id.push_str(variant);
     }
     id
+}
+
+/// Metadata about the nature of a transliterator source.
+#[derive(Debug, Clone, Copy)]
+pub struct Metadata {
+    /// Whether the transliterator is constructable directly by the user or not.
+    pub visible: bool,
+    /// The supported direction(s) of the transliterator.
+    pub direction: parse::Direction,
 }
 
 #[cfg(test)]

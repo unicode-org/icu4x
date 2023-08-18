@@ -104,12 +104,16 @@ impl DataProvider<TransliteratorRulesV1Marker> for crate::DatagenProvider {
             .cldr()?
             .transforms()
             .read_and_parse_metadata(&transform)?;
-        // TODO(#3736): Pass visibility to compiler
-        let _visibility = metadata.visibility;
+        let visibility = metadata.visibility;
+
         let metadata_dir = match metadata.direction {
             transforms::Direction::Forward => icu_transliterator_parser::Direction::Forward,
             transforms::Direction::Backward => icu_transliterator_parser::Direction::Reverse,
             transforms::Direction::Both => icu_transliterator_parser::Direction::Both,
+        };
+        let metadata = icu_transliterator_parser::Metadata {
+            visible: visibility == transforms::Visibility::External,
+            direction: metadata_dir,
         };
 
         let source = self.cldr()?.transforms().read_source(&transform)?;
@@ -120,7 +124,7 @@ impl DataProvider<TransliteratorRulesV1Marker> for crate::DatagenProvider {
             icu_transliterator_parser::Direction::Reverse
         };
         let (forwards, backwards) =
-            icu_transliterator_parser::parse_unstable(&source, metadata_dir, dir, mapping, self)
+            icu_transliterator_parser::parse_unstable(&source, dir, metadata, mapping, self)
                 .map_err(|e| {
                     DataError::custom("transliterator parsing failed").with_debug_context(&e)
                 })?;

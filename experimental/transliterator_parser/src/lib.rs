@@ -40,21 +40,25 @@ pub use errors::ParseErrorKind;
 pub use parse::Direction;
 
 pub use compile::legacy_id_to_internal_id;
+pub use compile::Metadata;
 
 /// Parse a rule based transliterator definition into a `TransliteratorDataStruct`.
 ///
 /// See [UTS #35 - Transliterators](https://unicode.org/reports/tr35/tr35-general.html#Transforms) for more information.
 ///
-/// Expects two [`Direction`]s. The first is directly from the metadata associated with the source.
-/// This is used to log warnings about the general structure of the rules. The second direction
+/// The `gen_direction` [`Direction`] argument
 /// determines which of the returned options is populated. The first option will be populated
 /// if the direction is [`Forward`](Direction::Forward), the second if the direction is
 /// [`Reverse`](Direction::Reverse), and both if the direction is [`Both`](Direction::Both).
+///
+/// `transliterator_map` is a map from legacy IDs to internal ICU4X IDs. Occurring IDs in `source`
+/// that do not have a corresponding entry in `transliterator_map` are still valid, but will be
+/// compiled with [`legacy_id_to_internal_id`].
 #[cfg(feature = "compiled_data")]
 pub fn parse(
     source: &str,
-    metadata_direction: Direction,
     gen_direction: Direction,
+    metadata: Metadata,
     transliterator_map: HashMap<String, String>,
 ) -> Result<
     (
@@ -65,8 +69,8 @@ pub fn parse(
 > {
     parse_unstable(
         source,
-        metadata_direction,
         gen_direction,
+        metadata,
         transliterator_map,
         &icu_properties::provider::Baked,
     )
@@ -75,8 +79,8 @@ pub fn parse(
 #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, parse())]
 pub fn parse_unstable<P>(
     source: &str,
-    metadata_direction: Direction,
     gen_direction: Direction,
+    metadata: Metadata,
     transliterator_map: HashMap<String, String>,
     provider: &P,
 ) -> Result<
@@ -146,12 +150,7 @@ where
 {
     let parsed = parse::parse_unstable(source, provider)?;
     // TODO(#3736): pass direction from metadata
-    compile::compile(
-        parsed,
-        metadata_direction,
-        gen_direction,
-        transliterator_map,
-    )
+    compile::compile(parsed, gen_direction, metadata, transliterator_map)
 }
 
 #[cfg(test)]
