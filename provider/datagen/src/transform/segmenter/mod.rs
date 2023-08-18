@@ -654,7 +654,7 @@ macro_rules! implement {
                 return Ok(DataResponse {
                     metadata: DataResponseMetadata::default(),
                     payload: Some(DataPayload::from_owned(
-                        self.generate_rule_break_data(include_str!(concat!("../../../data/segmenter_rules/", $rules))),
+                        self.generate_rule_break_data(include_str!(concat!("rules/", $rules))),
                     )),
                 });
             }
