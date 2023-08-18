@@ -1,0 +1,21 @@
+{
+  "visibility": true,
+  "variable_table": {
+    "compounds": [
+      "󰀆",
+      "󰀉",
+      "󰀊󰀃"
+    ],
+    "quantifiers_opt": [],
+    "quantifiers_kleene": [
+      "󰀋"
+    ],
+    "quantifiers_kleene_plus": [
+      "󰀂"
+    ],
+    "segments": [
+      "󰀂"
+    ],
+    "unicode_sets": [
+      {
+        "cp_inv_list": [

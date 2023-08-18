@@ -1,0 +1,34 @@
+{
+  "visibility": true,
+  "variable_table": {
+    "compounds": [],
+    "quantifiers_opt": [],
+    "quantifiers_kleene": [],
+    "quantifiers_kleene_plus": [],
+    "segments": [],
+    "unicode_sets": [],
+    "function_calls": []
+  },
+  "filter": [
+    "\u0000-􏿿"
+  ],
+  "id_group_list": [
+    [
+      {
+        "filter": [
+          "\u0000-􏿿"
+        ],
+        "id": "Any-Null"
+      },
+      {
+        "filter": [
+          "\u0000-􏿿"
+        ],
+        "id": "Any-Null"
+      }
+    ]
+  ],
+  "rule_group_list": [
+    []
+  ]
+}

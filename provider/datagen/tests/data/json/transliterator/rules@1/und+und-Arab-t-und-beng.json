@@ -1,0 +1,60 @@
+{
+  "visibility": true,
+  "variable_table": {
+    "compounds": [],
+    "quantifiers_opt": [],
+    "quantifiers_kleene": [],
+    "quantifiers_kleene_plus": [],
+    "segments": [],
+    "unicode_sets": [],
+    "function_calls": []
+  },
+  "filter": [
+    "।-॥",
+    "ঁ-ঃ",
+    "অ-ঌ",
+    "এ-ঐ",
+    "ও-ন",
+    "প-র",
+    "ল",
+    "শ-হ",
+    "়-ৄ",
+    "ে-ৈ",
+    "ো-ৎ",
+    "ৗ",
+    "ড়-ঢ়",
+    "য়-ৣ",
+    "০-৺"
+  ],
+  "id_group_list": [
+    [
+      {
+        "filter": [
+          "\u0000-􏿿"
+        ],
+        "id": "Any-NFD"
+      },
+      {
+        "filter": [
+          "\u0000-􏿿"
+        ],
+        "id": "Bengali-InterIndic"
+      },
+      {
+        "filter": [
+          "\u0000-􏿿"
+        ],
+        "id": "InterIndic-Arabic"
+      },
+      {
+        "filter": [
+          "\u0000-􏿿"
+        ],
+        "id": "Any-NFC"
+      }
+    ]
+  ],
+  "rule_group_list": [
+    []
+  ]
+}

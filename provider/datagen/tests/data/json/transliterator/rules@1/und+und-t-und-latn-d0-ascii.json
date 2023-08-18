@@ -1,0 +1,6542 @@
+{
+  "visibility": true,
+  "variable_table": {
+    "compounds": [],
+    "quantifiers_opt": [],
+    "quantifiers_kleene": [],
+    "quantifiers_kleene_plus": [
+      "󰀂"
+    ],
+    "segments": [],
+    "unicode_sets": [
+      {
+        "cp_inv_list": [
+          "0-9",
+          "A-Z",
+          "a-z",
+          "ª",
+          "º",
+          "À-Ö",
+          "Ø-ö",
+          "ø-ʸ",
+          "ˠ-ˤ",
+          "ᴀ-ᴥ",
+          "ᴬ-ᵜ",
+          "ᵢ-ᵥ",
+          "ᵫ-ᵷ",
+          "ᵹ-ᶾ",
+          "Ḁ-ỿ",
+          "ⁱ",
+          "ⁿ",
+          "ₐ-ₜ",
+          "K-Å",
+          "Ⅎ",
+          "ⅎ",
+          "Ⅰ-ↈ",
+          "Ⱡ-Ɀ",
+          "Ꜣ-ꞇ",
+          "Ꞌ-ꟊ",
+          "Ꟑ-ꟑ",
+          "ꟓ",
+          "ꟕ-ꟙ",
+          "ꟲ-ꟿ",
+          "ꬰ-ꭚ",
+          "ꭜ-ꭤ",
+          "ꭦ-ꭩ",
+          "ﬀ-ﬆ",
+          "Ａ-Ｚ",
+          "ａ-ｚ",
+          "𐞀-𐞅",
+          "𐞇-𐞰",
+          "𐞲-𐞺",
+          "𝼀-𝼞",
+          "𝼥-𝼪"
+        ],
+        "str_list": []
+      },
+      {
+        "cp_inv_list": [
+          "̀-ͯ",
+          "҃-҇",
+          "֑-ֽ",
+          "ֿ",
+          "ׁ-ׂ",
+          "ׄ-ׅ",
+          "ׇ",
+          "ؐ-ؚ",
+          "ً-ٟ",
+          "ٰ",
+          "ۖ-ۜ",
+          "۟-ۤ",
+          "ۧ-ۨ",
+          "۪-ۭ",
+          "ܑ",
+          "ܰ-݊",
+          "ަ-ް",
+          "߫-߳",
+          "߽",
+          "ࠖ-࠙",
+          "ࠛ-ࠣ",
+          "ࠥ-ࠧ",
+          "ࠩ-࠭",
+          "࡙-࡛",
+          "࢘-࢟",
+          "࣊-࣡",
+          "ࣣ-ं",
+          "ऺ",
+          "़",
+          "ु-ै",
+          "्",
+          "॑-ॗ",
+          "ॢ-ॣ",
+          "ঁ",
+          "়",
+          "ু-ৄ",
+          "্",
+          "ৢ-ৣ",
+          "৾",
+          "ਁ-ਂ",
+          "਼",
+          "ੁ-ੂ",
+          "ੇ-ੈ",
+          "ੋ-੍",
+          "ੑ",
+          "ੰ-ੱ",
+          "ੵ",
+          "ઁ-ં",
+          "઼",
+          "ુ-ૅ",
+          "ે-ૈ",
+          "્",
+          "ૢ-ૣ",
+          "ૺ-૿",
+          "ଁ",
+          "଼",
+          "ି",
+          "ୁ-ୄ",
+          "୍",
+          "୕-ୖ",
+          "ୢ-ୣ",
+          "ஂ",
+          "ீ",
+          "்",
+          "ఀ",
+          "ఄ",
+          "఼",
+          "ా-ీ",
+          "ె-ై",
+          "ొ-్",
+          "ౕ-ౖ",
+          "ౢ-ౣ",
+          "ಁ",
+          "಼",
+          "ಿ",
+          "ೆ",
+          "ೌ-್",
+          "ೢ-ೣ",
+          "ഀ-ഁ",
+          "഻-഼",
+          "ു-ൄ",
+          "്",
+          "ൢ-ൣ",
+          "ඁ",
+          "්",
+          "ි-ු",
+          "ූ",
+          "ั",
+          "ิ-ฺ",
+          "็-๎",
+          "ັ",
+          "ິ-ຼ",
+          "່-໎",
+          "༘-༙",
+          "༵",
+          "༷",
+          "༹",
+          "ཱ-ཾ",
+          "ྀ-྄",
+          "྆-྇",
+          "ྍ-ྗ",
+          "ྙ-ྼ",
+          "࿆",
+          "ိ-ူ",
+          "ဲ-့",
+          "္-်",
+          "ွ-ှ",
+          "ၘ-ၙ",
+          "ၞ-ၠ",
+          "ၱ-ၴ",
+          "ႂ",
+          "ႅ-ႆ",
+          "ႍ",
+          "ႝ",
+          "፝-፟",
+          "ᜒ-᜔",
+          "ᜲ-ᜳ",
+          "ᝒ-ᝓ",
+          "ᝲ-ᝳ",
+          "឴-឵",
+          "ិ-ួ",
+          "ំ",
+          "៉-៓",
+          "៝",
+          "᠋-᠍",
+          "᠏",
+          "ᢅ-ᢆ",
+          "ᢩ",
+          "ᤠ-ᤢ",
+          "ᤧ-ᤨ",
+          "ᤲ",
+          "᤹-᤻",
+          "ᨗ-ᨘ",
+          "ᨛ",
+          "ᩖ",
+          "ᩘ-ᩞ",
+          "᩠",
+          "ᩢ",
+          "ᩥ-ᩬ",
+          "ᩳ-᩼",
+          "᩿",
+          "᪰-᪽",
+          "ᪿ-ᫎ",
+          "ᬀ-ᬃ",
+          "᬴",
+          "ᬶ-ᬺ",
+          "ᬼ",
+          "ᭂ",
+          "᭫-᭳",
+          "ᮀ-ᮁ",
+          "ᮢ-ᮥ",
+          "ᮨ-ᮩ",
+          "᮫-ᮭ",
+          "᯦",
+          "ᯨ-ᯩ",
+          "ᯭ",
+          "ᯯ-ᯱ",
+          "ᰬ-ᰳ",
+          "ᰶ-᰷",
+          "᳐-᳒",
+          "᳔-᳠",
+          "᳢-᳨",
+          "᳭",
+          "᳴",
+          "᳸-᳹",
+          "᷀-᷿",
+          "⃐-⃜",
+          "⃡",
+          "⃥-⃰",
+          "⳯-⳱",
+          "⵿",
+          "ⷠ-ⷿ",
+          "〪-〭",
+          "゙-゚",
+          "꙯",
+          "ꙴ-꙽",
+          "ꚞ-ꚟ",
+          "꛰-꛱",
+          "ꠂ",
+          "꠆",
+          "ꠋ",
+          "ꠥ-ꠦ",
+          "꠬",
+          "꣄-ꣅ",
+          "꣠-꣱",
+          "ꣿ",
+          "ꤦ-꤭",
+          "ꥇ-ꥑ",
+          "ꦀ-ꦂ",
+          "꦳",
+          "ꦶ-ꦹ",
+          "ꦼ-ꦽ",
+          "ꧥ",
+          "ꨩ-ꨮ",
+          "ꨱ-ꨲ",
+          "ꨵ-ꨶ",
+          "ꩃ",
+          "ꩌ",
+          "ꩼ",
+          "ꪰ",
+          "ꪲ-ꪴ",
+          "ꪷ-ꪸ",
+          "ꪾ-꪿",
+          "꫁",
+          "ꫬ-ꫭ",
+          "꫶",
+          "ꯥ",
+          "ꯨ",
+          "꯭",
+          "ﬞ",
+          "︀-️",
+          "︠-︯",
+          "𐇽",
+          "𐋠",
+          "𐍶-𐍺",
+          "𐨁-𐨃",
+          "𐨅-𐨆",
+          "𐨌-𐨏",
+          "𐨸-𐨺",
+          "𐨿",
+          "𐫥-𐫦",
+          "𐴤-𐴧",
+          "𐺫-𐺬",
+          "𐻽-𐻿",
+          "𐽆-𐽐",
+          "𐾂-𐾅",
+          "𑀁",
+          "𑀸-𑁆",
+          "𑁰",
+          "𑁳-𑁴",
+          "𑁿-𑂁",
+          "𑂳-𑂶",
+          "𑂹-𑂺",
+          "𑃂",
+          "𑄀-𑄂",
+          "𑄧-𑄫",
+          "𑄭-𑄴",
+          "𑅳",
+          "𑆀-𑆁",
+          "𑆶-𑆾",
+          "𑇉-𑇌",
+          "𑇏",
+          "𑈯-𑈱",
+          "𑈴",
+          "𑈶-𑈷",
+          "𑈾",
+          "𑉁",
+          "𑋟",
+          "𑋣-𑋪",
+          "𑌀-𑌁",
+          "𑌻-𑌼",
+          "𑍀",
+          "𑍦-𑍬",
+          "𑍰-𑍴",
+          "𑐸-𑐿",
+          "𑑂-𑑄",
+          "𑑆",
+          "𑑞",
+          "𑒳-𑒸",
+          "𑒺",
+          "𑒿-𑓀",
+          "𑓂-𑓃",
+          "𑖲-𑖵",
+          "𑖼-𑖽",
+          "𑖿-𑗀",
+          "𑗜-𑗝",
+          "𑘳-𑘺",
+          "𑘽",
+          "𑘿-𑙀",
+          "𑚫",
+          "𑚭",
+          "𑚰-𑚵",
+          "𑚷",
+          "𑜝-𑜟",
+          "𑜢-𑜥",
+          "𑜧-𑜫",
+          "𑠯-𑠷",
+          "𑠹-𑠺",
+          "𑤻-𑤼",
+          "𑤾",
+          "𑥃",
+          "𑧔-𑧗",
+          "𑧚-𑧛",
+          "𑧠",
+          "𑨁-𑨊",
+          "𑨳-𑨸",
+          "𑨻-𑨾",
+          "𑩇",
+          "𑩑-𑩖",
+          "𑩙-𑩛",
+          "𑪊-𑪖",
+          "𑪘-𑪙",
+          "𑰰-𑰶",
+          "𑰸-𑰽",
+          "𑰿",
+          "𑲒-𑲧",
+          "𑲪-𑲰",
+          "𑲲-𑲳",
+          "𑲵-𑲶",
+          "𑴱-𑴶",
+          "𑴺",
+          "𑴼-𑴽",
+          "𑴿-𑵅",
+          "𑵇",
+          "𑶐-𑶑",
+          "𑶕",
+          "𑶗",
+          "𑻳-𑻴",
+          "𑼀-𑼁",
+          "𑼶-𑼺",
+          "𑽀",
+          "𑽂",
+          "𓑀",
+          "𓑇-𓑕",
+          "𖫰-𖫴",
+          "𖬰-𖬶",
+          "𖽏",
+          "𖾏-𖾒",
+          "𖿤",
+          "𛲝-𛲞",
+          "𜼀-𜼭",
+          "𜼰-𜽆",
+          "𝅧-𝅩",
+          "𝅻-𝆂",
+          "𝆅-𝆋",
+          "𝆪-𝆭",
+          "𝉂-𝉄",
+          "𝨀-𝨶",
+          "𝨻-𝩬",
+          "𝩵",
+          "𝪄",
+          "𝪛-𝪟",
+          "𝪡-𝪯",
+          "𞀀-𞀆",
+          "𞀈-𞀘",
+          "𞀛-𞀡",
+          "𞀣-𞀤",
+          "𞀦-𞀪",
+          "𞂏",
+          "𞄰-𞄶",
+          "𞊮",
+          "𞋬-𞋯",
+          "𞓬-𞓯",
+          "𞣐-𞣖",
+          "𞥄-𞥊",
+          "󠄀-󠇯"
+        ],
+        "str_list": []
+      }
+    ],
+    "function_calls": []
+  },
+  "filter": [
+    "\u0000-˩",
+    "ˬ-ͯ",
+    "ʹ",
+    ";",
+    "΅",
+    "·",
+    "҅-҆",
+    "؅",
+    "،",
+    "؛",
+    "؟",
+    "ـ",
+    "ً-ٕ",
+    "ٰ",
+    "۝",
+    "࣢",
+    "॑-॔",
+    "।-॥",
+    "฿",
+    "࿕-࿘",
+    "჻",
+    "᛫-᛭",
+    "᜵-᜶",
+    "᠂-᠃",
+    "᠅",
+    "᪰-ᫎ",
+    "᳐-ᳺ",
+    "ᴀ-ᴥ",
+    "ᴬ-ᵜ",
+    "ᵢ-ᵥ",
+    "ᵫ-ᵷ",
+    "ᵹ-ᶾ",
+    "᷀-ỿ",
+    " -⁤",
+    "⁦-ⁱ",
+    "⁴-₎",
+    "ₐ-ₜ",
+    "₠-⃀",
+    "⃐-⃰",
+    "℀-℥",
+    "℧-↋",
+    "←-␦",
+    "⑀-⑊",
+    "①-⟿",
+    "⤀-⭳",
+    "⭶-⮕",
+    "⮗-⯿",
+    "Ⱡ-Ɀ",
+    "⸀-⹝",
+    "⿰-⿻",
+    "　-〄",
+    "〆-〠",
+    "〪-〭",
+    "〰-〷",
+    "〼-〿",
+    "゙-゜",
+    "゠",
+    "・-ー",
+    "㆐-㆟",
+    "㇀-㇣",
+    "㈠-㉟",
+    "㉿-㋏",
+    "㋿",
+    "㍘-㏿",
+    "䷀-䷿",
+    "꜀-ꟊ",
+    "Ꟑ-ꟑ",
+    "ꟓ",
+    "ꟕ-ꟙ",
+    "ꟲ-ꟿ",
+    "꠰-꠹",
+    "꤮",
+    "ꧏ",
+    "ꬰ-ꭤ",
+    "ꭦ-꭫",
+    "ﬀ-ﬆ",
+    "﴾-﴿",
+    "︀-︙",
+    "︠-︭",
+    "︰-﹒",
+    "﹔-﹦",
+    "﹨-﹫",
+    "﻿",
+    "！-･",
+    "ｰ",
+    "ﾞ-ﾟ",
+    "￠-￦",
+    "￨-￮",
+    "￹-�",
+    "𐄀-𐄂",
+    "𐄇-𐄳",
+    "𐄷-𐄿",
+    "𐆐-𐆜",
+    "𐇐-𐇽",
+    "𐋠-𐋻",
+    "𐞀-𐞅",
+    "𐞇-𐞰",
+    "𐞲-𐞺",
+    "𑌻",
+    "𛲠-𛲣",
+    "𜼀-𜼭",
+    "𜼰-𜽆",
+    "𜽐-𜿃",
+    "𝀀-𝃵",
+    "𝄀-𝄦",
+    "𝄩-𝇪",
+    "𝋀-𝋓",
+    "𝋠-𝋳",
+    "𝌀-𝍖",
+    "𝍠-𝍸",
+    "𝐀-𝑔",
+    "𝑖-𝒜",
+    "𝒞-𝒟",
+    "𝒢",
+    "𝒥-𝒦",
+    "𝒩-𝒬",
+    "𝒮-𝒹",
+    "𝒻",
+    "𝒽-𝓃",
+    "𝓅-𝔅",
+    "𝔇-𝔊",
+    "𝔍-𝔔",
+    "𝔖-𝔜",
+    "𝔞-𝔹",
+    "𝔻-𝔾",
+    "𝕀-𝕄",
+    "𝕆",
+    "𝕊-𝕐",
+    "𝕒-𝚥",
+    "𝚨-𝟋",
+    "𝟎-𝟿",
+    "𝼀-𝼞",
+    "𝼥-𝼪",
+    "𞱱-𞲴",
+    "𞴁-𞴽",
+    "🀀-🀫",
+    "🀰-🂓",
+    "🂠-🂮",
+    "🂱-🂿",
+    "🃁-🃏",
+    "🃑-🃵",
+    "🄀-🆭",
+    "🇦-🇿",
+    "🈁-🈂",
+    "🈐-🈻",
+    "🉀-🉈",
+    "🉐-🉑",
+    "🉠-🉥",
+    "🌀-🛗",
+    "🛜-🛬",
+    "🛰-🛼",
+    "🜀-🝶",
+    "🝻-🟙",
+    "🟠-🟫",
+    "🟰",
+    "🠀-🠋",
+    "🠐-🡇",
+    "🡐-🡙",
+    "🡠-🢇",
+    "🢐-🢭",
+    "🢰-🢱",
+    "🤀-🩓",
+    "🩠-🩭",
+    "🩰-🩼",
+    "🪀-🪈",
+    "🪐-🪽",
+    "🪿-🫅",
+    "🫎-🫛",
+    "🫠-🫨",
+    "🫰-🫸",
+    "🬀-🮒",
+    "🮔-🯊",
+    "🯰-🯹",
+    "󠀁",
+    "󠀠-󠁿",
+    "󠄀-󠇯"
+  ],
+  "id_group_list": [
+    [
+      {
+        "filter": [
+          "\u0000-􏿿"
+        ],
+        "id": "Any-NFD"
+      }
+    ],
+    [
+      {
+        "filter": [
+          "\u0000-􏿿"
+        ],
+        "id": "Any-NFC"
+      }
+    ]
+  ],
+  "rule_group_list": [
+    [
+      {
+        "ante": "󰀁",
+        "key": "󰀀",
+        "post": "",
+        "replacer": "",
+        "cursor_offset": 0
+      }
+    ],
+    [
+      {
+        "ante": "",
+        "key": "Æ",
+        "post": "",
+        "replacer": "AE",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "Ð",
+        "post": "",
+        "replacer": "D",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "Ø",
+        "post": "",
+        "replacer": "O",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "Þ",
+        "post": "",
+        "replacer": "TH",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "ß",
+        "post": "",
+        "replacer": "ss",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "æ",
+        "post": "",
+        "replacer": "ae",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "ð",
+        "post": "",
+        "replacer": "d",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "ø",
+        "post": "",
+        "replacer": "o",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "þ",
+        "post": "",
+        "replacer": "th",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "Đ",
+        "post": "",
+        "replacer": "D",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "đ",
+        "post": "",
+        "replacer": "d",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "Ħ",
+        "post": "",
+        "replacer": "H",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "ħ",
+        "post": "",
+        "replacer": "h",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "ı",
+        "post": "",
+        "replacer": "i",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "Ĳ",
+        "post": "",
+        "replacer": "IJ",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "ĳ",
+        "post": "",
+        "replacer": "ij",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "ĸ",
+        "post": "",
+        "replacer": "q",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "Ŀ",
+        "post": "",
+        "replacer": "L",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "ŀ",
+        "post": "",
+        "replacer": "l",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "Ł",
+        "post": "",
+        "replacer": "L",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "ł",
+        "post": "",
+        "replacer": "l",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "ŉ",
+        "post": "",
+        "replacer": "'n",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "Ŋ",
+        "post": "",
+        "replacer": "N",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "ŋ",
+        "post": "",
+        "replacer": "n",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "Œ",
+        "post": "",
+        "replacer": "OE",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "œ",
+        "post": "",
+        "replacer": "oe",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "Ŧ",
+        "post": "",
+        "replacer": "T",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "ŧ",
+        "post": "",
+        "replacer": "t",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "ſ",
+        "post": "",
+        "replacer": "s",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "ƀ",
+        "post": "",
+        "replacer": "b",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "Ɓ",
+        "post": "",
+        "replacer": "B",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "Ƃ",
+        "post": "",
+        "replacer": "B",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "ƃ",
+        "post": "",
+        "replacer": "b",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "Ƈ",
+        "post": "",
+        "replacer": "C",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "ƈ",
+        "post": "",
+        "replacer": "c",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "Ɖ",
+        "post": "",
+        "replacer": "D",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "Ɗ",
+        "post": "",
+        "replacer": "D",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "Ƌ",
+        "post": "",
+        "replacer": "D",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "ƌ",
+        "post": "",
+        "replacer": "d",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "Ɛ",
+        "post": "",
+        "replacer": "E",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "Ƒ",
+        "post": "",
+        "replacer": "F",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "ƒ",
+        "post": "",
+        "replacer": "f",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "Ɠ",
+        "post": "",
+        "replacer": "G",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "ƕ",
+        "post": "",
+        "replacer": "hv",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "Ɩ",
+        "post": "",
+        "replacer": "I",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "Ɨ",
+        "post": "",
+        "replacer": "I",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "Ƙ",
+        "post": "",
+        "replacer": "K",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "ƙ",
+        "post": "",
+        "replacer": "k",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "ƚ",
+        "post": "",
+        "replacer": "l",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "Ɲ",
+        "post": "",
+        "replacer": "N",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "ƞ",
+        "post": "",
+        "replacer": "n",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "Ƣ",
+        "post": "",
+        "replacer": "OI",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "ƣ",
+        "post": "",
+        "replacer": "oi",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "Ƥ",
+        "post": "",
+        "replacer": "P",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "ƥ",
+        "post": "",
+        "replacer": "p",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "ƫ",
+        "post": "",
+        "replacer": "t",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "Ƭ",
+        "post": "",
+        "replacer": "T",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "ƭ",
+        "post": "",
+        "replacer": "t",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "Ʈ",
+        "post": "",
+        "replacer": "T",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "Ʋ",
+        "post": "",
+        "replacer": "V",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "Ƴ",
+        "post": "",
+        "replacer": "Y",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "ƴ",
+        "post": "",
+        "replacer": "y",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "Ƶ",
+        "post": "",
+        "replacer": "Z",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "ƶ",
+        "post": "",
+        "replacer": "z",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "Ǆ",
+        "post": "",
+        "replacer": "DZ",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "ǅ",
+        "post": "",
+        "replacer": "Dz",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "ǆ",
+        "post": "",
+        "replacer": "dz",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "Ǉ",
+        "post": "",
+        "replacer": "LJ",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "ǈ",
+        "post": "",
+        "replacer": "Lj",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "ǉ",
+        "post": "",
+        "replacer": "lj",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "Ǌ",
+        "post": "",
+        "replacer": "NJ",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "ǋ",
+        "post": "",
+        "replacer": "Nj",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "ǌ",
+        "post": "",
+        "replacer": "nj",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "Ǥ",
+        "post": "",
+        "replacer": "G",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "ǥ",
+        "post": "",
+        "replacer": "g",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "Ǳ",
+        "post": "",
+        "replacer": "DZ",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "ǲ",
+        "post": "",
+        "replacer": "Dz",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "ǳ",
+        "post": "",
+        "replacer": "dz",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "ȡ",
+        "post": "",
+        "replacer": "d",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "Ȥ",
+        "post": "",
+        "replacer": "Z",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "ȥ",
+        "post": "",
+        "replacer": "z",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "ȴ",
+        "post": "",
+        "replacer": "l",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "ȵ",
+        "post": "",
+        "replacer": "n",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "ȶ",
+        "post": "",
+        "replacer": "t",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "ȷ",
+        "post": "",
+        "replacer": "j",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "ȸ",
+        "post": "",
+        "replacer": "db",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "ȹ",
+        "post": "",
+        "replacer": "qp",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "Ⱥ",
+        "post": "",
+        "replacer": "A",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "Ȼ",
+        "post": "",
+        "replacer": "C",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "ȼ",
+        "post": "",
+        "replacer": "c",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "Ƚ",
+        "post": "",
+        "replacer": "L",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "Ⱦ",
+        "post": "",
+        "replacer": "T",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "ȿ",
+        "post": "",
+        "replacer": "s",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "ɀ",
+        "post": "",
+        "replacer": "z",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "Ƀ",
+        "post": "",
+        "replacer": "B",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "Ʉ",
+        "post": "",
+        "replacer": "U",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "Ɇ",
+        "post": "",
+        "replacer": "E",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "ɇ",
+        "post": "",
+        "replacer": "e",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "Ɉ",
+        "post": "",
+        "replacer": "J",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "ɉ",
+        "post": "",
+        "replacer": "j",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "Ɍ",
+        "post": "",
+        "replacer": "R",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "ɍ",
+        "post": "",
+        "replacer": "r",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "Ɏ",
+        "post": "",
+        "replacer": "Y",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "ɏ",
+        "post": "",
+        "replacer": "y",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "ɓ",
+        "post": "",
+        "replacer": "b",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "ɕ",
+        "post": "",
+        "replacer": "c",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "ɖ",
+        "post": "",
+        "replacer": "d",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "ɗ",
+        "post": "",
+        "replacer": "d",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "ɛ",
+        "post": "",
+        "replacer": "e",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "ɟ",
+        "post": "",
+        "replacer": "j",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "ɠ",
+        "post": "",
+        "replacer": "g",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "ɡ",
+        "post": "",
+        "replacer": "g",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "ɢ",
+        "post": "",
+        "replacer": "G",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "ɦ",
+        "post": "",
+        "replacer": "h",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "ɧ",
+        "post": "",
+        "replacer": "h",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "ɨ",
+        "post": "",
+        "replacer": "i",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "ɪ",
+        "post": "",
+        "replacer": "I",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "ɫ",
+        "post": "",
+        "replacer": "l",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "ɬ",
+        "post": "",
+        "replacer": "l",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "ɭ",
+        "post": "",
+        "replacer": "l",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "ɱ",
+        "post": "",
+        "replacer": "m",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "ɲ",
+        "post": "",
+        "replacer": "n",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "ɳ",
+        "post": "",
+        "replacer": "n",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "ɴ",
+        "post": "",
+        "replacer": "N",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "ɶ",
+        "post": "",
+        "replacer": "OE",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "ɼ",
+        "post": "",
+        "replacer": "r",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "ɽ",
+        "post": "",
+        "replacer": "r",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "ɾ",
+        "post": "",
+        "replacer": "r",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "ʀ",
+        "post": "",
+        "replacer": "R",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "ʂ",
+        "post": "",
+        "replacer": "s",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "ʈ",
+        "post": "",
+        "replacer": "t",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "ʉ",
+        "post": "",
+        "replacer": "u",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "ʋ",
+        "post": "",
+        "replacer": "v",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "ʏ",
+        "post": "",
+        "replacer": "Y",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "ʐ",
+        "post": "",
+        "replacer": "z",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "ʑ",
+        "post": "",
+        "replacer": "z",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "ʙ",
+        "post": "",
+        "replacer": "B",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "ʛ",
+        "post": "",
+        "replacer": "G",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "ʜ",
+        "post": "",
+        "replacer": "H",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "ʝ",
+        "post": "",
+        "replacer": "j",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "ʟ",
+        "post": "",
+        "replacer": "L",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "ʠ",
+        "post": "",
+        "replacer": "q",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "ʣ",
+        "post": "",
+        "replacer": "dz",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "ʥ",
+        "post": "",
+        "replacer": "dz",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "ʦ",
+        "post": "",
+        "replacer": "ts",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "ʪ",
+        "post": "",
+        "replacer": "ls",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "ʫ",
+        "post": "",
+        "replacer": "lz",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "ᴀ",
+        "post": "",
+        "replacer": "A",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "ᴁ",
+        "post": "",
+        "replacer": "AE",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "ᴃ",
+        "post": "",
+        "replacer": "B",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "ᴄ",
+        "post": "",
+        "replacer": "C",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "ᴅ",
+        "post": "",
+        "replacer": "D",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "ᴆ",
+        "post": "",
+        "replacer": "D",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "ᴇ",
+        "post": "",
+        "replacer": "E",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "ᴊ",
+        "post": "",
+        "replacer": "J",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "ᴋ",
+        "post": "",
+        "replacer": "K",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "ᴌ",
+        "post": "",
+        "replacer": "L",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "ᴍ",
+        "post": "",
+        "replacer": "M",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "ᴏ",
+        "post": "",
+        "replacer": "O",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "ᴘ",
+        "post": "",
+        "replacer": "P",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "ᴛ",
+        "post": "",
+        "replacer": "T",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "ᴜ",
+        "post": "",
+        "replacer": "U",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "ᴠ",
+        "post": "",
+        "replacer": "V",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "ᴡ",
+        "post": "",
+        "replacer": "W",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "ᴢ",
+        "post": "",
+        "replacer": "Z",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "ᵫ",
+        "post": "",
+        "replacer": "ue",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "ᵬ",
+        "post": "",
+        "replacer": "b",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "ᵭ",
+        "post": "",
+        "replacer": "d",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "ᵮ",
+        "post": "",
+        "replacer": "f",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "ᵯ",
+        "post": "",
+        "replacer": "m",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "ᵰ",
+        "post": "",
+        "replacer": "n",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "ᵱ",
+        "post": "",
+        "replacer": "p",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "ᵲ",
+        "post": "",
+        "replacer": "r",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "ᵳ",
+        "post": "",
+        "replacer": "r",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "ᵴ",
+        "post": "",
+        "replacer": "s",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "ᵵ",
+        "post": "",
+        "replacer": "t",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "ᵶ",
+        "post": "",
+        "replacer": "z",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "ᵺ",
+        "post": "",
+        "replacer": "th",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "ᵻ",
+        "post": "",
+        "replacer": "I",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "ᵽ",
+        "post": "",
+        "replacer": "p",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "ᵾ",
+        "post": "",
+        "replacer": "U",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "ᶀ",
+        "post": "",
+        "replacer": "b",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "ᶁ",
+        "post": "",
+        "replacer": "d",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "ᶂ",
+        "post": "",
+        "replacer": "f",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "ᶃ",
+        "post": "",
+        "replacer": "g",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "ᶄ",
+        "post": "",
+        "replacer": "k",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "ᶅ",
+        "post": "",
+        "replacer": "l",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "ᶆ",
+        "post": "",
+        "replacer": "m",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "ᶇ",
+        "post": "",
+        "replacer": "n",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "ᶈ",
+        "post": "",
+        "replacer": "p",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "ᶉ",
+        "post": "",
+        "replacer": "r",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "ᶊ",
+        "post": "",
+        "replacer": "s",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "ᶌ",
+        "post": "",
+        "replacer": "v",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "ᶍ",
+        "post": "",
+        "replacer": "x",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "ᶎ",
+        "post": "",
+        "replacer": "z",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "ᶏ",
+        "post": "",
+        "replacer": "a",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "ᶑ",
+        "post": "",
+        "replacer": "d",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "ᶒ",
+        "post": "",
+        "replacer": "e",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "ᶓ",
+        "post": "",
+        "replacer": "e",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "ᶖ",
+        "post": "",
+        "replacer": "i",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "ᶙ",
+        "post": "",
+        "replacer": "u",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "ẚ",
+        "post": "",
+        "replacer": "a",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "ẜ",
+        "post": "",
+        "replacer": "s",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "ẝ",
+        "post": "",
+        "replacer": "s",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "ẞ",
+        "post": "",
+        "replacer": "SS",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "Ỻ",
+        "post": "",
+        "replacer": "LL",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "ỻ",
+        "post": "",
+        "replacer": "ll",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "Ỽ",
+        "post": "",
+        "replacer": "V",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "ỽ",
+        "post": "",
+        "replacer": "v",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "Ỿ",
+        "post": "",
+        "replacer": "Y",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "ỿ",
+        "post": "",
+        "replacer": "y",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "Ⱡ",
+        "post": "",
+        "replacer": "L",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "ⱡ",
+        "post": "",
+        "replacer": "l",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "Ɫ",
+        "post": "",
+        "replacer": "L",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "Ᵽ",
+        "post": "",
+        "replacer": "P",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "Ɽ",
+        "post": "",
+        "replacer": "R",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "ⱥ",
+        "post": "",
+        "replacer": "a",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "ⱦ",
+        "post": "",
+        "replacer": "t",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "Ⱨ",
+        "post": "",
+        "replacer": "H",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "ⱨ",
+        "post": "",
+        "replacer": "h",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "Ⱪ",
+        "post": "",
+        "replacer": "K",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "ⱪ",
+        "post": "",
+        "replacer": "k",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "Ⱬ",
+        "post": "",
+        "replacer": "Z",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "ⱬ",
+        "post": "",
+        "replacer": "z",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "Ɱ",
+        "post": "",
+        "replacer": "M",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "ⱱ",
+        "post": "",
+        "replacer": "v",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "Ⱳ",
+        "post": "",
+        "replacer": "W",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "ⱳ",
+        "post": "",
+        "replacer": "w",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "ⱴ",
+        "post": "",
+        "replacer": "v",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "ⱸ",
+        "post": "",
+        "replacer": "e",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "ⱺ",
+        "post": "",
+        "replacer": "o",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "Ȿ",
+        "post": "",
+        "replacer": "S",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "Ɀ",
+        "post": "",
+        "replacer": "Z",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "ꜰ",
+        "post": "",
+        "replacer": "F",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "ꜱ",
+        "post": "",
+        "replacer": "S",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "Ꜳ",
+        "post": "",
+        "replacer": "AA",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "ꜳ",
+        "post": "",
+        "replacer": "aa",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "Ꜵ",
+        "post": "",
+        "replacer": "AO",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "ꜵ",
+        "post": "",
+        "replacer": "ao",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "Ꜷ",
+        "post": "",
+        "replacer": "AU",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "ꜷ",
+        "post": "",
+        "replacer": "au",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "Ꜹ",
+        "post": "",
+        "replacer": "AV",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "ꜹ",
+        "post": "",
+        "replacer": "av",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "Ꜻ",
+        "post": "",
+        "replacer": "AV",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "ꜻ",
+        "post": "",
+        "replacer": "av",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "Ꜽ",
+        "post": "",
+        "replacer": "AY",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "ꜽ",
+        "post": "",
+        "replacer": "ay",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "Ꝁ",
+        "post": "",
+        "replacer": "K",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "ꝁ",
+        "post": "",
+        "replacer": "k",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "Ꝃ",
+        "post": "",
+        "replacer": "K",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "ꝃ",
+        "post": "",
+        "replacer": "k",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "Ꝅ",
+        "post": "",
+        "replacer": "K",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "ꝅ",
+        "post": "",
+        "replacer": "k",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "Ꝇ",
+        "post": "",
+        "replacer": "L",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "ꝇ",
+        "post": "",
+        "replacer": "l",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "Ꝉ",
+        "post": "",
+        "replacer": "L",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "ꝉ",
+        "post": "",
+        "replacer": "l",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "Ꝋ",
+        "post": "",
+        "replacer": "O",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "ꝋ",
+        "post": "",
+        "replacer": "o",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "Ꝍ",
+        "post": "",
+        "replacer": "O",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "ꝍ",
+        "post": "",
+        "replacer": "o",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "Ꝏ",
+        "post": "",
+        "replacer": "OO",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "ꝏ",
+        "post": "",
+        "replacer": "oo",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "Ꝑ",
+        "post": "",
+        "replacer": "P",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "ꝑ",
+        "post": "",
+        "replacer": "p",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "Ꝓ",
+        "post": "",
+        "replacer": "P",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "ꝓ",
+        "post": "",
+        "replacer": "p",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "Ꝕ",
+        "post": "",
+        "replacer": "P",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "ꝕ",
+        "post": "",
+        "replacer": "p",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "Ꝗ",
+        "post": "",
+        "replacer": "Q",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "ꝗ",
+        "post": "",
+        "replacer": "q",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "Ꝙ",
+        "post": "",
+        "replacer": "Q",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "ꝙ",
+        "post": "",
+        "replacer": "q",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "Ꝟ",
+        "post": "",
+        "replacer": "V",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "ꝟ",
+        "post": "",
+        "replacer": "v",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "Ꝡ",
+        "post": "",
+        "replacer": "VY",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "ꝡ",
+        "post": "",
+        "replacer": "vy",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "Ꝥ",
+        "post": "",
+        "replacer": "TH",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "ꝥ",
+        "post": "",
+        "replacer": "th",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "Ꝧ",
+        "post": "",
+        "replacer": "TH",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "ꝧ",
+        "post": "",
+        "replacer": "th",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "ꝱ",
+        "post": "",
+        "replacer": "d",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "ꝲ",
+        "post": "",
+        "replacer": "l",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "ꝳ",
+        "post": "",
+        "replacer": "m",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "ꝴ",
+        "post": "",
+        "replacer": "n",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "ꝵ",
+        "post": "",
+        "replacer": "r",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "ꝶ",
+        "post": "",
+        "replacer": "R",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "ꝷ",
+        "post": "",
+        "replacer": "t",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "Ꝺ",
+        "post": "",
+        "replacer": "D",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "ꝺ",
+        "post": "",
+        "replacer": "d",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "Ꝼ",
+        "post": "",
+        "replacer": "F",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "ꝼ",
+        "post": "",
+        "replacer": "f",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "Ꞇ",
+        "post": "",
+        "replacer": "T",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "ꞇ",
+        "post": "",
+        "replacer": "t",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "Ꞑ",
+        "post": "",
+        "replacer": "N",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "ꞑ",
+        "post": "",
+        "replacer": "n",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "Ꞓ",
+        "post": "",
+        "replacer": "C",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "ꞓ",
+        "post": "",
+        "replacer": "c",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "Ꞡ",
+        "post": "",
+        "replacer": "G",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "ꞡ",
+        "post": "",
+        "replacer": "g",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "Ꞣ",
+        "post": "",
+        "replacer": "K",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "ꞣ",
+        "post": "",
+        "replacer": "k",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "Ꞥ",
+        "post": "",
+        "replacer": "N",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "ꞥ",
+        "post": "",
+        "replacer": "n",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "Ꞧ",
+        "post": "",
+        "replacer": "R",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "ꞧ",
+        "post": "",
+        "replacer": "r",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "Ꞩ",
+        "post": "",
+        "replacer": "S",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "ꞩ",
+        "post": "",
+        "replacer": "s",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "Ɦ",
+        "post": "",
+        "replacer": "H",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "ﬀ",
+        "post": "",
+        "replacer": "ff",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "ﬁ",
+        "post": "",
+        "replacer": "fi",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "ﬂ",
+        "post": "",
+        "replacer": "fl",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "ﬃ",
+        "post": "",
+        "replacer": "ffi",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "ﬄ",
+        "post": "",
+        "replacer": "ffl",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "ﬅ",
+        "post": "",
+        "replacer": "st",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "ﬆ",
+        "post": "",
+        "replacer": "st",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "Ａ",
+        "post": "",
+        "replacer": "A",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "Ｂ",
+        "post": "",
+        "replacer": "B",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "Ｃ",
+        "post": "",
+        "replacer": "C",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "Ｄ",
+        "post": "",
+        "replacer": "D",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "Ｅ",
+        "post": "",
+        "replacer": "E",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "Ｆ",
+        "post": "",
+        "replacer": "F",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "Ｇ",
+        "post": "",
+        "replacer": "G",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "Ｈ",
+        "post": "",
+        "replacer": "H",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "Ｉ",
+        "post": "",
+        "replacer": "I",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "Ｊ",
+        "post": "",
+        "replacer": "J",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "Ｋ",
+        "post": "",
+        "replacer": "K",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "Ｌ",
+        "post": "",
+        "replacer": "L",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "Ｍ",
+        "post": "",
+        "replacer": "M",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "Ｎ",
+        "post": "",
+        "replacer": "N",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "Ｏ",
+        "post": "",
+        "replacer": "O",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "Ｐ",
+        "post": "",
+        "replacer": "P",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "Ｑ",
+        "post": "",
+        "replacer": "Q",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "Ｒ",
+        "post": "",
+        "replacer": "R",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "Ｓ",
+        "post": "",
+        "replacer": "S",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "Ｔ",
+        "post": "",
+        "replacer": "T",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "Ｕ",
+        "post": "",
+        "replacer": "U",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "Ｖ",
+        "post": "",
+        "replacer": "V",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "Ｗ",
+        "post": "",
+        "replacer": "W",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "Ｘ",
+        "post": "",
+        "replacer": "X",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "Ｙ",
+        "post": "",
+        "replacer": "Y",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "Ｚ",
+        "post": "",
+        "replacer": "Z",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "ａ",
+        "post": "",
+        "replacer": "a",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "ｂ",
+        "post": "",
+        "replacer": "b",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "ｃ",
+        "post": "",
+        "replacer": "c",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "ｄ",
+        "post": "",
+        "replacer": "d",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "ｅ",
+        "post": "",
+        "replacer": "e",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "ｆ",
+        "post": "",
+        "replacer": "f",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "ｇ",
+        "post": "",
+        "replacer": "g",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "ｈ",
+        "post": "",
+        "replacer": "h",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "ｉ",
+        "post": "",
+        "replacer": "i",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "ｊ",
+        "post": "",
+        "replacer": "j",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "ｋ",
+        "post": "",
+        "replacer": "k",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "ｌ",
+        "post": "",
+        "replacer": "l",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "ｍ",
+        "post": "",
+        "replacer": "m",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "ｎ",
+        "post": "",
+        "replacer": "n",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "ｏ",
+        "post": "",
+        "replacer": "o",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "ｐ",
+        "post": "",
+        "replacer": "p",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "ｑ",
+        "post": "",
+        "replacer": "q",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "ｒ",
+        "post": "",
+        "replacer": "r",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "ｓ",
+        "post": "",
+        "replacer": "s",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "ｔ",
+        "post": "",
+        "replacer": "t",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "ｕ",
+        "post": "",
+        "replacer": "u",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "ｖ",
+        "post": "",
+        "replacer": "v",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "ｗ",
+        "post": "",
+        "replacer": "w",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "ｘ",
+        "post": "",
+        "replacer": "x",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "ｙ",
+        "post": "",
+        "replacer": "y",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "ｚ",
+        "post": "",
+        "replacer": "z",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "©",
+        "post": "",
+        "replacer": "(C)",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "®",
+        "post": "",
+        "replacer": "(R)",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "₠",
+        "post": "",
+        "replacer": "CE",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "₢",
+        "post": "",
+        "replacer": "Cr",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "₣",
+        "post": "",
+        "replacer": "Fr.",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "₤",
+        "post": "",
+        "replacer": "L.",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "₧",
+        "post": "",
+        "replacer": "Pts",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "₹",
+        "post": "",
+        "replacer": "Rs",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "₺",
+        "post": "",
+        "replacer": "TL",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "℀",
+        "post": "",
+        "replacer": "a/c",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "℁",
+        "post": "",
+        "replacer": "a/s",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "ℂ",
+        "post": "",
+        "replacer": "C",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "℅",
+        "post": "",
+        "replacer": "c/o",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "℆",
+        "post": "",
+        "replacer": "c/u",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "ℊ",
+        "post": "",
+        "replacer": "g",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "ℋ",
+        "post": "",
+        "replacer": "H",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "ℌ",
+        "post": "",
+        "replacer": "x",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "ℍ",
+        "post": "",
+        "replacer": "H",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "ℎ",
+        "post": "",
+        "replacer": "h",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "ℐ",
+        "post": "",
+        "replacer": "I",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "ℑ",
+        "post": "",
+        "replacer": "I",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "ℒ",
+        "post": "",
+        "replacer": "L",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "ℓ",
+        "post": "",
+        "replacer": "l",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "ℕ",
+        "post": "",
+        "replacer": "N",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "№",
+        "post": "",
+        "replacer": "No",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "℗",
+        "post": "",
+        "replacer": "(P)",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "℘",
+        "post": "",
+        "replacer": "P",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "ℙ",
+        "post": "",
+        "replacer": "P",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "ℚ",
+        "post": "",
+        "replacer": "Q",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "ℛ",
+        "post": "",
+        "replacer": "R",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "ℜ",
+        "post": "",
+        "replacer": "R",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "ℝ",
+        "post": "",
+        "replacer": "R",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "℞",
+        "post": "",
+        "replacer": "Rx",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "℡",
+        "post": "",
+        "replacer": "TEL",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "ℤ",
+        "post": "",
+        "replacer": "Z",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "ℨ",
+        "post": "",
+        "replacer": "Z",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "ℬ",
+        "post": "",
+        "replacer": "B",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "ℭ",
+        "post": "",
+        "replacer": "C",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "ℯ",
+        "post": "",
+        "replacer": "e",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "ℰ",
+        "post": "",
+        "replacer": "E",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "ℱ",
+        "post": "",
+        "replacer": "F",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "ℳ",
+        "post": "",
+        "replacer": "M",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "ℴ",
+        "post": "",
+        "replacer": "o",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "ℹ",
+        "post": "",
+        "replacer": "i",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "℻",
+        "post": "",
+        "replacer": "FAX",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "ⅅ",
+        "post": "",
+        "replacer": "D",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "ⅆ",
+        "post": "",
+        "replacer": "d",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "ⅇ",
+        "post": "",
+        "replacer": "e",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "ⅈ",
+        "post": "",
+        "replacer": "i",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "ⅉ",
+        "post": "",
+        "replacer": "j",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "㍱",
+        "post": "",
+        "replacer": "hPa",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "㍲",
+        "post": "",
+        "replacer": "da",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "㍳",
+        "post": "",
+        "replacer": "AU",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "㍴",
+        "post": "",
+        "replacer": "bar",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "㍵",
+        "post": "",
+        "replacer": "oV",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "㍶",
+        "post": "",
+        "replacer": "pc",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "㍷",
+        "post": "",
+        "replacer": "dm",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "㍺",
+        "post": "",
+        "replacer": "IU",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "㎀",
+        "post": "",
+        "replacer": "pA",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "㎁",
+        "post": "",
+        "replacer": "nA",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "㎃",
+        "post": "",
+        "replacer": "mA",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "㎄",
+        "post": "",
+        "replacer": "kA",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "㎅",
+        "post": "",
+        "replacer": "KB",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "㎆",
+        "post": "",
+        "replacer": "MB",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "㎇",
+        "post": "",
+        "replacer": "GB",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "㎈",
+        "post": "",
+        "replacer": "cal",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "㎉",
+        "post": "",
+        "replacer": "kcal",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "㎊",
+        "post": "",
+        "replacer": "pF",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "㎋",
+        "post": "",
+        "replacer": "nF",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "㎎",
+        "post": "",
+        "replacer": "mg",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "㎏",
+        "post": "",
+        "replacer": "kg",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "㎐",
+        "post": "",
+        "replacer": "Hz",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "㎑",
+        "post": "",
+        "replacer": "kHz",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "㎒",
+        "post": "",
+        "replacer": "MHz",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "㎓",
+        "post": "",
+        "replacer": "GHz",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "㎔",
+        "post": "",
+        "replacer": "THz",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "㎙",
+        "post": "",
+        "replacer": "fm",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "㎚",
+        "post": "",
+        "replacer": "nm",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "㎜",
+        "post": "",
+        "replacer": "mm",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "㎝",
+        "post": "",
+        "replacer": "cm",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "㎞",
+        "post": "",
+        "replacer": "km",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "㎧",
+        "post": "",
+        "replacer": "m/s",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "㎩",
+        "post": "",
+        "replacer": "Pa",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "㎪",
+        "post": "",
+        "replacer": "kPa",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "㎫",
+        "post": "",
+        "replacer": "MPa",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "㎬",
+        "post": "",
+        "replacer": "GPa",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "㎭",
+        "post": "",
+        "replacer": "rad",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "㎮",
+        "post": "",
+        "replacer": "rad/s",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "㎰",
+        "post": "",
+        "replacer": "ps",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "㎱",
+        "post": "",
+        "replacer": "ns",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "㎳",
+        "post": "",
+        "replacer": "ms",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "㎴",
+        "post": "",
+        "replacer": "pV",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "㎵",
+        "post": "",
+        "replacer": "nV",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "㎷",
+        "post": "",
+        "replacer": "mV",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "㎸",
+        "post": "",
+        "replacer": "kV",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "㎹",
+        "post": "",
+        "replacer": "MV",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "㎺",
+        "post": "",
+        "replacer": "pW",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "㎻",
+        "post": "",
+        "replacer": "nW",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "㎽",
+        "post": "",
+        "replacer": "mW",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "㎾",
+        "post": "",
+        "replacer": "kW",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "㎿",
+        "post": "",
+        "replacer": "MW",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "㏂",
+        "post": "",
+        "replacer": "a.m.",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "㏃",
+        "post": "",
+        "replacer": "Bq",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "㏄",
+        "post": "",
+        "replacer": "cc",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "㏅",
+        "post": "",
+        "replacer": "cd",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "㏆",
+        "post": "",
+        "replacer": "C/kg",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "㏇",
+        "post": "",
+        "replacer": "Co.",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "㏈",
+        "post": "",
+        "replacer": "dB",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "㏉",
+        "post": "",
+        "replacer": "Gy",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "㏊",
+        "post": "",
+        "replacer": "ha",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "㏋",
+        "post": "",
+        "replacer": "HP",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "㏌",
+        "post": "",
+        "replacer": "in",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "㏍",
+        "post": "",
+        "replacer": "KK",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "㏎",
+        "post": "",
+        "replacer": "KM",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "㏏",
+        "post": "",
+        "replacer": "kt",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "㏐",
+        "post": "",
+        "replacer": "lm",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "㏑",
+        "post": "",
+        "replacer": "ln",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "㏒",
+        "post": "",
+        "replacer": "log",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "㏓",
+        "post": "",
+        "replacer": "lx",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "㏔",
+        "post": "",
+        "replacer": "mb",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "㏕",
+        "post": "",
+        "replacer": "mil",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "㏖",
+        "post": "",
+        "replacer": "mol",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "㏗",
+        "post": "",
+        "replacer": "pH",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "㏘",
+        "post": "",
+        "replacer": "p.m.",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "㏙",
+        "post": "",
+        "replacer": "PPM",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "㏚",
+        "post": "",
+        "replacer": "PR",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "㏛",
+        "post": "",
+        "replacer": "sr",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "㏜",
+        "post": "",
+        "replacer": "Sv",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "㏝",
+        "post": "",
+        "replacer": "Wb",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "㏞",
+        "post": "",
+        "replacer": "V/m",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "㏟",
+        "post": "",
+        "replacer": "A/m",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "⒜",
+        "post": "",
+        "replacer": "(a)",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "⒝",
+        "post": "",
+        "replacer": "(b)",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "⒞",
+        "post": "",
+        "replacer": "(c)",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "⒟",
+        "post": "",
+        "replacer": "(d)",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "⒠",
+        "post": "",
+        "replacer": "(e)",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "⒡",
+        "post": "",
+        "replacer": "(f)",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "⒢",
+        "post": "",
+        "replacer": "(g)",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "⒣",
+        "post": "",
+        "replacer": "(h)",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "⒤",
+        "post": "",
+        "replacer": "(i)",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "⒥",
+        "post": "",
+        "replacer": "(j)",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "⒦",
+        "post": "",
+        "replacer": "(k)",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "⒧",
+        "post": "",
+        "replacer": "(l)",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "⒨",
+        "post": "",
+        "replacer": "(m)",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "⒩",
+        "post": "",
+        "replacer": "(n)",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "⒪",
+        "post": "",
+        "replacer": "(o)",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "⒫",
+        "post": "",
+        "replacer": "(p)",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "⒬",
+        "post": "",
+        "replacer": "(q)",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "⒭",
+        "post": "",
+        "replacer": "(r)",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "⒮",
+        "post": "",
+        "replacer": "(s)",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "⒯",
+        "post": "",
+        "replacer": "(t)",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "⒰",
+        "post": "",
+        "replacer": "(u)",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "⒱",
+        "post": "",
+        "replacer": "(v)",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "⒲",
+        "post": "",
+        "replacer": "(w)",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "⒳",
+        "post": "",
+        "replacer": "(x)",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "⒴",
+        "post": "",
+        "replacer": "(y)",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "⒵",
+        "post": "",
+        "replacer": "(z)",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "🄐",
+        "post": "",
+        "replacer": "(A)",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "🄑",
+        "post": "",
+        "replacer": "(B)",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "🄒",
+        "post": "",
+        "replacer": "(C)",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "🄓",
+        "post": "",
+        "replacer": "(D)",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "🄔",
+        "post": "",
+        "replacer": "(E)",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "🄕",
+        "post": "",
+        "replacer": "(F)",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "🄖",
+        "post": "",
+        "replacer": "(G)",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "🄗",
+        "post": "",
+        "replacer": "(H)",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "🄘",
+        "post": "",
+        "replacer": "(I)",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "🄙",
+        "post": "",
+        "replacer": "(J)",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "🄚",
+        "post": "",
+        "replacer": "(K)",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "🄛",
+        "post": "",
+        "replacer": "(L)",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "🄜",
+        "post": "",
+        "replacer": "(M)",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "🄝",
+        "post": "",
+        "replacer": "(N)",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "🄞",
+        "post": "",
+        "replacer": "(O)",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "🄟",
+        "post": "",
+        "replacer": "(P)",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "🄠",
+        "post": "",
+        "replacer": "(Q)",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "🄡",
+        "post": "",
+        "replacer": "(R)",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "🄢",
+        "post": "",
+        "replacer": "(S)",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "🄣",
+        "post": "",
+        "replacer": "(T)",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "🄤",
+        "post": "",
+        "replacer": "(U)",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "🄥",
+        "post": "",
+        "replacer": "(V)",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "🄦",
+        "post": "",
+        "replacer": "(W)",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "🄧",
+        "post": "",
+        "replacer": "(X)",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "🄨",
+        "post": "",
+        "replacer": "(Y)",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "🄩",
+        "post": "",
+        "replacer": "(Z)",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "Ⅰ",
+        "post": "",
+        "replacer": "I",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "Ⅱ",
+        "post": "",
+        "replacer": "II",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "Ⅲ",
+        "post": "",
+        "replacer": "III",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "Ⅳ",
+        "post": "",
+        "replacer": "IV",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "Ⅴ",
+        "post": "",
+        "replacer": "V",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "Ⅵ",
+        "post": "",
+        "replacer": "VI",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "Ⅶ",
+        "post": "",
+        "replacer": "VII",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "Ⅷ",
+        "post": "",
+        "replacer": "VIII",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "Ⅸ",
+        "post": "",
+        "replacer": "IX",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "Ⅹ",
+        "post": "",
+        "replacer": "X",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "Ⅺ",
+        "post": "",
+        "replacer": "XI",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "Ⅻ",
+        "post": "",
+        "replacer": "XII",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "Ⅼ",
+        "post": "",
+        "replacer": "L",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "Ⅽ",
+        "post": "",
+        "replacer": "C",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "Ⅾ",
+        "post": "",
+        "replacer": "D",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "Ⅿ",
+        "post": "",
+        "replacer": "M",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "ⅰ",
+        "post": "",
+        "replacer": "i",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "ⅱ",
+        "post": "",
+        "replacer": "ii",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "ⅲ",
+        "post": "",
+        "replacer": "iii",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "ⅳ",
+        "post": "",
+        "replacer": "iv",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "ⅴ",
+        "post": "",
+        "replacer": "v",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "ⅵ",
+        "post": "",
+        "replacer": "vi",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "ⅶ",
+        "post": "",
+        "replacer": "vii",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "ⅷ",
+        "post": "",
+        "replacer": "viii",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "ⅸ",
+        "post": "",
+        "replacer": "ix",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "ⅹ",
+        "post": "",
+        "replacer": "x",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "ⅺ",
+        "post": "",
+        "replacer": "xi",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "ⅻ",
+        "post": "",
+        "replacer": "xii",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "ⅼ",
+        "post": "",
+        "replacer": "l",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "ⅽ",
+        "post": "",
+        "replacer": "c",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "ⅾ",
+        "post": "",
+        "replacer": "d",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "ⅿ",
+        "post": "",
+        "replacer": "m",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "¼",
+        "post": "",
+        "replacer": " 1/4",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "½",
+        "post": "",
+        "replacer": " 1/2",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "¾",
+        "post": "",
+        "replacer": " 3/4",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "⅐",
+        "post": "",
+        "replacer": " 1/7",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "⅑",
+        "post": "",
+        "replacer": " 1/9",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "⅒",
+        "post": "",
+        "replacer": " 1/10",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "⅓",
+        "post": "",
+        "replacer": " 1/3",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "⅔",
+        "post": "",
+        "replacer": " 2/3",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "⅕",
+        "post": "",
+        "replacer": " 1/5",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "⅖",
+        "post": "",
+        "replacer": " 2/5",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "⅗",
+        "post": "",
+        "replacer": " 3/5",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "⅘",
+        "post": "",
+        "replacer": " 4/5",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "⅙",
+        "post": "",
+        "replacer": " 1/6",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "⅚",
+        "post": "",
+        "replacer": " 5/6",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "⅛",
+        "post": "",
+        "replacer": " 1/8",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "⅜",
+        "post": "",
+        "replacer": " 3/8",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "⅝",
+        "post": "",
+        "replacer": " 5/8",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "⅞",
+        "post": "",
+        "replacer": " 7/8",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "⅟",
+        "post": "",
+        "replacer": " 1/",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "↉",
+        "post": "",
+        "replacer": " 0/3",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "⑴",
+        "post": "",
+        "replacer": "(1)",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "⑵",
+        "post": "",
+        "replacer": "(2)",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "⑶",
+        "post": "",
+        "replacer": "(3)",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "⑷",
+        "post": "",
+        "replacer": "(4)",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "⑸",
+        "post": "",
+        "replacer": "(5)",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "⑹",
+        "post": "",
+        "replacer": "(6)",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "⑺",
+        "post": "",
+        "replacer": "(7)",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "⑻",
+        "post": "",
+        "replacer": "(8)",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "⑼",
+        "post": "",
+        "replacer": "(9)",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "⑽",
+        "post": "",
+        "replacer": "(10)",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "⑾",
+        "post": "",
+        "replacer": "(11)",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "⑿",
+        "post": "",
+        "replacer": "(12)",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "⒀",
+        "post": "",
+        "replacer": "(13)",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "⒁",
+        "post": "",
+        "replacer": "(14)",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "⒂",
+        "post": "",
+        "replacer": "(15)",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "⒃",
+        "post": "",
+        "replacer": "(16)",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "⒄",
+        "post": "",
+        "replacer": "(17)",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "⒅",
+        "post": "",
+        "replacer": "(18)",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "⒆",
+        "post": "",
+        "replacer": "(19)",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "⒇",
+        "post": "",
+        "replacer": "(20)",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "🄀",
+        "post": "",
+        "replacer": "0.",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "⒈",
+        "post": "",
+        "replacer": "1.",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "⒉",
+        "post": "",
+        "replacer": "2.",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "⒊",
+        "post": "",
+        "replacer": "3.",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "⒋",
+        "post": "",
+        "replacer": "4.",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "⒌",
+        "post": "",
+        "replacer": "5.",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "⒍",
+        "post": "",
+        "replacer": "6.",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "⒎",
+        "post": "",
+        "replacer": "7.",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "⒏",
+        "post": "",
+        "replacer": "8.",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "⒐",
+        "post": "",
+        "replacer": "9.",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "⒑",
+        "post": "",
+        "replacer": "10.",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "⒒",
+        "post": "",
+        "replacer": "11.",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "⒓",
+        "post": "",
+        "replacer": "12.",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "⒔",
+        "post": "",
+        "replacer": "13.",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "⒕",
+        "post": "",
+        "replacer": "14.",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "⒖",
+        "post": "",
+        "replacer": "15.",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "⒗",
+        "post": "",
+        "replacer": "16.",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "⒘",
+        "post": "",
+        "replacer": "17.",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "⒙",
+        "post": "",
+        "replacer": "18.",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "⒚",
+        "post": "",
+        "replacer": "19.",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "⒛",
+        "post": "",
+        "replacer": "20.",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "🄁",
+        "post": "",
+        "replacer": "0,",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "🄂",
+        "post": "",
+        "replacer": "1,",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "🄃",
+        "post": "",
+        "replacer": "2,",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "🄄",
+        "post": "",
+        "replacer": "3,",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "🄅",
+        "post": "",
+        "replacer": "4,",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "🄆",
+        "post": "",
+        "replacer": "5,",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "🄇",
+        "post": "",
+        "replacer": "6,",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "🄈",
+        "post": "",
+        "replacer": "7,",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "🄉",
+        "post": "",
+        "replacer": "8,",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "🄊",
+        "post": "",
+        "replacer": "9,",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "〇",
+        "post": "",
+        "replacer": "0",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "０",
+        "post": "",
+        "replacer": "0",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "１",
+        "post": "",
+        "replacer": "1",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "２",
+        "post": "",
+        "replacer": "2",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "３",
+        "post": "",
+        "replacer": "3",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "４",
+        "post": "",
+        "replacer": "4",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "５",
+        "post": "",
+        "replacer": "5",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "６",
+        "post": "",
+        "replacer": "6",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "７",
+        "post": "",
+        "replacer": "7",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "８",
+        "post": "",
+        "replacer": "8",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "９",
+        "post": "",
+        "replacer": "9",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": " ",
+        "post": "",
+        "replacer": " ",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": " ",
+        "post": "",
+        "replacer": " ",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": " ",
+        "post": "",
+        "replacer": " ",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": " ",
+        "post": "",
+        "replacer": " ",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": " ",
+        "post": "",
+        "replacer": " ",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": " ",
+        "post": "",
+        "replacer": " ",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": " ",
+        "post": "",
+        "replacer": " ",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": " ",
+        "post": "",
+        "replacer": " ",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": " ",
+        "post": "",
+        "replacer": " ",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": " ",
+        "post": "",
+        "replacer": " ",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": " ",
+        "post": "",
+        "replacer": " ",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "　",
+        "post": "",
+        "replacer": " ",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "ʹ",
+        "post": "",
+        "replacer": "'",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "ʺ",
+        "post": "",
+        "replacer": "\"",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "ʻ",
+        "post": "",
+        "replacer": "'",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "ʼ",
+        "post": "",
+        "replacer": "'",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "ʽ",
+        "post": "",
+        "replacer": "'",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "ˈ",
+        "post": "",
+        "replacer": "'",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "ˋ",
+        "post": "",
+        "replacer": "`",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "‘",
+        "post": "",
+        "replacer": "'",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "’",
+        "post": "",
+        "replacer": "'",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "‚",
+        "post": "",
+        "replacer": ",",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "‛",
+        "post": "",
+        "replacer": "'",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "“",
+        "post": "",
+        "replacer": "\"",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "”",
+        "post": "",
+        "replacer": "\"",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "„",
+        "post": "",
+        "replacer": ",,",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "‟",
+        "post": "",
+        "replacer": "\"",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "′",
+        "post": "",
+        "replacer": "'",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "″",
+        "post": "",
+        "replacer": "\"",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "〝",
+        "post": "",
+        "replacer": "\"",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "〞",
+        "post": "",
+        "replacer": "\"",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "＂",
+        "post": "",
+        "replacer": "\"",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "＇",
+        "post": "",
+        "replacer": "'",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "«",
+        "post": "",
+        "replacer": "<<",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "»",
+        "post": "",
+        "replacer": ">>",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "‹",
+        "post": "",
+        "replacer": "<",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "›",
+        "post": "",
+        "replacer": ">",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "­",
+        "post": "",
+        "replacer": "-",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "‐",
+        "post": "",
+        "replacer": "-",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "‑",
+        "post": "",
+        "replacer": "-",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "‒",
+        "post": "",
+        "replacer": "-",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "–",
+        "post": "",
+        "replacer": "-",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "—",
+        "post": "",
+        "replacer": "-",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "―",
+        "post": "",
+        "replacer": "-",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "︱",
+        "post": "",
+        "replacer": "-",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "︲",
+        "post": "",
+        "replacer": "-",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "﹘",
+        "post": "",
+        "replacer": "-",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "﹣",
+        "post": "",
+        "replacer": "-",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "－",
+        "post": "",
+        "replacer": "-",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "¡",
+        "post": "",
+        "replacer": "!",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "¿",
+        "post": "",
+        "replacer": "?",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "˂",
+        "post": "",
+        "replacer": "<",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "˃",
+        "post": "",
+        "replacer": ">",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "˄",
+        "post": "",
+        "replacer": "^",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "ˆ",
+        "post": "",
+        "replacer": "^",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "ː",
+        "post": "",
+        "replacer": ":",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "˜",
+        "post": "",
+        "replacer": "~",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "‖",
+        "post": "",
+        "replacer": "||",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "․",
+        "post": "",
+        "replacer": ".",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "‥",
+        "post": "",
+        "replacer": "..",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "…",
+        "post": "",
+        "replacer": "...",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "‼",
+        "post": "",
+        "replacer": "!!",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "⁄",
+        "post": "",
+        "replacer": "/",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "⁅",
+        "post": "",
+        "replacer": "[",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "⁆",
+        "post": "",
+        "replacer": "]",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "⁇",
+        "post": "",
+        "replacer": "??",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "⁈",
+        "post": "",
+        "replacer": "?!",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "⁉",
+        "post": "",
+        "replacer": "!?",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "⁎",
+        "post": "",
+        "replacer": "*",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "←",
+        "post": "",
+        "replacer": "<-",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "→",
+        "post": "",
+        "replacer": "->",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "↔",
+        "post": "",
+        "replacer": "<->",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "￩",
+        "post": "",
+        "replacer": "<-",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "￫",
+        "post": "",
+        "replacer": "->",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "、",
+        "post": "",
+        "replacer": ",",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "。",
+        "post": "",
+        "replacer": ".",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "〈",
+        "post": "",
+        "replacer": "<",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "〉",
+        "post": "",
+        "replacer": ">",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "《",
+        "post": "",
+        "replacer": "<<",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "》",
+        "post": "",
+        "replacer": ">>",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "〔",
+        "post": "",
+        "replacer": "[",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "〕",
+        "post": "",
+        "replacer": "]",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "〘",
+        "post": "",
+        "replacer": "[",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "〙",
+        "post": "",
+        "replacer": "]",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "〚",
+        "post": "",
+        "replacer": "[",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "〛",
+        "post": "",
+        "replacer": "]",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "︐",
+        "post": "",
+        "replacer": ",",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "︑",
+        "post": "",
+        "replacer": ",",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "︒",
+        "post": "",
+        "replacer": ".",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "︓",
+        "post": "",
+        "replacer": ":",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "︔",
+        "post": "",
+        "replacer": ";",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "︕",
+        "post": "",
+        "replacer": "!",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "︖",
+        "post": "",
+        "replacer": "?",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "︙",
+        "post": "",
+        "replacer": "...",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "︰",
+        "post": "",
+        "replacer": "..",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "︵",
+        "post": "",
+        "replacer": "(",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "︶",
+        "post": "",
+        "replacer": ")",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "︷",
+        "post": "",
+        "replacer": "{",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "︸",
+        "post": "",
+        "replacer": "}",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "︹",
+        "post": "",
+        "replacer": "[",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "︺",
+        "post": "",
+        "replacer": "]",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "︽",
+        "post": "",
+        "replacer": "<<",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "︾",
+        "post": "",
+        "replacer": ">>",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "︿",
+        "post": "",
+        "replacer": "<",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "﹀",
+        "post": "",
+        "replacer": ">",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "﹇",
+        "post": "",
+        "replacer": "[",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "﹈",
+        "post": "",
+        "replacer": "]",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "﹐",
+        "post": "",
+        "replacer": ",",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "﹑",
+        "post": "",
+        "replacer": ",",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "﹒",
+        "post": "",
+        "replacer": ".",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "﹔",
+        "post": "",
+        "replacer": ";",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "﹕",
+        "post": "",
+        "replacer": ":",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "﹖",
+        "post": "",
+        "replacer": "?",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "﹗",
+        "post": "",
+        "replacer": "!",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "﹙",
+        "post": "",
+        "replacer": "(",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "﹚",
+        "post": "",
+        "replacer": ")",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "﹛",
+        "post": "",
+        "replacer": "{",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "﹜",
+        "post": "",
+        "replacer": "}",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "﹝",
+        "post": "",
+        "replacer": "[",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "﹞",
+        "post": "",
+        "replacer": "]",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "﹟",
+        "post": "",
+        "replacer": "#",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "﹠",
+        "post": "",
+        "replacer": "&",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "﹡",
+        "post": "",
+        "replacer": "*",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "﹢",
+        "post": "",
+        "replacer": "+",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "﹤",
+        "post": "",
+        "replacer": "<",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "﹥",
+        "post": "",
+        "replacer": ">",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "﹦",
+        "post": "",
+        "replacer": "=",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "﹨",
+        "post": "",
+        "replacer": "\\",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "﹩",
+        "post": "",
+        "replacer": "$",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "﹪",
+        "post": "",
+        "replacer": "%",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "﹫",
+        "post": "",
+        "replacer": "@",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "！",
+        "post": "",
+        "replacer": "!",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "＃",
+        "post": "",
+        "replacer": "#",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "＄",
+        "post": "",
+        "replacer": "$",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "％",
+        "post": "",
+        "replacer": "%",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "＆",
+        "post": "",
+        "replacer": "&",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "（",
+        "post": "",
+        "replacer": "(",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "）",
+        "post": "",
+        "replacer": ")",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "＊",
+        "post": "",
+        "replacer": "*",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "＋",
+        "post": "",
+        "replacer": "+",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "，",
+        "post": "",
+        "replacer": ",",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "．",
+        "post": "",
+        "replacer": ".",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "／",
+        "post": "",
+        "replacer": "/",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "：",
+        "post": "",
+        "replacer": ":",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "；",
+        "post": "",
+        "replacer": ";",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "＜",
+        "post": "",
+        "replacer": "<",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "＝",
+        "post": "",
+        "replacer": "=",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "＞",
+        "post": "",
+        "replacer": ">",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "？",
+        "post": "",
+        "replacer": "?",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "＠",
+        "post": "",
+        "replacer": "@",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "［",
+        "post": "",
+        "replacer": "[",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "＼",
+        "post": "",
+        "replacer": "\\",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "］",
+        "post": "",
+        "replacer": "]",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "＾",
+        "post": "",
+        "replacer": "^",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "＿",
+        "post": "",
+        "replacer": "_",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "｀",
+        "post": "",
+        "replacer": "`",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "｛",
+        "post": "",
+        "replacer": "{",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "｜",
+        "post": "",
+        "replacer": "|",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "｝",
+        "post": "",
+        "replacer": "}",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "～",
+        "post": "",
+        "replacer": "~",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "｟",
+        "post": "",
+        "replacer": "((",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "｠",
+        "post": "",
+        "replacer": "))",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "｡",
+        "post": "",
+        "replacer": ".",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "､",
+        "post": "",
+        "replacer": ",",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "±",
+        "post": "",
+        "replacer": "+/-",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "×",
+        "post": "",
+        "replacer": "*",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "÷",
+        "post": "",
+        "replacer": "/",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "˖",
+        "post": "",
+        "replacer": "+",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "˗",
+        "post": "",
+        "replacer": "-",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "−",
+        "post": "",
+        "replacer": "-",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "∕",
+        "post": "",
+        "replacer": "/",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "∖",
+        "post": "",
+        "replacer": "\\",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "∣",
+        "post": "",
+        "replacer": "|",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "∥",
+        "post": "",
+        "replacer": "||",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "≪",
+        "post": "",
+        "replacer": "<<",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "≫",
+        "post": "",
+        "replacer": ">>",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "⦅",
+        "post": "",
+        "replacer": "((",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "⦆",
+        "post": "",
+        "replacer": "))",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "⩴",
+        "post": "",
+        "replacer": "::=",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "⩵",
+        "post": "",
+        "replacer": "==",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "⩶",
+        "post": "",
+        "replacer": "===",
+        "cursor_offset": 0
+      }
+    ]
+  ]
+}

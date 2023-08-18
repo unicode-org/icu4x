@@ -115,8 +115,10 @@ impl DataProvider<TransliteratorRulesV1Marker> for crate::DatagenProvider {
         } else {
             icu_transliterator_parser::Direction::Reverse
         };
-        let (forwards, backwards) =
-            icu_transliterator_parser::parse_unstable(&source, dir, self).unwrap();
+        let (forwards, backwards) = icu_transliterator_parser::parse_unstable(&source, dir, self)
+            .map_err(|e| {
+            DataError::custom("transliterator parsing failed").with_debug_context(&e)
+        })?;
         let transliterator = if is_forwards {
             // the parser guarantees we receive this
             #[allow(clippy::unwrap_used)]

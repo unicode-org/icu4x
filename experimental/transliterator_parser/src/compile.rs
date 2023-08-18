@@ -330,23 +330,23 @@ impl<'p> Pass1<'p> {
         target: &HalfRule,
     ) -> Result<()> {
         // TODO(#3736): include source location/actual source text in these logs
-        if !self.direction.permits(dir) {
-            // example: metadata defines this transliterator as forward, but a `<>` or `<` rule is found.
-            log::warn!(
-                "metadata for transliterator specifies direction {:?} but conversion rule specifies {:?}",
-                self.direction,
-                dir,
-            );
-        }
-        // logging for useless contexts
-        if dir == parse::Direction::Forward && (!target.ante.is_empty() || !target.post.is_empty())
-        {
-            log::warn!("forward conversion rule has ignored context on target side");
-        }
-        if dir == parse::Direction::Reverse && (!source.ante.is_empty() || !source.post.is_empty())
-        {
-            log::warn!("reverse conversion rule has ignored context on target side");
-        }
+        // if !self.direction.permits(dir) {
+        //     // example: metadata defines this transliterator as forward, but a `<>` or `<` rule is found.
+        //     log::warn!(
+        //         "metadata for transliterator specifies direction {:?} but conversion rule specifies {:?}",
+        //         self.direction,
+        //         dir,
+        //     );
+        // }
+        // // logging for useless contexts
+        // if dir == parse::Direction::Forward && (!target.ante.is_empty() || !target.post.is_empty())
+        // {
+        //     log::warn!("forward conversion rule has ignored context on target side");
+        // }
+        // if dir == parse::Direction::Reverse && (!source.ante.is_empty() || !source.post.is_empty())
+        // {
+        //     log::warn!("reverse conversion rule has ignored context on target side");
+        // }
 
         if self.direction.permits(parse::Direction::Forward)
             && dir.permits(parse::Direction::Forward)
