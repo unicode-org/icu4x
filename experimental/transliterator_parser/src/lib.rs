@@ -149,7 +149,6 @@ where
         + DataProvider<XidStartV1Marker>,
 {
     let parsed = parse::parse_unstable(source, provider)?;
-    // TODO(#3736): pass direction from metadata
     compile::compile(parsed, gen_direction, metadata, transliterator_map)
 }
 
