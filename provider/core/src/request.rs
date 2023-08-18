@@ -862,6 +862,7 @@ impl AuxiliaryKeys {
     /// assert!(AuxiliaryKeys::try_from_iter(["AB$C"]).is_err());
     /// ```
     pub fn try_from_iter<'a>(iter: impl IntoIterator<Item = &'a str>) -> Result<Self, DataError> {
+        // TODO: Avoid the allocation when possible
         let mut builder = String::new();
         for item in iter.into_iter() {
             if !item.is_empty()
@@ -880,8 +881,8 @@ impl AuxiliaryKeys {
             }
         }
         if builder.len() <= 23 {
+            #[allow(clippy::unwrap_used)] // we just checked that the string is ascii
             Ok(Self {
-                #[allow(clippy::unwrap_used)] // we just checked that the string is ascii
                 value: AuxiliaryKeysInner::Stack(builder.parse().unwrap())
             })
         } else {
@@ -897,8 +898,8 @@ impl AuxiliaryKeys {
                 .all(|b| b.is_ascii_alphanumeric() || matches!(b, b'-' | b'+'))
         {
             if s.len() <= 23 {
+                #[allow(clippy::unwrap_used)] // we just checked that the string is ascii
                 Ok(Self {
-                    #[allow(clippy::unwrap_used)] // we just checked that the string is ascii
                     value: AuxiliaryKeysInner::Stack(s.parse().unwrap())
                 })
             } else {
