@@ -2,17 +2,41 @@ import { ICU4XDataProvider, ICU4XWordSegmenter } from "icu4x";
 
 export class SegmenterDemo {
     #displayFn: (formatted: string) => void;
+    #dataProvider: ICU4XDataProvider;
 
     #segmenter: ICU4XWordSegmenter;
+    #model: string;
     #text: string;
 
     constructor(displayFn: (formatted: string) => void, dataProvider: ICU4XDataProvider) {
         this.#displayFn = displayFn;
-        this.#segmenter = ICU4XWordSegmenter.create_auto(dataProvider);
+        this.#dataProvider = dataProvider;
+
+        this.#model = "Auto";
+        this.#text = "";
+        this.#updateSegmenter();
+    }
+
+    setModel(model: string): void {
+        this.#model = model;
+        this.#updateSegmenter();
     }
 
     setText(text: string): void {
         this.#text = text;
+        this.#render();
+    }
+
+    #updateSegmenter(): void {
+        if (this.#model === "Auto") {
+            this.#segmenter = ICU4XWordSegmenter.create_auto(this.#dataProvider);
+        } else if (this.#model === "LSTM") {
+            this.#segmenter = ICU4XWordSegmenter.create_lstm(this.#dataProvider);
+        } else if (this.#model === "Dictionary") {
+            this.#segmenter = ICU4XWordSegmenter.create_dictionary(this.#dataProvider);
+        } else {
+            console.error("Unknown model: " + this.#model);
+        }
         this.#render();
     }
 
@@ -56,6 +80,10 @@ export function setup(dataProvider: ICU4XDataProvider): void {
         segmentedText.innerHTML = formatted;
     }, dataProvider);
 
+    for (let btn of document.querySelectorAll<HTMLInputElement | null>('input[name="segmenter-model"]')) {
+        btn?.addEventListener('click', () => segmenterDemo.setModel(btn.value));
+    }
+
     const inputText = document.getElementById('seg-input') as HTMLTextAreaElement | null;
     inputText?.addEventListener('input', () => segmenterDemo.setText(inputText.value));
 
@@ -84,6 +112,18 @@ export function setup(dataProvider: ICU4XDataProvider): void {
     const sampleChineseBtn = document.getElementById('seg-sample-chinese') as HTMLButtonElement | null;
     sampleChineseBtn?.addEventListener('click', () => {
         inputText.value = chineseSamples[Math.floor(Math.random() * chineseSamples.length)];
+        segmenterDemo.setText(inputText.value);
+    });
+
+    const thaiSamples = [
+        "โดยที่การยอมรับนับถือเกียรติศักดิ์ประจำตัว และสิทธิเท่าเทียมกันและโอนมิได้ของบรรดา สมาชิก ทั้ง หลายแห่งครอบครัว มนุษย์เป็นหลักมูลเหตุแห่งอิสรภาพ ความยุติธรรม และสันติภาพในโลก",
+        "โดยที่การไม่นำพาและการเหยียดหยามต่อสิทธิมนุษยชน ยังผลให้มีการหระทำอันป่าเถื่อน ซี่งเป็นการละเมิดมโนธรรมของมนุษยชาติอย่างร้ายแรง และใต้[ได้]มีการประกาศว่า ปณิธานสูงสุดของสามัญชนได้แก่ความต้องการให้มนุษย์มีชีวิตอยู่ในโลกด้วยอิสรภาพในการพูด และความเชื่อถือ และอิสรภาพพ้นจากความหวาดกลัวและความต้องการ",
+        "โดยที่เป็นการจำเป็นอย่างยิ่งที่สิทธิมนุษยชนควรได้รับความคุ้มครองโดยหลักบังคับของกฎหมาย ถ้าไม่ประสงค์จะให้คนตกอยู่ในบังคับให้หันเข้าหาการขบถขัดขืนต่อทรราชและการกดขี่เป็นวิถีทางสุดท้าย",
+    ];
+
+    const sampleThaiBtn = document.getElementById('seg-sample-thai') as HTMLButtonElement | null;
+    sampleThaiBtn?.addEventListener('click', () => {
+        inputText.value = thaiSamples[Math.floor(Math.random() * thaiSamples.length)];
         segmenterDemo.setText(inputText.value);
     });
 }
