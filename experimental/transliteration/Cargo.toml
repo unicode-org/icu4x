@@ -37,8 +37,6 @@ serde = { version = "1.0", features = ["derive"], optional = true, default-featu
 
 icu_transliteration_data = { version = "~0.0.0", path = "data", optional = true }
 
-
-# TODO(#3736): Add serde, datagen, compiled_data, databake features
 [features]
 default = ["compiled_data"]
 serde = ["dep:serde", "zerovec/serde", "icu_collections/serde"]
