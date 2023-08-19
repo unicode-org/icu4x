@@ -26,13 +26,18 @@ all-features = true
 
 [dependencies]
 icu_provider = { path = "../../provider/core", features = ["macros"] }
-icu_collections = { version = "1.2.0", path = "../../components/collections", features = ["serde", "databake"] }
+icu_collections = { version = "1.2.0", path = "../../components/collections" }
 
-zerovec = { version = "0.9.4", path = "../../utils/zerovec", features = ["derive", "databake"] }
+zerovec = { version = "0.9.4", path = "../../utils/zerovec", features = ["derive"] }
 zerofrom = { version = "0.1.1", path = "../../utils/zerofrom", features = ["derive"] }
 yoke = { version = "0.7.1", path = "../../utils/yoke", features = ["derive"] }
-databake = { version = "0.1.3", path = "../../utils/databake", features = ["derive"] }
+databake = { version = "0.1.3", path = "../../utils/databake", optional = true, features = ["derive"] }
 
-serde = { version = "1.0", features = ["derive"] }
+serde = { version = "1.0", features = ["derive"], optional = true, default-features = false }
 
 # TODO(#3736): Add serde, datagen, compiled_data, databake features
+[features]
+default = ["compiled_data"]
+serde = ["dep:serde", "zerovec/serde", "icu_collections/serde"]
+datagen = ["serde", "dep:databake", "zerovec/databake", "icu_collections/databake"]
+compiled_data = []
