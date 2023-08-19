@@ -30,7 +30,11 @@ pub struct Baked;
 
 #[cfg(feature = "compiled_data")]
 const _: () = {
-    icu_transliteration_data::impl_transliteration_transliterator_rules_v1!(Baked);
+    mod icu {
+        pub use crate as transliteration;
+        pub use icu_collections as collections;
+    }
+    icu_transliteration_data::impl_transliterator_rules_v1!(Baked);
 };
 
 // TODO(#3776): Improve the documentation of this datastruct.

@@ -4,11 +4,11 @@
       "transliterator/rules@1"
     ]
   },
-  "fallback": "runtime",
-  "locales": "recommended",
-  "cldr": "latest",
-  "icuExport": "latest",
-  "segmenterLstm": "latest",
+  "locales": "all",
+  "fallback": "runtimeManual",
+  "cldr": {
+    "path": "../../../provider/datagen/tests/data/cldr"
+  },
   "export": {
     "baked": {
       "path": "data",
