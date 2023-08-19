@@ -343,5 +343,6 @@
         "cursor_offset": 0
       }
     ]
-  ]
+  ],
+  "dependencies": []
 }

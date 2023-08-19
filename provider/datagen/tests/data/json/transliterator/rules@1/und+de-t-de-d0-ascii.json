@@ -2171,5 +2171,8 @@
       }
     ],
     []
+  ],
+  "dependencies": [
+    "und-t-und-latn-d0-ascii"
   ]
 }

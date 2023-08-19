@@ -56,5 +56,11 @@
   ],
   "rule_group_list": [
     []
+  ],
+  "dependencies": [
+    "x-Any-NFC",
+    "x-Any-NFD",
+    "x-Bengali-InterIndic",
+    "x-InterIndic-Arabic"
   ]
 }

@@ -6538,5 +6538,9 @@
         "cursor_offset": 0
       }
     ]
+  ],
+  "dependencies": [
+    "x-Any-NFC",
+    "x-Any-NFD"
   ]
 }
