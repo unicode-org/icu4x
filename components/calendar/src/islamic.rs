@@ -253,7 +253,6 @@ impl IslamicObservational {
     // The fixed date algorithms are from
     // Dershowitz, Nachum, and Edward M. Reingold. _Calendrical calculations_. Cambridge University Press, 2008.
     // Lisp code reference: https://github.com/EdReingold/calendar-code2/blob/main/calendar.l#L6904
-    #[allow(clippy::unwrap_used)]
     fn fixed_from_islamic(i_date: IslamicDateInner) -> RataDie {
         let year = i64::from(i_date.0.year);
         let month = i64::from(i_date.0.month);
@@ -267,7 +266,6 @@ impl IslamicObservational {
             - 1
     }
 
-    #[allow(clippy::unwrap_used)]
     fn islamic_from_fixed(date: RataDie) -> Date<IslamicObservational> {
         let lunar_phase = Astronomical::calculate_lunar_phase_at_or_before(date);
         let crescent = Astronomical::phasis_on_or_before(date, CAIRO, Some(lunar_phase));
@@ -600,7 +598,6 @@ impl IslamicUmmAlQura {
     }
 
     // Lisp code reference: https://github.com/EdReingold/calendar-code2/blob/main/calendar.l#L6996
-    #[allow(clippy::unwrap_used)]
     fn saudi_islamic_from_fixed(date: RataDie) -> Date<IslamicUmmAlQura> {
         let crescent = Self::saudi_new_month_on_or_before(date);
         let elapsed_months =
@@ -808,20 +805,21 @@ impl IslamicCivil {
         )
     }
     // Lisp code reference: https://github.com/EdReingold/calendar-code2/blob/main/calendar.l#L2090
-    #[allow(clippy::unwrap_used)]
     fn islamic_from_fixed(date: RataDie) -> Date<IslamicCivil> {
         let year = helpers::i64_to_saturated_i32(
             div_rem_euclid64(((date - FIXED_ISLAMIC_EPOCH_FRIDAY) * 30) + 10646, 10631).0,
         );
         let prior_days = date.to_f64_date()
             - ((Self::fixed_from_islamic(IslamicCivilDateInner(
-                ArithmeticDate::new_from_lunar_ordinals(year, 1, 1).unwrap(), // Safe unwrap due to hardcoded values,
+                ArithmeticDate::new_unchecked(year, 1, 1), // Unchecked ok because of hardcoded values,
             )))
             .to_f64_date());
-        let month = div_rem_euclid_f64((prior_days * 11.0) + 330.0, 325.0).0 as u8; // Prior days will always be a number between 354-355, making the value within the bounds of a u8.
+        debug_assert!(prior_days <= 354.);
+        let month = div_rem_euclid_f64((prior_days * 11.0) + 330.0, 325.0).0 as u8; // Prior days is maximum 354 (when year length is 355), making the value always less than 12
+        debug_assert!(month <= 12);
         let day = (date.to_f64_date()
             - (Self::fixed_from_islamic(IslamicCivilDateInner(
-                ArithmeticDate::new_from_lunar_ordinals(year, month, 1).unwrap(), // Safe unwrap,
+                ArithmeticDate::new_unchecked(year, month, 1), // Unchecked is ok because of hardcoded date and month being in range
             ))
             .to_f64_date())
             + 1.0) as u8; // The value will always be number between 1-30 because of the difference between the date and lunar ordinals function.
@@ -1059,20 +1057,21 @@ impl IslamicTabular {
         )
     }
     // Lisp code reference: https://github.com/EdReingold/calendar-code2/blob/main/calendar.l#L2090
-    #[allow(clippy::unwrap_used)]
     fn islamic_from_fixed(date: RataDie) -> Date<IslamicTabular> {
         let year = helpers::i64_to_saturated_i32(
             div_rem_euclid64(((date - FIXED_ISLAMIC_EPOCH_THURSDAY) * 30) + 10646, 10631).0,
         );
         let prior_days = date.to_f64_date()
             - ((Self::fixed_from_islamic(IslamicTabularDateInner(
-                ArithmeticDate::new_from_lunar_ordinals(year, 1, 1).unwrap(), // Safe unwrap due to hardcoded values,
+                ArithmeticDate::new_unchecked(year, 1, 1), // Unchecked ok to hardcoded values,
             )))
             .to_f64_date());
-        let month = div_rem_euclid_f64((prior_days * 11.0) + 330.0, 325.0).0 as u8; // Prior days will always be a number between 354-355, making the value within the bounds of a u8.
+        debug_assert!(prior_days <= 354.);
+        let month = div_rem_euclid_f64((prior_days * 11.0) + 330.0, 325.0).0 as u8; // Prior days is at most 354 (with year length 355), making the value 12 or less and within bounds of u8
+        debug_assert!(month <= 12);
         let day = (date.to_f64_date()
             - (Self::fixed_from_islamic(IslamicTabularDateInner(
-                ArithmeticDate::new_from_lunar_ordinals(year, month, 1).unwrap(), // Safe unwrap,
+                ArithmeticDate::new_unchecked(year, month, 1), // Unchecked ok due to hardcoded day value and month being in range,
             ))
             .to_f64_date())
             + 1.0) as u8; // The value will always be number between 1-30 because of the difference between the date and lunar ordinals function.
