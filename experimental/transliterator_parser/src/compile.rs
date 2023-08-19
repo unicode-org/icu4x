@@ -923,11 +923,24 @@ pub fn legacy_id_to_internal_id(source: &str, target: &str, variant: Option<&str
 
 /// Metadata about the nature of a transliterator source.
 #[derive(Debug, Clone, Copy)]
+#[non_exhaustive]
 pub struct Metadata {
     /// Whether the transliterator is constructable directly by the user or not.
     pub visible: bool,
     /// The supported direction(s) of the transliterator.
     pub direction: parse::Direction,
+}
+
+impl Metadata {
+    /// Creates a Metadata struct.
+    ///
+    /// # Arguments
+    ///
+    /// * `visible`: Whether the transliterator is constructable directly by the user or not.
+    /// * `direction`: The supported direction(s) of the transliterator according to the metadata.
+    pub fn new(visible: bool, direction: parse::Direction) -> Self {
+        Self { visible, direction }
+    }
 }
 
 #[cfg(test)]

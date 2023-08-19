@@ -112,10 +112,10 @@ impl DataProvider<TransliteratorRulesV1Marker> for crate::DatagenProvider {
             transforms::Direction::Backward => icu_transliterator_parser::Direction::Reverse,
             transforms::Direction::Both => icu_transliterator_parser::Direction::Both,
         };
-        let metadata = icu_transliterator_parser::Metadata {
-            visible: visibility == transforms::Visibility::External,
-            direction: metadata_dir,
-        };
+        let metadata = icu_transliterator_parser::Metadata::new(
+            visibility == transforms::Visibility::External,
+            metadata_dir,
+        );
 
         let source = self.cldr()?.transforms().read_source(&transform)?;
 
