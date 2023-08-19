@@ -10,3 +10,10 @@
 include!(concat!(core::env!("ICU4X_DATA_DIR"), "/macros.rs"));
 #[cfg(not(icu4x_custom_data))]
 include!("../data/macros.rs");
+
+#[macro_export]
+macro_rules! impl_transliteration_transliterator_rules_v1 {
+    ($name:ident) => {
+        // noop
+    };
+}
