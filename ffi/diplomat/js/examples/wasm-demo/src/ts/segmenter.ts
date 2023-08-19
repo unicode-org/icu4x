@@ -19,47 +19,29 @@ export class SegmenterDemo {
     #render(): void {
         const segments = [];
 
-        const sizeOfLetter = (codePoint: number) => {
-            let numBytes = 0;
-            while (codePoint > 0) {
-                codePoint >>= 4;
-                numBytes += 1;
-            }
-            return numBytes - 1;
-        };
-
-        let nextIndex = 0;
-        let bytes = 0;
-        const updateIndexToByte = (byte: number) => {
-            if (bytes >= byte) {
-                return nextIndex;
-            }
-            for (let n = 0; n < 8; ++n) {
-                bytes += sizeOfLetter(this.#text.codePointAt(nextIndex));
-                nextIndex += 1;
-                if (bytes >= byte) {
-                    return nextIndex;
-                }
-            }
-            return -1;
-        };
-
+        let utf8Index = 0;
+        let utf16Index = 0;
         const iter8 = this.#segmenter.segment_utf8(this.#text);
-        let index = 0;
         while (true) {
             const next = iter8.next();
 
             if (next === -1) {
-                segments.push(this.#text.slice(index));
+                segments.push(this.#text.slice(utf16Index));
                 break;
             } else {
-                const nextIndex = updateIndexToByte(next);
-                if (nextIndex === -1) {
-                    this.#displayFn("Error: characters currently not support in the JS demo");
-                    return;
+                const oldUtf16Index = utf16Index;
+                while (utf8Index < next) {
+                    const codePoint = this.#text.codePointAt(utf16Index);
+                    const utf8Len = (codePoint <= 0x7F) ? 1
+                        : (codePoint <= 0x7FF) ? 2
+                        : (codePoint <= 0xFFFF) ? 3
+                        : 4;
+                    const utf16Len = (codePoint <= 0xFFFF) ? 1
+                        : 2;
+                    utf8Index += utf8Len;
+                    utf16Index += utf16Len;
                 }
-                segments.push(this.#text.slice(index, nextIndex));
-                index = nextIndex;
+                segments.push(this.#text.slice(oldUtf16Index, utf16Index));
             }
         }
 
