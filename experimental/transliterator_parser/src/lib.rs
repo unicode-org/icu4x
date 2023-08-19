@@ -294,6 +294,11 @@ mod tests {
                 rule_group_list: VarZeroVec::from(&expected_rule_group_list),
                 variable_table: expected_var_table,
                 visibility: true,
+                dependencies: VarZeroVec::from(&[
+                    "x-Any-Remove",
+                    "x-InterIndic-Devanagari",
+                    "x-Latin-InterIndic",
+                ]),
             };
             assert_eq!(forward, expected_rbt);
         }
@@ -384,6 +389,12 @@ mod tests {
                 rule_group_list: VarZeroVec::from(&expected_rule_group_list),
                 variable_table: expected_var_table,
                 visibility: true,
+                dependencies: VarZeroVec::from(&[
+                    "und-t-s0-anyrev-d0-addrndsp-m0-fifty",
+                    "x-Any-RevFnCall",
+                    "x-Devanagari-InterIndic",
+                    "x-InterIndic-Latin",
+                ]),
             };
             assert_eq!(reverse, expected_rbt);
         }

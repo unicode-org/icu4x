@@ -3,7 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use super::*;
-use crate::parse::UnicodeSet;
+use crate::parse::{BasicId, UnicodeSet};
 use core::fmt;
 use icu_collections::codepointinvlist::CodePointInversionList;
 use std::fmt::{Display, Formatter};
@@ -211,7 +211,12 @@ impl<'a, 'p> Pass2<'a, 'p> {
             var_definitions,
             available_transliterators,
         )?;
-        pass2.compile(result.groups, result.filter, visible)
+        pass2.compile(
+            result.groups,
+            result.filter,
+            result.data.used_transliterators,
+            visible,
+        )
     }
 
     fn try_new(
@@ -231,6 +236,7 @@ impl<'a, 'p> Pass2<'a, 'p> {
         &mut self,
         rule_groups: super::RuleGroups<'p>,
         global_filter: Option<FilterSet>,
+        used_transliterators: HashSet<BasicId>,
         visible: bool,
     ) -> Result<ds::RuleBasedTransliterator<'static>> {
         let mut compiled_transform_groups: Vec<VarZeroVec<'static, ds::SimpleIdULE>> = Vec::new();
@@ -250,15 +256,20 @@ impl<'a, 'p> Pass2<'a, 'p> {
             compiled_conversion_groups.push(VarZeroVec::from(&compiled_conversion_group));
         }
 
-        let res = ds::RuleBasedTransliterator {
+        let mut deps: Vec<_> = used_transliterators
+            .into_iter()
+            .map(|id| self.compile_basic_id(id))
+            .collect();
+        deps.sort_unstable();
+
+        Ok(ds::RuleBasedTransliterator {
             visibility: visible,
             filter: global_filter.unwrap_or(CodePointInversionList::all()),
             id_group_list: VarZeroVec::from(&compiled_transform_groups),
             rule_group_list: VarZeroVec::from(&compiled_conversion_groups),
             variable_table: self.var_table.finalize(),
-        };
-
-        Ok(res)
+            dependencies: VarZeroVec::from(&deps),
+        })
     }
 
     fn compile_conversion_rule(&mut self, rule: UniConversionRule<'p>) -> ds::Rule<'static> {
@@ -364,21 +375,22 @@ impl<'a, 'p> Pass2<'a, 'p> {
         }
     }
 
-    fn compile_single_id(&self, id: parse::SingleId) -> ds::SimpleId<'static> {
-        let recombined_legacy_id = id.basic_id.to_string();
-        let internal_id =
-            if let Some(internal_id) = self.available_transliterators.get(&recombined_legacy_id) {
-                internal_id.clone()
-            } else {
-                legacy_id_to_internal_id(
-                    &id.basic_id.source,
-                    &id.basic_id.target,
-                    id.basic_id.variant.as_deref(),
-                )
-            };
+    fn compile_basic_id(&self, basic_id: parse::BasicId) -> String {
+        let recombined_legacy_id = basic_id.to_string();
+        if let Some(internal_id) = self.available_transliterators.get(&recombined_legacy_id) {
+            internal_id.clone()
+        } else {
+            legacy_id_to_internal_id(
+                &basic_id.source,
+                &basic_id.target,
+                basic_id.variant.as_deref(),
+            )
+        }
+    }
 
+    fn compile_single_id(&self, id: parse::SingleId) -> ds::SimpleId<'static> {
         ds::SimpleId {
-            id: internal_id.into(),
+            id: self.compile_basic_id(id.basic_id).into(),
             filter: id.filter.unwrap_or(CodePointInversionList::all()),
         }
     }

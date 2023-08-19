@@ -46,6 +46,9 @@ pub struct RuleBasedTransliterator<'a> {
     /// The list of conversion rule groups this transliterator uses.
     #[serde(borrow)]
     pub rule_group_list: VarZeroVec<'a, VarZeroSlice<RuleULE>>,
+    /// The direct dependencies of this transliterator.
+    #[serde(borrow)]
+    pub dependencies: VarZeroVec<'a, str>,
 }
 
 /// The ID of a transliterator plus an optional filter.
