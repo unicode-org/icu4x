@@ -1968,11 +1968,16 @@ dependencies = [
  "databake",
  "icu_collections",
  "icu_provider",
+ "icu_transliteration_data",
  "serde",
  "yoke",
  "zerofrom",
  "zerovec",
 ]
+
+[[package]]
+name = "icu_transliteration_data"
+version = "0.0.0"
 
 [[package]]
 name = "icu_transliterator_parser"

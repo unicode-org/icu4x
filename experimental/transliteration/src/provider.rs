@@ -23,6 +23,16 @@ use icu_collections::{
 };
 use zerovec::*;
 
+#[cfg(feature = "compiled_data")]
+#[derive(Debug)]
+/// Baked data
+pub struct Baked;
+
+#[cfg(feature = "compiled_data")]
+const _: () = {
+    icu_transliteration_data::impl_transliteration_transliterator_rules_v1!(Baked);
+};
+
 // TODO(#3776): Improve the documentation of this datastruct.
 
 /// The data struct representing [UTS #35 transform rules](https://unicode.org/reports/tr35/tr35-general.html#Transforms).
@@ -57,8 +67,16 @@ pub struct RuleBasedTransliterator<'a> {
 #[make_varule(SimpleIdULE)]
 #[zerovec::skip_derive(Ord)]
 #[zerovec::derive(Debug)]
-#[cfg_attr(feature = "serde", derive(serde::Deserialize), zerovec::derive(Deserialize))]
-#[cfg_attr(feature = "datagen", derive(serde::Serialize), zerovec::derive(Serialize))]
+#[cfg_attr(
+    feature = "serde",
+    derive(serde::Deserialize),
+    zerovec::derive(Deserialize)
+)]
+#[cfg_attr(
+    feature = "datagen",
+    derive(serde::Serialize),
+    zerovec::derive(Serialize)
+)]
 pub struct SimpleId<'a> {
     /// The filter for the transliterator. If there is none, the set of all code points is used.
     #[zerovec::varule(CodePointInversionListULE)]
@@ -75,8 +93,16 @@ pub struct SimpleId<'a> {
 #[make_varule(RuleULE)]
 #[zerovec::skip_derive(Ord)]
 #[zerovec::derive(Debug)]
-#[cfg_attr(feature = "serde", derive(serde::Deserialize), zerovec::derive(Deserialize))]
-#[cfg_attr(feature = "datagen", derive(serde::Serialize), zerovec::derive(Serialize))]
+#[cfg_attr(
+    feature = "serde",
+    derive(serde::Deserialize),
+    zerovec::derive(Deserialize)
+)]
+#[cfg_attr(
+    feature = "datagen",
+    derive(serde::Serialize),
+    zerovec::derive(Serialize)
+)]
 pub struct Rule<'a> {
     /// The pattern for the ante context. This is not replaced.
     #[cfg_attr(feature = "serde", serde(borrow))]
@@ -134,8 +160,16 @@ pub struct VarTable<'a> {
 #[make_varule(FunctionCallULE)]
 #[zerovec::skip_derive(Ord)]
 #[zerovec::derive(Debug)]
-#[cfg_attr(feature = "serde", derive(serde::Deserialize), zerovec::derive(Deserialize))]
-#[cfg_attr(feature = "datagen", derive(serde::Serialize), zerovec::derive(Serialize))]
+#[cfg_attr(
+    feature = "serde",
+    derive(serde::Deserialize),
+    zerovec::derive(Deserialize)
+)]
+#[cfg_attr(
+    feature = "datagen",
+    derive(serde::Serialize),
+    zerovec::derive(Serialize)
+)]
 pub struct FunctionCall<'a> {
     /// The transliterator that will be called.
     #[zerovec::varule(SimpleIdULE)]
