@@ -13,6 +13,13 @@ use icu_provider::{yoke, zerofrom};
 use zerovec::{VarZeroVec, ZeroMap};
 use Default;
 
+/// This type contains all of the constants data for units conversion.
+///
+/// <div class="stab unstable">
+/// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
+/// including in SemVer minor releases. While the serde representation of data structs is guaranteed
+/// to be stable, their Rust representation might not be. Use with caution.
+/// </div>
 #[icu_provider::data_struct(marker(UnitsConstantsV1Marker, "units/constants@1", singleton))]
 #[derive(Default, Clone, PartialEq, Debug)]
 #[cfg_attr(
@@ -23,11 +30,14 @@ use Default;
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[yoke(prove_covariance_manually)]
 pub struct UnitsConstantsV1<'data> {
+    /// Maps from constant name (e.g. m-to-ft) to index in the constants_values where the constant value can be retrieved.
     #[cfg_attr(feature = "serde", serde(borrow))]
     pub constants_map: ZeroMap<'data, str, u16>,
 
     // TODO(#3882): Use a more efficient representation for the values with numerators and denominators.
     // Also, the constant types.
+    /// Contains all the constant values (including numerators and denominators) and can
+    /// be accessed through the index from the constants_map.
     #[cfg_attr(feature = "serde", serde(borrow))]
     pub constants_values: VarZeroVec<'data, str>,
 }
