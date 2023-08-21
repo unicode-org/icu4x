@@ -10,7 +10,7 @@ rust-version = "1.65.0"
 authors = ["Manish Goregaokar <manishsmail@gmail.com>"]
 edition = "2021"
 repository = "https://github.com/unicode-org/icu4x"
-license = "Unicode-DFS-2016"
+license-file = "LICENSE"
 categories = ["data-structures", "memory-management", "caching", "no-std"]
 keywords = ["zerocopy", "serialization", "lifetime", "borrow", "self-referential"]
 include = [
@@ -45,7 +45,7 @@ stable_deref_trait = { version = "1.2.0", default-features = false }
 yoke-derive = { version = "0.7.0", path = "./derive", optional = true }
 
 serde = { version = "1.0", default-features = false, optional = true }
-zerofrom = { version = "0.1.1", path = "../zerofrom", default-features = false, optional = true} 
+zerofrom = { version = "0.1.1", path = "../zerofrom", default-features = false, optional = true}
 
 [dev-dependencies]
 bincode = "1.3.3"
