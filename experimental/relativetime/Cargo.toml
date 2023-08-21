@@ -6,16 +6,15 @@
 name = "icu_relativetime"
 version = "0.1.1"
 description = "Relative time formatting"
-rust-version = "1.61.0"
+rust-version = "1.65.0"
 authors = ["The ICU4X Project Developers"]
 edition = "2021"
 repository = "https://github.com/unicode-org/icu4x"
 homepage = "https://icu4x.unicode.org"
-license = "Unicode-DFS-2016"
+license-file = "LICENSE"
 categories = ["internationalization"]
 # Keep this in sync with other crates unless there are exceptions
 include = [
-    "data/*",
     "src/**/*",
     "examples/**/*",
     "benches/**/*",
@@ -34,8 +33,8 @@ all-features = true
 [dependencies]
 displaydoc = { version = "0.2.3", default-features = false }
 fixed_decimal = { version = "0.5.2", path = "../../utils/fixed_decimal" }
-icu_decimal = { version = "1.2.0", path = "../../components/decimal" }
-icu_plurals = { version = "1.2.0", path = "../../components/plurals" }
+icu_decimal = { version = "1.2.0", path = "../../components/decimal", default-features = false }
+icu_plurals = { version = "1.2.0", path = "../../components/plurals", default-features = false }
 icu_provider = { version = "1.2.0", path = "../../provider/core", features = ["macros"] }
 writeable = { version = "0.5.1", path = "../../utils/writeable" }
 zerovec = { version = "0.9.4", path = "../../utils/zerovec", features = ["yoke"] }
@@ -43,14 +42,18 @@ zerovec = { version = "0.9.4", path = "../../utils/zerovec", features = ["yoke"]
 databake = { version = "0.1.3", path = "../../utils/databake", features = ["derive"], optional = true}
 serde = { version = "1.0", default-features = false, features = ["derive", "alloc"], optional = true }
 
+icu_relativetime_data = { version = "~1.3.0", path = "data", optional = true }
+icu_locid_transform = { version = "1.2.0", path = "../../components/locid_transform", optional = true }
+
 [dev-dependencies]
 icu = { path = "../../components/icu", features = ["icu_relativetime"] }
-icu_testdata = { path = "../../provider/testdata", default-features = false, features = ["icu_plurals", "icu_decimal", "icu_relativetime"] }
 
 [features]
+default = ["compiled_data"]
 std = ["fixed_decimal/std", "icu_decimal/std", "icu_plurals/std", "icu_provider/std"]
-serde = ["dep:serde", "zerovec/serde"]
+serde = ["dep:serde", "zerovec/serde", "icu_provider/serde", "icu_plurals/serde", "icu_decimal/serde"]
 datagen = ["std", "serde", "dep:databake", "zerovec/databake"]
+compiled_data = ["dep:icu_relativetime_data", "dep:icu_locid_transform", "icu_decimal/compiled_data", "icu_plurals/compiled_data"]
 
 [[test]]
 name = "tests"

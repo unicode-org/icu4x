@@ -5,11 +5,11 @@
 [package]
 name = "litemap"
 version = "0.7.0"
-rust-version = "1.61.0"
+rust-version = "1.65.0"
 authors = ["The ICU4X Project Developers"]
 repository = "https://github.com/unicode-org/icu4x"
 edition = "2021"
-license = "Unicode-DFS-2016"
+license-file = "LICENSE"
 keywords = ["sorted", "vec", "map", "hashmap", "btreemap"]
 description = "A key-value Map implementation based on a flat, sorted Vec."
 documentation = "https://docs.rs/litemap"
@@ -38,13 +38,15 @@ yoke = { version = "0.7.1", path = "../yoke", features = ["derive"], optional = 
 [dev-dependencies]
 bincode = "1"
 bytecheck = "0.6"
-criterion = "0.4"
 icu_benchmark_macros = { path = "../../tools/benchmark/macros" }
 icu_locid = { path = "../../components/locid" }
 postcard = { version = "1.0.0", features = ["use-std"], default-features = false }
 rkyv = { version = "0.7", features = ["validation"] }
 serde = "1"
 serde_json = "1"
+
+[target.'cfg(not(target_arch = "wasm32"))'.dev-dependencies]
+criterion = "0.4"
 
 [features]
 bench = []

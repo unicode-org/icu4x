@@ -6,13 +6,13 @@
 name = "icu_harfbuzz"
 description = "HarfBuzz glue code for ICU4X"
 version = "0.1.0"
-rust-version = "1.61.0"
+rust-version = "1.65.0"
 authors = ["The ICU4X Project Developers"]
 edition = "2021"
 resolver = "2"
 repository = "https://github.com/unicode-org/icu4x"
 homepage = "https://icu4x.unicode.org"
-license = "Unicode-DFS-2016"
+license-file = "LICENSE"
 categories = ["internationalization"]
 # Keep this in sync with other crates unless there are exceptions
 include = [
@@ -42,18 +42,17 @@ denylist = ["bench", "serde", "logging"]
 
 [dependencies]
 harfbuzz-sys = { version = "0.5.0" }
-icu_normalizer = { version = "1.0.0", path = "../../components/normalizer/" }
-icu_properties = { version = "1.0.0", path = "../../components/properties" }
+icu_normalizer = { version = "1.2.0", path = "../../components/normalizer/", default-features = false }
+icu_properties = { version = "1.2.0", path = "../../components/properties", default-features = false }
 icu_provider = { version = "1.0.0", path = "../../provider/core", features = ["macros"] }
 displaydoc = { version = "0.2.3", default-features = false }
 tinystr = { version = "0.7.1", path = "../../utils/tinystr", default-features = false }
 
 [dev-dependencies]
-icu_testdata = { path = "../../provider/testdata" }
 harfbuzz = { version = "0.4.0" }
 
 [features]
 default = []
-# TODO(#3275) Make this no_std again
-# std = []
+compiled_data = ["icu_normalizer/compiled_data", "icu_properties/compiled_data"]
+std = []
 serde = ["icu_properties/serde", "icu_normalizer/serde", "icu_provider/serde"]

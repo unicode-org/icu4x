@@ -65,10 +65,10 @@ where
     /// `bytes` need to be an output from [`ZeroSlice::as_bytes()`].
     pub const unsafe fn from_bytes_unchecked(bytes: &[u8]) -> &Self {
         // &[u8] and &[T::ULE] are the same slice with different length metadata.
-        Self::from_ule_slice(core::mem::transmute((
-            bytes.as_ptr(),
+        Self::from_ule_slice(core::slice::from_raw_parts(
+            bytes.as_ptr() as *const T::ULE,
             bytes.len() / core::mem::size_of::<T::ULE>(),
-        )))
+        ))
     }
 
     /// Construct a `&ZeroSlice<T>` from a slice of ULEs.
@@ -577,16 +577,17 @@ mod test {
         }
         {
             // single element slice
-            const DATA: &ZeroSlice<u16> = zeroslice![u16; <u16 as AsULE>::ULE::from_unsigned; 211];
+            const DATA: &ZeroSlice<u16> =
+                zeroslice!(u16; <u16 as AsULE>::ULE::from_unsigned; [211]);
             assert_eq!((211, zeroslice![]), DATA.split_first().unwrap());
         }
         {
             // slice with many elements.
             const DATA: &ZeroSlice<u16> =
-                zeroslice![u16; <u16 as AsULE>::ULE::from_unsigned; 211, 281, 421, 32973];
+                zeroslice!(u16; <u16 as AsULE>::ULE::from_unsigned; [211, 281, 421, 32973]);
             const EXPECTED_VALUE: (u16, &ZeroSlice<u16>) = (
                 211,
-                zeroslice![u16; <u16 as AsULE>::ULE::from_unsigned; 281, 421, 32973],
+                zeroslice!(u16; <u16 as AsULE>::ULE::from_unsigned; [281, 421, 32973]),
             );
 
             assert_eq!(EXPECTED_VALUE, DATA.split_first().unwrap());

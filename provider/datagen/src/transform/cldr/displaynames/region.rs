@@ -16,10 +16,10 @@ impl DataProvider<RegionDisplayNamesV1Marker> for crate::DatagenProvider {
         &self,
         req: DataRequest,
     ) -> Result<DataResponse<RegionDisplayNamesV1Marker>, DataError> {
+        self.check_req::<RegionDisplayNamesV1Marker>(req)?;
         let langid = req.locale.get_langid();
 
         let data: &cldr_serde::displaynames::region::Resource = self
-            .source
             .cldr()?
             .displaynames()
             .read_and_parse(&langid, "territories.json")?;
@@ -37,23 +37,20 @@ impl DataProvider<RegionDisplayNamesV1Marker> for crate::DatagenProvider {
 
 impl IterableDataProvider<RegionDisplayNamesV1Marker> for crate::DatagenProvider {
     fn supported_locales(&self) -> Result<Vec<DataLocale>, DataError> {
-        Ok(self.source.options.locales.filter_by_langid_equality(
-            self.source
-                .cldr()?
-                .displaynames()
-                .list_langs()?
-                .filter(|langid| {
-                    // The directory might exist without territories.json
-                    self.source
-                        .cldr()
-                        .unwrap()
-                        .displaynames()
-                        .file_exists(langid, "territories.json")
-                        .unwrap_or_default()
-                })
-                .map(DataLocale::from)
-                .collect(),
-        ))
+        Ok(self
+            .cldr()?
+            .displaynames()
+            .list_langs()?
+            .filter(|langid| {
+                // The directory might exist without territories.json
+                self.cldr()
+                    .unwrap()
+                    .displaynames()
+                    .file_exists(langid, "territories.json")
+                    .unwrap_or_default()
+            })
+            .map(DataLocale::from)
+            .collect())
     }
 }
 
@@ -67,13 +64,11 @@ impl TryFrom<&cldr_serde::displaynames::region::Resource> for RegionDisplayNames
     fn try_from(other: &cldr_serde::displaynames::region::Resource) -> Result<Self, Self::Error> {
         let mut names = BTreeMap::new();
         let mut short_names = BTreeMap::new();
-        for (_, lang_display_names) in other.main.0.iter() {
-            for (region, value) in lang_display_names.localedisplaynames.regions.iter() {
-                if let Some(region) = region.strip_suffix(SHORT_SUBSTRING) {
-                    short_names.insert(Region::from_str(region)?.into_tinystr(), value.as_str());
-                } else if !region.contains(ALT_SUBSTRING) {
-                    names.insert(Region::from_str(region)?.into_tinystr(), value.as_str());
-                }
+        for (region, value) in other.main.value.localedisplaynames.regions.iter() {
+            if let Some(region) = region.strip_suffix(SHORT_SUBSTRING) {
+                short_names.insert(Region::from_str(region)?.into_tinystr(), value.as_str());
+            } else if !region.contains(ALT_SUBSTRING) {
+                names.insert(Region::from_str(region)?.into_tinystr(), value.as_str());
             }
         }
         Ok(Self {
@@ -95,11 +90,11 @@ impl TryFrom<&cldr_serde::displaynames::region::Resource> for RegionDisplayNames
 #[cfg(test)]
 mod tests {
     use super::*;
-    use icu_locid::{locale, subtags_region as region};
+    use icu_locid::{locale, subtags::region};
 
     #[test]
     fn test_basic() {
-        let provider = crate::DatagenProvider::for_test();
+        let provider = crate::DatagenProvider::latest_tested_offline_subset();
 
         let data: DataPayload<RegionDisplayNamesV1Marker> = provider
             .load(DataRequest {
@@ -121,7 +116,7 @@ mod tests {
 
     #[test]
     fn test_basic_short_names() {
-        let provider = crate::DatagenProvider::for_test();
+        let provider = crate::DatagenProvider::latest_tested_offline_subset();
 
         let data: DataPayload<RegionDisplayNamesV1Marker> = provider
             .load(DataRequest {

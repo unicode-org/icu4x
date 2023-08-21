@@ -64,16 +64,14 @@ impl From<GroupingStrategy> for CompactDecimalFormatterOptions {
 /// use icu_locid::locale;
 /// use writeable::assert_writeable_eq;
 ///
-/// let short_french = CompactDecimalFormatter::try_new_short_unstable(
-///    &icu_testdata::unstable(),
+/// let short_french = CompactDecimalFormatter::try_new_short(
 ///    &locale!("fr").into(),
 ///    Default::default(),
 /// ).unwrap();
 ///
 /// let [long_french, long_japanese, long_bangla] = [locale!("fr"), locale!("ja"), locale!("bn")]
 ///     .map(|locale| {
-///         CompactDecimalFormatter::try_new_long_unstable(
-///             &icu_testdata::unstable(),
+///         CompactDecimalFormatter::try_new_long(
 ///             &locale.into(),
 ///             Default::default(),
 ///         )
@@ -100,15 +98,13 @@ pub struct CompactDecimalFormatter {
 }
 
 impl CompactDecimalFormatter {
-    /// Constructor that takes a selected locale, reference to a
-    /// [data provider] and a list of preferences, then collects all data
-    /// necessary to format numbers in short compact decimal notation for
-    /// the given locale.
+    /// Constructor that takes a selected locale and a list of preferences,
+    /// then collects all compiled data necessary to format numbers in short compact
+    /// decimal notation for the given locale.
+    ///
+    /// ✨ *Enabled with the `compiled_data` Cargo feature.*
     ///
     /// [📚 Help choosing a constructor](icu_provider::constructors)
-    /// <div class="stab unstable">
-    /// ⚠️ The bounds on this function may change over time, including in SemVer minor releases.
-    /// </div>
     ///
     /// # Examples
     ///
@@ -116,16 +112,51 @@ impl CompactDecimalFormatter {
     /// use icu_compactdecimal::CompactDecimalFormatter;
     /// use icu_locid::locale;
     ///
-    /// CompactDecimalFormatter::try_new_short_unstable(
-    ///     &icu_testdata::unstable(),
+    /// CompactDecimalFormatter::try_new_short(
     ///     &locale!("sv").into(),
     ///     Default::default(),
     /// );
     /// ```
-    ///
-    /// [data provider]: icu_provider
+    #[cfg(feature = "compiled_data")]
+    pub fn try_new_short(
+        locale: &DataLocale,
+        options: CompactDecimalFormatterOptions,
+    ) -> Result<Self, CompactDecimalError> {
+        Ok(Self {
+            fixed_decimal_format: FixedDecimalFormatter::try_new(
+                locale,
+                options.fixed_decimal_formatter_options,
+            )?,
+            plural_rules: PluralRules::try_new_cardinal(locale)?,
+            compact_data: DataProvider::<ShortCompactDecimalFormatDataV1Marker>::load(
+                &crate::provider::Baked,
+                DataRequest {
+                    locale,
+                    metadata: Default::default(),
+                },
+            )?
+            .take_payload()?
+            .cast(),
+        })
+    }
+
+    icu_provider::gen_any_buffer_data_constructors!(
+        locale: include,
+        options: CompactDecimalFormatterOptions,
+        error: CompactDecimalError,
+        #[cfg(skip)]
+        functions: [
+            try_new_short,
+            try_new_short_with_any_provider,
+            try_new_short_with_buffer_provider,
+            try_new_short_unstable,
+            Self,
+        ]
+    );
+
+    #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::try_new_short)]
     pub fn try_new_short_unstable<D>(
-        data_provider: &D,
+        provider: &D,
         locale: &DataLocale,
         options: CompactDecimalFormatterOptions,
     ) -> Result<Self, CompactDecimalError>
@@ -137,13 +168,13 @@ impl CompactDecimalFormatter {
     {
         Ok(Self {
             fixed_decimal_format: FixedDecimalFormatter::try_new_unstable(
-                data_provider,
+                provider,
                 locale,
                 options.fixed_decimal_formatter_options,
             )?,
-            plural_rules: PluralRules::try_new_cardinal_unstable(data_provider, locale)?,
+            plural_rules: PluralRules::try_new_cardinal_unstable(provider, locale)?,
             compact_data: DataProvider::<ShortCompactDecimalFormatDataV1Marker>::load(
-                data_provider,
+                provider,
                 DataRequest {
                     locale,
                     metadata: Default::default(),
@@ -154,26 +185,13 @@ impl CompactDecimalFormatter {
         })
     }
 
-    icu_provider::gen_any_buffer_constructors!(
-        locale: include,
-        options: CompactDecimalFormatterOptions,
-        error: CompactDecimalError,
-        functions: [
-            Self::try_new_short_unstable,
-            try_new_short_with_any_provider,
-            try_new_short_with_buffer_provider
-        ]
-    );
-
-    /// Constructor that takes a selected locale, reference to a
-    /// [data provider] and a list of preferences, then collects all data
-    /// necessary to format numbers in short compact decimal notation for
-    /// the given locale.
+    /// Constructor that takes a selected locale and a list of preferences,
+    /// then collects all compiled data necessary to format numbers in short compact
+    /// decimal notation for the given locale.
+    ///
+    /// ✨ *Enabled with the `compiled_data` Cargo feature.*
     ///
     /// [📚 Help choosing a constructor](icu_provider::constructors)
-    /// <div class="stab unstable">
-    /// ⚠️ The bounds on this function may change over time, including in SemVer minor releases.
-    /// </div>
     ///
     /// # Examples
     ///
@@ -181,16 +199,51 @@ impl CompactDecimalFormatter {
     /// use icu_compactdecimal::CompactDecimalFormatter;
     /// use icu_locid::locale;
     ///
-    /// CompactDecimalFormatter::try_new_long_unstable(
-    ///     &icu_testdata::unstable(),
+    /// CompactDecimalFormatter::try_new_long(
     ///     &locale!("sv").into(),
     ///     Default::default(),
     /// );
     /// ```
-    ///
-    /// [data provider]: icu_provider
+    #[cfg(feature = "compiled_data")]
+    pub fn try_new_long(
+        locale: &DataLocale,
+        options: CompactDecimalFormatterOptions,
+    ) -> Result<Self, CompactDecimalError> {
+        Ok(Self {
+            fixed_decimal_format: FixedDecimalFormatter::try_new(
+                locale,
+                options.fixed_decimal_formatter_options,
+            )?,
+            plural_rules: PluralRules::try_new_cardinal(locale)?,
+            compact_data: DataProvider::<LongCompactDecimalFormatDataV1Marker>::load(
+                &crate::provider::Baked,
+                DataRequest {
+                    locale,
+                    metadata: Default::default(),
+                },
+            )?
+            .take_payload()?
+            .cast(),
+        })
+    }
+
+    icu_provider::gen_any_buffer_data_constructors!(
+        locale: include,
+        options: CompactDecimalFormatterOptions,
+        error: CompactDecimalError,
+        #[cfg(skip)]
+        functions: [
+            try_new_long,
+            try_new_long_with_any_provider,
+            try_new_long_with_buffer_provider,
+            try_new_long_unstable,
+            Self,
+        ]
+    );
+
+    #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::try_new_long)]
     pub fn try_new_long_unstable<D>(
-        data_provider: &D,
+        provider: &D,
         locale: &DataLocale,
         options: CompactDecimalFormatterOptions,
     ) -> Result<Self, CompactDecimalError>
@@ -202,13 +255,13 @@ impl CompactDecimalFormatter {
     {
         Ok(Self {
             fixed_decimal_format: FixedDecimalFormatter::try_new_unstable(
-                data_provider,
+                provider,
                 locale,
                 options.fixed_decimal_formatter_options,
             )?,
-            plural_rules: PluralRules::try_new_cardinal_unstable(data_provider, locale)?,
+            plural_rules: PluralRules::try_new_cardinal_unstable(provider, locale)?,
             compact_data: DataProvider::<LongCompactDecimalFormatDataV1Marker>::load(
-                data_provider,
+                provider,
                 DataRequest {
                     locale,
                     metadata: Default::default(),
@@ -218,17 +271,6 @@ impl CompactDecimalFormatter {
             .cast(),
         })
     }
-
-    icu_provider::gen_any_buffer_constructors!(
-        locale: include,
-        options: CompactDecimalFormatterOptions,
-        error: CompactDecimalError,
-        functions: [
-            Self::try_new_long_unstable,
-            try_new_long_with_any_provider,
-            try_new_long_with_buffer_provider
-        ]
-    );
 
     /// Formats an integer in compact decimal notation using the default
     /// precision settings.
@@ -241,8 +283,7 @@ impl CompactDecimalFormatter {
     /// # use icu_locid::locale;
     /// # use writeable::assert_writeable_eq;
     /// #
-    /// # let short_english = CompactDecimalFormatter::try_new_short_unstable(
-    /// #    &icu_testdata::unstable(),
+    /// # let short_english = CompactDecimalFormatter::try_new_short(
     /// #    &locale!("en").into(),
     /// #    Default::default(),
     /// # ).unwrap();
@@ -261,8 +302,7 @@ impl CompactDecimalFormatter {
     /// # use icu_locid::locale;
     /// # use writeable::assert_writeable_eq;
     /// #
-    /// # let short_english = CompactDecimalFormatter::try_new_short_unstable(
-    /// #    &icu_testdata::unstable(),
+    /// # let short_english = CompactDecimalFormatter::try_new_short(
     /// #    &locale!("en").into(),
     /// #    Default::default(),
     /// # ).unwrap();
@@ -340,15 +380,13 @@ impl CompactDecimalFormatter {
     /// # use std::str::FromStr;
     /// use fixed_decimal::CompactDecimal;
     ///
-    /// # let short_french = CompactDecimalFormatter::try_new_short_unstable(
-    /// #    &icu_testdata::unstable(),
+    /// # let short_french = CompactDecimalFormatter::try_new_short(
     /// #    &locale!("fr").into(),
     /// #    Default::default(),
     /// # ).unwrap();
     /// # let [long_french, long_bangla] = [locale!("fr"), locale!("bn")]
     /// #     .map(|locale| {
-    /// #         CompactDecimalFormatter::try_new_long_unstable(
-    /// #             &icu_testdata::unstable(),
+    /// #         CompactDecimalFormatter::try_new_long(
     /// #             &locale.into(),
     /// #             Default::default(),
     /// #         )
@@ -445,8 +483,7 @@ impl CompactDecimalFormatter {
     ///
     /// let [long_french, long_japanese, long_bangla] =
     ///     [locale!("fr"), locale!("ja"), locale!("bn")].map(|locale| {
-    ///         CompactDecimalFormatter::try_new_long_unstable(
-    ///             &icu_testdata::unstable(),
+    ///         CompactDecimalFormatter::try_new_long(
     ///             &locale.into(),
     ///             Default::default(),
     ///         )
@@ -543,19 +580,10 @@ mod tests {
             },
         ];
         for case in cases {
-            let provider = icu_testdata::buffer();
             let formatter = if case.short {
-                CompactDecimalFormatter::try_new_short_with_buffer_provider(
-                    &provider,
-                    &locale!("en").into(),
-                    case.options.clone(),
-                )
+                CompactDecimalFormatter::try_new_short(&locale!("en").into(), case.options.clone())
             } else {
-                CompactDecimalFormatter::try_new_long_with_buffer_provider(
-                    &provider,
-                    &locale!("en").into(),
-                    case.options.clone(),
-                )
+                CompactDecimalFormatter::try_new_long(&locale!("en").into(), case.options.clone())
             }
             .unwrap();
             let result1T = formatter.format_i64(1_000_000_000_000_000);

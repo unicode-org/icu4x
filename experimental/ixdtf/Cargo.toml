@@ -6,13 +6,13 @@
 name = "ixdtf"
 description = "Parser for Internet eXtended DateTime Format"
 version = "0.1.0"
-rust-version = "1.61.0"
+rust-version = "1.65.0"
 authors = ["The ICU4X Project Developers"]
 edition = "2021"
 readme = "README.md"
 repository = "https://github.com/unicode-org/icu4x"
 homepage = "https://icu4x.unicode.org"
-license = "Unicode-DFS-2016"
+license-file = "LICENSE"
 categories = ["internationalization"]
 # Keep this in sync with other crates unless there are exceptions
 include = [
@@ -34,6 +34,7 @@ all-features = true
 [dependencies]
 
 [dev-dependencies]
-criterion = "0.4"
-icu_testdata = { path = "../../provider/testdata" }
 serde-json-core = { version = "0.4", features = ["std"] }
+
+[target.'cfg(not(target_arch = "wasm32"))'.dev-dependencies]
+criterion = "0.4"

@@ -1,0 +1,23 @@
+{
+  "keys": {
+    "explicit": [
+      "core/helloworld@1"
+    ]
+  },
+  "fallback": "preresolved",
+  "locales": {
+    "explicit": [
+      "de"
+    ]
+  },
+  "cldr": "none",
+  "icuExport": "none",
+  "segmenterLstm": "none",
+  "export": {
+    "fileSystem": {
+      "path": "de",
+      "syntax": "json"
+    }
+  },
+  "overwrite": true
+}

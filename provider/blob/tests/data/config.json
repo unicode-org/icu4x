@@ -1,0 +1,18 @@
+{
+  "keys": {
+    "explicit": [
+      "core/helloworld@1"
+    ]
+  },
+  "fallback": "hybrid",
+  "locales": "all",
+  "cldr": "none",
+  "icuExport": "none",
+  "segmenterLstm": "none",
+  "export": {
+    "blob": {
+      "path": "hello_world.postcard"
+    }
+  },
+  "overwrite": true
+}

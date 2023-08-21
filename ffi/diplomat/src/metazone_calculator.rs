@@ -13,19 +13,22 @@ pub mod ffi {
     ///
     /// This can be used via `maybe_calculate_metazone()` on [`ICU4XCustomTimeZone`].
     ///
-    /// [`ICU4XCustomTimeZone`]: crate::timezone::ffi::ICU4XCustomTimeZone;
+    /// [`ICU4XCustomTimeZone`]: crate::timezone::ffi::ICU4XCustomTimeZone
     #[diplomat::opaque]
     #[diplomat::rust_link(icu::timezone::MetazoneCalculator, Struct)]
     pub struct ICU4XMetazoneCalculator(pub MetazoneCalculator);
 
     impl ICU4XMetazoneCalculator {
-        #[diplomat::rust_link(icu::timezone::MetazoneCalculator::try_new_unstable, FnInStruct)]
+        #[diplomat::rust_link(icu::timezone::MetazoneCalculator::new, FnInStruct)]
         pub fn create(
             provider: &ICU4XDataProvider,
         ) -> Result<Box<ICU4XMetazoneCalculator>, ICU4XError> {
-            Ok(Box::new(ICU4XMetazoneCalculator(
-                MetazoneCalculator::try_new_unstable(&provider.0)?,
-            )))
+            Ok(Box::new(ICU4XMetazoneCalculator(call_constructor!(
+                MetazoneCalculator::new [r => Ok(r)],
+                MetazoneCalculator::try_new_with_any_provider,
+                MetazoneCalculator::try_new_with_buffer_provider,
+                provider,
+            )?)))
         }
     }
 }

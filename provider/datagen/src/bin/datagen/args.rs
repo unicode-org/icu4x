@@ -45,6 +45,16 @@ enum CollationTable {
     SearchAll,
 }
 
+// Mirrors crate::options::FallbackMode
+#[derive(Copy, Clone, PartialEq, Eq, PartialOrd, Ord, ValueEnum, Debug)]
+enum Fallback {
+    Auto,
+    Hybrid,
+    Runtime,
+    RuntimeManual,
+    Preresolved,
+}
+
 impl CollationTable {
     fn to_datagen_value(self) -> &'static str {
         match self {
@@ -63,8 +73,8 @@ impl CollationTable {
 #[command(about = format!("Learn more at: https://docs.rs/icu_datagen/{}", option_env!("CARGO_PKG_VERSION").unwrap_or("")), long_about = None)]
 #[command(group(
             ArgGroup::new("key_mode")
-                // .required(true)
-                .args(["keys", "key_file", "keys_for_bin", "all_keys"]),
+                .required(true)
+                .args(["keys", "key_file", "keys_for_bin", "all_keys", "config"]),
         ))]
 pub struct Cli {
     #[arg(short, long)]
@@ -89,8 +99,10 @@ pub struct Cli {
     #[arg(help = "--format=mod, --format=dir only: pretty-print the Rust or JSON output files.")]
     pretty: bool,
 
-    #[arg(long)]
-    #[arg(help = "--format=dir only: whether to add a fingerprints file to the output.")]
+    #[arg(long, hide = true)]
+    #[arg(
+        help = "--format=dir only: whether to add a fingerprints file to the output. This feature will be removed in a future version."
+    )]
     fingerprint: bool,
 
     #[arg(short = 't', long, value_name = "TAG", default_value = "latest")]
@@ -187,10 +199,11 @@ pub struct Cli {
     #[arg(help = "Deprecated: alias for --keys all")]
     all_keys: bool,
 
-    #[arg(long, short, num_args = 0..)]
+    #[arg(long, short, num_args = 0.., default_value = "recommended")]
     #[arg(
         help = "Include this locale in the output. Accepts multiple arguments. \
-                  Set to 'full' or 'modern' for the respective CLDR locale sets, or 'none' for no locales."
+                  Set to 'full' or 'modern' for the respective CLDR locale sets, 'none' for no locales, \
+                  or 'recommended' for the recommended set of locales."
     )]
     locales: Vec<String>,
 
@@ -207,7 +220,7 @@ pub struct Cli {
     )]
     output: Option<PathBuf>,
 
-    #[arg(long)]
+    #[arg(long, hide = true)]
     #[arg(
         help = "--format=mod only: insert feature gates for individual `icu_*` crates. Requires --use-separate-crates"
     )]
@@ -221,40 +234,100 @@ pub struct Cli {
 
     #[arg(long)]
     #[arg(help = "Load a TOML config")]
-    pub config: Option<PathBuf>,
+    config: Option<PathBuf>,
+
+    // TODO(#2856): Change the default to Auto in 2.0
+    #[arg(short, long, value_enum, default_value_t = Fallback::Hybrid)]
+    fallback: Fallback,
+
+    #[arg(long, num_args = 0.., default_value = "recommended")]
+    #[arg(
+        help = "Include these segmenter models in the output. Accepts multiple arguments. \
+                Defaults to 'recommended' for the recommended set of models. Use 'none' for no models"
+    )]
+    segmenter_models: Vec<String>,
 }
 
 impl Cli {
     pub fn as_config(&self) -> eyre::Result<config::Config> {
-        Ok(config::Config {
-            keys: self.make_keys()?,
-            locales: self.make_locales()?,
-            cldr: self.make_path(&self.cldr_root, &self.cldr_tag, "cldr-root")?,
-            icu_export: self.make_path(
-                &self.icuexport_root,
-                &self.icuexport_tag,
-                "icuexport-root",
-            )?,
-            segmenter_lstm: self.make_path(
-                &self.segmenter_lstm_root,
-                &self.segmenter_lstm_tag,
-                "segmenter-lstm",
-            )?,
-            trie_type: match self.trie_type {
-                TrieType::Fast => config::TrieType::Fast,
-                TrieType::Small => config::TrieType::Small,
-            },
-            collation_han_database: match self.collation_han_database {
-                CollationHanDatabase::Unihan => config::CollationHanDatabase::Unihan,
-                CollationHanDatabase::Implicit => config::CollationHanDatabase::Implicit,
-            },
-            collations: self
-                .include_collations
-                .iter()
-                .map(|c| c.to_datagen_value().to_owned())
-                .collect(),
-            export: self.make_exporter()?,
-            overwrite: self.overwrite,
+        Ok(if let Some(ref config_path) = self.config {
+            let mut config: config::Config =
+                serde_json::from_str(&std::fs::read_to_string(config_path)?)?;
+            let parent = config_path.parent().unwrap();
+            // all paths in the JSON file are relative to its path, not to pwd.
+            for path_or_tag in [
+                &mut config.cldr,
+                &mut config.icu_export,
+                &mut config.segmenter_lstm,
+            ] {
+                if let config::PathOrTag::Path(ref mut path) = path_or_tag {
+                    if path.is_relative() {
+                        *path = parent.join(path.clone());
+                    }
+                }
+            }
+            if let config::KeyInclude::ForBinary(path) = &mut config.keys {
+                if path.is_relative() {
+                    *path = parent.join(path.clone());
+                }
+            }
+            match &mut config.export {
+                config::Export::FileSystem { path, .. } => {
+                    if path.is_relative() {
+                        *path = parent.join(path.clone());
+                    }
+                }
+                config::Export::Blob { path, .. } => {
+                    if path.is_relative() {
+                        *path = parent.join(path.clone());
+                    }
+                }
+                config::Export::Baked { path, .. } => {
+                    if path.is_relative() {
+                        *path = parent.join(path.clone());
+                    }
+                }
+            }
+            config
+        } else {
+            config::Config {
+                keys: self.make_keys()?,
+                locales: self.make_locales()?,
+                cldr: self.make_path(&self.cldr_root, &self.cldr_tag, "cldr-root")?,
+                icu_export: self.make_path(
+                    &self.icuexport_root,
+                    &self.icuexport_tag,
+                    "icuexport-root",
+                )?,
+                segmenter_lstm: self.make_path(
+                    &self.segmenter_lstm_root,
+                    &self.segmenter_lstm_tag,
+                    "segmenter-lstm",
+                )?,
+                trie_type: match self.trie_type {
+                    TrieType::Fast => config::TrieType::Fast,
+                    TrieType::Small => config::TrieType::Small,
+                },
+                collation_han_database: match self.collation_han_database {
+                    CollationHanDatabase::Unihan => config::CollationHanDatabase::Unihan,
+                    CollationHanDatabase::Implicit => config::CollationHanDatabase::Implicit,
+                },
+                collations: self
+                    .include_collations
+                    .iter()
+                    .map(|c| c.to_datagen_value().to_owned())
+                    .collect(),
+                segmenter_models: self.make_segmenter_models()?,
+                export: self.make_exporter()?,
+                fallback: match self.fallback {
+                    Fallback::Auto => config::FallbackMode::PreferredForExporter,
+                    Fallback::Hybrid => config::FallbackMode::Hybrid,
+                    Fallback::Runtime => config::FallbackMode::Runtime,
+                    Fallback::RuntimeManual => config::FallbackMode::RuntimeManual,
+                    Fallback::Preresolved => config::FallbackMode::Preresolved,
+                },
+                overwrite: self.overwrite,
+            }
         })
     }
 
@@ -265,7 +338,12 @@ impl Cli {
             match self.keys.as_slice() {
                 [x] if x == "none" => config::KeyInclude::None,
                 [x] if x == "all" => config::KeyInclude::All,
-                [x] if x == "experimental-all" => config::KeyInclude::AllWithExperimental,
+                [x] if x == "experimental-all" => {
+                    log::warn!("--keys=experimental-all is deprecated, using --keys=all.");
+                    log::warn!("--keys=all behavior is dependent on activated Cargo features, so");
+                    log::warn!("building with experimental features includes experimental keys");
+                    config::KeyInclude::All
+                }
                 keys => config::KeyInclude::Explicit(
                     keys.iter()
                         .map(|k| icu_datagen::key(k).ok_or(eyre::eyre!(k.to_string())))
@@ -291,6 +369,8 @@ impl Cli {
     fn make_locales(&self) -> eyre::Result<config::LocaleInclude> {
         Ok(if self.locales.as_slice() == ["none"] {
             config::LocaleInclude::None
+        } else if self.locales.as_slice() == ["recommended"] {
+            config::LocaleInclude::Recommended
         } else if self.locales.as_slice() == ["full"] || self.all_locales {
             config::LocaleInclude::All
         } else if let Some(locale_subsets) = self
@@ -306,6 +386,9 @@ impl Cli {
         {
             config::LocaleInclude::CldrSet(locale_subsets.into_iter().collect())
         } else {
+            if self.locales.as_slice() == ["all"] {
+                log::warn!("`--locales all` selects the Allar language. Use `--locales full` for all locales");
+            }
             config::LocaleInclude::Explicit(
                 self.locales
                     .iter()
@@ -335,6 +418,16 @@ impl Cli {
         })
     }
 
+    fn make_segmenter_models(&self) -> eyre::Result<config::SegmenterModelInclude> {
+        Ok(if self.segmenter_models.as_slice() == ["none"] {
+            config::SegmenterModelInclude::None
+        } else if self.segmenter_models.as_slice() == ["recommended"] {
+            config::SegmenterModelInclude::Recommended
+        } else {
+            config::SegmenterModelInclude::Explicit(self.segmenter_models.clone())
+        })
+    }
+
     fn make_exporter(&self) -> eyre::Result<config::Export> {
         match self.format {
             v @ (Format::Dir | Format::DeprecatedDefault) => {
@@ -344,8 +437,8 @@ impl Cli {
                 #[cfg(not(feature = "provider_fs"))]
                 eyre::bail!("FsDataProvider export requires the provider_fs Cargo feature.");
                 #[cfg(feature = "provider_fs")]
-                Ok(config::Export::Fs {
-                    output_path: if let Some(root) = self.output.as_ref() {
+                Ok(config::Export::FileSystem {
+                    path: if let Some(root) = self.output.as_ref() {
                         root.clone()
                     } else {
                         PathBuf::from("icu4x_data")
@@ -363,18 +456,20 @@ impl Cli {
                 #[cfg(not(feature = "provider_blob"))]
                 eyre::bail!("BlobDataProvider export requires the provider_blob Cargo feature.");
                 #[cfg(feature = "provider_blob")]
-                Ok(config::Export::Blob(if let Some(path) = &self.output {
-                    path.clone()
-                } else {
-                    PathBuf::from("/stdout")
-                }))
+                Ok(config::Export::Blob {
+                    path: if let Some(path) = &self.output {
+                        path.clone()
+                    } else {
+                        PathBuf::from("/stdout")
+                    },
+                })
             }
             Format::Mod => {
                 #[cfg(not(feature = "provider_baked"))]
                 eyre::bail!("Baked data export requires the provider_baked Cargo feature.");
                 #[cfg(feature = "provider_baked")]
                 Ok(config::Export::Baked {
-                    output_path: if let Some(mod_directory) = self.output.as_ref() {
+                    path: if let Some(mod_directory) = self.output.as_ref() {
                         mod_directory.clone()
                     } else {
                         PathBuf::from("icu4x_data")

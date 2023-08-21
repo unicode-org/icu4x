@@ -12,7 +12,7 @@
 
         Creates a new :js:class:`ICU4XFixedDecimalFormatter` from locale data.
 
-        See the `Rust documentation for try_new_unstable <https://docs.rs/icu/latest/icu/decimal/struct.FixedDecimalFormatter.html#method.try_new_unstable>`__ for more information.
+        See the `Rust documentation for try_new <https://docs.rs/icu/latest/icu/decimal/struct.FixedDecimalFormatter.html#method.try_new>`__ for more information.
 
 
     .. js:function:: create_with_decimal_symbols_v1(data_struct, grouping_strategy)

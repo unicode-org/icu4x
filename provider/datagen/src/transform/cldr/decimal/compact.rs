@@ -4,7 +4,7 @@
 
 use crate::transform::cldr::cldr_serde;
 use icu_compactdecimal::provider::*;
-use icu_locid::extensions_unicode_key as key;
+use icu_locid::extensions::unicode::key;
 use icu_provider::datagen::IterableDataProvider;
 use icu_provider::prelude::*;
 use std::convert::TryFrom;
@@ -14,20 +14,15 @@ impl DataProvider<ShortCompactDecimalFormatDataV1Marker> for crate::DatagenProvi
         &self,
         req: DataRequest,
     ) -> Result<DataResponse<ShortCompactDecimalFormatDataV1Marker>, DataError> {
+        self.check_req::<ShortCompactDecimalFormatDataV1Marker>(req)?;
         let langid = req.locale.get_langid();
 
         let resource: &cldr_serde::numbers::Resource = self
-            .source
             .cldr()?
             .numbers()
             .read_and_parse(&langid, "numbers.json")?;
 
-        let numbers = &resource
-            .main
-            .0
-            .get(&langid)
-            .expect("CLDR file contains the expected language")
-            .numbers;
+        let numbers = &resource.main.value.numbers;
 
         let nsname = match req.locale.get_unicode_ext(&key!("nu")) {
             Some(v) => *v
@@ -67,20 +62,15 @@ impl DataProvider<LongCompactDecimalFormatDataV1Marker> for crate::DatagenProvid
         &self,
         req: DataRequest,
     ) -> Result<DataResponse<LongCompactDecimalFormatDataV1Marker>, DataError> {
+        self.check_req::<LongCompactDecimalFormatDataV1Marker>(req)?;
         let langid = req.locale.get_langid();
 
         let resource: &cldr_serde::numbers::Resource = self
-            .source
             .cldr()?
             .numbers()
             .read_and_parse(&langid, "numbers.json")?;
 
-        let numbers = &resource
-            .main
-            .0
-            .get(&langid)
-            .expect("CLDR file contains the expected language")
-            .numbers;
+        let numbers = &resource.main.value.numbers;
 
         let nsname = match req.locale.get_unicode_ext(&key!("nu")) {
             Some(v) => *v
@@ -139,7 +129,7 @@ mod tests {
     #[test]
 
     fn test_compact_long() {
-        let provider = crate::DatagenProvider::for_test();
+        let provider = crate::DatagenProvider::latest_tested_offline_subset();
 
         let fr_compact_long: DataPayload<LongCompactDecimalFormatDataV1Marker> = provider
             .load(DataRequest {
@@ -205,7 +195,7 @@ mod tests {
 
     #[test]
     fn test_compact_short() {
-        let provider = crate::DatagenProvider::for_test();
+        let provider = crate::DatagenProvider::latest_tested_offline_subset();
 
         let ja_compact_short: DataPayload<ShortCompactDecimalFormatDataV1Marker> = provider
             .load(DataRequest {

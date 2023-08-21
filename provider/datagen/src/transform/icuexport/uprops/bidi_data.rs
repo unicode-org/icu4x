@@ -2,27 +2,26 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-#[cfg(any(feature = "use_wasm", feature = "use_icu4c"))]
-use crate::SourceData;
-
 use icu_properties::provider::bidi_data::BidiAuxiliaryPropertiesV1Marker;
 use icu_provider::datagen::*;
 use icu_provider::prelude::*;
 
 #[cfg(any(feature = "use_wasm", feature = "use_icu4c"))]
-fn get_code_point_prop_map<'a>(
-    source: &'a SourceData,
-    key: &str,
-) -> Result<&'a super::uprops_serde::code_point_prop::CodePointPropertyMap, DataError> {
-    source
-        .icuexport()?
-        .read_and_parse_toml::<super::uprops_serde::code_point_prop::Main>(&format!(
-            "uprops/{}/{}.toml",
-            source.options.trie_type, key
-        ))?
-        .enum_property
-        .get(0)
-        .ok_or_else(|| DataErrorKind::MissingDataKey.into_error())
+impl crate::DatagenProvider {
+    fn get_code_point_prop_map<'a>(
+        &'a self,
+        key: &str,
+    ) -> Result<&'a super::uprops_serde::code_point_prop::CodePointPropertyMap, DataError> {
+        self.icuexport()?
+            .read_and_parse_toml::<super::uprops_serde::code_point_prop::Main>(&format!(
+                "uprops/{}/{}.toml",
+                self.trie_type(),
+                key
+            ))?
+            .enum_property
+            .get(0)
+            .ok_or_else(|| DataErrorKind::MissingDataKey.into_error())
+    }
 }
 
 // implement data provider 2 different ways, based on whether or not
@@ -31,9 +30,8 @@ impl DataProvider<BidiAuxiliaryPropertiesV1Marker> for crate::DatagenProvider {
     #[cfg(any(feature = "use_wasm", feature = "use_icu4c"))]
     fn load(
         &self,
-        _: DataRequest,
+        req: DataRequest,
     ) -> Result<DataResponse<BidiAuxiliaryPropertiesV1Marker>, DataError> {
-        use crate::transform::icuexport::uprops::{bin_cp_set, enum_codepointtrie};
         use icu_codepointtrie_builder::{CodePointTrieBuilder, CodePointTrieBuilderData};
         use icu_collections::codepointinvlist::CodePointInversionListBuilder;
         use icu_collections::codepointtrie::CodePointTrie;
@@ -42,8 +40,10 @@ impl DataProvider<BidiAuxiliaryPropertiesV1Marker> for crate::DatagenProvider {
             BidiAuxiliaryPropertiesV1, MirroredPairedBracketData,
         };
 
+        self.check_req::<BidiAuxiliaryPropertiesV1Marker>(req)?;
+
         // Bidi_M / Bidi_Mirrored
-        let bidi_m_data = bin_cp_set::get_binary_prop_for_code_point_set(&self.source, "Bidi_M")?;
+        let bidi_m_data = self.get_binary_prop_for_code_point_set("Bidi_M")?;
         let mut bidi_m_builder = CodePointInversionListBuilder::new();
         for (start, end) in &bidi_m_data.ranges {
             bidi_m_builder.add_range_u32(&(start..=end));
@@ -51,14 +51,13 @@ impl DataProvider<BidiAuxiliaryPropertiesV1Marker> for crate::DatagenProvider {
         let bidi_m_cpinvlist = bidi_m_builder.build();
 
         // bmg / Bidi_Mirroring_Glyph
-        let bmg_data = &get_code_point_prop_map(&self.source, "bmg")?.code_point_trie;
+        let bmg_data = &self.get_code_point_prop_map("bmg")?.code_point_trie;
         let bmg_trie = CodePointTrie::try_from(bmg_data).map_err(|e| {
             DataError::custom("Could not parse CodePointTrie TOML").with_display_context(&e)
         })?;
 
         // bpt / Bidi_Paired_Bracket_Type
-        let bpt_data =
-            &enum_codepointtrie::get_enumerated_prop(&self.source, "bpt")?.code_point_trie;
+        let bpt_data = &self.get_enumerated_prop("bpt")?.code_point_trie;
         let bpt_trie = CodePointTrie::try_from(bpt_data).map_err(|e| {
             DataError::custom("Could not parse CodePointTrie TOML").with_display_context(&e)
         })?;
@@ -100,8 +99,9 @@ impl DataProvider<BidiAuxiliaryPropertiesV1Marker> for crate::DatagenProvider {
     #[cfg(not(any(feature = "use_wasm", feature = "use_icu4c")))]
     fn load(
         &self,
-        _: DataRequest,
+        req: DataRequest,
     ) -> Result<DataResponse<BidiAuxiliaryPropertiesV1Marker>, DataError> {
+        self.check_req::<BidiAuxiliaryPropertiesV1Marker>(req)?;
         return Err(DataError::custom(
             "icu_datagen must be built with use_icu4c or use_wasm to build Bidi auxiliary properties data",
         ));
@@ -122,7 +122,7 @@ mod tests {
 
     #[test]
     fn test_bidi_data_provider() {
-        let provider = crate::DatagenProvider::for_test();
+        let provider = crate::DatagenProvider::latest_tested_offline_subset();
 
         let payload: DataPayload<BidiAuxiliaryPropertiesV1Marker> = provider
             .load(Default::default())

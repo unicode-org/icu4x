@@ -173,7 +173,7 @@ impl NormalizedPropertyNameStr {
         unsafe { core::mem::transmute(value) }
     }
 
-    /// Get a [`NormalizedPropertyName`] box from a byte slice.
+    /// Get a [`NormalizedPropertyNameStr`] box from a byte slice.
     pub fn boxed_from_bytes(b: &[u8]) -> Box<Self> {
         Self::cast_box(UnvalidatedStr::from_boxed_bytes(b.into()))
     }
@@ -186,10 +186,11 @@ impl NormalizedPropertyNameStr {
 /// including in SemVer minor releases. While the serde representation of data structs is guaranteed
 /// to be stable, their Rust representation might not be. Use with caution.
 /// </div>
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq)]
 #[icu_provider::data_struct(marker(
     GeneralCategoryMaskNameToValueV1Marker,
-    "propnames/from/gcm@1"
+    "propnames/from/gcm@1",
+    singleton,
 ))]
 #[cfg_attr(
     feature = "datagen", 
@@ -212,7 +213,7 @@ pub struct PropertyValueNameToEnumMapV1<'data> {
 /// including in SemVer minor releases. While the serde representation of data structs is guaranteed
 /// to be stable, their Rust representation might not be. Use with caution.
 /// </div>
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq)]
 #[icu_provider::data_struct]
 #[cfg_attr(
     feature = "datagen", 
@@ -235,7 +236,7 @@ pub struct PropertyEnumToValueNameSparseMapV1<'data> {
 /// including in SemVer minor releases. While the serde representation of data structs is guaranteed
 /// to be stable, their Rust representation might not be. Use with caution.
 /// </div>
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq)]
 #[icu_provider::data_struct]
 #[cfg_attr(
     feature = "datagen", 
@@ -259,7 +260,7 @@ pub struct PropertyEnumToValueNameLinearMapV1<'data> {
 /// including in SemVer minor releases. While the serde representation of data structs is guaranteed
 /// to be stable, their Rust representation might not be. Use with caution.
 /// </div>
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq)]
 #[icu_provider::data_struct]
 #[cfg_attr(
     feature = "datagen", 

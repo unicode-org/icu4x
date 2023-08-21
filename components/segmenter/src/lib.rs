@@ -30,8 +30,7 @@
 //! use icu::segmenter::LineSegmenter;
 //!
 //! let segmenter =
-//!     LineSegmenter::try_new_auto_unstable(&icu_testdata::unstable())
-//!         .expect("Data exists");
+//!     LineSegmenter::new_auto();
 //!
 //! let breakpoints: Vec<usize> = segmenter
 //!     .segment_str("Hello World. Xin chào thế giới!")
@@ -49,8 +48,7 @@
 //! use icu::segmenter::GraphemeClusterSegmenter;
 //!
 //! let segmenter =
-//!     GraphemeClusterSegmenter::try_new_unstable(&icu_testdata::unstable())
-//!         .expect("Data exists");
+//!     GraphemeClusterSegmenter::new();
 //!
 //! let breakpoints: Vec<usize> = segmenter
 //!     .segment_str("Hello World. Xin chào thế giới!")
@@ -74,8 +72,7 @@
 //! use icu::segmenter::WordSegmenter;
 //!
 //! let segmenter =
-//!     WordSegmenter::try_new_auto_unstable(&icu_testdata::unstable())
-//!         .expect("Data exists");
+//!     WordSegmenter::new_auto();
 //!
 //! let breakpoints: Vec<usize> = segmenter
 //!     .segment_str("Hello World. Xin chào thế giới!")
@@ -96,8 +93,7 @@
 //! use icu::segmenter::SentenceSegmenter;
 //!
 //! let segmenter =
-//!     SentenceSegmenter::try_new_unstable(&icu_testdata::unstable())
-//!         .expect("Data exists");
+//!     SentenceSegmenter::new();
 //!
 //! let breakpoints: Vec<usize> = segmenter
 //!     .segment_str("Hello World. Xin chào thế giới!")

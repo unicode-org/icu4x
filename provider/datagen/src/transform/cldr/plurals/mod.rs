@@ -11,16 +11,14 @@ use icu_provider::prelude::*;
 impl crate::DatagenProvider {
     fn get_rules_for(&self, key: DataKey) -> Result<&cldr_serde::plurals::Rules, DataError> {
         if key == CardinalV1Marker::KEY {
-            self.source
-                .cldr()?
+            self.cldr()?
                 .core()
                 .read_and_parse::<cldr_serde::plurals::Resource>("supplemental/plurals.json")?
                 .supplemental
                 .plurals_type_cardinal
                 .as_ref()
         } else if key == OrdinalV1Marker::KEY {
-            self.source
-                .cldr()?
+            self.cldr()?
                 .core()
                 .read_and_parse::<cldr_serde::plurals::Resource>("supplemental/ordinals.json")?
                 .supplemental
@@ -37,6 +35,7 @@ macro_rules! implement {
     ($marker:ident) => {
         impl DataProvider<$marker> for crate::DatagenProvider {
             fn load(&self, req: DataRequest) -> Result<DataResponse<$marker>, DataError> {
+                self.check_req::<$marker>(req)?;
                 Ok(DataResponse {
                     metadata: Default::default(),
                     payload: Some(DataPayload::from_owned(PluralRulesV1::from(
@@ -51,15 +50,14 @@ macro_rules! implement {
 
         impl IterableDataProvider<$marker> for crate::DatagenProvider {
             fn supported_locales(&self) -> Result<Vec<DataLocale>, DataError> {
-                Ok(self.source.options.locales.filter_by_langid_equality(
-                    self.get_rules_for(<$marker>::KEY)?
-                        .0
-                        .keys()
-                        // TODO(#568): Avoid the clone
-                        .cloned()
-                        .map(DataLocale::from)
-                        .collect(),
-                ))
+                Ok(self
+                    .get_rules_for(<$marker>::KEY)?
+                    .0
+                    .keys()
+                    // TODO(#568): Avoid the clone
+                    .cloned()
+                    .map(DataLocale::from)
+                    .collect())
             }
         }
     };
@@ -89,7 +87,7 @@ impl From<&cldr_serde::plurals::LocalePluralRules> for PluralRulesV1<'static> {
 fn test_basic() {
     use icu_locid::langid;
 
-    let provider = crate::DatagenProvider::for_test();
+    let provider = crate::DatagenProvider::latest_tested_offline_subset();
 
     // Spot-check locale 'cs' since it has some interesting entries
     let cs_rules: DataPayload<CardinalV1Marker> = provider

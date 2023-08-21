@@ -14,6 +14,24 @@ use tinystr::UnvalidatedTinyAsciiStr;
 use zerovec::ule::UnvalidatedStr;
 use zerovec::ZeroMap;
 
+#[cfg(feature = "compiled_data")]
+#[derive(Debug)]
+/// Baked data
+pub struct Baked;
+
+#[cfg(feature = "compiled_data")]
+const _: () = {
+    pub mod icu {
+        pub use crate as displaynames;
+        pub use icu_locid_transform as locid_transform;
+    }
+    icu_displaynames_data::impl_displaynames_languages_v1!(Baked);
+    icu_displaynames_data::impl_displaynames_locales_v1!(Baked);
+    icu_displaynames_data::impl_displaynames_regions_v1!(Baked);
+    icu_displaynames_data::impl_displaynames_scripts_v1!(Baked);
+    icu_displaynames_data::impl_displaynames_variants_v1!(Baked);
+};
+
 // We use raw TinyAsciiStrs for map keys, as we then don't have to
 // validate them as subtags on deserialization. Map lookup can be
 // done even if they are not valid tags (an invalid key will just

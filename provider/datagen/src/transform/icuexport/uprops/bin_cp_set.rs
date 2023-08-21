@@ -2,26 +2,27 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use crate::SourceData;
 use icu_collections::codepointinvlist::CodePointInversionListBuilder;
 use icu_properties::provider::*;
 use icu_provider::datagen::*;
 use icu_provider::prelude::*;
 
-// get the source data for a Unicode binary property that only defines values for code points
-pub(crate) fn get_binary_prop_for_code_point_set<'a>(
-    source: &'a SourceData,
-    key: &str,
-) -> Result<&'a super::uprops_serde::binary::BinaryProperty, DataError> {
-    source
-        .icuexport()?
-        .read_and_parse_toml::<super::uprops_serde::binary::Main>(&format!(
-            "uprops/{}/{}.toml",
-            source.options.trie_type, key
-        ))?
-        .binary_property
-        .get(0)
-        .ok_or_else(|| DataErrorKind::MissingDataKey.into_error())
+impl crate::DatagenProvider {
+    // get the source data for a Unicode binary property that only defines values for code points
+    pub(crate) fn get_binary_prop_for_code_point_set<'a>(
+        &'a self,
+        key: &str,
+    ) -> Result<&'a super::uprops_serde::binary::BinaryProperty, DataError> {
+        self.icuexport()?
+            .read_and_parse_toml::<super::uprops_serde::binary::Main>(&format!(
+                "uprops/{}/{}.toml",
+                self.trie_type(),
+                key
+            ))?
+            .binary_property
+            .get(0)
+            .ok_or_else(|| DataErrorKind::MissingDataKey.into_error())
+    }
 }
 
 macro_rules! expand {
@@ -30,9 +31,10 @@ macro_rules! expand {
             impl DataProvider<$marker> for crate::DatagenProvider {
                 fn load(
                     &self,
-                    _: DataRequest,
+                    req: DataRequest,
                 ) -> Result<DataResponse<$marker>, DataError> {
-                    let data = get_binary_prop_for_code_point_set(&self.source, $prop_name)?;
+                    self.check_req::<$marker>(req)?;
+                    let data = self.get_binary_prop_for_code_point_set($prop_name)?;
 
                     let mut builder = CodePointInversionListBuilder::new();
                     for (start, end) in &data.ranges {
@@ -53,7 +55,7 @@ macro_rules! expand {
                 fn supported_locales(
                     &self,
                 ) -> Result<Vec<DataLocale>, DataError> {
-                    get_binary_prop_for_code_point_set(&self.source, $prop_name)?;
+                    self.get_binary_prop_for_code_point_set($prop_name)?;
 
                     Ok(vec![Default::default()])
                 }
@@ -136,7 +138,7 @@ fn test_basic() {
     use icu_properties::provider::PropertyCodePointSetV1;
     use icu_properties::provider::WhiteSpaceV1Marker;
 
-    let provider = crate::DatagenProvider::for_test();
+    let provider = crate::DatagenProvider::latest_tested_offline_subset();
 
     let payload: DataPayload<WhiteSpaceV1Marker> = provider
         .load(Default::default())

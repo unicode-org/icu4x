@@ -6,8 +6,8 @@
 
 #![allow(clippy::exhaustive_structs)] // data struct module
 
-#[cfg(feature = "datagen")]
-use crate::datagen::IterableDataProvider;
+use crate as icu_provider;
+
 use crate::prelude::*;
 use alloc::borrow::Cow;
 use alloc::string::String;
@@ -50,7 +50,7 @@ impl DataMarker for HelloWorldV1Marker {
 }
 
 impl KeyedDataMarker for HelloWorldV1Marker {
-    const KEY: DataKey = crate::data_key!("core/helloworld@1");
+    const KEY: DataKey = icu_provider::data_key!("core/helloworld@1");
 }
 
 /// A data provider returning Hello World strings in different languages.
@@ -76,6 +76,25 @@ impl KeyedDataMarker for HelloWorldV1Marker {
 ///
 /// assert_eq!("Hallo Welt", german_hello_world.get().message);
 /// ```
+///
+/// Load the reverse string using an auxiliary key:
+///
+/// ```
+/// use icu_provider::hello_world::*;
+/// use icu_provider::prelude::*;
+///
+/// let reverse_hello_world: DataPayload<HelloWorldV1Marker> =
+///     HelloWorldProvider
+///         .load(DataRequest {
+///             locale: &"en+reverse".parse().unwrap(),
+///             metadata: Default::default(),
+///         })
+///         .expect("Loading should succeed")
+///         .take_payload()
+///         .expect("Data should be present");
+///
+/// assert_eq!("Olleh Dlrow", reverse_hello_world.get().message);
+/// ```
 #[derive(Debug, PartialEq, Default)]
 pub struct HelloWorldProvider;
 
@@ -88,11 +107,13 @@ impl HelloWorldProvider {
         ("de", "Hallo Welt"),
         ("el", "Καλημέρα κόσμε"),
         ("en", "Hello World"),
+        ("en+reverse", "Olleh Dlrow"),
         ("eo", "Saluton, Mondo"),
         ("fa", "سلام دنیا‎"),
         ("fi", "hei maailma"),
         ("is", "Halló, heimur"),
         ("ja", "こんにちは世界"),
+        ("ja+reverse", "界世はちにんこ"),
         ("la", "Ave, munde"),
         ("pt", "Olá, mundo"),
         ("ro", "Salut, lume"),
@@ -133,7 +154,7 @@ impl DataPayload<HelloWorldV1Marker> {
 
 // AnyProvider support.
 #[cfg(not(feature = "datagen"))]
-impl_dynamic_data_provider!(HelloWorldProvider, [HelloWorldV1Marker,], AnyMarker);
+icu_provider::impl_dynamic_data_provider!(HelloWorldProvider, [HelloWorldV1Marker,], AnyMarker);
 
 #[cfg(feature = "deserialize_json")]
 /// A data provider returning Hello World strings in different languages as JSON blobs.
@@ -172,7 +193,7 @@ impl BufferProvider for HelloWorldJsonProvider {
         let result = HelloWorldProvider.load(req)?;
         let (mut metadata, old_payload) =
             DataResponse::<HelloWorldV1Marker>::take_metadata_and_payload(result)?;
-        metadata.buffer_format = Some(crate::buf::BufferFormat::Json);
+        metadata.buffer_format = Some(icu_provider::buf::BufferFormat::Json);
         #[allow(clippy::unwrap_used)] // HelloWorldV1::serialize is infallible
         Ok(DataResponse {
             metadata,
@@ -187,19 +208,15 @@ impl BufferProvider for HelloWorldJsonProvider {
 }
 
 #[cfg(feature = "datagen")]
-impl IterableDataProvider<HelloWorldV1Marker> for HelloWorldProvider {
+impl icu_provider::datagen::IterableDataProvider<HelloWorldV1Marker> for HelloWorldProvider {
     fn supported_locales(&self) -> Result<Vec<DataLocale>, DataError> {
         #[allow(clippy::unwrap_used)] // datagen
-        Ok(Self::DATA
-            .iter()
-            .map(|(s, _)| s.parse::<icu_locid::LanguageIdentifier>().unwrap())
-            .map(DataLocale::from)
-            .collect())
+        Ok(Self::DATA.iter().map(|(s, _)| s.parse().unwrap()).collect())
     }
 }
 
 #[cfg(feature = "datagen")]
-make_exportable_provider!(HelloWorldProvider, [HelloWorldV1Marker,]);
+icu_provider::make_exportable_provider!(HelloWorldProvider, [HelloWorldV1Marker,]);
 
 /// A type that formats localized "hello world" strings.
 ///
@@ -236,12 +253,22 @@ pub struct FormattedHelloWorld<'l> {
 impl HelloWorldFormatter {
     /// Creates a new [`HelloWorldFormatter`] for the specified locale.
     ///
-    /// See [`HelloWorldFormatter`] for an example.
-    ///
-    /// [📚 Help choosing a constructor](crate::constructors)
-    /// <div class="stab unstable">
-    /// ⚠️ The bounds on this function may change over time, including in SemVer minor releases.
-    /// </div>
+    /// [📚 Help choosing a constructor](icu_provider::constructors)
+    pub fn try_new(locale: &DataLocale) -> Result<Self, DataError> {
+        Self::try_new_unstable(&HelloWorldProvider, locale)
+    }
+
+    icu_provider::gen_any_buffer_data_constructors!(locale: include, options: skip, error: DataError,
+        #[cfg(skip)]
+        functions: [
+            try_new,
+            try_new_with_any_provider,
+            try_new_with_buffer_provider,
+            try_new_unstable,
+            Self,
+    ]);
+
+    #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::try_new)]
     pub fn try_new_unstable<P>(provider: &P, locale: &DataLocale) -> Result<Self, DataError>
     where
         P: DataProvider<HelloWorldV1Marker>,
@@ -254,8 +281,6 @@ impl HelloWorldFormatter {
             .take_payload()?;
         Ok(Self { data })
     }
-
-    crate::gen_any_buffer_constructors!(locale: include, options: skip, error: DataError);
 
     /// Formats a hello world message, returning a [`FormattedHelloWorld`].
     #[allow(clippy::needless_lifetimes)] // documentary example
@@ -290,6 +315,7 @@ writeable::impl_display_with_writeable!(FormattedHelloWorld<'_>);
 #[cfg(feature = "datagen")]
 #[test]
 fn test_iter() {
+    use crate::datagen::IterableDataProvider;
     use icu_locid::locale;
 
     assert_eq!(
@@ -300,11 +326,13 @@ fn test_iter() {
             locale!("de").into(),
             locale!("el").into(),
             locale!("en").into(),
+            "en+reverse".parse().unwrap(),
             locale!("eo").into(),
             locale!("fa").into(),
             locale!("fi").into(),
             locale!("is").into(),
             locale!("ja").into(),
+            "ja+reverse".parse().unwrap(),
             locale!("la").into(),
             locale!("pt").into(),
             locale!("ro").into(),

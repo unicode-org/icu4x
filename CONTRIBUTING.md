@@ -69,7 +69,7 @@ Our wider testsuite is organized as `ci-job-foo` make tasks corresponding to eac
  - `cargo doc --no-deps --all-features`: Recreates API docs locally; any warning should be fixed since it will be treated as an error in CI.
  - `cargo make ci-job-ffi`: Runs all of the FFI tests; mostly important if you're changing the FFI interface. This has several additional dependencies:
      + [`Diplomat`](https://github.com/rust-diplomat/diplomat) installed at the appropriate version: `cargo make diplomat-install`
-     + `clang-14` and `lld-14` with the `gold` plugin (APT packages `llvm-14` and `lld-14`)
+     + `clang-15` and `lld-15` with the `gold` plugin (APT packages `llvm-15` and `lld-15`)
  - `cargo make ci-job-wasm`: Runs Rust-to-WASM tests. This also has a couple additional dependencies:
      + Node.js version 16.18.0. This may not the one offered by the package manager; get it from the NodeJS website or `nvm`.
      + [`Twiggy`](https://github.com/rustwasm/twiggy) (at least 0.7.0: `cargo install twiggy`
@@ -213,8 +213,6 @@ In order to contribute to this project, the Unicode Consortium must have on file
 - **Corporate CLA**: If you have determined that a Corporate CLA is appropriate, please check the [public list of Corporate CLAs][unicode-corporate-clas] that the Consortium has on file. If your employer has already signed a CLA, then just open a Pull Request and you will have the opportunity to click that your employer has already signed a CLA. If your employer has not already signed a CLA, you will need to arrange for your employer to sign the Corporate CLA, as described in [How to Sign a Unicode CLA][signing].
 
 Unless otherwise noted in the [LICENSE](./LICENSE) file, this project is released under the free and open-source [Unicode License][unicode-license], also known as Unicode, Inc. License Agreement - Data Files and Software.
-
-SPDX-License-Identifier: Unicode-DFS-2016
 
 ### New files
 

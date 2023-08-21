@@ -6,13 +6,13 @@
 name = "icu_testdata"
 description = "Pre-built test data for ICU4X"
 version = "1.2.0"
-rust-version = "1.61.0"
+rust-version = "1.65.0"
 authors = ["The ICU4X Project Developers"]
 edition = "2021"
 readme = "README.md"
 repository = "https://github.com/unicode-org/icu4x"
 homepage = "https://icu4x.unicode.org"
-license = "Unicode-DFS-2016"
+license-file = "LICENSE"
 categories = ["internationalization"]
 # Keep this in sync with other crates unless there are exceptions
 include = [
@@ -46,7 +46,7 @@ zerovec = { version = "0.9.4", path = "../../utils/zerovec" }
 
 # databake options
 icu_calendar = { version = "1.2.0", path = "../../components/calendar", default-features = false, optional = true }
-icu_casemapping = { version = "0.7.1", path = "../../experimental/casemapping", default-features = false, optional = true }
+icu_casemap = { version = "1.2.0", path = "../../components/casemap", default-features = false, optional = true }
 icu_collator = { version = "1.2.0", path = "../../components/collator", default-features = false, optional = true }
 icu_compactdecimal = { version = "0.2.0", path = "../../experimental/compactdecimal", default-features = false, optional = true }
 icu_datetime = { version = "1.2.0", path = "../../components/datetime", default-features = false, optional = true }
@@ -64,7 +64,10 @@ icu_timezone = { version = "1.2.0", path = "../../components/timezone", default-
 [dev-dependencies]
 icu = { path = "../../components/icu" }
 icu_provider = { path = "../../provider/core", features = ["deserialize_json"] }
+
+[target.'cfg(not(target_arch = "wasm32"))'.dev-dependencies]
 criterion = "0.4"
+
 
 [features]
 default = [

@@ -8,8 +8,6 @@ pub mod ffi {
     use crate::provider::ffi::ICU4XDataProvider;
     use alloc::boxed::Box;
     use core::convert::TryFrom;
-    use icu_provider::DataProvider;
-    use icu_segmenter::provider::SentenceBreakDataV1Marker;
     use icu_segmenter::{
         SentenceBreakIteratorLatin1, SentenceBreakIteratorPotentiallyIllFormedUtf8,
         SentenceBreakIteratorUtf16, SentenceSegmenter,
@@ -43,20 +41,16 @@ pub mod ffi {
 
     impl ICU4XSentenceSegmenter {
         /// Construct an [`ICU4XSentenceSegmenter`].
-        #[diplomat::rust_link(icu::segmenter::SentenceSegmenter::try_new_unstable, FnInStruct)]
+        #[diplomat::rust_link(icu::segmenter::SentenceSegmenter::new, FnInStruct)]
         pub fn create(
             provider: &ICU4XDataProvider,
         ) -> Result<Box<ICU4XSentenceSegmenter>, ICU4XError> {
-            Self::try_new_impl(&provider.0)
-        }
-
-        fn try_new_impl<D>(provider: &D) -> Result<Box<ICU4XSentenceSegmenter>, ICU4XError>
-        where
-            D: DataProvider<SentenceBreakDataV1Marker> + ?Sized,
-        {
-            Ok(Box::new(ICU4XSentenceSegmenter(
-                SentenceSegmenter::try_new_unstable(provider)?,
-            )))
+            Ok(Box::new(ICU4XSentenceSegmenter(call_constructor!(
+                SentenceSegmenter::new [r => Ok(r)],
+                SentenceSegmenter::try_new_with_any_provider,
+                SentenceSegmenter::try_new_with_buffer_provider,
+                provider,
+            )?)))
         }
 
         /// Segments a (potentially ill-formed) UTF-8 string.

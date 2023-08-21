@@ -290,7 +290,11 @@ impl PluralRules {
         locale: include,
         rule_type: PluralRuleType,
         error: PluralsError,
-        /// Constructs a new `PluralRules` for a given locale and type.
+        /// Constructs a new `PluralRules` for a given locale and type using compiled data.
+        ///
+        /// ✨ *Enabled with the `compiled_data` Cargo feature.*
+        ///
+        /// [📚 Help choosing a constructor](icu_provider::constructors)
         ///
         /// # Examples
         ///
@@ -310,13 +314,13 @@ impl PluralRules {
 
     #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::try_new)]
     pub fn try_new_unstable(
-        data_provider: &(impl DataProvider<CardinalV1Marker> + DataProvider<OrdinalV1Marker> + ?Sized),
+        provider: &(impl DataProvider<CardinalV1Marker> + DataProvider<OrdinalV1Marker> + ?Sized),
         locale: &DataLocale,
         rule_type: PluralRuleType,
     ) -> Result<Self, PluralsError> {
         match rule_type {
-            PluralRuleType::Cardinal => Self::try_new_cardinal_unstable(data_provider, locale),
-            PluralRuleType::Ordinal => Self::try_new_ordinal_unstable(data_provider, locale),
+            PluralRuleType::Cardinal => Self::try_new_cardinal_unstable(provider, locale),
+            PluralRuleType::Ordinal => Self::try_new_ordinal_unstable(provider, locale),
         }
     }
 
@@ -324,7 +328,7 @@ impl PluralRules {
         locale: include,
         options: skip,
         error: PluralsError,
-        /// Constructs a new `PluralRules` for a given locale for cardinal numbers.
+        /// Constructs a new `PluralRules` for a given locale for cardinal numbers using compiled data.
         ///
         /// Cardinal plural forms express quantities of units such as time, currency or distance,
         /// used in conjunction with a number expressed in decimal digits (i.e. "2", not "two").
@@ -333,6 +337,10 @@ impl PluralRules {
         ///
         /// * [`One`]: `1 day`
         /// * [`Other`]: `0 days`, `2 days`, `10 days`, `0.3 days`
+        ///
+        /// ✨ *Enabled with the `compiled_data` Cargo feature.*
+        ///
+        /// [📚 Help choosing a constructor](icu_provider::constructors)
         ///
         /// # Examples
         ///
@@ -358,11 +366,11 @@ impl PluralRules {
 
     #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::try_new_cardinal)]
     pub fn try_new_cardinal_unstable(
-        data_provider: &(impl DataProvider<CardinalV1Marker> + ?Sized),
+        provider: &(impl DataProvider<CardinalV1Marker> + ?Sized),
         locale: &DataLocale,
     ) -> Result<Self, PluralsError> {
         Ok(Self(
-            data_provider
+            provider
                 .load(DataRequest {
                     locale,
                     metadata: Default::default(),
@@ -376,7 +384,7 @@ impl PluralRules {
         locale: include,
         options: skip,
         error: PluralsError,
-        /// Constructs a new `PluralRules` for a given locale for ordinal numbers.
+        /// Constructs a new `PluralRules` for a given locale for ordinal numbers using compiled data.
         ///
         /// Ordinal plural forms denote the order of items in a set and are always integers.
         ///
@@ -386,6 +394,10 @@ impl PluralRules {
         /// * [`Two`]: `2nd floor`, `22nd floor`, `102nd floor`
         /// * [`Few`]: `3rd floor`, `23rd floor`, `103rd floor`
         /// * [`Other`]: `4th floor`, `11th floor`, `96th floor`
+        ///
+        /// ✨ *Enabled with the `compiled_data` Cargo feature.*
+        ///
+        /// [📚 Help choosing a constructor](icu_provider::constructors)
         ///
         /// # Examples
         ///
@@ -416,11 +428,11 @@ impl PluralRules {
 
     #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::try_new_ordinal)]
     pub fn try_new_ordinal_unstable(
-        data_provider: &(impl DataProvider<OrdinalV1Marker> + ?Sized),
+        provider: &(impl DataProvider<OrdinalV1Marker> + ?Sized),
         locale: &DataLocale,
     ) -> Result<Self, PluralsError> {
         Ok(Self(
-            data_provider
+            provider
                 .load(DataRequest {
                     locale,
                     metadata: Default::default(),
@@ -455,7 +467,7 @@ impl PluralRules {
     /// All unsigned primitive number types can infallibly be converted so they can be
     /// used as an input.
     ///
-    /// For signed numbers and strings, [`Plural Operands`] implement [`TryFrom`](std::convert::TryFrom)
+    /// For signed numbers and strings, [`Plural Operands`] implement [`TryFrom`]
     /// and [`FromStr`](std::str::FromStr), which should be used before passing the result to
     /// [`category_for()`](PluralRules::category_for()).
     ///

@@ -179,22 +179,10 @@ mod tests {
     use super::*;
     use crate::{LineSegmenter, WordSegmenter};
     use icu_provider::prelude::*;
-    use icu_provider_adapters::fork::ForkByKeyProvider;
-    use icu_provider_fs::FsDataProvider;
-    use std::path::PathBuf;
-
-    fn get_segmenter_testdata_provider() -> impl BufferProvider {
-        let segmenter_fs_provider = FsDataProvider::try_new(
-            PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("tests/testdata/provider"),
-        )
-        .unwrap();
-        ForkByKeyProvider::new(segmenter_fs_provider, icu_testdata::buffer())
-    }
 
     #[test]
     fn burmese_dictionary_test() {
-        let provider = get_segmenter_testdata_provider();
-        let segmenter = LineSegmenter::try_new_dictionary_with_buffer_provider(&provider).unwrap();
+        let segmenter = LineSegmenter::new_dictionary();
         // From css/css-text/word-break/word-break-normal-my-000.html
         let s = "မြန်မာစာမြန်မာစာမြန်မာစာ";
         let result: Vec<usize> = segmenter.segment_str(s).collect();
@@ -207,9 +195,7 @@ mod tests {
 
     #[test]
     fn cj_dictionary_test() {
-        let provider = get_segmenter_testdata_provider();
-        let dict_payload: DataPayload<DictionaryForWordOnlyAutoV1Marker> = provider
-            .as_deserializing()
+        let dict_payload: DataPayload<DictionaryForWordOnlyAutoV1Marker> = crate::provider::Baked
             .load(DataRequest {
                 locale: &icu_locid::locale!("ja").into(),
                 metadata: Default::default(),
@@ -217,18 +203,11 @@ mod tests {
             .unwrap()
             .take_payload()
             .unwrap();
-        let grph_payload: DataPayload<GraphemeClusterBreakDataV1Marker> = provider
-            .as_deserializing()
-            .load(DataRequest {
-                locale: &icu_locid::locale!("ja").into(),
-                metadata: Default::default(),
-            })
-            .unwrap()
-            .take_payload()
-            .unwrap();
-        let word_segmenter =
-            WordSegmenter::try_new_dictionary_with_buffer_provider(&provider).unwrap();
-        let dict_segmenter = DictionarySegmenter::new(dict_payload.get(), grph_payload.get());
+        let word_segmenter = WordSegmenter::new_dictionary();
+        let dict_segmenter = DictionarySegmenter::new(
+            dict_payload.get(),
+            crate::provider::Baked::SINGLETON_SEGMENTER_GRAPHEME_V1,
+        );
 
         // Match case
         let s = "龟山岛龟山岛";
@@ -265,8 +244,7 @@ mod tests {
 
     #[test]
     fn khmer_dictionary_test() {
-        let provider = get_segmenter_testdata_provider();
-        let segmenter = LineSegmenter::try_new_dictionary_with_buffer_provider(&provider).unwrap();
+        let segmenter = LineSegmenter::new_dictionary();
         let s = "ភាសាខ្មែរភាសាខ្មែរភាសាខ្មែរ";
         let result: Vec<usize> = segmenter.segment_str(s).collect();
         assert_eq!(result, vec![0, 27, 54, 81]);
@@ -278,8 +256,7 @@ mod tests {
 
     #[test]
     fn lao_dictionary_test() {
-        let provider = get_segmenter_testdata_provider();
-        let segmenter = LineSegmenter::try_new_dictionary_with_buffer_provider(&provider).unwrap();
+        let segmenter = LineSegmenter::new_dictionary();
         let s = "ພາສາລາວພາສາລາວພາສາລາວ";
         let r: Vec<usize> = segmenter.segment_str(s).collect();
         assert_eq!(r, vec![0, 12, 21, 33, 42, 54, 63]);

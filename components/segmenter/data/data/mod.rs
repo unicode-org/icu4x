@@ -1,6 +1,6 @@
 // @generated
 include!("macros.rs");
-/// Implement [`DataProvider<M>`](icu_provider::DataProvider) on the given struct using the data
+/// Implement `DataProvider<M>` on the given struct using the data
 /// hardcoded in this module. This allows the struct to be used with
 /// `icu`'s `_unstable` constructors.
 ///
@@ -24,7 +24,7 @@ macro_rules! __impl_data_provider {
 }
 #[doc(inline)]
 pub use __impl_data_provider as impl_data_provider;
-/// Implement [`AnyProvider`](icu_provider::AnyProvider) on the given struct using the data
+/// Implement `AnyProvider` on the given struct using the data
 /// hardcoded in this module. This allows the struct to be used with
 /// `icu`'s `_any` constructors.
 ///
@@ -37,24 +37,24 @@ pub use __impl_data_provider as impl_data_provider;
 #[macro_export]
 macro_rules! __impl_any_provider {
     ($ provider : path) => {
-        #[clippy::msrv = "1.61"]
+        #[clippy::msrv = "1.65"]
         impl icu_provider::AnyProvider for $provider {
             fn load_any(&self, key: icu_provider::DataKey, req: icu_provider::DataRequest) -> Result<icu_provider::AnyResponse, icu_provider::DataError> {
-                const SEGMENTER_DICTIONARY_W_AUTO_V1: icu_provider::DataKeyHash = <icu_segmenter::provider::DictionaryForWordOnlyAutoV1Marker as icu_provider::KeyedDataMarker>::KEY.hashed();
-                const SEGMENTER_DICTIONARY_WL_EXT_V1: icu_provider::DataKeyHash = <icu_segmenter::provider::DictionaryForWordLineExtendedV1Marker as icu_provider::KeyedDataMarker>::KEY.hashed();
-                const SEGMENTER_GRAPHEME_V1: icu_provider::DataKeyHash = <icu_segmenter::provider::GraphemeClusterBreakDataV1Marker as icu_provider::KeyedDataMarker>::KEY.hashed();
-                const SEGMENTER_LINE_V1: icu_provider::DataKeyHash = <icu_segmenter::provider::LineBreakDataV1Marker as icu_provider::KeyedDataMarker>::KEY.hashed();
-                const SEGMENTER_LSTM_WL_AUTO_V1: icu_provider::DataKeyHash = <icu_segmenter::provider::LstmForWordLineAutoV1Marker as icu_provider::KeyedDataMarker>::KEY.hashed();
-                const SEGMENTER_SENTENCE_V1: icu_provider::DataKeyHash = <icu_segmenter::provider::SentenceBreakDataV1Marker as icu_provider::KeyedDataMarker>::KEY.hashed();
-                const SEGMENTER_WORD_V1: icu_provider::DataKeyHash = <icu_segmenter::provider::WordBreakDataV1Marker as icu_provider::KeyedDataMarker>::KEY.hashed();
+                const SEGMENTER_DICTIONARY_W_AUTO_V1: icu_provider::DataKeyHash = <icu::segmenter::provider::DictionaryForWordOnlyAutoV1Marker as icu_provider::KeyedDataMarker>::KEY.hashed();
+                const SEGMENTER_DICTIONARY_WL_EXT_V1: icu_provider::DataKeyHash = <icu::segmenter::provider::DictionaryForWordLineExtendedV1Marker as icu_provider::KeyedDataMarker>::KEY.hashed();
+                const SEGMENTER_GRAPHEME_V1: icu_provider::DataKeyHash = <icu::segmenter::provider::GraphemeClusterBreakDataV1Marker as icu_provider::KeyedDataMarker>::KEY.hashed();
+                const SEGMENTER_LINE_V1: icu_provider::DataKeyHash = <icu::segmenter::provider::LineBreakDataV1Marker as icu_provider::KeyedDataMarker>::KEY.hashed();
+                const SEGMENTER_LSTM_WL_AUTO_V1: icu_provider::DataKeyHash = <icu::segmenter::provider::LstmForWordLineAutoV1Marker as icu_provider::KeyedDataMarker>::KEY.hashed();
+                const SEGMENTER_SENTENCE_V1: icu_provider::DataKeyHash = <icu::segmenter::provider::SentenceBreakDataV1Marker as icu_provider::KeyedDataMarker>::KEY.hashed();
+                const SEGMENTER_WORD_V1: icu_provider::DataKeyHash = <icu::segmenter::provider::WordBreakDataV1Marker as icu_provider::KeyedDataMarker>::KEY.hashed();
                 match key.hashed() {
-                    SEGMENTER_DICTIONARY_W_AUTO_V1 => icu_provider::DataProvider::<icu_segmenter::provider::DictionaryForWordOnlyAutoV1Marker>::load(self, req).and_then(|r| r.take_metadata_and_payload()).map(|(metadata, payload)| icu_provider::AnyResponse { payload: Some(payload.wrap_into_any_payload()), metadata }),
-                    SEGMENTER_DICTIONARY_WL_EXT_V1 => icu_provider::DataProvider::<icu_segmenter::provider::DictionaryForWordLineExtendedV1Marker>::load(self, req).and_then(|r| r.take_metadata_and_payload()).map(|(metadata, payload)| icu_provider::AnyResponse { payload: Some(payload.wrap_into_any_payload()), metadata }),
-                    SEGMENTER_GRAPHEME_V1 => icu_provider::DataProvider::<icu_segmenter::provider::GraphemeClusterBreakDataV1Marker>::load(self, req).and_then(|r| r.take_metadata_and_payload()).map(|(metadata, payload)| icu_provider::AnyResponse { payload: Some(payload.wrap_into_any_payload()), metadata }),
-                    SEGMENTER_LINE_V1 => icu_provider::DataProvider::<icu_segmenter::provider::LineBreakDataV1Marker>::load(self, req).and_then(|r| r.take_metadata_and_payload()).map(|(metadata, payload)| icu_provider::AnyResponse { payload: Some(payload.wrap_into_any_payload()), metadata }),
-                    SEGMENTER_LSTM_WL_AUTO_V1 => icu_provider::DataProvider::<icu_segmenter::provider::LstmForWordLineAutoV1Marker>::load(self, req).and_then(|r| r.take_metadata_and_payload()).map(|(metadata, payload)| icu_provider::AnyResponse { payload: Some(payload.wrap_into_any_payload()), metadata }),
-                    SEGMENTER_SENTENCE_V1 => icu_provider::DataProvider::<icu_segmenter::provider::SentenceBreakDataV1Marker>::load(self, req).and_then(|r| r.take_metadata_and_payload()).map(|(metadata, payload)| icu_provider::AnyResponse { payload: Some(payload.wrap_into_any_payload()), metadata }),
-                    SEGMENTER_WORD_V1 => icu_provider::DataProvider::<icu_segmenter::provider::WordBreakDataV1Marker>::load(self, req).and_then(|r| r.take_metadata_and_payload()).map(|(metadata, payload)| icu_provider::AnyResponse { payload: Some(payload.wrap_into_any_payload()), metadata }),
+                    SEGMENTER_DICTIONARY_W_AUTO_V1 => icu_provider::DataProvider::<icu::segmenter::provider::DictionaryForWordOnlyAutoV1Marker>::load(self, req).and_then(|r| r.take_metadata_and_payload()).map(|(metadata, payload)| icu_provider::AnyResponse { payload: Some(payload.wrap_into_any_payload()), metadata }),
+                    SEGMENTER_DICTIONARY_WL_EXT_V1 => icu_provider::DataProvider::<icu::segmenter::provider::DictionaryForWordLineExtendedV1Marker>::load(self, req).and_then(|r| r.take_metadata_and_payload()).map(|(metadata, payload)| icu_provider::AnyResponse { payload: Some(payload.wrap_into_any_payload()), metadata }),
+                    SEGMENTER_GRAPHEME_V1 => icu_provider::DataProvider::<icu::segmenter::provider::GraphemeClusterBreakDataV1Marker>::load(self, req).and_then(|r| r.take_metadata_and_payload()).map(|(metadata, payload)| icu_provider::AnyResponse { payload: Some(payload.wrap_into_any_payload()), metadata }),
+                    SEGMENTER_LINE_V1 => icu_provider::DataProvider::<icu::segmenter::provider::LineBreakDataV1Marker>::load(self, req).and_then(|r| r.take_metadata_and_payload()).map(|(metadata, payload)| icu_provider::AnyResponse { payload: Some(payload.wrap_into_any_payload()), metadata }),
+                    SEGMENTER_LSTM_WL_AUTO_V1 => icu_provider::DataProvider::<icu::segmenter::provider::LstmForWordLineAutoV1Marker>::load(self, req).and_then(|r| r.take_metadata_and_payload()).map(|(metadata, payload)| icu_provider::AnyResponse { payload: Some(payload.wrap_into_any_payload()), metadata }),
+                    SEGMENTER_SENTENCE_V1 => icu_provider::DataProvider::<icu::segmenter::provider::SentenceBreakDataV1Marker>::load(self, req).and_then(|r| r.take_metadata_and_payload()).map(|(metadata, payload)| icu_provider::AnyResponse { payload: Some(payload.wrap_into_any_payload()), metadata }),
+                    SEGMENTER_WORD_V1 => icu_provider::DataProvider::<icu::segmenter::provider::WordBreakDataV1Marker>::load(self, req).and_then(|r| r.take_metadata_and_payload()).map(|(metadata, payload)| icu_provider::AnyResponse { payload: Some(payload.wrap_into_any_payload()), metadata }),
                     _ => Err(icu_provider::DataErrorKind::MissingDataKey.with_req(key, req)),
                 }
             }
@@ -63,6 +63,6 @@ macro_rules! __impl_any_provider {
 }
 #[doc(inline)]
 pub use __impl_any_provider as impl_any_provider;
-#[clippy::msrv = "1.61"]
+#[clippy::msrv = "1.65"]
 pub struct BakedDataProvider;
 impl_data_provider!(BakedDataProvider);

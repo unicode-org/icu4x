@@ -19,14 +19,80 @@
             "values": {
                 "en": "Tuesday, January 21, 2020 Anno Domini, 08:25:07",
                 "en-u-ca-buddhist": "Tuesday, January 21, 2563 BE, 08:25:07",
+                "en-u-ca-chinese": "Tuesday, Twelfth Month 27, 2019((cyclic year: 36)), 08:25:07",
+                "zh-u-ca-chinese": "2019(cyclic year: 36)年腊月27星期二 08:25:07",
                 "en-u-ca-japanese": "Tuesday, January 21, 2 Reiwa, 08:25:07",
                 "ja-u-ca-japanese": "令和2年1月21日火曜日 8:25:07",
                 "en-u-ca-coptic": "Tuesday, Toba 12, 1736 ERA1, 08:25:07",
                 "fr-u-ca-coptic": "mardi 12 toubah 1736 après Dioclétien 08:25:07",
+                "en-u-ca-dangi": "Tuesday, Twelfth Month 27, 2019((cyclic year: 36)), 08:25:07",
+                "fr-u-ca-dangi": "2019((cyclic year: 36)) shí’èryuè 27, mardi 08:25:07",
+                "ko-u-ca-dangi": "2019년((cyclic year: 36)년) 12월 27일 화요일 08:25:07",
                 "en-u-ca-indian": "Tuesday, Magha 01, 1941 Saka, 08:25:07",
+                "en-u-ca-islamic": "Tuesday, Jumada I 25, 1441 AH, 08:25:07",
+                "fr-u-ca-islamic": "mardi 25 joumada al oula 1441 ère de l’Hégire 08:25:07",
+                "en-u-ca-islamic-civil": "Tuesday, Jumada I 25, 1441 AH, 08:25:07",
+                "fr-u-ca-islamic-civil": "mardi 25 joumada al oula 1441 ère de l’Hégire 08:25:07",
+                "en-u-ca-islamic-umalqura": "Tuesday, Jumada I 26, 1441 AH, 08:25:07",
+                "fr-u-ca-islamic-umalqura": "mardi 26 joumada al oula 1441 ère de l’Hégire 08:25:07",
+                "en-u-ca-islamic-tbla": "Tuesday, Jumada I 26, 1441 AH, 08:25:07",
+                "fr-u-ca-islamic-tbla": "mardi 26 joumada al oula 1441 ère de l’Hégire 08:25:07",
+                "en-u-ca-persian": "Tuesday, Bahman 01, 1398 AP, 08:25:07",
+                "fr-u-ca-persian": "mardi 01 bahman 1398 Anno Persico 08:25:07",
+                "en-u-ca-hebrew": "Tuesday, 24 Tevet 5780 AM, 08:25:07",
+                "fr-u-ca-hebrew": "mardi 24 téveth 5780 Anno Mundi 08:25:07",
                 "en-u-ca-ethiopic": "Tuesday, Ter 12, 2012 ERA0, 08:25:07",
                 "fr-u-ca-ethiopic": "mardi 12 ter 2012 avant l’Incarnation 08:25:07",
-                "fr-u-ca-ethioaa": "mardi 12 ter 7512 ERA0 08:25:07"
+                "fr-u-ca-ethioaa": "mardi 12 ter 7512 ERA0 08:25:07",
+                "en-u-ca-roc": "Tuesday, January 21, 109 Minguo, 08:25:07",
+                "fr-u-ca-roc": "mardi 21 janvier 109 RdC 08:25:07",
+                "zh-u-ca-roc": "民国109年1月21日星期二 08:25:07"
+            }
+        }
+    },
+    {
+        "input": {
+            "value": "2023-03-23T14:15:07.123",
+            "options": {
+                "components": {
+                    "weekday": "long",
+                    "month": "long",
+                    "day": "two-digit-day-of-month",
+                    "era": "long",
+                    "year": "numeric",
+                    "hour": "numeric",
+                    "minute": "numeric",
+                    "second": "numeric"
+                }
+            }
+        },
+        "output": {
+            "values": {
+                "en-u-ca-chinese": "Thursday, Second Month(leap) 02, 2023((cyclic year: 40)), 14:15:07",
+                "zh-u-ca-chinese": "2023(cyclic year: 40)年二月(leap)02星期四 14:15:07"
+            }
+        }
+    },
+    {
+        "input": {
+            "value": "2011-04-03T14:15:07.123",
+            "options": {
+                "components": {
+                    "weekday": "long",
+                    "month": "long",
+                    "day": "two-digit-day-of-month",
+                    "era": "long",
+                    "year": "numeric",
+                    "hour": "numeric",
+                    "minute": "numeric",
+                    "second": "numeric"
+                }
+            }
+        },
+        "output": {
+            "values": {
+                "en-u-ca-hebrew": "Sunday, 28 Adar II 5771 AM, 14:15:07",
+                "fr-u-ca-hebrew": "dimanche 28 adar II 5771 Anno Mundi 14:15:07"
             }
         }
     },

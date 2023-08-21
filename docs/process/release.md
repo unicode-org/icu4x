@@ -29,10 +29,11 @@ Once the release is complete, the assigned release driver will:
   * This will only update crates that have changed, and will ask you which version number to bump for each crate
   * You can use commands like `git log icu@1.0.0..@ -- components/plurals/src/` and `cargo public-api -p icu_list diff 1.0.0` to figure out whether to do a major, minor, or patch release
   * Get this reviewed and checked in before continuing
+* `cargo make testdata-legacy` to generate data for `icu_testdata` (which is gitignored)
 * Use `cargo workspaces publish --from-git` to automatically publish the crates in the correct order
   * Add `icu4x-release` group as owners to each new component you're publishing
     * `cargo owner -a github:unicode-org:icu4x-release`
-* Verify that the tutorial crates work on the newly released crates.io sources by running `cargo make test-cargo-tutorial-cratesio`
+* Verify that the tutorials work on the newly released crates.io sources by running `cargo make test-tutorials-cratesio`
   * If there are any errors, please fix them before advertising the release
 * [Tag the Release](https://github.com/unicode-org/icu4x/releases)
 * Announce the release to public

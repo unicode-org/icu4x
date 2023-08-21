@@ -1,0 +1,21 @@
+{
+  "keys": {
+    "explicit": [
+      "core/helloworld@1",
+      "fallback/likelysubtags@1",
+      "fallback/parents@1",
+      "fallback/supplement/co@1"
+    ]
+  },
+  "fallback": "runtimeManual",
+  "locales": "all",
+  "cldr": "latest",
+  "icuExport": "none",
+  "segmenterLstm": "none",
+  "export": {
+    "blob": {
+      "path": "blob.postcard"
+    }
+  },
+  "overwrite": true
+}

@@ -38,10 +38,30 @@ use crate::elements::NO_CE_PRIMARY;
 use super::CaseFirst;
 use super::MaxVariable;
 
+#[cfg(feature = "compiled_data")]
+#[derive(Debug)]
+/// Baked data
+pub struct Baked;
+
+#[cfg(feature = "compiled_data")]
+const _: () = {
+    pub mod icu {
+        pub use crate as collator;
+        pub use icu_collections as collections;
+        pub use icu_locid_transform as locid_transform;
+    }
+    icu_collator_data::impl_collator_data_v1!(Baked);
+    icu_collator_data::impl_collator_dia_v1!(Baked);
+    icu_collator_data::impl_collator_jamo_v1!(Baked);
+    icu_collator_data::impl_collator_meta_v1!(Baked);
+    icu_collator_data::impl_collator_prim_v1!(Baked);
+    icu_collator_data::impl_collator_reord_v1!(Baked);
+};
+
 const SINGLE_U32: &ZeroSlice<u32> =
-    zeroslice![u32; <u32 as AsULE>::ULE::from_unsigned; FFFD_CE32_VALUE];
+    zeroslice!(u32; <u32 as AsULE>::ULE::from_unsigned; [FFFD_CE32_VALUE]);
 const SINGLE_U64: &ZeroSlice<u64> =
-    zeroslice![u64; <u64 as AsULE>::ULE::from_unsigned; FFFD_CE_VALUE];
+    zeroslice!(u64; <u64 as AsULE>::ULE::from_unsigned; [FFFD_CE_VALUE]);
 
 fn data_ce_to_primary(data_ce: u64, c: char) -> u32 {
     // Collation::getThreeBytePrimaryForOffsetData
@@ -195,7 +215,8 @@ impl<'data> CollationDataV1<'data> {
     "collator/dia@1",
     extension_key = "co",
     fallback_by = "collation",
-    fallback_supplement = "collation"
+    fallback_supplement = "collation",
+    singleton,
 ))]
 #[derive(Debug, PartialEq, Clone)]
 #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake), databake(path = icu_collator::provider))]
@@ -216,7 +237,7 @@ pub struct CollationDiacriticsV1<'data> {
 /// including in SemVer minor releases. While the serde representation of data structs is guaranteed
 /// to be stable, their Rust representation might not be. Use with caution.
 /// </div>
-#[icu_provider::data_struct(CollationJamoV1Marker = "collator/jamo@1")]
+#[icu_provider::data_struct(marker(CollationJamoV1Marker, "collator/jamo@1", singleton))]
 #[derive(Debug, PartialEq, Clone)]
 #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake), databake(path = icu_collator::provider))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
@@ -420,7 +441,11 @@ impl CollationMetadataV1 {
 /// including in SemVer minor releases. While the serde representation of data structs is guaranteed
 /// to be stable, their Rust representation might not be. Use with caution.
 /// </div>
-#[icu_provider::data_struct(CollationSpecialPrimariesV1Marker = "collator/prim@1")]
+#[icu_provider::data_struct(marker(
+    CollationSpecialPrimariesV1Marker,
+    "collator/prim@1",
+    singleton
+))]
 #[derive(Debug, PartialEq, Clone)]
 #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake), databake(path = icu_collator::provider))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]

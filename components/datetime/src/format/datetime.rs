@@ -36,8 +36,7 @@ use writeable::Writeable;
 /// use icu::calendar::{DateTime, Gregorian};
 /// use icu::datetime::TypedDateTimeFormatter;
 /// use icu::locid::locale;
-/// let dtf = TypedDateTimeFormatter::<Gregorian>::try_new_unstable(
-///     &icu_testdata::unstable(),
+/// let dtf = TypedDateTimeFormatter::<Gregorian>::try_new(
 ///     &locale!("en").into(),
 ///     Default::default(),
 /// )
@@ -233,6 +232,38 @@ where
                 FixedDecimal::from(datetime.week_of_year()?.0.number),
                 field.length,
             )?,
+            Year::Cyclic => {
+                w.write_str("(cyclic year: ")?; // TODO(#3761): Add data for cyclic year names
+                format_number(
+                    w,
+                    fixed_decimal_format,
+                    FixedDecimal::from(
+                        datetime
+                            .datetime()
+                            .year()
+                            .ok_or(Error::MissingInputField(Some("year")))?
+                            .cyclic
+                            .ok_or(Error::MissingInputField(Some("cyclic")))?,
+                    ),
+                    field.length,
+                )?;
+                w.write_char(')')?;
+            }
+            Year::RelatedIso => {
+                format_number(
+                    w,
+                    fixed_decimal_format,
+                    FixedDecimal::from(
+                        datetime
+                            .datetime()
+                            .year()
+                            .ok_or(Error::MissingInputField(Some("year")))?
+                            .related_iso
+                            .ok_or(Error::MissingInputField(Some("related_iso")))?,
+                    ),
+                    field.length,
+                )?;
+            }
         },
         FieldSymbol::Month(month) => match field.length {
             FieldLength::One | FieldLength::TwoDigit => format_number(
@@ -248,18 +279,29 @@ where
                 field.length,
             )?,
             length => {
-                let symbol = date_symbols
+                let code = datetime
+                    .datetime()
+                    .month()
+                    .ok_or(Error::MissingInputField(Some("month")))?
+                    .code;
+
+                let symbols = date_symbols
                     .ok_or(Error::MissingDateSymbols)?
-                    .get_symbol_for_month(
-                        month,
-                        length,
-                        datetime
-                            .datetime()
-                            .month()
-                            .ok_or(Error::MissingInputField(Some("month")))?
-                            .code,
-                    )?;
-                w.write_str(symbol)?
+                    .get_symbols_for_month(month, length)?;
+
+                let symbol_option = symbols.get(code);
+                if symbol_option.is_some() {
+                    w.write_str(symbol_option.ok_or(Error::MissingMonthSymbol(code))?)?;
+                } else {
+                    let code = code
+                        .get_normal_if_leap()
+                        .ok_or(Error::MissingMonthSymbol(code))?;
+                    let symbols = date_symbols
+                        .ok_or(Error::MissingDateSymbols)?
+                        .get_symbols_for_month(month, length)?;
+                    w.write_str(symbols.get(code).ok_or(Error::MissingMonthSymbol(code))?)?;
+                    w.write_str("(leap)")?; // This is temporary; TODO(#3766) add support for leap months
+                }
             }
         },
         FieldSymbol::Week(week) => match week {
@@ -510,17 +552,14 @@ mod tests {
         use icu::datetime::DateFormatter;
 
         let locale: Locale = "en-u-ca-japanese".parse().unwrap();
-        let dtf = DateFormatter::try_new_with_length_unstable(
-            &icu_testdata::unstable(),
-            &locale.into(),
-            length::Date::Medium,
-        )
-        .expect("DateTimeFormat construction succeeds");
+        let dtf = DateFormatter::try_new_with_length(&locale.into(), length::Date::Medium)
+            .expect("DateTimeFormat construction succeeds");
 
-        let japanext = JapaneseExtended::try_new_unstable(&icu_testdata::unstable())
-            .expect("Cannot load japanext data");
         let date = Date::try_new_gregorian_date(1800, 9, 1).expect("Failed to construct Date.");
-        let date = date.to_calendar(japanext).into_japanese_date().to_any();
+        let date = date
+            .to_calendar(JapaneseExtended::new())
+            .into_japanese_date()
+            .to_any();
 
         writeable::assert_writeable_eq!(dtf.format(&date).unwrap(), "Sep 1, 12 kansei-1789")
     }
@@ -537,26 +576,20 @@ mod tests {
             locale: &locale,
             metadata: Default::default(),
         };
-        let date_data: DataPayload<GregorianDateSymbolsV1Marker> = icu_testdata::buffer()
-            .as_deserializing()
+        let date_data: DataPayload<GregorianDateSymbolsV1Marker> = crate::provider::Baked
             .load(req)
             .unwrap()
             .take_payload()
             .unwrap();
-        let time_data: DataPayload<TimeSymbolsV1Marker> = icu_testdata::buffer()
-            .as_deserializing()
+        let time_data: DataPayload<TimeSymbolsV1Marker> = crate::provider::Baked
             .load(req)
             .unwrap()
             .take_payload()
             .unwrap();
         let pattern = "MMM".parse().unwrap();
         let datetime = DateTime::try_new_gregorian_datetime(2020, 8, 1, 12, 34, 28).unwrap();
-        let fixed_decimal_format = FixedDecimalFormatter::try_new_unstable(
-            &icu_testdata::unstable(),
-            &locale,
-            Default::default(),
-        )
-        .unwrap();
+        let fixed_decimal_format =
+            FixedDecimalFormatter::try_new(&locale, Default::default()).unwrap();
 
         let mut sink = String::new();
         let loc_datetime = DateTimeInputWithWeekConfig::new(&datetime, None);
@@ -587,8 +620,7 @@ mod tests {
 
         let mut fixed_decimal_format_options = FixedDecimalFormatterOptions::default();
         fixed_decimal_format_options.grouping_strategy = GroupingStrategy::Never;
-        let fixed_decimal_format = FixedDecimalFormatter::try_new_unstable(
-            &icu_testdata::unstable(),
+        let fixed_decimal_format = FixedDecimalFormatter::try_new(
             &icu_locid::locale!("en").into(),
             fixed_decimal_format_options,
         )

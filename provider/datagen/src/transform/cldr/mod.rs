@@ -7,13 +7,17 @@
 pub mod calendar;
 pub mod characters;
 pub mod cldr_serde;
+#[cfg(feature = "icu_singlenumberformatter")]
+pub mod currency;
 pub mod datetime;
 pub mod decimal;
+#[cfg(feature = "icu_displaynames")]
 pub mod displaynames;
 pub mod fallback;
 pub mod list;
 pub mod locale_canonicalizer;
 pub mod plurals;
+#[cfg(feature = "icu_relativetime")]
 pub mod relativetime;
 pub mod source;
 pub mod time_zones;

@@ -1,0 +1,114 @@
+{
+  "months": {
+    "format": {
+      "abbreviated": {
+        "Other": {
+          "M01": "tishri",
+          "M02": "heshvan",
+          "M03": "kislev",
+          "M04": "tevet",
+          "M05": "shevat",
+          "M05L": "adar I",
+          "M06": "adar",
+          "M06L": "adar II",
+          "M07": "nisan",
+          "M08": "iyar",
+          "M09": "sivan",
+          "M10": "tamuz",
+          "M11": "av",
+          "M12": "elul"
+        }
+      },
+      "narrow": {
+        "Other": {
+          "M01": "1",
+          "M02": "2",
+          "M03": "3",
+          "M04": "4",
+          "M05": "5",
+          "M05L": "6",
+          "M06": "7",
+          "M06L": "7",
+          "M07": "8",
+          "M08": "9",
+          "M09": "10",
+          "M10": "11",
+          "M11": "12",
+          "M12": "13"
+        }
+      },
+      "short": null,
+      "wide": {
+        "Other": {
+          "M01": "tishri",
+          "M02": "heshvan",
+          "M03": "kislev",
+          "M04": "tevet",
+          "M05": "shevat",
+          "M05L": "adar I",
+          "M06": "adar",
+          "M06L": "adar II",
+          "M07": "nisan",
+          "M08": "iyar",
+          "M09": "sivan",
+          "M10": "tamuz",
+          "M11": "av",
+          "M12": "elul"
+        }
+      }
+    },
+    "stand_alone": null
+  },
+  "weekdays": {
+    "format": {
+      "abbreviated": [
+        "dom",
+        "lun",
+        "mar",
+        "mié",
+        "jue",
+        "vie",
+        "sáb"
+      ],
+      "narrow": [
+        "D",
+        "L",
+        "M",
+        "X",
+        "J",
+        "V",
+        "S"
+      ],
+      "short": [
+        "DO",
+        "LU",
+        "MA",
+        "MI",
+        "JU",
+        "VI",
+        "SA"
+      ],
+      "wide": [
+        "domingo",
+        "lunes",
+        "martes",
+        "miércoles",
+        "jueves",
+        "viernes",
+        "sábado"
+      ]
+    },
+    "stand_alone": null
+  },
+  "eras": {
+    "names": {
+      "hebrew": "AM"
+    },
+    "abbr": {
+      "hebrew": "AM"
+    },
+    "narrow": {
+      "hebrew": "AM"
+    }
+  }
+}

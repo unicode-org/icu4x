@@ -59,11 +59,11 @@
     See the `Rust documentation for LocaleDisplayNamesFormatter <https://docs.rs/icu/latest/icu/displaynames/struct.LocaleDisplayNamesFormatter.html>`__ for more information.
 
 
-    .. cpp:function:: static diplomat::result<ICU4XLocaleDisplayNamesFormatter, ICU4XError> try_new_unstable(const ICU4XDataProvider& provider, const ICU4XLocale& locale, ICU4XDisplayNamesOptionsV1 options)
+    .. cpp:function:: static diplomat::result<ICU4XLocaleDisplayNamesFormatter, ICU4XError> try_new(const ICU4XDataProvider& provider, const ICU4XLocale& locale, ICU4XDisplayNamesOptionsV1 options)
 
         Creates a new ``LocaleDisplayNamesFormatter`` from locale data and an options bag.
 
-        See the `Rust documentation for try_new_unstable <https://docs.rs/icu/latest/icu/displaynames/struct.LocaleDisplayNamesFormatter.html#method.try_new_unstable>`__ for more information.
+        See the `Rust documentation for try_new <https://docs.rs/icu/latest/icu/displaynames/struct.LocaleDisplayNamesFormatter.html#method.try_new>`__ for more information.
 
 
     .. cpp:function:: template<typename W> diplomat::result<std::monostate, ICU4XError> of_to_writeable(const ICU4XLocale& locale, W& write) const
@@ -85,11 +85,11 @@
     See the `Rust documentation for RegionDisplayNames <https://docs.rs/icu/latest/icu/displaynames/struct.RegionDisplayNames.html>`__ for more information.
 
 
-    .. cpp:function:: static diplomat::result<ICU4XRegionDisplayNames, ICU4XError> try_new_unstable(const ICU4XDataProvider& provider, const ICU4XLocale& locale)
+    .. cpp:function:: static diplomat::result<ICU4XRegionDisplayNames, ICU4XError> try_new(const ICU4XDataProvider& provider, const ICU4XLocale& locale)
 
         Creates a new ``RegionDisplayNames`` from locale data and an options bag.
 
-        See the `Rust documentation for try_new_unstable <https://docs.rs/icu/latest/icu/displaynames/struct.RegionDisplayNames.html#method.try_new_unstable>`__ for more information.
+        See the `Rust documentation for try_new <https://docs.rs/icu/latest/icu/displaynames/struct.RegionDisplayNames.html#method.try_new>`__ for more information.
 
 
     .. cpp:function:: template<typename W> diplomat::result<std::monostate, ICU4XError> of_to_writeable(const std::string_view region, W& write) const

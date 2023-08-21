@@ -4,11 +4,19 @@
 
 # This is a cargo-make file included in the toplevel Makefile.toml
 
+[tasks.check-all-features-chunked]
+description = "Build all permutations of all features for the provided chunk index (3 chunks)"
+category = "ICU4X Development"
+install_crate = { crate_name = "cargo-all-features", binary = "cargo-check-all-features", test_arg = ["--help"] }
+install_crate_args = ["--version", "^1.10"]
+command = "cargo"
+args = ["check-all-features", "--n-chunks", "3", "--chunk", "${@}"]
+
 [tasks.check-all-features]
 description = "Build all permutations of all features"
 category = "ICU4X Development"
 install_crate = { crate_name = "cargo-all-features", binary = "cargo-check-all-features", test_arg = ["--help"] }
-install_crate_args = ["--version", "^1.9"]
+install_crate_args = ["--version", "^1.10"]
 command = "cargo"
 args = ["check-all-features"]
 
@@ -16,7 +24,7 @@ args = ["check-all-features"]
 description = "Build all permutations of all features"
 category = "ICU4X Development"
 install_crate = { crate_name = "cargo-all-features", binary = "cargo-build-all-features", test_arg = ["--help"] }
-install_crate_args = ["--version", "^1.8"]
+install_crate_args = ["--version", "^1.10"]
 command = "cargo"
 args = ["build-all-features"]
 
@@ -26,13 +34,20 @@ category = "ICU4X Development"
 command = "cargo"
 args = ["test", "--all-features", "--all-targets", "--no-fail-fast"]
 
+[tasks.test-all-features-windows]
+description = "Run all Rust tests with all features and targets (with special changes to reduce Windows disk space)"
+category = "ICU4X Development"
+command = "cargo"
+args = ["test", "--all-features", "--all-targets", "--no-fail-fast", "--profile", "windows-test-ci"]
+
+
 [tasks.test-docs]
 description = "Run all Rust doctests with all features"
 category = "ICU4X Development"
 command = "cargo"
 args = ["test", "--all-features", "--doc", "--no-fail-fast"]
 
-[tasks.check-cargo-tutorial-local]
+[tasks.check-tutorials-local]
 description = "Build the Cargo tutorial projects based on local crates"
 category = "ICU4X Development"
 script_runner = "@duckscript"
@@ -42,8 +57,9 @@ exit_on_error true
 pwd = pwd
 set_env CARGO_TARGET_DIR ${pwd}/target
 
-cd docs/tutorials/crates
+cd docs/tutorials/testing
 
+exec --fail-on-error cargo --config patch.toml test -p tutorials-test
 exec --fail-on-error cargo --config patch.toml check -p tutorial_baked
 exec --fail-on-error cargo --config patch.toml check -p tutorial_buffer
 exec --fail-on-error cargo --config patch.toml check -p tutorial_experimental
@@ -51,7 +67,7 @@ exec --fail-on-error cargo --config patch.toml check -p tutorial_lazy_static
 exec --fail-on-error cargo --config patch.toml check -p tutorial_testdata
 '''
 
-[tasks.test-cargo-tutorial-local]
+[tasks.test-tutorials-local]
 description = "Build and run the Cargo tutorial projects based on local crates"
 category = "ICU4X Development"
 script_runner = "@duckscript"
@@ -63,32 +79,32 @@ set_env CARGO_TARGET_DIR ${project_dir}/target
 
 exec --fail-on-error cargo build -p icu_datagen
 
-cd docs/tutorials/crates
+cd docs/tutorials/testing
+
+exec --fail-on-error cargo --config patch.toml test -p tutorials-test
+exec --fail-on-error cargo --config patch.toml run -p tutorial_baked
+exec --fail-on-error cargo --config patch.toml run -p tutorial_experimental
+exec --fail-on-error cargo --config patch.toml run -p tutorial_lazy_static
+exec --fail-on-error cargo --config patch.toml run -p tutorial_testdata
 
 # Build the postcard file
 # Copy our own icu4x-datagen and tutorial_buffer to speed up the task
 exec --fail-on-error cargo --config patch.toml build -p tutorial_buffer
-mkdir -p buffer/bin
-cp ${project_dir}/target/debug/icu4x-datagen buffer/bin/icu4x-datagen
-cp ${project_dir}/target/debug/tutorial_buffer buffer/bin/tutorial_buffer
-exec --fail-on-error make -C buffer buffer_data.postcard
-
-# Run the 5 projects
-exec --fail-on-error cargo --config patch.toml run -p tutorial_baked
+mkdir ../crates/buffer/bin
+cp ${project_dir}/target/debug/icu4x-datagen ../crates/buffer/bin/icu4x-datagen
+cp ${project_dir}/target/debug/tutorial_buffer ../crates/buffer/bin/tutorial_buffer
+exec --fail-on-error make -C ../crates/buffer buffer_data.postcard
 exec --fail-on-error cargo --config patch.toml run -p tutorial_buffer
-exec --fail-on-error cargo --config patch.toml run -p tutorial_experimental
-exec --fail-on-error cargo --config patch.toml run -p tutorial_lazy_static
-exec --fail-on-error cargo --config patch.toml run -p tutorial_testdata
 '''
 
-[tasks.test-cargo-tutorial-cratesio]
+[tasks.test-tutorials-cratesio]
 description = "Build and run the Cargo tutorial projects based on crates.io"
 category = "ICU4X Development"
 script_runner = "@duckscript"
 script = '''
 exit_on_error true
 
-cd docs/tutorials/crates
+cd docs/tutorials/
 
 # Delete the lockfile to make a clean crates.io build
 rm -f Cargo.lock
@@ -96,15 +112,15 @@ rm -f Cargo.lock
 pwd = pwd
 set_env CARGO_TARGET_DIR ${pwd}/target/cratesio
 
-# Build the postcard file
-# Use the full Makefile task
-exec --fail-on-error cargo build --release -p tutorial_buffer
-exec --fail-on-error make -C buffer
-
-# Run the 5 projects
+exec --fail-on-error cargo test -p tutorials-test
 exec --fail-on-error cargo run --release -p tutorial_baked
-exec --fail-on-error cargo run --release -p tutorial_buffer
 exec --fail-on-error cargo run --release -p tutorial_experimental
 exec --fail-on-error cargo run --release -p tutorial_lazy_static
 exec --fail-on-error cargo run --release -p tutorial_testdata
+
+# Build the postcard file
+# Use the full Makefile task
+exec --fail-on-error cargo build --release -p tutorial_buffer
+exec --fail-on-error make -C crates/buffer
+exec --fail-on-error cargo run --release -p tutorial_buffer
 '''

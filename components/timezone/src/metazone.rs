@@ -19,7 +19,7 @@ pub struct MetazoneCalculator {
     pub(super) metazone_period: DataPayload<MetazonePeriodV1Marker>,
 }
 
-#[cfg(feature = "data")]
+#[cfg(feature = "compiled_data")]
 impl Default for MetazoneCalculator {
     fn default() -> Self {
         Self::new()
@@ -27,12 +27,12 @@ impl Default for MetazoneCalculator {
 }
 
 impl MetazoneCalculator {
-    /// Constructs a `MetazoneCalculator`.
+    /// Constructs a `MetazoneCalculator` using compiled data.
     ///
-    /// ✨ **Enabled with the `"data"` feature.**
+    /// ✨ *Enabled with the `compiled_data` Cargo feature.*
     ///
     /// [📚 Help choosing a constructor](icu_provider::constructors)
-    #[cfg(feature = "data")]
+    #[cfg(feature = "compiled_data")]
     #[inline]
     pub const fn new() -> Self {
         MetazoneCalculator {

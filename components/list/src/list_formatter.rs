@@ -26,10 +26,14 @@ macro_rules! constructor {
             locale: include,
             style: ListLength,
             error: ListError,
-            #[doc = concat!("Creates a new [`ListFormatter`] that produces a ", $doc, "-type list.")]
+            #[doc = concat!("Creates a new [`ListFormatter`] that produces a ", $doc, "-type list using compiled data.")]
             ///
             /// See the [CLDR spec](https://unicode.org/reports/tr35/tr35-general.html#ListPatterns) for
             /// an explanation of the different types.
+            ///
+            /// ✨ *Enabled with the `compiled_data` Cargo feature.*
+            ///
+            /// [📚 Help choosing a constructor](icu_provider::constructors)
             functions: [
                 $name,
                 $name_any,
@@ -41,11 +45,11 @@ macro_rules! constructor {
 
         #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::$name)]
         pub fn $name_unstable(
-            data_provider: &(impl DataProvider<$marker> + ?Sized),
+            provider: &(impl DataProvider<$marker> + ?Sized),
             locale: &DataLocale,
             length: ListLength,
         ) -> Result<Self, ListError> {
-            let data = data_provider
+            let data = provider
                 .load(DataRequest {
                     locale,
                     metadata: Default::default(),
@@ -363,5 +367,69 @@ mod tests {
         let formatter = formatter(ListLength::Narrow);
 
         assert_writeable_eq!(formatter.format(["Beta", "Alpha"].iter()), "Beta :o Alpha");
+    }
+
+    macro_rules! test {
+        ($locale:literal, $type:ident, $(($input:expr, $output:literal),)+) => {
+            let f = ListFormatter::$type(
+                &icu::locid::locale!($locale).into(),
+                ListLength::Wide
+            ).unwrap();
+            $(
+                assert_writeable_eq!(f.format($input.iter()), $output);
+            )+
+        };
+    }
+
+    #[test]
+    fn test_basic() {
+        test!("fr", try_new_or_with_length, (["A", "B"], "A ou B"),);
+    }
+
+    #[test]
+    fn test_spanish() {
+        test!(
+            "es",
+            try_new_and_with_length,
+            (["x", "Mallorca"], "x y Mallorca"),
+            (["x", "Ibiza"], "x e Ibiza"),
+            (["x", "Hidalgo"], "x e Hidalgo"),
+            (["x", "Hierva"], "x y Hierva"),
+        );
+
+        test!(
+            "es",
+            try_new_or_with_length,
+            (["x", "Ibiza"], "x o Ibiza"),
+            (["x", "Okinawa"], "x u Okinawa"),
+            (["x", "8 más"], "x u 8 más"),
+            (["x", "8"], "x u 8"),
+            (["x", "87 más"], "x u 87 más"),
+            (["x", "87"], "x u 87"),
+            (["x", "11 más"], "x u 11 más"),
+            (["x", "11"], "x u 11"),
+            (["x", "110 más"], "x o 110 más"),
+            (["x", "110"], "x o 110"),
+            (["x", "11.000 más"], "x u 11.000 más"),
+            (["x", "11.000"], "x u 11.000"),
+            (["x", "11.000,92 más"], "x u 11.000,92 más"),
+            (["x", "11.000,92"], "x u 11.000,92"),
+        );
+
+        test!(
+            "es-AR",
+            try_new_and_with_length,
+            (["x", "Ibiza"], "x e Ibiza"),
+        );
+    }
+
+    #[test]
+    fn test_hebrew() {
+        test!(
+            "he",
+            try_new_and_with_length,
+            (["x", "יפו"], "x ויפו"),
+            (["x", "Ibiza"], "x ו‑Ibiza"),
+        );
     }
 }

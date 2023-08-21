@@ -19,13 +19,13 @@ export class ICU4XLocaleDisplayNamesFormatter {
     }
   }
 
-  static try_new_unstable(arg_provider, arg_locale, arg_options) {
+  static try_new(arg_provider, arg_locale, arg_options) {
     const field_style_arg_options = arg_options["style"];
     const field_fallback_arg_options = arg_options["fallback"];
     const field_language_display_arg_options = arg_options["language_display"];
     return (() => {
       const diplomat_receive_buffer = wasm.diplomat_alloc(5, 4);
-      wasm.ICU4XLocaleDisplayNamesFormatter_try_new_unstable(diplomat_receive_buffer, arg_provider.underlying, arg_locale.underlying, ICU4XDisplayNamesStyle_js_to_rust[field_style_arg_options], ICU4XDisplayNamesFallback_js_to_rust[field_fallback_arg_options], ICU4XLanguageDisplay_js_to_rust[field_language_display_arg_options]);
+      wasm.ICU4XLocaleDisplayNamesFormatter_try_new(diplomat_receive_buffer, arg_provider.underlying, arg_locale.underlying, ICU4XDisplayNamesStyle_js_to_rust[field_style_arg_options], ICU4XDisplayNamesFallback_js_to_rust[field_fallback_arg_options], ICU4XLanguageDisplay_js_to_rust[field_language_display_arg_options]);
       const is_ok = diplomatRuntime.resultFlag(wasm, diplomat_receive_buffer, 4);
       if (is_ok) {
         const ok_value = new ICU4XLocaleDisplayNamesFormatter(diplomatRuntime.ptrRead(wasm, diplomat_receive_buffer), true, []);

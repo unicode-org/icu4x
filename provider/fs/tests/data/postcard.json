@@ -1,0 +1,19 @@
+{
+  "keys": {
+    "explicit": [
+      "core/helloworld@1"
+    ]
+  },
+  "fallback": "hybrid",
+  "locales": "all",
+  "cldr": "none",
+  "icuExport": "none",
+  "segmenterLstm": "none",
+  "export": {
+    "fileSystem": {
+      "path": "postcard",
+      "syntax": "postcard"
+    }
+  },
+  "overwrite": true
+}

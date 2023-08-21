@@ -6,10 +6,13 @@
 
 use crate::error::CalendarError;
 use crate::helpers;
+use crate::rata_die::RataDie;
 use core::convert::TryFrom;
 use core::convert::TryInto;
 use core::fmt;
+use core::ops::{Add, AddAssign, Sub, SubAssign};
 use core::str::FromStr;
+use tinystr::TinyAsciiStr;
 use tinystr::{TinyStr16, TinyStr4};
 use zerovec::maps::ZeroMapKV;
 use zerovec::ule::AsULE;
@@ -18,6 +21,10 @@ use zerovec::ule::AsULE;
 ///
 /// Different calendars use different era codes, see their documentation
 /// for details.
+///
+/// Era codes are shared with Temporal, [see Temporal proposal][era-proposal].
+///
+/// [era-proposal]: https://tc39.es/proposal-intl-era-monthcode/
 #[derive(Copy, Clone, Debug, PartialEq)]
 #[allow(clippy::exhaustive_structs)] // this is a newtype
 pub struct Era(pub TinyStr16);
@@ -37,16 +44,23 @@ impl FromStr for Era {
 
 /// Representation of a formattable year.
 ///
-/// More fields may be added in the future, for things like
-/// the cyclic or extended year
+/// More fields may be added in the future for things like extended year
 #[derive(Copy, Clone, Debug, PartialEq)]
 #[non_exhaustive]
 pub struct FormattableYear {
     /// The era containing the year.
+    ///
+    /// This may not always be the canonical era for the calendar and could be an alias,
+    /// for example all `islamic` calendars return `islamic` as the formattable era code
+    /// which allows them to share data.
     pub era: Era,
 
     /// The year number in the current era (usually 1-based).
     pub number: i32,
+
+    /// The year in the current cycle for cyclic calendars;
+    /// can be set to None for non-cyclic calendars
+    pub cyclic: Option<i32>,
 
     /// The related ISO year. This is normally the ISO (proleptic Gregorian) year having the greatest
     /// overlap with the calendar year. It is used in certain date formatting patterns.
@@ -61,10 +75,11 @@ impl FormattableYear {
     ///
     /// Other fields can be set mutably after construction
     /// as needed
-    pub fn new(era: Era, number: i32) -> Self {
+    pub fn new(era: Era, number: i32, cyclic: Option<i32>) -> Self {
         Self {
             era,
             number,
+            cyclic,
             related_iso: None,
         }
     }
@@ -76,6 +91,10 @@ impl FormattableYear {
 /// (`M03L`) in lunar calendars. Solar calendars will have codes between `M01` and `M12`
 /// potentially with an `M13` for epagomenal months. Check the docs for a particular calendar
 /// for details on what its month codes are.
+///
+/// Month codes are shared with Temporal, [see Temporal proposal][era-proposal].
+///
+/// [era-proposal]: https://tc39.es/proposal-intl-era-monthcode/
 #[derive(Clone, Copy, Debug, PartialEq, Eq, PartialOrd, Ord, Hash)]
 #[allow(clippy::exhaustive_structs)] // this is a newtype
 #[cfg_attr(
@@ -85,6 +104,35 @@ impl FormattableYear {
 )]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 pub struct MonthCode(pub TinyStr4);
+
+impl MonthCode {
+    /// Returns an option which is Some containing the non-month version of a leap month
+    /// if the MonthCode this method is called upon is a leap month, and None otherwise.
+    /// This method assumes the MonthCode is valid.
+    pub fn get_normal_if_leap(self) -> Option<MonthCode> {
+        let bytes = self.0.all_bytes();
+        if bytes[3] == b'L' {
+            Some(MonthCode(TinyAsciiStr::from_bytes(&bytes[0..3]).ok()?))
+        } else {
+            None
+        }
+    }
+}
+
+#[test]
+fn test_get_normal_month_code_if_leap() {
+    let mc1 = MonthCode(tinystr::tinystr!(4, "M01L"));
+    let result1 = mc1.get_normal_if_leap();
+    assert_eq!(result1, Some(MonthCode(tinystr::tinystr!(4, "M01"))));
+
+    let mc2 = MonthCode(tinystr::tinystr!(4, "M11L"));
+    let result2 = mc2.get_normal_if_leap();
+    assert_eq!(result2, Some(MonthCode(tinystr::tinystr!(4, "M11"))));
+
+    let mc_invalid = MonthCode(tinystr::tinystr!(4, "M10"));
+    let result_invalid = mc_invalid.get_normal_if_leap();
+    assert_eq!(result_invalid, None);
+}
 
 impl AsULE for MonthCode {
     type ULE = TinyStr4;
@@ -132,6 +180,11 @@ pub struct FormattableMonth {
     pub ordinal: u32,
 
     /// The month code, used to distinguish months during leap years.
+    ///
+    /// This may not necessarily be the canonical month code for a month in cases where a month has different
+    /// formatting in a leap year, for example Adar/Adar II in the Hebrew calendar in a leap year has
+    /// the code M06, but for formatting specifically the Hebrew calendar will return M06L since it is formatted
+    /// differently.
     pub code: MonthCode,
 }
 
@@ -142,13 +195,13 @@ pub struct FormattableMonth {
 #[allow(clippy::exhaustive_structs)] // this type is stable
 pub struct DayOfYearInfo {
     /// The current day of the year, 1-based.
-    pub day_of_year: u32,
+    pub day_of_year: u16,
     /// The number of days in a year.
-    pub days_in_year: u32,
+    pub days_in_year: u16,
     /// The previous year.
     pub prev_year: FormattableYear,
     /// The number of days in the previous year.
-    pub days_in_prev_year: u32,
+    pub days_in_prev_year: u16,
     /// The next year.
     pub next_year: FormattableYear,
 }
@@ -704,5 +757,75 @@ impl From<usize> for IsoWeekday {
             ordinal = 7;
         }
         unsafe { core::mem::transmute(ordinal) }
+    }
+}
+
+/// A moment is a RataDie with a fractional part giving the time of day.
+///
+/// NOTE: This should not cause overflow errors for most cases, but consider
+/// alternative implementations if necessary.
+#[derive(Debug, Copy, Clone, PartialEq, PartialOrd)]
+#[doc(hidden)] // This type is unstable
+pub struct Moment(f64);
+
+/// Add a number of days to a Moment
+impl Add<f64> for Moment {
+    type Output = Self;
+    fn add(self, rhs: f64) -> Self::Output {
+        Self(self.0 + rhs)
+    }
+}
+
+impl AddAssign<f64> for Moment {
+    fn add_assign(&mut self, rhs: f64) {
+        self.0 += rhs;
+    }
+}
+
+/// Subtract a number of days from a Moment
+impl Sub<f64> for Moment {
+    type Output = Self;
+    fn sub(self, rhs: f64) -> Self::Output {
+        Self(self.0 - rhs)
+    }
+}
+
+impl SubAssign<f64> for Moment {
+    fn sub_assign(&mut self, rhs: f64) {
+        self.0 -= rhs;
+    }
+}
+
+/// Calculate the number of days between two moments
+impl Sub for Moment {
+    type Output = f64;
+    fn sub(self, rhs: Self) -> Self::Output {
+        self.0 - rhs.0
+    }
+}
+
+impl Moment {
+    /// Create a new moment
+    pub const fn new(value: f64) -> Moment {
+        Moment(value)
+    }
+
+    /// Get the inner field of a Moment
+    pub const fn inner(&self) -> f64 {
+        self.0
+    }
+
+    /// Get the RataDie of a Moment
+    pub(crate) fn as_rata_die(&self) -> RataDie {
+        RataDie::new(libm::floor(self.0) as i64)
+    }
+}
+
+#[test]
+fn test_moment_to_rata_die_conversion() {
+    for i in -1000..=1000 {
+        let moment = Moment::new(i as f64);
+        let rata_die = moment.as_rata_die();
+        assert_eq!(rata_die.to_i64_date(), i);
     }
 }

@@ -36,6 +36,8 @@ pub mod ffi {
         Indian = 7,
         /// The kind of a Coptic calendar
         Coptic = 8,
+        /// The kind of a Dangi calendar
+        Dangi = 9,
     }
 
     impl ICU4XAnyCalendarKind {
@@ -90,27 +92,35 @@ pub mod ffi {
 
     impl ICU4XCalendar {
         /// Creates a new [`ICU4XCalendar`] from the specified date and time.
-        #[diplomat::rust_link(icu::calendar::AnyCalendar::try_new_for_locale_unstable, FnInEnum)]
+        #[diplomat::rust_link(icu::calendar::AnyCalendar::new_for_locale, FnInEnum)]
         pub fn create_for_locale(
             provider: &ICU4XDataProvider,
             locale: &ICU4XLocale,
         ) -> Result<Box<ICU4XCalendar>, ICU4XError> {
             let locale = locale.to_datalocale();
 
-            Ok(Box::new(ICU4XCalendar(Arc::new(
-                AnyCalendar::try_new_for_locale_unstable(&provider.0, &locale)?,
-            ))))
+            Ok(Box::new(ICU4XCalendar(Arc::new(call_constructor!(
+                AnyCalendar::new_for_locale [r => Ok(r)],
+                AnyCalendar::try_new_for_locale_with_any_provider,
+                AnyCalendar::try_new_for_locale_with_buffer_provider,
+                provider,
+                &locale
+            )?))))
         }
 
         /// Creates a new [`ICU4XCalendar`] from the specified date and time.
-        #[diplomat::rust_link(icu::calendar::AnyCalendar::try_new_unstable, FnInEnum)]
+        #[diplomat::rust_link(icu::calendar::AnyCalendar::new, FnInEnum)]
         pub fn create_for_kind(
             provider: &ICU4XDataProvider,
             kind: ICU4XAnyCalendarKind,
         ) -> Result<Box<ICU4XCalendar>, ICU4XError> {
-            Ok(Box::new(ICU4XCalendar(Arc::new(
-                AnyCalendar::try_new_unstable(&provider.0, kind.into())?,
-            ))))
+            Ok(Box::new(ICU4XCalendar(Arc::new(call_constructor!(
+                AnyCalendar::new [r => Ok(r)],
+                AnyCalendar::try_new_with_any_provider,
+                AnyCalendar::try_new_with_buffer_provider,
+                provider,
+                kind.into()
+            )?))))
         }
 
         /// Returns the kind of this calendar

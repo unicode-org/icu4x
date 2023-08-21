@@ -15,8 +15,8 @@
 //! 3. Reduced overhead and code size (data is resolved locally at each call site).
 //! 4. Explicit support for multiple ICU4X instances sharing data.
 //!
-//! However, as manual data management can be tedious, ICU4X also has a `data` Cargo feature
-//! that includes data and makes ICU4X work out-of-the box.
+//! However, as manual data management can be tedious, ICU4X also has a `compiled_data`
+//! default Cargo feature that includes data and makes ICU4X work out-of-the box.
 //!
 //! Subsequently, there are 4 versions of all Rust ICU4X functions that use data:
 //!
@@ -30,18 +30,18 @@
 //! ## When to use `*`
 //!
 //! If you don't want to customize data at runtime (i.e. if you don't care about code size,
-//! updating your data, etc.) you can enable the `data` Cargo feature and don't have to think
+//! updating your data, etc.) you can use the `compiled_data` Cargo feature and don't have to think
 //! about where your data comes from.
 //!
-//! These constructors are sometimes `const` functions or even `const` values (if they
-//! don't take any parameters). This way Rust can most effectively optimize your usage of ICU4X.
+//! These constructors are sometimes `const` functions, this way Rust can most effectively optimize
+//! your usage of ICU4X.
 //!
 //! ## When to use `*_unstable`
 //!
 //! Use this constructor if your data provider implements the [`DataProvider`] trait for all
 //! data structs in *current and future* ICU4X versions. Examples:
 //!
-//! 1. `BakedDataProvider` auto-regenerated on new ICU4X versions
+//! 1. `BakedDataProvider` generated for the specific ICU4X minor version
 //! 2. Anything with a _blanket_ [`DataProvider`] impl
 //!
 //! Since the exact set of bounds may change at any time, including in minor SemVer releases,
@@ -64,9 +64,9 @@
 //!
 //! 1. [`BlobDataProvider`]
 //! 2. [`FsDataProvider`]
-//! 3. [`ForkByKeyProvider`] between any of the above
+//! 3. [`ForkByKeyProvider`] between two providers implementing [`BufferProvider`]
 //!
-//! Please note that you must enable the `"serde"` Cargo feature on each crate in which you use the
+//! Please note that you must enable the `serde` Cargo feature on each crate in which you use the
 //! `*_with_buffer_provider` constructor.
 //!
 //! # Data Versioning Policy
@@ -78,7 +78,7 @@
 //! version 1.2 will be able to read the same data file. Likewise, backwards-compatible keys can
 //! always be included by `icu_datagen` to support older library versions.
 //!
-//! The `*_unstable` functions are only guaranteed to work on data built for the exact same version
+//! The `*_unstable` functions are only guaranteed to work on data built for the exact same minor version
 //! of ICU4X. The advantage of the `*_unstable` functions is that they result in the smallest code
 //! size and allow for automatic data slicing when `BakedDataProvider` is used. However, the type
 //! bounds of this function may change over time, breaking SemVer guarantees. These functions
@@ -88,19 +88,18 @@
 //! # Data Providers Over FFI
 //!
 //! Over FFI, there is only one data provider type: [`ICU4XDataProvider`]. Internally, it is an
-//! `enum` between `dyn `[`AnyProvider`] and `dyn `[`BufferProvider`].
+//! `enum` between`dyn `[`BufferProvider`] and a unit compiled data variant.
 //!
-//! To control for code size, there are two Cargo features, `any_provider` and `buffer_provider`,
+//! To control for code size, there are two Cargo features, `compiled_data` and `buffer_provider`,
 //! that enable the corresponding items in the enum.
 //!
-//! In Rust ICU4X, a similar buffer/any enum approach was not taken because:
+//! In Rust ICU4X, a similar enum approach was not taken because:
 //!
 //! 1. Feature-gating the enum branches gets complex across crates.
 //! 2. Without feature gating, users need to carry Serde code even if they're not using it,
 //!    violating one of the core value propositions of ICU4X.
-//! 3. We could reduce the number of constructors from 3 to 2 but not to 1, so the educational
+//! 3. We could reduce the number of constructors from 4 to 2 but not to 1, so the educational
 //!    benefit is limited.
-//!
 //!
 //! [`DataProvider`]: crate::DataProvider
 //! [`BufferProvider`]: crate::BufferProvider
@@ -118,23 +117,23 @@ macro_rules! gen_any_buffer_unstable_docs {
     (ANY, $data:path) => {
         concat!(
             "A version of [`", stringify!($data), "`] that uses custom data ",
-            "provided by an [`AnyProvider`](", stringify!($crate), "::AnyProvider).\n\n",
-            "[📚 Help choosing a constructor](", stringify!($crate), "::constructors)",
+            "provided by an [`AnyProvider`](icu_provider::AnyProvider).\n\n",
+            "[📚 Help choosing a constructor](icu_provider::constructors)",
         )
     };
     (BUFFER, $data:path) => {
         concat!(
             "A version of [`", stringify!($data), "`] that uses custom data ",
-            "provided by a [`BufferProvider`](", stringify!($crate), "::BufferProvider).\n\n",
-            "✨ **Enabled with the `\"serde\"` feature.**\n\n",
-            "[📚 Help choosing a constructor](", stringify!($crate), "::constructors)",
+            "provided by a [`BufferProvider`](icu_provider::BufferProvider).\n\n",
+            "✨ *Enabled with the `serde` feature.*\n\n",
+            "[📚 Help choosing a constructor](icu_provider::constructors)",
         )
     };
     (UNSTABLE, $data:path) => {
         concat!(
             "A version of [`", stringify!($data), "`] that uses custom data ",
-            "provided by a [`DataProvider`](", stringify!($crate), "::DataProvider).\n\n",
-            "[📚 Help choosing a constructor](", stringify!($crate), "::constructors)\n\n",
+            "provided by a [`DataProvider`](icu_provider::DataProvider).\n\n",
+            "[📚 Help choosing a constructor](icu_provider::constructors)\n\n",
             "<div class=\"stab unstable\">⚠️ The bounds on <tt>provider</tt> may change over time, including in SemVer minor releases.</div>"
         )
     };
@@ -160,11 +159,8 @@ macro_rules! gen_any_buffer_data_constructors {
         );
     };
     (locale: skip, options: skip, error: $error_ty:path, $(#[$doc:meta])+ functions: [$baked:ident, $any:ident, $buffer:ident, $unstable:ident $(, $struct:ident)? $(,)?]) => {
-        #[cfg(feature = "data")]
+        #[cfg(feature = "compiled_data")]
         $(#[$doc])+
-        /// ✨ **Enabled with the `"data"` feature.**
-        ///
-        /// [📚 Help choosing a constructor](icu_provider::constructors)
         pub fn $baked() -> Result<Self, $error_ty> {
             $($struct :: )? $unstable(&crate::provider::Baked)
         }
@@ -183,10 +179,10 @@ macro_rules! gen_any_buffer_data_constructors {
 
 
     (locale: skip, options: skip, result: $result_ty:path, $(#[$doc:meta])+ functions: [$baked:ident, $any:ident, $buffer:ident, $unstable:ident $(, $struct:ident)? $(,)?]) => {
-        #[cfg(feature = "data")]
+        #[cfg(feature = "compiled_data")]
         $(#[$doc])+
         ///
-        /// ✨ **Enabled with the `"data"` feature.**
+        /// ✨ *Enabled with the `compiled_data` Cargo feature.*
         ///
         /// [📚 Help choosing a constructor](icu_provider::constructors)
         pub fn $baked() -> $result_ty {
@@ -221,10 +217,10 @@ macro_rules! gen_any_buffer_data_constructors {
         );
     };
     (locale: skip, $options_arg:ident: $options_ty:ty, result: $result_ty:ty, $(#[$doc:meta])+ functions: [$baked:ident, $any:ident, $buffer:ident, $unstable:ident $(, $struct:ident)? $(,)?]) => {
-        #[cfg(feature = "data")]
+        #[cfg(feature = "compiled_data")]
         $(#[$doc])+
         ///
-        /// ✨ **Enabled with the `"data"` feature.**
+        /// ✨ *Enabled with the `compiled_data` Cargo feature.*
         ///
         /// [📚 Help choosing a constructor](icu_provider::constructors)
         pub fn $baked($options_arg: $options_ty) -> $result_ty {
@@ -243,10 +239,10 @@ macro_rules! gen_any_buffer_data_constructors {
         }
     };
     (locale: skip, $options_arg:ident: $options_ty:ty, error: $error_ty:ty, $(#[$doc:meta])+ functions: [$baked:ident, $any:ident, $buffer:ident, $unstable:ident $(, $struct:ident)? $(,)?]) => {
-        #[cfg(feature = "data")]
+        #[cfg(feature = "compiled_data")]
         $(#[$doc])+
         ///
-        /// ✨ **Enabled with the `"data"` feature.**
+        /// ✨ *Enabled with the `compiled_data` Cargo feature.*
         ///
         /// [📚 Help choosing a constructor](icu_provider::constructors)
         pub fn $baked($options_arg: $options_ty) -> Result<Self, $error_ty> {
@@ -280,10 +276,10 @@ macro_rules! gen_any_buffer_data_constructors {
         );
     };
     (locale: include, options: skip, error: $error_ty:path, $(#[$doc:meta])+ functions: [$baked:ident, $any:ident, $buffer:ident, $unstable:ident $(, $struct:ident)? $(,)?]) => {
-        #[cfg(feature = "data")]
+        #[cfg(feature = "compiled_data")]
         $(#[$doc])+
         ///
-        /// ✨ **Enabled with the `"data"` feature.**
+        /// ✨ *Enabled with the `compiled_data` Cargo feature.*
         ///
         /// [📚 Help choosing a constructor](icu_provider::constructors)
         pub fn $baked(locale: &$crate::DataLocale) -> Result<Self, $error_ty> {
@@ -319,10 +315,10 @@ macro_rules! gen_any_buffer_data_constructors {
         );
     };
     (locale: include, $config_arg:ident: $config_ty:path, $options_arg:ident: $options_ty:path, error: $error_ty:path, $(#[$doc:meta])+ functions: [$baked:ident, $any:ident, $buffer:ident, $unstable:ident $(, $struct:ident)? $(,)?]) => {
-        #[cfg(feature = "data")]
+        #[cfg(feature = "compiled_data")]
         $(#[$doc])+
         ///
-        /// ✨ **Enabled with the `"data"` feature.**
+        /// ✨ *Enabled with the `compiled_data` Cargo feature.*
         ///
         /// [📚 Help choosing a constructor](icu_provider::constructors)
         pub fn $baked(locale: &$crate::DataLocale, $config_arg: $config_ty, $options_arg: $options_ty) -> Result<Self, $error_ty> {
@@ -357,10 +353,10 @@ macro_rules! gen_any_buffer_data_constructors {
         );
     };
     (locale: include, $options_arg:ident: $options_ty:path, error: $error_ty:path, $(#[$doc:meta])+ functions: [$baked:ident, $any:ident, $buffer:ident, $unstable:ident $(, $struct:ident)? $(,)?]) => {
-        #[cfg(feature = "data")]
+        #[cfg(feature = "compiled_data")]
         $(#[$doc])+
         ///
-        /// ✨ **Enabled with the `"data"` feature.**
+        /// ✨ *Enabled with the `compiled_data` Cargo feature.*
         ///
         /// [📚 Help choosing a constructor](icu_provider::constructors)
         pub fn $baked(locale: &$crate::DataLocale, $options_arg: $options_ty) -> Result<Self, $error_ty> {

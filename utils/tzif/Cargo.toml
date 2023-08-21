@@ -4,13 +4,13 @@
 
 [package]
 name = "tzif"
-rust-version = "1.61.0"
+rust-version = "1.65.0"
 authors = ["The ICU4X Project Developers"]
 description = "A parser for TZif files"
 version = "0.2.1"
 edition = "2021"
 readme = "README.md"
-license = "Unicode-DFS-2016"
+license-file = "LICENSE"
 repository = "https://github.com/unicode-org/icu4x"
 keywords = ["time-zone", "posix", "iana", "parse", "data"]
 categories = ["date-and-time", "parser-implementations"]

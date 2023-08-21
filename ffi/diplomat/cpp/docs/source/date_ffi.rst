@@ -128,7 +128,7 @@
         See the `Rust documentation for days_in_month <https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.days_in_month>`__ for more information.
 
 
-    .. cpp:function:: uint32_t days_in_year() const
+    .. cpp:function:: uint16_t days_in_year() const
 
         Returns the number of days in the year represented by this date
 
@@ -233,7 +233,7 @@
         See the `Rust documentation for days_in_month <https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.days_in_month>`__ for more information.
 
 
-    .. cpp:function:: uint32_t days_in_year() const
+    .. cpp:function:: uint16_t days_in_year() const
 
         Returns the number of days in the year represented by this date
 

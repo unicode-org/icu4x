@@ -10,18 +10,15 @@ edition = "2021"
 
 [dependencies]
 # Note: Only dependencies that are explicitly listed here are given public GN build targets.
-icu_capi = { version = "1.0", path = "../../ffi/diplomat", default-features = false, features = ["default_components", "provider_test", "any_provider"] }
-icu = { version = "1.0", path = "../../components/icu" }
+icu_capi = { version = "1.0", path = "../../ffi/diplomat", default-features = false, features = ["default_components"] }
+icu = { version = "1.0", path = "../../components/icu", default-features = false }
 icu_provider = { version = "1.0", path = "../../provider/core" }
-
-[gn.package.log."0.4.17"]
-rustflags = ["--cfg=atomic_cas", "--cfg=has_atomics"]
 
 # TODO: Determine the correct rustflags for memchr
 [gn.package.memchr."2.5.0"]
 rustflags = []
 
-[gn.package.proc-macro2."1.0.56"]
+[gn.package.proc-macro2."1.0.63"]
 rustflags = ["--cfg=use_proc_macro", "--cfg=wrap_proc_macro", "--cfg=proc_macro_span"]
 
 [gn.package.quote."1.0.26"]

@@ -53,6 +53,11 @@
         The kind of a Coptic calendar
 
 
+    .. cpp:enumerator:: Dangi
+
+        The kind of a Dangi calendar
+
+
     .. cpp:function:: static diplomat::result<ICU4XAnyCalendarKind, std::monostate> get_for_locale(const ICU4XLocale& locale)
 
         Read the calendar type off of the -u-ca- extension on a locale.
@@ -94,14 +99,14 @@
 
         Creates a new :cpp:class:`ICU4XCalendar` from the specified date and time.
 
-        See the `Rust documentation for try_new_for_locale_unstable <https://docs.rs/icu/latest/icu/calendar/enum.AnyCalendar.html#method.try_new_for_locale_unstable>`__ for more information.
+        See the `Rust documentation for new_for_locale <https://docs.rs/icu/latest/icu/calendar/enum.AnyCalendar.html#method.new_for_locale>`__ for more information.
 
 
     .. cpp:function:: static diplomat::result<ICU4XCalendar, ICU4XError> create_for_kind(const ICU4XDataProvider& provider, ICU4XAnyCalendarKind kind)
 
         Creates a new :cpp:class:`ICU4XCalendar` from the specified date and time.
 
-        See the `Rust documentation for try_new_unstable <https://docs.rs/icu/latest/icu/calendar/enum.AnyCalendar.html#method.try_new_unstable>`__ for more information.
+        See the `Rust documentation for new <https://docs.rs/icu/latest/icu/calendar/enum.AnyCalendar.html#method.new>`__ for more information.
 
 
     .. cpp:function:: ICU4XAnyCalendarKind kind() const

@@ -1,0 +1,16 @@
+{
+    "keys": {
+        "explicit": [
+            "currency/essentials@1"
+        ]
+    },
+    "fallback": "runtime",
+    "locales": "recommended",
+    "export": {
+        "baked": {
+            "path": "data",
+            "pretty": true
+        }
+    },
+    "overwrite": true
+}

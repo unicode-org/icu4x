@@ -214,6 +214,7 @@ name = "icu"
 version = "1.2.0"
 dependencies = [
  "icu_calendar",
+ "icu_casemap",
  "icu_collator",
  "icu_collections",
  "icu_datetime",
@@ -236,6 +237,7 @@ dependencies = [
  "displaydoc",
  "icu_locid",
  "icu_provider",
+ "libm",
  "tinystr",
  "writeable",
  "zerovec",
@@ -249,6 +251,7 @@ dependencies = [
  "diplomat-runtime",
  "fixed_decimal",
  "icu_calendar",
+ "icu_casemap",
  "icu_collator",
  "icu_collections",
  "icu_datetime",
@@ -262,9 +265,7 @@ dependencies = [
  "icu_provider",
  "icu_provider_adapters",
  "icu_segmenter",
- "icu_testdata",
  "icu_timezone",
- "log",
  "tinystr",
  "unicode-bidi",
  "writeable",
@@ -277,6 +278,20 @@ dependencies = [
  "icu",
  "icu_capi",
  "icu_provider",
+]
+
+[[package]]
+name = "icu_casemap"
+version = "1.2.0"
+dependencies = [
+ "displaydoc",
+ "icu_collections",
+ "icu_locid",
+ "icu_properties",
+ "icu_provider",
+ "writeable",
+ "yoke",
+ "zerovec",
 ]
 
 [[package]]
@@ -413,6 +428,7 @@ dependencies = [
  "icu_locid",
  "icu_provider_macros",
  "stable_deref_trait",
+ "tinystr",
  "writeable",
  "yoke",
  "zerofrom",
@@ -424,6 +440,7 @@ name = "icu_provider_adapters"
 version = "1.2.0"
 dependencies = [
  "icu_locid",
+ "icu_locid_transform",
  "icu_provider",
  "tinystr",
  "yoke",
@@ -449,28 +466,6 @@ dependencies = [
  "icu_provider",
  "libm",
  "utf8_iter",
- "zerovec",
-]
-
-[[package]]
-name = "icu_testdata"
-version = "1.2.0"
-dependencies = [
- "icu_calendar",
- "icu_collator",
- "icu_collections",
- "icu_datetime",
- "icu_decimal",
- "icu_list",
- "icu_locid",
- "icu_locid_transform",
- "icu_normalizer",
- "icu_plurals",
- "icu_properties",
- "icu_provider",
- "icu_provider_adapters",
- "icu_segmenter",
- "icu_timezone",
  "zerovec",
 ]
 
@@ -541,15 +536,6 @@ name = "litemap"
 version = "0.7.0"
 
 [[package]]
-name = "log"
-version = "0.4.17"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "abb12e687cfb44aa40f41fc3978ef76448f9b6038cad6aef4259d3c095a2382e"
-dependencies = [
- "cfg-if",
-]
-
-[[package]]
 name = "memchr"
 version = "2.5.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -567,9 +553,9 @@ dependencies = [
 
 [[package]]
 name = "proc-macro2"
-version = "1.0.56"
+version = "1.0.63"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "2b63bdb0cd06f1f4dedf69b254734f9b45af66e4a031e42a7480257d9898b435"
+checksum = "7b368fba921b0dce7e60f5e04ec15e565b3303972b42bcfde1d0713b881959eb"
 dependencies = [
  "unicode-ident",
 ]

@@ -40,7 +40,7 @@ pub trait Calendar {
     fn months_in_year(&self, date: &Self::DateInner) -> u8;
     /// Count the number of days in a given year, specified by providing a date
     /// from that year
-    fn days_in_year(&self, date: &Self::DateInner) -> u32;
+    fn days_in_year(&self, date: &Self::DateInner) -> u16;
     /// Count the number of days in a given month, specified by providing a date
     /// from that year/month
     fn days_in_month(&self, date: &Self::DateInner) -> u8;

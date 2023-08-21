@@ -257,6 +257,24 @@ impl<'a, T: AsULE + Ord> Ord for ZeroVec<'a, T> {
     }
 }
 
+impl<'a, T: AsULE> AsRef<[T::ULE]> for ZeroVec<'a, T> {
+    fn as_ref(&self) -> &[T::ULE] {
+        self.as_ule_slice()
+    }
+}
+
+impl<'a, T: AsULE> From<&'a [T::ULE]> for ZeroVec<'a, T> {
+    fn from(other: &'a [T::ULE]) -> Self {
+        ZeroVec::new_borrowed(other)
+    }
+}
+
+impl<'a, T: AsULE> From<Vec<T::ULE>> for ZeroVec<'a, T> {
+    fn from(other: Vec<T::ULE>) -> Self {
+        ZeroVec::new_owned(other)
+    }
+}
+
 impl<'a, T> ZeroVec<'a, T>
 where
     T: AsULE + ?Sized,
@@ -359,10 +377,10 @@ where
     /// `bytes` need to be an output from [`ZeroSlice::as_bytes()`].
     pub const unsafe fn from_bytes_unchecked(bytes: &'a [u8]) -> Self {
         // &[u8] and &[T::ULE] are the same slice with different length metadata.
-        Self::new_borrowed(core::mem::transmute((
-            bytes.as_ptr(),
+        Self::new_borrowed(core::slice::from_raw_parts(
+            bytes.as_ptr() as *const T::ULE,
             bytes.len() / core::mem::size_of::<T::ULE>(),
-        )))
+        ))
     }
 
     /// Converts a `ZeroVec<T>` into a `ZeroVec<u8>`, retaining the current ownership model.
@@ -940,16 +958,16 @@ impl<T: AsULE> FromIterator<T> for ZeroVec<'_, T> {
 /// use zerovec::{ZeroSlice, zeroslice, ule::AsULE};
 /// use zerovec::ule::UnvalidatedChar;
 ///
-/// const SIGNATURE: &ZeroSlice<char> = zeroslice![char; <char as AsULE>::ULE::from_aligned; 'b', 'y', 'e', '✌'];
+/// const SIGNATURE: &ZeroSlice<char> = zeroslice!(char; <char as AsULE>::ULE::from_aligned; ['b', 'y', 'e', '✌']);
 /// const EMPTY: &ZeroSlice<u32> = zeroslice![];
 /// const UC: &ZeroSlice<UnvalidatedChar> =
-///     zeroslice![
+///     zeroslice!(
 ///         UnvalidatedChar;
 ///         <UnvalidatedChar as AsULE>::ULE::from_unvalidated_char;
-///         UnvalidatedChar::from_char('a'),
-///     ];
+///         [UnvalidatedChar::from_char('a')]
+///     );
 /// let empty: &ZeroSlice<u32> = zeroslice![];
-/// let nums = zeroslice![u32; <u32 as AsULE>::ULE::from_unsigned; 1, 2, 3, 4, 5];
+/// let nums = zeroslice!(u32; <u32 as AsULE>::ULE::from_unsigned; [1, 2, 3, 4, 5]);
 /// assert_eq!(nums.last().unwrap(), 5);
 /// ```
 ///
@@ -962,14 +980,14 @@ impl<T: AsULE> FromIterator<T> for ZeroVec<'_, T> {
 ///     RawBytesULE(num.to_be_bytes())
 /// }
 ///
-/// const NUMBERS_BE: &ZeroSlice<i16> = zeroslice![i16; be_convert; 1, -2, 3, -4, 5];
+/// const NUMBERS_BE: &ZeroSlice<i16> = zeroslice!(i16; be_convert; [1, -2, 3, -4, 5]);
 /// ```
 #[macro_export]
 macro_rules! zeroslice {
     () => (
         $crate::ZeroSlice::new_empty()
     );
-    ($aligned:ty; $convert:expr; $($x:expr),+ $(,)?) => (
+    ($aligned:ty; $convert:expr; [$($x:expr),+ $(,)?]) => (
         $crate::ZeroSlice::<$aligned>::from_ule_slice(
             {const X: &[<$aligned as $crate::ule::AsULE>::ULE] = &[
                 $($convert($x)),*
@@ -978,7 +996,7 @@ macro_rules! zeroslice {
     );
 }
 
-/// Creates a borrowed `ZeroVec`. Convenience wrapper for `zeroslice![...].as_zerovec()`. The value
+/// Creates a borrowed `ZeroVec`. Convenience wrapper for `zeroslice!(...).as_zerovec()`. The value
 /// will be created at compile-time, meaning that all arguments must also be constant.
 ///
 /// See [`zeroslice!`](crate::zeroslice) for more information.
@@ -988,7 +1006,7 @@ macro_rules! zeroslice {
 /// ```
 /// use zerovec::{ZeroVec, zerovec, ule::AsULE};
 ///
-/// const SIGNATURE: ZeroVec<char> = zerovec![char; <char as AsULE>::ULE::from_aligned; 'a', 'y', 'e', '✌'];
+/// const SIGNATURE: ZeroVec<char> = zerovec!(char; <char as AsULE>::ULE::from_aligned; ['a', 'y', 'e', '✌']);
 /// assert!(!SIGNATURE.is_owned());
 ///
 /// const EMPTY: ZeroVec<u32> = zerovec![];
@@ -999,8 +1017,8 @@ macro_rules! zerovec {
     () => (
         $crate::ZeroVec::new()
     );
-    ($aligned:ty; $convert:expr; $($x:expr),+ $(,)?) => (
-        $crate::zeroslice![$aligned; $convert; $($x),+].as_zerovec()
+    ($aligned:ty; $convert:expr; [$($x:expr),+ $(,)?]) => (
+        $crate::zeroslice![$aligned; $convert; [$($x),+]].as_zerovec()
     );
 }
 

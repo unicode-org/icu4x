@@ -10,16 +10,24 @@
 pub mod aliases;
 pub mod ca;
 pub mod coverage_levels;
+#[cfg(feature = "icu_singlenumberformatter")]
+pub mod currencies;
+pub mod currency_data;
+#[cfg(feature = "icu_relativetime")]
 pub mod date_fields;
 pub mod directionality;
+#[cfg(feature = "icu_displaynames")]
 pub mod displaynames;
 pub mod exemplar_chars;
 pub mod japanese;
 pub mod likely_subtags;
 pub mod list_patterns;
+pub mod locale_resource;
 pub mod numbering_systems;
 pub mod numbers;
 pub mod parent_locales;
 pub mod plurals;
 pub mod time_zones;
 pub mod week_data;
+
+use locale_resource::LocaleResource;

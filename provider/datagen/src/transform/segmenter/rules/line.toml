@@ -1,0 +1,1237 @@
+# This file is part of ICU4X. For terms of use, please see the file
+# called LICENSE at the top level of the ICU4X source tree
+# (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
+
+# These line boundary rules are based on UAX #14, Unicode Version 15.0.0.
+# https://www.unicode.org/reports/tr14/tr14-49.html
+
+segmenter_type = "line"
+
+# Any = non combined property (AI..ZWJ)
+
+[[tables]]
+name = "AI"
+
+[[tables]]
+name = "AL"
+
+[[tables]]
+name = "B2"
+
+[[tables]]
+name = "BA"
+
+[[tables]]
+name = "BB"
+
+[[tables]]
+name = "BK"
+
+[[tables]]
+name = "CB"
+
+[[tables]]
+name = "CJ"
+
+[[tables]]
+name = "CL"
+
+[[tables]]
+name = "CM"
+
+[[tables]]
+name = "CP"
+
+[[tables]]
+name = "CR"
+
+[[tables]]
+name = "EB"
+
+[[tables]]
+name = "EM"
+
+[[tables]]
+name = "EX"
+
+[[tables]]
+name = "GL"
+
+[[tables]]
+name = "H2"
+
+[[tables]]
+name = "H3"
+
+[[tables]]
+name = "HL"
+
+[[tables]]
+name = "HY"
+
+[[tables]]
+name = "ID"
+
+[[tables]]
+# For LB30b
+# Unassigned codepoints with Line_Break=ID in some blocks
+# are also assigned the Extended_Pictographic property.
+name = "ID_CN"
+
+[[tables]]
+name = "IN"
+
+[[tables]]
+name = "IS"
+
+[[tables]]
+name = "JL"
+
+[[tables]]
+name = "JT"
+
+[[tables]]
+name = "JV"
+
+[[tables]]
+name = "LF"
+
+[[tables]]
+name = "NL"
+
+[[tables]]
+name = "NS"
+
+[[tables]]
+name = "NU"
+
+[[tables]]
+name = "OP_EA"
+
+[[tables]]
+# LB30
+name = "OP_OP30"
+
+[[tables]]
+name = "PO"
+
+[[tables]]
+name = "PO_EAW"
+
+[[tables]]
+name = "PR"
+
+[[tables]]
+name = "PR_EAW"
+
+[[tables]]
+name = "QU"
+
+[[tables]]
+name = "RI"
+
+[[tables]]
+name = "SA"
+
+[[tables]]
+name = "SG"
+
+[[tables]]
+name = "SP"
+
+[[tables]]
+name = "SY"
+
+[[tables]]
+name = "WJ"
+
+[[tables]]
+name = "XX"
+
+[[tables]]
+name = "ZW"
+
+[[tables]]
+name = "ZWJ"
+
+[[tables]]
+# LB8
+name = "ZW"
+left = "ZW"
+right = "SP"
+
+[[tables]]
+# LB9
+name = "AI"
+left = "AI"
+right = "CM"
+
+[[tables]]
+# LB9
+name = "AL"
+left = "AL"
+right = "CM"
+
+[[tables]]
+# LB9
+name = "B2"
+left = "B2"
+right = "CM"
+
+[[tables]]
+# LB9
+name = "BA"
+left = "BA"
+right = "CM"
+
+[[tables]]
+# LB9
+name = "BB"
+left = "BB"
+right = "CM"
+
+[[tables]]
+# LB9
+name = "CB"
+left = "CB"
+right = "CM"
+
+[[tables]]
+# LB9
+name = "CJ"
+left = "CJ"
+right = "CM"
+
+[[tables]]
+# LB9
+name = "CL"
+left = "CL"
+right = "CM"
+
+[[tables]]
+# LB9
+name = "CM"
+left = "CM"
+right = "CM"
+
+[[tables]]
+# LB9
+name = "CP"
+left = "CP"
+right = "CM"
+
+[[tables]]
+# LB9
+name = "EB"
+left = "EB"
+right = "CM"
+
+[[tables]]
+# LB9
+name = "EM"
+left = "EM"
+right = "CM"
+
+[[tables]]
+# LB9
+name = "EX"
+left = "EX"
+right = "CM"
+
+[[tables]]
+# LB9
+name = "GL"
+left = "GL"
+right = "CM"
+
+[[tables]]
+# LB9
+name = "H2"
+left = "H2"
+right = "CM"
+
+[[tables]]
+# LB9
+name = "H3"
+left = "H3"
+right = "CM"
+
+[[tables]]
+# LB9
+name = "HL"
+left = "HL"
+right = "CM"
+
+[[tables]]
+# LB9
+name = "HY"
+left = "HY"
+right = "CM"
+
+[[tables]]
+# LB9
+name = "ID"
+left = "ID"
+right = "CM"
+
+[[tables]]
+# LB9
+name = "ID_CN"
+left = "ID_CN"
+right = "CM"
+
+[[tables]]
+# LB9
+name = "IN"
+left = "IN"
+right = "CM"
+
+[[tables]]
+# LB9
+name = "IS"
+left = "IS"
+right = "CM"
+
+[[tables]]
+# LB9
+name = "JL"
+left = "JL"
+right = "CM"
+
+[[tables]]
+# LB9
+name = "JT"
+left = "JT"
+right = "CM"
+
+[[tables]]
+# LB9
+name = "JV"
+left = "JV"
+right = "CM"
+
+[[tables]]
+# LB9
+name = "NS"
+left = "NS"
+right = "CM"
+
+[[tables]]
+# LB9
+name = "NU"
+left = "NU"
+right = "CM"
+
+[[tables]]
+# LB9
+name = "OP_EA"
+left = "OP_EA"
+right = "CM"
+
+[[tables]]
+# LB9
+name = "OP_OP30"
+left = "OP_OP30"
+right = "CM"
+
+[[tables]]
+# LB9
+name = "PR"
+left = "PR"
+right = "CM"
+
+[[tables]]
+# LB9
+name = "PR_EAW"
+left = "PR_EAW"
+right = "CM"
+
+[[tables]]
+# LB9
+name = "PO"
+left = "PO"
+right = "CM"
+
+[[tables]]
+# LB9
+name = "PO_EAW"
+left = "PO_EAW"
+right = "CM"
+
+[[tables]]
+# LB9
+name = "QU"
+left = "QU"
+right = "CM"
+
+[[tables]]
+# LB9
+name = "RI"
+left = "RI"
+right = "CM"
+
+[[tables]]
+# LB9
+name = "SA"
+left = "SA"
+right = "CM"
+
+[[tables]]
+# LB9
+name = "SY"
+left = "SY"
+right = "CM"
+
+[[tables]]
+# LB9
+name = "WJ"
+left = "WJ"
+right = "CM"
+
+[[tables]]
+# LB9
+name = "XX"
+left = "XX"
+right = "CM"
+
+[[tables]]
+# LB9
+name = "AI"
+left = "AI"
+right = "ZWJ"
+
+[[tables]]
+# LB9
+name = "AL"
+left = "AL"
+right = "ZWJ"
+
+[[tables]]
+# LB9
+name = "B2"
+left = "B2"
+right = "ZWJ"
+
+[[tables]]
+# LB9
+name = "BA"
+left = "BA"
+right = "ZWJ"
+
+[[tables]]
+# LB9
+name = "BB"
+left = "BB"
+right = "ZWJ"
+
+[[tables]]
+# LB9
+name = "CB"
+left = "CB"
+right = "ZWJ"
+
+[[tables]]
+# LB9
+name = "CJ"
+left = "CJ"
+right = "ZWJ"
+
+[[tables]]
+# LB9
+name = "CL"
+left = "CL"
+right = "ZWJ"
+
+[[tables]]
+# LB9
+name = "CM"
+left = "CM"
+right = "ZWJ"
+
+[[tables]]
+# LB9
+name = "CP"
+left = "CP"
+right = "ZWJ"
+
+[[tables]]
+# LB9
+name = "EB"
+left = "EB"
+right = "ZWJ"
+
+[[tables]]
+# LB9
+name = "EM"
+left = "EM"
+right = "ZWJ"
+
+[[tables]]
+# LB9
+name = "EX"
+left = "EX"
+right = "ZWJ"
+
+[[tables]]
+# LB9
+name = "GL"
+left = "GL"
+right = "ZWJ"
+
+[[tables]]
+# LB9
+name = "H2"
+left = "H2"
+right = "ZWJ"
+
+[[tables]]
+# LB9
+name = "H3"
+left = "H3"
+right = "ZWJ"
+
+[[tables]]
+# LB9
+name = "HL"
+left = "HL"
+right = "ZWJ"
+
+[[tables]]
+# LB9
+name = "HY"
+left = "HY"
+right = "ZWJ"
+
+[[tables]]
+# LB9
+name = "ID"
+left = "ID"
+right = "ZWJ"
+
+[[tables]]
+# LB9
+name = "ID_CN"
+left = "ID_CN"
+right = "ZWJ"
+
+[[tables]]
+# LB9
+name = "IN"
+left = "IN"
+right = "ZWJ"
+
+[[tables]]
+# LB9
+name = "IS"
+left = "IS"
+right = "ZWJ"
+
+[[tables]]
+# LB9
+name = "JL"
+left = "JL"
+right = "ZWJ"
+
+[[tables]]
+# LB9
+name = "JT"
+left = "JT"
+right = "ZWJ"
+
+[[tables]]
+# LB9
+name = "JV"
+left = "JV"
+right = "ZWJ"
+
+[[tables]]
+# LB9
+name = "NS"
+left = "NS"
+right = "ZWJ"
+
+[[tables]]
+# LB9
+name = "NU"
+left = "NU"
+right = "ZWJ"
+
+[[tables]]
+# LB9
+name = "OP_EA"
+left = "OP_EA"
+right = "ZWJ"
+
+[[tables]]
+# LB9
+name = "OP_OP30"
+left = "OP_OP30"
+right = "ZWJ"
+
+[[tables]]
+# LB9
+name = "PO"
+left = "PO"
+right = "ZWJ"
+
+[[tables]]
+# LB9
+name = "PO_EAW"
+left = "PO_EAW"
+right = "ZWJ"
+
+[[tables]]
+# LB9
+name = "QU"
+left = "QU"
+right = "ZWJ"
+
+[[tables]]
+# LB9
+name = "RI"
+left = "RI"
+right = "ZWJ"
+
+[[tables]]
+# LB9
+name = "PR"
+left = "PR"
+right = "ZWJ"
+
+[[tables]]
+# LB9
+name = "PR_EAW"
+left = "PR_EAW"
+right = "ZWJ"
+
+[[tables]]
+# LB9
+name = "SA"
+left = "SA"
+right = "ZWJ"
+
+[[tables]]
+# LB9
+name = "SY"
+left = "SY"
+right = "ZWJ"
+
+[[tables]]
+# LB9
+name = "WJ"
+left = "WJ"
+right = "ZWJ"
+
+[[tables]]
+# LB9
+name = "XX"
+left = "XX"
+right = "ZWJ"
+
+[[tables]]
+# LB9
+name = "OP_OP30"
+left = "OP_OP30"
+right = "ZWJ"
+
+[[tables]]
+# LB9
+name = "OP_EA"
+left = "OP_EA"
+right = "ZWJ"
+
+[[tables]]
+# LB14
+name = "OP_SP"
+left = "OP_OP30"
+right = "SP"
+
+[[tables]]
+# LB14
+name = "OP_SP"
+left = "OP_EA"
+right = "SP"
+
+[[tables]]
+# LB14
+name = "OP_SP"
+left = "OP_SP"
+right = "SP"
+
+[[tables]]
+# LB15
+name = "QU_SP"
+left = "QU"
+right = "SP"
+
+[[tables]]
+# LB15
+name = "QU_SP"
+left = "QU_SP"
+right = "SP"
+
+[[tables]]
+# LB16
+name = "CL_CP_SP"
+left = "CL"
+right = "SP"
+
+[[tables]]
+# LB16
+name = "CL_CP_SP"
+left = "CP"
+right = "SP"
+
+[[tables]]
+# LB16
+name = "CL_CP_SP"
+left = "CL_CP_SP"
+right = "SP"
+
+[[tables]]
+# LB17
+name = "B2_SP"
+left = "B2"
+right = "SP"
+
+[[tables]]
+# LB17
+name = "B2_SP"
+left = "B2_SP"
+right = "SP"
+
+[[tables]]
+# LB21
+name = "HL_HY"
+left = "HL"
+right = "HY"
+
+[[tables]]
+# LB21
+name = "HL_HY"
+left = "HL"
+right = "BA"
+
+[[tables]]
+# LB25
+name = "LB25_HY"
+left = "PR"
+right = "HY"
+
+[[tables]]
+# LB25
+name = "LB25_HY"
+left = "PR_EAW"
+right = "HY"
+
+[[tables]]
+# LB25
+name = "LB25_HY"
+left = "PO"
+right = "HY"
+
+[[tables]]
+# LB25
+name = "LB25_HY"
+left = "PO_EAW"
+right = "HY"
+
+[[tables]]
+# LB25
+name = "LB25_OP"
+left = "PR"
+right = "OP_OP30"
+
+[[tables]]
+# LB25
+name = "LB25_OP"
+left = "PR_EAW"
+right = "OP_OP30"
+
+[[tables]]
+# LB25
+name = "LB25_OP"
+left = "PR"
+right = "OP_EA"
+
+[[tables]]
+# LB25
+name = "LB25_OP"
+left = "PR_EAW"
+right = "OP_EA"
+
+[[tables]]
+# LB25
+name = "LB25_OP"
+left = "PO"
+right = "OP_OP30"
+
+[[tables]]
+# LB25
+name = "LB25_OP"
+left = "PO_EAW"
+right = "OP_OP30"
+
+[[tables]]
+# LB25
+name = "LB25_OP"
+left = "PO"
+right = "OP_EA"
+
+[[tables]]
+# LB25
+name = "LB25_OP"
+left = "PO_EAW"
+right = "OP_EA"
+
+[[tables]]
+# LB25
+name = "NU"
+left = "NU"
+right = "NU"
+
+[[tables]]
+# LB25
+name = "LB25_NU_IS"
+left = "NU"
+right = "IS"
+
+[[tables]]
+# LB25
+name = "LB25_NU_SY"
+left = "NU"
+right = "SY"
+
+[[tables]]
+# LB25
+name = "NU"
+left = "LB25_NU_IS"
+right = "NU"
+
+[[tables]]
+# LB25
+name = "NU"
+left = "LB25_NU_SY"
+right = "NU"
+
+[[tables]]
+# LB25
+name = "LB25_NU_CL"
+left = "NU"
+right = "CL"
+
+[[tables]]
+# LB25
+name = "LB25_NU_CL"
+left = "LB25_NU_IS"
+right = "CL"
+
+[[tables]]
+# LB25
+name = "LB25_NU_CL"
+left = "LB25_NU_SY"
+right = "CL"
+
+[[tables]]
+# LB25
+name = "LB25_NU_CP"
+left = "NU"
+right = "CP"
+
+[[tables]]
+# LB25
+name = "LB25_NU_CP"
+left = "LB25_NU_IS"
+right = "CP"
+
+[[tables]]
+# LB25
+name = "LB25_NU_CP"
+left = "LB25_NU_SY"
+right = "CP"
+
+[[tables]]
+# LB30a
+name = "RI_RI"
+left = "RI"
+right = "RI"
+
+[[rules]]
+# LB3
+left = [ "LB25_OP" ]
+right = [ "eot" ]
+# not matched
+
+[[rules]]
+# LB3
+left = [ "Any" ]
+right = [ "eot" ]
+break_state = true
+
+[[rules]]
+# LB3
+left = [ "B2_SP", "CL_CP_SP", "HL_HY", "LB25_HY", "LB25_NU_IS", "LB25_NU_SY", "LB25_NU_CL", "LB25_NU_CP", "OP_SP", "QU_SP", "RI_RI" ]
+right = [ "eot" ]
+break_state = true
+
+[[rules]]
+# LB4
+left = [ "BK" ]
+right = [ "Any" ]
+break_state = true
+
+[[rules]]
+# LB5
+left = [ "CR" ]
+right = [ "LF" ]
+break_state = false
+
+[[rules]]
+# LB5
+left = [ "CR", "LF", "NL" ]
+right = [ "Any" ]
+break_state = true
+
+[[rules]]
+# LB6
+left = [ "Any" ]
+right = [ "BK", "CR", "LF", "NL" ]
+break_state = false
+
+[[rules]]
+# LB6
+left = [ "B2_SP", "CL_CP_SP", "HL_HY", "LB25_HY", "LB25_OP", "LB25_NU_IS", "LB25_NU_SY", "LB25_NU_CL", "LB25_NU_CP", "OP_SP", "QU_SP", "RI_RI" ]
+right = [ "BK", "CR", "LF", "NL" ]
+break_state = false
+
+[[rules]]
+# LB7
+left = [ "Any" ]
+right = [ "SP", "ZW" ]
+break_state = false
+
+[[rules]]
+# LB7
+left = [ "B2_SP", "CL_CP_SP", "HL_HY", "LB25_NU_IS", "LB25_NU_SY", "LB25_NU_CL", "LB25_NU_CP", "OP_SP", "QU_SP", "RI_RI" ]
+right = [ "ZW" ]
+break_state = false
+
+[[rules]]
+# LB8
+left = [ "ZW" ]
+right = [ "Any" ]
+break_state = true
+
+[[rules]]
+# LB8a
+left = [ "ZWJ" ]
+right = [ "Any" ]
+break_state = false
+
+[[rules]]
+# LB11
+left = [ "WJ" ]
+right = [ "Any" ]
+break_state = false
+
+[[rules]]
+# LB11
+left = [ "Any" ]
+right = [ "WJ" ]
+break_state = false
+
+[[rules]]
+# LB11
+left = [ "B2_SP", "CL_CP_SP", "HL_HY", "LB25_NU_IS", "LB25_NU_SY", "LB25_NU_CL", "LB25_NU_CP", "OP_SP", "QU_SP", "RI_RI" ]
+right = [ "WJ" ]
+break_state = false
+
+[[rules]]
+# LB12
+left = [ "GL" ]
+right = [ "Any" ]
+break_state = false
+
+[[rules]]
+# LB12a
+left = [ "HL_HY", "LB25_NU_IS", "LB25_NU_SY", "LB25_NU_CL", "LB25_NU_CP", "OP_SP", "RI_RI" ]
+right = [ "GL" ]
+break_state = false
+
+[[rules]]
+# LB12a
+left = [ "B2_SP", "CL_CP_SP", "QU_SP", "SP", "BA", "HY" ]
+right = [ "GL" ]
+break_state = true
+
+[[rules]]
+# LB12a
+left = [ "Any" ]
+right = [ "GL" ]
+break_state = false
+
+[[rules]]
+# LB13
+left = [ "Any" ]
+right = [ "CL", "CP", "EX", "IS", "SY" ]
+break_state = false
+
+[[rules]]
+# LB13
+left = [ "NU" ]
+right = [ "CL", "CP", "EX", "IS", "SY" ]
+# clear for LB25
+
+[[rules]]
+# LB13
+left = [ "B2_SP", "CL_CP_SP", "QU_SP", "LB25_NU_CP" ]
+right = [ "CL", "CP", "EX", "IS", "SY" ]
+break_state = false
+
+[[rules]]
+# LB14
+left = [ "OP_OP30", "OP_EA", "OP_SP" ]
+right = [ "Any" ]
+break_state = false
+
+[[rules]]
+# LB15
+left = [ "QU", "QU_SP" ]
+right = [ "OP_OP30", "OP_EA" ]
+break_state = false
+
+[[rules]]
+# LB16
+left = [ "CL", "CP", "CL_CP_SP", "LB25_NU_CL", "LB25_NU_CP" ]
+right = [ "CJ", "NS" ] # NS = CJ or NS
+break_state = false
+
+[[rules]]
+# LB17
+left = [ "B2", "B2_SP" ]
+right = [ "B2" ]
+break_state = false
+
+[[rules]]
+# LB18
+left = [ "SP" ]
+right = [ "Any"]
+break_state = true
+
+[[rules]]
+# LB18
+left = [ "QU_SP", "B2_SP", "CL_CP_SP" ] # LB15
+right = [ "Any" ]
+break_state = true
+
+[[rules]]
+# LB19
+left = [ "Any" ]
+right = [ "QU" ]
+break_state = false
+
+[[rules]]
+# LB19
+left = [ "QU" ]
+right = [ "Any" ]
+break_state = false
+
+[[rules]]
+# LB20
+left = [ "CB" ]
+right = [ "Any" ]
+break_state = true
+
+[[rules]]
+# LB20
+left = [ "Any" ]
+right = [ "CB" ]
+break_state = true
+
+[[rules]]
+# LB21
+left = [ "Any" ]
+right = [ "BA", "HY", "CJ", "NS" ] # NS = CJ or NS
+break_state = false
+
+[[rules]]
+# LB21
+left = [ "BB" ]
+right = [ "Any" ]
+break_state = false
+
+[[rules]]
+# LB21a
+left = [ "HL_HY" ]
+right = [ "Any" ]
+break_state = false
+
+[[rules]]
+# LB21b
+left = [ "SY" ]
+right = [ "HL" ]
+break_state = false
+
+[[rules]]
+# LB22
+left = [ "Any" ]
+right = [ "IN" ]
+break_state = false
+
+[[rules]]
+# LB23
+# (LB1 AL = AI, AL, SA or XX)
+# (LB10 AL = CM)
+left = [ "AI", "AL", "SA", "XX", "HL", "CM" ]
+right = [ "NU" ]
+break_state = false
+
+[[rules]]
+# LB23
+# (LB1 AL = AI, AL, SA or XX)
+left = [ "NU" ]
+right = [ "AI", "AL", "SA", "XX", "HL" ]
+break_state = false
+
+[[rules]]
+# LB23a
+left = [ "PR", "PR_EAW" ]
+right = [ "ID", "ID_CN", "EB", "EM" ]
+break_state = false
+
+[[rules]]
+# LB23a
+left = [ "ID", "ID_CN", "EB", "EM" ]
+right = [ "PO", "PO_EAW" ]
+break_state = false
+
+[[rules]]
+# LB24
+# (LB1 AL = AI, AL, SA or XX)
+# (LB10 AL = CM)
+left = [ "PR", "PO", "PR_EAW", "PO_EAW" ]
+right = [ "AI", "AL", "SA", "XX", "HL" ]
+break_state = false
+
+[[rules]]
+# LB24
+# (LB1 AL = AI, AL, SA or XX)
+# (LB10 AL = CM)
+left = [ "AI", "AL", "SA", "XX", "HL", "CM" ]
+right = [ "PR", "PO", "PR_EAW", "PO_EAW" ]
+break_state = false
+
+[[rules]]
+# LB25
+left = [ "PR", "PO", "OP_OP30", "OP_EA", "HY", "LB25_OP", "LB25_HY", "PR_EAW", "PO_EAW" ]
+right = [ "NU" ]
+break_state = false
+
+[[rules]]
+# LB25
+left = [ "NU", "LB25_NU_IS", "LB25_NU_SY", "LB25_NU_CL", "LB25_NU_CP" ]
+right = [ "PR", "PO", "PR_EAW", "PO_EAW" ]
+break_state = false
+
+[[rules]]
+# LB25
+left = [ "LB25_NU_CL" ]
+right = [ "Any" ]
+break_state = true
+
+[[rules]]
+# LB25
+left = [ "LB25_NU_SY" ]
+right = [ "Any" ]
+break_state = true
+
+[[rules]]
+# LB26
+left = [ "JL" ]
+right = [ "JL", "JV", "H2", "H3" ]
+break_state = false
+
+[[rules]]
+# LB26
+left = [ "JV", "H2" ]
+right = [ "JV", "JT" ]
+break_state = false
+
+[[rules]]
+# LB26
+left = [ "JT", "H3" ]
+right = [ "JT" ]
+break_state = false
+
+[[rules]]
+# LB27
+left = [ "JL", "JV", "JT", "H2", "H3" ]
+right = [ "PO", "PO_EAW" ]
+break_state = false
+
+[[rules]]
+# LB27
+left = [ "PR", "PR_EAW" ]
+right = [ "JL", "JV", "JT", "H2", "H3" ]
+break_state = false
+
+[[rules]]
+# LB28
+# (LB1 AL = AI, AL, SA or XX)
+# (LB10 AL = CM)
+left = [ "AL", "HL", "AI", "XX", "SA", "CM" ]
+right = [ "AL", "HL", "AI", "XX", "SA" ]
+break_state = false
+
+[[rules]]
+# LB29
+# (LB1 AL = AI, AL, SA or XX)
+left = [ "IS", "LB25_NU_IS" ]
+right = [ "AL", "HL", "AI", "SA", "XX" ]
+break_state = false
+
+[[rules]]
+# LB30
+# (LB1 AL = AI, AL, SA or XX)
+# (LB10 AL = CM)
+left = [ "AL", "HL", "NU", "AI", "XX", "SA", "CM" ]
+right = [ "OP_OP30" ]
+break_state = false
+
+[[rules]]
+# LB30
+# (LB1 AL = AI, AL, SA or XX)
+left = [ "CP", "LB25_NU_CP" ]
+right = [ "AL", "HL", "NU", "AI", "XX", "SA" ]
+break_state = false
+
+[[rules]]
+# LB30a
+left = [ "RI_RI" ]
+right = [ "RI" ]
+break_state = true
+
+[[rules]]
+# LB30a
+left = [ "RI_RI" ]
+right = [ "Any" ]
+break_state = true
+
+[[rules]]
+# LB30b
+left = [ "EB", "ID_CN" ]
+right = [ "EM" ]
+break_state = false
+
+[[rules]]
+# (LB25)
+left = [ "LB25_NU_CP", "LB25_NU_IS" ]
+right = [ "Any" ]
+break_state = true
+
+[[rules]]
+# LB31
+left = [ "Any" ]
+right = [ "Any" ]
+break_state = true
+

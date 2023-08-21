@@ -8,11 +8,20 @@ mod patterns;
 use icu_calendar::{
     any_calendar::{AnyCalendarKind, IntoAnyCalendar},
     buddhist::Buddhist,
+    chinese::Chinese,
     coptic::Coptic,
+    dangi::Dangi,
     ethiopian::{Ethiopian, EthiopianEraStyle},
+    hebrew::Hebrew,
     indian::Indian,
+    islamic::IslamicCivil,
+    islamic::IslamicObservational,
+    islamic::IslamicTabular,
+    islamic::IslamicUmmAlQura,
     japanese::{Japanese, JapaneseExtended},
+    persian::Persian,
     provider::WeekDataV1Marker,
+    roc::Roc,
     AsCalendar, DateTime, Gregorian, Iso,
 };
 use icu_datetime::provider::time_zones::{
@@ -29,8 +38,8 @@ use icu_datetime::{
 };
 use icu_decimal::provider::DecimalSymbolsV1Marker;
 use icu_locid::{
-    extensions_unicode_key as key, extensions_unicode_value as value, langid, locale,
-    LanguageIdentifier, Locale,
+    extensions::unicode::{key, value},
+    langid, locale, LanguageIdentifier, Locale,
 };
 use icu_provider::prelude::*;
 use icu_provider_adapters::any_payload::AnyPayloadProvider;
@@ -54,10 +63,8 @@ fn test_fixture(fixture_name: &str) {
         .expect("Unable to get fixture.")
         .0
     {
-        let japanese = Japanese::try_new_unstable(&icu_testdata::unstable())
-            .expect("Cannot load japanese data");
-        let japanext = JapaneseExtended::try_new_unstable(&icu_testdata::unstable())
-            .expect("Cannot load japanese data");
+        let japanese = Japanese::new();
+        let japanext = JapaneseExtended::new();
         let options_base = match fixtures::get_options(&fx.input.options) {
             Some(o) => o,
             #[cfg(feature = "experimental")]
@@ -66,16 +73,25 @@ fn test_fixture(fixture_name: &str) {
             None => continue,
         };
         let input_value = mock::parse_gregorian_from_str(&fx.input.value).unwrap();
-        let input_iso = input_value.to_calendar(Iso);
         let input_buddhist = input_value.to_calendar(Buddhist);
-        let input_japanese = input_value.to_calendar(japanese);
-        let input_japanext = input_value.to_calendar(japanext);
+        let input_chinese = input_value.to_calendar(Chinese);
         let input_coptic = input_value.to_calendar(Coptic);
-        let input_indian = input_value.to_calendar(Indian);
+        let input_dangi = input_value.to_calendar(Dangi);
         let input_ethiopian = input_value.to_calendar(Ethiopian::new());
-
         let input_ethioaa =
             input_value.to_calendar(Ethiopian::new_with_era_style(EthiopianEraStyle::AmeteAlem));
+        let input_hebrew = input_value.to_calendar(Hebrew);
+        let input_indian = input_value.to_calendar(Indian);
+        let input_islamic_civil = input_value.to_calendar(IslamicCivil);
+        let input_islamic_observational = input_value.to_calendar(IslamicObservational);
+        let input_islamic_tabular = input_value.to_calendar(IslamicTabular);
+        let input_islamic_umm_al_qura = input_value.to_calendar(IslamicUmmAlQura);
+        let input_iso = input_value.to_calendar(Iso);
+        let input_japanese = input_value.to_calendar(japanese);
+        let input_japanext = input_value.to_calendar(japanext);
+        let input_persian = input_value.to_calendar(Persian);
+        let input_roc = input_value.to_calendar(Roc);
+
         let description = match fx.description {
             Some(description) => {
                 format!("\n  test: {description:?}\n  file: {fixture_name}.json\n")
@@ -90,6 +106,94 @@ fn test_fixture(fixture_name: &str) {
                     AnyCalendarKind::Buddhist => assert_fixture_element(
                         &locale,
                         &input_buddhist,
+                        &input_iso,
+                        &output_value,
+                        options,
+                        &description,
+                    ),
+                    AnyCalendarKind::Chinese => assert_fixture_element(
+                        &locale,
+                        &input_chinese,
+                        &input_iso,
+                        &output_value,
+                        options,
+                        &description,
+                    ),
+                    AnyCalendarKind::Coptic => assert_fixture_element(
+                        &locale,
+                        &input_coptic,
+                        &input_iso,
+                        &output_value,
+                        options,
+                        &description,
+                    ),
+                    AnyCalendarKind::Dangi => assert_fixture_element(
+                        &locale,
+                        &input_dangi,
+                        &input_iso,
+                        &output_value,
+                        options,
+                        &description,
+                    ),
+                    AnyCalendarKind::Ethiopian => assert_fixture_element(
+                        &locale,
+                        &input_ethiopian,
+                        &input_iso,
+                        &output_value,
+                        options,
+                        &description,
+                    ),
+                    AnyCalendarKind::EthiopianAmeteAlem => assert_fixture_element(
+                        &locale,
+                        &input_ethioaa,
+                        &input_iso,
+                        &output_value,
+                        options,
+                        &description,
+                    ),
+                    AnyCalendarKind::Hebrew => assert_fixture_element(
+                        &locale,
+                        &input_hebrew,
+                        &input_iso,
+                        &output_value,
+                        options,
+                        &description,
+                    ),
+                    AnyCalendarKind::Indian => assert_fixture_element(
+                        &locale,
+                        &input_indian,
+                        &input_iso,
+                        &output_value,
+                        options,
+                        &description,
+                    ),
+                    AnyCalendarKind::IslamicCivil => assert_fixture_element(
+                        &locale,
+                        &input_islamic_civil,
+                        &input_iso,
+                        &output_value,
+                        options,
+                        &description,
+                    ),
+                    AnyCalendarKind::IslamicObservational => assert_fixture_element(
+                        &locale,
+                        &input_islamic_observational,
+                        &input_iso,
+                        &output_value,
+                        options,
+                        &description,
+                    ),
+                    AnyCalendarKind::IslamicTabular => assert_fixture_element(
+                        &locale,
+                        &input_islamic_tabular,
+                        &input_iso,
+                        &output_value,
+                        options,
+                        &description,
+                    ),
+                    AnyCalendarKind::IslamicUmmAlQura => assert_fixture_element(
+                        &locale,
+                        &input_islamic_umm_al_qura,
                         &input_iso,
                         &output_value,
                         options,
@@ -111,33 +215,17 @@ fn test_fixture(fixture_name: &str) {
                         options,
                         &description,
                     ),
-                    AnyCalendarKind::Coptic => assert_fixture_element(
+                    AnyCalendarKind::Persian => assert_fixture_element(
                         &locale,
-                        &input_coptic,
+                        &input_persian,
                         &input_iso,
                         &output_value,
                         options,
                         &description,
                     ),
-                    AnyCalendarKind::Indian => assert_fixture_element(
+                    AnyCalendarKind::Roc => assert_fixture_element(
                         &locale,
-                        &input_indian,
-                        &input_iso,
-                        &output_value,
-                        options,
-                        &description,
-                    ),
-                    AnyCalendarKind::Ethiopian => assert_fixture_element(
-                        &locale,
-                        &input_ethiopian,
-                        &input_iso,
-                        &output_value,
-                        options,
-                        &description,
-                    ),
-                    AnyCalendarKind::EthiopianAmeteAlem => assert_fixture_element(
-                        &locale,
-                        &input_ethioaa,
+                        &input_roc,
                         &input_iso,
                         &output_value,
                         options,
@@ -170,46 +258,29 @@ fn assert_fixture_element<A>(
     A: AsCalendar,
     A::Calendar: CldrCalendar,
     A::Calendar: IntoAnyCalendar,
-    // Bounds for testdata to support the calendar
-    icu_testdata::UnstableDataProvider:
-        DataProvider<<A::Calendar as CldrCalendar>::DateSymbolsV1Marker>,
-    icu_testdata::UnstableDataProvider:
-        DataProvider<<A::Calendar as CldrCalendar>::DateLengthsV1Marker>,
+    icu_datetime::provider::Baked: DataProvider<<A::Calendar as CldrCalendar>::DateSymbolsV1Marker>,
+    icu_datetime::provider::Baked: DataProvider<<A::Calendar as CldrCalendar>::DateLengthsV1Marker>,
 {
     let any_input = input_value.to_any();
     let iso_any_input = input_iso.to_any();
     #[cfg(feature = "experimental")]
     let (dtf, any_dtf) = {
         (
-            TypedDateTimeFormatter::<A::Calendar>::try_new_experimental_unstable(
-                &icu_testdata::buffer().as_deserializing(),
+            TypedDateTimeFormatter::<A::Calendar>::try_new_experimental(
                 &locale.into(),
                 options.clone(),
             )
             .expect(description),
-            DateTimeFormatter::try_new_experimental_unstable(
-                &icu_testdata::buffer().as_deserializing(),
-                &locale.into(),
-                options.clone(),
-            )
-            .expect(description),
+            DateTimeFormatter::try_new_experimental(&locale.into(), options.clone())
+                .expect(description),
         )
     };
     #[cfg(not(feature = "experimental"))]
     let (dtf, any_dtf) = {
         (
-            TypedDateTimeFormatter::<A::Calendar>::try_new_unstable(
-                &icu_testdata::unstable(),
-                &locale.into(),
-                options.clone(),
-            )
-            .expect(description),
-            DateTimeFormatter::try_new_unstable(
-                &icu_testdata::unstable(),
-                &locale.into(),
-                options.clone(),
-            )
-            .expect(description),
+            TypedDateTimeFormatter::<A::Calendar>::try_new(&locale.into(), options.clone())
+                .expect(description),
+            DateTimeFormatter::try_new(&locale.into(), options.clone()).expect(description),
         )
     };
 
@@ -231,24 +302,17 @@ fn assert_fixture_element<A>(
 
     if let DateTimeFormatterOptions::Length(bag) = options {
         if bag.date.is_some() && bag.time.is_some() {
-            let df = TypedDateFormatter::<A::Calendar>::try_new_with_length_unstable(
-                &icu_testdata::unstable(),
+            let df = TypedDateFormatter::<A::Calendar>::try_new_with_length(
                 &locale.into(),
                 bag.date.unwrap(),
             )
             .unwrap();
-            let tf = TimeFormatter::try_new_with_length_unstable(
-                &icu_testdata::unstable(),
-                &locale.into(),
-                bag.time.unwrap(),
-            )
-            .unwrap();
+            let tf = TimeFormatter::try_new_with_length(&locale.into(), bag.time.unwrap()).unwrap();
 
             let dtf = TypedDateTimeFormatter::try_from_date_and_time(df, tf).unwrap();
             assert_writeable_eq!(dtf.format(input_value), output_value, "{}", description);
         } else if bag.date.is_some() {
-            let df = TypedDateFormatter::<A::Calendar>::try_new_with_length_unstable(
-                &icu_testdata::unstable(),
+            let df = TypedDateFormatter::<A::Calendar>::try_new_with_length(
                 &locale.into(),
                 bag.date.unwrap(),
             )
@@ -256,12 +320,7 @@ fn assert_fixture_element<A>(
 
             assert_writeable_eq!(df.format(input_value), output_value, "{}", description);
         } else if bag.time.is_some() {
-            let tf = TimeFormatter::try_new_with_length_unstable(
-                &icu_testdata::unstable(),
-                &locale.into(),
-                bag.time.unwrap(),
-            )
-            .unwrap();
+            let tf = TimeFormatter::try_new_with_length(&locale.into(), bag.time.unwrap()).unwrap();
 
             assert_writeable_eq!(tf.format(input_value), output_value, "{}", description);
         }
@@ -297,8 +356,7 @@ fn test_fixture_with_time_zones(fixture_name: &str, config: TimeZoneConfig) {
             let locale: Locale = locale.parse().unwrap();
             #[cfg(feature = "experimental")]
             let dtf = {
-                TypedZonedDateTimeFormatter::<Gregorian>::try_new_experimental_unstable(
-                    &icu_testdata::buffer().as_deserializing(),
+                TypedZonedDateTimeFormatter::<Gregorian>::try_new_experimental(
                     &locale.into(),
                     options.clone(),
                     TimeZoneFormatterOptions::default(),
@@ -307,8 +365,7 @@ fn test_fixture_with_time_zones(fixture_name: &str, config: TimeZoneConfig) {
             };
             #[cfg(not(feature = "experimental"))]
             let dtf = {
-                TypedZonedDateTimeFormatter::<Gregorian>::try_new_unstable(
-                    &icu_testdata::unstable(),
+                TypedZonedDateTimeFormatter::<Gregorian>::try_new(
                     &locale.into(),
                     options.clone(),
                     TimeZoneFormatterOptions::default(),
@@ -340,7 +397,7 @@ fn test_dayperiod_patterns() {
             metadata: Default::default(),
         };
         let mut date_patterns_data: DataPayload<GregorianDateLengthsV1Marker> =
-            icu_testdata::unstable()
+            icu_datetime::provider::Baked
                 .load(req)
                 .unwrap()
                 .take_payload()
@@ -348,38 +405,40 @@ fn test_dayperiod_patterns() {
         date_patterns_data.with_mut(|data| {
             data.length_combinations.medium = "{0}".parse().unwrap();
         });
-        let mut time_patterns_data: DataPayload<TimeLengthsV1Marker> = icu_testdata::unstable()
-            .load(req)
-            .unwrap()
-            .take_payload()
-            .unwrap();
+        let mut time_patterns_data: DataPayload<TimeLengthsV1Marker> =
+            icu_datetime::provider::Baked
+                .load(req)
+                .unwrap()
+                .take_payload()
+                .unwrap();
         date_patterns_data.with_mut(|data| {
             data.length_combinations.medium = "{0}".parse().unwrap();
         });
-        let date_symbols_data: DataPayload<GregorianDateSymbolsV1Marker> = icu_testdata::unstable()
-            .load(req)
-            .unwrap()
-            .take_payload()
-            .unwrap();
-        let time_symbols_data: DataPayload<TimeSymbolsV1Marker> = icu_testdata::unstable()
+        let date_symbols_data: DataPayload<GregorianDateSymbolsV1Marker> =
+            icu_datetime::provider::Baked
+                .load(req)
+                .unwrap()
+                .take_payload()
+                .unwrap();
+        let time_symbols_data: DataPayload<TimeSymbolsV1Marker> = icu_datetime::provider::Baked
             .load(req)
             .unwrap()
             .take_payload()
             .unwrap();
         #[cfg(feature = "experimental")]
-        let skeleton_data: DataPayload<DateSkeletonPatternsV1Marker> = icu_testdata::buffer()
-            .as_deserializing()
-            .load(req)
-            .unwrap()
-            .take_payload()
-            .unwrap();
-        let week_data: DataPayload<WeekDataV1Marker> = icu_testdata::unstable()
+        let skeleton_data: DataPayload<DateSkeletonPatternsV1Marker> =
+            icu_datetime::provider::Baked
+                .load(req)
+                .unwrap()
+                .take_payload()
+                .unwrap();
+        let week_data: DataPayload<WeekDataV1Marker> = icu_calendar::provider::Baked
             .load(req)
             .unwrap()
             .take_payload()
             .unwrap();
         data_locale.retain_unicode_ext(|_| false);
-        let decimal_data: DataPayload<DecimalSymbolsV1Marker> = icu_testdata::unstable()
+        let decimal_data: DataPayload<DecimalSymbolsV1Marker> = icu_decimal::provider::Baked
             .load(DataRequest {
                 locale: &data_locale,
                 metadata: Default::default(),
@@ -464,12 +523,8 @@ fn test_time_zone_format_configs() {
         {
             for &config_input in configs {
                 for (&fallback_format, expect) in fallback_formats.iter().zip(expected.iter()) {
-                    let mut tzf = TimeZoneFormatter::try_new_unstable(
-                        &icu_testdata::unstable(),
-                        &data_locale,
-                        fallback_format.into(),
-                    )
-                    .unwrap();
+                    let mut tzf =
+                        TimeZoneFormatter::try_new(&data_locale, fallback_format.into()).unwrap();
                     config_input.set_on_formatter(&mut tzf).unwrap();
                     assert_writeable_eq!(
                         tzf.format(&time_zone),
@@ -501,12 +556,7 @@ fn test_time_zone_format_gmt_offset_not_set_debug_assert_panic() {
         metazone_id: Some(MetazoneId(tinystr!(4, "ampa"))),
         zone_variant: Some(ZoneVariant::daylight()),
     };
-    let tzf = TimeZoneFormatter::try_new_unstable(
-        &icu_testdata::unstable(),
-        &langid!("en").into(),
-        Default::default(),
-    )
-    .unwrap();
+    let tzf = TimeZoneFormatter::try_new(&langid!("en").into(), Default::default()).unwrap();
     tzf.format(&time_zone).write_to_string();
 }
 
@@ -519,12 +569,7 @@ fn test_time_zone_format_gmt_offset_not_set_no_debug_assert() {
         Some(MetazoneId(tinystr!(4, "ampa"))),
         Some(tinystr!(8, "daylight")),
     );
-    let tzf = TimeZoneFormatter::try_new_unstable(
-        &icu_testdata::unstable(),
-        &langid!("en").into(),
-        Default::default(),
-    )
-    .unwrap();
+    let tzf = TimeZoneFormatter::try_new(&langid!("en").into(), Default::default()).unwrap();
     assert_writeable_eq!(tzf.format(&time_zone).unwrap(), "GMT+?");
 }
 
@@ -550,72 +595,75 @@ fn test_time_zone_patterns() {
         time_zone.zone_variant = config.zone_variant.take().map(ZoneVariant);
 
         let mut date_patterns_data: DataPayload<GregorianDateLengthsV1Marker> =
-            icu_testdata::unstable()
+            icu_datetime::provider::Baked
                 .load(req)
                 .unwrap()
                 .take_payload()
                 .unwrap();
-        let mut time_patterns_data: DataPayload<TimeLengthsV1Marker> = icu_testdata::unstable()
-            .load(req)
-            .unwrap()
-            .take_payload()
-            .unwrap();
+        let mut time_patterns_data: DataPayload<TimeLengthsV1Marker> =
+            icu_datetime::provider::Baked
+                .load(req)
+                .unwrap()
+                .take_payload()
+                .unwrap();
         #[cfg(feature = "experimental")]
-        let skeleton_data: DataPayload<DateSkeletonPatternsV1Marker> = icu_testdata::buffer()
-            .as_deserializing()
+        let skeleton_data: DataPayload<DateSkeletonPatternsV1Marker> =
+            icu_datetime::provider::Baked
+                .load(req)
+                .unwrap()
+                .take_payload()
+                .unwrap();
+        let symbols_data: DataPayload<GregorianDateSymbolsV1Marker> = icu_datetime::provider::Baked
             .load(req)
             .unwrap()
             .take_payload()
             .unwrap();
-        let symbols_data: DataPayload<GregorianDateSymbolsV1Marker> = icu_testdata::unstable()
+        let week_data: DataPayload<WeekDataV1Marker> = icu_calendar::provider::Baked
             .load(req)
             .unwrap()
             .take_payload()
             .unwrap();
-        let week_data: DataPayload<WeekDataV1Marker> = icu_testdata::unstable()
+        let decimal_data: DataPayload<DecimalSymbolsV1Marker> = icu_decimal::provider::Baked
             .load(req)
             .unwrap()
             .take_payload()
             .unwrap();
-        let decimal_data: DataPayload<DecimalSymbolsV1Marker> = icu_testdata::unstable()
-            .load(req)
-            .unwrap()
-            .take_payload()
-            .unwrap();
-        let time_zone_formats_data: DataPayload<TimeZoneFormatsV1Marker> = icu_testdata::unstable()
-            .load(req)
-            .unwrap()
-            .take_payload()
-            .unwrap();
+        let time_zone_formats_data: DataPayload<TimeZoneFormatsV1Marker> =
+            icu_datetime::provider::Baked
+                .load(req)
+                .unwrap()
+                .take_payload()
+                .unwrap();
         let metazone_specific_short_data: DataPayload<MetazoneSpecificNamesShortV1Marker> =
-            icu_testdata::unstable()
+            icu_datetime::provider::Baked
                 .load(req)
                 .unwrap()
                 .take_payload()
                 .unwrap();
         let metazone_specific_long_data: DataPayload<MetazoneSpecificNamesLongV1Marker> =
-            icu_testdata::unstable()
+            icu_datetime::provider::Baked
                 .load(req)
                 .unwrap()
                 .take_payload()
                 .unwrap();
         let metazone_generic_short_data: DataPayload<MetazoneGenericNamesShortV1Marker> =
-            icu_testdata::unstable()
+            icu_datetime::provider::Baked
                 .load(req)
                 .unwrap()
                 .take_payload()
                 .unwrap();
         let metazone_generic_long_data: DataPayload<MetazoneGenericNamesLongV1Marker> =
-            icu_testdata::unstable()
+            icu_datetime::provider::Baked
                 .load(req)
                 .unwrap()
                 .take_payload()
                 .unwrap();
-        let exemplar_cities_data: DataPayload<ExemplarCitiesV1Marker> = icu_testdata::unstable()
-            .load(req)
-            .unwrap()
-            .take_payload()
-            .unwrap();
+        let exemplar_cities_data: DataPayload<ExemplarCitiesV1Marker> =
+            icu_datetime::provider::Baked
+                .load(req)
+                .unwrap()
+                .take_payload()
+                .unwrap();
 
         date_patterns_data.with_mut(|data| {
             data.length_combinations.medium = "{0}".parse().unwrap();
@@ -789,37 +837,7 @@ fn constructing_datetime_format_with_time_zone_pattern_symbols_is_err() {
     length_bag.time = Some(Time::Full); // Full has timezone symbols
     let options = DateTimeFormatterOptions::Length(length_bag);
 
-    let result = TypedDateTimeFormatter::<Gregorian>::try_new_unstable(
-        &icu_testdata::unstable(),
-        &locale!("en").into(),
-        options,
-    );
+    let result = TypedDateTimeFormatter::<Gregorian>::try_new(&locale!("en").into(), options);
 
     assert!(result.is_err());
-}
-
-#[test]
-fn test_vertical_fallback_disabled() {
-    use icu_datetime::{
-        options::length::{Bag, Date, Time},
-        DateTimeFormatterOptions,
-    };
-
-    let mut length_bag = Bag::default();
-    length_bag.date = Some(Date::Full);
-    length_bag.time = Some(Time::Short);
-    let options = DateTimeFormatterOptions::Length(length_bag);
-
-    let dtf = TypedDateTimeFormatter::<Gregorian>::try_new_unstable(
-        &icu_testdata::unstable_no_fallback(),
-        &locale!("fr").into(),
-        options,
-    )
-    .unwrap();
-
-    // This should work for length bag. It doesn't currently work for components bag.
-    assert_writeable_eq!(
-        dtf.format(&DateTime::try_new_gregorian_datetime(2022, 4, 5, 12, 33, 44).unwrap()),
-        "mardi 5 avril 2022, 12:33",
-    );
 }

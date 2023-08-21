@@ -21,6 +21,22 @@ use icu_provider::prelude::*;
 use tinystr::TinyStr16;
 use zerovec::ZeroVec;
 
+#[cfg(feature = "compiled_data")]
+#[derive(Debug)]
+/// Baked data
+pub struct Baked;
+
+#[cfg(feature = "compiled_data")]
+const _: () = {
+    pub mod icu {
+        pub use crate as calendar;
+        pub use icu_locid_transform as locid_transform;
+    }
+    icu_calendar_data::impl_calendar_japanese_v1!(Baked);
+    icu_calendar_data::impl_calendar_japanext_v1!(Baked);
+    icu_calendar_data::impl_datetime_week_data_v1!(Baked);
+};
+
 /// The date at which an era started
 ///
 /// The order of fields in this struct is important!
@@ -58,8 +74,8 @@ pub struct EraStartDate {
 /// to be stable, their Rust representation might not be. Use with caution.
 /// </div>
 #[icu_provider::data_struct(
-    marker(JapaneseErasV1Marker, "calendar/japanese@1"),
-    marker(JapaneseExtendedErasV1Marker, "calendar/japanext@1")
+    marker(JapaneseErasV1Marker, "calendar/japanese@1", singleton),
+    marker(JapaneseExtendedErasV1Marker, "calendar/japanext@1", singleton)
 )]
 #[derive(Debug, PartialEq, Clone, Default)]
 #[cfg_attr(
@@ -106,7 +122,7 @@ impl FromStr for EraStartDate {
     "datetime/week_data@1",
     fallback_by = "region"
 ))]
-#[derive(Clone, Copy, Debug)]
+#[derive(Clone, Copy, Debug, PartialEq)]
 #[cfg_attr(
     feature = "datagen",
     derive(serde::Serialize, databake::Bake),

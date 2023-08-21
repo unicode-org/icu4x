@@ -10,6 +10,9 @@ pub(crate) const MISSING_CLDR_ERROR: DataError =
 pub(crate) const MISSING_ICUEXPORT_ERROR: DataError =
     DataErrorKind::MissingSourceData.with_str_context("icuexport");
 
+pub(crate) const MISSING_SEGMENTER_LSTM_ERROR: DataError =
+    DataErrorKind::MissingSourceData.with_str_context("segmenter");
+
 /// Identifies errors that are due to missing CLDR data.
 pub fn is_missing_cldr_error(mut e: DataError) -> bool {
     e.key = None;
@@ -20,4 +23,10 @@ pub fn is_missing_cldr_error(mut e: DataError) -> bool {
 pub fn is_missing_icuexport_error(mut e: DataError) -> bool {
     e.key = None;
     e == MISSING_ICUEXPORT_ERROR
+}
+
+/// Identifies errors that are due to missing segmenter LSTM data.
+pub fn is_missing_segmenter_lstm_error(mut e: DataError) -> bool {
+    e.key = None;
+    e == MISSING_SEGMENTER_LSTM_ERROR
 }

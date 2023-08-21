@@ -6,12 +6,12 @@
 name = "databake"
 description = "Trait that lets structs represent themselves as (const) Rust expressions"
 version = "0.1.5"
-rust-version = "1.61.0"
+rust-version = "1.65.0"
 authors = ["The ICU4X Project Developers"]
 edition = "2021"
 readme = "README.md"
 repository = "https://github.com/unicode-org/icu4x"
-license = "Unicode-DFS-2016"
+license-file = "LICENSE"
 categories = ["rust-patterns", "memory-management", "development-tools::procedural-macro-helpers", "development-tools::build-utils"]
 keywords = ["zerocopy", "serialization", "const", "proc"]
 # Keep this in sync with other crates unless there are exceptions

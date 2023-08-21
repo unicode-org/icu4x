@@ -1,15 +1,15 @@
 // @generated
-/// Implement [`DataProvider<AliasesV1Marker>`](icu_provider::DataProvider) on the given struct using the data
+/// Implement `DataProvider<AliasesV1Marker>` on the given struct using the data
 /// hardcoded in this file. This allows the struct to be used with
 /// `icu`'s `_unstable` constructors.
 #[doc(hidden)]
 #[macro_export]
 macro_rules! __impl_locid_transform_aliases_v1 {
     ($ provider : path) => {
-        #[clippy::msrv = "1.61"]
+        #[clippy::msrv = "1.65"]
         impl $provider {
             #[doc(hidden)]
-            pub const SINGLETON_LOCID_TRANSFORM_ALIASES_V1: &'static <icu_locid_transform::provider::AliasesV1Marker as icu_provider::DataMarker>::Yokeable = &icu_locid_transform::provider::AliasesV1 {
+            pub const SINGLETON_LOCID_TRANSFORM_ALIASES_V1: &'static <icu::locid_transform::provider::AliasesV1Marker as icu_provider::DataMarker>::Yokeable = &icu::locid_transform::provider::AliasesV1 {
                 language_variants: unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x13\0\0\0\0\0\x17\x000\0J\0c\0z\0\x92\0\xBB\0\xD1\0\xE8\0\xFF\0\x1B\x015\x01O\x01h\x01\x80\x01\x99\x01\xB3\x01\xCB\x01\x02\0\0\0\0\0\0\0\x08\0\0\0aa-saahossy\x02\0\0\0\0\0\0\0\n\0\0\0art-lojbanjbo\x02\0\0\0\0\0\0\0\x0B\0\0\0cel-gaulishxtg\x02\0\0\0\0\0\0\0\n\0\0\0hy-arevmdahyw\x02\0\0\0\0\0\0\0\t\0\0\0no-bokmalnb\x02\0\0\0\0\0\0\0\n\0\0\0no-nynorsknn\x02\0\0\0\0\0\0\0\x12\0\0\0und-hepburn-heplocund-alalc97\x02\0\0\0\0\0\0\0\x08\0\0\0zh-guoyuzh\x02\0\0\0\0\0\0\0\x08\0\0\0zh-hakkahak\x02\0\0\0\0\0\0\0\x08\0\0\0zh-xianghsn\x02\0\0\0\0\0\0\0\n\0\0\0und-aalandund-AX\x02\0\0\0\0\0\0\0\x0B\0\0\0und-arevelaund\x02\0\0\0\0\0\0\0\x0B\0\0\0und-arevmdaund\x02\0\0\0\0\0\0\0\n\0\0\0und-bokmalund\x02\0\0\0\0\0\0\0\t\0\0\0und-hakkaund\x02\0\0\0\0\0\0\0\n\0\0\0und-lojbanund\x02\0\0\0\0\0\0\0\x0B\0\0\0und-nynorskund\x02\0\0\0\0\0\0\0\t\0\0\0und-saahound\x02\0\0\0\0\0\0\0\t\0\0\0und-xiangund") },
                 sgn_region: unsafe {
                     #[allow(unused_unsafe)]
@@ -50,19 +50,13 @@ macro_rules! __impl_locid_transform_aliases_v1 {
                 },
             };
         }
-        #[clippy::msrv = "1.61"]
-        impl icu_provider::DataProvider<icu_locid_transform::provider::AliasesV1Marker> for $provider {
-            fn load(&self, req: icu_provider::DataRequest) -> Result<icu_provider::DataResponse<icu_locid_transform::provider::AliasesV1Marker>, icu_provider::DataError> {
-                let locale = req.locale;
-                match {
-                    if locale.is_empty() {
-                        Ok(Self::SINGLETON_LOCID_TRANSFORM_ALIASES_V1)
-                    } else {
-                        Err(icu_provider::DataErrorKind::ExtraneousLocale)
-                    }
-                } {
-                    Ok(payload) => Ok(icu_provider::DataResponse { metadata: Default::default(), payload: Some(icu_provider::DataPayload::from_static_ref(payload)) }),
-                    Err(e) => Err(e.with_req(<icu_locid_transform::provider::AliasesV1Marker as icu_provider::KeyedDataMarker>::KEY, req)),
+        #[clippy::msrv = "1.65"]
+        impl icu_provider::DataProvider<icu::locid_transform::provider::AliasesV1Marker> for $provider {
+            fn load(&self, req: icu_provider::DataRequest) -> Result<icu_provider::DataResponse<icu::locid_transform::provider::AliasesV1Marker>, icu_provider::DataError> {
+                if req.locale.is_empty() {
+                    Ok(icu_provider::DataResponse { payload: Some(icu_provider::DataPayload::from_static_ref(Self::SINGLETON_LOCID_TRANSFORM_ALIASES_V1)), metadata: Default::default() })
+                } else {
+                    Err(icu_provider::DataErrorKind::ExtraneousLocale.with_req(<icu::locid_transform::provider::AliasesV1Marker as icu_provider::KeyedDataMarker>::KEY, req))
                 }
             }
         }

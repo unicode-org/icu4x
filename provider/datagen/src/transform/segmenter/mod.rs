@@ -20,8 +20,8 @@ use icu_segmenter::symbols::*;
 use std::fmt::Debug;
 use zerovec::ZeroVec;
 
-mod dictionary;
-mod lstm;
+pub(crate) mod dictionary;
+pub(crate) mod lstm;
 
 // state machine name define by builtin name
 // [[tables]]
@@ -585,9 +585,9 @@ impl crate::DatagenProvider {
             data: CodePointTrieBuilderData::ValuesByCodePoint(&properties_map),
             default_value: 0,
             error_value: 0,
-            trie_type: match self.source.options.trie_type {
-                crate::options::TrieType::Fast => icu_collections::codepointtrie::TrieType::Fast,
-                crate::options::TrieType::Small => icu_collections::codepointtrie::TrieType::Small,
+            trie_type: match self.trie_type() {
+                crate::TrieType::Fast => icu_collections::codepointtrie::TrieType::Fast,
+                crate::TrieType::Small => icu_collections::codepointtrie::TrieType::Small,
             },
         }
         .build();
@@ -642,17 +642,19 @@ impl crate::DatagenProvider {
 macro_rules! implement {
     ($marker:ident, $rules:literal) => {
         impl DataProvider<$marker> for crate::DatagenProvider {
-            fn load(&self, _req: DataRequest) -> Result<DataResponse<$marker>, DataError> {
+            fn load(&self, req: DataRequest) -> Result<DataResponse<$marker>, DataError> {
                 #[cfg(not(any(feature = "use_wasm", feature = "use_icu4c")))]
                 return Err(DataError::custom(
                     "icu_datagen must be built with use_icu4c or use_wasm to build segmentation rules",
                 )
-                .with_req($marker::KEY, _req));
+                .with_req($marker::KEY, req));
+                #[cfg(any(feature = "use_wasm", feature = "use_icu4c"))]
+                self.check_req::<$marker>(req)?;
                 #[cfg(any(feature = "use_wasm", feature = "use_icu4c"))]
                 return Ok(DataResponse {
                     metadata: DataResponseMetadata::default(),
                     payload: Some(DataPayload::from_owned(
-                        self.generate_rule_break_data(include_str!(concat!("../../../data/segmenter/rules/", $rules))),
+                        self.generate_rule_break_data(include_str!(concat!("rules/", $rules))),
                     )),
                 });
             }
@@ -677,7 +679,7 @@ mod tests {
 
     #[test]
     fn load_grapheme_cluster_data() {
-        let provider = crate::DatagenProvider::for_test();
+        let provider = crate::DatagenProvider::latest_tested_offline_subset();
         let payload: DataPayload<GraphemeClusterBreakDataV1Marker> = provider
             .load(Default::default())
             .expect("Loading should succeed!")

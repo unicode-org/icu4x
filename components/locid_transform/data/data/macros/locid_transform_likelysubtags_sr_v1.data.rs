@@ -1,15 +1,15 @@
 // @generated
-/// Implement [`DataProvider<LikelySubtagsForScriptRegionV1Marker>`](icu_provider::DataProvider) on the given struct using the data
+/// Implement `DataProvider<LikelySubtagsForScriptRegionV1Marker>` on the given struct using the data
 /// hardcoded in this file. This allows the struct to be used with
 /// `icu`'s `_unstable` constructors.
 #[doc(hidden)]
 #[macro_export]
 macro_rules! __impl_locid_transform_likelysubtags_sr_v1 {
     ($ provider : path) => {
-        #[clippy::msrv = "1.61"]
+        #[clippy::msrv = "1.65"]
         impl $provider {
             #[doc(hidden)]
-            pub const SINGLETON_LOCID_TRANSFORM_LIKELYSUBTAGS_SR_V1: &'static <icu_locid_transform::provider::LikelySubtagsForScriptRegionV1Marker as icu_provider::DataMarker>::Yokeable = &icu_locid_transform::provider::LikelySubtagsForScriptRegionV1 {
+            pub const SINGLETON_LOCID_TRANSFORM_LIKELYSUBTAGS_SR_V1: &'static <icu::locid_transform::provider::LikelySubtagsForScriptRegionV1Marker as icu_provider::DataMarker>::Yokeable = &icu::locid_transform::provider::LikelySubtagsForScriptRegionV1 {
                 script_region: unsafe {
                     #[allow(unused_unsafe)]
                     zerovec::ZeroMap::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"ArabCC\0ArabGB\0ArabID\0ArabIN\0ArabMN\0ArabMU\0ArabNG\0ArabPK\0ArabTJ\0CyrlAL\0CyrlBA\0CyrlGR\0CyrlMD\0CyrlRO\0CyrlSK\0CyrlXK\0DevaBT\0DevaMU\0HantCA\0LatnAF\0LatnCY\0LatnDZ\0LatnET\0LatnIR\0LatnKM\0LatnMA\0LatnMK\0LatnMO\0LatnMR\0LatnSY\0LatnTN\0LatnUA\0") }, unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"ms\0ur\0ms\0ur\0kk\0ur\0ha\0ur\0fa\0mk\0sr\0mk\0uk\0bg\0uk\0sr\0ne\0bhoyuetk\0tr\0fr\0en\0tk\0fr\0fr\0sq\0pt\0fr\0fr\0fr\0pl\0") })
@@ -24,19 +24,13 @@ macro_rules! __impl_locid_transform_likelysubtags_sr_v1 {
                 },
             };
         }
-        #[clippy::msrv = "1.61"]
-        impl icu_provider::DataProvider<icu_locid_transform::provider::LikelySubtagsForScriptRegionV1Marker> for $provider {
-            fn load(&self, req: icu_provider::DataRequest) -> Result<icu_provider::DataResponse<icu_locid_transform::provider::LikelySubtagsForScriptRegionV1Marker>, icu_provider::DataError> {
-                let locale = req.locale;
-                match {
-                    if locale.is_empty() {
-                        Ok(Self::SINGLETON_LOCID_TRANSFORM_LIKELYSUBTAGS_SR_V1)
-                    } else {
-                        Err(icu_provider::DataErrorKind::ExtraneousLocale)
-                    }
-                } {
-                    Ok(payload) => Ok(icu_provider::DataResponse { metadata: Default::default(), payload: Some(icu_provider::DataPayload::from_static_ref(payload)) }),
-                    Err(e) => Err(e.with_req(<icu_locid_transform::provider::LikelySubtagsForScriptRegionV1Marker as icu_provider::KeyedDataMarker>::KEY, req)),
+        #[clippy::msrv = "1.65"]
+        impl icu_provider::DataProvider<icu::locid_transform::provider::LikelySubtagsForScriptRegionV1Marker> for $provider {
+            fn load(&self, req: icu_provider::DataRequest) -> Result<icu_provider::DataResponse<icu::locid_transform::provider::LikelySubtagsForScriptRegionV1Marker>, icu_provider::DataError> {
+                if req.locale.is_empty() {
+                    Ok(icu_provider::DataResponse { payload: Some(icu_provider::DataPayload::from_static_ref(Self::SINGLETON_LOCID_TRANSFORM_LIKELYSUBTAGS_SR_V1)), metadata: Default::default() })
+                } else {
+                    Err(icu_provider::DataErrorKind::ExtraneousLocale.with_req(<icu::locid_transform::provider::LikelySubtagsForScriptRegionV1Marker as icu_provider::KeyedDataMarker>::KEY, req))
                 }
             }
         }

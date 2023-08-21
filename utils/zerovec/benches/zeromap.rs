@@ -403,5 +403,5 @@ impl<'a> ZeroMapKV<'a> for Index32Str {
 
 #[inline]
 fn indexify(s: &str) -> &Index32Str {
-    unsafe { ::core::mem::transmute(s) }
+    unsafe { &*(s as *const str as *const Index32Str) }
 }

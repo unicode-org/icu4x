@@ -39,7 +39,7 @@ jobs:
   
       - uses:                   actions-rs/toolchain@v1
         with:
-          toolchain:            nightly-2023-01-31
+          toolchain:            nightly-2022-09-26
           override:             true
 
       - run: cargo test --all-features --no-fail-fast
@@ -53,10 +53,10 @@ jobs:
         uses:                   actions-rs/grcov@v0.1
 
       - name:                   Push grcov results to Coveralls via GitHub Action
-        uses:                   coverallsapp/github-action@v1.0.1
+        uses:                   coverallsapp/github-action@v2.2.1
         with:
           github-token:         ${{ secrets.GITHUB_TOKEN }}
-          path-to-lcov:         ${{ steps.coverage.outputs.report }}
+          file:                 ${{ steps.coverage.outputs.report }}
 
       - name:                   Push grcov results to Codecov via GitHub Action
         uses:                   codecov/codecov-action@v3

@@ -6,11 +6,11 @@
 name = "yoke"
 version = "0.7.1"
 description = "Abstraction allowing borrowed data to be carried along with the backing data it borrows from"
-rust-version = "1.61.0"
+rust-version = "1.65.0"
 authors = ["Manish Goregaokar <manishsmail@gmail.com>"]
 edition = "2021"
 repository = "https://github.com/unicode-org/icu4x"
-license = "Unicode-DFS-2016"
+license-file = "LICENSE"
 categories = ["data-structures", "memory-management", "caching", "no-std"]
 keywords = ["zerocopy", "serialization", "lifetime", "borrow", "self-referential"]
 include = [
@@ -26,12 +26,18 @@ include = [
 independent = true
 
 [features]
+default = ["alloc", "zerofrom"]
 derive = ["dep:yoke-derive", "zerofrom/derive"]
 alloc = ["stable_deref_trait/alloc", "serde?/alloc", "zerofrom/alloc"]
-default = ["alloc", "zerofrom"]
+serde = ["dep:serde"]
+zerofrom = ["dep:zerofrom"]
 
 [package.metadata.docs.rs]
 all-features = true
+
+[package.metadata.cargo-all-features]
+# We have tons of features here, limit the amount of tests we run
+max_combination_size = 3
 
 [dependencies]
 stable_deref_trait = { version = "1.2.0", default-features = false }
@@ -39,7 +45,7 @@ stable_deref_trait = { version = "1.2.0", default-features = false }
 yoke-derive = { version = "0.7.0", path = "./derive", optional = true }
 
 serde = { version = "1.0", default-features = false, optional = true }
-zerofrom = { version = "0.1.1", path = "../zerofrom", default-features = false, optional = true} 
+zerofrom = { version = "0.1.1", path = "../zerofrom", default-features = false, optional = true}
 
 [dev-dependencies]
 bincode = "1.3.3"

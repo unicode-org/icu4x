@@ -35,7 +35,6 @@ use crate::any_calendar::AnyCalendarKind;
 use crate::calendar_arithmetic::{ArithmeticDate, CalendarArithmetic};
 use crate::iso::Iso;
 use crate::{types, Calendar, CalendarError, Date, DateDuration, DateDurationUnit, DateTime};
-use core::marker::PhantomData;
 use tinystr::tinystr;
 
 /// The Indian National Calendar (aka the Saka calendar)
@@ -49,6 +48,10 @@ use tinystr::tinystr;
 /// # Era codes
 ///
 /// This calendar has a single era: `"saka"`, with Saka 0 being 78 CE. Dates before this era use negative years.
+///
+/// # Month codes
+///
+/// This calendar supports 12 solar month codes (`"M01" - "M12"`)
 #[derive(Copy, Clone, Debug, Hash, Default, Eq, PartialEq, PartialOrd, Ord)]
 #[allow(clippy::exhaustive_structs)] // this type is stable
 pub struct Indian;
@@ -86,7 +89,7 @@ impl CalendarArithmetic for Indian {
         (12, 30)
     }
 
-    fn days_in_provided_year(year: i32) -> u32 {
+    fn days_in_provided_year(year: i32) -> u16 {
         if Self::is_leap_year(year) {
             366
         } else {
@@ -97,7 +100,7 @@ impl CalendarArithmetic for Indian {
 
 /// The Saka calendar starts on the 81st day of the Gregorian year (March 22 or 21)
 /// which is an 80 day offset. This number should be subtracted from Gregorian dates
-const DAY_OFFSET: u32 = 80;
+const DAY_OFFSET: u16 = 80;
 /// The Saka calendar is 78 years behind Gregorian. This number should be added to Gregorian dates
 const YEAR_OFFSET: i32 = 78;
 
@@ -110,11 +113,11 @@ impl Calendar for Indian {
         month_code: types::MonthCode,
         day: u8,
     ) -> Result<Self::DateInner, CalendarError> {
-        if era.0 != tinystr!(16, "saka") {
+        if era.0 != tinystr!(16, "saka") && era.0 != tinystr!(16, "indian") {
             return Err(CalendarError::UnknownEra(era.0, self.debug_name()));
         }
 
-        ArithmeticDate::new_from_solar(self, year, month_code, day).map(IndianDateInner)
+        ArithmeticDate::new_from_codes(self, year, month_code, day).map(IndianDateInner)
     }
 
     //
@@ -133,7 +136,10 @@ impl Calendar for Indian {
         } else {
             day_of_year_iso - DAY_OFFSET
         };
-        IndianDateInner(ArithmeticDate::date_from_year_day(year, day_of_year_indian))
+        IndianDateInner(ArithmeticDate::date_from_year_day(
+            year,
+            day_of_year_indian as u32,
+        ))
     }
 
     fn date_to_iso(&self, date: &Self::DateInner) -> Date<Iso> {
@@ -156,7 +162,7 @@ impl Calendar for Indian {
         date.0.months_in_year()
     }
 
-    fn days_in_year(&self, date: &Self::DateInner) -> u32 {
+    fn days_in_year(&self, date: &Self::DateInner) -> u16 {
         date.0.days_in_year()
     }
 
@@ -188,12 +194,13 @@ impl Calendar for Indian {
         types::FormattableYear {
             era: types::Era(tinystr!(16, "saka")),
             number: date.0.year,
+            cyclic: None,
             related_iso: None,
         }
     }
 
     fn month(&self, date: &Self::DateInner) -> types::FormattableMonth {
-        date.0.solar_month()
+        date.0.month()
     }
 
     fn day_of_month(&self, date: &Self::DateInner) -> types::DayOfMonth {
@@ -204,11 +211,13 @@ impl Calendar for Indian {
         let prev_year = types::FormattableYear {
             era: types::Era(tinystr!(16, "saka")),
             number: date.0.year - 1,
+            cyclic: None,
             related_iso: None,
         };
         let next_year = types::FormattableYear {
             era: types::Era(tinystr!(16, "saka")),
             number: date.0.year + 1,
+            cyclic: None,
             related_iso: None,
         };
         types::DayOfYearInfo {
@@ -235,7 +244,7 @@ impl Indian {
         Self
     }
 
-    fn days_in_year_direct(year: i32) -> u32 {
+    fn days_in_year_direct(year: i32) -> u16 {
         if Indian::is_leap_year(year) {
             366
         } else {
@@ -262,19 +271,9 @@ impl Date<Indian> {
         month: u8,
         day: u8,
     ) -> Result<Date<Indian>, CalendarError> {
-        let inner = ArithmeticDate {
-            year,
-            month,
-            day,
-            marker: PhantomData,
-        };
-
-        let bound = inner.days_in_month();
-        if day > bound {
-            return Err(CalendarError::OutOfRange);
-        }
-
-        Ok(Date::from_raw(IndianDateInner(inner), Indian))
+        ArithmeticDate::new_from_ordinals(year, month, day)
+            .map(IndianDateInner)
+            .map(|inner| Date::from_raw(inner, Indian))
     }
 }
 
@@ -313,6 +312,7 @@ impl DateTime<Indian> {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use crate::rata_die::RataDie;
     fn assert_roundtrip(y: i32, m: u8, d: u8, iso_y: i32, iso_m: u8, iso_d: u8) {
         let indian =
             Date::try_new_indian_date(y, m, d).expect("Indian date should construct successfully");
@@ -367,5 +367,206 @@ mod tests {
         assert_roundtrip(1943, 11, 7, 2022, 1, 27);
         assert_roundtrip(1942, 11, 7, 2021, 1, 27);
         assert_roundtrip(1941, 11, 7, 2020, 1, 27);
+    }
+
+    #[derive(Debug)]
+    struct TestCase {
+        iso_year: i32,
+        iso_month: u8,
+        iso_day: u8,
+        expected_year: i32,
+        expected_month: u32,
+        expected_day: u32,
+    }
+
+    fn check_case(case: TestCase) {
+        let iso = Date::try_new_iso_date(case.iso_year, case.iso_month, case.iso_day).unwrap();
+        let saka = iso.to_calendar(Indian);
+        assert_eq!(
+            saka.year().number,
+            case.expected_year,
+            "Year check failed for case: {case:?}"
+        );
+        assert_eq!(
+            saka.month().ordinal,
+            case.expected_month,
+            "Month check failed for case: {case:?}"
+        );
+        assert_eq!(
+            saka.day_of_month().0,
+            case.expected_day,
+            "Day check failed for case: {case:?}"
+        );
+    }
+
+    #[test]
+    fn test_cases_near_epoch_start() {
+        let cases = [
+            TestCase {
+                iso_year: 79,
+                iso_month: 3,
+                iso_day: 23,
+                expected_year: 1,
+                expected_month: 1,
+                expected_day: 2,
+            },
+            TestCase {
+                iso_year: 79,
+                iso_month: 3,
+                iso_day: 22,
+                expected_year: 1,
+                expected_month: 1,
+                expected_day: 1,
+            },
+            TestCase {
+                iso_year: 79,
+                iso_month: 3,
+                iso_day: 21,
+                expected_year: 0,
+                expected_month: 12,
+                expected_day: 30,
+            },
+            TestCase {
+                iso_year: 79,
+                iso_month: 3,
+                iso_day: 20,
+                expected_year: 0,
+                expected_month: 12,
+                expected_day: 29,
+            },
+            TestCase {
+                iso_year: 78,
+                iso_month: 3,
+                iso_day: 21,
+                expected_year: -1,
+                expected_month: 12,
+                expected_day: 30,
+            },
+        ];
+
+        for case in cases {
+            check_case(case);
+        }
+    }
+
+    #[test]
+    fn test_cases_near_rd_zero() {
+        let cases = [
+            TestCase {
+                iso_year: 1,
+                iso_month: 3,
+                iso_day: 22,
+                expected_year: -77,
+                expected_month: 1,
+                expected_day: 1,
+            },
+            TestCase {
+                iso_year: 1,
+                iso_month: 3,
+                iso_day: 21,
+                expected_year: -78,
+                expected_month: 12,
+                expected_day: 30,
+            },
+            TestCase {
+                iso_year: 1,
+                iso_month: 1,
+                iso_day: 1,
+                expected_year: -78,
+                expected_month: 10,
+                expected_day: 11,
+            },
+            TestCase {
+                iso_year: 0,
+                iso_month: 3,
+                iso_day: 21,
+                expected_year: -78,
+                expected_month: 1,
+                expected_day: 1,
+            },
+            TestCase {
+                iso_year: 0,
+                iso_month: 1,
+                iso_day: 1,
+                expected_year: -79,
+                expected_month: 10,
+                expected_day: 11,
+            },
+            TestCase {
+                iso_year: -1,
+                iso_month: 3,
+                iso_day: 21,
+                expected_year: -80,
+                expected_month: 12,
+                expected_day: 30,
+            },
+        ];
+
+        for case in cases {
+            check_case(case);
+        }
+    }
+
+    #[test]
+    fn test_roundtrip_near_rd_zero() {
+        for i in -1000..=1000 {
+            let initial = RataDie::new(i);
+            let result = Iso::fixed_from_iso(
+                Iso::iso_from_fixed(initial)
+                    .to_calendar(Indian)
+                    .to_calendar(Iso)
+                    .inner,
+            );
+            assert_eq!(
+                initial, result,
+                "Roundtrip failed for initial: {initial:?}, result: {result:?}"
+            );
+        }
+    }
+
+    #[test]
+    fn test_roundtrip_near_epoch_start() {
+        // Epoch start: RD 28570
+        for i in 27570..=29570 {
+            let initial = RataDie::new(i);
+            let result = Iso::fixed_from_iso(
+                Iso::iso_from_fixed(initial)
+                    .to_calendar(Indian)
+                    .to_calendar(Iso)
+                    .inner,
+            );
+            assert_eq!(
+                initial, result,
+                "Roundtrip failed for initial: {initial:?}, result: {result:?}"
+            );
+        }
+    }
+
+    #[test]
+    fn test_directionality_near_rd_zero() {
+        for i in -100..=100 {
+            for j in -100..=100 {
+                let rd_i = RataDie::new(i);
+                let rd_j = RataDie::new(j);
+
+                let indian_i = Iso::iso_from_fixed(rd_i).to_calendar(Indian);
+                let indian_j = Iso::iso_from_fixed(rd_j).to_calendar(Indian);
+
+                assert_eq!(i.cmp(&j), indian_i.cmp(&indian_j), "Directionality test failed for i: {i}, j: {j}, indian_i: {indian_i:?}, indian_j: {indian_j:?}");
+            }
+        }
+    }
+
+    #[test]
+    fn test_directionality_near_epoch_start() {
+        // Epoch start: RD 28570
+        for i in 28470..=28670 {
+            for j in 28470..=28670 {
+                let indian_i = Iso::iso_from_fixed(RataDie::new(i)).to_calendar(Indian);
+                let indian_j = Iso::iso_from_fixed(RataDie::new(j)).to_calendar(Indian);
+
+                assert_eq!(i.cmp(&j), indian_i.cmp(&indian_j), "Directionality test failed for i: {i}, j: {j}, indian_i: {indian_i:?}, indian_j: {indian_j:?}");
+            }
+        }
     }
 }

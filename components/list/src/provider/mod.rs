@@ -23,12 +23,17 @@ use icu_provider::DataMarker;
 mod serde_dfa;
 pub use serde_dfa::SerdeDFA;
 
-#[cfg(feature = "data")]
-pub(crate) struct Baked;
+#[cfg(feature = "compiled_data")]
+#[derive(Debug)]
+/// Baked data
+pub struct Baked;
 
-#[cfg(feature = "data")]
+#[cfg(feature = "compiled_data")]
 const _: () = {
-    use crate as icu_list;
+    pub mod icu {
+        pub use crate as list;
+        pub use icu_locid_transform as locid_transform;
+    }
     icu_list_data::impl_list_and_v1!(Baked);
     icu_list_data::impl_list_or_v1!(Baked);
     icu_list_data::impl_list_unit_v1!(Baked);
@@ -46,7 +51,7 @@ const _: () = {
     OrListV1Marker = "list/or@1",
     UnitListV1Marker = "list/unit@1"
 )]
-#[derive(Clone, Debug)]
+#[derive(Clone, Debug, PartialEq)]
 #[cfg_attr(
     feature = "datagen",
     derive(serde::Serialize, databake::Bake),
@@ -114,10 +119,10 @@ impl<'data> ListFormatterPatternsV1<'data> {
 /// including in SemVer minor releases. While the serde representation of data structs is guaranteed
 /// to be stable, their Rust representation might not be. Use with caution.
 /// </div>
-#[derive(Clone, Debug, yoke::Yokeable, zerofrom::ZeroFrom)]
+#[derive(Clone, Debug, PartialEq, yoke::Yokeable, zerofrom::ZeroFrom)]
 #[cfg_attr(
     feature = "datagen",
-    derive(PartialEq, serde::Serialize, databake::Bake),
+    derive(serde::Serialize, databake::Bake),
     databake(path = icu_list::provider),
 )]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
@@ -140,10 +145,10 @@ pub struct ConditionalListJoinerPattern<'data> {
 /// including in SemVer minor releases. While the serde representation of data structs is guaranteed
 /// to be stable, their Rust representation might not be. Use with caution.
 /// </div>
-#[derive(Clone, Debug, yoke::Yokeable, zerofrom::ZeroFrom)]
+#[derive(Clone, Debug, PartialEq, yoke::Yokeable, zerofrom::ZeroFrom)]
 #[cfg_attr(
     feature = "datagen",
-    derive(PartialEq, serde::Serialize, databake::Bake),
+    derive(serde::Serialize, databake::Bake),
     databake(path = icu_list::provider),
 )]
 pub struct SpecialCasePattern<'data> {

@@ -6,13 +6,13 @@
 name = "icu"
 description = "International Components for Unicode"
 version = "1.2.0"
-rust-version = "1.61.0"
+rust-version = "1.65.0"
 authors = ["The ICU4X Project Developers"]
 edition = "2021"
 readme = "README.md"
 repository = "https://github.com/unicode-org/icu4x"
 homepage = "https://icu4x.unicode.org"
-license = "Unicode-DFS-2016"
+license-file = "LICENSE"
 categories = ["internationalization"]
 # Keep this in sync with other crates unless there are exceptions
 include = [
@@ -30,6 +30,7 @@ all-features = true
 
 [dependencies]
 icu_calendar = { version = "1.2.0", path = "../calendar", default-features = false }
+icu_casemap = { version = "1.2.0", path = "../../components/casemap", default-features = false }
 icu_collator = { version = "1.2.0", path = "../collator", default-features = false }
 icu_collections = { version = "1.2.0", path = "../collections", default-features = false }
 icu_datetime = { version = "1.2.0", path = "../datetime", default-features = false }
@@ -44,25 +45,40 @@ icu_segmenter = { version = "1.2.0", path = "../segmenter", default-features = f
 icu_timezone = { version = "1.2.0", path = "../timezone", default-features = false }
 
 # Experimental components
-icu_casemapping = { version = "0.7.1", path = "../../experimental/casemapping", default-features = false, optional = true }
+icu_compactdecimal = { version = "0.2.0", path = "../../experimental/compactdecimal", default-features = false, optional = true }
 icu_displaynames = { version = "0.10.0", path = "../../experimental/displaynames", default-features = false, optional = true }
 icu_relativetime = { version = "0.1.0", path = "../../experimental/relativetime", default-features = false, optional = true }
-icu_compactdecimal = { version = "0.2.0", path = "../../experimental/compactdecimal", default-features = false, optional = true }
 
-# For docs links
+# For docs links and features
 icu_provider = { version = "1.2.0", path = "../../provider/core", default-features = false }
 
 [dev-dependencies]
-icu_testdata = { path = "../../provider/testdata" }
+icu_datetime = { version = "1.2.0", path = "../datetime", features = ["serde"] }
+icu_provider_adapters = { path = "../../provider/adapters", features = ["serde"] }
+icu_provider_blob = { path = "../../provider/blob" }
 writeable = { path = "../../utils/writeable" }
 
 [features]
 default = [
+    "icu_calendar/default",
+    "icu_casemap/default",
+    "icu_collator/default",
+    "icu_compactdecimal?/default",
+    "icu_datetime/default",
+    "icu_decimal/default",
+    "icu_displaynames?/default",
+    "icu_list/default",
+    "icu_locid_transform/default",
+    "icu_normalizer/default",
+    "icu_plurals/default",
+    "icu_properties/default",
+    "icu_relativetime?/default",
     "icu_segmenter/default",
+    "icu_timezone/default",
 ]
 std = [
     "icu_calendar/std",
-    "icu_casemapping?/std",
+    "icu_casemap/std",
     "icu_collator/std",
     "icu_collections/std",
     "icu_datetime/std",
@@ -73,14 +89,14 @@ std = [
     "icu_locid/std",
     "icu_normalizer/std",
     "icu_plurals/std",
-    "icu_relativetime?/std",
     "icu_properties/std",
+    "icu_relativetime?/std",
     "icu_segmenter/std",
     "icu_timezone/std",
 ]
 serde = [
     "icu_calendar/serde",
-    "icu_casemapping?/serde",
+    "icu_casemap/serde",
     "icu_collator/serde",
     "icu_collections/serde",
     "icu_datetime/serde",
@@ -91,10 +107,27 @@ serde = [
     "icu_locid/serde",
     "icu_normalizer/serde",
     "icu_plurals/serde",
-    "icu_relativetime?/serde",
     "icu_properties/serde",
+    "icu_relativetime?/serde",
     "icu_segmenter/serde",
     "icu_timezone/serde",
+]
+compiled_data = [
+    "icu_calendar/compiled_data",
+    "icu_casemap/compiled_data",
+    "icu_collator/compiled_data",
+    "icu_compactdecimal?/compiled_data",
+    "icu_datetime/compiled_data",
+    "icu_decimal/compiled_data",
+    "icu_displaynames?/compiled_data",
+    "icu_list/compiled_data",
+    "icu_locid_transform/compiled_data",
+    "icu_normalizer/compiled_data",
+    "icu_plurals/compiled_data",
+    "icu_properties/compiled_data",
+    "icu_relativetime?/compiled_data",
+    "icu_segmenter/compiled_data",
+    "icu_timezone/compiled_data",
 ]
 serde_human = [
     "icu_list/serde_human"
@@ -103,13 +136,15 @@ icu_datetime_experimental = [
     "icu_datetime/experimental",
 ]
 experimental = [
-    "icu_casemapping",
+    "icu_compactdecimal",
     "icu_datetime_experimental",
     "icu_displaynames",
     "icu_locid_transform/experimental",
+    "icu_plurals/experimental",
     "icu_relativetime",
-    "icu_compactdecimal",
 ]
+sync = ["icu_provider/sync"]
+logging = ["icu_provider/logging"]
 
 [package.metadata.cargo-all-features]
 # Components are tested individually, and there's no logic in this crate

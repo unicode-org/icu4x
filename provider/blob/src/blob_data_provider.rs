@@ -136,3 +136,75 @@ impl BufferProvider for BlobDataProvider {
         })
     }
 }
+
+#[cfg(test)]
+mod test {
+    use super::*;
+    use crate::export::*;
+    use icu_provider::datagen::*;
+    use icu_provider::hello_world::*;
+
+    #[icu_provider::data_struct(marker(HelloSingletonV1Marker, "hello/singleton@1", singleton))]
+    #[derive(Clone, Copy)]
+    pub struct HelloSingletonV1;
+
+    #[test]
+    fn test_empty() {
+        let mut blob: Vec<u8> = Vec::new();
+
+        {
+            let mut exporter = BlobExporter::new_with_sink(Box::new(&mut blob));
+
+            exporter.flush(HelloWorldV1Marker::KEY).unwrap();
+
+            exporter.close().unwrap();
+        }
+
+        let provider = BlobDataProvider::try_new_from_blob(blob.into()).unwrap();
+
+        assert!(matches!(
+            provider.load_buffer(HelloWorldV1Marker::KEY, Default::default()),
+            Err(DataError {
+                kind: DataErrorKind::MissingLocale,
+                ..
+            })
+        ));
+    }
+
+    #[test]
+    fn test_singleton() {
+        let mut blob: Vec<u8> = Vec::new();
+
+        {
+            let mut exporter = BlobExporter::new_with_sink(Box::new(&mut blob));
+
+            exporter.flush(HelloSingletonV1Marker::KEY).unwrap();
+
+            exporter.close().unwrap();
+        }
+
+        let provider = BlobDataProvider::try_new_from_blob(blob.into()).unwrap();
+
+        assert!(matches!(
+            provider.load_buffer(
+                HelloSingletonV1Marker::KEY,
+                DataRequest {
+                    locale: &icu_locid::locale!("de").into(),
+                    metadata: Default::default()
+                }
+            ),
+            Err(DataError {
+                kind: DataErrorKind::ExtraneousLocale,
+                ..
+            })
+        ));
+
+        assert!(matches!(
+            provider.load_buffer(HelloSingletonV1Marker::KEY, Default::default()),
+            Err(DataError {
+                kind: DataErrorKind::MissingLocale,
+                ..
+            })
+        ));
+    }
+}
