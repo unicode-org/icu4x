@@ -122,17 +122,33 @@ fn bench_zeromap(c: &mut Criterion) {
 }
 
 fn build_zeromap(large: bool) -> ZeroMap<'static, Index32Str, Index32Str> {
-    let mut map: ZeroMap<Index32Str, Index32Str> = ZeroMap::new();
-    for (key, value) in DATA.iter() {
+    // TODO(#2826): This should use ZeroMap::from_iter, however that currently takes
+    // *minutes*, whereas this code runs in milliseconds
+    let mut keys = match large {
+        true => Vec::with_capacity(8192 * DATA.len()),
+        false => Vec::with_capacity(DATA.len()),
+    };
+    let mut values = match large {
+        true => Vec::with_capacity(8192 * DATA.len()),
+        false => Vec::with_capacity(DATA.len()),
+    };
+    let mut data = DATA.to_vec();
+    data.sort();
+    for &(key, value) in data.iter() {
         if large {
             for n in 0..8192 {
-                map.insert(indexify(&format!("{key}{n}")), indexify(value));
+                keys.push(format!("{key}{n:04}"));
+                values.push(indexify(value));
             }
         } else {
-            map.insert(indexify(key), indexify(value));
+            keys.push(key.to_owned());
+            values.push(indexify(value));
         }
     }
-    map
+
+    let keys = keys.iter().map(|s| indexify(s)).collect::<Vec<_>>();
+    // keys are sorted by construction
+    unsafe { ZeroMap::from_parts_unchecked(VarZeroVec::from(&keys), VarZeroVec::from(&values)) }
 }
 
 fn bench_deserialize(c: &mut Criterion) {
@@ -269,11 +285,7 @@ fn bench_zerohashmap(c: &mut Criterion) {
     // generate_zerohashmap();
 
     bench_deserialize_zerohashmap(c);
-    #[cfg(feature = "bench")]
-    bench_deserialize_large_zerohashmap(c);
     bench_zerohashmap_lookup(c);
-    #[cfg(feature = "bench")]
-    bench_zerohashmap_lookup_large(c);
 }
 
 fn build_zerohashmap(large: bool) -> ZeroHashMap<'static, Index32Str, Index32Str> {
@@ -305,18 +317,6 @@ fn bench_deserialize_zerohashmap(c: &mut Criterion) {
     });
 }
 
-#[cfg(feature = "bench")]
-fn bench_deserialize_large_zerohashmap(c: &mut Criterion) {
-    let buf = large_zerohashmap_postcard_bytes();
-    c.bench_function("zerohashmap/deserialize/large", |b| {
-        b.iter(|| {
-            let map: ZeroHashMap<Index32Str, Index32Str> =
-                postcard::from_bytes(black_box(&buf)).unwrap();
-            assert_eq!(map.get(indexify("iu3333")).map(|x| &x.0), Some("Inuktitut"));
-        })
-    });
-}
-
 fn bench_zerohashmap_lookup(c: &mut Criterion) {
     let zero_hashmap: ZeroHashMap<Index32Str, Index32Str> =
         postcard::from_bytes(black_box(&POSTCARD_ZEROHASHMAP)).unwrap();
@@ -333,32 +333,6 @@ fn bench_zerohashmap_lookup(c: &mut Criterion) {
             );
         });
     });
-}
-
-#[cfg(feature = "bench")]
-fn bench_zerohashmap_lookup_large(c: &mut Criterion) {
-    let buf = large_zerohashmap_postcard_bytes();
-    let zero_hashmap: ZeroHashMap<Index32Str, Index32Str> = postcard::from_bytes(&buf).unwrap();
-
-    c.bench_function("zerohashmap/lookup/large", |b| {
-        b.iter(|| {
-            assert_eq!(
-                zero_hashmap
-                    .get(black_box(indexify("iu3333")))
-                    .map(|x| &x.0),
-                Some("Inuktitut")
-            );
-            assert_eq!(
-                zero_hashmap.get(black_box(indexify("zz"))).map(|x| &x.0),
-                None
-            );
-        });
-    });
-}
-
-#[cfg(feature = "bench")]
-fn large_zerohashmap_postcard_bytes() -> Vec<u8> {
-    postcard::to_stdvec(&build_zerohashmap(true)).unwrap()
 }
 
 criterion_group!(benches, overview_bench);
