@@ -30,6 +30,7 @@ const ALL_VEC: ZeroVec<u32> =
 /// and predefined ranges.
 #[zerovec::make_varule(CodePointInversionListULE)]
 #[zerovec::skip_derive(Ord)]
+#[zerovec::derive(Debug)]
 #[derive(Debug, Eq, PartialEq, Clone, Yokeable, ZeroFrom)]
 pub struct CodePointInversionList<'data> {
     // If we wanted to use an array to keep the memory on the stack, there is an unsafe nightly feature
