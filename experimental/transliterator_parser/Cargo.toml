@@ -31,7 +31,12 @@ icu_provider = { path = "../../provider/core" }
 icu_unicodeset_parser = { path = "../unicodeset_parser" }
 icu_transliteration = { path = "../transliteration" }
 
+zerovec = { version = "0.9.4", path = "../../utils/zerovec" }
+
 log = "0.4"
+
+[dev-dependencies]
+zerofrom = { version = "0.1.1", path = "../../utils/zerofrom" }
 
 [features]
 compiled_data = ["icu_properties/compiled_data"]

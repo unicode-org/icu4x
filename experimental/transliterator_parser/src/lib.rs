@@ -30,18 +30,25 @@ use icu_provider::prelude::*;
 use icu_transliteration::provider::RuleBasedTransliterator;
 
 mod compile;
+mod errors;
 mod parse;
 
-pub use parse::ElementKind;
-pub use parse::ElementLocation;
-pub use parse::ParseError;
-pub use parse::ParseErrorKind;
+pub use errors::ParseError;
+pub use errors::ParseErrorKind;
 
 /// Parse a rule based transliterator definition into a `TransliteratorDataStruct`.
 ///
 /// See [UTS #35 - Transliterators](https://unicode.org/reports/tr35/tr35-general.html#Transforms) for more information.
 #[cfg(feature = "compiled_data")]
-pub fn parse(source: &str) -> Result<RuleBasedTransliterator<'static>, parse::ParseError> {
+pub fn parse(
+    source: &str,
+) -> Result<
+    (
+        Option<RuleBasedTransliterator<'static>>,
+        Option<RuleBasedTransliterator<'static>>,
+    ),
+    ParseError,
+> {
     parse_unstable(source, &icu_properties::provider::Baked)
 }
 
@@ -49,7 +56,13 @@ pub fn parse(source: &str) -> Result<RuleBasedTransliterator<'static>, parse::Pa
 pub fn parse_unstable<P>(
     source: &str,
     provider: &P,
-) -> Result<RuleBasedTransliterator<'static>, parse::ParseError>
+) -> Result<
+    (
+        Option<RuleBasedTransliterator<'static>>,
+        Option<RuleBasedTransliterator<'static>>,
+    ),
+    ParseError,
+>
 where
     P: ?Sized
         + DataProvider<AsciiHexDigitV1Marker>
@@ -111,4 +124,231 @@ where
     let parsed = parse::parse_unstable(source, provider)?;
     // TODO(#3736): pass direction from metadata
     compile::compile(parsed, parse::Direction::Both)
+}
+
+#[cfg(test)]
+mod tests {
+    use std::borrow::Cow;
+
+    use super::*;
+    use crate::parse::{FilterSet, UnicodeSet};
+    use icu_transliteration::provider as ds;
+    use zerovec::VarZeroVec;
+
+    fn parse_set(source: &str) -> UnicodeSet {
+        icu_unicodeset_parser::parse_unstable(source, &icu_properties::provider::Baked)
+            .expect("Parsing failed")
+            .0
+    }
+
+    fn parse_set_cp(source: &str) -> FilterSet {
+        icu_unicodeset_parser::parse_unstable(source, &icu_properties::provider::Baked)
+            .expect("Parsing failed")
+            .0
+            .code_points()
+            .clone()
+    }
+
+    #[test]
+    fn test_source_to_struct() {
+        let source = r#"
+        :: [1] ;
+        :: Latin-InterIndic ;
+        $a = [a] [b]+ ;
+        $unused = [c{string}]+? ;
+        $b = $a? 'literal chars' ;
+        x } [a-z] > y ;
+        $a > ab ;
+        'reverse output:' &RevFnCall($1 'padding') < ($b) ;
+        ^ left } $ <> ^ { right } [0-9] $ ;
+        :: [\ ] Remove (AnyRev-AddRandomSpaces/FiftyPercent) ;
+        # splits up the forward rules
+        forward rule that > splits up rule groups ;
+        :: InterIndic-Devanagari ;
+        "#;
+
+        let (forward, reverse) = parse(source).expect("parsing failed");
+        let forward = forward.expect("forward transliterator expected");
+        let reverse = reverse.expect("reverse transliterator expected");
+
+        {
+            let expected_filter = parse_set_cp("[1]");
+
+            let expected_id_group1 = vec![ds::SimpleId {
+                filter: FilterSet::all(),
+                id: Cow::Borrowed("Latin-InterIndic"),
+            }];
+            let expected_id_group2 = vec![ds::SimpleId {
+                filter: parse_set_cp(r"[\ ]"),
+                id: Cow::Borrowed("Any-Remove"),
+            }];
+            let expected_id_group3 = vec![ds::SimpleId {
+                filter: FilterSet::all(),
+                id: Cow::Borrowed("InterIndic-Devanagari"),
+            }];
+
+            let expected_id_group_list: Vec<VarZeroVec<'_, ds::SimpleIdULE>> = vec![
+                VarZeroVec::from(&expected_id_group1),
+                VarZeroVec::from(&expected_id_group2),
+                VarZeroVec::from(&expected_id_group3),
+            ];
+
+            let expected_rule_group1 = vec![
+                ds::Rule {
+                    ante: Cow::Borrowed(""),
+                    key: Cow::Borrowed("x"),
+                    post: Cow::Borrowed("\u{F0002}"),
+                    replacer: Cow::Borrowed("y"),
+                    cursor_offset: 0,
+                },
+                ds::Rule {
+                    ante: Cow::Borrowed(""),
+                    key: Cow::Borrowed("\u{F0000}"),
+                    post: Cow::Borrowed(""),
+                    replacer: Cow::Borrowed("ab"),
+                    cursor_offset: 0,
+                },
+                ds::Rule {
+                    ante: Cow::Borrowed(""),
+                    key: Cow::Borrowed("\u{FFFFC}left"),
+                    post: Cow::Borrowed("\u{FFFFD}"),
+                    replacer: Cow::Borrowed("right"),
+                    cursor_offset: 0,
+                },
+            ];
+            let expected_rule_group2 = vec![ds::Rule {
+                ante: Cow::Borrowed(""),
+                key: Cow::Borrowed("forwardrulethat"),
+                post: Cow::Borrowed(""),
+                replacer: Cow::Borrowed("splitsuprulegroups"),
+                cursor_offset: 0,
+            }];
+
+            let expected_rule_group_list: Vec<VarZeroVec<'_, ds::RuleULE>> = vec![
+                VarZeroVec::from(&expected_rule_group1),
+                VarZeroVec::from(&expected_rule_group2),
+                VarZeroVec::new(), // empty rule group after the last transform rule
+            ];
+
+            let expected_compounds = vec![
+                "\u{F0003}\u{F0001}", // [a] and [b]+ (the quantifier contains [b])
+            ];
+
+            let expected_quantifiers_kleene_plus = vec![
+                "\u{F0004}", // [b] from [b]+
+            ];
+
+            let expected_unicode_sets =
+                vec![parse_set("[a-z]"), parse_set("[a]"), parse_set("[b]")];
+
+            let expected_var_table = ds::VarTable {
+                compounds: VarZeroVec::from(&expected_compounds),
+                quantifiers_opt: VarZeroVec::new(),
+                quantifiers_kleene: VarZeroVec::new(),
+                quantifiers_kleene_plus: VarZeroVec::from(&expected_quantifiers_kleene_plus),
+                segments: VarZeroVec::new(),
+                unicode_sets: VarZeroVec::from(&expected_unicode_sets),
+                function_calls: VarZeroVec::new(),
+            };
+
+            let expected_rbt = ds::RuleBasedTransliterator {
+                filter: expected_filter,
+                id_group_list: VarZeroVec::from(&expected_id_group_list),
+                rule_group_list: VarZeroVec::from(&expected_rule_group_list),
+                variable_table: expected_var_table,
+                visibility: true,
+            };
+            assert_eq!(forward, expected_rbt);
+        }
+        {
+            let expected_filter = FilterSet::all();
+
+            let expected_id_group1 = vec![
+                ds::SimpleId {
+                    filter: FilterSet::all(),
+                    id: Cow::Borrowed("Devanagari-InterIndic"),
+                },
+                ds::SimpleId {
+                    filter: FilterSet::all(),
+                    id: Cow::Borrowed("AnyRev-AddRandomSpaces/FiftyPercent"),
+                },
+            ];
+            let expected_id_group2 = vec![ds::SimpleId {
+                filter: FilterSet::all(),
+                id: Cow::Borrowed("InterIndic-Latin"),
+            }];
+
+            let expected_id_group_list: Vec<VarZeroVec<'_, ds::SimpleIdULE>> = vec![
+                VarZeroVec::from(&expected_id_group1),
+                VarZeroVec::from(&expected_id_group2),
+            ];
+
+            let expected_rule_group1 = vec![
+                ds::Rule {
+                    ante: Cow::Borrowed(""),
+                    key: Cow::Borrowed("\u{F0004}"),
+                    post: Cow::Borrowed(""),
+                    replacer: Cow::Borrowed("reverse output:\u{F0008}"), // function call
+                    cursor_offset: 0,
+                },
+                ds::Rule {
+                    ante: Cow::Borrowed("\u{FFFFC}"), // start anchor
+                    key: Cow::Borrowed("right"),
+                    post: Cow::Borrowed("\u{F0007}\u{FFFFD}"), // [0-9] and end anchor
+                    replacer: Cow::Borrowed("left"),
+                    cursor_offset: 0,
+                },
+            ];
+
+            let expected_rule_group_list: Vec<VarZeroVec<'_, ds::RuleULE>> =
+                vec![VarZeroVec::from(&expected_rule_group1), VarZeroVec::new()];
+
+            let expected_compounds = vec![
+                "\u{F0005}\u{F0003}",     // $a = [a] [b]+ (quantifier contains [b])
+                "\u{F0002}literal chars", // $b = $a? (quantifier contains $a)
+            ];
+
+            let expected_quantifers_opt = vec![
+                "\u{F0000}", // $a from $a?
+            ];
+
+            let expected_quantifiers_kleene_plus = vec![
+                "\u{F0006}", // [b] from [b]+
+            ];
+
+            let expected_segments = vec![
+                "\u{F0001}", // $b from ($b)
+            ];
+
+            let expected_unicode_sets =
+                vec![parse_set("[a]"), parse_set("[b]"), parse_set("[0-9]")];
+
+            let expected_function_calls = vec![ds::FunctionCall {
+                arg: Cow::Borrowed("\u{F0009}padding"), // $1 and 'padding'
+                translit: ds::SimpleId {
+                    filter: FilterSet::all(),
+                    id: Cow::Borrowed("Any-RevFnCall"),
+                },
+            }];
+
+            let expected_var_table = ds::VarTable {
+                compounds: VarZeroVec::from(&expected_compounds),
+                quantifiers_opt: VarZeroVec::from(&expected_quantifers_opt),
+                quantifiers_kleene: VarZeroVec::new(),
+                quantifiers_kleene_plus: VarZeroVec::from(&expected_quantifiers_kleene_plus),
+                segments: VarZeroVec::from(&expected_segments),
+                unicode_sets: VarZeroVec::from(&expected_unicode_sets),
+                function_calls: VarZeroVec::from(&expected_function_calls),
+            };
+
+            let expected_rbt = ds::RuleBasedTransliterator {
+                filter: expected_filter,
+                id_group_list: VarZeroVec::from(&expected_id_group_list),
+                rule_group_list: VarZeroVec::from(&expected_rule_group_list),
+                variable_table: expected_var_table,
+                visibility: true,
+            };
+            assert_eq!(reverse, expected_rbt);
+        }
+    }
 }

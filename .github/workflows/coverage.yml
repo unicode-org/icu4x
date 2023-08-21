@@ -53,10 +53,10 @@ jobs:
         uses:                   actions-rs/grcov@v0.1
 
       - name:                   Push grcov results to Coveralls via GitHub Action
-        uses:                   coverallsapp/github-action@v1.0.1
+        uses:                   coverallsapp/github-action@v2.2.1
         with:
           github-token:         ${{ secrets.GITHUB_TOKEN }}
-          path-to-lcov:         ${{ steps.coverage.outputs.report }}
+          file:                 ${{ steps.coverage.outputs.report }}
 
       - name:                   Push grcov results to Codecov via GitHub Action
         uses:                   codecov/codecov-action@v3

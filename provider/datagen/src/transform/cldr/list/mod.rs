@@ -17,7 +17,6 @@ fn load<M: KeyedDataMarker<Yokeable = ListFormatterPatternsV1<'static>>>(
     let langid = req.locale.get_langid();
 
     let resource: &cldr_serde::list_patterns::Resource = selff
-        .source
         .cldr()?
         .misc()
         .read_and_parse(&langid, "listPatterns.json")?;
@@ -129,7 +128,6 @@ macro_rules! implement {
         impl IterableDataProvider<$marker> for crate::DatagenProvider {
             fn supported_locales(&self) -> Result<Vec<DataLocale>, DataError> {
                 Ok(self
-                    .source
                     .cldr()?
                     .misc()
                     .list_langs()?
