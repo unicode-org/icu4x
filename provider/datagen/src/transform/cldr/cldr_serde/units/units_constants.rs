@@ -34,7 +34,4 @@ pub struct Supplemental {
     pub unit_constants: UnitConstants,
 }
 
-#[derive(PartialEq, Debug, Deserialize)]
-pub struct Resource {
-    pub supplemental: Supplemental,
-}
+pub type Resource = super::super::LocaleResource<Supplemental>;
