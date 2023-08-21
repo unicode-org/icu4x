@@ -2,9 +2,9 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use alloc::vec::Vec;
 #[cfg(feature = "serde")]
-use alloc::{format, string::String};
+use alloc::format;
+use alloc::vec::Vec;
 use core::{char, ops::RangeBounds, ops::RangeInclusive};
 use yoke::Yokeable;
 use zerofrom::ZeroFrom;
@@ -67,13 +67,18 @@ impl<'de: 'a, 'a> serde::Deserialize<'de> for CodePointInversionList<'a> {
                         ZeroVec::new_owned(Vec::with_capacity(parsed_strings.len() * 2));
                     for range in parsed_strings {
                         fn internal(range: &str) -> Option<(u32, u32)> {
-                            let (start, range) = u32_from_escaped_string(range)?;
+                            let (start, range) = UnicodeCodePoint::parse(range)?;
+                            let start = start.to_u32();
                             if range.is_empty() {
                                 return Some((start, start));
                             }
-                            let (hyphen, range) = u32_from_escaped_string(range)?;
-                            let (end, range) = u32_from_escaped_string(range)?;
-                            (hyphen == '-' as u32 && range.is_empty()).then_some((start, end))
+                            let (hyphen, range) = UnicodeCodePoint::parse(range)?;
+                            if hyphen.to_u32() != '-' as u32 {
+                                return None;
+                            }
+                            let (end, range) = UnicodeCodePoint::parse(range)?;
+                            let end = end.to_u32();
+                            range.is_empty().then_some((start, end))
                         }
                         let (start, end) = internal(&range).ok_or_else(|| Error::custom(format!(
                             "Cannot deserialize invalid inversion list for CodePointInversionList: {range:?}"
@@ -112,29 +117,55 @@ impl databake::Bake for CodePointInversionList<'_> {
 }
 
 #[cfg(feature = "serde")]
-fn u32_to_escaped_string(value: u32) -> Option<String> {
-    if (0xD800..=0xDFFF).contains(&value) {
-        // surrogate
-        Some(format!("U+{value:X}"))
-    } else if value <= 0x10FFFF {
-        #[allow(clippy::unwrap_used)] // definitely in range
-        Some(String::from(char::from_u32(value).unwrap()))
-    } else {
-        None
+#[derive(Debug, Copy, Clone)]
+enum UnicodeCodePoint {
+    Char(char),
+    Surrogate(u32),
+}
+
+#[cfg(feature = "serde")]
+impl UnicodeCodePoint {
+    fn from_u32(cp: u32) -> Result<Self, String> {
+        if (0xD800..=0xDFFF).contains(&cp) {
+            Ok(Self::Surrogate(cp))
+        } else if cp <= 0x10FFFF {
+            #[allow(clippy::unwrap_used)] // range checked
+            Ok(Self::Char(char::from_u32(cp).unwrap()))
+        } else {
+            Err(format!("Not a Unicode code point {}", cp))
+        }
+    }
+
+    fn parse(value: &str) -> Option<(Self, &str)> {
+        Some(if let Some(hex) = value.strip_prefix("U+") {
+            let (escape, remainder) = (hex.get(4..)?, hex.get(4..)?);
+            (
+                Self::Surrogate(u32::from_str_radix(escape, 16).ok()?),
+                remainder,
+            )
+        } else {
+            let c = value.chars().next()?;
+            (Self::Char(c), value.get(c.len_utf8()..)?)
+        })
+    }
+
+    fn to_u32(self) -> u32 {
+        match self {
+            Self::Char(c) => c as u32,
+            Self::Surrogate(s) => s,
+        }
     }
 }
 
 #[cfg(feature = "serde")]
-fn u32_from_escaped_string(value: &str) -> Option<(u32, &str)> {
-    Some(if let Some(hex) = value.strip_prefix("U+") {
-        (u32::from_str_radix(hex.get(..4)?, 16).ok()?, hex.get(4..)?)
-    } else {
-        let c = value.chars().next()?;
-        #[allow(clippy::indexing_slicing)] // len_utf8 is a valid index
-        (c as u32, &value[c.len_utf8()..])
-    })
+impl core::fmt::Display for UnicodeCodePoint {
+    fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
+        match *self {
+            Self::Char(c) => write!(f, "{c}"),
+            Self::Surrogate(s) => write!(f, "U+{s:X}"),
+        }
+    }
 }
-
 #[cfg(feature = "serde")]
 impl<'data> serde::Serialize for CodePointInversionList<'data> {
     fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
@@ -146,16 +177,12 @@ impl<'data> serde::Serialize for CodePointInversionList<'data> {
             use serde::ser::SerializeSeq;
             let mut seq = serializer.serialize_seq(Some(self.inv_list.len() / 2))?;
             for range in self.iter_ranges() {
-                let start = u32_to_escaped_string(*range.start()).ok_or_else(|| {
-                    S::Error::custom(format!("Invalid code point {}", range.start()))
-                })?;
-                let end = u32_to_escaped_string(*range.end()).ok_or_else(|| {
-                    S::Error::custom(format!("Invalid code point {}", range.end()))
-                })?;
-                if start == end {
-                    seq.serialize_element(&start)?;
+                let start = UnicodeCodePoint::from_u32(*range.start()).map_err(S::Error::custom)?;
+                if range.start() == range.end() {
+                    seq.serialize_element(&format!("{start}"))?;
                 } else {
-                    seq.serialize_element(&format!("{start}-{end}"))?;
+                    let end = UnicodeCodePoint::from_u32(*range.end()).map_err(S::Error::custom)?;
+                    seq.serialize_element(&format!("{start}-{end}",))?;
                 }
             }
             seq.end()
