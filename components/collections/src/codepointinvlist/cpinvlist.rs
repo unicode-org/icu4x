@@ -70,17 +70,15 @@ impl<'de: 'a, 'a> serde::Deserialize<'de> for CodePointInversionList<'a> {
                     for range in parsed_strings {
                         fn internal(range: &str) -> Option<(u32, u32)> {
                             let (start, range) = UnicodeCodePoint::parse(range)?;
-                            let start = start.to_u32();
                             if range.is_empty() {
-                                return Some((start, start));
+                                return Some((start.0, start.0));
                             }
                             let (hyphen, range) = UnicodeCodePoint::parse(range)?;
-                            if hyphen.to_u32() != '-' as u32 {
+                            if hyphen.0 != '-' as u32 {
                                 return None;
                             }
                             let (end, range) = UnicodeCodePoint::parse(range)?;
-                            let end = end.to_u32();
-                            range.is_empty().then_some((start, end))
+                            range.is_empty().then_some((start.0, end.0))
                         }
                         let (start, end) = internal(&range).ok_or_else(|| Error::custom(format!(
                             "Cannot deserialize invalid inversion list for CodePointInversionList: {range:?}"
@@ -120,19 +118,13 @@ impl databake::Bake for CodePointInversionList<'_> {
 
 #[cfg(feature = "serde")]
 #[derive(Debug, Copy, Clone)]
-enum UnicodeCodePoint {
-    Char(char),
-    Surrogate(u32),
-}
+struct UnicodeCodePoint(u32);
 
 #[cfg(feature = "serde")]
 impl UnicodeCodePoint {
     fn from_u32(cp: u32) -> Result<Self, String> {
-        if (0xD800..=0xDFFF).contains(&cp) {
-            Ok(Self::Surrogate(cp))
-        } else if cp <= 0x10FFFF {
-            #[allow(clippy::unwrap_used)] // range checked
-            Ok(Self::Char(char::from_u32(cp).unwrap()))
+        if cp <= char::MAX as u32 {
+            Ok(Self(cp))
         } else {
             Err(format!("Not a Unicode code point {}", cp))
         }
@@ -141,30 +133,21 @@ impl UnicodeCodePoint {
     fn parse(value: &str) -> Option<(Self, &str)> {
         Some(if let Some(hex) = value.strip_prefix("U+") {
             let (escape, remainder) = (hex.get(..4)?, hex.get(4..)?);
-            (
-                Self::Surrogate(u32::from_str_radix(escape, 16).ok()?),
-                remainder,
-            )
+            (Self(u32::from_str_radix(escape, 16).ok()?), remainder)
         } else {
             let c = value.chars().next()?;
-            (Self::Char(c), value.get(c.len_utf8()..)?)
+            (Self(c as u32), value.get(c.len_utf8()..)?)
         })
-    }
-
-    fn to_u32(self) -> u32 {
-        match self {
-            Self::Char(c) => c as u32,
-            Self::Surrogate(s) => s,
-        }
     }
 }
 
 #[cfg(feature = "serde")]
 impl core::fmt::Display for UnicodeCodePoint {
     fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
-        match *self {
-            Self::Char(c) => write!(f, "{c}"),
-            Self::Surrogate(s) => write!(f, "U+{s:X}"),
+        match self.0 {
+            s @ 0xD800..=0xDFFF => write!(f, "U+{s:X}"),
+            // SAFETY: c <= char::MAX by construction, and not a surrogate
+            c => write!(f, "{}", unsafe { char::from_u32_unchecked(c) }),
         }
     }
 }
