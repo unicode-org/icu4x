@@ -23,7 +23,7 @@ impl DataProvider<UnitsConstantsV1Marker> for crate::DatagenProvider {
         let mut constants_values = Vec::<&str>::new();
         let mut constants_map = BTreeMap::<&str, u16>::new();
 
-        let constants = &_units_data.main.value.unit_constants.constants;
+        let constants = &_units_data.supplemental.unit_constants.constants;
         for (key, constant) in constants {
             let index = constants_values.len() as u16;
             constants_values.push(&constant.value);

@@ -34,4 +34,7 @@ pub struct Supplemental {
     pub unit_constants: UnitConstants,
 }
 
-pub type Resource = super::super::LocaleResource<Supplemental>;
+#[derive(Deserialize)]
+pub struct Resource {
+    pub supplemental: Supplemental,
+}
