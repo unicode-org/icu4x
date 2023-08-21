@@ -4,6 +4,8 @@
 
 #[cfg(feature = "serde")]
 use alloc::format;
+#[cfg(feature = "serde")]
+use alloc::string::String;
 use alloc::vec::Vec;
 use core::{char, ops::RangeBounds, ops::RangeInclusive};
 use yoke::Yokeable;
