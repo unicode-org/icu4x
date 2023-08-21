@@ -3,37 +3,37 @@
     "AED": {
       "short_pattern_standard": "Standard",
       "narrow_pattern_standard": "Standard",
-      "short_place_holder_index": 1022,
-      "narrow_place_holder_index": 1023
+      "short_place_holder_index": 2046,
+      "narrow_place_holder_index": 2047
     },
     "AFN": {
       "short_pattern_standard": "Standard",
       "narrow_pattern_standard": "Standard",
-      "short_place_holder_index": 1022,
+      "short_place_holder_index": 2046,
       "narrow_place_holder_index": 0
     },
     "ALL": {
       "short_pattern_standard": "Standard",
       "narrow_pattern_standard": "Standard",
-      "short_place_holder_index": 1022,
-      "narrow_place_holder_index": 1023
+      "short_place_holder_index": 2046,
+      "narrow_place_holder_index": 2047
     },
     "AMD": {
       "short_pattern_standard": "Standard",
       "narrow_pattern_standard": "Standard",
-      "short_place_holder_index": 1022,
+      "short_place_holder_index": 2046,
       "narrow_place_holder_index": 1
     },
     "ANG": {
       "short_pattern_standard": "Standard",
       "narrow_pattern_standard": "Standard",
-      "short_place_holder_index": 1022,
-      "narrow_place_holder_index": 1023
+      "short_place_holder_index": 2046,
+      "narrow_place_holder_index": 2047
     },
     "AOA": {
       "short_pattern_standard": "Standard",
       "narrow_pattern_standard": "Standard",
-      "short_place_holder_index": 1022,
+      "short_place_holder_index": 2046,
       "narrow_place_holder_index": 2
     },
     "ARS": {
@@ -51,56 +51,56 @@
     "AWG": {
       "short_pattern_standard": "Standard",
       "narrow_pattern_standard": "Standard",
-      "short_place_holder_index": 1022,
-      "narrow_place_holder_index": 1023
+      "short_place_holder_index": 2046,
+      "narrow_place_holder_index": 2047
     },
     "AZN": {
       "short_pattern_standard": "Standard",
       "narrow_pattern_standard": "Standard",
-      "short_place_holder_index": 1022,
+      "short_place_holder_index": 2046,
       "narrow_place_holder_index": 6
     },
     "BAM": {
       "short_pattern_standard": "Standard",
       "narrow_pattern_standard": "Standard",
-      "short_place_holder_index": 1022,
+      "short_place_holder_index": 2046,
       "narrow_place_holder_index": 7
     },
     "BBD": {
       "short_pattern_standard": "Standard",
       "narrow_pattern_standard": "Standard",
-      "short_place_holder_index": 1022,
+      "short_place_holder_index": 2046,
       "narrow_place_holder_index": 4
     },
     "BDT": {
       "short_pattern_standard": "Standard",
       "narrow_pattern_standard": "Standard",
-      "short_place_holder_index": 1022,
+      "short_place_holder_index": 2046,
       "narrow_place_holder_index": 8
     },
     "BEF": {
       "short_pattern_standard": "Standard",
       "narrow_pattern_standard": "Standard",
       "short_place_holder_index": 9,
-      "narrow_place_holder_index": 1023
+      "narrow_place_holder_index": 2047
     },
     "BGN": {
       "short_pattern_standard": "Standard",
       "narrow_pattern_standard": "Standard",
-      "short_place_holder_index": 1022,
-      "narrow_place_holder_index": 1023
+      "short_place_holder_index": 2046,
+      "narrow_place_holder_index": 2047
     },
     "BHD": {
       "short_pattern_standard": "Standard",
       "narrow_pattern_standard": "Standard",
-      "short_place_holder_index": 1022,
-      "narrow_place_holder_index": 1023
+      "short_place_holder_index": 2046,
+      "narrow_place_holder_index": 2047
     },
     "BIF": {
       "short_pattern_standard": "Standard",
       "narrow_pattern_standard": "Standard",
-      "short_place_holder_index": 1022,
-      "narrow_place_holder_index": 1023
+      "short_place_holder_index": 2046,
+      "narrow_place_holder_index": 2047
     },
     "BMD": {
       "short_pattern_standard": "Standard",
@@ -117,7 +117,7 @@
     "BOB": {
       "short_pattern_standard": "Standard",
       "narrow_pattern_standard": "Standard",
-      "short_place_holder_index": 1022,
+      "short_place_holder_index": 2046,
       "narrow_place_holder_index": 12
     },
     "BRL": {
@@ -129,32 +129,32 @@
     "BSD": {
       "short_pattern_standard": "Standard",
       "narrow_pattern_standard": "Standard",
-      "short_place_holder_index": 1022,
+      "short_place_holder_index": 2046,
       "narrow_place_holder_index": 4
     },
     "BTN": {
       "short_pattern_standard": "Standard",
       "narrow_pattern_standard": "Standard",
-      "short_place_holder_index": 1022,
-      "narrow_place_holder_index": 1023
+      "short_place_holder_index": 2046,
+      "narrow_place_holder_index": 2047
     },
     "BWP": {
       "short_pattern_standard": "Standard",
       "narrow_pattern_standard": "Standard",
-      "short_place_holder_index": 1022,
+      "short_place_holder_index": 2046,
       "narrow_place_holder_index": 14
     },
     "BYN": {
       "short_pattern_standard": "Standard",
       "narrow_pattern_standard": "Standard",
-      "short_place_holder_index": 1022,
+      "short_place_holder_index": 2046,
       "narrow_place_holder_index": 15
     },
     "BYR": {
       "short_pattern_standard": "Standard",
       "narrow_pattern_standard": "Standard",
-      "short_place_holder_index": 1022,
-      "narrow_place_holder_index": 1023
+      "short_place_holder_index": 2046,
+      "narrow_place_holder_index": 2047
     },
     "BZD": {
       "short_pattern_standard": "Standard",
@@ -171,14 +171,14 @@
     "CDF": {
       "short_pattern_standard": "Standard",
       "narrow_pattern_standard": "Standard",
-      "short_place_holder_index": 1022,
-      "narrow_place_holder_index": 1023
+      "short_place_holder_index": 2046,
+      "narrow_place_holder_index": 2047
     },
     "CHF": {
       "short_pattern_standard": "Standard",
       "narrow_pattern_standard": "Standard",
-      "short_place_holder_index": 1022,
-      "narrow_place_holder_index": 1023
+      "short_place_holder_index": 2046,
+      "narrow_place_holder_index": 2047
     },
     "CLP": {
       "short_pattern_standard": "Standard",
@@ -189,13 +189,13 @@
     "CNH": {
       "short_pattern_standard": "Standard",
       "narrow_pattern_standard": "Standard",
-      "short_place_holder_index": 1022,
-      "narrow_place_holder_index": 1023
+      "short_place_holder_index": 2046,
+      "narrow_place_holder_index": 2047
     },
     "CNY": {
       "short_pattern_standard": "Standard",
       "narrow_pattern_standard": "Standard",
-      "short_place_holder_index": 1022,
+      "short_place_holder_index": 2046,
       "narrow_place_holder_index": 19
     },
     "COP": {
@@ -207,86 +207,86 @@
     "CRC": {
       "short_pattern_standard": "Standard",
       "narrow_pattern_standard": "Standard",
-      "short_place_holder_index": 1022,
+      "short_place_holder_index": 2046,
       "narrow_place_holder_index": 21
     },
     "CUC": {
       "short_pattern_standard": "Standard",
       "narrow_pattern_standard": "Standard",
-      "short_place_holder_index": 1022,
+      "short_place_holder_index": 2046,
       "narrow_place_holder_index": 4
     },
     "CUP": {
       "short_pattern_standard": "Standard",
       "narrow_pattern_standard": "Standard",
-      "short_place_holder_index": 1022,
+      "short_place_holder_index": 2046,
       "narrow_place_holder_index": 4
     },
     "CVE": {
       "short_pattern_standard": "Standard",
       "narrow_pattern_standard": "Standard",
-      "short_place_holder_index": 1022,
-      "narrow_place_holder_index": 1023
+      "short_place_holder_index": 2046,
+      "narrow_place_holder_index": 2047
     },
     "CYP": {
       "short_pattern_standard": "Standard",
       "narrow_pattern_standard": "Standard",
       "short_place_holder_index": 22,
-      "narrow_place_holder_index": 1023
+      "narrow_place_holder_index": 2047
     },
     "CZK": {
       "short_pattern_standard": "Standard",
       "narrow_pattern_standard": "Standard",
-      "short_place_holder_index": 1022,
+      "short_place_holder_index": 2046,
       "narrow_place_holder_index": 23
     },
     "DJF": {
       "short_pattern_standard": "Standard",
       "narrow_pattern_standard": "Standard",
-      "short_place_holder_index": 1022,
-      "narrow_place_holder_index": 1023
+      "short_place_holder_index": 2046,
+      "narrow_place_holder_index": 2047
     },
     "DKK": {
       "short_pattern_standard": "Standard",
       "narrow_pattern_standard": "Standard",
-      "short_place_holder_index": 1022,
+      "short_place_holder_index": 2046,
       "narrow_place_holder_index": 24
     },
     "DOP": {
       "short_pattern_standard": "Standard",
       "narrow_pattern_standard": "Standard",
-      "short_place_holder_index": 1022,
+      "short_place_holder_index": 2046,
       "narrow_place_holder_index": 4
     },
     "DZD": {
       "short_pattern_standard": "Standard",
       "narrow_pattern_standard": "Standard",
-      "short_place_holder_index": 1022,
-      "narrow_place_holder_index": 1023
+      "short_place_holder_index": 2046,
+      "narrow_place_holder_index": 2047
     },
     "EGP": {
       "short_pattern_standard": "Standard",
       "narrow_pattern_standard": "Standard",
-      "short_place_holder_index": 1022,
+      "short_place_holder_index": 2046,
       "narrow_place_holder_index": 25
     },
     "ERN": {
       "short_pattern_standard": "Standard",
       "narrow_pattern_standard": "Standard",
-      "short_place_holder_index": 1022,
-      "narrow_place_holder_index": 1023
+      "short_place_holder_index": 2046,
+      "narrow_place_holder_index": 2047
     },
     "ESP": {
       "short_pattern_standard": "Standard",
       "narrow_pattern_standard": "Standard",
-      "short_place_holder_index": 1023,
+      "short_place_holder_index": 2047,
       "narrow_place_holder_index": 26
     },
     "ETB": {
       "short_pattern_standard": "Standard",
       "narrow_pattern_standard": "Standard",
-      "short_place_holder_index": 1022,
-      "narrow_place_holder_index": 1023
+      "short_place_holder_index": 2046,
+      "narrow_place_holder_index": 2047
     },
     "EUR": {
       "short_pattern_standard": "Standard",
@@ -310,7 +310,7 @@
       "short_pattern_standard": "Standard",
       "narrow_pattern_standard": "Standard",
       "short_place_holder_index": 31,
-      "narrow_place_holder_index": 1023
+      "narrow_place_holder_index": 2047
     },
     "GBP": {
       "short_pattern_standard": "Standard",
@@ -321,13 +321,13 @@
     "GEL": {
       "short_pattern_standard": "Standard",
       "narrow_pattern_standard": "Standard",
-      "short_place_holder_index": 1022,
+      "short_place_holder_index": 2046,
       "narrow_place_holder_index": 33
     },
     "GHS": {
       "short_pattern_standard": "Standard",
       "narrow_pattern_standard": "Standard",
-      "short_place_holder_index": 1022,
+      "short_place_holder_index": 2046,
       "narrow_place_holder_index": 34
     },
     "GIP": {
@@ -339,74 +339,74 @@
     "GMD": {
       "short_pattern_standard": "Standard",
       "narrow_pattern_standard": "Standard",
-      "short_place_holder_index": 1022,
-      "narrow_place_holder_index": 1023
+      "short_place_holder_index": 2046,
+      "narrow_place_holder_index": 2047
     },
     "GNF": {
       "short_pattern_standard": "Standard",
       "narrow_pattern_standard": "Standard",
-      "short_place_holder_index": 1022,
+      "short_place_holder_index": 2046,
       "narrow_place_holder_index": 36
     },
     "GTQ": {
       "short_pattern_standard": "Standard",
       "narrow_pattern_standard": "Standard",
-      "short_place_holder_index": 1022,
+      "short_place_holder_index": 2046,
       "narrow_place_holder_index": 37
     },
     "GYD": {
       "short_pattern_standard": "Standard",
       "narrow_pattern_standard": "Standard",
-      "short_place_holder_index": 1022,
+      "short_place_holder_index": 2046,
       "narrow_place_holder_index": 4
     },
     "HKD": {
       "short_pattern_standard": "Standard",
       "narrow_pattern_standard": "Standard",
-      "short_place_holder_index": 1022,
+      "short_place_holder_index": 2046,
       "narrow_place_holder_index": 4
     },
     "HNL": {
       "short_pattern_standard": "Standard",
       "narrow_pattern_standard": "Standard",
-      "short_place_holder_index": 1022,
+      "short_place_holder_index": 2046,
       "narrow_place_holder_index": 38
     },
     "HRK": {
       "short_pattern_standard": "Standard",
       "narrow_pattern_standard": "Standard",
-      "short_place_holder_index": 1022,
+      "short_place_holder_index": 2046,
       "narrow_place_holder_index": 39
     },
     "HTG": {
       "short_pattern_standard": "Standard",
       "narrow_pattern_standard": "Standard",
-      "short_place_holder_index": 1022,
-      "narrow_place_holder_index": 1023
+      "short_place_holder_index": 2046,
+      "narrow_place_holder_index": 2047
     },
     "HUF": {
       "short_pattern_standard": "Standard",
       "narrow_pattern_standard": "Standard",
-      "short_place_holder_index": 1022,
+      "short_place_holder_index": 2046,
       "narrow_place_holder_index": 40
     },
     "IDR": {
       "short_pattern_standard": "Standard",
       "narrow_pattern_standard": "Standard",
-      "short_place_holder_index": 1022,
+      "short_place_holder_index": 2046,
       "narrow_place_holder_index": 41
     },
     "IEP": {
       "short_pattern_standard": "Standard",
       "narrow_pattern_standard": "Standard",
       "short_place_holder_index": 42,
-      "narrow_place_holder_index": 1023
+      "narrow_place_holder_index": 2047
     },
     "ILP": {
       "short_pattern_standard": "Standard",
       "narrow_pattern_standard": "Standard",
       "short_place_holder_index": 43,
-      "narrow_place_holder_index": 1023
+      "narrow_place_holder_index": 2047
     },
     "ILS": {
       "short_pattern_standard": "Standard",
@@ -423,73 +423,73 @@
     "IQD": {
       "short_pattern_standard": "Standard",
       "narrow_pattern_standard": "Standard",
-      "short_place_holder_index": 1022,
-      "narrow_place_holder_index": 1023
+      "short_place_holder_index": 2046,
+      "narrow_place_holder_index": 2047
     },
     "IRR": {
       "short_pattern_standard": "Standard",
       "narrow_pattern_standard": "Standard",
-      "short_place_holder_index": 1022,
-      "narrow_place_holder_index": 1023
+      "short_place_holder_index": 2046,
+      "narrow_place_holder_index": 2047
     },
     "ISK": {
       "short_pattern_standard": "Standard",
       "narrow_pattern_standard": "Standard",
-      "short_place_holder_index": 1022,
+      "short_place_holder_index": 2046,
       "narrow_place_holder_index": 24
     },
     "ITL": {
       "short_pattern_standard": "Standard",
       "narrow_pattern_standard": "Standard",
       "short_place_holder_index": 46,
-      "narrow_place_holder_index": 1023
+      "narrow_place_holder_index": 2047
     },
     "JMD": {
       "short_pattern_standard": "Standard",
       "narrow_pattern_standard": "Standard",
-      "short_place_holder_index": 1022,
+      "short_place_holder_index": 2046,
       "narrow_place_holder_index": 4
     },
     "JOD": {
       "short_pattern_standard": "Standard",
       "narrow_pattern_standard": "Standard",
-      "short_place_holder_index": 1022,
-      "narrow_place_holder_index": 1023
+      "short_place_holder_index": 2046,
+      "narrow_place_holder_index": 2047
     },
     "JPY": {
       "short_pattern_standard": "Standard",
       "narrow_pattern_standard": "Standard",
-      "short_place_holder_index": 1022,
+      "short_place_holder_index": 2046,
       "narrow_place_holder_index": 19
     },
     "KES": {
       "short_pattern_standard": "Standard",
       "narrow_pattern_standard": "Standard",
-      "short_place_holder_index": 1022,
-      "narrow_place_holder_index": 1023
+      "short_place_holder_index": 2046,
+      "narrow_place_holder_index": 2047
     },
     "KGS": {
       "short_pattern_standard": "Standard",
       "narrow_pattern_standard": "Standard",
-      "short_place_holder_index": 1022,
-      "narrow_place_holder_index": 1023
+      "short_place_holder_index": 2046,
+      "narrow_place_holder_index": 2047
     },
     "KHR": {
       "short_pattern_standard": "Standard",
       "narrow_pattern_standard": "Standard",
-      "short_place_holder_index": 1022,
+      "short_place_holder_index": 2046,
       "narrow_place_holder_index": 47
     },
     "KMF": {
       "short_pattern_standard": "Standard",
       "narrow_pattern_standard": "Standard",
-      "short_place_holder_index": 1022,
+      "short_place_holder_index": 2046,
       "narrow_place_holder_index": 48
     },
     "KPW": {
       "short_pattern_standard": "Standard",
       "narrow_pattern_standard": "Standard",
-      "short_place_holder_index": 1022,
+      "short_place_holder_index": 2046,
       "narrow_place_holder_index": 49
     },
     "KRW": {
@@ -501,25 +501,25 @@
     "KWD": {
       "short_pattern_standard": "Standard",
       "narrow_pattern_standard": "Standard",
-      "short_place_holder_index": 1022,
-      "narrow_place_holder_index": 1023
+      "short_place_holder_index": 2046,
+      "narrow_place_holder_index": 2047
     },
     "KYD": {
       "short_pattern_standard": "Standard",
       "narrow_pattern_standard": "Standard",
-      "short_place_holder_index": 1022,
+      "short_place_holder_index": 2046,
       "narrow_place_holder_index": 4
     },
     "KZT": {
       "short_pattern_standard": "Standard",
       "narrow_pattern_standard": "Standard",
-      "short_place_holder_index": 1022,
+      "short_place_holder_index": 2046,
       "narrow_place_holder_index": 50
     },
     "LAK": {
       "short_pattern_standard": "Standard",
       "narrow_pattern_standard": "Standard",
-      "short_place_holder_index": 1022,
+      "short_place_holder_index": 2046,
       "narrow_place_holder_index": 51
     },
     "LBP": {
@@ -531,110 +531,110 @@
     "LKR": {
       "short_pattern_standard": "Standard",
       "narrow_pattern_standard": "Standard",
-      "short_place_holder_index": 1022,
+      "short_place_holder_index": 2046,
       "narrow_place_holder_index": 54
     },
     "LRD": {
       "short_pattern_standard": "Standard",
       "narrow_pattern_standard": "Standard",
-      "short_place_holder_index": 1022,
+      "short_place_holder_index": 2046,
       "narrow_place_holder_index": 4
     },
     "LTL": {
       "short_pattern_standard": "Standard",
       "narrow_pattern_standard": "Standard",
-      "short_place_holder_index": 1022,
+      "short_place_holder_index": 2046,
       "narrow_place_holder_index": 55
     },
     "LVL": {
       "short_pattern_standard": "Standard",
       "narrow_pattern_standard": "Standard",
-      "short_place_holder_index": 1022,
+      "short_place_holder_index": 2046,
       "narrow_place_holder_index": 56
     },
     "LYD": {
       "short_pattern_standard": "Standard",
       "narrow_pattern_standard": "Standard",
-      "short_place_holder_index": 1022,
-      "narrow_place_holder_index": 1023
+      "short_place_holder_index": 2046,
+      "narrow_place_holder_index": 2047
     },
     "MAD": {
       "short_pattern_standard": "Standard",
       "narrow_pattern_standard": "Standard",
-      "short_place_holder_index": 1022,
-      "narrow_place_holder_index": 1023
+      "short_place_holder_index": 2046,
+      "narrow_place_holder_index": 2047
     },
     "MDL": {
       "short_pattern_standard": "Standard",
       "narrow_pattern_standard": "Standard",
-      "short_place_holder_index": 1022,
-      "narrow_place_holder_index": 1023
+      "short_place_holder_index": 2046,
+      "narrow_place_holder_index": 2047
     },
     "MGA": {
       "short_pattern_standard": "Standard",
       "narrow_pattern_standard": "Standard",
-      "short_place_holder_index": 1022,
+      "short_place_holder_index": 2046,
       "narrow_place_holder_index": 57
     },
     "MKD": {
       "short_pattern_standard": "Standard",
       "narrow_pattern_standard": "Standard",
-      "short_place_holder_index": 1022,
-      "narrow_place_holder_index": 1023
+      "short_place_holder_index": 2046,
+      "narrow_place_holder_index": 2047
     },
     "MMK": {
       "short_pattern_standard": "Standard",
       "narrow_pattern_standard": "Standard",
-      "short_place_holder_index": 1022,
+      "short_place_holder_index": 2046,
       "narrow_place_holder_index": 58
     },
     "MNT": {
       "short_pattern_standard": "Standard",
       "narrow_pattern_standard": "Standard",
-      "short_place_holder_index": 1022,
+      "short_place_holder_index": 2046,
       "narrow_place_holder_index": 59
     },
     "MOP": {
       "short_pattern_standard": "Standard",
       "narrow_pattern_standard": "Standard",
-      "short_place_holder_index": 1022,
-      "narrow_place_holder_index": 1023
+      "short_place_holder_index": 2046,
+      "narrow_place_holder_index": 2047
     },
     "MRO": {
       "short_pattern_standard": "Standard",
       "narrow_pattern_standard": "Standard",
-      "short_place_holder_index": 1022,
-      "narrow_place_holder_index": 1023
+      "short_place_holder_index": 2046,
+      "narrow_place_holder_index": 2047
     },
     "MRU": {
       "short_pattern_standard": "Standard",
       "narrow_pattern_standard": "Standard",
-      "short_place_holder_index": 1022,
-      "narrow_place_holder_index": 1023
+      "short_place_holder_index": 2046,
+      "narrow_place_holder_index": 2047
     },
     "MTP": {
       "short_pattern_standard": "Standard",
       "narrow_pattern_standard": "Standard",
       "short_place_holder_index": 60,
-      "narrow_place_holder_index": 1023
+      "narrow_place_holder_index": 2047
     },
     "MUR": {
       "short_pattern_standard": "Standard",
       "narrow_pattern_standard": "Standard",
-      "short_place_holder_index": 1022,
+      "short_place_holder_index": 2046,
       "narrow_place_holder_index": 54
     },
     "MVR": {
       "short_pattern_standard": "Standard",
       "narrow_pattern_standard": "Standard",
-      "short_place_holder_index": 1022,
-      "narrow_place_holder_index": 1023
+      "short_place_holder_index": 2046,
+      "narrow_place_holder_index": 2047
     },
     "MWK": {
       "short_pattern_standard": "Standard",
       "narrow_pattern_standard": "Standard",
-      "short_place_holder_index": 1022,
-      "narrow_place_holder_index": 1023
+      "short_place_holder_index": 2046,
+      "narrow_place_holder_index": 2047
     },
     "MXN": {
       "short_pattern_standard": "Standard",
@@ -645,14 +645,14 @@
     "MYR": {
       "short_pattern_standard": "Standard",
       "narrow_pattern_standard": "Standard",
-      "short_place_holder_index": 1022,
+      "short_place_holder_index": 2046,
       "narrow_place_holder_index": 62
     },
     "MZN": {
       "short_pattern_standard": "Standard",
       "narrow_pattern_standard": "Standard",
-      "short_place_holder_index": 1022,
-      "narrow_place_holder_index": 1023
+      "short_place_holder_index": 2046,
+      "narrow_place_holder_index": 2047
     },
     "NAD": {
       "short_pattern_standard": "Standard",
@@ -663,25 +663,25 @@
     "NGN": {
       "short_pattern_standard": "Standard",
       "narrow_pattern_standard": "Standard",
-      "short_place_holder_index": 1022,
+      "short_place_holder_index": 2046,
       "narrow_place_holder_index": 64
     },
     "NIO": {
       "short_pattern_standard": "Standard",
       "narrow_pattern_standard": "Standard",
-      "short_place_holder_index": 1022,
+      "short_place_holder_index": 2046,
       "narrow_place_holder_index": 65
     },
     "NOK": {
       "short_pattern_standard": "Standard",
       "narrow_pattern_standard": "Standard",
-      "short_place_holder_index": 1022,
+      "short_place_holder_index": 2046,
       "narrow_place_holder_index": 24
     },
     "NPR": {
       "short_pattern_standard": "Standard",
       "narrow_pattern_standard": "Standard",
-      "short_place_holder_index": 1022,
+      "short_place_holder_index": 2046,
       "narrow_place_holder_index": 54
     },
     "NZD": {
@@ -693,92 +693,92 @@
     "OMR": {
       "short_pattern_standard": "Standard",
       "narrow_pattern_standard": "Standard",
-      "short_place_holder_index": 1022,
-      "narrow_place_holder_index": 1023
+      "short_place_holder_index": 2046,
+      "narrow_place_holder_index": 2047
     },
     "PAB": {
       "short_pattern_standard": "Standard",
       "narrow_pattern_standard": "Standard",
-      "short_place_holder_index": 1022,
-      "narrow_place_holder_index": 1023
+      "short_place_holder_index": 2046,
+      "narrow_place_holder_index": 2047
     },
     "PEN": {
       "short_pattern_standard": "Standard",
       "narrow_pattern_standard": "Standard",
-      "short_place_holder_index": 1022,
-      "narrow_place_holder_index": 1023
+      "short_place_holder_index": 2046,
+      "narrow_place_holder_index": 2047
     },
     "PGK": {
       "short_pattern_standard": "Standard",
       "narrow_pattern_standard": "Standard",
-      "short_place_holder_index": 1022,
-      "narrow_place_holder_index": 1023
+      "short_place_holder_index": 2046,
+      "narrow_place_holder_index": 2047
     },
     "PHP": {
       "short_pattern_standard": "Standard",
       "narrow_pattern_standard": "Standard",
-      "short_place_holder_index": 1022,
+      "short_place_holder_index": 2046,
       "narrow_place_holder_index": 67
     },
     "PKR": {
       "short_pattern_standard": "Standard",
       "narrow_pattern_standard": "Standard",
-      "short_place_holder_index": 1022,
+      "short_place_holder_index": 2046,
       "narrow_place_holder_index": 54
     },
     "PLN": {
       "short_pattern_standard": "Standard",
       "narrow_pattern_standard": "Standard",
-      "short_place_holder_index": 1022,
+      "short_place_holder_index": 2046,
       "narrow_place_holder_index": 68
     },
     "PYG": {
       "short_pattern_standard": "Standard",
       "narrow_pattern_standard": "Standard",
-      "short_place_holder_index": 1022,
+      "short_place_holder_index": 2046,
       "narrow_place_holder_index": 69
     },
     "QAR": {
       "short_pattern_standard": "Standard",
       "narrow_pattern_standard": "Standard",
-      "short_place_holder_index": 1022,
-      "narrow_place_holder_index": 1023
+      "short_place_holder_index": 2046,
+      "narrow_place_holder_index": 2047
     },
     "RHD": {
       "short_pattern_standard": "Standard",
       "narrow_pattern_standard": "Standard",
       "short_place_holder_index": 70,
-      "narrow_place_holder_index": 1023
+      "narrow_place_holder_index": 2047
     },
     "RON": {
       "short_pattern_standard": "Standard",
       "narrow_pattern_standard": "Standard",
-      "short_place_holder_index": 1022,
+      "short_place_holder_index": 2046,
       "narrow_place_holder_index": 38
     },
     "RSD": {
       "short_pattern_standard": "Standard",
       "narrow_pattern_standard": "Standard",
-      "short_place_holder_index": 1022,
-      "narrow_place_holder_index": 1023
+      "short_place_holder_index": 2046,
+      "narrow_place_holder_index": 2047
     },
     "RUB": {
       "short_pattern_standard": "Standard",
       "narrow_pattern_standard": "Standard",
-      "short_place_holder_index": 1022,
+      "short_place_holder_index": 2046,
       "narrow_place_holder_index": 71
     },
     "RWF": {
       "short_pattern_standard": "Standard",
       "narrow_pattern_standard": "Standard",
-      "short_place_holder_index": 1022,
+      "short_place_holder_index": 2046,
       "narrow_place_holder_index": 72
     },
     "SAR": {
       "short_pattern_standard": "Standard",
       "narrow_pattern_standard": "Standard",
-      "short_place_holder_index": 1022,
-      "narrow_place_holder_index": 1023
+      "short_place_holder_index": 2046,
+      "narrow_place_holder_index": 2047
     },
     "SBD": {
       "short_pattern_standard": "Standard",
@@ -789,19 +789,19 @@
     "SCR": {
       "short_pattern_standard": "Standard",
       "narrow_pattern_standard": "Standard",
-      "short_place_holder_index": 1022,
-      "narrow_place_holder_index": 1023
+      "short_place_holder_index": 2046,
+      "narrow_place_holder_index": 2047
     },
     "SDG": {
       "short_pattern_standard": "Standard",
       "narrow_pattern_standard": "Standard",
-      "short_place_holder_index": 1022,
-      "narrow_place_holder_index": 1023
+      "short_place_holder_index": 2046,
+      "narrow_place_holder_index": 2047
     },
     "SEK": {
       "short_pattern_standard": "Standard",
       "narrow_pattern_standard": "Standard",
-      "short_place_holder_index": 1022,
+      "short_place_holder_index": 2046,
       "narrow_place_holder_index": 24
     },
     "SGD": {
@@ -813,20 +813,20 @@
     "SHP": {
       "short_pattern_standard": "Standard",
       "narrow_pattern_standard": "Standard",
-      "short_place_holder_index": 1022,
+      "short_place_holder_index": 2046,
       "narrow_place_holder_index": 30
     },
     "SLL": {
       "short_pattern_standard": "Standard",
       "narrow_pattern_standard": "Standard",
-      "short_place_holder_index": 1022,
-      "narrow_place_holder_index": 1023
+      "short_place_holder_index": 2046,
+      "narrow_place_holder_index": 2047
     },
     "SOS": {
       "short_pattern_standard": "Standard",
       "narrow_pattern_standard": "Standard",
-      "short_place_holder_index": 1022,
-      "narrow_place_holder_index": 1023
+      "short_place_holder_index": 2046,
+      "narrow_place_holder_index": 2047
     },
     "SRD": {
       "short_pattern_standard": "Standard",
@@ -837,67 +837,67 @@
     "SSP": {
       "short_pattern_standard": "Standard",
       "narrow_pattern_standard": "Standard",
-      "short_place_holder_index": 1022,
+      "short_place_holder_index": 2046,
       "narrow_place_holder_index": 30
     },
     "STD": {
       "short_pattern_standard": "Standard",
       "narrow_pattern_standard": "Standard",
-      "short_place_holder_index": 1022,
-      "narrow_place_holder_index": 1023
+      "short_place_holder_index": 2046,
+      "narrow_place_holder_index": 2047
     },
     "STN": {
       "short_pattern_standard": "Standard",
       "narrow_pattern_standard": "Standard",
-      "short_place_holder_index": 1022,
+      "short_place_holder_index": 2046,
       "narrow_place_holder_index": 76
     },
     "SYP": {
       "short_pattern_standard": "Standard",
       "narrow_pattern_standard": "Standard",
-      "short_place_holder_index": 1022,
+      "short_place_holder_index": 2046,
       "narrow_place_holder_index": 30
     },
     "SZL": {
       "short_pattern_standard": "Standard",
       "narrow_pattern_standard": "Standard",
-      "short_place_holder_index": 1022,
-      "narrow_place_holder_index": 1023
+      "short_place_holder_index": 2046,
+      "narrow_place_holder_index": 2047
     },
     "THB": {
       "short_pattern_standard": "Standard",
       "narrow_pattern_standard": "Standard",
-      "short_place_holder_index": 1022,
+      "short_place_holder_index": 2046,
       "narrow_place_holder_index": 77
     },
     "TJS": {
       "short_pattern_standard": "Standard",
       "narrow_pattern_standard": "Standard",
-      "short_place_holder_index": 1022,
-      "narrow_place_holder_index": 1023
+      "short_place_holder_index": 2046,
+      "narrow_place_holder_index": 2047
     },
     "TMT": {
       "short_pattern_standard": "Standard",
       "narrow_pattern_standard": "Standard",
-      "short_place_holder_index": 1022,
-      "narrow_place_holder_index": 1023
+      "short_place_holder_index": 2046,
+      "narrow_place_holder_index": 2047
     },
     "TND": {
       "short_pattern_standard": "Standard",
       "narrow_pattern_standard": "Standard",
-      "short_place_holder_index": 1022,
-      "narrow_place_holder_index": 1023
+      "short_place_holder_index": 2046,
+      "narrow_place_holder_index": 2047
     },
     "TOP": {
       "short_pattern_standard": "Standard",
       "narrow_pattern_standard": "Standard",
-      "short_place_holder_index": 1022,
+      "short_place_holder_index": 2046,
       "narrow_place_holder_index": 78
     },
     "TRY": {
       "short_pattern_standard": "Standard",
       "narrow_pattern_standard": "Standard",
-      "short_place_holder_index": 1022,
+      "short_place_holder_index": 2046,
       "narrow_place_holder_index": 79
     },
     "TTD": {
@@ -909,26 +909,26 @@
     "TWD": {
       "short_pattern_standard": "Standard",
       "narrow_pattern_standard": "Standard",
-      "short_place_holder_index": 1022,
+      "short_place_holder_index": 2046,
       "narrow_place_holder_index": 81
     },
     "TZS": {
       "short_pattern_standard": "Standard",
       "narrow_pattern_standard": "Standard",
-      "short_place_holder_index": 1022,
-      "narrow_place_holder_index": 1023
+      "short_place_holder_index": 2046,
+      "narrow_place_holder_index": 2047
     },
     "UAH": {
       "short_pattern_standard": "Standard",
       "narrow_pattern_standard": "Standard",
-      "short_place_holder_index": 1022,
+      "short_place_holder_index": 2046,
       "narrow_place_holder_index": 82
     },
     "UGX": {
       "short_pattern_standard": "Standard",
       "narrow_pattern_standard": "Standard",
-      "short_place_holder_index": 1022,
-      "narrow_place_holder_index": 1023
+      "short_place_holder_index": 2046,
+      "narrow_place_holder_index": 2047
     },
     "USD": {
       "short_pattern_standard": "Standard",
@@ -945,20 +945,20 @@
     "UZS": {
       "short_pattern_standard": "Standard",
       "narrow_pattern_standard": "Standard",
-      "short_place_holder_index": 1022,
-      "narrow_place_holder_index": 1023
+      "short_place_holder_index": 2046,
+      "narrow_place_holder_index": 2047
     },
     "VEF": {
       "short_pattern_standard": "Standard",
       "narrow_pattern_standard": "Standard",
-      "short_place_holder_index": 1022,
+      "short_place_holder_index": 2046,
       "narrow_place_holder_index": 12
     },
     "VES": {
       "short_pattern_standard": "Standard",
       "narrow_pattern_standard": "Standard",
-      "short_place_holder_index": 1022,
-      "narrow_place_holder_index": 1023
+      "short_place_holder_index": 2046,
+      "narrow_place_holder_index": 2047
     },
     "VND": {
       "short_pattern_standard": "Standard",
@@ -969,67 +969,67 @@
     "VUV": {
       "short_pattern_standard": "Standard",
       "narrow_pattern_standard": "Standard",
-      "short_place_holder_index": 1022,
-      "narrow_place_holder_index": 1023
+      "short_place_holder_index": 2046,
+      "narrow_place_holder_index": 2047
     },
     "WST": {
       "short_pattern_standard": "Standard",
       "narrow_pattern_standard": "Standard",
       "short_place_holder_index": 86,
-      "narrow_place_holder_index": 1023
+      "narrow_place_holder_index": 2047
     },
     "XAF": {
       "short_pattern_standard": "Standard",
       "narrow_pattern_standard": "Standard",
       "short_place_holder_index": 87,
-      "narrow_place_holder_index": 1023
+      "narrow_place_holder_index": 2047
     },
     "XCD": {
       "short_pattern_standard": "Standard",
       "narrow_pattern_standard": "Standard",
-      "short_place_holder_index": 1022,
+      "short_place_holder_index": 2046,
       "narrow_place_holder_index": 4
     },
     "XOF": {
       "short_pattern_standard": "Standard",
       "narrow_pattern_standard": "Standard",
       "short_place_holder_index": 88,
-      "narrow_place_holder_index": 1023
+      "narrow_place_holder_index": 2047
     },
     "XPF": {
       "short_pattern_standard": "Standard",
       "narrow_pattern_standard": "Standard",
       "short_place_holder_index": 89,
-      "narrow_place_holder_index": 1023
+      "narrow_place_holder_index": 2047
     },
     "XXX": {
       "short_pattern_standard": "Standard",
       "narrow_pattern_standard": "Standard",
       "short_place_holder_index": 90,
-      "narrow_place_holder_index": 1023
+      "narrow_place_holder_index": 2047
     },
     "YER": {
       "short_pattern_standard": "Standard",
       "narrow_pattern_standard": "Standard",
-      "short_place_holder_index": 1022,
-      "narrow_place_holder_index": 1023
+      "short_place_holder_index": 2046,
+      "narrow_place_holder_index": 2047
     },
     "ZAR": {
       "short_pattern_standard": "Standard",
       "narrow_pattern_standard": "Standard",
-      "short_place_holder_index": 1022,
+      "short_place_holder_index": 2046,
       "narrow_place_holder_index": 91
     },
     "ZMK": {
       "short_pattern_standard": "Standard",
       "narrow_pattern_standard": "Standard",
-      "short_place_holder_index": 1022,
-      "narrow_place_holder_index": 1023
+      "short_place_holder_index": 2046,
+      "narrow_place_holder_index": 2047
     },
     "ZMW": {
       "short_pattern_standard": "Standard",
       "narrow_pattern_standard": "Standard",
-      "short_place_holder_index": 1022,
+      "short_place_holder_index": 2046,
       "narrow_place_holder_index": 92
     }
   },

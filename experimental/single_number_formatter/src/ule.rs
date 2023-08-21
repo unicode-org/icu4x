@@ -14,14 +14,14 @@ use crate::provider::{CurrencyPatterns, PatternSelection};
 ///
 /// The serialization model packages the pattern item in three bytes.
 ///
-/// The first two bits (b7 & b6) is used to determine the short_pattern_standard. If the bits are `00`, then, the value will be `Standard`.
-/// If the bits are `01`, then, the value will be `StandardAlphaNextToNumber`.
+/// The first bit (b7) is used to determine the short_pattern_standard. If the bits are `0`, then, the value will be `Standard`.
+/// If the bits are `1`, then, the value will be `StandardAlphaNextToNumber`.
 ///
-/// The second two bits (b5 & b4) is used to determine the narrow_pattern_standard. If the bits are `00`, then, the value will be `Standard`.
-/// If the bits are `01`, then, the value will be `StandardAlphaNextToNumber`.
+/// The second bit (b6) is used to determine the narrow_pattern_standard. If the bits are `0`, then, the value will be `Standard`.
+/// If the bits are `1`, then, the value will be `StandardAlphaNextToNumber`.
 ///
-/// The third two bits (b3 & b2) with the second byte is used to determine the short_place_holder_index.
-/// The fourth two bits (b1 & b0) with the third byte is used to determine the narrow_place_holder_index.
+/// The next three bits (b5, b4 & b3) with the second byte is used to determine the short_place_holder_index.
+/// The next three bits (b2, b1 & b0) with the third byte is used to determine the narrow_place_holder_index.
 #[derive(Copy, Clone, Debug, PartialEq)]
 #[repr(transparent)]
 pub struct CurrencyPatternsULE([u8; 3]);
@@ -45,9 +45,9 @@ unsafe impl ULE for CurrencyPatternsULE {
     }
 }
 
-const PATTERN_SHORT_SHIFT: u8 = 6;
-const PATTERN_NARROW_SHIFT: u8 = 4;
-const INDEX_SHORT_SHIFT: u8 = 2;
+const PATTERN_SHORT_SHIFT: u8 = 7;
+const PATTERN_NARROW_SHIFT: u8 = 6;
+const INDEX_SHORT_SHIFT: u8 = 3;
 const INDEX_NARROW_SHIFT: u8 = 0;
 
 impl AsULE for CurrencyPatterns {
@@ -58,16 +58,16 @@ impl AsULE for CurrencyPatterns {
         let mut first_byte_ule: u8 = 0;
 
         if self.short_pattern_standard == PatternSelection::StandardAlphaNextToNumber {
-            first_byte_ule |= 0b01 << PATTERN_SHORT_SHIFT;
+            first_byte_ule |= 0b1 << PATTERN_SHORT_SHIFT;
         }
         if self.narrow_pattern_standard == PatternSelection::StandardAlphaNextToNumber {
-            first_byte_ule |= 0b01 << PATTERN_NARROW_SHIFT;
+            first_byte_ule |= 0b1 << PATTERN_NARROW_SHIFT;
         }
 
         // For short_place_holder_index
         let [short_most_significant_byte, short_least_significant_byte_ule] =
             self.short_place_holder_index.to_be_bytes();
-        if short_most_significant_byte & 0b1111_1100 != 0 {
+        if short_most_significant_byte & 0b1111_1000 != 0 {
             panic!(
                 "short_place_holder_index is too large {}, {}",
                 self.short_place_holder_index, short_most_significant_byte
@@ -78,7 +78,7 @@ impl AsULE for CurrencyPatterns {
         // For narrow_place_holder_index
         let [narrow_most_significant_byte, narrow_least_significant_byte_ule] =
             self.narrow_place_holder_index.to_be_bytes();
-        if narrow_most_significant_byte & 0b1111_1100 != 0 {
+        if narrow_most_significant_byte & 0b1111_1000 != 0 {
             panic!(
                 "narrow_place_holder_index is too large {}, {}",
                 self.narrow_place_holder_index, narrow_most_significant_byte
@@ -98,20 +98,20 @@ impl AsULE for CurrencyPatterns {
         let [first_byte, second_byte, third_byte] = unaligned.0;
 
         let short_pattern_standard =
-            if first_byte & (0b11 << PATTERN_SHORT_SHIFT) == 0b01 << PATTERN_SHORT_SHIFT {
+            if first_byte & (0b1 << PATTERN_SHORT_SHIFT) == 0b1 << PATTERN_SHORT_SHIFT {
                 PatternSelection::StandardAlphaNextToNumber
             } else {
                 PatternSelection::Standard
             };
 
         let narrow_pattern_standard =
-            if first_byte & (0b11 << PATTERN_NARROW_SHIFT) == 0b01 << PATTERN_NARROW_SHIFT {
+            if first_byte & (0b1 << PATTERN_NARROW_SHIFT) == 0b1 << PATTERN_NARROW_SHIFT {
                 PatternSelection::StandardAlphaNextToNumber
             } else {
                 PatternSelection::Standard
             };
-        let short_prefix = (first_byte & 0b11 << INDEX_SHORT_SHIFT) >> INDEX_SHORT_SHIFT;
-        let narrow_prefix = (first_byte & 0b11 << INDEX_NARROW_SHIFT) >> INDEX_NARROW_SHIFT;
+        let short_prefix = (first_byte & 0b111 << INDEX_SHORT_SHIFT) >> INDEX_SHORT_SHIFT;
+        let narrow_prefix = (first_byte & 0b111 << INDEX_NARROW_SHIFT) >> INDEX_NARROW_SHIFT;
 
         let short_place_holder_index = ((short_prefix as u16) << 8) | second_byte as u16;
         let narrow_place_holder_index = ((narrow_prefix as u16) << 8) | third_byte as u16;
