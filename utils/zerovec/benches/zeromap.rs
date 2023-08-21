@@ -318,7 +318,7 @@ fn bench_deserialize_large_zerohashmap(c: &mut Criterion) {
         b.iter(|| {
             let map: ZeroHashMap<Index32Str, Index32Str> =
                 postcard::from_bytes(black_box(&buf)).unwrap();
-            assert_eq!(map.get(indexify("iu3333")).map(|x| &x.0), Some("Inuktitut"));
+            assert_eq!(map.get(indexify("iu333")).map(|x| &x.0), Some("Inuktitut"));
         })
     });
 }
