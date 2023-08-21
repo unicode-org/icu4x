@@ -14,19 +14,17 @@ use crate::provider::{CurrencyPatterns, PatternSelection};
 ///
 /// The serialization model packages the pattern item in three bytes.
 ///
-/// The first two bits is used to determine the short_pattern_standard. If the bits are `00`, then, the value will be `Standard`.
+/// The first two bits (b7 & b6) is used to determine the short_pattern_standard. If the bits are `00`, then, the value will be `Standard`.
 /// If the bits are `01`, then, the value will be `StandardAlphaNextToNumber`.
 ///
-/// The second two bits is used to determine the narrow_pattern_standard. If the bits are `00`, then, the value will be `Standard`.
+/// The second two bits (b5 & b4) is used to determine the narrow_pattern_standard. If the bits are `00`, then, the value will be `Standard`.
 /// If the bits are `01`, then, the value will be `StandardAlphaNextToNumber`.
 ///
-/// The third two bits with the second byte is used to determine the short_place_holder_index.
-/// The fourth two bits with the third byte is used to determine the narrow_place_holder_index.
+/// The third two bits (b3 & b2) with the second byte is used to determine the short_place_holder_index.
+/// The fourth two bits (b1 & b0) with the third byte is used to determine the narrow_place_holder_index.
 #[derive(Copy, Clone, Debug, PartialEq)]
 #[repr(transparent)]
 pub struct CurrencyPatternsULE([u8; 3]);
-
-impl CurrencyPatternsULE {}
 
 // Safety (based on the safety checklist on the ULE trait):
 //  1. CurrencyPatternsULE does not include any uninitialized or padding bytes.
