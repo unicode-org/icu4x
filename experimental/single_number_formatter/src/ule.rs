@@ -67,27 +67,33 @@ impl AsULE for CurrencyPatterns {
         }
 
         // For short_place_holder_index
-        let [first_index_byte, second_byte_ule] = self.short_place_holder_index.to_be_bytes();
-        if first_index_byte < 0b0100 {
-            first_byte_ule |= first_index_byte << INDEX_SHORT_POSITION;
+        let [short_most_significant_byte, short_least_significant_byte_ule] =
+            self.short_place_holder_index.to_be_bytes();
+        if short_most_significant_byte & 0b1111_1100 == 0 {
+            first_byte_ule |= short_most_significant_byte << INDEX_SHORT_POSITION;
         } else {
             panic!(
                 "short_place_holder_index is too large {}, {}",
-                self.short_place_holder_index, first_index_byte
+                self.short_place_holder_index, short_most_significant_byte
             )
         }
 
         // For narrow_place_holder_index
-        let [first_index_byte, third_byte_ule] = self.narrow_place_holder_index.to_be_bytes();
-        if first_index_byte < 0b0100 {
-            first_byte_ule |= first_index_byte << INDEX_NARROW_POSITION;
+        let [narrow_most_significant_byte, narrow_least_significant_byte_ule] =
+            self.narrow_place_holder_index.to_be_bytes();
+        if narrow_most_significant_byte & 0b1111_1100 == 0 {
+            first_byte_ule |= narrow_most_significant_byte << INDEX_NARROW_POSITION;
         } else {
             panic!(
                 "narrow_place_holder_index is too large {}, {}",
-                self.narrow_place_holder_index, first_index_byte
+                self.narrow_place_holder_index, narrow_most_significant_byte
             )
         }
-        CurrencyPatternsULE([first_byte_ule, second_byte_ule, third_byte_ule])
+        CurrencyPatternsULE([
+            first_byte_ule,
+            short_least_significant_byte_ule,
+            narrow_least_significant_byte_ule,
+        ])
     }
 
     #[inline]
