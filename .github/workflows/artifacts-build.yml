@@ -283,7 +283,7 @@ jobs:
       if: success() || failure()
       run: |
           git checkout empty
-          gsutil -m cp -r benchmarks/perf/${{ matrix.component }} gs://${{ env.GCP_MAIN_BUCKET_ID }}/gha/benchmarks/perf
+          gsutil -m cp -r benchmarks/perf/${{ matrix.component }}/* gs://${{ env.GCP_MAIN_BUCKET_ID }}/gha/benchmarks/perf/${{ matrix.component }}
 
   # Run examples with dhat-rs in order to collect memory heap size metrics. These
   # metrics will then be charted over time. See tools/benchmark/memory/README.md for
@@ -375,7 +375,7 @@ jobs:
 
     - name:  Download previous benchmark data
       run: |
-        gsutil -m cp -rn gs://${{ env.GCP_MAIN_BUCKET_ID }}/gha/benchmarks/memory/${{ matrix.os }} benchmarks/memory
+        gsutil -m cp -rn gs://${{ env.GCP_MAIN_BUCKET_ID }}/gha/benchmarks/memory/${{ matrix.os }}/* benchmarks/memory/${{ matrix.os }}
 
     - name: Store benchmark result & create dashboard
       # The gregtatum fork of rhysd/github-action-benchmark contains support for ndjson.
@@ -399,7 +399,7 @@ jobs:
       if: success() || failure()
       run: |
           git checkout empty
-          gsutil -m cp -r benchmarks/memory/${{ matrix.os }} gs://${{ env.GCP_MAIN_BUCKET_ID }}/gha/benchmarks/memory
+          gsutil -m cp -r benchmarks/memory/${{ matrix.os }}/* gs://${{ env.GCP_MAIN_BUCKET_ID }}/gha/benchmarks/memory/${{ matrix.os }}
 
   # Binary size benchmark: build and size wasm binaries; creates ndjson output data format
   bench-binsize:
@@ -480,8 +480,8 @@ jobs:
     - name:  Download previous benchmark data
       run: |
         mkdir -p benchmarks/binsize
-        gsutil -m cp -rn gs://${{ env.GCP_MAIN_BUCKET_ID }}/gha/benchmarks/binsize benchmarks/binsize
-
+        gsutil -m cp -rn gs://${{ env.GCP_MAIN_BUCKET_ID }}/gha/benchmarks/binsize/* benchmarks/binsize
+ 
     - name: Store benchmark result & create dashboard (wasm)
       # Use gregtatum special feature to process ndjson-formatted benchmark data
       uses: gregtatum/github-action-benchmark@d3f06f738e9612988d575db23fae5ca0008d3d12
@@ -518,7 +518,7 @@ jobs:
       if: success() || failure()
       run: |
           git checkout empty
-          gsutil -m cp -r benchmarks/binsize gs://${{ env.GCP_MAIN_BUCKET_ID }}/gha/benchmarks
+          gsutil -m cp -r benchmarks/binsize/* gs://${{ env.GCP_MAIN_BUCKET_ID }}/gha/benchmarks/binsize
 
   # Data size benchmark: track size of provider/datagen/tests/data/testdata.postcard (total data size).
   bench-datasize:
@@ -561,7 +561,7 @@ jobs:
     - name:  Download previous benchmark data
       run: |
         mkdir -p benchmarks
-        gsutil -m cp -rn gs://${{ env.GCP_MAIN_BUCKET_ID }}/gha/benchmarks/datasize benchmarks
+        gsutil -m cp -rn gs://${{ env.GCP_MAIN_BUCKET_ID }}/gha/benchmarks/datasize/* benchmarks/datasize
 
     - name: Store benchmark result & create dashboard
       # Use gregtatum special feature to process ndjson-formatted benchmark data
@@ -582,7 +582,7 @@ jobs:
       if: success() || failure()
       run: |
           git checkout empty
-          gsutil -m cp -r benchmarks/datasize gs://${{ env.GCP_MAIN_BUCKET_ID }}/gha/benchmarks
+          gsutil -m cp -r benchmarks/datasize/* gs://${{ env.GCP_MAIN_BUCKET_ID }}/gha/benchmarks/datasize
 
   gh-pages:
     name: "Deploy to GitHub Pages"

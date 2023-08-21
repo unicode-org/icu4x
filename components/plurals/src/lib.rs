@@ -467,7 +467,7 @@ impl PluralRules {
     /// All unsigned primitive number types can infallibly be converted so they can be
     /// used as an input.
     ///
-    /// For signed numbers and strings, [`Plural Operands`] implement [`TryFrom`](std::convert::TryFrom)
+    /// For signed numbers and strings, [`Plural Operands`] implement [`TryFrom`]
     /// and [`FromStr`](std::str::FromStr), which should be used before passing the result to
     /// [`category_for()`](PluralRules::category_for()).
     ///

@@ -214,8 +214,6 @@ In order to contribute to this project, the Unicode Consortium must have on file
 
 Unless otherwise noted in the [LICENSE](./LICENSE) file, this project is released under the free and open-source [Unicode License][unicode-license], also known as Unicode, Inc. License Agreement - Data Files and Software.
 
-SPDX-License-Identifier: Unicode-DFS-2016
-
 ### New files
 
 When adding a new Rust file, please ensure that it starts with this precise text:
