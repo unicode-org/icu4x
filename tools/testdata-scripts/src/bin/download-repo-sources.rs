@@ -118,6 +118,12 @@ fn main() -> eyre::Result<()> {
         paths
     }
 
+    // TODO(#3736): Remove this workaround when cldr-json has transform rules
+    std::fs::rename(
+        out_root.join("tests/data/cldr/cldr-transforms-full"),
+        out_root.join("tests/data/cldr-transforms-full"),
+    )?;
+
     std::fs::remove_dir_all(out_root.join("tests/data/cldr"))?;
     extract(
         cached(&format!(
@@ -128,6 +134,12 @@ fn main() -> eyre::Result<()> {
         .with_context(|| "Failed to download CLDR ZIP".to_owned())?,
         expand_paths(CLDR_JSON_GLOB, false),
         out_root.join("tests/data/cldr"),
+    )?;
+
+    // TODO(#3736): Remove this workaround when cldr-json has transform rules
+    std::fs::rename(
+        out_root.join("tests/data/cldr-transforms-full"),
+        out_root.join("tests/data/cldr/cldr-transforms-full"),
     )?;
 
     std::fs::remove_dir_all(out_root.join("tests/data/icuexport"))?;
