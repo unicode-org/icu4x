@@ -138,7 +138,7 @@ impl UnicodeCodePoint {
 
     fn parse(value: &str) -> Option<(Self, &str)> {
         Some(if let Some(hex) = value.strip_prefix("U+") {
-            let (escape, remainder) = (hex.get(4..)?, hex.get(4..)?);
+            let (escape, remainder) = (hex.get(..4)?, hex.get(4..)?);
             (
                 Self::Surrogate(u32::from_str_radix(escape, 16).ok()?),
                 remainder,
@@ -166,6 +166,7 @@ impl core::fmt::Display for UnicodeCodePoint {
         }
     }
 }
+
 #[cfg(feature = "serde")]
 impl<'data> serde::Serialize for CodePointInversionList<'data> {
     fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
