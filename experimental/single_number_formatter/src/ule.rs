@@ -45,10 +45,10 @@ unsafe impl ULE for CurrencyPatternsULE {
     }
 }
 
-const PATTERN_SHORT_SHIFT_POSITION: u8 = 6;
-const PATTERN_NARROW_SHIFT_POSITION: u8 = 4;
-const INDEX_SHORT_SHIFT_POSITION: u8 = 2;
-const INDEX_NARROW_SHIFT_POSITION: u8 = 0;
+const PATTERN_SHORT_SHIFT: u8 = 6;
+const PATTERN_NARROW_SHIFT: u8 = 4;
+const INDEX_SHORT_SHIFT: u8 = 2;
+const INDEX_NARROW_SHIFT: u8 = 0;
 
 impl AsULE for CurrencyPatterns {
     type ULE = CurrencyPatternsULE;
@@ -58,35 +58,34 @@ impl AsULE for CurrencyPatterns {
         let mut first_byte_ule: u8 = 0;
 
         if self.short_pattern_standard == PatternSelection::StandardAlphaNextToNumber {
-            first_byte_ule |= 0b01 << PATTERN_SHORT_SHIFT_POSITION;
+            first_byte_ule |= 0b01 << PATTERN_SHORT_SHIFT;
         }
         if self.narrow_pattern_standard == PatternSelection::StandardAlphaNextToNumber {
-            first_byte_ule |= 0b01 << PATTERN_NARROW_SHIFT_POSITION;
+            first_byte_ule |= 0b01 << PATTERN_NARROW_SHIFT;
         }
 
         // For short_place_holder_index
         let [short_most_significant_byte, short_least_significant_byte_ule] =
             self.short_place_holder_index.to_be_bytes();
-        if short_most_significant_byte & 0b1111_1100 == 0 {
-            first_byte_ule |= short_most_significant_byte << INDEX_SHORT_SHIFT_POSITION;
-        } else {
+        if short_most_significant_byte & 0b1111_1100 != 0 {
             panic!(
                 "short_place_holder_index is too large {}, {}",
                 self.short_place_holder_index, short_most_significant_byte
             )
         }
+        first_byte_ule |= short_most_significant_byte << INDEX_SHORT_SHIFT;
 
         // For narrow_place_holder_index
         let [narrow_most_significant_byte, narrow_least_significant_byte_ule] =
             self.narrow_place_holder_index.to_be_bytes();
-        if narrow_most_significant_byte & 0b1111_1100 == 0 {
-            first_byte_ule |= narrow_most_significant_byte << INDEX_NARROW_SHIFT_POSITION;
-        } else {
+        if narrow_most_significant_byte & 0b1111_1100 != 0 {
             panic!(
                 "narrow_place_holder_index is too large {}, {}",
                 self.narrow_place_holder_index, narrow_most_significant_byte
             )
         }
+        first_byte_ule |= narrow_most_significant_byte << INDEX_NARROW_SHIFT;
+
         CurrencyPatternsULE([
             first_byte_ule,
             short_least_significant_byte_ule,
@@ -98,25 +97,21 @@ impl AsULE for CurrencyPatterns {
     fn from_unaligned(unaligned: Self::ULE) -> Self {
         let [first_byte, second_byte, third_byte] = unaligned.0;
 
-        let short_pattern_standard = if first_byte & (0b11 << PATTERN_SHORT_SHIFT_POSITION)
-            == 0b01 << PATTERN_SHORT_SHIFT_POSITION
-        {
-            PatternSelection::StandardAlphaNextToNumber
-        } else {
-            PatternSelection::Standard
-        };
+        let short_pattern_standard =
+            if first_byte & (0b11 << PATTERN_SHORT_SHIFT) == 0b01 << PATTERN_SHORT_SHIFT {
+                PatternSelection::StandardAlphaNextToNumber
+            } else {
+                PatternSelection::Standard
+            };
 
-        let narrow_pattern_standard = if first_byte & (0b11 << PATTERN_NARROW_SHIFT_POSITION)
-            == 0b01 << PATTERN_NARROW_SHIFT_POSITION
-        {
-            PatternSelection::StandardAlphaNextToNumber
-        } else {
-            PatternSelection::Standard
-        };
-        let short_prefix =
-            (first_byte & 0b11 << INDEX_SHORT_SHIFT_POSITION) >> INDEX_SHORT_SHIFT_POSITION;
-        let narrow_prefix =
-            (first_byte & 0b11 << INDEX_NARROW_SHIFT_POSITION) >> INDEX_NARROW_SHIFT_POSITION;
+        let narrow_pattern_standard =
+            if first_byte & (0b11 << PATTERN_NARROW_SHIFT) == 0b01 << PATTERN_NARROW_SHIFT {
+                PatternSelection::StandardAlphaNextToNumber
+            } else {
+                PatternSelection::Standard
+            };
+        let short_prefix = (first_byte & 0b11 << INDEX_SHORT_SHIFT) >> INDEX_SHORT_SHIFT;
+        let narrow_prefix = (first_byte & 0b11 << INDEX_NARROW_SHIFT) >> INDEX_NARROW_SHIFT;
 
         let short_place_holder_index = ((short_prefix as u16) << 8) | second_byte as u16;
         let narrow_place_holder_index = ((narrow_prefix as u16) << 8) | third_byte as u16;
