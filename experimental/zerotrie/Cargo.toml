@@ -10,7 +10,7 @@ authors = ["The ICU4X Project Developers"]
 edition = "2021"
 readme = "README.md"
 repository = "https://github.com/unicode-org/icu4x"
-license = "Unicode-DFS-2016"
+license-file = "LICENSE"
 # Keep this in sync with other crates unless there are exceptions
 include = [
     "src/**/*",
@@ -40,12 +40,14 @@ postcard = { version = "1.0", default-features = false, features = ["alloc"] }
 serde = { version = "1.0", default-features = false }
 zerovec = { path = "../../utils/zerovec", features = ["serde", "hashmap"] }
 litemap = { path = "../../utils/litemap" }
-criterion = "0.4"
 icu_benchmark_macros = { path = "../../tools/benchmark/macros" }
 serde_json = "1.0"
 bincode = "1.0"
 rand = "0.8"
 rand_pcg = "0.3"
+
+[target.'cfg(not(target_arch = "wasm32"))'.dev-dependencies]
+criterion = "0.4"
 
 [lib]
 bench = false  # This option is required for Benchmark CI
