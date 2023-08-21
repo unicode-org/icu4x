@@ -124,14 +124,8 @@ fn bench_zeromap(c: &mut Criterion) {
 fn build_zeromap(large: bool) -> ZeroMap<'static, Index32Str, Index32Str> {
     // TODO(#2826): This should use ZeroMap::from_iter, however that currently takes
     // *minutes*, whereas this code runs in milliseconds
-    let mut keys = match large {
-        true => Vec::with_capacity(8192 * DATA.len()),
-        false => Vec::with_capacity(DATA.len()),
-    };
-    let mut values = match large {
-        true => Vec::with_capacity(8192 * DATA.len()),
-        false => Vec::with_capacity(DATA.len()),
-    };
+    let mut keys = Vec::new();
+    let mut values = Vec::new();
     let mut data = DATA.to_vec();
     data.sort();
     for &(key, value) in data.iter() {
