@@ -1,19 +1,16 @@
 {
     "keys": {
-        "Explicit": [
+        "explicit": [
             "currency/essentials@1"
         ]
     },
-    "locales": "Recommended",
-    "cldr": "Latest",
-    "icu_export": "Latest",
-    "segmenter_lstm": "Latest",
+    "fallback": "runtime",
+    "locales": "recommended",
     "export": {
-        "Baked": {
+        "baked": {
             "path": "data",
             "pretty": true
         }
     },
-    "fallback": "Runtime",
     "overwrite": true
 }

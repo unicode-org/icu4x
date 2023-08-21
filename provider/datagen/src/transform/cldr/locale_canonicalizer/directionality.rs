@@ -11,11 +11,8 @@ use icu_provider::prelude::*;
 impl DataProvider<ScriptDirectionV1Marker> for crate::DatagenProvider {
     fn load(&self, req: DataRequest) -> Result<DataResponse<ScriptDirectionV1Marker>, DataError> {
         self.check_req::<ScriptDirectionV1Marker>(req)?;
-        let data: &cldr_serde::directionality::Resource = self
-            .source
-            .cldr()?
-            .core()
-            .read_and_parse("scriptMetadata.json")?;
+        let data: &cldr_serde::directionality::Resource =
+            self.cldr()?.core().read_and_parse("scriptMetadata.json")?;
         Ok(DataResponse {
             metadata: Default::default(),
             payload: Some(DataPayload::from_owned(ScriptDirectionV1::from(data))),
@@ -54,7 +51,7 @@ impl From<&cldr_serde::directionality::Resource> for ScriptDirectionV1<'_> {
 fn test_basic() {
     use icu_locid::subtags::script;
 
-    let provider = crate::DatagenProvider::for_test();
+    let provider = crate::DatagenProvider::latest_tested_offline_subset();
     let data: DataPayload<ScriptDirectionV1Marker> = provider
         .load(Default::default())
         .unwrap()

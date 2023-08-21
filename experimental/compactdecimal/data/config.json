@@ -1,21 +1,20 @@
 {
-    "keys": {
-        "Explicit": [
-            "compactdecimal/long@1",
-            "compactdecimal/short@1"
-
-        ]
-    },
-    "locales": "Recommended",
-    "cldr": "Latest",
-    "icu_export": "Latest",
-    "segmenter_lstm": "Latest",
-    "export": {
-        "Baked": {
-            "path": "data",
-            "pretty": true
-        }
-    },
-    "fallback": "Runtime",
-    "overwrite": true
+  "keys": {
+    "explicit": [
+      "compactdecimal/long@1",
+      "compactdecimal/short@1"
+    ]
+  },
+  "fallback": "runtime",
+  "locales": "recommended",
+  "cldr": "latest",
+  "icuExport": "latest",
+  "segmenterLstm": "latest",
+  "export": {
+    "baked": {
+      "path": "data",
+      "pretty": true
+    }
+  },
+  "overwrite": true
 }

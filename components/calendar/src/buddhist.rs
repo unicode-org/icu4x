@@ -55,8 +55,11 @@ const BUDDHIST_ERA_OFFSET: i32 = 543;
 ///
 /// # Era codes
 ///
-/// This calendar supports one era, `"be"`, with 1 B.E. being 543 BCE
-
+/// This calendar supports one era, `"be"`, with 1 B.E. being 543 BCE.
+///
+/// # Month codes
+///
+/// This calendar supports 12 solar month codes (`"M01" - "M12"`)
 #[allow(clippy::exhaustive_structs)] // this type is stable
 pub struct Buddhist;
 

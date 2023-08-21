@@ -55,6 +55,10 @@ const JULIAN_EPOCH: RataDie = RataDie::new(-1);
 /// # Era codes
 ///
 /// This calendar supports two era codes: `"bce"`, and `"ce"`, corresponding to the BCE/BC and CE/AD eras
+///
+/// # Month codes
+///
+/// This calendar supports 12 solar month codes (`"M01" - "M12"`)
 #[derive(Copy, Clone, Debug, Hash, Default, Eq, PartialEq, PartialOrd, Ord)]
 #[allow(clippy::exhaustive_structs)] // this type is stable
 pub struct Julian;

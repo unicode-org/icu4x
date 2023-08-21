@@ -18,7 +18,6 @@ impl DataProvider<AliasesV1Marker> for crate::DatagenProvider {
     fn load(&self, req: DataRequest) -> Result<DataResponse<AliasesV1Marker>, DataError> {
         self.check_req::<AliasesV1Marker>(req)?;
         let data: &cldr_serde::aliases::Resource = self
-            .source
             .cldr()?
             .core()
             .read_and_parse("supplemental/aliases.json")?;
@@ -271,7 +270,7 @@ fn test_appendix_c_cmp() {
 fn test_basic() {
     use icu_locid::subtags::{language, region, script};
 
-    let provider = crate::DatagenProvider::for_test();
+    let provider = crate::DatagenProvider::latest_tested_offline_subset();
     let data: DataPayload<AliasesV1Marker> = provider
         .load(Default::default())
         .unwrap()

@@ -90,8 +90,17 @@ pub trait DataExporter: Sync {
 /// A [`DynamicDataProvider`] that can be used for exporting data.
 ///
 /// Use [`make_exportable_provider`](crate::make_exportable_provider) to implement this.
-pub trait ExportableProvider: IterableDynamicDataProvider<ExportMarker> + Sync {}
+pub trait ExportableProvider: IterableDynamicDataProvider<ExportMarker> + Sync {
+    /// Returns a struct implementing `DataProvider<M>` by downcasting
+    fn as_downcasting(&self) -> DowncastingExportableDataProvider<Self> {
+        DowncastingExportableDataProvider(self)
+    }
+}
 impl<T> ExportableProvider for T where T: IterableDynamicDataProvider<ExportMarker> + Sync {}
+
+#[derive(Debug)]
+#[doc(hidden)]
+pub struct DowncastingExportableDataProvider<'a, P: ?Sized>(&'a P);
 
 /// This macro can be used on a data provider to allow it to be used for data generation.
 ///

@@ -23,9 +23,10 @@ macro_rules! normalization_provider {
             fn load(&self, req: DataRequest) -> Result<DataResponse<$marker>, DataError> {
                 self.check_req::<$marker>(req)?;
                 let $toml_data: &normalizer_serde::$serde_struct =
-                    self.source.icuexport()?.read_and_parse_toml(&format!(
+                    self.icuexport()?.read_and_parse_toml(&format!(
                         "norm/{}/{}.toml",
-                        self.source.trie_type, $file_name
+                        self.trie_type(),
+                        $file_name
                     ))?;
 
                 $conversion

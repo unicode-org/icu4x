@@ -1,0 +1,67 @@
+# This file is part of ICU4X. For terms of use, please see the file
+# called LICENSE at the top level of the ICU4X source tree
+# (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
+
+[package]
+name = "zerotrie"
+description = "A data structure that efficiently maps strings to integers"
+version = "0.1.0"
+authors = ["The ICU4X Project Developers"]
+edition = "2021"
+readme = "README.md"
+repository = "https://github.com/unicode-org/icu4x"
+license = "Unicode-DFS-2016"
+# Keep this in sync with other crates unless there are exceptions
+include = [
+    "src/**/*",
+    "examples/**/*",
+    "benches/**/*",
+    "tests/**/*",
+    "Cargo.toml",
+    "LICENSE",
+    "README.md"
+]
+
+[package.metadata.docs.rs]
+all-features = true
+
+[package.metadata.cargo-all-features]
+# Bench feature gets tested separately and is only relevant for CI
+denylist = ["bench"]
+
+[dependencies]
+zerovec = { path = "../../utils/zerovec", optional = true }
+litemap = { path = "../../utils/litemap", default-features = false, features = ["alloc"], optional = true }
+serde = { version = "1.0", optional = true }
+displaydoc = { version = "0.2.3", default-features = false }
+
+[dev-dependencies]
+postcard = { version = "1.0", default-features = false, features = ["alloc"] }
+serde = { version = "1.0", default-features = false }
+zerovec = { path = "../../utils/zerovec", features = ["serde", "hashmap"] }
+litemap = { path = "../../utils/litemap" }
+criterion = "0.4"
+icu_benchmark_macros = { path = "../../tools/benchmark/macros" }
+serde_json = "1.0"
+bincode = "1.0"
+rand = "0.8"
+rand_pcg = "0.3"
+
+[lib]
+bench = false  # This option is required for Benchmark CI
+path = "src/lib.rs"
+
+[features]
+default = []
+bench = []
+alloc = []
+litemap = ["dep:litemap", "alloc"]
+serde = ["dep:serde", "dep:litemap", "alloc", "litemap/serde", "zerovec?/serde"]
+
+[[bench]]
+name = "overview"
+harness = false
+
+[[test]]
+name = "builder_test"
+required-features = ["alloc", "litemap"]
