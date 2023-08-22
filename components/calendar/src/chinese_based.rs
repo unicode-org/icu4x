@@ -430,10 +430,10 @@ impl<C: ChineseBased + CalendarArithmetic> ChineseBasedDateInner<C> {
                 debug_assert!((1..=13).contains(&month), "Month out of bounds!");
                 let mut index = 0;
                 let mut result = first_day_of_year;
+                // Indexing is ok because `index` starts at 0 and goes to `month - 1`, and the above assertion
+                // ensures that month is within 1..=13, meaning `index` from `0..=(month - 1)` will always be valid
+                #[allow(clippy::indexing_slicing)]
                 while (index as i64) < month - 1 {
-                    // Indexing is ok because `index` starts at 0 and goes to `month - 1`, and the above assertion
-                    // ensures that month is within 1..=13, meaning `index` from `0..=(month - 1)` will always be valid
-                    #[allow(clippy::indexing_slicing)]
                     result += data.month_lengths[index] as i64;
                     index += 1;
                 }
@@ -606,10 +606,10 @@ impl<C: ChineseBased + CalendarArithmetic> ChineseBasedDateInner<C> {
         let days_until_month = if let ChineseBasedYearInfo::Data(data) = self.1 {
             let mut result = 0;
             let mut index = 0;
+            // Indexing is ok because `index` starts at 0 and ends at `self.0.month - 1`; the maximum value of
+            // `self.0.month - 1` is 12, so `0..=12` always contains `index`
+            #[allow(clippy::indexing_slicing)]
             while index < self.0.month - 1 {
-                // Indexing is ok because `index` starts at 0 and ends at `self.0.month - 1`; the maximum value of
-                // `self.0.month - 1` is 12, so `0..=12` always contains `index`
-                #[allow(clippy::indexing_slicing)]
                 result += data.month_lengths[index as usize];
                 index += 1;
             }
