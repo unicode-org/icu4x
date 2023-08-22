@@ -406,23 +406,24 @@ impl LocaleDisplayNamesFormatter {
 
     /// Returns the display name of a locale.
     /// This implementation is based on the algorithm described in
-    /// https://www.unicode.org/reports/tr35/tr35-general.html#locale_display_name_algorithm
+    /// `<https://www.unicode.org/reports/tr35/tr35-general.html#locale_display_name_algorithm>`
     ///
     // TODO: Make this return a writeable instead of using alloc
     pub fn of<'a, 'b: 'a, 'c: 'a>(&'b self, locale: &'c Locale) -> Cow<'a, str> {
-        let longest_matching_identifier = self.find_longest_matching_subtag(&locale);
+        let longest_matching_identifier = self.find_longest_matching_subtag(locale);
 
         // Step - 1: Construct a locale display name string (LDN).
         // Find the displayname for the longest_matching_subtag which was derived above.
-        let ldn = self.get_locale_display_name(&locale, &longest_matching_identifier);
+        let ldn = self.get_locale_display_name(locale, &longest_matching_identifier);
 
         // Step - 2: Construct a vector of longest qualifying substrings (LQS).
         // Find the displayname for the remaining locale if exists.
-        let lqs = self.get_longest_qualifying_substrings(&locale, &longest_matching_identifier);
+        let lqs = self.get_longest_qualifying_substrings(locale, &longest_matching_identifier);
 
         // Step - 3: Return the displayname based on the size of LQS.
         let mut result = Cow::Borrowed(ldn);
-        if lqs.len() > 0 {
+        #[allow(clippy::indexing_slicing)] // indexes in range
+        if !lqs.is_empty() {
             let mut output = String::with_capacity(
                 result.len() + " (".len() + lqs.iter().map(|s| ", ".len() + s.len()).sum::<usize>()
                     - ", ".len()
@@ -435,7 +436,7 @@ impl LocaleDisplayNamesFormatter {
                 output.push_str(", ");
                 output.push_str(lqs);
             }
-            output.push_str(")");
+            output.push(')');
             result = Cow::Owned(output);
         }
         result
@@ -473,7 +474,7 @@ impl LocaleDisplayNamesFormatter {
                 }
             }
         }
-        return (locale.id.language, None, None).into();
+        (locale.id.language, None, None).into()
     }
 
     fn get_locale_display_name<'a>(
@@ -614,7 +615,6 @@ impl LocaleDisplayNamesFormatter {
                     .unwrap_or(variant_key.as_str()),
             );
         }
-
-        return lqs;
+        lqs
     }
 }

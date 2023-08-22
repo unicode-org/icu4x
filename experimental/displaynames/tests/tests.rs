@@ -48,6 +48,10 @@ fn test_concatenate() {
             expected: "Latin American Spanish (IPA Phonetics)",
         },
         TestCase {
+            input_1: &Locale::from_str("es-Latn-419").unwrap(),
+            expected: "Spanish (Latin, Latin America)",
+        },
+        TestCase {
             input_1: &locale!("xx-YY"),
             expected: "xx (YY)",
         },
