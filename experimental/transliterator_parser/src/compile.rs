@@ -918,6 +918,8 @@ pub fn legacy_id_to_internal_id(source: &str, target: &str, variant: Option<&str
         id.push('-');
         id.push_str(variant);
     }
+    // normalizing to ASCII lowercase to avoid duplicate dependencies like Any-null and Any-Null
+    id.make_ascii_lowercase();
     id
 }
 

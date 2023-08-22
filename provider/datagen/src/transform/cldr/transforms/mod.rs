@@ -9,6 +9,8 @@ use icu_provider::prelude::*;
 use icu_transliteration::provider::*;
 use std::collections::HashMap;
 
+use super::cldr_serde::transforms::TransformAlias;
+
 // TODO(#3736): This could benefit from avoiding recomputation across `load` calls.
 //  Maybe a OnceCell?
 struct TransliteratorCollection<'a> {
@@ -32,19 +34,25 @@ impl<'a> TransliteratorCollection<'a> {
             let (forwards, backwards) = internal_ids_from_metadata(metadata);
             if let Some(forwards) = forwards {
                 if forwards == internal_id {
-                    return Ok(Some((transform, icu_transliterator_parser::Direction::Forward)));
+                    return Ok(Some((
+                        transform,
+                        icu_transliterator_parser::Direction::Forward,
+                    )));
                 }
             }
             if let Some(backwards) = backwards {
                 if backwards == internal_id {
-                    return Ok(Some((transform, icu_transliterator_parser::Direction::Reverse)));
+                    return Ok(Some((
+                        transform,
+                        icu_transliterator_parser::Direction::Reverse,
+                    )));
                 }
             }
         }
         Ok(None)
     }
 
-    /// Returns a mapping from known legacy IDs to internal ICU4X IDs.
+    /// Returns a mapping from known legacy IDs to internal ICU4X IDs. The legacy ID keys are normalized to ASCII lowercase.
     ///
     /// The compilation process uses this mapping to go from legacy IDs to internal IDs, if possible.
     /// Otherwise [`icu_transliterator_parser::legacy_id_to_internal_id`](icu_transliterator_parser::legacy_id_to_internal_id) is used.
@@ -54,27 +62,42 @@ impl<'a> TransliteratorCollection<'a> {
             let metadata = self.cldr_transforms.read_and_parse_metadata(&transform)?;
             let (forwards, backwards) = internal_ids_from_metadata(metadata);
             if let Some(forwards) = forwards {
-                // for all forwards aliases, map them to the internal ID
-                for alias in &metadata.alias {
-                    mapping.insert(alias.clone(), forwards.clone());
+                // for all forwards legacy aliases, map them to the internal ID
+                // bcp47 aliases are skipped, because those are not valid legacy IDs
+                let legacy_iter = metadata.alias.iter().filter_map(|alias| match alias {
+                    TransformAlias::LegacyId(s) => Some(s),
+                    _ => None,
+                });
+                for alias in legacy_iter {
+                    mapping.insert(alias.to_ascii_lowercase(), forwards.clone());
                 }
                 // source, target, and variant may also be used
                 let mut legacy_id = format!("{}-{}", metadata.source, metadata.target);
                 if let Some(variant) = &metadata.variant {
                     legacy_id.push_str(&format!("/{}", variant));
                 }
+                legacy_id.make_ascii_lowercase();
                 mapping.insert(legacy_id, forwards.clone());
             }
             if let Some(backwards) = backwards {
                 // for all backwards aliases, map them to the internal ID
-                for backward_alias in &metadata.backward_alias {
-                    mapping.insert(backward_alias.clone(), backwards.clone());
+                // bcp47 aliases are skipped, because those are not valid legacy IDs
+                let legacy_iter = metadata
+                    .backward_alias
+                    .iter()
+                    .filter_map(|alias| match alias {
+                        TransformAlias::LegacyId(s) => Some(s),
+                        _ => None,
+                    });
+                for backward_alias in legacy_iter {
+                    mapping.insert(backward_alias.to_ascii_lowercase(), backwards.clone());
                 }
                 // target, source, and variant may also be used
                 let mut legacy_id = format!("{}-{}", metadata.target, metadata.source);
                 if let Some(variant) = &metadata.variant {
                     legacy_id.push_str(&format!("/{}", variant));
                 }
+                legacy_id.make_ascii_lowercase();
                 mapping.insert(legacy_id, backwards.clone());
             }
         }
@@ -119,17 +142,20 @@ impl DataProvider<TransliteratorRulesV1Marker> for crate::DatagenProvider {
 
         let source = self.cldr()?.transforms().read_source(&transform)?;
 
-        let (forwards, backwards) =
-            icu_transliterator_parser::parse_unstable(&source, want_direction, metadata, mapping, self)
-                .map_err(|e| {
-                    DataError::custom("transliterator parsing failed").with_debug_context(&e)
-                })?;
+        let (forwards, backwards) = icu_transliterator_parser::parse_unstable(
+            &source,
+            want_direction,
+            metadata,
+            mapping,
+            self,
+        )
+        .map_err(|e| DataError::custom("transliterator parsing failed").with_debug_context(&e))?;
         let transliterator = match want_direction {
             icu_transliterator_parser::Direction::Forward => {
                 // the parser guarantees we receive this
                 #[allow(clippy::unwrap_used)]
                 forwards.unwrap()
-            },
+            }
             icu_transliterator_parser::Direction::Reverse => {
                 // the parser guarantees we receive this
                 #[allow(clippy::unwrap_used)]
@@ -168,7 +194,8 @@ impl IterableDataProvider<TransliteratorRulesV1Marker> for crate::DatagenProvide
     }
 }
 
-/// Get the internal ICU4X ID for this transliterator from CLDR metadata.
+/// Get the internal ICU4X ID for this transliterator from CLDR metadata. This is what will end up in
+/// the DataLocale's auxiliary key.
 ///
 /// Returns (forwards, backwards) internal IDs if the corresponding direction is supported according
 /// to the metadata.
@@ -204,7 +231,7 @@ fn internal_ids_from_metadata(metadata: &transforms::Resource) -> (Option<String
 }
 
 fn internal_id_from_parts(
-    aliases: &[String],
+    aliases: &[TransformAlias],
     source: &str,
     target: &str,
     variant: Option<&str>,
@@ -214,13 +241,14 @@ fn internal_id_from_parts(
     })
 }
 
-fn find_bcp47_in_list(list: &[String]) -> Option<String> {
-    for item in list {
-        if item.contains("-t-") {
-            return Some(item.clone());
+fn find_bcp47_in_list(list: &[TransformAlias]) -> Option<String> {
+    list.iter().find_map(|alias| {
+        if let TransformAlias::Bcp47(locale) = alias {
+            Some(locale.to_string())
+        } else {
+            None
         }
-    }
-    None
+    })
 }
 
 #[cfg(test)]

@@ -2,48 +2,52 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use serde::de::Error;
+use std::fmt::Display;
+
+use icu_locid::Locale;
 use serde::{Deserialize, Deserializer};
 
-#[derive(PartialEq, Debug)]
+#[derive(PartialEq, Debug, Deserialize)]
+#[serde(rename_all = "lowercase")]
 pub enum Direction {
     Forward,
     Backward,
     Both,
 }
 
-impl<'de> Deserialize<'de> for Direction {
-    fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
-    where
-        D: Deserializer<'de>,
-    {
-        let s = String::deserialize(deserializer)?;
-        match s.as_str() {
-            "forward" => Ok(Self::Forward),
-            "backward" => Ok(Self::Backward),
-            "both" => Ok(Self::Both),
-            _ => Err(D::Error::custom("unknown direction")),
-        }
-    }
-}
-
-#[derive(PartialEq, Debug, Default, Copy, Clone)]
+#[derive(PartialEq, Debug, Default, Copy, Clone, Deserialize)]
+#[serde(rename_all = "lowercase")]
 pub enum Visibility {
     Internal,
     #[default]
     External,
 }
 
-impl<'de> Deserialize<'de> for Visibility {
+#[derive(PartialEq, Debug, Clone)]
+pub enum TransformAlias {
+    Bcp47(Locale),
+    LegacyId(String),
+}
+
+impl<'de> Deserialize<'de> for TransformAlias {
     fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
     where
         D: Deserializer<'de>,
     {
         let s = String::deserialize(deserializer)?;
-        match s.as_str() {
-            "internal" => Ok(Self::Internal),
-            "external" => Ok(Self::External),
-            _ => Err(D::Error::custom("unknown visibility")),
+        if let Some(Ok(locale)) = s.contains("-t-").then(|| s.parse::<Locale>()) {
+            Ok(Self::Bcp47(locale))
+        } else {
+            Ok(Self::LegacyId(s))
+        }
+    }
+}
+
+impl Display for TransformAlias {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        match self {
+            Self::Bcp47(locale) => locale.fmt(f),
+            Self::LegacyId(s) => s.fmt(f),
         }
     }
 }
@@ -59,8 +63,8 @@ pub struct Resource {
     #[serde(default)]
     pub variant: Option<String>,
     #[serde(default)]
-    pub alias: Vec<String>,
+    pub alias: Vec<TransformAlias>,
     #[serde(default)]
     #[serde(rename = "backwardAlias")]
-    pub backward_alias: Vec<String>,
+    pub backward_alias: Vec<TransformAlias>,
 }

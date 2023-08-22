@@ -376,7 +376,9 @@ impl<'a, 'p> Pass2<'a, 'p> {
     }
 
     fn compile_basic_id(&self, basic_id: parse::BasicId) -> String {
-        let recombined_legacy_id = basic_id.to_string();
+        let mut recombined_legacy_id = basic_id.to_string();
+        // normalize to ASCII lowercase. This is what the mapping expects.
+        recombined_legacy_id.make_ascii_lowercase();
         if let Some(internal_id) = self.available_transliterators.get(&recombined_legacy_id) {
             internal_id.clone()
         } else {
