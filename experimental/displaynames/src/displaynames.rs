@@ -443,14 +443,13 @@ impl LocaleDisplayNamesFormatter {
 
     /// For a given locale and the data, find the longest prefix of the string that exists as a key in the CLDR locale data.
     pub fn find_longest_matching_subtag(&self, locale: &Locale) -> LanguageIdentifier {
-        let LocaleDisplayNamesFormatter { locale_data, .. } = self;
-
         // NOTE: The subtag ordering of the canonical locale is `language_script_region + variants + extensions`.
         // The logic to find the longest matching subtag is based on this ordering.
         if let Some(script) = locale.id.script {
             let lang_script_identifier: LanguageIdentifier =
                 (locale.id.language, Some(script), None).into();
-            if locale_data
+            if self
+                .locale_data
                 .get()
                 .names
                 .get_by(|uvstr| lang_script_identifier.strict_cmp(uvstr).reverse())
@@ -463,7 +462,8 @@ impl LocaleDisplayNamesFormatter {
             if locale.id.script.is_none() {
                 let lang_region_identifier: LanguageIdentifier =
                     (locale.id.language, None, Some(region)).into();
-                if locale_data
+                if self
+                    .locale_data
                     .get()
                     .names
                     .get_by(|uvstr| lang_region_identifier.strict_cmp(uvstr).reverse())
@@ -545,7 +545,7 @@ impl LocaleDisplayNamesFormatter {
                 )
             });
         }
-        // Throw an error if the LDN is none as it is not possible to have a locale string without the language.
+        // Fallback on language subtag in LanguageIdentifier id the key is not found in CLDR data.
         return ldn.unwrap_or(locale.id.language.as_str());
     }
 
