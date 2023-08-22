@@ -16,7 +16,7 @@ use std::io::Write;
 use std::path::Path;
 use std::sync::Mutex;
 
-include!("data/locales.rs.data");
+include!("locales.rs.data");
 
 #[test]
 fn generate_json_and_verify_postcard() {
