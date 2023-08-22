@@ -54,3 +54,29 @@ impl IterableDataProvider<UnitsConstantsV1Marker> for crate::DatagenProvider {
 }
 
 // TODO(#3905): Add tests for the provider.
+
+
+#[test]
+fn test_basic() {
+    use icu_locid::locale;
+    use icu_provider::prelude::*;
+    use icu_unitsconversion::provider::*;
+
+    let provider = crate::DatagenProvider::latest_tested_offline_subset();
+
+    let und: DataPayload<UnitsConstantsV1Marker> = provider
+    .load(DataRequest {
+        locale: &locale!("und").into(),
+        metadata: Default::default(),
+    })
+    .unwrap()
+    .take_payload()
+    .unwrap();
+
+    let constants = &und.get().to_owned().constants_map;
+    let values = &und.get().to_owned().constants_values;
+
+    assert_eq!(constants.len(), values.len());
+
+}
+
