@@ -42,8 +42,7 @@ fn test_concatenate() {
         let locale = locale!("en-001");
         let options: DisplayNamesOptions = Default::default();
 
-        let display_name = LocaleDisplayNamesFormatter::try_new_unstable(
-            &icu_testdata::unstable(),
+        let display_name = LocaleDisplayNamesFormatter::try_new(
             &locale.into(),
             options,
         )
