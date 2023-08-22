@@ -25,5 +25,3 @@ include = [
     "README.md"
 ]
 
-
-[dependencies]
