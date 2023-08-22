@@ -45,7 +45,6 @@ denylist = ["bench"]
 
 [lib]
 bench = false  # This option is required for Benchmark CI
-path = "src/lib.rs"
 
 [[bench]]
 name = "writeable"

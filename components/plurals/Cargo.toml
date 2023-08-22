@@ -60,7 +60,6 @@ bench = ["serde"]
 compiled_data = ["dep:icu_plurals_data", "dep:icu_locid_transform"]
 
 [lib]
-path = "src/lib.rs"
 bench = false  # This option is required for Benchmark CI
 
 [package.metadata.cargo-all-features]
