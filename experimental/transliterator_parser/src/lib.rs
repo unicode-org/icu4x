@@ -194,7 +194,7 @@ mod tests {
         "#;
 
         let t_map = HashMap::from([(
-            "AnyRev-AddRandomSpaces/FiftyPercent".into(),
+            "AnyRev-AddRandomSpaces/FiftyPercent".to_ascii_lowercase(),
             "und-t-s0-anyrev-d0-addrndsp-m0-fifty".into(),
         )]);
 
@@ -213,15 +213,15 @@ mod tests {
 
             let expected_id_group1 = vec![ds::SimpleId {
                 filter: FilterSet::all(),
-                id: Cow::Borrowed("x-Latin-InterIndic"),
+                id: Cow::Borrowed("x-latin-interindic"),
             }];
             let expected_id_group2 = vec![ds::SimpleId {
                 filter: parse_set_cp(r"[\ ]"),
-                id: Cow::Borrowed("x-Any-Remove"),
+                id: Cow::Borrowed("x-any-remove"),
             }];
             let expected_id_group3 = vec![ds::SimpleId {
                 filter: FilterSet::all(),
-                id: Cow::Borrowed("x-InterIndic-Devanagari"),
+                id: Cow::Borrowed("x-interindic-devanagari"),
             }];
 
             let expected_id_group_list: Vec<VarZeroVec<'_, ds::SimpleIdULE>> = vec![
@@ -295,9 +295,9 @@ mod tests {
                 variable_table: expected_var_table,
                 visibility: true,
                 dependencies: VarZeroVec::from(&[
-                    "x-Any-Remove",
-                    "x-InterIndic-Devanagari",
-                    "x-Latin-InterIndic",
+                    "x-any-remove",
+                    "x-interindic-devanagari",
+                    "x-latin-interindic",
                 ]),
             };
             assert_eq!(forward, expected_rbt);
@@ -308,7 +308,7 @@ mod tests {
             let expected_id_group1 = vec![
                 ds::SimpleId {
                     filter: FilterSet::all(),
-                    id: Cow::Borrowed("x-Devanagari-InterIndic"),
+                    id: Cow::Borrowed("x-devanagari-interindic"),
                 },
                 ds::SimpleId {
                     filter: FilterSet::all(),
@@ -317,7 +317,7 @@ mod tests {
             ];
             let expected_id_group2 = vec![ds::SimpleId {
                 filter: FilterSet::all(),
-                id: Cow::Borrowed("x-InterIndic-Latin"),
+                id: Cow::Borrowed("x-interindic-latin"),
             }];
 
             let expected_id_group_list: Vec<VarZeroVec<'_, ds::SimpleIdULE>> = vec![
@@ -369,7 +369,7 @@ mod tests {
                 arg: Cow::Borrowed("\u{F0009}padding"), // $1 and 'padding'
                 translit: ds::SimpleId {
                     filter: FilterSet::all(),
-                    id: Cow::Borrowed("x-Any-RevFnCall"),
+                    id: Cow::Borrowed("x-any-revfncall"),
                 },
             }];
 
@@ -391,9 +391,9 @@ mod tests {
                 visibility: true,
                 dependencies: VarZeroVec::from(&[
                     "und-t-s0-anyrev-d0-addrndsp-m0-fifty",
-                    "x-Any-RevFnCall",
-                    "x-Devanagari-InterIndic",
-                    "x-InterIndic-Latin",
+                    "x-any-revfncall",
+                    "x-devanagari-interindic",
+                    "x-interindic-latin",
                 ]),
             };
             assert_eq!(reverse, expected_rbt);
