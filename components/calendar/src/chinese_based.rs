@@ -602,7 +602,7 @@ impl<C: ChineseBased + CalendarArithmetic> ChineseBasedDateInner<C> {
     /// similar to `CalendarArithmetic::day_of_year`
     pub(crate) fn day_of_year(&self) -> u16 {
         let new_year = self.1.get_new_year();
-        let month_approx = 28 * (self.0.month - 1);
+        let month_approx = 28_u8.saturating_mul(self.0.month - 1);
         let days_until_month = if let ChineseBasedYearInfo::Data(data) = self.1 {
             let mut result = 0;
             let mut index = 0;
