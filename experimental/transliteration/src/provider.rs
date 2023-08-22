@@ -126,13 +126,7 @@ pub struct Rule<'a> {
 }
 
 /// The special matchers and replacers used by this transliterator.
-#[derive(
-    Debug,
-    Clone,
-    zerofrom::ZeroFrom, // QUESTION: does ZeroFrom need to be behind a feature?
-    PartialEq,
-    Eq,
-)]
+#[derive(Debug, Clone, zerofrom::ZeroFrom, PartialEq, Eq)]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake), databake(path = icu_transliteration::provider))]
 pub struct VarTable<'a> {

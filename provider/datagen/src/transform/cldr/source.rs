@@ -238,24 +238,16 @@ impl<'a> CldrDirTransform<'a> {
         transform: &str,
     ) -> Result<&'a crate::transform::cldr::cldr_serde::transforms::Resource, DataError> {
         let dir_suffix = self.0.dir_suffix()?;
-        let path = format!("{}-{dir_suffix}/main/{transform}/metadata.json", self.1);
-        if self.0.serde_cache.file_exists(&path)? {
-            self.0.serde_cache.read_and_parse_json(&path)
-        } else {
-            Err(DataErrorKind::Io(std::io::ErrorKind::NotFound)
-                .into_error()
-                .with_display_context(&path))
-        }
+        // using the -NoLang version because `transform` is not a valid LanguageIdentifier
+        let cldr_dir = CldrDirNoLang(self.0, format!("{}-{dir_suffix}/main/{transform}", self.1));
+        cldr_dir.read_and_parse("metadata.json")
     }
 
     pub fn read_source(&self, transform: &str) -> Result<String, DataError> {
         let dir_suffix = self.0.dir_suffix()?;
         let path = format!("{}-{dir_suffix}/main/{transform}/source.txt", self.1);
         if self.0.serde_cache.file_exists(&path)? {
-            let buf = self.0.serde_cache.root.read_to_buf(&path)?;
-            let s = String::from_utf8(buf)
-                .map_err(|e| DataError::custom("Source UTF-8 checking").with_display_context(&e))?;
-            Ok(s)
+            self.0.serde_cache.root.read_to_string(&path)
         } else {
             Err(DataErrorKind::Io(std::io::ErrorKind::NotFound)
                 .into_error()

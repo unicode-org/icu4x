@@ -21,23 +21,23 @@ impl<'a> TransliteratorCollection<'a> {
     }
 
     /// Given an internal ID for an existing transliterator, returns the directory name for a
-    /// source that maps to the given internal ID. Additionally returns `true` if this is a
-    /// forwards transliterator, or `false` if it is a backwards transliterator.
+    /// source that maps to the given internal ID. Additionally returns the direction (relative to the metadata)
+    /// of the passed internal ID.
     fn lookup_dir_from_internal_id(
         &self,
         internal_id: &str,
-    ) -> Result<Option<(String, bool)>, DataError> {
+    ) -> Result<Option<(String, icu_transliterator_parser::Direction)>, DataError> {
         for transform in self.cldr_transforms.list_transforms()? {
             let metadata = self.cldr_transforms.read_and_parse_metadata(&transform)?;
             let (forwards, backwards) = internal_ids_from_metadata(metadata);
             if let Some(forwards) = forwards {
                 if forwards == internal_id {
-                    return Ok(Some((transform, true)));
+                    return Ok(Some((transform, icu_transliterator_parser::Direction::Forward)));
                 }
             }
             if let Some(backwards) = backwards {
                 if backwards == internal_id {
-                    return Ok(Some((transform, false)));
+                    return Ok(Some((transform, icu_transliterator_parser::Direction::Reverse)));
                 }
             }
         }
@@ -99,7 +99,7 @@ impl DataProvider<TransliteratorRulesV1Marker> for crate::DatagenProvider {
 
         // our `supported_locales` use the same mapping mechanism as in lookup_dir_from_internal_id
         #[allow(clippy::unwrap_used)]
-        let (transform, is_forwards) = tc.lookup_dir_from_internal_id(&internal_id)?.unwrap();
+        let (transform, want_direction) = tc.lookup_dir_from_internal_id(&internal_id)?.unwrap();
 
         let metadata = self
             .cldr()?
@@ -119,24 +119,26 @@ impl DataProvider<TransliteratorRulesV1Marker> for crate::DatagenProvider {
 
         let source = self.cldr()?.transforms().read_source(&transform)?;
 
-        let dir = if is_forwards {
-            icu_transliterator_parser::Direction::Forward
-        } else {
-            icu_transliterator_parser::Direction::Reverse
-        };
         let (forwards, backwards) =
-            icu_transliterator_parser::parse_unstable(&source, dir, metadata, mapping, self)
+            icu_transliterator_parser::parse_unstable(&source, want_direction, metadata, mapping, self)
                 .map_err(|e| {
                     DataError::custom("transliterator parsing failed").with_debug_context(&e)
                 })?;
-        let transliterator = if is_forwards {
-            // the parser guarantees we receive this
-            #[allow(clippy::unwrap_used)]
-            forwards.unwrap()
-        } else {
-            // the parser guarantees we receive this
-            #[allow(clippy::unwrap_used)]
-            backwards.unwrap()
+        let transliterator = match want_direction {
+            icu_transliterator_parser::Direction::Forward => {
+                // the parser guarantees we receive this
+                #[allow(clippy::unwrap_used)]
+                forwards.unwrap()
+            },
+            icu_transliterator_parser::Direction::Reverse => {
+                // the parser guarantees we receive this
+                #[allow(clippy::unwrap_used)]
+                backwards.unwrap()
+            }
+            _ => {
+                // unreachable because `lookup_dir_from_internal_id` only ever returns one direction.
+                unreachable!("unexpected want_direction")
+            }
         };
 
         Ok(DataResponse {

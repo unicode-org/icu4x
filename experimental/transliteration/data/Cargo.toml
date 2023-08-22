@@ -24,5 +24,3 @@ include = [
     "LICENSE",
     "README.md"
 ]
-
-[dependencies]

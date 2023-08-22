@@ -177,7 +177,7 @@ impl AbstractFs {
         Ok(())
     }
 
-    pub(crate) fn read_to_buf(&self, path: &str) -> Result<Vec<u8>, DataError> {
+    fn read_to_buf(&self, path: &str) -> Result<Vec<u8>, DataError> {
         self.init()?;
         match self {
             Self::Fs(root) => {
@@ -209,6 +209,13 @@ impl AbstractFs {
                 DataError::custom("Not found in icu4x-datagen's data/").with_display_context(path)
             }),
         }
+    }
+
+    pub(crate) fn read_to_string(&self, path: &str) -> Result<String, DataError> {
+        let vec = self.read_to_buf(path)?;
+        let s = String::from_utf8(vec)
+            .map_err(|e| DataError::custom("Invalid UTF-8").with_display_context(&e))?;
+        Ok(s)
     }
 
     fn list(&self, path: &str) -> Result<impl Iterator<Item = String>, DataError> {
