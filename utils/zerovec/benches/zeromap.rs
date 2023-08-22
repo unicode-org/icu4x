@@ -349,9 +349,7 @@ fn bench_zerohashmap_lookup_large(c: &mut Criterion) {
     c.bench_function("zerohashmap/lookup/large", |b| {
         b.iter(|| {
             assert_eq!(
-                zero_hashmap
-                    .get(black_box(indexify("iu3333")))
-                    .map(|x| &x.0),
+                zero_hashmap.get(black_box(indexify("iu333"))).map(|x| &x.0),
                 Some("Inuktitut")
             );
             assert_eq!(
