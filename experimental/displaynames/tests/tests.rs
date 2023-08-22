@@ -43,11 +43,10 @@ fn test_concatenate() {
             input_1: &Locale::from_str("es-419-fonipa").unwrap(),
             expected: "Latin American Spanish (IPA Phonetics)",
         },
-        // TODO: Uncomment this when the fallback is properly supported.
-        // TestCase {
-        //     input_1: &locale!("xx-YY"),
-        //     expected: "xx (YY)",
-        // },
+        TestCase {
+            input_1: &locale!("xx-YY"),
+            expected: "xx (YY)",
+        },
     ];
     for cas in &cases {
         // TODO: Add tests for different data locales.

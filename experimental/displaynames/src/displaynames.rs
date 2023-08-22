@@ -339,6 +339,8 @@ impl LanguageDisplayNames {
 /// assert_eq!(display_name.of(&locale!("en-GB")), "British English");
 /// assert_eq!(display_name.of(&locale!("en")), "English");
 /// assert_eq!(display_name.of(&locale!("en-MX")), "English (Mexico)");
+/// assert_eq!(display_name.of(&locale!("xx-YY")), "xx (YY)");
+/// assert_eq!(display_name.of(&locale!("xx")), "xx");
 /// ```
 pub struct LocaleDisplayNamesFormatter {
     options: DisplayNamesOptions,
@@ -350,7 +352,7 @@ pub struct LocaleDisplayNamesFormatter {
     region_data: DataPayload<RegionDisplayNamesV1Marker>,
     variant_data: DataPayload<VariantDisplayNamesV1Marker>,
     // key_data: DataPayload<KeyDisplayNamesV1Marker>,
-    // measuerment_data: DataPayload<MeasurementSystemsDisplayNamesV1Marker>,
+    // measurement_data: DataPayload<MeasurementSystemsDisplayNamesV1Marker>,
     // subdivisions_data: DataPayload<SubdivisionsDisplayNamesV1Marker>,
     // transforms_data: DataPayload<TransformsDisplayNamesV1Marker>,
 }
@@ -549,8 +551,8 @@ impl LocaleDisplayNamesFormatter {
 
     fn get_longest_qualifying_substrings<'a>(
         &'a self,
-        locale: &Locale,
-        longest_matching_identifier: &LanguageIdentifier,
+        locale: &'a Locale,
+        longest_matching_identifier: &'a LanguageIdentifier,
     ) -> Vec<&'a str> {
         let LocaleDisplayNamesFormatter {
             options,
@@ -560,9 +562,9 @@ impl LocaleDisplayNamesFormatter {
             ..
         } = self;
 
-        let mut lqs: Vec<&str> = vec![];
+        let mut lqs: Vec<&'a str> = vec![];
 
-        if let Some(script) = locale.id.script {
+        if let Some(script) = &locale.id.script {
             // Ignore if the script was used to derive LDN.
             if longest_matching_identifier.script.is_none() {
                 let scriptdisplay = match options.style {
@@ -578,13 +580,11 @@ impl LocaleDisplayNamesFormatter {
                         .names
                         .get(&script.into_tinystr().to_unvalidated())
                 });
-                if let Some(scriptdn) = scriptdisplay {
-                    lqs.push(scriptdn);
-                }
+                lqs.push(scriptdisplay.unwrap_or(script.as_str()));
             }
         }
 
-        if let Some(region) = locale.id.region {
+        if let Some(region) = &locale.id.region {
             // Ignore if the region was used to derive LDN.
             if longest_matching_identifier.region.is_none() {
                 let regiondisplay = match options.style {
@@ -601,20 +601,18 @@ impl LocaleDisplayNamesFormatter {
                         .get(&region.into_tinystr().to_unvalidated())
                 });
 
-                if let Some(regiondn) = regiondisplay {
-                    lqs.push(regiondn);
-                }
+                lqs.push(regiondisplay.unwrap_or(region.as_str()));
             }
         }
 
-        for &variant_key in locale.id.variants.iter() {
-            if let Some(variant_dn) = variant_data
-                .get()
-                .names
-                .get(&variant_key.into_tinystr().to_unvalidated())
-            {
-                lqs.push(variant_dn);
-            }
+        for variant_key in locale.id.variants.iter() {
+            lqs.push(
+                variant_data
+                    .get()
+                    .names
+                    .get(&variant_key.into_tinystr().to_unvalidated())
+                    .unwrap_or(variant_key.as_str()),
+            );
         }
 
         return lqs;
