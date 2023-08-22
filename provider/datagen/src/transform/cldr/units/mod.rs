@@ -10,7 +10,7 @@ use icu_provider::{
     DataResponse,
 };
 use icu_unitsconversion::provider::{UnitsConstantsV1, UnitsConstantsV1Marker};
-use zerovec::{VarZeroVec, ZeroMap};
+use zerovec::ZeroMap;
 
 impl DataProvider<UnitsConstantsV1Marker> for crate::DatagenProvider {
     fn load(&self, _req: DataRequest) -> Result<DataResponse<UnitsConstantsV1Marker>, DataError> {
@@ -20,19 +20,15 @@ impl DataProvider<UnitsConstantsV1Marker> for crate::DatagenProvider {
             .cldr()?
             .core()
             .read_and_parse("supplemental/units.json")?;
-        let mut constants_values = Vec::<&str>::new();
-        let mut constants_map = BTreeMap::<&str, u16>::new();
+        let mut constants_map = BTreeMap::<&str, &str>::new();
 
         let constants = &_units_data.supplemental.unit_constants.constants;
         for (key, constant) in constants {
-            let index = constants_values.len() as u16;
-            constants_values.push(&constant.value);
-            constants_map.insert(key, index);
+            constants_map.insert(key, &constant.value);
         }
 
         let result = UnitsConstantsV1 {
             constants_map: ZeroMap::from_iter(constants_map.into_iter()),
-            constants_values: VarZeroVec::from(&constants_values),
         };
 
         Ok(DataResponse {
@@ -53,9 +49,6 @@ impl IterableDataProvider<UnitsConstantsV1Marker> for crate::DatagenProvider {
     }
 }
 
-// TODO(#3905): Add tests for the provider.
-
-
 #[test]
 fn test_basic() {
     use icu_locid::locale;
@@ -65,18 +58,16 @@ fn test_basic() {
     let provider = crate::DatagenProvider::latest_tested_offline_subset();
 
     let und: DataPayload<UnitsConstantsV1Marker> = provider
-    .load(DataRequest {
-        locale: &locale!("und").into(),
-        metadata: Default::default(),
-    })
-    .unwrap()
-    .take_payload()
-    .unwrap();
+        .load(DataRequest {
+            locale: &locale!("und").into(),
+            metadata: Default::default(),
+        })
+        .unwrap()
+        .take_payload()
+        .unwrap();
 
     let constants = &und.get().to_owned().constants_map;
-    let values = &und.get().to_owned().constants_values;
 
-    assert_eq!(constants.len(), values.len());
-
+    assert_eq!(constants.get("ft_to_m").unwrap(), "0.3048");
+    assert_eq!(constants.get("ft2_to_m2").unwrap(), "ft_to_m*ft_to_m");
 }
-

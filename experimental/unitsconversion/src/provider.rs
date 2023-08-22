@@ -10,7 +10,7 @@
 //! Read more about data providers: [`icu_provider`]
 
 use icu_provider::{yoke, zerofrom};
-use zerovec::{VarZeroVec, ZeroMap};
+use zerovec::ZeroMap;
 use Default;
 
 /// This type contains all of the constants data for units conversion.
@@ -30,14 +30,9 @@ use Default;
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[yoke(prove_covariance_manually)]
 pub struct UnitsConstantsV1<'data> {
-    /// Maps from constant name (e.g. m-to-ft) to index in the constants_values where the constant value can be retrieved.
-    #[cfg_attr(feature = "serde", serde(borrow))]
-    pub constants_map: ZeroMap<'data, str, u16>,
-
     // TODO(#3882): Use a more efficient representation for the values with numerators and denominators.
     // Also, the constant types.
-    /// Contains all the constant values (including numerators and denominators) and can
-    /// be accessed through the index from the constants_map.
+    /// Maps from constant name (e.g. ft_to_m) to the value of the constant (e.g. 0.3048).
     #[cfg_attr(feature = "serde", serde(borrow))]
-    pub constants_values: VarZeroVec<'data, str>,
+    pub constants_map: ZeroMap<'data, str, str>,
 }
