@@ -40,12 +40,7 @@ impl DataProvider<UnitsConstantsV1Marker> for crate::DatagenProvider {
 
 impl IterableDataProvider<UnitsConstantsV1Marker> for crate::DatagenProvider {
     fn supported_locales(&self) -> Result<Vec<DataLocale>, DataError> {
-        Ok(self
-            .cldr()?
-            .numbers()
-            .list_langs()?
-            .map(DataLocale::from)
-            .collect())
+        Ok(vec![Default::default()])
     }
 }
 
