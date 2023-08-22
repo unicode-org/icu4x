@@ -1202,7 +1202,7 @@
         "filter": [
           "\u0000-􏿿"
         ],
-        "id": "x-Any-NFD"
+        "id": "x-any-nfd"
       }
     ]
   ],
@@ -2541,6 +2541,6 @@
     ]
   ],
   "dependencies": [
-    "x-Any-NFD"
+    "x-any-nfd"
   ]
 }

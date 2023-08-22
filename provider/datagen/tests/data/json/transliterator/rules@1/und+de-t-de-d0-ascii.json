@@ -2100,7 +2100,7 @@
         "filter": [
           "\u0000-􏿿"
         ],
-        "id": "und-t-und-latn-d0-ascii"
+        "id": "und-t-und-Latn-d0-ascii"
       }
     ]
   ],
@@ -2173,6 +2173,6 @@
     []
   ],
   "dependencies": [
-    "und-t-und-latn-d0-ascii"
+    "und-t-und-Latn-d0-ascii"
   ]
 }

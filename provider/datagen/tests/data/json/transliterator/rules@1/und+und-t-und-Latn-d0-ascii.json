@@ -592,7 +592,7 @@
         "filter": [
           "\u0000-􏿿"
         ],
-        "id": "x-Any-NFD"
+        "id": "x-any-nfd"
       }
     ],
     [
@@ -600,7 +600,7 @@
         "filter": [
           "\u0000-􏿿"
         ],
-        "id": "x-Any-NFC"
+        "id": "x-any-nfc"
       }
     ]
   ],
@@ -6540,7 +6540,7 @@
     ]
   ],
   "dependencies": [
-    "x-Any-NFC",
-    "x-Any-NFD"
+    "x-any-nfc",
+    "x-any-nfd"
   ]
 }
