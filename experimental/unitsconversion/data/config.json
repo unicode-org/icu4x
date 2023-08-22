@@ -1,0 +1,19 @@
+{
+    "keys": {
+        "Explicit": [
+            "units/constants@1"
+        ]
+    },
+    "locales": "Recommended",
+    "cldr": "Latest",
+    "icu_export": "Latest",
+    "segmenter_lstm": "Latest",
+    "export": {
+        "Baked": {
+            "path": "data",
+            "pretty": true
+        }
+    },
+    "fallback": "Runtime",
+    "overwrite": true
+}

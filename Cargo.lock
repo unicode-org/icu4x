@@ -1490,6 +1490,7 @@ dependencies = [
  "icu_segmenter",
  "icu_singlenumberformatter",
  "icu_timezone",
+ "icu_unitsconversion",
  "itertools",
  "log",
  "memchr",
@@ -1991,6 +1992,20 @@ dependencies = [
  "icu_properties",
  "icu_provider",
  "log",
+ "tinystr",
+ "zerovec",
+]
+
+[[package]]
+name = "icu_unitsconversion"
+version = "1.2.0"
+dependencies = [
+ "databake",
+ "displaydoc",
+ "fixed_decimal",
+ "icu_locid",
+ "icu_provider",
+ "serde",
  "tinystr",
  "zerovec",
 ]
