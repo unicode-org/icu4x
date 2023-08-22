@@ -132,7 +132,13 @@ const KOREAN_LOCATION_1961: Location = Location::new_unchecked(
 /// ```
 /// # Era codes
 ///
-/// This Calendar supports a single era code "dangi" based on the year -2332 ISO (2333 BCE) as year 1.
+/// This Calendar supports a single era code "dangi" based on the year -2332 ISO (2333 BCE) as year 1. Typically
+/// years will be formatted using cyclic years and the related ISO year.
+///
+/// # Month codes
+///
+/// This calendar is a lunisolar calendar. It supports regular month codes `"M01" - "M12"` as well
+/// as leap month codes `"M01L" - "M12L"`.
 #[derive(Copy, Clone, Debug, Default, PartialEq, Eq, PartialOrd, Ord, Hash)]
 #[allow(clippy::exhaustive_structs)] // this type is stable
 pub struct Dangi;

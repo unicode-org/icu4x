@@ -64,12 +64,7 @@
 //! offset of a given special construct when we encode an element. The precomputed lengths mean we
 //! never overflow into the indices of the following `VZV`.
 
-// more (data struct compatible) runtime optimization opportunities:
-// - deduplicate special constructs ($a = hello; $b = hello; should only generate one hello element)
-//   - especially important for equivalent unicodesets
-// - inline single-use variables ($a = x; $a > b; => x > b;)
-// - replace uses of single-element variables with the element itself ($a = [a-z]; $a > a; => [a-z] > a;)
-// - flatten single-element sets into literals ([a] > b; => a > b;)
+// TODO(#3825): Datagen optimizations (variable inlining, set flattening, deduplicating VarTable)
 
 /*
 Encoding example:
@@ -118,13 +113,15 @@ as described in the zero-copy format, and the maps here are just arrays)
     ]
 */
 
+use crate::errors::{Result, PEK};
 use crate::parse;
-use crate::parse::{ElementLocation as EL, HalfRule, QuantifierKind, UnicodeSet};
-use parse::Result;
-use parse::PEK;
+use crate::parse::{FilterSet, HalfRule, QuantifierKind};
+use icu_transliteration::provider::RuleBasedTransliterator;
 use std::collections::{HashMap, HashSet};
 
+mod pass2;
 mod rule_group_agg;
+use crate::compile::pass2::Pass2;
 use rule_group_agg::RuleGroups;
 
 enum SingleDirection {
@@ -142,6 +139,22 @@ struct SpecialConstructCounts {
     num_segments: usize,
     num_unicode_sets: usize,
     num_function_calls: usize,
+    // backrefs have no data, they're simply an integer, so we only care about the maximum number
+    // we need to encode
+    max_backref_num: u32,
+}
+
+impl SpecialConstructCounts {
+    fn num_total(&self) -> usize {
+        self.num_compounds
+            + self.num_quantifiers_opt
+            + self.num_quantifiers_kleene
+            + self.num_quantifiers_kleene_plus
+            + self.num_segments
+            + self.num_unicode_sets
+            + self.num_function_calls
+            + self.max_backref_num as usize
+    }
 }
 
 // Data for a given direction or variable definition (the "key")
@@ -154,16 +167,14 @@ struct Pass1Data {
     used_transliterators: HashSet<parse::BasicId>,
 }
 
-#[allow(unused)] // TODO: remove annotation
 #[derive(Debug, Clone)]
 struct DirectedPass1Result<'p> {
     // data with dependencies resolved and counts summed
     data: Pass1Data,
     groups: RuleGroups<'p>,
-    filter: Option<UnicodeSet>,
+    filter: Option<FilterSet>,
 }
 
-#[allow(unused)] // TODO: remove annotation
 #[derive(Debug, Clone)]
 struct Pass1Result<'p> {
     forward_result: DirectedPass1Result<'p>,
@@ -179,8 +190,8 @@ struct Pass1<'p> {
     forward_data: Pass1Data,
     reverse_data: Pass1Data,
     variable_data: HashMap<String, Pass1Data>,
-    forward_filter: Option<UnicodeSet>,
-    reverse_filter: Option<UnicodeSet>,
+    forward_filter: Option<FilterSet>,
+    reverse_filter: Option<FilterSet>,
     forward_rule_group_agg: rule_group_agg::ForwardRuleGroupAggregator<'p>,
     reverse_rule_group_agg: rule_group_agg::ReverseRuleGroupAggregator<'p>,
     variable_definitions: HashMap<String, &'p [parse::Element]>,
@@ -246,9 +257,6 @@ impl<'p> Pass1<'p> {
     ) -> Result<&'a [parse::Rule]> {
         let rules = match rules {
             [parse::Rule::GlobalFilter(filter), rest @ ..] => {
-                if filter.has_strings() {
-                    return Err(PEK::GlobalFilterWithStrings.into());
-                }
                 self.forward_filter = Some(filter.clone());
 
                 rest
@@ -257,9 +265,6 @@ impl<'p> Pass1<'p> {
         };
         let rules = match rules {
             [rest @ .., parse::Rule::GlobalInverseFilter(filter)] => {
-                if filter.has_strings() {
-                    return Err(PEK::GlobalFilterWithStrings.into());
-                }
                 self.reverse_filter = Some(filter.clone());
 
                 rest
@@ -500,7 +505,7 @@ impl<'a, 'p, F: Fn(&str) -> bool> SourceValidator<'a, 'p, F> {
                 return Err(PEK::AnchorEndNotAtEnd.into());
             }
             elt => {
-                return Err(PEK::UnexpectedElement(elt.kind(), EL::Source).into());
+                return Err(PEK::UnexpectedElementInSource(elt.kind().debug_str()).into());
             }
         }
         Ok(())
@@ -605,6 +610,7 @@ impl<'a, 'p, F: Fn(&str) -> bool> TargetValidator<'a, 'p, F> {
                 if *num > self.num_segments {
                     return Err(PEK::BackReferenceOutOfRange.into());
                 }
+                self.data.counts.max_backref_num = self.data.counts.max_backref_num.max(*num);
             }
             parse::Element::FunctionCall(id, inner) => {
                 self.validate_section(inner, false)?;
@@ -626,7 +632,7 @@ impl<'a, 'p, F: Fn(&str) -> bool> TargetValidator<'a, 'p, F> {
                 // while anchors have no effect on the target side, they may still appear
             }
             elt => {
-                return Err(PEK::UnexpectedElement(elt.kind(), EL::Target).into());
+                return Err(PEK::UnexpectedElementInTarget(elt.kind().debug_str()).into());
             }
         }
         Ok(())
@@ -709,7 +715,9 @@ impl<'a, 'p, F: Fn(&str) -> bool> VariableDefinitionValidator<'a, 'p, F> {
                 self.data.counts.num_unicode_sets += 1;
             }
             elt => {
-                return Err(PEK::UnexpectedElement(elt.kind(), EL::VariableDefinition).into());
+                return Err(
+                    PEK::UnexpectedElementInVariableDefinition(elt.kind().debug_str()).into(),
+                );
             }
         }
         Ok(())
@@ -802,26 +810,28 @@ impl Pass1ResultGenerator {
         // will need to take into account recursive dependencies from `used_vars` as well
         let used_transliterators = seed_transliterators.clone();
 
-        let counts = used_variables
-            .iter()
-            .try_fold(seed_data.counts, |mut counts, var| {
-                // we check for unknown variables during the first pass, so these should exist
-                let var_data = var_data_map.get(var).ok_or(PEK::Internal)?;
-                counts.num_compounds += var_data.counts.num_compounds;
-                counts.num_segments += var_data.counts.num_segments;
-                counts.num_quantifiers_opt += var_data.counts.num_quantifiers_opt;
-                counts.num_quantifiers_kleene += var_data.counts.num_quantifiers_kleene;
-                counts.num_quantifiers_kleene_plus += var_data.counts.num_quantifiers_kleene_plus;
-                counts.num_unicode_sets += var_data.counts.num_unicode_sets;
-                counts.num_function_calls += var_data.counts.num_function_calls;
+        let mut combined_counts = seed_data.counts;
 
-                Ok::<_, crate::ParseError>(counts)
-            })?;
+        for var in &used_variables {
+            // we check for unknown variables during the first pass, so these should exist
+            let var_data = var_data_map.get(var).ok_or(PEK::Internal)?;
+            let var_counts: SpecialConstructCounts = var_data.counts;
+            combined_counts.num_compounds += var_counts.num_compounds;
+            combined_counts.num_segments += var_counts.num_segments;
+            combined_counts.num_quantifiers_opt += var_counts.num_quantifiers_opt;
+            combined_counts.num_quantifiers_kleene += var_counts.num_quantifiers_kleene;
+            combined_counts.num_quantifiers_kleene_plus += var_counts.num_quantifiers_kleene_plus;
+            combined_counts.num_unicode_sets += var_counts.num_unicode_sets;
+            combined_counts.num_function_calls += var_counts.num_function_calls;
+            combined_counts.max_backref_num = combined_counts
+                .max_backref_num
+                .max(var_counts.max_backref_num);
+        }
 
         Ok(Pass1Data {
             used_transliterators,
             used_variables,
-            counts,
+            counts: combined_counts,
         })
     }
 
@@ -852,19 +862,36 @@ impl Pass1ResultGenerator {
     }
 }
 
+// returns (forward, backward) transliterators if they were requested
 pub(crate) fn compile(
     rules: Vec<parse::Rule>,
     direction: parse::Direction,
-) -> Result<icu_transliteration::provider::RuleBasedTransliterator<'static>> {
+) -> Result<(
+    Option<RuleBasedTransliterator<'static>>,
+    Option<RuleBasedTransliterator<'static>>,
+)> {
     // TODO(#3736): decide if validation should be metadata-direction dependent
     //  example: transliterator with metadata-direction "forward", and a rule `[a-z] < b ;` (invalid)
     //  - if validation is dependent, this rule is valid because it's not used in the forward direction
     //  - if validation is independent, this rule is invalid because the reverse direction is also checked
-    let mut pass1 = Pass1::new(direction);
-    pass1.run(&rules)?;
-    let _result = pass1.generate_result();
+    let mut p1 = Pass1::new(direction);
+    p1.run(&rules)?;
+    let p1_result = p1.generate_result()?;
 
-    todo!()
+    let forward_t = if direction.permits(parse::Direction::Forward) {
+        let t = Pass2::run(p1_result.forward_result, &p1_result.variable_definitions)?;
+        Some(t)
+    } else {
+        None
+    };
+    let reverse_t = if direction.permits(parse::Direction::Reverse) {
+        let t = Pass2::run(p1_result.reverse_result, &p1_result.variable_definitions)?;
+        Some(t)
+    } else {
+        None
+    };
+
+    Ok((forward_t, reverse_t))
 }
 
 #[cfg(test)]
@@ -888,7 +915,7 @@ mod tests {
     }
 
     fn pass1data_from_parts(
-        translit_deps: &[(&'static str, &'static str, &'static str)],
+        translit_deps: &[(&'static str, &'static str, Option<&'static str>)],
         var_deps: &[&'static str],
         counts: SpecialConstructCounts,
     ) -> Pass1Data {
@@ -900,7 +927,7 @@ mod tests {
             data.used_transliterators.insert(parse::BasicId {
                 source: source.into(),
                 target: target.into(),
-                variant: variant.into(),
+                variant: variant.map(|s| s.into()),
             });
         }
         for &var in var_deps {
@@ -949,14 +976,15 @@ mod tests {
                 num_segments: 1,
                 num_function_calls: 1,
                 num_unicode_sets: 1,
+                max_backref_num: 1,
                 ..Default::default()
             };
             let expected_fwd_data = pass1data_from_parts(
                 &[
-                    ("Bidi", "Dependency", "One"),
-                    ("Forward", "Dependency", ""),
-                    ("Any", "AnotherForwardDependency", ""),
-                    ("YetAnother", "ForwardDependency", ""),
+                    ("Bidi", "Dependency", Some("One")),
+                    ("Forward", "Dependency", None),
+                    ("Any", "AnotherForwardDependency", None),
+                    ("YetAnother", "ForwardDependency", None),
                 ],
                 &["used_both", "used_fwd", "literal1", "literal2"],
                 counts,
@@ -970,16 +998,17 @@ mod tests {
                 num_quantifiers_kleene_plus: 2,
                 num_segments: 2,
                 num_function_calls: 3,
+                max_backref_num: 2,
                 ..Default::default()
             };
             let expected_rev_data = pass1data_from_parts(
                 &[
-                    ("Dependency", "Bidi", "One"),
-                    ("Backward", "Dependency", ""),
-                    ("Any", "AnotherBackwardDependency", ""),
-                    ("Any", "Many", ""),
-                    ("Any", "Backwardz", ""),
-                    ("Any", "Deps", ""),
+                    ("Dependency", "Bidi", Some("One")),
+                    ("Backward", "Dependency", None),
+                    ("Any", "AnotherBackwardDependency", None),
+                    ("Any", "Many", None),
+                    ("Any", "Backwardz", None),
+                    ("Any", "Deps", None),
                 ],
                 &["used_rev", "literal1", "literal2"],
                 counts,
@@ -1085,14 +1114,15 @@ mod tests {
                 num_unicode_sets: 3,
                 num_function_calls: 1,
                 num_segments: 1,
+                max_backref_num: 1,
                 ..Default::default()
             };
             let fwd_data = pass1data_from_parts(
                 &[
-                    ("Bidi", "Dependency", "One"),
-                    ("Forward", "Dependency", ""),
-                    ("Any", "AnotherForwardDependency", ""),
-                    ("YetAnother", "ForwardDependency", ""),
+                    ("Bidi", "Dependency", Some("One")),
+                    ("Forward", "Dependency", None),
+                    ("Any", "AnotherForwardDependency", None),
+                    ("YetAnother", "ForwardDependency", None),
                 ],
                 &["used_both", "used_fwd", "literal1", "literal2"],
                 fwd_counts,
@@ -1105,16 +1135,17 @@ mod tests {
                 num_quantifiers_opt: 1,
                 num_segments: 2,
                 num_function_calls: 3,
+                max_backref_num: 2,
                 ..Default::default()
             };
             let rev_data = pass1data_from_parts(
                 &[
-                    ("Dependency", "Bidi", "One"),
-                    ("Backward", "Dependency", ""),
-                    ("Any", "AnotherBackwardDependency", ""),
-                    ("Any", "Many", ""),
-                    ("Any", "Backwardz", ""),
-                    ("Any", "Deps", ""),
+                    ("Dependency", "Bidi", Some("One")),
+                    ("Backward", "Dependency", None),
+                    ("Any", "AnotherBackwardDependency", None),
+                    ("Any", "Many", None),
+                    ("Any", "Backwardz", None),
+                    ("Any", "Deps", None),
                 ],
                 &["used_both", "used_rev", "literal1", "literal2"],
                 rev_counts,
@@ -1266,8 +1297,6 @@ mod tests {
             (Pass, r":: [a-z];"),
             (Pass, r":: ([a-z]);"),
             (Pass, r":: [a-z] ; :: ([a-z]);"),
-            (Fail, r":: [{string}] ;"),
-            (Fail, r":: ([{string}]);"),
             (Fail, r":: [a-z] ; :: [a-z] ;"),
             (Fail, r":: ([a-z]) ; :: ([a-z]) ;"),
             (Fail, r":: ([a-z]) ; :: [a-z] ;"),

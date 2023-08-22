@@ -111,6 +111,10 @@ const CHINESE_LOCATION_POST_1929: Location =
 /// * _The Mathematics of the Chinese Calendar_ by Helmer Aslaksen <https://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.139.9311&rep=rep1&type=pdf>
 /// * Wikipedia: <https://en.wikipedia.org/wiki/Chinese_calendar>
 ///
+/// # Month codes
+///
+/// This calendar is a lunisolar calendar. It supports regular month codes `"M01" - "M12"` as well
+/// as leap month codes `"M01L" - "M12L"`.
 #[derive(Copy, Clone, Debug, Default, PartialEq, Eq, PartialOrd, Ord, Hash)]
 #[allow(clippy::exhaustive_structs)] // this type is stable
 pub struct Chinese;

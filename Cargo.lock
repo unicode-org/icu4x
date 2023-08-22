@@ -1791,6 +1791,7 @@ dependencies = [
  "serde",
  "serde_json",
  "stable_deref_trait",
+ "tinystr",
  "writeable",
  "yoke",
  "zerofrom",
@@ -1978,6 +1979,8 @@ dependencies = [
  "icu_transliteration",
  "icu_unicodeset_parser",
  "log",
+ "zerofrom",
+ "zerovec",
 ]
 
 [[package]]
@@ -4240,6 +4243,23 @@ dependencies = [
  "syn 2.0.15",
  "synstructure",
  "zerofrom",
+ "zerovec",
+]
+
+[[package]]
+name = "zerotrie"
+version = "0.1.0"
+dependencies = [
+ "bincode",
+ "criterion",
+ "displaydoc",
+ "icu_benchmark_macros",
+ "litemap",
+ "postcard",
+ "rand",
+ "rand_pcg",
+ "serde",
+ "serde_json",
  "zerovec",
 ]
 

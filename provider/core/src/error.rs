@@ -47,6 +47,10 @@ pub enum DataErrorKind {
     #[displaydoc("Invalid state")]
     InvalidState,
 
+    /// The syntax of the [`DataKey`] or [`DataLocale`] was invalid.
+    #[displaydoc("Parse error for data key or data locale")]
+    KeyLocaleSyntax,
+
     /// An unspecified error occurred, such as a Serde error.
     ///
     /// Check debug logs for potentially more information.

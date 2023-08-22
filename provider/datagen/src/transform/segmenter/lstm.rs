@@ -4,7 +4,6 @@
 
 //! This module contains provider implementations backed by LSTM segmentation data.
 
-use crate::options;
 use icu_locid::langid;
 use icu_provider::datagen::IterableDataProvider;
 use icu_provider::prelude::*;
@@ -203,23 +202,6 @@ pub(crate) fn data_locale_to_model_name(locale: &DataLocale) -> Option<&'static 
     }
 }
 
-pub(crate) fn filter_data_locales(
-    locales: HashSet<DataLocale>,
-    segmenter_models: &options::SegmenterModelInclude,
-) -> HashSet<DataLocale> {
-    match &segmenter_models {
-        options::SegmenterModelInclude::Recommended => locales,
-        options::SegmenterModelInclude::None => Default::default(),
-        options::SegmenterModelInclude::Explicit(list) => locales
-            .into_iter()
-            .filter(|locale| {
-                list.iter()
-                    .any(|x| Some(x.as_str()) == data_locale_to_model_name(locale))
-            })
-            .collect(),
-    }
-}
-
 impl DataProvider<LstmForWordLineAutoV1Marker> for crate::DatagenProvider {
     fn load(
         &self,
@@ -231,7 +213,6 @@ impl DataProvider<LstmForWordLineAutoV1Marker> for crate::DatagenProvider {
             .ok_or(DataErrorKind::MissingLocale.with_req(LstmForWordLineAutoV1Marker::KEY, req))?;
 
         let lstm_data = self
-            .source
             .segmenter_lstm()?
             .read_and_parse_json::<RawLstmData>(&format!("{model}/weights.json"))
             .map_err(|_| DataErrorKind::MissingLocale.into_error())?;
@@ -268,9 +249,8 @@ mod tests {
 
     #[test]
     fn thai_word_break_with_grapheme_model() {
-        let provider = crate::DatagenProvider::for_test();
+        let provider = crate::DatagenProvider::latest_tested_offline_subset();
         let raw_data = provider
-            .source
             .segmenter_lstm()
             .unwrap()
             .read_and_parse_json::<RawLstmData>("Thai_graphclust_model4_heavy/weights.json")

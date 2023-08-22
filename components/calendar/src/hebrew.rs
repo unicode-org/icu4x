@@ -33,7 +33,7 @@ use crate::calendar_arithmetic::{ArithmeticDate, CalendarArithmetic};
 use crate::helpers::{self, div_rem_euclid, div_rem_euclid_f64, final_func, next_u8};
 use crate::julian::Julian;
 use crate::rata_die::RataDie;
-use crate::types::Moment;
+use crate::types::{FormattableMonth, Moment};
 use crate::Iso;
 use crate::{types, Calendar, CalendarError, Date, DateDuration, DateDurationUnit, DateTime};
 use ::tinystr::tinystr;
@@ -41,12 +41,33 @@ use ::tinystr::tinystr;
 /// Biblical Hebrew
 #[derive(Copy, Clone, Debug, Default, Hash, Eq, PartialEq, PartialOrd, Ord)]
 #[allow(clippy::exhaustive_structs)]
-pub struct BookHebrew {
+struct BookHebrew {
     year: i32,
     month: u8,
     day: u8,
 }
-/// Civil Hebrew Calendar
+
+/// The Civil Hebrew Calendar
+///
+/// The [Hebrew calendar] is a lunisolar calendar used as the Jewish liturgical calendar
+/// as well as an official calendar in Israel.
+///
+/// This calendar is the _civil_ Hebrew calendar, with the year starting at in the month of Tishrei.
+///
+/// # Era codes
+///
+/// This calendar supports a single era code, Anno Mundi, with code `"am"`
+///
+/// # Month codes
+///
+/// This calendar is a lunisolar calendar and thus has a leap month. It supports codes `"M01"-"M12"`
+/// for regular months, and the leap month Adar I being coded as `"M05L"`.
+///
+/// [`FormattableMonth`] has slightly divergent behavior: because the regular month Adar is formatted
+/// as "Adar II" in a leap year, this calendar will produce the special code `"M06L"` in any [`FormattableMonth`]
+/// objects it creates.
+///
+/// [Hebrew calendar]: https://en.wikipedia.org/wiki/Hebrew_calendar
 #[derive(Copy, Clone, Debug, Default, Hash, Eq, PartialEq, PartialOrd, Ord)]
 #[allow(clippy::exhaustive_structs)]
 pub struct Hebrew;
@@ -117,7 +138,7 @@ impl Calendar for Hebrew {
         day: u8,
     ) -> Result<Self::DateInner, CalendarError> {
         let is_leap_year = Self::is_leap_year(year);
-        let year = if era.0 == tinystr!(16, "hebrew") {
+        let year = if era.0 == tinystr!(16, "hebrew") || era.0 == tinystr!(16, "am") {
             year
         } else {
             return Err(CalendarError::UnknownEra(era.0, self.debug_name()));
@@ -133,7 +154,8 @@ impl Calendar for Hebrew {
                 "M04" => 4,
                 "M05" => 5,
                 "M05L" => 6,
-                "M06" => 7,
+                // M06L is the formatting era code used for Adar II
+                "M06" | "M06L" => 7,
                 "M07" => 8,
                 "M08" => 9,
                 "M09" => 10,
@@ -218,15 +240,22 @@ impl Calendar for Hebrew {
         Self::year_as_hebrew(date.0.year)
     }
 
-    fn month(&self, date: &Self::DateInner) -> types::FormattableMonth {
+    fn month(&self, date: &Self::DateInner) -> FormattableMonth {
         let mut ordinal = date.0.month;
         let is_leap_year = Self::is_leap_year(date.0.year);
 
-        if is_leap_year && ordinal == 6 {
-            return types::FormattableMonth {
-                ordinal: ordinal as u32,
-                code: types::MonthCode(tinystr!(4, "M05L")),
-            };
+        if is_leap_year {
+            if ordinal == 6 {
+                return types::FormattableMonth {
+                    ordinal: ordinal as u32,
+                    code: types::MonthCode(tinystr!(4, "M05L")),
+                };
+            } else if ordinal == 7 {
+                return types::FormattableMonth {
+                    ordinal: ordinal as u32,
+                    code: types::MonthCode(tinystr!(4, "M06L")),
+                };
+            }
         }
 
         if is_leap_year && ordinal > 6 {
@@ -279,8 +308,7 @@ impl Hebrew {
     }
 
     // Converts a Biblical Hebrew Date to a Civil Hebrew Date
-    #[allow(clippy::unwrap_used)]
-    fn biblical_to_civil_date(biblical_date: BookHebrew) -> Date<Hebrew> {
+    fn biblical_to_civil_date(biblical_date: BookHebrew) -> HebrewDateInner {
         let biblical_month = biblical_date.month;
         let biblical_year = biblical_date.year;
         let mut civil_month;
@@ -294,7 +322,17 @@ impl Hebrew {
             civil_month += 1;
         }
 
-        Date::try_new_hebrew_date(biblical_year, civil_month, biblical_date.day).unwrap()
+        debug_assert!(ArithmeticDate::<Hebrew>::new_from_lunar_ordinals(
+            biblical_year,
+            civil_month,
+            biblical_date.day
+        )
+        .is_ok());
+        HebrewDateInner(ArithmeticDate::new_unchecked(
+            biblical_year,
+            civil_month,
+            biblical_date.day,
+        ))
     }
 
     // Converts a Civil Hebrew Date to a Biblical Hebrew Date
@@ -369,10 +407,9 @@ impl Hebrew {
         BookHebrew::fixed_from_book_hebrew(book_date)
     }
 
-    #[allow(clippy::unwrap_used)]
     fn civil_hebrew_from_fixed(date: RataDie) -> Date<Hebrew> {
         let book_hebrew = BookHebrew::book_hebrew_from_fixed(date);
-        Hebrew::biblical_to_civil_date(book_hebrew)
+        Date::from_raw(Hebrew::biblical_to_civil_date(book_hebrew), Hebrew)
     }
 
     fn year_as_hebrew(civil_year: i32) -> types::FormattableYear {
@@ -600,7 +637,6 @@ impl BookHebrew {
     }
 
     // Lisp code reference: https://github.com/EdReingold/calendar-code2/blob/main/calendar.l#L2352
-    #[allow(dead_code, clippy::unwrap_used)]
     fn book_hebrew_from_fixed(date: RataDie) -> BookHebrew {
         let approx = helpers::i64_to_i32(
             (div_rem_euclid_f64((date - FIXED_HEBREW_EPOCH) as f64, 35975351.0 / 98496.0).0) as i64, //  The value 35975351/98496, the average length of a BookHebrew year, can be approximated by 365.25
@@ -1069,8 +1105,7 @@ mod tests {
                 year: case.year,
                 month: case.month,
                 day: case.day,
-            })
-            .inner;
+            });
             let days_in_month =
                 Hebrew::last_day_of_civil_hebrew_month(civil_date.0.year, civil_date.0.month);
             assert_eq!(days_in_month, *expected);
@@ -1285,7 +1320,7 @@ mod tests {
                 civil_date_nums.0,
             ));
 
-            let book_to_civil = Hebrew::biblical_to_civil_date(book_date).inner;
+            let book_to_civil = Hebrew::biblical_to_civil_date(book_date);
             let civil_to_book = Hebrew::civil_to_biblical_date(civil_date);
 
             assert_eq!(civil_date, book_to_civil);

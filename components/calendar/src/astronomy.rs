@@ -354,7 +354,6 @@ impl Astronomical {
     ///
     /// Based on functions from _Calendrical Calculations_ by Reingold & Dershowitz.
     /// Reference lisp code: https://github.com/EdReingold/calendar-code2/blob/9afc1f3/calendar.l#L3670-L3679
-    #[allow(clippy::unwrap_used)]
     pub(crate) fn dusk(date: f64, location: Location, alpha: f64) -> Option<Moment> {
         let evening = false;
         let moment_of_depression = Self::moment_of_depression(
@@ -381,7 +380,7 @@ impl Astronomical {
         angle + poly(c, coefs)
     }
 
-    /// Calculates the declination at a given [`Moment`] of UTC time of an object at latitude `beta` and longitude `lambda`; all angles are in degrees.
+    /// Calculates the declination at a given [`Moment`] of UTC time of an object at ecliptic latitude `beta` and ecliptic longitude `lambda`; all angles are in degrees.
     /// the declination is the angular distance north or south of an object in the sky with respect to the plane
     /// of the Earth's equator; analogous to latitude.
     ///
@@ -395,18 +394,14 @@ impl Astronomical {
         )
     }
 
-    /// Calculates the right ascension at a given [`Moment`] of UTC time of an object at latitude `beta` and longitude `lambda`; all angles are in degrees.
+    /// Calculates the right ascension at a given [`Moment`] of UTC time of an object at ecliptic latitude `beta` and ecliptic longitude `lambda`; all angles are in degrees.
     /// the right ascension is the angular distance east or west of an object in the sky with respect to the plane
     /// of the vernal equinox, which is the celestial coordinate point at which the ecliptic intersects the celestial
     /// equator marking spring in the northern hemisphere; analogous to longitude.
     ///
     /// Based on functions from _Calendrical Calculations_ by Reingold & Dershowitz.
     /// Reference lisp code: https://github.com/EdReingold/calendar-code2/blob/9afc1f3/calendar.l#L3578-L3588
-    pub(crate) fn right_ascension(
-        moment: Moment,
-        beta: f64,
-        lambda: f64,
-    ) -> Result<f64, &'static str> {
+    pub(crate) fn right_ascension(moment: Moment, beta: f64, lambda: f64) -> f64 {
         let varepsilon = Self::obliquity(moment);
         arctan_degrees(
             sin_degrees(lambda) * cos_degrees(varepsilon)
@@ -480,7 +475,6 @@ impl Astronomical {
     ///
     /// Based on functions from _Calendrical Calculations_ by Reingold & Dershowitz.
     /// Reference lisp code: https://github.com/EdReingold/calendar-code2/blob/9afc1f3/calendar.l#L3633-L3647
-    #[allow(clippy::unwrap_used)]
     pub(crate) fn moment_of_depression(
         approx: Moment,
         location: Location,
@@ -766,7 +760,11 @@ impl Astronomical {
         div_rem_euclid_f64(angle, 360.0).1
     }
 
-    /// Latitude of the moon (in degrees)
+    /// Ecliptic (aka celestial) latitude of the moon (in degrees)
+    ///
+    /// This is not a geocentric or geodetic latitude, it does not take into account the
+    /// rotation of the Earth and is instead measured from the ecliptic.
+    ///
     /// `julian_centuries` is the result of calling `Self::julian_centuries(moment)`.
     /// Based on functions from _Calendrical Calculations_ by Reingold & Dershowitz,
     /// originally from _Astronomical Algorithms_ by Jean Meeus, 2nd edn., 1998, pp. 338-342.
@@ -962,7 +960,10 @@ impl Astronomical {
         correction + venus + flat_earth + extra
     }
 
-    /// Longitude of the moon (in degrees) at a given moment
+    /// Ecliptic (aka celestial) longitude of the moon (in degrees)
+    ///
+    /// This is not a geocentric or geodetic longitude, it does not take into account the
+    /// rotation of the Earth and is instead measured from the ecliptic and the vernal equinox.
     ///
     /// Based on functions from _Calendrical Calculations_ by Reingold & Dershowitz,
     /// originally from _Astronomical Algorithms_ by Jean Meeus, 2nd edn., 1998, pp. 338-342.
@@ -1212,7 +1213,6 @@ impl Astronomical {
     ///
     /// Based on functions from _Calendrical Calculations_ by Reingold & Dershowitz.
     /// Reference lisp code: https://github.com/EdReingold/calendar-code2/blob/9afc1f3/calendar.l#L7068-L7074
-    #[allow(clippy::unwrap_used)]
     pub(crate) fn month_length(date: RataDie, location: Location) -> u8 {
         let moon = Self::phasis_on_or_after(date + 1, location, None);
         let prev = Self::phasis_on_or_before(date, location, None);
@@ -1242,14 +1242,13 @@ impl Astronomical {
     /// Based on functions from _Calendrical Calculations_ by Reingold & Dershowitz,
     /// originally from _Astronomical Algorithms_ by Jean Meeus, 2nd edn., 1998.
     /// Lisp code reference: https://github.com/EdReingold/calendar-code2/blob/9afc1f3/calendar.l#L4537
-    #[allow(clippy::unwrap_used)]
     pub(crate) fn lunar_altitude(moment: Moment, location: Location) -> f64 {
         let phi = location.latitude;
         let psi = location.longitude;
         let c = Self::julian_centuries(moment);
-        let lambda = Self::lunar_longitude(c); // This works
-        let beta = Self::lunar_latitude(c); // This works
-        let alpha = Self::right_ascension(moment, beta, lambda).unwrap(); // Safe value
+        let lambda = Self::lunar_longitude(c);
+        let beta = Self::lunar_latitude(c);
+        let alpha = Self::right_ascension(moment, beta, lambda);
         let delta = Self::declination(moment, beta, lambda);
         let theta0 = Self::sidereal_from_moment(moment);
         let cap_h: f64 = div_rem_euclid_f64(theta0 + psi - alpha, 360.0).1;
@@ -1522,7 +1521,6 @@ impl Astronomical {
     ///
     /// Based on functions from _Calendrical Calculations_ by Reingold & Dershowitz.
     /// Lisp code reference: https://github.com/EdReingold/calendar-code2/blob/9afc1f3/calendar.l#L6770-L6778
-    #[allow(clippy::unwrap_used, clippy::eq_op)]
     pub(crate) fn moonlag(date: Moment, location: Location) -> Option<f64> {
         if let Some(sun) = Self::sunset(date, location) {
             if let Some(moon) = Self::moonset(date, location) {

@@ -35,7 +35,7 @@ use core::fmt;
 /// This can be constructed by calling `.into()` on a concrete calendar type if the calendar type is known at
 /// compile time. When the type is known at runtime, the [`AnyCalendar::new()`] and sibling methods may be used.
 ///
-/// [`Date`](crate::Date) can also be converted to [`AnyCalendar`]-compatible ones
+/// [`Date`] can also be converted to [`AnyCalendar`]-compatible ones
 /// via [`Date::to_any()`](crate::Date::to_any()).
 ///
 /// There are many ways of constructing an AnyCalendar'd date:

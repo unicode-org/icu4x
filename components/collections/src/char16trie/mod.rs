@@ -11,7 +11,7 @@
 //!
 //! ## Architecture
 //!
-//! ICU4X [`Char16Trie`](crate::char16trie::Char16Trie) is designed to provide a read-only view of UCharsTrie data that is exported from ICU4C.
+//! ICU4X [`Char16Trie`] is designed to provide a read-only view of UCharsTrie data that is exported from ICU4C.
 //!
 //! ## Examples
 //!

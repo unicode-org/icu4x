@@ -13,7 +13,7 @@ use crate::helpers::ShortSlice;
 use crate::ordering::SubtagOrderingResult;
 
 /// A list of [`Key`]-[`Value`] pairs representing functional information
-/// about locale's internationnalization preferences.
+/// about locale's internationalization preferences.
 ///
 /// Here are examples of fields used in Unicode:
 /// - `hc` - Hour Cycle (`h11`, `h12`, `h23`, `h24`)

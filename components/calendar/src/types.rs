@@ -21,6 +21,10 @@ use zerovec::ule::AsULE;
 ///
 /// Different calendars use different era codes, see their documentation
 /// for details.
+///
+/// Era codes are shared with Temporal, [see Temporal proposal][era-proposal].
+///
+/// [era-proposal]: https://tc39.es/proposal-intl-era-monthcode/
 #[derive(Copy, Clone, Debug, PartialEq)]
 #[allow(clippy::exhaustive_structs)] // this is a newtype
 pub struct Era(pub TinyStr16);
@@ -45,6 +49,10 @@ impl FromStr for Era {
 #[non_exhaustive]
 pub struct FormattableYear {
     /// The era containing the year.
+    ///
+    /// This may not always be the canonical era for the calendar and could be an alias,
+    /// for example all `islamic` calendars return `islamic` as the formattable era code
+    /// which allows them to share data.
     pub era: Era,
 
     /// The year number in the current era (usually 1-based).
@@ -83,6 +91,10 @@ impl FormattableYear {
 /// (`M03L`) in lunar calendars. Solar calendars will have codes between `M01` and `M12`
 /// potentially with an `M13` for epagomenal months. Check the docs for a particular calendar
 /// for details on what its month codes are.
+///
+/// Month codes are shared with Temporal, [see Temporal proposal][era-proposal].
+///
+/// [era-proposal]: https://tc39.es/proposal-intl-era-monthcode/
 #[derive(Clone, Copy, Debug, PartialEq, Eq, PartialOrd, Ord, Hash)]
 #[allow(clippy::exhaustive_structs)] // this is a newtype
 #[cfg_attr(
@@ -168,6 +180,11 @@ pub struct FormattableMonth {
     pub ordinal: u32,
 
     /// The month code, used to distinguish months during leap years.
+    ///
+    /// This may not necessarily be the canonical month code for a month in cases where a month has different
+    /// formatting in a leap year, for example Adar/Adar II in the Hebrew calendar in a leap year has
+    /// the code M06, but for formatting specifically the Hebrew calendar will return M06L since it is formatted
+    /// differently.
     pub code: MonthCode,
 }
 

@@ -10,10 +10,13 @@
 pub mod aliases;
 pub mod ca;
 pub mod coverage_levels;
+#[cfg(feature = "icu_singlenumberformatter")]
 pub mod currencies;
 pub mod currency_data;
+#[cfg(feature = "icu_relativetime")]
 pub mod date_fields;
 pub mod directionality;
+#[cfg(feature = "icu_displaynames")]
 pub mod displaynames;
 pub mod exemplar_chars;
 pub mod japanese;

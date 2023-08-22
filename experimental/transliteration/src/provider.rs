@@ -26,7 +26,7 @@ use zerovec::*;
 // TODO(#3776): Improve the documentation of this datastruct.
 
 /// The data struct representing [UTS #35 transform rules](https://unicode.org/reports/tr35/tr35-general.html#Transforms).
-#[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
+#[derive(Debug, Clone, serde::Serialize, serde::Deserialize, PartialEq, Eq)]
 pub struct RuleBasedTransliterator<'a> {
     /// Whether this transliterator is accessible directly through the constructor.
     /// Hidden transliterators are intended as dependencies for visible transliterators,
@@ -89,7 +89,7 @@ pub struct Rule<'a> {
 }
 
 /// The special matchers and replacers used by this transliterator.
-#[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
+#[derive(Debug, Clone, serde::Serialize, serde::Deserialize, PartialEq, Eq)]
 pub struct VarTable<'a> {
     /// Variable definitions.
     #[serde(borrow)]

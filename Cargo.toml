@@ -46,6 +46,7 @@ members = [
     "experimental/transliteration",
     "experimental/transliterator_parser",
     "experimental/unicodeset_parser",
+    "experimental/zerotrie",
     "ffi/capi_cdylib",
     "ffi/capi_staticlib",
     "ffi/diplomat",
