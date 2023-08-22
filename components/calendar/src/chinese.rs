@@ -159,7 +159,7 @@ impl Calendar for Chinese {
     // Construct the date from an ISO date
     fn date_from_iso(&self, iso: Date<Iso>) -> Self::DateInner {
         let fixed = Iso::fixed_from_iso(iso.inner);
-        ChineseDateInner(Inner::chinese_based_date_from_fixed(fixed))
+        ChineseDateInner(Inner::chinese_based_date_from_fixed(fixed, Some(iso)))
     }
 
     // Obtain an ISO date from a Chinese date
@@ -498,15 +498,51 @@ impl Chinese {
         month_lengths[0] = if packed_data.0 & 0b100 != 0 { 30 } else { 29 };
         month_lengths[1] = if packed_data.0 & 0b010 != 0 { 30 } else { 29 };
         month_lengths[2] = if packed_data.0 & 0b001 != 0 { 30 } else { 29 };
-        month_lengths[3] = if packed_data.1 & 0b10000000 != 0 { 30 } else { 29 };
-        month_lengths[4] = if packed_data.1 & 0b01000000 != 0 { 30 } else { 29 };
-        month_lengths[5] = if packed_data.1 & 0b00100000 != 0 { 30 } else { 29 };
-        month_lengths[6] = if packed_data.1 & 0b00010000 != 0 { 30 } else { 29 };
-        month_lengths[7] = if packed_data.1 & 0b00001000 != 0 { 30 } else { 29 };
-        month_lengths[8] = if packed_data.1 & 0b00000100 != 0 { 30 } else { 29 };
-        month_lengths[9] = if packed_data.1 & 0b00000010 != 0 { 30 } else { 29 };
-        month_lengths[10] = if packed_data.1 & 0b00000001 != 0 { 30 } else { 29 };
-        month_lengths[11] = if packed_data.2 & 0b10000000 != 0 { 30 } else { 29 };
+        month_lengths[3] = if packed_data.1 & 0b10000000 != 0 {
+            30
+        } else {
+            29
+        };
+        month_lengths[4] = if packed_data.1 & 0b01000000 != 0 {
+            30
+        } else {
+            29
+        };
+        month_lengths[5] = if packed_data.1 & 0b00100000 != 0 {
+            30
+        } else {
+            29
+        };
+        month_lengths[6] = if packed_data.1 & 0b00010000 != 0 {
+            30
+        } else {
+            29
+        };
+        month_lengths[7] = if packed_data.1 & 0b00001000 != 0 {
+            30
+        } else {
+            29
+        };
+        month_lengths[8] = if packed_data.1 & 0b00000100 != 0 {
+            30
+        } else {
+            29
+        };
+        month_lengths[9] = if packed_data.1 & 0b00000010 != 0 {
+            30
+        } else {
+            29
+        };
+        month_lengths[10] = if packed_data.1 & 0b00000001 != 0 {
+            30
+        } else {
+            29
+        };
+        month_lengths[11] = if packed_data.2 & 0b10000000 != 0 {
+            30
+        } else {
+            29
+        };
 
         let leap_month_bits = packed_data.2 & 0o77;
         let leap_month = if leap_month_bits == 0 {
@@ -644,7 +680,7 @@ mod test {
         ];
 
         for case in cases {
-            let chinese = Inner::chinese_based_date_from_fixed(RataDie::new(case.fixed));
+            let chinese = Inner::chinese_based_date_from_fixed(RataDie::new(case.fixed), None);
             assert_eq!(
                 case.expected_year, chinese.0.year,
                 "Chinese from fixed failed for case: {case:?}"
@@ -701,7 +737,7 @@ mod test {
         let max_iters = 560;
         while fixed < max_fixed && iters < max_iters {
             let rata_die = RataDie::new(fixed);
-            let chinese = Inner::chinese_based_date_from_fixed(rata_die);
+            let chinese = Inner::chinese_based_date_from_fixed(rata_die, None);
             let result = Inner::fixed_from_chinese_based_date_inner(chinese);
             let result_debug = result.to_i64_date();
             assert_eq!(result, rata_die, "Failed roundtrip fixed -> Chinese -> fixed for fixed: {fixed}, with calculated: {result_debug} from Chinese date:\n{chinese:?}");

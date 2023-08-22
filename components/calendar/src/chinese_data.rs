@@ -22,5 +22,5 @@ pub(crate) struct ChineseData(pub(crate) u8, pub(crate) u8, pub(crate) u8);
 /// TODO: Generate this data
 pub(crate) const CHINESE_DATA_ARRAY: [ChineseData; 2] = [
     ChineseData(0b_00001_010, 0b_01101101, 0b_01_000011),
-    ChineseData(0b_10101_010, 0b_01011011, 0b_00_000000),
+    ChineseData(0b_10100_010, 0b_01011011, 0b_00_000000),
 ];

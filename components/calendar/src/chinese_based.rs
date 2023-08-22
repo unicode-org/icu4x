@@ -27,7 +27,7 @@ use crate::{
     helpers::{adjusted_rem_euclid, i64_to_i32, quotient, I32Result},
     rata_die::RataDie,
     types::{Moment, MonthCode},
-    Calendar, CalendarError,
+    Calendar, CalendarError, Date, Iso,
 };
 use core::num::NonZeroU8;
 
@@ -286,7 +286,7 @@ impl<C: ChineseBased + CalendarArithmetic> ChineseBasedDateInner<C> {
         }
     }
 
-    /// Get a ChineseBasedDateInner from a fixed date
+    /// Get a ChineseBasedDateInner from a fixed date, with an option to pass in an ISO date.
     ///
     /// Months are calculated by iterating through the dates of new moons until finding the last month which
     /// does not exceed the given fixed date. The day of month is calculated by subtracting the fixed date
@@ -294,28 +294,37 @@ impl<C: ChineseBased + CalendarArithmetic> ChineseBasedDateInner<C> {
     ///
     /// The calculation for `elapsed_years` and `month` in this function are based on code from _Calendrical Calculations_ by Reingold & Dershowitz.
     /// Lisp reference code: https://github.com/EdReingold/calendar-code2/blob/main/calendar.l#L5414-L5459
-    pub(crate) fn chinese_based_date_from_fixed(date: RataDie) -> ChineseBasedDateInner<C> {
-        let (first_day_of_year, next_solstice) = Self::new_year_on_or_before_fixed_date(date, None);
-        let next_new_year =
-            Self::new_year_on_or_before_fixed_date(first_day_of_year + 400, Some(next_solstice)).0;
-        let year_float = libm::floor(
-            1.5 - 1.0 / 12.0 + ((first_day_of_year - C::EPOCH) as f64) / MEAN_TROPICAL_YEAR,
-        );
-        let year_int = i64_to_i32(year_float as i64);
-        debug_assert!(
-            matches!(year_int, I32Result::WithinRange(_)),
-            "Year should be in range of i32"
-        );
-        let year = year_int.saturate();
+    pub(crate) fn chinese_based_date_from_fixed(
+        date: RataDie,
+        iso: Option<Date<Iso>>,
+    ) -> ChineseBasedDateInner<C> {
+        let iso = if let Some(iso_date) = iso {
+            iso_date
+        } else {
+            Iso::iso_from_fixed(date)
+        };
+
+        let epoch_as_iso = Iso::iso_from_fixed(C::EPOCH);
+        let year = iso.year().number - epoch_as_iso.year().number + 1;
+
         let data_option = C::get_compiled_data_for_year(year);
+        let data_option = if let Some(data) = data_option {
+            if date < data.new_year {
+                C::get_compiled_data_for_year(year - 1)
+            } else if date >= data.next_new_year {
+                C::get_compiled_data_for_year(year + 1)
+            } else {
+                data_option
+            }
+        } else {
+            None
+        };
 
         if let Some(data) = data_option {
-            let data_new_year = data.new_year;
             debug_assert!(
-                first_day_of_year == data_new_year,
-                "Calculated and stored new year RataDies do not match! {first_day_of_year:?}, {data_new_year:?}"
+                date < data.next_new_year,
+                "Stored date {date:?} out of bounds!"
             );
-            debug_assert!(date < data.next_new_year, "Stored date out of bounds!");
             let mut cur = data.new_year - 1;
             let mut month = 0;
             for length in data.month_lengths {
@@ -343,6 +352,23 @@ impl<C: ChineseBased + CalendarArithmetic> ChineseBasedDateInner<C> {
                 ChineseBasedYearInfo::Data(data),
             )
         } else {
+            let (first_day_of_year, next_solstice) =
+                Self::new_year_on_or_before_fixed_date(date, None);
+            let next_new_year = Self::new_year_on_or_before_fixed_date(
+                first_day_of_year + 400,
+                Some(next_solstice),
+            )
+            .0;
+            let year_float = libm::floor(
+                1.5 - 1.0 / 12.0 + ((first_day_of_year - C::EPOCH) as f64) / MEAN_TROPICAL_YEAR,
+            );
+            let year_int = i64_to_i32(year_float as i64);
+            debug_assert!(
+                matches!(year_int, I32Result::WithinRange(_)),
+                "Year should be in range of i32"
+            );
+            let year = year_int.saturate();
+
             let new_moon = Self::new_moon_before((date + 1).as_moment());
             let month_i64 =
                 libm::round((new_moon - first_day_of_year) as f64 / MEAN_SYNODIC_MONTH) as i64 + 1;
