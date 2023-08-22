@@ -1,5 +1,3 @@
 data/** linguist-generated=true
-tests/data/cldr/** linguist-generated=true
-tests/data/icuexport/** linguist-generated=true
-tests/data/json/** linguist-generated=true
-tests/data/lstm/** linguist-generated=true
+tests/data/** linguist-generated=true
+tests/data/postcard/fingerprints.csv linguist-generated=false
