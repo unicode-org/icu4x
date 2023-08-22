@@ -12,7 +12,6 @@
 use icu_provider::prelude::*;
 use zerovec::ZeroMap;
 
-
 /// This type contains all of the constants data for units conversion.
 ///
 /// <div class="stab unstable">
