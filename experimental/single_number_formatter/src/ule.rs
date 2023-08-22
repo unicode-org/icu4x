@@ -14,11 +14,11 @@ use crate::provider::{CurrencyPatterns, PatternSelection};
 ///
 /// The serialization model packages the pattern item in three bytes.
 ///
-/// The first bit (b7) is used to determine the short_pattern_standard. If the bits are `0`, then, the value will be `Standard`.
-/// If the bits are `1`, then, the value will be `StandardAlphaNextToNumber`.
+/// The first bit (b7) is used to determine the short_pattern_standard. If the bit is `0`, then, the value will be `Standard`.
+/// If the bit is `1`, then, the value will be `StandardAlphaNextToNumber`.
 ///
-/// The second bit (b6) is used to determine the narrow_pattern_standard. If the bits are `0`, then, the value will be `Standard`.
-/// If the bits are `1`, then, the value will be `StandardAlphaNextToNumber`.
+/// The second bit (b6) is used to determine the narrow_pattern_standard. If the bit is `0`, then, the value will be `Standard`.
+/// If the bit is `1`, then, the value will be `StandardAlphaNextToNumber`.
 ///
 /// The next three bits (b5, b4 & b3) with the second byte is used to determine the short_place_holder_index.
 /// The next three bits (b2, b1 & b0) with the third byte is used to determine the narrow_place_holder_index.
