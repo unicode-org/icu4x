@@ -338,6 +338,9 @@ impl<C: ChineseBased + CalendarArithmetic> ChineseBasedDateInner<C> {
                 "Cannot have 13 months in a non-leap year!"
             );
 
+            debug_assert!((0..=12).contains(&(month - 1)), "Month out of bounds!");
+            #[allow(clippy::indexing_slicing)]
+            // Indexing is ok, above assertion checks (month - 1) is in range of array
             let day_before_month_start = cur - data.month_lengths[(month - 1) as usize] as i64;
             let day = date - day_before_month_start;
             debug_assert!(((u8::MIN as i64)..=(u8::MAX as i64)).contains(&day));
@@ -428,6 +431,9 @@ impl<C: ChineseBased + CalendarArithmetic> ChineseBasedDateInner<C> {
                 let mut index = 0;
                 let mut result = first_day_of_year;
                 while (index as i64) < month - 1 {
+                    // Indexing is ok because `index` starts at 0 and goes to `month - 1`, and the above assertion
+                    // ensures that month is within 1..=13, meaning `index` from `0..=(month - 1)` will always be valid
+                    #[allow(clippy::indexing_slicing)]
                     result += data.month_lengths[index] as i64;
                     index += 1;
                 }
@@ -505,7 +511,7 @@ impl<C: ChineseBased + CalendarArithmetic> ChineseBasedDateInner<C> {
         year_info: &ChineseBasedYearInfo,
     ) -> Result<ArithmeticDate<C>, CalendarError> {
         let max_month = Self::months_in_year_with_info(year_info);
-        if month > max_month {
+        if !(1..=max_month).contains(&month) {
             return Err(CalendarError::Overflow {
                 field: "month",
                 max: max_month as usize,
@@ -513,6 +519,8 @@ impl<C: ChineseBased + CalendarArithmetic> ChineseBasedDateInner<C> {
         }
 
         let max_day = if let ChineseBasedYearInfo::Data(data) = year_info {
+            // Indexing is ok because `month` is already checked to be valid or return an `Err`
+            #[allow(clippy::indexing_slicing)]
             data.month_lengths[(month - 1) as usize]
         } else {
             Self::days_in_month(month, year_info.get_new_year(), None).0
@@ -547,6 +555,8 @@ impl<C: ChineseBased + CalendarArithmetic> ChineseBasedDateInner<C> {
     /// Calls `days_in_month` on an instance of ChineseBasedDateInner
     pub(crate) fn days_in_month_inner(&self) -> u8 {
         if let ChineseBasedYearInfo::Data(data) = self.1 {
+            // Indexing is ok because it uses `self.0.month` which will be valid from construction
+            #[allow(clippy::indexing_slicing)]
             data.month_lengths[(self.0.month - 1) as usize]
         } else {
             Self::days_in_month(self.0.month, self.1.get_new_year(), None).0
@@ -597,6 +607,9 @@ impl<C: ChineseBased + CalendarArithmetic> ChineseBasedDateInner<C> {
             let mut result = 0;
             let mut index = 0;
             while index < self.0.month - 1 {
+                // Indexing is ok because `index` starts at 0 and ends at `self.0.month - 1`; the maximum value of
+                // `self.0.month - 1` is 12, so `0..=12` always contains `index`
+                #[allow(clippy::indexing_slicing)]
                 result += data.month_lengths[index as usize];
                 index += 1;
             }
@@ -607,7 +620,7 @@ impl<C: ChineseBased + CalendarArithmetic> ChineseBasedDateInner<C> {
             debug_assert!(((u16::MIN as i64)..=(u16::MAX as i64)).contains(&result));
             result as u16
         };
-        let days_until_month = days_until_month as u16;
+        let days_until_month = days_until_month;
         days_until_month + self.0.day as u16
     }
 

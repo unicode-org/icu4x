@@ -387,8 +387,12 @@ impl ChineseBased for Chinese {
 
     fn get_compiled_data_for_year(year: i32) -> Option<ChineseBasedCompiledData> {
         if (chinese_data::MIN_YEAR..=chinese_data::MAX_YEAR).contains(&year) {
+            #[allow(clippy::indexing_slicing)]
+            // indexing is ok because the if statement checks for bounds
             let packed_data =
                 chinese_data::CHINESE_DATA_ARRAY[(year - chinese_data::MIN_YEAR) as usize];
+            #[allow(clippy::indexing_slicing)]
+            // indexing is ok because the if statement checks for bounds
             let next_year_data =
                 chinese_data::CHINESE_DATA_ARRAY[(year - chinese_data::MIN_YEAR + 1) as usize];
             Some(Self::unpack_chinese_data(year, packed_data, next_year_data))
@@ -548,7 +552,7 @@ impl Chinese {
         let leap_month = if leap_month_bits == 0 {
             None
         } else {
-            NonZeroU8::new(leap_month_bits as u8)
+            NonZeroU8::new(leap_month_bits)
         };
 
         if leap_month.is_some() {
