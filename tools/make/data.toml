@@ -84,7 +84,7 @@ category = "ICU4X Data"
 dependencies = ["testdata-legacy-gen"]
 script_runner = "@duckscript"
 script = """
-    cargo clean # free up space
+    exec --fail-on-error cargo clean # free up space
     cd provider/testdata
     exec --fail-on-error cargo check-all-features
     exec --fail-on-error cargo test --all-features --all-targets
