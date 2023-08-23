@@ -203,6 +203,24 @@ jobs:
       if: steps.cargo-make-cache.outputs.cache-hit != 'true'
       run: cargo +stable install cargo-make
 
+    # Cargo-all-features boilerplate
+    - name: Get cargo-all-features version
+      id: cargo-all-features-version
+      run: |
+        echo "hash=$(cargo search cargo-all-features | grep '^cargo-all-features =' | md5sum)" >> $GITHUB_OUTPUT
+      shell: bash
+    - name: Attempt to load cached cargo-all-features
+      uses: actions/cache@v3
+      id: cargo-all-features-cache
+      with:
+        path: |
+          ~/.cargo/bin/cargo-all-features
+          ~/.cargo/bin/cargo-all-features.exe
+        key: ${{ runner.os }}-all-features-${{ steps.cargo-all-features-version.outputs.hash }}
+    - name: Install cargo-all-features
+      if: steps.cargo-all-features-cache.outputs.cache-hit != 'true'
+      run: cargo +stable install cargo-all-features
+
     # Toolchain boilerplate
     - name: Potentially override rust version with nightly
       run: cargo make set-nightly-version-for-ci
