@@ -138,7 +138,7 @@ impl DatagenDriver {
     // Avoids multiple monomorphizations
     fn export_dyn(
         mut self,
-        provider: &impl ExportableProvider,
+        provider: &dyn ExportableProvider,
         sink: &mut dyn DataExporter,
     ) -> Result<(), DataError> {
         if self.keys.is_empty() {
@@ -176,9 +176,8 @@ impl DatagenDriver {
             }
         );
 
-        let fallbacker = once_cell::sync::Lazy::new(|| {
-            LocaleFallbacker::try_new_unstable(&provider.as_downcasting())
-        });
+        let fallbacker =
+            Lazy::new(|| LocaleFallbacker::try_new_with_any_provider(&provider.as_any_provider()));
 
         let load_with_fallback = |key, locale: &_| {
             log::trace!("Generating key/locale: {key}/{locale:}");
@@ -236,6 +235,13 @@ impl DatagenDriver {
             log::info!("Generating key {key}");
 
             if key.metadata().singleton {
+                if provider.supported_locales_for_key(key)? != &[Default::default()] {
+                    return Err(
+                        DataError::custom("Invalid supported locales for singleton key")
+                            .with_key(key),
+                    );
+                }
+
                 let payload = provider
                     .load_data(key, Default::default())
                     .and_then(DataResponse::take_payload)
@@ -320,7 +326,7 @@ impl DatagenDriver {
     /// provider's options bag. The locales may be later optionally deduplicated for fallback.
     fn select_locales_for_key(
         &self,
-        provider: &impl ExportableProvider,
+        provider: &dyn ExportableProvider,
         key: DataKey,
         fallbacker: &Lazy<
             Result<LocaleFallbacker, DataError>,

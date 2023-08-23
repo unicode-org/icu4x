@@ -365,7 +365,7 @@ pub trait AsDynamicDataProviderAnyMarkerWrap {
 
 impl<P> AsDynamicDataProviderAnyMarkerWrap for P
 where
-    P: DynamicDataProvider<AnyMarker>,
+    P: DynamicDataProvider<AnyMarker> + ?Sized,
 {
     #[inline]
     fn as_any_provider(&self) -> DynamicDataProviderAnyMarkerWrap<P> {
