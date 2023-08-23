@@ -4,24 +4,17 @@
 
 [package]
 name = "tinystr"
-version = "0.7.1"
 description = "A small ASCII-only bounded length string representation."
-rust-version = "1.65.0"
-authors = ["The ICU4X Project Developers"]
-edition = "2021"
-repository = "https://github.com/unicode-org/icu4x"
-license-file = "LICENSE"
+version = "0.7.1"
 keywords = ["string", "str", "small", "tiny", "no_std"]
 categories = ["data-structures"]
-include = [
-    "src/**/*",
-    "examples/**/*",
-    "benches/**/*",
-    "tests/**/*",
-    "Cargo.toml",
-    "LICENSE",
-    "README.md"
-]
+
+authors.workspace = true
+edition.workspace = true
+include.workspace = true
+license-file.workspace = true
+repository.workspace = true
+rust-version.workspace = true
 
 [package.metadata.workspaces]
 independent = true
@@ -33,8 +26,8 @@ all-features = true
 displaydoc = { version = "0.2.3", default-features = false }
 
 serde = { version = "1.0.123", default-features = false, features = ["alloc"], optional = true }
-zerovec = { version = "0.9.4", path = "../../utils/zerovec", optional = true }
-databake = { version = "0.1.3", path = "../../utils/databake", optional = true }
+zerovec = { workspace = true, optional = true }
+databake = { workspace = true, optional = true }
 
 [dev-dependencies]
 bincode = "1.3"

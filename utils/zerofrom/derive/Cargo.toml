@@ -4,14 +4,15 @@
 
 [package]
 name = "zerofrom-derive"
-version = "0.1.2"
 description = "Custom derive for the zerofrom crate"
-repository = "https://github.com/unicode-org/icu4x"
-license-file = "LICENSE"
+version = "0.1.2"
+authors = ["Manish Goregaokar <manishsmail@gmail.com>"]
 categories = ["data-structures", "memory-management", "caching", "no-std"]
 keywords = ["zerocopy", "serialization", "lifetime", "borrow"]
-authors = ["Manish Goregaokar <manishsmail@gmail.com>"]
-edition = "2021"
+
+edition.workspace = true
+license-file.workspace = true
+repository.workspace = true
 
 [package.metadata.workspaces]
 independent = true
@@ -27,6 +28,6 @@ syn = { version = "2", features = ["derive", "fold", "visit"] }
 synstructure = "0.13"
 
 [dev-dependencies]
-zerofrom = { path = "..", features = ["derive"]}
-zerovec = { path = "../../zerovec", features = ["yoke"] }
+zerofrom = { workspace = true, features = ["derive"]}
+zerovec = { workspace = true, features = ["yoke"] }
 
