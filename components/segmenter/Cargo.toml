@@ -63,7 +63,6 @@ auto = ["lstm"] # Enabled try_new_auto_unstable constructors
 compiled_data = ["dep:icu_segmenter_data"]
 
 [lib]
-path = "src/lib.rs"
 bench = false  # This option is required for Benchmark CI
 
 [[bench]]

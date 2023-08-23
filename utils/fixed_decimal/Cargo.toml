@@ -54,7 +54,6 @@ ryu = ["dep:ryu"]
 
 [lib]
 bench = false  # This option is required for Benchmark CI
-path = "src/lib.rs"
 
 [package.metadata.cargo-all-features]
 # Bench feature gets tested separately and is only relevant for CI

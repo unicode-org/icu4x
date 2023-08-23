@@ -58,7 +58,6 @@ zerovec = ["dep:zerovec"]
 bench = ["serde"]
 
 [lib]
-path = "src/lib.rs"
 bench = false  # This option is required for Benchmark CI
 
 [package.metadata.cargo-all-features]

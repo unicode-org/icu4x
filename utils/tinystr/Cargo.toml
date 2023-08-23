@@ -55,6 +55,9 @@ std = []
 # Bench feature gets tested separately and is only relevant for CI
 denylist = ["bench"]
 
+[lib]
+bench = false  # This option is required for Benchmark CI
+
 [[test]]
 name = "serde"
 required-features = ["serde"]
