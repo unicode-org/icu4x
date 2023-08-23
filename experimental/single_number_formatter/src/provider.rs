@@ -80,7 +80,10 @@ pub const MAX_PLACE_HOLDER_INDEX: u16 = 0b0111_1111_1101;
 #[derive(Copy, Debug, Clone, PartialEq, PartialOrd, Eq, Ord)]
 #[repr(u16)]
 pub enum PlaceHolder {
+    /// The index of the place holder in the place holders list.
     Index(u16),
+
+    /// The place holder is the iso code.
     ISO,
 }
 #[cfg_attr(
@@ -100,12 +103,10 @@ pub struct CurrencyPatterns {
     pub narrow_pattern_standard: PatternSelection,
 
     /// The index of the short pattern place holder in the place holders list.
-    /// If the value is `NO_PLACE_HOLDER`, this means that the short pattern does not have a place holder.
-    /// If the value is `USE_ISO_CODE`, this means that the short pattern equals to the iso code.
+    /// If the value is `None`, this means that the short pattern does not have a place holder.
     pub short_place_holder_index: Option<PlaceHolder>,
 
     /// The index of the narrow pattern place holder in the place holders list.
-    /// If the value is `NO_PLACE_HOLDER`, this means that the narrow pattern does not have a place holder.
-    /// If the value is `USE_ISO_CODE`, this means that the narrow pattern equals to the iso code.
+    /// If the value is `None`, this means that the narrow pattern does not have a place holder.
     pub narrow_place_holder_index: Option<PlaceHolder>,
 }
