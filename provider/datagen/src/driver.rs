@@ -235,7 +235,7 @@ impl DatagenDriver {
             log::info!("Generating key {key}");
 
             if key.metadata().singleton {
-                if provider.supported_locales_for_key(key)? != &[Default::default()] {
+                if provider.supported_locales_for_key(key)? != [Default::default()] {
                     return Err(
                         DataError::custom("Invalid supported locales for singleton key")
                             .with_key(key),
