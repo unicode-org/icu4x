@@ -84,8 +84,8 @@ category = "ICU4X Data"
 dependencies = ["testdata-legacy-gen"]
 script_runner = "@duckscript"
 script = """
-    exec --fail-on-error cargo clean # free up space
     cd provider/testdata
+    set_env CARGO_TARGET_DIR "../../target"
     exec --fail-on-error cargo check-all-features
     exec --fail-on-error cargo test --all-features --all-targets
     set_env RUSTDOCFLAGS -Dwarnings
