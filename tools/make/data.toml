@@ -69,7 +69,7 @@ if greater_than ${output_length} 0
 end
 '''
 
-[tasks.testdata-legacy-gen]
+[tasks.testdata-legacy]
 description = "Build the data for the legacy icu_testdata crate"
 category = "ICU4X Data"
 command = "cargo"
@@ -78,10 +78,9 @@ args = [
     "--bin=make-testdata-legacy",
 ]
 
-[tasks.testdata-legacy]
+[tasks.testdata-legacy-test]
 description = "Verify the data for the legacy icu_testdata crate"
 category = "ICU4X Data"
-dependencies = ["testdata-legacy-gen"]
 script_runner = "@duckscript"
 script = """
     cd provider/testdata

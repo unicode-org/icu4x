@@ -235,8 +235,14 @@ jobs:
         path: /tmp/icu4x-source-cache
 
     # Actual job
-    - name: Run `cargo make ci-job-testdata`
-      run: cargo make ci-job-testdata
+    - name: Run `cargo make testdata-legacy`
+      run: cargo make testdata-legacy
+
+    # This is too slow for Windows and Mac
+    - name: Run `cargo make testdata-legacy-test`
+      if: matrix.os == 'ubuntu-latest'
+      run: cargo make testdata-legacy-test
+
 
   # ci-job-test-docs
   test-docs:
