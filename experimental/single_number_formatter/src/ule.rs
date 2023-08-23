@@ -7,10 +7,11 @@ use zerovec::{
     ule::{AsULE, ZeroVecError, ULE},
 };
 
-use crate::provider::{
-    CurrencyPatterns, PatternSelection, PlaceHolder, MAX_PLACE_HOLDER_INDEX, NO_PLACE_HOLDER,
-    USE_ISO_CODE,
-};
+use crate::provider::{CurrencyPatterns, PatternSelection, PlaceHolder};
+
+const NO_PLACE_HOLDER: u16 = 0b0111_1111_1111;
+const USE_ISO_CODE: u16 = 0b0111_1111_1110;
+pub const MAX_PLACE_HOLDER_INDEX: u16 = 0b0111_1111_1101;
 
 /// `CurrencyPatternsULE` is a type optimized for efficient storing and
 /// deserialization of `CurrencyPatterns` using the `ZeroVec` model.

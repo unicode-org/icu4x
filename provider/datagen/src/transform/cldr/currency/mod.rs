@@ -5,6 +5,7 @@
 use icu_properties::sets::load_for_general_category_group;
 use icu_properties::GeneralCategoryGroup;
 use icu_provider::DataProvider;
+use icu_singlenumberformatter::ule::MAX_PLACE_HOLDER_INDEX;
 use tinystr::UnvalidatedTinyAsciiStr;
 use zerovec::VarZeroVec;
 use zerovec::ZeroMap;

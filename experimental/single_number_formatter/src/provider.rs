@@ -67,10 +67,6 @@ pub enum PatternSelection {
     StandardAlphaNextToNumber = 1,
 }
 
-pub const NO_PLACE_HOLDER: u16 = 0b0111_1111_1111;
-pub const USE_ISO_CODE: u16 = 0b0111_1111_1110;
-pub const MAX_PLACE_HOLDER_INDEX: u16 = 0b0111_1111_1101;
-
 #[cfg_attr(
     feature = "datagen",
     derive(serde::Serialize, databake::Bake),
