@@ -6,12 +6,12 @@
 use icu_provider::DataError;
 
 /// Removes all whitespace from a string.
-fn remove_whitespace(s: &str) -> String {
+pub fn remove_whitespace(s: &str) -> String {
     s.chars().filter(|c| !c.is_whitespace()).collect()
 }
 
 /// Split a string into a vector of strings, using specific characters as delimiters.
-fn split_string(s: &str, delimiters: Vec<&str>) -> Vec<String> {
+pub fn split_string(s: &str, delimiters: Vec<&str>) -> Vec<String> {
     let mut result = vec![];
     let mut current = String::new();
     for c in s.chars() {
@@ -27,7 +27,7 @@ fn split_string(s: &str, delimiters: Vec<&str>) -> Vec<String> {
 }
 
 /// Returns the greatest common divisor of two numbers.
-fn gcd(a: u64, b: u64) -> u64 {
+pub fn gcd(a: u64, b: u64) -> u64 {
     if b == 0 {
         return a;
     }
@@ -35,7 +35,7 @@ fn gcd(a: u64, b: u64) -> u64 {
 }
 
 /// Checks if a string represents a decimal number.
-fn check_if_decimal_number(number: &str) -> bool {
+pub fn check_if_decimal_number(number: &str) -> bool {
     if number.chars().next().unwrap_or('0') == '-' || number.chars().next().unwrap_or('0') == '+' {
         return check_if_decimal_number(&number[1..]);
     }
@@ -56,7 +56,7 @@ fn check_if_decimal_number(number: &str) -> bool {
 }
 
 /// Converts a rational number represented as a string into a tuple of (numerator, denominator).
-fn to_fractional(number: &str) -> Result<(u64, u64), DataError> {
+pub fn to_fractional(number: &str) -> Result<(u64, u64), DataError> {
     if !check_if_decimal_number(number) {
         return Err(DataError::custom("the number is not a decimal number"));
     }
@@ -75,7 +75,7 @@ fn to_fractional(number: &str) -> Result<(u64, u64), DataError> {
 }
 
 /// Checks if a string represents a scientific notation number.
-fn check_if_scientific_notation_number(number: &str) -> bool {
+pub fn check_if_scientific_notation_number(number: &str) -> bool {
     let mut split = number.split('E');
     if split.clone().count() > 2 {
         return false;
@@ -87,7 +87,7 @@ fn check_if_scientific_notation_number(number: &str) -> bool {
 }
 
 /// Converts a scientific notation number represented as a string into a tuple of (numerator, denominator).
-fn convert_scientific_notation_number_to_fractional(number: &str) -> Result<(u64, u64), DataError> {
+pub fn convert_scientific_notation_number_to_fractional(number: &str) -> Result<(u64, u64), DataError> {
     if !check_if_scientific_notation_number(number) {
         return Err(DataError::custom(
             "the number is not a scientific notation number",
