@@ -130,15 +130,19 @@ impl AsULE for CurrencyPatterns {
         let short_place_holder_index = match short_place_holder_index {
             NO_PLACE_HOLDER => None,
             USE_ISO_CODE => Some(PlaceHolder::ISO),
-            index if index <= MAX_PLACE_HOLDER_INDEX => Some(PlaceHolder::Index(index)),
-            _ => panic!("Invalid short_place_holder_index"),
+            index => {
+                debug_assert!(index <= MAX_PLACE_HOLDER_INDEX);
+                Some(PlaceHolder::Index(index))
+            }
         };
 
         let narrow_place_holder_index = match narrow_place_holder_index {
             NO_PLACE_HOLDER => None,
             USE_ISO_CODE => Some(PlaceHolder::ISO),
-            index if index <= MAX_PLACE_HOLDER_INDEX => Some(PlaceHolder::Index(index)),
-            _ => panic!("Invalid narrow_place_holder_index"),
+            index => {
+                debug_assert!(index <= MAX_PLACE_HOLDER_INDEX);
+                Some(PlaceHolder::Index(index))
+            }
         };
 
         CurrencyPatterns {
