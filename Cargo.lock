@@ -1490,6 +1490,8 @@ dependencies = [
  "icu_segmenter",
  "icu_singlenumberformatter",
  "icu_timezone",
+ "icu_transliteration",
+ "icu_transliterator_parser",
  "icu_unitsconversion",
  "itertools",
  "log",
@@ -1964,11 +1966,19 @@ version = "1.3.0"
 name = "icu_transliteration"
 version = "0.0.0"
 dependencies = [
+ "databake",
  "icu_collections",
  "icu_provider",
+ "icu_transliteration_data",
  "serde",
+ "yoke",
+ "zerofrom",
  "zerovec",
 ]
+
+[[package]]
+name = "icu_transliteration_data"
+version = "0.0.0"
 
 [[package]]
 name = "icu_transliterator_parser"

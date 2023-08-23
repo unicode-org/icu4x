@@ -865,7 +865,9 @@ impl Pass1ResultGenerator {
 // returns (forward, backward) transliterators if they were requested
 pub(crate) fn compile(
     rules: Vec<parse::Rule>,
-    direction: parse::Direction,
+    compile_direction: parse::Direction,
+    metadata: Metadata,
+    available_transliterators: HashMap<String, String>,
 ) -> Result<(
     Option<RuleBasedTransliterator<'static>>,
     Option<RuleBasedTransliterator<'static>>,
@@ -874,24 +876,73 @@ pub(crate) fn compile(
     //  example: transliterator with metadata-direction "forward", and a rule `[a-z] < b ;` (invalid)
     //  - if validation is dependent, this rule is valid because it's not used in the forward direction
     //  - if validation is independent, this rule is invalid because the reverse direction is also checked
-    let mut p1 = Pass1::new(direction);
+    let mut p1 = Pass1::new(metadata.direction);
     p1.run(&rules)?;
     let p1_result = p1.generate_result()?;
 
-    let forward_t = if direction.permits(parse::Direction::Forward) {
-        let t = Pass2::run(p1_result.forward_result, &p1_result.variable_definitions)?;
+    let forward_t = if compile_direction.permits(parse::Direction::Forward) {
+        let t = Pass2::run(
+            p1_result.forward_result,
+            &p1_result.variable_definitions,
+            &available_transliterators,
+            metadata.visible,
+        )?;
         Some(t)
     } else {
         None
     };
-    let reverse_t = if direction.permits(parse::Direction::Reverse) {
-        let t = Pass2::run(p1_result.reverse_result, &p1_result.variable_definitions)?;
+    let reverse_t = if compile_direction.permits(parse::Direction::Reverse) {
+        let t = Pass2::run(
+            p1_result.reverse_result,
+            &p1_result.variable_definitions,
+            &available_transliterators,
+            metadata.visible,
+        )?;
         Some(t)
     } else {
         None
     };
 
     Ok((forward_t, reverse_t))
+}
+
+/// Conversion from an unknown legacy ID to an internal ID is handled by this function.
+///
+/// Known legacy IDs, i.e., ones that have associated BCP47 IDs in their metadata, are simply
+/// that BCP47 ID. For unknown legacy IDs, the output is given by this function.
+#[doc(hidden)]
+pub fn legacy_id_to_internal_id(source: &str, target: &str, variant: Option<&str>) -> String {
+    // TODO(#3891): Decide representation for unknown BCP47 IDs
+    let mut id = format!("x-{source}-{target}");
+    if let Some(variant) = variant {
+        id.push('-');
+        id.push_str(variant);
+    }
+    // normalizing to ASCII lowercase to avoid duplicate dependencies like Any-null and Any-Null
+    id.make_ascii_lowercase();
+    id
+}
+
+/// Metadata about the nature of a transliterator source.
+#[derive(Debug, Clone, Copy)]
+#[non_exhaustive]
+pub struct Metadata {
+    /// Whether the transliterator is constructable directly by the user or not.
+    pub visible: bool,
+    /// The supported direction(s) of the transliterator.
+    pub direction: parse::Direction,
+}
+
+impl Metadata {
+    /// Creates a Metadata struct.
+    ///
+    /// # Arguments
+    ///
+    /// * `visible`: Whether the transliterator is constructable directly by the user or not.
+    /// * `direction`: The supported direction(s) of the transliterator according to the metadata.
+    pub fn new(visible: bool, direction: parse::Direction) -> Self {
+        Self { visible, direction }
+    }
 }
 
 #[cfg(test)]
