@@ -231,9 +231,24 @@
                 </div>
                 <div class="tab-pane" id="pills-seg" role="tabpanel" aria-labelledby="pills-seg-tab" tabindex="0">
                     <div class="vstack gap-2">
+                        Segmentation Model (note: LSTM not supported in Chinese/Japanese)
+                        <div class="btn-toolbar" role="toolbar" aria-label="Segmentation options">
+                            <div class="btn-group" role="group" aria-label="Segmentation model">
+                                <input type="radio" class="btn-check" name="segmenter-model" id="segmenter-model-auto" value="Auto" checked>
+                                <label class="btn btn-outline-primary" for="segmenter-model-auto">Auto</label>
+
+                                <input type="radio" class="btn-check" name="segmenter-model" id="segmenter-model-never" value="LSTM">
+                                <label class="btn btn-outline-primary" for="segmenter-model-never">LSTM</label>
+
+                                <input type="radio" class="btn-check" name="segmenter-model" id="segmenter-model-always" value="Dictionary">
+                                <label class="btn btn-outline-primary" for="segmenter-model-always">Dictionary</label>
+                            </div>
+                        </div>
+
                         Enter a string
                         <button id="seg-sample-japanese" type="button" class="btn btn-secondary">Sample Japanese</button>
                         <button id="seg-sample-chinese" type="button" class="btn btn-secondary">Sample Chinese</button>
+                        <button id="seg-sample-thai" type="button" class="btn btn-secondary">Sample Thai</button>
                         <input type="text" id='seg-input' class="form-control" placeholder="全部の人間は"></input>
                         <div class="card">
                             <div class="card-header">Segmented</div>

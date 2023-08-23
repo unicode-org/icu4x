@@ -70,12 +70,12 @@ required-features = ["testing"]
 
 [[example]]
 name = "litemap_bincode"
-path = "benches/bin/litemap_bincode.rs"
+path = "examples/litemap_bincode.rs"
 required-features = ["serde"]
 
 [[example]]
 name = "litemap_postcard"
-path = "benches/bin/litemap_postcard.rs"
+path = "examples/litemap_postcard.rs"
 required-features = ["serde"]
 
 [[bench]]
