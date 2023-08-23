@@ -11,7 +11,7 @@ authors = ["The ICU4X Project Developers"]
 edition = "2021"
 readme = "README.md"
 repository = "https://github.com/unicode-org/icu4x"
-license = "Unicode-DFS-2016"
+license-file = "LICENSE"
 include = [
     "src/**/*",
     "examples/**/*",

@@ -1490,6 +1490,9 @@ dependencies = [
  "icu_segmenter",
  "icu_singlenumberformatter",
  "icu_timezone",
+ "icu_transliteration",
+ "icu_transliterator_parser",
+ "icu_unitsconversion",
  "itertools",
  "log",
  "memchr",
@@ -1783,6 +1786,7 @@ dependencies = [
  "displaydoc",
  "erased-serde",
  "icu_locid",
+ "icu_locid_transform",
  "icu_provider_adapters",
  "icu_provider_macros",
  "log",
@@ -1790,6 +1794,7 @@ dependencies = [
  "serde",
  "serde_json",
  "stable_deref_trait",
+ "tinystr",
  "writeable",
  "yoke",
  "zerofrom",
@@ -1961,11 +1966,19 @@ version = "1.3.0"
 name = "icu_transliteration"
 version = "0.0.0"
 dependencies = [
+ "databake",
  "icu_collections",
  "icu_provider",
+ "icu_transliteration_data",
  "serde",
+ "yoke",
+ "zerofrom",
  "zerovec",
 ]
+
+[[package]]
+name = "icu_transliteration_data"
+version = "0.0.0"
 
 [[package]]
 name = "icu_transliterator_parser"
@@ -1974,7 +1987,11 @@ dependencies = [
  "icu_collections",
  "icu_properties",
  "icu_provider",
+ "icu_transliteration",
  "icu_unicodeset_parser",
+ "log",
+ "zerofrom",
+ "zerovec",
 ]
 
 [[package]]
@@ -1985,6 +2002,20 @@ dependencies = [
  "icu_properties",
  "icu_provider",
  "log",
+ "tinystr",
+ "zerovec",
+]
+
+[[package]]
+name = "icu_unitsconversion"
+version = "1.2.0"
+dependencies = [
+ "databake",
+ "displaydoc",
+ "fixed_decimal",
+ "icu_locid",
+ "icu_provider",
+ "serde",
  "tinystr",
  "zerovec",
 ]
@@ -4237,6 +4268,23 @@ dependencies = [
  "syn 2.0.15",
  "synstructure",
  "zerofrom",
+ "zerovec",
+]
+
+[[package]]
+name = "zerotrie"
+version = "0.1.0"
+dependencies = [
+ "bincode",
+ "criterion",
+ "displaydoc",
+ "icu_benchmark_macros",
+ "litemap",
+ "postcard",
+ "rand",
+ "rand_pcg",
+ "serde",
+ "serde_json",
  "zerovec",
 ]
 

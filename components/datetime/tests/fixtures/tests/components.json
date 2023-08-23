@@ -31,12 +31,12 @@
                 "en-u-ca-indian": "Tuesday, Magha 01, 1941 Saka, 08:25:07",
                 "en-u-ca-islamic": "Tuesday, Jumada I 25, 1441 AH, 08:25:07",
                 "fr-u-ca-islamic": "mardi 25 joumada al oula 1441 ère de l’Hégire 08:25:07",
-                "en-u-ca-islamicc": "Tuesday, Jumada I 25, 1441 AH, 08:25:07",
-                "fr-u-ca-islamicc": "mardi 25 joumada al oula 1441 ère de l’Hégire 08:25:07",
-                "en-u-ca-umalqura": "Tuesday, Jumada I 26, 1441 AH, 08:25:07",
-                "fr-u-ca-umalqura": "mardi 26 joumada al oula 1441 ère de l’Hégire 08:25:07",
-                "en-u-ca-tbla": "Tuesday, Jumada I 26, 1441 AH, 08:25:07",
-                "fr-u-ca-tbla": "mardi 26 joumada al oula 1441 ère de l’Hégire 08:25:07",
+                "en-u-ca-islamic-civil": "Tuesday, Jumada I 25, 1441 AH, 08:25:07",
+                "fr-u-ca-islamic-civil": "mardi 25 joumada al oula 1441 ère de l’Hégire 08:25:07",
+                "en-u-ca-islamic-umalqura": "Tuesday, Jumada I 26, 1441 AH, 08:25:07",
+                "fr-u-ca-islamic-umalqura": "mardi 26 joumada al oula 1441 ère de l’Hégire 08:25:07",
+                "en-u-ca-islamic-tbla": "Tuesday, Jumada I 26, 1441 AH, 08:25:07",
+                "fr-u-ca-islamic-tbla": "mardi 26 joumada al oula 1441 ère de l’Hégire 08:25:07",
                 "en-u-ca-persian": "Tuesday, Bahman 01, 1398 AP, 08:25:07",
                 "fr-u-ca-persian": "mardi 01 bahman 1398 Anno Persico 08:25:07",
                 "en-u-ca-hebrew": "Tuesday, 24 Tevet 5780 AM, 08:25:07",
@@ -70,6 +70,29 @@
             "values": {
                 "en-u-ca-chinese": "Thursday, Second Month(leap) 02, 2023((cyclic year: 40)), 14:15:07",
                 "zh-u-ca-chinese": "2023(cyclic year: 40)年二月(leap)02星期四 14:15:07"
+            }
+        }
+    },
+    {
+        "input": {
+            "value": "2011-04-03T14:15:07.123",
+            "options": {
+                "components": {
+                    "weekday": "long",
+                    "month": "long",
+                    "day": "two-digit-day-of-month",
+                    "era": "long",
+                    "year": "numeric",
+                    "hour": "numeric",
+                    "minute": "numeric",
+                    "second": "numeric"
+                }
+            }
+        },
+        "output": {
+            "values": {
+                "en-u-ca-hebrew": "Sunday, 28 Adar II 5771 AM, 14:15:07",
+                "fr-u-ca-hebrew": "dimanche 28 adar II 5771 Anno Mundi 14:15:07"
             }
         }
     },

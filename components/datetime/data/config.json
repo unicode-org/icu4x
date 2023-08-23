@@ -1,60 +1,53 @@
 {
-    "keys": {
-        "Explicit": [
-            "datetime/buddhist/datelengths@1",
-            "datetime/buddhist/datesymbols@1",
-            "datetime/chinese/datelengths@1",
-            "datetime/chinese/datesymbols@1",
-            "datetime/coptic/datelengths@1",
-            "datetime/coptic/datesymbols@1",
-            "datetime/dangi/datelengths@1",
-            "datetime/dangi/datesymbols@1",
-            "datetime/ethiopic/datelengths@1",
-            "datetime/ethiopic/datesymbols@1",
-            "datetime/gregory/datelengths@1",
-            "datetime/gregory/datesymbols@1",
-            "datetime/hebrew/datelengths@1",
-            "datetime/hebrew/datesymbols@1",
-            "datetime/indian/datelengths@1",
-            "datetime/indian/datesymbols@1",
-            "datetime/islamic/civil/datelengths@1",
-            "datetime/islamic/civil/datesymbols@1",
-            "datetime/islamic/observational/datelengths@1",
-            "datetime/islamic/observational/datesymbols@1",
-            "datetime/islamic/tabular/datelengths@1",
-            "datetime/islamic/tabular/datesymbols@1",
-            "datetime/islamic/ummalqura/datelengths@1",
-            "datetime/islamic/ummalqura/datesymbols@1",
-            "datetime/japanese/datelengths@1",
-            "datetime/japanese/datesymbols@1",
-            "datetime/japanext/datelengths@1",
-            "datetime/japanext/datesymbols@1",
-            "datetime/persian/datelengths@1",
-            "datetime/persian/datesymbols@1",
-            "datetime/roc/datelengths@1",
-            "datetime/roc/datesymbols@1",
-            "datetime/skeletons@1",
-            "datetime/timelengths@1",
-            "datetime/timesymbols@1",
-            "time_zone/exemplar_cities@1",
-            "time_zone/formats@1",
-            "time_zone/generic_long@1",
-            "time_zone/generic_short@1",
-            "time_zone/specific_long@1",
-            "time_zone/specific_short@1"
-
-        ]
-    },
-    "locales": "Recommended",
-    "cldr": "Latest",
-    "icu_export": "Latest",
-    "segmenter_lstm": "Latest",
-    "export": {
-        "Baked": {
-            "path": "data",
-            "pretty": true
-        }
-    },
-    "fallback": "Runtime",
-    "overwrite": true
+  "keys": {
+    "explicit": [
+      "datetime/buddhist/datelengths@1",
+      "datetime/buddhist/datesymbols@1",
+      "datetime/chinese/datelengths@1",
+      "datetime/chinese/datesymbols@1",
+      "datetime/coptic/datelengths@1",
+      "datetime/coptic/datesymbols@1",
+      "datetime/dangi/datelengths@1",
+      "datetime/dangi/datesymbols@1",
+      "datetime/ethiopic/datelengths@1",
+      "datetime/ethiopic/datesymbols@1",
+      "datetime/gregory/datelengths@1",
+      "datetime/gregory/datesymbols@1",
+      "datetime/hebrew/datelengths@1",
+      "datetime/hebrew/datesymbols@1",
+      "datetime/indian/datelengths@1",
+      "datetime/indian/datesymbols@1",
+      "datetime/islamic/datelengths@1",
+      "datetime/islamic/datesymbols@1",
+      "datetime/japanese/datelengths@1",
+      "datetime/japanese/datesymbols@1",
+      "datetime/japanext/datelengths@1",
+      "datetime/japanext/datesymbols@1",
+      "datetime/persian/datelengths@1",
+      "datetime/persian/datesymbols@1",
+      "datetime/roc/datelengths@1",
+      "datetime/roc/datesymbols@1",
+      "datetime/skeletons@1",
+      "datetime/timelengths@1",
+      "datetime/timesymbols@1",
+      "time_zone/exemplar_cities@1",
+      "time_zone/formats@1",
+      "time_zone/generic_long@1",
+      "time_zone/generic_short@1",
+      "time_zone/specific_long@1",
+      "time_zone/specific_short@1"
+    ]
+  },
+  "fallback": "runtime",
+  "locales": "recommended",
+  "cldr": "latest",
+  "icuExport": "latest",
+  "segmenterLstm": "latest",
+  "export": {
+    "baked": {
+      "path": "data",
+      "pretty": true
+    }
+  },
+  "overwrite": true
 }

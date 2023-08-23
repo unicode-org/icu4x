@@ -71,7 +71,7 @@ use displaydoc::Display;
 
 /// Custom Errors for [`CodePointInversionList`].
 ///
-/// Re-exported as [`Error`](Error).
+/// Re-exported as [`Error`].
 #[derive(Display, Debug)]
 pub enum CodePointInversionListError {
     /// A CodePointInversionList was constructed with an invalid inversion list

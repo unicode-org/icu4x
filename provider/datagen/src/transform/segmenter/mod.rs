@@ -585,9 +585,9 @@ impl crate::DatagenProvider {
             data: CodePointTrieBuilderData::ValuesByCodePoint(&properties_map),
             default_value: 0,
             error_value: 0,
-            trie_type: match self.source.trie_type {
-                crate::source::TrieType::Fast => icu_collections::codepointtrie::TrieType::Fast,
-                crate::source::TrieType::Small => icu_collections::codepointtrie::TrieType::Small,
+            trie_type: match self.trie_type() {
+                crate::TrieType::Fast => icu_collections::codepointtrie::TrieType::Fast,
+                crate::TrieType::Small => icu_collections::codepointtrie::TrieType::Small,
             },
         }
         .build();
@@ -654,7 +654,7 @@ macro_rules! implement {
                 return Ok(DataResponse {
                     metadata: DataResponseMetadata::default(),
                     payload: Some(DataPayload::from_owned(
-                        self.generate_rule_break_data(include_str!(concat!("../../../data/segmenter/rules/", $rules))),
+                        self.generate_rule_break_data(include_str!(concat!("rules/", $rules))),
                     )),
                 });
             }
@@ -679,7 +679,7 @@ mod tests {
 
     #[test]
     fn load_grapheme_cluster_data() {
-        let provider = crate::DatagenProvider::for_test();
+        let provider = crate::DatagenProvider::latest_tested_offline_subset();
         let payload: DataPayload<GraphemeClusterBreakDataV1Marker> = provider
             .load(Default::default())
             .expect("Loading should succeed!")

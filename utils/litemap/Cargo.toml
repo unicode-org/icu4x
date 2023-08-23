@@ -9,7 +9,7 @@ rust-version = "1.65.0"
 authors = ["The ICU4X Project Developers"]
 repository = "https://github.com/unicode-org/icu4x"
 edition = "2021"
-license = "Unicode-DFS-2016"
+license-file = "LICENSE"
 keywords = ["sorted", "vec", "map", "hashmap", "btreemap"]
 description = "A key-value Map implementation based on a flat, sorted Vec."
 documentation = "https://docs.rs/litemap"
@@ -70,12 +70,12 @@ required-features = ["testing"]
 
 [[example]]
 name = "litemap_bincode"
-path = "benches/bin/litemap_bincode.rs"
+path = "examples/litemap_bincode.rs"
 required-features = ["serde"]
 
 [[example]]
 name = "litemap_postcard"
-path = "benches/bin/litemap_postcard.rs"
+path = "examples/litemap_postcard.rs"
 required-features = ["serde"]
 
 [[bench]]

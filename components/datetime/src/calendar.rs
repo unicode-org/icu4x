@@ -14,15 +14,17 @@ use icu_calendar::{
 };
 use icu_locid::extensions::unicode::{value, Value};
 use icu_provider::prelude::*;
-
+use tinystr::{tinystr, TinyAsciiStr};
 /// A calendar that can be found in CLDR
 ///
 /// New implementors of this trait will likely also wish to modify `get_era_code_map()`
 /// in the CLDR transformer to support any new era maps.
 pub trait CldrCalendar {
-    /// The Unicode BCP 47 identifier for the calendar
+    /// The Unicode BCP 47 identifier for the calendar's skeleton
     /// If multiple BCP 47 identifiers work, this should be
     /// the default one when no others are provided
+    ///
+    /// If `is_identifier_allowed_for_calendar()` is set, this only is used for loading skeletons data
     const DEFAULT_BCP_47_IDENTIFIER: Value;
 
     /// The data marker for loading symbols for this calendar.
@@ -39,6 +41,18 @@ pub trait CldrCalendar {
     }
 }
 
+/// Check if the provided value is of the form `islamic-{subcal}`
+fn is_islamic_subcal(value: &Value, subcal: TinyAsciiStr<8>) -> bool {
+    let slice = value.as_tinystr_slice();
+    if slice.len() > 2 {
+        return false;
+    }
+    if let (Some(first), Some(second)) = (slice.get(0), slice.get(1)) {
+        return *first == tinystr!(8, "islamic") && *second == subcal;
+    }
+
+    false
+}
 impl CldrCalendar for Buddhist {
     const DEFAULT_BCP_47_IDENTIFIER: Value = value!("buddhist");
     type DateSymbolsV1Marker = BuddhistDateSymbolsV1Marker;
@@ -91,27 +105,45 @@ impl CldrCalendar for Indian {
 }
 
 impl CldrCalendar for IslamicCivil {
-    const DEFAULT_BCP_47_IDENTIFIER: Value = value!("islamicc");
-    type DateSymbolsV1Marker = IslamicCivilDateSymbolsV1Marker;
-    type DateLengthsV1Marker = IslamicCivilDateLengthsV1Marker;
+    // this value is not actually a valid identifier for this calendar,
+    // however since we are overriding is_identifier_allowed_for_calendar we are using
+    // this solely for its effects on skeleton data loading
+    const DEFAULT_BCP_47_IDENTIFIER: Value = value!("islamic");
+    type DateSymbolsV1Marker = IslamicDateSymbolsV1Marker;
+    type DateLengthsV1Marker = IslamicDateLengthsV1Marker;
+    fn is_identifier_allowed_for_calendar(value: &Value) -> bool {
+        *value == value!("islamicc") || is_islamic_subcal(value, tinystr!(8, "civil"))
+    }
 }
 
 impl CldrCalendar for IslamicObservational {
     const DEFAULT_BCP_47_IDENTIFIER: Value = value!("islamic");
-    type DateSymbolsV1Marker = IslamicObservationalDateSymbolsV1Marker;
-    type DateLengthsV1Marker = IslamicObservationalDateLengthsV1Marker;
+    type DateSymbolsV1Marker = IslamicDateSymbolsV1Marker;
+    type DateLengthsV1Marker = IslamicDateLengthsV1Marker;
 }
 
 impl CldrCalendar for IslamicTabular {
-    const DEFAULT_BCP_47_IDENTIFIER: Value = value!("tbla");
-    type DateSymbolsV1Marker = IslamicTabularDateSymbolsV1Marker;
-    type DateLengthsV1Marker = IslamicTabularDateLengthsV1Marker;
+    // this value is not actually a valid identifier for this calendar,
+    // however since we are overriding is_identifier_allowed_for_calendar we are using
+    // this solely for its effects on skeleton data loading
+    const DEFAULT_BCP_47_IDENTIFIER: Value = value!("islamic");
+    type DateSymbolsV1Marker = IslamicDateSymbolsV1Marker;
+    type DateLengthsV1Marker = IslamicDateLengthsV1Marker;
+    fn is_identifier_allowed_for_calendar(value: &Value) -> bool {
+        is_islamic_subcal(value, tinystr!(8, "tbla"))
+    }
 }
 
 impl CldrCalendar for IslamicUmmAlQura {
-    const DEFAULT_BCP_47_IDENTIFIER: Value = value!("umalqura");
-    type DateSymbolsV1Marker = IslamicUmmAlQuraDateSymbolsV1Marker;
-    type DateLengthsV1Marker = IslamicUmmAlQuraDateLengthsV1Marker;
+    // this value is not actually a valid identifier for this calendar,
+    // however since we are overriding is_identifier_allowed_for_calendar we are using
+    // this solely for its effects on skeleton data loading
+    const DEFAULT_BCP_47_IDENTIFIER: Value = value!("islamic");
+    type DateSymbolsV1Marker = IslamicDateSymbolsV1Marker;
+    type DateLengthsV1Marker = IslamicDateLengthsV1Marker;
+    fn is_identifier_allowed_for_calendar(value: &Value) -> bool {
+        is_islamic_subcal(value, tinystr!(8, "umalqura"))
+    }
 }
 
 impl CldrCalendar for Japanese {
@@ -186,10 +218,7 @@ where
         + DataProvider<GregorianDateLengthsV1Marker>
         + DataProvider<HebrewDateLengthsV1Marker>
         + DataProvider<IndianDateLengthsV1Marker>
-        + DataProvider<IslamicCivilDateLengthsV1Marker>
-        + DataProvider<IslamicObservationalDateLengthsV1Marker>
-        + DataProvider<IslamicTabularDateLengthsV1Marker>
-        + DataProvider<IslamicUmmAlQuraDateLengthsV1Marker>
+        + DataProvider<IslamicDateLengthsV1Marker>
         + DataProvider<JapaneseDateLengthsV1Marker>
         + DataProvider<JapaneseExtendedDateLengthsV1Marker>
         + DataProvider<PersianDateLengthsV1Marker>
@@ -310,10 +339,7 @@ where
         + DataProvider<GregorianDateSymbolsV1Marker>
         + DataProvider<HebrewDateSymbolsV1Marker>
         + DataProvider<IndianDateSymbolsV1Marker>
-        + DataProvider<IslamicCivilDateSymbolsV1Marker>
-        + DataProvider<IslamicObservationalDateSymbolsV1Marker>
-        + DataProvider<IslamicTabularDateSymbolsV1Marker>
-        + DataProvider<IslamicUmmAlQuraDateSymbolsV1Marker>
+        + DataProvider<IslamicDateSymbolsV1Marker>
         + DataProvider<JapaneseDateSymbolsV1Marker>
         + DataProvider<JapaneseExtendedDateSymbolsV1Marker>
         + DataProvider<PersianDateSymbolsV1Marker>

@@ -72,6 +72,10 @@ use tinystr::{tinystr, TinyStr16};
 ///
 /// These eras are loaded from data, requiring a data provider capable of providing [`JapaneseErasV1Marker`]
 /// data (`calendar/japanese@1`).
+///
+/// # Month codes
+///
+/// This calendar supports 12 solar month codes (`"M01" - "M12"`)
 #[derive(Clone, Debug, Default)]
 pub struct Japanese {
     eras: DataPayload<JapaneseErasV1Marker>,

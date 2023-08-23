@@ -53,6 +53,11 @@ use tinystr::tinystr;
 ///
 /// This calendar supports two era codes: `"bd"`, and `"ad"`, corresponding to the Before Diocletian and After Diocletian/Anno Martyrum
 /// eras. 1 A.M. is equivalent to 284 C.E.
+///
+/// # Month codes
+///
+/// This calendar supports 13 solar month codes (`"M01" - "M13"`), with `"M13"` being used for the short epagomenal month
+/// at the end of the year.
 #[derive(Copy, Clone, Debug, Hash, Default, Eq, PartialEq, PartialOrd, Ord)]
 #[allow(clippy::exhaustive_structs)] // this type is stable
 pub struct Coptic;

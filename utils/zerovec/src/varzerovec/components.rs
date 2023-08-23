@@ -168,6 +168,7 @@ impl<'a, T: VarULE + ?Sized, F: VarZeroVecFormat> VarZeroVecComponents<'a, T, F>
     ///   `things`, such that it parses to a `T::VarULE`
     #[inline]
     pub fn parse_byte_slice(slice: &'a [u8]) -> Result<Self, ZeroVecError> {
+        // The empty VZV is special-cased to the empty slice
         if slice.is_empty() {
             return Ok(VarZeroVecComponents {
                 len: 0,
@@ -219,6 +220,7 @@ impl<'a, T: VarULE + ?Sized, F: VarZeroVecFormat> VarZeroVecComponents<'a, T, F>
     /// The bytes must have previously successfully run through
     /// [`VarZeroVecComponents::parse_byte_slice()`]
     pub unsafe fn from_bytes_unchecked(slice: &'a [u8]) -> Self {
+        // The empty VZV is special-cased to the empty slice
         if slice.is_empty() {
             return VarZeroVecComponents {
                 len: 0,
@@ -485,12 +487,13 @@ where
 }
 
 /// Collects the bytes for a VarZeroSlice into a Vec.
-pub fn get_serializable_bytes<T, A, F>(elements: &[A]) -> Option<Vec<u8>>
+pub fn get_serializable_bytes_non_empty<T, A, F>(elements: &[A]) -> Option<Vec<u8>>
 where
     T: VarULE + ?Sized,
     A: EncodeAsVarULE<T>,
     F: VarZeroVecFormat,
 {
+    debug_assert!(!elements.is_empty());
     let len = compute_serializable_len::<T, A, F>(elements)?;
     debug_assert!(len >= LENGTH_WIDTH as u32);
     let mut output: Vec<u8> = alloc::vec![0; len as usize];

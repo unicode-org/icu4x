@@ -558,6 +558,7 @@ rust_library("icu_provider-v1_2_0") {
   deps += [ ":icu_locid-v1_2_0" ]
   deps += [ ":icu_provider_macros-v1_2_0($host_toolchain)" ]
   deps += [ ":stable_deref_trait-v1_2_0" ]
+  deps += [ ":tinystr-v0_7_1" ]
   deps += [ ":writeable-v0_5_2" ]
   deps += [ ":yoke-v0_7_1" ]
   deps += [ ":zerofrom-v0_1_2" ]

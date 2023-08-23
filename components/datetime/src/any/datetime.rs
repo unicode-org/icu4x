@@ -242,14 +242,8 @@ impl DateTimeFormatter {
             + DataProvider<HebrewDateSymbolsV1Marker>
             + DataProvider<IndianDateLengthsV1Marker>
             + DataProvider<IndianDateSymbolsV1Marker>
-            + DataProvider<IslamicCivilDateLengthsV1Marker>
-            + DataProvider<IslamicCivilDateSymbolsV1Marker>
-            + DataProvider<IslamicObservationalDateLengthsV1Marker>
-            + DataProvider<IslamicObservationalDateSymbolsV1Marker>
-            + DataProvider<IslamicTabularDateLengthsV1Marker>
-            + DataProvider<IslamicTabularDateSymbolsV1Marker>
-            + DataProvider<IslamicUmmAlQuraDateLengthsV1Marker>
-            + DataProvider<IslamicUmmAlQuraDateSymbolsV1Marker>
+            + DataProvider<IslamicDateLengthsV1Marker>
+            + DataProvider<IslamicDateSymbolsV1Marker>
             + DataProvider<JapaneseDateLengthsV1Marker>
             + DataProvider<JapaneseDateSymbolsV1Marker>
             + DataProvider<JapaneseErasV1Marker>
@@ -390,14 +384,8 @@ impl DateTimeFormatter {
             + DataProvider<HebrewDateSymbolsV1Marker>
             + DataProvider<IndianDateLengthsV1Marker>
             + DataProvider<IndianDateSymbolsV1Marker>
-            + DataProvider<IslamicCivilDateLengthsV1Marker>
-            + DataProvider<IslamicCivilDateSymbolsV1Marker>
-            + DataProvider<IslamicObservationalDateLengthsV1Marker>
-            + DataProvider<IslamicObservationalDateSymbolsV1Marker>
-            + DataProvider<IslamicTabularDateLengthsV1Marker>
-            + DataProvider<IslamicTabularDateSymbolsV1Marker>
-            + DataProvider<IslamicUmmAlQuraDateLengthsV1Marker>
-            + DataProvider<IslamicUmmAlQuraDateSymbolsV1Marker>
+            + DataProvider<IslamicDateLengthsV1Marker>
+            + DataProvider<IslamicDateSymbolsV1Marker>
             + DataProvider<JapaneseDateLengthsV1Marker>
             + DataProvider<JapaneseDateSymbolsV1Marker>
             + DataProvider<JapaneseErasV1Marker>

@@ -73,6 +73,11 @@ pub enum EthiopianEraStyle {
 /// This calendar supports three era codes, based on what mode it is in. In the Amete Mihret scheme it has
 /// the `"incar"` and `"pre-incar"` eras, 1 Incarnation is 9 CE. In the Amete Alem scheme, it instead has a single era,
 /// `"mundi`, where 1 Anno Mundi is 5493 BCE. Dates before that use negative year numbers.
+///
+/// # Month codes
+///
+/// This calendar supports 13 solar month codes (`"M01" - "M13"`), with `"M13"` being used for the short epagomenal month
+/// at the end of the year.
 // The bool specifies whether dates should be in the Amete Alem era scheme
 #[derive(Copy, Clone, Debug, Hash, Default, Eq, PartialEq, PartialOrd, Ord)]
 pub struct Ethiopian(pub(crate) bool);

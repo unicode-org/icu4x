@@ -12,7 +12,7 @@ edition = "2021"
 readme = "README.md"
 repository = "https://github.com/unicode-org/icu4x"
 homepage = "https://icu4x.unicode.org"
-license = "Unicode-DFS-2016"
+license-file = "LICENSE"
 categories = ["internationalization"]
 # Keep this in sync with other crates unless there are exceptions
 include = [
@@ -50,8 +50,9 @@ icu_properties = { version = "1.2.0", path = "../../components/properties", defa
 icu_relativetime = { version = "0.1.0", path = "../../experimental/relativetime", default-features = false, features = ["datagen"], optional = true }
 icu_segmenter = { version = "1.2.0", path = "../../components/segmenter", default-features = false, features = ["datagen", "lstm"] }
 icu_timezone = { version = "1.2.0", path = "../../components/timezone", default-features = false, features = ["datagen"] }
+icu_transliteration = { version = "0.0.0", path = "../../experimental/transliteration", default-features = false, features = ["datagen"], optional = true }
 icu_singlenumberformatter = { version = "0.1.0", path = "../../experimental/single_number_formatter", default-features = false, features = ["datagen"], optional = true}
-
+icu_unitsconversion = { version = "1.2.0", path = "../../experimental/unitsconversion", default-features = false, features = ["datagen"], optional = true}
 
 # ICU infrastructure
 icu_codepointtrie_builder = { version = "0.3.4", path = "../../components/collections/codepointtrie_builder", default-features = false }
@@ -59,6 +60,7 @@ icu_collections = { version = "1.2.0", path = "../../components/collections", fe
 icu_locid = { version = "1.2.0", path = "../../components/locid", features = ["std", "serde"] }
 icu_provider = { version = "1.2.0", path = "../core", features = ["std", "logging", "datagen"]}
 icu_provider_adapters = { version = "1.2.0", path = "../adapters" }
+icu_transliterator_parser = { version = "0.0.0", path = "../../experimental/transliterator_parser", optional = true }
 tinystr = { version = "0.7.1", path = "../../utils/tinystr", features = ["alloc", "serde", "zerovec"], default-features = false }
 writeable = { version = "0.5.1", path = "../../utils/writeable" }
 zerovec = { version = "0.9.4", path = "../../utils/zerovec", features = ["serde", "yoke"] }
@@ -120,6 +122,8 @@ icu_compactdecimal = ["dep:icu_compactdecimal"]
 icu_displaynames = ["dep:icu_displaynames"]
 icu_relativetime = ["dep:icu_relativetime"]
 icu_singlenumberformatter = ["dep:icu_singlenumberformatter"]
+icu_transliteration = ["dep:icu_transliteration", "dep:icu_transliterator_parser"]
+icu_unitsconversion = ["dep:icu_unitsconversion"]
 
 [[bin]]
 name = "icu4x-datagen"
@@ -137,6 +141,6 @@ skip_feature_sets = [["use_icu4c"], ["use_wasm"]]
 skip_optional_dependencies = true
 # Always the experimental deps because we want to all-or-nothing them
 # and the nothing case is already tested in regular check CI
-always_include_features = ["icu_compactdecimal", "icu_displaynames", "icu_relativetime", "icu_singlenumberformatter"]
+always_include_features = ["icu_compactdecimal", "icu_displaynames", "icu_relativetime", "icu_singlenumberformatter", "icu_transliteration", "icu_unitsconversion"]
 # We have a *lot* of features here
 max_combination_size = 2

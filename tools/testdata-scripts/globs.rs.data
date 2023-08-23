@@ -23,6 +23,7 @@ const CLDR_JSON_GLOB: &[&str] = &[
     "cldr-core/supplemental/aliases.json",
     "cldr-core/supplemental/calendarData.json",
     "cldr-core/supplemental/currencyData.json",
+    "cldr-core/supplemental/units.json",
     "cldr-core/supplemental/likelySubtags.json",
     "cldr-core/supplemental/metaZones.json",
     "cldr-core/supplemental/numberingSystems.json",
@@ -85,6 +86,11 @@ const ICUEXPORTDATA_GLOB: &[&str] = &[
     "norm/small/nfkd.toml",
     "norm/small/nfkdex.toml",
     "norm/small/uts46d.toml",
+    "segmenter/dictionary/burmesedict.toml",
+    "segmenter/dictionary/cjdict.toml",
+    "segmenter/dictionary/khmerdict.toml",
+    "segmenter/dictionary/laodict.toml",
+    "segmenter/dictionary/thaidict.toml",
     "ucase/small/ucase.toml",
     "uprops/small/AHex.toml",
     "uprops/small/alnum.toml",
@@ -165,14 +171,6 @@ const ICUEXPORTDATA_GLOB: &[&str] = &[
     "uprops/small/xdigit.toml",
     "uprops/small/XIDC.toml",
     "uprops/small/XIDS.toml",
-];
-
-const ICUEXPORTDATA_SEGMENTER_GLOB: &[&str] = &[
-    "segmenter/dictionary/burmesedict.toml",
-    "segmenter/dictionary/cjdict.toml",
-    "segmenter/dictionary/khmerdict.toml",
-    "segmenter/dictionary/laodict.toml",
-    "segmenter/dictionary/thaidict.toml"
 ];
 
 const LSTM_GLOB: &[&str] = &[

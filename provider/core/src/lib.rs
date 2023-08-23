@@ -135,6 +135,8 @@ extern crate alloc;
 
 mod data_provider;
 mod error;
+#[doc(hidden)]
+pub mod fallback;
 mod key;
 mod request;
 mod response;
@@ -159,8 +161,7 @@ pub use crate::key::DataKey;
 pub use crate::key::DataKeyHash;
 pub use crate::key::DataKeyMetadata;
 pub use crate::key::DataKeyPath;
-pub use crate::key::FallbackPriority;
-pub use crate::key::FallbackSupplement;
+pub use crate::request::AuxiliaryKeys;
 pub use crate::request::DataLocale;
 pub use crate::request::DataRequest;
 pub use crate::request::DataRequestMetadata;
@@ -206,6 +207,8 @@ pub mod prelude {
     #[doc(no_inline)]
     pub use crate::AsDynamicDataProviderAnyMarkerWrap;
     #[doc(no_inline)]
+    pub use crate::AuxiliaryKeys;
+    #[doc(no_inline)]
     pub use crate::BufferMarker;
     #[doc(no_inline)]
     pub use crate::BufferProvider;
@@ -246,6 +249,10 @@ pub mod prelude {
 
 // Additional crate re-exports for compatibility
 #[doc(hidden)]
+pub use fallback::LocaleFallbackPriority as FallbackPriority;
+#[doc(hidden)]
+pub use fallback::LocaleFallbackSupplement as FallbackSupplement;
+#[doc(hidden)]
 pub use yoke;
 #[doc(hidden)]
 pub use zerofrom;
@@ -253,5 +260,6 @@ pub use zerofrom;
 // For macros
 #[doc(hidden)]
 pub mod _internal {
-    pub use icu_locid::extensions_unicode_key;
+    pub use super::fallback::{LocaleFallbackPriority, LocaleFallbackSupplement};
+    pub use icu_locid as locid;
 }

@@ -18,8 +18,9 @@ script_runner = "@duckscript"
 script = '''
 exit_on_error true
 
-# Re-run the build command only to generate the JSON output (--message-format=json)
 set_env RUSTFLAGS "-C panic=abort -C opt-level=s"
+exec --fail-on-error cargo +${ICU4X_NIGHTLY_TOOLCHAIN} wasm-build-release --examples --workspace --features serde --exclude icu_datagen --exclude icu_capi
+# Re-run the build command only to generate the JSON output (--message-format=json)
 output = exec --fail-on-error cargo +${ICU4X_NIGHTLY_TOOLCHAIN} wasm-build-release --message-format=json --examples --workspace --features serde --exclude icu_datagen --exclude icu_capi
 
 # Parse the JSON messages from --message-format=json line by line

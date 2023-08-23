@@ -21,3 +21,7 @@ pub mod plurals;
 pub mod relativetime;
 pub mod source;
 pub mod time_zones;
+#[cfg(feature = "icu_transliteration")]
+pub mod transforms;
+#[cfg(feature = "icu_unitsconversion")]
+pub mod units;

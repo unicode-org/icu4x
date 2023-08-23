@@ -137,20 +137,9 @@ pub fn mod3(x: f64, a: f64, b: f64) -> f64 {
     }
 }
 
-// Arctan of x,y in degrees
-pub fn arctan_degrees(y: f64, x: f64) -> Result<f64, &'static str> {
-    if x == 0.0 && y == 0.0 {
-        Err("Both x and y are zero")
-    } else if x == 0.0 {
-        if y > 0.0 {
-            Ok(90.0)
-        } else {
-            Ok(-90.0)
-        }
-    } else {
-        let alpha = libm::atan(y / x) * 180.0 / PI;
-        Ok(mod_degrees(if x >= 0.0 { alpha } else { alpha + 180.0 }))
-    }
+// Arctangent of y/x in degrees, handling zero cases (using atan2)
+pub fn arctan_degrees(y: f64, x: f64) -> f64 {
+    mod_degrees(libm::atan2(y, x) * 180.0 / PI)
 }
 
 // TODO: convert recursive into iterative

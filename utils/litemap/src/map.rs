@@ -4,12 +4,13 @@
 
 use crate::store::*;
 use alloc::borrow::Borrow;
+use alloc::boxed::Box;
 use alloc::vec::Vec;
 use core::cmp::Ordering;
 use core::iter::FromIterator;
 use core::marker::PhantomData;
 use core::mem;
-use core::ops::{Index, IndexMut};
+use core::ops::{Index, IndexMut, Range};
 
 /// A simple "flat" map based on a sorted vector
 ///
@@ -125,6 +126,118 @@ where
     pub fn last(&self) -> Option<(&K, &V)> {
         self.values.lm_get(self.len() - 1).map(|(k, v)| (k, v))
     }
+
+    /// Returns a new [`LiteMap`] with owned keys and values.
+    ///
+    /// The trait bounds allow transforming most slice and string types.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use litemap::LiteMap;
+    ///
+    /// let mut map: LiteMap<&str, &str> = LiteMap::new_vec();
+    /// map.insert("one", "uno");
+    /// map.insert("two", "dos");
+    ///
+    /// let boxed_map: LiteMap<Box<str>, Box<str>> = map.to_boxed_keys_values();
+    ///
+    /// assert_eq!(boxed_map.get("one"), Some(&Box::from("uno")));
+    /// ```
+    pub fn to_boxed_keys_values<KB: ?Sized, VB: ?Sized, SB>(&self) -> LiteMap<Box<KB>, Box<VB>, SB>
+    where
+        SB: StoreMut<Box<KB>, Box<VB>>,
+        K: Borrow<KB>,
+        V: Borrow<VB>,
+        Box<KB>: for<'a> From<&'a KB>,
+        Box<VB>: for<'a> From<&'a VB>,
+    {
+        let mut values = SB::lm_with_capacity(self.len());
+        for i in 0..self.len() {
+            #[allow(clippy::unwrap_used)] // iterating over our own length
+            let (k, v) = self.values.lm_get(i).unwrap();
+            values.lm_push(Box::from(k.borrow()), Box::from(v.borrow()))
+        }
+        LiteMap {
+            values,
+            _key_type: PhantomData,
+            _value_type: PhantomData,
+        }
+    }
+
+    /// Returns a new [`LiteMap`] with owned keys and cloned values.
+    ///
+    /// The trait bounds allow transforming most slice and string types.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use litemap::LiteMap;
+    ///
+    /// let mut map: LiteMap<&str, usize> = LiteMap::new_vec();
+    /// map.insert("one", 11);
+    /// map.insert("two", 22);
+    ///
+    /// let boxed_map: LiteMap<Box<str>, usize> = map.to_boxed_keys();
+    ///
+    /// assert_eq!(boxed_map.get("one"), Some(&11));
+    /// ```
+    pub fn to_boxed_keys<KB: ?Sized, SB>(&self) -> LiteMap<Box<KB>, V, SB>
+    where
+        V: Clone,
+        SB: StoreMut<Box<KB>, V>,
+        K: Borrow<KB>,
+        Box<KB>: for<'a> From<&'a KB>,
+    {
+        let mut values = SB::lm_with_capacity(self.len());
+        for i in 0..self.len() {
+            #[allow(clippy::unwrap_used)] // iterating over our own length
+            let (k, v) = self.values.lm_get(i).unwrap();
+            values.lm_push(Box::from(k.borrow()), v.clone())
+        }
+        LiteMap {
+            values,
+            _key_type: PhantomData,
+            _value_type: PhantomData,
+        }
+    }
+
+    /// Returns a new [`LiteMap`] with cloned keys and owned values.
+    ///
+    /// The trait bounds allow transforming most slice and string types.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use litemap::LiteMap;
+    ///
+    /// let mut map: LiteMap<usize, &str> = LiteMap::new_vec();
+    /// map.insert(11, "uno");
+    /// map.insert(22, "dos");
+    ///
+    /// let boxed_map: LiteMap<usize, Box<str>> = map.to_boxed_values();
+    ///
+    /// assert_eq!(boxed_map.get(&11), Some(&Box::from("uno")));
+    /// ```
+    pub fn to_boxed_values<VB: ?Sized, SB>(&self) -> LiteMap<K, Box<VB>, SB>
+    where
+        K: Clone,
+        SB: StoreMut<K, Box<VB>>,
+        V: Borrow<VB>,
+        Box<VB>: for<'a> From<&'a VB>,
+    {
+        let mut values = SB::lm_with_capacity(self.len());
+        for i in 0..self.len() {
+            #[allow(clippy::unwrap_used)] // iterating over our own length
+            let (k, v) = self.values.lm_get(i).unwrap();
+            values.lm_push(k.clone(), Box::from(v.borrow()))
+        }
+        LiteMap {
+            values,
+            _key_type: PhantomData,
+            _value_type: PhantomData,
+        }
+    }
 }
 
 impl<K: ?Sized, V: ?Sized, S> LiteMap<K, V, S>
@@ -194,6 +307,197 @@ where
         Q: Ord,
     {
         self.values.lm_binary_search_by(|k| k.borrow().cmp(key))
+    }
+}
+
+impl<K: ?Sized, V: ?Sized, S> LiteMap<K, V, S>
+where
+    S: StoreSlice<K, V>,
+{
+    /// Creates a new [`LiteMap`] from a range of the current [`LiteMap`].
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use litemap::LiteMap;
+    ///
+    /// let mut map = LiteMap::new_vec();
+    /// map.insert(1, "one");
+    /// map.insert(2, "two");
+    /// map.insert(3, "three");
+    ///
+    /// let mut sub_map = map.get_indexed_range(1..3).expect("valid range");
+    /// assert_eq!(sub_map.get(&1), None);
+    /// assert_eq!(sub_map.get(&2), Some(&"two"));
+    /// assert_eq!(sub_map.get(&3), Some(&"three"));
+    /// ```
+    pub fn get_indexed_range(&self, range: Range<usize>) -> Option<LiteMap<K, V, &S::Slice>> {
+        let subslice = self.values.lm_get_range(range)?;
+        Some(LiteMap {
+            values: subslice,
+            _key_type: PhantomData,
+            _value_type: PhantomData,
+        })
+    }
+
+    /// Borrows this [`LiteMap`] as one of its slice type.
+    ///
+    /// This can be useful in situations where you need a `LiteMap` by value but do not want
+    /// to clone the owned version.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use litemap::LiteMap;
+    ///
+    /// let mut map = LiteMap::new_vec();
+    /// map.insert(1, "one");
+    /// map.insert(2, "two");
+    ///
+    /// let borrowed_map = map.as_sliced();
+    /// assert_eq!(borrowed_map.get(&1), Some(&"one"));
+    /// assert_eq!(borrowed_map.get(&2), Some(&"two"));
+    /// ```
+    pub fn as_sliced(&self) -> LiteMap<K, V, &S::Slice> {
+        // Won't panic: 0..self.len() is within range
+        #[allow(clippy::unwrap_used)]
+        let subslice = self.values.lm_get_range(0..self.len()).unwrap();
+        LiteMap {
+            values: subslice,
+            _key_type: PhantomData,
+            _value_type: PhantomData,
+        }
+    }
+
+    /// Borrows the backing buffer of this [`LiteMap`] as its slice type.
+    ///
+    /// The slice will be sorted.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use litemap::LiteMap;
+    ///
+    /// let mut map = LiteMap::new_vec();
+    /// map.insert(1, "one");
+    /// map.insert(2, "two");
+    ///
+    /// let slice = map.as_slice();
+    /// assert_eq!(slice, &[(1, "one"), (2, "two")]);
+    /// ```
+    pub fn as_slice(&self) -> &S::Slice {
+        // Won't panic: 0..self.len() is within range
+        #[allow(clippy::unwrap_used)]
+        self.values.lm_get_range(0..self.len()).unwrap()
+    }
+}
+
+impl<'a, K: 'a, V: 'a, S> LiteMap<K, V, S>
+where
+    S: Store<K, V>,
+{
+    /// Returns a new [`LiteMap`] with keys and values borrowed from this one.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use litemap::LiteMap;
+    ///
+    /// let mut map: LiteMap<Box<usize>, String> = LiteMap::new_vec();
+    /// map.insert(Box::new(1), "one".to_string());
+    /// map.insert(Box::new(2), "two".to_string());
+    ///
+    /// let borrowed_map: LiteMap<&usize, &str> = map.to_borrowed_keys_values();
+    ///
+    /// assert_eq!(borrowed_map.get(&1), Some(&"one"));
+    /// ```
+    pub fn to_borrowed_keys_values<KB: ?Sized, VB: ?Sized, SB>(
+        &'a self,
+    ) -> LiteMap<&'a KB, &'a VB, SB>
+    where
+        K: Borrow<KB>,
+        V: Borrow<VB>,
+        SB: StoreMut<&'a KB, &'a VB>,
+    {
+        let mut values = SB::lm_with_capacity(self.len());
+        for i in 0..self.len() {
+            #[allow(clippy::unwrap_used)] // iterating over our own length
+            let (k, v) = self.values.lm_get(i).unwrap();
+            values.lm_push(k.borrow(), v.borrow())
+        }
+        LiteMap {
+            values,
+            _key_type: PhantomData,
+            _value_type: PhantomData,
+        }
+    }
+
+    /// Returns a new [`LiteMap`] with keys borrowed from this one and cloned values.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use litemap::LiteMap;
+    ///
+    /// let mut map: LiteMap<Box<usize>, String> = LiteMap::new_vec();
+    /// map.insert(Box::new(1), "one".to_string());
+    /// map.insert(Box::new(2), "two".to_string());
+    ///
+    /// let borrowed_map: LiteMap<&usize, String> = map.to_borrowed_keys();
+    ///
+    /// assert_eq!(borrowed_map.get(&1), Some(&"one".to_string()));
+    /// ```
+    pub fn to_borrowed_keys<KB: ?Sized, SB>(&'a self) -> LiteMap<&'a KB, V, SB>
+    where
+        K: Borrow<KB>,
+        V: Clone,
+        SB: StoreMut<&'a KB, V>,
+    {
+        let mut values = SB::lm_with_capacity(self.len());
+        for i in 0..self.len() {
+            #[allow(clippy::unwrap_used)] // iterating over our own length
+            let (k, v) = self.values.lm_get(i).unwrap();
+            values.lm_push(k.borrow(), v.clone())
+        }
+        LiteMap {
+            values,
+            _key_type: PhantomData,
+            _value_type: PhantomData,
+        }
+    }
+
+    /// Returns a new [`LiteMap`] with values borrowed from this one and cloned keys.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use litemap::LiteMap;
+    ///
+    /// let mut map: LiteMap<Box<usize>, String> = LiteMap::new_vec();
+    /// map.insert(Box::new(1), "one".to_string());
+    /// map.insert(Box::new(2), "two".to_string());
+    ///
+    /// let borrowed_map: LiteMap<Box<usize>, &str> = map.to_borrowed_values();
+    ///
+    /// assert_eq!(borrowed_map.get(&1), Some(&"one"));
+    /// ```
+    pub fn to_borrowed_values<VB: ?Sized, SB>(&'a self) -> LiteMap<K, &'a VB, SB>
+    where
+        K: Clone,
+        V: Borrow<VB>,
+        SB: StoreMut<K, &'a VB>,
+    {
+        let mut values = SB::lm_with_capacity(self.len());
+        for i in 0..self.len() {
+            #[allow(clippy::unwrap_used)] // iterating over our own length
+            let (k, v) = self.values.lm_get(i).unwrap();
+            values.lm_push(k.clone(), v.borrow())
+        }
+        LiteMap {
+            values,
+            _key_type: PhantomData,
+            _value_type: PhantomData,
+        }
     }
 }
 
@@ -357,6 +661,64 @@ where
                 None
             }
         }
+    }
+
+    /// Attemps to insert a unique entry into the map.
+    ///
+    /// If `key` is not already in the map, invokes the closure to compute `value`, inserts
+    /// the pair into the map, and returns a reference to the value. The closure is passed
+    /// a reference to the `key` argument.
+    ///
+    /// If `key` is already in the map, a reference to the existing value is returned.
+    ///
+    /// Additionally, the index of the value in the map is returned. If it is not desirable
+    /// to hold on to the mutable reference's lifetime, the index can be used to access the
+    /// element via [`LiteMap::get_indexed()`].
+    ///
+    /// The closure returns a `Result` to allow for a fallible insertion function. If the
+    /// creation of `value` is infallible, you can use [`core::convert::Infallible`].
+    ///
+    /// ```
+    /// use litemap::LiteMap;
+    ///
+    /// /// Helper function to unwrap an `Infallible` result from the insertion function
+    /// fn unwrap_infallible<T>(result: Result<T, core::convert::Infallible>) -> T {
+    ///     result.unwrap_or_else(|never| match never {})
+    /// }
+    ///
+    /// let mut map = LiteMap::new_vec();
+    /// map.insert(1, "one");
+    /// map.insert(3, "three");
+    ///
+    /// // 2 is not yet in the map...
+    /// let result1 = unwrap_infallible(
+    ///     map.try_get_or_insert(2, |_| Ok("two"))
+    /// );
+    /// assert_eq!(result1.1, &"two");
+    /// assert_eq!(map.len(), 3);
+    ///
+    /// // ...but now it is.
+    /// let result1 = unwrap_infallible(
+    ///     map.try_get_or_insert(2, |_| Ok("TWO"))
+    /// );
+    /// assert_eq!(result1.1, &"two");
+    /// assert_eq!(map.len(), 3);
+    /// ```
+    pub fn try_get_or_insert<E>(
+        &mut self,
+        key: K,
+        value: impl FnOnce(&K) -> Result<V, E>,
+    ) -> Result<(usize, &V), E> {
+        let idx = match self.values.lm_binary_search_by(|k| k.cmp(&key)) {
+            Ok(idx) => idx,
+            Err(idx) => {
+                let value = value(&key)?;
+                self.values.lm_insert(idx, key, value);
+                idx
+            }
+        };
+        #[allow(clippy::unwrap_used)] // item at idx found or inserted above
+        Ok((idx, self.values.lm_get(idx).unwrap().1))
     }
 
     /// Remove the value at `key`, returning it if it exists.

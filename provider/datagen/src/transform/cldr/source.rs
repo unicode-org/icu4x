@@ -4,8 +4,8 @@
 
 #![allow(dead_code)] // features
 
-use super::locale_canonicalizer::likely_subtags::LikelySubtagsResources;
 use crate::source::SerdeCache;
+use crate::CoverageLevel;
 use icu_locid::LanguageIdentifier;
 use icu_locid_transform::provider::LikelySubtagsForLanguageV1Marker;
 use icu_locid_transform::provider::LikelySubtagsForScriptRegionV1Marker;
@@ -15,29 +15,9 @@ use icu_provider::DataError;
 use icu_provider_adapters::any_payload::AnyPayloadProvider;
 use icu_provider_adapters::fork::ForkByKeyProvider;
 use once_cell::sync::OnceCell;
+use std::collections::HashSet;
 use std::fmt::Debug;
 use std::str::FromStr;
-
-/// A language's CLDR coverage level.
-#[derive(Debug, Copy, Clone, PartialEq, Eq, serde::Deserialize, serde::Serialize, Hash)]
-#[non_exhaustive]
-pub enum CoverageLevel {
-    /// Locales listed as modern coverage targets by the CLDR subcomittee.
-    ///
-    /// This is the highest level of coverage.
-    #[serde(rename = "modern")]
-    Modern,
-    /// Locales listed as moderate coverage targets by the CLDR subcomittee.
-    ///
-    /// This is a medium level of coverage.
-    #[serde(rename = "moderate")]
-    Moderate,
-    /// Locales listed as basic coverage targets by the CLDR subcomittee.
-    ///
-    /// This is the lowest level of coverage.
-    #[serde(rename = "basic")]
-    Basic,
-}
 
 #[derive(Debug)]
 pub(crate) struct CldrCache {
@@ -75,6 +55,11 @@ impl CldrCache {
         CldrDirLang(self, "cldr-localenames".to_owned())
     }
 
+    #[cfg(feature = "icu_transliteration")]
+    pub fn transforms(&self) -> CldrDirTransform<'_> {
+        CldrDirTransform(self, "cldr-transforms".to_owned())
+    }
+
     pub fn dates(&self, cal: &str) -> CldrDirLang<'_> {
         CldrDirLang(
             self,
@@ -88,8 +73,9 @@ impl CldrCache {
 
     pub fn locales(
         &self,
-        levels: &[CoverageLevel],
+        levels: impl IntoIterator<Item = CoverageLevel>,
     ) -> Result<Vec<icu_locid::LanguageIdentifier>, DataError> {
+        let levels = levels.into_iter().collect::<HashSet<_>>();
         Ok(self
             .serde_cache
             .read_and_parse_json::<crate::transform::cldr::cldr_serde::coverage_levels::Resource>(
@@ -99,6 +85,8 @@ impl CldrCache {
             .iter()
             .filter_map(|(locale, c)| levels.contains(c).then_some(locale))
             .cloned()
+            // `und` needs to be part of every set
+            .chain([Default::default()])
             .collect())
     }
 
@@ -115,15 +103,9 @@ impl CldrCache {
     }
 
     fn locale_expander(&self) -> Result<&LocaleExpander, DataError> {
+        use super::locale_canonicalizer::likely_subtags::*;
         self.locale_expander.get_or_try_init(|| {
-            let resources = LikelySubtagsResources::from_resources(
-                self.serde_cache
-                    .read_and_parse_json("cldr-core/supplemental/likelySubtags.json")?,
-                self.serde_cache
-                    .read_and_parse_json("cldr-core/coverageLevels.json")?,
-            );
-            let data =
-                super::locale_canonicalizer::likely_subtags::transform(resources.get_common());
+            let data = transform(LikelySubtagsResources::try_from_cldr_cache(self)?.get_common());
             let provider = ForkByKeyProvider::new(
                 AnyPayloadProvider::from_owned::<LikelySubtagsForLanguageV1Marker>(
                     data.clone().into(),
@@ -240,6 +222,50 @@ impl<'a> CldrDirLang<'a> {
             Ok(true)
         } else if let Some(new_langid) = self.0.add_script(lang)? {
             self.file_exists(&new_langid, file_name)
+        } else {
+            Ok(false)
+        }
+    }
+}
+
+#[cfg(feature = "icu_transliteration")]
+pub(crate) struct CldrDirTransform<'a>(&'a CldrCache, String);
+
+#[cfg(feature = "icu_transliteration")]
+impl<'a> CldrDirTransform<'a> {
+    pub fn read_and_parse_metadata(
+        &self,
+        transform: &str,
+    ) -> Result<&'a crate::transform::cldr::cldr_serde::transforms::Resource, DataError> {
+        let dir_suffix = self.0.dir_suffix()?;
+        // using the -NoLang version because `transform` is not a valid LanguageIdentifier
+        let cldr_dir = CldrDirNoLang(self.0, format!("{}-{dir_suffix}/main/{transform}", self.1));
+        cldr_dir.read_and_parse("metadata.json")
+    }
+
+    pub fn read_source(&self, transform: &str) -> Result<String, DataError> {
+        let dir_suffix = self.0.dir_suffix()?;
+        let path = format!("{}-{dir_suffix}/main/{transform}/source.txt", self.1);
+        if self.0.serde_cache.file_exists(&path)? {
+            self.0.serde_cache.root.read_to_string(&path)
+        } else {
+            Err(DataErrorKind::Io(std::io::ErrorKind::NotFound)
+                .into_error()
+                .with_display_context(&path))
+        }
+    }
+
+    pub fn list_transforms(&self) -> Result<impl Iterator<Item = String> + '_, DataError> {
+        let dir_suffix = self.0.dir_suffix()?;
+        let path = format!("{}-{dir_suffix}/main", self.1);
+        self.0.serde_cache.list(&path)
+    }
+
+    pub fn file_exists(&self, transform: &str, file_name: &str) -> Result<bool, DataError> {
+        let dir_suffix = self.0.dir_suffix()?;
+        let path = format!("{}-{dir_suffix}/main/{transform}/{file_name}", self.1);
+        if self.0.serde_cache.file_exists(&path)? {
+            Ok(true)
         } else {
             Ok(false)
         }

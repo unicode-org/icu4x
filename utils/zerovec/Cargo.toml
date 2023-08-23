@@ -11,7 +11,7 @@ authors = ["The ICU4X Project Developers"]
 edition = "2021"
 readme = "README.md"
 repository = "https://github.com/unicode-org/icu4x"
-license = "Unicode-DFS-2016"
+license-file = "LICENSE"
 categories = ["rust-patterns", "memory-management", "caching", "no-std", "data-structures"]
 keywords = ["zerocopy", "serialization", "zero-copy", "serde"]
 include = [
@@ -97,7 +97,7 @@ harness = false
 [[bench]]
 name = "zeromap"
 harness = false
-required-features = ["serde", "hashmap"]
+required-features = ["serde", "hashmap", "derive"]
 
 [[example]]
 name = "zv_serde"

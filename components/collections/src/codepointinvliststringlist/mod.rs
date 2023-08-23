@@ -25,6 +25,7 @@ use zerovec::{VarZeroSlice, VarZeroVec};
 /// list-like structure to store and iterate over the strings.
 #[zerovec::make_varule(CodePointInversionListAndStringListULE)]
 #[zerovec::skip_derive(Ord)]
+#[zerovec::derive(Debug)]
 #[derive(Debug, Eq, PartialEq, Clone, Yokeable, ZeroFrom)]
 // Valid to auto-derive Deserialize because the invariants are weakly held
 #[cfg_attr(feature = "serde", derive(serde::Deserialize, serde::Serialize))]
@@ -257,7 +258,7 @@ impl<'a> FromIterator<&'a str> for CodePointInversionListAndStringList<'_> {
 
 /// Custom Errors for [`CodePointInversionListAndStringList`].
 ///
-/// Re-exported as [`Error`](Error).
+/// Re-exported as [`Error`].
 #[derive(Display, Debug)]
 pub enum CodePointInversionListAndStringListError {
     /// An invalid CodePointInversionList was constructed

@@ -16,7 +16,7 @@
 /**
  * Priority mode for the ICU4X fallback algorithm.
  * 
- * See the [Rust documentation for `FallbackPriority`](https://docs.rs/icu/latest/icu/locid_transform/fallback/enum.FallbackPriority.html) for more information.
+ * See the [Rust documentation for `LocaleFallbackPriority`](https://docs.rs/icu/latest/icu/locid_transform/fallback/enum.LocaleFallbackPriority.html) for more information.
  */
 enum struct ICU4XLocaleFallbackPriority {
   Language = 0,

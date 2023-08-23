@@ -4,6 +4,7 @@
 
 use crate::error::{DataError, DataErrorKind};
 
+use crate::fallback::{LocaleFallbackConfig, LocaleFallbackPriority, LocaleFallbackSupplement};
 use alloc::borrow::Cow;
 use core::fmt;
 use core::fmt::Write;
@@ -158,48 +159,6 @@ impl AsULE for DataKeyHash {
 // Safe since the ULE type is `self`.
 unsafe impl EqULE for DataKeyHash {}
 
-/// Hint for what to prioritize during fallback when data is unavailable.
-///
-/// For example, if `"en-US"` is requested, but we have no data for that specific locale,
-/// fallback may take us to `"en"` or `"und-US"` to check for data.
-#[derive(Debug, PartialEq, Eq, Copy, Clone, PartialOrd, Ord)]
-#[non_exhaustive]
-pub enum FallbackPriority {
-    /// Prioritize the language. This is the default behavior.
-    ///
-    /// For example, `"en-US"` should go to `"en"` and then `"und"`.
-    Language,
-    /// Prioritize the region.
-    ///
-    /// For example, `"en-US"` should go to `"und-US"` and then `"und"`.
-    Region,
-    /// Collation-specific fallback rules. Similar to language priority.
-    ///
-    /// For example, `"zh-Hant"` goes to `"zh"` before `"und"`.
-    Collation,
-}
-
-impl FallbackPriority {
-    /// Const-friendly version of [`Default::default`].
-    pub const fn const_default() -> Self {
-        Self::Language
-    }
-}
-
-impl Default for FallbackPriority {
-    fn default() -> Self {
-        Self::const_default()
-    }
-}
-
-/// What additional data to load when performing fallback.
-#[derive(Debug, PartialEq, Eq, Copy, Clone, PartialOrd, Ord)]
-#[non_exhaustive]
-pub enum FallbackSupplement {
-    /// Collation supplement; see `CollationFallbackSupplementV1Marker`
-    Collation,
-}
-
 /// The string path of a data key. For example, "foo@1"
 #[derive(Debug, Copy, Clone, PartialEq, Eq, PartialOrd, Ord)]
 pub struct DataKeyPath {
@@ -235,13 +194,13 @@ impl Deref for DataKeyPath {
 #[non_exhaustive]
 pub struct DataKeyMetadata {
     /// What to prioritize when fallbacking on this [`DataKey`].
-    pub fallback_priority: FallbackPriority,
+    pub fallback_priority: LocaleFallbackPriority,
     /// A Unicode extension keyword to consider when loading data for this [`DataKey`].
     pub extension_key: Option<icu_locid::extensions::unicode::Key>,
     /// Optional choice for additional fallbacking data required for loading this marker.
     ///
     /// For more information, see `LocaleFallbackConfig::fallback_supplement`.
-    pub fallback_supplement: Option<FallbackSupplement>,
+    pub fallback_supplement: Option<LocaleFallbackSupplement>,
     /// Whether the key has a singleton value, as opposed to per-locale values. Singleton
     /// keys behave differently, e.g. they never perform fallback, and can be optimized
     /// in data providers.
@@ -252,7 +211,7 @@ impl DataKeyMetadata {
     /// Const-friendly version of [`Default::default`].
     pub const fn const_default() -> Self {
         Self {
-            fallback_priority: FallbackPriority::const_default(),
+            fallback_priority: LocaleFallbackPriority::const_default(),
             extension_key: None,
             fallback_supplement: None,
             singleton: false,
@@ -261,9 +220,9 @@ impl DataKeyMetadata {
 
     #[doc(hidden)]
     pub const fn construct_internal(
-        fallback_priority: FallbackPriority,
+        fallback_priority: LocaleFallbackPriority,
         extension_key: Option<icu_locid::extensions::unicode::Key>,
-        fallback_supplement: Option<FallbackSupplement>,
+        fallback_supplement: Option<LocaleFallbackSupplement>,
         singleton: bool,
     ) -> Self {
         Self {
@@ -379,6 +338,16 @@ impl DataKey {
     #[inline]
     pub const fn metadata(self) -> DataKeyMetadata {
         self.metadata
+    }
+
+    /// Returns the [`LocaleFallbackConfig`] for this [`DataKey`].
+    #[inline]
+    pub const fn fallback_config(self) -> LocaleFallbackConfig {
+        let mut config = LocaleFallbackConfig::const_default();
+        config.priority = self.metadata.fallback_priority;
+        config.extension_key = self.metadata.extension_key;
+        config.fallback_supplement = self.metadata.fallback_supplement;
+        config
     }
 
     /// Constructs a [`DataKey`] from a path and metadata.
