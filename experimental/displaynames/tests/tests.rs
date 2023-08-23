@@ -85,7 +85,7 @@ fn test_concatenate() {
         let display_name = LocaleDisplayNamesFormatter::try_new(&locale.into(), options)
             .expect("Data should load successfully");
 
-        let result = display_name.of(&cas.input_1);
+        let result = display_name.of(cas.input_1);
         assert_eq!(result, cas.expected);
 
         if cas.should_borrow {
