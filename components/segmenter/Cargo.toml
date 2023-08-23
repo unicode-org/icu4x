@@ -52,6 +52,7 @@ datagen = ["serde", "dep:databake", "zerovec/databake", "icu_collections/databak
 lstm = ["dep:libm"]
 auto = ["lstm"] # Enabled try_new_auto_unstable constructors
 compiled_data = ["dep:icu_segmenter_data"]
+bench = []
 
 [lib]
 bench = false  # This option is required for Benchmark CI
