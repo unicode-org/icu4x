@@ -25,8 +25,8 @@ use tinystr::tinystr;
 ///    because the character closes to the number is a letter.
 fn currency_pattern_selection(
     provider: &DatagenProvider,
-    pattern: &String,
-    place_holder: &String,
+    pattern: &str,
+    place_holder: &str,
 ) -> Result<PatternSelection, DataError> {
     // TODO(younies): what should we do when the place_holder is empty?
     if place_holder.is_empty() {
@@ -189,7 +189,7 @@ fn extract_currency_essentials<'data>(
                 Some(PlaceHolder::Index(index)) => currency_pattern_selection(
                     provider,
                     standard,
-                    &place_holders.get(index as usize).unwrap().to_string(),
+                    place_holders.get(index as usize).unwrap(),
                 )?,
                 Some(PlaceHolder::ISO) => {
                     currency_pattern_selection(provider, standard, &iso_string)?
@@ -207,7 +207,7 @@ fn extract_currency_essentials<'data>(
                 Some(PlaceHolder::Index(index)) => currency_pattern_selection(
                     provider,
                     standard,
-                    &place_holders.get(index as usize).unwrap().to_string(),
+                    place_holders.get(index as usize).unwrap(),
                 )?,
                 Some(PlaceHolder::ISO) => {
                     currency_pattern_selection(provider, standard, &iso_string)?
