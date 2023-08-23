@@ -1,5 +1,7 @@
 # databake [![crates.io](https://img.shields.io/crates/v/databake)](https://crates.io/crates/databake)
 
+<!-- cargo-rdme start -->
+
 This crate allows data to write itself into Rust code (bake itself in).
 
 Types that implement the `Bake` trait can be written into Rust expressions,
@@ -54,6 +56,8 @@ test_bake!(
     my_crate,
 );
 ```
+
+<!-- cargo-rdme end -->
 
 ## More Information
 

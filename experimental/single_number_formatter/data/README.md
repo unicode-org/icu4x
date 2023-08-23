@@ -1,6 +1,10 @@
 # icu_singlenumberformatter_data [![crates.io](https://img.shields.io/crates/v/icu_singlenumberformatter_data)](https://crates.io/crates/icu_singlenumberformatter_data)
 
+<!-- cargo-rdme start -->
+
 Data for the icu_singlenumberformatter crate
+
+<!-- cargo-rdme end -->
 
 ## More Information
 

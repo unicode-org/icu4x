@@ -5,42 +5,33 @@
 [package]
 name = "icu_provider_blob"
 description = "ICU4X data provider that reads from blobs in memory"
-version = "1.2.0"
-rust-version = "1.65.0"
-authors = ["The ICU4X Project Developers"]
-edition = "2021"
-readme = "README.md"
-repository = "https://github.com/unicode-org/icu4x"
-homepage = "https://icu4x.unicode.org"
-license-file = "LICENSE"
-categories = ["internationalization"]
-# Keep this in sync with other crates unless there are exceptions
-include = [
-    "src/**/*",
-    "examples/**/*",
-    "benches/**/*",
-    "tests/**/*",
-    "Cargo.toml",
-    "LICENSE",
-    "README.md"
-]
+
+authors.workspace = true
+categories.workspace = true
+edition.workspace = true
+homepage.workspace = true
+include.workspace = true
+license-file.workspace = true
+repository.workspace = true
+rust-version.workspace = true
+version.workspace = true
 
 [package.metadata.docs.rs]
 all-features = true
 
 [dependencies]
-icu_provider = { version = "1.2.0", path = "../core", features = ["deserialize_postcard_1", "serde"] }
+icu_provider = { workspace = true, features = ["deserialize_postcard_1", "serde"] }
 postcard = { version = "1.0.0", default-features = false, features = ["alloc"] }
 serde = { version = "1.0", default-features = false, features = ["alloc"] }
-writeable = { version = "0.5.1", path = "../../utils/writeable" }
-yoke = { version = "0.7.1", path = "../../utils/yoke" }
-zerovec = { version = "0.9.4", path = "../../utils/zerovec", features = ["serde", "yoke"] }
+writeable = {workspace = true }
+yoke = { workspace = true }
+zerovec = { workspace = true, features = ["serde", "yoke"] }
 
 log = { version = "0.4", optional = true }
 
 [dev-dependencies]
-icu_locid = { path = "../../components/locid", features = ["serde"] }
-icu_datagen = { path = "../datagen" }
+icu_locid = { workspace = true, features = ["serde"] }
+icu_datagen = { workspace = true }
 
 [features]
 std = ["icu_provider/std"]

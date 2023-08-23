@@ -1,5 +1,7 @@
 # icu_collator [![crates.io](https://img.shields.io/crates/v/icu_collator)](https://crates.io/crates/icu_collator)
 
+<!-- cargo-rdme start -->
+
 Comparing strings according to language-dependent conventions.
 
 This module is published as its own crate ([`icu_collator`](https://docs.rs/icu_collator/latest/icu_collator/))
@@ -267,6 +269,8 @@ let collator_num_on: Collator = Collator::try_new(
 .unwrap();
 assert_eq!(collator_num_on.compare("a10b", "a2b"), Ordering::Greater);
 ```
+
+<!-- cargo-rdme end -->
 
 ## More Information
 

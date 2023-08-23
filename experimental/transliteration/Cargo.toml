@@ -6,29 +6,33 @@
 name = "icu_transliteration"
 description = "API for Transliteration"
 version = "0.0.0"
-authors = ["The ICU4X Project Developers"]
-edition = "2021"
-readme = "README.md"
-repository = "https://github.com/unicode-org/icu4x"
-license-file = "LICENSE"
-categories = ["internationalization"]
-# Keep this in sync with other crates unless there are exceptions
-include = [
-    "src/**/*",
-    "tests/**/*",
-    "Cargo.toml",
-    "LICENSE",
-    "README.md"
-]
+
+authors.workspace = true
+categories.workspace = true
+edition.workspace = true
+homepage.workspace = true
+include.workspace = true
+license-file.workspace = true
+repository.workspace = true
+rust-version.workspace = true
 
 [package.metadata.docs.rs]
 all-features = true
-
 [dependencies]
-icu_provider = { path = "../../provider/core" }
-icu_collections = { version = "1.2.0", path = "../../components/collections", features = ["serde"] }
+icu_provider = { workspace = true, features = ["macros"] }
+icu_collections = { workspace = true }
 
-serde = { version = "1.0", features = ["derive"] }
-zerovec = { version = "0.9.4", path = "../../utils/zerovec", features = ["derive"] }
+zerovec = { workspace = true, features = ["derive"] }
+zerofrom = { workspace = true, features = ["derive"] }
+yoke = { workspace = true, features = ["derive"] }
+databake = { workspace = true, optional = true, features = ["derive"] }
 
-# TODO: Add serde, datagen, compiled_data features
+serde = { version = "1.0", features = ["derive"], optional = true, default-features = false }
+
+icu_transliteration_data = { workspace = true, optional = true }
+
+[features]
+default = ["compiled_data"]
+serde = ["dep:serde", "zerovec/serde", "icu_collections/serde"]
+datagen = ["serde", "dep:databake", "zerovec/databake", "icu_collections/databake"]
+compiled_data = ["dep:icu_transliteration_data"]

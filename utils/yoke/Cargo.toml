@@ -4,23 +4,17 @@
 
 [package]
 name = "yoke"
-version = "0.7.1"
 description = "Abstraction allowing borrowed data to be carried along with the backing data it borrows from"
-rust-version = "1.65.0"
+version = "0.7.1"
 authors = ["Manish Goregaokar <manishsmail@gmail.com>"]
-edition = "2021"
-repository = "https://github.com/unicode-org/icu4x"
-license-file = "LICENSE"
 categories = ["data-structures", "memory-management", "caching", "no-std"]
 keywords = ["zerocopy", "serialization", "lifetime", "borrow", "self-referential"]
-include = [
-    "src/**/*",
-    "examples/**/*",
-    "benches/**/*",
-    "Cargo.toml",
-    "LICENSE",
-    "README.md"
-]
+
+edition.workspace = true
+include.workspace = true
+license-file.workspace = true
+repository.workspace = true
+rust-version.workspace = true
 
 [package.metadata.workspaces]
 independent = true
@@ -42,10 +36,10 @@ max_combination_size = 3
 [dependencies]
 stable_deref_trait = { version = "1.2.0", default-features = false }
 
-yoke-derive = { version = "0.7.0", path = "./derive", optional = true }
+yoke-derive = { workspace = true, optional = true }
 
 serde = { version = "1.0", default-features = false, optional = true }
-zerofrom = { version = "0.1.1", path = "../zerofrom", default-features = false, optional = true}
+zerofrom = { workspace = true, default-features = false, optional = true}
 
 [dev-dependencies]
 bincode = "1.3.3"

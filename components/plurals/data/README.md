@@ -1,6 +1,10 @@
 # icu_plurals_data [![crates.io](https://img.shields.io/crates/v/icu_plurals_data)](https://crates.io/crates/icu_plurals_data)
 
+<!-- cargo-rdme start -->
+
 Data for the icu_plurals crate
+
+<!-- cargo-rdme end -->
 
 ## More Information
 

@@ -1,0 +1,10 @@
+{
+    "direction": "forward",
+    "source": "el",
+    "target": "el_Latn",
+    "variant": "BGN",
+    "alias": [
+        "Greek-Latin/BGN",
+        "el-Latn-t-el-m0-bgn"
+    ]
+}

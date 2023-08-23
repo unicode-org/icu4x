@@ -4,23 +4,17 @@
 
 [package]
 name = "zerofrom"
-version = "0.1.2"
 description = "ZeroFrom trait for constructing"
-rust-version = "1.65.0"
+version = "0.1.2"
 authors = ["Manish Goregaokar <manishsmail@gmail.com>"]
-edition = "2021"
-repository = "https://github.com/unicode-org/icu4x"
-license-file = "LICENSE"
 categories = ["data-structures", "caching", "no-std"]
 keywords = ["zerocopy", "serialization", "lifetime", "borrow"]
-include = [
-    "src/**/*",
-    "examples/**/*",
-    "benches/**/*",
-    "Cargo.toml",
-    "LICENSE",
-    "README.md"
-]
+
+edition.workspace = true
+include.workspace = true
+license-file.workspace = true
+repository.workspace = true
+rust-version.workspace = true
 
 [package.metadata.workspaces]
 independent = true
@@ -34,4 +28,4 @@ derive = ["dep:zerofrom-derive"]
 default = ["alloc"]
 
 [dependencies]
-zerofrom-derive = { version = "0.1.1", path = "./derive", optional = true}
+zerofrom-derive = { workspace = true, optional = true}

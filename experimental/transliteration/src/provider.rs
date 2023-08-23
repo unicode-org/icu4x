@@ -23,27 +23,47 @@ use icu_collections::{
 };
 use zerovec::*;
 
+#[cfg(feature = "compiled_data")]
+#[derive(Debug)]
+/// Baked data
+pub struct Baked;
+
+#[cfg(feature = "compiled_data")]
+const _: () = {
+    mod icu {
+        pub use crate as transliteration;
+        pub use icu_collections as collections;
+    }
+    icu_transliteration_data::impl_transliterator_rules_v1!(Baked);
+};
+
 // TODO(#3776): Improve the documentation of this datastruct.
 
 /// The data struct representing [UTS #35 transform rules](https://unicode.org/reports/tr35/tr35-general.html#Transforms).
-#[derive(Debug, Clone, serde::Serialize, serde::Deserialize, PartialEq, Eq)]
+#[icu_provider::data_struct(TransliteratorRulesV1Marker = "transliterator/rules@1")]
+#[derive(Debug, Clone, PartialEq, Eq)]
+#[cfg_attr(feature = "serde", derive(serde::Deserialize))]
+#[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake), databake(path = icu_transliteration::provider))]
 pub struct RuleBasedTransliterator<'a> {
     /// Whether this transliterator is accessible directly through the constructor.
     /// Hidden transliterators are intended as dependencies for visible transliterators,
     /// see, e.g., [Devanagari-Latin](https://github.com/unicode-org/cldr/blob/main/common/transforms/Devanagari-Latin.xml)
     pub visibility: bool,
     /// The [`VarTable`] containing any special matchers (variables, UnicodeSets, ...) used by this transliterator.
-    #[serde(borrow)]
+    #[cfg_attr(feature = "serde", serde(borrow))]
     pub variable_table: VarTable<'a>,
     /// The filter for this transliterator. If there is none, the set of all code points is used.
-    #[serde(borrow)]
+    #[cfg_attr(feature = "serde", serde(borrow))]
     pub filter: CodePointInversionList<'a>,
     /// The list of transform rule groups this transliterator uses.
-    #[serde(borrow)]
+    #[cfg_attr(feature = "serde", serde(borrow))]
     pub id_group_list: VarZeroVec<'a, VarZeroSlice<SimpleIdULE>>,
     /// The list of conversion rule groups this transliterator uses.
-    #[serde(borrow)]
+    #[cfg_attr(feature = "serde", serde(borrow))]
     pub rule_group_list: VarZeroVec<'a, VarZeroSlice<RuleULE>>,
+    /// The direct dependencies of this transliterator.
+    #[cfg_attr(feature = "serde", serde(borrow))]
+    pub dependencies: VarZeroVec<'a, str>,
 }
 
 /// The ID of a transliterator plus an optional filter.
@@ -51,37 +71,54 @@ pub struct RuleBasedTransliterator<'a> {
 #[make_varule(SimpleIdULE)]
 #[zerovec::skip_derive(Ord)]
 #[zerovec::derive(Debug)]
-#[zerovec::derive(Serialize, Deserialize)]
-#[derive(serde::Serialize, serde::Deserialize)]
+#[cfg_attr(
+    feature = "serde",
+    derive(serde::Deserialize),
+    zerovec::derive(Deserialize)
+)]
+#[cfg_attr(
+    feature = "datagen",
+    derive(serde::Serialize),
+    zerovec::derive(Serialize)
+)]
 pub struct SimpleId<'a> {
     /// The filter for the transliterator. If there is none, the set of all code points is used.
     #[zerovec::varule(CodePointInversionListULE)]
-    #[serde(borrow)]
+    #[cfg_attr(feature = "serde", serde(borrow))]
     pub filter: CodePointInversionList<'a>,
     /// The ID of the transliterator.
-    #[serde(borrow)]
+    #[cfg_attr(feature = "serde", serde(borrow))]
     pub id: Cow<'a, str>,
 }
 
 /// A conversion rule. The source patterns as well as the replacer use inlined private use characters
 /// that refer to elements of the [`VarTable`] for special matchers (variables, UnicodeSets, ...).
+#[derive(Debug, Clone)]
 #[make_varule(RuleULE)]
 #[zerovec::skip_derive(Ord)]
 #[zerovec::derive(Debug)]
-#[zerovec::derive(Serialize, Deserialize)]
-#[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
+#[cfg_attr(
+    feature = "serde",
+    derive(serde::Deserialize),
+    zerovec::derive(Deserialize)
+)]
+#[cfg_attr(
+    feature = "datagen",
+    derive(serde::Serialize),
+    zerovec::derive(Serialize)
+)]
 pub struct Rule<'a> {
     /// The pattern for the ante context. This is not replaced.
-    #[serde(borrow)]
+    #[cfg_attr(feature = "serde", serde(borrow))]
     pub ante: Cow<'a, str>,
     /// The pattern for the key. This is what gets replaced.
-    #[serde(borrow)]
+    #[cfg_attr(feature = "serde", serde(borrow))]
     pub key: Cow<'a, str>,
     /// The pattern for the post context. This is not replaced.
-    #[serde(borrow)]
+    #[cfg_attr(feature = "serde", serde(borrow))]
     pub post: Cow<'a, str>,
     /// The replacer. The key gets replaced with this.
-    #[serde(borrow)]
+    #[cfg_attr(feature = "serde", serde(borrow))]
     pub replacer: Cow<'a, str>,
     /// The offset of the cursor after this rule, if the rule matches.
     /// The end of the key/replacer is 0, i.e., a no-op.
@@ -89,43 +126,54 @@ pub struct Rule<'a> {
 }
 
 /// The special matchers and replacers used by this transliterator.
-#[derive(Debug, Clone, serde::Serialize, serde::Deserialize, PartialEq, Eq)]
+#[derive(Debug, Clone, zerofrom::ZeroFrom, PartialEq, Eq)]
+#[cfg_attr(feature = "serde", derive(serde::Deserialize))]
+#[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake), databake(path = icu_transliteration::provider))]
 pub struct VarTable<'a> {
     /// Variable definitions.
-    #[serde(borrow)]
+    #[cfg_attr(feature = "serde", serde(borrow))]
     pub compounds: VarZeroVec<'a, str>,
     /// Zero or one quantifiers.
-    #[serde(borrow)]
+    #[cfg_attr(feature = "serde", serde(borrow))]
     pub quantifiers_opt: VarZeroVec<'a, str>,
     /// Zero or more quantifiers.
-    #[serde(borrow)]
+    #[cfg_attr(feature = "serde", serde(borrow))]
     pub quantifiers_kleene: VarZeroVec<'a, str>,
     /// One or more quantifiers.
-    #[serde(borrow)]
+    #[cfg_attr(feature = "serde", serde(borrow))]
     pub quantifiers_kleene_plus: VarZeroVec<'a, str>,
     /// Segments.
-    #[serde(borrow)]
+    #[cfg_attr(feature = "serde", serde(borrow))]
     pub segments: VarZeroVec<'a, str>,
     /// UnicodeSets. These are represented as a [`CodePointInversionListAndStringList`](icu_collections::codepointinvliststringlist::CodePointInversionListAndStringList)
-    #[serde(borrow)]
+    #[cfg_attr(feature = "serde", serde(borrow))]
     pub unicode_sets: VarZeroVec<'a, CodePointInversionListAndStringListULE>,
     /// Function calls.
-    #[serde(borrow)]
+    #[cfg_attr(feature = "serde", serde(borrow))]
     pub function_calls: VarZeroVec<'a, FunctionCallULE>,
 }
 
 /// An inline recursive call to a transliterator with an arbitrary argument.
+#[derive(Debug, Clone)]
 #[make_varule(FunctionCallULE)]
 #[zerovec::skip_derive(Ord)]
 #[zerovec::derive(Debug)]
-#[zerovec::derive(Serialize, Deserialize)]
-#[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
+#[cfg_attr(
+    feature = "serde",
+    derive(serde::Deserialize),
+    zerovec::derive(Deserialize)
+)]
+#[cfg_attr(
+    feature = "datagen",
+    derive(serde::Serialize),
+    zerovec::derive(Serialize)
+)]
 pub struct FunctionCall<'a> {
     /// The transliterator that will be called.
     #[zerovec::varule(SimpleIdULE)]
-    #[serde(borrow)]
+    #[cfg_attr(feature = "serde", serde(borrow))]
     pub translit: SimpleId<'a>,
-    #[serde(borrow)]
+    #[cfg_attr(feature = "serde", serde(borrow))]
     /// The argument to be transliterated given to the transliterator.
     pub arg: Cow<'a, str>,
 }

@@ -730,7 +730,6 @@ rust_library("litemap-v0_7_0") {
     "-Cmetadata=9af155724df6c491",
     "-Cextra-filename=-9af155724df6c491",
     "--cfg=feature=\"alloc\"",
-    "--cfg=feature=\"default\"",
   ]
 
   visibility = [ ":*" ]
@@ -1048,7 +1047,6 @@ rust_library("tinystr-v0_7_1") {
     "-Cmetadata=29f1288a310491e0",
     "-Cextra-filename=-29f1288a310491e0",
     "--cfg=feature=\"alloc\"",
-    "--cfg=feature=\"default\"",
     "--cfg=feature=\"zerovec\"",
   ]
 
@@ -1256,7 +1254,6 @@ rust_library("zerofrom-v0_1_2") {
     "-Cmetadata=ea522fe78acdecd7",
     "-Cextra-filename=-ea522fe78acdecd7",
     "--cfg=feature=\"alloc\"",
-    "--cfg=feature=\"default\"",
     "--cfg=feature=\"derive\"",
   ]
 

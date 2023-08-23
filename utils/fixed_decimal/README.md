@@ -1,5 +1,7 @@
 # fixed_decimal [![crates.io](https://img.shields.io/crates/v/fixed_decimal)](https://crates.io/crates/fixed_decimal)
 
+<!-- cargo-rdme start -->
+
 `fixed_decimal` is a utility crate of the [`ICU4X`] project.
 
 It includes [`FixedDecimal`], a core API for representing numbers in a human-readable form
@@ -33,6 +35,8 @@ assert_eq!(
 ```
 
 [`ICU4X`]: ../icu/index.html
+
+<!-- cargo-rdme end -->
 
 ## More Information
 

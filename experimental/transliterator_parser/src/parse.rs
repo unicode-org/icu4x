@@ -3,6 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use std::borrow::Cow;
+use std::fmt::{Display, Formatter};
 use std::{iter::Peekable, str::CharIndices};
 
 use icu_collections::{
@@ -135,6 +136,16 @@ impl Default for BasicId {
     }
 }
 
+impl Display for BasicId {
+    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
+        write!(f, "{}-{}", self.source, self.target)?;
+        if let Some(variant) = &self.variant {
+            write!(f, "/{}", variant)?;
+        }
+        Ok(())
+    }
+}
+
 // [set] source-target/variant
 #[derive(Debug, Clone)]
 pub(crate) struct SingleId {
@@ -209,10 +220,15 @@ pub(crate) struct HalfRule {
     pub(crate) post: Section,
 }
 
+/// The direction of a rule-based transliterator in respect to its source.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub(crate) enum Direction {
+#[non_exhaustive]
+pub enum Direction {
+    /// Forwards, i.e., left-to-right in the source.
     Forward,
+    /// Backwards, i.e., right-to-left in the source.
     Reverse,
+    /// Both forwards and backwards.
     Both,
 }
 
