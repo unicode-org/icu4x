@@ -3,7 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 #![no_std]
-// Experimental.
+//! Experimental.
 #![allow(dead_code)]
 // TODO(#2127): Fix this lint.
 #![allow(clippy::needless_return)]

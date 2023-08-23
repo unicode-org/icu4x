@@ -1490,6 +1490,9 @@ dependencies = [
  "icu_segmenter",
  "icu_singlenumberformatter",
  "icu_timezone",
+ "icu_transliteration",
+ "icu_transliterator_parser",
+ "icu_unitsconversion",
  "itertools",
  "log",
  "memchr",
@@ -1731,6 +1734,19 @@ dependencies = [
 ]
 
 [[package]]
+name = "icu_personnames"
+version = "0.1.0"
+dependencies = [
+ "databake",
+ "icu_collections",
+ "icu_locid",
+ "icu_provider",
+ "litemap",
+ "serde",
+ "zerovec",
+]
+
+[[package]]
 name = "icu_plurals"
 version = "1.2.0"
 dependencies = [
@@ -1922,6 +1938,10 @@ dependencies = [
 ]
 
 [[package]]
+name = "icu_singlenumberformatter_data"
+version = "1.3.0"
+
+[[package]]
 name = "icu_testdata_scripts"
 version = "0.0.0"
 dependencies = [
@@ -1963,11 +1983,19 @@ version = "1.3.0"
 name = "icu_transliteration"
 version = "0.0.0"
 dependencies = [
+ "databake",
  "icu_collections",
  "icu_provider",
+ "icu_transliteration_data",
  "serde",
+ "yoke",
+ "zerofrom",
  "zerovec",
 ]
+
+[[package]]
+name = "icu_transliteration_data"
+version = "0.0.0"
 
 [[package]]
 name = "icu_transliterator_parser"
@@ -1994,6 +2022,24 @@ dependencies = [
  "tinystr",
  "zerovec",
 ]
+
+[[package]]
+name = "icu_unitsconversion"
+version = "1.2.0"
+dependencies = [
+ "databake",
+ "displaydoc",
+ "fixed_decimal",
+ "icu_locid",
+ "icu_provider",
+ "serde",
+ "tinystr",
+ "zerovec",
+]
+
+[[package]]
+name = "icu_unitsconversion_data"
+version = "1.3.0"
 
 [[package]]
 name = "ident_case"

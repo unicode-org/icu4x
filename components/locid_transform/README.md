@@ -1,5 +1,7 @@
 # icu_locid_transform [![crates.io](https://img.shields.io/crates/v/icu_locid_transform)](https://crates.io/crates/icu_locid_transform)
 
+<!-- cargo-rdme start -->
+
 Canonicalization of locale identifiers based on [`CLDR`] data.
 
 This module is published as its own crate ([`icu_locid_transform`](https://docs.rs/icu_locid_transform/latest/icu_locid_transform/))
@@ -67,6 +69,8 @@ assert_eq!(locale, locale!("zh"));
 [`CLDR`]: http://cldr.unicode.org/
 [`UTS #35: Unicode LDML 3. Likely Subtags`]: https://www.unicode.org/reports/tr35/#Likely_Subtags.
 [`UTS #35: Unicode LDML 3. LocaleId Canonicalization`]: http://unicode.org/reports/tr35/#LocaleId_Canonicalization,
+
+<!-- cargo-rdme end -->
 
 ## More Information
 

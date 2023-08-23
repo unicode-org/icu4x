@@ -2,13 +2,24 @@ import { ICU4XDataProvider, ICU4XWordSegmenter } from "icu4x";
 
 export class SegmenterDemo {
     #displayFn: (formatted: string) => void;
+    #dataProvider: ICU4XDataProvider;
 
     #segmenter: ICU4XWordSegmenter;
+    #model: string;
     #text: string;
 
     constructor(displayFn: (formatted: string) => void, dataProvider: ICU4XDataProvider) {
         this.#displayFn = displayFn;
-        this.#segmenter = ICU4XWordSegmenter.create_auto(dataProvider);
+        this.#dataProvider = dataProvider;
+
+        this.#model = "Auto";
+        this.#text = "";
+        this.#updateSegmenter();
+    }
+
+    setModel(model: string): void {
+        this.#model = model;
+        this.#updateSegmenter();
     }
 
     setText(text: string): void {
@@ -16,50 +27,45 @@ export class SegmenterDemo {
         this.#render();
     }
 
+    #updateSegmenter(): void {
+        if (this.#model === "Auto") {
+            this.#segmenter = ICU4XWordSegmenter.create_auto(this.#dataProvider);
+        } else if (this.#model === "LSTM") {
+            this.#segmenter = ICU4XWordSegmenter.create_lstm(this.#dataProvider);
+        } else if (this.#model === "Dictionary") {
+            this.#segmenter = ICU4XWordSegmenter.create_dictionary(this.#dataProvider);
+        } else {
+            console.error("Unknown model: " + this.#model);
+        }
+        this.#render();
+    }
+
     #render(): void {
         const segments = [];
 
-        const sizeOfLetter = (codePoint: number) => {
-            let numBytes = 0;
-            while (codePoint > 0) {
-                codePoint >>= 4;
-                numBytes += 1;
-            }
-            return numBytes - 1;
-        };
-
-        let nextIndex = 0;
-        let bytes = 0;
-        const updateIndexToByte = (byte: number) => {
-            if (bytes >= byte) {
-                return nextIndex;
-            }
-            for (let n = 0; n < 8; ++n) {
-                bytes += sizeOfLetter(this.#text.codePointAt(nextIndex));
-                nextIndex += 1;
-                if (bytes >= byte) {
-                    return nextIndex;
-                }
-            }
-            return -1;
-        };
-
+        let utf8Index = 0;
+        let utf16Index = 0;
         const iter8 = this.#segmenter.segment_utf8(this.#text);
-        let index = 0;
         while (true) {
             const next = iter8.next();
 
             if (next === -1) {
-                segments.push(this.#text.slice(index));
+                segments.push(this.#text.slice(utf16Index));
                 break;
             } else {
-                const nextIndex = updateIndexToByte(next);
-                if (nextIndex === -1) {
-                    this.#displayFn("Error: characters currently not support in the JS demo");
-                    return;
+                const oldUtf16Index = utf16Index;
+                while (utf8Index < next) {
+                    const codePoint = this.#text.codePointAt(utf16Index);
+                    const utf8Len = (codePoint <= 0x7F) ? 1
+                        : (codePoint <= 0x7FF) ? 2
+                        : (codePoint <= 0xFFFF) ? 3
+                        : 4;
+                    const utf16Len = (codePoint <= 0xFFFF) ? 1
+                        : 2;
+                    utf8Index += utf8Len;
+                    utf16Index += utf16Len;
                 }
-                segments.push(this.#text.slice(index, nextIndex));
-                index = nextIndex;
+                segments.push(this.#text.slice(oldUtf16Index, utf16Index));
             }
         }
 
@@ -73,6 +79,10 @@ export function setup(dataProvider: ICU4XDataProvider): void {
         // Use innerHTML because we have actual HTML we want to display
         segmentedText.innerHTML = formatted;
     }, dataProvider);
+
+    for (let btn of document.querySelectorAll<HTMLInputElement | null>('input[name="segmenter-model"]')) {
+        btn?.addEventListener('click', () => segmenterDemo.setModel(btn.value));
+    }
 
     const inputText = document.getElementById('seg-input') as HTMLTextAreaElement | null;
     inputText?.addEventListener('input', () => segmenterDemo.setText(inputText.value));
@@ -102,6 +112,18 @@ export function setup(dataProvider: ICU4XDataProvider): void {
     const sampleChineseBtn = document.getElementById('seg-sample-chinese') as HTMLButtonElement | null;
     sampleChineseBtn?.addEventListener('click', () => {
         inputText.value = chineseSamples[Math.floor(Math.random() * chineseSamples.length)];
+        segmenterDemo.setText(inputText.value);
+    });
+
+    const thaiSamples = [
+        "โดยที่การยอมรับนับถือเกียรติศักดิ์ประจำตัว และสิทธิเท่าเทียมกันและโอนมิได้ของบรรดา สมาชิก ทั้ง หลายแห่งครอบครัว มนุษย์เป็นหลักมูลเหตุแห่งอิสรภาพ ความยุติธรรม และสันติภาพในโลก",
+        "โดยที่การไม่นำพาและการเหยียดหยามต่อสิทธิมนุษยชน ยังผลให้มีการหระทำอันป่าเถื่อน ซี่งเป็นการละเมิดมโนธรรมของมนุษยชาติอย่างร้ายแรง และใต้[ได้]มีการประกาศว่า ปณิธานสูงสุดของสามัญชนได้แก่ความต้องการให้มนุษย์มีชีวิตอยู่ในโลกด้วยอิสรภาพในการพูด และความเชื่อถือ และอิสรภาพพ้นจากความหวาดกลัวและความต้องการ",
+        "โดยที่เป็นการจำเป็นอย่างยิ่งที่สิทธิมนุษยชนควรได้รับความคุ้มครองโดยหลักบังคับของกฎหมาย ถ้าไม่ประสงค์จะให้คนตกอยู่ในบังคับให้หันเข้าหาการขบถขัดขืนต่อทรราชและการกดขี่เป็นวิถีทางสุดท้าย",
+    ];
+
+    const sampleThaiBtn = document.getElementById('seg-sample-thai') as HTMLButtonElement | null;
+    sampleThaiBtn?.addEventListener('click', () => {
+        inputText.value = thaiSamples[Math.floor(Math.random() * thaiSamples.length)];
         segmenterDemo.setText(inputText.value);
     });
 }

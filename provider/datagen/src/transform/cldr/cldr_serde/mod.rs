@@ -28,6 +28,10 @@ pub mod numbers;
 pub mod parent_locales;
 pub mod plurals;
 pub mod time_zones;
+#[cfg(feature = "icu_transliteration")]
+pub mod transforms;
+#[cfg(feature = "icu_unitsconversion")]
+pub mod units;
 pub mod week_data;
 
 use locale_resource::LocaleResource;

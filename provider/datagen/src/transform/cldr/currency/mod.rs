@@ -143,6 +143,8 @@ fn extract_currency_essentials<'data>(
                         short_place_holder_index = USE_ISO_CODE;
                     } else {
                         short_place_holder_index = place_holders.len() as u16;
+                        //TODO(#3900): remove this assert and return an error instead.
+                        assert!(short_place_holder_index <= MAX_PLACE_HOLDER_INDEX);
                         place_holders.push(short_place_holder);
                     }
                     place_holders_map.insert(short_place_holder, short_place_holder_index);
@@ -161,6 +163,8 @@ fn extract_currency_essentials<'data>(
                             narrow_place_holder_index = USE_ISO_CODE;
                         } else {
                             narrow_place_holder_index = place_holders.len() as u16;
+                            //TODO(#3900): remove this assert and return an error instead.
+                            assert!(narrow_place_holder_index <= MAX_PLACE_HOLDER_INDEX);
                             place_holders.push(narrow_place_holder);
                         }
                         place_holders_map.insert(narrow_place_holder, narrow_place_holder_index);
