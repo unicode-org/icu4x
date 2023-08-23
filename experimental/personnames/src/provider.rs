@@ -15,7 +15,7 @@ use icu_provider::prelude::*;
 use zerovec::VarZeroVec;
 
 /// This is the equivalent of
-/// https://www.unicode.org/reports/tr35/tr35-personNames.html#personnames-element
+/// <https://www.unicode.org/reports/tr35/tr35-personNames.html#personnames-element>
 ///
 /// There are some liberties taken from the DTD definition,
 /// as we enforce uniqueness on some tags where the documentation doesn't specify any of these
@@ -68,7 +68,7 @@ pub struct PersonNamesFormattingDefinitionV1<'data> {
 
 /// Person Name Attributes.
 /// {order=givenFirst, length=long, usage=referring, formality=formal}
-/// see https://www.unicode.org/reports/tr35/tr35-personNames.html#personname-element
+/// see <https://www.unicode.org/reports/tr35/tr35-personNames.html#personname-element>
 #[repr(u32)]
 pub enum PersonNamesFormattingAttributes {
     // Order
@@ -92,7 +92,7 @@ type PersonNamesFormattingAttributesMask = u32;
 
 /// PersonName Formatting data.
 ///
-/// https://www.unicode.org/reports/tr35/tr35-personNames.html#personname-element
+/// <https://www.unicode.org/reports/tr35/tr35-personNames.html#personname-element>
 #[zerovec::make_varule(PersonNamesFormattingDataVarULE)]
 #[zerovec::skip_derive(ZeroMapKV, Ord)]
 #[cfg_attr(feature = "datagen",
@@ -107,9 +107,9 @@ zerovec::derive(Serialize))
 )]
 pub struct PersonNamesFormattingData<'data> {
     /// Attributes
-    /// https://www.unicode.org/reports/tr35/tr35-personNames.html#personname-element
+    /// <https://www.unicode.org/reports/tr35/tr35-personNames.html#personname-element>
     pub attributes: PersonNamesFormattingAttributesMask,
-    /// https://www.unicode.org/reports/tr35/tr35-personNames.html#namepattern-syntax
+    /// <https://www.unicode.org/reports/tr35/tr35-personNames.html#namepattern-syntax>
     #[cfg_attr(feature = "serde", serde(borrow))]
     pub patterns: VarZeroVec<'data, str>,
 }
