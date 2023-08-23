@@ -103,6 +103,7 @@ fn main() {
             .arg("bench")
             .stderr(Stdio::piped())
             .spawn()
+            .and_then(|mut c| c.wait())
             .unwrap_or_else(|err| {
                 eprintln!("Failed to collect examples {err:?}");
                 process::exit(1);
