@@ -5,25 +5,16 @@
 [package]
 name = "icu_provider_macros"
 description = "Proc macros for ICU data providers"
-version = "1.2.0"
-rust-version = "1.65.0"
-authors = ["The ICU4X Project Developers"]
-edition = "2021"
-readme = "README.md"
-repository = "https://github.com/unicode-org/icu4x"
-homepage = "https://icu4x.unicode.org"
-license-file = "LICENSE"
-categories = ["internationalization"]
-# Keep this in sync with other crates unless there are exceptions
-include = [
-    "src/**/*",
-    "examples/**/*",
-    "benches/**/*",
-    "tests/**/*",
-    "Cargo.toml",
-    "LICENSE",
-    "README.md"
-]
+
+authors.workspace = true
+categories.workspace = true
+edition.workspace = true
+homepage.workspace = true
+include.workspace = true
+license-file.workspace = true
+repository.workspace = true
+rust-version.workspace = true
+version.workspace = true
 
 [lib]
 path = "src/lib.rs"
@@ -35,4 +26,4 @@ quote = "1.0.9"
 syn = { version = "2", features = ["full", "parsing"]}
 
 [dev-dependencies]
-icu_provider = { path = "../core", features = ["macros"] }
+icu_provider = { workspace = true }

@@ -6,16 +6,8 @@
 name = "icu_freertos"
 description = "C interface to ICU4X"
 version = "1.2.1"
-rust-version = "1.65.0"
-authors = ["The ICU4X Project Developers"]
-edition = "2021"
-resolver = "2"
-repository = "https://github.com/unicode-org/icu4x"
-homepage = "https://icu4x.unicode.org"
-license-file = "LICENSE"
-categories = ["internationalization"]
-# Keep this in sync with other crates unless there are exceptions
 include = [
+    "build.rs",
     "src/**/*",
     "examples/**/*",
     "benches/**/*",
@@ -26,6 +18,14 @@ include = [
     "README.md"
 ]
 
+authors.workspace = true
+categories.workspace = true
+edition.workspace = true
+homepage.workspace = true
+license-file.workspace = true
+repository.workspace = true
+rust-version.workspace = true
+
 [package.metadata.docs.rs]
 all-features = true
 
@@ -34,7 +34,7 @@ crate-type = ["staticlib", "rlib"]
 path = "src/lib.rs"
 
 [dependencies]
-icu_capi = { version = "1.2.0", path = "../diplomat", default-features = false }
+icu_capi = { workspace = true }
 
 [target.'cfg(target_os = "none")'.dependencies]
 cortex-m = "0.7.3"

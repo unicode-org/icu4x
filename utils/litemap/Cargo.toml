@@ -5,25 +5,16 @@
 [package]
 name = "litemap"
 version = "0.7.0"
-rust-version = "1.65.0"
-authors = ["The ICU4X Project Developers"]
-repository = "https://github.com/unicode-org/icu4x"
-edition = "2021"
-license-file = "LICENSE"
 keywords = ["sorted", "vec", "map", "hashmap", "btreemap"]
 description = "A key-value Map implementation based on a flat, sorted Vec."
 documentation = "https://docs.rs/litemap"
-readme = "./README.md"
-# Keep this in sync with other crates unless there are exceptions
-include = [
-    "src/**/*",
-    "examples/**/*",
-    "benches/**/*",
-    "tests/**/*",
-    "Cargo.toml",
-    "LICENSE",
-    "README.md"
-]
+
+authors.workspace = true
+edition.workspace = true
+include.workspace = true
+license-file.workspace = true
+repository.workspace = true
+rust-version.workspace = true
 
 [package.metadata.workspaces]
 independent = true
@@ -33,13 +24,13 @@ all-features = true
 
 [dependencies]
 serde = {version = "1", optional = true, default-features = false, features = ["alloc"]}
-yoke = { version = "0.7.1", path = "../yoke", features = ["derive"], optional = true }
+yoke = { workspace = true, features = ["derive"], optional = true }
 
 [dev-dependencies]
 bincode = "1"
 bytecheck = "0.6"
-icu_benchmark_macros = { path = "../../tools/benchmark/macros" }
-icu_locid = { path = "../../components/locid" }
+icu_benchmark_macros = { workspace = true }
+icu_locid = { workspace = true }
 postcard = { version = "1.0.0", features = ["use-std"], default-features = false }
 rkyv = { version = "0.7", features = ["validation"] }
 serde = "1"
