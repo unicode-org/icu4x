@@ -1,5 +1,7 @@
 # tzif [![crates.io](https://img.shields.io/crates/v/tzif)](https://crates.io/crates/tzif)
 
+<!-- cargo-rdme start -->
+
 A parser for [Time Zone Information Format (`TZif`)](https://tools.ietf.org/id/draft-murchison-tzdist-tzif-00.html) files.
 
 Also includes a parser for [POSIX time-zone strings](https://www.gnu.org/software/libc/manual/html_node/TZ-Variable.html),
@@ -20,6 +22,8 @@ let data = tzif::parse_tzif_file("path_to_file").unwrap();
 let data =
     tzif::parse_posix_tz_string(b"WGT3WGST,M3.5.0/-2,M10.5.0/-1").unwrap();
 ```
+
+<!-- cargo-rdme end -->
 
 ## More Information
 

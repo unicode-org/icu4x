@@ -476,6 +476,26 @@ jobs:
       if: steps.gn-third-party-tools-cache.outputs.cache-hit != 'true'
       run: cargo make gn-install
 
+    - name: Get cargo-rdme version
+      id: cargo-readme-version
+      run: |
+        echo "::set-output name=hash::$(cargo search cargo-rdme | grep '^cargo-rdme =' | md5sum)"
+      shell: bash
+    - name: Attempt to load cached cargo-rdme
+      uses: actions/cache@v3
+      id: cargo-rdme-cache
+      with:
+        path: |
+          ~/.cargo/bin/cargo-rdme
+          ~/.cargo/bin/cargo-rdme.exe
+        key: ${{ runner.os }}-readme-${{ steps.cargo-rdme-version.outputs.hash }}
+    - name: Install cargo-rdme
+      if: steps.cargo-rdme-cache.outputs.cache-hit != 'true'
+      uses: actions-rs/install@v0.1.2
+      with:
+        crate: cargo-rdme
+        version: latest
+
     # Actual job
     - name: Run `cargo make ci-job-verify-gn`
       run: cargo make ci-job-verify-gn
@@ -606,24 +626,24 @@ jobs:
       run: rustup show
 
     # Job-specific dependencies
-    - name: Get cargo-readme version
+    - name: Get cargo-rdme version
       id: cargo-readme-version
       run: |
-        echo "::set-output name=hash::$(cargo search cargo-readme | grep '^cargo-readme =' | md5sum)"
+        echo "::set-output name=hash::$(cargo search cargo-rdme | grep '^cargo-rdme =' | md5sum)"
       shell: bash
-    - name: Attempt to load cached cargo-readme
+    - name: Attempt to load cached cargo-rdme
       uses: actions/cache@v3
-      id: cargo-readme-cache
+      id: cargo-rdme-cache
       with:
         path: |
-          ~/.cargo/bin/cargo-readme
-          ~/.cargo/bin/cargo-readme.exe
-        key: ${{ runner.os }}-readme-${{ steps.cargo-readme-version.outputs.hash }}
-    - name: Install cargo-readme
-      if: steps.cargo-readme-cache.outputs.cache-hit != 'true'
+          ~/.cargo/bin/cargo-rdme
+          ~/.cargo/bin/cargo-rdme.exe
+        key: ${{ runner.os }}-readme-${{ steps.cargo-rdme-version.outputs.hash }}
+    - name: Install cargo-rdme
+      if: steps.cargo-rdme-cache.outputs.cache-hit != 'true'
       uses: actions-rs/install@v0.1.2
       with:
-        crate: cargo-readme
+        crate: cargo-rdme
         version: latest
 
     # Actual job

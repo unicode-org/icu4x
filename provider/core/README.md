@@ -1,5 +1,7 @@
 # icu_provider [![crates.io](https://img.shields.io/crates/v/icu_provider)](https://crates.io/crates/icu_provider)
 
+<!-- cargo-rdme start -->
+
 `icu_provider` is one of the [`ICU4X`] components.
 
 Unicode's experience with ICU4X's parent projects, ICU4C and ICU4J, led the team to realize
@@ -112,6 +114,8 @@ data generation implementation.
 [`FsDataProvider`]: ../icu_provider_fs/struct.FsDataProvider.html
 [`BlobDataProvider`]: ../icu_provider_blob/struct.BlobDataProvider.html
 [`icu_datagen`]: ../icu_datagen/index.html
+
+<!-- cargo-rdme end -->
 
 ## More Information
 

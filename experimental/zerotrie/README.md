@@ -1,5 +1,7 @@
 # zerotrie [![crates.io](https://img.shields.io/crates/v/zerotrie)](https://crates.io/crates/zerotrie)
 
+<!-- cargo-rdme start -->
+
 A data structure offering zero-copy storage and retrieval of byte strings, with a focus
 on the efficient storage of ASCII strings. Strings are mapped to `usize` values.
 
@@ -35,6 +37,8 @@ cargo doc --document-private-items --all-features --no-deps --open
 
 [`LiteMap`]: litemap::LiteMap
 [`BTreeMap`]: alloc::collections::BTreeMap
+
+<!-- cargo-rdme end -->
 
 ## More Information
 
