@@ -476,7 +476,7 @@ impl BakedExporter {
                             } else if ch == '-' {
                                 ['_'].into_iter().chain(None)
                             } else {
-                                [ch.to_ascii_lowercase()].into_iter().chain(None)
+                                [ch.to_ascii_uppercase()].into_iter().chain(None)
                             }
                         })
                         .collect::<String>(),
