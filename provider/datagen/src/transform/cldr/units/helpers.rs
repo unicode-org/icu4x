@@ -2,7 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use icu_datetime::input;
+
 use icu_provider::DataError;
 
 /// Removes all whitespace from a string.
@@ -46,10 +46,10 @@ fn check_if_decimal_number(number: &str) -> bool {
     }
     let whole = split.next().unwrap_or("0");
     let fractional = split.next().unwrap_or("0");
-    if whole.chars().any(|c| !c.is_digit(10)) {
+    if whole.chars().any(|c| !c.is_ascii_digit()) {
         return false;
     }
-    if fractional.chars().any(|c| !c.is_digit(10)) {
+    if fractional.chars().any(|c| !c.is_ascii_digit()) {
         return false;
     }
     true
