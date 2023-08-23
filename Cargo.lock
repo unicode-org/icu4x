@@ -1266,7 +1266,6 @@ dependencies = [
 name = "icu_benchmark_memory"
 version = "0.0.0"
 dependencies = [
- "cargo_metadata",
  "clap 4.0.32",
  "libc",
  "serde_json",
