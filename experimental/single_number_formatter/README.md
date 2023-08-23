@@ -1,6 +1,6 @@
 # icu_singlenumberformatter [![crates.io](https://img.shields.io/crates/v/icu_singlenumberformatter)](https://crates.io/crates/icu_singlenumberformatter)
 
-
+Experimental.
 
 ## More Information
 
