@@ -7,7 +7,10 @@ use zerovec::{
     ule::{AsULE, ZeroVecError, ULE},
 };
 
-use crate::provider::{CurrencyPatterns, PatternSelection};
+use crate::provider::{
+    CurrencyPatterns, PatternSelection, PlaceHolder, MAX_PLACE_HOLDER_INDEX, NO_PLACE_HOLDER,
+    USE_ISO_CODE,
+};
 
 /// `CurrencyPatternsULE` is a type optimized for efficient storing and
 /// deserialization of `CurrencyPatterns` using the `ZeroVec` model.
@@ -66,22 +69,30 @@ impl AsULE for CurrencyPatterns {
 
         // For short_place_holder_index
         let [short_most_significant_byte, short_least_significant_byte_ule] =
-            self.short_place_holder_index.to_be_bytes();
+            match self.short_place_holder_index {
+                Some(PlaceHolder::Index(index)) => index.to_be_bytes(),
+                Some(PlaceHolder::ISO) => USE_ISO_CODE.to_be_bytes(),
+                None => NO_PLACE_HOLDER.to_be_bytes(),
+            };
         if short_most_significant_byte & 0b1111_1000 != 0 {
             panic!(
                 "short_place_holder_index is too large {}, {}",
-                self.short_place_holder_index, short_most_significant_byte
+                short_most_significant_byte, short_least_significant_byte_ule
             )
         }
         first_byte_ule |= short_most_significant_byte << INDEX_SHORT_SHIFT;
 
         // For narrow_place_holder_index
         let [narrow_most_significant_byte, narrow_least_significant_byte_ule] =
-            self.narrow_place_holder_index.to_be_bytes();
+            match self.narrow_place_holder_index {
+                Some(PlaceHolder::Index(index)) => index.to_be_bytes(),
+                Some(PlaceHolder::ISO) => USE_ISO_CODE.to_be_bytes(),
+                None => NO_PLACE_HOLDER.to_be_bytes(),
+            };
         if narrow_most_significant_byte & 0b1111_1000 != 0 {
             panic!(
                 "narrow_place_holder_index is too large {}, {}",
-                self.narrow_place_holder_index, narrow_most_significant_byte
+                narrow_most_significant_byte, narrow_least_significant_byte_ule
             )
         }
         first_byte_ule |= narrow_most_significant_byte << INDEX_NARROW_SHIFT;
@@ -115,6 +126,20 @@ impl AsULE for CurrencyPatterns {
 
         let short_place_holder_index = ((short_prefix as u16) << 8) | second_byte as u16;
         let narrow_place_holder_index = ((narrow_prefix as u16) << 8) | third_byte as u16;
+
+        let short_place_holder_index = match short_place_holder_index {
+            NO_PLACE_HOLDER => None,
+            USE_ISO_CODE => Some(PlaceHolder::ISO),
+            index if index <= MAX_PLACE_HOLDER_INDEX => Some(PlaceHolder::Index(index)),
+            _ => panic!("Invalid short_place_holder_index"),
+        };
+
+        let narrow_place_holder_index = match narrow_place_holder_index {
+            NO_PLACE_HOLDER => None,
+            USE_ISO_CODE => Some(PlaceHolder::ISO),
+            index if index <= MAX_PLACE_HOLDER_INDEX => Some(PlaceHolder::Index(index)),
+            _ => panic!("Invalid narrow_place_holder_index"),
+        };
 
         CurrencyPatterns {
             short_pattern_standard,
