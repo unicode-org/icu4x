@@ -30,7 +30,6 @@ use data::{posix::PosixTzString, tzif::TzifData};
 use error::Error;
 use std::fs::File;
 use std::path::Path;
-
 /// The parsed data representations.
 pub mod data;
 
