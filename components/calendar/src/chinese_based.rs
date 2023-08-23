@@ -602,7 +602,7 @@ impl<C: ChineseBased + CalendarArithmetic> ChineseBasedDateInner<C> {
     /// similar to `CalendarArithmetic::day_of_year`
     pub(crate) fn day_of_year(&self) -> u16 {
         let new_year = self.1.get_new_year();
-        let month_approx = 28_u8.saturating_mul(self.0.month - 1);
+        let month_approx = 28_u16.saturating_mul(self.0.month as u16 - 1);
         let days_until_month = if let ChineseBasedYearInfo::Data(data) = self.1 {
             let mut result = 0;
             let mut index = 0;
@@ -615,9 +615,9 @@ impl<C: ChineseBased + CalendarArithmetic> ChineseBasedDateInner<C> {
             }
             result as u16
         } else {
-            let new_moon = Self::new_moon_on_or_after(Moment::new(month_approx as f64));
+            let new_moon = Self::new_moon_on_or_after(new_year.as_moment() + (month_approx as f64));
             let result = new_moon - new_year;
-            debug_assert!(((u16::MIN as i64)..=(u16::MAX as i64)).contains(&result));
+            debug_assert!(((u16::MIN as i64)..=(u16::MAX as i64)).contains(&result), "Result {result} from new moon: {new_moon:?} and new year: {new_year:?} should be in range of u16!");
             result as u16
         };
         let days_until_month = days_until_month;
