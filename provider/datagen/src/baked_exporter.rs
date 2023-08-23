@@ -472,11 +472,11 @@ impl BakedExporter {
                         .flat_map(|ch| {
                             if ch == AuxiliaryKeys::separator() as char {
                                 // Replace the aux key separator with double-underscore
-                                Some('_').into_iter().chain(Some('_'))
+                                ['_'].into_iter().chain(Some('_'))
                             } else if ch == '-' {
-                                Some('_').into_iter().chain(None)
+                                ['_'].into_iter().chain(None)
                             } else {
-                                Some(ch.to_ascii_lowercase()).into_iter().chain(None)
+                                [ch.to_ascii_lowercase()].into_iter().chain(None)
                             }
                         })
                         .collect::<String>(),
