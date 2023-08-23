@@ -77,7 +77,7 @@ pub enum PatternSelection {
 #[repr(u16)]
 pub enum PlaceHolder {
     /// The index of the place holder in the place holders list.
-    /// NOTE: the maximum value is MAX_PLACE_HOLDER_INDEX which is 0b0111_1111_1101.
+    /// NOTE: the maximum value is MAX_PLACE_HOLDER_INDEX which is 2045 (0b0111_1111_1101).
     Index(u16),
 
     /// The place holder is the iso code.
