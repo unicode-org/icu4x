@@ -15,5 +15,3 @@
 //! - `cargo make gn-run`: Runs ICU4X from the binaries built with `gn` and `ninja`.
 //!
 //! This actual Rust crate is only a placeholder for input to Cargo GNaw.
-
-mod _ {}

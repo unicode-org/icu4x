@@ -109,11 +109,9 @@ exit_on_error true
 glob_pattern = set "./**/Cargo.toml"
 glob_skip_pattern = array "ffi/gn/vendor/**/*" "ffi/gn/third_party_tools/**/*" "ffi/diplomat/*/examples/**/*" "tools/**/*" "**/fuzz/*" "**/target/**/*" "docs/**/*"
 
-template = canonicalize README.tpl
-
 cargo_list = exec cargo --list
-if not contains ${cargo_list.stdout} "readme"
-    trigger_error "Please run 'cargo install cargo-readme' to support generating README.md files"
+if not contains ${cargo_list.stdout} "rdme"
+    trigger_error "Please run 'cargo install cargo-rdme' to support generating README.md files"
 end
 
 skip_paths = set_new
@@ -124,6 +122,8 @@ for skip_pattern in ${glob_skip_pattern}
     end
 end
 
+project_dir = pwd
+
 handle = glob_array ${glob_pattern}
 for path in ${handle}
     root_dir = dirname ${path}
@@ -133,7 +133,9 @@ for path in ${handle}
     end
     if not ${skip_this}
         echo "Automatically generating ${root_dir}/README.md"
-        exec --fail-on-error cargo readme -r ${root_dir} -o README.md -t ${template}
+        cd ${root_dir}
+        exec --fail-on-error cargo rdme --force
+        cd ${project_dir}
     end
 end
 '''
