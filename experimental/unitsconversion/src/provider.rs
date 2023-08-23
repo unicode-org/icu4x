@@ -35,3 +35,32 @@ pub struct UnitsConstantsV1<'data> {
     #[cfg_attr(feature = "serde", serde(borrow))]
     pub constants_map: ZeroMap<'data, str, str>,
 }
+
+#[zerovec::make_ule(ConstantTypeULE)]
+#[cfg_attr(
+    feature = "datagen",
+    derive(serde::Serialize, databake::Bake),
+    databake(path = icu_unitsconversion::provider),
+)]
+#[cfg_attr(feature = "serde", derive(serde::Deserialize))]
+#[derive(Copy, Clone, Debug, PartialOrd, Ord, PartialEq, Eq, Default)]
+#[repr(u8)]
+pub enum ConstantType {
+    #[default]
+    Actual = 0,
+    Approximate = 1,
+}
+
+#[zerovec::make_ule(ConstantValueULE)]
+#[cfg_attr(
+    feature = "datagen",
+    derive(serde::Serialize, databake::Bake),
+    databake(path = icu_unitsconversion::provider),
+)]
+#[cfg_attr(feature = "serde", derive(serde::Deserialize))]
+#[derive(Copy, Clone, Debug, PartialOrd, Ord, PartialEq, Eq, Default)]
+pub struct ConstantValue {
+    pub numerator: u32,
+    pub denominator: u32,
+    pub constant_type: ConstantType,
+}
