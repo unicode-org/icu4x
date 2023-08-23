@@ -148,7 +148,7 @@ fn extract_currency_essentials<'data>(
                             let index = place_holders.len() as u16;
                             short_place_holder_index = PlaceHolder::Index(index).into();
                             //TODO(#3900): remove this assert and return an error instead.
-                            assert!(index as u16 <= MAX_PLACE_HOLDER_INDEX);
+                            assert!(index <= MAX_PLACE_HOLDER_INDEX);
                             place_holders.push(short_place_holder);
                             place_holders_checker_map.insert(short_place_holder, index);
                         }
@@ -222,8 +222,8 @@ fn extract_currency_essentials<'data>(
         // PatternSelection::StandardNextToNumber.
         if short_pattern_standard == PatternSelection::Standard
             && narrow_pattern_standard == PatternSelection::Standard
-            && short_place_holder_index == None
-            && narrow_place_holder_index == None
+            && short_place_holder_index.is_none()
+            && narrow_place_holder_index.is_none()
         {
             continue;
         }
@@ -269,7 +269,7 @@ fn test_basic() {
         let short_place_holder = match currency_pattern.short_place_holder_index {
             Some(PlaceHolder::Index(index)) => place_holders
                 .get(index as usize)
-                .unwrap_or(&iso_code.try_into_tinystr().unwrap().to_string())
+                .unwrap_or(&iso_code.try_into_tinystr().unwrap())
                 .to_string(),
             Some(PlaceHolder::ISO) => iso_code.try_into_tinystr().unwrap().to_string(),
             None => "".to_string(),
@@ -278,7 +278,7 @@ fn test_basic() {
         let narrow_place_holder = match currency_pattern.narrow_place_holder_index {
             Some(PlaceHolder::Index(index)) => place_holders
                 .get(index as usize)
-                .unwrap_or(&iso_code.try_into_tinystr().unwrap().to_string())
+                .unwrap_or(&iso_code.try_into_tinystr().unwrap())
                 .to_string(),
             Some(PlaceHolder::ISO) => iso_code.try_into_tinystr().unwrap().to_string(),
             None => "".to_string(),
