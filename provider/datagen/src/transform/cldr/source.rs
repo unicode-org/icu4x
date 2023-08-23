@@ -55,6 +55,11 @@ impl CldrCache {
         CldrDirLang(self, "cldr-localenames".to_owned())
     }
 
+    #[cfg(feature = "icu_transliteration")]
+    pub fn transforms(&self) -> CldrDirTransform<'_> {
+        CldrDirTransform(self, "cldr-transforms".to_owned())
+    }
+
     pub fn dates(&self, cal: &str) -> CldrDirLang<'_> {
         CldrDirLang(
             self,
@@ -217,6 +222,50 @@ impl<'a> CldrDirLang<'a> {
             Ok(true)
         } else if let Some(new_langid) = self.0.add_script(lang)? {
             self.file_exists(&new_langid, file_name)
+        } else {
+            Ok(false)
+        }
+    }
+}
+
+#[cfg(feature = "icu_transliteration")]
+pub(crate) struct CldrDirTransform<'a>(&'a CldrCache, String);
+
+#[cfg(feature = "icu_transliteration")]
+impl<'a> CldrDirTransform<'a> {
+    pub fn read_and_parse_metadata(
+        &self,
+        transform: &str,
+    ) -> Result<&'a crate::transform::cldr::cldr_serde::transforms::Resource, DataError> {
+        let dir_suffix = self.0.dir_suffix()?;
+        // using the -NoLang version because `transform` is not a valid LanguageIdentifier
+        let cldr_dir = CldrDirNoLang(self.0, format!("{}-{dir_suffix}/main/{transform}", self.1));
+        cldr_dir.read_and_parse("metadata.json")
+    }
+
+    pub fn read_source(&self, transform: &str) -> Result<String, DataError> {
+        let dir_suffix = self.0.dir_suffix()?;
+        let path = format!("{}-{dir_suffix}/main/{transform}/source.txt", self.1);
+        if self.0.serde_cache.file_exists(&path)? {
+            self.0.serde_cache.root.read_to_string(&path)
+        } else {
+            Err(DataErrorKind::Io(std::io::ErrorKind::NotFound)
+                .into_error()
+                .with_display_context(&path))
+        }
+    }
+
+    pub fn list_transforms(&self) -> Result<impl Iterator<Item = String> + '_, DataError> {
+        let dir_suffix = self.0.dir_suffix()?;
+        let path = format!("{}-{dir_suffix}/main", self.1);
+        self.0.serde_cache.list(&path)
+    }
+
+    pub fn file_exists(&self, transform: &str, file_name: &str) -> Result<bool, DataError> {
+        let dir_suffix = self.0.dir_suffix()?;
+        let path = format!("{}-{dir_suffix}/main/{transform}/{file_name}", self.1);
+        if self.0.serde_cache.file_exists(&path)? {
+            Ok(true)
         } else {
             Ok(false)
         }

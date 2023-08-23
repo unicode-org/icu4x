@@ -1,5 +1,7 @@
 # icu_timezone [![crates.io](https://img.shields.io/crates/v/icu_timezone)](https://crates.io/crates/icu_timezone)
 
+<!-- cargo-rdme start -->
+
 Types for resolving and manipulating time zones.
 
 ## Fields
@@ -98,6 +100,8 @@ time_zone.maybe_calculate_metazone(&mzc, &datetime);
 
 assert_eq!("amce", time_zone.metazone_id.unwrap().0.as_str());
 ```
+
+<!-- cargo-rdme end -->
 
 ## More Information
 

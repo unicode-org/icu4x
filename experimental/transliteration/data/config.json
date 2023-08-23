@@ -1,0 +1,19 @@
+{
+  "keys": {
+    "explicit": [
+      "transliterator/rules@1"
+    ]
+  },
+  "locales": "all",
+  "fallback": "runtimeManual",
+  "cldr": {
+    "path": "../../../provider/datagen/tests/data/cldr"
+  },
+  "export": {
+    "baked": {
+      "path": "data",
+      "pretty": true
+    }
+  },
+  "overwrite": true
+}

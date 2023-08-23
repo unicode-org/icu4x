@@ -1,5 +1,7 @@
 # icu_decimal [![crates.io](https://img.shields.io/crates/v/icu_decimal)](https://crates.io/crates/icu_decimal)
 
+<!-- cargo-rdme start -->
+
 Formatting basic decimal numbers.
 
 This module is published as its own crate ([`icu_decimal`](https://docs.rs/icu_decimal/latest/icu_decimal/))
@@ -71,6 +73,8 @@ assert_writeable_eq!(fdf.format(&fixed_decimal), "๑,๐๐๐,๐๐๗");
 ```
 
 [`FixedDecimalFormatter`]: FixedDecimalFormatter
+
+<!-- cargo-rdme end -->
 
 ## More Information
 

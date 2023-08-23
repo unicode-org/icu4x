@@ -1,5 +1,7 @@
 # icu_list [![crates.io](https://img.shields.io/crates/v/icu_list)](https://crates.io/crates/icu_list)
 
+<!-- cargo-rdme start -->
+
 Formatting lists in a locale-sensitive way.
 
 This module is published as its own crate ([`icu_list`](https://docs.rs/icu_list/latest/icu_list/))
@@ -10,7 +12,6 @@ and as part of the [`icu`](https://docs.rs/icu/latest/icu/) crate. See the latte
 ### Formatting *and* lists in Spanish
 
 ```rust
-#
 let list_formatter = ListFormatter::try_new_and_with_length(
     &locale!("es").into(),
     ListLength::Wide,
@@ -32,7 +33,6 @@ assert_writeable_eq!(
 ### Formatting *or* lists in Thai
 
 ```rust
-#
 let list_formatter = ListFormatter::try_new_or_with_length(
     &locale!("th").into(),
     ListLength::Short,
@@ -46,7 +46,6 @@ assert_writeable_eq!(list_formatter.format(1..=3), "1, 2 หรือ 3",);
 ### Formatting unit lists in English
 
 ```rust
-#
 let list_formatter = ListFormatter::try_new_unit_with_length(
     &locale!("en").into(),
     ListLength::Wide,
@@ -60,6 +59,8 @@ assert_writeable_eq!(
 ```
 Note: this last example is not fully internationalized. See [icu4x/2192](https://github.com/unicode-org/icu4x/issues/2192)
 for full unit handling.
+
+<!-- cargo-rdme end -->
 
 ## More Information
 

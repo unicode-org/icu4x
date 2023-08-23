@@ -1,5 +1,7 @@
 # icu_casemap [![crates.io](https://img.shields.io/crates/v/icu_casemap)](https://crates.io/crates/icu_casemap)
 
+<!-- cargo-rdme start -->
+
 🚧 \[Experimental\] Case mapping for Unicode characters and strings.
 
 This module is published as its own crate ([`icu_casemap`](https://docs.rs/icu_casemap/latest/icu_casemap/))
@@ -25,6 +27,8 @@ of the icu meta-crate. Use with caution.
 </div>
 
 [`ICU4X`]: ../icu/index.html
+
+<!-- cargo-rdme end -->
 
 ## More Information
 

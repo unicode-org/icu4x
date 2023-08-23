@@ -1,5 +1,7 @@
 # icu_plurals [![crates.io](https://img.shields.io/crates/v/icu_plurals)](https://crates.io/crates/icu_plurals)
 
+<!-- cargo-rdme start -->
+
 Determine the plural category appropriate for a given number in a given language.
 
 This module is published as its own crate ([`icu_plurals`](https://docs.rs/icu_plurals/latest/icu_plurals/))
@@ -57,6 +59,8 @@ Plural rules depend on the use case. This crate supports two types of plural rul
 * [`Ordinal`](PluralRuleType::Ordinal): `1st place`, `10th day`, `11th floor`
 
 [Language Plural Rules]: https://unicode.org/reports/tr35/tr35-numbers.html#Language_Plural_Rules
+
+<!-- cargo-rdme end -->
 
 ## More Information
 

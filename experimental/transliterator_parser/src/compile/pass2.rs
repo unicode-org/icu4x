@@ -3,7 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use super::*;
-use crate::parse::UnicodeSet;
+use crate::parse::{BasicId, UnicodeSet};
 use core::fmt;
 use icu_collections::codepointinvlist::CodePointInversionList;
 use std::fmt::{Display, Formatter};
@@ -193,6 +193,8 @@ impl<'a> Display for LiteralOrStandin<'a> {
 pub(super) struct Pass2<'a, 'p> {
     var_table: MutVarTable,
     var_definitions: &'a HashMap<String, &'p [parse::Element]>,
+    // transliterators available at datagen time exist in this mapping from legacy ID to internal ID
+    available_transliterators: &'a HashMap<String, String>,
     // the inverse of VarTable.compounds
     var_to_char: HashMap<String, char>,
 }
@@ -201,18 +203,31 @@ impl<'a, 'p> Pass2<'a, 'p> {
     pub(super) fn run(
         result: DirectedPass1Result<'p>,
         var_definitions: &'a HashMap<String, &'p [parse::Element]>,
+        available_transliterators: &'a HashMap<String, String>,
+        visible: bool,
     ) -> Result<ds::RuleBasedTransliterator<'static>> {
-        let mut pass2 = Self::try_new(result.data.counts, var_definitions)?;
-        pass2.compile(result.groups, result.filter)
+        let mut pass2 = Self::try_new(
+            result.data.counts,
+            var_definitions,
+            available_transliterators,
+        )?;
+        pass2.compile(
+            result.groups,
+            result.filter,
+            result.data.used_transliterators,
+            visible,
+        )
     }
 
     fn try_new(
         counts: SpecialConstructCounts,
         var_definitions: &'a HashMap<String, &'p [parse::Element]>,
+        available_transliterators: &'a HashMap<String, String>,
     ) -> Result<Self> {
         Ok(Pass2 {
             var_table: MutVarTable::try_new_from_counts(counts)?,
             var_definitions,
+            available_transliterators,
             var_to_char: HashMap::new(),
         })
     }
@@ -221,6 +236,8 @@ impl<'a, 'p> Pass2<'a, 'p> {
         &mut self,
         rule_groups: super::RuleGroups<'p>,
         global_filter: Option<FilterSet>,
+        used_transliterators: HashSet<BasicId>,
+        visible: bool,
     ) -> Result<ds::RuleBasedTransliterator<'static>> {
         let mut compiled_transform_groups: Vec<VarZeroVec<'static, ds::SimpleIdULE>> = Vec::new();
         let mut compiled_conversion_groups: Vec<VarZeroVec<'static, ds::RuleULE>> = Vec::new();
@@ -228,7 +245,7 @@ impl<'a, 'p> Pass2<'a, 'p> {
         for (transform_group, conversion_group) in rule_groups {
             let compiled_transform_group: Vec<_> = transform_group
                 .into_iter()
-                .map(|id| Pass2::compile_single_id(id.into_owned()))
+                .map(|id| self.compile_single_id(id.into_owned()))
                 .collect();
             compiled_transform_groups.push(VarZeroVec::from(&compiled_transform_group));
 
@@ -239,15 +256,20 @@ impl<'a, 'p> Pass2<'a, 'p> {
             compiled_conversion_groups.push(VarZeroVec::from(&compiled_conversion_group));
         }
 
-        let res = ds::RuleBasedTransliterator {
-            visibility: true, // TODO(#3736): use metadata
+        let mut deps: Vec<_> = used_transliterators
+            .into_iter()
+            .map(|id| self.compile_basic_id(id))
+            .collect();
+        deps.sort_unstable();
+
+        Ok(ds::RuleBasedTransliterator {
+            visibility: visible,
             filter: global_filter.unwrap_or(CodePointInversionList::all()),
             id_group_list: VarZeroVec::from(&compiled_transform_groups),
             rule_group_list: VarZeroVec::from(&compiled_conversion_groups),
             variable_table: self.var_table.finalize(),
-        };
-
-        Ok(res)
+            dependencies: VarZeroVec::from(&deps),
+        })
     }
 
     fn compile_conversion_rule(&mut self, rule: UniConversionRule<'p>) -> ds::Rule<'static> {
@@ -339,7 +361,7 @@ impl<'a, 'p> Pass2<'a, 'p> {
             }
             parse::Element::FunctionCall(id, inner) => {
                 let inner = self.compile_section(inner, loc);
-                let id = Pass2::compile_single_id(id.clone());
+                let id = self.compile_single_id(id.clone());
                 let standin = self.var_table.insert_function_call(ds::FunctionCall {
                     translit: id,
                     arg: inner.into(),
@@ -353,21 +375,24 @@ impl<'a, 'p> Pass2<'a, 'p> {
         }
     }
 
-    fn compile_single_id(id: parse::SingleId) -> ds::SimpleId<'static> {
-        // TODO(#3736): map legacy ID to internal ID and use here
-        let id_string = format!(
-            "{}-{}{}",
-            id.basic_id.source,
-            id.basic_id.target,
-            if let Some(v) = id.basic_id.variant {
-                format!("/{}", v)
-            } else {
-                "".to_owned()
-            }
-        );
+    fn compile_basic_id(&self, basic_id: parse::BasicId) -> String {
+        let mut recombined_legacy_id = basic_id.to_string();
+        // normalize to ASCII lowercase. This is what the mapping expects.
+        recombined_legacy_id.make_ascii_lowercase();
+        if let Some(internal_id) = self.available_transliterators.get(&recombined_legacy_id) {
+            internal_id.clone()
+        } else {
+            legacy_id_to_internal_id(
+                &basic_id.source,
+                &basic_id.target,
+                basic_id.variant.as_deref(),
+            )
+        }
+    }
 
+    fn compile_single_id(&self, id: parse::SingleId) -> ds::SimpleId<'static> {
         ds::SimpleId {
-            id: id_string.into(),
+            id: self.compile_basic_id(id.basic_id).into(),
             filter: id.filter.unwrap_or(CodePointInversionList::all()),
         }
     }

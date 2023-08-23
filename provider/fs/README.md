@@ -1,5 +1,7 @@
 # icu_provider_fs [![crates.io](https://img.shields.io/crates/v/icu_provider_fs)](https://crates.io/crates/icu_provider_fs)
 
+<!-- cargo-rdme start -->
+
 `icu_provider_fs` is one of the [`ICU4X`] components.
 
 It reads ICU4X data files from the filesystem in a given directory.
@@ -22,7 +24,7 @@ as the leaf data files. For example, Arabic JSON data for cardinal plural rules 
 The exact form of the directory structure may change over time. ICU4X uses metadata from
 `manifest.json` to dynamically interpret different versions of the directory structure.
 
-```
+```text
 ├── manifest.json
 ├── dates
 │   └── gregory@1
@@ -73,6 +75,8 @@ icu4x-datagen --keys all --locales full --format dir --syntax postcard
 ```
 
 [`ICU4X`]: ../icu/index.html
+
+<!-- cargo-rdme end -->
 
 ## More Information
 

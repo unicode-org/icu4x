@@ -1,5 +1,7 @@
 # icu_datagen [![crates.io](https://img.shields.io/crates/v/icu_datagen)](https://crates.io/crates/icu_datagen)
 
+<!-- cargo-rdme start -->
+
 `icu_datagen` is a library to generate data files that can be used in ICU4X data providers.
 
 Data files can be generated either programmatically (i.e. in `build.rs`), or through a
@@ -41,6 +43,8 @@ $ icu4x-datagen \
 >    --out data.postcard
 ```
 More details can be found by running `--help`.
+
+<!-- cargo-rdme end -->
 
 ## More Information
 
