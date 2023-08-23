@@ -118,7 +118,36 @@ pub fn locales() -> alloc::vec::Vec<icu_locid::LanguageIdentifier> {
 
 #[cfg(feature = "std")]
 #[deprecated]
-pub mod paths;
+/// Get paths to the test data directories. Some of these paths do not
+/// exist anymore, and data should only be accessed through the functions
+/// provided by this crate.
+pub mod paths {
+    use std::path::PathBuf;
+
+    #[deprecated(since = "1.3.0", note = "use `compiled_data`")]
+    /// Returns the absolute path to the top-level data directory.
+    pub fn data_root() -> PathBuf {
+        PathBuf::from(std::env!("CARGO_MANIFEST_DIR")).join("data")
+    }
+
+    #[deprecated(since = "1.3.0", note = "use `compiled_data`")]
+    /// Returns the absolute path to the CLDR JSON root directory.
+    pub fn cldr_json_root() -> PathBuf {
+        data_root().join("cldr")
+    }
+
+    #[deprecated(since = "1.3.0", note = "use `compiled_data`")]
+    /// Returns the absolute path to the icuexport TOML root directory.
+    pub fn icuexport_toml_root() -> PathBuf {
+        data_root().join("icuexport")
+    }
+
+    #[deprecated(since = "1.3.0", note = "use `compiled_data`")]
+    /// Returns the absolute path to the collation tailoring TOML root directory.
+    pub fn coll_toml_root() -> PathBuf {
+        data_root().join("coll")
+    }
+}
 
 use icu_provider::prelude::*;
 use icu_provider_adapters::fallback::LocaleFallbackProvider;

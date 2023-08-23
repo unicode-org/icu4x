@@ -632,9 +632,11 @@ impl BakedExporter {
             quote! {
                 #(
                     #[macro_use]
+                    #features
                     #[path = #file_paths]
                     mod #mod_idents;
                     #[doc(inline)]
+                    #features
                     pub use #prefixed_macro_idents as #macro_idents;
                 )*
             },

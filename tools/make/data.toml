@@ -69,7 +69,7 @@ if greater_than ${output_length} 0
 end
 '''
 
-[tasks.testdata-legacy]
+[tasks.testdata-legacy-gen]
 description = "Build the data for the legacy icu_testdata crate"
 category = "ICU4X Data"
 command = "cargo"
@@ -77,6 +77,19 @@ args = [
     "run",
     "--bin=make-testdata-legacy",
 ]
+
+[tasks.testdata-legacy]
+description = "Verify the data for the legacy icu_testdata crate"
+category = "ICU4X Data"
+dependencies = ["testdata-legacy-gen"]
+script_runner = "@duckscript"
+script = """
+    cd provider/testdata
+    exec --fail-on-error cargo check-all-features
+    exec --fail-on-error cargo test --all-features --all-targets
+    set_env RUSTDOCFLAGS=-Dwarnings
+    exec --fail-on-error cargo doc --all-features --no-deps
+"""
 
 [tasks.bakeddata]
 description = "Builds full baked data"
