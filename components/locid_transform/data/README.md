@@ -1,6 +1,10 @@
 # icu_locid_transform_data [![crates.io](https://img.shields.io/crates/v/icu_locid_transform_data)](https://crates.io/crates/icu_locid_transform_data)
 
+<!-- cargo-rdme start -->
+
 Data for the icu_locid_transform crate
+
+<!-- cargo-rdme end -->
 
 ## More Information
 

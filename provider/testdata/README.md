@@ -1,5 +1,7 @@
 # icu_testdata [![crates.io](https://img.shields.io/crates/v/icu_testdata)](https://crates.io/crates/icu_testdata)
 
+<!-- cargo-rdme start -->
+
 `icu_testdata` is a unit testing crate for [`ICU4X`].
 
 The crate exposes data providers with stable data useful for unit testing. The data is
@@ -48,6 +50,8 @@ HelloWorldFormatter::try_new_unstable(
 ```
 
 [`ICU4X`]: ../icu/index.html
+
+<!-- cargo-rdme end -->
 
 ## More Information
 

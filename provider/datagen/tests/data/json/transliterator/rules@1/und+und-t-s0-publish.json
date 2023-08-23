@@ -1,0 +1,348 @@
+{
+  "visibility": true,
+  "variable_table": {
+    "compounds": [
+      "\"",
+      "'"
+    ],
+    "quantifiers_opt": [],
+    "quantifiers_kleene": [],
+    "quantifiers_kleene_plus": [],
+    "segments": [],
+    "unicode_sets": [],
+    "function_calls": []
+  },
+  "filter": [
+    "\u0000-􏿿"
+  ],
+  "id_group_list": [
+    []
+  ],
+  "rule_group_list": [
+    [
+      {
+        "ante": "",
+        "key": "“",
+        "post": "",
+        "replacer": "󰀀",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "”",
+        "post": "",
+        "replacer": "󰀀",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "‘",
+        "post": "",
+        "replacer": "󰀁",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "’",
+        "post": "",
+        "replacer": "󰀁",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "⟷",
+        "post": "",
+        "replacer": "<--->",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "⟵",
+        "post": "",
+        "replacer": "<---",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "⟶",
+        "post": "",
+        "replacer": "--->",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "↔",
+        "post": "",
+        "replacer": "<-->",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "←",
+        "post": "",
+        "replacer": "<--",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "→",
+        "post": "",
+        "replacer": "-->",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "↮",
+        "post": "",
+        "replacer": "<-/->",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "↚",
+        "post": "",
+        "replacer": "<-/-",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "↛",
+        "post": "",
+        "replacer": "-/->",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "⟺",
+        "post": "",
+        "replacer": "<===>",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "⟸",
+        "post": "",
+        "replacer": "<===",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "⟹",
+        "post": "",
+        "replacer": "===>",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "⇔",
+        "post": "",
+        "replacer": "<==>",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "⇐",
+        "post": "",
+        "replacer": "<==",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "⇒",
+        "post": "",
+        "replacer": "==>",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "≠",
+        "post": "",
+        "replacer": "!=",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "≤",
+        "post": "",
+        "replacer": "<=",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "≥",
+        "post": "",
+        "replacer": ">=",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "±",
+        "post": "",
+        "replacer": "+-",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "∓",
+        "post": "",
+        "replacer": "-+",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "≅",
+        "post": "",
+        "replacer": "~=",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "—",
+        "post": "",
+        "replacer": "--",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "…",
+        "post": "",
+        "replacer": "...",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "©",
+        "post": "",
+        "replacer": "(C)",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "®",
+        "post": "",
+        "replacer": "(R)",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "™",
+        "post": "",
+        "replacer": "(TM)",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "℅",
+        "post": "",
+        "replacer": "c/o",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "½",
+        "post": "",
+        "replacer": "1/2",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "⅓",
+        "post": "",
+        "replacer": "1/3",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "⅔",
+        "post": "",
+        "replacer": "2/3",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "¼",
+        "post": "",
+        "replacer": "1/4",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "¾",
+        "post": "",
+        "replacer": "3/4",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "⅕",
+        "post": "",
+        "replacer": "1/5",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "⅖",
+        "post": "",
+        "replacer": "2/5",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "⅗",
+        "post": "",
+        "replacer": "3/5",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "⅘",
+        "post": "",
+        "replacer": "4/5",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "⅙",
+        "post": "",
+        "replacer": "1/6",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "⅚",
+        "post": "",
+        "replacer": "5/6",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "⅛",
+        "post": "",
+        "replacer": "1/8",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "⅜",
+        "post": "",
+        "replacer": "3/8",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "⅝",
+        "post": "",
+        "replacer": "5/8",
+        "cursor_offset": 0
+      },
+      {
+        "ante": "",
+        "key": "⅞",
+        "post": "",
+        "replacer": "7/8",
+        "cursor_offset": 0
+      }
+    ]
+  ],
+  "dependencies": []
+}

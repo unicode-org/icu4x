@@ -1,5 +1,7 @@
 # litemap [![crates.io](https://img.shields.io/crates/v/litemap)](https://crates.io/crates/litemap)
 
+<!-- cargo-rdme start -->
+
 ## `litemap`
 
 `litemap` is a crate providing [`LiteMap`], a highly simplistic "flat" key-value map
@@ -20,6 +22,8 @@ random-access data store, giving that data store a map-like interface. See the [
 module for more details.
 
 [`Vec`]: alloc::vec::Vec
+
+<!-- cargo-rdme end -->
 
 ## More Information
 

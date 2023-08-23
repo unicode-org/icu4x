@@ -1,6 +1,10 @@
 # icu_calendar_data [![crates.io](https://img.shields.io/crates/v/icu_calendar_data)](https://crates.io/crates/icu_calendar_data)
 
+<!-- cargo-rdme start -->
+
 Data for the icu_calendar crate
+
+<!-- cargo-rdme end -->
 
 ## More Information
 

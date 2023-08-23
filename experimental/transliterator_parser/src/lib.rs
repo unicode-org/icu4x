@@ -28,6 +28,7 @@
 use icu_properties::provider::*;
 use icu_provider::prelude::*;
 use icu_transliteration::provider::RuleBasedTransliterator;
+use std::collections::HashMap;
 
 mod compile;
 mod errors;
@@ -36,12 +37,29 @@ mod parse;
 pub use errors::ParseError;
 pub use errors::ParseErrorKind;
 
+pub use parse::Direction;
+
+pub use compile::legacy_id_to_internal_id;
+pub use compile::Metadata;
+
 /// Parse a rule based transliterator definition into a `TransliteratorDataStruct`.
 ///
 /// See [UTS #35 - Transliterators](https://unicode.org/reports/tr35/tr35-general.html#Transforms) for more information.
+///
+/// The `gen_direction` [`Direction`] argument
+/// determines which of the returned options is populated. The first option will be populated
+/// if the direction is [`Forward`](Direction::Forward), the second if the direction is
+/// [`Reverse`](Direction::Reverse), and both if the direction is [`Both`](Direction::Both).
+///
+/// `transliterator_map` is a map from legacy IDs to internal ICU4X IDs. Occurring IDs in `source`
+/// that do not have a corresponding entry in `transliterator_map` are still valid, but will be
+/// compiled with [`legacy_id_to_internal_id`].
 #[cfg(feature = "compiled_data")]
 pub fn parse(
     source: &str,
+    gen_direction: Direction,
+    metadata: Metadata,
+    transliterator_map: HashMap<String, String>,
 ) -> Result<
     (
         Option<RuleBasedTransliterator<'static>>,
@@ -49,12 +67,21 @@ pub fn parse(
     ),
     ParseError,
 > {
-    parse_unstable(source, &icu_properties::provider::Baked)
+    parse_unstable(
+        source,
+        gen_direction,
+        metadata,
+        transliterator_map,
+        &icu_properties::provider::Baked,
+    )
 }
 
 #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, parse())]
 pub fn parse_unstable<P>(
     source: &str,
+    gen_direction: Direction,
+    metadata: Metadata,
+    transliterator_map: HashMap<String, String>,
     provider: &P,
 ) -> Result<
     (
@@ -122,8 +149,7 @@ where
         + DataProvider<XidStartV1Marker>,
 {
     let parsed = parse::parse_unstable(source, provider)?;
-    // TODO(#3736): pass direction from metadata
-    compile::compile(parsed, parse::Direction::Both)
+    compile::compile(parsed, gen_direction, metadata, transliterator_map)
 }
 
 #[cfg(test)]
@@ -167,7 +193,18 @@ mod tests {
         :: InterIndic-Devanagari ;
         "#;
 
-        let (forward, reverse) = parse(source).expect("parsing failed");
+        let t_map = HashMap::from([(
+            "AnyRev-AddRandomSpaces/FiftyPercent".to_ascii_lowercase(),
+            "und-t-s0-anyrev-d0-addrndsp-m0-fifty".into(),
+        )]);
+
+        let metadata = Metadata {
+            direction: Direction::Both,
+            visible: true,
+        };
+
+        let (forward, reverse) =
+            parse(source, Direction::Both, metadata, t_map).expect("parsing failed");
         let forward = forward.expect("forward transliterator expected");
         let reverse = reverse.expect("reverse transliterator expected");
 
@@ -176,15 +213,15 @@ mod tests {
 
             let expected_id_group1 = vec![ds::SimpleId {
                 filter: FilterSet::all(),
-                id: Cow::Borrowed("Latin-InterIndic"),
+                id: Cow::Borrowed("x-latin-interindic"),
             }];
             let expected_id_group2 = vec![ds::SimpleId {
                 filter: parse_set_cp(r"[\ ]"),
-                id: Cow::Borrowed("Any-Remove"),
+                id: Cow::Borrowed("x-any-remove"),
             }];
             let expected_id_group3 = vec![ds::SimpleId {
                 filter: FilterSet::all(),
-                id: Cow::Borrowed("InterIndic-Devanagari"),
+                id: Cow::Borrowed("x-interindic-devanagari"),
             }];
 
             let expected_id_group_list: Vec<VarZeroVec<'_, ds::SimpleIdULE>> = vec![
@@ -257,6 +294,11 @@ mod tests {
                 rule_group_list: VarZeroVec::from(&expected_rule_group_list),
                 variable_table: expected_var_table,
                 visibility: true,
+                dependencies: VarZeroVec::from(&[
+                    "x-any-remove",
+                    "x-interindic-devanagari",
+                    "x-latin-interindic",
+                ]),
             };
             assert_eq!(forward, expected_rbt);
         }
@@ -266,16 +308,16 @@ mod tests {
             let expected_id_group1 = vec![
                 ds::SimpleId {
                     filter: FilterSet::all(),
-                    id: Cow::Borrowed("Devanagari-InterIndic"),
+                    id: Cow::Borrowed("x-devanagari-interindic"),
                 },
                 ds::SimpleId {
                     filter: FilterSet::all(),
-                    id: Cow::Borrowed("AnyRev-AddRandomSpaces/FiftyPercent"),
+                    id: Cow::Borrowed("und-t-s0-anyrev-d0-addrndsp-m0-fifty"),
                 },
             ];
             let expected_id_group2 = vec![ds::SimpleId {
                 filter: FilterSet::all(),
-                id: Cow::Borrowed("InterIndic-Latin"),
+                id: Cow::Borrowed("x-interindic-latin"),
             }];
 
             let expected_id_group_list: Vec<VarZeroVec<'_, ds::SimpleIdULE>> = vec![
@@ -327,7 +369,7 @@ mod tests {
                 arg: Cow::Borrowed("\u{F0009}padding"), // $1 and 'padding'
                 translit: ds::SimpleId {
                     filter: FilterSet::all(),
-                    id: Cow::Borrowed("Any-RevFnCall"),
+                    id: Cow::Borrowed("x-any-revfncall"),
                 },
             }];
 
@@ -347,6 +389,12 @@ mod tests {
                 rule_group_list: VarZeroVec::from(&expected_rule_group_list),
                 variable_table: expected_var_table,
                 visibility: true,
+                dependencies: VarZeroVec::from(&[
+                    "und-t-s0-anyrev-d0-addrndsp-m0-fifty",
+                    "x-any-revfncall",
+                    "x-devanagari-interindic",
+                    "x-interindic-latin",
+                ]),
             };
             assert_eq!(reverse, expected_rbt);
         }

@@ -1,0 +1,12 @@
+{
+    "direction": "both",
+    "source": "Latin",
+    "target": "ASCII",
+    "alias": [
+        "Any-ASCII",
+        "und-t-und-latn-d0-ascii"
+    ],
+    "backwardAlias": [
+        "und-Latn-t-s0-ascii"
+    ]
+}
