@@ -69,7 +69,6 @@
 //! # }
 //! ```
 
-use crate::helpers::ZeroOneOrTwo;
 use databake::*;
 use icu_provider::datagen::*;
 use icu_provider::prelude::*;
@@ -473,11 +472,11 @@ impl BakedExporter {
                         .flat_map(|ch| {
                             if ch == AuxiliaryKeys::separator() as char {
                                 // Replace the aux key separator with double-underscore
-                                ZeroOneOrTwo::Two('_', '_')
+                                Some('_').into_iter().chain(Some('_'))
                             } else if ch == '-' {
-                                ZeroOneOrTwo::One('_')
+                                Some('_').into_iter().chain(None)
                             } else {
-                                ZeroOneOrTwo::One(ch.to_ascii_uppercase())
+                                Some(ch.to_ascii_lowercase()).into_iter().chain(None)
                             }
                         })
                         .collect::<String>(),
