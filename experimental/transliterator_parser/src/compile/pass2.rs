@@ -194,6 +194,8 @@ impl MutVarTable {
             segments: VarZeroVec::from(&self.segments.vec),
             unicode_sets: VarZeroVec::from(&self.unicode_sets.vec),
             function_calls: VarZeroVec::from(&self.function_calls.vec),
+            // these casts are safe, because the constructor checks that everything is in range,
+            // and the range has a length of less than 2^16
             max_left_placeholder_count: self.counts.max_left_placeholders as u16,
             max_right_placeholder_count: self.counts.max_right_placeholders as u16,
         }
