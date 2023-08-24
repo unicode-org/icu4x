@@ -339,6 +339,8 @@ fn test_iter() {
             locale!("pt").into(),
             locale!("ro").into(),
             locale!("ru").into(),
+            locale!("sr").into(),
+            locale!("sr-Latn").into(),
             locale!("vi").into(),
             locale!("zh").into()
         ]
