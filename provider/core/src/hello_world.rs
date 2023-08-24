@@ -109,11 +109,11 @@ impl HelloWorldProvider {
         ("el", "Καλημέρα κόσμε"),
         ("en", "Hello World"),
         ("en+reverse", "Olleh Dlrow"),
-        ("en-001", "Hello from 🗺️"), // WORLD
-        ("en-002", "Hello from 🌍"), // AFRICA
-        ("en-019", "Hello from 🌎"), // AMERICAS
-        ("en-142", "Hello from 🌏"), // ASIA
-        ("en-GB", "Hello from 🇬🇧"), // GREAT BRITAIN
+        ("en-001", "Hello from 🗺️"),            // WORLD
+        ("en-002", "Hello from 🌍"),           // AFRICA
+        ("en-019", "Hello from 🌎"),           // AMERICAS
+        ("en-142", "Hello from 🌏"),           // ASIA
+        ("en-GB", "Hello from 🇬🇧"),            // GREAT BRITAIN
         ("en-GB-u-sd-gbeng", "Hello from 🏴󠁧󠁢󠁥󠁮󠁧󠁿"), // ENGLAND
         ("eo", "Saluton, Mondo"),
         ("fa", "سلام دنیا‎"),
