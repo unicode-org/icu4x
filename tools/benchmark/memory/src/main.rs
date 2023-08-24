@@ -5,10 +5,10 @@
 use clap::Parser;
 use serde_json::json;
 use std::io::prelude::*;
-use std::path::PathBuf;
+use std::path::{Path, PathBuf};
 use std::process;
 use std::process::Command;
-use std::{env, process::Stdio};
+use std::process::Stdio;
 use std::{fs, io::BufReader};
 
 #[derive(Parser)]
@@ -91,6 +91,8 @@ fn extract_bytes_from_log_line(preamble: &str, text: &str) -> u64 {
 fn main() {
     let ProcessedArgs { os, examples } = process_cli_args();
 
+    let root_dir = PathBuf::from(concat!(std::env!("CARGO_MANIFEST_DIR"), "/../../.."));
+
     let examples = if !examples.is_empty() {
         examples
     } else {
@@ -101,43 +103,29 @@ fn main() {
             .arg("icu_benchmark_macros/benchmark_memory")
             .arg("--features")
             .arg("bench")
-            .stderr(Stdio::piped())
-            .spawn()
-            .and_then(|mut c| c.wait())
+            .status()
             .unwrap_or_else(|err| {
                 eprintln!("Failed to collect examples {err:?}");
                 process::exit(1);
             });
-        fs::read_dir("target/debug/examples")
+        fs::read_dir(root_dir.join("target/debug/examples"))
             .unwrap()
             .flat_map(|entry| {
-                entry
-                    .ok()?
-                    .file_name()
-                    .into_string()
-                    .ok()
-                    .filter(|s| !s.contains(['-', '.']))
+                entry.ok()?.file_name().into_string().ok().and_then(|s| {
+                    if cfg!(windows) {
+                        s.strip_suffix(".exe").map(ToString::to_string)
+                    } else {
+                        (!s.contains(['-', '.'])).then_some(s)
+                    }
+                })
             })
             .collect()
     };
 
-    let root_dir = {
-        let mut path = PathBuf::from(&env::var("CARGO_MANIFEST_DIR").expect("$CARGO_MANIFEST_DIR"));
-        path.pop();
-        path.pop();
-        path.pop();
-        path
-    };
-
     // benchmarks/memory/{os}
-    let benchmark_dir = {
-        let path = root_dir.join("benchmarks/memory");
-        if let Some(os) = os {
-            path.join(os)
-        } else {
-            path
-        }
-    };
+    let benchmark_dir = root_dir
+        .join("benchmarks/memory")
+        .join(os.as_deref().unwrap_or("."));
 
     // Make the directory: benchmarks/memory/{os}
     fs::create_dir_all(&benchmark_dir).unwrap_or_else(|err| {
@@ -234,7 +222,7 @@ fn main() {
 
         let dhat_destination = benchmark_dir.join(format!("{example}-dhat-heap.json"));
 
-        let dhat_source = root_dir.join("dhat-heap.json");
+        let dhat_source = Path::new("dhat-heap.json");
 
         assert!(
             dhat_source.exists(),
