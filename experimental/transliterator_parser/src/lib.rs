@@ -183,10 +183,10 @@ mod tests {
         $a = [a] [b]+ ;
         $unused = [c{string}]+? ;
         $b = $a? 'literal chars' ;
-        x } [a-z] > y ;
+        x } [a-z] > |@@@y ;
         $a > ab ;
-        'reverse output:' &RevFnCall($1 'padding') < ($b) ;
-        ^ left } $ <> ^ { right } [0-9] $ ;
+        'reverse output:' &RevFnCall($1 'padding') @@ | < ($b) ;
+        ^ left } $ <> ^ { rig|ht } [0-9] $ ;
         :: [\ ] Remove (AnyRev-AddRandomSpaces/FiftyPercent) ;
         # splits up the forward rules
         forward rule that > splits up rule groups ;
@@ -235,7 +235,7 @@ mod tests {
                     ante: Cow::Borrowed(""),
                     key: Cow::Borrowed("x"),
                     post: Cow::Borrowed("\u{F0002}"),
-                    replacer: Cow::Borrowed("y"),
+                    replacer: Cow::Borrowed("\u{F0007}y"), // `|@@@`
                     cursor_offset: 0,
                 },
                 ds::Rule {
@@ -249,7 +249,7 @@ mod tests {
                     ante: Cow::Borrowed(""),
                     key: Cow::Borrowed("\u{FFFFC}left"),
                     post: Cow::Borrowed("\u{FFFFD}"),
-                    replacer: Cow::Borrowed("right"),
+                    replacer: Cow::Borrowed("rig\u{FFFFB}ht"), // `|`
                     cursor_offset: 0,
                 },
             ];
@@ -286,6 +286,8 @@ mod tests {
                 segments: VarZeroVec::new(),
                 unicode_sets: VarZeroVec::from(&expected_unicode_sets),
                 function_calls: VarZeroVec::new(),
+                max_left_placeholder_count: 0,
+                max_right_placeholder_count: 3,
             };
 
             let expected_rbt = ds::RuleBasedTransliterator {
@@ -330,7 +332,7 @@ mod tests {
                     ante: Cow::Borrowed(""),
                     key: Cow::Borrowed("\u{F0004}"),
                     post: Cow::Borrowed(""),
-                    replacer: Cow::Borrowed("reverse output:\u{F0008}"), // function call
+                    replacer: Cow::Borrowed("reverse output:\u{F0008}\u{F0010}"), // `@@|` and function call
                     cursor_offset: 0,
                 },
                 ds::Rule {
@@ -366,7 +368,7 @@ mod tests {
                 vec![parse_set("[a]"), parse_set("[b]"), parse_set("[0-9]")];
 
             let expected_function_calls = vec![ds::FunctionCall {
-                arg: Cow::Borrowed("\u{F0009}padding"), // $1 and 'padding'
+                arg: Cow::Borrowed("\u{F0011}padding"), // $1 and 'padding'
                 translit: ds::SimpleId {
                     filter: FilterSet::all(),
                     id: Cow::Borrowed("x-any-revfncall"),
@@ -381,6 +383,8 @@ mod tests {
                 segments: VarZeroVec::from(&expected_segments),
                 unicode_sets: VarZeroVec::from(&expected_unicode_sets),
                 function_calls: VarZeroVec::from(&expected_function_calls),
+                max_left_placeholder_count: 2,
+                max_right_placeholder_count: 0,
             };
 
             let expected_rbt = ds::RuleBasedTransliterator {

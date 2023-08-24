@@ -34,7 +34,7 @@ const _: () = {
         pub use crate as transliteration;
         pub use icu_collections as collections;
     }
-    icu_transliteration_data::impl_transliterator_rules_v1!(Baked);
+    // icu_transliteration_data::impl_transliterator_rules_v1!(Baked);
 };
 
 // TODO(#3776): Improve the documentation of this datastruct.
@@ -151,6 +151,10 @@ pub struct VarTable<'a> {
     /// Function calls.
     #[cfg_attr(feature = "serde", serde(borrow))]
     pub function_calls: VarZeroVec<'a, FunctionCallULE>,
+    /// The maximum number of _left_ placeholders (`rest @@@ |`) in any rule.
+    pub max_left_placeholder_count: u16,
+    /// The maximum number of _right_ placeholders (`| @@@ rest`) in any rule.
+    pub max_right_placeholder_count: u16,
 }
 
 /// An inline recursive call to a transliterator with an arbitrary argument.
