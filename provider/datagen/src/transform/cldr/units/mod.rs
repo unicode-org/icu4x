@@ -14,7 +14,7 @@ use icu_provider::{
 use icu_unitsconversion::provider::{
     ConstantType, ConstantValue, UnitsConstantsV1, UnitsConstantsV1Marker,
 };
-use zerovec::{ule::AsULE, ZeroMap};
+use zerovec::{ZeroMap};
 
 use self::helpers::{
     convert_any_constant_value_to_fractional, convert_constant_value_in_scientific_to_fractional,
