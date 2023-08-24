@@ -2,8 +2,11 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+use std::collections::BTreeMap;
 
 use icu_provider::DataError;
+use icu_unitsconversion::{provider::{ConstantValue, ConstantType}, helpers::gcd, Error};
+
 
 /// Removes all whitespace from a string.
 pub fn remove_whitespace(s: &str) -> String {
@@ -26,13 +29,6 @@ pub fn split_string(s: &str, delimiters: Vec<&str>) -> Vec<String> {
     result
 }
 
-/// Returns the greatest common divisor of two numbers.
-pub fn gcd(a: u64, b: u64) -> u64 {
-    if b == 0 {
-        return a;
-    }
-    gcd(b, a % b)
-}
 
 /// Checks if a string represents a decimal number.
 pub fn check_if_decimal_number(number: &str) -> bool {
@@ -87,7 +83,9 @@ pub fn check_if_scientific_notation_number(number: &str) -> bool {
 }
 
 /// Converts a scientific notation number represented as a string into a tuple of (numerator, denominator).
-pub fn convert_scientific_notation_number_to_fractional(number: &str) -> Result<(u64, u64), DataError> {
+pub fn convert_scientific_notation_number_to_fractional(
+    number: &str,
+) -> Result<(u64, u64), DataError> {
     if !check_if_scientific_notation_number(number) {
         return Err(DataError::custom(
             "the number is not a scientific notation number",
@@ -112,6 +110,9 @@ pub fn convert_scientific_notation_number_to_fractional(number: &str) -> Result<
     let gcd = gcd(numerator, denominator);
     Ok((numerator / gcd, denominator / gcd))
 }
+
+
+
 
 #[test]
 fn test_remove_whitespace() {
@@ -166,6 +167,91 @@ fn test_gcd() {
     let actual = gcd(input.0, input.1);
     assert_eq!(expected, actual);
 }
+
+/// Converts a string representing a constant value into a tuple of (numerator, denominator).
+/// For example: input = "6.67408E-11", output will be = (41713, 625000000000000)
+///              input = "ft_to_m", output will be error.
+pub fn convert_constant_value_in_scientific_to_fractional(input: &str, constant_type: ConstantType) -> Result<ConstantValue, DataError> {
+    if !check_if_scientific_notation_number(input) {
+        return Err(DataError::custom(
+            "the number is not a scientific notation number",
+        ));
+    }
+
+    let (numerator, denominator) = match convert_scientific_notation_number_to_fractional(input) {
+        Ok((numerator, denominator)) => (numerator, denominator),
+        Err(e) => return Err(e),
+    };
+
+    let gcd = gcd(numerator, denominator);
+
+    let numerator = match u32::try_from(numerator / gcd) {
+        Ok(numerator) => numerator,
+        Err(_) => return Err(DataError::custom("the numerator is too large")),
+    };
+
+    let denominator = match u32::try_from(denominator / gcd) {
+        Ok(denominator) => denominator,
+        Err(_) => return Err(DataError::custom("the denominator is too large")),
+    };
+
+    Ok(ConstantValue {
+        numerator,
+        denominator,
+        constant_type,
+    })
+}
+
+pub fn convert_any_constant_value_to_fractional(constant_str :&str, constants_map : BTreeMap<&str, ConstantValue> ,constant_type: ConstantType) -> Result<ConstantValue, DataError> {
+   let constant_string_cleaned = remove_whitespace(constant_str);
+   let fraction_str = split_string(constant_str, vec!["/"]);
+    let numerator_strs = split_string(&fraction_str[0].to_string(),vec!["*"] );
+    let denominator_strs = split_string(&fraction_str[1].to_string(),vec!["*"] );
+
+    let mut result  = ConstantValue {
+        numerator: 1,
+        denominator: 1,
+        constant_type,
+    };
+
+    for numerator_str in numerator_strs {
+        let numerator = match constants_map.get(numerator_str.as_str()) {
+            Some(numerator) => *numerator,
+            None => match convert_constant_value_in_scientific_to_fractional(numerator_str.as_str(), constant_type) {
+                Ok(numerator) => numerator,
+                Err(e) => return Err(e),
+            },
+        };
+        result = match result.multiply(&numerator) {
+            Ok(result) => result,
+            Err(e) => return match e {
+                Error::Limit => Err(DataError::custom("calculations exceeded the limit")),
+                _ => Err(DataError::custom("the numerator is too large")),
+            },
+        };
+    }
+
+    for denominator_str in denominator_strs {
+        let denominator = match constants_map.get(denominator_str.as_str()) {
+            Some(denominator) => *denominator,
+            None => match convert_constant_value_in_scientific_to_fractional(denominator_str.as_str(), constant_type) {
+                Ok(denominator) => denominator,
+                Err(e) => return Err(e),
+            },
+        };
+        result = match result.divide(&denominator) {
+            Ok(result) => result,
+            Err(e) => return match e {
+                Error::Limit => Err(DataError::custom("calculations exceeded the limit")),
+                _ => Err(DataError::custom("the denominator is too large")),
+            },
+        };
+    }
+
+    Ok(result)
+
+}
+
 
 #[test]
 fn test_to_fractional() {
@@ -222,6 +308,11 @@ fn test_convert_scientific_notation_number_to_fractional() {
 
     let input = "1.5E-2";
     let expected = (3, 200);
+    let actual = convert_scientific_notation_number_to_fractional(input);
+    assert_eq!(expected, actual.unwrap());
+
+    let input = "6.67408E-11";
+    let expected = (41713, 625000000000000);
     let actual = convert_scientific_notation_number_to_fractional(input);
     assert_eq!(expected, actual.unwrap());
 }

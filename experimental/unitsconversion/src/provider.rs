@@ -12,6 +12,8 @@
 use icu_provider::prelude::*;
 use zerovec::ZeroMap;
 
+use crate::{helpers::gcd, Error};
+
 /// This type contains all of the constants data for units conversion.
 ///
 /// <div class="stab unstable">
@@ -63,4 +65,61 @@ pub struct ConstantValue {
     pub numerator: u32,
     pub denominator: u32,
     pub constant_type: ConstantType,
+}
+
+
+impl ConstantValue {
+    pub fn multiply(&self, other: &ConstantValue) -> Result<ConstantValue, Error> {
+        let numerator = self.numerator as u64 * other.numerator as u64;
+        let denominator = self.denominator as u64 * other.denominator as u64;
+        let gcd = gcd(numerator, denominator);
+
+        let numerator = match u32::try_from(numerator / gcd) {
+            Ok(numerator) => numerator,
+            Err(_) => return Err(Error::Limit),
+        };
+            
+        let denominator = match u32::try_from(denominator / gcd) {
+            Ok(denominator) => denominator,
+            Err(_) => return Err(Error::Limit),
+        };
+
+        let constant_type = match (self.constant_type, other.constant_type) {
+            (ConstantType::Actual, ConstantType::Actual) => ConstantType::Actual,
+            _ => ConstantType::Approximate,
+        };
+
+        Ok(ConstantValue {
+            numerator,
+            denominator,
+            constant_type,
+        })
+    }
+
+    pub fn divide(&self, other: &ConstantValue) -> Result<ConstantValue, Error> {
+        let numerator = self.numerator as u64 * other.denominator as u64;
+        let denominator = self.denominator as u64 * other.numerator as u64;
+        let gcd = gcd(numerator, denominator);
+
+        let numerator = match u32::try_from(numerator / gcd) {
+            Ok(numerator) => numerator,
+            Err(_) => return Err(Error::Limit),
+        };
+            
+        let denominator = match u32::try_from(denominator / gcd) {
+            Ok(denominator) => denominator,
+            Err(_) => return Err(Error::Limit),
+        };
+
+        let constant_type = match (self.constant_type, other.constant_type) {
+            (ConstantType::Actual, ConstantType::Actual) => ConstantType::Actual,
+            _ => ConstantType::Approximate,
+        };
+
+        Ok(ConstantValue {
+            numerator,
+            denominator,
+            constant_type,
+        })
+    }
 }

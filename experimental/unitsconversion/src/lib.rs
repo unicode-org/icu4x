@@ -4,6 +4,22 @@
 
 //! Experimental.
 
+use displaydoc::Display;
+
 extern crate alloc;
 
 pub mod provider;
+pub mod helpers;
+
+
+
+#[derive(Display, Debug, PartialEq)]
+#[non_exhaustive]
+pub enum Error {
+    #[displaydoc("Magnitude or number of digits exceeded")]
+    Limit,
+}
+
+#[cfg(feature = "std")]
+impl std::error::Error for Error {}
+
