@@ -8,10 +8,8 @@ use displaydoc::Display;
 
 extern crate alloc;
 
-pub mod provider;
 pub mod helpers;
-
-
+pub mod provider;
 
 #[derive(Display, Debug, PartialEq)]
 #[non_exhaustive]
@@ -22,4 +20,3 @@ pub enum Error {
 
 #[cfg(feature = "std")]
 impl std::error::Error for Error {}
-

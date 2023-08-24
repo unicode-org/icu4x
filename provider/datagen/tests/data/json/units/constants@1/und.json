@@ -1,19 +1,54 @@
 {
   "constants_map": {
-    "G": "6.67408E-11",
-    "PI": "411557987 / 131002976",
-    "ft2_to_m2": "ft_to_m*ft_to_m",
-    "ft3_to_m3": "ft_to_m*ft_to_m*ft_to_m",
-    "ft_to_m": "0.3048",
-    "gal_imp_to_m3": "0.00454609",
-    "gal_to_m3": "231*in3_to_m3",
-    "glucose_molar_mass": "180.1557",
-    "gravity": "9.80665",
-    "in3_to_m3": "ft3_to_m3/12*12*12",
-    "item_per_mole": "6.02214076E+23",
-    "lb_to_kg": "0.45359237",
-    "meters_per_AU": "149597870700",
-    "sec_per_julian_year": "31557600",
-    "speed_of_light_meters_per_second": "299792458"
+    "PI": {
+      "numerator": 411557987,
+      "denominator": 131002976,
+      "constant_type": "Approximate"
+    },
+    "ft2_to_m2": {
+      "numerator": 145161,
+      "denominator": 1562500,
+      "constant_type": "Actual"
+    },
+    "ft3_to_m3": {
+      "numerator": 55306341,
+      "denominator": 1953125000,
+      "constant_type": "Actual"
+    },
+    "ft_to_m": {
+      "numerator": 381,
+      "denominator": 1250,
+      "constant_type": "Actual"
+    },
+    "gal_imp_to_m3": {
+      "numerator": 454609,
+      "denominator": 100000000,
+      "constant_type": "Actual"
+    },
+    "glucose_molar_mass": {
+      "numerator": 1801557,
+      "denominator": 10000,
+      "constant_type": "Actual"
+    },
+    "gravity": {
+      "numerator": 196133,
+      "denominator": 20000,
+      "constant_type": "Actual"
+    },
+    "lb_to_kg": {
+      "numerator": 45359237,
+      "denominator": 100000000,
+      "constant_type": "Actual"
+    },
+    "sec_per_julian_year": {
+      "numerator": 31557600,
+      "denominator": 1,
+      "constant_type": "Actual"
+    },
+    "speed_of_light_meters_per_second": {
+      "numerator": 299792458,
+      "denominator": 1,
+      "constant_type": "Actual"
+    }
   }
 }

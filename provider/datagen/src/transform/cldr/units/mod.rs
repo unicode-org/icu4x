@@ -14,7 +14,7 @@ use icu_provider::{
 use icu_unitsconversion::provider::{
     ConstantType, ConstantValue, UnitsConstantsV1, UnitsConstantsV1Marker,
 };
-use zerovec::{ZeroMap, ule::AsULE};
+use zerovec::{ule::AsULE, ZeroMap};
 
 use self::helpers::{
     convert_any_constant_value_to_fractional, convert_constant_value_in_scientific_to_fractional,
@@ -67,7 +67,10 @@ impl DataProvider<UnitsConstantsV1Marker> for crate::DatagenProvider {
                 Ok(constant_value) => {
                     constants_map.insert(key, constant_value);
                 }
-                Err(_) => return Err(DataError::custom("Failed to convert constant_str").with_debug_context(constant_str)),
+                Err(_) => {
+                    return Err(DataError::custom("Failed to convert constant_str")
+                        .with_debug_context(constant_str))
+                }
             }
         }
 

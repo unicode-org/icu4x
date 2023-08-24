@@ -218,7 +218,11 @@ pub fn convert_any_constant_value_to_fractional(
     let constant_string_cleaned = remove_whitespace(constant_str);
     let fraction_str = split_string(constant_string_cleaned.as_str(), vec!["/"]);
     let numerator_strs = split_string(&fraction_str[0].to_string(), vec!["*"]);
-    let denominator_strs = split_string(&fraction_str.get(1).unwrap_or(&"".to_string()), vec!["*"]);
+    let denominator_strs: Option<Vec<String>> = if fraction_str.len() > 1 {
+        Some(split_string(&fraction_str[1].to_string(), vec!["*"]))
+    } else {
+        None
+    };
 
     let mut result = ConstantValue {
         numerator: 1,
@@ -248,7 +252,11 @@ pub fn convert_any_constant_value_to_fractional(
         };
     }
 
-    for denominator_str in denominator_strs {
+    if denominator_strs.is_none() {
+        return Ok(result);
+    }
+
+    for denominator_str in denominator_strs.unwrap() {
         let denominator = match constants_map.get(denominator_str.as_str()) {
             Some(denominator) => *denominator,
             None => match convert_constant_value_in_scientific_to_fractional(

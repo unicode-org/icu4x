@@ -24,15 +24,8 @@
       "gravity": {
         "_value": "9.80665"
       },
-      "in3_to_m3": {
-        "_value": "ft3_to_m3/12*12*12"
-      },
       "lb_to_kg": {
         "_value": "0.45359237"
-      },
-      "meters_per_AU": {
-        "_description": "https://www.iau.org/public/themes/measuring/",
-        "_value": "149597870700"
       },
       "PI": {
         "_value": "411557987 / 131002976",

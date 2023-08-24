@@ -67,7 +67,6 @@ pub struct ConstantValue {
     pub constant_type: ConstantType,
 }
 
-
 impl ConstantValue {
     pub fn multiply(&self, other: &ConstantValue) -> Result<ConstantValue, Error> {
         let numerator = self.numerator as u64 * other.numerator as u64;
@@ -78,7 +77,7 @@ impl ConstantValue {
             Ok(numerator) => numerator,
             Err(_) => return Err(Error::Limit),
         };
-            
+
         let denominator = match u32::try_from(denominator / gcd) {
             Ok(denominator) => denominator,
             Err(_) => return Err(Error::Limit),
@@ -105,7 +104,7 @@ impl ConstantValue {
             Ok(numerator) => numerator,
             Err(_) => return Err(Error::Limit),
         };
-            
+
         let denominator = match u32::try_from(denominator / gcd) {
             Ok(denominator) => denominator,
             Err(_) => return Err(Error::Limit),
