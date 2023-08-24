@@ -177,7 +177,7 @@ impl AbstractFs {
         Ok(())
     }
 
-    fn read_to_buf(&self, path: &str) -> Result<Vec<u8>, DataError> {
+    pub(crate) fn read_to_buf(&self, path: &str) -> Result<Vec<u8>, DataError> {
         self.init()?;
         match self {
             Self::Fs(root) => {

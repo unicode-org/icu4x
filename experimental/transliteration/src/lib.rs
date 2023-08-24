@@ -14,7 +14,7 @@
 //! </div>
 
 // https://github.com/unicode-org/icu4x/blob/main/docs/process/boilerplate.md#library-annotations
-#![cfg_attr(not(test), no_std)]
+#![cfg_attr(not(any(test, feature = "std")), no_std)]
 #![cfg_attr(
     not(test),
     deny(
@@ -30,5 +30,15 @@
 #![warn(missing_docs)]
 
 extern crate alloc;
+extern crate core;
 
 pub mod provider;
+
+mod error;
+mod transliterator;
+
+pub use error::TransliteratorError;
+pub use transliterator::*;
+
+#[doc(no_inline)]
+pub use TransliteratorError as Error;
