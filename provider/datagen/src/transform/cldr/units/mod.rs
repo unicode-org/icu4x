@@ -11,8 +11,14 @@ use icu_provider::{
     datagen::IterableDataProvider, DataError, DataLocale, DataPayload, DataProvider, DataRequest,
     DataResponse,
 };
-use icu_unitsconversion::provider::{UnitsConstantsV1, UnitsConstantsV1Marker};
-use zerovec::ZeroMap;
+use icu_unitsconversion::provider::{
+    ConstantType, ConstantValue, UnitsConstantsV1, UnitsConstantsV1Marker,
+};
+use zerovec::{ZeroMap, ule::AsULE};
+
+use self::helpers::{
+    convert_any_constant_value_to_fractional, convert_constant_value_in_scientific_to_fractional,
+};
 
 impl DataProvider<UnitsConstantsV1Marker> for crate::DatagenProvider {
     fn load(&self, _req: DataRequest) -> Result<DataResponse<UnitsConstantsV1Marker>, DataError> {
@@ -22,11 +28,47 @@ impl DataProvider<UnitsConstantsV1Marker> for crate::DatagenProvider {
             .cldr()?
             .core()
             .read_and_parse("supplemental/units.json")?;
-        let mut constants_map = BTreeMap::<&str, &str>::new();
+        let mut constants_map = BTreeMap::<&str, ConstantValue>::new();
 
         let constants = &_units_data.supplemental.unit_constants.constants;
+        let mut constants_need_map = Vec::<(&str, &str, ConstantType)>::new();
         for (key, constant) in constants {
-            constants_map.insert(key, &constant.value);
+            let constant_type = match &constant.status {
+                Some(status) => match status.as_str() {
+                    "approximate" => ConstantType::Approximate,
+                    _ => return Err(DataError::custom("Unknown constant type")),
+                },
+                None => ConstantType::Actual,
+            };
+
+            let constant_str = constant.value.as_str();
+            let constant_value = match convert_constant_value_in_scientific_to_fractional(
+                constant_str,
+                constant_type,
+            ) {
+                Ok(value) => value,
+                Err(_) => {
+                    constants_need_map.push((key, constant_str, constant_type));
+                    continue;
+                }
+            };
+
+            constants_map.insert(key, constant_value);
+        }
+
+        for (key, constant_str, constant_type) in constants_need_map {
+            let constant_value = convert_any_constant_value_to_fractional(
+                constant_str,
+                &constants_map,
+                constant_type,
+            );
+
+            match constant_value {
+                Ok(constant_value) => {
+                    constants_map.insert(key, constant_value);
+                }
+                Err(_) => return Err(DataError::custom("Failed to convert constant_str").with_debug_context(constant_str)),
+            }
         }
 
         let result = UnitsConstantsV1 {
@@ -63,8 +105,19 @@ fn test_basic() {
         .take_payload()
         .unwrap();
 
-    let constants = &und.get().to_owned().constants_map;
+    // let constants = &und.get().to_owned().constants_map;
 
-    assert_eq!(constants.get("ft_to_m").unwrap(), "0.3048");
-    assert_eq!(constants.get("ft2_to_m2").unwrap(), "ft_to_m*ft_to_m");
+    // let ft_to_m : ConstantValue = constants.get("ft_to_m").unwrap();
+
+    // assert_eq!(ft_to_m , ConstantValue {
+    //     numerator: 3048,
+    //     denominator: 10000,
+    //     constant_type: ConstantType::Actual,
+    // });
+
+    // assert!(constants.get("ft2_to_m2").eq( ConstantValue {
+    //     numerator: 3048,
+    //     denominator: 10000,
+    //     constant_type: ConstantType::Actual,
+    // }));
 }

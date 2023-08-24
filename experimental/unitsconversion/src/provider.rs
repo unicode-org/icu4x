@@ -35,7 +35,7 @@ pub struct UnitsConstantsV1<'data> {
     // Also, the constant types.
     /// Maps from constant name (e.g. ft_to_m) to the value of the constant (e.g. 0.3048).
     #[cfg_attr(feature = "serde", serde(borrow))]
-    pub constants_map: ZeroMap<'data, str, str>,
+    pub constants_map: ZeroMap<'data, str, ConstantValue>,
 }
 
 #[zerovec::make_ule(ConstantTypeULE)]
