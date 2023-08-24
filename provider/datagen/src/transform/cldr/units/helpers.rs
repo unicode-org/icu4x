@@ -103,10 +103,16 @@ pub fn convert_scientific_notation_number_to_fractional(
     if exponent > 0 {
         for _ in 0..exponent {
             numerator *= 10;
+            let gcd = gcd(numerator, denominator);
+            numerator /= gcd;
+            denominator /= gcd;
         }
     } else {
         for _ in 0..(-exponent) {
             denominator *= 10;
+            let gcd = gcd(numerator, denominator);
+            numerator /= gcd;
+            denominator /= gcd;
         }
     }
     let gcd = gcd(numerator, denominator);
@@ -212,7 +218,7 @@ pub fn convert_any_constant_value_to_fractional(
     let constant_string_cleaned = remove_whitespace(constant_str);
     let fraction_str = split_string(constant_string_cleaned.as_str(), vec!["/"]);
     let numerator_strs = split_string(&fraction_str[0].to_string(), vec!["*"]);
-    let denominator_strs = split_string(&fraction_str[1].to_string(), vec!["*"]);
+    let denominator_strs = split_string(&fraction_str.get(1).unwrap_or(&"".to_string()), vec!["*"]);
 
     let mut result = ConstantValue {
         numerator: 1,
@@ -327,6 +333,11 @@ fn test_convert_scientific_notation_number_to_fractional() {
 
     let input = "6.67408E-11";
     let expected = (41713, 625000000000000);
+    let actual = convert_scientific_notation_number_to_fractional(input);
+    assert_eq!(expected, actual.unwrap());
+
+    let input = "149597870700";
+    let expected = (149597870700, 1);
     let actual = convert_scientific_notation_number_to_fractional(input);
     assert_eq!(expected, actual.unwrap());
 }

@@ -14,15 +14,8 @@
       "ft3_to_m3": {
         "_value": "ft_to_m*ft_to_m*ft_to_m"
       },
-      "G": {
-        "_value": "6.67408E-11",
-        "_status": "approximate"
-      },
       "gal_imp_to_m3": {
         "_value": "0.00454609"
-      },
-      "gal_to_m3": {
-        "_value": "231*in3_to_m3"
       },
       "glucose_molar_mass": {
         "_description": "derivation from the mean atomic weights according to STANDARD ATOMIC WEIGHTS 2019 on https://ciaaw.org/atomic-weights.htm",
@@ -33,9 +26,6 @@
       },
       "in3_to_m3": {
         "_value": "ft3_to_m3/12*12*12"
-      },
-      "item_per_mole": {
-        "_value": "6.02214076E+23"
       },
       "lb_to_kg": {
         "_value": "0.45359237"
