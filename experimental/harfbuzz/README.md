@@ -1,5 +1,7 @@
 # icu_harfbuzz [![crates.io](https://img.shields.io/crates/v/icu_harfbuzz)](https://crates.io/crates/icu_harfbuzz)
 
+<!-- cargo-rdme start -->
+
 Using ICU4X as the Unicode Database back end for HarfBuzz.
 
 ## Examples
@@ -21,6 +23,8 @@ b.guess_segment_properties();
 assert_eq!(b.get_direction(), Direction::RTL);
 assert_eq!(b.get_script(), sys::HB_SCRIPT_ARABIC);
 ```
+
+<!-- cargo-rdme end -->
 
 ## More Information
 

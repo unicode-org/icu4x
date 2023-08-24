@@ -62,7 +62,6 @@
 
 mod driver;
 mod error;
-mod helpers;
 mod provider;
 mod registry;
 mod source;

@@ -6,15 +6,6 @@
 name = "icu_codepointtrie_builder"
 description = "Runtime builder for CodePointTrie"
 version = "0.3.5"
-rust-version = "1.65.0"
-authors = ["The ICU4X Project Developers"]
-edition = "2021"
-readme = "README.md"
-repository = "https://github.com/unicode-org/icu4x"
-homepage = "https://icu4x.unicode.org"
-license-file = "LICENSE"
-categories = ["internationalization"]
-# Keep this in sync with other crates unless there are exceptions
 include = [
     "src/**/*",
     "examples/**/*",
@@ -25,6 +16,14 @@ include = [
     "README.md",
     "list_to_ucptrie.wasm"
 ]
+
+authors.workspace = true
+categories.workspace = true
+edition.workspace = true
+homepage.workspace = true
+license-file.workspace = true
+repository.workspace = true
+rust-version.workspace = true
 
 [package.metadata.workspaces]
 independent = true
@@ -40,10 +39,10 @@ wasm = ["wasmer", "wasmer-wasi", "once_cell"]
 icu4c = ["zerovec"]
 
 [dependencies]
-icu_collections = { version = "1.2.0", path = "..", features = ["serde"] }
-zerovec = { version = "0.9.4", path = "../../../utils/zerovec", optional = true }
-toml = "0.5"
+icu_collections = { workspace = true, features = ["serde"] }
 once_cell = { version = "1.18.0", optional = true }
+toml = "0.5"
+zerovec = { workspace = true, optional = true }
 
 [dependencies.wasmer]
 version = "2.2.1"
@@ -70,7 +69,7 @@ features = [
 ]
 
 [dev-dependencies]
-icu = { path = "../../icu" }
+icu = { workspace = true }
 
 [package.metadata.cargo-all-features]
 skip_optional_dependencies = true

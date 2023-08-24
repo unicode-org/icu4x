@@ -6,31 +6,24 @@
 name = "icu_unicodeset_parser"
 description = "API to parse unicode sets as defined in UTS35"
 version = "0.0.0"
-authors = ["The ICU4X Project Developers"]
-edition = "2021"
-readme = "README.md"
-repository = "https://github.com/unicode-org/icu4x"
-license-file = "LICENSE"
-categories = ["internationalization"]
-# Keep this in sync with other crates unless there are exceptions
-include = [
-    "src/**/*",
-    "tests/**/*",
-    "Cargo.toml",
-    "LICENSE",
-    "README.md"
-]
+
+authors.workspace = true
+categories.workspace = true
+edition.workspace = true
+include.workspace = true
+license-file.workspace = true
+repository.workspace = true
 
 [package.metadata.docs.rs]
 all-features = true
 
 [dependencies]
-icu_collections = { path = "../../components/collections" }
-icu_properties = { path = "../../components/properties", default-features = false }
-icu_provider = { path = "../../provider/core" }
+icu_collections = { workspace = true }
+icu_properties = { workspace = true }
+icu_provider = { workspace = true }
 
-tinystr = { version = "0.7.1", path = "../../utils/tinystr", default-features = false, features = ["alloc", "zerovec"] }
-zerovec = { version = "0.9.4", path = "../../utils/zerovec",  features = ["yoke"] }
+tinystr = { workspace = true, features = ["alloc", "zerovec"] }
+zerovec = { workspace = true,  features = ["yoke"] }
 log = "0.4"
 
 [features]

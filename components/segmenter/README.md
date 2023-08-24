@@ -1,5 +1,7 @@
 # icu_segmenter [![crates.io](https://img.shields.io/crates/v/icu_segmenter)](https://crates.io/crates/icu_segmenter)
 
+<!-- cargo-rdme start -->
+
 Segment strings by lines, graphemes, words, and sentences.
 
 This module is published as its own crate ([`icu_segmenter`](https://docs.rs/icu_segmenter/latest/icu_segmenter/))
@@ -100,6 +102,8 @@ assert_eq!(&breakpoints, &[0, 13, 36]);
 ```
 
 See [`SentenceSegmenter`] for more examples.
+
+<!-- cargo-rdme end -->
 
 ## More Information
 

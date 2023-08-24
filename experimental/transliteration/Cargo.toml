@@ -6,36 +6,30 @@
 name = "icu_transliteration"
 description = "API for Transliteration"
 version = "0.0.0"
-authors = ["The ICU4X Project Developers"]
-edition = "2021"
-readme = "README.md"
-repository = "https://github.com/unicode-org/icu4x"
-license-file = "LICENSE"
-categories = ["internationalization"]
-# Keep this in sync with other crates unless there are exceptions
-include = [
-    "src/**/*",
-    "tests/**/*",
-    "Cargo.toml",
-    "LICENSE",
-    "README.md"
-]
+
+authors.workspace = true
+categories.workspace = true
+edition.workspace = true
+homepage.workspace = true
+include.workspace = true
+license-file.workspace = true
+repository.workspace = true
+rust-version.workspace = true
 
 [package.metadata.docs.rs]
 all-features = true
-
 [dependencies]
-icu_provider = { path = "../../provider/core", features = ["macros"] }
-icu_collections = { version = "1.2.0", path = "../../components/collections" }
+icu_provider = { workspace = true, features = ["macros"] }
+icu_collections = { workspace = true }
 
-zerovec = { version = "0.9.4", path = "../../utils/zerovec", features = ["derive"] }
-zerofrom = { version = "0.1.1", path = "../../utils/zerofrom", features = ["derive"] }
-yoke = { version = "0.7.1", path = "../../utils/yoke", features = ["derive"] }
-databake = { version = "0.1.3", path = "../../utils/databake", optional = true, features = ["derive"] }
+zerovec = { workspace = true, features = ["derive"] }
+zerofrom = { workspace = true, features = ["derive"] }
+yoke = { workspace = true, features = ["derive"] }
+databake = { workspace = true, optional = true, features = ["derive"] }
 
 serde = { version = "1.0", features = ["derive"], optional = true, default-features = false }
 
-icu_transliteration_data = { version = "~0.0.0", path = "data", optional = true }
+icu_transliteration_data = { workspace = true, optional = true }
 
 [features]
 default = ["compiled_data"]

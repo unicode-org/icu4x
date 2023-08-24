@@ -6,22 +6,13 @@
 name = "writeable"
 description = "A more efficient alternative to fmt::Display"
 version = "0.5.2"
-rust-version = "1.65.0"
-authors = ["The ICU4X Project Developers"]
-edition = "2021"
-readme = "README.md"
-repository = "https://github.com/unicode-org/icu4x"
-license-file = "LICENSE"
-# Keep this in sync with other crates unless there are exceptions
-include = [
-    "src/**/*",
-    "examples/**/*",
-    "benches/**/*",
-    "tests/**/*",
-    "Cargo.toml",
-    "LICENSE",
-    "README.md"
-]
+
+authors.workspace = true
+edition.workspace = true
+include.workspace = true
+license-file.workspace = true
+repository.workspace = true
+rust-version.workspace = true
 
 [package.metadata.workspaces]
 independent = true
@@ -30,7 +21,7 @@ independent = true
 all-features = true
 
 [dev-dependencies]
-icu_benchmark_macros = { path = "../../tools/benchmark/macros" }
+icu_benchmark_macros = { workspace = true }
 rand = { version = "0.8", features = ["small_rng"] }
 
 [target.'cfg(not(target_arch = "wasm32"))'.dev-dependencies]
@@ -45,7 +36,6 @@ denylist = ["bench"]
 
 [lib]
 bench = false  # This option is required for Benchmark CI
-path = "src/lib.rs"
 
 [[bench]]
 name = "writeable"

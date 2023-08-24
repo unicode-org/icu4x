@@ -1,5 +1,7 @@
 # icu_provider_blob [![crates.io](https://img.shields.io/crates/v/icu_provider_blob)](https://crates.io/crates/icu_provider_blob)
 
+<!-- cargo-rdme start -->
+
 `icu_provider_blob` contains [`BlobDataProvider`], a [`BufferProvider`] implementation that
 supports loading data from a single serialized blob.
 
@@ -14,6 +16,8 @@ For examples, see the specific data providers.
 [`ICU4X`]: ../icu/index.html
 [`BufferProvider`]: icu_provider::BufferProvider
 [`icu_datagen`]: ../icu_datagen/index.html
+
+<!-- cargo-rdme end -->
 
 ## More Information
 

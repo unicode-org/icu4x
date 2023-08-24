@@ -7,9 +7,14 @@
 use crate::options::*;
 use crate::provider::*;
 use alloc::borrow::Cow;
-use icu_locid::{subtags::Language, subtags::Region, subtags::Script, subtags::Variant, Locale};
+use alloc::string::String;
+use alloc::vec;
+use alloc::vec::Vec;
+use icu_locid::{
+    subtags::Language, subtags::Region, subtags::Script, subtags::Variant, LanguageIdentifier,
+    Locale,
+};
 use icu_provider::prelude::*;
-
 /// Lookup of the locale-specific display names by region code.
 ///
 /// # Example
@@ -110,7 +115,6 @@ pub struct ScriptDisplayNames {
     script_data: DataPayload<ScriptDisplayNamesV1Marker>,
 }
 
-#[allow(dead_code)] // not public at the moment
 impl ScriptDisplayNames {
     icu_provider::gen_any_buffer_data_constructors!(
         locale: include,
@@ -188,7 +192,6 @@ pub struct VariantDisplayNames {
     variant_data: DataPayload<VariantDisplayNamesV1Marker>,
 }
 
-#[allow(dead_code)] // not public at the moment
 impl VariantDisplayNames {
     icu_provider::gen_any_buffer_data_constructors!(
         locale: include,
@@ -333,9 +336,9 @@ impl LanguageDisplayNames {
 /// )
 /// .expect("Data should load successfully");
 ///
-/// assert_eq!(display_name.of(&locale!("de-CH")), "Swiss High German");
-/// assert_eq!(display_name.of(&locale!("de")), "German");
-/// assert_eq!(display_name.of(&locale!("de-MX")), "German (Mexico)");
+/// assert_eq!(display_name.of(&locale!("en-GB")), "British English");
+/// assert_eq!(display_name.of(&locale!("en")), "English");
+/// assert_eq!(display_name.of(&locale!("en-MX")), "English (Mexico)");
 /// assert_eq!(display_name.of(&locale!("xx-YY")), "xx (YY)");
 /// assert_eq!(display_name.of(&locale!("xx")), "xx");
 /// ```
@@ -345,13 +348,11 @@ pub struct LocaleDisplayNamesFormatter {
     locale_data: DataPayload<LocaleDisplayNamesV1Marker>,
 
     language_data: DataPayload<LanguageDisplayNamesV1Marker>,
-    #[allow(dead_code)] // TODO use this
     script_data: DataPayload<ScriptDisplayNamesV1Marker>,
     region_data: DataPayload<RegionDisplayNamesV1Marker>,
-    #[allow(dead_code)] // TODO add support for variants
     variant_data: DataPayload<VariantDisplayNamesV1Marker>,
     // key_data: DataPayload<KeyDisplayNamesV1Marker>,
-    // measuerment_data: DataPayload<MeasurementSystemsDisplayNamesV1Marker>,
+    // measurement_data: DataPayload<MeasurementSystemsDisplayNamesV1Marker>,
     // subdivisions_data: DataPayload<SubdivisionsDisplayNamesV1Marker>,
     // transforms_data: DataPayload<TransformsDisplayNamesV1Marker>,
 }
@@ -404,90 +405,216 @@ impl LocaleDisplayNamesFormatter {
     }
 
     /// Returns the display name of a locale.
+    /// This implementation is based on the algorithm described in
+    /// <https://www.unicode.org/reports/tr35/tr35-general.html#locale_display_name_algorithm>
+    ///
     // TODO: Make this return a writeable instead of using alloc
     pub fn of<'a, 'b: 'a, 'c: 'a>(&'b self, locale: &'c Locale) -> Cow<'a, str> {
-        // https://www.unicode.org/reports/tr35/tr35-general.html#Display_Name_Elements
+        let longest_matching_identifier = self.find_longest_matching_subtag(locale);
 
-        // TODO: This binary search needs to return the longest matching found prefix
-        // instead of just perfect matches
-        if let Some(displayname) = match self.options.style {
-            Some(Style::Short) => self
+        // Step - 1: Construct a locale display name string (LDN).
+        // Find the displayname for the longest_matching_subtag which was derived above.
+        let ldn = self.get_locale_display_name(locale, &longest_matching_identifier);
+
+        // Step - 2: Construct a vector of longest qualifying substrings (LQS).
+        // Find the displayname for the remaining locale if exists.
+        let lqs = self.get_longest_qualifying_substrings(locale, &longest_matching_identifier);
+
+        // Step - 3: Return the displayname based on the size of LQS.
+        let mut result = Cow::Borrowed(ldn);
+        #[allow(clippy::indexing_slicing)] // indexes in range
+        if !lqs.is_empty() {
+            let mut output = String::with_capacity(
+                result.len() + " (".len() + lqs.iter().map(|s| ", ".len() + s.len()).sum::<usize>()
+                    - ", ".len()
+                    + ")".len(),
+            );
+            output.push_str(&result);
+            output.push_str(" (");
+            output.push_str(lqs[0]);
+            for lqs in &lqs[1..] {
+                output.push_str(", ");
+                output.push_str(lqs);
+            }
+            output.push(')');
+            result = Cow::Owned(output);
+        }
+        result
+    }
+
+    /// For a given locale and the data, find the longest prefix of the string that exists as a key in the CLDR locale data.
+    pub fn find_longest_matching_subtag(&self, locale: &Locale) -> LanguageIdentifier {
+        // NOTE: The subtag ordering of the canonical locale is `language_script_region + variants + extensions`.
+        // The logic to find the longest matching subtag is based on this ordering.
+        if let Some(script) = locale.id.script {
+            let lang_script_identifier: LanguageIdentifier =
+                (locale.id.language, Some(script), None).into();
+            if self
                 .locale_data
+                .get()
+                .names
+                .get_by(|uvstr| lang_script_identifier.strict_cmp(uvstr).reverse())
+                .is_some()
+            {
+                return lang_script_identifier;
+            }
+        }
+        if let Some(region) = locale.id.region {
+            if locale.id.script.is_none() {
+                let lang_region_identifier: LanguageIdentifier =
+                    (locale.id.language, None, Some(region)).into();
+                if self
+                    .locale_data
+                    .get()
+                    .names
+                    .get_by(|uvstr| lang_region_identifier.strict_cmp(uvstr).reverse())
+                    .is_some()
+                {
+                    return lang_region_identifier;
+                }
+            }
+        }
+        (locale.id.language, None, None).into()
+    }
+
+    fn get_locale_display_name<'a>(
+        &'a self,
+        locale: &'a Locale,
+        longest_matching_identifier: &LanguageIdentifier,
+    ) -> &'a str {
+        let LocaleDisplayNamesFormatter {
+            options,
+            locale_data,
+            language_data,
+            ..
+        } = self;
+
+        // Check if the key exists in the locale_data first.
+        // Example: "en_GB", "nl_BE".
+        let mut ldn = match options.style {
+            Some(Style::Short) => locale_data
                 .get()
                 .short_names
-                .get_by(|bytes| locale.strict_cmp(bytes).reverse()),
-            Some(Style::Long) => self
-                .locale_data
+                .get_by(|uvstr| longest_matching_identifier.strict_cmp(uvstr).reverse()),
+            Some(Style::Long) => locale_data
                 .get()
                 .long_names
-                .get_by(|bytes| locale.strict_cmp(bytes).reverse()),
-            Some(Style::Menu) => self
-                .locale_data
+                .get_by(|uvstr| longest_matching_identifier.strict_cmp(uvstr).reverse()),
+            Some(Style::Menu) => locale_data
                 .get()
                 .menu_names
-                .get_by(|bytes| locale.strict_cmp(bytes).reverse()),
+                .get_by(|uvstr| longest_matching_identifier.strict_cmp(uvstr).reverse()),
             _ => None,
         }
         .or_else(|| {
-            self.locale_data
+            locale_data
                 .get()
                 .names
-                .get_by(|bytes| locale.strict_cmp(bytes).reverse())
-        }) {
-            return Cow::Borrowed(displayname);
-        }
-
-        // TODO: This is a dummy implementation which does not adhere to UTS35. It only uses
-        // the language and region code, and uses a hardcoded pattern to combine them.
-
-        let langdisplay = match self.options.style {
-            Some(Style::Short) => self
-                .language_data
-                .get()
-                .short_names
-                .get(&locale.id.language.into_tinystr().to_unvalidated()),
-            Some(Style::Long) => self
-                .language_data
-                .get()
-                .long_names
-                .get(&locale.id.language.into_tinystr().to_unvalidated()),
-            Some(Style::Menu) => self
-                .language_data
-                .get()
-                .menu_names
-                .get(&locale.id.language.into_tinystr().to_unvalidated()),
-            _ => None,
-        }
-        .or_else(|| {
-            self.language_data
-                .get()
-                .names
-                .get(&locale.id.language.into_tinystr().to_unvalidated())
+                .get_by(|uvstr| longest_matching_identifier.strict_cmp(uvstr).reverse())
         });
 
-        if let Some(region) = locale.id.region {
-            let regiondisplay = match self.options.style {
-                Some(Style::Short) => self
-                    .region_data
-                    .get()
-                    .short_names
-                    .get(&region.into_tinystr().to_unvalidated()),
+        // At this point the key should exist in the language_data.
+        // Example: "en", "nl", "zh".
+        if ldn.is_none() {
+            ldn = match options.style {
+                Some(Style::Short) => language_data.get().short_names.get(
+                    &longest_matching_identifier
+                        .language
+                        .into_tinystr()
+                        .to_unvalidated(),
+                ),
+                Some(Style::Long) => language_data.get().long_names.get(
+                    &longest_matching_identifier
+                        .language
+                        .into_tinystr()
+                        .to_unvalidated(),
+                ),
+                Some(Style::Menu) => language_data.get().menu_names.get(
+                    &longest_matching_identifier
+                        .language
+                        .into_tinystr()
+                        .to_unvalidated(),
+                ),
                 _ => None,
             }
             .or_else(|| {
-                self.region_data
+                language_data.get().names.get(
+                    &longest_matching_identifier
+                        .language
+                        .into_tinystr()
+                        .to_unvalidated(),
+                )
+            });
+        }
+        // Fallback on language subtag in LanguageIdentifier id the key is not found in CLDR data.
+        return ldn.unwrap_or(locale.id.language.as_str());
+    }
+
+    fn get_longest_qualifying_substrings<'a>(
+        &'a self,
+        locale: &'a Locale,
+        longest_matching_identifier: &'a LanguageIdentifier,
+    ) -> Vec<&'a str> {
+        let LocaleDisplayNamesFormatter {
+            options,
+            region_data,
+            script_data,
+            variant_data,
+            ..
+        } = self;
+
+        let mut lqs: Vec<&'a str> = vec![];
+
+        if let Some(script) = &locale.id.script {
+            // Ignore if the script was used to derive LDN.
+            if longest_matching_identifier.script.is_none() {
+                let scriptdisplay = match options.style {
+                    Some(Style::Short) => script_data
+                        .get()
+                        .short_names
+                        .get(&script.into_tinystr().to_unvalidated()),
+                    _ => None,
+                }
+                .or_else(|| {
+                    script_data
+                        .get()
+                        .names
+                        .get(&script.into_tinystr().to_unvalidated())
+                });
+                lqs.push(scriptdisplay.unwrap_or(script.as_str()));
+            }
+        }
+
+        if let Some(region) = &locale.id.region {
+            // Ignore if the region was used to derive LDN.
+            if longest_matching_identifier.region.is_none() {
+                let regiondisplay = match options.style {
+                    Some(Style::Short) => region_data
+                        .get()
+                        .short_names
+                        .get(&region.into_tinystr().to_unvalidated()),
+                    _ => None,
+                }
+                .or_else(|| {
+                    region_data
+                        .get()
+                        .names
+                        .get(&region.into_tinystr().to_unvalidated())
+                });
+
+                lqs.push(regiondisplay.unwrap_or(region.as_str()));
+            }
+        }
+
+        for variant_key in locale.id.variants.iter() {
+            lqs.push(
+                variant_data
                     .get()
                     .names
-                    .get(&region.into_tinystr().to_unvalidated())
-            });
-            // TODO: Use data patterns
-            Cow::Owned(alloc::format!(
-                "{} ({})",
-                langdisplay.unwrap_or(locale.id.language.as_str()),
-                regiondisplay.unwrap_or(region.as_str())
-            ))
-        } else {
-            Cow::Borrowed(langdisplay.unwrap_or(locale.id.language.as_str()))
+                    .get(&variant_key.into_tinystr().to_unvalidated())
+                    .unwrap_or(variant_key.as_str()),
+            );
         }
+        lqs
     }
 }

@@ -99,6 +99,7 @@ category = "CI"
 dependencies = [
     "testdata-check",
     "testdata-legacy",
+    "testdata-legacy-test",
 ]
 
 [tasks.ci-job-test-docs]
