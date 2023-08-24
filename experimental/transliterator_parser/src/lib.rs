@@ -236,21 +236,18 @@ mod tests {
                     key: Cow::Borrowed("x"),
                     post: Cow::Borrowed("\u{F0002}"),
                     replacer: Cow::Borrowed("\u{F0007}y"), // `|@@@`
-                    cursor_offset: 0,
                 },
                 ds::Rule {
                     ante: Cow::Borrowed(""),
                     key: Cow::Borrowed("\u{F0000}"),
                     post: Cow::Borrowed(""),
                     replacer: Cow::Borrowed("ab"),
-                    cursor_offset: 0,
                 },
                 ds::Rule {
                     ante: Cow::Borrowed(""),
                     key: Cow::Borrowed("\u{FFFFC}left"),
                     post: Cow::Borrowed("\u{FFFFD}"),
                     replacer: Cow::Borrowed("rig\u{FFFFB}ht"), // `|`
-                    cursor_offset: 0,
                 },
             ];
             let expected_rule_group2 = vec![ds::Rule {
@@ -258,7 +255,6 @@ mod tests {
                 key: Cow::Borrowed("forwardrulethat"),
                 post: Cow::Borrowed(""),
                 replacer: Cow::Borrowed("splitsuprulegroups"),
-                cursor_offset: 0,
             }];
 
             let expected_rule_group_list: Vec<VarZeroVec<'_, ds::RuleULE>> = vec![
@@ -332,15 +328,13 @@ mod tests {
                     ante: Cow::Borrowed(""),
                     key: Cow::Borrowed("\u{F0004}"),
                     post: Cow::Borrowed(""),
-                    replacer: Cow::Borrowed("reverse output:\u{F0008}\u{F0010}"), // `@@|` and function call
-                    cursor_offset: 0,
+                    replacer: Cow::Borrowed("reverse output:\u{F0008}\u{F000A}"), // `@@|` and function call
                 },
                 ds::Rule {
                     ante: Cow::Borrowed("\u{FFFFC}"), // start anchor
                     key: Cow::Borrowed("right"),
                     post: Cow::Borrowed("\u{F0007}\u{FFFFD}"), // [0-9] and end anchor
                     replacer: Cow::Borrowed("left"),
-                    cursor_offset: 0,
                 },
             ];
 
@@ -368,7 +362,7 @@ mod tests {
                 vec![parse_set("[a]"), parse_set("[b]"), parse_set("[0-9]")];
 
             let expected_function_calls = vec![ds::FunctionCall {
-                arg: Cow::Borrowed("\u{F0011}padding"), // $1 and 'padding'
+                arg: Cow::Borrowed("\u{F000B}padding"), // $1 and 'padding'
                 translit: ds::SimpleId {
                     filter: FilterSet::all(),
                     id: Cow::Borrowed("x-any-revfncall"),

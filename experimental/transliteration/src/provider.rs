@@ -120,9 +120,6 @@ pub struct Rule<'a> {
     /// The replacer. The key gets replaced with this.
     #[cfg_attr(feature = "serde", serde(borrow))]
     pub replacer: Cow<'a, str>,
-    /// The offset of the cursor after this rule, if the rule matches.
-    /// The end of the key/replacer is 0, i.e., a no-op.
-    pub cursor_offset: i32,
 }
 
 /// The special matchers and replacers used by this transliterator.

@@ -26,7 +26,6 @@ pub(crate) struct UniConversionRule<'p> {
     pub(crate) key: &'p [parse::Element],
     pub(crate) post: &'p [parse::Element],
     pub(crate) replacement: &'p [parse::Element],
-    pub(crate) cursor_offset: i32,
 }
 
 // transform + conversion rule groups for a single direction
@@ -77,7 +76,6 @@ impl<'p> ForwardRuleGroupAggregator<'p> {
                     key,
                     post,
                     replacement,
-                    cursor_offset: 0, // TODO(#3736): maybe pass this as an additional parameter to push?
                 };
 
                 let finished_group = self.current.push(UniRule::Conversion(rule));
@@ -221,7 +219,6 @@ impl<'p> ReverseRuleGroupAggregator<'p> {
                     key,
                     post,
                     replacement,
-                    cursor_offset: 0, // TODO(#3736): maybe pass this as an additional parameter to push?
                 };
 
                 let finished_group = self.current.push(UniRule::Conversion(rule));

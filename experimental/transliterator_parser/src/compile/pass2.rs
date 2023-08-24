@@ -312,13 +312,11 @@ impl<'a, 'p> Pass2<'a, 'p> {
         let key = self.compile_section(rule.key, parse::ElementLocation::Source);
         let post = self.compile_section(rule.post, parse::ElementLocation::Source);
         let replacer = self.compile_section(rule.replacement, parse::ElementLocation::Target);
-        let cursor_offset = rule.cursor_offset;
         ds::Rule {
             ante: ante.into(),
             key: key.into(),
             post: post.into(),
             replacer: replacer.into(),
-            cursor_offset,
         }
     }
 
