@@ -311,3 +311,57 @@ let formatter = FixedDecimalFormatter::try_new_with_any_provider(
 
 assert_eq!(formatter.format_to_string(&100007i64.into()), "100🐮007");
 ```
+
+## Accessing the Resolved Locale
+
+ICU4X objects to not store their "resolved locale" because that is not a well-defined concept. Components can load data from many sources, and fallbacks to parent locales or root does not necesarily mean that a locale is not supported.
+
+However, for environments that require this behavior, such as ECMA-402, the data provider can be instrumented to access the resolved locale from `DataResponseMetadata`, as shown in the following example.
+
+```rust
+use icu_provider::prelude::*;
+use icu::decimal::FixedDecimalFormatter;
+use icu::decimal::provider::DecimalSymbolsV1Marker;
+use icu::locid::locale;
+use std::sync::RwLock;
+
+pub struct ResolvedLocaleProvider<P> {
+    inner: P,
+    resolved_locale: RwLock<Option<DataLocale>>,
+}
+
+impl<P> AnyProvider for ResolvedLocaleProvider<P>
+where
+    P: AnyProvider
+{
+    fn load_any(&self, key: DataKey, req: DataRequest) -> Result<AnyResponse, DataError> {
+        let mut any_res = self.inner.load_any(key, req)?;
+        // Whichever locale gets loaded for `DecimalSymbolsV1Marker::KEY` will be the one
+        // we consider the "resolved locale".
+        if key == DecimalSymbolsV1Marker::KEY {
+            let mut w = self.resolved_locale.write().unwrap();
+            *w = any_res.metadata.locale.clone();
+        }
+        Ok(any_res)
+    }
+}
+
+let provider = ResolvedLocaleProvider {
+    inner: icu_testdata::any(),
+    resolved_locale: None.into(),
+};
+
+// Request data for sr-ME...
+FixedDecimalFormatter::try_new_with_any_provider(
+    &provider,
+    &locale!("sr-ME").into(),
+    Default::default(),
+)
+.unwrap();
+
+// ...which loads data from sr-Latn.
+assert_eq!(
+    *provider.resolved_locale.read().unwrap(),
+    Some(locale!("sr-Latn").into()),
+);
+```
