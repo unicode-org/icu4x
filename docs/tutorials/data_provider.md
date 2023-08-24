@@ -320,8 +320,10 @@ However, for environments that require this behavior, such as ECMA-402, the data
 
 ```rust
 use icu_provider::prelude::*;
+use icu_provider::hello_world::*;
 use icu::decimal::FixedDecimalFormatter;
-use icu::decimal::provider::DecimalSymbolsV1Marker;
+use icu_provider_adapters::fallback::LocaleFallbackProvider;
+use icu_provider_adapters::fallback::LocaleFallbacker;
 use icu::locid::locale;
 use std::sync::RwLock;
 
@@ -336,9 +338,9 @@ where
 {
     fn load_any(&self, key: DataKey, req: DataRequest) -> Result<AnyResponse, DataError> {
         let mut any_res = self.inner.load_any(key, req)?;
-        // Whichever locale gets loaded for `DecimalSymbolsV1Marker::KEY` will be the one
+        // Whichever locale gets loaded for `HelloWorldV1Marker::KEY` will be the one
         // we consider the "resolved locale".
-        if key == DecimalSymbolsV1Marker::KEY {
+        if key == HelloWorldV1Marker::KEY {
             let mut w = self.resolved_locale.write().unwrap();
             *w = any_res.metadata.locale.clone();
         }
@@ -346,22 +348,25 @@ where
     }
 }
 
+// Set up a HelloWorldProvider with fallback
 let provider = ResolvedLocaleProvider {
-    inner: icu_testdata::any(),
+    inner: LocaleFallbackProvider::new_with_fallbacker(
+        HelloWorldProvider.as_any_provider(),
+        LocaleFallbacker::try_new_unstable(&icu_testdata::unstable()).unwrap(),
+    ),
     resolved_locale: None.into(),
 };
 
-// Request data for sr-ME...
-FixedDecimalFormatter::try_new_with_any_provider(
+// Request data for ru-RU...
+HelloWorldFormatter::try_new_with_any_provider(
     &provider,
-    &locale!("sr-ME").into(),
-    Default::default(),
+    &locale!("ru-RU").into(),
 )
 .unwrap();
 
-// ...which loads data from sr-Latn.
+// ...which loads data from ru.
 assert_eq!(
     *provider.resolved_locale.read().unwrap(),
-    Some(locale!("sr-Latn").into()),
+    Some(locale!("ru").into()),
 );
 ```
