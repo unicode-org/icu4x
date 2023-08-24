@@ -118,6 +118,8 @@ impl HelloWorldProvider {
         ("pt", "Olá, mundo"),
         ("ro", "Salut, lume"),
         ("ru", "Привет, мир"),
+        ("sr", "Поздрав свете"),
+        ("sr-Latn", "Pozdrav svete"),
         ("vi", "Xin chào thế giới"),
         ("zh", "你好世界"),
     ];
