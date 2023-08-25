@@ -354,7 +354,7 @@ let provider = ResolvedLocaleProvider {
         HelloWorldProvider.as_any_provider(),
         LocaleFallbacker::try_new_unstable(&icu_testdata::unstable()).unwrap(),
     ),
-    resolved_locale: None.into(),
+    resolved_locale: Default::default(),
 };
 
 // Request data for ru-RU...
