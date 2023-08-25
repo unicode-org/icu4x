@@ -66,6 +66,13 @@ fn main() {
                                 panic!("Found character {ch} that has diacritics but is not a Greek vowel");
                             }
                         }
+                        greek_to_me::diacritics!(BREATHING_AND_LENGTH)
+                        | greek_to_me::diacritics!(ACCENTS) => {
+                            // Rho takes breathing marks but other consonants should not
+                            if let Some(GreekPrecomposedLetterData::Consonant(false)) = data {
+                                panic!("Found character {ch} that has diacritics but is not a Greek vowel");
+                            }
+                        }
                         // Ignore all small letters
                         '\u{1D00}'..='\u{1DBF}' | '\u{AB65}' => (),
                         // caps: [[:Grek:]&[:L:]-[\u1D00-\u1DBF\uAB65]] . NFD, remove non-letters, uppercase
@@ -87,7 +94,8 @@ fn main() {
                                     GreekDiacritics::default(),
                                 ))
                             } else {
-                                data = Some(GreekPrecomposedLetterData::Consonant)
+                                let is_rho = uppercased == greek_to_me::CAPITAL_RHO;
+                                data = Some(GreekPrecomposedLetterData::Consonant(is_rho))
                             };
                         }
                         _ => (),

@@ -35,9 +35,9 @@ pub(crate) fn get_data(ch: char) -> Option<GreekPrecomposedLetterData> {
 /// Bit layout:
 ///
 /// ```text
-///   7       6   5   4     3   2   1    0
-/// discr=0 | [diacritics]  | [vowel       ]  
-/// discr=1 | [  unused = 0     ]
+///   7       6   5   4     3   2   1       0
+/// discr=0 | [diacritics]  | [vowel            ]  
+/// discr=1 | [  unused = 0     ]      | [is_rho]
 /// ```
 ///
 /// Bit 7 is the discriminant. if 0, it is a vowel, else, it is a consonant.
@@ -70,8 +70,8 @@ impl TryFrom<PackedGreekPrecomposedLetterData> for GreekPrecomposedLetterData {
             Ok(GreekPrecomposedLetterData::Vowel(vowel, diacritics))
         } else {
             // consonant
-
-            Ok(GreekPrecomposedLetterData::Consonant)
+            // 0x80 is is_rho = false, 0x81 is is_rho = true
+            Ok(GreekPrecomposedLetterData::Consonant(other.0 == 0x81))
         }
     }
 }
@@ -93,7 +93,9 @@ impl From<GreekPrecomposedLetterData> for PackedGreekPrecomposedLetterData {
                 bits |= vowel as u8;
                 PackedGreekPrecomposedLetterData(bits)
             }
-            GreekPrecomposedLetterData::Consonant => PackedGreekPrecomposedLetterData(0x80),
+            GreekPrecomposedLetterData::Consonant(is_rho) => {
+                PackedGreekPrecomposedLetterData(0x80 + is_rho as u8)
+            }
         }
     }
 }
@@ -104,7 +106,10 @@ pub enum GreekPrecomposedLetterData {
     /// A vowel, with a capitalized base letter, and the diacritics found
     Vowel(GreekVowel, GreekDiacritics),
     /// A consonant or vowel that does not take diacritics
-    Consonant,
+    ///
+    /// The boolean is true when the consonant is a rho, which is handled specially since
+    /// it can take breathing marks (but is *not* a vowel)
+    Consonant(bool),
 }
 
 /// n.b. these are Greek capital letters, not Latin
@@ -120,6 +125,7 @@ pub enum GreekVowel {
     Ω = 7,
     ϒ = 8,
 }
+pub const CAPITAL_RHO: char = 'Ρ';
 
 impl From<GreekVowel> for char {
     fn from(other: GreekVowel) -> Self {
