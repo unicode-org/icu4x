@@ -21,8 +21,8 @@ use replaceable::*;
 
 use crate::provider::{FunctionCall, Rule, RuleULE, SimpleId, VarTable};
 use alloc::vec::Vec;
-use std::ops::RangeInclusive;
 use icu_collections::codepointinvliststringlist::CodePointInversionListAndStringList;
+use std::ops::RangeInclusive;
 use zerofrom::ZeroFrom;
 use zerovec::VarZeroSlice;
 
@@ -240,8 +240,6 @@ impl<'a> RuleGroup<'a> {
     }
 }
 
-
-
 impl<'a> Rule<'a> {
     /// Returns `None` if there is no match. If there is a match, returns the associated
     /// [`MatchData`].
@@ -272,8 +270,6 @@ impl<'a> Rule<'a> {
             return input.ends_with(self.ante.as_ref());
         }
 
-
-
         false
     }
 
@@ -297,7 +293,12 @@ mod helpers {
         s.chars().any(|c| VarTable::ENCODE_RANGE.contains(&c))
     }
 
-    pub(super) fn match_encoded_str(query: &str, input: &str, match_data: &mut MatchData, vt: &VarTable) -> Option<usize> {
+    pub(super) fn match_encoded_str(
+        query: &str,
+        input: &str,
+        match_data: &mut MatchData,
+        vt: &VarTable,
+    ) -> Option<usize> {
         // note: this could be precomputed + stored at datagen time
         // (there could eg be a reserved char that is at the start/end of key <=> key is pure)
         if is_pure(query) {
@@ -305,7 +306,7 @@ mod helpers {
                 Some(query.len())
             } else {
                 None
-            }
+            };
         }
 
         let mut remaining_input_to_match = input;
@@ -315,9 +316,7 @@ mod helpers {
             if !VarTable::ENCODE_RANGE.contains(&query_c) {
                 // regular char
                 // note: could have InputMatcher that wraps the &str and has match_and_consume functionality. keeps a ref to the vartable
-                let (len, input_c) = remaining_input_to_match
-                    .char_indices()
-                    .next()?;
+                let (len, input_c) = remaining_input_to_match.char_indices().next()?;
                 if query_c != input_c {
                     return None;
                 }
