@@ -314,7 +314,7 @@ assert_eq!(formatter.format_to_string(&100007i64.into()), "100🐮007");
 
 ## Accessing the Resolved Locale
 
-ICU4X objects to not store their "resolved locale" because that is not a well-defined concept. Components can load data from many sources, and fallbacks to parent locales or root does not necesarily mean that a locale is not supported.
+ICU4X objects do not store their "resolved locale" because that is not a well-defined concept. Components can load data from many sources, and fallbacks to parent locales or root does not necesarily mean that a locale is not supported.
 
 However, for environments that require this behavior, such as ECMA-402, the data provider can be instrumented to access the resolved locale from `DataResponseMetadata`, as shown in the following example.
 
