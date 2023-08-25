@@ -1,4 +1,11 @@
 # Test transliterator that uses every feature available and also tests some edge cases
+# TODO(this PR): move these rules somewhere else, maybe dynamically create structss
 
 :: [a-z] ;
-abc { def } ghi > DEF ;
+abc { def } ghi > | @ DEF ;
+c } D [EF] [EF] > C ;
+[D] [E] [F] > xyz ;
+[xyz] { ghi > XYZ ;
+ghi > 'bad' ;
+l > |@@@@@@@@@@@@@@@@@@@@@@@@@L;
+kL > 'bad' ;

@@ -178,7 +178,11 @@ impl<'a> Replaceable<'a> {
             return None;
         }
 
-        debug_assert!(start < self.content.len(), "start `{start}` must be within the content length `{}`", self.content.len());
+        debug_assert!(
+            start < self.content.len(),
+            "start `{start}` must be within the content length `{}`",
+            self.content.len()
+        );
         debug_assert!(self.as_str().is_char_boundary(start));
 
         // TODO: might need to assert start is within the modifiable range

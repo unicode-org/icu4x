@@ -21,8 +21,9 @@ use replaceable::*;
 
 use crate::provider::{FunctionCall, Rule, RuleULE, SimpleId, VarTable};
 use alloc::vec::Vec;
-use icu_collections::codepointinvliststringlist::CodePointInversionListAndStringList;
+use core::fmt::{Debug, Formatter};
 use core::ops::RangeInclusive;
+use icu_collections::codepointinvliststringlist::CodePointInversionListAndStringList;
 use zerofrom::ZeroFrom;
 use zerovec::VarZeroSlice;
 
@@ -35,6 +36,7 @@ pub trait CustomTransliterator {
     fn transliterate(&self, input: &str, range: Range<usize>) -> String;
 }
 
+#[derive(Debug)]
 struct NFCTransliterator {}
 
 enum InternalTransliterator {
@@ -58,9 +60,27 @@ impl InternalTransliterator {
     }
 }
 
+impl Debug for InternalTransliterator {
+    fn fmt(&self, f: &mut Formatter<'_>) -> core::fmt::Result {
+        #[derive(Debug)]
+        enum DebugInternalTransliterator<'a> {
+            RuleBased(&'a DataPayload<TransliteratorRulesV1Marker>),
+            NFC(&'a NFCTransliterator),
+            Dyn,
+        }
+        let d = match self {
+            Self::RuleBased(rbt) => DebugInternalTransliterator::RuleBased(rbt),
+            Self::NFC(nfc) => DebugInternalTransliterator::NFC(nfc),
+            Self::Dyn(_) => DebugInternalTransliterator::Dyn,
+        };
+        d.fmt(f)
+    }
+}
+
 type Env = LiteMap<String, InternalTransliterator>;
 
-struct Transliterator {
+#[derive(Debug)]
+pub struct Transliterator {
     transliterator: DataPayload<TransliteratorRulesV1Marker>,
     env: Env,
 }
@@ -173,16 +193,20 @@ impl<'a> RuleBasedTransliterator<'a> {
         // TODO: https://unicode-org.atlassian.net/jira/software/c/projects/ICU/issues/ICU-22469
 
         rep.for_each_run(&self.filter, |run| {
-            // eprintln!("got RBT filtered_run: {run:?}");
+            eprintln!("got RBT filtered_run: {run:?}");
             self.transliterate_run(run, env);
-            // eprintln!("finished RBT filtered_run transliteration: {run:?}")
+            eprintln!("finished RBT filtered_run transliteration: {run:?}")
         });
     }
 
     /// Transliteration of a single run, i.e., without needing to look at the filter.
     fn transliterate_run(&self, rep: &mut Replaceable, env: &Env) {
         // assumes the cursor is at the right position.
-        debug_assert!(rep.allowed_range().contains(&rep.cursor()), "cursor {} is out of bounds for replaceable {rep:?}", rep.cursor());
+        debug_assert!(
+            rep.allowed_range().contains(&rep.cursor()),
+            "cursor {} is out of bounds for replaceable {rep:?}",
+            rep.cursor()
+        );
 
         for (id_group, rule_group) in self.id_group_list.iter().zip(self.rule_group_list.iter()) {
             // first handle id_group
@@ -200,9 +224,7 @@ impl<'a> RuleBasedTransliterator<'a> {
 
 impl<'a> SimpleId<'a> {
     fn transliterate(&self, mut rep: Replaceable, env: &Env) {
-        rep.for_each_run(&self.filter, |run| {
-            self.transliterate_run(run, env)
-        })
+        rep.for_each_run(&self.filter, |run| self.transliterate_run(run, env))
     }
 
     fn transliterate_run(&self, rep: &mut Replaceable, env: &Env) {
@@ -237,17 +259,18 @@ impl<'a> RuleGroup<'a> {
         // when a rule matches, apply its replacement and move the cursor according to the replacement
 
         'main: while !rep.is_finished() {
-            // eprintln!("ongoing RuleGroup transliteration:\n{rep:?}");
+            eprintln!("ongoing RuleGroup transliteration:\n{rep:?}");
             for rule in self.rules.iter() {
                 let rule: Rule = Rule::zero_from(rule);
-                // eprintln!("trying rule: {rule:?}");
+                eprintln!("trying rule: {rule:?}");
                 if let Some(data) = rule.matches(&rep, vt) {
                     rule.apply(&mut rep, data, vt, env);
+                    eprintln!("applied rule!");
                     // rule application is responsible for updating the cursor
                     continue 'main;
                 }
             }
-            // eprintln!("no rule matched, moving cursor forward");
+            eprintln!("no rule matched, moving cursor forward");
             // no rule matched, so just move the cursor forward by one code point
             rep.step_cursor();
         }
@@ -261,11 +284,12 @@ impl<'a> Rule<'a> {
         let mut buf = String::new();
         let replacement_range = rep.cursor()..(rep.cursor() + data.key_match_len);
 
-        let cursor_offset =
-            helpers::replace_encoded_str(&self.replacer, &mut buf, vt).unwrap_or(buf.len() as i64);
-        let new_cursor = (rep.cursor() as i64 + cursor_offset);
+        let cursor_offset = helpers::replace_encoded_str(&self.replacer, &mut buf, &data, vt)
+            .unwrap_or(CursorOffset::Byte(buf.len()));
+        let new_cursor = cursor_offset.apply(rep, &data, buf.len());
         debug_assert!(new_cursor >= 0);
-        let new_cursor = new_cursor as usize;
+
+        // SAFETY: CursorOffset guarantees a valid UTF-8 index
         unsafe { rep.set_cursor(new_cursor) };
 
         // SAFETY: the range is guaranteed to be valid, as key_match_len is the length of a UTF-8
@@ -279,49 +303,113 @@ impl<'a> Rule<'a> {
         let mut match_data = MatchData::new();
 
         let ante_input = rep.as_str_ante();
-        if !self.ante_matches(ante_input, &mut match_data, vt) {
-            return None;
-        }
+        match_data.ante_match_len = self.ante_matches(ante_input, &mut match_data, vt)?;
 
         let key_input = rep.as_str_key();
         let key_match_len = self.key_matches(key_input, &mut match_data, vt)?;
         match_data.key_match_len = key_match_len;
 
         let post_input = rep.as_str_post(key_match_len);
-        if !self.post_matches(post_input, &mut match_data, vt) {
-            return None;
-        }
+        match_data.post_match_len = self.post_matches(post_input, &mut match_data, vt)?;
 
         Some(match_data)
     }
 
-    /// Returns whether there is a match for ante. Fills segments in `match_data` if applicable.
-    fn ante_matches(&self, input: &str, match_data: &mut MatchData, vt: &VarTable) -> bool {
-        // note: this could be precomputed + stored at datagen time
-        // (there could eg be a reserved char that is at the start/end of ante <=> ante is pure)
-        if helpers::is_pure(&self.ante) {
-            return input.ends_with(self.ante.as_ref());
-        }
-
-        false
+    /// Returns `None` if the ante context does not match. If there is a match, returns the length
+    /// of the match. Fills in `match_data` if applicable.
+    ///
+    /// This must be a right-aligned match, i.e., the input must _end_ with a substring that is a
+    /// match for this rule's ante context. We also call right-aligned matches `rev`erse matches.
+    fn ante_matches(
+        &self,
+        input: &str,
+        match_data: &mut MatchData,
+        vt: &VarTable,
+    ) -> Option<usize> {
+        helpers::rev_match_encoded_str(&self.ante, input, match_data, vt)
     }
 
-    /// Returns whether there is a match for post. Fills segments in `match_data` if applicable.
-    fn post_matches(&self, input: &str, match_data: &mut MatchData, vt: &VarTable) -> bool {
-        helpers::match_encoded_str(&self.post, input, match_data, vt).is_some()
+    /// Returns `None` if the post context does not match. If there is a match, returns the length
+    /// of the match. Fills in `match_data` if applicable.
+    ///
+    /// This must be a left-aligned match, i.e., the input must _start_ with a substring that is a
+    /// match for this rule's post context.
+    fn post_matches(
+        &self,
+        input: &str,
+        match_data: &mut MatchData,
+        vt: &VarTable,
+    ) -> Option<usize> {
+        helpers::match_encoded_str(&self.post, input, match_data, vt)
     }
 
     /// Returns `None` if the key does not match. If there is a match, returns the length of the
     /// match. Fills in `match_data` if applicable.
+    ///
+    /// This must be a left-aligned match, i.e., the input must _start_ with a substring that is a
+    /// match for this rule's key.
     fn key_matches(&self, input: &str, match_data: &mut MatchData, vt: &VarTable) -> Option<usize> {
         helpers::match_encoded_str(&self.key, input, match_data, vt)
+    }
+}
+
+/// Stores the kinds of cursor offsets that a replacement can produce.
+enum CursorOffset {
+    /// A byte offset ready to use.
+    Byte(usize),
+    /// A `char`-based offset for after the replacement string.
+    CharsOffEnd(u16),
+    /// A `char`-based offset for before the replacement string.
+    CharsOffStart(u16),
+}
+
+impl CursorOffset {
+    /// Computes the final cursor position according to the offset.
+    ///
+    /// Ensures no overflow of cursors past the contexts and returns a valid UTF-8 index.
+    fn apply(self, rep: &Replaceable, data: &MatchData, replacement_len: usize) -> usize {
+        match self {
+            Self::Byte(offset) => rep.cursor() + offset,
+            Self::CharsOffEnd(count) => {
+                let post = rep.as_str_post(data.key_match_len);
+                // restricting to the matched substr ensures no overflow of the cursor past the
+                // contexts, which is good
+                let matched_post = &post[..data.post_match_len];
+                // compute byte-length of `count` chars in post
+                let post_len = matched_post
+                    .chars()
+                    .take(count as usize)
+                    .map(char::len_utf8)
+                    .sum::<usize>();
+                rep.cursor() + replacement_len + post_len
+            }
+            Self::CharsOffStart(count) => {
+                let ante = rep.as_str_ante();
+                // restricting to the matched substr ensures no overflow of the cursor past the
+                // contexts, which is good
+                let matched_ante = &ante[(ante.len() - data.ante_match_len)..];
+                // compute byte-length of `count` chars in ante (from the right)
+                let ante_len = matched_ante
+                    .chars()
+                    .rev()
+                    .take(count as usize)
+                    .map(char::len_utf8)
+                    .sum::<usize>();
+                // not underflowing because ante_len is at most the cursor, because the cursor is
+                // right after where the ante context ends.
+                rep.cursor() - ante_len
+            }
+        }
     }
 }
 
 mod helpers {
     use super::*;
 
+    /// Returns true if the given encoded string does not contain any special matchers/replacers.
     pub(super) fn is_pure(s: &str) -> bool {
+        // note: this could be precomputed + stored at datagen time
+        // (there could eg be a reserved char that is at the start/end of key <=> key is pure)
         !s.chars().any(|c| VarTable::ENCODE_RANGE.contains(&c))
     }
 
@@ -330,14 +418,35 @@ mod helpers {
     pub(super) fn replace_encoded_str(
         replacement: &str,
         buf: &mut String,
+        data: &MatchData,
         vt: &VarTable,
-    ) -> Option<i64> {
+    ) -> Option<CursorOffset> {
         if is_pure(replacement) {
             buf.push_str(replacement);
             return None;
         }
-        // TODO: special replacers
-        None
+        let mut cursor_offset = None;
+
+        for rep_c in replacement.chars() {
+            if !VarTable::ENCODE_RANGE.contains(&rep_c) {
+                // regular char
+                buf.push(rep_c);
+                continue;
+            }
+            // must be special replacer
+
+            let replacer = match vt.lookup_replacer(rep_c) {
+                Some(replacer) => replacer,
+                None => {
+                    debug_assert!(false, "invalid encoded char");
+                    // GIGO behavior. we just skip invalid encoded chars
+                    continue;
+                }
+            };
+            cursor_offset = cursor_offset.or(replacer.replace(buf, data, vt));
+        }
+
+        cursor_offset
     }
 
     /// Tries to match the encoded `query` on `input`. Returns the length of the match, if there is
@@ -348,8 +457,6 @@ mod helpers {
         match_data: &mut MatchData,
         vt: &VarTable,
     ) -> Option<usize> {
-        // note: this could be precomputed + stored at datagen time
-        // (there could eg be a reserved char that is at the start/end of key <=> key is pure)
         if is_pure(query) {
             return if input.starts_with(query) {
                 Some(query.len())
@@ -388,17 +495,68 @@ mod helpers {
 
         Some(input.len() - remaining_input_to_match.len())
     }
+
+    /// Tries to match the encoded `query` on `input` from the right. Returns the length of the
+    /// match, if there is one. Fills in `match_data` if applicable.
+    pub(super) fn rev_match_encoded_str(
+        query: &str,
+        input: &str,
+        match_data: &mut MatchData,
+        vt: &VarTable,
+    ) -> Option<usize> {
+        if is_pure(query) {
+            return if input.ends_with(query) {
+                Some(query.len())
+            } else {
+                None
+            };
+        }
+
+        let mut remaining_input_to_match = input;
+        // iterate char-by-char, and try to match each char
+        // note: might be good to avoid the UTF-8 => char conversion?
+        for query_c in query.chars().rev() {
+            if !VarTable::ENCODE_RANGE.contains(&query_c) {
+                // regular char
+                remaining_input_to_match = remaining_input_to_match.strip_suffix(query_c)?;
+                continue;
+            }
+            // must be special matcher
+
+            let matcher = match vt.lookup_matcher(query_c) {
+                Some(matcher) => matcher,
+                None => {
+                    debug_assert!(false, "invalid encoded char");
+                    // GIGO behavior. we just skip invalid encoded chars
+                    continue;
+                }
+            };
+            let match_len = matcher.rev_matches(remaining_input_to_match, match_data, vt)?;
+            remaining_input_to_match =
+                &remaining_input_to_match[..remaining_input_to_match.len() - match_len];
+        }
+
+        Some(input.len() - remaining_input_to_match.len())
+    }
 }
 
 /// Stores the state for a single conversion rule.
 struct MatchData {
     /// The length (in bytes) of the matched key. This portion will be replaced.
     key_match_len: usize,
+    /// The length (in bytes) of the matched ante context. This portion will not be replaced.
+    ante_match_len: usize,
+    /// The length (in bytes) of the matched post context. This portion will not be replaced.
+    post_match_len: usize,
 }
 
 impl MatchData {
     fn new() -> Self {
-        Self { key_match_len: 0 }
+        Self {
+            key_match_len: 0,
+            ante_match_len: 0,
+            post_match_len: 0,
+        }
     }
 }
 
@@ -424,7 +582,7 @@ impl<'a> SpecialMatcher<'a> {
         match self {
             Self::Compound(query) => helpers::match_encoded_str(query, input, match_data, vt),
             Self::UnicodeSet(set) => {
-                // eprintln!("checking if set {set:?} matches input {input:?}");
+                eprintln!("checking if set {set:?} matches input {input:?}");
 
                 // TODO: handle start anchors somehow
 
@@ -461,9 +619,50 @@ impl<'a> SpecialMatcher<'a> {
                 }
 
                 let input_c = input.chars().next()?;
-                // eprintln!("checking if set {set:?} contains char {input_c:?}");
+                eprintln!("checking if set {set:?} contains char {input_c:?}");
                 if set.contains_char(input_c) {
-                    // eprintln!("contains!");
+                    eprintln!("contains!");
+                    return Some(input_c.len_utf8());
+                }
+                None
+            }
+            // TODO: do more
+            _ => None,
+        }
+    }
+
+    /// Returns `None` if the input does not match from the right. If there is a match, returns the
+    /// length of the match.
+    fn rev_matches(&self, input: &str, match_data: &mut MatchData, vt: &VarTable) -> Option<usize> {
+        match self {
+            Self::Compound(query) => helpers::rev_match_encoded_str(query, input, match_data, vt),
+            Self::UnicodeSet(set) => {
+                eprintln!("checking if set {set:?} reverse matches input {input:?}");
+
+                // TODO: handle start anchors somehow
+
+                if input.is_empty() {
+                    // the only way an empty input is matched by a set
+                    return set.contains("").then_some(0);
+                }
+
+                // because we are reverse matching, we cannot do the same early breaking as in
+                // forward matching.
+                let max_str_match = set
+                    .strings()
+                    .iter()
+                    .filter(|s| input.ends_with(s))
+                    .map(str::len)
+                    .max();
+                if let Some(max) = max_str_match {
+                    // some string matched
+                    return Some(max);
+                }
+
+                let input_c = input.chars().rev().next()?;
+                eprintln!("checking if set {set:?} contains char {input_c:?}");
+                if set.contains_char(input_c) {
+                    eprintln!("contains!");
                     return Some(input_c.len_utf8());
                 }
                 None
@@ -483,6 +682,30 @@ enum SpecialReplacer<'a> {
     PureCursor,
 }
 
+impl<'a> SpecialReplacer<'a> {
+    /// Applies the replacement from this replacer to `buf`. Returns the offset of the cursor after
+    /// the replacement, if a non-default one exists.
+    fn replace(&self, buf: &mut String, data: &MatchData, vt: &VarTable) -> Option<CursorOffset> {
+        match self {
+            Self::Compound(query) => helpers::replace_encoded_str(query, buf, data, vt),
+            Self::PureCursor => Some(CursorOffset::Byte(buf.len())),
+            &Self::LeftPlaceholderCursor(num) => {
+                // must occur at the very end of a replacement
+                Some(CursorOffset::CharsOffEnd(num))
+            }
+            &Self::RightPlaceholderCursor(num) => {
+                // must occur at the very beginning of the replacement
+                debug_assert!(buf.is_empty(), "pre-start cursor not the first replacement");
+                Some(CursorOffset::CharsOffStart(num))
+            }
+            _ => {
+                // TODO
+                None
+            }
+        }
+    }
+}
+
 enum VarTableElement<'a> {
     Compound(&'a str),
     Quantifier(QuantifierKind, &'a str),
@@ -500,28 +723,24 @@ enum VarTableElement<'a> {
 impl<'a> VarTableElement<'a> {
     fn to_replacer(self) -> Option<SpecialReplacer<'a>> {
         Some(match self {
-            VarTableElement::Compound(elt) => SpecialReplacer::Compound(elt),
-            VarTableElement::FunctionCall(elt) => SpecialReplacer::FunctionCall(elt),
-            VarTableElement::BackReference(elt) => SpecialReplacer::BackReference(elt),
-            VarTableElement::LeftPlaceholderCursor(elt) => {
-                SpecialReplacer::LeftPlaceholderCursor(elt)
-            }
-            VarTableElement::RightPlaceholderCursor(elt) => {
-                SpecialReplacer::RightPlaceholderCursor(elt)
-            }
-            VarTableElement::PureCursor => SpecialReplacer::PureCursor,
+            Self::Compound(elt) => SpecialReplacer::Compound(elt),
+            Self::FunctionCall(elt) => SpecialReplacer::FunctionCall(elt),
+            Self::BackReference(elt) => SpecialReplacer::BackReference(elt),
+            Self::LeftPlaceholderCursor(elt) => SpecialReplacer::LeftPlaceholderCursor(elt),
+            Self::RightPlaceholderCursor(elt) => SpecialReplacer::RightPlaceholderCursor(elt),
+            Self::PureCursor => SpecialReplacer::PureCursor,
             _ => return None,
         })
     }
 
     fn to_matcher(self) -> Option<SpecialMatcher<'a>> {
         Some(match self {
-            VarTableElement::Compound(elt) => SpecialMatcher::Compound(elt),
-            VarTableElement::Quantifier(kind, elt) => SpecialMatcher::Quantifier(kind, elt),
-            VarTableElement::Segment(elt) => SpecialMatcher::Segment(elt),
-            VarTableElement::UnicodeSet(elt) => SpecialMatcher::UnicodeSet(elt),
-            VarTableElement::AnchorEnd => SpecialMatcher::AnchorEnd,
-            VarTableElement::AnchorStart => SpecialMatcher::AnchorStart,
+            Self::Compound(elt) => SpecialMatcher::Compound(elt),
+            Self::Quantifier(kind, elt) => SpecialMatcher::Quantifier(kind, elt),
+            Self::Segment(elt) => SpecialMatcher::Segment(elt),
+            Self::UnicodeSet(elt) => SpecialMatcher::UnicodeSet(elt),
+            Self::AnchorEnd => SpecialMatcher::AnchorEnd,
+            Self::AnchorStart => SpecialMatcher::AnchorStart,
             _ => return None,
         })
     }
@@ -638,6 +857,16 @@ impl<'a> VarTable<'a> {
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn test_functionality() {
+        let t =
+            Transliterator::try_new("und-t-und-s0-test-d0-test-m0-niels".parse().unwrap()).unwrap();
+
+        let input = "abcdefghijkl";
+        let output = "abCxyzXYZjkL";
+        assert_eq!(t.transliterate(input.to_string()), output);
+    }
 
     #[test]
     fn test() {
