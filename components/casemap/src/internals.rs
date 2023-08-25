@@ -237,94 +237,79 @@ impl<'data> CaseMapV1<'data> {
                 return Ok(());
             }
             let data = greek_to_me::get_data(c);
-            // Check if the character is a Greek character with an associated uppercase base character.
-            if let Some(data) = data {
-                match data {
-                    GreekPrecomposedLetterData::Vowel(vowel, mut precomposed_diacritics) => {
-                        // Get the diacritics on the character itself, and add any further combining diacritics
-                        // from the context.
-                        let mut diacritics = context.add_greek_diacritics(precomposed_diacritics);
-                        // If the previous vowel had an accent (which would be removed) but no dialytika,
-                        // and this is an iota or upsilon, add a dialytika since it is necessary to disambiguate
-                        // the now-unaccented adjacent vowels from a digraph/diphthong.
-                        // Use a precomposed dialytika if the accent was precomposed, and a combining dialytika
-                        // if the accent was combining, so as to map NFD to NFD and NFC to NFC.
-                        if !diacritics.dialytika
-                            && (vowel == GreekVowel::Ι || vowel == GreekVowel::Υ)
+            // Check if the character is a Greek vowel
+            if let Some(GreekPrecomposedLetterData::Vowel(vowel, mut precomposed_diacritics)) = data
+            {
+                // Get the diacritics on the character itself, and add any further combining diacritics
+                // from the context.
+                let mut diacritics = context.add_greek_diacritics(precomposed_diacritics);
+                // If the previous vowel had an accent (which would be removed) but no dialytika,
+                // and this is an iota or upsilon, add a dialytika since it is necessary to disambiguate
+                // the now-unaccented adjacent vowels from a digraph/diphthong.
+                // Use a precomposed dialytika if the accent was precomposed, and a combining dialytika
+                // if the accent was combining, so as to map NFD to NFD and NFC to NFC.
+                if !diacritics.dialytika && (vowel == GreekVowel::Ι || vowel == GreekVowel::Υ) {
+                    if let Some(preceding_vowel) = context.preceding_greek_vowel_diacritics() {
+                        if !preceding_vowel.combining.dialytika
+                            && !preceding_vowel.precomposed.dialytika
                         {
-                            if let Some(preceding_vowel) =
-                                context.preceding_greek_vowel_diacritics()
-                            {
-                                if !preceding_vowel.combining.dialytika
-                                    && !preceding_vowel.precomposed.dialytika
-                                {
-                                    if preceding_vowel.combining.accented {
-                                        diacritics.dialytika = true;
-                                    } else {
-                                        precomposed_diacritics.dialytika =
-                                            preceding_vowel.precomposed.accented;
-                                    }
-                                }
+                            if preceding_vowel.combining.accented {
+                                diacritics.dialytika = true;
+                            } else {
+                                precomposed_diacritics.dialytika =
+                                    preceding_vowel.precomposed.accented;
                             }
-                        }
-                        // Write the base of the uppercased combining character sequence.
-                        // In most branches this is [`upper_base`], i.e., the uppercase letter with all accents removed.
-                        // In some branches the base has a precomposed diacritic.
-                        // In the case of the Greek disjunctive "or", a combining tonos may also be written.
-                        match vowel {
-                            GreekVowel::Η => {
-                                // The letter η (eta) is allowed to retain a tonos when it is form a single-letter word to distinguish
-                                // the feminine definite article ἡ (monotonic η) from the disjunctive "or" ἤ (monotonic ή).
-                                //
-                                // A lone η with an accent other than the oxia/tonos is not expected,
-                                // so there is no need to special-case the oxia/tonos.
-                                // The ancient ᾖ (exist.PRS.SUBJ.3s) has a iota subscript as well as the circumflex,
-                                // so it would not be given an oxia/tonos under this rule, and the subjunctive is formed with a particle
-                                // (e.g. να είναι) since Byzantine times anyway.
-                                if diacritics.accented
-                                    && !context.followed_by_cased_letter(self)
-                                    && !context.preceded_by_cased_letter(self)
-                                    && !diacritics.ypogegrammeni
-                                {
-                                    if precomposed_diacritics.accented {
-                                        sink.write_char('Ή')?;
-                                    } else {
-                                        sink.write_char('Η')?;
-                                        sink.write_char(greek_to_me::TONOS)?;
-                                    }
-                                } else {
-                                    sink.write_char('Η')?;
-                                }
-                            }
-                            GreekVowel::Ι => {
-                                sink.write_char(if precomposed_diacritics.dialytika {
-                                    diacritics.dialytika = false;
-                                    'Ϊ'
-                                } else {
-                                    vowel.into()
-                                })?
-                            }
-                            GreekVowel::Υ => {
-                                sink.write_char(if precomposed_diacritics.dialytika {
-                                    diacritics.dialytika = false;
-                                    'Ϋ'
-                                } else {
-                                    vowel.into()
-                                })?
-                            }
-                            _ => sink.write_char(vowel.into())?,
-                        };
-                        if diacritics.dialytika {
-                            sink.write_char(greek_to_me::DIALYTIKA)?;
-                        }
-                        if precomposed_diacritics.ypogegrammeni {
-                            sink.write_char('Ι')?;
                         }
                     }
-                    GreekPrecomposedLetterData::Consonant(uppercased) => {
-                        // Just write the character without any additional diacritics
-                        sink.write_char(uppercased.into())?
+                }
+                // Write the base of the uppercased combining character sequence.
+                // In most branches this is [`upper_base`], i.e., the uppercase letter with all accents removed.
+                // In some branches the base has a precomposed diacritic.
+                // In the case of the Greek disjunctive "or", a combining tonos may also be written.
+                match vowel {
+                    GreekVowel::Η => {
+                        // The letter η (eta) is allowed to retain a tonos when it is form a single-letter word to distinguish
+                        // the feminine definite article ἡ (monotonic η) from the disjunctive "or" ἤ (monotonic ή).
+                        //
+                        // A lone η with an accent other than the oxia/tonos is not expected,
+                        // so there is no need to special-case the oxia/tonos.
+                        // The ancient ᾖ (exist.PRS.SUBJ.3s) has a iota subscript as well as the circumflex,
+                        // so it would not be given an oxia/tonos under this rule, and the subjunctive is formed with a particle
+                        // (e.g. να είναι) since Byzantine times anyway.
+                        if diacritics.accented
+                            && !context.followed_by_cased_letter(self)
+                            && !context.preceded_by_cased_letter(self)
+                            && !diacritics.ypogegrammeni
+                        {
+                            if precomposed_diacritics.accented {
+                                sink.write_char('Ή')?;
+                            } else {
+                                sink.write_char('Η')?;
+                                sink.write_char(greek_to_me::TONOS)?;
+                            }
+                        } else {
+                            sink.write_char('Η')?;
+                        }
                     }
+                    GreekVowel::Ι => sink.write_char(if precomposed_diacritics.dialytika {
+                        diacritics.dialytika = false;
+                        'Ϊ'
+                    } else {
+                        vowel.into()
+                    })?,
+                    GreekVowel::Υ => sink.write_char(if precomposed_diacritics.dialytika {
+                        diacritics.dialytika = false;
+                        'Ϋ'
+                    } else {
+                        vowel.into()
+                    })?,
+                    _ => sink.write_char(vowel.into())?,
+                };
+                if diacritics.dialytika {
+                    sink.write_char(greek_to_me::DIALYTIKA)?;
+                }
+                if precomposed_diacritics.ypogegrammeni {
+                    sink.write_char('Ι')?;
                 }
 
                 return Ok(());

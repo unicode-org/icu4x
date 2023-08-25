@@ -3,12 +3,11 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use icu_casemap::greek_to_me::{
-    self, GreekConsonant, GreekDiacritics, GreekPrecomposedLetterData, GreekVowel,
-    PackedGreekPrecomposedLetterData,
+    self, GreekDiacritics, GreekPrecomposedLetterData, GreekVowel, PackedGreekPrecomposedLetterData,
 };
 use icu_casemap::CaseMapper;
 use icu_normalizer::DecomposingNormalizer;
-use icu_properties::{maps, GeneralCategory, GeneralCategoryGroup, Script};
+use icu_properties::{maps, GeneralCategoryGroup, Script};
 use std::collections::BTreeMap;
 use std::fmt::Write;
 use std::fs;
@@ -87,10 +86,8 @@ fn main() {
                                     vowel,
                                     GreekDiacritics::default(),
                                 ))
-                            } else if let Ok(consonant) = GreekConsonant::try_from(uppercased) {
-                                data = Some(GreekPrecomposedLetterData::Consonant(consonant))
-                            } else if gc.get(uppercased) == GeneralCategory::UppercaseLetter {
-                                panic!("Found unknown Greek base uppercase letter {uppercased} while looking at {ch}, consider adding to GreekVowel or GreekConsonant");
+                            } else {
+                                data = Some(GreekPrecomposedLetterData::Consonant)
                             };
                         }
                         _ => (),

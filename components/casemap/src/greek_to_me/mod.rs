@@ -36,8 +36,8 @@ pub(crate) fn get_data(ch: char) -> Option<GreekPrecomposedLetterData> {
 ///
 /// ```text
 ///   7       6   5   4     3   2   1    0
-/// discr | [diacritics]  | [vowel       ]  
-/// discr | [  consonant                 ]
+/// discr=0 | [diacritics]  | [vowel       ]  
+/// discr=1 | [  unused = 0     ]
 /// ```
 ///
 /// Bit 7 is the discriminant. if 0, it is a vowel, else, it is a consonant.
@@ -70,12 +70,8 @@ impl TryFrom<PackedGreekPrecomposedLetterData> for GreekPrecomposedLetterData {
             Ok(GreekPrecomposedLetterData::Vowel(vowel, diacritics))
         } else {
             // consonant
-            let consonant = 0x7F & other.0;
-            let consonant = GreekConsonant::try_from(consonant);
-            debug_assert!(consonant.is_ok());
-            let consonant = consonant.unwrap_or(GreekConsonant::Β);
 
-            Ok(GreekPrecomposedLetterData::Consonant(consonant))
+            Ok(GreekPrecomposedLetterData::Consonant)
         }
     }
 }
@@ -97,10 +93,7 @@ impl From<GreekPrecomposedLetterData> for PackedGreekPrecomposedLetterData {
                 bits |= vowel as u8;
                 PackedGreekPrecomposedLetterData(bits)
             }
-            GreekPrecomposedLetterData::Consonant(consonant) => {
-                let bits = consonant as u8;
-                PackedGreekPrecomposedLetterData(0x80 | bits)
-            }
+            GreekPrecomposedLetterData::Consonant => PackedGreekPrecomposedLetterData(0x80),
         }
     }
 }
@@ -110,8 +103,8 @@ impl From<GreekPrecomposedLetterData> for PackedGreekPrecomposedLetterData {
 pub enum GreekPrecomposedLetterData {
     /// A vowel, with a capitalized base letter, and the diacritics found
     Vowel(GreekVowel, GreekDiacritics),
-    /// A consonant, with its capitalized base letter
-    Consonant(GreekConsonant),
+    /// A consonant or vowel that does not take diacritics
+    Consonant,
 }
 
 /// n.b. these are Greek capital letters, not Latin
@@ -125,9 +118,6 @@ pub enum GreekVowel {
     Ο = 5,
     Υ = 6,
     Ω = 7,
-
-    // This does not currently take any diacritics, but is technically
-    // still a vowel
     ϒ = 8,
 }
 
@@ -175,171 +165,6 @@ impl TryFrom<u8> for GreekVowel {
             6 => Self::Υ,
             7 => Self::Ω,
             8 => Self::ϒ,
-            _ => return Err(()),
-        })
-    }
-}
-
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub enum GreekConsonant {
-    Β = 0,
-    Γ = 1,
-    Δ = 2,
-    Ϝ = 3,
-    Ͷ = 4,
-    Ϛ = 5,
-    Ζ = 6,
-    Ͱ = 7,
-    Θ = 8,
-    Ϳ = 9,
-    Κ = 10,
-    Ϗ = 11,
-    Λ = 12,
-    Μ = 13,
-    Ν = 14,
-    Ξ = 15,
-    Π = 16,
-    Ϻ = 17,
-    Ϟ = 18,
-    Ϙ = 19,
-    Ρ = 20,
-    Σ = 21,
-    Ͼ = 22,
-    Ͻ = 23,
-    Ͽ = 24,
-    Τ = 25,
-    Φ = 26,
-    Χ = 27,
-    Ψ = 28,
-    Ϡ = 29,
-    Ͳ = 30,
-    Ϸ = 31,
-    Ϲ = 32,
-    ϴ = 33,
-}
-
-impl TryFrom<char> for GreekConsonant {
-    type Error = ();
-    fn try_from(other: char) -> Result<Self, ()> {
-        Ok(match other {
-            'Β' => Self::Β,
-            'Γ' => Self::Γ,
-            'Δ' => Self::Δ,
-            'Ϝ' => Self::Ϝ,
-            'Ͷ' => Self::Ͷ,
-            'Ϛ' => Self::Ϛ,
-            'Ζ' => Self::Ζ,
-            'Ͱ' => Self::Ͱ,
-            'Θ' => Self::Θ,
-            'Ϳ' => Self::Ϳ,
-            'Κ' => Self::Κ,
-            'Ϗ' => Self::Ϗ,
-            'Λ' => Self::Λ,
-            'Μ' => Self::Μ,
-            'Ν' => Self::Ν,
-            'Ξ' => Self::Ξ,
-            'Π' => Self::Π,
-            'Ϻ' => Self::Ϻ,
-            'Ϟ' => Self::Ϟ,
-            'Ϙ' => Self::Ϙ,
-            'Ρ' => Self::Ρ,
-            'Σ' => Self::Σ,
-            'Ͼ' => Self::Ͼ,
-            'Ͻ' => Self::Ͻ,
-            'Ͽ' => Self::Ͽ,
-            'Τ' => Self::Τ,
-            'Φ' => Self::Φ,
-            'Χ' => Self::Χ,
-            'Ψ' => Self::Ψ,
-            'Ϡ' => Self::Ϡ,
-            'Ͳ' => Self::Ͳ,
-            'Ϸ' => Self::Ϸ,
-            'Ϲ' => Self::Ϲ,
-            'ϴ' => Self::ϴ,
-            _ => return Err(()),
-        })
-    }
-}
-
-impl From<GreekConsonant> for char {
-    fn from(other: GreekConsonant) -> Self {
-        match other {
-            GreekConsonant::Β => 'Β',
-            GreekConsonant::Γ => 'Γ',
-            GreekConsonant::Δ => 'Δ',
-            GreekConsonant::Ϝ => 'Ϝ',
-            GreekConsonant::Ͷ => 'Ͷ',
-            GreekConsonant::Ϛ => 'Ϛ',
-            GreekConsonant::Ζ => 'Ζ',
-            GreekConsonant::Ͱ => 'Ͱ',
-            GreekConsonant::Θ => 'Θ',
-            GreekConsonant::Ϳ => 'Ϳ',
-            GreekConsonant::Κ => 'Κ',
-            GreekConsonant::Ϗ => 'Ϗ',
-            GreekConsonant::Λ => 'Λ',
-            GreekConsonant::Μ => 'Μ',
-            GreekConsonant::Ν => 'Ν',
-            GreekConsonant::Ξ => 'Ξ',
-            GreekConsonant::Π => 'Π',
-            GreekConsonant::Ϻ => 'Ϻ',
-            GreekConsonant::Ϟ => 'Ϟ',
-            GreekConsonant::Ϙ => 'Ϙ',
-            GreekConsonant::Ρ => 'Ρ',
-            GreekConsonant::Σ => 'Σ',
-            GreekConsonant::Ͼ => 'Ͼ',
-            GreekConsonant::Ͻ => 'Ͻ',
-            GreekConsonant::Ͽ => 'Ͽ',
-            GreekConsonant::Τ => 'Τ',
-            GreekConsonant::Φ => 'Φ',
-            GreekConsonant::Χ => 'Χ',
-            GreekConsonant::Ψ => 'Ψ',
-            GreekConsonant::Ϡ => 'Ϡ',
-            GreekConsonant::Ͳ => 'Ͳ',
-            GreekConsonant::Ϸ => 'Ϸ',
-            GreekConsonant::Ϲ => 'Ϲ',
-            GreekConsonant::ϴ => 'ϴ',
-        }
-    }
-}
-
-impl TryFrom<u8> for GreekConsonant {
-    type Error = ();
-    fn try_from(other: u8) -> Result<Self, ()> {
-        Ok(match other {
-            0 => Self::Β,
-            1 => Self::Γ,
-            2 => Self::Δ,
-            3 => Self::Ϝ,
-            4 => Self::Ͷ,
-            5 => Self::Ϛ,
-            6 => Self::Ζ,
-            7 => Self::Ͱ,
-            8 => Self::Θ,
-            9 => Self::Ϳ,
-            10 => Self::Κ,
-            11 => Self::Ϗ,
-            12 => Self::Λ,
-            13 => Self::Μ,
-            14 => Self::Ν,
-            15 => Self::Ξ,
-            16 => Self::Π,
-            17 => Self::Ϻ,
-            18 => Self::Ϟ,
-            19 => Self::Ϙ,
-            20 => Self::Ρ,
-            21 => Self::Σ,
-            22 => Self::Ͼ,
-            23 => Self::Ͻ,
-            24 => Self::Ͽ,
-            25 => Self::Τ,
-            26 => Self::Φ,
-            27 => Self::Χ,
-            28 => Self::Ψ,
-            29 => Self::Ϡ,
-            30 => Self::Ͳ,
-            31 => Self::Ϸ,
-            32 => Self::Ϲ,
-            33 => Self::ϴ,
             _ => return Err(()),
         })
     }
