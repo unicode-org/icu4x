@@ -4,6 +4,7 @@
 
 use alloc::string::String;
 use alloc::vec::Vec;
+use core::fmt::{Debug, Formatter};
 use core::ops::Range;
 use core::str;
 
@@ -43,6 +44,7 @@ impl<'a> Replaceable<'a> {
     }
 
     // TODO: design
+    // TODO: maybe add checks about frozen range?
     pub(crate) unsafe fn splice(&mut self, range: Range<usize>, replacement: &[u8]) {
         self.content.splice(range, replacement.iter().copied());
     }
@@ -97,10 +99,11 @@ impl<'a> Replaceable<'a> {
     /// Advances the cursor by one char.
     pub(crate) fn step_cursor(&mut self) {
         let step_len = self.as_str()[self.cursor..]
-            .char_indices()
+            .chars()
             .next()
-            .map(|(i, c)| i)
+            .map(char::len_utf8)
             .unwrap_or(0);
+        eprintln!("step_cursor: {}", step_len);
         self.cursor += step_len;
     }
 
@@ -122,7 +125,8 @@ impl<'a> Replaceable<'a> {
 
     /// Returns true if the cursor is at the end of the modifiable range.
     pub(crate) fn is_finished(&self) -> bool {
-        self.cursor == self.finished_cursor()
+        debug_assert!(self.cursor <= self.finished_cursor());
+        self.cursor >= self.finished_cursor()
     }
 
     // pub(crate) fn with_range(&mut self, range: Range<usize>) -> Replaceable {
@@ -145,6 +149,20 @@ impl<'a> Replaceable<'a> {
         }
     }
 
+    // TODO: could replace the F generic with a InternalTransliteratorTrait generic
+    pub(crate) fn for_each_run<F>(&mut self, filter: &Filter, mut f: F)
+    where
+        F: FnMut(&mut Replaceable),
+    {
+        // runs are in modifiable ranges, so we can only start in our modifiable range
+        let mut start = self.freeze_pre_len;
+        // SAFETY: start is always the result of a function returning valid UTF-8 indices
+        while let Some(mut run) = unsafe { self.next_filtered_run(start, filter) } {
+            f(&mut run);
+            start = run.allowed_upper_bound();
+        }
+    }
+
     /// Returns the next run (as a Replaceable with the corresponding frozen range)
     /// that occurs on or after `start`, if one exists.
     ///
@@ -155,7 +173,12 @@ impl<'a> Replaceable<'a> {
         start: usize,
         filter: &Filter,
     ) -> Option<Replaceable> {
-        debug_assert!(start < self.content.len());
+        if start == self.content.len() {
+            // we have reached the end, there are no more runs
+            return None;
+        }
+
+        debug_assert!(start < self.content.len(), "start `{start}` must be within the content length `{}`", self.content.len());
         debug_assert!(self.as_str().is_char_boundary(start));
 
         // TODO: might need to assert start is within the modifiable range
@@ -202,5 +225,23 @@ impl<'a> Replaceable<'a> {
     /// Returns the current (exclusive) upper bound of the allowed range.
     fn allowed_upper_bound(&self) -> usize {
         self.content.len() - self.freeze_post_len
+    }
+}
+
+impl<'a> Debug for Replaceable<'a> {
+    fn fmt(&self, f: &mut Formatter<'_>) -> core::fmt::Result {
+        write!(f, "{}", &self.as_str()[..self.freeze_pre_len])?;
+        write!(f, "{{{{{{")?;
+        write!(f, "{}", &self.as_str()[self.freeze_pre_len..self.cursor])?;
+        write!(f, "|||")?;
+        write!(
+            f,
+            "{}",
+            &self.as_str()[self.cursor..self.allowed_upper_bound()]
+        )?;
+        write!(f, "}}}}}}")?;
+        write!(f, "{}", &self.as_str()[self.allowed_upper_bound()..])?;
+
+        Ok(())
     }
 }

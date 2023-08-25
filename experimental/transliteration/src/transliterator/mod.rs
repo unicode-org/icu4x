@@ -171,24 +171,18 @@ impl<'a> RuleBasedTransliterator<'a> {
         debug_assert!(rep.allowed_range().contains(&rep.cursor()));
 
         // TODO: https://unicode-org.atlassian.net/jira/software/c/projects/ICU/issues/ICU-22469
-        // TODO: could move the filtered_transliterate functionality (this while loop) on Replaceable, with some generic
-        //  T: InternalTransliterator argument maybe?
-        while let Some(filtered_run) = unsafe { rep.next_filtered_run(rep.cursor(), &self.filter) }
-        {
-            let finished_cursor = filtered_run.finished_cursor();
-            self.transliterate_run(filtered_run, env);
-            unsafe {
-                // TODO: the transliteration runs have to assert themselves that they did a complete transliteration
-                // SAFETY: finished_cursor() returns a valid UTF-8 index
-                rep.set_cursor(finished_cursor);
-            }
-        }
+
+        rep.for_each_run(&self.filter, |run| {
+            eprintln!("got RBT filtered_run: {run:?}");
+            self.transliterate_run(run, env);
+            eprintln!("finished RBT filtered_run transliteration: {run:?}")
+        });
     }
 
     /// Transliteration of a single run, i.e., without needing to look at the filter.
-    fn transliterate_run(&self, mut rep: Replaceable, env: &Env) {
+    fn transliterate_run(&self, rep: &mut Replaceable, env: &Env) {
         // assumes the cursor is at the right position.
-        debug_assert!(rep.allowed_range().contains(&rep.cursor()));
+        debug_assert!(rep.allowed_range().contains(&rep.cursor()), "cursor {} is out of bounds for replaceable {rep:?}", rep.cursor());
 
         for (id_group, rule_group) in self.id_group_list.iter().zip(self.rule_group_list.iter()) {
             // first handle id_group
@@ -206,7 +200,19 @@ impl<'a> RuleBasedTransliterator<'a> {
 
 impl<'a> SimpleId<'a> {
     fn transliterate(&self, mut rep: Replaceable, env: &Env) {
-        // again split into runs based on self.filter and then transliterate_run
+        rep.for_each_run(&self.filter, |run| {
+            self.transliterate_run(run, env)
+        })
+    }
+
+    fn transliterate_run(&self, rep: &mut Replaceable, env: &Env) {
+        match env.get(self.id.as_ref()) {
+            None => {
+                debug_assert!(false, "missing transliterator {}", &self.id);
+                // GIGO behavior, missing recursive transliterator is a noop
+            }
+            Some(internal_t) => internal_t.transliterate(rep.child(), env),
+        }
     }
 }
 
@@ -222,18 +228,26 @@ impl<'a> RuleGroup<'a> {
     fn transliterate(&self, mut rep: Replaceable, vt: &VarTable, env: &Env) {
         // no need to split into runs, because a RuleGroup has no filters.
 
+        if self.rules.is_empty() {
+            // empty rule group, nothing to do
+            return;
+        }
+
         // while the cursor has not reached the end yet, keep trying to apply each rule in order.
         // when a rule matches, apply its replacement and move the cursor according to the replacement
 
         'main: while !rep.is_finished() {
+            eprintln!("ongoing RuleGroup transliteration:\n{rep:?}");
             for rule in self.rules.iter() {
                 let rule: Rule = Rule::zero_from(rule);
+                eprintln!("trying rule: {rule:?}");
                 if let Some(data) = rule.matches(&rep, vt) {
                     rule.apply(&mut rep, data, vt, env);
                     // rule application is responsible for updating the cursor
                     continue 'main;
                 }
             }
+            eprintln!("no rule matched, moving cursor forward");
             // no rule matched, so just move the cursor forward by one code point
             rep.step_cursor();
         }
@@ -247,7 +261,12 @@ impl<'a> Rule<'a> {
         let mut buf = String::new();
         let replacement_range = rep.cursor()..(rep.cursor() + data.key_match_len);
 
-        helpers::replace_encoded_str(&self.replacer, &mut buf, vt);
+        let cursor_offset =
+            helpers::replace_encoded_str(&self.replacer, &mut buf, vt).unwrap_or(buf.len() as i64);
+        let new_cursor = (rep.cursor() as i64 + cursor_offset);
+        debug_assert!(new_cursor >= 0);
+        let new_cursor = new_cursor as usize;
+        unsafe { rep.set_cursor(new_cursor) };
 
         // SAFETY: the range is guaranteed to be valid, as key_match_len is the length of a UTF-8
         // substring. the replacement is guaranteed to be valid UTF-8, as it comes from a String.
@@ -304,17 +323,26 @@ mod helpers {
     use crate::transliterator::MatchData;
 
     pub(super) fn is_pure(s: &str) -> bool {
-        s.chars().any(|c| VarTable::ENCODE_RANGE.contains(&c))
+        !s.chars().any(|c| VarTable::ENCODE_RANGE.contains(&c))
     }
 
-    pub(super) fn replace_encoded_str(replacement: &str, buf: &mut String, vt: &VarTable) {
+    /// Applies the replacements from the encoded `replacement` to `buf`. Returns the offset of the
+    /// cursor after the replacement, if a non-default one exists.
+    pub(super) fn replace_encoded_str(
+        replacement: &str,
+        buf: &mut String,
+        vt: &VarTable,
+    ) -> Option<i64> {
         if is_pure(replacement) {
             buf.push_str(replacement);
-            return;
+            return None;
         }
         // TODO: special replacers
+        None
     }
 
+    /// Tries to match the encoded `query` on `input`. Returns the length of the match, if there is
+    /// one. Fills in `match_data` if applicable.
     pub(super) fn match_encoded_str(
         query: &str,
         input: &str,
@@ -338,11 +366,11 @@ mod helpers {
             if !VarTable::ENCODE_RANGE.contains(&query_c) {
                 // regular char
                 // note: could have InputMatcher that wraps the &str and has match_and_consume functionality. keeps a ref to the vartable
-                let (len, input_c) = remaining_input_to_match.char_indices().next()?;
+                let input_c = remaining_input_to_match.chars().next()?;
                 if query_c != input_c {
                     return None;
                 }
-                remaining_input_to_match = &remaining_input_to_match[len..];
+                remaining_input_to_match = &remaining_input_to_match[input_c.len_utf8()..];
                 continue;
             }
             // must be special matcher
@@ -359,7 +387,7 @@ mod helpers {
             remaining_input_to_match = &remaining_input_to_match[len..];
         }
 
-        None
+        Some(input.len() - remaining_input_to_match.len())
     }
 }
 
@@ -371,9 +399,7 @@ struct MatchData {
 
 impl MatchData {
     fn new() -> Self {
-        Self {
-            key_match_len: 0,
-        }
+        Self { key_match_len: 0 }
     }
 }
 
@@ -399,6 +425,8 @@ impl<'a> SpecialMatcher<'a> {
         match self {
             Self::Compound(query) => helpers::match_encoded_str(query, input, match_data, vt),
             Self::UnicodeSet(set) => {
+                eprintln!("checking if set {set:?} matches input {input:?}");
+
                 // TODO: handle start anchors somehow
 
                 // TODO: check in which order a unicodeset matches
@@ -434,7 +462,9 @@ impl<'a> SpecialMatcher<'a> {
                 }
 
                 let input_c = input.chars().next()?;
+                eprintln!("checking if set {set:?} contains char {input_c:?}");
                 if set.contains_char(input_c) {
+                    eprintln!("contains!");
                     return Some(input_c.len_utf8());
                 }
                 None
@@ -614,9 +644,13 @@ mod tests {
     fn test() {
         let t = Transliterator::try_new("de-t-de-d0-ascii".parse().unwrap()).unwrap();
         let input =
-            r"Über ältere Lügner lästern ist sehr a\u{0308}rgerlich. Ja, SEHR ÄRGERLICH! - ꜵ";
+            "Über ältere Lügner lästern ist sehr a\u{0308}rgerlich. Ja, SEHR ÄRGERLICH! - ꜵ";
         let output =
             "Ueber aeltere Luegner laestern ist sehr aergerlich. Ja, SEHR AERGERLICH! - ao";
+        // let input =
+        //     "a\u{0308}rg";
+        // let output =
+        //     "aerg";
         assert_eq!(t.transliterate(input.to_string()), output);
     }
 }
