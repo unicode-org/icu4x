@@ -14,7 +14,10 @@ use alloc::string::{String, ToString};
 use core::str;
 use icu_collections::codepointinvlist::CodePointInversionList;
 use icu_provider::_internal::locid::Locale;
-use icu_provider::{DataError, DataLocale, DataPayload, DataProvider, DataRequest};
+use icu_provider::{
+    AsDynamicDataProviderAnyMarkerWrap, DataError, DataLocale, DataPayload, DataProvider,
+    DataRequest,
+};
 
 use litemap::LiteMap;
 use replaceable::*;
@@ -263,6 +266,9 @@ impl<'a> RuleGroup<'a> {
         // while the cursor has not reached the end yet, keep trying to apply each rule in order.
         // when a rule matches, apply its replacement and move the cursor according to the replacement
 
+        // TODO: do we allow empty keys? if so, rep.finished() would cause too early of a stop
+        //  the cursor would be at the end, but an empty key rule could still force insertion of more
+        //  text
         'main: while !rep.is_finished() {
             eprintln!("ongoing RuleGroup transliteration:\n{rep:?}");
             for rule in self.rules.iter() {
@@ -307,31 +313,28 @@ impl<'a> Rule<'a> {
     fn matches(&self, rep: &Replaceable, vt: &VarTable) -> Option<MatchData> {
         let mut match_data = MatchData::new();
 
-        let ante_input = rep.as_str_ante();
-        match_data.ante_match_len = self.ante_matches(ante_input, &mut match_data, vt)?;
+        match_data.ante_match_len = self.ante_matches(rep, &mut match_data, vt)?;
 
-        let key_input = rep.as_str_key();
-        let key_match_len = self.key_matches(key_input, &mut match_data, vt)?;
+        let key_match_len = self.key_matches(rep, &mut match_data, vt)?;
         match_data.key_match_len = key_match_len;
 
-        let post_input = rep.as_str_post(key_match_len);
-        match_data.post_match_len = self.post_matches(post_input, &mut match_data, vt)?;
+        match_data.post_match_len = self.post_matches(rep, key_match_len, &mut match_data, vt)?;
 
-        // check anchors
-        if match_data.anchored_to_end {
-            if rep.as_str_post(key_match_len).len() != match_data.post_match_len {
-                // if the potential post context is longer than what was matched, then this match
-                // is not anchored to the end
-                return None;
-            }
-        }
-        if match_data.anchored_to_start {
-            if rep.as_str_ante().len() != match_data.ante_match_len {
-                // if the potential ante context is longer than what was matched, then this match
-                // is not anchored to the start
-                return None;
-            }
-        }
+        // // check anchors
+        // if match_data.anchored_to_end {
+        //     if rep.as_str_post(key_match_len).len() != match_data.post_match_len {
+        //         // if the potential post context is longer than what was matched, then this match
+        //         // is not anchored to the end
+        //         return None;
+        //     }
+        // }
+        // if match_data.anchored_to_start {
+        //     if rep.as_str_ante().len() != match_data.ante_match_len {
+        //         // if the potential ante context is longer than what was matched, then this match
+        //         // is not anchored to the start
+        //         return None;
+        //     }
+        // }
 
         Some(match_data)
     }
@@ -343,11 +346,17 @@ impl<'a> Rule<'a> {
     /// match for this rule's ante context. We also call right-aligned matches `rev`erse matches.
     fn ante_matches(
         &self,
-        input: &str,
+        rep: &Replaceable,
         match_data: &mut MatchData,
         vt: &VarTable,
     ) -> Option<usize> {
-        helpers::rev_match_encoded_str(&self.ante, input, match_data, vt)
+        let visible = rep.as_str();
+        let mut input = RevInput {
+            visible,
+            cursor: rep.cursor(),
+        };
+        helpers::rev_match_encoded_str(&self.ante, &mut input, match_data, vt)
+            .then_some(rep.cursor() - input.cursor)
     }
 
     /// Returns `None` if the post context does not match. If there is a match, returns the length
@@ -357,11 +366,21 @@ impl<'a> Rule<'a> {
     /// match for this rule's post context.
     fn post_matches(
         &self,
-        input: &str,
+        rep: &Replaceable,
+        key_match_len: usize,
         match_data: &mut MatchData,
         vt: &VarTable,
     ) -> Option<usize> {
-        helpers::match_encoded_str(&self.post, input, match_data, vt)
+        let visible = rep.as_str();
+        let mut input = Input {
+            visible,
+            cursor: rep.cursor() + key_match_len,
+            // no end restrictions for post context matching
+            max_match_end: visible.len(),
+        };
+
+        helpers::match_encoded_str(&self.post, &mut input, match_data, vt)
+            .then_some(input.cursor - rep.cursor())
     }
 
     /// Returns `None` if the key does not match. If there is a match, returns the length of the
@@ -369,8 +388,21 @@ impl<'a> Rule<'a> {
     ///
     /// This must be a left-aligned match, i.e., the input must _start_ with a substring that is a
     /// match for this rule's key.
-    fn key_matches(&self, input: &str, match_data: &mut MatchData, vt: &VarTable) -> Option<usize> {
-        helpers::match_encoded_str(&self.key, input, match_data, vt)
+    fn key_matches(
+        &self,
+        rep: &Replaceable,
+        match_data: &mut MatchData,
+        vt: &VarTable,
+    ) -> Option<usize> {
+        let visible = rep.as_str();
+        let mut input = Input {
+            visible,
+            cursor: rep.cursor(),
+            // key matching can only occur in the modifiable range.
+            max_match_end: rep.allowed_upper_bound(),
+        };
+        helpers::match_encoded_str(&self.key, &mut input, match_data, vt)
+            .then_some(input.cursor - rep.cursor())
     }
 }
 
@@ -474,30 +506,22 @@ mod helpers {
     /// one. Fills in `match_data` if applicable.
     pub(super) fn match_encoded_str(
         query: &str,
-        input: &str,
+        input: &mut Input,
         match_data: &mut MatchData,
         vt: &VarTable,
-    ) -> Option<usize> {
+    ) -> bool {
         if is_pure(query) {
-            return if input.starts_with(query) {
-                Some(query.len())
-            } else {
-                None
-            };
+            return input.match_and_consume_str(query);
         }
 
-        let mut remaining_input_to_match = input;
         // iterate char-by-char, and try to match each char
         // note: might be good to avoid the UTF-8 => char conversion?
         for query_c in query.chars() {
             if !VarTable::ENCODE_RANGE.contains(&query_c) {
                 // regular char
-                // note: could have InputMatcher that wraps the &str and has match_and_consume functionality. keeps a ref to the vartable
-                let input_c = remaining_input_to_match.chars().next()?;
-                if query_c != input_c {
-                    return None;
+                if !input.match_and_consume_char(query_c) {
+                    return false;
                 }
-                remaining_input_to_match = &remaining_input_to_match[input_c.len_utf8()..];
                 continue;
             }
             // must be special matcher
@@ -510,36 +534,35 @@ mod helpers {
                     continue;
                 }
             };
-            let len = matcher.matches(remaining_input_to_match, match_data, vt)?;
-            remaining_input_to_match = &remaining_input_to_match[len..];
+            if !matcher.matches(input, match_data, vt) {
+                return false;
+            }
         }
 
-        Some(input.len() - remaining_input_to_match.len())
+        // matched the fully query string successfully
+        true
     }
 
     /// Tries to match the encoded `query` on `input` from the right. Returns the length of the
     /// match, if there is one. Fills in `match_data` if applicable.
     pub(super) fn rev_match_encoded_str(
         query: &str,
-        input: &str,
+        input: &mut RevInput,
         match_data: &mut MatchData,
         vt: &VarTable,
-    ) -> Option<usize> {
+    ) -> bool {
         if is_pure(query) {
-            return if input.ends_with(query) {
-                Some(query.len())
-            } else {
-                None
-            };
+            return input.match_and_consume_str(query);
         }
 
-        let mut remaining_input_to_match = input;
         // iterate char-by-char, and try to match each char
         // note: might be good to avoid the UTF-8 => char conversion?
         for query_c in query.chars().rev() {
             if !VarTable::ENCODE_RANGE.contains(&query_c) {
                 // regular char
-                remaining_input_to_match = remaining_input_to_match.strip_suffix(query_c)?;
+                if !input.match_and_consume_char(query_c) {
+                    return false;
+                }
                 continue;
             }
             // must be special matcher
@@ -552,12 +575,13 @@ mod helpers {
                     continue;
                 }
             };
-            let match_len = matcher.rev_matches(remaining_input_to_match, match_data, vt)?;
-            remaining_input_to_match =
-                &remaining_input_to_match[..remaining_input_to_match.len() - match_len];
+            if !matcher.rev_matches(input, match_data, vt) {
+                return false;
+            }
         }
 
-        Some(input.len() - remaining_input_to_match.len())
+        // matched the fully query string successfully
+        true
     }
 }
 
@@ -569,10 +593,10 @@ struct MatchData {
     ante_match_len: usize,
     /// The length (in bytes) of the matched post context. This portion will not be replaced.
     post_match_len: usize,
-    /// Whether the match must be anchored to the start of the input.
-    anchored_to_start: bool,
-    /// Whether the match must be anchored to the end of the input.
-    anchored_to_end: bool,
+    // /// Whether the match must be anchored to the start of the input.
+    // anchored_to_start: bool,
+    // /// Whether the match must be anchored to the end of the input.
+    // anchored_to_end: bool,
 }
 
 impl MatchData {
@@ -581,9 +605,166 @@ impl MatchData {
             key_match_len: 0,
             ante_match_len: 0,
             post_match_len: 0,
-            anchored_to_start: false,
-            anchored_to_end: false,
+            // anchored_to_start: false,
+            // anchored_to_end: false,
         }
+    }
+}
+
+/// This used during matching. It knows the full input string, the part of it we can match on,
+/// and what we are currently matching.
+struct Input<'a> {
+    /// The input string we are matching on.
+    visible: &'a str,
+    /// The start of the remainder of the input string.
+    cursor: usize,
+    /// The maximum part of the input string we are allowed to match.
+    max_match_end: usize,
+}
+
+impl<'a> Input<'a> {
+    fn is_empty(&self) -> bool {
+        self.cursor == self.max_match_end
+    }
+
+    fn match_str(&self, s: &str) -> bool {
+        self.visible[self.cursor..self.max_match_end].starts_with(s)
+    }
+
+    fn match_and_consume_str(&mut self, s: &str) -> bool {
+        if self.visible[self.cursor..self.max_match_end].starts_with(s) {
+            self.cursor += s.len();
+            true
+        } else {
+            false
+        }
+    }
+
+    fn match_and_consume_char(&mut self, c: char) -> bool {
+        if self.visible[self.cursor..self.max_match_end].starts_with(c) {
+            self.cursor += c.len_utf8();
+            true
+        } else {
+            false
+        }
+    }
+
+    fn match_and_consume_start_anchor(&self) -> bool {
+        if self.cursor == 0 {
+            true
+        } else {
+            false
+        }
+    }
+
+    fn match_and_consume_end_anchor(&self) -> bool {
+        if self.cursor == self.visible.len() {
+            true
+        } else {
+            false
+        }
+    }
+
+    fn next_char(&self) -> Option<char> {
+        self.visible[self.cursor..self.max_match_end].chars().next()
+    }
+
+    #[must_use]
+    fn consume(&mut self, len: usize) -> bool {
+        if self.cursor + len <= self.max_match_end {
+            self.cursor += len;
+            true
+        } else {
+            false
+        }
+    }
+}
+
+impl<'a> Debug for Input<'a> {
+    fn fmt(&self, f: &mut Formatter<'_>) -> core::fmt::Result {
+        write!(f, "{}", &self.visible[..self.cursor])?;
+        write!(f, "|||")?;
+        write!(f, "{}", &self.visible[self.cursor..self.max_match_end])?;
+        write!(f, "<<<")?;
+        write!(f, "{}", &self.visible[self.max_match_end..])
+    }
+}
+
+/// This used during reversematching. It knows the full input string, the part of it we can
+/// match on, and what we are currently matching.
+struct RevInput<'a> {
+    /// The input string we are matching on.
+    visible: &'a str,
+    /// The (exclusive) end of the remainder of the input string.
+    cursor: usize,
+}
+
+impl<'a> RevInput<'a> {
+    fn is_empty(&self) -> bool {
+        self.cursor == 0
+    }
+
+    fn match_str(&self, s: &str) -> bool {
+        self.visible[..self.cursor].ends_with(s)
+    }
+
+    fn match_and_consume_str(&mut self, s: &str) -> bool {
+        if self.visible[..self.cursor].ends_with(s) {
+            self.cursor -= s.len();
+            true
+        } else {
+            false
+        }
+    }
+
+    fn match_and_consume_char(&mut self, c: char) -> bool {
+        if self.visible[..self.cursor].ends_with(c) {
+            self.cursor -= c.len_utf8();
+            true
+        } else {
+            false
+        }
+    }
+
+    fn match_and_consume_start_anchor(&self) -> bool {
+        if self.cursor == 0 {
+            true
+        } else {
+            false
+        }
+    }
+
+    fn match_and_consume_end_anchor(&self) -> bool {
+        if self.cursor == self.visible.len() {
+            true
+        } else {
+            false
+        }
+    }
+
+    fn next_char(&self) -> Option<char> {
+        self.visible[..self.cursor].chars().rev().next()
+    }
+
+    #[must_use]
+    fn consume(&mut self, len: usize) -> bool {
+        if len <= self.cursor {
+            self.cursor -= len;
+            true
+        } else {
+            false
+        }
+    }
+}
+
+impl<'a> Debug for RevInput<'a> {
+    fn fmt(&self, f: &mut Formatter<'_>) -> core::fmt::Result {
+        write!(
+            f,
+            ">>>{}|||{}",
+            &self.visible[..self.cursor],
+            &self.visible[self.cursor..]
+        )
     }
 }
 
@@ -605,13 +786,11 @@ enum SpecialMatcher<'a> {
 impl<'a> SpecialMatcher<'a> {
     /// Returns `None` if the input does not match. If there is a match, returns the length of the
     /// match.
-    fn matches(&self, input: &str, match_data: &mut MatchData, vt: &VarTable) -> Option<usize> {
+    fn matches(&self, input: &mut Input, match_data: &mut MatchData, vt: &VarTable) -> bool {
         match self {
             Self::Compound(query) => helpers::match_encoded_str(query, input, match_data, vt),
             Self::UnicodeSet(set) => {
                 eprintln!("checking if set {set:?} matches input {input:?}");
-
-                // TODO: handle start anchors somehow
 
                 // TODO: check in which order a unicodeset matches
                 //  (chars first? strings first? longest first? shortest first?)
@@ -619,9 +798,19 @@ impl<'a> SpecialMatcher<'a> {
                 //  TODO ^ add this to gdoc
 
                 if input.is_empty() {
-                    // the only way an empty input is matched by a set
-                    return set.contains("").then_some(0);
-                    // TODO: actually, an anchor could also match an empty input
+                    if set.contains("") {
+                        return true;
+                    }
+                    if set.contains("\u{FFFF}") {
+                        if input.match_and_consume_end_anchor() {
+                            return true;
+                        }
+                        if input.match_and_consume_start_anchor() {
+                            return true;
+                        }
+                    }
+                    // only an empty string or an anchor could match an empty input
+                    return false;
                 }
 
                 let mut max_str_match: Option<usize> = None;
@@ -629,12 +818,12 @@ impl<'a> SpecialMatcher<'a> {
                     // strings are sorted. we can optimize by early-breaking when we encounter
                     // an `s` that is lexicographically larger than `input`
 
-                    if input.starts_with(s) {
+                    if input.match_str(s) {
                         max_str_match = max_str_match.map(|m| m.max(s.len())).or(Some(s.len()));
                         continue;
                     }
 
-                    match (s.chars().next(), input.chars().next()) {
+                    match (s.chars().next(), input.next_char()) {
                         // break early. since s_c is > input_c, we know that s > input, thus all
                         // strings from here on out are > input, and thus cannot match
                         (Some(s_c), Some(input_c)) if s_c > input_c => break,
@@ -643,54 +832,48 @@ impl<'a> SpecialMatcher<'a> {
                 }
                 if let Some(max) = max_str_match {
                     // some string matched
-                    return Some(max);
+                    return input.consume(max);
                 }
 
-
-                if let Some(input_c) = input.chars().next() {
+                if let Some(input_c) = input.next_char() {
                     eprintln!("checking if set {set:?} contains char {input_c:?}");
                     if set.contains_char(input_c) {
                         eprintln!("contains!");
-                        return Some(input_c.len_utf8());
+                        return input.consume(input_c.len_utf8());
                     }
                 }
 
-                // TODO: anchor (\u{FFFF})
-                if set.contains("\u{FFFF}") {
-
-                }
-
-
-
-                None
+                false
             }
-            Self::AnchorEnd => {
-                // need a way to look at the whole non-ignored part of replaceable
-                match_data.anchored_to_end = true;
-                Some(0)
-            }
-            Self::AnchorStart => {
-                match_data.anchored_to_start = true;
-                Some(0)
-            }
+            Self::AnchorEnd => input.match_and_consume_end_anchor(),
+            Self::AnchorStart => input.match_and_consume_start_anchor(),
             // TODO: do more
-            _ => None,
+            _ => false,
         }
     }
 
     /// Returns `None` if the input does not match from the right. If there is a match, returns the
     /// length of the match.
-    fn rev_matches(&self, input: &str, match_data: &mut MatchData, vt: &VarTable) -> Option<usize> {
+    fn rev_matches(&self, input: &mut RevInput, match_data: &mut MatchData, vt: &VarTable) -> bool {
         match self {
             Self::Compound(query) => helpers::rev_match_encoded_str(query, input, match_data, vt),
             Self::UnicodeSet(set) => {
                 eprintln!("checking if set {set:?} reverse matches input {input:?}");
 
-                // TODO: handle start anchors somehow
-
                 if input.is_empty() {
-                    // the only way an empty input is matched by a set
-                    return set.contains("").then_some(0);
+                    if set.contains("") {
+                        return true;
+                    }
+                    if set.contains("\u{FFFF}") {
+                        if input.match_and_consume_end_anchor() {
+                            return true;
+                        }
+                        if input.match_and_consume_start_anchor() {
+                            return true;
+                        }
+                    }
+                    // only an empty string or an anchor could match an empty input
+                    return false;
                 }
 
                 // because we are reverse matching, we cannot do the same early breaking as in
@@ -698,24 +881,28 @@ impl<'a> SpecialMatcher<'a> {
                 let max_str_match = set
                     .strings()
                     .iter()
-                    .filter(|s| input.ends_with(s))
+                    .filter(|s| input.match_str(s))
                     .map(str::len)
                     .max();
                 if let Some(max) = max_str_match {
                     // some string matched
-                    return Some(max);
+                    return input.consume(max);
                 }
 
-                let input_c = input.chars().rev().next()?;
-                eprintln!("checking if set {set:?} contains char {input_c:?}");
-                if set.contains_char(input_c) {
-                    eprintln!("contains!");
-                    return Some(input_c.len_utf8());
+                if let Some(input_c) = input.next_char() {
+                    eprintln!("checking if set {set:?} contains char {input_c:?}");
+                    if set.contains_char(input_c) {
+                        eprintln!("contains!");
+                        return input.consume(input_c.len_utf8());
+                    }
                 }
-                None
+
+                false
             }
+            Self::AnchorEnd => input.match_and_consume_end_anchor(),
+            Self::AnchorStart => input.match_and_consume_start_anchor(),
             // TODO: do more
-            _ => None,
+            _ => false,
         }
     }
 }
@@ -910,8 +1097,8 @@ mod tests {
         let t =
             Transliterator::try_new("und-t-und-s0-test-d0-test-m0-niels".parse().unwrap()).unwrap();
 
-        let input = "abcdefghijkl!";
-        let output = "firstbCxyzXYZjkL!";
+        let input = "abädefghijkl!";
+        let output = "firstbCxyzXYZjkT!";
         assert_eq!(t.transliterate(input.to_string()), output);
     }
 

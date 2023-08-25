@@ -10,7 +10,8 @@ use core::str;
 
 use super::Filter;
 
-/// Wrapper for in-place transliteration. Stores the currently allowed transliteration range.
+/// Wrapper for in-place transliteration. Stores the currently allowed-to-be-modified
+/// transliteration range.
 pub(crate) struct Replaceable<'a> {
     // guaranteed to be valid UTF-8
     // only content[freeze_pre_len..content.len()-freeze_post_len] is mutable
@@ -116,17 +117,11 @@ impl<'a> Replaceable<'a> {
         self.cursor = cursor;
     }
 
-    /// Returns the index of the first char outside the modifiable range.
-    ///
-    /// This is guaranteed to be a valid UTF-8 index into `self.content`.
-    pub(crate) fn finished_cursor(&self) -> usize {
-        self.allowed_upper_bound()
-    }
-
     /// Returns true if the cursor is at the end of the modifiable range.
     pub(crate) fn is_finished(&self) -> bool {
-        debug_assert!(self.cursor <= self.finished_cursor());
-        self.cursor >= self.finished_cursor()
+        // the cursor should never be > the upper bound
+        debug_assert!(self.cursor <= self.allowed_upper_bound());
+        self.cursor >= self.allowed_upper_bound()
     }
 
     // pub(crate) fn with_range(&mut self, range: Range<usize>) -> Replaceable {
@@ -226,8 +221,10 @@ impl<'a> Replaceable<'a> {
         Some(start + idx)
     }
 
-    /// Returns the current (exclusive) upper bound of the allowed range.
-    fn allowed_upper_bound(&self) -> usize {
+    /// Returns the current (exclusive) upper bound of the modifiable range.
+    ///
+    /// This is guaranteed to be a valid UTF-8 index into `self.content`.
+    pub(crate) fn allowed_upper_bound(&self) -> usize {
         self.content.len() - self.freeze_post_len
     }
 }
