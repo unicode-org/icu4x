@@ -46,7 +46,3 @@ std = ["fixed_decimal/std", "icu_decimal/std", "icu_plurals/std", "icu_provider/
 serde = ["dep:serde", "zerovec/serde", "icu_provider/serde", "icu_plurals/serde", "icu_decimal/serde"]
 datagen = ["std", "serde", "dep:databake", "zerovec/databake"]
 compiled_data = ["dep:icu_relativetime_data", "dep:icu_locid_transform", "icu_decimal/compiled_data", "icu_plurals/compiled_data"]
-
-[[test]]
-name = "tests"
-path = "tests/tests.rs"
