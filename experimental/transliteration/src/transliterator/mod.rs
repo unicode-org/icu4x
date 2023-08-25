@@ -42,6 +42,7 @@ struct NFCTransliterator {}
 enum InternalTransliterator {
     RuleBased(DataPayload<TransliteratorRulesV1Marker>),
     NFC(NFCTransliterator),
+    Null,
     Dyn(Box<dyn CustomTransliterator>),
 }
 
@@ -51,6 +52,7 @@ impl InternalTransliterator {
             Self::RuleBased(rbt) => rbt.get().transliterate(rep, env),
             // TODO(#3910): internal hardcoded transliterators
             Self::NFC(_nfc) => (),
+            Self::Null => (),
             Self::Dyn(custom) => {
                 let replacement = custom.transliterate(rep.as_str(), rep.allowed_range());
                 // SAFETY: rep.allowed_range() returns a range with valid UTF-8 bounds, and the bytes are valid UTF-8 as they come from a String
@@ -66,11 +68,13 @@ impl Debug for InternalTransliterator {
         enum DebugInternalTransliterator<'a> {
             RuleBased(&'a DataPayload<TransliteratorRulesV1Marker>),
             NFC(&'a NFCTransliterator),
+            Null,
             Dyn,
         }
         let d = match self {
             Self::RuleBased(rbt) => DebugInternalTransliterator::RuleBased(rbt),
             Self::NFC(nfc) => DebugInternalTransliterator::NFC(nfc),
+            Self::Null => DebugInternalTransliterator::Null,
             Self::Dyn(_) => DebugInternalTransliterator::Dyn,
         };
         d.fmt(f)
@@ -149,7 +153,8 @@ impl Transliterator {
         if let Some(special) = id.strip_prefix("x-") {
             // TODO: add more
             match special {
-                "Any-NFC" => Ok(InternalTransliterator::NFC(NFCTransliterator {})),
+                "any-nfc" => Ok(InternalTransliterator::NFC(NFCTransliterator {})),
+                "any-null" => Ok(InternalTransliterator::Null),
                 _ => Ok(InternalTransliterator::NFC(NFCTransliterator {})),
                 s => Err(DataError::custom("unavailable transliterator")
                     .with_debug_context(s)
@@ -311,6 +316,22 @@ impl<'a> Rule<'a> {
 
         let post_input = rep.as_str_post(key_match_len);
         match_data.post_match_len = self.post_matches(post_input, &mut match_data, vt)?;
+
+        // check anchors
+        if match_data.anchored_to_end {
+            if rep.as_str_post(key_match_len).len() != match_data.post_match_len {
+                // if the potential post context is longer than what was matched, then this match
+                // is not anchored to the end
+                return None;
+            }
+        }
+        if match_data.anchored_to_start {
+            if rep.as_str_ante().len() != match_data.ante_match_len {
+                // if the potential ante context is longer than what was matched, then this match
+                // is not anchored to the start
+                return None;
+            }
+        }
 
         Some(match_data)
     }
@@ -548,6 +569,10 @@ struct MatchData {
     ante_match_len: usize,
     /// The length (in bytes) of the matched post context. This portion will not be replaced.
     post_match_len: usize,
+    /// Whether the match must be anchored to the start of the input.
+    anchored_to_start: bool,
+    /// Whether the match must be anchored to the end of the input.
+    anchored_to_end: bool,
 }
 
 impl MatchData {
@@ -556,6 +581,8 @@ impl MatchData {
             key_match_len: 0,
             ante_match_len: 0,
             post_match_len: 0,
+            anchored_to_start: false,
+            anchored_to_end: false,
         }
     }
 }
@@ -594,6 +621,7 @@ impl<'a> SpecialMatcher<'a> {
                 if input.is_empty() {
                     // the only way an empty input is matched by a set
                     return set.contains("").then_some(0);
+                    // TODO: actually, an anchor could also match an empty input
                 }
 
                 let mut max_str_match: Option<usize> = None;
@@ -618,13 +646,32 @@ impl<'a> SpecialMatcher<'a> {
                     return Some(max);
                 }
 
-                let input_c = input.chars().next()?;
-                eprintln!("checking if set {set:?} contains char {input_c:?}");
-                if set.contains_char(input_c) {
-                    eprintln!("contains!");
-                    return Some(input_c.len_utf8());
+
+                if let Some(input_c) = input.chars().next() {
+                    eprintln!("checking if set {set:?} contains char {input_c:?}");
+                    if set.contains_char(input_c) {
+                        eprintln!("contains!");
+                        return Some(input_c.len_utf8());
+                    }
                 }
+
+                // TODO: anchor (\u{FFFF})
+                if set.contains("\u{FFFF}") {
+
+                }
+
+
+
                 None
+            }
+            Self::AnchorEnd => {
+                // need a way to look at the whole non-ignored part of replaceable
+                match_data.anchored_to_end = true;
+                Some(0)
+            }
+            Self::AnchorStart => {
+                match_data.anchored_to_start = true;
+                Some(0)
             }
             // TODO: do more
             _ => None,
@@ -863,8 +910,8 @@ mod tests {
         let t =
             Transliterator::try_new("und-t-und-s0-test-d0-test-m0-niels".parse().unwrap()).unwrap();
 
-        let input = "abcdefghijkl";
-        let output = "abCxyzXYZjkL";
+        let input = "abcdefghijkl!";
+        let output = "firstbCxyzXYZjkL!";
         assert_eq!(t.transliterate(input.to_string()), output);
     }
 

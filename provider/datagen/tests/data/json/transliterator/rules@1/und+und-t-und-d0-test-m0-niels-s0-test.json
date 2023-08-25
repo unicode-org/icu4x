@@ -1,0 +1,154 @@
+{
+  "visibility": true,
+  "variable_table": {
+    "compounds": [],
+    "quantifiers_opt": [],
+    "quantifiers_kleene": [],
+    "quantifiers_kleene_plus": [],
+    "segments": [],
+    "unicode_sets": [
+      {
+        "cp_inv_list": [
+          "E-F"
+        ],
+        "str_list": []
+      },
+      {
+        "cp_inv_list": [
+          "E-F"
+        ],
+        "str_list": []
+      },
+      {
+        "cp_inv_list": [
+          "D"
+        ],
+        "str_list": []
+      },
+      {
+        "cp_inv_list": [
+          "E"
+        ],
+        "str_list": []
+      },
+      {
+        "cp_inv_list": [
+          "F"
+        ],
+        "str_list": []
+      },
+      {
+        "cp_inv_list": [
+          "x-z"
+        ],
+        "str_list": []
+      },
+      {
+        "cp_inv_list": [
+          "\u0000-\t",
+          "\u000b-\f",
+          "\u000e-‧",
+          "‪-￾",
+          "𐀀-􏿿"
+        ],
+        "str_list": []
+      },
+      {
+        "cp_inv_list": [
+          "\u0000-\t",
+          "\u000b-\f",
+          "\u000e-‧",
+          "‪-￾",
+          "𐀀-􏿿"
+        ],
+        "str_list": []
+      }
+    ],
+    "function_calls": [],
+    "max_left_placeholder_count": 0,
+    "max_right_placeholder_count": 25
+  },
+  "filter": [
+    "a-z"
+  ],
+  "id_group_list": [
+    [],
+    [
+      {
+        "filter": [
+          "\u0000-􏿿"
+        ],
+        "id": "x-any-null"
+      }
+    ]
+  ],
+  "rule_group_list": [
+    [
+      {
+        "ante": "abc",
+        "key": "def",
+        "post": "ghi",
+        "replacer": "󰀈DEF"
+      },
+      {
+        "ante": "",
+        "key": "c",
+        "post": "D󰀀󰀁",
+        "replacer": "C"
+      },
+      {
+        "ante": "",
+        "key": "󰀂󰀃󰀄",
+        "post": "",
+        "replacer": "xyz"
+      },
+      {
+        "ante": "󰀅",
+        "key": "ghi",
+        "post": "",
+        "replacer": "XYZ"
+      },
+      {
+        "ante": "",
+        "key": "ghi",
+        "post": "",
+        "replacer": "bad"
+      },
+      {
+        "ante": "",
+        "key": "l",
+        "post": "",
+        "replacer": "󰀠L"
+      },
+      {
+        "ante": "",
+        "key": "kL",
+        "post": "",
+        "replacer": "bad"
+      }
+    ],
+    [
+      {
+        "ante": "",
+        "key": "󿿼󰀆󿿽",
+        "post": "",
+        "replacer": "bad"
+      },
+      {
+        "ante": "",
+        "key": "󿿼󰀇",
+        "post": "",
+        "replacer": "first"
+      },
+      {
+        "ante": "",
+        "key": "L",
+        "post": "󿿽",
+        "replacer": "last"
+      }
+    ]
+  ],
+  "dependencies": [
+    "x-any-null"
+  ]
+}

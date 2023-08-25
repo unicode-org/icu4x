@@ -2049,10 +2049,11 @@ time_zone/specific_short@1, und, 31B, 4b7af6a019fab889
 transliterator/rules@1, und+de-t-de-d0-ascii, 16784B, cbb0f7f795d1c6dc
 transliterator/rules@1, und+el-Latn-t-el-m0-bgn, 13818B, 2293dcb5f5e7fc0b
 transliterator/rules@1, und+und-Arab-t-und-Beng, 381B, 13688c829c4a2176
-transliterator/rules@1, und+und-Latn-t-s0-ascii, 110B, 33cd224df9804b07
+transliterator/rules@1, und+und-Latn-t-s0-ascii, 126B, bd845d3dc35e3b57
 transliterator/rules@1, und+und-t-d0-publish, 3477B, c9558c0f7daee292
 transliterator/rules@1, und+und-t-s0-publish, 1343B, 6084ebbdd93523c2
 transliterator/rules@1, und+und-t-und-Latn-d0-ascii, 27110B, c66743617e3238ff
+transliterator/rules@1, und+und-t-und-d0-test-m0-niels-s0-test, 706B, 4d45198cda6edf7b
 transliterator/rules@1, und+x-bengali-interindic, 2621B, 24a04df29d08559d
 transliterator/rules@1, und+x-interindic-arabic, 24108B, 2f360f0eca4cc4b
 units/constants@1, und, 426B, e0c7eeb9e702371c

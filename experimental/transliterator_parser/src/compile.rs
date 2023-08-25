@@ -346,15 +346,11 @@ impl<'p> Pass1<'p> {
         reverse_id: Option<&parse::SingleId>,
     ) -> Result<()> {
         let fwd_dep = forward_id.basic_id.clone();
-        if !fwd_dep.is_null() {
-            self.forward_data.used_transliterators.insert(fwd_dep);
-        }
+        self.forward_data.used_transliterators.insert(fwd_dep);
         let rev_dep = reverse_id
             .map(|single_id| single_id.basic_id.clone())
             .unwrap_or_else(|| forward_id.basic_id.clone().reverse());
-        if !rev_dep.is_null() {
-            self.reverse_data.used_transliterators.insert(rev_dep);
-        }
+        self.reverse_data.used_transliterators.insert(rev_dep);
         Ok(())
     }
 

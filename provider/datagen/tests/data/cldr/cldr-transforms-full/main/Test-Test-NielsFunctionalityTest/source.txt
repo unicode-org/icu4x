@@ -9,3 +9,9 @@ c } D [EF] [EF] > C ;
 ghi > 'bad' ;
 l > |@@@@@@@@@@@@@@@@@@@@@@@@@L;
 kL > 'bad' ;
+
+:: Null ;
+
+^ . $ > 'bad' ;
+^ . > 'first' ;
+L } $ > 'last' ;
