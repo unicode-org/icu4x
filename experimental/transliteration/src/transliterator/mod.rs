@@ -241,6 +241,19 @@ impl<'a> RuleGroup<'a> {
 }
 
 impl<'a> Rule<'a> {
+    /// Applies this rule's replacement using the given [`MatchData`]. Updates the cursor of the
+    /// given [`Replaceable`].
+    fn apply(&self, rep: &mut Replaceable, data: MatchData, vt: &VarTable, env: &Env) {
+        let mut buf = String::new();
+        let replacement_range = rep.cursor()..(rep.cursor() + data.key_match_len);
+
+        helpers::replace_encoded_str(&self.replacer, &mut buf, vt);
+
+        // SAFETY: the range is guaranteed to be valid, as key_match_len is the length of a UTF-8
+        // substring. the replacement is guaranteed to be valid UTF-8, as it comes from a String.
+        unsafe { rep.splice(replacement_range, buf.as_bytes()) };
+    }
+
     /// Returns `None` if there is no match. If there is a match, returns the associated
     /// [`MatchData`].
     fn matches(&self, rep: &Replaceable, vt: &VarTable) -> Option<MatchData> {
@@ -253,6 +266,7 @@ impl<'a> Rule<'a> {
 
         let key_input = rep.as_str_key();
         let key_match_len = self.key_matches(key_input, &mut match_data, vt)?;
+        match_data.key_match_len = key_match_len;
 
         let post_input = rep.as_str_post(key_match_len);
         if !self.post_matches(post_input, &mut match_data, vt) {
@@ -291,6 +305,14 @@ mod helpers {
 
     pub(super) fn is_pure(s: &str) -> bool {
         s.chars().any(|c| VarTable::ENCODE_RANGE.contains(&c))
+    }
+
+    pub(super) fn replace_encoded_str(replacement: &str, buf: &mut String, vt: &VarTable) {
+        if is_pure(replacement) {
+            buf.push_str(replacement);
+            return;
+        }
+        // TODO: special replacers
     }
 
     pub(super) fn match_encoded_str(
@@ -342,11 +364,16 @@ mod helpers {
 }
 
 /// Stores the state for a single conversion rule.
-struct MatchData {}
+struct MatchData {
+    /// The length (in bytes) of the matched key. This portion will be replaced.
+    key_match_len: usize,
+}
 
 impl MatchData {
     fn new() -> Self {
-        Self {}
+        Self {
+            key_match_len: 0,
+        }
     }
 }
 
@@ -384,8 +411,8 @@ impl<'a> SpecialMatcher<'a> {
                     return set.contains("").then_some(0);
                 }
 
-                let mut max_str_match = None;
-                for s in set.strings() {
+                let mut max_str_match: Option<usize> = None;
+                for s in set.strings().iter() {
                     // strings are sorted. we can optimize by early-breaking when we encounter
                     // an `s` that is lexicographically larger than `input`
 

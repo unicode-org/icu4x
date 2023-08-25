@@ -174,11 +174,13 @@ impl<'a> Replaceable<'a> {
                 .unwrap_or(self.content.len());
         }
 
+        let freeze_post_len = self.content.len() - run_end;
+
         Some(Replaceable {
             content: self.content,
             // safety: these uphold the invariants
             freeze_pre_len: run_start,
-            freeze_post_len: self.content.len() - run_end,
+            freeze_post_len,
             // TODO: do we want this?
             cursor: run_start,
         })
