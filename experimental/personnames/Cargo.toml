@@ -5,7 +5,7 @@
 [package]
 name = "icu_personnames"
 description = "API for formatting person names according to language-dependent conventions"
-version = "0.1.0"
+version = "0.0.0"
 
 authors.workspace = true
 categories.workspace = true
@@ -30,7 +30,3 @@ litemap = { workspace = true }
 std = ["icu_collections/std", "icu_locid/std", "icu_provider/std"]
 serde = ["dep:serde", "zerovec/serde", "icu_collections/serde", "icu_provider/serde"]
 datagen = ["serde", "std", "dep:databake", "zerovec/databake", "icu_collections/databake"]
-
-[[test]]
-name = "tests"
-path = "tests/tests.rs"
