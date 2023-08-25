@@ -26,6 +26,7 @@ use crate::provider::{FunctionCall, Rule, RuleULE, SimpleId, VarTable};
 use alloc::vec::Vec;
 use core::fmt::{Debug, Formatter};
 use core::ops::RangeInclusive;
+use std::collections::VecDeque;
 use icu_collections::codepointinvliststringlist::CodePointInversionListAndStringList;
 use zerofrom::ZeroFrom;
 use zerovec::VarZeroSlice;
@@ -320,22 +321,6 @@ impl<'a> Rule<'a> {
 
         match_data.post_match_len = self.post_matches(rep, key_match_len, &mut match_data, vt)?;
 
-        // // check anchors
-        // if match_data.anchored_to_end {
-        //     if rep.as_str_post(key_match_len).len() != match_data.post_match_len {
-        //         // if the potential post context is longer than what was matched, then this match
-        //         // is not anchored to the end
-        //         return None;
-        //     }
-        // }
-        // if match_data.anchored_to_start {
-        //     if rep.as_str_ante().len() != match_data.ante_match_len {
-        //         // if the potential ante context is longer than what was matched, then this match
-        //         // is not anchored to the start
-        //         return None;
-        //     }
-        // }
-
         Some(match_data)
     }
 
@@ -593,10 +578,10 @@ struct MatchData {
     ante_match_len: usize,
     /// The length (in bytes) of the matched post context. This portion will not be replaced.
     post_match_len: usize,
-    // /// Whether the match must be anchored to the start of the input.
-    // anchored_to_start: bool,
-    // /// Whether the match must be anchored to the end of the input.
-    // anchored_to_end: bool,
+    /// Stored matches of segments.
+    segments: Vec<String>,
+    /// Stored matches of segments in ante. Needed because traversal is in the opposite order.
+    ante_segments: VecDeque<String>,
 }
 
 impl MatchData {
@@ -605,9 +590,25 @@ impl MatchData {
             key_match_len: 0,
             ante_match_len: 0,
             post_match_len: 0,
-            // anchored_to_start: false,
-            // anchored_to_end: false,
+            segments: Vec::new(),
+            ante_segments: VecDeque::new(),
         }
+    }
+}
+
+impl MatchData {
+    fn get_segment(&self, i: usize) -> &str {
+        let mut idx = i;
+        if idx < self.ante_segments.len() {
+            return &self.ante_segments[idx];
+        }
+        idx -= self.ante_segments.len();
+        if idx < self.segments.len() {
+            return &self.segments[idx];
+        }
+        debug_assert!(false, "backref {i} out of bounds");
+        // GIGO behavior: return empty string
+        ""
     }
 }
 
@@ -847,6 +848,23 @@ impl<'a> SpecialMatcher<'a> {
             }
             Self::AnchorEnd => input.match_and_consume_end_anchor(),
             Self::AnchorStart => input.match_and_consume_start_anchor(),
+            Self::Segment(query) => {
+                let idx = match_data.segments.len();
+                // need to push before the recursive call such that the order for backref lookup is
+                // correct
+                match_data.segments.push(String::new());
+                let start = input.cursor;
+                if !helpers::match_encoded_str(query, input, match_data, vt) {
+                    // no match
+                    match_data.segments.pop();
+                    return false;
+                }
+                let end = input.cursor;
+                let matched = &input.visible[start..end];
+                // note: at the moment we could just store start..end
+                match_data.segments[idx].push_str(matched);
+                true
+            }
             // TODO: do more
             _ => false,
         }
@@ -901,6 +919,25 @@ impl<'a> SpecialMatcher<'a> {
             }
             Self::AnchorEnd => input.match_and_consume_end_anchor(),
             Self::AnchorStart => input.match_and_consume_start_anchor(),
+            Self::Segment(query) => {
+                // need to push after the recursive call such that the order for backref lookup is
+                // correct
+                let end = input.cursor;
+                if !helpers::rev_match_encoded_str(query, input, match_data, vt) {
+                    return false;
+                }
+                let start = input.cursor;
+                let matched = &input.visible[start..end];
+                // note: at the moment we could just store start..end
+                match_data.ante_segments.push_front(matched.to_string());
+
+                // TODO: hmmm. RevInput messes up segment order, because we traverse the encoded
+                //  query string backwards. this means that for (1) (2) { key > repl ;, we first see
+                //  and push (2), even though (1) should be at first position.
+                //  => use Vecdeque
+
+                true
+            }
             // TODO: do more
             _ => false,
         }
@@ -931,6 +968,10 @@ impl<'a> SpecialReplacer<'a> {
                 // must occur at the very beginning of the replacement
                 debug_assert!(buf.is_empty(), "pre-start cursor not the first replacement");
                 Some(CursorOffset::CharsOffStart(num))
+            }
+            &Self::BackReference(num) => {
+                buf.push_str(data.get_segment(num as usize));
+                None
             }
             _ => {
                 // TODO
@@ -1072,9 +1113,8 @@ impl<'a> VarTable<'a> {
         }
         idx -= next_base;
         // idx must be a backreference (an u16 encoded as <itself> indices past the last valid other index)
-        // + 1 because index 0 represents $1, etc.
         // cast is guaranteed because query is inside a range of less than 2^16 elements
-        Some(VarTableElement::BackReference(idx as u16 + 1))
+        Some(VarTableElement::BackReference(idx as u16))
     }
 
     fn lookup_matcher(&'a self, query: char) -> Option<SpecialMatcher<'a>> {
@@ -1098,7 +1138,7 @@ mod tests {
             Transliterator::try_new("und-t-und-s0-test-d0-test-m0-niels".parse().unwrap()).unwrap();
 
         let input = "abädefghijkl!";
-        let output = "firstbCxyzXYZjkT!";
+        let output = "firsfifirsrstbCxyzftbCxyzxyzXYZjkT!";
         assert_eq!(t.transliterate(input.to_string()), output);
     }
 

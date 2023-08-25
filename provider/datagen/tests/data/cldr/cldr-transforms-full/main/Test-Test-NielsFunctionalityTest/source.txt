@@ -1,6 +1,8 @@
 # Test transliterator that uses every feature available and also tests some edge cases
 # TODO(this PR): move these rules somewhere else, maybe dynamically create structss
 
+# input: abädefghijkl!
+
 :: [äa-z] ;
 abä { def } ghi > | @ DEF ;
 ä } D [EF] [EF] > C ;
@@ -17,4 +19,25 @@ kL > 'bad' ;
 L } $ > las|t ;
 
 L } \! [$] > T ;
+
+:: Null ;
+
+# output so far: firstbCxyzXYZjkT!
+
+$b = b ;
+$t = t ;
+$a = $t$b ;
+
+([^$]) irs { ($a C (xyz)) > $3 $2 $1 $2 $3 ; # xyz tb C xyz f tb C xyz xyz
+
+:: Null ;
+
+# output so far: firsxyztbCxyzftbCxyzxyzXYZjkT!
+
+# 1 2   3     4 5   6
+^ ( (f) (i) ) ( (r) (s) ) { xyz > $1 $2 $3 $4 $5 $6 ; # fi f i rs r s
+
+:: Null ;
+
+# output so far: firsfifirsrstbCxyzftbCxyzxyzXYZjkT!
 
