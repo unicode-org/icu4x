@@ -1,0 +1,4 @@
+# Test transliterator that uses every feature available and also tests some edge cases
+
+:: [a-z] ;
+abc { def } ghi > DEF ;
