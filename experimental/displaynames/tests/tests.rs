@@ -5,7 +5,7 @@
 use icu_displaynames::{DisplayNamesOptions, LocaleDisplayNamesFormatter};
 use icu_locid::locale;
 use icu_locid::Locale;
-use std::str::FromStr;
+use std::borrow::Cow;
 
 #[test]
 fn test_concatenate() {
@@ -13,47 +13,68 @@ fn test_concatenate() {
     struct TestCase<'a> {
         pub input_1: &'a Locale,
         pub expected: &'a str,
+        pub should_borrow: bool,
     }
     let cases = [
         TestCase {
             input_1: &locale!("de-CH"),
             expected: "Swiss High German",
+            should_borrow: true,
         },
         TestCase {
             input_1: &locale!("zh_Hans"),
             expected: "Simplified Chinese",
+            should_borrow: true,
         },
         TestCase {
             input_1: &locale!("es-419"),
             expected: "Latin American Spanish",
+            should_borrow: true,
         },
         TestCase {
             input_1: &locale!("es-Cyrl-MX"),
-            expected: "Spanish (Cyrillic, Mexico)",
+            expected: "Mexican Spanish (Cyrillic)",
+            should_borrow: false,
         },
         TestCase {
-            input_1: &Locale::from_str("en-Latn-GB-fonipa-scouse").unwrap(),
-            expected: "English (Latin, United Kingdom, IPA Phonetics, Scouse)",
+            input_1: &"en-Latn-GB-fonipa-scouse".parse().unwrap(),
+            expected: "British English (Latin, IPA Phonetics, Scouse)",
+            should_borrow: false,
         },
         TestCase {
-            input_1: &Locale::from_str("de-Latn-CH").unwrap(),
-            expected: "German (Latin, Switzerland)",
+            input_1: &locale!("de-Latn-CH"),
+            expected: "Swiss High German (Latin)",
+            should_borrow: false,
         },
         TestCase {
-            input_1: &Locale::from_str("zh-Hans-CN").unwrap(),
+            input_1: &locale!("zh-Hans-CN"),
             expected: "Simplified Chinese (China)",
+            should_borrow: false,
         },
         TestCase {
-            input_1: &Locale::from_str("es-419-fonipa").unwrap(),
+            input_1: &locale!("es-419-fonipa"),
             expected: "Latin American Spanish (IPA Phonetics)",
+            should_borrow: false,
         },
         TestCase {
-            input_1: &Locale::from_str("es-Latn-419").unwrap(),
-            expected: "Spanish (Latin, Latin America)",
+            input_1: &locale!("es-Latn-419"),
+            expected: "Latin American Spanish (Latin)",
+            should_borrow: false,
+        },
+        TestCase {
+            input_1: &locale!("xx"),
+            expected: "xx",
+            should_borrow: true,
         },
         TestCase {
             input_1: &locale!("xx-YY"),
             expected: "xx (YY)",
+            should_borrow: false,
+        },
+        TestCase {
+            input_1: &"aa-Brai-CC-fonipa-posix".parse().unwrap(),
+            expected: "Afar (Braille, Cocos (Keeling) Islands, IPA Phonetics, Computer)",
+            should_borrow: false,
         },
     ];
     for cas in &cases {
@@ -64,6 +85,15 @@ fn test_concatenate() {
         let display_name = LocaleDisplayNamesFormatter::try_new(&locale.into(), options)
             .expect("Data should load successfully");
 
-        assert_eq!(display_name.of(cas.input_1), cas.expected);
+        let result = display_name.of(cas.input_1);
+        assert_eq!(result, cas.expected);
+
+        if cas.should_borrow {
+            assert!(matches!(result, Cow::Borrowed(_)));
+        } else {
+            assert!(matches!(result, Cow::Owned(_)));
+            let result = result.into_owned();
+            assert_eq!(result.capacity(), result.len());
+        }
     }
 }
