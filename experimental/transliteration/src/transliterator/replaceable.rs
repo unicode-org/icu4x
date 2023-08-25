@@ -18,6 +18,8 @@ pub(crate) struct Replaceable<'a> {
     freeze_pre_len: usize,
     // `content.len() - freeze_post_len` is guaranteed to be a valid UTF-8 index into content
     freeze_post_len: usize,
+    // guaranteed to be a valid UTF-8 index into content
+    cursor: usize,
     // note: for Function Calls (that only "see" the input argument), we also need a "ignore_pre_len" and "ignore_post_len", probably
 }
 
@@ -33,9 +35,10 @@ impl<'a> Replaceable<'a> {
     pub(crate) unsafe fn new(buf: &'a mut Vec<u8>) -> Self {
         Self {
             content: buf,
-            // these lengths uphold the invariants
+            // these uphold the invariants
             freeze_pre_len: 0,
             freeze_post_len: 0,
+            cursor: 0,
         }
     }
 
@@ -44,10 +47,22 @@ impl<'a> Replaceable<'a> {
         self.content.splice(range, replacement.iter().copied());
     }
 
-    pub(crate) fn as_str(&self) -> &str {
+    /// Returns the full current content as a `&str`.
+    fn as_str(&self) -> &str {
         debug_assert!(str::from_utf8(&self.content[..]).is_ok());
         // SAFETY: Replaceable's invariant states that content is always valid UTF-8
         unsafe { str::from_utf8_unchecked(&self.content[..]) }
+    }
+
+    /// Returns the current content before the cursor as a `&str`.
+    pub(crate) fn as_str_ante(&self) -> &str {
+        // TODO: use the ignore thing as lower bound here
+        &self.as_str()[..self.cursor]
+    }
+
+    /// Returns the current modifiable content after the cursor as a `&str`.
+    pub(crate) fn as_str_key(&self) -> &str {
+        &self.as_str()[self.cursor..self.allowed_upper_bound()]
     }
 
     // TODO: this is unsafe, need to guarantee pos/len are valid for UTF-8
@@ -62,41 +77,74 @@ impl<'a> Replaceable<'a> {
     /// 
     /// This is guaranteed to be a range compatible with the internal UTF-8.
     pub(crate) fn allowed_range(&self) -> Range<usize> {
-        self.freeze_pre_len..(self.content.len() - self.freeze_post_len)
+        self.freeze_pre_len..self.allowed_upper_bound()
     }
 
-    pub(crate) fn with_range(&mut self, range: Range<usize>) -> Replaceable {
-        Replaceable { content: self.content, freeze_pre_len: range.start, freeze_post_len: range.end }
+    /// Returns the cursor.
+    ///
+    /// This is guaranteed to be a valid UTF-8 index into `self.content`.
+    pub(crate) fn cursor(&self) -> usize {
+        self.cursor
     }
+
+    // pub(crate) fn with_range(&mut self, range: Range<usize>) -> Replaceable {
+    //     Replaceable { content: self.content, freeze_pre_len: range.start, freeze_post_len: range.end }
+    // }
 
     // pub(crate) fn get(&self, pos: usize) -> Option<u8> {
     //     self.content.get(pos).copied()
     // }
 
-    // /// Returns the next run (run_start_index, run_length) that occurs after `start`, if one exists.
-    // pub(crate) fn next_filtered_run(
-    //     &self,
-    //     start: usize,
-    //     filter: &Filter,
-    // ) -> Option<(usize, usize)> {
-    //     debug_assert!(start < self.content.len());
+    /// Returns the next run (as a Replaceable with the corresponding frozen range)
+    /// that occurs on or after `start`, if one exists.
+    ///
+    /// # Safety
+    /// The caller must ensure that `start` is a valid UTF-8 index into `self.content`.
+    pub(crate) unsafe fn next_filtered_run(
+        &mut self,
+        start: usize,
+        filter: &Filter,
+    ) -> Option<Replaceable> {
+        debug_assert!(start < self.content.len());
+        debug_assert!(self.as_str().is_char_boundary(start));
 
-    //     let run_start = self.find_first_in(start, filter)?;
-    //     let run_end = self.find_first_out(run_start, filter)?;
-    //     let run_length = run_end - run_start;
+        let run_start;
+        let run_end;
+        if filter == Filter::all() {
+            // special case for the noop filter
 
-    //     Some((run_start, run_length))
-    // }
+            run_start = start;
+            run_end = self.content.len();
+        } else {
+            run_start = self.find_first_char(start, |c| filter.contains(c))?;
+            run_end = self.find_first_char(run_start, |c| !filter.contains(c)).unwrap_or(self.content.len());
+        }
 
-    // fn find_first_in(&self, start: usize, filter: &Filter) -> Option<usize> {
-    //     let tail = &self.as_str()[start..];
-    //     let (idx, _) = tail.char_indices().find(|&(_, c)| filter.contains(c))?;
-    //     Some(start + idx)
-    // }
+        Some(Replaceable {
+            content: self.content,
+            // safety: these uphold the invariants
+            freeze_pre_len: run_start,
+            freeze_post_len: self.content.len() - run_end,
+            // TODO: do we want this?
+            cursor: run_start,
+        })
+    }
 
-    // fn find_first_out(&self, start: usize, filter: &Filter) -> Option<usize> {
-    //     let tail = &self.as_str()[start..];
-    //     let (idx, _) = tail.char_indices().find(|&(_, c)| !filter.contains(c))?;
-    //     Some(start + idx)
-    // }
+    /// Returns the index of the first char in `self.content` that satisfies `f`,
+    /// starting at index `start`. The returned index is guaranteed to be a valid UTF-8 index.
+    ///
+    /// `start` must be a valid UTF-8 index into `self.content`.
+    fn find_first_char<F>(&self, start: usize, f: F) -> Option<usize>
+    where
+        F: Fn(char) -> bool,
+    {
+        let tail = &self.as_str()[start..];
+        let (idx, _) = tail.char_indices().find(|&(_, c)| f(c))?;
+        Some(start + idx)
+    }
+
+    /// Returns the current (exclusive) upper bound of the allowed range.
+    fn allowed_upper_bound(&self) -> usize {
+        self.content.len() - self.freeze_post_len
+    }
 }

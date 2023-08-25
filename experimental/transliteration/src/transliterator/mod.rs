@@ -161,17 +161,18 @@ impl<'a> RuleBasedTransliterator<'a> {
     ///  1. Split the input modifiable range of the Replaceable according into runs according to self.filter 
     ///  2. Transliterate each run in sequence 
     ///      i. Transliterate the first id_group, then the first rule_group, then the second id_group, etc.
-    // muster-child signature of internal transliteration. due to the borrowchecker we cannot work with &mut,
-    // and instead need to work with owned data that we pass back to the caller after we're done with it.
+    // muster-child signature of internal transliteration
     fn transliterate(&self, mut rep: Replaceable, env: &Env) {
-        // need to store rep's 
-
-        let first = rep.with_range(0..1);
-        drop(first);
-        let second = rep.with_range(2..3);
+        // assumes the cursor is at the right position.
 
         debug_assert_eq!(self.id_group_list.len(), self.rule_group_list.len());
+        debug_assert!(rep.allowed_range().contains(&rep.cursor()));
 
+        // TODO: https://unicode-org.atlassian.net/jira/software/c/projects/ICU/issues/ICU-22469
+        while let Some(filtered_run) = unsafe { rep.next_filtered_run(rep.cursor(), &self.filter) } {
+
+
+        }
     }
 
 
@@ -275,7 +276,10 @@ enum SpecialMatcher<'a> {
 enum SpecialReplacer<'a> {
     Compound(&'a str),
     FunctionCall(FunctionCall<'a>),
-    BackReference(u32),
+    BackReference(u16),
+    LeftPlaceholderCursor(u16),
+    RightPlaceholderCursor(u16),
+    PureCursor,
 }
 
 enum VarTableElement<'a> {
@@ -284,9 +288,12 @@ enum VarTableElement<'a> {
     Segment(&'a str),
     UnicodeSet(CodePointInversionListAndStringList<'a>),
     FunctionCall(FunctionCall<'a>),
-    BackReference(u32),
+    BackReference(u16),
     AnchorStart,
     AnchorEnd,
+    LeftPlaceholderCursor(u16),
+    RightPlaceholderCursor(u16),
+    PureCursor,
 }
 
 impl<'a> VarTableElement<'a> {
@@ -295,6 +302,9 @@ impl<'a> VarTableElement<'a> {
             VarTableElement::Compound(elt) => SpecialReplacer::Compound(elt),
             VarTableElement::FunctionCall(elt) => SpecialReplacer::FunctionCall(elt),
             VarTableElement::BackReference(elt) => SpecialReplacer::BackReference(elt),
+            VarTableElement::LeftPlaceholderCursor(elt) => SpecialReplacer::LeftPlaceholderCursor(elt),
+            VarTableElement::RightPlaceholderCursor(elt) => SpecialReplacer::RightPlaceholderCursor(elt),
+            VarTableElement::PureCursor => SpecialReplacer::PureCursor,
             _ => return None,
         })
     }
@@ -316,6 +326,7 @@ impl<'a> VarTable<'a> {
     // TODO: these must be the same as during datagen. Find some place to define them *once*
     const BASE: u32 = '\u{F0000}' as u32;
     const MAX_DYNAMIC: u32 = '\u{FFFF0}' as u32;
+    const RESERVED_PURE_CURSOR: u32 = '\u{FFFFB}' as u32;
     const RESERVED_ANCHOR_START: u32 = '\u{FFFFC}' as u32;
     const RESERVED_ANCHOR_END: u32 = '\u{FFFFD}' as u32;
 
@@ -385,9 +396,24 @@ impl<'a> VarTable<'a> {
             )));
         }
         idx -= next_base;
-        // idx must be a backreference (an u32 encoded as <itself> indices past the last valid VarZeroVec index)
-        // usize -> u32 conversion is valid because `idx` started out as u32 and was only subtracted from
-        Some(VarTableElement::BackReference(idx as u32))
+        next_base = self.max_left_placeholder_count as usize;
+        if idx < next_base {
+            // + 1 because index 0 represents 1 placeholder, etc.
+            // cast is guaranteed because query is inside a range of less than 2^16 elements
+            return Some(VarTableElement::LeftPlaceholderCursor(idx as u16 + 1));
+        }
+        idx -= next_base;
+        next_base = self.max_right_placeholder_count as usize;
+        if idx < next_base {
+            // + 1 because index 0 represents 1 placeholder, etc.
+            // cast is guaranteed because query is inside a range of less than 2^16 elements
+            return Some(VarTableElement::RightPlaceholderCursor(idx as u16 + 1));
+        }
+        idx -= next_base;
+        // idx must be a backreference (an u16 encoded as <itself> indices past the last valid other index)
+        // + 1 because index 0 represents $1, etc.
+        // cast is guaranteed because query is inside a range of less than 2^16 elements
+        Some(VarTableElement::BackReference(idx as u16 + 1))
     }
 
     fn lookup_matcher(&'a self, query: char) -> Option<SpecialMatcher<'a>> {
