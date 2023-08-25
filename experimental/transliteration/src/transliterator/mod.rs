@@ -22,7 +22,7 @@ use replaceable::*;
 use crate::provider::{FunctionCall, Rule, RuleULE, SimpleId, VarTable};
 use alloc::vec::Vec;
 use icu_collections::codepointinvliststringlist::CodePointInversionListAndStringList;
-use std::ops::RangeInclusive;
+use core::ops::RangeInclusive;
 use zerofrom::ZeroFrom;
 use zerovec::VarZeroSlice;
 
@@ -173,9 +173,9 @@ impl<'a> RuleBasedTransliterator<'a> {
         // TODO: https://unicode-org.atlassian.net/jira/software/c/projects/ICU/issues/ICU-22469
 
         rep.for_each_run(&self.filter, |run| {
-            eprintln!("got RBT filtered_run: {run:?}");
+            // eprintln!("got RBT filtered_run: {run:?}");
             self.transliterate_run(run, env);
-            eprintln!("finished RBT filtered_run transliteration: {run:?}")
+            // eprintln!("finished RBT filtered_run transliteration: {run:?}")
         });
     }
 
@@ -237,17 +237,17 @@ impl<'a> RuleGroup<'a> {
         // when a rule matches, apply its replacement and move the cursor according to the replacement
 
         'main: while !rep.is_finished() {
-            eprintln!("ongoing RuleGroup transliteration:\n{rep:?}");
+            // eprintln!("ongoing RuleGroup transliteration:\n{rep:?}");
             for rule in self.rules.iter() {
                 let rule: Rule = Rule::zero_from(rule);
-                eprintln!("trying rule: {rule:?}");
+                // eprintln!("trying rule: {rule:?}");
                 if let Some(data) = rule.matches(&rep, vt) {
                     rule.apply(&mut rep, data, vt, env);
                     // rule application is responsible for updating the cursor
                     continue 'main;
                 }
             }
-            eprintln!("no rule matched, moving cursor forward");
+            // eprintln!("no rule matched, moving cursor forward");
             // no rule matched, so just move the cursor forward by one code point
             rep.step_cursor();
         }
@@ -319,8 +319,7 @@ impl<'a> Rule<'a> {
 }
 
 mod helpers {
-    use crate::provider::VarTable;
-    use crate::transliterator::MatchData;
+    use super::*;
 
     pub(super) fn is_pure(s: &str) -> bool {
         !s.chars().any(|c| VarTable::ENCODE_RANGE.contains(&c))
@@ -425,7 +424,7 @@ impl<'a> SpecialMatcher<'a> {
         match self {
             Self::Compound(query) => helpers::match_encoded_str(query, input, match_data, vt),
             Self::UnicodeSet(set) => {
-                eprintln!("checking if set {set:?} matches input {input:?}");
+                // eprintln!("checking if set {set:?} matches input {input:?}");
 
                 // TODO: handle start anchors somehow
 
@@ -462,9 +461,9 @@ impl<'a> SpecialMatcher<'a> {
                 }
 
                 let input_c = input.chars().next()?;
-                eprintln!("checking if set {set:?} contains char {input_c:?}");
+                // eprintln!("checking if set {set:?} contains char {input_c:?}");
                 if set.contains_char(input_c) {
-                    eprintln!("contains!");
+                    // eprintln!("contains!");
                     return Some(input_c.len_utf8());
                 }
                 None

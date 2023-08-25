@@ -103,7 +103,7 @@ impl<'a> Replaceable<'a> {
             .next()
             .map(char::len_utf8)
             .unwrap_or(0);
-        eprintln!("step_cursor: {}", step_len);
+        // eprintln!("step_cursor: {}", step_len);
         self.cursor += step_len;
     }
 

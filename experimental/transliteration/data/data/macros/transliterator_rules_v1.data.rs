@@ -97,6 +97,17 @@ macro_rules! __impl_transliterator_rules_v1 {
                     rule_group_list: unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0") },
                     dependencies: zerovec::VarZeroVec::new(),
                 };
+                static UND__UND_T_UND_D0_TEST_M0_NIELS_S0_TEST: <icu::transliteration::provider::TransliteratorRulesV1Marker as icu_provider::DataMarker>::Yokeable = icu::transliteration::provider::RuleBasedTransliterator {
+                    visibility: true,
+                    variable_table: icu::transliteration::provider::VarTable { compounds: zerovec::VarZeroVec::new(), quantifiers_opt: zerovec::VarZeroVec::new(), quantifiers_kleene: zerovec::VarZeroVec::new(), quantifiers_kleene_plus: zerovec::VarZeroVec::new(), segments: zerovec::VarZeroVec::new(), unicode_sets: zerovec::VarZeroVec::new(), function_calls: zerovec::VarZeroVec::new(), max_left_placeholder_count: 0u16, max_right_placeholder_count: 0u16 },
+                    filter: unsafe {
+                        #[allow(unused_unsafe)]
+                        icu::collections::codepointinvlist::CodePointInversionList::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"a\0\0\0{\0\0\0") }, 26u32)
+                    },
+                    id_group_list: unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0") },
+                    rule_group_list: unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0\x01\0\0\0\0\0\x04\0\0\0\0\0\0\0\x03\0\0\0\x06\0\0\0\t\0\0\0abcdefghiDEF") },
+                    dependencies: zerovec::VarZeroVec::new(),
+                };
                 static UND__UND_ARAB_T_UND_BENG: <icu::transliteration::provider::TransliteratorRulesV1Marker as icu_provider::DataMarker>::Yokeable = icu::transliteration::provider::RuleBasedTransliterator {
                     visibility: true,
                     variable_table: icu::transliteration::provider::VarTable { compounds: zerovec::VarZeroVec::new(), quantifiers_opt: zerovec::VarZeroVec::new(), quantifiers_kleene: zerovec::VarZeroVec::new(), quantifiers_kleene_plus: zerovec::VarZeroVec::new(), segments: zerovec::VarZeroVec::new(), unicode_sets: zerovec::VarZeroVec::new(), function_calls: zerovec::VarZeroVec::new(), max_left_placeholder_count: 0u16, max_right_placeholder_count: 0u16 },
@@ -108,8 +119,8 @@ macro_rules! __impl_transliterator_rules_v1 {
                     rule_group_list: unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0") },
                     dependencies: unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x04\0\0\0\0\0\t\0\x12\0&\0x-any-nfcx-any-nfdx-bengali-interindicx-interindic-arabic") },
                 };
-                static VALUES: [&<icu::transliteration::provider::TransliteratorRulesV1Marker as icu_provider::DataMarker>::Yokeable; 9usize] = [&UND__DE_T_DE_D0_ASCII, &UND__EL_LATN_T_EL_M0_BGN, &UND__UND_ARAB_T_UND_BENG, &UND__UND_LATN_T_S0_ASCII, &UND__UND_T_D0_PUBLISH, &UND__UND_T_S0_PUBLISH, &UND__UND_T_UND_LATN_D0_ASCII, &UND__X_BENGALI_INTERINDIC, &UND__X_INTERINDIC_ARABIC];
-                static KEYS: [&str; 9usize] = ["und+de-t-de-d0-ascii", "und+el-Latn-t-el-m0-bgn", "und+und-Arab-t-und-Beng", "und+und-Latn-t-s0-ascii", "und+und-t-d0-publish", "und+und-t-s0-publish", "und+und-t-und-Latn-d0-ascii", "und+x-bengali-interindic", "und+x-interindic-arabic"];
+                static VALUES: [&<icu::transliteration::provider::TransliteratorRulesV1Marker as icu_provider::DataMarker>::Yokeable; 10usize] = [&UND__DE_T_DE_D0_ASCII, &UND__EL_LATN_T_EL_M0_BGN, &UND__UND_ARAB_T_UND_BENG, &UND__UND_LATN_T_S0_ASCII, &UND__UND_T_D0_PUBLISH, &UND__UND_T_S0_PUBLISH, &UND__UND_T_UND_LATN_D0_ASCII, &UND__UND_T_UND_D0_TEST_M0_NIELS_S0_TEST, &UND__X_BENGALI_INTERINDIC, &UND__X_INTERINDIC_ARABIC];
+                static KEYS: [&str; 10usize] = ["und+de-t-de-d0-ascii", "und+el-Latn-t-el-m0-bgn", "und+und-Arab-t-und-Beng", "und+und-Latn-t-s0-ascii", "und+und-t-d0-publish", "und+und-t-s0-publish", "und+und-t-und-Latn-d0-ascii", "und+und-t-und-d0-test-m0-niels-s0-test", "und+x-bengali-interindic", "und+x-interindic-arabic"];
                 if let Ok(payload) = KEYS.binary_search_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse()).map(|i| *unsafe { VALUES.get_unchecked(i) }) {
                     Ok(icu_provider::DataResponse { payload: Some(icu_provider::DataPayload::from_static_ref(payload)), metadata: Default::default() })
                 } else {
