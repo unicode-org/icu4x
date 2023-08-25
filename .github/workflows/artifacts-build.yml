@@ -194,7 +194,7 @@ jobs:
     - name: "⭐⭐⭐ Links to Uploaded Artifacts ⭐⭐⭐"
       run: |
         echo "::group::Wasm Demo Preview"
-        echo "https://storage.googleapis.com/${{ env.GCP_MAIN_BUCKET_ID }}/gha/wasm-demo/index.html"
+        echo "https://storage.googleapis.com/${{ env.GCP_MAIN_BUCKET_ID }}/gha/wasm-demo/dist/index.html"
         echo "::endgroup::"
 
   bench-perf:
