@@ -41,6 +41,8 @@ struct MutVarTable {
     segments: MutVarTableField<String>,
     unicode_sets: MutVarTableField<UnicodeSet>,
     function_calls: MutVarTableField<ds::FunctionCall<'static>>,
+    left_placeholder_base: u32,
+    right_placeholder_base: u32,
     backref_base: u32,
     counts: SpecialConstructCounts,
 }
@@ -48,6 +50,7 @@ struct MutVarTable {
 impl MutVarTable {
     const BASE: u32 = '\u{F0000}' as u32;
     const MAX_DYNAMIC: u32 = '\u{FFFF0}' as u32;
+    const RESERVED_PURE_CURSOR: char = '\u{FFFFB}';
     const RESERVED_ANCHOR_START: char = '\u{FFFFC}';
     const RESERVED_ANCHOR_END: char = '\u{FFFFD}';
 
@@ -65,6 +68,14 @@ impl MutVarTable {
             quantifiers_kleene_plus_base + counts.num_quantifiers_kleene_plus as u32;
         let unicode_sets_base = segments_base + counts.num_segments as u32;
         let function_calls_base = unicode_sets_base + counts.num_unicode_sets as u32;
+
+        let left_placeholder_base = function_calls_base + counts.num_function_calls as u32;
+
+        // if placeholders needed to encode 0, we would need to add 1 to this. they don't, so this
+        // is fine.
+        let right_placeholder_base = left_placeholder_base + counts.max_left_placeholders;
+        // same here
+        let backref_base = right_placeholder_base + counts.max_right_placeholders;
 
         Ok(Self {
             compounds: MutVarTableField {
@@ -103,7 +114,9 @@ impl MutVarTable {
                 current: function_calls_base,
             },
             counts,
-            backref_base: function_calls_base + counts.num_function_calls as u32,
+            left_placeholder_base,
+            right_placeholder_base,
+            backref_base,
         })
     }
 
@@ -140,6 +153,26 @@ impl MutVarTable {
         backref_base
     );
 
+    fn standin_for_cursor(&self, left: u32, right: u32) -> char {
+        match (left, right) {
+            (0, 0) => Self::RESERVED_PURE_CURSOR,
+            (left, 0) => {
+                debug_assert!(left <= self.counts.max_left_placeholders);
+                #[allow(clippy::unwrap_used)] // constructor checks this via num_totals
+                char::try_from(self.left_placeholder_base + left - 1).unwrap()
+            }
+            (0, right) => {
+                debug_assert!(right <= self.counts.max_right_placeholders);
+                #[allow(clippy::unwrap_used)] // constructor checks this via num_totals
+                char::try_from(self.right_placeholder_base + right - 1).unwrap()
+            }
+            _ => {
+                // validation catches (>0, >0) cases
+                unreachable!()
+            }
+        }
+    }
+
     fn standin_for_backref(&self, backref_num: u32) -> char {
         debug_assert!(backref_num > 0);
         // -1 because backrefs are 1-indexed
@@ -161,6 +194,10 @@ impl MutVarTable {
             segments: VarZeroVec::from(&self.segments.vec),
             unicode_sets: VarZeroVec::from(&self.unicode_sets.vec),
             function_calls: VarZeroVec::from(&self.function_calls.vec),
+            // these casts are safe, because the constructor checks that everything is in range,
+            // and the range has a length of less than 2^16
+            max_left_placeholder_count: self.counts.max_left_placeholders as u16,
+            max_right_placeholder_count: self.counts.max_right_placeholders as u16,
         }
     }
 
@@ -277,13 +314,11 @@ impl<'a, 'p> Pass2<'a, 'p> {
         let key = self.compile_section(rule.key, parse::ElementLocation::Source);
         let post = self.compile_section(rule.post, parse::ElementLocation::Source);
         let replacer = self.compile_section(rule.replacement, parse::ElementLocation::Target);
-        let cursor_offset = rule.cursor_offset;
         ds::Rule {
             ante: ante.into(),
             key: key.into(),
             post: post.into(),
             replacer: replacer.into(),
-            cursor_offset,
         }
     }
 
@@ -368,9 +403,8 @@ impl<'a, 'p> Pass2<'a, 'p> {
                 });
                 LiteralOrStandin::Standin(standin)
             }
-            parse::Element::Cursor(..) => {
-                // TODO(#3736): compile this
-                LiteralOrStandin::Literal("")
+            &parse::Element::Cursor(pre, post) => {
+                LiteralOrStandin::Standin(self.var_table.standin_for_cursor(pre, post))
             }
         }
     }
