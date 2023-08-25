@@ -87,6 +87,27 @@ impl<'a> Replaceable<'a> {
         self.cursor
     }
 
+    /// Sets the cursor.
+    ///
+    /// # Safety
+    /// The caller must ensure that `cursor` is a valid UTF-8 index into `self.content`.
+    pub(crate) unsafe fn set_cursor(&mut self, cursor: usize) {
+        // TODO: check that it's inside the non-ignored range (outside frozen is okay)
+        self.cursor = cursor;
+    }
+
+    /// Returns the index of the first char outside the modifiable range.
+    ///
+    /// This is guaranteed to be a valid UTF-8 index into `self.content`.
+    pub(crate) fn finished_cursor(&self) -> usize {
+        self.allowed_upper_bound()
+    }
+
+    /// Returns true if the cursor is at the end of the modifiable range.
+    pub(crate) fn is_finished(&self) -> bool {
+        self.cursor == self.finished_cursor()
+    }
+
     // pub(crate) fn with_range(&mut self, range: Range<usize>) -> Replaceable {
     //     Replaceable { content: self.content, freeze_pre_len: range.start, freeze_post_len: range.end }
     // }

@@ -169,9 +169,11 @@ impl<'a> RuleBasedTransliterator<'a> {
         debug_assert!(rep.allowed_range().contains(&rep.cursor()));
 
         // TODO: https://unicode-org.atlassian.net/jira/software/c/projects/ICU/issues/ICU-22469
+        // TODO: could move the filtered_transliterate functionality on Replaceable, with some generic
+        //  T: InternalTransliterator argument maybe?
         while let Some(filtered_run) = unsafe { rep.next_filtered_run(rep.cursor(), &self.filter) } {
-
-
+            self.transliterate_run(filtered_run, env);
+            rep.set_cursor(filtered_run.allowed_range().end)
         }
     }
 
