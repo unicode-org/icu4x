@@ -7,9 +7,6 @@
 /// The minimum year present in CHINESE_DATA_ARRAY
 pub(crate) const MIN_YEAR: i32 = 4660;
 
-/// The maximum year present in CHINESE_DATA_ARRAY
-pub(crate) const MAX_YEAR: i32 = 4660;
-
 /// The struct containing compiled ChineseData
 #[derive(Debug, Copy, Clone)]
 pub(crate) struct ChineseData(pub(crate) u8, pub(crate) u8, pub(crate) u8);

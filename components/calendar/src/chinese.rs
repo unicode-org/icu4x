@@ -390,16 +390,16 @@ impl ChineseBased for Chinese {
     const EPOCH: RataDie = CHINESE_EPOCH;
 
     fn get_compiled_data_for_year(year: i32) -> Option<ChineseBasedCompiledData> {
-        if (chinese_data::MIN_YEAR..=chinese_data::MAX_YEAR).contains(&year) {
-            #[allow(clippy::indexing_slicing)]
-            // indexing is ok because the if statement checks for bounds
-            let packed_data =
-                chinese_data::CHINESE_DATA_ARRAY[(year - chinese_data::MIN_YEAR) as usize];
-            #[allow(clippy::indexing_slicing)]
-            // indexing is ok because the if statement checks for bounds
-            let next_year_data =
-                chinese_data::CHINESE_DATA_ARRAY[(year - chinese_data::MIN_YEAR + 1) as usize];
-            Some(Self::unpack_chinese_data(year, packed_data, next_year_data))
+        let offset_year = (year - chinese_data::MIN_YEAR) as usize;
+        if let (Some(packed_data), Some(next_year_data)) = (
+            chinese_data::CHINESE_DATA_ARRAY.get(offset_year),
+            chinese_data::CHINESE_DATA_ARRAY.get(offset_year + 1),
+        ) {
+            Some(Self::unpack_chinese_data(
+                year,
+                *packed_data,
+                *next_year_data,
+            ))
         } else {
             None
         }
