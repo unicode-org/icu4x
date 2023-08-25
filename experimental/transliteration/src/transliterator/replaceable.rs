@@ -2,10 +2,10 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use core::ops::Range;
-use core::str;
 use alloc::string::String;
 use alloc::vec::Vec;
+use core::ops::Range;
+use core::str;
 
 use super::Filter;
 
@@ -23,7 +23,7 @@ pub(crate) struct Replaceable<'a> {
     // note: for Function Calls (that only "see" the input argument), we also need a "ignore_pre_len" and "ignore_post_len", probably
 }
 
-// note: would be great to have something like Replaceable::replace_range(&mut self, range) -> &mut Insertable 
+// note: would be great to have something like Replaceable::replace_range(&mut self, range) -> &mut Insertable
 // where Insertable supports things like pushing chars, strs, etc, and they would directly go to the corresponding range
 // of the backing Vec<u8>. pushing more things than range.len would reallocate the backing vec to make space on the fly,
 // pushing fewer things than range.len would move around the tail of the Vec on Insertable::drop to fill the "empty space".
@@ -48,7 +48,7 @@ impl<'a> Replaceable<'a> {
     }
 
     /// Returns the full current content as a `&str`.
-    fn as_str(&self) -> &str {
+    pub(crate) fn as_str(&self) -> &str {
         debug_assert!(str::from_utf8(&self.content[..]).is_ok());
         // SAFETY: Replaceable's invariant states that content is always valid UTF-8
         unsafe { str::from_utf8_unchecked(&self.content[..]) }
@@ -65,6 +65,13 @@ impl<'a> Replaceable<'a> {
         &self.as_str()[self.cursor..self.allowed_upper_bound()]
     }
 
+    /// Returns the current content after the cursor as a `&str`. `key_match_len` is the length of
+    /// the key match and must be a valid UTF-8 index into `self.content`.
+    pub(crate) fn as_str_post(&self, key_match_len: usize) -> &str {
+        // TODO: use ignore thing as upper bound
+        &self.as_str()[(self.cursor + key_match_len)..]
+    }
+
     // TODO: this is unsafe, need to guarantee pos/len are valid for UTF-8
     pub(crate) fn freeze_at(&mut self, pos: usize, len: usize) {
         debug_assert!(pos < self.content.len() && len <= self.content.len() - pos);
@@ -74,7 +81,7 @@ impl<'a> Replaceable<'a> {
     }
 
     /// Returns the range of bytes that are currently allowed to be modified.
-    /// 
+    ///
     /// This is guaranteed to be a range compatible with the internal UTF-8.
     pub(crate) fn allowed_range(&self) -> Range<usize> {
         self.freeze_pre_len..self.allowed_upper_bound()
@@ -85,6 +92,16 @@ impl<'a> Replaceable<'a> {
     /// This is guaranteed to be a valid UTF-8 index into `self.content`.
     pub(crate) fn cursor(&self) -> usize {
         self.cursor
+    }
+
+    /// Advances the cursor by one char.
+    pub(crate) fn step_cursor(&mut self) {
+        let step_len = self.as_str()[self.cursor..]
+            .char_indices()
+            .next()
+            .map(|(i, c)| i)
+            .unwrap_or(0);
+        self.cursor += step_len;
     }
 
     /// Sets the cursor.
@@ -116,6 +133,18 @@ impl<'a> Replaceable<'a> {
     //     self.content.get(pos).copied()
     // }
 
+    /// Returns a `Replaceable` with the same content as the current one.
+    ///
+    /// This is useful for repeated transliterations of the same modifiable range.
+    pub(crate) fn child(&mut self) -> Replaceable {
+        Replaceable {
+            content: self.content,
+            freeze_pre_len: self.freeze_pre_len,
+            freeze_post_len: self.freeze_post_len,
+            cursor: self.cursor,
+        }
+    }
+
     /// Returns the next run (as a Replaceable with the corresponding frozen range)
     /// that occurs on or after `start`, if one exists.
     ///
@@ -129,16 +158,20 @@ impl<'a> Replaceable<'a> {
         debug_assert!(start < self.content.len());
         debug_assert!(self.as_str().is_char_boundary(start));
 
+        // TODO: might need to assert start is within the modifiable range
+
         let run_start;
         let run_end;
-        if filter == Filter::all() {
+        if filter == &Filter::all() {
             // special case for the noop filter
 
             run_start = start;
             run_end = self.content.len();
         } else {
             run_start = self.find_first_char(start, |c| filter.contains(c))?;
-            run_end = self.find_first_char(run_start, |c| !filter.contains(c)).unwrap_or(self.content.len());
+            run_end = self
+                .find_first_char(run_start, |c| !filter.contains(c))
+                .unwrap_or(self.content.len());
         }
 
         Some(Replaceable {

@@ -8,10 +8,10 @@ use core::ops::Range;
 
 use crate::provider::{RuleBasedTransliterator, TransliteratorRulesV1Marker};
 use crate::TransliteratorError;
-use core::str;
 use alloc::borrow::Cow;
 use alloc::boxed::Box;
 use alloc::string::{String, ToString};
+use core::str;
 use icu_collections::codepointinvlist::CodePointInversionList;
 use icu_provider::_internal::locid::Locale;
 use icu_provider::{DataError, DataLocale, DataPayload, DataProvider, DataRequest};
@@ -21,6 +21,7 @@ use replaceable::*;
 
 use crate::provider::{FunctionCall, Rule, RuleULE, SimpleId, VarTable};
 use alloc::vec::Vec;
+use std::ops::RangeInclusive;
 use icu_collections::codepointinvliststringlist::CodePointInversionListAndStringList;
 use zerofrom::ZeroFrom;
 use zerovec::VarZeroSlice;
@@ -29,7 +30,7 @@ type Filter<'a> = CodePointInversionList<'a>;
 
 pub trait CustomTransliterator {
     /// Transliterate the portion of the input string specified by the byte indices in the range.
-    /// 
+    ///
     /// The returned `String` should just be the transliteration of `input[range]`.
     fn transliterate(&self, input: &str, range: Range<usize>) -> String;
 }
@@ -126,6 +127,7 @@ impl Transliterator {
         P: DataProvider<TransliteratorRulesV1Marker>,
     {
         if let Some(special) = id.strip_prefix("x-") {
+            // TODO: add more
             match special {
                 "Any-NFC" => Ok(InternalTransliterator::NFC(NFCTransliterator {})),
                 _ => Ok(InternalTransliterator::NFC(NFCTransliterator {})),
@@ -158,8 +160,8 @@ impl Transliterator {
 
 impl<'a> RuleBasedTransliterator<'a> {
     /// Transliteration using rules works as follows:
-    ///  1. Split the input modifiable range of the Replaceable according into runs according to self.filter 
-    ///  2. Transliterate each run in sequence 
+    ///  1. Split the input modifiable range of the Replaceable according into runs according to self.filter
+    ///  2. Transliterate each run in sequence
     ///      i. Transliterate the first id_group, then the first rule_group, then the second id_group, etc.
     // muster-child signature of internal transliteration
     fn transliterate(&self, mut rep: Replaceable, env: &Env) {
@@ -169,96 +171,185 @@ impl<'a> RuleBasedTransliterator<'a> {
         debug_assert!(rep.allowed_range().contains(&rep.cursor()));
 
         // TODO: https://unicode-org.atlassian.net/jira/software/c/projects/ICU/issues/ICU-22469
-        // TODO: could move the filtered_transliterate functionality on Replaceable, with some generic
+        // TODO: could move the filtered_transliterate functionality (this while loop) on Replaceable, with some generic
         //  T: InternalTransliterator argument maybe?
-        while let Some(filtered_run) = unsafe { rep.next_filtered_run(rep.cursor(), &self.filter) } {
+        while let Some(filtered_run) = unsafe { rep.next_filtered_run(rep.cursor(), &self.filter) }
+        {
+            let finished_cursor = filtered_run.finished_cursor();
             self.transliterate_run(filtered_run, env);
-            rep.set_cursor(filtered_run.allowed_range().end)
+            unsafe {
+                // TODO: the transliteration runs have to assert themselves that they did a complete transliteration
+                // SAFETY: finished_cursor() returns a valid UTF-8 index
+                rep.set_cursor(finished_cursor);
+            }
         }
     }
 
+    /// Transliteration of a single run, i.e., without needing to look at the filter.
+    fn transliterate_run(&self, mut rep: Replaceable, env: &Env) {
+        // assumes the cursor is at the right position.
+        debug_assert!(rep.allowed_range().contains(&rep.cursor()));
 
+        for (id_group, rule_group) in self.id_group_list.iter().zip(self.rule_group_list.iter()) {
+            // first handle id_group
+            for single_id in id_group.iter() {
+                let id = SimpleId::zero_from(single_id);
+                id.transliterate(rep.child(), env);
+            }
 
-
-    //     // first: process the groups in order, i.e., id_group_list[0], rule_group_list[0], id_group_list[1], rule_group_list[1], ...
-    //     for (id_group, rule_group) in self.id_group_list.iter().zip(self.rule_group_list.iter()) {
-    //         // first handle id_group
-    //         for single_id in id_group.iter() {
-    //             let id = SimpleId::zero_from(single_id);
-    //             let transliterated = self.transliterate_nested(
-    //                 id,
-    //                 unsafe { str::from_utf8_unchecked(&buf[..]) },
-    //                 &filter,
-    //                 env,
-    //             );
-    //             buf = transliterated.into_bytes();
-    //         }
-
-    //         // then handle rule_group
-    //         let transliterated = self.transliterate_rule_group(
-    //             rule_group,
-    //             unsafe { str::from_utf8_unchecked(&buf[..]) },
-    //             &filter,
-    //             env,
-    //         );
-    //         buf = transliterated.into_bytes();
-    //     }
-
-    //     unsafe { String::from_utf8_unchecked(buf) }
-    // }
-
-    // fn transliterate_nested(
-    //     &self,
-    //     id: SimpleId<'a>,
-    //     input: &str,
-    //     filter: &FilterChain,
-    //     env: &Env<'a>,
-    // ) -> String {
-    //     let filter = filter.add(&id.filter);
-    //     // this get succeeds for valid RBT serializations
-    //     if let Some(transliterator) = env.get(&id.id) {
-    //         return transliterator.transliterate(input, &filter, env);
-    //     }
-    //     // GIGO, we don't want to panic
-    //     String::new()
-    // }
-
-    // fn transliterate_rule_group(
-    //     &self,
-    //     rules: &VarZeroSlice<RuleULE>,
-    //     input: &str,
-    //     filter: &FilterChain,
-    //     env: &Env<'a>,
-    // ) -> String {
-    //     // for (start_index, run_length) in filtered_runs...
-
-    //     for rule in rules.iter() {
-    //         let rule = Rule::zero_from(rule);
-    //         let transliterated = self.transliterate_rule(rule, input, env);
-    //     }
-
-    //     String::new()
-    // }
-
-    // fn transliterate_rule(&self, rule: Rule<'a>, input: &str, env: &Env<'a>) -> String {
-    //     String::new()
-    // }
-
-    // // returns the byte-length of the run after transliteration
-    // fn transliterate_run(
-    //     &self,
-    //     inout: &mut Vec<u8>,
-    //     start_index: usize,
-    //     run_length: usize,
-    //     env: &Env<'a>,
-    // ) -> usize {
-    //     let stop_when_remaining_length_is = inout.len() - start_index - run_length;
-    //     let mut cursor = start_index;
-    //     let mut remaining_length = run_length;
-    //     0
-    // }
+            // then handle rule_group
+            let rule_group = RuleGroup::from(rule_group);
+            rule_group.transliterate(rep.child(), &self.variable_table, env);
+        }
+    }
 }
 
+impl<'a> SimpleId<'a> {
+    fn transliterate(&self, mut rep: Replaceable, env: &Env) {
+        // again split into runs based on self.filter and then transliterate_run
+    }
+}
+
+struct RuleGroup<'a> {
+    rules: &'a VarZeroSlice<RuleULE>,
+}
+
+impl<'a> RuleGroup<'a> {
+    fn from(rules: &'a VarZeroSlice<RuleULE>) -> Self {
+        Self { rules }
+    }
+
+    fn transliterate(&self, mut rep: Replaceable, vt: &VarTable, env: &Env) {
+        // no need to split into runs, because a RuleGroup has no filters.
+
+        // while the cursor has not reached the end yet, keep trying to apply each rule in order.
+        // when a rule matches, apply its replacement and move the cursor according to the replacement
+
+        'main: while !rep.is_finished() {
+            for rule in self.rules.iter() {
+                let rule: Rule = Rule::zero_from(rule);
+                if let Some(data) = rule.matches(&rep, vt) {
+                    rule.apply(&mut rep, data, vt, env);
+                    // rule application is responsible for updating the cursor
+                    continue 'main;
+                }
+            }
+            // no rule matched, so just move the cursor forward by one code point
+            rep.step_cursor();
+        }
+    }
+}
+
+
+
+impl<'a> Rule<'a> {
+    /// Returns `None` if there is no match. If there is a match, returns the associated
+    /// [`MatchData`].
+    fn matches(&self, rep: &Replaceable, vt: &VarTable) -> Option<MatchData> {
+        let mut match_data = MatchData::new();
+
+        let ante_input = rep.as_str_ante();
+        if !self.ante_matches(ante_input, &mut match_data, vt) {
+            return None;
+        }
+
+        let key_input = rep.as_str_key();
+        let key_match_len = self.key_matches(key_input, &mut match_data, vt)?;
+
+        let post_input = rep.as_str_post(key_match_len);
+        if !self.post_matches(post_input, &mut match_data, vt) {
+            return None;
+        }
+
+        Some(match_data)
+    }
+
+    /// Returns whether there is a match for ante. Fills segments in `match_data` if applicable.
+    fn ante_matches(&self, input: &str, match_data: &mut MatchData, vt: &VarTable) -> bool {
+        // note: this could be precomputed + stored at datagen time
+        // (there could eg be a reserved char that is at the start/end of ante <=> ante is pure)
+        if helpers::is_pure(&self.ante) {
+            return input.ends_with(self.ante.as_ref());
+        }
+
+
+
+        false
+    }
+
+    /// Returns whether there is a match for post. Fills segments in `match_data` if applicable.
+    fn post_matches(&self, input: &str, match_data: &mut MatchData, vt: &VarTable) -> bool {
+        helpers::match_encoded_str(&self.post, input, match_data, vt).is_some()
+    }
+
+    /// Returns `None` if the key does not match. If there is a match, returns the length of the
+    /// match. Fills in `match_data` if applicable.
+    fn key_matches(&self, input: &str, match_data: &mut MatchData, vt: &VarTable) -> Option<usize> {
+        helpers::match_encoded_str(&self.key, input, match_data, vt)
+    }
+}
+
+mod helpers {
+    use crate::provider::VarTable;
+    use crate::transliterator::MatchData;
+
+    pub(super) fn is_pure(s: &str) -> bool {
+        s.chars().any(|c| VarTable::ENCODE_RANGE.contains(&c))
+    }
+
+    pub(super) fn match_encoded_str(query: &str, input: &str, match_data: &mut MatchData, vt: &VarTable) -> Option<usize> {
+        // note: this could be precomputed + stored at datagen time
+        // (there could eg be a reserved char that is at the start/end of key <=> key is pure)
+        if is_pure(query) {
+            return if input.starts_with(query) {
+                Some(query.len())
+            } else {
+                None
+            }
+        }
+
+        let mut remaining_input_to_match = input;
+        // iterate char-by-char, and try to match each char
+        // note: might be good to avoid the UTF-8 => char conversion?
+        for query_c in query.chars() {
+            if !VarTable::ENCODE_RANGE.contains(&query_c) {
+                // regular char
+                // note: could have InputMatcher that wraps the &str and has match_and_consume functionality. keeps a ref to the vartable
+                let (len, input_c) = remaining_input_to_match
+                    .char_indices()
+                    .next()?;
+                if query_c != input_c {
+                    return None;
+                }
+                remaining_input_to_match = &remaining_input_to_match[len..];
+                continue;
+            }
+            // must be special matcher
+
+            let matcher = match vt.lookup_matcher(query_c) {
+                Some(matcher) => matcher,
+                None => {
+                    debug_assert!(false, "invalid encoded char");
+                    // GIGO behavior. we just skip invalid encoded chars
+                    continue;
+                }
+            };
+            let len = matcher.matches(remaining_input_to_match, match_data, vt)?;
+            remaining_input_to_match = &remaining_input_to_match[len..];
+        }
+
+        None
+    }
+}
+
+/// Stores the state for a single conversion rule.
+struct MatchData {}
+
+impl MatchData {
+    fn new() -> Self {
+        Self {}
+    }
+}
 
 enum QuantifierKind {
     ZeroOrOne,
@@ -273,6 +364,59 @@ enum SpecialMatcher<'a> {
     UnicodeSet(CodePointInversionListAndStringList<'a>),
     AnchorStart,
     AnchorEnd,
+}
+
+impl<'a> SpecialMatcher<'a> {
+    /// Returns `None` if the input does not match. If there is a match, returns the length of the
+    /// match.
+    fn matches(&self, input: &str, match_data: &mut MatchData, vt: &VarTable) -> Option<usize> {
+        match self {
+            Self::Compound(query) => helpers::match_encoded_str(query, input, match_data, vt),
+            Self::UnicodeSet(set) => {
+                // TODO: handle start anchors somehow
+
+                // TODO: check in which order a unicodeset matches
+                //  (chars first? strings first? longest first? shortest first?)
+                //  ICU4J: UnicodeSet::matches says strings first, longest first, then chars
+                //  TODO ^ add this to gdoc
+
+                if input.is_empty() {
+                    // the only way an empty input is matched by a set
+                    return set.contains("").then_some(0);
+                }
+
+                let mut max_str_match = None;
+                for s in set.strings() {
+                    // strings are sorted. we can optimize by early-breaking when we encounter
+                    // an `s` that is lexicographically larger than `input`
+
+                    if input.starts_with(s) {
+                        max_str_match = max_str_match.map(|m| m.max(s.len())).or(Some(s.len()));
+                        continue;
+                    }
+
+                    match (s.chars().next(), input.chars().next()) {
+                        // break early. since s_c is > input_c, we know that s > input, thus all
+                        // strings from here on out are > input, and thus cannot match
+                        (Some(s_c), Some(input_c)) if s_c > input_c => break,
+                        _ => (),
+                    }
+                }
+                if let Some(max) = max_str_match {
+                    // some string matched
+                    return Some(max);
+                }
+
+                let input_c = input.chars().next()?;
+                if set.contains_char(input_c) {
+                    return Some(input_c.len_utf8());
+                }
+                None
+            }
+            // TODO: do more
+            _ => None,
+        }
+    }
 }
 
 enum SpecialReplacer<'a> {
@@ -304,8 +448,12 @@ impl<'a> VarTableElement<'a> {
             VarTableElement::Compound(elt) => SpecialReplacer::Compound(elt),
             VarTableElement::FunctionCall(elt) => SpecialReplacer::FunctionCall(elt),
             VarTableElement::BackReference(elt) => SpecialReplacer::BackReference(elt),
-            VarTableElement::LeftPlaceholderCursor(elt) => SpecialReplacer::LeftPlaceholderCursor(elt),
-            VarTableElement::RightPlaceholderCursor(elt) => SpecialReplacer::RightPlaceholderCursor(elt),
+            VarTableElement::LeftPlaceholderCursor(elt) => {
+                SpecialReplacer::LeftPlaceholderCursor(elt)
+            }
+            VarTableElement::RightPlaceholderCursor(elt) => {
+                SpecialReplacer::RightPlaceholderCursor(elt)
+            }
             VarTableElement::PureCursor => SpecialReplacer::PureCursor,
             _ => return None,
         })
@@ -332,6 +480,8 @@ impl<'a> VarTable<'a> {
     const RESERVED_ANCHOR_START: u32 = '\u{FFFFC}' as u32;
     const RESERVED_ANCHOR_END: u32 = '\u{FFFFD}' as u32;
 
+    const ENCODE_RANGE: RangeInclusive<char> = '\u{F0000}'..='\u{FFFFD}';
+
     fn lookup(&'a self, query: char) -> Option<VarTableElement<'a>> {
         let query = query as u32;
         if query < Self::BASE {
@@ -339,6 +489,7 @@ impl<'a> VarTable<'a> {
         }
         if query > Self::MAX_DYNAMIC {
             return match query {
+                Self::RESERVED_PURE_CURSOR => Some(VarTableElement::PureCursor),
                 Self::RESERVED_ANCHOR_END => Some(VarTableElement::AnchorEnd),
                 Self::RESERVED_ANCHOR_START => Some(VarTableElement::AnchorStart),
                 _ => None,
