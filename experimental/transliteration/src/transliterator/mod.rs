@@ -565,7 +565,7 @@ mod helpers {
             }
         }
 
-        // matched the fully query string successfully
+        // matched the full query string successfully
         true
     }
 
@@ -606,7 +606,7 @@ mod helpers {
             }
         }
 
-        // matched the fully query string successfully
+        // matched the full query string successfully
         true
     }
 }
