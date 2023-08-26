@@ -288,6 +288,8 @@ impl<'a> RuleGroup<'a> {
         //  text
         //  I would say yes: https://util.unicode.org/UnicodeJsps/transform.jsp?a=%23+%3A%3A+%5Ba%5D%3B%0D%0A%0D%0Ad+%7B+x%3F+%3E+match+%3B&b=db
         //  So add to gdoc.
+        //  Actually, this is what I'm talking about: https://util.unicode.org/UnicodeJsps/transform.jsp?a=%23+%3A%3A+%5Ba%5D%3B%0D%0A%0D%0Ad+%7B+x%3F+%3E+match+%3B&b=d
+        //  no empty match at the end.
         'main: while !rep.is_finished() {
             eprintln!("ongoing RuleGroup transliteration:\n{rep:?}");
             for rule in self.rules.iter() {
@@ -1236,6 +1238,24 @@ mod tests {
     use super::*;
 
     #[test]
+    fn test_empty_matches() {
+        let cases = [
+            ("ax", "amatch"),
+            ("a", "a"),
+            ("a1", "amatch1"),
+            ("b", "b"),
+            ("b1", "bmatch1"),
+        ];
+
+        let t =
+            Transliterator::try_new("und-t-und-s0-test-d0-test-m0-emtymach".parse().unwrap()).unwrap();
+
+        for (input, output) in cases {
+            assert_eq!(t.transliterate(input.to_string()), output);
+        }
+    }
+
+    #[test]
     fn test_recursive_suite() {
         let t =
             Transliterator::try_new("und-t-und-s0-test-d0-test-m0-rectestr".parse().unwrap()).unwrap();
@@ -1266,7 +1286,7 @@ mod tests {
     }
 
     #[test]
-    fn test() {
+    fn test_de_ascii() {
         let t = Transliterator::try_new("de-t-de-d0-ascii".parse().unwrap()).unwrap();
         let input =
             "Über ältere Lügner lästern ist sehr a\u{0308}rgerlich. Ja, SEHR ÄRGERLICH! - ꜵ";
