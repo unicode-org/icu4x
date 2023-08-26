@@ -35,14 +35,17 @@ pub(crate) struct Replaceable<'a> {
 
 impl<'a> Replaceable<'a> {
     /// # Safety
-    /// The caller must ensure `buf` is valid UTF-8.
-    pub(crate) unsafe fn new(buf: &'a mut Vec<u8>) -> Self {
+    /// The caller must ensure `buf` is valid UTF-8 and that `visible_range` is a valid UTF-8 range.
+    pub(crate) unsafe fn new(buf: &'a mut Vec<u8>, visible_range: Range<usize>) -> Self {
+        // for now, only ignored prefixes are allowed
+        debug_assert!(visible_range.end == buf.len());
+        debug_assert!(visible_range.start <= buf.len());
         Self {
             content: buf,
             // these uphold the invariants
             freeze_pre_len: 0,
             freeze_post_len: 0,
-            ignore_pre_len: 0,
+            ignore_pre_len: visible_range.start,
             cursor: 0,
         }
     }
@@ -65,21 +68,6 @@ impl<'a> Replaceable<'a> {
 
         // SAFETY: the caller ensures that this is a valid index after the replacement is applied.
         self.set_cursor(new_cursor);
-    }
-
-    /// Sets the first `ignore_pre_len` bytes of the content to be _completely_ ignored.
-    ///
-    /// # Safety
-    /// The caller must ensure that `ignore_pre_len` is a valid UTF-8 index into `self.content`.
-    pub(crate) unsafe fn set_ignore_pre_len(&mut self, ignore_pre_len: usize) {
-        // TODO: maybe move this function in the constructor?
-        eprintln!(
-            "set_ignore_pre_len called with ignore_pre_len: {}",
-            ignore_pre_len
-        );
-        eprintln!("on self: {self:?}");
-        self.ignore_pre_len = ignore_pre_len;
-        eprintln!("on self: {self:?}");
     }
 
     /// Returns the full current content as a `&str`.

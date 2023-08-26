@@ -192,8 +192,9 @@ impl Transliterator {
 
     pub fn transliterate(&self, input: String) -> String {
         let mut buffer = input.into_bytes();
-        // SAFETY: buffer is constructed from a String
-        let rep = unsafe { Replaceable::new(&mut buffer) };
+        let visible_range = 0..buffer.len();
+        // SAFETY: buffer is constructed from a String and visible_range is the entire buffer
+        let rep = unsafe { Replaceable::new(&mut buffer, visible_range) };
         self.transliterator.get().transliterate(rep, &self.env);
         debug_assert!(str::from_utf8(&buffer[..]).is_ok());
         // SAFETY: Replaceable's invariants ensure that buffer is always valid UTF-8
@@ -1062,17 +1063,16 @@ impl<'a> SpecialReplacer<'a> {
 
                 eprintln!("buf before function call: {buf:?}");
 
-                let start = buf.len();
-
-                // no cursor offsets allowed here
+                let visible_start = buf.len();
+                // cursor offsets have no effect here
                 let _ = helpers::replace_encoded_str(&call.arg, buf, data, vt, env);
+                let visible_end = buf.len();
 
                 let moved_str = core::mem::replace(buf, String::new());
                 let mut vec = moved_str.into_bytes();
-                // SAFETY: `vec` is constructed directly from a String
-                let mut rep = unsafe { Replaceable::new(&mut vec) };
-                // SAFETY: `start` comes from buf.len(), and buf is append-only.
-                unsafe { rep.set_ignore_pre_len(start) };
+
+                // SAFETY: `vec` is constructed directly from a String and the range is an empty suffix
+                let rep = unsafe { Replaceable::new(&mut vec, visible_start..visible_end) };
 
                 call.translit.transliterate(rep, env);
 
