@@ -324,7 +324,7 @@ impl CompactDecimalFormatter {
         self.format_fixed_decimal(unrounded)
     }
 
-    /// Formats an integer in compact decimal notation using the default
+    /// Formats a floating-point number in compact decimal notation using the default
     /// precision settings.
     ///
     /// The result may have a fractional digit only if it is compact and its
