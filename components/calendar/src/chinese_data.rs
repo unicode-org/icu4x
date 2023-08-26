@@ -4,12 +4,10 @@
 
 //! Compiled and compressed data for Chinese calendar years; includes `RataDie` types for the beginning of years
 
+use crate::chinese_based::PackedChineseBasedCompiledData;
 /// The minimum year present in CHINESE_DATA_ARRAY
 pub(crate) const MIN_YEAR: i32 = 4660;
-
-/// The struct containing compiled ChineseData
-#[derive(Debug, Copy, Clone)]
-pub(crate) struct ChineseData(pub(crate) u8, pub(crate) u8, pub(crate) u8);
+pub(crate) const MIN_YEAR_ISO: i32 = 2023;
 
 /// The array of year data for Chinese years between MIN_YEAR and MAX_YEAR; currently, this array must also have
 /// an entry for the year after max year, since the function for unpacking this data also uses the next entry's new year.
@@ -22,7 +20,7 @@ pub(crate) struct ChineseData(pub(crate) u8, pub(crate) u8, pub(crate) u8);
 ///
 /// TODO: Generate this data
 #[allow(clippy::unusual_byte_groupings)]
-pub(crate) const CHINESE_DATA_ARRAY: [ChineseData; 2] = [
-    ChineseData(0b_00001_010, 0b_01101101, 0b_01_000011),
-    ChineseData(0b_10100_010, 0b_01011011, 0b_00_000000),
+pub(crate) const CHINESE_DATA_ARRAY: [PackedChineseBasedCompiledData; 2] = [
+    PackedChineseBasedCompiledData(0b_00001_010, 0b_01101101, 0b_01_000011),
+    PackedChineseBasedCompiledData(0b_10100_010, 0b_01011011, 0b_00_000000),
 ];

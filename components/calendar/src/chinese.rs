@@ -33,8 +33,6 @@
 //! assert_eq!(chinese_datetime.time.second.number(), 0);
 //! ```
 
-use core::num::NonZeroU8;
-
 use crate::any_calendar::AnyCalendarKind;
 use crate::astronomy::Location;
 use crate::calendar_arithmetic::CalendarArithmetic;
@@ -42,7 +40,6 @@ use crate::chinese_based::{
     chinese_based_ordinal_lunar_month_from_code, ChineseBased, ChineseBasedCompiledData,
     ChineseBasedDateInner, ChineseBasedYearInfo,
 };
-use crate::chinese_data::ChineseData;
 use crate::helpers::div_rem_euclid;
 use crate::iso::{Iso, IsoDateInner};
 use crate::rata_die::RataDie;
@@ -389,17 +386,10 @@ impl ChineseBased for Chinese {
 
     const EPOCH: RataDie = CHINESE_EPOCH;
 
-    fn get_compiled_data_for_year(year: i32) -> Option<ChineseBasedCompiledData> {
+    fn get_compiled_data_for_year(extended_year: i32) -> Option<ChineseBasedCompiledData> {
         let offset_year = (year - chinese_data::MIN_YEAR) as usize;
-        if let (Some(packed_data), Some(next_year_data)) = (
-            chinese_data::CHINESE_DATA_ARRAY.get(offset_year),
-            chinese_data::CHINESE_DATA_ARRAY.get(offset_year + 1),
-        ) {
-            Some(Self::unpack_chinese_data(
-                year,
-                *packed_data,
-                *next_year_data,
-            ))
+        if let Some(packed_data) = chinese_data::CHINESE_DATA_ARRAY.get(offset_year) {
+            Some(packed_data.unpack(offset_year as i32 + chinese_data::MIN_YEAR_ISO))
         } else {
             None
         }
@@ -483,95 +473,6 @@ impl Chinese {
             number,
             cyclic,
             related_iso,
-        }
-    }
-
-    fn unpack_chinese_data(
-        year: i32,
-        packed_data: ChineseData,
-        next_year_data: ChineseData,
-    ) -> ChineseBasedCompiledData {
-        let new_year_offset = ((packed_data.0 & 0b11111000) >> 3) as u16;
-        let iso_year = 2023 + (year - 4660);
-        let new_year =
-            Iso::fixed_from_iso(Iso::iso_from_year_day(iso_year, 21 + new_year_offset).inner);
-
-        let next_new_year_offset = ((next_year_data.0 & 0b11111000) >> 3) as u16;
-        let next_iso_year = iso_year + 1;
-        let next_new_year = Iso::fixed_from_iso(
-            Iso::iso_from_year_day(next_iso_year, 21 + next_new_year_offset).inner,
-        );
-
-        let mut month_lengths: [u8; 13] = [0; 13];
-        month_lengths[0] = if packed_data.0 & 0b100 != 0 { 30 } else { 29 };
-        month_lengths[1] = if packed_data.0 & 0b010 != 0 { 30 } else { 29 };
-        month_lengths[2] = if packed_data.0 & 0b001 != 0 { 30 } else { 29 };
-        month_lengths[3] = if packed_data.1 & 0b10000000 != 0 {
-            30
-        } else {
-            29
-        };
-        month_lengths[4] = if packed_data.1 & 0b01000000 != 0 {
-            30
-        } else {
-            29
-        };
-        month_lengths[5] = if packed_data.1 & 0b00100000 != 0 {
-            30
-        } else {
-            29
-        };
-        month_lengths[6] = if packed_data.1 & 0b00010000 != 0 {
-            30
-        } else {
-            29
-        };
-        month_lengths[7] = if packed_data.1 & 0b00001000 != 0 {
-            30
-        } else {
-            29
-        };
-        month_lengths[8] = if packed_data.1 & 0b00000100 != 0 {
-            30
-        } else {
-            29
-        };
-        month_lengths[9] = if packed_data.1 & 0b00000010 != 0 {
-            30
-        } else {
-            29
-        };
-        month_lengths[10] = if packed_data.1 & 0b00000001 != 0 {
-            30
-        } else {
-            29
-        };
-        month_lengths[11] = if packed_data.2 & 0b10000000 != 0 {
-            30
-        } else {
-            29
-        };
-
-        let leap_month_bits = packed_data.2 & 0o77;
-        let leap_month = if leap_month_bits == 0 {
-            None
-        } else {
-            NonZeroU8::new(leap_month_bits)
-        };
-
-        if leap_month.is_some() {
-            month_lengths[12] = if packed_data.2 & 0b01000000 != 0 {
-                30
-            } else {
-                29
-            };
-        }
-
-        ChineseBasedCompiledData {
-            new_year,
-            next_new_year,
-            month_lengths,
-            leap_month,
         }
     }
 }
