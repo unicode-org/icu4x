@@ -314,24 +314,17 @@ impl<'a> Rule<'a> {
     /// Applies this rule's replacement using the given [`MatchData`]. Updates the cursor of the
     /// given [`Replaceable`].
     fn apply(&self, rep: &mut Replaceable, data: MatchData, vt: &VarTable, env: &Env) {
-        let mut buf = String::new();
         let replacement_range = rep.cursor()..(rep.cursor() + data.key_match_len);
 
-        let cursor_offset = helpers::replace_encoded_str(&self.replacer, &mut buf, &data, vt, env)
-            .unwrap_or(CursorOffset::Byte(buf.len()));
-        let new_cursor = cursor_offset.apply(rep, &data, buf.len());
-
-        eprintln!(
-            "applying replacement {buf:?} with cursor {new_cursor} from offset {cursor_offset:?}"
-        );
-
-        // // SAFETY: CursorOffset guarantees a valid UTF-8 index
-        // unsafe { rep.set_cursor(new_cursor) };
-
         // SAFETY: the range is guaranteed to be valid, as key_match_len is the length of a UTF-8
-        // substring. the replacement is guaranteed to be valid UTF-8, as it comes from a String.
-        // CursorOffset guarantees a valid index for into the post-replacement content.
-        unsafe { rep.splice(replacement_range, buf.as_bytes(), new_cursor) };
+        // substring.
+        let mut dest = unsafe { rep.replace_range(replacement_range, None) };
+
+        let cursor_offset = helpers::replace_encoded_str(&self.replacer, &mut dest, &data, vt, env)
+            .unwrap_or(CursorOffset::Byte(dest.curr_replacement_len()));
+
+        dest.commit(cursor_offset, &data);
+
         eprintln!("finished applying replacement: {rep:?}");
     }
 
@@ -429,33 +422,30 @@ enum CursorOffset {
 }
 
 impl CursorOffset {
-    /// Computes the final cursor position according to the offset. This will be valid after the
-    /// replacement is applied.
+    /// Computes the final cursor position according to the offset. Must be called after replacement
+    /// is finished.
     ///
     /// Ensures no overflow of cursors past the contexts and returns a valid UTF-8 index.
-    /// Only moves
     fn apply(self, rep: &Replaceable, data: &MatchData, replacement_len: usize) -> usize {
         match self {
             Self::Byte(offset) => rep.cursor() + offset,
             Self::CharsOffEnd(count) => {
-                let post = rep.as_str_post(data.key_match_len);
-                // restricting to the matched substr ensures no overflow of the cursor past the
-                // contexts, which is good
-                let matched_post = &post[..data.post_match_len];
+                // they key has already been replaced, so the post match starts `replacement_len`
+                // bytes after the cursor
+                let post_start = rep.cursor() + replacement_len;
+                // the replacement d oes not affect the post match length
+                let post_end = post_start + data.post_match_len;
+                let matched_post = &rep.as_str()[post_start..post_end];
                 // compute byte-length of `count` chars in post
-                let post_len = matched_post
+                let post_offset_len = matched_post
                     .chars()
                     .take(count as usize)
                     .map(char::len_utf8)
                     .sum::<usize>();
 
-                // clamping cursor to the modifiable range
-                // adjust allowed_range for new replacement_len. the cursor we are returning
-                // must be valid _after_ the replacement is applied.
-                let adjusted_upper_bound =
-                    rep.allowed_range().end + replacement_len - data.key_match_len;
                 // we are not allowed to move the cursor into unmodifiable territory
-                adjusted_upper_bound.min(rep.cursor() + replacement_len + post_len)
+                let max_cursor = rep.allowed_range().end;
+                max_cursor.min(rep.cursor() + replacement_len + post_offset_len)
             }
             Self::CharsOffStart(count) => {
                 let ante = rep.as_str_ante();
@@ -469,11 +459,11 @@ impl CursorOffset {
                     .take(count as usize)
                     .map(char::len_utf8)
                     .sum::<usize>();
-                // not underflowing because ante_len is at most the cursor, because the cursor is
-                // right after where the ante context ends.
 
                 // clamping cursor to the modifiable range
                 let min_cursor = rep.allowed_range().start;
+                // not underflowing because ante_len is at most the cursor, because the cursor is
+                // right after where the ante context ends.
                 min_cursor.max(rep.cursor() - ante_len)
             }
         }
@@ -494,13 +484,13 @@ mod helpers {
     /// cursor after the replacement, if a non-default one exists.
     pub(super) fn replace_encoded_str(
         replacement: &str,
-        buf: &mut String,
+        dest: &mut Insertable,
         data: &MatchData,
         vt: &VarTable,
         env: &Env,
     ) -> Option<CursorOffset> {
         if is_pure(replacement) {
-            buf.push_str(replacement);
+            dest.push_str(replacement);
             return None;
         }
         let mut cursor_offset = None;
@@ -508,7 +498,7 @@ mod helpers {
         for rep_c in replacement.chars() {
             if !VarTable::ENCODE_RANGE.contains(&rep_c) {
                 // regular char
-                buf.push(rep_c);
+                dest.push(rep_c);
                 continue;
             }
             // must be special replacer
@@ -521,7 +511,7 @@ mod helpers {
                     continue;
                 }
             };
-            cursor_offset = cursor_offset.or(replacer.replace(buf, data, vt, env));
+            cursor_offset = cursor_offset.or(replacer.replace(dest, data, vt, env));
         }
 
         cursor_offset
@@ -1034,25 +1024,25 @@ impl<'a> SpecialReplacer<'a> {
     /// the replacement, if a non-default one exists.
     fn replace(
         &self,
-        buf: &mut String,
+        dest: &mut Insertable,
         data: &MatchData,
         vt: &VarTable,
         env: &Env,
     ) -> Option<CursorOffset> {
         match self {
-            Self::Compound(query) => helpers::replace_encoded_str(query, buf, data, vt, env),
-            Self::PureCursor => Some(CursorOffset::Byte(buf.len())),
+            Self::Compound(query) => helpers::replace_encoded_str(query, dest, data, vt, env),
+            Self::PureCursor => Some(CursorOffset::Byte(dest.curr_replacement_len())),
             &Self::LeftPlaceholderCursor(num) => {
                 // must occur at the very end of a replacement
                 Some(CursorOffset::CharsOffEnd(num))
             }
             &Self::RightPlaceholderCursor(num) => {
                 // must occur at the very beginning of the replacement
-                debug_assert!(buf.is_empty(), "pre-start cursor not the first replacement");
+                debug_assert_eq!(dest.curr_replacement_len(), 0, "pre-start cursor not the first replacement");
                 Some(CursorOffset::CharsOffStart(num))
             }
             &Self::BackReference(num) => {
-                buf.push_str(data.get_segment(num as usize));
+                dest.push_str(data.get_segment(num as usize));
                 None
             }
             Self::FunctionCall(call) => {
@@ -1061,25 +1051,22 @@ impl<'a> SpecialReplacer<'a> {
                 // have `ignore_len` fields (like freeze) on replaceable, that indicate *completely*
                 // inaccessible data.
 
-                eprintln!("buf before function call: {buf:?}");
+                eprintln!("dest before function call: {dest:?}");
 
-                let visible_start = buf.len();
+                let visible_start = dest.curr_replacement_len();
                 // cursor offsets have no effect here
-                let _ = helpers::replace_encoded_str(&call.arg, buf, data, vt, env);
-                let visible_end = buf.len();
+                let _ = helpers::replace_encoded_str(&call.arg, dest, data, vt, env);
+                let visible_end = dest.curr_replacement_len();
 
-                let moved_str = core::mem::replace(buf, String::new());
-                let mut vec = moved_str.into_bytes();
+                // SAFETY: the range is from a valid offset to another valid offset
+                let mut rep = unsafe { dest.as_replaceable(visible_start..visible_end) };
 
-                // SAFETY: `vec` is constructed directly from a String and the range is an empty suffix
-                let rep = unsafe { Replaceable::new(&mut vec, visible_start..visible_end) };
+                call.translit.transliterate(rep.child(), env);
 
-                call.translit.transliterate(rep, env);
+                drop(rep);
 
                 // SAFETY: Replaceable guarantees any changes are valid UTF-8.
-                let recovered_string = unsafe { String::from_utf8_unchecked(vec) };
-                let _ = core::mem::replace(buf, recovered_string);
-                eprintln!("buf after function call: {buf:?}");
+                eprintln!("dest after function call: {dest:?}");
                 eprintln!("matchdata: {data:?}");
                 None
             }

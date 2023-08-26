@@ -2,13 +2,16 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use alloc::string::String;
 use alloc::vec::Vec;
 use core::fmt::{Debug, Formatter};
 use core::ops::Range;
 use core::str;
+use crate::transliterator::{CursorOffset, MatchData};
 
 use super::Filter;
+
+// TODO: do we really want this much unsafe? a lot of the API could be replaced with safe, but
+//  checked String methods.
 
 /// Wrapper for in-place transliteration. Stores the currently allowed-to-be-modified
 /// transliteration range.
@@ -25,6 +28,8 @@ pub(crate) struct Replaceable<'a> {
     // guaranteed to be a valid UTF-8 index into content
     // needed because function calls _only_ see their arguments, but nothing surrounding them.
     ignore_pre_len: usize,
+    // guaranteed to be a valid UTF-8 suffix length
+    ignore_post_len: usize,
 }
 
 // note: would be great to have something like Replaceable::replace_range(&mut self, range) -> &mut Insertable
@@ -37,17 +42,28 @@ impl<'a> Replaceable<'a> {
     /// # Safety
     /// The caller must ensure `buf` is valid UTF-8 and that `visible_range` is a valid UTF-8 range.
     pub(crate) unsafe fn new(buf: &'a mut Vec<u8>, visible_range: Range<usize>) -> Self {
-        // for now, only ignored prefixes are allowed
-        debug_assert!(visible_range.end == buf.len());
+        debug_assert!(visible_range.end <= buf.len());
         debug_assert!(visible_range.start <= buf.len());
+        let ignore_post_len = buf.len() - visible_range.end;
         Self {
             content: buf,
             // these uphold the invariants
             freeze_pre_len: 0,
             freeze_post_len: 0,
             ignore_pre_len: visible_range.start,
+            ignore_post_len,
             cursor: 0,
         }
+    }
+
+    /// # Safety
+    /// The caller must ensure that `range` is a valid UTF-8 range into the visible content.
+    pub(crate) unsafe fn replace_range<'b>(&'b mut self, range: Range<usize>, size_hint: Option<usize>) -> Insertable<'a, 'b> {
+        // TODO: if start is always cursor, maybe change signature to take only end?
+        debug_assert_eq!(range.start, self.cursor);
+        // the passed range is into self.visible_content(), which starts at offset self.ignore_pre_len
+        let adjusted_range = range.start + self.ignore_pre_len..range.end + self.ignore_pre_len;
+        Insertable::new_with_size_hint(self, adjusted_range, size_hint.unwrap_or(0))
     }
 
     // TODO: design
@@ -164,6 +180,7 @@ impl<'a> Replaceable<'a> {
             freeze_post_len: self.freeze_post_len,
             cursor: self.cursor,
             ignore_pre_len: self.ignore_pre_len,
+            ignore_post_len: self.ignore_post_len,
         }
     }
 
@@ -230,6 +247,7 @@ impl<'a> Replaceable<'a> {
             // TODO: do we want this?
             cursor: run_start,
             ignore_pre_len: self.ignore_pre_len,
+            ignore_post_len: self.ignore_post_len,
         })
     }
 
@@ -256,7 +274,11 @@ impl<'a> Replaceable<'a> {
 
     /// Returns the byte slice of the content that is currently visible.
     fn visible_content(&self) -> &[u8] {
-        &self.content[self.ignore_pre_len..]
+        &self.content[self.ignore_pre_len..self.visible_content_upper_bound()]
+    }
+
+    fn visible_content_upper_bound(&self) -> usize {
+        self.content.len() - self.ignore_post_len
     }
 }
 
@@ -279,5 +301,159 @@ impl<'a> Debug for Replaceable<'a> {
         write!(f, "{}", &self.as_str()[self.allowed_upper_bound()..])?;
 
         Ok(())
+    }
+}
+
+// TODO: write about invariants. they're basically the same as replaceable's
+pub(crate) struct Insertable<'a, 'b> {
+    // Replaceable's invariants may temporarily be broken while this Insertable is alive
+    _rep: &'b mut Replaceable<'a>,
+    start: usize,
+    end_len: usize,
+    curr: usize,
+}
+
+impl<'a, 'b> Insertable<'a, 'b> {
+    /// # Safety
+    /// The caller must ensure that `range` is a valid UTF-8 range into `content`.
+    unsafe fn new_with_size_hint(rep: &'b mut Replaceable<'a>, range: Range<usize>, size_hint: usize) -> Insertable<'a, 'b> {
+        let end_len =  rep.content.len() - range.end;
+        let s = Self {
+            _rep: rep,
+            start: range.start,
+            end_len,
+            curr: range.start,
+        };
+
+        let free_bytes = s.free_range().len();
+        if free_bytes < size_hint {
+            s._rep.content.splice(s.end()..s.end(), core::iter::repeat(0).take(size_hint - free_bytes));
+        }
+        s
+    }
+
+    pub(crate) fn push(&mut self, c: char) {
+        let mut buf = [0; 4];
+        let c_utf8 = c.encode_utf8(&mut buf);
+        self.push_str(c_utf8);
+        debug_assert!(self.curr <= self.end());
+    }
+
+    pub(crate) fn push_str(&mut self, s: &str) {
+        // SAFETY: s is valid UTF-8 by type
+        unsafe { self.push_bytes(s.as_bytes()) };
+        debug_assert!(self.curr <= self.end());
+    }
+
+    /// # Safety
+    /// The caller must ensure that `visible_range` is a valid UTF-8 range into the current
+    /// replacement.
+    pub(super) unsafe fn as_replaceable(&mut self, visible_range: Range<usize>) -> InsertableGuard<impl FnMut(&[u8]) + '_> {
+        debug_assert!(visible_range.start <= self.curr_replacement_len());
+        debug_assert!(visible_range.end <= self.curr_replacement_len());
+
+        // this is important because the Replaceable's invariant states that the whole content
+        // is valid UTF-8.
+        self.make_contiguous();
+
+        // The returned replaceable may modify the length of content[self.start..self.curr].
+        // Due to the above make_contiguous call, self.curr will always be at self.end() right now.
+        // We need a way to update self.curr to self.end() *after* the Replaceable is finished.
+
+        // We do that by returning an InsertableGuard whose `on_drop` callback will update self.curr.
+
+        // the passed visible range is into self.curr_replacement(), which starts at offset self.start
+        // of the actual buffer.
+        let adjusted_visible_range = visible_range.start + self.start..visible_range.end + self.start;
+        let rep = Replaceable::new(self._rep.content, adjusted_visible_range);
+        let on_drop = |content: &[u8]| {
+            // self.content is contiguous, so we are inserting at the very end
+            self.curr = content.len() - self.end_len;
+        };
+        InsertableGuard::new(rep, on_drop)
+    }
+
+    /// # Safety
+    /// The caller must ensure that `bytes` is valid UTF-8.
+    unsafe fn push_bytes(&mut self, bytes: &[u8]) {
+        if self.free_range().len() >= bytes.len() {
+            self._rep.content[self.curr..self.curr + bytes.len()].copy_from_slice(bytes);
+            self.curr += bytes.len();
+            return;
+        }
+        eprintln!("WARNING: free space not sufficient for Insertable::push_bytes");
+
+        self._rep.content.splice(self.free_range(), bytes.iter().copied());
+        self.curr = self.end();
+    }
+
+    pub(crate) fn curr_replacement_len(&self) -> usize {
+        self.curr - self.start
+    }
+
+    pub(crate) fn curr_replacement(&self) -> &str {
+        // SAFETY: the invariant states that this part of the content is valid UTF-8
+        unsafe { str::from_utf8_unchecked(&self._rep.content[self.start..self.curr]) }
+    }
+
+    pub(super) fn commit(mut self, cursor_offset: CursorOffset, data: &MatchData) {
+        self.make_contiguous();
+        let cursor = cursor_offset.apply(self._rep, data, self.curr_replacement_len());
+        // SAFETY: CursorOffset guarantees to be a valid UTF-8 index into the visible slice
+        unsafe { self._rep.set_cursor(cursor) };
+    }
+
+    fn make_contiguous(&mut self) {
+        // need to move the tail of the Vec to fill the remainder of the free range
+        self._rep.content.splice(self.free_range(), core::iter::empty());
+    }
+
+    fn free_range(&self) -> Range<usize> {
+        eprintln!("free_range: curr: {}, end: {}", self.curr, self.end());
+        debug_assert!(self.curr <= self.end());
+        self.curr..self.end()
+    }
+
+    fn end(&self) -> usize {
+        self._rep.content.len() - self.end_len
+    }
+}
+
+impl<'a, 'b> Drop for Insertable<'a, 'b> {
+    fn drop(&mut self) {
+        self.make_contiguous();
+    }
+}
+
+impl<'a, 'b> Debug for Insertable<'a, 'b> {
+    fn fmt(&self, f: &mut Formatter<'_>) -> core::fmt::Result {
+        write!(f, "{}", unsafe { &str::from_utf8_unchecked(&self._rep.content[self.start..self.curr]) })
+    }
+}
+
+pub(super) struct InsertableGuard<'a, F>
+    where F: FnMut(&[u8])
+{
+    rep: Replaceable<'a>,
+    on_drop: F,
+}
+
+impl<'a, F> InsertableGuard<'a, F>
+where F: FnMut(&[u8])
+{
+    fn new(rep: Replaceable<'a>, on_drop: F) -> Self {
+        Self { rep, on_drop }
+    }
+
+    pub(crate) fn child(&mut self) -> Replaceable {
+        self.rep.child()
+    }
+}
+
+impl<'a, F> Drop for InsertableGuard<'a, F>
+where F: FnMut(&[u8])
+{
+    fn drop(&mut self) {
+        (self.on_drop)(&self.rep.content[..]);
     }
 }
