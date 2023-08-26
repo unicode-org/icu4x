@@ -338,7 +338,8 @@ where
     fn load_any(&self, key: DataKey, req: DataRequest) -> Result<AnyResponse, DataError> {
         let mut any_res = self.inner.load_any(key, req)?;
         // Whichever locale gets loaded for `HelloWorldV1Marker::KEY` will be the one
-        // we consider the "resolved locale".
+        // we consider the "resolved locale". Although `HelloWorldFormatter` only loads
+        // one key, this is a useful distinction for most other formatters.
         if key == HelloWorldV1Marker::KEY {
             let mut w = self.resolved_locale.write().unwrap();
             *w = any_res.metadata.locale.clone();
