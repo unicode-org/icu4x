@@ -51,3 +51,12 @@ $fi+ > FI ;
 
 # output so far: FIfiFItbxyzftbxyzxyzXYZjkT!
 
+:: Null ;
+
+$fifi = fiFI;
+
+($fifi) > &[IF!] Remove($1 'unremoved') ;
+
+# output so far: FIfiunremovedtbxyzftbxyzxyzXYZjkT!
+
+
