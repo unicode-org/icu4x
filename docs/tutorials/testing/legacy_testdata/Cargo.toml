@@ -19,4 +19,5 @@ icu_displaynames = { version = "0.10", optional = true }
 icu_list = "1.2.0"
 icu_plurals = "1.2.0"
 icu_provider = { version = "1.2.0" }
+icu_provider_adapters = "1.2.0"
 zerovec = { version = "0.9.4" }
