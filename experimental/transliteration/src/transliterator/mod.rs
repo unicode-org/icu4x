@@ -60,12 +60,14 @@ impl InternalTransliterator {
             Self::Null => (),
             Self::Remove => {
                 // SAFETY: rep.allowed_range() returns a range with valid UTF-8 bounds
-                unsafe { rep.splice(rep.allowed_range(), b"") };
+                unsafe { rep.splice(rep.allowed_range(), b"", rep.cursor()) };
             }
             Self::Dyn(custom) => {
                 let replacement = custom.transliterate(rep.as_str(), rep.allowed_range());
-                // SAFETY: rep.allowed_range() returns a range with valid UTF-8 bounds, and the bytes are valid UTF-8 as they come from a String
-                unsafe { rep.splice(rep.allowed_range(), replacement.as_bytes()) };
+                let new_cursor = rep.cursor() + replacement.len();
+                // SAFETY: rep.allowed_range() returns a range with valid UTF-8 bounds, and the bytes are valid UTF-8 as they come from a String.
+                // The cursor is valid post-replacement as it comes from a valid `.cursor()` call plus a valid UTF-8 length.
+                unsafe { rep.splice(rep.allowed_range(), replacement.as_bytes(), new_cursor) };
             }
         }
     }
@@ -282,6 +284,8 @@ impl<'a> RuleGroup<'a> {
         // TODO: do we allow empty keys? if so, rep.finished() would cause too early of a stop
         //  the cursor would be at the end, but an empty key rule could still force insertion of more
         //  text
+        //  I would say yes: https://util.unicode.org/UnicodeJsps/transform.jsp?a=%23+%3A%3A+%5Ba%5D%3B%0D%0A%0D%0Ad+%7B+x%3F+%3E+match+%3B&b=db
+        //  So add to gdoc.
         'main: while !rep.is_finished() {
             eprintln!("ongoing RuleGroup transliteration:\n{rep:?}");
             for rule in self.rules.iter() {
@@ -312,12 +316,16 @@ impl<'a> Rule<'a> {
             .unwrap_or(CursorOffset::Byte(buf.len()));
         let new_cursor = cursor_offset.apply(rep, &data, buf.len());
 
-        // SAFETY: CursorOffset guarantees a valid UTF-8 index
-        unsafe { rep.set_cursor(new_cursor) };
+        eprintln!("applying replacement {buf:?} with cursor {new_cursor} from offset {cursor_offset:?}");
+
+        // // SAFETY: CursorOffset guarantees a valid UTF-8 index
+        // unsafe { rep.set_cursor(new_cursor) };
 
         // SAFETY: the range is guaranteed to be valid, as key_match_len is the length of a UTF-8
         // substring. the replacement is guaranteed to be valid UTF-8, as it comes from a String.
-        unsafe { rep.splice(replacement_range, buf.as_bytes()) };
+        // CursorOffset guarantees a valid index for into the post-replacement content.
+        unsafe { rep.splice(replacement_range, buf.as_bytes(), new_cursor) };
+        eprintln!("finished applying replacement: {rep:?}");
     }
 
     /// Returns `None` if there is no match. If there is a match, returns the associated
@@ -403,6 +411,7 @@ impl<'a> Rule<'a> {
 }
 
 /// Stores the kinds of cursor offsets that a replacement can produce.
+#[derive(Debug, Clone, Copy)]
 enum CursorOffset {
     /// A byte offset ready to use.
     Byte(usize),
@@ -413,9 +422,11 @@ enum CursorOffset {
 }
 
 impl CursorOffset {
-    /// Computes the final cursor position according to the offset.
+    /// Computes the final cursor position according to the offset. This will be valid after the
+    /// replacement is applied.
     ///
     /// Ensures no overflow of cursors past the contexts and returns a valid UTF-8 index.
+    /// Only moves
     fn apply(self, rep: &Replaceable, data: &MatchData, replacement_len: usize) -> usize {
         match self {
             Self::Byte(offset) => rep.cursor() + offset,
@@ -430,7 +441,13 @@ impl CursorOffset {
                     .take(count as usize)
                     .map(char::len_utf8)
                     .sum::<usize>();
-                rep.cursor() + replacement_len + post_len
+
+                // clamping cursor to the modifiable range
+                // adjust allowed_range for new replacement_len. the cursor we are returning
+                // must be valid _after_ the replacement is applied.
+                let adjusted_upper_bound = rep.allowed_range().end + replacement_len - data.key_match_len;
+                // we are not allowed to move the cursor into unmodifiable territory
+                adjusted_upper_bound.min(rep.cursor() + replacement_len + post_len)
             }
             Self::CharsOffStart(count) => {
                 let ante = rep.as_str_ante();
@@ -446,7 +463,10 @@ impl CursorOffset {
                     .sum::<usize>();
                 // not underflowing because ante_len is at most the cursor, because the cursor is
                 // right after where the ante context ends.
-                rep.cursor() - ante_len
+
+                // clamping cursor to the modifiable range
+                let min_cursor = rep.allowed_range().start;
+                min_cursor.max(rep.cursor() - ante_len)
             }
         }
     }
@@ -585,6 +605,7 @@ mod helpers {
 }
 
 /// Stores the state for a single conversion rule.
+#[derive(Debug)]
 struct MatchData {
     /// The length (in bytes) of the matched key. This portion will be replaced.
     key_match_len: usize,
@@ -1032,6 +1053,8 @@ impl<'a> SpecialReplacer<'a> {
                 // have `ignore_len` fields (like freeze) on replaceable, that indicate *completely*
                 // inaccessible data.
 
+                eprintln!("buf before function call: {buf:?}");
+
                 let start = buf.len();
 
                 // no cursor offsets allowed here
@@ -1049,6 +1072,8 @@ impl<'a> SpecialReplacer<'a> {
                 // SAFETY: Replaceable guarantees any changes are valid UTF-8.
                 let recovered_string = unsafe { String::from_utf8_unchecked(vec) };
                 let _ = core::mem::replace(buf, recovered_string);
+                eprintln!("buf after function call: {buf:?}");
+                eprintln!("matchdata: {data:?}");
                 None
             }
         }
@@ -1207,6 +1232,16 @@ impl<'a> VarTable<'a> {
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn test_recursive_suite() {
+        let t =
+            Transliterator::try_new("und-t-und-s0-test-d0-test-m0-rectestr".parse().unwrap()).unwrap();
+
+        let input = "XXXabcXXXdXXe";
+        let output = "XXXXXXaWORKEDcXXXXXXdXXXXXe";
+        assert_eq!(t.transliterate(input.to_string()), output);
+    }
 
     #[test]
     fn test_cursor_placeholders_filters() {
