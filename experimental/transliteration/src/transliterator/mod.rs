@@ -316,9 +316,16 @@ impl<'a> Rule<'a> {
     fn apply(&self, rep: &mut Replaceable, data: MatchData, vt: &VarTable, env: &Env) {
         let replacement_range = rep.cursor()..(rep.cursor() + data.key_match_len);
 
+        // note: this could be precomputed ignoring segments and function calls.
+        // A `rule.used_segments` ZeroVec<u16> could be added at compile time,
+        // which would make it easier to take segments into account at runtime.
+        // there is no easy way to estimate the size of function calls, though.
+        // TODO: benchmark with and without this optimization
+        let replacement_size_estimate = helpers::estimate_replacement_size(&self.replacer, &data, vt);
+
         // SAFETY: the range is guaranteed to be valid, as key_match_len is the length of a UTF-8
         // substring.
-        let mut dest = unsafe { rep.replace_range(replacement_range, None) };
+        let mut dest = unsafe { rep.replace_range(replacement_range, Some(replacement_size_estimate)) };
 
         let cursor_offset = helpers::replace_encoded_str(&self.replacer, &mut dest, &data, vt, env)
             .unwrap_or_default();
@@ -418,6 +425,36 @@ mod helpers {
         // note: this could be precomputed + stored at datagen time
         // (there could eg be a reserved char that is at the start/end of key <=> key is pure)
         !s.chars().any(|c| VarTable::ENCODE_RANGE.contains(&c))
+    }
+
+    /// Recursively estimates the size of the replacement string.
+    pub(super) fn estimate_replacement_size(replacement: &str, data: &MatchData, vt: &VarTable) -> usize {
+        if is_pure(replacement) {
+            return replacement.len();
+        }
+
+        let mut size = 0;
+
+        for rep_c in replacement.chars() {
+            if !VarTable::ENCODE_RANGE.contains(&rep_c) {
+                // regular char
+                size += rep_c.len_utf8();
+                continue;
+            }
+            // must be special replacer
+
+            let replacer = match vt.lookup_replacer(rep_c) {
+                Some(replacer) => replacer,
+                None => {
+                    debug_assert!(false, "invalid encoded char");
+                    // GIGO behavior. we just skip invalid encoded chars
+                    continue;
+                }
+            };
+            size += replacer.estimate_size(data, vt);
+        }
+
+        size
     }
 
     /// Applies the replacements from the encoded `replacement` to `buf`. Returns the offset of the
@@ -960,6 +997,24 @@ enum SpecialReplacer<'a> {
 }
 
 impl<'a> SpecialReplacer<'a> {
+    /// Estimates the size of the replacement string produced by this Replacer.
+    fn estimate_size(&self, data: &MatchData, vt: &VarTable) -> usize {
+        match self {
+            Self::Compound(replacer) => {helpers::estimate_replacement_size(replacer, data, vt)},
+            Self::FunctionCall(call) => {
+                // this is the only inexact case, so we estimate that the transliteration will stay
+                // roughly the same size as the input
+                helpers::estimate_replacement_size(&call.arg, data, vt)
+            }
+            &Self::BackReference(num) => {
+                data.get_segment(num as usize).len()
+            },
+            Self::LeftPlaceholderCursor(_) | Self::RightPlaceholderCursor(_) | Self::PureCursor => {
+                return 0;
+            }
+        }
+    }
+
     /// Applies the replacement from this replacer to `buf`. Returns the offset of the cursor after
     /// the replacement, if a non-default one exists.
     fn replace(
@@ -970,7 +1025,7 @@ impl<'a> SpecialReplacer<'a> {
         env: &Env,
     ) -> Option<CursorOffset> {
         match self {
-            Self::Compound(query) => helpers::replace_encoded_str(query, dest, data, vt, env),
+            Self::Compound(replacer) => helpers::replace_encoded_str(replacer, dest, data, vt, env),
             Self::PureCursor => {
                 // SAFETY: the curr_replacement_len is a valid UTF-8 length
                 Some(unsafe { CursorOffset::byte(dest.curr_replacement_len()) })
