@@ -36,12 +36,6 @@ const _: () = {
         pub use icu_normalizer as normalizer;
     }
     icu_transliteration_data::impl_transliterator_rules_v1!(Baked);
-
-    icu_normalizer_data::impl_normalizer_comp_v1!(Baked);
-    icu_normalizer_data::impl_normalizer_nfd_v1!(Baked);
-    icu_normalizer_data::impl_normalizer_nfdex_v1!(Baked);
-    icu_normalizer_data::impl_normalizer_nfkd_v1!(Baked);
-    icu_normalizer_data::impl_normalizer_nfkdex_v1!(Baked);
 };
 
 // TODO(#3776): Improve the documentation of this datastruct.

@@ -192,7 +192,13 @@ impl Transliterator {
     #[cfg(feature = "compiled_data")]
     pub fn try_new(locale: Locale) -> Result<Transliterator, TransliteratorError> {
         let provider = crate::provider::Baked;
-        Self::try_new_unstable(locale, &provider)
+        let normalizer_provider = icu_normalizer::provider::Baked;
+        Self::internal_try_new_with_override_unstable(
+            locale,
+            None::<&fn(&Locale) -> Option<Box<dyn CustomTransliterator>>>,
+            &provider,
+            &normalizer_provider,
+        )
     }
 
     #[cfg(feature = "compiled_data")]
@@ -204,7 +210,13 @@ impl Transliterator {
         F: Fn(&Locale) -> Option<Box<dyn CustomTransliterator>>,
     {
         let provider = crate::provider::Baked;
-        Self::try_new_with_override_unstable(locale, lookup, &provider)
+        let normalizer_provider = icu_normalizer::provider::Baked;
+        Self::internal_try_new_with_override_unstable(
+            locale,
+            Some(&lookup),
+            &provider,
+            &normalizer_provider,
+        )
     }
 
     pub fn try_new_unstable<P>(
@@ -224,6 +236,7 @@ impl Transliterator {
             locale,
             None::<&fn(&Locale) -> Option<Box<dyn CustomTransliterator>>>,
             provider,
+            provider,
         )
     }
 
@@ -242,17 +255,18 @@ impl Transliterator {
             + ?Sized,
         F: Fn(&Locale) -> Option<Box<dyn CustomTransliterator>>,
     {
-        Self::internal_try_new_with_override_unstable(locale, Some(&lookup), provider)
+        Self::internal_try_new_with_override_unstable(locale, Some(&lookup), provider, provider)
     }
 
-    pub fn internal_try_new_with_override_unstable<P, F>(
+    pub fn internal_try_new_with_override_unstable<PN, PT, F>(
         locale: Locale,
         lookup: Option<&F>,
-        provider: &P,
+        transliterator_provider: &PT,
+        normalizer_provider: &PN,
     ) -> Result<Transliterator, TransliteratorError>
     where
-        P: DataProvider<TransliteratorRulesV1Marker>
-            + DataProvider<CanonicalDecompositionDataV1Marker>
+        PT: DataProvider<TransliteratorRulesV1Marker> + ?Sized,
+        PN: DataProvider<CanonicalDecompositionDataV1Marker>
             + DataProvider<CompatibilityDecompositionSupplementV1Marker>
             + DataProvider<CanonicalDecompositionTablesV1Marker>
             + DataProvider<CompatibilityDecompositionTablesV1Marker>
@@ -268,30 +282,36 @@ impl Transliterator {
             locale: &data_locale,
             metadata: Default::default(),
         };
-        let payload: DataPayload<TransliteratorRulesV1Marker> =
-            provider.load(req)?.take_payload()?;
+        let payload = transliterator_provider.load(req)?.take_payload()?;
         let rbt = payload.get();
         if !rbt.visibility {
             // transliterator is internal
             return Err(TransliteratorError::InternalOnly);
         }
         let mut env = LiteMap::new();
-        Transliterator::load_dependencies(rbt, &mut env, lookup, provider)?;
+        Transliterator::load_dependencies(
+            rbt,
+            &mut env,
+            lookup,
+            transliterator_provider,
+            normalizer_provider,
+        )?;
         Ok(Transliterator {
             transliterator: payload,
             env,
         })
     }
 
-    fn load_dependencies<P, F>(
+    fn load_dependencies<PT, PN, F>(
         rbt: &RuleBasedTransliterator<'_>,
         env: &mut LiteMap<String, InternalTransliterator>,
         lookup: Option<&F>,
-        provider: &P,
+        transliterator_provider: &PT,
+        normalizer_provider: &PN,
     ) -> Result<(), TransliteratorError>
     where
-        P: DataProvider<TransliteratorRulesV1Marker>
-            + DataProvider<CanonicalDecompositionDataV1Marker>
+        PT: DataProvider<TransliteratorRulesV1Marker> + ?Sized,
+        PN: DataProvider<CanonicalDecompositionDataV1Marker>
             + DataProvider<CompatibilityDecompositionSupplementV1Marker>
             + DataProvider<CanonicalDecompositionTablesV1Marker>
             + DataProvider<CompatibilityDecompositionTablesV1Marker>
@@ -301,9 +321,16 @@ impl Transliterator {
     {
         for dep in rbt.dependencies.iter() {
             if !env.contains_key(dep) {
-                let internal_t = Self::load_nested(dep, lookup, provider)?;
+                let internal_t =
+                    Self::load_nested(dep, lookup, transliterator_provider, normalizer_provider)?;
                 if let InternalTransliterator::RuleBased(rbt) = &internal_t {
-                    Self::load_dependencies(rbt.get(), env, lookup, provider)?;
+                    Self::load_dependencies(
+                        rbt.get(),
+                        env,
+                        lookup,
+                        transliterator_provider,
+                        normalizer_provider,
+                    )?;
                 }
                 env.insert(dep.to_string(), internal_t);
             }
@@ -312,14 +339,15 @@ impl Transliterator {
     }
 
     // TODO: add hook for custom
-    fn load_nested<P, F>(
+    fn load_nested<PT, PN, F>(
         id: &str,
         lookup: Option<&F>,
-        provider: &P,
+        transliterator_provider: &PT,
+        normalizer_provider: &PN,
     ) -> Result<InternalTransliterator, TransliteratorError>
     where
-        P: DataProvider<TransliteratorRulesV1Marker>
-            + DataProvider<CanonicalDecompositionDataV1Marker>
+        PT: DataProvider<TransliteratorRulesV1Marker> + ?Sized,
+        PN: DataProvider<CanonicalDecompositionDataV1Marker>
             + DataProvider<CompatibilityDecompositionSupplementV1Marker>
             + DataProvider<CanonicalDecompositionTablesV1Marker>
             + DataProvider<CompatibilityDecompositionTablesV1Marker>
@@ -331,16 +359,16 @@ impl Transliterator {
             // TODO: add more
             match special {
                 "any-nfc" => Ok(InternalTransliterator::Composing(
-                    ComposingTransliterator::try_nfc(provider)?,
+                    ComposingTransliterator::try_nfc(normalizer_provider)?,
                 )),
                 "any-nfkc" => Ok(InternalTransliterator::Composing(
-                    ComposingTransliterator::try_nfkc(provider)?,
+                    ComposingTransliterator::try_nfkc(normalizer_provider)?,
                 )),
                 "any-nfd" => Ok(InternalTransliterator::Decomposing(
-                    DecomposingTransliterator::try_nfd(provider)?,
+                    DecomposingTransliterator::try_nfd(normalizer_provider)?,
                 )),
                 "any-nfkd" => Ok(InternalTransliterator::Decomposing(
-                    DecomposingTransliterator::try_nfkd(provider)?,
+                    DecomposingTransliterator::try_nfkd(normalizer_provider)?,
                 )),
                 "any-null" => Ok(InternalTransliterator::Null),
                 "any-remove" => Ok(InternalTransliterator::Remove),
@@ -372,7 +400,7 @@ impl Transliterator {
                 locale: &data_locale,
                 metadata: Default::default(),
             };
-            let rbt = provider.load(req)?.take_payload()?;
+            let rbt = transliterator_provider.load(req)?.take_payload()?;
             Ok(InternalTransliterator::RuleBased(rbt))
         }
     }

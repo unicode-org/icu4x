@@ -35,12 +35,10 @@ serde = { version = "1.0", features = ["derive"], optional = true, default-featu
 displaydoc = { version = "0.2.3", default-features = false }
 
 icu_transliteration_data = { workspace = true, optional = true }
-icu_normalizer_data = { workspace = true, optional = true }
-icu_casemap_data = { workspace = true, optional = true }
 
 [features]
 default = ["compiled_data"]
 std = []
 serde = ["dep:serde", "zerovec/serde", "icu_collections/serde"]
 datagen = ["serde", "dep:databake", "zerovec/databake", "icu_collections/databake"]
-compiled_data = ["dep:icu_transliteration_data", "dep:icu_normalizer_data", "dep:icu_casemap_data", "icu_normalizer/compiled_data", "icu_casemap/compiled_data"]
+compiled_data = ["dep:icu_transliteration_data", "icu_normalizer/compiled_data", "icu_casemap/compiled_data"]
