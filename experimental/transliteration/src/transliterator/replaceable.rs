@@ -200,15 +200,15 @@ impl<'a> Replaceable<'a> {
     /// # Safety
     /// The caller must ensure that `start` is a valid UTF-8 index into the visible slice.
     unsafe fn next_filtered_run(&mut self, start: usize, filter: &Filter) -> Option<Replaceable> {
-        if start == self.visible_content().len() {
+        if start == self.allowed_upper_bound() {
             // we have reached the end, there are no more runs
             return None;
         }
 
         debug_assert!(
-            start < self.visible_content().len(),
+            start < self.allowed_upper_bound(),
             "start `{start}` must be within the content length `{}`",
-            self.visible_content().len()
+            self.allowed_upper_bound()
         );
         debug_assert!(self.as_str().is_char_boundary(start));
 
@@ -220,13 +220,15 @@ impl<'a> Replaceable<'a> {
             // special case for the noop filter
 
             run_start = start;
-            run_end = self.visible_content().len();
+            run_end = self.allowed_upper_bound();
         } else {
-            run_start = self.find_first_char(start, |c| filter.contains(c))?;
+            run_start = self.find_first_char_in_modifiable_range(start, |c| filter.contains(c))?;
             run_end = self
-                .find_first_char(run_start, |c| !filter.contains(c))
-                .unwrap_or(self.visible_content().len());
+                .find_first_char_in_modifiable_range(run_start, |c| !filter.contains(c))
+                .unwrap_or(self.allowed_upper_bound());
         }
+
+        eprintln!("computing filtered run for rep: {self:?}, start: {start}, run_start: {run_start}, run_end: {run_end}");
 
         let freeze_post_len = self.visible_content().len() - run_end;
 
@@ -245,11 +247,11 @@ impl<'a> Replaceable<'a> {
     /// starting at index `start`. The returned index is guaranteed to be a valid UTF-8 index.
     ///
     /// `start` must be a valid UTF-8 index into into the visible slice.
-    fn find_first_char<F>(&self, start: usize, f: F) -> Option<usize>
+    fn find_first_char_in_modifiable_range<F>(&self, start: usize, f: F) -> Option<usize>
     where
         F: Fn(char) -> bool,
     {
-        let tail = &self.as_str()[start..];
+        let tail = &self.as_str()[start..self.allowed_upper_bound()];
         let (idx, _) = tail.char_indices().find(|&(_, c)| f(c))?;
         Some(start + idx)
     }

@@ -247,10 +247,12 @@ impl<'a> RuleBasedTransliterator<'a> {
 
 impl<'a> SimpleId<'a> {
     fn transliterate(&self, mut rep: Replaceable, env: &Env) {
+        eprintln!("transliterating SimpleId: {self:?}");
         rep.for_each_run(&self.filter, |run| self.transliterate_run(run, env))
     }
 
     fn transliterate_run(&self, rep: &mut Replaceable, env: &Env) {
+        eprintln!("transliterating SimpleId run: {rep:?}");
         match env.get(self.id.as_ref()) {
             None => {
                 debug_assert!(false, "missing transliterator {}", &self.id);
