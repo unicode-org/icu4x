@@ -20,8 +20,8 @@ pub(crate) struct Replaceable<'a> {
     freeze_pre_len: usize,
     // `content.len() - freeze_post_len` is guaranteed to be a valid UTF-8 index into content
     freeze_post_len: usize,
-    // guaranteed to be a valid UTF-8 index into content. is absolute, so not affected by ignore_pre_len
-    raw_cursor: usize,
+    // guaranteed to be a valid UTF-8 index into the visible content.
+    cursor: usize,
     // guaranteed to be a valid UTF-8 index into content
     // needed because function calls _only_ see their arguments, but nothing surrounding them.
     ignore_pre_len: usize,
@@ -43,7 +43,7 @@ impl<'a> Replaceable<'a> {
             freeze_pre_len: 0,
             freeze_post_len: 0,
             ignore_pre_len: 0,
-            raw_cursor: 0,
+            cursor: 0,
         }
     }
 
@@ -78,11 +78,6 @@ impl<'a> Replaceable<'a> {
             ignore_pre_len
         );
         eprintln!("on self: {self:?}");
-        // adjust cursor
-        let previous_ignore_pre_len = self.ignore_pre_len;
-        let new_raw_cursor =
-            self.raw_cursor as i64 - previous_ignore_pre_len as i64 + ignore_pre_len as i64;
-        self.raw_cursor = new_raw_cursor as usize;
         self.ignore_pre_len = ignore_pre_len;
         eprintln!("on self: {self:?}");
     }
@@ -132,7 +127,7 @@ impl<'a> Replaceable<'a> {
     /// This is guaranteed to be a valid UTF-8 index into the visible slice.
     pub(crate) fn cursor(&self) -> usize {
         // eprintln!("cursor called with raw_cursor: {}, ignore_pre_len: {}", self.raw_cursor, self.ignore_pre_len);
-        self.raw_cursor - self.ignore_pre_len
+        self.cursor
     }
 
     /// Advances the cursor by one char.
@@ -143,7 +138,7 @@ impl<'a> Replaceable<'a> {
             .map(char::len_utf8)
             .unwrap_or(0);
         // eprintln!("step_cursor: {}", step_len);
-        self.raw_cursor += step_len;
+        self.cursor += step_len;
     }
 
     /// Sets the cursor. The cursor must remain in the modifiable window.
@@ -151,17 +146,15 @@ impl<'a> Replaceable<'a> {
     /// # Safety
     /// The caller must ensure that `cursor` is a valid UTF-8 index into the visible slice.
     pub(crate) unsafe fn set_cursor(&mut self, cursor: usize) {
-        debug_assert!(cursor <= self.visible_content().len());
-        debug_assert!(cursor >= self.freeze_pre_len);
         debug_assert!(cursor <= self.allowed_upper_bound());
-        self.raw_cursor = cursor + self.ignore_pre_len;
+        debug_assert!(cursor >= self.freeze_pre_len);
+        self.cursor = cursor;
     }
 
     /// Returns true if the cursor is at the end of the modifiable range.
     pub(crate) fn is_finished(&self) -> bool {
         // the cursor should never be > the upper bound
         debug_assert!(self.cursor() <= self.allowed_upper_bound());
-        // GIGO behavior: >= to avoid infinite loops
         self.cursor() >= self.allowed_upper_bound()
     }
 
@@ -181,7 +174,7 @@ impl<'a> Replaceable<'a> {
             content: self.content,
             freeze_pre_len: self.freeze_pre_len,
             freeze_post_len: self.freeze_post_len,
-            raw_cursor: self.raw_cursor,
+            cursor: self.cursor,
             ignore_pre_len: self.ignore_pre_len,
         }
     }
@@ -247,7 +240,7 @@ impl<'a> Replaceable<'a> {
             freeze_pre_len: run_start,
             freeze_post_len,
             // TODO: do we want this?
-            raw_cursor: self.ignore_pre_len + run_start,
+            cursor: run_start,
             ignore_pre_len: self.ignore_pre_len,
         })
     }
