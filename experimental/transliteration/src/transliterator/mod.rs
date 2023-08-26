@@ -311,7 +311,6 @@ impl<'a> Rule<'a> {
         let cursor_offset = helpers::replace_encoded_str(&self.replacer, &mut buf, &data, vt, env)
             .unwrap_or(CursorOffset::Byte(buf.len()));
         let new_cursor = cursor_offset.apply(rep, &data, buf.len());
-        debug_assert!(new_cursor >= 0);
 
         // SAFETY: CursorOffset guarantees a valid UTF-8 index
         unsafe { rep.set_cursor(new_cursor) };
