@@ -321,7 +321,6 @@ However, for environments that require this behavior, such as ECMA-402, the data
 ```rust
 use icu_provider::prelude::*;
 use icu_provider::hello_world::*;
-use icu::decimal::FixedDecimalFormatter;
 use icu_provider_adapters::fallback::LocaleFallbackProvider;
 use icu_provider_adapters::fallback::LocaleFallbacker;
 use icu::locid::locale;
