@@ -41,7 +41,7 @@ pub trait CustomTransliterator {
 }
 
 #[derive(Debug)]
-struct NFCTransliterator {}
+struct NFCTransliterator();
 
 enum InternalTransliterator {
     RuleBased(DataPayload<TransliteratorRulesV1Marker>),
@@ -101,6 +101,9 @@ pub struct Transliterator {
     transliterator: DataPayload<TransliteratorRulesV1Marker>,
     env: Env,
 }
+
+// TODO: Think about non-internal signatures returning a Writeable instead that could be written
+//  to Insertable, perhaps? or Replaceable?
 
 impl Transliterator {
     #[cfg(feature = "compiled_data")]
@@ -1416,6 +1419,14 @@ mod tests {
 
         let input = "Ich liebe ꜵ über alles";
         let output = "Ich liebe maoam ueber alles";
+        assert_eq!(t.transliterate(input.to_string()), output);
+    }
+
+    #[test]
+    fn test_nfc_nfd() {
+        let t = Transliterator::try_new("und-t-und-latn-d0-ascii".parse().unwrap()).unwrap();
+        let input = "äa\u{0308}";
+        let output = "aa";
         assert_eq!(t.transliterate(input.to_string()), output);
     }
 }

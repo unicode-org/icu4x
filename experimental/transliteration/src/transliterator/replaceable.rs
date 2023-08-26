@@ -310,6 +310,10 @@ impl<'a> Debug for Replaceable<'a> {
 }
 
 // TODO: write about invariants. they're basically the same as replaceable's
+// TODO about complexity: in the worst case, we need to move the full `end_len` tail for every
+//  push. A good size_hint avoids this.
+//  one fix could be to preemptively move the tail to the end of the buffer whenever the capacity
+//  changes. Should give us the same benefits as an exponential allocation strategy.
 pub(crate) struct Insertable<'a, 'b> {
     // Replaceable's invariants may temporarily be broken while this Insertable is alive
     _rep: &'b mut Replaceable<'a>,
