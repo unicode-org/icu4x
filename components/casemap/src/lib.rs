@@ -43,6 +43,8 @@
     )
 )]
 #![warn(missing_docs)]
+// We're using Greek identifiers here on purpose. These lints can only be disabled at the crate level
+#![allow(confusable_idents, uncommon_codepoints)]
 
 extern crate alloc;
 
