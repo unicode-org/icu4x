@@ -320,7 +320,9 @@ impl<'a> Rule<'a> {
             .unwrap_or(CursorOffset::Byte(buf.len()));
         let new_cursor = cursor_offset.apply(rep, &data, buf.len());
 
-        eprintln!("applying replacement {buf:?} with cursor {new_cursor} from offset {cursor_offset:?}");
+        eprintln!(
+            "applying replacement {buf:?} with cursor {new_cursor} from offset {cursor_offset:?}"
+        );
 
         // // SAFETY: CursorOffset guarantees a valid UTF-8 index
         // unsafe { rep.set_cursor(new_cursor) };
@@ -449,7 +451,8 @@ impl CursorOffset {
                 // clamping cursor to the modifiable range
                 // adjust allowed_range for new replacement_len. the cursor we are returning
                 // must be valid _after_ the replacement is applied.
-                let adjusted_upper_bound = rep.allowed_range().end + replacement_len - data.key_match_len;
+                let adjusted_upper_bound =
+                    rep.allowed_range().end + replacement_len - data.key_match_len;
                 // we are not allowed to move the cursor into unmodifiable territory
                 adjusted_upper_bound.min(rep.cursor() + replacement_len + post_len)
             }
@@ -1247,8 +1250,8 @@ mod tests {
             ("b1", "bmatch1"),
         ];
 
-        let t =
-            Transliterator::try_new("und-t-und-s0-test-d0-test-m0-emtymach".parse().unwrap()).unwrap();
+        let t = Transliterator::try_new("und-t-und-s0-test-d0-test-m0-emtymach".parse().unwrap())
+            .unwrap();
 
         for (input, output) in cases {
             assert_eq!(t.transliterate(input.to_string()), output);
@@ -1257,8 +1260,8 @@ mod tests {
 
     #[test]
     fn test_recursive_suite() {
-        let t =
-            Transliterator::try_new("und-t-und-s0-test-d0-test-m0-rectestr".parse().unwrap()).unwrap();
+        let t = Transliterator::try_new("und-t-und-s0-test-d0-test-m0-rectestr".parse().unwrap())
+            .unwrap();
 
         let input = "XXXabcXXXdXXe";
         let output = "XXXXXXaWORKEDcXXXXXXdXXXXXe";
@@ -1267,8 +1270,8 @@ mod tests {
 
     #[test]
     fn test_cursor_placeholders_filters() {
-        let t =
-            Transliterator::try_new("und-t-und-s0-test-d0-test-m0-cursfilt".parse().unwrap()).unwrap();
+        let t = Transliterator::try_new("und-t-und-s0-test-d0-test-m0-cursfilt".parse().unwrap())
+            .unwrap();
 
         let input = "xa";
         let output = "xb";

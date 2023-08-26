@@ -49,7 +49,12 @@ impl<'a> Replaceable<'a> {
 
     // TODO: design
     // TODO: maybe add checks about frozen range?
-    pub(crate) unsafe fn splice(&mut self, range: Range<usize>, replacement: &[u8], new_cursor: usize) {
+    pub(crate) unsafe fn splice(
+        &mut self,
+        range: Range<usize>,
+        replacement: &[u8],
+        new_cursor: usize,
+    ) {
         // TODO: splice should probably be combined with a cursor update, otherwise
         //  the invariants may not hold across function calls
 
@@ -68,11 +73,15 @@ impl<'a> Replaceable<'a> {
     /// The caller must ensure that `ignore_pre_len` is a valid UTF-8 index into `self.content`.
     pub(crate) unsafe fn set_ignore_pre_len(&mut self, ignore_pre_len: usize) {
         // TODO: maybe move this function in the constructor?
-        eprintln!("set_ignore_pre_len called with ignore_pre_len: {}", ignore_pre_len);
+        eprintln!(
+            "set_ignore_pre_len called with ignore_pre_len: {}",
+            ignore_pre_len
+        );
         eprintln!("on self: {self:?}");
         // adjust cursor
         let previous_ignore_pre_len = self.ignore_pre_len;
-        let new_raw_cursor = self.raw_cursor as i64 - previous_ignore_pre_len as i64 + ignore_pre_len as i64;
+        let new_raw_cursor =
+            self.raw_cursor as i64 - previous_ignore_pre_len as i64 + ignore_pre_len as i64;
         self.raw_cursor = new_raw_cursor as usize;
         self.ignore_pre_len = ignore_pre_len;
         eprintln!("on self: {self:?}");
