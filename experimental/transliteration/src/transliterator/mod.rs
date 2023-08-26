@@ -495,6 +495,8 @@ mod helpers {
         match_data: &mut MatchData,
         vt: &VarTable,
     ) -> bool {
+        eprintln!("trying to match query {query:?} on input {input:?}");
+
         if is_pure(query) {
             return input.match_and_consume_str(query);
         }
@@ -864,6 +866,42 @@ impl<'a> SpecialMatcher<'a> {
                 // note: at the moment we could just store start..end
                 match_data.segments[idx].push_str(matched);
                 true
+            }
+            Self::Quantifier(kind, query) => {
+                let (min_matches, max_matches) = match kind {
+                    QuantifierKind::ZeroOrOne => (0, 1),
+                    QuantifierKind::ZeroOrMore => (0, usize::MAX),
+                    QuantifierKind::OneOrMore => (1, usize::MAX),
+                };
+
+                let mut matches = 0;
+
+                while matches < max_matches {
+                    // TODO: matching the same query multiple times leads to issues with
+                    //  segment numbering. best would be if a segment directly new its associated
+                    //  number, then it could always fill that slot.
+                    //  Alternatively, we can do inefficient moving around of segments as a
+                    //  workaround.
+                    //  Actually, no. Segments need to know their number at compile time due to
+                    //  ZeroOrX quantifiers. Zero matches would not allocate any segments, but we
+                    //  need them.
+
+                    eprintln!("trying to match query {query:?} on input {input:?} with quantifier {min_matches}-{max_matches}");
+
+                    let pre_cursor = input.cursor;
+                    if !helpers::match_encoded_str(query, input, match_data, vt) {
+                        break;
+                    }
+                    let post_cursor = input.cursor;
+                    matches += 1;
+                    if pre_cursor == post_cursor {
+                        // no progress was made but there was still a match. this means we could
+                        // recurse infinitely. break out of the loop.
+                        break;
+                    }
+                }
+
+                matches >= min_matches
             }
             // TODO: do more
             _ => false,

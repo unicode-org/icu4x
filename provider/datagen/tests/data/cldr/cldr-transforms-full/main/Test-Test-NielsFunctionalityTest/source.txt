@@ -41,3 +41,9 @@ $a = $t$b ;
 
 # output so far: firsfifirsrstbCxyzftbCxyzxyzXYZjkT!
 
+$fi = fi ;
+$fi+ > FI ;
+(r?s?C?)+ > $1 ;
+
+# output so far: FIrsFIrstbCxyzftbCxyzxyzXYZjkT!
+
