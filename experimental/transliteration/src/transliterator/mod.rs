@@ -26,8 +26,8 @@ use crate::provider::{FunctionCall, Rule, RuleULE, SimpleId, VarTable};
 use alloc::vec::Vec;
 use core::fmt::{Debug, Formatter};
 use core::ops::RangeInclusive;
-use std::collections::VecDeque;
 use icu_collections::codepointinvliststringlist::CodePointInversionListAndStringList;
+use std::collections::VecDeque;
 use zerofrom::ZeroFrom;
 use zerovec::VarZeroSlice;
 
@@ -171,7 +171,7 @@ impl Transliterator {
                     // TODO: remove
                     eprintln!("unavailable transliterator: {}", id);
                     Ok(InternalTransliterator::Null)
-                },
+                }
                 s => Err(DataError::custom("unavailable transliterator")
                     .with_debug_context(s)
                     .into()),
@@ -1004,7 +1004,13 @@ enum SpecialReplacer<'a> {
 impl<'a> SpecialReplacer<'a> {
     /// Applies the replacement from this replacer to `buf`. Returns the offset of the cursor after
     /// the replacement, if a non-default one exists.
-    fn replace(&self, buf: &mut String, data: &MatchData, vt: &VarTable, env: &Env) -> Option<CursorOffset> {
+    fn replace(
+        &self,
+        buf: &mut String,
+        data: &MatchData,
+        vt: &VarTable,
+        env: &Env,
+    ) -> Option<CursorOffset> {
         match self {
             Self::Compound(query) => helpers::replace_encoded_str(query, buf, data, vt, env),
             Self::PureCursor => Some(CursorOffset::Byte(buf.len())),
@@ -1150,7 +1156,9 @@ impl<'a> VarTable<'a> {
         idx -= next_base;
         next_base = self.segments.len();
         if idx < next_base {
-            return Some(VarTableElement::Segment(Segment::zero_from(&self.segments[idx])));
+            return Some(VarTableElement::Segment(Segment::zero_from(
+                &self.segments[idx],
+            )));
         }
         idx -= next_base;
         next_base = self.unicode_sets.len();

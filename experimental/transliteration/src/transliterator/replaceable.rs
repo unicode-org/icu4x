@@ -50,8 +50,10 @@ impl<'a> Replaceable<'a> {
     // TODO: design
     // TODO: maybe add checks about frozen range?
     pub(crate) unsafe fn splice(&mut self, range: Range<usize>, replacement: &[u8]) {
-        let ignore_adjusted_range = range.start + self.ignore_pre_len..range.end + self.ignore_pre_len;
-        self.content.splice(ignore_adjusted_range, replacement.iter().copied());
+        let ignore_adjusted_range =
+            range.start + self.ignore_pre_len..range.end + self.ignore_pre_len;
+        self.content
+            .splice(ignore_adjusted_range, replacement.iter().copied());
     }
 
     /// Sets the first `ignore_pre_len` bytes of the content to be _completely_ ignored.
@@ -178,11 +180,7 @@ impl<'a> Replaceable<'a> {
     ///
     /// # Safety
     /// The caller must ensure that `start` is a valid UTF-8 index into the visible slice.
-    unsafe fn next_filtered_run(
-        &mut self,
-        start: usize,
-        filter: &Filter,
-    ) -> Option<Replaceable> {
+    unsafe fn next_filtered_run(&mut self, start: usize, filter: &Filter) -> Option<Replaceable> {
         if start == self.content.len() {
             // we have reached the end, there are no more runs
             return None;
@@ -252,7 +250,9 @@ impl<'a> Replaceable<'a> {
 
 impl<'a> Debug for Replaceable<'a> {
     fn fmt(&self, f: &mut Formatter<'_>) -> core::fmt::Result {
-        write!(f, "{}", unsafe {&str::from_utf8_unchecked(self.content)[..self.ignore_pre_len]})?;
+        write!(f, "{}", unsafe {
+            &str::from_utf8_unchecked(self.content)[..self.ignore_pre_len]
+        })?;
         write!(f, "[[[")?;
         write!(f, "{}", &self.as_str()[..self.freeze_pre_len])?;
         write!(f, "{{{{{{")?;
