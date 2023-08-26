@@ -14,15 +14,17 @@ use super::Filter;
 /// transliteration range.
 pub(crate) struct Replaceable<'a> {
     // guaranteed to be valid UTF-8
-    // only content[freeze_pre_len..content.len()-freeze_post_len] is mutable
+    // only content[ignore_pre_len+freeze_pre_len..content.len()-freeze_post_len] is mutable
     content: &'a mut Vec<u8>,
-    // guaranteed to be a valid UTF-8 index into content
+    // `ignore_pre_len + freeze_pre_len` is guaranteed to be a valid UTF-8 index into content
     freeze_pre_len: usize,
     // `content.len() - freeze_post_len` is guaranteed to be a valid UTF-8 index into content
     freeze_post_len: usize,
+    // guaranteed to be a valid UTF-8 index into content. is absolute, so not affected by ignore_pre_len
+    raw_cursor: usize,
     // guaranteed to be a valid UTF-8 index into content
-    cursor: usize,
-    // note: for Function Calls (that only "see" the input argument), we also need a "ignore_pre_len" and "ignore_post_len", probably
+    // needed because function calls _only_ see their arguments, but nothing surrounding them.
+    ignore_pre_len: usize,
 }
 
 // note: would be great to have something like Replaceable::replace_range(&mut self, range) -> &mut Insertable
@@ -40,15 +42,16 @@ impl<'a> Replaceable<'a> {
             // these uphold the invariants
             freeze_pre_len: 0,
             freeze_post_len: 0,
-            cursor: 0,
+            ignore_pre_len: 0,
+            raw_cursor: 0,
         }
     }
 
     // TODO: design
     // TODO: maybe add checks about frozen range?
     pub(crate) unsafe fn splice(&mut self, range: Range<usize>, replacement: &[u8]) {
-        let ignore_adjusted_range =
-        self.content.splice(range, replacement.iter().copied());
+        let ignore_adjusted_range = range.start + self.ignore_pre_len..range.end + self.ignore_pre_len;
+        self.content.splice(ignore_adjusted_range, replacement.iter().copied());
     }
 
     /// Sets the first `ignore_pre_len` bytes of the content to be _completely_ ignored.
@@ -56,41 +59,42 @@ impl<'a> Replaceable<'a> {
     /// # Safety
     /// The caller must ensure that `ignore_pre_len` is a valid UTF-8 index into `self.content`.
     pub(crate) unsafe fn set_ignore_pre_len(&mut self, ignore_pre_len: usize) {
-
+        // TODO: maybe move this function in the constructor?
+        self.ignore_pre_len = ignore_pre_len;
     }
 
     /// Returns the full current content as a `&str`.
     pub(crate) fn as_str(&self) -> &str {
-        debug_assert!(str::from_utf8(&self.content[..]).is_ok());
+        debug_assert!(str::from_utf8(self.visible_content()).is_ok());
         // SAFETY: Replaceable's invariant states that content is always valid UTF-8
-        unsafe { str::from_utf8_unchecked(&self.content[..]) }
+        unsafe { str::from_utf8_unchecked(self.visible_content()) }
     }
 
     /// Returns the current content before the cursor as a `&str`.
     pub(crate) fn as_str_ante(&self) -> &str {
         // TODO: use the ignore thing as lower bound here
-        &self.as_str()[..self.cursor]
+        &self.as_str()[..self.cursor()]
     }
 
     /// Returns the current modifiable content after the cursor as a `&str`.
     pub(crate) fn as_str_key(&self) -> &str {
-        &self.as_str()[self.cursor..self.allowed_upper_bound()]
+        &self.as_str()[self.cursor()..self.allowed_upper_bound()]
     }
 
     /// Returns the current content after the cursor as a `&str`. `key_match_len` is the length of
-    /// the key match and must be a valid UTF-8 index into `self.content`.
+    /// the key match and must be a valid UTF-8 index into the visible slice..
     pub(crate) fn as_str_post(&self, key_match_len: usize) -> &str {
         // TODO: use ignore thing as upper bound
-        &self.as_str()[(self.cursor + key_match_len)..]
+        &self.as_str()[(self.cursor() + key_match_len)..]
     }
-
-    // TODO: this is unsafe, need to guarantee pos/len are valid for UTF-8
-    pub(crate) fn freeze_at(&mut self, pos: usize, len: usize) {
-        debug_assert!(pos < self.content.len() && len <= self.content.len() - pos);
-
-        self.freeze_pre_len = pos;
-        self.freeze_post_len = self.content.len() - pos - len;
-    }
+    //
+    // // TODO: this is unsafe, need to guarantee pos/len are valid for UTF-8
+    // pub(crate) fn freeze_at(&mut self, pos: usize, len: usize) {
+    //     debug_assert!(pos < self.content.len() && len <= self.content.len() - pos);
+    //
+    //     self.freeze_pre_len = pos;
+    //     self.freeze_post_len = self.content.len() - pos - len;
+    // }
 
     /// Returns the range of bytes that are currently allowed to be modified.
     ///
@@ -101,36 +105,37 @@ impl<'a> Replaceable<'a> {
 
     /// Returns the cursor.
     ///
-    /// This is guaranteed to be a valid UTF-8 index into `self.content`.
+    /// This is guaranteed to be a valid UTF-8 index into the visible slice.
     pub(crate) fn cursor(&self) -> usize {
-        self.cursor
+        self.raw_cursor - self.ignore_pre_len
     }
 
     /// Advances the cursor by one char.
     pub(crate) fn step_cursor(&mut self) {
-        let step_len = self.as_str()[self.cursor..]
+        let step_len = self.as_str()[self.cursor()..]
             .chars()
             .next()
             .map(char::len_utf8)
             .unwrap_or(0);
         // eprintln!("step_cursor: {}", step_len);
-        self.cursor += step_len;
+        self.raw_cursor += step_len;
     }
 
     /// Sets the cursor.
     ///
     /// # Safety
-    /// The caller must ensure that `cursor` is a valid UTF-8 index into `self.content`.
+    /// The caller must ensure that `cursor` is a valid UTF-8 index into the visible slice..
     pub(crate) unsafe fn set_cursor(&mut self, cursor: usize) {
         // TODO: check that it's inside the non-ignored range (outside frozen is okay)
-        self.cursor = cursor;
+        self.raw_cursor = cursor + self.ignore_pre_len;
     }
 
     /// Returns true if the cursor is at the end of the modifiable range.
     pub(crate) fn is_finished(&self) -> bool {
         // the cursor should never be > the upper bound
-        debug_assert!(self.cursor <= self.allowed_upper_bound());
-        self.cursor >= self.allowed_upper_bound()
+        debug_assert!(self.cursor() <= self.allowed_upper_bound());
+        // GIGO behavior: >= to avoid infinite loops
+        self.cursor() >= self.allowed_upper_bound()
     }
 
     // pub(crate) fn with_range(&mut self, range: Range<usize>) -> Replaceable {
@@ -149,7 +154,8 @@ impl<'a> Replaceable<'a> {
             content: self.content,
             freeze_pre_len: self.freeze_pre_len,
             freeze_post_len: self.freeze_post_len,
-            cursor: self.cursor,
+            raw_cursor: self.raw_cursor,
+            ignore_pre_len: self.ignore_pre_len,
         }
     }
 
@@ -158,7 +164,7 @@ impl<'a> Replaceable<'a> {
     where
         F: FnMut(&mut Replaceable),
     {
-        // runs are in modifiable ranges, so we can only start in our modifiable range
+        // runs are in modifiable ranges, so we can only start in our modifiable range.
         let mut start = self.freeze_pre_len;
         // SAFETY: start is always the result of a function returning valid UTF-8 indices
         while let Some(mut run) = unsafe { self.next_filtered_run(start, filter) } {
@@ -171,8 +177,8 @@ impl<'a> Replaceable<'a> {
     /// that occurs on or after `start`, if one exists.
     ///
     /// # Safety
-    /// The caller must ensure that `start` is a valid UTF-8 index into `self.content`.
-    pub(crate) unsafe fn next_filtered_run(
+    /// The caller must ensure that `start` is a valid UTF-8 index into the visible slice.
+    unsafe fn next_filtered_run(
         &mut self,
         start: usize,
         filter: &Filter,
@@ -213,14 +219,15 @@ impl<'a> Replaceable<'a> {
             freeze_pre_len: run_start,
             freeze_post_len,
             // TODO: do we want this?
-            cursor: run_start,
+            raw_cursor: run_start,
+            ignore_pre_len: self.ignore_pre_len,
         })
     }
 
     /// Returns the index of the first char in `self.content` that satisfies `f`,
     /// starting at index `start`. The returned index is guaranteed to be a valid UTF-8 index.
     ///
-    /// `start` must be a valid UTF-8 index into `self.content`.
+    /// `start` must be a valid UTF-8 index into into the visible slice.
     fn find_first_char<F>(&self, start: usize, f: F) -> Option<usize>
     where
         F: Fn(char) -> bool,
@@ -232,22 +239,29 @@ impl<'a> Replaceable<'a> {
 
     /// Returns the current (exclusive) upper bound of the modifiable range.
     ///
-    /// This is guaranteed to be a valid UTF-8 index into `self.content`.
+    /// This is guaranteed to be a valid UTF-8 index into the visible slice.
     pub(crate) fn allowed_upper_bound(&self) -> usize {
-        self.content.len() - self.freeze_post_len
+        self.content.len() - self.freeze_post_len - self.ignore_pre_len
+    }
+
+    /// Returns the byte slice of the content that is currently visible.
+    fn visible_content(&self) -> &[u8] {
+        &self.content[self.ignore_pre_len..]
     }
 }
 
 impl<'a> Debug for Replaceable<'a> {
     fn fmt(&self, f: &mut Formatter<'_>) -> core::fmt::Result {
+        write!(f, "{}", unsafe {&str::from_utf8_unchecked(self.content)[..self.ignore_pre_len]})?;
+        write!(f, "[[[")?;
         write!(f, "{}", &self.as_str()[..self.freeze_pre_len])?;
         write!(f, "{{{{{{")?;
-        write!(f, "{}", &self.as_str()[self.freeze_pre_len..self.cursor])?;
+        write!(f, "{}", &self.as_str()[self.freeze_pre_len..self.cursor()])?;
         write!(f, "|||")?;
         write!(
             f,
             "{}",
-            &self.as_str()[self.cursor..self.allowed_upper_bound()]
+            &self.as_str()[self.cursor()..self.allowed_upper_bound()]
         )?;
         write!(f, "}}}}}}")?;
         write!(f, "{}", &self.as_str()[self.allowed_upper_bound()..])?;

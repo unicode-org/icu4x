@@ -47,6 +47,7 @@ enum InternalTransliterator {
     RuleBased(DataPayload<TransliteratorRulesV1Marker>),
     NFC(NFCTransliterator),
     Null,
+    Remove,
     Dyn(Box<dyn CustomTransliterator>),
 }
 
@@ -57,6 +58,10 @@ impl InternalTransliterator {
             // TODO(#3910): internal hardcoded transliterators
             Self::NFC(_nfc) => (),
             Self::Null => (),
+            Self::Remove => {
+                // SAFETY: rep.allowed_range() returns a range with valid UTF-8 bounds
+                unsafe { rep.splice(rep.allowed_range(), b"") };
+            }
             Self::Dyn(custom) => {
                 let replacement = custom.transliterate(rep.as_str(), rep.allowed_range());
                 // SAFETY: rep.allowed_range() returns a range with valid UTF-8 bounds, and the bytes are valid UTF-8 as they come from a String
@@ -73,12 +78,14 @@ impl Debug for InternalTransliterator {
             RuleBased(&'a DataPayload<TransliteratorRulesV1Marker>),
             NFC(&'a NFCTransliterator),
             Null,
+            Remove,
             Dyn,
         }
         let d = match self {
             Self::RuleBased(rbt) => DebugInternalTransliterator::RuleBased(rbt),
             Self::NFC(nfc) => DebugInternalTransliterator::NFC(nfc),
             Self::Null => DebugInternalTransliterator::Null,
+            Self::Remove => DebugInternalTransliterator::Remove,
             Self::Dyn(_) => DebugInternalTransliterator::Dyn,
         };
         d.fmt(f)
@@ -159,7 +166,12 @@ impl Transliterator {
             match special {
                 "any-nfc" => Ok(InternalTransliterator::NFC(NFCTransliterator {})),
                 "any-null" => Ok(InternalTransliterator::Null),
-                _ => Ok(InternalTransliterator::NFC(NFCTransliterator {})),
+                "any-remove" => Ok(InternalTransliterator::Remove),
+                _ => {
+                    // TODO: remove
+                    eprintln!("unavailable transliterator: {}", id);
+                    Ok(InternalTransliterator::Null)
+                },
                 s => Err(DataError::custom("unavailable transliterator")
                     .with_debug_context(s)
                     .into()),
