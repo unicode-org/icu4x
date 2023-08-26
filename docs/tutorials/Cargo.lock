@@ -3041,6 +3041,10 @@ name = "icu4x_ecma402"
 version = "0.8.0"
 
 [[patch.unused]]
+name = "icu_benchmark_macros"
+version = "0.0.0"
+
+[[patch.unused]]
 name = "icu_capi"
 version = "1.2.2"
 
@@ -3065,7 +3069,35 @@ name = "icu_pattern"
 version = "0.1.4"
 
 [[patch.unused]]
+name = "icu_personnames"
+version = "0.0.0"
+
+[[patch.unused]]
+name = "icu_singlenumberformatter"
+version = "0.0.0"
+
+[[patch.unused]]
+name = "icu_singlenumberformatter_data"
+version = "1.2.0"
+
+[[patch.unused]]
+name = "icu_transliteration"
+version = "0.0.0"
+
+[[patch.unused]]
+name = "icu_transliteration_data"
+version = "0.0.0"
+
+[[patch.unused]]
+name = "icu_transliterator_parser"
+version = "0.0.0"
+
+[[patch.unused]]
 name = "icu_unicodeset_parser"
+version = "0.0.0"
+
+[[patch.unused]]
+name = "icu_unitsconversion"
 version = "0.0.0"
 
 [[patch.unused]]
@@ -3075,3 +3107,7 @@ version = "0.1.0"
 [[patch.unused]]
 name = "tzif"
 version = "0.2.1"
+
+[[patch.unused]]
+name = "zerotrie"
+version = "0.0.0"

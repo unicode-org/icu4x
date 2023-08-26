@@ -141,7 +141,7 @@ pub struct VarTable<'a> {
     pub quantifiers_kleene_plus: VarZeroVec<'a, str>,
     /// Segments.
     #[cfg_attr(feature = "serde", serde(borrow))]
-    pub segments: VarZeroVec<'a, str>,
+    pub segments: VarZeroVec<'a, SegmentULE>,
     /// UnicodeSets. These are represented as a [`CodePointInversionListAndStringList`](icu_collections::codepointinvliststringlist::CodePointInversionListAndStringList)
     #[cfg_attr(feature = "serde", serde(borrow))]
     pub unicode_sets: VarZeroVec<'a, CodePointInversionListAndStringListULE>,
@@ -152,6 +152,30 @@ pub struct VarTable<'a> {
     pub max_left_placeholder_count: u16,
     /// The maximum number of _right_ placeholders (`| @@@ rest`) in any rule.
     pub max_right_placeholder_count: u16,
+}
+
+/// Segments store matched parts of the input dynamically and can be referred to by back references
+/// in the replacer.
+#[derive(Debug, Clone)]
+#[make_varule(SegmentULE)]
+#[zerovec::skip_derive(Ord)]
+#[zerovec::derive(Debug)]
+#[cfg_attr(
+    feature = "serde",
+    derive(serde::Deserialize),
+    zerovec::derive(Deserialize)
+)]
+#[cfg_attr(
+    feature = "datagen",
+    derive(serde::Serialize),
+    zerovec::derive(Serialize)
+)]
+pub struct Segment<'a> {
+    /// The 0-based index of this segment.
+    pub idx: u16,
+    #[cfg_attr(feature = "serde", serde(borrow))]
+    /// The content of the segment.
+    pub content: Cow<'a, str>,
 }
 
 /// An inline recursive call to a transliterator with an arbitrary argument.
