@@ -46,6 +46,10 @@ You should generate it automatically at build time if:
 
 If you check in the generated data, it is recommended that you configure a job in continuous integration that verifies that the data in your repository reflects the latest CLDR/Unicode releases; otherwise, your app may drift out of date.
 
+## Locale Fallbacking
+
+Data generated with `--format blob` or `--format fs` supports only exact matches for locales, not locales requiring _fallback_. For example, if `en-US` is requested but only `en` data is available, then the data request will fail. Because of this, it is often desirable to configure a `LocaleFallbackProvider`, as illustrated in the remainder of the examples on this page.
+
 # 3. Using the generated data
 
 Once we have generated some data, it needs to be loaded as a data provider. The blob format we chose can be loaded by `BlobDataProvider` from the `icu_provider_blob` crate.
