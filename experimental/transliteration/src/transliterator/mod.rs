@@ -420,22 +420,36 @@ impl<'a> Rule<'a> {
 mod helpers {
     use super::*;
 
-    /// Returns true if the given encoded string does not contain any special matchers/replacers.
-    pub(super) fn is_pure(s: &str) -> bool {
-        // note: this could be precomputed + stored at datagen time
-        // (there could eg be a reserved char that is at the start/end of key <=> key is pure)
-        !s.chars().any(|c| VarTable::ENCODE_RANGE.contains(&c))
+    /// Returns the index of the first encoded char in `s`, if there is one. Returns `None` if the
+    /// passed string is pure (contains no encoded special constructs).
+    pub(super) fn find_encoded(s: &str) -> Option<usize> {
+        // note: full-match (i.e., if this function returns Some(_) or None, could be
+        // precomputed + stored at datagen time (there could eg be a reserved char that is at the
+        // start/end of key <=> key is completely pure)
+        s.char_indices().find(|(_, c)| VarTable::ENCODE_RANGE.contains(c)).map(|(i, _)| i)
+    }
+
+    /// Returns the index of the char to the right of the first (from the right) encoded char in
+    /// `s`, if there is one.
+    /// Returns `None` if the passed string is pure (contains no encoded special constructs).
+    pub(super) fn rev_find_encoded(s: &str) -> Option<usize> {
+        s.char_indices().rfind(|(_, c)| VarTable::ENCODE_RANGE.contains(c)).map(|(i, c)| i + c.len_utf8())
     }
 
     /// Recursively estimates the size of the replacement string.
     pub(super) fn estimate_replacement_size(replacement: &str, data: &MatchData, vt: &VarTable) -> usize {
-        if is_pure(replacement) {
-            return replacement.len();
+        let mut size;
+        let replacement_tail;
+
+        match find_encoded(replacement) {
+            None => return replacement.len(),
+            Some(idx) => {
+                size = idx;
+                replacement_tail = &replacement[idx..];
+            },
         }
 
-        let mut size = 0;
-
-        for rep_c in replacement.chars() {
+        for rep_c in replacement_tail.chars() {
             if !VarTable::ENCODE_RANGE.contains(&rep_c) {
                 // regular char
                 size += rep_c.len_utf8();
@@ -466,10 +480,17 @@ mod helpers {
         vt: &VarTable,
         env: &Env,
     ) -> Option<CursorOffset> {
-        if is_pure(replacement) {
-            dest.push_str(replacement);
-            return None;
-        }
+        let replacement = match find_encoded(replacement) {
+            None => {
+                // pure string
+                dest.push_str(replacement);
+                return None;
+            }
+            Some(idx) => {
+                dest.push_str(&replacement[..idx]);
+                &replacement[idx..]
+            },
+        };
         let mut cursor_offset = None;
 
         for rep_c in replacement.chars() {
@@ -504,9 +525,18 @@ mod helpers {
     ) -> bool {
         eprintln!("trying to match query {query:?} on input {input:?}");
 
-        if is_pure(query) {
-            return input.match_and_consume_str(query);
-        }
+        let query = match find_encoded(query) {
+            None => {
+                // pure string
+                return input.match_and_consume_str(query);
+            }
+            Some(idx) => {
+                if !input.match_and_consume_str(&query[..idx]) {
+                    return false;
+                }
+                &query[idx..]
+            }
+        };
 
         // iterate char-by-char, and try to match each char
         // note: might be good to avoid the UTF-8 => char conversion?
@@ -545,9 +575,18 @@ mod helpers {
         match_data: &mut MatchData,
         vt: &VarTable,
     ) -> bool {
-        if is_pure(query) {
-            return input.match_and_consume_str(query);
-        }
+        let query = match rev_find_encoded(query) {
+            None => {
+                // pure string
+                return input.match_and_consume_str(query);
+            }
+            Some(idx) => {
+                if !input.match_and_consume_str(&query[idx..]) {
+                    return false;
+                }
+                &query[..idx]
+            }
+        };
 
         // iterate char-by-char, and try to match each char
         // note: might be good to avoid the UTF-8 => char conversion?
