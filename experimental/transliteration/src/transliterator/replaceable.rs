@@ -123,13 +123,13 @@ impl<'a> Replaceable<'a> {
         self.raw_cursor += step_len;
     }
 
-    /// Sets the cursor.
+    /// Sets the cursor. Clamps to the allowed range.
     ///
     /// # Safety
-    /// The caller must ensure that `cursor` is a valid UTF-8 index into the visible slice..
+    /// The caller must ensure that `cursor` is a valid UTF-8 index into the visible slice.
     pub(crate) unsafe fn set_cursor(&mut self, cursor: usize) {
-        // TODO: check that it's inside the non-ignored range (outside frozen is okay)
-        self.raw_cursor = cursor + self.ignore_pre_len;
+        let clamped = cursor.clamp(self.freeze_pre_len, self.allowed_upper_bound());
+        self.raw_cursor = clamped + self.ignore_pre_len;
     }
 
     /// Returns true if the cursor is at the end of the modifiable range.

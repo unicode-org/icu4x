@@ -1209,6 +1209,16 @@ mod tests {
     use super::*;
 
     #[test]
+    fn test_cursor_placeholders_filters() {
+        let t =
+            Transliterator::try_new("und-t-und-s0-test-d0-test-m0-cursfilt".parse().unwrap()).unwrap();
+
+        let input = "xa";
+        let output = "xb";
+        assert_eq!(t.transliterate(input.to_string()), output);
+    }
+
+    #[test]
     fn test_functionality() {
         let t =
             Transliterator::try_new("und-t-und-s0-test-d0-test-m0-niels".parse().unwrap()).unwrap();

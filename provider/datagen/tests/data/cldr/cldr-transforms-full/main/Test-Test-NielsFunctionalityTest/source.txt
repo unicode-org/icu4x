@@ -1,5 +1,5 @@
 # Test transliterator that uses every feature available and also tests some edge cases
-# TODO(this PR): move these rules somewhere else, maybe dynamically create structss
+# TODO(this PR): move all these Test-Test rules somewhere else, maybe dynamically create structs
 
 # input: abädefghijkl!
 
