@@ -6,7 +6,7 @@ use alloc::vec::Vec;
 use core::fmt::{Debug, Formatter};
 use core::ops::Range;
 use core::str;
-use crate::transliterator::{CursorOffset, MatchData};
+use crate::transliterator::MatchData;
 
 use super::Filter;
 
@@ -60,6 +60,7 @@ impl<'a> Replaceable<'a> {
     /// The caller must ensure that `range` is a valid UTF-8 range into the visible content.
     pub(crate) unsafe fn replace_range<'b>(&'b mut self, range: Range<usize>, size_hint: Option<usize>) -> Insertable<'a, 'b> {
         // TODO: if start is always cursor, maybe change signature to take only end?
+        //  that would also mean we could replace Insertable.start with Insertable._rep.cursor + ignore_pre_len
         debug_assert_eq!(range.start, self.cursor);
         // the passed range is into self.visible_content(), which starts at offset self.ignore_pre_len
         let adjusted_range = range.start + self.ignore_pre_len..range.end + self.ignore_pre_len;
@@ -398,8 +399,56 @@ impl<'a, 'b> Insertable<'a, 'b> {
 
     pub(super) fn commit(mut self, cursor_offset: CursorOffset, data: &MatchData) {
         self.make_contiguous();
-        let cursor = cursor_offset.apply(self._rep, data, self.curr_replacement_len());
-        // SAFETY: CursorOffset guarantees to be a valid UTF-8 index into the visible slice
+
+        // SAFETY: make_contiguous ensures that `content` is contiguous, valid UTF-8 again, thus
+        // we can call methods of Replaceable again.
+        let rep = &self._rep;
+
+        let old_cursor = rep.cursor;
+        let replacement_len = self.curr_replacement_len();
+
+        let cursor = match cursor_offset.0 {
+            CursorOffsetInner::Default => old_cursor + replacement_len,
+            CursorOffsetInner::Byte(offset) => old_cursor + offset,
+            CursorOffsetInner::CharsOffEnd(count) => {
+                // they key has already been replaced, so the post match starts `replacement_len`
+                // bytes after the cursor
+                let post_start = old_cursor + replacement_len;
+                // the replacement d oes not affect the post match length
+                let post_end = post_start + data.post_match_len;
+                let matched_post = &rep.as_str()[post_start..post_end];
+                // compute byte-length of `count` chars in post
+                let post_offset_len = matched_post
+                    .chars()
+                    .take(count as usize)
+                    .map(char::len_utf8)
+                    .sum::<usize>();
+
+                // we are not allowed to move the cursor into unmodifiable territory
+                let max_cursor = rep.allowed_range().end;
+                max_cursor.min(old_cursor + replacement_len + post_offset_len)
+            }
+            CursorOffsetInner::CharsOffStart(count) => {
+                let ante = rep.as_str_ante();
+                // restricting to the matched substr ensures no overflow of the cursor past the
+                // contexts, which is good
+                let matched_ante = &ante[(ante.len() - data.ante_match_len)..];
+                // compute byte-length of `count` chars in ante (from the right)
+                let ante_len = matched_ante
+                    .chars()
+                    .rev()
+                    .take(count as usize)
+                    .map(char::len_utf8)
+                    .sum::<usize>();
+
+                // clamping cursor to the modifiable range
+                let min_cursor = rep.allowed_range().start;
+                // not underflowing because ante_len is at most the cursor, because the cursor is
+                // right after where the ante context ends.
+                min_cursor.max(old_cursor - ante_len)
+            }
+        };
+        // SAFETY: all cases guarantee a valid UTF-8 index into the visible slice
         unsafe { self._rep.set_cursor(cursor) };
     }
 
@@ -457,3 +506,37 @@ where F: FnMut(&[u8])
         (self.on_drop)(&self.rep.content[..]);
     }
 }
+
+/// Stores the kinds of cursor offsets that a replacement can produce.
+#[derive(Debug, Clone, Copy, Default)]
+enum CursorOffsetInner {
+    /// The default offset, which just puts the cursor at the end of the replacement.
+    #[default]
+    Default,
+    /// A byte offset into the replacement string that is ready to use.
+    Byte(usize),
+    /// A `char`-based offset for after the replacement string.
+    CharsOffEnd(u16),
+    /// A `char`-based offset for before the replacement string.
+    CharsOffStart(u16),
+}
+
+#[derive(Debug, Clone, Copy, Default)]
+pub(super) struct CursorOffset(CursorOffsetInner);
+
+impl CursorOffset {
+    /// # Safety
+    /// The caller must ensure that `offset` is a valid UTF-8 index into the replacement string
+    pub(super) unsafe fn byte(offset: usize) -> Self {
+        Self(CursorOffsetInner::Byte(offset))
+    }
+
+    pub(super) fn chars_off_end(count: u16) -> Self {
+        Self(CursorOffsetInner::CharsOffEnd(count))
+    }
+
+    pub(super) fn chars_off_start(count: u16) -> Self {
+        Self(CursorOffsetInner::CharsOffStart(count))
+    }
+}
+

@@ -321,7 +321,7 @@ impl<'a> Rule<'a> {
         let mut dest = unsafe { rep.replace_range(replacement_range, None) };
 
         let cursor_offset = helpers::replace_encoded_str(&self.replacer, &mut dest, &data, vt, env)
-            .unwrap_or(CursorOffset::Byte(dest.curr_replacement_len()));
+            .unwrap_or_default();
 
         dest.commit(cursor_offset, &data);
 
@@ -407,66 +407,6 @@ impl<'a> Rule<'a> {
         };
         helpers::match_encoded_str(&self.key, &mut input, match_data, vt)
             .then_some(input.cursor - rep.cursor())
-    }
-}
-
-/// Stores the kinds of cursor offsets that a replacement can produce.
-#[derive(Debug, Clone, Copy)]
-enum CursorOffset {
-    /// A byte offset ready to use.
-    Byte(usize),
-    /// A `char`-based offset for after the replacement string.
-    CharsOffEnd(u16),
-    /// A `char`-based offset for before the replacement string.
-    CharsOffStart(u16),
-}
-
-impl CursorOffset {
-    /// Computes the final cursor position according to the offset. Must be called after replacement
-    /// is finished.
-    ///
-    /// Ensures no overflow of cursors past the contexts and returns a valid UTF-8 index.
-    fn apply(self, rep: &Replaceable, data: &MatchData, replacement_len: usize) -> usize {
-        match self {
-            Self::Byte(offset) => rep.cursor() + offset,
-            Self::CharsOffEnd(count) => {
-                // they key has already been replaced, so the post match starts `replacement_len`
-                // bytes after the cursor
-                let post_start = rep.cursor() + replacement_len;
-                // the replacement d oes not affect the post match length
-                let post_end = post_start + data.post_match_len;
-                let matched_post = &rep.as_str()[post_start..post_end];
-                // compute byte-length of `count` chars in post
-                let post_offset_len = matched_post
-                    .chars()
-                    .take(count as usize)
-                    .map(char::len_utf8)
-                    .sum::<usize>();
-
-                // we are not allowed to move the cursor into unmodifiable territory
-                let max_cursor = rep.allowed_range().end;
-                max_cursor.min(rep.cursor() + replacement_len + post_offset_len)
-            }
-            Self::CharsOffStart(count) => {
-                let ante = rep.as_str_ante();
-                // restricting to the matched substr ensures no overflow of the cursor past the
-                // contexts, which is good
-                let matched_ante = &ante[(ante.len() - data.ante_match_len)..];
-                // compute byte-length of `count` chars in ante (from the right)
-                let ante_len = matched_ante
-                    .chars()
-                    .rev()
-                    .take(count as usize)
-                    .map(char::len_utf8)
-                    .sum::<usize>();
-
-                // clamping cursor to the modifiable range
-                let min_cursor = rep.allowed_range().start;
-                // not underflowing because ante_len is at most the cursor, because the cursor is
-                // right after where the ante context ends.
-                min_cursor.max(rep.cursor() - ante_len)
-            }
-        }
     }
 }
 
@@ -1031,15 +971,18 @@ impl<'a> SpecialReplacer<'a> {
     ) -> Option<CursorOffset> {
         match self {
             Self::Compound(query) => helpers::replace_encoded_str(query, dest, data, vt, env),
-            Self::PureCursor => Some(CursorOffset::Byte(dest.curr_replacement_len())),
+            Self::PureCursor => {
+                // SAFETY: the curr_replacement_len is a valid UTF-8 length
+                Some(unsafe { CursorOffset::byte(dest.curr_replacement_len()) })
+            },
             &Self::LeftPlaceholderCursor(num) => {
                 // must occur at the very end of a replacement
-                Some(CursorOffset::CharsOffEnd(num))
+                Some(CursorOffset::chars_off_end(num))
             }
             &Self::RightPlaceholderCursor(num) => {
                 // must occur at the very beginning of the replacement
                 debug_assert_eq!(dest.curr_replacement_len(), 0, "pre-start cursor not the first replacement");
-                Some(CursorOffset::CharsOffStart(num))
+                Some(CursorOffset::chars_off_start(num))
             }
             &Self::BackReference(num) => {
                 dest.push_str(data.get_segment(num as usize));
