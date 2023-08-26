@@ -47,7 +47,16 @@ impl<'a> Replaceable<'a> {
     // TODO: design
     // TODO: maybe add checks about frozen range?
     pub(crate) unsafe fn splice(&mut self, range: Range<usize>, replacement: &[u8]) {
+        let ignore_adjusted_range =
         self.content.splice(range, replacement.iter().copied());
+    }
+
+    /// Sets the first `ignore_pre_len` bytes of the content to be _completely_ ignored.
+    ///
+    /// # Safety
+    /// The caller must ensure that `ignore_pre_len` is a valid UTF-8 index into `self.content`.
+    pub(crate) unsafe fn set_ignore_pre_len(&mut self, ignore_pre_len: usize) {
+
     }
 
     /// Returns the full current content as a `&str`.

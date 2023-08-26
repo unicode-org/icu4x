@@ -296,7 +296,7 @@ impl<'a> Rule<'a> {
         let mut buf = String::new();
         let replacement_range = rep.cursor()..(rep.cursor() + data.key_match_len);
 
-        let cursor_offset = helpers::replace_encoded_str(&self.replacer, &mut buf, &data, vt)
+        let cursor_offset = helpers::replace_encoded_str(&self.replacer, &mut buf, &data, vt, env)
             .unwrap_or(CursorOffset::Byte(buf.len()));
         let new_cursor = cursor_offset.apply(rep, &data, buf.len());
         debug_assert!(new_cursor >= 0);
@@ -458,6 +458,7 @@ mod helpers {
         buf: &mut String,
         data: &MatchData,
         vt: &VarTable,
+        env: &Env,
     ) -> Option<CursorOffset> {
         if is_pure(replacement) {
             buf.push_str(replacement);
@@ -481,7 +482,7 @@ mod helpers {
                     continue;
                 }
             };
-            cursor_offset = cursor_offset.or(replacer.replace(buf, data, vt));
+            cursor_offset = cursor_offset.or(replacer.replace(buf, data, vt, env));
         }
 
         cursor_offset
@@ -785,6 +786,9 @@ enum SpecialMatcher<'a> {
 }
 
 impl<'a> SpecialMatcher<'a> {
+    // TODO: a lot of duplicated code in matches and rev_matches. deduplicate.
+    //  maybe by being generic over Input/RevInput? doesn't work for some special cases, though
+
     /// Returns `None` if the input does not match. If there is a match, returns the length of the
     /// match.
     fn matches(&self, input: &mut Input, match_data: &mut MatchData, vt: &VarTable) -> bool {
@@ -884,8 +888,6 @@ impl<'a> SpecialMatcher<'a> {
 
                 matches >= min_matches
             }
-            // TODO: do more
-            _ => false,
         }
     }
 
@@ -949,8 +951,31 @@ impl<'a> SpecialMatcher<'a> {
                 match_data.update_segment(segment.idx as usize, matched.to_string());
                 true
             }
-            // TODO: do more
-            _ => false,
+            Self::Quantifier(kind, query) => {
+                let (min_matches, max_matches) = match kind {
+                    QuantifierKind::ZeroOrOne => (0, 1),
+                    QuantifierKind::ZeroOrMore => (0, usize::MAX),
+                    QuantifierKind::OneOrMore => (1, usize::MAX),
+                };
+
+                let mut matches = 0;
+
+                while matches < max_matches {
+                    let pre_cursor = input.cursor;
+                    if !helpers::rev_match_encoded_str(query, input, match_data, vt) {
+                        break;
+                    }
+                    let post_cursor = input.cursor;
+                    matches += 1;
+                    if pre_cursor == post_cursor {
+                        // no progress was made but there was still a match. this means we could
+                        // recurse infinitely. break out of the loop.
+                        break;
+                    }
+                }
+
+                matches >= min_matches
+            }
         }
     }
 }
@@ -967,9 +992,9 @@ enum SpecialReplacer<'a> {
 impl<'a> SpecialReplacer<'a> {
     /// Applies the replacement from this replacer to `buf`. Returns the offset of the cursor after
     /// the replacement, if a non-default one exists.
-    fn replace(&self, buf: &mut String, data: &MatchData, vt: &VarTable) -> Option<CursorOffset> {
+    fn replace(&self, buf: &mut String, data: &MatchData, vt: &VarTable, env: &Env) -> Option<CursorOffset> {
         match self {
-            Self::Compound(query) => helpers::replace_encoded_str(query, buf, data, vt),
+            Self::Compound(query) => helpers::replace_encoded_str(query, buf, data, vt, env),
             Self::PureCursor => Some(CursorOffset::Byte(buf.len())),
             &Self::LeftPlaceholderCursor(num) => {
                 // must occur at the very end of a replacement
@@ -984,8 +1009,29 @@ impl<'a> SpecialReplacer<'a> {
                 buf.push_str(data.get_segment(num as usize));
                 None
             }
-            _ => {
-                // TODO
+            Self::FunctionCall(call) => {
+                // the way function call replacing works is as such:
+                // use the `buf` as the backing storage for Replaceable.
+                // have `ignore_len` fields (like freeze) on replaceable, that indicate *completely*
+                // inaccessible data.
+
+                let start = buf.len();
+
+                // no cursor offsets allowed here
+                let _ = helpers::replace_encoded_str(&call.arg, buf, data, vt, env);
+
+                let moved_str = core::mem::replace(buf, String::new());
+                let mut vec = moved_str.into_bytes();
+                // SAFETY: `vec` is constructed directly from a String
+                let mut rep = unsafe { Replaceable::new(&mut vec) };
+                // SAFETY: `start` comes from buf.len(), and buf is append-only.
+                unsafe { rep.set_ignore_pre_len(start) };
+
+                call.translit.transliterate(rep, env);
+
+                // SAFETY: Replaceable guarantees any changes are valid UTF-8.
+                let recovered_string = unsafe { String::from_utf8_unchecked(vec) };
+                let _ = core::mem::replace(buf, recovered_string);
                 None
             }
         }
@@ -1149,7 +1195,7 @@ mod tests {
             Transliterator::try_new("und-t-und-s0-test-d0-test-m0-niels".parse().unwrap()).unwrap();
 
         let input = "abädefghijkl!";
-        let output = "FIfiFItbxyzftbxyzxyzXYZjkT!";
+        let output = "FIfiunremovedtbxyzftbxyzxyzXYZjkT!";
         assert_eq!(t.transliterate(input.to_string()), output);
     }
 
