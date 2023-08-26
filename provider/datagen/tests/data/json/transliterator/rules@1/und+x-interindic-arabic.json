@@ -14,7 +14,10 @@
       "󰀂"
     ],
     "segments": [
-      "󰀂"
+      {
+        "idx": 0,
+        "content": "󰀂"
+      }
     ],
     "unicode_sets": [
       {
