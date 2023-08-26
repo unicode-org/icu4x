@@ -1984,7 +1984,11 @@ version = "0.0.0"
 dependencies = [
  "databake",
  "displaydoc",
+ "icu_casemap",
+ "icu_casemap_data",
  "icu_collections",
+ "icu_normalizer",
+ "icu_normalizer_data",
  "icu_provider",
  "icu_transliteration_data",
  "litemap",

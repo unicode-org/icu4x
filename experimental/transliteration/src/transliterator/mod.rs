@@ -27,6 +27,8 @@ use alloc::vec::Vec;
 use core::fmt::{Debug, Formatter};
 use core::ops::RangeInclusive;
 use icu_collections::codepointinvliststringlist::CodePointInversionListAndStringList;
+use icu_normalizer::provider::*;
+use icu_normalizer::{ComposingNormalizer, DecomposingNormalizer};
 use std::collections::VecDeque;
 use zerofrom::ZeroFrom;
 use zerovec::VarZeroSlice;
@@ -41,11 +43,89 @@ pub trait CustomTransliterator {
 }
 
 #[derive(Debug)]
-struct NFCTransliterator();
+struct ComposingTransliterator(ComposingNormalizer);
+
+impl ComposingTransliterator {
+    fn try_nfc<P>(provider: &P) -> Result<Self, TransliteratorError>
+    where
+        P: DataProvider<CanonicalDecompositionDataV1Marker>
+            + DataProvider<CanonicalDecompositionTablesV1Marker>
+            + DataProvider<CanonicalCompositionsV1Marker>
+            + ?Sized,
+    {
+        let inner = ComposingNormalizer::try_new_nfc_unstable(provider)
+            .map_err(|e| DataError::custom("failed to load NFC").with_debug_context(&e))?;
+        Ok(Self(inner))
+    }
+
+    fn try_nfkc<P>(provider: &P) -> Result<Self, TransliteratorError>
+    where
+        P: DataProvider<CanonicalDecompositionDataV1Marker>
+            + DataProvider<CompatibilityDecompositionSupplementV1Marker>
+            + DataProvider<CanonicalDecompositionTablesV1Marker>
+            + DataProvider<CompatibilityDecompositionTablesV1Marker>
+            + DataProvider<CanonicalCompositionsV1Marker>
+            + ?Sized,
+    {
+        let inner = ComposingNormalizer::try_new_nfkc_unstable(provider)
+            .map_err(|e| DataError::custom("failed to load NFKC").with_debug_context(&e))?;
+        Ok(Self(inner))
+    }
+
+    fn transliterate(&self, mut rep: Replaceable, _env: &Env) {
+        // would be cool to use `normalize_to` and pass Insertable, but we need to know the
+        // input string, which gets replaced by the normalized string.
+
+        let buf = self.0.normalize(rep.as_str_modifiable());
+        // SAFETY: rep.allowed_range() returns a range with valid UTF-8 bounds
+        let mut dest = unsafe { rep.replace_range(rep.allowed_range(), Some(buf.len())) };
+        dest.push_str(&buf);
+    }
+}
+
+#[derive(Debug)]
+struct DecomposingTransliterator(DecomposingNormalizer);
+
+impl DecomposingTransliterator {
+    fn try_nfd<P>(provider: &P) -> Result<Self, TransliteratorError>
+    where
+        P: DataProvider<CanonicalDecompositionDataV1Marker>
+            + DataProvider<CanonicalDecompositionTablesV1Marker>
+            + ?Sized,
+    {
+        let inner = DecomposingNormalizer::try_new_nfd_unstable(provider)
+            .map_err(|e| DataError::custom("failed to load NFD").with_debug_context(&e))?;
+        Ok(Self(inner))
+    }
+
+    fn try_nfkd<P>(provider: &P) -> Result<Self, TransliteratorError>
+    where
+        P: DataProvider<CanonicalDecompositionDataV1Marker>
+            + DataProvider<CompatibilityDecompositionSupplementV1Marker>
+            + DataProvider<CanonicalDecompositionTablesV1Marker>
+            + DataProvider<CompatibilityDecompositionTablesV1Marker>
+            + ?Sized,
+    {
+        let inner = DecomposingNormalizer::try_new_nfkd_unstable(provider)
+            .map_err(|e| DataError::custom("failed to load NFKD").with_debug_context(&e))?;
+        Ok(Self(inner))
+    }
+
+    fn transliterate(&self, mut rep: Replaceable, _env: &Env) {
+        // would be cool to use `normalize_to` and pass Insertable, but we need to know the
+        // input string, which gets replaced by the normalized string.
+
+        let buf = self.0.normalize(rep.as_str_modifiable());
+        // SAFETY: rep.allowed_range() returns a range with valid UTF-8 bounds
+        let mut dest = unsafe { rep.replace_range(rep.allowed_range(), Some(buf.len())) };
+        dest.push_str(&buf);
+    }
+}
 
 enum InternalTransliterator {
     RuleBased(DataPayload<TransliteratorRulesV1Marker>),
-    NFC(NFCTransliterator),
+    Composing(ComposingTransliterator),
+    Decomposing(DecomposingTransliterator),
     Null,
     Remove,
     Dyn(Box<dyn CustomTransliterator>),
@@ -56,7 +136,8 @@ impl InternalTransliterator {
         match self {
             Self::RuleBased(rbt) => rbt.get().transliterate(rep, env),
             // TODO(#3910): internal hardcoded transliterators
-            Self::NFC(_nfc) => (),
+            Self::Composing(t) => t.transliterate(rep, env),
+            Self::Decomposing(t) => t.transliterate(rep, env),
             Self::Null => (),
             Self::Remove => {
                 // SAFETY: rep.allowed_range() returns a range with valid UTF-8 bounds
@@ -78,14 +159,16 @@ impl Debug for InternalTransliterator {
         #[derive(Debug)]
         enum DebugInternalTransliterator<'a> {
             RuleBased(&'a DataPayload<TransliteratorRulesV1Marker>),
-            NFC(&'a NFCTransliterator),
+            ComposingTransliterator(&'a ComposingTransliterator),
+            DecomposingTransliterator(&'a DecomposingTransliterator),
             Null,
             Remove,
             Dyn,
         }
         let d = match self {
             Self::RuleBased(rbt) => DebugInternalTransliterator::RuleBased(rbt),
-            Self::NFC(nfc) => DebugInternalTransliterator::NFC(nfc),
+            Self::Composing(t) => DebugInternalTransliterator::ComposingTransliterator(t),
+            Self::Decomposing(t) => DebugInternalTransliterator::DecomposingTransliterator(t),
             Self::Null => DebugInternalTransliterator::Null,
             Self::Remove => DebugInternalTransliterator::Remove,
             Self::Dyn(_) => DebugInternalTransliterator::Dyn,
@@ -129,7 +212,13 @@ impl Transliterator {
         provider: &P,
     ) -> Result<Transliterator, TransliteratorError>
     where
-        P: DataProvider<TransliteratorRulesV1Marker>,
+        P: DataProvider<TransliteratorRulesV1Marker>
+            + DataProvider<CanonicalDecompositionDataV1Marker>
+            + DataProvider<CompatibilityDecompositionSupplementV1Marker>
+            + DataProvider<CanonicalDecompositionTablesV1Marker>
+            + DataProvider<CompatibilityDecompositionTablesV1Marker>
+            + DataProvider<CanonicalCompositionsV1Marker>
+            + ?Sized,
     {
         Self::internal_try_new_with_override_unstable(
             locale,
@@ -144,7 +233,13 @@ impl Transliterator {
         provider: &P,
     ) -> Result<Transliterator, TransliteratorError>
     where
-        P: DataProvider<TransliteratorRulesV1Marker>,
+        P: DataProvider<TransliteratorRulesV1Marker>
+            + DataProvider<CanonicalDecompositionDataV1Marker>
+            + DataProvider<CompatibilityDecompositionSupplementV1Marker>
+            + DataProvider<CanonicalDecompositionTablesV1Marker>
+            + DataProvider<CompatibilityDecompositionTablesV1Marker>
+            + DataProvider<CanonicalCompositionsV1Marker>
+            + ?Sized,
         F: Fn(&Locale) -> Option<Box<dyn CustomTransliterator>>,
     {
         Self::internal_try_new_with_override_unstable(locale, Some(&lookup), provider)
@@ -156,7 +251,13 @@ impl Transliterator {
         provider: &P,
     ) -> Result<Transliterator, TransliteratorError>
     where
-        P: DataProvider<TransliteratorRulesV1Marker>,
+        P: DataProvider<TransliteratorRulesV1Marker>
+            + DataProvider<CanonicalDecompositionDataV1Marker>
+            + DataProvider<CompatibilityDecompositionSupplementV1Marker>
+            + DataProvider<CanonicalDecompositionTablesV1Marker>
+            + DataProvider<CompatibilityDecompositionTablesV1Marker>
+            + DataProvider<CanonicalCompositionsV1Marker>
+            + ?Sized,
         F: Fn(&Locale) -> Option<Box<dyn CustomTransliterator>>,
     {
         debug_assert!(!locale.extensions.transform.is_empty());
@@ -167,7 +268,8 @@ impl Transliterator {
             locale: &data_locale,
             metadata: Default::default(),
         };
-        let payload = provider.load(req)?.take_payload()?;
+        let payload: DataPayload<TransliteratorRulesV1Marker> =
+            provider.load(req)?.take_payload()?;
         let rbt = payload.get();
         if !rbt.visibility {
             // transliterator is internal
@@ -188,7 +290,13 @@ impl Transliterator {
         provider: &P,
     ) -> Result<(), TransliteratorError>
     where
-        P: DataProvider<TransliteratorRulesV1Marker>,
+        P: DataProvider<TransliteratorRulesV1Marker>
+            + DataProvider<CanonicalDecompositionDataV1Marker>
+            + DataProvider<CompatibilityDecompositionSupplementV1Marker>
+            + DataProvider<CanonicalDecompositionTablesV1Marker>
+            + DataProvider<CompatibilityDecompositionTablesV1Marker>
+            + DataProvider<CanonicalCompositionsV1Marker>
+            + ?Sized,
         F: Fn(&Locale) -> Option<Box<dyn CustomTransliterator>>,
     {
         for dep in rbt.dependencies.iter() {
@@ -210,13 +318,30 @@ impl Transliterator {
         provider: &P,
     ) -> Result<InternalTransliterator, TransliteratorError>
     where
-        P: DataProvider<TransliteratorRulesV1Marker>,
+        P: DataProvider<TransliteratorRulesV1Marker>
+            + DataProvider<CanonicalDecompositionDataV1Marker>
+            + DataProvider<CompatibilityDecompositionSupplementV1Marker>
+            + DataProvider<CanonicalDecompositionTablesV1Marker>
+            + DataProvider<CompatibilityDecompositionTablesV1Marker>
+            + DataProvider<CanonicalCompositionsV1Marker>
+            + ?Sized,
         F: Fn(&Locale) -> Option<Box<dyn CustomTransliterator>>,
     {
         if let Some(special) = id.strip_prefix("x-") {
             // TODO: add more
             match special {
-                "any-nfc" => Ok(InternalTransliterator::NFC(NFCTransliterator {})),
+                "any-nfc" => Ok(InternalTransliterator::Composing(
+                    ComposingTransliterator::try_nfc(provider)?,
+                )),
+                "any-nfkc" => Ok(InternalTransliterator::Composing(
+                    ComposingTransliterator::try_nfkc(provider)?,
+                )),
+                "any-nfd" => Ok(InternalTransliterator::Decomposing(
+                    DecomposingTransliterator::try_nfd(provider)?,
+                )),
+                "any-nfkd" => Ok(InternalTransliterator::Decomposing(
+                    DecomposingTransliterator::try_nfkd(provider)?,
+                )),
                 "any-null" => Ok(InternalTransliterator::Null),
                 "any-remove" => Ok(InternalTransliterator::Remove),
                 _ => {

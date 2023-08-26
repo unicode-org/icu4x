@@ -98,9 +98,13 @@ impl<'a> Replaceable<'a> {
         unsafe { str::from_utf8_unchecked(self.visible_content()) }
     }
 
+    /// Returns the current modifiable content as a `&str`.
+    pub(crate) fn as_str_modifiable(&self) -> &str {
+        &self.as_str()[self.allowed_range()]
+    }
+
     /// Returns the current content before the cursor as a `&str`.
     pub(crate) fn as_str_ante(&self) -> &str {
-        // TODO: use the ignore thing as lower bound here
         &self.as_str()[..self.cursor()]
     }
 
