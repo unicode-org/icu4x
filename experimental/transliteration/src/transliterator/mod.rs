@@ -109,12 +109,52 @@ impl Transliterator {
         Self::try_new_unstable(locale, &provider)
     }
 
+    #[cfg(feature = "compiled_data")]
+    pub fn try_new_with_override<F>(
+        locale: Locale,
+        lookup: F,
+    ) -> Result<Transliterator, TransliteratorError>
+    where
+        F: Fn(&Locale) -> Option<Box<dyn CustomTransliterator>>,
+    {
+        let provider = crate::provider::Baked;
+        Self::try_new_with_override_unstable(locale, lookup, &provider)
+    }
+
     pub fn try_new_unstable<P>(
         locale: Locale,
         provider: &P,
     ) -> Result<Transliterator, TransliteratorError>
     where
         P: DataProvider<TransliteratorRulesV1Marker>,
+    {
+        Self::internal_try_new_with_override_unstable(
+            locale,
+            None::<&fn(&Locale) -> Option<Box<dyn CustomTransliterator>>>,
+            provider,
+        )
+    }
+
+    pub fn try_new_with_override_unstable<P, F>(
+        locale: Locale,
+        lookup: F,
+        provider: &P,
+    ) -> Result<Transliterator, TransliteratorError>
+    where
+        P: DataProvider<TransliteratorRulesV1Marker>,
+        F: Fn(&Locale) -> Option<Box<dyn CustomTransliterator>>,
+    {
+        Self::internal_try_new_with_override_unstable(locale, Some(&lookup), provider)
+    }
+
+    pub fn internal_try_new_with_override_unstable<P, F>(
+        locale: Locale,
+        lookup: Option<&F>,
+        provider: &P,
+    ) -> Result<Transliterator, TransliteratorError>
+    where
+        P: DataProvider<TransliteratorRulesV1Marker>,
+        F: Fn(&Locale) -> Option<Box<dyn CustomTransliterator>>,
     {
         debug_assert!(!locale.extensions.transform.is_empty());
 
@@ -131,26 +171,28 @@ impl Transliterator {
             return Err(TransliteratorError::InternalOnly);
         }
         let mut env = LiteMap::new();
-        Transliterator::load_dependencies(rbt, &mut env, provider)?;
+        Transliterator::load_dependencies(rbt, &mut env, lookup, provider)?;
         Ok(Transliterator {
             transliterator: payload,
             env,
         })
     }
 
-    fn load_dependencies<P>(
+    fn load_dependencies<P, F>(
         rbt: &RuleBasedTransliterator<'_>,
         env: &mut LiteMap<String, InternalTransliterator>,
+        lookup: Option<&F>,
         provider: &P,
     ) -> Result<(), TransliteratorError>
     where
         P: DataProvider<TransliteratorRulesV1Marker>,
+        F: Fn(&Locale) -> Option<Box<dyn CustomTransliterator>>,
     {
         for dep in rbt.dependencies.iter() {
             if !env.contains_key(dep) {
-                let internal_t = Self::load_nested(dep, provider)?;
+                let internal_t = Self::load_nested(dep, lookup, provider)?;
                 if let InternalTransliterator::RuleBased(rbt) = &internal_t {
-                    Self::load_dependencies(rbt.get(), env, provider)?;
+                    Self::load_dependencies(rbt.get(), env, lookup, provider)?;
                 }
                 env.insert(dep.to_string(), internal_t);
             }
@@ -159,9 +201,14 @@ impl Transliterator {
     }
 
     // TODO: add hook for custom
-    fn load_nested<P>(id: &str, provider: &P) -> Result<InternalTransliterator, TransliteratorError>
+    fn load_nested<P, F>(
+        id: &str,
+        lookup: Option<&F>,
+        provider: &P,
+    ) -> Result<InternalTransliterator, TransliteratorError>
     where
         P: DataProvider<TransliteratorRulesV1Marker>,
+        F: Fn(&Locale) -> Option<Box<dyn CustomTransliterator>>,
     {
         if let Some(special) = id.strip_prefix("x-") {
             // TODO: add more
@@ -179,6 +226,18 @@ impl Transliterator {
                     .into()),
             }
         } else {
+            // this must be a valid -t- locale
+            if let Some(lookup) = lookup {
+                let locale: Locale = id.parse().map_err(|e| {
+                    DataError::custom("internal: transliterator dependency is not a valid Locale")
+                        .with_debug_context(&e)
+                })?;
+                let custom = lookup(&locale);
+                if let Some(custom) = custom {
+                    return Ok(InternalTransliterator::Dyn(custom));
+                }
+            }
+
             let mut data_locale = DataLocale::default();
             data_locale.set_aux(id.parse()?);
             let req = DataRequest {
@@ -321,11 +380,13 @@ impl<'a> Rule<'a> {
         // which would make it easier to take segments into account at runtime.
         // there is no easy way to estimate the size of function calls, though.
         // TODO: benchmark with and without this optimization
-        let replacement_size_estimate = helpers::estimate_replacement_size(&self.replacer, &data, vt);
+        let replacement_size_estimate =
+            helpers::estimate_replacement_size(&self.replacer, &data, vt);
 
         // SAFETY: the range is guaranteed to be valid, as key_match_len is the length of a UTF-8
         // substring.
-        let mut dest = unsafe { rep.replace_range(replacement_range, Some(replacement_size_estimate)) };
+        let mut dest =
+            unsafe { rep.replace_range(replacement_range, Some(replacement_size_estimate)) };
 
         let cursor_offset = helpers::replace_encoded_str(&self.replacer, &mut dest, &data, vt, env)
             .unwrap_or_default();
@@ -426,18 +487,26 @@ mod helpers {
         // note: full-match (i.e., if this function returns Some(_) or None, could be
         // precomputed + stored at datagen time (there could eg be a reserved char that is at the
         // start/end of key <=> key is completely pure)
-        s.char_indices().find(|(_, c)| VarTable::ENCODE_RANGE.contains(c)).map(|(i, _)| i)
+        s.char_indices()
+            .find(|(_, c)| VarTable::ENCODE_RANGE.contains(c))
+            .map(|(i, _)| i)
     }
 
     /// Returns the index of the char to the right of the first (from the right) encoded char in
     /// `s`, if there is one.
     /// Returns `None` if the passed string is pure (contains no encoded special constructs).
     pub(super) fn rev_find_encoded(s: &str) -> Option<usize> {
-        s.char_indices().rfind(|(_, c)| VarTable::ENCODE_RANGE.contains(c)).map(|(i, c)| i + c.len_utf8())
+        s.char_indices()
+            .rfind(|(_, c)| VarTable::ENCODE_RANGE.contains(c))
+            .map(|(i, c)| i + c.len_utf8())
     }
 
     /// Recursively estimates the size of the replacement string.
-    pub(super) fn estimate_replacement_size(replacement: &str, data: &MatchData, vt: &VarTable) -> usize {
+    pub(super) fn estimate_replacement_size(
+        replacement: &str,
+        data: &MatchData,
+        vt: &VarTable,
+    ) -> usize {
         let mut size;
         let replacement_tail;
 
@@ -446,7 +515,7 @@ mod helpers {
             Some(idx) => {
                 size = idx;
                 replacement_tail = &replacement[idx..];
-            },
+            }
         }
 
         for rep_c in replacement_tail.chars() {
@@ -489,7 +558,7 @@ mod helpers {
             Some(idx) => {
                 dest.push_str(&replacement[..idx]);
                 &replacement[idx..]
-            },
+            }
         };
         let mut cursor_offset = None;
 
@@ -1039,15 +1108,13 @@ impl<'a> SpecialReplacer<'a> {
     /// Estimates the size of the replacement string produced by this Replacer.
     fn estimate_size(&self, data: &MatchData, vt: &VarTable) -> usize {
         match self {
-            Self::Compound(replacer) => {helpers::estimate_replacement_size(replacer, data, vt)},
+            Self::Compound(replacer) => helpers::estimate_replacement_size(replacer, data, vt),
             Self::FunctionCall(call) => {
                 // this is the only inexact case, so we estimate that the transliteration will stay
                 // roughly the same size as the input
                 helpers::estimate_replacement_size(&call.arg, data, vt)
             }
-            &Self::BackReference(num) => {
-                data.get_segment(num as usize).len()
-            },
+            &Self::BackReference(num) => data.get_segment(num as usize).len(),
             Self::LeftPlaceholderCursor(_) | Self::RightPlaceholderCursor(_) | Self::PureCursor => {
                 return 0;
             }
@@ -1068,14 +1135,18 @@ impl<'a> SpecialReplacer<'a> {
             Self::PureCursor => {
                 // SAFETY: the curr_replacement_len is a valid UTF-8 length
                 Some(unsafe { CursorOffset::byte(dest.curr_replacement_len()) })
-            },
+            }
             &Self::LeftPlaceholderCursor(num) => {
                 // must occur at the very end of a replacement
                 Some(CursorOffset::chars_off_end(num))
             }
             &Self::RightPlaceholderCursor(num) => {
                 // must occur at the very beginning of the replacement
-                debug_assert_eq!(dest.curr_replacement_len(), 0, "pre-start cursor not the first replacement");
+                debug_assert_eq!(
+                    dest.curr_replacement_len(),
+                    0,
+                    "pre-start cursor not the first replacement"
+                );
                 Some(CursorOffset::chars_off_start(num))
             }
             &Self::BackReference(num) => {
@@ -1323,6 +1394,28 @@ mod tests {
         //     "a\u{0308}rg";
         // let output =
         //     "aerg";
+        assert_eq!(t.transliterate(input.to_string()), output);
+    }
+
+    #[test]
+    fn test_override() {
+        struct MyT;
+        impl CustomTransliterator for MyT {
+            fn transliterate(&self, input: &str, range: Range<usize>) -> String {
+                let input = &input[range];
+                input.replace("ꜵ", "maoam")
+            }
+        }
+
+        let want_locale = "und-t-und-latn-d0-ascii".parse().unwrap();
+        let t =
+            Transliterator::try_new_with_override("de-t-de-d0-ascii".parse().unwrap(), |locale| {
+                locale.eq(&want_locale).then_some(Box::new(MyT))
+            })
+            .unwrap();
+
+        let input = "Ich liebe ꜵ über alles";
+        let output = "Ich liebe maoam ueber alles";
         assert_eq!(t.transliterate(input.to_string()), output);
     }
 }

@@ -2,11 +2,11 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+use crate::transliterator::MatchData;
 use alloc::vec::Vec;
 use core::fmt::{Debug, Formatter};
 use core::ops::Range;
 use core::str;
-use crate::transliterator::MatchData;
 
 use super::Filter;
 
@@ -58,7 +58,11 @@ impl<'a> Replaceable<'a> {
 
     /// # Safety
     /// The caller must ensure that `range` is a valid UTF-8 range into the visible content.
-    pub(crate) unsafe fn replace_range<'b>(&'b mut self, range: Range<usize>, size_hint: Option<usize>) -> Insertable<'a, 'b> {
+    pub(crate) unsafe fn replace_range<'b>(
+        &'b mut self,
+        range: Range<usize>,
+        size_hint: Option<usize>,
+    ) -> Insertable<'a, 'b> {
         // TODO: if start is always cursor, maybe change signature to take only end?
         //  that would also mean we could replace Insertable.start with Insertable._rep.cursor + ignore_pre_len
         debug_assert_eq!(range.start, self.cursor);
@@ -317,8 +321,12 @@ pub(crate) struct Insertable<'a, 'b> {
 impl<'a, 'b> Insertable<'a, 'b> {
     /// # Safety
     /// The caller must ensure that `range` is a valid UTF-8 range into `content`.
-    unsafe fn new_with_size_hint(rep: &'b mut Replaceable<'a>, range: Range<usize>, size_hint: usize) -> Insertable<'a, 'b> {
-        let end_len =  rep.content.len() - range.end;
+    unsafe fn new_with_size_hint(
+        rep: &'b mut Replaceable<'a>,
+        range: Range<usize>,
+        size_hint: usize,
+    ) -> Insertable<'a, 'b> {
+        let end_len = rep.content.len() - range.end;
         let s = Self {
             _rep: rep,
             start: range.start,
@@ -328,7 +336,10 @@ impl<'a, 'b> Insertable<'a, 'b> {
 
         let free_bytes = s.free_range().len();
         if free_bytes < size_hint {
-            s._rep.content.splice(s.end()..s.end(), core::iter::repeat(0).take(size_hint - free_bytes));
+            s._rep.content.splice(
+                s.end()..s.end(),
+                core::iter::repeat(0).take(size_hint - free_bytes),
+            );
         }
         s
     }
@@ -349,7 +360,10 @@ impl<'a, 'b> Insertable<'a, 'b> {
     /// # Safety
     /// The caller must ensure that `visible_range` is a valid UTF-8 range into the current
     /// replacement.
-    pub(super) unsafe fn as_replaceable(&mut self, visible_range: Range<usize>) -> InsertableGuard<impl FnMut(&[u8]) + '_> {
+    pub(super) unsafe fn as_replaceable(
+        &mut self,
+        visible_range: Range<usize>,
+    ) -> InsertableGuard<impl FnMut(&[u8]) + '_> {
         debug_assert!(visible_range.start <= self.curr_replacement_len());
         debug_assert!(visible_range.end <= self.curr_replacement_len());
 
@@ -365,7 +379,8 @@ impl<'a, 'b> Insertable<'a, 'b> {
 
         // the passed visible range is into self.curr_replacement(), which starts at offset self.start
         // of the actual buffer.
-        let adjusted_visible_range = visible_range.start + self.start..visible_range.end + self.start;
+        let adjusted_visible_range =
+            visible_range.start + self.start..visible_range.end + self.start;
         let rep = Replaceable::new(self._rep.content, adjusted_visible_range);
         let on_drop = |content: &[u8]| {
             // self.content is contiguous, so we are inserting at the very end
@@ -384,7 +399,9 @@ impl<'a, 'b> Insertable<'a, 'b> {
         }
         eprintln!("WARNING: free space not sufficient for Insertable::push_bytes");
 
-        self._rep.content.splice(self.free_range(), bytes.iter().copied());
+        self._rep
+            .content
+            .splice(self.free_range(), bytes.iter().copied());
         self.curr = self.end();
     }
 
@@ -454,7 +471,9 @@ impl<'a, 'b> Insertable<'a, 'b> {
 
     fn make_contiguous(&mut self) {
         // need to move the tail of the Vec to fill the remainder of the free range
-        self._rep.content.splice(self.free_range(), core::iter::empty());
+        self._rep
+            .content
+            .splice(self.free_range(), core::iter::empty());
     }
 
     fn free_range(&self) -> Range<usize> {
@@ -476,19 +495,23 @@ impl<'a, 'b> Drop for Insertable<'a, 'b> {
 
 impl<'a, 'b> Debug for Insertable<'a, 'b> {
     fn fmt(&self, f: &mut Formatter<'_>) -> core::fmt::Result {
-        write!(f, "{}", unsafe { &str::from_utf8_unchecked(&self._rep.content[self.start..self.curr]) })
+        write!(f, "{}", unsafe {
+            &str::from_utf8_unchecked(&self._rep.content[self.start..self.curr])
+        })
     }
 }
 
 pub(super) struct InsertableGuard<'a, F>
-    where F: FnMut(&[u8])
+where
+    F: FnMut(&[u8]),
 {
     rep: Replaceable<'a>,
     on_drop: F,
 }
 
 impl<'a, F> InsertableGuard<'a, F>
-where F: FnMut(&[u8])
+where
+    F: FnMut(&[u8]),
 {
     fn new(rep: Replaceable<'a>, on_drop: F) -> Self {
         Self { rep, on_drop }
@@ -500,7 +523,8 @@ where F: FnMut(&[u8])
 }
 
 impl<'a, F> Drop for InsertableGuard<'a, F>
-where F: FnMut(&[u8])
+where
+    F: FnMut(&[u8]),
 {
     fn drop(&mut self) {
         (self.on_drop)(&self.rep.content[..]);
@@ -539,4 +563,3 @@ impl CursorOffset {
         Self(CursorOffsetInner::CharsOffStart(count))
     }
 }
-
