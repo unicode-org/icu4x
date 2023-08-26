@@ -6,7 +6,7 @@ mod replaceable;
 
 use core::ops::Range;
 
-use crate::provider::{RuleBasedTransliterator, TransliteratorRulesV1Marker};
+use crate::provider::{RuleBasedTransliterator, Segment, TransliteratorRulesV1Marker};
 use crate::TransliteratorError;
 use alloc::borrow::Cow;
 use alloc::boxed::Box;
@@ -582,8 +582,6 @@ struct MatchData {
     post_match_len: usize,
     /// Stored matches of segments.
     segments: Vec<String>,
-    /// Stored matches of segments in ante. Needed because traversal is in the opposite order.
-    ante_segments: VecDeque<String>,
 }
 
 impl MatchData {
@@ -593,23 +591,23 @@ impl MatchData {
             ante_match_len: 0,
             post_match_len: 0,
             segments: Vec::new(),
-            ante_segments: VecDeque::new(),
         }
     }
-}
 
-impl MatchData {
-    fn get_segment(&self, i: usize) -> &str {
-        let mut idx = i;
-        if idx < self.ante_segments.len() {
-            return &self.ante_segments[idx];
+    fn update_segment(&mut self, i: usize, s: String) {
+        if i >= self.segments.len() {
+            self.segments.resize_with(i + 1, Default::default);
         }
-        idx -= self.ante_segments.len();
-        if idx < self.segments.len() {
-            return &self.segments[idx];
+        self.segments[i] = s;
+    }
+
+    fn get_segment(&self, i: usize) -> &str {
+        if let Some(s) = self.segments.get(i) {
+            return s;
         }
         debug_assert!(false, "backref {i} out of bounds");
-        // GIGO behavior: return empty string
+        // two cases: we have not (at runtime) encountered a segment with a high enough index,
+        // in which case it is associated to "", or this is GIGO, which is "" either way.
         ""
     }
 }
@@ -780,7 +778,7 @@ enum QuantifierKind {
 enum SpecialMatcher<'a> {
     Compound(&'a str),
     Quantifier(QuantifierKind, &'a str),
-    Segment(&'a str),
+    Segment(Segment<'a>),
     UnicodeSet(CodePointInversionListAndStringList<'a>),
     AnchorStart,
     AnchorEnd,
@@ -850,21 +848,15 @@ impl<'a> SpecialMatcher<'a> {
             }
             Self::AnchorEnd => input.match_and_consume_end_anchor(),
             Self::AnchorStart => input.match_and_consume_start_anchor(),
-            Self::Segment(query) => {
-                let idx = match_data.segments.len();
-                // need to push before the recursive call such that the order for backref lookup is
-                // correct
-                match_data.segments.push(String::new());
+            Self::Segment(segment) => {
                 let start = input.cursor;
-                if !helpers::match_encoded_str(query, input, match_data, vt) {
-                    // no match
-                    match_data.segments.pop();
+                if !helpers::match_encoded_str(&segment.content, input, match_data, vt) {
                     return false;
                 }
                 let end = input.cursor;
                 let matched = &input.visible[start..end];
                 // note: at the moment we could just store start..end
-                match_data.segments[idx].push_str(matched);
+                match_data.update_segment(segment.idx as usize, matched.to_string());
                 true
             }
             Self::Quantifier(kind, query) => {
@@ -877,17 +869,6 @@ impl<'a> SpecialMatcher<'a> {
                 let mut matches = 0;
 
                 while matches < max_matches {
-                    // TODO: matching the same query multiple times leads to issues with
-                    //  segment numbering. best would be if a segment directly new its associated
-                    //  number, then it could always fill that slot.
-                    //  Alternatively, we can do inefficient moving around of segments as a
-                    //  workaround.
-                    //  Actually, no. Segments need to know their number at compile time due to
-                    //  ZeroOrX quantifiers. Zero matches would not allocate any segments, but we
-                    //  need them.
-
-                    eprintln!("trying to match query {query:?} on input {input:?} with quantifier {min_matches}-{max_matches}");
-
                     let pre_cursor = input.cursor;
                     if !helpers::match_encoded_str(query, input, match_data, vt) {
                         break;
@@ -957,23 +938,15 @@ impl<'a> SpecialMatcher<'a> {
             }
             Self::AnchorEnd => input.match_and_consume_end_anchor(),
             Self::AnchorStart => input.match_and_consume_start_anchor(),
-            Self::Segment(query) => {
-                // need to push after the recursive call such that the order for backref lookup is
-                // correct
+            Self::Segment(segment) => {
                 let end = input.cursor;
-                if !helpers::rev_match_encoded_str(query, input, match_data, vt) {
+                if !helpers::rev_match_encoded_str(&segment.content, input, match_data, vt) {
                     return false;
                 }
                 let start = input.cursor;
                 let matched = &input.visible[start..end];
                 // note: at the moment we could just store start..end
-                match_data.ante_segments.push_front(matched.to_string());
-
-                // TODO: hmmm. RevInput messes up segment order, because we traverse the encoded
-                //  query string backwards. this means that for (1) (2) { key > repl ;, we first see
-                //  and push (2), even though (1) should be at first position.
-                //  => use Vecdeque
-
+                match_data.update_segment(segment.idx as usize, matched.to_string());
                 true
             }
             // TODO: do more
@@ -1022,7 +995,7 @@ impl<'a> SpecialReplacer<'a> {
 enum VarTableElement<'a> {
     Compound(&'a str),
     Quantifier(QuantifierKind, &'a str),
-    Segment(&'a str),
+    Segment(Segment<'a>),
     UnicodeSet(CodePointInversionListAndStringList<'a>),
     FunctionCall(FunctionCall<'a>),
     BackReference(u16),
@@ -1119,7 +1092,7 @@ impl<'a> VarTable<'a> {
         idx -= next_base;
         next_base = self.segments.len();
         if idx < next_base {
-            return Some(VarTableElement::Segment(&self.segments[idx]));
+            return Some(VarTableElement::Segment(Segment::zero_from(&self.segments[idx])));
         }
         idx -= next_base;
         next_base = self.unicode_sets.len();
@@ -1176,7 +1149,7 @@ mod tests {
             Transliterator::try_new("und-t-und-s0-test-d0-test-m0-niels".parse().unwrap()).unwrap();
 
         let input = "abädefghijkl!";
-        let output = "firsfifirsrstbCxyzftbCxyzxyzXYZjkT!";
+        let output = "FIfiFItbxyzftbxyzxyzXYZjkT!";
         assert_eq!(t.transliterate(input.to_string()), output);
     }
 

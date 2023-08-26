@@ -41,9 +41,13 @@ $a = $t$b ;
 
 # output so far: firsfifirsrstbCxyzftbCxyzxyzXYZjkT!
 
+'firsfifirsrstbCxyzftbCxyzxyzXYZjkT' > | 'firsfififirsrstbCxyzftbCxyzxyzXYZjkT' ;
+
+# output so far: firsfififirsrstbCxyzftbCxyzxyzXYZjkT!
+
 $fi = fi ;
 $fi+ > FI ;
-(r?s?C?)+ > $1 ;
+(r?s?C?)+ (.) > $1 $2 ; # note: the (.) is necessary to make the rule advance, otherwise we end up in an infinite loop. ICU has the same issue.
 
-# output so far: FIrsFIrstbCxyzftbCxyzxyzXYZjkT!
+# output so far: FIfiFItbxyzftbxyzxyzXYZjkT!
 
