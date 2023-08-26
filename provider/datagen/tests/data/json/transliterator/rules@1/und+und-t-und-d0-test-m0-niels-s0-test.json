@@ -1,11 +1,73 @@
 {
   "visibility": true,
   "variable_table": {
-    "compounds": [],
-    "quantifiers_opt": [],
+    "compounds": [
+      "t",
+      "b",
+      "󰀀󰀁",
+      "fi",
+      "fiFI"
+    ],
+    "quantifiers_opt": [
+      "r",
+      "s",
+      "C"
+    ],
     "quantifiers_kleene": [],
-    "quantifiers_kleene_plus": [],
-    "segments": [],
+    "quantifiers_kleene_plus": [
+      "󰀃",
+      "󰀓"
+    ],
+    "segments": [
+      {
+        "idx": 0,
+        "content": "󰀟"
+      },
+      {
+        "idx": 2,
+        "content": "xyz"
+      },
+      {
+        "idx": 1,
+        "content": "󰀂C󰀋"
+      },
+      {
+        "idx": 1,
+        "content": "f"
+      },
+      {
+        "idx": 2,
+        "content": "i"
+      },
+      {
+        "idx": 0,
+        "content": "󰀍󰀎"
+      },
+      {
+        "idx": 4,
+        "content": "r"
+      },
+      {
+        "idx": 5,
+        "content": "s"
+      },
+      {
+        "idx": 3,
+        "content": "󰀐󰀑"
+      },
+      {
+        "idx": 0,
+        "content": "󰀅󰀆󰀇"
+      },
+      {
+        "idx": 1,
+        "content": "󰀠"
+      },
+      {
+        "idx": 0,
+        "content": "󰀄"
+      }
+    ],
     "unicode_sets": [
       {
         "cp_inv_list": [
@@ -62,17 +124,85 @@
           "𐀀-􏿿"
         ],
         "str_list": []
+      },
+      {
+        "cp_inv_list": [
+          "￿"
+        ],
+        "str_list": []
+      },
+      {
+        "cp_inv_list": [
+          "\u0000-￾",
+          "𐀀-􏿿"
+        ],
+        "str_list": []
+      },
+      {
+        "cp_inv_list": [
+          "\u0000-\t",
+          "\u000b-\f",
+          "\u000e-‧",
+          "‪-￾",
+          "𐀀-􏿿"
+        ],
+        "str_list": []
       }
     ],
-    "function_calls": [],
+    "function_calls": [
+      {
+        "translit": {
+          "filter": [
+            "!",
+            "F",
+            "I"
+          ],
+          "id": "x-any-remove"
+        },
+        "arg": "󰀻unremoved"
+      }
+    ],
     "max_left_placeholder_count": 0,
     "max_right_placeholder_count": 25
   },
   "filter": [
-    "a-z"
+    "a-z",
+    "ä"
   ],
   "id_group_list": [
     [],
+    [
+      {
+        "filter": [
+          "\u0000-􏿿"
+        ],
+        "id": "x-any-null"
+      }
+    ],
+    [
+      {
+        "filter": [
+          "\u0000-􏿿"
+        ],
+        "id": "x-any-null"
+      }
+    ],
+    [
+      {
+        "filter": [
+          "\u0000-􏿿"
+        ],
+        "id": "x-any-null"
+      }
+    ],
+    [
+      {
+        "filter": [
+          "\u0000-􏿿"
+        ],
+        "id": "x-any-null"
+      }
+    ],
     [
       {
         "filter": [
@@ -85,25 +215,25 @@
   "rule_group_list": [
     [
       {
-        "ante": "abc",
+        "ante": "abä",
         "key": "def",
         "post": "ghi",
-        "replacer": "󰀈DEF"
+        "replacer": "󰀢DEF"
       },
       {
         "ante": "",
-        "key": "c",
-        "post": "D󰀀󰀁",
+        "key": "ä",
+        "post": "D󰀖󰀗",
         "replacer": "C"
       },
       {
         "ante": "",
-        "key": "󰀂󰀃󰀄",
+        "key": "󰀘󰀙󰀚",
         "post": "",
         "replacer": "xyz"
       },
       {
-        "ante": "󰀅",
+        "ante": "󰀛",
         "key": "ghi",
         "post": "",
         "replacer": "XYZ"
@@ -118,7 +248,7 @@
         "ante": "",
         "key": "l",
         "post": "",
-        "replacer": "󰀠L"
+        "replacer": "󰀺L"
       },
       {
         "ante": "",
@@ -130,13 +260,13 @@
     [
       {
         "ante": "",
-        "key": "󿿼󰀆󿿽",
+        "key": "󿿼󰀜󿿽",
         "post": "",
         "replacer": "bad"
       },
       {
         "ante": "",
-        "key": "󿿼󰀇",
+        "key": "󿿼󰀝",
         "post": "",
         "replacer": "first"
       },
@@ -144,11 +274,62 @@
         "ante": "",
         "key": "L",
         "post": "󿿽",
-        "replacer": "last"
+        "replacer": "las󿿻t"
+      },
+      {
+        "ante": "",
+        "key": "L",
+        "post": "!󰀞",
+        "replacer": "T"
+      }
+    ],
+    [
+      {
+        "ante": "󰀊irs",
+        "key": "󰀌",
+        "post": "",
+        "replacer": "󰀽󰀼󰀻󰀼󰀽"
+      }
+    ],
+    [
+      {
+        "ante": "󿿼󰀏󰀒",
+        "key": "xyz",
+        "post": "",
+        "replacer": "󰀻󰀼󰀽󰀾󰀿󰁀"
+      }
+    ],
+    [
+      {
+        "ante": "",
+        "key": "firsfifirsrstbCxyzftbCxyzxyzXYZjkT",
+        "post": "",
+        "replacer": "󿿻firsfififirsrstbCxyzftbCxyzxyzXYZjkT"
+      },
+      {
+        "ante": "",
+        "key": "󰀈",
+        "post": "",
+        "replacer": "FI"
+      },
+      {
+        "ante": "",
+        "key": "󰀉󰀔",
+        "post": "",
+        "replacer": "󰀻󰀼"
+      }
+    ],
+    [
+      {
+        "ante": "",
+        "key": "󰀕",
+        "post": "",
+        "replacer": "󰀡"
       }
     ]
   ],
   "dependencies": [
-    "x-any-null"
+    "x-any-null",
+    "x-any-remove"
   ]
 }
