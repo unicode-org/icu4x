@@ -328,6 +328,7 @@ use std::sync::RwLock;
 
 pub struct ResolvedLocaleProvider<P> {
     inner: P,
+    // This could be a RefCell if thread safety is not required:
     resolved_locale: RwLock<Option<DataLocale>>,
 }
 
@@ -342,7 +343,7 @@ where
         // one key, this is a useful distinction for most other formatters.
         if key == HelloWorldV1Marker::KEY {
             let mut w = self.resolved_locale.write().unwrap();
-            *w = any_res.metadata.locale.clone();
+            w.replace(any_res.metadata.locale.take());
         }
         Ok(any_res)
     }
