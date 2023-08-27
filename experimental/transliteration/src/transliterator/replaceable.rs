@@ -69,6 +69,9 @@ impl<'a> Replaceable<'a> {
     ) -> Insertable<'a, 'b> {
         // TODO: if start is always cursor, maybe change signature to take only end?
         //  that would also mean we could replace Insertable.start with Insertable._rep.cursor + ignore_pre_len
+        // TODO: maybe add checks about frozen range?
+        // TODO: replace_range should probably be combined with a cursor update, otherwise cursor
+        //  invariant can break if cursor is inside the range.
         debug_assert_eq!(range.start, self.cursor);
         // the passed range is into self.visible_content(), which starts at offset self.ignore_pre_len
         let adjusted_range = range.start + self.ignore_pre_len..range.end + self.ignore_pre_len;
@@ -83,26 +86,6 @@ impl<'a> Replaceable<'a> {
         unsafe {
             self.replace_range(self.allowed_range(), size_hint)
         }
-    }
-
-    // TODO: design
-    // TODO: maybe add checks about frozen range?
-    pub(crate) unsafe fn splice(
-        &mut self,
-        range: Range<usize>,
-        replacement: &[u8],
-        new_cursor: usize,
-    ) {
-        // TODO: splice should probably be combined with a cursor update, otherwise
-        //  the invariants may not hold across function calls
-
-        let ignore_adjusted_range =
-            range.start + self.ignore_pre_len..range.end + self.ignore_pre_len;
-        self.content
-            .splice(ignore_adjusted_range, replacement.iter().copied());
-
-        // SAFETY: the caller ensures that this is a valid index after the replacement is applied.
-        self.set_cursor(new_cursor);
     }
 
     /// Returns the full current content as a `&str`.
@@ -130,17 +113,8 @@ impl<'a> Replaceable<'a> {
     /// Returns the current content after the cursor as a `&str`. `key_match_len` is the length of
     /// the key match and must be a valid UTF-8 index into the visible slice..
     pub(crate) fn as_str_post(&self, key_match_len: usize) -> &str {
-        // TODO: use ignore thing as upper bound
         &self.as_str()[(self.cursor() + key_match_len)..]
     }
-    //
-    // // TODO: this is unsafe, need to guarantee pos/len are valid for UTF-8
-    // pub(crate) fn freeze_at(&mut self, pos: usize, len: usize) {
-    //     debug_assert!(pos < self.content.len() && len <= self.content.len() - pos);
-    //
-    //     self.freeze_pre_len = pos;
-    //     self.freeze_post_len = self.content.len() - pos - len;
-    // }
 
     /// Returns the range of bytes that are currently allowed to be modified.
     ///
@@ -267,7 +241,6 @@ impl<'a> Replaceable<'a> {
             // safety: these uphold the invariants
             freeze_pre_len: run_start,
             freeze_post_len,
-            // TODO: do we want this?
             cursor: run_start,
             ignore_pre_len: self.ignore_pre_len,
             ignore_post_len: self.ignore_post_len,
