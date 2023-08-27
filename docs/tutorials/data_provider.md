@@ -269,23 +269,33 @@ use tinystr::tinystr;
 
 pub struct CustomDecimalSymbolsProvider<P>(P);
 
-impl<P> AnyProvider for CustomDecimalSymbolsProvider<P>
+fn transform(any_res: AnyResponse) -> Result<AnyResponse, DataError> {
+    let mut dec_res: DataResponse<DecimalSymbolsV1Marker> = any_res.downcast()?;
+    if let Some(payload) = &mut dec_res.payload.as_mut() {
+        payload.with_mut(|data| {
+            // Change the grouping separator for all Swiss locales to '🐮'
+            data.grouping_separator = Cow::Borrowed("🐮");
+        });
+    }
+    Ok(dec_res.wrap_into_any_response())
+}
+
+impl<P, M> DataProvider<M> for CustomDecimalSymbolsProvider<P>
 where
-    P: AnyProvider
+    P: DataProvider<M>,
+    M: KeyedDataMarker,
+    M::Yokeable: icu_provider::MaybeSendSync + zerofrom::ZeroFrom<'static, M::Yokeable>,
+    for<'a> yoke::trait_hack::YokeTraitHack<<M::Yokeable as yoke::Yokeable<'a>>::Output>: Clone,
 {
-    fn load_any(&self, key: DataKey, req: DataRequest) -> Result<AnyResponse, DataError> {
-        let mut any_res = self.0.load_any(key, req)?;
-        if key == DecimalSymbolsV1Marker::KEY && req.locale.region() == Some(region!("CH")) {
-            let mut res: DataResponse<DecimalSymbolsV1Marker> = any_res.downcast()?;
-            if let Some(payload) = &mut res.payload.as_mut() {
-                payload.with_mut(|data| {
-                    // Change the grouping separator for all Swiss locales to '🐮'
-                    data.grouping_separator = Cow::Borrowed("🐮");
-                });
-            }
-            any_res = res.wrap_into_any_response();
+    #[inline]
+    fn load(&self, req: DataRequest) -> Result<DataResponse<M>, DataError> {
+        let mut res = self.0.load(req)?;
+        if M::KEY == DecimalSymbolsV1Marker::KEY && req.locale.region() == Some(region!("CH")) {
+            let any_res = res.wrap_into_any_response();
+            transform(any_res)?.downcast()
+        } else {
+            Ok(res)
         }
-        Ok(any_res)
     }
 }
 
@@ -293,7 +303,7 @@ let provider = CustomDecimalSymbolsProvider(
     AnyPayloadProvider::new_default::<DecimalSymbolsV1Marker>()
 );
 
-let formatter = FixedDecimalFormatter::try_new_with_any_provider(
+let formatter = FixedDecimalFormatter::try_new_unstable(
     &provider,
     &locale!("und").into(),
     Default::default(),
@@ -302,7 +312,7 @@ let formatter = FixedDecimalFormatter::try_new_with_any_provider(
 
 assert_eq!(formatter.format_to_string(&100007i64.into()), "100,007");
 
-let formatter = FixedDecimalFormatter::try_new_with_any_provider(
+let formatter = FixedDecimalFormatter::try_new_unstable(
     &provider,
     &locale!("und-CH").into(),
     Default::default(),
