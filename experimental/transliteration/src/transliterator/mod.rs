@@ -539,6 +539,9 @@ impl<'a> Rule<'a> {
         let mut dest =
             unsafe { rep.replace_range(replacement_range, Some(replacement_size_estimate)) };
 
+        // TODO: small safety issue: a malicious implementation could construct a cursor
+        //  *for a different Insertable* but then use it with this insertable. Can we link
+        //  the cursor to this insertable somehow? Otherwise we might need to make .commit() unsafe.
         let cursor_offset = helpers::replace_encoded_str(&self.replacer, &mut dest, &data, vt, env)
             .unwrap_or_default();
 
@@ -1285,10 +1288,7 @@ impl<'a> SpecialReplacer<'a> {
     ) -> Option<CursorOffset> {
         match self {
             Self::Compound(replacer) => helpers::replace_encoded_str(replacer, dest, data, vt, env),
-            Self::PureCursor => {
-                // SAFETY: the curr_replacement_len is a valid UTF-8 length
-                Some(unsafe { CursorOffset::byte(dest.curr_replacement_len()) })
-            }
+            Self::PureCursor => Some(dest.offset_here()),
             &Self::LeftPlaceholderCursor(num) => {
                 // must occur at the very end of a replacement
                 Some(CursorOffset::chars_off_end(num))

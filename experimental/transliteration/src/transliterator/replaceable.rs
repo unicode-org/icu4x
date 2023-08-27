@@ -410,6 +410,11 @@ impl<'a, 'b> Insertable<'a, 'b> {
         unsafe { str::from_utf8_unchecked(&self._rep.content[self.start..self.curr]) }
     }
 
+    pub(super) fn offset_here(&self) -> CursorOffset {
+        // SAFETY: curr_replacement_len returns a valid UTF-8 prefix length of this Insertable
+        unsafe { CursorOffset::byte(self.curr_replacement_len()) }
+    }
+
     pub(super) fn commit(mut self, cursor_offset: CursorOffset, data: &MatchData) {
         self.make_contiguous();
 
