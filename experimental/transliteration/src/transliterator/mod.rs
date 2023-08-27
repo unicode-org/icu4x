@@ -536,6 +536,8 @@ impl<'a> Rule<'a> {
 
         // SAFETY: the range is guaranteed to be valid, as key_match_len is the length of a UTF-8
         // substring.
+        // TODO: same small safety issue as below if we made this `safe`: there is no guarantee that
+        //  the passed MatchData is for this rule.
         let mut dest =
             unsafe { rep.replace_range(replacement_range, Some(replacement_size_estimate)) };
 
