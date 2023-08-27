@@ -60,4 +60,9 @@ $fifi = fiFI;
 
 # output so far: FIfiunremovedtbxyzftbxyzxyzXYZjkT!
 
+:: Null ;
+
+# this should have no effect:
+(FI) ('this does not match' ('this segment is never tried to match'))? > $1 $2 $3 ;
+
 
