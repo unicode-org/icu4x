@@ -24,18 +24,9 @@ fn test_all_cldr() {
         }
         let locale = path.file_stem().unwrap().to_str().unwrap();
         let locale = map.get(locale).unwrap_or(&locale);
-        let locale: Locale = match locale.parse() {
-            Err(_) => {
-                eprintln!("INVALID LOCALE {locale}");
-                continue
-            },
-            Ok(locale) => locale,
-        };
-        let t = Transliterator::try_new(locale.clone());
-        eprintln!("Locale {locale} got {t:?}");
-        if let Ok(t) = t {
-            test_file(t, path);
-        }
+        let locale: Locale = locale.parse().unwrap();
+        let t = Transliterator::try_new(locale.clone()).unwrap();
+        test_file(t, path);
     }
 }
 
