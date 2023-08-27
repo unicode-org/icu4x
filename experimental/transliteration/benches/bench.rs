@@ -3,11 +3,6 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use criterion::{criterion_group, criterion_main};
-
-// This file is part of ICU4X. For terms of use, please see the file
-// called LICENSE at the top level of the ICU4X source tree
-// (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
-
 use criterion::{black_box, BenchmarkId, Criterion};
 use icu_provider::_internal::locid::Locale;
 
