@@ -1,0 +1,75 @@
+Alba Iulia	አልባ ዩልያ
+Alexandria	አሌክሳንድርያ
+Arad	አራድ
+Bacău	ባከው
+Baia Mare	ባያ ማሬ
+Bistrița	ቢስትሪጻ
+Borșa	ቦርሻ
+Botoșani	ቦቶሻኒ
+Brașov	ብራሾቭ
+Brăila	ብረይላ
+București	ቡኩሬሽቲ
+Buzău	ቡዘው
+Bârlad	ብርላድ
+Caracal	ካራካል
+Cluj-Napoca	ክሉዢ ናፖካ
+Constanța	ኮንስታንጻ
+Craiova	ክራዮቫ
+Curtea de Argeș	ኩርቴዋ ዴ አርጄሽ
+Câmpina	ክምፒና
+Câmpulung	ክምፑሉንግ
+Călărași	ከለራሺ
+Dej	ዴዢ
+Deva	ዴቫ
+Drobeta-Turnu Severin	ድሮቤታ ቱርኑ ሴቬሪን
+Fetești	ፌቴሽቲ
+Focșani	ፎክሻኒ
+Făgăraș	ፈገራሽ
+Fălticeni	ፈልቲቼኒ
+Galați	ጋላጺ
+Giurgiu	ጅዩርጂው
+Hunedoara	ሁኔዶዋራ
+Huși	ሁሺ
+Iași	ያሺ
+Lugoj	ሉጎዢ
+Mangalia	ማንጋልያ
+Medgidia	ሜጂድያ
+Mediaș	ሜድያሽ
+Miercurea Ciuc	ምዬርኩሬዋ ችዩክ
+Mioveni	ምዮቬኒ
+Năvodari	ነቮዳሪ
+Odorheiu Secuiesc	ኦዶርሄዩ ሴኩዬስክ
+Onești	ኦኔሽቲ
+Oradea	ኦራዴዋ
+Pantelimon	ፓንቴሊሞን
+Pașcani	ፓሽካኒ
+Petroșani	ፔትሮሻኒ
+Piatra Neamț	ፕያትራ ኔዋምጽ
+Pitești	ፒቴሽቲ
+Ploiești	ፕሎዬሽቲ
+Reghin	ሬጊን
+Reșița	ሬሺጻ
+Roman	ሮማን
+Roșiorii de Vede	ሮሽዮሪይ ዴ ቬዴ
+Râmnicu Sărat	ርምኒኩ ሰራት
+Râmnicu Vâlcea	ርምኒኩ ቭልቼዋ
+Satu Mare	ሳቱ ማሬ
+Sebeș	ሴቤሽ
+Sfântu Gheorghe	ስፍንቱ ጌዎርጌ
+Sibiu	ሲቢው
+Sighetu Marmației	ሲጌቱ ማርማጽዬይ
+Sighișoara	ሲጊሾዋራ
+Slatina	ስላቲና
+Slobozia	ስሎቦዝያ
+Suceava	ሱቼዋቫ
+Săcele	ሰቼሌ
+Tecuci	ቴኩቺ
+Timișoara	ቲሚሾዋራ
+Tulcea	ቱልቼዋ
+Turda	ቱርዳ
+Târgoviște	ትርጎቪሽቴ
+Târgu Jiu	ትርጉ ዢው
+Târgu Mureș	ትርጉ ሙሬሽ
+Vaslui	ቫስሉይ
+Voluntari	ቮሉንታሪ
+Zalău	ዛለው

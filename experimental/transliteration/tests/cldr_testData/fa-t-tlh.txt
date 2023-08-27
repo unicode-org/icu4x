@@ -1,0 +1,81 @@
+'ab	آب
+'amerI'qa' SepjIjQa'	آماریقا شاپدژیدژقخا
+'anyan 'oQqar	آنیان اوقخقار
+baghneQ	باغناقخ
+bIQSIp 'ugh	بیقخشیپ اوغ
+boq	بوق
+borghel	بورغال
+buqjaj	بوقدژادژ
+chIw	تشیو
+choQ	تشوقخ
+chuD	تشوض
+chuv	تشوو
+chuy	تشوی
+DaH	ضاخ
+DenIb Qatlh	ضانیب قخاتشل
+De'wI'Hom	ضاویخوم
+DoyIchlan	ضوییتشلان
+'eQway' 'echlet	اقخوای اتشلات
+ghach	غاتش
+ghInjaj	غیندژادژ
+Huch chaw'	خوتش تشاو
+Hun	خون
+'Internet	اینتارنات
+'Iq	ایق
+janluq pIqarD	دژانلوق پیقارض
+jer	دژار
+jIm	دژیم
+julSIp	دژولشیپ
+jungwoq	دژونگووق
+logh	لوغ
+loHjan	لوخدژان
+lupwI' mIr	لوپوی میر
+maDyar	ماضیار
+mIl'oD ngeb	میلوض نگاب
+muchpa'	موتشپا
+nav HablI'	ناو خابلی
+netlh	ناتشل
+nIpon	نیپون
+ngugh	نگوغ
+nguSDI'	نگوشضی
+'och	اوتش
+'o'rIS	اوریش
+pegh	پاغ
+pItSa' chab	پیتشا تشاب
+qanraD	قانراض
+qay	قای
+qa'vam	قاوام
+qe'rot	قاروت
+Qal	قخال
+QI	قخی
+Qulpa'	قخولپا
+raQ	راقخ
+raSber naH	راشبار ناخ
+ren	ران
+rutlh	روتشل
+Saqjan	شاقدژان
+SIrlIy	شیرلی
+So'Ha'	شوخا
+SuwomIy	شوومی
+taQ	تاقخ
+tera' na'ran	تارا ناران
+tuS	توش
+tlhat	تشلات
+tlhot	تشلوت
+tlhup	تشلوپ
+'uD'a'	اوضا
+'uSqan	اوشقان
+valQIS	والقخیش
+ven	وان
+vIlInHoD	ویلینخوض
+vIraS	ویراش
+vuy	ووی
+wab	اواب
+weQmoQnaQ	اواقخموقخناقخ
+wogh	اووغ
+wuD	اووض
+yang	یانگ
+yem	یام
+yIr	یر
+yor	یور
+yu'muD	یوموض

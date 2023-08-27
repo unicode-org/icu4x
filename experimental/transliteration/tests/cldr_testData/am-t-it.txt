@@ -1,0 +1,153 @@
+Acerra	አቼራ
+Acireale	አቺሬአሌ
+Afragola	አፍራጎላ
+Agrigento	አግሪጄንቶ
+Alessandria	አሌሣንድሪአ
+Altamura	አልታሙራ
+Ancona	አንኮና
+Andria	አንድሪአ
+Anzio	አንዚዖ
+Aprilia	አፕሪሊአ
+Arezzo	አሬጾ
+Asti	አስቲ
+Avellino	አቬሊኖ
+Aversa	አቬርዛ
+Bagheria	ባጌሪአ
+Bari	ባሪ
+Barletta	ባርሌታ
+Battipaglia	ባቲፓሊአ
+Benevento	ቤኔቬንቶ
+Bergamo	ቤርጋሞ
+Bisceglie	ቢሼሊዔ
+Bitonto	ቢቶንቶ
+Bologna	ቦሎኛ
+Bolzano	ቦልዛኖ
+Brescia	ብሬሺያ
+Brindisi	ብሪንዲዚ
+Busto Arsizio	ቡስቶ አርዚዚዖ
+Cagliari	ካሊአሪ
+Caltanissetta	ካልታኒሤታ
+Carpi	ካርፒ
+Carrara	ካራራ
+Casalnuovo di Napoli	ካዛልኑዖቮ ዲ ናፖሊ
+Caserta	ካዜርታ
+Casoria	ካዞሪአ
+Castellammare di Stabia	ካስቴላማሬ ዲ ስታቢአ
+Catania	ካታኒአ
+Catanzaro	ካታንዛሮ
+Cava de' Tirreni	ካቫ ዴ ቲሬኒ
+Cerignola	ቼሪኞላ
+Cesena	ቼዜና
+Chieti	ኪዔቲ
+Cinisello Balsamo	ቺኒዜሎ ባልዛሞ
+Civitavecchia	ቺቪታቬኪአ
+Collegno	ኮሌኞ
+Como	ኮሞ
+Cosenza	ኮዜንዛ
+Cremona	ክሬሞና
+Crotone	ክሮቶኔ
+Cuneo	ኩኔዖ
+Ercolano	ዔርኮላኖ
+Faenza	ፋዔንዛ
+Fano	ፋኖ
+Ferrara	ፌራራ
+Firenze	ፊሬንዜ
+Fiumicino	ፊዑሚቺኖ
+Foggia	ፎጂያ
+Foligno	ፎሊኞ
+ForlÃ¬	ፎርላ¬
+Gallarate	ጋላራቴ
+Gela	ጄላ
+Genova	ጄኖቫ
+Giugliano in Campania	ጂዩሊአኖ ዒን ካምፓኒአ
+Grosseto	ግሮሤቶ
+Guidonia Montecelio	ጉዒዶኒአ ሞንቴቼሊዖ
+Imola	ዒሞላ
+L'Aquila	ላክዑዒላ
+La Spezia	ላ ስፔዚአ
+Lamezia Terme	ላሜዚአ ቴርሜ
+Latina	ላቲና
+Lecce	ሌቼ
+Legnano	ሌኛኖ
+Livorno	ሊቮርኖ
+Lucca	ሉካ
+Manfredonia	ማንፍሬዶኒአ
+Marano di Napoli	ማራኖ ዲ ናፖሊ
+Marsala	ማርዛላ
+Massa	ማሣ
+Matera	ማቴራ
+Mazara del Vallo	ማዛራ ዴል ቫሎ
+Messina	ሜሢና
+Milano	ሚላኖ
+Modena	ሞዴና
+Modica	ሞዲካ
+Molfetta	ሞልፌታ
+Moncalieri	ሞንካሊዔሪ
+Montesilvano	ሞንቴዚልቫኖ
+Monza	ሞንዛ
+Napoli	ናፖሊ
+Novara	ኖቫራ
+Olbia	ዖልቢአ
+Padova	ፓዶቫ
+Palermo	ፓሌርሞ
+Parma	ፓርማ
+Pavia	ፓቪአ
+Perugia	ፔሩጂያ
+Pesaro	ፔዛሮ
+Pescara	ፔስካራ
+Piacenza	ፒአቼንዛ
+Pisa	ፒዛ
+Pistoia	ፒስቶዒአ
+Pomezia	ፖሜዚአ
+Pordenone	ፖርዴኖኔ
+Portici	ፖርቲቺ
+Potenza	ፖቴንዛ
+Pozzuoli	ፖጹዖሊ
+Prato	ፕራቶ
+Quartu Sant'Elena	ክዑአርቱ ሣንቴሌና
+Ragusa	ራጉዛ
+Ravenna	ራቬና
+Reggio di Calabria	ሬጂዮ ዲ ካላብሪአ
+Reggio nell'Emilia	ሬጂዮ ኔሌሚሊአ
+Rho	ርህዖ
+Rimini	ሪሚኒ
+Roma	ሮማ
+Rovigo	ሮቪጎ
+Salerno	ሣሌርኖ
+San Severo	ሣን ሤቬሮ
+Sanremo	ሣንሬሞ
+Sassari	ሣሣሪ
+Savona	ሣቮና
+Scafati	ስካፋቲ
+Scandicci	ስካንዲቺ
+Sesto San Giovanni	ሤስቶ ሣን ጂዮቫኒ
+Siena	ሢዔና
+Siracusa	ሢራኩዛ
+Taranto	ታራንቶ
+Teramo	ቴራሞ
+Terni	ቴርኒ
+Tivoli	ቲቮሊ
+Torino	ቶሪኖ
+Torre del Greco	ቶሬ ዴል ግሬኮ
+Trani	ትራኒ
+Trapani	ትራፓኒ
+Trento	ትሬንቶ
+Treviso	ትሬቪዞ
+Trieste	ትሪዔስቴ
+Udine	ዑዲኔ
+Varese	ቫሬዜ
+Velletri	ቬሌትሪ
+Venezia	ቬኔዚአ
+Verona	ቬሮና
+Viareggio	ቪአሬጂዮ
+Vicenza	ቪቼንዛ
+Vigevano	ቪጄቫኖ
+Viterbo	ቪቴርቦ
+Vittoria	ቪቶሪአ
+abbraccio	አብራቺዮ
+febbraio	ፌብራዒዖ
+gennaio	ጄናዒዖ
+gli	ሊ
+lasagna	ላዛኛ
+pasta	ፓስታ
+spaghetti	ስፓጌቲ

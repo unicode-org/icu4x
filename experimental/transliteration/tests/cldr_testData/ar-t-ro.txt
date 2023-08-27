@@ -1,0 +1,75 @@
+Alba Iulia	ألبا يوليا
+Alexandria	أليكساندريا
+Arad	أراد
+Bacău	باكو
+Baia Mare	بايا ماري
+Bistrița	بيستريتسا
+Borșa	بورشا
+Botoșani	بوتوشاني
+Brașov	براشوف
+Brăila	بريلا
+București	بوكوريشتي
+Buzău	بوزو
+Bârlad	بورلاد
+Caracal	كاراكال
+Cluj-Napoca	كلوج نابوكا
+Constanța	كونستانتسا
+Craiova	كرايوفا
+Curtea de Argeș	كورتيا دي أردجيش
+Câmpina	كومبينا
+Câmpulung	كومبولونْغ
+Călărași	كلراشي
+Dej	ديج
+Deva	ديفا
+Drobeta-Turnu Severin	دروبيتا تورنو سيفيرين
+Fetești	فيتيشتي
+Focșani	فوكشاني
+Făgăraș	فغراش
+Fălticeni	فلتيتشيني
+Galați	غالاتسي
+Giurgiu	دجيوردجيو
+Hunedoara	هونيدوارا
+Huși	هوشي
+Iași	ياشي
+Lugoj	لوغوج
+Mangalia	مانْغاليا
+Medgidia	ميدجيديا
+Mediaș	ميدياش
+Miercurea Ciuc	ميركوريا تشيوك
+Mioveni	ميوفيني
+Năvodari	نفوداري
+Odorheiu Secuiesc	أدورهييو سيكوياسك
+Onești	أنيشتي
+Oradea	أراديا
+Pantelimon	بانتيليمون
+Pașcani	باشكاني
+Petroșani	بيتروشاني
+Piatra Neamț	بياترا نيامتس
+Pitești	بيتيشتي
+Ploiești	بلوياشتي
+Reghin	ريغين
+Reșița	ريشيتسا
+Roman	رومان
+Roșiorii de Vede	روشيوريي دي فيدي
+Râmnicu Sărat	رومنيكو سرات
+Râmnicu Vâlcea	رومنيكو فولتشيا
+Satu Mare	ساتو ماري
+Sebeș	سيبيش
+Sfântu Gheorghe	سفونتو غيورغي
+Sibiu	سيبيو
+Sighetu Marmației	سيغيتو مارماتسيي
+Sighișoara	سيغيشوارا
+Slatina	سلاتينا
+Slobozia	سلوبوزيا
+Suceava	سوتشيافا
+Săcele	ستشيلي
+Tecuci	تيكوتشي
+Timișoara	تيميشوارا
+Tulcea	تولتشيا
+Turda	توردا
+Târgoviște	تورغوفيشتي
+Târgu Jiu	تورغو جيو
+Târgu Mureș	تورغو موريش
+Vaslui	فاسلوي
+Voluntari	فولونتاري
+Zalău	زالو

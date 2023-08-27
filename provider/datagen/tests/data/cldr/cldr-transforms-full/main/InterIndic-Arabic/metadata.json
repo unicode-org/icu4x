@@ -2,5 +2,8 @@
     "direction": "forward",
     "source": "InterIndic",
     "target": "Arabic",
-    "visibility": "internal"
+    "visibility": "internal",
+    "alias": [
+        "und-Arab-t-s0-intindic"
+    ]
 }
