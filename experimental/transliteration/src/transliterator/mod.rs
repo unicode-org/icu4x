@@ -334,7 +334,6 @@ impl Transliterator {
         Ok(())
     }
 
-    // TODO: add hook for custom
     fn load_nested<PT, PN, F>(
         id: &str,
         lookup: Option<&F>,
@@ -562,6 +561,8 @@ impl<'a> Rule<'a> {
 
         Some(match_data)
     }
+
+    // TODO: for *_matches, consider a fast path if query.is_empty() and just return Some(0).
 
     /// Returns `None` if the ante context does not match. If there is a match, returns the length
     /// of the match. Fills in `match_data` if applicable.
@@ -1542,10 +1543,6 @@ mod tests {
             "Über ältere Lügner lästern ist sehr a\u{0308}rgerlich. Ja, SEHR ÄRGERLICH! - ꜵ";
         let output =
             "Ueber aeltere Luegner laestern ist sehr aergerlich. Ja, SEHR AERGERLICH! - ao";
-        // let input =
-        //     "a\u{0308}rg";
-        // let output =
-        //     "aerg";
         assert_eq!(t.transliterate(input.to_string()), output);
     }
 
