@@ -559,8 +559,6 @@ impl<'a> Rule<'a> {
         Some((match_data, matcher))
     }
 
-    // TODO: for *_matches, consider a fast path if query.is_empty() and just return Some(0).
-
     /// Returns `None` if the ante context does not match. If there is a match, returns the length
     /// of the match. Fills in `match_data` if applicable.
     ///
@@ -572,6 +570,10 @@ impl<'a> Rule<'a> {
         match_data: &mut MatchData,
         vt: &VarTable,
     ) -> bool {
+        if self.ante.is_empty() {
+            // empty queries always match
+            return true;
+        }
         helpers::rev_match_encoded_str(&self.ante, matcher, match_data, vt)
     }
 
@@ -586,6 +588,10 @@ impl<'a> Rule<'a> {
         match_data: &mut MatchData,
         vt: &VarTable,
     ) -> bool {
+        if self.post.is_empty() {
+            // empty queries always match
+            return true;
+        }
         helpers::match_encoded_str(&self.post, matcher, match_data, vt)
     }
 
@@ -600,6 +606,10 @@ impl<'a> Rule<'a> {
         match_data: &mut MatchData,
         vt: &VarTable,
     ) -> bool {
+        if self.key.is_empty() {
+            // empty queries always match
+            return true;
+        }
         helpers::match_encoded_str(&self.key, matcher, match_data, vt)
     }
 }
