@@ -211,10 +211,12 @@ impl<'a> Replaceable<'a> {
     }
 
     pub(super) fn start_match(&mut self) -> RepMatcher<'a, '_> {
+        let cursor = self.cursor;
         RepMatcher {
             rep: self,
             key_match_len: 0,
             key_finished: false,
+            cursor,
             ante_match_len: 0,
             post_match_len: 0,
         }
@@ -330,9 +332,10 @@ impl<'a> Debug for Replaceable<'a> {
 pub(super) struct RepMatcher<'a, 'b> {
     rep: &'b mut Replaceable<'a>,
     key_match_len: usize, // relative to rep.cursor()
-    key_finished: bool,
     ante_match_len: usize, // relative to rep.cursor()
     post_match_len: usize, // relative to rep.cursor() + key_match_len
+    cursor: usize, // relative to the visible content
+    key_finished: bool,
 }
 
 impl<'a, 'b> RepMatcher<'a, 'b> {
@@ -340,61 +343,56 @@ impl<'a, 'b> RepMatcher<'a, 'b> {
         Insertable::from_matcher(self)
     }
 
-    pub(super) fn finish_key(&mut self) {
+    pub(super) fn start_key(&mut self) {
+        debug_assert!(!self.key_finished);
+        self.cursor = self.rep.cursor;
+    }
+    pub(super) fn start_ante(&mut self) {
+        self.cursor = self.rep.cursor;
+    }
+    pub(super) fn finish_key_and_start_post(&mut self) {
         self.key_finished = true;
-    }
-
-    fn key_cursor(&self) -> usize {
-        debug_assert!(self.rep.cursor() + self.key_match_len <= self.rep.allowed_upper_bound());
-        self.rep.cursor() + self.key_match_len
-    }
-
-    fn post_cursor(&self) -> usize {
-        debug_assert!(self.key_cursor() + self.post_match_len <= self.rep.visible_len());
-        self.key_cursor() + self.post_match_len
-    }
-
-    fn ante_cursor(&self) -> usize {
-        debug_assert!(self.rep.cursor() >= self.ante_match_len);
-        self.rep.cursor() - self.ante_match_len
+        self.cursor = self.rep.cursor + self.key_match_len;
     }
 
     fn remaining_key(&self) -> usize {
-        self.rep.allowed_upper_bound() - self.key_cursor()
+        debug_assert!(!self.key_finished);
+        self.rep.allowed_upper_bound() - self.cursor
     }
 
     fn remaining_post(&self) -> usize {
-        self.rep.visible_len() - self.post_cursor()
+        debug_assert!(self.key_finished);
+        self.rep.visible_len() - self.cursor
     }
 
-    fn remaining_ante(&self) -> usize {
-        self.ante_cursor()
-    }
+    // fn remaining_ante(&self) -> usize {
+    //     self.ante_cursor()
+    // }
 
     fn remaining_forward_slice(&self) -> &str {
         if self.key_finished {
-            &self.rep.as_str()[self.post_cursor()..]
+            &self.rep.as_str()[self.cursor..]
         } else {
-            &self.rep.as_str()[self.key_cursor()..self.key_cursor() + self.remaining_key()]
+            &self.rep.as_str()[self.cursor..self.rep.allowed_upper_bound()]
         }
     }
 
     fn remaining_ante_slice(&self) -> &str {
-        &self.rep.as_str()[..self.ante_cursor()]
+        &self.rep.as_str()[..self.cursor]
     }
 
-    fn curr_forward_cursor(&self) -> usize {
-        if self.key_finished {
-            self.post_cursor()
-        } else {
-            self.key_cursor()
-        }
-    }
+    // fn curr_forward_cursor(&self) -> usize {
+    //     if self.key_finished {
+    //         self.post_cursor()
+    //     } else {
+    //         self.key_cursor()
+    //     }
+    // }
 }
 
 impl<'a, 'b> Utf8Matcher<Forward> for RepMatcher<'a, 'b> {
     fn cursor(&self) -> usize {
-        self.curr_forward_cursor()
+        self.cursor
     }
 
     fn str_range(&self, range: Range<usize>) -> Option<&str> {
@@ -403,9 +401,9 @@ impl<'a, 'b> Utf8Matcher<Forward> for RepMatcher<'a, 'b> {
     
     fn is_empty(&self) -> bool {
         if self.key_finished {
-            self.remaining_post() == 0
+            self.cursor == self.rep.visible_len()
         } else {
-            self.remaining_key() == 0
+            self.cursor == self.rep.allowed_upper_bound()
         }
     }
 
@@ -426,18 +424,19 @@ impl<'a, 'b> Utf8Matcher<Forward> for RepMatcher<'a, 'b> {
     }
 
     fn match_start_anchor(&self) -> bool {
-        self.curr_forward_cursor() == 0
+        self.cursor == 0
     }
 
     fn match_end_anchor(&self) -> bool {
         // no matter if we're matching key or post, we must be completely at the end of the string
-        self.remaining_post() == 0
+        self.cursor == self.rep.visible_len()
     }
 
     fn consume(&mut self, len: usize) -> bool {
         if self.key_finished {
             if len <= self.remaining_post() {
                 self.post_match_len += len;
+                self.cursor += len;
                 true
             } else {
                 false
@@ -445,6 +444,7 @@ impl<'a, 'b> Utf8Matcher<Forward> for RepMatcher<'a, 'b> {
         } else {
             if len <= self.remaining_key() {
                 self.key_match_len += len;
+                self.cursor += len;
                 true
             } else {
                 false
@@ -459,7 +459,7 @@ impl<'a, 'b> Utf8Matcher<Forward> for RepMatcher<'a, 'b> {
 
 impl<'a, 'b> Utf8Matcher<Reverse> for RepMatcher<'a, 'b> {
     fn cursor(&self) -> usize {
-        self.ante_cursor()
+        self.cursor
     }
 
     fn str_range(&self, range: Range<usize>) -> Option<&str> {
@@ -467,7 +467,7 @@ impl<'a, 'b> Utf8Matcher<Reverse> for RepMatcher<'a, 'b> {
     }
 
     fn is_empty(&self) -> bool {
-        self.remaining_ante() == 0
+        self.cursor == 0
     }
 
     fn match_str(&self, s: &str) -> bool {
@@ -487,16 +487,17 @@ impl<'a, 'b> Utf8Matcher<Reverse> for RepMatcher<'a, 'b> {
     }
 
     fn match_start_anchor(&self) -> bool {
-        self.ante_cursor() == 0
+        self.cursor == 0
     }
 
     fn match_end_anchor(&self) -> bool {
-        self.ante_cursor() == self.rep.visible_len()
+        self.cursor == self.rep.visible_len()
     }
 
     fn consume(&mut self, len: usize) -> bool {
-        if len <= self.remaining_ante() {
+        if len <= self.cursor {
             self.ante_match_len += len;
+            self.cursor -= len;
             true
         } else {
             false
@@ -579,9 +580,9 @@ impl<'a, 'b> Insertable<'a, 'b> {
 
     fn from_matcher(matcher: RepMatcher<'a, 'b>) -> Insertable<'a, 'b> {
         // we start replacing from the left
-        let start = matcher.rep.ignore_pre_len + matcher.rep.cursor();
+        let start = matcher.rep.ignore_pre_len + matcher.rep.cursor;
         // whatever is not matched *by the key* is unaffected by this Insertable
-        let end_len = (matcher.rep.visible_len() - matcher.key_cursor()) + matcher.rep.ignore_post_len;
+        let end_len = (matcher.rep.visible_len() - (matcher.rep.cursor() + matcher.key_match_len)) + matcher.rep.ignore_post_len;
 
         Insertable {
             _rep: matcher.rep,

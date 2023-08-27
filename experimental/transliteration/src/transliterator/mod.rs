@@ -548,15 +548,18 @@ impl<'a> Rule<'a> {
     fn matches(&self, matcher: &mut RepMatcher, vt: &VarTable) -> Option<MatchData> {
         let mut match_data = MatchData::new();
 
+        matcher.start_ante();
         if !self.ante_matches(matcher, &mut match_data, vt) {
             return None;
         }
+
+        matcher.start_key();
 
         if !self.key_matches(matcher, &mut match_data, vt) {
             return None;
         }
 
-        matcher.finish_key();
+        matcher.finish_key_and_start_post();
 
         if !self.post_matches(matcher, &mut match_data, vt) {
             return None;
