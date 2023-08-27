@@ -13,6 +13,10 @@ use super::Filter;
 // TODO: do we really want this much unsafe? a lot of the API could be replaced with safe, but
 //  checked String methods.
 
+// TODO: if we loosen the invariant of Replaceable UTF-8 content to only need UTF-8 content in
+//  the visible range, we would not need to make_contiguous in Insertable, which would avoid
+//  moving around the tail after a non-final function call.
+
 /// Wrapper for in-place transliteration. Stores the currently allowed-to-be-modified
 /// transliteration range.
 pub(crate) struct Replaceable<'a> {
@@ -69,6 +73,16 @@ impl<'a> Replaceable<'a> {
         // the passed range is into self.visible_content(), which starts at offset self.ignore_pre_len
         let adjusted_range = range.start + self.ignore_pre_len..range.end + self.ignore_pre_len;
         Insertable::new_with_size_hint(self, adjusted_range, size_hint.unwrap_or(0))
+    }
+
+    pub(crate) fn replace_modifiable_range<'b>(
+        &'b mut self,
+        size_hint: Option<usize>,
+    ) -> Insertable<'a, 'b> {
+        // SAFETY: allowed_range is a valid UTF-8 range into the visible content
+        unsafe {
+            self.replace_range(self.allowed_range(), size_hint)
+        }
     }
 
     // TODO: design
@@ -318,6 +332,7 @@ impl<'a> Debug for Replaceable<'a> {
 //  push. A good size_hint avoids this.
 //  one fix could be to preemptively move the tail to the end of the buffer whenever the capacity
 //  changes. Should give us the same benefits as an exponential allocation strategy.
+// TODO: describe what this even is
 pub(crate) struct Insertable<'a, 'b> {
     // Replaceable's invariants may temporarily be broken while this Insertable is alive
     _rep: &'b mut Replaceable<'a>,

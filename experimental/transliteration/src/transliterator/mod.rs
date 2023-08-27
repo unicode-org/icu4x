@@ -77,8 +77,7 @@ impl ComposingTransliterator {
         // input string, which gets replaced by the normalized string.
 
         let buf = self.0.normalize(rep.as_str_modifiable());
-        // SAFETY: rep.allowed_range() returns a range with valid UTF-8 bounds
-        let mut dest = unsafe { rep.replace_range(rep.allowed_range(), Some(buf.len())) };
+        let mut dest = rep.replace_modifiable_range(Some(buf.len()));
         dest.push_str(&buf);
     }
 }
@@ -117,8 +116,7 @@ impl DecomposingTransliterator {
         // input string, which gets replaced by the normalized string.
 
         let buf = self.0.normalize(rep.as_str_modifiable());
-        // SAFETY: rep.allowed_range() returns a range with valid UTF-8 bounds
-        let mut dest = unsafe { rep.replace_range(rep.allowed_range(), Some(buf.len())) };
+        let mut dest = rep.replace_modifiable_range(Some(buf.len()));
         dest.push_str(&buf);
     }
 }
@@ -141,14 +139,11 @@ impl InternalTransliterator {
             Self::Decomposing(t) => t.transliterate(rep, env),
             Self::Null => (),
             Self::Remove => {
-                // SAFETY: rep.allowed_range() returns a range with valid UTF-8 bounds
-                unsafe { rep.replace_range(rep.allowed_range(), Some(0)) };
+                rep.replace_modifiable_range(Some(0));
             }
             Self::Dyn(custom) => {
                 let replacement = custom.transliterate(rep.as_str(), rep.allowed_range());
-                // SAFETY: rep.allowed_range() returns a range with valid UTF-8 bounds
-                // TODO: idea, add a safe convenience replace_range doesn't take a range
-                let mut dest = unsafe { rep.replace_range(rep.allowed_range(), Some(replacement.len())) };
+                let mut dest = rep.replace_modifiable_range(Some(replacement.len()));
                 dest.push_str(&replacement);
             }
         }
