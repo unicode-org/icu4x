@@ -36,9 +36,16 @@ displaydoc = { version = "0.2.3", default-features = false }
 
 icu_transliteration_data = { workspace = true, optional = true }
 
+[target.'cfg(not(target_arch = "wasm32"))'.dev-dependencies]
+criterion = "0.4.0"
+
 [features]
 default = ["compiled_data"]
 std = []
 serde = ["dep:serde", "zerovec/serde", "icu_collections/serde"]
 datagen = ["serde", "dep:databake", "zerovec/databake", "icu_collections/databake"]
 compiled_data = ["dep:icu_transliteration_data", "icu_normalizer/compiled_data", "icu_casemap/compiled_data"]
+
+[[bench]]
+name = "bench"
+harness = false
