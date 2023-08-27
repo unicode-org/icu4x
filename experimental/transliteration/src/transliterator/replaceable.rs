@@ -65,33 +65,40 @@ impl<'a> Replaceable<'a> {
         }
     }
 
-    /// # Safety
-    /// The caller must ensure that `range` is a valid UTF-8 range into the visible content.
-    pub(crate) unsafe fn replace_range<'b>(
-        &'b mut self,
-        range: Range<usize>,
-        size_hint: Option<usize>,
-    ) -> Insertable<'a, 'b> {
-        // TODO: if start is always cursor, maybe change signature to take only end?
-        //  that would also mean we could replace Insertable.start with Insertable._rep.cursor + ignore_pre_len
-        // TODO: maybe add checks about frozen range?
-        // TODO: replace_range should probably be combined with a cursor update, otherwise cursor
-        //  invariant can break if cursor is inside the range.
-        debug_assert_eq!(range.start, self.cursor);
-        // the passed range is into self.visible_content(), which starts at offset self.ignore_pre_len
+    // /// # Safety
+    // /// The caller must ensure that `range` is a valid UTF-8 range into the visible content.
+    // pub(crate) unsafe fn replace_range<'b>(
+    //     &'b mut self,
+    //     range: Range<usize>,
+    //     size_hint: Option<usize>,
+    // ) -> Insertable<'a, 'b> {
+    //     // TODO: if start is always cursor, maybe change signature to take only end?
+    //     //  that would also mean we could replace Insertable.start with Insertable._rep.cursor + ignore_pre_len
+    //     // TODO: maybe add checks about frozen range?
+    //     // TODO: replace_range should probably be combined with a cursor update, otherwise cursor
+    //     //  invariant can break if cursor is inside the range.
+    //     debug_assert_eq!(range.start, self.cursor);
+    //     // the passed range is into self.visible_content(), which starts at offset self.ignore_pre_len
+    //     let adjusted_range = range.start + self.ignore_pre_len..range.end + self.ignore_pre_len;
+    //     Insertable::new_with_size_hint(self, adjusted_range, size_hint.unwrap_or(0))
+    // }
+
+    pub(crate) fn replace_modifiable_with_str(&mut self, s: &str) {
+        let range = self.allowed_range();
+        // content is offset by ignore_pre_len relative to the visible content
         let adjusted_range = range.start + self.ignore_pre_len..range.end + self.ignore_pre_len;
-        Insertable::new_with_size_hint(self, adjusted_range, size_hint.unwrap_or(0))
+        self.content.splice(adjusted_range, s.bytes());
     }
 
-    pub(crate) fn replace_modifiable_range<'b>(
-        &'b mut self,
-        size_hint: Option<usize>,
-    ) -> Insertable<'a, 'b> {
-        // SAFETY: allowed_range is a valid UTF-8 range into the visible content
-        unsafe {
-            self.replace_range(self.allowed_range(), size_hint)
-        }
-    }
+    // pub(crate) fn replace_modifiable_range<'b>(
+    //     &'b mut self,
+    //     size_hint: Option<usize>,
+    // ) -> Insertable<'a, 'b> {
+    //     // SAFETY: allowed_range is a valid UTF-8 range into the visible content
+    //     unsafe {
+    //         self.replace_range(self.allowed_range(), size_hint)
+    //     }
+    // }
 
     /// Returns the full current content as a `&str`.
     pub(crate) fn as_str(&self) -> &str {
@@ -203,6 +210,16 @@ impl<'a> Replaceable<'a> {
         }
     }
 
+    pub(super) fn start_match(&mut self) -> RepMatcher<'a, '_> {
+        RepMatcher {
+            rep: self,
+            key_match_len: 0,
+            key_finished: false,
+            ante_match_len: 0,
+            post_match_len: 0,
+        }
+    }
+
     /// Returns the next run (as a Replaceable with the corresponding frozen range)
     /// that occurs on or after `start`, if one exists.
     ///
@@ -278,6 +295,11 @@ impl<'a> Replaceable<'a> {
         &self.content[self.ignore_pre_len..self.visible_content_upper_bound()]
     }
 
+    /// Returns the current length of the visible content.
+    fn visible_len(&self) -> usize {
+        self.visible_content().len()
+    }
+
     fn visible_content_upper_bound(&self) -> usize {
         self.content.len() - self.ignore_post_len
     }
@@ -285,9 +307,7 @@ impl<'a> Replaceable<'a> {
 
 impl<'a> Debug for Replaceable<'a> {
     fn fmt(&self, f: &mut Formatter<'_>) -> core::fmt::Result {
-        write!(f, "{}", unsafe {
-            &str::from_utf8_unchecked(self.content)[..self.ignore_pre_len]
-        })?;
+        write!(f, "{:?}", &self.content[..self.ignore_pre_len])?;
         write!(f, "[[[")?;
         write!(f, "{}", &self.as_str()[..self.freeze_pre_len])?;
         write!(f, "{{{{{{")?;
@@ -300,10 +320,223 @@ impl<'a> Debug for Replaceable<'a> {
         )?;
         write!(f, "}}}}}}")?;
         write!(f, "{}", &self.as_str()[self.allowed_upper_bound()..])?;
+        write!(f, "{:?}", &self.content[self.content.len() - self.ignore_post_len..])?;
 
         Ok(())
     }
 }
+
+#[derive(Debug)]
+pub(super) struct RepMatcher<'a, 'b> {
+    rep: &'b mut Replaceable<'a>,
+    key_match_len: usize, // relative to rep.cursor()
+    key_finished: bool,
+    ante_match_len: usize, // relative to rep.cursor()
+    post_match_len: usize, // relative to rep.cursor() + key_match_len
+}
+
+impl<'a, 'b> RepMatcher<'a, 'b> {
+    pub(super) fn finish_match(self) -> Insertable<'a, 'b> {
+        Insertable::from_matcher(self)
+    }
+
+    pub(super) fn finish_key(&mut self) {
+        self.key_finished = true;
+    }
+
+    fn key_cursor(&self) -> usize {
+        debug_assert!(self.rep.cursor() + self.key_match_len <= self.rep.allowed_upper_bound());
+        self.rep.cursor() + self.key_match_len
+    }
+
+    fn post_cursor(&self) -> usize {
+        debug_assert!(self.key_cursor() + self.post_match_len <= self.rep.visible_len());
+        self.key_cursor() + self.post_match_len
+    }
+
+    fn ante_cursor(&self) -> usize {
+        debug_assert!(self.rep.cursor() >= self.ante_match_len);
+        self.rep.cursor() - self.ante_match_len
+    }
+
+    fn remaining_key(&self) -> usize {
+        self.rep.allowed_upper_bound() - self.key_cursor()
+    }
+
+    fn remaining_post(&self) -> usize {
+        self.rep.visible_len() - self.post_cursor()
+    }
+
+    fn remaining_ante(&self) -> usize {
+        self.ante_cursor()
+    }
+
+    fn remaining_forward_slice(&self) -> &str {
+        if self.key_finished {
+            &self.rep.as_str()[self.post_cursor()..]
+        } else {
+            &self.rep.as_str()[self.key_cursor()..self.key_cursor() + self.remaining_key()]
+        }
+    }
+
+    fn remaining_ante_slice(&self) -> &str {
+        &self.rep.as_str()[..self.ante_cursor()]
+    }
+
+    fn curr_forward_cursor(&self) -> usize {
+        if self.key_finished {
+            self.post_cursor()
+        } else {
+            self.key_cursor()
+        }
+    }
+}
+
+impl<'a, 'b> Utf8Matcher<Forward> for RepMatcher<'a, 'b> {
+    fn cursor(&self) -> usize {
+        self.curr_forward_cursor()
+    }
+
+    fn str_range(&self, range: Range<usize>) -> Option<&str> {
+        self.rep.as_str().get(range)
+    }
+    
+    fn is_empty(&self) -> bool {
+        if self.key_finished {
+            self.remaining_post() == 0
+        } else {
+            self.remaining_key() == 0
+        }
+    }
+
+    fn match_str(&self, s: &str) -> bool {
+        self.remaining_forward_slice().starts_with(s)
+    }
+
+    fn match_and_consume_str(&mut self, s: &str) -> bool {
+        if Utf8Matcher::<Forward>::match_str(self, s) {
+            Utf8Matcher::<Forward>::consume(self, s.len())
+        } else {
+            false
+        }
+    }
+
+    fn match_and_consume_char(&mut self, c: char) -> bool {
+        Utf8Matcher::<Forward>::match_and_consume_str(self, c.encode_utf8(&mut [0; 4]))
+    }
+
+    fn match_start_anchor(&self) -> bool {
+        self.curr_forward_cursor() == 0
+    }
+
+    fn match_end_anchor(&self) -> bool {
+        // no matter if we're matching key or post, we must be completely at the end of the string
+        self.remaining_post() == 0
+    }
+
+    fn consume(&mut self, len: usize) -> bool {
+        if self.key_finished {
+            if len <= self.remaining_post() {
+                self.post_match_len += len;
+                true
+            } else {
+                false
+            }
+        } else {
+            if len <= self.remaining_key() {
+                self.key_match_len += len;
+                true
+            } else {
+                false
+            }
+        }
+    }
+
+    fn next_char(&self) -> Option<char> {
+        self.remaining_forward_slice().chars().next()
+    }
+}
+
+impl<'a, 'b> Utf8Matcher<Reverse> for RepMatcher<'a, 'b> {
+    fn cursor(&self) -> usize {
+        self.ante_cursor()
+    }
+
+    fn str_range(&self, range: Range<usize>) -> Option<&str> {
+        self.rep.as_str().get(range)
+    }
+
+    fn is_empty(&self) -> bool {
+        self.remaining_ante() == 0
+    }
+
+    fn match_str(&self, s: &str) -> bool {
+        self.remaining_ante_slice().ends_with(s)
+    }
+
+    fn match_and_consume_str(&mut self, s: &str) -> bool {
+        if Utf8Matcher::<Reverse>::match_str(self, s) {
+            Utf8Matcher::<Reverse>::consume(self, s.len())
+        } else {
+            false
+        }
+    }
+
+    fn match_and_consume_char(&mut self, c: char) -> bool {
+        Utf8Matcher::<Reverse>::match_and_consume_str(self, c.encode_utf8(&mut [0; 4]))
+    }
+
+    fn match_start_anchor(&self) -> bool {
+        self.ante_cursor() == 0
+    }
+
+    fn match_end_anchor(&self) -> bool {
+        self.ante_cursor() == self.rep.visible_len()
+    }
+
+    fn consume(&mut self, len: usize) -> bool {
+        if len <= self.remaining_ante() {
+            self.ante_match_len += len;
+            true
+        } else {
+            false
+        }
+    }
+
+    fn next_char(&self) -> Option<char> {
+        self.remaining_ante_slice().chars().next_back()
+    }
+}
+
+mod sealed {
+    pub(crate) trait Sealed {}
+    impl Sealed for super::Forward {}
+    impl Sealed for super::Reverse {}
+}
+
+pub(super) struct Forward;
+pub(super) struct Reverse;
+pub(super) trait MatchDirection: sealed::Sealed {}
+impl MatchDirection for Forward {}
+impl MatchDirection for Reverse {}
+
+pub(super) trait Utf8Matcher<D: MatchDirection>: Debug {
+    fn cursor(&self) -> usize;
+
+    fn str_range(&self, range: Range<usize>) -> Option<&str>;
+
+    fn is_empty(&self) -> bool;
+    fn match_str(&self, s: &str) -> bool;
+
+    fn match_and_consume_str(&mut self, s: &str) -> bool;
+    fn match_and_consume_char(&mut self, c: char) -> bool;
+
+    fn match_start_anchor(&self) -> bool;
+    fn match_end_anchor(&self) -> bool;
+    fn consume(&mut self, len: usize) -> bool;
+    fn next_char(&self) -> Option<char>;
+}
+
 
 // TODO: write about invariants. they're basically the same as replaceable's
 // TODO about complexity: in the worst case, we need to move the full `end_len` tail for every
@@ -317,32 +550,58 @@ pub(crate) struct Insertable<'a, 'b> {
     start: usize,
     end_len: usize,
     curr: usize,
+    ante_match_len: usize,
+    key_match_len: usize,
+    post_match_len: usize,
 }
 
 impl<'a, 'b> Insertable<'a, 'b> {
-    /// # Safety
-    /// The caller must ensure that `range` is a valid UTF-8 range into `content`.
-    unsafe fn new_with_size_hint(
-        rep: &'b mut Replaceable<'a>,
-        range: Range<usize>,
-        size_hint: usize,
-    ) -> Insertable<'a, 'b> {
-        let end_len = rep.content.len() - range.end;
-        let s = Self {
-            _rep: rep,
-            start: range.start,
-            end_len,
-            curr: range.start,
-        };
+    // /// # Safety
+    // /// The caller must ensure that `range` is a valid UTF-8 range into `content`.
+    // unsafe fn new_with_size_hint(
+    //     rep: &'b mut Replaceable<'a>,
+    //     range: Range<usize>,
+    //     size_hint: usize,
+    // ) -> Insertable<'a, 'b> {
+    //     let end_len = rep.content.len() - range.end;
+    //     let mut s = Self {
+    //         _rep: rep,
+    //         start: range.start,
+    //         end_len,
+    //         curr: range.start,
+    //         key_match_len: 0,
+    //         ante_match_len: 0,
+    //         post_match_len: 0,
+    //     };
+    //     s.apply_size_hint(size_hint);
+    //     s
+    // }
 
-        let free_bytes = s.free_range().len();
-        if free_bytes < size_hint {
-            s._rep.content.splice(
-                s.end()..s.end(),
-                core::iter::repeat(0).take(size_hint - free_bytes),
+    fn from_matcher(matcher: RepMatcher<'a, 'b>) -> Insertable<'a, 'b> {
+        // we start replacing from the left
+        let start = matcher.rep.ignore_pre_len + matcher.rep.cursor();
+        // whatever is not matched *by the key* is unaffected by this Insertable
+        let end_len = (matcher.rep.visible_len() - matcher.key_cursor()) + matcher.rep.ignore_post_len;
+
+        Insertable {
+            _rep: matcher.rep,
+            start,
+            end_len,
+            curr: start,
+            key_match_len: matcher.key_match_len,
+            ante_match_len: matcher.ante_match_len,
+            post_match_len: matcher.post_match_len,
+        }
+    }
+
+    pub(crate) fn apply_size_hint(&mut self, size: usize) {
+        let free_bytes = self.free_range().len();
+        if free_bytes < size {
+            self._rep.content.splice(
+                self.end()..self.end(),
+                core::iter::repeat(0).take(size - free_bytes),
             );
         }
-        s
     }
 
     pub(crate) fn push(&mut self, c: char) {
@@ -420,7 +679,8 @@ impl<'a, 'b> Insertable<'a, 'b> {
         unsafe { CursorOffset::byte(self.curr_replacement_len()) }
     }
 
-    pub(super) fn commit(mut self, cursor_offset: CursorOffset, data: &MatchData) {
+    // TODO(now) rewrite now that no matchdata is passed
+    pub(super) fn commit(mut self, cursor_offset: CursorOffset) {
         self.make_contiguous();
 
         // SAFETY: make_contiguous ensures that `content` is contiguous, valid UTF-8 again, thus
@@ -438,7 +698,7 @@ impl<'a, 'b> Insertable<'a, 'b> {
                 // bytes after the cursor
                 let post_start = old_cursor + replacement_len;
                 // the replacement d oes not affect the post match length
-                let post_end = post_start + data.post_match_len;
+                let post_end = post_start + self.post_match_len;
                 let matched_post = &rep.as_str()[post_start..post_end];
                 // compute byte-length of `count` chars in post
                 let post_offset_len = matched_post
@@ -455,7 +715,7 @@ impl<'a, 'b> Insertable<'a, 'b> {
                 let ante = rep.as_str_ante();
                 // restricting to the matched substr ensures no overflow of the cursor past the
                 // contexts, which is good
-                let matched_ante = &ante[(ante.len() - data.ante_match_len)..];
+                let matched_ante = &ante[(ante.len() - self.ante_match_len)..];
                 // compute byte-length of `count` chars in ante (from the right)
                 let ante_len = matched_ante
                     .chars()

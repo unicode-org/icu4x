@@ -13,6 +13,7 @@ l > |@@@@@@@@@@@@@@@@@@@@@@@@@L;
 kL > 'bad' ;
 
 :: Null ;
+# output so far: abCxyzXYZjkL!
 
 ^ . $ > 'bad' ;
 ^ . > 'first' ;

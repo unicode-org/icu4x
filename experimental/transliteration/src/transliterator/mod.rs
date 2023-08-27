@@ -30,6 +30,7 @@ use icu_collections::codepointinvliststringlist::CodePointInversionListAndString
 use icu_normalizer::provider::*;
 use icu_normalizer::{ComposingNormalizer, DecomposingNormalizer};
 use std::collections::VecDeque;
+use std::iter::Rev;
 use zerofrom::ZeroFrom;
 use zerovec::VarZeroSlice;
 
@@ -77,8 +78,7 @@ impl ComposingTransliterator {
         // input string, which gets replaced by the normalized string.
 
         let buf = self.0.normalize(rep.as_str_modifiable());
-        let mut dest = rep.replace_modifiable_range(Some(buf.len()));
-        dest.push_str(&buf);
+        rep.replace_modifiable_with_str(&buf);
     }
 }
 
@@ -116,8 +116,7 @@ impl DecomposingTransliterator {
         // input string, which gets replaced by the normalized string.
 
         let buf = self.0.normalize(rep.as_str_modifiable());
-        let mut dest = rep.replace_modifiable_range(Some(buf.len()));
-        dest.push_str(&buf);
+        rep.replace_modifiable_with_str(&buf);
     }
 }
 
@@ -139,12 +138,11 @@ impl InternalTransliterator {
             Self::Decomposing(t) => t.transliterate(rep, env),
             Self::Null => (),
             Self::Remove => {
-                rep.replace_modifiable_range(Some(0));
+                rep.replace_modifiable_with_str("")
             }
             Self::Dyn(custom) => {
                 let replacement = custom.transliterate(rep.as_str(), rep.allowed_range());
-                let mut dest = rep.replace_modifiable_range(Some(replacement.len()));
-                dest.push_str(&replacement);
+                rep.replace_modifiable_with_str(&replacement)
             }
         }
     }
@@ -506,8 +504,10 @@ impl<'a> RuleGroup<'a> {
             for rule in self.rules.iter() {
                 let rule: Rule = Rule::zero_from(rule);
                 eprintln!("trying rule: {rule:?}");
-                if let Some(data) = rule.matches(&rep, vt) {
-                    rule.apply(&mut rep, data, vt, env);
+                let mut matcher = rep.start_match();
+                if let Some(data) = rule.matches(&mut matcher, vt) {
+                    rule.apply(matcher.finish_match(), data, vt, env);
+                    eprintln!("finished applying replacement: {rep:?}");
                     eprintln!("applied rule!");
                     // rule application is responsible for updating the cursor
                     continue 'main;
@@ -523,9 +523,7 @@ impl<'a> RuleGroup<'a> {
 impl<'a> Rule<'a> {
     /// Applies this rule's replacement using the given [`MatchData`]. Updates the cursor of the
     /// given [`Replaceable`].
-    fn apply(&self, rep: &mut Replaceable, data: MatchData, vt: &VarTable, env: &Env) {
-        let replacement_range = rep.cursor()..(rep.cursor() + data.key_match_len);
-
+    fn apply(&self, mut dest: Insertable, data: MatchData, vt: &VarTable, env: &Env) {
         // note: this could be precomputed ignoring segments and function calls.
         // A `rule.used_segments` ZeroVec<u16> could be added at compile time,
         // which would make it easier to take segments into account at runtime.
@@ -534,12 +532,7 @@ impl<'a> Rule<'a> {
         let replacement_size_estimate =
             helpers::estimate_replacement_size(&self.replacer, &data, vt);
 
-        // SAFETY: the range is guaranteed to be valid, as key_match_len is the length of a UTF-8
-        // substring.
-        // TODO: same small safety issue as below if we made this `safe`: there is no guarantee that
-        //  the passed MatchData is for this rule.
-        let mut dest =
-            unsafe { rep.replace_range(replacement_range, Some(replacement_size_estimate)) };
+        dest.apply_size_hint(replacement_size_estimate);
 
         // TODO: small safety issue: a malicious implementation could construct a cursor
         //  *for a different Insertable* but then use it with this insertable. Can we link
@@ -547,22 +540,27 @@ impl<'a> Rule<'a> {
         let cursor_offset = helpers::replace_encoded_str(&self.replacer, &mut dest, &data, vt, env)
             .unwrap_or_default();
 
-        dest.commit(cursor_offset, &data);
-
-        eprintln!("finished applying replacement: {rep:?}");
+        dest.commit(cursor_offset);
     }
 
     /// Returns `None` if there is no match. If there is a match, returns the associated
     /// [`MatchData`].
-    fn matches(&self, rep: &Replaceable, vt: &VarTable) -> Option<MatchData> {
+    fn matches(&self, matcher: &mut RepMatcher, vt: &VarTable) -> Option<MatchData> {
         let mut match_data = MatchData::new();
 
-        match_data.ante_match_len = self.ante_matches(rep, &mut match_data, vt)?;
+        if !self.ante_matches(matcher, &mut match_data, vt) {
+            return None;
+        }
 
-        let key_match_len = self.key_matches(rep, &mut match_data, vt)?;
-        match_data.key_match_len = key_match_len;
+        if !self.key_matches(matcher, &mut match_data, vt) {
+            return None;
+        }
 
-        match_data.post_match_len = self.post_matches(rep, key_match_len, &mut match_data, vt)?;
+        matcher.finish_key();
+
+        if !self.post_matches(matcher, &mut match_data, vt) {
+            return None;
+        }
 
         Some(match_data)
     }
@@ -576,17 +574,11 @@ impl<'a> Rule<'a> {
     /// match for this rule's ante context. We also call right-aligned matches `rev`erse matches.
     fn ante_matches(
         &self,
-        rep: &Replaceable,
+        matcher: &mut impl Utf8Matcher<Reverse>,
         match_data: &mut MatchData,
         vt: &VarTable,
-    ) -> Option<usize> {
-        let visible = rep.as_str();
-        let mut input = RevInput {
-            visible,
-            cursor: rep.cursor(),
-        };
-        helpers::rev_match_encoded_str(&self.ante, &mut input, match_data, vt)
-            .then_some(rep.cursor() - input.cursor)
+    ) -> bool {
+        helpers::rev_match_encoded_str(&self.ante, matcher, match_data, vt)
     }
 
     /// Returns `None` if the post context does not match. If there is a match, returns the length
@@ -596,21 +588,11 @@ impl<'a> Rule<'a> {
     /// match for this rule's post context.
     fn post_matches(
         &self,
-        rep: &Replaceable,
-        key_match_len: usize,
+        matcher: &mut impl Utf8Matcher<Forward>,
         match_data: &mut MatchData,
         vt: &VarTable,
-    ) -> Option<usize> {
-        let visible = rep.as_str();
-        let mut input = Input {
-            visible,
-            cursor: rep.cursor() + key_match_len,
-            // no end restrictions for post context matching
-            max_match_end: visible.len(),
-        };
-
-        helpers::match_encoded_str(&self.post, &mut input, match_data, vt)
-            .then_some(input.cursor - rep.cursor())
+    ) -> bool {
+        helpers::match_encoded_str(&self.post, matcher, match_data, vt)
     }
 
     /// Returns `None` if the key does not match. If there is a match, returns the length of the
@@ -620,19 +602,11 @@ impl<'a> Rule<'a> {
     /// match for this rule's key.
     fn key_matches(
         &self,
-        rep: &Replaceable,
+        matcher: &mut impl Utf8Matcher<Forward>,
         match_data: &mut MatchData,
         vt: &VarTable,
-    ) -> Option<usize> {
-        let visible = rep.as_str();
-        let mut input = Input {
-            visible,
-            cursor: rep.cursor(),
-            // key matching can only occur in the modifiable range.
-            max_match_end: rep.allowed_upper_bound(),
-        };
-        helpers::match_encoded_str(&self.key, &mut input, match_data, vt)
-            .then_some(input.cursor - rep.cursor())
+    ) -> bool {
+        helpers::match_encoded_str(&self.key, matcher, match_data, vt)
     }
 }
 
@@ -746,19 +720,19 @@ mod helpers {
     /// one. Fills in `match_data` if applicable.
     pub(super) fn match_encoded_str(
         query: &str,
-        input: &mut Input,
+        matcher: &mut impl Utf8Matcher<Forward>,
         match_data: &mut MatchData,
         vt: &VarTable,
     ) -> bool {
-        eprintln!("trying to match query {query:?} on input {input:?}");
+        eprintln!("trying to match query {query:?} on input {matcher:?}");
 
         let query = match find_encoded(query) {
             None => {
                 // pure string
-                return input.match_and_consume_str(query);
+                return matcher.match_and_consume_str(query);
             }
             Some(idx) => {
-                if !input.match_and_consume_str(&query[..idx]) {
+                if !matcher.match_and_consume_str(&query[..idx]) {
                     return false;
                 }
                 &query[idx..]
@@ -770,14 +744,14 @@ mod helpers {
         for query_c in query.chars() {
             if !VarTable::ENCODE_RANGE.contains(&query_c) {
                 // regular char
-                if !input.match_and_consume_char(query_c) {
+                if !matcher.match_and_consume_char(query_c) {
                     return false;
                 }
                 continue;
             }
             // must be special matcher
 
-            let matcher = match vt.lookup_matcher(query_c) {
+            let special_matcher = match vt.lookup_matcher(query_c) {
                 Some(matcher) => matcher,
                 None => {
                     debug_assert!(false, "invalid encoded char");
@@ -785,7 +759,7 @@ mod helpers {
                     continue;
                 }
             };
-            if !matcher.matches(input, match_data, vt) {
+            if !special_matcher.matches(matcher, match_data, vt) {
                 return false;
             }
         }
@@ -798,17 +772,17 @@ mod helpers {
     /// match, if there is one. Fills in `match_data` if applicable.
     pub(super) fn rev_match_encoded_str(
         query: &str,
-        input: &mut RevInput,
+        matcher: &mut impl Utf8Matcher<Reverse>,
         match_data: &mut MatchData,
         vt: &VarTable,
     ) -> bool {
         let query = match rev_find_encoded(query) {
             None => {
                 // pure string
-                return input.match_and_consume_str(query);
+                return matcher.match_and_consume_str(query);
             }
             Some(idx) => {
-                if !input.match_and_consume_str(&query[idx..]) {
+                if !matcher.match_and_consume_str(&query[idx..]) {
                     return false;
                 }
                 &query[..idx]
@@ -820,14 +794,14 @@ mod helpers {
         for query_c in query.chars().rev() {
             if !VarTable::ENCODE_RANGE.contains(&query_c) {
                 // regular char
-                if !input.match_and_consume_char(query_c) {
+                if !matcher.match_and_consume_char(query_c) {
                     return false;
                 }
                 continue;
             }
             // must be special matcher
 
-            let matcher = match vt.lookup_matcher(query_c) {
+            let special_matcher = match vt.lookup_matcher(query_c) {
                 Some(matcher) => matcher,
                 None => {
                     debug_assert!(false, "invalid encoded char");
@@ -835,7 +809,7 @@ mod helpers {
                     continue;
                 }
             };
-            if !matcher.rev_matches(input, match_data, vt) {
+            if !special_matcher.rev_matches(matcher, match_data, vt) {
                 return false;
             }
         }
@@ -848,12 +822,6 @@ mod helpers {
 /// Stores the state for a single conversion rule.
 #[derive(Debug)]
 struct MatchData {
-    /// The length (in bytes) of the matched key. This portion will be replaced.
-    key_match_len: usize,
-    /// The length (in bytes) of the matched ante context. This portion will not be replaced.
-    ante_match_len: usize,
-    /// The length (in bytes) of the matched post context. This portion will not be replaced.
-    post_match_len: usize,
     /// Stored matches of segments.
     segments: Vec<String>,
 }
@@ -861,9 +829,6 @@ struct MatchData {
 impl MatchData {
     fn new() -> Self {
         Self {
-            key_match_len: 0,
-            ante_match_len: 0,
-            post_match_len: 0,
             segments: Vec::new(),
         }
     }
@@ -886,162 +851,162 @@ impl MatchData {
     }
 }
 
-/// This used during matching. It knows the full input string, the part of it we can match on,
-/// and what we are currently matching.
-struct Input<'a> {
-    /// The input string we are matching on.
-    visible: &'a str,
-    /// The start of the remainder of the input string.
-    cursor: usize,
-    /// The maximum part of the input string we are allowed to match.
-    max_match_end: usize,
-}
-
-impl<'a> Input<'a> {
-    fn is_empty(&self) -> bool {
-        self.cursor == self.max_match_end
-    }
-
-    fn match_str(&self, s: &str) -> bool {
-        self.visible[self.cursor..self.max_match_end].starts_with(s)
-    }
-
-    fn match_and_consume_str(&mut self, s: &str) -> bool {
-        if self.visible[self.cursor..self.max_match_end].starts_with(s) {
-            self.cursor += s.len();
-            true
-        } else {
-            false
-        }
-    }
-
-    fn match_and_consume_char(&mut self, c: char) -> bool {
-        if self.visible[self.cursor..self.max_match_end].starts_with(c) {
-            self.cursor += c.len_utf8();
-            true
-        } else {
-            false
-        }
-    }
-
-    fn match_and_consume_start_anchor(&self) -> bool {
-        if self.cursor == 0 {
-            true
-        } else {
-            false
-        }
-    }
-
-    fn match_and_consume_end_anchor(&self) -> bool {
-        if self.cursor == self.visible.len() {
-            true
-        } else {
-            false
-        }
-    }
-
-    fn next_char(&self) -> Option<char> {
-        self.visible[self.cursor..self.max_match_end].chars().next()
-    }
-
-    #[must_use]
-    fn consume(&mut self, len: usize) -> bool {
-        if self.cursor + len <= self.max_match_end {
-            self.cursor += len;
-            true
-        } else {
-            false
-        }
-    }
-}
-
-impl<'a> Debug for Input<'a> {
-    fn fmt(&self, f: &mut Formatter<'_>) -> core::fmt::Result {
-        write!(f, "{}", &self.visible[..self.cursor])?;
-        write!(f, "|||")?;
-        write!(f, "{}", &self.visible[self.cursor..self.max_match_end])?;
-        write!(f, "<<<")?;
-        write!(f, "{}", &self.visible[self.max_match_end..])
-    }
-}
-
-/// This used during reversematching. It knows the full input string, the part of it we can
-/// match on, and what we are currently matching.
-struct RevInput<'a> {
-    /// The input string we are matching on.
-    visible: &'a str,
-    /// The (exclusive) end of the remainder of the input string.
-    cursor: usize,
-}
-
-impl<'a> RevInput<'a> {
-    fn is_empty(&self) -> bool {
-        self.cursor == 0
-    }
-
-    fn match_str(&self, s: &str) -> bool {
-        self.visible[..self.cursor].ends_with(s)
-    }
-
-    fn match_and_consume_str(&mut self, s: &str) -> bool {
-        if self.visible[..self.cursor].ends_with(s) {
-            self.cursor -= s.len();
-            true
-        } else {
-            false
-        }
-    }
-
-    fn match_and_consume_char(&mut self, c: char) -> bool {
-        if self.visible[..self.cursor].ends_with(c) {
-            self.cursor -= c.len_utf8();
-            true
-        } else {
-            false
-        }
-    }
-
-    fn match_and_consume_start_anchor(&self) -> bool {
-        if self.cursor == 0 {
-            true
-        } else {
-            false
-        }
-    }
-
-    fn match_and_consume_end_anchor(&self) -> bool {
-        if self.cursor == self.visible.len() {
-            true
-        } else {
-            false
-        }
-    }
-
-    fn next_char(&self) -> Option<char> {
-        self.visible[..self.cursor].chars().rev().next()
-    }
-
-    #[must_use]
-    fn consume(&mut self, len: usize) -> bool {
-        if len <= self.cursor {
-            self.cursor -= len;
-            true
-        } else {
-            false
-        }
-    }
-}
-
-impl<'a> Debug for RevInput<'a> {
-    fn fmt(&self, f: &mut Formatter<'_>) -> core::fmt::Result {
-        write!(
-            f,
-            ">>>{}|||{}",
-            &self.visible[..self.cursor],
-            &self.visible[self.cursor..]
-        )
-    }
-}
+// /// This used during matching. It knows the full input string, the part of it we can match on,
+// /// and what we are currently matching.
+// struct Input<'a> {
+//     /// The input string we are matching on.
+//     visible: &'a str,
+//     /// The start of the remainder of the input string.
+//     cursor: usize,
+//     /// The maximum part of the input string we are allowed to match.
+//     max_match_end: usize,
+// }
+//
+// impl<'a> Input<'a> {
+//     fn is_empty(&self) -> bool {
+//         self.cursor == self.max_match_end
+//     }
+//
+//     fn match_str(&self, s: &str) -> bool {
+//         self.visible[self.cursor..self.max_match_end].starts_with(s)
+//     }
+//
+//     fn match_and_consume_str(&mut self, s: &str) -> bool {
+//         if self.visible[self.cursor..self.max_match_end].starts_with(s) {
+//             self.cursor += s.len();
+//             true
+//         } else {
+//             false
+//         }
+//     }
+//
+//     fn match_and_consume_char(&mut self, c: char) -> bool {
+//         if self.visible[self.cursor..self.max_match_end].starts_with(c) {
+//             self.cursor += c.len_utf8();
+//             true
+//         } else {
+//             false
+//         }
+//     }
+//
+//     fn match_and_consume_start_anchor(&self) -> bool {
+//         if self.cursor == 0 {
+//             true
+//         } else {
+//             false
+//         }
+//     }
+//
+//     fn match_and_consume_end_anchor(&self) -> bool {
+//         if self.cursor == self.visible.len() {
+//             true
+//         } else {
+//             false
+//         }
+//     }
+//
+//     fn next_char(&self) -> Option<char> {
+//         self.visible[self.cursor..self.max_match_end].chars().next()
+//     }
+//
+//     #[must_use]
+//     fn consume(&mut self, len: usize) -> bool {
+//         if self.cursor + len <= self.max_match_end {
+//             self.cursor += len;
+//             true
+//         } else {
+//             false
+//         }
+//     }
+// }
+//
+// impl<'a> Debug for Input<'a> {
+//     fn fmt(&self, f: &mut Formatter<'_>) -> core::fmt::Result {
+//         write!(f, "{}", &self.visible[..self.cursor])?;
+//         write!(f, "|||")?;
+//         write!(f, "{}", &self.visible[self.cursor..self.max_match_end])?;
+//         write!(f, "<<<")?;
+//         write!(f, "{}", &self.visible[self.max_match_end..])
+//     }
+// }
+//
+// /// This used during reversematching. It knows the full input string, the part of it we can
+// /// match on, and what we are currently matching.
+// struct RevInput<'a> {
+//     /// The input string we are matching on.
+//     visible: &'a str,
+//     /// The (exclusive) end of the remainder of the input string.
+//     cursor: usize,
+// }
+//
+// impl<'a> RevInput<'a> {
+//     fn is_empty(&self) -> bool {
+//         self.cursor == 0
+//     }
+//
+//     fn match_str(&self, s: &str) -> bool {
+//         self.visible[..self.cursor].ends_with(s)
+//     }
+//
+//     fn match_and_consume_str(&mut self, s: &str) -> bool {
+//         if self.visible[..self.cursor].ends_with(s) {
+//             self.cursor -= s.len();
+//             true
+//         } else {
+//             false
+//         }
+//     }
+//
+//     fn match_and_consume_char(&mut self, c: char) -> bool {
+//         if self.visible[..self.cursor].ends_with(c) {
+//             self.cursor -= c.len_utf8();
+//             true
+//         } else {
+//             false
+//         }
+//     }
+//
+//     fn match_and_consume_start_anchor(&self) -> bool {
+//         if self.cursor == 0 {
+//             true
+//         } else {
+//             false
+//         }
+//     }
+//
+//     fn match_and_consume_end_anchor(&self) -> bool {
+//         if self.cursor == self.visible.len() {
+//             true
+//         } else {
+//             false
+//         }
+//     }
+//
+//     fn next_char(&self) -> Option<char> {
+//         self.visible[..self.cursor].chars().rev().next()
+//     }
+//
+//     #[must_use]
+//     fn consume(&mut self, len: usize) -> bool {
+//         if len <= self.cursor {
+//             self.cursor -= len;
+//             true
+//         } else {
+//             false
+//         }
+//     }
+// }
+//
+// impl<'a> Debug for RevInput<'a> {
+//     fn fmt(&self, f: &mut Formatter<'_>) -> core::fmt::Result {
+//         write!(
+//             f,
+//             ">>>{}|||{}",
+//             &self.visible[..self.cursor],
+//             &self.visible[self.cursor..]
+//         )
+//     }
+// }
 
 enum QuantifierKind {
     ZeroOrOne,
@@ -1064,26 +1029,26 @@ impl<'a> SpecialMatcher<'a> {
 
     /// Returns `None` if the input does not match. If there is a match, returns the length of the
     /// match.
-    fn matches(&self, input: &mut Input, match_data: &mut MatchData, vt: &VarTable) -> bool {
+    fn matches(&self, matcher: &mut impl Utf8Matcher<Forward>, match_data: &mut MatchData, vt: &VarTable) -> bool {
         match self {
-            Self::Compound(query) => helpers::match_encoded_str(query, input, match_data, vt),
+            Self::Compound(query) => helpers::match_encoded_str(query, matcher, match_data, vt),
             Self::UnicodeSet(set) => {
-                eprintln!("checking if set {set:?} matches input {input:?}");
+                eprintln!("checking if set {set:?} matches input {matcher:?}");
 
                 // TODO: check in which order a unicodeset matches
                 //  (chars first? strings first? longest first? shortest first?)
                 //  ICU4J: UnicodeSet::matches says strings first, longest first, then chars
                 //  TODO ^ add this to gdoc
 
-                if input.is_empty() {
+                if matcher.is_empty() {
                     if set.contains("") {
                         return true;
                     }
                     if set.contains("\u{FFFF}") {
-                        if input.match_and_consume_end_anchor() {
+                        if matcher.match_end_anchor() {
                             return true;
                         }
-                        if input.match_and_consume_start_anchor() {
+                        if matcher.match_start_anchor() {
                             return true;
                         }
                     }
@@ -1096,12 +1061,12 @@ impl<'a> SpecialMatcher<'a> {
                     // strings are sorted. we can optimize by early-breaking when we encounter
                     // an `s` that is lexicographically larger than `input`
 
-                    if input.match_str(s) {
+                    if matcher.match_str(s) {
                         max_str_match = max_str_match.map(|m| m.max(s.len())).or(Some(s.len()));
                         continue;
                     }
 
-                    match (s.chars().next(), input.next_char()) {
+                    match (s.chars().next(), matcher.next_char()) {
                         // break early. since s_c is > input_c, we know that s > input, thus all
                         // strings from here on out are > input, and thus cannot match
                         (Some(s_c), Some(input_c)) if s_c > input_c => break,
@@ -1110,28 +1075,28 @@ impl<'a> SpecialMatcher<'a> {
                 }
                 if let Some(max) = max_str_match {
                     // some string matched
-                    return input.consume(max);
+                    return matcher.consume(max);
                 }
 
-                if let Some(input_c) = input.next_char() {
+                if let Some(input_c) = matcher.next_char() {
                     eprintln!("checking if set {set:?} contains char {input_c:?}");
                     if set.contains_char(input_c) {
                         eprintln!("contains!");
-                        return input.consume(input_c.len_utf8());
+                        return matcher.consume(input_c.len_utf8());
                     }
                 }
 
                 false
             }
-            Self::AnchorEnd => input.match_and_consume_end_anchor(),
-            Self::AnchorStart => input.match_and_consume_start_anchor(),
+            Self::AnchorEnd => matcher.match_end_anchor(),
+            Self::AnchorStart => matcher.match_start_anchor(),
             Self::Segment(segment) => {
-                let start = input.cursor;
-                if !helpers::match_encoded_str(&segment.content, input, match_data, vt) {
+                let start = matcher.cursor();
+                if !helpers::match_encoded_str(&segment.content, matcher, match_data, vt) {
                     return false;
                 }
-                let end = input.cursor;
-                let matched = &input.visible[start..end];
+                let end = matcher.cursor();
+                let matched = matcher.str_range(start..end).unwrap();
                 // note: at the moment we could just store start..end
                 match_data.update_segment(segment.idx as usize, matched.to_string());
                 true
@@ -1146,11 +1111,11 @@ impl<'a> SpecialMatcher<'a> {
                 let mut matches = 0;
 
                 while matches < max_matches {
-                    let pre_cursor = input.cursor;
-                    if !helpers::match_encoded_str(query, input, match_data, vt) {
+                    let pre_cursor = matcher.cursor();
+                    if !helpers::match_encoded_str(query, matcher, match_data, vt) {
                         break;
                     }
-                    let post_cursor = input.cursor;
+                    let post_cursor = matcher.cursor();
                     matches += 1;
                     if pre_cursor == post_cursor {
                         // no progress was made but there was still a match. this means we could
@@ -1166,21 +1131,21 @@ impl<'a> SpecialMatcher<'a> {
 
     /// Returns `None` if the input does not match from the right. If there is a match, returns the
     /// length of the match.
-    fn rev_matches(&self, input: &mut RevInput, match_data: &mut MatchData, vt: &VarTable) -> bool {
+    fn rev_matches(&self, matcher: &mut impl Utf8Matcher<Reverse>, match_data: &mut MatchData, vt: &VarTable) -> bool {
         match self {
-            Self::Compound(query) => helpers::rev_match_encoded_str(query, input, match_data, vt),
+            Self::Compound(query) => helpers::rev_match_encoded_str(query, matcher, match_data, vt),
             Self::UnicodeSet(set) => {
-                eprintln!("checking if set {set:?} reverse matches input {input:?}");
+                eprintln!("checking if set {set:?} reverse matches input {matcher:?}");
 
-                if input.is_empty() {
+                if matcher.is_empty() {
                     if set.contains("") {
                         return true;
                     }
                     if set.contains("\u{FFFF}") {
-                        if input.match_and_consume_end_anchor() {
+                        if matcher.match_end_anchor() {
                             return true;
                         }
-                        if input.match_and_consume_start_anchor() {
+                        if matcher.match_start_anchor() {
                             return true;
                         }
                     }
@@ -1193,33 +1158,33 @@ impl<'a> SpecialMatcher<'a> {
                 let max_str_match = set
                     .strings()
                     .iter()
-                    .filter(|s| input.match_str(s))
+                    .filter(|s| matcher.match_str(s))
                     .map(str::len)
                     .max();
                 if let Some(max) = max_str_match {
                     // some string matched
-                    return input.consume(max);
+                    return matcher.consume(max);
                 }
 
-                if let Some(input_c) = input.next_char() {
+                if let Some(input_c) = matcher.next_char() {
                     eprintln!("checking if set {set:?} contains char {input_c:?}");
                     if set.contains_char(input_c) {
                         eprintln!("contains!");
-                        return input.consume(input_c.len_utf8());
+                        return matcher.consume(input_c.len_utf8());
                     }
                 }
 
                 false
             }
-            Self::AnchorEnd => input.match_and_consume_end_anchor(),
-            Self::AnchorStart => input.match_and_consume_start_anchor(),
+            Self::AnchorEnd => matcher.match_end_anchor(),
+            Self::AnchorStart => matcher.match_start_anchor(),
             Self::Segment(segment) => {
-                let end = input.cursor;
-                if !helpers::rev_match_encoded_str(&segment.content, input, match_data, vt) {
+                let end = matcher.cursor();
+                if !helpers::rev_match_encoded_str(&segment.content, matcher, match_data, vt) {
                     return false;
                 }
-                let start = input.cursor;
-                let matched = &input.visible[start..end];
+                let start = matcher.cursor();
+                let matched = &matcher.str_range(start..end).unwrap();
                 // note: at the moment we could just store start..end
                 match_data.update_segment(segment.idx as usize, matched.to_string());
                 true
@@ -1234,11 +1199,11 @@ impl<'a> SpecialMatcher<'a> {
                 let mut matches = 0;
 
                 while matches < max_matches {
-                    let pre_cursor = input.cursor;
-                    if !helpers::rev_match_encoded_str(query, input, match_data, vt) {
+                    let pre_cursor = matcher.cursor();
+                    if !helpers::rev_match_encoded_str(query, matcher, match_data, vt) {
                         break;
                     }
-                    let post_cursor = input.cursor;
+                    let post_cursor = matcher.cursor();
                     matches += 1;
                     if pre_cursor == post_cursor {
                         // no progress was made but there was still a match. this means we could
