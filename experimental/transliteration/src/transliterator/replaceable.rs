@@ -139,7 +139,7 @@ impl<'a> Replaceable<'a> {
     ///
     /// This is guaranteed to be a valid UTF-8 index into the visible slice.
     pub(crate) fn cursor(&self) -> usize {
-        // eprintln!("cursor called with raw_cursor: {}, ignore_pre_len: {}", self.raw_cursor, self.ignore_pre_len);
+        // // eprintln!("cursor called with raw_cursor: {}, ignore_pre_len: {}", self.raw_cursor, self.ignore_pre_len);
         self.cursor
     }
 
@@ -150,7 +150,7 @@ impl<'a> Replaceable<'a> {
             .next()
             .map(char::len_utf8)
             .unwrap_or(0);
-        // eprintln!("step_cursor: {}", step_len);
+        // // eprintln!("step_cursor: {}", step_len);
         self.cursor += step_len;
     }
 
@@ -256,7 +256,7 @@ impl<'a> Replaceable<'a> {
                 .unwrap_or(self.allowed_upper_bound());
         }
 
-        eprintln!("computing filtered run for rep: {self:?}, start: {start}, run_start: {run_start}, run_end: {run_end}");
+        // eprintln!("computing filtered run for rep: {self:?}, start: {start}, run_start: {run_start}, run_end: {run_end}");
 
         let freeze_post_len = self.visible_content().len() - run_end;
 
@@ -288,7 +288,7 @@ impl<'a> Replaceable<'a> {
     ///
     /// This is guaranteed to be a valid UTF-8 index into the visible slice.
     pub(crate) fn allowed_upper_bound(&self) -> usize {
-        // eprintln!("allowed_upper_bound called with len: {}, freeze_post_len: {}, ignore_pre_len: {}", self.content.len(), self.freeze_post_len, self.ignore_pre_len);
+        // // eprintln!("allowed_upper_bound called with len: {}, freeze_post_len: {}, ignore_pre_len: {}", self.content.len(), self.freeze_post_len, self.ignore_pre_len);
         self.visible_content().len() - self.freeze_post_len
     }
 
@@ -658,7 +658,7 @@ impl<'a, 'b> Insertable<'a, 'b> {
             self.curr += bytes.len();
             return;
         }
-        eprintln!("WARNING: free space not sufficient for Insertable::push_bytes");
+        // eprintln!("WARNING: free space not sufficient for Insertable::push_bytes");
 
         self._rep
             .content
@@ -744,7 +744,7 @@ impl<'a, 'b> Insertable<'a, 'b> {
     }
 
     fn free_range(&self) -> Range<usize> {
-        eprintln!("free_range: curr: {}, end: {}", self.curr, self.end());
+        // eprintln!("free_range: curr: {}, end: {}", self.curr, self.end());
         debug_assert!(self.curr <= self.end());
         self.curr..self.end()
     }

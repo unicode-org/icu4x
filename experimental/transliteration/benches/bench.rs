@@ -46,7 +46,7 @@ fn bench_data() -> Vec<BenchDataContent> {
         include_str!("../tests/cldr_testData/und-Arab-t-und-beng.txt"),
     ));
 
-    bench_data
+    bench_data.into_iter().take(5).collect()
 }
 
 fn function_under_bench(translit: &Transliterator, input: &str) {

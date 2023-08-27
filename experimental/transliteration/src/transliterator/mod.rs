@@ -367,7 +367,7 @@ impl Transliterator {
                 "any-remove" => Ok(InternalTransliterator::Remove),
                 _ => {
                     // TODO: remove
-                    eprintln!("unavailable transliterator: {}", id);
+                    // eprintln!("unavailable transliterator: {}", id);
                     Ok(InternalTransliterator::Null)
                 }
                 s => Err(DataError::custom("unavailable transliterator")
@@ -425,9 +425,9 @@ impl<'a> RuleBasedTransliterator<'a> {
         // TODO: https://unicode-org.atlassian.net/jira/software/c/projects/ICU/issues/ICU-22469
 
         rep.for_each_run(&self.filter, |run| {
-            eprintln!("got RBT filtered_run: {run:?}");
+            // eprintln!("got RBT filtered_run: {run:?}");
             self.transliterate_run(run, env);
-            eprintln!("finished RBT filtered_run transliteration: {run:?}")
+            // eprintln!("finished RBT filtered_run transliteration: {run:?}")
         });
     }
 
@@ -456,12 +456,12 @@ impl<'a> RuleBasedTransliterator<'a> {
 
 impl<'a> SimpleId<'a> {
     fn transliterate(&self, mut rep: Replaceable, env: &Env) {
-        eprintln!("transliterating SimpleId: {self:?}");
+        // eprintln!("transliterating SimpleId: {self:?}");
         rep.for_each_run(&self.filter, |run| self.transliterate_run(run, env))
     }
 
     fn transliterate_run(&self, rep: &mut Replaceable, env: &Env) {
-        eprintln!("transliterating SimpleId run: {rep:?}");
+        // eprintln!("transliterating SimpleId run: {rep:?}");
         match env.get(self.id.as_ref()) {
             None => {
                 debug_assert!(false, "missing transliterator {}", &self.id);
@@ -500,20 +500,20 @@ impl<'a> RuleGroup<'a> {
         //  Actually, this is what I'm talking about: https://util.unicode.org/UnicodeJsps/transform.jsp?a=%23+%3A%3A+%5Ba%5D%3B%0D%0A%0D%0Ad+%7B+x%3F+%3E+match+%3B&b=d
         //  no empty match at the end.
         'main: while !rep.is_finished() {
-            eprintln!("ongoing RuleGroup transliteration:\n{rep:?}");
+            // eprintln!("ongoing RuleGroup transliteration:\n{rep:?}");
             for rule in self.rules.iter() {
                 let rule: Rule = Rule::zero_from(rule);
-                eprintln!("trying rule: {rule:?}");
+                // eprintln!("trying rule: {rule:?}");
                 let mut matcher = rep.start_match();
                 if let Some(data) = rule.matches(&mut matcher, vt) {
                     rule.apply(matcher.finish_match(), data, vt, env);
-                    eprintln!("finished applying replacement: {rep:?}");
-                    eprintln!("applied rule!");
+                    // eprintln!("finished applying replacement: {rep:?}");
+                    // eprintln!("applied rule!");
                     // rule application is responsible for updating the cursor
                     continue 'main;
                 }
             }
-            eprintln!("no rule matched, moving cursor forward");
+            // eprintln!("no rule matched, moving cursor forward");
             // no rule matched, so just move the cursor forward by one code point
             rep.step_cursor();
         }
@@ -727,7 +727,7 @@ mod helpers {
         match_data: &mut MatchData,
         vt: &VarTable,
     ) -> bool {
-        eprintln!("trying to match query {query:?} on input {matcher:?}");
+        // eprintln!("trying to match query {query:?} on input {matcher:?}");
 
         let query = match find_encoded(query) {
             None => {
@@ -1036,7 +1036,7 @@ impl<'a> SpecialMatcher<'a> {
         match self {
             Self::Compound(query) => helpers::match_encoded_str(query, matcher, match_data, vt),
             Self::UnicodeSet(set) => {
-                eprintln!("checking if set {set:?} matches input {matcher:?}");
+                // eprintln!("checking if set {set:?} matches input {matcher:?}");
 
                 // TODO: check in which order a unicodeset matches
                 //  (chars first? strings first? longest first? shortest first?)
@@ -1082,9 +1082,9 @@ impl<'a> SpecialMatcher<'a> {
                 }
 
                 if let Some(input_c) = matcher.next_char() {
-                    eprintln!("checking if set {set:?} contains char {input_c:?}");
+                    // eprintln!("checking if set {set:?} contains char {input_c:?}");
                     if set.contains_char(input_c) {
-                        eprintln!("contains!");
+                        // eprintln!("contains!");
                         return matcher.consume(input_c.len_utf8());
                     }
                 }
@@ -1138,7 +1138,7 @@ impl<'a> SpecialMatcher<'a> {
         match self {
             Self::Compound(query) => helpers::rev_match_encoded_str(query, matcher, match_data, vt),
             Self::UnicodeSet(set) => {
-                eprintln!("checking if set {set:?} reverse matches input {matcher:?}");
+                // eprintln!("checking if set {set:?} reverse matches input {matcher:?}");
 
                 if matcher.is_empty() {
                     if set.contains("") {
@@ -1170,9 +1170,9 @@ impl<'a> SpecialMatcher<'a> {
                 }
 
                 if let Some(input_c) = matcher.next_char() {
-                    eprintln!("checking if set {set:?} contains char {input_c:?}");
+                    // eprintln!("checking if set {set:?} contains char {input_c:?}");
                     if set.contains_char(input_c) {
-                        eprintln!("contains!");
+                        // eprintln!("contains!");
                         return matcher.consume(input_c.len_utf8());
                     }
                 }
@@ -1282,7 +1282,7 @@ impl<'a> SpecialReplacer<'a> {
                 // have `ignore_len` fields (like freeze) on replaceable, that indicate *completely*
                 // inaccessible data.
 
-                eprintln!("dest before function call: {dest:?}");
+                // eprintln!("dest before function call: {dest:?}");
 
                 let visible_start = dest.curr_replacement_len();
                 // cursor offsets have no effect here
@@ -1297,8 +1297,8 @@ impl<'a> SpecialReplacer<'a> {
                 drop(rep);
 
                 // SAFETY: Replaceable guarantees any changes are valid UTF-8.
-                eprintln!("dest after function call: {dest:?}");
-                eprintln!("matchdata: {data:?}");
+                // eprintln!("dest after function call: {dest:?}");
+                // eprintln!("matchdata: {data:?}");
                 None
             }
         }
