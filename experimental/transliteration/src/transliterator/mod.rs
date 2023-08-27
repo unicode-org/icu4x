@@ -534,13 +534,7 @@ impl<'a> Rule<'a> {
 
         dest.apply_size_hint(replacement_size_estimate);
 
-        // TODO: small safety issue: a malicious implementation could construct a cursor
-        //  *for a different Insertable* but then use it with this insertable. Can we link
-        //  the cursor to this insertable somehow? Otherwise we might need to make .commit() unsafe.
-        let cursor_offset = helpers::replace_encoded_str(&self.replacer, &mut dest, &data, vt, env)
-            .unwrap_or_default();
-
-        dest.commit(cursor_offset);
+        helpers::replace_encoded_str(&self.replacer, &mut dest, &data, vt, env);
     }
 
     /// Returns `None` if there is no match. If there is a match, returns the associated
@@ -680,19 +674,18 @@ mod helpers {
         data: &MatchData,
         vt: &VarTable,
         env: &Env,
-    ) -> Option<CursorOffset> {
+    ) {
         let replacement = match find_encoded(replacement) {
             None => {
                 // pure string
                 dest.push_str(replacement);
-                return None;
+                return;
             }
             Some(idx) => {
                 dest.push_str(&replacement[..idx]);
                 &replacement[idx..]
             }
         };
-        let mut cursor_offset = None;
 
         for rep_c in replacement.chars() {
             if !VarTable::ENCODE_RANGE.contains(&rep_c) {
@@ -710,10 +703,8 @@ mod helpers {
                     continue;
                 }
             };
-            cursor_offset = cursor_offset.or(replacer.replace(dest, data, vt, env));
+            replacer.replace(dest, data, vt, env);
         }
-
-        cursor_offset
     }
 
     /// Tries to match the encoded `query` on `input`. Returns the length of the match, if there is
@@ -1252,13 +1243,13 @@ impl<'a> SpecialReplacer<'a> {
         data: &MatchData,
         vt: &VarTable,
         env: &Env,
-    ) -> Option<CursorOffset> {
+    ) {
         match self {
             Self::Compound(replacer) => helpers::replace_encoded_str(replacer, dest, data, vt, env),
-            Self::PureCursor => Some(dest.offset_here()),
+            Self::PureCursor => dest.use_offset_here(),
             &Self::LeftPlaceholderCursor(num) => {
                 // must occur at the very end of a replacement
-                Some(CursorOffset::chars_off_end(num))
+                dest.use_offset_chars_off_end(num);
             }
             &Self::RightPlaceholderCursor(num) => {
                 // must occur at the very beginning of the replacement
@@ -1267,17 +1258,15 @@ impl<'a> SpecialReplacer<'a> {
                     0,
                     "pre-start cursor not the first replacement"
                 );
-                Some(CursorOffset::chars_off_start(num))
+                dest.use_offset_chars_off_start(num);
             }
             &Self::BackReference(num) => {
                 dest.push_str(data.get_segment(num as usize));
-                None
             }
             Self::FunctionCall(call) => {
                 // the way function call replacing works is as such:
-                // use the `buf` as the backing storage for Replaceable.
-                // have `ignore_len` fields (like freeze) on replaceable, that indicate *completely*
-                // inaccessible data.
+                // use the same backing buffer as the parent Replaceable, but set
+                // the visible content range of the Replaceable appropriately.
 
                 // eprintln!("dest before function call: {dest:?}");
 
@@ -1290,13 +1279,6 @@ impl<'a> SpecialReplacer<'a> {
                 let mut rep = unsafe { dest.as_replaceable(visible_start..visible_end) };
 
                 call.translit.transliterate(rep.child(), env);
-
-                drop(rep);
-
-                // SAFETY: Replaceable guarantees any changes are valid UTF-8.
-                // eprintln!("dest after function call: {dest:?}");
-                // eprintln!("matchdata: {data:?}");
-                None
             }
         }
     }
