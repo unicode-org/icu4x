@@ -83,6 +83,7 @@ impl ComposingTransliterator {
     }
 }
 
+// TODO: Deduplicate with ComposingTransliterator?
 #[derive(Debug)]
 struct DecomposingTransliterator(DecomposingNormalizer);
 
@@ -141,14 +142,14 @@ impl InternalTransliterator {
             Self::Null => (),
             Self::Remove => {
                 // SAFETY: rep.allowed_range() returns a range with valid UTF-8 bounds
-                unsafe { rep.splice(rep.allowed_range(), b"", rep.cursor()) };
+                unsafe { rep.replace_range(rep.allowed_range(), Some(0)) };
             }
             Self::Dyn(custom) => {
                 let replacement = custom.transliterate(rep.as_str(), rep.allowed_range());
-                let new_cursor = rep.cursor() + replacement.len();
-                // SAFETY: rep.allowed_range() returns a range with valid UTF-8 bounds, and the bytes are valid UTF-8 as they come from a String.
-                // The cursor is valid post-replacement as it comes from a valid `.cursor()` call plus a valid UTF-8 length.
-                unsafe { rep.splice(rep.allowed_range(), replacement.as_bytes(), new_cursor) };
+                // SAFETY: rep.allowed_range() returns a range with valid UTF-8 bounds
+                // TODO: idea, add a safe convenience replace_range doesn't take a range
+                let mut dest = unsafe { rep.replace_range(rep.allowed_range(), Some(replacement.len())) };
+                dest.push_str(&replacement);
             }
         }
     }
