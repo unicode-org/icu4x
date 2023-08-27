@@ -504,8 +504,8 @@ impl<'a> RuleGroup<'a> {
             for rule in self.rules.iter() {
                 let rule: Rule = Rule::zero_from(rule);
                 // eprintln!("trying rule: {rule:?}");
-                let mut matcher = rep.start_match();
-                if let Some(data) = rule.matches(&mut matcher, vt) {
+                let matcher = rep.start_match();
+                if let Some((data, matcher)) = rule.matches(matcher, vt) {
                     rule.apply(matcher.finish_match(), data, vt, env);
                     // eprintln!("finished applying replacement: {rep:?}");
                     // eprintln!("applied rule!");
@@ -545,27 +545,24 @@ impl<'a> Rule<'a> {
 
     /// Returns `None` if there is no match. If there is a match, returns the associated
     /// [`MatchData`].
-    fn matches(&self, matcher: &mut RepMatcher, vt: &VarTable) -> Option<MatchData> {
+    fn matches<'r1, 'r2>(&self, mut matcher: RepMatcher<'r1, 'r2, false>, vt: &VarTable) -> Option<(MatchData, RepMatcher<'r1, 'r2, true>)> {
         let mut match_data = MatchData::new();
 
-        matcher.start_ante();
-        if !self.ante_matches(matcher, &mut match_data, vt) {
+        if !self.ante_matches(&mut matcher, &mut match_data, vt) {
             return None;
         }
 
-        matcher.start_key();
-
-        if !self.key_matches(matcher, &mut match_data, vt) {
+        if !self.key_matches(&mut matcher, &mut match_data, vt) {
             return None;
         }
 
-        matcher.finish_key_and_start_post();
+        let mut matcher = matcher.finish_key();
 
-        if !self.post_matches(matcher, &mut match_data, vt) {
+        if !self.post_matches(&mut matcher, &mut match_data, vt) {
             return None;
         }
 
-        Some(match_data)
+        Some((match_data, matcher))
     }
 
     // TODO: for *_matches, consider a fast path if query.is_empty() and just return Some(0).
