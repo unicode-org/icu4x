@@ -433,18 +433,18 @@ impl<C: ChineseBased + CalendarArithmetic> ChineseBasedDateInner<C> {
         };
 
         let epoch_as_iso = Iso::iso_from_fixed(C::EPOCH);
-        // Get the 1-indexed Chinese extended year
-        let mut year = iso.year().number - epoch_as_iso.year().number + 1;
+        // Get the 1-indexed Chinese extended year, used for fetching data from the cache
+        let mut getter_year = iso.year().number - epoch_as_iso.year().number + 1;
 
-        let data_option = C::get_compiled_data_for_year(year);
+        let data_option = C::get_compiled_data_for_year(getter_year);
         // todo we should be able to do this without unpacking
         let data_option = if let Some(data) = data_option {
             if date < data.new_year {
-                year -= 1;
-                C::get_compiled_data_for_year(year)
+                getter_year -= 1;
+                C::get_compiled_data_for_year(getter_year)
             } else if date >= data.next_new_year() {
-                year += 1;
-                C::get_compiled_data_for_year(year)
+                getter_year += 1;
+                C::get_compiled_data_for_year(getter_year)
             } else {
                 data_option
             }
@@ -454,6 +454,9 @@ impl<C: ChineseBased + CalendarArithmetic> ChineseBasedDateInner<C> {
 
 
         if let Some(data) = data_option {
+            // cache fetch successful, getter year is just the regular extended year
+            let year = getter_year;
+
             debug_assert!(
                 date < data.next_new_year(),
                 "Stored date {date:?} out of bounds!"
