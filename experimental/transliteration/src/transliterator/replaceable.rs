@@ -51,8 +51,17 @@ pub(crate) struct Replaceable<'a> {
 
 impl<'a> Replaceable<'a> {
     /// # Safety
-    /// The caller must ensure `buf` is valid UTF-8 and that `visible_range` is a valid UTF-8 range.
-    pub(crate) unsafe fn new(buf: &'a mut Vec<u8>, visible_range: Range<usize>) -> Self {
+    /// The caller must ensure `buf` is valid UTF-8.
+    pub(crate) unsafe fn new(buf: &'a mut Vec<u8>) -> Self {
+        // SAFETY: the visible range is trivially a valid UTF-8 range
+        Replaceable::new_with_visible(buf, 0..buf.len())
+    }
+
+    /// # Safety
+    /// The caller must ensure `buf` is valid UTF-8 and `visible_range` is a valid UTF-8 range into
+    /// `buf`.
+    pub(crate) unsafe fn new_with_visible(buf: &'a mut Vec<u8>, visible_range: Range<usize>) -> Self {
+        debug_assert!(str::from_utf8(&buf[visible_range.clone()]).is_ok());
         debug_assert!(visible_range.end <= buf.len());
         debug_assert!(visible_range.start <= buf.len());
         let ignore_post_len = buf.len() - visible_range.end;
@@ -800,7 +809,7 @@ impl<'a, 'b, F> InsertableToReplaceableAdapter<'a, 'b, F>
 
         // SAFETY: visible_range is always the range from one valid content-based UTF-8 index of the
         // replacement to a subsequent valid UTF-8 content-index of the replacement.
-        let rep = unsafe { Replaceable::new(content, visible_range) };
+        let rep = unsafe { Replaceable::new_with_visible(content, visible_range) };
         let on_drop = |new_content: &[u8]| {
             // child's content is contiguous, so we are inserting at the very end
             child.curr = new_content.len() - child.end_len;

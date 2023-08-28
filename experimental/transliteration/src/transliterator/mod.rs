@@ -400,9 +400,8 @@ impl Transliterator {
 
     pub fn transliterate(&self, input: String) -> String {
         let mut buffer = input.into_bytes();
-        let visible_range = 0..buffer.len();
-        // SAFETY: buffer is constructed from a String and visible_range is the entire buffer
-        let rep = unsafe { Replaceable::new(&mut buffer, visible_range) };
+        // SAFETY: buffer is constructed from a String
+        let rep = unsafe { Replaceable::new(&mut buffer) };
         self.transliterator.get().transliterate(rep, &self.env);
         debug_assert!(str::from_utf8(&buffer[..]).is_ok());
         // SAFETY: Replaceable's invariants ensure that buffer is always valid UTF-8
