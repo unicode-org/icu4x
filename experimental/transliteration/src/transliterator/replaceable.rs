@@ -917,6 +917,7 @@ impl<'a, 'b> Debug for Insertable<'a, 'b> {
     }
 }
 
+// TODO: could implement DerefMut and pass through child.
 /// See [`Insertable::start_replaceable_adapter`].
 pub(super) struct InsertableToReplaceableAdapter<'a, 'b, F>
     where
@@ -929,6 +930,7 @@ pub(super) struct InsertableToReplaceableAdapter<'a, 'b, F>
     // TODO: actually, by using insertable.start instead of _rep.cursor, this issue can be avoided.
     //  are there other issues? otherwise this method can be cleaned up a bit.
     //  Can we now maybe even have a mutable reference to an insertable? I don't think so.
+    //  and make_contiguous() would be called, which could be bad for performance? I vote to keep ManuallyDrop
     child: ManuallyDrop<Insertable<'a, 'b>>,
     range_start: usize,
     on_drop: F,
