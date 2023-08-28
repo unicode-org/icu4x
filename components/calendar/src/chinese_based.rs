@@ -414,6 +414,27 @@ impl<C: ChineseBased + CalendarArithmetic> ChineseBasedDateInner<C> {
         }
     }
 
+    /// Given a 1-indexed chinese extended year, fetch its data from the cache.
+    ///
+    /// If the actual year data that was fetched is for a different year, update the getter year
+    fn get_compiled_data_for_year_helper(date: RataDie, getter_year: &mut i32) -> Option<ChineseBasedCompiledData> {
+        let data_option = C::get_compiled_data_for_year(*getter_year);
+        // todo we should be able to do this without unpacking
+        if let Some(data) = data_option {
+            if date < data.new_year {
+                *getter_year -= 1;
+                C::get_compiled_data_for_year(*getter_year)
+            } else if date >= data.next_new_year() {
+                *getter_year += 1;
+                C::get_compiled_data_for_year(*getter_year)
+            } else {
+                data_option
+            }
+        } else {
+            None
+        }
+    } 
+
     /// Get a ChineseBasedDateInner from a fixed date, with an option to pass in an ISO date.
     ///
     /// Months are calculated by iterating through the dates of new moons until finding the last month which
@@ -436,21 +457,8 @@ impl<C: ChineseBased + CalendarArithmetic> ChineseBasedDateInner<C> {
         // Get the 1-indexed Chinese extended year, used for fetching data from the cache
         let mut getter_year = iso.year().number - epoch_as_iso.year().number + 1;
 
-        let data_option = C::get_compiled_data_for_year(getter_year);
-        // todo we should be able to do this without unpacking
-        let data_option = if let Some(data) = data_option {
-            if date < data.new_year {
-                getter_year -= 1;
-                C::get_compiled_data_for_year(getter_year)
-            } else if date >= data.next_new_year() {
-                getter_year += 1;
-                C::get_compiled_data_for_year(getter_year)
-            } else {
-                data_option
-            }
-        } else {
-            None
-        };
+
+        let data_option = Self::get_compiled_data_for_year_helper(date, &mut getter_year);
 
 
         if let Some(data) = data_option {
