@@ -43,7 +43,11 @@ const _: () = {
 // TODO(#3776): Improve the documentation of this datastruct.
 
 /// The data struct representing [UTS #35 transform rules](https://unicode.org/reports/tr35/tr35-general.html#Transforms).
-#[icu_provider::data_struct(TransliteratorRulesV1Marker = "transliterator/rules@1")]
+#[icu_provider::data_struct(marker(
+    TransliteratorRulesV1Marker,
+    "transliterator/rules@1",
+    fallback_by = "language"
+))]
 #[derive(Debug, Clone, PartialEq, Eq)]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake), databake(path = icu_transliteration::provider))]
