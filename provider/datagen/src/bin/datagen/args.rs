@@ -354,7 +354,7 @@ impl Cli {
             log::warn!("The --key-file argument is deprecated. Use --options with a JSON file.");
             #[allow(deprecated)]
             config::KeyInclude::Explicit(
-                icu_datagen::keys_from_file(key_file_path)
+                icu_datagen::keys_from_bin(key_file_path)
                     .with_context(|| key_file_path.to_string_lossy().into_owned())?
                     .into_iter()
                     .collect(),
@@ -434,9 +434,6 @@ impl Cli {
                 if v == Format::DeprecatedDefault {
                     log::warn!("Defaulting to --format=dir. This will become a required parameter in the future.");
                 }
-                #[cfg(not(feature = "fs_exporter"))]
-                eyre::bail!("FsDataProvider export requires the fs_exporter Cargo feature.");
-                #[cfg(feature = "fs_exporter")]
                 Ok(config::Export::FileSystem {
                     path: if let Some(root) = self.output.as_ref() {
                         root.clone()
@@ -453,9 +450,6 @@ impl Cli {
                 })
             }
             Format::Blob => {
-                #[cfg(not(feature = "blob_exporter"))]
-                eyre::bail!("BlobDataProvider export requires the blob_exporter Cargo feature.");
-                #[cfg(feature = "blob_exporter")]
                 Ok(config::Export::Blob {
                     path: if let Some(path) = &self.output {
                         path.clone()
@@ -465,9 +459,6 @@ impl Cli {
                 })
             }
             Format::Mod => {
-                #[cfg(not(feature = "baked_exporter"))]
-                eyre::bail!("Baked data export requires the baked_exporter Cargo feature.");
-                #[cfg(feature = "baked_exporter")]
                 Ok(config::Export::Baked {
                     path: if let Some(mod_directory) = self.output.as_ref() {
                         mod_directory.clone()

@@ -50,7 +50,7 @@ fn main() -> eyre::Result<()> {
         config::PathOrTag::Tag(tag) => provider.with_cldr_for_tag(&tag),
         config::PathOrTag::None => provider,
         #[cfg(not(feature = "networking"))]
-        _ => eyre::bail!("Download data from tags requires the `networking` Cargo feature"),
+        _ => eyre::bail!("Downloading data from tags requires the `networking` Cargo feature"),
     };
 
     provider = match config.icu_export {
@@ -63,7 +63,7 @@ fn main() -> eyre::Result<()> {
         config::PathOrTag::Tag(tag) => provider.with_icuexport_for_tag(&tag),
         config::PathOrTag::None => provider,
         #[cfg(not(feature = "networking"))]
-        _ => eyre::bail!("Download data from tags requires the `networking` Cargo feature"),
+        _ => eyre::bail!("Downloading data from tags requires the `networking` Cargo feature"),
     };
 
     provider = match config.segmenter_lstm {
@@ -76,7 +76,7 @@ fn main() -> eyre::Result<()> {
         config::PathOrTag::Tag(tag) => provider.with_segmenter_lstm_for_tag(&tag),
         config::PathOrTag::None => provider,
         #[cfg(not(feature = "networking"))]
-        _ => eyre::bail!("Download data from tags requires the `networking` Cargo feature"),
+        _ => eyre::bail!("Downloading data from tags requires the `networking` Cargo feature"),
     };
 
     let mut driver = DatagenDriver::new();
