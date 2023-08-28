@@ -17,6 +17,7 @@ use core::str;
 use icu_collections::codepointinvlist::CodePointInversionList;
 use icu_collections::codepointinvliststringlist::CodePointInversionListAndStringList;
 use icu_locid::Locale;
+use icu_locid_transform::fallback::LocaleFallbacker;
 use icu_normalizer::provider::*;
 use icu_normalizer::{ComposingNormalizer, DecomposingNormalizer};
 use icu_provider::prelude::*;
@@ -273,7 +274,57 @@ impl Transliterator {
         Self::internal_try_new_with_override_unstable(locale, Some(&lookup), provider, provider)
     }
 
-    fn internal_try_new_with_override_unstable<PN, PT, F>(
+    fn try_load_any_in_fallback<P>(
+        locale: Locale,
+        provider: &P,
+    ) -> Result<DataPayload<TransliteratorRulesV1Marker>, DataError>
+    where
+        P: DataProvider<TransliteratorRulesV1Marker> + ?Sized,
+    {
+        let try_load = |locale: &Locale| {
+            let mut data_locale = DataLocale::default();
+            data_locale.set_aux(locale.to_string().parse().unwrap());
+            let req = DataRequest {
+                locale: &data_locale,
+                metadata: Default::default(),
+            };
+            provider.load(req)?.take_payload()
+        };
+
+        // TODO(#3950): How is fallback handled with special parts?
+
+        // first try loading of locale
+        if let Ok(t) = try_load(&locale) {
+            return Ok(t);
+        }
+
+        // TODO: fix data loading here
+        let fallbacker =
+            LocaleFallbacker::new().for_config(TransliteratorRulesV1Marker::KEY.fallback_config());
+
+        let mut source_iterator = fallbacker.fallback_for(
+            locale
+                .extensions
+                .transform
+                .lang
+                .as_ref()
+                .cloned()
+                .unwrap_or_default()
+                .into(),
+        );
+
+        while !source_iterator.get().is_und() {
+            let mut fallbacked_locale = locale.clone();
+            fallbacked_locale.extensions.transform.lang = Some(source_iterator.get().get_langid());
+            if let Ok(t) = try_load(&fallbacked_locale) {
+                return Ok(t);
+            }
+            source_iterator.step();
+        }
+        todo!("error")
+    }
+
+    pub fn internal_try_new_with_override_unstable<PN, PT, F>(
         locale: Locale,
         lookup: Option<&F>,
         transliterator_provider: &PT,
@@ -289,7 +340,14 @@ impl Transliterator {
             + ?Sized,
         F: Fn(&Locale) -> Option<Box<dyn CustomTransliterator>>,
     {
-        let payload = Transliterator::load_rbt(&locale.to_string(), transliterator_provider)?;
+        // let mut data_locale = DataLocale::default();
+        // data_locale.set_aux(locale.to_string().parse()?);
+        // let req = DataRequest {
+        //     locale: &data_locale,
+        //     metadata: Default::default(),
+        // };
+        let payload = Transliterator::try_load_any_in_fallback(locale, transliterator_provider)?;
+        // let payload = transliterator_provider.load(req)?.take_payload()?;
         let rbt = payload.get();
         if !rbt.visibility {
             // transliterator is internal
@@ -1327,6 +1385,18 @@ mod tests {
     #[test]
     fn test_de_ascii() {
         let t = Transliterator::try_new("de-t-de-d0-ascii".parse().unwrap()).unwrap();
+        let input =
+            "Über ältere Lügner lästern ist sehr a\u{0308}rgerlich. Ja, SEHR ÄRGERLICH! - ꜵ";
+        let output =
+            "Ueber aeltere Luegner laestern ist sehr aergerlich. Ja, SEHR AERGERLICH! - ao";
+        assert_eq!(t.transliterate(input.to_string()), output);
+    }
+
+    #[test]
+    fn test_de_ascii_fallback() {
+        // the actual, existing transliterator has source `de`. Check that the fallback chain from `de-Latn-CH`
+        // eventually reaches `de` and gives us the expected transliterator.
+        let t = Transliterator::try_new("de-t-de-latn-ch-d0-ascii".parse().unwrap()).unwrap();
         let input =
             "Über ältere Lügner lästern ist sehr a\u{0308}rgerlich. Ja, SEHR ÄRGERLICH! - ꜵ";
         let output =

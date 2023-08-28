@@ -25,6 +25,7 @@ icu_locid = { workspace = true }
 icu_collections = { workspace = true }
 icu_normalizer = { workspace = true }
 icu_casemap = { workspace = true }
+icu_locid_transform = { workspace = true }
 
 zerovec = { workspace = true, features = ["derive"] }
 yoke = { workspace = true, features = ["derive"] }
