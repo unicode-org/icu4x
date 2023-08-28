@@ -12,6 +12,8 @@ use alloc::vec::Vec;
 use core::fmt::{Debug, Formatter};
 use core::ops::Range;
 use core::str;
+use std::mem::ManuallyDrop;
+use std::ops::DerefMut;
 
 use super::Filter;
 
@@ -519,6 +521,7 @@ pub(super) trait Utf8Matcher<D: MatchDirection>: Debug {
 }
 
 // match lengths in bytes of the three parts of a match
+#[derive(Debug, Clone, Copy)]
 struct MatchLengths {
     ante: usize,
     key: usize,
@@ -604,38 +607,6 @@ impl<'a, 'b> Insertable<'a, 'b> {
     }
 
     /// # Safety
-    /// The caller must ensure that `visible_range` is a valid UTF-8 range into the current
-    /// replacement.
-    pub(super) unsafe fn as_replaceable(
-        &mut self,
-        visible_range: Range<usize>,
-    ) -> InsertableGuard<impl FnMut(&[u8]) + '_> {
-        debug_assert!(visible_range.start <= self.curr_replacement_len());
-        debug_assert!(visible_range.end <= self.curr_replacement_len());
-
-        // this is important because the Replaceable's invariant states that the whole content
-        // is valid UTF-8.
-        self.make_contiguous();
-
-        // The returned replaceable may modify the length of content[self.start..self.curr].
-        // Due to the above make_contiguous call, self.curr will always be at self.end() right now.
-        // We need a way to update self.curr to self.end() *after* the Replaceable is finished.
-
-        // We do that by returning an InsertableGuard whose `on_drop` callback will update self.curr.
-
-        // the passed visible range is into self.curr_replacement(), which starts at offset self.start
-        // of the actual buffer.
-        let adjusted_visible_range =
-            visible_range.start + self.start..visible_range.end + self.start;
-        let rep = Replaceable::new(self._rep.content, adjusted_visible_range);
-        let on_drop = |content: &[u8]| {
-            // self.content is contiguous, so we are inserting at the very end
-            self.curr = content.len() - self.end_len;
-        };
-        InsertableGuard::new(rep, on_drop)
-    }
-
-    /// # Safety
     /// The caller must ensure that `bytes` is valid UTF-8.
     unsafe fn push_bytes(&mut self, bytes: &[u8]) {
         if self.free_range().len() >= bytes.len() {
@@ -660,15 +631,15 @@ impl<'a, 'b> Insertable<'a, 'b> {
         unsafe { str::from_utf8_unchecked(&self._rep.content[self.start..self.curr]) }
     }
 
-    pub(super) fn use_offset_here(&mut self) {
+    pub(super) fn set_offset_to_here(&mut self) {
         self.cursor_offset = CursorOffset::Byte(self.curr_replacement_len());
     }
 
-    pub(super) fn use_offset_chars_off_end(&mut self, count: u16) {
+    pub(super) fn set_offset_to_chars_off_end(&mut self, count: u16) {
         self.cursor_offset = CursorOffset::CharsOffEnd(count);
     }
 
-    pub(super) fn use_offset_chars_off_start(&mut self, count: u16) {
+    pub(super) fn set_offset_to_chars_off_start(&mut self, count: u16) {
         self.cursor_offset = CursorOffset::CharsOffStart(count);
     }
 
@@ -764,6 +735,26 @@ impl<'a, 'b> Insertable<'a, 'b> {
     fn end(&self) -> usize {
         self._rep.content.len() - self.end_len
     }
+
+    pub(super) fn start_replaceable_adapter(&mut self) -> InsertableToReplaceableAdapter<'a, '_, impl FnMut(usize) + '_> {
+        let range_start = self.curr;
+        let child_insertable = Insertable {
+            _rep: self._rep,
+            start: self.curr,
+            end_len: self.end_len,
+            curr: self.curr,
+            match_lens: self.match_lens,
+            cursor_offset: CursorOffset::Default,
+        };
+        // only `curr` and `cursor_offset` may be modified by the child, so we need to get them back
+        // once the child is dropped. however, replaceable_adapter is only used for function call
+        // arguments, which may not contain cursors (and if they do, it's GIGO), so we don't need
+        // to worry about the cursor_offset.
+        let on_drop = |new_curr: usize| {
+            self.curr = new_curr;
+        };
+        InsertableToReplaceableAdapter { child: ManuallyDrop::new(child_insertable), range_start, on_drop}
+    }
 }
 
 impl<'a, 'b> Drop for Insertable<'a, 'b> {
@@ -774,9 +765,56 @@ impl<'a, 'b> Drop for Insertable<'a, 'b> {
 
 impl<'a, 'b> Debug for Insertable<'a, 'b> {
     fn fmt(&self, f: &mut Formatter<'_>) -> core::fmt::Result {
-        write!(f, "{}", unsafe {
-            &str::from_utf8_unchecked(&self._rep.content[self.start..self.curr])
-        })
+        write!(f, "{}|{}", self.curr_replacement(), self.free_range().len())
+    }
+}
+
+pub(super) struct InsertableToReplaceableAdapter<'a, 'b, F>
+    where
+        F: FnMut(usize),
+{
+    // needs to be ManuallyDrop, because cleanup happens in the Drop impl of Insertable.
+    // this would cause issues where the if the `child_for_range()` received malicious offsets,
+    // then the Drop would update the rep's cursor, but the parent Insertable expects
+    // the rep's cursor to be exactly the start of the key match.
+    child: ManuallyDrop<Insertable<'a, 'b>>,
+    range_start: usize, // content-based
+    on_drop: F,
+}
+
+impl<'a, 'b, F> InsertableToReplaceableAdapter<'a, 'b, F>
+    where
+        F: FnMut(usize),
+{
+    pub(super) fn child_for_range(&mut self) -> &mut Insertable<'a, 'b> {
+        self.child.deref_mut()
+    }
+
+    pub(super) fn as_replaceable(&mut self) -> InsertableGuard<impl FnMut(&[u8]) + '_> {
+        self.child.make_contiguous();
+        let range_end = self.child.curr;
+        let visible_range = self.range_start..range_end;
+
+        let child = self.child.deref_mut();
+        let content = &mut *child._rep.content;
+
+        // SAFETY: visible_range is always the range from one valid content-based UTF-8 index of the
+        // replacement to a subsequent valid UTF-8 content-index of the replacement.
+        let rep = unsafe { Replaceable::new(content, visible_range) };
+        let on_drop = |new_content: &[u8]| {
+            // child's content is contiguous, so we are inserting at the very end
+            child.curr = new_content.len() - child.end_len;
+        };
+        InsertableGuard::new(rep, on_drop)
+    }
+}
+
+impl<'a, 'b, F> Drop for InsertableToReplaceableAdapter<'a, 'b, F>
+    where
+        F: FnMut(usize),
+{
+    fn drop(&mut self) {
+        (self.on_drop)(self.child.curr);
     }
 }
 
@@ -823,22 +861,3 @@ enum CursorOffset {
     /// A `char`-based offset for before the replacement string.
     CharsOffStart(u16),
 }
-
-// #[derive(Debug, Clone, Copy, Default)]
-// pub(super) struct CursorOffset(CursorOffsetInner);
-//
-// impl CursorOffset {
-//     /// # Safety
-//     /// The caller must ensure that `offset` is a valid UTF-8 index into the replacement string
-//     pub(super) unsafe fn byte(offset: usize) -> Self {
-//         Self(CursorOffsetInner::Byte(offset))
-//     }
-//
-//     pub(super) fn chars_off_end(count: u16) -> Self {
-//         Self(CursorOffsetInner::CharsOffEnd(count))
-//     }
-//
-//     pub(super) fn chars_off_start(count: u16) -> Self {
-//         Self(CursorOffsetInner::CharsOffStart(count))
-//     }
-// }

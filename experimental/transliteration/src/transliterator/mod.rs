@@ -1099,10 +1099,10 @@ impl<'a> SpecialReplacer<'a> {
     ) {
         match self {
             Self::Compound(replacer) => helpers::replace_encoded_str(replacer, dest, data, vt, env),
-            Self::PureCursor => dest.use_offset_here(),
+            Self::PureCursor => dest.set_offset_to_here(),
             &Self::LeftPlaceholderCursor(num) => {
                 // must occur at the very end of a replacement
-                dest.use_offset_chars_off_end(num);
+                dest.set_offset_to_chars_off_end(num);
             }
             &Self::RightPlaceholderCursor(num) => {
                 // must occur at the very beginning of the replacement
@@ -1111,7 +1111,7 @@ impl<'a> SpecialReplacer<'a> {
                     0,
                     "pre-start cursor not the first replacement"
                 );
-                dest.use_offset_chars_off_start(num);
+                dest.set_offset_to_chars_off_start(num);
             }
             &Self::BackReference(num) => {
                 dest.push_str(data.get_segment(num as usize));
@@ -1123,15 +1123,10 @@ impl<'a> SpecialReplacer<'a> {
 
                 // eprintln!("dest before function call: {dest:?}");
 
-                let visible_start = dest.curr_replacement_len();
-                // cursor offsets have no effect here
-                let _ = helpers::replace_encoded_str(&call.arg, dest, data, vt, env);
-                let visible_end = dest.curr_replacement_len();
+                let mut range_aggregator = dest.start_replaceable_adapter();
+                helpers::replace_encoded_str(&call.arg, range_aggregator.child_for_range(), data, vt, env);
 
-                // SAFETY: the range is from a valid offset to another valid offset
-                let mut rep = unsafe { dest.as_replaceable(visible_start..visible_end) };
-
-                call.translit.transliterate(rep.child(), env);
+                call.translit.transliterate(range_aggregator.as_replaceable().child(), env);
             }
         }
     }
