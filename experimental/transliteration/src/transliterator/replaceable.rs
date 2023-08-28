@@ -32,6 +32,25 @@ use std::ops::{Deref, DerefMut};
 
 use super::Filter;
 
+/// The backing buffer for the API provided by this module.
+/// 
+/// # Safety
+/// Exclusive access to a buffer implies it contains valid UTF-8.
+pub(crate) struct TransliteratorBuffer(Vec<u8>);
+
+impl TransliteratorBuffer {
+    pub(crate) fn from_string(s: String) -> Self {
+        Self(s.into_bytes())
+    }
+
+    pub(crate) fn into_string(self) -> String {
+        debug_assert!(str::from_utf8(&self.0).is_ok());
+        // SAFETY: We have exclusive access, so the vec must contain valid UTF-8
+        unsafe { String::from_utf8_unchecked(self.0) }
+    }
+}
+
+
 /// A wrapper over `Vec<u8>` that only allows access (and modification) to a certain range.
 ///
 /// This is useful for other types that might only need a part of a `Vec<u8>` to be of a certain
@@ -160,12 +179,9 @@ pub(crate) struct Replaceable<'a> {
 // a "rope" or "cord" to replace the Vec<u8> might also be nice
 
 impl<'a> Replaceable<'a> {
-    /// # Safety
-    /// The caller must ensure `buf` is valid UTF-8.
-    pub(crate) unsafe fn new(buf: &'a mut Vec<u8>) -> Self {
-        // SAFETY: the visible range is the full range, and according to this function's contract,
-        // that is valid UTF-8.
-        Replaceable::from_hide(Hide::new(buf))
+    pub(crate) fn new(buf: &'a mut TransliteratorBuffer) -> Self {
+        // SAFETY: we have exclusive access to the buffer, so it must contain valid UTF-8
+        unsafe { Replaceable::from_hide(Hide::new(&mut buf.0)) }
     }
 
     /// # Safety
