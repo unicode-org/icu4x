@@ -577,8 +577,7 @@ impl BakedExporter {
             .map(|marker| marker.parse::<TokenStream>().unwrap())
             .collect::<Vec<_>>();
 
-        let (macro_idents, prefixed_macro_idents, mod_idents, file_paths, hash_idents): (
-            Vec<_>,
+        let (macro_idents, prefixed_macro_idents, mod_idents, file_paths): (
             Vec<_>,
             Vec<_>,
             Vec<_>,
@@ -593,7 +592,6 @@ impl BakedExporter {
                 format!("__impl_{}", ident).parse::<TokenStream>().unwrap(),
                 ident.parse::<TokenStream>().unwrap(),
                 format!("macros/{}.data.rs", ident),
-                ident.to_ascii_uppercase().parse::<TokenStream>().unwrap(),
             )
         }));
 
@@ -656,14 +654,10 @@ impl BakedExporter {
                         #[clippy::msrv = "1.65"]
                         impl icu_provider::AnyProvider for $provider {
                             fn load_any(&self, key: icu_provider::DataKey, req: icu_provider::DataRequest) -> Result<icu_provider::AnyResponse, icu_provider::DataError> {
-                                #(
-                                    #features
-                                    const #hash_idents: icu_provider::DataKeyHash = <#markers as icu_provider::KeyedDataMarker>::KEY.hashed();
-                                )*
                                 match key.hashed() {
                                     #(
                                         #features
-                                        #hash_idents =>
+                                        h if h == <#markers as icu_provider::KeyedDataMarker>::KEY.hashed() =>
                                             icu_provider::DataProvider::<#markers>::load(self, req).map(icu_provider::DataResponse::wrap_into_any_response),
                                     )*
                                     _ => Err(icu_provider::DataErrorKind::MissingDataKey.with_req(key, req)),
