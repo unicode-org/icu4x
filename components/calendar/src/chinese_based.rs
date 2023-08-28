@@ -27,7 +27,7 @@ use crate::{
     helpers::{adjusted_rem_euclid, i64_to_i32, quotient, I32Result},
     rata_die::RataDie,
     types::{Moment, MonthCode},
-    Calendar, CalendarError, Date, Iso,
+    Calendar, CalendarError, Iso,
 };
 use core::num::NonZeroU8;
 
@@ -483,7 +483,7 @@ impl<C: ChineseBased + CalendarArithmetic> ChineseBasedDateInner<C> {
         )
     }
 
-    /// Get a ChineseBasedDateInner from a fixed date, with an option to pass in an ISO date.
+    /// Get a ChineseBasedDateInner from a fixed date, with the related ISO year
     ///
     /// Months are calculated by iterating through the dates of new moons until finding the last month which
     /// does not exceed the given fixed date. The day of month is calculated by subtracting the fixed date
@@ -493,17 +493,11 @@ impl<C: ChineseBased + CalendarArithmetic> ChineseBasedDateInner<C> {
     /// Lisp reference code: https://github.com/EdReingold/calendar-code2/blob/main/calendar.l#L5414-L5459
     pub(crate) fn chinese_based_date_from_fixed(
         date: RataDie,
-        iso: Option<Date<Iso>>,
+        iso_year: i32,
     ) -> ChineseBasedDateInner<C> {
-        let iso = if let Some(iso_date) = iso {
-            iso_date
-        } else {
-            Iso::iso_from_fixed(date)
-        };
-
-        let epoch_as_iso = Iso::iso_from_fixed(C::EPOCH);
         // Get the 1-indexed Chinese extended year, used for fetching data from the cache
-        let mut getter_year = iso.year().number - epoch_as_iso.year().number + 1;
+        let epoch_as_iso = Iso::iso_from_fixed(C::EPOCH);
+        let mut getter_year = iso_year - epoch_as_iso.year().number + 1;
 
         let data_option = Self::get_compiled_data_for_year_helper(date, &mut getter_year);
 

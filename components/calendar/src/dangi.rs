@@ -185,7 +185,10 @@ impl Calendar for Dangi {
 
     fn date_from_iso(&self, iso: Date<crate::Iso>) -> Self::DateInner {
         let fixed = Iso::fixed_from_iso(iso.inner);
-        DangiDateInner(Inner::chinese_based_date_from_fixed(fixed, Some(iso)))
+        DangiDateInner(Inner::chinese_based_date_from_fixed(
+            fixed,
+            iso.year().number,
+        ))
     }
 
     fn date_to_iso(&self, date: &Self::DateInner) -> Date<crate::Iso> {
@@ -635,7 +638,8 @@ mod test {
         let max_iters = 560;
         while fixed < max_fixed && iters < max_iters {
             let rata_die = RataDie::new(fixed);
-            let chinese = Inner::chinese_based_date_from_fixed(rata_die, None);
+            let iso = Iso::iso_from_fixed(rata_die);
+            let chinese = Inner::chinese_based_date_from_fixed(rata_die, iso.year().number);
             let result = Inner::fixed_from_chinese_based_date_inner(chinese);
             let result_debug = result.to_i64_date();
             assert_eq!(result, rata_die, "Failed roundtrip fixed -> Chinese -> fixed for fixed: {fixed}, with calculated: {result_debug} from Chinese date:\n{chinese:?}");
