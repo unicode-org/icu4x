@@ -4,8 +4,23 @@
 
 //! APIs to support in-place transliteration.
 //!
-//! Runs
+//! The process will usually look as follows:
 //!
+//! 1. Create a [`Replaceable`].
+//! 2. If there is a filter to be applied, call [`Replaceable::for_each_run`] with the filter.
+//! 3. Next, if we are black-box transliterating, call [`Replaceable::replace_modifiable_with_str`],
+//!    after which we are done. If we are transliterating UTS #35 Transform Rules, continue:
+//! 4. Create a [`RepMatcher`] with [`Replaceable::start_match`].
+//! 5. Match a rule with the `RepMatcher`.
+//! 6. Assuming the rule matches, call [`RepMatcher::finish_match`] to obtain an [`Insertable`].
+//! 7. Walk through the rule's replacement string, and use `Insertable`'s methods to insert
+//!    valid UTF-8 content. If there are recursive function calls, use the entry point
+//!    [`Insertable::start_replaceable_adapter`] to obtain a child `Replaceable` that can be
+//!    used by going back to step 2.
+//! 8. Once the replacement string has been fully processed, the `Insertable`'s `Drop`
+//!    implementation will adjust the `Replaceable`'s cursor to reflect the applied replacement.
+//! 9. The rule is done, continue with the next rule and step 4 until [`Replaceable::is_finished`]
+//!    returns true.
 
 use crate::transliterator::MatchData;
 use alloc::vec::Vec;
@@ -17,6 +32,13 @@ use std::ops::{Deref, DerefMut};
 
 use super::Filter;
 
+/// A wrapper over `Vec<u8>` that only allows access (and modification) to a certain range.
+///
+/// This is useful for other types that might only need a part of a `Vec<u8>` to be of a certain
+/// structure, such as UTF-8. With this wrapper, they can assert their invariants only for the
+/// accessible portion.
+///
+/// All methods that take indices as arguments expect them to be relative to the *visible* part.
 struct Hide<'a> {
     raw: &'a mut Vec<u8>,
     hide_pre_len: usize,
@@ -37,10 +59,6 @@ impl<'a> Hide<'a> {
         self.raw.splice(adjusted_range, replace_with);
     }
 
-    fn len(&self) -> usize {
-        self.raw.len() - self.hide_pre_len - self.hide_post_len
-    }
-
     fn child(&mut self) -> Hide {
         Hide {
             raw: self.raw,
@@ -49,6 +67,7 @@ impl<'a> Hide<'a> {
         }
     }
 
+    /// Borrows into a child `Hide` with its visible part restricted to the given range.
     fn tighten(&mut self, visible_range: Range<usize>) -> Hide {
         debug_assert!(visible_range.start <= self.len());
         debug_assert!(visible_range.end <= self.len());
@@ -91,9 +110,37 @@ impl<'a> DerefMut for Hide<'a> {
 // TODO: if we loosen the invariant of Replaceable UTF-8 content to only need UTF-8 content in
 //  the visible range, we would not need to make_contiguous in Insertable, which would avoid
 //  moving around the tail after a non-final function call.
+//  => invariants are loosened, but to avoid make_contiguous our on_drop needs to be smarter
+//  than right now, because it assumes self.curr == self.end().
 
-/// Wrapper for in-place transliteration. Stores the currently allowed-to-be-modified
-/// transliteration range.
+// TODO: A transliteration run does not necessarily need cursors. In fact, cursor only exist
+//  in the context of Transform Rules. We could have a wrapping CursoredReplaceable type
+//  that is specifically for transform rules.
+
+// TODO: Renames? Replaceable => Run, and CursoredRun/RunWithCursor.
+
+/// Represents a transliteration run. It is aware of the range of the input that is allowed
+/// to be transliterated, according to the filter.
+///
+/// `Replaceable`s are made to be stacked. This means that while a given `Replaceable` represents
+/// a single run, it can be used to iterate over all sub-runs with a given filter of itself using
+/// [`for_each_run`](Replaceable::for_each_run).
+///
+/// Typical usage of a `Replaceable` depends on the client:
+/// - When transliterating transform rules, the `cursor`-related methods, as well as [`start_match`](Replaceable::start_match)
+///   will be of interest.
+/// - When transliterating with a black box, most likely [`replace_modifiable_with_str`](Replaceable::replace_modifiable_with_str)
+///   is the only method that will be used.
+///
+/// # Safety
+/// Note: `content` is a `Hide`. Whenever `content` is mentioned, only the *visible* part of it is
+/// meant.
+///
+/// The invariants of this struct are as follows:
+/// - (The visible part of) `content` must be valid UTF-8.
+/// - `cursor` must be a valid UTF-8 index into the visible part of `content`.
+/// - `run_range()` (as defined by `freeze_pre_len` and `freeze_post_len`), must always be a valid
+///   UTF-8 range into `content`.
 pub(crate) struct Replaceable<'a> {
     // guaranteed to be valid UTF-8
     // only content[ignore_pre_len+freeze_pre_len..content.len()-freeze_post_len] is mutable
@@ -138,28 +185,30 @@ impl<'a> Replaceable<'a> {
         self.content.splice(self.allowed_range(), s.bytes());
     }
 
-    /// Returns the full current content as a `&str`.
+    /// Returns the full internal text as a `&str`.
     pub(crate) fn as_str(&self) -> &str {
         debug_assert!(str::from_utf8(&self.content).is_ok());
         // SAFETY: Replaceable's invariant states that content is always valid UTF-8
         unsafe { str::from_utf8_unchecked(&self.content) }
     }
 
-    /// Returns the current modifiable content as a `&str`.
+    /// Returns the current modifiable text as a `&str`.
     pub(crate) fn as_str_modifiable(&self) -> &str {
         &self.as_str()[self.allowed_range()]
     }
 
     /// Returns the range of bytes that are currently allowed to be modified.
     ///
-    /// This is guaranteed to be a range compatible with the internal UTF-8.
+    /// This is guaranteed to be a range compatible with the internal text.
+    // TODO: rename to run_range()? also any associated mentions of this, the upper bound,
+    //  "modifiable range" etc..
     pub(crate) fn allowed_range(&self) -> Range<usize> {
         self.freeze_pre_len..self.allowed_upper_bound()
     }
 
     /// Returns the cursor.
     ///
-    /// This is guaranteed to be a valid UTF-8 index into the visible slice.
+    /// This is guaranteed to be a valid UTF-8 index into the internal text.
     pub(crate) fn cursor(&self) -> usize {
         // // eprintln!("cursor called with raw_cursor: {}, ignore_pre_len: {}", self.raw_cursor, self.ignore_pre_len);
         self.cursor
@@ -173,13 +222,14 @@ impl<'a> Replaceable<'a> {
             .map(char::len_utf8)
             .unwrap_or(0);
         // // eprintln!("step_cursor: {}", step_len);
+        // SAFETY: step_len is the UTF-8 length of the char after `self.cursor`
         self.cursor += step_len;
     }
 
     /// Sets the cursor. The cursor must remain in the modifiable window.
     ///
     /// # Safety
-    /// The caller must ensure that `cursor` is a valid UTF-8 index into the visible slice.
+    /// The caller must ensure that `cursor` is a valid UTF-8 index into the internal text.
     unsafe fn set_cursor(&mut self, cursor: usize) {
         debug_assert!(cursor <= self.allowed_upper_bound());
         debug_assert!(cursor >= self.freeze_pre_len);
@@ -206,6 +256,7 @@ impl<'a> Replaceable<'a> {
     }
 
     // TODO: could replace the F generic with a InternalTransliteratorTrait generic
+    /// Applies `f` to each sub-run as defined by `filter` of the current `Replaceable`'s run.
     pub(crate) fn for_each_run<F>(&mut self, filter: &Filter, mut f: F)
     where
         F: FnMut(&mut Replaceable),
@@ -222,6 +273,7 @@ impl<'a> Replaceable<'a> {
         }
     }
 
+    /// Initiate the matching process for a single rule, starting at the current cursor.
     pub(super) fn start_match(&mut self) -> RepMatcher<'a, '_, false> {
         let cursor = self.cursor;
         RepMatcher {
@@ -237,7 +289,7 @@ impl<'a> Replaceable<'a> {
     /// that occurs on or after `start`, if one exists.
     ///
     /// # Safety
-    /// The caller must ensure that `start` is a valid UTF-8 index into the visible slice.
+    /// The caller must ensure that `start` is a valid UTF-8 index into the internal text.
     unsafe fn next_filtered_run(&mut self, start: usize, filter: &Filter) -> Option<Replaceable> {
         if start == self.allowed_upper_bound() {
             // we have reached the end, there are no more runs
@@ -281,9 +333,10 @@ impl<'a> Replaceable<'a> {
     }
 
     /// Returns the index of the first char in `self.content` that satisfies `f`,
-    /// starting at index `start`. The returned index is guaranteed to be a valid UTF-8 index.
+    /// starting at index `start`. The returned index is guaranteed to be a valid UTF-8 index
+    /// into the internal text.
     ///
-    /// `start` must be a valid UTF-8 index into into the visible slice.
+    /// `start` must be a valid UTF-8 index into into the internal text.
     fn find_first_char_in_modifiable_range<F>(&self, start: usize, f: F) -> Option<usize>
     where
         F: Fn(char) -> bool,
@@ -295,7 +348,7 @@ impl<'a> Replaceable<'a> {
 
     /// Returns the current (exclusive) upper bound of the modifiable range.
     ///
-    /// This is guaranteed to be a valid UTF-8 index into the visible slice.
+    /// This is guaranteed to be a valid UTF-8 index into the internal text.
     pub(crate) fn allowed_upper_bound(&self) -> usize {
         // // eprintln!("allowed_upper_bound called with len: {}, freeze_post_len: {}, ignore_pre_len: {}", self.content.len(), self.freeze_post_len, self.ignore_pre_len);
         self.content.len() - self.freeze_post_len
@@ -326,6 +379,8 @@ impl<'a> Debug for Replaceable<'a> {
 
 // For safety reasons, we must ensure that the key is not matched after post matching has started.
 // One way to enforce this at compile-time, is with the KEY_FINISHED generic.
+// TODO: Maybe this should be renamed as Matchable (also the trait), as we have "SpecialMatchers"
+// TODO: Continue writing docs starting here
 #[derive(Debug)]
 pub(super) struct RepMatcher<'a, 'b, const KEY_FINISHED: bool> {
     rep: &'b mut Replaceable<'a>,

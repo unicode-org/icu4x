@@ -36,10 +36,14 @@ use zerovec::VarZeroSlice;
 
 type Filter<'a> = CodePointInversionList<'a>;
 
+// TODO: How about a RunTransliterator trait that is implemented for all internal types, is blanket
+//  implemented for CustomTransliterator, and maybe is exposed to users if they want more control?
+
 pub trait CustomTransliterator {
     /// Transliterate the portion of the input string specified by the byte indices in the range.
     ///
-    /// The returned `String` should just be the transliteration of `input[range]`.
+    /// The returned `String` should just be the transliteration of `input[range]`. The rest is
+    /// there for context, if necessary.
     fn transliterate(&self, input: &str, range: Range<usize>) -> String;
 }
 
