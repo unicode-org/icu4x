@@ -194,7 +194,7 @@ impl PackedChineseBasedCompiledData {
 #[derive(Copy, Clone, Debug, Eq, PartialEq, PartialOrd, Ord)]
 pub(crate) struct ChineseBasedCompiledData {
     pub(crate) new_year: RataDie,
-    /// last_day_of_month[12] = 0 in non-leap years
+    /// last_day_of_month[12] = last_day_of_month[11] in non-leap years
     /// These days are 1-indexed: so the last day of month for a 30-day 一月 is 30
     /// The array itself is zero-indexed, be careful passing it self.0.month!
     pub(crate) last_day_of_month: [u16; 13],
