@@ -149,9 +149,7 @@ impl InternalTransliterator {
             Self::Composing(t) => t.transliterate(rep, env),
             Self::Decomposing(t) => t.transliterate(rep, env),
             Self::Null => (),
-            Self::Remove => {
-                rep.replace_modifiable_with_str("")
-            }
+            Self::Remove => rep.replace_modifiable_with_str(""),
             Self::Dyn(custom) => {
                 let replacement = custom.transliterate(rep.as_str(), rep.allowed_range());
                 rep.replace_modifiable_with_str(&replacement)
@@ -547,7 +545,11 @@ impl<'a> Rule<'a> {
 
     /// Returns `None` if there is no match. If there is a match, returns the associated
     /// [`MatchData`].
-    fn matches<'r1, 'r2>(&self, mut matcher: RepMatcher<'r1, 'r2, false>, vt: &VarTable) -> Option<(MatchData, RepMatcher<'r1, 'r2, true>)> {
+    fn matches<'r1, 'r2>(
+        &self,
+        mut matcher: RepMatcher<'r1, 'r2, false>,
+        vt: &VarTable,
+    ) -> Option<(MatchData, RepMatcher<'r1, 'r2, true>)> {
         let mut match_data = MatchData::new();
 
         if !self.ante_matches(&mut matcher, &mut match_data, vt) {
@@ -881,7 +883,12 @@ impl<'a> SpecialMatcher<'a> {
 
     /// Returns `None` if the input does not match. If there is a match, returns the length of the
     /// match.
-    fn matches(&self, matcher: &mut impl Utf8Matcher<Forward>, match_data: &mut MatchData, vt: &VarTable) -> bool {
+    fn matches(
+        &self,
+        matcher: &mut impl Utf8Matcher<Forward>,
+        match_data: &mut MatchData,
+        vt: &VarTable,
+    ) -> bool {
         match self {
             Self::Compound(query) => helpers::match_encoded_str(query, matcher, match_data, vt),
             Self::UnicodeSet(set) => {
@@ -985,7 +992,12 @@ impl<'a> SpecialMatcher<'a> {
 
     /// Returns `None` if the input does not match from the right. If there is a match, returns the
     /// length of the match.
-    fn rev_matches(&self, matcher: &mut impl Utf8Matcher<Reverse>, match_data: &mut MatchData, vt: &VarTable) -> bool {
+    fn rev_matches(
+        &self,
+        matcher: &mut impl Utf8Matcher<Reverse>,
+        match_data: &mut MatchData,
+        vt: &VarTable,
+    ) -> bool {
         match self {
             Self::Compound(query) => helpers::rev_match_encoded_str(query, matcher, match_data, vt),
             Self::UnicodeSet(set) => {
@@ -1100,13 +1112,7 @@ impl<'a> SpecialReplacer<'a> {
 
     /// Applies the replacement from this replacer to `buf`. Returns the offset of the cursor after
     /// the replacement, if a non-default one exists.
-    fn replace(
-        &self,
-        dest: &mut Insertable,
-        data: &MatchData,
-        vt: &VarTable,
-        env: &Env,
-    ) {
+    fn replace(&self, dest: &mut Insertable, data: &MatchData, vt: &VarTable, env: &Env) {
         match self {
             Self::Compound(replacer) => helpers::replace_encoded_str(replacer, dest, data, vt, env),
             Self::PureCursor => dest.set_offset_to_here(),
@@ -1134,9 +1140,16 @@ impl<'a> SpecialReplacer<'a> {
                 // eprintln!("dest before function call: {dest:?}");
 
                 let mut range_aggregator = dest.start_replaceable_adapter();
-                helpers::replace_encoded_str(&call.arg, range_aggregator.child_for_range(), data, vt, env);
+                helpers::replace_encoded_str(
+                    &call.arg,
+                    range_aggregator.child_for_range(),
+                    data,
+                    vt,
+                    env,
+                );
 
-                call.translit.transliterate(range_aggregator.as_replaceable().child(), env);
+                call.translit
+                    .transliterate(range_aggregator.as_replaceable().child(), env);
             }
         }
     }

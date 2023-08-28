@@ -2,8 +2,8 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use criterion::{criterion_group, criterion_main};
 use criterion::{black_box, BenchmarkId, Criterion};
+use criterion::{criterion_group, criterion_main};
 use icu_provider::_internal::locid::Locale;
 
 use icu_transliteration::Transliterator;
@@ -26,12 +26,16 @@ fn owned_inputs(content: &str) -> Vec<String> {
 fn bench_data_from_sources(locale_str: &str, source: &str) -> Vec<BenchDataContent> {
     let locale: Locale = locale_str.parse().unwrap();
     let inputs = owned_inputs(source);
-    inputs.into_iter().enumerate().map(|(idx, input)| BenchDataContent {
-        num: idx + 1,
-        name: locale_str.to_string(),
-        translit: Transliterator::try_new(locale.clone()).unwrap(),
-        input,
-    }).collect()
+    inputs
+        .into_iter()
+        .enumerate()
+        .map(|(idx, input)| BenchDataContent {
+            num: idx + 1,
+            name: locale_str.to_string(),
+            translit: Transliterator::try_new(locale.clone()).unwrap(),
+            input,
+        })
+        .collect()
 }
 
 fn bench_data() -> Vec<BenchDataContent> {
@@ -55,20 +59,20 @@ pub fn criterion_benchmark(criterion: &mut Criterion) {
 
     for bench_data_content in black_box(bench_data()) {
         group.bench_function(
-            BenchmarkId::from_parameter(format!("transliterate_{}_{}", bench_data_content.name, bench_data_content.num)),
+            BenchmarkId::from_parameter(format!(
+                "transliterate_{}_{}",
+                bench_data_content.name, bench_data_content.num
+            )),
             |bencher| {
-                bencher
-                    .iter(|| function_under_bench(&bench_data_content.translit, &bench_data_content.input))
+                bencher.iter(|| {
+                    function_under_bench(&bench_data_content.translit, &bench_data_content.input)
+                })
             },
         );
     }
     group.finish();
 }
 
-
-criterion_group!(
-    benches,
-    criterion_benchmark,
-);
+criterion_group!(benches, criterion_benchmark,);
 
 criterion_main!(benches);

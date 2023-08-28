@@ -4,19 +4,21 @@
 
 // TODO: find a way to keep cldr_testData uptodate
 
-use std::collections::HashMap;
-use std::path::PathBuf;
 use icu_provider::_internal::locid::Locale;
 use icu_transliteration::Transliterator;
+use std::collections::HashMap;
+use std::path::PathBuf;
 
 #[test]
 fn test_all_cldr() {
     // broken BCP47 ids in CLDR
-    let map = HashMap::from([
-        ("und-t-d0-ascii", "und-t-und-latn-d0-ascii")
-    ]);
+    let map = HashMap::from([("und-t-d0-ascii", "und-t-und-latn-d0-ascii")]);
 
-    let mut in_order = std::fs::read_dir(concat!(env!("CARGO_MANIFEST_DIR"), "/tests/cldr_testData")).unwrap().map(|x| x.unwrap().path()).collect::<Vec<_>>();
+    let mut in_order =
+        std::fs::read_dir(concat!(env!("CARGO_MANIFEST_DIR"), "/tests/cldr_testData"))
+            .unwrap()
+            .map(|x| x.unwrap().path())
+            .collect::<Vec<_>>();
     in_order.sort();
     for path in in_order {
         if path.ends_with("_readme.txt") {
@@ -34,20 +36,36 @@ fn test_all_cldr() {
 fn test_file(t: Transliterator, path: PathBuf) {
     let data = std::fs::read_to_string(&path).unwrap();
     let lines = data.lines().filter(|x| !x.starts_with('#'));
-    let test_cases = lines.map(|l| {
-        let mut parts = l.splitn(2, '\t');
-        let input = parts.next().unwrap();
-        let output = parts.next().unwrap();
-        (input, output)
-    }).collect::<Vec<_>>();
+    let test_cases = lines
+        .map(|l| {
+            let mut parts = l.splitn(2, '\t');
+            let input = parts.next().unwrap();
+            let output = parts.next().unwrap();
+            (input, output)
+        })
+        .collect::<Vec<_>>();
 
-    eprintln!("Testing {:?} with {} test cases", path.file_stem().unwrap(), test_cases.len());
+    eprintln!(
+        "Testing {:?} with {} test cases",
+        path.file_stem().unwrap(),
+        test_cases.len()
+    );
 
     for (idx, (input, output)) in test_cases.into_iter().enumerate() {
-        eprintln!("Testing testcase {}! Input: {:?} Output: {:?}", idx+1, input, output);
+        eprintln!(
+            "Testing testcase {}! Input: {:?} Output: {:?}",
+            idx + 1,
+            input,
+            output
+        );
         let actual = t.transliterate(input.to_string());
-        assert_eq!(actual, output, "Transliterator {:?} failed", path.file_stem().unwrap());
-        eprintln!("Passed testcase {}!", idx+1);
+        assert_eq!(
+            actual,
+            output,
+            "Transliterator {:?} failed",
+            path.file_stem().unwrap()
+        );
+        eprintln!("Passed testcase {}!", idx + 1);
     }
     eprintln!("Transliterator {:?} passed", path.file_stem().unwrap());
 }

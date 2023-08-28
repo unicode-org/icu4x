@@ -21,7 +21,7 @@
 //!    implementation will adjust the `Replaceable`'s cursor to reflect the applied replacement.
 //! 9. The rule is done, continue with the next rule and step 4 until [`Replaceable::is_finished`]
 //!    returns true.
-//! 
+//!
 //! This module uses a lot of unsafe code to work with UTF-8 in an allocation-efficient manner and to
 //! avoid a lot of UTF-8 validity checks.
 // note: this mod could be moved into a utility crate, the only thing
@@ -42,7 +42,7 @@ use std::ops::{Deref, DerefMut};
 use super::Filter;
 
 /// The backing buffer for the API provided by this module.
-/// 
+///
 /// # Safety
 /// Exclusive access to a buffer implies it contains valid UTF-8.
 pub(crate) struct TransliteratorBuffer(Vec<u8>);
@@ -58,7 +58,6 @@ impl TransliteratorBuffer {
         unsafe { String::from_utf8_unchecked(self.0) }
     }
 }
-
 
 /// A wrapper over `Vec<u8>` that only allows access (and modification) to a certain range.
 ///
@@ -82,7 +81,7 @@ impl<'a> Hide<'a> {
         }
     }
 
-    fn splice(&mut self, range: Range<usize>, replace_with: impl IntoIterator<Item=u8>) {
+    fn splice(&mut self, range: Range<usize>, replace_with: impl IntoIterator<Item = u8>) {
         let adjusted_range = range.start + self.hide_pre_len..range.end + self.hide_pre_len;
         self.raw.splice(adjusted_range, replace_with);
     }
@@ -128,7 +127,7 @@ impl<'a> Deref for Hide<'a> {
 impl<'a> DerefMut for Hide<'a> {
     fn deref_mut(&mut self) -> &mut Self::Target {
         let len = self.raw.len();
-        &mut self.raw[self.hide_pre_len.. len - self.hide_post_len]
+        &mut self.raw[self.hide_pre_len..len - self.hide_post_len]
     }
 }
 
@@ -394,27 +393,27 @@ impl<'a> Debug for Replaceable<'a> {
 
 // TODO: Maybe this should be renamed as Matchable (also the trait), as we have "SpecialMatchers"
 /// Supports safe conversion rule matching over a [`Replaceable`].
-/// 
+///
 /// Conversion rule matching consists of three parts:
 /// 1. Matching the ante. This is a right-aligned (reverse) match at the `Replaceable`'s cursor.
 /// 2. Matching the key. This is a left-aligned (forward) match at the `Replaceable`'s cursor.
 /// 3. Matching the post. This is a left-aligned (forward) match at the end of _the matched key_.
 ///    Note that this means we _cannot_ match the key after the post, as the post match is aligned
 ///    to the end of the key match. The `KEY_FINISHED` parameter enforces this at compile-time.
-/// 
+///
 /// After a successful match, the replacement can be applied using the [`Insertable`] returned by
 /// [`RepMatcher::finish_match`].
-/// 
+///
 /// # Safety
 /// The matched portions of the string (as defined by `rep.cursor`, `key_match_len`,
 /// `ante_match_len` and `post_match_len`) are all guaranteed to be valid UTF-8 subslices of
 /// the `Replaceable`'s internal text.
-/// 
+///
 /// The `RepMatcher` does not modify the contained `Replaceable`.
 #[derive(Debug)]
 pub(super) struct RepMatcher<'a, 'b, const KEY_FINISHED: bool> {
     rep: &'b mut Replaceable<'a>,
-    key_match_len: usize, // relative to rep.cursor
+    key_match_len: usize,  // relative to rep.cursor
     ante_match_len: usize, // relative to rep.cursor
     post_match_len: usize, // relative to rep.cursor + key_match_len
     forward_cursor: usize, // absolute
@@ -484,7 +483,7 @@ impl<'a, 'b, const KEY_FINISHED: bool> Utf8Matcher<Forward> for RepMatcher<'a, '
     fn str_range(&self, range: Range<usize>) -> Option<&str> {
         self.rep.as_str().get(range)
     }
-    
+
     fn is_empty(&self) -> bool {
         self.remaining() == 0
     }
@@ -551,7 +550,9 @@ impl<'a, 'b, const KEY_FINISHED: bool> Utf8Matcher<Reverse> for RepMatcher<'a, '
 
     fn consume(&mut self, len: usize) -> bool {
         if len <= self.ante_cursor() {
-            assert!(self.remaining_ante_slice().is_char_boundary(self.ante_cursor() - len));
+            assert!(self
+                .remaining_ante_slice()
+                .is_char_boundary(self.ante_cursor() - len));
             // SAFETY: `len` is guaranteed to be a valid UTF-8 length reverse-starting at `ante_cursor()`.
             self.ante_match_len += len;
             true
@@ -572,24 +573,24 @@ mod sealed {
 }
 
 /// A forward match.
-/// 
+///
 /// For example, forward-matching `"aft"` on the input `"previous|after"`, with the cursor at the `'|'`,
 /// would return a match, forward-matching `"fter"` would not.
 pub(super) struct Forward;
 /// A reverse match.
-/// 
+///
 /// For example, reverse-matching `"ious"` on the input `"previous|after"`, with the cursor at the `'|'`,
 /// would return a match, forward-matching `"prev"` would not.
 pub(super) struct Reverse;
 /// The direction a match can be applied. Used in [`Utf8Matcher`].
-/// 
+///
 /// See [`Forward`] and [`Reverse`] for implementors.
 pub(super) trait MatchDirection: sealed::Sealed {}
 impl MatchDirection for Forward {}
 impl MatchDirection for Reverse {}
 
 /// Matching functionality on strings. Matching can be done in forward or reverse directions, see [`MatchDirection`].
-/// 
+///
 /// The used indices in method parameters are all compatible with each other.
 // TODO: I don't think this needs to be called *Utf8* matcher, maybe just Matcheable
 
@@ -635,25 +636,25 @@ struct MatchLengths {
 // TODO: describe what this even is
 // note: implementing this with a Rope/Cord data structure might be interesting.
 /// This provides (append-only) replacement APIs for a [`Replaceable`].
-/// 
+///
 /// It can only be constructed with a complete match using a [`RepMatcher`].
-/// 
+///
 /// A main goal of this type is to avoid unnecessary allocations when applying a rule replacement.
 /// For this, it keeps track of the range of the `Replaceable`'s content that we are replacing
 /// using `start` and `end_len`,
 /// and lazily starts replacing this range from the left, in a grow-only fashion. That is,
 /// there might be a suffix in this replace range that is invalid UTF-8.
-/// 
+///
 /// A noteworthy feature of `Insertable`'s are getting back a *valid* sub-`Replaceable` for
 /// full-blown transliteration of the replacement. This means that despite the grow-only
 /// nature of this Insertable, we can do arbitrary replacements.
-/// 
+///
 /// Furthermore, an `Insertable` takes care of updating its parent's cursor.
-/// 
+///
 /// # Safety
 /// While we hold onto the associated `Replaceable`, we may temporarily break its invariants.
 /// As such, we cannot use any methods on `Replaceable` itself that rely on its invariants.
-/// 
+///
 /// Specifically, we temporarily change the validity of `_rep.content`. During a replacement
 /// with this `Insertable`, the following invariants hold:
 /// - `start is a valid UTF-8 index into `_rep.content` that signifies the start of the range we are replacing.
@@ -666,10 +667,10 @@ struct MatchLengths {
 ///   creating a sub-`Replaceable` that guarantees UTF-8 through its invariants).
 /// - `_rep.content` has valid UTF-8 in the non-replaced portions as defined by `start` and
 ///   `end_len`.
-/// 
+///
 /// In particular, these mean that the range of the `Replaceable`'s internal text that we have
 /// *not yet replaced*, is allowed to be invalid UTF-8.
-/// 
+///
 /// We fix the `Replaceable`'s invariants in the `Drop` impl using [`Insertable::cleanup`].
 pub(crate) struct Insertable<'a, 'b> {
     // Replaceable's invariants may temporarily be broken while this Insertable is alive
@@ -684,13 +685,13 @@ pub(crate) struct Insertable<'a, 'b> {
 impl<'a, 'b> Insertable<'a, 'b> {
     fn from_matcher(matcher: RepMatcher<'a, 'b, true>) -> Insertable<'a, 'b> {
         let match_lens = matcher.match_lens();
-        // SAFETY: RepMatcher does not modify the `Replaceable`. 
+        // SAFETY: RepMatcher does not modify the `Replaceable`.
         // This is the start of the range we want to replace.
         let start_idx = matcher.rep.cursor;
         // whatever is not matched *by the key* is unaffected by this Insertable
-        // SAFETY: match_lens is guaranteed to have been created for 
+        // SAFETY: match_lens is guaranteed to have been created for
         // *this specific state of the Replaceable*, so these are valid lengths
-        // according to RepMatcher's guarantees. 
+        // according to RepMatcher's guarantees.
         let end_idx = start_idx + match_lens.key;
         let end_len = matcher.rep.content.len() - end_idx;
 
@@ -706,7 +707,7 @@ impl<'a, 'b> Insertable<'a, 'b> {
 
     /// If we know the size of the replacement, we can pre-emptively grow the replacement range.
     /// This avoids many moves of the tail (defined by `end_len`) in case of repeated pushes on
-    /// an empty replacement range. 
+    /// an empty replacement range.
     pub(crate) fn apply_size_hint(&mut self, size: usize) {
         let free_bytes = self.free_range().len();
         if free_bytes < size {
@@ -796,12 +797,12 @@ impl<'a, 'b> Insertable<'a, 'b> {
             CursorOffset::Default => {
                 // SAFETY: replacement_len is a valid UTF-8 length after cursor.
                 base_cursor + replacement_len
-            },
+            }
             CursorOffset::Byte(offset) => {
                 // SAFETY: CursorOffset::Byte is only constructed by passing a UTF-8 prefix-len of
                 // the replacement, which is anchored at the cursor.
                 base_cursor + offset
-            },
+            }
             CursorOffset::CharsOffEnd(count) => {
                 // they key has already been replaced, so the post match starts `replacement_len`
                 // bytes after the cursor
@@ -856,7 +857,7 @@ impl<'a, 'b> Insertable<'a, 'b> {
     }
 
     /// Gets rid of the unreplaced range remaining in this `Insertable`.
-    /// 
+    ///
     /// A consequence of this is that `_rep.content` is now completely UTF-8 valid again.
     fn make_contiguous(&mut self) {
         // need to move the tail of the Vec to fill the remainder of the free range
@@ -877,7 +878,7 @@ impl<'a, 'b> Insertable<'a, 'b> {
 
     /// Use this if you want to get a sub-`Replaceable` for applying a full-blown transliteration to
     /// a range of `self`'s already replaced text.
-    /// 
+    ///
     /// # Example
     /// ```ignore
     /// let mut ins = my_insertable();
@@ -888,7 +889,9 @@ impl<'a, 'b> Insertable<'a, 'b> {
     /// // transliterates "world" and inserts it in the original `Insertable`.
     /// transliterate_with_rep(rep);
     /// ```
-    pub(super) fn start_replaceable_adapter(&mut self) -> InsertableToReplaceableAdapter<'a, '_, impl FnMut(usize) + '_> {
+    pub(super) fn start_replaceable_adapter(
+        &mut self,
+    ) -> InsertableToReplaceableAdapter<'a, '_, impl FnMut(usize) + '_> {
         let range_start = self.curr;
         let child_insertable = Insertable {
             _rep: self._rep,
@@ -904,10 +907,14 @@ impl<'a, 'b> Insertable<'a, 'b> {
         // to worry about the cursor_offset.
         let on_drop = |new_curr: usize| {
             // SAFETY: new_curr will be a later `curr` by `child_insertable`, and due to the grow-only
-            // nature of curr and the invariants of `Insertable`, this new_curr must be valid for `self` too. 
+            // nature of curr and the invariants of `Insertable`, this new_curr must be valid for `self` too.
             self.curr = new_curr;
         };
-        InsertableToReplaceableAdapter { child: ManuallyDrop::new(child_insertable), range_start, on_drop }
+        InsertableToReplaceableAdapter {
+            child: ManuallyDrop::new(child_insertable),
+            range_start,
+            on_drop,
+        }
     }
 }
 
@@ -926,8 +933,8 @@ impl<'a, 'b> Debug for Insertable<'a, 'b> {
 // TODO: could implement DerefMut and pass through child.
 /// See [`Insertable::start_replaceable_adapter`].
 pub(super) struct InsertableToReplaceableAdapter<'a, 'b, F>
-    where
-        F: FnMut(usize),
+where
+    F: FnMut(usize),
 {
     // needs to be ManuallyDrop, because cleanup happens in the Drop impl of Insertable.
     // this would cause issues where the if the `child_for_range()` received malicious offsets,
@@ -943,8 +950,8 @@ pub(super) struct InsertableToReplaceableAdapter<'a, 'b, F>
 }
 
 impl<'a, 'b, F> InsertableToReplaceableAdapter<'a, 'b, F>
-    where
-        F: FnMut(usize),
+where
+    F: FnMut(usize),
 {
     /// Returns an `Insertable`. Exactly the changes done by that insertable will
     /// be in scope for transliteration with [`as_replaceable`](InsertableToReplaceableAdapter::as_replaceable).
@@ -984,8 +991,8 @@ impl<'a, 'b, F> InsertableToReplaceableAdapter<'a, 'b, F>
 }
 
 impl<'a, 'b, F> Drop for InsertableToReplaceableAdapter<'a, 'b, F>
-    where
-        F: FnMut(usize),
+where
+    F: FnMut(usize),
 {
     fn drop(&mut self) {
         (self.on_drop)(self.child.curr);
