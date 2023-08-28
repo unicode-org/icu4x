@@ -435,36 +435,8 @@ impl<C: ChineseBased + CalendarArithmetic> ChineseBasedDateInner<C> {
         }
     } 
 
-    /// Get a ChineseBasedDateInner from a fixed date, with an option to pass in an ISO date.
-    ///
-    /// Months are calculated by iterating through the dates of new moons until finding the last month which
-    /// does not exceed the given fixed date. The day of month is calculated by subtracting the fixed date
-    /// from the fixed date of the beginning of the month.
-    ///
-    /// The calculation for `elapsed_years` and `month` in this function are based on code from _Calendrical Calculations_ by Reingold & Dershowitz.
-    /// Lisp reference code: https://github.com/EdReingold/calendar-code2/blob/main/calendar.l#L5414-L5459
-    pub(crate) fn chinese_based_date_from_fixed(
-        date: RataDie,
-        iso: Option<Date<Iso>>,
-    ) -> ChineseBasedDateInner<C> {
-        let iso = if let Some(iso_date) = iso {
-            iso_date
-        } else {
-            Iso::iso_from_fixed(date)
-        };
-
-        let epoch_as_iso = Iso::iso_from_fixed(C::EPOCH);
-        // Get the 1-indexed Chinese extended year, used for fetching data from the cache
-        let mut getter_year = iso.year().number - epoch_as_iso.year().number + 1;
-
-
-        let data_option = Self::get_compiled_data_for_year_helper(date, &mut getter_year);
-
-
-        if let Some(data) = data_option {
-            // cache fetch successful, getter year is just the regular extended year
-            let year = getter_year;
-
+    /// Get a ChineseBasedDateInner from a fixed date and the cache/extended year associated with it
+    fn chinese_based_date_from_cached(date: RataDie, data: ChineseBasedCompiledData, extended_year: i32) -> ChineseBasedDateInner<C> {
             debug_assert!(
                 date < data.next_new_year(),
                 "Stored date {date:?} out of bounds!"
@@ -499,9 +471,41 @@ impl<C: ChineseBased + CalendarArithmetic> ChineseBasedDateInner<C> {
             // creating this ArithmeticDate would fail, since the same algorithms used to generate the ymd
             // are also used to check for valid ymd.
             ChineseBasedDateInner(
-                ArithmeticDate::new_unchecked(year, month, day_of_month),
+                ArithmeticDate::new_unchecked(extended_year, month, day_of_month),
                 ChineseBasedYearInfo::Data(data),
             )
+    }
+
+    /// Get a ChineseBasedDateInner from a fixed date, with an option to pass in an ISO date.
+    ///
+    /// Months are calculated by iterating through the dates of new moons until finding the last month which
+    /// does not exceed the given fixed date. The day of month is calculated by subtracting the fixed date
+    /// from the fixed date of the beginning of the month.
+    ///
+    /// The calculation for `elapsed_years` and `month` in this function are based on code from _Calendrical Calculations_ by Reingold & Dershowitz.
+    /// Lisp reference code: https://github.com/EdReingold/calendar-code2/blob/main/calendar.l#L5414-L5459
+    pub(crate) fn chinese_based_date_from_fixed(
+        date: RataDie,
+        iso: Option<Date<Iso>>,
+    ) -> ChineseBasedDateInner<C> {
+        let iso = if let Some(iso_date) = iso {
+            iso_date
+        } else {
+            Iso::iso_from_fixed(date)
+        };
+
+        let epoch_as_iso = Iso::iso_from_fixed(C::EPOCH);
+        // Get the 1-indexed Chinese extended year, used for fetching data from the cache
+        let mut getter_year = iso.year().number - epoch_as_iso.year().number + 1;
+
+
+        let data_option = Self::get_compiled_data_for_year_helper(date, &mut getter_year);
+
+
+        if let Some(data) = data_option {
+            // cache fetch successful, getter year is just the regular extended year
+            Self::chinese_based_date_from_cached(date, data, getter_year)
+
         } else {
             let (first_day_of_year, next_solstice) =
                 Self::new_year_on_or_before_fixed_date(date, None);
