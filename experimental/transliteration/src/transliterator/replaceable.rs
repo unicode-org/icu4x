@@ -21,6 +21,12 @@
 //!    implementation will adjust the `Replaceable`'s cursor to reflect the applied replacement.
 //! 9. The rule is done, continue with the next rule and step 4 until [`Replaceable::is_finished`]
 //!    returns true.
+//! 
+//! This module uses a lot of unsafe code to work with UTF-8 in an allocation-efficient manner and to
+//! avoid a lot of UTF-8 validity checks.
+// note: this mod could be moved into a utility crate, the only thing
+// quite closely coupled to Transform Rules is `RepMatcher` and its explicit `ante`, `post`, `key`
+// handling.
 
 // TODO: for this whole module, I don't know how panics work together with safety invariants. I'm fairly sure that unexpected panics
 //  could break some invariants.

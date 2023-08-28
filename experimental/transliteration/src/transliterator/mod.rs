@@ -41,6 +41,9 @@ type Filter<'a> = CodePointInversionList<'a>;
 //  Actually, an alternative would be: CustomTransliterator is just &str -> String, RunTransliterator is
 //  (&str, allowed_range) -> String, and some RepTransliterator would just be Replaceable -> ().
 
+// TODO: actually, we could have a CustomTransliterator that instead of returning a String, returns a Writeable.
+// We would then writeable.write_to(<insertable as fmt::Write>) (and add the corresponding impl). Could avoid
+// allocations in some cases.
 
 /// A type that supports transliteration. Used for overrides in [`Transliterator`] - see
 /// [`Transliterator::try_new_with_override`].
