@@ -197,7 +197,7 @@ pub(crate) struct ChineseBasedCompiledData {
     /// last_day_of_month[12] = last_day_of_month[11] in non-leap years
     /// These days are 1-indexed: so the last day of month for a 30-day 一月 is 30
     /// The array itself is zero-indexed, be careful passing it self.0.month!
-    pub(crate) last_day_of_month: [u16; 13],
+    last_day_of_month: [u16; 13],
     ///
     pub(crate) leap_month: Option<NonZeroU8>,
 }
@@ -464,10 +464,9 @@ impl<C: ChineseBased + CalendarArithmetic> ChineseBasedDateInner<C> {
             let day_of_year = day_of_year.unwrap_or(0);
             let mut month = 1;
             // todo perhaps use a binary search
-            for last_day in data.last_day_of_month {
-                if last_day < day_of_year {
-                    month += 1;
-                } else {
+            for iter_month in 1..=13 {
+                month = iter_month;
+                if data.last_day_of_month(iter_month) >= day_of_year {
                     break;
                 }
             }
@@ -820,7 +819,7 @@ impl<C: ChineseBased + Calendar> CalendarArithmetic for C {
 
     fn days_in_provided_year(year: i32) -> u16 {
         if let Some(data) = C::get_compiled_data_for_year(year) {
-            data.last_day_of_month[12]
+            data.last_day_of_month(13)
         } else {
             let mid_year = ChineseBasedDateInner::<C>::fixed_mid_year_from_year(year);
             let (prev_new_year, solstice) =
