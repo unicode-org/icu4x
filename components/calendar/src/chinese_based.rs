@@ -417,7 +417,10 @@ impl<C: ChineseBased + CalendarArithmetic> ChineseBasedDateInner<C> {
     /// Given a 1-indexed chinese extended year, fetch its data from the cache.
     ///
     /// If the actual year data that was fetched is for a different year, update the getter year
-    fn get_compiled_data_for_year_helper(date: RataDie, getter_year: &mut i32) -> Option<ChineseBasedCompiledData> {
+    fn get_compiled_data_for_year_helper(
+        date: RataDie,
+        getter_year: &mut i32,
+    ) -> Option<ChineseBasedCompiledData> {
         let data_option = C::get_compiled_data_for_year(*getter_year);
         // todo we should be able to do this without unpacking
         if let Some(data) = data_option {
@@ -433,47 +436,51 @@ impl<C: ChineseBased + CalendarArithmetic> ChineseBasedDateInner<C> {
         } else {
             None
         }
-    } 
+    }
 
     /// Get a ChineseBasedDateInner from a fixed date and the cache/extended year associated with it
-    fn chinese_based_date_from_cached(date: RataDie, data: ChineseBasedCompiledData, extended_year: i32) -> ChineseBasedDateInner<C> {
-            debug_assert!(
-                date < data.next_new_year(),
-                "Stored date {date:?} out of bounds!"
-            );
-            // 1-indexed day of year
-            let day_of_year = u16::try_from(date - data.new_year + 1);
-            debug_assert!(day_of_year.is_ok(), "Somehow got a very large year in data");
-            let day_of_year = day_of_year.unwrap_or(0);
-            let mut month = 1;
-            // todo perhaps use a binary search
-            for iter_month in 1..=13 {
-                month = iter_month;
-                if data.last_day_of_month(iter_month) >= day_of_year {
-                    break;
-                }
+    fn chinese_based_date_from_cached(
+        date: RataDie,
+        data: ChineseBasedCompiledData,
+        extended_year: i32,
+    ) -> ChineseBasedDateInner<C> {
+        debug_assert!(
+            date < data.next_new_year(),
+            "Stored date {date:?} out of bounds!"
+        );
+        // 1-indexed day of year
+        let day_of_year = u16::try_from(date - data.new_year + 1);
+        debug_assert!(day_of_year.is_ok(), "Somehow got a very large year in data");
+        let day_of_year = day_of_year.unwrap_or(0);
+        let mut month = 1;
+        // todo perhaps use a binary search
+        for iter_month in 1..=13 {
+            month = iter_month;
+            if data.last_day_of_month(iter_month) >= day_of_year {
+                break;
             }
+        }
 
-            debug_assert!((1..=13).contains(&month), "Month out of bounds!");
+        debug_assert!((1..=13).contains(&month), "Month out of bounds!");
 
-            debug_assert!(
-                month < 13 || data.leap_month.is_some(),
-                "Cannot have 13 months in a non-leap year!"
-            );
-            let day_before_month_start = data.last_day_of_previous_month(month);
-            let day_of_month = day_of_year - day_before_month_start;
-            let day_of_month = u8::try_from(day_of_month as u8);
-            debug_assert!(day_of_month.is_ok(), "Month too big!");
-            let day_of_month = day_of_month.unwrap_or(1);
+        debug_assert!(
+            month < 13 || data.leap_month.is_some(),
+            "Cannot have 13 months in a non-leap year!"
+        );
+        let day_before_month_start = data.last_day_of_previous_month(month);
+        let day_of_month = day_of_year - day_before_month_start;
+        let day_of_month = u8::try_from(day_of_month as u8);
+        debug_assert!(day_of_month.is_ok(), "Month too big!");
+        let day_of_month = day_of_month.unwrap_or(1);
 
-            // This can use `new_unchecked` because this function is only ever called from functions which
-            // generate the year, month, and day; therefore, there should never be a situation where
-            // creating this ArithmeticDate would fail, since the same algorithms used to generate the ymd
-            // are also used to check for valid ymd.
-            ChineseBasedDateInner(
-                ArithmeticDate::new_unchecked(extended_year, month, day_of_month),
-                ChineseBasedYearInfo::Data(data),
-            )
+        // This can use `new_unchecked` because this function is only ever called from functions which
+        // generate the year, month, and day; therefore, there should never be a situation where
+        // creating this ArithmeticDate would fail, since the same algorithms used to generate the ymd
+        // are also used to check for valid ymd.
+        ChineseBasedDateInner(
+            ArithmeticDate::new_unchecked(extended_year, month, day_of_month),
+            ChineseBasedYearInfo::Data(data),
+        )
     }
 
     /// Get a ChineseBasedDateInner from a fixed date, with an option to pass in an ISO date.
@@ -498,14 +505,11 @@ impl<C: ChineseBased + CalendarArithmetic> ChineseBasedDateInner<C> {
         // Get the 1-indexed Chinese extended year, used for fetching data from the cache
         let mut getter_year = iso.year().number - epoch_as_iso.year().number + 1;
 
-
         let data_option = Self::get_compiled_data_for_year_helper(date, &mut getter_year);
-
 
         if let Some(data) = data_option {
             // cache fetch successful, getter year is just the regular extended year
             Self::chinese_based_date_from_cached(date, data, getter_year)
-
         } else {
             let (first_day_of_year, next_solstice) =
                 Self::new_year_on_or_before_fixed_date(date, None);
