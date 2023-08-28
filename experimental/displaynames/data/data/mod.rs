@@ -44,11 +44,11 @@ macro_rules! __impl_any_provider {
                 const DISPLAYNAMES_SCRIPTS_V1: icu_provider::DataKeyHash = <icu::displaynames::provider::ScriptDisplayNamesV1Marker as icu_provider::KeyedDataMarker>::KEY.hashed();
                 const DISPLAYNAMES_VARIANTS_V1: icu_provider::DataKeyHash = <icu::displaynames::provider::VariantDisplayNamesV1Marker as icu_provider::KeyedDataMarker>::KEY.hashed();
                 match key.hashed() {
-                    DISPLAYNAMES_LANGUAGES_V1 => icu_provider::DataProvider::<icu::displaynames::provider::LanguageDisplayNamesV1Marker>::load(self, req).and_then(|r| r.take_metadata_and_payload()).map(|(metadata, payload)| icu_provider::AnyResponse { payload: Some(payload.wrap_into_any_payload()), metadata }),
-                    DISPLAYNAMES_LOCALES_V1 => icu_provider::DataProvider::<icu::displaynames::provider::LocaleDisplayNamesV1Marker>::load(self, req).and_then(|r| r.take_metadata_and_payload()).map(|(metadata, payload)| icu_provider::AnyResponse { payload: Some(payload.wrap_into_any_payload()), metadata }),
-                    DISPLAYNAMES_REGIONS_V1 => icu_provider::DataProvider::<icu::displaynames::provider::RegionDisplayNamesV1Marker>::load(self, req).and_then(|r| r.take_metadata_and_payload()).map(|(metadata, payload)| icu_provider::AnyResponse { payload: Some(payload.wrap_into_any_payload()), metadata }),
-                    DISPLAYNAMES_SCRIPTS_V1 => icu_provider::DataProvider::<icu::displaynames::provider::ScriptDisplayNamesV1Marker>::load(self, req).and_then(|r| r.take_metadata_and_payload()).map(|(metadata, payload)| icu_provider::AnyResponse { payload: Some(payload.wrap_into_any_payload()), metadata }),
-                    DISPLAYNAMES_VARIANTS_V1 => icu_provider::DataProvider::<icu::displaynames::provider::VariantDisplayNamesV1Marker>::load(self, req).and_then(|r| r.take_metadata_and_payload()).map(|(metadata, payload)| icu_provider::AnyResponse { payload: Some(payload.wrap_into_any_payload()), metadata }),
+                    DISPLAYNAMES_LANGUAGES_V1 => icu_provider::DataProvider::<icu::displaynames::provider::LanguageDisplayNamesV1Marker>::load(self, req).map(icu_provider::DataResponse::wrap_into_any_response),
+                    DISPLAYNAMES_LOCALES_V1 => icu_provider::DataProvider::<icu::displaynames::provider::LocaleDisplayNamesV1Marker>::load(self, req).map(icu_provider::DataResponse::wrap_into_any_response),
+                    DISPLAYNAMES_REGIONS_V1 => icu_provider::DataProvider::<icu::displaynames::provider::RegionDisplayNamesV1Marker>::load(self, req).map(icu_provider::DataResponse::wrap_into_any_response),
+                    DISPLAYNAMES_SCRIPTS_V1 => icu_provider::DataProvider::<icu::displaynames::provider::ScriptDisplayNamesV1Marker>::load(self, req).map(icu_provider::DataResponse::wrap_into_any_response),
+                    DISPLAYNAMES_VARIANTS_V1 => icu_provider::DataProvider::<icu::displaynames::provider::VariantDisplayNamesV1Marker>::load(self, req).map(icu_provider::DataResponse::wrap_into_any_response),
                     _ => Err(icu_provider::DataErrorKind::MissingDataKey.with_req(key, req)),
                 }
             }

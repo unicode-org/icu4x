@@ -38,8 +38,8 @@ macro_rules! __impl_any_provider {
                 const PLURALS_CARDINAL_V1: icu_provider::DataKeyHash = <icu::plurals::provider::CardinalV1Marker as icu_provider::KeyedDataMarker>::KEY.hashed();
                 const PLURALS_ORDINAL_V1: icu_provider::DataKeyHash = <icu::plurals::provider::OrdinalV1Marker as icu_provider::KeyedDataMarker>::KEY.hashed();
                 match key.hashed() {
-                    PLURALS_CARDINAL_V1 => icu_provider::DataProvider::<icu::plurals::provider::CardinalV1Marker>::load(self, req).and_then(|r| r.take_metadata_and_payload()).map(|(metadata, payload)| icu_provider::AnyResponse { payload: Some(payload.wrap_into_any_payload()), metadata }),
-                    PLURALS_ORDINAL_V1 => icu_provider::DataProvider::<icu::plurals::provider::OrdinalV1Marker>::load(self, req).and_then(|r| r.take_metadata_and_payload()).map(|(metadata, payload)| icu_provider::AnyResponse { payload: Some(payload.wrap_into_any_payload()), metadata }),
+                    PLURALS_CARDINAL_V1 => icu_provider::DataProvider::<icu::plurals::provider::CardinalV1Marker>::load(self, req).map(icu_provider::DataResponse::wrap_into_any_response),
+                    PLURALS_ORDINAL_V1 => icu_provider::DataProvider::<icu::plurals::provider::OrdinalV1Marker>::load(self, req).map(icu_provider::DataResponse::wrap_into_any_response),
                     _ => Err(icu_provider::DataErrorKind::MissingDataKey.with_req(key, req)),
                 }
             }

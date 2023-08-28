@@ -38,8 +38,8 @@ macro_rules! __impl_any_provider {
                 const COMPACTDECIMAL_LONG_V1: icu_provider::DataKeyHash = <icu::compactdecimal::provider::LongCompactDecimalFormatDataV1Marker as icu_provider::KeyedDataMarker>::KEY.hashed();
                 const COMPACTDECIMAL_SHORT_V1: icu_provider::DataKeyHash = <icu::compactdecimal::provider::ShortCompactDecimalFormatDataV1Marker as icu_provider::KeyedDataMarker>::KEY.hashed();
                 match key.hashed() {
-                    COMPACTDECIMAL_LONG_V1 => icu_provider::DataProvider::<icu::compactdecimal::provider::LongCompactDecimalFormatDataV1Marker>::load(self, req).and_then(|r| r.take_metadata_and_payload()).map(|(metadata, payload)| icu_provider::AnyResponse { payload: Some(payload.wrap_into_any_payload()), metadata }),
-                    COMPACTDECIMAL_SHORT_V1 => icu_provider::DataProvider::<icu::compactdecimal::provider::ShortCompactDecimalFormatDataV1Marker>::load(self, req).and_then(|r| r.take_metadata_and_payload()).map(|(metadata, payload)| icu_provider::AnyResponse { payload: Some(payload.wrap_into_any_payload()), metadata }),
+                    COMPACTDECIMAL_LONG_V1 => icu_provider::DataProvider::<icu::compactdecimal::provider::LongCompactDecimalFormatDataV1Marker>::load(self, req).map(icu_provider::DataResponse::wrap_into_any_response),
+                    COMPACTDECIMAL_SHORT_V1 => icu_provider::DataProvider::<icu::compactdecimal::provider::ShortCompactDecimalFormatDataV1Marker>::load(self, req).map(icu_provider::DataResponse::wrap_into_any_response),
                     _ => Err(icu_provider::DataErrorKind::MissingDataKey.with_req(key, req)),
                 }
             }

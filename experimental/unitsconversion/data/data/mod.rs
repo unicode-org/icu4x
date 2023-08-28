@@ -36,7 +36,7 @@ macro_rules! __impl_any_provider {
             fn load_any(&self, key: icu_provider::DataKey, req: icu_provider::DataRequest) -> Result<icu_provider::AnyResponse, icu_provider::DataError> {
                 const UNITS_CONSTANTS_V1: icu_provider::DataKeyHash = <icu::unitsconversion::provider::UnitsConstantsV1Marker as icu_provider::KeyedDataMarker>::KEY.hashed();
                 match key.hashed() {
-                    UNITS_CONSTANTS_V1 => icu_provider::DataProvider::<icu::unitsconversion::provider::UnitsConstantsV1Marker>::load(self, req).and_then(|r| r.take_metadata_and_payload()).map(|(metadata, payload)| icu_provider::AnyResponse { payload: Some(payload.wrap_into_any_payload()), metadata }),
+                    UNITS_CONSTANTS_V1 => icu_provider::DataProvider::<icu::unitsconversion::provider::UnitsConstantsV1Marker>::load(self, req).map(icu_provider::DataResponse::wrap_into_any_response),
                     _ => Err(icu_provider::DataErrorKind::MissingDataKey.with_req(key, req)),
                 }
             }

@@ -38,8 +38,8 @@ macro_rules! __impl_any_provider {
                 const PROPS_CASEMAP_V1: icu_provider::DataKeyHash = <icu::casemap::provider::CaseMapV1Marker as icu_provider::KeyedDataMarker>::KEY.hashed();
                 const PROPS_CASEMAP_UNFOLD_V1: icu_provider::DataKeyHash = <icu::casemap::provider::CaseMapUnfoldV1Marker as icu_provider::KeyedDataMarker>::KEY.hashed();
                 match key.hashed() {
-                    PROPS_CASEMAP_V1 => icu_provider::DataProvider::<icu::casemap::provider::CaseMapV1Marker>::load(self, req).and_then(|r| r.take_metadata_and_payload()).map(|(metadata, payload)| icu_provider::AnyResponse { payload: Some(payload.wrap_into_any_payload()), metadata }),
-                    PROPS_CASEMAP_UNFOLD_V1 => icu_provider::DataProvider::<icu::casemap::provider::CaseMapUnfoldV1Marker>::load(self, req).and_then(|r| r.take_metadata_and_payload()).map(|(metadata, payload)| icu_provider::AnyResponse { payload: Some(payload.wrap_into_any_payload()), metadata }),
+                    PROPS_CASEMAP_V1 => icu_provider::DataProvider::<icu::casemap::provider::CaseMapV1Marker>::load(self, req).map(icu_provider::DataResponse::wrap_into_any_response),
+                    PROPS_CASEMAP_UNFOLD_V1 => icu_provider::DataProvider::<icu::casemap::provider::CaseMapUnfoldV1Marker>::load(self, req).map(icu_provider::DataResponse::wrap_into_any_response),
                     _ => Err(icu_provider::DataErrorKind::MissingDataKey.with_req(key, req)),
                 }
             }

@@ -40,9 +40,9 @@ macro_rules! __impl_any_provider {
                 const LIST_OR_V1: icu_provider::DataKeyHash = <icu::list::provider::OrListV1Marker as icu_provider::KeyedDataMarker>::KEY.hashed();
                 const LIST_UNIT_V1: icu_provider::DataKeyHash = <icu::list::provider::UnitListV1Marker as icu_provider::KeyedDataMarker>::KEY.hashed();
                 match key.hashed() {
-                    LIST_AND_V1 => icu_provider::DataProvider::<icu::list::provider::AndListV1Marker>::load(self, req).and_then(|r| r.take_metadata_and_payload()).map(|(metadata, payload)| icu_provider::AnyResponse { payload: Some(payload.wrap_into_any_payload()), metadata }),
-                    LIST_OR_V1 => icu_provider::DataProvider::<icu::list::provider::OrListV1Marker>::load(self, req).and_then(|r| r.take_metadata_and_payload()).map(|(metadata, payload)| icu_provider::AnyResponse { payload: Some(payload.wrap_into_any_payload()), metadata }),
-                    LIST_UNIT_V1 => icu_provider::DataProvider::<icu::list::provider::UnitListV1Marker>::load(self, req).and_then(|r| r.take_metadata_and_payload()).map(|(metadata, payload)| icu_provider::AnyResponse { payload: Some(payload.wrap_into_any_payload()), metadata }),
+                    LIST_AND_V1 => icu_provider::DataProvider::<icu::list::provider::AndListV1Marker>::load(self, req).map(icu_provider::DataResponse::wrap_into_any_response),
+                    LIST_OR_V1 => icu_provider::DataProvider::<icu::list::provider::OrListV1Marker>::load(self, req).map(icu_provider::DataResponse::wrap_into_any_response),
+                    LIST_UNIT_V1 => icu_provider::DataProvider::<icu::list::provider::UnitListV1Marker>::load(self, req).map(icu_provider::DataResponse::wrap_into_any_response),
                     _ => Err(icu_provider::DataErrorKind::MissingDataKey.with_req(key, req)),
                 }
             }
