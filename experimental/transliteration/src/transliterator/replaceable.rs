@@ -13,9 +13,77 @@ use core::fmt::{Debug, Formatter};
 use core::ops::Range;
 use core::str;
 use std::mem::ManuallyDrop;
-use std::ops::DerefMut;
+use std::ops::{Deref, DerefMut};
 
 use super::Filter;
+
+struct Hide<'a> {
+    raw: &'a mut Vec<u8>,
+    hide_pre_len: usize,
+    hide_post_len: usize,
+}
+
+impl<'a> Hide<'a> {
+    fn new(raw: &'a mut Vec<u8>) -> Self {
+        Self {
+            raw,
+            hide_pre_len: 0,
+            hide_post_len: 0,
+        }
+    }
+
+    fn splice(&mut self, range: Range<usize>, replace_with: impl IntoIterator<Item=u8>) {
+        let adjusted_range = range.start + self.hide_pre_len..range.end + self.hide_pre_len;
+        self.raw.splice(adjusted_range, replace_with);
+    }
+
+    fn len(&self) -> usize {
+        self.raw.len() - self.hide_pre_len - self.hide_post_len
+    }
+
+    fn child(&mut self) -> Hide {
+        Hide {
+            raw: self.raw,
+            hide_pre_len: self.hide_pre_len,
+            hide_post_len: self.hide_post_len,
+        }
+    }
+
+    fn tighten(&mut self, visible_range: Range<usize>) -> Hide {
+        debug_assert!(visible_range.start <= self.len());
+        debug_assert!(visible_range.end <= self.len());
+
+        let hide_pre_len = self.hide_pre_len + visible_range.start;
+        let hide_post_len = self.hide_post_len + (self.len() - visible_range.end);
+        Hide {
+            raw: self.raw,
+            hide_pre_len,
+            hide_post_len,
+        }
+    }
+
+    fn hidden_prefix(&self) -> &[u8] {
+        &self.raw[..self.hide_pre_len]
+    }
+
+    fn hidden_suffix(&self) -> &[u8] {
+        &self.raw[self.raw.len() - self.hide_post_len..]
+    }
+}
+
+impl<'a> Deref for Hide<'a> {
+    type Target = [u8];
+    fn deref(&self) -> &Self::Target {
+        &self.raw[self.hide_pre_len..self.raw.len() - self.hide_post_len]
+    }
+}
+
+impl<'a> DerefMut for Hide<'a> {
+    fn deref_mut(&mut self) -> &mut Self::Target {
+        let len = self.raw.len();
+        &mut self.raw[self.hide_pre_len.. len - self.hide_post_len]
+    }
+}
 
 // TODO: do we really want this much unsafe? a lot of the API could be replaced with safe, but
 //  checked String methods.
@@ -29,18 +97,13 @@ use super::Filter;
 pub(crate) struct Replaceable<'a> {
     // guaranteed to be valid UTF-8
     // only content[ignore_pre_len+freeze_pre_len..content.len()-freeze_post_len] is mutable
-    content: &'a mut Vec<u8>,
+    content: Hide<'a>,
     // `ignore_pre_len + freeze_pre_len` is guaranteed to be a valid UTF-8 index into content
     freeze_pre_len: usize,
     // `content.len() - freeze_post_len` is guaranteed to be a valid UTF-8 index into content
     freeze_post_len: usize,
     // guaranteed to be a valid UTF-8 index into the visible content.
     cursor: usize,
-    // guaranteed to be a valid UTF-8 index into content
-    // needed because function calls _only_ see their arguments, but nothing surrounding them.
-    ignore_pre_len: usize,
-    // guaranteed to be a valid UTF-8 suffix length
-    ignore_post_len: usize,
 }
 
 // note: would be great to have something like Replaceable::replace_range(&mut self, range) -> &mut Insertable
@@ -53,90 +116,38 @@ impl<'a> Replaceable<'a> {
     /// # Safety
     /// The caller must ensure `buf` is valid UTF-8.
     pub(crate) unsafe fn new(buf: &'a mut Vec<u8>) -> Self {
-        // SAFETY: the visible range is trivially a valid UTF-8 range
-        Replaceable::new_with_visible(buf, 0..buf.len())
+        // SAFETY: the visible range is the full range, and according to this function's contract,
+        // that is valid UTF-8.
+        Replaceable::from_hide(Hide::new(buf))
     }
 
     /// # Safety
-    /// The caller must ensure `buf` is valid UTF-8 and `visible_range` is a valid UTF-8 range into
-    /// `buf`.
-    pub(crate) unsafe fn new_with_visible(buf: &'a mut Vec<u8>, visible_range: Range<usize>) -> Self {
-        debug_assert!(str::from_utf8(&buf[visible_range.clone()]).is_ok());
-        debug_assert!(visible_range.end <= buf.len());
-        debug_assert!(visible_range.start <= buf.len());
-        let ignore_post_len = buf.len() - visible_range.end;
+    /// The caller must ensure the visible portion of `content` is valid UTF-8.
+    unsafe fn from_hide(content: Hide<'a>) -> Self {
+        debug_assert!(str::from_utf8(&content).is_ok());
         Self {
-            content: buf,
+            content,
             // these uphold the invariants
             freeze_pre_len: 0,
             freeze_post_len: 0,
-            ignore_pre_len: visible_range.start,
-            ignore_post_len,
             cursor: 0,
         }
     }
 
-    // /// # Safety
-    // /// The caller must ensure that `range` is a valid UTF-8 range into the visible content.
-    // pub(crate) unsafe fn replace_range<'b>(
-    //     &'b mut self,
-    //     range: Range<usize>,
-    //     size_hint: Option<usize>,
-    // ) -> Insertable<'a, 'b> {
-    //     // TODO: if start is always cursor, maybe change signature to take only end?
-    //     //  that would also mean we could replace Insertable.start with Insertable._rep.cursor + ignore_pre_len
-    //     // TODO: maybe add checks about frozen range?
-    //     // TODO: replace_range should probably be combined with a cursor update, otherwise cursor
-    //     //  invariant can break if cursor is inside the range.
-    //     debug_assert_eq!(range.start, self.cursor);
-    //     // the passed range is into self.visible_content(), which starts at offset self.ignore_pre_len
-    //     let adjusted_range = range.start + self.ignore_pre_len..range.end + self.ignore_pre_len;
-    //     Insertable::new_with_size_hint(self, adjusted_range, size_hint.unwrap_or(0))
-    // }
-
     pub(crate) fn replace_modifiable_with_str(&mut self, s: &str) {
-        let range = self.allowed_range();
-        // content is offset by ignore_pre_len relative to the visible content
-        let adjusted_range = range.start + self.ignore_pre_len..range.end + self.ignore_pre_len;
-        self.content.splice(adjusted_range, s.bytes());
+        self.content.splice(self.allowed_range(), s.bytes());
     }
-
-    // pub(crate) fn replace_modifiable_range<'b>(
-    //     &'b mut self,
-    //     size_hint: Option<usize>,
-    // ) -> Insertable<'a, 'b> {
-    //     // SAFETY: allowed_range is a valid UTF-8 range into the visible content
-    //     unsafe {
-    //         self.replace_range(self.allowed_range(), size_hint)
-    //     }
-    // }
 
     /// Returns the full current content as a `&str`.
     pub(crate) fn as_str(&self) -> &str {
-        debug_assert!(str::from_utf8(self.visible_content()).is_ok());
+        debug_assert!(str::from_utf8(&self.content).is_ok());
         // SAFETY: Replaceable's invariant states that content is always valid UTF-8
-        unsafe { str::from_utf8_unchecked(self.visible_content()) }
+        unsafe { str::from_utf8_unchecked(&self.content) }
     }
 
     /// Returns the current modifiable content as a `&str`.
     pub(crate) fn as_str_modifiable(&self) -> &str {
         &self.as_str()[self.allowed_range()]
-    }
-
-    /// Returns the current content before the cursor as a `&str`.
-    pub(crate) fn as_str_ante(&self) -> &str {
-        &self.as_str()[..self.cursor()]
-    }
-
-    /// Returns the current modifiable content after the cursor as a `&str`.
-    pub(crate) fn as_str_key(&self) -> &str {
-        &self.as_str()[self.cursor()..self.allowed_upper_bound()]
-    }
-
-    /// Returns the current content after the cursor as a `&str`. `key_match_len` is the length of
-    /// the key match and must be a valid UTF-8 index into the visible slice..
-    pub(crate) fn as_str_post(&self, key_match_len: usize) -> &str {
-        &self.as_str()[(self.cursor() + key_match_len)..]
     }
 
     /// Returns the range of bytes that are currently allowed to be modified.
@@ -156,7 +167,7 @@ impl<'a> Replaceable<'a> {
 
     /// Advances the cursor by one char.
     pub(crate) fn step_cursor(&mut self) {
-        let step_len = self.as_str()[self.cursor()..]
+        let step_len = self.as_str()[self.cursor..]
             .chars()
             .next()
             .map(char::len_utf8)
@@ -169,7 +180,7 @@ impl<'a> Replaceable<'a> {
     ///
     /// # Safety
     /// The caller must ensure that `cursor` is a valid UTF-8 index into the visible slice.
-    pub(crate) unsafe fn set_cursor(&mut self, cursor: usize) {
+    unsafe fn set_cursor(&mut self, cursor: usize) {
         debug_assert!(cursor <= self.allowed_upper_bound());
         debug_assert!(cursor >= self.freeze_pre_len);
         self.cursor = cursor;
@@ -178,29 +189,19 @@ impl<'a> Replaceable<'a> {
     /// Returns true if the cursor is at the end of the modifiable range.
     pub(crate) fn is_finished(&self) -> bool {
         // the cursor should never be > the upper bound
-        debug_assert!(self.cursor() <= self.allowed_upper_bound());
-        self.cursor() >= self.allowed_upper_bound()
+        debug_assert!(self.cursor <= self.allowed_upper_bound());
+        self.cursor >= self.allowed_upper_bound()
     }
-
-    // pub(crate) fn with_range(&mut self, range: Range<usize>) -> Replaceable {
-    //     Replaceable { content: self.content, freeze_pre_len: range.start, freeze_post_len: range.end }
-    // }
-
-    // pub(crate) fn get(&self, pos: usize) -> Option<u8> {
-    //     self.content.get(pos).copied()
-    // }
 
     /// Returns a `Replaceable` with the same content as the current one.
     ///
     /// This is useful for repeated transliterations of the same modifiable range.
     pub(crate) fn child(&mut self) -> Replaceable {
         Replaceable {
-            content: self.content,
+            content: self.content.child(),
             freeze_pre_len: self.freeze_pre_len,
             freeze_post_len: self.freeze_post_len,
             cursor: self.cursor,
-            ignore_pre_len: self.ignore_pre_len,
-            ignore_post_len: self.ignore_post_len,
         }
     }
 
@@ -268,16 +269,14 @@ impl<'a> Replaceable<'a> {
 
         // eprintln!("computing filtered run for rep: {self:?}, start: {start}, run_start: {run_start}, run_end: {run_end}");
 
-        let freeze_post_len = self.visible_content().len() - run_end;
+        let freeze_post_len = self.content.len() - run_end;
 
         Some(Replaceable {
-            content: self.content,
+            content: self.content.child(),
             // safety: these uphold the invariants
             freeze_pre_len: run_start,
             freeze_post_len,
             cursor: run_start,
-            ignore_pre_len: self.ignore_pre_len,
-            ignore_post_len: self.ignore_post_len,
         })
     }
 
@@ -299,27 +298,13 @@ impl<'a> Replaceable<'a> {
     /// This is guaranteed to be a valid UTF-8 index into the visible slice.
     pub(crate) fn allowed_upper_bound(&self) -> usize {
         // // eprintln!("allowed_upper_bound called with len: {}, freeze_post_len: {}, ignore_pre_len: {}", self.content.len(), self.freeze_post_len, self.ignore_pre_len);
-        self.visible_content().len() - self.freeze_post_len
-    }
-
-    /// Returns the byte slice of the content that is currently visible.
-    fn visible_content(&self) -> &[u8] {
-        &self.content[self.ignore_pre_len..self.visible_content_upper_bound()]
-    }
-
-    /// Returns the current length of the visible content.
-    fn visible_len(&self) -> usize {
-        self.visible_content().len()
-    }
-
-    fn visible_content_upper_bound(&self) -> usize {
-        self.content.len() - self.ignore_post_len
+        self.content.len() - self.freeze_post_len
     }
 }
 
 impl<'a> Debug for Replaceable<'a> {
     fn fmt(&self, f: &mut Formatter<'_>) -> core::fmt::Result {
-        write!(f, "{:?}", &self.content[..self.ignore_pre_len])?;
+        write!(f, "{:?}", self.content.hidden_prefix())?;
         write!(f, "[[[")?;
         write!(f, "{}", &self.as_str()[..self.freeze_pre_len])?;
         write!(f, "{{{{{{")?;
@@ -332,7 +317,8 @@ impl<'a> Debug for Replaceable<'a> {
         )?;
         write!(f, "}}}}}}")?;
         write!(f, "{}", &self.as_str()[self.allowed_upper_bound()..])?;
-        write!(f, "{:?}", &self.content[self.content.len() - self.ignore_post_len..])?;
+        write!(f, "]]]")?;
+        write!(f, "{:?}", self.content.hidden_suffix())?;
 
         Ok(())
     }
@@ -380,7 +366,7 @@ impl<'a, 'b> RepMatcher<'a, 'b, false> {
 impl<'a, 'b, const KEY_FINISHED: bool> RepMatcher<'a, 'b, KEY_FINISHED> {
     fn remaining(&self) -> usize {
         if KEY_FINISHED {
-            self.rep.visible_len() - self.cursor
+            self.rep.content.len() - self.cursor
         } else {
             self.rep.allowed_upper_bound() - self.cursor
         }
@@ -427,7 +413,7 @@ impl<'a, 'b, const KEY_FINISHED: bool> Utf8Matcher<Forward> for RepMatcher<'a, '
 
     fn match_end_anchor(&self) -> bool {
         // no matter if we're matching key or post, we must be completely at the end of the string
-        self.cursor == self.rep.visible_len()
+        self.cursor == self.rep.content.len()
     }
 
     fn consume(&mut self, len: usize) -> bool {
@@ -473,7 +459,7 @@ impl<'a, 'b, const KEY_FINISHED: bool> Utf8Matcher<Reverse> for RepMatcher<'a, '
     }
 
     fn match_end_anchor(&self) -> bool {
-        self.ante_cursor() == self.rep.visible_len()
+        self.ante_cursor() == self.rep.content.len()
     }
 
     fn consume(&mut self, len: usize) -> bool {
@@ -578,15 +564,16 @@ impl<'a, 'b> Insertable<'a, 'b> {
     fn from_matcher(matcher: RepMatcher<'a, 'b, true>) -> Insertable<'a, 'b> {
         let match_lens = matcher.match_lens();
         // we start replacing from the left
-        let start = matcher.rep.ignore_pre_len + matcher.rep.cursor;
+        let start_idx = matcher.rep.cursor;
         // whatever is not matched *by the key* is unaffected by this Insertable
-        let end_len = (matcher.rep.visible_len() - (matcher.rep.cursor() + matcher.key_match_len)) + matcher.rep.ignore_post_len;
+        let end_idx = start_idx + match_lens.key;
+        let end_len = matcher.rep.content.len() - end_idx;
 
         Insertable {
             _rep: matcher.rep,
-            start,
+            start: start_idx,
             end_len,
-            curr: start,
+            curr: start_idx,
             match_lens,
             cursor_offset: CursorOffset::Default,
         }
@@ -661,24 +648,24 @@ impl<'a, 'b> Insertable<'a, 'b> {
         // we can call methods of Replaceable again.
         let rep = &self._rep;
 
-        // this is guaranteed to be the cursor at the start of the matched key.
-        let old_cursor = rep.cursor;
+        // SAFETY: this guaranteed to be the index of the first byte of the replacement
+        let base_cursor = self.start;
         let replacement_len = self.curr_replacement_len();
 
         let cursor = match self.cursor_offset {
             CursorOffset::Default => {
                 // SAFETY: replacement_len is a valid UTF-8 length after cursor.
-                old_cursor + replacement_len
+                base_cursor + replacement_len
             },
             CursorOffset::Byte(offset) => {
                 // SAFETY: CursorOffset::Byte is only constructed by passing a UTF-8 prefix-len of
                 // the replacement, which is anchored at the cursor.
-                old_cursor + offset
+                base_cursor + offset
             },
             CursorOffset::CharsOffEnd(count) => {
                 // they key has already been replaced, so the post match starts `replacement_len`
                 // bytes after the cursor
-                let post_start = old_cursor + replacement_len;
+                let post_start = base_cursor + replacement_len;
                 // the replacement d oes not affect the post match length
                 let post_end = post_start + self.match_lens.post;
                 let matched_post = &rep.as_str()[post_start..post_end];
@@ -690,7 +677,7 @@ impl<'a, 'b> Insertable<'a, 'b> {
                     .sum::<usize>();
 
                 // SAFETY: this is a sum of valid UTF-8 lengths, so it is a valid UTF-8 index
-                let computed_cursor = old_cursor + replacement_len + post_offset_len;
+                let computed_cursor = base_cursor + replacement_len + post_offset_len;
 
                 // SAFETY: the returned range is guaranteed to be valid
                 let max_cursor = rep.allowed_range().end;
@@ -699,7 +686,7 @@ impl<'a, 'b> Insertable<'a, 'b> {
                 max_cursor.min(computed_cursor)
             }
             CursorOffset::CharsOffStart(count) => {
-                let ante = rep.as_str_ante();
+                let ante = &rep.as_str()[..base_cursor];
                 // restricting to the matched substr ensures no overflow of the cursor past the
                 // contexts, which is good
                 let matched_ante = &ante[(ante.len() - self.match_lens.ante)..];
@@ -715,7 +702,7 @@ impl<'a, 'b> Insertable<'a, 'b> {
                 // right after where the ante context ends.
                 // SAFETY: ante_len is a valid UTF-8 substr length preceding the cursor, and the
                 // cursor is also a valid index.
-                let computed_cursor = old_cursor - ante_len;
+                let computed_cursor = base_cursor - ante_len;
 
                 // SAFETY: the returned range is guaranteed to be valid
                 let min_cursor = rep.allowed_range().start;
@@ -787,7 +774,7 @@ pub(super) struct InsertableToReplaceableAdapter<'a, 'b, F>
     // then the Drop would update the rep's cursor, but the parent Insertable expects
     // the rep's cursor to be exactly the start of the key match.
     child: ManuallyDrop<Insertable<'a, 'b>>,
-    range_start: usize, // content-based
+    range_start: usize,
     on_drop: F,
 }
 
@@ -805,14 +792,22 @@ impl<'a, 'b, F> InsertableToReplaceableAdapter<'a, 'b, F>
         let visible_range = self.range_start..range_end;
 
         let child = self.child.deref_mut();
-        let content = &mut *child._rep.content;
+        let hidden_len = child._rep.content.len() - visible_range.len();
+        let content = &mut child._rep.content;
+        let modifiable_content = content.tighten(visible_range);
 
         // SAFETY: visible_range is always the range from one valid content-based UTF-8 index of the
         // replacement to a subsequent valid UTF-8 content-index of the replacement.
-        let rep = unsafe { Replaceable::new_with_visible(content, visible_range) };
-        let on_drop = |new_content: &[u8]| {
-            // child's content is contiguous, so we are inserting at the very end
-            child.curr = new_content.len() - child.end_len;
+        let rep = unsafe { Replaceable::from_hide(modifiable_content) };
+
+        // `move` hack - don't move these into closure
+        let child_curr = &mut child.curr;
+        let child_end_len = &child.end_len;
+        let on_drop = move |new_content: &[u8]| {
+            // 1. child's content is contiguous, so we are inserting at the very end.
+            // 2. we need hidden_len as well because `child.curr` is relative to `child.content`,
+            //    not `new_content`, which is the visible portion of the `rep`'s content.
+            *child_curr = new_content.len() + hidden_len - child_end_len;
         };
         InsertableGuard::new(rep, on_drop)
     }
@@ -853,7 +848,7 @@ where
     F: FnMut(&[u8]),
 {
     fn drop(&mut self) {
-        (self.on_drop)(&self.rep.content[..]);
+        (self.on_drop)(&self.rep.content);
     }
 }
 
