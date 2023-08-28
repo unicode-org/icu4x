@@ -11,17 +11,18 @@
     "quantifiers_opt": [
       "r",
       "s",
-      "C"
+      "C",
+      "󰀙"
     ],
     "quantifiers_kleene": [],
     "quantifiers_kleene_plus": [
       "󰀃",
-      "󰀓"
+      "󰀔"
     ],
     "segments": [
       {
         "idx": 0,
-        "content": "󰀟"
+        "content": "󰀣"
       },
       {
         "idx": 2,
@@ -29,7 +30,7 @@
       },
       {
         "idx": 1,
-        "content": "󰀂C󰀋"
+        "content": "󰀂C󰀌"
       },
       {
         "idx": 1,
@@ -41,7 +42,7 @@
       },
       {
         "idx": 0,
-        "content": "󰀍󰀎"
+        "content": "󰀎󰀏"
       },
       {
         "idx": 4,
@@ -53,7 +54,7 @@
       },
       {
         "idx": 3,
-        "content": "󰀐󰀑"
+        "content": "󰀑󰀒"
       },
       {
         "idx": 0,
@@ -61,11 +62,23 @@
       },
       {
         "idx": 1,
-        "content": "󰀠"
+        "content": "󰀤"
       },
       {
         "idx": 0,
         "content": "󰀄"
+      },
+      {
+        "idx": 0,
+        "content": "FI"
+      },
+      {
+        "idx": 2,
+        "content": "this segment is never tried to match"
+      },
+      {
+        "idx": 1,
+        "content": "this does not match󰀘"
       }
     ],
     "unicode_sets": [
@@ -159,7 +172,7 @@
           ],
           "id": "x-any-remove"
         },
-        "arg": "󰀻unremoved"
+        "arg": "󰀿unremoved"
       }
     ],
     "max_left_placeholder_count": 0,
@@ -210,6 +223,14 @@
         ],
         "id": "x-any-null"
       }
+    ],
+    [
+      {
+        "filter": [
+          "\u0000-􏿿"
+        ],
+        "id": "x-any-null"
+      }
     ]
   ],
   "rule_group_list": [
@@ -218,22 +239,22 @@
         "ante": "abä",
         "key": "def",
         "post": "ghi",
-        "replacer": "󰀢DEF"
+        "replacer": "󰀦DEF"
       },
       {
         "ante": "",
         "key": "ä",
-        "post": "D󰀖󰀗",
+        "post": "D󰀚󰀛",
         "replacer": "C"
       },
       {
         "ante": "",
-        "key": "󰀘󰀙󰀚",
+        "key": "󰀜󰀝󰀞",
         "post": "",
         "replacer": "xyz"
       },
       {
-        "ante": "󰀛",
+        "ante": "󰀟",
         "key": "ghi",
         "post": "",
         "replacer": "XYZ"
@@ -248,7 +269,7 @@
         "ante": "",
         "key": "l",
         "post": "",
-        "replacer": "󰀺L"
+        "replacer": "󰀾L"
       },
       {
         "ante": "",
@@ -260,13 +281,13 @@
     [
       {
         "ante": "",
-        "key": "󿿼󰀜󿿽",
+        "key": "󿿼󰀠󿿽",
         "post": "",
         "replacer": "bad"
       },
       {
         "ante": "",
-        "key": "󿿼󰀝",
+        "key": "󿿼󰀡",
         "post": "",
         "replacer": "first"
       },
@@ -279,24 +300,24 @@
       {
         "ante": "",
         "key": "L",
-        "post": "!󰀞",
+        "post": "!󰀢",
         "replacer": "T"
       }
     ],
     [
       {
-        "ante": "󰀊irs",
-        "key": "󰀌",
+        "ante": "󰀋irs",
+        "key": "󰀍",
         "post": "",
-        "replacer": "󰀽󰀼󰀻󰀼󰀽"
+        "replacer": "󰁁󰁀󰀿󰁀󰁁"
       }
     ],
     [
       {
-        "ante": "󿿼󰀏󰀒",
+        "ante": "󿿼󰀐󰀓",
         "key": "xyz",
         "post": "",
-        "replacer": "󰀻󰀼󰀽󰀾󰀿󰁀"
+        "replacer": "󰀿󰁀󰁁󰁂󰁃󰁄"
       }
     ],
     [
@@ -308,23 +329,31 @@
       },
       {
         "ante": "",
-        "key": "󰀈",
+        "key": "󰀉",
         "post": "",
         "replacer": "FI"
       },
       {
         "ante": "",
-        "key": "󰀉󰀔",
+        "key": "󰀊󰀕",
         "post": "",
-        "replacer": "󰀻󰀼"
+        "replacer": "󰀿󰁀"
       }
     ],
     [
       {
         "ante": "",
-        "key": "󰀕",
+        "key": "󰀖",
         "post": "",
-        "replacer": "󰀡"
+        "replacer": "󰀥"
+      }
+    ],
+    [
+      {
+        "ante": "",
+        "key": "󰀗󰀈",
+        "post": "",
+        "replacer": "󰀿󰁀󰁁"
       }
     ]
   ],
