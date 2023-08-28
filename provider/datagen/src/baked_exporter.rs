@@ -51,21 +51,14 @@
 //!     #     }
 //!     #   }
 //!     # }
-//!     include!("/path/to/mod/");
+//!     include!("/path/to/mod.rs");
 //!     impl_data_provider!(super::MyDataProvider);
 //! }
 //!
 //! # fn main() {
-//! let response: DataPayload<HelloWorldV1Marker> = MyDataProvider
-//!     .load(DataRequest {
-//!         locale: &langid!("en").into(),
-//!         metadata: Default::default(),
-//!     })
-//!     .unwrap()
-//!     .take_payload()
-//!     .unwrap();
+//! let formatter = HelloWorldFormatter::try_new_unstable(&MyDataProvider, &langid!("en").into()).unwrap();
 //!
-//! assert_eq!(response.get().message, "Hello World");
+//! assert_eq!(formatter.format_to_string(), "Hello World");
 //! # }
 //! ```
 

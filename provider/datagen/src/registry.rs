@@ -6,11 +6,10 @@ use icu_provider::prelude::*;
 
 macro_rules! registry {
     ($(#[cfg($feature:meta)] $($marker:path = $path:literal,)+)+) => {
-        /// List of all keys that are available. A key will not be available if the corresponding
-        /// Cargo feature has not been enabled.
+        /// List of all keys that are available.
         ///
-        /// Note that pre-1.3, `all_keys` and `all_keys_with_experimental` behaved differently,
-        /// they now behave the same and depend on which features are enabled.
+        /// Note that since v1.3, `all_keys` also contains experimental keys for which the
+        /// corresponding Cargo features has been enabled.
         // Excludes the hello world key, as that generally should not be generated.
         pub fn all_keys() -> Vec<DataKey> {
             #[cfg(not(all($($feature,)+)))]
@@ -26,7 +25,13 @@ macro_rules! registry {
         }
 
         /// Same as `all_keys`.
+        ///
+        /// Note that since v1.3, `all_keys` also contains experimental keys for which the
+        /// corresponding Cargo features has been enabled.
+        ///
+        /// ✨ *Enabled with the `legacy_api` Cargo feature.*
         #[deprecated(since = "1.3.0", note = "use `all_keys` with the required cargo features")]
+        #[cfg(feature = "legacy_api")]
         pub fn all_keys_with_experimental() -> Vec<DataKey> {
             all_keys()
         }
@@ -95,7 +100,7 @@ macro_rules! registry {
             ]
         );
 
-        #[cfg(feature = "provider_baked")]
+        #[cfg(feature = "baked_exporter")]
         pub(crate) fn key_to_marker_bake(key: DataKey, env: &databake::CrateEnv) -> databake::TokenStream {
             use databake::Bake;
             // This is a bit naughty, we need the marker's type, but we're actually

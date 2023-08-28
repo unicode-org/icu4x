@@ -36,7 +36,7 @@ serde_json = { version = "1.0", optional = true }
 icu_benchmark_macros = { workspace = true }
 icu_locid = { workspace = true, features = ["serde"] }
 icu_provider = { workspace = true, features = ["deserialize_json", "deserialize_bincode_1", "deserialize_postcard_1", "datagen"] }
-icu_datagen = { workspace = true }
+icu_datagen = { workspace = true, features = ["networking"] }
 writeable = { workspace = true }
 
 [target.'cfg(not(target_arch = "wasm32"))'.dev-dependencies]

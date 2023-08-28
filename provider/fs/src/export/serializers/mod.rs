@@ -4,8 +4,6 @@
 
 //! Serializer configurations for the [`FilesystemExporter`].
 //!
-//! Each serializer is in a child module.
-//!
 //! [`FilesystemExporter`]: super::FilesystemExporter
 
 #[doc(hidden)]

@@ -29,7 +29,7 @@ use writeable::Writeable;
 ///       .export(&DatagenProvider::latest_tested(), BlobExporter::new_with_sink(Box::new(&mut Vec::new())))
 ///       .unwrap();
 /// ```
-#[derive(Debug, Clone, Default)]
+#[derive(Debug, Clone)]
 pub struct DatagenDriver {
     keys: HashSet<DataKey>,
     // `None` means all
@@ -42,7 +42,13 @@ pub struct DatagenDriver {
 impl DatagenDriver {
     /// Creates an empty [`DatagenDriver`].
     pub fn new() -> Self {
-        Self::default()
+        Self {
+            keys: Default::default(),
+            locales: Default::default(),
+            fallback: Default::default(),
+            collations: Default::default(),
+            segmenter_models: Default::default(),
+        }
     }
 
     /// Sets this driver to generate the given keys. See [`icu_datagen::keys`],
@@ -85,7 +91,7 @@ impl DatagenDriver {
     /// are excluded. This method can be used to reennable them.
     ///
     /// The special string `"search*"` causes all search collation tables to be included.
-    pub fn with_collations(self, collations: impl IntoIterator<Item = String>) -> Self {
+    pub fn with_additional_collations(self, collations: impl IntoIterator<Item = String>) -> Self {
         Self {
             collations: collations.into_iter().collect(),
             ..self
@@ -536,7 +542,7 @@ fn test_collation_filtering() {
     ];
     for cas in cases {
         let resolved_locales = DatagenDriver::new()
-            .with_collations(cas.include_collations.iter().copied().map(String::from))
+            .with_additional_collations(cas.include_collations.iter().copied().map(String::from))
             .with_locales([cas.language.clone()])
             .with_fallback_mode(FallbackMode::Preresolved)
             .select_locales_for_key(
