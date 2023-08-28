@@ -38,11 +38,16 @@ type Filter<'a> = CodePointInversionList<'a>;
 
 // TODO: How about a RunTransliterator trait that is implemented for all internal types, is blanket
 //  implemented for CustomTransliterator, and maybe is exposed to users if they want more control?
+//  Actually, an alternative would be: CustomTransliterator is just &str -> String, RunTransliterator is
+//  (&str, allowed_range) -> String, and some RepTransliterator would just be Replaceable -> ().
 
+
+/// A type that supports transliteration. Used for overrides in [`Transliterator`] - see
+/// [`Transliterator::try_new_with_override`].
 pub trait CustomTransliterator {
-    /// Transliterate the portion of the input string specified by the byte indices in the range.
+    /// Transliterates the portion of the input string specified by the byte indices in the range.
     ///
-    /// The returned `String` should just be the transliteration of `input[range]`. The rest is
+    /// The returned `String` must just be the transliteration of `input[range]`. The rest is
     /// there for context, if necessary.
     fn transliterate(&self, input: &str, range: Range<usize>) -> String;
 }
