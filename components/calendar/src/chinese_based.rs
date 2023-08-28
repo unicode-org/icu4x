@@ -572,16 +572,9 @@ impl<C: ChineseBased + CalendarArithmetic> ChineseBasedDateInner<C> {
     /// This finds the RataDie of the new year of the year given, then finds the RataDie of the new moon
     /// (beginning of the month) of the month given, then adds the necessary number of days.
     pub(crate) fn fixed_from_chinese_based_date_inner(date: ChineseBasedDateInner<C>) -> RataDie {
-        let day = date.0.day as i64;
         let first_day_of_year = date.1.get_new_year();
-        let prior_new_moon = if let ChineseBasedYearInfo::Data(data) = date.1 {
-            first_day_of_year + data.last_day_of_previous_month(date.0.month).into()
-        } else {
-            let month = date.0.month as i64;
-            let month_approx = first_day_of_year + (month - 1) * 29;
-            Self::new_moon_on_or_after(month_approx.as_moment())
-        };
-        prior_new_moon + day - 1
+        let day_of_year = date.day_of_year(); // 1 indexed
+        first_day_of_year + i64::from(day_of_year) - 1
     }
 
     /// Get a RataDie in the middle of a year; this is not necessarily meant for direct use in
@@ -736,7 +729,7 @@ impl<C: ChineseBased + CalendarArithmetic> ChineseBasedDateInner<C> {
     /// similar to `CalendarArithmetic::day_of_year`
     pub(crate) fn day_of_year(&self) -> u16 {
         let new_year = self.1.get_new_year();
-        let month_approx = 28_u16.saturating_mul(self.0.month as u16 - 1);
+        let month_approx = 28_u16.saturating_mul(u16::from(self.0.month) - 1);
         let days_until_month = if let ChineseBasedYearInfo::Data(data) = self.1 {
             data.last_day_of_previous_month(self.0.month)
         } else {
@@ -746,7 +739,7 @@ impl<C: ChineseBased + CalendarArithmetic> ChineseBasedDateInner<C> {
             result as u16
         };
         let days_until_month = days_until_month;
-        days_until_month + self.0.day as u16
+        days_until_month + u16::from(self.0.day)
     }
 
     /// Compute a `ChineseBasedCache` from a ChineseBased year
