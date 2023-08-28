@@ -935,6 +935,8 @@ impl<'a> SpecialMatcher<'a> {
             Self::AnchorEnd => matcher.match_end_anchor(),
             Self::AnchorStart => matcher.match_start_anchor(),
             Self::Segment(segment) => {
+                // TODO: Would it be cool to have a similar functionality as Insertable::start_replaceable_adapter
+                //  that takes care of this `start`/`end` shenanigans? here it's not a safety issue, merely a panic issue.
                 let start = matcher.cursor();
                 if !helpers::match_encoded_str(&segment.content, matcher, match_data, vt) {
                     return false;
