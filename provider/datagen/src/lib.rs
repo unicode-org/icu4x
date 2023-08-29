@@ -608,6 +608,7 @@ fn test_keys() {
 }
 
 #[test]
+#[cfg(feature = "legacy_api")]
 fn test_keys_from_file() {
     #![allow(deprecated)]
     assert_eq!(
@@ -674,7 +675,6 @@ pub fn is_missing_icuexport_error(e: DataError) -> bool {
 ///
 /// ✨ *Enabled with the `legacy_api` Cargo feature.*
 pub use icu_provider_fs::export::serializers as syntax;
-
 
 #[cfg(feature = "legacy_api")]
 #[doc(hidden)]

@@ -449,27 +449,23 @@ impl Cli {
                     fingerprint: self.fingerprint,
                 })
             }
-            Format::Blob => {
-                Ok(config::Export::Blob {
-                    path: if let Some(path) = &self.output {
-                        path.clone()
-                    } else {
-                        PathBuf::from("/stdout")
-                    },
-                })
-            }
-            Format::Mod => {
-                Ok(config::Export::Baked {
-                    path: if let Some(mod_directory) = self.output.as_ref() {
-                        mod_directory.clone()
-                    } else {
-                        PathBuf::from("icu4x_data")
-                    },
-                    pretty: self.pretty,
-                    insert_feature_gates: self.insert_feature_gates,
-                    use_separate_crates: self.use_separate_crates,
-                })
-            }
+            Format::Blob => Ok(config::Export::Blob {
+                path: if let Some(path) = &self.output {
+                    path.clone()
+                } else {
+                    PathBuf::from("/stdout")
+                },
+            }),
+            Format::Mod => Ok(config::Export::Baked {
+                path: if let Some(mod_directory) = self.output.as_ref() {
+                    mod_directory.clone()
+                } else {
+                    PathBuf::from("icu4x_data")
+                },
+                pretty: self.pretty,
+                insert_feature_gates: self.insert_feature_gates,
+                use_separate_crates: self.use_separate_crates,
+            }),
         }
     }
 }

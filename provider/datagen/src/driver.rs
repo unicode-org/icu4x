@@ -41,6 +41,7 @@ pub struct DatagenDriver {
 
 impl DatagenDriver {
     /// Creates an empty [`DatagenDriver`].
+    #[allow(clippy::new_without_default)] // TODO
     pub fn new() -> Self {
         Self {
             keys: Default::default(),
