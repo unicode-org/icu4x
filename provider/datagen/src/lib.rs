@@ -343,9 +343,13 @@ pub fn keys_from_file<P: AsRef<Path>>(path: P) -> std::io::Result<Vec<DataKey>> 
         .collect()
 }
 
-/// Parses a compiled binary and returns a list of [`DataKey`]s used by it.
+/// Parses a compiled binary and returns a list of [`DataKey`]s that it uses *at runtime*.
 ///
-/// Unknown key names are ignored.
+/// This function is intended to be used for binaries that use `AnyProvider` or `BufferProvider`,
+/// for which the compiler cannot remove unused data. Using this function on a binary that only
+/// uses compiled data (through the `compiled_data` feature or manual baked data) will not return
+/// any keys, as the keys only exist in the type system.
+///
 //  Supports the hello world key
 /// # Example
 ///
@@ -674,7 +678,15 @@ pub fn is_missing_icuexport_error(e: DataError) -> bool {
 /// [`Out::Fs`] serialization formats.
 ///
 /// ✨ *Enabled with the `legacy_api` Cargo feature.*
-pub use icu_provider_fs::export::serializers as syntax;
+#[deprecated(since = "1.3.0", note = "use `fs_exporter::serializers`")]
+pub mod syntax {
+    #[doc(no_inline)]
+    pub use crate::fs_exporter::serializers::Bincode;
+    #[doc(no_inline)]
+    pub use crate::fs_exporter::serializers::Json;
+    #[doc(no_inline)]
+    pub use crate::fs_exporter::serializers::Postcard;
+}
 
 #[cfg(feature = "legacy_api")]
 #[doc(hidden)]
