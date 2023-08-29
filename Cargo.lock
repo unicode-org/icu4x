@@ -1356,7 +1356,6 @@ dependencies = [
  "icu",
  "icu_benchmark_macros",
  "icu_casemap_data",
- "icu_codepointtrie_builder",
  "icu_collections",
  "icu_locid",
  "icu_normalizer",

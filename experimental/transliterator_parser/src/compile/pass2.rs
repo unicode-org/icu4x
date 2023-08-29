@@ -38,7 +38,7 @@ struct MutVarTable {
     quantifiers_opt: MutVarTableField<String>,
     quantifiers_kleene: MutVarTableField<String>,
     quantifiers_kleene_plus: MutVarTableField<String>,
-    segments: MutVarTableField<String>,
+    segments: MutVarTableField<ds::Segment<'static>>,
     unicode_sets: MutVarTableField<UnicodeSet>,
     function_calls: MutVarTableField<ds::FunctionCall<'static>>,
     left_placeholder_base: u32,
@@ -139,7 +139,12 @@ impl MutVarTable {
         String,
         segments.base
     );
-    impl_insert!(insert_segment, segments, String, unicode_sets.base);
+    impl_insert!(
+        insert_segment,
+        segments,
+        ds::Segment<'static>,
+        unicode_sets.base
+    );
     impl_insert!(
         insert_unicode_set,
         unicode_sets,
@@ -234,6 +239,8 @@ pub(super) struct Pass2<'a, 'p> {
     available_transliterators: &'a HashMap<String, String>,
     // the inverse of VarTable.compounds
     var_to_char: HashMap<String, char>,
+    // the current segment index (per conversion rule)
+    curr_segment: u16,
 }
 
 impl<'a, 'p> Pass2<'a, 'p> {
@@ -266,6 +273,7 @@ impl<'a, 'p> Pass2<'a, 'p> {
             var_definitions,
             available_transliterators,
             var_to_char: HashMap::new(),
+            curr_segment: 0,
         })
     }
 
@@ -310,6 +318,7 @@ impl<'a, 'p> Pass2<'a, 'p> {
     }
 
     fn compile_conversion_rule(&mut self, rule: UniConversionRule<'p>) -> ds::Rule<'static> {
+        self.curr_segment = 0;
         let ante = self.compile_section(rule.ante, parse::ElementLocation::Source);
         let key = self.compile_section(rule.key, parse::ElementLocation::Source);
         let post = self.compile_section(rule.post, parse::ElementLocation::Source);
@@ -390,8 +399,14 @@ impl<'a, 'p> Pass2<'a, 'p> {
                 LiteralOrStandin::Standin(standin)
             }
             parse::Element::Segment(inner) => {
+                // important to store the number before the recursive call
+                let idx = self.curr_segment;
+                self.curr_segment += 1;
                 let inner = self.compile_section(inner, loc);
-                let standin = self.var_table.insert_segment(inner);
+                let standin = self.var_table.insert_segment(ds::Segment {
+                    idx,
+                    content: inner.into(),
+                });
                 LiteralOrStandin::Standin(standin)
             }
             parse::Element::FunctionCall(id, inner) => {

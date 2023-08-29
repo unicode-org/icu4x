@@ -403,4 +403,7 @@ fn test_greek_upper() {
     // specially handled by the implementation.
     assert_greek_uppercase("ᾠδή, -ήν, -ῆς, -ῇ", "ΩΙΔΗ, -ΗΝ, -ΗΣ, -ΗΙ");
     assert_greek_uppercase("ᾍδης", "ΑΙΔΗΣ");
+
+    // Handle breathing marks on rho
+    assert_greek_uppercase("ῥήματα ῤήματα", "ΡΗΜΑΤΑ ΡΗΜΑΤΑ");
 }

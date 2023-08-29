@@ -6,7 +6,7 @@ use diplomat_core::*;
 use rustdoc_types::{Crate, Item, ItemEnum};
 use std::collections::{BTreeSet, HashSet};
 use std::fmt;
-use std::fs;
+use std::fs::{self, File};
 use std::path::PathBuf;
 mod allowlist;
 use allowlist::{IGNORED_ASSOCIATED_ITEMS, IGNORED_PATHS, IGNORED_SUBSTRINGS, IGNORED_TRAITS};
@@ -41,6 +41,7 @@ impl fmt::Display for RustLinkInfo {
 }
 
 fn main() {
+    let out_path = std::env::args().nth(1);
     let doc_types = ["icu", "fixed_decimal", "icu_provider_adapters"]
         .into_iter()
         .flat_map(collect_public_types)
@@ -78,10 +79,20 @@ fn main() {
                 typ: rl.typ,
             })
             .collect::<BTreeSet<_>>();
-    println!("{FILE_HEADER}");
+
+    let mut file_anchor = None;
+    let mut stdout_anchor = None;
+    let out_stream = if let Some(out_path) = out_path {
+        let stream = file_anchor.insert(File::create(out_path).expect("opening output file"));
+        stream as &mut dyn std::io::Write
+    } else {
+        let stream = stdout_anchor.insert(std::io::stdout());
+        stream as &mut dyn std::io::Write
+    };
+    writeln!(out_stream, "{FILE_HEADER}").unwrap();
     doc_types
         .difference(&diplomat_types)
-        .for_each(|item| println!("{item}"));
+        .for_each(|item| writeln!(out_stream, "{item}").unwrap());
 }
 
 fn collect_public_types(krate: &str) -> impl Iterator<Item = (Vec<String>, ast::DocType)> {
