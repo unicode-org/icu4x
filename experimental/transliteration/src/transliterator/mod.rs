@@ -95,7 +95,7 @@ impl ComposingTransliterator {
     }
 }
 
-// TODO: Deduplicate with ComposingTransliterator?
+// Thought: Can we somehow deduplicate this code with ComposingTransliterator?
 #[derive(Debug)]
 struct DecomposingTransliterator(DecomposingNormalizer);
 
