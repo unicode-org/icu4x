@@ -36,14 +36,15 @@ use zerovec::VarZeroSlice;
 
 type Filter<'a> = CodePointInversionList<'a>;
 
-// TODO: How about a RunTransliterator trait that is implemented for all internal types, is blanket
+// Thought: How about a RunTransliterator trait that is implemented for all internal types, is blanket
 //  implemented for CustomTransliterator, and maybe is exposed to users if they want more control?
 //  Actually, an alternative would be: CustomTransliterator is just &str -> String, RunTransliterator is
 //  (&str, allowed_range) -> String, and some RepTransliterator would just be Replaceable -> ().
 
-// TODO: actually, we could have a CustomTransliterator that instead of returning a String, returns a Writeable.
+// Thought: actually, we could have a CustomTransliterator that instead of returning a String, returns a Writeable.
 // We would then writeable.write_to(<insertable as fmt::Write>) (and add the corresponding impl). Could avoid
-// allocations in some cases. The problem 
+// allocations in some cases. The problem is that Writeable's often borrow from the input - we can't have that here.
+// So probably quite a useless function.
 
 /// A type that supports transliteration. Used for overrides in [`Transliterator`] - see
 /// [`Transliterator::try_new_with_override`].
@@ -458,7 +459,8 @@ impl Transliterator {
 
     /// Transliterates `input` and returns its transliteration.
     pub fn transliterate(&self, input: String) -> String {
-        // TODO: Seems too much work for the benefits, but maybe have a Cow buffer instead? Insertable would only actually to_owned if the replaced bytes differ from the ones already there
+        // Thought: Seems too much work for the benefits, but maybe have a Cow buffer instead? 
+        //  Insertable would only actually to_owned if the replaced bytes differ from the ones already there
         let mut buffer = TransliteratorBuffer::from_string(input);
         let rep = Replaceable::new(&mut buffer);
         self.transliterator.get().transliterate(rep, &self.env);
@@ -582,7 +584,7 @@ impl<'a> Rule<'a> {
         // A `rule.used_segments` ZeroVec<u16> could be added at compile time,
         // which would make it easier to take segments into account at runtime.
         // there is no easy way to estimate the size of function calls, though.
-        // TODO: benchmark with and without this optimization
+        // TODO(#3957): benchmark with and without this optimization
         let replacement_size_estimate =
             helpers::estimate_replacement_size(&self.replacer, &data, vt);
 
@@ -593,7 +595,7 @@ impl<'a> Rule<'a> {
 
     /// Returns `None` if there is no match. If there is a match, returns the associated
     /// [`MatchData`] and [`RepMatcher`].
-    // TODO: RepMatcher<true> could be "FinishedRepMatcher"? but we can still match post.. 
+    // Thought: RepMatcher<true> could be "FinishedRepMatcher"? but we can still match post.. 
     fn matches<'r1, 'r2>(
         &self,
         mut matcher: RepMatcher<'r1, 'r2, false>,
@@ -918,8 +920,8 @@ enum SpecialMatcher<'a> {
 }
 
 impl<'a> SpecialMatcher<'a> {
-    // TODO: a lot of duplicated code in matches and rev_matches. deduplicate.
-    //  maybe by being generic over Input/RevInput? doesn't work for some special cases, though
+    // Thought: a lot of duplicated code in matches and rev_matches. deduplicate.
+    //  maybe by being generic over Direction? doesn't work for some special cases, though, like segments and sets
 
     /// Returns whether there is a match or not. Fills in `match_data` if applicable.
     fn matches(
@@ -989,7 +991,7 @@ impl<'a> SpecialMatcher<'a> {
             Self::AnchorEnd => matcher.match_end_anchor(),
             Self::AnchorStart => matcher.match_start_anchor(),
             Self::Segment(segment) => {
-                // TODO: Would it be cool to have a similar functionality as Insertable::start_replaceable_adapter
+                // Thought: Would it be cool to have a similar functionality as Insertable::start_replaceable_adapter
                 //  that takes care of this `start`/`end` shenanigans? here it's not a safety issue, merely a panic issue.
                 let start = matcher.cursor();
                 if !helpers::match_encoded_str(&segment.content, matcher, match_data, vt) {
@@ -1259,8 +1261,8 @@ impl<'a> VarTable<'a> {
         let mut idx = idx as usize;
 
         // TODO: these lookups must be in the same order as during datagen. Best way to enforce this?
-        // note: might be worth trying to speed up these lookups by binary searching?
-        // TODO: we can special-case lookup_matcher, lookup_replacer. lookup_matcher does not need
+        // TODO(#3957): might it be worth trying to speed up these lookups by binary searching?
+        // TODO(#3957): we can special-case lookup_matcher, lookup_replacer. lookup_matcher does not need
         //  to check past UnicodeSets, lookup_replacer needs to check the range for Compounds, then skip
         //  quantifiers, segments, unicodesets completely, then continue with segments, function calls,
         //  cursors and backreferences

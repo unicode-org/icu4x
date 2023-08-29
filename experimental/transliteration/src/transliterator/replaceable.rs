@@ -28,7 +28,7 @@
 // quite closely coupled to Transform Rules is `RepMatcher` and its explicit `ante`, `post`, `key`
 // handling.
 
-// TODO: for this whole module, I don't know how panics work together with safety invariants. I'm fairly sure that unexpected panics
+// QUESTION: for this whole module, I don't know how panics work together with safety invariants. I'm fairly sure that unexpected panics
 //  could break some invariants.
 
 use crate::transliterator::MatchData;
@@ -131,20 +131,17 @@ impl<'a> DerefMut for Hide<'a> {
     }
 }
 
-// TODO: do we really want this much unsafe? a lot of the API could be replaced with safe, but
-//  checked String methods.
-
-// TODO: if we loosen the invariant of Replaceable UTF-8 content to only need UTF-8 content in
+// Thought: if we loosen the invariant of Replaceable UTF-8 content to only need UTF-8 content in
 //  the visible range, we would not need to make_contiguous in Insertable, which would avoid
 //  moving around the tail after a non-final function call.
-//  => invariants are loosened, but to avoid make_contiguous our on_drop needs to be smarter
+//  => invariants have been loosened, but to avoid make_contiguous our on_drop needs to be smarter
 //  than right now, because it assumes self.curr == self.end().
 
-// TODO: A transliteration run does not necessarily need cursors. In fact, cursor only exist
+// Thought: A transliteration run does not necessarily need cursors. In fact, cursor only exist
 //  in the context of Transform Rules. We could have a wrapping CursoredReplaceable type
 //  that is specifically for transform rules.
 
-// TODO: Renames? Replaceable => Run, and CursoredRun/RunWithCursor.
+// Thought for above: Renames? Replaceable => Run, and CursoredRun/RunWithCursor.
 
 /// Represents a transliteration run. It is aware of the range of the input that is allowed
 /// to be transliterated, according to the filter.
@@ -211,11 +208,11 @@ impl<'a> Replaceable<'a> {
         &self.as_str()[self.allowed_range()]
     }
 
+    // Thought: rename to run_range()? also any associated mentions of this, the upper bound,
+    //  "modifiable range" etc..
     /// Returns the range of bytes that are currently allowed to be modified.
     ///
     /// This is guaranteed to be a range compatible with the internal text.
-    // TODO: rename to run_range()? also any associated mentions of this, the upper bound,
-    //  "modifiable range" etc..
     pub(crate) fn allowed_range(&self) -> Range<usize> {
         self.freeze_pre_len..self.allowed_upper_bound()
     }
@@ -269,7 +266,7 @@ impl<'a> Replaceable<'a> {
         }
     }
 
-    // TODO: could replace the F generic with a InternalTransliteratorTrait generic
+    // Thought: could replace the F generic with a InternalTransliteratorTrait generic, but this is fine?
     /// Applies `f` to each sub-run as defined by `filter` of the current `Replaceable`'s run.
     pub(crate) fn for_each_run<F>(&mut self, filter: &Filter, mut f: F)
     where
@@ -316,8 +313,6 @@ impl<'a> Replaceable<'a> {
             self.allowed_upper_bound()
         );
         debug_assert!(self.as_str().is_char_boundary(start));
-
-        // TODO: might need to assert start is within the modifiable range
 
         let run_start;
         let run_end;
@@ -391,7 +386,7 @@ impl<'a> Debug for Replaceable<'a> {
     }
 }
 
-// TODO: Maybe this should be renamed as Matchable (also the trait), as we have "SpecialMatchers"
+// Thought: Maybe this should be renamed as Matchable (also the trait), as we have "SpecialMatchers"
 /// Supports safe conversion rule matching over a [`Replaceable`].
 ///
 /// Conversion rule matching consists of three parts:
@@ -592,7 +587,7 @@ impl MatchDirection for Reverse {}
 /// Matching functionality on strings. Matching can be done in forward or reverse directions, see [`MatchDirection`].
 ///
 /// The used indices in method parameters are all compatible with each other.
-// TODO: I don't think this needs to be called *Utf8* matcher, maybe just Matcheable
+// Thought: I don't think this needs to be called *Utf8* matcher, maybe just Matcheable
 
 pub(super) trait Utf8Matcher<D: MatchDirection>: Debug {
     fn cursor(&self) -> usize;
@@ -628,13 +623,13 @@ struct MatchLengths {
     post: usize,
 }
 
-// TODO: write about invariants. they're basically the same as replaceable's
-// TODO about complexity: in the worst case, we need to move the full `end_len` tail for every
+// TODO(#3957) about complexity: in the worst case, we need to move the full `end_len` tail for every
 //  push. A good size_hint avoids this.
 //  one fix could be to preemptively move the tail to the end of the buffer whenever the capacity
 //  changes. Should give us the same benefits as an exponential allocation strategy.
-// TODO: describe what this even is
-// note: implementing this with a Rope/Cord data structure might be interesting.
+
+// TODO(#3957): implementing this with a Rope/Cord data structure might be interesting. Decide if necessary
+
 /// This provides (append-only) replacement APIs for a [`Replaceable`].
 ///
 /// It can only be constructed with a complete match using a [`RepMatcher`].
