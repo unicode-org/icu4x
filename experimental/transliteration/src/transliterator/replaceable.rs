@@ -927,14 +927,7 @@ pub(super) struct InsertableToReplaceableAdapter<'a, 'b, F>
 where
     F: FnMut(usize),
 {
-    // needs to be ManuallyDrop, because cleanup happens in the Drop impl of Insertable.
-    // this would cause issues where the if the `child_for_range()` received malicious offsets,
-    // then the Drop would update the rep's cursor, but the parent Insertable expects
-    // the rep's cursor to be exactly the start of the key match.
-    // TODO: actually, by using insertable.start instead of _rep.cursor, this issue can be avoided.
-    //  are there other issues? otherwise this method can be cleaned up a bit.
-    //  Can we now maybe even have a mutable reference to an insertable? I don't think so.
-    //  and make_contiguous() would be called, which could be bad for performance? I vote to keep ManuallyDrop
+    // this is ManuallyDrop because we don't want the child's cleanup function to run.
     child: ManuallyDrop<Insertable<'a, 'b>>,
     range_start: usize,
     on_drop: F,

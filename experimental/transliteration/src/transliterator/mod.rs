@@ -1219,7 +1219,7 @@ impl<'a> VarTableElement<'a> {
 }
 
 impl<'a> VarTable<'a> {
-    // TODO: these must be the same as during datagen. Find some place to define them *once*
+    // TODO(#3958): these must be the same as during datagen. Find some place to define them *once*
     const BASE: u32 = '\u{F0000}' as u32;
     const MAX_DYNAMIC: u32 = '\u{FFFF0}' as u32;
     const RESERVED_PURE_CURSOR: u32 = '\u{FFFFB}' as u32;
@@ -1244,7 +1244,7 @@ impl<'a> VarTable<'a> {
         let idx = query - Self::BASE;
         let mut idx = idx as usize;
 
-        // TODO: these lookups must be in the same order as during datagen. Best way to enforce this?
+        // QUESTION: these lookups must be in the same order as during datagen. Best way to enforce this?
         // TODO(#3957): might it be worth trying to speed up these lookups by binary searching?
         // TODO(#3957): we can special-case lookup_matcher, lookup_replacer. lookup_matcher does not need
         //  to check past UnicodeSets, lookup_replacer needs to check the range for Compounds, then skip
