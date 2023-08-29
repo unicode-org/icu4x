@@ -1090,6 +1090,8 @@ mod tests {
                 num_function_calls: 1,
                 num_unicode_sets: 1,
                 max_backref_num: 1,
+                max_left_placeholders: 0,
+                max_right_placeholders: 0,
                 ..Default::default()
             };
             let expected_fwd_data = pass1data_from_parts(
@@ -1098,6 +1100,7 @@ mod tests {
                     ("Forward", "Dependency", None),
                     ("Any", "AnotherForwardDependency", None),
                     ("YetAnother", "ForwardDependency", None),
+                    ("Any", "Null", None),
                 ],
                 &["used_both", "used_fwd", "literal1", "literal2"],
                 counts,
@@ -1112,6 +1115,8 @@ mod tests {
                 num_segments: 2,
                 num_function_calls: 3,
                 max_backref_num: 2,
+                max_left_placeholders: 0,
+                max_right_placeholders: 0,
                 ..Default::default()
             };
             let expected_rev_data = pass1data_from_parts(
@@ -1122,6 +1127,7 @@ mod tests {
                     ("Any", "Many", None),
                     ("Any", "Backwardz", None),
                     ("Any", "Deps", None),
+                    ("Any", "Null", None),
                 ],
                 &["used_rev", "literal1", "literal2"],
                 counts,
@@ -1236,6 +1242,7 @@ mod tests {
                     ("Forward", "Dependency", None),
                     ("Any", "AnotherForwardDependency", None),
                     ("YetAnother", "ForwardDependency", None),
+                    ("Any", "Null", None),
                 ],
                 &["used_both", "used_fwd", "literal1", "literal2"],
                 fwd_counts,
@@ -1259,6 +1266,7 @@ mod tests {
                     ("Any", "Many", None),
                     ("Any", "Backwardz", None),
                     ("Any", "Deps", None),
+                    ("Any", "Null", None),
                 ],
                 &["used_both", "used_rev", "literal1", "literal2"],
                 rev_counts,
