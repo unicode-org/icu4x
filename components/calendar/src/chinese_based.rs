@@ -269,11 +269,11 @@ impl YearBounds {
     fn compute<C: ChineseBased + CalendarArithmetic>(date: RataDie) -> Self {
         let prev_solstice = ChineseBasedDateInner::<C>::winter_solstice_on_or_before(date);
         let (new_year, next_solstice) =
-            ChineseBasedDateInner::<C>::new_year_on_or_before_fixed_date(date, Some(prev_solstice));
+            ChineseBasedDateInner::<C>::new_year_on_or_before_fixed_date(date, prev_solstice);
         // Using 400 here since new years can be up to 390 days apart, and we add some padding
         let next_new_year = ChineseBasedDateInner::<C>::new_year_on_or_before_fixed_date(
             new_year + 400,
-            Some(next_solstice),
+            next_solstice,
         )
         .0;
 
@@ -370,23 +370,14 @@ impl<C: ChineseBased + CalendarArithmetic> ChineseBasedDateInner<C> {
         Location::universal_from_standard(moment, C::location(moment.as_rata_die()))
     }
 
-    /// Determines the fixed date of the lunar new year in the sui4 (solar year based on the winter solstice)
-    /// which contains the fixed date passed as an argument.
-    /// This function also returns the local variable `following_solstice` for optimization (see #3743).
-    /// An optional `prior_solstice` field can also be passed in for optimization.
+    /// Determines the fixed date of the lunar new year given the start of its corresponding solar year (歲), which is
+    /// also the winter solstice
     ///
     /// Based on functions from _Calendrical Calculations_ by Reingold & Dershowitz.
     /// Lisp reference code: https://github.com/EdReingold/calendar-code2/blob/main/calendar.l#L5370-L5394
-    pub(crate) fn new_year_in_sui(
-        date: RataDie,
-        prior_solstice: Option<RataDie>,
-    ) -> (RataDie, RataDie) {
-        let prior_solstice = if let Some(prior) = prior_solstice {
-            prior
-        } else {
-            Self::winter_solstice_on_or_before(date)
-        }; // s1
-           // Using 370 here since solstices are ~365 days apart
+    pub(crate) fn new_year_in_sui(prior_solstice: RataDie) -> (RataDie, RataDie) {
+        // s1 is prior_solstice
+        // Using 370 here since solstices are ~365 days apart
         let following_solstice = Self::winter_solstice_on_or_before(prior_solstice + 370); // s2
         let month_after_eleventh = Self::new_moon_on_or_after((prior_solstice + 1).as_moment()); // m12
         let month_after_twelfth =
@@ -437,15 +428,17 @@ impl<C: ChineseBased + CalendarArithmetic> ChineseBasedDateInner<C> {
 
     /// Get the fixed date of the nearest Lunar New Year on or before a given fixed date.
     /// This function also returns the solstice following a given date for optimization (see #3743).
-    /// In some situations, the RataDie for the prior winter solstice can be passed in
+    ///
+    /// To call this function you must precompute the value of the prior solstice, which
+    /// is the result of winter_solstice_on_or_before
     ///
     /// Based on functions from _Calendrical Calculations_ by Reingold & Dershowitz.
     /// Lisp reference code: https://github.com/EdReingold/calendar-code2/blob/main/calendar.l#L5396-L5405
     pub(crate) fn new_year_on_or_before_fixed_date(
         date: RataDie,
-        prior_solstice: Option<RataDie>,
+        prior_solstice: RataDie,
     ) -> (RataDie, RataDie) {
-        let new_year = Self::new_year_in_sui(date, prior_solstice);
+        let new_year = Self::new_year_in_sui(prior_solstice);
         if date >= new_year.0 {
             new_year
         } else {
@@ -453,7 +446,9 @@ impl<C: ChineseBased + CalendarArithmetic> ChineseBasedDateInner<C> {
             // and the solstice has already happened. Thus the relevant solstice
             // for the current lunar year is the previous one, which we calculate by offsetting
             // back by a year.
-            Self::new_year_in_sui(date - 180, None)
+            let date_in_last_sui = date - 180; // This date is in the current lunar year, but the last solar year
+            let prior_solstice = Self::winter_solstice_on_or_before(date_in_last_sui);
+            Self::new_year_in_sui(prior_solstice)
         }
     }
 
@@ -781,8 +776,9 @@ impl<C: ChineseBased + Calendar> CalendarArithmetic for C {
     /// month and the new moon at the beginning of the next month.
     fn month_days(year: i32, month: u8) -> u8 {
         let mid_year = ChineseBasedDateInner::<C>::fixed_mid_year_from_year(year);
+        let prev_solstice = ChineseBasedDateInner::<C>::winter_solstice_on_or_before(mid_year);
         let new_year =
-            ChineseBasedDateInner::<C>::new_year_on_or_before_fixed_date(mid_year, None).0;
+            ChineseBasedDateInner::<C>::new_year_on_or_before_fixed_date(mid_year, prev_solstice).0;
         ChineseBasedDateInner::<C>::days_in_month(month, new_year, None).0
     }
 
