@@ -541,57 +541,56 @@ impl<C: ChineseBased + CalendarArithmetic> ChineseBasedDateInner<C> {
 
         if let Some(data) = data_option {
             // cache fetch successful, getter year is just the regular extended year
-            Self::chinese_based_date_from_cached(date, data, getter_year)
-        } else {
-            let year_bounds = YearBounds::compute::<C>(date);
-            let first_day_of_year = year_bounds.new_year;
-
-            let year_float = libm::floor(
-                1.5 - 1.0 / 12.0 + ((first_day_of_year - C::EPOCH) as f64) / MEAN_TROPICAL_YEAR,
-            );
-            let year_int = i64_to_i32(year_float as i64);
-            debug_assert!(
-                matches!(year_int, I32Result::WithinRange(_)),
-                "Year should be in range of i32"
-            );
-            let year = year_int.saturate();
-
-            let new_moon = Self::new_moon_before((date + 1).as_moment());
-            let month_i64 =
-                libm::round((new_moon - first_day_of_year) as f64 / MEAN_SYNODIC_MONTH) as i64 + 1;
-            debug_assert!(
-                ((u8::MIN as i64)..=(u8::MAX as i64)).contains(&month_i64),
-                "Month should be in range of u8! Value {month_i64} failed for RD {date:?}"
-            );
-            let month = month_i64 as u8;
-            let day_i64 = date - new_moon + 1;
-            debug_assert!(
-                ((u8::MIN as i64)..=(u8::MAX as i64)).contains(&month_i64),
-                "Day should be in range of u8! Value {month_i64} failed for RD {date:?}"
-            );
-            let day = day_i64 as u8;
-            let leap_month = if year_bounds.is_leap() {
-                // This doesn't need to be checked for `None`, since `get_leap_month_from_new_year`
-                // will always return a number greater than or equal to 1, and less than 14.
-                NonZeroU8::new(Self::get_leap_month_from_new_year(first_day_of_year))
-            } else {
-                None
-            };
-            let cache = ChineseBasedCache {
-                new_year: first_day_of_year,
-                next_new_year: year_bounds.next_new_year,
-                leap_month,
-            };
-
-            // This can use `new_unchecked` because this function is only ever called from functions which
-            // generate the year, month, and day; therefore, there should never be a situation where
-            // creating this ArithmeticDate would fail, since the same algorithms used to generate the ymd
-            // are also used to check for valid ymd.
-            ChineseBasedDateInner(
-                ArithmeticDate::new_unchecked(year, month, day),
-                ChineseBasedYearInfo::Cache(cache),
-            )
+            return Self::chinese_based_date_from_cached(date, data, getter_year);
         }
+        let year_bounds = YearBounds::compute::<C>(date);
+        let first_day_of_year = year_bounds.new_year;
+
+        let year_float = libm::floor(
+            1.5 - 1.0 / 12.0 + ((first_day_of_year - C::EPOCH) as f64) / MEAN_TROPICAL_YEAR,
+        );
+        let year_int = i64_to_i32(year_float as i64);
+        debug_assert!(
+            matches!(year_int, I32Result::WithinRange(_)),
+            "Year should be in range of i32"
+        );
+        let year = year_int.saturate();
+
+        let new_moon = Self::new_moon_before((date + 1).as_moment());
+        let month_i64 =
+            libm::round((new_moon - first_day_of_year) as f64 / MEAN_SYNODIC_MONTH) as i64 + 1;
+        debug_assert!(
+            ((u8::MIN as i64)..=(u8::MAX as i64)).contains(&month_i64),
+            "Month should be in range of u8! Value {month_i64} failed for RD {date:?}"
+        );
+        let month = month_i64 as u8;
+        let day_i64 = date - new_moon + 1;
+        debug_assert!(
+            ((u8::MIN as i64)..=(u8::MAX as i64)).contains(&month_i64),
+            "Day should be in range of u8! Value {month_i64} failed for RD {date:?}"
+        );
+        let day = day_i64 as u8;
+        let leap_month = if year_bounds.is_leap() {
+            // This doesn't need to be checked for `None`, since `get_leap_month_from_new_year`
+            // will always return a number greater than or equal to 1, and less than 14.
+            NonZeroU8::new(Self::get_leap_month_from_new_year(first_day_of_year))
+        } else {
+            None
+        };
+        let cache = ChineseBasedCache {
+            new_year: first_day_of_year,
+            next_new_year: year_bounds.next_new_year,
+            leap_month,
+        };
+
+        // This can use `new_unchecked` because this function is only ever called from functions which
+        // generate the year, month, and day; therefore, there should never be a situation where
+        // creating this ArithmeticDate would fail, since the same algorithms used to generate the ymd
+        // are also used to check for valid ymd.
+        ChineseBasedDateInner(
+            ArithmeticDate::new_unchecked(year, month, day),
+            ChineseBasedYearInfo::Cache(cache),
+        )
     }
 
     /// Get a RataDie from a ChineseBasedDateInner
