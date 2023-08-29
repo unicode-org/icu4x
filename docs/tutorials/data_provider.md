@@ -368,7 +368,7 @@ HelloWorldFormatter::try_new_unstable(
 
 // ...which loads data from ru.
 assert_eq!(
-    *provider.resolved_locale.read().unwrap(),
+    *provider.resolved_locale.read().expect("poison"),
     Some(locale!("ru").into()),
 );
 ```
