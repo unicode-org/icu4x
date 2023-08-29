@@ -16,14 +16,19 @@
 //! ## Rust script
 //!
 //! ```no_run
-//! use icu_datagen::prelude::*;
 //! use icu_datagen::blob_exporter::*;
+//! use icu_datagen::prelude::*;
 //! use std::fs::File;
 //!
 //! DatagenDriver::new()
-//!       .with_keys([icu::list::provider::AndListV1Marker::KEY])
-//!       .export(&DatagenProvider::latest_tested(), BlobExporter::new_with_sink(Box::new(File::create("data.postcard").unwrap())))
-//!       .unwrap();
+//!     .with_keys([icu::list::provider::AndListV1Marker::KEY])
+//!     .export(
+//!         &DatagenProvider::latest_tested(),
+//!         BlobExporter::new_with_sink(Box::new(
+//!             File::create("data.postcard").unwrap(),
+//!         )),
+//!     )
+//!     .unwrap();
 //! ```
 //!
 //! ## Command line
@@ -349,7 +354,6 @@ pub fn keys_from_file<P: AsRef<Path>>(path: P) -> std::io::Result<Vec<DataKey>> 
 /// for which the compiler cannot remove unused data. Using this function on a binary that only
 /// uses compiled data (through the `compiled_data` feature or manual baked data) will not return
 /// any keys, as the keys only exist in the type system.
-///
 //  Supports the hello world key
 /// # Example
 ///

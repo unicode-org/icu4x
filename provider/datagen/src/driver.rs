@@ -21,13 +21,16 @@ use writeable::Writeable;
 /// # Examples
 ///
 /// ```no_run
-/// use icu_datagen::prelude::*;
 /// use icu_datagen::blob_exporter::*;
+/// use icu_datagen::prelude::*;
 ///
 /// DatagenDriver::new()
-///       .with_keys([icu::list::provider::AndListV1Marker::KEY])
-///       .export(&DatagenProvider::latest_tested(), BlobExporter::new_with_sink(Box::new(&mut Vec::new())))
-///       .unwrap();
+///     .with_keys([icu::list::provider::AndListV1Marker::KEY])
+///     .export(
+///         &DatagenProvider::latest_tested(),
+///         BlobExporter::new_with_sink(Box::new(&mut Vec::new())),
+///     )
+///     .unwrap();
 /// ```
 #[derive(Debug, Clone)]
 pub struct DatagenDriver {
@@ -378,7 +381,9 @@ impl DatagenDriver {
                 let Some(collation) = locale
                     .get_unicode_ext(&key!("co"))
                     .and_then(|co| co.as_single_subtag().copied())
-                else { return true };
+                else {
+                    return true;
+                };
                 self.collations.contains(collation.as_str())
                     || if collation.starts_with("search") {
                         self.collations.contains("search*")

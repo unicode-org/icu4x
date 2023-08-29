@@ -15,14 +15,19 @@ Also see our [datagen tutorial](https://github.com/unicode-org/icu4x/blob/main/d
 ### Rust script
 
 ```rust
-use icu_datagen::prelude::*;
 use icu_datagen::blob_exporter::*;
+use icu_datagen::prelude::*;
 use std::fs::File;
 
 DatagenDriver::new()
-      .with_keys([icu::list::provider::AndListV1Marker::KEY])
-      .export(&DatagenProvider::latest_tested(), BlobExporter::new_with_sink(Box::new(File::create("data.postcard").unwrap())))
-      .unwrap();
+    .with_keys([icu::list::provider::AndListV1Marker::KEY])
+    .export(
+        &DatagenProvider::latest_tested(),
+        BlobExporter::new_with_sink(Box::new(
+            File::create("data.postcard").unwrap(),
+        )),
+    )
+    .unwrap();
 ```
 
 ### Command line

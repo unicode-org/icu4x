@@ -9,20 +9,21 @@
 //! # Examples
 //!
 //! ```
-//! use icu_datagen::prelude::*;
 //! use icu_datagen::baked_exporter::*;
+//! use icu_datagen::prelude::*;
 //!
 //! let demo_path = std::env::temp_dir().join("icu4x_baked_demo");
 //! # let _ = std::fs::remove_dir_all(&demo_path);
 //!
 //! // Set up the exporter
-//! let mut exporter = BakedExporter::new(demo_path.clone(), Default::default()).unwrap();
+//! let mut exporter =
+//!     BakedExporter::new(demo_path.clone(), Default::default()).unwrap();
 //!
 //! // Export something
 //! DatagenDriver::new()
-//!   .with_keys([icu_provider::hello_world::HelloWorldV1Marker::KEY])
-//!   .export(&DatagenProvider::latest_tested(), exporter)
-//!   .unwrap();
+//!     .with_keys([icu_provider::hello_world::HelloWorldV1Marker::KEY])
+//!     .export(&DatagenProvider::latest_tested(), exporter)
+//!     .unwrap();
 //! #
 //! # let _ = std::fs::remove_dir_all(&demo_path);
 //! ```
