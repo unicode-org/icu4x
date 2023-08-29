@@ -571,7 +571,7 @@ pub(super) struct Forward;
 /// A reverse match.
 ///
 /// For example, reverse-matching `"ious"` on the input `"previous|after"`, with the cursor at the `'|'`,
-/// would return a match, forward-matching `"prev"` would not.
+/// would return a match, reverse-matching `"prev"` would not.
 pub(super) struct Reverse;
 /// The direction a match can be applied. Used in [`Utf8Matcher`].
 ///
