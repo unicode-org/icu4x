@@ -266,7 +266,7 @@ impl Transliterator {
         )
     }
 
-    #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, try_new())]
+    #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Transliterator::try_new)]
     pub fn try_new_unstable<P>(
         locale: Locale,
         provider: &P,
@@ -288,7 +288,7 @@ impl Transliterator {
         )
     }
 
-    #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, try_new_with_override())]
+    #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Transliterator::try_new_with_override)]
     pub fn try_new_with_override_unstable<P, F>(
         locale: Locale,
         lookup: F,

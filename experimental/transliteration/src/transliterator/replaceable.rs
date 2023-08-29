@@ -32,12 +32,13 @@
 //  could break some invariants.
 
 use super::Filter;
+use alloc::string::String;
 use alloc::vec::Vec;
 use core::fmt::{Debug, Formatter};
+use core::mem::ManuallyDrop;
 use core::ops::Range;
+use core::ops::{Deref, DerefMut};
 use core::str;
-use std::mem::ManuallyDrop;
-use std::ops::{Deref, DerefMut};
 
 /// The backing buffer for the API provided by this module.
 ///

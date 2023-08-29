@@ -37,7 +37,7 @@ fn test_file(t: Transliterator, path: PathBuf) {
     let data = std::fs::read_to_string(&path).unwrap();
     let lines = data.lines().filter(|x| !x.starts_with('#'));
     let test_cases = lines
-        .map(|l|l.split_once('\t').unwrap())
+        .map(|l| l.split_once('\t').unwrap())
         .collect::<Vec<_>>();
 
     eprintln!(
