@@ -343,7 +343,7 @@ where
         // one key, this is a useful distinction for most other formatters.
         if key == HelloWorldV1Marker::KEY {
             let mut w = self.resolved_locale.write().unwrap();
-            w.replace(any_res.metadata.locale.take());
+            *w = any_res.metadata.locale.take();
         }
         Ok(any_res)
     }
