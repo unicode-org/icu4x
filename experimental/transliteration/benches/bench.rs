@@ -38,6 +38,7 @@ fn bench_data_from_sources(locale_str: &str, source: &str) -> Vec<BenchDataConte
         .collect()
 }
 
+// TODO(#3957): Better bench inputs
 fn bench_data() -> Vec<BenchDataContent> {
     let mut bench_data = Vec::new();
     bench_data.extend(bench_data_from_sources(
