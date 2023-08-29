@@ -43,7 +43,7 @@ type Filter<'a> = CodePointInversionList<'a>;
 
 // TODO: actually, we could have a CustomTransliterator that instead of returning a String, returns a Writeable.
 // We would then writeable.write_to(<insertable as fmt::Write>) (and add the corresponding impl). Could avoid
-// allocations in some cases.
+// allocations in some cases. The problem 
 
 /// A type that supports transliteration. Used for overrides in [`Transliterator`] - see
 /// [`Transliterator::try_new_with_override`].
@@ -188,9 +188,6 @@ pub struct Transliterator {
     transliterator: DataPayload<TransliteratorRulesV1Marker>,
     env: Env,
 }
-
-// TODO: Think about non-internal signatures returning a Writeable instead that could be written
-//  to Insertable, perhaps? or Replaceable?
 
 impl Transliterator {
     #[cfg(feature = "compiled_data")]
@@ -359,7 +356,7 @@ impl Transliterator {
         F: Fn(&Locale) -> Option<Box<dyn CustomTransliterator>>,
     {
         if let Some(special) = id.strip_prefix("x-") {
-            // TODO: add more
+            // TODO(#3909, #3910): add more
             match special {
                 "any-nfc" => Ok(InternalTransliterator::Composing(
                     ComposingTransliterator::try_nfc(normalizer_provider)?,
@@ -375,11 +372,6 @@ impl Transliterator {
                 )),
                 "any-null" => Ok(InternalTransliterator::Null),
                 "any-remove" => Ok(InternalTransliterator::Remove),
-                _ => {
-                    // TODO: remove
-                    // eprintln!("unavailable transliterator: {}", id);
-                    Ok(InternalTransliterator::Null)
-                }
                 s => Err(DataError::custom("unavailable transliterator")
                     .with_debug_context(s)
                     .into()),
@@ -408,9 +400,11 @@ impl Transliterator {
         }
     }
 
+    /// Transliterates `input` and returns its transliteration.
     pub fn transliterate(&self, input: String) -> String {
+        // TODO: Seems too much work for the benefits, but maybe have a Cow buffer instead? Insertable would only actually to_owned if the replaced bytes differ from the ones already there
         let mut buffer = TransliteratorBuffer::from_string(input);
-        let rep = unsafe { Replaceable::new(&mut buffer) };
+        let rep = Replaceable::new(&mut buffer);
         self.transliterator.get().transliterate(rep, &self.env);
         buffer.into_string()
     }
@@ -421,14 +415,11 @@ impl<'a> RuleBasedTransliterator<'a> {
     ///  1. Split the input modifiable range of the Replaceable according into runs according to self.filter
     ///  2. Transliterate each run in sequence
     ///      i. Transliterate the first id_group, then the first rule_group, then the second id_group, etc.
-    // muster-child signature of internal transliteration
     fn transliterate(&self, mut rep: Replaceable, env: &Env) {
         // assumes the cursor is at the right position.
 
         debug_assert_eq!(self.id_group_list.len(), self.rule_group_list.len());
         debug_assert!(rep.allowed_range().contains(&rep.cursor()));
-
-        // TODO: https://unicode-org.atlassian.net/jira/software/c/projects/ICU/issues/ICU-22469
 
         rep.for_each_run(&self.filter, |run| {
             // eprintln!("got RBT filtered_run: {run:?}");
@@ -440,6 +431,7 @@ impl<'a> RuleBasedTransliterator<'a> {
     /// Transliteration of a single run, i.e., without needing to look at the filter.
     fn transliterate_run(&self, rep: &mut Replaceable, env: &Env) {
         // assumes the cursor is at the right position.
+        // note that there is no such thing as an empty run.
         debug_assert!(
             rep.allowed_range().contains(&rep.cursor()),
             "cursor {} is out of bounds for replaceable {rep:?}",
@@ -504,7 +496,7 @@ impl<'a> RuleGroup<'a> {
         //  I would say yes: https://util.unicode.org/UnicodeJsps/transform.jsp?a=%23+%3A%3A+%5Ba%5D%3B%0D%0A%0D%0Ad+%7B+x%3F+%3E+match+%3B&b=db
         //  So add to gdoc.
         //  Actually, this is what I'm talking about: https://util.unicode.org/UnicodeJsps/transform.jsp?a=%23+%3A%3A+%5Ba%5D%3B%0D%0A%0D%0Ad+%7B+x%3F+%3E+match+%3B&b=d
-        //  no empty match at the end.
+        //  no empty match at the end. This is what we're currently doing.
         'main: while !rep.is_finished() {
             // eprintln!("ongoing RuleGroup transliteration:\n{rep:?}");
             for rule in self.rules.iter() {
@@ -528,7 +520,7 @@ impl<'a> RuleGroup<'a> {
 
 impl<'a> Rule<'a> {
     /// Applies this rule's replacement using the given [`MatchData`]. Updates the cursor of the
-    /// given [`Replaceable`].
+    /// current run.
     fn apply(&self, mut dest: Insertable, data: MatchData, vt: &VarTable, env: &Env) {
         // note: this could be precomputed ignoring segments and function calls.
         // A `rule.used_segments` ZeroVec<u16> could be added at compile time,
@@ -544,7 +536,8 @@ impl<'a> Rule<'a> {
     }
 
     /// Returns `None` if there is no match. If there is a match, returns the associated
-    /// [`MatchData`].
+    /// [`MatchData`] and [`RepMatcher`].
+    // TODO: RepMatcher<true> could be "FinishedRepMatcher"? but we can still match post.. 
     fn matches<'r1, 'r2>(
         &self,
         mut matcher: RepMatcher<'r1, 'r2, false>,
@@ -569,11 +562,9 @@ impl<'a> Rule<'a> {
         Some((match_data, matcher))
     }
 
-    /// Returns `None` if the ante context does not match. If there is a match, returns the length
-    /// of the match. Fills in `match_data` if applicable.
+    /// Returns whether the ante context matches or not. Fills in `match_data` if applicable.
     ///
-    /// This must be a right-aligned match, i.e., the input must _end_ with a substring that is a
-    /// match for this rule's ante context. We also call right-aligned matches `rev`erse matches.
+    /// This uses reverse matching.
     fn ante_matches(
         &self,
         matcher: &mut impl Utf8Matcher<Reverse>,
@@ -581,17 +572,15 @@ impl<'a> Rule<'a> {
         vt: &VarTable,
     ) -> bool {
         if self.ante.is_empty() {
-            // empty queries always match
+            // fast path for empty queries, which always match
             return true;
         }
         helpers::rev_match_encoded_str(&self.ante, matcher, match_data, vt)
     }
 
-    /// Returns `None` if the post context does not match. If there is a match, returns the length
-    /// of the match. Fills in `match_data` if applicable.
+    /// Returns whether the post context matches or not. Fills in `match_data` if applicable.
     ///
-    /// This must be a left-aligned match, i.e., the input must _start_ with a substring that is a
-    /// match for this rule's post context.
+    /// This uses forward matching.
     fn post_matches(
         &self,
         matcher: &mut impl Utf8Matcher<Forward>,
@@ -599,17 +588,15 @@ impl<'a> Rule<'a> {
         vt: &VarTable,
     ) -> bool {
         if self.post.is_empty() {
-            // empty queries always match
+            // fast path for empty queries, which always match
             return true;
         }
         helpers::match_encoded_str(&self.post, matcher, match_data, vt)
     }
 
-    /// Returns `None` if the key does not match. If there is a match, returns the length of the
-    /// match. Fills in `match_data` if applicable.
+    /// Returns whether the post context matches or not. Fills in `match_data` if applicable.
     ///
-    /// This must be a left-aligned match, i.e., the input must _start_ with a substring that is a
-    /// match for this rule's key.
+    /// This uses forward matching.
     fn key_matches(
         &self,
         matcher: &mut impl Utf8Matcher<Forward>,
@@ -617,7 +604,7 @@ impl<'a> Rule<'a> {
         vt: &VarTable,
     ) -> bool {
         if self.key.is_empty() {
-            // empty queries always match
+            // fast path for empty queries, which always match
             return true;
         }
         helpers::match_encoded_str(&self.key, matcher, match_data, vt)
@@ -686,8 +673,7 @@ mod helpers {
         size
     }
 
-    /// Applies the replacements from the encoded `replacement` to `buf`. Returns the offset of the
-    /// cursor after the replacement, if a non-default one exists.
+    /// Applies the replacements from the encoded `replacement` to `dest`, including non-default cursor updates.
     pub(super) fn replace_encoded_str(
         replacement: &str,
         dest: &mut Insertable,
@@ -727,8 +713,7 @@ mod helpers {
         }
     }
 
-    /// Tries to match the encoded `query` on `input`. Returns the length of the match, if there is
-    /// one. Fills in `match_data` if applicable.
+    /// Tries to match the encoded `query` on `matcher`. Fills in `match_data` if applicable.
     pub(super) fn match_encoded_str(
         query: &str,
         matcher: &mut impl Utf8Matcher<Forward>,
@@ -779,8 +764,7 @@ mod helpers {
         true
     }
 
-    /// Tries to match the encoded `query` on `input` from the right. Returns the length of the
-    /// match, if there is one. Fills in `match_data` if applicable.
+    /// Tries to match the encoded `query` on `matcher` from the right. Fills in `match_data` if applicable.
     pub(super) fn rev_match_encoded_str(
         query: &str,
         matcher: &mut impl Utf8Matcher<Reverse>,
@@ -881,8 +865,7 @@ impl<'a> SpecialMatcher<'a> {
     // TODO: a lot of duplicated code in matches and rev_matches. deduplicate.
     //  maybe by being generic over Input/RevInput? doesn't work for some special cases, though
 
-    /// Returns `None` if the input does not match. If there is a match, returns the length of the
-    /// match.
+    /// Returns whether there is a match or not. Fills in `match_data` if applicable.
     fn matches(
         &self,
         matcher: &mut impl Utf8Matcher<Forward>,
@@ -990,8 +973,7 @@ impl<'a> SpecialMatcher<'a> {
         }
     }
 
-    /// Returns `None` if the input does not match from the right. If there is a match, returns the
-    /// length of the match.
+    /// Returns whether there is a match or not. Fills in `match_data` if applicable.
     fn rev_matches(
         &self,
         matcher: &mut impl Utf8Matcher<Reverse>,
@@ -1110,8 +1092,7 @@ impl<'a> SpecialReplacer<'a> {
         }
     }
 
-    /// Applies the replacement from this replacer to `buf`. Returns the offset of the cursor after
-    /// the replacement, if a non-default one exists.
+    /// Applies the replacement from this replacer to `dest`. Also applies any updates to the cursor.
     fn replace(&self, dest: &mut Insertable, data: &MatchData, vt: &VarTable, env: &Env) {
         match self {
             Self::Compound(replacer) => helpers::replace_encoded_str(replacer, dest, data, vt, env),
@@ -1223,6 +1204,10 @@ impl<'a> VarTable<'a> {
 
         // TODO: these lookups must be in the same order as during datagen. Best way to enforce this?
         // note: might be worth trying to speed up these lookups by binary searching?
+        // TODO: we can special-case lookup_matcher, lookup_replacer. lookup_matcher does not need
+        //  to check past UnicodeSets, lookup_replacer needs to check the range for Compounds, then skip
+        //  quantifiers, segments, unicodesets completely, then continue with segments, function calls,
+        //  cursors and backreferences
         let mut next_base = self.compounds.len();
         if idx < next_base {
             return Some(VarTableElement::Compound(&self.compounds[idx]));
