@@ -332,34 +332,35 @@ pub struct ResolvedLocaleProvider<P> {
     resolved_locale: RwLock<Option<DataLocale>>,
 }
 
-impl<P> AnyProvider for ResolvedLocaleProvider<P>
+impl<M, P> DataProvider<M> for ResolvedLocaleProvider<P>
 where
-    P: AnyProvider
+    M: KeyedDataMarker,
+    P: DataProvider<M>
 {
-    fn load_any(&self, key: DataKey, req: DataRequest) -> Result<AnyResponse, DataError> {
-        let mut any_res = self.inner.load_any(key, req)?;
+    fn load(&self, req: DataRequest) -> Result<DataResponse<M>, DataError> {
+        let mut res = self.inner.load(req)?;
         // Whichever locale gets loaded for `HelloWorldV1Marker::KEY` will be the one
         // we consider the "resolved locale". Although `HelloWorldFormatter` only loads
         // one key, this is a useful distinction for most other formatters.
-        if key == HelloWorldV1Marker::KEY {
+        if M::KEY == HelloWorldV1Marker::KEY {
             let mut w = self.resolved_locale.write().unwrap();
-            *w = any_res.metadata.locale.take();
+            *w = res.metadata.locale.take();
         }
-        Ok(any_res)
+        Ok(res)
     }
 }
 
 // Set up a HelloWorldProvider with fallback
 let provider = ResolvedLocaleProvider {
     inner: LocaleFallbackProvider::new_with_fallbacker(
-        HelloWorldProvider.as_any_provider(),
+        HelloWorldProvider,
         LocaleFallbacker::try_new_unstable(&icu_testdata::unstable()).unwrap(),
     ),
     resolved_locale: Default::default(),
 };
 
 // Request data for ru-RU...
-HelloWorldFormatter::try_new_with_any_provider(
+HelloWorldFormatter::try_new_unstable(
     &provider,
     &locale!("ru-RU").into(),
 )
