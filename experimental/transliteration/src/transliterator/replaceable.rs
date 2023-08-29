@@ -34,7 +34,7 @@
 use super::Filter;
 use alloc::string::String;
 use alloc::vec::Vec;
-use core::fmt::{Debug, Formatter};
+use core::fmt::{Debug, Formatter, Write};
 use core::mem::ManuallyDrop;
 use core::ops::Range;
 use core::ops::{Deref, DerefMut};
@@ -427,6 +427,10 @@ impl<'a, 'b> RepMatcher<'a, 'b, true> {
 
 // we can only finish matching the key once
 impl<'a, 'b> RepMatcher<'a, 'b, false> {
+    pub(super) fn finish_match(self) -> Insertable<'a, 'b> {
+        Insertable::from_matcher(self.finish_key())
+    }
+
     pub(super) fn finish_key(self) -> RepMatcher<'a, 'b, true> {
         RepMatcher {
             rep: self.rep,
@@ -906,6 +910,13 @@ impl<'a, 'b> Insertable<'a, 'b> {
             range_start,
             on_drop,
         }
+    }
+}
+
+impl<'a, 'b> Write for Insertable<'a, 'b> {
+    fn write_str(&mut self, s: &str) -> core::fmt::Result {
+        self.push_str(s);
+        Ok(())
     }
 }
 
