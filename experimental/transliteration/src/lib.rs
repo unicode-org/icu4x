@@ -7,6 +7,8 @@
 //! This module is published as its own crate ([`icu_transliteration`](https://docs.rs/icu_transliteration/latest/icu_transliteration/))
 //! and as part of the [`icu`](https://docs.rs/icu/latest/icu/) crate. See the latter for more details on the ICU4X project.
 //!
+//! See [`Transliterator`].
+//!
 //! <div class="stab unstable">
 //! 🚧 This code is experimental; it may change at any time, in breaking or non-breaking ways,
 //! including in SemVer minor releases. It can be enabled with the "experimental" Cargo feature
