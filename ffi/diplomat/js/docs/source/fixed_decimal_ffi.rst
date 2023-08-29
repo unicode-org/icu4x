@@ -40,7 +40,7 @@
 
         See the `Rust documentation for try_from_f64 <https://docs.rs/fixed_decimal/latest/fixed_decimal/struct.FixedDecimal.html#method.try_from_f64>`__ for more information.
 
-        See the `Rust documentation for DoublePrecision <https://docs.rs/fixed_decimal/latest/fixed_decimal/enum.DoublePrecision.html>`__ for more information.
+        See the `Rust documentation for FloatPrecision <https://docs.rs/fixed_decimal/latest/fixed_decimal/enum.FloatPrecision.html>`__ for more information.
 
 
     .. js:function:: create_from_f64_with_lower_magnitude(f, magnitude)
@@ -49,7 +49,7 @@
 
         See the `Rust documentation for try_from_f64 <https://docs.rs/fixed_decimal/latest/fixed_decimal/struct.FixedDecimal.html#method.try_from_f64>`__ for more information.
 
-        See the `Rust documentation for DoublePrecision <https://docs.rs/fixed_decimal/latest/fixed_decimal/enum.DoublePrecision.html>`__ for more information.
+        See the `Rust documentation for FloatPrecision <https://docs.rs/fixed_decimal/latest/fixed_decimal/enum.FloatPrecision.html>`__ for more information.
 
 
     .. js:function:: create_from_f64_with_significant_digits(f, digits)
@@ -58,7 +58,7 @@
 
         See the `Rust documentation for try_from_f64 <https://docs.rs/fixed_decimal/latest/fixed_decimal/struct.FixedDecimal.html#method.try_from_f64>`__ for more information.
 
-        See the `Rust documentation for DoublePrecision <https://docs.rs/fixed_decimal/latest/fixed_decimal/enum.DoublePrecision.html>`__ for more information.
+        See the `Rust documentation for FloatPrecision <https://docs.rs/fixed_decimal/latest/fixed_decimal/enum.FloatPrecision.html>`__ for more information.
 
 
     .. js:function:: create_from_f64_with_floating_precision(f)
@@ -67,7 +67,7 @@
 
         See the `Rust documentation for try_from_f64 <https://docs.rs/fixed_decimal/latest/fixed_decimal/struct.FixedDecimal.html#method.try_from_f64>`__ for more information.
 
-        See the `Rust documentation for DoublePrecision <https://docs.rs/fixed_decimal/latest/fixed_decimal/enum.DoublePrecision.html>`__ for more information.
+        See the `Rust documentation for FloatPrecision <https://docs.rs/fixed_decimal/latest/fixed_decimal/enum.FloatPrecision.html>`__ for more information.
 
 
     .. js:function:: create_from_string(v)
