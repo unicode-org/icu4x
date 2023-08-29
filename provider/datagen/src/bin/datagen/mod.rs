@@ -87,7 +87,7 @@ fn main() -> eyre::Result<()> {
         config::KeyInclude::ForBinary(path) => driver.with_keys(icu_datagen::keys_from_bin(path)?),
     };
     driver = driver.with_fallback_mode(config.fallback);
-    driver = driver.with_additional_collations(config.collations);
+    driver = driver.with_additional_collations(config.additional_collations);
     driver = match config.locales {
         config::LocaleInclude::All => driver.with_all_locales(),
         config::LocaleInclude::None => driver.with_locales([]),

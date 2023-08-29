@@ -71,12 +71,10 @@ impl CollationTable {
 #[command(name = "icu4x-datagen")]
 #[command(author = "The ICU4X Project Developers", version = option_env!("CARGO_PKG_VERSION"))]
 #[command(about = format!("Learn more at: https://docs.rs/icu_datagen/{}", option_env!("CARGO_PKG_VERSION").unwrap_or("")), long_about = None)]
-#[command(group(
-            ArgGroup::new("key_mode")
-                .required(true)
-                .args(["keys", "key_file", "keys_for_bin", "all_keys", "config"]),
-        ))]
 pub struct Cli {
+    #[arg(help = "Load a JSON config. All options other than --verbose are ignored.")]
+    config: Option<PathBuf>,
+
     #[arg(short, long)]
     #[arg(help = "Requests verbose output")]
     pub verbose: bool,
@@ -232,10 +230,6 @@ pub struct Cli {
     )]
     use_separate_crates: bool,
 
-    #[arg(long)]
-    #[arg(help = "Load a TOML config")]
-    config: Option<PathBuf>,
-
     // TODO(#2856): Change the default to Auto in 2.0
     #[arg(short, long, value_enum, default_value_t = Fallback::Hybrid)]
     fallback: Fallback,
@@ -312,7 +306,7 @@ impl Cli {
                     CollationHanDatabase::Unihan => config::CollationHanDatabase::Unihan,
                     CollationHanDatabase::Implicit => config::CollationHanDatabase::Implicit,
                 },
-                collations: self
+                additional_collations: self
                     .include_collations
                     .iter()
                     .map(|c| c.to_datagen_value().to_owned())
@@ -351,7 +345,7 @@ impl Cli {
                 ),
             }
         } else if let Some(key_file_path) = &self.key_file {
-            log::warn!("The --key-file argument is deprecated. Use --options with a JSON file.");
+            log::warn!("The --key-file argument is deprecated. Use a config.json.");
             #[allow(deprecated)]
             config::KeyInclude::Explicit(
                 icu_datagen::keys_from_bin(key_file_path)
@@ -362,7 +356,7 @@ impl Cli {
         } else if let Some(bin_path) = &self.keys_for_bin {
             config::KeyInclude::ForBinary(bin_path.clone())
         } else {
-            unreachable!("Argument group");
+            eyre::bail!("Without a config, --keys or --keys-from-bin are required.")
         })
     }
 

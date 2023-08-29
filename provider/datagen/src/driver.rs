@@ -38,7 +38,7 @@ pub struct DatagenDriver {
     // `None` means all
     locales: Option<HashSet<LanguageIdentifier>>,
     fallback: FallbackMode,
-    collations: HashSet<String>,
+    additional_collations: HashSet<String>,
     segmenter_models: Vec<String>,
 }
 
@@ -50,7 +50,7 @@ impl DatagenDriver {
             keys: Default::default(),
             locales: Default::default(),
             fallback: Default::default(),
-            collations: Default::default(),
+            additional_collations: Default::default(),
             segmenter_models: Default::default(),
         }
     }
@@ -95,9 +95,12 @@ impl DatagenDriver {
     /// are excluded. This method can be used to reennable them.
     ///
     /// The special string `"search*"` causes all search collation tables to be included.
-    pub fn with_additional_collations(self, collations: impl IntoIterator<Item = String>) -> Self {
+    pub fn with_additional_collations(
+        self,
+        additional_collations: impl IntoIterator<Item = String>,
+    ) -> Self {
         Self {
-            collations: collations.into_iter().collect(),
+            additional_collations: additional_collations.into_iter().collect(),
             ..self
         }
     }
@@ -384,9 +387,9 @@ impl DatagenDriver {
                 else {
                     return true;
                 };
-                self.collations.contains(collation.as_str())
+                self.additional_collations.contains(collation.as_str())
                     || if collation.starts_with("search") {
-                        self.collations.contains("search*")
+                        self.additional_collations.contains("search*")
                     } else {
                         !["big5han", "gb2312"].contains(&collation.as_str())
                     }
