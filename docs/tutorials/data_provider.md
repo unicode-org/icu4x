@@ -343,7 +343,7 @@ where
         // we consider the "resolved locale". Although `HelloWorldFormatter` only loads
         // one key, this is a useful distinction for most other formatters.
         if M::KEY == HelloWorldV1Marker::KEY {
-            let mut w = self.resolved_locale.write().unwrap();
+            let mut w = self.resolved_locale.write().expect("poison");
             *w = res.metadata.locale.take();
         }
         Ok(res)
