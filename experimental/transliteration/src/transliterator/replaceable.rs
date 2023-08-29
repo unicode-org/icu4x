@@ -274,9 +274,6 @@ impl<'a> Replaceable<'a> {
     {
         // sub-runs must be part of *self*'s run, so we can only start in our modifiable range.
         let mut start = self.freeze_pre_len;
-        // TODO: add to gdoc that this behavior is the same as ICU: transliterations do not happen
-        //  when *nothing* in the input matches the filter. this is true even if there are
-        //  empty rule matchers (eg `d { > repl`).
         // SAFETY: start is always the result of a function returning valid UTF-8 indices
         while let Some(mut run) = unsafe { self.next_filtered_run(start, filter) } {
             f(&mut run);
