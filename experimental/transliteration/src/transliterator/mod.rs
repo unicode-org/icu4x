@@ -188,7 +188,7 @@ pub struct Transliterator {
 }
 
 impl Transliterator {
-    /// Construct a [`Transliterator`] from the given `Locale`.
+    /// Construct a [`Transliterator`] from the given [`Locale`].
     ///
     /// The locale must be a BCP-47 transform ID, i.e., `"und-Latn-t-und-Cyrl"`.
     ///
@@ -214,7 +214,7 @@ impl Transliterator {
         )
     }
 
-    /// Construct a [`Transliterator`] from the given `Locale` using overrides provided
+    /// Construct a [`Transliterator`] from the given [`Locale`] using overrides provided
     /// by `lookup`.
     ///
     /// This allows clients to override the nested transliterators used by this transliterator.
