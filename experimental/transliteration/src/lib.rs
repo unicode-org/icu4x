@@ -35,6 +35,7 @@ extern crate core;
 pub mod provider;
 
 mod error;
+#[allow(clippy::indexing_slicing, clippy::unwrap_used)] // TODO(#3958): Remove.
 mod transliterator;
 
 pub use error::TransliteratorError;

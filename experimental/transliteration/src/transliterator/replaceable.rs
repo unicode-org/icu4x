@@ -31,15 +31,13 @@
 // QUESTION: for this whole module, I don't know how panics work together with safety invariants. I'm fairly sure that unexpected panics
 //  could break some invariants.
 
-use crate::transliterator::MatchData;
+use super::Filter;
 use alloc::vec::Vec;
 use core::fmt::{Debug, Formatter};
 use core::ops::Range;
 use core::str;
 use std::mem::ManuallyDrop;
 use std::ops::{Deref, DerefMut};
-
-use super::Filter;
 
 /// The backing buffer for the API provided by this module.
 ///

@@ -1,36 +1,27 @@
 // This file is part of ICU4X. For terms of use, please see the file
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
-
+#[allow(clippy::indexing_slicing, clippy::unwrap_used)] // TODO(#3958): Remove.
 mod replaceable;
 
-use core::ops::Range;
-
+use crate::provider::{FunctionCall, Rule, RuleULE, SimpleId, VarTable};
 use crate::provider::{RuleBasedTransliterator, Segment, TransliteratorRulesV1Marker};
 use crate::TransliteratorError;
-use alloc::borrow::Cow;
 use alloc::boxed::Box;
 use alloc::string::{String, ToString};
-use core::str;
-use icu_collections::codepointinvlist::CodePointInversionList;
-use icu_provider::_internal::locid::Locale;
-use icu_provider::{
-    AsDynamicDataProviderAnyMarkerWrap, DataError, DataLocale, DataPayload, DataProvider,
-    DataRequest,
-};
-
-use litemap::LiteMap;
-use replaceable::*;
-
-use crate::provider::{FunctionCall, Rule, RuleULE, SimpleId, VarTable};
 use alloc::vec::Vec;
 use core::fmt::{Debug, Formatter};
+use core::ops::Range;
 use core::ops::RangeInclusive;
+use core::str;
+use icu_collections::codepointinvlist::CodePointInversionList;
 use icu_collections::codepointinvliststringlist::CodePointInversionListAndStringList;
 use icu_normalizer::provider::*;
 use icu_normalizer::{ComposingNormalizer, DecomposingNormalizer};
-use std::collections::VecDeque;
-use std::iter::Rev;
+use icu_provider::_internal::locid::Locale;
+use icu_provider::{DataError, DataLocale, DataPayload, DataProvider, DataRequest};
+use litemap::LiteMap;
+use replaceable::*;
 use zerofrom::ZeroFrom;
 use zerovec::VarZeroSlice;
 
@@ -1135,7 +1126,7 @@ impl<'a> SpecialReplacer<'a> {
             }
             &Self::BackReference(num) => data.get_segment(num as usize).len(),
             Self::LeftPlaceholderCursor(_) | Self::RightPlaceholderCursor(_) | Self::PureCursor => {
-                return 0;
+                0
             }
         }
     }
@@ -1193,7 +1184,7 @@ enum VarTableElement<'a> {
 }
 
 impl<'a> VarTableElement<'a> {
-    fn to_replacer(self) -> Option<SpecialReplacer<'a>> {
+    fn into_replacer(self) -> Option<SpecialReplacer<'a>> {
         Some(match self {
             Self::Compound(elt) => SpecialReplacer::Compound(elt),
             Self::FunctionCall(elt) => SpecialReplacer::FunctionCall(elt),
@@ -1205,7 +1196,7 @@ impl<'a> VarTableElement<'a> {
         })
     }
 
-    fn to_matcher(self) -> Option<SpecialMatcher<'a>> {
+    fn into_matcher(self) -> Option<SpecialMatcher<'a>> {
         Some(match self {
             Self::Compound(elt) => SpecialMatcher::Compound(elt),
             Self::Quantifier(kind, elt) => SpecialMatcher::Quantifier(kind, elt),
@@ -1322,12 +1313,12 @@ impl<'a> VarTable<'a> {
 
     fn lookup_matcher(&'a self, query: char) -> Option<SpecialMatcher<'a>> {
         let elt = self.lookup(query)?;
-        elt.to_matcher()
+        elt.into_matcher()
     }
 
     fn lookup_replacer(&'a self, query: char) -> Option<SpecialReplacer<'a>> {
         let elt = self.lookup(query)?;
-        elt.to_replacer()
+        elt.into_replacer()
     }
 }
 
@@ -1399,7 +1390,7 @@ mod tests {
         impl CustomTransliterator for MyT {
             fn transliterate(&self, input: &str, range: Range<usize>) -> String {
                 let input = &input[range];
-                input.replace("ꜵ", "maoam")
+                input.replace('ꜵ', "maoam")
             }
         }
 
