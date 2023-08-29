@@ -391,11 +391,9 @@ impl ChineseBased for Chinese {
 
     fn get_compiled_data_for_year(extended_year: i32) -> Option<ChineseBasedCompiledData> {
         let offset_year = (extended_year - chinese_data::MIN_YEAR) as usize;
-        if let Some(packed_data) = chinese_data::CHINESE_DATA_ARRAY.get(offset_year) {
-            Some(packed_data.unpack(offset_year as i32 + chinese_data::MIN_YEAR_ISO))
-        } else {
-            None
-        }
+        chinese_data::CHINESE_DATA_ARRAY
+            .get(offset_year)
+            .map(|packed_data| packed_data.unpack(offset_year as i32 + chinese_data::MIN_YEAR_ISO))
     }
 }
 

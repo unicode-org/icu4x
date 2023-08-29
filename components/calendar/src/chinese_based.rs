@@ -469,7 +469,7 @@ impl<C: ChineseBased + CalendarArithmetic> ChineseBasedDateInner<C> {
         );
         let day_before_month_start = data.last_day_of_previous_month(month);
         let day_of_month = day_of_year - day_before_month_start;
-        let day_of_month = u8::try_from(day_of_month as u8);
+        let day_of_month = u8::try_from(day_of_month);
         debug_assert!(day_of_month.is_ok(), "Month too big!");
         let day_of_month = day_of_month.unwrap_or(1);
 
