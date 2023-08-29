@@ -451,7 +451,7 @@ impl<C: ChineseBased + CalendarArithmetic> ChineseBasedDateInner<C> {
         // 1-indexed day of year
         let day_of_year = u16::try_from(date - data.new_year + 1);
         debug_assert!(day_of_year.is_ok(), "Somehow got a very large year in data");
-        let day_of_year = day_of_year.unwrap_or(0);
+        let day_of_year = day_of_year.unwrap_or(1);
         let mut month = 1;
         // todo perhaps use a binary search
         for iter_month in 1..=13 {
