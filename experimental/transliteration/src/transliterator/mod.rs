@@ -184,7 +184,7 @@ impl Debug for InternalTransliterator {
 
 // Thought: Have *Borrowed variants of the structs here? InternalTransliterators store a DataPayload.
 //  This is only a potential (small) performance issue in cases where there's a lot of nested transliteration.
-//  Transliteration of a single, non-nesting RuleBasedTransliterator does not store any DataPayloads. 
+//  Transliteration of a single, non-nesting RuleBasedTransliterator does not store any DataPayloads.
 type Env = LiteMap<String, InternalTransliterator>;
 
 /// A `Transliterator` allows transliteration based on [UTS #35 transform rules](https://unicode.org/reports/tr35/tr35-general.html#Transforms),
@@ -197,9 +197,9 @@ pub struct Transliterator {
 
 impl Transliterator {
     /// Construct a [`Transliterator`] from the given `Locale`.
-    /// 
+    ///
     /// The locale must be a BCP-47 transform ID, i.e., `"und-Latn-t-und-Cyrl"`.
-    /// 
+    ///
     /// # Examples
     /// ```
     /// use icu_transliteration::Transliterator;
@@ -207,7 +207,7 @@ impl Transliterator {
     /// let locale = "und-Arab-t-und-beng".parse().unwrap();
     /// let t = Transliterator::try_new(locale).unwrap();
     /// let output = t.transliterate("অকার্যতানাযা".to_string());
-    /// 
+    ///
     /// assert_eq!(output, "اكاريتانايا");
     /// ```
     #[cfg(feature = "compiled_data")]
@@ -224,37 +224,37 @@ impl Transliterator {
 
     /// Construct a [`Transliterator`] from the given `Locale` using overrides provided
     /// by `lookup`.
-    /// 
+    ///
     /// This allows clients to override the nested transliterators used by this transliterator.
     /// Any nested transliterator will first try to be loaded with `lookup`, and only fall back
     /// to the nested transliterator defined by the data if it returns `None`.
     /// See [`CustomTransliterator`].
-    /// 
+    ///
     /// The locale must be a BCP-47 transform ID, i.e., `"und-Latn-t-und-Cyrl"`.
-    /// 
+    ///
     /// # Example
     /// Overriding `"de-t-de-d0-ascii"`'s dependency on `"und-t-und-Latn-d0-ascii"`:
     /// ```
     /// use icu_transliteration::{Transliterator, CustomTransliterator};
     /// use icu_provider::_internal::locid::Locale;
     /// use core::ops::Range;
-    /// 
+    ///
     /// struct MyTranslit;
     /// impl CustomTransliterator for MyTranslit {
     ///     fn transliterate(&self, input: &str, allowed_range: Range<usize>) -> String {
     ///         input[allowed_range].replace("oeverride", "overridden")
     ///     }
     /// }
-    /// 
+    ///
     /// let override_locale: Locale = "und-t-und-Latn-d0-ascii".parse().unwrap();
     /// let lookup = |lookup_locale: &Locale| -> Option<Box<dyn CustomTransliterator>> {
     ///     override_locale.eq(lookup_locale).then_some(Box::new(MyTranslit))
     /// };
-    /// 
+    ///
     /// let locale = "de-t-de-d0-ascii".parse().unwrap();
     /// let t = Transliterator::try_new_with_override(locale, lookup).unwrap();
     /// let output = t.transliterate("This is an överride example".to_string());
-    /// 
+    ///
     /// assert_eq!(output, "This is an overridden example");
     /// ```
     #[cfg(feature = "compiled_data")]
@@ -459,7 +459,7 @@ impl Transliterator {
 
     /// Transliterates `input` and returns its transliteration.
     pub fn transliterate(&self, input: String) -> String {
-        // Thought: Seems too much work for the benefits, but maybe have a Cow buffer instead? 
+        // Thought: Seems too much work for the benefits, but maybe have a Cow buffer instead?
         //  Insertable would only actually to_owned if the replaced bytes differ from the ones already there
         let mut buffer = TransliteratorBuffer::from_string(input);
         let rep = Replaceable::new(&mut buffer);
@@ -548,13 +548,8 @@ impl<'a> RuleGroup<'a> {
         // while the cursor has not reached the end yet, keep trying to apply each rule in order.
         // when a rule matches, apply its replacement and move the cursor according to the replacement
 
-        // TODO: do we allow empty keys? if so, rep.finished() would cause too early of a stop
-        //  the cursor would be at the end, but an empty key rule could still force insertion of more
-        //  text
-        //  I would say yes: https://util.unicode.org/UnicodeJsps/transform.jsp?a=%23+%3A%3A+%5Ba%5D%3B%0D%0A%0D%0Ad+%7B+x%3F+%3E+match+%3B&b=db
-        //  So add to gdoc.
-        //  Actually, this is what I'm talking about: https://util.unicode.org/UnicodeJsps/transform.jsp?a=%23+%3A%3A+%5Ba%5D%3B%0D%0A%0D%0Ad+%7B+x%3F+%3E+match+%3B&b=d
-        //  no empty match at the end. This is what we're currently doing.
+        // note that we're stopping transliteration at the end _even though empty rules might still match_.
+        // this behavior is copied from ICU4C/J.
         'main: while !rep.is_finished() {
             // eprintln!("ongoing RuleGroup transliteration:\n{rep:?}");
             for rule in self.rules.iter() {
@@ -595,7 +590,7 @@ impl<'a> Rule<'a> {
 
     /// Returns `None` if there is no match. If there is a match, returns the associated
     /// [`MatchData`] and [`RepMatcher`].
-    // Thought: RepMatcher<true> could be "FinishedRepMatcher"? but we can still match post.. 
+    // Thought: RepMatcher<true> could be "FinishedRepMatcher"? but we can still match post..
     fn matches<'r1, 'r2>(
         &self,
         mut matcher: RepMatcher<'r1, 'r2, false>,
@@ -935,11 +930,6 @@ impl<'a> SpecialMatcher<'a> {
             Self::UnicodeSet(set) => {
                 // eprintln!("checking if set {set:?} matches input {matcher:?}");
 
-                // TODO: check in which order a unicodeset matches
-                //  (chars first? strings first? longest first? shortest first?)
-                //  ICU4J: UnicodeSet::matches says strings first, longest first, then chars
-                //  TODO ^ add this to gdoc
-
                 if matcher.is_empty() {
                     if set.contains("") {
                         return true;
@@ -1179,13 +1169,7 @@ impl<'a> SpecialReplacer<'a> {
                 // eprintln!("dest before function call: {dest:?}");
 
                 let mut range_aggregator = dest.start_replaceable_adapter();
-                helpers::replace_encoded_str(
-                    &call.arg,
-                    range_aggregator.child_for_range(),
-                    data,
-                    vt,
-                    env,
-                );
+                helpers::replace_encoded_str(&call.arg, &mut range_aggregator, data, vt, env);
 
                 call.translit
                     .transliterate(range_aggregator.as_replaceable().child(), env);

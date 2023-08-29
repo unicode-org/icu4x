@@ -925,7 +925,6 @@ impl<'a, 'b> Debug for Insertable<'a, 'b> {
     }
 }
 
-// TODO: could implement DerefMut and pass through child.
 /// See [`Insertable::start_replaceable_adapter`].
 pub(super) struct InsertableToReplaceableAdapter<'a, 'b, F>
 where
@@ -948,12 +947,6 @@ impl<'a, 'b, F> InsertableToReplaceableAdapter<'a, 'b, F>
 where
     F: FnMut(usize),
 {
-    /// Returns an `Insertable`. Exactly the changes done by that insertable will
-    /// be in scope for transliteration with [`as_replaceable`](InsertableToReplaceableAdapter::as_replaceable).
-    pub(super) fn child_for_range(&mut self) -> &mut Insertable<'a, 'b> {
-        self.child.deref_mut()
-    }
-
     /// Returns a type that allows getting a `Replaceable` from it. The replaceable will
     /// transliterate everything since `self` was created with [`Insertable::start_replaceable_adapter`].
     pub(super) fn as_replaceable(&mut self) -> InsertableGuard<impl FnMut(&[u8]) + '_> {
@@ -991,6 +984,25 @@ where
 {
     fn drop(&mut self) {
         (self.on_drop)(self.child.curr);
+    }
+}
+
+impl<'a, 'b, F> Deref for InsertableToReplaceableAdapter<'a, 'b, F>
+where
+    F: FnMut(usize),
+{
+    type Target = Insertable<'a, 'b>;
+    fn deref(&self) -> &Self::Target {
+        self.child.deref()
+    }
+}
+
+impl<'a, 'b, F> DerefMut for InsertableToReplaceableAdapter<'a, 'b, F>
+where
+    F: FnMut(usize),
+{
+    fn deref_mut(&mut self) -> &mut Self::Target {
+        self.child.deref_mut()
     }
 }
 
