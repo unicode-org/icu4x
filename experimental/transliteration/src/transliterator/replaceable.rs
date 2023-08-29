@@ -648,7 +648,7 @@ struct MatchLengths {
 ///
 /// Specifically, we temporarily change the validity of `_rep.content`. During a replacement
 /// with this `Insertable`, the following invariants hold:
-/// - `start is a valid UTF-8 index into `_rep.content` that signifies the start of the range we are replacing.
+/// - start is a valid UTF-8 index into `_rep.content` that signifies the start of the range we are replacing.
 ///   It may not be changed.
 /// - `end_len` is a valid UTF-8 suffix length into `_rep.content` that signifies the suffix of
 ///   the `Replaceable`'s internal text that we are *not* replacing.
