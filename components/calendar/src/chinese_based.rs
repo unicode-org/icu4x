@@ -251,6 +251,44 @@ impl ChineseBasedCompiledData {
     }
 }
 
+/// Marks the bounds of a lunar year
+#[derive(Debug, Copy, Clone)]
+struct YearBounds {
+    /// The date marking the start of the current lunar year
+    new_year: RataDie,
+    /// The date marking the start of the next lunar year
+    next_new_year: RataDie,
+}
+
+impl YearBounds {
+    /// Compute the YearBounds for the lunar year (年) containing `date`,
+    /// as well as the corresponding solar year (歲). Note that since the two
+    /// years overlap significantly but not entirely, the solstice bounds for the solar
+    /// year *may* not include `date`.
+    #[inline]
+    fn compute<C: ChineseBased + CalendarArithmetic>(date: RataDie) -> Self {
+        let prev_solstice = ChineseBasedDateInner::<C>::winter_solstice_on_or_before(date);
+        let (new_year, next_solstice) =
+            ChineseBasedDateInner::<C>::new_year_on_or_before_fixed_date(date, Some(prev_solstice));
+        // Using 400 here since new years can be up to 390 days apart, and we add some padding
+        let next_new_year = ChineseBasedDateInner::<C>::new_year_on_or_before_fixed_date(
+            new_year + 400,
+            Some(next_solstice),
+        )
+        .0;
+
+        Self {
+            new_year,
+            next_new_year,
+        }
+    }
+
+    fn is_leap(self) -> bool {
+        let difference = self.next_new_year - self.new_year;
+        difference > 365
+    }
+}
+
 impl<C: ChineseBased + CalendarArithmetic> ChineseBasedDateInner<C> {
     /// Get the current major solar term of a fixed date, output as an integer from 1..=12.
     ///
@@ -348,7 +386,7 @@ impl<C: ChineseBased + CalendarArithmetic> ChineseBasedDateInner<C> {
         } else {
             Self::winter_solstice_on_or_before(date)
         }; // s1
-        // Using 370 here since solstices are ~365 days apart
+           // Using 370 here since solstices are ~365 days apart
         let following_solstice = Self::winter_solstice_on_or_before(prior_solstice + 370); // s2
         let month_after_eleventh = Self::new_moon_on_or_after((prior_solstice + 1).as_moment()); // m12
         let month_after_twelfth =
@@ -411,7 +449,11 @@ impl<C: ChineseBased + CalendarArithmetic> ChineseBasedDateInner<C> {
         if date >= new_year.0 {
             new_year
         } else {
-            Self::new_year_in_sui(date - 180, prior_solstice)
+            // This happens when we're at the end of the current lunar year
+            // and the solstice has already happened. Thus the relevant solstice
+            // for the current lunar year is the previous one, which we calculate by offsetting
+            // back by a year.
+            Self::new_year_in_sui(date - 180, None)
         }
     }
 
@@ -506,14 +548,9 @@ impl<C: ChineseBased + CalendarArithmetic> ChineseBasedDateInner<C> {
             // cache fetch successful, getter year is just the regular extended year
             Self::chinese_based_date_from_cached(date, data, getter_year)
         } else {
-            let (first_day_of_year, next_solstice) =
-                Self::new_year_on_or_before_fixed_date(date, None);
-            // Using 400 here since new years can be up to 390 days apart, and we add some padding
-            let next_new_year = Self::new_year_on_or_before_fixed_date(
-                first_day_of_year + 400,
-                Some(next_solstice),
-            )
-            .0;
+            let year_bounds = YearBounds::compute::<C>(date);
+            let first_day_of_year = year_bounds.new_year;
+
             let year_float = libm::floor(
                 1.5 - 1.0 / 12.0 + ((first_day_of_year - C::EPOCH) as f64) / MEAN_TROPICAL_YEAR,
             );
@@ -538,12 +575,7 @@ impl<C: ChineseBased + CalendarArithmetic> ChineseBasedDateInner<C> {
                 "Day should be in range of u8! Value {month_i64} failed for RD {date:?}"
             );
             let day = day_i64 as u8;
-            let is_leap_year = Self::new_year_is_leap_year(
-                first_day_of_year,
-                Some(next_solstice),
-                Some(next_new_year),
-            );
-            let leap_month = if is_leap_year {
+            let leap_month = if year_bounds.is_leap() {
                 // This doesn't need to be checked for `None`, since `get_leap_month_from_new_year`
                 // will always return a number greater than or equal to 1, and less than 14.
                 NonZeroU8::new(Self::get_leap_month_from_new_year(first_day_of_year))
@@ -552,7 +584,7 @@ impl<C: ChineseBased + CalendarArithmetic> ChineseBasedDateInner<C> {
             };
             let cache = ChineseBasedCache {
                 new_year: first_day_of_year,
-                next_new_year,
+                next_new_year: year_bounds.next_new_year,
                 leap_month,
             };
 
@@ -587,31 +619,6 @@ impl<C: ChineseBased + CalendarArithmetic> ChineseBasedDateInner<C> {
         let cycle = quotient(elapsed_years - 1, 60) + 1;
         let year = adjusted_rem_euclid(elapsed_years, 60);
         C::EPOCH + ((((cycle - 1) * 60 + year - 1) as f64 + 0.5) * MEAN_TROPICAL_YEAR) as i64
-    }
-
-    /// Returns true if the fixed date given is in a leap year, false otherwise
-    pub(crate) fn fixed_date_is_in_leap_year(date: RataDie) -> bool {
-        let (prev_new_year, next_solstice) = Self::new_year_on_or_before_fixed_date(date, None);
-        Self::new_year_is_leap_year(prev_new_year, Some(next_solstice), None)
-    }
-
-    /// Returns true if the fixed date given is in a leap year, assuming the fixed date
-    /// given is the RataDie of a new year. Optionally, a RataDie representing the prior winter
-    /// solstice before the `new_year` can be passed in as an Option argument, as well as an
-    /// Option<RataDie> representing the next new year.
-    pub(crate) fn new_year_is_leap_year(
-        new_year: RataDie,
-        next_solstice: Option<RataDie>,
-        next_new_year: Option<RataDie>,
-    ) -> bool {
-        let new_year_after = if let Some(next) = next_new_year {
-            next
-        } else {
-            // Using 400 here since new years can be up to 390 days apart, and we add some padding
-            Self::new_year_on_or_before_fixed_date(new_year + 400, next_solstice).0
-        };
-        let difference = new_year_after - new_year;
-        difference > 365
     }
 
     /// Given that `new_year` is the first day of a leap year, find which month in the year is a leap month.
@@ -746,14 +753,13 @@ impl<C: ChineseBased + CalendarArithmetic> ChineseBasedDateInner<C> {
     /// Compute a `ChineseBasedCache` from a ChineseBased year
     pub(crate) fn compute_cache(year: i32) -> ChineseBasedCache {
         let mid_year = Self::fixed_mid_year_from_year(year);
-        let prior_solstice = Self::winter_solstice_on_or_before(mid_year);
-        let (new_year, following_solstice) =
-            Self::new_year_on_or_before_fixed_date(mid_year, Some(prior_solstice));
-        // Using 400 here since new years can be up to 390 days apart, and we add some padding
-        let next_new_year =
-            Self::new_year_on_or_before_fixed_date(new_year + 400, Some(following_solstice)).0;
-        let is_leap_year =
-            Self::new_year_is_leap_year(new_year, Some(following_solstice), Some(next_new_year));
+        let year_bounds = YearBounds::compute::<C>(mid_year);
+        let YearBounds {
+            new_year,
+            next_new_year,
+            ..
+        } = year_bounds;
+        let is_leap_year = year_bounds.is_leap();
         let leap_month = if is_leap_year {
             // This doesn't need to be checked for None because `get_leap_month_from_new_year`
             // will always return a value between 1..=13
@@ -795,7 +801,7 @@ impl<C: ChineseBased + Calendar> CalendarArithmetic for C {
             data.leap_month.is_some()
         } else {
             let mid_year = ChineseBasedDateInner::<C>::fixed_mid_year_from_year(year);
-            ChineseBasedDateInner::<C>::fixed_date_is_in_leap_year(mid_year)
+            YearBounds::compute::<C>(mid_year).is_leap()
         }
     }
 
@@ -812,17 +818,9 @@ impl<C: ChineseBased + Calendar> CalendarArithmetic for C {
             }
         } else {
             let mid_year = ChineseBasedDateInner::<C>::fixed_mid_year_from_year(year);
-            // Using 370 here since we're offsetting from a mid_year, so adding 370 will always be
-            // sufficient to go into the next year
-            let next_new_year =
-                ChineseBasedDateInner::<C>::new_year_on_or_before_fixed_date(mid_year + 370, None)
-                    .0;
-            let last_day = next_new_year - 1;
-            let month = if ChineseBasedDateInner::<C>::fixed_date_is_in_leap_year(last_day) {
-                13
-            } else {
-                12
-            };
+            let year_bounds = YearBounds::compute::<C>(mid_year);
+            let last_day = year_bounds.next_new_year - 1;
+            let month = if year_bounds.is_leap() { 13 } else { 12 };
             let day =
                 last_day - ChineseBasedDateInner::<C>::new_moon_before(last_day.as_moment()) + 1;
             (month, day as u8)
@@ -834,15 +832,13 @@ impl<C: ChineseBased + Calendar> CalendarArithmetic for C {
             data.last_day_of_month(13)
         } else {
             let mid_year = ChineseBasedDateInner::<C>::fixed_mid_year_from_year(year);
-            let (prev_new_year, solstice) =
-                ChineseBasedDateInner::<C>::new_year_on_or_before_fixed_date(mid_year, None);
-            // Using 400 here since new years can be up to 390 days apart, and we add some padding
-            let next_new_year = ChineseBasedDateInner::<C>::new_year_on_or_before_fixed_date(
-                prev_new_year + 400,
-                Some(solstice),
-            )
-            .0;
-            ChineseBasedDateInner::<C>::days_in_year(prev_new_year, next_new_year)
+            let YearBounds {
+                new_year,
+                next_new_year,
+                ..
+            } = YearBounds::compute::<C>(mid_year);
+
+            ChineseBasedDateInner::<C>::days_in_year(new_year, next_new_year)
         }
     }
 }
