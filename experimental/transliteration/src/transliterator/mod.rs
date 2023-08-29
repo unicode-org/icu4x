@@ -181,8 +181,13 @@ impl Debug for InternalTransliterator {
     }
 }
 
+// Thought: Have *Borrowed variants of the structs here? InternalTransliterators store a DataPayload.
+//  This is only a potential (small) performance issue in cases where there's a lot of nested transliteration.
+//  Transliteration of a single, non-nesting RuleBasedTransliterator does not store any DataPayloads. 
 type Env = LiteMap<String, InternalTransliterator>;
 
+/// A `Transliterator` allows transliteration based on [UTS #35 transform rules](https://unicode.org/reports/tr35/tr35-general.html#Transforms),
+/// including overrides with custom implementations.
 #[derive(Debug)]
 pub struct Transliterator {
     transliterator: DataPayload<TransliteratorRulesV1Marker>,
@@ -190,6 +195,20 @@ pub struct Transliterator {
 }
 
 impl Transliterator {
+    /// Construct a [`Transliterator`] from the given `Locale`.
+    /// 
+    /// The locale must be a BCP-47 transform ID, i.e., `"und-Latn-t-und-Cyrl"`.
+    /// 
+    /// # Examples
+    /// ```
+    /// use icu_transliteration::Transliterator;
+    /// // BCP-47-T ID for Bengali to Arabic transliteration
+    /// let locale = "und-Arab-t-und-beng".parse().unwrap();
+    /// let t = Transliterator::try_new(locale).unwrap();
+    /// let output = t.transliterate("অকার্যতানাযা".to_string());
+    /// 
+    /// assert_eq!(output, "اكاريتانايا");
+    /// ```
     #[cfg(feature = "compiled_data")]
     pub fn try_new(locale: Locale) -> Result<Transliterator, TransliteratorError> {
         let provider = crate::provider::Baked;
@@ -202,6 +221,41 @@ impl Transliterator {
         )
     }
 
+    /// Construct a [`Transliterator`] from the given `Locale` using overrides provided
+    /// by `lookup`.
+    /// 
+    /// This allows clients to override the nested transliterators used by this transliterator.
+    /// Any nested transliterator will first try to be loaded with `lookup`, and only fall back
+    /// to the nested transliterator defined by the data if it returns `None`.
+    /// See [`CustomTransliterator`].
+    /// 
+    /// The locale must be a BCP-47 transform ID, i.e., `"und-Latn-t-und-Cyrl"`.
+    /// 
+    /// # Example
+    /// Overriding `"de-t-de-d0-ascii"`'s dependency on `"und-t-und-Latn-d0-ascii"`:
+    /// ```
+    /// use icu_transliteration::{Transliterator, CustomTransliterator};
+    /// use icu_provider::_internal::locid::Locale;
+    /// use core::ops::Range;
+    /// 
+    /// struct MyTranslit;
+    /// impl CustomTransliterator for MyTranslit {
+    ///     fn transliterate(&self, input: &str, allowed_range: Range<usize>) -> String {
+    ///         input[allowed_range].replace("oeverride", "overridden")
+    ///     }
+    /// }
+    /// 
+    /// let override_locale: Locale = "und-t-und-Latn-d0-ascii".parse().unwrap();
+    /// let lookup = |lookup_locale: &Locale| -> Option<Box<dyn CustomTransliterator>> {
+    ///     override_locale.eq(lookup_locale).then_some(Box::new(MyTranslit))
+    /// };
+    /// 
+    /// let locale = "de-t-de-d0-ascii".parse().unwrap();
+    /// let t = Transliterator::try_new_with_override(locale, lookup).unwrap();
+    /// let output = t.transliterate("This is an överride example".to_string());
+    /// 
+    /// assert_eq!(output, "This is an overridden example");
+    /// ```
     #[cfg(feature = "compiled_data")]
     pub fn try_new_with_override<F>(
         locale: Locale,
@@ -220,6 +274,7 @@ impl Transliterator {
         )
     }
 
+    #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, try_new())]
     pub fn try_new_unstable<P>(
         locale: Locale,
         provider: &P,
@@ -241,6 +296,7 @@ impl Transliterator {
         )
     }
 
+    #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, try_new_with_override())]
     pub fn try_new_with_override_unstable<P, F>(
         locale: Locale,
         lookup: F,
@@ -259,7 +315,7 @@ impl Transliterator {
         Self::internal_try_new_with_override_unstable(locale, Some(&lookup), provider, provider)
     }
 
-    pub fn internal_try_new_with_override_unstable<PN, PT, F>(
+    fn internal_try_new_with_override_unstable<PN, PT, F>(
         locale: Locale,
         lookup: Option<&F>,
         transliterator_provider: &PT,
