@@ -274,8 +274,6 @@ impl<P, M> DataProvider<M> for CustomDecimalSymbolsProvider<P>
 where
     P: DataProvider<M>,
     M: KeyedDataMarker,
-    M::Yokeable: icu_provider::MaybeSendSync + zerofrom::ZeroFrom<'static, M::Yokeable>,
-    for<'a> yoke::trait_hack::YokeTraitHack<<M::Yokeable as yoke::Yokeable<'a>>::Output>: Clone,
 {
     #[inline]
     fn load(&self, req: DataRequest) -> Result<DataResponse<M>, DataError> {
