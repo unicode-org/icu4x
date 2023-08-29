@@ -348,6 +348,7 @@ impl<C: ChineseBased + CalendarArithmetic> ChineseBasedDateInner<C> {
         } else {
             Self::winter_solstice_on_or_before(date)
         }; // s1
+        // Using 370 here since solstices are ~365 days apart
         let following_solstice = Self::winter_solstice_on_or_before(prior_solstice + 370); // s2
         let month_after_eleventh = Self::new_moon_on_or_after((prior_solstice + 1).as_moment()); // m12
         let month_after_twelfth =
@@ -507,6 +508,7 @@ impl<C: ChineseBased + CalendarArithmetic> ChineseBasedDateInner<C> {
         } else {
             let (first_day_of_year, next_solstice) =
                 Self::new_year_on_or_before_fixed_date(date, None);
+            // Using 400 here since new years can be up to 390 days apart, and we add some padding
             let next_new_year = Self::new_year_on_or_before_fixed_date(
                 first_day_of_year + 400,
                 Some(next_solstice),
@@ -605,6 +607,7 @@ impl<C: ChineseBased + CalendarArithmetic> ChineseBasedDateInner<C> {
         let new_year_after = if let Some(next) = next_new_year {
             next
         } else {
+            // Using 400 here since new years can be up to 390 days apart, and we add some padding
             Self::new_year_on_or_before_fixed_date(new_year + 400, next_solstice).0
         };
         let difference = new_year_after - new_year;
@@ -746,6 +749,7 @@ impl<C: ChineseBased + CalendarArithmetic> ChineseBasedDateInner<C> {
         let prior_solstice = Self::winter_solstice_on_or_before(mid_year);
         let (new_year, following_solstice) =
             Self::new_year_on_or_before_fixed_date(mid_year, Some(prior_solstice));
+        // Using 400 here since new years can be up to 390 days apart, and we add some padding
         let next_new_year =
             Self::new_year_on_or_before_fixed_date(new_year + 400, Some(following_solstice)).0;
         let is_leap_year =
@@ -808,6 +812,8 @@ impl<C: ChineseBased + Calendar> CalendarArithmetic for C {
             }
         } else {
             let mid_year = ChineseBasedDateInner::<C>::fixed_mid_year_from_year(year);
+            // Using 370 here since we're offsetting from a mid_year, so adding 370 will always be
+            // sufficient to go into the next year
             let next_new_year =
                 ChineseBasedDateInner::<C>::new_year_on_or_before_fixed_date(mid_year + 370, None)
                     .0;
@@ -830,8 +836,9 @@ impl<C: ChineseBased + Calendar> CalendarArithmetic for C {
             let mid_year = ChineseBasedDateInner::<C>::fixed_mid_year_from_year(year);
             let (prev_new_year, solstice) =
                 ChineseBasedDateInner::<C>::new_year_on_or_before_fixed_date(mid_year, None);
+            // Using 400 here since new years can be up to 390 days apart, and we add some padding
             let next_new_year = ChineseBasedDateInner::<C>::new_year_on_or_before_fixed_date(
-                prev_new_year + 370,
+                prev_new_year + 400,
                 Some(solstice),
             )
             .0;
