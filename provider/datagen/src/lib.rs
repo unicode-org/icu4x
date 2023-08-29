@@ -9,11 +9,11 @@
 //! command-line utility.
 //!
 //!
-//! Also see our [datagen tutorial](https://github.com/unicode-org/icu4x/blob/main/docs/tutorials/data_management.md)
+//! Also see our [datagen tutorial](https://github.com/unicode-org/icu4x/blob/main/docs/tutorials/data_management.md).
 //!
 //! # Examples
 //!
-//! ## Rust script
+//! ## Rust API
 //!
 //! ```no_run
 //! use icu_datagen::blob_exporter::*;
@@ -81,6 +81,7 @@
 //! * `icu_singlenumberformatter`
 //! * `icu_transliteration`
 //! * `icu_unitsconversion`
+//! * ...
 //!
 //! The meta-feature `experimental_components` is available to activate all experimental components.
 
