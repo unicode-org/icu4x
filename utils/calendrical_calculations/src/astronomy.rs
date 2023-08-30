@@ -46,7 +46,7 @@ pub const PI: f64 = 3.14159265358979323846264338327950288_f64;
 /// (86400 seconds = 24 hours * 60 minutes/hour * 60 seconds/minute)
 ///
 /// This is defined in _Calendrical Calculations_ by Reingold & Dershowitz.
-/// Reference lisp code: https://github.com/EdReingold/calendar-code2/blob/9afc1f3/calendar.l#L3880-L3882
+/// Reference lisp code: <https://github.com/EdReingold/calendar-code2/blob/9afc1f3/calendar.l#L3880-L3882>
 pub const MEAN_SYNODIC_MONTH: f64 = 29.530588861;
 
 /// The Moment of noon on January 1, 2000
@@ -55,7 +55,7 @@ pub const J2000: Moment = Moment::new(730120.5);
 /// The mean tropical year in days
 ///
 /// This is defined in _Calendrical Calculations_ by Reingold & Dershowitz.
-/// Reference lisp code: https://github.com/EdReingold/calendar-code2/blob/9afc1f3/calendar.l#L3872-L3874
+/// Reference lisp code: <https://github.com/EdReingold/calendar-code2/blob/9afc1f3/calendar.l#L3872-L3874>
 pub const MEAN_TROPICAL_YEAR: f64 = 365.242189;
 
 /// The minimum allowable UTC offset (-12 hours) in fractional days (-0.5 days)
@@ -151,7 +151,7 @@ impl Location {
     /// Convert standard time to local mean time given a location and a time zone with given offset
     ///
     /// Based on functions from _Calendrical Calculations_ by Reingold & Dershowitz.
-    /// Reference lisp code: https://github.com/EdReingold/calendar-code2/blob/9afc1f3/calendar.l#L3501-L3506
+    /// Reference lisp code: <https://github.com/EdReingold/calendar-code2/blob/9afc1f3/calendar.l#L3501-L3506>
     #[allow(dead_code)]
     pub fn standard_from_local(standard_time: Moment, location: Location) -> Moment {
         Self::standard_from_universal(
@@ -163,7 +163,7 @@ impl Location {
     /// Convert from local mean time to universal time given a location
     ///
     /// Based on functions from _Calendrical Calculations_ by Reingold & Dershowitz.
-    /// Reference lisp code: https://github.com/EdReingold/calendar-code2/blob/9afc1f3/calendar.l#L3496-L3499
+    /// Reference lisp code: <https://github.com/EdReingold/calendar-code2/blob/9afc1f3/calendar.l#L3496-L3499>
     pub fn universal_from_local(local_time: Moment, location: Location) -> Moment {
         local_time - Self::zone_from_longitude(location.longitude)
     }
@@ -171,7 +171,7 @@ impl Location {
     /// Convert from universal time to local time given a location
     ///
     /// Based on functions from _Calendrical Calculations_ by Reingold & Dershowitz.
-    /// Reference lisp code: https://github.com/EdReingold/calendar-code2/blob/9afc1f3/calendar.l#L3491-L3494
+    /// Reference lisp code: <https://github.com/EdReingold/calendar-code2/blob/9afc1f3/calendar.l#L3491-L3494>
     #[allow(dead_code)] // TODO: Remove dead_code tag after use
     pub fn local_from_universal(universal_time: Moment, location: Location) -> Moment {
         universal_time + Self::zone_from_longitude(location.longitude)
@@ -183,7 +183,7 @@ impl Location {
     /// the constand fields `MIN_UTC_OFFSET` and `MAX_UTC_OFFSET`.
     ///
     /// Based on functions from _Calendrical Calculations_ by Reingold & Dershowitz.
-    /// Reference lisp code: https://github.com/EdReingold/calendar-code2/blob/9afc1f3/calendar.l#L3479-L3483
+    /// Reference lisp code: <https://github.com/EdReingold/calendar-code2/blob/9afc1f3/calendar.l#L3479-L3483>
     pub fn universal_from_standard(standard_moment: Moment, location: Location) -> Moment {
         debug_assert!(location.zone > MIN_UTC_OFFSET && location.zone < MAX_UTC_OFFSET, "UTC offset {0} was not within the possible range of offsets (see astronomy::MIN_UTC_OFFSET and astronomy::MAX_UTC_OFFSET)", location.zone);
         standard_moment - location.zone
@@ -194,7 +194,7 @@ impl Location {
     /// the constand fields `MIN_UTC_OFFSET` and `MAX_UTC_OFFSET`.
     ///
     /// Based on functions from _Calendrical Calculations_ by Reingold & Dershowitz.
-    /// Reference lisp code: https://github.com/EdReingold/calendar-code2/blob/9afc1f3/calendar.l#L3473-L3477
+    /// Reference lisp code: <https://github.com/EdReingold/calendar-code2/blob/9afc1f3/calendar.l#L3473-L3477>
     #[allow(dead_code)]
     pub fn standard_from_universal(standard_time: Moment, location: Location) -> Moment {
         debug_assert!(location.zone > MIN_UTC_OFFSET && location.zone < MAX_UTC_OFFSET, "UTC offset {0} was not within the possible range of offsets (see astronomy::MIN_UTC_OFFSET and astronomy::MAX_UTC_OFFSET)", location.zone);
@@ -214,7 +214,7 @@ impl Astronomical {
     ///
     /// Based on functions from _Calendrical Calculations_ by Reingold & Dershowitz,
     /// originally from _Astronomical Algorithms_ by Jean Meeus (1991) with data from NASA.
-    /// Reference lisp code: https://github.com/EdReingold/calendar-code2/blob/9afc1f3/calendar.l#L3884-L3952
+    /// Reference lisp code: <https://github.com/EdReingold/calendar-code2/blob/9afc1f3/calendar.l#L3884-L3952>
     pub fn ephemeris_correction(moment: Moment) -> f64 {
         // TODO: Change this to directly convert from moment to Gregorian year through a separate fn
         let year = moment.inner() / 365.2425;
@@ -295,7 +295,7 @@ impl Astronomical {
     /// Include the ephemeris correction to universal time, yielding dynamical time
     ///
     /// Based on functions from _Calendrical Calculations_ by Reingold & Dershowitz.
-    /// Reference lisp code: https://github.com/EdReingold/calendar-code2/blob/9afc1f3/calendar.l#L3850-L3853
+    /// Reference lisp code: <https://github.com/EdReingold/calendar-code2/blob/9afc1f3/calendar.l#L3850-L3853>
     pub fn dynamical_from_universal(universal: Moment) -> Moment {
         // TODO: Determine correct naming scheme for "dynamical"
         universal + Self::ephemeris_correction(universal)
@@ -304,7 +304,7 @@ impl Astronomical {
     /// Remove the ephemeris correction from dynamical time, yielding universal time
     ///
     /// Based on functions from _Calendrical Calculations_ by Reingold & Dershowitz.
-    /// Reference lisp code: https://github.com/EdReingold/calendar-code2/blob/9afc1f3/calendar.l#L3845-L3848
+    /// Reference lisp code: <https://github.com/EdReingold/calendar-code2/blob/9afc1f3/calendar.l#L3845-L3848>
     pub fn universal_from_dynamical(dynamical: Moment) -> Moment {
         // TODO: Determine correct naming scheme for "dynamical"
         dynamical - Self::ephemeris_correction(dynamical)
@@ -314,7 +314,7 @@ impl Astronomical {
     /// before or after noon on January 1, 2000
     ///
     /// Based on functions from _Calendrical Calculations_ by Reingold & Dershowitz.
-    /// Reference lisp code: https://github.com/EdReingold/calendar-code2/blob/9afc1f3/calendar.l#L3551-L3555
+    /// Reference lisp code: <https://github.com/EdReingold/calendar-code2/blob/9afc1f3/calendar.l#L3551-L3555>
     pub fn julian_centuries(moment: Moment) -> f64 {
         let intermediate = Self::dynamical_from_universal(moment);
         (intermediate - J2000) / 36525.0
@@ -327,7 +327,7 @@ impl Astronomical {
     ///
     /// Based on functions from _Calendrical Calculations_ by Reingold & Dershowitz,
     /// originally from _Astronomical Algorithms_ by Jean Meeus, 2nd edn., 1998, p. 185.
-    /// Reference lisp code: https://github.com/EdReingold/calendar-code2/blob/9afc1f3/calendar.l#L3954-L3983
+    /// Reference lisp code: <https://github.com/EdReingold/calendar-code2/blob/9afc1f3/calendar.l#L3954-L3983>
     pub fn equation_of_time(moment: Moment) -> f64 {
         let c = Self::julian_centuries(moment);
         let lambda = poly(c, &[280.46645, 36000.76983, 0.0003032]);
@@ -348,7 +348,7 @@ impl Astronomical {
     /// dusk on that date.
     ///
     /// Based on functions from _Calendrical Calculations_ by Reingold & Dershowitz.
-    /// Reference lisp code: https://github.com/EdReingold/calendar-code2/blob/9afc1f3/calendar.l#L3670-L3679
+    /// Reference lisp code: <https://github.com/EdReingold/calendar-code2/blob/9afc1f3/calendar.l#L3670-L3679>
     pub fn dusk(date: f64, location: Location, alpha: f64) -> Option<Moment> {
         let evening = false;
         let moment_of_depression = Self::moment_of_depression(
@@ -367,7 +367,7 @@ impl Astronomical {
     /// axial tilt with respect to the plane of its orbit around the sun  (currently ~23.4 deg)
     ///
     /// Based on functions from _Calendrical Calculations_ by Reingold & Dershowitz.
-    /// Reference lisp code: https://github.com/EdReingold/calendar-code2/blob/9afc1f3/calendar.l#L3557-L3565
+    /// Reference lisp code: <https://github.com/EdReingold/calendar-code2/blob/9afc1f3/calendar.l#L3557-L3565>
     pub fn obliquity(moment: Moment) -> f64 {
         let c = Self::julian_centuries(moment);
         let angle = 23.0 + 26.0 / 60.0 + 21.448 / 3600.0;
@@ -380,7 +380,7 @@ impl Astronomical {
     /// of the Earth's equator; analogous to latitude.
     ///
     /// Based on functions from _Calendrical Calculations_ by Reingold & Dershowitz.
-    /// Reference lisp code: https://github.com/EdReingold/calendar-code2/blob/9afc1f3/calendar.l#L3567-L3576
+    /// Reference lisp code: <https://github.com/EdReingold/calendar-code2/blob/9afc1f3/calendar.l#L3567-L3576>
     pub fn declination(moment: Moment, beta: f64, lambda: f64) -> f64 {
         let varepsilon = Self::obliquity(moment);
         arcsin_degrees(
@@ -395,7 +395,7 @@ impl Astronomical {
     /// equator marking spring in the northern hemisphere; analogous to longitude.
     ///
     /// Based on functions from _Calendrical Calculations_ by Reingold & Dershowitz.
-    /// Reference lisp code: https://github.com/EdReingold/calendar-code2/blob/9afc1f3/calendar.l#L3578-L3588
+    /// Reference lisp code: <https://github.com/EdReingold/calendar-code2/blob/9afc1f3/calendar.l#L3578-L3588>
     pub fn right_ascension(moment: Moment, beta: f64, lambda: f64) -> f64 {
         let varepsilon = Self::obliquity(moment);
         arctan_degrees(
@@ -408,7 +408,7 @@ impl Astronomical {
     /// Local time from apparent solar time at a given location
     ///
     /// Based on functions from _Calendrical Calculations_ by Reingold & Dershowitz.
-    /// Reference lisp code: https://github.com/EdReingold/calendar-code2/blob/9afc1f3/calendar.l#L3521-L3524
+    /// Reference lisp code: <https://github.com/EdReingold/calendar-code2/blob/9afc1f3/calendar.l#L3521-L3524>
     pub fn local_from_apparent(moment: Moment, location: Location) -> Moment {
         moment - Self::equation_of_time(Location::universal_from_local(moment, location))
     }
@@ -419,7 +419,7 @@ impl Astronomical {
     /// evening. Returns None if the specified angle is not reached.
     ///
     /// Based on functions from _Calendrical Calculations_ by Reingold & Dershowitz.
-    /// Reference lisp code: https://github.com/EdReingold/calendar-code2/blob/9afc1f3/calendar.l#L3607-L3631
+    /// Reference lisp code: <https://github.com/EdReingold/calendar-code2/blob/9afc1f3/calendar.l#L3607-L3631>
     pub fn approx_moment_of_depression(
         moment: Moment,
         location: Location,
@@ -469,7 +469,7 @@ impl Astronomical {
     /// evening. Returns None if the specified angle is not reached.
     ///
     /// Based on functions from _Calendrical Calculations_ by Reingold & Dershowitz.
-    /// Reference lisp code: https://github.com/EdReingold/calendar-code2/blob/9afc1f3/calendar.l#L3633-L3647
+    /// Reference lisp code: <https://github.com/EdReingold/calendar-code2/blob/9afc1f3/calendar.l#L3633-L3647>
     pub fn moment_of_depression(
         approx: Moment,
         location: Location,
@@ -487,7 +487,7 @@ impl Astronomical {
     /// The angle of refraction caused by Earth's atmosphere at a given location.
     ///
     /// Based on functions from _Calendrical Calculations_ by Reingold & Dershowitz.
-    /// Reference lisp code: https://github.com/EdReingold/calendar-code2/blob/9afc1f3/calendar.l#L3681-L3690
+    /// Reference lisp code: <https://github.com/EdReingold/calendar-code2/blob/9afc1f3/calendar.l#L3681-L3690>
     pub fn refraction(location: Location) -> f64 {
         // The moment is not used.
         let h = location.elevation.max(0.0);
@@ -503,7 +503,7 @@ impl Astronomical {
     ///
     /// Based on functions from _Calendrical Calculations_ by Reingold & Dershowitz,
     /// originally from _Astronomical Algorithms_ by Jean Meeus, corrected 2nd edn., 2005.
-    /// Reference code: https://github.com/EdReingold/calendar-code2/blob/9afc1f3/calendar.l#L4288-L4377
+    /// Reference code: <https://github.com/EdReingold/calendar-code2/blob/9afc1f3/calendar.l#L4288-L4377>
     pub fn nth_new_moon(n: i32) -> Moment {
         // The following polynomials are written out instead of using libm::pow for optimization, see #3743
         let n0 = 24724.0;
@@ -739,7 +739,7 @@ impl Astronomical {
     ///
     /// Based on functions from _Calendrical Calculations_ by Reingold & Dershowitz,
     /// originally from _Astronomical Algorithms_ by Meeus, 2nd edition (1988), p. 88.
-    /// Reference lisp code: https://github.com/EdReingold/calendar-code2/blob/9afc1f3/calendar.l#L3860-L3870
+    /// Reference lisp code: <https://github.com/EdReingold/calendar-code2/blob/9afc1f3/calendar.l#L3860-L3870>
     #[allow(dead_code)] // TODO: Remove dead code tag after use
     pub fn sidereal_from_moment(moment: Moment) -> f64 {
         let c = (moment - J2000) / 36525.0;
@@ -763,7 +763,7 @@ impl Astronomical {
     /// `julian_centuries` is the result of calling `Self::julian_centuries(moment)`.
     /// Based on functions from _Calendrical Calculations_ by Reingold & Dershowitz,
     /// originally from _Astronomical Algorithms_ by Jean Meeus, 2nd edn., 1998, pp. 338-342.
-    /// Reference code: https://github.com/EdReingold/calendar-code2/blob/9afc1f3/calendar.l#L4466
+    /// Reference code: <https://github.com/EdReingold/calendar-code2/blob/9afc1f3/calendar.l#L4466>
     pub fn lunar_latitude(julian_centuries: f64) -> f64 {
         let c = julian_centuries;
         let l = Self::mean_lunar_longitude(c);
@@ -962,7 +962,7 @@ impl Astronomical {
     ///
     /// Based on functions from _Calendrical Calculations_ by Reingold & Dershowitz,
     /// originally from _Astronomical Algorithms_ by Jean Meeus, 2nd edn., 1998, pp. 338-342.
-    /// Reference code: https://github.com/EdReingold/calendar-code2/blob/9afc1f3/calendar.l#L4215-L4278
+    /// Reference code: <https://github.com/EdReingold/calendar-code2/blob/9afc1f3/calendar.l#L4215-L4278>
     pub fn lunar_longitude(julian_centuries: f64) -> f64 {
         let c = julian_centuries;
         let l = Self::mean_lunar_longitude(c);
@@ -1148,7 +1148,7 @@ impl Astronomical {
     ///
     /// Based on functions from _Calendrical Calculations_ by Reingold & Dershowitz,
     /// originally from _Astronomical Algorithms_ by Jean Meeus, 2nd edn., 1998, pp. 336-340.
-    /// Reference code: https://github.com/EdReingold/calendar-code2/blob/9afc1f3/calendar.l#L4148-L4158
+    /// Reference code: <https://github.com/EdReingold/calendar-code2/blob/9afc1f3/calendar.l#L4148-L4158>
     fn mean_lunar_longitude(c: f64) -> f64 {
         // This polynomial is written out manually instead of using a fn like libm::pow for optimization, see #3743
         let n = 218.3164477
@@ -1160,7 +1160,7 @@ impl Astronomical {
     /// Closest fixed date on or after `date` on the eve of which crescent moon first became visible at `location`.
     ///
     /// Based on functions from _Calendrical Calculations_ by Reingold & Dershowitz.
-    /// Reference lisp code: https://github.com/EdReingold/calendar-code2/blob/9afc1f3/calendar.l#L6883-L6896
+    /// Reference lisp code: <https://github.com/EdReingold/calendar-code2/blob/9afc1f3/calendar.l#L6883-L6896>
     pub fn phasis_on_or_after(
         date: RataDie,
         location: Location,
@@ -1181,7 +1181,7 @@ impl Astronomical {
     /// Lunar phase is the result of calling `lunar_phase(moment, julian_centuries) in an earlier function.
     ///
     /// Based on functions from _Calendrical Calculations_ by Reingold & Dershowitz.
-    /// Reference lisp code: https://github.com/EdReingold/calendar-code2/blob/9afc1f3/calendar.l#L6868-L6881
+    /// Reference lisp code: <https://github.com/EdReingold/calendar-code2/blob/9afc1f3/calendar.l#L6868-L6881>
     pub fn phasis_on_or_before(
         date: RataDie,
         location: Location,
@@ -1207,7 +1207,7 @@ impl Astronomical {
     /// Can return 31 days due to the imprecise nature of trying to approximate an observational calendar. (See page 294 of the Calendrical Calculations book)
     ///
     /// Based on functions from _Calendrical Calculations_ by Reingold & Dershowitz.
-    /// Reference lisp code: https://github.com/EdReingold/calendar-code2/blob/9afc1f3/calendar.l#L7068-L7074
+    /// Reference lisp code: <https://github.com/EdReingold/calendar-code2/blob/9afc1f3/calendar.l#L7068-L7074>
     pub fn month_length(date: RataDie, location: Location) -> u8 {
         let moon = Self::phasis_on_or_after(date + 1, location, None);
         let prev = Self::phasis_on_or_before(date, location, None);
@@ -1221,7 +1221,7 @@ impl Astronomical {
     ///
     /// Based on functions from _Calendrical Calculations_ by Reingold & Dershowitz,
     /// originally from _Astronomical Algorithms_ by Jean Meeus, 2nd edn., 1998, p. 338.
-    /// Reference code: https://github.com/EdReingold/calendar-code2/blob/9afc1f3/calendar.l#L4160-L4170
+    /// Reference code: <https://github.com/EdReingold/calendar-code2/blob/9afc1f3/calendar.l#L4160-L4170>
     fn lunar_elongation(c: f64) -> f64 {
         // This polynomial is written out manually instead of using a fn like libm::pow for optimization, see #3743
         div_rem_euclid_f64(
@@ -1236,7 +1236,7 @@ impl Astronomical {
     ///
     /// Based on functions from _Calendrical Calculations_ by Reingold & Dershowitz,
     /// originally from _Astronomical Algorithms_ by Jean Meeus, 2nd edn., 1998.
-    /// Lisp code reference: https://github.com/EdReingold/calendar-code2/blob/9afc1f3/calendar.l#L4537
+    /// Lisp code reference: <https://github.com/EdReingold/calendar-code2/blob/9afc1f3/calendar.l#L4537>
     pub fn lunar_altitude(moment: Moment, location: Location) -> f64 {
         let phi = location.latitude;
         let psi = location.longitude;
@@ -1260,7 +1260,7 @@ impl Astronomical {
     ///
     /// Based on functions from _Calendrical Calculations_ by Reingold & Dershowitz,
     /// originally from _Astronomical Algorithms_ by Jean Meeus, 2nd edn., 1998, pp. 338-342.
-    /// Lisp code reference: https://github.com/EdReingold/calendar-code2/blob/9afc1f3/calendar.l#L4568-L4617
+    /// Lisp code reference: <https://github.com/EdReingold/calendar-code2/blob/9afc1f3/calendar.l#L4568-L4617>
     #[allow(dead_code)]
     pub fn lunar_distance(moment: Moment) -> f64 {
         let c = Self::julian_centuries(moment);
@@ -1381,7 +1381,7 @@ impl Astronomical {
     /// Note: the location is encoded as the `lunar_altitude_val` which is the result of `lunar_altitude(moment,location)`.
     /// Based on functions from _Calendrical Calculations_ by Reingold & Dershowitz,
     /// originally from _Astronomical Algorithms_ by Jean Meeus, 2nd edn., 1998.
-    /// Lisp code reference: https://github.com/EdReingold/calendar-code2/blob/9afc1f3/calendar.l#L4619-L4628
+    /// Lisp code reference: <https://github.com/EdReingold/calendar-code2/blob/9afc1f3/calendar.l#L4619-L4628>
     pub fn lunar_parallax(lunar_altitude_val: f64, moment: Moment) -> f64 {
         let cap_delta = Self::lunar_distance(moment);
         let alt = 6378140.0 / cap_delta;
@@ -1392,7 +1392,7 @@ impl Astronomical {
     /// Topocentric altitude of the moon.
     ///
     /// Based on functions from _Calendrical Calculations_ by Reingold & Dershowitz.
-    /// Lisp code reference: https://github.com/EdReingold/calendar-code2/blob/9afc1f3/calendar.l#L4630-L4636
+    /// Lisp code reference: <https://github.com/EdReingold/calendar-code2/blob/9afc1f3/calendar.l#L4630-L4636>
     fn topocentric_lunar_altitude(moment: Moment, location: Location) -> f64 {
         let lunar_altitude = Self::lunar_altitude(moment, location);
         lunar_altitude - Self::lunar_parallax(lunar_altitude, moment)
@@ -1400,7 +1400,7 @@ impl Astronomical {
 
     /// Observed altitude of upper limb of moon at moment at location.
     /// /// Based on functions from _Calendrical Calculations_ by Reingold & Dershowitz.
-    /// Lisp code reference: https://github.com/EdReingold/calendar-code2/blob/9afc1f3/calendar.l#L4646-L4653
+    /// Lisp code reference: <https://github.com/EdReingold/calendar-code2/blob/9afc1f3/calendar.l#L4646-L4653>
     fn observed_lunar_altitude(moment: Moment, location: Location) -> f64 {
         let r = Self::topocentric_lunar_altitude(moment, location);
         let y = Self::refraction(location);
@@ -1414,7 +1414,7 @@ impl Astronomical {
     ///
     /// Based on functions from _Calendrical Calculations_ by Reingold & Dershowitz,
     /// originally from _Astronomical Algorithms_ by Jean Meeus, 2nd edn., 1998, p. 338.
-    /// Lisp code reference: https://github.com/EdReingold/calendar-code2/blob/9afc1f3/calendar.l#L4172-L4182
+    /// Lisp code reference: <https://github.com/EdReingold/calendar-code2/blob/9afc1f3/calendar.l#L4172-L4182>
     fn solar_anomaly(c: f64) -> f64 {
         // This polynomial is written out manually instead of using a fn like libm::pow for optimization, see #3743
         div_rem_euclid_f64(
@@ -1429,7 +1429,7 @@ impl Astronomical {
     ///
     /// Based on functions from _Calendrical Calculations_ by Reingold & Dershowitz,
     /// originally from _Astronomical Algorithms_ by Jean Meeus, 2nd edn., 1998, p. 338.
-    /// Lisp code reference: https://github.com/EdReingold/calendar-code2/blob/9afc1f3/calendar.l#L4184-L4194
+    /// Lisp code reference: <https://github.com/EdReingold/calendar-code2/blob/9afc1f3/calendar.l#L4184-L4194>
     fn lunar_anomaly(c: f64) -> f64 {
         // This polynomial is written out manually instead of using a fn like libm::pow for optimization, see #3743
         div_rem_euclid_f64(
@@ -1445,7 +1445,7 @@ impl Astronomical {
     ///
     /// Based on functions from _Calendrical Calculations_ by Reingold & Dershowitz,
     /// originally from _Astronomical Algorithms_ by Jean Meeus, 2nd edn., 1998, p. 338.
-    /// Lisp code reference: https://github.com/EdReingold/calendar-code2/blob/9afc1f3/calendar.l#L4196-L4206
+    /// Lisp code reference: <https://github.com/EdReingold/calendar-code2/blob/9afc1f3/calendar.l#L4196-L4206>
     fn moon_node(c: f64) -> f64 {
         // This polynomial is written out manually instead of using a fn like libm::pow for optimization, see #3743
         div_rem_euclid_f64(
@@ -1460,7 +1460,7 @@ impl Astronomical {
     /// Returns None if there is no such moonset.
     ///
     /// Based on functions from _Calendrical Calculations_ by Reingold & Dershowitz.
-    /// Lisp code reference: https://github.com/EdReingold/calendar-code2/blob/9afc1f3/calendar.l#L4655-L4681
+    /// Lisp code reference: <https://github.com/EdReingold/calendar-code2/blob/9afc1f3/calendar.l#L4655-L4681>
     #[allow(dead_code)] // TODO: Remove dead code tag after use
     fn moonset(date: Moment, location: Location) -> Option<Moment> {
         let moment = Location::universal_from_standard(date, location);
@@ -1504,7 +1504,7 @@ impl Astronomical {
     /// Standard time of sunset on the date of the given moment and at the given location.
     /// Returns None if there is no such sunset.
     /// Based on functions from _Calendrical Calculations_ by Reingold & Dershowitz.
-    /// Lisp code reference: https://github.com/EdReingold/calendar-code2/blob/9afc1f3/calendar.l#L3700-L3706
+    /// Lisp code reference: <https://github.com/EdReingold/calendar-code2/blob/9afc1f3/calendar.l#L3700-L3706>
     #[allow(dead_code)]
     pub fn sunset(date: Moment, location: Location) -> Option<Moment> {
         let alpha = Self::refraction(location) + (16.0 / 60.0);
@@ -1515,7 +1515,7 @@ impl Astronomical {
     /// Returns None if there is no such sunset.
     ///
     /// Based on functions from _Calendrical Calculations_ by Reingold & Dershowitz.
-    /// Lisp code reference: https://github.com/EdReingold/calendar-code2/blob/9afc1f3/calendar.l#L6770-L6778
+    /// Lisp code reference: <https://github.com/EdReingold/calendar-code2/blob/9afc1f3/calendar.l#L6770-L6778>
     pub fn moonlag(date: Moment, location: Location) -> Option<f64> {
         if let Some(sun) = Self::sunset(date, location) {
             if let Some(moon) = Self::moonset(date, location) {
@@ -1532,7 +1532,7 @@ impl Astronomical {
     /// Argument comes from the result of calling `Self::julian_centuries(moment)` in an earlier function.
     ///
     /// Based on functions from _Calendrical Calculations_ by Reingold & Dershowitz.
-    /// Reference code: https://github.com/EdReingold/calendar-code2/blob/9afc1f3/calendar.l#L4037-L4047
+    /// Reference code: <https://github.com/EdReingold/calendar-code2/blob/9afc1f3/calendar.l#L4037-L4047>
     fn nutation(julian_centuries: f64) -> f64 {
         // This polynomial is written out manually instead of using a fn like libm::pow for optimization, see #3743
         let c = julian_centuries;
@@ -1545,7 +1545,7 @@ impl Astronomical {
     /// of the sun and the moon.
     ///
     /// Based on functions from _Calendrical Calculations_ by Reingold & Dershowitz.
-    /// Reference code: https://github.com/EdReingold/calendar-code2/blob/9afc1f3/calendar.l#L4397-L4414
+    /// Reference code: <https://github.com/EdReingold/calendar-code2/blob/9afc1f3/calendar.l#L4397-L4414>
     pub fn lunar_phase(moment: Moment, julian_centuries: f64) -> f64 {
         let t0 = NEW_MOON_ZERO;
         let maybe_n =
@@ -1577,7 +1577,7 @@ impl Astronomical {
     /// was equal to the `phase` given.
     ///
     /// Based on functions from _Calendrical Calculations_ by Reingold & Dershowitz.
-    /// Reference code: https://github.com/EdReingold/calendar-code2/blob/9afc1f3/calendar.l#L4416-L4427
+    /// Reference code: <https://github.com/EdReingold/calendar-code2/blob/9afc1f3/calendar.l#L4416-L4427>
     pub fn lunar_phase_at_or_before(phase: f64, moment: Moment) -> Moment {
         let julian_centuries = Self::julian_centuries(moment);
         let tau = moment.inner()
@@ -1598,7 +1598,7 @@ impl Astronomical {
     ///
     /// Based on functions from _Calendrical Calculations_ by Reingold & Dershowitz,
     /// originally from "Planetary Programs and Tables from -4000 to +2800" by Bretagnon & Simon, 1986.
-    /// Reference code: https://github.com/EdReingold/calendar-code2/blob/9afc1f3/calendar.l#L3985-L4035
+    /// Reference code: <https://github.com/EdReingold/calendar-code2/blob/9afc1f3/calendar.l#L3985-L4035>
     pub fn solar_longitude(julian_centuries: f64) -> f64 {
         let c: f64 = julian_centuries;
         let mut lt = (
@@ -1784,7 +1784,7 @@ impl Astronomical {
     /// the time when the sun is 4.5 degrees below the horizon, or `date + 1` if there is no such time.
     ///
     /// Based on functions from _Calendrical Calculations_ by Reingold & Dershowitz.
-    /// Reference lisp code: https://github.com/EdReingold/calendar-code2/blob/9afc1f3/calendar.l#L7337-L7346
+    /// Reference lisp code: <https://github.com/EdReingold/calendar-code2/blob/9afc1f3/calendar.l#L7337-L7346>
     fn simple_best_view(date: RataDie, location: Location) -> Moment {
         let dark = Self::dusk(date.to_f64_date(), location, 4.5);
         let best = dark.unwrap_or((date + 1).as_moment());
@@ -1796,7 +1796,7 @@ impl Astronomical {
     /// visibility of the crescent moon.
     ///
     /// Based on functions from _Calendrical Calculations_ by Reingold & Dershowitz.
-    /// Reference lisp code: https://github.com/EdReingold/calendar-code2/blob/9afc1f3/calendar.l#L7284-L7290
+    /// Reference lisp code: <https://github.com/EdReingold/calendar-code2/blob/9afc1f3/calendar.l#L7284-L7290>
     fn arc_of_light(moment: Moment) -> f64 {
         let julian_centuries = Self::julian_centuries(moment);
         arccos_degrees(
@@ -1809,7 +1809,7 @@ impl Astronomical {
     /// not intended for high altitudes or polar regions, as defined by S.K. Shaukat.
     ///
     /// Based on functions from _Calendrical Calculations_ by Reingold & Dershowitz.
-    /// Reference lisp code: https://github.com/EdReingold/calendar-code2/blob/9afc1f3/calendar.l#L7306-L7317
+    /// Reference lisp code: <https://github.com/EdReingold/calendar-code2/blob/9afc1f3/calendar.l#L7306-L7317>
     pub fn shaukat_criterion(date: Moment, location: Location) -> bool {
         let tee = Self::simple_best_view((date - 1.0).as_rata_die(), location);
         let phase = Self::lunar_phase(tee, Self::julian_centuries(tee));
@@ -1844,7 +1844,7 @@ impl Astronomical {
     /// at which solar longitude exceeded the given angle.
     ///
     /// Based on functions from _Calendrical Calculations_ by Reingold & Dershowitz.
-    /// Lisp code reference: https://github.com/EdReingold/calendar-code2/blob/9afc1f3/calendar.l#L4132-L4146
+    /// Lisp code reference: <https://github.com/EdReingold/calendar-code2/blob/9afc1f3/calendar.l#L4132-L4146>
     pub fn estimate_prior_solar_longitude(angle: f64, moment: Moment) -> Moment {
         let rate = MEAN_TROPICAL_YEAR / 360.0;
         let julian_centuries = Self::julian_centuries(moment);
@@ -1867,7 +1867,7 @@ impl Astronomical {
     /// See: https://sceweb.sce.uhcl.edu/helm/WEB-Positional%20Astronomy/Tutorial/Aberration/Aberration.html
     ///
     /// Based on functions from _Calendrical Calculations_ by Reingold & Dershowitz.
-    /// Lisp code reference: https://github.com/EdReingold/calendar-code2/blob/9afc1f3/calendar.l#L4049-L4057
+    /// Lisp code reference: <https://github.com/EdReingold/calendar-code2/blob/9afc1f3/calendar.l#L4049-L4057>
     fn aberration(c: f64) -> f64 {
         // This code differs from the lisp/book code by taking in a julian centuries value instead of
         // a Moment; this is because aberration is only ever called in the fn solar_longitude, which
@@ -1879,8 +1879,8 @@ impl Astronomical {
     /// Find the time of the new moon preceding a given Moment (the last new moon before the moment)
     ///
     /// Based on functions from _Calendrical Calculations_ by Reingold & Dershowitz.
-    /// Most of the math performed in the equivalent book/lisp function is done in [`num_of_new_moon_at_or_after`].
-    /// Lisp code reference: https://github.com/EdReingold/calendar-code2/blob/9afc1f3/calendar.l#L4379-L4386
+    /// Most of the math performed in the equivalent book/lisp function is done in [`Self::num_of_new_moon_at_or_after`].
+    /// Lisp code reference: <https://github.com/EdReingold/calendar-code2/blob/9afc1f3/calendar.l#L4379-L4386>
     pub fn new_moon_before(moment: Moment) -> Moment {
         Self::nth_new_moon(Self::num_of_new_moon_at_or_after(moment) - 1)
     }
@@ -1888,8 +1888,8 @@ impl Astronomical {
     /// Find the time of the new moon following a given Moment (the first new moon before the moment)
     ///
     /// Based on functions from _Calendrical Calculations_ by Reingold & Dershowitz.
-    /// Most of the math performed in the equivalent book/lisp function is done in [`num_of_new_moon_at_or_after`].
-    /// Lisp code reference: https://github.com/EdReingold/calendar-code2/blob/9afc1f3/calendar.l#L4388-L4395
+    /// Most of the math performed in the equivalent book/lisp function is done in [`Self::num_of_new_moon_at_or_after`].
+    /// Lisp code reference: <https://github.com/EdReingold/calendar-code2/blob/9afc1f3/calendar.l#L4388-L4395>
     pub fn new_moon_at_or_after(moment: Moment) -> Moment {
         Self::nth_new_moon(Self::num_of_new_moon_at_or_after(moment))
     }
@@ -1899,9 +1899,9 @@ impl Astronomical {
     ///
     /// Based on functions from _Calendrical Calculations_ by Reingold & Dershowitz.
     /// This function incorporates code from the book/lisp equivalent functions
-    /// of [`new_moon_before`] and [`new_moon_at_or_after`].
-    /// Lisp code reference: https://github.com/EdReingold/calendar-code2/blob/9afc1f3/calendar.l#L4379-L4395
-    fn num_of_new_moon_at_or_after(moment: Moment) -> i32 {
+    /// of [`Self::new_moon_before`] and [`Self::new_moon_at_or_after`].
+    /// Lisp code reference: <https://github.com/EdReingold/calendar-code2/blob/9afc1f3/calendar.l#L4379-L4395>
+    pub fn num_of_new_moon_at_or_after(moment: Moment) -> i32 {
         let t0: Moment = NEW_MOON_ZERO;
         let phi = Self::lunar_phase(moment, Self::julian_centuries(moment));
         let maybe_n = i64_to_i32(libm::round(
@@ -1926,7 +1926,7 @@ impl Astronomical {
     /// at which the angle of depression of the sun from the given location is equal to `alpha`.
     ///
     /// Based on functions from _Calendrical Calculations_ by Reingold & Dershowitz.
-    /// Lisp code reference: https://github.com/EdReingold/calendar-code2/blob/9afc1f3/calendar.l#L3590-L3605
+    /// Lisp code reference: <https://github.com/EdReingold/calendar-code2/blob/9afc1f3/calendar.l#L3590-L3605>
     pub fn sine_offset(moment: Moment, location: Location, alpha: f64) -> f64 {
         let phi = location.latitude;
         let tee_prime = Location::universal_from_local(moment, location);
