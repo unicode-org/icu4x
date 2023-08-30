@@ -80,6 +80,8 @@ impl<'a> LocaleFallbackerWithConfig<'a> {
                     {
                         locale.set_script(None);
                     }
+                } else if script == default_script {
+                    locale.set_script(None);
                 }
             }
         }
