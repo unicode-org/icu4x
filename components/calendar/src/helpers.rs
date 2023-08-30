@@ -2,10 +2,8 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use crate::{
-    astronomy::{Location, PI},
-    rata_die::{Moment, RataDie},
-};
+use crate::rata_die::{Moment, RataDie};
+use calendrical_calculations::astronomy::{Location, PI};
 
 /// Calculate `(n / d, n % d)` such that the remainder is always positive.
 ///

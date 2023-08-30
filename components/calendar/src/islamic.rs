@@ -34,10 +34,11 @@ use crate::helpers::{self, div_rem_euclid, div_rem_euclid64, div_rem_euclid_f64,
 use crate::julian::Julian;
 use crate::rata_die::{Moment, RataDie};
 use crate::AnyCalendarKind;
-use crate::{astronomy::*, Iso};
+use crate::Iso;
 use crate::{types, Calendar, CalendarError, Date, DateDuration, DateDurationUnit, DateTime};
 use ::tinystr::tinystr;
 
+use calendrical_calculations::astronomy::*;
 /// Islamic Observational Calendar (Default)
 ///
 /// # Era codes

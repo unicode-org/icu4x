@@ -16,4 +16,6 @@
 // TODO
 // #![warn(missing_docs)]
 
+// TODO: once everything is moved, go through and make stuff private again
+pub mod astronomy;
 pub mod rata_die;
