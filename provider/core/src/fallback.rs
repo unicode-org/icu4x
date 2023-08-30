@@ -24,6 +24,10 @@ pub enum LocaleFallbackPriority {
     ///
     /// For example, `"en-US"` should go to `"und-US"` and then `"und"`.
     Region,
+    /// Transliteration-specific fallback rules. See [UTS #35](https://unicode.org/reports/tr35/tr35-general.html#Inheritance).
+    ///
+    /// For example, `"en-US"` should go to `"en"` and then `"und-Latn"`, never reaching `"und"`.
+    Transliteration,
     /// Collation-specific fallback rules. Similar to language priority.
     ///
     /// For example, `"zh-Hant"` goes to `"zh"` before `"und"`.

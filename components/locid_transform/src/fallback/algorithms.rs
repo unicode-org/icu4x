@@ -3,7 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use icu_locid::extensions::unicode::{key, Key};
-use icu_locid::subtags::Language;
+use icu_locid::subtags::{Language, Script};
 use icu_locid::LanguageIdentifier;
 use icu_provider::FallbackPriority;
 
@@ -12,6 +12,26 @@ use super::*;
 const SUBDIVISION_KEY: Key = key!("sd");
 
 impl<'a> LocaleFallbackerWithConfig<'a> {
+    pub(crate) fn max_script(&self, locale: &DataLocale) -> Script {
+        if let Some(script) = locale.script() {
+            return script;
+        }
+        let language = locale.language().into_tinystr().to_unvalidated();
+        let script = if let Some(region) = locale.region() {
+            self.likely_subtags
+                .lr2s
+                .get_copied_2d(&language, &region.into_tinystr().to_unvalidated())
+        } else {
+            None
+        };
+        script.unwrap_or_else(|| {
+            self.likely_subtags
+                .l2s
+                .get_copied(&language)
+                .unwrap_or(DEFAULT_SCRIPT)
+        })
+    }
+
     pub(crate) fn normalize(&self, locale: &mut DataLocale) {
         let language = locale.language();
         // 1. Populate the region (required for region fallback only)
@@ -38,28 +58,29 @@ impl<'a> LocaleFallbackerWithConfig<'a> {
                 );
             }
         }
-        // 2. Remove the script if it is implied by the other subtags
-        if let Some(script) = locale.script() {
-            let default_script = self
-                .likely_subtags
-                .l2s
-                .get_copied(&language.into_tinystr().to_unvalidated())
-                .unwrap_or(DEFAULT_SCRIPT);
-            if let Some(region) = locale.region() {
-                if script
-                    == self
-                        .likely_subtags
-                        .lr2s
-                        .get_copied_2d(
-                            &language.into_tinystr().to_unvalidated(),
-                            &region.into_tinystr().to_unvalidated(),
-                        )
-                        .unwrap_or(default_script)
-                {
-                    locale.set_script(None);
+        // 2. Remove the script if it is implied by the other subtags and the fallback priority is
+        // not transliteration.
+        if self.config.priority != FallbackPriority::Transliteration {
+            if let Some(script) = locale.script() {
+                let default_script = self
+                    .likely_subtags
+                    .l2s
+                    .get_copied(&language.into_tinystr().to_unvalidated())
+                    .unwrap_or(DEFAULT_SCRIPT);
+                if let Some(region) = locale.region() {
+                    if script
+                        == self
+                            .likely_subtags
+                            .lr2s
+                            .get_copied_2d(
+                                &language.into_tinystr().to_unvalidated(),
+                                &region.into_tinystr().to_unvalidated(),
+                            )
+                            .unwrap_or(default_script)
+                    {
+                        locale.set_script(None);
+                    }
                 }
-            } else if script == default_script {
-                locale.set_script(None);
             }
         }
         // 3. Remove irrelevant extension subtags
@@ -84,8 +105,9 @@ impl<'a> LocaleFallbackIteratorInner<'a> {
             FallbackPriority::Language => self.step_language(locale),
             FallbackPriority::Region => self.step_region(locale),
             // TODO(#1964): Change the collation fallback rules to be different
-            // from the language fallback fules.
+            // from the language fallback rules.
             FallbackPriority::Collation => self.step_language(locale),
+            FallbackPriority::Transliteration => self.step_transliteration(locale),
             // This case should not normally happen, but `FallbackPriority` is non_exhaustive.
             // Make it go directly to `und`.
             _ => {
@@ -181,6 +203,40 @@ impl<'a> LocaleFallbackIteratorInner<'a> {
         // 6. Remove region
         debug_assert!(locale.region().is_some()); // don't call .step() on und
         locale.set_region(None);
+    }
+
+    fn step_transliteration(&mut self, locale: &mut DataLocale) {
+        // 1. Remove the region
+        if let Some(region) = locale.region() {
+            self.backup_region = Some(region);
+            locale.set_region(None);
+            return;
+        }
+
+        // 2. Remove the script if we have a language
+        if !locale.language().is_empty() {
+            if locale.script().is_some() {
+                locale.set_script(None);
+                if let Some(region) = self.backup_region.take() {
+                    locale.set_region(Some(region));
+                }
+                return;
+            } else {
+                // 3. Remove the language and apply the maximized script
+                locale.set_language(Language::UND);
+                // we must have stored a maximized script for transliterator fallback
+                debug_assert!(self.max_script.is_some());
+                if let Some(script) = self.max_script {
+                    locale.set_script(Some(script));
+                    return;
+                }
+            }
+        }
+
+        // note: UTS #35 wants us to apply "other associated scripts" now. ICU4C/J does not do this,
+        // so we don't either.
+
+        // 4. Do not fallback to `und` for transliteration.
     }
 
     fn restore_extensions_variants(&mut self, locale: &mut DataLocale) {
@@ -481,6 +537,41 @@ mod tests {
                     cas.input,
                     priority
                 );
+            }
+        }
+    }
+
+    #[test]
+    fn test_fallback_transliteration() {
+        let cases: &'static [(&'static str, &'static [&'static str])] = &[
+            ("en-US", &["en-US", "en", "und-Latn"]),
+            (
+                "az-Arab-IR",
+                &["az-Arab-IR", "az-Arab", "az-IR", "az", "und-Arab"],
+            ),
+            ("ru-RU", &["ru-RU", "ru", "und-Cyrl"]),
+            ("el-GR", &["el-GR", "el", "und-Grek"]),
+            ("el", &["el", "und-Grek"]),
+            ("el-Deva", &["el-Deva", "el", "und-Deva"]),
+        ];
+
+        let fallbacker = LocaleFallbacker::new();
+        for &(input, expected_chain) in cases {
+            let priority = FallbackPriority::Transliteration;
+            let mut config = LocaleFallbackConfig::default();
+            config.priority = priority;
+            let mut it = fallbacker
+                .for_config(config)
+                .fallback_for(Locale::from_str(input).unwrap().into());
+            for &expected in expected_chain {
+                assert_eq!(
+                    expected,
+                    &*it.get().write_to_string(),
+                    "{:?} ({:?})",
+                    input,
+                    priority
+                );
+                it.step();
             }
         }
     }

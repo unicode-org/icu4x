@@ -41,11 +41,12 @@
 
 use crate::provider::*;
 use icu_locid::extensions::unicode::Value;
-use icu_locid::subtags::Variants;
+use icu_locid::subtags::{Region, Script, Variants};
 use icu_provider::prelude::*;
 
 #[doc(inline)]
 pub use icu_provider::fallback::*;
+use icu_provider::FallbackPriority;
 
 mod algorithms;
 
@@ -86,6 +87,8 @@ struct LocaleFallbackIteratorInner<'a> {
     backup_extension: Option<Value>,
     backup_subdivision: Option<Value>,
     backup_variants: Option<Variants>,
+    backup_region: Option<Region>,
+    max_script: Option<Script>,
 }
 
 /// Iteration type for locale fallback operations.
@@ -228,6 +231,11 @@ impl<'a> LocaleFallbackerWithConfig<'a> {
     /// When first initialized, the locale is normalized according to the fallback algorithm.
     pub fn fallback_for(&self, mut locale: DataLocale) -> LocaleFallbackIterator<'a, 'static> {
         self.normalize(&mut locale);
+        let max_script = self
+            .config
+            .priority
+            .eq(&FallbackPriority::Transliteration)
+            .then(|| self.max_script(&locale));
         LocaleFallbackIterator {
             current: locale,
             inner: LocaleFallbackIteratorInner {
@@ -238,6 +246,8 @@ impl<'a> LocaleFallbackerWithConfig<'a> {
                 backup_extension: None,
                 backup_subdivision: None,
                 backup_variants: None,
+                backup_region: None,
+                max_script,
             },
             phantom: core::marker::PhantomData,
         }
