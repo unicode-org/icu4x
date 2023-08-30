@@ -3,7 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::rata_die::{Moment, RataDie};
-use calendrical_calculations::astronomy::{Location, PI};
+use crate::astronomy::{Location, PI};
 
 /// Calculate `(n / d, n % d)` such that the remainder is always positive.
 ///

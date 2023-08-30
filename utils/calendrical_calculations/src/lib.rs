@@ -18,4 +18,6 @@
 
 // TODO: once everything is moved, go through and make stuff private again
 pub mod astronomy;
+mod error;
+pub mod helpers;
 pub mod rata_die;

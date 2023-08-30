@@ -129,7 +129,6 @@ mod error;
 pub mod ethiopian;
 pub mod gregorian;
 pub mod hebrew;
-mod helpers;
 pub mod indian;
 pub mod islamic;
 pub mod iso;
@@ -141,7 +140,7 @@ pub mod roc;
 pub mod types;
 mod week_of;
 
-use calendrical_calculations::rata_die;
+use calendrical_calculations::{rata_die, helpers};
 
 pub mod week {
     //! Functions for week-of-month and week-of-year arithmetic.

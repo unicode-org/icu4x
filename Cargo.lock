@@ -248,6 +248,7 @@ dependencies = [
 name = "calendrical_calculations"
 version = "0.1.0"
 dependencies = [
+ "displaydoc",
  "libm",
 ]
 

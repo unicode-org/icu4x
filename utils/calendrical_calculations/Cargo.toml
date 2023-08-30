@@ -33,6 +33,7 @@ all-features = true
 
 [dependencies]
 libm = { version = "0.2", default-features = false }
+displaydoc = { version = "0.2.3", default-features = false }
 
 [dev-dependencies]
 
