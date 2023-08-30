@@ -6,7 +6,7 @@
 #[macro_export]
 macro_rules! __impl_datetime_gregory_datesymbols_v1 {
     ($ provider : path) => {
-        #[clippy::msrv = "1.65"]
+        #[clippy::msrv = "1.66"]
         impl icu_provider::DataProvider<icu::datetime::provider::calendar::GregorianDateSymbolsV1Marker> for $provider {
             fn load(&self, req: icu_provider::DataRequest) -> Result<icu_provider::DataResponse<icu::datetime::provider::calendar::GregorianDateSymbolsV1Marker>, icu_provider::DataError> {
                 static MN: <icu::datetime::provider::calendar::GregorianDateSymbolsV1Marker as icu_provider::DataMarker>::Yokeable = icu::datetime::provider::calendar::DateSymbolsV1 {

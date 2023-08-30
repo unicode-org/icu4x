@@ -68,7 +68,7 @@ fn test() {
         },
     )
     .unwrap()
-    .format(vec!["Mallorca", "Ibiza"], &mut buf)
+    .format(["Mallorca", "Ibiza"], &mut buf)
     .unwrap();
 
     assert_eq!(buf, "Mallorca e Ibiza");

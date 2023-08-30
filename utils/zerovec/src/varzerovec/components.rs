@@ -128,13 +128,7 @@ pub struct VarZeroVecComponents<'a, T: ?Sized, F> {
 impl<'a, T: ?Sized, F> Copy for VarZeroVecComponents<'a, T, F> {}
 impl<'a, T: ?Sized, F> Clone for VarZeroVecComponents<'a, T, F> {
     fn clone(&self) -> Self {
-        VarZeroVecComponents {
-            len: self.len,
-            indices: self.indices,
-            things: self.things,
-            entire_slice: self.entire_slice,
-            marker: PhantomData,
-        }
+        *self
     }
 }
 
@@ -569,9 +563,7 @@ where
     let data_len: u32 = elements
         .iter()
         .map(|v| u32::try_from(v.encode_var_ule_len()).ok())
-        .fold(Some(0u32), |s, v| {
-            s.and_then(|s| v.and_then(|v| s.checked_add(v)))
-        })?;
+        .try_fold(0u32, |s, v| s.checked_add(v?))?;
     let ret = idx_len.checked_add(data_len);
     if let Some(r) = ret {
         if r >= F::MAX_VALUE {

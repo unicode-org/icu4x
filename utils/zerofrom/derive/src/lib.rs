@@ -76,7 +76,7 @@ fn get_may_borrow_attr(attrs: &[syn::Attribute]) -> Result<HashSet<Ident>, Span>
                 if let Ok(list) =
                     list.parse_args_with(Punctuated::<Ident, Token![,]>::parse_terminated)
                 {
-                    params.extend(list.into_iter())
+                    params.extend(list)
                 } else {
                     return Err(attr.span());
                 }

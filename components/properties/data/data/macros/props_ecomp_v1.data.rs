@@ -6,7 +6,7 @@
 #[macro_export]
 macro_rules! __impl_props_ecomp_v1 {
     ($ provider : path) => {
-        #[clippy::msrv = "1.65"]
+        #[clippy::msrv = "1.66"]
         impl $provider {
             #[doc(hidden)]
             pub const SINGLETON_PROPS_ECOMP_V1: &'static <icu::properties::provider::EmojiComponentV1Marker as icu_provider::DataMarker>::Yokeable = &icu::properties::provider::PropertyCodePointSetV1::InversionList(unsafe {
@@ -14,7 +14,7 @@ macro_rules! __impl_props_ecomp_v1 {
                 icu::collections::codepointinvlist::CodePointInversionList::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"#\0\0\0$\0\0\0*\0\0\0+\0\0\x000\0\0\0:\0\0\0\r \0\0\x0E \0\0\xE3 \0\0\xE4 \0\0\x0F\xFE\0\0\x10\xFE\0\0\xE6\xF1\x01\0\0\xF2\x01\0\xFB\xF3\x01\0\0\xF4\x01\0\xB0\xF9\x01\0\xB4\xF9\x01\0 \0\x0E\0\x80\0\x0E\0") }, 146u32)
             });
         }
-        #[clippy::msrv = "1.65"]
+        #[clippy::msrv = "1.66"]
         impl icu_provider::DataProvider<icu::properties::provider::EmojiComponentV1Marker> for $provider {
             fn load(&self, req: icu_provider::DataRequest) -> Result<icu_provider::DataResponse<icu::properties::provider::EmojiComponentV1Marker>, icu_provider::DataError> {
                 if req.locale.is_empty() {

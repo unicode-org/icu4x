@@ -284,6 +284,6 @@ mod tests {
 
         // deserialize from ULE bytes
         let ule_parse_result = MirroredPairedBracketDataULE::parse_byte_slice(ule_bytes);
-        assert!(matches!(ule_parse_result, Err(_)));
+        assert!(ule_parse_result.is_err());
     }
 }
