@@ -204,7 +204,7 @@ pub(crate) mod rayon_prelude {
 /// |---|---|---|
 /// | [`Runtime`] | Required, Automatic | Smallest |
 /// | [`RuntimeManual`] | Required, Manual | Smallest |
-/// | [`Preresolved`] | Not required | Small |
+/// | [`Preresolved`] | Unsupported | Small |
 /// | [`Hybrid`] | Optional | Medium |
 ///
 /// If you are not 100% certain of the closed set of locales you need at runtime, you should
