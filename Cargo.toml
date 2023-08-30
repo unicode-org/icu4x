@@ -70,6 +70,7 @@ members = [
     "provider/macros",
 
     # Utils
+    "utils/calendrical_calculations",
     "utils/crlify",
     "utils/databake",
     "utils/databake/derive",
