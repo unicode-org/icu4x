@@ -185,8 +185,10 @@ pub struct Cli {
     #[arg(long, value_name = "KEY_FILE")]
     #[arg(
         help = "Path to text file with resource keys to include, one per line. Empty lines \
-                  and lines starting with '#' are ignored."
+                  and lines starting with '#' are ignored.\n
+                  Requires the `legacy_api` Cargo feature."
     )]
+    #[cfg(feature = "legacy_api")]
     key_file: Option<PathBuf>,
 
     #[arg(long, value_name = "BINARY")]
