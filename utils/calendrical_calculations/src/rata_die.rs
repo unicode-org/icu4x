@@ -1,6 +1,9 @@
-// This file is part of ICU4X. For terms of use, please see the file
-// called LICENSE at the top level of the ICU4X source tree
-// (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
+// This file is part of ICU4X.
+//
+// This file is licensed under the Apache License, Version 2.0,
+// which can be found in the LICENSE file in the
+// calendrical_calculations package root or online at
+// <https://www.apache.org/licenses/LICENSE-2.0>.
 
 use core::ops::{Add, AddAssign, Sub, SubAssign};
 
