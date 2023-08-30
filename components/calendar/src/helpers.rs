@@ -4,8 +4,7 @@
 
 use crate::{
     astronomy::{Location, PI},
-    rata_die::RataDie,
-    types::Moment,
+    rata_die::{Moment, RataDie},
 };
 
 /// Calculate `(n / d, n % d)` such that the remainder is always positive.

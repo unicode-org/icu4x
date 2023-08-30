@@ -15,8 +15,7 @@ use crate::helpers::{
     tan_degrees, I32Result,
 };
 use crate::iso::Iso;
-use crate::rata_die::RataDie;
-use crate::types::Moment;
+use crate::rata_die::{Moment, RataDie};
 use crate::{Date, Gregorian};
 
 #[derive(Debug, Copy, Clone, Default)]

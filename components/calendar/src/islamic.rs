@@ -32,7 +32,7 @@
 use crate::calendar_arithmetic::{ArithmeticDate, CalendarArithmetic};
 use crate::helpers::{self, div_rem_euclid, div_rem_euclid64, div_rem_euclid_f64, next};
 use crate::julian::Julian;
-use crate::rata_die::RataDie;
+use crate::rata_die::{Moment, RataDie};
 use crate::AnyCalendarKind;
 use crate::{astronomy::*, Iso};
 use crate::{types, Calendar, CalendarError, Date, DateDuration, DateDurationUnit, DateTime};
@@ -366,7 +366,7 @@ impl CalendarArithmetic for IslamicUmmAlQura {
         // We cannot use month_days from the book here, that is for the observational calendar
         //
         // Instead we subtract the two new months calculated using the saudi criterion
-        let midmonth = types::Moment::new(
+        let midmonth = Moment::new(
             FIXED_ISLAMIC_EPOCH_FRIDAY.to_f64_date()
                 + (((year - 1) as f64) * 12.0 + month as f64 - 0.5) * MEAN_SYNODIC_MONTH,
         );

@@ -8,10 +8,10 @@ use core::ops::{Add, AddAssign, Sub, SubAssign};
 ///
 /// See: <https://en.wikipedia.org/wiki/Rata_Die>
 ///
-/// Keep this class INTERNAL because it shouldn't be possible to construct a RataDie
+/// It is a logic error to construct a RataDie
 /// except from a date that is in range of one of the official calendars.
 #[derive(Debug, Copy, Clone, PartialEq, Eq, PartialOrd, Ord)]
-pub(crate) struct RataDie(i64);
+pub struct RataDie(i64);
 
 impl RataDie {
     pub const fn new(fixed_date: i64) -> Self {
@@ -112,7 +112,7 @@ impl Sub for RataDie {
 /// NOTE: This should not cause overflow errors for most cases, but consider
 /// alternative implementations if necessary.
 #[derive(Debug, Copy, Clone, PartialEq, PartialOrd)]
-pub(crate) struct Moment(f64);
+pub struct Moment(f64);
 
 /// Add a number of days to a Moment
 impl Add<f64> for Moment {
@@ -162,7 +162,7 @@ impl Moment {
     }
 
     /// Get the RataDie of a Moment
-    pub(crate) fn as_rata_die(&self) -> RataDie {
+    pub fn as_rata_die(&self) -> RataDie {
         RataDie::new(libm::floor(self.0) as i64)
     }
 }

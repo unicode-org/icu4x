@@ -1282,6 +1282,7 @@ dependencies = [
 name = "icu_calendar"
 version = "1.2.0"
 dependencies = [
+ "calendrical_calculations",
  "criterion",
  "databake",
  "displaydoc",

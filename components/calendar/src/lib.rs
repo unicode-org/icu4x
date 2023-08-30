@@ -138,10 +138,11 @@ pub mod japanese;
 pub mod julian;
 pub mod persian;
 pub mod provider;
-mod rata_die;
 pub mod roc;
 pub mod types;
 mod week_of;
+
+use calendrical_calculations::rata_die;
 
 pub mod week {
     //! Functions for week-of-month and week-of-year arithmetic.
