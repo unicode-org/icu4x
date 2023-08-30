@@ -12,27 +12,7 @@ use super::*;
 const SUBDIVISION_KEY: Key = key!("sd");
 
 impl<'a> LocaleFallbackerWithConfig<'a> {
-    pub(crate) fn max_script(&self, locale: &DataLocale) -> Script {
-        if let Some(script) = locale.script() {
-            return script;
-        }
-        let language = locale.language().into_tinystr().to_unvalidated();
-        let script = if let Some(region) = locale.region() {
-            self.likely_subtags
-                .lr2s
-                .get_copied_2d(&language, &region.into_tinystr().to_unvalidated())
-        } else {
-            None
-        };
-        script.unwrap_or_else(|| {
-            self.likely_subtags
-                .l2s
-                .get_copied(&language)
-                .unwrap_or(DEFAULT_SCRIPT)
-        })
-    }
-
-    pub(crate) fn normalize(&self, locale: &mut DataLocale) {
+    pub(crate) fn normalize(&self, locale: &mut DataLocale, max_script: &mut Script) {
         let language = locale.language();
         // 1. Populate the region (required for region fallback only)
         if self.config.priority == FallbackPriority::Region && locale.region().is_none() {
@@ -58,32 +38,34 @@ impl<'a> LocaleFallbackerWithConfig<'a> {
                 );
             }
         }
-        // 2. Remove the script if it is implied by the other subtags and the fallback priority is
-        // not transliteration.
-        if self.config.priority != FallbackPriority::Transliteration {
-            if let Some(script) = locale.script() {
-                let default_script = self
-                    .likely_subtags
-                    .l2s
-                    .get_copied(&language.into_tinystr().to_unvalidated())
-                    .unwrap_or(DEFAULT_SCRIPT);
-                if let Some(region) = locale.region() {
-                    if script
-                        == self
-                            .likely_subtags
-                            .lr2s
-                            .get_copied_2d(
-                                &language.into_tinystr().to_unvalidated(),
-                                &region.into_tinystr().to_unvalidated(),
-                            )
-                            .unwrap_or(default_script)
-                    {
-                        locale.set_script(None);
-                    }
-                } else if script == default_script {
-                    locale.set_script(None);
-                }
+        // 2. Remove the script if it is implied by the other subtags or store the maximized script
+        // if the fallback priority is transliteration.
+        let locale_script = locale.script().unwrap_or(DEFAULT_SCRIPT);
+        let max_l_script = self
+            .likely_subtags
+            .l2s
+            .get_copied(&language.into_tinystr().to_unvalidated())
+            .unwrap_or(DEFAULT_SCRIPT);
+        *max_script = max_l_script;
+        if let Some(region) = locale.region() {
+            let max_lr_script = self
+                .likely_subtags
+                .lr2s
+                .get_copied_2d(
+                    &language.into_tinystr().to_unvalidated(),
+                    &region.into_tinystr().to_unvalidated(),
+                )
+                .unwrap_or(max_l_script);
+            *max_script = max_lr_script;
+            if locale_script == max_lr_script
+                && self.config.priority != FallbackPriority::Transliteration
+            {
+                locale.set_script(None);
             }
+        } else if locale_script == max_l_script
+            && self.config.priority != FallbackPriority::Transliteration
+        {
+            locale.set_script(None);
         }
         // 3. Remove irrelevant extension subtags
         locale.retain_unicode_ext(|key| {
@@ -228,14 +210,10 @@ impl<'a> LocaleFallbackIteratorInner<'a> {
             } else {
                 // 3. Remove the language and apply the maximized script
                 locale.set_language(Language::UND);
-                // we must have stored a maximized script for transliterator fallback
-                debug_assert!(self.max_script.is_some());
-                if let Some(script) = self.max_script {
-                    locale.set_script(Some(script));
-                    // needed if more fallback is added at the end
-                    #[allow(clippy::needless_return)]
-                    return;
-                }
+                locale.set_script(Some(self.max_script));
+                // needed if more fallback is added at the end
+                #[allow(clippy::needless_return)]
+                return;
             }
         }
 

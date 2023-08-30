@@ -46,7 +46,6 @@ use icu_provider::prelude::*;
 
 #[doc(inline)]
 pub use icu_provider::fallback::*;
-use icu_provider::FallbackPriority;
 
 mod algorithms;
 
@@ -88,7 +87,7 @@ struct LocaleFallbackIteratorInner<'a> {
     backup_subdivision: Option<Value>,
     backup_variants: Option<Variants>,
     backup_region: Option<Region>,
-    max_script: Option<Script>,
+    max_script: Script,
 }
 
 /// Iteration type for locale fallback operations.
@@ -230,12 +229,9 @@ impl<'a> LocaleFallbackerWithConfig<'a> {
     ///
     /// When first initialized, the locale is normalized according to the fallback algorithm.
     pub fn fallback_for(&self, mut locale: DataLocale) -> LocaleFallbackIterator<'a, 'static> {
-        self.normalize(&mut locale);
-        let max_script = self
-            .config
-            .priority
-            .eq(&FallbackPriority::Transliteration)
-            .then(|| self.max_script(&locale));
+        let mut max_script = DEFAULT_SCRIPT;
+        self.normalize(&mut locale, &mut max_script);
+        let max_script = locale.script().unwrap_or(max_script);
         LocaleFallbackIterator {
             current: locale,
             inner: LocaleFallbackIteratorInner {
