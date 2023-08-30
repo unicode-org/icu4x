@@ -40,32 +40,39 @@ impl<'a> LocaleFallbackerWithConfig<'a> {
         }
         // 2. Remove the script if it is implied by the other subtags or store the maximized script
         // if the fallback priority is transliteration.
-        let locale_script = locale.script().unwrap_or(DEFAULT_SCRIPT);
-        let max_l_script = self
-            .likely_subtags
-            .l2s
-            .get_copied(&language.into_tinystr().to_unvalidated())
-            .unwrap_or(DEFAULT_SCRIPT);
-        *max_script = max_l_script;
-        if let Some(region) = locale.region() {
-            let max_lr_script = self
+        if let Some(locale_script) = locale.script().or(self
+            .config
+            .priority
+            .eq(&FallbackPriority::Transliteration)
+            // we want a Some(_) to call the max_script-setting code in the case of transliteration.
+            .then_some(DEFAULT_SCRIPT))
+        {
+            let max_l_script = self
                 .likely_subtags
-                .lr2s
-                .get_copied_2d(
-                    &language.into_tinystr().to_unvalidated(),
-                    &region.into_tinystr().to_unvalidated(),
-                )
-                .unwrap_or(max_l_script);
-            *max_script = max_lr_script;
-            if locale_script == max_lr_script
+                .l2s
+                .get_copied(&language.into_tinystr().to_unvalidated())
+                .unwrap_or(DEFAULT_SCRIPT);
+            *max_script = max_l_script;
+            if let Some(region) = locale.region() {
+                let max_lr_script = self
+                    .likely_subtags
+                    .lr2s
+                    .get_copied_2d(
+                        &language.into_tinystr().to_unvalidated(),
+                        &region.into_tinystr().to_unvalidated(),
+                    )
+                    .unwrap_or(max_l_script);
+                *max_script = max_lr_script;
+                if locale_script == max_lr_script
+                    && self.config.priority != FallbackPriority::Transliteration
+                {
+                    locale.set_script(None);
+                }
+            } else if locale_script == max_l_script
                 && self.config.priority != FallbackPriority::Transliteration
             {
                 locale.set_script(None);
             }
-        } else if locale_script == max_l_script
-            && self.config.priority != FallbackPriority::Transliteration
-        {
-            locale.set_script(None);
         }
         // 3. Remove irrelevant extension subtags
         locale.retain_unicode_ext(|key| {
