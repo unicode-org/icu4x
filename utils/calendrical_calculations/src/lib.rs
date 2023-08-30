@@ -5,6 +5,11 @@
 // calendrical_calculations package root or online at
 // <https://www.apache.org/licenses/LICENSE-2.0>.
 
+//! Calendrical calculations
+//!
+//! This crate implements algorithms from
+//! Calendrical Calculations by Reingold & Dershowitz, Cambridge University Press, 4th edition (2018)
+//! as needed by [ICU4X](https://github.com/unicode-org/icu4x).
 // https://github.com/unicode-org/icu4x/blob/main/docs/process/boilerplate.md#library-annotations
 #![cfg_attr(not(any(test, feature = "std")), no_std)]
 #![cfg_attr(
