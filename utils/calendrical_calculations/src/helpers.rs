@@ -2,8 +2,8 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use crate::rata_die::{Moment, RataDie};
 use crate::astronomy::{Location, PI};
+use crate::rata_die::{Moment, RataDie};
 
 /// Calculate `(n / d, n % d)` such that the remainder is always positive.
 ///
@@ -199,7 +199,7 @@ pub fn invert_angular<F: Fn(f64) -> f64>(f: F, y: f64, r: (f64, f64)) -> f64 {
     )
 }
 
-pub(crate) fn next_moment<F>(mut index: Moment, location: Location, condition: F) -> RataDie
+pub fn next_moment<F>(mut index: Moment, location: Location, condition: F) -> RataDie
 where
     F: Fn(Moment, Location) -> bool,
 {
@@ -211,7 +211,7 @@ where
     }
 }
 
-pub(crate) fn next<F>(mut index: RataDie, condition: F) -> RataDie
+pub fn next<F>(mut index: RataDie, condition: F) -> RataDie
 where
     F: Fn(RataDie) -> bool,
 {
@@ -223,7 +223,7 @@ where
     }
 }
 
-pub(crate) fn next_u8<F>(mut index: u8, condition: F) -> u8
+pub fn next_u8<F>(mut index: u8, condition: F) -> u8
 where
     F: Fn(u8) -> bool,
 {
@@ -236,7 +236,7 @@ where
 }
 
 // "Final" is a reserved keyword in rust, which explains the naming convention here.
-pub(crate) fn final_func<F>(mut index: i32, condition: F) -> i32
+pub fn final_func<F>(mut index: i32, condition: F) -> i32
 where
     F: Fn(i32) -> bool,
 {

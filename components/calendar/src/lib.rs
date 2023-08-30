@@ -140,7 +140,7 @@ pub mod roc;
 pub mod types;
 mod week_of;
 
-use calendrical_calculations::{rata_die, helpers};
+use calendrical_calculations::{helpers, rata_die};
 
 pub mod week {
     //! Functions for week-of-month and week-of-year arithmetic.
