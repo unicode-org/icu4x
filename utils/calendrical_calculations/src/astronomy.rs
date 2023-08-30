@@ -23,6 +23,7 @@ use crate::rata_die::{Moment, RataDie};
 /// A Location on the Earth given as a latitude, longitude, elevation, and standard time zone.
 /// Latitude is given in degrees from -90 to 90, longitude in degrees from -180 to 180,
 /// elevation in meters, and zone as a UTC offset in fractional days (ex. UTC+1 would have zone = 1.0 / 24.0)
+#[allow(clippy::exhaustive_structs)] // This is all that is needed by the book algorithms
 pub struct Location {
     pub latitude: f64,  // latitude from -90 to 90
     pub longitude: f64, // longitude from -180 to 180
@@ -205,6 +206,7 @@ impl Location {
 #[derive(Debug)]
 /// The Astronomical struct provides functions which support astronomical
 /// calculations used by many observational calendars.
+#[allow(clippy::exhaustive_structs)] // only exists to collect methods
 pub struct Astronomical;
 
 impl Astronomical {

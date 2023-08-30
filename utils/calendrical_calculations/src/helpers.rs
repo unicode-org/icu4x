@@ -619,6 +619,7 @@ fn test_ceil_div() {
 }
 
 #[derive(Copy, Clone, Debug)]
+#[allow(clippy::exhaustive_enums)] // enum is specific to function and has a closed set of possible values
 pub enum I32Result {
     BelowMin(i64),
     WithinRange(i32),

@@ -9,6 +9,7 @@ use displaydoc::Display;
 
 /// A list of error outcomes for exceeding location bounds
 #[derive(Display, Debug, Copy, Clone, PartialEq)]
+#[non_exhaustive]
 pub enum LocationOutOfBoundsError {
     /// Latitude value was out of bounds
     #[displaydoc("Latitude {0} outside bounds of -90 to 90")]
