@@ -864,7 +864,7 @@ impl AuxiliaryKeys {
     pub fn try_from_iter<'a>(iter: impl IntoIterator<Item = &'a str>) -> Result<Self, DataError> {
         // TODO: Avoid the allocation when possible
         let mut builder = String::new();
-        for item in iter.into_iter() {
+        for item in iter {
             if !item.is_empty()
                 && item
                     .bytes()

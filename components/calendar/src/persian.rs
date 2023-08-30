@@ -689,7 +689,7 @@ mod tests {
             expected_next: i32,
         }
 
-        let test_cases = vec![
+        let test_cases = [
             TestCase {
                 input: 0,
                 expected_prev: -1,

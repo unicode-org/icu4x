@@ -106,7 +106,7 @@ where
     /// use icu_provider::prelude::*;
     /// use icu_provider_adapters::filter::Filterable;
     ///
-    /// let allowlist = vec![langid!("de"), langid!("zh")];
+    /// let allowlist = [langid!("de"), langid!("zh")];
     /// let provider = HelloWorldProvider
     ///     .filterable("Demo German+Chinese filter")
     ///     .filter_by_langid_allowlist_strict(&allowlist);
