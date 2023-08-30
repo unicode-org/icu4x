@@ -222,6 +222,8 @@ impl<'a> LocaleFallbackIteratorInner<'a> {
                 if let Some(region) = self.backup_region.take() {
                     locale.set_region(Some(region));
                 }
+                // needed if more fallback is added at the end
+                #[allow(clippy::needless_return)]
                 return;
             } else {
                 // 3. Remove the language and apply the maximized script
@@ -230,6 +232,8 @@ impl<'a> LocaleFallbackIteratorInner<'a> {
                 debug_assert!(self.max_script.is_some());
                 if let Some(script) = self.max_script {
                     locale.set_script(Some(script));
+                    // needed if more fallback is added at the end
+                    #[allow(clippy::needless_return)]
                     return;
                 }
             }
