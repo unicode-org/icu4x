@@ -490,7 +490,7 @@ impl<'data> CodePointInversionList<'data> {
             let range_limit: u32 = AsULE::from_unaligned(pair[1]);
             RangeInclusive::new(range_start, range_limit - 1)
         });
-        beginning.into_iter().chain(chunks).chain(end.into_iter())
+        beginning.into_iter().chain(chunks).chain(end)
     }
 
     /// Returns the number of ranges contained in this [`CodePointInversionList`]
@@ -1034,14 +1034,8 @@ mod tests {
 
     #[test]
     fn test_serde_deserialize_invalid() {
-        assert!(matches!(
-            serde_json::from_str::<CodePointInversionList>("[65,70,98775,85]"),
-            Err(_)
-        ));
-        assert!(matches!(
-            serde_json::from_str::<CodePointInversionList>("[65,70,U+FFFFFFFFFF,85]"),
-            Err(_)
-        ));
+        assert!(serde_json::from_str::<CodePointInversionList>("[65,70,98775,85]").is_err());
+        assert!(serde_json::from_str::<CodePointInversionList>("[65,70,U+FFFFFFFFFF,85]").is_err());
     }
 
     #[test]

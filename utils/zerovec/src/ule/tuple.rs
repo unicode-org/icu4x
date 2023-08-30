@@ -147,7 +147,7 @@ fn test_pairule_validate() {
     // Test failed validation with a correctly sized but differently constrained tuple
     // Note: 1234901 is not a valid char
     let zerovec3 = ZeroVec::<(char, u32)>::parse_byte_slice(bytes);
-    assert!(matches!(zerovec3, Err(_)));
+    assert!(zerovec3.is_err());
 }
 
 #[test]
@@ -162,7 +162,7 @@ fn test_tripleule_validate() {
     // Test failed validation with a correctly sized but differently constrained tuple
     // Note: 1234901 is not a valid char
     let zerovec3 = ZeroVec::<(char, i8, u32)>::parse_byte_slice(bytes);
-    assert!(matches!(zerovec3, Err(_)));
+    assert!(zerovec3.is_err());
 }
 
 #[test]
@@ -178,5 +178,5 @@ fn test_quadule_validate() {
     // Test failed validation with a correctly sized but differently constrained tuple
     // Note: 1234901 is not a valid char
     let zerovec3 = ZeroVec::<(char, i8, u16, u32)>::parse_byte_slice(bytes);
-    assert!(matches!(zerovec3, Err(_)));
+    assert!(zerovec3.is_err());
 }

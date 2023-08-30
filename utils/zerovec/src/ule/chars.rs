@@ -174,7 +174,7 @@ mod test {
             .collect();
         let u32_bytes: &[u8] = RawBytesULE::<4>::as_byte_slice(&u32_ules);
         let parsed_ules_result = CharULE::parse_byte_slice(u32_bytes);
-        assert!(matches!(parsed_ules_result, Err(_)));
+        assert!(parsed_ules_result.is_err());
 
         // 0x20FFFF is out of range for a char
         let u32s = [0x20FFFF];
@@ -185,6 +185,6 @@ mod test {
             .collect();
         let u32_bytes: &[u8] = RawBytesULE::<4>::as_byte_slice(&u32_ules);
         let parsed_ules_result = CharULE::parse_byte_slice(u32_bytes);
-        assert!(matches!(parsed_ules_result, Err(_)));
+        assert!(parsed_ules_result.is_err());
     }
 }
