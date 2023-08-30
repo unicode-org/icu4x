@@ -49,7 +49,17 @@ impl HexTransliterator {
 
             let c_u32 = c as u32;
             // computing length for the size hint
-            let length = c_u32.checked_ilog2().unwrap_or(0) / 4 + 1;
+            let length = if c_u32 == 0 {
+                1
+            } else {
+                let mut length = 0;
+                let mut rem = c_u32;
+                while rem != 0 {
+                    length += 1;
+                    rem >>= 4;
+                }
+                length
+            };
             let length = length.max(self.min_length as u32);
             dest.apply_size_hint(length as usize + self.prefix.len() + self.suffix.len());
 
