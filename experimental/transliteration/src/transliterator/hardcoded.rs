@@ -8,6 +8,8 @@
 use crate::transliterator::replaceable::{Forward, RepMatcher, Replaceable, Utf8Matcher};
 use core::fmt::Write;
 
+/// A transliterator that replaces every character with its `case`-case hexadecimal representation,
+/// 0-padded to `min_length`, and surrounded by `prefix` and `suffix`.
 #[derive(Debug)]
 pub(super) struct HexTransliterator {
     prefix: &'static str,
