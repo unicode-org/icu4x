@@ -344,18 +344,20 @@ impl Cli {
                         .collect::<Result<_, _>>()?,
                 ),
             }
-        } else if let Some(key_file_path) = &self.key_file {
-            log::warn!("The --key-file argument is deprecated. Use a config.json.");
-            #[allow(deprecated)]
-            config::KeyInclude::Explicit(
-                icu_datagen::keys_from_bin(key_file_path)
-                    .with_context(|| key_file_path.to_string_lossy().into_owned())?
-                    .into_iter()
-                    .collect(),
-            )
         } else if let Some(bin_path) = &self.keys_for_bin {
             config::KeyInclude::ForBinary(bin_path.clone())
         } else {
+            #[cfg(feature = "legacy_api")]
+            if let Some(key_file_path) = &self.key_file {
+                log::warn!("The --key-file argument is deprecated. Use a config.json.");
+                #[allow(deprecated)]
+                return Ok(config::KeyInclude::Explicit(
+                    icu_datagen::keys_from_file(key_file_path)
+                        .with_context(|| key_file_path.to_string_lossy().into_owned())?
+                        .into_iter()
+                        .collect(),
+                ));
+            }
             eyre::bail!("Without a config, --keys or --keys-from-bin are required.")
         })
     }

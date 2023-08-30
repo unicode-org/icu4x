@@ -373,10 +373,7 @@ pub fn keys<S: AsRef<str>>(strings: &[S]) -> Vec<DataKey> {
 /// # Ok(())
 /// # }
 /// ```
-#[deprecated(
-    since = "1.3.0",
-    note = "use `all_keys` with the required cargo features"
-)]
+#[deprecated(since = "1.3.0", note = "use Rust code")]
 #[cfg(feature = "legacy_api")]
 pub fn keys_from_file<P: AsRef<Path>>(path: P) -> std::io::Result<Vec<DataKey>> {
     use std::io::{BufRead, BufReader};
@@ -392,7 +389,7 @@ pub fn keys_from_file<P: AsRef<Path>>(path: P) -> std::io::Result<Vec<DataKey>> 
 /// for which the compiler cannot remove unused data. Using this function on a binary that only
 /// uses compiled data (through the `compiled_data` feature or manual baked data) will not return
 /// any keys, as the keys only exist in the type system.
-//  Supports the hello world key
+///
 /// # Example
 ///
 /// #### build.rs
@@ -410,6 +407,7 @@ pub fn keys_from_file<P: AsRef<Path>>(path: P) -> std::io::Result<Vec<DataKey>> 
 /// # Ok(())
 /// # }
 /// ```
+//  Supports the hello world key
 pub fn keys_from_bin<P: AsRef<Path>>(path: P) -> std::io::Result<Vec<DataKey>> {
     use memchr::memmem::*;
 
