@@ -221,9 +221,9 @@ macro_rules! impl_data_provider {
                     );
                 }
 
+                #[allow(clippy::redundant_closure_call)]
                 Ok(DataResponse {
                     metadata: Default::default(),
-                    #[allow(clippy::redundant_closure_call)]
                     payload: Some(DataPayload::from_owned(($expr)(
                         &data,
                         &calendar.to_string(),

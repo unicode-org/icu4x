@@ -70,8 +70,8 @@ pub struct PersianDateInner(ArithmeticDate<Persian>);
 impl CalendarArithmetic for Persian {
     fn month_days(year: i32, month: u8) -> u8 {
         match month {
-            1 | 2 | 3 | 4 | 5 | 6 => 31,
-            7 | 8 | 9 | 10 | 11 => 30,
+            1..=6 => 31,
+            7..=11 => 30,
             12 if Self::is_leap_year(year) => 30,
             12 => 29,
             _ => 0,
@@ -689,7 +689,7 @@ mod tests {
             expected_next: i32,
         }
 
-        let test_cases = vec![
+        let test_cases = [
             TestCase {
                 input: 0,
                 expected_prev: -1,

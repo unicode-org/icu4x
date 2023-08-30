@@ -6,7 +6,7 @@
 #[macro_export]
 macro_rules! __impl_plurals_cardinal_v1 {
     ($ provider : path) => {
-        #[clippy::msrv = "1.65"]
+        #[clippy::msrv = "1.66"]
         impl icu_provider::DataProvider<icu::plurals::provider::CardinalV1Marker> for $provider {
             fn load(&self, req: icu_provider::DataRequest) -> Result<icu_provider::DataResponse<icu::plurals::provider::CardinalV1Marker>, icu_provider::DataError> {
                 static UND: <icu::plurals::provider::CardinalV1Marker as icu_provider::DataMarker>::Yokeable = icu::plurals::provider::PluralRulesV1 { zero: None, one: None, two: None, few: None, many: None };

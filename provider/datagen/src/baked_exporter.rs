@@ -89,6 +89,8 @@ macro_rules! move_out {
 // TokenStream isn't Send/Sync
 type SyncTokenStream = String;
 
+const MSRV: &str = std::env!("CARGO_PKG_RUST_VERSION");
+
 /// Options for configuring the output of [`BakedExporter`].
 #[non_exhaustive]
 #[derive(Debug)]
@@ -328,14 +330,14 @@ impl DataExporter for BakedExporter {
         let bake = payload.tokenize(&self.dependencies);
 
         self.write_impl_macro(quote! {
-            #[clippy::msrv = "1.65"]
+            #[clippy::msrv = #MSRV]
             impl $provider {
                 // Exposing singleton structs as consts allows us to get rid of fallibility
                 #[doc(hidden)]
                 pub const #singleton_ident: &'static <#marker as icu_provider::DataMarker>::Yokeable = &#bake;
             }
 
-            #[clippy::msrv = "1.65"]
+            #[clippy::msrv = #MSRV]
             impl icu_provider::DataProvider<#marker> for $provider {
                 fn load(
                     &self,
@@ -534,7 +536,7 @@ impl BakedExporter {
 
         self.write_impl_macro(
             quote! {
-                #[clippy::msrv = "1.65"]
+                #[clippy::msrv = #MSRV]
                 impl icu_provider::DataProvider<#marker> for $provider {
                     fn load(
                         &self,
@@ -651,7 +653,7 @@ impl BakedExporter {
                 #[macro_export]
                 macro_rules! __impl_any_provider {
                     ($provider:path) => {
-                        #[clippy::msrv = "1.65"]
+                        #[clippy::msrv = #MSRV]
                         impl icu_provider::AnyProvider for $provider {
                             fn load_any(&self, key: icu_provider::DataKey, req: icu_provider::DataRequest) -> Result<icu_provider::AnyResponse, icu_provider::DataError> {
                                 match key.hashed() {
@@ -669,7 +671,7 @@ impl BakedExporter {
                 #[doc(inline)]
                 pub use __impl_any_provider as impl_any_provider;
 
-                #[clippy::msrv = "1.65"]
+                #[clippy::msrv = #MSRV]
                 pub struct BakedDataProvider;
                 impl_data_provider!(BakedDataProvider);
             },

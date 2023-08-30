@@ -375,7 +375,7 @@ macro_rules! long_short_impls {
                                     match place_or_region {
                                         LocationOrSubRegion::Location(place) => {
                                             match bcp47_tzid_data.get(&key) {
-                                                Some(bcp47) => vec![place]
+                                                Some(bcp47) => [place]
                                                     .into_iter()
                                                     .filter_map(|inner_place| {
                                                         inner_place
