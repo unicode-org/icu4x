@@ -240,7 +240,8 @@ impl<'a> LocaleFallbackIteratorInner<'a> {
         }
 
         // note: UTS #35 wants us to apply "other associated scripts" now. ICU4C/J does not do this,
-        // so we don't either.
+        // so we don't either. They would be found here if they are ever needed:
+        // https://github.com/unicode-cldr/cldr-core/blob/master/supplemental/languageData.json
 
         // 4. Do not fallback to `und` for transliteration.
     }
