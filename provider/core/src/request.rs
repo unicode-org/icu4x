@@ -223,7 +223,7 @@ impl FromStr for DataLocale {
         let Some(locale_str) = aux_iter.next() else {
             return Err(DataErrorKind::KeyLocaleSyntax
                 .into_error()
-                .with_display_context(s))
+                .with_display_context(s));
         };
         let locale = Locale::from_str(locale_str).map_err(|e| {
             DataErrorKind::KeyLocaleSyntax
