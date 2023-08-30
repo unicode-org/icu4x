@@ -483,8 +483,8 @@ impl Chinese {
 mod test {
 
     use super::*;
-    use calendrical_calculations::rata_die::Moment;
     use crate::types::MonthCode;
+    use calendrical_calculations::rata_die::Moment;
 
     #[test]
     fn test_chinese_new_moon_directionality() {
