@@ -66,7 +66,7 @@ class ICU4XFixedDecimal {
    * 
    * See the [Rust documentation for `try_from_f64`](https://docs.rs/fixed_decimal/latest/fixed_decimal/struct.FixedDecimal.html#method.try_from_f64) for more information.
    * 
-   * See the [Rust documentation for `DoublePrecision`](https://docs.rs/fixed_decimal/latest/fixed_decimal/enum.DoublePrecision.html) for more information.
+   * See the [Rust documentation for `FloatPrecision`](https://docs.rs/fixed_decimal/latest/fixed_decimal/enum.FloatPrecision.html) for more information.
    */
   static diplomat::result<ICU4XFixedDecimal, ICU4XError> create_from_f64_with_integer_precision(double f);
 
@@ -75,7 +75,7 @@ class ICU4XFixedDecimal {
    * 
    * See the [Rust documentation for `try_from_f64`](https://docs.rs/fixed_decimal/latest/fixed_decimal/struct.FixedDecimal.html#method.try_from_f64) for more information.
    * 
-   * See the [Rust documentation for `DoublePrecision`](https://docs.rs/fixed_decimal/latest/fixed_decimal/enum.DoublePrecision.html) for more information.
+   * See the [Rust documentation for `FloatPrecision`](https://docs.rs/fixed_decimal/latest/fixed_decimal/enum.FloatPrecision.html) for more information.
    */
   static diplomat::result<ICU4XFixedDecimal, ICU4XError> create_from_f64_with_lower_magnitude(double f, int16_t magnitude);
 
@@ -84,7 +84,7 @@ class ICU4XFixedDecimal {
    * 
    * See the [Rust documentation for `try_from_f64`](https://docs.rs/fixed_decimal/latest/fixed_decimal/struct.FixedDecimal.html#method.try_from_f64) for more information.
    * 
-   * See the [Rust documentation for `DoublePrecision`](https://docs.rs/fixed_decimal/latest/fixed_decimal/enum.DoublePrecision.html) for more information.
+   * See the [Rust documentation for `FloatPrecision`](https://docs.rs/fixed_decimal/latest/fixed_decimal/enum.FloatPrecision.html) for more information.
    */
   static diplomat::result<ICU4XFixedDecimal, ICU4XError> create_from_f64_with_significant_digits(double f, uint8_t digits);
 
@@ -94,7 +94,7 @@ class ICU4XFixedDecimal {
    * 
    * See the [Rust documentation for `try_from_f64`](https://docs.rs/fixed_decimal/latest/fixed_decimal/struct.FixedDecimal.html#method.try_from_f64) for more information.
    * 
-   * See the [Rust documentation for `DoublePrecision`](https://docs.rs/fixed_decimal/latest/fixed_decimal/enum.DoublePrecision.html) for more information.
+   * See the [Rust documentation for `FloatPrecision`](https://docs.rs/fixed_decimal/latest/fixed_decimal/enum.FloatPrecision.html) for more information.
    */
   static diplomat::result<ICU4XFixedDecimal, ICU4XError> create_from_f64_with_floating_precision(double f);
 

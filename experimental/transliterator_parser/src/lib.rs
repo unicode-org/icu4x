@@ -354,9 +354,10 @@ mod tests {
                 "\u{F0006}", // [b] from [b]+
             ];
 
-            let expected_segments = vec![
-                "\u{F0001}", // $b from ($b)
-            ];
+            let expected_segments = vec![ds::Segment {
+                idx: 0,
+                content: Cow::Borrowed("\u{F0001}"), // $b from ($b)
+            }];
 
             let expected_unicode_sets =
                 vec![parse_set("[a]"), parse_set("[b]"), parse_set("[0-9]")];
