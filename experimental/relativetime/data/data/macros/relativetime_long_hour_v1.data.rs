@@ -6,7 +6,7 @@
 #[macro_export]
 macro_rules! __impl_relativetime_long_hour_v1 {
     ($ provider : path) => {
-        #[clippy::msrv = "1.65"]
+        #[clippy::msrv = "1.66"]
         impl icu_provider::DataProvider<icu::relativetime::provider::LongHourRelativeTimeFormatDataV1Marker> for $provider {
             fn load(&self, req: icu_provider::DataRequest) -> Result<icu_provider::DataResponse<icu::relativetime::provider::LongHourRelativeTimeFormatDataV1Marker>, icu_provider::DataError> {
                 static PCM: <icu::relativetime::provider::LongHourRelativeTimeFormatDataV1Marker as icu_provider::DataMarker>::Yokeable = icu::relativetime::provider::RelativeTimePatternDataV1 {
