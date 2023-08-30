@@ -32,8 +32,8 @@
 use crate::calendar_arithmetic::{ArithmeticDate, CalendarArithmetic};
 use crate::helpers::{self, div_rem_euclid, div_rem_euclid_f64, final_func, next_u8};
 use crate::julian::Julian;
-use crate::rata_die::RataDie;
-use crate::types::{FormattableMonth, Moment};
+use crate::rata_die::{Moment, RataDie};
+use crate::types::FormattableMonth;
 use crate::Iso;
 use crate::{types, Calendar, CalendarError, Date, DateDuration, DateDurationUnit, DateTime};
 use ::tinystr::tinystr;

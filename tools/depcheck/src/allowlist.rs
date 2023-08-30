@@ -24,6 +24,7 @@ pub const BASIC_RUNTIME_DEPS: &[&str] = &[
     "icu_segmenter",
     "icu_timezone",
     // ICU4X utils
+    "calendrical_calculations",
     "fixed_decimal",
     "icu_provider_adapters", // not included in icu, but needed generally
     "icu_provider",
