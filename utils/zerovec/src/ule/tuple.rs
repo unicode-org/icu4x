@@ -111,10 +111,7 @@ macro_rules! tuple_ule {
 
         impl<$($t: ULE),+> Clone for $name<$($t),+> {
             fn clone(&self) -> Self {
-                // copy to the stack to avoid hitting a future incompat error
-                // https://github.com/rust-lang/rust/issues/82523#issuecomment-947900712
-                let stack = ($(self.$i),+);
-                $name($(stack.$i),+)
+                *self
             }
         }
 
