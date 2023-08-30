@@ -483,7 +483,7 @@ impl Chinese {
 mod test {
 
     use super::*;
-    use crate::types::Moment;
+    use calendrical_calculations::rata_die::Moment;
     use crate::types::MonthCode;
 
     #[test]

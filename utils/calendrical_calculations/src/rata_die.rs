@@ -41,7 +41,9 @@ impl RataDie {
     }
 
     /// A valid RataDie that is intended to be below all dates representable in calendars
-    #[cfg(test)]
+    ///
+    /// For testing only
+    #[doc(hidden)]
     pub const fn big_negative() -> Self {
         Self::new(i64::MIN / 256 / 256)
     }
