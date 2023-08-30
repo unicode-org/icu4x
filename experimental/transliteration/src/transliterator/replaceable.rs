@@ -939,7 +939,7 @@ where
     /// Returns a type that allows getting a `Replaceable` from it. The replaceable will
     /// transliterate everything since `self` was created with [`Insertable::start_replaceable_adapter`].
     pub(super) fn as_replaceable(&mut self) -> InsertableGuard<impl FnMut(&[u8]) + '_> {
-        // Thought: we don't need to the Insertable contiguous because the visible length hides
+        // Thought: we don't need to make the Insertable contiguous because the visible length hides
         //  the invalid UTF-8 tail. However, we do not gain anything from that empty buffer at the
         //  moment, because the child Replaceable's Insertable will not know about it. can we
         //  somehow give it that information?
