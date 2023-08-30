@@ -247,6 +247,9 @@ dependencies = [
 [[package]]
 name = "calendrical_calculations"
 version = "0.1.0"
+dependencies = [
+ "libm",
+]
 
 [[package]]
 name = "camino"

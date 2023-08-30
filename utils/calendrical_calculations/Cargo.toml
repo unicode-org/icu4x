@@ -32,6 +32,8 @@ all-features = true
 
 
 [dependencies]
+libm = { version = "0.2", default-features = false }
+
 [dev-dependencies]
 
 
