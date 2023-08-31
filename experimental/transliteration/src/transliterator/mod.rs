@@ -479,13 +479,10 @@ impl<'a> RuleBasedTransliterator<'a> {
 impl<'a> SimpleId<'a> {
     fn transliterate(&self, mut rep: Replaceable, env: &Env) {
         // eprintln!("transliterating SimpleId: {self:?}");
-        let inner = match env.get(self.id.as_ref()) {
-            None => {
-                debug_assert!(false, "missing transliterator {}", &self.id);
-                // GIGO behavior, missing recursive transliterator is a noop
-                return;
-            }
-            Some(inner) => inner,
+        let Some(inner) = env.get(self.id.as_ref()) else {
+            debug_assert!(false, "missing transliterator {}", &self.id);
+            // GIGO behavior, missing recursive transliterator is a noop
+            return;
         };
         rep.for_each_run(&self.filter, |run| {
             // eprintln!("transliterating SimpleId run: {rep:?}");
