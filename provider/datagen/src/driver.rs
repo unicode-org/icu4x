@@ -91,6 +91,8 @@ impl DatagenDriver {
         }
     }
 
+    /// This option is only relevant if using `icu::collator`.
+    /// 
     /// By default, the collations `big5han`, `gb2312`, and those starting with `search`
     /// are excluded. This method can be used to reennable them.
     ///
@@ -105,6 +107,8 @@ impl DatagenDriver {
         }
     }
 
+    /// This option is only relevant if using `icu::segmenter`.
+    /// 
     /// Sets this driver to generate the given segmentation models, to the extent required by the
     /// chosen data keys.
     ///
@@ -137,6 +141,8 @@ impl DatagenDriver {
     /// Exports data from the given provider to the given exporter.
     ///
     /// See
+    /// [`DatagenProvider`](crate::DatagenProvider),
+    /// [`make_exportable_provider!`](icu_provider::make_exportable_provider),
     /// [`BlobExporter`](icu_provider_blob::export),
     /// [`FileSystemExporter`](icu_provider_fs::export),
     /// and [`BakedExporter`](crate::baked_exporter).

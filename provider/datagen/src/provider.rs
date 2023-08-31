@@ -100,8 +100,8 @@ impl DatagenProvider {
             .clone()
     }
 
-    /// Adds CLDR data to this `SourceData`. The root should point to a local
-    /// `cldr-{tag}-json-full.zip` directory or ZIP file (see
+    /// Adds CLDR source data to the provider. The root should point to a local
+    /// `cldr-{tag}-json-full` directory or ZIP file (see
     /// [GitHub releases](https://github.com/unicode-org/cldr-json/releases)).
     pub fn with_cldr(self, root: PathBuf) -> Result<Self, DataError> {
         Ok(Self {
@@ -114,8 +114,8 @@ impl DatagenProvider {
         })
     }
 
-    /// Adds ICU export data to this `SourceData`. The path should point to a local
-    /// `icuexportdata_{tag}.zip` directory or ZIP file (see [GitHub releases](
+    /// Adds ICU export source data to the provider. The path should point to a local
+    /// `icuexportdata_{tag}` directory or ZIP file (see [GitHub releases](
     /// https://github.com/unicode-org/icu/releases)).
     pub fn with_icuexport(self, root: PathBuf) -> Result<Self, DataError> {
         Ok(Self {
@@ -126,8 +126,8 @@ impl DatagenProvider {
         })
     }
 
-    /// Adds segmenter LSTM data to this `SourceData`. The path should point to a local
-    /// `models.zip` directory or ZIP file (see [GitHub releases](
+    /// Adds segmenter LSTM source data to the provider. The path should point to a local
+    /// `models` directory or ZIP file (see [GitHub releases](
     /// https://github.com/unicode-org/lstm_word_segmentation/releases)).
     pub fn with_segmenter_lstm(self, root: PathBuf) -> Result<Self, DataError> {
         Ok(Self {
@@ -138,7 +138,7 @@ impl DatagenProvider {
         })
     }
 
-    /// Adds CLDR data to this `SourceData`. The data will be downloaded from GitHub
+    /// Adds CLDR source data to the provider. The data will be downloaded from GitHub
     /// using the given tag (see [GitHub releases](https://github.com/unicode-org/cldr-json/releases)).
     ///
     /// Also see: [`LATEST_TESTED_CLDR_TAG`](Self::LATEST_TESTED_CLDR_TAG)
@@ -156,7 +156,7 @@ impl DatagenProvider {
         }
     }
 
-    /// Adds ICU export data to this `SourceData`. The data will be downloaded from GitHub
+    /// Adds ICU export source data to the provider. The data will be downloaded from GitHub
     /// using the given tag. (see [GitHub releases](https://github.com/unicode-org/icu/releases)).
     ///
     /// Also see: [`LATEST_TESTED_ICUEXPORT_TAG`](Self::LATEST_TESTED_ICUEXPORT_TAG)
@@ -178,7 +178,7 @@ impl DatagenProvider {
         }
     }
 
-    /// Adds segmenter LSTM data to this `SourceData`. The data will be downloaded from GitHub
+    /// Adds segmenter LSTM source data to the provider. The data will be downloaded from GitHub
     /// using the given tag. (see [GitHub releases](https://github.com/unicode-org/lstm_word_segmentation/releases)).
     ///
     /// Also see: [`LATEST_TESTED_SEGMENTER_LSTM_TAG`](Self::LATEST_TESTED_SEGMENTER_LSTM_TAG)
