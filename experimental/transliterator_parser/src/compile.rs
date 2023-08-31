@@ -346,15 +346,11 @@ impl<'p> Pass1<'p> {
         reverse_id: Option<&parse::SingleId>,
     ) -> Result<()> {
         let fwd_dep = forward_id.basic_id.clone();
-        if !fwd_dep.is_null() {
-            self.forward_data.used_transliterators.insert(fwd_dep);
-        }
+        self.forward_data.used_transliterators.insert(fwd_dep);
         let rev_dep = reverse_id
             .map(|single_id| single_id.basic_id.clone())
             .unwrap_or_else(|| forward_id.basic_id.clone().reverse());
-        if !rev_dep.is_null() {
-            self.reverse_data.used_transliterators.insert(rev_dep);
-        }
+        self.reverse_data.used_transliterators.insert(rev_dep);
         Ok(())
     }
 
@@ -1094,6 +1090,8 @@ mod tests {
                 num_function_calls: 1,
                 num_unicode_sets: 1,
                 max_backref_num: 1,
+                max_left_placeholders: 0,
+                max_right_placeholders: 0,
                 ..Default::default()
             };
             let expected_fwd_data = pass1data_from_parts(
@@ -1102,6 +1100,7 @@ mod tests {
                     ("Forward", "Dependency", None),
                     ("Any", "AnotherForwardDependency", None),
                     ("YetAnother", "ForwardDependency", None),
+                    ("Any", "Null", None),
                 ],
                 &["used_both", "used_fwd", "literal1", "literal2"],
                 counts,
@@ -1116,6 +1115,8 @@ mod tests {
                 num_segments: 2,
                 num_function_calls: 3,
                 max_backref_num: 2,
+                max_left_placeholders: 0,
+                max_right_placeholders: 0,
                 ..Default::default()
             };
             let expected_rev_data = pass1data_from_parts(
@@ -1126,6 +1127,7 @@ mod tests {
                     ("Any", "Many", None),
                     ("Any", "Backwardz", None),
                     ("Any", "Deps", None),
+                    ("Any", "Null", None),
                 ],
                 &["used_rev", "literal1", "literal2"],
                 counts,
@@ -1240,6 +1242,7 @@ mod tests {
                     ("Forward", "Dependency", None),
                     ("Any", "AnotherForwardDependency", None),
                     ("YetAnother", "ForwardDependency", None),
+                    ("Any", "Null", None),
                 ],
                 &["used_both", "used_fwd", "literal1", "literal2"],
                 fwd_counts,
@@ -1263,6 +1266,7 @@ mod tests {
                     ("Any", "Many", None),
                     ("Any", "Backwardz", None),
                     ("Any", "Deps", None),
+                    ("Any", "Null", None),
                 ],
                 &["used_both", "used_rev", "literal1", "literal2"],
                 rev_counts,

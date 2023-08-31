@@ -58,42 +58,36 @@ fn test_basic() {
         .take_payload()
         .unwrap();
 
-    assert!(matches!(
-        data.get()
-            .rtl
-            .binary_search(&script!("Avst").into_tinystr().to_unvalidated()),
-        Ok(_)
-    ));
-    assert!(matches!(
-        data.get()
-            .ltr
-            .binary_search(&script!("Avst").into_tinystr().to_unvalidated()),
-        Err(_)
-    ));
+    assert!(data
+        .get()
+        .rtl
+        .binary_search(&script!("Avst").into_tinystr().to_unvalidated())
+        .is_ok());
+    assert!(data
+        .get()
+        .ltr
+        .binary_search(&script!("Avst").into_tinystr().to_unvalidated())
+        .is_err());
 
-    assert!(matches!(
-        data.get()
-            .ltr
-            .binary_search(&script!("Latn").into_tinystr().to_unvalidated()),
-        Ok(_)
-    ));
-    assert!(matches!(
-        data.get()
-            .rtl
-            .binary_search(&script!("Latn").into_tinystr().to_unvalidated()),
-        Err(_)
-    ));
+    assert!(data
+        .get()
+        .ltr
+        .binary_search(&script!("Latn").into_tinystr().to_unvalidated())
+        .is_ok());
+    assert!(data
+        .get()
+        .rtl
+        .binary_search(&script!("Latn").into_tinystr().to_unvalidated())
+        .is_err());
 
-    assert!(matches!(
-        data.get()
-            .ltr
-            .binary_search(&script!("Zzzz").into_tinystr().to_unvalidated()),
-        Err(_)
-    ));
-    assert!(matches!(
-        data.get()
-            .rtl
-            .binary_search(&script!("Zzzz").into_tinystr().to_unvalidated()),
-        Err(_)
-    ));
+    assert!(data
+        .get()
+        .ltr
+        .binary_search(&script!("Zzzz").into_tinystr().to_unvalidated())
+        .is_err());
+    assert!(data
+        .get()
+        .rtl
+        .binary_search(&script!("Zzzz").into_tinystr().to_unvalidated())
+        .is_err());
 }

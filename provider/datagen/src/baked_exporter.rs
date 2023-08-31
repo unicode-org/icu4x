@@ -9,20 +9,21 @@
 //! # Examples
 //!
 //! ```
-//! use icu_datagen::prelude::*;
 //! use icu_datagen::baked_exporter::*;
+//! use icu_datagen::prelude::*;
 //!
 //! let demo_path = std::env::temp_dir().join("icu4x_baked_demo");
 //! # let _ = std::fs::remove_dir_all(&demo_path);
 //!
 //! // Set up the exporter
-//! let mut exporter = BakedExporter::new(demo_path.clone(), Default::default()).unwrap();
+//! let mut exporter =
+//!     BakedExporter::new(demo_path.clone(), Default::default()).unwrap();
 //!
 //! // Export something
 //! DatagenDriver::new()
-//!   .with_keys([icu_provider::hello_world::HelloWorldV1Marker::KEY])
-//!   .export(&DatagenProvider::latest_tested(), exporter)
-//!   .unwrap();
+//!     .with_keys([icu_provider::hello_world::HelloWorldV1Marker::KEY])
+//!     .export(&DatagenProvider::latest_tested(), exporter)
+//!     .unwrap();
 //! #
 //! # let _ = std::fs::remove_dir_all(&demo_path);
 //! ```
@@ -51,21 +52,14 @@
 //!     #     }
 //!     #   }
 //!     # }
-//!     include!("/path/to/mod/");
+//!     include!("/path/to/mod.rs");
 //!     impl_data_provider!(super::MyDataProvider);
 //! }
 //!
 //! # fn main() {
-//! let response: DataPayload<HelloWorldV1Marker> = MyDataProvider
-//!     .load(DataRequest {
-//!         locale: &langid!("en").into(),
-//!         metadata: Default::default(),
-//!     })
-//!     .unwrap()
-//!     .take_payload()
-//!     .unwrap();
+//! let formatter = HelloWorldFormatter::try_new_unstable(&MyDataProvider, &langid!("en").into()).unwrap();
 //!
-//! assert_eq!(response.get().message, "Hello World");
+//! assert_eq!(formatter.format_to_string(), "Hello World");
 //! # }
 //! ```
 
@@ -88,6 +82,8 @@ macro_rules! move_out {
 
 // TokenStream isn't Send/Sync
 type SyncTokenStream = String;
+
+const MSRV: &str = std::env!("CARGO_PKG_RUST_VERSION");
 
 /// Options for configuring the output of [`BakedExporter`].
 #[non_exhaustive]
@@ -328,14 +324,14 @@ impl DataExporter for BakedExporter {
         let bake = payload.tokenize(&self.dependencies);
 
         self.write_impl_macro(quote! {
-            #[clippy::msrv = "1.65"]
+            #[clippy::msrv = #MSRV]
             impl $provider {
                 // Exposing singleton structs as consts allows us to get rid of fallibility
                 #[doc(hidden)]
                 pub const #singleton_ident: &'static <#marker as icu_provider::DataMarker>::Yokeable = &#bake;
             }
 
-            #[clippy::msrv = "1.65"]
+            #[clippy::msrv = #MSRV]
             impl icu_provider::DataProvider<#marker> for $provider {
                 fn load(
                     &self,
@@ -534,7 +530,7 @@ impl BakedExporter {
 
         self.write_impl_macro(
             quote! {
-                #[clippy::msrv = "1.65"]
+                #[clippy::msrv = #MSRV]
                 impl icu_provider::DataProvider<#marker> for $provider {
                     fn load(
                         &self,
@@ -651,7 +647,7 @@ impl BakedExporter {
                 #[macro_export]
                 macro_rules! __impl_any_provider {
                     ($provider:path) => {
-                        #[clippy::msrv = "1.65"]
+                        #[clippy::msrv = #MSRV]
                         impl icu_provider::AnyProvider for $provider {
                             fn load_any(&self, key: icu_provider::DataKey, req: icu_provider::DataRequest) -> Result<icu_provider::AnyResponse, icu_provider::DataError> {
                                 match key.hashed() {
@@ -669,7 +665,7 @@ impl BakedExporter {
                 #[doc(inline)]
                 pub use __impl_any_provider as impl_any_provider;
 
-                #[clippy::msrv = "1.65"]
+                #[clippy::msrv = #MSRV]
                 pub struct BakedDataProvider;
                 impl_data_provider!(BakedDataProvider);
             },

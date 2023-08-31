@@ -39,12 +39,12 @@ use crate::chinese_based::{
 };
 use crate::helpers::div_rem_euclid64;
 use crate::{
-    astronomy::Location,
     chinese_based::{ChineseBased, ChineseBasedDateInner},
     rata_die::RataDie,
     types::{self, Era, FormattableYear},
     AnyCalendarKind, Calendar, CalendarError, Date, DateTime, Iso,
 };
+use calendrical_calculations::astronomy::Location;
 use tinystr::tinystr;
 
 // The first day in the Korean Dangi calendar (based on the founding of Gojoseon)

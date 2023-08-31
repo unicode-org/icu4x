@@ -52,7 +52,7 @@ General convention is to use snake_case naming for variables, see [Naming - Rust
 Variables used in loops, closures and in narrow scope (handful of lines) can be abbreviated to one or more characters, e.g.
 
 `
-vec![2, 3].into_iter().fold(0, |l, r| l + r)
+[2, 3].into_iter().fold(0, |l, r| l + r)
 `
 
 In all other cases, esp. in public APIs, use non-abbreviated names, like locale vs loc, canonicalized_locale vs canon_loc, item_count vs item_ct.

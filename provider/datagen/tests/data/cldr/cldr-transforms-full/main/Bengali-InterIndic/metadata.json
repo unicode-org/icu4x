@@ -2,5 +2,8 @@
     "direction": "forward",
     "source": "Bengali",
     "target": "InterIndic",
-    "visibility": "internal"
+    "visibility": "internal",
+    "alias": [
+        "und-t-und-beng-d0-intindic"
+    ]
 }

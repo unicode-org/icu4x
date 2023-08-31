@@ -36,8 +36,7 @@ use crate::rata_die::RataDie;
 use crate::{types, Calendar, CalendarError, Date, DateDuration, DateDurationUnit, DateTime};
 use tinystr::tinystr;
 
-// The georgian epoch is equivalent to first day in fixed day measurement
-const EPOCH: RataDie = RataDie::new(1);
+use calendrical_calculations::iso::EPOCH;
 
 /// The [ISO Calendar]
 ///
@@ -77,7 +76,7 @@ impl CalendarArithmetic for Iso {
     }
 
     fn is_leap_year(year: i32) -> bool {
-        year % 4 == 0 && (year % 400 == 0 || year % 100 != 0)
+        calendrical_calculations::iso::is_leap_year(year)
     }
 
     fn last_month_day_in_year(_year: i32) -> (u8, u8) {
@@ -381,27 +380,7 @@ impl Iso {
     //
     // Lisp code reference: https://github.com/EdReingold/calendar-code2/blob/1ee51ecfaae6f856b0d7de3e36e9042100b4f424/calendar.l#L1167-L1189
     pub(crate) fn fixed_from_iso(date: IsoDateInner) -> RataDie {
-        let prev_year = (date.0.year as i64) - 1;
-        // Calculate days per year
-        let mut fixed: i64 = (EPOCH.to_i64_date() - 1) + 365 * prev_year;
-        // Calculate leap year offset
-        let offset =
-            quotient64(prev_year, 4) - quotient64(prev_year, 100) + quotient64(prev_year, 400);
-        // Adjust for leap year logic
-        fixed += offset;
-        // Days of current year
-        fixed += quotient64(367 * (date.0.month as i64) - 362, 12);
-        // Leap year adjustment for the current year
-        fixed += if date.0.month <= 2 {
-            0
-        } else if Self::is_leap_year(date.0.year) {
-            -1
-        } else {
-            -2
-        };
-        // Days passed in current month
-        fixed += date.0.day as i64;
-        RataDie::new(fixed)
+        calendrical_calculations::iso::fixed_from_iso(date.0.year, date.0.month, date.0.day)
     }
 
     fn fixed_from_iso_integers(year: i32, month: u8, day: u8) -> Option<RataDie> {

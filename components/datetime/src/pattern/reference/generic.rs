@@ -21,7 +21,7 @@ impl GenericPattern {
         let size = replacements.iter().fold(0, |acc, r| acc + r.items.len());
         let mut result = Vec::with_capacity(self.items.len() + size);
 
-        for item in self.items.into_iter() {
+        for item in self.items {
             match item {
                 GenericPatternItem::Placeholder(idx) => {
                     #[allow(clippy::unwrap_used)] // idx is a valid base-10 digit

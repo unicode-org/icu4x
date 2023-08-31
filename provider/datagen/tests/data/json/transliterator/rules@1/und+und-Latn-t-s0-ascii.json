@@ -33,5 +33,7 @@
   "rule_group_list": [
     []
   ],
-  "dependencies": []
+  "dependencies": [
+    "x-any-null"
+  ]
 }

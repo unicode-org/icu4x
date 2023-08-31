@@ -116,7 +116,6 @@ mod date;
 mod datetime;
 
 pub mod any_calendar;
-mod astronomy;
 pub mod buddhist;
 mod calendar;
 mod calendar_arithmetic;
@@ -130,7 +129,6 @@ mod error;
 pub mod ethiopian;
 pub mod gregorian;
 pub mod hebrew;
-mod helpers;
 pub mod indian;
 pub mod islamic;
 pub mod iso;
@@ -138,10 +136,11 @@ pub mod japanese;
 pub mod julian;
 pub mod persian;
 pub mod provider;
-mod rata_die;
 pub mod roc;
 pub mod types;
 mod week_of;
+
+use calendrical_calculations::{helpers, rata_die};
 
 pub mod week {
     //! Functions for week-of-month and week-of-year arithmetic.

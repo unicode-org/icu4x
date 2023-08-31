@@ -34,7 +34,6 @@
 //! ```
 
 use crate::any_calendar::AnyCalendarKind;
-use crate::astronomy::Location;
 use crate::calendar_arithmetic::CalendarArithmetic;
 use crate::chinese_based::{
     chinese_based_ordinal_lunar_month_from_code, ChineseBased, ChineseBasedCompiledData,
@@ -47,6 +46,7 @@ use crate::types::{Era, FormattableYear};
 use crate::{
     chinese_data, types, Calendar, CalendarError, Date, DateDuration, DateDurationUnit, DateTime,
 };
+use calendrical_calculations::astronomy::Location;
 use tinystr::tinystr;
 
 // The equivalent first day in the Chinese calendar (based on inception of the calendar)
@@ -483,8 +483,8 @@ impl Chinese {
 mod test {
 
     use super::*;
-    use crate::types::Moment;
     use crate::types::MonthCode;
+    use calendrical_calculations::rata_die::Moment;
 
     #[test]
     fn test_chinese_new_moon_directionality() {
