@@ -56,7 +56,7 @@ pub struct FormattableYear {
     /// The year number in the current era (usually 1-based).
     pub number: i32,
 
-    /// The year in the current cycle for cyclic calendars;
+    /// The year in the current cycle for cyclic calendars (1-indexed)
     /// can be set to None for non-cyclic calendars
     pub cyclic: Option<i32>,
 
