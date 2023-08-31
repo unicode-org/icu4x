@@ -30,7 +30,10 @@
 
 // TODO: once everything is moved, go through and make stuff private again
 pub mod astronomy;
+pub mod coptic;
 pub mod error;
+pub mod ethiopian;
 pub mod helpers;
 pub mod iso;
+pub mod julian;
 pub mod rata_die;

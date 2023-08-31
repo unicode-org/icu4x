@@ -397,7 +397,6 @@ impl Iso {
         #[allow(clippy::unwrap_used)] // month in 1..=12, day <= month_days
         Date::try_new_iso_date(year, month, day).unwrap()
     }
-    // Lisp code reference: https://github.com/EdReingold/calendar-code2/blob/1ee51ecfaae6f856b0d7de3e36e9042100b4f424/calendar.l#L1237-L1258
     pub(crate) fn iso_from_fixed(date: RataDie) -> Date<Iso> {
         let (year, month, day) = match calendrical_calculations::iso::iso_from_fixed(date) {
             Err(I32CastError::BelowMin) => {

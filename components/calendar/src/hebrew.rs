@@ -31,7 +31,6 @@
 
 use crate::calendar_arithmetic::{ArithmeticDate, CalendarArithmetic};
 use crate::helpers::{self, div_rem_euclid, div_rem_euclid_f64, final_func, next_u8};
-use crate::julian::Julian;
 use crate::rata_die::{Moment, RataDie};
 use crate::types::FormattableMonth;
 use crate::Iso;
@@ -73,7 +72,8 @@ struct BookHebrew {
 pub struct Hebrew;
 
 // Lisp code reference: https://github.com/EdReingold/calendar-code2/blob/main/calendar.l#L2206
-const FIXED_HEBREW_EPOCH: RataDie = Julian::fixed_from_julian_book_version(-3761, 10, 7);
+const FIXED_HEBREW_EPOCH: RataDie =
+    calendrical_calculations::julian::fixed_from_julian_book_version(-3761, 10, 7);
 
 // The BookHebrew Months
 const NISAN: u8 = 1;

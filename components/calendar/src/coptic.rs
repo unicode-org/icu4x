@@ -33,9 +33,8 @@
 
 use crate::any_calendar::AnyCalendarKind;
 use crate::calendar_arithmetic::{ArithmeticDate, CalendarArithmetic};
-use crate::helpers::{i64_to_i32, quotient, quotient64, I32CastError};
+use crate::helpers::I32CastError;
 use crate::iso::Iso;
-use crate::julian::Julian;
 use crate::rata_die::RataDie;
 use crate::{types, Calendar, CalendarError, Date, DateDuration, DateDurationUnit, DateTime};
 use tinystr::tinystr;
@@ -206,40 +205,19 @@ impl Calendar for Coptic {
     }
 }
 
-pub(crate) const COPTIC_EPOCH: RataDie = Julian::fixed_from_julian_integers(284, 8, 29);
-
 impl Coptic {
-    // "Fixed" is a day count representation of calendars staring from Jan 1st of year 1 of the Georgian Calendar.
-    // The fixed date algorithms are from
-    // Dershowitz, Nachum, and Edward M. Reingold. _Calendrical calculations_. Cambridge University Press, 2008.
-    //
-    // Lisp code reference: https://github.com/EdReingold/calendar-code2/blob/1ee51ecfaae6f856b0d7de3e36e9042100b4f424/calendar.l#L1978
     fn fixed_from_coptic(date: ArithmeticDate<Coptic>) -> RataDie {
-        COPTIC_EPOCH - 1
-            + 365 * (date.year as i64 - 1)
-            + quotient(date.year, 4) as i64
-            + 30 * (date.month as i64 - 1)
-            + date.day as i64
+        calendrical_calculations::coptic::fixed_from_coptic(date.year, date.month, date.day)
     }
 
-    pub(crate) fn fixed_from_coptic_integers(year: i32, month: u8, day: u8) -> RataDie {
-        // TODO: Should we check bounds here?
-        Self::fixed_from_coptic(ArithmeticDate::new_unchecked(year, month, day))
-    }
-
-    // Lisp code reference: https://github.com/EdReingold/calendar-code2/blob/1ee51ecfaae6f856b0d7de3e36e9042100b4f424/calendar.l#L1990
     pub(crate) fn coptic_from_fixed(date: RataDie) -> CopticDateInner {
-        let year = quotient64(4 * (date - COPTIC_EPOCH) + 1463, 1461);
-        let year = match i64_to_i32(year) {
+        let (year, month, day) = match calendrical_calculations::coptic::coptic_from_fixed(date) {
             Err(I32CastError::BelowMin) => return CopticDateInner(ArithmeticDate::min_date()),
             Err(I32CastError::AboveMax) => return CopticDateInner(ArithmeticDate::max_date()),
-            Ok(y) => y,
+            Ok(ymd) => ymd,
         };
-        let month = (quotient64(date - Self::fixed_from_coptic_integers(year, 1, 1), 30) + 1) as u8; // <= 12 < u8::MAX
-        let day = (date + 1 - Self::fixed_from_coptic_integers(year, month, 1)) as u8; // <= days_in_month < u8::MAX
 
-        #[allow(clippy::unwrap_used)] // day and month have the correct bounds
-        *Date::try_new_coptic_date(year, month, day).unwrap().inner()
+        CopticDateInner(ArithmeticDate::new_unchecked(year, month, day))
     }
 
     fn days_in_year_direct(year: i32) -> u16 {
