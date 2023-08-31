@@ -1986,13 +1986,13 @@ dependencies = [
  "displaydoc",
  "icu_casemap",
  "icu_collections",
+ "icu_locid",
  "icu_normalizer",
  "icu_provider",
  "icu_transliteration_data",
  "litemap",
  "serde",
  "yoke",
- "zerofrom",
  "zerovec",
 ]
 

@@ -21,12 +21,12 @@ all-features = true
 
 [dependencies]
 icu_provider = { workspace = true, features = ["macros"] }
+icu_locid = { workspace = true }
 icu_collections = { workspace = true }
 icu_normalizer = { workspace = true }
 icu_casemap = { workspace = true }
 
 zerovec = { workspace = true, features = ["derive"] }
-zerofrom = { workspace = true, features = ["derive"] }
 yoke = { workspace = true, features = ["derive"] }
 databake = { workspace = true, optional = true, features = ["derive"] }
 litemap = { workspace = true }
@@ -43,7 +43,7 @@ criterion = "0.4.0"
 default = ["compiled_data"]
 std = []
 serde = ["dep:serde", "zerovec/serde", "icu_collections/serde"]
-datagen = ["serde", "dep:databake", "zerovec/databake", "icu_collections/databake"]
+datagen = ["serde", "dep:databake", "zerovec/databake", "icu_collections/databake", "std"]
 compiled_data = ["dep:icu_transliteration_data", "icu_normalizer/compiled_data", "icu_casemap/compiled_data"]
 
 [[bench]]

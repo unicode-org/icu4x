@@ -51,8 +51,7 @@ icu_compactdecimal = { workspace = true, features = ["datagen"], optional = true
 icu_displaynames = { workspace = true, features = ["datagen"], optional = true }
 icu_relativetime = { workspace = true, features = ["datagen"], optional = true }
 icu_singlenumberformatter = { workspace = true, features = ["datagen"], optional = true}
-# TODO(this PR): remove std again
-icu_transliteration = { workspace = true, features = ["datagen", "std"], optional = true }
+icu_transliteration = { workspace = true, features = ["datagen"], optional = true }
 icu_unitsconversion = { workspace = true, features = ["datagen"], optional = true}
 
 # ICU infrastructure

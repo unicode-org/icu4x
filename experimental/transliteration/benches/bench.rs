@@ -4,7 +4,7 @@
 
 use criterion::{black_box, BenchmarkId, Criterion};
 use criterion::{criterion_group, criterion_main};
-use icu_provider::_internal::locid::Locale;
+use icu_locid::Locale;
 
 use icu_transliteration::Transliterator;
 
