@@ -541,10 +541,15 @@ mod tests {
                 "az-Arab-IR",
                 &["az-Arab-IR", "az-Arab", "az-IR", "az", "und-Arab"],
             ),
+            ("az-IR", &["az-IR", "az", "und-Arab"]),
+            ("az-Arab", &["az-Arab", "az", "und-Arab"]),
+            ("az", &["az", "und-Latn"]),
             ("ru-RU", &["ru-RU", "ru", "und-Cyrl"]),
             ("el-GR", &["el-GR", "el", "und-Grek"]),
             ("el", &["el", "und-Grek"]),
             ("el-Deva", &["el-Deva", "el", "und-Deva"]),
+            // degenerate case
+            ("und", &["und"]),
         ];
 
         let fallbacker = LocaleFallbacker::new();
