@@ -95,7 +95,7 @@ macro_rules! __impl_transliterator_rules_v1 {
                     },
                     id_group_list: unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0\x02\0\0\0\0\0\"\0\x02\0\0\0\0\0\0\0\x0C\0\0\0\0\0\x11\0\0\0\0\0\0\0\x11\0x-any-null\x02\0\0\0\0\0\0\0\x0C\0\0\0\0\0\x11\0\0\0\0\0\0\0\x11\0x-any-null") },
                     rule_group_list: unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0") },
-                    dependencies: zerovec::VarZeroVec::new(),
+                    dependencies: unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0x-any-null") },
                 };
                 static UND__UND_ARAB_T_UND_BENG: <icu::transliteration::provider::TransliteratorRulesV1Marker as icu_provider::DataMarker>::Yokeable = icu::transliteration::provider::RuleBasedTransliterator {
                     visibility: true,
