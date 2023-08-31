@@ -6,14 +6,10 @@
 
 use icu_locid::Locale;
 use icu_transliteration::Transliterator;
-use std::collections::HashMap;
 use std::path::PathBuf;
 
 #[test]
 fn test_all_cldr() {
-    // broken BCP47 ids in CLDR: tracked in CLDR-10436
-    let map = HashMap::from([("und-t-d0-ascii", "und-t-und-latn-d0-ascii")]);
-
     let mut in_order =
         std::fs::read_dir(concat!(env!("CARGO_MANIFEST_DIR"), "/tests/cldr_testData"))
             .unwrap()
@@ -25,7 +21,6 @@ fn test_all_cldr() {
             continue;
         }
         let locale = path.file_stem().unwrap().to_str().unwrap();
-        let locale = map.get(locale).unwrap_or(&locale);
         let locale: Locale = locale.parse().unwrap();
         let t = Transliterator::try_new(locale).unwrap();
         test_file(t, path);
