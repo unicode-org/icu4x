@@ -811,7 +811,7 @@ mod test {
         };
         assert_eq!(
             bag.to_vec_fields(),
-            vec![
+            [
                 (Symbol::Year(fields::Year::Calendar), Length::One).into(),
                 (Symbol::Month(fields::Month::Format), Length::Wide).into(),
                 (Symbol::Week(fields::Week::WeekOfMonth), Length::One).into(),
@@ -838,7 +838,7 @@ mod test {
         };
         assert_eq!(
             bag.to_vec_fields(),
-            vec![
+            [
                 (Symbol::Year(fields::Year::Calendar), Length::One).into(),
                 (Symbol::Month(fields::Month::Format), Length::TwoDigit).into(),
                 (Symbol::Day(fields::Day::DayOfMonth), Length::One).into(),

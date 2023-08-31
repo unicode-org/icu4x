@@ -557,6 +557,6 @@ impl PluralRules {
             .chain(test_rule!(two, Two))
             .chain(test_rule!(few, Few))
             .chain(test_rule!(many, Many))
-            .chain(Some(PluralCategory::Other).into_iter())
+            .chain(Some(PluralCategory::Other))
     }
 }

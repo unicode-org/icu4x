@@ -27,7 +27,7 @@ use super::Value;
 /// use icu::locid::extensions::transform::{Fields, Key, Value, key};
 ///
 /// let value = "hybrid".parse::<Value>().expect("Failed to parse a Value.");
-/// let fields = vec![(key!("h0"), value)].into_iter().collect::<Fields>();
+/// let fields = [(key!("h0"), value)].into_iter().collect::<Fields>();
 ///
 /// assert_eq!(&fields.to_string(), "h0-hybrid");
 /// ```
@@ -78,7 +78,7 @@ impl Fields {
     /// use icu::locid::extensions::transform::{Fields, Value, key};
     ///
     /// let value = "hybrid".parse::<Value>().expect("Failed to parse a Value.");
-    /// let mut fields = vec![(key!("h0"), value)].into_iter().collect::<Fields>();
+    /// let mut fields = [(key!("h0"), value)].into_iter().collect::<Fields>();
     ///
     /// assert_eq!(&fields.to_string(), "h0-hybrid");
     ///
@@ -100,7 +100,7 @@ impl Fields {
     ///
     /// let key: Key = "h0".parse().expect("Failed to parse a Key.");
     /// let value: Value = "hybrid".parse().expect("Failed to parse a Value.");
-    /// let mut fields: Fields = vec![(key, value)].into_iter().collect();
+    /// let mut fields = [(key, value)].into_iter().collect::<Fields>();
     ///
     /// let key: Key = "h0".parse().expect("Failed to parse a Key.");
     /// assert!(&fields.contains_key(&key));
@@ -122,7 +122,7 @@ impl Fields {
     /// use icu::locid::extensions::transform::{Fields, Key, Value, key};
     ///
     /// let value = "hybrid".parse::<Value>().unwrap();
-    /// let fields = vec![(key!("h0"), value.clone())]
+    /// let fields = [(key!("h0"), value.clone())]
     ///     .into_iter()
     ///     .collect::<Fields>();
     ///

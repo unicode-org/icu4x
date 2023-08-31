@@ -95,7 +95,7 @@ fn test_fallback_options() {
     let data_all_hybrid = testing_exporter.take_map_and_reset();
 
     // These are all of the supported locales for DecimalSymbolsV1 in tests/data.
-    let all_locales: Vec<&str> = vec![
+    let all_locales = [
         "ar",
         "ar-EG",
         "ar-EG-u-nu-latn",
@@ -138,7 +138,7 @@ fn test_fallback_options() {
     let data_all_runtime = testing_exporter.take_map_and_reset();
 
     // These are all of the supported locales with deduplication applied.
-    let all_locales_dedup: Vec<&str> = vec![
+    let all_locales_dedup = [
         "ar",
         // "ar-EG", (same as 'ar')
         // "ar-EG-u-nu-latn", (same as 'ar-u-nu-latn')
@@ -214,7 +214,7 @@ fn test_fallback_options() {
     let data_explicit_hybrid = testing_exporter.take_map_and_reset();
 
     // Explicit locales are "arc", "ar-EG", "en-GB", "es", "sr-ME", "ru-Cyrl-RU"
-    let explicit_hybrid_locales: Vec<&str> = vec![
+    let explicit_hybrid_locales = [
         "ar",              // ancestor of ar-EG
         "ar-EG",           // explicit locale
         "ar-EG-u-nu-latn", // descendant of ar-EG
@@ -250,7 +250,7 @@ fn test_fallback_options() {
     let data_explicit_runtime = testing_exporter.take_map_and_reset();
 
     // Explicit locales are "arc", "ar-EG", "en-GB", "es", "sr-ME", "ru-Cyrl-RU"
-    let explicit_hybrid_locales_dedup: Vec<&str> = vec![
+    let explicit_hybrid_locales_dedup = [
         "ar",
         // "ar-Arab-EG", (same as 'ar')
         // "ar-EG", (same as 'ar')
@@ -287,7 +287,7 @@ fn test_fallback_options() {
     let data_explicit_preresolved = testing_exporter.take_map_and_reset();
 
     // Explicit locales are "arc", "ar-EG", "en-GB", "es", "sr-ME", "ru-Cyrl-RU"
-    let explicit_preresolved_locales: Vec<&str> = vec![
+    let explicit_preresolved_locales = [
         "ar-EG",
         "ar-EG-u-nu-latn", // extensions included even in preresolved mode
         "arc",

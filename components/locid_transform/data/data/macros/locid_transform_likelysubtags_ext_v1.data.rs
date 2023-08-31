@@ -6,7 +6,7 @@
 #[macro_export]
 macro_rules! __impl_locid_transform_likelysubtags_ext_v1 {
     ($ provider : path) => {
-        #[clippy::msrv = "1.65"]
+        #[clippy::msrv = "1.66"]
         impl $provider {
             #[doc(hidden)]
             pub const SINGLETON_LOCID_TRANSFORM_LIKELYSUBTAGS_EXT_V1: &'static <icu::locid_transform::provider::LikelySubtagsExtendedV1Marker as icu_provider::DataMarker>::Yokeable = &icu::locid_transform::provider::LikelySubtagsExtendedV1 {
@@ -36,7 +36,7 @@ macro_rules! __impl_locid_transform_likelysubtags_ext_v1 {
                 },
             };
         }
-        #[clippy::msrv = "1.65"]
+        #[clippy::msrv = "1.66"]
         impl icu_provider::DataProvider<icu::locid_transform::provider::LikelySubtagsExtendedV1Marker> for $provider {
             fn load(&self, req: icu_provider::DataRequest) -> Result<icu_provider::DataResponse<icu::locid_transform::provider::LikelySubtagsExtendedV1Marker>, icu_provider::DataError> {
                 if req.locale.is_empty() {

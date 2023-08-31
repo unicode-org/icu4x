@@ -12,16 +12,16 @@ use std::fmt::Debug;
 use std::path::PathBuf;
 use std::sync::Arc;
 
-/// A [`DataProvider`] backed by raw CLDR and ICU data.
+/// An [`ExportableProvider`](icu_provider::datagen::ExportableProvider) backed by raw CLDR and ICU data.
 ///
 /// This provider covers all keys that are used by ICU4X. It is intended as the canonical
 /// provider for [`DatagenDriver::export`](crate::DatagenDriver::export).
 ///
-/// If a specific data source has not been set, `DataProvider::load` will
-/// error ([`is_missing_cldr_error`](crate::is_missing_cldr_error) /
-/// [`is_missing_icuexport_error`](crate::is_missing_icuexport_error)) /
-/// [`is_missing_segmenter_lstm_error`](crate::is_missing_segmenter_lstm_error))
-/// if the data is required for that key.
+/// If a required data source has not been set, `DataProvider::load` will
+/// fail with the appropriate error:
+/// * [`is_missing_cldr_error`](Self::is_missing_cldr_error)
+/// * [`is_missing_icuexport_error`](Self::is_missing_icuexport_error)
+/// * [`is_missing_segmenter_lstm_error`](Self::is_missing_segmenter_lstm_error)
 #[allow(clippy::exhaustive_structs)] // any information will be added to SourceData
 #[derive(Debug, Clone)]
 pub struct DatagenProvider {
@@ -59,8 +59,9 @@ impl DatagenProvider {
 
     /// A provider using the latest data that has been verified to work with this version of `icu_datagen`.
     ///
-    /// See [`DatagenProvider::LATEST_TESTED_CLDR_TAG`], [`DatagenProvider::LATEST_TESTED_ICUEXPORT_TAG`],
-    /// [`DatagenProvider::LATEST_TESTED_SEGMENTER_LSTM_TAG`].
+    /// See [`LATEST_TESTED_CLDR_TAG`](Self::LATEST_TESTED_CLDR_TAG),
+    /// [`LATEST_TESTED_ICUEXPORT_TAG`](Self::LATEST_TESTED_ICUEXPORT_TAG),
+    /// [`LATEST_TESTED_SEGMENTER_LSTM_TAG`](Self::LATEST_TESTED_SEGMENTER_LSTM_TAG).
     ///
     /// ✨ *Enabled with the `networking` Cargo feature.*
     #[cfg(feature = "networking")]
@@ -193,6 +194,53 @@ impl DatagenProvider {
         }
     }
 
+    const MISSING_CLDR_ERROR: DataError = DataErrorKind::MissingSourceData.with_str_context("cldr");
+
+    const MISSING_ICUEXPORT_ERROR: DataError =
+        DataErrorKind::MissingSourceData.with_str_context("icuexport");
+
+    const MISSING_SEGMENTER_LSTM_ERROR: DataError =
+        DataErrorKind::MissingSourceData.with_str_context("segmenter");
+
+    /// Identifies errors that are due to missing CLDR data.
+    pub fn is_missing_cldr_error(mut e: DataError) -> bool {
+        e.key = None;
+        e == Self::MISSING_CLDR_ERROR
+    }
+
+    /// Identifies errors that are due to missing ICU export data.
+    pub fn is_missing_icuexport_error(mut e: DataError) -> bool {
+        e.key = None;
+        e == Self::MISSING_ICUEXPORT_ERROR
+    }
+
+    /// Identifies errors that are due to missing segmenter LSTM data.
+    pub fn is_missing_segmenter_lstm_error(mut e: DataError) -> bool {
+        e.key = None;
+        e == Self::MISSING_SEGMENTER_LSTM_ERROR
+    }
+
+    pub(crate) fn cldr(&self) -> Result<&CldrCache, DataError> {
+        self.source
+            .cldr_paths
+            .as_deref()
+            .ok_or(Self::MISSING_CLDR_ERROR)
+    }
+
+    pub(crate) fn icuexport(&self) -> Result<&SerdeCache, DataError> {
+        self.source
+            .icuexport_paths
+            .as_deref()
+            .ok_or(Self::MISSING_ICUEXPORT_ERROR)
+    }
+
+    pub(crate) fn segmenter_lstm(&self) -> Result<&SerdeCache, DataError> {
+        self.source
+            .segmenter_lstm_paths
+            .as_deref()
+            .ok_or(Self::MISSING_SEGMENTER_LSTM_ERROR)
+    }
+
     /// Set this to use tries optimized for speed instead of data size
     pub fn with_fast_tries(self) -> Self {
         Self {
@@ -213,27 +261,6 @@ impl DatagenProvider {
         }
     }
 
-    pub(crate) fn cldr(&self) -> Result<&CldrCache, DataError> {
-        self.source
-            .cldr_paths
-            .as_deref()
-            .ok_or(crate::error::MISSING_CLDR_ERROR)
-    }
-
-    pub(crate) fn icuexport(&self) -> Result<&SerdeCache, DataError> {
-        self.source
-            .icuexport_paths
-            .as_deref()
-            .ok_or(crate::error::MISSING_ICUEXPORT_ERROR)
-    }
-
-    pub(crate) fn segmenter_lstm(&self) -> Result<&SerdeCache, DataError> {
-        self.source
-            .segmenter_lstm_paths
-            .as_deref()
-            .ok_or(crate::error::MISSING_SEGMENTER_LSTM_ERROR)
-    }
-
     pub(crate) fn trie_type(&self) -> TrieType {
         self.source.trie_type
     }
@@ -246,7 +273,7 @@ impl DatagenProvider {
     pub fn locales_for_coverage_levels(
         &self,
         levels: impl IntoIterator<Item = CoverageLevel>,
-    ) -> Result<Vec<icu_locid::LanguageIdentifier>, DataError> {
+    ) -> Result<impl IntoIterator<Item = icu_locid::LanguageIdentifier>, DataError> {
         self.cldr()?.locales(levels)
     }
 }
@@ -276,13 +303,13 @@ impl std::fmt::Display for TrieType {
 
 // SEMVER GRAVEYARD
 
-/// Requires `legacy_api` Cargo feature
-///
-/// Bag of options for datagen source data.
+/// Bag of options for [`datagen`](crate::datagen).
 ///
 /// Warning: this includes hardcoded segmentation data for backwards compatibility.
 /// It is strongly discouraged to keep using this API, instead use [`DatagenProvider`]
 /// and set segmentation data explicitly.
+///
+/// ✨ *Enabled with the `legacy_api` Cargo feature.*
 #[derive(Clone, Debug)]
 #[non_exhaustive]
 #[deprecated(since = "1.3.0", note = "use `DatagenProvider`")]
@@ -460,7 +487,7 @@ impl SourceData {
     }
 
     #[cfg(feature = "legacy_api")]
-    /// See [`DatagenDriver::with_collations`](crate::DatagenDriver::with_collations)
+    /// See [`DatagenDriver::with_additional_collations`](crate::DatagenDriver::with_additional_collations)
     pub fn with_collations(self, collations: Vec<String>) -> Self {
         Self { collations, ..self }
     }
@@ -472,7 +499,7 @@ impl SourceData {
     ) -> Result<Vec<icu_locid::LanguageIdentifier>, DataError> {
         self.cldr_paths
             .as_deref()
-            .ok_or(crate::error::MISSING_CLDR_ERROR)?
+            .ok_or(DatagenProvider::MISSING_CLDR_ERROR)?
             .locales(levels.iter().copied())
     }
 }

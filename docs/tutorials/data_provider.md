@@ -311,3 +311,64 @@ let formatter = FixedDecimalFormatter::try_new_with_any_provider(
 
 assert_eq!(formatter.format_to_string(&100007i64.into()), "100🐮007");
 ```
+
+## Accessing the Resolved Locale
+
+ICU4X objects do not store their "resolved locale" because that is not a well-defined concept. Components can load data from many sources, and fallbacks to parent locales or root does not necesarily mean that a locale is not supported.
+
+However, for environments that require this behavior, such as ECMA-402, the data provider can be instrumented to access the resolved locale from `DataResponseMetadata`, as shown in the following example.
+
+```rust
+use icu_provider::prelude::*;
+use icu_provider::hello_world::*;
+use icu_provider_adapters::fallback::LocaleFallbackProvider;
+use icu_provider_adapters::fallback::LocaleFallbacker;
+use icu::locid::locale;
+use std::sync::RwLock;
+
+pub struct ResolvedLocaleProvider<P> {
+    inner: P,
+    // This could be a RefCell if thread safety is not required:
+    resolved_locale: RwLock<Option<DataLocale>>,
+}
+
+impl<M, P> DataProvider<M> for ResolvedLocaleProvider<P>
+where
+    M: KeyedDataMarker,
+    P: DataProvider<M>
+{
+    fn load(&self, req: DataRequest) -> Result<DataResponse<M>, DataError> {
+        let mut res = self.inner.load(req)?;
+        // Whichever locale gets loaded for `HelloWorldV1Marker::KEY` will be the one
+        // we consider the "resolved locale". Although `HelloWorldFormatter` only loads
+        // one key, this is a useful distinction for most other formatters.
+        if M::KEY == HelloWorldV1Marker::KEY {
+            let mut w = self.resolved_locale.write().expect("poison");
+            *w = res.metadata.locale.take();
+        }
+        Ok(res)
+    }
+}
+
+// Set up a HelloWorldProvider with fallback
+let provider = ResolvedLocaleProvider {
+    inner: LocaleFallbackProvider::new_with_fallbacker(
+        HelloWorldProvider,
+        LocaleFallbacker::try_new_unstable(&icu_testdata::unstable()).unwrap(),
+    ),
+    resolved_locale: Default::default(),
+};
+
+// Request data for ru-RU...
+HelloWorldFormatter::try_new_unstable(
+    &provider,
+    &locale!("ru-RU").into(),
+)
+.unwrap();
+
+// ...which loads data from ru.
+assert_eq!(
+    *provider.resolved_locale.read().expect("poison"),
+    Some(locale!("ru").into()),
+);
+```

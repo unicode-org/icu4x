@@ -9,20 +9,21 @@
 //! # Examples
 //!
 //! ```
-//! use icu_datagen::prelude::*;
 //! use icu_datagen::baked_exporter::*;
+//! use icu_datagen::prelude::*;
 //!
 //! let demo_path = std::env::temp_dir().join("icu4x_baked_demo");
 //! # let _ = std::fs::remove_dir_all(&demo_path);
 //!
 //! // Set up the exporter
-//! let mut exporter = BakedExporter::new(demo_path.clone(), Default::default()).unwrap();
+//! let mut exporter =
+//!     BakedExporter::new(demo_path.clone(), Default::default()).unwrap();
 //!
 //! // Export something
 //! DatagenDriver::new()
-//!   .with_keys([icu_provider::hello_world::HelloWorldV1Marker::KEY])
-//!   .export(&DatagenProvider::latest_tested(), exporter)
-//!   .unwrap();
+//!     .with_keys([icu_provider::hello_world::HelloWorldV1Marker::KEY])
+//!     .export(&DatagenProvider::latest_tested(), exporter)
+//!     .unwrap();
 //! #
 //! # let _ = std::fs::remove_dir_all(&demo_path);
 //! ```
@@ -51,21 +52,14 @@
 //!     #     }
 //!     #   }
 //!     # }
-//!     include!("/path/to/mod/");
+//!     include!("/path/to/mod.rs");
 //!     impl_data_provider!(super::MyDataProvider);
 //! }
 //!
 //! # fn main() {
-//! let response: DataPayload<HelloWorldV1Marker> = MyDataProvider
-//!     .load(DataRequest {
-//!         locale: &langid!("en").into(),
-//!         metadata: Default::default(),
-//!     })
-//!     .unwrap()
-//!     .take_payload()
-//!     .unwrap();
+//! let formatter = HelloWorldFormatter::try_new_unstable(&MyDataProvider, &langid!("en").into()).unwrap();
 //!
-//! assert_eq!(response.get().message, "Hello World");
+//! assert_eq!(formatter.format_to_string(), "Hello World");
 //! # }
 //! ```
 
@@ -88,6 +82,8 @@ macro_rules! move_out {
 
 // TokenStream isn't Send/Sync
 type SyncTokenStream = String;
+
+const MSRV: &str = std::env!("CARGO_PKG_RUST_VERSION");
 
 /// Options for configuring the output of [`BakedExporter`].
 #[non_exhaustive]
@@ -125,20 +121,10 @@ pub struct BakedExporter {
     use_separate_crates: bool,
     // Temporary storage for put_payload: key -> (bake -> {locale})
     data: Mutex<HashMap<DataKey, BTreeMap<SyncTokenStream, BTreeSet<String>>>>,
-    /// Information to generate implementations. This is populated by `flush` and consumed by `close`.
-    impl_data: Mutex<BTreeMap<&'static str, ImplData>>,
+    /// (Key, Marker) pairs to wire up in mod.rs. This is populated by `flush` and consumed by `close`.
+    impl_data: Mutex<BTreeMap<DataKey, SyncTokenStream>>,
     // List of dependencies used by baking.
     dependencies: CrateEnv,
-}
-
-/// Data required to write the implementations
-struct ImplData {
-    marker: SyncTokenStream,
-    feature: SyncTokenStream,
-    macro_ident: SyncTokenStream,
-    prefixed_macro_ident: SyncTokenStream,
-    hash_ident: SyncTokenStream,
-    mod_ident: SyncTokenStream,
 }
 
 impl std::fmt::Debug for BakedExporter {
@@ -260,12 +246,13 @@ impl BakedExporter {
         body: TokenStream,
         key: DataKey,
         marker: syn::Path,
-        ident: String,
     ) -> Result<(), DataError> {
         let doc = format!(
             " Implement `DataProvider<{}>` on the given struct using the data",
             marker.segments.iter().next_back().unwrap().ident
         );
+
+        let ident = Self::ident(key);
 
         let prefixed_macro_ident = format!("__impl_{ident}").parse::<TokenStream>().unwrap();
 
@@ -285,33 +272,18 @@ impl BakedExporter {
             },
         )?;
 
-        let feature = if !self.insert_feature_gates {
-            quote!()
-        } else if marker.segments.iter().next_back().unwrap().ident
-            == "DateSkeletonPatternsV1Marker"
-        {
-            quote! { #[cfg(feature = "icu_datetime_experimental")] }
-        } else if marker.segments.iter().next_back().unwrap().ident == "HelloWorldV1Marker" {
-            quote!()
-        } else {
-            let feature = marker.segments.iter().next().unwrap().ident.to_string();
-            quote! { #[cfg(feature = #feature)] }
-        };
-
-        let data = ImplData {
-            feature: feature.to_string(),
-            marker: quote!(#marker).to_string(),
-            macro_ident: format!("impl_{ident}"),
-            prefixed_macro_ident: prefixed_macro_ident.to_string(),
-            hash_ident: ident.to_ascii_uppercase(),
-            mod_ident: ident,
-        };
-
         self.impl_data
             .lock()
             .expect("poison")
-            .insert(key.path().get(), data);
+            .insert(key, quote!(#marker).to_string());
         Ok(())
+    }
+
+    fn ident(key: DataKey) -> String {
+        key.path()
+            .to_ascii_lowercase()
+            .replace('@', "_v")
+            .replace('/', "_")
     }
 }
 
@@ -345,27 +317,21 @@ impl DataExporter for BakedExporter {
             syn::parse2::<syn::Path>(crate::registry::key_to_marker_bake(key, &self.dependencies))
                 .unwrap();
 
-        let ident = key
-            .path()
-            .to_ascii_lowercase()
-            .replace('@', "_v")
-            .replace('/', "_");
-
-        let singleton_ident = format!("SINGLETON_{}", ident.to_ascii_uppercase())
+        let singleton_ident = format!("SINGLETON_{}", Self::ident(key).to_ascii_uppercase())
             .parse::<TokenStream>()
             .unwrap();
 
         let bake = payload.tokenize(&self.dependencies);
 
         self.write_impl_macro(quote! {
-            #[clippy::msrv = "1.65"]
+            #[clippy::msrv = #MSRV]
             impl $provider {
                 // Exposing singleton structs as consts allows us to get rid of fallibility
                 #[doc(hidden)]
                 pub const #singleton_ident: &'static <#marker as icu_provider::DataMarker>::Yokeable = &#bake;
             }
 
-            #[clippy::msrv = "1.65"]
+            #[clippy::msrv = #MSRV]
             impl icu_provider::DataProvider<#marker> for $provider {
                 fn load(
                     &self,
@@ -381,7 +347,7 @@ impl DataExporter for BakedExporter {
                     }
                 }
             }
-        }, key, marker, ident)
+        }, key, marker)
     }
 
     fn flush(&self, key: DataKey) -> Result<(), DataError> {
@@ -452,12 +418,6 @@ impl BakedExporter {
             .remove(&key)
             .unwrap_or_default();
 
-        let ident = key
-            .path()
-            .to_ascii_lowercase()
-            .replace('@', "_v")
-            .replace('/', "_");
-
         let body = if values.is_empty() {
             quote!(Err(icu_provider::DataErrorKind::MissingLocale.with_req(<#marker as icu_provider::KeyedDataMarker>::KEY, req)))
         } else {
@@ -517,7 +477,8 @@ impl BakedExporter {
                     }
                 }
                 Some(BuiltInFallbackMode::Standard) => {
-                    self.dependencies.insert("icu_locid_transform/data");
+                    self.dependencies
+                        .insert("icu_locid_transform/compiled_data");
                     let search_direct = search(quote!(req.locale));
                     let search_iterator = search(quote!(fallback_iterator.get()));
                     let maybe_err = if keys.contains(&String::from("und")) {
@@ -569,7 +530,7 @@ impl BakedExporter {
 
         self.write_impl_macro(
             quote! {
-                #[clippy::msrv = "1.65"]
+                #[clippy::msrv = #MSRV]
                 impl icu_provider::DataProvider<#marker> for $provider {
                     fn load(
                         &self,
@@ -581,7 +542,6 @@ impl BakedExporter {
             },
             key,
             marker,
-            ident,
         )
     }
 
@@ -591,39 +551,45 @@ impl BakedExporter {
         let data = move_out!(self.impl_data).into_inner().expect("poison");
 
         let features = data
-            .values()
-            .map(|data| data.feature.parse::<TokenStream>().unwrap())
+            .iter()
+            .map(|(key, marker)| {
+                if !self.insert_feature_gates {
+                    quote!()
+                } else if *key
+                    == icu_datetime::provider::calendar::DateSkeletonPatternsV1Marker::KEY
+                {
+                    quote! { #[cfg(feature = "icu_datetime_experimental")] }
+                } else if *key == icu_provider::hello_world::HelloWorldV1Marker::KEY {
+                    quote!()
+                } else {
+                    let feature = marker.split(" :: ").next().unwrap();
+                    quote! { #[cfg(feature = #feature)] }
+                }
+            })
             .collect::<Vec<_>>();
+
         let markers = data
             .values()
-            .map(|data| data.marker.parse::<TokenStream>().unwrap())
+            .map(|marker| marker.parse::<TokenStream>().unwrap())
             .collect::<Vec<_>>();
 
-        let macro_idents = data
-            .values()
-            .map(|data| data.macro_ident.parse::<TokenStream>().unwrap())
-            .collect::<Vec<_>>();
-        let mod_idents = data
-            .values()
-            .map(|data| data.mod_ident.parse::<TokenStream>().unwrap())
-            .collect::<Vec<_>>();
-        let file_paths = data
-            .values()
-            .map(|data| format!("macros/{}.data.rs", data.mod_ident))
-            .collect::<Vec<_>>();
-
-        // We prefix all macros with `__`, as these will be automatically exported at the crate root, which is annoying
-        // for crates that include the data but don't want it to be public. We then reexport them as items that use
-        // normal scoping that clients can control.
-        let prefixed_macro_idents = data
-            .values()
-            .map(|data| data.prefixed_macro_ident.parse::<TokenStream>().unwrap())
-            .collect::<Vec<_>>();
-
-        let hash_idents = data
-            .values()
-            .map(|data| data.hash_ident.parse::<TokenStream>().unwrap())
-            .collect::<Vec<_>>();
+        let (macro_idents, prefixed_macro_idents, mod_idents, file_paths): (
+            Vec<_>,
+            Vec<_>,
+            Vec<_>,
+            Vec<_>,
+        ) = itertools::multiunzip(data.keys().map(|&key| {
+            let ident = Self::ident(key);
+            (
+                format!("impl_{}", ident).parse::<TokenStream>().unwrap(),
+                // We prefix all macros with `__`, as these will be automatically exported at the crate root, which is annoying
+                // for crates that include the data but don't want it to be public. We then reexport them as items that use
+                // normal scoping that clients can control.
+                format!("__impl_{}", ident).parse::<TokenStream>().unwrap(),
+                ident.parse::<TokenStream>().unwrap(),
+                format!("macros/{}.data.rs", ident),
+            )
+        }));
 
         // macros.rs is the interface for built-in data. It exposes one macro per data key.
         self.write_to_file(
@@ -681,22 +647,14 @@ impl BakedExporter {
                 #[macro_export]
                 macro_rules! __impl_any_provider {
                     ($provider:path) => {
-                        #[clippy::msrv = "1.65"]
+                        #[clippy::msrv = #MSRV]
                         impl icu_provider::AnyProvider for $provider {
                             fn load_any(&self, key: icu_provider::DataKey, req: icu_provider::DataRequest) -> Result<icu_provider::AnyResponse, icu_provider::DataError> {
-                                #(
-                                    #features
-                                    const #hash_idents: icu_provider::DataKeyHash = <#markers as icu_provider::KeyedDataMarker>::KEY.hashed();
-                                )*
                                 match key.hashed() {
                                     #(
                                         #features
-                                        #hash_idents => icu_provider::DataProvider::<#markers>::load(self, req)
-                                            .and_then(|r| r.take_metadata_and_payload())
-                                            .map(|(metadata, payload)| icu_provider::AnyResponse {
-                                                payload: Some(payload.wrap_into_any_payload()),
-                                                metadata,
-                                            }),
+                                        h if h == <#markers as icu_provider::KeyedDataMarker>::KEY.hashed() =>
+                                            icu_provider::DataProvider::<#markers>::load(self, req).map(icu_provider::DataResponse::wrap_into_any_response),
                                     )*
                                     _ => Err(icu_provider::DataErrorKind::MissingDataKey.with_req(key, req)),
                                 }
@@ -707,7 +665,7 @@ impl BakedExporter {
                 #[doc(inline)]
                 pub use __impl_any_provider as impl_any_provider;
 
-                #[clippy::msrv = "1.65"]
+                #[clippy::msrv = #MSRV]
                 pub struct BakedDataProvider;
                 impl_data_provider!(BakedDataProvider);
             },

@@ -363,8 +363,8 @@ mod tests {
         let in_strs_1 = ["a", "abc", "xyz", "abc"];
         let in_strs_2 = ["xyz", "abc", "a", "abc"];
 
-        let cpilsl_1 = CodePointInversionListAndStringList::from_iter(in_strs_1.into_iter());
-        let cpilsl_2 = CodePointInversionListAndStringList::from_iter(in_strs_2.into_iter());
+        let cpilsl_1 = CodePointInversionListAndStringList::from_iter(in_strs_1);
+        let cpilsl_2 = CodePointInversionListAndStringList::from_iter(in_strs_2);
 
         assert_eq!(cpilsl_1, cpilsl_2);
 

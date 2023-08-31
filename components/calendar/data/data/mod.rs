@@ -33,16 +33,13 @@ pub use __impl_data_provider as impl_data_provider;
 #[macro_export]
 macro_rules! __impl_any_provider {
     ($ provider : path) => {
-        #[clippy::msrv = "1.65"]
+        #[clippy::msrv = "1.66"]
         impl icu_provider::AnyProvider for $provider {
             fn load_any(&self, key: icu_provider::DataKey, req: icu_provider::DataRequest) -> Result<icu_provider::AnyResponse, icu_provider::DataError> {
-                const CALENDAR_JAPANESE_V1: icu_provider::DataKeyHash = <icu::calendar::provider::JapaneseErasV1Marker as icu_provider::KeyedDataMarker>::KEY.hashed();
-                const CALENDAR_JAPANEXT_V1: icu_provider::DataKeyHash = <icu::calendar::provider::JapaneseExtendedErasV1Marker as icu_provider::KeyedDataMarker>::KEY.hashed();
-                const DATETIME_WEEK_DATA_V1: icu_provider::DataKeyHash = <icu::calendar::provider::WeekDataV1Marker as icu_provider::KeyedDataMarker>::KEY.hashed();
                 match key.hashed() {
-                    CALENDAR_JAPANESE_V1 => icu_provider::DataProvider::<icu::calendar::provider::JapaneseErasV1Marker>::load(self, req).and_then(|r| r.take_metadata_and_payload()).map(|(metadata, payload)| icu_provider::AnyResponse { payload: Some(payload.wrap_into_any_payload()), metadata }),
-                    CALENDAR_JAPANEXT_V1 => icu_provider::DataProvider::<icu::calendar::provider::JapaneseExtendedErasV1Marker>::load(self, req).and_then(|r| r.take_metadata_and_payload()).map(|(metadata, payload)| icu_provider::AnyResponse { payload: Some(payload.wrap_into_any_payload()), metadata }),
-                    DATETIME_WEEK_DATA_V1 => icu_provider::DataProvider::<icu::calendar::provider::WeekDataV1Marker>::load(self, req).and_then(|r| r.take_metadata_and_payload()).map(|(metadata, payload)| icu_provider::AnyResponse { payload: Some(payload.wrap_into_any_payload()), metadata }),
+                    h if h == <icu::calendar::provider::JapaneseErasV1Marker as icu_provider::KeyedDataMarker>::KEY.hashed() => icu_provider::DataProvider::<icu::calendar::provider::JapaneseErasV1Marker>::load(self, req).map(icu_provider::DataResponse::wrap_into_any_response),
+                    h if h == <icu::calendar::provider::JapaneseExtendedErasV1Marker as icu_provider::KeyedDataMarker>::KEY.hashed() => icu_provider::DataProvider::<icu::calendar::provider::JapaneseExtendedErasV1Marker>::load(self, req).map(icu_provider::DataResponse::wrap_into_any_response),
+                    h if h == <icu::calendar::provider::WeekDataV1Marker as icu_provider::KeyedDataMarker>::KEY.hashed() => icu_provider::DataProvider::<icu::calendar::provider::WeekDataV1Marker>::load(self, req).map(icu_provider::DataResponse::wrap_into_any_response),
                     _ => Err(icu_provider::DataErrorKind::MissingDataKey.with_req(key, req)),
                 }
             }
@@ -51,6 +48,6 @@ macro_rules! __impl_any_provider {
 }
 #[doc(inline)]
 pub use __impl_any_provider as impl_any_provider;
-#[clippy::msrv = "1.65"]
+#[clippy::msrv = "1.66"]
 pub struct BakedDataProvider;
 impl_data_provider!(BakedDataProvider);

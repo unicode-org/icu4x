@@ -70,6 +70,7 @@ members = [
     "provider/macros",
 
     # Utils
+    "utils/calendrical_calculations",
     "utils/crlify",
     "utils/databake",
     "utils/databake/derive",
@@ -115,7 +116,7 @@ exclude = [
 
 [workspace.package]
 version = "1.2.0"
-rust-version = "1.65"
+rust-version = "1.66"
 authors = ["The ICU4X Project Developers"]
 edition = "2021"
 repository = "https://github.com/unicode-org/icu4x"
@@ -199,6 +200,7 @@ icu_provider_fs = { version = "~1.2.0", path = "provider/fs/", default-features 
 icu_provider_macros = { version = "~1.2.0", path = "provider/macros", default-features = false }
 
 # Utils
+calendrical_calculations = { version = "0.1.0", path = "utils/calendrical_calculations", default-features = false }
 crlify = { version = "1.0.1", path = "utils/crlify", default-features = false }
 databake = { version = "0.1.3", path = "utils/databake", default-features = false }
 databake-derive = { version = "0.1.3", path = "utils/databake/derive", default-features = false }
