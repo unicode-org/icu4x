@@ -13,7 +13,6 @@ use alloc::string::{String, ToString};
 use alloc::vec::Vec;
 use core::fmt::Debug;
 use core::ops::Range;
-use core::ops::RangeInclusive;
 use core::str;
 use icu_collections::codepointinvlist::CodePointInversionList;
 use icu_collections::codepointinvliststringlist::CodePointInversionListAndStringList;
@@ -480,15 +479,17 @@ impl<'a> RuleBasedTransliterator<'a> {
 impl<'a> SimpleId<'a> {
     fn transliterate(&self, mut rep: Replaceable, env: &Env) {
         // eprintln!("transliterating SimpleId: {self:?}");
+        let inner = match env.get(self.id.as_ref()) {
+            None => {
+                debug_assert!(false, "missing transliterator {}", &self.id);
+                // GIGO behavior, missing recursive transliterator is a noop
+                return;
+            }
+            Some(inner) => inner,
+        };
         rep.for_each_run(&self.filter, |run| {
             // eprintln!("transliterating SimpleId run: {rep:?}");
-            match env.get(self.id.as_ref()) {
-                None => {
-                    debug_assert!(false, "missing transliterator {}", &self.id);
-                    // GIGO behavior, missing recursive transliterator is a noop
-                }
-                Some(internal_t) => internal_t.transliterate(run.child(), env),
-            }
+            inner.transliterate(run.child(), env)
         })
     }
 }
@@ -549,7 +550,7 @@ impl<'a> Rule<'a> {
 
         dest.apply_size_hint(replacement_size_estimate);
 
-        replace_encoded_str(&self.replacer, &mut dest, &data, vt, env);
+        replace_str_with_specials(&self.replacer, &mut dest, &data, vt, env);
     }
 
     /// Returns `None` if there is no match. If there is a match, returns the associated
@@ -592,7 +593,7 @@ impl<'a> Rule<'a> {
             // fast path for empty queries, which always match
             return true;
         }
-        rev_match_encoded_str(&self.ante, matcher, match_data, vt)
+        rev_match_str_with_specials(&self.ante, matcher, match_data, vt)
     }
 
     /// Returns whether the post context matches or not. Fills in `match_data` if applicable.
@@ -608,7 +609,7 @@ impl<'a> Rule<'a> {
             // fast path for empty queries, which always match
             return true;
         }
-        match_encoded_str(&self.post, matcher, match_data, vt)
+        match_str_with_specials(&self.post, matcher, match_data, vt)
     }
 
     /// Returns whether the post context matches or not. Fills in `match_data` if applicable.
@@ -624,7 +625,7 @@ impl<'a> Rule<'a> {
             // fast path for empty queries, which always match
             return true;
         }
-        match_encoded_str(&self.key, matcher, match_data, vt)
+        match_str_with_specials(&self.key, matcher, match_data, vt)
     }
 }
 
@@ -673,8 +674,8 @@ fn estimate_replacement_size(replacement: &str, data: &MatchData, vt: &VarTable)
         let replacer = match vt.lookup_replacer(rep_c) {
             Some(replacer) => replacer,
             None => {
-                debug_assert!(false, "invalid encoded char {:?}", rep_c);
-                // GIGO behavior. we just skip invalid encoded chars
+                debug_assert!(false, "invalid encoded special {:?}", rep_c);
+                // GIGO behavior. we just skip invalid encodings
                 continue;
             }
         };
@@ -684,8 +685,9 @@ fn estimate_replacement_size(replacement: &str, data: &MatchData, vt: &VarTable)
     size
 }
 
-/// Applies the replacements from the encoded `replacement` to `dest`, including non-default cursor updates.
-fn replace_encoded_str(
+/// Applies the replacements from the `replacement`, which may contain encoded special replacers, to `dest`,
+/// including non-default cursor updates.
+fn replace_str_with_specials(
     replacement: &str,
     dest: &mut Insertable,
     data: &MatchData,
@@ -715,8 +717,8 @@ fn replace_encoded_str(
         let replacer = match vt.lookup_replacer(rep_c) {
             Some(replacer) => replacer,
             None => {
-                debug_assert!(false, "invalid encoded char {:?}", rep_c);
-                // GIGO behavior. we just skip invalid encoded chars
+                debug_assert!(false, "invalid encoded special {:?}", rep_c);
+                // GIGO behavior. we just skip invalid encodings
                 continue;
             }
         };
@@ -724,8 +726,8 @@ fn replace_encoded_str(
     }
 }
 
-/// Tries to match the encoded `query` on `matcher`. Fills in `match_data` if applicable.
-fn match_encoded_str(
+/// Tries to match `query`, which may contain encoded special matchers, on `matcher`. Fills in `match_data` if applicable.
+fn match_str_with_specials(
     query: &str,
     matcher: &mut impl Utf8Matcher<Forward>,
     match_data: &mut MatchData,
@@ -761,8 +763,8 @@ fn match_encoded_str(
         let special_matcher = match vt.lookup_matcher(query_c) {
             Some(matcher) => matcher,
             None => {
-                debug_assert!(false, "invalid encoded char {:?}", query_c);
-                // GIGO behavior. we just skip invalid encoded chars
+                debug_assert!(false, "invalid encoded special {:?}", query_c);
+                // GIGO behavior. we just skip invalid encodings
                 continue;
             }
         };
@@ -775,8 +777,8 @@ fn match_encoded_str(
     true
 }
 
-/// Tries to match the encoded `query` on `matcher` from the right. Fills in `match_data` if applicable.
-fn rev_match_encoded_str(
+/// Tries to match `query`, which may contain encoded special matchers, on `matcher` from the right. Fills in `match_data` if applicable.
+fn rev_match_str_with_specials(
     query: &str,
     matcher: &mut impl Utf8Matcher<Reverse>,
     match_data: &mut MatchData,
@@ -810,8 +812,8 @@ fn rev_match_encoded_str(
         let special_matcher = match vt.lookup_matcher(query_c) {
             Some(matcher) => matcher,
             None => {
-                debug_assert!(false, "invalid encoded char {:?}", query_c);
-                // GIGO behavior. we just skip invalid encoded chars
+                debug_assert!(false, "invalid encoded special {:?}", query_c);
+                // GIGO behavior. we just skip invalid encodings
                 continue;
             }
         };
@@ -883,7 +885,7 @@ impl<'a> SpecialMatcher<'a> {
         vt: &VarTable,
     ) -> bool {
         match self {
-            Self::Compound(query) => match_encoded_str(query, matcher, match_data, vt),
+            Self::Compound(query) => match_str_with_specials(query, matcher, match_data, vt),
             Self::UnicodeSet(set) => {
                 // eprintln!("checking if set {set:?} matches input {matcher:?}");
 
@@ -941,7 +943,7 @@ impl<'a> SpecialMatcher<'a> {
                 // Thought: Would it be cool to have a similar functionality as Insertable::start_replaceable_adapter
                 //  that takes care of this `start`/`end` shenanigans? here it's not a safety issue, merely a panic issue.
                 let start = matcher.cursor();
-                if !match_encoded_str(&segment.content, matcher, match_data, vt) {
+                if !match_str_with_specials(&segment.content, matcher, match_data, vt) {
                     return false;
                 }
                 let end = matcher.cursor();
@@ -961,7 +963,7 @@ impl<'a> SpecialMatcher<'a> {
 
                 while matches < max_matches {
                     let pre_cursor = matcher.cursor();
-                    if !match_encoded_str(query, matcher, match_data, vt) {
+                    if !match_str_with_specials(query, matcher, match_data, vt) {
                         break;
                     }
                     let post_cursor = matcher.cursor();
@@ -986,7 +988,7 @@ impl<'a> SpecialMatcher<'a> {
         vt: &VarTable,
     ) -> bool {
         match self {
-            Self::Compound(query) => rev_match_encoded_str(query, matcher, match_data, vt),
+            Self::Compound(query) => rev_match_str_with_specials(query, matcher, match_data, vt),
             Self::UnicodeSet(set) => {
                 // eprintln!("checking if set {set:?} reverse matches input {matcher:?}");
 
@@ -1033,7 +1035,7 @@ impl<'a> SpecialMatcher<'a> {
             Self::AnchorStart => matcher.match_start_anchor(),
             Self::Segment(segment) => {
                 let end = matcher.cursor();
-                if !rev_match_encoded_str(&segment.content, matcher, match_data, vt) {
+                if !rev_match_str_with_specials(&segment.content, matcher, match_data, vt) {
                     return false;
                 }
                 let start = matcher.cursor();
@@ -1053,7 +1055,7 @@ impl<'a> SpecialMatcher<'a> {
 
                 while matches < max_matches {
                     let pre_cursor = matcher.cursor();
-                    if !rev_match_encoded_str(query, matcher, match_data, vt) {
+                    if !rev_match_str_with_specials(query, matcher, match_data, vt) {
                         break;
                     }
                     let post_cursor = matcher.cursor();
@@ -1100,7 +1102,7 @@ impl<'a> SpecialReplacer<'a> {
     /// Applies the replacement from this replacer to `dest`. Also applies any updates to the cursor.
     fn replace(&self, dest: &mut Insertable, data: &MatchData, vt: &VarTable, env: &Env) {
         match self {
-            Self::Compound(replacer) => replace_encoded_str(replacer, dest, data, vt, env),
+            Self::Compound(replacer) => replace_str_with_specials(replacer, dest, data, vt, env),
             Self::PureCursor => dest.set_offset_to_here(),
             &Self::LeftPlaceholderCursor(num) => {
                 // must occur at the very end of a replacement
@@ -1126,7 +1128,7 @@ impl<'a> SpecialReplacer<'a> {
                 // eprintln!("dest before function call: {dest:?}");
 
                 let mut range_aggregator = dest.start_replaceable_adapter();
-                replace_encoded_str(&call.arg, &mut range_aggregator, data, vt, env);
+                replace_str_with_specials(&call.arg, &mut range_aggregator, data, vt, env);
 
                 call.translit
                     .transliterate(range_aggregator.as_replaceable().child(), env);
@@ -1176,19 +1178,6 @@ impl<'a> VarTableElement<'a> {
 }
 
 impl<'a> VarTable<'a> {
-    #[doc(hidden)]
-    pub const BASE: char = '\u{F0000}';
-    #[doc(hidden)]
-    pub const MAX_DYNAMIC: char = '\u{FFFF0}';
-    #[doc(hidden)]
-    pub const RESERVED_PURE_CURSOR: char = '\u{FFFFB}';
-    #[doc(hidden)]
-    pub const RESERVED_ANCHOR_START: char = '\u{FFFFC}';
-    #[doc(hidden)]
-    pub const RESERVED_ANCHOR_END: char = '\u{FFFFD}';
-
-    const ENCODE_RANGE: RangeInclusive<char> = Self::BASE..=Self::RESERVED_ANCHOR_END;
-
     fn lookup(&'a self, query: char) -> Option<VarTableElement<'a>> {
         match query {
             Self::BASE..=Self::MAX_DYNAMIC => {}

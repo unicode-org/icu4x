@@ -50,7 +50,7 @@ struct MutVarTable {
 
 impl MutVarTable {
     fn try_new_from_counts(counts: SpecialConstructCounts) -> Result<Self> {
-        if counts.num_total() > (VarTable::MAX_DYNAMIC as usize - VarTable::BASE as usize + 1) {
+        if counts.num_total() > VarTable::NUM_DYNAMIC {
             return Err(PEK::TooManySpecials.into());
         }
 
