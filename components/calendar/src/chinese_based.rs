@@ -23,7 +23,7 @@ use crate::{
         ArithmeticDate, CalendarArithmetic, MAX_ITERS_FOR_DAYS_OF_YEAR,
         MAX_ITERS_FOR_MONTHS_OF_YEAR,
     },
-    helpers::{adjusted_rem_euclid, i64_to_i32, quotient, I32Result},
+    helpers::{adjusted_rem_euclid, i64_to_i32, quotient},
     rata_die::{Moment, RataDie},
     types::MonthCode,
     Calendar, CalendarError, Iso,
@@ -304,10 +304,10 @@ impl<C: ChineseBased + CalendarArithmetic> ChineseBasedDateInner<C> {
             Astronomical::julian_centuries(universal),
         ) as i64);
         debug_assert!(
-            matches!(solar_longitude, I32Result::WithinRange(_)),
+            solar_longitude.is_ok(),
             "Solar longitude should be in range of i32"
         );
-        let s = solar_longitude.saturate();
+        let s = solar_longitude.unwrap_or_else(|e| e.saturate());
         let result_signed = adjusted_rem_euclid(2 + quotient(s, 30), 12);
         debug_assert!(result_signed >= 0);
         result_signed as u32
@@ -335,10 +335,10 @@ impl<C: ChineseBased + CalendarArithmetic> ChineseBasedDateInner<C> {
             Astronomical::julian_centuries(universal),
         ) as i64);
         debug_assert!(
-            matches!(solar_longitude, I32Result::WithinRange(_)),
+            solar_longitude.is_ok(),
             "Solar longitude should be in range of i32"
         );
-        let s = solar_longitude.saturate();
+        let s = solar_longitude.unwrap_or_else(|e| e.saturate());
         let result_signed = adjusted_rem_euclid(3 + quotient(s - 15, 30), 12);
         debug_assert!(result_signed >= 0);
         result_signed as u32
@@ -552,11 +552,8 @@ impl<C: ChineseBased + CalendarArithmetic> ChineseBasedDateInner<C> {
             1.5 - 1.0 / 12.0 + ((first_day_of_year - C::EPOCH) as f64) / MEAN_TROPICAL_YEAR,
         );
         let year_int = i64_to_i32(year_float as i64);
-        debug_assert!(
-            matches!(year_int, I32Result::WithinRange(_)),
-            "Year should be in range of i32"
-        );
-        let year = year_int.saturate();
+        debug_assert!(year_int.is_ok(), "Year should be in range of i32");
+        let year = year_int.unwrap_or_else(|e| e.saturate());
 
         let new_moon = Self::new_moon_before((date + 1).as_moment());
         let month_i64 =

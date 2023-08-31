@@ -5,7 +5,7 @@
 // calendrical_calculations package root or online at
 // <https://www.apache.org/licenses/LICENSE-2.0>.
 
-use crate::helpers::{div_rem_euclid64, i64_to_i32, quotient64, I32Result};
+use crate::helpers::{div_rem_euclid64, i64_to_i32, quotient64, I32CastError};
 use crate::rata_die::RataDie;
 
 // The Gregorian epoch is equivalent to first day in fixed day measurement
@@ -43,7 +43,7 @@ pub fn fixed_from_iso(year: i32, month: u8, day: u8) -> RataDie {
 }
 
 // Lisp code reference: https://github.com/EdReingold/calendar-code2/blob/1ee51ecfaae6f856b0d7de3e36e9042100b4f424/calendar.l#L1191-L1217
-pub fn iso_year_from_fixed(date: RataDie) -> i64 {
+fn iso_year_from_fixed(date: RataDie) -> i64 {
     // Shouldn't overflow because it's not possbile to construct extreme values of RataDie
     let date = date - EPOCH;
 
@@ -72,17 +72,9 @@ fn iso_new_year(year: i32) -> RataDie {
 }
 
 // todo: do not call from
-pub fn iso_from_fixed(date: RataDie) -> (i32, u8, u8) {
+pub fn iso_from_fixed(date: RataDie) -> Result<(i32, u8, u8), I32CastError> {
     let year = iso_year_from_fixed(date);
-    let year = match i64_to_i32(year) {
-        I32Result::BelowMin(_) => {
-            unreachable!()
-        }
-        I32Result::AboveMax(_) => {
-            unreachable!()
-        }
-        I32Result::WithinRange(y) => y,
-    };
+    let year = i64_to_i32(year)?;
     // Calculates the prior days of the adjusted year, then applies a correction based on leap year conditions for the correct ISO date conversion.
     let prior_days = date - iso_new_year(year);
     let correction = if date < fixed_from_iso(year, 3, 1) {
@@ -94,5 +86,5 @@ pub fn iso_from_fixed(date: RataDie) -> (i32, u8, u8) {
     };
     let month = quotient64(12 * (prior_days + correction) + 373, 367) as u8; // in 1..12 < u8::MAX
     let day = (date - fixed_from_iso(year, month, 1) + 1) as u8; // <= days_in_month < u8::MAX
-    (year, month, day)
+    Ok((year, month, day))
 }

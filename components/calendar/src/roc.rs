@@ -33,7 +33,7 @@
 
 use crate::{
     calendar_arithmetic::ArithmeticDate,
-    helpers::{i64_to_i32, I32Result},
+    helpers::i64_to_i32,
     iso::IsoDateInner,
     types::{self, Era},
     Calendar, CalendarError, Date, DateTime, Iso,
@@ -252,11 +252,7 @@ impl DateTime<Roc> {
 }
 
 pub(crate) fn year_as_roc(year: i64) -> types::FormattableYear {
-    let year_i32 = match i64_to_i32(year) {
-        I32Result::BelowMin(_) => i32::MIN,
-        I32Result::AboveMax(_) => i32::MAX,
-        I32Result::WithinRange(y) => y,
-    };
+    let year_i32 = i64_to_i32(year).unwrap_or_else(|e| e.saturate());
     let offset_i64 = ROC_ERA_OFFSET as i64;
     if year > offset_i64 {
         types::FormattableYear {

@@ -618,38 +618,39 @@ fn test_ceil_div() {
     }
 }
 
+/// Error returned when casting from an i32
 #[derive(Copy, Clone, Debug)]
 #[allow(clippy::exhaustive_enums)] // enum is specific to function and has a closed set of possible values
-pub enum I32Result {
-    BelowMin(i64),
-    WithinRange(i32),
-    AboveMax(i64),
+pub enum I32CastError {
+    /// Less than i32::MIN
+    BelowMin,
+    /// Greater than i32::MAX
+    AboveMax,
 }
 
-impl I32Result {
+impl I32CastError {
     pub const fn saturate(self) -> i32 {
         match self {
-            I32Result::BelowMin(_) => i32::MIN,
-            I32Result::WithinRange(x) => x,
-            I32Result::AboveMax(_) => i32::MAX,
+            I32CastError::BelowMin => i32::MIN,
+            I32CastError::AboveMax => i32::MAX,
         }
     }
 }
 
 #[inline]
-pub const fn i64_to_i32(input: i64) -> I32Result {
+pub const fn i64_to_i32(input: i64) -> Result<i32, I32CastError> {
     if input < i32::MIN as i64 {
-        I32Result::BelowMin(input)
+        Err(I32CastError::BelowMin)
     } else if input > i32::MAX as i64 {
-        I32Result::AboveMax(input)
+        Err(I32CastError::AboveMax)
     } else {
-        I32Result::WithinRange(input as i32)
+        Ok(input as i32)
     }
 }
 
 #[inline]
-pub const fn i64_to_saturated_i32(input: i64) -> i32 {
-    i64_to_i32(input).saturate()
+pub fn i64_to_saturated_i32(input: i64) -> i32 {
+    i64_to_i32(input).unwrap_or_else(|i| i.saturate())
 }
 
 #[test]

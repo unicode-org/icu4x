@@ -31,7 +31,7 @@
 
 use crate::any_calendar::AnyCalendarKind;
 use crate::calendar_arithmetic::{ArithmeticDate, CalendarArithmetic};
-use crate::helpers::{ceil_div, div_rem_euclid64, i64_to_i32, I32Result};
+use crate::helpers::{ceil_div, div_rem_euclid64, i64_to_i32, I32CastError};
 use crate::iso::Iso;
 use crate::julian::Julian;
 use crate::rata_die::RataDie;
@@ -246,13 +246,13 @@ impl Persian {
     fn arithmetic_persian_from_fixed(date: RataDie) -> Date<Persian> {
         let year = Self::arithmetic_persian_year_from_fixed(date);
         let year = match i64_to_i32(year) {
-            I32Result::BelowMin(_) => {
+            Err(I32CastError::BelowMin) => {
                 return Date::from_raw(PersianDateInner(ArithmeticDate::min_date()), Persian)
             }
-            I32Result::AboveMax(_) => {
+            Err(I32CastError::AboveMax) => {
                 return Date::from_raw(PersianDateInner(ArithmeticDate::max_date()), Persian)
             }
-            I32Result::WithinRange(y) => y,
+            Ok(y) => y,
         };
         #[allow(clippy::unwrap_used)] // valid month,day
         let day_of_year = 1_i64 + (date - Self::fixed_from_persian_integers(year, 1, 1).unwrap());

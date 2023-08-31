@@ -34,7 +34,7 @@
 use crate::any_calendar::AnyCalendarKind;
 use crate::calendar_arithmetic::{ArithmeticDate, CalendarArithmetic};
 use crate::gregorian::year_as_gregorian;
-use crate::helpers::{div_rem_euclid, div_rem_euclid64, i64_to_i32, quotient64, I32Result};
+use crate::helpers::{div_rem_euclid, div_rem_euclid64, i64_to_i32, quotient64, I32CastError};
 use crate::iso::Iso;
 use crate::rata_die::RataDie;
 use crate::{types, Calendar, CalendarError, Date, DateDuration, DateDurationUnit, DateTime};
@@ -279,9 +279,9 @@ impl Julian {
     fn julian_from_fixed(date: RataDie) -> JulianDateInner {
         let approx = quotient64(4 * date.to_i64_date() + 1464, 1461);
         let year = match i64_to_i32(approx) {
-            I32Result::BelowMin(_) => return JulianDateInner(ArithmeticDate::min_date()),
-            I32Result::AboveMax(_) => return JulianDateInner(ArithmeticDate::max_date()),
-            I32Result::WithinRange(y) => y,
+            Err(I32CastError::BelowMin) => return JulianDateInner(ArithmeticDate::min_date()),
+            Err(I32CastError::AboveMax) => return JulianDateInner(ArithmeticDate::max_date()),
+            Ok(y) => y,
         };
         let prior_days = date
             - Self::fixed_from_julian_integers(year, 1, 1)

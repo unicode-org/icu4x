@@ -33,7 +33,7 @@
 
 use crate::any_calendar::AnyCalendarKind;
 use crate::calendar_arithmetic::{ArithmeticDate, CalendarArithmetic};
-use crate::helpers::{i64_to_i32, quotient, quotient64, I32Result};
+use crate::helpers::{i64_to_i32, quotient, quotient64, I32CastError};
 use crate::iso::Iso;
 use crate::julian::Julian;
 use crate::rata_die::RataDie;
@@ -231,9 +231,9 @@ impl Coptic {
     pub(crate) fn coptic_from_fixed(date: RataDie) -> CopticDateInner {
         let year = quotient64(4 * (date - COPTIC_EPOCH) + 1463, 1461);
         let year = match i64_to_i32(year) {
-            I32Result::BelowMin(_) => return CopticDateInner(ArithmeticDate::min_date()),
-            I32Result::AboveMax(_) => return CopticDateInner(ArithmeticDate::max_date()),
-            I32Result::WithinRange(y) => y,
+            Err(I32CastError::BelowMin) => return CopticDateInner(ArithmeticDate::min_date()),
+            Err(I32CastError::AboveMax) => return CopticDateInner(ArithmeticDate::max_date()),
+            Ok(y) => y,
         };
         let month = (quotient64(date - Self::fixed_from_coptic_integers(year, 1, 1), 30) + 1) as u8; // <= 12 < u8::MAX
         let day = (date + 1 - Self::fixed_from_coptic_integers(year, month, 1)) as u8; // <= days_in_month < u8::MAX

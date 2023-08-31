@@ -31,7 +31,7 @@
 
 use crate::any_calendar::AnyCalendarKind;
 use crate::calendar_arithmetic::{ArithmeticDate, CalendarArithmetic};
-use crate::helpers::{i64_to_i32, i64_to_saturated_i32, I32Result};
+use crate::helpers::{i64_to_saturated_i32, I32CastError};
 use crate::rata_die::RataDie;
 use crate::{types, Calendar, CalendarError, Date, DateDuration, DateDurationUnit, DateTime};
 use tinystr::tinystr;
@@ -399,17 +399,15 @@ impl Iso {
     }
     // Lisp code reference: https://github.com/EdReingold/calendar-code2/blob/1ee51ecfaae6f856b0d7de3e36e9042100b4f424/calendar.l#L1237-L1258
     pub(crate) fn iso_from_fixed(date: RataDie) -> Date<Iso> {
-        let year = calendrical_calculations::iso::iso_year_from_fixed(date);
-        let _ = match i64_to_i32(year) {
-            I32Result::BelowMin(_) => {
+        let (year, month, day) = match calendrical_calculations::iso::iso_from_fixed(date) {
+            Err(I32CastError::BelowMin) => {
                 return Date::from_raw(IsoDateInner(ArithmeticDate::min_date()), Iso)
             }
-            I32Result::AboveMax(_) => {
+            Err(I32CastError::AboveMax) => {
                 return Date::from_raw(IsoDateInner(ArithmeticDate::max_date()), Iso)
             }
-            I32Result::WithinRange(y) => y,
+            Ok(ymd) => ymd,
         };
-        let (year, month, day) = calendrical_calculations::iso::iso_from_fixed(date);
         #[allow(clippy::unwrap_used)] // valid day and month
         Date::try_new_iso_date(year, month, day).unwrap()
     }
