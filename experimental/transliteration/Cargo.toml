@@ -45,6 +45,7 @@ std = []
 serde = ["dep:serde", "zerovec/serde", "icu_collections/serde"]
 datagen = ["serde", "dep:databake", "zerovec/databake", "icu_collections/databake", "std"]
 compiled_data = ["dep:icu_transliteration_data", "icu_normalizer/compiled_data", "icu_casemap/compiled_data"]
+bench = []
 
 [[bench]]
 name = "bench"
