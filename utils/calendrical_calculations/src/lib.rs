@@ -36,4 +36,5 @@ pub mod ethiopian;
 pub mod helpers;
 pub mod iso;
 pub mod julian;
+pub mod persian;
 pub mod rata_die;
