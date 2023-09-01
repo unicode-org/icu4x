@@ -21,7 +21,7 @@ This is a checklist of things that should be done in the weeks leading to the re
   * [ ] Cargo.toml files
     * [ ] All dependencies from the workspace should use `workspace = true` rather than their version number or path 
     * [ ] Cargo.toml files need to specify versions for each non-workspace entry in `dependencies`
-    * [ ] Ensure that any new packages have suitable version numbers.
+    * [ ] Ensure that any new packages have version number `0.0.0`, this will making bumping during the release easier.
     * [ ] Ensure that the Cargo.toml file includes a set of fields consistent with other ICU4X packages.
 * [ ] Run `cargo +nightly fmt -- --config=format_code_in_doc_comments=true --config=doc_comment_code_block_width=80` to prettify our docs
 * [ ] Run `cargo update` for each `Cargo.lock` file to update our CI to freshest dependencies
