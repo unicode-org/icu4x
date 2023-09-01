@@ -71,7 +71,6 @@ fn iso_new_year(year: i32) -> RataDie {
     fixed_from_iso(year, 1, 1)
 }
 
-// todo: do not call from
 pub fn iso_from_fixed(date: RataDie) -> Result<(i32, u8, u8), I32CastError> {
     let year = iso_year_from_fixed(date);
     let year = i64_to_i32(year)?;
