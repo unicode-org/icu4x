@@ -112,6 +112,9 @@ const KOREAN_LOCATION_1961: Location = Location::new_unchecked(
 /// This can cause some differences; for example, 2012 was a leap year, but in the Dangi
 /// calendar the leap month was 3, while in the Chinese calendar the leap month was 4.
 ///
+/// This calendar is currently in a preview state: formatting for this calendar is not
+/// going to be perfect.
+///
 /// ```rust
 /// use icu::calendar::{Date, dangi::Dangi, chinese::Chinese};
 /// use tinystr::tinystr;

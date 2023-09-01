@@ -112,6 +112,9 @@ const CHINESE_LOCATION_POST_1929: Location =
 ///
 /// This calendar is a lunisolar calendar. It supports regular month codes `"M01" - "M12"` as well
 /// as leap month codes `"M01L" - "M12L"`.
+///
+/// This calendar is currently in a preview state: formatting for this calendar is not
+/// going to be perfect.
 #[derive(Copy, Clone, Debug, Default, PartialEq, Eq, PartialOrd, Ord, Hash)]
 #[allow(clippy::exhaustive_structs)] // this type is stable
 pub struct Chinese;

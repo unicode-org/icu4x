@@ -267,7 +267,7 @@ where
                         field: "cyclic",
                         max: 60,
                     })?;
-                w.write_str(cyclic_str)?; 
+                w.write_str(cyclic_str)?;
             }
             Year::RelatedIso => {
                 format_number(
