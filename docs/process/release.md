@@ -23,6 +23,7 @@ This is a checklist of things that should be done in the weeks leading to the re
     * [ ] Cargo.toml files need to specify versions for each non-workspace entry in `dependencies`
     * [ ] Ensure that any new packages have version number `0.0.0`, this will making bumping during the release easier.
     * [ ] Ensure that the Cargo.toml file includes a set of fields consistent with other ICU4X packages.
+        * These should mostly use workspace inheritance
 * [ ] Run `cargo +nightly fmt -- --config=format_code_in_doc_comments=true --config=doc_comment_code_block_width=80` to prettify our docs
 * [ ] Run `cargo update` for each `Cargo.lock` file to update our CI to freshest dependencies
 * [ ] Go through `ffi/diplomat/tests/missing_apis.txt` and verify that it is empty. If it is not, component owners should either add FFI APIs, add `rust_link` annotations, or allowlist the relevant APIs as having been punted to the future
