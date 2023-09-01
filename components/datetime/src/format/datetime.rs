@@ -197,6 +197,8 @@ const DANGI_CYCLIC_YEARS: [&str; 60] = [
     "임자", "계축", "갑인", "을묘", "병진", "정사", "무오", "기미", "경신", "신유", "임술", "계해",
 ];
 
+const CHINESE_LEAP_PREFIX: &str = "閏";
+const DANGI_LEAP_PREFIX: &str = "윤";
 // This function assumes that the correct decision has been
 // made regarding availability of symbols in the caller.
 //
@@ -322,8 +324,8 @@ where
                     let symbol = symbols.get(code).ok_or(Error::MissingMonthSymbol(code))?;
                     // FIXME (#3766) this should be using actual data for leap months
                     let leap_str = match datetime.any_calendar_kind() {
-                        Some(AnyCalendarKind::Chinese) => "閏",
-                        Some(AnyCalendarKind::Dangi) => "윤",
+                        Some(AnyCalendarKind::Chinese) => CHINESE_LEAP_PREFIX,
+                        Some(AnyCalendarKind::Dangi) => DANGI_LEAP_PREFIX,
                         _ => "(leap)",
                     };
                     w.write_str(leap_str)?;
