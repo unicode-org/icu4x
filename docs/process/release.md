@@ -29,6 +29,7 @@ This is a checklist of things that should be done in the weeks leading to the re
 * [ ] Go through `ffi/diplomat/tests/missing_apis.txt` and verify that it is empty. If it is not, component owners should either add FFI APIs, add `rust_link` annotations, or allowlist the relevant APIs as having been punted to the future
 * [ ] Verify that `ffi/diplomat` depends on a released (not Git) version of Diplomat. Get it published (ask manishearth or sffc) otherwise.
 * [ ] Start work on a changelog (see below)
+* [ ] Prepare a PR to update tutorials using the upcoming release. The PR should pass `cargo make test-tutorials-local`, but can fail `cargo make test-tutorials-cratesio` prior to release
 
 ## Release steps
 
