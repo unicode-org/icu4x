@@ -45,7 +45,7 @@ Once the release checklist is complete, the assigned release driver will perform
   * Use `cargo workspaces publish --from-git` to automatically publish the crates in the correct order if you would like
   * Add `icu4x-release` group as owners to each new component you're publishing
     * `cargo owner -a github:unicode-org:icu4x-release`
-* Verify that the tutorials work on the newly released crates.io sources by running `cargo make test-tutorials-cratesio`
+* Merge the tutorials PR. `cargo make test-tuturials-cratesio` should now pass
   * If there are any errors, please fix them before advertising the release
 * [Tag the Release](https://github.com/unicode-org/icu4x/releases)
 * Land the changelog (see below)
