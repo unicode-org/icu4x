@@ -20,7 +20,7 @@ This is a checklist of things that should be done in the weeks leading to the re
   * [ ] Performance / Memory / Size benchmarks
   * [ ] Cargo.toml files
     * [ ] All dependencies from the workspace should use `workspace = true` rather than their version number or path 
-    * [ ] Cargo.toml files need to specify versions for each non-workspace entry in `dependencies`
+    * [ ] Cargo.toml files need to specify versions for each non-workspace entry in `dependencies`, or use `workspace = true`.
     * [ ] Ensure that any new packages have version number `0.0.0`, this will making bumping during the release easier.
     * [ ] Ensure that the Cargo.toml file includes a set of fields consistent with other ICU4X packages.
         * These should mostly use workspace inheritance
