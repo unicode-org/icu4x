@@ -5,7 +5,7 @@
 //! This module defines implementations for code-based transliterators that are part of
 //! transform rules.
 
-use crate::transliterator::replaceable::{Forward, RepMatcher, Replaceable, Utf8Matcher};
+use crate::transliterator::replaceable::{Forward, Replaceable, Utf8Matcher};
 
 /// A transliterator that replaces every character with its `case`-case hexadecimal representation,
 /// 0-padded to `min_length`, and surrounded by `prefix` and `suffix`.
@@ -41,14 +41,16 @@ impl HexTransliterator {
     pub(super) fn transliterate(&self, mut rep: Replaceable) {
         while !rep.is_finished() {
             let mut matcher = rep.start_match();
-            // Thought: ok this is annoying, maybe separate functions are better for Forward vs Reverse matching.
-            let c = <RepMatcher<false> as Utf8Matcher<Forward>>::next_char(&matcher);
+            // Thought: ok this fully specified path is annoying, maybe a separate API surface is
+            // better for Forward vs Reverse matching.
+            let c = Utf8Matcher::<Forward>::next_char(&matcher);
             // there must always be a char, because we just checked that `rep` is not finished yet.
             let c = c.unwrap();
-            <RepMatcher<false> as Utf8Matcher<Forward>>::match_and_consume_char(&mut matcher, c);
+            Utf8Matcher::<Forward>::match_and_consume_char(&mut matcher, c);
             let mut dest = matcher.finish_match();
 
             let c_u32 = c as u32;
+            // rounding-up division by 4
             let length = (u32::BITS - c_u32.leading_zeros() + 3) / 4;
             let padding = self.min_length.saturating_sub(length as u8);
             dest.apply_size_hint(
@@ -60,6 +62,8 @@ impl HexTransliterator {
                 dest.push_str("0");
             }
             let mut remaining_c = c_u32;
+            // temporary buffer because forward iteration through a u32's bytes is easier and
+            // we need the reverse order
             let mut buf = [0; 6];
             for slot in buf.iter_mut() {
                 if c_u32 == 0 {
@@ -72,6 +76,7 @@ impl HexTransliterator {
                 };
                 remaining_c >>= 4;
             }
+            // only `length` hex digits are actually from the char
             for c in buf[..length as usize].iter().rev() {
                 dest.push(*c as char);
             }
