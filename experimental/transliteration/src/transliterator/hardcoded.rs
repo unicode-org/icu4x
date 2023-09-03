@@ -6,7 +6,6 @@
 //! transform rules.
 
 use crate::transliterator::replaceable::{Forward, RepMatcher, Replaceable, Utf8Matcher};
-use core::fmt::Write;
 
 /// A transliterator that replaces every character with its `case`-case hexadecimal representation,
 /// 0-padded to `min_length`, and surrounded by `prefix` and `suffix`.
@@ -42,7 +41,7 @@ impl HexTransliterator {
     pub(super) fn transliterate(&self, mut rep: Replaceable) {
         while !rep.is_finished() {
             let mut matcher = rep.start_match();
-            // TODO: ok this is annoying, maybe separate functions are better for Forward vs Reverse matching.
+            // Thought: ok this is annoying, maybe separate functions are better for Forward vs Reverse matching.
             let c = <RepMatcher<false> as Utf8Matcher<Forward>>::next_char(&matcher);
             // there must always be a char, because we just checked that `rep` is not finished yet.
             let c = c.unwrap();
@@ -50,40 +49,33 @@ impl HexTransliterator {
             let mut dest = matcher.finish_match();
 
             let c_u32 = c as u32;
-            // computing length for the size hint
-            let length = if c_u32 == 0 {
-                1
-            } else {
-                let mut length = 0;
-                let mut rem = c_u32;
-                while rem != 0 {
-                    length += 1;
-                    rem >>= 4;
-                }
-                length
-            };
-            let length = length.max(self.min_length as u32);
-            dest.apply_size_hint(length as usize + self.prefix.len() + self.suffix.len());
+            let length = (u32::BITS - c_u32.leading_zeros() + 3) / 4;
+            let padding = self.min_length.saturating_sub(length as u8);
+            dest.apply_size_hint(
+                self.prefix.len() + padding as usize + length as usize + self.suffix.len(),
+            );
 
-            if self.case == Case::Lower {
-                write!(
-                    dest,
-                    "{prefix}{c_u32:0width$x}{suffix}",
-                    prefix = self.prefix,
-                    width = self.min_length as usize,
-                    suffix = self.suffix
-                )
-                .unwrap();
-            } else {
-                write!(
-                    dest,
-                    "{prefix}{c_u32:0width$X}{suffix}",
-                    prefix = self.prefix,
-                    width = self.min_length as usize,
-                    suffix = self.suffix
-                )
-                .unwrap();
+            dest.push_str(self.prefix);
+            for _ in 0..padding {
+                dest.push_str("0");
             }
+            let mut remaining_c = c_u32;
+            let mut buf = [0; 6];
+            for slot in buf.iter_mut() {
+                if c_u32 == 0 {
+                    break;
+                }
+                *slot = match remaining_c & 0xF {
+                    x @ 0x0..=0x9 => b'0' + x as u8,
+                    x @ 0xA..=0xF if self.case == Case::Lower => b'a' + (x - 0xA) as u8,
+                    x => b'A' + (x - 0xA) as u8,
+                };
+                remaining_c >>= 4;
+            }
+            for c in buf[..length as usize].iter().rev() {
+                dest.push(*c as char);
+            }
+            dest.push_str(self.suffix);
         }
     }
 }
