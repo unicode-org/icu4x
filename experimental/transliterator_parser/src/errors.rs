@@ -14,7 +14,7 @@ pub enum ParseErrorKind {
     /// The source is incomplete.
     Eof,
     /// Something unexpected went wrong with our code. Please file a bug report on GitHub.
-    Internal,
+    Internal(&'static str),
     /// The provided syntax is not supported by us. Please file an issue on GitHub if you need
     /// this feature.
     Unimplemented,

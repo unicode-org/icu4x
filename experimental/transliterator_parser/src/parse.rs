@@ -482,7 +482,8 @@ where
             //  2. the above none checks implying forward_basic_id.is_some()
             // because this is difficult to verify, returning a PEK::Internal anyway
             // instead of unwrapping, despite technically being unnecessary
-            let forward_basic_id = forward_basic_id.ok_or(PEK::Internal)?;
+            let forward_basic_id =
+                forward_basic_id.ok_or(PEK::Internal("transform rule logic error"))?;
             return Ok(Rule::Transform(
                 SingleId {
                     basic_id: forward_basic_id,
@@ -979,7 +980,8 @@ where
         // which are all exactly one UTF-8 byte long, so slicing on these offsets always respects char boundaries
         #[allow(clippy::indexing_slicing)]
         let hex_source = &self.source[first_offset..=end_offset];
-        let num = u32::from_str_radix(hex_source, 16).map_err(|_| PEK::Internal)?;
+        let num = u32::from_str_radix(hex_source, 16)
+            .map_err(|_| PEK::Internal("expected valid hex escape"))?;
         char::try_from(num).map_err(|_| PEK::InvalidEscape.with_offset(end_offset))
     }
 
@@ -1050,7 +1052,7 @@ where
             None => {
                 let (set, _) = self
                     .unicode_set_from_str(Self::DOT_SET)
-                    .map_err(|_| PEK::Internal)?;
+                    .map_err(|_| PEK::Internal("dot set syntax not valid"))?;
                 self.dot_set = Some(set.clone());
                 Ok(set)
             }
@@ -1333,12 +1335,15 @@ where
         + DataProvider<ScriptWithExtensionsPropertyV1Marker>
         + DataProvider<XidStartV1Marker>,
 {
-    let xid_start = load_xid_start(provider).map_err(|_| PEK::Internal)?;
+    let xid_start =
+        load_xid_start(provider).map_err(|_| PEK::Internal("data loading for xid_start broke"))?;
     let xid_start_list = xid_start.to_code_point_inversion_list();
-    let xid_continue = load_xid_continue(provider).map_err(|_| PEK::Internal)?;
+    let xid_continue = load_xid_continue(provider)
+        .map_err(|_| PEK::Internal("data loading for xid_continue broke"))?;
     let xid_continue_list = xid_continue.to_code_point_inversion_list();
 
-    let pat_ws = load_pattern_white_space(provider).map_err(|_| PEK::Internal)?;
+    let pat_ws = load_pattern_white_space(provider)
+        .map_err(|_| PEK::Internal("data loading for pattern_white_space broke"))?;
     let pat_ws_list = pat_ws.to_code_point_inversion_list();
 
     let mut parser = TransliteratorParser::new(
