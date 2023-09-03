@@ -407,6 +407,8 @@ where
         loop {
             self.skip_whitespace();
             if let Some(start) = self.peek_index() {
+                // the returned index comes from `self.source`'s `char_indices`.
+                #[allow(clippy::indexing_slicing)]
                 let start_source = &self.source[start..];
                 if start_source.starts_with("use variable range 0x") {
                     let conv_idx = start_source.find(['>', '<', '→', '←', '↔']);
