@@ -4,16 +4,12 @@
 
 // TODO(#3736): find a way to keep cldr_testData uptodate
 
-use icu_provider::_internal::locid::Locale;
+use icu_locid::Locale;
 use icu_transliteration::Transliterator;
-use std::collections::HashMap;
 use std::path::PathBuf;
 
 #[test]
 fn test_all_cldr() {
-    // broken BCP47 ids in CLDR
-    let map = HashMap::from([("und-t-d0-ascii", "und-t-und-latn-d0-ascii")]);
-
     let mut in_order =
         std::fs::read_dir(concat!(env!("CARGO_MANIFEST_DIR"), "/tests/cldr_testData"))
             .unwrap()
@@ -25,14 +21,12 @@ fn test_all_cldr() {
             continue;
         }
         let locale = path.file_stem().unwrap().to_str().unwrap();
-        let locale = map.get(locale).unwrap_or(&locale);
         let locale: Locale = locale.parse().unwrap();
-        let t = Transliterator::try_new(locale.clone()).unwrap();
+        let t = Transliterator::try_new(locale).unwrap();
         test_file(t, path);
     }
 }
 
-#[track_caller]
 fn test_file(t: Transliterator, path: PathBuf) {
     let data = std::fs::read_to_string(&path).unwrap();
     let lines = data.lines().filter(|x| !x.starts_with('#'));

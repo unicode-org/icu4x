@@ -34,7 +34,7 @@
 use super::Filter;
 use alloc::string::String;
 use alloc::vec::Vec;
-use core::fmt::{Debug, Formatter, Write};
+use core::fmt::{Debug, Formatter};
 use core::mem::ManuallyDrop;
 use core::ops::Range;
 use core::ops::{Deref, DerefMut};
@@ -910,13 +910,6 @@ impl<'a, 'b> Insertable<'a, 'b> {
             range_start,
             on_drop,
         }
-    }
-}
-
-impl<'a, 'b> Write for Insertable<'a, 'b> {
-    fn write_str(&mut self, s: &str) -> core::fmt::Result {
-        self.push_str(s);
-        Ok(())
     }
 }
 

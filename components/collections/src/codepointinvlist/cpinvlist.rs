@@ -334,7 +334,7 @@ impl<'data> CodePointInversionList<'data> {
     /// use icu_collections::codepointinvlist::CodePointInversionList;
     /// use zerovec::ZeroVec;
     ///
-    /// let expected = vec![0x0, (char::MAX as u32) + 1];
+    /// let expected = [0x0, (char::MAX as u32) + 1];
     /// assert_eq!(
     ///     CodePointInversionList::all().get_inversion_list_vec(),
     ///     expected
@@ -363,7 +363,7 @@ impl<'data> CodePointInversionList<'data> {
     ///
     /// const BMP_MAX: u32 = 0xFFFF;
     ///
-    /// let expected = vec![0x0, BMP_MAX + 1];
+    /// let expected = [0x0, BMP_MAX + 1];
     /// assert_eq!(
     ///     CodePointInversionList::bmp().get_inversion_list_vec(),
     ///     expected
@@ -490,7 +490,7 @@ impl<'data> CodePointInversionList<'data> {
             let range_limit: u32 = AsULE::from_unaligned(pair[1]);
             RangeInclusive::new(range_start, range_limit - 1)
         });
-        beginning.into_iter().chain(chunks).chain(end.into_iter())
+        beginning.into_iter().chain(chunks).chain(end)
     }
 
     /// Returns the number of ranges contained in this [`CodePointInversionList`]
@@ -1034,14 +1034,8 @@ mod tests {
 
     #[test]
     fn test_serde_deserialize_invalid() {
-        assert!(matches!(
-            serde_json::from_str::<CodePointInversionList>("[65,70,98775,85]"),
-            Err(_)
-        ));
-        assert!(matches!(
-            serde_json::from_str::<CodePointInversionList>("[65,70,U+FFFFFFFFFF,85]"),
-            Err(_)
-        ));
+        assert!(serde_json::from_str::<CodePointInversionList>("[65,70,98775,85]").is_err());
+        assert!(serde_json::from_str::<CodePointInversionList>("[65,70,U+FFFFFFFFFF,85]").is_err());
     }
 
     #[test]

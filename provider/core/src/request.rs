@@ -223,7 +223,7 @@ impl FromStr for DataLocale {
         let Some(locale_str) = aux_iter.next() else {
             return Err(DataErrorKind::KeyLocaleSyntax
                 .into_error()
-                .with_display_context(s))
+                .with_display_context(s));
         };
         let locale = Locale::from_str(locale_str).map_err(|e| {
             DataErrorKind::KeyLocaleSyntax
@@ -864,7 +864,7 @@ impl AuxiliaryKeys {
     pub fn try_from_iter<'a>(iter: impl IntoIterator<Item = &'a str>) -> Result<Self, DataError> {
         // TODO: Avoid the allocation when possible
         let mut builder = String::new();
-        for item in iter.into_iter() {
+        for item in iter {
             if !item.is_empty()
                 && item
                     .bytes()

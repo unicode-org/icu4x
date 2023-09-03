@@ -11,15 +11,7 @@ use writeable::Writeable;
 pub fn test_ecma402_table() {
     // Source: <https://tc39.es/ecma402/#table-intl-rounding-modes>
     #[allow(clippy::type_complexity)] // best way to make it render like a table
-    let cases: [(
-        &'static str,
-        fn(&mut FixedDecimal, i16),
-        i32,
-        i32,
-        i32,
-        i32,
-        i32,
-    ); 9] = [
+    let cases: [(_, fn(&mut FixedDecimal, i16), _, _, _, _, _); 9] = [
         ("ceil", FixedDecimal::ceil, -1, 1, 1, 1, 2),
         ("floor", FixedDecimal::floor, -2, 0, 0, 0, 1),
         ("expand", FixedDecimal::expand, -2, 1, 1, 1, 2),
@@ -30,7 +22,7 @@ pub fn test_ecma402_table() {
         ("half_trunc", FixedDecimal::half_trunc, -1, 0, 0, 1, 1),
         ("half_even", FixedDecimal::half_even, -2, 0, 0, 1, 2),
     ];
-    for (rounding_mode, f, e1, e2, e3, e4, e5) in cases.into_iter() {
+    for (rounding_mode, f, e1, e2, e3, e4, e5) in cases {
         let mut fd1: FixedDecimal = "-1.5".parse().unwrap();
         let mut fd2: FixedDecimal = "0.4".parse().unwrap();
         let mut fd3: FixedDecimal = "0.5".parse().unwrap();

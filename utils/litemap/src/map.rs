@@ -100,8 +100,8 @@ where
     /// ```rust
     /// use litemap::LiteMap;
     ///
-    /// let mut map: LiteMap<i32, &str, Vec<_>> =
-    ///     LiteMap::from_iter([(1, "uno"), (3, "tres")].into_iter());
+    /// let mut map=
+    ///     LiteMap::<i32, &str, Vec<_>>::from_iter([(1, "uno"), (3, "tres")]);
     ///
     /// assert_eq!(map.first(), Some((&1, &"uno")));
     /// ```
@@ -117,8 +117,8 @@ where
     /// ```rust
     /// use litemap::LiteMap;
     ///
-    /// let mut map: LiteMap<i32, &str, Vec<_>> =
-    ///     LiteMap::from_iter([(1, "uno"), (3, "tres")].into_iter());
+    /// let mut map =
+    ///     LiteMap::<i32, &str, Vec<_>>::from_iter([(1, "uno"), (3, "tres")]);
     ///
     /// assert_eq!(map.last(), Some((&3, &"tres")));
     /// ```
@@ -1164,7 +1164,7 @@ mod test {
         expected.insert(3, "original-three");
         expected.insert(4, "updated-four");
 
-        let actual = vec![
+        let actual = [
             (1, "original-one"),
             (2, "original-two"),
             (4, "original-four"),

@@ -13,16 +13,15 @@ use crate::TransliteratorError;
 use alloc::boxed::Box;
 use alloc::string::{String, ToString};
 use alloc::vec::Vec;
-use core::fmt::{Debug, Formatter};
+use core::fmt::Debug;
 use core::ops::Range;
-use core::ops::RangeInclusive;
 use core::str;
 use icu_collections::codepointinvlist::CodePointInversionList;
 use icu_collections::codepointinvliststringlist::CodePointInversionListAndStringList;
+use icu_locid::Locale;
 use icu_normalizer::provider::*;
 use icu_normalizer::{ComposingNormalizer, DecomposingNormalizer};
-use icu_provider::_internal::locid::Locale;
-use icu_provider::{DataError, DataLocale, DataPayload, DataProvider, DataRequest};
+use icu_provider::prelude::*;
 use litemap::LiteMap;
 use replaceable::*;
 use zerofrom::ZeroFrom;
@@ -35,14 +34,9 @@ type Filter<'a> = CodePointInversionList<'a>;
 //  Actually, an alternative would be: CustomTransliterator is just &str -> String, RunTransliterator is
 //  (&str, allowed_range) -> String, and some RepTransliterator would just be Replaceable -> ().
 
-// Thought: actually, we could have a CustomTransliterator that instead of returning a String, returns a Writeable.
-// We would then writeable.write_to(<insertable as fmt::Write>) (and add the corresponding impl). Could avoid
-// allocations in some cases. The problem is that Writeable's often borrow from the input - we can't have that here.
-// So probably quite a useless function.
-
 /// A type that supports transliteration. Used for overrides in [`Transliterator`] - see
 /// [`Transliterator::try_new_with_override`].
-pub trait CustomTransliterator {
+pub trait CustomTransliterator: Debug {
     /// Transliterates the portion of the input string specified by the byte indices in the range.
     ///
     /// The returned `String` must just be the transliteration of `input[range]`. The rest is
@@ -89,7 +83,6 @@ impl ComposingTransliterator {
     }
 }
 
-// Thought: Can we somehow deduplicate this code with ComposingTransliterator?
 #[derive(Debug)]
 struct DecomposingTransliterator(DecomposingNormalizer);
 
@@ -127,6 +120,7 @@ impl DecomposingTransliterator {
     }
 }
 
+#[derive(Debug)]
 enum InternalTransliterator {
     RuleBased(DataPayload<TransliteratorRulesV1Marker>),
     Composing(ComposingTransliterator),
@@ -155,34 +149,6 @@ impl InternalTransliterator {
     }
 }
 
-impl Debug for InternalTransliterator {
-    fn fmt(&self, f: &mut Formatter<'_>) -> core::fmt::Result {
-        #[derive(Debug)]
-        enum DebugInternalTransliterator<'a> {
-            RuleBased(&'a DataPayload<TransliteratorRulesV1Marker>),
-            ComposingTransliterator(&'a ComposingTransliterator),
-            DecomposingTransliterator(&'a DecomposingTransliterator),
-            Hex(&'a hardcoded::HexTransliterator),
-            Null,
-            Remove,
-            Dyn,
-        }
-        let d = match self {
-            Self::RuleBased(rbt) => DebugInternalTransliterator::RuleBased(rbt),
-            Self::Composing(t) => DebugInternalTransliterator::ComposingTransliterator(t),
-            Self::Decomposing(t) => DebugInternalTransliterator::DecomposingTransliterator(t),
-            Self::Hex(t) => DebugInternalTransliterator::Hex(t),
-            Self::Null => DebugInternalTransliterator::Null,
-            Self::Remove => DebugInternalTransliterator::Remove,
-            Self::Dyn(_) => DebugInternalTransliterator::Dyn,
-        };
-        d.fmt(f)
-    }
-}
-
-// Thought: Have *Borrowed variants of the structs here? InternalTransliterators store a DataPayload.
-//  This is only a potential (small) performance issue in cases where there's a lot of nested transliteration.
-//  Transliteration of a single, non-nesting RuleBasedTransliterator does not store any DataPayloads.
 type Env = LiteMap<String, InternalTransliterator>;
 
 /// A `Transliterator` allows transliteration based on [UTS #35 transform rules](https://unicode.org/reports/tr35/tr35-general.html#Transforms),
@@ -195,8 +161,6 @@ pub struct Transliterator {
 
 impl Transliterator {
     /// Construct a [`Transliterator`] from the given [`Locale`].
-    ///
-    /// The locale must be a BCP-47 transform ID, i.e., `"und-Latn-t-und-Cyrl"`.
     ///
     /// # Examples
     /// ```
@@ -228,17 +192,16 @@ impl Transliterator {
     /// to the nested transliterator defined by the data if it returns `None`.
     /// See [`CustomTransliterator`].
     ///
-    /// The locale must be a BCP-47 transform ID, i.e., `"und-Latn-t-und-Cyrl"`.
-    ///
     /// # Example
     /// Overriding `"de-t-de-d0-ascii"`'s dependency on `"und-t-und-Latn-d0-ascii"`:
     /// ```
     /// use icu_transliteration::{Transliterator, CustomTransliterator};
-    /// use icu_provider::_internal::locid::Locale;
+    /// use icu_locid::Locale;
     /// use core::ops::Range;
     ///
-    /// struct MyTranslit;
-    /// impl CustomTransliterator for MyTranslit {
+    /// #[derive(Debug)]
+    /// struct FunkyGermanToAscii;
+    /// impl CustomTransliterator for FunkyGermanToAscii {
     ///     fn transliterate(&self, input: &str, allowed_range: Range<usize>) -> String {
     ///         input[allowed_range].replace("oeverride", "overridden")
     ///     }
@@ -246,7 +209,7 @@ impl Transliterator {
     ///
     /// let override_locale: Locale = "und-t-und-Latn-d0-ascii".parse().unwrap();
     /// let lookup = |lookup_locale: &Locale| -> Option<Box<dyn CustomTransliterator>> {
-    ///     override_locale.eq(lookup_locale).then_some(Box::new(MyTranslit))
+    ///     override_locale.eq(lookup_locale).then_some(Box::new(FunkyGermanToAscii))
     /// };
     ///
     /// let locale = "de-t-de-d0-ascii".parse().unwrap();
@@ -330,22 +293,14 @@ impl Transliterator {
             + ?Sized,
         F: Fn(&Locale) -> Option<Box<dyn CustomTransliterator>>,
     {
-        debug_assert!(!locale.extensions.transform.is_empty());
-
-        let mut data_locale = DataLocale::default();
-        data_locale.set_aux(locale.to_string().parse()?);
-        let req = DataRequest {
-            locale: &data_locale,
-            metadata: Default::default(),
-        };
-        let payload = transliterator_provider.load(req)?.take_payload()?;
+        let payload = Transliterator::load_rbt(&locale.to_string(), transliterator_provider)?;
         let rbt = payload.get();
         if !rbt.visibility {
             // transliterator is internal
             return Err(TransliteratorError::InternalOnly);
         }
         let mut env = LiteMap::new();
-        Transliterator::load_dependencies(
+        Transliterator::load_dependencies_recursive(
             rbt,
             &mut env,
             lookup,
@@ -358,7 +313,7 @@ impl Transliterator {
         })
     }
 
-    fn load_dependencies<PT, PN, F>(
+    fn load_dependencies_recursive<PT, PN, F>(
         rbt: &RuleBasedTransliterator<'_>,
         env: &mut LiteMap<String, InternalTransliterator>,
         lookup: Option<&F>,
@@ -377,10 +332,28 @@ impl Transliterator {
     {
         for dep in rbt.dependencies.iter() {
             if !env.contains_key(dep) {
-                let internal_t =
-                    Self::load_nested(dep, lookup, transliterator_provider, normalizer_provider)?;
+                // Load the dependency.
+                // 1. Insert a placeholder to avoid infinite recursion.
+                env.insert(dep.to_string(), InternalTransliterator::Null);
+                // 2. Load the transliterator, by checking
+                // a) hardcoded specials
+                // b) the user-provided override
+                // c) the data
+                let internal_t = dep
+                    .strip_prefix("x-")
+                    .map(|special| Transliterator::load_special(special, normalizer_provider))
+                    .or_else(|| {
+                        lookup.and_then(|lookup| {
+                            Transliterator::load_with_override(dep, lookup).transpose()
+                        })
+                    })
+                    .unwrap_or_else(|| {
+                        let rbt = Transliterator::load_rbt(dep, transliterator_provider)?;
+                        Ok(InternalTransliterator::RuleBased(rbt))
+                    })?;
                 if let InternalTransliterator::RuleBased(rbt) = &internal_t {
-                    Self::load_dependencies(
+                    // 3. Recursively load the dependencies of the dependency.
+                    Self::load_dependencies_recursive(
                         rbt.get(),
                         env,
                         lookup,
@@ -388,88 +361,87 @@ impl Transliterator {
                         normalizer_provider,
                     )?;
                 }
+                // 4. Replace the placeholder with the loaded transliterator.
                 env.insert(dep.to_string(), internal_t);
             }
         }
         Ok(())
     }
 
-    fn load_nested<PT, PN, F>(
-        id: &str,
-        lookup: Option<&F>,
-        transliterator_provider: &PT,
-        normalizer_provider: &PN,
+    fn load_special<P>(
+        special: &str,
+        normalizer_provider: &P,
     ) -> Result<InternalTransliterator, TransliteratorError>
     where
-        PT: DataProvider<TransliteratorRulesV1Marker> + ?Sized,
-        PN: DataProvider<CanonicalDecompositionDataV1Marker>
+        P: DataProvider<CanonicalDecompositionDataV1Marker>
             + DataProvider<CompatibilityDecompositionSupplementV1Marker>
             + DataProvider<CanonicalDecompositionTablesV1Marker>
             + DataProvider<CompatibilityDecompositionTablesV1Marker>
             + DataProvider<CanonicalCompositionsV1Marker>
             + ?Sized,
-        F: Fn(&Locale) -> Option<Box<dyn CustomTransliterator>>,
     {
-        if let Some(special) = id.strip_prefix("x-") {
-            // TODO(#3909, #3910): add more
-            match special {
-                "any-nfc" => Ok(InternalTransliterator::Composing(
-                    ComposingTransliterator::try_nfc(normalizer_provider)?,
-                )),
-                "any-nfkc" => Ok(InternalTransliterator::Composing(
-                    ComposingTransliterator::try_nfkc(normalizer_provider)?,
-                )),
-                "any-nfd" => Ok(InternalTransliterator::Decomposing(
-                    DecomposingTransliterator::try_nfd(normalizer_provider)?,
-                )),
-                "any-nfkd" => Ok(InternalTransliterator::Decomposing(
-                    DecomposingTransliterator::try_nfkd(normalizer_provider)?,
-                )),
-                "any-hex-unicode" => Ok(InternalTransliterator::Hex(
-                    hardcoded::HexTransliterator::new("U+", "", 4, Case::Upper),
-                )),
-                "any-hex-rust" => Ok(InternalTransliterator::Hex(
-                    hardcoded::HexTransliterator::new("\\u{", "}", 2, Case::Lower),
-                )),
-                "any-hex-xml" => Ok(InternalTransliterator::Hex(
-                    hardcoded::HexTransliterator::new("&#x", ";", 1, Case::Upper),
-                )),
-                "any-hex-perl" => Ok(InternalTransliterator::Hex(
-                    hardcoded::HexTransliterator::new("\\x{", "}", 1, Case::Upper),
-                )),
-                "any-hex-plain" => Ok(InternalTransliterator::Hex(
-                    hardcoded::HexTransliterator::new("", "", 4, Case::Upper),
-                )),
-                "any-null" => Ok(InternalTransliterator::Null),
-                "any-remove" => Ok(InternalTransliterator::Remove),
-                s => Err(DataError::custom("unavailable transliterator")
-                    .with_debug_context(s)
-                    .into()),
-            }
-        } else {
-            // this must be a valid -t- locale
-            if let Some(lookup) = lookup {
-                let locale: Locale = id.parse().map_err(|e| {
-                    DataError::custom("internal: transliterator dependency is not a valid Locale")
-                        .with_debug_context(&e)
-                })?;
-                let custom = lookup(&locale);
-                if let Some(custom) = custom {
-                    return Ok(InternalTransliterator::Dyn(custom));
-                }
-            }
-
-            let mut data_locale = DataLocale::default();
-            data_locale.set_aux(id.parse()?);
-            let req = DataRequest {
-                locale: &data_locale,
-                metadata: Default::default(),
-            };
-            let rbt = transliterator_provider.load(req)?.take_payload()?;
-            Ok(InternalTransliterator::RuleBased(rbt))
+        // TODO(#3909, #3910): add more
+        match special {
+            "any-nfc" => Ok(InternalTransliterator::Composing(
+                ComposingTransliterator::try_nfc(normalizer_provider)?,
+            )),
+            "any-nfkc" => Ok(InternalTransliterator::Composing(
+                ComposingTransliterator::try_nfkc(normalizer_provider)?,
+            )),
+            "any-nfd" => Ok(InternalTransliterator::Decomposing(
+                DecomposingTransliterator::try_nfd(normalizer_provider)?,
+            )),
+            "any-nfkd" => Ok(InternalTransliterator::Decomposing(
+                DecomposingTransliterator::try_nfkd(normalizer_provider)?,
+            )),
+            "any-null" => Ok(InternalTransliterator::Null),
+            "any-remove" => Ok(InternalTransliterator::Remove),
+            s => Err(DataError::custom("unavailable transliterator")
+                .with_debug_context(s)
+                .into()),
         }
     }
 
+    fn load_with_override<F>(
+        id: &str,
+        lookup: &F,
+    ) -> Result<Option<InternalTransliterator>, TransliteratorError>
+    where
+        F: Fn(&Locale) -> Option<Box<dyn CustomTransliterator>>,
+    {
+        let locale: Locale = id.parse().map_err(|e| {
+            DataError::custom("invalid data: transliterator dependency is not a valid Locale")
+                .with_debug_context(&e)
+        })?;
+        Ok(lookup(&locale).map(InternalTransliterator::Dyn))
+    }
+
+    fn load_rbt<P>(
+        id: &str,
+        provider: &P,
+    ) -> Result<DataPayload<TransliteratorRulesV1Marker>, DataError>
+    where
+        P: DataProvider<TransliteratorRulesV1Marker> + ?Sized,
+    {
+        let mut data_locale = DataLocale::default();
+        data_locale.set_aux(id.parse()?);
+        let req = DataRequest {
+            locale: &data_locale,
+            metadata: Default::default(),
+        };
+        let payload = provider.load(req)?.take_payload()?;
+        let rbt = payload.get();
+        if rbt.id_group_list.len() != rbt.rule_group_list.len() {
+            return Err(DataError::custom(
+                "invalid data: id_group_list and rule_group_list have different lengths",
+            ));
+        }
+        Ok(payload)
+    }
+
+    // Before stabilization, consider the input type we want to accept here. We might want to
+    // use a data structure internally that works nicely with a &str, but if we don't, a String
+    // is good to accept because the user might already have one.
     /// Transliterates `input` and returns its transliteration.
     pub fn transliterate(&self, input: String) -> String {
         // Thought: Seems too much work for the benefits, but maybe have a Cow buffer instead?
@@ -489,55 +461,37 @@ impl<'a> RuleBasedTransliterator<'a> {
     fn transliterate(&self, mut rep: Replaceable, env: &Env) {
         // assumes the cursor is at the right position.
 
-        debug_assert_eq!(self.id_group_list.len(), self.rule_group_list.len());
-        debug_assert!(rep.allowed_range().contains(&rep.cursor()));
-
         rep.for_each_run(&self.filter, |run| {
             // eprintln!("got RBT filtered_run: {run:?}");
-            self.transliterate_run(run, env);
+            for (id_group, rule_group) in self.id_group_list.iter().zip(self.rule_group_list.iter())
+            {
+                // first handle id_group
+                for single_id in id_group.iter() {
+                    let id = SimpleId::zero_from(single_id);
+                    id.transliterate(run.child(), env);
+                }
+
+                // then handle rule_group
+                let rule_group = RuleGroup::from(rule_group);
+                rule_group.transliterate(run.child(), &self.variable_table, env);
+            }
             // eprintln!("finished RBT filtered_run transliteration: {run:?}")
         });
-    }
-
-    /// Transliteration of a single run, i.e., without needing to look at the filter.
-    fn transliterate_run(&self, rep: &mut Replaceable, env: &Env) {
-        // assumes the cursor is at the right position.
-        // note that there is no such thing as an empty run.
-        debug_assert!(
-            rep.allowed_range().contains(&rep.cursor()),
-            "cursor {} is out of bounds for replaceable {rep:?}",
-            rep.cursor()
-        );
-
-        for (id_group, rule_group) in self.id_group_list.iter().zip(self.rule_group_list.iter()) {
-            // first handle id_group
-            for single_id in id_group.iter() {
-                let id = SimpleId::zero_from(single_id);
-                id.transliterate(rep.child(), env);
-            }
-
-            // then handle rule_group
-            let rule_group = RuleGroup::from(rule_group);
-            rule_group.transliterate(rep.child(), &self.variable_table, env);
-        }
     }
 }
 
 impl<'a> SimpleId<'a> {
     fn transliterate(&self, mut rep: Replaceable, env: &Env) {
         // eprintln!("transliterating SimpleId: {self:?}");
-        rep.for_each_run(&self.filter, |run| self.transliterate_run(run, env))
-    }
-
-    fn transliterate_run(&self, rep: &mut Replaceable, env: &Env) {
-        // eprintln!("transliterating SimpleId run: {rep:?}");
-        match env.get(self.id.as_ref()) {
-            None => {
-                debug_assert!(false, "missing transliterator {}", &self.id);
-                // GIGO behavior, missing recursive transliterator is a noop
-            }
-            Some(internal_t) => internal_t.transliterate(rep.child(), env),
-        }
+        let Some(inner) = env.get(self.id.as_ref()) else {
+            debug_assert!(false, "missing transliterator {}", &self.id);
+            // GIGO behavior, missing recursive transliterator is a noop
+            return;
+        };
+        rep.for_each_run(&self.filter, |run| {
+            // eprintln!("transliterating SimpleId run: {rep:?}");
+            inner.transliterate(run.child(), env)
+        })
     }
 }
 
@@ -593,12 +547,11 @@ impl<'a> Rule<'a> {
         // which would make it easier to take segments into account at runtime.
         // there is no easy way to estimate the size of function calls, though.
         // TODO(#3957): benchmark with and without this optimization
-        let replacement_size_estimate =
-            helpers::estimate_replacement_size(&self.replacer, &data, vt);
+        let replacement_size_estimate = estimate_replacement_size(&self.replacer, &data, vt);
 
         dest.apply_size_hint(replacement_size_estimate);
 
-        helpers::replace_encoded_str(&self.replacer, &mut dest, &data, vt, env);
+        replace_str_with_specials(&self.replacer, &mut dest, &data, vt, env);
     }
 
     /// Returns `None` if there is no match. If there is a match, returns the associated
@@ -641,7 +594,7 @@ impl<'a> Rule<'a> {
             // fast path for empty queries, which always match
             return true;
         }
-        helpers::rev_match_encoded_str(&self.ante, matcher, match_data, vt)
+        rev_match_str_with_specials(&self.ante, matcher, match_data, vt)
     }
 
     /// Returns whether the post context matches or not. Fills in `match_data` if applicable.
@@ -657,7 +610,7 @@ impl<'a> Rule<'a> {
             // fast path for empty queries, which always match
             return true;
         }
-        helpers::match_encoded_str(&self.post, matcher, match_data, vt)
+        match_str_with_specials(&self.post, matcher, match_data, vt)
     }
 
     /// Returns whether the post context matches or not. Fills in `match_data` if applicable.
@@ -673,211 +626,205 @@ impl<'a> Rule<'a> {
             // fast path for empty queries, which always match
             return true;
         }
-        helpers::match_encoded_str(&self.key, matcher, match_data, vt)
+        match_str_with_specials(&self.key, matcher, match_data, vt)
     }
 }
 
-mod helpers {
-    use super::*;
+/// Returns the index of the first special construct that is encoded as a private use char in `s`,
+/// if there is one. Returns `None` if the passed string is pure
+/// (contains no encoded special constructs).
+fn find_special(s: &str) -> Option<usize> {
+    // note: full-match (i.e., if this function returns Some(_) or None, could be
+    // precomputed + stored at datagen time (there could eg be a reserved char that is at the
+    // start/end of key <=> key is completely pure)
+    s.char_indices()
+        .find(|(_, c)| VarTable::ENCODE_RANGE.contains(c))
+        .map(|(i, _)| i)
+}
 
-    /// Returns the index of the first encoded char in `s`, if there is one. Returns `None` if the
-    /// passed string is pure (contains no encoded special constructs).
-    pub(super) fn find_encoded(s: &str) -> Option<usize> {
-        // note: full-match (i.e., if this function returns Some(_) or None, could be
-        // precomputed + stored at datagen time (there could eg be a reserved char that is at the
-        // start/end of key <=> key is completely pure)
-        s.char_indices()
-            .find(|(_, c)| VarTable::ENCODE_RANGE.contains(c))
-            .map(|(i, _)| i)
-    }
+/// Returns the index of the char to the right of the first (from the right) special construct
+/// encoded as a private use char. Returns `None` if the passed string is pure
+/// (contains no encoded special constructs).
+fn rev_find_special(s: &str) -> Option<usize> {
+    s.char_indices()
+        .rfind(|(_, c)| VarTable::ENCODE_RANGE.contains(c))
+        .map(|(i, c)| i + c.len_utf8())
+}
 
-    /// Returns the index of the char to the right of the first (from the right) encoded char in
-    /// `s`, if there is one.
-    /// Returns `None` if the passed string is pure (contains no encoded special constructs).
-    pub(super) fn rev_find_encoded(s: &str) -> Option<usize> {
-        s.char_indices()
-            .rfind(|(_, c)| VarTable::ENCODE_RANGE.contains(c))
-            .map(|(i, c)| i + c.len_utf8())
-    }
+/// Recursively estimates the size of the replacement string.
+fn estimate_replacement_size(replacement: &str, data: &MatchData, vt: &VarTable) -> usize {
+    let mut size;
+    let replacement_tail;
 
-    /// Recursively estimates the size of the replacement string.
-    pub(super) fn estimate_replacement_size(
-        replacement: &str,
-        data: &MatchData,
-        vt: &VarTable,
-    ) -> usize {
-        let mut size;
-        let replacement_tail;
-
-        match find_encoded(replacement) {
-            None => return replacement.len(),
-            Some(idx) => {
-                size = idx;
-                replacement_tail = &replacement[idx..];
-            }
+    match find_special(replacement) {
+        None => return replacement.len(),
+        Some(idx) => {
+            size = idx;
+            replacement_tail = &replacement[idx..];
         }
-
-        for rep_c in replacement_tail.chars() {
-            if !VarTable::ENCODE_RANGE.contains(&rep_c) {
-                // regular char
-                size += rep_c.len_utf8();
-                continue;
-            }
-            // must be special replacer
-
-            let replacer = match vt.lookup_replacer(rep_c) {
-                Some(replacer) => replacer,
-                None => {
-                    debug_assert!(false, "invalid encoded char");
-                    // GIGO behavior. we just skip invalid encoded chars
-                    continue;
-                }
-            };
-            size += replacer.estimate_size(data, vt);
-        }
-
-        size
     }
 
-    /// Applies the replacements from the encoded `replacement` to `dest`, including non-default cursor updates.
-    pub(super) fn replace_encoded_str(
-        replacement: &str,
-        dest: &mut Insertable,
-        data: &MatchData,
-        vt: &VarTable,
-        env: &Env,
-    ) {
-        let replacement = match find_encoded(replacement) {
+    for rep_c in replacement_tail.chars() {
+        if !VarTable::ENCODE_RANGE.contains(&rep_c) {
+            // regular char
+            size += rep_c.len_utf8();
+            continue;
+        }
+        // must be special replacer
+
+        let replacer = match vt.lookup_replacer(rep_c) {
+            Some(replacer) => replacer,
             None => {
-                // pure string
-                dest.push_str(replacement);
-                return;
-            }
-            Some(idx) => {
-                dest.push_str(&replacement[..idx]);
-                &replacement[idx..]
+                debug_assert!(false, "invalid encoded special {:?}", rep_c);
+                // GIGO behavior. we just skip invalid encodings
+                continue;
             }
         };
-
-        for rep_c in replacement.chars() {
-            if !VarTable::ENCODE_RANGE.contains(&rep_c) {
-                // regular char
-                dest.push(rep_c);
-                continue;
-            }
-            // must be special replacer
-
-            let replacer = match vt.lookup_replacer(rep_c) {
-                Some(replacer) => replacer,
-                None => {
-                    debug_assert!(false, "invalid encoded char");
-                    // GIGO behavior. we just skip invalid encoded chars
-                    continue;
-                }
-            };
-            replacer.replace(dest, data, vt, env);
-        }
+        size += replacer.estimate_size(data, vt);
     }
 
-    /// Tries to match the encoded `query` on `matcher`. Fills in `match_data` if applicable.
-    pub(super) fn match_encoded_str(
-        query: &str,
-        matcher: &mut impl Utf8Matcher<Forward>,
-        match_data: &mut MatchData,
-        vt: &VarTable,
-    ) -> bool {
-        // eprintln!("trying to match query {query:?} on input {matcher:?}");
+    size
+}
 
-        let query = match find_encoded(query) {
+/// Applies the replacements from the `replacement`, which may contain encoded special replacers, to `dest`,
+/// including non-default cursor updates.
+fn replace_str_with_specials(
+    replacement: &str,
+    dest: &mut Insertable,
+    data: &MatchData,
+    vt: &VarTable,
+    env: &Env,
+) {
+    let replacement = match find_special(replacement) {
+        None => {
+            // pure string
+            dest.push_str(replacement);
+            return;
+        }
+        Some(idx) => {
+            dest.push_str(&replacement[..idx]);
+            &replacement[idx..]
+        }
+    };
+
+    for rep_c in replacement.chars() {
+        if !VarTable::ENCODE_RANGE.contains(&rep_c) {
+            // regular char
+            dest.push(rep_c);
+            continue;
+        }
+        // must be special replacer
+
+        let replacer = match vt.lookup_replacer(rep_c) {
+            Some(replacer) => replacer,
             None => {
-                // pure string
-                return matcher.match_and_consume_str(query);
-            }
-            Some(idx) => {
-                if !matcher.match_and_consume_str(&query[..idx]) {
-                    return false;
-                }
-                &query[idx..]
-            }
-        };
-
-        // iterate char-by-char, and try to match each char
-        // note: might be good to avoid the UTF-8 => char conversion?
-        for query_c in query.chars() {
-            if !VarTable::ENCODE_RANGE.contains(&query_c) {
-                // regular char
-                if !matcher.match_and_consume_char(query_c) {
-                    return false;
-                }
+                debug_assert!(false, "invalid encoded special {:?}", rep_c);
+                // GIGO behavior. we just skip invalid encodings
                 continue;
             }
-            // must be special matcher
+        };
+        replacer.replace(dest, data, vt, env);
+    }
+}
 
-            let special_matcher = match vt.lookup_matcher(query_c) {
-                Some(matcher) => matcher,
-                None => {
-                    debug_assert!(false, "invalid encoded char");
-                    // GIGO behavior. we just skip invalid encoded chars
-                    continue;
-                }
-            };
-            if !special_matcher.matches(matcher, match_data, vt) {
+/// Tries to match `query`, which may contain encoded special matchers, on `matcher`. Fills in `match_data` if applicable.
+fn match_str_with_specials(
+    query: &str,
+    matcher: &mut impl Utf8Matcher<Forward>,
+    match_data: &mut MatchData,
+    vt: &VarTable,
+) -> bool {
+    // eprintln!("trying to match query {query:?} on input {matcher:?}");
+
+    let query = match find_special(query) {
+        None => {
+            // pure string
+            return matcher.match_and_consume_str(query);
+        }
+        Some(idx) => {
+            if !matcher.match_and_consume_str(&query[..idx]) {
                 return false;
             }
+            &query[idx..]
         }
+    };
 
-        // matched the full query string successfully
-        true
-    }
-
-    /// Tries to match the encoded `query` on `matcher` from the right. Fills in `match_data` if applicable.
-    pub(super) fn rev_match_encoded_str(
-        query: &str,
-        matcher: &mut impl Utf8Matcher<Reverse>,
-        match_data: &mut MatchData,
-        vt: &VarTable,
-    ) -> bool {
-        let query = match rev_find_encoded(query) {
-            None => {
-                // pure string
-                return matcher.match_and_consume_str(query);
-            }
-            Some(idx) => {
-                if !matcher.match_and_consume_str(&query[idx..]) {
-                    return false;
-                }
-                &query[..idx]
-            }
-        };
-
-        // iterate char-by-char, and try to match each char
-        // note: might be good to avoid the UTF-8 => char conversion?
-        for query_c in query.chars().rev() {
-            if !VarTable::ENCODE_RANGE.contains(&query_c) {
-                // regular char
-                if !matcher.match_and_consume_char(query_c) {
-                    return false;
-                }
-                continue;
-            }
-            // must be special matcher
-
-            let special_matcher = match vt.lookup_matcher(query_c) {
-                Some(matcher) => matcher,
-                None => {
-                    debug_assert!(false, "invalid encoded char");
-                    // GIGO behavior. we just skip invalid encoded chars
-                    continue;
-                }
-            };
-            if !special_matcher.rev_matches(matcher, match_data, vt) {
+    // iterate char-by-char, and try to match each char
+    // note: might be good to avoid the UTF-8 => char conversion?
+    for query_c in query.chars() {
+        if !VarTable::ENCODE_RANGE.contains(&query_c) {
+            // regular char
+            if !matcher.match_and_consume_char(query_c) {
                 return false;
             }
+            continue;
         }
+        // must be special matcher
 
-        // matched the full query string successfully
-        true
+        let special_matcher = match vt.lookup_matcher(query_c) {
+            Some(matcher) => matcher,
+            None => {
+                debug_assert!(false, "invalid encoded special {:?}", query_c);
+                // GIGO behavior. we just skip invalid encodings
+                continue;
+            }
+        };
+        if !special_matcher.matches(matcher, match_data, vt) {
+            return false;
+        }
     }
+
+    // matched the full query string successfully
+    true
+}
+
+/// Tries to match `query`, which may contain encoded special matchers, on `matcher` from the right. Fills in `match_data` if applicable.
+fn rev_match_str_with_specials(
+    query: &str,
+    matcher: &mut impl Utf8Matcher<Reverse>,
+    match_data: &mut MatchData,
+    vt: &VarTable,
+) -> bool {
+    let query = match rev_find_special(query) {
+        None => {
+            // pure string
+            return matcher.match_and_consume_str(query);
+        }
+        Some(idx) => {
+            if !matcher.match_and_consume_str(&query[idx..]) {
+                return false;
+            }
+            &query[..idx]
+        }
+    };
+
+    // iterate char-by-char, and try to match each char
+    // note: might be good to avoid the UTF-8 => char conversion?
+    for query_c in query.chars().rev() {
+        if !VarTable::ENCODE_RANGE.contains(&query_c) {
+            // regular char
+            if !matcher.match_and_consume_char(query_c) {
+                return false;
+            }
+            continue;
+        }
+        // must be special matcher
+
+        let special_matcher = match vt.lookup_matcher(query_c) {
+            Some(matcher) => matcher,
+            None => {
+                debug_assert!(false, "invalid encoded special {:?}", query_c);
+                // GIGO behavior. we just skip invalid encodings
+                continue;
+            }
+        };
+        if !special_matcher.rev_matches(matcher, match_data, vt) {
+            return false;
+        }
+    }
+
+    // matched the full query string successfully
+    true
 }
 
 /// Stores the state for a single conversion rule.
@@ -939,7 +886,7 @@ impl<'a> SpecialMatcher<'a> {
         vt: &VarTable,
     ) -> bool {
         match self {
-            Self::Compound(query) => helpers::match_encoded_str(query, matcher, match_data, vt),
+            Self::Compound(query) => match_str_with_specials(query, matcher, match_data, vt),
             Self::UnicodeSet(set) => {
                 // eprintln!("checking if set {set:?} matches input {matcher:?}");
 
@@ -997,7 +944,7 @@ impl<'a> SpecialMatcher<'a> {
                 // Thought: Would it be cool to have a similar functionality as Insertable::start_replaceable_adapter
                 //  that takes care of this `start`/`end` shenanigans? here it's not a safety issue, merely a panic issue.
                 let start = matcher.cursor();
-                if !helpers::match_encoded_str(&segment.content, matcher, match_data, vt) {
+                if !match_str_with_specials(&segment.content, matcher, match_data, vt) {
                     return false;
                 }
                 let end = matcher.cursor();
@@ -1017,7 +964,7 @@ impl<'a> SpecialMatcher<'a> {
 
                 while matches < max_matches {
                     let pre_cursor = matcher.cursor();
-                    if !helpers::match_encoded_str(query, matcher, match_data, vt) {
+                    if !match_str_with_specials(query, matcher, match_data, vt) {
                         break;
                     }
                     let post_cursor = matcher.cursor();
@@ -1042,7 +989,7 @@ impl<'a> SpecialMatcher<'a> {
         vt: &VarTable,
     ) -> bool {
         match self {
-            Self::Compound(query) => helpers::rev_match_encoded_str(query, matcher, match_data, vt),
+            Self::Compound(query) => rev_match_str_with_specials(query, matcher, match_data, vt),
             Self::UnicodeSet(set) => {
                 // eprintln!("checking if set {set:?} reverse matches input {matcher:?}");
 
@@ -1089,7 +1036,7 @@ impl<'a> SpecialMatcher<'a> {
             Self::AnchorStart => matcher.match_start_anchor(),
             Self::Segment(segment) => {
                 let end = matcher.cursor();
-                if !helpers::rev_match_encoded_str(&segment.content, matcher, match_data, vt) {
+                if !rev_match_str_with_specials(&segment.content, matcher, match_data, vt) {
                     return false;
                 }
                 let start = matcher.cursor();
@@ -1109,7 +1056,7 @@ impl<'a> SpecialMatcher<'a> {
 
                 while matches < max_matches {
                     let pre_cursor = matcher.cursor();
-                    if !helpers::rev_match_encoded_str(query, matcher, match_data, vt) {
+                    if !rev_match_str_with_specials(query, matcher, match_data, vt) {
                         break;
                     }
                     let post_cursor = matcher.cursor();
@@ -1140,11 +1087,11 @@ impl<'a> SpecialReplacer<'a> {
     /// Estimates the size of the replacement string produced by this Replacer.
     fn estimate_size(&self, data: &MatchData, vt: &VarTable) -> usize {
         match self {
-            Self::Compound(replacer) => helpers::estimate_replacement_size(replacer, data, vt),
+            Self::Compound(replacer) => estimate_replacement_size(replacer, data, vt),
             Self::FunctionCall(call) => {
                 // this is the only inexact case, so we estimate that the transliteration will stay
                 // roughly the same size as the input
-                helpers::estimate_replacement_size(&call.arg, data, vt)
+                estimate_replacement_size(&call.arg, data, vt)
             }
             &Self::BackReference(num) => data.get_segment(num as usize).len(),
             Self::LeftPlaceholderCursor(_) | Self::RightPlaceholderCursor(_) | Self::PureCursor => {
@@ -1156,7 +1103,7 @@ impl<'a> SpecialReplacer<'a> {
     /// Applies the replacement from this replacer to `dest`. Also applies any updates to the cursor.
     fn replace(&self, dest: &mut Insertable, data: &MatchData, vt: &VarTable, env: &Env) {
         match self {
-            Self::Compound(replacer) => helpers::replace_encoded_str(replacer, dest, data, vt, env),
+            Self::Compound(replacer) => replace_str_with_specials(replacer, dest, data, vt, env),
             Self::PureCursor => dest.set_offset_to_here(),
             &Self::LeftPlaceholderCursor(num) => {
                 // must occur at the very end of a replacement
@@ -1182,7 +1129,7 @@ impl<'a> SpecialReplacer<'a> {
                 // eprintln!("dest before function call: {dest:?}");
 
                 let mut range_aggregator = dest.start_replaceable_adapter();
-                helpers::replace_encoded_str(&call.arg, &mut range_aggregator, data, vt, env);
+                replace_str_with_specials(&call.arg, &mut range_aggregator, data, vt, env);
 
                 call.translit
                     .transliterate(range_aggregator.as_replaceable().child(), env);
@@ -1232,32 +1179,17 @@ impl<'a> VarTableElement<'a> {
 }
 
 impl<'a> VarTable<'a> {
-    // TODO(#3958): these must be the same as during datagen. Find some place to define them *once*
-    const BASE: u32 = '\u{F0000}' as u32;
-    const MAX_DYNAMIC: u32 = '\u{FFFF0}' as u32;
-    const RESERVED_PURE_CURSOR: u32 = '\u{FFFFB}' as u32;
-    const RESERVED_ANCHOR_START: u32 = '\u{FFFFC}' as u32;
-    const RESERVED_ANCHOR_END: u32 = '\u{FFFFD}' as u32;
-
-    const ENCODE_RANGE: RangeInclusive<char> = '\u{F0000}'..='\u{FFFFD}';
-
     fn lookup(&'a self, query: char) -> Option<VarTableElement<'a>> {
-        let query = query as u32;
-        if query < Self::BASE {
-            return None;
-        }
-        if query > Self::MAX_DYNAMIC {
-            return match query {
-                Self::RESERVED_PURE_CURSOR => Some(VarTableElement::PureCursor),
-                Self::RESERVED_ANCHOR_END => Some(VarTableElement::AnchorEnd),
-                Self::RESERVED_ANCHOR_START => Some(VarTableElement::AnchorStart),
-                _ => None,
-            };
-        }
-        let idx = query - Self::BASE;
+        match query {
+            Self::BASE..=Self::MAX_DYNAMIC => {}
+            Self::RESERVED_PURE_CURSOR => return Some(VarTableElement::PureCursor),
+            Self::RESERVED_ANCHOR_END => return Some(VarTableElement::AnchorEnd),
+            Self::RESERVED_ANCHOR_START => return Some(VarTableElement::AnchorStart),
+            _ => return None,
+        };
+        let idx = query as u32 - Self::BASE as u32;
         let mut idx = idx as usize;
 
-        // QUESTION: these lookups must be in the same order as during datagen. Best way to enforce this?
         // TODO(#3957): might it be worth trying to speed up these lookups by binary searching?
         // TODO(#3957): we can special-case lookup_matcher, lookup_replacer. lookup_matcher does not need
         //  to check past UnicodeSets, lookup_replacer needs to check the range for Compounds, then skip
@@ -1408,8 +1340,9 @@ mod tests {
 
     #[test]
     fn test_override() {
-        struct MyT;
-        impl CustomTransliterator for MyT {
+        #[derive(Debug)]
+        struct MaoamTranslit;
+        impl CustomTransliterator for MaoamTranslit {
             fn transliterate(&self, input: &str, range: Range<usize>) -> String {
                 let input = &input[range];
                 input.replace('ꜵ', "maoam")
@@ -1419,7 +1352,7 @@ mod tests {
         let want_locale = "und-t-und-latn-d0-ascii".parse().unwrap();
         let t =
             Transliterator::try_new_with_override("de-t-de-d0-ascii".parse().unwrap(), |locale| {
-                locale.eq(&want_locale).then_some(Box::new(MyT))
+                locale.eq(&want_locale).then_some(Box::new(MaoamTranslit))
             })
             .unwrap();
 

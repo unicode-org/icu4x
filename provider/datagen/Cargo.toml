@@ -102,11 +102,11 @@ postcard = "1"
 simple_logger = { version = "4.1.0", default-features = false }
 
 [features]
-default = ["bin", "use_wasm", "networking", "legacy_api", "rayon"]
-provider_baked = ["dep:crlify", "dep:databake", "dep:syn"]
-provider_blob = ["dep:icu_provider_blob"]
-provider_fs = ["dep:icu_provider_fs"]
-legacy_api = ["provider_fs", "provider_blob", "provider_baked"]
+default = ["bin", "use_wasm", "networking", "legacy_api", "rayon", "fs_exporter", "blob_exporter", "baked_exporter"]
+baked_exporter = ["dep:crlify", "dep:databake", "dep:syn"]
+blob_exporter = ["dep:icu_provider_blob"]
+fs_exporter = ["dep:icu_provider_fs"]
+legacy_api = ["fs_exporter", "blob_exporter", "baked_exporter"]
 bin = ["dep:clap", "dep:eyre", "dep:simple_logger"]
 rayon = ["dep:rayon"]
 # Use wasm for building codepointtries
@@ -125,6 +125,14 @@ icu_relativetime = ["dep:icu_relativetime"]
 icu_singlenumberformatter = ["dep:icu_singlenumberformatter"]
 icu_transliteration = ["dep:icu_transliteration", "dep:icu_transliterator_parser"]
 icu_unitsconversion = ["dep:icu_unitsconversion"]
+experimental_components = [
+    "icu_compactdecimal",
+    "icu_displaynames",
+    "icu_relativetime",
+    "icu_singlenumberformatter",
+    "icu_transliteration",
+    "icu_unitsconversion"
+]
 
 [[bin]]
 name = "icu4x-datagen"
@@ -134,7 +142,7 @@ required-features = ["bin"]
 [[test]]
 name = "make-testdata"
 path = "tests/make-testdata.rs"
-required-features = ["provider_fs", "use_wasm"]
+required-features = ["fs_exporter", "use_wasm"]
 
 [package.metadata.cargo-all-features]
 # We don't need working CPT builders for check

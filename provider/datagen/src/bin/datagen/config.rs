@@ -19,7 +19,7 @@ pub struct Config {
         skip_serializing_if = "is_default",
         serialize_with = "sorted_set"
     )]
-    pub collations: HashSet<String>,
+    pub additional_collations: HashSet<String>,
     #[serde(default, skip_serializing_if = "is_default")]
     pub segmenter_models: SegmenterModelInclude,
 

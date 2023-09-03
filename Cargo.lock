@@ -245,6 +245,14 @@ dependencies = [
 ]
 
 [[package]]
+name = "calendrical_calculations"
+version = "0.1.0"
+dependencies = [
+ "displaydoc",
+ "libm",
+]
+
+[[package]]
 name = "camino"
 version = "1.1.4"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1275,6 +1283,7 @@ dependencies = [
 name = "icu_calendar"
 version = "1.2.0"
 dependencies = [
+ "calendrical_calculations",
  "criterion",
  "databake",
  "displaydoc",
@@ -1986,13 +1995,13 @@ dependencies = [
  "displaydoc",
  "icu_casemap",
  "icu_collections",
+ "icu_locid",
  "icu_normalizer",
  "icu_provider",
  "icu_transliteration_data",
  "litemap",
  "serde",
  "yoke",
- "zerofrom",
  "zerovec",
 ]
 

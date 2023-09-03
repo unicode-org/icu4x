@@ -177,7 +177,7 @@ mod tests {
 
     #[test]
     fn test_source_to_struct() {
-        let source = r#"
+        let source = r"
         :: [1] ;
         :: Latin-InterIndic ;
         $a = [a] [b]+ ;
@@ -191,7 +191,7 @@ mod tests {
         # splits up the forward rules
         forward rule that > splits up rule groups ;
         :: InterIndic-Devanagari ;
-        "#;
+        ";
 
         let t_map = HashMap::from([(
             "AnyRev-AddRandomSpaces/FiftyPercent".to_ascii_lowercase(),

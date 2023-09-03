@@ -15,12 +15,15 @@
 //!
 //! Read more about data providers: [`icu_provider`]
 
+use core::ops::RangeInclusive;
+
 use alloc::borrow::Cow;
 
 use icu_collections::{
     codepointinvlist::{CodePointInversionList, CodePointInversionListULE},
     codepointinvliststringlist::CodePointInversionListAndStringListULE,
 };
+use icu_provider::prelude::*;
 use zerovec::*;
 
 #[cfg(feature = "compiled_data")]
@@ -153,6 +156,24 @@ pub struct VarTable<'a> {
     pub max_left_placeholder_count: u16,
     /// The maximum number of _right_ placeholders (`| @@@ rest`) in any rule.
     pub max_right_placeholder_count: u16,
+}
+
+impl<'a> VarTable<'a> {
+    /// The lowest `char` used for encoding specials.
+    pub const BASE: char = '\u{F0000}';
+    /// The highest `char` used for encoding dynamic (i.e., growing, non-reserved) specials.
+    pub const MAX_DYNAMIC: char = '\u{FFFF0}';
+    /// The `char` that encodes a pure cursor, `|` without `@`.
+    pub const RESERVED_PURE_CURSOR: char = '\u{FFFFB}';
+    /// The `char` that encodes a start anchor, `^`.
+    pub const RESERVED_ANCHOR_START: char = '\u{FFFFC}';
+    /// The `char` that encodes an end anchor, `$`.
+    pub const RESERVED_ANCHOR_END: char = '\u{FFFFD}';
+
+    /// The range used for encoded specials.
+    pub const ENCODE_RANGE: RangeInclusive<char> = Self::BASE..=Self::RESERVED_ANCHOR_END;
+    /// The number of `char`s available for encoding dynamic (i.e., growing, non-reserved) specials.
+    pub const NUM_DYNAMIC: usize = Self::MAX_DYNAMIC as usize - Self::BASE as usize + 1;
 }
 
 /// Segments store matched parts of the input dynamically and can be referred to by back references

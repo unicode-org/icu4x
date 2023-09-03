@@ -209,7 +209,9 @@ impl TitlecaseMapper<CaseMapper> {
     {
         let cm = CaseMapper::try_new_unstable(provider)?;
         let gc = icu_properties::maps::load_general_category(provider).map_err(|e| {
-            let PropertiesError::PropDataLoad(e) = e else { unreachable!() };
+            let PropertiesError::PropDataLoad(e) = e else {
+                unreachable!()
+            };
             e
         })?;
         Ok(Self { cm, gc })
@@ -250,7 +252,9 @@ impl<CM: AsRef<CaseMapper>> TitlecaseMapper<CM> {
         P: DataProvider<CaseMapV1Marker> + DataProvider<GeneralCategoryV1Marker> + ?Sized,
     {
         let gc = icu_properties::maps::load_general_category(provider).map_err(|e| {
-            let PropertiesError::PropDataLoad(e) = e else { unreachable!() };
+            let PropertiesError::PropDataLoad(e) = e else {
+                unreachable!()
+            };
             e
         })?;
         Ok(Self { cm: casemapper, gc })

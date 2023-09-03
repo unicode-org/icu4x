@@ -109,7 +109,9 @@ pub(crate) struct BasicId {
 
 impl BasicId {
     pub(crate) fn is_null(&self) -> bool {
-        self.source == "Any" && self.target == "Null" && self.variant.is_none()
+        self.source.to_lowercase() == "any"
+            && self.target.to_lowercase() == "null"
+            && self.variant.is_none()
     }
 
     pub(crate) fn reverse(self) -> Self {
@@ -1355,7 +1357,7 @@ mod tests {
 
     #[test]
     fn test_full() {
-        let source = r##"
+        let source = r"
         :: [a-z\]] ; :: [b-z] Latin/BGN ;
         :: Source-Target/Variant () ;::([b-z]Target-Source/Variant) ;
         :: [a-z] Any ([b-z] Target-Source/Variant);
@@ -1376,7 +1378,7 @@ mod tests {
         . > ;
 
         :: ([inverse-filter]) ;
-        "##;
+        ";
 
         if let Err(e) = parse(source) {
             panic!("Failed to parse {:?}: {:?}", source, e);
