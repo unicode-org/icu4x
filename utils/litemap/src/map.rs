@@ -873,17 +873,17 @@ where
     S: StoreIterable<'a, K, V>,
 {
     /// Produce an ordered iterator over key-value pairs
-    pub fn iter(&'a self) -> impl Iterator<Item = (&'a K, &'a V)> + DoubleEndedIterator {
+    pub fn iter(&'a self) -> impl DoubleEndedIterator<Item = (&'a K, &'a V)> {
         self.values.lm_iter()
     }
 
     /// Produce an ordered iterator over keys
-    pub fn iter_keys(&'a self) -> impl Iterator<Item = &'a K> + DoubleEndedIterator {
+    pub fn iter_keys(&'a self) -> impl DoubleEndedIterator<Item = &'a K> {
         self.values.lm_iter().map(|val| val.0)
     }
 
     /// Produce an iterator over values, ordered by their keys
-    pub fn iter_values(&'a self) -> impl Iterator<Item = &'a V> + DoubleEndedIterator {
+    pub fn iter_values(&'a self) -> impl DoubleEndedIterator<Item = &'a V> {
         self.values.lm_iter().map(|val| val.1)
     }
 }
@@ -893,9 +893,7 @@ where
     S: StoreIterableMut<'a, K, V>,
 {
     /// Produce an ordered mutable iterator over key-value pairs
-    pub fn iter_mut(
-        &'a mut self,
-    ) -> impl Iterator<Item = (&'a K, &'a mut V)> + DoubleEndedIterator {
+    pub fn iter_mut(&'a mut self) -> impl DoubleEndedIterator<Item = (&'a K, &'a mut V)> {
         self.values.lm_iter_mut()
     }
 }
