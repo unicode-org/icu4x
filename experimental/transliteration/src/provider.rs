@@ -36,7 +36,6 @@ const _: () = {
     mod icu {
         pub use crate as transliteration;
         pub use icu_collections as collections;
-        pub use icu_normalizer as normalizer;
     }
     icu_transliteration_data::impl_transliterator_rules_v1!(Baked);
 };
