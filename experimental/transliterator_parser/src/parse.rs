@@ -402,8 +402,33 @@ where
         }
     }
 
+    // skips ICU4C pragmas of the form `use variable range 0xFFFF 0xFFFF ;`
+    fn skip_icu_pragma(&mut self) {
+        loop {
+            self.skip_whitespace();
+            if let Some(start) = self.peek_index() {
+                let start_source = &self.source[start..];
+                if start_source.starts_with("use variable range 0x") {
+                    let conv_idx = start_source.find(['>', '<', '→', '←', '↔']);
+                    let end_idx = start_source.find(Self::RULE_END);
+                    // avoid cases like `use variable range 0x70 0x72 > b ;` which not pragmas
+                    match (end_idx, conv_idx) {
+                        (Some(end_idx), Some(conv_idx)) if conv_idx < end_idx => break,
+                        (None, Some(_)) => break,
+                        _ => {}
+                    }
+                    self.skip_until(Self::RULE_END);
+                    // search for another pragma
+                    continue;
+                }
+            }
+            break;
+        }
+    }
+
     fn parse_rules(&mut self) -> Result<Vec<Rule>> {
         let mut rules = Vec::new();
+        self.skip_icu_pragma();
 
         loop {
             self.skip_whitespace();
@@ -1358,6 +1383,11 @@ mod tests {
     #[test]
     fn test_full() {
         let source = r"
+
+        # these are skipped:
+        use variable range 0x70 0x72 ;
+        use variable range 0x1 0x2 ;
+
         :: [a-z\]] ; :: [b-z] Latin/BGN ;
         :: Source-Target/Variant () ;::([b-z]Target-Source/Variant) ;
         :: [a-z] Any ([b-z] Target-Source/Variant);
@@ -1435,6 +1465,7 @@ mod tests {
             r"+ > b ;",
             r"* > b ;",
             r"? > b ;",
+            r"use variable range 0x71 > 2 ; use variable range 0x71 ;",
         ];
 
         for source in sources {
