@@ -191,6 +191,7 @@ mod tests {
         # splits up the forward rules
         forward rule that > splits up rule groups ;
         :: InterIndic-Devanagari ;
+        :: NFC ;
         ";
 
         let t_map = HashMap::from([(
@@ -219,10 +220,16 @@ mod tests {
                 filter: parse_set_cp(r"[\ ]"),
                 id: Cow::Borrowed("x-any-remove"),
             }];
-            let expected_id_group3 = vec![ds::SimpleId {
-                filter: FilterSet::all(),
-                id: Cow::Borrowed("x-interindic-devanagari"),
-            }];
+            let expected_id_group3 = vec![
+                ds::SimpleId {
+                    filter: FilterSet::all(),
+                    id: Cow::Borrowed("x-interindic-devanagari"),
+                },
+                ds::SimpleId {
+                    filter: FilterSet::all(),
+                    id: Cow::Borrowed("x-any-nfc"),
+                },
+            ];
 
             let expected_id_group_list: Vec<VarZeroVec<'_, ds::SimpleIdULE>> = vec![
                 VarZeroVec::from(&expected_id_group1),
@@ -293,6 +300,7 @@ mod tests {
                 variable_table: expected_var_table,
                 visibility: true,
                 dependencies: VarZeroVec::from(&[
+                    "x-any-nfc",
                     "x-any-remove",
                     "x-interindic-devanagari",
                     "x-latin-interindic",
@@ -304,6 +312,10 @@ mod tests {
             let expected_filter = FilterSet::all();
 
             let expected_id_group1 = vec![
+                ds::SimpleId {
+                    filter: FilterSet::all(),
+                    id: Cow::Borrowed("x-any-nfd"),
+                },
                 ds::SimpleId {
                     filter: FilterSet::all(),
                     id: Cow::Borrowed("x-devanagari-interindic"),
@@ -390,6 +402,7 @@ mod tests {
                 visibility: true,
                 dependencies: VarZeroVec::from(&[
                     "und-t-s0-anyrev-d0-addrndsp-m0-fifty",
+                    "x-any-nfd",
                     "x-any-revfncall",
                     "x-devanagari-interindic",
                     "x-interindic-latin",
