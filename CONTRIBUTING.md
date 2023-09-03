@@ -89,7 +89,7 @@ The other is the review cycle.
 #### Draft Phase
 
 If the pull request is simple and short lived, it can be initialized with review request.
-If the pull request is more complex and is being developed over time, it may be benefitial to start it in a `Draft` state.
+If the pull request is more complex and is being developed over time, it may be beneficial to start it in a `Draft` state.
 This allows other contributors to monitor the progress and volunteer feedback while annotating that the pull request is not yet ready for review.
 
 If a pull request is particularly large in scope and not release-ready, consider either (1) reducing the scope of the pull request, (2) moving work to the `experimental/` directory, or (3) hiding the work behind the `"experimental"` feature flag. See the section above, "Release Readiness", for more details.
@@ -175,10 +175,10 @@ In such cases, *mentorship model* should be used where a more senior engineer ta
 When the PR author creates a new PR, they should consider three sources of reviewers and informed stakeholders:
 
 * Owners and peers of the component they work with
-* People involved in the preceeding conversation
+* People involved in the preceding conversation
 * Recognized experts in the domain the PR operates in
 
-The goal of the PR author is to find the subset of stakeholders that represent those three groups well. Depending on the scope and priority of the PR, the reviewers group size can be adjusted, with small PRs being sufficent for review by just one stakeholder, and larger PRs, or first-of-a-kind using a larger pool of reviewers.
+The goal of the PR author is to find the subset of stakeholders that represent those three groups well. Depending on the scope and priority of the PR, the reviewers group size can be adjusted, with small PRs being sufficient for review by just one stakeholder, and larger PRs, or first-of-a-kind using a larger pool of reviewers.
 
 ### PR author and reviewers workflow
 

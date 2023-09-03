@@ -18,7 +18,7 @@ The following terms are used throughout this document.
 - **Key:** An identifier corresponding to a specific hunk.
 - **Request Variables:** Metadata that is sent along with a key when requesting data from a data provider.
 - **Response Variables:** Metadata that is sent along with a hunk when a data provider responds to a request.
-- **Schema Version:** A version of the schema, tied to a hunk and abstracted away from the format version and data version.  For example, data may be reorganied within the JSON file between schema versions.
+- **Schema Version:** A version of the schema, tied to a hunk and abstracted away from the format version and data version.  For example, data may be reorganized within the JSON file between schema versions.
 - **Schema:** The structure of locale data, abstracted away from the hunk types.  Data is stored in a particular format according to the schema.
 - **Type:** The structure of a hunk.  The type may be, for example, a number, string, list of numbers or strings, or another data type discussed in detail later in the document.
 

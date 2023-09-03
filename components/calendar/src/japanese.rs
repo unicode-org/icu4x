@@ -206,7 +206,7 @@ impl JapaneseExtended {
         }))
     }
 
-    pub(crate) const DEBUG_NAME: &str = "Japanese (histocial era data)";
+    pub(crate) const DEBUG_NAME: &str = "Japanese (historical era data)";
 }
 
 impl Calendar for Japanese {
