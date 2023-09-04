@@ -476,7 +476,7 @@ mod tests {
         },
     ];
 
-    // Persian New Year occuring in March of Gregorian year (g_year) to fixed date
+    // Persian New Year occurring in March of Gregorian year (g_year) to fixed date
     fn nowruz(g_year: i32) -> RataDie {
         let iso_from_fixed: Date<Iso> = Iso::iso_from_fixed(RataDie::new(
             calendrical_calculations::persian::FIXED_PERSIAN_EPOCH.to_i64_date(),

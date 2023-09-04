@@ -346,15 +346,11 @@ impl<'p> Pass1<'p> {
         reverse_id: Option<&parse::SingleId>,
     ) -> Result<()> {
         let fwd_dep = forward_id.basic_id.clone();
-        if !fwd_dep.is_null() {
-            self.forward_data.used_transliterators.insert(fwd_dep);
-        }
+        self.forward_data.used_transliterators.insert(fwd_dep);
         let rev_dep = reverse_id
             .map(|single_id| single_id.basic_id.clone())
             .unwrap_or_else(|| forward_id.basic_id.clone().reverse());
-        if !rev_dep.is_null() {
-            self.reverse_data.used_transliterators.insert(rev_dep);
-        }
+        self.reverse_data.used_transliterators.insert(rev_dep);
         Ok(())
     }
 
@@ -890,7 +886,9 @@ impl Pass1ResultGenerator {
 
         for var in &used_variables {
             // we check for unknown variables during the first pass, so these should exist
-            let var_data = var_data_map.get(var).ok_or(PEK::Internal)?;
+            let var_data = var_data_map
+                .get(var)
+                .ok_or(PEK::Internal("unexpected unknown variable"))?;
             combined_counts.combine(var_data.counts);
         }
 
@@ -907,11 +905,13 @@ impl Pass1ResultGenerator {
         }
         if self.current_vars.contains(name) {
             // cyclic dependency - should not occur
-            return Err(PEK::Internal.into());
+            return Err(PEK::Internal("unexpected cyclic variable").into());
         }
         self.current_vars.insert(name.to_owned());
         // we check for unknown variables during the first pass, so these should exist
-        let var_data = var_data_map.get(name).ok_or(PEK::Internal)?;
+        let var_data = var_data_map
+            .get(name)
+            .ok_or(PEK::Internal("unexpected unknown variable"))?;
         let mut transitive_dependencies = var_data.used_variables.clone();
         var_data.used_variables.iter().try_for_each(|var| {
             self.visit_var(var, var_data_map)?;
@@ -1094,6 +1094,8 @@ mod tests {
                 num_function_calls: 1,
                 num_unicode_sets: 1,
                 max_backref_num: 1,
+                max_left_placeholders: 0,
+                max_right_placeholders: 0,
                 ..Default::default()
             };
             let expected_fwd_data = pass1data_from_parts(
@@ -1102,6 +1104,7 @@ mod tests {
                     ("Forward", "Dependency", None),
                     ("Any", "AnotherForwardDependency", None),
                     ("YetAnother", "ForwardDependency", None),
+                    ("Any", "Null", None),
                 ],
                 &["used_both", "used_fwd", "literal1", "literal2"],
                 counts,
@@ -1116,6 +1119,8 @@ mod tests {
                 num_segments: 2,
                 num_function_calls: 3,
                 max_backref_num: 2,
+                max_left_placeholders: 0,
+                max_right_placeholders: 0,
                 ..Default::default()
             };
             let expected_rev_data = pass1data_from_parts(
@@ -1126,6 +1131,7 @@ mod tests {
                     ("Any", "Many", None),
                     ("Any", "Backwardz", None),
                     ("Any", "Deps", None),
+                    ("Any", "Null", None),
                 ],
                 &["used_rev", "literal1", "literal2"],
                 counts,
@@ -1240,6 +1246,7 @@ mod tests {
                     ("Forward", "Dependency", None),
                     ("Any", "AnotherForwardDependency", None),
                     ("YetAnother", "ForwardDependency", None),
+                    ("Any", "Null", None),
                 ],
                 &["used_both", "used_fwd", "literal1", "literal2"],
                 fwd_counts,
@@ -1263,6 +1270,7 @@ mod tests {
                     ("Any", "Many", None),
                     ("Any", "Backwardz", None),
                     ("Any", "Deps", None),
+                    ("Any", "Null", None),
                 ],
                 &["used_both", "used_rev", "literal1", "literal2"],
                 rev_counts,

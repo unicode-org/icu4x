@@ -63,13 +63,10 @@ $ icu4x-datagen config.json
   "fallback": "runtimeManual",
   "locales": "all",
   "segmenterModels": ["burmesedict"],
-  "additionalCollations": ["big5han"],
-  
-
+  "additionalCollations": ["big5han"],<br/>
   "cldr": "latest",
   "icuExport": "73.1",
-  "segmenterLstm": "none",
-  
+  "segmenterLstm": "none",<br/>
   "export": {
     "blob": {
       "path": "blob.postcard"

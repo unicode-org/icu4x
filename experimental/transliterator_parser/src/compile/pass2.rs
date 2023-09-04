@@ -11,6 +11,7 @@ use zerovec::VarZeroVec;
 
 use crate::compile::rule_group_agg::UniConversionRule;
 use icu_transliteration::provider as ds;
+use icu_transliteration::provider::VarTable;
 
 macro_rules! impl_insert {
     ($fn_name:ident, $field:ident, $elt_type:ty, $($next_field:tt)*) => {
@@ -48,18 +49,12 @@ struct MutVarTable {
 }
 
 impl MutVarTable {
-    const BASE: u32 = '\u{F0000}' as u32;
-    const MAX_DYNAMIC: u32 = '\u{FFFF0}' as u32;
-    const RESERVED_PURE_CURSOR: char = '\u{FFFFB}';
-    const RESERVED_ANCHOR_START: char = '\u{FFFFC}';
-    const RESERVED_ANCHOR_END: char = '\u{FFFFD}';
-
     fn try_new_from_counts(counts: SpecialConstructCounts) -> Result<Self> {
-        if counts.num_total() > (Self::MAX_DYNAMIC as usize - Self::BASE as usize + 1) {
+        if counts.num_total() > VarTable::NUM_DYNAMIC {
             return Err(PEK::TooManySpecials.into());
         }
 
-        let compounds_base = MutVarTable::BASE;
+        let compounds_base = VarTable::BASE as u32;
         let quantifiers_opt_base = compounds_base + counts.num_compounds as u32;
         let quantifiers_kleene_base = quantifiers_opt_base + counts.num_quantifiers_opt as u32;
         let quantifiers_kleene_plus_base =
@@ -160,7 +155,7 @@ impl MutVarTable {
 
     fn standin_for_cursor(&self, left: u32, right: u32) -> char {
         match (left, right) {
-            (0, 0) => Self::RESERVED_PURE_CURSOR,
+            (0, 0) => VarTable::RESERVED_PURE_CURSOR,
             (left, 0) => {
                 debug_assert!(left <= self.counts.max_left_placeholders);
                 #[allow(clippy::unwrap_used)] // constructor checks this via num_totals
@@ -182,7 +177,7 @@ impl MutVarTable {
         debug_assert!(backref_num > 0);
         // -1 because backrefs are 1-indexed
         let standin = self.backref_base + backref_num - 1;
-        debug_assert!(standin <= Self::MAX_DYNAMIC);
+        debug_assert!(standin <= VarTable::MAX_DYNAMIC as u32);
         #[allow(clippy::unwrap_used)] // constructor checks this via num_totals
         char::try_from(standin).unwrap()
     }
@@ -388,11 +383,9 @@ impl<'a, 'p> Pass2<'a, 'p> {
             &parse::Element::BackRef(num) => {
                 LiteralOrStandin::Standin(self.var_table.standin_for_backref(num))
             }
-            parse::Element::AnchorEnd => {
-                LiteralOrStandin::Standin(MutVarTable::RESERVED_ANCHOR_END)
-            }
+            parse::Element::AnchorEnd => LiteralOrStandin::Standin(VarTable::RESERVED_ANCHOR_END),
             parse::Element::AnchorStart => {
-                LiteralOrStandin::Standin(MutVarTable::RESERVED_ANCHOR_START)
+                LiteralOrStandin::Standin(VarTable::RESERVED_ANCHOR_START)
             }
             parse::Element::UnicodeSet(set) => {
                 let standin = self.var_table.insert_unicode_set(set.clone());

@@ -7,6 +7,8 @@
 //! This module is published as its own crate ([`icu_transliteration`](https://docs.rs/icu_transliteration/latest/icu_transliteration/))
 //! and as part of the [`icu`](https://docs.rs/icu/latest/icu/) crate. See the latter for more details on the ICU4X project.
 //!
+//! See [`Transliterator`].
+//!
 //! <div class="stab unstable">
 //! 🚧 This code is experimental; it may change at any time, in breaking or non-breaking ways,
 //! including in SemVer minor releases. It can be enabled with the "experimental" Cargo feature
@@ -14,7 +16,7 @@
 //! </div>
 
 // https://github.com/unicode-org/icu4x/blob/main/docs/process/boilerplate.md#library-annotations
-#![cfg_attr(not(test), no_std)]
+#![cfg_attr(not(any(test, feature = "std")), no_std)]
 #![cfg_attr(
     not(test),
     deny(
@@ -32,3 +34,13 @@
 extern crate alloc;
 
 pub mod provider;
+
+mod error;
+#[allow(clippy::indexing_slicing, clippy::unwrap_used)] // TODO(#3958): Remove.
+mod transliterator;
+
+pub use error::TransliteratorError;
+pub use transliterator::*;
+
+#[doc(no_inline)]
+pub use TransliteratorError as Error;

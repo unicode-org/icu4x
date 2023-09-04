@@ -235,6 +235,9 @@ jobs:
         path: /tmp/icu4x-source-cache
 
     # Actual job
+    - name: Run `cargo make testdata-check`
+      run: cargo make testdata-check
+
     - name: Run `cargo make testdata-legacy`
       run: cargo make testdata-legacy
 

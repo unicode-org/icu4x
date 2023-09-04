@@ -1990,13 +1990,18 @@ version = "1.2.0"
 name = "icu_transliteration"
 version = "0.0.0"
 dependencies = [
+ "criterion",
  "databake",
+ "displaydoc",
+ "icu_casemap",
  "icu_collections",
+ "icu_locid",
+ "icu_normalizer",
  "icu_provider",
  "icu_transliteration_data",
+ "litemap",
  "serde",
  "yoke",
- "zerofrom",
  "zerovec",
 ]
 

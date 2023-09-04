@@ -1865,7 +1865,7 @@ impl Astronomical {
         }
     }
 
-    /// Aberration at the the time given in Julian centuries.
+    /// Aberration at the time given in Julian centuries.
     /// See: https://sceweb.sce.uhcl.edu/helm/WEB-Positional%20Astronomy/Tutorial/Aberration/Aberration.html
     ///
     /// Based on functions from _Calendrical Calculations_ by Reingold & Dershowitz.

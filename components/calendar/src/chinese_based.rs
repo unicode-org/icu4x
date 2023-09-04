@@ -739,7 +739,6 @@ impl<C: ChineseBased + CalendarArithmetic> ChineseBasedDateInner<C> {
             debug_assert!(((u16::MIN as i64)..=(u16::MAX as i64)).contains(&result), "Result {result} from new moon: {new_moon:?} and new year: {new_year:?} should be in range of u16!");
             result as u16
         };
-        let days_until_month = days_until_month;
         days_until_month + u16::from(self.0.day)
     }
 

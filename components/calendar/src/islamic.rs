@@ -589,13 +589,13 @@ impl IslamicUmmAlQura {
         let age = date.to_f64_date() - last_new_moon;
         // Explanation of why the value 3.0 is chosen: https://github.com/unicode-org/icu4x/pull/3673/files#r1267460916
         let tau = if age <= 3.0 && !Self::adjusted_saudi_criterion(date) {
-            // Checks if the criterion is not yet visibile on the evening of date
+            // Checks if the criterion is not yet visible on the evening of date
             last_new_moon - 30.0 // Goes back a month
         } else {
             last_new_moon
         };
 
-        next(RataDie::new(tau as i64), Self::adjusted_saudi_criterion) // Loop that increments the day and checks if the criterion is now visibile
+        next(RataDie::new(tau as i64), Self::adjusted_saudi_criterion) // Loop that increments the day and checks if the criterion is now visible
     }
 
     // Lisp code reference: https://github.com/EdReingold/calendar-code2/blob/main/calendar.l#L6996

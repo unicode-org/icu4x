@@ -16,7 +16,7 @@ use smallvec::SmallVec;
 ///
 /// A [`Skeleton`] is a [`Vec`]`<Field>`, but with the invariant that it is sorted according to the canonical
 /// sort order. This order is sorted according to the most significant `Field` to the least significant.
-/// For example, a field with a `Minute` symbol would preceed a field with a `Second` symbol.
+/// For example, a field with a `Minute` symbol would precede a field with a `Second` symbol.
 /// This order is documented as the order of fields as presented in the
 /// [UTS 35 Date Field Symbol Table](https://unicode.org/reports/tr35/tr35-dates.html#Date_Field_Symbol_Table)
 ///
