@@ -24,6 +24,10 @@ pub enum LocaleFallbackPriority {
     ///
     /// For example, `"en-US"` should go to `"und-US"` and then `"und"`.
     Region,
+    /// Prioritize the script.
+    ///
+    /// For example, `"en-US"` should go to `"en"` and then `"und-Latn"` and then `"und"`.
+    Script,
     /// Collation-specific fallback rules. Similar to language priority.
     ///
     /// For example, `"zh-Hant"` goes to `"zh"` before `"und"`.

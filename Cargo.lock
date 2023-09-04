@@ -1996,6 +1996,7 @@ dependencies = [
  "icu_casemap",
  "icu_collections",
  "icu_locid",
+ "icu_locid_transform",
  "icu_normalizer",
  "icu_provider",
  "icu_transliteration_data",
