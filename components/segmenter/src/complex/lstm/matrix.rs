@@ -6,7 +6,7 @@ use alloc::vec;
 use alloc::vec::Vec;
 use core::ops::Range;
 #[allow(unused_imports)]
-use core_float::*;
+use core_maths::*;
 use zerovec::ule::AsULE;
 use zerovec::ZeroSlice;
 

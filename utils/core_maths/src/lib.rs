@@ -2,14 +2,14 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-//! Extension trait to use full float functionality in `#[no_std]` backed by [`libm`].
+//! Extension trait for full float functionality in `#[no_std]` backed by [`libm`].
 //!
 //! Method signatures and documentation are the same as `std` as of 1.72.
 //!
 //! # Usage
 //! ```rust
 //! #[allow(unused_imports)] // will be unused on std targets
-//! use core_float::*;
+//! use core_maths::*;
 //!
 //! 3.9.floor();
 //! ```
@@ -85,7 +85,7 @@ pub trait CoreFloat: Sized + Copy {
     /// # Examples
     ///
     /// ```
-    /// # use core_float::*;
+    /// # use core_maths::*;
     /// let f = 3.3_f64;
     /// let g = -3.3_f64;
     /// let h = 3.5_f64;

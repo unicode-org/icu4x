@@ -507,7 +507,7 @@ dependencies = [
 ]
 
 [[package]]
-name = "core_float"
+name = "core_maths"
 version = "0.0.0"
 dependencies = [
  "libm",
@@ -1916,7 +1916,7 @@ version = "1.2.0"
 name = "icu_segmenter"
 version = "1.2.1"
 dependencies = [
- "core_float",
+ "core_maths",
  "criterion",
  "databake",
  "displaydoc",
@@ -2196,9 +2196,9 @@ dependencies = [
 
 [[package]]
 name = "libm"
-version = "0.2.7"
+version = "0.2.6"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "f7012b1bbb0719e1097c47611d3898568c546d597c2e74d66f6087edd5233ff4"
+checksum = "348108ab3fba42ec82ff6e9564fc4ca0247bdccdc68dd8af9764bbc79c3c8ffb"
 
 [[package]]
 name = "linux-raw-sys"
