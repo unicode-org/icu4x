@@ -52,6 +52,7 @@ const _: () = {
     icu_locid_transform_data::impl_locid_transform_likelysubtags_l_v1!(Baked);
     icu_locid_transform_data::impl_locid_transform_likelysubtags_sr_v1!(Baked);
     icu_locid_transform_data::impl_locid_transform_script_dir_v1!(Baked);
+    // icu_locid_transform_data::impl_locid_transform_week_data_v2!(Baked);
 };
 
 #[cfg(feature = "datagen")]

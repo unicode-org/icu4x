@@ -94,6 +94,8 @@ mod error;
 mod expander;
 pub mod fallback;
 pub mod provider;
+// #[cfg(feature = "experimental")]
+mod week_info;
 
 pub use canonicalizer::LocaleCanonicalizer;
 pub use directionality::{Direction, LocaleDirectionality};
@@ -101,6 +103,8 @@ pub use error::LocaleTransformError;
 pub use expander::LocaleExpander;
 #[doc(inline)]
 pub use fallback::LocaleFallbacker;
+// #[cfg(feature = "experimental")]
+pub use week_info::LocaleWeekInfo;
 
 /// Used to track the result of a transformation operation that potentially modifies its argument in place.
 #[derive(Debug, PartialEq)]
