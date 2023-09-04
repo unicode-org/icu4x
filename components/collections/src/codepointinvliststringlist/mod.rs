@@ -7,7 +7,7 @@
 //! It depends on [`CodePointInversionList`] to efficiently represent Unicode code points, while
 //! it also maintains a list of strings in the set.
 //!
-//! It is an implementation of the the existing [ICU4C UnicodeSet API](https://unicode-org.github.io/icu-docs/apidoc/released/icu4c/classicu_1_1UnicodeSet.html).
+//! It is an implementation of the existing [ICU4C UnicodeSet API](https://unicode-org.github.io/icu-docs/apidoc/released/icu4c/classicu_1_1UnicodeSet.html).
 
 use crate::codepointinvlist::{
     CodePointInversionList, CodePointInversionListBuilder, CodePointInversionListError,

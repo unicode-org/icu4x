@@ -221,7 +221,7 @@ impl Calendar for Chinese {
     /// The calendar-specific month code represented by `date`;
     /// since the Chinese calendar has leap months, an "L" is appended to the month code for
     /// leap months. For example, in a year where an intercalary month is added after the second
-    /// month, the month codes for ordinal monts 1, 2, 3, 4, 5 would be "M01", "M02", "M02L", "M03", "M04".
+    /// month, the month codes for ordinal months 1, 2, 3, 4, 5 would be "M01", "M02", "M02L", "M03", "M04".
     fn month(&self, date: &Self::DateInner) -> types::FormattableMonth {
         let ordinal = date.0 .0.month;
         let leap_month_option = date.0 .1.get_leap_month();
@@ -449,12 +449,12 @@ impl Chinese {
         Iso::iso_from_fixed(result_fixed)
     }
 
-    /// Get a FormattableYear from an integer Chinese year; optionall, a `ChineseBasedYearInfo`
+    /// Get a FormattableYear from an integer Chinese year; optionally, a `ChineseBasedYearInfo`
     /// can be passed in for faster results.
     ///
     /// `era` is always `Era(tinystr!(16, "chinese"))`
     /// `number` is the year since the inception of the Chinese calendar (see [`Chinese`])
-    /// `cyclic` is an option with the current year in the sexigesimal cycle (see [`Chinese`])
+    /// `cyclic` is an option with the current year in the sexagesimal cycle (see [`Chinese`])
     /// `related_iso` is the ISO year in which the given Chinese year begins (see [`Chinese`])
     fn format_chinese_year(
         year: i32,

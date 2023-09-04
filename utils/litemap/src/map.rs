@@ -663,7 +663,7 @@ where
         }
     }
 
-    /// Attemps to insert a unique entry into the map.
+    /// Attempts to insert a unique entry into the map.
     ///
     /// If `key` is not already in the map, invokes the closure to compute `value`, inserts
     /// the pair into the map, and returns a reference to the value. The closure is passed

@@ -141,7 +141,7 @@ Note: A subset of crates received patch releases in the 1.2 stream.
     - Support configurable grouping separators in CompactDecimalFormatter (#3045)
    - `icu_displaynames`: 0.8.0 -> 0.10.0
      - Add ScriptDisplayNames (#3317)
-     - Add LangaugeDisplayNames with support for variants (#3058, #3113)
+     - Add LanguageDisplayNames with support for variants (#3058, #3113)
      - Add stronger typing (#3190)
    - `icu_harfbuzz`: New experimental port: Harfbuzz integration for ICU4X (v0.1.0)
    - `icu_relativetime`: 0.1.0 -> 0.1.1
@@ -221,7 +221,7 @@ Note: A subset of crates received patch releases in the 1.2 stream.
   * icu_segmenter: enforce `clippy::indexing_slicing`. (#2325)
   * Use `GraphemeClusterSegmenter` in `DictionarySegmenter` and `LstmSegmenter` (#2716)
   * Rename `*BreakSegmenter` to `*Segmenter` (#2707)
-  * Remove unnecessary langauge check for East Asian languagne (SA property) (#2705)
+  * Remove unnecessary language check for East Asian language (SA property) (#2705)
   * internal and doc improvements
 
 * `icu_timezone`

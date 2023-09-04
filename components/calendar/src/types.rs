@@ -368,7 +368,7 @@ dt_unit!(
     61,
     "An ISO-8601 second component, for use with ISO calendars.
 
-Must be within inclusive bounds `[0, 61]`. `60` accomodates for leap seconds.
+Must be within inclusive bounds `[0, 61]`. `60` accommodates for leap seconds.
 
 The value could also be equal to 60 or 61, to indicate the end of a leap second,
 with the writing `23:59:61.000000000Z` or `23:59:60.000000000Z`. These examples,
