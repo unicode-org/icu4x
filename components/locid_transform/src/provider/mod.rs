@@ -23,6 +23,8 @@ mod expander;
 pub use expander::*;
 mod fallback;
 pub use fallback::*;
+mod week_data;
+pub use week_data::*;
 
 #[cfg(feature = "compiled_data")]
 #[derive(Debug)]
