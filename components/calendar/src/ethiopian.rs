@@ -34,11 +34,10 @@
 
 use crate::any_calendar::AnyCalendarKind;
 use crate::calendar_arithmetic::{ArithmeticDate, CalendarArithmetic};
-use crate::coptic::Coptic;
 use crate::iso::Iso;
-use crate::julian::Julian;
 use crate::rata_die::RataDie;
 use crate::{types, Calendar, CalendarError, Date, DateDuration, DateDurationUnit, DateTime};
+use calendrical_calculations::helpers::I32CastError;
 use tinystr::tinystr;
 
 /// The number of years the Amete Alem epoch precedes the Amete Mihret epoch
@@ -232,9 +231,6 @@ impl Calendar for Ethiopian {
     }
 }
 
-const ETHIOPIC_TO_COPTIC_OFFSET: i64 =
-    super::coptic::COPTIC_EPOCH.const_diff(Julian::fixed_from_julian_integers(8, 8, 29));
-
 impl Ethiopian {
     /// Construct a new Ethiopian Calendar for the Amete Mihret era naming scheme
     pub const fn new() -> Self {
@@ -258,29 +254,22 @@ impl Ethiopian {
         }
     }
 
-    // "Fixed" is a day count representation of calendars staring from Jan 1st of year 1 of the Georgian Calendar.
-    // The fixed date algorithms are from
-    // Dershowitz, Nachum, and Edward M. Reingold. _Calendrical calculations_. Cambridge University Press, 2008.
-    //
-    // Lisp code reference: https://github.com/EdReingold/calendar-code2/blob/1ee51ecfaae6f856b0d7de3e36e9042100b4f424/calendar.l#L2017
     fn fixed_from_ethiopian(date: ArithmeticDate<Ethiopian>) -> RataDie {
-        Coptic::fixed_from_coptic_integers(date.year, date.month, date.day)
-            - ETHIOPIC_TO_COPTIC_OFFSET
+        calendrical_calculations::ethiopian::fixed_from_ethiopian(date.year, date.month, date.day)
     }
 
-    // Lisp code reference: https://github.com/EdReingold/calendar-code2/blob/1ee51ecfaae6f856b0d7de3e36e9042100b4f424/calendar.l#L2028
     fn ethiopian_from_fixed(date: RataDie) -> EthiopianDateInner {
-        let coptic_date = Coptic::coptic_from_fixed(date + ETHIOPIC_TO_COPTIC_OFFSET);
-
-        #[allow(clippy::unwrap_used)] // Coptic and Ethiopic have the same allowed ranges for dates
-        *Date::try_new_ethiopian_date(
-            EthiopianEraStyle::AmeteMihret,
-            coptic_date.0.year,
-            coptic_date.0.month,
-            coptic_date.0.day,
-        )
-        .unwrap()
-        .inner()
+        let (year, month, day) =
+            match calendrical_calculations::ethiopian::ethiopian_from_fixed(date) {
+                Err(I32CastError::BelowMin) => {
+                    return EthiopianDateInner(ArithmeticDate::min_date())
+                }
+                Err(I32CastError::AboveMax) => {
+                    return EthiopianDateInner(ArithmeticDate::max_date())
+                }
+                Ok(ymd) => ymd,
+            };
+        EthiopianDateInner(ArithmeticDate::new_unchecked(year, month, day))
     }
 
     fn days_in_year_direct(year: i32) -> u16 {
