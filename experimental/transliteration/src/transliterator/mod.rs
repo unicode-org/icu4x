@@ -19,7 +19,10 @@ use core::str;
 use icu_collections::codepointinvlist::CodePointInversionList;
 use icu_collections::codepointinvliststringlist::CodePointInversionListAndStringList;
 use icu_locid::Locale;
-use icu_locid_transform::fallback::LocaleFallbacker;
+use icu_locid_transform::fallback::{
+    LocaleFallbackConfig, LocaleFallbackPriority, LocaleFallbacker,
+};
+use icu_locid_transform::provider::*;
 use icu_normalizer::provider::*;
 use icu_normalizer::{ComposingNormalizer, DecomposingNormalizer};
 use icu_provider::prelude::*;
@@ -175,13 +178,12 @@ impl Transliterator {
     /// ```
     #[cfg(feature = "compiled_data")]
     pub fn try_new(locale: Locale) -> Result<Transliterator, TransliteratorError> {
-        let provider = crate::provider::Baked;
-        let normalizer_provider = icu_normalizer::provider::Baked;
         Self::internal_try_new_with_override_unstable(
             locale,
             None::<&fn(&Locale) -> Option<Box<dyn CustomTransliterator>>>,
-            &provider,
-            &normalizer_provider,
+            &crate::provider::Baked,
+            &icu_normalizer::provider::Baked,
+            || Ok(LocaleFallbacker::new().static_to_owned()),
         )
     }
 
@@ -220,20 +222,16 @@ impl Transliterator {
     /// assert_eq!(output, "This is an overridden example");
     /// ```
     #[cfg(feature = "compiled_data")]
-    pub fn try_new_with_override<F>(
+    pub fn try_new_with_override(
         locale: Locale,
-        lookup: F,
-    ) -> Result<Transliterator, TransliteratorError>
-    where
-        F: Fn(&Locale) -> Option<Box<dyn CustomTransliterator>>,
-    {
-        let provider = crate::provider::Baked;
-        let normalizer_provider = icu_normalizer::provider::Baked;
+        lookup: impl Fn(&Locale) -> Option<Box<dyn CustomTransliterator>>,
+    ) -> Result<Transliterator, TransliteratorError> {
         Self::internal_try_new_with_override_unstable(
             locale,
             Some(&lookup),
-            &provider,
-            &normalizer_provider,
+            &crate::provider::Baked,
+            &icu_normalizer::provider::Baked,
+            || Ok(LocaleFallbacker::new().static_to_owned()),
         )
     }
 
@@ -249,6 +247,9 @@ impl Transliterator {
             + DataProvider<CanonicalDecompositionTablesV1Marker>
             + DataProvider<CompatibilityDecompositionTablesV1Marker>
             + DataProvider<CanonicalCompositionsV1Marker>
+            + DataProvider<LocaleFallbackLikelySubtagsV1Marker>
+            + DataProvider<LocaleFallbackParentsV1Marker>
+            + DataProvider<CollationFallbackSupplementV1Marker>
             + ?Sized,
     {
         Self::internal_try_new_with_override_unstable(
@@ -256,13 +257,14 @@ impl Transliterator {
             None::<&fn(&Locale) -> Option<Box<dyn CustomTransliterator>>>,
             provider,
             provider,
+            || LocaleFallbacker::try_new_unstable(provider),
         )
     }
 
     #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Transliterator::try_new_with_override)]
-    pub fn try_new_with_override_unstable<P, F>(
+    pub fn try_new_with_override_unstable<P>(
         locale: Locale,
-        lookup: F,
+        lookup: impl Fn(&Locale) -> Option<Box<dyn CustomTransliterator>>,
         provider: &P,
     ) -> Result<Transliterator, TransliteratorError>
     where
@@ -272,67 +274,26 @@ impl Transliterator {
             + DataProvider<CanonicalDecompositionTablesV1Marker>
             + DataProvider<CompatibilityDecompositionTablesV1Marker>
             + DataProvider<CanonicalCompositionsV1Marker>
+            + DataProvider<LocaleFallbackLikelySubtagsV1Marker>
+            + DataProvider<LocaleFallbackParentsV1Marker>
+            + DataProvider<CollationFallbackSupplementV1Marker>
             + ?Sized,
-        F: Fn(&Locale) -> Option<Box<dyn CustomTransliterator>>,
     {
-        Self::internal_try_new_with_override_unstable(locale, Some(&lookup), provider, provider)
+        Self::internal_try_new_with_override_unstable(
+            locale,
+            Some(&lookup),
+            provider,
+            provider,
+            || LocaleFallbacker::try_new_unstable(provider),
+        )
     }
 
-    fn try_load_any_in_fallback<P>(
+    fn internal_try_new_with_override_unstable<PN, PT>(
         locale: Locale,
-        provider: &P,
-    ) -> Result<DataPayload<TransliteratorRulesV1Marker>, DataError>
-    where
-        P: DataProvider<TransliteratorRulesV1Marker> + ?Sized,
-    {
-        let try_load = |locale: &Locale| {
-            let mut data_locale = DataLocale::default();
-            data_locale.set_aux(locale.to_string().parse().unwrap());
-            let req = DataRequest {
-                locale: &data_locale,
-                metadata: Default::default(),
-            };
-            provider.load(req)?.take_payload()
-        };
-
-        // TODO(#3950): How is fallback handled with special parts?
-
-        // first try loading of locale
-        if let Ok(t) = try_load(&locale) {
-            return Ok(t);
-        }
-
-        // TODO: fix data loading here
-        let fallbacker =
-            LocaleFallbacker::new().for_config(TransliteratorRulesV1Marker::KEY.fallback_config());
-
-        let mut source_iterator = fallbacker.fallback_for(
-            locale
-                .extensions
-                .transform
-                .lang
-                .as_ref()
-                .cloned()
-                .unwrap_or_default()
-                .into(),
-        );
-
-        while !source_iterator.get().is_und() {
-            let mut fallbacked_locale = locale.clone();
-            fallbacked_locale.extensions.transform.lang = Some(source_iterator.get().get_langid());
-            if let Ok(t) = try_load(&fallbacked_locale) {
-                return Ok(t);
-            }
-            source_iterator.step();
-        }
-        todo!("error")
-    }
-
-    pub fn internal_try_new_with_override_unstable<PN, PT, F>(
-        locale: Locale,
-        lookup: Option<&F>,
+        lookup: Option<&impl Fn(&Locale) -> Option<Box<dyn CustomTransliterator>>>,
         transliterator_provider: &PT,
         normalizer_provider: &PN,
+        fallbacker: impl Fn() -> Result<LocaleFallbacker, DataError>,
     ) -> Result<Transliterator, TransliteratorError>
     where
         PT: DataProvider<TransliteratorRulesV1Marker> + ?Sized,
@@ -342,39 +303,69 @@ impl Transliterator {
             + DataProvider<CompatibilityDecompositionTablesV1Marker>
             + DataProvider<CanonicalCompositionsV1Marker>
             + ?Sized,
-        F: Fn(&Locale) -> Option<Box<dyn CustomTransliterator>>,
     {
-        // let mut data_locale = DataLocale::default();
-        // data_locale.set_aux(locale.to_string().parse()?);
-        // let req = DataRequest {
-        //     locale: &data_locale,
-        //     metadata: Default::default(),
-        // };
-        let payload = Transliterator::try_load_any_in_fallback(locale, transliterator_provider)?;
-        // let payload = transliterator_provider.load(req)?.take_payload()?;
-        let rbt = payload.get();
-        if !rbt.visibility {
+        // TODO(#3950): How is fallback handled with special parts?
+
+        // first try loading of locale
+        let transliterator = if let Ok(transliterator) =
+            Self::load_rbt(&locale.to_string(), transliterator_provider)
+        {
+            transliterator
+        } else {
+            let fallbacker = fallbacker()?;
+            let mut fallback_config = LocaleFallbackConfig::default();
+            fallback_config.priority = LocaleFallbackPriority::Script;
+            let fallbacker = fallbacker.for_config(fallback_config);
+
+            let mut transform_extensions = locale.extensions.transform;
+            let source_id = transform_extensions.lang.take().unwrap_or_default();
+            let target_id = locale.id;
+
+            let mut source_iterator = fallbacker.fallback_for(source_id.into());
+            let mut target_iterator = fallbacker.fallback_for(target_id.into());
+
+            'target: loop {
+                if target_iterator.get().is_und() {
+                    Err(DataErrorKind::MissingLocale.with_key(TransliteratorRulesV1Marker::KEY))?;
+                }
+                'source: loop {
+                    if source_iterator.get().is_und() {
+                        break 'source;
+                    }
+                    let mut candidate = Locale::from(target_iterator.get().clone().get_langid());
+                    candidate.extensions.transform = transform_extensions.clone();
+                    candidate.extensions.transform.lang = Some(source_iterator.get().get_langid());
+                    if let Ok(t) = Self::load_rbt(&candidate.to_string(), transliterator_provider) {
+                        break 'target t;
+                    }
+                    source_iterator.step();
+                }
+                target_iterator.step();
+            }
+        };
+
+        if !transliterator.get().visibility {
             // transliterator is internal
             return Err(TransliteratorError::InternalOnly);
         }
         let mut env = LiteMap::new();
         Transliterator::load_dependencies_recursive(
-            rbt,
+            transliterator.get(),
             &mut env,
             lookup,
             transliterator_provider,
             normalizer_provider,
         )?;
         Ok(Transliterator {
-            transliterator: payload,
+            transliterator,
             env,
         })
     }
 
-    fn load_dependencies_recursive<PT, PN, F>(
+    fn load_dependencies_recursive<PT, PN>(
         rbt: &RuleBasedTransliterator<'_>,
         env: &mut LiteMap<String, InternalTransliterator>,
-        lookup: Option<&F>,
+        lookup: Option<&impl Fn(&Locale) -> Option<Box<dyn CustomTransliterator>>>,
         transliterator_provider: &PT,
         normalizer_provider: &PN,
     ) -> Result<(), TransliteratorError>
@@ -386,7 +377,6 @@ impl Transliterator {
             + DataProvider<CompatibilityDecompositionTablesV1Marker>
             + DataProvider<CanonicalCompositionsV1Marker>
             + ?Sized,
-        F: Fn(&Locale) -> Option<Box<dyn CustomTransliterator>>,
     {
         for dep in rbt.dependencies.iter() {
             if !env.contains_key(dep) {
@@ -475,13 +465,10 @@ impl Transliterator {
         }
     }
 
-    fn load_with_override<F>(
+    fn load_with_override(
         id: &str,
-        lookup: &F,
-    ) -> Result<Option<InternalTransliterator>, TransliteratorError>
-    where
-        F: Fn(&Locale) -> Option<Box<dyn CustomTransliterator>>,
-    {
+        lookup: &impl Fn(&Locale) -> Option<Box<dyn CustomTransliterator>>,
+    ) -> Result<Option<InternalTransliterator>, TransliteratorError> {
         let locale: Locale = id.parse().map_err(|e| {
             DataError::custom("invalid data: transliterator dependency is not a valid Locale")
                 .with_debug_context(&e)
@@ -498,9 +485,11 @@ impl Transliterator {
     {
         let mut data_locale = DataLocale::default();
         data_locale.set_aux(id.parse()?);
+        let mut metadata = DataRequestMetadata::default();
+        metadata.silent = true;
         let req = DataRequest {
             locale: &data_locale,
-            metadata: Default::default(),
+            metadata,
         };
         let payload = provider.load(req)?.take_payload()?;
         let rbt = payload.get();
