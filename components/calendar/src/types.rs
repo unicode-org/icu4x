@@ -58,6 +58,9 @@ pub struct FormattableYear {
 
     /// The year in the current cycle for cyclic calendars (1-indexed)
     /// can be set to None for non-cyclic calendars
+    ///
+    /// This should not be zero or negative. For chinese and dangi it will be
+    /// a number between 1 and 60, for hypothetical other calendars it may be something else.
     pub cyclic: Option<i32>,
 
     /// The related ISO year. This is normally the ISO (proleptic Gregorian) year having the greatest
