@@ -5,3 +5,4 @@
 pub mod aliases;
 pub mod directionality;
 pub mod likely_subtags;
+pub mod week_data;

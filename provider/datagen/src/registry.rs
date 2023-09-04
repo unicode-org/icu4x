@@ -233,6 +233,7 @@ registry!(
     icu_locid_transform::provider::LocaleFallbackLikelySubtagsV1Marker = "fallback/likelysubtags@1",
     icu_locid_transform::provider::LocaleFallbackParentsV1Marker = "fallback/parents@1",
     icu_locid_transform::provider::ScriptDirectionV1Marker = "locid_transform/script_dir@1",
+    icu_locid_transform::provider::WeekDataV2Marker = "locid_transform/week_data@2",
     #[cfg(any(all(), feature = "icu_normalizer"))]
     icu_normalizer::provider::CanonicalCompositionsV1Marker = "normalizer/comp@1",
     icu_normalizer::provider::CanonicalDecompositionDataV1Marker = "normalizer/nfd@1",
