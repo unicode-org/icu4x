@@ -41,6 +41,21 @@ impl From<&Weekday> for icu_calendar::types::IsoWeekday {
     }
 }
 
+impl From<&Weekday> for icu_locid_transform::provider::IsoWeekday {
+    fn from(day: &Weekday) -> Self {
+        use icu_locid_transform::provider::IsoWeekday;
+        match day {
+            Weekday::Mon => IsoWeekday::Monday,
+            Weekday::Tue => IsoWeekday::Tuesday,
+            Weekday::Wed => IsoWeekday::Wednesday,
+            Weekday::Thu => IsoWeekday::Thursday,
+            Weekday::Fri => IsoWeekday::Friday,
+            Weekday::Sat => IsoWeekday::Saturday,
+            Weekday::Sun => IsoWeekday::Sunday,
+        }
+    }
+}
+
 /// The territory that data is keyed by.
 ///
 /// For example the "AD" in "weekData": { "minDays": { "AD": 4, } }

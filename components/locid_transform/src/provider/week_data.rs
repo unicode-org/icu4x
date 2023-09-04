@@ -43,3 +43,117 @@ pub struct WeekDataV2<'data> {
     #[cfg_attr(feature = "serde", serde(borrow))]
     pub weekend: ZeroVec<'data, IsoWeekday>,
 }
+
+// TODO: [CODE REVIEW]
+// Assuming we want to share this model, but we don't want `locid_transform` to depend on `icu_calendar`,
+// how can we share it ?
+// In the meantime, copy/pasting it here from `icu_calendar::types::IsoWeekday`.
+
+/*
+/// A weekday in a 7-day week, according to ISO-8601.
+///
+/// The discriminant values correspond to ISO-8601 weekday numbers (Monday = 1, Sunday = 7).
+///
+/// # Examples
+///
+/// ```
+/// use icu::calendar::types::IsoWeekday;
+///
+/// assert_eq!(1, IsoWeekday::Monday as usize);
+/// assert_eq!(7, IsoWeekday::Sunday as usize);
+/// ```
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+#[allow(missing_docs)] // The weekday variants should be self-obvious.
+// TODO: investigate why this derive is not working
+#[repr(u8)]
+#[zerovec::make_ule(IsoWeekdayULE)]
+#[cfg_attr(
+    feature = "datagen",
+    derive(serde::Serialize, databake::Bake),
+    databake(path = icu_locid_transform::provider),
+)]
+#[cfg_attr(feature = "serde", derive(serde::Deserialize))]
+#[allow(clippy::exhaustive_enums)] // This is stable
+pub enum IsoWeekday {
+    Monday = 1,
+    Tuesday,
+    Wednesday,
+    Thursday,
+    Friday,
+    Saturday,
+    Sunday,
+}
+
+impl From<usize> for IsoWeekday {
+    /// Convert from an ISO-8601 weekday number to an [`IsoWeekday`] enum. 0 is automatically converted
+    /// to 7 (Sunday). If the number is out of range, it is interpreted modulo 7.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use icu::calendar::types::IsoWeekday;
+    ///
+    /// assert_eq!(IsoWeekday::Sunday, IsoWeekday::from(0));
+    /// assert_eq!(IsoWeekday::Monday, IsoWeekday::from(1));
+    /// assert_eq!(IsoWeekday::Sunday, IsoWeekday::from(7));
+    /// assert_eq!(IsoWeekday::Monday, IsoWeekday::from(8));
+    /// ```
+    fn from(input: usize) -> Self {
+        let mut ordinal = (input % 7) as i8;
+        if ordinal == 0 {
+            ordinal = 7;
+        }
+        unsafe { core::mem::transmute(ordinal) }
+    }
+}
+*/
+
+// TODO: [CODE REVIEW]
+// Making this u8 and making it zero-based,
+// otherwise `make_ule` was not compiling.
+// Need to confirm what's the appropiate approach here.
+
+#[zerovec::make_ule(IsoWeekdayULE)]
+#[zerovec::derive(Debug)]
+#[derive(Copy, Clone, PartialEq, Eq, Debug)]
+#[cfg_attr(feature = "serde", derive(serde::Deserialize))]
+#[cfg_attr(
+    feature = "datagen", 
+    derive(serde::Serialize, databake::Bake),
+    databake(path = icu_locid_transform::provider)
+)]
+#[repr(u8)]
+#[allow(missing_docs)] // The weekday variants should be self-obvious.
+#[allow(clippy::exhaustive_enums)] // This is stable
+pub enum IsoWeekday {
+    Monday = 0,
+    Tuesday = 1,
+    Wednesday = 2,
+    Thursday = 3,
+    Friday = 4,
+    Saturday = 5,
+    Sunday = 6,
+}
+
+impl From<usize> for IsoWeekday {
+    /// Convert from an ISO-8601 weekday number to an [`IsoWeekday`] enum. 0 is automatically converted
+    /// to 7 (Sunday). If the number is out of range, it is interpreted modulo 7.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use icu::locid_transform::provider::IsoWeekday;
+    ///
+    /// assert_eq!(IsoWeekday::Sunday, IsoWeekday::from(0));
+    /// assert_eq!(IsoWeekday::Monday, IsoWeekday::from(1));
+    /// assert_eq!(IsoWeekday::Sunday, IsoWeekday::from(7));
+    /// assert_eq!(IsoWeekday::Monday, IsoWeekday::from(8));
+    /// ```
+    fn from(input: usize) -> Self {
+        let mut ordinal = (input % 7) as i8;
+        if ordinal == 0 {
+            ordinal = 7;
+        }
+        unsafe { core::mem::transmute(ordinal) }
+    }
+}
