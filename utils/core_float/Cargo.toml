@@ -1,0 +1,15 @@
+[package]
+name = "core_float"
+version = "0.0.0"
+
+rust-version.workspace = true
+authors.workspace = true
+edition.workspace = true
+repository.workspace = true
+homepage.workspace = true
+license-file.workspace = true
+categories.workspace = true
+include.workspace = true
+
+[dependencies]
+libm = "0.2.7"

@@ -68,6 +68,7 @@ icu_provider_fs = { path = "../../provider/fs/" }
 icu_provider_macros = { path = "../../provider/macros" }
 icu_testdata = { path = "testing/legacy_testdata" }
 
+core_float = { path = "../../utils/core_float" }
 crlify = { path = "../../utils/crlify" }
 databake = { path = "../../utils/databake" }
 databake-derive = { path = "../../utils/databake/derive" }
