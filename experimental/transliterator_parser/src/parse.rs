@@ -108,21 +108,26 @@ pub(crate) struct BasicId {
 }
 
 impl BasicId {
-    pub(crate) fn is_null(&self) -> bool {
-        self.source.to_lowercase() == "any"
-            && self.target.to_lowercase() == "null"
-            && self.variant.is_none()
-    }
-
     pub(crate) fn reverse(self) -> Self {
-        if self.is_null() {
-            return self;
-        }
-        // TODO(#3736): add hardcoded reverses here
+        let source = self.source.to_lowercase();
+        let target = self.target.to_lowercase();
+        let (new_source, new_target) = match (source.as_str(), target.as_str()) {
+            // hardcoded inverses
+            ("any", "lower") => (self.source, "Upper".to_string()),
+            ("any", "upper") => (self.source, "Lower".to_string()),
+            ("any", "nfc") => (self.source, "NFD".to_string()),
+            ("any", "nfd") => (self.source, "NFC".to_string()),
+            ("any", "nfkc") => (self.source, "NFKD".to_string()),
+            ("any", "nfkd") => (self.source, "NFKC".to_string()),
+            // no-ops
+            ("any", "remove" | "null") => (self.source, self.target),
+            // default inverse swaps source and target
+            _ => (self.target, self.source),
+        };
 
         Self {
-            source: self.target,
-            target: self.source,
+            source: new_source,
+            target: new_target,
             variant: self.variant,
         }
     }
