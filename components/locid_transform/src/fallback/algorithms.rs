@@ -43,7 +43,7 @@ impl<'a> LocaleFallbackerWithConfig<'a> {
         if let Some(locale_script) = locale.script().or(self
             .config
             .priority
-            .eq(&FallbackPriority::Transliteration)
+            .eq(&FallbackPriority::Script)
             // we want a Some(_) to call the max_script-setting code in the case of transliteration.
             .then_some(DEFAULT_SCRIPT))
         {
@@ -64,12 +64,12 @@ impl<'a> LocaleFallbackerWithConfig<'a> {
                     .unwrap_or(max_l_script);
                 *max_script = max_lr_script;
                 if locale_script == max_lr_script
-                    && self.config.priority != FallbackPriority::Transliteration
+                    && self.config.priority != FallbackPriority::Script
                 {
                     locale.set_script(None);
                 }
             } else if locale_script == max_l_script
-                && self.config.priority != FallbackPriority::Transliteration
+                && self.config.priority != FallbackPriority::Script
             {
                 locale.set_script(None);
             }
@@ -98,7 +98,7 @@ impl<'a> LocaleFallbackIteratorInner<'a> {
             // TODO(#1964): Change the collation fallback rules to be different
             // from the language fallback rules.
             FallbackPriority::Collation => self.step_language(locale),
-            FallbackPriority::Transliteration => self.step_transliteration(locale),
+            FallbackPriority::Script => self.step_script(locale),
             // This case should not normally happen, but `FallbackPriority` is non_exhaustive.
             // Make it go directly to `und`.
             _ => {
@@ -196,7 +196,7 @@ impl<'a> LocaleFallbackIteratorInner<'a> {
         locale.set_region(None);
     }
 
-    fn step_transliteration(&mut self, locale: &mut DataLocale) {
+    fn step_script(&mut self, locale: &mut DataLocale) {
         // 1. Remove the region
         if let Some(region) = locale.region() {
             self.backup_region = Some(region);
@@ -228,7 +228,8 @@ impl<'a> LocaleFallbackIteratorInner<'a> {
         // so we don't either. They would be found here if they are ever needed:
         // https://github.com/unicode-cldr/cldr-core/blob/master/supplemental/languageData.json
 
-        // 4. Do not fallback to `und` for transliteration.
+        // 4. Remove script
+        locale.set_script(None)
     }
 
     fn restore_extensions_variants(&mut self, locale: &mut DataLocale) {
@@ -265,7 +266,6 @@ mod tests {
     use super::*;
     use icu_locid::Locale;
     use std::str::FromStr;
-    use writeable::Writeable;
 
     struct TestCase {
         input: &'static str,
@@ -275,6 +275,7 @@ mod tests {
         // Note: The first entry in the chain is the normalized locale
         expected_language_chain: &'static [&'static str],
         expected_region_chain: &'static [&'static str],
+        expected_script_chain: &'static [&'static str],
     }
 
     // TODO: Consider loading these from a JSON file
@@ -286,6 +287,7 @@ mod tests {
             fallback_supplement: None,
             expected_language_chain: &["en-u-sd-usca", "en"],
             expected_region_chain: &["en-u-sd-usca", "en", "und-u-sd-usca"],
+            expected_script_chain: &["en-u-sd-usca", "und-Latn-u-sd-usca", "und-u-sd-usca"],
         },
         TestCase {
             input: "en-US-u-hc-h12-sd-usca",
@@ -294,6 +296,12 @@ mod tests {
             fallback_supplement: None,
             expected_language_chain: &["en-US-u-sd-usca", "en-US", "en-u-sd-usca", "en"],
             expected_region_chain: &["en-US-u-sd-usca", "en-US", "und-US-u-sd-usca", "und-US"],
+            expected_script_chain: &[
+                "en-US-u-sd-usca",
+                "en-u-sd-usca",
+                "und-Latn-u-sd-usca",
+                "und-u-sd-usca",
+            ],
         },
         TestCase {
             input: "en-US-fonipa-u-hc-h12-sd-usca",
@@ -320,6 +328,12 @@ mod tests {
                 "und-US-fonipa",
                 "und-US",
             ],
+            expected_script_chain: &[
+                "en-US-fonipa-u-hc-h12-sd-usca",
+                "en-fonipa-u-hc-h12-sd-usca",
+                "und-Latn-fonipa-u-hc-h12-sd-usca",
+                "und-fonipa-u-hc-h12-sd-usca",
+            ],
         },
         TestCase {
             input: "en-u-hc-h12-sd-usca",
@@ -328,6 +342,7 @@ mod tests {
             fallback_supplement: None,
             expected_language_chain: &["en-u-sd-usca", "en"],
             expected_region_chain: &["en-US-u-sd-usca", "en-US", "und-US-u-sd-usca", "und-US"],
+            expected_script_chain: &["en-u-sd-usca", "und-Latn-u-sd-usca", "und-u-sd-usca"],
         },
         TestCase {
             input: "en-Latn-u-sd-usca",
@@ -336,6 +351,12 @@ mod tests {
             fallback_supplement: None,
             expected_language_chain: &["en-u-sd-usca", "en"],
             expected_region_chain: &["en-US-u-sd-usca", "en-US", "und-US-u-sd-usca", "und-US"],
+            expected_script_chain: &[
+                "en-Latn-u-sd-usca",
+                "en-u-sd-usca",
+                "und-Latn-u-sd-usca",
+                "und-u-sd-usca",
+            ],
         },
         TestCase {
             input: "en-Latn-US-u-sd-usca",
@@ -344,6 +365,14 @@ mod tests {
             fallback_supplement: None,
             expected_language_chain: &["en-US-u-sd-usca", "en-US", "en-u-sd-usca", "en"],
             expected_region_chain: &["en-US-u-sd-usca", "en-US", "und-US-u-sd-usca", "und-US"],
+            expected_script_chain: &[
+                "en-Latn-US-u-sd-usca",
+                "en-Latn-u-sd-usca",
+                "en-US-u-sd-usca",
+                "en-u-sd-usca",
+                "und-Latn-u-sd-usca",
+                "und-u-sd-usca",
+            ],
         },
         TestCase {
             // NOTE: -u-rg is not yet supported; when it is, this test should be updated
@@ -353,6 +382,7 @@ mod tests {
             fallback_supplement: None,
             expected_language_chain: &["en"],
             expected_region_chain: &["en"],
+            expected_script_chain: &["en", "und-Latn"],
         },
         TestCase {
             input: "sr-ME",
@@ -361,6 +391,7 @@ mod tests {
             fallback_supplement: None,
             expected_language_chain: &["sr-ME", "sr-Latn-ME", "sr-Latn"],
             expected_region_chain: &["sr-ME", "und-ME"],
+            expected_script_chain: &["sr-ME", "sr", "und-Latn"],
         },
         TestCase {
             input: "sr-Latn-ME",
@@ -369,6 +400,7 @@ mod tests {
             fallback_supplement: None,
             expected_language_chain: &["sr-ME", "sr-Latn-ME", "sr-Latn"],
             expected_region_chain: &["sr-ME", "und-ME"],
+            expected_script_chain: &["sr-Latn-ME", "sr-Latn", "sr-ME", "sr", "und-Latn"],
         },
         TestCase {
             input: "sr-ME-fonipa",
@@ -384,6 +416,7 @@ mod tests {
                 "sr-Latn",
             ],
             expected_region_chain: &["sr-ME-fonipa", "sr-ME", "und-ME-fonipa", "und-ME"],
+            expected_script_chain: &["sr-ME-fonipa", "sr-fonipa", "und-Latn-fonipa", "und-fonipa"],
         },
         TestCase {
             input: "sr-RS",
@@ -392,6 +425,7 @@ mod tests {
             fallback_supplement: None,
             expected_language_chain: &["sr-RS", "sr"],
             expected_region_chain: &["sr-RS", "und-RS"],
+            expected_script_chain: &["sr-RS", "sr", "und-Cyrl"],
         },
         TestCase {
             input: "sr-Cyrl-RS",
@@ -400,6 +434,7 @@ mod tests {
             fallback_supplement: None,
             expected_language_chain: &["sr-RS", "sr"],
             expected_region_chain: &["sr-RS", "und-RS"],
+            expected_script_chain: &["sr-Cyrl-RS", "sr-Cyrl", "sr-RS", "sr", "und-Cyrl"],
         },
         TestCase {
             input: "sr-Latn-RS",
@@ -408,6 +443,7 @@ mod tests {
             fallback_supplement: None,
             expected_language_chain: &["sr-Latn-RS", "sr-Latn"],
             expected_region_chain: &["sr-Latn-RS", "und-RS"],
+            expected_script_chain: &["sr-Latn-RS", "sr-Latn", "sr-RS", "sr", "und-Latn"],
         },
         TestCase {
             input: "de-Latn-LI",
@@ -416,6 +452,7 @@ mod tests {
             fallback_supplement: None,
             expected_language_chain: &["de-LI", "de"],
             expected_region_chain: &["de-LI", "und-LI"],
+            expected_script_chain: &["de-Latn-LI", "de-Latn", "de-LI", "de", "und-Latn"],
         },
         TestCase {
             input: "ca-ES-valencia",
@@ -424,6 +461,12 @@ mod tests {
             fallback_supplement: None,
             expected_language_chain: &["ca-ES-valencia", "ca-ES", "ca-valencia", "ca"],
             expected_region_chain: &["ca-ES-valencia", "ca-ES", "und-ES-valencia", "und-ES"],
+            expected_script_chain: &[
+                "ca-ES-valencia",
+                "ca-valencia",
+                "und-Latn-valencia",
+                "und-valencia",
+            ],
         },
         TestCase {
             input: "es-AR",
@@ -432,6 +475,7 @@ mod tests {
             fallback_supplement: None,
             expected_language_chain: &["es-AR", "es-419", "es"],
             expected_region_chain: &["es-AR", "und-AR"],
+            expected_script_chain: &["es-AR", "es", "und-Latn"],
         },
         TestCase {
             input: "hi-IN",
@@ -440,6 +484,7 @@ mod tests {
             fallback_supplement: None,
             expected_language_chain: &["hi-IN", "hi"],
             expected_region_chain: &["hi-IN", "und-IN"],
+            expected_script_chain: &["hi-IN", "hi", "und-Deva"],
         },
         TestCase {
             input: "hi-Latn-IN",
@@ -448,6 +493,7 @@ mod tests {
             fallback_supplement: None,
             expected_language_chain: &["hi-Latn-IN", "hi-Latn", "en-IN", "en-001", "en"],
             expected_region_chain: &["hi-Latn-IN", "und-IN"],
+            expected_script_chain: &["hi-Latn-IN", "hi-Latn", "hi-IN", "hi", "und-Latn"],
         },
         TestCase {
             input: "zh-CN",
@@ -459,6 +505,7 @@ mod tests {
             // script is the default for the language
             expected_language_chain: &["zh-CN", "zh"],
             expected_region_chain: &["zh-CN", "und-CN"],
+            expected_script_chain: &["zh-CN", "zh", "und-Hans"],
         },
         TestCase {
             input: "zh-TW",
@@ -467,6 +514,7 @@ mod tests {
             fallback_supplement: None,
             expected_language_chain: &["zh-TW", "zh-Hant-TW", "zh-Hant"],
             expected_region_chain: &["zh-TW", "und-TW"],
+            expected_script_chain: &["zh-TW", "zh", "und-Hant"],
         },
         TestCase {
             input: "yue-HK",
@@ -475,6 +523,7 @@ mod tests {
             fallback_supplement: None,
             expected_language_chain: &["yue-HK", "yue"],
             expected_region_chain: &["yue-HK", "und-HK"],
+            expected_script_chain: &["yue-HK", "yue", "und-Hant"],
         },
         TestCase {
             input: "yue-HK",
@@ -484,6 +533,34 @@ mod tests {
             // TODO(#1964): add "zh" as a target.
             expected_language_chain: &["yue-HK", "yue", "zh-Hant"],
             expected_region_chain: &["yue-HK", "und-HK"],
+            expected_script_chain: &["yue-HK", "yue", "und-Hant"],
+        },
+        TestCase {
+            input: "az-Arab-IR",
+            requires_data: true,
+            extension_key: None,
+            fallback_supplement: None,
+            expected_language_chain: &["az-IR", "az-Arab-IR", "az-Arab"],
+            expected_region_chain: &["az-IR", "und-IR"],
+            expected_script_chain: &["az-Arab-IR", "az-Arab", "az-IR", "az", "und-Arab"],
+        },
+        TestCase {
+            input: "az-IR",
+            requires_data: true,
+            extension_key: None,
+            fallback_supplement: None,
+            expected_language_chain: &["az-IR", "az-Arab-IR", "az-Arab"],
+            expected_region_chain: &["az-IR", "und-IR"],
+            expected_script_chain: &["az-IR", "az", "und-Arab"],
+        },
+        TestCase {
+            input: "az-Arab",
+            requires_data: true,
+            extension_key: None,
+            fallback_supplement: None,
+            expected_language_chain: &["az-Arab"],
+            expected_region_chain: &["az-IR", "und-IR"],
+            expected_script_chain: &["az-Arab", "az", "und-Arab"],
         },
     ];
 
@@ -499,6 +576,7 @@ mod tests {
                     cas.expected_language_chain,
                 ),
                 (LocaleFallbackPriority::Region, cas.expected_region_chain),
+                (LocaleFallbackPriority::Script, cas.expected_script_chain),
             ] {
                 let mut config = LocaleFallbackConfig::default();
                 config.priority = priority;
@@ -512,63 +590,13 @@ mod tests {
                 let mut it = fallbacker
                     .for_config(config)
                     .fallback_for(Locale::from_str(cas.input).unwrap().into());
-                for &expected in expected_chain {
-                    assert_eq!(
-                        expected,
-                        &*it.get().write_to_string(),
-                        "{:?} ({:?})",
-                        cas.input,
-                        priority
-                    );
+                let mut chain = vec![];
+                while !it.get().is_und() && chain.last() != Some(&it.get().to_string()) {
+                    chain.push(it.get().to_string());
                     it.step();
                 }
-                assert_eq!(
-                    "und",
-                    &*it.get().write_to_string(),
-                    "{:?} ({:?})",
-                    cas.input,
-                    priority
-                );
-            }
-        }
-    }
 
-    #[test]
-    fn test_fallback_transliteration() {
-        let cases: &'static [(&'static str, &'static [&'static str])] = &[
-            ("en-US", &["en-US", "en", "und-Latn"]),
-            (
-                "az-Arab-IR",
-                &["az-Arab-IR", "az-Arab", "az-IR", "az", "und-Arab"],
-            ),
-            ("az-IR", &["az-IR", "az", "und-Arab"]),
-            ("az-Arab", &["az-Arab", "az", "und-Arab"]),
-            ("az", &["az", "und-Latn"]),
-            ("ru-RU", &["ru-RU", "ru", "und-Cyrl"]),
-            ("el-GR", &["el-GR", "el", "und-Grek"]),
-            ("el", &["el", "und-Grek"]),
-            ("el-Deva", &["el-Deva", "el", "und-Deva"]),
-            // degenerate case
-            ("und", &["und"]),
-        ];
-
-        let fallbacker = LocaleFallbacker::new();
-        for &(input, expected_chain) in cases {
-            let priority = FallbackPriority::Transliteration;
-            let mut config = LocaleFallbackConfig::default();
-            config.priority = priority;
-            let mut it = fallbacker
-                .for_config(config)
-                .fallback_for(Locale::from_str(input).unwrap().into());
-            for &expected in expected_chain {
-                assert_eq!(
-                    expected,
-                    &*it.get().write_to_string(),
-                    "{:?} ({:?})",
-                    input,
-                    priority
-                );
-                it.step();
+                assert_eq!(&chain, expected_chain, "{:?} ({:?})", cas.input, priority);
             }
         }
     }
