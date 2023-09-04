@@ -427,6 +427,10 @@ impl<'a, 'b> RepMatcher<'a, 'b, true> {
 
 // we can only finish matching the key once
 impl<'a, 'b> RepMatcher<'a, 'b, false> {
+    pub(super) fn finish_match(self) -> Insertable<'a, 'b> {
+        Insertable::from_matcher(self.finish_key())
+    }
+
     pub(super) fn finish_key(self) -> RepMatcher<'a, 'b, true> {
         RepMatcher {
             rep: self.rep,

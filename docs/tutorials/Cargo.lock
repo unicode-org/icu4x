@@ -193,6 +193,14 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "14c189c53d098945499cdfa7ecc63567cf3886b3332b312a5b4585d8d3a6a610"
 
 [[package]]
+name = "calendrical_calculations"
+version = "0.1.0"
+dependencies = [
+ "displaydoc",
+ "libm",
+]
+
+[[package]]
 name = "cc"
 version = "1.0.79"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -722,6 +730,7 @@ dependencies = [
 name = "icu_calendar"
 version = "1.2.0"
 dependencies = [
+ "calendrical_calculations",
  "databake",
  "displaydoc",
  "icu_calendar_data",
@@ -1078,6 +1087,7 @@ dependencies = [
  "icu_locid",
  "icu_locid_transform",
  "icu_provider",
+ "serde",
  "tinystr",
  "yoke",
  "zerovec",
@@ -1169,6 +1179,7 @@ dependencies = [
  "icu_decimal",
  "icu_displaynames",
  "icu_list",
+ "icu_locid_transform",
  "icu_plurals",
  "icu_provider",
  "zerovec",

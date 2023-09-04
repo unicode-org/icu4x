@@ -886,7 +886,9 @@ impl Pass1ResultGenerator {
 
         for var in &used_variables {
             // we check for unknown variables during the first pass, so these should exist
-            let var_data = var_data_map.get(var).ok_or(PEK::Internal)?;
+            let var_data = var_data_map
+                .get(var)
+                .ok_or(PEK::Internal("unexpected unknown variable"))?;
             combined_counts.combine(var_data.counts);
         }
 
@@ -903,11 +905,13 @@ impl Pass1ResultGenerator {
         }
         if self.current_vars.contains(name) {
             // cyclic dependency - should not occur
-            return Err(PEK::Internal.into());
+            return Err(PEK::Internal("unexpected cyclic variable").into());
         }
         self.current_vars.insert(name.to_owned());
         // we check for unknown variables during the first pass, so these should exist
-        let var_data = var_data_map.get(name).ok_or(PEK::Internal)?;
+        let var_data = var_data_map
+            .get(name)
+            .ok_or(PEK::Internal("unexpected unknown variable"))?;
         let mut transitive_dependencies = var_data.used_variables.clone();
         var_data.used_variables.iter().try_for_each(|var| {
             self.visit_var(var, var_data_map)?;

@@ -40,6 +40,9 @@ icu_transliteration_data = { workspace = true, optional = true }
 [target.'cfg(not(target_arch = "wasm32"))'.dev-dependencies]
 criterion = "0.4.0"
 
+[lib]
+bench = false
+
 [features]
 default = ["compiled_data"]
 std = []

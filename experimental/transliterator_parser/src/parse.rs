@@ -108,21 +108,26 @@ pub(crate) struct BasicId {
 }
 
 impl BasicId {
-    pub(crate) fn is_null(&self) -> bool {
-        self.source.to_lowercase() == "any"
-            && self.target.to_lowercase() == "null"
-            && self.variant.is_none()
-    }
-
     pub(crate) fn reverse(self) -> Self {
-        if self.is_null() {
-            return self;
-        }
-        // TODO(#3736): add hardcoded reverses here
+        let source = self.source.to_lowercase();
+        let target = self.target.to_lowercase();
+        let (new_source, new_target) = match (source.as_str(), target.as_str()) {
+            // hardcoded inverses
+            ("any", "lower") => (self.source, "Upper".to_string()),
+            ("any", "upper") => (self.source, "Lower".to_string()),
+            ("any", "nfc") => (self.source, "NFD".to_string()),
+            ("any", "nfd") => (self.source, "NFC".to_string()),
+            ("any", "nfkc") => (self.source, "NFKD".to_string()),
+            ("any", "nfkd") => (self.source, "NFKC".to_string()),
+            // no-ops
+            ("any", "remove" | "null") => (self.source, self.target),
+            // default inverse swaps source and target
+            _ => (self.target, self.source),
+        };
 
         Self {
-            source: self.target,
-            target: self.source,
+            source: new_source,
+            target: new_target,
             variant: self.variant,
         }
     }
@@ -402,8 +407,35 @@ where
         }
     }
 
+    // skips ICU4C pragmas of the form `use variable range 0xFFFF 0xFFFF ;`
+    fn skip_icu_pragma(&mut self) {
+        loop {
+            self.skip_whitespace();
+            if let Some(start) = self.peek_index() {
+                // the returned index comes from `self.source`'s `char_indices`.
+                #[allow(clippy::indexing_slicing)]
+                let start_source = &self.source[start..];
+                if start_source.starts_with("use variable range 0x") {
+                    let conv_idx = start_source.find(['>', '<', '→', '←', '↔']);
+                    let end_idx = start_source.find(Self::RULE_END);
+                    // avoid cases like `use variable range 0x70 0x72 > b ;` which not pragmas
+                    match (end_idx, conv_idx) {
+                        (Some(end_idx), Some(conv_idx)) if conv_idx < end_idx => break,
+                        (None, Some(_)) => break,
+                        _ => {}
+                    }
+                    self.skip_until(Self::RULE_END);
+                    // search for another pragma
+                    continue;
+                }
+            }
+            break;
+        }
+    }
+
     fn parse_rules(&mut self) -> Result<Vec<Rule>> {
         let mut rules = Vec::new();
+        self.skip_icu_pragma();
 
         loop {
             self.skip_whitespace();
@@ -482,7 +514,8 @@ where
             //  2. the above none checks implying forward_basic_id.is_some()
             // because this is difficult to verify, returning a PEK::Internal anyway
             // instead of unwrapping, despite technically being unnecessary
-            let forward_basic_id = forward_basic_id.ok_or(PEK::Internal)?;
+            let forward_basic_id =
+                forward_basic_id.ok_or(PEK::Internal("transform rule logic error"))?;
             return Ok(Rule::Transform(
                 SingleId {
                     basic_id: forward_basic_id,
@@ -979,7 +1012,8 @@ where
         // which are all exactly one UTF-8 byte long, so slicing on these offsets always respects char boundaries
         #[allow(clippy::indexing_slicing)]
         let hex_source = &self.source[first_offset..=end_offset];
-        let num = u32::from_str_radix(hex_source, 16).map_err(|_| PEK::Internal)?;
+        let num = u32::from_str_radix(hex_source, 16)
+            .map_err(|_| PEK::Internal("expected valid hex escape"))?;
         char::try_from(num).map_err(|_| PEK::InvalidEscape.with_offset(end_offset))
     }
 
@@ -1050,7 +1084,7 @@ where
             None => {
                 let (set, _) = self
                     .unicode_set_from_str(Self::DOT_SET)
-                    .map_err(|_| PEK::Internal)?;
+                    .map_err(|_| PEK::Internal("dot set syntax not valid"))?;
                 self.dot_set = Some(set.clone());
                 Ok(set)
             }
@@ -1333,12 +1367,15 @@ where
         + DataProvider<ScriptWithExtensionsPropertyV1Marker>
         + DataProvider<XidStartV1Marker>,
 {
-    let xid_start = load_xid_start(provider).map_err(|_| PEK::Internal)?;
+    let xid_start =
+        load_xid_start(provider).map_err(|_| PEK::Internal("data loading for xid_start broke"))?;
     let xid_start_list = xid_start.to_code_point_inversion_list();
-    let xid_continue = load_xid_continue(provider).map_err(|_| PEK::Internal)?;
+    let xid_continue = load_xid_continue(provider)
+        .map_err(|_| PEK::Internal("data loading for xid_continue broke"))?;
     let xid_continue_list = xid_continue.to_code_point_inversion_list();
 
-    let pat_ws = load_pattern_white_space(provider).map_err(|_| PEK::Internal)?;
+    let pat_ws = load_pattern_white_space(provider)
+        .map_err(|_| PEK::Internal("data loading for pattern_white_space broke"))?;
     let pat_ws_list = pat_ws.to_code_point_inversion_list();
 
     let mut parser = TransliteratorParser::new(
@@ -1358,6 +1395,11 @@ mod tests {
     #[test]
     fn test_full() {
         let source = r"
+
+        # these are skipped:
+        use variable range 0x70 0x72 ;
+        use variable range 0x1 0x2 ;
+
         :: [a-z\]] ; :: [b-z] Latin/BGN ;
         :: Source-Target/Variant () ;::([b-z]Target-Source/Variant) ;
         :: [a-z] Any ([b-z] Target-Source/Variant);
@@ -1435,6 +1477,7 @@ mod tests {
             r"+ > b ;",
             r"* > b ;",
             r"? > b ;",
+            r"use variable range 0x71 > 2 ; use variable range 0x71 ;",
         ];
 
         for source in sources {

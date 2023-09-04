@@ -2,11 +2,13 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+mod hardcoded;
 #[allow(clippy::indexing_slicing, clippy::unwrap_used)] // TODO(#3958): Remove.
 mod replaceable;
 
 use crate::provider::{FunctionCall, Rule, RuleULE, SimpleId, VarTable};
 use crate::provider::{RuleBasedTransliterator, Segment, TransliteratorRulesV1Marker};
+use crate::transliterator::hardcoded::Case;
 use crate::TransliteratorError;
 use alloc::boxed::Box;
 use alloc::string::{String, ToString};
@@ -124,6 +126,7 @@ enum InternalTransliterator {
     RuleBased(DataPayload<TransliteratorRulesV1Marker>),
     Composing(ComposingTransliterator),
     Decomposing(DecomposingTransliterator),
+    Hex(hardcoded::HexTransliterator),
     Null,
     Remove,
     Dyn(Box<dyn CustomTransliterator>),
@@ -136,6 +139,7 @@ impl InternalTransliterator {
             // TODO(#3910): internal hardcoded transliterators
             Self::Composing(t) => t.transliterate(rep, env),
             Self::Decomposing(t) => t.transliterate(rep, env),
+            Self::Hex(t) => t.transliterate(rep),
             Self::Null => (),
             Self::Remove => rep.replace_modifiable_with_str(""),
             Self::Dyn(custom) => {
@@ -450,6 +454,21 @@ impl Transliterator {
             )),
             "any-null" => Ok(InternalTransliterator::Null),
             "any-remove" => Ok(InternalTransliterator::Remove),
+            "any-hex-unicode" => Ok(InternalTransliterator::Hex(
+                hardcoded::HexTransliterator::new("U+", "", 4, Case::Upper),
+            )),
+            "any-hex-rust" => Ok(InternalTransliterator::Hex(
+                hardcoded::HexTransliterator::new("\\u{", "}", 2, Case::Lower),
+            )),
+            "any-hex-xml" => Ok(InternalTransliterator::Hex(
+                hardcoded::HexTransliterator::new("&#x", ";", 1, Case::Upper),
+            )),
+            "any-hex-perl" => Ok(InternalTransliterator::Hex(
+                hardcoded::HexTransliterator::new("\\x{", "}", 1, Case::Upper),
+            )),
+            "any-hex-plain" => Ok(InternalTransliterator::Hex(
+                hardcoded::HexTransliterator::new("", "", 4, Case::Upper),
+            )),
             s => Err(DataError::custom("unavailable transliterator")
                 .with_debug_context(s)
                 .into()),
@@ -1432,6 +1451,24 @@ mod tests {
         let t = Transliterator::try_new("und-t-und-latn-d0-ascii".parse().unwrap()).unwrap();
         let input = "äa\u{0308}";
         let output = "aa";
+        assert_eq!(t.transliterate(input.to_string()), output);
+    }
+
+    #[test]
+    fn test_hex_rust() {
+        let t = Transliterator::try_new("und-t-und-s0-test-d0-test-m0-hexrust".parse().unwrap())
+            .unwrap();
+        let input = "\0äa\u{10FFFF}❤!";
+        let output = r"\u{00}\u{e4}\u{61}\u{10ffff}\u{2764}\u{21}";
+        assert_eq!(t.transliterate(input.to_string()), output);
+    }
+
+    #[test]
+    fn test_hex_unicode() {
+        let t = Transliterator::try_new("und-t-und-s0-test-d0-test-m0-hexuni".parse().unwrap())
+            .unwrap();
+        let input = "\0äa\u{10FFFF}❤!";
+        let output = "U+0000U+00E4U+0061U+10FFFFU+2764U+0021";
         assert_eq!(t.transliterate(input.to_string()), output);
     }
 }
