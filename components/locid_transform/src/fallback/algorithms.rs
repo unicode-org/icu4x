@@ -197,19 +197,41 @@ impl<'a> LocaleFallbackIteratorInner<'a> {
     }
 
     fn step_script(&mut self, locale: &mut DataLocale) {
-        // 1. Remove the region
-        if let Some(region) = locale.region() {
-            self.backup_region = Some(region);
-            locale.set_region(None);
+        // 1. Remove the extension fallback keyword
+        if let Some(extension_key) = self.config.extension_key {
+            if let Some(value) = locale.remove_unicode_ext(&extension_key) {
+                self.backup_extension = Some(value);
+                return;
+            }
+        }
+        // 2. Remove the subdivision keyword
+        if let Some(value) = locale.remove_unicode_ext(&SUBDIVISION_KEY) {
+            self.backup_subdivision = Some(value);
+            return;
+        }
+        // 3. Assert that the locale is a language identifier
+        debug_assert!(!locale.has_unicode_ext());
+        // 4. Remove variants
+        if locale.has_variants() {
+            self.backup_variants = Some(locale.clear_variants());
             return;
         }
 
-        // 2. Remove the script if we have a language
+        // 4. Remove the region
+        if let Some(region) = locale.region() {
+            self.backup_region = Some(region);
+            locale.set_region(None);
+            self.restore_extensions_variants(locale);
+            return;
+        }
+
+        // 5. Remove the script if we have a language
         if !locale.language().is_empty() {
             if locale.script().is_some() {
                 locale.set_script(None);
                 if let Some(region) = self.backup_region.take() {
                     locale.set_region(Some(region));
+                    self.restore_extensions_variants(locale);
                 }
                 // needed if more fallback is added at the end
                 #[allow(clippy::needless_return)]
@@ -218,6 +240,7 @@ impl<'a> LocaleFallbackIteratorInner<'a> {
                 // 3. Remove the language and apply the maximized script
                 locale.set_language(Language::UND);
                 locale.set_script(Some(self.max_script));
+                self.restore_extensions_variants(locale);
                 // needed if more fallback is added at the end
                 #[allow(clippy::needless_return)]
                 return;
@@ -228,8 +251,11 @@ impl<'a> LocaleFallbackIteratorInner<'a> {
         // so we don't either. They would be found here if they are ever needed:
         // https://github.com/unicode-cldr/cldr-core/blob/master/supplemental/languageData.json
 
-        // 4. Remove script
-        locale.set_script(None)
+        // 6. Remove script
+        if locale.script().is_some() {
+            locale.set_script(None);
+            self.restore_extensions_variants(locale);
+        }
     }
 
     fn restore_extensions_variants(&mut self, locale: &mut DataLocale) {
@@ -287,7 +313,13 @@ mod tests {
             fallback_supplement: None,
             expected_language_chain: &["en-u-sd-usca", "en"],
             expected_region_chain: &["en-u-sd-usca", "en", "und-u-sd-usca"],
-            expected_script_chain: &["en-u-sd-usca", "und-Latn-u-sd-usca", "und-u-sd-usca"],
+            expected_script_chain: &[
+                "en-u-sd-usca",
+                "en",
+                "und-Latn-u-sd-usca",
+                "und-Latn",
+                "und-u-sd-usca",
+            ],
         },
         TestCase {
             input: "en-US-u-hc-h12-sd-usca",
@@ -298,8 +330,11 @@ mod tests {
             expected_region_chain: &["en-US-u-sd-usca", "en-US", "und-US-u-sd-usca", "und-US"],
             expected_script_chain: &[
                 "en-US-u-sd-usca",
+                "en-US",
                 "en-u-sd-usca",
+                "en",
                 "und-Latn-u-sd-usca",
+                "und-Latn",
                 "und-u-sd-usca",
             ],
         },
@@ -330,9 +365,20 @@ mod tests {
             ],
             expected_script_chain: &[
                 "en-US-fonipa-u-hc-h12-sd-usca",
+                "en-US-fonipa-u-sd-usca",
+                "en-US-fonipa",
+                "en-US",
                 "en-fonipa-u-hc-h12-sd-usca",
+                "en-fonipa-u-sd-usca",
+                "en-fonipa",
+                "en",
                 "und-Latn-fonipa-u-hc-h12-sd-usca",
+                "und-Latn-fonipa-u-sd-usca",
+                "und-Latn-fonipa",
+                "und-Latn",
                 "und-fonipa-u-hc-h12-sd-usca",
+                "und-fonipa-u-sd-usca",
+                "und-fonipa",
             ],
         },
         TestCase {
@@ -342,7 +388,7 @@ mod tests {
             fallback_supplement: None,
             expected_language_chain: &["en-u-sd-usca", "en"],
             expected_region_chain: &["en-US-u-sd-usca", "en-US", "und-US-u-sd-usca", "und-US"],
-            expected_script_chain: &["en-u-sd-usca", "und-Latn-u-sd-usca", "und-u-sd-usca"],
+            expected_script_chain: &["en-u-sd-usca", "en", "und-Latn-u-sd-usca", "und-Latn", "und-u-sd-usca"],
         },
         TestCase {
             input: "en-Latn-u-sd-usca",
@@ -351,12 +397,7 @@ mod tests {
             fallback_supplement: None,
             expected_language_chain: &["en-u-sd-usca", "en"],
             expected_region_chain: &["en-US-u-sd-usca", "en-US", "und-US-u-sd-usca", "und-US"],
-            expected_script_chain: &[
-                "en-Latn-u-sd-usca",
-                "en-u-sd-usca",
-                "und-Latn-u-sd-usca",
-                "und-u-sd-usca",
-            ],
+            expected_script_chain: &["en-Latn-u-sd-usca", "en-Latn", "en", "und-Latn-u-sd-usca", "und-Latn", "und-u-sd-usca"],
         },
         TestCase {
             input: "en-Latn-US-u-sd-usca",
@@ -365,14 +406,7 @@ mod tests {
             fallback_supplement: None,
             expected_language_chain: &["en-US-u-sd-usca", "en-US", "en-u-sd-usca", "en"],
             expected_region_chain: &["en-US-u-sd-usca", "en-US", "und-US-u-sd-usca", "und-US"],
-            expected_script_chain: &[
-                "en-Latn-US-u-sd-usca",
-                "en-Latn-u-sd-usca",
-                "en-US-u-sd-usca",
-                "en-u-sd-usca",
-                "und-Latn-u-sd-usca",
-                "und-u-sd-usca",
-            ],
+            expected_script_chain: &["en-Latn-US-u-sd-usca", "en-Latn-US", "en-Latn-u-sd-usca", "en-Latn", "en-US-u-sd-usca", "en-US", "en-u-sd-usca", "en", "und-Latn-u-sd-usca", "und-Latn", "und-u-sd-usca"],
         },
         TestCase {
             // NOTE: -u-rg is not yet supported; when it is, this test should be updated
@@ -416,7 +450,7 @@ mod tests {
                 "sr-Latn",
             ],
             expected_region_chain: &["sr-ME-fonipa", "sr-ME", "und-ME-fonipa", "und-ME"],
-            expected_script_chain: &["sr-ME-fonipa", "sr-fonipa", "und-Latn-fonipa", "und-fonipa"],
+            expected_script_chain: &["sr-ME-fonipa", "sr-ME", "sr-fonipa", "sr", "und-Latn-fonipa", "und-Latn", "und-fonipa"],
         },
         TestCase {
             input: "sr-RS",
@@ -461,12 +495,7 @@ mod tests {
             fallback_supplement: None,
             expected_language_chain: &["ca-ES-valencia", "ca-ES", "ca-valencia", "ca"],
             expected_region_chain: &["ca-ES-valencia", "ca-ES", "und-ES-valencia", "und-ES"],
-            expected_script_chain: &[
-                "ca-ES-valencia",
-                "ca-valencia",
-                "und-Latn-valencia",
-                "und-valencia",
-            ],
+            expected_script_chain: &["ca-ES-valencia", "ca-ES", "ca-valencia", "ca", "und-Latn-valencia", "und-Latn", "und-valencia"],
         },
         TestCase {
             input: "es-AR",
@@ -597,6 +626,14 @@ mod tests {
                 }
 
                 assert_eq!(&chain, expected_chain, "{:?} ({:?})", cas.input, priority);
+
+                assert!(
+                    chain.last() != Some(&it.get().to_string()),
+                    "loop in {:?} ({:?}) at {:?}",
+                    cas.input,
+                    priority,
+                    it.get().is_und()
+                );
             }
         }
     }
