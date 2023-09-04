@@ -155,7 +155,7 @@ impl<'a, T: VarULE + ?Sized, F: VarZeroVecFormat> VarZeroVecComponents<'a, T, F>
     /// Construct a new VarZeroVecComponents, checking invariants about the overall buffer size:
     ///
     /// - There must be either zero or at least four bytes (if four, this is the "length" parsed as a usize)
-    /// - There must be at least `4*length + 4` bytes total, to form the the array `indices` of indices
+    /// - There must be at least `4*length + 4` bytes total, to form the array `indices` of indices
     /// - `indices[i]..indices[i+1]` must index into a valid section of
     ///   `things`, such that it parses to a `T::VarULE`
     /// - `indices[len - 1]..things.len()` must index into a valid section of

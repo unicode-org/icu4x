@@ -460,7 +460,7 @@ mod test {
                 assert_eq!(
                     i.cmp(&j),
                     iso_i.cmp(&iso_j),
-                    "ISO directionality inconcistent with directionality for i: {i}, j: {j}"
+                    "ISO directionality inconsistent with directionality for i: {i}, j: {j}"
                 );
                 assert_eq!(
                     i.cmp(&j),
@@ -485,7 +485,7 @@ mod test {
                 assert_eq!(
                     i.cmp(&j),
                     iso_i.cmp(&iso_j),
-                    "ISO directionality inconcistent with directionality for i: {i}, j: {j}"
+                    "ISO directionality inconsistent with directionality for i: {i}, j: {j}"
                 );
                 assert_eq!(
                     i.cmp(&j),

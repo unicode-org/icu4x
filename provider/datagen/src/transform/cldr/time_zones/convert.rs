@@ -177,23 +177,34 @@ impl From<CldrTimeZonesData<'_>> for MetazonePeriodV1<'static> {
         let meta_zone_id_data = &compute_meta_zone_ids_hashmap(other.meta_zone_ids_resource);
         Self(
             data.iter()
-                .flat_map(|(key, zone)| {
-                    let key = key;
-                    match zone {
-                        ZonePeriod::Region(periods) => match bcp47_tzid_data.get(key) {
-                            Some(bcp47) => {
-                                vec![(*bcp47, periods.clone(), meta_zone_id_data.clone())]
-                            }
-                            None => panic!("Cannot find bcp47 for {key:?}."),
-                        },
-                        ZonePeriod::LocationOrSubRegion(place) => place
-                            .iter()
-                            .flat_map(move |(inner_key, location_or_subregion)| {
-                                let mut key = key.clone();
-                                key.push('/');
-                                key.push_str(inner_key);
-                                match location_or_subregion {
-                                    MetaLocationOrSubRegion::Location(periods) => {
+                .flat_map(|(key, zone)| match zone {
+                    ZonePeriod::Region(periods) => match bcp47_tzid_data.get(key) {
+                        Some(bcp47) => {
+                            vec![(*bcp47, periods.clone(), meta_zone_id_data.clone())]
+                        }
+                        None => panic!("Cannot find bcp47 for {key:?}."),
+                    },
+                    ZonePeriod::LocationOrSubRegion(place) => place
+                        .iter()
+                        .flat_map(move |(inner_key, location_or_subregion)| {
+                            let mut key = key.clone();
+                            key.push('/');
+                            key.push_str(inner_key);
+                            match location_or_subregion {
+                                MetaLocationOrSubRegion::Location(periods) => match bcp47_tzid_data
+                                    .get(&key)
+                                {
+                                    Some(bcp47) => {
+                                        vec![(*bcp47, periods.clone(), meta_zone_id_data.clone())]
+                                    }
+                                    None => panic!("Cannot find bcp47 for {key:?}."),
+                                },
+                                MetaLocationOrSubRegion::SubRegion(subregion) => subregion
+                                    .iter()
+                                    .flat_map(move |(inner_inner_key, periods)| {
+                                        let mut key = key.clone();
+                                        key.push('/');
+                                        key.push_str(inner_inner_key);
                                         match bcp47_tzid_data.get(&key) {
                                             Some(bcp47) => {
                                                 vec![(
@@ -204,29 +215,11 @@ impl From<CldrTimeZonesData<'_>> for MetazonePeriodV1<'static> {
                                             }
                                             None => panic!("Cannot find bcp47 for {key:?}."),
                                         }
-                                    }
-                                    MetaLocationOrSubRegion::SubRegion(subregion) => subregion
-                                        .iter()
-                                        .flat_map(move |(inner_inner_key, periods)| {
-                                            let mut key = key.clone();
-                                            key.push('/');
-                                            key.push_str(inner_inner_key);
-                                            match bcp47_tzid_data.get(&key) {
-                                                Some(bcp47) => {
-                                                    vec![(
-                                                        *bcp47,
-                                                        periods.clone(),
-                                                        meta_zone_id_data.clone(),
-                                                    )]
-                                                }
-                                                None => panic!("Cannot find bcp47 for {key:?}."),
-                                            }
-                                        })
-                                        .collect::<Vec<_>>(),
-                                }
-                            })
-                            .collect::<Vec<_>>(),
-                    }
+                                    })
+                                    .collect::<Vec<_>>(),
+                            }
+                        })
+                        .collect::<Vec<_>>(),
                 })
                 .flat_map(metazone_periods_iter)
                 .collect(),

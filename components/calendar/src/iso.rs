@@ -411,7 +411,7 @@ impl Iso {
 
     // Lisp code reference: https://github.com/EdReingold/calendar-code2/blob/1ee51ecfaae6f856b0d7de3e36e9042100b4f424/calendar.l#L1191-L1217
     fn iso_year_from_fixed(date: RataDie) -> i64 {
-        // Shouldn't overflow because it's not possbile to construct extreme values of RataDie
+        // Shouldn't overflow because it's not possible to construct extreme values of RataDie
         let date = date - EPOCH;
 
         // 400 year cycles have 146097 days
