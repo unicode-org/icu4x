@@ -15,7 +15,7 @@ use crate::error::LocationOutOfBoundsError;
 use crate::helpers::{
     arccos_degrees, arcsin_degrees, arctan_degrees, binary_search, cos_degrees, div_rem_euclid_f64,
     i64_to_i32, interval_mod_f64, invert_angular, mod3, next_moment, poly, signum, sin_degrees,
-    tan_degrees, I32Result,
+    tan_degrees,
 };
 use crate::rata_die::{Moment, RataDie};
 
@@ -1553,10 +1553,10 @@ impl Astronomical {
         let maybe_n =
             i64_to_i32(libm::round(div_rem_euclid_f64(moment - t0, MEAN_SYNODIC_MONTH).0) as i64);
         debug_assert!(
-            matches!(maybe_n, I32Result::WithinRange(_)),
+            maybe_n.is_ok(),
             "Lunar phase moment should be in range of i32"
         );
-        let n = maybe_n.saturate();
+        let n = maybe_n.unwrap_or_else(|e| e.saturate());
         let a = div_rem_euclid_f64(
             Self::lunar_longitude(julian_centuries) - Self::solar_longitude(julian_centuries),
             360.0,
@@ -1909,11 +1909,8 @@ impl Astronomical {
         let maybe_n = i64_to_i32(libm::round(
             div_rem_euclid_f64(moment - t0, MEAN_SYNODIC_MONTH).0 - phi / 360.0,
         ) as i64);
-        debug_assert!(
-            matches!(maybe_n, I32Result::WithinRange(_)),
-            "Num of new moon should be in range of i32"
-        );
-        let n = maybe_n.saturate();
+        debug_assert!(maybe_n.is_ok(), "Num of new moon should be in range of i32");
+        let n = maybe_n.unwrap_or_else(|e| e.saturate());
         let mut result = n;
         let mut iters = 0;
         let max_iters = 31;
