@@ -178,6 +178,7 @@ mod tests {
     #[test]
     fn test_source_to_struct() {
         let source = r"
+        use variable range 0xFFF 0xFFFF ;
         :: [1] ;
         :: Latin-InterIndic ;
         $a = [a] [b]+ ;
