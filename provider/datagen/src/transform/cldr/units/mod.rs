@@ -50,7 +50,7 @@ fn test_basic() {
     use icu_provider::prelude::*;
     use icu_unitsconversion::provider::*;
 
-    let provider = crate::DatagenProvider::latest_tested_offline_subset();
+    let provider = crate::DatagenProvider::new_testing();
 
     let und: DataPayload<UnitsConstantsV1Marker> = provider
         .load(DataRequest {

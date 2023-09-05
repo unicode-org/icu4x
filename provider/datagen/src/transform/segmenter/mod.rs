@@ -679,7 +679,7 @@ mod tests {
 
     #[test]
     fn load_grapheme_cluster_data() {
-        let provider = crate::DatagenProvider::latest_tested_offline_subset();
+        let provider = crate::DatagenProvider::new_testing();
         let payload: DataPayload<GraphemeClusterBreakDataV1Marker> = provider
             .load(Default::default())
             .expect("Loading should succeed!")

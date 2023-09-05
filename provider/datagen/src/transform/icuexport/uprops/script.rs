@@ -72,7 +72,7 @@ mod tests {
 
     #[test]
     fn test_script_val_from_script_extensions() {
-        let provider = crate::DatagenProvider::latest_tested_offline_subset();
+        let provider = crate::DatagenProvider::new_testing();
 
         let payload: DataPayload<ScriptWithExtensionsPropertyV1Marker> = provider
             .load(Default::default())
@@ -92,7 +92,7 @@ mod tests {
 
     #[test]
     fn test_scx_array_from_script_extensions() {
-        let provider = crate::DatagenProvider::latest_tested_offline_subset();
+        let provider = crate::DatagenProvider::new_testing();
 
         let payload: DataPayload<ScriptWithExtensionsPropertyV1Marker> = provider
             .load(Default::default())
@@ -166,7 +166,7 @@ mod tests {
 
     #[test]
     fn test_has_script() {
-        let provider = crate::DatagenProvider::latest_tested_offline_subset();
+        let provider = crate::DatagenProvider::new_testing();
 
         let payload: DataPayload<ScriptWithExtensionsPropertyV1Marker> = provider
             .load(Default::default())
@@ -246,7 +246,7 @@ mod tests {
 
     #[test]
     fn test_get_script_extensions_set() {
-        let provider = crate::DatagenProvider::latest_tested_offline_subset();
+        let provider = crate::DatagenProvider::new_testing();
 
         let payload: DataPayload<ScriptWithExtensionsPropertyV1Marker> = provider
             .load(Default::default())
