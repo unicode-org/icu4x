@@ -7,8 +7,13 @@
 use crate::options::*;
 use crate::provider::*;
 use alloc::borrow::Cow;
-use icu_locid::{subtags::Language, subtags::Region, subtags::Script, subtags::Variant, Locale};
+use alloc::string::String;
+use icu_locid::{
+    subtags::Language, subtags::Region, subtags::Script, subtags::Variant, LanguageIdentifier,
+    Locale,
+};
 use icu_provider::prelude::*;
+use zerovec::ule::UnvalidatedStr;
 
 /// Lookup of the locale-specific display names by region code.
 ///
@@ -110,7 +115,6 @@ pub struct ScriptDisplayNames {
     script_data: DataPayload<ScriptDisplayNamesV1Marker>,
 }
 
-#[allow(dead_code)] // not public at the moment
 impl ScriptDisplayNames {
     icu_provider::gen_any_buffer_data_constructors!(
         locale: include,
@@ -188,7 +192,6 @@ pub struct VariantDisplayNames {
     variant_data: DataPayload<VariantDisplayNamesV1Marker>,
 }
 
-#[allow(dead_code)] // not public at the moment
 impl VariantDisplayNames {
     icu_provider::gen_any_buffer_data_constructors!(
         locale: include,
@@ -333,9 +336,9 @@ impl LanguageDisplayNames {
 /// )
 /// .expect("Data should load successfully");
 ///
-/// assert_eq!(display_name.of(&locale!("de-CH")), "Swiss High German");
-/// assert_eq!(display_name.of(&locale!("de")), "German");
-/// assert_eq!(display_name.of(&locale!("de-MX")), "German (Mexico)");
+/// assert_eq!(display_name.of(&locale!("en-GB")), "British English");
+/// assert_eq!(display_name.of(&locale!("en")), "English");
+/// assert_eq!(display_name.of(&locale!("en-MX")), "English (Mexico)");
 /// assert_eq!(display_name.of(&locale!("xx-YY")), "xx (YY)");
 /// assert_eq!(display_name.of(&locale!("xx")), "xx");
 /// ```
@@ -345,13 +348,11 @@ pub struct LocaleDisplayNamesFormatter {
     locale_data: DataPayload<LocaleDisplayNamesV1Marker>,
 
     language_data: DataPayload<LanguageDisplayNamesV1Marker>,
-    #[allow(dead_code)] // TODO use this
     script_data: DataPayload<ScriptDisplayNamesV1Marker>,
     region_data: DataPayload<RegionDisplayNamesV1Marker>,
-    #[allow(dead_code)] // TODO add support for variants
     variant_data: DataPayload<VariantDisplayNamesV1Marker>,
     // key_data: DataPayload<KeyDisplayNamesV1Marker>,
-    // measuerment_data: DataPayload<MeasurementSystemsDisplayNamesV1Marker>,
+    // measurement_data: DataPayload<MeasurementSystemsDisplayNamesV1Marker>,
     // subdivisions_data: DataPayload<SubdivisionsDisplayNamesV1Marker>,
     // transforms_data: DataPayload<TransformsDisplayNamesV1Marker>,
 }
@@ -404,90 +405,135 @@ impl LocaleDisplayNamesFormatter {
     }
 
     /// Returns the display name of a locale.
+    /// This implementation is based on the algorithm described in
+    /// <https://www.unicode.org/reports/tr35/tr35-general.html#locale_display_name_algorithm>
+    ///
     // TODO: Make this return a writeable instead of using alloc
     pub fn of<'a, 'b: 'a, 'c: 'a>(&'b self, locale: &'c Locale) -> Cow<'a, str> {
-        // https://www.unicode.org/reports/tr35/tr35-general.html#Display_Name_Elements
+        // Step - 1: Construct a locale display name string (LDN) for the longest matching subtag.
+        let mut ldn = None;
 
-        // TODO: This binary search needs to return the longest matching found prefix
-        // instead of just perfect matches
-        if let Some(displayname) = match self.options.style {
-            Some(Style::Short) => self
-                .locale_data
-                .get()
-                .short_names
-                .get_by(|bytes| locale.strict_cmp(bytes).reverse()),
-            Some(Style::Long) => self
-                .locale_data
-                .get()
-                .long_names
-                .get_by(|bytes| locale.strict_cmp(bytes).reverse()),
-            Some(Style::Menu) => self
-                .locale_data
-                .get()
-                .menu_names
-                .get_by(|bytes| locale.strict_cmp(bytes).reverse()),
-            _ => None,
-        }
-        .or_else(|| {
-            self.locale_data
-                .get()
-                .names
-                .get_by(|bytes| locale.strict_cmp(bytes).reverse())
-        }) {
-            return Cow::Borrowed(displayname);
-        }
+        // These qualifying strings (QS) will later be set to None if they are part of the LDN.
+        // Using references as we might borrow from these later
+        let mut script_qs = locale.id.script.as_ref();
+        let mut region_qs = locale.id.region.as_ref();
+        let variants_qs = Cow::Borrowed(&*locale.id.variants);
 
-        // TODO: This is a dummy implementation which does not adhere to UTS35. It only uses
-        // the language and region code, and uses a hardcoded pattern to combine them.
+        // TODO: handle the other possible longest subtag cases
 
-        let langdisplay = match self.options.style {
-            Some(Style::Short) => self
-                .language_data
-                .get()
-                .short_names
-                .get(&locale.id.language.into_tinystr().to_unvalidated()),
-            Some(Style::Long) => self
-                .language_data
-                .get()
-                .long_names
-                .get(&locale.id.language.into_tinystr().to_unvalidated()),
-            Some(Style::Menu) => self
-                .language_data
-                .get()
-                .menu_names
-                .get(&locale.id.language.into_tinystr().to_unvalidated()),
-            _ => None,
-        }
-        .or_else(|| {
-            self.language_data
-                .get()
-                .names
-                .get(&locale.id.language.into_tinystr().to_unvalidated())
-        });
-
-        if let Some(region) = locale.id.region {
-            let regiondisplay = match self.options.style {
-                Some(Style::Short) => self
-                    .region_data
-                    .get()
-                    .short_names
-                    .get(&region.into_tinystr().to_unvalidated()),
+        if let Some(script) = locale.id.script {
+            let data = self.locale_data.get();
+            let id = LanguageIdentifier::from((locale.id.language, Some(script), None));
+            let cmp = |uvstr: &UnvalidatedStr| id.strict_cmp(uvstr).reverse();
+            if let Some(x) = match self.options.style {
+                Some(Style::Short) => data.short_names.get_by(cmp),
+                Some(Style::Long) => data.long_names.get_by(cmp),
+                Some(Style::Menu) => data.menu_names.get_by(cmp),
                 _ => None,
             }
-            .or_else(|| {
-                self.region_data
-                    .get()
-                    .names
-                    .get(&region.into_tinystr().to_unvalidated())
-            });
-            // TODO: Use data patterns
-            Cow::Owned(alloc::format!(
-                "{} ({})",
-                langdisplay.unwrap_or(locale.id.language.as_str()),
-                regiondisplay.unwrap_or(region.as_str())
-            ))
-        } else {
-            Cow::Borrowed(langdisplay.unwrap_or(locale.id.language.as_str()))
+            .or_else(|| data.names.get_by(cmp))
+            {
+                ldn = Some(x);
+                script_qs = None;
+            }
         }
+
+        if ldn.is_none() {
+            if let Some(region) = locale.id.region {
+                let data = self.locale_data.get();
+                let id = LanguageIdentifier::from((locale.id.language, None, Some(region)));
+                let cmp = |uvstr: &UnvalidatedStr| id.strict_cmp(uvstr).reverse();
+                if let Some(x) = match self.options.style {
+                    Some(Style::Short) => data.short_names.get_by(cmp),
+                    Some(Style::Long) => data.long_names.get_by(cmp),
+                    Some(Style::Menu) => data.menu_names.get_by(cmp),
+                    _ => None,
+                }
+                .or_else(|| data.names.get_by(cmp))
+                {
+                    ldn = Some(x);
+                    region_qs = None;
+                }
+            }
+        }
+
+        let ldn = ldn
+            .or_else(|| {
+                let data = self.language_data.get();
+                let key = locale.id.language.into_tinystr().to_unvalidated();
+                match self.options.style {
+                    Some(Style::Short) => data.short_names.get(&key),
+                    Some(Style::Long) => data.long_names.get(&key),
+                    Some(Style::Menu) => data.menu_names.get(&key),
+                    _ => None,
+                }
+                .or_else(|| data.names.get(&key))
+            })
+            .unwrap_or(locale.id.language.as_str());
+
+        if script_qs.is_none() && region_qs.is_none() && variants_qs.is_empty() {
+            // The LDN fully represents the locale
+            return Cow::Borrowed(ldn);
+        }
+
+        // Step - 2: Construct the list of qualifying substrings (LQS).
+
+        let script_qs = script_qs.map(|script| {
+            let data = self.script_data.get();
+            let key = script.into_tinystr().to_unvalidated();
+            match self.options.style {
+                Some(Style::Short) => data.short_names.get(&key),
+                _ => None,
+            }
+            .or_else(|| data.names.get(&key))
+            .unwrap_or(script.as_str())
+        });
+
+        let region_qs = region_qs.map(|region| {
+            let data = self.region_data.get();
+            let key = region.into_tinystr().to_unvalidated();
+            match self.options.style {
+                Some(Style::Short) => data.short_names.get(&key),
+                _ => None,
+            }
+            .or_else(|| data.names.get(&key))
+            .unwrap_or(region.as_str())
+        });
+
+        let variants_qs = variants_qs.iter().map(|variant_key| {
+            self.variant_data
+                .get()
+                .names
+                .get(&variant_key.into_tinystr().to_unvalidated())
+                .unwrap_or(variant_key.as_str())
+        });
+
+        let lqs = script_qs.into_iter().chain(region_qs).chain(variants_qs);
+
+        // Step - 3: Write LDN and LQS to output
+        // TODO: Move to an `impl Writeable`
+
+        // TODO: load from data
+        let (before, middle, after) = (" (", ", ", ")");
+
+        let mut output = String::with_capacity(
+            ldn.len() + before.len() + lqs.clone().map(|x| x.len() + middle.len()).sum::<usize>()
+                - middle.len()
+                + after.len(),
+        );
+        output.push_str(ldn);
+        output.push_str(before);
+
+        let mut first = true;
+        for lqs in lqs {
+            if !first {
+                output.push_str(middle);
+            } else {
+                first = false;
+            }
+            output.push_str(lqs);
+        }
+        output.push_str(after);
+        Cow::Owned(output)
     }
 }

@@ -5,7 +5,7 @@
 use self::ffi::ICU4XError;
 use core::fmt;
 #[cfg(feature = "icu_decimal")]
-use fixed_decimal::Error as FixedDecimalError;
+use fixed_decimal::FixedDecimalError;
 #[cfg(any(
     feature = "icu_datetime",
     feature = "icu_timezone",
@@ -45,7 +45,7 @@ pub mod ffi {
     /// A common enum for errors that ICU4X may return, organized by API
     ///
     /// The error names are stable and can be checked against as strings in the JS API
-    #[diplomat::rust_link(fixed_decimal::Error, Enum, compact)]
+    #[diplomat::rust_link(fixed_decimal::FixedDecimalError, Enum, compact)]
     #[diplomat::rust_link(icu::calendar::CalendarError, Enum, compact)]
     #[diplomat::rust_link(icu::collator::CollatorError, Enum, compact)]
     #[diplomat::rust_link(icu::datetime::DateTimeError, Enum, compact)]

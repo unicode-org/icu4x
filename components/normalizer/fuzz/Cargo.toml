@@ -23,7 +23,6 @@ utf16_iter = "1.0.3"
 
 # Prevent this from interfering with workspaces
 [workspace]
-members = ["."]
 
 [[bin]]
 name = "compare_utf16"

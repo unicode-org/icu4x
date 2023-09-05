@@ -169,7 +169,7 @@ impl Japanese {
         self.new_japanese_date_inner(era, year, month, day)
     }
 
-    pub(crate) const DEBUG_NAME: &str = "Japanese";
+    pub(crate) const DEBUG_NAME: &'static str = "Japanese";
 }
 
 impl JapaneseExtended {
@@ -206,7 +206,7 @@ impl JapaneseExtended {
         }))
     }
 
-    pub(crate) const DEBUG_NAME: &str = "Japanese (histocial era data)";
+    pub(crate) const DEBUG_NAME: &'static str = "Japanese (historical era data)";
 }
 
 impl Calendar for Japanese {

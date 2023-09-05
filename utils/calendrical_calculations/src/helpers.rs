@@ -1,12 +1,12 @@
-// This file is part of ICU4X. For terms of use, please see the file
-// called LICENSE at the top level of the ICU4X source tree
-// (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
+// This file is part of ICU4X.
+//
+// This file is licensed under the Apache License, Version 2.0,
+// which can be found in the LICENSE file in the
+// calendrical_calculations package root or online at
+// <https://www.apache.org/licenses/LICENSE-2.0>.
 
-use crate::{
-    astronomy::{Location, PI},
-    rata_die::RataDie,
-    types::Moment,
-};
+use crate::astronomy::{Location, PI};
+use crate::rata_die::{Moment, RataDie};
 
 /// Calculate `(n / d, n % d)` such that the remainder is always positive.
 ///
@@ -202,7 +202,7 @@ pub fn invert_angular<F: Fn(f64) -> f64>(f: F, y: f64, r: (f64, f64)) -> f64 {
     )
 }
 
-pub(crate) fn next_moment<F>(mut index: Moment, location: Location, condition: F) -> RataDie
+pub fn next_moment<F>(mut index: Moment, location: Location, condition: F) -> RataDie
 where
     F: Fn(Moment, Location) -> bool,
 {
@@ -214,7 +214,7 @@ where
     }
 }
 
-pub(crate) fn next<F>(mut index: RataDie, condition: F) -> RataDie
+pub fn next<F>(mut index: RataDie, condition: F) -> RataDie
 where
     F: Fn(RataDie) -> bool,
 {
@@ -226,7 +226,7 @@ where
     }
 }
 
-pub(crate) fn next_u8<F>(mut index: u8, condition: F) -> u8
+pub fn next_u8<F>(mut index: u8, condition: F) -> u8
 where
     F: Fn(u8) -> bool,
 {
@@ -239,7 +239,7 @@ where
 }
 
 // "Final" is a reserved keyword in rust, which explains the naming convention here.
-pub(crate) fn final_func<F>(mut index: i32, condition: F) -> i32
+pub fn final_func<F>(mut index: i32, condition: F) -> i32
 where
     F: Fn(i32) -> bool,
 {
@@ -618,37 +618,39 @@ fn test_ceil_div() {
     }
 }
 
+/// Error returned when casting from an i32
 #[derive(Copy, Clone, Debug)]
-pub enum I32Result {
-    BelowMin(i64),
-    WithinRange(i32),
-    AboveMax(i64),
+#[allow(clippy::exhaustive_enums)] // enum is specific to function and has a closed set of possible values
+pub enum I32CastError {
+    /// Less than i32::MIN
+    BelowMin,
+    /// Greater than i32::MAX
+    AboveMax,
 }
 
-impl I32Result {
+impl I32CastError {
     pub const fn saturate(self) -> i32 {
         match self {
-            I32Result::BelowMin(_) => i32::MIN,
-            I32Result::WithinRange(x) => x,
-            I32Result::AboveMax(_) => i32::MAX,
+            I32CastError::BelowMin => i32::MIN,
+            I32CastError::AboveMax => i32::MAX,
         }
     }
 }
 
 #[inline]
-pub const fn i64_to_i32(input: i64) -> I32Result {
+pub const fn i64_to_i32(input: i64) -> Result<i32, I32CastError> {
     if input < i32::MIN as i64 {
-        I32Result::BelowMin(input)
+        Err(I32CastError::BelowMin)
     } else if input > i32::MAX as i64 {
-        I32Result::AboveMax(input)
+        Err(I32CastError::AboveMax)
     } else {
-        I32Result::WithinRange(input as i32)
+        Ok(input as i32)
     }
 }
 
 #[inline]
-pub const fn i64_to_saturated_i32(input: i64) -> i32 {
-    i64_to_i32(input).saturate()
+pub fn i64_to_saturated_i32(input: i64) -> i32 {
+    i64_to_i32(input).unwrap_or_else(|i| i.saturate())
 }
 
 #[test]

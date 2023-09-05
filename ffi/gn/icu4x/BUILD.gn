@@ -16,6 +16,27 @@ group("icu_provider") {
   public_deps = [ ":icu_provider-v1_2_0" ]
 }
 
+rust_library("calendrical_calculations-v0_1_0") {
+  crate_name = "calendrical_calculations"
+  crate_root = "//utils/calendrical_calculations/src/lib.rs"
+  output_name = "calendrical_calculations-6d1745975698a042"
+
+  deps = []
+  deps += [ ":displaydoc-v0_2_4($host_toolchain)" ]
+  deps += [ ":libm-v0_2_6" ]
+
+  rustenv = []
+
+  rustflags = [
+    "--cap-lints=allow",
+    "--edition=2021",
+    "-Cmetadata=6d1745975698a042",
+    "-Cextra-filename=-6d1745975698a042",
+  ]
+
+  visibility = [ ":*" ]
+}
+
 rust_proc_macro("diplomat-v0_5_2") {
   crate_name = "diplomat"
   crate_root = "//ffi/gn/vendor/diplomat/src/lib.rs"
@@ -189,6 +210,7 @@ rust_library("icu_calendar-v1_2_0") {
   output_name = "icu_calendar-b90bea54cbe4b94f"
 
   deps = []
+  deps += [ ":calendrical_calculations-v0_1_0" ]
   deps += [ ":displaydoc-v0_2_4($host_toolchain)" ]
   deps += [ ":icu_locid-v1_2_0" ]
   deps += [ ":icu_provider-v1_2_0" ]
@@ -730,7 +752,6 @@ rust_library("litemap-v0_7_0") {
     "-Cmetadata=9af155724df6c491",
     "-Cextra-filename=-9af155724df6c491",
     "--cfg=feature=\"alloc\"",
-    "--cfg=feature=\"default\"",
   ]
 
   visibility = [ ":*" ]
@@ -1048,7 +1069,6 @@ rust_library("tinystr-v0_7_1") {
     "-Cmetadata=29f1288a310491e0",
     "-Cextra-filename=-29f1288a310491e0",
     "--cfg=feature=\"alloc\"",
-    "--cfg=feature=\"default\"",
     "--cfg=feature=\"zerovec\"",
   ]
 
@@ -1256,7 +1276,6 @@ rust_library("zerofrom-v0_1_2") {
     "-Cmetadata=ea522fe78acdecd7",
     "-Cextra-filename=-ea522fe78acdecd7",
     "--cfg=feature=\"alloc\"",
-    "--cfg=feature=\"default\"",
     "--cfg=feature=\"derive\"",
   ]
 

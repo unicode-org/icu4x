@@ -4,23 +4,29 @@
 
 [package]
 name = "icu_singlenumberformatter"
-version = "0.1.0"
-edition = "2021"
+version = "0.0.0"
 
-# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+authors.workspace = true
+categories.workspace = true
+edition.workspace = true
+homepage.workspace = true
+include.workspace = true
+license-file.workspace = true
+repository.workspace = true
+rust-version.workspace = true
 
 [package.metadata.docs.rs]
 all-features = true
 
 [dependencies]
-fixed_decimal = { version = "0.5", path = "../../utils/fixed_decimal" }
-icu_provider = { version = "1.2.0", path = "../../provider/core", features = ["macros"] }
-icu_locid = { version = "1.0.0", path = "../../components/locid" }
+fixed_decimal = { workspace = true }
+icu_provider = { workspace = true, features = ["macros"] }
+icu_locid = { workspace = true }
 serde = { version = "1.0", default-features = false, features = ["derive", "alloc"], optional = true }
 displaydoc = { version = "0.2.3", default-features = false }
-zerovec = { version = "0.9", path = "../../utils/zerovec", features = ["yoke"] }
-databake = { version = "0.1.0", path = "../../utils/databake", optional = true, features = ["derive"]}
-tinystr = { version = "0.7.1", path = "../../utils/tinystr", features = ["zerovec"], default-features = false }
+zerovec = { workspace = true, features = ["yoke"] }
+databake = { workspace = true, optional = true, features = ["derive"]}
+tinystr = { workspace = true, features = ["zerovec"], default-features = false }
 
 
 [features]

@@ -1,18 +1,20 @@
-// This file is part of ICU4X. For terms of use, please see the file
-// called LICENSE at the top level of the ICU4X source tree
-// (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
+// This file is part of ICU4X.
+//
+// This file is licensed under the Apache License, Version 2.0,
+// which can be found in the LICENSE file in the
+// calendrical_calculations package root or online at
+// <https://www.apache.org/licenses/LICENSE-2.0>.
 
-use crate::types::Moment;
 use core::ops::{Add, AddAssign, Sub, SubAssign};
 
 /// The *Rata Die*, or *R.D.*, or `fixed_date`: number of days since January 1, 1 CE.
 ///
 /// See: <https://en.wikipedia.org/wiki/Rata_Die>
 ///
-/// Keep this class INTERNAL because it shouldn't be possible to construct a RataDie
+/// It is a logic error to construct a RataDie
 /// except from a date that is in range of one of the official calendars.
 #[derive(Debug, Copy, Clone, PartialEq, Eq, PartialOrd, Ord)]
-pub(crate) struct RataDie(i64);
+pub struct RataDie(i64);
 
 impl RataDie {
     pub const fn new(fixed_date: i64) -> Self {
@@ -39,7 +41,9 @@ impl RataDie {
     }
 
     /// A valid RataDie that is intended to be below all dates representable in calendars
-    #[cfg(test)]
+    ///
+    /// For testing only
+    #[doc(hidden)]
     pub const fn big_negative() -> Self {
         Self::new(i64::MIN / 256 / 256)
     }
@@ -105,5 +109,74 @@ impl Sub for RataDie {
     type Output = i64;
     fn sub(self, rhs: Self) -> Self::Output {
         self.0 - rhs.0
+    }
+}
+
+/// A moment is a RataDie with a fractional part giving the time of day.
+///
+/// NOTE: This should not cause overflow errors for most cases, but consider
+/// alternative implementations if necessary.
+#[derive(Debug, Copy, Clone, PartialEq, PartialOrd)]
+pub struct Moment(f64);
+
+/// Add a number of days to a Moment
+impl Add<f64> for Moment {
+    type Output = Self;
+    fn add(self, rhs: f64) -> Self::Output {
+        Self(self.0 + rhs)
+    }
+}
+
+impl AddAssign<f64> for Moment {
+    fn add_assign(&mut self, rhs: f64) {
+        self.0 += rhs;
+    }
+}
+
+/// Subtract a number of days from a Moment
+impl Sub<f64> for Moment {
+    type Output = Self;
+    fn sub(self, rhs: f64) -> Self::Output {
+        Self(self.0 - rhs)
+    }
+}
+
+impl SubAssign<f64> for Moment {
+    fn sub_assign(&mut self, rhs: f64) {
+        self.0 -= rhs;
+    }
+}
+
+/// Calculate the number of days between two moments
+impl Sub for Moment {
+    type Output = f64;
+    fn sub(self, rhs: Self) -> Self::Output {
+        self.0 - rhs.0
+    }
+}
+
+impl Moment {
+    /// Create a new moment
+    pub const fn new(value: f64) -> Moment {
+        Moment(value)
+    }
+
+    /// Get the inner field of a Moment
+    pub const fn inner(&self) -> f64 {
+        self.0
+    }
+
+    /// Get the RataDie of a Moment
+    pub fn as_rata_die(&self) -> RataDie {
+        RataDie::new(libm::floor(self.0) as i64)
+    }
+}
+
+#[test]
+fn test_moment_to_rata_die_conversion() {
+    for i in -1000..=1000 {
+        let moment = Moment::new(i as f64);
+        let rata_die = moment.as_rata_die();
+        assert_eq!(rata_die.to_i64_date(), i);
     }
 }

@@ -14,14 +14,14 @@ fn bench_calendar<C: Copy + Calendar>(
     name: &str,
     calendar: C,
 ) {
-    let iso = Date::try_new_iso_date(1970, 1, 2).unwrap();
+    let iso = Date::try_new_iso_date(2023, 8, 16).unwrap();
     group.bench_function(name, |b| {
         b.iter(|| {
             let converted = black_box(iso).to_calendar(calendar);
             let year = black_box(converted.year().number);
             let month = black_box(converted.month().ordinal);
             let day = black_box(converted.day_of_month().0);
-            black_box((year, month, day))
+            black_box((converted, year, month, day))
         })
     });
 }

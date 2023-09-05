@@ -28,7 +28,7 @@ impl DataProvider<UnitsConstantsV1Marker> for crate::DatagenProvider {
         }
 
         let result = UnitsConstantsV1 {
-            constants_map: ZeroMap::from_iter(constants_map.into_iter()),
+            constants_map: ZeroMap::from_iter(constants_map),
         };
 
         Ok(DataResponse {

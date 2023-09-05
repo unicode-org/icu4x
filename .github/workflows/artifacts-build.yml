@@ -189,7 +189,7 @@ jobs:
 
     - name: Upload wasm-demo bundle to Google Cloud Storage
       run: |
-        gsutil -m cp -r ffi/diplomat/js/examples/wasm-demo/dist/ gs://${{ env.GCP_MAIN_BUCKET_ID }}/gha/wasm-demo
+        gsutil -m cp -r ffi/diplomat/js/examples/wasm-demo/dist/* gs://${{ env.GCP_MAIN_BUCKET_ID }}/gha/wasm-demo
 
     - name: "⭐⭐⭐ Links to Uploaded Artifacts ⭐⭐⭐"
       run: |
@@ -206,11 +206,19 @@ jobs:
       fail-fast: false
       matrix:
         component:
-          - components/locid
-          - components/plurals
-          - components/datetime
           - components/collections
+          - components/datetime
+          - components/locid
+          - components/locid_transform
+          - components/plurals
+          - components/segmenter
+          - experimental/transliteration
+          - experimental/zerotrie
           - utils/fixed_decimal
+          - utils/litemap
+          - utils/tinystr
+          - utils/writeable
+          - utils/zerovec
     concurrency:
       # Allow one run at a time to include the previous run's results
       group: bench-perf-${{ matrix.component }}
@@ -310,27 +318,6 @@ jobs:
       # examples folder.
       matrix:
         os: [ ubuntu-latest, macos-latest, windows-latest ]
-        # The list of examples to run, with the form {package}/{example}.
-        #
-        # n.b. Don't get tripped up by the yml syntax here. This is a list with a single string
-        # entry. It is using the block chomping indicator ">-", which means the multiline string
-        # will be joined together into one line using a single space between each line. This
-        # will place all of the examples on the same line so they can get passed to the
-        # icu_benchmark_memory cli.
-        examples:
-          - >-
-              icu_calendar/iso_date_manipulations
-              icu_calendar/iso_datetime_manipulations
-              icu_datetime/work_log
-              icu_list/and_list
-              icu_locid/syntatically_canonicalize_locales
-              icu_locid/filter_langids
-              icu_plurals/unread_emails
-              icu_plurals/elevator_floors
-              icu_collections/unicode_bmp_blocks_selector
-              fixed_decimal/permyriad
-              writeable/writeable_message
-              litemap/language_names_lite_map
     runs-on: ${{ matrix.os }}
     concurrency:
       # Allow one run at a time to include the previous run's results
@@ -371,7 +358,7 @@ jobs:
 
     - name: Run the example with dhat-rs to collect memory information
       run: |
-        cargo run --package icu_benchmark_memory -- --os ${{ matrix.os }} ${{ matrix.examples }}
+        cargo run --package icu_benchmark_memory -- --os ${{ matrix.os }}
 
     - name:  Download previous benchmark data
       run: |
@@ -399,6 +386,8 @@ jobs:
       if: success() || failure()
       run: |
           git checkout empty
+          # Delete intermediate files
+          rm benchmarks/memory/${{ matrix.os }}/*-dhat-heap.json
           gsutil -m cp -r benchmarks/memory/${{ matrix.os }}/* gs://${{ env.GCP_MAIN_BUCKET_ID }}/gha/benchmarks/memory/${{ matrix.os }}
 
   # Binary size benchmark: build and size wasm binaries; creates ndjson output data format

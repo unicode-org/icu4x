@@ -39,6 +39,32 @@
 //! * Therefore we must know the number of elements of each `VZV` before we can start encoding
 //!   conversion rules into `str`s.
 //!
+//! ## Special encodings
+//!
+//! ### Back references (`$1`, `$2`, ...)
+//! Back references are encoded as the other special matchers with an index, except the index is
+//! the value. Thus, `$1` should be encoded as if it was an index of 0 into some subsequent `VZV`,
+//! `$2` as 1, etc. The index 0 decodes into 1 because there is no valid back reference of `$0`.
+//!
+//! ### Cursors (`|@@@ rest`, `rest @@@|`, `rest | rest`)
+//! There are three kinds of cursors.
+//! * `|@@@ rest`: The cursor is at the beginning of the replacement and has placeholders. We call
+//!  this a cursor with _right_ placeholders, because they are on the right of the cursor.
+//! * `rest @@@|`: The cursor is at the end of the replacement and has placeholders. We call this
+//!  a cursor with _left_ placeholders, because they are on the left of the cursor.
+//! * `rest | rest`: The cursor is in the middle of the replacement and has no placeholders. We call
+//!  this a pure cursor.
+//!
+//! Pure cursors get a reserved code point that is inlined into the replacement encoding where the
+//! cursor appears. Cursors with placeholders are encoded like back references, so two more
+//! pseudo-VZV entries, one for left placeholders and one for right placeholders, are used to
+//! encode the number of placeholders as indices. E.g., `|@@@` is the index 2 into the `left`
+//! pseudo-VZV because there are 3 left placeholders.
+//!
+//!
+//! ### Anchors (`^`, `$`)
+//! These are encoded with a reserved private use code point per type (start `^` or end `$`).
+//!
 //! # Passes
 //!
 //! This module works by performing multiple passes over the rules.
@@ -56,6 +82,9 @@
 //!
 //! ## Pass 2
 //! Encoding of the zero-copy data struct.
+//!
+//! This works under the assumption that the first pass was successful, and thus generally
+//! no more validation needs to be performed.
 //!
 //! To encode conversion rules into `str`s, we use the previously described encoded `VarTable`
 //! indices. Because we know the lengths of each special construct list (in the form a `VZV`)
@@ -139,8 +168,14 @@ struct SpecialConstructCounts {
     num_segments: usize,
     num_unicode_sets: usize,
     num_function_calls: usize,
-    // backrefs have no data, they're simply an integer, so we only care about the maximum number
-    // we need to encode
+    // a "left" placeholder is a placeholder on the left side of a cursor, e.g., `abc @@@ |`
+    // this is means the cursor itself is on the very right of a replacement section
+    max_left_placeholders: u32,
+    // a "right" placeholder is a placeholder on the right side of a cursor, e.g., `| @@@ abc`
+    // this is means the cursor itself is on the very left of a replacement section
+    max_right_placeholders: u32,
+    // backrefs have no data, they're simply an unsigned integer, so we only care about the maximum
+    // number we need to encode
     max_backref_num: u32,
 }
 
@@ -153,7 +188,37 @@ impl SpecialConstructCounts {
             + self.num_segments
             + self.num_unicode_sets
             + self.num_function_calls
+            + self.max_left_placeholders as usize
+            + self.max_right_placeholders as usize
             + self.max_backref_num as usize
+    }
+
+    fn combine(&mut self, other: Self) {
+        // destructuring to compile-time check the completeness of this function in case new fields
+        // are added
+        let Self {
+            num_compounds,
+            num_quantifiers_opt,
+            num_quantifiers_kleene,
+            num_quantifiers_kleene_plus,
+            num_segments,
+            num_unicode_sets,
+            num_function_calls,
+            max_left_placeholders,
+            max_right_placeholders,
+            max_backref_num,
+        } = other;
+
+        self.num_compounds += num_compounds;
+        self.num_quantifiers_opt += num_quantifiers_opt;
+        self.num_quantifiers_kleene += num_quantifiers_kleene;
+        self.num_quantifiers_kleene_plus += num_quantifiers_kleene_plus;
+        self.num_segments += num_segments;
+        self.num_unicode_sets += num_unicode_sets;
+        self.num_function_calls += num_function_calls;
+        self.max_left_placeholders = self.max_left_placeholders.max(max_left_placeholders);
+        self.max_right_placeholders = self.max_right_placeholders.max(max_right_placeholders);
+        self.max_backref_num = self.max_backref_num.max(max_backref_num);
     }
 }
 
@@ -281,15 +346,11 @@ impl<'p> Pass1<'p> {
         reverse_id: Option<&parse::SingleId>,
     ) -> Result<()> {
         let fwd_dep = forward_id.basic_id.clone();
-        if !fwd_dep.is_null() {
-            self.forward_data.used_transliterators.insert(fwd_dep);
-        }
+        self.forward_data.used_transliterators.insert(fwd_dep);
         let rev_dep = reverse_id
             .map(|single_id| single_id.basic_id.clone())
             .unwrap_or_else(|| forward_id.basic_id.clone().reverse());
-        if !rev_dep.is_null() {
-            self.reverse_data.used_transliterators.insert(rev_dep);
-        }
+        self.reverse_data.used_transliterators.insert(rev_dep);
         Ok(())
     }
 
@@ -556,30 +617,33 @@ impl<'a, 'p, F: Fn(&str) -> bool> TargetValidator<'a, 'p, F> {
                     // corrseponds to `@@@|@@@`, i.e., placeholders on both sides of the cursor
                     return Err(PEK::InvalidCursor.into());
                 }
+                self.update_cursor_data(*pre, *post);
                 return Ok(());
             }
             _ => section,
         };
         // strip |@@@ from beginning
         let section = match section {
-            [parse::Element::Cursor(pre, _), rest @ ..] => {
+            [parse::Element::Cursor(pre, post), rest @ ..] => {
                 self.encounter_cursor()?;
                 if *pre != 0 {
                     // corrseponds to `@@@|...`, i.e., placeholders in front of the cursor
                     return Err(PEK::InvalidCursor.into());
                 }
+                self.update_cursor_data(*pre, *post);
                 rest
             }
             _ => section,
         };
         // strip @@@| from end
         let section = match section {
-            [rest @ .., parse::Element::Cursor(_, post)] => {
+            [rest @ .., parse::Element::Cursor(pre, post)] => {
                 self.encounter_cursor()?;
                 if *post != 0 {
                     // corrseponds to `...|@@@`, i.e., placeholders after the cursor
                     return Err(PEK::InvalidCursor.into());
                 }
+                self.update_cursor_data(*pre, *post);
                 rest
             }
             _ => section,
@@ -617,13 +681,14 @@ impl<'a, 'p, F: Fn(&str) -> bool> TargetValidator<'a, 'p, F> {
                 self.data.used_transliterators.insert(id.basic_id.clone());
                 self.data.counts.num_function_calls += 1;
             }
-            parse::Element::Cursor(pre, post) => {
+            &parse::Element::Cursor(pre, post) => {
                 self.encounter_cursor()?;
-                if !top_level || *pre != 0 || *post != 0 {
+                if !top_level || pre != 0 || post != 0 {
                     // pre and post must be 0 if the cursor does not appear at the very beginning or the very end
                     // we account for the beginning or the end in `validate`.
                     return Err(PEK::InvalidCursor.into());
                 }
+                // no need to update cursor data: pre/post are 0
             }
             parse::Element::AnchorStart => {
                 // while anchors have no effect on the target side, they may still appear
@@ -644,6 +709,13 @@ impl<'a, 'p, F: Fn(&str) -> bool> TargetValidator<'a, 'p, F> {
         }
         self.encountered_cursor = true;
         Ok(())
+    }
+
+    /// Updates the max encountered cursor placeholders. Does no validation.
+    fn update_cursor_data(&mut self, left: u32, right: u32) {
+        self.data.counts.max_left_placeholders = self.data.counts.max_left_placeholders.max(left);
+        self.data.counts.max_right_placeholders =
+            self.data.counts.max_right_placeholders.max(right);
     }
 }
 
@@ -814,18 +886,10 @@ impl Pass1ResultGenerator {
 
         for var in &used_variables {
             // we check for unknown variables during the first pass, so these should exist
-            let var_data = var_data_map.get(var).ok_or(PEK::Internal)?;
-            let var_counts: SpecialConstructCounts = var_data.counts;
-            combined_counts.num_compounds += var_counts.num_compounds;
-            combined_counts.num_segments += var_counts.num_segments;
-            combined_counts.num_quantifiers_opt += var_counts.num_quantifiers_opt;
-            combined_counts.num_quantifiers_kleene += var_counts.num_quantifiers_kleene;
-            combined_counts.num_quantifiers_kleene_plus += var_counts.num_quantifiers_kleene_plus;
-            combined_counts.num_unicode_sets += var_counts.num_unicode_sets;
-            combined_counts.num_function_calls += var_counts.num_function_calls;
-            combined_counts.max_backref_num = combined_counts
-                .max_backref_num
-                .max(var_counts.max_backref_num);
+            let var_data = var_data_map
+                .get(var)
+                .ok_or(PEK::Internal("unexpected unknown variable"))?;
+            combined_counts.combine(var_data.counts);
         }
 
         Ok(Pass1Data {
@@ -841,11 +905,13 @@ impl Pass1ResultGenerator {
         }
         if self.current_vars.contains(name) {
             // cyclic dependency - should not occur
-            return Err(PEK::Internal.into());
+            return Err(PEK::Internal("unexpected cyclic variable").into());
         }
         self.current_vars.insert(name.to_owned());
         // we check for unknown variables during the first pass, so these should exist
-        let var_data = var_data_map.get(name).ok_or(PEK::Internal)?;
+        let var_data = var_data_map
+            .get(name)
+            .ok_or(PEK::Internal("unexpected unknown variable"))?;
         let mut transitive_dependencies = var_data.used_variables.clone();
         var_data.used_variables.iter().try_for_each(|var| {
             self.visit_var(var, var_data_map)?;
@@ -1028,6 +1094,8 @@ mod tests {
                 num_function_calls: 1,
                 num_unicode_sets: 1,
                 max_backref_num: 1,
+                max_left_placeholders: 0,
+                max_right_placeholders: 0,
                 ..Default::default()
             };
             let expected_fwd_data = pass1data_from_parts(
@@ -1036,6 +1104,7 @@ mod tests {
                     ("Forward", "Dependency", None),
                     ("Any", "AnotherForwardDependency", None),
                     ("YetAnother", "ForwardDependency", None),
+                    ("Any", "Null", None),
                 ],
                 &["used_both", "used_fwd", "literal1", "literal2"],
                 counts,
@@ -1050,6 +1119,8 @@ mod tests {
                 num_segments: 2,
                 num_function_calls: 3,
                 max_backref_num: 2,
+                max_left_placeholders: 0,
+                max_right_placeholders: 0,
                 ..Default::default()
             };
             let expected_rev_data = pass1data_from_parts(
@@ -1060,6 +1131,7 @@ mod tests {
                     ("Any", "Many", None),
                     ("Any", "Backwardz", None),
                     ("Any", "Deps", None),
+                    ("Any", "Null", None),
                 ],
                 &["used_rev", "literal1", "literal2"],
                 counts,
@@ -1174,6 +1246,7 @@ mod tests {
                     ("Forward", "Dependency", None),
                     ("Any", "AnotherForwardDependency", None),
                     ("YetAnother", "ForwardDependency", None),
+                    ("Any", "Null", None),
                 ],
                 &["used_both", "used_fwd", "literal1", "literal2"],
                 fwd_counts,
@@ -1197,6 +1270,7 @@ mod tests {
                     ("Any", "Many", None),
                     ("Any", "Backwardz", None),
                     ("Any", "Deps", None),
+                    ("Any", "Null", None),
                 ],
                 &["used_both", "used_rev", "literal1", "literal2"],
                 rev_counts,

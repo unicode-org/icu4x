@@ -48,7 +48,7 @@ export class ICU4XFixedDecimal {
 
    * See the {@link https://docs.rs/fixed_decimal/latest/fixed_decimal/struct.FixedDecimal.html#method.try_from_f64 Rust documentation for `try_from_f64`} for more information.
 
-   * See the {@link https://docs.rs/fixed_decimal/latest/fixed_decimal/enum.DoublePrecision.html Rust documentation for `DoublePrecision`} for more information.
+   * See the {@link https://docs.rs/fixed_decimal/latest/fixed_decimal/enum.FloatPrecision.html Rust documentation for `FloatPrecision`} for more information.
    * @throws {@link FFIError}<{@link ICU4XError}>
    */
   static create_from_f64_with_integer_precision(f: f64): ICU4XFixedDecimal | never;
@@ -59,7 +59,7 @@ export class ICU4XFixedDecimal {
 
    * See the {@link https://docs.rs/fixed_decimal/latest/fixed_decimal/struct.FixedDecimal.html#method.try_from_f64 Rust documentation for `try_from_f64`} for more information.
 
-   * See the {@link https://docs.rs/fixed_decimal/latest/fixed_decimal/enum.DoublePrecision.html Rust documentation for `DoublePrecision`} for more information.
+   * See the {@link https://docs.rs/fixed_decimal/latest/fixed_decimal/enum.FloatPrecision.html Rust documentation for `FloatPrecision`} for more information.
    * @throws {@link FFIError}<{@link ICU4XError}>
    */
   static create_from_f64_with_lower_magnitude(f: f64, magnitude: i16): ICU4XFixedDecimal | never;
@@ -70,7 +70,7 @@ export class ICU4XFixedDecimal {
 
    * See the {@link https://docs.rs/fixed_decimal/latest/fixed_decimal/struct.FixedDecimal.html#method.try_from_f64 Rust documentation for `try_from_f64`} for more information.
 
-   * See the {@link https://docs.rs/fixed_decimal/latest/fixed_decimal/enum.DoublePrecision.html Rust documentation for `DoublePrecision`} for more information.
+   * See the {@link https://docs.rs/fixed_decimal/latest/fixed_decimal/enum.FloatPrecision.html Rust documentation for `FloatPrecision`} for more information.
    * @throws {@link FFIError}<{@link ICU4XError}>
    */
   static create_from_f64_with_significant_digits(f: f64, digits: u8): ICU4XFixedDecimal | never;
@@ -81,7 +81,7 @@ export class ICU4XFixedDecimal {
 
    * See the {@link https://docs.rs/fixed_decimal/latest/fixed_decimal/struct.FixedDecimal.html#method.try_from_f64 Rust documentation for `try_from_f64`} for more information.
 
-   * See the {@link https://docs.rs/fixed_decimal/latest/fixed_decimal/enum.DoublePrecision.html Rust documentation for `DoublePrecision`} for more information.
+   * See the {@link https://docs.rs/fixed_decimal/latest/fixed_decimal/enum.FloatPrecision.html Rust documentation for `FloatPrecision`} for more information.
    * @throws {@link FFIError}<{@link ICU4XError}>
    */
   static create_from_f64_with_floating_precision(f: f64): ICU4XFixedDecimal | never;

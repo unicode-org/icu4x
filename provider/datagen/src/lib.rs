@@ -9,21 +9,26 @@
 //! command-line utility.
 //!
 //!
-//! Also see our [datagen tutorial](https://github.com/unicode-org/icu4x/blob/main/docs/tutorials/data_management.md)
+//! Also see our [datagen tutorial](https://github.com/unicode-org/icu4x/blob/main/docs/tutorials/data_management.md).
 //!
 //! # Examples
 //!
-//! ## `build.rs`
+//! ## Rust API
 //!
 //! ```no_run
-//! use icu_datagen::prelude::*;
 //! use icu_datagen::blob_exporter::*;
+//! use icu_datagen::prelude::*;
 //! use std::fs::File;
 //!
 //! DatagenDriver::new()
-//!       .with_keys([icu::list::provider::AndListV1Marker::KEY])
-//!       .export(&DatagenProvider::latest_tested(), BlobExporter::new_with_sink(Box::new(File::create("data.postcard").unwrap())))
-//!       .unwrap();
+//!     .with_keys([icu::list::provider::AndListV1Marker::KEY])
+//!     .export(
+//!         &DatagenProvider::latest_tested(),
+//!         BlobExporter::new_with_sink(Box::new(
+//!             File::create("data.postcard").unwrap(),
+//!         )),
+//!     )
+//!     .unwrap();
 //! ```
 //!
 //! ## Command line
@@ -37,13 +42,82 @@
 //! Once the tool is installed, you can invoke it like this:
 //!
 //! ```bash
-//! $ icu4x-datagen \
-//! >    --keys all \
-//! >    --locales de en-AU \
-//! >    --format blob \
-//! >    --out data.postcard
+//! $ icu4x-datagen --keys all --locales de en-AU --format blob --out data.postcard
 //! ```
+//!
+//! For complex invocations, the CLI also supports configuration files:
+//!
+//! ```bash
+//! $ icu4x-datagen config.json
+//! ```
+//!
+//! <details><summary><code>config.json</code></summary>
+//! <pre><code>{
+//!   "keys": {
+//!     "explicit": [
+//!       "core/helloworld@1",
+//!       "fallback/likelysubtags@1",
+//!       "fallback/parents@1",
+//!       "fallback/supplement/co@1"
+//!     ]
+//!   },
+//!   "fallback": "runtimeManual",
+//!   "locales": "all",
+//!   "segmenterModels": ["burmesedict"],
+//!   "additionalCollations": ["big5han"],<br/>
+//!   "cldr": "latest",
+//!   "icuExport": "73.1",
+//!   "segmenterLstm": "none",<br/>
+//!   "export": {
+//!     "blob": {
+//!       "path": "blob.postcard"
+//!     }
+//!   },
+//!   "overwrite": true
+//! }
+//! </code></pre>
+//! </details>
+//!
 //! More details can be found by running `--help`.
+//!
+//! # Features
+//!
+//! This crate has a lot of dependencies, some of which are not required for all operating modes. These default Cargo features
+//! can be disabled to reduce dependencies:
+//! * `baked_exporter`
+//!   * enables the [`baked_exporter`] module
+//!   * enables the `--format mod` CLI argument
+//! * `blob_exporter`
+//!   * enables the [`blob_exporter`] module, a reexport of [`icu_provider_blob::export`]
+//!   * enables the `--format blob` CLI argument
+//! * `fs_exporter`
+//!   * enables the [`fs_exporter`] module, a reexport of [`icu_provider_fs::export`]
+//!   * enables the `--format dir` CLI argument
+//! * `networking`
+//!   * enables methods on [`DatagenProvider`] that fetch source data from the network
+//!   * enables the `--cldr-tag`, `--icu-export-tag`, and `--segmenter-lstm-tag` CLI arguments that download data
+//! * `rayon`
+//!   * enables parallelism during export
+//! * `use_wasm` / `use_icu4c`
+//!   * see the documentation on [`icu_codepointtrie_builder`](icu_codepointtrie_builder#build-configuration)
+//! * `bin`
+//!   * required by the CLI and enabled by default to make `cargo install` work
+//! * `legacy_api`
+//!   * enables the deprecated pre-1.3 API
+//!   * enabled by default for semver stability
+//!   * will be removed in 2.0.
+//!
+//! Experimental unstable ICU4X components are behind features which are not enabled by default. Note that these features
+//! affect the behaviour of [`all_keys`]:
+//! * `icu_compactdecimal`
+//! * `icu_displaynames`
+//! * `icu_relativetime`
+//! * `icu_singlenumberformatter`
+//! * `icu_transliteration`
+//! * `icu_unitsconversion`
+//! * ...
+//!
+//! The meta-feature `experimental_components` is available to activate all experimental components.
 
 #![cfg_attr(
     not(test),
@@ -61,28 +135,23 @@
 #![warn(missing_docs)]
 
 mod driver;
-mod error;
-mod helpers;
 mod provider;
 mod registry;
 mod source;
 mod transform;
 
 pub use driver::DatagenDriver;
-pub use error::{
-    is_missing_cldr_error, is_missing_icuexport_error, is_missing_segmenter_lstm_error,
-};
 pub use provider::DatagenProvider;
 #[doc(hidden)] // for CLI serde
 pub use provider::TrieType;
 #[allow(deprecated)] // ugh
-pub use registry::{all_keys, all_keys_with_experimental, deserialize_and_measure, key};
+pub use registry::*;
 
-#[cfg(feature = "provider_baked")]
+#[cfg(feature = "baked_exporter")]
 pub mod baked_exporter;
-#[cfg(feature = "provider_blob")]
+#[cfg(feature = "blob_exporter")]
 pub use icu_provider_blob::export as blob_exporter;
-#[cfg(feature = "provider_fs")]
+#[cfg(feature = "fs_exporter")]
 pub use icu_provider_fs::export as fs_exporter;
 
 /// A prelude for using the datagen API
@@ -130,9 +199,9 @@ pub(crate) mod rayon_prelude {
 ///
 /// | Mode | Runtime Fallback | Data Size |
 /// |---|---|---|
-/// | [`Runtime`] | Yes, Automatic | Smallest |
-/// | [`RuntimeManual`] | Yes, Manual | Smallest |
-/// | [`Preresolved`] | No | Small |
+/// | [`Runtime`] | Required, Automatic | Smallest |
+/// | [`RuntimeManual`] | Required, Manual | Smallest |
+/// | [`Preresolved`] | Unsupported | Small |
 /// | [`Hybrid`] | Optional | Medium |
 ///
 /// If you are not 100% certain of the closed set of locales you need at runtime, you should
@@ -301,6 +370,8 @@ pub fn keys<S: AsRef<str>>(strings: &[S]) -> Vec<DataKey> {
 /// # Ok(())
 /// # }
 /// ```
+#[deprecated(since = "1.3.0", note = "use Rust code")]
+#[cfg(feature = "legacy_api")]
 pub fn keys_from_file<P: AsRef<Path>>(path: P) -> std::io::Result<Vec<DataKey>> {
     use std::io::{BufRead, BufReader};
     BufReader::new(std::fs::File::open(path.as_ref())?)
@@ -309,10 +380,13 @@ pub fn keys_from_file<P: AsRef<Path>>(path: P) -> std::io::Result<Vec<DataKey>> 
         .collect()
 }
 
-/// Parses a compiled binary and returns a list of [`DataKey`]s used by it.
+/// Parses a compiled binary and returns a list of [`DataKey`]s that it uses *at runtime*.
 ///
-/// Unknown key names are ignored.
-//  Supports the hello world key
+/// This function is intended to be used for binaries that use `AnyProvider` or `BufferProvider`,
+/// for which the compiler cannot remove unused data. Using this function on a binary that only
+/// uses compiled data (through the `compiled_data` feature or manual baked data) will not return
+/// any keys, as the keys only exist in the type system.
+///
 /// # Example
 ///
 /// #### build.rs
@@ -330,6 +404,7 @@ pub fn keys_from_file<P: AsRef<Path>>(path: P) -> std::io::Result<Vec<DataKey>> 
 /// # Ok(())
 /// # }
 /// ```
+//  Supports the hello world key
 pub fn keys_from_bin<P: AsRef<Path>>(path: P) -> std::io::Result<Vec<DataKey>> {
     use memchr::memmem::*;
 
@@ -365,9 +440,9 @@ pub fn keys_from_bin<P: AsRef<Path>>(path: P) -> std::io::Result<Vec<DataKey>> {
 #[cfg(feature = "legacy_api")]
 pub use provider::SourceData;
 
-/// Requires `legacy_api` Cargo feature
+/// The output format for [`datagen`].
 ///
-/// The output format.
+/// ✨ *Enabled with the `legacy_api` Cargo feature.*
 #[deprecated(since = "1.3.0", note = "use `DatagenDriver`")]
 #[non_exhaustive]
 #[cfg(feature = "legacy_api")]
@@ -449,7 +524,9 @@ impl core::fmt::Debug for Out {
 #[deprecated(since = "1.3.0", note = "use `DatagenDriver`")]
 #[cfg(feature = "legacy_api")]
 #[allow(deprecated)]
-/// Requires `legacy_api` Cargo feature
+/// Runs data generation
+///
+/// ✨ *Enabled with the `legacy_api` Cargo feature.*
 ///
 /// The argument are used as follows:
 /// * `locales`: If this is present, only locales that are either `und` or
@@ -469,7 +546,7 @@ pub fn datagen(
     let exporter = DatagenDriver::new()
         .with_keys(keys.iter().cloned())
         .with_fallback_mode(FallbackMode::Hybrid)
-        .with_collations(source.collations.clone());
+        .with_additional_collations(source.collations.clone());
     match locales {
         Some(locales) => exporter
             .with_locales(
@@ -572,7 +649,9 @@ fn test_keys() {
 }
 
 #[test]
+#[cfg(feature = "legacy_api")]
 fn test_keys_from_file() {
+    #![allow(deprecated)]
     assert_eq!(
         keys_from_file(concat!(
             env!("CARGO_MANIFEST_DIR"),
@@ -615,22 +694,57 @@ fn test_keys_from_bin() {
 // SEMVER GRAVEYARD
 
 #[cfg(feature = "legacy_api")]
+#[deprecated(since = "1.3.0", note = "use methods on `DatagenProvider`")]
+/// Identifies errors that are due to missing CLDR data.
+///
+/// ✨ *Enabled with the `legacy_api` Cargo feature.*
+pub fn is_missing_cldr_error(e: DataError) -> bool {
+    DatagenProvider::is_missing_cldr_error(e)
+}
+
+#[cfg(feature = "legacy_api")]
+#[deprecated(since = "1.3.0", note = "use methods on `DatagenProvider`")]
+/// Identifies errors that are due to missing ICU export data.
+///
+/// ✨ *Enabled with the `legacy_api` Cargo feature.*
+pub fn is_missing_icuexport_error(e: DataError) -> bool {
+    DatagenProvider::is_missing_icuexport_error(e)
+}
+
+#[cfg(feature = "legacy_api")]
+/// [`Out::Fs`] serialization formats.
+///
+/// ✨ *Enabled with the `legacy_api` Cargo feature.*
+#[deprecated(since = "1.3.0", note = "use `fs_exporter::serializers`")]
+pub mod syntax {
+    #[doc(no_inline)]
+    pub use crate::fs_exporter::serializers::Bincode;
+    #[doc(no_inline)]
+    pub use crate::fs_exporter::serializers::Json;
+    #[doc(no_inline)]
+    pub use crate::fs_exporter::serializers::Postcard;
+}
+
+#[cfg(feature = "legacy_api")]
 #[doc(hidden)]
 pub use baked_exporter::Options as BakedOptions;
 
 #[allow(clippy::exhaustive_enums)] // exists for backwards compatibility
 #[doc(hidden)]
 #[derive(Debug)]
+#[cfg(feature = "legacy_api")]
 pub enum CldrLocaleSubset {
     Ignored,
 }
 
+#[cfg(feature = "legacy_api")]
 impl Default for CldrLocaleSubset {
     fn default() -> Self {
         Self::Ignored
     }
 }
 
+#[cfg(feature = "legacy_api")]
 impl CldrLocaleSubset {
     #[allow(non_upper_case_globals)]
     pub const Full: Self = Self::Ignored;
@@ -639,9 +753,7 @@ impl CldrLocaleSubset {
 }
 
 #[cfg(feature = "legacy_api")]
-#[doc(hidden)]
-pub use icu_provider_fs::export::serializers as syntax;
-
+/// ✨ *Enabled with the `legacy_api` Cargo feature.*
 impl AnyProvider for DatagenProvider {
     fn load_any(&self, key: DataKey, req: DataRequest) -> Result<AnyResponse, DataError> {
         self.as_any_provider().load_any(key, req)

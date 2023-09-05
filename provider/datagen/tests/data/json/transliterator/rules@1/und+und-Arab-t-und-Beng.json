@@ -7,7 +7,9 @@
     "quantifiers_kleene_plus": [],
     "segments": [],
     "unicode_sets": [],
-    "function_calls": []
+    "function_calls": [],
+    "max_left_placeholder_count": 0,
+    "max_right_placeholder_count": 0
   },
   "filter": [
     "।-॥",
@@ -38,13 +40,13 @@
         "filter": [
           "\u0000-􏿿"
         ],
-        "id": "x-bengali-interindic"
+        "id": "und-t-und-Beng-d0-intindic"
       },
       {
         "filter": [
           "\u0000-􏿿"
         ],
-        "id": "x-interindic-arabic"
+        "id": "und-Arab-t-s0-intindic"
       },
       {
         "filter": [
@@ -58,9 +60,9 @@
     []
   ],
   "dependencies": [
+    "und-Arab-t-s0-intindic",
+    "und-t-und-Beng-d0-intindic",
     "x-any-nfc",
-    "x-any-nfd",
-    "x-bengali-interindic",
-    "x-interindic-arabic"
+    "x-any-nfd"
   ]
 }

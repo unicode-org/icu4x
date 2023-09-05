@@ -14,7 +14,10 @@
       "󰀂"
     ],
     "segments": [
-      "󰀂"
+      {
+        "idx": 0,
+        "content": "󰀂"
+      }
     ],
     "unicode_sets": [
       {
@@ -2606,7 +2609,9 @@
         "str_list": []
       }
     ],
-    "function_calls": []
+    "function_calls": [],
+    "max_left_placeholder_count": 0,
+    "max_right_placeholder_count": 0
   },
   "filter": [
     "\u0000-􏿿"
@@ -2628,834 +2633,715 @@
         "ante": "",
         "key": "",
         "post": "󰀀",
-        "replacer": "كيا",
-        "cursor_offset": 0
+        "replacer": "كيا"
       },
       {
         "ante": "",
         "key": "",
         "post": "󰀀",
-        "replacer": "ديا",
-        "cursor_offset": 0
+        "replacer": "ديا"
       },
       {
         "ante": "",
         "key": "",
         "post": "󰀀",
-        "replacer": "كي",
-        "cursor_offset": 0
+        "replacer": "كي"
       },
       {
         "ante": "",
         "key": "",
         "post": "",
-        "replacer": "هي",
-        "cursor_offset": 0
+        "replacer": "هي"
       },
       {
         "ante": "",
         "key": "",
         "post": "󰀀",
-        "replacer": "ن",
-        "cursor_offset": 0
+        "replacer": "ن"
       },
       {
         "ante": "",
         "key": "",
         "post": "",
-        "replacer": "ن",
-        "cursor_offset": 0
+        "replacer": "ن"
       },
       {
         "ante": "",
         "key": "",
         "post": "󰀀",
-        "replacer": "ن",
-        "cursor_offset": 0
+        "replacer": "ن"
       },
       {
         "ante": "",
         "key": "",
         "post": "",
-        "replacer": "ن",
-        "cursor_offset": 0
+        "replacer": "ن"
       },
       {
         "ante": "",
         "key": "",
         "post": "",
-        "replacer": "ها",
-        "cursor_offset": 0
+        "replacer": "ها"
       },
       {
         "ante": "",
         "key": "",
         "post": "",
-        "replacer": "ا",
-        "cursor_offset": 0
+        "replacer": "ا"
       },
       {
         "ante": "",
         "key": "",
         "post": "",
-        "replacer": "ا",
-        "cursor_offset": 0
+        "replacer": "ا"
       },
       {
         "ante": "",
         "key": "",
         "post": "",
-        "replacer": "آ",
-        "cursor_offset": 0
+        "replacer": "آ"
       },
       {
         "ante": "󰀇",
         "key": "",
         "post": "",
-        "replacer": "ي",
-        "cursor_offset": 0
+        "replacer": "ي"
       },
       {
         "ante": "",
         "key": "",
         "post": "",
-        "replacer": "إ",
-        "cursor_offset": 0
+        "replacer": "إ"
       },
       {
         "ante": "󰀈",
         "key": "",
         "post": "",
-        "replacer": "ي",
-        "cursor_offset": 0
+        "replacer": "ي"
       },
       {
         "ante": "",
         "key": "",
         "post": "",
-        "replacer": "إ",
-        "cursor_offset": 0
+        "replacer": "إ"
       },
       {
         "ante": "",
         "key": "",
         "post": "",
-        "replacer": "و",
-        "cursor_offset": 0
+        "replacer": "و"
       },
       {
         "ante": "",
         "key": "",
         "post": "",
-        "replacer": "و",
-        "cursor_offset": 0
+        "replacer": "و"
       },
       {
         "ante": "",
         "key": "",
         "post": "",
-        "replacer": "ر",
-        "cursor_offset": 0
+        "replacer": "ر"
       },
       {
         "ante": "",
         "key": "",
         "post": "",
-        "replacer": "ل",
-        "cursor_offset": 0
+        "replacer": "ل"
       },
       {
         "ante": "",
         "key": "",
         "post": "",
-        "replacer": "اي",
-        "cursor_offset": 0
+        "replacer": "اي"
       },
       {
         "ante": "",
         "key": "",
         "post": "",
-        "replacer": "ي",
-        "cursor_offset": 0
+        "replacer": "ي"
       },
       {
         "ante": "󰀁",
         "key": "",
         "post": "",
-        "replacer": "إي",
-        "cursor_offset": 0
+        "replacer": "إي"
       },
       {
         "ante": "",
         "key": "",
         "post": "󰀀",
-        "replacer": "ي",
-        "cursor_offset": 0
+        "replacer": "ي"
       },
       {
         "ante": "",
         "key": "",
         "post": "",
-        "replacer": "ي",
-        "cursor_offset": 0
+        "replacer": "ي"
       },
       {
         "ante": "",
         "key": "",
         "post": "󰀀",
-        "replacer": "اي",
-        "cursor_offset": 0
+        "replacer": "اي"
       },
       {
         "ante": "",
         "key": "",
         "post": "",
-        "replacer": "اي",
-        "cursor_offset": 0
+        "replacer": "اي"
       },
       {
         "ante": "",
         "key": "",
         "post": "",
-        "replacer": "او",
-        "cursor_offset": 0
+        "replacer": "او"
       },
       {
         "ante": "",
         "key": "",
         "post": "",
-        "replacer": "او",
-        "cursor_offset": 0
+        "replacer": "او"
       },
       {
         "ante": "",
         "key": "",
         "post": "",
-        "replacer": "او",
-        "cursor_offset": 0
+        "replacer": "او"
       },
       {
         "ante": "",
         "key": "",
         "post": "",
-        "replacer": "او",
-        "cursor_offset": 0
+        "replacer": "او"
       },
       {
         "ante": "",
         "key": "",
         "post": "",
-        "replacer": "ك",
-        "cursor_offset": 0
+        "replacer": "ك"
       },
       {
         "ante": "",
         "key": "",
         "post": "",
-        "replacer": "كه",
-        "cursor_offset": 0
+        "replacer": "كه"
       },
       {
         "ante": "",
         "key": "",
         "post": "",
-        "replacer": "ج",
-        "cursor_offset": 0
+        "replacer": "ج"
       },
       {
         "ante": "",
         "key": "",
         "post": "",
-        "replacer": "جه",
-        "cursor_offset": 0
+        "replacer": "جه"
       },
       {
         "ante": "",
         "key": "",
         "post": "",
-        "replacer": "نج",
-        "cursor_offset": 0
+        "replacer": "نج"
       },
       {
         "ante": "",
         "key": "",
         "post": "",
-        "replacer": "تش",
-        "cursor_offset": 0
+        "replacer": "تش"
       },
       {
         "ante": "",
         "key": "",
         "post": "",
-        "replacer": "تشه",
-        "cursor_offset": 0
+        "replacer": "تشه"
       },
       {
         "ante": "",
         "key": "",
         "post": "",
-        "replacer": "ج",
-        "cursor_offset": 0
+        "replacer": "ج"
       },
       {
         "ante": "",
         "key": "",
         "post": "",
-        "replacer": "جه",
-        "cursor_offset": 0
+        "replacer": "جه"
       },
       {
         "ante": "",
         "key": "",
         "post": "",
-        "replacer": "ن",
-        "cursor_offset": 0
+        "replacer": "ن"
       },
       {
         "ante": "",
         "key": "",
         "post": "",
-        "replacer": "ط",
-        "cursor_offset": 0
+        "replacer": "ط"
       },
       {
         "ante": "",
         "key": "",
         "post": "",
-        "replacer": "طه",
-        "cursor_offset": 0
+        "replacer": "طه"
       },
       {
         "ante": "",
         "key": "",
         "post": "",
-        "replacer": "د",
-        "cursor_offset": 0
+        "replacer": "د"
       },
       {
         "ante": "",
         "key": "",
         "post": "",
-        "replacer": "ده",
-        "cursor_offset": 0
+        "replacer": "ده"
       },
       {
         "ante": "",
         "key": "",
         "post": "",
-        "replacer": "ن",
-        "cursor_offset": 0
+        "replacer": "ن"
       },
       {
         "ante": "",
         "key": "",
         "post": "",
-        "replacer": "ت",
-        "cursor_offset": 0
+        "replacer": "ت"
       },
       {
         "ante": "",
         "key": "",
         "post": "",
-        "replacer": "ته",
-        "cursor_offset": 0
+        "replacer": "ته"
       },
       {
         "ante": "",
         "key": "",
         "post": "",
-        "replacer": "د",
-        "cursor_offset": 0
+        "replacer": "د"
       },
       {
         "ante": "",
         "key": "",
         "post": "",
-        "replacer": "ده",
-        "cursor_offset": 0
+        "replacer": "ده"
       },
       {
         "ante": "",
         "key": "",
         "post": "",
-        "replacer": "ن",
-        "cursor_offset": 0
+        "replacer": "ن"
       },
       {
         "ante": "",
         "key": "",
         "post": "",
-        "replacer": "ن",
-        "cursor_offset": 0
+        "replacer": "ن"
       },
       {
         "ante": "",
         "key": "",
         "post": "",
-        "replacer": "ب",
-        "cursor_offset": 0
+        "replacer": "ب"
       },
       {
         "ante": "",
         "key": "",
         "post": "",
-        "replacer": "به",
-        "cursor_offset": 0
+        "replacer": "به"
       },
       {
         "ante": "",
         "key": "",
         "post": "",
-        "replacer": "ب",
-        "cursor_offset": 0
+        "replacer": "ب"
       },
       {
         "ante": "",
         "key": "",
         "post": "",
-        "replacer": "به",
-        "cursor_offset": 0
+        "replacer": "به"
       },
       {
         "ante": "",
         "key": "",
         "post": "",
-        "replacer": "م",
-        "cursor_offset": 0
+        "replacer": "م"
       },
       {
         "ante": "",
         "key": "",
         "post": "",
-        "replacer": "ي",
-        "cursor_offset": 0
+        "replacer": "ي"
       },
       {
         "ante": "",
         "key": "",
         "post": "",
-        "replacer": "ر",
-        "cursor_offset": 0
+        "replacer": "ر"
       },
       {
         "ante": "",
         "key": "",
         "post": "",
-        "replacer": "ر",
-        "cursor_offset": 0
+        "replacer": "ر"
       },
       {
         "ante": "",
         "key": "",
         "post": "",
-        "replacer": "ل",
-        "cursor_offset": 0
+        "replacer": "ل"
       },
       {
         "ante": "",
         "key": "",
         "post": "",
-        "replacer": "ر",
-        "cursor_offset": 0
+        "replacer": "ر"
       },
       {
         "ante": "",
         "key": "",
         "post": "",
-        "replacer": "ر",
-        "cursor_offset": 0
+        "replacer": "ر"
       },
       {
         "ante": "",
         "key": "",
         "post": "",
-        "replacer": "و",
-        "cursor_offset": 0
+        "replacer": "و"
       },
       {
         "ante": "",
         "key": "",
         "post": "",
-        "replacer": "ش",
-        "cursor_offset": 0
+        "replacer": "ش"
       },
       {
         "ante": "",
         "key": "",
         "post": "",
-        "replacer": "ش",
-        "cursor_offset": 0
+        "replacer": "ش"
       },
       {
         "ante": "",
         "key": "",
         "post": "",
-        "replacer": "س",
-        "cursor_offset": 0
+        "replacer": "س"
       },
       {
         "ante": "",
         "key": "",
         "post": "",
-        "replacer": "ه",
-        "cursor_offset": 0
+        "replacer": "ه"
       },
       {
         "ante": "",
         "key": "",
         "post": "",
-        "replacer": "",
-        "cursor_offset": 0
+        "replacer": ""
       },
       {
         "ante": "",
         "key": "",
         "post": "",
-        "replacer": "",
-        "cursor_offset": 0
+        "replacer": ""
       },
       {
         "ante": "",
         "key": "",
         "post": "",
-        "replacer": "ا",
-        "cursor_offset": 0
+        "replacer": "ا"
       },
       {
         "ante": "",
         "key": "",
         "post": "",
-        "replacer": "ي",
-        "cursor_offset": 0
+        "replacer": "ي"
       },
       {
         "ante": "",
         "key": "",
         "post": "",
-        "replacer": "ي",
-        "cursor_offset": 0
+        "replacer": "ي"
       },
       {
         "ante": "",
         "key": "",
         "post": "",
-        "replacer": "و",
-        "cursor_offset": 0
+        "replacer": "و"
       },
       {
         "ante": "",
         "key": "",
         "post": "",
-        "replacer": "و",
-        "cursor_offset": 0
+        "replacer": "و"
       },
       {
         "ante": "",
         "key": "",
         "post": "",
-        "replacer": "ر",
-        "cursor_offset": 0
+        "replacer": "ر"
       },
       {
         "ante": "",
         "key": "",
         "post": "",
-        "replacer": "ر",
-        "cursor_offset": 0
+        "replacer": "ر"
       },
       {
         "ante": "",
         "key": "",
         "post": "",
-        "replacer": "ن",
-        "cursor_offset": 0
+        "replacer": "ن"
       },
       {
         "ante": "",
         "key": "",
         "post": "",
-        "replacer": "ي",
-        "cursor_offset": 0
+        "replacer": "ي"
       },
       {
         "ante": "",
         "key": "",
         "post": "󰀀",
-        "replacer": "ي",
-        "cursor_offset": 0
+        "replacer": "ي"
       },
       {
         "ante": "",
         "key": "",
         "post": "",
-        "replacer": "ي",
-        "cursor_offset": 0
+        "replacer": "ي"
       },
       {
         "ante": "",
         "key": "",
         "post": "󰀀",
-        "replacer": "اي",
-        "cursor_offset": 0
+        "replacer": "اي"
       },
       {
         "ante": "",
         "key": "",
         "post": "",
-        "replacer": "اي",
-        "cursor_offset": 0
+        "replacer": "اي"
       },
       {
         "ante": "",
         "key": "",
         "post": "",
-        "replacer": "و",
-        "cursor_offset": 0
+        "replacer": "و"
       },
       {
         "ante": "",
         "key": "",
         "post": "",
-        "replacer": "او",
-        "cursor_offset": 0
+        "replacer": "او"
       },
       {
         "ante": "",
         "key": "",
         "post": "",
-        "replacer": "و",
-        "cursor_offset": 0
+        "replacer": "و"
       },
       {
         "ante": "",
         "key": "",
         "post": "",
-        "replacer": "او",
-        "cursor_offset": 0
+        "replacer": "او"
       },
       {
         "ante": "",
         "key": "",
         "post": "",
-        "replacer": "",
-        "cursor_offset": 0
+        "replacer": ""
       },
       {
         "ante": "",
         "key": "",
         "post": "",
-        "replacer": "او",
-        "cursor_offset": 0
+        "replacer": "او"
       },
       {
         "ante": "",
         "key": "",
         "post": "",
-        "replacer": "",
-        "cursor_offset": 0
+        "replacer": ""
       },
       {
         "ante": "",
         "key": "",
         "post": "",
-        "replacer": "",
-        "cursor_offset": 0
+        "replacer": ""
       },
       {
         "ante": "",
         "key": "",
         "post": "",
-        "replacer": "",
-        "cursor_offset": 0
+        "replacer": ""
       },
       {
         "ante": "",
         "key": "",
         "post": "",
-        "replacer": "",
-        "cursor_offset": 0
+        "replacer": ""
       },
       {
         "ante": "",
         "key": "",
         "post": "",
-        "replacer": "ق",
-        "cursor_offset": 0
+        "replacer": "ق"
       },
       {
         "ante": "",
         "key": "",
         "post": "",
-        "replacer": "خ",
-        "cursor_offset": 0
+        "replacer": "خ"
       },
       {
         "ante": "",
         "key": "",
         "post": "",
-        "replacer": "غ",
-        "cursor_offset": 0
+        "replacer": "غ"
       },
       {
         "ante": "",
         "key": "",
         "post": "",
-        "replacer": "ز",
-        "cursor_offset": 0
+        "replacer": "ز"
       },
       {
         "ante": "",
         "key": "",
         "post": "",
-        "replacer": "ر",
-        "cursor_offset": 0
+        "replacer": "ر"
       },
       {
         "ante": "",
         "key": "",
         "post": "",
-        "replacer": "ره",
-        "cursor_offset": 0
+        "replacer": "ره"
       },
       {
         "ante": "",
         "key": "",
         "post": "",
-        "replacer": "ف",
-        "cursor_offset": 0
+        "replacer": "ف"
       },
       {
         "ante": "",
         "key": "",
         "post": "",
-        "replacer": "ي",
-        "cursor_offset": 0
+        "replacer": "ي"
       },
       {
         "ante": "",
         "key": "",
         "post": "",
-        "replacer": "ر",
-        "cursor_offset": 0
+        "replacer": "ر"
       },
       {
         "ante": "",
         "key": "",
         "post": "",
-        "replacer": "ل",
-        "cursor_offset": 0
+        "replacer": "ل"
       },
       {
         "ante": "",
         "key": "",
         "post": "",
-        "replacer": "ل",
-        "cursor_offset": 0
+        "replacer": "ل"
       },
       {
         "ante": "",
         "key": "",
         "post": "",
-        "replacer": "ل",
-        "cursor_offset": 0
+        "replacer": "ل"
       },
       {
         "ante": "",
         "key": "",
         "post": "",
-        "replacer": "۔",
-        "cursor_offset": 0
+        "replacer": "۔"
       },
       {
         "ante": "",
         "key": "",
         "post": "",
-        "replacer": "۔",
-        "cursor_offset": 0
+        "replacer": "۔"
       },
       {
         "ante": "",
         "key": "",
         "post": "",
-        "replacer": ".",
-        "cursor_offset": 0
+        "replacer": "."
       },
       {
         "ante": "",
         "key": "",
         "post": "",
-        "replacer": "١",
-        "cursor_offset": 0
+        "replacer": "١"
       },
       {
         "ante": "",
         "key": "",
         "post": "",
-        "replacer": "٢",
-        "cursor_offset": 0
+        "replacer": "٢"
       },
       {
         "ante": "",
         "key": "",
         "post": "",
-        "replacer": "٣",
-        "cursor_offset": 0
+        "replacer": "٣"
       },
       {
         "ante": "",
         "key": "",
         "post": "",
-        "replacer": "٤",
-        "cursor_offset": 0
+        "replacer": "٤"
       },
       {
         "ante": "",
         "key": "",
         "post": "",
-        "replacer": "٥",
-        "cursor_offset": 0
+        "replacer": "٥"
       },
       {
         "ante": "",
         "key": "",
         "post": "",
-        "replacer": "٦",
-        "cursor_offset": 0
+        "replacer": "٦"
       },
       {
         "ante": "",
         "key": "",
         "post": "",
-        "replacer": "٧",
-        "cursor_offset": 0
+        "replacer": "٧"
       },
       {
         "ante": "",
         "key": "",
         "post": "",
-        "replacer": "٨",
-        "cursor_offset": 0
+        "replacer": "٨"
       },
       {
         "ante": "",
         "key": "",
         "post": "",
-        "replacer": "٩",
-        "cursor_offset": 0
+        "replacer": "٩"
       },
       {
         "ante": "",
         "key": "",
         "post": "",
-        "replacer": ".",
-        "cursor_offset": 0
+        "replacer": "."
       },
       {
         "ante": "",
         "key": "",
         "post": "",
-        "replacer": "",
-        "cursor_offset": 0
+        "replacer": ""
       }
     ],
     [
@@ -3463,8 +3349,7 @@
         "ante": "",
         "key": "󰀅󰀄",
         "post": "",
-        "replacer": "󰀌",
-        "cursor_offset": 0
+        "replacer": "󰀌"
       }
     ]
   ],

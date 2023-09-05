@@ -5,43 +5,43 @@
 [package]
 name = "icu_casemap"
 description = "Unicode case mapping and folding algorithms"
-version = "1.2.0"
-rust-version = "1.65.0"
-authors = ["The ICU4X Project Developers"]
-edition = "2021"
-readme = "README.md"
-repository = "https://github.com/unicode-org/icu4x"
-homepage = "https://icu4x.unicode.org"
-license-file = "LICENSE"
-categories = ["internationalization"]
-# Keep this in sync with other crates unless there are exceptions
-include = [
-    "src/**/*",
-    "examples/**/*",
-    "benches/**/*",
-    "tests/**/*",
-    "Cargo.toml",
-    "LICENSE",
-    "README.md"
-]
+
+authors.workspace = true
+categories.workspace = true
+edition.workspace = true
+homepage.workspace = true
+include.workspace = true
+license-file.workspace = true
+repository.workspace = true
+rust-version.workspace = true
+version.workspace = true
 
 [package.metadata.docs.rs]
 all-features = true
 
 [dependencies]
 displaydoc = { version = "0.2.3", default-features = false }
-icu_collections = { version = "1.2.0", path = "../../components/collections" }
-icu_locid = { version = "1.2.0", path = "../../components/locid" }
-icu_properties = { version = "1.2.0", path = "../../components/properties", default-features = false }
-icu_provider = { version = "1.2.0", path = "../../provider/core", features = ["macros"] }
-yoke = { version = "0.7.1", path = "../../utils/yoke", features = ["derive"] }
-zerovec = { version = "0.9.4", path = "../../utils/zerovec", features = ["yoke"] }
-writeable = { version = "0.5.1", path = "../../utils/writeable" }
+icu_collections = { workspace = true }
+icu_locid = { workspace = true }
+icu_properties = { workspace = true }
+icu_provider = { workspace = true, features = ["macros"] }
+yoke = { workspace = true, features = ["derive"] }
+zerovec = { workspace = true, features = ["yoke"] }
+writeable = { workspace = true }
 
-databake = { version = "0.1.3", path = "../../utils/databake", features = ["derive"], optional = true}
+databake = { workspace = true, features = ["derive"], optional = true}
 serde = { version = "1.0", default-features = false, features = ["derive", "alloc"], optional = true }
 
-icu_casemap_data = { version = "~1.3.0", path = "data", optional = true }
+icu_casemap_data = { workspace = true, optional = true }
+
+[dev-dependencies]
+icu = { workspace = true }
+icu_normalizer = { workspace = true , features = ["compiled_data"]}
+icu_benchmark_macros = { workspace = true  }
+icu_collections = { workspace = true , features = ["databake"] }
+
+[target.'cfg(not(target_arch = "wasm32"))'.dev-dependencies]
+criterion = "0.4"
 
 [features]
 default = ["compiled_data"]
@@ -55,18 +55,6 @@ compiled_data = ["dep:icu_casemap_data", "icu_properties/compiled_data"]
 skip_optional_dependencies = true
 # Bench feature gets tested separately and is only relevant for CI
 denylist = ["bench"]
-
-[dev-dependencies]
-icu = { path = "../../components/icu" }
-icu_normalizer = { path = "../../components/normalizer" }
-icu_benchmark_macros = { path = "../../tools/benchmark/macros" }
-icu_collections = { path = "../../components/collections", features = ["databake"] }
-databake = { version = "0.1.3", path = "../../utils/databake", default-features = false}
-
-[target.'cfg(not(target_arch = "wasm32"))'.dev-dependencies]
-criterion = "0.4"
-icu_codepointtrie_builder = { version = "0.3.4", path = "../../components/collections/codepointtrie_builder" }
-
 
 [[test]]
 name = "conversions"

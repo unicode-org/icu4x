@@ -4,14 +4,15 @@
 
 [package]
 name = "yoke-derive"
-version = "0.7.1"
 description = "Custom derive for the yoke crate"
-repository = "https://github.com/unicode-org/icu4x"
-license-file = "LICENSE"
+version = "0.7.1"
 categories = ["data-structures", "memory-management", "caching", "no-std"]
 keywords = ["zerocopy", "serialization", "lifetime", "borrow", "self-referential"]
 authors = ["Manish Goregaokar <manishsmail@gmail.com>"]
-edition = "2021"
+
+edition.workspace = true
+license-file.workspace = true
+repository.workspace = true
 
 [package.metadata.workspaces]
 independent = true
@@ -27,5 +28,5 @@ syn = { version = "2", features = ["derive", "fold"] }
 synstructure = "0.13"
 
 [dev-dependencies]
-yoke = { path = "..", features = ["derive"]}
-zerovec = { path = "../../zerovec", features = ["yoke"] }
+yoke = { workspace = true }
+zerovec = { workspace = true }
