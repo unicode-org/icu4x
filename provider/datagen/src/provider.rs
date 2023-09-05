@@ -29,24 +29,6 @@ pub struct DatagenProvider {
     pub source: SourceData,
 }
 
-impl Default for DatagenProvider {
-    fn default() -> Self {
-        Self {
-            source: SourceData {
-                cldr_paths: None,
-                icuexport_paths: None,
-                segmenter_lstm_paths: None,
-                trie_type: Default::default(),
-                collation_han_database: Default::default(),
-                #[cfg(feature = "legacy_api")]
-                icuexport_dictionary_fallback: None,
-                #[cfg(feature = "legacy_api")]
-                collations: Default::default(),
-            },
-        }
-    }
-}
-
 impl DatagenProvider {
     /// The latest CLDR JSON tag that has been verified to work with this version of `icu_datagen`.
     pub const LATEST_TESTED_CLDR_TAG: &'static str = "43.1.0";
@@ -65,13 +47,13 @@ impl DatagenProvider {
     ///
     /// ✨ *Enabled with the `networking` Cargo feature.*
     #[cfg(feature = "networking")]
-    pub fn latest_tested() -> Self {
+    pub fn new_latest_tested() -> Self {
         // Singleton so that all instantiations share the same cache.
         static SINGLETON: once_cell::sync::OnceCell<DatagenProvider> =
             once_cell::sync::OnceCell::new();
         SINGLETON
             .get_or_init(|| {
-                Self::default()
+                Self::new_custom()
                     .with_cldr_for_tag(Self::LATEST_TESTED_CLDR_TAG)
                     .with_icuexport_for_tag(Self::LATEST_TESTED_ICUEXPORT_TAG)
                     .with_segmenter_lstm_for_tag(Self::LATEST_TESTED_SEGMENTER_LSTM_TAG)
@@ -80,7 +62,7 @@ impl DatagenProvider {
     }
 
     #[cfg(test)]
-    pub fn latest_tested_offline_subset() -> Self {
+    pub fn new_testing() -> Self {
         // Singleton so that all instantiations share the same cache.
         static SINGLETON: once_cell::sync::OnceCell<DatagenProvider> =
             once_cell::sync::OnceCell::new();
@@ -89,7 +71,7 @@ impl DatagenProvider {
                 // This is equivalent for the files defined in `tools/testdata-scripts/globs.rs.data`.
                 let data_root =
                     std::path::Path::new(core::env!("CARGO_MANIFEST_DIR")).join("tests/data");
-                Self::default()
+                Self::new_custom()
                     .with_cldr(data_root.join("cldr"))
                     .unwrap()
                     .with_icuexport(data_root.join("icuexport"))
@@ -98,6 +80,26 @@ impl DatagenProvider {
                     .unwrap()
             })
             .clone()
+    }
+
+    /// A provider with no source data. Without adding more sources, most `load` methods
+    /// will return errors.
+    ///
+    /// Use [`with_cldr`], [`with_icuexport`], [`with_segmenter_lstm`] to set data sources.
+    pub fn new_custom() -> Self {
+        Self {
+            source: SourceData {
+                cldr_paths: None,
+                icuexport_paths: None,
+                segmenter_lstm_paths: None,
+                trie_type: Default::default(),
+                collation_han_database: Default::default(),
+                #[cfg(feature = "legacy_api")]
+                icuexport_dictionary_fallback: None,
+                #[cfg(feature = "legacy_api")]
+                collations: Default::default(),
+            },
+        }
     }
 
     /// Adds CLDR source data to the provider. The root should point to a local
@@ -395,7 +397,7 @@ impl Default for SourceData {
                 .into_iter()
                 .collect(),
             )))),
-            ..DatagenProvider::default().source
+            ..DatagenProvider::new_custom().source
         }
     }
 }
@@ -410,9 +412,9 @@ impl SourceData {
         DatagenProvider::LATEST_TESTED_ICUEXPORT_TAG;
 
     #[cfg(feature = "networking")]
-    /// See [`DatagenProvider::latest_tested`]
+    /// See [`DatagenProvider::new_latest_tested`]
     pub fn latest_tested() -> Self {
-        DatagenProvider::latest_tested().source
+        DatagenProvider::new_latest_tested().source
     }
 
     /// See [`DatagenProvider::with_cldr`]

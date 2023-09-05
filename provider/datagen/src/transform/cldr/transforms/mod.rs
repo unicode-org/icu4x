@@ -242,7 +242,7 @@ mod tests {
 
     #[test]
     fn test_de_ascii_forward() {
-        let provider = crate::DatagenProvider::latest_tested_offline_subset();
+        let provider = crate::DatagenProvider::new_testing();
 
         let _data: DataPayload<TransliteratorRulesV1Marker> = provider
             .load(DataRequest {
@@ -256,7 +256,7 @@ mod tests {
 
     #[test]
     fn test_latin_ascii_backward() {
-        let provider = crate::DatagenProvider::latest_tested_offline_subset();
+        let provider = crate::DatagenProvider::new_testing();
 
         let _data: DataPayload<TransliteratorRulesV1Marker> = provider
             .load(DataRequest {

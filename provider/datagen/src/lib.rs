@@ -22,8 +22,9 @@
 //!
 //! DatagenDriver::new()
 //!     .with_keys([icu::list::provider::AndListV1Marker::KEY])
+//!     .with_all_locales()
 //!     .export(
-//!         &DatagenProvider::latest_tested(),
+//!         &DatagenProvider::new_latest_tested(),
 //!         BlobExporter::new_with_sink(Box::new(
 //!             File::create("data.postcard").unwrap(),
 //!         )),
