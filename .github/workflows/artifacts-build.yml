@@ -212,7 +212,7 @@ jobs:
           - components/locid_transform
           - components/plurals
           - components/segmenter
-          - experimental/transliteration
+          - experimental/transliterate
           - experimental/zerotrie
           - utils/fixed_decimal
           - utils/litemap
