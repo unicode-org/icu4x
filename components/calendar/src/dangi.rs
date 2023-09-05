@@ -439,7 +439,8 @@ impl Dangi {
     ) -> FormattableYear {
         let era = Era(tinystr!(16, "dangi"));
         let number = year;
-        let cyclic = u8::try_from(div_rem_euclid64(number as i64 - 1 + 364, 60).1 as i32 + 1).unwrap_or(0);
+        let cyclic =
+            u8::try_from(div_rem_euclid64(number as i64 - 1 + 364, 60).1 as i32 + 1).unwrap_or(0);
         let cyclic = NonZeroU8::new(cyclic);
         let rata_die_in_year = if let Some(info) = year_info_option {
             info.get_new_year()
@@ -688,7 +689,7 @@ mod test {
             iso_month: u8,
             iso_day: u8,
             expected_rel_iso: i32,
-            expected_cyclic: i32,
+            expected_cyclic: u8,
             expected_month: u32,
             expected_day: u32,
         }
@@ -1195,8 +1196,8 @@ mod test {
                 "Related ISO failed for test case: {case:?}"
             );
             assert_eq!(
-                dangi_cyclic,
-                Some(case.expected_cyclic),
+                dangi_cyclic.unwrap().get(),
+                case.expected_cyclic,
                 "Cyclic year failed for test case: {case:?}"
             );
             assert_eq!(

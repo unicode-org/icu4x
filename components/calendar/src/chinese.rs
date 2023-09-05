@@ -673,7 +673,7 @@ mod test {
         assert_eq!(chinese.month().ordinal, 1);
         assert_eq!(chinese.month().code.0, "M01");
         assert_eq!(chinese.day_of_month().0, 1);
-        assert_eq!(chinese.year().cyclic, Some(1));
+        assert_eq!(chinese.year().cyclic.unwrap().get(), 1);
         assert_eq!(chinese.year().related_iso, Some(-2636));
     }
 
@@ -978,7 +978,7 @@ mod test {
             iso_month: u8,
             iso_day: u8,
             expected_rel_iso: i32,
-            expected_cyclic: i32,
+            expected_cyclic: u8,
             expected_month: u32,
             expected_day: u32,
         }
@@ -1075,8 +1075,8 @@ mod test {
                 "Related ISO failed for test case: {case:?}"
             );
             assert_eq!(
-                chinese_cyclic,
-                Some(case.expected_cyclic),
+                chinese_cyclic.unwrap().get(),
+                case.expected_cyclic,
                 "Cyclic year failed for test case: {case:?}"
             );
             assert_eq!(
