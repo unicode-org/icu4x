@@ -40,7 +40,7 @@ rust_library("calendrical_calculations-v0_1_0") {
 rust_library("core_maths-v0_0_0") {
   crate_name = "core_maths"
   crate_root = "//utils/core_maths/src/lib.rs"
-  output_name = "core_maths-f45589bdaf7699cf"
+  output_name = "core_maths-a561b188108edc64"
 
   deps = []
   deps += [ ":libm-v0_2_6" ]
@@ -50,8 +50,8 @@ rust_library("core_maths-v0_0_0") {
   rustflags = [
     "--cap-lints=allow",
     "--edition=2021",
-    "-Cmetadata=f45589bdaf7699cf",
-    "-Cextra-filename=-f45589bdaf7699cf",
+    "-Cmetadata=a561b188108edc64",
+    "-Cextra-filename=-a561b188108edc64",
   ]
 
   visibility = [ ":*" ]
