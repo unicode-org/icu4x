@@ -35,12 +35,17 @@ extern crate alloc;
 
 pub mod provider;
 
+#[cfg(feature = "datagen")]
+mod compile;
 mod error;
 #[allow(clippy::indexing_slicing, clippy::unwrap_used)] // TODO(#3958): Remove.
 mod transliterator;
 
-pub use error::TransliteratorError;
+pub use error::*;
 pub use transliterator::*;
 
 #[doc(no_inline)]
 pub use TransliteratorError as Error;
+
+#[cfg(feature = "datagen")]
+pub use compile::{legacy_id_to_internal_id, Direction};

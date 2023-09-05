@@ -60,7 +60,6 @@ icu_collections = { workspace = true, features = ["serde"] }
 icu_locid = { workspace = true, features = ["std", "serde"] }
 icu_provider = { workspace = true, features = ["std", "logging", "datagen"]}
 icu_provider_adapters = { workspace = true }
-icu_transliterator_parser = { workspace = true, optional = true }
 tinystr = { workspace = true, features = ["alloc", "serde", "zerovec"] }
 writeable = { workspace = true }
 zerovec = { workspace = true, features = ["serde", "yoke"] }
@@ -122,7 +121,7 @@ icu_compactdecimal = ["dep:icu_compactdecimal"]
 icu_displaynames = ["dep:icu_displaynames"]
 icu_relativetime = ["dep:icu_relativetime"]
 icu_singlenumberformatter = ["dep:icu_singlenumberformatter"]
-icu_transliteration = ["dep:icu_transliteration", "dep:icu_transliterator_parser"]
+icu_transliteration = ["dep:icu_transliteration"]
 icu_unitsconversion = ["dep:icu_unitsconversion"]
 experimental_components = [
     "icu_compactdecimal",

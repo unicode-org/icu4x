@@ -1498,7 +1498,6 @@ dependencies = [
  "icu_singlenumberformatter",
  "icu_timezone",
  "icu_transliteration",
- "icu_transliterator_parser",
  "icu_unitsconversion",
  "itertools",
  "log",
@@ -1997,31 +1996,21 @@ dependencies = [
  "icu_collections",
  "icu_locid",
  "icu_normalizer",
+ "icu_properties",
  "icu_provider",
  "icu_transliteration_data",
+ "icu_unicodeset_parser",
  "litemap",
+ "log",
  "serde",
  "yoke",
+ "zerofrom",
  "zerovec",
 ]
 
 [[package]]
 name = "icu_transliteration_data"
 version = "0.0.0"
-
-[[package]]
-name = "icu_transliterator_parser"
-version = "0.0.0"
-dependencies = [
- "icu_collections",
- "icu_properties",
- "icu_provider",
- "icu_transliteration",
- "icu_unicodeset_parser",
- "log",
- "zerofrom",
- "zerovec",
-]
 
 [[package]]
 name = "icu_unicodeset_parser"
