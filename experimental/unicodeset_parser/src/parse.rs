@@ -24,7 +24,7 @@ use icu_provider::prelude::*;
 /// The kind of error that occurred.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 #[non_exhaustive]
-pub enum CompileErrorKind {
+pub enum ParseErrorKind {
     /// An unexpected character was encountered. This variant implies the other variants
     /// (notably `UnknownProperty` and `Unimplemented`) do not apply.
     UnexpectedChar(char),
@@ -47,9 +47,9 @@ pub enum CompileErrorKind {
     InvalidEscape,
 }
 use zerovec::VarZeroVec;
-use CompileErrorKind as PEK;
+use ParseErrorKind as PEK;
 
-impl CompileErrorKind {
+impl ParseErrorKind {
     fn with_offset(self, offset: usize) -> ParseError {
         ParseError {
             offset: Some(offset),
@@ -58,15 +58,15 @@ impl CompileErrorKind {
     }
 }
 
-impl From<CompileErrorKind> for ParseError {
-    fn from(kind: CompileErrorKind) -> Self {
+impl From<ParseErrorKind> for ParseError {
+    fn from(kind: ParseErrorKind) -> Self {
         ParseError { offset: None, kind }
     }
 }
 
 /// The error type returned by the `parse` functions in this crate.
 ///
-/// See [`ParseError::fmt_with_source`] for pretty-printing and [`CompileErrorKind`] of the
+/// See [`ParseError::fmt_with_source`] for pretty-printing and [`ParseErrorKind`] of the
 /// different types of errors represented by this struct.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub struct ParseError {
@@ -74,7 +74,7 @@ pub struct ParseError {
     // to display as location for the error, e.g., the unexpected character itself or
     // for an unknown property name the last character of the name.
     offset: Option<usize>,
-    kind: CompileErrorKind,
+    kind: ParseErrorKind,
 }
 
 type Result<T, E = ParseError> = core::result::Result<T, E>;
@@ -108,7 +108,7 @@ impl ParseError {
     pub fn fmt_with_source(&self, source: &str) -> impl Display {
         let ParseError { offset, kind } = *self;
 
-        if kind == CompileErrorKind::Eof {
+        if kind == ParseErrorKind::Eof {
             return format!("{source}← error: unexpected end of input");
         }
         let mut s = String::new();
@@ -141,28 +141,28 @@ impl ParseError {
         }
         s.push_str("error: ");
         match kind {
-            CompileErrorKind::UnexpectedChar(c) => {
+            ParseErrorKind::UnexpectedChar(c) => {
                 s.push_str(&format!("unexpected character '{}'", c.escape_debug()));
             }
-            CompileErrorKind::UnknownProperty => {
+            ParseErrorKind::UnknownProperty => {
                 s.push_str("unknown property");
             }
-            CompileErrorKind::UnknownVariable => {
+            ParseErrorKind::UnknownVariable => {
                 s.push_str("unknown variable");
             }
-            CompileErrorKind::UnexpectedVariable => {
+            ParseErrorKind::UnexpectedVariable => {
                 s.push_str("unexpected variable");
             }
-            CompileErrorKind::Eof => {
+            ParseErrorKind::Eof => {
                 s.push_str("unexpected end of input");
             }
-            CompileErrorKind::Internal => {
+            ParseErrorKind::Internal => {
                 s.push_str("internal error");
             }
-            CompileErrorKind::Unimplemented => {
+            ParseErrorKind::Unimplemented => {
                 s.push_str("unimplemented");
             }
-            CompileErrorKind::InvalidEscape => {
+            ParseErrorKind::InvalidEscape => {
                 s.push_str("invalid escape sequence");
             }
         }
@@ -170,8 +170,8 @@ impl ParseError {
         s
     }
 
-    /// Returns the [`CompileErrorKind`] of this error.
-    pub fn kind(&self) -> CompileErrorKind {
+    /// Returns the [`ParseErrorKind`] of this error.
+    pub fn kind(&self) -> ParseErrorKind {
         self.kind
     }
 
@@ -1252,7 +1252,7 @@ where
 
     // TODO: return Result<!> once ! is stable
     #[inline]
-    fn error_here<T>(&mut self, kind: CompileErrorKind) -> Result<T> {
+    fn error_here<T>(&mut self, kind: ParseErrorKind) -> Result<T> {
         match self.iter.peek() {
             None => Err(kind.into()),
             Some(&(offset, _)) => Err(kind.with_offset(offset)),
