@@ -5,7 +5,7 @@
 // TODO(#3736): find a way to keep cldr_testData uptodate
 
 use icu_locid::Locale;
-use icu_transliteration::Transliterator;
+use icu_transliterate::Transliterator;
 use std::path::PathBuf;
 
 #[test]

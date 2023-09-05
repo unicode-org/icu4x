@@ -3,7 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 //! This module has three main functions. First, it validates many aspects of transliterators.
-//! Second, it compiles them into the zero-copy data struct defined in `icu_transliteration`. Third,
+//! Second, it compiles them into the zero-copy data struct defined in `icu_transliterate`. Third,
 //! it computes the dependencies of the transliterator.
 //! It is responsible for both directions of a source file, but the rest of this documentation
 //! assumes a single direction. The process is simply repeated for the other direction.

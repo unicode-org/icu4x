@@ -2,7 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-//! Data for the icu_transliteration crate
+//! Data for the icu_transliterate crate
 
 #![no_std]
 

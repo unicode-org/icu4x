@@ -55,7 +55,7 @@ impl CldrCache {
         CldrDirLang(self, "cldr-localenames".to_owned())
     }
 
-    #[cfg(feature = "icu_transliteration")]
+    #[cfg(feature = "icu_transliterate")]
     pub fn transforms(&self) -> CldrDirTransform<'_> {
         CldrDirTransform(self, "cldr-transforms".to_owned())
     }
@@ -228,10 +228,10 @@ impl<'a> CldrDirLang<'a> {
     }
 }
 
-#[cfg(feature = "icu_transliteration")]
+#[cfg(feature = "icu_transliterate")]
 pub(crate) struct CldrDirTransform<'a>(&'a CldrCache, String);
 
-#[cfg(feature = "icu_transliteration")]
+#[cfg(feature = "icu_transliterate")]
 impl<'a> CldrDirTransform<'a> {
     pub fn read_and_parse_metadata(
         &self,

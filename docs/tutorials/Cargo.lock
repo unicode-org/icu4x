@@ -3092,11 +3092,11 @@ name = "icu_singlenumberformatter_data"
 version = "1.2.0"
 
 [[patch.unused]]
-name = "icu_transliteration"
+name = "icu_transliterate"
 version = "0.0.0"
 
 [[patch.unused]]
-name = "icu_transliteration_data"
+name = "icu_transliterate_data"
 version = "0.0.0"
 
 [[patch.unused]]
