@@ -34,7 +34,7 @@ pub struct Baked;
 #[cfg(feature = "compiled_data")]
 const _: () = {
     mod icu {
-        pub use crate as transliteration;
+        pub use crate as transliterate;
         pub use icu_collections as collections;
     }
     icu_transliterate_data::impl_transliterator_rules_v1!(Baked);
