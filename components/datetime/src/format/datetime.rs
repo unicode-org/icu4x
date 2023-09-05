@@ -262,13 +262,12 @@ where
                     Some(AnyCalendarKind::Dangi) => &DANGI_CYCLIC_YEARS,
                     _ => &CHINESE_CYCLIC_YEARS, // for now assume all other calendars use the stem-branch model
                 };
-                let cyclic_str = usize::try_from(cyclic)
-                    .ok()
-                    .and_then(|c| cyclics.get(c - 1)) // `cyclic` is 1-indexed
-                    .ok_or(icu_calendar::CalendarError::Overflow {
+                let cyclic_str = cyclics.get(usize::from(cyclic.get()) - 1).ok_or(
+                    icu_calendar::CalendarError::Overflow {
                         field: "cyclic",
                         max: 60,
-                    })?;
+                    },
+                )?;
                 w.write_str(cyclic_str)?;
             }
             Year::RelatedIso => {

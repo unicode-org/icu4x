@@ -9,6 +9,7 @@ use crate::helpers;
 use core::convert::TryFrom;
 use core::convert::TryInto;
 use core::fmt;
+use core::num::NonZeroU8;
 use core::str::FromStr;
 use tinystr::TinyAsciiStr;
 use tinystr::{TinyStr16, TinyStr4};
@@ -59,9 +60,9 @@ pub struct FormattableYear {
     /// The year in the current cycle for cyclic calendars (1-indexed)
     /// can be set to None for non-cyclic calendars
     ///
-    /// This should not be zero or negative. For chinese and dangi it will be
+    /// For chinese and dangi it will be
     /// a number between 1 and 60, for hypothetical other calendars it may be something else.
-    pub cyclic: Option<i32>,
+    pub cyclic: Option<NonZeroU8>,
 
     /// The related ISO year. This is normally the ISO (proleptic Gregorian) year having the greatest
     /// overlap with the calendar year. It is used in certain date formatting patterns.
@@ -76,7 +77,7 @@ impl FormattableYear {
     ///
     /// Other fields can be set mutably after construction
     /// as needed
-    pub fn new(era: Era, number: i32, cyclic: Option<i32>) -> Self {
+    pub fn new(era: Era, number: i32, cyclic: Option<NonZeroU8>) -> Self {
         Self {
             era,
             number,

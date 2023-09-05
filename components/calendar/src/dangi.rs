@@ -45,6 +45,7 @@ use crate::{
     AnyCalendarKind, Calendar, CalendarError, Date, DateTime, Iso,
 };
 use calendrical_calculations::astronomy::Location;
+use core::num::NonZeroU8;
 use tinystr::tinystr;
 
 // The first day in the Korean Dangi calendar (based on the founding of Gojoseon)
@@ -438,7 +439,8 @@ impl Dangi {
     ) -> FormattableYear {
         let era = Era(tinystr!(16, "dangi"));
         let number = year;
-        let cyclic = Some(div_rem_euclid64(number as i64 - 1 + 364, 60).1 as i32 + 1);
+        let cyclic = u8::try_from(div_rem_euclid64(number as i64 - 1 + 364, 60).1 as i32 + 1).unwrap_or(0);
+        let cyclic = NonZeroU8::new(cyclic);
         let rata_die_in_year = if let Some(info) = year_info_option {
             info.get_new_year()
         } else {
