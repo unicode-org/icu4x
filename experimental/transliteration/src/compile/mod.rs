@@ -183,6 +183,7 @@ mod tests {
 
     use super::*;
     use crate::provider as ds;
+    use std::collections::HashSet;
     use zerovec::VarZeroVec;
 
     fn parse_set(source: &str) -> parse::UnicodeSet {
@@ -324,14 +325,18 @@ mod tests {
                 rule_group_list: VarZeroVec::from(&expected_rule_group_list),
                 variable_table: expected_var_table,
                 visibility: true,
-                dependencies: VarZeroVec::from(&[
-                    "x-any-nfc",
-                    "x-any-remove",
-                    "x-interindic-devanagari",
-                    "x-latin-interindic",
-                ]),
             };
             assert_eq!(forward, expected_rbt);
+
+            assert_eq!(
+                forward.deps().collect::<HashSet<_>>(),
+                HashSet::from_iter([
+                    Cow::Borrowed("x-any-nfc"),
+                    Cow::Borrowed("x-any-remove"),
+                    Cow::Borrowed("x-interindic-devanagari"),
+                    Cow::Borrowed("x-latin-interindic"),
+                ])
+            );
         }
         {
             let expected_filter = parse::FilterSet::all();
@@ -425,15 +430,19 @@ mod tests {
                 rule_group_list: VarZeroVec::from(&expected_rule_group_list),
                 variable_table: expected_var_table,
                 visibility: true,
-                dependencies: VarZeroVec::from(&[
-                    "und-t-s0-anyrev-d0-addrndsp-m0-fifty",
-                    "x-any-nfd",
-                    "x-any-revfncall",
-                    "x-devanagari-interindic",
-                    "x-interindic-latin",
-                ]),
             };
             assert_eq!(reverse, expected_rbt);
+
+            assert_eq!(
+                reverse.deps().collect::<HashSet<_>>(),
+                HashSet::from_iter([
+                    Cow::Borrowed("und-t-s0-anyrev-d0-addrndsp-m0-fifty"),
+                    Cow::Borrowed("x-any-nfd"),
+                    Cow::Borrowed("x-any-revfncall"),
+                    Cow::Borrowed("x-devanagari-interindic"),
+                    Cow::Borrowed("x-interindic-latin"),
+                ])
+            );
         }
     }
 }
