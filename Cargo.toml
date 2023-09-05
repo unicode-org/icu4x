@@ -30,7 +30,6 @@ members = [
     "experimental/relativetime",
     "experimental/single_number_formatter",
     "experimental/transliteration",
-    "experimental/transliterator_parser",
     "experimental/unicodeset_parser",
     "experimental/unitsconversion",
 
@@ -160,7 +159,6 @@ icu_personnames = { version = "0.0.0", path = "experimental/personnames", defaul
 icu_relativetime = { version = "0.1.0", path = "experimental/relativetime", default-features = false }
 icu_singlenumberformatter = { version = "0.0.0", path = "experimental/single_number_formatter", default-features = false }
 icu_transliteration = { version = "0.0.0", path = "experimental/transliteration", default-features = false }
-icu_transliterator_parser = { version = "0.0.0", path = "experimental/transliterator_parser", default-features = false }
 icu_unicodeset_parser = { version = "0.0.0", path = "experimental/unicodeset_parser", default-features = false }
 icu_unitsconversion = { version = "0.0.0", path = "experimental/unitsconversion", default-features = false }
 

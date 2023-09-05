@@ -3,15 +3,11 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use super::*;
-use crate::parse::{BasicId, UnicodeSet};
-use core::fmt;
+use crate::provider as ds;
 use icu_collections::codepointinvlist::CodePointInversionList;
-use std::fmt::{Display, Formatter};
+use std::collections::{HashMap, HashSet};
+use std::fmt::{self, Display, Formatter};
 use zerovec::VarZeroVec;
-
-use crate::compile::rule_group_agg::UniConversionRule;
-use icu_transliteration::provider as ds;
-use icu_transliteration::provider::VarTable;
 
 macro_rules! impl_insert {
     ($fn_name:ident, $field:ident, $elt_type:ty, $($next_field:tt)*) => {
@@ -40,21 +36,21 @@ struct MutVarTable {
     quantifiers_kleene: MutVarTableField<String>,
     quantifiers_kleene_plus: MutVarTableField<String>,
     segments: MutVarTableField<ds::Segment<'static>>,
-    unicode_sets: MutVarTableField<UnicodeSet>,
+    unicode_sets: MutVarTableField<parse::UnicodeSet>,
     function_calls: MutVarTableField<ds::FunctionCall<'static>>,
     left_placeholder_base: u32,
     right_placeholder_base: u32,
     backref_base: u32,
-    counts: SpecialConstructCounts,
+    counts: pass1::SpecialConstructCounts,
 }
 
 impl MutVarTable {
-    fn try_new_from_counts(counts: SpecialConstructCounts) -> Result<Self> {
-        if counts.num_total() > VarTable::NUM_DYNAMIC {
-            return Err(PEK::TooManySpecials.into());
+    fn try_new_from_counts(counts: pass1::SpecialConstructCounts) -> Result<Self> {
+        if counts.num_total() > ds::VarTable::NUM_DYNAMIC {
+            return Err(CompileErrorKind::TooManySpecials.into());
         }
 
-        let compounds_base = VarTable::BASE as u32;
+        let compounds_base = ds::VarTable::BASE as u32;
         let quantifiers_opt_base = compounds_base + counts.num_compounds as u32;
         let quantifiers_kleene_base = quantifiers_opt_base + counts.num_quantifiers_opt as u32;
         let quantifiers_kleene_plus_base =
@@ -143,7 +139,7 @@ impl MutVarTable {
     impl_insert!(
         insert_unicode_set,
         unicode_sets,
-        UnicodeSet,
+        parse::UnicodeSet,
         function_calls.base
     );
     impl_insert!(
@@ -155,7 +151,7 @@ impl MutVarTable {
 
     fn standin_for_cursor(&self, left: u32, right: u32) -> char {
         match (left, right) {
-            (0, 0) => VarTable::RESERVED_PURE_CURSOR,
+            (0, 0) => ds::VarTable::RESERVED_PURE_CURSOR,
             (left, 0) => {
                 debug_assert!(left <= self.counts.max_left_placeholders);
                 #[allow(clippy::unwrap_used)] // constructor checks this via num_totals
@@ -177,7 +173,7 @@ impl MutVarTable {
         debug_assert!(backref_num > 0);
         // -1 because backrefs are 1-indexed
         let standin = self.backref_base + backref_num - 1;
-        debug_assert!(standin <= VarTable::MAX_DYNAMIC as u32);
+        debug_assert!(standin <= ds::VarTable::MAX_DYNAMIC as u32);
         #[allow(clippy::unwrap_used)] // constructor checks this via num_totals
         char::try_from(standin).unwrap()
     }
@@ -240,10 +236,9 @@ pub(super) struct Pass2<'a, 'p> {
 
 impl<'a, 'p> Pass2<'a, 'p> {
     pub(super) fn run(
-        result: DirectedPass1Result<'p>,
+        result: pass1::DirectedPass1Result<'p>,
         var_definitions: &'a HashMap<String, &'p [parse::Element]>,
         available_transliterators: &'a HashMap<String, String>,
-        visible: bool,
     ) -> Result<ds::RuleBasedTransliterator<'static>> {
         let mut pass2 = Self::try_new(
             result.data.counts,
@@ -254,12 +249,11 @@ impl<'a, 'p> Pass2<'a, 'p> {
             result.groups,
             result.filter,
             result.data.used_transliterators,
-            visible,
         )
     }
 
     fn try_new(
-        counts: SpecialConstructCounts,
+        counts: pass1::SpecialConstructCounts,
         var_definitions: &'a HashMap<String, &'p [parse::Element]>,
         available_transliterators: &'a HashMap<String, String>,
     ) -> Result<Self> {
@@ -274,10 +268,9 @@ impl<'a, 'p> Pass2<'a, 'p> {
 
     fn compile(
         &mut self,
-        rule_groups: super::RuleGroups<'p>,
-        global_filter: Option<FilterSet>,
-        used_transliterators: HashSet<BasicId>,
-        visible: bool,
+        rule_groups: rule_group_agg::RuleGroups<'p>,
+        global_filter: Option<parse::FilterSet>,
+        used_transliterators: HashSet<parse::BasicId>,
     ) -> Result<ds::RuleBasedTransliterator<'static>> {
         let mut compiled_transform_groups: Vec<VarZeroVec<'static, ds::SimpleIdULE>> = Vec::new();
         let mut compiled_conversion_groups: Vec<VarZeroVec<'static, ds::RuleULE>> = Vec::new();
@@ -303,7 +296,7 @@ impl<'a, 'p> Pass2<'a, 'p> {
         deps.sort_unstable();
 
         Ok(ds::RuleBasedTransliterator {
-            visibility: visible,
+            visibility: true,
             filter: global_filter.unwrap_or(CodePointInversionList::all()),
             id_group_list: VarZeroVec::from(&compiled_transform_groups),
             rule_group_list: VarZeroVec::from(&compiled_conversion_groups),
@@ -312,7 +305,10 @@ impl<'a, 'p> Pass2<'a, 'p> {
         })
     }
 
-    fn compile_conversion_rule(&mut self, rule: UniConversionRule<'p>) -> ds::Rule<'static> {
+    fn compile_conversion_rule(
+        &mut self,
+        rule: rule_group_agg::UniConversionRule<'p>,
+    ) -> ds::Rule<'static> {
         self.curr_segment = 0;
         let ante = self.compile_section(rule.ante, parse::ElementLocation::Source);
         let key = self.compile_section(rule.key, parse::ElementLocation::Source);
@@ -383,9 +379,11 @@ impl<'a, 'p> Pass2<'a, 'p> {
             &parse::Element::BackRef(num) => {
                 LiteralOrStandin::Standin(self.var_table.standin_for_backref(num))
             }
-            parse::Element::AnchorEnd => LiteralOrStandin::Standin(VarTable::RESERVED_ANCHOR_END),
+            parse::Element::AnchorEnd => {
+                LiteralOrStandin::Standin(ds::VarTable::RESERVED_ANCHOR_END)
+            }
             parse::Element::AnchorStart => {
-                LiteralOrStandin::Standin(VarTable::RESERVED_ANCHOR_START)
+                LiteralOrStandin::Standin(ds::VarTable::RESERVED_ANCHOR_START)
             }
             parse::Element::UnicodeSet(set) => {
                 let standin = self.var_table.insert_unicode_set(set.clone());
