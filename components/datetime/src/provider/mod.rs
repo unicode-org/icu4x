@@ -22,6 +22,12 @@ pub mod time_zones;
 #[cfg(feature = "compiled_data")]
 #[derive(Debug)]
 /// Baked data
+/// 
+/// <div class="stab unstable">
+/// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
+/// including in SemVer minor releases. In particular, the `DataProvider` implementations are only
+/// guaranteed to match with this version's `*_unstable` providers. Use with caution.
+/// </div>
 pub struct Baked;
 
 #[cfg(feature = "compiled_data")]
