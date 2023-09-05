@@ -17,7 +17,7 @@ use crate::provider::date_time::{DateSymbols, TimeSymbols};
 
 use core::fmt;
 use fixed_decimal::FixedDecimal;
-use icu_calendar::provider::WeekDataV1;
+use icu_calendar::week::WeekCalculator;
 use icu_decimal::FixedDecimalFormatter;
 use icu_plurals::PluralRules;
 use icu_provider::DataPayload;
@@ -55,7 +55,7 @@ pub struct FormattedDateTime<'l> {
     pub(crate) date_symbols: Option<&'l provider::calendar::DateSymbolsV1<'l>>,
     pub(crate) time_symbols: Option<&'l provider::calendar::TimeSymbolsV1<'l>>,
     pub(crate) datetime: ExtractedDateTimeInput,
-    pub(crate) week_data: Option<&'l WeekDataV1>,
+    pub(crate) week_data: Option<&'l WeekCalculator>,
     pub(crate) ordinal_rules: Option<&'l PluralRules>,
     pub(crate) fixed_decimal_format: &'l FixedDecimalFormatter,
 }
@@ -160,7 +160,7 @@ pub fn write_pattern_plurals<T, W>(
     date_symbols: Option<&provider::calendar::DateSymbolsV1>,
     time_symbols: Option<&provider::calendar::TimeSymbolsV1>,
     datetime: &T,
-    week_data: Option<&WeekDataV1>,
+    week_data: Option<&WeekCalculator>,
     ordinal_rules: Option<&PluralRules>,
     fixed_decimal_format: &FixedDecimalFormatter,
     w: &mut W,
@@ -169,7 +169,7 @@ where
     T: DateTimeInput,
     W: fmt::Write + ?Sized,
 {
-    let loc_datetime = DateTimeInputWithWeekConfig::new(datetime, week_data.map(|v| v.into()));
+    let loc_datetime = DateTimeInputWithWeekConfig::new(datetime, week_data);
     let pattern = patterns.select(&loc_datetime, ordinal_rules)?;
     write_pattern(
         pattern,

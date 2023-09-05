@@ -54,7 +54,7 @@ impl ZonedDateTimeFormatter {
         };
 
         let week_data = if required.week_data {
-            Some(icu_calendar::provider::Baked.load(req)?.take_payload()?)
+            Some(icu_calendar::week::WeekCalculator::try_new(locale)?)
         } else {
             None
         };
@@ -140,7 +140,9 @@ impl ZonedDateTimeFormatter {
         };
 
         let week_data = if required.week_data {
-            Some(provider.load(req)?.take_payload()?)
+            Some(icu_calendar::week::WeekCalculator::try_new_unstable(
+                provider, locale,
+            )?)
         } else {
             None
         };
