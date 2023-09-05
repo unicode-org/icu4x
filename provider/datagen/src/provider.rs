@@ -85,7 +85,8 @@ impl DatagenProvider {
     /// A provider with no source data. Without adding more sources, most `load` methods
     /// will return errors.
     ///
-    /// Use [`with_cldr`], [`with_icuexport`], [`with_segmenter_lstm`] to set data sources.
+    /// Use [`with_cldr`](Self::with_cldr), [`with_icuexport`](Self::with_icuexport),
+    /// [`with_segmenter_lstm`](Self::with_segmenter_lstm) to set data sources.
     pub fn new_custom() -> Self {
         Self {
             source: SourceData {
