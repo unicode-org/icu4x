@@ -33,7 +33,7 @@ mod unfold;
 #[cfg(feature = "compiled_data")]
 #[derive(Debug)]
 /// Baked data
-/// 
+///
 /// <div class="stab unstable">
 /// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
 /// including in SemVer minor releases. In particular, the `DataProvider` implementations are only
