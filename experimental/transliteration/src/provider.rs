@@ -64,9 +64,24 @@ pub struct RuleBasedTransliterator<'a> {
     /// The list of conversion rule groups this transliterator uses.
     #[cfg_attr(feature = "serde", serde(borrow))]
     pub rule_group_list: VarZeroVec<'a, VarZeroSlice<RuleULE>>,
-    /// The direct dependencies of this transliterator.
-    #[cfg_attr(feature = "serde", serde(borrow))]
-    pub dependencies: VarZeroVec<'a, str>,
+}
+
+impl<'a> RuleBasedTransliterator<'a> {
+    /// Returns an iterator of dependencies on other transliterators.
+    ///
+    /// Note that this may contain duplicate entries.
+    pub fn deps(&self) -> impl Iterator<Item = Cow<str>> {
+        use zerofrom::ZeroFrom;
+        self.id_group_list
+            .iter()
+            .flat_map(|id_group| id_group.iter().map(|s| SimpleId::zero_from(s).id))
+            .chain(
+                self.variable_table
+                    .function_calls
+                    .iter()
+                    .map(|s| FunctionCall::zero_from(s).translit.id),
+            )
+    }
 }
 
 /// The ID of a transliterator plus an optional filter.
