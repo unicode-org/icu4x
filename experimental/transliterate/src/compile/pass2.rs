@@ -5,7 +5,7 @@
 use super::*;
 use crate::provider as ds;
 use icu_collections::codepointinvlist::CodePointInversionList;
-use std::collections::{HashMap, HashSet};
+use std::collections::HashMap;
 use std::fmt::{self, Display, Formatter};
 use zerovec::VarZeroVec;
 
@@ -245,11 +245,7 @@ impl<'a, 'p> Pass2<'a, 'p> {
             var_definitions,
             available_transliterators,
         )?;
-        pass2.compile(
-            result.groups,
-            result.filter,
-            result.data.used_transliterators,
-        )
+        pass2.compile(result.groups, result.filter)
     }
 
     fn try_new(
@@ -270,7 +266,6 @@ impl<'a, 'p> Pass2<'a, 'p> {
         &mut self,
         rule_groups: rule_group_agg::RuleGroups<'p>,
         global_filter: Option<parse::FilterSet>,
-        used_transliterators: HashSet<parse::BasicId>,
     ) -> Result<ds::RuleBasedTransliterator<'static>> {
         let mut compiled_transform_groups: Vec<VarZeroVec<'static, ds::SimpleIdULE>> = Vec::new();
         let mut compiled_conversion_groups: Vec<VarZeroVec<'static, ds::RuleULE>> = Vec::new();
@@ -289,19 +284,12 @@ impl<'a, 'p> Pass2<'a, 'p> {
             compiled_conversion_groups.push(VarZeroVec::from(&compiled_conversion_group));
         }
 
-        let mut deps: Vec<_> = used_transliterators
-            .into_iter()
-            .map(|id| self.compile_basic_id(id))
-            .collect();
-        deps.sort_unstable();
-
         Ok(ds::RuleBasedTransliterator {
             visibility: true,
             filter: global_filter.unwrap_or(CodePointInversionList::all()),
             id_group_list: VarZeroVec::from(&compiled_transform_groups),
             rule_group_list: VarZeroVec::from(&compiled_conversion_groups),
             variable_table: self.var_table.finalize(),
-            dependencies: VarZeroVec::from(&deps),
         })
     }
 

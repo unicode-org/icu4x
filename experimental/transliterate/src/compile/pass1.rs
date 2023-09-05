@@ -220,8 +220,6 @@ pub(crate) struct Pass1Data {
     pub(crate) counts: SpecialConstructCounts,
     // the variables used by the associated key
     pub(crate) used_variables: HashSet<String>,
-    // the recursive transliterators used by the associated key
-    pub(crate) used_transliterators: HashSet<parse::BasicId>,
 }
 
 #[derive(Debug, Clone)]
@@ -287,9 +285,7 @@ impl<'p> Pass1<'p> {
                     // the previous step ensures `rules` has no more global filters
                     return Err(CompileErrorKind::UnexpectedGlobalFilter.into());
                 }
-                parse::Rule::Transform(forward_id, reverse_id) => {
-                    s.validate_transform(forward_id, reverse_id.as_ref())?;
-                }
+                parse::Rule::Transform(..) => {}
                 parse::Rule::VariableDefinition(name, definition) => {
                     s.validate_variable_definition(name, definition)?;
                 }
@@ -324,20 +320,6 @@ impl<'p> Pass1<'p> {
         };
 
         Ok(rules)
-    }
-
-    fn validate_transform(
-        &mut self,
-        forward_id: &parse::SingleId,
-        reverse_id: Option<&parse::SingleId>,
-    ) -> Result<()> {
-        let fwd_dep = forward_id.basic_id.clone();
-        self.forward_data.used_transliterators.insert(fwd_dep);
-        let rev_dep = reverse_id
-            .map(|single_id| single_id.basic_id.clone())
-            .unwrap_or_else(|| forward_id.basic_id.clone().reverse());
-        self.reverse_data.used_transliterators.insert(rev_dep);
-        Ok(())
     }
 
     fn validate_variable_definition(
@@ -654,9 +636,8 @@ impl<'a, 'p, F: Fn(&str) -> bool> TargetValidator<'a, 'p, F> {
                 }
                 self.data.counts.max_backref_num = self.data.counts.max_backref_num.max(*num);
             }
-            parse::Element::FunctionCall(id, inner) => {
+            parse::Element::FunctionCall(_, inner) => {
                 self.validate_section(inner, false)?;
-                self.data.used_transliterators.insert(id.basic_id.clone());
                 self.data.counts.num_function_calls += 1;
             }
             &parse::Element::Cursor(pre, post) => {
@@ -853,7 +834,6 @@ impl Pass1ResultGenerator {
         var_data_map: &HashMap<String, Pass1Data>,
     ) -> Result<Pass1Data> {
         let seed_vars = &seed_data.used_variables;
-        let seed_transliterators = &seed_data.used_transliterators;
 
         let mut used_variables = seed_vars.clone();
         for var in seed_vars {
@@ -862,10 +842,6 @@ impl Pass1ResultGenerator {
             let deps = self.transitive_var_dependencies[var].clone();
             used_variables.extend(deps);
         }
-
-        // if in the future variables are ever allowed to contain, e.g., function calls, this
-        // will need to take into account recursive dependencies from `used_vars` as well
-        let used_transliterators = seed_transliterators.clone();
 
         let mut combined_counts = seed_data.counts;
 
@@ -878,7 +854,6 @@ impl Pass1ResultGenerator {
         }
 
         Ok(Pass1Data {
-            used_transliterators,
             used_variables,
             counts: combined_counts,
         })
@@ -937,7 +912,6 @@ mod tests {
     }
 
     fn pass1data_from_parts(
-        translit_deps: &[(&'static str, &'static str, Option<&'static str>)],
         var_deps: &[&'static str],
         counts: SpecialConstructCounts,
     ) -> Pass1Data {
@@ -945,13 +919,6 @@ mod tests {
             counts,
             ..Default::default()
         };
-        for &(source, target, variant) in translit_deps {
-            data.used_transliterators.insert(parse::BasicId {
-                source: source.into(),
-                target: target.into(),
-                variant: variant.map(|s| s.into()),
-            });
-        }
         for &var in var_deps {
             data.used_variables.insert(var.into());
         }
@@ -1006,13 +973,6 @@ mod tests {
                 ..Default::default()
             };
             let fwd_data = pass1data_from_parts(
-                &[
-                    ("Bidi", "Dependency", Some("One")),
-                    ("Forward", "Dependency", None),
-                    ("Any", "AnotherForwardDependency", None),
-                    ("YetAnother", "ForwardDependency", None),
-                    ("Any", "Null", None),
-                ],
                 &["used_both", "used_fwd", "literal1", "literal2"],
                 fwd_counts,
             );
@@ -1028,15 +988,6 @@ mod tests {
                 ..Default::default()
             };
             let rev_data = pass1data_from_parts(
-                &[
-                    ("Dependency", "Bidi", Some("One")),
-                    ("Backward", "Dependency", None),
-                    ("Any", "AnotherBackwardDependency", None),
-                    ("Any", "Many", None),
-                    ("Any", "Backwardz", None),
-                    ("Any", "Deps", None),
-                    ("Any", "Null", None),
-                ],
                 &["used_both", "used_rev", "literal1", "literal2"],
                 rev_counts,
             );

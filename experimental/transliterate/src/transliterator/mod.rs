@@ -330,25 +330,20 @@ impl Transliterator {
             + ?Sized,
         F: Fn(&Locale) -> Option<Box<dyn CustomTransliterator>>,
     {
-        for dep in rbt.dependencies.iter() {
-            if !env.contains_key(dep) {
-                // Load the dependency.
+        for dep in rbt.deps() {
+            if !env.contains_key(&*dep) {
                 // 1. Insert a placeholder to avoid infinite recursion.
                 env.insert(dep.to_string(), InternalTransliterator::Null);
                 // 2. Load the transliterator, by checking
-                // a) hardcoded specials
-                // b) the user-provided override
-                // c) the data
                 let internal_t = dep
+                    // a) hardcoded specials
                     .strip_prefix("x-")
                     .map(|special| Transliterator::load_special(special, normalizer_provider))
-                    .or_else(|| {
-                        lookup.and_then(|lookup| {
-                            Transliterator::load_with_override(dep, lookup).transpose()
-                        })
-                    })
+                    // b) the user-provided override
+                    .or_else(|| Transliterator::load_with_override(&dep, lookup?).transpose())
+                    // c) the data
                     .unwrap_or_else(|| {
-                        let rbt = Transliterator::load_rbt(dep, transliterator_provider)?;
+                        let rbt = Transliterator::load_rbt(&dep, transliterator_provider)?;
                         Ok(InternalTransliterator::RuleBased(rbt))
                     })?;
                 if let InternalTransliterator::RuleBased(rbt) = &internal_t {
@@ -498,11 +493,8 @@ impl<'a> RuleBasedTransliterator<'a> {
 impl<'a> SimpleId<'a> {
     fn transliterate(&self, mut rep: Replaceable, env: &Env) {
         // eprintln!("transliterating SimpleId: {self:?}");
-        let Some(inner) = env.get(self.id.as_ref()) else {
-            debug_assert!(false, "missing transliterator {}", &self.id);
-            // GIGO behavior, missing recursive transliterator is a noop
-            return;
-        };
+        // definitely loaded in the constructor
+        let inner = env.get(self.id.as_ref()).unwrap();
         rep.for_each_run(&self.filter, |run| {
             // eprintln!("transliterating SimpleId run: {rep:?}");
             inner.transliterate(run.child(), env)
