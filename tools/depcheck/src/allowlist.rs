@@ -25,6 +25,7 @@ pub const BASIC_RUNTIME_DEPS: &[&str] = &[
     "icu_timezone",
     // ICU4X utils
     "calendrical_calculations",
+    "core_maths",
     "fixed_decimal",
     "icu_provider_adapters", // not included in icu, but needed generally
     "icu_provider",
@@ -102,7 +103,7 @@ pub const EXTRA_EXPERIMENTAL_DATA_DEPS: &[&str] = &[
 ];
 
 /// Dependencies allowed when opting in to LSTM segmenter
-pub const EXTRA_LSTM_DEPS: &[&str] = &["core_maths"];
+pub const EXTRA_LSTM_DEPS: &[&str] = &[];
 
 /// Dependencies allowed when opting in to fixed_decimal's `ryu` backend
 /// This should never change
