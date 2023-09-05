@@ -199,6 +199,7 @@ const DANGI_CYCLIC_YEARS: [&str; 60] = [
 
 const CHINESE_LEAP_PREFIX: &str = "閏";
 const DANGI_LEAP_PREFIX: &str = "윤";
+const PLACEHOLDER_LEAP_PREFIX: &str = "(leap)";
 // This function assumes that the correct decision has been
 // made regarding availability of symbols in the caller.
 //
@@ -325,7 +326,7 @@ where
                     let leap_str = match datetime.any_calendar_kind() {
                         Some(AnyCalendarKind::Chinese) => CHINESE_LEAP_PREFIX,
                         Some(AnyCalendarKind::Dangi) => DANGI_LEAP_PREFIX,
-                        _ => "(leap)",
+                        _ => PLACEHOLDER_LEAP_PREFIX,
                     };
                     w.write_str(leap_str)?;
                     w.write_str(symbol)?;
