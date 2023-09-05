@@ -102,7 +102,7 @@ pub const EXTRA_EXPERIMENTAL_DATA_DEPS: &[&str] = &[
 ];
 
 /// Dependencies allowed when opting in to LSTM segmenter
-pub const EXTRA_LSTM_DEPS: &[&str] = &["libm"];
+pub const EXTRA_LSTM_DEPS: &[&str] = &["core_maths"];
 
 /// Dependencies allowed when opting in to fixed_decimal's `ryu` backend
 /// This should never change
