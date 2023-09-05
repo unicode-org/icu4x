@@ -174,7 +174,7 @@ impl Parse for DataStructArg {
             let mut singleton = false;
             let punct = content.parse_terminated(DataStructMarkerArg::parse, Token![,])?;
 
-            for entry in punct.into_iter() {
+            for entry in punct {
                 match entry {
                     DataStructMarkerArg::Path(path) => {
                         at_most_one_option(&mut marker_name, path, "marker", input.span())?;
@@ -321,7 +321,7 @@ fn data_struct_impl(attr: DataStructArgs, input: DeriveInput) -> TokenStream2 {
 
     let mut result = TokenStream2::new();
 
-    for single_attr in attr.args.into_iter() {
+    for single_attr in attr.args {
         let DataStructArg {
             marker_name,
             key_lit,

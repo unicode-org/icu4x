@@ -7,7 +7,9 @@
     "quantifiers_kleene_plus": [],
     "segments": [],
     "unicode_sets": [],
-    "function_calls": []
+    "function_calls": [],
+    "max_left_placeholder_count": 0,
+    "max_right_placeholder_count": 0
   },
   "filter": [
     "\u0000-􏿿"
@@ -21,645 +23,553 @@
         "ante": "",
         "key": "ো",
         "post": "",
-        "replacer": "",
-        "cursor_offset": 0
+        "replacer": ""
       },
       {
         "ante": "",
         "key": "ৌ",
         "post": "",
-        "replacer": "",
-        "cursor_offset": 0
+        "replacer": ""
       },
       {
         "ante": "",
         "key": "ঁ",
         "post": "",
-        "replacer": "",
-        "cursor_offset": 0
+        "replacer": ""
       },
       {
         "ante": "",
         "key": "ং",
         "post": "",
-        "replacer": "",
-        "cursor_offset": 0
+        "replacer": ""
       },
       {
         "ante": "",
         "key": "ঃ",
         "post": "",
-        "replacer": "",
-        "cursor_offset": 0
+        "replacer": ""
       },
       {
         "ante": "",
         "key": "অ",
         "post": "",
-        "replacer": "",
-        "cursor_offset": 0
+        "replacer": ""
       },
       {
         "ante": "",
         "key": "আ",
         "post": "",
-        "replacer": "",
-        "cursor_offset": 0
+        "replacer": ""
       },
       {
         "ante": "",
         "key": "ই",
         "post": "",
-        "replacer": "",
-        "cursor_offset": 0
+        "replacer": ""
       },
       {
         "ante": "",
         "key": "ঈ",
         "post": "",
-        "replacer": "",
-        "cursor_offset": 0
+        "replacer": ""
       },
       {
         "ante": "",
         "key": "উ",
         "post": "",
-        "replacer": "",
-        "cursor_offset": 0
+        "replacer": ""
       },
       {
         "ante": "",
         "key": "ঊ",
         "post": "",
-        "replacer": "",
-        "cursor_offset": 0
+        "replacer": ""
       },
       {
         "ante": "",
         "key": "ঋ",
         "post": "",
-        "replacer": "",
-        "cursor_offset": 0
+        "replacer": ""
       },
       {
         "ante": "",
         "key": "ঌ",
         "post": "",
-        "replacer": "",
-        "cursor_offset": 0
+        "replacer": ""
       },
       {
         "ante": "",
         "key": "এ",
         "post": "",
-        "replacer": "",
-        "cursor_offset": 0
+        "replacer": ""
       },
       {
         "ante": "",
         "key": "ঐ",
         "post": "",
-        "replacer": "",
-        "cursor_offset": 0
+        "replacer": ""
       },
       {
         "ante": "",
         "key": "ও",
         "post": "",
-        "replacer": "",
-        "cursor_offset": 0
+        "replacer": ""
       },
       {
         "ante": "",
         "key": "ঔ",
         "post": "",
-        "replacer": "",
-        "cursor_offset": 0
+        "replacer": ""
       },
       {
         "ante": "",
         "key": "ক",
         "post": "",
-        "replacer": "",
-        "cursor_offset": 0
+        "replacer": ""
       },
       {
         "ante": "",
         "key": "খ",
         "post": "",
-        "replacer": "",
-        "cursor_offset": 0
+        "replacer": ""
       },
       {
         "ante": "",
         "key": "গ",
         "post": "",
-        "replacer": "",
-        "cursor_offset": 0
+        "replacer": ""
       },
       {
         "ante": "",
         "key": "ঘ",
         "post": "",
-        "replacer": "",
-        "cursor_offset": 0
+        "replacer": ""
       },
       {
         "ante": "",
         "key": "ঙ",
         "post": "",
-        "replacer": "",
-        "cursor_offset": 0
+        "replacer": ""
       },
       {
         "ante": "",
         "key": "চ",
         "post": "",
-        "replacer": "",
-        "cursor_offset": 0
+        "replacer": ""
       },
       {
         "ante": "",
         "key": "ছ",
         "post": "",
-        "replacer": "",
-        "cursor_offset": 0
+        "replacer": ""
       },
       {
         "ante": "",
         "key": "জ",
         "post": "",
-        "replacer": "",
-        "cursor_offset": 0
+        "replacer": ""
       },
       {
         "ante": "",
         "key": "ঝ",
         "post": "",
-        "replacer": "",
-        "cursor_offset": 0
+        "replacer": ""
       },
       {
         "ante": "",
         "key": "ঞ",
         "post": "",
-        "replacer": "",
-        "cursor_offset": 0
+        "replacer": ""
       },
       {
         "ante": "",
         "key": "ট",
         "post": "",
-        "replacer": "",
-        "cursor_offset": 0
+        "replacer": ""
       },
       {
         "ante": "",
         "key": "ঠ",
         "post": "",
-        "replacer": "",
-        "cursor_offset": 0
+        "replacer": ""
       },
       {
         "ante": "",
         "key": "ড",
         "post": "",
-        "replacer": "",
-        "cursor_offset": 0
+        "replacer": ""
       },
       {
         "ante": "",
         "key": "ঢ",
         "post": "",
-        "replacer": "",
-        "cursor_offset": 0
+        "replacer": ""
       },
       {
         "ante": "",
         "key": "ণ",
         "post": "",
-        "replacer": "",
-        "cursor_offset": 0
+        "replacer": ""
       },
       {
         "ante": "",
         "key": "ত",
         "post": "",
-        "replacer": "",
-        "cursor_offset": 0
+        "replacer": ""
       },
       {
         "ante": "",
         "key": "থ",
         "post": "",
-        "replacer": "",
-        "cursor_offset": 0
+        "replacer": ""
       },
       {
         "ante": "",
         "key": "দ",
         "post": "",
-        "replacer": "",
-        "cursor_offset": 0
+        "replacer": ""
       },
       {
         "ante": "",
         "key": "ধ",
         "post": "",
-        "replacer": "",
-        "cursor_offset": 0
+        "replacer": ""
       },
       {
         "ante": "",
         "key": "ন",
         "post": "",
-        "replacer": "",
-        "cursor_offset": 0
+        "replacer": ""
       },
       {
         "ante": "",
         "key": "প",
         "post": "",
-        "replacer": "",
-        "cursor_offset": 0
+        "replacer": ""
       },
       {
         "ante": "",
         "key": "ফ",
         "post": "",
-        "replacer": "",
-        "cursor_offset": 0
+        "replacer": ""
       },
       {
         "ante": "",
         "key": "ব",
         "post": "",
-        "replacer": "",
-        "cursor_offset": 0
+        "replacer": ""
       },
       {
         "ante": "",
         "key": "ভ",
         "post": "",
-        "replacer": "",
-        "cursor_offset": 0
+        "replacer": ""
       },
       {
         "ante": "",
         "key": "ম",
         "post": "",
-        "replacer": "",
-        "cursor_offset": 0
+        "replacer": ""
       },
       {
         "ante": "",
         "key": "য",
         "post": "",
-        "replacer": "",
-        "cursor_offset": 0
+        "replacer": ""
       },
       {
         "ante": "",
         "key": "র",
         "post": "",
-        "replacer": "",
-        "cursor_offset": 0
+        "replacer": ""
       },
       {
         "ante": "",
         "key": "ল",
         "post": "",
-        "replacer": "",
-        "cursor_offset": 0
+        "replacer": ""
       },
       {
         "ante": "",
         "key": "শ",
         "post": "",
-        "replacer": "",
-        "cursor_offset": 0
+        "replacer": ""
       },
       {
         "ante": "",
         "key": "ষ",
         "post": "",
-        "replacer": "",
-        "cursor_offset": 0
+        "replacer": ""
       },
       {
         "ante": "",
         "key": "স",
         "post": "",
-        "replacer": "",
-        "cursor_offset": 0
+        "replacer": ""
       },
       {
         "ante": "",
         "key": "হ",
         "post": "",
-        "replacer": "",
-        "cursor_offset": 0
+        "replacer": ""
       },
       {
         "ante": "",
         "key": "়",
         "post": "",
-        "replacer": "",
-        "cursor_offset": 0
+        "replacer": ""
       },
       {
         "ante": "",
         "key": "ঽ",
         "post": "",
-        "replacer": "",
-        "cursor_offset": 0
+        "replacer": ""
       },
       {
         "ante": "",
         "key": "া",
         "post": "",
-        "replacer": "",
-        "cursor_offset": 0
+        "replacer": ""
       },
       {
         "ante": "",
         "key": "ি",
         "post": "",
-        "replacer": "",
-        "cursor_offset": 0
+        "replacer": ""
       },
       {
         "ante": "",
         "key": "ী",
         "post": "",
-        "replacer": "",
-        "cursor_offset": 0
+        "replacer": ""
       },
       {
         "ante": "",
         "key": "ু",
         "post": "",
-        "replacer": "",
-        "cursor_offset": 0
+        "replacer": ""
       },
       {
         "ante": "",
         "key": "ূ",
         "post": "",
-        "replacer": "",
-        "cursor_offset": 0
+        "replacer": ""
       },
       {
         "ante": "",
         "key": "ৃ",
         "post": "",
-        "replacer": "",
-        "cursor_offset": 0
+        "replacer": ""
       },
       {
         "ante": "",
         "key": "ৄ",
         "post": "",
-        "replacer": "",
-        "cursor_offset": 0
+        "replacer": ""
       },
       {
         "ante": "",
         "key": "ে",
         "post": "",
-        "replacer": "",
-        "cursor_offset": 0
+        "replacer": ""
       },
       {
         "ante": "",
         "key": "ৈ",
         "post": "",
-        "replacer": "",
-        "cursor_offset": 0
+        "replacer": ""
       },
       {
         "ante": "",
         "key": "ো",
         "post": "",
-        "replacer": "",
-        "cursor_offset": 0
+        "replacer": ""
       },
       {
         "ante": "",
         "key": "ৌ",
         "post": "",
-        "replacer": "",
-        "cursor_offset": 0
+        "replacer": ""
       },
       {
         "ante": "",
         "key": "্",
         "post": "",
-        "replacer": "",
-        "cursor_offset": 0
+        "replacer": ""
       },
       {
         "ante": "",
         "key": "ৎ",
         "post": "",
-        "replacer": "",
-        "cursor_offset": 0
+        "replacer": ""
       },
       {
         "ante": "",
         "key": "ৗ",
         "post": "",
-        "replacer": "",
-        "cursor_offset": 0
+        "replacer": ""
       },
       {
         "ante": "",
         "key": "ৠ",
         "post": "",
-        "replacer": "",
-        "cursor_offset": 0
+        "replacer": ""
       },
       {
         "ante": "",
         "key": "ৡ",
         "post": "",
-        "replacer": "",
-        "cursor_offset": 0
+        "replacer": ""
       },
       {
         "ante": "",
         "key": "ৢ",
         "post": "",
-        "replacer": "",
-        "cursor_offset": 0
+        "replacer": ""
       },
       {
         "ante": "",
         "key": "ৣ",
         "post": "",
-        "replacer": "",
-        "cursor_offset": 0
+        "replacer": ""
       },
       {
         "ante": "",
         "key": "০",
         "post": "",
-        "replacer": "",
-        "cursor_offset": 0
+        "replacer": ""
       },
       {
         "ante": "",
         "key": "১",
         "post": "",
-        "replacer": "",
-        "cursor_offset": 0
+        "replacer": ""
       },
       {
         "ante": "",
         "key": "২",
         "post": "",
-        "replacer": "",
-        "cursor_offset": 0
+        "replacer": ""
       },
       {
         "ante": "",
         "key": "৩",
         "post": "",
-        "replacer": "",
-        "cursor_offset": 0
+        "replacer": ""
       },
       {
         "ante": "",
         "key": "৪",
         "post": "",
-        "replacer": "",
-        "cursor_offset": 0
+        "replacer": ""
       },
       {
         "ante": "",
         "key": "৫",
         "post": "",
-        "replacer": "",
-        "cursor_offset": 0
+        "replacer": ""
       },
       {
         "ante": "",
         "key": "৬",
         "post": "",
-        "replacer": "",
-        "cursor_offset": 0
+        "replacer": ""
       },
       {
         "ante": "",
         "key": "৭",
         "post": "",
-        "replacer": "",
-        "cursor_offset": 0
+        "replacer": ""
       },
       {
         "ante": "",
         "key": "৮",
         "post": "",
-        "replacer": "",
-        "cursor_offset": 0
+        "replacer": ""
       },
       {
         "ante": "",
         "key": "৯",
         "post": "",
-        "replacer": "",
-        "cursor_offset": 0
+        "replacer": ""
       },
       {
         "ante": "",
         "key": "ৰ",
         "post": "",
-        "replacer": "",
-        "cursor_offset": 0
+        "replacer": ""
       },
       {
         "ante": "",
         "key": "ৱ",
         "post": "",
-        "replacer": "",
-        "cursor_offset": 0
+        "replacer": ""
       },
       {
         "ante": "",
         "key": "৲",
         "post": "",
-        "replacer": "",
-        "cursor_offset": 0
+        "replacer": ""
       },
       {
         "ante": "",
         "key": "৳",
         "post": "",
-        "replacer": "",
-        "cursor_offset": 0
+        "replacer": ""
       },
       {
         "ante": "",
         "key": "৴",
         "post": "",
-        "replacer": "",
-        "cursor_offset": 0
+        "replacer": ""
       },
       {
         "ante": "",
         "key": "৵",
         "post": "",
-        "replacer": "",
-        "cursor_offset": 0
+        "replacer": ""
       },
       {
         "ante": "",
         "key": "৶",
         "post": "",
-        "replacer": "",
-        "cursor_offset": 0
+        "replacer": ""
       },
       {
         "ante": "",
         "key": "৷",
         "post": "",
-        "replacer": "",
-        "cursor_offset": 0
+        "replacer": ""
       },
       {
         "ante": "",
         "key": "৸",
         "post": "",
-        "replacer": "",
-        "cursor_offset": 0
+        "replacer": ""
       },
       {
         "ante": "",
         "key": "৹",
         "post": "",
-        "replacer": "",
-        "cursor_offset": 0
+        "replacer": ""
       },
       {
         "ante": "",
         "key": "৺",
         "post": "",
-        "replacer": "",
-        "cursor_offset": 0
+        "replacer": ""
       },
       {
         "ante": "",
         "key": "।",
         "post": "",
-        "replacer": "",
-        "cursor_offset": 0
+        "replacer": ""
       },
       {
         "ante": "",
         "key": "॥",
         "post": "",
-        "replacer": "",
-        "cursor_offset": 0
+        "replacer": ""
       }
     ]
   ],

@@ -21,28 +21,38 @@ use writeable::Writeable;
 /// # Examples
 ///
 /// ```no_run
-/// use icu_datagen::prelude::*;
 /// use icu_datagen::blob_exporter::*;
+/// use icu_datagen::prelude::*;
 ///
 /// DatagenDriver::new()
-///       .with_keys([icu::list::provider::AndListV1Marker::KEY])
-///       .export(&DatagenProvider::latest_tested(), BlobExporter::new_with_sink(Box::new(&mut Vec::new())))
-///       .unwrap();
+///     .with_keys([icu::list::provider::AndListV1Marker::KEY])
+///     .export(
+///         &DatagenProvider::latest_tested(),
+///         BlobExporter::new_with_sink(Box::new(&mut Vec::new())),
+///     )
+///     .unwrap();
 /// ```
-#[derive(Debug, Clone, Default)]
+#[derive(Debug, Clone)]
 pub struct DatagenDriver {
     keys: HashSet<DataKey>,
     // `None` means all
     locales: Option<HashSet<LanguageIdentifier>>,
     fallback: FallbackMode,
-    collations: HashSet<String>,
+    additional_collations: HashSet<String>,
     segmenter_models: Vec<String>,
 }
 
 impl DatagenDriver {
     /// Creates an empty [`DatagenDriver`].
+    #[allow(clippy::new_without_default)] // TODO
     pub fn new() -> Self {
-        Self::default()
+        Self {
+            keys: Default::default(),
+            locales: Default::default(),
+            fallback: Default::default(),
+            additional_collations: Default::default(),
+            segmenter_models: Default::default(),
+        }
     }
 
     /// Sets this driver to generate the given keys. See [`icu_datagen::keys`],
@@ -81,17 +91,24 @@ impl DatagenDriver {
         }
     }
 
+    /// This option is only relevant if using `icu::collator`.
+    ///
     /// By default, the collations `big5han`, `gb2312`, and those starting with `search`
     /// are excluded. This method can be used to reennable them.
     ///
     /// The special string `"search*"` causes all search collation tables to be included.
-    pub fn with_collations(self, collations: impl IntoIterator<Item = String>) -> Self {
+    pub fn with_additional_collations(
+        self,
+        additional_collations: impl IntoIterator<Item = String>,
+    ) -> Self {
         Self {
-            collations: collations.into_iter().collect(),
+            additional_collations: additional_collations.into_iter().collect(),
             ..self
         }
     }
 
+    /// This option is only relevant if using `icu::segmenter`.
+    ///
     /// Sets this driver to generate the given segmentation models, to the extent required by the
     /// chosen data keys.
     ///
@@ -124,6 +141,8 @@ impl DatagenDriver {
     /// Exports data from the given provider to the given exporter.
     ///
     /// See
+    /// [`DatagenProvider`](crate::DatagenProvider),
+    /// [`make_exportable_provider!`](icu_provider::make_exportable_provider),
     /// [`BlobExporter`](icu_provider_blob::export),
     /// [`FileSystemExporter`](icu_provider_fs::export),
     /// and [`BakedExporter`](crate::baked_exporter).
@@ -138,7 +157,7 @@ impl DatagenDriver {
     // Avoids multiple monomorphizations
     fn export_dyn(
         mut self,
-        provider: &impl ExportableProvider,
+        provider: &dyn ExportableProvider,
         sink: &mut dyn DataExporter,
     ) -> Result<(), DataError> {
         if self.keys.is_empty() {
@@ -176,9 +195,8 @@ impl DatagenDriver {
             }
         );
 
-        let fallbacker = once_cell::sync::Lazy::new(|| {
-            LocaleFallbacker::try_new_unstable(&provider.as_downcasting())
-        });
+        let fallbacker =
+            Lazy::new(|| LocaleFallbacker::try_new_with_any_provider(&provider.as_any_provider()));
 
         let load_with_fallback = |key, locale: &_| {
             log::trace!("Generating key/locale: {key}/{locale:}");
@@ -236,6 +254,13 @@ impl DatagenDriver {
             log::info!("Generating key {key}");
 
             if key.metadata().singleton {
+                if provider.supported_locales_for_key(key)? != [Default::default()] {
+                    return Err(
+                        DataError::custom("Invalid supported locales for singleton key")
+                            .with_key(key),
+                    );
+                }
+
                 let payload = provider
                     .load_data(key, Default::default())
                     .and_then(DataResponse::take_payload)
@@ -320,7 +345,7 @@ impl DatagenDriver {
     /// provider's options bag. The locales may be later optionally deduplicated for fallback.
     fn select_locales_for_key(
         &self,
-        provider: &impl ExportableProvider,
+        provider: &dyn ExportableProvider,
         key: DataKey,
         fallbacker: &Lazy<
             Result<LocaleFallbacker, DataError>,
@@ -365,10 +390,12 @@ impl DatagenDriver {
                 let Some(collation) = locale
                     .get_unicode_ext(&key!("co"))
                     .and_then(|co| co.as_single_subtag().copied())
-                else { return true };
-                self.collations.contains(collation.as_str())
+                else {
+                    return true;
+                };
+                self.additional_collations.contains(collation.as_str())
                     || if collation.starts_with("search") {
-                        self.collations.contains("search*")
+                        self.additional_collations.contains("search*")
                     } else {
                         !["big5han", "gb2312"].contains(&collation.as_str())
                     }
@@ -530,7 +557,7 @@ fn test_collation_filtering() {
     ];
     for cas in cases {
         let resolved_locales = DatagenDriver::new()
-            .with_collations(cas.include_collations.iter().copied().map(String::from))
+            .with_additional_collations(cas.include_collations.iter().copied().map(String::from))
             .with_locales([cas.language.clone()])
             .with_fallback_mode(FallbackMode::Preresolved)
             .select_locales_for_key(

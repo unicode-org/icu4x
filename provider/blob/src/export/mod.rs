@@ -19,9 +19,9 @@
 //!
 //! // Export something
 //! DatagenDriver::new()
-//!   .with_keys([icu_provider::hello_world::HelloWorldV1Marker::KEY])
-//!   .export(&DatagenProvider::latest_tested(), exporter)
-//!   .unwrap();
+//!     .with_keys([icu_provider::hello_world::HelloWorldV1Marker::KEY])
+//!     .export(&DatagenProvider::latest_tested(), exporter)
+//!     .unwrap();
 //!
 //! // communicate the blob to the client application (network, disk, etc.)
 //! ```
@@ -42,18 +42,10 @@
 //!     BlobDataProvider::try_new_from_blob(blob.into_boxed_slice())
 //!         .expect("Should successfully read from blob");
 //!
-//! // Read the key from the blob
-//! let response: DataPayload<HelloWorldV1Marker> = provider
-//!     .as_deserializing()
-//!     .load(DataRequest {
-//!         locale: &langid!("en").into(),
-//!         metadata: Default::default(),
-//!     })
-//!     .unwrap()
-//!     .take_payload()
-//!     .unwrap();
+//! // Use the provider as a `BufferProvider`
+//! let formatter = HelloWorldFormatter::try_new_with_buffer_provider(&provider, &langid!("en").into()).unwrap();
 //!
-//! assert_eq!(response.get().message, "Hello World");
+//! assert_eq!(formatter.format_to_string(), "Hello World");
 //! ```
 
 mod blob_exporter;

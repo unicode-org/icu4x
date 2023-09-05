@@ -47,7 +47,7 @@ exit_on_error true
 if "${ICU4X_BUILDING_WITH_FORCED_NIGHTLY}"
     echo "Skipping diplomat-coverage since ICU4X_BUILDING_WITH_FORCED_NIGHTLY is set"
 else
-    exec --fail-on-error cargo run -p icu_ffi_coverage --all-features > ffi/diplomat/tests/missing_apis.txt
+    exec --fail-on-error cargo run -p icu_ffi_coverage --all-features -- ffi/diplomat/tests/missing_apis.txt
 end
 '''
 

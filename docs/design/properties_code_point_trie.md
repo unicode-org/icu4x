@@ -141,7 +141,7 @@ Building a `CodePointTrie` is expensive because several optimizations are applie
 In ICU, when trie data is built for Unicode properties, it is done in a compile-time step and stored statically, which therefore does not affect runtime performance.
 One example of an optimization is called compaction, in which subarrays which have identical contents can be collapsed and treated as being identical without affecting the trie lookup algorithm's result.
 However, the algorithm to detect redundant blocks is inherently a pairwise comparison, and thus O(n^2).
-The code to handle this and other optimziations is non-trivially complex.
+The code to handle this and other optimizations is non-trivially complex.
 
 Therefore, ICU4X implements the reader code for a trie, but it does not attempt to similarly port the ICU code for building a trie.
 However, as a convenience, some code may exist in ICU4X which uses a wrapper over the WASM binary to which the ICU4C trie builder code is compiled.

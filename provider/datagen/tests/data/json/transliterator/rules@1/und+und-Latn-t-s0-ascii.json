@@ -7,7 +7,9 @@
     "quantifiers_kleene_plus": [],
     "segments": [],
     "unicode_sets": [],
-    "function_calls": []
+    "function_calls": [],
+    "max_left_placeholder_count": 0,
+    "max_right_placeholder_count": 0
   },
   "filter": [
     "\u0000-􏿿"
@@ -31,5 +33,7 @@
   "rule_group_list": [
     []
   ],
-  "dependencies": []
+  "dependencies": [
+    "x-any-null"
+  ]
 }

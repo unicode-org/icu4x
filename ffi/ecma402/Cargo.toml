@@ -6,34 +6,21 @@
 name = "icu4x_ecma402"
 description = "ECMA-402 API functionality backed by the ICU4X library"
 version = "0.8.0"
-rust-version = "1.65.0"
-authors = ["The ICU4X Project Developers"]
-edition = "2021"
-readme = "README.md"
-repository = "https://github.com/unicode-org/icu4x"
-homepage = "https://icu4x.unicode.org"
-license-file = "LICENSE"
-categories = ["internationalization"]
-# Keep this in sync with other crates unless there are exceptions
-include = [
-    "src/**/*",
-    "examples/**/*",
-    "benches/**/*",
-    "tests/**/*",
-    "Cargo.toml",
-    "LICENSE",
-    "README.md",
-    "build.rs",
-]
+
+authors.workspace = true
+categories.workspace = true
+edition.workspace = true
+homepage.workspace = true
+include.workspace = true
+license-file.workspace = true
+repository.workspace = true
+rust-version.workspace = true
 
 [package.metadata.docs.rs]
 all-features = true
 
 [dependencies]
 ecma402_traits = "4"
-icu = { version = "1.2.0", path = "../../components/icu", features = ["std", "compiled_data"] }
-icu_provider = { version = "1.2.0", path = "../../provider/core" }
-writeable = { version = "0.5.1", path = "../../utils/writeable" }
-
-[dev-dependencies]
-icu = { path = "../../components/icu", features = ["experimental"] }
+icu = { workspace = true, features = ["std", "compiled_data"] }
+icu_provider = { workspace = true }
+writeable = { workspace = true }

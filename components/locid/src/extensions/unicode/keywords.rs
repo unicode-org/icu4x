@@ -33,7 +33,7 @@ use crate::ordering::SubtagOrderingResult;
 ///     extensions::unicode::{Keywords, key, value}, locale,
 /// };
 ///
-/// let keywords = vec![(key!("hc"), value!("h23"))]
+/// let keywords = [(key!("hc"), value!("h23"))]
 ///     .into_iter()
 ///     .collect::<Keywords>();
 ///
@@ -117,7 +117,7 @@ impl Keywords {
     /// ```
     /// use icu::locid::extensions::unicode::{Keywords, key, value};
     ///
-    /// let keywords = vec![(key!("ca"), value!("gregory"))]
+    /// let keywords = [(key!("ca"), value!("gregory"))]
     ///     .into_iter()
     ///     .collect::<Keywords>();
     ///
@@ -139,7 +139,7 @@ impl Keywords {
     /// ```
     /// use icu::locid::extensions::unicode::{Keywords, key, value};
     ///
-    /// let keywords = vec![(key!("ca"), value!("buddhist"))]
+    /// let keywords = [(key!("ca"), value!("buddhist"))]
     ///     .into_iter()
     ///     .collect::<Keywords>();
     ///
@@ -162,7 +162,7 @@ impl Keywords {
     /// ```
     /// use icu::locid::extensions::unicode::{Keywords, key, value};
     ///
-    /// let mut keywords = vec![(key!("ca"), value!("buddhist"))]
+    /// let mut keywords = [(key!("ca"), value!("buddhist"))]
     ///     .into_iter()
     ///     .collect::<Keywords>();
     ///

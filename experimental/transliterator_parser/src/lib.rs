@@ -177,21 +177,23 @@ mod tests {
 
     #[test]
     fn test_source_to_struct() {
-        let source = r#"
+        let source = r"
+        use variable range 0xFFF 0xFFFF ;
         :: [1] ;
         :: Latin-InterIndic ;
         $a = [a] [b]+ ;
         $unused = [c{string}]+? ;
         $b = $a? 'literal chars' ;
-        x } [a-z] > y ;
+        x } [a-z] > |@@@y ;
         $a > ab ;
-        'reverse output:' &RevFnCall($1 'padding') < ($b) ;
-        ^ left } $ <> ^ { right } [0-9] $ ;
+        'reverse output:' &RevFnCall($1 'padding') @@ | < ($b) ;
+        ^ left } $ <> ^ { rig|ht } [0-9] $ ;
         :: [\ ] Remove (AnyRev-AddRandomSpaces/FiftyPercent) ;
         # splits up the forward rules
         forward rule that > splits up rule groups ;
         :: InterIndic-Devanagari ;
-        "#;
+        :: NFC ;
+        ";
 
         let t_map = HashMap::from([(
             "AnyRev-AddRandomSpaces/FiftyPercent".to_ascii_lowercase(),
@@ -219,10 +221,16 @@ mod tests {
                 filter: parse_set_cp(r"[\ ]"),
                 id: Cow::Borrowed("x-any-remove"),
             }];
-            let expected_id_group3 = vec![ds::SimpleId {
-                filter: FilterSet::all(),
-                id: Cow::Borrowed("x-interindic-devanagari"),
-            }];
+            let expected_id_group3 = vec![
+                ds::SimpleId {
+                    filter: FilterSet::all(),
+                    id: Cow::Borrowed("x-interindic-devanagari"),
+                },
+                ds::SimpleId {
+                    filter: FilterSet::all(),
+                    id: Cow::Borrowed("x-any-nfc"),
+                },
+            ];
 
             let expected_id_group_list: Vec<VarZeroVec<'_, ds::SimpleIdULE>> = vec![
                 VarZeroVec::from(&expected_id_group1),
@@ -235,22 +243,19 @@ mod tests {
                     ante: Cow::Borrowed(""),
                     key: Cow::Borrowed("x"),
                     post: Cow::Borrowed("\u{F0002}"),
-                    replacer: Cow::Borrowed("y"),
-                    cursor_offset: 0,
+                    replacer: Cow::Borrowed("\u{F0007}y"), // `|@@@`
                 },
                 ds::Rule {
                     ante: Cow::Borrowed(""),
                     key: Cow::Borrowed("\u{F0000}"),
                     post: Cow::Borrowed(""),
                     replacer: Cow::Borrowed("ab"),
-                    cursor_offset: 0,
                 },
                 ds::Rule {
                     ante: Cow::Borrowed(""),
                     key: Cow::Borrowed("\u{FFFFC}left"),
                     post: Cow::Borrowed("\u{FFFFD}"),
-                    replacer: Cow::Borrowed("right"),
-                    cursor_offset: 0,
+                    replacer: Cow::Borrowed("rig\u{FFFFB}ht"), // `|`
                 },
             ];
             let expected_rule_group2 = vec![ds::Rule {
@@ -258,7 +263,6 @@ mod tests {
                 key: Cow::Borrowed("forwardrulethat"),
                 post: Cow::Borrowed(""),
                 replacer: Cow::Borrowed("splitsuprulegroups"),
-                cursor_offset: 0,
             }];
 
             let expected_rule_group_list: Vec<VarZeroVec<'_, ds::RuleULE>> = vec![
@@ -286,6 +290,8 @@ mod tests {
                 segments: VarZeroVec::new(),
                 unicode_sets: VarZeroVec::from(&expected_unicode_sets),
                 function_calls: VarZeroVec::new(),
+                max_left_placeholder_count: 0,
+                max_right_placeholder_count: 3,
             };
 
             let expected_rbt = ds::RuleBasedTransliterator {
@@ -295,6 +301,7 @@ mod tests {
                 variable_table: expected_var_table,
                 visibility: true,
                 dependencies: VarZeroVec::from(&[
+                    "x-any-nfc",
                     "x-any-remove",
                     "x-interindic-devanagari",
                     "x-latin-interindic",
@@ -306,6 +313,10 @@ mod tests {
             let expected_filter = FilterSet::all();
 
             let expected_id_group1 = vec![
+                ds::SimpleId {
+                    filter: FilterSet::all(),
+                    id: Cow::Borrowed("x-any-nfd"),
+                },
                 ds::SimpleId {
                     filter: FilterSet::all(),
                     id: Cow::Borrowed("x-devanagari-interindic"),
@@ -330,15 +341,13 @@ mod tests {
                     ante: Cow::Borrowed(""),
                     key: Cow::Borrowed("\u{F0004}"),
                     post: Cow::Borrowed(""),
-                    replacer: Cow::Borrowed("reverse output:\u{F0008}"), // function call
-                    cursor_offset: 0,
+                    replacer: Cow::Borrowed("reverse output:\u{F0008}\u{F000A}"), // `@@|` and function call
                 },
                 ds::Rule {
                     ante: Cow::Borrowed("\u{FFFFC}"), // start anchor
                     key: Cow::Borrowed("right"),
                     post: Cow::Borrowed("\u{F0007}\u{FFFFD}"), // [0-9] and end anchor
                     replacer: Cow::Borrowed("left"),
-                    cursor_offset: 0,
                 },
             ];
 
@@ -358,15 +367,16 @@ mod tests {
                 "\u{F0006}", // [b] from [b]+
             ];
 
-            let expected_segments = vec![
-                "\u{F0001}", // $b from ($b)
-            ];
+            let expected_segments = vec![ds::Segment {
+                idx: 0,
+                content: Cow::Borrowed("\u{F0001}"), // $b from ($b)
+            }];
 
             let expected_unicode_sets =
                 vec![parse_set("[a]"), parse_set("[b]"), parse_set("[0-9]")];
 
             let expected_function_calls = vec![ds::FunctionCall {
-                arg: Cow::Borrowed("\u{F0009}padding"), // $1 and 'padding'
+                arg: Cow::Borrowed("\u{F000B}padding"), // $1 and 'padding'
                 translit: ds::SimpleId {
                     filter: FilterSet::all(),
                     id: Cow::Borrowed("x-any-revfncall"),
@@ -381,6 +391,8 @@ mod tests {
                 segments: VarZeroVec::from(&expected_segments),
                 unicode_sets: VarZeroVec::from(&expected_unicode_sets),
                 function_calls: VarZeroVec::from(&expected_function_calls),
+                max_left_placeholder_count: 2,
+                max_right_placeholder_count: 0,
             };
 
             let expected_rbt = ds::RuleBasedTransliterator {
@@ -391,6 +403,7 @@ mod tests {
                 visibility: true,
                 dependencies: VarZeroVec::from(&[
                     "und-t-s0-anyrev-d0-addrndsp-m0-fifty",
+                    "x-any-nfd",
                     "x-any-revfncall",
                     "x-devanagari-interindic",
                     "x-interindic-latin",

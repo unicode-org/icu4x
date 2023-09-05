@@ -18,15 +18,15 @@
 //! // Set up the exporter
 //! let mut options = ExporterOptions::default();
 //! options.root = demo_path.clone();
-//! let serializer = Box::new(serializers::json::Serializer::default());
+//! let serializer = Box::new(serializers::Json::default());
 //! let mut exporter = FilesystemExporter::try_new(serializer, options)
 //!     .expect("Should successfully initialize data output directory");
 //!
 //! // Export something
 //! DatagenDriver::new()
-//!   .with_keys([icu_provider::hello_world::HelloWorldV1Marker::KEY])
-//!   .export(&DatagenProvider::latest_tested(), exporter)
-//!   .unwrap();
+//!     .with_keys([icu_provider::hello_world::HelloWorldV1Marker::KEY])
+//!     .export(&DatagenProvider::latest_tested(), exporter)
+//!     .unwrap();
 //! #
 //! # let _ = std::fs::remove_dir_all(&demo_path);
 //! ```
@@ -44,18 +44,10 @@
 //! let provider = FsDataProvider::try_new(&demo_path)
 //!     .expect("Should successfully read from filesystem");
 //!
-//! // Read the key from the filesystem
-//! let response: DataPayload<HelloWorldV1Marker> = provider
-//!     .as_deserializing()
-//!     .load(DataRequest {
-//!         locale: &langid!("en").into(),
-//!         metadata: Default::default(),
-//!     })
-//!     .unwrap()
-//!     .take_payload()
-//!     .unwrap();
+//! // Use the provider as a `BufferProvider`
+//! let formatter = HelloWorldFormatter::try_new_with_buffer_provider(&provider, &langid!("en").into()).unwrap();
 //!
-//! assert_eq!(response.get().message, "Hello World");
+//! assert_eq!(formatter.format_to_string(), "Hello World");
 //! ```
 
 #![allow(

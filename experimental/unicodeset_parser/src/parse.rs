@@ -1261,7 +1261,7 @@ where
 
     fn process_strings(&mut self, op: Operation, other_strings: HashSet<String>) {
         match op {
-            Operation::Union => self.string_set.extend(other_strings.into_iter()),
+            Operation::Union => self.string_set.extend(other_strings),
             Operation::Difference => {
                 self.string_set = self
                     .string_set

@@ -211,6 +211,7 @@ impl AbstractFs {
         }
     }
 
+    #[allow(dead_code)]
     pub(crate) fn read_to_string(&self, path: &str) -> Result<String, DataError> {
         let vec = self.read_to_buf(path)?;
         let s = String::from_utf8(vec)

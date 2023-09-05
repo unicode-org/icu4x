@@ -15,12 +15,15 @@
 //!
 //! Read more about data providers: [`icu_provider`]
 
+use core::ops::RangeInclusive;
+
 use alloc::borrow::Cow;
 
 use icu_collections::{
     codepointinvlist::{CodePointInversionList, CodePointInversionListULE},
     codepointinvliststringlist::CodePointInversionListAndStringListULE,
 };
+use icu_provider::prelude::*;
 use zerovec::*;
 
 #[cfg(feature = "compiled_data")]
@@ -120,9 +123,6 @@ pub struct Rule<'a> {
     /// The replacer. The key gets replaced with this.
     #[cfg_attr(feature = "serde", serde(borrow))]
     pub replacer: Cow<'a, str>,
-    /// The offset of the cursor after this rule, if the rule matches.
-    /// The end of the key/replacer is 0, i.e., a no-op.
-    pub cursor_offset: i32,
 }
 
 /// The special matchers and replacers used by this transliterator.
@@ -144,13 +144,59 @@ pub struct VarTable<'a> {
     pub quantifiers_kleene_plus: VarZeroVec<'a, str>,
     /// Segments.
     #[cfg_attr(feature = "serde", serde(borrow))]
-    pub segments: VarZeroVec<'a, str>,
+    pub segments: VarZeroVec<'a, SegmentULE>,
     /// UnicodeSets. These are represented as a [`CodePointInversionListAndStringList`](icu_collections::codepointinvliststringlist::CodePointInversionListAndStringList)
     #[cfg_attr(feature = "serde", serde(borrow))]
     pub unicode_sets: VarZeroVec<'a, CodePointInversionListAndStringListULE>,
     /// Function calls.
     #[cfg_attr(feature = "serde", serde(borrow))]
     pub function_calls: VarZeroVec<'a, FunctionCallULE>,
+    /// The maximum number of _left_ placeholders (`rest @@@ |`) in any rule.
+    pub max_left_placeholder_count: u16,
+    /// The maximum number of _right_ placeholders (`| @@@ rest`) in any rule.
+    pub max_right_placeholder_count: u16,
+}
+
+impl<'a> VarTable<'a> {
+    /// The lowest `char` used for encoding specials.
+    pub const BASE: char = '\u{F0000}';
+    /// The highest `char` used for encoding dynamic (i.e., growing, non-reserved) specials.
+    pub const MAX_DYNAMIC: char = '\u{FFFF0}';
+    /// The `char` that encodes a pure cursor, `|` without `@`.
+    pub const RESERVED_PURE_CURSOR: char = '\u{FFFFB}';
+    /// The `char` that encodes a start anchor, `^`.
+    pub const RESERVED_ANCHOR_START: char = '\u{FFFFC}';
+    /// The `char` that encodes an end anchor, `$`.
+    pub const RESERVED_ANCHOR_END: char = '\u{FFFFD}';
+
+    /// The range used for encoded specials.
+    pub const ENCODE_RANGE: RangeInclusive<char> = Self::BASE..=Self::RESERVED_ANCHOR_END;
+    /// The number of `char`s available for encoding dynamic (i.e., growing, non-reserved) specials.
+    pub const NUM_DYNAMIC: usize = Self::MAX_DYNAMIC as usize - Self::BASE as usize + 1;
+}
+
+/// Segments store matched parts of the input dynamically and can be referred to by back references
+/// in the replacer.
+#[derive(Debug, Clone)]
+#[make_varule(SegmentULE)]
+#[zerovec::skip_derive(Ord)]
+#[zerovec::derive(Debug)]
+#[cfg_attr(
+    feature = "serde",
+    derive(serde::Deserialize),
+    zerovec::derive(Deserialize)
+)]
+#[cfg_attr(
+    feature = "datagen",
+    derive(serde::Serialize),
+    zerovec::derive(Serialize)
+)]
+pub struct Segment<'a> {
+    /// The 0-based index of this segment.
+    pub idx: u16,
+    #[cfg_attr(feature = "serde", serde(borrow))]
+    /// The content of the segment.
+    pub content: Cow<'a, str>,
 }
 
 /// An inline recursive call to a transliterator with an arbitrary argument.
