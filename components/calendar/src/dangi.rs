@@ -18,14 +18,14 @@
 //! // `Date` checks
 //! assert_eq!(dangi_date.year().number, 4356);
 //! assert_eq!(dangi_date.year().related_iso, Some(2023));
-//! assert_eq!(dangi_date.year().cyclic, Some(40));
+//! assert_eq!(dangi_date.year().cyclic.unwrap().get(), 40);
 //! assert_eq!(dangi_date.month().ordinal, 6);
 //! assert_eq!(dangi_date.day_of_month().0, 6);
 //!
 //! // `DateTime` checks
 //! assert_eq!(dangi_datetime.date.year().number, 4356);
 //! assert_eq!(dangi_datetime.date.year().related_iso, Some(2023));
-//! assert_eq!(dangi_datetime.date.year().cyclic, Some(40));
+//! assert_eq!(dangi_datetime.date.year().cyclic.unwrap().get(), 40);
 //! assert_eq!(dangi_datetime.date.month().ordinal, 6);
 //! assert_eq!(dangi_datetime.date.day_of_month().0, 6);
 //! assert_eq!(dangi_datetime.time.hour.number(), 13);
@@ -45,6 +45,7 @@ use crate::{
     AnyCalendarKind, Calendar, CalendarError, Date, DateTime, Iso,
 };
 use calendrical_calculations::astronomy::Location;
+use core::num::NonZeroU8;
 use tinystr::tinystr;
 
 // The first day in the Korean Dangi calendar (based on the founding of Gojoseon)
@@ -111,6 +112,9 @@ const KOREAN_LOCATION_1961: Location = Location::new_unchecked(
 /// except that observations are based in Korea (currently UTC+9) rather than China (UTC+8).
 /// This can cause some differences; for example, 2012 was a leap year, but in the Dangi
 /// calendar the leap month was 3, while in the Chinese calendar the leap month was 4.
+///
+/// This calendar is currently in a preview state: formatting for this calendar is not
+/// going to be perfect.
 ///
 /// ```rust
 /// use icu::calendar::{Date, dangi::Dangi, chinese::Chinese};
@@ -334,7 +338,7 @@ impl Date<Dangi> {
     ///     .expect("Failed to initialize Dangi Date instance.");
     ///
     /// assert_eq!(date_dangi.year().number, 4356);
-    /// assert_eq!(date_dangi.year().cyclic, Some(40));
+    /// assert_eq!(date_dangi.year().cyclic.unwrap().get(), 40);
     /// assert_eq!(date_dangi.year().related_iso, Some(2023));
     /// assert_eq!(date_dangi.month().ordinal, 6);
     /// assert_eq!(date_dangi.day_of_month().0, 18);
@@ -360,7 +364,7 @@ impl DateTime<Dangi> {
     ///
     /// assert_eq!(dangi_datetime.date.year().number, 4356);
     /// assert_eq!(dangi_datetime.date.year().related_iso, Some(2023));
-    /// assert_eq!(dangi_datetime.date.year().cyclic, Some(40));
+    /// assert_eq!(dangi_datetime.date.year().cyclic.unwrap().get(), 40);
     /// assert_eq!(dangi_datetime.date.month().ordinal, 6);
     /// assert_eq!(dangi_datetime.date.day_of_month().0, 6);
     /// assert_eq!(dangi_datetime.time.hour.number(), 13);
@@ -435,7 +439,9 @@ impl Dangi {
     ) -> FormattableYear {
         let era = Era(tinystr!(16, "dangi"));
         let number = year;
-        let cyclic = Some(div_rem_euclid64(number as i64 - 1 + 364, 60).1 as i32 + 1);
+        // constant 364 from https://github.com/EdReingold/calendar-code2/blob/main/calendar.l#L5704
+        let cyclic = (div_rem_euclid64(number as i64 - 1 + 364, 60).1 as i32) as u8;
+        let cyclic = NonZeroU8::new(cyclic + 1); // 1-indexed
         let rata_die_in_year = if let Some(info) = year_info_option {
             info.get_new_year()
         } else {
@@ -683,7 +689,7 @@ mod test {
             iso_month: u8,
             iso_day: u8,
             expected_rel_iso: i32,
-            expected_cyclic: i32,
+            expected_cyclic: u8,
             expected_month: u32,
             expected_day: u32,
         }
@@ -1190,8 +1196,8 @@ mod test {
                 "Related ISO failed for test case: {case:?}"
             );
             assert_eq!(
-                dangi_cyclic,
-                Some(case.expected_cyclic),
+                dangi_cyclic.unwrap().get(),
+                case.expected_cyclic,
                 "Cyclic year failed for test case: {case:?}"
             );
             assert_eq!(

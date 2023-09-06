@@ -265,14 +265,14 @@ impl LocaleExpander {
         }
     }
 
-    #[doc = icu_provider::gen_any_buffer_unstable_docs!(ANY, Self::try_new_unstable)]
+    #[doc = icu_provider::gen_any_buffer_unstable_docs!(ANY, Self::new)]
     pub fn try_new_with_any_provider(
         provider: &(impl AnyProvider + ?Sized),
     ) -> Result<LocaleExpander, LocaleTransformError> {
         Self::try_new_compat(&provider.as_downcasting())
     }
 
-    #[doc = icu_provider::gen_any_buffer_unstable_docs!(BUFFER, Self::try_new_unstable)]
+    #[doc = icu_provider::gen_any_buffer_unstable_docs!(BUFFER, Self::new)]
     #[cfg(feature = "serde")]
     pub fn try_new_with_buffer_provider(
         provider: &(impl BufferProvider + ?Sized),

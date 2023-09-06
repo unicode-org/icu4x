@@ -213,9 +213,9 @@ mod tests {
         check_size_of!(6744 | 5456, TypedDateTimeFormatter::<Gregorian>);
 
         check_size_of!(88, DateTimeError);
-        check_size_of!(200, FormattedDateTime);
+        check_size_of!(184, FormattedDateTime);
         check_size_of!(16, FormattedTimeZone::<CustomTimeZone>);
-        check_size_of!(184, FormattedZonedDateTime);
+        check_size_of!(168, FormattedZonedDateTime);
 
         if cfg!(feature = "experimental") {
             check_size_of!(13, DateTimeFormatterOptions);

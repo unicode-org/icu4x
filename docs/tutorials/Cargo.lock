@@ -3100,10 +3100,6 @@ name = "icu_transliteration_data"
 version = "0.0.0"
 
 [[patch.unused]]
-name = "icu_transliterator_parser"
-version = "0.0.0"
-
-[[patch.unused]]
 name = "icu_unicodeset_parser"
 version = "0.0.0"
 

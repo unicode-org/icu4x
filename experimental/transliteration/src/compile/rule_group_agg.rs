@@ -15,7 +15,7 @@
 // could also receive the full `&[parse::Rule]` slice. with some careful index handling, some
 // allocations could be avoided.
 
-use crate::parse;
+use super::*;
 use std::borrow::Cow;
 use std::collections::VecDeque;
 
@@ -62,7 +62,7 @@ impl<'p> ForwardRuleGroupAggregator<'p> {
     pub(crate) fn push(&mut self, rule: &'p parse::Rule) {
         match rule {
             parse::Rule::Conversion(source_half, dir, target_half) => {
-                if !dir.permits(parse::Direction::Forward) {
+                if !dir.permits(Direction::Forward) {
                     return;
                 }
 
@@ -205,7 +205,7 @@ impl<'p> ReverseRuleGroupAggregator<'p> {
     pub(crate) fn push(&mut self, rule: &'p parse::Rule) {
         match rule {
             parse::Rule::Conversion(target_half, dir, source_half) => {
-                if !dir.permits(parse::Direction::Reverse) {
+                if !dir.permits(Direction::Reverse) {
                     return;
                 }
 

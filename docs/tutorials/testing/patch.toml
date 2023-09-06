@@ -28,7 +28,6 @@ icu_personnames = { path = "../../experimental/personnames" }
 icu_relativetime = { path = "../../experimental/relativetime" }
 icu_singlenumberformatter = { path = "../../experimental/single_number_formatter"}
 icu_transliteration = { path = "../../experimental/transliteration" }
-icu_transliterator_parser = { path = "../../experimental/transliterator_parser" }
 icu_unicodeset_parser = { path = "../../experimental/unicodeset_parser" }
 icu_unitsconversion = { path = "../../experimental/unitsconversion" }
 

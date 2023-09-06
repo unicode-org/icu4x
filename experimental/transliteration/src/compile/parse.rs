@@ -2,25 +2,17 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+use super::*;
+use icu_collections::codepointinvlist::CodePointInversionList;
+use icu_collections::codepointinvliststringlist::CodePointInversionListAndStringList;
+use icu_unicodeset_parser::{VariableMap, VariableValue};
 use std::borrow::Cow;
 use std::fmt::{Display, Formatter};
 use std::{iter::Peekable, str::CharIndices};
 
-use icu_collections::{
-    codepointinvlist::CodePointInversionList,
-    codepointinvliststringlist::CodePointInversionListAndStringList,
-};
-use icu_properties::provider::*;
-use icu_properties::sets::{load_pattern_white_space, load_xid_continue, load_xid_start};
-use icu_provider::prelude::*;
-use icu_unicodeset_parser::{VariableMap, VariableValue};
-
-use crate::errors::{Result, PEK};
-
-/// An element that can appear in a rule. Used for error reporting in [`ParseError`].
+/// An element that can appear in a rule. Used for error reporting in [`CompileError`].
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
-#[non_exhaustive]
-pub enum ElementKind {
+pub(crate) enum ElementKind {
     /// A literal string: `abc 'abc'`.
     Literal,
     /// A variable reference: `$var`.
@@ -71,10 +63,9 @@ impl ElementKind {
     }
 }
 
-/// The location in which an element can appear. Used for error reporting in [`ParseError`].
+/// The location in which an element can appear. Used for error reporting in [`CompileError`].
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
-#[non_exhaustive]
-pub enum ElementLocation {
+pub(crate) enum ElementLocation {
     /// The element appears on the source side of a rule (i.e., the side _not_ pointed at
     /// by the arrow).
     Source,
@@ -227,29 +218,6 @@ pub(crate) struct HalfRule {
     pub(crate) post: Section,
 }
 
-/// The direction of a rule-based transliterator in respect to its source.
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-#[non_exhaustive]
-pub enum Direction {
-    /// Forwards, i.e., left-to-right in the source.
-    Forward,
-    /// Backwards, i.e., right-to-left in the source.
-    Reverse,
-    /// Both forwards and backwards.
-    Both,
-}
-
-impl Direction {
-    // whether `self` is a superset of `other` or not
-    pub(crate) fn permits(&self, other: Direction) -> bool {
-        match self {
-            Direction::Forward => other == Direction::Forward,
-            Direction::Reverse => other == Direction::Reverse,
-            Direction::Both => true,
-        }
-    }
-}
-
 #[derive(Debug, Clone)]
 #[allow(clippy::large_enum_variant)]
 pub(crate) enum Rule {
@@ -265,7 +233,7 @@ pub(crate) enum Rule {
     VariableDefinition(String, Section),
 }
 
-struct TransliteratorParser<'a, P: ?Sized> {
+pub(crate) struct Parser<'a, P: ?Sized> {
     iter: Peekable<CharIndices<'a>>,
     source: &'a str,
     // flattened variable map specifically for unicodesets, i.e., only contains variables that
@@ -281,7 +249,7 @@ struct TransliteratorParser<'a, P: ?Sized> {
     property_provider: &'a P,
 }
 
-impl<'a, P> TransliteratorParser<'a, P>
+impl<'a, P> Parser<'a, P>
 where
     P: ?Sized
         + DataProvider<AsciiHexDigitV1Marker>
@@ -388,14 +356,14 @@ where
     // before or after a cursor
     const CURSOR_PLACEHOLDER: char = '@';
 
-    fn new(
+    pub(crate) fn run(
         source: &'a str,
         xid_start: &'a CodePointInversionList<'a>,
         xid_continue: &'a CodePointInversionList<'a>,
         pat_ws: &'a CodePointInversionList<'a>,
         provider: &'a P,
-    ) -> Self {
-        Self {
+    ) -> Result<Vec<Rule>> {
+        let mut s = Self {
             iter: source.char_indices().peekable(),
             source,
             variable_map: Default::default(),
@@ -404,7 +372,21 @@ where
             xid_continue,
             pat_ws,
             property_provider: provider,
+        };
+
+        let mut rules = Vec::new();
+        s.skip_icu_pragma();
+
+        loop {
+            s.skip_whitespace();
+            if s.iter.peek().is_none() {
+                break;
+            }
+            // we skipped whitespace and comments, so any other chars must be part of a rule
+            rules.push(s.parse_rule()?);
         }
+
+        Ok(rules)
     }
 
     // skips ICU4C pragmas of the form `use variable range 0xFFFF 0xFFFF ;`
@@ -431,22 +413,6 @@ where
             }
             break;
         }
-    }
-
-    fn parse_rules(&mut self) -> Result<Vec<Rule>> {
-        let mut rules = Vec::new();
-        self.skip_icu_pragma();
-
-        loop {
-            self.skip_whitespace();
-            if self.iter.peek().is_none() {
-                break;
-            }
-            // we skipped whitespace and comments, so any other chars must be part of a rule
-            rules.push(self.parse_rule()?);
-        }
-
-        Ok(rules)
     }
 
     // expects a rule
@@ -505,17 +471,17 @@ where
 
         // either forward_basic_id or reverse_basic_id must be nonempty
         if forward_basic_id.is_none() && reverse_basic_id.is_none() {
-            return Err(PEK::InvalidId.with_offset(meta_err_offset));
+            return Err(CompileErrorKind::InvalidId.with_offset(meta_err_offset));
         }
 
         if !has_reverse {
             // we must have a forward id due to:
             //  1. !has_reverse implying reverse_basic_id.is_none()
             //  2. the above none checks implying forward_basic_id.is_some()
-            // because this is difficult to verify, returning a PEK::Internal anyway
+            // because this is difficult to verify, returning a CompileErrorKind::Internal anyway
             // instead of unwrapping, despite technically being unnecessary
             let forward_basic_id =
-                forward_basic_id.ok_or(PEK::Internal("transform rule logic error"))?;
+                forward_basic_id.ok_or(CompileErrorKind::Internal("transform rule logic error"))?;
             return Ok(Rule::Transform(
                 SingleId {
                     basic_id: forward_basic_id,
@@ -529,7 +495,7 @@ where
             || reverse_filter.is_some() && reverse_basic_id.is_none()
         {
             // cannot have a filter without a basic id
-            return Err(PEK::InvalidId.with_offset(meta_err_offset));
+            return Err(CompileErrorKind::InvalidId.with_offset(meta_err_offset));
         }
 
         // an empty forward rule, such as ":: (R) ;" is equivalent to ":: Any-Null (R) ;"
@@ -704,7 +670,7 @@ where
 
         let (first_offset, first_c) = self.must_peek()?;
         if !self.xid_start.contains(first_c) {
-            return Err(PEK::UnexpectedChar(first_c).with_offset(first_offset));
+            return Err(CompileErrorKind::UnexpectedChar(first_c).with_offset(first_offset));
         }
         self.iter.next();
         id.push(first_c);
@@ -878,7 +844,7 @@ where
     fn parse_number(&mut self) -> Result<u32> {
         let (first_offset, first_c) = self.must_next()?;
         if !matches!(first_c, '1'..='9') {
-            return Err(PEK::UnexpectedChar(first_c).with_offset(first_offset));
+            return Err(CompileErrorKind::UnexpectedChar(first_c).with_offset(first_offset));
         }
         // inclusive end offset
         let mut end_offset = first_offset;
@@ -898,7 +864,7 @@ where
         #[allow(clippy::indexing_slicing)]
         self.source[first_offset..=end_offset]
             .parse()
-            .map_err(|_| PEK::InvalidNumber.with_offset(end_offset))
+            .map_err(|_| CompileErrorKind::InvalidNumber.with_offset(end_offset))
     }
 
     fn parse_literal(&mut self) -> Result<String> {
@@ -990,7 +956,7 @@ where
             'N' => {
                 // parse code point with name in {}
                 // tracking issue: https://github.com/unicode-org/icu4x/issues/1397
-                return Err(PEK::Unimplemented.with_offset(offset));
+                return Err(CompileErrorKind::Unimplemented.with_offset(offset));
             }
             'a' => buf.push('\u{0007}'),
             'b' => buf.push('\u{0008}'),
@@ -1013,8 +979,8 @@ where
         #[allow(clippy::indexing_slicing)]
         let hex_source = &self.source[first_offset..=end_offset];
         let num = u32::from_str_radix(hex_source, 16)
-            .map_err(|_| PEK::Internal("expected valid hex escape"))?;
-        char::try_from(num).map_err(|_| PEK::InvalidEscape.with_offset(end_offset))
+            .map_err(|_| CompileErrorKind::Internal("expected valid hex escape"))?;
+        char::try_from(num).map_err(|_| CompileErrorKind::InvalidEscape.with_offset(end_offset))
     }
 
     // validates [0-9a-fA-F]{min,max}, returns the offset of the last digit, consuming everything in the process
@@ -1046,7 +1012,7 @@ where
         if self.peek_is_unicode_set_start() {
             let (offset, set) = self.parse_unicode_set()?;
             if set.has_strings() {
-                return Err(PEK::GlobalFilterWithStrings.with_offset(offset));
+                return Err(CompileErrorKind::GlobalFilterWithStrings.with_offset(offset));
             }
             return Ok(Some(set.code_points().clone()));
         }
@@ -1059,9 +1025,12 @@ where
         // was created from self.source
         #[allow(clippy::indexing_slicing)]
         let set_source = &self.source[pre_offset..];
-        let (set, consumed_bytes) = self
-            .unicode_set_from_str(set_source)
-            .map_err(|e| e.or_with_offset(pre_offset))?;
+        let (set, consumed_bytes) = icu_unicodeset_parser::parse_unstable_with_variables(
+            set_source,
+            &self.variable_map,
+            self.property_provider,
+        )
+        .map_err(|e| CompileErrorKind::UnicodeSetError(e).with_offset(pre_offset))?;
 
         let mut last_offset = pre_offset;
         // advance self.iter consumed_bytes bytes
@@ -1082,22 +1051,13 @@ where
         match &self.dot_set {
             Some(set) => Ok(set.clone()),
             None => {
-                let (set, _) = self
-                    .unicode_set_from_str(Self::DOT_SET)
-                    .map_err(|_| PEK::Internal("dot set syntax not valid"))?;
+                let (set, _) =
+                    icu_unicodeset_parser::parse_unstable(Self::DOT_SET, self.property_provider)
+                        .map_err(|_| CompileErrorKind::Internal("dot set syntax not valid"))?;
                 self.dot_set = Some(set.clone());
                 Ok(set)
             }
         }
-    }
-
-    fn unicode_set_from_str(&self, set: &str) -> Result<(UnicodeSet, usize)> {
-        let (set, consumed_bytes) = icu_unicodeset_parser::parse_unstable_with_variables(
-            set,
-            &self.variable_map,
-            self.property_provider,
-        )?;
-        Ok((set, consumed_bytes))
     }
 
     fn parse_function_call(&mut self) -> Result<Element> {
@@ -1153,7 +1113,7 @@ where
         if let Some(uset_value) = self.try_uset_flatten_section(&value) {
             self.variable_map
                 .insert(name.to_string(), uset_value)
-                .map_err(|_| PEK::DuplicateVariable.with_offset(offset))?;
+                .map_err(|_| CompileErrorKind::DuplicateVariable.with_offset(offset))?;
         }
         Ok(())
     }
@@ -1192,7 +1152,9 @@ where
 
     fn consume(&mut self, expected: char) -> Result<()> {
         match self.must_next()? {
-            (offset, c) if c != expected => Err(PEK::UnexpectedChar(c).with_offset(offset)),
+            (offset, c) if c != expected => {
+                Err(CompileErrorKind::UnexpectedChar(c).with_offset(offset))
+            }
             _ => Ok(()),
         }
     }
@@ -1250,7 +1212,7 @@ where
 
     // use this whenever an empty iterator would imply an Eof error
     fn must_next(&mut self) -> Result<(usize, char)> {
-        self.iter.next().ok_or(PEK::Eof.into())
+        self.iter.next().ok_or(CompileErrorKind::Eof.into())
     }
 
     // see must_next
@@ -1260,7 +1222,10 @@ where
 
     // use this whenever an empty iterator would imply an Eof error
     fn must_peek(&mut self) -> Result<(usize, char)> {
-        self.iter.peek().copied().ok_or(PEK::Eof.into())
+        self.iter
+            .peek()
+            .copied()
+            .ok_or(CompileErrorKind::Eof.into())
     }
 
     // see must_peek
@@ -1275,7 +1240,7 @@ where
 
     fn unexpected_char_here<T>(&mut self) -> Result<T> {
         let (offset, char) = self.must_peek()?;
-        Err(PEK::UnexpectedChar(char).with_offset(offset))
+        Err(CompileErrorKind::UnexpectedChar(char).with_offset(offset))
     }
 
     fn is_section_end(&self, c: char) -> bool {
@@ -1301,356 +1266,281 @@ where
     }
 }
 
-// used in tests
-#[allow(unused)]
-#[cfg(feature = "compiled_data")]
-pub(crate) fn parse(source: &str) -> Result<Vec<Rule>> {
-    parse_unstable(source, &icu_properties::provider::Baked)
-}
-
-pub(crate) fn parse_unstable<P>(source: &str, provider: &P) -> Result<Vec<Rule>>
-where
-    P: ?Sized
-        + DataProvider<AsciiHexDigitV1Marker>
-        + DataProvider<AlphabeticV1Marker>
-        + DataProvider<BidiControlV1Marker>
-        + DataProvider<BidiMirroredV1Marker>
-        + DataProvider<CaseIgnorableV1Marker>
-        + DataProvider<CasedV1Marker>
-        + DataProvider<ChangesWhenCasefoldedV1Marker>
-        + DataProvider<ChangesWhenCasemappedV1Marker>
-        + DataProvider<ChangesWhenLowercasedV1Marker>
-        + DataProvider<ChangesWhenNfkcCasefoldedV1Marker>
-        + DataProvider<ChangesWhenTitlecasedV1Marker>
-        + DataProvider<ChangesWhenUppercasedV1Marker>
-        + DataProvider<DashV1Marker>
-        + DataProvider<DefaultIgnorableCodePointV1Marker>
-        + DataProvider<DeprecatedV1Marker>
-        + DataProvider<DiacriticV1Marker>
-        + DataProvider<EmojiV1Marker>
-        + DataProvider<EmojiComponentV1Marker>
-        + DataProvider<EmojiModifierV1Marker>
-        + DataProvider<EmojiModifierBaseV1Marker>
-        + DataProvider<EmojiPresentationV1Marker>
-        + DataProvider<ExtendedPictographicV1Marker>
-        + DataProvider<ExtenderV1Marker>
-        + DataProvider<GraphemeBaseV1Marker>
-        + DataProvider<GraphemeExtendV1Marker>
-        + DataProvider<HexDigitV1Marker>
-        + DataProvider<IdsBinaryOperatorV1Marker>
-        + DataProvider<IdsTrinaryOperatorV1Marker>
-        + DataProvider<IdContinueV1Marker>
-        + DataProvider<IdStartV1Marker>
-        + DataProvider<IdeographicV1Marker>
-        + DataProvider<JoinControlV1Marker>
-        + DataProvider<LogicalOrderExceptionV1Marker>
-        + DataProvider<LowercaseV1Marker>
-        + DataProvider<MathV1Marker>
-        + DataProvider<NoncharacterCodePointV1Marker>
-        + DataProvider<PatternSyntaxV1Marker>
-        + DataProvider<PatternWhiteSpaceV1Marker>
-        + DataProvider<QuotationMarkV1Marker>
-        + DataProvider<RadicalV1Marker>
-        + DataProvider<RegionalIndicatorV1Marker>
-        + DataProvider<SentenceTerminalV1Marker>
-        + DataProvider<SoftDottedV1Marker>
-        + DataProvider<TerminalPunctuationV1Marker>
-        + DataProvider<UnifiedIdeographV1Marker>
-        + DataProvider<UppercaseV1Marker>
-        + DataProvider<VariationSelectorV1Marker>
-        + DataProvider<WhiteSpaceV1Marker>
-        + DataProvider<XidContinueV1Marker>
-        + DataProvider<GeneralCategoryMaskNameToValueV1Marker>
-        + DataProvider<GeneralCategoryV1Marker>
-        + DataProvider<ScriptNameToValueV1Marker>
-        + DataProvider<ScriptV1Marker>
-        + DataProvider<ScriptWithExtensionsPropertyV1Marker>
-        + DataProvider<XidStartV1Marker>,
-{
-    let xid_start =
-        load_xid_start(provider).map_err(|_| PEK::Internal("data loading for xid_start broke"))?;
-    let xid_start_list = xid_start.to_code_point_inversion_list();
-    let xid_continue = load_xid_continue(provider)
-        .map_err(|_| PEK::Internal("data loading for xid_continue broke"))?;
-    let xid_continue_list = xid_continue.to_code_point_inversion_list();
-
-    let pat_ws = load_pattern_white_space(provider)
-        .map_err(|_| PEK::Internal("data loading for pattern_white_space broke"))?;
-    let pat_ws_list = pat_ws.to_code_point_inversion_list();
-
-    let mut parser = TransliteratorParser::new(
-        source,
-        &xid_start_list,
-        &xid_continue_list,
-        &pat_ws_list,
-        provider,
-    );
-    parser.parse_rules()
-}
-
 #[cfg(test)]
-mod tests {
-    use super::*;
+pub(crate) fn parse(source: &str) -> Result<Vec<Rule>> {
+    Parser::run(
+        source,
+        &sets::xid_start()
+            .static_to_owned()
+            .to_code_point_inversion_list(),
+        &sets::xid_continue()
+            .static_to_owned()
+            .to_code_point_inversion_list(),
+        &sets::pattern_white_space()
+            .static_to_owned()
+            .to_code_point_inversion_list(),
+        &icu_properties::provider::Baked,
+    )
+}
 
-    #[test]
-    fn test_full() {
-        let source = r"
+#[test]
+fn test_full() {
+    let source = r"
 
-        # these are skipped:
-        use variable range 0x70 0x72 ;
-        use variable range 0x1 0x2 ;
+    # these are skipped:
+    use variable range 0x70 0x72 ;
+    use variable range 0x1 0x2 ;
 
-        :: [a-z\]] ; :: [b-z] Latin/BGN ;
-        :: Source-Target/Variant () ;::([b-z]Target-Source/Variant) ;
-        :: [a-z] Any ([b-z] Target-Source/Variant);
+    :: [a-z\]] ; :: [b-z] Latin/BGN ;
+    :: Source-Target/Variant () ;::([b-z]Target-Source/Variant) ;
+    :: [a-z] Any ([b-z] Target-Source/Variant);
 
-        $my_var = an arbitrary section ',' some quantifiers *+? 'and other variables: $var' $var  ;
-        $innerMinus = '-' ;
-        $minus = $innerMinus ;
-        $good_set = [a $minus z] ;
+    $my_var = an arbitrary section ',' some quantifiers *+? 'and other variables: $var' $var  ;
+    $innerMinus = '-' ;
+    $minus = $innerMinus ;
+    $good_set = [a $minus z] ;
 
-        ^ (start) { key ' key '+ $good_set } > $102 }  post\-context$;
-        # contexts are optional
-        target < source [{set\ with\ string}];
-        # contexts can be empty
-        { 'source-or-target' } <> { 'target-or-source' } ;
+    ^ (start) { key ' key '+ $good_set } > $102 }  post\-context$;
+    # contexts are optional
+    target < source [{set\ with\ string}];
+    # contexts can be empty
+    { 'source-or-target' } <> { 'target-or-source' } ;
 
-        (nested (sections)+ are () so fun) > ;
+    (nested (sections)+ are () so fun) > ;
 
-        . > ;
+    . > ;
 
-        :: ([inverse-filter]) ;
-        ";
+    :: ([inverse-filter]) ;
+    ";
 
+    if let Err(e) = parse(source) {
+        panic!("Failed to parse {:?}: {:?}", source, e);
+    }
+}
+
+#[test]
+fn test_conversion_rules_ok() {
+    let sources = [
+        r"a > b ;",
+        r"a < b ;",
+        r"a <> b ;",
+        r"a → b ;",
+        r"a ← b ;",
+        r"a ↔ b ;",
+        r"a \> > b ;",
+        r"a \→ > b ;",
+        r"{ a > b ;",
+        r"a {  > b ;",
+        r"{ a } > b ;",
+        r"{ a } > { b ;",
+        r"{ a } > { b } ;",
+        r"^ pre [a-z] { a } post [$] $ > ^ [$] pre { b [b-z] } post $ ;",
+        r"[äöü] > ;",
+        r"([äöü]) > &Remove($1) ;",
+        r"[äöü] { ([äöü]+) > &Remove($1) ;",
+        r"|@@@ a <> b @@@@  @ | ;",
+        r"|a <> b ;",
+    ];
+
+    for source in sources {
         if let Err(e) = parse(source) {
             panic!("Failed to parse {:?}: {:?}", source, e);
         }
     }
+}
 
-    #[test]
-    fn test_conversion_rules_ok() {
-        let sources = [
-            r"a > b ;",
-            r"a < b ;",
-            r"a <> b ;",
-            r"a → b ;",
-            r"a ← b ;",
-            r"a ↔ b ;",
-            r"a \> > b ;",
-            r"a \→ > b ;",
-            r"{ a > b ;",
-            r"a {  > b ;",
-            r"{ a } > b ;",
-            r"{ a } > { b ;",
-            r"{ a } > { b } ;",
-            r"^ pre [a-z] { a } post [$] $ > ^ [$] pre { b [b-z] } post $ ;",
-            r"[äöü] > ;",
-            r"([äöü]) > &Remove($1) ;",
-            r"[äöü] { ([äöü]+) > &Remove($1) ;",
-            r"|@@@ a <> b @@@@  @ | ;",
-            r"|a <> b ;",
-        ];
+#[test]
+fn test_conversion_rules_err() {
+    let sources = [
+        r"a > > b ;",
+        r"a >< b ;",
+        r"(a > b) > b ;",
+        r"a \← b ;",
+        r"a ↔ { b > } ;",
+        r"a ↔ { b > } ;",
+        r"a > b",
+        r"@ a > b ;",
+        r"a ( {  > b ;",
+        r"a ( { )  > b ;",
+        r"a } + > b ;",
+        r"a (+?*) > b ;",
+        r"+?* > b ;",
+        r"+ > b ;",
+        r"* > b ;",
+        r"? > b ;",
+        r"use variable range 0x71 > 2 ; use variable range 0x71 ;",
+    ];
 
-        for source in sources {
-            if let Err(e) = parse(source) {
-                panic!("Failed to parse {:?}: {:?}", source, e);
-            }
+    for source in sources {
+        if let Ok(rules) = parse(source) {
+            panic!("Parsed invalid source {:?}: {:?}", source, rules);
         }
     }
+}
 
-    #[test]
-    fn test_conversion_rules_err() {
-        let sources = [
-            r"a > > b ;",
-            r"a >< b ;",
-            r"(a > b) > b ;",
-            r"a \← b ;",
-            r"a ↔ { b > } ;",
-            r"a ↔ { b > } ;",
-            r"a > b",
-            r"@ a > b ;",
-            r"a ( {  > b ;",
-            r"a ( { )  > b ;",
-            r"a } + > b ;",
-            r"a (+?*) > b ;",
-            r"+?* > b ;",
-            r"+ > b ;",
-            r"* > b ;",
-            r"? > b ;",
-            r"use variable range 0x71 > 2 ; use variable range 0x71 ;",
-        ];
+#[test]
+fn test_variable_rules_ok() {
+    let sources = [
+        r" $my_var = [a-z] ;",
+        r"$my_var = äüöÜ ;",
+        r"$my_var = [a-z] literal ; $other_var = [A-Z] [b-z];",
+        r"$my_var = [a-z] ; $other_var = [A-Z] [b-z];",
+        r"$my_var = [a-z] ; $other_var = $my_var + $2222;",
+        r"$my_var = [a-z] ; $other_var = $my_var \+\ \$2222 \\ 'hello\';",
+        r"
+        $innerMinus = '-' ;
+        $minus = $innerMinus ;
+        $good_set = [a $minus z] ;
+        ",
+    ];
 
-        for source in sources {
-            if let Ok(rules) = parse(source) {
-                panic!("Parsed invalid source {:?}: {:?}", source, rules);
-            }
+    for source in sources {
+        if let Err(e) = parse(source) {
+            panic!("Failed to parse {:?}: {:?}", source, e);
         }
     }
+}
 
-    #[test]
-    fn test_variable_rules_ok() {
-        let sources = [
-            r" $my_var = [a-z] ;",
-            r"$my_var = äüöÜ ;",
-            r"$my_var = [a-z] literal ; $other_var = [A-Z] [b-z];",
-            r"$my_var = [a-z] ; $other_var = [A-Z] [b-z];",
-            r"$my_var = [a-z] ; $other_var = $my_var + $2222;",
-            r"$my_var = [a-z] ; $other_var = $my_var \+\ \$2222 \\ 'hello\';",
-            r"
-            $innerMinus = '-' ;
-            $minus = $innerMinus ;
-            $good_set = [a $minus z] ;
-            ",
-        ];
+#[test]
+fn test_variable_rules_err() {
+    let sources = [
+        r" $ my_var = a ;",
+        r" $my_var = a_2 ;",
+        r"$my_var 2 = [a-z] literal ;",
+        r"$my_var = [$doesnt_exist] ;",
+    ];
 
-        for source in sources {
-            if let Err(e) = parse(source) {
-                panic!("Failed to parse {:?}: {:?}", source, e);
-            }
+    for source in sources {
+        if let Ok(rules) = parse(source) {
+            panic!("Parsed invalid source {:?}: {:?}", source, rules);
         }
     }
+}
 
-    #[test]
-    fn test_variable_rules_err() {
-        let sources = [
-            r" $ my_var = a ;",
-            r" $my_var = a_2 ;",
-            r"$my_var 2 = [a-z] literal ;",
-            r"$my_var = [$doesnt_exist] ;",
-        ];
+#[test]
+fn test_global_filters_ok() {
+    let sources = [
+        r":: [^\[$] ;",
+        r":: \p{L} ;",
+        r":: [^\[{[}$] ;",
+        r":: [^\[{]}$] ;",
+        r":: [^\[{]\}]}$] ;",
+        r":: ([^\[$]) ;",
+        r":: ( [^\[$] ) ;",
+        r":: [^[a-z[]][]] ;",
+        r":: [^[a-z\[\]]\]] ;",
+        r":: [^\]] ;",
+    ];
 
-        for source in sources {
-            if let Ok(rules) = parse(source) {
-                panic!("Parsed invalid source {:?}: {:?}", source, rules);
-            }
+    for source in sources {
+        if let Err(e) = parse(source) {
+            panic!("Failed to parse {:?}: {:?}", source, e);
         }
     }
+}
 
-    #[test]
-    fn test_global_filters_ok() {
-        let sources = [
-            r":: [^\[$] ;",
-            r":: \p{L} ;",
-            r":: [^\[{[}$] ;",
-            r":: [^\[{]}$] ;",
-            r":: [^\[{]\}]}$] ;",
-            r":: ([^\[$]) ;",
-            r":: ( [^\[$] ) ;",
-            r":: [^[a-z[]][]] ;",
-            r":: [^[a-z\[\]]\]] ;",
-            r":: [^\]] ;",
-        ];
+#[test]
+fn test_global_filters_err() {
+    let sources = [
+        r":: [^\[$ ;",
+        r":: \p{L  ;",
+        r":: [^[$] ;",
+        r":: [^\[$]) ;",
+        r":: ( [^\[$]  ;",
+        r":: [^[a-z[]][]] [] ;",
+        r":: [^[a-z\[\]]\]] ([a-z]);",
+        r":: [a$-^\]] ;",
+        r":: ( [] [] ) ;",
+        r":: () [] ;",
+        r":: [{string}];",
+        r":: ([{string}]);",
+    ];
 
-        for source in sources {
-            if let Err(e) = parse(source) {
-                panic!("Failed to parse {:?}: {:?}", source, e);
-            }
+    for source in sources {
+        if let Ok(rules) = parse(source) {
+            panic!("Parsed invalid source {:?}: {:?}", source, rules);
         }
     }
+}
 
-    #[test]
-    fn test_global_filters_err() {
-        let sources = [
-            r":: [^\[$ ;",
-            r":: \p{L  ;",
-            r":: [^[$] ;",
-            r":: [^\[$]) ;",
-            r":: ( [^\[$]  ;",
-            r":: [^[a-z[]][]] [] ;",
-            r":: [^[a-z\[\]]\]] ([a-z]);",
-            r":: [a$-^\]] ;",
-            r":: ( [] [] ) ;",
-            r":: () [] ;",
-            r":: [{string}];",
-            r":: ([{string}]);",
-        ];
+#[test]
+fn test_function_calls_ok() {
+    let sources = [
+        r"$fn = & Any-Any/Variant ($var literal 'quoted literal' $1) ;",
+        r"$fn = &[a-z] Any-Any/Variant ($var literal 'quoted literal' $1) ;",
+        r"$fn = &[a-z]Any-Any/Variant ($var literal 'quoted literal' $1) ;",
+        r"$fn = &[a-z]Any/Variant ($var literal 'quoted literal' $1) ;",
+        r"$fn = &Any/Variant ($var literal 'quoted literal' $1) ;",
+        r"$fn = &[a-z]Any ($var literal 'quoted literal' $1) ;",
+        r"$fn = &Any($var literal 'quoted literal' $1) ;",
+    ];
 
-        for source in sources {
-            if let Ok(rules) = parse(source) {
-                panic!("Parsed invalid source {:?}: {:?}", source, rules);
-            }
+    for source in sources {
+        if let Err(e) = parse(source) {
+            panic!("Failed to parse {:?}: {:?}", source, e);
         }
     }
+}
 
-    #[test]
-    fn test_function_calls_ok() {
-        let sources = [
-            r"$fn = & Any-Any/Variant ($var literal 'quoted literal' $1) ;",
-            r"$fn = &[a-z] Any-Any/Variant ($var literal 'quoted literal' $1) ;",
-            r"$fn = &[a-z]Any-Any/Variant ($var literal 'quoted literal' $1) ;",
-            r"$fn = &[a-z]Any/Variant ($var literal 'quoted literal' $1) ;",
-            r"$fn = &Any/Variant ($var literal 'quoted literal' $1) ;",
-            r"$fn = &[a-z]Any ($var literal 'quoted literal' $1) ;",
-            r"$fn = &Any($var literal 'quoted literal' $1) ;",
-        ];
+#[test]
+fn test_function_calls_err() {
+    let sources = [
+        r"$fn = &[a-z]($var literal 'quoted literal' $1) ;",
+        r"$fn = &[a-z] ($var literal 'quoted literal' $1) ;",
+        r"$fn = &($var literal 'quoted literal' $1) ;",
+    ];
 
-        for source in sources {
-            if let Err(e) = parse(source) {
-                panic!("Failed to parse {:?}: {:?}", source, e);
-            }
+    for source in sources {
+        if let Ok(rules) = parse(source) {
+            panic!("Parsed invalid source {:?}: {:?}", source, rules);
         }
     }
+}
 
-    #[test]
-    fn test_function_calls_err() {
-        let sources = [
-            r"$fn = &[a-z]($var literal 'quoted literal' $1) ;",
-            r"$fn = &[a-z] ($var literal 'quoted literal' $1) ;",
-            r"$fn = &($var literal 'quoted literal' $1) ;",
-        ];
+#[test]
+fn test_transform_rules_ok() {
+    let sources = [
+        ":: NFD; :: NFKC;",
+        ":: Latin ;",
+        ":: any - Latin;",
+        ":: any - Latin/bgn;",
+        ":: any - Latin/bgn ();",
+        ":: any - Latin/bgn ([a-z] a-z);",
+        ":: ([a-z] a-z);",
+        ":: (a-z);",
+        ":: (a-z / variant);",
+        ":: [a-z] latin/variant (a-z / variant);",
+        ":: [a-z] latin/variant (a-z / variant) ;",
+        ":: [a-z] latin (  );",
+        ":: [a-z] latin ;",
+        "::[];",
+    ];
 
-        for source in sources {
-            if let Ok(rules) = parse(source) {
-                panic!("Parsed invalid source {:?}: {:?}", source, rules);
-            }
+    for source in sources {
+        if let Err(e) = parse(source) {
+            panic!("Failed to parse {:?}: {:?}", source, e);
         }
     }
+}
 
-    #[test]
-    fn test_transform_rules_ok() {
-        let sources = [
-            ":: NFD; :: NFKC;",
-            ":: Latin ;",
-            ":: any - Latin;",
-            ":: any - Latin/bgn;",
-            ":: any - Latin/bgn ();",
-            ":: any - Latin/bgn ([a-z] a-z);",
-            ":: ([a-z] a-z);",
-            ":: (a-z);",
-            ":: (a-z / variant);",
-            ":: [a-z] latin/variant (a-z / variant);",
-            ":: [a-z] latin/variant (a-z / variant) ;",
-            ":: [a-z] latin (  );",
-            ":: [a-z] latin ;",
-            "::[];",
-        ];
+#[test]
+fn test_transform_rules_err() {
+    let sources = [
+        r":: a a ;",
+        r":: (a a) ;",
+        r":: a - z - b ;",
+        r":: ( a - z - b) ;",
+        r":: [] ( a - z) ;",
+        r":: a-z ( [] ) ;",
+        r":: a-z / ( [] a-z ) ;",
+        r":: Latin-ASCII/BGN Arab-Greek/UNGEGN ;",
+        r":: (Latin-ASCII/BGN Arab-Greek/UNGEGN) ;",
+        r":: [a-z{string}] Remove ;",
+    ];
 
-        for source in sources {
-            if let Err(e) = parse(source) {
-                panic!("Failed to parse {:?}: {:?}", source, e);
-            }
-        }
-    }
-
-    #[test]
-    fn test_transform_rules_err() {
-        let sources = [
-            r":: a a ;",
-            r":: (a a) ;",
-            r":: a - z - b ;",
-            r":: ( a - z - b) ;",
-            r":: [] ( a - z) ;",
-            r":: a-z ( [] ) ;",
-            r":: a-z / ( [] a-z ) ;",
-            r":: Latin-ASCII/BGN Arab-Greek/UNGEGN ;",
-            r":: (Latin-ASCII/BGN Arab-Greek/UNGEGN) ;",
-            r":: [a-z{string}] Remove ;",
-        ];
-
-        for source in sources {
-            if let Ok(rules) = parse(source) {
-                panic!("Parsed invalid source {:?}: {:?}", source, rules);
-            }
+    for source in sources {
+        if let Ok(rules) = parse(source) {
+            panic!("Parsed invalid source {:?}: {:?}", source, rules);
         }
     }
 }

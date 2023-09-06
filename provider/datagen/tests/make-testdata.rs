@@ -28,7 +28,7 @@ fn generate_json_and_verify_postcard() {
 
     let data_root = Path::new(concat!(core::env!("CARGO_MANIFEST_DIR"), "/tests/data/"));
 
-    let source = DatagenProvider::default()
+    let source = DatagenProvider::new_custom()
         .with_cldr(data_root.join("cldr"))
         .unwrap()
         .with_icuexport(data_root.join("icuexport"))

@@ -142,16 +142,8 @@ as described in the zero-copy format, and the maps here are just arrays)
     ]
 */
 
-use crate::errors::{Result, PEK};
-use crate::parse;
-use crate::parse::{FilterSet, HalfRule, QuantifierKind};
-use icu_transliteration::provider::RuleBasedTransliterator;
+use super::*;
 use std::collections::{HashMap, HashSet};
-
-mod pass2;
-mod rule_group_agg;
-use crate::compile::pass2::Pass2;
-use rule_group_agg::RuleGroups;
 
 enum SingleDirection {
     Forward,
@@ -160,27 +152,27 @@ enum SingleDirection {
 
 /// The number of elements for each `VZV` in the `VarTable`.
 #[derive(Debug, Copy, Clone, Default, PartialEq, Eq)]
-struct SpecialConstructCounts {
-    num_compounds: usize,
-    num_quantifiers_opt: usize,
-    num_quantifiers_kleene: usize,
-    num_quantifiers_kleene_plus: usize,
-    num_segments: usize,
-    num_unicode_sets: usize,
-    num_function_calls: usize,
+pub(crate) struct SpecialConstructCounts {
+    pub(crate) num_compounds: usize,
+    pub(crate) num_quantifiers_opt: usize,
+    pub(crate) num_quantifiers_kleene: usize,
+    pub(crate) num_quantifiers_kleene_plus: usize,
+    pub(crate) num_segments: usize,
+    pub(crate) num_unicode_sets: usize,
+    pub(crate) num_function_calls: usize,
     // a "left" placeholder is a placeholder on the left side of a cursor, e.g., `abc @@@ |`
     // this is means the cursor itself is on the very right of a replacement section
-    max_left_placeholders: u32,
+    pub(crate) max_left_placeholders: u32,
     // a "right" placeholder is a placeholder on the right side of a cursor, e.g., `| @@@ abc`
     // this is means the cursor itself is on the very left of a replacement section
-    max_right_placeholders: u32,
+    pub(crate) max_right_placeholders: u32,
     // backrefs have no data, they're simply an unsigned integer, so we only care about the maximum
     // number we need to encode
-    max_backref_num: u32,
+    pub(crate) max_backref_num: u32,
 }
 
 impl SpecialConstructCounts {
-    fn num_total(&self) -> usize {
+    pub(crate) fn num_total(&self) -> usize {
         self.num_compounds
             + self.num_quantifiers_opt
             + self.num_quantifiers_kleene
@@ -224,39 +216,37 @@ impl SpecialConstructCounts {
 
 // Data for a given direction or variable definition (the "key")
 #[derive(Debug, Clone, Default, PartialEq, Eq)]
-struct Pass1Data {
-    counts: SpecialConstructCounts,
+pub(crate) struct Pass1Data {
+    pub(crate) counts: SpecialConstructCounts,
     // the variables used by the associated key
-    used_variables: HashSet<String>,
-    // the recursive transliterators used by the associated key
-    used_transliterators: HashSet<parse::BasicId>,
+    pub(crate) used_variables: HashSet<String>,
 }
 
 #[derive(Debug, Clone)]
-struct DirectedPass1Result<'p> {
+pub(crate) struct DirectedPass1Result<'p> {
     // data with dependencies resolved and counts summed
-    data: Pass1Data,
-    groups: RuleGroups<'p>,
-    filter: Option<FilterSet>,
+    pub(crate) data: Pass1Data,
+    pub(crate) groups: rule_group_agg::RuleGroups<'p>,
+    pub(crate) filter: Option<parse::FilterSet>,
 }
 
 #[derive(Debug, Clone)]
-struct Pass1Result<'p> {
-    forward_result: DirectedPass1Result<'p>,
-    reverse_result: DirectedPass1Result<'p>,
-    variable_definitions: HashMap<String, &'p [parse::Element]>,
+pub(crate) struct Pass1Result<'p> {
+    pub(crate) forward_result: DirectedPass1Result<'p>,
+    pub(crate) reverse_result: DirectedPass1Result<'p>,
+    pub(crate) variable_definitions: HashMap<String, &'p [parse::Element]>,
 }
 
 /// Responsible for the first pass as described in the module-level documentation.
 #[derive(Debug, Clone)]
-struct Pass1<'p> {
-    direction: parse::Direction,
+pub(crate) struct Pass1<'p> {
+    direction: Direction,
     // data for *direct* dependencies
     forward_data: Pass1Data,
     reverse_data: Pass1Data,
     variable_data: HashMap<String, Pass1Data>,
-    forward_filter: Option<FilterSet>,
-    reverse_filter: Option<FilterSet>,
+    forward_filter: Option<parse::FilterSet>,
+    reverse_filter: Option<parse::FilterSet>,
     forward_rule_group_agg: rule_group_agg::ForwardRuleGroupAggregator<'p>,
     reverse_rule_group_agg: rule_group_agg::ReverseRuleGroupAggregator<'p>,
     variable_definitions: HashMap<String, &'p [parse::Element]>,
@@ -266,8 +256,8 @@ struct Pass1<'p> {
 }
 
 impl<'p> Pass1<'p> {
-    fn new(direction: parse::Direction) -> Self {
-        Self {
+    pub(crate) fn run(direction: Direction, rules: &'p [parse::Rule]) -> Result<Pass1Result<'p>> {
+        let mut s = Self {
             direction,
             forward_data: Pass1Data::default(),
             reverse_data: Pass1Data::default(),
@@ -278,42 +268,34 @@ impl<'p> Pass1<'p> {
             reverse_filter: None,
             forward_rule_group_agg: rule_group_agg::ForwardRuleGroupAggregator::new(),
             reverse_rule_group_agg: rule_group_agg::ReverseRuleGroupAggregator::new(),
-        }
-    }
+        };
 
-    fn run(&mut self, rules: &'p [parse::Rule]) -> Result<()> {
         // first check global filter/global inverse filter.
         // after this check, they may not appear anywhere.
-        let rules = self.validate_global_filters(rules)?;
+        let rules = s.validate_global_filters(rules)?;
 
         // iterate through remaining rules and perform checks according to interim specification
 
         for rule in rules {
-            self.forward_rule_group_agg.push(rule);
-            self.reverse_rule_group_agg.push(rule);
+            s.forward_rule_group_agg.push(rule);
+            s.reverse_rule_group_agg.push(rule);
 
             match rule {
                 parse::Rule::GlobalFilter(_) | parse::Rule::GlobalInverseFilter(_) => {
                     // the previous step ensures `rules` has no more global filters
-                    return Err(PEK::UnexpectedGlobalFilter.into());
+                    return Err(CompileErrorKind::UnexpectedGlobalFilter.into());
                 }
-                parse::Rule::Transform(forward_id, reverse_id) => {
-                    self.validate_transform(forward_id, reverse_id.as_ref())?;
-                }
+                parse::Rule::Transform(..) => {}
                 parse::Rule::VariableDefinition(name, definition) => {
-                    self.validate_variable_definition(name, definition)?;
+                    s.validate_variable_definition(name, definition)?;
                 }
                 parse::Rule::Conversion(hr1, dir, hr2) => {
-                    self.validate_conversion(hr1, *dir, hr2)?;
+                    s.validate_conversion(hr1, *dir, hr2)?;
                 }
             }
         }
 
-        Ok(())
-    }
-
-    fn generate_result(self) -> Result<Pass1Result<'p>> {
-        Pass1ResultGenerator::generate(self)
+        Pass1ResultGenerator::generate(s)
     }
 
     fn validate_global_filters<'a>(
@@ -340,27 +322,13 @@ impl<'p> Pass1<'p> {
         Ok(rules)
     }
 
-    fn validate_transform(
-        &mut self,
-        forward_id: &parse::SingleId,
-        reverse_id: Option<&parse::SingleId>,
-    ) -> Result<()> {
-        let fwd_dep = forward_id.basic_id.clone();
-        self.forward_data.used_transliterators.insert(fwd_dep);
-        let rev_dep = reverse_id
-            .map(|single_id| single_id.basic_id.clone())
-            .unwrap_or_else(|| forward_id.basic_id.clone().reverse());
-        self.reverse_data.used_transliterators.insert(rev_dep);
-        Ok(())
-    }
-
     fn validate_variable_definition(
         &mut self,
         name: &String,
         definition: &'p [parse::Element],
     ) -> Result<()> {
         if self.variable_definitions.contains_key(name) {
-            return Err(PEK::DuplicateVariable.into());
+            return Err(CompileErrorKind::DuplicateVariable.into());
         }
         self.variable_definitions.insert(name.clone(), definition);
 
@@ -386,37 +354,23 @@ impl<'p> Pass1<'p> {
 
     fn validate_conversion(
         &mut self,
-        source: &HalfRule,
-        dir: parse::Direction,
-        target: &HalfRule,
+        source: &parse::HalfRule,
+        dir: Direction,
+        target: &parse::HalfRule,
     ) -> Result<()> {
         // TODO(#3736): include source location/actual source text in these logs
-        if !self.direction.permits(dir) {
-            // example: metadata defines this transliterator as forward, but a `<>` or `<` rule is found.
-            log::warn!(
-                "metadata for transliterator specifies direction {:?} but conversion rule specifies {:?}",
-                self.direction,
-                dir,
-            );
-        }
         // logging for useless contexts
-        if dir == parse::Direction::Forward && (!target.ante.is_empty() || !target.post.is_empty())
-        {
+        if dir == Direction::Forward && (!target.ante.is_empty() || !target.post.is_empty()) {
             log::warn!("forward conversion rule has ignored context on target side");
         }
-        if dir == parse::Direction::Reverse && (!source.ante.is_empty() || !source.post.is_empty())
-        {
+        if dir == Direction::Reverse && (!source.ante.is_empty() || !source.post.is_empty()) {
             log::warn!("reverse conversion rule has ignored context on target side");
         }
 
-        if self.direction.permits(parse::Direction::Forward)
-            && dir.permits(parse::Direction::Forward)
-        {
+        if self.direction.permits(Direction::Forward) && dir.permits(Direction::Forward) {
             self.validate_conversion_one_direction(source, target, SingleDirection::Forward)?;
         }
-        if self.direction.permits(parse::Direction::Reverse)
-            && dir.permits(parse::Direction::Reverse)
-        {
+        if self.direction.permits(Direction::Reverse) && dir.permits(Direction::Reverse) {
             self.validate_conversion_one_direction(target, source, SingleDirection::Reverse)?;
         }
 
@@ -425,8 +379,8 @@ impl<'p> Pass1<'p> {
 
     fn validate_conversion_one_direction(
         &mut self,
-        source: &HalfRule,
-        target: &HalfRule,
+        source: &parse::HalfRule,
+        target: &parse::HalfRule,
         dir: SingleDirection,
     ) -> Result<()> {
         let data = match dir {
@@ -526,16 +480,20 @@ impl<'a, 'p, F: Fn(&str) -> bool> SourceValidator<'a, 'p, F> {
             parse::Element::Literal(_) => {}
             parse::Element::VariableRef(name) => {
                 if !(self.is_variable_defined)(name) {
-                    return Err(PEK::UnknownVariable.into());
+                    return Err(CompileErrorKind::UnknownVariable.into());
                 }
                 self.data.used_variables.insert(name.clone());
             }
             parse::Element::Quantifier(kind, inner) => {
                 self.validate_element(inner, false)?;
                 match *kind {
-                    QuantifierKind::ZeroOrOne => self.data.counts.num_quantifiers_opt += 1,
-                    QuantifierKind::ZeroOrMore => self.data.counts.num_quantifiers_kleene += 1,
-                    QuantifierKind::OneOrMore => self.data.counts.num_quantifiers_kleene_plus += 1,
+                    parse::QuantifierKind::ZeroOrOne => self.data.counts.num_quantifiers_opt += 1,
+                    parse::QuantifierKind::ZeroOrMore => {
+                        self.data.counts.num_quantifiers_kleene += 1
+                    }
+                    parse::QuantifierKind::OneOrMore => {
+                        self.data.counts.num_quantifiers_kleene_plus += 1
+                    }
                 }
             }
             parse::Element::Segment(inner) => {
@@ -554,19 +512,21 @@ impl<'a, 'p, F: Fn(&str) -> bool> SourceValidator<'a, 'p, F> {
 
                 // however, cursors are only allowed at the top level
                 if !top_level {
-                    return Err(PEK::InvalidCursor.into());
+                    return Err(CompileErrorKind::InvalidCursor.into());
                 }
             }
             parse::Element::AnchorStart => {
                 // we check for these in `validate`
-                return Err(PEK::AnchorStartNotAtStart.into());
+                return Err(CompileErrorKind::AnchorStartNotAtStart.into());
             }
             parse::Element::AnchorEnd => {
                 // we check for these in `validate`
-                return Err(PEK::AnchorEndNotAtEnd.into());
+                return Err(CompileErrorKind::AnchorEndNotAtEnd.into());
             }
             elt => {
-                return Err(PEK::UnexpectedElementInSource(elt.kind().debug_str()).into());
+                return Err(
+                    CompileErrorKind::UnexpectedElementInSource(elt.kind().debug_str()).into(),
+                );
             }
         }
         Ok(())
@@ -615,7 +575,7 @@ impl<'a, 'p, F: Fn(&str) -> bool> TargetValidator<'a, 'p, F> {
                 self.encounter_cursor()?;
                 if *pre != 0 && *post != 0 {
                     // corrseponds to `@@@|@@@`, i.e., placeholders on both sides of the cursor
-                    return Err(PEK::InvalidCursor.into());
+                    return Err(CompileErrorKind::InvalidCursor.into());
                 }
                 self.update_cursor_data(*pre, *post);
                 return Ok(());
@@ -628,7 +588,7 @@ impl<'a, 'p, F: Fn(&str) -> bool> TargetValidator<'a, 'p, F> {
                 self.encounter_cursor()?;
                 if *pre != 0 {
                     // corrseponds to `@@@|...`, i.e., placeholders in front of the cursor
-                    return Err(PEK::InvalidCursor.into());
+                    return Err(CompileErrorKind::InvalidCursor.into());
                 }
                 self.update_cursor_data(*pre, *post);
                 rest
@@ -641,7 +601,7 @@ impl<'a, 'p, F: Fn(&str) -> bool> TargetValidator<'a, 'p, F> {
                 self.encounter_cursor()?;
                 if *post != 0 {
                     // corrseponds to `...|@@@`, i.e., placeholders after the cursor
-                    return Err(PEK::InvalidCursor.into());
+                    return Err(CompileErrorKind::InvalidCursor.into());
                 }
                 self.update_cursor_data(*pre, *post);
                 rest
@@ -663,22 +623,21 @@ impl<'a, 'p, F: Fn(&str) -> bool> TargetValidator<'a, 'p, F> {
             parse::Element::Literal(_) => {}
             parse::Element::VariableRef(name) => {
                 if !(self.is_variable_defined)(name) {
-                    return Err(PEK::UnknownVariable.into());
+                    return Err(CompileErrorKind::UnknownVariable.into());
                 }
                 if self.target_disallowed_variables.contains(name) {
-                    return Err(PEK::SourceOnlyVariable.into());
+                    return Err(CompileErrorKind::SourceOnlyVariable.into());
                 }
                 self.data.used_variables.insert(name.clone());
             }
             parse::Element::BackRef(num) => {
                 if *num > self.num_segments {
-                    return Err(PEK::BackReferenceOutOfRange.into());
+                    return Err(CompileErrorKind::BackReferenceOutOfRange.into());
                 }
                 self.data.counts.max_backref_num = self.data.counts.max_backref_num.max(*num);
             }
-            parse::Element::FunctionCall(id, inner) => {
+            parse::Element::FunctionCall(_, inner) => {
                 self.validate_section(inner, false)?;
-                self.data.used_transliterators.insert(id.basic_id.clone());
                 self.data.counts.num_function_calls += 1;
             }
             &parse::Element::Cursor(pre, post) => {
@@ -686,7 +645,7 @@ impl<'a, 'p, F: Fn(&str) -> bool> TargetValidator<'a, 'p, F> {
                 if !top_level || pre != 0 || post != 0 {
                     // pre and post must be 0 if the cursor does not appear at the very beginning or the very end
                     // we account for the beginning or the end in `validate`.
-                    return Err(PEK::InvalidCursor.into());
+                    return Err(CompileErrorKind::InvalidCursor.into());
                 }
                 // no need to update cursor data: pre/post are 0
             }
@@ -697,7 +656,9 @@ impl<'a, 'p, F: Fn(&str) -> bool> TargetValidator<'a, 'p, F> {
                 // while anchors have no effect on the target side, they may still appear
             }
             elt => {
-                return Err(PEK::UnexpectedElementInTarget(elt.kind().debug_str()).into());
+                return Err(
+                    CompileErrorKind::UnexpectedElementInTarget(elt.kind().debug_str()).into(),
+                );
             }
         }
         Ok(())
@@ -705,7 +666,7 @@ impl<'a, 'p, F: Fn(&str) -> bool> TargetValidator<'a, 'p, F> {
 
     fn encounter_cursor(&mut self) -> Result<()> {
         if self.encountered_cursor {
-            return Err(PEK::DuplicateCursor.into());
+            return Err(CompileErrorKind::DuplicateCursor.into());
         }
         self.encountered_cursor = true;
         Ok(())
@@ -766,7 +727,7 @@ impl<'a, 'p, F: Fn(&str) -> bool> VariableDefinitionValidator<'a, 'p, F> {
             parse::Element::Literal(_) => {}
             parse::Element::VariableRef(name) => {
                 if !(self.is_variable_defined)(name) {
-                    return Err(PEK::UnknownVariable.into());
+                    return Err(CompileErrorKind::UnknownVariable.into());
                 }
                 if self.target_disallowed_variables.contains(name) {
                     self.used_target_disallowed_construct = true;
@@ -776,9 +737,13 @@ impl<'a, 'p, F: Fn(&str) -> bool> VariableDefinitionValidator<'a, 'p, F> {
             parse::Element::Quantifier(kind, inner) => {
                 self.used_target_disallowed_construct = true;
                 match *kind {
-                    QuantifierKind::ZeroOrOne => self.data.counts.num_quantifiers_opt += 1,
-                    QuantifierKind::ZeroOrMore => self.data.counts.num_quantifiers_kleene += 1,
-                    QuantifierKind::OneOrMore => self.data.counts.num_quantifiers_kleene_plus += 1,
+                    parse::QuantifierKind::ZeroOrOne => self.data.counts.num_quantifiers_opt += 1,
+                    parse::QuantifierKind::ZeroOrMore => {
+                        self.data.counts.num_quantifiers_kleene += 1
+                    }
+                    parse::QuantifierKind::OneOrMore => {
+                        self.data.counts.num_quantifiers_kleene_plus += 1
+                    }
                 }
                 self.validate_element(inner)?;
             }
@@ -787,9 +752,10 @@ impl<'a, 'p, F: Fn(&str) -> bool> VariableDefinitionValidator<'a, 'p, F> {
                 self.data.counts.num_unicode_sets += 1;
             }
             elt => {
-                return Err(
-                    PEK::UnexpectedElementInVariableDefinition(elt.kind().debug_str()).into(),
-                );
+                return Err(CompileErrorKind::UnexpectedElementInVariableDefinition(
+                    elt.kind().debug_str(),
+                )
+                .into());
             }
         }
         Ok(())
@@ -868,7 +834,6 @@ impl Pass1ResultGenerator {
         var_data_map: &HashMap<String, Pass1Data>,
     ) -> Result<Pass1Data> {
         let seed_vars = &seed_data.used_variables;
-        let seed_transliterators = &seed_data.used_transliterators;
 
         let mut used_variables = seed_vars.clone();
         for var in seed_vars {
@@ -878,22 +843,17 @@ impl Pass1ResultGenerator {
             used_variables.extend(deps);
         }
 
-        // if in the future variables are ever allowed to contain, e.g., function calls, this
-        // will need to take into account recursive dependencies from `used_vars` as well
-        let used_transliterators = seed_transliterators.clone();
-
         let mut combined_counts = seed_data.counts;
 
         for var in &used_variables {
             // we check for unknown variables during the first pass, so these should exist
             let var_data = var_data_map
                 .get(var)
-                .ok_or(PEK::Internal("unexpected unknown variable"))?;
+                .ok_or(CompileErrorKind::Internal("unexpected unknown variable"))?;
             combined_counts.combine(var_data.counts);
         }
 
         Ok(Pass1Data {
-            used_transliterators,
             used_variables,
             counts: combined_counts,
         })
@@ -905,109 +865,29 @@ impl Pass1ResultGenerator {
         }
         if self.current_vars.contains(name) {
             // cyclic dependency - should not occur
-            return Err(PEK::Internal("unexpected cyclic variable").into());
+            return Err(CompileErrorKind::Internal("unexpected cyclic variable").into());
         }
         self.current_vars.insert(name.to_owned());
         // we check for unknown variables during the first pass, so these should exist
         let var_data = var_data_map
             .get(name)
-            .ok_or(PEK::Internal("unexpected unknown variable"))?;
+            .ok_or(CompileErrorKind::Internal("unexpected unknown variable"))?;
         let mut transitive_dependencies = var_data.used_variables.clone();
-        var_data.used_variables.iter().try_for_each(|var| {
-            self.visit_var(var, var_data_map)?;
-            #[allow(clippy::indexing_slicing)] // an non-error `visit_var` ensures this exists
-            let deps = self.transitive_var_dependencies[var].clone();
-            transitive_dependencies.extend(deps);
+        var_data
+            .used_variables
+            .iter()
+            .try_for_each(|var| -> Result<()> {
+                self.visit_var(var, var_data_map)?;
+                #[allow(clippy::indexing_slicing)] // an non-error `visit_var` ensures this exists
+                let deps = self.transitive_var_dependencies[var].clone();
+                transitive_dependencies.extend(deps);
 
-            Ok::<_, crate::ParseError>(())
-        })?;
+                Ok(())
+            })?;
         self.current_vars.remove(name);
         self.transitive_var_dependencies
             .insert(name.to_owned(), transitive_dependencies);
         Ok(())
-    }
-}
-
-// returns (forward, backward) transliterators if they were requested
-pub(crate) fn compile(
-    rules: Vec<parse::Rule>,
-    compile_direction: parse::Direction,
-    metadata: Metadata,
-    available_transliterators: HashMap<String, String>,
-) -> Result<(
-    Option<RuleBasedTransliterator<'static>>,
-    Option<RuleBasedTransliterator<'static>>,
-)> {
-    // TODO(#3736): decide if validation should be metadata-direction dependent
-    //  example: transliterator with metadata-direction "forward", and a rule `[a-z] < b ;` (invalid)
-    //  - if validation is dependent, this rule is valid because it's not used in the forward direction
-    //  - if validation is independent, this rule is invalid because the reverse direction is also checked
-    let mut p1 = Pass1::new(metadata.direction);
-    p1.run(&rules)?;
-    let p1_result = p1.generate_result()?;
-
-    let forward_t = if compile_direction.permits(parse::Direction::Forward) {
-        let t = Pass2::run(
-            p1_result.forward_result,
-            &p1_result.variable_definitions,
-            &available_transliterators,
-            metadata.visible,
-        )?;
-        Some(t)
-    } else {
-        None
-    };
-    let reverse_t = if compile_direction.permits(parse::Direction::Reverse) {
-        let t = Pass2::run(
-            p1_result.reverse_result,
-            &p1_result.variable_definitions,
-            &available_transliterators,
-            metadata.visible,
-        )?;
-        Some(t)
-    } else {
-        None
-    };
-
-    Ok((forward_t, reverse_t))
-}
-
-/// Conversion from an unknown legacy ID to an internal ID is handled by this function.
-///
-/// Known legacy IDs, i.e., ones that have associated BCP47 IDs in their metadata, are simply
-/// that BCP47 ID. For unknown legacy IDs, the output is given by this function.
-#[doc(hidden)]
-pub fn legacy_id_to_internal_id(source: &str, target: &str, variant: Option<&str>) -> String {
-    // TODO(#3891): Decide representation for unknown BCP47 IDs
-    let mut id = format!("x-{source}-{target}");
-    if let Some(variant) = variant {
-        id.push('-');
-        id.push_str(variant);
-    }
-    // normalizing to ASCII lowercase to avoid duplicate dependencies like Any-null and Any-Null
-    id.make_ascii_lowercase();
-    id
-}
-
-/// Metadata about the nature of a transliterator source.
-#[derive(Debug, Clone, Copy)]
-#[non_exhaustive]
-pub struct Metadata {
-    /// Whether the transliterator is constructable directly by the user or not.
-    pub visible: bool,
-    /// The supported direction(s) of the transliterator.
-    pub direction: parse::Direction,
-}
-
-impl Metadata {
-    /// Creates a Metadata struct.
-    ///
-    /// # Arguments
-    ///
-    /// * `visible`: Whether the transliterator is constructable directly by the user or not.
-    /// * `direction`: The supported direction(s) of the transliterator according to the metadata.
-    pub fn new(visible: bool, direction: parse::Direction) -> Self {
-        Self { visible, direction }
     }
 }
 
@@ -1022,7 +902,7 @@ mod tests {
     }
     use ExpectedOutcome::*;
 
-    const BOTH: parse::Direction = parse::Direction::Both;
+    const BOTH: Direction = Direction::Both;
 
     fn parse(s: &str) -> Vec<parse::Rule> {
         match parse::parse(s) {
@@ -1032,7 +912,6 @@ mod tests {
     }
 
     fn pass1data_from_parts(
-        translit_deps: &[(&'static str, &'static str, Option<&'static str>)],
         var_deps: &[&'static str],
         counts: SpecialConstructCounts,
     ) -> Pass1Data {
@@ -1040,13 +919,6 @@ mod tests {
             counts,
             ..Default::default()
         };
-        for &(source, target, variant) in translit_deps {
-            data.used_transliterators.insert(parse::BasicId {
-                source: source.into(),
-                target: target.into(),
-                variant: variant.map(|s| s.into()),
-            });
-        }
         for &var in var_deps {
             data.used_variables.insert(var.into());
         }
@@ -1079,155 +951,15 @@ mod tests {
         ";
 
         let rules = parse(source);
-        let mut pass1 = Pass1::new(BOTH);
-        pass1.run(&rules).expect("pass1 failed");
-        // cloning to keep access to intermediate data for testing
-        let result = pass1
-            .clone()
-            .generate_result()
-            .expect("pass1 result generation failed");
-
+        let result = Pass1::run(BOTH, &rules).expect("pass1 failed");
         {
-            // forward
-            let counts = SpecialConstructCounts {
-                num_segments: 1,
-                num_function_calls: 1,
-                num_unicode_sets: 1,
-                max_backref_num: 1,
-                max_left_placeholders: 0,
-                max_right_placeholders: 0,
-                ..Default::default()
-            };
-            let expected_fwd_data = pass1data_from_parts(
-                &[
-                    ("Bidi", "Dependency", Some("One")),
-                    ("Forward", "Dependency", None),
-                    ("Any", "AnotherForwardDependency", None),
-                    ("YetAnother", "ForwardDependency", None),
-                    ("Any", "Null", None),
-                ],
-                &["used_both", "used_fwd", "literal1", "literal2"],
-                counts,
-            );
-            assert_eq!(expected_fwd_data, pass1.forward_data);
-        }
-        {
-            // reverse
-            let counts = SpecialConstructCounts {
-                num_quantifiers_opt: 1,
-                num_quantifiers_kleene_plus: 2,
-                num_segments: 2,
-                num_function_calls: 3,
-                max_backref_num: 2,
-                max_left_placeholders: 0,
-                max_right_placeholders: 0,
-                ..Default::default()
-            };
-            let expected_rev_data = pass1data_from_parts(
-                &[
-                    ("Dependency", "Bidi", Some("One")),
-                    ("Backward", "Dependency", None),
-                    ("Any", "AnotherBackwardDependency", None),
-                    ("Any", "Many", None),
-                    ("Any", "Backwardz", None),
-                    ("Any", "Deps", None),
-                    ("Any", "Null", None),
-                ],
-                &["used_rev", "literal1", "literal2"],
-                counts,
-            );
-            assert_eq!(expected_rev_data, pass1.reverse_data);
-        }
-        {
-            // $used_both
-            let counts = SpecialConstructCounts {
-                num_compounds: 1,
-                num_unicode_sets: 1,
-                ..Default::default()
-            };
-            let expected_data = pass1data_from_parts(&[], &[], counts);
-            assert_eq!(expected_data, pass1.variable_data["used_both"]);
-        }
-        {
-            // $used_rev
-            let counts = SpecialConstructCounts {
-                num_compounds: 1,
-                num_quantifiers_kleene_plus: 1,
-                ..Default::default()
-            };
-            let expected_data = pass1data_from_parts(&[], &["used_both"], counts);
-            assert_eq!(expected_data, pass1.variable_data["used_rev"]);
-        }
-        {
-            // $unused
-            let counts = SpecialConstructCounts {
-                num_compounds: 1,
-                num_unicode_sets: 1,
-                num_quantifiers_opt: 1,
-                num_quantifiers_kleene_plus: 2,
-                ..Default::default()
-            };
-            let expected_data = pass1data_from_parts(&[], &["used_both", "used_rev"], counts);
-            assert_eq!(expected_data, pass1.variable_data["unused"]);
-        }
-        {
-            // $unused2
-            let counts = SpecialConstructCounts {
-                num_compounds: 1,
-                ..Default::default()
-            };
-            let expected_data = pass1data_from_parts(&[], &["unused"], counts);
-            assert_eq!(expected_data, pass1.variable_data["unused2"]);
-        }
-        {
-            // $used_both
-            let counts = SpecialConstructCounts {
-                num_compounds: 1,
-                num_unicode_sets: 1,
-                ..Default::default()
-            };
-            let expected_data = pass1data_from_parts(&[], &[], counts);
-            assert_eq!(expected_data, pass1.variable_data["used_both"]);
-        }
-        {
-            // $used_fwd
-            let counts = SpecialConstructCounts {
-                num_compounds: 1,
-                num_unicode_sets: 1,
-                ..Default::default()
-            };
-            let expected_data = pass1data_from_parts(&[], &[], counts);
-            assert_eq!(expected_data, pass1.variable_data["used_fwd"]);
-        }
-        {
-            // $literal1
-            let counts = SpecialConstructCounts {
-                num_compounds: 1,
-                ..Default::default()
-            };
-            let expected_data = pass1data_from_parts(&[], &[], counts);
-            assert_eq!(expected_data, pass1.variable_data["literal1"]);
-        }
-        {
-            // $literal2
-            let counts = SpecialConstructCounts {
-                num_compounds: 1,
-                ..Default::default()
-            };
-            let expected_data = pass1data_from_parts(&[], &[], counts);
-            assert_eq!(expected_data, pass1.variable_data["literal2"]);
-        }
-        {
-            let vars_with_data: HashSet<_> = pass1.variable_data.keys().map(Deref::deref).collect();
-            let expected_vars_with_data = HashSet::from([
-                "used_both",
-                "used_rev",
-                "unused",
-                "unused2",
-                "used_fwd",
-                "literal1",
-                "literal2",
-            ]);
+            let vars_with_data: HashSet<_> = result
+                .variable_definitions
+                .keys()
+                .map(Deref::deref)
+                .collect();
+            let expected_vars_with_data =
+                HashSet::from(["used_both", "used_rev", "used_fwd", "literal1", "literal2"]);
             assert_eq!(expected_vars_with_data, vars_with_data);
         }
         {
@@ -1241,13 +973,6 @@ mod tests {
                 ..Default::default()
             };
             let fwd_data = pass1data_from_parts(
-                &[
-                    ("Bidi", "Dependency", Some("One")),
-                    ("Forward", "Dependency", None),
-                    ("Any", "AnotherForwardDependency", None),
-                    ("YetAnother", "ForwardDependency", None),
-                    ("Any", "Null", None),
-                ],
                 &["used_both", "used_fwd", "literal1", "literal2"],
                 fwd_counts,
             );
@@ -1263,15 +988,6 @@ mod tests {
                 ..Default::default()
             };
             let rev_data = pass1data_from_parts(
-                &[
-                    ("Dependency", "Bidi", Some("One")),
-                    ("Backward", "Dependency", None),
-                    ("Any", "AnotherBackwardDependency", None),
-                    ("Any", "Many", None),
-                    ("Any", "Backwardz", None),
-                    ("Any", "Deps", None),
-                    ("Any", "Null", None),
-                ],
                 &["used_both", "used_rev", "literal1", "literal2"],
                 rev_counts,
             );
@@ -1369,10 +1085,7 @@ mod tests {
         ];
 
         for (expected_outcome, source) in sources {
-            let rules = parse(source);
-            let mut pass = Pass1::new(BOTH);
-            let result = pass.run(&rules).and_then(|_| pass.generate_result());
-            match (expected_outcome, result) {
+            match (expected_outcome, Pass1::run(BOTH, &parse(source))) {
                 (Fail, Ok(_)) => {
                     panic!("unexpected successful pass1 validation for rules {source:?}")
                 }
@@ -1401,10 +1114,7 @@ mod tests {
         ];
 
         for (expected_outcome, source) in sources {
-            let rules = parse(source);
-            let mut pass = Pass1::new(BOTH);
-            let result = pass.run(&rules).and_then(|_| pass.generate_result());
-            match (expected_outcome, result) {
+            match (expected_outcome, Pass1::run(BOTH, &parse(source))) {
                 (Fail, Ok(_)) => {
                     panic!("unexpected successful pass1 validation for rules {source:?}")
                 }
@@ -1432,8 +1142,7 @@ mod tests {
 
         for (expected_outcome, source) in sources {
             let rules = parse(source);
-            let mut pass = Pass1::new(BOTH);
-            let result = pass.run(&rules).and_then(|_| pass.generate_result());
+            let result = Pass1::run(BOTH, &rules);
             match (expected_outcome, result) {
                 (Fail, Ok(_)) => {
                     panic!("unexpected successful pass1 validation for rules {source:?}")

@@ -20,10 +20,8 @@ pub const fn is_leap_year(year: i32) -> bool {
 
 // "Fixed" is a day count representation of calendars staring from Jan 1st of year 1 of the Georgian Calendar.
 pub const fn fixed_from_julian(year: i32, month: u8, day: u8) -> RataDie {
-    let year = year;
     let mut fixed =
         JULIAN_EPOCH.to_i64_date() - 1 + 365 * (year as i64 - 1) + quotient64(year as i64 - 1, 4);
-    let month = month;
     debug_assert!(month > 0 && month < 13, "Month should be in range 1..=12.");
     fixed += match month {
         1 => 0,
