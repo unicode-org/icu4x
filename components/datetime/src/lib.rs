@@ -170,6 +170,7 @@ pub use DateTimeError as Error;
 mod tests {
     use super::*;
     use core::mem::size_of;
+    use icu_calendar::week::WeekCalculator;
     use icu_calendar::Gregorian;
     use icu_decimal::FixedDecimalFormatter;
     use icu_plurals::PluralRules;
@@ -188,7 +189,6 @@ mod tests {
     use time_zone::TimeZoneDataPayloads;
     use time_zone::TimeZoneFormatter;
     use time_zone::TimeZoneFormatterUnit;
-    use icu_calendar::week::WeekCalculator;
 
     /// Checks that the size of the type is one of the given sizes.
     /// The size might differ across Rust versions or channels.
