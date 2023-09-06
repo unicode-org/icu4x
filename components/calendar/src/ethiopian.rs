@@ -35,9 +35,9 @@
 use crate::any_calendar::AnyCalendarKind;
 use crate::calendar_arithmetic::{ArithmeticDate, CalendarArithmetic};
 use crate::iso::Iso;
-use crate::rata_die::RataDie;
 use crate::{types, Calendar, CalendarError, Date, DateDuration, DateDurationUnit, DateTime};
 use calendrical_calculations::helpers::I32CastError;
+use calendrical_calculations::rata_die::RataDie;
 use tinystr::tinystr;
 
 /// The number of years the Amete Alem epoch precedes the Amete Mihret epoch

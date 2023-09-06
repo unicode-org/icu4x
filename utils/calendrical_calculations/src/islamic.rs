@@ -1,5 +1,7 @@
 use crate::astronomy::*;
-use crate::helpers::{self, div_rem_euclid, div_rem_euclid64, div_rem_euclid_f64, next};
+#[allow(unused_imports)]
+use crate::helpers::CoreFloat;
+use crate::helpers::{div_rem_euclid_f64, i64_to_saturated_i32, next};
 use crate::rata_die::{Moment, RataDie};
 
 // Different islamic calendars use different epochs (Thursday vs Friday) due to disagreement on the exact date of Mohammed's migration to Mecca.
@@ -36,9 +38,9 @@ pub fn observational_islamic_from_fixed(date: RataDie) -> (i32, u8, u8) {
     let lunar_phase = Astronomical::calculate_lunar_phase_at_or_before(date);
     let crescent = Astronomical::phasis_on_or_before(date, CAIRO, Some(lunar_phase));
     let elapsed_months =
-        (libm::round((crescent - FIXED_ISLAMIC_EPOCH_FRIDAY) as f64 / MEAN_SYNODIC_MONTH)) as i32;
-    let year = div_rem_euclid(elapsed_months, 12).0 + 1;
-    let month = div_rem_euclid(elapsed_months, 12).1 + 1;
+        ((crescent - FIXED_ISLAMIC_EPOCH_FRIDAY) as f64 / MEAN_SYNODIC_MONTH).round() as i32;
+    let year = elapsed_months.div_euclid(12) + 1;
+    let month = elapsed_months.rem_euclid(12) + 1;
     let day = (date - crescent + 1) as u8;
 
     (year, month as u8, day)
@@ -68,8 +70,9 @@ pub(crate) fn adjusted_saudi_criterion(date: RataDie) -> bool {
 // Closest fixed date on or before date when Saudi visibility criterion is held.
 /// Lisp code reference: <https://github.com/EdReingold/calendar-code2/blob/main/calendar.l#L6966>
 pub fn saudi_new_month_on_or_before(date: RataDie) -> RataDie {
-    let last_new_moon =
-        libm::floor((Astronomical::lunar_phase_at_or_before(0.0, date.as_moment())).inner()); // Gets the R.D Date of the prior new moon
+    let last_new_moon = (Astronomical::lunar_phase_at_or_before(0.0, date.as_moment()))
+        .inner()
+        .floor(); // Gets the R.D Date of the prior new moon
     let age = date.to_f64_date() - last_new_moon;
     // Explanation of why the value 3.0 is chosen: https://github.com/unicode-org/icu4x/pull/3673/files#r1267460916
     let tau = if age <= 3.0 && !adjusted_saudi_criterion(date) {
@@ -86,9 +89,9 @@ pub fn saudi_new_month_on_or_before(date: RataDie) -> RataDie {
 pub fn saudi_islamic_from_fixed(date: RataDie) -> (i32, u8, u8) {
     let crescent = saudi_new_month_on_or_before(date);
     let elapsed_months =
-        libm::round((crescent - FIXED_ISLAMIC_EPOCH_FRIDAY) as f64 / MEAN_SYNODIC_MONTH) as i64;
-    let year = helpers::i64_to_saturated_i32((div_rem_euclid64(elapsed_months, 12).0) + 1);
-    let month = ((div_rem_euclid64(elapsed_months, 12).1) + 1) as u8;
+        ((crescent - FIXED_ISLAMIC_EPOCH_FRIDAY) as f64 / MEAN_SYNODIC_MONTH).round() as i64;
+    let year = i64_to_saturated_i32(elapsed_months.div_euclid(12) + 1);
+    let month = (elapsed_months.rem_euclid(12) + 1) as u8;
     let day = ((date - crescent) + 1) as u8;
 
     (year, month, day)
@@ -98,7 +101,7 @@ pub fn saudi_islamic_from_fixed(date: RataDie) -> (i32, u8, u8) {
 pub fn fixed_from_saudi_islamic(year: i32, month: u8, day: u8) -> RataDie {
     let midmonth = RataDie::new(
         FIXED_ISLAMIC_EPOCH_FRIDAY.to_i64_date()
-            + libm::floor(((year as f64 - 1.0) * 12.0 + month as f64 - 0.5) * MEAN_SYNODIC_MONTH)
+            + (((year as f64 - 1.0) * 12.0 + month as f64 - 0.5) * MEAN_SYNODIC_MONTH).floor()
                 as i64,
     );
     let first_day_of_month = saudi_new_month_on_or_before(midmonth).to_i64_date();
@@ -123,9 +126,8 @@ pub fn fixed_from_islamic_civil(year: i32, month: u8, day: u8) -> RataDie {
 }
 /// Lisp code reference: <https://github.com/EdReingold/calendar-code2/blob/main/calendar.l#L2090>
 pub fn islamic_civil_from_fixed(date: RataDie) -> (i32, u8, u8) {
-    let year = helpers::i64_to_saturated_i32(
-        div_rem_euclid64(((date - FIXED_ISLAMIC_EPOCH_FRIDAY) * 30) + 10646, 10631).0,
-    );
+    let year =
+        i64_to_saturated_i32(((date - FIXED_ISLAMIC_EPOCH_FRIDAY) * 30 + 10646).div_euclid(10631));
     let prior_days = date.to_f64_date() - fixed_from_islamic_civil(year, 1, 1).to_f64_date();
     debug_assert!(prior_days <= 354.);
     let month = div_rem_euclid_f64((prior_days * 11.0) + 330.0, 325.0).0 as u8; // Prior days is maximum 354 (when year length is 355), making the value always less than 12
@@ -156,8 +158,8 @@ pub fn fixed_from_islamic_tabular(year: i32, month: u8, day: u8) -> RataDie {
 }
 /// Lisp code reference: <https://github.com/EdReingold/calendar-code2/blob/main/calendar.l#L2090>
 pub fn islamic_tabular_from_fixed(date: RataDie) -> (i32, u8, u8) {
-    let year = helpers::i64_to_saturated_i32(
-        div_rem_euclid64(((date - FIXED_ISLAMIC_EPOCH_THURSDAY) * 30) + 10646, 10631).0,
+    let year = i64_to_saturated_i32(
+        ((date - FIXED_ISLAMIC_EPOCH_THURSDAY) * 30 + 10646).div_euclid(10631),
     );
     let prior_days = date.to_f64_date() - fixed_from_islamic_tabular(year, 1, 1).to_f64_date();
     debug_assert!(prior_days <= 354.);

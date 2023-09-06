@@ -34,8 +34,6 @@ serde = { version = "1.0", default-features = false, features = ["derive", "allo
 icu_calendar_data = { workspace = true, optional = true }
 icu_locid_transform = { workspace = true, optional = true, features = ["compiled_data"] }
 
-libm = { version = "0.2", default-features = false }
-
 [dev-dependencies]
 icu = { workspace = true }
 icu_benchmark_macros = { workspace = true }
@@ -48,7 +46,7 @@ criterion = "0.4"
 
 [features]
 default = ["compiled_data"]
-std = ["icu_provider/std", "icu_locid/std"]
+std = ["icu_provider/std", "icu_locid/std", "calendrical_calculations/std"]
 serde = ["dep:serde", "zerovec/serde", "tinystr/serde", "icu_provider/serde"]
 datagen = ["serde", "dep:databake", "zerovec/databake", "tinystr/databake"]
 bench = []

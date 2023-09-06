@@ -7,7 +7,9 @@
 // the Apache License, Version 2.0 which can be found at the calendrical_calculations
 // package root or at http://www.apache.org/licenses/LICENSE-2.0.
 
-use crate::helpers::{self, div_rem_euclid, div_rem_euclid_f64, final_func, next_u8};
+#[allow(unused_imports)]
+use crate::helpers::CoreFloat;
+use crate::helpers::{div_rem_euclid_f64, final_func, i64_to_i32, next_u8};
 use crate::rata_die::{Moment, RataDie};
 
 /// Lisp code reference: <https://github.com/EdReingold/calendar-code2/blob/main/calendar.l#L2206>
@@ -110,7 +112,7 @@ impl BookHebrew {
         }; // Treat Nisan as start of year
 
         let months_elapsed = (book_month as f64 - TISHRI as f64) // Months this year
-            + (libm::floor((235.0 * y as f64 - 234.0) / 19.0)); // Months until New Year.
+            + ((235.0 * y as f64 - 234.0) / 19.0).floor(); // Months until New Year.
 
         Moment::new(
             FIXED_HEBREW_EPOCH.to_f64_date() - (876.0 / 25920.0)
@@ -132,9 +134,9 @@ impl BookHebrew {
     // Number of days elapsed from the (Sunday) noon prior to the epoch of the BookHebrew Calendar to the molad of Tishri of BookHebrew year (h_year) or one day later
     /// Lisp code reference: <https://github.com/EdReingold/calendar-code2/blob/main/calendar.l#L2261>
     fn book_hebrew_calendar_elapsed_days(book_year: i32) -> i32 {
-        let months_elapsed = libm::floor((235.0 * book_year as f64 - 234.0) / 19.0);
+        let months_elapsed = ((235.0 * book_year as f64 - 234.0) / 19.0).floor();
         let parts_elapsed = 12084.0 + 13753.0 * months_elapsed;
-        let days = 29.0 * months_elapsed + libm::floor(parts_elapsed / 25920.0);
+        let days = 29.0 * months_elapsed + (parts_elapsed / 25920.0).floor();
 
         if div_rem_euclid_f64(3.0 * (days + 1.0), 7.0).1 < 3.0 {
             days as i32 + 1
@@ -176,7 +178,7 @@ impl BookHebrew {
 
     /// Lisp code reference: <https://github.com/EdReingold/calendar-code2/blob/1ee51ecfaae6f856b0d7de3e36e9042100b4f424/calendar.l#L2275-L2278>
     pub fn is_hebrew_leap_year(book_year: i32) -> bool {
-        div_rem_euclid(7 * book_year + 1, 19).1 < 7
+        (7 * book_year + 1).rem_euclid(19) < 7
     }
 
     // True if the month Marheshvan is going to be long in given BookHebrew year
@@ -256,7 +258,7 @@ impl BookHebrew {
 
     /// Lisp code reference: <https://github.com/EdReingold/calendar-code2/blob/main/calendar.l#L2352>
     pub fn book_hebrew_from_fixed(date: RataDie) -> BookHebrew {
-        let approx = helpers::i64_to_i32(
+        let approx = i64_to_i32(
             1 + (div_rem_euclid_f64((date - FIXED_HEBREW_EPOCH) as f64, 35975351.0 / 98496.0).0)
                 as i64, //  The value 35975351/98496, the average length of a BookHebrew year, can be approximated by 365.25
         )

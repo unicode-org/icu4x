@@ -313,7 +313,7 @@ impl DateTime<Indian> {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::rata_die::RataDie;
+    use calendrical_calculations::rata_die::RataDie;
     fn assert_roundtrip(y: i32, m: u8, d: u8, iso_y: i32, iso_m: u8, iso_d: u8) {
         let indian =
             Date::try_new_indian_date(y, m, d).expect("Indian date should construct successfully");

@@ -38,7 +38,6 @@ use crate::chinese_based::{
     chinese_based_ordinal_lunar_month_from_code, ChineseBasedCompiledData,
     ChineseBasedWithDataLoading, ChineseBasedYearInfo,
 };
-use crate::helpers::div_rem_euclid64;
 use crate::{
     chinese_based::ChineseBasedDateInner,
     types::{self, Era, FormattableYear},
@@ -346,7 +345,7 @@ impl Dangi {
         let era = Era(tinystr!(16, "dangi"));
         let number = year;
         // constant 364 from https://github.com/EdReingold/calendar-code2/blob/main/calendar.l#L5704
-        let cyclic = (div_rem_euclid64(number as i64 - 1 + 364, 60).1 as i32) as u8;
+        let cyclic = (number as i64 - 1 + 364).rem_euclid(60) as u8;
         let cyclic = NonZeroU8::new(cyclic + 1); // 1-indexed
         let rata_die_in_year = if let Some(info) = year_info_option {
             info.get_new_year()
@@ -369,7 +368,7 @@ mod test {
 
     use super::*;
     use crate::chinese::Chinese;
-    use crate::rata_die::RataDie;
+    use calendrical_calculations::rata_die::RataDie;
 
     fn check_cyclic_and_rel_iso(year: i32) {
         let iso = Date::try_new_iso_date(year, 6, 6).unwrap();

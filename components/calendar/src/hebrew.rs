@@ -30,12 +30,12 @@
 //! ```
 
 use crate::calendar_arithmetic::{ArithmeticDate, CalendarArithmetic};
-use crate::rata_die::RataDie;
 use crate::types::FormattableMonth;
 use crate::Iso;
 use crate::{types, Calendar, CalendarError, Date, DateDuration, DateDurationUnit, DateTime};
 use ::tinystr::tinystr;
 use calendrical_calculations::hebrew::BookHebrew;
+use calendrical_calculations::rata_die::RataDie;
 
 /// The Civil Hebrew Calendar
 ///

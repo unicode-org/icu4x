@@ -7,6 +7,8 @@
 // the Apache License, Version 2.0 which can be found at the calendrical_calculations
 // package root or at http://www.apache.org/licenses/LICENSE-2.0.
 
+#[allow(unused_imports)]
+use crate::helpers::CoreFloat;
 use core::ops::{Add, AddAssign, Sub, SubAssign};
 
 /// The *Rata Die*, or *R.D.*, or `fixed_date`: number of days since January 1, 1 CE.
@@ -175,7 +177,7 @@ impl Moment {
 
     /// Get the RataDie of a Moment
     pub fn as_rata_die(&self) -> RataDie {
-        RataDie::new(libm::floor(self.0) as i64)
+        RataDie::new(self.0.floor() as i64)
     }
 }
 

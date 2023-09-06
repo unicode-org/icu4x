@@ -7,37 +7,11 @@
 // the Apache License, Version 2.0 which can be found at the calendrical_calculations
 // package root or at http://www.apache.org/licenses/LICENSE-2.0.
 
-use crate::astronomy::{Location, PI};
+use crate::astronomy::Location;
 use crate::rata_die::{Moment, RataDie};
 
-/// Calculate `(n / d, n % d)` such that the remainder is always positive.
-///
-/// Also see [`i32::div_euclid`], [`i32::rem_euclid`].
-pub const fn div_rem_euclid(n: i32, d: i32) -> (i32, i32) {
-    debug_assert!(d > 0);
-    let (a, b) = (n / d, n % d);
-    if n >= 0 || b == 0 {
-        (a, b)
-    } else {
-        (a - 1, d + b)
-    }
-}
-
-/// [`div_rem_euclid`] for 64-bit inputs
-///
-/// Also see [`i64::div_euclid`], [`i64::rem_euclid`].
-pub fn div_rem_euclid64(n: i64, d: i64) -> (i64, i64) {
-    debug_assert!(d > 0);
-    let (a, b) = (n / d, n % d);
-    if n >= 0 || b == 0 {
-        (a, b)
-    } else {
-        (a - 1, d + b)
-    }
-}
-
 /// [`div_rem_euclid`] for f64
-pub fn div_rem_euclid_f64(n: f64, d: f64) -> (f64, f64) {
+pub(crate) fn div_rem_euclid_f64(n: f64, d: f64) -> (f64, f64) {
     debug_assert!(d > 0.0);
     let (a, b) = (n / d, n % d);
     if n >= 0.0 || b == 0.0 {
@@ -51,7 +25,7 @@ pub fn div_rem_euclid_f64(n: f64, d: f64) -> (f64, f64) {
 /// This is achieved by performing an integer division and then, if the numerator is positive and there is a non-zero remainder,
 /// incrementing the quotient by 1.
 /// This is equivalent to ceiling() in the Reingold/Dershowitz Lisp code
-pub fn ceil_div(n: i64, d: i64) -> i64 {
+pub(crate) fn ceil_div(n: i64, d: i64) -> i64 {
     debug_assert!(d > 0);
     let (a, b) = (n / d, n % d);
     if n <= 0 || b == 0 {
@@ -59,89 +33,6 @@ pub fn ceil_div(n: i64, d: i64) -> i64 {
     } else {
         a + 1
     }
-}
-
-/// Calculate `n / d` such that the remainder is always positive.
-/// This is equivalent to quotient() in the Reingold/Dershowitz Lisp code
-///
-/// Also see [`i32::div_euclid`]
-pub const fn quotient(n: i32, d: i32) -> i32 {
-    debug_assert!(d > 0);
-    // Code can use int_roundings once stabilized
-    // https://github.com/rust-lang/rust/issues/88581
-    let (a, b) = (n / d, n % d);
-    if n >= 0 || b == 0 {
-        a
-    } else {
-        a - 1
-    }
-}
-
-/// [`quotient`] for 64-bit inputs
-///
-/// Also see [`i64::div_euclid`]
-pub const fn quotient64(n: i64, d: i64) -> i64 {
-    debug_assert!(d > 0);
-    // Code can use int_roundings once stabilized
-    // https://github.com/rust-lang/rust/issues/88581
-    let (a, b) = (n / d, n % d);
-    if n >= 0 || b == 0 {
-        a
-    } else {
-        a - 1
-    }
-}
-
-// cosine of x in radians
-pub(crate) fn cos_degrees(x: f64) -> f64 {
-    let radians = x.to_radians();
-    libm::cos(radians)
-}
-
-// sine of x in radians
-pub(crate) fn sin_degrees(x: f64) -> f64 {
-    let radians = x.to_radians();
-    libm::sin(radians)
-}
-
-// tan of x in radians
-pub(crate) fn tan_degrees(x: f64) -> f64 {
-    let radians = x.to_radians();
-    libm::tan(radians)
-}
-
-// Arccosine of x in degrees
-pub(crate) fn arccos_degrees(x: f64) -> f64 {
-    let radians = libm::acos(x);
-    radians.to_degrees()
-}
-
-// Arcsine of x in degrees
-pub(crate) fn arcsin_degrees(x: f64) -> f64 {
-    let radians = libm::asin(x);
-    let r = radians.to_degrees();
-
-    div_rem_euclid_f64(r, 360.0).1
-}
-
-fn mod_degrees(x: f64) -> f64 {
-    ((x % 360.0) + 360.0) % 360.0
-}
-
-pub(crate) fn mod3(x: f64, a: f64, b: f64) -> f64 {
-    // The value of x shifted into the range [a..b).
-    // Returns x if a=b.
-    if libm::fabs(a - b) < f64::EPSILON {
-        x
-    } else {
-        let (_, rem) = div_rem_euclid_f64(x - a, b - a);
-        a + rem
-    }
-}
-
-// Arctangent of y/x in degrees, handling zero cases (using atan2)
-pub(crate) fn arctan_degrees(y: f64, x: f64) -> f64 {
-    mod_degrees(libm::atan2(y, x) * 180.0 / PI)
 }
 
 // TODO: convert recursive into iterative
@@ -174,22 +65,6 @@ where
         if end(h, l) {
             return x;
         }
-    }
-}
-
-// Returns a number that represents the sign of `self`.
-// - `1.0` if the number is positive, `+0.0` or `INFINITY`
-// - `-1.0` if the number is negative, `-0.0` or `NEG_INFINITY`
-// - NaN if the number is NaN
-pub(crate) fn signum(x: f64) -> f64 {
-    if x.is_nan() {
-        return f64::NAN;
-    }
-
-    if x.is_sign_positive() {
-        1.0
-    } else {
-        -1.0
     }
 }
 
@@ -358,8 +233,8 @@ fn test_invert_angular() {
 }
 
 /// Return y if x.rem_euclid(y) == 0, x.rem_euclid(y) otherwise
-pub fn adjusted_rem_euclid(x: i32, y: i32) -> i32 {
-    let remainder = div_rem_euclid(x, y).1;
+pub(crate) fn adjusted_rem_euclid(x: i32, y: i32) -> i32 {
+    let remainder = x.rem_euclid(y);
     if remainder == 0 {
         y
     } else {
@@ -418,8 +293,8 @@ fn test_adjusted_rem_euclid() {
 }
 
 /// The value of x shifted into the range [a..b); returns x if a == b; for f64 types
-pub fn interval_mod_f64(x: f64, a: f64, b: f64) -> f64 {
-    if a == b {
+pub(crate) fn interval_mod_f64(x: f64, a: f64, b: f64) -> f64 {
+    if (a - b).abs() < f64::EPSILON {
         x
     } else {
         a + div_rem_euclid_f64(x - a, b - a).1
@@ -487,73 +362,6 @@ fn test_interval_mod() {
             case.expected, result,
             "Interval mod test failed for case: {case:?}"
         );
-    }
-}
-
-#[test]
-fn test_div_rem_euclid() {
-    assert_eq!(div_rem_euclid(i32::MIN, 1), (-2147483648, 0));
-    assert_eq!(div_rem_euclid(i32::MIN, 2), (-1073741824, 0));
-    assert_eq!(div_rem_euclid(i32::MIN, 3), (-715827883, 1));
-
-    assert_eq!(div_rem_euclid(-10, 1), (-10, 0));
-    assert_eq!(div_rem_euclid(-10, 2), (-5, 0));
-    assert_eq!(div_rem_euclid(-10, 3), (-4, 2));
-
-    assert_eq!(div_rem_euclid(-9, 1), (-9, 0));
-    assert_eq!(div_rem_euclid(-9, 2), (-5, 1));
-    assert_eq!(div_rem_euclid(-9, 3), (-3, 0));
-
-    assert_eq!(div_rem_euclid(-8, 1), (-8, 0));
-    assert_eq!(div_rem_euclid(-8, 2), (-4, 0));
-    assert_eq!(div_rem_euclid(-8, 3), (-3, 1));
-
-    assert_eq!(div_rem_euclid(-2, 1), (-2, 0));
-    assert_eq!(div_rem_euclid(-2, 2), (-1, 0));
-    assert_eq!(div_rem_euclid(-2, 3), (-1, 1));
-
-    assert_eq!(div_rem_euclid(-1, 1), (-1, 0));
-    assert_eq!(div_rem_euclid(-1, 2), (-1, 1));
-    assert_eq!(div_rem_euclid(-1, 3), (-1, 2));
-
-    assert_eq!(div_rem_euclid(0, 1), (0, 0));
-    assert_eq!(div_rem_euclid(0, 2), (0, 0));
-    assert_eq!(div_rem_euclid(0, 3), (0, 0));
-
-    assert_eq!(div_rem_euclid(1, 1), (1, 0));
-    assert_eq!(div_rem_euclid(1, 2), (0, 1));
-    assert_eq!(div_rem_euclid(1, 3), (0, 1));
-
-    assert_eq!(div_rem_euclid(2, 1), (2, 0));
-    assert_eq!(div_rem_euclid(2, 2), (1, 0));
-    assert_eq!(div_rem_euclid(2, 3), (0, 2));
-
-    assert_eq!(div_rem_euclid(8, 1), (8, 0));
-    assert_eq!(div_rem_euclid(8, 2), (4, 0));
-    assert_eq!(div_rem_euclid(8, 3), (2, 2));
-
-    assert_eq!(div_rem_euclid(9, 1), (9, 0));
-    assert_eq!(div_rem_euclid(9, 2), (4, 1));
-    assert_eq!(div_rem_euclid(9, 3), (3, 0));
-
-    assert_eq!(div_rem_euclid(10, 1), (10, 0));
-    assert_eq!(div_rem_euclid(10, 2), (5, 0));
-    assert_eq!(div_rem_euclid(10, 3), (3, 1));
-
-    assert_eq!(div_rem_euclid(i32::MAX, 1), (2147483647, 0));
-    assert_eq!(div_rem_euclid(i32::MAX, 2), (1073741823, 1));
-    assert_eq!(div_rem_euclid(i32::MAX, 3), (715827882, 1));
-
-    for n in -100..100 {
-        for d in 1..5 {
-            let (x1, y1) = div_rem_euclid(n, d);
-            let (x2, y2) = div_rem_euclid64(n as i64, d as i64);
-            let (x3, y3) = (n.div_euclid(d), n.rem_euclid(d));
-            assert_eq!(x1, x2 as i32);
-            assert_eq!(x1, x3);
-            assert_eq!(y1, y2 as i32);
-            assert_eq!(y1, y3);
-        }
     }
 }
 
@@ -658,17 +466,6 @@ pub fn i64_to_saturated_i32(input: i64) -> i32 {
 }
 
 #[test]
-fn test_signum_i64() {
-    assert_eq!(signum(5.0), 1.0);
-    assert_eq!(signum(-5.0), -1.0);
-    assert_eq!(signum(0.0), 1.0);
-    assert_eq!(signum(-0.0), -1.0);
-    assert_eq!(signum(f64::INFINITY), 1.0);
-    assert_eq!(signum(f64::NEG_INFINITY), -1.0);
-    assert!(signum(f64::NAN).is_nan());
-}
-
-#[test]
 fn test_i64_to_saturated_i32() {
     assert_eq!(i64_to_saturated_i32(i64::MIN), i32::MIN);
     assert_eq!(i64_to_saturated_i32(-2147483649), -2147483648);
@@ -683,4 +480,98 @@ fn test_i64_to_saturated_i32() {
     assert_eq!(i64_to_saturated_i32(2147483648), 2147483647);
     assert_eq!(i64_to_saturated_i32(2147483649), 2147483647);
     assert_eq!(i64_to_saturated_i32(i64::MAX), i32::MAX);
+}
+
+/// Core maths
+pub(crate) trait CoreFloat {
+    fn floor(self) -> Self;
+    fn round(self) -> Self;
+    fn trunc(self) -> Self;
+    fn abs(self) -> Self;
+    fn signum(self) -> Self;
+    fn copysign(self, sign: Self) -> Self;
+    fn powf(self, n: Self) -> Self;
+    fn sqrt(self) -> Self;
+    fn sin(self) -> Self;
+    fn cos(self) -> Self;
+    fn tan(self) -> Self;
+    fn asin(self) -> Self;
+    fn acos(self) -> Self;
+    fn atan2(self, other: Self) -> Self;
+}
+
+impl CoreFloat for f64 {
+    #[inline]
+    fn floor(self) -> Self {
+        libm::floor(self)
+    }
+
+    #[inline]
+    fn round(self) -> Self {
+        libm::round(self)
+    }
+
+    #[inline]
+    fn trunc(self) -> Self {
+        libm::trunc(self)
+    }
+
+    #[inline]
+    fn abs(self) -> Self {
+        libm::fabs(self)
+    }
+
+    #[inline]
+    fn signum(self) -> Self {
+        if self.is_nan() {
+            Self::NAN
+        } else {
+            1.0_f64.copysign(self)
+        }
+    }
+
+    #[inline]
+    fn copysign(self, sign: Self) -> Self {
+        libm::copysign(self, sign)
+    }
+
+    #[inline]
+    fn powf(self, n: Self) -> Self {
+        libm::pow(self, n)
+    }
+
+    #[inline]
+    fn sqrt(self) -> Self {
+        libm::sqrt(self)
+    }
+
+    #[inline]
+    fn sin(self) -> Self {
+        libm::sin(self)
+    }
+
+    #[inline]
+    fn cos(self) -> Self {
+        libm::cos(self)
+    }
+
+    #[inline]
+    fn tan(self) -> Self {
+        libm::tan(self)
+    }
+
+    #[inline]
+    fn asin(self) -> Self {
+        libm::asin(self)
+    }
+
+    #[inline]
+    fn acos(self) -> Self {
+        libm::acos(self)
+    }
+
+    #[inline]
+    fn atan2(self, other: Self) -> Self {
+        libm::atan2(self, other)
+    }
 }

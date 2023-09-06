@@ -31,11 +31,11 @@
 
 use crate::any_calendar::AnyCalendarKind;
 use crate::calendar_arithmetic::{ArithmeticDate, CalendarArithmetic};
-use crate::helpers::{div_rem_euclid64, I32CastError};
 use crate::iso::Iso;
-use crate::rata_die::RataDie;
 use crate::{types, Calendar, CalendarError, Date, DateDuration, DateDurationUnit, DateTime};
 use ::tinystr::tinystr;
+use calendrical_calculations::helpers::I32CastError;
+use calendrical_calculations::rata_die::RataDie;
 
 /// The Persian Calendar
 ///
@@ -84,10 +84,9 @@ impl CalendarArithmetic for Persian {
         } else {
             p_year -= 473;
         };
-        let d = div_rem_euclid64(p_year, 2820);
-        let year = d.1 + 474;
+        let year = p_year.rem_euclid(2820) + 474;
 
-        div_rem_euclid64((year + 38) * 31, 128).1 < 31
+        ((year + 38) * 31).rem_euclid(128) < 31
     }
 
     fn days_in_provided_year(year: i32) -> u16 {

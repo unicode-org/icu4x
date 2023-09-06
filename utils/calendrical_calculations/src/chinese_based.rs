@@ -1,5 +1,7 @@
 use crate::astronomy::{self, Astronomical, Location, MEAN_SYNODIC_MONTH, MEAN_TROPICAL_YEAR};
-use crate::helpers::{adjusted_rem_euclid, i64_to_i32, quotient};
+#[allow(unused_imports)]
+use crate::helpers::CoreFloat;
+use crate::helpers::{adjusted_rem_euclid, i64_to_i32};
 use crate::rata_die::{Moment, RataDie};
 use core::num::NonZeroU8;
 
@@ -200,7 +202,7 @@ pub(crate) fn major_solar_term_from_fixed<C: ChineseBased>(date: RataDie) -> u32
         "Solar longitude should be in range of i32"
     );
     let s = solar_longitude.unwrap_or_else(|e| e.saturate());
-    let result_signed = adjusted_rem_euclid(2 + quotient(s, 30), 12);
+    let result_signed = adjusted_rem_euclid(2 + s.div_euclid(30), 12);
     debug_assert!(result_signed >= 0);
     result_signed as u32
 }
@@ -256,8 +258,7 @@ pub(crate) fn new_year_in_sui<C: ChineseBased>(prior_solstice: RataDie) -> (Rata
     let month_after_twelfth = new_moon_on_or_after::<C>((month_after_eleventh + 1).as_moment()); // m13
     let next_eleventh_month = new_moon_before::<C>((following_solstice + 1).as_moment()); // next-m11
     let lhs_argument =
-        libm::round((next_eleventh_month - month_after_eleventh) as f64 / MEAN_SYNODIC_MONTH)
-            as i64;
+        ((next_eleventh_month - month_after_eleventh) as f64 / MEAN_SYNODIC_MONTH).round() as i64;
     if lhs_argument == 12
         && (no_major_solar_term::<C>(month_after_eleventh)
             || no_major_solar_term::<C>(month_after_twelfth))
@@ -281,7 +282,7 @@ pub(crate) fn winter_solstice_on_or_before<C: ChineseBased>(date: RataDie) -> Ra
         midnight::<C>((date + 1).as_moment()),
     );
     let mut iters = 0;
-    let mut day = Moment::new(libm::floor(approx.inner() - 1.0));
+    let mut day = Moment::new((approx.inner() - 1.0).floor());
     while iters < MAX_ITERS_FOR_MONTHS_OF_YEAR
         && astronomy::WINTER
             >= Astronomical::solar_longitude(Astronomical::julian_centuries(midnight::<C>(
@@ -331,7 +332,7 @@ pub(crate) fn new_year_on_or_before_fixed_date<C: ChineseBased>(
 /// Based on functions from _Calendrical Calculations_ by Reingold & Dershowitz
 /// Lisp reference code: <https://github.com/EdReingold/calendar-code2/blob/main/calendar.l#L5469-L5475>
 pub fn fixed_mid_year_from_year<C: ChineseBased>(elapsed_years: i32) -> RataDie {
-    let cycle = quotient(elapsed_years - 1, 60) + 1;
+    let cycle = (elapsed_years - 1).div_euclid(60) + 1;
     let year = adjusted_rem_euclid(elapsed_years, 60);
     C::EPOCH + ((((cycle - 1) * 60 + year - 1) as f64 + 0.5) * MEAN_TROPICAL_YEAR) as i64
 }
@@ -388,16 +389,14 @@ pub fn chinese_based_date_from_fixed<C: ChineseBased>(date: RataDie) -> ChineseF
     let year_bounds = YearBounds::compute::<C>(date);
     let first_day_of_year = year_bounds.new_year;
 
-    let year_float = libm::floor(
-        1.5 - 1.0 / 12.0 + ((first_day_of_year - C::EPOCH) as f64) / MEAN_TROPICAL_YEAR,
-    );
+    let year_float =
+        (1.5 - 1.0 / 12.0 + ((first_day_of_year - C::EPOCH) as f64) / MEAN_TROPICAL_YEAR).floor();
     let year_int = i64_to_i32(year_float as i64);
     debug_assert!(year_int.is_ok(), "Year should be in range of i32");
     let year = year_int.unwrap_or_else(|e| e.saturate());
 
     let new_moon = new_moon_before::<C>((date + 1).as_moment());
-    let month_i64 =
-        libm::round((new_moon - first_day_of_year) as f64 / MEAN_SYNODIC_MONTH) as i64 + 1;
+    let month_i64 = ((new_moon - first_day_of_year) as f64 / MEAN_SYNODIC_MONTH).round() as i64 + 1;
     debug_assert!(
         ((u8::MIN as i64)..=(u8::MAX as i64)).contains(&month_i64),
         "Month should be in range of u8! Value {month_i64} failed for RD {date:?}"
