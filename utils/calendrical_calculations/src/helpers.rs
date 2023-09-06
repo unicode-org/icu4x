@@ -27,12 +27,9 @@ impl IntegerRoundings for i64 {
     }
 }
 
-// TODO: convert recursive into iterative
+// Highest power is *last*
 pub(crate) fn poly(x: f64, coeffs: &[f64]) -> f64 {
-    match coeffs.split_first() {
-        Some((first, rest)) => first + x * poly(x, rest),
-        None => 0.0,
-    }
+    coeffs.iter().rev().fold(0.0, |a, c| a * x + c)
 }
 
 // A generic function that finds a value within an interval
