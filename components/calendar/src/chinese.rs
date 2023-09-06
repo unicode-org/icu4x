@@ -18,14 +18,14 @@
 //! // `Date` checks
 //! assert_eq!(chinese_date.year().number, 4660);
 //! assert_eq!(chinese_date.year().related_iso, Some(2023));
-//! assert_eq!(chinese_date.year().cyclic, Some(40));
+//! assert_eq!(chinese_date.year().cyclic.unwrap().get(), 40);
 //! assert_eq!(chinese_date.month().ordinal, 6);
 //! assert_eq!(chinese_date.day_of_month().0, 6);
 //!
 //! // `DateTime` checks
 //! assert_eq!(chinese_datetime.date.year().number, 4660);
 //! assert_eq!(chinese_datetime.date.year().related_iso, Some(2023));
-//! assert_eq!(chinese_datetime.date.year().cyclic, Some(40));
+//! assert_eq!(chinese_datetime.date.year().cyclic.unwrap().get(), 40);
 //! assert_eq!(chinese_datetime.date.month().ordinal, 6);
 //! assert_eq!(chinese_datetime.date.day_of_month().0, 6);
 //! assert_eq!(chinese_datetime.time.hour.number(), 13);
@@ -328,7 +328,7 @@ impl Date<Chinese> {
     ///     .expect("Failed to initialize Chinese Date instance.");
     ///
     /// assert_eq!(date_chinese.year().number, 4660);
-    /// assert_eq!(date_chinese.year().cyclic, Some(40));
+    /// assert_eq!(date_chinese.year().cyclic.unwrap().get(), 40);
     /// assert_eq!(date_chinese.year().related_iso, Some(2023));
     /// assert_eq!(date_chinese.month().ordinal, 6);
     /// assert_eq!(date_chinese.day_of_month().0, 11);
@@ -359,7 +359,7 @@ impl DateTime<Chinese> {
     ///
     /// assert_eq!(chinese_datetime.date.year().number, 4660);
     /// assert_eq!(chinese_datetime.date.year().related_iso, Some(2023));
-    /// assert_eq!(chinese_datetime.date.year().cyclic, Some(40));
+    /// assert_eq!(chinese_datetime.date.year().cyclic.unwrap().get(), 40);
     /// assert_eq!(chinese_datetime.date.month().ordinal, 6);
     /// assert_eq!(chinese_datetime.date.day_of_month().0, 11);
     /// assert_eq!(chinese_datetime.time.hour.number(), 13);

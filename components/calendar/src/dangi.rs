@@ -18,14 +18,14 @@
 //! // `Date` checks
 //! assert_eq!(dangi_date.year().number, 4356);
 //! assert_eq!(dangi_date.year().related_iso, Some(2023));
-//! assert_eq!(dangi_date.year().cyclic, Some(40));
+//! assert_eq!(dangi_date.year().cyclic.unwrap().get(), 40);
 //! assert_eq!(dangi_date.month().ordinal, 6);
 //! assert_eq!(dangi_date.day_of_month().0, 6);
 //!
 //! // `DateTime` checks
 //! assert_eq!(dangi_datetime.date.year().number, 4356);
 //! assert_eq!(dangi_datetime.date.year().related_iso, Some(2023));
-//! assert_eq!(dangi_datetime.date.year().cyclic, Some(40));
+//! assert_eq!(dangi_datetime.date.year().cyclic.unwrap().get(), 40);
 //! assert_eq!(dangi_datetime.date.month().ordinal, 6);
 //! assert_eq!(dangi_datetime.date.day_of_month().0, 6);
 //! assert_eq!(dangi_datetime.time.hour.number(), 13);
@@ -338,7 +338,7 @@ impl Date<Dangi> {
     ///     .expect("Failed to initialize Dangi Date instance.");
     ///
     /// assert_eq!(date_dangi.year().number, 4356);
-    /// assert_eq!(date_dangi.year().cyclic, Some(40));
+    /// assert_eq!(date_dangi.year().cyclic.unwrap().get(), 40);
     /// assert_eq!(date_dangi.year().related_iso, Some(2023));
     /// assert_eq!(date_dangi.month().ordinal, 6);
     /// assert_eq!(date_dangi.day_of_month().0, 18);
@@ -364,7 +364,7 @@ impl DateTime<Dangi> {
     ///
     /// assert_eq!(dangi_datetime.date.year().number, 4356);
     /// assert_eq!(dangi_datetime.date.year().related_iso, Some(2023));
-    /// assert_eq!(dangi_datetime.date.year().cyclic, Some(40));
+    /// assert_eq!(dangi_datetime.date.year().cyclic.unwrap().get(), 40);
     /// assert_eq!(dangi_datetime.date.month().ordinal, 6);
     /// assert_eq!(dangi_datetime.date.day_of_month().0, 6);
     /// assert_eq!(dangi_datetime.time.hour.number(), 13);

@@ -13,7 +13,7 @@
 //!
 //! assert_eq!(chinese_date.year().number, 4660);
 //! assert_eq!(chinese_date.year().related_iso, Some(2023));
-//! assert_eq!(chinese_date.year().cyclic, Some(40));
+//! assert_eq!(chinese_date.year().cyclic.unwrap().get(), 40);
 //! assert_eq!(chinese_date.month().ordinal, 6);
 //! assert_eq!(chinese_date.day_of_month().0, 6);
 //! ```
