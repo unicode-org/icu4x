@@ -21,17 +21,20 @@ pub(crate) fn div_rem_euclid_f64(n: f64, d: f64) -> (f64, f64) {
     }
 }
 
-/// Calculates `n / d` such that the remainder is always positive.
-/// This is achieved by performing an integer division and then, if the numerator is positive and there is a non-zero remainder,
-/// incrementing the quotient by 1.
-/// This is equivalent to ceiling() in the Reingold/Dershowitz Lisp code
-pub(crate) fn ceil_div(n: i64, d: i64) -> i64 {
-    debug_assert!(d > 0);
-    let (a, b) = (n / d, n % d);
-    if n <= 0 || b == 0 {
-        a
-    } else {
-        a + 1
+pub(crate) trait IntegerRoundings {
+    fn div_ceil(self, rhs: Self) -> Self;
+}
+
+impl IntegerRoundings for i64 {
+    // copied from std
+    fn div_ceil(self, rhs: Self) -> Self {
+        let d = self / rhs;
+        let r = self % rhs;
+        if (r > 0 && rhs > 0) || (r < 0 && rhs < 0) {
+            d + 1
+        } else {
+            d
+        }
     }
 }
 
@@ -366,62 +369,68 @@ fn test_interval_mod() {
 }
 
 #[test]
-fn test_ceil_div() {
-    assert_eq!(ceil_div(i64::MIN, 1), i64::MIN);
-    assert_eq!(ceil_div(i64::MIN, 2), -4611686018427387904);
-    assert_eq!(ceil_div(i64::MIN, 3), -3074457345618258602);
+fn test_div_ceil() {
+    assert_eq!(IntegerRoundings::div_ceil(i64::MIN, 1), i64::MIN);
+    assert_eq!(
+        IntegerRoundings::div_ceil(i64::MIN, 2),
+        -4611686018427387904
+    );
+    assert_eq!(
+        IntegerRoundings::div_ceil(i64::MIN, 3),
+        -3074457345618258602
+    );
 
-    assert_eq!(ceil_div(-10, 1), -10);
-    assert_eq!(ceil_div(-10, 2), -5);
-    assert_eq!(ceil_div(-10, 3), -3);
+    assert_eq!(IntegerRoundings::div_ceil(-10, 1), -10);
+    assert_eq!(IntegerRoundings::div_ceil(-10, 2), -5);
+    assert_eq!(IntegerRoundings::div_ceil(-10, 3), -3);
 
-    assert_eq!(ceil_div(-9, 1), -9);
-    assert_eq!(ceil_div(-9, 2), -4);
-    assert_eq!(ceil_div(-9, 3), -3);
+    assert_eq!(IntegerRoundings::div_ceil(-9, 1), -9);
+    assert_eq!(IntegerRoundings::div_ceil(-9, 2), -4);
+    assert_eq!(IntegerRoundings::div_ceil(-9, 3), -3);
 
-    assert_eq!(ceil_div(-8, 1), -8);
-    assert_eq!(ceil_div(-8, 2), -4);
-    assert_eq!(ceil_div(-8, 3), -2);
+    assert_eq!(IntegerRoundings::div_ceil(-8, 1), -8);
+    assert_eq!(IntegerRoundings::div_ceil(-8, 2), -4);
+    assert_eq!(IntegerRoundings::div_ceil(-8, 3), -2);
 
-    assert_eq!(ceil_div(-2, 1), -2);
-    assert_eq!(ceil_div(-2, 2), -1);
-    assert_eq!(ceil_div(-2, 3), 0);
+    assert_eq!(IntegerRoundings::div_ceil(-2, 1), -2);
+    assert_eq!(IntegerRoundings::div_ceil(-2, 2), -1);
+    assert_eq!(IntegerRoundings::div_ceil(-2, 3), 0);
 
-    assert_eq!(ceil_div(-1, 1), -1);
-    assert_eq!(ceil_div(-1, 2), 0);
-    assert_eq!(ceil_div(-1, 3), 0);
+    assert_eq!(IntegerRoundings::div_ceil(-1, 1), -1);
+    assert_eq!(IntegerRoundings::div_ceil(-1, 2), 0);
+    assert_eq!(IntegerRoundings::div_ceil(-1, 3), 0);
 
-    assert_eq!(ceil_div(0, 1), 0);
-    assert_eq!(ceil_div(0, 2), 0);
-    assert_eq!(ceil_div(0, 3), 0);
+    assert_eq!(IntegerRoundings::div_ceil(0, 1), 0);
+    assert_eq!(IntegerRoundings::div_ceil(0, 2), 0);
+    assert_eq!(IntegerRoundings::div_ceil(0, 3), 0);
 
-    assert_eq!(ceil_div(1, 1), 1);
-    assert_eq!(ceil_div(1, 2), 1);
-    assert_eq!(ceil_div(1, 3), 1);
+    assert_eq!(IntegerRoundings::div_ceil(1, 1), 1);
+    assert_eq!(IntegerRoundings::div_ceil(1, 2), 1);
+    assert_eq!(IntegerRoundings::div_ceil(1, 3), 1);
 
-    assert_eq!(ceil_div(2, 1), 2);
-    assert_eq!(ceil_div(2, 2), 1);
-    assert_eq!(ceil_div(2, 3), 1);
+    assert_eq!(IntegerRoundings::div_ceil(2, 1), 2);
+    assert_eq!(IntegerRoundings::div_ceil(2, 2), 1);
+    assert_eq!(IntegerRoundings::div_ceil(2, 3), 1);
 
-    assert_eq!(ceil_div(8, 1), 8);
-    assert_eq!(ceil_div(8, 2), 4);
-    assert_eq!(ceil_div(8, 3), 3);
+    assert_eq!(IntegerRoundings::div_ceil(8, 1), 8);
+    assert_eq!(IntegerRoundings::div_ceil(8, 2), 4);
+    assert_eq!(IntegerRoundings::div_ceil(8, 3), 3);
 
-    assert_eq!(ceil_div(9, 1), 9);
-    assert_eq!(ceil_div(9, 2), 5);
-    assert_eq!(ceil_div(9, 3), 3);
+    assert_eq!(IntegerRoundings::div_ceil(9, 1), 9);
+    assert_eq!(IntegerRoundings::div_ceil(9, 2), 5);
+    assert_eq!(IntegerRoundings::div_ceil(9, 3), 3);
 
-    assert_eq!(ceil_div(10, 1), 10);
-    assert_eq!(ceil_div(10, 2), 5);
-    assert_eq!(ceil_div(10, 3), 4);
+    assert_eq!(IntegerRoundings::div_ceil(10, 1), 10);
+    assert_eq!(IntegerRoundings::div_ceil(10, 2), 5);
+    assert_eq!(IntegerRoundings::div_ceil(10, 3), 4);
 
-    assert_eq!(ceil_div(i64::MAX, 1), 9223372036854775807);
-    assert_eq!(ceil_div(i64::MAX, 2), 4611686018427387904);
-    assert_eq!(ceil_div(i64::MAX, 3), 3074457345618258603);
+    assert_eq!(IntegerRoundings::div_ceil(i64::MAX, 1), 9223372036854775807);
+    assert_eq!(IntegerRoundings::div_ceil(i64::MAX, 2), 4611686018427387904);
+    assert_eq!(IntegerRoundings::div_ceil(i64::MAX, 3), 3074457345618258603);
 
     for n in -100..100 {
         for d in 1..5 {
-            let x1 = ceil_div(n, d);
+            let x1 = IntegerRoundings::div_ceil(n, d);
             let x2 = (n as f64 / d as f64).ceil();
             assert_eq!(x1, x2 as i64);
         }

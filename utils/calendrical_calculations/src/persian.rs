@@ -7,7 +7,7 @@
 // the Apache License, Version 2.0 which can be found at the calendrical_calculations
 // package root or at http://www.apache.org/licenses/LICENSE-2.0.
 
-use crate::helpers::{ceil_div, i64_to_i32, I32CastError};
+use crate::helpers::{i64_to_i32, I32CastError, IntegerRoundings};
 use crate::rata_die::RataDie;
 /// Lisp code reference: <https://github.com/EdReingold/calendar-code2/blob/main/calendar.l#L4720>
 // Book states that the Persian epoch is the date: 3/19/622 and since the Persian Calendar has no year 0, the best choice was to use the Julian function.
@@ -45,10 +45,11 @@ pub fn arithmetic_persian_from_fixed(date: RataDie) -> Result<(i32, u8, u8), I32
     let year = i64_to_i32(year)?;
     #[allow(clippy::unwrap_used)] // valid month,day
     let day_of_year = 1_i64 + (date - fixed_from_arithmetic_persian(year, 1, 1));
+    #[allow(unstable_name_collisions)] // div_ceil is unstable and polyfilled
     let month = if day_of_year <= 186 {
-        ceil_div(day_of_year, 31) as u8
+        day_of_year.div_ceil(31) as u8
     } else {
-        ceil_div(day_of_year - 6, 30) as u8
+        (day_of_year - 6).div_ceil(30) as u8
     };
     let day = (date - fixed_from_arithmetic_persian(year, month, 1) + 1) as u8;
     Ok((year, month, day))
