@@ -25,8 +25,8 @@ pub const BASIC_RUNTIME_DEPS: &[&str] = &[
     "icu_timezone",
     // ICU4X utils
     "calendrical_calculations",
-    "core_maths",
     "fixed_decimal",
+    "icu_core_float",
     "icu_provider_adapters", // not included in icu, but needed generally
     "icu_provider",
     "litemap",

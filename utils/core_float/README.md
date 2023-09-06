@@ -1,4 +1,4 @@
-# core_maths [![crates.io](https://img.shields.io/crates/v/core_maths)](https://crates.io/crates/core_maths)
+# icu_core_float [![crates.io](https://img.shields.io/crates/v/icu_core_float)](https://crates.io/crates/icu_core_float)
 
 <!-- cargo-rdme start -->
 
@@ -9,7 +9,7 @@ Method signatures and documentation are the same as `std` as of 1.72.
 ## Usage
 ```rust
 #[allow(unused_imports)] // will be unused on std targets
-use core_maths::*;
+use core_float::*;
 
 3.9.floor();
 ```
