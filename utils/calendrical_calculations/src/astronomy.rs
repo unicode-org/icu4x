@@ -16,9 +16,7 @@
 use crate::error::LocationOutOfBoundsError;
 #[allow(unused_imports)]
 use crate::helpers::CoreFloat;
-use crate::helpers::{
-    binary_search, i64_to_i32, interval_mod_f64, invert_angular, next_moment, poly,
-};
+use crate::helpers::{binary_search, i64_to_i32, invert_angular, next_moment, poly};
 use crate::rata_die::{Moment, RataDie};
 use core::f64::consts::PI;
 
@@ -467,11 +465,8 @@ impl Astronomical {
         };
 
         if value.abs() <= 1.0 {
-            let offset = interval_mod_f64(
-                value.asin().to_degrees().rem_euclid(360.0) / 360.0,
-                -12.0 / 24.0,
-                12.0 / 24.0,
-            );
+            let offset =
+                (value.asin().to_degrees().rem_euclid(360.0) / 360.0 + 0.5).rem_euclid(1.0) - 0.5;
 
             let moment = Moment::new(
                 date + if early {
@@ -1271,13 +1266,12 @@ impl Astronomical {
         let theta0 = Self::sidereal_from_moment(moment);
         let cap_h = (theta0 + psi - alpha).rem_euclid(360.0);
 
-        let altitude = ((phi.to_radians().sin() * delta.to_radians().sin()
+        let altitude = (phi.to_radians().sin() * delta.to_radians().sin()
             + phi.to_radians().cos() * delta.to_radians().cos() * cap_h.to_radians().cos())
         .asin()
-        .to_degrees())
-        .rem_euclid(360.0);
+        .to_degrees();
 
-        interval_mod_f64(altitude, -180.0, 180.0)
+        (altitude + 180.0).rem_euclid(360.0) - 180.0
     }
 
     /// Distance to the moon in meters at the given moment.
@@ -1858,11 +1852,9 @@ impl Astronomical {
         let julian_centuries = Self::julian_centuries(moment);
         let tau =
             moment - rate * (Self::solar_longitude(julian_centuries) - angle).rem_euclid(360.0);
-        let delta = interval_mod_f64(
-            Self::solar_longitude(Self::julian_centuries(tau)) - angle,
-            -180.0,
-            180.0,
-        );
+        let delta = (Self::solar_longitude(Self::julian_centuries(tau)) - angle + 180.0)
+            .rem_euclid(360.0)
+            - 180.0;
         let result_rhs = tau - rate * delta;
         if moment < result_rhs {
             moment

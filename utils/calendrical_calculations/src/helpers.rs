@@ -27,6 +27,75 @@ impl IntegerRoundings for i64 {
     }
 }
 
+#[test]
+fn test_div_ceil() {
+    assert_eq!(IntegerRoundings::div_ceil(i64::MIN, 1), i64::MIN);
+    assert_eq!(
+        IntegerRoundings::div_ceil(i64::MIN, 2),
+        -4611686018427387904
+    );
+    assert_eq!(
+        IntegerRoundings::div_ceil(i64::MIN, 3),
+        -3074457345618258602
+    );
+
+    assert_eq!(IntegerRoundings::div_ceil(-10, 1), -10);
+    assert_eq!(IntegerRoundings::div_ceil(-10, 2), -5);
+    assert_eq!(IntegerRoundings::div_ceil(-10, 3), -3);
+
+    assert_eq!(IntegerRoundings::div_ceil(-9, 1), -9);
+    assert_eq!(IntegerRoundings::div_ceil(-9, 2), -4);
+    assert_eq!(IntegerRoundings::div_ceil(-9, 3), -3);
+
+    assert_eq!(IntegerRoundings::div_ceil(-8, 1), -8);
+    assert_eq!(IntegerRoundings::div_ceil(-8, 2), -4);
+    assert_eq!(IntegerRoundings::div_ceil(-8, 3), -2);
+
+    assert_eq!(IntegerRoundings::div_ceil(-2, 1), -2);
+    assert_eq!(IntegerRoundings::div_ceil(-2, 2), -1);
+    assert_eq!(IntegerRoundings::div_ceil(-2, 3), 0);
+
+    assert_eq!(IntegerRoundings::div_ceil(-1, 1), -1);
+    assert_eq!(IntegerRoundings::div_ceil(-1, 2), 0);
+    assert_eq!(IntegerRoundings::div_ceil(-1, 3), 0);
+
+    assert_eq!(IntegerRoundings::div_ceil(0, 1), 0);
+    assert_eq!(IntegerRoundings::div_ceil(0, 2), 0);
+    assert_eq!(IntegerRoundings::div_ceil(0, 3), 0);
+
+    assert_eq!(IntegerRoundings::div_ceil(1, 1), 1);
+    assert_eq!(IntegerRoundings::div_ceil(1, 2), 1);
+    assert_eq!(IntegerRoundings::div_ceil(1, 3), 1);
+
+    assert_eq!(IntegerRoundings::div_ceil(2, 1), 2);
+    assert_eq!(IntegerRoundings::div_ceil(2, 2), 1);
+    assert_eq!(IntegerRoundings::div_ceil(2, 3), 1);
+
+    assert_eq!(IntegerRoundings::div_ceil(8, 1), 8);
+    assert_eq!(IntegerRoundings::div_ceil(8, 2), 4);
+    assert_eq!(IntegerRoundings::div_ceil(8, 3), 3);
+
+    assert_eq!(IntegerRoundings::div_ceil(9, 1), 9);
+    assert_eq!(IntegerRoundings::div_ceil(9, 2), 5);
+    assert_eq!(IntegerRoundings::div_ceil(9, 3), 3);
+
+    assert_eq!(IntegerRoundings::div_ceil(10, 1), 10);
+    assert_eq!(IntegerRoundings::div_ceil(10, 2), 5);
+    assert_eq!(IntegerRoundings::div_ceil(10, 3), 4);
+
+    assert_eq!(IntegerRoundings::div_ceil(i64::MAX, 1), 9223372036854775807);
+    assert_eq!(IntegerRoundings::div_ceil(i64::MAX, 2), 4611686018427387904);
+    assert_eq!(IntegerRoundings::div_ceil(i64::MAX, 3), 3074457345618258603);
+
+    for n in -100..100 {
+        for d in 1..5 {
+            let x1 = IntegerRoundings::div_ceil(n, d);
+            let x2 = (n as f64 / d as f64).ceil();
+            assert_eq!(x1, x2 as i64);
+        }
+    }
+}
+
 // Highest power is *last*
 pub(crate) fn poly(x: f64, coeffs: &[f64]) -> f64 {
     coeffs.iter().rev().fold(0.0, |a, c| a * x + c)
@@ -207,148 +276,6 @@ fn test_invert_angular() {
     for case in test_cases {
         let x = invert_angular(case.f, case.y, case.r);
         assert!((((case.f)(x)).rem_euclid(360.0) - case.expected).abs() < tolerance);
-    }
-}
-
-/// The value of x shifted into the range [a..b); returns x if a == b; for f64 types
-pub(crate) fn interval_mod_f64(x: f64, a: f64, b: f64) -> f64 {
-    if (a - b).abs() < f64::EPSILON {
-        x
-    } else {
-        a + (x - a).rem_euclid(b - a)
-    }
-}
-
-#[test]
-fn test_interval_mod() {
-    #[derive(Debug)]
-    struct TestCase {
-        x: f64,
-        a: f64,
-        b: f64,
-        expected: f64,
-    }
-
-    let cases = [
-        TestCase {
-            x: 5.0,
-            a: 10.0,
-            b: 20.0,
-            expected: 15.0,
-        },
-        TestCase {
-            x: -5.0,
-            a: 10.0,
-            b: 20.0,
-            expected: 15.0,
-        },
-        TestCase {
-            x: 2.0,
-            a: 12.0,
-            b: 17.0,
-            expected: 12.0,
-        },
-        TestCase {
-            x: 9.0,
-            a: 9.0,
-            b: 10.0,
-            expected: 9.0,
-        },
-        TestCase {
-            x: 16.5,
-            a: 13.5,
-            b: 20.0,
-            expected: 16.5,
-        },
-        TestCase {
-            x: 9.0,
-            a: 3.0,
-            b: 9.0,
-            expected: 3.0,
-        },
-        TestCase {
-            x: 17.0,
-            a: 1.0,
-            b: 5.5,
-            expected: 3.5,
-        },
-    ];
-
-    for case in cases {
-        let result = interval_mod_f64(case.x, case.a, case.b);
-        assert_eq!(
-            case.expected, result,
-            "Interval mod test failed for case: {case:?}"
-        );
-    }
-}
-
-#[test]
-fn test_div_ceil() {
-    assert_eq!(IntegerRoundings::div_ceil(i64::MIN, 1), i64::MIN);
-    assert_eq!(
-        IntegerRoundings::div_ceil(i64::MIN, 2),
-        -4611686018427387904
-    );
-    assert_eq!(
-        IntegerRoundings::div_ceil(i64::MIN, 3),
-        -3074457345618258602
-    );
-
-    assert_eq!(IntegerRoundings::div_ceil(-10, 1), -10);
-    assert_eq!(IntegerRoundings::div_ceil(-10, 2), -5);
-    assert_eq!(IntegerRoundings::div_ceil(-10, 3), -3);
-
-    assert_eq!(IntegerRoundings::div_ceil(-9, 1), -9);
-    assert_eq!(IntegerRoundings::div_ceil(-9, 2), -4);
-    assert_eq!(IntegerRoundings::div_ceil(-9, 3), -3);
-
-    assert_eq!(IntegerRoundings::div_ceil(-8, 1), -8);
-    assert_eq!(IntegerRoundings::div_ceil(-8, 2), -4);
-    assert_eq!(IntegerRoundings::div_ceil(-8, 3), -2);
-
-    assert_eq!(IntegerRoundings::div_ceil(-2, 1), -2);
-    assert_eq!(IntegerRoundings::div_ceil(-2, 2), -1);
-    assert_eq!(IntegerRoundings::div_ceil(-2, 3), 0);
-
-    assert_eq!(IntegerRoundings::div_ceil(-1, 1), -1);
-    assert_eq!(IntegerRoundings::div_ceil(-1, 2), 0);
-    assert_eq!(IntegerRoundings::div_ceil(-1, 3), 0);
-
-    assert_eq!(IntegerRoundings::div_ceil(0, 1), 0);
-    assert_eq!(IntegerRoundings::div_ceil(0, 2), 0);
-    assert_eq!(IntegerRoundings::div_ceil(0, 3), 0);
-
-    assert_eq!(IntegerRoundings::div_ceil(1, 1), 1);
-    assert_eq!(IntegerRoundings::div_ceil(1, 2), 1);
-    assert_eq!(IntegerRoundings::div_ceil(1, 3), 1);
-
-    assert_eq!(IntegerRoundings::div_ceil(2, 1), 2);
-    assert_eq!(IntegerRoundings::div_ceil(2, 2), 1);
-    assert_eq!(IntegerRoundings::div_ceil(2, 3), 1);
-
-    assert_eq!(IntegerRoundings::div_ceil(8, 1), 8);
-    assert_eq!(IntegerRoundings::div_ceil(8, 2), 4);
-    assert_eq!(IntegerRoundings::div_ceil(8, 3), 3);
-
-    assert_eq!(IntegerRoundings::div_ceil(9, 1), 9);
-    assert_eq!(IntegerRoundings::div_ceil(9, 2), 5);
-    assert_eq!(IntegerRoundings::div_ceil(9, 3), 3);
-
-    assert_eq!(IntegerRoundings::div_ceil(10, 1), 10);
-    assert_eq!(IntegerRoundings::div_ceil(10, 2), 5);
-    assert_eq!(IntegerRoundings::div_ceil(10, 3), 4);
-
-    assert_eq!(IntegerRoundings::div_ceil(i64::MAX, 1), 9223372036854775807);
-    assert_eq!(IntegerRoundings::div_ceil(i64::MAX, 2), 4611686018427387904);
-    assert_eq!(IntegerRoundings::div_ceil(i64::MAX, 3), 3074457345618258603);
-
-    for n in -100..100 {
-        for d in 1..5 {
-            let x1 = IntegerRoundings::div_ceil(n, d);
-            let x2 = (n as f64 / d as f64).ceil();
-            assert_eq!(x1, x2 as i64);
-        }
     }
 }
 
