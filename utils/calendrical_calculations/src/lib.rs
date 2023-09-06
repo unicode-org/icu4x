@@ -33,6 +33,7 @@ pub mod astronomy;
 pub mod coptic;
 pub mod error;
 pub mod ethiopian;
+pub mod hebrew;
 pub mod helpers;
 pub mod iso;
 pub mod julian;
