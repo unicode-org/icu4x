@@ -7,7 +7,7 @@
 //! aggregators for forward and reverse directions.
 //!
 //! These aggregators both accept source-order (!) `parse::Rule`s and aggregate them into the rule
-//! groups that the data struct [`RuleBasedTransliterator`](icu_transliteration::provider::RuleBasedTransliterator)
+//! groups that the data struct [`RuleBasedTransliterator`](icu_transliterate::provider::RuleBasedTransliterator)
 //! semantically expects. A later step converts these into the actual zero-copy format.
 //! They also transform the bidirectional `parse::Rule`s into a unidirectional version.
 

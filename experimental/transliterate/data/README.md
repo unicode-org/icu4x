@@ -1,8 +1,8 @@
-# icu_transliteration_data [![crates.io](https://img.shields.io/crates/v/icu_transliteration_data)](https://crates.io/crates/icu_transliteration_data)
+# icu_transliterate_data [![crates.io](https://img.shields.io/crates/v/icu_transliterate_data)](https://crates.io/crates/icu_transliterate_data)
 
 <!-- cargo-rdme start -->
 
-Data for the icu_transliteration crate
+Data for the icu_transliterate crate
 
 <!-- cargo-rdme end -->
 

@@ -34,10 +34,10 @@ pub struct Baked;
 #[cfg(feature = "compiled_data")]
 const _: () = {
     mod icu {
-        pub use crate as transliteration;
+        pub use crate as transliterate;
         pub use icu_collections as collections;
     }
-    icu_transliteration_data::impl_transliterator_rules_v1!(Baked);
+    icu_transliterate_data::impl_transliterator_rules_v1!(Baked);
 };
 
 // TODO(#3776): Improve the documentation of this datastruct.
@@ -46,7 +46,7 @@ const _: () = {
 #[icu_provider::data_struct(TransliteratorRulesV1Marker = "transliterator/rules@1")]
 #[derive(Debug, Clone, PartialEq, Eq)]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
-#[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake), databake(path = icu_transliteration::provider))]
+#[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake), databake(path = icu_transliterate::provider))]
 pub struct RuleBasedTransliterator<'a> {
     /// Whether this transliterator is accessible directly through the constructor.
     /// Hidden transliterators are intended as dependencies for visible transliterators,
@@ -143,7 +143,7 @@ pub struct Rule<'a> {
 /// The special matchers and replacers used by this transliterator.
 #[derive(Debug, Clone, zerofrom::ZeroFrom, PartialEq, Eq)]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
-#[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake), databake(path = icu_transliteration::provider))]
+#[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake), databake(path = icu_transliterate::provider))]
 pub struct VarTable<'a> {
     /// Variable definitions.
     #[cfg_attr(feature = "serde", serde(borrow))]

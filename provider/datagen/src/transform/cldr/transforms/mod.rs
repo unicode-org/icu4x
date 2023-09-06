@@ -6,8 +6,8 @@ use crate::transform::cldr::cldr_serde::transforms;
 use crate::transform::cldr::source::CldrDirTransform;
 use icu_provider::datagen::IterableDataProvider;
 use icu_provider::prelude::*;
-use icu_transliteration::provider::*;
-use icu_transliteration::Direction;
+use icu_transliterate::provider::*;
+use icu_transliterate::Direction;
 use std::collections::HashMap;
 
 use super::cldr_serde::transforms::TransformAlias;
@@ -50,7 +50,7 @@ impl<'a> TransliteratorCollection<'a> {
     /// Returns a mapping from known legacy IDs to internal ICU4X IDs. The legacy ID keys are normalized to ASCII lowercase.
     ///
     /// The compilation process uses this mapping to go from legacy IDs to internal IDs, if possible.
-    /// Otherwise [`icu_transliteration::legacy_id_to_internal_id`](icu_transliteration::legacy_id_to_internal_id) is used.
+    /// Otherwise [`icu_transliterate::legacy_id_to_internal_id`](icu_transliterate::legacy_id_to_internal_id) is used.
     fn generate_id_mapping(&self) -> Result<HashMap<String, String>, DataError> {
         let mut mapping = HashMap::new();
         for transform in self.cldr_transforms.list_transforms()? {
@@ -223,7 +223,7 @@ fn internal_id_from_parts(
     variant: Option<&str>,
 ) -> String {
     find_bcp47_in_list(aliases)
-        .unwrap_or_else(|| icu_transliteration::legacy_id_to_internal_id(source, target, variant))
+        .unwrap_or_else(|| icu_transliterate::legacy_id_to_internal_id(source, target, variant))
 }
 
 fn find_bcp47_in_list(list: &[TransformAlias]) -> Option<String> {

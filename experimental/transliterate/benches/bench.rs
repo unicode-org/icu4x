@@ -6,7 +6,7 @@ use criterion::{black_box, BenchmarkId, Criterion};
 use criterion::{criterion_group, criterion_main};
 use icu_locid::Locale;
 
-use icu_transliteration::Transliterator;
+use icu_transliterate::Transliterator;
 
 struct BenchDataContent {
     pub num: usize,

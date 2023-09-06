@@ -1497,7 +1497,7 @@ dependencies = [
  "icu_segmenter",
  "icu_singlenumberformatter",
  "icu_timezone",
- "icu_transliteration",
+ "icu_transliterate",
  "icu_unitsconversion",
  "itertools",
  "log",
@@ -1986,7 +1986,7 @@ name = "icu_timezone_data"
 version = "1.2.0"
 
 [[package]]
-name = "icu_transliteration"
+name = "icu_transliterate"
 version = "0.0.0"
 dependencies = [
  "criterion",
@@ -1998,7 +1998,7 @@ dependencies = [
  "icu_normalizer",
  "icu_properties",
  "icu_provider",
- "icu_transliteration_data",
+ "icu_transliterate_data",
  "icu_unicodeset_parser",
  "litemap",
  "log",
@@ -2009,7 +2009,7 @@ dependencies = [
 ]
 
 [[package]]
-name = "icu_transliteration_data"
+name = "icu_transliterate_data"
 version = "0.0.0"
 
 [[package]]

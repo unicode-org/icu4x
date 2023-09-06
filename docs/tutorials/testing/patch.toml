@@ -27,7 +27,7 @@ icu_displaynames = {  path = "../../experimental/displaynames" }
 icu_personnames = { path = "../../experimental/personnames" }
 icu_relativetime = { path = "../../experimental/relativetime" }
 icu_singlenumberformatter = { path = "../../experimental/single_number_formatter"}
-icu_transliteration = { path = "../../experimental/transliteration" }
+icu_transliterate = { path = "../../experimental/transliterate" }
 icu_unicodeset_parser = { path = "../../experimental/unicodeset_parser" }
 icu_unitsconversion = { path = "../../experimental/unitsconversion" }
 
@@ -48,7 +48,7 @@ icu_compactdecimal_data = { path = "../../experimental/compactdecimal/data" }
 icu_displaynames_data = { path = "../../experimental/displaynames/data" }
 icu_relativetime_data = { path = "../../experimental/relativetime/data" }
 icu_singlenumberformatter_data = { path = "../../experimental/single_number_formatter/data"}
-icu_transliteration_data = { path = "../../experimental/transliteration/data" }
+icu_transliterate_data = { path = "../../experimental/transliterate/data" }
 
 # FFI
 icu_capi = { path = "../../ffi/diplomat" }

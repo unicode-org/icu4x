@@ -1,10 +1,10 @@
-# icu_transliteration [![crates.io](https://img.shields.io/crates/v/icu_transliteration)](https://crates.io/crates/icu_transliteration)
+# icu_transliterate [![crates.io](https://img.shields.io/crates/v/icu_transliterate)](https://crates.io/crates/icu_transliterate)
 
 <!-- cargo-rdme start -->
 
 🚧 \[Experimental\] Transliteration
 
-This module is published as its own crate ([`icu_transliteration`](https://docs.rs/icu_transliteration/latest/icu_transliteration/))
+This module is published as its own crate ([`icu_transliterate`](https://docs.rs/icu_transliterate/latest/icu_transliterate/))
 and as part of the [`icu`](https://docs.rs/icu/latest/icu/) crate. See the latter for more details on the ICU4X project.
 
 See [`Transliterator`].

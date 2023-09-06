@@ -114,7 +114,7 @@
 //! * `icu_displaynames`
 //! * `icu_relativetime`
 //! * `icu_singlenumberformatter`
-//! * `icu_transliteration`
+//! * `icu_transliterate`
 //! * `icu_unitsconversion`
 //! * ...
 //!
