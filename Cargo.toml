@@ -70,7 +70,7 @@ members = [
 
     # Utils
     "utils/calendrical_calculations",
-    "utils/core_float",
+    "utils/core_math",
     "utils/crlify",
     "utils/databake",
     "utils/databake/derive",
@@ -200,7 +200,7 @@ icu_provider_macros = { version = "~1.2.0", path = "provider/macros", default-fe
 
 # Utils
 calendrical_calculations = { version = "0.1.0", path = "utils/calendrical_calculations", default-features = false }
-icu_core_float = { version = "0.0.0", path = "utils/core_float", default-features = false }
+core_math = { version = "0.0.0", path = "utils/core_math", default-features = false }
 crlify = { version = "1.0.1", path = "utils/crlify", default-features = false }
 databake = { version = "0.1.3", path = "utils/databake", default-features = false }
 databake-derive = { version = "0.1.3", path = "utils/databake/derive", default-features = false }

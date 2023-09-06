@@ -3,7 +3,7 @@
 # (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 [package]
-name = "icu_core_float"
+name = "core_math"
 version = "0.0.0"
 description = "Extension trait for full float functionality in `#[no_std]` backed by `libm`."
 
@@ -17,7 +17,7 @@ categories.workspace = true
 include.workspace = true
 
 [lib]
-name = "core_float"
+name = "core_math"
 
 [target.'cfg(target_os = "none")'.dependencies]
 libm = "0.2"

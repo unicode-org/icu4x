@@ -9,7 +9,7 @@
 //! # Usage
 //! ```rust
 //! #[allow(unused_imports)] // will be unused on std targets
-//! use core_float::*;
+//! use core_math::*;
 //!
 //! 3.9.floor();
 //! ```
@@ -85,7 +85,7 @@ pub trait CoreFloat: Sized + Copy {
     /// # Examples
     ///
     /// ```
-    /// # use core_float::*;
+    /// # use core_math::*;
     /// let f = 3.3_f64;
     /// let g = -3.3_f64;
     /// let h = 3.5_f64;

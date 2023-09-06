@@ -73,7 +73,7 @@ databake-derive = { path = "../../utils/databake/derive" }
 deduplicating_array = { path = "../../utils/deduplicating_array" }
 fixed_decimal = { path = "../../utils/fixed_decimal" }
 litemap = { path = "../../utils/litemap" }
-icu_core_float = { path = "../../utils/core_float" }
+core_math = { path = "../../utils/core_math" }
 icu_pattern = { path = "../../utils/pattern" }
 tinystr = { path = "../../utils/tinystr" }
 tzif = { path = "../../utils/tzif" }

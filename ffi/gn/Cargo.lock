@@ -103,6 +103,13 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "baf1de4339761588bc0619e3cbc0120ee582ebb74b53b4efbf79117bd2da40fd"
 
 [[package]]
+name = "core_math"
+version = "0.0.0"
+dependencies = [
+ "libm",
+]
+
+[[package]]
 name = "difference"
 version = "2.0.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -330,13 +337,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "icu_core_float"
-version = "0.0.0"
-dependencies = [
- "libm",
-]
-
-[[package]]
 name = "icu_datetime"
 version = "1.2.1"
 dependencies = [
@@ -476,9 +476,9 @@ dependencies = [
 name = "icu_segmenter"
 version = "1.2.1"
 dependencies = [
+ "core_math",
  "displaydoc",
  "icu_collections",
- "icu_core_float",
  "icu_locid",
  "icu_provider",
  "utf8_iter",

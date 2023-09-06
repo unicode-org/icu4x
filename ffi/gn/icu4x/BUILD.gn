@@ -37,6 +37,28 @@ rust_library("calendrical_calculations-v0_1_0") {
   visibility = [ ":*" ]
 }
 
+rust_library("core_math-v0_0_0") {
+  crate_name = "core_math"
+  crate_root = "//utils/core_math/src/lib.rs"
+  output_name = "core_math-73cb7218c03e07b7"
+
+  deps = []
+  if (false) {
+    deps += [ ":libm-v0_2_6" ]
+  }
+
+  rustenv = []
+
+  rustflags = [
+    "--cap-lints=allow",
+    "--edition=2021",
+    "-Cmetadata=73cb7218c03e07b7",
+    "-Cextra-filename=-73cb7218c03e07b7",
+  ]
+
+  visibility = [ ":*" ]
+}
+
 rust_proc_macro("diplomat-v0_5_2") {
   crate_name = "diplomat"
   crate_root = "//ffi/gn/vendor/diplomat/src/lib.rs"
@@ -364,28 +386,6 @@ rust_library("icu_collections-v1_2_0") {
   visibility = [ ":*" ]
 }
 
-rust_library("icu_core_float-v0_0_0") {
-  crate_name = "core_float"
-  crate_root = "//utils/core_float/src/lib.rs"
-  output_name = "core_float-e4b5d0cf2faa46db"
-
-  deps = []
-  if (false) {
-    deps += [ ":libm-v0_2_6" ]
-  }
-
-  rustenv = []
-
-  rustflags = [
-    "--cap-lints=allow",
-    "--edition=2021",
-    "-Cmetadata=e4b5d0cf2faa46db",
-    "-Cextra-filename=-e4b5d0cf2faa46db",
-  ]
-
-  visibility = [ ":*" ]
-}
-
 rust_library("icu_datetime-v1_2_1") {
   crate_name = "icu_datetime"
   crate_root = "//components/datetime/src/lib.rs"
@@ -674,9 +674,9 @@ rust_library("icu_segmenter-v1_2_1") {
   output_name = "icu_segmenter-9c67817750522b21"
 
   deps = []
+  deps += [ ":core_math-v0_0_0" ]
   deps += [ ":displaydoc-v0_2_4($host_toolchain)" ]
   deps += [ ":icu_collections-v1_2_0" ]
-  deps += [ ":icu_core_float-v0_0_0" ]
   deps += [ ":icu_locid-v1_2_0" ]
   deps += [ ":icu_provider-v1_2_0" ]
   deps += [ ":utf8_iter-v1_0_3" ]
@@ -693,9 +693,6 @@ rust_library("icu_segmenter-v1_2_1") {
     "--cfg=feature=\"lstm\"",
   ]
 
-  aliased_deps = {
-    core_float = ":icu_core_float-v0_0_0"
-  }
   visibility = [ ":*" ]
 }
 
