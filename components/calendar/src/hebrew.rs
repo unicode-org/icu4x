@@ -31,9 +31,8 @@
 
 use crate::calendar_arithmetic::{ArithmeticDate, CalendarArithmetic};
 use crate::helpers::{self, div_rem_euclid, div_rem_euclid_f64, final_func, next_u8};
-use crate::julian::Julian;
-use crate::rata_die::RataDie;
-use crate::types::{FormattableMonth, Moment};
+use crate::rata_die::{Moment, RataDie};
+use crate::types::FormattableMonth;
 use crate::Iso;
 use crate::{types, Calendar, CalendarError, Date, DateDuration, DateDurationUnit, DateTime};
 use ::tinystr::tinystr;
@@ -73,7 +72,8 @@ struct BookHebrew {
 pub struct Hebrew;
 
 // Lisp code reference: https://github.com/EdReingold/calendar-code2/blob/main/calendar.l#L2206
-const FIXED_HEBREW_EPOCH: RataDie = Julian::fixed_from_julian_book_version(-3761, 10, 7);
+const FIXED_HEBREW_EPOCH: RataDie =
+    calendrical_calculations::julian::fixed_from_julian_book_version(-3761, 10, 7);
 
 // The BookHebrew Months
 const NISAN: u8 = 1;
@@ -639,10 +639,10 @@ impl BookHebrew {
     // Lisp code reference: https://github.com/EdReingold/calendar-code2/blob/main/calendar.l#L2352
     fn book_hebrew_from_fixed(date: RataDie) -> BookHebrew {
         let approx = helpers::i64_to_i32(
-            (div_rem_euclid_f64((date - FIXED_HEBREW_EPOCH) as f64, 35975351.0 / 98496.0).0) as i64, //  The value 35975351/98496, the average length of a BookHebrew year, can be approximated by 365.25
+            1 + (div_rem_euclid_f64((date - FIXED_HEBREW_EPOCH) as f64, 35975351.0 / 98496.0).0)
+                as i64, //  The value 35975351/98496, the average length of a BookHebrew year, can be approximated by 365.25
         )
-        .saturate()
-            + 1;
+        .unwrap_or_else(|e| e.saturate());
 
         // Search forward for the year
         let year_condition = |year: i32| Self::book_hebrew_new_year(year) <= date;

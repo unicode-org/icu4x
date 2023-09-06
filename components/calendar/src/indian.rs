@@ -120,7 +120,7 @@ impl Calendar for Indian {
         ArithmeticDate::new_from_codes(self, year, month_code, day).map(IndianDateInner)
     }
 
-    //
+    // Algorithms directly implemented in icu_calendar since they're not from the book
     fn date_from_iso(&self, iso: Date<Iso>) -> IndianDateInner {
         // Get day number in year (1 indexed)
         let day_of_year_iso = Iso::day_of_year(*iso.inner());
@@ -142,6 +142,7 @@ impl Calendar for Indian {
         ))
     }
 
+    // Algorithms directly implemented in icu_calendar since they're not from the book
     fn date_to_iso(&self, date: &Self::DateInner) -> Date<Iso> {
         let day_of_year_indian = date.0.day_of_year();
         let days_in_year = date.0.days_in_year();

@@ -12,129 +12,167 @@
 //! This is public and doc(hidden) so that it can be accessed from the gen_greek_to_me test file,
 //! and should not be used otherwise.
 
+#[rustfmt::skip]
 mod data;
 
-pub(crate) use data::GREEK_DATA_TRIE;
+pub(crate) fn get_data(ch: char) -> Option<GreekPrecomposedLetterData> {
+    let ch_i = ch as usize;
+    let packed = if (0x370..=0x3FF).contains(&ch_i) {
+        *data::DATA_370.get(ch_i - 0x370)?
+    } else if (0x1f00..0x1fff).contains(&ch_i) {
+        *data::DATA_1F00.get(ch_i - 0x1f00)?
+    } else {
+        data::match_extras(ch)?
+    };
 
-use icu_collections::codepointtrie::TrieValue;
-use zerovec::ule::AsULE;
+    let packed = PackedGreekPrecomposedLetterData(packed);
 
-/// The per-precomposed letter data stored in the hardcoded trie from `mod data`
-#[derive(Copy, Clone, Default, PartialEq, Eq, Debug)]
-#[cfg_attr(feature = "datagen", derive(databake::Bake), databake(path = self))] // the `self` makes this bakeable if it's already in scope
-pub struct GreekPrecomposedLetterData {
-    /// Whether it has an accent
-    pub accented: bool,
-    /// Whether it has a dialytika
-    pub dialytika: bool,
-    /// Whether it contains an ypogegrammeni
-    pub ypogegrammeni: bool,
-    /// The uppercase Greek letter that this maps to (with accents removed)
-    /// expressed as an offset from U+0391 GREEK CAPITAL LETTER ALPHA
-    pub uppercase: Option<char>,
+    GreekPrecomposedLetterData::try_from(packed).ok()
 }
 
-const GREEK_BLOCK_START: u32 = 0x370;
-
-/// Format:
+/// A packed representation of [`GreekPrecomposedLetterData`]
 ///
-/// 0..7: uppercase_delta
-/// 8: uppercase_delta is set
-/// 9: ypogegrammeni
-/// 10: dialytika
-/// 11: accented
-/// rest: unused, but unvalidated as this is not user data
-impl AsULE for GreekPrecomposedLetterData {
-    type ULE = <u16 as AsULE>::ULE;
-    fn to_unaligned(self) -> Self::ULE {
-        let sixteen = u16::from(self);
+/// Bit layout:
+///
+/// ```text
+///   7       6   5   4     3   2   1       0
+/// discr=0 | [diacritics]  | [vowel            ]  
+/// discr=1 | [  unused = 0     ]      | [is_rho]
+/// ```
+///
+/// Bit 7 is the discriminant. if 0, it is a vowel, else, it is a consonant.
+/// If the whole thing is a zero then it is assumed to be an empty entry.
+///
+/// In the vowel case, the next three bits are the next three elements of GreekDiacritics,
+/// in order (accented, dialytika, ypogegrammeni), and the four bits after that identify
+/// a GreekVowel value.
+///
+/// In the consonant case, the remaining seven bits identify a GreekConsonant value.
+#[derive(Debug, Clone, Copy)]
+pub struct PackedGreekPrecomposedLetterData(pub u8);
 
-        sixteen.to_unaligned()
-    }
-
-    fn from_unaligned(ule: Self::ULE) -> Self {
-        u16::from_unaligned(ule).into()
-    }
-}
-
-impl TrieValue for GreekPrecomposedLetterData {
-    type TryFromU32Error = <u16 as TrieValue>::TryFromU32Error;
-
-    fn try_from_u32(i: u32) -> Result<Self, Self::TryFromU32Error> {
-        u16::try_from_u32(i).map(From::from)
-    }
-}
-
-impl GreekPrecomposedLetterData {
-    /// Data on the diacritics present in this character
-    pub(crate) fn diacritics(self) -> GreekDiacritics {
-        GreekDiacritics {
-            accented: self.accented,
-            dialytika: self.dialytika,
-            ypogegrammeni: self.ypogegrammeni,
+impl TryFrom<PackedGreekPrecomposedLetterData> for GreekPrecomposedLetterData {
+    type Error = ();
+    fn try_from(other: PackedGreekPrecomposedLetterData) -> Result<GreekPrecomposedLetterData, ()> {
+        if other.0 == 0 {
+            return Err(());
         }
-    }
-    /// The base greek letter in this character, uppercased (if any)
-    pub(crate) fn greek_base_uppercase(self) -> Option<char> {
-        self.uppercase
-    }
-
-    /// Is this a greek letter?
-    pub(crate) fn is_greek_letter(self) -> bool {
-        self.uppercase.is_some()
-    }
-}
-
-impl From<u16> for GreekPrecomposedLetterData {
-    fn from(sixteen: u16) -> Self {
-        let mut this = Self::default();
-        if sixteen & (1 << 8) != 0 {
-            let int = u32::from(sixteen & 0xFF);
-            let ch = int + GREEK_BLOCK_START;
-            let ch = char::try_from(ch);
-            debug_assert!(ch.is_ok());
-            this.uppercase = ch.ok();
+        if other.0 & 0x80 == 0 {
+            // vowel
+            let diacritics = GreekDiacritics {
+                accented: other.0 & 0x40 != 0,
+                dialytika: other.0 & 0x20 != 0,
+                ypogegrammeni: other.0 & 0x10 != 0,
+            };
+            let vowel = GreekVowel::try_from(other.0 & 0b1111);
+            debug_assert!(vowel.is_ok());
+            let vowel = vowel.unwrap_or(GreekVowel::Α);
+            Ok(GreekPrecomposedLetterData::Vowel(vowel, diacritics))
         } else {
-            debug_assert!((sixteen & 0xFF00) == 0)
+            // consonant
+            // 0x80 is is_rho = false, 0x81 is is_rho = true
+            Ok(GreekPrecomposedLetterData::Consonant(other.0 == 0x81))
         }
-        this.ypogegrammeni = sixteen & (1 << 9) != 0;
-        this.dialytika = sixteen & (1 << 10) != 0;
-        this.accented = sixteen & (1 << 11) != 0;
-        debug_assert!(
-            sixteen & (0xFFFF - (1 << 12) + 1) == 0,
-            "Bits 12..16 should not be set in GreekPrecomposedLetterData"
-        );
-
-        this
     }
 }
 
-impl From<GreekPrecomposedLetterData> for u16 {
-    fn from(this: GreekPrecomposedLetterData) -> Self {
-        let mut sixteen = 0;
-        if let Some(uppercase) = this.uppercase {
-            let delta = u32::from(uppercase) - GREEK_BLOCK_START;
-            debug_assert!(delta <= 0xFF);
-            sixteen = u16::try_from(delta).unwrap_or(0);
-
-            sixteen |= 1 << 8;
+impl From<GreekPrecomposedLetterData> for PackedGreekPrecomposedLetterData {
+    fn from(other: GreekPrecomposedLetterData) -> Self {
+        match other {
+            GreekPrecomposedLetterData::Vowel(vowel, diacritics) => {
+                let mut bits = 0;
+                if diacritics.accented {
+                    bits |= 0x40;
+                }
+                if diacritics.dialytika {
+                    bits |= 0x20;
+                }
+                if diacritics.ypogegrammeni {
+                    bits |= 0x10;
+                }
+                bits |= vowel as u8;
+                PackedGreekPrecomposedLetterData(bits)
+            }
+            GreekPrecomposedLetterData::Consonant(is_rho) => {
+                PackedGreekPrecomposedLetterData(0x80 + is_rho as u8)
+            }
         }
-        if this.ypogegrammeni {
-            sixteen |= 1 << 9;
-        }
-        if this.dialytika {
-            sixteen |= 1 << 10;
-        }
-        if this.accented {
-            sixteen |= 1 << 11;
-        }
-        sixteen
     }
 }
 
-impl From<GreekPrecomposedLetterData> for u32 {
-    fn from(this: GreekPrecomposedLetterData) -> Self {
-        u16::from(this).into()
+/// The precomposed letter data stored in the hardcoded data in `mod data`
+#[derive(Debug, Copy, Clone, PartialEq, Eq)]
+pub enum GreekPrecomposedLetterData {
+    /// A vowel, with a capitalized base letter, and the diacritics found
+    Vowel(GreekVowel, GreekDiacritics),
+    /// A consonant or vowel that does not take diacritics
+    ///
+    /// The boolean is true when the consonant is a rho, which is handled specially since
+    /// it can take breathing marks (but is *not* a vowel)
+    Consonant(bool),
+}
+
+/// n.b. these are Greek capital letters, not Latin
+#[derive(Debug, Clone, Copy, PartialOrd, Ord, PartialEq, Eq)]
+pub enum GreekVowel {
+    // 0 is purposely left out so that the all-zero case is unambiguous
+    Α = 1,
+    Ε = 2,
+    Η = 3,
+    Ι = 4,
+    Ο = 5,
+    Υ = 6,
+    Ω = 7,
+    ϒ = 8,
+}
+pub const CAPITAL_RHO: char = 'Ρ';
+
+impl From<GreekVowel> for char {
+    fn from(other: GreekVowel) -> Self {
+        match other {
+            GreekVowel::Α => 'Α',
+            GreekVowel::Ε => 'Ε',
+            GreekVowel::Η => 'Η',
+            GreekVowel::Ι => 'Ι',
+            GreekVowel::Ο => 'Ο',
+            GreekVowel::Υ => 'Υ',
+            GreekVowel::Ω => 'Ω',
+            GreekVowel::ϒ => 'ϒ',
+        }
+    }
+}
+
+impl TryFrom<char> for GreekVowel {
+    type Error = ();
+    fn try_from(other: char) -> Result<Self, ()> {
+        Ok(match other {
+            'Α' => GreekVowel::Α,
+            'Ε' => GreekVowel::Ε,
+            'Η' => GreekVowel::Η,
+            'Ι' => GreekVowel::Ι,
+            'Ο' => GreekVowel::Ο,
+            'Υ' => GreekVowel::Υ,
+            'Ω' => GreekVowel::Ω,
+            'ϒ' => GreekVowel::ϒ,
+            _ => return Err(()),
+        })
+    }
+}
+
+impl TryFrom<u8> for GreekVowel {
+    type Error = ();
+    fn try_from(other: u8) -> Result<Self, ()> {
+        Ok(match other {
+            1 => Self::Α,
+            2 => Self::Ε,
+            3 => Self::Η,
+            4 => Self::Ι,
+            5 => Self::Ο,
+            6 => Self::Υ,
+            7 => Self::Ω,
+            8 => Self::ϒ,
+            _ => return Err(()),
+        })
     }
 }
 
@@ -236,7 +274,7 @@ pub(crate) fn preceded_by_greek_letter(context_before: &str) -> bool {
     for c in context_before.chars().rev() {
         match c {
             diacritics!(ACCENTS | BREATHING_AND_LENGTH | DIALYTIKA_ALL | YPOGEGRAMMENI) => continue,
-            _ => return GREEK_DATA_TRIE.get(c).is_greek_letter(),
+            _ => return get_data(c).is_some(),
         }
     }
     false
@@ -258,19 +296,14 @@ pub(crate) fn preceding_greek_vowel_diacritics(
             diacritics!(DIALYTIKA) => combining.dialytika = true,
             diacritics!(BREATHING_AND_LENGTH) => continue,
             _ => {
-                let data = GREEK_DATA_TRIE.get(c);
-                if let Some(uppercase) = data.greek_base_uppercase() {
-                    let is_vowel = matches!(uppercase, 'Α' | 'Ε' | 'Η' | 'Ι' | 'Ο' | 'Υ' | 'Ω');
-                    if !is_vowel {
-                        return None;
-                    }
-                    let base_diacritics = data.diacritics();
+                let data = get_data(c);
+                if let Some(GreekPrecomposedLetterData::Vowel(_vowel, diacritics)) = data {
                     return Some(GreekCombiningCharacterSequenceDiacritics {
-                        precomposed: base_diacritics,
+                        precomposed: diacritics,
                         combining,
                     });
                 } else {
-                    // Not a greek letter.
+                    // Not a greek vowel.
                     return None;
                 }
             }

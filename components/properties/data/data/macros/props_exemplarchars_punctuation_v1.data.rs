@@ -6,7 +6,7 @@
 #[macro_export]
 macro_rules! __impl_props_exemplarchars_punctuation_v1 {
     ($ provider : path) => {
-        #[clippy::msrv = "1.65"]
+        #[clippy::msrv = "1.66"]
         impl icu_provider::DataProvider<icu::properties::provider::ExemplarCharactersPunctuationV1Marker> for $provider {
             fn load(&self, req: icu_provider::DataRequest) -> Result<icu_provider::DataResponse<icu::properties::provider::ExemplarCharactersPunctuationV1Marker>, icu_provider::DataError> {
                 static EL: <icu::properties::provider::ExemplarCharactersPunctuationV1Marker as icu_provider::DataMarker>::Yokeable = icu::properties::provider::PropertyUnicodeSetV1::CPInversionListStrList(icu::collections::codepointinvliststringlist::CodePointInversionListAndStringList::from_parts_unchecked(

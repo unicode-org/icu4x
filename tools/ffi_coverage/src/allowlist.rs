@@ -329,6 +329,7 @@ lazy_static::lazy_static! {
         "icu::datetime::options::DateTimeFormatterOptions",
 
         // Re-exports of errors
+        "fixed_decimal::Error",
         "icu::calendar::Error",
         "icu::compactdecimal::Error",
         "icu::datetime::Error",

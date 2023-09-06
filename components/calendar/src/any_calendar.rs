@@ -546,7 +546,7 @@ impl Calendar for AnyCalendar {
             Self::IslamicUmmAlQura(_) => "AnyCalendar (Islamic, Umm al-Qura)",
             Self::Iso(_) => "AnyCalendar (Iso)",
             Self::Japanese(_) => "AnyCalendar (Japanese)",
-            Self::JapaneseExtended(_) => "AnyCalendar (Japanese, histocial era data)",
+            Self::JapaneseExtended(_) => "AnyCalendar (Japanese, historical era data)",
             Self::Persian(_) => "AnyCalendar (Persian)",
             Self::Roc(_) => "AnyCalendar (Roc)",
         }

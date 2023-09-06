@@ -245,6 +245,14 @@ dependencies = [
 ]
 
 [[package]]
+name = "calendrical_calculations"
+version = "0.1.0"
+dependencies = [
+ "displaydoc",
+ "libm",
+]
+
+[[package]]
 name = "camino"
 version = "1.1.4"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1275,6 +1283,7 @@ dependencies = [
 name = "icu_calendar"
 version = "1.2.0"
 dependencies = [
+ "calendrical_calculations",
  "criterion",
  "databake",
  "displaydoc",
@@ -1356,7 +1365,6 @@ dependencies = [
  "icu",
  "icu_benchmark_macros",
  "icu_casemap_data",
- "icu_codepointtrie_builder",
  "icu_collections",
  "icu_locid",
  "icu_normalizer",
@@ -1489,8 +1497,7 @@ dependencies = [
  "icu_segmenter",
  "icu_singlenumberformatter",
  "icu_timezone",
- "icu_transliteration",
- "icu_transliterator_parser",
+ "icu_transliterate",
  "icu_unitsconversion",
  "itertools",
  "log",
@@ -1734,7 +1741,7 @@ dependencies = [
 
 [[package]]
 name = "icu_personnames"
-version = "0.1.0"
+version = "0.0.0"
 dependencies = [
  "databake",
  "icu_collections",
@@ -1924,7 +1931,7 @@ version = "1.2.0"
 
 [[package]]
 name = "icu_singlenumberformatter"
-version = "0.1.0"
+version = "0.0.0"
 dependencies = [
  "databake",
  "displaydoc",
@@ -1979,13 +1986,22 @@ name = "icu_timezone_data"
 version = "1.2.0"
 
 [[package]]
-name = "icu_transliteration"
+name = "icu_transliterate"
 version = "0.0.0"
 dependencies = [
+ "criterion",
  "databake",
+ "displaydoc",
+ "icu_casemap",
  "icu_collections",
+ "icu_locid",
+ "icu_normalizer",
+ "icu_properties",
  "icu_provider",
- "icu_transliteration_data",
+ "icu_transliterate_data",
+ "icu_unicodeset_parser",
+ "litemap",
+ "log",
  "serde",
  "yoke",
  "zerofrom",
@@ -1993,22 +2009,8 @@ dependencies = [
 ]
 
 [[package]]
-name = "icu_transliteration_data"
+name = "icu_transliterate_data"
 version = "0.0.0"
-
-[[package]]
-name = "icu_transliterator_parser"
-version = "0.0.0"
-dependencies = [
- "icu_collections",
- "icu_properties",
- "icu_provider",
- "icu_transliteration",
- "icu_unicodeset_parser",
- "log",
- "zerofrom",
- "zerovec",
-]
 
 [[package]]
 name = "icu_unicodeset_parser"
@@ -2024,7 +2026,7 @@ dependencies = [
 
 [[package]]
 name = "icu_unitsconversion"
-version = "1.2.0"
+version = "0.0.0"
 dependencies = [
  "databake",
  "displaydoc",
@@ -2038,7 +2040,7 @@ dependencies = [
 
 [[package]]
 name = "icu_unitsconversion_data"
-version = "1.3.0"
+version = "0.0.0"
 
 [[package]]
 name = "ident_case"
@@ -4293,7 +4295,7 @@ dependencies = [
 
 [[package]]
 name = "zerotrie"
-version = "0.1.0"
+version = "0.0.0"
 dependencies = [
  "bincode",
  "criterion",

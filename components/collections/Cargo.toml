@@ -69,7 +69,3 @@ path = "src/codepointtrie/benches/iai_cpt.rs"
 name = "inv_list"
 harness = false
 path = "src/codepointinvlist/benches/inv_list.rs"
-
-[[example]]
-name = "unicode_bmp_blocks_selector"
-path = "src/codepointinvlist/examples/unicode_bmp_blocks_selector.rs"

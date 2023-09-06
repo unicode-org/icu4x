@@ -5,7 +5,7 @@
 impl_tinystr_subtag!(
     /// A language subtag (examples: `"en"`, `"csb"`, `"zh"`, `"und"`, etc.)
     ///
-    /// [`Language`] represents a Unicode base language code conformat to the
+    /// [`Language`] represents a Unicode base language code conformant to the
     /// [`unicode_language_id`] field of the Language and Locale Identifier.
     ///
     /// # Examples

@@ -6,11 +6,10 @@
 
 use crate::error::CalendarError;
 use crate::helpers;
-use crate::rata_die::RataDie;
 use core::convert::TryFrom;
 use core::convert::TryInto;
 use core::fmt;
-use core::ops::{Add, AddAssign, Sub, SubAssign};
+use core::num::NonZeroU8;
 use core::str::FromStr;
 use tinystr::TinyAsciiStr;
 use tinystr::{TinyStr16, TinyStr4};
@@ -58,9 +57,12 @@ pub struct FormattableYear {
     /// The year number in the current era (usually 1-based).
     pub number: i32,
 
-    /// The year in the current cycle for cyclic calendars;
+    /// The year in the current cycle for cyclic calendars (1-indexed)
     /// can be set to None for non-cyclic calendars
-    pub cyclic: Option<i32>,
+    ///
+    /// For chinese and dangi it will be
+    /// a number between 1 and 60, for hypothetical other calendars it may be something else.
+    pub cyclic: Option<NonZeroU8>,
 
     /// The related ISO year. This is normally the ISO (proleptic Gregorian) year having the greatest
     /// overlap with the calendar year. It is used in certain date formatting patterns.
@@ -75,7 +77,7 @@ impl FormattableYear {
     ///
     /// Other fields can be set mutably after construction
     /// as needed
-    pub fn new(era: Era, number: i32, cyclic: Option<i32>) -> Self {
+    pub fn new(era: Era, number: i32, cyclic: Option<NonZeroU8>) -> Self {
         Self {
             era,
             number,
@@ -370,7 +372,7 @@ dt_unit!(
     61,
     "An ISO-8601 second component, for use with ISO calendars.
 
-Must be within inclusive bounds `[0, 61]`. `60` accomodates for leap seconds.
+Must be within inclusive bounds `[0, 61]`. `60` accommodates for leap seconds.
 
 The value could also be equal to 60 or 61, to indicate the end of a leap second,
 with the writing `23:59:61.000000000Z` or `23:59:60.000000000Z`. These examples,
@@ -757,75 +759,5 @@ impl From<usize> for IsoWeekday {
             ordinal = 7;
         }
         unsafe { core::mem::transmute(ordinal) }
-    }
-}
-
-/// A moment is a RataDie with a fractional part giving the time of day.
-///
-/// NOTE: This should not cause overflow errors for most cases, but consider
-/// alternative implementations if necessary.
-#[derive(Debug, Copy, Clone, PartialEq, PartialOrd)]
-#[doc(hidden)] // This type is unstable
-pub struct Moment(f64);
-
-/// Add a number of days to a Moment
-impl Add<f64> for Moment {
-    type Output = Self;
-    fn add(self, rhs: f64) -> Self::Output {
-        Self(self.0 + rhs)
-    }
-}
-
-impl AddAssign<f64> for Moment {
-    fn add_assign(&mut self, rhs: f64) {
-        self.0 += rhs;
-    }
-}
-
-/// Subtract a number of days from a Moment
-impl Sub<f64> for Moment {
-    type Output = Self;
-    fn sub(self, rhs: f64) -> Self::Output {
-        Self(self.0 - rhs)
-    }
-}
-
-impl SubAssign<f64> for Moment {
-    fn sub_assign(&mut self, rhs: f64) {
-        self.0 -= rhs;
-    }
-}
-
-/// Calculate the number of days between two moments
-impl Sub for Moment {
-    type Output = f64;
-    fn sub(self, rhs: Self) -> Self::Output {
-        self.0 - rhs.0
-    }
-}
-
-impl Moment {
-    /// Create a new moment
-    pub const fn new(value: f64) -> Moment {
-        Moment(value)
-    }
-
-    /// Get the inner field of a Moment
-    pub const fn inner(&self) -> f64 {
-        self.0
-    }
-
-    /// Get the RataDie of a Moment
-    pub(crate) fn as_rata_die(&self) -> RataDie {
-        RataDie::new(libm::floor(self.0) as i64)
-    }
-}
-
-#[test]
-fn test_moment_to_rata_die_conversion() {
-    for i in -1000..=1000 {
-        let moment = Moment::new(i as f64);
-        let rata_die = moment.as_rata_die();
-        assert_eq!(rata_die.to_i64_date(), i);
     }
 }

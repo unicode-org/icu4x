@@ -7,7 +7,7 @@
 //! It depends on [`CodePointInversionList`] to efficiently represent Unicode code points, while
 //! it also maintains a list of strings in the set.
 //!
-//! It is an implementation of the the existing [ICU4C UnicodeSet API](https://unicode-org.github.io/icu-docs/apidoc/released/icu4c/classicu_1_1UnicodeSet.html).
+//! It is an implementation of the existing [ICU4C UnicodeSet API](https://unicode-org.github.io/icu-docs/apidoc/released/icu4c/classicu_1_1UnicodeSet.html).
 
 use crate::codepointinvlist::{
     CodePointInversionList, CodePointInversionListBuilder, CodePointInversionListError,
@@ -363,8 +363,8 @@ mod tests {
         let in_strs_1 = ["a", "abc", "xyz", "abc"];
         let in_strs_2 = ["xyz", "abc", "a", "abc"];
 
-        let cpilsl_1 = CodePointInversionListAndStringList::from_iter(in_strs_1.into_iter());
-        let cpilsl_2 = CodePointInversionListAndStringList::from_iter(in_strs_2.into_iter());
+        let cpilsl_1 = CodePointInversionListAndStringList::from_iter(in_strs_1);
+        let cpilsl_2 = CodePointInversionListAndStringList::from_iter(in_strs_2);
 
         assert_eq!(cpilsl_1, cpilsl_2);
 

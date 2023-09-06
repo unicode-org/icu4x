@@ -1164,7 +1164,9 @@
         "str_list": []
       }
     ],
-    "function_calls": []
+    "function_calls": [],
+    "max_left_placeholder_count": 0,
+    "max_right_placeholder_count": 0
   },
   "filter": [
     "Ά",
@@ -1212,1335 +1214,1142 @@
         "ante": "",
         "key": "󰀂",
         "post": "",
-        "replacer": "Α",
-        "cursor_offset": 0
+        "replacer": "Α"
       },
       {
         "ante": "",
         "key": "󰀃",
         "post": "",
-        "replacer": "α",
-        "cursor_offset": 0
+        "replacer": "α"
       },
       {
         "ante": "",
         "key": "󰀄",
         "post": "",
-        "replacer": "Ά",
-        "cursor_offset": 0
+        "replacer": "Ά"
       },
       {
         "ante": "",
         "key": "󰀅",
         "post": "",
-        "replacer": "ά",
-        "cursor_offset": 0
+        "replacer": "ά"
       },
       {
         "ante": "",
         "key": "󰀆",
         "post": "",
-        "replacer": "Ε",
-        "cursor_offset": 0
+        "replacer": "Ε"
       },
       {
         "ante": "",
         "key": "󰀇",
         "post": "",
-        "replacer": "ε",
-        "cursor_offset": 0
+        "replacer": "ε"
       },
       {
         "ante": "",
         "key": "󰀈",
         "post": "",
-        "replacer": "Έ",
-        "cursor_offset": 0
+        "replacer": "Έ"
       },
       {
         "ante": "",
         "key": "󰀉",
         "post": "",
-        "replacer": "έ",
-        "cursor_offset": 0
+        "replacer": "έ"
       },
       {
         "ante": "",
         "key": "󰀊",
         "post": "",
-        "replacer": "Η",
-        "cursor_offset": 0
+        "replacer": "Η"
       },
       {
         "ante": "",
         "key": "󰀋",
         "post": "",
-        "replacer": "η",
-        "cursor_offset": 0
+        "replacer": "η"
       },
       {
         "ante": "",
         "key": "󰀌",
         "post": "",
-        "replacer": "Ή",
-        "cursor_offset": 0
+        "replacer": "Ή"
       },
       {
         "ante": "",
         "key": "󰀍",
         "post": "",
-        "replacer": "ή",
-        "cursor_offset": 0
+        "replacer": "ή"
       },
       {
         "ante": "",
         "key": "󰀎",
         "post": "",
-        "replacer": "Ι",
-        "cursor_offset": 0
+        "replacer": "Ι"
       },
       {
         "ante": "",
         "key": "󰀏",
         "post": "",
-        "replacer": "ι",
-        "cursor_offset": 0
+        "replacer": "ι"
       },
       {
         "ante": "",
         "key": "󰀐",
         "post": "",
-        "replacer": "Ί",
-        "cursor_offset": 0
+        "replacer": "Ί"
       },
       {
         "ante": "",
         "key": "󰀑",
         "post": "",
-        "replacer": "ί",
-        "cursor_offset": 0
+        "replacer": "ί"
       },
       {
         "ante": "",
         "key": "󰀒",
         "post": "",
-        "replacer": "Ο",
-        "cursor_offset": 0
+        "replacer": "Ο"
       },
       {
         "ante": "",
         "key": "󰀓",
         "post": "",
-        "replacer": "ο",
-        "cursor_offset": 0
+        "replacer": "ο"
       },
       {
         "ante": "",
         "key": "󰀔",
         "post": "",
-        "replacer": "Ό",
-        "cursor_offset": 0
+        "replacer": "Ό"
       },
       {
         "ante": "",
         "key": "󰀕",
         "post": "",
-        "replacer": "ό",
-        "cursor_offset": 0
+        "replacer": "ό"
       },
       {
         "ante": "",
         "key": "Ὑ",
         "post": "",
-        "replacer": "Υ",
-        "cursor_offset": 0
+        "replacer": "Υ"
       },
       {
         "ante": "",
         "key": "󰀖",
         "post": "",
-        "replacer": "υ",
-        "cursor_offset": 0
+        "replacer": "υ"
       },
       {
         "ante": "",
         "key": "󰀗",
         "post": "",
-        "replacer": "Ύ",
-        "cursor_offset": 0
+        "replacer": "Ύ"
       },
       {
         "ante": "",
         "key": "󰀘",
         "post": "",
-        "replacer": "ύ",
-        "cursor_offset": 0
+        "replacer": "ύ"
       },
       {
         "ante": "",
         "key": "󰀙",
         "post": "",
-        "replacer": "Ω",
-        "cursor_offset": 0
+        "replacer": "Ω"
       },
       {
         "ante": "",
         "key": "󰀚",
         "post": "",
-        "replacer": "ω",
-        "cursor_offset": 0
+        "replacer": "ω"
       },
       {
         "ante": "",
         "key": "󰀛",
         "post": "",
-        "replacer": "Ώ",
-        "cursor_offset": 0
+        "replacer": "Ώ"
       },
       {
         "ante": "",
         "key": "󰀜",
         "post": "",
-        "replacer": "ώ",
-        "cursor_offset": 0
+        "replacer": "ώ"
       },
       {
         "ante": "",
         "key": "Ῥ",
         "post": "",
-        "replacer": "Ρ",
-        "cursor_offset": 0
+        "replacer": "Ρ"
       },
       {
         "ante": "",
         "key": "󰀝",
         "post": "",
-        "replacer": "ρ",
-        "cursor_offset": 0
+        "replacer": "ρ"
       },
       {
         "ante": "",
         "key": "Αί",
         "post": "",
-        "replacer": "Aí",
-        "cursor_offset": 0
+        "replacer": "Aí"
       },
       {
         "ante": "",
         "key": "αί",
         "post": "",
-        "replacer": "aí",
-        "cursor_offset": 0
+        "replacer": "aí"
       },
       {
         "ante": "",
         "key": "Οί",
         "post": "",
-        "replacer": "Oí",
-        "cursor_offset": 0
+        "replacer": "Oí"
       },
       {
         "ante": "",
         "key": "οί",
         "post": "",
-        "replacer": "Oí",
-        "cursor_offset": 0
+        "replacer": "Oí"
       },
       {
         "ante": "",
         "key": "Ού",
         "post": "",
-        "replacer": "Oú",
-        "cursor_offset": 0
+        "replacer": "Oú"
       },
       {
         "ante": "",
         "key": "ού",
         "post": "",
-        "replacer": "oú",
-        "cursor_offset": 0
+        "replacer": "oú"
       },
       {
         "ante": "",
         "key": "Αύ",
         "post": "",
-        "replacer": "Άυ",
-        "cursor_offset": 0
+        "replacer": "Άυ"
       },
       {
         "ante": "",
         "key": "αύ",
         "post": "",
-        "replacer": "άυ",
-        "cursor_offset": 0
+        "replacer": "άυ"
       },
       {
         "ante": "",
         "key": "Εύ",
         "post": "",
-        "replacer": "Έυ",
-        "cursor_offset": 0
+        "replacer": "Έυ"
       },
       {
         "ante": "",
         "key": "εύ",
         "post": "",
-        "replacer": "έυ",
-        "cursor_offset": 0
+        "replacer": "έυ"
       },
       {
         "ante": "",
         "key": "Ηύ",
         "post": "",
-        "replacer": "Ήυ",
-        "cursor_offset": 0
+        "replacer": "Ήυ"
       },
       {
         "ante": "",
         "key": "ηύ",
         "post": "",
-        "replacer": "ήυ",
-        "cursor_offset": 0
+        "replacer": "ήυ"
       },
       {
         "ante": "",
         "key": "󰀞",
         "post": "",
-        "replacer": "Ï",
-        "cursor_offset": 0
+        "replacer": "Ï"
       },
       {
         "ante": "",
         "key": "󰀟",
         "post": "",
-        "replacer": "ï",
-        "cursor_offset": 0
+        "replacer": "ï"
       },
       {
         "ante": "",
         "key": "󰀠",
         "post": "",
-        "replacer": "ḯ",
-        "cursor_offset": 0
+        "replacer": "ḯ"
       },
       {
         "ante": "",
         "key": "Αε",
         "post": "",
-        "replacer": "Aë",
-        "cursor_offset": 0
+        "replacer": "Aë"
       },
       {
         "ante": "",
         "key": "αε",
         "post": "",
-        "replacer": "aë",
-        "cursor_offset": 0
+        "replacer": "aë"
       },
       {
         "ante": "",
         "key": "Αη",
         "post": "",
-        "replacer": "Aï",
-        "cursor_offset": 0
+        "replacer": "Aï"
       },
       {
         "ante": "",
         "key": "αη",
         "post": "",
-        "replacer": "aï",
-        "cursor_offset": 0
+        "replacer": "aï"
       },
       {
         "ante": "",
         "key": "Οη",
         "post": "",
-        "replacer": "Oï",
-        "cursor_offset": 0
+        "replacer": "Oï"
       },
       {
         "ante": "",
         "key": "οη",
         "post": "",
-        "replacer": "oï",
-        "cursor_offset": 0
+        "replacer": "oï"
       },
       {
         "ante": "",
         "key": "Ωο",
         "post": "",
-        "replacer": "Oö",
-        "cursor_offset": 0
+        "replacer": "Oö"
       },
       {
         "ante": "",
         "key": "ωο",
         "post": "",
-        "replacer": "oö",
-        "cursor_offset": 0
+        "replacer": "oö"
       },
       {
         "ante": "",
         "key": "Άε",
         "post": "",
-        "replacer": "Áë",
-        "cursor_offset": 0
+        "replacer": "Áë"
       },
       {
         "ante": "",
         "key": "άε",
         "post": "",
-        "replacer": "áë",
-        "cursor_offset": 0
+        "replacer": "áë"
       },
       {
         "ante": "",
         "key": "Άη",
         "post": "",
-        "replacer": "Áï",
-        "cursor_offset": 0
+        "replacer": "Áï"
       },
       {
         "ante": "",
         "key": "άη",
         "post": "",
-        "replacer": "áï",
-        "cursor_offset": 0
+        "replacer": "áï"
       },
       {
         "ante": "",
         "key": "Όη",
         "post": "",
-        "replacer": "Óï",
-        "cursor_offset": 0
+        "replacer": "Óï"
       },
       {
         "ante": "",
         "key": "όη",
         "post": "",
-        "replacer": "óï",
-        "cursor_offset": 0
+        "replacer": "óï"
       },
       {
         "ante": "",
         "key": "Ώο",
         "post": "",
-        "replacer": "Óö",
-        "cursor_offset": 0
+        "replacer": "Óö"
       },
       {
         "ante": "",
         "key": "ώο",
         "post": "",
-        "replacer": "óö",
-        "cursor_offset": 0
+        "replacer": "óö"
       },
       {
         "ante": "",
         "key": "ΑΙ",
         "post": "",
-        "replacer": "AI",
-        "cursor_offset": 0
+        "replacer": "AI"
       },
       {
         "ante": "",
         "key": "Αι",
         "post": "",
-        "replacer": "Ai",
-        "cursor_offset": 0
+        "replacer": "Ai"
       },
       {
         "ante": "",
         "key": "αι",
         "post": "",
-        "replacer": "ai",
-        "cursor_offset": 0
+        "replacer": "ai"
       },
       {
         "ante": "",
         "key": "ΑΥ",
         "post": "",
-        "replacer": "AV",
-        "cursor_offset": 0
+        "replacer": "AV"
       },
       {
         "ante": "",
         "key": "Αυ",
         "post": "",
-        "replacer": "Av",
-        "cursor_offset": 0
+        "replacer": "Av"
       },
       {
         "ante": "",
         "key": "αυ",
         "post": "",
-        "replacer": "av",
-        "cursor_offset": 0
+        "replacer": "av"
       },
       {
         "ante": "",
         "key": "Α",
         "post": "",
-        "replacer": "A",
-        "cursor_offset": 0
+        "replacer": "A"
       },
       {
         "ante": "",
         "key": "α",
         "post": "",
-        "replacer": "a",
-        "cursor_offset": 0
+        "replacer": "a"
       },
       {
         "ante": "",
         "key": "Ά",
         "post": "",
-        "replacer": "Á",
-        "cursor_offset": 0
+        "replacer": "Á"
       },
       {
         "ante": "",
         "key": "ά",
         "post": "",
-        "replacer": "á",
-        "cursor_offset": 0
+        "replacer": "á"
       },
       {
         "ante": "",
         "key": "Β",
         "post": "",
-        "replacer": "V",
-        "cursor_offset": 0
+        "replacer": "V"
       },
       {
         "ante": "",
         "key": "β",
         "post": "",
-        "replacer": "v",
-        "cursor_offset": 0
+        "replacer": "v"
       },
       {
         "ante": "",
         "key": "ΓΓ",
         "post": "",
-        "replacer": "NG",
-        "cursor_offset": 0
+        "replacer": "NG"
       },
       {
         "ante": "",
         "key": "Γγ",
         "post": "",
-        "replacer": "Ng",
-        "cursor_offset": 0
+        "replacer": "Ng"
       },
       {
         "ante": "",
         "key": "γγ",
         "post": "",
-        "replacer": "ng",
-        "cursor_offset": 0
+        "replacer": "ng"
       },
       {
         "ante": "󰀀",
         "key": "ΓΚ",
         "post": "",
-        "replacer": "G",
-        "cursor_offset": 0
+        "replacer": "G"
       },
       {
         "ante": "󰀀",
         "key": "Γκ",
         "post": "",
-        "replacer": "G",
-        "cursor_offset": 0
+        "replacer": "G"
       },
       {
         "ante": "󰀀",
         "key": "γκ",
         "post": "",
-        "replacer": "g",
-        "cursor_offset": 0
+        "replacer": "g"
       },
       {
         "ante": "",
         "key": "ΓΚ",
         "post": "",
-        "replacer": "NG",
-        "cursor_offset": 0
+        "replacer": "NG"
       },
       {
         "ante": "",
         "key": "Γκ",
         "post": "",
-        "replacer": "Ng",
-        "cursor_offset": 0
+        "replacer": "Ng"
       },
       {
         "ante": "",
         "key": "γκ",
         "post": "",
-        "replacer": "ng",
-        "cursor_offset": 0
+        "replacer": "ng"
       },
       {
         "ante": "",
         "key": "Γ",
         "post": "󰀢",
-        "replacer": "G",
-        "cursor_offset": 0
+        "replacer": "G"
       },
       {
         "ante": "",
         "key": "Γ",
         "post": "󰀣",
-        "replacer": "G",
-        "cursor_offset": 0
+        "replacer": "G"
       },
       {
         "ante": "",
         "key": "Γ",
         "post": "ΟΥ",
-        "replacer": "G",
-        "cursor_offset": 0
+        "replacer": "G"
       },
       {
         "ante": "",
         "key": "Γ",
         "post": "ου",
-        "replacer": "G",
-        "cursor_offset": 0
+        "replacer": "G"
       },
       {
         "ante": "",
         "key": "γ",
         "post": "󰀤",
-        "replacer": "g",
-        "cursor_offset": 0
+        "replacer": "g"
       },
       {
         "ante": "",
         "key": "γ",
         "post": "ου",
-        "replacer": "g",
-        "cursor_offset": 0
+        "replacer": "g"
       },
       {
         "ante": "",
         "key": "Γ",
         "post": "󰀥Ι",
-        "replacer": "Y",
-        "cursor_offset": 0
+        "replacer": "Y"
       },
       {
         "ante": "",
         "key": "Γ",
         "post": "󰀦",
-        "replacer": "Y",
-        "cursor_offset": 0
+        "replacer": "Y"
       },
       {
         "ante": "",
         "key": "Γ",
         "post": "󰀧ι",
-        "replacer": "Y",
-        "cursor_offset": 0
+        "replacer": "Y"
       },
       {
         "ante": "",
         "key": "Γ",
         "post": "󰀨",
-        "replacer": "Y",
-        "cursor_offset": 0
+        "replacer": "Y"
       },
       {
         "ante": "",
         "key": "γ",
         "post": "󰀩ι",
-        "replacer": "y",
-        "cursor_offset": 0
+        "replacer": "y"
       },
       {
         "ante": "",
         "key": "γ",
         "post": "󰀪",
-        "replacer": "y",
-        "cursor_offset": 0
+        "replacer": "y"
       },
       {
         "ante": "",
         "key": "Γ",
         "post": "󰀫",
-        "replacer": "N",
-        "cursor_offset": 0
+        "replacer": "N"
       },
       {
         "ante": "",
         "key": "Γ",
         "post": "󰀬",
-        "replacer": "N",
-        "cursor_offset": 0
+        "replacer": "N"
       },
       {
         "ante": "",
         "key": "γ",
         "post": "󰀭",
-        "replacer": "n",
-        "cursor_offset": 0
+        "replacer": "n"
       },
       {
         "ante": "",
         "key": "Γ",
         "post": "",
-        "replacer": "G",
-        "cursor_offset": 0
+        "replacer": "G"
       },
       {
         "ante": "",
         "key": "γ",
         "post": "",
-        "replacer": "g",
-        "cursor_offset": 0
+        "replacer": "g"
       },
       {
         "ante": "Ν",
         "key": "Δ",
         "post": "Ρ",
-        "replacer": "D",
-        "cursor_offset": 0
+        "replacer": "D"
       },
       {
         "ante": "ν",
         "key": "δ",
         "post": "ρ",
-        "replacer": "d",
-        "cursor_offset": 0
+        "replacer": "d"
       },
       {
         "ante": "",
         "key": "Δ",
         "post": "󰀁",
-        "replacer": "Dh",
-        "cursor_offset": 0
+        "replacer": "Dh"
       },
       {
         "ante": "",
         "key": "Δ",
         "post": "",
-        "replacer": "DH",
-        "cursor_offset": 0
+        "replacer": "DH"
       },
       {
         "ante": "",
         "key": "δ",
         "post": "",
-        "replacer": "dh",
-        "cursor_offset": 0
+        "replacer": "dh"
       },
       {
         "ante": "",
         "key": "ΕΙ",
         "post": "",
-        "replacer": "I",
-        "cursor_offset": 0
+        "replacer": "I"
       },
       {
         "ante": "",
         "key": "Ει",
         "post": "",
-        "replacer": "I",
-        "cursor_offset": 0
+        "replacer": "I"
       },
       {
         "ante": "",
         "key": "ει",
         "post": "",
-        "replacer": "i",
-        "cursor_offset": 0
+        "replacer": "i"
       },
       {
         "ante": "",
         "key": "ΕΪ",
         "post": "",
-        "replacer": "EÏ",
-        "cursor_offset": 0
+        "replacer": "EÏ"
       },
       {
         "ante": "",
         "key": "Εϊ",
         "post": "",
-        "replacer": "Eï",
-        "cursor_offset": 0
+        "replacer": "Eï"
       },
       {
         "ante": "",
         "key": "εϊ",
         "post": "",
-        "replacer": "eï",
-        "cursor_offset": 0
+        "replacer": "eï"
       },
       {
         "ante": "",
         "key": "ΕΥ",
         "post": "",
-        "replacer": "EV",
-        "cursor_offset": 0
+        "replacer": "EV"
       },
       {
         "ante": "",
         "key": "Ευ",
         "post": "",
-        "replacer": "Ev",
-        "cursor_offset": 0
+        "replacer": "Ev"
       },
       {
         "ante": "",
         "key": "ευ",
         "post": "",
-        "replacer": "ev",
-        "cursor_offset": 0
+        "replacer": "ev"
       },
       {
         "ante": "",
         "key": "Ε",
         "post": "",
-        "replacer": "E",
-        "cursor_offset": 0
+        "replacer": "E"
       },
       {
         "ante": "",
         "key": "ε",
         "post": "",
-        "replacer": "e",
-        "cursor_offset": 0
+        "replacer": "e"
       },
       {
         "ante": "",
         "key": "Έ",
         "post": "",
-        "replacer": "É",
-        "cursor_offset": 0
+        "replacer": "É"
       },
       {
         "ante": "",
         "key": "έ",
         "post": "",
-        "replacer": "é",
-        "cursor_offset": 0
+        "replacer": "é"
       },
       {
         "ante": "",
         "key": "Ζ",
         "post": "",
-        "replacer": "Z",
-        "cursor_offset": 0
+        "replacer": "Z"
       },
       {
         "ante": "",
         "key": "ζ",
         "post": "",
-        "replacer": "z",
-        "cursor_offset": 0
+        "replacer": "z"
       },
       {
         "ante": "",
         "key": "ΗΥ",
         "post": "",
-        "replacer": "IV",
-        "cursor_offset": 0
+        "replacer": "IV"
       },
       {
         "ante": "",
         "key": "Ηυ",
         "post": "",
-        "replacer": "Iv",
-        "cursor_offset": 0
+        "replacer": "Iv"
       },
       {
         "ante": "",
         "key": "ηυ",
         "post": "",
-        "replacer": "iv",
-        "cursor_offset": 0
+        "replacer": "iv"
       },
       {
         "ante": "",
         "key": "Η",
         "post": "",
-        "replacer": "I",
-        "cursor_offset": 0
+        "replacer": "I"
       },
       {
         "ante": "",
         "key": "η",
         "post": "",
-        "replacer": "i",
-        "cursor_offset": 0
+        "replacer": "i"
       },
       {
         "ante": "",
         "key": "Ή",
         "post": "",
-        "replacer": "Í",
-        "cursor_offset": 0
+        "replacer": "Í"
       },
       {
         "ante": "",
         "key": "ή",
         "post": "",
-        "replacer": "í",
-        "cursor_offset": 0
+        "replacer": "í"
       },
       {
         "ante": "",
         "key": "Θ",
         "post": "󰀁",
-        "replacer": "Th",
-        "cursor_offset": 0
+        "replacer": "Th"
       },
       {
         "ante": "",
         "key": "Θ",
         "post": "",
-        "replacer": "TH",
-        "cursor_offset": 0
+        "replacer": "TH"
       },
       {
         "ante": "",
         "key": "θ",
         "post": "",
-        "replacer": "th",
-        "cursor_offset": 0
+        "replacer": "th"
       },
       {
         "ante": "",
         "key": "Ι",
         "post": "",
-        "replacer": "I",
-        "cursor_offset": 0
+        "replacer": "I"
       },
       {
         "ante": "",
         "key": "ι",
         "post": "",
-        "replacer": "i",
-        "cursor_offset": 0
+        "replacer": "i"
       },
       {
         "ante": "",
         "key": "Ί",
         "post": "",
-        "replacer": "Í",
-        "cursor_offset": 0
+        "replacer": "Í"
       },
       {
         "ante": "",
         "key": "ί",
         "post": "",
-        "replacer": "í",
-        "cursor_offset": 0
+        "replacer": "í"
       },
       {
         "ante": "",
         "key": "Κ",
         "post": "",
-        "replacer": "K",
-        "cursor_offset": 0
+        "replacer": "K"
       },
       {
         "ante": "",
         "key": "κ",
         "post": "",
-        "replacer": "k",
-        "cursor_offset": 0
+        "replacer": "k"
       },
       {
         "ante": "",
         "key": "Λ",
         "post": "",
-        "replacer": "L",
-        "cursor_offset": 0
+        "replacer": "L"
       },
       {
         "ante": "",
         "key": "λ",
         "post": "",
-        "replacer": "l",
-        "cursor_offset": 0
+        "replacer": "l"
       },
       {
         "ante": "󰀀",
         "key": "ΜΠ",
         "post": "",
-        "replacer": "B",
-        "cursor_offset": 0
+        "replacer": "B"
       },
       {
         "ante": "󰀀",
         "key": "Μπ",
         "post": "",
-        "replacer": "B",
-        "cursor_offset": 0
+        "replacer": "B"
       },
       {
         "ante": "󰀀",
         "key": "μπ",
         "post": "",
-        "replacer": "b",
-        "cursor_offset": 0
+        "replacer": "b"
       },
       {
         "ante": "",
         "key": "ΜΠ",
         "post": "",
-        "replacer": "MB",
-        "cursor_offset": 0
+        "replacer": "MB"
       },
       {
         "ante": "",
         "key": "Μπ",
         "post": "",
-        "replacer": "Mb",
-        "cursor_offset": 0
+        "replacer": "Mb"
       },
       {
         "ante": "",
         "key": "μπ",
         "post": "",
-        "replacer": "mb",
-        "cursor_offset": 0
+        "replacer": "mb"
       },
       {
         "ante": "",
         "key": "Μ",
         "post": "",
-        "replacer": "M",
-        "cursor_offset": 0
+        "replacer": "M"
       },
       {
         "ante": "",
         "key": "μ",
         "post": "",
-        "replacer": "m",
-        "cursor_offset": 0
+        "replacer": "m"
       },
       {
         "ante": "󰀀",
         "key": "ΝΤ",
         "post": "",
-        "replacer": "D",
-        "cursor_offset": 0
+        "replacer": "D"
       },
       {
         "ante": "󰀀",
         "key": "Ντ",
         "post": "",
-        "replacer": "D",
-        "cursor_offset": 0
+        "replacer": "D"
       },
       {
         "ante": "󰀀",
         "key": "ντ",
         "post": "",
-        "replacer": "d",
-        "cursor_offset": 0
+        "replacer": "d"
       },
       {
         "ante": "",
         "key": "ΝΤ",
         "post": "",
-        "replacer": "ND",
-        "cursor_offset": 0
+        "replacer": "ND"
       },
       {
         "ante": "",
         "key": "Ντ",
         "post": "",
-        "replacer": "Nd",
-        "cursor_offset": 0
+        "replacer": "Nd"
       },
       {
         "ante": "",
         "key": "ντ",
         "post": "",
-        "replacer": "nd",
-        "cursor_offset": 0
+        "replacer": "nd"
       },
       {
         "ante": "",
         "key": "Ν",
         "post": "",
-        "replacer": "N",
-        "cursor_offset": 0
+        "replacer": "N"
       },
       {
         "ante": "",
         "key": "ν",
         "post": "",
-        "replacer": "n",
-        "cursor_offset": 0
+        "replacer": "n"
       },
       {
         "ante": "",
         "key": "Ξ",
         "post": "",
-        "replacer": "X",
-        "cursor_offset": 0
+        "replacer": "X"
       },
       {
         "ante": "",
         "key": "ξ",
         "post": "",
-        "replacer": "x",
-        "cursor_offset": 0
+        "replacer": "x"
       },
       {
         "ante": "",
         "key": "ΟΙ",
         "post": "",
-        "replacer": "OI",
-        "cursor_offset": 0
+        "replacer": "OI"
       },
       {
         "ante": "",
         "key": "Οι",
         "post": "",
-        "replacer": "Oi",
-        "cursor_offset": 0
+        "replacer": "Oi"
       },
       {
         "ante": "",
         "key": "οι",
         "post": "",
-        "replacer": "oi",
-        "cursor_offset": 0
+        "replacer": "oi"
       },
       {
         "ante": "",
         "key": "ΟΥ",
         "post": "",
-        "replacer": "OU",
-        "cursor_offset": 0
+        "replacer": "OU"
       },
       {
         "ante": "",
         "key": "Ου",
         "post": "",
-        "replacer": "Ou",
-        "cursor_offset": 0
+        "replacer": "Ou"
       },
       {
         "ante": "",
         "key": "ου",
         "post": "",
-        "replacer": "ou",
-        "cursor_offset": 0
+        "replacer": "ou"
       },
       {
         "ante": "",
         "key": "Ο",
         "post": "",
-        "replacer": "O",
-        "cursor_offset": 0
+        "replacer": "O"
       },
       {
         "ante": "",
         "key": "ο",
         "post": "",
-        "replacer": "o",
-        "cursor_offset": 0
+        "replacer": "o"
       },
       {
         "ante": "",
         "key": "Ό",
         "post": "",
-        "replacer": "Ó",
-        "cursor_offset": 0
+        "replacer": "Ó"
       },
       {
         "ante": "",
         "key": "ό",
         "post": "",
-        "replacer": "ó",
-        "cursor_offset": 0
+        "replacer": "ó"
       },
       {
         "ante": "",
         "key": "Π",
         "post": "",
-        "replacer": "P",
-        "cursor_offset": 0
+        "replacer": "P"
       },
       {
         "ante": "",
         "key": "π",
         "post": "",
-        "replacer": "p",
-        "cursor_offset": 0
+        "replacer": "p"
       },
       {
         "ante": "",
         "key": "Ρ",
         "post": "",
-        "replacer": "R",
-        "cursor_offset": 0
+        "replacer": "R"
       },
       {
         "ante": "",
         "key": "ρ",
         "post": "",
-        "replacer": "r",
-        "cursor_offset": 0
+        "replacer": "r"
       },
       {
         "ante": "",
         "key": "Σ",
         "post": "",
-        "replacer": "S",
-        "cursor_offset": 0
+        "replacer": "S"
       },
       {
         "ante": "",
         "key": "σ",
         "post": "",
-        "replacer": "s",
-        "cursor_offset": 0
+        "replacer": "s"
       },
       {
         "ante": "",
         "key": "ς",
         "post": "",
-        "replacer": "s",
-        "cursor_offset": 0
+        "replacer": "s"
       },
       {
         "ante": "",
         "key": "Τ",
         "post": "",
-        "replacer": "T",
-        "cursor_offset": 0
+        "replacer": "T"
       },
       {
         "ante": "",
         "key": "τ",
         "post": "",
-        "replacer": "t",
-        "cursor_offset": 0
+        "replacer": "t"
       },
       {
         "ante": "",
         "key": "Υ",
         "post": "",
-        "replacer": "I",
-        "cursor_offset": 0
+        "replacer": "I"
       },
       {
         "ante": "",
         "key": "υ",
         "post": "",
-        "replacer": "i",
-        "cursor_offset": 0
+        "replacer": "i"
       },
       {
         "ante": "",
         "key": "Ύ",
         "post": "",
-        "replacer": "Í",
-        "cursor_offset": 0
+        "replacer": "Í"
       },
       {
         "ante": "",
         "key": "ύ",
         "post": "",
-        "replacer": "í",
-        "cursor_offset": 0
+        "replacer": "í"
       },
       {
         "ante": "",
         "key": "Φ",
         "post": "",
-        "replacer": "F",
-        "cursor_offset": 0
+        "replacer": "F"
       },
       {
         "ante": "",
         "key": "φ",
         "post": "",
-        "replacer": "f",
-        "cursor_offset": 0
+        "replacer": "f"
       },
       {
         "ante": "",
         "key": "Χ",
         "post": "󰀁",
-        "replacer": "Kh",
-        "cursor_offset": 0
+        "replacer": "Kh"
       },
       {
         "ante": "",
         "key": "Χ",
         "post": "",
-        "replacer": "KH",
-        "cursor_offset": 0
+        "replacer": "KH"
       },
       {
         "ante": "",
         "key": "χ",
         "post": "",
-        "replacer": "kh",
-        "cursor_offset": 0
+        "replacer": "kh"
       },
       {
         "ante": "",
         "key": "Ψ",
         "post": "󰀁",
-        "replacer": "Ps",
-        "cursor_offset": 0
+        "replacer": "Ps"
       },
       {
         "ante": "",
         "key": "Ψ",
         "post": "",
-        "replacer": "PS",
-        "cursor_offset": 0
+        "replacer": "PS"
       },
       {
         "ante": "",
         "key": "ψ",
         "post": "",
-        "replacer": "ps",
-        "cursor_offset": 0
+        "replacer": "ps"
       },
       {
         "ante": "",
         "key": "Ω",
         "post": "",
-        "replacer": "O",
-        "cursor_offset": 0
+        "replacer": "O"
       },
       {
         "ante": "",
         "key": "ω",
         "post": "",
-        "replacer": "o",
-        "cursor_offset": 0
+        "replacer": "o"
       },
       {
         "ante": "",
         "key": "Ώ",
         "post": "",
-        "replacer": "Ó",
-        "cursor_offset": 0
+        "replacer": "Ó"
       },
       {
         "ante": "",
         "key": "ώ",
         "post": "",
-        "replacer": "ó",
-        "cursor_offset": 0
+        "replacer": "ó"
       }
     ]
-  ],
-  "dependencies": [
-    "x-any-nfd"
   ]
 }

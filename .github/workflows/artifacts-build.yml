@@ -189,7 +189,7 @@ jobs:
 
     - name: Upload wasm-demo bundle to Google Cloud Storage
       run: |
-        gsutil -m cp -r ffi/diplomat/js/examples/wasm-demo/dist/ gs://${{ env.GCP_MAIN_BUCKET_ID }}/gha/wasm-demo
+        gsutil -m cp -r ffi/diplomat/js/examples/wasm-demo/dist/* gs://${{ env.GCP_MAIN_BUCKET_ID }}/gha/wasm-demo
 
     - name: "⭐⭐⭐ Links to Uploaded Artifacts ⭐⭐⭐"
       run: |
@@ -212,6 +212,7 @@ jobs:
           - components/locid_transform
           - components/plurals
           - components/segmenter
+          - experimental/transliterate
           - experimental/zerotrie
           - utils/fixed_decimal
           - utils/litemap

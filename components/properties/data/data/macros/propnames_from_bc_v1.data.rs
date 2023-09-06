@@ -6,7 +6,7 @@
 #[macro_export]
 macro_rules! __impl_propnames_from_bc_v1 {
     ($ provider : path) => {
-        #[clippy::msrv = "1.65"]
+        #[clippy::msrv = "1.66"]
         impl $provider {
             #[doc(hidden)]
             pub const SINGLETON_PROPNAMES_FROM_BC_V1: &'static <icu::properties::provider::BidiClassNameToValueV1Marker as icu_provider::DataMarker>::Yokeable = &icu::properties::provider::names::PropertyValueNameToEnumMapV1 {
@@ -16,7 +16,7 @@ macro_rules! __impl_propnames_from_bc_v1 {
                 },
             };
         }
-        #[clippy::msrv = "1.65"]
+        #[clippy::msrv = "1.66"]
         impl icu_provider::DataProvider<icu::properties::provider::BidiClassNameToValueV1Marker> for $provider {
             fn load(&self, req: icu_provider::DataRequest) -> Result<icu_provider::DataResponse<icu::properties::provider::BidiClassNameToValueV1Marker>, icu_provider::DataError> {
                 if req.locale.is_empty() {

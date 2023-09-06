@@ -6,7 +6,8 @@ use crate::transform::cldr::cldr_serde::transforms;
 use crate::transform::cldr::source::CldrDirTransform;
 use icu_provider::datagen::IterableDataProvider;
 use icu_provider::prelude::*;
-use icu_transliteration::provider::*;
+use icu_transliterate::provider::*;
+use icu_transliterate::Direction;
 use std::collections::HashMap;
 
 use super::cldr_serde::transforms::TransformAlias;
@@ -28,24 +29,18 @@ impl<'a> TransliteratorCollection<'a> {
     fn lookup_dir_from_internal_id(
         &self,
         internal_id: &str,
-    ) -> Result<Option<(String, icu_transliterator_parser::Direction)>, DataError> {
+    ) -> Result<Option<(String, Direction)>, DataError> {
         for transform in self.cldr_transforms.list_transforms()? {
             let metadata = self.cldr_transforms.read_and_parse_metadata(&transform)?;
             let (forwards, backwards) = internal_ids_from_metadata(metadata);
             if let Some(forwards) = forwards {
                 if forwards == internal_id {
-                    return Ok(Some((
-                        transform,
-                        icu_transliterator_parser::Direction::Forward,
-                    )));
+                    return Ok(Some((transform, Direction::Forward)));
                 }
             }
             if let Some(backwards) = backwards {
                 if backwards == internal_id {
-                    return Ok(Some((
-                        transform,
-                        icu_transliterator_parser::Direction::Reverse,
-                    )));
+                    return Ok(Some((transform, Direction::Reverse)));
                 }
             }
         }
@@ -55,8 +50,8 @@ impl<'a> TransliteratorCollection<'a> {
     /// Returns a mapping from known legacy IDs to internal ICU4X IDs. The legacy ID keys are normalized to ASCII lowercase.
     ///
     /// The compilation process uses this mapping to go from legacy IDs to internal IDs, if possible.
-    /// Otherwise [`icu_transliterator_parser::legacy_id_to_internal_id`](icu_transliterator_parser::legacy_id_to_internal_id) is used.
-    fn generate_mapping(&self) -> Result<HashMap<String, String>, DataError> {
+    /// Otherwise [`icu_transliterate::legacy_id_to_internal_id`](icu_transliterate::legacy_id_to_internal_id) is used.
+    fn generate_id_mapping(&self) -> Result<HashMap<String, String>, DataError> {
         let mut mapping = HashMap::new();
         for transform in self.cldr_transforms.list_transforms()? {
             let metadata = self.cldr_transforms.read_and_parse_metadata(&transform)?;
@@ -113,59 +108,50 @@ impl DataProvider<TransliteratorRulesV1Marker> for crate::DatagenProvider {
         self.check_req::<TransliteratorRulesV1Marker>(req)?;
 
         // all our `supported_locales` have an auxiliary key
-        #[allow(clippy::unwrap_used)]
         let internal_id = req.locale.get_aux().unwrap().to_string();
 
         let tc = TransliteratorCollection::new(self.cldr()?.transforms());
 
-        let mapping = tc.generate_mapping()?;
+        let id_mapping = tc.generate_id_mapping()?;
 
         // our `supported_locales` use the same mapping mechanism as in lookup_dir_from_internal_id
-        #[allow(clippy::unwrap_used)]
-        let (transform, want_direction) = tc.lookup_dir_from_internal_id(&internal_id)?.unwrap();
+        let (transform, direction) = tc.lookup_dir_from_internal_id(&internal_id)?.unwrap();
 
         let metadata = self
             .cldr()?
             .transforms()
             .read_and_parse_metadata(&transform)?;
-        let visibility = metadata.visibility;
 
-        let metadata_dir = match metadata.direction {
-            transforms::Direction::Forward => icu_transliterator_parser::Direction::Forward,
-            transforms::Direction::Backward => icu_transliterator_parser::Direction::Reverse,
-            transforms::Direction::Both => icu_transliterator_parser::Direction::Both,
-        };
-        let metadata = icu_transliterator_parser::Metadata::new(
-            visibility == transforms::Visibility::External,
-            metadata_dir,
-        );
+        if !match metadata.direction {
+            transforms::Direction::Forward => Direction::Forward,
+            transforms::Direction::Backward => Direction::Reverse,
+            transforms::Direction::Both => Direction::Both,
+        }
+        .permits(direction)
+        {
+            return Err(DataError::custom("internal error"));
+        }
 
         let source = self.cldr()?.transforms().read_source(&transform)?;
 
-        let (forwards, backwards) = icu_transliterator_parser::parse_unstable(
-            &source,
-            want_direction,
-            metadata,
-            mapping,
-            self,
-        )
-        .map_err(|e| DataError::custom("transliterator parsing failed").with_debug_context(&e))?;
-        let transliterator = match want_direction {
-            icu_transliterator_parser::Direction::Forward => {
-                // the parser guarantees we receive this
-                #[allow(clippy::unwrap_used)]
-                forwards.unwrap()
-            }
-            icu_transliterator_parser::Direction::Reverse => {
-                // the parser guarantees we receive this
-                #[allow(clippy::unwrap_used)]
-                backwards.unwrap()
-            }
+        let (forwards, backwards) =
+            RuleBasedTransliterator::compile(self, &source, direction, &id_mapping).map_err(
+                |e| DataError::custom("transliterator parsing failed").with_debug_context(&e),
+            )?;
+        let mut transliterator = match direction {
+            // the parser guarantees we receive this
+            Direction::Forward => forwards.unwrap(),
+            // the parser guarantees we receive this
+            Direction::Reverse => backwards.unwrap(),
+            // unreachable because `lookup_dir_from_internal_id` only ever returns one direction.
             _ => {
-                // unreachable because `lookup_dir_from_internal_id` only ever returns one direction.
-                unreachable!("unexpected want_direction")
+                unreachable!("unexpected direction")
             }
         };
+
+        if metadata.visibility != transforms::Visibility::External {
+            transliterator.visibility = false;
+        }
 
         Ok(DataResponse {
             metadata: Default::default(),
@@ -236,9 +222,8 @@ fn internal_id_from_parts(
     target: &str,
     variant: Option<&str>,
 ) -> String {
-    find_bcp47_in_list(aliases).unwrap_or_else(|| {
-        icu_transliterator_parser::legacy_id_to_internal_id(source, target, variant)
-    })
+    find_bcp47_in_list(aliases)
+        .unwrap_or_else(|| icu_transliterate::legacy_id_to_internal_id(source, target, variant))
 }
 
 fn find_bcp47_in_list(list: &[TransformAlias]) -> Option<String> {
@@ -257,7 +242,7 @@ mod tests {
 
     #[test]
     fn test_de_ascii_forward() {
-        let provider = crate::DatagenProvider::latest_tested_offline_subset();
+        let provider = crate::DatagenProvider::new_testing();
 
         let _data: DataPayload<TransliteratorRulesV1Marker> = provider
             .load(DataRequest {
@@ -271,7 +256,7 @@ mod tests {
 
     #[test]
     fn test_latin_ascii_backward() {
-        let provider = crate::DatagenProvider::latest_tested_offline_subset();
+        let provider = crate::DatagenProvider::new_testing();
 
         let _data: DataPayload<TransliteratorRulesV1Marker> = provider
             .load(DataRequest {

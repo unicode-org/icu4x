@@ -912,6 +912,12 @@ break_state = false
 
 [[rules]]
 # LB7
+left = [ "HL_HY", "LB25_NU_CL", "LB25_NU_CP", "LB25_NU_IS", "LB25_NU_SY", "RI_RI" ]
+right = [ "SP" ]
+break_state = false
+
+[[rules]]
+# LB7
 left = [ "B2_SP", "CL_CP_SP", "HL_HY", "LB25_NU_IS", "LB25_NU_SY", "LB25_NU_CL", "LB25_NU_CP", "OP_SP", "QU_SP", "RI_RI" ]
 right = [ "ZW" ]
 break_state = false

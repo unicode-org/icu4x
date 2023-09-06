@@ -5,7 +5,7 @@
 impl_tinystr_subtag!(
     /// A variant subtag (examples: `"macos"`, `"posix"`, `"1996"` etc.)
     ///
-    /// [`Variant`] represents a Unicode base language code conformat to the
+    /// [`Variant`] represents a Unicode base language code conformant to the
     /// [`unicode_variant_id`] field of the Language and Locale Identifier.
     ///
     /// # Examples

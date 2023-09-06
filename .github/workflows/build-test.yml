@@ -32,7 +32,7 @@ concurrency:
 jobs:
 
   # ci-job-check & ci-job-features
-  # Running at MSRV (1.65)
+  # Running at MSRV (1.66)
   msrv:
     runs-on: ubuntu-latest
     # Defined as a matrix so that features can start immediately, but
@@ -235,6 +235,9 @@ jobs:
         path: /tmp/icu4x-source-cache
 
     # Actual job
+    - name: Run `cargo make testdata-check`
+      run: cargo make testdata-check
+
     - name: Run `cargo make testdata-legacy`
       run: cargo make testdata-legacy
 
@@ -580,7 +583,6 @@ jobs:
 
   # ci-job-fmt
   fmt:
-    if: github.event_name != 'schedule'
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v3

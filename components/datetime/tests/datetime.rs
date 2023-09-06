@@ -98,7 +98,7 @@ fn test_fixture(fixture_name: &str) {
             }
             None => format!("\n  file: {fixture_name}.json\n"),
         };
-        for (locale, output_value) in fx.output.values.into_iter() {
+        for (locale, output_value) in fx.output.values {
             let options = options_base.clone();
             let locale = Locale::from_str(&locale).expect("Expected parseable locale in fixture");
             if let Some(kind) = AnyCalendarKind::get_for_locale(&locale) {
@@ -352,7 +352,7 @@ fn test_fixture_with_time_zones(fixture_name: &str, config: TimeZoneConfig) {
             }
             None => format!("\n  file: {fixture_name}.json\n"),
         };
-        for (locale, output_value) in fx.output.values.into_iter() {
+        for (locale, output_value) in fx.output.values {
             let locale: Locale = locale.parse().unwrap();
             #[cfg(feature = "experimental")]
             let dtf = {

@@ -6,7 +6,7 @@
 #[macro_export]
 macro_rules! __impl_compactdecimal_short_v1 {
     ($ provider : path) => {
-        #[clippy::msrv = "1.65"]
+        #[clippy::msrv = "1.66"]
         impl icu_provider::DataProvider<icu::compactdecimal::provider::ShortCompactDecimalFormatDataV1Marker> for $provider {
             fn load(&self, req: icu_provider::DataRequest) -> Result<icu_provider::DataResponse<icu::compactdecimal::provider::ShortCompactDecimalFormatDataV1Marker>, icu_provider::DataError> {
                 static TO: <icu::compactdecimal::provider::ShortCompactDecimalFormatDataV1Marker as icu_provider::DataMarker>::Yokeable = icu::compactdecimal::provider::CompactDecimalPatternDataV1 {

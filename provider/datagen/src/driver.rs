@@ -21,28 +21,40 @@ use writeable::Writeable;
 /// # Examples
 ///
 /// ```no_run
-/// use icu_datagen::prelude::*;
 /// use icu_datagen::blob_exporter::*;
+/// use icu_datagen::prelude::*;
 ///
 /// DatagenDriver::new()
-///       .with_keys([icu::list::provider::AndListV1Marker::KEY])
-///       .export(&DatagenProvider::latest_tested(), BlobExporter::new_with_sink(Box::new(&mut Vec::new())))
-///       .unwrap();
+///     .with_keys([icu::list::provider::AndListV1Marker::KEY])
+///     .with_all_locales()
+///     .export(
+///         &DatagenProvider::new_latest_tested(),
+///         BlobExporter::new_with_sink(Box::new(&mut Vec::new())),
+///     )
+///     .unwrap();
 /// ```
-#[derive(Debug, Clone, Default)]
+#[derive(Debug, Clone)]
 pub struct DatagenDriver {
-    keys: HashSet<DataKey>,
-    // `None` means all
-    locales: Option<HashSet<LanguageIdentifier>>,
+    keys: Option<HashSet<DataKey>>,
+    // `None` means not set, `Some(None)` means all
+    locales: Option<Option<HashSet<LanguageIdentifier>>>,
     fallback: FallbackMode,
-    collations: HashSet<String>,
+    additional_collations: HashSet<String>,
     segmenter_models: Vec<String>,
 }
 
 impl DatagenDriver {
     /// Creates an empty [`DatagenDriver`].
+    #[allow(clippy::new_without_default)] // this is not directly usable
     pub fn new() -> Self {
-        Self::default()
+        Self {
+            keys: None,
+            locales: None,
+            fallback: FallbackMode::default(),
+            additional_collations: HashSet::new(),
+            segmenter_models: Vec::new(),
+        }
+        .with_recommended_segmenter_models()
     }
 
     /// Sets this driver to generate the given keys. See [`icu_datagen::keys`],
@@ -54,7 +66,7 @@ impl DatagenDriver {
     /// [`icu_datagen::keys_from_bin`]: crate::keys_from_bin
     pub fn with_keys(self, keys: impl IntoIterator<Item = DataKey>) -> Self {
         Self {
-            keys: keys.into_iter().collect(),
+            keys: Some(keys.into_iter().collect()),
             ..self
         }
     }
@@ -68,7 +80,7 @@ impl DatagenDriver {
     /// Sets the locales to generate.
     pub fn with_locales(self, locales: impl IntoIterator<Item = LanguageIdentifier>) -> Self {
         Self {
-            locales: Some(locales.into_iter().collect()),
+            locales: Some(Some(locales.into_iter().collect())),
             ..self
         }
     }
@@ -76,22 +88,47 @@ impl DatagenDriver {
     /// Sets this driver to generate all available locales.
     pub fn with_all_locales(self) -> Self {
         Self {
-            locales: None,
+            locales: Some(None),
             ..self
         }
     }
 
+    /// This option is only relevant if using `icu::collator`.
+    ///
     /// By default, the collations `big5han`, `gb2312`, and those starting with `search`
     /// are excluded. This method can be used to reennable them.
     ///
     /// The special string `"search*"` causes all search collation tables to be included.
-    pub fn with_collations(self, collations: impl IntoIterator<Item = String>) -> Self {
+    pub fn with_additional_collations(
+        self,
+        additional_collations: impl IntoIterator<Item = String>,
+    ) -> Self {
         Self {
-            collations: collations.into_iter().collect(),
+            additional_collations: additional_collations.into_iter().collect(),
             ..self
         }
     }
 
+    /// This option is only relevant if using `icu::segmenter`.
+    ///
+    /// Sets this driver to generate the recommended segmentation models, to the extent required by the
+    /// chosen data keys.
+    pub fn with_recommended_segmenter_models(self) -> Self {
+        self.with_segmenter_models([
+            "cjdict".into(),
+            "burmesedict".into(),
+            "khmerdict".into(),
+            "laodict".into(),
+            "thaidict".into(),
+            "Burmese_codepoints_exclusive_model4_heavy".into(),
+            "Khmer_codepoints_exclusive_model4_heavy".into(),
+            "Lao_codepoints_exclusive_model4_heavy".into(),
+            "Thai_codepoints_exclusive_model4_heavy".into(),
+        ])
+    }
+
+    /// This option is only relevant if using `icu::segmenter`.
+    ///
     /// Sets this driver to generate the given segmentation models, to the extent required by the
     /// chosen data keys.
     ///
@@ -124,6 +161,8 @@ impl DatagenDriver {
     /// Exports data from the given provider to the given exporter.
     ///
     /// See
+    /// [`DatagenProvider`](crate::DatagenProvider),
+    /// [`make_exportable_provider!`](icu_provider::make_exportable_provider),
     /// [`BlobExporter`](icu_provider_blob::export),
     /// [`FileSystemExporter`](icu_provider_fs::export),
     /// and [`BakedExporter`](crate::baked_exporter).
@@ -137,21 +176,41 @@ impl DatagenDriver {
 
     // Avoids multiple monomorphizations
     fn export_dyn(
-        mut self,
+        self,
         provider: &dyn ExportableProvider,
         sink: &mut dyn DataExporter,
     ) -> Result<(), DataError> {
-        if self.keys.is_empty() {
+        let Self {
+            keys,
+            locales,
+            fallback,
+            additional_collations,
+            segmenter_models,
+        } = self;
+
+        let Some(keys) = keys else {
+            return Err(DataError::custom(
+                "`DatagenDriver::with_keys` needs to be called",
+            ));
+        };
+
+        let Some(locales) = locales else {
+            return Err(DataError::custom(
+                "`DatagenDriver::with_locales` or `with_all_locales` needs to be called",
+            ));
+        };
+
+        if keys.is_empty() {
             log::warn!("No keys selected");
         }
 
-        if matches!(self.fallback, FallbackMode::Preresolved) && self.locales.is_none() {
+        if matches!(fallback, FallbackMode::Preresolved) && locales.is_none() {
             return Err(DataError::custom(
                 "FallbackMode::Preresolved requires an explicit locale set",
             ));
         }
 
-        self.fallback = match self.fallback {
+        let fallback = match fallback {
             FallbackMode::PreferredForExporter => {
                 if sink.supports_built_in_fallback() {
                     FallbackMode::Runtime
@@ -164,8 +223,8 @@ impl DatagenDriver {
 
         log::info!(
             "Datagen configured with fallback mode {:?} and these locales: {}",
-            self.fallback,
-            match self.locales {
+            fallback,
+            match locales {
                 None => "ALL".to_string(),
                 Some(ref set) => {
                     let mut list: Vec<Cow<str>> =
@@ -231,7 +290,7 @@ impl DatagenDriver {
             }
         };
 
-        self.keys.clone().into_par_iter().try_for_each(|key| {
+        keys.clone().into_par_iter().try_for_each(|key| {
             log::info!("Generating key {key}");
 
             if key.metadata().singleton {
@@ -252,9 +311,17 @@ impl DatagenDriver {
                     .map_err(|e| e.with_req(key, Default::default()));
             }
 
-            let locales_to_export = self.select_locales_for_key(provider, key, &fallbacker)?;
+            let locales_to_export = select_locales_for_key(
+                provider,
+                key,
+                fallback,
+                locales.as_ref(),
+                &additional_collations,
+                &segmenter_models,
+                &fallbacker,
+            )?;
 
-            match self.fallback {
+            match fallback {
                 FallbackMode::Runtime | FallbackMode::RuntimeManual => {
                     let payloads = locales_to_export
                         .into_par_iter()
@@ -311,7 +378,7 @@ impl DatagenDriver {
                 FallbackMode::PreferredForExporter => unreachable!("resolved"),
             };
 
-            if self.fallback == FallbackMode::Runtime {
+            if fallback == FallbackMode::Runtime {
                 sink.flush_with_built_in_fallback(key, BuiltInFallbackMode::Standard)
             } else {
                 sink.flush(key)
@@ -321,141 +388,140 @@ impl DatagenDriver {
 
         sink.close()
     }
+}
 
-    /// Selects the maximal set of locales to export based on a [`DataKey`] and this datagen
-    /// provider's options bag. The locales may be later optionally deduplicated for fallback.
-    fn select_locales_for_key(
-        &self,
-        provider: &dyn ExportableProvider,
-        key: DataKey,
-        fallbacker: &Lazy<
-            Result<LocaleFallbacker, DataError>,
-            impl FnOnce() -> Result<LocaleFallbacker, DataError>,
-        >,
-    ) -> Result<HashSet<icu_provider::DataLocale>, DataError> {
-        let mut locales = provider
-            .supported_locales_for_key(key)
-            .map_err(|e| e.with_key(key))?
+/// Selects the maximal set of locales to export based on a [`DataKey`] and this datagen
+/// provider's options bag. The locales may be later optionally deduplicated for fallback.
+fn select_locales_for_key(
+    provider: &dyn ExportableProvider,
+    key: DataKey,
+    fallback: FallbackMode,
+    locales: Option<&HashSet<LanguageIdentifier>>,
+    additional_collations: &HashSet<String>,
+    segmenter_models: &[String],
+    fallbacker: &Lazy<
+        Result<LocaleFallbacker, DataError>,
+        impl FnOnce() -> Result<LocaleFallbacker, DataError>,
+    >,
+) -> Result<HashSet<icu_provider::DataLocale>, DataError> {
+    let mut result = provider
+        .supported_locales_for_key(key)
+        .map_err(|e| e.with_key(key))?
+        .into_iter()
+        .collect::<HashSet<DataLocale>>();
+
+    if key == icu_segmenter::provider::DictionaryForWordOnlyAutoV1Marker::KEY
+        || key == icu_segmenter::provider::DictionaryForWordLineExtendedV1Marker::KEY
+    {
+        result.retain(|locale| {
+            let model = crate::transform::segmenter::dictionary::data_locale_to_model_name(locale);
+            segmenter_models.iter().any(|m| Some(m.as_ref()) == model)
+        });
+        // Don't perform additional locale filtering
+        return Ok(result);
+    } else if key == icu_segmenter::provider::LstmForWordLineAutoV1Marker::KEY {
+        result.retain(|locale| {
+            let model = crate::transform::segmenter::lstm::data_locale_to_model_name(locale);
+            segmenter_models.iter().any(|m| Some(m.as_ref()) == model)
+        });
+        // Don't perform additional locale filtering
+        return Ok(result);
+    } else if key == icu_collator::provider::CollationDataV1Marker::KEY
+        || key == icu_collator::provider::CollationDiacriticsV1Marker::KEY
+        || key == icu_collator::provider::CollationJamoV1Marker::KEY
+        || key == icu_collator::provider::CollationMetadataV1Marker::KEY
+        || key == icu_collator::provider::CollationReorderingV1Marker::KEY
+        || key == icu_collator::provider::CollationSpecialPrimariesV1Marker::KEY
+    {
+        result.retain(|locale| {
+            let Some(collation) = locale
+                .get_unicode_ext(&key!("co"))
+                .and_then(|co| co.as_single_subtag().copied())
+            else {
+                return true;
+            };
+            additional_collations.contains(collation.as_str())
+                || if collation.starts_with("search") {
+                    additional_collations.contains("search*")
+                } else {
+                    !["big5han", "gb2312"].contains(&collation.as_str())
+                }
+        });
+    }
+
+    result = match (locales, fallback) {
+        // Case 1: `None` simply exports all supported locales for this key.
+        (None, _) => result,
+        // Case 2: `FallbackMode::Preresolved` exports all supported locales whose langid matches
+        // one of the explicit locales. This ensures extensions are included. In addition, any
+        // explicit locales are added to the list, even if they themselves don't contain data;
+        // fallback should be performed upon exporting.
+        (Some(explicit), FallbackMode::Preresolved) => result
             .into_iter()
-            .collect::<HashSet<DataLocale>>();
+            .chain(explicit.iter().map(|langid| langid.into()))
+            .filter(|locale| explicit.contains(&locale.get_langid()))
+            .collect(),
+        // Case 3: All other modes resolve to the "ancestors and descendants" strategy.
+        (Some(explicit), _) => {
+            let include_und = explicit.contains(&LanguageIdentifier::UND);
+            let explicit: HashSet<DataLocale> = explicit.iter().map(DataLocale::from).collect();
+            let mut implicit = HashSet::new();
+            // TODO: Make including the default locale configurable
+            implicit.insert(DataLocale::default());
+            let fallbacker = fallbacker.as_ref().map_err(|e| *e)?;
+            let fallbacker_with_config = fallbacker.for_config(key.fallback_config());
 
-        if key == icu_segmenter::provider::DictionaryForWordOnlyAutoV1Marker::KEY
-            || key == icu_segmenter::provider::DictionaryForWordLineExtendedV1Marker::KEY
-        {
-            locales.retain(|locale| {
-                let model =
-                    crate::transform::segmenter::dictionary::data_locale_to_model_name(locale);
-                self.segmenter_models
-                    .iter()
-                    .any(|m| Some(m.as_ref()) == model)
-            });
-            // Don't perform additional locale filtering
-            return Ok(locales);
-        } else if key == icu_segmenter::provider::LstmForWordLineAutoV1Marker::KEY {
-            locales.retain(|locale| {
-                let model = crate::transform::segmenter::lstm::data_locale_to_model_name(locale);
-                self.segmenter_models
-                    .iter()
-                    .any(|m| Some(m.as_ref()) == model)
-            });
-            // Don't perform additional locale filtering
-            return Ok(locales);
-        } else if key == icu_collator::provider::CollationDataV1Marker::KEY
-            || key == icu_collator::provider::CollationDiacriticsV1Marker::KEY
-            || key == icu_collator::provider::CollationJamoV1Marker::KEY
-            || key == icu_collator::provider::CollationMetadataV1Marker::KEY
-            || key == icu_collator::provider::CollationReorderingV1Marker::KEY
-            || key == icu_collator::provider::CollationSpecialPrimariesV1Marker::KEY
-        {
-            locales.retain(|locale| {
-                let Some(collation) = locale
-                    .get_unicode_ext(&key!("co"))
-                    .and_then(|co| co.as_single_subtag().copied())
-                else { return true };
-                self.collations.contains(collation.as_str())
-                    || if collation.starts_with("search") {
-                        self.collations.contains("search*")
-                    } else {
-                        !["big5han", "gb2312"].contains(&collation.as_str())
-                    }
-            });
-        }
+            for locale in explicit.iter() {
+                let mut iter = fallbacker_with_config.fallback_for(locale.clone());
+                while !iter.get().is_und() {
+                    implicit.insert(iter.get().clone());
+                    iter.step();
+                }
+            }
 
-        locales = match (&self.locales, self.fallback) {
-            // Case 1: `None` simply exports all supported locales for this key.
-            (None, _) => locales,
-            // Case 2: `FallbackMode::Preresolved` exports all supported locales whose langid matches
-            // one of the explicit locales. This ensures extensions are included. In addition, any
-            // explicit locales are added to the list, even if they themselves don't contain data;
-            // fallback should be performed upon exporting.
-            (Some(explicit), FallbackMode::Preresolved) => locales
+            result
                 .into_iter()
-                .chain(explicit.iter().map(|langid| langid.into()))
-                .filter(|locale| explicit.contains(&locale.get_langid()))
-                .collect(),
-            // Case 3: All other modes resolve to the "ancestors and descendants" strategy.
-            (Some(explicit), _) => {
-                let include_und = explicit.contains(&LanguageIdentifier::UND);
-                let explicit: HashSet<DataLocale> = explicit.iter().map(DataLocale::from).collect();
-                let mut implicit = HashSet::new();
-                // TODO: Make including the default locale configurable
-                implicit.insert(DataLocale::default());
-                let fallbacker = fallbacker.as_ref().map_err(|e| *e)?;
-                let fallbacker_with_config = fallbacker.for_config(key.fallback_config());
-
-                for locale in explicit.iter() {
+                .chain(explicit.iter().cloned())
+                .filter(|locale| {
+                    if implicit.contains(locale) {
+                        return true;
+                    }
+                    if explicit.contains(locale) {
+                        return true;
+                    }
+                    if locale.is_langid_und() && include_und {
+                        return true;
+                    }
+                    if locale.language().is_empty()
+                        && matches!(
+                            key.fallback_config().priority,
+                            icu_provider::FallbackPriority::Region
+                        )
+                    {
+                        return true;
+                    }
+                    // Special case: skeletons *require* the -u-ca keyword, so don't export locales that don't have it
+                    // This would get caught later on, but it makes datagen faster and quieter to catch it here
+                    if key == icu_datetime::provider::calendar::DateSkeletonPatternsV1Marker::KEY
+                        && !locale.has_unicode_ext()
+                    {
+                        return false;
+                    }
                     let mut iter = fallbacker_with_config.fallback_for(locale.clone());
                     while !iter.get().is_und() {
-                        implicit.insert(iter.get().clone());
+                        if explicit.contains(iter.get()) {
+                            return true;
+                        }
                         iter.step();
                     }
-                }
+                    log::trace!("Filtered out: {key}/{locale}");
+                    false
+                })
+                .collect()
+        }
+    };
 
-                locales
-                    .into_iter()
-                    .chain(explicit.iter().cloned())
-                    .filter(|locale| {
-                        if implicit.contains(locale) {
-                            return true;
-                        }
-                        if explicit.contains(locale) {
-                            return true;
-                        }
-                        if locale.is_langid_und() && include_und {
-                            return true;
-                        }
-                        if locale.language().is_empty()
-                            && matches!(
-                                key.fallback_config().priority,
-                                icu_provider::FallbackPriority::Region
-                            )
-                        {
-                            return true;
-                        }
-                        // Special case: skeletons *require* the -u-ca keyword, so don't export locales that don't have it
-                        // This would get caught later on, but it makes datagen faster and quieter to catch it here
-                        if key
-                            == icu_datetime::provider::calendar::DateSkeletonPatternsV1Marker::KEY
-                            && !locale.has_unicode_ext()
-                        {
-                            return false;
-                        }
-                        let mut iter = fallbacker_with_config.fallback_for(locale.clone());
-                        while !iter.get().is_und() {
-                            if explicit.contains(iter.get()) {
-                                return true;
-                            }
-                            iter.step();
-                        }
-                        log::trace!("Filtered out: {key}/{locale}");
-                        false
-                    })
-                    .collect()
-            }
-        };
-
-        Ok(locales)
-    }
+    Ok(result)
 }
 
 #[test]
@@ -535,19 +601,19 @@ fn test_collation_filtering() {
         },
     ];
     for cas in cases {
-        let resolved_locales = DatagenDriver::new()
-            .with_collations(cas.include_collations.iter().copied().map(String::from))
-            .with_locales([cas.language.clone()])
-            .with_fallback_mode(FallbackMode::Preresolved)
-            .select_locales_for_key(
-                &crate::DatagenProvider::latest_tested_offline_subset(),
-                icu_collator::provider::CollationDataV1Marker::KEY,
-                &once_cell::sync::Lazy::new(|| unreachable!()),
-            )
-            .unwrap()
-            .into_iter()
-            .map(|l| l.to_string())
-            .collect::<BTreeSet<_>>();
+        let resolved_locales = select_locales_for_key(
+            &crate::DatagenProvider::new_testing(),
+            icu_collator::provider::CollationDataV1Marker::KEY,
+            FallbackMode::Preresolved,
+            Some(&HashSet::from_iter([cas.language.clone()])),
+            &HashSet::from_iter(cas.include_collations.iter().copied().map(String::from)),
+            &[],
+            &once_cell::sync::Lazy::new(|| unreachable!()),
+        )
+        .unwrap()
+        .into_iter()
+        .map(|l| l.to_string())
+        .collect::<BTreeSet<_>>();
         let expected_locales = cas
             .expected
             .iter()

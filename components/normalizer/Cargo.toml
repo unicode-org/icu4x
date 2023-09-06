@@ -52,10 +52,6 @@ datagen = ["serde", "dep:databake", "icu_collections/databake", "zerovec/databak
 experimental = []
 compiled_data = ["dep:icu_normalizer_data", "icu_properties/compiled_data"]
 
-[[test]]
-name = "tests"
-path = "tests/tests.rs"
-
 [[bench]]
 name = "bench"
 harness = false

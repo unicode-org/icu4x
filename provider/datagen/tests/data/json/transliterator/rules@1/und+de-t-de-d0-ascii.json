@@ -2088,7 +2088,9 @@
         "str_list": []
       }
     ],
-    "function_calls": []
+    "function_calls": [],
+    "max_left_placeholder_count": 0,
+    "max_right_placeholder_count": 0
   },
   "filter": [
     "\u0000-􏿿"
@@ -2110,69 +2112,57 @@
         "ante": "",
         "key": "󰀃",
         "post": "",
-        "replacer": "ae",
-        "cursor_offset": 0
+        "replacer": "ae"
       },
       {
         "ante": "",
         "key": "󰀄",
         "post": "",
-        "replacer": "oe",
-        "cursor_offset": 0
+        "replacer": "oe"
       },
       {
         "ante": "",
         "key": "󰀅",
         "post": "",
-        "replacer": "ue",
-        "cursor_offset": 0
+        "replacer": "ue"
       },
       {
         "ante": "",
         "key": "󰀀",
         "post": "󰀇",
-        "replacer": "Ae",
-        "cursor_offset": 0
+        "replacer": "Ae"
       },
       {
         "ante": "",
         "key": "󰀁",
         "post": "󰀉",
-        "replacer": "Oe",
-        "cursor_offset": 0
+        "replacer": "Oe"
       },
       {
         "ante": "",
         "key": "󰀂",
         "post": "󰀋",
-        "replacer": "Ue",
-        "cursor_offset": 0
+        "replacer": "Ue"
       },
       {
         "ante": "",
         "key": "󰀀",
         "post": "",
-        "replacer": "AE",
-        "cursor_offset": 0
+        "replacer": "AE"
       },
       {
         "ante": "",
         "key": "󰀁",
         "post": "",
-        "replacer": "OE",
-        "cursor_offset": 0
+        "replacer": "OE"
       },
       {
         "ante": "",
         "key": "󰀂",
         "post": "",
-        "replacer": "UE",
-        "cursor_offset": 0
+        "replacer": "UE"
       }
     ],
     []
-  ],
-  "dependencies": [
-    "und-t-und-Latn-d0-ascii"
   ]
 }

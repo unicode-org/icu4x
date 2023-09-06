@@ -105,9 +105,16 @@ impl HelloWorldProvider {
         ("bn", "ওহে বিশ্ব"),
         ("cs", "Ahoj světe"),
         ("de", "Hallo Welt"),
+        ("de-AT", "Servus Welt"),
         ("el", "Καλημέρα κόσμε"),
         ("en", "Hello World"),
         ("en+reverse", "Olleh Dlrow"),
+        ("en-001", "Hello from 🗺️"),            // WORLD
+        ("en-002", "Hello from 🌍"),           // AFRICA
+        ("en-019", "Hello from 🌎"),           // AMERICAS
+        ("en-142", "Hello from 🌏"),           // ASIA
+        ("en-GB", "Hello from 🇬🇧"),            // GREAT BRITAIN
+        ("en-GB-u-sd-gbeng", "Hello from 🏴󠁧󠁢󠁥󠁮󠁧󠁿"), // ENGLAND
         ("eo", "Saluton, Mondo"),
         ("fa", "سلام دنیا‎"),
         ("fi", "hei maailma"),
@@ -118,6 +125,8 @@ impl HelloWorldProvider {
         ("pt", "Olá, mundo"),
         ("ro", "Salut, lume"),
         ("ru", "Привет, мир"),
+        ("sr", "Поздрав свете"),
+        ("sr-Latn", "Pozdrav svete"),
         ("vi", "Xin chào thế giới"),
         ("zh", "你好世界"),
     ];
@@ -324,9 +333,16 @@ fn test_iter() {
             locale!("bn").into(),
             locale!("cs").into(),
             locale!("de").into(),
+            locale!("de-AT").into(),
             locale!("el").into(),
             locale!("en").into(),
             "en+reverse".parse().unwrap(),
+            locale!("en-001").into(),
+            locale!("en-002").into(),
+            locale!("en-019").into(),
+            locale!("en-142").into(),
+            locale!("en-GB").into(),
+            locale!("en-GB-u-sd-gbeng").into(),
             locale!("eo").into(),
             locale!("fa").into(),
             locale!("fi").into(),
@@ -337,6 +353,8 @@ fn test_iter() {
             locale!("pt").into(),
             locale!("ro").into(),
             locale!("ru").into(),
+            locale!("sr").into(),
+            locale!("sr-Latn").into(),
             locale!("vi").into(),
             locale!("zh").into()
         ]

@@ -52,10 +52,6 @@ serde = ["dep:serde", "zerovec/serde", "icu_properties/serde", "icu_normalizer/s
 datagen = ["serde", "dep:databake", "zerovec/databake", "icu_properties/datagen", "icu_normalizer/datagen", "icu_collections/databake"]
 compiled_data = ["dep:icu_collator_data", "icu_normalizer/compiled_data", "dep:icu_locid_transform"]
 
-[[test]]
-name = "tests"
-path = "tests/tests.rs"
-
 [[bench]]
 name = "bench"
 harness = false

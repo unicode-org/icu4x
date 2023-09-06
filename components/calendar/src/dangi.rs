@@ -18,14 +18,14 @@
 //! // `Date` checks
 //! assert_eq!(dangi_date.year().number, 4356);
 //! assert_eq!(dangi_date.year().related_iso, Some(2023));
-//! assert_eq!(dangi_date.year().cyclic, Some(40));
+//! assert_eq!(dangi_date.year().cyclic.unwrap().get(), 40);
 //! assert_eq!(dangi_date.month().ordinal, 6);
 //! assert_eq!(dangi_date.day_of_month().0, 6);
 //!
 //! // `DateTime` checks
 //! assert_eq!(dangi_datetime.date.year().number, 4356);
 //! assert_eq!(dangi_datetime.date.year().related_iso, Some(2023));
-//! assert_eq!(dangi_datetime.date.year().cyclic, Some(40));
+//! assert_eq!(dangi_datetime.date.year().cyclic.unwrap().get(), 40);
 //! assert_eq!(dangi_datetime.date.month().ordinal, 6);
 //! assert_eq!(dangi_datetime.date.day_of_month().0, 6);
 //! assert_eq!(dangi_datetime.time.hour.number(), 13);
@@ -34,15 +34,18 @@
 //! ```
 
 use crate::calendar_arithmetic::CalendarArithmetic;
-use crate::chinese_based::chinese_based_ordinal_lunar_month_from_code;
+use crate::chinese_based::{
+    chinese_based_ordinal_lunar_month_from_code, ChineseBasedCompiledData, ChineseBasedYearInfo,
+};
 use crate::helpers::div_rem_euclid64;
 use crate::{
-    astronomy::Location,
     chinese_based::{ChineseBased, ChineseBasedDateInner},
     rata_die::RataDie,
     types::{self, Era, FormattableYear},
     AnyCalendarKind, Calendar, CalendarError, Date, DateTime, Iso,
 };
+use calendrical_calculations::astronomy::Location;
+use core::num::NonZeroU8;
 use tinystr::tinystr;
 
 // The first day in the Korean Dangi calendar (based on the founding of Gojoseon)
@@ -110,6 +113,9 @@ const KOREAN_LOCATION_1961: Location = Location::new_unchecked(
 /// This can cause some differences; for example, 2012 was a leap year, but in the Dangi
 /// calendar the leap month was 3, while in the Chinese calendar the leap month was 4.
 ///
+/// This calendar is currently in a preview state: formatting for this calendar is not
+/// going to be perfect.
+///
 /// ```rust
 /// use icu::calendar::{Date, dangi::Dangi, chinese::Chinese};
 /// use tinystr::tinystr;
@@ -157,10 +163,10 @@ impl Calendar for Dangi {
         month_code: crate::types::MonthCode,
         day: u8,
     ) -> Result<Self::DateInner, crate::Error> {
-        let cache = Inner::compute_cache(year);
+        let year_info = ChineseBasedYearInfo::get_year_info::<Dangi>(year);
 
         let month = if let Some(ordinal) =
-            chinese_based_ordinal_lunar_month_from_code::<Dangi>(month_code, cache)
+            chinese_based_ordinal_lunar_month_from_code::<Dangi>(month_code, year_info)
         {
             ordinal
         } else {
@@ -174,13 +180,19 @@ impl Calendar for Dangi {
             return Err(CalendarError::UnknownEra(era.0, self.debug_name()));
         }
 
-        let arithmetic = Inner::new_from_ordinals(year, month, day, &cache);
-        Ok(DangiDateInner(ChineseBasedDateInner(arithmetic?, cache)))
+        let arithmetic = Inner::new_from_ordinals(year, month, day, &year_info);
+        Ok(DangiDateInner(ChineseBasedDateInner(
+            arithmetic?,
+            year_info,
+        )))
     }
 
     fn date_from_iso(&self, iso: Date<crate::Iso>) -> Self::DateInner {
         let fixed = Iso::fixed_from_iso(iso.inner);
-        DangiDateInner(Inner::chinese_based_date_from_fixed(fixed))
+        DangiDateInner(Inner::chinese_based_date_from_fixed(
+            fixed,
+            iso.year().number,
+        ))
     }
 
     fn date_to_iso(&self, date: &Self::DateInner) -> Date<crate::Iso> {
@@ -204,7 +216,7 @@ impl Calendar for Dangi {
         let year = date.0 .0.year;
         date.0 .0.offset_date(offset);
         if date.0 .0.year != year {
-            date.0 .1 = Inner::compute_cache(date.0 .0.year);
+            date.0 .1 = ChineseBasedYearInfo::get_year_info::<Dangi>(year);
         }
     }
 
@@ -224,12 +236,12 @@ impl Calendar for Dangi {
     }
 
     fn year(&self, date: &Self::DateInner) -> crate::types::FormattableYear {
-        Self::format_dangi_year(date.0 .0.year)
+        Self::format_dangi_year(date.0 .0.year, Some(date.0 .1))
     }
 
     fn month(&self, date: &Self::DateInner) -> crate::types::FormattableMonth {
         let ordinal = date.0 .0.month;
-        let leap_month_option = date.0 .1.leap_month;
+        let leap_month_option = date.0 .1.get_leap_month();
         let leap_month = if let Some(leap) = leap_month_option {
             leap.get()
         } else {
@@ -298,9 +310,9 @@ impl Calendar for Dangi {
         types::DayOfYearInfo {
             day_of_year: date.0 .0.day_of_year(),
             days_in_year: date.0.days_in_year_inner(),
-            prev_year: Self::format_dangi_year(prev_year),
+            prev_year: Self::format_dangi_year(prev_year, None),
             days_in_prev_year: Self::days_in_provided_year(prev_year),
-            next_year: Self::format_dangi_year(next_year),
+            next_year: Self::format_dangi_year(next_year, None),
         }
     }
 
@@ -326,13 +338,13 @@ impl Date<Dangi> {
     ///     .expect("Failed to initialize Dangi Date instance.");
     ///
     /// assert_eq!(date_dangi.year().number, 4356);
-    /// assert_eq!(date_dangi.year().cyclic, Some(40));
+    /// assert_eq!(date_dangi.year().cyclic.unwrap().get(), 40);
     /// assert_eq!(date_dangi.year().related_iso, Some(2023));
     /// assert_eq!(date_dangi.month().ordinal, 6);
     /// assert_eq!(date_dangi.day_of_month().0, 18);
     /// ```
     pub fn try_new_dangi_date(year: i32, month: u8, day: u8) -> Result<Date<Dangi>, CalendarError> {
-        let cache = Inner::compute_cache(year);
+        let cache = ChineseBasedYearInfo::Cache(Inner::compute_cache(year));
         let arithmetic = Inner::new_from_ordinals(year, month, day, &cache);
         Ok(Date::from_raw(
             DangiDateInner(ChineseBasedDateInner(arithmetic?, cache)),
@@ -352,7 +364,7 @@ impl DateTime<Dangi> {
     ///
     /// assert_eq!(dangi_datetime.date.year().number, 4356);
     /// assert_eq!(dangi_datetime.date.year().related_iso, Some(2023));
-    /// assert_eq!(dangi_datetime.date.year().cyclic, Some(40));
+    /// assert_eq!(dangi_datetime.date.year().cyclic.unwrap().get(), 40);
     /// assert_eq!(dangi_datetime.date.month().ordinal, 6);
     /// assert_eq!(dangi_datetime.date.day_of_month().0, 6);
     /// assert_eq!(dangi_datetime.time.hour.number(), 13);
@@ -390,6 +402,10 @@ impl ChineseBased for Dangi {
     }
 
     const EPOCH: RataDie = KOREAN_EPOCH;
+
+    fn get_compiled_data_for_year(_year: i32) -> Option<ChineseBasedCompiledData> {
+        None
+    }
 }
 
 impl Dangi {
@@ -410,16 +426,28 @@ impl Dangi {
     pub fn seollal_on_or_before_iso(iso: Date<Iso>) -> Date<Iso> {
         let iso_inner = iso.inner;
         let fixed = Iso::fixed_from_iso(iso_inner);
-        let result_fixed = Inner::new_year_on_or_before_fixed_date(fixed, None).0;
+        let prev_solstice = Inner::winter_solstice_on_or_before(fixed);
+        let result_fixed = Inner::new_year_on_or_before_fixed_date(fixed, prev_solstice).0;
         Iso::iso_from_fixed(result_fixed)
     }
 
-    fn format_dangi_year(year: i32) -> FormattableYear {
+    /// Get a `FormattableYear` from an integer Dangi year; optionally, a `ChineseBasedYearInfo`
+    /// can be passed in for faster results.
+    fn format_dangi_year(
+        year: i32,
+        year_info_option: Option<ChineseBasedYearInfo>,
+    ) -> FormattableYear {
         let era = Era(tinystr!(16, "dangi"));
         let number = year;
-        let cyclic = Some(div_rem_euclid64(number as i64 - 1 + 364, 60).1 as i32 + 1);
-        let mid_year = Inner::fixed_mid_year_from_year(number);
-        let iso_formattable_year = Iso::iso_from_fixed(mid_year).year();
+        // constant 364 from https://github.com/EdReingold/calendar-code2/blob/main/calendar.l#L5704
+        let cyclic = (div_rem_euclid64(number as i64 - 1 + 364, 60).1 as i32) as u8;
+        let cyclic = NonZeroU8::new(cyclic + 1); // 1-indexed
+        let rata_die_in_year = if let Some(info) = year_info_option {
+            info.get_new_year()
+        } else {
+            Inner::fixed_mid_year_from_year(number)
+        };
+        let iso_formattable_year = Iso::iso_from_fixed(rata_die_in_year).year();
         let related_iso = Some(iso_formattable_year.number);
         types::FormattableYear {
             era,
@@ -617,7 +645,8 @@ mod test {
         let max_iters = 560;
         while fixed < max_fixed && iters < max_iters {
             let rata_die = RataDie::new(fixed);
-            let chinese = Inner::chinese_based_date_from_fixed(rata_die);
+            let iso = Iso::iso_from_fixed(rata_die);
+            let chinese = Inner::chinese_based_date_from_fixed(rata_die, iso.year().number);
             let result = Inner::fixed_from_chinese_based_date_inner(chinese);
             let result_debug = result.to_i64_date();
             assert_eq!(result, rata_die, "Failed roundtrip fixed -> Chinese -> fixed for fixed: {fixed}, with calculated: {result_debug} from Chinese date:\n{chinese:?}");
@@ -660,7 +689,7 @@ mod test {
             iso_month: u8,
             iso_day: u8,
             expected_rel_iso: i32,
-            expected_cyclic: i32,
+            expected_cyclic: u8,
             expected_month: u32,
             expected_day: u32,
         }
@@ -1167,8 +1196,8 @@ mod test {
                 "Related ISO failed for test case: {case:?}"
             );
             assert_eq!(
-                dangi_cyclic,
-                Some(case.expected_cyclic),
+                dangi_cyclic.unwrap().get(),
+                case.expected_cyclic,
                 "Cyclic year failed for test case: {case:?}"
             );
             assert_eq!(

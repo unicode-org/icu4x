@@ -42,6 +42,15 @@ include!("../data/baked/macros/displaynames_regions_v1.data.rs");
 #[cfg(feature = "icu_displaynames")]
 __impl_displaynames_regions_v1!(UnstableDataProvider);
 
+include!("../data/baked/macros/fallback_likelysubtags_v1.data.rs");
+__impl_fallback_likelysubtags_v1!(UnstableDataProvider);
+
+include!("../data/baked/macros/fallback_parents_v1.data.rs");
+__impl_fallback_parents_v1!(UnstableDataProvider);
+
+include!("../data/baked/macros/fallback_supplement_co_v1.data.rs");
+__impl_fallback_supplement_co_v1!(UnstableDataProvider);
+
 include!("../data/baked/macros/list_and_v1.data.rs");
 __impl_list_and_v1!(UnstableDataProvider);
 

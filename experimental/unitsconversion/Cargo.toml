@@ -5,10 +5,16 @@
 
 [package]
 name = "icu_unitsconversion"
-version = "1.2.0"
-edition = "2021"
+version = "0.0.0"
 
-# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+rust-version.workspace = true
+authors.workspace = true
+edition.workspace = true
+repository.workspace = true
+homepage.workspace = true
+license-file.workspace = true
+categories.workspace = true
+include.workspace = true
 
 [package.metadata.docs.rs]
 all-features = true

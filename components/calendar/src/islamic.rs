@@ -32,12 +32,13 @@
 use crate::calendar_arithmetic::{ArithmeticDate, CalendarArithmetic};
 use crate::helpers::{self, div_rem_euclid, div_rem_euclid64, div_rem_euclid_f64, next};
 use crate::julian::Julian;
-use crate::rata_die::RataDie;
+use crate::rata_die::{Moment, RataDie};
 use crate::AnyCalendarKind;
-use crate::{astronomy::*, Iso};
+use crate::Iso;
 use crate::{types, Calendar, CalendarError, Date, DateDuration, DateDurationUnit, DateTime};
 use ::tinystr::tinystr;
 
+use calendrical_calculations::astronomy::*;
 /// Islamic Observational Calendar (Default)
 ///
 /// # Era codes
@@ -366,7 +367,7 @@ impl CalendarArithmetic for IslamicUmmAlQura {
         // We cannot use month_days from the book here, that is for the observational calendar
         //
         // Instead we subtract the two new months calculated using the saudi criterion
-        let midmonth = types::Moment::new(
+        let midmonth = Moment::new(
             FIXED_ISLAMIC_EPOCH_FRIDAY.to_f64_date()
                 + (((year - 1) as f64) * 12.0 + month as f64 - 0.5) * MEAN_SYNODIC_MONTH,
         );
@@ -588,13 +589,13 @@ impl IslamicUmmAlQura {
         let age = date.to_f64_date() - last_new_moon;
         // Explanation of why the value 3.0 is chosen: https://github.com/unicode-org/icu4x/pull/3673/files#r1267460916
         let tau = if age <= 3.0 && !Self::adjusted_saudi_criterion(date) {
-            // Checks if the criterion is not yet visibile on the evening of date
+            // Checks if the criterion is not yet visible on the evening of date
             last_new_moon - 30.0 // Goes back a month
         } else {
             last_new_moon
         };
 
-        next(RataDie::new(tau as i64), Self::adjusted_saudi_criterion) // Loop that increments the day and checks if the criterion is now visibile
+        next(RataDie::new(tau as i64), Self::adjusted_saudi_criterion) // Loop that increments the day and checks if the criterion is now visible
     }
 
     // Lisp code reference: https://github.com/EdReingold/calendar-code2/blob/main/calendar.l#L6996
