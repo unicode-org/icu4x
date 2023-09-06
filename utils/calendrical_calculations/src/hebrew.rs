@@ -9,7 +9,7 @@
 
 #[allow(unused_imports)]
 use crate::helpers::CoreFloat;
-use crate::helpers::{div_euclid_f64, final_func, i64_to_i32, next_u8};
+use crate::helpers::{final_func, i64_to_i32, next_u8};
 use crate::rata_die::{Moment, RataDie};
 
 /// Lisp code reference: <https://github.com/EdReingold/calendar-code2/blob/main/calendar.l#L2206>
@@ -259,7 +259,7 @@ impl BookHebrew {
     /// Lisp code reference: <https://github.com/EdReingold/calendar-code2/blob/main/calendar.l#L2352>
     pub fn book_hebrew_from_fixed(date: RataDie) -> BookHebrew {
         let approx = i64_to_i32(
-            1 + (div_euclid_f64((date - FIXED_HEBREW_EPOCH) as f64, 35975351.0 / 98496.0)) as i64, //  The value 35975351/98496, the average length of a BookHebrew year, can be approximated by 365.25
+            1 + ((date - FIXED_HEBREW_EPOCH) as f64).div_euclid(35975351.0 / 98496.0) as i64, //  The value 35975351/98496, the average length of a BookHebrew year, can be approximated by 365.25
         )
         .unwrap_or_else(|e| e.saturate());
 

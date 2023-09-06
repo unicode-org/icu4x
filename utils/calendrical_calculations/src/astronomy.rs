@@ -17,10 +17,22 @@ use crate::error::LocationOutOfBoundsError;
 #[allow(unused_imports)]
 use crate::helpers::CoreFloat;
 use crate::helpers::{
-    binary_search, div_euclid_f64, i64_to_i32, interval_mod_f64, invert_angular, next_moment, poly,
+    binary_search, i64_to_i32, interval_mod_f64, invert_angular, next_moment, poly,
 };
 use crate::rata_die::{Moment, RataDie};
 use core::f64::consts::PI;
+
+// TODO: this isn't f64::div_euclid as defined in std. Figure out what the call sites
+// mean to do.
+fn div_euclid_f64(n: f64, d: f64) -> f64 {
+    debug_assert!(d > 0.0);
+    let (a, b) = (n / d, n % d);
+    if n >= 0.0 || b == 0.0 {
+        a
+    } else {
+        a - 1.0
+    }
+}
 
 #[derive(Debug, Copy, Clone, Default)]
 /// A Location on the Earth given as a latitude, longitude, elevation, and standard time zone.
@@ -456,7 +468,7 @@ impl Astronomical {
 
         if value.abs() <= 1.0 {
             let offset = interval_mod_f64(
-                div_euclid_f64(value.asin().to_degrees().rem_euclid(360.0), 360.0),
+                value.asin().to_degrees().rem_euclid(360.0) / 360.0,
                 -12.0 / 24.0,
                 12.0 / 24.0,
             );
@@ -1563,8 +1575,7 @@ impl Astronomical {
         let n = maybe_n.unwrap_or_else(|e| e.saturate());
         let a = (Self::lunar_longitude(julian_centuries) - Self::solar_longitude(julian_centuries))
             .rem_euclid(360.0);
-        let b = 360.0
-            * div_euclid_f64(moment - Self::nth_new_moon(n), MEAN_SYNODIC_MONTH).rem_euclid(1.0);
+        let b = 360.0 * ((moment - Self::nth_new_moon(n)) / MEAN_SYNODIC_MONTH).rem_euclid(1.0);
         if (a - b).abs() > 180.0 {
             b
         } else {

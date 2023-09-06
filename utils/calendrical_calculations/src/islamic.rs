@@ -1,7 +1,7 @@
 use crate::astronomy::*;
 #[allow(unused_imports)]
 use crate::helpers::CoreFloat;
-use crate::helpers::{div_euclid_f64, i64_to_saturated_i32, next};
+use crate::helpers::{i64_to_saturated_i32, next};
 use crate::rata_die::{Moment, RataDie};
 
 // Different islamic calendars use different epochs (Thursday vs Friday) due to disagreement on the exact date of Mohammed's migration to Mecca.
@@ -129,8 +129,9 @@ pub fn islamic_civil_from_fixed(date: RataDie) -> (i32, u8, u8) {
     let year =
         i64_to_saturated_i32(((date - FIXED_ISLAMIC_EPOCH_FRIDAY) * 30 + 10646).div_euclid(10631));
     let prior_days = date.to_f64_date() - fixed_from_islamic_civil(year, 1, 1).to_f64_date();
+    debug_assert!(prior_days >= 0.0);
     debug_assert!(prior_days <= 354.);
-    let month = div_euclid_f64((prior_days * 11.0) + 330.0, 325.0) as u8; // Prior days is maximum 354 (when year length is 355), making the value always less than 12
+    let month = (((prior_days * 11.0) + 330.0) / 325.0) as u8; // Prior days is maximum 354 (when year length is 355), making the value always less than 12
     debug_assert!(month <= 12);
     let day =
         (date.to_f64_date() - fixed_from_islamic_civil(year, month, 1).to_f64_date() + 1.0) as u8; // The value will always be number between 1-30 because of the difference between the date and lunar ordinals function.
@@ -162,8 +163,9 @@ pub fn islamic_tabular_from_fixed(date: RataDie) -> (i32, u8, u8) {
         ((date - FIXED_ISLAMIC_EPOCH_THURSDAY) * 30 + 10646).div_euclid(10631),
     );
     let prior_days = date.to_f64_date() - fixed_from_islamic_tabular(year, 1, 1).to_f64_date();
+    debug_assert!(prior_days >= 0.0);
     debug_assert!(prior_days <= 354.);
-    let month = div_euclid_f64((prior_days * 11.0) + 330.0, 325.0) as u8; // Prior days is at most 354 (with year length 355), making the value 12 or less and within bounds of u8
+    let month = (((prior_days * 11.0) + 330.0) / 325.0) as u8; // Prior days is maximum 354 (when year length is 355), making the value always less than 12
     debug_assert!(month <= 12);
     let day =
         (date.to_f64_date() - fixed_from_islamic_tabular(year, month, 1).to_f64_date() + 1.0) as u8; // The value will always be number between 1-30 because of the difference between the date and lunar ordinals function.

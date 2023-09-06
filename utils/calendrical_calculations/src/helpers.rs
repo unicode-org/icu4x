@@ -10,17 +10,6 @@
 use crate::astronomy::Location;
 use crate::rata_die::{Moment, RataDie};
 
-/// [`div_euclid`] for f64
-pub(crate) fn div_euclid_f64(n: f64, d: f64) -> f64 {
-    debug_assert!(d > 0.0);
-    let (a, b) = (n / d, n % d);
-    if n >= 0.0 || b == 0.0 {
-        a
-    } else {
-        a - 1.0
-    }
-}
-
 pub(crate) trait IntegerRoundings {
     fn div_ceil(self, rhs: Self) -> Self;
 }
@@ -428,6 +417,7 @@ pub(crate) trait CoreFloat {
     fn abs(self) -> Self;
     fn signum(self) -> Self;
     fn copysign(self, sign: Self) -> Self;
+    fn div_euclid(self, rhs: Self) -> Self;
     fn rem_euclid(self, rhs: Self) -> Self;
     fn powf(self, n: Self) -> Self;
     fn sqrt(self) -> Self;
@@ -472,6 +462,15 @@ impl CoreFloat for f64 {
     #[inline]
     fn copysign(self, sign: Self) -> Self {
         libm::copysign(self, sign)
+    }
+
+    #[inline]
+    fn div_euclid(self, rhs: Self) -> Self {
+        let q = (self / rhs).trunc();
+        if self % rhs < 0.0 {
+            return if rhs > 0.0 { q - 1.0 } else { q + 1.0 };
+        }
+        q
     }
 
     #[inline]
