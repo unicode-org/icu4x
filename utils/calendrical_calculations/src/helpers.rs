@@ -235,66 +235,6 @@ fn test_invert_angular() {
     }
 }
 
-/// Return y if x.rem_euclid(y) == 0, x.rem_euclid(y) otherwise
-pub(crate) fn adjusted_rem_euclid(x: i32, y: i32) -> i32 {
-    let remainder = x.rem_euclid(y);
-    if remainder == 0 {
-        y
-    } else {
-        remainder
-    }
-}
-
-#[test]
-fn test_adjusted_rem_euclid() {
-    #[derive(Debug)]
-    struct TestCase {
-        x: i32,
-        y: i32,
-        expected: i32,
-    }
-
-    let cases = [
-        TestCase {
-            x: 3,
-            y: 7,
-            expected: 3,
-        },
-        TestCase {
-            x: 7,
-            y: 3,
-            expected: 1,
-        },
-        TestCase {
-            x: -11,
-            y: 9,
-            expected: 7,
-        },
-        TestCase {
-            x: 11,
-            y: 9,
-            expected: 2,
-        },
-        TestCase {
-            x: 11,
-            y: 11,
-            expected: 11,
-        },
-        TestCase {
-            x: -22,
-            y: 11,
-            expected: 11,
-        },
-    ];
-    for case in cases {
-        let result = adjusted_rem_euclid(case.x, case.y);
-        assert_eq!(
-            case.expected, result,
-            "Adjusted rem euclid failed for case: {case:?}"
-        );
-    }
-}
-
 /// The value of x shifted into the range [a..b); returns x if a == b; for f64 types
 pub(crate) fn interval_mod_f64(x: f64, a: f64, b: f64) -> f64 {
     if (a - b).abs() < f64::EPSILON {

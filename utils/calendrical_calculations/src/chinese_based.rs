@@ -1,7 +1,7 @@
 use crate::astronomy::{self, Astronomical, Location, MEAN_SYNODIC_MONTH, MEAN_TROPICAL_YEAR};
+use crate::helpers::i64_to_i32;
 #[allow(unused_imports)]
 use crate::helpers::CoreFloat;
-use crate::helpers::{adjusted_rem_euclid, i64_to_i32};
 use crate::rata_die::{Moment, RataDie};
 use core::num::NonZeroU8;
 
@@ -202,7 +202,7 @@ pub(crate) fn major_solar_term_from_fixed<C: ChineseBased>(date: RataDie) -> u32
         "Solar longitude should be in range of i32"
     );
     let s = solar_longitude.unwrap_or_else(|e| e.saturate());
-    let result_signed = adjusted_rem_euclid(2 + s.div_euclid(30), 12);
+    let result_signed = (2 + s.div_euclid(30) - 1).rem_euclid(12) + 1;
     debug_assert!(result_signed >= 0);
     result_signed as u32
 }
@@ -333,7 +333,7 @@ pub(crate) fn new_year_on_or_before_fixed_date<C: ChineseBased>(
 /// Lisp reference code: <https://github.com/EdReingold/calendar-code2/blob/main/calendar.l#L5469-L5475>
 pub fn fixed_mid_year_from_year<C: ChineseBased>(elapsed_years: i32) -> RataDie {
     let cycle = (elapsed_years - 1).div_euclid(60) + 1;
-    let year = adjusted_rem_euclid(elapsed_years, 60);
+    let year = (elapsed_years - 1).rem_euclid(60) + 1;
     C::EPOCH + ((((cycle - 1) * 60 + year - 1) as f64 + 0.5) * MEAN_TROPICAL_YEAR) as i64
 }
 
