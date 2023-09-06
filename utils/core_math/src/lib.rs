@@ -683,7 +683,6 @@ pub trait CoreFloat: Sized + Copy {
     fn atanh(self) -> Self;
 }
 
-#[cfg(target_os = "none")]
 impl CoreFloat for f32 {
     #[inline]
     fn floor(self) -> Self {
@@ -913,7 +912,6 @@ impl CoreFloat for f32 {
     }
 }
 
-#[cfg(target_os = "none")]
 impl CoreFloat for f64 {
     #[inline]
     fn floor(self) -> Self {

@@ -19,5 +19,5 @@ include.workspace = true
 [lib]
 name = "core_math"
 
-[target.'cfg(target_os = "none")'.dependencies]
+[dependencies]
 libm = "0.2"
