@@ -29,15 +29,21 @@ use zerovec::*;
 #[cfg(feature = "compiled_data")]
 #[derive(Debug)]
 /// Baked data
+///
+/// <div class="stab unstable">
+/// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
+/// including in SemVer minor releases. In particular, the `DataProvider` implementations are only
+/// guaranteed to match with this version's `*_unstable` providers. Use with caution.
+/// </div>
 pub struct Baked;
 
 #[cfg(feature = "compiled_data")]
 const _: () = {
     mod icu {
-        pub use crate as transliteration;
+        pub use crate as transliterate;
         pub use icu_collections as collections;
     }
-    icu_transliteration_data::impl_transliterator_rules_v1!(Baked);
+    icu_transliterate_data::impl_transliterator_rules_v1!(Baked);
 };
 
 // TODO(#3776): Improve the documentation of this datastruct.
@@ -46,7 +52,7 @@ const _: () = {
 #[icu_provider::data_struct(TransliteratorRulesV1Marker = "transliterator/rules@1")]
 #[derive(Debug, Clone, PartialEq, Eq)]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
-#[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake), databake(path = icu_transliteration::provider))]
+#[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake), databake(path = icu_transliterate::provider))]
 pub struct RuleBasedTransliterator<'a> {
     /// Whether this transliterator is accessible directly through the constructor.
     /// Hidden transliterators are intended as dependencies for visible transliterators,
@@ -64,9 +70,24 @@ pub struct RuleBasedTransliterator<'a> {
     /// The list of conversion rule groups this transliterator uses.
     #[cfg_attr(feature = "serde", serde(borrow))]
     pub rule_group_list: VarZeroVec<'a, VarZeroSlice<RuleULE>>,
-    /// The direct dependencies of this transliterator.
-    #[cfg_attr(feature = "serde", serde(borrow))]
-    pub dependencies: VarZeroVec<'a, str>,
+}
+
+impl<'a> RuleBasedTransliterator<'a> {
+    /// Returns an iterator of dependencies on other transliterators.
+    ///
+    /// Note that this may contain duplicate entries.
+    pub fn deps(&self) -> impl Iterator<Item = Cow<str>> {
+        use zerofrom::ZeroFrom;
+        self.id_group_list
+            .iter()
+            .flat_map(|id_group| id_group.iter().map(|s| SimpleId::zero_from(s).id))
+            .chain(
+                self.variable_table
+                    .function_calls
+                    .iter()
+                    .map(|s| FunctionCall::zero_from(s).translit.id),
+            )
+    }
 }
 
 /// The ID of a transliterator plus an optional filter.
@@ -128,7 +149,7 @@ pub struct Rule<'a> {
 /// The special matchers and replacers used by this transliterator.
 #[derive(Debug, Clone, zerofrom::ZeroFrom, PartialEq, Eq)]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
-#[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake), databake(path = icu_transliteration::provider))]
+#[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake), databake(path = icu_transliterate::provider))]
 pub struct VarTable<'a> {
     /// Variable definitions.
     #[cfg_attr(feature = "serde", serde(borrow))]

@@ -258,6 +258,7 @@ ICU4X's explicit data pipeline allows for specific data entries to be overwritte
 The following example illustrates how to overwrite the decimal separators for a region.
 
 ```rust
+use core::any::Any;
 use icu::decimal::FixedDecimalFormatter;
 use icu::decimal::provider::DecimalSymbolsV1Marker;
 use icu_provider::prelude::*;
@@ -269,23 +270,27 @@ use tinystr::tinystr;
 
 pub struct CustomDecimalSymbolsProvider<P>(P);
 
-impl<P> AnyProvider for CustomDecimalSymbolsProvider<P>
+impl<P, M> DataProvider<M> for CustomDecimalSymbolsProvider<P>
 where
-    P: AnyProvider
+    P: DataProvider<M>,
+    M: KeyedDataMarker,
 {
-    fn load_any(&self, key: DataKey, req: DataRequest) -> Result<AnyResponse, DataError> {
-        let mut any_res = self.0.load_any(key, req)?;
-        if key == DecimalSymbolsV1Marker::KEY && req.locale.region() == Some(region!("CH")) {
-            let mut res: DataResponse<DecimalSymbolsV1Marker> = any_res.downcast()?;
-            if let Some(payload) = &mut res.payload.as_mut() {
-                payload.with_mut(|data| {
-                    // Change the grouping separator for all Swiss locales to '🐮'
-                    data.grouping_separator = Cow::Borrowed("🐮");
-                });
+    #[inline]
+    fn load(&self, req: DataRequest) -> Result<DataResponse<M>, DataError> {
+        let mut res = self.0.load(req)?;
+        if let Some(mut generic_payload) = res.payload.as_mut() {
+            // Cast from `DataPayload<M>` to `DataPayload<DecimalSymbolsV1Marker>`
+            let mut any_payload = generic_payload as &mut dyn Any;
+            if let Some(mut decimal_payload) = any_payload.downcast_mut::<DataPayload<DecimalSymbolsV1Marker>>() {
+                if req.locale.region() == Some(region!("CH")) {
+                    decimal_payload.with_mut(|data| {
+                        // Change the grouping separator for all Swiss locales to '🐮'
+                        data.grouping_separator = Cow::Borrowed("🐮");
+                    });
+                }
             }
-            any_res = res.wrap_into_any_response();
         }
-        Ok(any_res)
+        Ok(res)
     }
 }
 
@@ -293,7 +298,7 @@ let provider = CustomDecimalSymbolsProvider(
     AnyPayloadProvider::new_default::<DecimalSymbolsV1Marker>()
 );
 
-let formatter = FixedDecimalFormatter::try_new_with_any_provider(
+let formatter = FixedDecimalFormatter::try_new_unstable(
     &provider,
     &locale!("und").into(),
     Default::default(),
@@ -302,7 +307,7 @@ let formatter = FixedDecimalFormatter::try_new_with_any_provider(
 
 assert_eq!(formatter.format_to_string(&100007i64.into()), "100,007");
 
-let formatter = FixedDecimalFormatter::try_new_with_any_provider(
+let formatter = FixedDecimalFormatter::try_new_unstable(
     &provider,
     &locale!("und-CH").into(),
     Default::default(),

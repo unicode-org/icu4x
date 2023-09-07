@@ -268,7 +268,7 @@ pub(crate) fn transform<'x>(
 fn test_basic() {
     use icu_locid::subtags::{language, region, script};
 
-    let provider = crate::DatagenProvider::latest_tested_offline_subset();
+    let provider = crate::DatagenProvider::new_testing();
     let result_common: DataPayload<LikelySubtagsV1Marker> = provider
         .load(Default::default())
         .unwrap()

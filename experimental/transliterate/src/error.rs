@@ -2,10 +2,47 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-/// The kind of error that occurred.
+use core::fmt::Debug;
+use displaydoc::Display;
+use icu_provider::DataError;
+
+#[cfg(feature = "std")]
+impl std::error::Error for TransliteratorError {}
+
+/// A list of error outcomes for various operations in this module.
+///
+/// Re-exported as [`Error`](crate::Error).
+#[derive(Display, Debug, Copy, Clone, PartialEq)]
+#[non_exhaustive]
+pub enum TransliteratorError {
+    /// An error originating inside of the [data provider](icu_provider).
+    #[displaydoc("{0}")]
+    Data(DataError),
+    /// The requested transliterator is marked as internal-only.
+    InternalOnly,
+    #[cfg(feature = "datagen")]
+    /// The variant returned by [`RuleBasedTransliterator::compile`](crate::provider::RuleBasedTransliterator::compile).
+    Compile {
+        /// offset is the index to an arbitrary byte in the last character in the source that makes sense
+        /// to display as location for the error, e.g., the unexpected character itself or
+        /// for an unknown property name the last character of the name.
+        offset: Option<usize>,
+        /// The type of compile error
+        kind: CompileErrorKind,
+    },
+}
+
+impl From<DataError> for TransliteratorError {
+    fn from(e: DataError) -> Self {
+        Self::Data(e)
+    }
+}
+
+/// The kind of compile error that occurred.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 #[non_exhaustive]
-pub enum ParseErrorKind {
+#[cfg(feature = "datagen")]
+pub enum CompileErrorKind {
     /// An unexpected character was encountered. This variant implies the other variants
     /// (notably `UnknownProperty` and `Unimplemented`) do not apply.
     UnexpectedChar(char),
@@ -55,53 +92,20 @@ pub enum ParseErrorKind {
     /// There are too many special matchers/replacers/variables in the source.
     TooManySpecials,
 }
-pub(crate) use ParseErrorKind as PEK;
 
-impl ParseErrorKind {
-    pub(crate) fn with_offset(self, offset: usize) -> ParseError {
-        ParseError {
+#[cfg(feature = "datagen")]
+impl CompileErrorKind {
+    pub(crate) fn with_offset(self, offset: usize) -> TransliteratorError {
+        TransliteratorError::Compile {
             offset: Some(offset),
             kind: self,
         }
     }
 }
 
-/// The error type returned by the `parse` functions in this crate.
-#[allow(unused)] // TODO(#3736): remove when parse error message tests are added
-#[derive(Debug, Clone, Copy)]
-pub struct ParseError {
-    // offset is the index to an arbitrary byte in the last character in the source that makes sense
-    // to display as location for the error, e.g., the unexpected character itself or
-    // for an unknown property name the last character of the name.
-    offset: Option<usize>,
-    kind: ParseErrorKind,
-}
-
-impl ParseError {
-    pub(crate) fn or_with_offset(self, offset: usize) -> Self {
-        match self.offset {
-            Some(_) => self,
-            None => ParseError {
-                offset: Some(offset),
-                ..self
-            },
-        }
+#[cfg(feature = "datagen")]
+impl From<CompileErrorKind> for TransliteratorError {
+    fn from(kind: CompileErrorKind) -> Self {
+        TransliteratorError::Compile { offset: None, kind }
     }
 }
-
-impl From<ParseErrorKind> for ParseError {
-    fn from(kind: ParseErrorKind) -> Self {
-        ParseError { offset: None, kind }
-    }
-}
-
-impl From<icu_unicodeset_parser::ParseError> for ParseError {
-    fn from(e: icu_unicodeset_parser::ParseError) -> Self {
-        ParseError {
-            offset: None,
-            kind: PEK::UnicodeSetError(e),
-        }
-    }
-}
-
-pub(crate) type Result<T, E = ParseError> = core::result::Result<T, E>;

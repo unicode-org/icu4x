@@ -41,6 +41,10 @@ jobs:
       matrix: 
         behavior: [check, features-1, features-2, features-3]
       fail-fast: true
+    # Set CARGO_HTTP_MULTIPLEXING=false to work around crates.io curl bug:
+    # <https://rust-lang.zulipchat.com/#narrow/stream/246057-t-cargo/topic/timeout.20investigation>
+    env:
+      CARGO_HTTP_MULTIPLEXING: false
     steps:
     - uses: actions/checkout@v3
 

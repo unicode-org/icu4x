@@ -249,7 +249,7 @@ mod tests {
 
     #[test]
     fn thai_word_break_with_grapheme_model() {
-        let provider = crate::DatagenProvider::latest_tested_offline_subset();
+        let provider = crate::DatagenProvider::new_testing();
         let raw_data = provider
             .segmenter_lstm()
             .unwrap()

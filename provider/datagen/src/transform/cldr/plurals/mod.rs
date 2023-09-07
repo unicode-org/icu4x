@@ -87,7 +87,7 @@ impl From<&cldr_serde::plurals::LocalePluralRules> for PluralRulesV1<'static> {
 fn test_basic() {
     use icu_locid::langid;
 
-    let provider = crate::DatagenProvider::latest_tested_offline_subset();
+    let provider = crate::DatagenProvider::new_testing();
 
     // Spot-check locale 'cs' since it has some interesting entries
     let cs_rules: DataPayload<CardinalV1Marker> = provider

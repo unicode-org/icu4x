@@ -5693,9 +5693,5 @@
         "replacer": "==="
       }
     ]
-  ],
-  "dependencies": [
-    "x-any-nfc",
-    "x-any-nfd"
   ]
 }

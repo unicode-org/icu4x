@@ -86,7 +86,7 @@ mod tests {
 
     #[test]
     fn test_basic_variant_display_names() {
-        let provider = crate::DatagenProvider::latest_tested_offline_subset();
+        let provider = crate::DatagenProvider::new_testing();
 
         let data: DataPayload<VariantDisplayNamesV1Marker> = provider
             .load(DataRequest {

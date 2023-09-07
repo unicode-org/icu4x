@@ -29,8 +29,7 @@ members = [
     "experimental/personnames",
     "experimental/relativetime",
     "experimental/single_number_formatter",
-    "experimental/transliteration",
-    "experimental/transliterator_parser",
+    "experimental/transliterate",
     "experimental/unicodeset_parser",
     "experimental/unitsconversion",
 
@@ -159,8 +158,7 @@ icu_displaynames = { version = "0.10.0", path = "experimental/displaynames", def
 icu_personnames = { version = "0.0.0", path = "experimental/personnames", default-features = false }
 icu_relativetime = { version = "0.1.0", path = "experimental/relativetime", default-features = false }
 icu_singlenumberformatter = { version = "0.0.0", path = "experimental/single_number_formatter", default-features = false }
-icu_transliteration = { version = "0.0.0", path = "experimental/transliteration", default-features = false }
-icu_transliterator_parser = { version = "0.0.0", path = "experimental/transliterator_parser", default-features = false }
+icu_transliterate = { version = "0.0.0", path = "experimental/transliterate", default-features = false }
 icu_unicodeset_parser = { version = "0.0.0", path = "experimental/unicodeset_parser", default-features = false }
 icu_unitsconversion = { version = "0.0.0", path = "experimental/unitsconversion", default-features = false }
 
@@ -181,7 +179,7 @@ icu_compactdecimal_data = { version = "~1.2.0", path = "experimental/compactdeci
 icu_displaynames_data = { version = "~1.2.0", path = "experimental/displaynames/data", default-features = false }
 icu_relativetime_data = { version = "1.2.0", path = "experimental/relativetime/data", default-features = false }
 icu_singlenumberformatter_data = { version = "~1.2.0", path = "experimental/single_number_formatter/data", default-features = false }
-icu_transliteration_data = { version = "0.0.0", path = "experimental/transliteration/data", default-features = false }
+icu_transliterate_data = { version = "0.0.0", path = "experimental/transliterate/data", default-features = false }
 
 # FFI
 icu_capi = { version = "~1.2.0", path = "ffi/diplomat", default-features = false }

@@ -138,7 +138,7 @@ fn test_basic() {
     use icu_properties::provider::PropertyCodePointSetV1;
     use icu_properties::provider::WhiteSpaceV1Marker;
 
-    let provider = crate::DatagenProvider::latest_tested_offline_subset();
+    let provider = crate::DatagenProvider::new_testing();
 
     let payload: DataPayload<WhiteSpaceV1Marker> = provider
         .load(Default::default())

@@ -356,9 +356,5 @@
         "replacer": "󰀿󰁀󰁁"
       }
     ]
-  ],
-  "dependencies": [
-    "x-any-null",
-    "x-any-remove"
   ]
 }

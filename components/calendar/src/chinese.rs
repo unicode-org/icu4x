@@ -18,14 +18,14 @@
 //! // `Date` checks
 //! assert_eq!(chinese_date.year().number, 4660);
 //! assert_eq!(chinese_date.year().related_iso, Some(2023));
-//! assert_eq!(chinese_date.year().cyclic, Some(40));
+//! assert_eq!(chinese_date.year().cyclic.unwrap().get(), 40);
 //! assert_eq!(chinese_date.month().ordinal, 6);
 //! assert_eq!(chinese_date.day_of_month().0, 6);
 //!
 //! // `DateTime` checks
 //! assert_eq!(chinese_datetime.date.year().number, 4660);
 //! assert_eq!(chinese_datetime.date.year().related_iso, Some(2023));
-//! assert_eq!(chinese_datetime.date.year().cyclic, Some(40));
+//! assert_eq!(chinese_datetime.date.year().cyclic.unwrap().get(), 40);
 //! assert_eq!(chinese_datetime.date.month().ordinal, 6);
 //! assert_eq!(chinese_datetime.date.day_of_month().0, 6);
 //! assert_eq!(chinese_datetime.time.hour.number(), 13);
@@ -47,6 +47,7 @@ use crate::{
     chinese_data, types, Calendar, CalendarError, Date, DateDuration, DateDurationUnit, DateTime,
 };
 use calendrical_calculations::astronomy::Location;
+use core::num::NonZeroU8;
 use tinystr::tinystr;
 
 // The equivalent first day in the Chinese calendar (based on inception of the calendar)
@@ -112,6 +113,9 @@ const CHINESE_LOCATION_POST_1929: Location =
 ///
 /// This calendar is a lunisolar calendar. It supports regular month codes `"M01" - "M12"` as well
 /// as leap month codes `"M01L" - "M12L"`.
+///
+/// This calendar is currently in a preview state: formatting for this calendar is not
+/// going to be perfect.
 #[derive(Copy, Clone, Debug, Default, PartialEq, Eq, PartialOrd, Ord, Hash)]
 #[allow(clippy::exhaustive_structs)] // this type is stable
 pub struct Chinese;
@@ -324,7 +328,7 @@ impl Date<Chinese> {
     ///     .expect("Failed to initialize Chinese Date instance.");
     ///
     /// assert_eq!(date_chinese.year().number, 4660);
-    /// assert_eq!(date_chinese.year().cyclic, Some(40));
+    /// assert_eq!(date_chinese.year().cyclic.unwrap().get(), 40);
     /// assert_eq!(date_chinese.year().related_iso, Some(2023));
     /// assert_eq!(date_chinese.month().ordinal, 6);
     /// assert_eq!(date_chinese.day_of_month().0, 11);
@@ -355,7 +359,7 @@ impl DateTime<Chinese> {
     ///
     /// assert_eq!(chinese_datetime.date.year().number, 4660);
     /// assert_eq!(chinese_datetime.date.year().related_iso, Some(2023));
-    /// assert_eq!(chinese_datetime.date.year().cyclic, Some(40));
+    /// assert_eq!(chinese_datetime.date.year().cyclic.unwrap().get(), 40);
     /// assert_eq!(chinese_datetime.date.month().ordinal, 6);
     /// assert_eq!(chinese_datetime.date.day_of_month().0, 11);
     /// assert_eq!(chinese_datetime.time.hour.number(), 13);
@@ -462,7 +466,8 @@ impl Chinese {
     ) -> FormattableYear {
         let era = Era(tinystr!(16, "chinese"));
         let number = year;
-        let cyclic = Some(div_rem_euclid(number - 1, 60).1 + 1);
+        let cyclic = (div_rem_euclid(number - 1, 60).1) as u8;
+        let cyclic = NonZeroU8::new(cyclic + 1); // 1-indexed
         let rata_die_in_year = if let Some(info) = year_info_option {
             info.get_new_year()
         } else {
@@ -668,7 +673,7 @@ mod test {
         assert_eq!(chinese.month().ordinal, 1);
         assert_eq!(chinese.month().code.0, "M01");
         assert_eq!(chinese.day_of_month().0, 1);
-        assert_eq!(chinese.year().cyclic, Some(1));
+        assert_eq!(chinese.year().cyclic.unwrap().get(), 1);
         assert_eq!(chinese.year().related_iso, Some(-2636));
     }
 
@@ -973,7 +978,7 @@ mod test {
             iso_month: u8,
             iso_day: u8,
             expected_rel_iso: i32,
-            expected_cyclic: i32,
+            expected_cyclic: u8,
             expected_month: u32,
             expected_day: u32,
         }
@@ -1070,8 +1075,8 @@ mod test {
                 "Related ISO failed for test case: {case:?}"
             );
             assert_eq!(
-                chinese_cyclic,
-                Some(case.expected_cyclic),
+                chinese_cyclic.unwrap().get(),
+                case.expected_cyclic,
                 "Cyclic year failed for test case: {case:?}"
             );
             assert_eq!(
