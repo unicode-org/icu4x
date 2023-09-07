@@ -147,7 +147,7 @@ fn extract_currency_essentials<'data>(
                     assert!(index <= MAX_INJECTING_TEXT_INDEX);
                     injecting_texts.push(short_injecting_text.as_str());
                     injecting_texts_checker_map.insert(short_injecting_text.as_str(), index);
-                    InjectingText::Index(index).into()
+                    InjectingText::Index(index)
                 }
             });
 
@@ -168,7 +168,7 @@ fn extract_currency_essentials<'data>(
                         assert!(index <= MAX_INJECTING_TEXT_INDEX);
                         injecting_texts.push(narrow_injecting_text.as_ref());
                         injecting_texts_checker_map.insert(narrow_injecting_text.as_str(), index);
-                        InjectingText::Index(index).into()
+                        InjectingText::Index(index)
                     }
                 });
 
