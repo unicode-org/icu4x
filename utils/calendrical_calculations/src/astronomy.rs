@@ -17,8 +17,7 @@ use crate::error::LocationOutOfBoundsError;
 #[allow(unused_imports)]
 use crate::helpers::CoreFloat;
 use crate::helpers::{
-    binary_search, div_rem_euclid_f64, i64_to_i32, interval_mod_f64, invert_angular, next_moment,
-    poly,
+    binary_search, div_euclid_f64, i64_to_i32, interval_mod_f64, invert_angular, next_moment, poly,
 };
 use crate::rata_die::{Moment, RataDie};
 use core::f64::consts::PI;
@@ -392,16 +391,11 @@ impl Astronomical {
     /// Reference lisp code: <https://github.com/EdReingold/calendar-code2/blob/9afc1f3/calendar.l#L3567-L3576>
     pub fn declination(moment: Moment, beta: f64, lambda: f64) -> f64 {
         let varepsilon = Self::obliquity(moment);
-        div_rem_euclid_f64(
-            (beta.to_radians().sin() * varepsilon.to_radians().cos()
-                + beta.to_radians().cos()
-                    * varepsilon.to_radians().sin()
-                    * lambda.to_radians().sin())
-            .asin()
-            .to_degrees(),
-            360.0,
-        )
-        .1
+        (beta.to_radians().sin() * varepsilon.to_radians().cos()
+            + beta.to_radians().cos() * varepsilon.to_radians().sin() * lambda.to_radians().sin())
+        .asin()
+        .to_degrees()
+        .rem_euclid(360.0)
     }
 
     /// Calculates the right ascension at a given [`Moment`] of UTC time of an object at ecliptic latitude `beta` and ecliptic longitude `lambda`; all angles are in degrees.
@@ -419,7 +413,7 @@ impl Astronomical {
         let x = lambda.to_radians().cos();
 
         // Arctangent of y/x in degrees, handling zero cases
-        div_rem_euclid_f64(y.atan2(x).to_degrees(), 360.0).1
+        y.atan2(x).to_degrees().rem_euclid(360.0)
     }
 
     /// Local time from apparent solar time at a given location
@@ -462,11 +456,7 @@ impl Astronomical {
 
         if value.abs() <= 1.0 {
             let offset = interval_mod_f64(
-                div_rem_euclid_f64(
-                    div_rem_euclid_f64(value.asin().to_degrees(), 360.0).1,
-                    360.0,
-                )
-                .0,
+                div_euclid_f64(value.asin().to_degrees().rem_euclid(360.0), 360.0),
                 -12.0 / 24.0,
                 12.0 / 24.0,
             );
@@ -775,7 +765,7 @@ impl Astronomical {
 
         let angle = poly(c, coefficients);
 
-        div_rem_euclid_f64(angle, 360.0).1
+        angle.rem_euclid(360.0)
     }
 
     /// Ecliptic (aka celestial) latitude of the moon (in degrees)
@@ -1162,11 +1152,8 @@ impl Astronomical {
         let venus = 3958.0 / 1000000.0 * (119.75 + c * 131.849).to_radians().sin();
         let jupiter = 318.0 / 1000000.0 * (53.09 + c * 479264.29).to_radians().sin();
         let flat_earth = 1962.0 / 1000000.0 * (l - f).to_radians().sin();
-        div_rem_euclid_f64(
-            l + correction + venus + jupiter + flat_earth + Self::nutation(julian_centuries),
-            360.0,
-        )
-        .1
+        (l + correction + venus + jupiter + flat_earth + Self::nutation(julian_centuries))
+            .rem_euclid(360.0)
     }
 
     /// Mean longitude of the moon (in degrees) at a given Moment in Julian centuries.
@@ -1179,7 +1166,7 @@ impl Astronomical {
         let n = 218.3164477
             + c * (481267.88123421 - 0.0015786 * c + c * c / 538841.0 - c * c * c / 65194000.0);
 
-        div_rem_euclid_f64(n, 360.0).1
+        n.rem_euclid(360.0)
     }
 
     /// Closest fixed date on or after `date` on the eve of which crescent moon first became visible at `location`.
@@ -1251,12 +1238,9 @@ impl Astronomical {
     /// Reference code: <https://github.com/EdReingold/calendar-code2/blob/9afc1f3/calendar.l#L4160-L4170>
     fn lunar_elongation(c: f64) -> f64 {
         // This polynomial is written out manually instead of using a fn like pow for optimization, see #3743
-        div_rem_euclid_f64(
-            297.85019021 + 445267.1114034 * c - 0.0018819 * c * c + c * c * c / 545868.0
-                - c * c * c * c / 113065000.0,
-            360.0,
-        )
-        .1
+        (297.85019021 + 445267.1114034 * c - 0.0018819 * c * c + c * c * c / 545868.0
+            - c * c * c * c / 113065000.0)
+            .rem_euclid(360.0)
     }
 
     /// Altitude of the moon (in degrees) at a given moment
@@ -1273,16 +1257,13 @@ impl Astronomical {
         let alpha = Self::right_ascension(moment, beta, lambda);
         let delta = Self::declination(moment, beta, lambda);
         let theta0 = Self::sidereal_from_moment(moment);
-        let cap_h = div_rem_euclid_f64(theta0 + psi - alpha, 360.0).1;
+        let cap_h = (theta0 + psi - alpha).rem_euclid(360.0);
 
-        let altitude = div_rem_euclid_f64(
-            (phi.to_radians().sin() * delta.to_radians().sin()
-                + phi.to_radians().cos() * delta.to_radians().cos() * cap_h.to_radians().cos())
-            .asin()
-            .to_degrees(),
-            360.0,
-        )
-        .1;
+        let altitude = ((phi.to_radians().sin() * delta.to_radians().sin()
+            + phi.to_radians().cos() * delta.to_radians().cos() * cap_h.to_radians().cos())
+        .asin()
+        .to_degrees())
+        .rem_euclid(360.0);
 
         interval_mod_f64(altitude, -180.0, 180.0)
     }
@@ -1419,7 +1400,7 @@ impl Astronomical {
         let cap_delta = Self::lunar_distance(moment);
         let alt = 6378140.0 / cap_delta;
         let arg = alt * lunar_altitude_val.to_radians().cos();
-        div_rem_euclid_f64(arg.asin().to_degrees(), 360.0).1
+        arg.asin().to_degrees().rem_euclid(360.0)
     }
 
     /// Topocentric altitude of the moon.
@@ -1450,11 +1431,8 @@ impl Astronomical {
     /// Lisp code reference: <https://github.com/EdReingold/calendar-code2/blob/9afc1f3/calendar.l#L4172-L4182>
     fn solar_anomaly(c: f64) -> f64 {
         // This polynomial is written out manually instead of using a fn like pow for optimization, see #3743
-        div_rem_euclid_f64(
-            357.5291092 + 35999.0502909 * c - 0.0001536 * c * c + c * c * c / 24490000.0,
-            360.0,
-        )
-        .1
+        (357.5291092 + 35999.0502909 * c - 0.0001536 * c * c + c * c * c / 24490000.0)
+            .rem_euclid(360.0)
     }
 
     /// Average anomaly of the moon (in degrees) at a given Moment in Julian centuries
@@ -1465,12 +1443,9 @@ impl Astronomical {
     /// Lisp code reference: <https://github.com/EdReingold/calendar-code2/blob/9afc1f3/calendar.l#L4184-L4194>
     fn lunar_anomaly(c: f64) -> f64 {
         // This polynomial is written out manually instead of using a fn like pow for optimization, see #3743
-        div_rem_euclid_f64(
-            134.9633964 + 477198.8675055 * c + 0.0087414 * c * c + c * c * c / 69699.0
-                - c * c * c * c / 14712000.0,
-            360.0,
-        )
-        .1
+        (134.9633964 + 477198.8675055 * c + 0.0087414 * c * c + c * c * c / 69699.0
+            - c * c * c * c / 14712000.0)
+            .rem_euclid(360.0)
     }
 
     /// The moon's argument of latitude, in degrees, at the moment given by `c` in Julian centuries.
@@ -1481,12 +1456,9 @@ impl Astronomical {
     /// Lisp code reference: <https://github.com/EdReingold/calendar-code2/blob/9afc1f3/calendar.l#L4196-L4206>
     fn moon_node(c: f64) -> f64 {
         // This polynomial is written out manually instead of using a fn like pow for optimization, see #3743
-        div_rem_euclid_f64(
-            93.2720950 + 483202.0175233 * c - 0.0036539 * c * c - c * c * c / 3526000.0
-                + c * c * c * c / 863310000.0,
-            360.0,
-        )
-        .1
+        (93.2720950 + 483202.0175233 * c - 0.0036539 * c * c - c * c * c / 3526000.0
+            + c * c * c * c / 863310000.0)
+            .rem_euclid(360.0)
     }
 
     /// Standard time of moonset on the date of the given moment and at the given location.
@@ -1516,7 +1488,7 @@ impl Astronomical {
             approx.inner() - (6.0 / 24.0),
             approx.inner() + (6.0 / 24.0),
             |x| Self::observed_lunar_altitude(Moment::new(x), location) < 0.0,
-            |u, l| (u - l) < 1.0 / 24.0 / 60.0,
+            1.0 / 24.0 / 60.0,
         ));
 
         if set < moment + 1.0 {
@@ -1583,27 +1555,16 @@ impl Astronomical {
     /// Reference code: <https://github.com/EdReingold/calendar-code2/blob/9afc1f3/calendar.l#L4397-L4414>
     pub fn lunar_phase(moment: Moment, julian_centuries: f64) -> f64 {
         let t0 = NEW_MOON_ZERO;
-        let maybe_n = i64_to_i32(
-            div_rem_euclid_f64(moment - t0, MEAN_SYNODIC_MONTH)
-                .0
-                .round() as i64,
-        );
+        let maybe_n = i64_to_i32(div_euclid_f64(moment - t0, MEAN_SYNODIC_MONTH).round() as i64);
         debug_assert!(
             maybe_n.is_ok(),
             "Lunar phase moment should be in range of i32"
         );
         let n = maybe_n.unwrap_or_else(|e| e.saturate());
-        let a = div_rem_euclid_f64(
-            Self::lunar_longitude(julian_centuries) - Self::solar_longitude(julian_centuries),
-            360.0,
-        )
-        .1;
+        let a = (Self::lunar_longitude(julian_centuries) - Self::solar_longitude(julian_centuries))
+            .rem_euclid(360.0);
         let b = 360.0
-            * (div_rem_euclid_f64(
-                div_rem_euclid_f64(moment - Self::nth_new_moon(n), MEAN_SYNODIC_MONTH).0,
-                1.0,
-            )
-            .1);
+            * div_euclid_f64(moment - Self::nth_new_moon(n), MEAN_SYNODIC_MONTH).rem_euclid(1.0);
         if (a - b).abs() > 180.0 {
             b
         } else {
@@ -1811,11 +1772,7 @@ impl Astronomical {
             + lt.48;
         lambda *= 0.000005729577951308232;
         lambda += 282.7771834 + 36000.76953744 * c;
-        div_rem_euclid_f64(
-            lambda + Self::aberration(c) + Self::nutation(julian_centuries),
-            360.0,
-        )
-        .1
+        (lambda + Self::aberration(c) + Self::nutation(julian_centuries)).rem_euclid(360.0)
     }
 
     /// The best viewing time (UT) in the evening for viewing the young moon from `location` on `date`. This is defined as
@@ -1888,8 +1845,8 @@ impl Astronomical {
     pub fn estimate_prior_solar_longitude(angle: f64, moment: Moment) -> Moment {
         let rate = MEAN_TROPICAL_YEAR / 360.0;
         let julian_centuries = Self::julian_centuries(moment);
-        let tau = moment
-            - rate * div_rem_euclid_f64(Self::solar_longitude(julian_centuries) - angle, 360.0).1;
+        let tau =
+            moment - rate * (Self::solar_longitude(julian_centuries) - angle).rem_euclid(360.0);
         let delta = interval_mod_f64(
             Self::solar_longitude(Self::julian_centuries(tau)) - angle,
             -180.0,
@@ -1945,7 +1902,7 @@ impl Astronomical {
         let t0: Moment = NEW_MOON_ZERO;
         let phi = Self::lunar_phase(moment, Self::julian_centuries(moment));
         let maybe_n = i64_to_i32(
-            (div_rem_euclid_f64(moment - t0, MEAN_SYNODIC_MONTH).0 - phi / 360.0).round() as i64,
+            (div_euclid_f64(moment - t0, MEAN_SYNODIC_MONTH) - phi / 360.0).round() as i64,
         );
         debug_assert!(maybe_n.is_ok(), "Num of new moon should be in range of i32");
         let n = maybe_n.unwrap_or_else(|e| e.saturate());

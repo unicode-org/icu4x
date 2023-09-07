@@ -10,14 +10,14 @@
 use crate::astronomy::Location;
 use crate::rata_die::{Moment, RataDie};
 
-/// [`div_rem_euclid`] for f64
-pub(crate) fn div_rem_euclid_f64(n: f64, d: f64) -> (f64, f64) {
+/// [`div_euclid`] for f64
+pub(crate) fn div_euclid_f64(n: f64, d: f64) -> f64 {
     debug_assert!(d > 0.0);
     let (a, b) = (n / d, n % d);
     if n >= 0.0 || b == 0.0 {
-        (a, b)
+        a
     } else {
-        (a - 1.0, d + b)
+        a - 1.0
     }
 }
 
@@ -48,38 +48,25 @@ pub(crate) fn poly(x: f64, coeffs: &[f64]) -> f64 {
 
 // A generic function that finds a value within an interval
 // where a certain condition is satisfied.
-pub(crate) fn binary_search<F, G>(mut l: f64, mut h: f64, test: F, end: G) -> f64
-where
-    F: Fn(f64) -> bool, // function that checks a condition to decide which direction to go.
-    G: Fn(f64, f64) -> bool, // function that checks if the interval is small enough to terminate the search.
-{
+pub(crate) fn binary_search(
+    mut l: f64,
+    mut h: f64,
+    test: impl Fn(f64) -> bool,
+    epsilon: f64,
+) -> f64 {
+    debug_assert!(l < h);
+
     loop {
-        // Calculate the midpoint between `l` and `h`.
-        let x = (h + l) / 2.0;
+        let mid = l + (h - l) / 2.0;
 
         // Determine which direction to go. `test` returns true if we need to go left.
-        let left = test(x);
+        (l, h) = if test(mid) { (l, mid) } else { (mid, h) };
 
-        l = if left { l } else { x };
-        h = if left { x } else { h };
-
-        // If the `end` condition is met (typically when the interval becomes smaller than a certain threshold),
-        // we break the loop and return the current midpoint `x`.
-        if end(h, l) {
-            return x;
+        // When the interval width reaches `epsilon`, return the current midpoint.
+        if (h - l) < epsilon {
+            return mid;
         }
     }
-}
-
-#[allow(dead_code)] // TODO: Remove dead_code tag after use
-pub(crate) fn invert_angular<F: Fn(f64) -> f64>(f: F, y: f64, r: (f64, f64)) -> f64 {
-    let varepsilon = 1.0 / 100000.0; // Desired accuracy
-    binary_search(
-        r.0,
-        r.1,
-        |x| div_rem_euclid_f64(f(x) - y, 360.0).1 < 180.0,
-        |u, l| (u - l) < varepsilon,
-    )
 }
 
 pub(crate) fn next_moment<F>(mut index: Moment, location: Location, condition: F) -> RataDie
@@ -137,8 +124,6 @@ fn test_binary_search() {
         expected: f64,
     }
 
-    let end = |h: f64, l: f64| (h - l).abs() < 0.0001;
-
     let test_cases = [
         TestCase {
             test_fn: |x: f64| x >= 4.0,
@@ -168,9 +153,13 @@ fn test_binary_search() {
     ];
 
     for case in test_cases {
-        let result = binary_search(case.range.0, case.range.1, case.test_fn, end);
+        let result = binary_search(case.range.0, case.range.1, case.test_fn, 1e-4);
         assert!((result - case.expected).abs() < 0.0001);
     }
+}
+
+pub(crate) fn invert_angular<F: Fn(f64) -> f64>(f: F, y: f64, r: (f64, f64)) -> f64 {
+    binary_search(r.0, r.1, |x| (f(x) - y).rem_euclid(360.0) < 180.0, 1e-5)
 }
 
 #[test]
@@ -183,15 +172,15 @@ fn test_invert_angular() {
     }
 
     fn f1(x: f64) -> f64 {
-        div_rem_euclid_f64(2.0 * x, 360.0).1
+        (2.0 * x).rem_euclid(360.0)
     }
 
     fn f2(x: f64) -> f64 {
-        div_rem_euclid_f64(3.0 * x, 360.0).1
+        (3.0 * x).rem_euclid(360.0)
     }
 
     fn f3(x: f64) -> f64 {
-        div_rem_euclid_f64(x, 360.0).1
+        (x).rem_euclid(360.0)
     }
     // tolerance for comparing floating points.
     let tolerance = 1e-5;
@@ -231,7 +220,7 @@ fn test_invert_angular() {
 
     for case in test_cases {
         let x = invert_angular(case.f, case.y, case.r);
-        assert!((div_rem_euclid_f64((case.f)(x), 360.0).1 - case.expected).abs() < tolerance);
+        assert!((((case.f)(x)).rem_euclid(360.0) - case.expected).abs() < tolerance);
     }
 }
 
@@ -240,7 +229,7 @@ pub(crate) fn interval_mod_f64(x: f64, a: f64, b: f64) -> f64 {
     if (a - b).abs() < f64::EPSILON {
         x
     } else {
-        a + div_rem_euclid_f64(x - a, b - a).1
+        a + (x - a).rem_euclid(b - a)
     }
 }
 
@@ -439,6 +428,7 @@ pub(crate) trait CoreFloat {
     fn abs(self) -> Self;
     fn signum(self) -> Self;
     fn copysign(self, sign: Self) -> Self;
+    fn rem_euclid(self, rhs: Self) -> Self;
     fn powf(self, n: Self) -> Self;
     fn sqrt(self) -> Self;
     fn sin(self) -> Self;
@@ -482,6 +472,16 @@ impl CoreFloat for f64 {
     #[inline]
     fn copysign(self, sign: Self) -> Self {
         libm::copysign(self, sign)
+    }
+
+    #[inline]
+    fn rem_euclid(self, rhs: Self) -> Self {
+        let r = self % rhs;
+        if r < 0.0 {
+            r + rhs.abs()
+        } else {
+            r
+        }
     }
 
     #[inline]

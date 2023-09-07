@@ -9,7 +9,7 @@
 
 #[allow(unused_imports)]
 use crate::helpers::CoreFloat;
-use crate::helpers::{div_rem_euclid_f64, final_func, i64_to_i32, next_u8};
+use crate::helpers::{div_euclid_f64, final_func, i64_to_i32, next_u8};
 use crate::rata_die::{Moment, RataDie};
 
 /// Lisp code reference: <https://github.com/EdReingold/calendar-code2/blob/main/calendar.l#L2206>
@@ -134,11 +134,11 @@ impl BookHebrew {
     // Number of days elapsed from the (Sunday) noon prior to the epoch of the BookHebrew Calendar to the molad of Tishri of BookHebrew year (h_year) or one day later
     /// Lisp code reference: <https://github.com/EdReingold/calendar-code2/blob/main/calendar.l#L2261>
     fn book_hebrew_calendar_elapsed_days(book_year: i32) -> i32 {
-        let months_elapsed = ((235.0 * book_year as f64 - 234.0) / 19.0).floor();
-        let parts_elapsed = 12084.0 + 13753.0 * months_elapsed;
-        let days = 29.0 * months_elapsed + (parts_elapsed / 25920.0).floor();
+        let months_elapsed = ((235.0 * book_year as f64 - 234.0) / 19.0).floor() as i64;
+        let parts_elapsed = 12084 + 13753 * months_elapsed;
+        let days = 29 * months_elapsed + (parts_elapsed as f64 / 25920.0).floor() as i64;
 
-        if div_rem_euclid_f64(3.0 * (days + 1.0), 7.0).1 < 3.0 {
+        if (3 * (days + 1)).rem_euclid(7) < 3 {
             days as i32 + 1
         } else {
             days as i32
@@ -259,8 +259,7 @@ impl BookHebrew {
     /// Lisp code reference: <https://github.com/EdReingold/calendar-code2/blob/main/calendar.l#L2352>
     pub fn book_hebrew_from_fixed(date: RataDie) -> BookHebrew {
         let approx = i64_to_i32(
-            1 + (div_rem_euclid_f64((date - FIXED_HEBREW_EPOCH) as f64, 35975351.0 / 98496.0).0)
-                as i64, //  The value 35975351/98496, the average length of a BookHebrew year, can be approximated by 365.25
+            1 + (div_euclid_f64((date - FIXED_HEBREW_EPOCH) as f64, 35975351.0 / 98496.0)) as i64, //  The value 35975351/98496, the average length of a BookHebrew year, can be approximated by 365.25
         )
         .unwrap_or_else(|e| e.saturate());
 
