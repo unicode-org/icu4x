@@ -7,6 +7,8 @@
 macro_rules! __impl_relativetime_narrow_year_v1 {
     ($ provider : path) => {
         #[clippy::msrv = "1.66"]
+        const _: () = <$provider>::MUST_USE_CREATE_PROVIDER_MACRO;
+        #[clippy::msrv = "1.66"]
         impl icu_provider::DataProvider<icu::relativetime::provider::NarrowYearRelativeTimeFormatDataV1Marker> for $provider {
             fn load(&self, req: icu_provider::DataRequest) -> Result<icu_provider::DataResponse<icu::relativetime::provider::NarrowYearRelativeTimeFormatDataV1Marker>, icu_provider::DataError> {
                 static GD: <icu::relativetime::provider::NarrowYearRelativeTimeFormatDataV1Marker as icu_provider::DataMarker>::Yokeable = icu::relativetime::provider::RelativeTimePatternDataV1 {

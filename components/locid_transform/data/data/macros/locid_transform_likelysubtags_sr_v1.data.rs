@@ -7,6 +7,8 @@
 macro_rules! __impl_locid_transform_likelysubtags_sr_v1 {
     ($ provider : path) => {
         #[clippy::msrv = "1.66"]
+        const _: () = <$provider>::MUST_USE_CREATE_PROVIDER_MACRO;
+        #[clippy::msrv = "1.66"]
         impl $provider {
             #[doc(hidden)]
             pub const SINGLETON_LOCID_TRANSFORM_LIKELYSUBTAGS_SR_V1: &'static <icu::locid_transform::provider::LikelySubtagsForScriptRegionV1Marker as icu_provider::DataMarker>::Yokeable = &icu::locid_transform::provider::LikelySubtagsForScriptRegionV1 {

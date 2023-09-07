@@ -7,6 +7,8 @@
 macro_rules! __impl_propnames_to_long_linear_sb_v1 {
     ($ provider : path) => {
         #[clippy::msrv = "1.66"]
+        const _: () = <$provider>::MUST_USE_CREATE_PROVIDER_MACRO;
+        #[clippy::msrv = "1.66"]
         impl $provider {
             #[doc(hidden)]
             pub const SINGLETON_PROPNAMES_TO_LONG_LINEAR_SB_V1: &'static <icu::properties::provider::SentenceBreakValueToLongNameV1Marker as icu_provider::DataMarker>::Yokeable = &icu::properties::provider::names::PropertyEnumToValueNameLinearMapV1 { map: unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x0E\0\0\0\0\0\x05\0\n\0\x0F\0\x15\0\x1A\0!\0(\0+\0-\x002\x007\09\0?\0OtherATermCloseFormatLowerNumericOLetterSepSpSTermUpperCRExtendLF") } };

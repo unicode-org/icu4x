@@ -7,6 +7,8 @@
 macro_rules! __impl_datetime_timesymbols_v1 {
     ($ provider : path) => {
         #[clippy::msrv = "1.66"]
+        const _: () = <$provider>::MUST_USE_CREATE_PROVIDER_MACRO;
+        #[clippy::msrv = "1.66"]
         impl icu_provider::DataProvider<icu::datetime::provider::calendar::TimeSymbolsV1Marker> for $provider {
             fn load(&self, req: icu_provider::DataRequest) -> Result<icu_provider::DataResponse<icu::datetime::provider::calendar::TimeSymbolsV1Marker>, icu_provider::DataError> {
                 static BR: <icu::datetime::provider::calendar::TimeSymbolsV1Marker as icu_provider::DataMarker>::Yokeable = icu::datetime::provider::calendar::TimeSymbolsV1 { day_periods: icu::datetime::provider::calendar::day_periods::ContextsV1 { format: icu::datetime::provider::calendar::day_periods::FormatWidthsV1 { abbreviated: icu::datetime::provider::calendar::day_periods::SymbolsV1 { am: alloc::borrow::Cow::Borrowed("A.M."), pm: alloc::borrow::Cow::Borrowed("G.M."), noon: None, midnight: None }, narrow: icu::datetime::provider::calendar::day_periods::SymbolsV1 { am: alloc::borrow::Cow::Borrowed("am"), pm: alloc::borrow::Cow::Borrowed("gm"), noon: None, midnight: None }, short: None, wide: icu::datetime::provider::calendar::day_periods::SymbolsV1 { am: alloc::borrow::Cow::Borrowed("A.M."), pm: alloc::borrow::Cow::Borrowed("G.M."), noon: None, midnight: None } }, stand_alone: Some(icu::datetime::provider::calendar::day_periods::StandAloneWidthsV1 { abbreviated: None, narrow: Some(icu::datetime::provider::calendar::day_periods::SymbolsV1 { am: alloc::borrow::Cow::Borrowed("A.M."), pm: alloc::borrow::Cow::Borrowed("G.M."), noon: None, midnight: None }), short: None, wide: None }) } };

@@ -7,6 +7,8 @@
 macro_rules! __impl_propnames_from_ea_v1 {
     ($ provider : path) => {
         #[clippy::msrv = "1.66"]
+        const _: () = <$provider>::MUST_USE_CREATE_PROVIDER_MACRO;
+        #[clippy::msrv = "1.66"]
         impl $provider {
             #[doc(hidden)]
             pub const SINGLETON_PROPNAMES_FROM_EA_V1: &'static <icu::properties::provider::EastAsianWidthNameToValueV1Marker as icu_provider::DataMarker>::Yokeable = &icu::properties::provider::names::PropertyValueNameToEnumMapV1 {

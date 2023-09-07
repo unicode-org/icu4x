@@ -7,6 +7,8 @@
 macro_rules! __impl_collator_prim_v1 {
     ($ provider : path) => {
         #[clippy::msrv = "1.66"]
+        const _: () = <$provider>::MUST_USE_CREATE_PROVIDER_MACRO;
+        #[clippy::msrv = "1.66"]
         impl $provider {
             #[doc(hidden)]
             pub const SINGLETON_COLLATOR_PRIM_V1: &'static <icu::collator::provider::CollationSpecialPrimariesV1Marker as icu_provider::DataMarker>::Yokeable = &icu::collator::provider::CollationSpecialPrimariesV1 { last_primaries: unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x06\x05\0\x0C\x8A\r\0\x0E") }, numeric_primary: 15u8 };

@@ -7,6 +7,8 @@
 macro_rules! __impl_propnames_to_short_linear_ea_v1 {
     ($ provider : path) => {
         #[clippy::msrv = "1.66"]
+        const _: () = <$provider>::MUST_USE_CREATE_PROVIDER_MACRO;
+        #[clippy::msrv = "1.66"]
         impl $provider {
             #[doc(hidden)]
             pub const SINGLETON_PROPNAMES_TO_SHORT_LINEAR_EA_V1: &'static <icu::properties::provider::EastAsianWidthValueToShortNameV1Marker as icu_provider::DataMarker>::Yokeable = &icu::properties::provider::names::PropertyEnumToValueNameLinearMapV1 { map: unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x05\0\0\0\0\0\x01\0\x02\0\x03\0\x04\0NAHFNa") } };

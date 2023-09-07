@@ -1,36 +1,17 @@
 // @generated
 include!("macros.rs");
-/// Implement `DataProvider<M>` on the given struct using the data
-/// hardcoded in this module. This allows the struct to be used with
-/// `icu`'s `_unstable` constructors.
-///
-/// ```compile_fail
-/// struct MyDataProvider;
-/// include!("/path/to/generated/mod.rs");
-/// impl_data_provider(MyDataProvider);
-/// ```
-#[doc(hidden)]
-#[macro_export]
-macro_rules! __impl_data_provider {
+macro_rules! impl_data_provider {
     ($ provider : path) => {
+        impl $provider {
+            #[doc(hidden)]
+            #[allow(dead_code)]
+            pub const MUST_USE_CREATE_PROVIDER_MACRO: () = ();
+        }
         impl_compactdecimal_long_v1!($provider);
         impl_compactdecimal_short_v1!($provider);
     };
 }
-#[doc(inline)]
-pub use __impl_data_provider as impl_data_provider;
-/// Implement `AnyProvider` on the given struct using the data
-/// hardcoded in this module. This allows the struct to be used with
-/// `icu`'s `_any` constructors.
-///
-/// ```compile_fail
-/// struct MyAnyProvider;
-/// include!("/path/to/generated/mod.rs");
-/// impl_any_provider(MyAnyProvider);
-/// ```
-#[doc(hidden)]
-#[macro_export]
-macro_rules! __impl_any_provider {
+macro_rules! impl_any_provider {
     ($ provider : path) => {
         #[clippy::msrv = "1.66"]
         impl icu_provider::AnyProvider for $provider {
@@ -44,8 +25,6 @@ macro_rules! __impl_any_provider {
         }
     };
 }
-#[doc(inline)]
-pub use __impl_any_provider as impl_any_provider;
 #[clippy::msrv = "1.66"]
 pub struct BakedDataProvider;
 impl_data_provider!(BakedDataProvider);

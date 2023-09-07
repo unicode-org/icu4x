@@ -7,6 +7,8 @@
 macro_rules! __impl_fallback_supplement_co_v1 {
     ($ provider : path) => {
         #[clippy::msrv = "1.66"]
+        const _: () = <$provider>::MUST_USE_CREATE_PROVIDER_MACRO;
+        #[clippy::msrv = "1.66"]
         impl $provider {
             #[doc(hidden)]
             pub const SINGLETON_FALLBACK_SUPPLEMENT_CO_V1: &'static <icu::locid_transform::provider::CollationFallbackSupplementV1Marker as icu_provider::DataMarker>::Yokeable = &icu::locid_transform::provider::LocaleFallbackSupplementV1 {
