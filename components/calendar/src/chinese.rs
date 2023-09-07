@@ -41,13 +41,10 @@ use crate::chinese_based::{
 };
 use crate::helpers::div_rem_euclid;
 use crate::iso::Iso;
-use crate::rata_die::RataDie;
 use crate::types::{Era, FormattableYear};
 use crate::{
     chinese_data, types, Calendar, CalendarError, Date, DateDuration, DateDurationUnit, DateTime,
 };
-use calendrical_calculations::astronomy::Location;
-use calendrical_calculations::chinese_based::ChineseBased;
 use core::num::NonZeroU8;
 use tinystr::tinystr;
 
@@ -364,15 +361,8 @@ impl DateTime<Chinese> {
     }
 }
 
-impl ChineseBased for Chinese {
-    fn location(fixed: RataDie) -> Location {
-        <calendrical_calculations::chinese_based::Chinese as ChineseBased>::location(fixed)
-    }
-
-    const EPOCH: RataDie =
-        <calendrical_calculations::chinese_based::Chinese as ChineseBased>::EPOCH;
-}
 impl ChineseBasedWithDataLoading for Chinese {
+    type CB = calendrical_calculations::chinese_based::Chinese;
     fn get_compiled_data_for_year(extended_year: i32) -> Option<ChineseBasedCompiledData> {
         let offset_year = (extended_year - chinese_data::MIN_YEAR) as usize;
         chinese_data::CHINESE_DATA_ARRAY
@@ -417,6 +407,7 @@ impl Chinese {
 mod test {
 
     use super::*;
+    use crate::rata_die::RataDie;
     use crate::types::MonthCode;
 
     #[test]
@@ -657,9 +648,9 @@ mod test {
             assert!(Chinese::is_leap_year(chinese_year));
             assert_eq!(
                 expected_month,
-                calendrical_calculations::chinese_based::get_leap_month_from_new_year::<Chinese>(
-                    cache.new_year
-                )
+                calendrical_calculations::chinese_based::get_leap_month_from_new_year::<
+                    calendrical_calculations::chinese_based::Chinese,
+                >(cache.new_year)
             );
         }
     }

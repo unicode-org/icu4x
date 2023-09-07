@@ -31,7 +31,8 @@ use core::num::NonZeroU8;
 /// The trait ChineseBased is used by Chinese-based calendars to perform computations shared by such calendar.
 ///
 /// For an example of how to use this trait, see `impl ChineseBasedWithDataLoading for Chinese` in [`Chinese`].
-pub(crate) trait ChineseBasedWithDataLoading: CalendarArithmetic + ChineseBased {
+pub(crate) trait ChineseBasedWithDataLoading: CalendarArithmetic {
+    type CB: ChineseBased;
     /// Get the compiled const data for a ChineseBased calendar; can return `None` if the given year
     /// does not correspond to any compiled data.
     fn get_compiled_data_for_year(extended_year: i32) -> Option<ChineseBasedCompiledData>;
@@ -306,7 +307,7 @@ impl<C: ChineseBasedWithDataLoading> ChineseBasedDateInner<C> {
         iso_year: i32,
     ) -> ChineseBasedDateInner<C> {
         // Get the 1-indexed Chinese extended year, used for fetching data from the cache
-        let epoch_as_iso = Iso::iso_from_fixed(C::EPOCH);
+        let epoch_as_iso = Iso::iso_from_fixed(C::CB::EPOCH);
         let mut getter_year = iso_year - epoch_as_iso.year().number + 1;
 
         let data_option = Self::get_compiled_data_for_year_helper(date, &mut getter_year);
@@ -315,7 +316,7 @@ impl<C: ChineseBasedWithDataLoading> ChineseBasedDateInner<C> {
             // cache fetch successful, getter year is just the regular extended year
             Self::chinese_based_date_from_cached(date, data, getter_year)
         } else {
-            let date = chinese_based::chinese_based_date_from_fixed::<C>(date);
+            let date = chinese_based::chinese_based_date_from_fixed::<C::CB>(date);
 
             let cache = ChineseBasedCache {
                 new_year: date.year_bounds.new_year,
@@ -364,7 +365,7 @@ impl<C: ChineseBasedWithDataLoading> ChineseBasedDateInner<C> {
         let max_day = if let ChineseBasedYearInfo::Data(data) = year_info {
             data.days_in_month(month)
         } else {
-            chinese_based::days_in_month::<C>(month, year_info.get_new_year(), None).0
+            chinese_based::days_in_month::<C::CB>(month, year_info.get_new_year(), None).0
         };
         if day > max_day {
             return Err(CalendarError::Overflow {
@@ -398,12 +399,12 @@ impl<C: ChineseBasedWithDataLoading> ChineseBasedDateInner<C> {
         if let ChineseBasedYearInfo::Data(data) = self.1 {
             data.days_in_month(self.0.month)
         } else {
-            chinese_based::days_in_month::<C>(self.0.month, self.1.get_new_year(), None).0
+            chinese_based::days_in_month::<C::CB>(self.0.month, self.1.get_new_year(), None).0
         }
     }
 
     pub(crate) fn fixed_mid_year_from_year(year: i32) -> RataDie {
-        chinese_based::fixed_mid_year_from_year::<C>(year)
+        chinese_based::fixed_mid_year_from_year::<C::CB>(year)
     }
 
     /// Calls days_in_year on an instance of ChineseBasedDateInner
@@ -424,7 +425,7 @@ impl<C: ChineseBasedWithDataLoading> ChineseBasedDateInner<C> {
             data.last_day_of_previous_month(self.0.month)
         } else {
             let new_year = self.1.get_new_year();
-            chinese_based::days_until_month::<C>(new_year, self.0.month)
+            chinese_based::days_until_month::<C::CB>(new_year, self.0.month)
         };
         days_until_month + u16::from(self.0.day)
     }
@@ -432,7 +433,7 @@ impl<C: ChineseBasedWithDataLoading> ChineseBasedDateInner<C> {
     /// Compute a `ChineseBasedCache` from a ChineseBased year
     pub(crate) fn compute_cache(year: i32) -> ChineseBasedCache {
         let mid_year = Self::fixed_mid_year_from_year(year);
-        let year_bounds = YearBounds::compute::<C>(mid_year);
+        let year_bounds = YearBounds::compute::<C::CB>(mid_year);
         let YearBounds {
             new_year,
             next_new_year,
@@ -442,7 +443,9 @@ impl<C: ChineseBasedWithDataLoading> ChineseBasedDateInner<C> {
         let leap_month = if is_leap_year {
             // This doesn't need to be checked for None because `get_leap_month_from_new_year`
             // will always return a value between 1..=13
-            NonZeroU8::new(chinese_based::get_leap_month_from_new_year::<C>(new_year))
+            NonZeroU8::new(chinese_based::get_leap_month_from_new_year::<C::CB>(
+                new_year,
+            ))
         } else {
             None
         };
@@ -456,7 +459,7 @@ impl<C: ChineseBasedWithDataLoading> ChineseBasedDateInner<C> {
 
 impl<C: ChineseBasedWithDataLoading> CalendarArithmetic for C {
     fn month_days(year: i32, month: u8) -> u8 {
-        chinese_based::month_days::<C>(year, month)
+        chinese_based::month_days::<C::CB>(year, month)
     }
 
     /// Returns the number of months in a given year, which is 13 in a leap year, and 12 in a common year.
@@ -473,7 +476,7 @@ impl<C: ChineseBasedWithDataLoading> CalendarArithmetic for C {
         if let Some(data) = C::get_compiled_data_for_year(year) {
             data.leap_month.is_some()
         } else {
-            chinese_based::is_leap_year::<C>(year)
+            chinese_based::is_leap_year::<C::CB>(year)
         }
     }
 
@@ -489,7 +492,7 @@ impl<C: ChineseBasedWithDataLoading> CalendarArithmetic for C {
                 (12, data.days_in_month(12))
             }
         } else {
-            chinese_based::last_month_day_in_year::<C>(year)
+            chinese_based::last_month_day_in_year::<C::CB>(year)
         }
     }
 
@@ -497,7 +500,7 @@ impl<C: ChineseBasedWithDataLoading> CalendarArithmetic for C {
         if let Some(data) = C::get_compiled_data_for_year(year) {
             data.last_day_of_month(13)
         } else {
-            chinese_based::days_in_provided_year::<C>(year)
+            chinese_based::days_in_provided_year::<C::CB>(year)
         }
     }
 }

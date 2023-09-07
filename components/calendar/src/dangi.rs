@@ -41,12 +41,9 @@ use crate::chinese_based::{
 use crate::helpers::div_rem_euclid64;
 use crate::{
     chinese_based::ChineseBasedDateInner,
-    rata_die::RataDie,
     types::{self, Era, FormattableYear},
     AnyCalendarKind, Calendar, CalendarError, Date, DateTime, Iso,
 };
-use calendrical_calculations::astronomy::Location;
-use calendrical_calculations::chinese_based::ChineseBased;
 use core::num::NonZeroU8;
 use tinystr::tinystr;
 
@@ -332,14 +329,8 @@ impl DateTime<Dangi> {
     }
 }
 
-impl ChineseBased for Dangi {
-    fn location(fixed: RataDie) -> Location {
-        <calendrical_calculations::chinese_based::Dangi as ChineseBased>::location(fixed)
-    }
-
-    const EPOCH: RataDie = <calendrical_calculations::chinese_based::Dangi as ChineseBased>::EPOCH;
-}
 impl ChineseBasedWithDataLoading for Dangi {
+    type CB = calendrical_calculations::chinese_based::Dangi;
     fn get_compiled_data_for_year(_year: i32) -> Option<ChineseBasedCompiledData> {
         None
     }
@@ -378,6 +369,7 @@ mod test {
 
     use super::*;
     use crate::chinese::Chinese;
+    use crate::rata_die::RataDie;
 
     fn check_cyclic_and_rel_iso(year: i32) {
         let iso = Date::try_new_iso_date(year, 6, 6).unwrap();
