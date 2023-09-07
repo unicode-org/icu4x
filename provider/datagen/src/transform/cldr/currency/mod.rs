@@ -134,54 +134,43 @@ fn extract_currency_essentials<'data>(
     let mut injecting_texts_checker_map = HashMap::<&str, u16>::new();
 
     for (iso, currency_pattern) in currencies {
-        let short_injecting_text_index: Option<InjectingText>;
-        let narrow_injecting_text_index: Option<InjectingText>;
-
-        let short_option = &currency_pattern.short;
-        match short_option {
-            Some(short_injecting_text) => {
-                match injecting_texts_checker_map.get(short_injecting_text.as_str()) {
-                    Some(index) => short_injecting_text_index = InjectingText::Index(*index).into(),
-                    None => {
-                        if short_injecting_text == iso.try_into_tinystr().unwrap().as_str() {
-                            short_injecting_text_index = InjectingText::ISO.into();
-                        } else {
-                            let index = injecting_texts.len() as u16;
-                            short_injecting_text_index = InjectingText::Index(index).into();
-                            //TODO(#3900): remove this assert and return an error instead.
-                            assert!(index <= MAX_INJECTING_TEXT_INDEX);
-                            injecting_texts.push(short_injecting_text);
-                            injecting_texts_checker_map.insert(short_injecting_text, index);
-                        }
-                    }
+        let short_injecting_text_index =
+            currency_pattern.short.as_ref().map(|short_injecting_text| {
+                if let Some(&index) = injecting_texts_checker_map.get(short_injecting_text.as_str())
+                {
+                    InjectingText::Index(index)
+                } else if short_injecting_text == iso.try_into_tinystr().unwrap().as_str() {
+                    InjectingText::ISO
+                } else {
+                    let index = injecting_texts.len() as u16;
+                    //TODO(#3900): remove this assert and return an error instead.
+                    assert!(index <= MAX_INJECTING_TEXT_INDEX);
+                    injecting_texts.push(short_injecting_text.as_str());
+                    injecting_texts_checker_map.insert(short_injecting_text.as_str(), index);
+                    InjectingText::Index(index).into()
                 }
-            }
-            None => short_injecting_text_index = None,
-        }
+            });
 
-        let narrow_option = &currency_pattern.narrow;
-        match narrow_option {
-            Some(narrow_injecting_text) => {
-                match injecting_texts_checker_map.get(narrow_injecting_text.as_str()) {
-                    Some(index) => {
-                        narrow_injecting_text_index = InjectingText::Index(*index).into()
+        let narrow_injecting_text_index =
+            currency_pattern
+                .narrow
+                .as_ref()
+                .map(|narrow_injecting_text| {
+                    if let Some(&index) =
+                        injecting_texts_checker_map.get(narrow_injecting_text.as_str())
+                    {
+                        InjectingText::Index(index)
+                    } else if narrow_injecting_text == iso.try_into_tinystr().unwrap().as_str() {
+                        InjectingText::ISO
+                    } else {
+                        let index = injecting_texts.len() as u16;
+                        //TODO(#3900): remove this assert and return an error instead.
+                        assert!(index <= MAX_INJECTING_TEXT_INDEX);
+                        injecting_texts.push(narrow_injecting_text.as_ref());
+                        injecting_texts_checker_map.insert(narrow_injecting_text.as_str(), index);
+                        InjectingText::Index(index).into()
                     }
-                    None => {
-                        if narrow_injecting_text == iso.try_into_tinystr().unwrap().as_str() {
-                            narrow_injecting_text_index = InjectingText::ISO.into();
-                        } else {
-                            let index = injecting_texts.len() as u16;
-                            narrow_injecting_text_index = InjectingText::Index(index).into();
-                            //TODO(#3900): remove this assert and return an error instead.
-                            assert!(index <= MAX_INJECTING_TEXT_INDEX);
-                            injecting_texts.push(narrow_injecting_text);
-                            injecting_texts_checker_map.insert(narrow_injecting_text, index);
-                        }
-                    }
-                }
-            }
-            None => narrow_injecting_text_index = None,
-        }
+                });
 
         let iso_string = iso.try_into_tinystr().unwrap().to_string();
 
