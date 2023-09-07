@@ -7,11 +7,11 @@ use zerovec::{
     ule::{AsULE, ZeroVecError, ULE},
 };
 
-use crate::provider::{CurrencyPatterns, PatternSelection, PlaceHolder};
+use crate::provider::{CurrencyPatterns, InjectingText, PatternSelection};
 
-const NO_PLACE_HOLDER: u16 = 0b0111_1111_1111;
-const USE_ISO_CODE: u16 = 0b0111_1111_1110;
-pub const MAX_PLACE_HOLDER_INDEX: u16 = 0b0111_1111_1101;
+const NO_INJECTING_TEXT: u16 = 0b0111_1111_1111; // decimal: 2047
+const USE_ISO_CODE: u16 = 0b0111_1111_1110; // decimal: 2046
+pub const MAX_INJECTING_TEXT_INDEX: u16 = 0b0111_1111_1101; // decimal: 2045
 
 /// `CurrencyPatternsULE` is a type optimized for efficient storing and
 /// deserialization of `CurrencyPatterns` using the `ZeroVec` model.
@@ -24,8 +24,8 @@ pub const MAX_PLACE_HOLDER_INDEX: u16 = 0b0111_1111_1101;
 /// The second bit (b6) is used to determine the narrow_pattern_standard. If the bit is `0`, then, the value will be `Standard`.
 /// If the bit is `1`, then, the value will be `StandardAlphaNextToNumber`.
 ///
-/// The next three bits (b5, b4 & b3) with the second byte is used to determine the short_place_holder_index.
-/// The next three bits (b2, b1 & b0) with the third byte is used to determine the narrow_place_holder_index.
+/// The next three bits (b5, b4 & b3) with the second byte is used to determine the short_injecting_text_index.
+/// The next three bits (b2, b1 & b0) with the third byte is used to determine the narrow_injecting_text_index.
 #[derive(Copy, Clone, Debug, PartialEq)]
 #[repr(transparent)]
 pub struct CurrencyPatternsULE([u8; 3]);
@@ -68,31 +68,31 @@ impl AsULE for CurrencyPatterns {
             first_byte_ule |= 0b1 << PATTERN_NARROW_SHIFT;
         }
 
-        // For short_place_holder_index
+        // For short_injecting_text_index
         let [short_most_significant_byte, short_least_significant_byte_ule] =
-            match self.short_place_holder_index {
-                Some(PlaceHolder::Index(index)) => index.to_be_bytes(),
-                Some(PlaceHolder::ISO) => USE_ISO_CODE.to_be_bytes(),
-                None => NO_PLACE_HOLDER.to_be_bytes(),
+            match self.short_injecting_text_index {
+                Some(InjectingText::Index(index)) => index.to_be_bytes(),
+                Some(InjectingText::ISO) => USE_ISO_CODE.to_be_bytes(),
+                None => NO_INJECTING_TEXT.to_be_bytes(),
             };
         if short_most_significant_byte & 0b1111_1000 != 0 {
             panic!(
-                "short_place_holder_index is too large {}, {}",
+                "short_injecting_text_index is too large {}, {}",
                 short_most_significant_byte, short_least_significant_byte_ule
             )
         }
         first_byte_ule |= short_most_significant_byte << INDEX_SHORT_SHIFT;
 
-        // For narrow_place_holder_index
+        // For narrow_injecting_text_index
         let [narrow_most_significant_byte, narrow_least_significant_byte_ule] =
-            match self.narrow_place_holder_index {
-                Some(PlaceHolder::Index(index)) => index.to_be_bytes(),
-                Some(PlaceHolder::ISO) => USE_ISO_CODE.to_be_bytes(),
-                None => NO_PLACE_HOLDER.to_be_bytes(),
+            match self.narrow_injecting_text_index {
+                Some(InjectingText::Index(index)) => index.to_be_bytes(),
+                Some(InjectingText::ISO) => USE_ISO_CODE.to_be_bytes(),
+                None => NO_INJECTING_TEXT.to_be_bytes(),
             };
         if narrow_most_significant_byte & 0b1111_1000 != 0 {
             panic!(
-                "narrow_place_holder_index is too large {}, {}",
+                "narrow_injecting_text_index is too large {}, {}",
                 narrow_most_significant_byte, narrow_least_significant_byte_ule
             )
         }
@@ -125,32 +125,32 @@ impl AsULE for CurrencyPatterns {
         let short_prefix = (first_byte & 0b111 << INDEX_SHORT_SHIFT) >> INDEX_SHORT_SHIFT;
         let narrow_prefix = (first_byte & 0b111 << INDEX_NARROW_SHIFT) >> INDEX_NARROW_SHIFT;
 
-        let short_place_holder_index = ((short_prefix as u16) << 8) | second_byte as u16;
-        let narrow_place_holder_index = ((narrow_prefix as u16) << 8) | third_byte as u16;
+        let short_injecting_text_index = ((short_prefix as u16) << 8) | second_byte as u16;
+        let narrow_injecting_text_index = ((narrow_prefix as u16) << 8) | third_byte as u16;
 
-        let short_place_holder_index = match short_place_holder_index {
-            NO_PLACE_HOLDER => None,
-            USE_ISO_CODE => Some(PlaceHolder::ISO),
+        let short_injecting_text_index = match short_injecting_text_index {
+            NO_INJECTING_TEXT => None,
+            USE_ISO_CODE => Some(InjectingText::ISO),
             index => {
-                debug_assert!(index <= MAX_PLACE_HOLDER_INDEX);
-                Some(PlaceHolder::Index(index))
+                debug_assert!(index <= MAX_INJECTING_TEXT_INDEX);
+                Some(InjectingText::Index(index))
             }
         };
 
-        let narrow_place_holder_index = match narrow_place_holder_index {
-            NO_PLACE_HOLDER => None,
-            USE_ISO_CODE => Some(PlaceHolder::ISO),
+        let narrow_injecting_text_index = match narrow_injecting_text_index {
+            NO_INJECTING_TEXT => None,
+            USE_ISO_CODE => Some(InjectingText::ISO),
             index => {
-                debug_assert!(index <= MAX_PLACE_HOLDER_INDEX);
-                Some(PlaceHolder::Index(index))
+                debug_assert!(index <= MAX_INJECTING_TEXT_INDEX);
+                Some(InjectingText::Index(index))
             }
         };
 
         CurrencyPatterns {
             short_pattern_standard,
             narrow_pattern_standard,
-            short_place_holder_index,
-            narrow_place_holder_index,
+            short_injecting_text_index,
+            narrow_injecting_text_index,
         }
     }
 }
