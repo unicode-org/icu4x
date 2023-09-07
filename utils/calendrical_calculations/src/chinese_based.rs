@@ -99,9 +99,12 @@ const KOREAN_LOCATION_1961: Location = Location::new_unchecked(
     UTC_OFFSET_1961,
 );
 
+/// A type implementing [`ChineseBased`] for the Chinese calendar
 #[derive(Debug)]
 #[allow(clippy::exhaustive_structs)] // newtype
 pub struct Chinese;
+
+/// A type implementing [`ChineseBased`] for the Dangi (Korean) calendar
 #[derive(Debug)]
 #[allow(clippy::exhaustive_structs)] // newtype
 pub struct Dangi;
@@ -165,6 +168,7 @@ impl YearBounds {
         }
     }
 
+    /// The number of days in this year
     pub fn count_days(self) -> u16 {
         let result = self.next_new_year - self.new_year;
         debug_assert!(
@@ -174,6 +178,7 @@ impl YearBounds {
         result as u16
     }
 
+    /// Whether or not this is a leap year
     pub fn is_leap(self) -> bool {
         let difference = self.next_new_year - self.new_year;
         difference > 365
@@ -331,11 +336,13 @@ pub fn fixed_mid_year_from_year<C: ChineseBased>(elapsed_years: i32) -> RataDie 
     C::EPOCH + ((((cycle - 1) * 60 + year - 1) as f64 + 0.5) * MEAN_TROPICAL_YEAR) as i64
 }
 
+/// Whether this year is a leap year
 pub fn is_leap_year<C: ChineseBased>(year: i32) -> bool {
     let mid_year = fixed_mid_year_from_year::<C>(year);
     YearBounds::compute::<C>(mid_year).is_leap()
 }
 
+/// The last month and day in this year
 pub fn last_month_day_in_year<C: ChineseBased>(year: i32) -> (u8, u8) {
     let mid_year = fixed_mid_year_from_year::<C>(year);
     let year_bounds = YearBounds::compute::<C>(mid_year);
@@ -345,6 +352,7 @@ pub fn last_month_day_in_year<C: ChineseBased>(year: i32) -> (u8, u8) {
     (month, day as u8)
 }
 
+/// Calculated the numbers of days in the given year
 pub fn days_in_provided_year<C: ChineseBased>(year: i32) -> u16 {
     let mid_year = fixed_mid_year_from_year::<C>(year);
     let bounds = YearBounds::compute::<C>(mid_year);
@@ -356,10 +364,15 @@ pub fn days_in_provided_year<C: ChineseBased>(year: i32) -> u16 {
 #[derive(Debug)]
 #[non_exhaustive]
 pub struct ChineseFromFixedResult {
+    /// The chinese year
     pub year: i32,
+    /// The chinese month
     pub month: u8,
+    /// The chinese day
     pub day: u8,
+    /// The bounds of the current lunar year
     pub year_bounds: YearBounds,
+    /// The index of the leap month, if any
     pub leap_month: Option<NonZeroU8>,
 }
 

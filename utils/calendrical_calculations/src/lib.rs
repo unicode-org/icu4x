@@ -24,20 +24,29 @@
         missing_debug_implementations,
     )
 )]
+#![warn(missing_docs)]
 
-// TODO
-// #![warn(missing_docs)]
-
-// TODO: once everything is moved, go through and make stuff private again
-pub mod astronomy;
+mod astronomy;
+/// Chinese-like lunar calendars (Chinese, Dangi)
 pub mod chinese_based;
+/// The Coptic calendar
 pub mod coptic;
-pub mod error;
+/// Error handling
+mod error;
+/// The ethiopian calendar
 pub mod ethiopian;
+/// The Hebrew calendar
 pub mod hebrew;
+/// Additional math helpers
 pub mod helpers;
+/// Various islamic lunar calendars
 pub mod islamic;
+/// The ISO calendar (also usable as Gregorian)
 pub mod iso;
+/// The Julian calendar
 pub mod julian;
+/// The persian calendar
 pub mod persian;
+/// Representation of Rata Die (R.D., also called J.D. for Julain Date)
+/// dates, which are represented as the number of days since ISO date 0001-01-01.
 pub mod rata_die;

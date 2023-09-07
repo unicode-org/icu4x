@@ -31,8 +31,6 @@ icu::calendar::DateTime::try_new_persian_datetime#FnInStruct
 icu::calendar::DateTime::try_new_roc_datetime#FnInStruct
 icu::calendar::DateTime::try_new_ummalqura_datetime#FnInStruct
 icu::calendar::chinese::Chinese#Struct
-icu::calendar::chinese::Chinese::EPOCH#AssociatedConstantInStruct
-icu::calendar::chinese::Chinese::location#FnInStruct
 icu::calendar::chinese::ChineseDateInner#Struct
 icu::calendar::hebrew::Hebrew#Struct
 icu::calendar::hebrew::Hebrew::new#FnInStruct

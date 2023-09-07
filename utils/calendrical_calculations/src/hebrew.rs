@@ -8,31 +8,48 @@
 use crate::helpers::{self, div_rem_euclid, div_rem_euclid_f64, final_func, next_u8};
 use crate::rata_die::{Moment, RataDie};
 
-// Lisp code reference: https://github.com/EdReingold/calendar-code2/blob/main/calendar.l#L2206
+/// Lisp code reference: <https://github.com/EdReingold/calendar-code2/blob/main/calendar.l#L2206>
 const FIXED_HEBREW_EPOCH: RataDie = crate::julian::fixed_from_julian_book_version(-3761, 10, 7);
 
-/// Biblical Hebrew
+/// Biblical Hebrew dates. The months are reckoned a bit strangely, with the new year occurring on
+/// Tishri (as in the civil calendar) but the months being numbered in a different order
 #[derive(Copy, Clone, Debug, Default, Hash, Eq, PartialEq, PartialOrd, Ord)]
 #[allow(clippy::exhaustive_structs)]
 pub struct BookHebrew {
+    /// The year
     pub year: i32,
+    /// The month
     pub month: u8,
+    /// The day
     pub day: u8,
 }
 
 // The BookHebrew Months
+/// The biblical month number used for the month of Nisan
 pub const NISAN: u8 = 1;
+/// The biblical month number used for the month of Iyyar
 pub const IYYAR: u8 = 2;
+/// The biblical month number used for the month of Sivan
 pub const SIVAN: u8 = 3;
+/// The biblical month number used for the month of Tammuz
 pub const TAMMUZ: u8 = 4;
+/// The biblical month number used for the month of Av
 pub const AV: u8 = 5;
+/// The biblical month number used for the month of Elul
 pub const ELUL: u8 = 6;
+/// The biblical month number used for the month of Tishri
 pub const TISHRI: u8 = 7;
+/// The biblical month number used for the month of Marheshvan
 pub const MARHESHVAN: u8 = 8;
+/// The biblical month number used for the month of Kislev
 pub const KISLEV: u8 = 9;
+/// The biblical month number used for the month of Tevet
 pub const TEVET: u8 = 10;
+/// The biblical month number used for the month of Shevat
 pub const SHEVAT: u8 = 11;
+/// The biblical month number used for the month of Adar (and Adar I)
 pub const ADAR: u8 = 12;
+/// The biblical month number used for the month of Adar II
 pub const ADARII: u8 = 13;
 
 // BIBLICAL HEBREW CALENDAR FUNCTIONS
@@ -81,7 +98,7 @@ impl BookHebrew {
         }
     }
     // Moment of mean conjunction (New Moon) of h_month in BookHebrew
-    // Lisp code reference: https://github.com/EdReingold/calendar-code2/blob/main/calendar.l#L2244
+    /// Lisp code reference: <https://github.com/EdReingold/calendar-code2/blob/main/calendar.l#L2244>
     #[allow(dead_code)]
     pub(crate) fn molad(book_year: i32, book_month: u8) -> Moment {
         let y = if book_month < TISHRI {
@@ -100,7 +117,7 @@ impl BookHebrew {
     }
 
     // ADAR = 12, ADARII = 13
-    // Lisp code reference: https://github.com/EdReingold/calendar-code2/blob/main/calendar.l#L2217
+    /// Lisp code reference: <https://github.com/EdReingold/calendar-code2/blob/main/calendar.l#L2217>
     #[allow(dead_code)]
     fn last_month_of_book_hebrew_year(book_year: i32) -> u8 {
         if Self::is_hebrew_leap_year(book_year) {
@@ -111,7 +128,7 @@ impl BookHebrew {
     }
 
     // Number of days elapsed from the (Sunday) noon prior to the epoch of the BookHebrew Calendar to the molad of Tishri of BookHebrew year (h_year) or one day later
-    // Lisp code reference: https://github.com/EdReingold/calendar-code2/blob/main/calendar.l#L2261
+    /// Lisp code reference: <https://github.com/EdReingold/calendar-code2/blob/main/calendar.l#L2261>
     fn book_hebrew_calendar_elapsed_days(book_year: i32) -> i32 {
         let months_elapsed = libm::floor((235.0 * book_year as f64 - 234.0) / 19.0);
         let parts_elapsed = 12084.0 + 13753.0 * months_elapsed;
@@ -125,7 +142,7 @@ impl BookHebrew {
     }
 
     // Delays to start of BookHebrew year to keep ordinary year in range 353-356 and leap year in range 383-386
-    // Lisp code reference: https://github.com/EdReingold/calendar-code2/blob/main/calendar.l#L2301
+    /// Lisp code reference: <https://github.com/EdReingold/calendar-code2/blob/main/calendar.l#L2301>
     fn book_hebrew_year_length_correction(book_year: i32) -> u8 {
         let ny0 = Self::book_hebrew_calendar_elapsed_days(book_year - 1);
         let ny1 = Self::book_hebrew_calendar_elapsed_days(book_year);
@@ -141,7 +158,7 @@ impl BookHebrew {
     }
 
     // Fixed date of BookHebrew new year
-    // Lisp code reference: https://github.com/EdReingold/calendar-code2/blob/main/calendar.l#L2294
+    /// Lisp code reference: <https://github.com/EdReingold/calendar-code2/blob/main/calendar.l#L2294>
     pub fn book_hebrew_new_year(book_year: i32) -> RataDie {
         RataDie::new(
             FIXED_HEBREW_EPOCH.to_i64_date()
@@ -150,17 +167,18 @@ impl BookHebrew {
         )
     }
 
-    // Lisp code reference: https://github.com/EdReingold/calendar-code2/blob/main/calendar.l#L2315
+    /// Lisp code reference: <https://github.com/EdReingold/calendar-code2/blob/main/calendar.l#L2315>
     pub fn days_in_book_hebrew_year(book_year: i32) -> u16 {
         (Self::book_hebrew_new_year(1 + book_year) - Self::book_hebrew_new_year(book_year)) as u16
     }
 
+    /// Lisp code reference: <https://github.com/EdReingold/calendar-code2/blob/1ee51ecfaae6f856b0d7de3e36e9042100b4f424/calendar.l#L2275-L2278>
     pub fn is_hebrew_leap_year(book_year: i32) -> bool {
         div_rem_euclid(7 * book_year + 1, 19).1 < 7
     }
 
     // True if the month Marheshvan is going to be long in given BookHebrew year
-    // Lisp code reference: https://github.com/EdReingold/calendar-code2/blob/main/calendar.l#L2321
+    /// Lisp code reference: <https://github.com/EdReingold/calendar-code2/blob/main/calendar.l#L2321>
     #[allow(dead_code)]
     fn is_long_marheshvan(book_year: i32) -> bool {
         let long_marheshavan_year_lengths = [355, 385];
@@ -168,7 +186,7 @@ impl BookHebrew {
     }
 
     // True if the month Kislve is going to be short in given BookHebrew year
-    // Lisp code reference: https://github.com/EdReingold/calendar-code2/blob/main/calendar.l#L2326
+    /// Lisp code reference: <https://github.com/EdReingold/calendar-code2/blob/main/calendar.l#L2326>
     #[allow(dead_code)]
     fn is_short_kislev(book_year: i32) -> bool {
         let short_kislev_year_lengths = [353, 383];
@@ -176,7 +194,7 @@ impl BookHebrew {
     }
 
     // Last day of month (h_month) in BookHebrew year (book_year)
-    // Lisp code reference: https://github.com/EdReingold/calendar-code2/blob/main/calendar.l#L2230
+    /// Lisp code reference: <https://github.com/EdReingold/calendar-code2/blob/main/calendar.l#L2230>
     pub fn last_day_of_book_hebrew_month(book_year: i32, book_month: u8) -> u8 {
         match book_month {
             IYYAR | TAMMUZ | ELUL | TEVET | ADARII => 29,
@@ -209,7 +227,7 @@ impl BookHebrew {
     // The fixed date algorithms are from
     // Dershowitz, Nachum, and Edward M. Reingold. _Calendrical calculations_. Cambridge University Press, 2008.
     //
-    // Lisp code reference: https://github.com/EdReingold/calendar-code2/blob/main/calendar.l#L2331
+    /// Lisp code reference: <https://github.com/EdReingold/calendar-code2/blob/main/calendar.l#L2331>
     pub fn fixed_from_book_hebrew(date: BookHebrew) -> RataDie {
         let book_year = date.year;
         let book_month = date.month;
@@ -234,7 +252,7 @@ impl BookHebrew {
         total_days
     }
 
-    // Lisp code reference: https://github.com/EdReingold/calendar-code2/blob/main/calendar.l#L2352
+    /// Lisp code reference: <https://github.com/EdReingold/calendar-code2/blob/main/calendar.l#L2352>
     pub fn book_hebrew_from_fixed(date: RataDie) -> BookHebrew {
         let approx = helpers::i64_to_i32(
             1 + (div_rem_euclid_f64((date - FIXED_HEBREW_EPOCH) as f64, 35975351.0 / 98496.0).0)

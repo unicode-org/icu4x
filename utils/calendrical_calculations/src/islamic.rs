@@ -3,11 +3,11 @@ use crate::helpers::{self, div_rem_euclid, div_rem_euclid64, div_rem_euclid_f64,
 use crate::rata_die::{Moment, RataDie};
 
 // Different islamic calendars use different epochs (Thursday vs Friday) due to disagreement on the exact date of Mohammed's migration to Mecca.
-// Lisp code reference: https://github.com/EdReingold/calendar-code2/blob/main/calendar.l#L2066
+/// Lisp code reference: <https://github.com/EdReingold/calendar-code2/blob/main/calendar.l#L2066>
 const FIXED_ISLAMIC_EPOCH_FRIDAY: RataDie = crate::julian::fixed_from_julian(622, 7, 16);
 const FIXED_ISLAMIC_EPOCH_THURSDAY: RataDie = crate::julian::fixed_from_julian(622, 7, 15);
 
-// Lisp code reference: https://github.com/EdReingold/calendar-code2/blob/main/calendar.l#L6898
+/// Lisp code reference: <https://github.com/EdReingold/calendar-code2/blob/main/calendar.l#L6898>
 const CAIRO: Location = Location {
     latitude: 30.1,
     longitude: 31.3,
@@ -18,7 +18,7 @@ const CAIRO: Location = Location {
 // "Fixed" is a day count representation of calendars staring from Jan 1st of year 1 of the Georgian Calendar.
 // The fixed date algorithms are from
 // Dershowitz, Nachum, and Edward M. Reingold. _Calendrical calculations_. Cambridge University Press, 2008.
-// Lisp code reference: https://github.com/EdReingold/calendar-code2/blob/main/calendar.l#L6904
+/// Lisp code reference: <https://github.com/EdReingold/calendar-code2/blob/main/calendar.l#L6904>
 pub fn fixed_from_islamic_observational(year: i32, month: u8, day: u8) -> RataDie {
     let year = i64::from(year);
     let month = i64::from(month);
@@ -31,6 +31,7 @@ pub fn fixed_from_islamic_observational(year: i32, month: u8, day: u8) -> RataDi
         - 1
 }
 
+/// Lisp code reference: <https://github.com/EdReingold/calendar-code2/blob/1ee51ecfaae6f856b0d7de3e36e9042100b4f424/calendar.l#L6983-L6995>
 pub fn observational_islamic_from_fixed(date: RataDie) -> (i32, u8, u8) {
     let lunar_phase = Astronomical::calculate_lunar_phase_at_or_before(date);
     let crescent = Astronomical::phasis_on_or_before(date, CAIRO, Some(lunar_phase));
@@ -46,7 +47,7 @@ pub fn observational_islamic_from_fixed(date: RataDie) -> (i32, u8, u8) {
 // Saudi visibility criterion on eve of fixed date in Mecca.
 // The start of the new month only happens if both of these criterias are met: The moon is a waxing crescent at sunset of the previous day
 // and the moon sets after the sun on that same evening.
-// Lisp code reference: https://github.com/EdReingold/calendar-code2/blob/main/calendar.l#L6957
+/// Lisp code reference: <https://github.com/EdReingold/calendar-code2/blob/main/calendar.l#L6957>
 fn saudi_criterion(date: RataDie) -> Option<bool> {
     let sunset = Astronomical::sunset((date - 1).as_moment(), MECCA)?;
     let tee = Location::universal_from_standard(sunset, MECCA);
@@ -65,7 +66,7 @@ pub(crate) fn adjusted_saudi_criterion(date: RataDie) -> bool {
 }
 
 // Closest fixed date on or before date when Saudi visibility criterion is held.
-// Lisp code reference: https://github.com/EdReingold/calendar-code2/blob/main/calendar.l#L6966
+/// Lisp code reference: <https://github.com/EdReingold/calendar-code2/blob/main/calendar.l#L6966>
 pub fn saudi_new_month_on_or_before(date: RataDie) -> RataDie {
     let last_new_moon =
         libm::floor((Astronomical::lunar_phase_at_or_before(0.0, date.as_moment())).inner()); // Gets the R.D Date of the prior new moon
@@ -81,7 +82,7 @@ pub fn saudi_new_month_on_or_before(date: RataDie) -> RataDie {
     next(RataDie::new(tau as i64), adjusted_saudi_criterion) // Loop that increments the day and checks if the criterion is now visible
 }
 
-// Lisp code reference: https://github.com/EdReingold/calendar-code2/blob/main/calendar.l#L6996
+/// Lisp code reference: <https://github.com/EdReingold/calendar-code2/blob/main/calendar.l#L6996>
 pub fn saudi_islamic_from_fixed(date: RataDie) -> (i32, u8, u8) {
     let crescent = saudi_new_month_on_or_before(date);
     let elapsed_months =
@@ -93,7 +94,7 @@ pub fn saudi_islamic_from_fixed(date: RataDie) -> (i32, u8, u8) {
     (year, month, day)
 }
 
-// Lisp code reference: https://github.com/EdReingold/calendar-code2/blob/main/calendar.l#L6981
+/// Lisp code reference: <https://github.com/EdReingold/calendar-code2/blob/main/calendar.l#L6981>
 pub fn fixed_from_saudi_islamic(year: i32, month: u8, day: u8) -> RataDie {
     let midmonth = RataDie::new(
         FIXED_ISLAMIC_EPOCH_FRIDAY.to_i64_date()
@@ -105,7 +106,7 @@ pub fn fixed_from_saudi_islamic(year: i32, month: u8, day: u8) -> RataDie {
     RataDie::new(first_day_of_month + day as i64 - 1)
 }
 
-// Lisp code reference:https://github.com/EdReingold/calendar-code2/blob/main/calendar.l#L2076
+/// Lisp code reference: <https://github.com/EdReingold/calendar-code2/blob/main/calendar.l#L2076>
 pub fn fixed_from_islamic_civil(year: i32, month: u8, day: u8) -> RataDie {
     let year = i64::from(year);
     let month = i64::from(month);
@@ -120,7 +121,7 @@ pub fn fixed_from_islamic_civil(year: i32, month: u8, day: u8) -> RataDie {
             + day,
     )
 }
-// Lisp code reference: https://github.com/EdReingold/calendar-code2/blob/main/calendar.l#L2090
+/// Lisp code reference: <https://github.com/EdReingold/calendar-code2/blob/main/calendar.l#L2090>
 pub fn islamic_civil_from_fixed(date: RataDie) -> (i32, u8, u8) {
     let year = helpers::i64_to_saturated_i32(
         div_rem_euclid64(((date - FIXED_ISLAMIC_EPOCH_FRIDAY) * 30) + 10646, 10631).0,
@@ -139,7 +140,7 @@ pub fn islamic_civil_from_fixed(date: RataDie) -> (i32, u8, u8) {
 // The fixed date algorithms are from
 // Dershowitz, Nachum, and Edward M. Reingold. _Calendrical calculations_. Cambridge University Press, 2008.
 //
-// Lisp code reference:https: //github.com/EdReingold/calendar-code2/blob/main/calendar.l#L2076
+/// Lisp code reference:https: //github.com/EdReingold/calendar-code2/blob/main/calendar.l#L2076
 pub fn fixed_from_islamic_tabular(year: i32, month: u8, day: u8) -> RataDie {
     let year = i64::from(year);
     let month = i64::from(month);
@@ -153,7 +154,7 @@ pub fn fixed_from_islamic_tabular(year: i32, month: u8, day: u8) -> RataDie {
             + day,
     )
 }
-// Lisp code reference: https://github.com/EdReingold/calendar-code2/blob/main/calendar.l#L2090
+/// Lisp code reference: <https://github.com/EdReingold/calendar-code2/blob/main/calendar.l#L2090>
 pub fn islamic_tabular_from_fixed(date: RataDie) -> (i32, u8, u8) {
     let year = helpers::i64_to_saturated_i32(
         div_rem_euclid64(((date - FIXED_ISLAMIC_EPOCH_THURSDAY) * 30) + 10646, 10631).0,
@@ -168,6 +169,7 @@ pub fn islamic_tabular_from_fixed(date: RataDie) -> (i32, u8, u8) {
     (year, month, day)
 }
 
+/// The number of days in a month for the observational islamic calendar
 pub fn observational_islamic_month_days(year: i32, month: u8) -> u8 {
     let midmonth = FIXED_ISLAMIC_EPOCH_FRIDAY.to_f64_date()
         + (((year - 1) as f64) * 12.0 + month as f64 - 0.5) * MEAN_SYNODIC_MONTH;
@@ -180,6 +182,7 @@ pub fn observational_islamic_month_days(year: i32, month: u8) -> u8 {
     Astronomical::month_length(f_date, CAIRO)
 }
 
+/// The number of days in a month for the Saudi (Umm Al-Qura) calendar
 pub fn saudi_islamic_month_days(year: i32, month: u8) -> u8 {
     // We cannot use month_days from the book here, that is for the observational calendar
     //

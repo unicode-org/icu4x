@@ -17,6 +17,7 @@ use core::ops::{Add, AddAssign, Sub, SubAssign};
 pub struct RataDie(i64);
 
 impl RataDie {
+    /// Create a RataDie
     pub const fn new(fixed_date: i64) -> Self {
         let result = Self(fixed_date);
         #[cfg(debug_assertions)]
@@ -24,6 +25,7 @@ impl RataDie {
         result
     }
 
+    /// Check that it is in range
     #[cfg(debug_assertions)]
     pub const fn check(&self) {
         if self.0 > i64::MAX / 256 {
@@ -48,10 +50,12 @@ impl RataDie {
         Self::new(i64::MIN / 256 / 256)
     }
 
+    /// Convert this to an i64 value representing the RataDie
     pub const fn to_i64_date(self) -> i64 {
         self.0
     }
 
+    /// Convert this to an f64 value representing the RataDie
     pub const fn to_f64_date(self) -> f64 {
         self.0 as f64
     }
@@ -61,6 +65,7 @@ impl RataDie {
         self.0 - rhs.0
     }
 
+    /// Convert this to a [`Moment`]
     pub const fn as_moment(&self) -> Moment {
         Moment::new(self.0 as f64)
     }

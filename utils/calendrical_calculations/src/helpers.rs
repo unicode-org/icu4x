@@ -91,31 +91,31 @@ pub const fn quotient64(n: i64, d: i64) -> i64 {
 }
 
 // cosine of x in radians
-pub fn cos_degrees(x: f64) -> f64 {
+pub(crate) fn cos_degrees(x: f64) -> f64 {
     let radians = x.to_radians();
     libm::cos(radians)
 }
 
 // sine of x in radians
-pub fn sin_degrees(x: f64) -> f64 {
+pub(crate) fn sin_degrees(x: f64) -> f64 {
     let radians = x.to_radians();
     libm::sin(radians)
 }
 
 // tan of x in radians
-pub fn tan_degrees(x: f64) -> f64 {
+pub(crate) fn tan_degrees(x: f64) -> f64 {
     let radians = x.to_radians();
     libm::tan(radians)
 }
 
 // Arccosine of x in degrees
-pub fn arccos_degrees(x: f64) -> f64 {
+pub(crate) fn arccos_degrees(x: f64) -> f64 {
     let radians = libm::acos(x);
     radians.to_degrees()
 }
 
 // Arcsine of x in degrees
-pub fn arcsin_degrees(x: f64) -> f64 {
+pub(crate) fn arcsin_degrees(x: f64) -> f64 {
     let radians = libm::asin(x);
     let r = radians.to_degrees();
 
@@ -126,7 +126,7 @@ fn mod_degrees(x: f64) -> f64 {
     ((x % 360.0) + 360.0) % 360.0
 }
 
-pub fn mod3(x: f64, a: f64, b: f64) -> f64 {
+pub(crate) fn mod3(x: f64, a: f64, b: f64) -> f64 {
     // The value of x shifted into the range [a..b).
     // Returns x if a=b.
     if libm::fabs(a - b) < f64::EPSILON {
@@ -138,12 +138,12 @@ pub fn mod3(x: f64, a: f64, b: f64) -> f64 {
 }
 
 // Arctangent of y/x in degrees, handling zero cases (using atan2)
-pub fn arctan_degrees(y: f64, x: f64) -> f64 {
+pub(crate) fn arctan_degrees(y: f64, x: f64) -> f64 {
     mod_degrees(libm::atan2(y, x) * 180.0 / PI)
 }
 
 // TODO: convert recursive into iterative
-pub fn poly(x: f64, coeffs: &[f64]) -> f64 {
+pub(crate) fn poly(x: f64, coeffs: &[f64]) -> f64 {
     match coeffs.split_first() {
         Some((first, rest)) => first + x * poly(x, rest),
         None => 0.0,
@@ -152,7 +152,7 @@ pub fn poly(x: f64, coeffs: &[f64]) -> f64 {
 
 // A generic function that finds a value within an interval
 // where a certain condition is satisfied.
-pub fn binary_search<F, G>(mut l: f64, mut h: f64, test: F, end: G) -> f64
+pub(crate) fn binary_search<F, G>(mut l: f64, mut h: f64, test: F, end: G) -> f64
 where
     F: Fn(f64) -> bool, // function that checks a condition to decide which direction to go.
     G: Fn(f64, f64) -> bool, // function that checks if the interval is small enough to terminate the search.
@@ -179,7 +179,7 @@ where
 // - `1.0` if the number is positive, `+0.0` or `INFINITY`
 // - `-1.0` if the number is negative, `-0.0` or `NEG_INFINITY`
 // - NaN if the number is NaN
-pub fn signum(x: f64) -> f64 {
+pub(crate) fn signum(x: f64) -> f64 {
     if x.is_nan() {
         return f64::NAN;
     }
@@ -192,7 +192,7 @@ pub fn signum(x: f64) -> f64 {
 }
 
 #[allow(dead_code)] // TODO: Remove dead_code tag after use
-pub fn invert_angular<F: Fn(f64) -> f64>(f: F, y: f64, r: (f64, f64)) -> f64 {
+pub(crate) fn invert_angular<F: Fn(f64) -> f64>(f: F, y: f64, r: (f64, f64)) -> f64 {
     let varepsilon = 1.0 / 100000.0; // Desired accuracy
     binary_search(
         r.0,
@@ -202,7 +202,7 @@ pub fn invert_angular<F: Fn(f64) -> f64>(f: F, y: f64, r: (f64, f64)) -> f64 {
     )
 }
 
-pub fn next_moment<F>(mut index: Moment, location: Location, condition: F) -> RataDie
+pub(crate) fn next_moment<F>(mut index: Moment, location: Location, condition: F) -> RataDie
 where
     F: Fn(Moment, Location) -> bool,
 {
@@ -214,7 +214,7 @@ where
     }
 }
 
-pub fn next<F>(mut index: RataDie, condition: F) -> RataDie
+pub(crate) fn next<F>(mut index: RataDie, condition: F) -> RataDie
 where
     F: Fn(RataDie) -> bool,
 {
@@ -226,7 +226,7 @@ where
     }
 }
 
-pub fn next_u8<F>(mut index: u8, condition: F) -> u8
+pub(crate) fn next_u8<F>(mut index: u8, condition: F) -> u8
 where
     F: Fn(u8) -> bool,
 {
@@ -239,7 +239,7 @@ where
 }
 
 // "Final" is a reserved keyword in rust, which explains the naming convention here.
-pub fn final_func<F>(mut index: i32, condition: F) -> i32
+pub(crate) fn final_func<F>(mut index: i32, condition: F) -> i32
 where
     F: Fn(i32) -> bool,
 {
@@ -629,7 +629,7 @@ pub enum I32CastError {
 }
 
 impl I32CastError {
-    pub const fn saturate(self) -> i32 {
+    pub(crate) const fn saturate(self) -> i32 {
         match self {
             I32CastError::BelowMin => i32::MIN,
             I32CastError::AboveMax => i32::MAX,
@@ -637,6 +637,7 @@ impl I32CastError {
     }
 }
 
+/// Convert an i64 to i32 and with information on which way it was out of bounds if so
 #[inline]
 pub const fn i64_to_i32(input: i64) -> Result<i32, I32CastError> {
     if input < i32::MIN as i64 {
@@ -648,6 +649,7 @@ pub const fn i64_to_i32(input: i64) -> Result<i32, I32CastError> {
     }
 }
 
+/// Convert an i64 to i32 but saturate at th ebounds
 #[inline]
 pub fn i64_to_saturated_i32(input: i64) -> i32 {
     i64_to_i32(input).unwrap_or_else(|i| i.saturate())
