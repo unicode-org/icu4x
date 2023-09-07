@@ -1,9 +1,11 @@
 // This file is part of ICU4X.
 //
-// This file is licensed under the Apache License, Version 2.0,
-// which can be found in the LICENSE file in the
-// calendrical_calculations package root or online at
-// <https://www.apache.org/licenses/LICENSE-2.0>.
+// The contents of this file implement algorithms from Calendrical Calculations
+// by Reingold & Dershowitz, Cambridge University Press, 4th edition (2018),
+// which have been released as Lisp code at <https://github.com/EdReingold/calendar-code2/>
+// under the Apache-2.0 license. Accordingly, this file is released under
+// the Apache License, Version 2.0 which can be found at the calendrical_calculations
+// package root or at http://www.apache.org/licenses/LICENSE-2.0.
 
 use crate::helpers::{self, div_rem_euclid, div_rem_euclid_f64, final_func, next_u8};
 use crate::rata_die::{Moment, RataDie};
