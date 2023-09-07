@@ -36,37 +36,20 @@
 use crate::any_calendar::AnyCalendarKind;
 use crate::calendar_arithmetic::CalendarArithmetic;
 use crate::chinese_based::{
-    chinese_based_ordinal_lunar_month_from_code, ChineseBased, ChineseBasedCompiledData,
-    ChineseBasedDateInner, ChineseBasedYearInfo,
+    chinese_based_ordinal_lunar_month_from_code, ChineseBasedCompiledData, ChineseBasedDateInner,
+    ChineseBasedWithDataLoading, ChineseBasedYearInfo,
 };
 use crate::helpers::div_rem_euclid;
-use crate::iso::{Iso, IsoDateInner};
+use crate::iso::Iso;
 use crate::rata_die::RataDie;
 use crate::types::{Era, FormattableYear};
 use crate::{
     chinese_data, types, Calendar, CalendarError, Date, DateDuration, DateDurationUnit, DateTime,
 };
 use calendrical_calculations::astronomy::Location;
+use calendrical_calculations::chinese_based::ChineseBased;
 use core::num::NonZeroU8;
 use tinystr::tinystr;
-
-// The equivalent first day in the Chinese calendar (based on inception of the calendar)
-const CHINESE_EPOCH: RataDie = RataDie::new(-963099); // Feb. 15, 2637 BCE (-2636)
-
-/// The Chinese calendar relies on knowing the current day at the moment of a new moon;
-/// however, this can vary depending on location. As such, new moon calculations are based
-/// on the time in Beijing. Before 1929, local time was used, represented as UTC+(1397/180 h).
-/// In 1929, China adopted a standard time zone based on 120 degrees of longitude, meaning
-/// from 1929 onward, all new moon calculations are based on UTC+8h.
-///
-/// Offsets are not given in hours, but in partial days (1 hour = 1 / 24 day)
-const UTC_OFFSET_PRE_1929: f64 = (1397.0 / 180.0) / 24.0;
-const UTC_OFFSET_POST_1929: f64 = 8.0 / 24.0;
-
-const CHINESE_LOCATION_PRE_1929: Location =
-    Location::new_unchecked(39.0, 116.0, 43.5, UTC_OFFSET_PRE_1929);
-const CHINESE_LOCATION_POST_1929: Location =
-    Location::new_unchecked(39.0, 116.0, 43.5, UTC_OFFSET_POST_1929);
 
 /// The Chinese Calendar
 ///
@@ -140,7 +123,7 @@ impl Calendar for Chinese {
         let year_info = ChineseBasedYearInfo::get_year_info::<Chinese>(year);
 
         let month = if let Some(ordinal) =
-            chinese_based_ordinal_lunar_month_from_code::<Chinese>(month_code, year_info)
+            chinese_based_ordinal_lunar_month_from_code(month_code, year_info)
         {
             ordinal
         } else {
@@ -383,16 +366,13 @@ impl DateTime<Chinese> {
 
 impl ChineseBased for Chinese {
     fn location(fixed: RataDie) -> Location {
-        let year = Iso::iso_from_fixed(fixed).year().number;
-        if year < 1929 {
-            CHINESE_LOCATION_PRE_1929
-        } else {
-            CHINESE_LOCATION_POST_1929
-        }
+        <calendrical_calculations::chinese_based::Chinese as ChineseBased>::location(fixed)
     }
 
-    const EPOCH: RataDie = CHINESE_EPOCH;
-
+    const EPOCH: RataDie =
+        <calendrical_calculations::chinese_based::Chinese as ChineseBased>::EPOCH;
+}
+impl ChineseBasedWithDataLoading for Chinese {
     fn get_compiled_data_for_year(extended_year: i32) -> Option<ChineseBasedCompiledData> {
         let offset_year = (extended_year - chinese_data::MIN_YEAR) as usize;
         chinese_data::CHINESE_DATA_ARRAY
@@ -402,57 +382,6 @@ impl ChineseBased for Chinese {
 }
 
 impl Chinese {
-    /// Get the current major solar term of an ISO date
-    ///
-    /// ```rust
-    /// use icu::calendar::Date;
-    /// use icu::calendar::chinese::Chinese;
-    ///
-    /// let iso_date = Date::try_new_iso_date(2023, 6, 28)
-    ///     .expect("Failed to initialize ISO Date instance.");
-    /// let major_solar_term = Chinese::major_solar_term_from_iso(*iso_date.inner());
-    /// assert_eq!(major_solar_term, 5);
-    /// ```
-    pub fn major_solar_term_from_iso(iso: IsoDateInner) -> u32 {
-        let fixed: RataDie = Iso::fixed_from_iso(iso);
-        Inner::major_solar_term_from_fixed(fixed)
-    }
-
-    /// Get the current major solar term of an ISO date
-    ///
-    /// ```rust
-    /// use icu::calendar::Date;
-    /// use icu::calendar::chinese::Chinese;
-    ///
-    /// let iso_date = Date::try_new_iso_date(2023, 6, 28)
-    ///     .expect("Failed to initialize ISO Date instance.");
-    /// let minor_solar_term = Chinese::minor_solar_term_from_iso(*iso_date.inner());
-    /// assert_eq!(minor_solar_term, 5);
-    /// ```
-    pub fn minor_solar_term_from_iso(iso: IsoDateInner) -> u32 {
-        let fixed: RataDie = Iso::fixed_from_iso(iso);
-        Inner::minor_solar_term_from_fixed(fixed)
-    }
-
-    /// Get the ISO date of the nearest Chinese New Year on or before a given ISO date
-    /// ```rust
-    /// use icu::calendar::Date;
-    /// use icu::calendar::chinese::Chinese;
-    ///
-    /// let date = Date::try_new_iso_date(2023, 6, 22).expect("Failed to initialize ISO Date");
-    /// let chinese_new_year = Chinese::chinese_new_year_on_or_before_iso(date);
-    /// assert_eq!(chinese_new_year.year().number, 2023);
-    /// assert_eq!(chinese_new_year.month().ordinal, 1);
-    /// assert_eq!(chinese_new_year.day_of_month().0, 22);
-    /// ```
-    pub fn chinese_new_year_on_or_before_iso(iso: Date<Iso>) -> Date<Iso> {
-        let iso_inner = iso.inner;
-        let fixed = Iso::fixed_from_iso(iso_inner);
-        let prev_solstice = Inner::winter_solstice_on_or_before(fixed);
-        let result_fixed = Inner::new_year_on_or_before_fixed_date(fixed, prev_solstice).0;
-        Iso::iso_from_fixed(result_fixed)
-    }
-
     /// Get a FormattableYear from an integer Chinese year; optionally, a `ChineseBasedYearInfo`
     /// can be passed in for faster results.
     ///
@@ -489,26 +418,6 @@ mod test {
 
     use super::*;
     use crate::types::MonthCode;
-    use calendrical_calculations::rata_die::Moment;
-
-    #[test]
-    fn test_chinese_new_moon_directionality() {
-        for i in (-1000..1000).step_by(31) {
-            let moment = Moment::new(i as f64);
-            let before = Inner::new_moon_before(moment);
-            let after = Inner::new_moon_on_or_after(moment);
-            assert!(before < after, "Chinese new moon directionality failed for Moment: {moment:?}, with:\n\tBefore: {before:?}\n\tAfter: {after:?}");
-        }
-    }
-
-    #[test]
-    fn test_chinese_new_year_on_or_before() {
-        let date = Date::try_new_iso_date(2023, 6, 22).expect("Failed to initialize ISO Date");
-        let chinese_new_year = Chinese::chinese_new_year_on_or_before_iso(date);
-        assert_eq!(chinese_new_year.year().number, 2023);
-        assert_eq!(chinese_new_year.month().ordinal, 1);
-        assert_eq!(chinese_new_year.day_of_month().0, 22);
-    }
 
     #[test]
     fn test_chinese_from_fixed() {
@@ -748,7 +657,9 @@ mod test {
             assert!(Chinese::is_leap_year(chinese_year));
             assert_eq!(
                 expected_month,
-                Inner::get_leap_month_from_new_year(cache.new_year)
+                calendrical_calculations::chinese_based::get_leap_month_from_new_year::<Chinese>(
+                    cache.new_year
+                )
             );
         }
     }
@@ -916,7 +827,7 @@ mod test {
         ];
         for ordinal_code_pair in codes {
             let code = MonthCode(ordinal_code_pair.1);
-            let ordinal = chinese_based_ordinal_lunar_month_from_code::<Chinese>(
+            let ordinal = chinese_based_ordinal_lunar_month_from_code(
                 code,
                 ChineseBasedYearInfo::Cache(cache),
             );
@@ -946,7 +857,7 @@ mod test {
             let year = year_code_pair.0;
             let cache = Inner::compute_cache(year);
             let code = MonthCode(year_code_pair.1);
-            let ordinal = chinese_based_ordinal_lunar_month_from_code::<Chinese>(
+            let ordinal = chinese_based_ordinal_lunar_month_from_code(
                 code,
                 ChineseBasedYearInfo::Cache(cache),
             );

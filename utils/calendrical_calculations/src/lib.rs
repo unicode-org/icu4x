@@ -30,6 +30,7 @@
 
 // TODO: once everything is moved, go through and make stuff private again
 pub mod astronomy;
+pub mod chinese_based;
 pub mod coptic;
 pub mod error;
 pub mod ethiopian;

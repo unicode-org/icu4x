@@ -8,9 +8,9 @@ use core::marker::PhantomData;
 use tinystr::tinystr;
 
 // Note: The Ord/PartialOrd impls can be derived because the fields are in the correct order.
-#[derive(Copy, Clone, Debug, Hash, Eq, PartialEq, Ord, PartialOrd)]
+#[derive(Debug, Hash, Eq, PartialEq, Ord, PartialOrd)]
 #[allow(clippy::exhaustive_structs)] // this type is stable
-pub struct ArithmeticDate<C: CalendarArithmetic> {
+pub struct ArithmeticDate<C> {
     pub year: i32,
     /// 1-based month of year
     pub month: u8,
@@ -19,15 +19,16 @@ pub struct ArithmeticDate<C: CalendarArithmetic> {
     marker: PhantomData<C>,
 }
 
+impl<C> Copy for ArithmeticDate<C> {}
+impl<C> Clone for ArithmeticDate<C> {
+    fn clone(&self) -> Self {
+        *self
+    }
+}
+
 /// Maximum number of iterations when iterating through the days of a month; can be increased if necessary
 #[allow(dead_code)] // TODO: Remove dead code tag after use
 pub(crate) const MAX_ITERS_FOR_DAYS_OF_MONTH: u8 = 33;
-
-/// Maximum number of iterations when iterating through the days of a year; can be increased if necessary
-pub(crate) const MAX_ITERS_FOR_DAYS_OF_YEAR: u16 = 370;
-
-/// Maximum number of iterations when iterating through months of a year; can be increased if necessary
-pub(crate) const MAX_ITERS_FOR_MONTHS_OF_YEAR: u8 = 14;
 
 pub trait CalendarArithmetic: Calendar {
     fn month_days(year: i32, month: u8) -> u8;
