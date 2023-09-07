@@ -267,6 +267,8 @@ impl BakedExporter {
                 #[macro_export]
                 macro_rules! #prefixed_macro_ident {
                     ($provider:path) => {
+                        #[clippy::msrv = #MSRV]
+                        const _: () = <$provider>::MUST_USE_CREATE_PROVIDER_MACRO;
                         #body
                     }
                 }
@@ -596,6 +598,32 @@ impl BakedExporter {
         self.write_to_file(
             PathBuf::from("macros.rs"),
             quote! {
+                /// Declares a data provider. You can then use `impl_data_provider` or
+                /// key specific macros, like `impl_core_helloworld_v1` to add implementations.
+                ///
+                /// ```ignore
+                /// #[path = "/path/to/generated/macros.rs"];
+                /// mod macros;
+                /// macros::create_provider(MyDataProvider);
+                /// ```
+                #[doc(hidden)]
+                #[macro_export]
+                macro_rules! __create_provider {
+                    ($(#[$meta:meta])* $vis:vis $name:ident) => {
+                        #[derive(Debug)]
+                        $(#[$meta])*
+                        #[clippy::msrv = #MSRV]
+                        $vis struct $name;
+                        #[clippy::msrv = #MSRV]
+                        impl $name {
+                            #[doc(hidden)]
+                            #[allow(dead_code)]
+                            pub const MUST_USE_CREATE_PROVIDER_MACRO: () = ();
+                        }
+                    };
+                }
+                #[doc(inline)]
+                pub use __create_provider as create_provider;
                 #(
                     #[macro_use]
                     #[path = #file_paths]
@@ -613,40 +641,23 @@ impl BakedExporter {
             quote! {
                 include!("macros.rs");
 
-                /// Implement `DataProvider<M>` on the given struct using the data
-                /// hardcoded in this module. This allows the struct to be used with
-                /// `icu`'s `_unstable` constructors.
-                ///
-                /// ```compile_fail
-                /// struct MyDataProvider;
-                /// include!("/path/to/generated/mod.rs");
-                /// impl_data_provider(MyDataProvider);
-                /// ```
-                #[doc(hidden)]
-                #[macro_export]
-                macro_rules! __impl_data_provider {
+                // Not public as it will only work locally due to needing access
+                // to the macros from `macros.rs`.
+                macro_rules! impl_data_provider {
                     ($provider:path) => {
+                        impl $provider {
+                            #[doc(hidden)]
+                            #[allow(dead_code)]
+                            pub const MUST_USE_CREATE_PROVIDER_MACRO: () = ();
+                        }
                         #(
                             #features
                             #macro_idents ! ($provider);
                         )*
-                    }
+                    };
                 }
-                #[doc(inline)]
-                pub use __impl_data_provider as impl_data_provider;
 
-                /// Implement `AnyProvider` on the given struct using the data
-                /// hardcoded in this module. This allows the struct to be used with
-                /// `icu`'s `_any` constructors.
-                ///
-                /// ```compile_fail
-                /// struct MyAnyProvider;
-                /// include!("/path/to/generated/mod.rs");
-                /// impl_any_provider(MyAnyProvider);
-                /// ```
-                #[doc(hidden)]
-                #[macro_export]
-                macro_rules! __impl_any_provider {
+                macro_rules! impl_any_provider {
                     ($provider:path) => {
                         #[clippy::msrv = #MSRV]
                         impl icu_provider::AnyProvider for $provider {
@@ -663,9 +674,8 @@ impl BakedExporter {
                         }
                     }
                 }
-                #[doc(inline)]
-                pub use __impl_any_provider as impl_any_provider;
 
+                // For backwards compatibility
                 #[clippy::msrv = #MSRV]
                 pub struct BakedDataProvider;
                 impl_data_provider!(BakedDataProvider);
