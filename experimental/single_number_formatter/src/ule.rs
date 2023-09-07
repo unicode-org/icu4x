@@ -11,6 +11,8 @@ use crate::provider::{CurrencyPatterns, InjectingText, PatternSelection};
 
 const NO_INJECTING_TEXT: u16 = 0b0111_1111_1111; // decimal: 2047
 const USE_ISO_CODE: u16 = 0b0111_1111_1110; // decimal: 2046
+
+// TODO(#4013): Remove this constant once we have an invariant that the injecting text index is always less than 2046.
 pub const MAX_INJECTING_TEXT_INDEX: u16 = 0b0111_1111_1101; // decimal: 2045
 
 /// `CurrencyPatternsULE` is a type optimized for efficient storing and
