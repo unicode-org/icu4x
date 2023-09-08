@@ -173,7 +173,7 @@ macro_rules! symbols_from {
     };
     ([$symbols: path, $name2: ident], $ctx:ty) => {
         impl $symbols {
-            // Helper function which returns None if the two groups of symbols overlap.
+            // Helper function which returns `None` if the two groups of symbols overlap.
             pub fn get_unaliased(&self, other: &Self) -> Option<Self> {
                 if self == other {
                     None
@@ -195,7 +195,7 @@ macro_rules! symbols_from {
         }
 
         impl ca::StandAloneWidths<$symbols> {
-            // Helper function which returns None if the two groups of symbols overlap.
+            // Helper function which returns `None` if the two groups of symbols overlap.
             pub fn get_unaliased(&self, other: &ca::FormatWidths<$symbols>) -> Option<Self> {
                 let abbreviated = self.abbreviated.as_ref().and_then(|v| v.get_unaliased(&other.abbreviated));
                 let narrow = self.narrow.as_ref().and_then(|v| v.get_unaliased(&other.narrow));

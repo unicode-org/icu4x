@@ -147,7 +147,7 @@ pub mod ffi {
             self.0.paragraphs.len()
         }
 
-        /// Get the nth paragraph, returning None if out of bounds
+        /// Get the nth paragraph, returning `None` if out of bounds
         pub fn paragraph_at(&'text self, n: usize) -> Option<Box<ICU4XBidiParagraph<'text>>> {
             self.0
                 .paragraphs

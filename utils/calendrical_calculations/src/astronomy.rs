@@ -346,7 +346,7 @@ impl Astronomical {
         signum(equation) * libm::fabs(equation).min(12.0 / 24.0)
     }
 
-    /// The standard time of dusk at a given location on a given date, or None if there is no
+    /// The standard time of dusk at a given location on a given date, or `None` if there is no
     /// dusk on that date.
     ///
     /// Based on functions from _Calendrical Calculations_ by Reingold & Dershowitz.
@@ -418,7 +418,7 @@ impl Astronomical {
     /// Approx moment in local time near `moment` at which the depression angle of the sun is `alpha` (negative if
     /// the sun is above the horizon) at the given location; since the same angle of depression of the sun
     /// can exist twice in a day, early is set to true to specify the morning moment, and false for the
-    /// evening. Returns None if the specified angle is not reached.
+    /// evening. Returns `None` if the specified angle is not reached.
     ///
     /// Based on functions from _Calendrical Calculations_ by Reingold & Dershowitz.
     /// Reference lisp code: <https://github.com/EdReingold/calendar-code2/blob/9afc1f3/calendar.l#L3607-L3631>
@@ -468,7 +468,7 @@ impl Astronomical {
     /// Moment in local time near `approx` at which the depression angle of the sun is `alpha` (negative if
     /// the sun is above the horizon) at the given location; since the same angle of depression of the sun
     /// can exist twice in a day, early is set to true to specify the morning moment, and false for the
-    /// evening. Returns None if the specified angle is not reached.
+    /// evening. Returns `None` if the specified angle is not reached.
     ///
     /// Based on functions from _Calendrical Calculations_ by Reingold & Dershowitz.
     /// Reference lisp code: <https://github.com/EdReingold/calendar-code2/blob/9afc1f3/calendar.l#L3633-L3647>
@@ -1459,7 +1459,7 @@ impl Astronomical {
     }
 
     /// Standard time of moonset on the date of the given moment and at the given location.
-    /// Returns None if there is no such moonset.
+    /// Returns `None` if there is no such moonset.
     ///
     /// Based on functions from _Calendrical Calculations_ by Reingold & Dershowitz.
     /// Lisp code reference: <https://github.com/EdReingold/calendar-code2/blob/9afc1f3/calendar.l#L4655-L4681>
@@ -1504,7 +1504,8 @@ impl Astronomical {
     }
 
     /// Standard time of sunset on the date of the given moment and at the given location.
-    /// Returns None if there is no such sunset.
+    /// Returns `None` if there is no such sunset.
+    ///
     /// Based on functions from _Calendrical Calculations_ by Reingold & Dershowitz.
     /// Lisp code reference: <https://github.com/EdReingold/calendar-code2/blob/9afc1f3/calendar.l#L3700-L3706>
     #[allow(dead_code)]
@@ -1514,7 +1515,7 @@ impl Astronomical {
     }
 
     /// Time between sunset and moonset on the date of the given moment at the given location.
-    /// Returns None if there is no such sunset.
+    /// Returns `None` if there is no such sunset.
     ///
     /// Based on functions from _Calendrical Calculations_ by Reingold & Dershowitz.
     /// Lisp code reference: <https://github.com/EdReingold/calendar-code2/blob/9afc1f3/calendar.l#L6770-L6778>
@@ -1842,7 +1843,7 @@ impl Astronomical {
         Self::shaukat_criterion(date, location)
     }
 
-    /// Given an angle and a Moment moment, approximate the Moment at or before moment
+    /// Given an `angle` and a [`Moment`] `moment`, approximate the `Moment` at or before moment
     /// at which solar longitude exceeded the given angle.
     ///
     /// Based on functions from _Calendrical Calculations_ by Reingold & Dershowitz.
@@ -1897,7 +1898,7 @@ impl Astronomical {
     }
 
     /// Function to find the number of the new moon at or after a given moment;
-    /// helper function for new_moon_before and new_moon_at_or_after
+    /// helper function for `new_moon_before` and `new_moon_at_or_after`.
     ///
     /// Based on functions from _Calendrical Calculations_ by Reingold & Dershowitz.
     /// This function incorporates code from the book/lisp equivalent functions

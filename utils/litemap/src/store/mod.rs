@@ -54,7 +54,7 @@ pub trait Store<K: ?Sized, V: ?Sized>: Sized {
     /// Gets a key/value pair at the specified index.
     fn lm_get(&self, index: usize) -> Option<(&K, &V)>;
 
-    /// Gets the last element in the store, or None if the store is empty.
+    /// Gets the last element in the store, or `None` if the store is empty.
     fn lm_last(&self) -> Option<(&K, &V)> {
         let len = self.lm_len();
         if len == 0 {
