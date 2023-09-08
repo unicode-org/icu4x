@@ -1,9 +1,11 @@
 // This file is part of ICU4X.
 //
-// This file is licensed under the Apache License, Version 2.0,
-// which can be found in the LICENSE file in the
-// calendrical_calculations package root or online at
-// <https://www.apache.org/licenses/LICENSE-2.0>.
+// The contents of this file implement algorithms from Calendrical Calculations
+// by Reingold & Dershowitz, Cambridge University Press, 4th edition (2018),
+// which have been released as Lisp code at <https://github.com/EdReingold/calendar-code2/>
+// under the Apache-2.0 license. Accordingly, this file is released under
+// the Apache License, Version 2.0 which can be found at the calendrical_calculations
+// package root or at http://www.apache.org/licenses/LICENSE-2.0.
 
 use core::ops::{Add, AddAssign, Sub, SubAssign};
 
@@ -17,6 +19,7 @@ use core::ops::{Add, AddAssign, Sub, SubAssign};
 pub struct RataDie(i64);
 
 impl RataDie {
+    /// Create a RataDie
     pub const fn new(fixed_date: i64) -> Self {
         let result = Self(fixed_date);
         #[cfg(debug_assertions)]
@@ -24,6 +27,7 @@ impl RataDie {
         result
     }
 
+    /// Check that it is in range
     #[cfg(debug_assertions)]
     pub const fn check(&self) {
         if self.0 > i64::MAX / 256 {
@@ -48,10 +52,12 @@ impl RataDie {
         Self::new(i64::MIN / 256 / 256)
     }
 
+    /// Convert this to an i64 value representing the RataDie
     pub const fn to_i64_date(self) -> i64 {
         self.0
     }
 
+    /// Convert this to an f64 value representing the RataDie
     pub const fn to_f64_date(self) -> f64 {
         self.0 as f64
     }
@@ -61,6 +67,7 @@ impl RataDie {
         self.0 - rhs.0
     }
 
+    /// Convert this to a [`Moment`]
     pub const fn as_moment(&self) -> Moment {
         Moment::new(self.0 as f64)
     }

@@ -211,12 +211,6 @@ impl Julian {
         calendrical_calculations::julian::fixed_from_julian(date.year, date.month, date.day)
     }
 
-    // Get a fixed date from the ymd of a Julian date; years are counted arithmetically (there is a year 0), in contrast to `fixed_from_julian_book_version`
-    pub(crate) const fn fixed_from_julian_integers(year: i32, month: u8, day: u8) -> RataDie {
-        // TODO: Should we check bounds here?
-        Self::fixed_from_julian(ArithmeticDate::new_unchecked(year, month, day))
-    }
-
     /// Convenience function so we can call days_in_year without
     /// needing to construct a full ArithmeticDate
     fn days_in_year_direct(year: i32) -> u16 {
