@@ -2364,7 +2364,7 @@ fn test_from_str() {
     #[derive(Debug)]
     struct TestCase {
         pub input_str: &'static str,
-        /// The output str, None for roundtrip
+        /// The output str, `None` for roundtrip
         pub output_str: Option<&'static str>,
         /// [upper magnitude, upper nonzero magnitude, lower nonzero magnitude, lower magnitude]
         pub magnitudes: [i16; 4],

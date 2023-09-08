@@ -58,7 +58,7 @@ pub struct FormattableYear {
     pub number: i32,
 
     /// The year in the current cycle for cyclic calendars (1-indexed)
-    /// can be set to None for non-cyclic calendars
+    /// can be set to `None` for non-cyclic calendars
     ///
     /// For chinese and dangi it will be
     /// a number between 1 and 60, for hypothetical other calendars it may be something else.
@@ -67,7 +67,7 @@ pub struct FormattableYear {
     /// The related ISO year. This is normally the ISO (proleptic Gregorian) year having the greatest
     /// overlap with the calendar year. It is used in certain date formatting patterns.
     ///
-    /// Can be None if the calendar does not typically use related_iso (and CLDR does not contain patterns
+    /// Can be `None` if the calendar does not typically use `related_iso` (and CLDR does not contain patterns
     /// using it)
     pub related_iso: Option<i32>,
 }
@@ -108,9 +108,9 @@ impl FormattableYear {
 pub struct MonthCode(pub TinyStr4);
 
 impl MonthCode {
-    /// Returns an option which is Some containing the non-month version of a leap month
-    /// if the MonthCode this method is called upon is a leap month, and None otherwise.
-    /// This method assumes the MonthCode is valid.
+    /// Returns an option which is `Some` containing the non-month version of a leap month
+    /// if the [`MonthCode`] this method is called upon is a leap month, and `None` otherwise.
+    /// This method assumes the [`MonthCode`] is valid.
     pub fn get_normal_if_leap(self) -> Option<MonthCode> {
         let bytes = self.0.all_bytes();
         if bytes[3] == b'L' {

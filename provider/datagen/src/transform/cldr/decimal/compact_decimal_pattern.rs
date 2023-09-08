@@ -21,7 +21,7 @@ struct ParsedPattern {
     /// The unescaped literal text, e.g., " mille" for the pattern "00 mille",
     /// "mille" for the pattern "mille".
     pub literal_text: Cow<'static, str>,
-    /// The placeholder; None for patterns such as "mille".
+    /// The placeholder; `None` for patterns such as "mille".
     pub placeholder: Option<ParsedPlaceholder>,
 }
 

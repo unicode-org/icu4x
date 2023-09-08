@@ -315,7 +315,7 @@ impl<'p, P> Parser<'p, P> {
     /// );
     /// assert_eq!(Ok(Some(PatternToken::Placeholder(1))), parser.try_next());
     ///
-    /// // … and then None once it's over.
+    /// // … and then `None` once it's over.
     /// assert_eq!(Ok(None), parser.try_next());
     /// ```
     pub fn try_next(
