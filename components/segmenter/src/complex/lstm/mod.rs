@@ -10,6 +10,7 @@ use zerovec::{maps::ZeroMapBorrowed, ule::UnvalidatedStr};
 
 mod matrix;
 use matrix::*;
+mod ops;
 
 // A word break iterator using LSTM model. Input string have to be same language.
 

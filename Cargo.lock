@@ -1919,6 +1919,7 @@ dependencies = [
  "icu_segmenter_data",
  "itertools",
  "libm",
+ "once_cell",
  "serde",
  "serde_json",
  "utf8_iter",

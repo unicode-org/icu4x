@@ -31,6 +31,7 @@ databake = { workspace = true, optional = true, features = ["derive"] }
 serde = { version = "1.0", default-features = false, features = ["derive", "alloc"], optional = true }
 
 libm = { version = "0.2", default-features = false, optional = true }
+once_cell = { version = "1.17.1"}
 
 icu_segmenter_data = { workspace = true, optional = true }
 icu_locid_transform = { workspace = true, optional = true, features = ["compiled_data"] }
