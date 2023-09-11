@@ -256,16 +256,13 @@ where
             let (tag, trie_bytes) = bytes
                 .split_first()
                 .ok_or(D::Error::custom("expected at least 1 byte for ZeroTrie"))?;
+            let store = Store::from(trie_bytes);
             let zerotrie = match *tag {
-                tags::SIMPLE_ASCII => ZeroTrieSimpleAscii::from_store(trie_bytes)
-                    .cast_store()
-                    .into_zerotrie(),
-                tags::PERFECT_HASH => ZeroTriePerfectHash::from_store(trie_bytes)
-                    .cast_store()
-                    .into_zerotrie(),
-                tags::EXTENDED_CAPACITY => ZeroTrieExtendedCapacity::from_store(trie_bytes)
-                    .cast_store()
-                    .into_zerotrie(),
+                tags::SIMPLE_ASCII => ZeroTrieSimpleAscii::from_store(store).into_zerotrie(),
+                tags::PERFECT_HASH => ZeroTriePerfectHash::from_store(store).into_zerotrie(),
+                tags::EXTENDED_CAPACITY => {
+                    ZeroTrieExtendedCapacity::from_store(store).into_zerotrie()
+                }
                 _ => return Err(D::Error::custom("invalid ZeroTrie tag")),
             };
             Ok(zerotrie)
