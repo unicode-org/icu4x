@@ -30,7 +30,8 @@
 //! 1. IANA time zone IDs, like `"America/Chicago"`
 //! 2. BCP-47 time zone IDs, like `"uschi"`
 //!
-//! ICU4X uses BCP-47 time zone IDs for all of its APIs.
+//! ICU4X uses BCP-47 time zone IDs for all of its APIs. To get a BCP-47 time zone from an
+//! IANA time zone, use [`IanaToBcp47Mapper`].
 //!
 //! ## Metazone
 //!
@@ -81,17 +82,18 @@
 //! the metazone based on a certain local datetime:
 //!
 //! ```
-//! use icu_calendar::DateTime;
-//! use icu_timezone::CustomTimeZone;
-//! use icu_timezone::GmtOffset;
-//! use icu_timezone::MetazoneCalculator;
+//! use icu::calendar::DateTime;
+//! use icu::timezone::CustomTimeZone;
+//! use icu::timezone::GmtOffset;
+//! use icu::timezone::MetazoneCalculator;
+//! use icu::timezone::IanaToBcp47Mapper;
 //! use tinystr::TinyAsciiStr;
 //!
 //! // Create a time zone for America/Chicago at GMT-6:
 //! let mut time_zone = CustomTimeZone::new_empty();
 //! time_zone.gmt_offset = "-0600".parse::<GmtOffset>().ok();
-//! time_zone.time_zone_id =
-//!     "uschi".parse::<TinyAsciiStr<8>>().ok().map(Into::into);
+//! let mapper = IanaToBcp47Mapper::try_new_unstable(&icu_testdata::unstable()).unwrap();
+//! time_zone.time_zone_id = mapper.as_borrowed().get_strict("America/Chicago");
 //!
 //! // Compute the metazone at January 1, 2022:
 //! let mzc = MetazoneCalculator::new();
@@ -120,12 +122,14 @@
 extern crate alloc;
 
 mod error;
+mod iana_ids;
 mod metazone;
 pub mod provider;
 mod time_zone;
 mod types;
 
 pub use error::TimeZoneError;
+pub use iana_ids::{Bcp47ToIanaMapper, IanaToBcp47Mapper};
 pub use metazone::MetazoneCalculator;
 pub use provider::{MetazoneId, TimeZoneBcp47Id};
 pub use time_zone::CustomTimeZone;
