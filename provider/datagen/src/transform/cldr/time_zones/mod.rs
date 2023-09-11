@@ -15,6 +15,7 @@ use icu_timezone::provider::*;
 use std::collections::HashMap;
 
 mod convert;
+mod names;
 
 #[derive(Debug, Copy, Clone)]
 struct CldrTimeZonesData<'a> {
