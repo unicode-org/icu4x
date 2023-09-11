@@ -108,12 +108,12 @@ where
             let lm = LiteMap::<Box<ByteStr>, usize>::deserialize(deserializer)?;
             ZeroTrieSimpleAscii::try_from_serde_litemap(&lm)
                 .map_err(D::Error::custom)
-                .map(|trie| trie.cast_store())
+                .map(|trie| trie.convert_store())
         } else {
             // Note: `impl Deserialize for &[u8]` uses visit_borrowed_bytes
             <&[u8]>::deserialize(deserializer)
                 .map(ZeroTrieSimpleAscii::from_store)
-                .map(|x| x.cast_store())
+                .map(|x| x.convert_store())
         }
     }
 }
@@ -149,12 +149,12 @@ where
             let lm = LiteMap::<Box<ByteStr>, usize>::deserialize(deserializer)?;
             ZeroTriePerfectHash::try_from_serde_litemap(&lm)
                 .map_err(D::Error::custom)
-                .map(|trie| trie.cast_store())
+                .map(|trie| trie.convert_store())
         } else {
             // Note: `impl Deserialize for &[u8]` uses visit_borrowed_bytes
             <&[u8]>::deserialize(deserializer)
                 .map(ZeroTriePerfectHash::from_store)
-                .map(|x| x.cast_store())
+                .map(|x| x.convert_store())
         }
     }
 }
@@ -194,12 +194,12 @@ where
             let lm = LiteMap::<Box<ByteStr>, usize>::deserialize(deserializer)?;
             ZeroTrieExtendedCapacity::try_from_serde_litemap(&lm)
                 .map_err(D::Error::custom)
-                .map(|trie| trie.cast_store())
+                .map(|trie| trie.convert_store())
         } else {
             // Note: `impl Deserialize for &[u8]` uses visit_borrowed_bytes
             <&[u8]>::deserialize(deserializer)
                 .map(ZeroTrieExtendedCapacity::from_store)
-                .map(|x| x.cast_store())
+                .map(|x| x.convert_store())
         }
     }
 }
@@ -249,7 +249,7 @@ where
             let lm = LiteMap::<Box<ByteStr>, usize>::deserialize(deserializer)?;
             ZeroTrie::<Vec<u8>>::try_from(&lm)
                 .map_err(D::Error::custom)
-                .map(|trie| trie.cast_store())
+                .map(|trie| trie.convert_store())
         } else {
             // Note: `impl Deserialize for &[u8]` uses visit_borrowed_bytes
             let bytes = <&[u8]>::deserialize(deserializer)?;

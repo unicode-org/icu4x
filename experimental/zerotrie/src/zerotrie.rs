@@ -161,6 +161,8 @@ macro_rules! impl_zerotrie_subtype {
             }
             /// Converts this trie's store to a different store implementing the `From` trait.
             ///
+            #[doc = concat!("For example, use this to change `", stringify!($name), "<Vec<u8>>` to `", stringify!($name), "<Cow<[u8]>>`.")]
+            ///
             /// # Examples
             ///
             /// ```
@@ -168,11 +170,11 @@ macro_rules! impl_zerotrie_subtype {
             #[doc = concat!("use zerotrie::", stringify!($name), ";")]
             ///
             #[doc = concat!("let trie: ", stringify!($name), "<Vec<u8>> = ", stringify!($name), "::from_bytes(b\"abc\\x85\").to_owned();")]
-            #[doc = concat!("let cow: ", stringify!($name), "<Cow<[u8]>> = trie.cast_store();")]
+            #[doc = concat!("let cow: ", stringify!($name), "<Cow<[u8]>> = trie.convert_store();")]
             ///
             /// assert_eq!(cow.get(b"abc"), Some(5));
             /// ```
-            pub fn cast_store<X: From<Store>>(self) -> $name<X> {
+            pub fn convert_store<X: From<Store>>(self) -> $name<X> {
                 $name::<X>::from_store(X::from(self.store))
             }
         }
@@ -555,11 +557,13 @@ impl<Store> ZeroTrie<Store> {
         impl_dispatch!(self, take_store())
     }
     /// Converts this trie's store to a different store implementing the `From` trait.
-    pub fn cast_store<NewStore>(self) -> ZeroTrie<NewStore>
+            ///
+            /// For example, use this to change `ZeroTrie<Vec<u8>>` to `ZeroTrie<Cow<[u8]>>`.
+    pub fn convert_store<NewStore>(self) -> ZeroTrie<NewStore>
     where
         NewStore: From<Store>,
     {
-        impl_dispatch!(self, cast_store().into_zerotrie())
+        impl_dispatch!(self, convert_store().into_zerotrie())
     }
 }
 
