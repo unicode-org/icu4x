@@ -21,6 +21,8 @@ use tinystr::TinyAsciiStr;
 use zerovec::ule::{AsULE, ULE};
 use zerovec::{ZeroMap2d, ZeroSlice, ZeroVec};
 
+pub mod names;
+
 #[cfg(feature = "compiled_data")]
 #[derive(Debug)]
 /// Baked data
