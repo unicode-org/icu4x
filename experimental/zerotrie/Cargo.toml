@@ -56,6 +56,11 @@ serde = ["dep:serde", "dep:litemap", "alloc", "litemap/serde", "zerovec?/serde"]
 [[bench]]
 name = "overview"
 harness = false
+required-features = ["alloc", "litemap"]
+
+[[test]]
+name = "asciitrie_test"
+required-features = ["alloc", "litemap"]
 
 [[test]]
 name = "builder_test"
