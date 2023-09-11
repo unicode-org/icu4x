@@ -137,6 +137,34 @@ pub mod ffi {
             Ok(())
         }
 
+        #[diplomat::rust_link(icu::timezone::IanaToBcp47MapperBorrowed::get_strict, FnInStruct)]
+        pub fn try_set_iana_time_zone_id_strict(
+            &mut self,
+            mapper: &crate::iana_bcp47_mapper::ffi::ICU4XIanaToBcp47Mapper,
+            id: &str,
+        ) -> Result<(), ICU4XError> {
+            self.0.time_zone_id = mapper.0.as_borrowed().get_strict(id);
+            if self.0.time_zone_id.is_some() {
+                Ok(())
+            } else {
+                Err(ICU4XError::TimeZoneInvalidIdError)
+            }
+        }
+
+        #[diplomat::rust_link(icu::timezone::IanaToBcp47MapperBorrowed::get_loose, FnInStruct)]
+        pub fn try_set_iana_time_zone_id_loose(
+            &mut self,
+            mapper: &crate::iana_bcp47_mapper::ffi::ICU4XIanaToBcp47Mapper,
+            id: &str,
+        ) -> Result<(), ICU4XError> {
+            self.0.time_zone_id = mapper.0.as_borrowed().get_loose(id);
+            if self.0.time_zone_id.is_some() {
+                Ok(())
+            } else {
+                Err(ICU4XError::TimeZoneInvalidIdError)
+            }
+        }
+
         /// Clears the `time_zone_id` field.
         #[diplomat::rust_link(icu::timezone::CustomTimeZone::time_zone_id, StructField)]
         #[diplomat::rust_link(icu::timezone::TimeZoneBcp47Id, Struct, compact)]
