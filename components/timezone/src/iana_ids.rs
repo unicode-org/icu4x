@@ -92,9 +92,8 @@ impl<'a> IanaToBcp47MapperBorrowed<'a> {
     ///
     /// See examples in [`IanaToBcp47Mapper`].
     pub fn get_strict(&self, iana_id: &str) -> Option<TimeZoneBcp47Id> {
-        self.data
-            .map
-            .get_copied(NormalizedTimeZoneIdStr::from_str(iana_id))
+        let idx = self.data.map.get(iana_id)?;
+        self.data.bcp47_ids.get(idx)
     }
 
     /// Looks up a BCP-47 time zone identifier based on an ASCII-case-insensitive match for
@@ -105,10 +104,8 @@ impl<'a> IanaToBcp47MapperBorrowed<'a> {
     /// See examples in [`IanaToBcp47Mapper`].
     ///
     /// [ECMAScript Temporal]: https://tc39.es/proposal-temporal/#sec-isavailabletimezonename
-    pub fn get_loose(&self, iana_id: &str) -> Option<TimeZoneBcp47Id> {
-        self.data
-            .map
-            .get_copied_by(|probe| probe.cmp_loose(NormalizedTimeZoneIdStr::from_str(iana_id)))
+    pub fn get_loose(&self, _iana_id: &str) -> Option<TimeZoneBcp47Id> {
+        unimplemented!()
     }
 }
 

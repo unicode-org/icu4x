@@ -4,22 +4,47 @@
 
 use super::convert::compute_bcp47_tzids_btreemap;
 use crate::transform::cldr::cldr_serde;
-use icu_provider::prelude::*;
 use icu_provider::datagen::IterableDataProvider;
+use icu_provider::prelude::*;
 use icu_timezone::provider::names::*;
+use icu_timezone::TimeZoneBcp47Id;
+use std::collections::BTreeMap;
+use std::collections::BTreeSet;
+use zerotrie::ZeroTriePerfectHash;
+use zerovec::ZeroVec;
 
 impl DataProvider<IanaToBcp47MapV1Marker> for crate::DatagenProvider {
     fn load(&self, _: DataRequest) -> Result<DataResponse<IanaToBcp47MapV1Marker>, DataError> {
         let resource: &cldr_serde::time_zones::bcp47_tzid::Resource =
-            self.cldr()?
-                .bcp47()
-                .read_and_parse("timezone.json")?;
-        let bcp47_tzid_data = &compute_bcp47_tzids_btreemap(&resource.keyword.u.time_zones.values);
+            self.cldr()?.bcp47().read_and_parse("timezone.json")?;
+
+        let iana2bcp = &compute_bcp47_tzids_btreemap(&resource.keyword.u.time_zones.values);
+
+        // Sort and deduplicate the BCP-47 IDs:
+        let bcp_set: BTreeSet<TimeZoneBcp47Id> = iana2bcp.values().copied().collect();
+        let bcp_zerovec: ZeroVec<TimeZoneBcp47Id> = bcp_set.iter().copied().collect();
+
+        // Transform the map to use BCP indices:
+        #[allow(clippy::unwrap_used)] // structures are derived from each other
+        let map: BTreeMap<Vec<u8>, usize> = iana2bcp
+            .iter()
+            .map(|(iana, bcp)| {
+                (
+                    iana.as_bytes().to_vec(),
+                    bcp_zerovec.binary_search(bcp).unwrap(),
+                )
+            })
+            .collect();
+
         let data_struct = IanaToBcp47MapV1 {
-            map: bcp47_tzid_data
-                .iter()
-                .map(|(k, v)| (NormalizedTimeZoneIdStr::boxed_from_bytes(k.as_bytes()), v))
-                .collect(),
+            map: ZeroTriePerfectHash::try_from(&map)
+                .map_err(|e| {
+                    DataError::custom("Could not create ZeroTrie from timezone.json data")
+                        .with_display_context(&e)
+                })?
+                .cast_store()
+                .into_zerotrie(),
+            bcp47_ids: bcp_zerovec,
         };
         Ok(DataResponse {
             metadata: Default::default(),
@@ -37,9 +62,7 @@ impl IterableDataProvider<IanaToBcp47MapV1Marker> for crate::DatagenProvider {
 impl DataProvider<Bcp47ToIanaMapV1Marker> for crate::DatagenProvider {
     fn load(&self, _: DataRequest) -> Result<DataResponse<Bcp47ToIanaMapV1Marker>, DataError> {
         let resource: &cldr_serde::time_zones::bcp47_tzid::Resource =
-            self.cldr()?
-                .bcp47()
-                .read_and_parse("timezone.json")?;
+            self.cldr()?.bcp47().read_and_parse("timezone.json")?;
         // Note: The BTreeMap retains the order of the aliases, which is important for establishing
         // the canonical order of the IANA names.
         let bcp47_tzid_data = &compute_bcp47_tzids_btreemap(&resource.keyword.u.time_zones.values);

@@ -20,8 +20,9 @@ use icu_provider::prelude::*;
 
 use crate::TimeZoneBcp47Id;
 use tinystr::UnvalidatedTinyAsciiStr;
+use zerotrie::ZeroTrie;
 use zerovec::ule::{UnvalidatedStr, VarULE};
-use zerovec::{maps::ZeroMapKV, VarZeroSlice, VarZeroVec, ZeroMap};
+use zerovec::{maps::ZeroMapKV, VarZeroSlice, VarZeroVec, ZeroMap, ZeroVec};
 
 /// This is a time zone identifier that can be "loose matched" as according to
 /// [ECMAScript Temporal](https://tc39.es/proposal-temporal/#sec-isavailabletimezonename)
@@ -181,9 +182,13 @@ impl NormalizedTimeZoneIdStr {
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[yoke(prove_covariance_manually)]
 pub struct IanaToBcp47MapV1<'data> {
-    /// A map from IANA time zone identifiers to BCP-47 time zone identifiers
+    /// A map from IANA time zone identifiers to indexes of BCP-47 time zone identifiers.
     #[cfg_attr(feature = "serde", serde(borrow))]
-    pub map: ZeroMap<'data, NormalizedTimeZoneIdStr, TimeZoneBcp47Id>,
+    pub map: ZeroTrie<ZeroVec<'data, u8>>,
+    /// A sorted list of BCP-47 time zone identifiers.
+    #[cfg_attr(feature = "serde", serde(borrow))]
+    // Note: this is 9739B as ZeroVec<TinyStr8> and 9335B as VarZeroVec<str>
+    pub bcp47_ids: ZeroVec<'data, TimeZoneBcp47Id>,
 }
 
 /// A mapping from IANA time zone identifiers to BCP-47 time zone identifiers.

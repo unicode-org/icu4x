@@ -62,6 +62,7 @@ icu_provider = { workspace = true, features = ["std", "logging", "datagen"]}
 icu_provider_adapters = { workspace = true }
 tinystr = { workspace = true, features = ["alloc", "serde", "zerovec"] }
 writeable = { workspace = true }
+zerotrie = { workspace = true, features = ["alloc"] }
 zerovec = { workspace = true, features = ["serde", "yoke"] }
 
 # Exporters
