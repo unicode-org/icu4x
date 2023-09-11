@@ -69,6 +69,22 @@ struct DeriveTest_ZeroTriePerfectHash_ZeroVec<'data> {
     _data: ZeroTriePerfectHash<ZeroVec<'data, u8>>,
 }
 
+#[test]
+#[ignore] // https://github.com/rust-lang/rust/issues/98906
+#[cfg(all(feature = "databake", feature = "alloc"))]
+fn bake_ZeroTriePerfectHash_ZeroVec() {
+    use databake::*;
+    extern crate std;
+    test_bake!(
+        DeriveTest_ZeroTriePerfectHash_ZeroVec<'static>,
+        crate::DeriveTest_ZeroTriePerfectHash_ZeroVec {
+            _data: zerotrie::ZeroTriePerfectHash {
+                store: zerovec::ZeroVec::new(),
+            }
+        },
+    );
+}
+
 #[cfg_attr(feature = "yoke", derive(yoke::Yokeable))]
 #[cfg_attr(feature = "zerofrom", derive(zerofrom::ZeroFrom))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize, serde::Serialize))]
@@ -76,4 +92,20 @@ struct DeriveTest_ZeroTriePerfectHash_ZeroVec<'data> {
 struct DeriveTest_ZeroTrieExtendedCapacity_ZeroVec<'data> {
     #[cfg_attr(feature = "serde", serde(borrow))]
     _data: ZeroTrieExtendedCapacity<ZeroVec<'data, u8>>,
+}
+
+#[test]
+#[ignore] // https://github.com/rust-lang/rust/issues/98906
+#[cfg(all(feature = "databake", feature = "alloc"))]
+fn bake_ZeroTrieExtendedCapacity_ZeroVec() {
+    use databake::*;
+    extern crate std;
+    test_bake!(
+        DeriveTest_ZeroTrieExtendedCapacity_ZeroVec<'static>,
+        crate::DeriveTest_ZeroTrieExtendedCapacity_ZeroVec {
+            _data: zerotrie::ZeroTrieExtendedCapacity {
+                store: zerovec::ZeroVec::new(),
+            }
+        },
+    );
 }
