@@ -302,7 +302,7 @@ where
 
 #[cfg(test)]
 mod testdata {
-    include!("../tests/data.rs");
+    include!("../tests/data/data.rs");
 }
 
 #[cfg(test)]
