@@ -658,7 +658,7 @@ where
 }
 
 #[cfg(feature = "databake")]
-impl<'zf, Store> databake::Bake for ZeroTrie<Store>
+impl<Store> databake::Bake for ZeroTrie<Store>
 where
     Store: databake::Bake,
 {
