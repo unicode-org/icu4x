@@ -1362,6 +1362,7 @@ dependencies = [
  "toml",
  "ureq",
  "writeable",
+ "zerotrie",
  "zerovec",
  "zip",
 ]
@@ -1820,6 +1821,7 @@ dependencies = [
  "icu_timezone_data",
  "serde",
  "tinystr",
+ "zerotrie",
  "zerovec",
 ]
 
