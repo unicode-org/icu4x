@@ -44,14 +44,8 @@ struct DeriveTest_ZeroTrieSimpleAscii_ZeroVec<'data> {
     _data: ZeroTrieSimpleAscii<ZeroVec<'data, u8>>,
 }
 
-/*
----- test::bake_ZeroTrieSimpleAscii_ZeroVec stdout ----
-thread 'test::bake_ZeroTrieSimpleAscii_ZeroVec' panicked at 'assertion failed: `(left == right)`
-  left: `"zerotrie :: test :: DeriveTest_ZeroTrieSimpleAscii_ZeroVec { _data : zerotrie :: ZeroTrieSimpleAscii { store : zerovec :: ZeroVec :: new () , } , }"`,
- right: `"zerotrie :: test :: DeriveTest_ZeroTrieSimpleAscii_ZeroVec { _data : zerotrie :: ZeroTrieSimpleAscii { store : zerovec :: ZeroVec :: new () } , }"`', experimental/zerotrie/src/test.rs:46:5
-*/
 #[test]
-#[ignore] // TODO: Fix (see error message above)
+#[ignore] // https://github.com/rust-lang/rust/issues/98906
 #[cfg(all(feature = "databake", feature = "alloc"))]
 fn bake_ZeroTrieSimpleAscii_ZeroVec() {
     use databake::*;
