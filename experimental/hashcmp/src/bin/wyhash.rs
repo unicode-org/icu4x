@@ -13,10 +13,10 @@ const ALPHANUMS: &[u8] = b"abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1
 fn main(_argc: isize, _argv: *const *const u8) -> isize {
     let seed = std::hint::black_box(2023u64);
     let mut hashes = BTreeSet::new();
-    let mut hashes_16bit = BTreeSet::new();
+    let mut hashes_32bit = BTreeSet::new();
     let mut record = |hashed| {
         hashes.insert(hashed);
-        hashes_16bit.insert(hashed as u16);
+        hashes_32bit.insert(hashed as u32);
     };
     let mut cases = 0;
     for i in 0u8..255 {
@@ -50,6 +50,6 @@ fn main(_argc: isize, _argv: *const *const u8) -> isize {
             }
         }
     }
-    println!("unique hashes: {} / {} (16-bit: {})", hashes.len(), cases, hashes_16bit.len());
+    println!("unique hashes: {} / {} (32-bit: {})", hashes.len(), cases, hashes_32bit.len());
     0
 }
