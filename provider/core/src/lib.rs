@@ -137,6 +137,7 @@ mod data_provider;
 mod error;
 #[doc(hidden)]
 pub mod fallback;
+mod fxhash;
 mod key;
 mod request;
 mod response;
