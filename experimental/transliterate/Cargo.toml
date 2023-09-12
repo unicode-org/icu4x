@@ -31,7 +31,6 @@ icu_unicodeset_parser = { workspace = true, optional = true }
 zerovec = { workspace = true, features = ["derive"] }
 databake = { workspace = true, optional = true, features = ["derive"] }
 litemap = { workspace = true }
-zerofrom = { workspace = true }
 log = "0.4"
 
 serde = { version = "1.0", features = ["derive"], optional = true, default-features = false }
