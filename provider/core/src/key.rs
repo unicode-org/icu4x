@@ -5,7 +5,7 @@
 use crate::error::{DataError, DataErrorKind};
 
 use crate::fallback::{LocaleFallbackConfig, LocaleFallbackPriority, LocaleFallbackSupplement};
-use crate::fxhash::fxhash_32;
+use crate::fxhash::fxhash_32_trim;
 use alloc::borrow::Cow;
 use core::fmt;
 use core::fmt::Write;
@@ -51,7 +51,7 @@ pub struct DataKeyHash([u8; 4]);
 
 impl DataKeyHash {
     const fn compute_from_path(path: DataKeyPath) -> Self {
-        let hash = fxhash_32(
+        let hash = fxhash_32_trim(
             path.tagged.as_bytes(),
             leading_tag!().len(),
             trailing_tag!().len(),

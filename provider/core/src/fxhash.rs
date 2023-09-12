@@ -19,7 +19,11 @@
 ///    the benefit of a cryptographically secure algorithm
 // The indexing operations in this function have been reviewed in detail and won't panic.
 #[allow(clippy::indexing_slicing)]
-pub(crate) const fn fxhash_32(bytes: &[u8], ignore_leading: usize, ignore_trailing: usize) -> u32 {
+pub(crate) const fn fxhash_32_trim(
+    bytes: &[u8],
+    ignore_leading: usize,
+    ignore_trailing: usize,
+) -> u32 {
     // This code is adapted from https://github.com/rust-lang/rustc-hash,
     // whose license text is reproduced below.
     //
@@ -77,19 +81,19 @@ pub(crate) const fn fxhash_32(bytes: &[u8], ignore_leading: usize, ignore_traili
 
 #[test]
 fn test_hash_word_32() {
-    assert_eq!(0, fxhash_32(b"", 0, 0));
-    assert_eq!(0, fxhash_32(b"a", 1, 0));
-    assert_eq!(0, fxhash_32(b"a", 0, 1));
-    assert_eq!(0, fxhash_32(b"a", 0, 10));
-    assert_eq!(0, fxhash_32(b"a", 10, 0));
-    assert_eq!(0, fxhash_32(b"a", 1, 1));
-    assert_eq!(0xF3051F19, fxhash_32(b"a", 0, 0));
-    assert_eq!(0x2F9DF119, fxhash_32(b"ab", 0, 0));
-    assert_eq!(0xCB1D9396, fxhash_32(b"abc", 0, 0));
-    assert_eq!(0x8628F119, fxhash_32(b"abcd", 0, 0));
-    assert_eq!(0xBEBDB56D, fxhash_32(b"abcde", 0, 0));
-    assert_eq!(0x1CE8476D, fxhash_32(b"abcdef", 0, 0));
-    assert_eq!(0xC0F176A4, fxhash_32(b"abcdefg", 0, 0));
-    assert_eq!(0x09AB476D, fxhash_32(b"abcdefgh", 0, 0));
-    assert_eq!(0xB72F5D88, fxhash_32(b"abcdefghi", 0, 0));
+    assert_eq!(0, fxhash_32_trim(b"", 0, 0));
+    assert_eq!(0, fxhash_32_trim(b"a", 1, 0));
+    assert_eq!(0, fxhash_32_trim(b"a", 0, 1));
+    assert_eq!(0, fxhash_32_trim(b"a", 0, 10));
+    assert_eq!(0, fxhash_32_trim(b"a", 10, 0));
+    assert_eq!(0, fxhash_32_trim(b"a", 1, 1));
+    assert_eq!(0xF3051F19, fxhash_32_trim(b"a", 0, 0));
+    assert_eq!(0x2F9DF119, fxhash_32_trim(b"ab", 0, 0));
+    assert_eq!(0xCB1D9396, fxhash_32_trim(b"abc", 0, 0));
+    assert_eq!(0x8628F119, fxhash_32_trim(b"abcd", 0, 0));
+    assert_eq!(0xBEBDB56D, fxhash_32_trim(b"abcde", 0, 0));
+    assert_eq!(0x1CE8476D, fxhash_32_trim(b"abcdef", 0, 0));
+    assert_eq!(0xC0F176A4, fxhash_32_trim(b"abcdefg", 0, 0));
+    assert_eq!(0x09AB476D, fxhash_32_trim(b"abcdefgh", 0, 0));
+    assert_eq!(0xB72F5D88, fxhash_32_trim(b"abcdefghi", 0, 0));
 }
