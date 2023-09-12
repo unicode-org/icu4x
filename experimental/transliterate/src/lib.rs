@@ -38,6 +38,7 @@ pub mod provider;
 #[cfg(feature = "datagen")]
 mod compile;
 mod error;
+mod ids;
 #[allow(clippy::indexing_slicing, clippy::unwrap_used)] // TODO(#3958): Remove.
 mod transliterator;
 
@@ -48,4 +49,6 @@ pub use transliterator::*;
 pub use TransliteratorError as Error;
 
 #[cfg(feature = "datagen")]
-pub use compile::{legacy_id_to_internal_id, Direction};
+pub use compile::{Direction, RuleCollection};
+#[cfg(feature = "datagen")]
+pub use ids::legacy_id_to_bcp_47;

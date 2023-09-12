@@ -136,9 +136,14 @@ impl Default for BasicId {
 
 impl Display for BasicId {
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
-        write!(f, "{}-{}", self.source, self.target)?;
+        write!(
+            f,
+            "{}-{}",
+            self.source.to_ascii_lowercase(),
+            self.target.to_ascii_lowercase()
+        )?;
         if let Some(variant) = &self.variant {
-            write!(f, "/{}", variant)?;
+            write!(f, "/{}", variant.to_ascii_lowercase())?;
         }
         Ok(())
     }

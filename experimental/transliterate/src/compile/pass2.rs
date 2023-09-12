@@ -5,6 +5,7 @@
 use super::*;
 use crate::provider as ds;
 use icu_collections::codepointinvlist::CodePointInversionList;
+use icu_locid::Locale;
 use std::collections::HashMap;
 use std::fmt::{self, Display, Formatter};
 use zerovec::VarZeroVec;
@@ -227,7 +228,7 @@ pub(super) struct Pass2<'a, 'p> {
     var_table: MutVarTable,
     var_definitions: &'a HashMap<String, &'p [parse::Element]>,
     // transliterators available at datagen time exist in this mapping from legacy ID to internal ID
-    available_transliterators: &'a HashMap<String, String>,
+    available_transliterators: &'a HashMap<String, Locale>,
     // the inverse of VarTable.compounds
     var_to_char: HashMap<String, char>,
     // the current segment index (per conversion rule)
@@ -238,7 +239,7 @@ impl<'a, 'p> Pass2<'a, 'p> {
     pub(super) fn run(
         result: pass1::DirectedPass1Result<'p>,
         var_definitions: &'a HashMap<String, &'p [parse::Element]>,
-        available_transliterators: &'a HashMap<String, String>,
+        available_transliterators: &'a HashMap<String, Locale>,
     ) -> Result<ds::RuleBasedTransliterator<'static>> {
         let mut pass2 = Self::try_new(
             result.data.counts,
@@ -251,7 +252,7 @@ impl<'a, 'p> Pass2<'a, 'p> {
     fn try_new(
         counts: pass1::SpecialConstructCounts,
         var_definitions: &'a HashMap<String, &'p [parse::Element]>,
-        available_transliterators: &'a HashMap<String, String>,
+        available_transliterators: &'a HashMap<String, Locale>,
     ) -> Result<Self> {
         Ok(Pass2 {
             var_table: MutVarTable::try_new_from_counts(counts)?,
@@ -403,14 +404,11 @@ impl<'a, 'p> Pass2<'a, 'p> {
         }
     }
 
-    fn compile_basic_id(&self, basic_id: parse::BasicId) -> String {
-        let mut recombined_legacy_id = basic_id.to_string();
-        // normalize to ASCII lowercase. This is what the mapping expects.
-        recombined_legacy_id.make_ascii_lowercase();
-        if let Some(internal_id) = self.available_transliterators.get(&recombined_legacy_id) {
+    fn compile_basic_id(&self, basic_id: parse::BasicId) -> Locale {
+        if let Some(internal_id) = self.available_transliterators.get(&basic_id.to_string()) {
             internal_id.clone()
         } else {
-            legacy_id_to_internal_id(
+            crate::ids::legacy_id_to_bcp_47(
                 &basic_id.source,
                 &basic_id.target,
                 basic_id.variant.as_deref(),
@@ -419,8 +417,13 @@ impl<'a, 'p> Pass2<'a, 'p> {
     }
 
     fn compile_single_id(&self, id: parse::SingleId) -> ds::SimpleId<'static> {
+        let mut string = self.compile_basic_id(id.basic_id).to_string();
+        if string.starts_with("und-x") {
+            // don't store the `und-` prefix
+            string.replace_range(0..4, "");
+        }
         ds::SimpleId {
-            id: self.compile_basic_id(id.basic_id).into(),
+            id: string.into(),
             filter: id.filter.unwrap_or(CodePointInversionList::all()),
         }
     }

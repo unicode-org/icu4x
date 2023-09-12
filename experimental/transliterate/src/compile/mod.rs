@@ -2,9 +2,10 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use crate::provider::RuleBasedTransliterator;
+use crate::provider::{RuleBasedTransliterator, TransliteratorRulesV1Marker};
 use crate::{CompileErrorKind, TransliteratorError};
 
+use icu_locid::Locale;
 use icu_properties::{provider::*, sets, PropertiesError};
 use icu_provider::prelude::*;
 use std::collections::HashMap;
@@ -39,22 +40,6 @@ impl Direction {
     }
 }
 
-/// Conversion from an unknown legacy ID to an internal ID is handled by this function.
-///
-/// Known legacy IDs, i.e., ones that have associated BCP47 IDs in their metadata, are simply
-/// that BCP47 ID. For unknown legacy IDs, the output is given by this function.
-pub fn legacy_id_to_internal_id(source: &str, target: &str, variant: Option<&str>) -> String {
-    // TODO(#3891): Decide representation for unknown BCP47 IDs
-    let mut id = format!("x-{source}-{target}");
-    if let Some(variant) = variant {
-        id.push('-');
-        id.push_str(variant);
-    }
-    // normalizing to ASCII lowercase to avoid duplicate dependencies like Any-null and Any-Null
-    id.make_ascii_lowercase();
-    id
-}
-
 impl RuleBasedTransliterator<'static> {
     /// Parse a rule based transliterator definition into a `TransliteratorDataStruct`.
     ///
@@ -65,14 +50,14 @@ impl RuleBasedTransliterator<'static> {
     /// if the direction is [`Forward`](Direction::Forward), the second if the direction is
     /// [`Reverse`](Direction::Reverse), and both if the direction is [`Both`](Direction::Both).
     ///
-    /// `id_mapping` is a map from legacy IDs to internal ICU4X IDs. Occurring IDs in `source`
+    /// `id_mapping` is a map from legacy IDs to modern BCP-47 IDs. Occurring IDs in `source`
     /// that do not have a corresponding entry in `id_mapping` are still valid, but will be
-    /// compiled with [`legacy_id_to_internal_id`].
+    /// compiled with a custom format defined by [`crate::legacy_id_to_bcp_47`].
     pub fn compile<P>(
         provider: &P,
         source: &str,
         direction: Direction,
-        id_mapping: &HashMap<String, String>,
+        id_mapping: &HashMap<String, Locale>,
     ) -> Result<(Option<Self>, Option<Self>)>
     where
         P: ?Sized
@@ -177,6 +162,217 @@ impl RuleBasedTransliterator<'static> {
     }
 }
 
+#[derive(Debug, Default)]
+/// A collection of transliteration rules.
+pub struct RuleCollection {
+    id_mapping: HashMap<String, Locale>, // internal id -> bcp id
+    data: HashMap<DataLocale, (String, Direction, bool)>, // internal id -> source/direction/visible
+}
+
+impl RuleCollection {
+    /// Add a new transliteration source to the collection.
+    pub fn register_source<'a>(
+        &mut self,
+        id: &icu_locid::Locale,
+        source: String,
+        aliases: impl Iterator<Item = &'a str>,
+        backwards: bool,
+        visible: bool,
+    ) {
+        self.data.insert(
+            crate::ids::bcp47_to_data_locale(id),
+            (
+                source,
+                if backwards {
+                    Direction::Reverse
+                } else {
+                    Direction::Forward
+                },
+                visible,
+            ),
+        );
+
+        for alias in aliases {
+            self.id_mapping
+                .insert(alias.to_ascii_lowercase(), id.clone());
+        }
+    }
+
+    /// List all registered sources.
+    pub fn list(&self) -> impl Iterator<Item = &'_ DataLocale> {
+        self.data.keys()
+    }
+
+    /// Combined with a properties provider, this becomes a `DataProvider<TransliteratorRulesV1Marker>`.
+    pub fn with_properties_provider<'a, P>(
+        &'a self,
+        properties_provider: &'a P,
+    ) -> impl DataProvider<TransliteratorRulesV1Marker> + 'a
+    where
+        P: ?Sized
+            + DataProvider<AsciiHexDigitV1Marker>
+            + DataProvider<AlphabeticV1Marker>
+            + DataProvider<BidiControlV1Marker>
+            + DataProvider<BidiMirroredV1Marker>
+            + DataProvider<CaseIgnorableV1Marker>
+            + DataProvider<CasedV1Marker>
+            + DataProvider<ChangesWhenCasefoldedV1Marker>
+            + DataProvider<ChangesWhenCasemappedV1Marker>
+            + DataProvider<ChangesWhenLowercasedV1Marker>
+            + DataProvider<ChangesWhenNfkcCasefoldedV1Marker>
+            + DataProvider<ChangesWhenTitlecasedV1Marker>
+            + DataProvider<ChangesWhenUppercasedV1Marker>
+            + DataProvider<DashV1Marker>
+            + DataProvider<DefaultIgnorableCodePointV1Marker>
+            + DataProvider<DeprecatedV1Marker>
+            + DataProvider<DiacriticV1Marker>
+            + DataProvider<EmojiV1Marker>
+            + DataProvider<EmojiComponentV1Marker>
+            + DataProvider<EmojiModifierV1Marker>
+            + DataProvider<EmojiModifierBaseV1Marker>
+            + DataProvider<EmojiPresentationV1Marker>
+            + DataProvider<ExtendedPictographicV1Marker>
+            + DataProvider<ExtenderV1Marker>
+            + DataProvider<GraphemeBaseV1Marker>
+            + DataProvider<GraphemeExtendV1Marker>
+            + DataProvider<HexDigitV1Marker>
+            + DataProvider<IdsBinaryOperatorV1Marker>
+            + DataProvider<IdsTrinaryOperatorV1Marker>
+            + DataProvider<IdContinueV1Marker>
+            + DataProvider<IdStartV1Marker>
+            + DataProvider<IdeographicV1Marker>
+            + DataProvider<JoinControlV1Marker>
+            + DataProvider<LogicalOrderExceptionV1Marker>
+            + DataProvider<LowercaseV1Marker>
+            + DataProvider<MathV1Marker>
+            + DataProvider<NoncharacterCodePointV1Marker>
+            + DataProvider<PatternSyntaxV1Marker>
+            + DataProvider<PatternWhiteSpaceV1Marker>
+            + DataProvider<QuotationMarkV1Marker>
+            + DataProvider<RadicalV1Marker>
+            + DataProvider<RegionalIndicatorV1Marker>
+            + DataProvider<SentenceTerminalV1Marker>
+            + DataProvider<SoftDottedV1Marker>
+            + DataProvider<TerminalPunctuationV1Marker>
+            + DataProvider<UnifiedIdeographV1Marker>
+            + DataProvider<UppercaseV1Marker>
+            + DataProvider<VariationSelectorV1Marker>
+            + DataProvider<WhiteSpaceV1Marker>
+            + DataProvider<XidContinueV1Marker>
+            + DataProvider<GeneralCategoryMaskNameToValueV1Marker>
+            + DataProvider<GeneralCategoryV1Marker>
+            + DataProvider<ScriptNameToValueV1Marker>
+            + DataProvider<ScriptV1Marker>
+            + DataProvider<ScriptWithExtensionsPropertyV1Marker>
+            + DataProvider<XidStartV1Marker>,
+    {
+        RuleCollectionProvider {
+            collection: self,
+            properties_provider,
+        }
+    }
+}
+
+struct RuleCollectionProvider<'a, P: ?Sized> {
+    collection: &'a RuleCollection,
+    properties_provider: &'a P,
+}
+
+impl<P> DataProvider<TransliteratorRulesV1Marker> for RuleCollectionProvider<'_, P>
+where
+    P: ?Sized
+        + DataProvider<AsciiHexDigitV1Marker>
+        + DataProvider<AlphabeticV1Marker>
+        + DataProvider<BidiControlV1Marker>
+        + DataProvider<BidiMirroredV1Marker>
+        + DataProvider<CaseIgnorableV1Marker>
+        + DataProvider<CasedV1Marker>
+        + DataProvider<ChangesWhenCasefoldedV1Marker>
+        + DataProvider<ChangesWhenCasemappedV1Marker>
+        + DataProvider<ChangesWhenLowercasedV1Marker>
+        + DataProvider<ChangesWhenNfkcCasefoldedV1Marker>
+        + DataProvider<ChangesWhenTitlecasedV1Marker>
+        + DataProvider<ChangesWhenUppercasedV1Marker>
+        + DataProvider<DashV1Marker>
+        + DataProvider<DefaultIgnorableCodePointV1Marker>
+        + DataProvider<DeprecatedV1Marker>
+        + DataProvider<DiacriticV1Marker>
+        + DataProvider<EmojiV1Marker>
+        + DataProvider<EmojiComponentV1Marker>
+        + DataProvider<EmojiModifierV1Marker>
+        + DataProvider<EmojiModifierBaseV1Marker>
+        + DataProvider<EmojiPresentationV1Marker>
+        + DataProvider<ExtendedPictographicV1Marker>
+        + DataProvider<ExtenderV1Marker>
+        + DataProvider<GraphemeBaseV1Marker>
+        + DataProvider<GraphemeExtendV1Marker>
+        + DataProvider<HexDigitV1Marker>
+        + DataProvider<IdsBinaryOperatorV1Marker>
+        + DataProvider<IdsTrinaryOperatorV1Marker>
+        + DataProvider<IdContinueV1Marker>
+        + DataProvider<IdStartV1Marker>
+        + DataProvider<IdeographicV1Marker>
+        + DataProvider<JoinControlV1Marker>
+        + DataProvider<LogicalOrderExceptionV1Marker>
+        + DataProvider<LowercaseV1Marker>
+        + DataProvider<MathV1Marker>
+        + DataProvider<NoncharacterCodePointV1Marker>
+        + DataProvider<PatternSyntaxV1Marker>
+        + DataProvider<PatternWhiteSpaceV1Marker>
+        + DataProvider<QuotationMarkV1Marker>
+        + DataProvider<RadicalV1Marker>
+        + DataProvider<RegionalIndicatorV1Marker>
+        + DataProvider<SentenceTerminalV1Marker>
+        + DataProvider<SoftDottedV1Marker>
+        + DataProvider<TerminalPunctuationV1Marker>
+        + DataProvider<UnifiedIdeographV1Marker>
+        + DataProvider<UppercaseV1Marker>
+        + DataProvider<VariationSelectorV1Marker>
+        + DataProvider<WhiteSpaceV1Marker>
+        + DataProvider<XidContinueV1Marker>
+        + DataProvider<GeneralCategoryMaskNameToValueV1Marker>
+        + DataProvider<GeneralCategoryV1Marker>
+        + DataProvider<ScriptNameToValueV1Marker>
+        + DataProvider<ScriptV1Marker>
+        + DataProvider<ScriptWithExtensionsPropertyV1Marker>
+        + DataProvider<XidStartV1Marker>,
+{
+    fn load(
+        &self,
+        req: DataRequest,
+    ) -> std::result::Result<DataResponse<TransliteratorRulesV1Marker>, DataError> {
+        let (source, direction, visible) =
+            self.collection.data.get(req.locale).ok_or_else(|| {
+                DataErrorKind::MissingLocale.with_req(TransliteratorRulesV1Marker::KEY, req)
+            })?;
+
+        let (forwards, backwards) = RuleBasedTransliterator::compile(
+            self.properties_provider,
+            source,
+            *direction,
+            &self.collection.id_mapping,
+        )
+        .map_err(|e| DataError::custom("transliterator parsing failed").with_debug_context(&e))?;
+        let mut transliterator = match direction {
+            #[allow(clippy::unwrap_used)] // the parser guarantees we receive this
+            Direction::Forward => forwards.unwrap(),
+            #[allow(clippy::unwrap_used)] // the parser guarantees we receive this
+            Direction::Reverse => backwards.unwrap(),
+            // unreachable because `self.rules` only ever returns one direction.
+            _ => {
+                unreachable!("unexpected direction")
+            }
+        };
+
+        transliterator.visibility = *visible;
+
+        Ok(DataResponse {
+            metadata: Default::default(),
+            payload: Some(DataPayload::from_owned(transliterator)),
+        })
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use std::borrow::Cow;
@@ -222,7 +418,7 @@ mod tests {
 
         let id_mapping = HashMap::from([(
             "AnyRev-AddRandomSpaces/FiftyPercent".to_ascii_lowercase(),
-            "und-t-s0-anyrev-d0-addrndsp-m0-fifty".into(),
+            "und-t-d0-addrndsp-m0-fifty-s0-anyrev".parse().unwrap(),
         )]);
 
         let (forward, reverse) = RuleBasedTransliterator::compile(
@@ -240,7 +436,7 @@ mod tests {
 
             let expected_id_group1 = vec![ds::SimpleId {
                 filter: parse::FilterSet::all(),
-                id: Cow::Borrowed("x-latin-interindic"),
+                id: Cow::Borrowed("x-latin-interind"),
             }];
             let expected_id_group2 = vec![ds::SimpleId {
                 filter: parse_set_cp(r"[\ ]"),
@@ -249,7 +445,7 @@ mod tests {
             let expected_id_group3 = vec![
                 ds::SimpleId {
                     filter: parse::FilterSet::all(),
-                    id: Cow::Borrowed("x-interindic-devanagari"),
+                    id: Cow::Borrowed("x-interind-devanaga"),
                 },
                 ds::SimpleId {
                     filter: parse::FilterSet::all(),
@@ -333,8 +529,8 @@ mod tests {
                 HashSet::from_iter([
                     Cow::Borrowed("x-any-nfc"),
                     Cow::Borrowed("x-any-remove"),
-                    Cow::Borrowed("x-interindic-devanagari"),
-                    Cow::Borrowed("x-latin-interindic"),
+                    Cow::Borrowed("x-interind-devanaga"),
+                    Cow::Borrowed("x-latin-interind"),
                 ])
             );
         }
@@ -348,16 +544,16 @@ mod tests {
                 },
                 ds::SimpleId {
                     filter: parse::FilterSet::all(),
-                    id: Cow::Borrowed("x-devanagari-interindic"),
+                    id: Cow::Borrowed("x-devanaga-interind"),
                 },
                 ds::SimpleId {
                     filter: parse::FilterSet::all(),
-                    id: Cow::Borrowed("und-t-s0-anyrev-d0-addrndsp-m0-fifty"),
+                    id: Cow::Borrowed("und-t-d0-addrndsp-m0-fifty-s0-anyrev"),
                 },
             ];
             let expected_id_group2 = vec![ds::SimpleId {
                 filter: parse::FilterSet::all(),
-                id: Cow::Borrowed("x-interindic-latin"),
+                id: Cow::Borrowed("x-interind-latin"),
             }];
 
             let expected_id_group_list: Vec<VarZeroVec<'_, ds::SimpleIdULE>> = vec![
@@ -408,7 +604,7 @@ mod tests {
                 arg: Cow::Borrowed("\u{F000B}padding"), // $1 and 'padding'
                 translit: ds::SimpleId {
                     filter: parse::FilterSet::all(),
-                    id: Cow::Borrowed("x-any-revfncall"),
+                    id: Cow::Borrowed("x-any-revfncal"),
                 },
             }];
 
@@ -436,11 +632,11 @@ mod tests {
             assert_eq!(
                 reverse.deps().collect::<HashSet<_>>(),
                 HashSet::from_iter([
-                    Cow::Borrowed("und-t-s0-anyrev-d0-addrndsp-m0-fifty"),
+                    Cow::Borrowed("und-t-d0-addrndsp-m0-fifty-s0-anyrev"),
                     Cow::Borrowed("x-any-nfd"),
-                    Cow::Borrowed("x-any-revfncall"),
-                    Cow::Borrowed("x-devanagari-interindic"),
-                    Cow::Borrowed("x-interindic-latin"),
+                    Cow::Borrowed("x-any-revfncal"),
+                    Cow::Borrowed("x-devanaga-interind"),
+                    Cow::Borrowed("x-interind-latin"),
                 ])
             );
         }

@@ -293,13 +293,18 @@ impl Transliterator {
             + ?Sized,
         F: Fn(&Locale) -> Option<Box<dyn CustomTransliterator>>,
     {
-        let payload = Transliterator::load_rbt(&locale.to_string(), transliterator_provider)?;
+        let payload = Transliterator::load_rbt(
+            &crate::ids::bcp47_to_data_locale(&locale),
+            transliterator_provider,
+        )?;
         let rbt = payload.get();
         if !rbt.visibility {
             // transliterator is internal
             return Err(TransliteratorError::InternalOnly);
         }
         let mut env = LiteMap::new();
+        // Avoid recursive load
+        env.insert(locale.to_string(), InternalTransliterator::Null);
         Transliterator::load_dependencies_recursive(
             rbt,
             &mut env,
@@ -343,7 +348,10 @@ impl Transliterator {
                     .or_else(|| Transliterator::load_with_override(&dep, lookup?).transpose())
                     // c) the data
                     .unwrap_or_else(|| {
-                        let rbt = Transliterator::load_rbt(&dep, transliterator_provider)?;
+                        let rbt = Transliterator::load_rbt(
+                            &crate::ids::unparsed_bcp47_to_data_locale(&dep)?,
+                            transliterator_provider,
+                        )?;
                         Ok(InternalTransliterator::RuleBased(rbt))
                     })?;
                 if let InternalTransliterator::RuleBased(rbt) = &internal_t {
@@ -427,16 +435,14 @@ impl Transliterator {
     }
 
     fn load_rbt<P>(
-        id: &str,
+        id: &DataLocale,
         provider: &P,
     ) -> Result<DataPayload<TransliteratorRulesV1Marker>, DataError>
     where
         P: DataProvider<TransliteratorRulesV1Marker> + ?Sized,
     {
-        let mut data_locale = DataLocale::default();
-        data_locale.set_aux(id.parse()?);
         let req = DataRequest {
-            locale: &data_locale,
+            locale: id,
             metadata: Default::default(),
         };
         let payload = provider.load(req)?.take_payload()?;
