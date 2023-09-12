@@ -15,9 +15,6 @@ const CAIRO: Location = Location {
     zone: (1_f64 / 12_f64),
 };
 
-// "Fixed" is a day count representation of calendars staring from Jan 1st of year 1 of the Georgian Calendar.
-// The fixed date algorithms are from
-// Dershowitz, Nachum, and Edward M. Reingold. _Calendrical calculations_. Cambridge University Press, 2008.
 /// Lisp code reference: <https://github.com/EdReingold/calendar-code2/blob/main/calendar.l#L6904>
 pub fn fixed_from_islamic_observational(year: i32, month: u8, day: u8) -> RataDie {
     let year = i64::from(year);
@@ -136,10 +133,6 @@ pub fn islamic_civil_from_fixed(date: RataDie) -> (i32, u8, u8) {
     (year, month, day)
 }
 
-// "Fixed" is a day count representation of calendars staring from Jan 1st of year 1 of the Georgian Calendar.
-// The fixed date algorithms are from
-// Dershowitz, Nachum, and Edward M. Reingold. _Calendrical calculations_. Cambridge University Press, 2008.
-//
 /// Lisp code reference:https: //github.com/EdReingold/calendar-code2/blob/main/calendar.l#L2076
 pub fn fixed_from_islamic_tabular(year: i32, month: u8, day: u8) -> RataDie {
     let year = i64::from(year);

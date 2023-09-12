@@ -225,10 +225,6 @@ impl BookHebrew {
         }
     }
 
-    // "Fixed" is a day count representation of calendars staring from Jan 1st of year 1 of the Georgian Calendar.
-    // The fixed date algorithms are from
-    // Dershowitz, Nachum, and Edward M. Reingold. _Calendrical calculations_. Cambridge University Press, 2008.
-    //
     /// Lisp code reference: <https://github.com/EdReingold/calendar-code2/blob/main/calendar.l#L2331>
     pub fn fixed_from_book_hebrew(date: BookHebrew) -> RataDie {
         let book_year = date.year;
