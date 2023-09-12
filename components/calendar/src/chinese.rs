@@ -39,7 +39,6 @@ use crate::chinese_based::{
     chinese_based_ordinal_lunar_month_from_code, ChineseBasedCompiledData, ChineseBasedDateInner,
     ChineseBasedWithDataLoading, ChineseBasedYearInfo,
 };
-use crate::helpers::div_rem_euclid;
 use crate::iso::Iso;
 use crate::types::{Era, FormattableYear};
 use crate::{
@@ -385,7 +384,7 @@ impl Chinese {
     ) -> FormattableYear {
         let era = Era(tinystr!(16, "chinese"));
         let number = year;
-        let cyclic = (div_rem_euclid(number - 1, 60).1) as u8;
+        let cyclic = (number - 1).rem_euclid(60) as u8;
         let cyclic = NonZeroU8::new(cyclic + 1); // 1-indexed
         let rata_die_in_year = if let Some(info) = year_info_option {
             info.get_new_year()
@@ -407,8 +406,8 @@ impl Chinese {
 mod test {
 
     use super::*;
-    use crate::rata_die::RataDie;
     use crate::types::MonthCode;
+    use calendrical_calculations::rata_die::RataDie;
 
     #[test]
     fn test_chinese_from_fixed() {

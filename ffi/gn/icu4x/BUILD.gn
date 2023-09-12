@@ -214,7 +214,6 @@ rust_library("icu_calendar-v1_2_0") {
   deps += [ ":displaydoc-v0_2_4($host_toolchain)" ]
   deps += [ ":icu_locid-v1_2_0" ]
   deps += [ ":icu_provider-v1_2_0" ]
-  deps += [ ":libm-v0_2_6" ]
   deps += [ ":tinystr-v0_7_1" ]
   deps += [ ":writeable-v0_5_2" ]
   deps += [ ":zerovec-v0_9_4" ]
@@ -732,6 +731,7 @@ rust_library("libm-v0_2_6") {
     "--edition=2018",
     "-Cmetadata=6b5214f2031c6f9e",
     "-Cextra-filename=-6b5214f2031c6f9e",
+    "--cfg=feature=\"default\"",
   ]
 
   visibility = [ ":*" ]

@@ -33,11 +33,11 @@
 
 use crate::{
     calendar_arithmetic::ArithmeticDate,
-    helpers::i64_to_saturated_i32,
     iso::IsoDateInner,
     types::{self, Era},
     Calendar, CalendarError, Date, DateTime, Iso,
 };
+use calendrical_calculations::helpers::i64_to_saturated_i32;
 use tinystr::tinystr;
 
 /// Year of the beginning of the Taiwanese (ROC/Minguo) calendar.
@@ -275,7 +275,7 @@ pub(crate) fn year_as_roc(year: i64) -> types::FormattableYear {
 mod test {
 
     use super::*;
-    use crate::rata_die::RataDie;
+    use calendrical_calculations::rata_die::RataDie;
 
     #[derive(Debug)]
     struct TestCase {

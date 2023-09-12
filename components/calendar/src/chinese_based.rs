@@ -20,12 +20,12 @@
 
 use crate::{
     calendar_arithmetic::{ArithmeticDate, CalendarArithmetic},
-    rata_die::RataDie,
     types::MonthCode,
     CalendarError, Iso,
 };
 
 use calendrical_calculations::chinese_based::{self, ChineseBased, YearBounds};
+use calendrical_calculations::rata_die::RataDie;
 use core::num::NonZeroU8;
 
 /// The trait ChineseBased is used by Chinese-based calendars to perform computations shared by such calendar.

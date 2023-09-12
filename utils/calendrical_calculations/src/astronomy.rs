@@ -14,12 +14,23 @@
 //! TODO(#3709): Address inconcistencies with existing ICU code for extreme dates.
 
 use crate::error::LocationOutOfBoundsError;
-use crate::helpers::{
-    arccos_degrees, arcsin_degrees, arctan_degrees, binary_search, cos_degrees, div_rem_euclid_f64,
-    i64_to_i32, interval_mod_f64, invert_angular, mod3, next_moment, poly, signum, sin_degrees,
-    tan_degrees,
-};
+#[allow(unused_imports)]
+use crate::helpers::CoreFloat;
+use crate::helpers::{binary_search, i64_to_i32, invert_angular, next_moment, poly};
 use crate::rata_die::{Moment, RataDie};
+use core::f64::consts::PI;
+
+// TODO: this isn't f64::div_euclid as defined in std. Figure out what the call sites
+// mean to do.
+fn div_euclid_f64(n: f64, d: f64) -> f64 {
+    debug_assert!(d > 0.0);
+    let (a, b) = (n / d, n % d);
+    if n >= 0.0 || b == 0.0 {
+        a
+    } else {
+        a - 1.0
+    }
+}
 
 #[derive(Debug, Copy, Clone, Default)]
 /// A Location on the Earth given as a latitude, longitude, elevation, and standard time zone.
@@ -41,9 +52,6 @@ pub const MECCA: Location = Location {
     elevation: 298.0,
     zone: (1_f64 / 8_f64),
 };
-
-#[allow(clippy::excessive_precision)]
-pub const PI: f64 = 3.14159265358979323846264338327950288_f64;
 
 /// The mean synodic month in days of 86400 atomic seconds
 /// (86400 seconds = 24 hours * 60 minutes/hour * 60 seconds/minute)
@@ -234,27 +242,27 @@ impl Astronomical {
 
         if (2051..=2150).contains(&year_int) {
             (-20.0
-                + 32.0 * libm::pow((year_int as f64 - 1820.0) / 100.0, 2.0)
-                + 0.5628 * (2150.0 - year_int as f64))
+                + 32.0 * (((year_int - 1820) * (year_int - 1820)) as f64 / 10000.0)
+                + 0.5628 * (2150 - year_int) as f64)
                 / 86400.0
         } else if (2006..=2050).contains(&year_int) {
             (62.92 + 0.32217 * y2000 + 0.005589 * y2000 * y2000) / 86400.0
         } else if (1987..=2005).contains(&year_int) {
-            // This polynomial is written out manually instead of using libm::pow for optimization, see #3743
+            // This polynomial is written out manually instead of using pow for optimization, see #3743
             (63.86 + 0.3345 * y2000 - 0.060374 * y2000 * y2000
                 + 0.0017275 * y2000 * y2000 * y2000
                 + 0.000651814 * y2000 * y2000 * y2000 * y2000
                 + 0.00002373599 * y2000 * y2000 * y2000 * y2000 * y2000)
                 / 86400.0
         } else if (1900..=1986).contains(&year_int) {
-            // This polynomial is written out manually instead of using a fn like libm::pow for optimization, see #3743
+            // This polynomial is written out manually instead of using a fn like pow for optimization, see #3743
             -0.00002 + 0.000297 * c + 0.025184 * c * c - 0.181133 * c * c * c
                 + 0.553040 * c * c * c * c
                 - 0.861938 * c * c * c * c * c
                 + 0.677066 * c * c * c * c * c * c
                 - 0.212591 * c * c * c * c * c * c * c
         } else if (1800..=1899).contains(&year_int) {
-            // This polynomial is written out manually instead of using a fn like libm::pow for optimization, see #3743
+            // This polynomial is written out manually instead of using a fn like pow for optimization, see #3743
             -0.000009
                 + 0.003844 * c
                 + 0.083563 * c * c
@@ -267,24 +275,24 @@ impl Astronomical {
                 + 11.636204 * c * c * c * c * c * c * c * c * c
                 + 2.043794 * c * c * c * c * c * c * c * c * c * c
         } else if (1700..=1799).contains(&year_int) {
-            // This polynomial is written out manually instead of using a fn like libm::pow for optimization, see #3743
+            // This polynomial is written out manually instead of using a fn like pow for optimization, see #3743
             (8.118780842 - 0.005092142 * y1700 + 0.003336121 * y1700 * y1700
                 - 0.0000266484 * y1700 * y1700 * y1700)
                 / 86400.0
         } else if (1600..=1699).contains(&year_int) {
-            // This polynomial is written out manually instead of using a fn like libm::pow for optimization, see #3743
+            // This polynomial is written out manually instead of using a fn like pow for optimization, see #3743
             (120.0 - 0.9808 * y1600 - 0.01532 * y1600 * y1600
                 + 0.000140272128 * y1600 * y1600 * y1600)
                 / 86400.0
         } else if (500..=1599).contains(&year_int) {
-            // This polynomial is written out manually instead of using a fn like libm::pow for optimization, see #3743
+            // This polynomial is written out manually instead of using a fn like pow for optimization, see #3743
             (1574.2 - 556.01 * y1000 + 71.23472 * y1000 * y1000 + 0.319781 * y1000 * y1000 * y1000
                 - 0.8503463 * y1000 * y1000 * y1000 * y1000
                 - 0.005050998 * y1000 * y1000 * y1000 * y1000 * y1000
                 + 0.0083572073 * y1000 * y1000 * y1000 * y1000 * y1000 * y1000)
                 / 86400.0
         } else if (-499..=499).contains(&year_int) {
-            // This polynomial is written out manually instead of using a fn like libm::pow for optimization, see #3743
+            // This polynomial is written out manually instead of using a fn like pow for optimization, see #3743
             (10583.6 - 1014.41 * y0 + 33.78311 * y0 * y0
                 - 5.952053 * y0 * y0 * y0
                 - 0.1798452 * y0 * y0 * y0 * y0
@@ -338,14 +346,20 @@ impl Astronomical {
         let anomaly = poly(c, &[357.52910, 35999.05030, -0.0001559, -0.00000048]);
         let eccentricity = poly(c, &[0.016708617, -0.000042037, -0.0000001236]);
         let varepsilon = Self::obliquity(moment);
-        let y = libm::pow(tan_degrees(varepsilon / 2.0), 2.0);
-        let equation = (y * sin_degrees(2.0 * lambda) - 2.0 * eccentricity * sin_degrees(anomaly)
-            + 4.0 * eccentricity * y * sin_degrees(anomaly) * cos_degrees(2.0 * lambda)
-            - 0.5 * y * y * sin_degrees(4.0 * lambda)
-            - 1.25 * eccentricity * eccentricity * sin_degrees(2.0 * anomaly))
+        let y = (varepsilon / 2.0).to_radians().tan();
+        let y = y * y;
+        let equation = (y * (2.0 * lambda).to_radians().sin()
+            - 2.0 * eccentricity * anomaly.to_radians().sin()
+            + 4.0
+                * eccentricity
+                * y
+                * anomaly.to_radians().sin()
+                * (2.0 * lambda).to_radians().cos()
+            - 0.5 * y * y * (4.0 * lambda).to_radians().sin()
+            - 1.25 * eccentricity * eccentricity * (2.0 * anomaly).to_radians().sin())
             / (2.0 * PI);
 
-        signum(equation) * libm::fabs(equation).min(12.0 / 24.0)
+        equation.signum() * equation.abs().min(12.0 / 24.0)
     }
 
     /// The standard time of dusk at a given location on a given date, or `None` if there is no
@@ -387,10 +401,11 @@ impl Astronomical {
     /// Reference lisp code: <https://github.com/EdReingold/calendar-code2/blob/9afc1f3/calendar.l#L3567-L3576>
     pub fn declination(moment: Moment, beta: f64, lambda: f64) -> f64 {
         let varepsilon = Self::obliquity(moment);
-        arcsin_degrees(
-            sin_degrees(beta) * cos_degrees(varepsilon)
-                + cos_degrees(beta) * sin_degrees(varepsilon) * sin_degrees(lambda),
-        )
+        (beta.to_radians().sin() * varepsilon.to_radians().cos()
+            + beta.to_radians().cos() * varepsilon.to_radians().sin() * lambda.to_radians().sin())
+        .asin()
+        .to_degrees()
+        .rem_euclid(360.0)
     }
 
     /// Calculates the right ascension at a given [`Moment`] of UTC time of an object at ecliptic latitude `beta` and ecliptic longitude `lambda`; all angles are in degrees.
@@ -402,11 +417,13 @@ impl Astronomical {
     /// Reference lisp code: <https://github.com/EdReingold/calendar-code2/blob/9afc1f3/calendar.l#L3578-L3588>
     pub fn right_ascension(moment: Moment, beta: f64, lambda: f64) -> f64 {
         let varepsilon = Self::obliquity(moment);
-        arctan_degrees(
-            sin_degrees(lambda) * cos_degrees(varepsilon)
-                - tan_degrees(beta) * sin_degrees(varepsilon),
-            cos_degrees(lambda),
-        )
+
+        let y = lambda.to_radians().sin() * varepsilon.to_radians().cos()
+            - beta.to_radians().tan() * varepsilon.to_radians().sin();
+        let x = lambda.to_radians().cos();
+
+        // Arctangent of y/x in degrees, handling zero cases
+        y.atan2(x).to_degrees().rem_euclid(360.0)
     }
 
     /// Local time from apparent solar time at a given location
@@ -430,7 +447,7 @@ impl Astronomical {
         alpha: f64,
         early: bool, // TODO: Replace this bool with an enum with Morning and Evening, or Early and Late
     ) -> Option<Moment> {
-        let date = libm::floor(moment.as_rata_die().to_f64_date());
+        let date = moment.as_rata_die().to_f64_date().floor();
         let alt = if alpha >= 0.0 {
             if early {
                 date
@@ -441,18 +458,15 @@ impl Astronomical {
             date + 12.0 / 24.0
         };
 
-        let value = if libm::fabs(Self::sine_offset(moment, location, alpha)) > 1.0 {
+        let value = if Self::sine_offset(moment, location, alpha).abs() > 1.0 {
             Self::sine_offset(Moment::new(alt), location, alpha)
         } else {
             Self::sine_offset(moment, location, alpha)
         };
 
-        if libm::fabs(value) <= 1.0 {
-            let offset = mod3(
-                div_rem_euclid_f64(arcsin_degrees(value), 360.0).0,
-                -12.0 / 24.0,
-                12.0 / 24.0,
-            );
+        if value.abs() <= 1.0 {
+            let offset =
+                (value.asin().to_degrees().rem_euclid(360.0) / 360.0 + 0.5).rem_euclid(1.0) - 0.5;
 
             let moment = Moment::new(
                 date + if early {
@@ -481,7 +495,7 @@ impl Astronomical {
         early: bool, // TODO: Replace this bool with an enum with Morning and Evening, or Early and Late
     ) -> Option<Moment> {
         let moment = Self::approx_moment_of_depression(approx, location, alpha, early)?;
-        if libm::fabs(approx - moment) < 30.0 {
+        if (approx - moment).abs() < 30.0 {
             Some(moment)
         } else {
             Self::moment_of_depression(moment, location, alpha, early)
@@ -496,9 +510,9 @@ impl Astronomical {
         // The moment is not used.
         let h = location.elevation.max(0.0);
         let earth_r = 6.372e6; // Radius of Earth.
-        let dip = arccos_degrees(earth_r / (earth_r + h));
+        let dip = (earth_r / (earth_r + h)).acos().to_degrees();
 
-        (34.0 / 60.0) + dip + ((19.0 / 3600.0) * libm::sqrt(h))
+        (34.0 / 60.0) + dip + ((19.0 / 3600.0) * h.sqrt())
     }
 
     /// The moment (in universal time) of the nth new moon after
@@ -509,7 +523,7 @@ impl Astronomical {
     /// originally from _Astronomical Algorithms_ by Jean Meeus, corrected 2nd edn., 2005.
     /// Reference code: <https://github.com/EdReingold/calendar-code2/blob/9afc1f3/calendar.l#L4288-L4377>
     pub fn nth_new_moon(n: i32) -> Moment {
-        // The following polynomials are written out instead of using libm::pow for optimization, see #3743
+        // The following polynomials are written out instead of using pow for optimization, see #3743
         let n0 = 24724.0;
         let k = (n as f64) - n0;
         let c = k / 1236.85;
@@ -570,114 +584,114 @@ impl Astronomical {
             0.000042, 0.000040, 0.000037, 0.000035, 0.000023,
         ];
 
-        let mut correction = -0.00017 * libm::sin(omega.to_radians());
+        let mut correction = -0.00017 * omega.to_radians().sin();
 
         // This summation is unrolled for optimization, see #3743
         st.0 = v0
-            * libm::sin(
-                (x0 * solar_anomaly + y0 * lunar_anomaly + z0 * moon_argument).to_radians(),
-            );
+            * (x0 * solar_anomaly + y0 * lunar_anomaly + z0 * moon_argument)
+                .to_radians()
+                .sin();
         st.1 = v1
             * e
-            * libm::sin(
-                (x1 * solar_anomaly + y1 * lunar_anomaly + z1 * moon_argument).to_radians(),
-            );
+            * (x1 * solar_anomaly + y1 * lunar_anomaly + z1 * moon_argument)
+                .to_radians()
+                .sin();
         st.2 = v2
-            * libm::sin(
-                (x2 * solar_anomaly + y2 * lunar_anomaly + z2 * moon_argument).to_radians(),
-            );
+            * (x2 * solar_anomaly + y2 * lunar_anomaly + z2 * moon_argument)
+                .to_radians()
+                .sin();
         st.3 = v3
-            * libm::sin(
-                (x3 * solar_anomaly + y3 * lunar_anomaly + z3 * moon_argument).to_radians(),
-            );
+            * (x3 * solar_anomaly + y3 * lunar_anomaly + z3 * moon_argument)
+                .to_radians()
+                .sin();
         st.4 = v4
             * e
-            * libm::sin(
-                (x4 * solar_anomaly + y4 * lunar_anomaly + z4 * moon_argument).to_radians(),
-            );
+            * (x4 * solar_anomaly + y4 * lunar_anomaly + z4 * moon_argument)
+                .to_radians()
+                .sin();
         st.5 = v5
             * e
-            * libm::sin(
-                (x5 * solar_anomaly + y5 * lunar_anomaly + z5 * moon_argument).to_radians(),
-            );
+            * (x5 * solar_anomaly + y5 * lunar_anomaly + z5 * moon_argument)
+                .to_radians()
+                .sin();
         st.6 = v6
             * e
             * e
-            * libm::sin(
-                (x6 * solar_anomaly + y6 * lunar_anomaly + z6 * moon_argument).to_radians(),
-            );
+            * (x6 * solar_anomaly + y6 * lunar_anomaly + z6 * moon_argument)
+                .to_radians()
+                .sin();
         st.7 = v7
-            * libm::sin(
-                (x7 * solar_anomaly + y7 * lunar_anomaly + z7 * moon_argument).to_radians(),
-            );
+            * (x7 * solar_anomaly + y7 * lunar_anomaly + z7 * moon_argument)
+                .to_radians()
+                .sin();
         st.8 = v8
-            * libm::sin(
-                (x8 * solar_anomaly + y8 * lunar_anomaly + z8 * moon_argument).to_radians(),
-            );
+            * (x8 * solar_anomaly + y8 * lunar_anomaly + z8 * moon_argument)
+                .to_radians()
+                .sin();
         st.9 = v9
             * e
-            * libm::sin(
-                (x9 * solar_anomaly + y9 * lunar_anomaly + z9 * moon_argument).to_radians(),
-            );
+            * (x9 * solar_anomaly + y9 * lunar_anomaly + z9 * moon_argument)
+                .to_radians()
+                .sin();
         st.10 = v10
-            * libm::sin(
-                (x10 * solar_anomaly + y10 * lunar_anomaly + z10 * moon_argument).to_radians(),
-            );
+            * (x10 * solar_anomaly + y10 * lunar_anomaly + z10 * moon_argument)
+                .to_radians()
+                .sin();
         st.11 = v11
             * e
-            * libm::sin(
-                (x11 * solar_anomaly + y11 * lunar_anomaly + z11 * moon_argument).to_radians(),
-            );
+            * (x11 * solar_anomaly + y11 * lunar_anomaly + z11 * moon_argument)
+                .to_radians()
+                .sin();
         st.12 = v12
             * e
-            * libm::sin(
-                (x12 * solar_anomaly + y12 * lunar_anomaly + z12 * moon_argument).to_radians(),
-            );
+            * (x12 * solar_anomaly + y12 * lunar_anomaly + z12 * moon_argument)
+                .to_radians()
+                .sin();
         st.13 = v13
             * e
-            * libm::sin(
-                (x13 * solar_anomaly + y13 * lunar_anomaly + z13 * moon_argument).to_radians(),
-            );
+            * (x13 * solar_anomaly + y13 * lunar_anomaly + z13 * moon_argument)
+                .to_radians()
+                .sin();
         st.14 = v14
-            * libm::sin(
-                (x14 * solar_anomaly + y14 * lunar_anomaly + z14 * moon_argument).to_radians(),
-            );
+            * (x14 * solar_anomaly + y14 * lunar_anomaly + z14 * moon_argument)
+                .to_radians()
+                .sin();
         st.15 = v15
-            * libm::sin(
-                (x15 * solar_anomaly + y15 * lunar_anomaly + z15 * moon_argument).to_radians(),
-            );
+            * (x15 * solar_anomaly + y15 * lunar_anomaly + z15 * moon_argument)
+                .to_radians()
+                .sin();
         st.16 = v16
-            * libm::sin(
-                (x16 * solar_anomaly + y16 * lunar_anomaly + z16 * moon_argument).to_radians(),
-            );
+            * (x16 * solar_anomaly + y16 * lunar_anomaly + z16 * moon_argument)
+                .to_radians()
+                .sin();
         st.17 = v17
-            * libm::sin(
-                (x17 * solar_anomaly + y17 * lunar_anomaly + z17 * moon_argument).to_radians(),
-            );
+            * (x17 * solar_anomaly + y17 * lunar_anomaly + z17 * moon_argument)
+                .to_radians()
+                .sin();
         st.18 = v18
-            * libm::sin(
-                (x18 * solar_anomaly + y18 * lunar_anomaly + z18 * moon_argument).to_radians(),
-            );
+            * (x18 * solar_anomaly + y18 * lunar_anomaly + z18 * moon_argument)
+                .to_radians()
+                .sin();
         st.19 = v19
-            * libm::sin(
-                (x19 * solar_anomaly + y19 * lunar_anomaly + z19 * moon_argument).to_radians(),
-            );
+            * (x19 * solar_anomaly + y19 * lunar_anomaly + z19 * moon_argument)
+                .to_radians()
+                .sin();
         st.20 = v20
-            * libm::sin(
-                (x20 * solar_anomaly + y20 * lunar_anomaly + z20 * moon_argument).to_radians(),
-            );
+            * (x20 * solar_anomaly + y20 * lunar_anomaly + z20 * moon_argument)
+                .to_radians()
+                .sin();
         st.21 = v21
-            * libm::sin(
-                (x21 * solar_anomaly + y21 * lunar_anomaly + z21 * moon_argument).to_radians(),
-            );
+            * (x21 * solar_anomaly + y21 * lunar_anomaly + z21 * moon_argument)
+                .to_radians()
+                .sin();
         st.22 = v22
-            * libm::sin(
-                (x22 * solar_anomaly + y22 * lunar_anomaly + z22 * moon_argument).to_radians(),
-            );
+            * (x22 * solar_anomaly + y22 * lunar_anomaly + z22 * moon_argument)
+                .to_radians()
+                .sin();
         st.23 = v23
-            * libm::sin(
-                (x23 * solar_anomaly + y23 * lunar_anomaly + z23 * moon_argument).to_radians(),
-            );
+            * (x23 * solar_anomaly + y23 * lunar_anomaly + z23 * moon_argument)
+                .to_radians()
+                .sin();
 
         let sum = st.0
             + st.1
@@ -706,21 +720,23 @@ impl Astronomical {
 
         correction += sum;
         let extra = 0.000325
-            * libm::sin((299.77 + (132.8475848 * c) - (0.009173 * libm::pow(c, 2.0))).to_radians());
+            * (299.77 + (132.8475848 * c) - (0.009173 * c * c))
+                .to_radians()
+                .sin();
 
-        at.0 = l0 * libm::sin((i0 + j0 * k).to_radians());
-        at.1 = l1 * libm::sin((i1 + j1 * k).to_radians());
-        at.2 = l2 * libm::sin((i2 + j2 * k).to_radians());
-        at.3 = l3 * libm::sin((i3 + j3 * k).to_radians());
-        at.4 = l4 * libm::sin((i4 + j4 * k).to_radians());
-        at.5 = l5 * libm::sin((i5 + j5 * k).to_radians());
-        at.6 = l6 * libm::sin((i6 + j6 * k).to_radians());
-        at.7 = l7 * libm::sin((i7 + j7 * k).to_radians());
-        at.8 = l8 * libm::sin((i8 + j8 * k).to_radians());
-        at.9 = l9 * libm::sin((i9 + j9 * k).to_radians());
-        at.10 = l10 * libm::sin((i10 + j10 * k).to_radians());
-        at.11 = l11 * libm::sin((i11 + j11 * k).to_radians());
-        at.12 = l12 * libm::sin((i12 + j12 * k).to_radians());
+        at.0 = l0 * (i0 + j0 * k).to_radians().sin();
+        at.1 = l1 * (i1 + j1 * k).to_radians().sin();
+        at.2 = l2 * (i2 + j2 * k).to_radians().sin();
+        at.3 = l3 * (i3 + j3 * k).to_radians().sin();
+        at.4 = l4 * (i4 + j4 * k).to_radians().sin();
+        at.5 = l5 * (i5 + j5 * k).to_radians().sin();
+        at.6 = l6 * (i6 + j6 * k).to_radians().sin();
+        at.7 = l7 * (i7 + j7 * k).to_radians().sin();
+        at.8 = l8 * (i8 + j8 * k).to_radians().sin();
+        at.9 = l9 * (i9 + j9 * k).to_radians().sin();
+        at.10 = l10 * (i10 + j10 * k).to_radians().sin();
+        at.11 = l11 * (i11 + j11 * k).to_radians().sin();
+        at.12 = l12 * (i12 + j12 * k).to_radians().sin();
 
         let additional = at.0
             + at.1
@@ -756,7 +772,7 @@ impl Astronomical {
 
         let angle = poly(c, coefficients);
 
-        div_rem_euclid_f64(angle, 360.0).1
+        angle.rem_euclid(360.0)
     }
 
     /// Ecliptic (aka celestial) latitude of the moon (in degrees)
@@ -775,7 +791,7 @@ impl Astronomical {
         let ms = Self::solar_anomaly(c);
         let ml = Self::lunar_anomaly(c);
         let f = Self::moon_node(c);
-        let e = 1.0 - (0.002516 * c) - (0.0000074 * libm::pow(c, 2.0));
+        let e = 1.0 - (0.002516 * c) - (0.0000074 * c * c);
 
         let mut ct = (
             0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
@@ -822,66 +838,66 @@ impl Astronomical {
         ];
 
         // This summation is unrolled for optimization, see #3743
-        ct.0 = v0 * sin_degrees(w0 * d + x0 * ms + y0 * ml + z0 * f);
-        ct.1 = v1 * sin_degrees(w1 * d + x1 * ms + y1 * ml + z1 * f);
-        ct.2 = v2 * sin_degrees(w2 * d + x2 * ms + y2 * ml + z2 * f);
-        ct.3 = v3 * sin_degrees(w3 * d + x3 * ms + y3 * ml + z3 * f);
-        ct.4 = v4 * sin_degrees(w4 * d + x4 * ms + y4 * ml + z4 * f);
-        ct.5 = v5 * sin_degrees(w5 * d + x5 * ms + y5 * ml + z5 * f);
-        ct.6 = v6 * sin_degrees(w6 * d + x6 * ms + y6 * ml + z6 * f);
-        ct.7 = v7 * sin_degrees(w7 * d + x7 * ms + y7 * ml + z7 * f);
-        ct.8 = v8 * sin_degrees(w8 * d + x8 * ms + y8 * ml + z8 * f);
-        ct.9 = v9 * sin_degrees(w9 * d + x9 * ms + y9 * ml + z9 * f);
-        ct.10 = v10 * e * sin_degrees(w10 * d + x10 * ms + y10 * ml + z10 * f);
-        ct.11 = v11 * sin_degrees(w11 * d + x11 * ms + y11 * ml + z11 * f);
-        ct.12 = v12 * sin_degrees(w12 * d + x12 * ms + y12 * ml + z12 * f);
-        ct.13 = v13 * e * sin_degrees(w13 * d + x13 * ms + y13 * ml + z13 * f);
-        ct.14 = v14 * e * sin_degrees(w14 * d + x14 * ms + y14 * ml + z14 * f);
-        ct.15 = v15 * e * sin_degrees(w15 * d + x15 * ms + y15 * ml + z15 * f);
-        ct.16 = v16 * e * sin_degrees(w16 * d + x16 * ms + y16 * ml + z16 * f);
-        ct.17 = v17 * e * sin_degrees(w17 * d + x17 * ms + y17 * ml + z17 * f);
-        ct.18 = v18 * sin_degrees(w18 * d + x18 * ms + y18 * ml + z18 * f);
-        ct.19 = v19 * e * sin_degrees(w19 * d + x19 * ms + y19 * ml + z19 * f);
-        ct.20 = v20 * sin_degrees(w20 * d + x20 * ms + y20 * ml + z20 * f);
-        ct.21 = v21 * e * sin_degrees(w21 * d + x21 * ms + y21 * ml + z21 * f);
-        ct.22 = v22 * sin_degrees(w22 * d + x22 * ms + y22 * ml + z22 * f);
-        ct.23 = v23 * e * sin_degrees(w23 * d + x23 * ms + y23 * ml + z23 * f);
-        ct.24 = v24 * e * sin_degrees(w24 * d + x24 * ms + y24 * ml + z24 * f);
-        ct.25 = v25 * e * sin_degrees(w25 * d + x25 * ms + y25 * ml + z25 * f);
-        ct.26 = v26 * sin_degrees(w26 * d + x26 * ms + y26 * ml + z26 * f);
-        ct.27 = v27 * sin_degrees(w27 * d + x27 * ms + y27 * ml + z27 * f);
-        ct.28 = v28 * sin_degrees(w28 * d + x28 * ms + y28 * ml + z28 * f);
-        ct.29 = v29 * sin_degrees(w29 * d + x29 * ms + y29 * ml + z29 * f);
-        ct.30 = v30 * sin_degrees(w30 * d + x30 * ms + y30 * ml + z30 * f);
-        ct.31 = v31 * sin_degrees(w31 * d + x31 * ms + y31 * ml + z31 * f);
-        ct.32 = v32 * sin_degrees(w32 * d + x32 * ms + y32 * ml + z32 * f);
-        ct.33 = v33 * sin_degrees(w33 * d + x33 * ms + y33 * ml + z33 * f);
-        ct.34 = v34 * e * sin_degrees(w34 * d + x34 * ms + y34 * ml + z34 * f);
-        ct.35 = v35 * sin_degrees(w35 * d + x35 * ms + y35 * ml + z35 * f);
-        ct.36 = v36 * sin_degrees(w36 * d + x36 * ms + y36 * ml + z36 * f);
-        ct.37 = v37 * sin_degrees(w37 * d + x37 * ms + y37 * ml + z37 * f);
-        ct.38 = v38 * sin_degrees(w38 * d + x38 * ms + y38 * ml + z38 * f);
-        ct.39 = v39 * e * sin_degrees(w39 * d + x39 * ms + y39 * ml + z39 * f);
-        ct.40 = v40 * e * sin_degrees(w40 * d + x40 * ms + y40 * ml + z40 * f);
-        ct.41 = v41 * sin_degrees(w41 * d + x41 * ms + y41 * ml + z41 * f);
-        ct.42 = v42 * e * sin_degrees(w42 * d + x42 * ms + y42 * ml + z42 * f);
-        ct.43 = v43 * e * e * sin_degrees(w43 * d + x43 * ms + y43 * ml + z43 * f);
-        ct.44 = v44 * sin_degrees(w44 * d + x44 * ms + y44 * ml + z44 * f);
-        ct.45 = v45 * e * sin_degrees(w45 * d + x45 * ms + y45 * ml + z45 * f);
-        ct.46 = v46 * e * sin_degrees(w46 * d + x46 * ms + y46 * ml + z46 * f);
-        ct.47 = v47 * e * sin_degrees(w47 * d + x47 * ms + y47 * ml + z47 * f);
-        ct.48 = v48 * e * sin_degrees(w48 * d + x48 * ms + y48 * ml + z48 * f);
-        ct.49 = v49 * e * sin_degrees(w49 * d + x49 * ms + y49 * ml + z49 * f);
-        ct.50 = v50 * sin_degrees(w50 * d + x50 * ms + y50 * ml + z50 * f);
-        ct.51 = v51 * e * sin_degrees(w51 * d + x51 * ms + y51 * ml + z51 * f);
-        ct.52 = v52 * e * sin_degrees(w52 * d + x52 * ms + y52 * ml + z52 * f);
-        ct.53 = v53 * sin_degrees(w53 * d + x53 * ms + y53 * ml + z53 * f);
-        ct.54 = v54 * e * sin_degrees(w54 * d + x54 * ms + y54 * ml + z54 * f);
-        ct.55 = v55 * sin_degrees(w55 * d + x55 * ms + y55 * ml + z55 * f);
-        ct.56 = v56 * sin_degrees(w56 * d + x56 * ms + y56 * ml + z56 * f);
-        ct.57 = v57 * sin_degrees(w57 * d + x57 * ms + y57 * ml + z57 * f);
-        ct.58 = v58 * e * sin_degrees(w58 * d + x58 * ms + y58 * ml + z58 * f);
-        ct.59 = v59 * e * e * sin_degrees(w59 * d + x59 * ms + y59 * ml + z59 * f);
+        ct.0 = v0 * (w0 * d + x0 * ms + y0 * ml + z0 * f).to_radians().sin();
+        ct.1 = v1 * (w1 * d + x1 * ms + y1 * ml + z1 * f).to_radians().sin();
+        ct.2 = v2 * (w2 * d + x2 * ms + y2 * ml + z2 * f).to_radians().sin();
+        ct.3 = v3 * (w3 * d + x3 * ms + y3 * ml + z3 * f).to_radians().sin();
+        ct.4 = v4 * (w4 * d + x4 * ms + y4 * ml + z4 * f).to_radians().sin();
+        ct.5 = v5 * (w5 * d + x5 * ms + y5 * ml + z5 * f).to_radians().sin();
+        ct.6 = v6 * (w6 * d + x6 * ms + y6 * ml + z6 * f).to_radians().sin();
+        ct.7 = v7 * (w7 * d + x7 * ms + y7 * ml + z7 * f).to_radians().sin();
+        ct.8 = v8 * (w8 * d + x8 * ms + y8 * ml + z8 * f).to_radians().sin();
+        ct.9 = v9 * (w9 * d + x9 * ms + y9 * ml + z9 * f).to_radians().sin();
+        ct.10 = v10 * e * (w10 * d + x10 * ms + y10 * ml + z10 * f).to_radians().sin();
+        ct.11 = v11 * (w11 * d + x11 * ms + y11 * ml + z11 * f).to_radians().sin();
+        ct.12 = v12 * (w12 * d + x12 * ms + y12 * ml + z12 * f).to_radians().sin();
+        ct.13 = v13 * e * (w13 * d + x13 * ms + y13 * ml + z13 * f).to_radians().sin();
+        ct.14 = v14 * e * (w14 * d + x14 * ms + y14 * ml + z14 * f).to_radians().sin();
+        ct.15 = v15 * e * (w15 * d + x15 * ms + y15 * ml + z15 * f).to_radians().sin();
+        ct.16 = v16 * e * (w16 * d + x16 * ms + y16 * ml + z16 * f).to_radians().sin();
+        ct.17 = v17 * e * (w17 * d + x17 * ms + y17 * ml + z17 * f).to_radians().sin();
+        ct.18 = v18 * (w18 * d + x18 * ms + y18 * ml + z18 * f).to_radians().sin();
+        ct.19 = v19 * e * (w19 * d + x19 * ms + y19 * ml + z19 * f).to_radians().sin();
+        ct.20 = v20 * (w20 * d + x20 * ms + y20 * ml + z20 * f).to_radians().sin();
+        ct.21 = v21 * e * (w21 * d + x21 * ms + y21 * ml + z21 * f).to_radians().sin();
+        ct.22 = v22 * (w22 * d + x22 * ms + y22 * ml + z22 * f).to_radians().sin();
+        ct.23 = v23 * e * (w23 * d + x23 * ms + y23 * ml + z23 * f).to_radians().sin();
+        ct.24 = v24 * e * (w24 * d + x24 * ms + y24 * ml + z24 * f).to_radians().sin();
+        ct.25 = v25 * e * (w25 * d + x25 * ms + y25 * ml + z25 * f).to_radians().sin();
+        ct.26 = v26 * (w26 * d + x26 * ms + y26 * ml + z26 * f).to_radians().sin();
+        ct.27 = v27 * (w27 * d + x27 * ms + y27 * ml + z27 * f).to_radians().sin();
+        ct.28 = v28 * (w28 * d + x28 * ms + y28 * ml + z28 * f).to_radians().sin();
+        ct.29 = v29 * (w29 * d + x29 * ms + y29 * ml + z29 * f).to_radians().sin();
+        ct.30 = v30 * (w30 * d + x30 * ms + y30 * ml + z30 * f).to_radians().sin();
+        ct.31 = v31 * (w31 * d + x31 * ms + y31 * ml + z31 * f).to_radians().sin();
+        ct.32 = v32 * (w32 * d + x32 * ms + y32 * ml + z32 * f).to_radians().sin();
+        ct.33 = v33 * (w33 * d + x33 * ms + y33 * ml + z33 * f).to_radians().sin();
+        ct.34 = v34 * e * (w34 * d + x34 * ms + y34 * ml + z34 * f).to_radians().sin();
+        ct.35 = v35 * (w35 * d + x35 * ms + y35 * ml + z35 * f).to_radians().sin();
+        ct.36 = v36 * (w36 * d + x36 * ms + y36 * ml + z36 * f).to_radians().sin();
+        ct.37 = v37 * (w37 * d + x37 * ms + y37 * ml + z37 * f).to_radians().sin();
+        ct.38 = v38 * (w38 * d + x38 * ms + y38 * ml + z38 * f).to_radians().sin();
+        ct.39 = v39 * e * (w39 * d + x39 * ms + y39 * ml + z39 * f).to_radians().sin();
+        ct.40 = v40 * e * (w40 * d + x40 * ms + y40 * ml + z40 * f).to_radians().sin();
+        ct.41 = v41 * (w41 * d + x41 * ms + y41 * ml + z41 * f).to_radians().sin();
+        ct.42 = v42 * e * (w42 * d + x42 * ms + y42 * ml + z42 * f).to_radians().sin();
+        ct.43 = v43 * e * e * (w43 * d + x43 * ms + y43 * ml + z43 * f).to_radians().sin();
+        ct.44 = v44 * (w44 * d + x44 * ms + y44 * ml + z44 * f).to_radians().sin();
+        ct.45 = v45 * e * (w45 * d + x45 * ms + y45 * ml + z45 * f).to_radians().sin();
+        ct.46 = v46 * e * (w46 * d + x46 * ms + y46 * ml + z46 * f).to_radians().sin();
+        ct.47 = v47 * e * (w47 * d + x47 * ms + y47 * ml + z47 * f).to_radians().sin();
+        ct.48 = v48 * e * (w48 * d + x48 * ms + y48 * ml + z48 * f).to_radians().sin();
+        ct.49 = v49 * e * (w49 * d + x49 * ms + y49 * ml + z49 * f).to_radians().sin();
+        ct.50 = v50 * (w50 * d + x50 * ms + y50 * ml + z50 * f).to_radians().sin();
+        ct.51 = v51 * e * (w51 * d + x51 * ms + y51 * ml + z51 * f).to_radians().sin();
+        ct.52 = v52 * e * (w52 * d + x52 * ms + y52 * ml + z52 * f).to_radians().sin();
+        ct.53 = v53 * (w53 * d + x53 * ms + y53 * ml + z53 * f).to_radians().sin();
+        ct.54 = v54 * e * (w54 * d + x54 * ms + y54 * ml + z54 * f).to_radians().sin();
+        ct.55 = v55 * (w55 * d + x55 * ms + y55 * ml + z55 * f).to_radians().sin();
+        ct.56 = v56 * (w56 * d + x56 * ms + y56 * ml + z56 * f).to_radians().sin();
+        ct.57 = v57 * (w57 * d + x57 * ms + y57 * ml + z57 * f).to_radians().sin();
+        ct.58 = v58 * e * (w58 * d + x58 * ms + y58 * ml + z58 * f).to_radians().sin();
+        ct.59 = v59 * e * e * (w59 * d + x59 * ms + y59 * ml + z59 * f).to_radians().sin();
 
         let mut correction = ct.0
             + ct.1
@@ -947,14 +963,16 @@ impl Astronomical {
         correction /= 1_000_000.0;
 
         let venus = (175.0
-            * (sin_degrees(119.75 + c * 131.849 + f) + sin_degrees(119.75 + c * 131.849 - f)))
+            * ((119.75 + c * 131.849 + f).to_radians().sin()
+                + (119.75 + c * 131.849 - f).to_radians().sin()))
             / 1_000_000.0;
 
-        let flat_earth =
-            (-2235.0 * sin_degrees(l) + 127.0 * sin_degrees(l - ml) + -115.0 * sin_degrees(l + ml))
-                / 1_000_000.0;
+        let flat_earth = (-2235.0 * l.to_radians().sin()
+            + 127.0 * (l - ml).to_radians().sin()
+            + -115.0 * (l + ml).to_radians().sin())
+            / 1_000_000.0;
 
-        let extra = (382.0 * sin_degrees(313.45 + (c * 481266.484))) / 1_000_000.0;
+        let extra = (382.0 * (313.45 + (c * 481266.484)).to_radians().sin()) / 1_000_000.0;
 
         correction + venus + flat_earth + extra
     }
@@ -1017,65 +1035,65 @@ impl Astronomical {
         ];
 
         // This summation is unrolled for optimization, see #3743
-        ct.0 = v0 * libm::sin((w0 * d + x0 * ms + y0 * ml + z0 * f).to_radians());
-        ct.1 = v1 * libm::sin((w1 * d + x1 * ms + y1 * ml + z1 * f).to_radians());
-        ct.2 = v2 * libm::sin((w2 * d + x2 * ms + y2 * ml + z2 * f).to_radians());
-        ct.3 = v3 * libm::sin((w3 * d + x3 * ms + y3 * ml + z3 * f).to_radians());
-        ct.4 = v4 * e * libm::sin((w4 * d + x4 * ms + y4 * ml + z4 * f).to_radians());
-        ct.5 = v5 * libm::sin((w5 * d + x5 * ms + y5 * ml + z5 * f).to_radians());
-        ct.6 = v6 * libm::sin((w6 * d + x6 * ms + y6 * ml + z6 * f).to_radians());
-        ct.7 = v7 * e * libm::sin((w7 * d + x7 * ms + y7 * ml + z7 * f).to_radians());
-        ct.8 = v8 * libm::sin((w8 * d + x8 * ms + y8 * ml + z8 * f).to_radians());
-        ct.9 = v9 * e * libm::sin((w9 * d + x9 * ms + y9 * ml + z9 * f).to_radians());
-        ct.10 = v10 * e * libm::sin((w10 * d + x10 * ms + y10 * ml + z10 * f).to_radians());
-        ct.11 = v11 * libm::sin((w11 * d + x11 * ms + y11 * ml + z11 * f).to_radians());
-        ct.12 = v12 * e * libm::sin((w12 * d + x12 * ms + y12 * ml + z12 * f).to_radians());
-        ct.13 = v13 * libm::sin((w13 * d + x13 * ms + y13 * ml + z13 * f).to_radians());
-        ct.14 = v14 * libm::sin((w14 * d + x14 * ms + y14 * ml + z14 * f).to_radians());
-        ct.15 = v15 * libm::sin((w15 * d + x15 * ms + y15 * ml + z15 * f).to_radians());
-        ct.16 = v16 * libm::sin((w16 * d + x16 * ms + y16 * ml + z16 * f).to_radians());
-        ct.17 = v17 * libm::sin((w17 * d + x17 * ms + y17 * ml + z17 * f).to_radians());
-        ct.18 = v18 * libm::sin((w18 * d + x18 * ms + y18 * ml + z18 * f).to_radians());
-        ct.19 = v19 * e * libm::sin((w19 * d + x19 * ms + y19 * ml + z19 * f).to_radians());
-        ct.20 = v20 * e * libm::sin((w20 * d + x20 * ms + y20 * ml + z20 * f).to_radians());
-        ct.21 = v21 * libm::sin((w21 * d + x21 * ms + y21 * ml + z21 * f).to_radians());
-        ct.22 = v22 * e * libm::sin((w22 * d + x22 * ms + y22 * ml + z22 * f).to_radians());
-        ct.23 = v23 * e * libm::sin((w23 * d + x23 * ms + y23 * ml + z23 * f).to_radians());
-        ct.24 = v24 * libm::sin((w24 * d + x24 * ms + y24 * ml + z24 * f).to_radians());
-        ct.25 = v25 * libm::sin((w25 * d + x25 * ms + y25 * ml + z25 * f).to_radians());
-        ct.26 = v26 * libm::sin((w26 * d + x26 * ms + y26 * ml + z26 * f).to_radians());
-        ct.27 = v27 * e * libm::sin((w27 * d + x27 * ms + y27 * ml + z27 * f).to_radians());
-        ct.28 = v28 * libm::sin((w28 * d + x28 * ms + y28 * ml + z28 * f).to_radians());
-        ct.29 = v29 * e * libm::sin((w29 * d + x29 * ms + y29 * ml + z29 * f).to_radians());
-        ct.30 = v30 * libm::sin((w30 * d + x30 * ms + y30 * ml + z30 * f).to_radians());
-        ct.31 = v31 * e * e * libm::sin((w31 * d + x31 * ms + y31 * ml + z31 * f).to_radians());
-        ct.32 = v32 * e * libm::sin((w32 * d + x32 * ms + y32 * ml + z32 * f).to_radians());
-        ct.33 = v33 * e * e * libm::sin((w33 * d + x33 * ms + y33 * ml + z33 * f).to_radians());
-        ct.34 = v34 * e * e * libm::sin((w34 * d + x34 * ms + y34 * ml + z34 * f).to_radians());
-        ct.35 = v35 * libm::sin((w35 * d + x35 * ms + y35 * ml + z35 * f).to_radians());
-        ct.36 = v36 * libm::sin((w36 * d + x36 * ms + y36 * ml + z36 * f).to_radians());
-        ct.37 = v37 * e * libm::sin((w37 * d + x37 * ms + y37 * ml + z37 * f).to_radians());
-        ct.38 = v38 * libm::sin((w38 * d + x38 * ms + y38 * ml + z38 * f).to_radians());
-        ct.39 = v39 * libm::sin((w39 * d + x39 * ms + y39 * ml + z39 * f).to_radians());
-        ct.40 = v40 * e * libm::sin((w40 * d + x40 * ms + y40 * ml + z40 * f).to_radians());
-        ct.41 = v41 * e * libm::sin((w41 * d + x41 * ms + y41 * ml + z41 * f).to_radians());
-        ct.42 = v42 * e * e * libm::sin((w42 * d + x42 * ms + y42 * ml + z42 * f).to_radians());
-        ct.43 = v43 * e * e * libm::sin((w43 * d + x43 * ms + y43 * ml + z43 * f).to_radians());
-        ct.44 = v44 * e * libm::sin((w44 * d + x44 * ms + y44 * ml + z44 * f).to_radians());
-        ct.45 = v45 * e * libm::sin((w45 * d + x45 * ms + y45 * ml + z45 * f).to_radians());
-        ct.46 = v46 * libm::sin((w46 * d + x46 * ms + y46 * ml + z46 * f).to_radians());
-        ct.47 = v47 * libm::sin((w47 * d + x47 * ms + y47 * ml + z47 * f).to_radians());
-        ct.48 = v48 * e * libm::sin((w48 * d + x48 * ms + y48 * ml + z48 * f).to_radians());
-        ct.49 = v49 * libm::sin((w49 * d + x49 * ms + y49 * ml + z49 * f).to_radians());
-        ct.50 = v50 * e * libm::sin((w50 * d + x50 * ms + y50 * ml + z50 * f).to_radians());
-        ct.51 = v51 * libm::sin((w51 * d + x51 * ms + y51 * ml + z51 * f).to_radians());
-        ct.52 = v52 * e * libm::sin((w52 * d + x52 * ms + y52 * ml + z52 * f).to_radians());
-        ct.53 = v53 * libm::sin((w53 * d + x53 * ms + y53 * ml + z53 * f).to_radians());
-        ct.54 = v54 * libm::sin((w54 * d + x54 * ms + y54 * ml + z54 * f).to_radians());
-        ct.55 = v55 * e * libm::sin((w55 * d + x55 * ms + y55 * ml + z55 * f).to_radians());
-        ct.56 = v56 * e * e * libm::sin((w56 * d + x56 * ms + y56 * ml + z56 * f).to_radians());
-        ct.57 = v57 * e * libm::sin((w57 * d + x57 * ms + y57 * ml + z57 * f).to_radians());
-        ct.58 = v58 * libm::sin((w58 * d + x58 * ms + y58 * ml + z58 * f).to_radians());
+        ct.0 = v0 * (w0 * d + x0 * ms + y0 * ml + z0 * f).to_radians().sin();
+        ct.1 = v1 * (w1 * d + x1 * ms + y1 * ml + z1 * f).to_radians().sin();
+        ct.2 = v2 * (w2 * d + x2 * ms + y2 * ml + z2 * f).to_radians().sin();
+        ct.3 = v3 * (w3 * d + x3 * ms + y3 * ml + z3 * f).to_radians().sin();
+        ct.4 = v4 * e * (w4 * d + x4 * ms + y4 * ml + z4 * f).to_radians().sin();
+        ct.5 = v5 * (w5 * d + x5 * ms + y5 * ml + z5 * f).to_radians().sin();
+        ct.6 = v6 * (w6 * d + x6 * ms + y6 * ml + z6 * f).to_radians().sin();
+        ct.7 = v7 * e * (w7 * d + x7 * ms + y7 * ml + z7 * f).to_radians().sin();
+        ct.8 = v8 * (w8 * d + x8 * ms + y8 * ml + z8 * f).to_radians().sin();
+        ct.9 = v9 * e * (w9 * d + x9 * ms + y9 * ml + z9 * f).to_radians().sin();
+        ct.10 = v10 * e * (w10 * d + x10 * ms + y10 * ml + z10 * f).to_radians().sin();
+        ct.11 = v11 * (w11 * d + x11 * ms + y11 * ml + z11 * f).to_radians().sin();
+        ct.12 = v12 * e * (w12 * d + x12 * ms + y12 * ml + z12 * f).to_radians().sin();
+        ct.13 = v13 * (w13 * d + x13 * ms + y13 * ml + z13 * f).to_radians().sin();
+        ct.14 = v14 * (w14 * d + x14 * ms + y14 * ml + z14 * f).to_radians().sin();
+        ct.15 = v15 * (w15 * d + x15 * ms + y15 * ml + z15 * f).to_radians().sin();
+        ct.16 = v16 * (w16 * d + x16 * ms + y16 * ml + z16 * f).to_radians().sin();
+        ct.17 = v17 * (w17 * d + x17 * ms + y17 * ml + z17 * f).to_radians().sin();
+        ct.18 = v18 * (w18 * d + x18 * ms + y18 * ml + z18 * f).to_radians().sin();
+        ct.19 = v19 * e * (w19 * d + x19 * ms + y19 * ml + z19 * f).to_radians().sin();
+        ct.20 = v20 * e * (w20 * d + x20 * ms + y20 * ml + z20 * f).to_radians().sin();
+        ct.21 = v21 * (w21 * d + x21 * ms + y21 * ml + z21 * f).to_radians().sin();
+        ct.22 = v22 * e * (w22 * d + x22 * ms + y22 * ml + z22 * f).to_radians().sin();
+        ct.23 = v23 * e * (w23 * d + x23 * ms + y23 * ml + z23 * f).to_radians().sin();
+        ct.24 = v24 * (w24 * d + x24 * ms + y24 * ml + z24 * f).to_radians().sin();
+        ct.25 = v25 * (w25 * d + x25 * ms + y25 * ml + z25 * f).to_radians().sin();
+        ct.26 = v26 * (w26 * d + x26 * ms + y26 * ml + z26 * f).to_radians().sin();
+        ct.27 = v27 * e * (w27 * d + x27 * ms + y27 * ml + z27 * f).to_radians().sin();
+        ct.28 = v28 * (w28 * d + x28 * ms + y28 * ml + z28 * f).to_radians().sin();
+        ct.29 = v29 * e * (w29 * d + x29 * ms + y29 * ml + z29 * f).to_radians().sin();
+        ct.30 = v30 * (w30 * d + x30 * ms + y30 * ml + z30 * f).to_radians().sin();
+        ct.31 = v31 * e * e * (w31 * d + x31 * ms + y31 * ml + z31 * f).to_radians().sin();
+        ct.32 = v32 * e * (w32 * d + x32 * ms + y32 * ml + z32 * f).to_radians().sin();
+        ct.33 = v33 * e * e * (w33 * d + x33 * ms + y33 * ml + z33 * f).to_radians().sin();
+        ct.34 = v34 * e * e * (w34 * d + x34 * ms + y34 * ml + z34 * f).to_radians().sin();
+        ct.35 = v35 * (w35 * d + x35 * ms + y35 * ml + z35 * f).to_radians().sin();
+        ct.36 = v36 * (w36 * d + x36 * ms + y36 * ml + z36 * f).to_radians().sin();
+        ct.37 = v37 * e * (w37 * d + x37 * ms + y37 * ml + z37 * f).to_radians().sin();
+        ct.38 = v38 * (w38 * d + x38 * ms + y38 * ml + z38 * f).to_radians().sin();
+        ct.39 = v39 * (w39 * d + x39 * ms + y39 * ml + z39 * f).to_radians().sin();
+        ct.40 = v40 * e * (w40 * d + x40 * ms + y40 * ml + z40 * f).to_radians().sin();
+        ct.41 = v41 * e * (w41 * d + x41 * ms + y41 * ml + z41 * f).to_radians().sin();
+        ct.42 = v42 * e * e * (w42 * d + x42 * ms + y42 * ml + z42 * f).to_radians().sin();
+        ct.43 = v43 * e * e * (w43 * d + x43 * ms + y43 * ml + z43 * f).to_radians().sin();
+        ct.44 = v44 * e * (w44 * d + x44 * ms + y44 * ml + z44 * f).to_radians().sin();
+        ct.45 = v45 * e * (w45 * d + x45 * ms + y45 * ml + z45 * f).to_radians().sin();
+        ct.46 = v46 * (w46 * d + x46 * ms + y46 * ml + z46 * f).to_radians().sin();
+        ct.47 = v47 * (w47 * d + x47 * ms + y47 * ml + z47 * f).to_radians().sin();
+        ct.48 = v48 * e * (w48 * d + x48 * ms + y48 * ml + z48 * f).to_radians().sin();
+        ct.49 = v49 * (w49 * d + x49 * ms + y49 * ml + z49 * f).to_radians().sin();
+        ct.50 = v50 * e * (w50 * d + x50 * ms + y50 * ml + z50 * f).to_radians().sin();
+        ct.51 = v51 * (w51 * d + x51 * ms + y51 * ml + z51 * f).to_radians().sin();
+        ct.52 = v52 * e * (w52 * d + x52 * ms + y52 * ml + z52 * f).to_radians().sin();
+        ct.53 = v53 * (w53 * d + x53 * ms + y53 * ml + z53 * f).to_radians().sin();
+        ct.54 = v54 * (w54 * d + x54 * ms + y54 * ml + z54 * f).to_radians().sin();
+        ct.55 = v55 * e * (w55 * d + x55 * ms + y55 * ml + z55 * f).to_radians().sin();
+        ct.56 = v56 * e * e * (w56 * d + x56 * ms + y56 * ml + z56 * f).to_radians().sin();
+        ct.57 = v57 * e * (w57 * d + x57 * ms + y57 * ml + z57 * f).to_radians().sin();
+        ct.58 = v58 * (w58 * d + x58 * ms + y58 * ml + z58 * f).to_radians().sin();
 
         let mut correction = ct.0
             + ct.1
@@ -1138,14 +1156,11 @@ impl Astronomical {
             + ct.58;
 
         correction /= 1000000.0;
-        let venus = 3958.0 / 1000000.0 * libm::sin((119.75 + c * 131.849).to_radians());
-        let jupiter = 318.0 / 1000000.0 * libm::sin((53.09 + c * 479264.29).to_radians());
-        let flat_earth = 1962.0 / 1000000.0 * libm::sin((l - f).to_radians());
-        div_rem_euclid_f64(
-            l + correction + venus + jupiter + flat_earth + Self::nutation(julian_centuries),
-            360.0,
-        )
-        .1
+        let venus = 3958.0 / 1000000.0 * (119.75 + c * 131.849).to_radians().sin();
+        let jupiter = 318.0 / 1000000.0 * (53.09 + c * 479264.29).to_radians().sin();
+        let flat_earth = 1962.0 / 1000000.0 * (l - f).to_radians().sin();
+        (l + correction + venus + jupiter + flat_earth + Self::nutation(julian_centuries))
+            .rem_euclid(360.0)
     }
 
     /// Mean longitude of the moon (in degrees) at a given Moment in Julian centuries.
@@ -1154,11 +1169,11 @@ impl Astronomical {
     /// originally from _Astronomical Algorithms_ by Jean Meeus, 2nd edn., 1998, pp. 336-340.
     /// Reference code: <https://github.com/EdReingold/calendar-code2/blob/9afc1f3/calendar.l#L4148-L4158>
     fn mean_lunar_longitude(c: f64) -> f64 {
-        // This polynomial is written out manually instead of using a fn like libm::pow for optimization, see #3743
+        // This polynomial is written out manually instead of using a fn like pow for optimization, see #3743
         let n = 218.3164477
             + c * (481267.88123421 - 0.0015786 * c + c * c / 538841.0 - c * c * c / 65194000.0);
 
-        div_rem_euclid_f64(n, 360.0).1
+        n.rem_euclid(360.0)
     }
 
     /// Closest fixed date on or after `date` on the eve of which crescent moon first became visible at `location`.
@@ -1203,7 +1218,9 @@ impl Astronomical {
     }
 
     pub fn calculate_lunar_phase_at_or_before(date: RataDie) -> f64 {
-        libm::floor(Self::lunar_phase_at_or_before(0.0, date.as_moment()).inner())
+        Self::lunar_phase_at_or_before(0.0, date.as_moment())
+            .inner()
+            .floor()
     }
 
     /// Length of the lunar month containing `date` in days, based on observability at `location`.
@@ -1227,13 +1244,10 @@ impl Astronomical {
     /// originally from _Astronomical Algorithms_ by Jean Meeus, 2nd edn., 1998, p. 338.
     /// Reference code: <https://github.com/EdReingold/calendar-code2/blob/9afc1f3/calendar.l#L4160-L4170>
     fn lunar_elongation(c: f64) -> f64 {
-        // This polynomial is written out manually instead of using a fn like libm::pow for optimization, see #3743
-        div_rem_euclid_f64(
-            297.85019021 + 445267.1114034 * c - 0.0018819 * c * c + c * c * c / 545868.0
-                - c * c * c * c / 113065000.0,
-            360.0,
-        )
-        .1
+        // This polynomial is written out manually instead of using a fn like pow for optimization, see #3743
+        (297.85019021 + 445267.1114034 * c - 0.0018819 * c * c + c * c * c / 545868.0
+            - c * c * c * c / 113065000.0)
+            .rem_euclid(360.0)
     }
 
     /// Altitude of the moon (in degrees) at a given moment
@@ -1250,14 +1264,14 @@ impl Astronomical {
         let alpha = Self::right_ascension(moment, beta, lambda);
         let delta = Self::declination(moment, beta, lambda);
         let theta0 = Self::sidereal_from_moment(moment);
-        let cap_h: f64 = div_rem_euclid_f64(theta0 + psi - alpha, 360.0).1;
+        let cap_h = (theta0 + psi - alpha).rem_euclid(360.0);
 
-        let altitude = arcsin_degrees(
-            sin_degrees(phi) * sin_degrees(delta)
-                + cos_degrees(phi) * cos_degrees(delta) * cos_degrees(cap_h),
-        );
+        let altitude = (phi.to_radians().sin() * delta.to_radians().sin()
+            + phi.to_radians().cos() * delta.to_radians().cos() * cap_h.to_radians().cos())
+        .asin()
+        .to_degrees();
 
-        mod3(altitude, -180.0, 180.0)
+        (altitude + 180.0).rem_euclid(360.0) - 180.0
     }
 
     /// Distance to the moon in meters at the given moment.
@@ -1372,8 +1386,10 @@ impl Astronomical {
             .zip(args_lunar_anomaly.iter())
             .zip(args_moon_node.iter())
             .map(|((((&v, &w), &x), &y), &z)| {
-                v * libm::pow(cap_e, libm::fabs(x))
-                    * libm::cos((w * cap_d + x * cap_m + y * cap_m_prime + z * cap_f).to_radians())
+                v * cap_e.powf(x.abs())
+                    * (w * cap_d + x * cap_m + y * cap_m_prime + z * cap_f)
+                        .to_radians()
+                        .cos()
             })
             .sum();
 
@@ -1389,8 +1405,8 @@ impl Astronomical {
     pub fn lunar_parallax(lunar_altitude_val: f64, moment: Moment) -> f64 {
         let cap_delta = Self::lunar_distance(moment);
         let alt = 6378140.0 / cap_delta;
-        let arg = alt * libm::cos(lunar_altitude_val.to_radians());
-        arcsin_degrees(arg)
+        let arg = alt * lunar_altitude_val.to_radians().cos();
+        arg.asin().to_degrees().rem_euclid(360.0)
     }
 
     /// Topocentric altitude of the moon.
@@ -1420,12 +1436,9 @@ impl Astronomical {
     /// originally from _Astronomical Algorithms_ by Jean Meeus, 2nd edn., 1998, p. 338.
     /// Lisp code reference: <https://github.com/EdReingold/calendar-code2/blob/9afc1f3/calendar.l#L4172-L4182>
     fn solar_anomaly(c: f64) -> f64 {
-        // This polynomial is written out manually instead of using a fn like libm::pow for optimization, see #3743
-        div_rem_euclid_f64(
-            357.5291092 + 35999.0502909 * c - 0.0001536 * c * c + c * c * c / 24490000.0,
-            360.0,
-        )
-        .1
+        // This polynomial is written out manually instead of using a fn like pow for optimization, see #3743
+        (357.5291092 + 35999.0502909 * c - 0.0001536 * c * c + c * c * c / 24490000.0)
+            .rem_euclid(360.0)
     }
 
     /// Average anomaly of the moon (in degrees) at a given Moment in Julian centuries
@@ -1435,13 +1448,10 @@ impl Astronomical {
     /// originally from _Astronomical Algorithms_ by Jean Meeus, 2nd edn., 1998, p. 338.
     /// Lisp code reference: <https://github.com/EdReingold/calendar-code2/blob/9afc1f3/calendar.l#L4184-L4194>
     fn lunar_anomaly(c: f64) -> f64 {
-        // This polynomial is written out manually instead of using a fn like libm::pow for optimization, see #3743
-        div_rem_euclid_f64(
-            134.9633964 + 477198.8675055 * c + 0.0087414 * c * c + c * c * c / 69699.0
-                - c * c * c * c / 14712000.0,
-            360.0,
-        )
-        .1
+        // This polynomial is written out manually instead of using a fn like pow for optimization, see #3743
+        (134.9633964 + 477198.8675055 * c + 0.0087414 * c * c + c * c * c / 69699.0
+            - c * c * c * c / 14712000.0)
+            .rem_euclid(360.0)
     }
 
     /// The moon's argument of latitude, in degrees, at the moment given by `c` in Julian centuries.
@@ -1451,13 +1461,10 @@ impl Astronomical {
     /// originally from _Astronomical Algorithms_ by Jean Meeus, 2nd edn., 1998, p. 338.
     /// Lisp code reference: <https://github.com/EdReingold/calendar-code2/blob/9afc1f3/calendar.l#L4196-L4206>
     fn moon_node(c: f64) -> f64 {
-        // This polynomial is written out manually instead of using a fn like libm::pow for optimization, see #3743
-        div_rem_euclid_f64(
-            93.2720950 + 483202.0175233 * c - 0.0036539 * c * c - c * c * c / 3526000.0
-                + c * c * c * c / 863310000.0,
-            360.0,
-        )
-        .1
+        // This polynomial is written out manually instead of using a fn like pow for optimization, see #3743
+        (93.2720950 + 483202.0175233 * c - 0.0036539 * c * c - c * c * c / 3526000.0
+            + c * c * c * c / 863310000.0)
+            .rem_euclid(360.0)
     }
 
     /// Standard time of moonset on the date of the given moment and at the given location.
@@ -1471,7 +1478,7 @@ impl Astronomical {
         let waxing = Self::lunar_phase(date, Self::julian_centuries(date)) < 180.0;
         let alt = Self::observed_lunar_altitude(moment, location);
         let lat = location.latitude;
-        let offset = alt / (4.0 * (90.0 - libm::fabs(lat)));
+        let offset = alt / (4.0 * (90.0 - lat.abs()));
 
         let approx = if waxing {
             if offset > 0.0 {
@@ -1487,14 +1494,15 @@ impl Astronomical {
             approx.inner() - (6.0 / 24.0),
             approx.inner() + (6.0 / 24.0),
             |x| Self::observed_lunar_altitude(Moment::new(x), location) < 0.0,
-            |u, l| (u - l) < 1.0 / 24.0 / 60.0,
+            1.0 / 24.0 / 60.0,
         ));
 
         if set < moment + 1.0 {
-            let std = Moment::new(libm::fmax(
-                Location::standard_from_universal(set, location).inner(),
-                date.inner(),
-            ));
+            let std = Moment::new(
+                Location::standard_from_universal(set, location)
+                    .inner()
+                    .max(date.inner()),
+            );
             debug_assert!(std >= date, "std should not be less than date");
             if std < date {
                 return None;
@@ -1539,11 +1547,11 @@ impl Astronomical {
     /// Based on functions from _Calendrical Calculations_ by Reingold & Dershowitz.
     /// Reference code: <https://github.com/EdReingold/calendar-code2/blob/9afc1f3/calendar.l#L4037-L4047>
     fn nutation(julian_centuries: f64) -> f64 {
-        // This polynomial is written out manually instead of using a fn like libm::pow for optimization, see #3743
+        // This polynomial is written out manually instead of using a fn like pow for optimization, see #3743
         let c = julian_centuries;
         let a = 124.90 - 1934.134 * c + 0.002063 * c * c;
         let b = 201.11 + 72001.5377 * c + 0.00057 * c * c;
-        -0.004778 * libm::sin(a.to_radians()) - 0.0003667 * libm::sin(b.to_radians())
+        -0.004778 * a.to_radians().sin() - 0.0003667 * b.to_radians().sin()
     }
 
     /// The phase of the moon at a given Moment, defined as the difference in longitudes
@@ -1553,25 +1561,16 @@ impl Astronomical {
     /// Reference code: <https://github.com/EdReingold/calendar-code2/blob/9afc1f3/calendar.l#L4397-L4414>
     pub fn lunar_phase(moment: Moment, julian_centuries: f64) -> f64 {
         let t0 = NEW_MOON_ZERO;
-        let maybe_n =
-            i64_to_i32(libm::round(div_rem_euclid_f64(moment - t0, MEAN_SYNODIC_MONTH).0) as i64);
+        let maybe_n = i64_to_i32(div_euclid_f64(moment - t0, MEAN_SYNODIC_MONTH).round() as i64);
         debug_assert!(
             maybe_n.is_ok(),
             "Lunar phase moment should be in range of i32"
         );
         let n = maybe_n.unwrap_or_else(|e| e.saturate());
-        let a = div_rem_euclid_f64(
-            Self::lunar_longitude(julian_centuries) - Self::solar_longitude(julian_centuries),
-            360.0,
-        )
-        .1;
-        let b = 360.0
-            * (div_rem_euclid_f64(
-                div_rem_euclid_f64(moment - Self::nth_new_moon(n), MEAN_SYNODIC_MONTH).0,
-                1.0,
-            )
-            .1);
-        if libm::fabs(a - b) > 180.0 {
+        let a = (Self::lunar_longitude(julian_centuries) - Self::solar_longitude(julian_centuries))
+            .rem_euclid(360.0);
+        let b = 360.0 * ((moment - Self::nth_new_moon(n)) / MEAN_SYNODIC_MONTH).rem_euclid(1.0);
+        if (a - b).abs() > 180.0 {
             b
         } else {
             a
@@ -1589,7 +1588,7 @@ impl Astronomical {
             - (MEAN_SYNODIC_MONTH / 360.0)
                 * ((Self::lunar_phase(moment, julian_centuries) - phase) % 360.0);
         let a = tau - 2.0;
-        let b = libm::fmin(moment.inner(), tau + 2.0);
+        let b = moment.inner().min(tau + 2.0);
 
         let lunar_phase_f64 = |x: f64| -> f64 {
             Self::lunar_phase(Moment::new(x), Self::julian_centuries(Moment::new(x)))
@@ -1677,55 +1676,55 @@ impl Astronomical {
         ];
 
         // This summation is unrolled for optimization, see #3743
-        lt.0 = x0 * libm::sin((y0 + z0 * c).to_radians());
-        lt.1 = x1 * libm::sin((y1 + z1 * c).to_radians());
-        lt.2 = x2 * libm::sin((y2 + z2 * c).to_radians());
-        lt.3 = x3 * libm::sin((y3 + z3 * c).to_radians());
-        lt.4 = x4 * libm::sin((y4 + z4 * c).to_radians());
-        lt.5 = x5 * libm::sin((y5 + z5 * c).to_radians());
-        lt.6 = x6 * libm::sin((y6 + z6 * c).to_radians());
-        lt.7 = x7 * libm::sin((y7 + z7 * c).to_radians());
-        lt.8 = x8 * libm::sin((y8 + z8 * c).to_radians());
-        lt.9 = x9 * libm::sin((y9 + z9 * c).to_radians());
-        lt.10 = x10 * libm::sin((y10 + z10 * c).to_radians());
-        lt.11 = x11 * libm::sin((y11 + z11 * c).to_radians());
-        lt.12 = x12 * libm::sin((y12 + z12 * c).to_radians());
-        lt.13 = x13 * libm::sin((y13 + z13 * c).to_radians());
-        lt.14 = x14 * libm::sin((y14 + z14 * c).to_radians());
-        lt.15 = x15 * libm::sin((y15 + z15 * c).to_radians());
-        lt.16 = x16 * libm::sin((y16 + z16 * c).to_radians());
-        lt.17 = x17 * libm::sin((y17 + z17 * c).to_radians());
-        lt.18 = x18 * libm::sin((y18 + z18 * c).to_radians());
-        lt.19 = x19 * libm::sin((y19 + z19 * c).to_radians());
-        lt.20 = x20 * libm::sin((y20 + z20 * c).to_radians());
-        lt.21 = x21 * libm::sin((y21 + z21 * c).to_radians());
-        lt.22 = x22 * libm::sin((y22 + z22 * c).to_radians());
-        lt.23 = x23 * libm::sin((y23 + z23 * c).to_radians());
-        lt.24 = x24 * libm::sin((y24 + z24 * c).to_radians());
-        lt.25 = x25 * libm::sin((y25 + z25 * c).to_radians());
-        lt.26 = x26 * libm::sin((y26 + z26 * c).to_radians());
-        lt.27 = x27 * libm::sin((y27 + z27 * c).to_radians());
-        lt.28 = x28 * libm::sin((y28 + z28 * c).to_radians());
-        lt.29 = x29 * libm::sin((y29 + z29 * c).to_radians());
-        lt.30 = x30 * libm::sin((y30 + z30 * c).to_radians());
-        lt.31 = x31 * libm::sin((y31 + z31 * c).to_radians());
-        lt.32 = x32 * libm::sin((y32 + z32 * c).to_radians());
-        lt.33 = x33 * libm::sin((y33 + z33 * c).to_radians());
-        lt.34 = x34 * libm::sin((y34 + z34 * c).to_radians());
-        lt.35 = x35 * libm::sin((y35 + z35 * c).to_radians());
-        lt.36 = x36 * libm::sin((y36 + z36 * c).to_radians());
-        lt.37 = x37 * libm::sin((y37 + z37 * c).to_radians());
-        lt.38 = x38 * libm::sin((y38 + z38 * c).to_radians());
-        lt.39 = x39 * libm::sin((y39 + z39 * c).to_radians());
-        lt.40 = x40 * libm::sin((y40 + z40 * c).to_radians());
-        lt.41 = x41 * libm::sin((y41 + z41 * c).to_radians());
-        lt.42 = x42 * libm::sin((y42 + z42 * c).to_radians());
-        lt.43 = x43 * libm::sin((y43 + z43 * c).to_radians());
-        lt.44 = x44 * libm::sin((y44 + z44 * c).to_radians());
-        lt.45 = x45 * libm::sin((y45 + z45 * c).to_radians());
-        lt.46 = x46 * libm::sin((y46 + z46 * c).to_radians());
-        lt.47 = x47 * libm::sin((y47 + z47 * c).to_radians());
-        lt.48 = x48 * libm::sin((y48 + z48 * c).to_radians());
+        lt.0 = x0 * (y0 + z0 * c).to_radians().sin();
+        lt.1 = x1 * (y1 + z1 * c).to_radians().sin();
+        lt.2 = x2 * (y2 + z2 * c).to_radians().sin();
+        lt.3 = x3 * (y3 + z3 * c).to_radians().sin();
+        lt.4 = x4 * (y4 + z4 * c).to_radians().sin();
+        lt.5 = x5 * (y5 + z5 * c).to_radians().sin();
+        lt.6 = x6 * (y6 + z6 * c).to_radians().sin();
+        lt.7 = x7 * (y7 + z7 * c).to_radians().sin();
+        lt.8 = x8 * (y8 + z8 * c).to_radians().sin();
+        lt.9 = x9 * (y9 + z9 * c).to_radians().sin();
+        lt.10 = x10 * (y10 + z10 * c).to_radians().sin();
+        lt.11 = x11 * (y11 + z11 * c).to_radians().sin();
+        lt.12 = x12 * (y12 + z12 * c).to_radians().sin();
+        lt.13 = x13 * (y13 + z13 * c).to_radians().sin();
+        lt.14 = x14 * (y14 + z14 * c).to_radians().sin();
+        lt.15 = x15 * (y15 + z15 * c).to_radians().sin();
+        lt.16 = x16 * (y16 + z16 * c).to_radians().sin();
+        lt.17 = x17 * (y17 + z17 * c).to_radians().sin();
+        lt.18 = x18 * (y18 + z18 * c).to_radians().sin();
+        lt.19 = x19 * (y19 + z19 * c).to_radians().sin();
+        lt.20 = x20 * (y20 + z20 * c).to_radians().sin();
+        lt.21 = x21 * (y21 + z21 * c).to_radians().sin();
+        lt.22 = x22 * (y22 + z22 * c).to_radians().sin();
+        lt.23 = x23 * (y23 + z23 * c).to_radians().sin();
+        lt.24 = x24 * (y24 + z24 * c).to_radians().sin();
+        lt.25 = x25 * (y25 + z25 * c).to_radians().sin();
+        lt.26 = x26 * (y26 + z26 * c).to_radians().sin();
+        lt.27 = x27 * (y27 + z27 * c).to_radians().sin();
+        lt.28 = x28 * (y28 + z28 * c).to_radians().sin();
+        lt.29 = x29 * (y29 + z29 * c).to_radians().sin();
+        lt.30 = x30 * (y30 + z30 * c).to_radians().sin();
+        lt.31 = x31 * (y31 + z31 * c).to_radians().sin();
+        lt.32 = x32 * (y32 + z32 * c).to_radians().sin();
+        lt.33 = x33 * (y33 + z33 * c).to_radians().sin();
+        lt.34 = x34 * (y34 + z34 * c).to_radians().sin();
+        lt.35 = x35 * (y35 + z35 * c).to_radians().sin();
+        lt.36 = x36 * (y36 + z36 * c).to_radians().sin();
+        lt.37 = x37 * (y37 + z37 * c).to_radians().sin();
+        lt.38 = x38 * (y38 + z38 * c).to_radians().sin();
+        lt.39 = x39 * (y39 + z39 * c).to_radians().sin();
+        lt.40 = x40 * (y40 + z40 * c).to_radians().sin();
+        lt.41 = x41 * (y41 + z41 * c).to_radians().sin();
+        lt.42 = x42 * (y42 + z42 * c).to_radians().sin();
+        lt.43 = x43 * (y43 + z43 * c).to_radians().sin();
+        lt.44 = x44 * (y44 + z44 * c).to_radians().sin();
+        lt.45 = x45 * (y45 + z45 * c).to_radians().sin();
+        lt.46 = x46 * (y46 + z46 * c).to_radians().sin();
+        lt.47 = x47 * (y47 + z47 * c).to_radians().sin();
+        lt.48 = x48 * (y48 + z48 * c).to_radians().sin();
 
         let mut lambda = lt.0
             + lt.1
@@ -1778,11 +1777,7 @@ impl Astronomical {
             + lt.48;
         lambda *= 0.000005729577951308232;
         lambda += 282.7771834 + 36000.76953744 * c;
-        div_rem_euclid_f64(
-            lambda + Self::aberration(c) + Self::nutation(julian_centuries),
-            360.0,
-        )
-        .1
+        (lambda + Self::aberration(c) + Self::nutation(julian_centuries)).rem_euclid(360.0)
     }
 
     /// The best viewing time (UT) in the evening for viewing the young moon from `location` on `date`. This is defined as
@@ -1804,10 +1799,12 @@ impl Astronomical {
     /// Reference lisp code: <https://github.com/EdReingold/calendar-code2/blob/9afc1f3/calendar.l#L7284-L7290>
     fn arc_of_light(moment: Moment) -> f64 {
         let julian_centuries = Self::julian_centuries(moment);
-        arccos_degrees(
-            cos_degrees(Self::lunar_latitude(julian_centuries))
-                * cos_degrees(Self::lunar_phase(moment, julian_centuries)),
-        )
+        (Self::lunar_latitude(julian_centuries).to_radians().cos()
+            * Self::lunar_phase(moment, julian_centuries)
+                .to_radians()
+                .cos())
+        .acos()
+        .to_degrees()
     }
 
     /// Criterion for likely visibility of the crescent moon on the eve of `date` at `location`,
@@ -1853,13 +1850,11 @@ impl Astronomical {
     pub fn estimate_prior_solar_longitude(angle: f64, moment: Moment) -> Moment {
         let rate = MEAN_TROPICAL_YEAR / 360.0;
         let julian_centuries = Self::julian_centuries(moment);
-        let tau = moment
-            - rate * div_rem_euclid_f64(Self::solar_longitude(julian_centuries) - angle, 360.0).1;
-        let delta = interval_mod_f64(
-            Self::solar_longitude(Self::julian_centuries(tau)) - angle,
-            -180.0,
-            180.0,
-        );
+        let tau =
+            moment - rate * (Self::solar_longitude(julian_centuries) - angle).rem_euclid(360.0);
+        let delta = (Self::solar_longitude(Self::julian_centuries(tau)) - angle + 180.0)
+            .rem_euclid(360.0)
+            - 180.0;
         let result_rhs = tau - rate * delta;
         if moment < result_rhs {
             moment
@@ -1878,7 +1873,7 @@ impl Astronomical {
         // a Moment; this is because aberration is only ever called in the fn solar_longitude, which
         // already converts moment to julian centuries. Thus this function takes the julian centuries
         // to avoid unnecessarily calculating the same value twice.
-        0.0000974 * libm::cos((177.63 + 35999.01848 * c).to_radians()) - 0.005575
+        0.0000974 * (177.63 + 35999.01848 * c).to_radians().cos() - 0.005575
     }
 
     /// Find the time of the new moon preceding a given Moment (the last new moon before the moment)
@@ -1909,9 +1904,9 @@ impl Astronomical {
     pub fn num_of_new_moon_at_or_after(moment: Moment) -> i32 {
         let t0: Moment = NEW_MOON_ZERO;
         let phi = Self::lunar_phase(moment, Self::julian_centuries(moment));
-        let maybe_n = i64_to_i32(libm::round(
-            div_rem_euclid_f64(moment - t0, MEAN_SYNODIC_MONTH).0 - phi / 360.0,
-        ) as i64);
+        let maybe_n = i64_to_i32(
+            (div_euclid_f64(moment - t0, MEAN_SYNODIC_MONTH) - phi / 360.0).round() as i64,
+        );
         debug_assert!(maybe_n.is_ok(), "Num of new moon should be in range of i32");
         let n = maybe_n.unwrap_or_else(|e| e.saturate());
         let mut result = n;
@@ -1938,8 +1933,8 @@ impl Astronomical {
             Self::solar_longitude(Self::julian_centuries(tee_prime)),
         );
 
-        tan_degrees(phi) * tan_degrees(delta)
-            + sin_degrees(alpha) / (cos_degrees(delta) * cos_degrees(phi))
+        phi.to_radians().tan() * delta.to_radians().tan()
+            + alpha.to_radians().sin() / (delta.to_radians().cos() * phi.to_radians().cos())
     }
 }
 

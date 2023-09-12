@@ -30,12 +30,11 @@
 //! ```
 
 use crate::calendar_arithmetic::{ArithmeticDate, CalendarArithmetic};
-use crate::helpers::div_rem_euclid;
-use crate::rata_die::RataDie;
 use crate::AnyCalendarKind;
 use crate::Iso;
 use crate::{types, Calendar, CalendarError, Date, DateDuration, DateDurationUnit, DateTime};
-use ::tinystr::tinystr;
+use calendrical_calculations::rata_die::RataDie;
+use tinystr::tinystr;
 
 /// Islamic Observational Calendar (Default)
 ///
@@ -551,7 +550,7 @@ impl CalendarArithmetic for IslamicCivil {
     }
 
     fn is_leap_year(year: i32) -> bool {
-        div_rem_euclid(14 + 11 * year, 30).1 < 11
+        (14 + 11 * year).rem_euclid(30) < 11
     }
 
     fn last_month_day_in_year(year: i32) -> (u8, u8) {
@@ -777,7 +776,7 @@ impl CalendarArithmetic for IslamicTabular {
     }
 
     fn is_leap_year(year: i32) -> bool {
-        div_rem_euclid(14 + 11 * year, 30).1 < 11
+        (14 + 11 * year).rem_euclid(30) < 11
     }
 
     fn last_month_day_in_year(year: i32) -> (u8, u8) {
