@@ -158,6 +158,7 @@ pub use crate::data_provider::DataProvider;
 pub use crate::data_provider::DynamicDataProvider;
 pub use crate::error::DataError;
 pub use crate::error::DataErrorKind;
+pub use crate::fxhash::fxhash_32;
 pub use crate::key::DataKey;
 pub use crate::key::DataKeyHash;
 pub use crate::key::DataKeyMetadata;
