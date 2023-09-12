@@ -4298,6 +4298,7 @@ version = "0.0.0"
 dependencies = [
  "bincode",
  "criterion",
+ "databake",
  "displaydoc",
  "icu_benchmark_macros",
  "litemap",
@@ -4306,6 +4307,8 @@ dependencies = [
  "rand_pcg",
  "serde",
  "serde_json",
+ "yoke",
+ "zerofrom",
  "zerovec",
 ]
 

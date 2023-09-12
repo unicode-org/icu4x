@@ -61,6 +61,8 @@ use litemap::LiteMap;
 /// # Ok::<_, zerotrie::ZeroTrieError>(())
 /// ```
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
+// Note: The absence of the following derive does not cause any test failures in this crate
+#[cfg_attr(feature = "yoke", derive(yoke::Yokeable))]
 pub struct ZeroTrie<Store>(pub(crate) ZeroTrieFlavor<Store>);
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
@@ -96,8 +98,10 @@ pub(crate) enum ZeroTrieFlavor<Store> {
 /// ```
 #[repr(transparent)]
 #[derive(Debug, Default, Clone, Copy, PartialEq, Eq)]
+#[cfg_attr(feature = "databake", derive(databake::Bake), databake(path = zerotrie))]
 pub struct ZeroTrieSimpleAscii<Store: ?Sized> {
-    pub(crate) store: Store,
+    #[doc(hidden)] // for databake, but there are no invariants
+    pub store: Store,
 }
 
 /// A data structure that compactly maps from byte strings to integers.
@@ -126,8 +130,10 @@ pub struct ZeroTrieSimpleAscii<Store: ?Sized> {
 /// ```
 #[repr(transparent)]
 #[derive(Debug, Default, Clone, Copy, PartialEq, Eq)]
+#[cfg_attr(feature = "databake", derive(databake::Bake), databake(path = zerotrie))]
 pub struct ZeroTriePerfectHash<Store: ?Sized> {
-    pub(crate) store: Store,
+    #[doc(hidden)] // for databake, but there are no invariants
+    pub store: Store,
 }
 
 /// A data structure that maps from a large number of byte strings to integers.
@@ -135,8 +141,10 @@ pub struct ZeroTriePerfectHash<Store: ?Sized> {
 /// For more information, see [`ZeroTrie`].
 #[repr(transparent)]
 #[derive(Debug, Default, Clone, Copy, PartialEq, Eq)]
+#[cfg_attr(feature = "databake", derive(databake::Bake), databake(path = zerotrie))]
 pub struct ZeroTrieExtendedCapacity<Store: ?Sized> {
-    pub(crate) store: Store,
+    #[doc(hidden)] // for databake, but there are no invariants
+    pub store: Store,
 }
 
 macro_rules! impl_zerotrie_subtype {
@@ -474,6 +482,16 @@ macro_rules! impl_zerotrie_subtype {
                 core::mem::transmute(Store::from_byte_slice_unchecked(bytes))
             }
         }
+        #[cfg(feature = "zerofrom")]
+        impl<'zf, Store1, Store2> zerofrom::ZeroFrom<'zf, $name<Store1>> for $name<Store2>
+        where
+            Store2: zerofrom::ZeroFrom<'zf, Store1>,
+        {
+            #[inline]
+            fn zero_from(other: &'zf $name<Store1>) -> Self {
+                $name::from_store(zerofrom::ZeroFrom::zero_from(&other.store))
+            }
+        }
     };
 }
 
@@ -534,6 +552,19 @@ macro_rules! impl_dispatch {
             ZeroTrieFlavor::SimpleAscii(subtype) => subtype.$inner_fn($arg),
             ZeroTrieFlavor::PerfectHash(subtype) => subtype.$inner_fn($arg),
             ZeroTrieFlavor::ExtendedCapacity(subtype) => subtype.$inner_fn($arg),
+        }
+    };
+    (&$self:ident, $trait:ident::$inner_fn:ident()) => {
+        match &$self.0 {
+            ZeroTrieFlavor::SimpleAscii(subtype) => {
+                ZeroTrie(ZeroTrieFlavor::SimpleAscii($trait::$inner_fn(subtype)))
+            }
+            ZeroTrieFlavor::PerfectHash(subtype) => {
+                ZeroTrie(ZeroTrieFlavor::PerfectHash($trait::$inner_fn(subtype)))
+            }
+            ZeroTrieFlavor::ExtendedCapacity(subtype) => {
+                ZeroTrie(ZeroTrieFlavor::ExtendedCapacity($trait::$inner_fn(subtype)))
+            }
         }
     };
 }
@@ -623,5 +654,28 @@ where
         let byte_str_slice = ByteStr::from_byte_slice_with_value(&items);
         #[allow(clippy::unwrap_used)] // FromIterator is panicky
         Self::try_from_tuple_slice(byte_str_slice).unwrap()
+    }
+}
+
+#[cfg(feature = "databake")]
+impl<Store> databake::Bake for ZeroTrie<Store>
+where
+    Store: databake::Bake,
+{
+    fn bake(&self, env: &databake::CrateEnv) -> databake::TokenStream {
+        use databake::*;
+        let inner = impl_dispatch!(&self, bake(env));
+        quote! { #inner.into_zerotrie() }
+    }
+}
+
+#[cfg(feature = "zerofrom")]
+impl<'zf, Store1, Store2> zerofrom::ZeroFrom<'zf, ZeroTrie<Store1>> for ZeroTrie<Store2>
+where
+    Store2: zerofrom::ZeroFrom<'zf, Store1>,
+{
+    fn zero_from(other: &'zf ZeroTrie<Store1>) -> Self {
+        use zerofrom::ZeroFrom;
+        impl_dispatch!(&other, ZeroFrom::zero_from())
     }
 }
