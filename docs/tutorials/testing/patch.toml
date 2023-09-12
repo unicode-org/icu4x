@@ -48,7 +48,6 @@ icu_compactdecimal_data = { path = "../../experimental/compactdecimal/data" }
 icu_displaynames_data = { path = "../../experimental/displaynames/data" }
 icu_relativetime_data = { path = "../../experimental/relativetime/data" }
 icu_singlenumberformatter_data = { path = "../../experimental/single_number_formatter/data"}
-icu_transliterate_data = { path = "../../experimental/transliterate/data" }
 
 # FFI
 icu_capi = { path = "../../ffi/diplomat" }

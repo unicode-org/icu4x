@@ -5,6 +5,7 @@
 use criterion::{black_box, BenchmarkId, Criterion};
 use criterion::{criterion_group, criterion_main};
 use icu_locid::Locale;
+use icu_provider::prelude::*;
 
 use icu_transliterate::Transliterator;
 
@@ -32,7 +33,16 @@ fn bench_data_from_sources(locale_str: &str, source: &str) -> Vec<BenchDataConte
         .map(|(idx, input)| BenchDataContent {
             num: idx + 1,
             name: locale_str.to_string(),
-            translit: Transliterator::try_new(locale.clone()).unwrap(),
+            translit: Transliterator::try_new_unstable(
+                locale.clone(),
+                &icu_provider_fs::FsDataProvider::try_new(concat!(
+                    std::env!("CARGO_MANIFEST_DIR"),
+                    "/../../provider/datagen/tests/data/json/"
+                ))
+                .unwrap()
+                .as_deserializing(),
+            )
+            .unwrap(),
             input,
         })
         .collect()
