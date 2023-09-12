@@ -1998,7 +1998,7 @@ dependencies = [
  "icu_normalizer",
  "icu_properties",
  "icu_provider",
- "icu_transliterate_data",
+ "icu_provider_fs",
  "icu_unicodeset_parser",
  "litemap",
  "log",
@@ -2007,10 +2007,6 @@ dependencies = [
  "zerofrom",
  "zerovec",
 ]
-
-[[package]]
-name = "icu_transliterate_data"
-version = "0.0.0"
 
 [[package]]
 name = "icu_unicodeset_parser"

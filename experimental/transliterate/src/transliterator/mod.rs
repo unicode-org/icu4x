@@ -163,80 +163,15 @@ impl Transliterator {
     /// Construct a [`Transliterator`] from the given [`Locale`].
     ///
     /// # Examples
-    /// ```
+    /// ```ignore
     /// use icu_transliterate::Transliterator;
     /// // BCP-47-T ID for Bengali to Arabic transliteration
     /// let locale = "und-Arab-t-und-beng".parse().unwrap();
-    /// let t = Transliterator::try_new(locale).unwrap();
+    /// let t = Transliterator::try_new_unstable(locale, provider).unwrap();
     /// let output = t.transliterate("অকার্যতানাযা".to_string());
     ///
     /// assert_eq!(output, "اكاريتانايا");
     /// ```
-    #[cfg(feature = "compiled_data")]
-    pub fn try_new(locale: Locale) -> Result<Transliterator, TransliteratorError> {
-        let provider = crate::provider::Baked;
-        let normalizer_provider = icu_normalizer::provider::Baked;
-        Self::internal_try_new_with_override_unstable(
-            locale,
-            None::<&fn(&Locale) -> Option<Box<dyn CustomTransliterator>>>,
-            &provider,
-            &normalizer_provider,
-        )
-    }
-
-    /// Construct a [`Transliterator`] from the given [`Locale`] using overrides provided
-    /// by `lookup`.
-    ///
-    /// This allows clients to override the nested transliterators used by this transliterator.
-    /// Any nested transliterator will first try to be loaded with `lookup`, and only fall back
-    /// to the nested transliterator defined by the data if it returns `None`.
-    /// See [`CustomTransliterator`].
-    ///
-    /// # Example
-    /// Overriding `"de-t-de-d0-ascii"`'s dependency on `"und-t-und-Latn-d0-ascii"`:
-    /// ```
-    /// use icu_transliterate::{Transliterator, CustomTransliterator};
-    /// use icu_locid::Locale;
-    /// use core::ops::Range;
-    ///
-    /// #[derive(Debug)]
-    /// struct FunkyGermanToAscii;
-    /// impl CustomTransliterator for FunkyGermanToAscii {
-    ///     fn transliterate(&self, input: &str, allowed_range: Range<usize>) -> String {
-    ///         input[allowed_range].replace("oeverride", "overridden")
-    ///     }
-    /// }
-    ///
-    /// let override_locale: Locale = "und-t-und-Latn-d0-ascii".parse().unwrap();
-    /// let lookup = |lookup_locale: &Locale| -> Option<Box<dyn CustomTransliterator>> {
-    ///     override_locale.eq(lookup_locale).then_some(Box::new(FunkyGermanToAscii))
-    /// };
-    ///
-    /// let locale = "de-t-de-d0-ascii".parse().unwrap();
-    /// let t = Transliterator::try_new_with_override(locale, lookup).unwrap();
-    /// let output = t.transliterate("This is an överride example".to_string());
-    ///
-    /// assert_eq!(output, "This is an overridden example");
-    /// ```
-    #[cfg(feature = "compiled_data")]
-    pub fn try_new_with_override<F>(
-        locale: Locale,
-        lookup: F,
-    ) -> Result<Transliterator, TransliteratorError>
-    where
-        F: Fn(&Locale) -> Option<Box<dyn CustomTransliterator>>,
-    {
-        let provider = crate::provider::Baked;
-        let normalizer_provider = icu_normalizer::provider::Baked;
-        Self::internal_try_new_with_override_unstable(
-            locale,
-            Some(&lookup),
-            &provider,
-            &normalizer_provider,
-        )
-    }
-
-    #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Transliterator::try_new)]
     pub fn try_new_unstable<P>(
         locale: Locale,
         provider: &P,
@@ -258,7 +193,40 @@ impl Transliterator {
         )
     }
 
-    #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Transliterator::try_new_with_override)]
+    /// Construct a [`Transliterator`] from the given [`Locale`] using overrides provided
+    /// by `lookup`.
+    ///
+    /// This allows clients to override the nested transliterators used by this transliterator.
+    /// Any nested transliterator will first try to be loaded with `lookup`, and only fall back
+    /// to the nested transliterator defined by the data if it returns `None`.
+    /// See [`CustomTransliterator`].
+    ///
+    /// # Example
+    /// Overriding `"de-t-de-d0-ascii"`'s dependency on `"und-t-und-Latn-d0-ascii"`:
+    /// ```ignore
+    /// use icu_transliterate::{Transliterator, CustomTransliterator};
+    /// use icu_locid::Locale;
+    /// use core::ops::Range;
+    ///
+    /// #[derive(Debug)]
+    /// struct FunkyGermanToAscii;
+    /// impl CustomTransliterator for FunkyGermanToAscii {
+    ///     fn transliterate(&self, input: &str, allowed_range: Range<usize>) -> String {
+    ///         input[allowed_range].replace("oeverride", "overridden")
+    ///     }
+    /// }
+    ///
+    /// let override_locale: Locale = "und-t-und-Latn-d0-ascii".parse().unwrap();
+    /// let lookup = |lookup_locale: &Locale| -> Option<Box<dyn CustomTransliterator>> {
+    ///     override_locale.eq(lookup_locale).then_some(Box::new(FunkyGermanToAscii))
+    /// };
+    ///
+    /// let locale = "de-t-de-d0-ascii".parse().unwrap();
+    /// let t = Transliterator::try_new_with_override_unstable(locale, lookup, provider).unwrap();
+    /// let output = t.transliterate("This is an överride example".to_string());
+    ///
+    /// assert_eq!(output, "This is an overridden example");
+    /// ```
     pub fn try_new_with_override_unstable<P, F>(
         locale: Locale,
         lookup: F,
@@ -1293,6 +1261,14 @@ impl<'a> VarTable<'a> {
 mod tests {
     use super::*;
 
+    fn get_provider() -> icu_provider_fs::FsDataProvider {
+        icu_provider_fs::FsDataProvider::try_new(concat!(
+            std::env!("CARGO_MANIFEST_DIR"),
+            "/../../provider/datagen/tests/data/json"
+        ))
+        .unwrap()
+    }
+
     #[test]
     fn test_empty_matches() {
         let cases = [
@@ -1303,8 +1279,11 @@ mod tests {
             ("b1", "bmatch1"),
         ];
 
-        let t = Transliterator::try_new("und-t-und-s0-test-d0-test-m0-emtymach".parse().unwrap())
-            .unwrap();
+        let t = Transliterator::try_new_unstable(
+            "und-t-und-s0-test-d0-test-m0-emtymach".parse().unwrap(),
+            &get_provider().as_deserializing(),
+        )
+        .unwrap();
 
         for (input, output) in cases {
             assert_eq!(t.transliterate(input.to_string()), output);
@@ -1313,8 +1292,11 @@ mod tests {
 
     #[test]
     fn test_recursive_suite() {
-        let t = Transliterator::try_new("und-t-und-s0-test-d0-test-m0-rectestr".parse().unwrap())
-            .unwrap();
+        let t = Transliterator::try_new_unstable(
+            "und-t-und-s0-test-d0-test-m0-rectestr".parse().unwrap(),
+            &get_provider().as_deserializing(),
+        )
+        .unwrap();
 
         let input = "XXXabcXXXdXXe";
         let output = "XXXXXXaWORKEDcXXXXXXdXXXXXe";
@@ -1323,8 +1305,11 @@ mod tests {
 
     #[test]
     fn test_cursor_placeholders_filters() {
-        let t = Transliterator::try_new("und-t-und-s0-test-d0-test-m0-cursfilt".parse().unwrap())
-            .unwrap();
+        let t = Transliterator::try_new_unstable(
+            "und-t-und-s0-test-d0-test-m0-cursfilt".parse().unwrap(),
+            &get_provider().as_deserializing(),
+        )
+        .unwrap();
 
         let input = "xa";
         let output = "xb";
@@ -1333,8 +1318,11 @@ mod tests {
 
     #[test]
     fn test_functionality() {
-        let t =
-            Transliterator::try_new("und-t-und-s0-test-d0-test-m0-niels".parse().unwrap()).unwrap();
+        let t = Transliterator::try_new_unstable(
+            "und-t-und-s0-test-d0-test-m0-niels".parse().unwrap(),
+            &get_provider().as_deserializing(),
+        )
+        .unwrap();
 
         let input = "abädefghijkl!";
         let output = "FIfiunremovedtbxyzftbxyzxyzXYZjkT!";
@@ -1343,7 +1331,11 @@ mod tests {
 
     #[test]
     fn test_de_ascii() {
-        let t = Transliterator::try_new("de-t-de-d0-ascii".parse().unwrap()).unwrap();
+        let t = Transliterator::try_new_unstable(
+            "de-t-de-d0-ascii".parse().unwrap(),
+            &get_provider().as_deserializing(),
+        )
+        .unwrap();
         let input =
             "Über ältere Lügner lästern ist sehr a\u{0308}rgerlich. Ja, SEHR ÄRGERLICH! - ꜵ";
         let output =
@@ -1363,11 +1355,12 @@ mod tests {
         }
 
         let want_locale = "und-t-und-latn-d0-ascii".parse().unwrap();
-        let t =
-            Transliterator::try_new_with_override("de-t-de-d0-ascii".parse().unwrap(), |locale| {
-                locale.eq(&want_locale).then_some(Box::new(MaoamTranslit))
-            })
-            .unwrap();
+        let t = Transliterator::try_new_with_override_unstable(
+            "de-t-de-d0-ascii".parse().unwrap(),
+            |locale| locale.eq(&want_locale).then_some(Box::new(MaoamTranslit)),
+            &get_provider().as_deserializing(),
+        )
+        .unwrap();
 
         let input = "Ich liebe ꜵ über alles";
         let output = "Ich liebe maoam ueber alles";
@@ -1376,7 +1369,11 @@ mod tests {
 
     #[test]
     fn test_nfc_nfd() {
-        let t = Transliterator::try_new("und-t-und-latn-d0-ascii".parse().unwrap()).unwrap();
+        let t = Transliterator::try_new_unstable(
+            "und-t-und-latn-d0-ascii".parse().unwrap(),
+            &get_provider().as_deserializing(),
+        )
+        .unwrap();
         let input = "äa\u{0308}";
         let output = "aa";
         assert_eq!(t.transliterate(input.to_string()), output);
@@ -1384,8 +1381,11 @@ mod tests {
 
     #[test]
     fn test_hex_rust() {
-        let t = Transliterator::try_new("und-t-und-s0-test-d0-test-m0-hexrust".parse().unwrap())
-            .unwrap();
+        let t = Transliterator::try_new_unstable(
+            "und-t-und-s0-test-d0-test-m0-hexrust".parse().unwrap(),
+            &get_provider().as_deserializing(),
+        )
+        .unwrap();
         let input = "\0äa\u{10FFFF}❤!";
         let output = r"\u{00}\u{e4}\u{61}\u{10ffff}\u{2764}\u{21}";
         assert_eq!(t.transliterate(input.to_string()), output);
@@ -1393,8 +1393,11 @@ mod tests {
 
     #[test]
     fn test_hex_unicode() {
-        let t = Transliterator::try_new("und-t-und-s0-test-d0-test-m0-hexuni".parse().unwrap())
-            .unwrap();
+        let t = Transliterator::try_new_unstable(
+            "und-t-und-s0-test-d0-test-m0-hexuni".parse().unwrap(),
+            &get_provider().as_deserializing(),
+        )
+        .unwrap();
         let input = "\0äa\u{10FFFF}❤!";
         let output = "U+0000U+00E4U+0061U+10FFFFU+2764U+0021";
         assert_eq!(t.transliterate(input.to_string()), output);
