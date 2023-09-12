@@ -281,7 +281,6 @@ dependencies = [
  "displaydoc",
  "icu_locid",
  "icu_provider",
- "libm",
  "tinystr",
  "writeable",
  "zerovec",

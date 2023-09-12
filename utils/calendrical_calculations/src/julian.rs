@@ -7,7 +7,7 @@
 // the Apache License, Version 2.0 which can be found at the calendrical_calculations
 // package root or at http://www.apache.org/licenses/LICENSE-2.0.
 
-use crate::helpers::{div_rem_euclid, div_rem_euclid64, i64_to_i32, quotient64, I32CastError};
+use crate::helpers::{i64_to_i32, I32CastError};
 use crate::rata_die::RataDie;
 
 // Julian epoch is equivalent to fixed_from_iso of December 30th of 0 year
@@ -17,13 +17,13 @@ const JULIAN_EPOCH: RataDie = RataDie::new(-1);
 /// Lisp code reference: <https://github.com/EdReingold/calendar-code2/blob/1ee51ecfaae6f856b0d7de3e36e9042100b4f424/calendar.l#L1684-L1687>
 #[inline(always)]
 pub const fn is_leap_year(year: i32) -> bool {
-    div_rem_euclid(year, 4).1 == 0
+    year % 4 == 0
 }
 
 /// Lisp code reference: <https://github.com/EdReingold/calendar-code2/blob/1ee51ecfaae6f856b0d7de3e36e9042100b4f424/calendar.l#L1689-L1709>
 pub const fn fixed_from_julian(year: i32, month: u8, day: u8) -> RataDie {
     let mut fixed =
-        JULIAN_EPOCH.to_i64_date() - 1 + 365 * (year as i64 - 1) + quotient64(year as i64 - 1, 4);
+        JULIAN_EPOCH.to_i64_date() - 1 + 365 * (year as i64 - 1) + (year as i64 - 1).div_euclid(4);
     debug_assert!(month > 0 && month < 13, "Month should be in range 1..=12.");
     fixed += match month {
         1 => 0,
@@ -49,7 +49,7 @@ pub const fn fixed_from_julian(year: i32, month: u8, day: u8) -> RataDie {
 
 /// Lisp code reference: <https://github.com/EdReingold/calendar-code2/blob/1ee51ecfaae6f856b0d7de3e36e9042100b4f424/calendar.l#L1711-L1738>
 pub fn julian_from_fixed(date: RataDie) -> Result<(i32, u8, u8), I32CastError> {
-    let approx = quotient64(4 * date.to_i64_date() + 1464, 1461);
+    let approx = (4 * date.to_i64_date() + 1464).div_euclid(1461);
     let year = i64_to_i32(approx)?;
     let prior_days = date
         - fixed_from_julian(year, 1, 1)
@@ -63,7 +63,7 @@ pub fn julian_from_fixed(date: RataDie) -> Result<(i32, u8, u8), I32CastError> {
     } else {
         year
     };
-    let adjusted_prior_days = div_rem_euclid64(prior_days, 365).1;
+    let adjusted_prior_days = prior_days.rem_euclid(365);
     debug_assert!((0..365).contains(&adjusted_prior_days));
     let month = if adjusted_prior_days < 31 {
         1

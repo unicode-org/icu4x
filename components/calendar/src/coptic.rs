@@ -33,10 +33,10 @@
 
 use crate::any_calendar::AnyCalendarKind;
 use crate::calendar_arithmetic::{ArithmeticDate, CalendarArithmetic};
-use crate::helpers::I32CastError;
 use crate::iso::Iso;
-use crate::rata_die::RataDie;
 use crate::{types, Calendar, CalendarError, Date, DateDuration, DateDurationUnit, DateTime};
+use calendrical_calculations::helpers::I32CastError;
+use calendrical_calculations::rata_die::RataDie;
 use tinystr::tinystr;
 
 /// The [Coptic Calendar]
