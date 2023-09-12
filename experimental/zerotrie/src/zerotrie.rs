@@ -557,8 +557,8 @@ impl<Store> ZeroTrie<Store> {
         impl_dispatch!(self, take_store())
     }
     /// Converts this trie's store to a different store implementing the `From` trait.
-            ///
-            /// For example, use this to change `ZeroTrie<Vec<u8>>` to `ZeroTrie<Cow<[u8]>>`.
+    ///
+    /// For example, use this to change `ZeroTrie<Vec<u8>>` to `ZeroTrie<Cow<[u8]>>`.
     pub fn convert_store<NewStore>(self) -> ZeroTrie<NewStore>
     where
         NewStore: From<Store>,
