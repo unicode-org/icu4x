@@ -35,7 +35,7 @@ type Filter<'a> = CodePointInversionList<'a>;
 //  (&str, allowed_range) -> String, and some RepTransliterator would just be Replaceable -> ().
 
 /// A type that supports transliteration. Used for overrides in [`Transliterator`] - see
-/// [`Transliterator::try_new_with_override`].
+/// [`Transliterator::try_new_with_override_unstable`].
 pub trait CustomTransliterator: Debug {
     /// Transliterates the portion of the input string specified by the byte indices in the range.
     ///
