@@ -108,12 +108,12 @@ where
             let lm = LiteMap::<Box<ByteStr>, usize>::deserialize(deserializer)?;
             ZeroTrieSimpleAscii::try_from_serde_litemap(&lm)
                 .map_err(D::Error::custom)
-                .map(|trie| trie.map_store(From::from))
+                .map(|trie| trie.convert_store())
         } else {
             // Note: `impl Deserialize for &[u8]` uses visit_borrowed_bytes
             <&[u8]>::deserialize(deserializer)
                 .map(ZeroTrieSimpleAscii::from_store)
-                .map(|x| x.map_store(From::from))
+                .map(|x| x.convert_store())
         }
     }
 }
@@ -149,12 +149,12 @@ where
             let lm = LiteMap::<Box<ByteStr>, usize>::deserialize(deserializer)?;
             ZeroTriePerfectHash::try_from_serde_litemap(&lm)
                 .map_err(D::Error::custom)
-                .map(|trie| trie.map_store(From::from))
+                .map(|trie| trie.convert_store())
         } else {
             // Note: `impl Deserialize for &[u8]` uses visit_borrowed_bytes
             <&[u8]>::deserialize(deserializer)
                 .map(ZeroTriePerfectHash::from_store)
-                .map(|x| x.map_store(From::from))
+                .map(|x| x.convert_store())
         }
     }
 }
@@ -194,12 +194,12 @@ where
             let lm = LiteMap::<Box<ByteStr>, usize>::deserialize(deserializer)?;
             ZeroTrieExtendedCapacity::try_from_serde_litemap(&lm)
                 .map_err(D::Error::custom)
-                .map(|trie| trie.map_store(From::from))
+                .map(|trie| trie.convert_store())
         } else {
             // Note: `impl Deserialize for &[u8]` uses visit_borrowed_bytes
             <&[u8]>::deserialize(deserializer)
                 .map(ZeroTrieExtendedCapacity::from_store)
-                .map(|x| x.map_store(From::from))
+                .map(|x| x.convert_store())
         }
     }
 }
@@ -249,23 +249,22 @@ where
             let lm = LiteMap::<Box<ByteStr>, usize>::deserialize(deserializer)?;
             ZeroTrie::<Vec<u8>>::try_from(&lm)
                 .map_err(D::Error::custom)
-                .map(|trie| trie.map_store(From::from))
+                .map(|trie| trie.convert_store())
         } else {
             // Note: `impl Deserialize for &[u8]` uses visit_borrowed_bytes
             let bytes = <&[u8]>::deserialize(deserializer)?;
             let (tag, trie_bytes) = bytes
                 .split_first()
                 .ok_or(D::Error::custom("expected at least 1 byte for ZeroTrie"))?;
-            let zerotrie =
-                match *tag {
-                    tags::SIMPLE_ASCII => ZeroTrieSimpleAscii::from_store(trie_bytes)
-                        .map_store_into_zerotrie(From::from),
-                    tags::PERFECT_HASH => ZeroTriePerfectHash::from_store(trie_bytes)
-                        .map_store_into_zerotrie(From::from),
-                    tags::EXTENDED_CAPACITY => ZeroTrieExtendedCapacity::from_store(trie_bytes)
-                        .map_store_into_zerotrie(From::from),
-                    _ => return Err(D::Error::custom("invalid ZeroTrie tag")),
-                };
+            let store = Store::from(trie_bytes);
+            let zerotrie = match *tag {
+                tags::SIMPLE_ASCII => ZeroTrieSimpleAscii::from_store(store).into_zerotrie(),
+                tags::PERFECT_HASH => ZeroTriePerfectHash::from_store(store).into_zerotrie(),
+                tags::EXTENDED_CAPACITY => {
+                    ZeroTrieExtendedCapacity::from_store(store).into_zerotrie()
+                }
+                _ => return Err(D::Error::custom("invalid ZeroTrie tag")),
+            };
             Ok(zerotrie)
         }
     }

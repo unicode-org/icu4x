@@ -167,16 +167,23 @@ macro_rules! impl_zerotrie_subtype {
             pub fn take_store(self) -> Store {
                 self.store
             }
-            /// Maps the store into another type.
-            #[inline]
-            #[cfg(feature = "serde")]
-            pub(crate) fn map_store<X>(self, f: impl FnOnce(Store) -> X) -> $name<X> {
-                $name::<X>::from_store(f(self.store))
-            }
-            #[inline]
-            #[cfg(feature = "serde")]
-            pub(crate) fn map_store_into_zerotrie<X>(self, f: impl FnOnce(Store) -> X) -> ZeroTrie<X> {
-                $name::<X>::from_store(f(self.store)).into_zerotrie()
+            /// Converts this trie's store to a different store implementing the `From` trait.
+            ///
+            #[doc = concat!("For example, use this to change `", stringify!($name), "<Vec<u8>>` to `", stringify!($name), "<Cow<[u8]>>`.")]
+            ///
+            /// # Examples
+            ///
+            /// ```
+            /// use std::borrow::Cow;
+            #[doc = concat!("use zerotrie::", stringify!($name), ";")]
+            ///
+            #[doc = concat!("let trie: ", stringify!($name), "<Vec<u8>> = ", stringify!($name), "::from_bytes(b\"abc\\x85\").to_owned();")]
+            #[doc = concat!("let cow: ", stringify!($name), "<Cow<[u8]>> = trie.convert_store();")]
+            ///
+            /// assert_eq!(cow.get(b"abc"), Some(5));
+            /// ```
+            pub fn convert_store<X: From<Store>>(self) -> $name<X> {
+                $name::<X>::from_store(X::from(self.store))
             }
         }
         impl<Store> $name<Store>
@@ -234,7 +241,6 @@ macro_rules! impl_zerotrie_subtype {
             /// # Examples
             ///
             /// ```
-            /// use std::borrow::Cow;
             #[doc = concat!("use zerotrie::", stringify!($name), ";")]
             ///
             #[doc = concat!("let trie: &", stringify!($name), "<[u8]> = ", stringify!($name), "::from_bytes(b\"abc\\x85\");")]
@@ -533,6 +539,13 @@ macro_rules! impl_dispatch {
             ZeroTrieFlavor::ExtendedCapacity(subtype) => subtype.$inner_fn(),
         }
     };
+    ($self:ident, $inner_fn:ident().into_zerotrie()) => {
+        match $self.0 {
+            ZeroTrieFlavor::SimpleAscii(subtype) => subtype.$inner_fn().into_zerotrie(),
+            ZeroTrieFlavor::PerfectHash(subtype) => subtype.$inner_fn().into_zerotrie(),
+            ZeroTrieFlavor::ExtendedCapacity(subtype) => subtype.$inner_fn().into_zerotrie(),
+        }
+    };
     (&$self:ident, $inner_fn:ident()) => {
         match &$self.0 {
             ZeroTrieFlavor::SimpleAscii(subtype) => subtype.$inner_fn(),
@@ -574,13 +587,14 @@ impl<Store> ZeroTrie<Store> {
     pub fn take_store(self) -> Store {
         impl_dispatch!(self, take_store())
     }
-    /// Maps the store into another type.
-    #[cfg(feature = "serde")]
-    pub(crate) fn map_store<NewStore>(
-        self,
-        f: impl FnOnce(Store) -> NewStore,
-    ) -> ZeroTrie<NewStore> {
-        impl_dispatch!(self, map_store_into_zerotrie(f))
+    /// Converts this trie's store to a different store implementing the `From` trait.
+    ///
+    /// For example, use this to change `ZeroTrie<Vec<u8>>` to `ZeroTrie<Cow<[u8]>>`.
+    pub fn convert_store<NewStore>(self) -> ZeroTrie<NewStore>
+    where
+        NewStore: From<Store>,
+    {
+        impl_dispatch!(self, convert_store().into_zerotrie())
     }
 }
 
