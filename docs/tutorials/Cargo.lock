@@ -737,7 +737,6 @@ dependencies = [
  "icu_locid",
  "icu_locid_transform",
  "icu_provider",
- "libm",
  "serde",
  "tinystr",
  "writeable",
@@ -879,6 +878,7 @@ dependencies = [
  "toml",
  "ureq",
  "writeable",
+ "zerotrie",
  "zerovec",
  "zip",
 ]
@@ -1197,6 +1197,7 @@ dependencies = [
  "icu_timezone_data",
  "serde",
  "tinystr",
+ "zerotrie",
  "zerovec",
 ]
 
@@ -3011,6 +3012,19 @@ dependencies = [
 ]
 
 [[package]]
+name = "zerotrie"
+version = "0.0.0"
+dependencies = [
+ "databake",
+ "displaydoc",
+ "litemap",
+ "serde",
+ "yoke",
+ "zerofrom",
+ "zerovec",
+]
+
+[[package]]
 name = "zerovec"
 version = "0.9.4"
 dependencies = [
@@ -3114,7 +3128,3 @@ version = "0.1.0"
 [[patch.unused]]
 name = "tzif"
 version = "0.2.1"
-
-[[patch.unused]]
-name = "zerotrie"
-version = "0.0.0"

@@ -87,6 +87,7 @@ members = [
     "utils/zerovec",
     "utils/zerovec/derive",
     "experimental/bies",
+    "experimental/hashcmp",
     "experimental/ixdtf",
     "experimental/zerotrie",
 
