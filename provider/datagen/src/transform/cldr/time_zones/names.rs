@@ -42,7 +42,7 @@ impl DataProvider<IanaToBcp47MapV1Marker> for crate::DatagenProvider {
                     DataError::custom("Could not create ZeroTrie from timezone.json data")
                         .with_display_context(&e)
                 })?
-                .cast_store()
+                .convert_store()
                 .into_zerotrie(),
             bcp47_ids: bcp_zerovec,
         };
