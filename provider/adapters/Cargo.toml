@@ -21,7 +21,6 @@ icu_locid = { workspace = true, features = ["zerovec"] }
 icu_locid_transform = { workspace = true, default-features = false }
 icu_provider = { workspace = true, features = ["macros"] }
 tinystr = { workspace = true, features = ["zerovec"] }
-yoke = { workspace = true }
 zerovec = { workspace = true, features = ["yoke"] }
 
 databake = { workspace = true, features = ["derive"], optional = true}

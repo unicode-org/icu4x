@@ -19,7 +19,6 @@ rust-version.workspace = true
 all-features = true
 
 [dependencies]
-fixed_decimal = { workspace = true }
 icu_provider = { workspace = true, features = ["macros"] }
 icu_locid = { workspace = true }
 serde = { version = "1.0", default-features = false, features = ["derive", "alloc"], optional = true }
