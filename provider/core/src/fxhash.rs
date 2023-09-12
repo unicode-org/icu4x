@@ -5,16 +5,16 @@
 /// Computes the FxHash of a byte array.
 ///
 /// ICU4X components can use this for a stable, compile-time hash.
-/// 
+///
 /// # Examples
-/// 
+///
 /// ```
 /// use zerovec::zeroslice;
 /// use zerovec::ule::AsULE;
 ///
 /// let nums = zeroslice!(u32; <u32 as AsULE>::ULE::from_unsigned; [1, 2, 3, 4, 5]);
 /// let hashed = icu_provider::fxhash_32(nums.as_bytes());
-/// 
+///
 /// assert_eq!(hashed, 0xF7495CFD);
 /// ```
 pub const fn fxhash_32(bytes: &[u8]) -> u32 {
