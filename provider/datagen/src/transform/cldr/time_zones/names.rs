@@ -12,7 +12,7 @@ use std::collections::BTreeMap;
 use std::collections::BTreeSet;
 use std::hash::Hasher;
 use zerotrie::ZeroTriePerfectHash;
-use zerovec::ZeroVec;
+use zerovec::{ZeroSlice, ZeroVec};
 
 impl DataProvider<IanaToBcp47MapV1Marker> for crate::DatagenProvider {
     fn load(&self, _: DataRequest) -> Result<DataResponse<IanaToBcp47MapV1Marker>, DataError> {
@@ -24,6 +24,7 @@ impl DataProvider<IanaToBcp47MapV1Marker> for crate::DatagenProvider {
         // Sort and deduplicate the BCP-47 IDs:
         let bcp_set: BTreeSet<TimeZoneBcp47Id> = iana2bcp.values().copied().collect();
         let bcp47_ids: ZeroVec<TimeZoneBcp47Id> = bcp_set.iter().copied().collect();
+        let bcp47_ids_checksum = compute_bcp47_ids_hash(&bcp47_ids);
 
         // Transform the map to use BCP indices:
         #[allow(clippy::unwrap_used)] // structures are derived from each other
@@ -36,11 +37,6 @@ impl DataProvider<IanaToBcp47MapV1Marker> for crate::DatagenProvider {
                 )
             })
             .collect();
-
-        // Compute the checksum:
-        let mut hasher = twox_hash::XxHash64::with_seed(0);
-        hasher.write(bcp47_ids.as_bytes());
-        let bcp47_ids_checksum = hasher.finish();
 
         let data_struct = IanaToBcp47MapV1 {
             map: ZeroTriePerfectHash::try_from(&map)
@@ -78,16 +74,12 @@ impl DataProvider<Bcp47ToIanaMapV1Marker> for crate::DatagenProvider {
             .map(|(iana, bcp)| (*bcp, iana.clone()))
             .collect();
         let bcp47_ids: ZeroVec<TimeZoneBcp47Id> = bcp2iana.keys().copied().collect();
+        let bcp47_ids_checksum = compute_bcp47_ids_hash(&bcp47_ids);
 
         // Make the VarZeroVec of canonical IANA names.
         // Note: we can't build VarZeroVec from an iterator yet.
         let iana_vec: Vec<String> = bcp2iana.into_values().collect();
         let canonical_iana_ids = iana_vec.as_slice().into();
-
-        // Compute the checksum:
-        let mut hasher = twox_hash::XxHash64::with_seed(0);
-        hasher.write(bcp47_ids.as_bytes());
-        let bcp47_ids_checksum = hasher.finish();
 
         let data_struct = Bcp47ToIanaMapV1 {
             bcp47_ids_checksum,
@@ -104,4 +96,28 @@ impl IterableDataProvider<Bcp47ToIanaMapV1Marker> for crate::DatagenProvider {
     fn supported_locales(&self) -> Result<Vec<DataLocale>, DataError> {
         Ok(vec![Default::default()])
     }
+}
+
+fn compute_bcp47_ids_hash(bcp47_ids: &ZeroSlice<TimeZoneBcp47Id>) -> u64 {
+    let mut hasher = twox_hash::XxHash64::with_seed(0);
+    hasher.write(bcp47_ids.as_bytes());
+    hasher.finish()
+}
+
+#[test]
+fn test_compute_bcp47_ids_hash() {
+    let bcp47_ids: ZeroVec<TimeZoneBcp47Id> = [
+        TimeZoneBcp47Id(tinystr::tinystr!(8, "aedxb")),
+        TimeZoneBcp47Id(tinystr::tinystr!(8, "brfor")),
+        TimeZoneBcp47Id(tinystr::tinystr!(8, "usinvev")),
+    ]
+    .into_iter()
+    .collect();
+    let checksum1 = compute_bcp47_ids_hash(&bcp47_ids);
+    let mut hasher = twox_hash::XxHash64::with_seed(0);
+    for bcp47 in bcp47_ids.iter() {
+        hasher.write(bcp47.0.all_bytes());
+    }
+    let checksum2 = hasher.finish();
+    assert_eq!(checksum1, checksum2);
 }
