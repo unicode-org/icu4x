@@ -3,12 +3,14 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use super::*;
+use alloc::borrow::Cow;
+use alloc::fmt::{Display, Formatter};
+use core::{iter::Peekable, str::CharIndices};
 use icu_collections::codepointinvlist::CodePointInversionList;
 use icu_collections::codepointinvliststringlist::CodePointInversionListAndStringList;
 use icu_unicodeset_parser::{VariableMap, VariableValue};
-use std::borrow::Cow;
-use std::fmt::{Display, Formatter};
-use std::{iter::Peekable, str::CharIndices};
+
+type Result<T> = core::result::Result<T, crate::TransliteratorError>;
 
 /// An element that can appear in a rule. Used for error reporting in [`CompileError`].
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]

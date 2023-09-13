@@ -49,6 +49,6 @@ pub use transliterator::*;
 pub use TransliteratorError as Error;
 
 #[cfg(feature = "datagen")]
-pub use compile::{Direction, RuleCollection};
+pub use compile::RuleCollection;
 #[cfg(feature = "datagen")]
 pub use ids::legacy_id_to_bcp_47;

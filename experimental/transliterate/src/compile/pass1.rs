@@ -145,6 +145,8 @@ as described in the zero-copy format, and the maps here are just arrays)
 use super::*;
 use std::collections::{HashMap, HashSet};
 
+type Result<T> = core::result::Result<T, crate::TransliteratorError>;
+
 enum SingleDirection {
     Forward,
     Reverse,
@@ -902,8 +904,6 @@ mod tests {
     }
     use ExpectedOutcome::*;
 
-    const BOTH: Direction = Direction::Both;
-
     fn parse(s: &str) -> Vec<parse::Rule> {
         match parse::parse(s) {
             Ok(rules) => rules,
@@ -951,7 +951,7 @@ mod tests {
         ";
 
         let rules = parse(source);
-        let result = Pass1::run(BOTH, &rules).expect("pass1 failed");
+        let result = Pass1::run(Direction::Both, &rules).expect("pass1 failed");
         {
             let vars_with_data: HashSet<_> = result
                 .variable_definitions
@@ -1085,7 +1085,10 @@ mod tests {
         ];
 
         for (expected_outcome, source) in sources {
-            match (expected_outcome, Pass1::run(BOTH, &parse(source))) {
+            match (
+                expected_outcome,
+                Pass1::run(Direction::Both, &parse(source)),
+            ) {
                 (Fail, Ok(_)) => {
                     panic!("unexpected successful pass1 validation for rules {source:?}")
                 }
@@ -1114,7 +1117,10 @@ mod tests {
         ];
 
         for (expected_outcome, source) in sources {
-            match (expected_outcome, Pass1::run(BOTH, &parse(source))) {
+            match (
+                expected_outcome,
+                Pass1::run(Direction::Both, &parse(source)),
+            ) {
                 (Fail, Ok(_)) => {
                     panic!("unexpected successful pass1 validation for rules {source:?}")
                 }
@@ -1142,7 +1148,7 @@ mod tests {
 
         for (expected_outcome, source) in sources {
             let rules = parse(source);
-            let result = Pass1::run(BOTH, &rules);
+            let result = Pass1::run(Direction::Both, &rules);
             match (expected_outcome, result) {
                 (Fail, Ok(_)) => {
                     panic!("unexpected successful pass1 validation for rules {source:?}")

@@ -2,15 +2,14 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use crate::provider::{RuleBasedTransliterator, TransliteratorRulesV1Marker};
-use crate::{CompileErrorKind, TransliteratorError};
+use crate::provider::TransliteratorRulesV1Marker;
+use crate::CompileErrorKind;
 
 use icu_locid::Locale;
 use icu_properties::{provider::*, sets, PropertiesError};
 use icu_provider::prelude::*;
 use std::collections::HashMap;
-
-type Result<T> = std::result::Result<T, TransliteratorError>;
+use std::sync::RwLock;
 
 mod parse;
 mod pass1;
@@ -19,19 +18,18 @@ mod rule_group_agg;
 
 /// The direction of a rule-based transliterator in respect to its source.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
-#[non_exhaustive]
-pub enum Direction {
+pub(crate) enum Direction {
     /// Forwards, i.e., left-to-right in the source.
     Forward,
-    /// Backwards, i.e., right-to-left in the source.
+    /// Reverse, i.e., right-to-left in the source.
     Reverse,
-    /// Both forwards and backwards.
+    /// Both forwards and reverse.
     Both,
 }
 
 impl Direction {
     /// Whether `self` is a superset of `other` or not.
-    pub fn permits(&self, other: Direction) -> bool {
+    pub(crate) fn permits(&self, other: Direction) -> bool {
         match self {
             Direction::Forward => other == Direction::Forward,
             Direction::Reverse => other == Direction::Reverse,
@@ -40,25 +38,51 @@ impl Direction {
     }
 }
 
-impl RuleBasedTransliterator<'static> {
-    /// Parse a rule based transliterator definition into a `TransliteratorDataStruct`.
-    ///
-    /// See [UTS #35 - Transliterators](https://unicode.org/reports/tr35/tr35-general.html#Transforms) for more information.
-    ///
-    /// The `direction` [`Direction`] argument
-    /// determines which of the returned options is populated. The first option will be populated
-    /// if the direction is [`Forward`](Direction::Forward), the second if the direction is
-    /// [`Reverse`](Direction::Reverse), and both if the direction is [`Both`](Direction::Both).
-    ///
-    /// `id_mapping` is a map from legacy IDs to modern BCP-47 IDs. Occurring IDs in `source`
-    /// that do not have a corresponding entry in `id_mapping` are still valid, but will be
-    /// compiled with a custom format defined by [`crate::legacy_id_to_bcp_47`].
-    pub fn compile<P>(
-        provider: &P,
-        source: &str,
-        direction: Direction,
-        id_mapping: &HashMap<String, Locale>,
-    ) -> Result<(Option<Self>, Option<Self>)>
+#[derive(Debug, Default)]
+/// A collection of transliteration rules.
+pub struct RuleCollection {
+    id_mapping: HashMap<String, Locale>, // alias -> bcp id
+    data: RwLock<HashMap<DataLocale, (String, bool, bool)>>, // locale -> source/reverse/visible
+    cache: RwLock<HashMap<DataLocale, DataResponse<TransliteratorRulesV1Marker>>>,
+}
+
+impl RuleCollection {
+    /// Add a new transliteration source to the collection.
+    pub fn register_source<'a>(
+        &mut self,
+        id: &icu_locid::Locale,
+        source: String,
+        aliases: impl Iterator<Item = &'a str>,
+        reverse: bool,
+        visible: bool,
+    ) {
+        self.data.get_mut().expect("poison").insert(
+            crate::ids::bcp47_to_data_locale(id),
+            (source, reverse, visible),
+        );
+
+        for alias in aliases {
+            self.id_mapping
+                .insert(alias.to_ascii_lowercase(), id.clone());
+        }
+    }
+
+    /// List all registered sources.
+    pub fn list(&self) -> impl Iterator<Item = DataLocale> {
+        self.data
+            .read()
+            .expect("poison")
+            .keys()
+            .cloned()
+            .collect::<Vec<_>>()
+            .into_iter()
+    }
+
+    /// Combined with a properties provider, this becomes a `DataProvider<TransliteratorRulesV1Marker>`.
+    pub fn with_properties_provider<'a, P>(
+        &'a self,
+        properties_provider: &'a P,
+    ) -> Result<impl DataProvider<TransliteratorRulesV1Marker> + 'a, DataError>
     where
         P: ?Sized
             + DataProvider<AsciiHexDigitV1Marker>
@@ -124,158 +148,25 @@ impl RuleBasedTransliterator<'static> {
             e
         };
 
-        let xid_start = sets::load_xid_start(provider).map_err(unwrap_props_data_error)?;
-        let xid_continue = sets::load_xid_continue(provider).map_err(unwrap_props_data_error)?;
-        let pat_ws = sets::load_pattern_white_space(provider).map_err(unwrap_props_data_error)?;
-
-        let rules = parse::Parser::run(
-            source,
-            &xid_start.to_code_point_inversion_list(),
-            &xid_continue.to_code_point_inversion_list(),
-            &pat_ws.to_code_point_inversion_list(),
-            provider,
-        )?;
-
-        // TODO(#3736): decide if validation should be direction dependent
-        //  example: transliterator with direction "forward", and a rule `[a-z] < b ;` (invalid)
-        //  - if validation is dependent, this rule is valid because it's not used in the forward direction
-        //  - if validation is independent, this rule is invalid because the reverse direction is also checked
-        let pass1 = pass1::Pass1::run(direction, &rules)?;
-
-        let forward = direction.permits(Direction::Forward).then(|| {
-            pass2::Pass2::run(
-                pass1.forward_result,
-                &pass1.variable_definitions,
-                id_mapping,
-            )
-        });
-
-        let reverse = direction.permits(Direction::Reverse).then(|| {
-            pass2::Pass2::run(
-                pass1.reverse_result,
-                &pass1.variable_definitions,
-                id_mapping,
-            )
-        });
-
-        Ok((forward.transpose()?, reverse.transpose()?))
-    }
-}
-
-#[derive(Debug, Default)]
-/// A collection of transliteration rules.
-pub struct RuleCollection {
-    id_mapping: HashMap<String, Locale>, // internal id -> bcp id
-    data: HashMap<DataLocale, (String, Direction, bool)>, // internal id -> source/direction/visible
-}
-
-impl RuleCollection {
-    /// Add a new transliteration source to the collection.
-    pub fn register_source<'a>(
-        &mut self,
-        id: &icu_locid::Locale,
-        source: String,
-        aliases: impl Iterator<Item = &'a str>,
-        backwards: bool,
-        visible: bool,
-    ) {
-        self.data.insert(
-            crate::ids::bcp47_to_data_locale(id),
-            (
-                source,
-                if backwards {
-                    Direction::Reverse
-                } else {
-                    Direction::Forward
-                },
-                visible,
-            ),
-        );
-
-        for alias in aliases {
-            self.id_mapping
-                .insert(alias.to_ascii_lowercase(), id.clone());
-        }
-    }
-
-    /// List all registered sources.
-    pub fn list(&self) -> impl Iterator<Item = &'_ DataLocale> {
-        self.data.keys()
-    }
-
-    /// Combined with a properties provider, this becomes a `DataProvider<TransliteratorRulesV1Marker>`.
-    pub fn with_properties_provider<'a, P>(
-        &'a self,
-        properties_provider: &'a P,
-    ) -> impl DataProvider<TransliteratorRulesV1Marker> + 'a
-    where
-        P: ?Sized
-            + DataProvider<AsciiHexDigitV1Marker>
-            + DataProvider<AlphabeticV1Marker>
-            + DataProvider<BidiControlV1Marker>
-            + DataProvider<BidiMirroredV1Marker>
-            + DataProvider<CaseIgnorableV1Marker>
-            + DataProvider<CasedV1Marker>
-            + DataProvider<ChangesWhenCasefoldedV1Marker>
-            + DataProvider<ChangesWhenCasemappedV1Marker>
-            + DataProvider<ChangesWhenLowercasedV1Marker>
-            + DataProvider<ChangesWhenNfkcCasefoldedV1Marker>
-            + DataProvider<ChangesWhenTitlecasedV1Marker>
-            + DataProvider<ChangesWhenUppercasedV1Marker>
-            + DataProvider<DashV1Marker>
-            + DataProvider<DefaultIgnorableCodePointV1Marker>
-            + DataProvider<DeprecatedV1Marker>
-            + DataProvider<DiacriticV1Marker>
-            + DataProvider<EmojiV1Marker>
-            + DataProvider<EmojiComponentV1Marker>
-            + DataProvider<EmojiModifierV1Marker>
-            + DataProvider<EmojiModifierBaseV1Marker>
-            + DataProvider<EmojiPresentationV1Marker>
-            + DataProvider<ExtendedPictographicV1Marker>
-            + DataProvider<ExtenderV1Marker>
-            + DataProvider<GraphemeBaseV1Marker>
-            + DataProvider<GraphemeExtendV1Marker>
-            + DataProvider<HexDigitV1Marker>
-            + DataProvider<IdsBinaryOperatorV1Marker>
-            + DataProvider<IdsTrinaryOperatorV1Marker>
-            + DataProvider<IdContinueV1Marker>
-            + DataProvider<IdStartV1Marker>
-            + DataProvider<IdeographicV1Marker>
-            + DataProvider<JoinControlV1Marker>
-            + DataProvider<LogicalOrderExceptionV1Marker>
-            + DataProvider<LowercaseV1Marker>
-            + DataProvider<MathV1Marker>
-            + DataProvider<NoncharacterCodePointV1Marker>
-            + DataProvider<PatternSyntaxV1Marker>
-            + DataProvider<PatternWhiteSpaceV1Marker>
-            + DataProvider<QuotationMarkV1Marker>
-            + DataProvider<RadicalV1Marker>
-            + DataProvider<RegionalIndicatorV1Marker>
-            + DataProvider<SentenceTerminalV1Marker>
-            + DataProvider<SoftDottedV1Marker>
-            + DataProvider<TerminalPunctuationV1Marker>
-            + DataProvider<UnifiedIdeographV1Marker>
-            + DataProvider<UppercaseV1Marker>
-            + DataProvider<VariationSelectorV1Marker>
-            + DataProvider<WhiteSpaceV1Marker>
-            + DataProvider<XidContinueV1Marker>
-            + DataProvider<GeneralCategoryMaskNameToValueV1Marker>
-            + DataProvider<GeneralCategoryV1Marker>
-            + DataProvider<ScriptNameToValueV1Marker>
-            + DataProvider<ScriptV1Marker>
-            + DataProvider<ScriptWithExtensionsPropertyV1Marker>
-            + DataProvider<XidStartV1Marker>,
-    {
-        RuleCollectionProvider {
+        Ok(RuleCollectionProvider {
             collection: self,
             properties_provider,
-        }
+            xid_start: sets::load_xid_start(properties_provider)
+                .map_err(unwrap_props_data_error)?,
+            xid_continue: sets::load_xid_continue(properties_provider)
+                .map_err(unwrap_props_data_error)?,
+            pat_ws: sets::load_pattern_white_space(properties_provider)
+                .map_err(unwrap_props_data_error)?,
+        })
     }
 }
 
 struct RuleCollectionProvider<'a, P: ?Sized> {
     collection: &'a RuleCollection,
     properties_provider: &'a P,
+    xid_start: sets::CodePointSetData,
+    xid_continue: sets::CodePointSetData,
+    pat_ws: sets::CodePointSetData,
 }
 
 impl<P> DataProvider<TransliteratorRulesV1Marker> for RuleCollectionProvider<'_, P>
@@ -340,36 +231,75 @@ where
     fn load(
         &self,
         req: DataRequest,
-    ) -> std::result::Result<DataResponse<TransliteratorRulesV1Marker>, DataError> {
-        let (source, direction, visible) =
-            self.collection.data.get(req.locale).ok_or_else(|| {
+    ) -> Result<DataResponse<TransliteratorRulesV1Marker>, DataError> {
+        if let Some(response) = self
+            .collection
+            .cache
+            .read()
+            .expect("poison")
+            .get(req.locale)
+        {
+            return Ok(response.clone());
+        }
+
+        let (source, reverse, visible) = self
+            .collection
+            .data
+            .write()
+            .expect("poison")
+            .remove(req.locale)
+            .ok_or_else(|| {
                 DataErrorKind::MissingLocale.with_req(TransliteratorRulesV1Marker::KEY, req)
             })?;
 
-        let (forwards, backwards) = RuleBasedTransliterator::compile(
+        let rules = parse::Parser::run(
+            &source,
+            &self.xid_start.to_code_point_inversion_list(),
+            &self.xid_continue.to_code_point_inversion_list(),
+            &self.pat_ws.to_code_point_inversion_list(),
             self.properties_provider,
-            source,
-            *direction,
+        )
+        .map_err(|e| DataError::custom("transliterator parsing failed").with_debug_context(&e))?;
+
+        // TODO(#3736): decide if validation should be direction dependent
+        //  example: transliterator with direction "forward", and a rule `[a-z] < b ;` (invalid)
+        //  - if validation is dependent, this rule is valid because it's not used in the forward direction
+        //  - if validation is independent, this rule is invalid because the reverse direction is also checked
+        let pass1 = pass1::Pass1::run(
+            if reverse {
+                Direction::Reverse
+            } else {
+                Direction::Forward
+            },
+            &rules,
+        )
+        .map_err(|e| DataError::custom("transliterator parsing failed").with_debug_context(&e))?;
+
+        let mut transliterator = pass2::Pass2::run(
+            if reverse {
+                pass1.reverse_result
+            } else {
+                pass1.forward_result
+            },
+            &pass1.variable_definitions,
             &self.collection.id_mapping,
         )
         .map_err(|e| DataError::custom("transliterator parsing failed").with_debug_context(&e))?;
-        let mut transliterator = match direction {
-            #[allow(clippy::unwrap_used)] // the parser guarantees we receive this
-            Direction::Forward => forwards.unwrap(),
-            #[allow(clippy::unwrap_used)] // the parser guarantees we receive this
-            Direction::Reverse => backwards.unwrap(),
-            // unreachable because `self.rules` only ever returns one direction.
-            _ => {
-                unreachable!("unexpected direction")
-            }
-        };
 
-        transliterator.visibility = *visible;
+        transliterator.visibility = visible;
 
-        Ok(DataResponse {
+        let response = DataResponse {
             metadata: Default::default(),
             payload: Some(DataPayload::from_owned(transliterator)),
-        })
+        };
+
+        self.collection
+            .cache
+            .write()
+            .expect("poison")
+            .insert(req.locale.clone(), response.clone());
+
+        Ok(response)
     }
 }
 
@@ -379,6 +309,7 @@ mod tests {
 
     use super::*;
     use crate::provider as ds;
+    use icu_locid::locale;
     use std::collections::HashSet;
     use zerovec::VarZeroVec;
 
@@ -416,21 +347,38 @@ mod tests {
         :: NFC ;
         ";
 
-        let id_mapping = HashMap::from([(
-            "AnyRev-AddRandomSpaces/FiftyPercent".to_ascii_lowercase(),
-            "und-t-d0-addrndsp-m0-fifty-s0-anyrev".parse().unwrap(),
-        )]);
+        let mut collection = RuleCollection::default();
+        collection.register_source(&locale!("fwd"), source.into(), [].into_iter(), false, true);
+        collection.register_source(&locale!("rev"), source.into(), [].into_iter(), true, true);
+        collection.register_source(
+            &"und-t-d0-addrndsp-m0-fifty-s0-anyrev".parse().unwrap(),
+            "unparsed dummy".into(),
+            ["AnyRev-AddRandomSpaces/FiftyPercent"].into_iter(),
+            false,
+            true,
+        );
 
-        let (forward, reverse) = RuleBasedTransliterator::compile(
-            &icu_properties::provider::Baked,
-            source,
-            Direction::Both,
-            &id_mapping,
-        )
-        .expect("compiling failed");
-        let forward = forward.expect("forward transliterator expected");
-        let reverse = reverse.expect("reverse transliterator expected");
+        let forward = collection
+            .with_properties_provider(&icu_properties::provider::Baked)
+            .unwrap()
+            .load(DataRequest {
+                locale: &crate::ids::bcp47_to_data_locale(&locale!("fwd")),
+                metadata: Default::default(),
+            })
+            .unwrap()
+            .take_payload()
+            .unwrap();
 
+        let reverse = collection
+            .with_properties_provider(&icu_properties::provider::Baked)
+            .unwrap()
+            .load(DataRequest {
+                locale: &crate::ids::bcp47_to_data_locale(&locale!("rev")),
+                metadata: Default::default(),
+            })
+            .unwrap()
+            .take_payload()
+            .unwrap();
         {
             let expected_filter = parse_set_cp("[1]");
 
@@ -522,10 +470,10 @@ mod tests {
                 variable_table: expected_var_table,
                 visibility: true,
             };
-            assert_eq!(forward, expected_rbt);
+            assert_eq!(*forward.get(), expected_rbt);
 
             assert_eq!(
-                forward.deps().collect::<HashSet<_>>(),
+                forward.get().deps().collect::<HashSet<_>>(),
                 HashSet::from_iter([
                     Cow::Borrowed("x-any-nfc"),
                     Cow::Borrowed("x-any-remove"),
@@ -627,10 +575,10 @@ mod tests {
                 variable_table: expected_var_table,
                 visibility: true,
             };
-            assert_eq!(reverse, expected_rbt);
+            assert_eq!(*reverse.get(), expected_rbt);
 
             assert_eq!(
-                reverse.deps().collect::<HashSet<_>>(),
+                reverse.get().deps().collect::<HashSet<_>>(),
                 HashSet::from_iter([
                     Cow::Borrowed("und-t-d0-addrndsp-m0-fifty-s0-anyrev"),
                     Cow::Borrowed("x-any-nfd"),

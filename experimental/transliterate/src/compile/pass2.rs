@@ -4,11 +4,13 @@
 
 use super::*;
 use crate::provider as ds;
+use core::fmt::{self, Display, Formatter};
 use icu_collections::codepointinvlist::CodePointInversionList;
 use icu_locid::Locale;
 use std::collections::HashMap;
-use std::fmt::{self, Display, Formatter};
 use zerovec::VarZeroVec;
+
+type Result<T> = core::result::Result<T, crate::TransliteratorError>;
 
 macro_rules! impl_insert {
     ($fn_name:ident, $field:ident, $elt_type:ty, $($next_field:tt)*) => {
