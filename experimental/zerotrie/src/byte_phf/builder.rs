@@ -100,6 +100,9 @@ pub fn find(bytes: &[u8]) -> Result<(u8, Vec<u8>), Error> {
 }
 
 impl PerfectByteHashMap<Vec<u8>> {
+    /// Computes a new [`PerfectByteHashMap`].
+    ///
+    /// (this is a doc-hidden API)
     pub fn try_new(keys: &[u8]) -> Result<Self, Error> {
         let n = keys.len();
         let (p, mut qq) = find(keys)?;
