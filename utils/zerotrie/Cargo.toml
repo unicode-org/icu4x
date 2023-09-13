@@ -5,7 +5,7 @@
 [package]
 name = "zerotrie"
 description = "A data structure that efficiently maps strings to integers"
-version = "0.0.0"
+version = "0.1.0"
 
 rust-version.workspace = true
 authors.workspace = true

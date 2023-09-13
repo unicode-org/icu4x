@@ -84,11 +84,11 @@ members = [
     "utils/yoke/derive",
     "utils/zerofrom",
     "utils/zerofrom/derive",
+    "utils/zerotrie",
     "utils/zerovec",
     "utils/zerovec/derive",
     "experimental/bies",
     "experimental/ixdtf",
-    "experimental/zerotrie",
 
     # Tools
     "tools/benchmark/binsize",
