@@ -7,13 +7,13 @@ pub mod ffi {
     use crate::errors::ffi::ICU4XError;
     use crate::provider::ffi::ICU4XDataProvider;
     use alloc::boxed::Box;
-    use icu_timezone::Bcp47ToIanaMapper;
+    use icu_timezone::IanaBcp47RoundTripMapper;
     use icu_timezone::IanaToBcp47Mapper;
     use icu_timezone::TimeZoneBcp47Id;
 
     /// An object capable of mapping from an IANA time zone ID to a BCP-47 ID.
     ///
-    /// This can be used via `try_set_iana_time_zone_id_strict()` on [`ICU4XCustomTimeZone`].
+    /// This can be used via `try_set_iana_time_zone_id()` on [`ICU4XCustomTimeZone`].
     ///
     /// [`ICU4XCustomTimeZone`]: crate::timezone::ffi::ICU4XCustomTimeZone;
     #[diplomat::opaque]
@@ -22,34 +22,40 @@ pub mod ffi {
     pub struct ICU4XIanaToBcp47Mapper(pub IanaToBcp47Mapper);
 
     impl ICU4XIanaToBcp47Mapper {
-        #[diplomat::rust_link(icu::timezone::IanaToBcp47Mapper::try_new_unstable, FnInStruct)]
+        #[diplomat::rust_link(icu::timezone::IanaToBcp47Mapper::new, FnInStruct)]
         pub fn create(
             provider: &ICU4XDataProvider,
         ) -> Result<Box<ICU4XIanaToBcp47Mapper>, ICU4XError> {
-            Ok(Box::new(ICU4XIanaToBcp47Mapper(
-                IanaToBcp47Mapper::try_new_unstable(&provider.0)?,
-            )))
+            Ok(Box::new(ICU4XIanaToBcp47Mapper(call_constructor!(
+                IanaToBcp47Mapper::new [r => Ok(r)],
+                IanaToBcp47Mapper::try_new_with_any_provider,
+                IanaToBcp47Mapper::try_new_with_buffer_provider,
+                provider,
+            )?)))
         }
     }
 
     /// An object capable of mapping from a BCP-47 time zone ID to an IANA ID.
     #[diplomat::opaque]
-    #[diplomat::rust_link(icu::timezone::Bcp47ToIanaMapper, Struct)]
-    #[diplomat::rust_link(icu::timezone::Bcp47ToIanaMapper::as_borrowed, FnInStruct, hidden)]
-    pub struct ICU4XBcp47ToIanaMapper(pub Bcp47ToIanaMapper);
+    #[diplomat::rust_link(icu::timezone::IanaBcp47RoundTripMapper, Struct)]
+    #[diplomat::rust_link(icu::timezone::IanaBcp47RoundTripMapper::as_borrowed, FnInStruct, hidden)]
+    pub struct ICU4XBcp47ToIanaMapper(pub IanaBcp47RoundTripMapper);
 
     impl ICU4XBcp47ToIanaMapper {
-        #[diplomat::rust_link(icu::timezone::Bcp47ToIanaMapper::try_new_unstable, FnInStruct)]
+        #[diplomat::rust_link(icu::timezone::IanaBcp47RoundTripMapper::try_new_unstable, FnInStruct)]
         pub fn create(
             provider: &ICU4XDataProvider,
         ) -> Result<Box<ICU4XBcp47ToIanaMapper>, ICU4XError> {
-            Ok(Box::new(ICU4XBcp47ToIanaMapper(
-                Bcp47ToIanaMapper::try_new_unstable(&provider.0)?,
-            )))
+            Ok(Box::new(ICU4XBcp47ToIanaMapper(call_constructor!(
+                IanaBcp47RoundTripMapper::new [r => Ok(r)],
+                IanaBcp47RoundTripMapper::try_new_with_any_provider,
+                IanaBcp47RoundTripMapper::try_new_with_buffer_provider,
+                provider,
+            )?)))
         }
 
         /// Writes out the canonical IANA time zone ID corresponding to the given BCP-47 ID.
-        #[diplomat::rust_link(icu::datetime::time_zone::Bcp47ToIanaMapper::get, FnInStruct)]
+        #[diplomat::rust_link(icu::datetime::time_zone::IanaBcp47RoundTripMapper::bcp47_to_iana, FnInStruct)]
         pub fn get(
             &self,
             value: &str,
@@ -60,7 +66,7 @@ pub mod ffi {
             let handle = self.0.as_borrowed();
             TimeZoneBcp47Id::from_str(value)
                 .ok()
-                .and_then(|bcp47_id| handle.get(bcp47_id))
+                .and_then(|bcp47_id| handle.bcp47_to_iana(bcp47_id))
                 .ok_or(ICU4XError::TimeZoneInvalidIdError)?
                 .write_to(write)?;
             Ok(())

@@ -69,7 +69,7 @@ int main() {
     }
     ICU4XMetazoneCalculator mzcalc = ICU4XMetazoneCalculator::create(dp).ok().value();
     ICU4XIanaToBcp47Mapper mapper = ICU4XIanaToBcp47Mapper::create(dp).ok().value();
-    time_zone.try_set_iana_time_zone_id_loose(mapper, "america/chicago").ok().value();
+    time_zone.try_set_iana_time_zone_id(mapper, "america/chicago").ok().value();
     std::string time_zone_id_return = time_zone.time_zone_id().ok().value();
     if (time_zone_id_return != "uschi") {
         std::cout << "Time zone ID does not roundtrip: " << time_zone_id_return << std::endl;
