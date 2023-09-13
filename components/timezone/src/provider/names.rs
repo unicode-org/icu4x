@@ -75,13 +75,13 @@ pub struct IanaToBcp47MapV1<'data> {
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[yoke(prove_covariance_manually)]
 pub struct Bcp47ToIanaMapV1<'data> {
-    /// An XxHash64 checksum of [`Self::bcp47_ids`].
+    /// An XxHash64 checksum of [`IanaToBcp47MapV1::bcp47_ids`].
     ///
-    /// The actual list should be loaded from [`IanaToBcp47MapV1`]. The checksums
-    /// should match if these were generated from the same data set.
+    /// The checksum here should match the checksum in [`IanaToBcp47MapV1`]
+    /// if these were generated from the same data set.
     pub bcp47_ids_checksum: u64,
     /// The IANA time zone identifier corresponding to the BCP-47 ID in
-    /// [`Self::bcp47_ids`].
+    /// [`IanaToBcp47MapV1::bcp47_ids`].
     ///
     /// Since there can be more than one IANA identifier for a particular
     /// BCP-47 identifier, this list contains only the current canonical
