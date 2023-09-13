@@ -3,7 +3,6 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::provider::TransliteratorRulesV1Marker;
-use crate::CompileErrorKind;
 
 use icu_locid::Locale;
 use icu_properties::{provider::*, sets, PropertiesError};
@@ -56,6 +55,7 @@ impl RuleCollection {
         reverse: bool,
         visible: bool,
     ) {
+        #[allow(clippy::expect_used)]
         self.data.get_mut().expect("poison").insert(
             crate::ids::bcp47_to_data_locale(id),
             (source, reverse, visible),
@@ -69,6 +69,7 @@ impl RuleCollection {
 
     /// List all registered sources.
     pub fn list(&self) -> impl Iterator<Item = DataLocale> {
+        #[allow(clippy::expect_used)]
         self.data
             .read()
             .expect("poison")
@@ -232,6 +233,7 @@ where
         &self,
         req: DataRequest,
     ) -> Result<DataResponse<TransliteratorRulesV1Marker>, DataError> {
+        #[allow(clippy::expect_used)]
         if let Some(response) = self
             .collection
             .cache
@@ -242,6 +244,7 @@ where
             return Ok(response.clone());
         }
 
+        #[allow(clippy::expect_used)]
         let (source, reverse, visible) = self
             .collection
             .data
@@ -259,7 +262,10 @@ where
             &self.pat_ws.to_code_point_inversion_list(),
             self.properties_provider,
         )
-        .map_err(|e| DataError::custom("transliterator parsing failed").with_debug_context(&e))?;
+        .map_err(|e| {
+            e.explain(&source)
+                .with_req(TransliteratorRulesV1Marker::KEY, req)
+        })?;
 
         // TODO(#3736): decide if validation should be direction dependent
         //  example: transliterator with direction "forward", and a rule `[a-z] < b ;` (invalid)
@@ -273,7 +279,10 @@ where
             },
             &rules,
         )
-        .map_err(|e| DataError::custom("transliterator parsing failed").with_debug_context(&e))?;
+        .map_err(|e| {
+            e.explain(&source)
+                .with_req(TransliteratorRulesV1Marker::KEY, req)
+        })?;
 
         let mut transliterator = pass2::Pass2::run(
             if reverse {
@@ -284,7 +293,10 @@ where
             &pass1.variable_definitions,
             &self.collection.id_mapping,
         )
-        .map_err(|e| DataError::custom("transliterator parsing failed").with_debug_context(&e))?;
+        .map_err(|e| {
+            e.explain(&source)
+                .with_req(TransliteratorRulesV1Marker::KEY, req)
+        })?;
 
         transliterator.visibility = visible;
 
@@ -293,6 +305,7 @@ where
             payload: Some(DataPayload::from_owned(transliterator)),
         };
 
+        #[allow(clippy::expect_used)]
         self.collection
             .cache
             .write()
@@ -300,6 +313,110 @@ where
             .insert(req.locale.clone(), response.clone());
 
         Ok(response)
+    }
+}
+
+struct CompileError {
+    /// offset is the index to an arbitrary byte in the last character in the source that makes sense
+    /// to display as location for the error, e.g., the unexpected character itself or
+    /// for an unknown property name the last character of the name.
+    offset: Option<usize>,
+    /// The type of compile error
+    kind: CompileErrorKind,
+}
+
+impl CompileError {
+    fn explain(self, source: &str) -> DataError {
+        let e = DataError::custom("Invalid transliterator");
+        if let Some(mut col_number) = self.offset {
+            let mut line_number = 1;
+            if let Some(snippet) = source
+                .lines()
+                .filter_map(|line| {
+                    if let Some(snippet) = line.get(col_number..) {
+                        Some(snippet)
+                    } else {
+                        col_number -= line.len();
+                        col_number -= 1; // \n
+                        line_number += 1;
+                        None
+                    }
+                })
+                .next()
+            {
+                e.with_display_context(&format!("at {line_number}:{col_number} '{snippet}'"));
+            }
+        }
+        e.with_debug_context(&self.kind);
+        e
+    }
+}
+
+/// The kind of compile error that occurred.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+enum CompileErrorKind {
+    /// An unexpected character was encountered. This variant implies the other variants
+    /// (notably `UnknownProperty` and `Unimplemented`) do not apply.
+    UnexpectedChar(char),
+    /// A reference to an unknown variable.
+    UnknownVariable,
+    /// The source is incomplete.
+    Eof,
+    /// Something unexpected went wrong with our code. Please file a bug report on GitHub.
+    Internal(&'static str),
+    /// The provided syntax is not supported by us. Please file an issue on GitHub if you need
+    /// this feature.
+    Unimplemented,
+    /// The provided escape sequence is not a valid Unicode code point.
+    InvalidEscape,
+    /// The provided transform ID is invalid.
+    InvalidId,
+    /// The provided number is invalid, which likely means it's too big.
+    InvalidNumber,
+    /// Duplicate variable definition.
+    DuplicateVariable,
+    /// Invalid UnicodeSet syntax. See `icu_unicodeset_parser`'s [`ParseError`](icu_unicodeset_parser::ParseError).
+    UnicodeSetError(icu_unicodeset_parser::ParseError),
+
+    // errors originating from compilation step
+    /// A global filter (forward or backward) in an unexpected position.
+    UnexpectedGlobalFilter,
+    /// A global filter (forward or backward) may not contain strings.
+    GlobalFilterWithStrings,
+    /// An element appeared on the source side of a rule, but that is prohibited.
+    UnexpectedElementInSource(&'static str),
+    /// An element appeared on the target side of a rule, but that is prohibited.
+    UnexpectedElementInTarget(&'static str),
+    /// An element appeared in a variable definition, but that is prohibited.
+    UnexpectedElementInVariableDefinition(&'static str),
+    /// The start anchor `^` was not placed at the beginning of a source.
+    AnchorStartNotAtStart,
+    /// The end anchor `$` was not placed at the end of a source.
+    AnchorEndNotAtEnd,
+    /// A variable that contains source-only matchers (e.g., UnicodeSets) was used on the target side.
+    SourceOnlyVariable,
+    /// No matching segment for this backreference was found.
+    BackReferenceOutOfRange,
+    /// The cursor is in an invalid position.
+    InvalidCursor,
+    /// Multiple cursors were defined.
+    DuplicateCursor,
+    /// There are too many special matchers/replacers/variables in the source.
+    TooManySpecials,
+}
+
+impl CompileErrorKind {
+    fn with_offset(self, offset: usize) -> CompileError {
+        CompileError {
+            offset: Some(offset),
+            kind: self,
+        }
+    }
+}
+
+impl From<CompileErrorKind> for CompileError {
+    fn from(kind: CompileErrorKind) -> Self {
+        CompileError { offset: None, kind }
     }
 }
 

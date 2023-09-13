@@ -10,7 +10,7 @@ use icu_locid::Locale;
 use std::collections::HashMap;
 use zerovec::VarZeroVec;
 
-type Result<T> = core::result::Result<T, crate::TransliteratorError>;
+type Result<T> = core::result::Result<T, CompileError>;
 
 macro_rules! impl_insert {
     ($fn_name:ident, $field:ident, $elt_type:ty, $($next_field:tt)*) => {
