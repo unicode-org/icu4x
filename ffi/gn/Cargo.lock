@@ -103,6 +103,26 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "baf1de4339761588bc0619e3cbc0120ee582ebb74b53b4efbf79117bd2da40fd"
 
 [[package]]
+name = "databake"
+version = "0.1.5"
+dependencies = [
+ "databake-derive",
+ "proc-macro2",
+ "quote",
+ "syn 2.0.15",
+]
+
+[[package]]
+name = "databake-derive"
+version = "0.1.5"
+dependencies = [
+ "proc-macro2",
+ "quote",
+ "syn 2.0.15",
+ "synstructure",
+]
+
+[[package]]
 name = "difference"
 version = "2.0.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -484,6 +504,7 @@ dependencies = [
  "icu_locid",
  "icu_provider",
  "tinystr",
+ "zerotrie",
  "zerovec",
 ]
 
@@ -977,9 +998,21 @@ dependencies = [
 ]
 
 [[package]]
+name = "zerotrie"
+version = "0.0.0"
+dependencies = [
+ "databake",
+ "displaydoc",
+ "yoke",
+ "zerofrom",
+ "zerovec",
+]
+
+[[package]]
 name = "zerovec"
 version = "0.9.4"
 dependencies = [
+ "databake",
  "yoke",
  "zerofrom",
  "zerovec-derive",
