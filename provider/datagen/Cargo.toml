@@ -84,6 +84,7 @@ serde = { version = "1.0", default-features = false, features = ["derive", "allo
 serde_json = { version = "1.0", default-features = false, features = ["alloc"] }
 serde-aux = { version = "4.1.2", default-features = false }
 toml = "0.5"
+twox-hash = "1.6.3"
 zip = { version = ">=0.5, <0.7", default-features = false, features = ["deflate"] }
 
 rayon = { version = "1.5", optional = true }

@@ -12,6 +12,7 @@ use std::collections::BTreeMap;
 use std::collections::BTreeSet;
 use zerotrie::ZeroTriePerfectHash;
 use zerovec::ZeroVec;
+use std::hash::Hasher;
 
 impl DataProvider<IanaToBcp47MapV1Marker> for crate::DatagenProvider {
     fn load(&self, _: DataRequest) -> Result<DataResponse<IanaToBcp47MapV1Marker>, DataError> {
@@ -22,7 +23,7 @@ impl DataProvider<IanaToBcp47MapV1Marker> for crate::DatagenProvider {
 
         // Sort and deduplicate the BCP-47 IDs:
         let bcp_set: BTreeSet<TimeZoneBcp47Id> = iana2bcp.values().copied().collect();
-        let bcp_zerovec: ZeroVec<TimeZoneBcp47Id> = bcp_set.iter().copied().collect();
+        let bcp47_ids: ZeroVec<TimeZoneBcp47Id> = bcp_set.iter().copied().collect();
 
         // Transform the map to use BCP indices:
         #[allow(clippy::unwrap_used)] // structures are derived from each other
@@ -31,10 +32,15 @@ impl DataProvider<IanaToBcp47MapV1Marker> for crate::DatagenProvider {
             .map(|(iana, bcp)| {
                 (
                     iana.as_bytes().to_vec(),
-                    bcp_zerovec.binary_search(bcp).unwrap(),
+                    bcp47_ids.binary_search(bcp).unwrap(),
                 )
             })
             .collect();
+
+        // Compute the checksum:
+        let mut hasher = twox_hash::XxHash64::with_seed(0);
+        hasher.write(bcp47_ids.as_bytes());
+        let bcp47_ids_checksum = hasher.finish();
 
         let data_struct = IanaToBcp47MapV1 {
             map: ZeroTriePerfectHash::try_from(&map)
@@ -44,7 +50,8 @@ impl DataProvider<IanaToBcp47MapV1Marker> for crate::DatagenProvider {
                 })?
                 .convert_store()
                 .into_zerotrie(),
-            bcp47_ids: bcp_zerovec,
+            bcp47_ids,
+            bcp47_ids_checksum
         };
         Ok(DataResponse {
             metadata: Default::default(),
@@ -65,12 +72,24 @@ impl DataProvider<Bcp47ToIanaMapV1Marker> for crate::DatagenProvider {
             self.cldr()?.bcp47().read_and_parse("timezone.json")?;
         // Note: The BTreeMap retains the order of the aliases, which is important for establishing
         // the canonical order of the IANA names.
-        let bcp47_tzid_data = &compute_bcp47_tzids_btreemap(&resource.keyword.u.time_zones.values);
+        let iana2bcp = &compute_bcp47_tzids_btreemap(&resource.keyword.u.time_zones.values);
+        let bcp2iana: BTreeMap<TimeZoneBcp47Id, String> = iana2bcp.iter().map(|(iana, bcp)| (*bcp, iana.clone())).collect();
+        let bcp47_ids: ZeroVec<TimeZoneBcp47Id> = bcp2iana.keys().copied().collect();
+
+        // Make the VarZeroVec of canonical IANA names.
+        // Note: we can't build VarZeroVec from an iterator yet.
+        let iana_vec: Vec<String> = bcp2iana.into_values().collect();
+        let canonical_iana_ids = iana_vec.as_slice().into();
+
+        // Compute the checksum:
+        let mut hasher = twox_hash::XxHash64::with_seed(0);
+        hasher.write(bcp47_ids.as_bytes());
+        let bcp47_ids_checksum = hasher.finish();
+
         let data_struct = Bcp47ToIanaMapV1 {
-            map: bcp47_tzid_data
-                .iter()
-                .map(|(k, v)| (v.0.to_unvalidated(), k.as_str()))
-                .collect(),
+            bcp47_ids,
+            bcp47_ids_checksum,
+            canonical_iana_ids
         };
         Ok(DataResponse {
             metadata: Default::default(),

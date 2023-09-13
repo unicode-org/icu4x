@@ -136,7 +136,8 @@ impl<'a> IanaToBcp47MapperBorrowed<'a> {
 /// ```
 #[derive(Debug)]
 pub struct Bcp47ToIanaMapper {
-    data: DataPayload<Bcp47ToIanaMapV1Marker>,
+    data1: DataPayload<IanaToBcp47MapV1Marker>,
+    data2: DataPayload<Bcp47ToIanaMapV1Marker>,
 }
 
 impl Bcp47ToIanaMapper {
@@ -167,10 +168,11 @@ impl Bcp47ToIanaMapper {
     #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::new)]
     pub fn try_new_unstable<P>(provider: &P) -> Result<Self, TimeZoneError>
     where
-        P: DataProvider<Bcp47ToIanaMapV1Marker> + ?Sized,
+        P: DataProvider<IanaToBcp47MapV1Marker> + DataProvider<Bcp47ToIanaMapV1Marker> + ?Sized,
     {
-        let data = provider.load(Default::default())?.take_payload()?;
-        Ok(Self { data })
+        let data1 = provider.load(Default::default())?.take_payload()?;
+        let data2 = provider.load(Default::default())?.take_payload()?;
+        Ok(Self { data1, data2 })
     }
 
     /// Returns a borrowed version of the mapper that can be queried.
@@ -178,7 +180,8 @@ impl Bcp47ToIanaMapper {
     /// This avoids a small potential cost of reading the data pointer.
     pub fn as_borrowed(&self) -> Bcp47ToIanaMapperBorrowed {
         Bcp47ToIanaMapperBorrowed {
-            data: self.data.get(),
+            data1: self.data1.get(),
+            data2: self.data2.get(),
         }
     }
 }
@@ -187,15 +190,25 @@ impl Bcp47ToIanaMapper {
 /// [`Bcp47ToIanaMapper::as_borrowed()`]. More efficient to query.
 #[derive(Debug)]
 pub struct Bcp47ToIanaMapperBorrowed<'a> {
-    data: &'a Bcp47ToIanaMapV1<'a>,
+    data1: &'a IanaToBcp47MapV1<'a>,
+    data2: &'a Bcp47ToIanaMapV1<'a>,
 }
 
 impl<'a> Bcp47ToIanaMapperBorrowed<'a> {
-    /// Looks up a BCP-47 time zone identifier based on an exact match for the given IANA
+    /// Looks up the canonical IANA time zone identifier of a BCP-47
     /// time zone identifier.
     ///
     /// See examples in [`Bcp47ToIanaMapper`].
     pub fn get(&self, bcp47_id: TimeZoneBcp47Id) -> Option<&str> {
-        self.data.map.get(&bcp47_id.0.to_unvalidated())
+        let bcp47_ids = if !self.data2.bcp47_ids.is_empty() {
+            &self.data2.bcp47_ids
+        } else if self.data2.bcp47_ids_checksum == self.data1.bcp47_ids_checksum {
+            &self.data1.bcp47_ids
+        } else {
+            return None;
+        };
+        // TODO: Use Carte to safely build a binary search map from parts
+        let index = bcp47_ids.binary_search(&bcp47_id).ok()?;
+        self.data2.canonical_iana_ids.get(index)
     }
 }

@@ -19,10 +19,9 @@ use core::str;
 use icu_provider::prelude::*;
 
 use crate::TimeZoneBcp47Id;
-use tinystr::UnvalidatedTinyAsciiStr;
 use zerotrie::ZeroTrie;
 use zerovec::ule::{UnvalidatedStr, VarULE};
-use zerovec::{maps::ZeroMapKV, VarZeroSlice, VarZeroVec, ZeroMap, ZeroVec};
+use zerovec::{maps::ZeroMapKV, VarZeroSlice, VarZeroVec, ZeroVec};
 
 /// This is a time zone identifier that can be "loose matched" as according to
 /// [ECMAScript Temporal](https://tc39.es/proposal-temporal/#sec-isavailabletimezonename)
@@ -189,6 +188,8 @@ pub struct IanaToBcp47MapV1<'data> {
     #[cfg_attr(feature = "serde", serde(borrow))]
     // Note: this is 9739B as ZeroVec<TinyStr8> and 9335B as VarZeroVec<str>
     pub bcp47_ids: ZeroVec<'data, TimeZoneBcp47Id>,
+    /// An XxHash64 checksum of [`Self::bcp47_ids`].
+    pub bcp47_ids_checksum: u64,
 }
 
 /// A mapping from IANA time zone identifiers to BCP-47 time zone identifiers.
@@ -214,7 +215,20 @@ pub struct IanaToBcp47MapV1<'data> {
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[yoke(prove_covariance_manually)]
 pub struct Bcp47ToIanaMapV1<'data> {
-    /// A map from BCP-47 time zone identifiers to IANA time zone identifiers
+    /// A sorted list of BCP-47 time zone identifiers.
+    ///
+    /// If empty, the list from [`IanaToBcp47MapV1`] should be used so long as
+    /// the checksums match.
     #[cfg_attr(feature = "serde", serde(borrow))]
-    pub map: ZeroMap<'data, UnvalidatedTinyAsciiStr<8>, str>,
+    pub bcp47_ids: ZeroVec<'data, TimeZoneBcp47Id>,
+    /// An XxHash64 checksum of [`Self::bcp47_ids`].
+    pub bcp47_ids_checksum: u64,
+    /// The IANA time zone identifier corresponding to the BCP-47 ID in
+    /// [`Self::bcp47_ids`].
+    ///
+    /// Since there can be more than one IANA identifier for a particular
+    /// BCP-47 identifier, this list contains only the current canonical
+    /// IANA identifier.
+    #[cfg_attr(feature = "serde", serde(borrow))]
+    pub canonical_iana_ids: VarZeroVec<'data, str>,
 }
