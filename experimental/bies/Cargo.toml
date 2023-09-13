@@ -23,7 +23,6 @@ all-features = true
 
 [dependencies]
 itertools = "0.10"
-num-traits = "0.2"
 partial-min-max = "0.4"
 strum = { version = "0.20", features = ["derive"] }
 writeable = { workspace = true }

@@ -1,27 +1,29 @@
 // This file is part of ICU4X.
 //
-// This file is licensed under the Apache License, Version 2.0,
-// which can be found in the LICENSE file in the
-// calendrical_calculations package root or online at
-// <https://www.apache.org/licenses/LICENSE-2.0>.
+// The contents of this file implement algorithms from Calendrical Calculations
+// by Reingold & Dershowitz, Cambridge University Press, 4th edition (2018),
+// which have been released as Lisp code at <https://github.com/EdReingold/calendar-code2/>
+// under the Apache-2.0 license. Accordingly, this file is released under
+// the Apache License, Version 2.0 which can be found at the calendrical_calculations
+// package root or at http://www.apache.org/licenses/LICENSE-2.0.
 
-use crate::helpers::{div_rem_euclid, div_rem_euclid64, i64_to_i32, quotient64, I32CastError};
+use crate::helpers::{i64_to_i32, I32CastError};
 use crate::rata_die::RataDie;
 
 // Julian epoch is equivalent to fixed_from_iso of December 30th of 0 year
 // 1st Jan of 1st year Julian is equivalent to December 30th of 0th year of ISO year
 const JULIAN_EPOCH: RataDie = RataDie::new(-1);
 
-// Lisp code reference: https://github.com/EdReingold/calendar-code2/blob/1ee51ecfaae6f856b0d7de3e36e9042100b4f424/calendar.l#L1684-L1687
+/// Lisp code reference: <https://github.com/EdReingold/calendar-code2/blob/1ee51ecfaae6f856b0d7de3e36e9042100b4f424/calendar.l#L1684-L1687>
 #[inline(always)]
 pub const fn is_leap_year(year: i32) -> bool {
-    div_rem_euclid(year, 4).1 == 0
+    year % 4 == 0
 }
 
-// "Fixed" is a day count representation of calendars staring from Jan 1st of year 1 of the Georgian Calendar.
+/// Lisp code reference: <https://github.com/EdReingold/calendar-code2/blob/1ee51ecfaae6f856b0d7de3e36e9042100b4f424/calendar.l#L1689-L1709>
 pub const fn fixed_from_julian(year: i32, month: u8, day: u8) -> RataDie {
     let mut fixed =
-        JULIAN_EPOCH.to_i64_date() - 1 + 365 * (year as i64 - 1) + quotient64(year as i64 - 1, 4);
+        JULIAN_EPOCH.to_i64_date() - 1 + 365 * (year as i64 - 1) + (year as i64 - 1).div_euclid(4);
     debug_assert!(month > 0 && month < 13, "Month should be in range 1..=12.");
     fixed += match month {
         1 => 0,
@@ -45,9 +47,9 @@ pub const fn fixed_from_julian(year: i32, month: u8, day: u8) -> RataDie {
     RataDie::new(fixed + (day as i64))
 }
 
-// Lisp code reference: https://github.com/EdReingold/calendar-code2/blob/1ee51ecfaae6f856b0d7de3e36e9042100b4f424/calendar.l#L1711-L1738
+/// Lisp code reference: <https://github.com/EdReingold/calendar-code2/blob/1ee51ecfaae6f856b0d7de3e36e9042100b4f424/calendar.l#L1711-L1738>
 pub fn julian_from_fixed(date: RataDie) -> Result<(i32, u8, u8), I32CastError> {
-    let approx = quotient64(4 * date.to_i64_date() + 1464, 1461);
+    let approx = (4 * date.to_i64_date() + 1464).div_euclid(1461);
     let year = i64_to_i32(approx)?;
     let prior_days = date
         - fixed_from_julian(year, 1, 1)
@@ -61,7 +63,7 @@ pub fn julian_from_fixed(date: RataDie) -> Result<(i32, u8, u8), I32CastError> {
     } else {
         year
     };
-    let adjusted_prior_days = div_rem_euclid64(prior_days, 365).1;
+    let adjusted_prior_days = prior_days.rem_euclid(365);
     debug_assert!((0..365).contains(&adjusted_prior_days));
     let month = if adjusted_prior_days < 31 {
         1
@@ -94,10 +96,20 @@ pub fn julian_from_fixed(date: RataDie) -> Result<(i32, u8, u8), I32CastError> {
     Ok((adjusted_year, month, day))
 }
 
-// Get a fixed date from the ymd of a Julian date; years are counted as in _Calendrical Calculations_ by Reingold & Dershowitz,
-// meaning there is no year 0. For instance, near the epoch date, years are counted: -3, -2, -1, 1, 2, 3 instead of -2, -1, 0, 1, 2, 3.
-pub const fn fixed_from_julian_book_version(year: i32, month: u8, day: u8) -> RataDie {
-    debug_assert!(year != 0);
+/// Get a fixed date from the ymd of a Julian date; years are counted as in _Calendrical Calculations_ by Reingold & Dershowitz,
+/// meaning there is no year 0. For instance, near the epoch date, years are counted: -3, -2, -1, 1, 2, 3 instead of -2, -1, 0, 1, 2, 3.
+///
+/// Primarily useful for use with code constructing epochs specified in the bookg
+pub const fn fixed_from_julian_book_version(book_year: i32, month: u8, day: u8) -> RataDie {
+    debug_assert!(book_year != 0);
     // TODO: Should we check the bounds here?
-    fixed_from_julian(if year < 0 { year + 1 } else { year }, month, day)
+    fixed_from_julian(
+        if book_year < 0 {
+            book_year + 1
+        } else {
+            book_year
+        },
+        month,
+        day,
+    )
 }

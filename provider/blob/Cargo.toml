@@ -24,7 +24,6 @@ icu_provider = { workspace = true, features = ["deserialize_postcard_1", "serde"
 postcard = { version = "1.0.0", default-features = false, features = ["alloc"] }
 serde = { version = "1.0", default-features = false, features = ["alloc"] }
 writeable = {workspace = true }
-yoke = { workspace = true }
 zerovec = { workspace = true, features = ["serde", "yoke"] }
 
 log = { version = "0.4", optional = true }

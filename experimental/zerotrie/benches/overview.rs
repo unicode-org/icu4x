@@ -12,7 +12,7 @@ use zerovec::ZeroHashMap;
 use zerovec::ZeroMap;
 
 mod testdata {
-    include!("../tests/data.rs");
+    include!("../tests/data/data.rs");
 }
 
 fn get_basic_bench(c: &mut Criterion) {

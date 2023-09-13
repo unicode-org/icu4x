@@ -91,7 +91,7 @@
 
     .. cpp:function:: std::optional<ICU4XBidiParagraph> paragraph_at(size_t n) const
 
-        Get the nth paragraph, returning None if out of bounds
+        Get the nth paragraph, returning ``None`` if out of bounds
 
         Lifetimes: ``this`` must live at least as long as the output.
 

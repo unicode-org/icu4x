@@ -5,7 +5,7 @@
 use std::env;
 
 /// Returns whether the Rust compiler needs an `#[alloc_error_handler]`
-/// set. Returns None for cases where we cannot determine the nightly version of the
+/// set. Returns `None` for cases where we cannot determine the nightly version of the
 /// compiler.
 fn needs_alloc_error_handler() -> Option<bool> {
     use rustc_version::Channel;

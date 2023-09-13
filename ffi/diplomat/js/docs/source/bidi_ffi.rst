@@ -85,7 +85,7 @@
 
     .. js:method:: paragraph_at(n)
 
-        Get the nth paragraph, returning None if out of bounds
+        Get the nth paragraph, returning ``None`` if out of bounds
 
 
     .. js:method:: size()

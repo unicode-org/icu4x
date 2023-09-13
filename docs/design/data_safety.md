@@ -58,7 +58,7 @@ impl MonthNamesBad {
     pub fn get_first_month_name(&self) -> &str {
         &self.month_names[0]
     }
-    /// Returns None only if `idx` is greater than the month count.
+    /// Returns `None`` only if `idx` is greater than the month count.
     pub fn get_month_name_at_index(&self, idx: usize) -> Option<&str> {
         if idx >= self.month_count {
             return None;
