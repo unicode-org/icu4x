@@ -87,7 +87,6 @@ impl DataProvider<Bcp47ToIanaMapV1Marker> for crate::DatagenProvider {
         let bcp47_ids_checksum = hasher.finish();
 
         let data_struct = Bcp47ToIanaMapV1 {
-            bcp47_ids,
             bcp47_ids_checksum,
             canonical_iana_ids
         };

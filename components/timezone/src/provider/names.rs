@@ -215,13 +215,10 @@ pub struct IanaToBcp47MapV1<'data> {
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[yoke(prove_covariance_manually)]
 pub struct Bcp47ToIanaMapV1<'data> {
-    /// A sorted list of BCP-47 time zone identifiers.
-    ///
-    /// If empty, the list from [`IanaToBcp47MapV1`] should be used so long as
-    /// the checksums match.
-    #[cfg_attr(feature = "serde", serde(borrow))]
-    pub bcp47_ids: ZeroVec<'data, TimeZoneBcp47Id>,
     /// An XxHash64 checksum of [`Self::bcp47_ids`].
+    ///
+    /// The actual list should be loaded from [`IanaToBcp47MapV1`]. The checksums
+    /// should match if these were generated from the same data set.
     pub bcp47_ids_checksum: u64,
     /// The IANA time zone identifier corresponding to the BCP-47 ID in
     /// [`Self::bcp47_ids`].

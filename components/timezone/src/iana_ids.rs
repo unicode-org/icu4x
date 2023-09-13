@@ -171,7 +171,11 @@ impl IanaBcp47RoundTripMapper {
     {
         let data1 = provider.load(Default::default())?.take_payload()?;
         let data2 = provider.load(Default::default())?.take_payload()?;
-        Ok(Self { data1, data2 })
+        let obj = Self { data1, data2 };
+        if obj.data1.get().bcp47_ids_checksum != obj.data2.get().bcp47_ids_checksum {
+            return Err(TimeZoneError::MismatchedChecksums);
+        }
+        Ok(obj)
     }
 
     /// Returns a borrowed version of the mapper that can be queried.
@@ -220,17 +224,7 @@ impl<'a> IanaBcp47RoundTripMapperBorrowed<'a> {
     ///
     /// See examples in [`IanaBcp47RoundTripMapper`].
     pub fn bcp47_to_iana(&self, bcp47_id: TimeZoneBcp47Id) -> Option<&str> {
-        let bcp47_ids = if !self.data2.bcp47_ids.is_empty() {
-            &self.data2.bcp47_ids
-        } else if self.data2.bcp47_ids_checksum == self.data1.bcp47_ids_checksum {
-            &self.data1.bcp47_ids
-        } else {
-            // TODO: Check the checksum in the constructor
-            debug_assert!(false, "bcp47_ids_checksum did not match");
-            return None;
-        };
-        // TODO: Use Carte to safely build a binary search map from parts
-        let index = bcp47_ids.binary_search(&bcp47_id).ok()?;
+        let index = self.data1.bcp47_ids.binary_search(&bcp47_id).ok()?;
         self.data2.canonical_iana_ids.get(index)
     }
 }
