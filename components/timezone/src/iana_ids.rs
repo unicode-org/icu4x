@@ -16,7 +16,7 @@ use icu_provider::prelude::*;
 /// ```
 /// use icu::timezone::IanaToBcp47Mapper;
 ///
-/// let mapper = IanaToBcp47Mapper::try_new_unstable(&icu_testdata::unstable()).unwrap();
+/// let mapper = IanaToBcp47Mapper::new();
 ///
 /// // Strict: the IANA identifier is already in case-canonical form, and we find a match
 /// let bcp47_id = mapper.as_borrowed().get_strict("America/Chicago");
@@ -46,7 +46,11 @@ impl IanaToBcp47Mapper {
     #[cfg(feature = "compiled_data")]
     #[inline]
     pub const fn new() -> Self {
-        unimplemented!()
+        IanaToBcp47Mapper {
+            data: DataPayload::from_static_ref(
+                crate::provider::Baked::SINGLETON_TIME_ZONE_IANA_TO_BCP47_V1,
+            ),
+        }
     }
 
     icu_provider::gen_any_buffer_data_constructors!(locale: skip, options: skip, error: TimeZoneError,
@@ -122,11 +126,11 @@ impl<'a> IanaToBcp47MapperBorrowed<'a> {
 /// ```
 /// use icu::timezone::IanaBcp47RoundTripMapper;
 ///
-/// let mapper = IanaBcp47RoundTripMapper::try_new_unstable(&icu_testdata::unstable()).unwrap();
+/// let mapper = IanaBcp47RoundTripMapper::new();
 /// let mapper_borrowed = mapper.as_borrowed();
 /// 
 /// // Look up the time zone ID for "Asia/Calcutta"
-/// let bcp47_id = mapper_borrowed.iana_to_bcp47_strict("asia/calcutta");
+/// let bcp47_id = mapper_borrowed.iana_to_bcp47_strict("Asia/Calcutta");
 /// assert_eq!(bcp47_id, Some("inccu".parse().unwrap()));
 ///
 /// // Get it back as the canonical form "Asia/Kolkata"
@@ -150,7 +154,14 @@ impl IanaBcp47RoundTripMapper {
     #[cfg(feature = "compiled_data")]
     #[inline]
     pub const fn new() -> Self {
-        unimplemented!()
+        IanaBcp47RoundTripMapper {
+            data1: DataPayload::from_static_ref(
+                crate::provider::Baked::SINGLETON_TIME_ZONE_IANA_TO_BCP47_V1,
+            ),
+            data2: DataPayload::from_static_ref(
+                crate::provider::Baked::SINGLETON_TIME_ZONE_BCP47_TO_IANA_V1,
+            ),
+        }
     }
 
     icu_provider::gen_any_buffer_data_constructors!(locale: skip, options: skip, error: TimeZoneError,
