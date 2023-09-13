@@ -10,7 +10,7 @@
 
     .. js:function:: create(provider)
 
-        See the `Rust documentation for try_new_unstable <https://docs.rs/icu/latest/icu/timezone/struct.IanaBcp47RoundTripMapper.html#method.try_new_unstable>`__ for more information.
+        See the `Rust documentation for new <https://docs.rs/icu/latest/icu/timezone/struct.IanaBcp47RoundTripMapper.html#method.new>`__ for more information.
 
 
     .. js:method:: get(value)
@@ -24,7 +24,7 @@
 
     An object capable of mapping from an IANA time zone ID to a BCP-47 ID.
 
-    This can be used via ``try_set_iana_time_zone_id()`` on ```ICU4XCustomTimeZone`` <crate::timezone::ffi::ICU4XCustomTimeZone;>`__.
+    This can be used via ``try_set_iana_time_zone_id()`` on ```ICU4XCustomTimeZone`` <crate::timezone::ffi::ICU4XCustomTimeZone>`__.
 
     See the `Rust documentation for IanaToBcp47Mapper <https://docs.rs/icu/latest/icu/timezone/struct.IanaToBcp47Mapper.html>`__ for more information.
 

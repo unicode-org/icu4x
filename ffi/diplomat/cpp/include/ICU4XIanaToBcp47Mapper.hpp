@@ -29,7 +29,7 @@ struct ICU4XIanaToBcp47MapperDeleter {
  * 
  * This can be used via `try_set_iana_time_zone_id()` on [`ICU4XCustomTimeZone`].
  * 
- * [`ICU4XCustomTimeZone`]: crate::timezone::ffi::ICU4XCustomTimeZone;
+ * [`ICU4XCustomTimeZone`]: crate::timezone::ffi::ICU4XCustomTimeZone
  * 
  * See the [Rust documentation for `IanaToBcp47Mapper`](https://docs.rs/icu/latest/icu/timezone/struct.IanaToBcp47Mapper.html) for more information.
  */

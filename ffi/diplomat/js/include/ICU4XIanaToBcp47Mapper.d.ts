@@ -6,7 +6,7 @@ import { ICU4XError } from "./ICU4XError";
 
  * An object capable of mapping from an IANA time zone ID to a BCP-47 ID.
 
- * This can be used via `try_set_iana_time_zone_id()` on {@link crate::timezone::ffi::ICU4XCustomTimeZone; `ICU4XCustomTimeZone`}.
+ * This can be used via `try_set_iana_time_zone_id()` on {@link crate::timezone::ffi::ICU4XCustomTimeZone `ICU4XCustomTimeZone`}.
 
  * See the {@link https://docs.rs/icu/latest/icu/timezone/struct.IanaToBcp47Mapper.html Rust documentation for `IanaToBcp47Mapper`} for more information.
  */

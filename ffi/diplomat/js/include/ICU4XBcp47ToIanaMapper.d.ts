@@ -12,7 +12,7 @@ export class ICU4XBcp47ToIanaMapper {
 
   /**
 
-   * See the {@link https://docs.rs/icu/latest/icu/timezone/struct.IanaBcp47RoundTripMapper.html#method.try_new_unstable Rust documentation for `try_new_unstable`} for more information.
+   * See the {@link https://docs.rs/icu/latest/icu/timezone/struct.IanaBcp47RoundTripMapper.html#method.new Rust documentation for `new`} for more information.
    * @throws {@link FFIError}<{@link ICU4XError}>
    */
   static create(provider: ICU4XDataProvider): ICU4XBcp47ToIanaMapper | never;
