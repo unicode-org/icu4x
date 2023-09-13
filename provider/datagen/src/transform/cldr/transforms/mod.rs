@@ -128,14 +128,17 @@ impl DataProvider<TransliteratorRulesV1Marker> for crate::DatagenProvider {
         self.check_req::<TransliteratorRulesV1Marker>(req)?;
         self.cldr()?
             .transforms()?
-            .with_properties_provider(self)?
+            .as_provider_unstable(self, self)?
             .load(req)
     }
 }
 
 impl IterableDataProvider<TransliteratorRulesV1Marker> for crate::DatagenProvider {
     fn supported_locales(&self) -> Result<Vec<DataLocale>, DataError> {
-        Ok(self.cldr()?.transforms()?.list().collect())
+        self.cldr()?
+            .transforms()?
+            .as_provider_unstable(self, self)?
+            .supported_locales()
     }
 }
 

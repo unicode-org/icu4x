@@ -5,6 +5,7 @@
 use crate::provider::TransliteratorRulesV1Marker;
 
 use icu_locid::Locale;
+use icu_normalizer::provider::*;
 use icu_properties::{provider::*, sets, PropertiesError};
 use icu_provider::prelude::*;
 use std::collections::HashMap;
@@ -39,6 +40,50 @@ impl Direction {
 
 #[derive(Debug, Default)]
 /// A collection of transliteration rules.
+///
+/// # Example
+/// ```
+/// use icu_transliterate::{RuleCollection, Transliterator};
+///
+/// let mut collection = RuleCollection::default();
+/// collection.register_source(
+///     &"de-t-de-d0-ascii".parse().unwrap(),
+///     r#"
+///       $AE = [Ä {A \u0308}];
+///       $OE = [Ö {O \u0308}];
+///       $UE = [Ü {U \u0308}];
+///  
+///       [ä {a \u0308}] → ae;
+///       [ö {o \u0308}] → oe;
+///       [ü {u \u0308}] → ue;
+///  
+///       {$AE} [:Lowercase:] → Ae;
+///       {$OE} [:Lowercase:] → Oe;
+///       {$UE} [:Lowercase:] → Ue;
+///  
+///       $AE → AE;
+///       $OE → OE;
+///       $UE → UE;
+///  
+///       ::Any-ASCII;
+///     "#.to_string(),
+///     // legacy alias, doesn't actually do anything in this case
+///     ["de-ASCII"],
+///     false,
+///     true,
+/// );
+/// collection.register_source(
+///     &"und-t-und-latn-d0-ascii".parse().unwrap(),
+///     "# ... ".to_string(),
+///     // the previous transliterator refers to this one by the `Any-ASCII` ID,
+///     // so it's important that the alias is listed here.
+///     ["Latin-Ascii", "Any-ASCII"],
+///     false,
+///     true,
+/// );
+///
+/// Transliterator::try_new_unstable("de-t-de-d0-ascii".parse().unwrap(), &collection.as_provider()).unwrap();
+///
 pub struct RuleCollection {
     id_mapping: HashMap<String, Locale>, // alias -> bcp id
     data: RwLock<HashMap<DataLocale, (String, bool, bool)>>, // locale -> source/reverse/visible
@@ -51,7 +96,7 @@ impl RuleCollection {
         &mut self,
         id: &icu_locid::Locale,
         source: String,
-        aliases: impl Iterator<Item = &'a str>,
+        aliases: impl IntoIterator<Item = &'a str>,
         reverse: bool,
         visible: bool,
     ) {
@@ -61,31 +106,54 @@ impl RuleCollection {
             (source, reverse, visible),
         );
 
-        for alias in aliases {
+        for alias in aliases.into_iter() {
             self.id_mapping
                 .insert(alias.to_ascii_lowercase(), id.clone());
         }
     }
 
-    /// List all registered sources.
-    pub fn list(&self) -> impl Iterator<Item = DataLocale> {
-        #[allow(clippy::expect_used)]
-        self.data
-            .read()
-            .expect("poison")
-            .keys()
-            .cloned()
-            .collect::<Vec<_>>()
-            .into_iter()
+    /// Returns a provider usable by [`Transliterator::try_new_unstable`](crate::Transliterator::try_new_unstable).
+    ///
+    /// ✨ *Enabled with the `compiled_data` Cargo feature.*
+    #[cfg(feature = "compiled_data")]
+    pub fn as_provider(
+        &self,
+    ) -> impl DataProvider<TransliteratorRulesV1Marker>
+           + DataProvider<CanonicalDecompositionDataV1Marker>
+           + DataProvider<CompatibilityDecompositionSupplementV1Marker>
+           + DataProvider<CanonicalDecompositionTablesV1Marker>
+           + DataProvider<CompatibilityDecompositionTablesV1Marker>
+           + DataProvider<CanonicalCompositionsV1Marker>
+           + icu_provider::datagen::IterableDataProvider<TransliteratorRulesV1Marker>
+           + '_ {
+        RuleCollectionProvider {
+            collection: self,
+            properties_provider: &icu_properties::provider::Baked,
+            normalizer_provider: &icu_normalizer::provider::Baked,
+            xid_start: sets::xid_start().static_to_owned(),
+            xid_continue: sets::xid_continue().static_to_owned(),
+            pat_ws: sets::pattern_white_space().static_to_owned(),
+        }
     }
 
-    /// Combined with a properties provider, this becomes a `DataProvider<TransliteratorRulesV1Marker>`.
-    pub fn with_properties_provider<'a, P>(
+    #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::as_provider)]
+    pub fn as_provider_unstable<'a, PP, NP>(
         &'a self,
-        properties_provider: &'a P,
-    ) -> Result<impl DataProvider<TransliteratorRulesV1Marker> + 'a, DataError>
+        properties_provider: &'a PP,
+        normalizer_provider: &'a NP,
+    ) -> Result<
+        impl DataProvider<TransliteratorRulesV1Marker>
+            + DataProvider<CanonicalDecompositionDataV1Marker>
+            + DataProvider<CompatibilityDecompositionSupplementV1Marker>
+            + DataProvider<CanonicalDecompositionTablesV1Marker>
+            + DataProvider<CompatibilityDecompositionTablesV1Marker>
+            + DataProvider<CanonicalCompositionsV1Marker>
+            + icu_provider::datagen::IterableDataProvider<TransliteratorRulesV1Marker>
+            + 'a,
+        DataError,
+    >
     where
-        P: ?Sized
+        PP: ?Sized
             + DataProvider<AsciiHexDigitV1Marker>
             + DataProvider<AlphabeticV1Marker>
             + DataProvider<BidiControlV1Marker>
@@ -141,6 +209,12 @@ impl RuleCollection {
             + DataProvider<ScriptV1Marker>
             + DataProvider<ScriptWithExtensionsPropertyV1Marker>
             + DataProvider<XidStartV1Marker>,
+        NP: ?Sized
+            + DataProvider<CanonicalDecompositionDataV1Marker>
+            + DataProvider<CompatibilityDecompositionSupplementV1Marker>
+            + DataProvider<CanonicalDecompositionTablesV1Marker>
+            + DataProvider<CompatibilityDecompositionTablesV1Marker>
+            + DataProvider<CanonicalCompositionsV1Marker>,
     {
         let unwrap_props_data_error = |e| {
             let PropertiesError::PropDataLoad(e) = e else {
@@ -152,6 +226,7 @@ impl RuleCollection {
         Ok(RuleCollectionProvider {
             collection: self,
             properties_provider,
+            normalizer_provider,
             xid_start: sets::load_xid_start(properties_provider)
                 .map_err(unwrap_props_data_error)?,
             xid_continue: sets::load_xid_continue(properties_provider)
@@ -162,17 +237,18 @@ impl RuleCollection {
     }
 }
 
-struct RuleCollectionProvider<'a, P: ?Sized> {
+struct RuleCollectionProvider<'a, PP: ?Sized, NP: ?Sized> {
     collection: &'a RuleCollection,
-    properties_provider: &'a P,
+    properties_provider: &'a PP,
+    normalizer_provider: &'a NP,
     xid_start: sets::CodePointSetData,
     xid_continue: sets::CodePointSetData,
     pat_ws: sets::CodePointSetData,
 }
 
-impl<P> DataProvider<TransliteratorRulesV1Marker> for RuleCollectionProvider<'_, P>
+impl<PP, NP> DataProvider<TransliteratorRulesV1Marker> for RuleCollectionProvider<'_, PP, NP>
 where
-    P: ?Sized
+    PP: ?Sized
         + DataProvider<AsciiHexDigitV1Marker>
         + DataProvider<AlphabeticV1Marker>
         + DataProvider<BidiControlV1Marker>
@@ -228,6 +304,7 @@ where
         + DataProvider<ScriptV1Marker>
         + DataProvider<ScriptWithExtensionsPropertyV1Marker>
         + DataProvider<XidStartV1Marker>,
+    NP: ?Sized,
 {
     fn load(
         &self,
@@ -313,6 +390,100 @@ where
             .insert(req.locale.clone(), response.clone());
 
         Ok(response)
+    }
+}
+
+macro_rules! redirect {
+    ($($marker:ty),*) => {
+        $(
+            impl<PP: ?Sized, NP: ?Sized + DataProvider<$marker>> DataProvider<$marker> for RuleCollectionProvider<'_, PP, NP> {
+                fn load(&self, req: DataRequest) -> Result<DataResponse<$marker>, DataError> {
+                    self.normalizer_provider.load(req)
+                }
+            }
+        )*
+    }
+}
+
+redirect!(
+    CanonicalDecompositionDataV1Marker,
+    CompatibilityDecompositionSupplementV1Marker,
+    CanonicalDecompositionTablesV1Marker,
+    CompatibilityDecompositionTablesV1Marker,
+    CanonicalCompositionsV1Marker
+);
+
+impl<PP, NP> icu_provider::datagen::IterableDataProvider<TransliteratorRulesV1Marker>
+    for RuleCollectionProvider<'_, PP, NP>
+where
+    PP: ?Sized
+        + DataProvider<AsciiHexDigitV1Marker>
+        + DataProvider<AlphabeticV1Marker>
+        + DataProvider<BidiControlV1Marker>
+        + DataProvider<BidiMirroredV1Marker>
+        + DataProvider<CaseIgnorableV1Marker>
+        + DataProvider<CasedV1Marker>
+        + DataProvider<ChangesWhenCasefoldedV1Marker>
+        + DataProvider<ChangesWhenCasemappedV1Marker>
+        + DataProvider<ChangesWhenLowercasedV1Marker>
+        + DataProvider<ChangesWhenNfkcCasefoldedV1Marker>
+        + DataProvider<ChangesWhenTitlecasedV1Marker>
+        + DataProvider<ChangesWhenUppercasedV1Marker>
+        + DataProvider<DashV1Marker>
+        + DataProvider<DefaultIgnorableCodePointV1Marker>
+        + DataProvider<DeprecatedV1Marker>
+        + DataProvider<DiacriticV1Marker>
+        + DataProvider<EmojiV1Marker>
+        + DataProvider<EmojiComponentV1Marker>
+        + DataProvider<EmojiModifierV1Marker>
+        + DataProvider<EmojiModifierBaseV1Marker>
+        + DataProvider<EmojiPresentationV1Marker>
+        + DataProvider<ExtendedPictographicV1Marker>
+        + DataProvider<ExtenderV1Marker>
+        + DataProvider<GraphemeBaseV1Marker>
+        + DataProvider<GraphemeExtendV1Marker>
+        + DataProvider<HexDigitV1Marker>
+        + DataProvider<IdsBinaryOperatorV1Marker>
+        + DataProvider<IdsTrinaryOperatorV1Marker>
+        + DataProvider<IdContinueV1Marker>
+        + DataProvider<IdStartV1Marker>
+        + DataProvider<IdeographicV1Marker>
+        + DataProvider<JoinControlV1Marker>
+        + DataProvider<LogicalOrderExceptionV1Marker>
+        + DataProvider<LowercaseV1Marker>
+        + DataProvider<MathV1Marker>
+        + DataProvider<NoncharacterCodePointV1Marker>
+        + DataProvider<PatternSyntaxV1Marker>
+        + DataProvider<PatternWhiteSpaceV1Marker>
+        + DataProvider<QuotationMarkV1Marker>
+        + DataProvider<RadicalV1Marker>
+        + DataProvider<RegionalIndicatorV1Marker>
+        + DataProvider<SentenceTerminalV1Marker>
+        + DataProvider<SoftDottedV1Marker>
+        + DataProvider<TerminalPunctuationV1Marker>
+        + DataProvider<UnifiedIdeographV1Marker>
+        + DataProvider<UppercaseV1Marker>
+        + DataProvider<VariationSelectorV1Marker>
+        + DataProvider<WhiteSpaceV1Marker>
+        + DataProvider<XidContinueV1Marker>
+        + DataProvider<GeneralCategoryMaskNameToValueV1Marker>
+        + DataProvider<GeneralCategoryV1Marker>
+        + DataProvider<ScriptNameToValueV1Marker>
+        + DataProvider<ScriptV1Marker>
+        + DataProvider<ScriptWithExtensionsPropertyV1Marker>
+        + DataProvider<XidStartV1Marker>,
+    NP: ?Sized,
+{
+    fn supported_locales(&self) -> Result<Vec<DataLocale>, DataError> {
+        #[allow(clippy::expect_used)]
+        Ok(self
+            .collection
+            .data
+            .read()
+            .expect("poison")
+            .keys()
+            .cloned()
+            .collect::<Vec<_>>())
     }
 }
 
@@ -475,9 +646,8 @@ mod tests {
             true,
         );
 
-        let forward = collection
-            .with_properties_provider(&icu_properties::provider::Baked)
-            .unwrap()
+        let forward: DataPayload<TransliteratorRulesV1Marker> = collection
+            .as_provider()
             .load(DataRequest {
                 locale: &crate::ids::bcp47_to_data_locale(&locale!("fwd")),
                 metadata: Default::default(),
@@ -486,9 +656,8 @@ mod tests {
             .take_payload()
             .unwrap();
 
-        let reverse = collection
-            .with_properties_provider(&icu_properties::provider::Baked)
-            .unwrap()
+        let reverse: DataPayload<TransliteratorRulesV1Marker> = collection
+            .as_provider()
             .load(DataRequest {
                 locale: &crate::ids::bcp47_to_data_locale(&locale!("rev")),
                 metadata: Default::default(),
