@@ -5,7 +5,7 @@
 use icu_properties::sets::load_for_general_category_group;
 use icu_properties::GeneralCategoryGroup;
 use icu_provider::DataProvider;
-use icu_singlenumberformatter::ule::MAX_INJECTING_TEXT_INDEX;
+use icu_singlenumberformatter::ule::MAX_PLACE_HOLDER_INDEX;
 use tinystr::UnvalidatedTinyAsciiStr;
 use zerovec::VarZeroVec;
 use zerovec::ZeroMap;
@@ -27,11 +27,11 @@ use tinystr::tinystr;
 fn currency_pattern_selection(
     provider: &DatagenProvider,
     pattern: &str,
-    injecting_text: &str,
+    place_holder: &str,
 ) -> Result<PatternSelection, DataError> {
-    // TODO(younies): what should we do when the injecting_text is empty?
-    if injecting_text.is_empty() {
-        todo!("Handle empty injecting texts")
+    // TODO(younies): what should we do when the place_holder is empty?
+    if place_holder.is_empty() {
+        todo!("Handle empty place holders")
     }
 
     let currency_sign = '¤';
@@ -50,9 +50,9 @@ fn currency_pattern_selection(
 
     let char_closer_to_number = {
         if currency_sign_index < first_num_index {
-            injecting_text.chars().next_back().unwrap()
+            place_holder.chars().next_back().unwrap()
         } else if currency_sign_index > last_num_index {
-            injecting_text.chars().next().unwrap()
+            place_holder.chars().next().unwrap()
         } else {
             return Err(DataError::custom(
                 "Currency sign must be in the middle of the pattern",
@@ -129,61 +129,54 @@ fn extract_currency_essentials<'data>(
     };
 
     let mut currency_patterns_map = BTreeMap::<UnvalidatedTinyAsciiStr<3>, CurrencyPatterns>::new();
-    let mut injecting_texts = Vec::<&str>::new();
-    // A map to check if the injecting text is already in the injecting_texts vector.
-    let mut injecting_texts_checker_map = HashMap::<&str, u16>::new();
+    let mut place_holders = Vec::<&str>::new();
+    // A map to check if the place holder is already in the place_holders vector.
+    let mut place_holders_checker_map = HashMap::<&str, u16>::new();
 
     for (iso, currency_pattern) in currencies {
-        let short_injecting_text_index =
-            currency_pattern.short.as_ref().map(|short_injecting_text| {
-                if let Some(&index) = injecting_texts_checker_map.get(short_injecting_text.as_str())
-                {
-                    InjectingText::Index(index)
-                } else if short_injecting_text == iso.try_into_tinystr().unwrap().as_str() {
-                    InjectingText::ISO
+        let short_place_holder_index = currency_pattern.short.as_ref().map(|short_place_holder| {
+            if let Some(&index) = place_holders_checker_map.get(short_place_holder.as_str()) {
+                PlaceHolder::Index(index)
+            } else if short_place_holder == iso.try_into_tinystr().unwrap().as_str() {
+                PlaceHolder::ISO
+            } else {
+                let index = place_holders.len() as u16;
+                //TODO(#3900): remove this assert and return an error instead.
+                assert!(index <= MAX_PLACE_HOLDER_INDEX);
+                place_holders.push(short_place_holder.as_str());
+                place_holders_checker_map.insert(short_place_holder.as_str(), index);
+                PlaceHolder::Index(index)
+            }
+        });
+
+        let narrow_place_holder_index =
+            currency_pattern.narrow.as_ref().map(|narrow_place_holder| {
+                if let Some(&index) = place_holders_checker_map.get(narrow_place_holder.as_str()) {
+                    PlaceHolder::Index(index)
+                } else if narrow_place_holder == iso.try_into_tinystr().unwrap().as_str() {
+                    PlaceHolder::ISO
                 } else {
-                    let index = injecting_texts.len() as u16;
+                    let index = place_holders.len() as u16;
                     //TODO(#3900): remove this assert and return an error instead.
-                    assert!(index <= MAX_INJECTING_TEXT_INDEX);
-                    injecting_texts.push(short_injecting_text.as_str());
-                    injecting_texts_checker_map.insert(short_injecting_text.as_str(), index);
-                    InjectingText::Index(index)
+                    assert!(index <= MAX_PLACE_HOLDER_INDEX);
+                    place_holders.push(narrow_place_holder.as_ref());
+                    place_holders_checker_map.insert(narrow_place_holder.as_str(), index);
+                    PlaceHolder::Index(index)
                 }
             });
-
-        let narrow_injecting_text_index =
-            currency_pattern
-                .narrow
-                .as_ref()
-                .map(|narrow_injecting_text| {
-                    if let Some(&index) =
-                        injecting_texts_checker_map.get(narrow_injecting_text.as_str())
-                    {
-                        InjectingText::Index(index)
-                    } else if narrow_injecting_text == iso.try_into_tinystr().unwrap().as_str() {
-                        InjectingText::ISO
-                    } else {
-                        let index = injecting_texts.len() as u16;
-                        //TODO(#3900): remove this assert and return an error instead.
-                        assert!(index <= MAX_INJECTING_TEXT_INDEX);
-                        injecting_texts.push(narrow_injecting_text.as_ref());
-                        injecting_texts_checker_map.insert(narrow_injecting_text.as_str(), index);
-                        InjectingText::Index(index)
-                    }
-                });
 
         let iso_string = iso.try_into_tinystr().unwrap().to_string();
 
         let short_pattern_standard: PatternSelection = if standard_alpha_next_to_number.is_empty() {
             PatternSelection::Standard
         } else {
-            match short_injecting_text_index {
-                Some(InjectingText::Index(index)) => currency_pattern_selection(
+            match short_place_holder_index {
+                Some(PlaceHolder::Index(index)) => currency_pattern_selection(
                     provider,
                     standard,
-                    injecting_texts.get(index as usize).unwrap(),
+                    place_holders.get(index as usize).unwrap(),
                 )?,
-                Some(InjectingText::ISO) => {
+                Some(PlaceHolder::ISO) => {
                     currency_pattern_selection(provider, standard, &iso_string)?
                 }
                 // TODO(younies): double check this case
@@ -195,13 +188,13 @@ fn extract_currency_essentials<'data>(
         {
             PatternSelection::Standard
         } else {
-            match narrow_injecting_text_index {
-                Some(InjectingText::Index(index)) => currency_pattern_selection(
+            match narrow_place_holder_index {
+                Some(PlaceHolder::Index(index)) => currency_pattern_selection(
                     provider,
                     standard,
-                    injecting_texts.get(index as usize).unwrap(),
+                    place_holders.get(index as usize).unwrap(),
                 )?,
-                Some(InjectingText::ISO) => {
+                Some(PlaceHolder::ISO) => {
                     currency_pattern_selection(provider, standard, &iso_string)?
                 }
 
@@ -214,8 +207,8 @@ fn extract_currency_essentials<'data>(
         // PatternSelection::StandardNextToNumber.
         if short_pattern_standard == PatternSelection::Standard
             && narrow_pattern_standard == PatternSelection::Standard
-            && short_injecting_text_index.is_none()
-            && narrow_injecting_text_index.is_none()
+            && short_place_holder_index.is_none()
+            && narrow_place_holder_index.is_none()
         {
             continue;
         }
@@ -225,8 +218,8 @@ fn extract_currency_essentials<'data>(
             CurrencyPatterns {
                 short_pattern_standard,
                 narrow_pattern_standard,
-                short_injecting_text_index,
-                narrow_injecting_text_index,
+                short_place_holder_index,
+                narrow_place_holder_index,
             },
         );
     }
@@ -235,22 +228,22 @@ fn extract_currency_essentials<'data>(
         currency_patterns_map: ZeroMap::from_iter(currency_patterns_map.iter()),
         standard: standard.to_owned().into(),
         standard_alpha_next_to_number: standard_alpha_next_to_number.to_owned().into(),
-        injecting_texts: VarZeroVec::from(&injecting_texts),
+        place_holders: VarZeroVec::from(&place_holders),
     })
 }
 
 #[test]
 fn test_basic() {
-    fn get_injecting_texts_of_currency(
+    fn get_place_holders_of_currency(
         iso_code: UnvalidatedTinyAsciiStr<3>,
         locale: &DataPayload<CurrencyEssentialsV1Marker>,
-        injecting_texts: &VarZeroVec<'_, str>,
+        place_holders: &VarZeroVec<'_, str>,
     ) -> (String, String) {
         let default = CurrencyPatterns {
             short_pattern_standard: PatternSelection::Standard,
             narrow_pattern_standard: PatternSelection::Standard,
-            short_injecting_text_index: None,
-            narrow_injecting_text_index: None,
+            short_place_holder_index: None,
+            narrow_place_holder_index: None,
         };
         let owned = locale.get().to_owned();
         let currency_pattern: CurrencyPatterns = owned
@@ -258,25 +251,25 @@ fn test_basic() {
             .get_copied(&iso_code)
             .unwrap_or(default);
 
-        let short_injecting_text = match currency_pattern.short_injecting_text_index {
-            Some(InjectingText::Index(index)) => injecting_texts
+        let short_place_holder = match currency_pattern.short_place_holder_index {
+            Some(PlaceHolder::Index(index)) => place_holders
                 .get(index as usize)
                 .unwrap_or(&iso_code.try_into_tinystr().unwrap())
                 .to_string(),
-            Some(InjectingText::ISO) => iso_code.try_into_tinystr().unwrap().to_string(),
+            Some(PlaceHolder::ISO) => iso_code.try_into_tinystr().unwrap().to_string(),
             None => "".to_string(),
         };
 
-        let narrow_injecting_text = match currency_pattern.narrow_injecting_text_index {
-            Some(InjectingText::Index(index)) => injecting_texts
+        let narrow_place_holder = match currency_pattern.narrow_place_holder_index {
+            Some(PlaceHolder::Index(index)) => place_holders
                 .get(index as usize)
                 .unwrap_or(&iso_code.try_into_tinystr().unwrap())
                 .to_string(),
-            Some(InjectingText::ISO) => iso_code.try_into_tinystr().unwrap().to_string(),
+            Some(PlaceHolder::ISO) => iso_code.try_into_tinystr().unwrap().to_string(),
             None => "".to_string(),
         };
 
-        (short_injecting_text, narrow_injecting_text)
+        (short_place_holder, narrow_place_holder)
     }
 
     use icu_locid::locale;
@@ -293,26 +286,20 @@ fn test_basic() {
         .take_payload()
         .unwrap();
 
-    let en_injecting_texts = &en.get().to_owned().injecting_texts;
+    let en_place_holders = &en.get().to_owned().place_holders;
     assert_eq!(en.clone().get().to_owned().standard, "¤#,##0.00");
     assert_eq!(
         en.clone().get().to_owned().standard_alpha_next_to_number,
         "¤\u{a0}#,##0.00"
     );
 
-    let (en_usd_short, en_usd_narrow) = get_injecting_texts_of_currency(
-        tinystr!(3, "USD").to_unvalidated(),
-        &en,
-        en_injecting_texts,
-    );
+    let (en_usd_short, en_usd_narrow) =
+        get_place_holders_of_currency(tinystr!(3, "USD").to_unvalidated(), &en, en_place_holders);
     assert_eq!(en_usd_short, "$");
     assert_eq!(en_usd_narrow, "$");
 
-    let (en_egp_short, en_egp_narrow) = get_injecting_texts_of_currency(
-        tinystr!(3, "EGP").to_unvalidated(),
-        &en,
-        en_injecting_texts,
-    );
+    let (en_egp_short, en_egp_narrow) =
+        get_place_holders_of_currency(tinystr!(3, "EGP").to_unvalidated(), &en, en_place_holders);
     assert_eq!(en_egp_short, "");
     assert_eq!(en_egp_narrow, "E£");
 
@@ -325,7 +312,7 @@ fn test_basic() {
         .take_payload()
         .unwrap();
 
-    let ar_eg_injecting_texts = &ar_eg.get().to_owned().injecting_texts;
+    let ar_eg_place_holders = &ar_eg.get().to_owned().place_holders;
 
     assert_eq!(
         ar_eg.clone().get().to_owned().standard,
@@ -335,18 +322,18 @@ fn test_basic() {
         ar_eg.clone().get().to_owned().standard_alpha_next_to_number,
         ""
     );
-    let (ar_eg_egp_short, ar_eg_egp_narrow) = get_injecting_texts_of_currency(
+    let (ar_eg_egp_short, ar_eg_egp_narrow) = get_place_holders_of_currency(
         tinystr!(3, "EGP").to_unvalidated(),
         &ar_eg,
-        ar_eg_injecting_texts,
+        ar_eg_place_holders,
     );
     assert_eq!(ar_eg_egp_short, "ج.م.\u{200f}");
     assert_eq!(ar_eg_egp_narrow, "E£");
 
-    let (ar_eg_usd_short, ar_eg_usd_narrow) = get_injecting_texts_of_currency(
+    let (ar_eg_usd_short, ar_eg_usd_narrow) = get_place_holders_of_currency(
         tinystr!(3, "USD").to_unvalidated(),
         &ar_eg,
-        ar_eg_injecting_texts,
+        ar_eg_place_holders,
     );
     assert_eq!(ar_eg_usd_short, "US$");
     assert_eq!(ar_eg_usd_narrow, "US$");

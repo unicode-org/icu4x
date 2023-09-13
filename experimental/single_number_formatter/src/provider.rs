@@ -32,7 +32,7 @@ use zerovec::{VarZeroVec, ZeroMap};
 #[yoke(prove_covariance_manually)]
 pub struct CurrencyEssentialsV1<'data> {
     /// Maps from currency iso code to currency patterns
-    /// which points to which pattern to use and the injecting text index.
+    /// which points to which pattern to use and the place holder index.
     #[cfg_attr(feature = "serde", serde(borrow))]
     pub currency_patterns_map: ZeroMap<'data, UnvalidatedTinyAsciiStr<3>, CurrencyPatterns>,
 
@@ -44,9 +44,9 @@ pub struct CurrencyEssentialsV1<'data> {
     #[cfg_attr(feature = "serde", serde(borrow))]
     pub standard_alpha_next_to_number: Cow<'data, str>,
 
-    /// Contains all the injecting texts.
+    /// Contains all the place holders.
     #[cfg_attr(feature = "serde", serde(borrow))]
-    pub injecting_texts: VarZeroVec<'data, str>,
+    pub place_holders: VarZeroVec<'data, str>,
 }
 
 #[zerovec::make_ule(PatternSelectionULE)]
@@ -75,12 +75,12 @@ pub enum PatternSelection {
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[derive(Copy, Debug, Clone, PartialEq, PartialOrd, Eq, Ord)]
 #[repr(u16)]
-pub enum InjectingText {
-    /// The index of the injecting text in the injecting texts list.
+pub enum PlaceHolder {
+    /// The index of the place holder in the place holders list.
     /// NOTE: the maximum value is MAX_PLACE_HOLDER_INDEX which is 2045 (0b0111_1111_1101).
     Index(u16),
 
-    /// The injecting text is the iso code.
+    /// The place holder is the iso code.
     ISO,
 }
 #[cfg_attr(
@@ -99,11 +99,11 @@ pub struct CurrencyPatterns {
     /// Otherwise, use the standard_alpha_next_to_number pattern.
     pub narrow_pattern_standard: PatternSelection,
 
-    /// The index of the short pattern injecting text in the injecting texts list.
-    /// If the value is `None`, this means that the short pattern does not have a injecting text.
-    pub short_injecting_text_index: Option<InjectingText>,
+    /// The index of the short pattern place holder in the place holders list.
+    /// If the value is `None`, this means that the short pattern does not have a place holder.
+    pub short_place_holder_index: Option<PlaceHolder>,
 
-    /// The index of the narrow pattern injecting text in the injecting texts list.
-    /// If the value is `None`, this means that the narrow pattern does not have a injecting text.
-    pub narrow_injecting_text_index: Option<InjectingText>,
+    /// The index of the narrow pattern place holder in the place holders list.
+    /// If the value is `None`, this means that the narrow pattern does not have a place holder.
+    pub narrow_place_holder_index: Option<PlaceHolder>,
 }

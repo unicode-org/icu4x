@@ -3,1203 +3,1203 @@
     "AED": {
       "short_pattern_standard": "Standard",
       "narrow_pattern_standard": "Standard",
-      "short_injecting_text_index": "ISO",
-      "narrow_injecting_text_index": null
+      "short_place_holder_index": "ISO",
+      "narrow_place_holder_index": null
     },
     "AFN": {
       "short_pattern_standard": "Standard",
       "narrow_pattern_standard": "Standard",
-      "short_injecting_text_index": "ISO",
-      "narrow_injecting_text_index": {
+      "short_place_holder_index": "ISO",
+      "narrow_place_holder_index": {
         "Index": 0
       }
     },
     "ALL": {
       "short_pattern_standard": "Standard",
       "narrow_pattern_standard": "Standard",
-      "short_injecting_text_index": "ISO",
-      "narrow_injecting_text_index": null
+      "short_place_holder_index": "ISO",
+      "narrow_place_holder_index": null
     },
     "AMD": {
       "short_pattern_standard": "Standard",
       "narrow_pattern_standard": "Standard",
-      "short_injecting_text_index": "ISO",
-      "narrow_injecting_text_index": {
+      "short_place_holder_index": "ISO",
+      "narrow_place_holder_index": {
         "Index": 1
       }
     },
     "ANG": {
       "short_pattern_standard": "Standard",
       "narrow_pattern_standard": "Standard",
-      "short_injecting_text_index": "ISO",
-      "narrow_injecting_text_index": null
+      "short_place_holder_index": "ISO",
+      "narrow_place_holder_index": null
     },
     "AOA": {
       "short_pattern_standard": "Standard",
       "narrow_pattern_standard": "Standard",
-      "short_injecting_text_index": "ISO",
-      "narrow_injecting_text_index": {
+      "short_place_holder_index": "ISO",
+      "narrow_place_holder_index": {
         "Index": 2
       }
     },
     "ARS": {
       "short_pattern_standard": "Standard",
       "narrow_pattern_standard": "Standard",
-      "short_injecting_text_index": {
+      "short_place_holder_index": {
         "Index": 3
       },
-      "narrow_injecting_text_index": {
+      "narrow_place_holder_index": {
         "Index": 3
       }
     },
     "AUD": {
       "short_pattern_standard": "Standard",
       "narrow_pattern_standard": "Standard",
-      "short_injecting_text_index": "ISO",
-      "narrow_injecting_text_index": {
+      "short_place_holder_index": "ISO",
+      "narrow_place_holder_index": {
         "Index": 3
       }
     },
     "AWG": {
       "short_pattern_standard": "Standard",
       "narrow_pattern_standard": "Standard",
-      "short_injecting_text_index": "ISO",
-      "narrow_injecting_text_index": null
+      "short_place_holder_index": "ISO",
+      "narrow_place_holder_index": null
     },
     "AZN": {
       "short_pattern_standard": "Standard",
       "narrow_pattern_standard": "Standard",
-      "short_injecting_text_index": "ISO",
-      "narrow_injecting_text_index": {
+      "short_place_holder_index": "ISO",
+      "narrow_place_holder_index": {
         "Index": 4
       }
     },
     "BAM": {
       "short_pattern_standard": "Standard",
       "narrow_pattern_standard": "Standard",
-      "short_injecting_text_index": "ISO",
-      "narrow_injecting_text_index": {
+      "short_place_holder_index": "ISO",
+      "narrow_place_holder_index": {
         "Index": 5
       }
     },
     "BBD": {
       "short_pattern_standard": "Standard",
       "narrow_pattern_standard": "Standard",
-      "short_injecting_text_index": "ISO",
-      "narrow_injecting_text_index": {
+      "short_place_holder_index": "ISO",
+      "narrow_place_holder_index": {
         "Index": 3
       }
     },
     "BDT": {
       "short_pattern_standard": "Standard",
       "narrow_pattern_standard": "Standard",
-      "short_injecting_text_index": "ISO",
-      "narrow_injecting_text_index": {
+      "short_place_holder_index": "ISO",
+      "narrow_place_holder_index": {
         "Index": 6
       }
     },
     "BGN": {
       "short_pattern_standard": "Standard",
       "narrow_pattern_standard": "Standard",
-      "short_injecting_text_index": "ISO",
-      "narrow_injecting_text_index": null
+      "short_place_holder_index": "ISO",
+      "narrow_place_holder_index": null
     },
     "BHD": {
       "short_pattern_standard": "Standard",
       "narrow_pattern_standard": "Standard",
-      "short_injecting_text_index": "ISO",
-      "narrow_injecting_text_index": null
+      "short_place_holder_index": "ISO",
+      "narrow_place_holder_index": null
     },
     "BIF": {
       "short_pattern_standard": "Standard",
       "narrow_pattern_standard": "Standard",
-      "short_injecting_text_index": "ISO",
-      "narrow_injecting_text_index": null
+      "short_place_holder_index": "ISO",
+      "narrow_place_holder_index": null
     },
     "BMD": {
       "short_pattern_standard": "Standard",
       "narrow_pattern_standard": "Standard",
-      "short_injecting_text_index": "ISO",
-      "narrow_injecting_text_index": {
+      "short_place_holder_index": "ISO",
+      "narrow_place_holder_index": {
         "Index": 3
       }
     },
     "BND": {
       "short_pattern_standard": "Standard",
       "narrow_pattern_standard": "Standard",
-      "short_injecting_text_index": "ISO",
-      "narrow_injecting_text_index": {
+      "short_place_holder_index": "ISO",
+      "narrow_place_holder_index": {
         "Index": 3
       }
     },
     "BOB": {
       "short_pattern_standard": "Standard",
       "narrow_pattern_standard": "Standard",
-      "short_injecting_text_index": "ISO",
-      "narrow_injecting_text_index": {
+      "short_place_holder_index": "ISO",
+      "narrow_place_holder_index": {
         "Index": 7
       }
     },
     "BRL": {
       "short_pattern_standard": "Standard",
       "narrow_pattern_standard": "Standard",
-      "short_injecting_text_index": "ISO",
-      "narrow_injecting_text_index": {
+      "short_place_holder_index": "ISO",
+      "narrow_place_holder_index": {
         "Index": 8
       }
     },
     "BSD": {
       "short_pattern_standard": "Standard",
       "narrow_pattern_standard": "Standard",
-      "short_injecting_text_index": "ISO",
-      "narrow_injecting_text_index": {
+      "short_place_holder_index": "ISO",
+      "narrow_place_holder_index": {
         "Index": 3
       }
     },
     "BTN": {
       "short_pattern_standard": "Standard",
       "narrow_pattern_standard": "Standard",
-      "short_injecting_text_index": "ISO",
-      "narrow_injecting_text_index": null
+      "short_place_holder_index": "ISO",
+      "narrow_place_holder_index": null
     },
     "BWP": {
       "short_pattern_standard": "Standard",
       "narrow_pattern_standard": "Standard",
-      "short_injecting_text_index": "ISO",
-      "narrow_injecting_text_index": {
+      "short_place_holder_index": "ISO",
+      "narrow_place_holder_index": {
         "Index": 9
       }
     },
     "BYN": {
       "short_pattern_standard": "Standard",
       "narrow_pattern_standard": "Standard",
-      "short_injecting_text_index": "ISO",
-      "narrow_injecting_text_index": {
+      "short_place_holder_index": "ISO",
+      "narrow_place_holder_index": {
         "Index": 10
       }
     },
     "BYR": {
       "short_pattern_standard": "Standard",
       "narrow_pattern_standard": "Standard",
-      "short_injecting_text_index": "ISO",
-      "narrow_injecting_text_index": null
+      "short_place_holder_index": "ISO",
+      "narrow_place_holder_index": null
     },
     "BZD": {
       "short_pattern_standard": "Standard",
       "narrow_pattern_standard": "Standard",
-      "short_injecting_text_index": "ISO",
-      "narrow_injecting_text_index": {
+      "short_place_holder_index": "ISO",
+      "narrow_place_holder_index": {
         "Index": 3
       }
     },
     "CAD": {
       "short_pattern_standard": "Standard",
       "narrow_pattern_standard": "Standard",
-      "short_injecting_text_index": "ISO",
-      "narrow_injecting_text_index": {
+      "short_place_holder_index": "ISO",
+      "narrow_place_holder_index": {
         "Index": 3
       }
     },
     "CDF": {
       "short_pattern_standard": "Standard",
       "narrow_pattern_standard": "Standard",
-      "short_injecting_text_index": "ISO",
-      "narrow_injecting_text_index": null
+      "short_place_holder_index": "ISO",
+      "narrow_place_holder_index": null
     },
     "CHF": {
       "short_pattern_standard": "Standard",
       "narrow_pattern_standard": "Standard",
-      "short_injecting_text_index": "ISO",
-      "narrow_injecting_text_index": null
+      "short_place_holder_index": "ISO",
+      "narrow_place_holder_index": null
     },
     "CLP": {
       "short_pattern_standard": "Standard",
       "narrow_pattern_standard": "Standard",
-      "short_injecting_text_index": "ISO",
-      "narrow_injecting_text_index": {
+      "short_place_holder_index": "ISO",
+      "narrow_place_holder_index": {
         "Index": 3
       }
     },
     "CNH": {
       "short_pattern_standard": "Standard",
       "narrow_pattern_standard": "Standard",
-      "short_injecting_text_index": "ISO",
-      "narrow_injecting_text_index": null
+      "short_place_holder_index": "ISO",
+      "narrow_place_holder_index": null
     },
     "CNY": {
       "short_pattern_standard": "Standard",
       "narrow_pattern_standard": "Standard",
-      "short_injecting_text_index": "ISO",
-      "narrow_injecting_text_index": {
+      "short_place_holder_index": "ISO",
+      "narrow_place_holder_index": {
         "Index": 11
       }
     },
     "COP": {
       "short_pattern_standard": "Standard",
       "narrow_pattern_standard": "Standard",
-      "short_injecting_text_index": "ISO",
-      "narrow_injecting_text_index": {
+      "short_place_holder_index": "ISO",
+      "narrow_place_holder_index": {
         "Index": 3
       }
     },
     "CRC": {
       "short_pattern_standard": "Standard",
       "narrow_pattern_standard": "Standard",
-      "short_injecting_text_index": "ISO",
-      "narrow_injecting_text_index": {
+      "short_place_holder_index": "ISO",
+      "narrow_place_holder_index": {
         "Index": 12
       }
     },
     "CUC": {
       "short_pattern_standard": "Standard",
       "narrow_pattern_standard": "Standard",
-      "short_injecting_text_index": "ISO",
-      "narrow_injecting_text_index": {
+      "short_place_holder_index": "ISO",
+      "narrow_place_holder_index": {
         "Index": 3
       }
     },
     "CUP": {
       "short_pattern_standard": "Standard",
       "narrow_pattern_standard": "Standard",
-      "short_injecting_text_index": "ISO",
-      "narrow_injecting_text_index": {
+      "short_place_holder_index": "ISO",
+      "narrow_place_holder_index": {
         "Index": 3
       }
     },
     "CVE": {
       "short_pattern_standard": "Standard",
       "narrow_pattern_standard": "Standard",
-      "short_injecting_text_index": "ISO",
-      "narrow_injecting_text_index": null
+      "short_place_holder_index": "ISO",
+      "narrow_place_holder_index": null
     },
     "CZK": {
       "short_pattern_standard": "Standard",
       "narrow_pattern_standard": "Standard",
-      "short_injecting_text_index": "ISO",
-      "narrow_injecting_text_index": {
+      "short_place_holder_index": "ISO",
+      "narrow_place_holder_index": {
         "Index": 13
       }
     },
     "DJF": {
       "short_pattern_standard": "Standard",
       "narrow_pattern_standard": "Standard",
-      "short_injecting_text_index": "ISO",
-      "narrow_injecting_text_index": null
+      "short_place_holder_index": "ISO",
+      "narrow_place_holder_index": null
     },
     "DKK": {
       "short_pattern_standard": "Standard",
       "narrow_pattern_standard": "Standard",
-      "short_injecting_text_index": "ISO",
-      "narrow_injecting_text_index": {
+      "short_place_holder_index": "ISO",
+      "narrow_place_holder_index": {
         "Index": 14
       }
     },
     "DOP": {
       "short_pattern_standard": "Standard",
       "narrow_pattern_standard": "Standard",
-      "short_injecting_text_index": "ISO",
-      "narrow_injecting_text_index": {
+      "short_place_holder_index": "ISO",
+      "narrow_place_holder_index": {
         "Index": 3
       }
     },
     "DZD": {
       "short_pattern_standard": "Standard",
       "narrow_pattern_standard": "Standard",
-      "short_injecting_text_index": "ISO",
-      "narrow_injecting_text_index": null
+      "short_place_holder_index": "ISO",
+      "narrow_place_holder_index": null
     },
     "EGP": {
       "short_pattern_standard": "Standard",
       "narrow_pattern_standard": "Standard",
-      "short_injecting_text_index": "ISO",
-      "narrow_injecting_text_index": {
+      "short_place_holder_index": "ISO",
+      "narrow_place_holder_index": {
         "Index": 15
       }
     },
     "ERN": {
       "short_pattern_standard": "Standard",
       "narrow_pattern_standard": "Standard",
-      "short_injecting_text_index": "ISO",
-      "narrow_injecting_text_index": null
+      "short_place_holder_index": "ISO",
+      "narrow_place_holder_index": null
     },
     "ESP": {
       "short_pattern_standard": "Standard",
       "narrow_pattern_standard": "Standard",
-      "short_injecting_text_index": {
+      "short_place_holder_index": {
         "Index": 16
       },
-      "narrow_injecting_text_index": {
+      "narrow_place_holder_index": {
         "Index": 16
       }
     },
     "ETB": {
       "short_pattern_standard": "Standard",
       "narrow_pattern_standard": "Standard",
-      "short_injecting_text_index": "ISO",
-      "narrow_injecting_text_index": null
+      "short_place_holder_index": "ISO",
+      "narrow_place_holder_index": null
     },
     "EUR": {
       "short_pattern_standard": "Standard",
       "narrow_pattern_standard": "Standard",
-      "short_injecting_text_index": "ISO",
-      "narrow_injecting_text_index": {
+      "short_place_holder_index": "ISO",
+      "narrow_place_holder_index": {
         "Index": 17
       }
     },
     "FJD": {
       "short_pattern_standard": "Standard",
       "narrow_pattern_standard": "Standard",
-      "short_injecting_text_index": "ISO",
-      "narrow_injecting_text_index": {
+      "short_place_holder_index": "ISO",
+      "narrow_place_holder_index": {
         "Index": 3
       }
     },
     "FKP": {
       "short_pattern_standard": "Standard",
       "narrow_pattern_standard": "Standard",
-      "short_injecting_text_index": "ISO",
-      "narrow_injecting_text_index": {
+      "short_place_holder_index": "ISO",
+      "narrow_place_holder_index": {
         "Index": 18
       }
     },
     "GBP": {
       "short_pattern_standard": "Standard",
       "narrow_pattern_standard": "Standard",
-      "short_injecting_text_index": "ISO",
-      "narrow_injecting_text_index": {
+      "short_place_holder_index": "ISO",
+      "narrow_place_holder_index": {
         "Index": 19
       }
     },
     "GEL": {
       "short_pattern_standard": "Standard",
       "narrow_pattern_standard": "Standard",
-      "short_injecting_text_index": "ISO",
-      "narrow_injecting_text_index": {
+      "short_place_holder_index": "ISO",
+      "narrow_place_holder_index": {
         "Index": 20
       }
     },
     "GHS": {
       "short_pattern_standard": "Standard",
       "narrow_pattern_standard": "Standard",
-      "short_injecting_text_index": "ISO",
-      "narrow_injecting_text_index": {
+      "short_place_holder_index": "ISO",
+      "narrow_place_holder_index": {
         "Index": 21
       }
     },
     "GIP": {
       "short_pattern_standard": "Standard",
       "narrow_pattern_standard": "Standard",
-      "short_injecting_text_index": "ISO",
-      "narrow_injecting_text_index": {
+      "short_place_holder_index": "ISO",
+      "narrow_place_holder_index": {
         "Index": 19
       }
     },
     "GMD": {
       "short_pattern_standard": "Standard",
       "narrow_pattern_standard": "Standard",
-      "short_injecting_text_index": "ISO",
-      "narrow_injecting_text_index": null
+      "short_place_holder_index": "ISO",
+      "narrow_place_holder_index": null
     },
     "GNF": {
       "short_pattern_standard": "Standard",
       "narrow_pattern_standard": "Standard",
-      "short_injecting_text_index": "ISO",
-      "narrow_injecting_text_index": {
+      "short_place_holder_index": "ISO",
+      "narrow_place_holder_index": {
         "Index": 22
       }
     },
     "GTQ": {
       "short_pattern_standard": "Standard",
       "narrow_pattern_standard": "Standard",
-      "short_injecting_text_index": "ISO",
-      "narrow_injecting_text_index": {
+      "short_place_holder_index": "ISO",
+      "narrow_place_holder_index": {
         "Index": 23
       }
     },
     "GYD": {
       "short_pattern_standard": "Standard",
       "narrow_pattern_standard": "Standard",
-      "short_injecting_text_index": "ISO",
-      "narrow_injecting_text_index": {
+      "short_place_holder_index": "ISO",
+      "narrow_place_holder_index": {
         "Index": 3
       }
     },
     "HKD": {
       "short_pattern_standard": "Standard",
       "narrow_pattern_standard": "Standard",
-      "short_injecting_text_index": "ISO",
-      "narrow_injecting_text_index": {
+      "short_place_holder_index": "ISO",
+      "narrow_place_holder_index": {
         "Index": 3
       }
     },
     "HNL": {
       "short_pattern_standard": "Standard",
       "narrow_pattern_standard": "Standard",
-      "short_injecting_text_index": "ISO",
-      "narrow_injecting_text_index": {
+      "short_place_holder_index": "ISO",
+      "narrow_place_holder_index": {
         "Index": 24
       }
     },
     "HRK": {
       "short_pattern_standard": "Standard",
       "narrow_pattern_standard": "Standard",
-      "short_injecting_text_index": "ISO",
-      "narrow_injecting_text_index": {
+      "short_place_holder_index": "ISO",
+      "narrow_place_holder_index": {
         "Index": 25
       }
     },
     "HTG": {
       "short_pattern_standard": "Standard",
       "narrow_pattern_standard": "Standard",
-      "short_injecting_text_index": "ISO",
-      "narrow_injecting_text_index": null
+      "short_place_holder_index": "ISO",
+      "narrow_place_holder_index": null
     },
     "HUF": {
       "short_pattern_standard": "Standard",
       "narrow_pattern_standard": "Standard",
-      "short_injecting_text_index": "ISO",
-      "narrow_injecting_text_index": {
+      "short_place_holder_index": "ISO",
+      "narrow_place_holder_index": {
         "Index": 26
       }
     },
     "IDR": {
       "short_pattern_standard": "Standard",
       "narrow_pattern_standard": "Standard",
-      "short_injecting_text_index": "ISO",
-      "narrow_injecting_text_index": {
+      "short_place_holder_index": "ISO",
+      "narrow_place_holder_index": {
         "Index": 27
       }
     },
     "ILS": {
       "short_pattern_standard": "Standard",
       "narrow_pattern_standard": "Standard",
-      "short_injecting_text_index": "ISO",
-      "narrow_injecting_text_index": {
+      "short_place_holder_index": "ISO",
+      "narrow_place_holder_index": {
         "Index": 28
       }
     },
     "INR": {
       "short_pattern_standard": "Standard",
       "narrow_pattern_standard": "Standard",
-      "short_injecting_text_index": "ISO",
-      "narrow_injecting_text_index": {
+      "short_place_holder_index": "ISO",
+      "narrow_place_holder_index": {
         "Index": 29
       }
     },
     "IQD": {
       "short_pattern_standard": "Standard",
       "narrow_pattern_standard": "Standard",
-      "short_injecting_text_index": "ISO",
-      "narrow_injecting_text_index": null
+      "short_place_holder_index": "ISO",
+      "narrow_place_holder_index": null
     },
     "IRR": {
       "short_pattern_standard": "Standard",
       "narrow_pattern_standard": "Standard",
-      "short_injecting_text_index": "ISO",
-      "narrow_injecting_text_index": null
+      "short_place_holder_index": "ISO",
+      "narrow_place_holder_index": null
     },
     "ISK": {
       "short_pattern_standard": "Standard",
       "narrow_pattern_standard": "Standard",
-      "short_injecting_text_index": "ISO",
-      "narrow_injecting_text_index": {
+      "short_place_holder_index": "ISO",
+      "narrow_place_holder_index": {
         "Index": 14
       }
     },
     "JMD": {
       "short_pattern_standard": "Standard",
       "narrow_pattern_standard": "Standard",
-      "short_injecting_text_index": "ISO",
-      "narrow_injecting_text_index": {
+      "short_place_holder_index": "ISO",
+      "narrow_place_holder_index": {
         "Index": 3
       }
     },
     "JOD": {
       "short_pattern_standard": "Standard",
       "narrow_pattern_standard": "Standard",
-      "short_injecting_text_index": "ISO",
-      "narrow_injecting_text_index": null
+      "short_place_holder_index": "ISO",
+      "narrow_place_holder_index": null
     },
     "JPY": {
       "short_pattern_standard": "Standard",
       "narrow_pattern_standard": "Standard",
-      "short_injecting_text_index": "ISO",
-      "narrow_injecting_text_index": {
+      "short_place_holder_index": "ISO",
+      "narrow_place_holder_index": {
         "Index": 11
       }
     },
     "KES": {
       "short_pattern_standard": "Standard",
       "narrow_pattern_standard": "Standard",
-      "short_injecting_text_index": "ISO",
-      "narrow_injecting_text_index": null
+      "short_place_holder_index": "ISO",
+      "narrow_place_holder_index": null
     },
     "KGS": {
       "short_pattern_standard": "Standard",
       "narrow_pattern_standard": "Standard",
-      "short_injecting_text_index": "ISO",
-      "narrow_injecting_text_index": null
+      "short_place_holder_index": "ISO",
+      "narrow_place_holder_index": null
     },
     "KHR": {
       "short_pattern_standard": "Standard",
       "narrow_pattern_standard": "Standard",
-      "short_injecting_text_index": "ISO",
-      "narrow_injecting_text_index": {
+      "short_place_holder_index": "ISO",
+      "narrow_place_holder_index": {
         "Index": 30
       }
     },
     "KMF": {
       "short_pattern_standard": "Standard",
       "narrow_pattern_standard": "Standard",
-      "short_injecting_text_index": "ISO",
-      "narrow_injecting_text_index": {
+      "short_place_holder_index": "ISO",
+      "narrow_place_holder_index": {
         "Index": 31
       }
     },
     "KPW": {
       "short_pattern_standard": "Standard",
       "narrow_pattern_standard": "Standard",
-      "short_injecting_text_index": "ISO",
-      "narrow_injecting_text_index": {
+      "short_place_holder_index": "ISO",
+      "narrow_place_holder_index": {
         "Index": 32
       }
     },
     "KRW": {
       "short_pattern_standard": "Standard",
       "narrow_pattern_standard": "Standard",
-      "short_injecting_text_index": "ISO",
-      "narrow_injecting_text_index": {
+      "short_place_holder_index": "ISO",
+      "narrow_place_holder_index": {
         "Index": 32
       }
     },
     "KWD": {
       "short_pattern_standard": "Standard",
       "narrow_pattern_standard": "Standard",
-      "short_injecting_text_index": "ISO",
-      "narrow_injecting_text_index": null
+      "short_place_holder_index": "ISO",
+      "narrow_place_holder_index": null
     },
     "KYD": {
       "short_pattern_standard": "Standard",
       "narrow_pattern_standard": "Standard",
-      "short_injecting_text_index": "ISO",
-      "narrow_injecting_text_index": {
+      "short_place_holder_index": "ISO",
+      "narrow_place_holder_index": {
         "Index": 3
       }
     },
     "KZT": {
       "short_pattern_standard": "Standard",
       "narrow_pattern_standard": "Standard",
-      "short_injecting_text_index": "ISO",
-      "narrow_injecting_text_index": {
+      "short_place_holder_index": "ISO",
+      "narrow_place_holder_index": {
         "Index": 33
       }
     },
     "LAK": {
       "short_pattern_standard": "Standard",
       "narrow_pattern_standard": "Standard",
-      "short_injecting_text_index": "ISO",
-      "narrow_injecting_text_index": {
+      "short_place_holder_index": "ISO",
+      "narrow_place_holder_index": {
         "Index": 34
       }
     },
     "LBP": {
       "short_pattern_standard": "Standard",
       "narrow_pattern_standard": "Standard",
-      "short_injecting_text_index": "ISO",
-      "narrow_injecting_text_index": {
+      "short_place_holder_index": "ISO",
+      "narrow_place_holder_index": {
         "Index": 35
       }
     },
     "LKR": {
       "short_pattern_standard": "Standard",
       "narrow_pattern_standard": "Standard",
-      "short_injecting_text_index": "ISO",
-      "narrow_injecting_text_index": {
+      "short_place_holder_index": "ISO",
+      "narrow_place_holder_index": {
         "Index": 36
       }
     },
     "LRD": {
       "short_pattern_standard": "Standard",
       "narrow_pattern_standard": "Standard",
-      "short_injecting_text_index": "ISO",
-      "narrow_injecting_text_index": {
+      "short_place_holder_index": "ISO",
+      "narrow_place_holder_index": {
         "Index": 3
       }
     },
     "LTL": {
       "short_pattern_standard": "Standard",
       "narrow_pattern_standard": "Standard",
-      "short_injecting_text_index": "ISO",
-      "narrow_injecting_text_index": {
+      "short_place_holder_index": "ISO",
+      "narrow_place_holder_index": {
         "Index": 37
       }
     },
     "LVL": {
       "short_pattern_standard": "Standard",
       "narrow_pattern_standard": "Standard",
-      "short_injecting_text_index": "ISO",
-      "narrow_injecting_text_index": {
+      "short_place_holder_index": "ISO",
+      "narrow_place_holder_index": {
         "Index": 38
       }
     },
     "LYD": {
       "short_pattern_standard": "Standard",
       "narrow_pattern_standard": "Standard",
-      "short_injecting_text_index": "ISO",
-      "narrow_injecting_text_index": null
+      "short_place_holder_index": "ISO",
+      "narrow_place_holder_index": null
     },
     "MAD": {
       "short_pattern_standard": "Standard",
       "narrow_pattern_standard": "Standard",
-      "short_injecting_text_index": "ISO",
-      "narrow_injecting_text_index": null
+      "short_place_holder_index": "ISO",
+      "narrow_place_holder_index": null
     },
     "MDL": {
       "short_pattern_standard": "Standard",
       "narrow_pattern_standard": "Standard",
-      "short_injecting_text_index": "ISO",
-      "narrow_injecting_text_index": null
+      "short_place_holder_index": "ISO",
+      "narrow_place_holder_index": null
     },
     "MGA": {
       "short_pattern_standard": "Standard",
       "narrow_pattern_standard": "Standard",
-      "short_injecting_text_index": "ISO",
-      "narrow_injecting_text_index": {
+      "short_place_holder_index": "ISO",
+      "narrow_place_holder_index": {
         "Index": 39
       }
     },
     "MKD": {
       "short_pattern_standard": "Standard",
       "narrow_pattern_standard": "Standard",
-      "short_injecting_text_index": "ISO",
-      "narrow_injecting_text_index": null
+      "short_place_holder_index": "ISO",
+      "narrow_place_holder_index": null
     },
     "MMK": {
       "short_pattern_standard": "Standard",
       "narrow_pattern_standard": "Standard",
-      "short_injecting_text_index": "ISO",
-      "narrow_injecting_text_index": {
+      "short_place_holder_index": "ISO",
+      "narrow_place_holder_index": {
         "Index": 40
       }
     },
     "MNT": {
       "short_pattern_standard": "Standard",
       "narrow_pattern_standard": "Standard",
-      "short_injecting_text_index": "ISO",
-      "narrow_injecting_text_index": {
+      "short_place_holder_index": "ISO",
+      "narrow_place_holder_index": {
         "Index": 41
       }
     },
     "MOP": {
       "short_pattern_standard": "Standard",
       "narrow_pattern_standard": "Standard",
-      "short_injecting_text_index": "ISO",
-      "narrow_injecting_text_index": null
+      "short_place_holder_index": "ISO",
+      "narrow_place_holder_index": null
     },
     "MRO": {
       "short_pattern_standard": "Standard",
       "narrow_pattern_standard": "Standard",
-      "short_injecting_text_index": "ISO",
-      "narrow_injecting_text_index": null
+      "short_place_holder_index": "ISO",
+      "narrow_place_holder_index": null
     },
     "MRU": {
       "short_pattern_standard": "Standard",
       "narrow_pattern_standard": "Standard",
-      "short_injecting_text_index": "ISO",
-      "narrow_injecting_text_index": null
+      "short_place_holder_index": "ISO",
+      "narrow_place_holder_index": null
     },
     "MUR": {
       "short_pattern_standard": "Standard",
       "narrow_pattern_standard": "Standard",
-      "short_injecting_text_index": "ISO",
-      "narrow_injecting_text_index": {
+      "short_place_holder_index": "ISO",
+      "narrow_place_holder_index": {
         "Index": 36
       }
     },
     "MVR": {
       "short_pattern_standard": "Standard",
       "narrow_pattern_standard": "Standard",
-      "short_injecting_text_index": "ISO",
-      "narrow_injecting_text_index": null
+      "short_place_holder_index": "ISO",
+      "narrow_place_holder_index": null
     },
     "MWK": {
       "short_pattern_standard": "Standard",
       "narrow_pattern_standard": "Standard",
-      "short_injecting_text_index": "ISO",
-      "narrow_injecting_text_index": null
+      "short_place_holder_index": "ISO",
+      "narrow_place_holder_index": null
     },
     "MXN": {
       "short_pattern_standard": "Standard",
       "narrow_pattern_standard": "Standard",
-      "short_injecting_text_index": "ISO",
-      "narrow_injecting_text_index": {
+      "short_place_holder_index": "ISO",
+      "narrow_place_holder_index": {
         "Index": 3
       }
     },
     "MYR": {
       "short_pattern_standard": "Standard",
       "narrow_pattern_standard": "Standard",
-      "short_injecting_text_index": "ISO",
-      "narrow_injecting_text_index": {
+      "short_place_holder_index": "ISO",
+      "narrow_place_holder_index": {
         "Index": 42
       }
     },
     "MZN": {
       "short_pattern_standard": "Standard",
       "narrow_pattern_standard": "Standard",
-      "short_injecting_text_index": "ISO",
-      "narrow_injecting_text_index": null
+      "short_place_holder_index": "ISO",
+      "narrow_place_holder_index": null
     },
     "NAD": {
       "short_pattern_standard": "Standard",
       "narrow_pattern_standard": "Standard",
-      "short_injecting_text_index": "ISO",
-      "narrow_injecting_text_index": {
+      "short_place_holder_index": "ISO",
+      "narrow_place_holder_index": {
         "Index": 3
       }
     },
     "NGN": {
       "short_pattern_standard": "Standard",
       "narrow_pattern_standard": "Standard",
-      "short_injecting_text_index": "ISO",
-      "narrow_injecting_text_index": {
+      "short_place_holder_index": "ISO",
+      "narrow_place_holder_index": {
         "Index": 43
       }
     },
     "NIO": {
       "short_pattern_standard": "Standard",
       "narrow_pattern_standard": "Standard",
-      "short_injecting_text_index": "ISO",
-      "narrow_injecting_text_index": {
+      "short_place_holder_index": "ISO",
+      "narrow_place_holder_index": {
         "Index": 44
       }
     },
     "NOK": {
       "short_pattern_standard": "Standard",
       "narrow_pattern_standard": "Standard",
-      "short_injecting_text_index": "ISO",
-      "narrow_injecting_text_index": {
+      "short_place_holder_index": "ISO",
+      "narrow_place_holder_index": {
         "Index": 14
       }
     },
     "NPR": {
       "short_pattern_standard": "Standard",
       "narrow_pattern_standard": "Standard",
-      "short_injecting_text_index": "ISO",
-      "narrow_injecting_text_index": {
+      "short_place_holder_index": "ISO",
+      "narrow_place_holder_index": {
         "Index": 36
       }
     },
     "NZD": {
       "short_pattern_standard": "Standard",
       "narrow_pattern_standard": "Standard",
-      "short_injecting_text_index": "ISO",
-      "narrow_injecting_text_index": {
+      "short_place_holder_index": "ISO",
+      "narrow_place_holder_index": {
         "Index": 3
       }
     },
     "OMR": {
       "short_pattern_standard": "Standard",
       "narrow_pattern_standard": "Standard",
-      "short_injecting_text_index": "ISO",
-      "narrow_injecting_text_index": null
+      "short_place_holder_index": "ISO",
+      "narrow_place_holder_index": null
     },
     "PAB": {
       "short_pattern_standard": "Standard",
       "narrow_pattern_standard": "Standard",
-      "short_injecting_text_index": "ISO",
-      "narrow_injecting_text_index": null
+      "short_place_holder_index": "ISO",
+      "narrow_place_holder_index": null
     },
     "PEN": {
       "short_pattern_standard": "Standard",
       "narrow_pattern_standard": "Standard",
-      "short_injecting_text_index": "ISO",
-      "narrow_injecting_text_index": null
+      "short_place_holder_index": "ISO",
+      "narrow_place_holder_index": null
     },
     "PGK": {
       "short_pattern_standard": "Standard",
       "narrow_pattern_standard": "Standard",
-      "short_injecting_text_index": "ISO",
-      "narrow_injecting_text_index": null
+      "short_place_holder_index": "ISO",
+      "narrow_place_holder_index": null
     },
     "PHP": {
       "short_pattern_standard": "Standard",
       "narrow_pattern_standard": "Standard",
-      "short_injecting_text_index": "ISO",
-      "narrow_injecting_text_index": {
+      "short_place_holder_index": "ISO",
+      "narrow_place_holder_index": {
         "Index": 45
       }
     },
     "PKR": {
       "short_pattern_standard": "Standard",
       "narrow_pattern_standard": "Standard",
-      "short_injecting_text_index": "ISO",
-      "narrow_injecting_text_index": {
+      "short_place_holder_index": "ISO",
+      "narrow_place_holder_index": {
         "Index": 36
       }
     },
     "PLN": {
       "short_pattern_standard": "Standard",
       "narrow_pattern_standard": "Standard",
-      "short_injecting_text_index": "ISO",
-      "narrow_injecting_text_index": {
+      "short_place_holder_index": "ISO",
+      "narrow_place_holder_index": {
         "Index": 46
       }
     },
     "PYG": {
       "short_pattern_standard": "Standard",
       "narrow_pattern_standard": "Standard",
-      "short_injecting_text_index": "ISO",
-      "narrow_injecting_text_index": {
+      "short_place_holder_index": "ISO",
+      "narrow_place_holder_index": {
         "Index": 47
       }
     },
     "QAR": {
       "short_pattern_standard": "Standard",
       "narrow_pattern_standard": "Standard",
-      "short_injecting_text_index": "ISO",
-      "narrow_injecting_text_index": null
+      "short_place_holder_index": "ISO",
+      "narrow_place_holder_index": null
     },
     "RON": {
       "short_pattern_standard": "Standard",
       "narrow_pattern_standard": "Standard",
-      "short_injecting_text_index": "ISO",
-      "narrow_injecting_text_index": {
+      "short_place_holder_index": "ISO",
+      "narrow_place_holder_index": {
         "Index": 24
       }
     },
     "RSD": {
       "short_pattern_standard": "Standard",
       "narrow_pattern_standard": "Standard",
-      "short_injecting_text_index": "ISO",
-      "narrow_injecting_text_index": null
+      "short_place_holder_index": "ISO",
+      "narrow_place_holder_index": null
     },
     "RUB": {
       "short_pattern_standard": "Standard",
       "narrow_pattern_standard": "Standard",
-      "short_injecting_text_index": "ISO",
-      "narrow_injecting_text_index": {
+      "short_place_holder_index": "ISO",
+      "narrow_place_holder_index": {
         "Index": 48
       }
     },
     "RWF": {
       "short_pattern_standard": "Standard",
       "narrow_pattern_standard": "Standard",
-      "short_injecting_text_index": "ISO",
-      "narrow_injecting_text_index": {
+      "short_place_holder_index": "ISO",
+      "narrow_place_holder_index": {
         "Index": 49
       }
     },
     "SAR": {
       "short_pattern_standard": "Standard",
       "narrow_pattern_standard": "Standard",
-      "short_injecting_text_index": "ISO",
-      "narrow_injecting_text_index": null
+      "short_place_holder_index": "ISO",
+      "narrow_place_holder_index": null
     },
     "SBD": {
       "short_pattern_standard": "Standard",
       "narrow_pattern_standard": "Standard",
-      "short_injecting_text_index": "ISO",
-      "narrow_injecting_text_index": {
+      "short_place_holder_index": "ISO",
+      "narrow_place_holder_index": {
         "Index": 3
       }
     },
     "SCR": {
       "short_pattern_standard": "Standard",
       "narrow_pattern_standard": "Standard",
-      "short_injecting_text_index": "ISO",
-      "narrow_injecting_text_index": null
+      "short_place_holder_index": "ISO",
+      "narrow_place_holder_index": null
     },
     "SDG": {
       "short_pattern_standard": "Standard",
       "narrow_pattern_standard": "Standard",
-      "short_injecting_text_index": "ISO",
-      "narrow_injecting_text_index": null
+      "short_place_holder_index": "ISO",
+      "narrow_place_holder_index": null
     },
     "SEK": {
       "short_pattern_standard": "Standard",
       "narrow_pattern_standard": "Standard",
-      "short_injecting_text_index": "ISO",
-      "narrow_injecting_text_index": {
+      "short_place_holder_index": "ISO",
+      "narrow_place_holder_index": {
         "Index": 14
       }
     },
     "SGD": {
       "short_pattern_standard": "Standard",
       "narrow_pattern_standard": "Standard",
-      "short_injecting_text_index": "ISO",
-      "narrow_injecting_text_index": {
+      "short_place_holder_index": "ISO",
+      "narrow_place_holder_index": {
         "Index": 3
       }
     },
     "SHP": {
       "short_pattern_standard": "Standard",
       "narrow_pattern_standard": "Standard",
-      "short_injecting_text_index": "ISO",
-      "narrow_injecting_text_index": {
+      "short_place_holder_index": "ISO",
+      "narrow_place_holder_index": {
         "Index": 19
       }
     },
     "SLL": {
       "short_pattern_standard": "Standard",
       "narrow_pattern_standard": "Standard",
-      "short_injecting_text_index": "ISO",
-      "narrow_injecting_text_index": null
+      "short_place_holder_index": "ISO",
+      "narrow_place_holder_index": null
     },
     "SOS": {
       "short_pattern_standard": "Standard",
       "narrow_pattern_standard": "Standard",
-      "short_injecting_text_index": "ISO",
-      "narrow_injecting_text_index": null
+      "short_place_holder_index": "ISO",
+      "narrow_place_holder_index": null
     },
     "SRD": {
       "short_pattern_standard": "Standard",
       "narrow_pattern_standard": "Standard",
-      "short_injecting_text_index": "ISO",
-      "narrow_injecting_text_index": {
+      "short_place_holder_index": "ISO",
+      "narrow_place_holder_index": {
         "Index": 3
       }
     },
     "SSP": {
       "short_pattern_standard": "Standard",
       "narrow_pattern_standard": "Standard",
-      "short_injecting_text_index": "ISO",
-      "narrow_injecting_text_index": {
+      "short_place_holder_index": "ISO",
+      "narrow_place_holder_index": {
         "Index": 50
       }
     },
     "STD": {
       "short_pattern_standard": "Standard",
       "narrow_pattern_standard": "Standard",
-      "short_injecting_text_index": "ISO",
-      "narrow_injecting_text_index": null
+      "short_place_holder_index": "ISO",
+      "narrow_place_holder_index": null
     },
     "STN": {
       "short_pattern_standard": "Standard",
       "narrow_pattern_standard": "Standard",
-      "short_injecting_text_index": "ISO",
-      "narrow_injecting_text_index": {
+      "short_place_holder_index": "ISO",
+      "narrow_place_holder_index": {
         "Index": 51
       }
     },
     "SYP": {
       "short_pattern_standard": "Standard",
       "narrow_pattern_standard": "Standard",
-      "short_injecting_text_index": "ISO",
-      "narrow_injecting_text_index": {
+      "short_place_holder_index": "ISO",
+      "narrow_place_holder_index": {
         "Index": 52
       }
     },
     "SZL": {
       "short_pattern_standard": "Standard",
       "narrow_pattern_standard": "Standard",
-      "short_injecting_text_index": "ISO",
-      "narrow_injecting_text_index": null
+      "short_place_holder_index": "ISO",
+      "narrow_place_holder_index": null
     },
     "THB": {
       "short_pattern_standard": "Standard",
       "narrow_pattern_standard": "Standard",
-      "short_injecting_text_index": "ISO",
-      "narrow_injecting_text_index": {
+      "short_place_holder_index": "ISO",
+      "narrow_place_holder_index": {
         "Index": 53
       }
     },
     "TJS": {
       "short_pattern_standard": "Standard",
       "narrow_pattern_standard": "Standard",
-      "short_injecting_text_index": "ISO",
-      "narrow_injecting_text_index": null
+      "short_place_holder_index": "ISO",
+      "narrow_place_holder_index": null
     },
     "TMT": {
       "short_pattern_standard": "Standard",
       "narrow_pattern_standard": "Standard",
-      "short_injecting_text_index": "ISO",
-      "narrow_injecting_text_index": null
+      "short_place_holder_index": "ISO",
+      "narrow_place_holder_index": null
     },
     "TND": {
       "short_pattern_standard": "Standard",
       "narrow_pattern_standard": "Standard",
-      "short_injecting_text_index": "ISO",
-      "narrow_injecting_text_index": null
+      "short_place_holder_index": "ISO",
+      "narrow_place_holder_index": null
     },
     "TOP": {
       "short_pattern_standard": "Standard",
       "narrow_pattern_standard": "Standard",
-      "short_injecting_text_index": "ISO",
-      "narrow_injecting_text_index": {
+      "short_place_holder_index": "ISO",
+      "narrow_place_holder_index": {
         "Index": 54
       }
     },
     "TRY": {
       "short_pattern_standard": "Standard",
       "narrow_pattern_standard": "Standard",
-      "short_injecting_text_index": "ISO",
-      "narrow_injecting_text_index": {
+      "short_place_holder_index": "ISO",
+      "narrow_place_holder_index": {
         "Index": 55
       }
     },
     "TTD": {
       "short_pattern_standard": "Standard",
       "narrow_pattern_standard": "Standard",
-      "short_injecting_text_index": "ISO",
-      "narrow_injecting_text_index": {
+      "short_place_holder_index": "ISO",
+      "narrow_place_holder_index": {
         "Index": 3
       }
     },
     "TWD": {
       "short_pattern_standard": "Standard",
       "narrow_pattern_standard": "Standard",
-      "short_injecting_text_index": "ISO",
-      "narrow_injecting_text_index": {
+      "short_place_holder_index": "ISO",
+      "narrow_place_holder_index": {
         "Index": 56
       }
     },
     "TZS": {
       "short_pattern_standard": "Standard",
       "narrow_pattern_standard": "Standard",
-      "short_injecting_text_index": "ISO",
-      "narrow_injecting_text_index": null
+      "short_place_holder_index": "ISO",
+      "narrow_place_holder_index": null
     },
     "UAH": {
       "short_pattern_standard": "Standard",
       "narrow_pattern_standard": "Standard",
-      "short_injecting_text_index": "ISO",
-      "narrow_injecting_text_index": {
+      "short_place_holder_index": "ISO",
+      "narrow_place_holder_index": {
         "Index": 57
       }
     },
     "UGX": {
       "short_pattern_standard": "Standard",
       "narrow_pattern_standard": "Standard",
-      "short_injecting_text_index": "ISO",
-      "narrow_injecting_text_index": null
+      "short_place_holder_index": "ISO",
+      "narrow_place_holder_index": null
     },
     "USD": {
       "short_pattern_standard": "Standard",
       "narrow_pattern_standard": "Standard",
-      "short_injecting_text_index": {
+      "short_place_holder_index": {
         "Index": 58
       },
-      "narrow_injecting_text_index": {
+      "narrow_place_holder_index": {
         "Index": 3
       }
     },
     "UYU": {
       "short_pattern_standard": "Standard",
       "narrow_pattern_standard": "Standard",
-      "short_injecting_text_index": "ISO",
-      "narrow_injecting_text_index": {
+      "short_place_holder_index": "ISO",
+      "narrow_place_holder_index": {
         "Index": 3
       }
     },
     "UYW": {
       "short_pattern_standard": "Standard",
       "narrow_pattern_standard": "Standard",
-      "short_injecting_text_index": "ISO",
-      "narrow_injecting_text_index": null
+      "short_place_holder_index": "ISO",
+      "narrow_place_holder_index": null
     },
     "UZS": {
       "short_pattern_standard": "Standard",
       "narrow_pattern_standard": "Standard",
-      "short_injecting_text_index": "ISO",
-      "narrow_injecting_text_index": null
+      "short_place_holder_index": "ISO",
+      "narrow_place_holder_index": null
     },
     "VEF": {
       "short_pattern_standard": "Standard",
       "narrow_pattern_standard": "Standard",
-      "short_injecting_text_index": "ISO",
-      "narrow_injecting_text_index": {
+      "short_place_holder_index": "ISO",
+      "narrow_place_holder_index": {
         "Index": 59
       }
     },
     "VES": {
       "short_pattern_standard": "Standard",
       "narrow_pattern_standard": "Standard",
-      "short_injecting_text_index": "ISO",
-      "narrow_injecting_text_index": null
+      "short_place_holder_index": "ISO",
+      "narrow_place_holder_index": null
     },
     "VND": {
       "short_pattern_standard": "Standard",
       "narrow_pattern_standard": "Standard",
-      "short_injecting_text_index": "ISO",
-      "narrow_injecting_text_index": {
+      "short_place_holder_index": "ISO",
+      "narrow_place_holder_index": {
         "Index": 60
       }
     },
     "VUV": {
       "short_pattern_standard": "Standard",
       "narrow_pattern_standard": "Standard",
-      "short_injecting_text_index": "ISO",
-      "narrow_injecting_text_index": null
+      "short_place_holder_index": "ISO",
+      "narrow_place_holder_index": null
     },
     "WST": {
       "short_pattern_standard": "Standard",
       "narrow_pattern_standard": "Standard",
-      "short_injecting_text_index": "ISO",
-      "narrow_injecting_text_index": null
+      "short_place_holder_index": "ISO",
+      "narrow_place_holder_index": null
     },
     "XAF": {
       "short_pattern_standard": "Standard",
       "narrow_pattern_standard": "Standard",
-      "short_injecting_text_index": "ISO",
-      "narrow_injecting_text_index": null
+      "short_place_holder_index": "ISO",
+      "narrow_place_holder_index": null
     },
     "XCD": {
       "short_pattern_standard": "Standard",
       "narrow_pattern_standard": "Standard",
-      "short_injecting_text_index": "ISO",
-      "narrow_injecting_text_index": {
+      "short_place_holder_index": "ISO",
+      "narrow_place_holder_index": {
         "Index": 3
       }
     },
     "XOF": {
       "short_pattern_standard": "Standard",
       "narrow_pattern_standard": "Standard",
-      "short_injecting_text_index": "ISO",
-      "narrow_injecting_text_index": null
+      "short_place_holder_index": "ISO",
+      "narrow_place_holder_index": null
     },
     "XPF": {
       "short_pattern_standard": "Standard",
       "narrow_pattern_standard": "Standard",
-      "short_injecting_text_index": {
+      "short_place_holder_index": {
         "Index": 61
       },
-      "narrow_injecting_text_index": null
+      "narrow_place_holder_index": null
     },
     "XXX": {
       "short_pattern_standard": "Standard",
       "narrow_pattern_standard": "Standard",
-      "short_injecting_text_index": {
+      "short_place_holder_index": {
         "Index": 62
       },
-      "narrow_injecting_text_index": null
+      "narrow_place_holder_index": null
     },
     "YER": {
       "short_pattern_standard": "Standard",
       "narrow_pattern_standard": "Standard",
-      "short_injecting_text_index": "ISO",
-      "narrow_injecting_text_index": null
+      "short_place_holder_index": "ISO",
+      "narrow_place_holder_index": null
     },
     "ZAR": {
       "short_pattern_standard": "Standard",
       "narrow_pattern_standard": "Standard",
-      "short_injecting_text_index": "ISO",
-      "narrow_injecting_text_index": {
+      "short_place_holder_index": "ISO",
+      "narrow_place_holder_index": {
         "Index": 63
       }
     },
     "ZMW": {
       "short_pattern_standard": "Standard",
       "narrow_pattern_standard": "Standard",
-      "short_injecting_text_index": "ISO",
-      "narrow_injecting_text_index": {
+      "short_place_holder_index": "ISO",
+      "narrow_place_holder_index": {
         "Index": 64
       }
     }
   },
   "standard": "¤ #,##0.00",
   "standard_alpha_next_to_number": "",
-  "injecting_texts": [
+  "place_holders": [
     "؋",
     "֏",
     "Kz",
