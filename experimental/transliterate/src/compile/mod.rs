@@ -636,12 +636,12 @@ mod tests {
         ";
 
         let mut collection = RuleCollection::default();
-        collection.register_source(&locale!("fwd"), source.into(), [].into_iter(), false, true);
-        collection.register_source(&locale!("rev"), source.into(), [].into_iter(), true, true);
+        collection.register_source(&locale!("fwd"), source.into(), [], false, true);
+        collection.register_source(&locale!("rev"), source.into(), [], true, true);
         collection.register_source(
             &"und-t-d0-addrndsp-m0-fifty-s0-anyrev".parse().unwrap(),
             "unparsed dummy".into(),
-            ["AnyRev-AddRandomSpaces/FiftyPercent"].into_iter(),
+            ["AnyRev-AddRandomSpaces/FiftyPercent"],
             false,
             true,
         );
