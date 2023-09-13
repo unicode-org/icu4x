@@ -16,6 +16,9 @@ pub mod provider;
 pub enum Error {
     #[displaydoc("Magnitude or number of digits exceeded")]
     Limit,
+
+    #[displaydoc("The input is not valid")]
+    InvalidInput,
 }
 
 #[cfg(feature = "std")]

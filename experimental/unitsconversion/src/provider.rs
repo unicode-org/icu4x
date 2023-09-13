@@ -9,8 +9,11 @@
 //!
 //! Read more about data providers: [`icu_provider`]
 
+use std::borrow::Cow;
+
 use icu_provider::prelude::*;
-use zerovec::ZeroMap;
+use zerovec::{ZeroMap, ZeroVec};
+use num_bigint::BigUint;
 
 use crate::{helpers::gcd, Error};
 
@@ -22,7 +25,7 @@ use crate::{helpers::gcd, Error};
 /// to be stable, their Rust representation might not be. Use with caution.
 /// </div>
 #[icu_provider::data_struct(marker(UnitsConstantsV1Marker, "units/constants@1", singleton))]
-#[derive(Default, Clone, PartialEq, Debug)]
+#[derive(Clone, PartialEq, Debug)]
 #[cfg_attr(
     feature = "datagen",
     derive(serde::Serialize, databake::Bake),
@@ -30,12 +33,12 @@ use crate::{helpers::gcd, Error};
 )]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[yoke(prove_covariance_manually)]
-pub struct UnitsConstantsV1<'data> {
+pub struct UnitsConstantsV1 <'data> {
     // TODO(#3882): Use a more efficient representation for the values with numerators and denominators.
     // Also, the constant types.
     /// Maps from constant name (e.g. ft_to_m) to the value of the constant (e.g. 0.3048).
     #[cfg_attr(feature = "serde", serde(borrow))]
-    pub constants_map: ZeroMap<'data, str, ConstantValue>,
+    pub constants_map: ZeroMap<'data, str, ConstantValueULE>,
 }
 
 #[zerovec::make_ule(ConstantTypeULE)]
@@ -53,72 +56,20 @@ pub enum ConstantType {
     Approximate = 1,
 }
 
-#[zerovec::make_ule(ConstantValueULE)]
+#[zerovec::make_varule(ConstantValueULE)]
 #[cfg_attr(
     feature = "datagen",
     derive(serde::Serialize, databake::Bake),
     databake(path = icu_unitsconversion::provider),
 )]
+#[zerovec::derive(Serialize, Deserialize, Debug)]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
-#[derive(Copy, Clone, Debug, PartialOrd, Ord, PartialEq, Eq, Default)]
-pub struct ConstantValue {
-    pub numerator: u32,
-    pub denominator: u32,
+#[derive(Clone, Debug, PartialOrd, Ord, PartialEq, Eq, Default)]
+pub struct ConstantValue <'data> {
+    #[serde(borrow)]
+    pub numerator: ZeroVec<'data, u8>,
+    #[serde(borrow)]
+    pub denominator: ZeroVec<'data, u8>,
+
     pub constant_type: ConstantType,
-}
-
-impl ConstantValue {
-    pub fn multiply(&self, other: &ConstantValue) -> Result<ConstantValue, Error> {
-        let numerator = self.numerator as u64 * other.numerator as u64;
-        let denominator = self.denominator as u64 * other.denominator as u64;
-        let gcd = gcd(numerator, denominator);
-
-        let numerator = match u32::try_from(numerator / gcd) {
-            Ok(numerator) => numerator,
-            Err(_) => return Err(Error::Limit),
-        };
-
-        let denominator = match u32::try_from(denominator / gcd) {
-            Ok(denominator) => denominator,
-            Err(_) => return Err(Error::Limit),
-        };
-
-        let constant_type = match (self.constant_type, other.constant_type) {
-            (ConstantType::Actual, ConstantType::Actual) => ConstantType::Actual,
-            _ => ConstantType::Approximate,
-        };
-
-        Ok(ConstantValue {
-            numerator,
-            denominator,
-            constant_type,
-        })
-    }
-
-    pub fn divide(&self, other: &ConstantValue) -> Result<ConstantValue, Error> {
-        let numerator = self.numerator as u64 * other.denominator as u64;
-        let denominator = self.denominator as u64 * other.numerator as u64;
-        let gcd = gcd(numerator, denominator);
-
-        let numerator = match u32::try_from(numerator / gcd) {
-            Ok(numerator) => numerator,
-            Err(_) => return Err(Error::Limit),
-        };
-
-        let denominator = match u32::try_from(denominator / gcd) {
-            Ok(denominator) => denominator,
-            Err(_) => return Err(Error::Limit),
-        };
-
-        let constant_type = match (self.constant_type, other.constant_type) {
-            (ConstantType::Actual, ConstantType::Actual) => ConstantType::Actual,
-            _ => ConstantType::Approximate,
-        };
-
-        Ok(ConstantValue {
-            numerator,
-            denominator,
-            constant_type,
-        })
-    }
 }
