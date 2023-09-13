@@ -41,7 +41,7 @@ pub struct IanaToBcp47Mapper {
 }
 
 impl IanaToBcp47Mapper {
-    /// Creates a new [`IanaToBcp47Mapper`].
+    /// Creates a new [`IanaToBcp47Mapper`] using compiled data.
     ///
     /// See [`IanaToBcp47Mapper`] for an example.
     ///
@@ -155,7 +155,7 @@ pub struct IanaBcp47RoundTripMapper {
 }
 
 impl IanaBcp47RoundTripMapper {
-    /// Creates a new [`IanaBcp47RoundTripMapper`].
+    /// Creates a new [`IanaBcp47RoundTripMapper`] using compiled data.
     ///
     /// See [`IanaBcp47RoundTripMapper`] for an example.
     ///
@@ -165,13 +165,13 @@ impl IanaBcp47RoundTripMapper {
     #[cfg(feature = "compiled_data")]
     #[inline]
     pub const fn new() -> Self {
+        let data1 = crate::provider::Baked::SINGLETON_TIME_ZONE_IANA_TO_BCP47_V1;
+        let data2 = crate::provider::Baked::SINGLETON_TIME_ZONE_BCP47_TO_IANA_V1;
+        // Note: assert_eq is not const
+        assert!(data1.bcp47_ids_checksum == data2.bcp47_ids_checksum);
         IanaBcp47RoundTripMapper {
-            data1: DataPayload::from_static_ref(
-                crate::provider::Baked::SINGLETON_TIME_ZONE_IANA_TO_BCP47_V1,
-            ),
-            data2: DataPayload::from_static_ref(
-                crate::provider::Baked::SINGLETON_TIME_ZONE_BCP47_TO_IANA_V1,
-            ),
+            data1: DataPayload::from_static_ref(data1),
+            data2: DataPayload::from_static_ref(data2),
         }
     }
 
@@ -225,7 +225,7 @@ impl<'a> IanaBcp47RoundTripMapperBorrowed<'a> {
     ///
     /// This is the type of match specified in [ECMAScript Temporal].
     ///
-    /// See examples in [`IanaToBcp47Mapper`].
+    /// See examples in [`IanaToBcp47Mapper`] or [`IanaBcp47RoundTripMapper`].
     ///
     /// [ECMAScript Temporal]: https://tc39.es/proposal-temporal/#sec-isavailabletimezonename
     pub fn iana_to_bcp47(&self, iana_id: &str) -> Option<TimeZoneBcp47Id> {

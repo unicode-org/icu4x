@@ -147,11 +147,12 @@ pub mod ffi {
             mapper: &crate::iana_bcp47_mapper::ffi::ICU4XIanaToBcp47Mapper,
             id: &str,
         ) -> Result<(), ICU4XError> {
-            self.0.time_zone_id = mapper.0.as_borrowed().get(id);
-            if self.0.time_zone_id.is_some() {
-                Ok(())
-            } else {
-                Err(ICU4XError::TimeZoneInvalidIdError)
+            match mapper.0.as_borrowed().get(id) {
+                Some(id) => {
+                    self.0.time_zone_id = Some(id);
+                    Ok(())
+                }
+                None => Err(ICU4XError::TimeZoneInvalidIdError),
             }
         }
 
