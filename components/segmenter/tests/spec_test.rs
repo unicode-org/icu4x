@@ -217,7 +217,24 @@ fn sentence_break_test(filename: &str) {
         let s: String = test.utf8_vec.into_iter().collect();
         let iter = segmenter.segment_str(&s);
         let result: Vec<usize> = iter.collect();
-        assert_eq!(result, test.break_result_utf8, "{}", test.original_line);
+        if result != test.break_result_utf8 {
+            let sb = icu::properties::maps::sentence_break();
+            let sb_name = icu::properties::SentenceBreak::enum_to_long_name_mapper();
+              // TODO(egg): It would be really nice to have Name here.
+            println!("  | A | E | Code pt. | Sentence_Break | Literal");
+            for (i, c) in s.char_indices() {
+                let expected_break = test.break_result_utf8.contains(&i);
+                let actual_break = result.contains(&i);
+                println!("{}| {} | {} | {:>8} | {:>14} | {}",
+                         if actual_break != expected_break { "😭"} else {"  "},
+                         if actual_break { "÷" } else { "×" },
+                         if expected_break { "÷" } else { "×" },
+                         format!("{:04X}", c as u32),
+                         sb_name.get(sb.get(c)).unwrap_or(&format!("{:?}", sb.get(c))),
+                         c)
+            }
+            assert!(false)
+        }
 
         let iter = segmenter.segment_utf16(&test.utf16_vec);
         let result: Vec<usize> = iter.collect();
