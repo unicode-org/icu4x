@@ -20,6 +20,7 @@ Documentation
    errors_ffi
    fallbacker_ffi
    fixed_decimal_ffi
+   iana_bcp47_mapper_ffi
    list_ffi
    locale_ffi
    locid_transform_ffi

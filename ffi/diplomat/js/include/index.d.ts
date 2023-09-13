@@ -2,6 +2,7 @@ export { FFIError, i8, u8, i16, u16, i32, u32, i64, u64, f32, f64, char } from '
 export { CodePointRangeIterator } from './CodePointRangeIterator.js';
 export { CodePointRangeIteratorResult } from './CodePointRangeIteratorResult.js';
 export { ICU4XAnyCalendarKind } from './ICU4XAnyCalendarKind.js';
+export { ICU4XBcp47ToIanaMapper } from './ICU4XBcp47ToIanaMapper.js';
 export { ICU4XBidi } from './ICU4XBidi.js';
 export { ICU4XBidiDirection } from './ICU4XBidiDirection.js';
 export { ICU4XBidiInfo } from './ICU4XBidiInfo.js';
@@ -53,6 +54,7 @@ export { ICU4XGraphemeClusterSegmenter } from './ICU4XGraphemeClusterSegmenter.j
 export { ICU4XGregorianDateFormatter } from './ICU4XGregorianDateFormatter.js';
 export { ICU4XGregorianDateTimeFormatter } from './ICU4XGregorianDateTimeFormatter.js';
 export { ICU4XGregorianZonedDateTimeFormatter } from './ICU4XGregorianZonedDateTimeFormatter.js';
+export { ICU4XIanaToBcp47Mapper } from './ICU4XIanaToBcp47Mapper.js';
 export { ICU4XIsoDate } from './ICU4XIsoDate.js';
 export { ICU4XIsoDateTime } from './ICU4XIsoDateTime.js';
 export { ICU4XIsoTimeZoneFormat } from './ICU4XIsoTimeZoneFormat.js';
