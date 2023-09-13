@@ -24,6 +24,7 @@ pub(crate) struct CldrCache {
     pub(super) serde_cache: SerdeCache,
     dir_suffix: OnceCell<&'static str>,
     locale_expander: OnceCell<LocaleExpander>,
+    #[cfg(feature = "icu_transliterate")]
     // used by transforms/mod.rs
     pub(super) transforms: OnceCell<icu_transliterate::RuleCollection>,
 }
@@ -34,6 +35,7 @@ impl CldrCache {
             serde_cache,
             dir_suffix: Default::default(),
             locale_expander: Default::default(),
+            #[cfg(feature = "icu_transliterate")]
             transforms: Default::default(),
         }
     }
