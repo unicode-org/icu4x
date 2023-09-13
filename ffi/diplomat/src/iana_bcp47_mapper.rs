@@ -46,10 +46,7 @@ pub mod ffi {
     pub struct ICU4XBcp47ToIanaMapper(pub IanaBcp47RoundTripMapper);
 
     impl ICU4XBcp47ToIanaMapper {
-        #[diplomat::rust_link(
-            icu::timezone::IanaBcp47RoundTripMapper::new,
-            FnInStruct
-        )]
+        #[diplomat::rust_link(icu::timezone::IanaBcp47RoundTripMapper::new, FnInStruct)]
         pub fn create(
             provider: &ICU4XDataProvider,
         ) -> Result<Box<ICU4XBcp47ToIanaMapper>, ICU4XError> {
