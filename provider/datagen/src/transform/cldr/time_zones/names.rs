@@ -31,7 +31,7 @@ impl DataProvider<IanaToBcp47MapV1Marker> for crate::DatagenProvider {
             .iter()
             .map(|(iana, bcp)| {
                 (
-                    iana.as_bytes().to_vec(),
+                    iana.as_bytes().to_ascii_lowercase().to_vec(),
                     bcp47_ids.binary_search(bcp).unwrap(),
                 )
             })

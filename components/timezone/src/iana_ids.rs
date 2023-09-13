@@ -11,24 +11,29 @@ use icu_provider::prelude::*;
 ///
 /// # Examples
 ///
-/// Demonstration of usage with strict and loose lookup:
-///
 /// ```
 /// use icu::timezone::IanaToBcp47Mapper;
 ///
 /// let mapper = IanaToBcp47Mapper::new();
+/// let mapper_borrowed = mapper.as_borrowed();
 ///
-/// // Strict: the IANA identifier is already in case-canonical form, and we find a match
-/// let bcp47_id = mapper.as_borrowed().get_strict("America/Chicago");
-/// assert_eq!(bcp47_id, Some("uschi".parse().unwrap()));
+/// // The IANA zone "Australia/Melbourne" is the BCP-47 zone "aumel"
+/// assert_eq!(
+///     mapper_borrowed.get("Australia/Melbourne"),
+///     Some("aumel".parse().unwrap())
+/// );
 ///
-/// // Strict: the IANA identifier is not in the correct case, so we find no match
-/// let bcp47_id = mapper.as_borrowed().get_strict("america/chicago");
-/// assert_eq!(bcp47_id, None);
+/// // Lookup is ASCII-case insensitive
+/// assert_eq!(
+///     mapper_borrowed.get("australia/melbourne"),
+///     Some("aumel".parse().unwrap())
+/// );
 ///
-/// // Loose: we find the IANA identifier even though it is in the wrong case
-/// let bcp47_id = mapper.as_borrowed().get_loose("america/chicago");
-/// assert_eq!(bcp47_id, Some("uschi".parse().unwrap()));
+/// // The IANA zone "Australia/Victoria" is an alias
+/// assert_eq!(
+///     mapper_borrowed.get("Australia/Victoria"),
+///     Some("aumel".parse().unwrap())
+/// );
 /// ```
 #[derive(Debug)]
 pub struct IanaToBcp47Mapper {
@@ -91,15 +96,6 @@ pub struct IanaToBcp47MapperBorrowed<'a> {
 }
 
 impl<'a> IanaToBcp47MapperBorrowed<'a> {
-    /// Looks up a BCP-47 time zone identifier based on an exact match for the given IANA
-    /// time zone identifier.
-    ///
-    /// See examples in [`IanaToBcp47Mapper`].
-    pub fn get_strict(&self, iana_id: &str) -> Option<TimeZoneBcp47Id> {
-        let idx = self.data.map.get(iana_id)?;
-        self.data.bcp47_ids.get(idx)
-    }
-
     /// Looks up a BCP-47 time zone identifier based on an ASCII-case-insensitive match for
     /// the given IANA time zone identifier.
     ///
@@ -108,8 +104,23 @@ impl<'a> IanaToBcp47MapperBorrowed<'a> {
     /// See examples in [`IanaToBcp47Mapper`].
     ///
     /// [ECMAScript Temporal]: https://tc39.es/proposal-temporal/#sec-isavailabletimezonename
-    pub fn get_loose(&self, _iana_id: &str) -> Option<TimeZoneBcp47Id> {
-        unimplemented!()
+    pub fn get(&self, iana_id: &str) -> Option<TimeZoneBcp47Id> {
+        // The longest IANA name in CLDR appears to be "America/Argentina/ComodRivadavia"
+        // which is 32 characters long, so 48 should be plenty. Add a debug assertion
+        // just in case.
+        let name_for_lookup = match tinystr::TinyAsciiStr::<48>::from_str(iana_id) {
+            Ok(tinystr) => tinystr.to_ascii_lowercase(),
+            Err(tinystr::TinyStrError::TooLarge { .. }) => {
+                debug_assert!(false, "IANA string too long for lookup");
+                return None;
+            }
+            Err(_) => {
+                // NonAscii
+                return None;
+            }
+        };
+        let idx = self.data.map.get(name_for_lookup.as_bytes())?;
+        self.data.bcp47_ids.get(idx)
     }
 }
 
@@ -128,9 +139,9 @@ impl<'a> IanaToBcp47MapperBorrowed<'a> {
 ///
 /// let mapper = IanaBcp47RoundTripMapper::new();
 /// let mapper_borrowed = mapper.as_borrowed();
-/// 
+///
 /// // Look up the time zone ID for "Asia/Calcutta"
-/// let bcp47_id = mapper_borrowed.iana_to_bcp47_strict("Asia/Calcutta");
+/// let bcp47_id = mapper_borrowed.iana_to_bcp47("Asia/Calcutta");
 /// assert_eq!(bcp47_id, Some("inccu".parse().unwrap()));
 ///
 /// // Get it back as the canonical form "Asia/Kolkata"
@@ -209,15 +220,6 @@ pub struct IanaBcp47RoundTripMapperBorrowed<'a> {
 }
 
 impl<'a> IanaBcp47RoundTripMapperBorrowed<'a> {
-    /// Looks up a BCP-47 time zone identifier based on an exact match for the given IANA
-    /// time zone identifier.
-    ///
-    /// See examples in [`IanaToBcp47Mapper`].
-    pub fn iana_to_bcp47_strict(&self, iana_id: &str) -> Option<TimeZoneBcp47Id> {
-        let idx = self.data1.map.get(iana_id)?;
-        self.data1.bcp47_ids.get(idx)
-    }
-
     /// Looks up a BCP-47 time zone identifier based on an ASCII-case-insensitive match for
     /// the given IANA time zone identifier.
     ///
@@ -226,8 +228,8 @@ impl<'a> IanaBcp47RoundTripMapperBorrowed<'a> {
     /// See examples in [`IanaToBcp47Mapper`].
     ///
     /// [ECMAScript Temporal]: https://tc39.es/proposal-temporal/#sec-isavailabletimezonename
-    pub fn iana_to_bcp47_loose(&self, _iana_id: &str) -> Option<TimeZoneBcp47Id> {
-        unimplemented!()
+    pub fn iana_to_bcp47(&self, iana_id: &str) -> Option<TimeZoneBcp47Id> {
+        IanaToBcp47MapperBorrowed { data: self.data1 }.get(iana_id)
     }
 
     /// Looks up the canonical IANA time zone identifier of a BCP-47

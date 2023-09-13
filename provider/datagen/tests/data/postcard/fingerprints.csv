@@ -2010,7 +2010,7 @@ time_zone/generic_short@1, sr-Latn, 61B, da063c8d2cbb7223
 time_zone/generic_short@1, th, 21B, 70edef5aa0f7a054
 time_zone/generic_short@1, tr, 21B, 70edef5aa0f7a054
 time_zone/generic_short@1, und, 21B, 70edef5aa0f7a054
-time_zone/iana_to_bcp47@1, und, 9749B, ee9d2af57ba49f49
+time_zone/iana_to_bcp47@1, und, 9749B, 2508f8150e633b96
 time_zone/metazone_period@1, und, 11270B, f204686d7a3e5ca0
 time_zone/specific_long@1, ar, 11362B, a886b0294ef9f145
 time_zone/specific_long@1, ar-EG, 11362B, a886b0294ef9f145

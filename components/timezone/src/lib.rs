@@ -92,8 +92,8 @@
 //! // Create a time zone for America/Chicago at GMT-6:
 //! let mut time_zone = CustomTimeZone::new_empty();
 //! time_zone.gmt_offset = "-0600".parse::<GmtOffset>().ok();
-//! let mapper = IanaToBcp47Mapper::try_new_unstable(&icu_testdata::unstable()).unwrap();
-//! time_zone.time_zone_id = mapper.as_borrowed().get_strict("America/Chicago");
+//! let mapper = IanaToBcp47Mapper::new();
+//! time_zone.time_zone_id = mapper.as_borrowed().get("America/Chicago");
 //!
 //! // Compute the metazone at January 1, 2022:
 //! let mzc = MetazoneCalculator::new();
