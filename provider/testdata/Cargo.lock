@@ -200,26 +200,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "databake"
-version = "0.1.5"
-dependencies = [
- "databake-derive",
- "proc-macro2",
- "quote",
- "syn",
-]
-
-[[package]]
-name = "databake-derive"
-version = "0.1.5"
-dependencies = [
- "proc-macro2",
- "quote",
- "syn",
- "synstructure",
-]
-
-[[package]]
 name = "displaydoc"
 version = "0.2.4"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -570,6 +550,7 @@ dependencies = [
  "icu_relativetime",
  "icu_segmenter",
  "icu_timezone",
+ "zerotrie",
  "zerovec",
 ]
 
@@ -1108,18 +1089,15 @@ dependencies = [
 name = "zerotrie"
 version = "0.0.0"
 dependencies = [
- "databake",
  "displaydoc",
  "yoke",
  "zerofrom",
- "zerovec",
 ]
 
 [[package]]
 name = "zerovec"
 version = "0.9.4"
 dependencies = [
- "databake",
  "serde",
  "yoke",
  "zerofrom",
