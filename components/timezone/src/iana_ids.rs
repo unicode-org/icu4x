@@ -166,12 +166,16 @@ impl IanaBcp47RoundTripMapper {
     #[inline]
     pub const fn new() -> Self {
         const _: () = assert!(
-            crate::provider::Baked::SINGLETON_TIME_ZONE_IANA_TO_BCP47_V1.checksum ==
-            crate::provider::Baked::SINGLETON_TIME_ZONE_BCP47_TO_IANA_V1.checksum,
+            crate::provider::Baked::SINGLETON_TIME_ZONE_IANA_TO_BCP47_V1.bcp47_ids_checksum
+                == crate::provider::Baked::SINGLETON_TIME_ZONE_BCP47_TO_IANA_V1.bcp47_ids_checksum,
         );
         IanaBcp47RoundTripMapper {
-            data1: DataPayload::from_static_ref(crate::provider::Baked::SINGLETON_TIME_ZONE_IANA_TO_BCP47_V1),
-            data2: DataPayload::from_static_ref(crate::provider::Baked::SINGLETON_TIME_ZONE_BCP47_TO_IANA_V1),
+            data1: DataPayload::from_static_ref(
+                crate::provider::Baked::SINGLETON_TIME_ZONE_IANA_TO_BCP47_V1,
+            ),
+            data2: DataPayload::from_static_ref(
+                crate::provider::Baked::SINGLETON_TIME_ZONE_BCP47_TO_IANA_V1,
+            ),
         }
     }
 
