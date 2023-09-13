@@ -37,53 +37,6 @@ rust_library("calendrical_calculations-v0_1_0") {
   visibility = [ ":*" ]
 }
 
-rust_library("databake-v0_1_5") {
-  crate_name = "databake"
-  crate_root = "//utils/databake/src/lib.rs"
-  output_name = "databake-73ec390a49a57eb5"
-
-  deps = []
-  deps += [ ":databake-derive-v0_1_5($host_toolchain)" ]
-  deps += [ ":proc-macro2-v1_0_63" ]
-  deps += [ ":quote-v1_0_26" ]
-  deps += [ ":syn-v2_0_15" ]
-
-  rustenv = []
-
-  rustflags = [
-    "--cap-lints=allow",
-    "--edition=2021",
-    "-Cmetadata=73ec390a49a57eb5",
-    "-Cextra-filename=-73ec390a49a57eb5",
-    "--cfg=feature=\"derive\"",
-  ]
-
-  visibility = [ ":*" ]
-}
-
-rust_proc_macro("databake-derive-v0_1_5") {
-  crate_name = "databake_derive"
-  crate_root = "//utils/databake/derive/src/lib.rs"
-  output_name = "databake_derive-9c671c1df104eda5"
-
-  deps = []
-  deps += [ ":proc-macro2-v1_0_63" ]
-  deps += [ ":quote-v1_0_26" ]
-  deps += [ ":syn-v2_0_15" ]
-  deps += [ ":synstructure-v0_13_0" ]
-
-  rustenv = []
-
-  rustflags = [
-    "--cap-lints=allow",
-    "--edition=2021",
-    "-Cmetadata=9c671c1df104eda5",
-    "-Cextra-filename=-9c671c1df104eda5",
-  ]
-
-  visibility = [ ":*" ]
-}
-
 rust_proc_macro("diplomat-v0_5_2") {
   crate_name = "diplomat"
   crate_root = "//ffi/gn/vendor/diplomat/src/lib.rs"
@@ -1357,11 +1310,9 @@ rust_library("zerotrie-v0_0_0") {
   output_name = "zerotrie-f52c13590b7a869c"
 
   deps = []
-  deps += [ ":databake-v0_1_5" ]
   deps += [ ":displaydoc-v0_2_4($host_toolchain)" ]
   deps += [ ":yoke-v0_7_1" ]
   deps += [ ":zerofrom-v0_1_2" ]
-  deps += [ ":zerovec-v0_9_4" ]
 
   rustenv = []
 
@@ -1370,7 +1321,6 @@ rust_library("zerotrie-v0_0_0") {
     "--edition=2021",
     "-Cmetadata=f52c13590b7a869c",
     "-Cextra-filename=-f52c13590b7a869c",
-    "--cfg=feature=\"databake\"",
     "--cfg=feature=\"yoke\"",
     "--cfg=feature=\"zerofrom\"",
   ]
@@ -1384,7 +1334,6 @@ rust_library("zerovec-v0_9_4") {
   output_name = "zerovec-78f54fc60dcbccf9"
 
   deps = []
-  deps += [ ":databake-v0_1_5" ]
   deps += [ ":yoke-v0_7_1" ]
   deps += [ ":zerofrom-v0_1_2" ]
   deps += [ ":zerovec-derive-v0_9_4($host_toolchain)" ]
@@ -1396,7 +1345,6 @@ rust_library("zerovec-v0_9_4") {
     "--edition=2021",
     "-Cmetadata=78f54fc60dcbccf9",
     "-Cextra-filename=-78f54fc60dcbccf9",
-    "--cfg=feature=\"databake\"",
     "--cfg=feature=\"derive\"",
     "--cfg=feature=\"yoke\"",
   ]
