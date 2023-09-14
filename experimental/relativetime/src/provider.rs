@@ -14,6 +14,7 @@ use icu_provider::prelude::*;
 use zerovec::ZeroMap;
 
 #[cfg(feature = "compiled_data")]
+#[derive(Debug)]
 /// Baked data
 ///
 /// <div class="stab unstable">
@@ -21,7 +22,6 @@ use zerovec::ZeroMap;
 /// including in SemVer minor releases. In particular, the `DataProvider` implementations are only
 /// guaranteed to match with this version's `*_unstable` providers. Use with caution.
 /// </div>
-#[derive(Debug)]
 pub struct Baked;
 
 #[cfg(feature = "compiled_data")]

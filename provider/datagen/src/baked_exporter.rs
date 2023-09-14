@@ -38,12 +38,12 @@
 //!
 //! pub struct MyDataProvider;
 //!
-//! mod baked {
+//! const _: () = {
 //!     # macro_rules! include {
 //!     #   ($path:literal) => {}
 //!     # }
 //!     # macro_rules! impl_data_provider {
-//!     #   ($p:path) => {
+//!     #   ($p:ty) => {
 //!     #     use icu_provider::prelude::*;
 //!     #     use icu_provider::hello_world::*;
 //!     #     impl DataProvider<HelloWorldV1Marker> for $p {
@@ -54,14 +54,12 @@
 //!     #   }
 //!     # }
 //!     include!("/path/to/mod.rs");
-//!     impl_data_provider!(super::MyDataProvider);
-//! }
+//!     impl_data_provider!(MyDataProvider);
+//! };
 //!
-//! # fn main() {
 //! let formatter = HelloWorldFormatter::try_new_unstable(&MyDataProvider, &langid!("en").into()).unwrap();
 //!
 //! assert_eq!(formatter.format_to_string(), "Hello World");
-//! # }
 //! ```
 
 use databake::*;
@@ -266,7 +264,7 @@ impl BakedExporter {
                 #[doc(hidden)]
                 #[macro_export]
                 macro_rules! #prefixed_macro_ident {
-                    ($provider:path) => {
+                    ($provider:ty) => {
                         #[clippy::msrv = #MSRV]
                         const _: () = <$provider>::MUST_USE_MAKE_PROVIDER_MACRO;
                         #body
@@ -598,13 +596,13 @@ impl BakedExporter {
         self.write_to_file(
             PathBuf::from("macros.rs"),
             quote! {
-                /// Declares a data provider. You can then use `impl_data_provider` or
-                /// key specific macros, like `impl_core_helloworld_v1` to add implementations.
+                /// Marks a type as a data provider. You can then use macros
+                /// `impl_core_helloworld_v1` to add implementations.
                 ///
                 /// ```ignore
                 /// #[path = "/path/to/generated/macros.rs"];
                 /// mod macros;
-                /// macros::create_provider(MyDataProvider);
+                /// macros::make_provider!(MyDataProvider);
                 /// ```
                 #[doc(hidden)]
                 #[macro_export]
@@ -637,10 +635,9 @@ impl BakedExporter {
             quote! {
                 include!("macros.rs");
 
-                // Not public as it will only work locally due to needing access
-                // to the macros from `macros.rs`.
+                // Not public as it will only work locally due to needing access to the macros from `macros.rs`.
                 macro_rules! impl_data_provider {
-                    ($provider:path) => {
+                    ($provider:ty) => {
                         make_provider!($provider);
                         #(
                             #features
@@ -649,10 +646,10 @@ impl BakedExporter {
                     };
                 }
 
-                // Not public because `impl_data_provider` isn't. Users can implement `DynamicDataProvider<AnyMarker>` using
-                // `impl_dynamic_data_provider!`.
+                // Not public because `impl_data_provider` isn't. Users can implement `DynamicDataProvider<AnyMarker>`
+                // using `impl_dynamic_data_provider!`.
                 macro_rules! impl_any_provider {
-                    ($provider:path) => {
+                    ($provider:ty) => {
                         #[clippy::msrv = #MSRV]
                         impl icu_provider::AnyProvider for $provider {
                             fn load_any(&self, key: icu_provider::DataKey, req: icu_provider::DataRequest) -> Result<icu_provider::AnyResponse, icu_provider::DataError> {

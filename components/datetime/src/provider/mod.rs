@@ -20,6 +20,7 @@ pub(crate) mod date_time;
 pub mod time_zones;
 
 #[cfg(feature = "compiled_data")]
+#[derive(Debug)]
 /// Baked data
 ///
 /// <div class="stab unstable">
@@ -27,7 +28,6 @@ pub mod time_zones;
 /// including in SemVer minor releases. In particular, the `DataProvider` implementations are only
 /// guaranteed to match with this version's `*_unstable` providers. Use with caution.
 /// </div>
-#[derive(Debug)]
 pub struct Baked;
 
 #[cfg(feature = "compiled_data")]

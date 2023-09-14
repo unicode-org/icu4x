@@ -24,6 +24,7 @@ mod serde_dfa;
 pub use serde_dfa::SerdeDFA;
 
 #[cfg(feature = "compiled_data")]
+#[derive(Debug)]
 /// Baked data
 ///
 /// <div class="stab unstable">
@@ -31,7 +32,6 @@ pub use serde_dfa::SerdeDFA;
 /// including in SemVer minor releases. In particular, the `DataProvider` implementations are only
 /// guaranteed to match with this version's `*_unstable` providers. Use with caution.
 /// </div>
-#[derive(Debug)]
 pub struct Baked;
 
 #[cfg(feature = "compiled_data")]
