@@ -596,7 +596,7 @@ impl BakedExporter {
         self.write_to_file(
             PathBuf::from("macros.rs"),
             quote! {
-                /// Marks a type as a data provider. You can then use macros
+                /// Marks a type as a data provider. You can then use macros like
                 /// `impl_core_helloworld_v1` to add implementations.
                 ///
                 /// ```ignore
