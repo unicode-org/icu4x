@@ -1937,7 +1937,7 @@ segmenter/line@1, und, 18811B, 12f61c35e42a3bc4
 segmenter/lstm/wl_auto@1, th, 72034B, c46e2e0c098c1fc1
 segmenter/sentence@1, und, 14402B, 379e46c5be8e8e5f
 segmenter/word@1, und, 14641B, d91c662e2d94f17f
-time_zone/bcp47_to_iana@1, und, 7568B, ca53028c19c920ac
+time_zone/bcp47_to_iana@1, und, 7569B, e3ddf20b1d136d6
 time_zone/exemplar_cities@1, ar, 10350B, 1c554603fa64a295
 time_zone/exemplar_cities@1, ar-EG, 10350B, 1c554603fa64a295
 time_zone/exemplar_cities@1, bn, 15146B, fc38df62995b3e8e
@@ -2010,7 +2010,7 @@ time_zone/generic_short@1, sr-Latn, 61B, da063c8d2cbb7223
 time_zone/generic_short@1, th, 21B, 70edef5aa0f7a054
 time_zone/generic_short@1, tr, 21B, 70edef5aa0f7a054
 time_zone/generic_short@1, und, 21B, 70edef5aa0f7a054
-time_zone/iana_to_bcp47@1, und, 9748B, 94d199894e028f36
+time_zone/iana_to_bcp47@1, und, 9749B, 2508f8150e633b96
 time_zone/metazone_period@1, und, 11270B, f204686d7a3e5ca0
 time_zone/specific_long@1, ar, 11362B, a886b0294ef9f145
 time_zone/specific_long@1, ar-EG, 11362B, a886b0294ef9f145

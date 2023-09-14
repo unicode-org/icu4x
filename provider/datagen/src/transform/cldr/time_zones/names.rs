@@ -99,8 +99,7 @@ impl IterableDataProvider<Bcp47ToIanaMapV1Marker> for crate::DatagenProvider {
 }
 
 fn create_hasher() -> impl std::hash::Hasher {
-    #[allow(deprecated)] // use SipHasher to reduce dependency count; see #4024
-    std::hash::SipHasher::new()
+    twox_hash::XxHash64::with_seed(0)
 }
 
 fn compute_bcp47_ids_hash(bcp47_ids: &ZeroSlice<TimeZoneBcp47Id>) -> u64 {
@@ -121,7 +120,7 @@ fn test_compute_bcp47_ids_hash() {
 
     // Checksum 1: the default output of the zeroslice hashing function
     let checksum1 = compute_bcp47_ids_hash(&bcp47_ids);
-    assert_eq!(checksum1, 0x301FDFA03E1A34A4); // stability
+    assert_eq!(checksum1, 0x66FA043B31200DCB); // stability
 
     // Checksum 2: hashing of each individual element
     // (should equal 1)
