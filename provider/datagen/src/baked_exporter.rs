@@ -78,7 +78,7 @@
 //! To do this, build your binary with the `ICU4X_DATA_DIR` environment variable:
 //!
 //! ```console
-//! ICU4X_DATA_DIR=/tmp/icu4x_baked_demo/mod.rs cargo build <...>
+//! ICU4X_DATA_DIR=/tmp/icu4x_baked_demo cargo build <...>
 //! ```
 //!
 //! ```
