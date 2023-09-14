@@ -99,7 +99,8 @@ impl IterableDataProvider<Bcp47ToIanaMapV1Marker> for crate::DatagenProvider {
 }
 
 fn compute_bcp47_ids_hash(bcp47_ids: &ZeroSlice<TimeZoneBcp47Id>) -> u64 {
-    let mut hasher = twox_hash::XxHash64::with_seed(0);
+    #[allow(deprecated)] // use SipHasher to reduce dependency count; see #4024
+    let mut hasher = std::hash::SipHasher::new();
     hasher.write(bcp47_ids.as_bytes());
     hasher.finish()
 }
