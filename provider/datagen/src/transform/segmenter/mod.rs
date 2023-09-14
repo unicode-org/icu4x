@@ -17,6 +17,7 @@ use icu_provider::datagen::IterableDataProvider;
 use icu_provider::prelude::*;
 use icu_segmenter::provider::*;
 use icu_segmenter::symbols::*;
+use itertools::Itertools;
 use std::fmt::Debug;
 use zerovec::ZeroVec;
 
@@ -469,6 +470,8 @@ impl crate::DatagenProvider {
         // sot and eot
         properties_names.push("sot".to_string());
         properties_names.push("eot".to_string());
+        println!("{:?}", properties_names);
+        println!("{}", properties_names.iter().enumerate().map(|(i, name)| format!("{:02X}={}", i, name)).join("\n"));
 
         let rule_size = properties_names.len() * properties_names.len();
         let mut break_state_table = vec![UNKNOWN_RULE; rule_size];

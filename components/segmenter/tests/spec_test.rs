@@ -6,10 +6,12 @@ use icu_segmenter::GraphemeClusterSegmenter;
 use icu_segmenter::LineSegmenter;
 use icu_segmenter::SentenceSegmenter;
 use icu_segmenter::WordSegmenter;
+use itertools::Itertools;
 use std::char;
 use std::fs::File;
 use std::io::prelude::*;
 use std::io::BufReader;
+use std::ops::Index;
 use std::u32;
 
 struct TestContentIterator {
@@ -220,18 +222,30 @@ fn sentence_break_test(filename: &str) {
         if result != test.break_result_utf8 {
             let sb = icu::properties::maps::sentence_break();
             let sb_name = icu::properties::SentenceBreak::enum_to_long_name_mapper();
-              // TODO(egg): It would be really nice to have Name here.
-            println!("  | A | E | Code pt. | Sentence_Break | Literal");
+            let mut iter = segmenter.segment_str(&s);
+            // TODO(egg): It would be really nice to have Name here.
+            println!("  | A | E | Code pt. | Sentence_Break | State | Literal");
+            let STATE_NAMES = ["Unknown", "CR", "LF", "Extend", "Sep", "Format", "Sp", "Lower", "Upper", "OLetter", "Numeric", "ATerm", "SContinue", "STerm", "Close", "ATerm_Close", "ATerm_Close_Sp", "STerm_Close", "STerm_Close_Sp", "Upper_ATerm", "Lower_ATerm", "ATerm_Close_Sp_ParaSep", "ATerm_Close_Sp_CR", "STerm_Close_Sp_ParaSep", "STerm_Close_Sp_CR", "ATerm_Close_Sp_SB8", "sot", "eot"];
             for (i, c) in s.char_indices() {
                 let expected_break = test.break_result_utf8.contains(&i);
                 let actual_break = result.contains(&i);
-                println!("{}| {} | {} | {:>8} | {:>14} | {}",
-                         if actual_break != expected_break { "😭"} else {"  "},
-                         if actual_break { "÷" } else { "×" },
-                         if expected_break { "÷" } else { "×" },
-                         format!("{:04X}", c as u32),
-                         sb_name.get(sb.get(c)).unwrap_or(&format!("{:?}", sb.get(c))),
-                         c)
+                if actual_break { iter.next(); }
+                println!(
+                    "{}| {} | {} | {:>8} | {:>14} | {} | {}",
+                    if actual_break != expected_break {
+                        "😭"
+                    } else {
+                        "  "
+                    },
+                    if actual_break { "÷" } else { "×" },
+                    if expected_break { "÷" } else { "×" },
+                    format!("{:04X}", c as u32),
+                    sb_name
+                        .get(sb.get(c))
+                        .unwrap_or(&format!("{:?}", sb.get(c))),
+                    if actual_break { format!("{:02X} {}", iter.state(), STATE_NAMES[iter.state() as usize]) } else {"??".to_string()},
+                    c
+                )
             }
             assert!(false)
         }
