@@ -32,16 +32,15 @@ use zerofrom::ZeroFrom;
 use zerovec::{VarZeroVec, ZeroSlice, ZeroVecError};
 
 #[cfg(feature = "compiled_data")]
-icu_properties_data::create_provider!(
-    /// Baked data
-    ///
-    /// <div class="stab unstable">
-    /// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
-    /// including in SemVer minor releases. In particular, the `DataProvider` implementations are only
-    /// guaranteed to match with this version's `*_unstable` providers. Use with caution.
-    /// </div>
-    pub Baked
-);
+/// Baked data
+///
+/// <div class="stab unstable">
+/// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
+/// including in SemVer minor releases. In particular, the `DataProvider` implementations are only
+/// guaranteed to match with this version's `*_unstable` providers. Use with caution.
+/// </div>
+#[derive(Debug)]
+pub struct Baked;
 
 #[cfg(feature = "compiled_data")]
 const _: () = {
@@ -50,6 +49,7 @@ const _: () = {
         pub use icu_collections as collections;
         pub use icu_locid_transform as locid_transform;
     }
+    icu_properties_data::make_provider!(Baked);
     icu_properties_data::impl_propnames_from_gcb_v1!(Baked);
     icu_properties_data::impl_propnames_from_bc_v1!(Baked);
     icu_properties_data::impl_propnames_from_ccc_v1!(Baked);

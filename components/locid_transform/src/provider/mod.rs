@@ -25,16 +25,15 @@ mod fallback;
 pub use fallback::*;
 
 #[cfg(feature = "compiled_data")]
-icu_locid_transform_data::create_provider!(
-    /// Baked data
-    ///
-    /// <div class="stab unstable">
-    /// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
-    /// including in SemVer minor releases. In particular, the `DataProvider` implementations are only
-    /// guaranteed to match with this version's `*_unstable` providers. Use with caution.
-    /// </div>
-    pub Baked
-);
+/// Baked data
+///
+/// <div class="stab unstable">
+/// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
+/// including in SemVer minor releases. In particular, the `DataProvider` implementations are only
+/// guaranteed to match with this version's `*_unstable` providers. Use with caution.
+/// </div>
+#[derive(Debug)]
+pub struct Baked;
 
 #[cfg(feature = "compiled_data")]
 const _: () = {
@@ -42,6 +41,7 @@ const _: () = {
         pub use crate as locid_transform;
         pub use icu_locid as locid;
     }
+    icu_locid_transform_data::make_provider!(Baked);
     icu_locid_transform_data::impl_fallback_likelysubtags_v1!(Baked);
     icu_locid_transform_data::impl_fallback_parents_v1!(Baked);
     icu_locid_transform_data::impl_fallback_supplement_co_v1!(Baked);

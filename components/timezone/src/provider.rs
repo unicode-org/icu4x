@@ -22,22 +22,22 @@ use zerovec::ule::{AsULE, ULE};
 use zerovec::{ZeroMap2d, ZeroSlice, ZeroVec};
 
 #[cfg(feature = "compiled_data")]
-icu_timezone_data::create_provider!(
-    /// Baked data
-    ///
-    /// <div class="stab unstable">
-    /// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
-    /// including in SemVer minor releases. In particular, the `DataProvider` implementations are only
-    /// guaranteed to match with this version's `*_unstable` providers. Use with caution.
-    /// </div>
-    pub Baked
-);
+/// Baked data
+///
+/// <div class="stab unstable">
+/// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
+/// including in SemVer minor releases. In particular, the `DataProvider` implementations are only
+/// guaranteed to match with this version's `*_unstable` providers. Use with caution.
+/// </div>
+#[derive(Debug)]
+pub struct Baked;
 
 #[cfg(feature = "compiled_data")]
 const _: () = {
     pub mod icu {
         pub use crate as timezone;
     }
+    icu_timezone_data::make_provider!(Baked);
     icu_timezone_data::impl_time_zone_metazone_period_v1!(Baked);
 };
 

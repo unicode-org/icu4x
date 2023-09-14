@@ -39,16 +39,15 @@ use super::CaseFirst;
 use super::MaxVariable;
 
 #[cfg(feature = "compiled_data")]
-icu_collator_data::create_provider!(
-    /// Baked data
-    ///
-    /// <div class="stab unstable">
-    /// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
-    /// including in SemVer minor releases. In particular, the `DataProvider` implementations are only
-    /// guaranteed to match with this version's `*_unstable` providers. Use with caution.
-    /// </div>
-    pub Baked
-);
+/// Baked data
+///
+/// <div class="stab unstable">
+/// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
+/// including in SemVer minor releases. In particular, the `DataProvider` implementations are only
+/// guaranteed to match with this version's `*_unstable` providers. Use with caution.
+/// </div>
+#[derive(Debug)]
+pub struct Baked;
 
 #[cfg(feature = "compiled_data")]
 const _: () = {
@@ -57,6 +56,7 @@ const _: () = {
         pub use icu_collections as collections;
         pub use icu_locid_transform as locid_transform;
     }
+    icu_collator_data::make_provider!(Baked);
     icu_collator_data::impl_collator_data_v1!(Baked);
     icu_collator_data::impl_collator_dia_v1!(Baked);
     icu_collator_data::impl_collator_jamo_v1!(Baked);

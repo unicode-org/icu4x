@@ -31,16 +31,15 @@ mod exceptions_builder;
 mod unfold;
 
 #[cfg(feature = "compiled_data")]
-icu_casemap_data::create_provider!(
-    /// Baked data
-    ///
-    /// <div class="stab unstable">
-    /// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
-    /// including in SemVer minor releases. In particular, the `DataProvider` implementations are only
-    /// guaranteed to match with this version's `*_unstable` providers. Use with caution.
-    /// </div>
-    pub Baked
-);
+/// Baked data
+///
+/// <div class="stab unstable">
+/// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
+/// including in SemVer minor releases. In particular, the `DataProvider` implementations are only
+/// guaranteed to match with this version's `*_unstable` providers. Use with caution.
+/// </div>
+#[derive(Debug)]
+pub struct Baked;
 
 #[cfg(feature = "compiled_data")]
 const _: () = {
@@ -48,6 +47,7 @@ const _: () = {
         pub use crate as casemap;
         pub use icu_collections as collections;
     }
+    icu_casemap_data::make_provider!(Baked);
     icu_casemap_data::impl_props_casemap_v1!(Baked);
     icu_casemap_data::impl_props_casemap_unfold_v1!(Baked);
 };

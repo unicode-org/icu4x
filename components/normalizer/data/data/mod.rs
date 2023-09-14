@@ -2,11 +2,7 @@
 include!("macros.rs");
 macro_rules! impl_data_provider {
     ($ provider : path) => {
-        impl $provider {
-            #[doc(hidden)]
-            #[allow(dead_code)]
-            pub const MUST_USE_CREATE_PROVIDER_MACRO: () = ();
-        }
+        make_provider!($provider);
         impl_normalizer_comp_v1!($provider);
         impl_normalizer_decomp_v1!($provider);
         impl_normalizer_nfd_v1!($provider);

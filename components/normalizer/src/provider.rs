@@ -21,16 +21,15 @@ use icu_provider::prelude::*;
 use zerovec::ZeroVec;
 
 #[cfg(feature = "compiled_data")]
-icu_normalizer_data::create_provider!(
-    /// Baked data
-    ///
-    /// <div class="stab unstable">
-    /// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
-    /// including in SemVer minor releases. In particular, the `DataProvider` implementations are only
-    /// guaranteed to match with this version's `*_unstable` providers. Use with caution.
-    /// </div>
-    pub Baked
-);
+/// Baked data
+///
+/// <div class="stab unstable">
+/// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
+/// including in SemVer minor releases. In particular, the `DataProvider` implementations are only
+/// guaranteed to match with this version's `*_unstable` providers. Use with caution.
+/// </div>
+#[derive(Debug)]
+pub struct Baked;
 
 #[cfg(feature = "compiled_data")]
 const _: () = {
@@ -38,6 +37,7 @@ const _: () = {
         pub use crate as normalizer;
         pub use icu_collections as collections;
     }
+    icu_normalizer_data::make_provider!(Baked);
     icu_normalizer_data::impl_normalizer_comp_v1!(Baked);
     icu_normalizer_data::impl_normalizer_decomp_v1!(Baked);
     icu_normalizer_data::impl_normalizer_nfd_v1!(Baked);

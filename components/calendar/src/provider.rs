@@ -22,16 +22,15 @@ use tinystr::TinyStr16;
 use zerovec::ZeroVec;
 
 #[cfg(feature = "compiled_data")]
-icu_calendar_data::create_provider!(
-    /// Baked data
-    ///
-    /// <div class="stab unstable">
-    /// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
-    /// including in SemVer minor releases. In particular, the `DataProvider` implementations are only
-    /// guaranteed to match with this version's `*_unstable` providers. Use with caution.
-    /// </div>
-    pub Baked
-);
+/// Baked data
+///
+/// <div class="stab unstable">
+/// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
+/// including in SemVer minor releases. In particular, the `DataProvider` implementations are only
+/// guaranteed to match with this version's `*_unstable` providers. Use with caution.
+/// </div>
+#[derive(Debug)]
+pub struct Baked;
 
 #[cfg(feature = "compiled_data")]
 const _: () = {
@@ -39,6 +38,7 @@ const _: () = {
         pub use crate as calendar;
         pub use icu_locid_transform as locid_transform;
     }
+    icu_calendar_data::make_provider!(Baked);
     icu_calendar_data::impl_calendar_japanese_v1!(Baked);
     icu_calendar_data::impl_calendar_japanext_v1!(Baked);
     icu_calendar_data::impl_datetime_week_data_v1!(Baked);

@@ -268,7 +268,7 @@ impl BakedExporter {
                 macro_rules! #prefixed_macro_ident {
                     ($provider:path) => {
                         #[clippy::msrv = #MSRV]
-                        const _: () = <$provider>::MUST_USE_CREATE_PROVIDER_MACRO;
+                        const _: () = <$provider>::MUST_USE_MAKE_PROVIDER_MACRO;
                         #body
                     }
                 }
@@ -608,22 +608,18 @@ impl BakedExporter {
                 /// ```
                 #[doc(hidden)]
                 #[macro_export]
-                macro_rules! __create_provider {
-                    ($(#[$meta:meta])* $vis:vis $name:ident) => {
-                        #[derive(Debug)]
-                        $(#[$meta])*
-                        #[clippy::msrv = #MSRV]
-                        $vis struct $name;
+                macro_rules! __make_provider {
+                    ($name:ty) => {
                         #[clippy::msrv = #MSRV]
                         impl $name {
                             #[doc(hidden)]
                             #[allow(dead_code)]
-                            pub const MUST_USE_CREATE_PROVIDER_MACRO: () = ();
+                            pub const MUST_USE_MAKE_PROVIDER_MACRO: () = ();
                         }
                     };
                 }
                 #[doc(inline)]
-                pub use __create_provider as create_provider;
+                pub use __make_provider as make_provider;
                 #(
                     #[macro_use]
                     #[path = #file_paths]
@@ -645,11 +641,7 @@ impl BakedExporter {
                 // to the macros from `macros.rs`.
                 macro_rules! impl_data_provider {
                     ($provider:path) => {
-                        impl $provider {
-                            #[doc(hidden)]
-                            #[allow(dead_code)]
-                            pub const MUST_USE_CREATE_PROVIDER_MACRO: () = ();
-                        }
+                        make_provider!($provider);
                         #(
                             #features
                             #macro_idents ! ($provider);
@@ -657,6 +649,8 @@ impl BakedExporter {
                     };
                 }
 
+                // Not public because `impl_data_provider` isn't. Users can implement `DynamicDataProvider<AnyMarker>` using
+                // `impl_dynamic_data_provider!`.
                 macro_rules! impl_any_provider {
                     ($provider:path) => {
                         #[clippy::msrv = #MSRV]

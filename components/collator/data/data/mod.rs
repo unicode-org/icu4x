@@ -2,11 +2,7 @@
 include!("macros.rs");
 macro_rules! impl_data_provider {
     ($ provider : path) => {
-        impl $provider {
-            #[doc(hidden)]
-            #[allow(dead_code)]
-            pub const MUST_USE_CREATE_PROVIDER_MACRO: () = ();
-        }
+        make_provider!($provider);
         impl_collator_data_v1!($provider);
         impl_collator_dia_v1!($provider);
         impl_collator_jamo_v1!($provider);

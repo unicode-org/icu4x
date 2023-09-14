@@ -9,9 +9,18 @@
 /// ```
 #[doc(hidden)]
 #[macro_export]
-macro_rules ! __create_provider { ($ (# [$ meta : meta]) * $ vis : vis $ name : ident) => { # [derive (Debug)] $ (# [$ meta]) * # [clippy :: msrv = "1.66"] $ vis struct $ name ; # [clippy :: msrv = "1.66"] impl $ name { # [doc (hidden)] # [allow (dead_code)] pub const MUST_USE_CREATE_PROVIDER_MACRO : () = () ; } } ; }
+macro_rules! __make_provider {
+    ($ name : ty) => {
+        #[clippy::msrv = "1.66"]
+        impl $name {
+            #[doc(hidden)]
+            #[allow(dead_code)]
+            pub const MUST_USE_MAKE_PROVIDER_MACRO: () = ();
+        }
+    };
+}
 #[doc(inline)]
-pub use __create_provider as create_provider;
+pub use __make_provider as make_provider;
 #[macro_use]
 #[path = "macros/list_and_v1.data.rs"]
 mod list_and_v1;

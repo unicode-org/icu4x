@@ -7,7 +7,7 @@
 macro_rules! __impl_props_nfkdinert_v1 {
     ($ provider : path) => {
         #[clippy::msrv = "1.66"]
-        const _: () = <$provider>::MUST_USE_CREATE_PROVIDER_MACRO;
+        const _: () = <$provider>::MUST_USE_MAKE_PROVIDER_MACRO;
         #[clippy::msrv = "1.66"]
         impl $provider {
             #[doc(hidden)]

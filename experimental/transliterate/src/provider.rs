@@ -27,16 +27,15 @@ use icu_provider::prelude::*;
 use zerovec::*;
 
 #[cfg(feature = "compiled_data")]
-icu_transliterate_data::create_provider!(
-    /// Baked data
-    ///
-    /// <div class="stab unstable">
-    /// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
-    /// including in SemVer minor releases. In particular, the `DataProvider` implementations are only
-    /// guaranteed to match with this version's `*_unstable` providers. Use with caution.
-    /// </div>
-    pub Baked
-);
+/// Baked data
+///
+/// <div class="stab unstable">
+/// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
+/// including in SemVer minor releases. In particular, the `DataProvider` implementations are only
+/// guaranteed to match with this version's `*_unstable` providers. Use with caution.
+/// </div>
+#[derive(Debug)]
+pub struct Baked;
 
 #[cfg(feature = "compiled_data")]
 const _: () = {
@@ -44,6 +43,7 @@ const _: () = {
         pub use crate as transliterate;
         pub use icu_collections as collections;
     }
+    icu_transliterate_data::make_provider!(Baked);
     icu_transliterate_data::impl_transliterator_rules_v1!(Baked);
 };
 
