@@ -1,13 +1,13 @@
 // @generated
 include!("macros.rs");
 macro_rules! impl_data_provider {
-    ($ provider : path) => {
+    ($ provider : ty) => {
         make_provider!($provider);
         impl_transliterator_rules_v1!($provider);
     };
 }
 macro_rules! impl_any_provider {
-    ($ provider : path) => {
+    ($ provider : ty) => {
         #[clippy::msrv = "1.66"]
         impl icu_provider::AnyProvider for $provider {
             fn load_any(&self, key: icu_provider::DataKey, req: icu_provider::DataRequest) -> Result<icu_provider::AnyResponse, icu_provider::DataError> {

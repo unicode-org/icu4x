@@ -5,7 +5,7 @@
 #[doc(hidden)]
 #[macro_export]
 macro_rules! __impl_relativetime_long_minute_v1 {
-    ($ provider : path) => {
+    ($ provider : ty) => {
         #[clippy::msrv = "1.66"]
         const _: () = <$provider>::MUST_USE_MAKE_PROVIDER_MACRO;
         #[clippy::msrv = "1.66"]

@@ -5,7 +5,7 @@
 #[doc(hidden)]
 #[macro_export]
 macro_rules! __impl_datetime_ethiopic_datelengths_v1 {
-    ($ provider : path) => {
+    ($ provider : ty) => {
         #[clippy::msrv = "1.66"]
         const _: () = <$provider>::MUST_USE_MAKE_PROVIDER_MACRO;
         #[clippy::msrv = "1.66"]

@@ -1,11 +1,14 @@
 // @generated
-/// Declares a data provider. You can then use `impl_data_provider` or
-/// key specific macros, like `impl_core_helloworld_v1` to add implementations.
+/// Marks a type as a data provider. You can then use macros like
+/// `impl_core_helloworld_v1` to add implementations.
 ///
 /// ```ignore
-/// #[path = "/path/to/generated/macros.rs"];
-/// mod macros;
-/// macros::create_provider(MyDataProvider);
+/// struct MyProvider;
+/// const _: () = {
+///     include!("path/to/generated/macros.rs");
+///     make_provider!(MyProvider);
+///     impl_core_helloworld_v1!(MyProvider);
+/// }
 /// ```
 #[doc(hidden)]
 #[macro_export]
