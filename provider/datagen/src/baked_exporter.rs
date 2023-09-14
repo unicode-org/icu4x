@@ -122,9 +122,9 @@ pub struct Options {
     /// Whether to use separate crates to name types instead of the `icu` metacrate.
     ///
     /// By default, types will be named through the `icu` crate, like `icu::list::provider::ListJoinerPattern`.
-    /// With this enabled, the alternative name from the `icu_list` crate will be used: `icu_list::provider::ListJoinerPattern`.
+    /// With this enabled, the alternative name from the component crates will be used: `icu_list::provider::ListJoinerPattern`.
     /// This is required when you are not using the `icu` crate, *and* you're building custom data providers;
-    /// data for `compiled_data` constructors does not need this.
+    /// data for `compiled_data` constructors uses `icu` names.
     pub use_separate_crates: bool,
     #[doc(hidden)] // deprecated, used by legacy testdata
     pub insert_feature_gates: bool,
