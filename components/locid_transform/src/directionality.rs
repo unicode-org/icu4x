@@ -57,7 +57,7 @@ pub struct LocaleDirectionality {
 
 impl LocaleDirectionality {
     /// Creates a [`LocaleDirectionality`] from compiled data.
-    /// 
+    ///
     /// This includes limited likely subtags data, see [`LocaleExpander::new()`].
     #[cfg(feature = "compiled_data")]
     pub const fn new() -> Self {
@@ -148,7 +148,7 @@ impl LocaleDirectionality {
     ///
     /// If you already have a script struct and want to get its direction, you should use
     /// `Locale::from(Some(my_script))` and call this method.
-    /// 
+    ///
     /// This method will return `None` if either a locale's script cannot be determined, or there is no information
     /// for the script.
     ///
@@ -196,8 +196,8 @@ impl LocaleDirectionality {
 
     /// Returns whether the given locale is right-to-left.
     ///
-    /// Note that if this method returns `false`, the locale is either left-to-right or 
-    /// the [`LocaleDirectionality`] does not include data for the locale. 
+    /// Note that if this method returns `false`, the locale is either left-to-right or
+    /// the [`LocaleDirectionality`] does not include data for the locale.
     /// You should use [`LocaleDirectionality::get`] if you need to differentiate between these cases.
     ///
     /// See [`LocaleDirectionality::get`] for more information.
@@ -210,8 +210,8 @@ impl LocaleDirectionality {
 
     /// Returns whether the given locale is left-to-right.
     ///
-    /// Note that if this method returns `false`, the locale is either right-to-left or 
-    /// the [`LocaleDirectionality`] does not include data for the locale. 
+    /// Note that if this method returns `false`, the locale is either right-to-left or
+    /// the [`LocaleDirectionality`] does not include data for the locale.
     /// You should use [`LocaleDirectionality::get`] if you need to differentiate between these cases.
     ///
     /// See [`LocaleDirectionality::get`] for more information.
