@@ -4,7 +4,9 @@
 
 use displaydoc::Display;
 
+/// Error types for the `zerotrie` crate.
 #[derive(Debug, Copy, Clone, PartialEq, Eq, Display)]
+#[non_exhaustive]
 pub enum Error {
     /// Non-ASCII data was added to an ASCII-only collection.
     #[displaydoc("Non-ASCII cannot be added to an ASCII-only collection")]

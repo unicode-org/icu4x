@@ -35,74 +35,16 @@
 
 use crate::calendar_arithmetic::CalendarArithmetic;
 use crate::chinese_based::{
-    chinese_based_ordinal_lunar_month_from_code, ChineseBasedCompiledData, ChineseBasedYearInfo,
+    chinese_based_ordinal_lunar_month_from_code, ChineseBasedCompiledData,
+    ChineseBasedWithDataLoading, ChineseBasedYearInfo,
 };
-use crate::helpers::div_rem_euclid64;
 use crate::{
-    chinese_based::{ChineseBased, ChineseBasedDateInner},
-    rata_die::RataDie,
+    chinese_based::ChineseBasedDateInner,
     types::{self, Era, FormattableYear},
     AnyCalendarKind, Calendar, CalendarError, Date, DateTime, Iso,
 };
-use calendrical_calculations::astronomy::Location;
 use core::num::NonZeroU8;
 use tinystr::tinystr;
-
-// The first day in the Korean Dangi calendar (based on the founding of Gojoseon)
-const KOREAN_EPOCH: RataDie = RataDie::new(-852065); // Lunar new year 2333 BCE (-2332 ISO)
-
-/// The Korean Dangi calendar relies on knowing the current day at the moment of a new moon;
-/// however, this can vary depending on location. As such, new moon calculations are based on
-/// the time in Seoul. Before 1908, local time was used, represented as UTC+(3809/450 h).
-/// This changed multiple times as different standard timezones were adopted in Korea.
-/// Currently, UTC+9h is used.
-///
-/// Offsets are not given in hours, but in partial days (1 hour = 1 / 24 day).
-const UTC_OFFSET_ORIGINAL: f64 = (3809.0 / 450.0) / 24.0;
-const UTC_OFFSET_1908: f64 = 8.5 / 24.0;
-const UTC_OFFSET_1912: f64 = 9.0 / 24.0;
-const UTC_OFFSET_1954: f64 = 8.5 / 24.0;
-const UTC_OFFSET_1961: f64 = 9.0 / 24.0;
-
-const FIXED_1908: RataDie = RataDie::new(696608); // Apr 1, 1908
-const FIXED_1912: RataDie = RataDie::new(697978); // Jan 1, 1912
-const FIXED_1954: RataDie = RataDie::new(713398); // Mar 21, 1954
-const FIXED_1961: RataDie = RataDie::new(716097); // Aug 10, 1961
-
-const KOREAN_LATITUDE: f64 = 37.0 + (34.0 / 60.0);
-const KOREAN_LONGITUDE: f64 = 126.0 + (58.0 / 60.0);
-const KOREAN_ELEVATION: f64 = 0.0;
-
-const KOREAN_LOCATION_ORIGINAL: Location = Location::new_unchecked(
-    KOREAN_LATITUDE,
-    KOREAN_LONGITUDE,
-    KOREAN_ELEVATION,
-    UTC_OFFSET_ORIGINAL,
-);
-const KOREAN_LOCATION_1908: Location = Location::new_unchecked(
-    KOREAN_LATITUDE,
-    KOREAN_LONGITUDE,
-    KOREAN_ELEVATION,
-    UTC_OFFSET_1908,
-);
-const KOREAN_LOCATION_1912: Location = Location::new_unchecked(
-    KOREAN_LATITUDE,
-    KOREAN_LONGITUDE,
-    KOREAN_ELEVATION,
-    UTC_OFFSET_1912,
-);
-const KOREAN_LOCATION_1954: Location = Location::new_unchecked(
-    KOREAN_LATITUDE,
-    KOREAN_LONGITUDE,
-    KOREAN_ELEVATION,
-    UTC_OFFSET_1954,
-);
-const KOREAN_LOCATION_1961: Location = Location::new_unchecked(
-    KOREAN_LATITUDE,
-    KOREAN_LONGITUDE,
-    KOREAN_ELEVATION,
-    UTC_OFFSET_1961,
-);
 
 /// The Dangi Calendar
 ///
@@ -166,7 +108,7 @@ impl Calendar for Dangi {
         let year_info = ChineseBasedYearInfo::get_year_info::<Dangi>(year);
 
         let month = if let Some(ordinal) =
-            chinese_based_ordinal_lunar_month_from_code::<Dangi>(month_code, year_info)
+            chinese_based_ordinal_lunar_month_from_code(month_code, year_info)
         {
             ordinal
         } else {
@@ -386,51 +328,14 @@ impl DateTime<Dangi> {
     }
 }
 
-impl ChineseBased for Dangi {
-    fn location(fixed: RataDie) -> Location {
-        if fixed < FIXED_1908 {
-            KOREAN_LOCATION_ORIGINAL
-        } else if fixed < FIXED_1912 {
-            KOREAN_LOCATION_1908
-        } else if fixed < FIXED_1954 {
-            KOREAN_LOCATION_1912
-        } else if fixed < FIXED_1961 {
-            KOREAN_LOCATION_1954
-        } else {
-            KOREAN_LOCATION_1961
-        }
-    }
-
-    const EPOCH: RataDie = KOREAN_EPOCH;
-
+impl ChineseBasedWithDataLoading for Dangi {
+    type CB = calendrical_calculations::chinese_based::Dangi;
     fn get_compiled_data_for_year(_year: i32) -> Option<ChineseBasedCompiledData> {
         None
     }
 }
 
 impl Dangi {
-    /// Get the ISO Date of Seollal (Korean Lunar New Year) on or before the given ISO Date `iso`.
-    ///
-    /// ```rust
-    /// use icu::calendar::Date;
-    /// use icu::calendar::dangi::Dangi;
-    ///
-    /// let iso = Date::try_new_iso_date(2023, 6, 18)
-    ///     .expect("Failed to initialize ISO Date instance.");
-    /// let seollal = Dangi::seollal_on_or_before_iso(iso);
-    ///
-    /// assert_eq!(seollal.year().number, 2023);
-    /// assert_eq!(seollal.month().ordinal, 1);
-    /// assert_eq!(seollal.day_of_month().0, 22);
-    /// ```
-    pub fn seollal_on_or_before_iso(iso: Date<Iso>) -> Date<Iso> {
-        let iso_inner = iso.inner;
-        let fixed = Iso::fixed_from_iso(iso_inner);
-        let prev_solstice = Inner::winter_solstice_on_or_before(fixed);
-        let result_fixed = Inner::new_year_on_or_before_fixed_date(fixed, prev_solstice).0;
-        Iso::iso_from_fixed(result_fixed)
-    }
-
     /// Get a `FormattableYear` from an integer Dangi year; optionally, a `ChineseBasedYearInfo`
     /// can be passed in for faster results.
     fn format_dangi_year(
@@ -440,7 +345,7 @@ impl Dangi {
         let era = Era(tinystr!(16, "dangi"));
         let number = year;
         // constant 364 from https://github.com/EdReingold/calendar-code2/blob/main/calendar.l#L5704
-        let cyclic = (div_rem_euclid64(number as i64 - 1 + 364, 60).1 as i32) as u8;
+        let cyclic = (number as i64 - 1 + 364).rem_euclid(60) as u8;
         let cyclic = NonZeroU8::new(cyclic + 1); // 1-indexed
         let rata_die_in_year = if let Some(info) = year_info_option {
             info.get_new_year()
@@ -463,146 +368,7 @@ mod test {
 
     use super::*;
     use crate::chinese::Chinese;
-
-    #[test]
-    fn test_seollal() {
-        #[derive(Debug)]
-        struct TestCase {
-            iso_year: i32,
-            iso_month: u8,
-            iso_day: u8,
-            expected_year: i32,
-            expected_month: u32,
-            expected_day: u32,
-        }
-
-        let cases = [
-            TestCase {
-                iso_year: 2024,
-                iso_month: 6,
-                iso_day: 6,
-                expected_year: 2024,
-                expected_month: 2,
-                expected_day: 10,
-            },
-            TestCase {
-                iso_year: 2024,
-                iso_month: 2,
-                iso_day: 9,
-                expected_year: 2023,
-                expected_month: 1,
-                expected_day: 22,
-            },
-            TestCase {
-                iso_year: 2023,
-                iso_month: 1,
-                iso_day: 22,
-                expected_year: 2023,
-                expected_month: 1,
-                expected_day: 22,
-            },
-            TestCase {
-                iso_year: 2023,
-                iso_month: 1,
-                iso_day: 21,
-                expected_year: 2022,
-                expected_month: 2,
-                expected_day: 1,
-            },
-            TestCase {
-                iso_year: 2022,
-                iso_month: 6,
-                iso_day: 6,
-                expected_year: 2022,
-                expected_month: 2,
-                expected_day: 1,
-            },
-            TestCase {
-                iso_year: 2021,
-                iso_month: 6,
-                iso_day: 6,
-                expected_year: 2021,
-                expected_month: 2,
-                expected_day: 12,
-            },
-            TestCase {
-                iso_year: 2020,
-                iso_month: 6,
-                iso_day: 6,
-                expected_year: 2020,
-                expected_month: 1,
-                expected_day: 25,
-            },
-            TestCase {
-                iso_year: 2019,
-                iso_month: 6,
-                iso_day: 6,
-                expected_year: 2019,
-                expected_month: 2,
-                expected_day: 5,
-            },
-            TestCase {
-                iso_year: 2018,
-                iso_month: 6,
-                iso_day: 6,
-                expected_year: 2018,
-                expected_month: 2,
-                expected_day: 16,
-            },
-            TestCase {
-                iso_year: 2025,
-                iso_month: 6,
-                iso_day: 6,
-                expected_year: 2025,
-                expected_month: 1,
-                expected_day: 29,
-            },
-            TestCase {
-                iso_year: 2026,
-                iso_month: 8,
-                iso_day: 8,
-                expected_year: 2026,
-                expected_month: 2,
-                expected_day: 17,
-            },
-            TestCase {
-                iso_year: 2027,
-                iso_month: 4,
-                iso_day: 4,
-                expected_year: 2027,
-                expected_month: 2,
-                expected_day: 7,
-            },
-            TestCase {
-                iso_year: 2028,
-                iso_month: 9,
-                iso_day: 21,
-                expected_year: 2028,
-                expected_month: 1,
-                expected_day: 27,
-            },
-        ];
-
-        for case in cases {
-            let iso = Date::try_new_iso_date(case.iso_year, case.iso_month, case.iso_day).unwrap();
-            let seollal = Dangi::seollal_on_or_before_iso(iso);
-            assert_eq!(
-                seollal.year().number,
-                case.expected_year,
-                "Year check failed for case: {case:?}"
-            );
-            assert_eq!(
-                seollal.month().ordinal,
-                case.expected_month,
-                "Month check failed for case: {case:?}"
-            );
-            assert_eq!(
-                seollal.day_of_month().0,
-                case.expected_day,
-                "Day check failed for case: {case:?}"
-            );
-        }
-    }
+    use calendrical_calculations::rata_die::RataDie;
 
     fn check_cyclic_and_rel_iso(year: i32) {
         let iso = Date::try_new_iso_date(year, 6, 6).unwrap();

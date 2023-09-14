@@ -237,7 +237,7 @@ pub(crate) fn year_as_gregorian(year: i32) -> types::FormattableYear {
 
 #[cfg(test)]
 mod test {
-    use crate::rata_die::RataDie;
+    use calendrical_calculations::rata_die::RataDie;
 
     use super::*;
     use types::Era;

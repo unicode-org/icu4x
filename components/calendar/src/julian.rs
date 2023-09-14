@@ -34,10 +34,10 @@
 use crate::any_calendar::AnyCalendarKind;
 use crate::calendar_arithmetic::{ArithmeticDate, CalendarArithmetic};
 use crate::gregorian::year_as_gregorian;
-use crate::helpers::I32CastError;
 use crate::iso::Iso;
-use crate::rata_die::RataDie;
 use crate::{types, Calendar, CalendarError, Date, DateDuration, DateDurationUnit, DateTime};
+use calendrical_calculations::helpers::I32CastError;
+use calendrical_calculations::rata_die::RataDie;
 use tinystr::tinystr;
 
 /// The [Julian Calendar]
@@ -209,12 +209,6 @@ impl Julian {
     // "Fixed" is a day count representation of calendars staring from Jan 1st of year 1 of the Georgian Calendar.
     pub(crate) const fn fixed_from_julian(date: ArithmeticDate<Julian>) -> RataDie {
         calendrical_calculations::julian::fixed_from_julian(date.year, date.month, date.day)
-    }
-
-    // Get a fixed date from the ymd of a Julian date; years are counted arithmetically (there is a year 0), in contrast to `fixed_from_julian_book_version`
-    pub(crate) const fn fixed_from_julian_integers(year: i32, month: u8, day: u8) -> RataDie {
-        // TODO: Should we check bounds here?
-        Self::fixed_from_julian(ArithmeticDate::new_unchecked(year, month, day))
     }
 
     /// Convenience function so we can call days_in_year without

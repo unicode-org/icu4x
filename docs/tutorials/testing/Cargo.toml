@@ -25,5 +25,3 @@ serde = { version = "1.0", features = ["derive", "alloc", "std"] }
 serde-aux = "4.1.2"
 tinystr = { version = "0.7", features = ["alloc"], default-features = false }
 writeable = { version = "0.5" }
-yoke = { version = "0.7" }
-zerofrom = { version = "0.1" }

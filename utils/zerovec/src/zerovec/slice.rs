@@ -169,7 +169,7 @@ impl<T> ZeroSlice<T>
 where
     T: AsULE,
 {
-    /// Gets the element at the specified index. Returns None if out of range.
+    /// Gets the element at the specified index. Returns `None` if out of range.
     ///
     /// # Example
     ///
@@ -191,7 +191,7 @@ where
             .map(T::from_unaligned)
     }
 
-    /// Gets the entire slice as an array of length `N`. Returns None if the slice
+    /// Gets the entire slice as an array of length `N`. Returns `None` if the slice
     /// does not have exactly `N` elements.
     ///
     /// # Example
@@ -212,7 +212,7 @@ where
         Some(ule_array.map(|u| T::from_unaligned(u)))
     }
 
-    /// Gets a subslice of elements within a certain range. Returns None if the range
+    /// Gets a subslice of elements within a certain range. Returns `None` if the range
     /// is out of bounds of this `ZeroSlice`.
     ///
     /// # Example
@@ -307,7 +307,7 @@ where
         Ok(ZeroSlice::from_ule_slice(new_slice))
     }
 
-    /// Gets the first element. Returns None if empty.
+    /// Gets the first element. Returns `None` if empty.
     ///
     /// # Example
     ///
@@ -325,7 +325,7 @@ where
         self.as_ule_slice().first().copied().map(T::from_unaligned)
     }
 
-    /// Gets the last element. Returns None if empty.
+    /// Gets the last element. Returns `None` if empty.
     ///
     /// # Example
     ///

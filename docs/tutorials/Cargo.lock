@@ -761,7 +761,6 @@ dependencies = [
  "icu_provider",
  "serde",
  "writeable",
- "yoke",
  "zerovec",
 ]
 
@@ -934,7 +933,6 @@ version = "1.2.0"
 name = "icu_displaynames"
 version = "0.10.0"
 dependencies = [
- "icu_collections",
  "icu_displaynames_data",
  "icu_locid",
  "icu_locid_transform",
@@ -1089,7 +1087,6 @@ dependencies = [
  "icu_provider",
  "serde",
  "tinystr",
- "yoke",
  "zerovec",
 ]
 
@@ -1102,7 +1099,6 @@ dependencies = [
  "postcard",
  "serde",
  "writeable",
- "yoke",
  "zerovec",
 ]
 
@@ -2297,8 +2293,6 @@ dependencies = [
  "serde-aux",
  "tinystr",
  "writeable",
- "yoke",
- "zerofrom",
 ]
 
 [[package]]
@@ -3028,7 +3022,6 @@ dependencies = [
  "proc-macro2",
  "quote",
  "syn 2.0.25",
- "synstructure",
 ]
 
 [[package]]
