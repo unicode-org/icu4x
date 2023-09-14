@@ -12,15 +12,16 @@ use std::io;
 
 /// Choices for how to render the JSON files.
 #[non_exhaustive]
-#[derive(Copy, Clone, Debug, PartialEq)]
+#[derive(Copy, Clone, Debug, PartialEq, Default)]
 pub enum StyleOption {
     /// Print the smallest possible JSON, to reduce file size.
+    #[default]
     Compact,
     /// Pretty-print JSON, to make it more readable.
     Pretty,
 }
 
-/// A serializer for JavaScript Object Notation (JSON).
+/// A serializer for [JavaScript Object Notation (JSON)](serde_json).
 ///
 /// # Examples
 ///
@@ -28,7 +29,7 @@ pub enum StyleOption {
 /// use icu_provider_fs::export::serializers;
 /// use icu_provider_fs::export::FilesystemExporter;
 ///
-/// let serializer = serializers::postcard::Serializer::new(Default::default());
+/// let serializer = serializers::Json::pretty();
 ///
 /// // Then pass it to a FilesystemExporter:
 /// let demo_path = std::env::temp_dir().join("icu4x_json_serializer_demo");
@@ -37,27 +38,19 @@ pub enum StyleOption {
 ///     demo_path.clone().into(),
 /// )
 /// .unwrap();
-/// std::fs::remove_dir_all(&demo_path).expect("Cleaning up test directory");
+/// # std::fs::remove_dir_all(&demo_path).expect("Cleaning up test directory");
 /// ```
-#[derive(Debug)]
+#[derive(Debug, Default)]
 pub struct Serializer {
     style: StyleOption,
 }
 
 /// Options bag for initializing a [`serde_json::Serializer`].
 #[non_exhaustive]
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Clone, Debug, PartialEq, Default)]
 pub struct Options {
     /// Format style to use when dumping output.
     pub style: StyleOption,
-}
-
-impl Default for Options {
-    fn default() -> Self {
-        Self {
-            style: StyleOption::Compact,
-        }
-    }
 }
 
 impl AbstractSerializer for Serializer {
@@ -86,25 +79,17 @@ impl AbstractSerializer for Serializer {
 }
 
 impl Serializer {
-    /// Creates a new serializer for [`serde_json`].
+    #[doc(hidden)]
     pub fn new(options: Options) -> Self {
         Self {
             style: options.style,
         }
     }
 
-    /// Convenience function to create a JSON serializer with the
-    /// [`StyleOption::Pretty`] format.
+    /// A JSON serializer that pretty-prints the output.
     pub fn pretty() -> Self {
-        Self::new(Options {
+        Self {
             style: StyleOption::Pretty,
-            ..Default::default()
-        })
-    }
-}
-
-impl Default for Serializer {
-    fn default() -> Self {
-        Self::new(Default::default())
+        }
     }
 }

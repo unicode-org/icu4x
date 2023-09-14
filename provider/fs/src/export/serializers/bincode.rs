@@ -11,7 +11,7 @@ use icu_provider::datagen::*;
 use icu_provider::prelude::*;
 use std::io;
 
-/// A serializer for Bincode.
+/// A serializer for [Bincode](bincode).
 ///
 /// # Examples
 ///
@@ -19,7 +19,7 @@ use std::io;
 /// use icu_provider_fs::export::serializers;
 /// use icu_provider_fs::export::FilesystemExporter;
 ///
-/// let serializer = serializers::bincode::Serializer::new(Default::default());
+/// let serializer = serializers::Bincode::default();
 ///
 /// // Then pass it to a FilesystemExporter:
 /// let demo_path = std::env::temp_dir().join("icu4x_bincode_serializer_demo");
@@ -28,7 +28,7 @@ use std::io;
 ///     demo_path.clone().into(),
 /// )
 /// .unwrap();
-/// std::fs::remove_dir_all(&demo_path).expect("Cleaning up test directory");
+/// # std::fs::remove_dir_all(&demo_path).expect("Cleaning up test directory");
 /// ```
 #[allow(clippy::exhaustive_structs)] // this type is stable
 #[derive(Debug)]
@@ -59,7 +59,7 @@ impl AbstractSerializer for Serializer {
 }
 
 impl Serializer {
-    /// Creates a new serializer for [`bincode`].
+    #[doc(hidden)]
     pub fn new(_options: Options) -> Self {
         Self {}
     }

@@ -22,6 +22,7 @@ use icu_provider::datagen::*;
 use icu_provider::prelude::*;
 use std::io;
 
+#[doc(hidden)]
 /// A simple serializer trait that works on whole objects.
 pub trait AbstractSerializer: core::fmt::Debug {
     /// Serializes an object to a sink.

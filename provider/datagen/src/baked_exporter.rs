@@ -6,6 +6,8 @@
 //!
 //! This module can be used as a target for the `icu_datagen` crate.
 //!
+//! See our [datagen tutorial](https://github.com/unicode-org/icu4x/blob/main/docs/tutorials/data_management.md) for more information about different data providers.
+//!
 //! # Examples
 //!
 //! ```
@@ -29,11 +31,17 @@
 //! # let _ = std::fs::remove_dir_all(&demo_path);
 //! ```
 //!
-//! The resulting module structure can now be used like this:
+//! There are two ways to use baked data: you can build custom data providers for use with
+//! [`_unstable` constructors](icu_provider::constructors), or you can use it with the
+//! `compiled_data` Cargo feature and constructors.
+//!
+//! ## Custom `DataProvider`
+//!
+//! This allows you to use baked data in custom data pipelines, such as including some baked
+//! data and lazily loading more data from the network.
 //!
 //! ```
 //! use icu_locid::langid;
-//! use icu_provider::prelude::*;
 //! use icu_provider::hello_world::*;
 //!
 //! pub struct MyDataProvider;
@@ -62,6 +70,25 @@
 //!
 //! assert_eq!(formatter.format_to_string(), "Hello World");
 //! # }
+//! ```
+//!
+//! ## `compiled_data`
+//!
+//! You can use baked data to overwrite the compiled data that's included in ICU4X.
+//! To do this, build your binary with the `ICU4X_DATA_DIR` environment variable:
+//!
+//! ```console
+//! ICU4X_DATA_DIR=/tmp/icu4x_baked_demo/mod.rs cargo build <...>
+//! ```
+//!
+//! ```
+//! use icu_locid::langid;
+//! use icu_provider::hello_world::*;
+//!
+//! let formatter =
+//!     HelloWorldFormatter::try_new(&langid!("en").into()).unwrap();
+//!
+//! assert_eq!(formatter.format_to_string(), "Hello World");
 //! ```
 
 use databake::*;
@@ -93,6 +120,11 @@ pub struct Options {
     /// Whether to run `rustfmt` on the generated files.
     pub pretty: bool,
     /// Whether to use separate crates to name types instead of the `icu` metacrate.
+    ///
+    /// By default, types will be named through the `icu` crate, like `icu::list::provider::ListJoinerPattern`.
+    /// With this enabled, the alternative name from the `icu_list` crate will be used: `icu_list::provider::ListJoinerPattern`.
+    /// This is required when you are not using the `icu` crate, *and* you're building custom data providers;
+    /// data for `compiled_data` constructors does not need this.
     pub use_separate_crates: bool,
     #[doc(hidden)] // deprecated, used by legacy testdata
     pub insert_feature_gates: bool,
