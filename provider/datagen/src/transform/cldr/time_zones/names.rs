@@ -98,9 +98,13 @@ impl IterableDataProvider<Bcp47ToIanaMapV1Marker> for crate::DatagenProvider {
     }
 }
 
-fn compute_bcp47_ids_hash(bcp47_ids: &ZeroSlice<TimeZoneBcp47Id>) -> u64 {
+fn create_hasher() -> impl std::hash::Hasher {
     #[allow(deprecated)] // use SipHasher to reduce dependency count; see #4024
-    let mut hasher = std::hash::SipHasher::new();
+    std::hash::SipHasher::new()
+}
+
+fn compute_bcp47_ids_hash(bcp47_ids: &ZeroSlice<TimeZoneBcp47Id>) -> u64 {
+    let mut hasher = create_hasher();
     hasher.write(bcp47_ids.as_bytes());
     hasher.finish()
 }
@@ -114,11 +118,79 @@ fn test_compute_bcp47_ids_hash() {
     ]
     .into_iter()
     .collect();
+
+    // Checksum 1: the default output of the zeroslice hashing function
     let checksum1 = compute_bcp47_ids_hash(&bcp47_ids);
-    let mut hasher = twox_hash::XxHash64::with_seed(0);
+    assert_eq!(checksum1, 0x301FDFA03E1A34A4); // stability
+
+    // Checksum 2: hashing of each individual element
+    // (should equal 1)
+    let mut hasher = create_hasher();
     for bcp47 in bcp47_ids.iter() {
         hasher.write(bcp47.0.all_bytes());
     }
     let checksum2 = hasher.finish();
     assert_eq!(checksum1, checksum2);
+
+    // Checksum 3: hashing of a ZeroVec in a different order
+    // (should not equal 1)
+    let bcp47_ids_rev: ZeroVec<TimeZoneBcp47Id> = [
+        TimeZoneBcp47Id(tinystr::tinystr!(8, "usinvev")),
+        TimeZoneBcp47Id(tinystr::tinystr!(8, "aedxb")),
+        TimeZoneBcp47Id(tinystr::tinystr!(8, "brfor")),
+    ]
+    .into_iter()
+    .collect();
+    let checksum3 = compute_bcp47_ids_hash(&bcp47_ids_rev);
+    assert_ne!(checksum1, checksum3);
+
+    // Checksum 4: moving letters between the elements should change the hash
+    // (should not equal 1)
+    let bcp47_ids_roll: ZeroVec<TimeZoneBcp47Id> = [
+        TimeZoneBcp47Id(tinystr::tinystr!(8, "aedx")),
+        TimeZoneBcp47Id(tinystr::tinystr!(8, "bbrfor")),
+        TimeZoneBcp47Id(tinystr::tinystr!(8, "usinvev")),
+    ]
+    .into_iter()
+    .collect();
+    let checksum4 = compute_bcp47_ids_hash(&bcp47_ids_roll);
+    assert_ne!(checksum1, checksum4);
+
+    // Checksum 5: empty strings at the end should change the hash
+    // (should not equal 1)
+    let bcp47_ids_empty_end: ZeroVec<TimeZoneBcp47Id> = [
+        TimeZoneBcp47Id(tinystr::tinystr!(8, "aedxb")),
+        TimeZoneBcp47Id(tinystr::tinystr!(8, "brfor")),
+        TimeZoneBcp47Id(tinystr::tinystr!(8, "usinvev")),
+        TimeZoneBcp47Id(tinystr::tinystr!(8, "")),
+    ]
+    .into_iter()
+    .collect();
+    let checksum5 = compute_bcp47_ids_hash(&bcp47_ids_empty_end);
+    assert_ne!(checksum1, checksum5);
+
+    // Checksum 6: empty strings in the middle should change the hash
+    // (should not equal 1 or 5)
+    let bcp47_ids_empty_middle: ZeroVec<TimeZoneBcp47Id> = [
+        TimeZoneBcp47Id(tinystr::tinystr!(8, "aedxb")),
+        TimeZoneBcp47Id(tinystr::tinystr!(8, "")),
+        TimeZoneBcp47Id(tinystr::tinystr!(8, "brfor")),
+        TimeZoneBcp47Id(tinystr::tinystr!(8, "usinvev")),
+    ]
+    .into_iter()
+    .collect();
+    let checksum6 = compute_bcp47_ids_hash(&bcp47_ids_empty_middle);
+    assert_ne!(checksum1, checksum6);
+    assert_ne!(checksum5, checksum6);
+
+    // Additional coverage
+    assert_ne!(checksum2, checksum3);
+    assert_ne!(checksum2, checksum4);
+    assert_ne!(checksum2, checksum5);
+    assert_ne!(checksum2, checksum6);
+    assert_ne!(checksum3, checksum4);
+    assert_ne!(checksum3, checksum5);
+    assert_ne!(checksum3, checksum6);
+    assert_ne!(checksum4, checksum5);
+    assert_ne!(checksum4, checksum6);
 }
