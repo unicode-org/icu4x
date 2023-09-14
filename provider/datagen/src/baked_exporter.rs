@@ -53,7 +53,7 @@
 //!     #     }
 //!     #   }
 //!     # }
-//!     include!("/path/to/mod.rs");
+//!     include!("/tmp/icu4x_baked_demo/mod.rs");
 //!     impl_data_provider!(MyDataProvider);
 //! };
 //!
@@ -600,9 +600,12 @@ impl BakedExporter {
                 /// `impl_core_helloworld_v1` to add implementations.
                 ///
                 /// ```ignore
-                /// #[path = "/path/to/generated/macros.rs"];
-                /// mod macros;
-                /// macros::make_provider!(MyDataProvider);
+                /// struct MyProvider;
+                /// const _: () = {
+                ///     include!("path/to/generated/macros.rs");
+                ///     make_provider!(MyProvider);
+                ///     impl_core_helloworld_v1!(MyProvider);
+                /// }
                 /// ```
                 #[doc(hidden)]
                 #[macro_export]
