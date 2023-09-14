@@ -33,6 +33,7 @@ pub const BASIC_RUNTIME_DEPS: &[&str] = &[
     "writeable",
     "yoke",
     "zerofrom",
+    "zerotrie",
     "zerovec",
     // 3P dependencies
     "either",
