@@ -1261,13 +1261,8 @@ impl<'a> VarTable<'a> {
 mod tests {
     use super::*;
 
-    fn get_provider() -> icu_provider_fs::FsDataProvider {
-        icu_provider_fs::FsDataProvider::try_new(concat!(
-            std::env!("CARGO_MANIFEST_DIR"),
-            "/../../provider/datagen/tests/data/json"
-        ))
-        .unwrap()
-    }
+    use crate as icu_transliterate;
+    include!("../../tests/data/baked/mod.rs");
 
     #[test]
     fn test_empty_matches() {
@@ -1281,7 +1276,7 @@ mod tests {
 
         let t = Transliterator::try_new_unstable(
             "und-t-und-s0-test-d0-test-m0-emtymach".parse().unwrap(),
-            &get_provider().as_deserializing(),
+            &BakedDataProvider,
         )
         .unwrap();
 
@@ -1294,7 +1289,7 @@ mod tests {
     fn test_recursive_suite() {
         let t = Transliterator::try_new_unstable(
             "und-t-und-s0-test-d0-test-m0-rectestr".parse().unwrap(),
-            &get_provider().as_deserializing(),
+            &BakedDataProvider,
         )
         .unwrap();
 
@@ -1307,7 +1302,7 @@ mod tests {
     fn test_cursor_placeholders_filters() {
         let t = Transliterator::try_new_unstable(
             "und-t-und-s0-test-d0-test-m0-cursfilt".parse().unwrap(),
-            &get_provider().as_deserializing(),
+            &BakedDataProvider,
         )
         .unwrap();
 
@@ -1320,7 +1315,7 @@ mod tests {
     fn test_functionality() {
         let t = Transliterator::try_new_unstable(
             "und-t-und-s0-test-d0-test-m0-niels".parse().unwrap(),
-            &get_provider().as_deserializing(),
+            &BakedDataProvider,
         )
         .unwrap();
 
@@ -1333,7 +1328,7 @@ mod tests {
     fn test_de_ascii() {
         let t = Transliterator::try_new_unstable(
             "de-t-de-d0-ascii".parse().unwrap(),
-            &get_provider().as_deserializing(),
+            &BakedDataProvider,
         )
         .unwrap();
         let input =
@@ -1358,7 +1353,7 @@ mod tests {
         let t = Transliterator::try_new_with_override_unstable(
             "de-t-de-d0-ascii".parse().unwrap(),
             |locale| locale.eq(&want_locale).then_some(Box::new(MaoamTranslit)),
-            &get_provider().as_deserializing(),
+            &BakedDataProvider,
         )
         .unwrap();
 
@@ -1371,7 +1366,7 @@ mod tests {
     fn test_nfc_nfd() {
         let t = Transliterator::try_new_unstable(
             "und-t-und-latn-d0-ascii".parse().unwrap(),
-            &get_provider().as_deserializing(),
+            &BakedDataProvider,
         )
         .unwrap();
         let input = "äa\u{0308}";
@@ -1383,7 +1378,7 @@ mod tests {
     fn test_hex_rust() {
         let t = Transliterator::try_new_unstable(
             "und-t-und-s0-test-d0-test-m0-hexrust".parse().unwrap(),
-            &get_provider().as_deserializing(),
+            &BakedDataProvider,
         )
         .unwrap();
         let input = "\0äa\u{10FFFF}❤!";
@@ -1395,7 +1390,7 @@ mod tests {
     fn test_hex_unicode() {
         let t = Transliterator::try_new_unstable(
             "und-t-und-s0-test-d0-test-m0-hexuni".parse().unwrap(),
-            &get_provider().as_deserializing(),
+            &BakedDataProvider,
         )
         .unwrap();
         let input = "\0äa\u{10FFFF}❤!";

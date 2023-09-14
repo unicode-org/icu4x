@@ -5,14 +5,15 @@
 // TODO(#3736): find a way to keep cldr_testData uptodate
 
 use icu_locid::Locale;
-use icu_provider::prelude::*;
 use icu_transliterate::Transliterator;
 use std::path::PathBuf;
+
+include!("data/baked/mod.rs");
 
 #[test]
 fn test_all_cldr() {
     let mut in_order =
-        std::fs::read_dir(concat!(env!("CARGO_MANIFEST_DIR"), "/tests/cldr_testData"))
+        std::fs::read_dir(concat!(env!("CARGO_MANIFEST_DIR"), "/tests/data/fixtures"))
             .unwrap()
             .map(|x| x.unwrap().path())
             .collect::<Vec<_>>();
@@ -23,16 +24,7 @@ fn test_all_cldr() {
         }
         let locale = path.file_stem().unwrap().to_str().unwrap();
         let locale: Locale = locale.parse().unwrap();
-        let t = Transliterator::try_new_unstable(
-            locale,
-            &icu_provider_fs::FsDataProvider::try_new(concat!(
-                std::env!("CARGO_MANIFEST_DIR"),
-                "/../../provider/datagen/tests/data/json/"
-            ))
-            .unwrap()
-            .as_deserializing(),
-        )
-        .unwrap();
+        let t = Transliterator::try_new_unstable(locale, &BakedDataProvider).unwrap();
         test_file(t, path);
     }
 }

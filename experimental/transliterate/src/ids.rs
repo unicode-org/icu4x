@@ -10,6 +10,7 @@ use icu_provider::prelude::*;
 ///
 /// Known legacy IDs, i.e., ones that have associated BCP47 IDs in their metadata, are simply
 /// that BCP47 ID. For unknown legacy IDs, the output is given by this function.
+#[cfg(feature = "datagen")]
 pub fn legacy_id_to_bcp_47(source: &str, target: &str, variant: Option<&str>) -> Locale {
     // TODO(#3891): Decide representation for unknown BCP47 IDs
     #[allow(clippy::indexing_slicing)] // safe indices and ASCII-only text

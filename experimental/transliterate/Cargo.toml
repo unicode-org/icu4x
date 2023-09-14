@@ -36,12 +36,6 @@ log = "0.4"
 serde = { version = "1.0", features = ["derive"], optional = true, default-features = false }
 displaydoc = { version = "0.2.3", default-features = false }
 
-[dev-dependencies]
-icu_provider_fs = { workspace = true }
-icu_properties = { workspace = true, features = ["serde"] }
-icu_normalizer = { workspace = true, features = ["serde"] }
-icu_provider = { workspace = true, features = ["deserialize_json"] }
-
 [target.'cfg(not(target_arch = "wasm32"))'.dev-dependencies]
 criterion = "0.4.0"
 
