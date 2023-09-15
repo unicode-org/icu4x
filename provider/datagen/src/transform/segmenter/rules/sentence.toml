@@ -573,7 +573,7 @@ break_state = true
 [[rules]]
 # SB11
 left = [ "ATerm_Close", "STerm", "STerm_Close" ]
-right = [ "Numeric", "Upper" ]
+right = [ "Numeric", "Upper", "OLetter" ]
 break_state = true
 
 [[rules]]
