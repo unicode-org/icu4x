@@ -536,7 +536,7 @@ impl core::fmt::Debug for Out {
 /// * `keys`: The keys for which to generate data. See [`all_keys`], [`keys`], [`keys_from_file`], [`keys_from_bin`].
 /// * `sources`: The underlying source data. CLDR and/or ICU data can be missing if no
 ///   requested key requires them, otherwise an error satisfying [`is_missing_cldr_error`]
-///   [`is_missing_icuexport_error`], or [`is_missing_tzif_error`] will be returned.
+///   or [`is_missing_icuexport_error`] will be returned.
 /// * `out`: The output format and location. See the documentation on [`Out`]
 pub fn datagen(
     locales: Option<&[icu_locid::LanguageIdentifier]>,

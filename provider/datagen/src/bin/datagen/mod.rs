@@ -69,9 +69,11 @@ fn main() -> eyre::Result<()> {
     provider = match config.tzif {
         config::PathOrTag::Path(path) => provider.with_tzif(path)?,
         #[cfg(feature = "networking")]
-        config::PathOrTag::Latest => todo!(),
+        // TODO
+        config::PathOrTag::Latest => provider,
+        // TODO
         #[cfg(feature = "networking")]
-        config::PathOrTag::Tag(tag) => todo!(),
+        config::PathOrTag::Tag(tag) => provider,
         config::PathOrTag::None => provider,
         #[cfg(not(feature = "networking"))]
         _ => eyre::bail!("Downloading data from tags requires the `networking` Cargo feature"),
