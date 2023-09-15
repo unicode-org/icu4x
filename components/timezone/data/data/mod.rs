@@ -14,6 +14,8 @@ include!("macros.rs");
 macro_rules! __impl_data_provider {
     ($ provider : path) => {
         impl_time_zone_metazone_period_v1!($provider);
+        impl_tzif_historic_transitions_v1!($provider);
+        impl_tzif_transition_rules_v1!($provider);
     };
 }
 #[doc(inline)]
@@ -36,6 +38,8 @@ macro_rules! __impl_any_provider {
             fn load_any(&self, key: icu_provider::DataKey, req: icu_provider::DataRequest) -> Result<icu_provider::AnyResponse, icu_provider::DataError> {
                 match key.hashed() {
                     h if h == <icu::timezone::provider::MetazonePeriodV1Marker as icu_provider::KeyedDataMarker>::KEY.hashed() => icu_provider::DataProvider::<icu::timezone::provider::MetazonePeriodV1Marker>::load(self, req).map(icu_provider::DataResponse::wrap_into_any_response),
+                    h if h == <icu::timezone::provider::tzif::TimeZoneHistoricTransitionsV1Marker as icu_provider::KeyedDataMarker>::KEY.hashed() => icu_provider::DataProvider::<icu::timezone::provider::tzif::TimeZoneHistoricTransitionsV1Marker>::load(self, req).map(icu_provider::DataResponse::wrap_into_any_response),
+                    h if h == <icu::timezone::provider::tzif::TimeZoneTransitionRulesV1Marker as icu_provider::KeyedDataMarker>::KEY.hashed() => icu_provider::DataProvider::<icu::timezone::provider::tzif::TimeZoneTransitionRulesV1Marker>::load(self, req).map(icu_provider::DataResponse::wrap_into_any_response),
                     _ => Err(icu_provider::DataErrorKind::MissingDataKey.with_req(key, req)),
                 }
             }

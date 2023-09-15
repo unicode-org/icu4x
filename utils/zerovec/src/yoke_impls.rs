@@ -14,6 +14,7 @@ use crate::map::ZeroMapBorrowed;
 use crate::map::ZeroMapKV;
 use crate::map2d::ZeroMap2dBorrowed;
 use crate::ule::*;
+use crate::vecs::VarZeroVecFormat;
 use crate::{VarZeroVec, ZeroMap, ZeroMap2d, ZeroVec};
 use core::{mem, ptr};
 use yoke::*;
@@ -48,8 +49,12 @@ unsafe impl<'a, T: 'static + AsULE + ?Sized> Yokeable<'a> for ZeroVec<'static, T
 
 // This impl is similar to the impl on Cow and is safe for the same reasons
 /// This impl requires enabling the optional `yoke` Cargo feature of the `zerovec` crate
-unsafe impl<'a, T: 'static + VarULE + ?Sized> Yokeable<'a> for VarZeroVec<'static, T> {
-    type Output = VarZeroVec<'a, T>;
+unsafe impl<'a, T, Index> Yokeable<'a> for VarZeroVec<'static, T, Index>
+where
+    T: 'static + VarULE + ?Sized,
+    Index: VarZeroVecFormat,
+{
+    type Output = VarZeroVec<'a, T, Index>;
     #[inline]
     fn transform(&'a self) -> &'a Self::Output {
         self

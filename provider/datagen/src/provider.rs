@@ -6,6 +6,7 @@
 
 use crate::source::*;
 use crate::transform::cldr::source::CldrCache;
+use crate::transform::tzif::source::TzifPaths;
 use crate::{CollationHanDatabase, CoverageLevel};
 use icu_provider::prelude::*;
 use std::fmt::Debug;
@@ -21,6 +22,7 @@ use std::sync::Arc;
 /// fail with the appropriate error:
 /// * [`is_missing_cldr_error`](Self::is_missing_cldr_error)
 /// * [`is_missing_icuexport_error`](Self::is_missing_icuexport_error)
+/// * [`is_missing_tzif_error`](Self::is_missing_tzif_error)
 /// * [`is_missing_segmenter_lstm_error`](Self::is_missing_segmenter_lstm_error)
 #[allow(clippy::exhaustive_structs)] // any information will be added to SourceData
 #[derive(Debug, Clone)]
@@ -76,6 +78,8 @@ impl DatagenProvider {
                     .unwrap()
                     .with_icuexport(data_root.join("icuexport"))
                     .unwrap()
+                    .with_tzif(data_root.join("tzif"))
+                    .unwrap()
                     .with_segmenter_lstm(data_root.join("lstm"))
                     .unwrap()
             })
@@ -92,6 +96,7 @@ impl DatagenProvider {
             source: SourceData {
                 cldr_paths: None,
                 icuexport_paths: None,
+                tzif_paths: None,
                 segmenter_lstm_paths: None,
                 trie_type: Default::default(),
                 collation_han_database: Default::default(),
@@ -124,6 +129,18 @@ impl DatagenProvider {
         Ok(Self {
             source: SourceData {
                 icuexport_paths: Some(Arc::new(SerdeCache::new(AbstractFs::new(root)?))),
+                ..self.source
+            },
+        })
+    }
+
+    /// Adds TZif data to the provider. The root should point to a directory
+    /// containing a hierarchy of TZif files, which can be generated from the
+    /// [IANA Time Zone Database](https://www.iana.org/time-zones)
+    pub fn with_tzif(self, _root: PathBuf) -> Result<Self, DataError> {
+        Ok(Self {
+            source: SourceData {
+                tzif_paths: Some(Arc::new(TzifPaths::new(_root)?)),
                 ..self.source
             },
         })
@@ -202,6 +219,8 @@ impl DatagenProvider {
     const MISSING_ICUEXPORT_ERROR: DataError =
         DataErrorKind::MissingSourceData.with_str_context("icuexport");
 
+    const MISSING_TZIF_ERROR: DataError = DataErrorKind::MissingSourceData.with_str_context("tzif");
+
     const MISSING_SEGMENTER_LSTM_ERROR: DataError =
         DataErrorKind::MissingSourceData.with_str_context("segmenter");
 
@@ -215,6 +234,12 @@ impl DatagenProvider {
     pub fn is_missing_icuexport_error(mut e: DataError) -> bool {
         e.key = None;
         e == Self::MISSING_ICUEXPORT_ERROR
+    }
+
+    /// Identifies errors that are due to missing tzif data.
+    pub fn is_missing_tzif_error(mut e: DataError) -> bool {
+        e.key = None;
+        e == Self::MISSING_TZIF_ERROR
     }
 
     /// Identifies errors that are due to missing segmenter LSTM data.
@@ -235,6 +260,13 @@ impl DatagenProvider {
             .icuexport_paths
             .as_deref()
             .ok_or(Self::MISSING_ICUEXPORT_ERROR)
+    }
+
+    pub(crate) fn tzif(&self) -> Result<&TzifPaths, DataError> {
+        self.source
+            .tzif_paths
+            .as_deref()
+            .ok_or(Self::MISSING_TZIF_ERROR)
     }
 
     pub(crate) fn segmenter_lstm(&self) -> Result<&SerdeCache, DataError> {
@@ -319,6 +351,7 @@ impl std::fmt::Display for TrieType {
 pub struct SourceData {
     cldr_paths: Option<Arc<CldrCache>>,
     icuexport_paths: Option<Arc<SerdeCache>>,
+    tzif_paths: Option<Arc<TzifPaths>>,
     segmenter_lstm_paths: Option<Arc<SerdeCache>>,
     trie_type: TrieType,
     collation_han_database: CollationHanDatabase,

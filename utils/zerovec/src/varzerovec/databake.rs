@@ -5,7 +5,13 @@
 use crate::{ule::VarULE, VarZeroSlice, VarZeroVec};
 use databake::*;
 
-impl<T: VarULE + ?Sized> Bake for VarZeroVec<'_, T> {
+use super::VarZeroVecFormat;
+
+impl<T, Index> Bake for VarZeroVec<'_, T, Index>
+where
+    T: VarULE + ?Sized,
+    Index: VarZeroVecFormat,
+{
     fn bake(&self, env: &CrateEnv) -> TokenStream {
         env.insert("zerovec");
         if self.is_empty() {

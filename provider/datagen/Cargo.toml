@@ -45,7 +45,7 @@ icu_normalizer = { workspace = true, features = ["datagen"] }
 icu_plurals = { workspace = true, features = ["datagen"] }
 icu_properties = { workspace = true, features = ["datagen"]}
 icu_segmenter = { workspace = true, features = ["datagen", "lstm"] }
-icu_timezone = { workspace = true, features = ["datagen"] }
+icu_timezone = { workspace = true, features = ["datagen", "experimental"] }
 
 icu_compactdecimal = { workspace = true, features = ["datagen"], optional = true }
 icu_displaynames = { workspace = true, features = ["datagen"], optional = true }
@@ -83,6 +83,8 @@ serde = { version = "1.0", default-features = false, features = ["derive", "allo
 serde_json = { version = "1.0", default-features = false, features = ["alloc"] }
 serde-aux = { version = "4.1.2", default-features = false }
 toml = "0.5"
+tzif = { version = "0.2.0", path = "../../utils/tzif" }
+walkdir = "2.3.2"
 zip = { version = ">=0.5, <0.7", default-features = false, features = ["deflate"] }
 
 rayon = { version = "1.5", optional = true }

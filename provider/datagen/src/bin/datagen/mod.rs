@@ -66,6 +66,19 @@ fn main() -> eyre::Result<()> {
         _ => eyre::bail!("Downloading data from tags requires the `networking` Cargo feature"),
     };
 
+    provider = match config.tzif {
+        config::PathOrTag::Path(path) => provider.with_tzif(path)?,
+        #[cfg(feature = "networking")]
+        // TODO
+        config::PathOrTag::Latest => provider,
+        // TODO
+        #[cfg(feature = "networking")]
+        config::PathOrTag::Tag(tag) => provider,
+        config::PathOrTag::None => provider,
+        #[cfg(not(feature = "networking"))]
+        _ => eyre::bail!("Downloading data from tags requires the `networking` Cargo feature"),
+    };
+
     provider = match config.segmenter_lstm {
         config::PathOrTag::Path(path) => provider.with_icuexport(path)?,
         #[cfg(feature = "networking")]

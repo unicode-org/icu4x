@@ -15,6 +15,9 @@
 //!
 //! Read more about data providers: [`icu_provider`]
 
+#[cfg(feature = "experimental")]
+pub mod tzif;
+
 use core::str::FromStr;
 use icu_provider::prelude::*;
 use tinystr::TinyAsciiStr;
@@ -38,6 +41,10 @@ const _: () = {
         pub use crate as timezone;
     }
     icu_timezone_data::impl_time_zone_metazone_period_v1!(Baked);
+    #[cfg(feature = "experimental")]
+    icu_timezone_data::impl_tzif_historic_transitions_v1!(Baked);
+    #[cfg(feature = "experimental")]
+    icu_timezone_data::impl_tzif_transition_rules_v1!(Baked);
 };
 
 /// TimeZone ID in BCP47 format

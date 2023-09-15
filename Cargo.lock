@@ -1360,7 +1360,9 @@ dependencies = [
  "syn 2.0.15",
  "tinystr",
  "toml",
+ "tzif",
  "ureq",
+ "walkdir",
  "writeable",
  "zerovec",
  "zip",
@@ -1819,6 +1821,7 @@ dependencies = [
  "icu_provider",
  "icu_timezone_data",
  "serde",
+ "serde_json",
  "tinystr",
  "zerovec",
 ]

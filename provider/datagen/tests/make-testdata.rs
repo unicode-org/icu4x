@@ -33,6 +33,8 @@ fn generate_json_and_verify_postcard() {
         .unwrap()
         .with_icuexport(data_root.join("icuexport"))
         .unwrap()
+        .with_tzif(data_root.join("tzif"))
+        .unwrap()
         .with_segmenter_lstm(data_root.join("lstm"))
         .unwrap();
 

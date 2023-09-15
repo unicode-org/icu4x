@@ -426,6 +426,9 @@ registry!(
     icu_segmenter::provider::WordBreakDataV1Marker = "segmenter/word@1",
     #[cfg(any(all(), feature = "icu_timezone"))]
     icu_timezone::provider::MetazonePeriodV1Marker = "time_zone/metazone_period@1",
+    icu_timezone::provider::tzif::TimeZoneHistoricTransitionsV1Marker =
+        "tzif/historic_transitions@1",
+    icu_timezone::provider::tzif::TimeZoneTransitionRulesV1Marker = "tzif/transition_rules@1",
     #[cfg(feature = "icu_transliterate")]
     icu_transliterate::provider::TransliteratorRulesV1Marker = "transliterator/rules@1",
 );

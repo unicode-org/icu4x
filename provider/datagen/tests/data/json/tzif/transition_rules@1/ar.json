@@ -1,0 +1,1363 @@
+{
+  "transition_rules": {
+    "adalv": {
+      "std_offset": -3600,
+      "dst_offset": -7200,
+      "dst_start": 10267639416067,
+      "dst_end": 10328037393674
+    },
+    "aedxb": {
+      "std_offset": -14400
+    },
+    "afkbl": {
+      "std_offset": -16200
+    },
+    "altia": {
+      "std_offset": -3600,
+      "dst_offset": -7200,
+      "dst_start": 10267639416067,
+      "dst_end": 10328037393674
+    },
+    "amevn": {
+      "std_offset": -14400
+    },
+    "aqcas": {
+      "std_offset": -39600
+    },
+    "aqdav": {
+      "std_offset": -25200
+    },
+    "aqmaw": {
+      "std_offset": -18000
+    },
+    "aqplm": {
+      "std_offset": 10800
+    },
+    "aqrot": {
+      "std_offset": 10800
+    },
+    "aqtrl": {
+      "std_offset": 0,
+      "dst_offset": -7200,
+      "dst_start": 10207241438467,
+      "dst_end": 10328037393674
+    },
+    "arbue": {
+      "std_offset": 10800
+    },
+    "arcor": {
+      "std_offset": 10800
+    },
+    "arctc": {
+      "std_offset": 10800
+    },
+    "arirj": {
+      "std_offset": 10800
+    },
+    "arjuj": {
+      "std_offset": 10800
+    },
+    "arluq": {
+      "std_offset": 10800
+    },
+    "armdz": {
+      "std_offset": 10800
+    },
+    "arrgl": {
+      "std_offset": 10800
+    },
+    "arsla": {
+      "std_offset": 10800
+    },
+    "artuc": {
+      "std_offset": 10800
+    },
+    "aruaq": {
+      "std_offset": 10800
+    },
+    "arush": {
+      "std_offset": 10800
+    },
+    "asppg": {
+      "std_offset": 39600
+    },
+    "atvie": {
+      "std_offset": -3600,
+      "dst_offset": -7200,
+      "dst_start": 10267639416067,
+      "dst_end": 10328037393674
+    },
+    "auadl": {
+      "std_offset": -34200,
+      "dst_offset": -37800,
+      "dst_start": 10267639415050,
+      "dst_end": 10328037392644
+    },
+    "aubhq": {
+      "std_offset": -34200,
+      "dst_offset": -37800,
+      "dst_start": 10267639415050,
+      "dst_end": 10328037392644
+    },
+    "aubne": {
+      "std_offset": -36000
+    },
+    "audrw": {
+      "std_offset": -34200
+    },
+    "aueuc": {
+      "std_offset": -31500
+    },
+    "auhba": {
+      "std_offset": -36000,
+      "dst_offset": -39600,
+      "dst_start": 10267639415050,
+      "dst_end": 10328037392644
+    },
+    "auldc": {
+      "std_offset": -36000
+    },
+    "auldh": {
+      "std_offset": -37800,
+      "dst_offset": -39600,
+      "dst_start": 10267639415050,
+      "dst_end": 10267639415044
+    },
+    "aumel": {
+      "std_offset": -36000,
+      "dst_offset": -39600,
+      "dst_start": 10267639415050,
+      "dst_end": 10328037392644
+    },
+    "aumqi": {
+      "std_offset": -36000,
+      "dst_offset": -39600,
+      "dst_start": 10267639415050,
+      "dst_end": 10328037392644
+    },
+    "auper": {
+      "std_offset": -28800
+    },
+    "ausyd": {
+      "std_offset": -36000,
+      "dst_offset": -39600,
+      "dst_start": 10267639415050,
+      "dst_end": 10328037392644
+    },
+    "azbak": {
+      "std_offset": -14400
+    },
+    "bbbgi": {
+      "std_offset": 14400
+    },
+    "bddac": {
+      "std_offset": -21600
+    },
+    "bebru": {
+      "std_offset": -3600,
+      "dst_offset": -7200,
+      "dst_start": 10267639416067,
+      "dst_end": 10328037393674
+    },
+    "bgsof": {
+      "std_offset": -7200,
+      "dst_offset": -10800,
+      "dst_start": 10328037393667,
+      "dst_end": 10388435371274
+    },
+    "bmbda": {
+      "std_offset": 14400,
+      "dst_offset": 10800,
+      "dst_start": 10267639415299,
+      "dst_end": 10267639415051
+    },
+    "bolpb": {
+      "std_offset": 14400
+    },
+    "braux": {
+      "std_offset": 10800
+    },
+    "brbel": {
+      "std_offset": 10800
+    },
+    "brbvb": {
+      "std_offset": 14400
+    },
+    "brcgb": {
+      "std_offset": 14400
+    },
+    "brcgr": {
+      "std_offset": 14400
+    },
+    "brern": {
+      "std_offset": 18000
+    },
+    "brfen": {
+      "std_offset": 7200
+    },
+    "brfor": {
+      "std_offset": 10800
+    },
+    "brmao": {
+      "std_offset": 14400
+    },
+    "brmcz": {
+      "std_offset": 10800
+    },
+    "brpvh": {
+      "std_offset": 14400
+    },
+    "brrbr": {
+      "std_offset": 18000
+    },
+    "brrec": {
+      "std_offset": 10800
+    },
+    "brsao": {
+      "std_offset": 10800
+    },
+    "brssa": {
+      "std_offset": 10800
+    },
+    "brstm": {
+      "std_offset": 10800
+    },
+    "btthi": {
+      "std_offset": -21600
+    },
+    "bymsq": {
+      "std_offset": -10800
+    },
+    "bzbze": {
+      "std_offset": 21600
+    },
+    "caedm": {
+      "std_offset": 25200,
+      "dst_offset": 21600,
+      "dst_start": 10267639415299,
+      "dst_end": 10267639415051
+    },
+    "cafne": {
+      "std_offset": 25200
+    },
+    "caglb": {
+      "std_offset": 14400,
+      "dst_offset": 10800,
+      "dst_start": 10267639415299,
+      "dst_end": 10267639415051
+    },
+    "cagoo": {
+      "std_offset": 14400,
+      "dst_offset": 10800,
+      "dst_start": 10267639415299,
+      "dst_end": 10267639415051
+    },
+    "cahal": {
+      "std_offset": 14400,
+      "dst_offset": 10800,
+      "dst_start": 10267639415299,
+      "dst_end": 10267639415051
+    },
+    "caiql": {
+      "std_offset": 18000,
+      "dst_offset": 14400,
+      "dst_start": 10267639415299,
+      "dst_end": 10267639415051
+    },
+    "camon": {
+      "std_offset": 14400,
+      "dst_offset": 10800,
+      "dst_start": 10267639415299,
+      "dst_end": 10267639415051
+    },
+    "careb": {
+      "std_offset": 21600,
+      "dst_offset": 18000,
+      "dst_start": 10267639415299,
+      "dst_end": 10267639415051
+    },
+    "careg": {
+      "std_offset": 21600
+    },
+    "casjf": {
+      "std_offset": 12600,
+      "dst_offset": 9000,
+      "dst_start": 10267639415299,
+      "dst_end": 10267639415051
+    },
+    "cator": {
+      "std_offset": 18000,
+      "dst_offset": 14400,
+      "dst_start": 10267639415299,
+      "dst_end": 10267639415051
+    },
+    "cavan": {
+      "std_offset": 28800,
+      "dst_offset": 25200,
+      "dst_start": 10267639415299,
+      "dst_end": 10267639415051
+    },
+    "cawnp": {
+      "std_offset": 21600,
+      "dst_offset": 18000,
+      "dst_start": 10267639415299,
+      "dst_end": 10267639415051
+    },
+    "caycb": {
+      "std_offset": 25200,
+      "dst_offset": 21600,
+      "dst_start": 10267639415299,
+      "dst_end": 10267639415051
+    },
+    "cayda": {
+      "std_offset": 25200
+    },
+    "caydq": {
+      "std_offset": 25200
+    },
+    "cayek": {
+      "std_offset": 21600,
+      "dst_offset": 18000,
+      "dst_start": 10267639415299,
+      "dst_end": 10267639415051
+    },
+    "cayev": {
+      "std_offset": 25200,
+      "dst_offset": 21600,
+      "dst_start": 10267639415299,
+      "dst_end": 10267639415051
+    },
+    "cayxy": {
+      "std_offset": 25200
+    },
+    "cayyn": {
+      "std_offset": 21600
+    },
+    "cayzf": {
+      "std_offset": 25200,
+      "dst_offset": 21600,
+      "dst_start": 10267639415299,
+      "dst_end": 10267639415051
+    },
+    "chzrh": {
+      "std_offset": -3600,
+      "dst_offset": -7200,
+      "dst_start": 10267639416067,
+      "dst_end": 10328037393674
+    },
+    "ciabj": {
+      "std_offset": 0
+    },
+    "ckrar": {
+      "std_offset": 36000
+    },
+    "clipc": {
+      "std_offset": 21600,
+      "dst_offset": 18000,
+      "dst_start": 11475599360265,
+      "dst_end": 11475599360260
+    },
+    "clpuq": {
+      "std_offset": 10800
+    },
+    "clscl": {
+      "std_offset": 14400,
+      "dst_offset": 10800,
+      "dst_start": 11596395315465,
+      "dst_end": 11596395315460
+    },
+    "cnsha": {
+      "std_offset": -28800
+    },
+    "cnurc": {
+      "std_offset": -21600
+    },
+    "cobog": {
+      "std_offset": 18000
+    },
+    "crsjo": {
+      "std_offset": 21600
+    },
+    "cst6cdt": {
+      "std_offset": 21600,
+      "dst_offset": 18000,
+      "dst_start": 10267639415299,
+      "dst_end": 10267639415051
+    },
+    "cuhav": {
+      "std_offset": 18000,
+      "dst_offset": 14400,
+      "dst_start": 10146843460099,
+      "dst_end": 10207241437451
+    },
+    "cvrai": {
+      "std_offset": 3600
+    },
+    "cyfmg": {
+      "std_offset": -7200,
+      "dst_offset": -10800,
+      "dst_start": 10328037393667,
+      "dst_end": 10388435371274
+    },
+    "cynic": {
+      "std_offset": -7200,
+      "dst_offset": -10800,
+      "dst_start": 10328037393667,
+      "dst_end": 10388435371274
+    },
+    "czprg": {
+      "std_offset": -3600,
+      "dst_offset": -7200,
+      "dst_start": 10267639416067,
+      "dst_end": 10328037393674
+    },
+    "deber": {
+      "std_offset": -3600,
+      "dst_offset": -7200,
+      "dst_start": 10267639416067,
+      "dst_end": 10328037393674
+    },
+    "dosdq": {
+      "std_offset": 14400
+    },
+    "dzalg": {
+      "std_offset": -3600
+    },
+    "ecgps": {
+      "std_offset": 21600
+    },
+    "ecgye": {
+      "std_offset": 18000
+    },
+    "eetll": {
+      "std_offset": -7200,
+      "dst_offset": -10800,
+      "dst_start": 10328037393667,
+      "dst_end": 10388435371274
+    },
+    "egcai": {
+      "std_offset": -7200
+    },
+    "eheai": {
+      "std_offset": -3600
+    },
+    "esceu": {
+      "std_offset": -3600,
+      "dst_offset": -7200,
+      "dst_start": 10267639416067,
+      "dst_end": 10328037393674
+    },
+    "eslpa": {
+      "std_offset": 0,
+      "dst_offset": -3600,
+      "dst_start": 10207241438467,
+      "dst_end": 10267639416074
+    },
+    "esmad": {
+      "std_offset": -3600,
+      "dst_offset": -7200,
+      "dst_start": 10267639416067,
+      "dst_end": 10328037393674
+    },
+    "est5edt": {
+      "std_offset": 18000,
+      "dst_offset": 14400,
+      "dst_start": 10267639415299,
+      "dst_end": 10267639415051
+    },
+    "fihel": {
+      "std_offset": -7200,
+      "dst_offset": -10800,
+      "dst_start": 10328037393667,
+      "dst_end": 10388435371274
+    },
+    "fjsuv": {
+      "std_offset": -43200
+    },
+    "fkpsy": {
+      "std_offset": 10800
+    },
+    "fmksa": {
+      "std_offset": -39600
+    },
+    "fotho": {
+      "std_offset": 0,
+      "dst_offset": -3600,
+      "dst_start": 10207241438467,
+      "dst_end": 10267639416074
+    },
+    "frpar": {
+      "std_offset": -3600,
+      "dst_offset": -7200,
+      "dst_start": 10267639416067,
+      "dst_end": 10328037393674
+    },
+    "gazastrp": {
+      "std_offset": -7200,
+      "dst_offset": -10800,
+      "dst_start": 13166742602755,
+      "dst_end": 13166742602762
+    },
+    "gblon": {
+      "std_offset": 0,
+      "dst_offset": -3600,
+      "dst_start": 10207241438467,
+      "dst_end": 10267639416074
+    },
+    "getbs": {
+      "std_offset": -14400
+    },
+    "gfcay": {
+      "std_offset": 10800
+    },
+    "gigib": {
+      "std_offset": -3600,
+      "dst_offset": -7200,
+      "dst_start": 10267639416067,
+      "dst_end": 10328037393674
+    },
+    "gldkshvn": {
+      "std_offset": 0
+    },
+    "glgoh": {
+      "std_offset": 7200
+    },
+    "globy": {
+      "std_offset": 3600,
+      "dst_offset": 0,
+      "dst_start": 10146843460867,
+      "dst_end": 10207241438474
+    },
+    "glthu": {
+      "std_offset": 14400,
+      "dst_offset": 10800,
+      "dst_start": 10267639415299,
+      "dst_end": 10267639415051
+    },
+    "gmt": {
+      "std_offset": 0
+    },
+    "grath": {
+      "std_offset": -7200,
+      "dst_offset": -10800,
+      "dst_start": 10328037393667,
+      "dst_end": 10388435371274
+    },
+    "gsgrv": {
+      "std_offset": 7200
+    },
+    "gtgua": {
+      "std_offset": 21600
+    },
+    "gugum": {
+      "std_offset": -36000
+    },
+    "gwoxb": {
+      "std_offset": 0
+    },
+    "gygeo": {
+      "std_offset": 14400
+    },
+    "hebron": {
+      "std_offset": -7200,
+      "dst_offset": -10800,
+      "dst_start": 13166742602755,
+      "dst_end": 13166742602762
+    },
+    "hkhkg": {
+      "std_offset": -28800
+    },
+    "hntgu": {
+      "std_offset": 21600
+    },
+    "htpap": {
+      "std_offset": 18000,
+      "dst_offset": 14400,
+      "dst_start": 10267639415299,
+      "dst_end": 10267639415051
+    },
+    "hubud": {
+      "std_offset": -3600,
+      "dst_offset": -7200,
+      "dst_start": 10267639416067,
+      "dst_end": 10328037393674
+    },
+    "iddjj": {
+      "std_offset": -32400
+    },
+    "idjkt": {
+      "std_offset": -25200
+    },
+    "idmak": {
+      "std_offset": -28800
+    },
+    "idpnk": {
+      "std_offset": -25200
+    },
+    "iedub": {
+      "std_offset": -3600,
+      "dst_offset": 0,
+      "dst_start": 10267639416074,
+      "dst_end": 10207241438467
+    },
+    "inccu": {
+      "std_offset": -19800
+    },
+    "iodga": {
+      "std_offset": -21600
+    },
+    "iqbgw": {
+      "std_offset": -10800
+    },
+    "irthr": {
+      "std_offset": -12600
+    },
+    "itrom": {
+      "std_offset": -3600,
+      "dst_offset": -7200,
+      "dst_start": 10267639416067,
+      "dst_end": 10328037393674
+    },
+    "jeruslm": {
+      "std_offset": -7200,
+      "dst_offset": -10800,
+      "dst_start": 11717191140355,
+      "dst_end": 10267639416074
+    },
+    "jmkin": {
+      "std_offset": 18000
+    },
+    "joamm": {
+      "std_offset": -10800
+    },
+    "jptyo": {
+      "std_offset": -32400
+    },
+    "kenbo": {
+      "std_offset": -10800
+    },
+    "kgfru": {
+      "std_offset": -21600
+    },
+    "kicxi": {
+      "std_offset": -50400
+    },
+    "kipho": {
+      "std_offset": -46800
+    },
+    "kitrw": {
+      "std_offset": -43200
+    },
+    "kpfnj": {
+      "std_offset": -32400
+    },
+    "krsel": {
+      "std_offset": -32400
+    },
+    "kzaau": {
+      "std_offset": -18000
+    },
+    "kzakx": {
+      "std_offset": -18000
+    },
+    "kzala": {
+      "std_offset": -21600
+    },
+    "kzguw": {
+      "std_offset": -18000
+    },
+    "kzksn": {
+      "std_offset": -21600
+    },
+    "kzkzo": {
+      "std_offset": -18000
+    },
+    "kzura": {
+      "std_offset": -18000
+    },
+    "lbbey": {
+      "std_offset": -7200,
+      "dst_offset": -10800,
+      "dst_start": 10146843460867,
+      "dst_end": 10146843460874
+    },
+    "lkcmb": {
+      "std_offset": -19800
+    },
+    "lrmlw": {
+      "std_offset": 0
+    },
+    "ltvno": {
+      "std_offset": -7200,
+      "dst_offset": -10800,
+      "dst_start": 10328037393667,
+      "dst_end": 10388435371274
+    },
+    "lvrix": {
+      "std_offset": -7200,
+      "dst_offset": -10800,
+      "dst_start": 10328037393667,
+      "dst_end": 10388435371274
+    },
+    "lytip": {
+      "std_offset": -7200
+    },
+    "macas": {
+      "std_offset": -3600
+    },
+    "mdkiv": {
+      "std_offset": -7200,
+      "dst_offset": -10800,
+      "dst_start": 10267639416067,
+      "dst_end": 10328037393674
+    },
+    "mhkwa": {
+      "std_offset": -43200
+    },
+    "mmrgn": {
+      "std_offset": -23400
+    },
+    "mncoq": {
+      "std_offset": -28800
+    },
+    "mnhvd": {
+      "std_offset": -25200
+    },
+    "mnuln": {
+      "std_offset": -28800
+    },
+    "momfm": {
+      "std_offset": -28800
+    },
+    "mqfdf": {
+      "std_offset": 14400
+    },
+    "mst7mdt": {
+      "std_offset": 25200,
+      "dst_offset": 21600,
+      "dst_start": 10267639415299,
+      "dst_end": 10267639415051
+    },
+    "mtmla": {
+      "std_offset": -3600,
+      "dst_offset": -7200,
+      "dst_start": 10267639416067,
+      "dst_end": 10328037393674
+    },
+    "muplu": {
+      "std_offset": -14400
+    },
+    "mvmle": {
+      "std_offset": -18000
+    },
+    "mxchi": {
+      "std_offset": 21600
+    },
+    "mxcjs": {
+      "std_offset": 25200,
+      "dst_offset": 21600,
+      "dst_start": 10267639415299,
+      "dst_end": 10267639415051
+    },
+    "mxcun": {
+      "std_offset": 18000
+    },
+    "mxhmo": {
+      "std_offset": 25200
+    },
+    "mxmam": {
+      "std_offset": 21600,
+      "dst_offset": 18000,
+      "dst_start": 10267639415299,
+      "dst_end": 10267639415051
+    },
+    "mxmex": {
+      "std_offset": 21600
+    },
+    "mxmid": {
+      "std_offset": 21600
+    },
+    "mxmty": {
+      "std_offset": 21600
+    },
+    "mxmzt": {
+      "std_offset": 25200
+    },
+    "mxoji": {
+      "std_offset": 21600,
+      "dst_offset": 18000,
+      "dst_start": 10267639415299,
+      "dst_end": 10267639415051
+    },
+    "mxpvr": {
+      "std_offset": 21600
+    },
+    "mxtij": {
+      "std_offset": 28800,
+      "dst_offset": 25200,
+      "dst_start": 10267639415299,
+      "dst_end": 10267639415051
+    },
+    "mykch": {
+      "std_offset": -28800
+    },
+    "mzmpm": {
+      "std_offset": -7200
+    },
+    "nawdh": {
+      "std_offset": -7200
+    },
+    "ncnou": {
+      "std_offset": -39600
+    },
+    "nfnlk": {
+      "std_offset": -39600,
+      "dst_offset": -43200,
+      "dst_start": 10267639415050,
+      "dst_end": 10328037392644
+    },
+    "nglos": {
+      "std_offset": -3600
+    },
+    "nimga": {
+      "std_offset": 21600
+    },
+    "npktm": {
+      "std_offset": -20700
+    },
+    "nrinu": {
+      "std_offset": -43200
+    },
+    "nuiue": {
+      "std_offset": 39600
+    },
+    "nzakl": {
+      "std_offset": -43200,
+      "dst_offset": -46800,
+      "dst_start": 10267639416073,
+      "dst_end": 10328037392644
+    },
+    "nzcht": {
+      "std_offset": -45900,
+      "dst_offset": -49500,
+      "dst_start": 10312937899273,
+      "dst_end": 10373335875844
+    },
+    "papty": {
+      "std_offset": 18000
+    },
+    "pelim": {
+      "std_offset": 18000
+    },
+    "pfgmr": {
+      "std_offset": 32400
+    },
+    "pfnhv": {
+      "std_offset": 34200
+    },
+    "pfppt": {
+      "std_offset": 36000
+    },
+    "pgpom": {
+      "std_offset": -36000
+    },
+    "pgraw": {
+      "std_offset": -39600
+    },
+    "phmnl": {
+      "std_offset": -28800
+    },
+    "pkkhi": {
+      "std_offset": -18000
+    },
+    "plwaw": {
+      "std_offset": -3600,
+      "dst_offset": -7200,
+      "dst_start": 10267639416067,
+      "dst_end": 10328037393674
+    },
+    "pmmqc": {
+      "std_offset": 10800,
+      "dst_offset": 7200,
+      "dst_start": 10267639415299,
+      "dst_end": 10267639415051
+    },
+    "pnpcn": {
+      "std_offset": 28800
+    },
+    "prsju": {
+      "std_offset": 14400
+    },
+    "pst8pdt": {
+      "std_offset": 28800,
+      "dst_offset": 25200,
+      "dst_start": 10267639415299,
+      "dst_end": 10267639415051
+    },
+    "ptfnc": {
+      "std_offset": 0,
+      "dst_offset": -3600,
+      "dst_start": 10207241438467,
+      "dst_end": 10267639416074
+    },
+    "ptlis": {
+      "std_offset": 0,
+      "dst_offset": -3600,
+      "dst_start": 10207241438467,
+      "dst_end": 10267639416074
+    },
+    "ptpdl": {
+      "std_offset": 3600,
+      "dst_offset": 0,
+      "dst_start": 10146843460867,
+      "dst_end": 10207241438474
+    },
+    "pwror": {
+      "std_offset": -32400
+    },
+    "pyasu": {
+      "std_offset": 14400,
+      "dst_offset": 10800,
+      "dst_start": 10146843459850,
+      "dst_end": 10146843460611
+    },
+    "qadoh": {
+      "std_offset": -10800
+    },
+    "robuh": {
+      "std_offset": -7200,
+      "dst_offset": -10800,
+      "dst_start": 10328037393667,
+      "dst_end": 10388435371274
+    },
+    "rsbeg": {
+      "std_offset": -3600,
+      "dst_offset": -7200,
+      "dst_start": 10267639416067,
+      "dst_end": 10328037393674
+    },
+    "ruasf": {
+      "std_offset": -14400
+    },
+    "rubax": {
+      "std_offset": -25200
+    },
+    "ruchita": {
+      "std_offset": -32400
+    },
+    "rudyr": {
+      "std_offset": -43200
+    },
+    "rugdx": {
+      "std_offset": -39600
+    },
+    "ruikt": {
+      "std_offset": -28800
+    },
+    "rukgd": {
+      "std_offset": -7200
+    },
+    "rukhndg": {
+      "std_offset": -32400
+    },
+    "rukra": {
+      "std_offset": -25200
+    },
+    "rukuf": {
+      "std_offset": -14400
+    },
+    "rukvx": {
+      "std_offset": -10800
+    },
+    "rumow": {
+      "std_offset": -10800
+    },
+    "runoz": {
+      "std_offset": -25200
+    },
+    "ruoms": {
+      "std_offset": -21600
+    },
+    "ruovb": {
+      "std_offset": -25200
+    },
+    "rupkc": {
+      "std_offset": -43200
+    },
+    "rurtw": {
+      "std_offset": -14400
+    },
+    "rusred": {
+      "std_offset": -39600
+    },
+    "rutof": {
+      "std_offset": -25200
+    },
+    "ruuly": {
+      "std_offset": -14400
+    },
+    "ruunera": {
+      "std_offset": -36000
+    },
+    "ruuus": {
+      "std_offset": -39600
+    },
+    "ruvog": {
+      "std_offset": -10800
+    },
+    "ruvvo": {
+      "std_offset": -36000
+    },
+    "ruyek": {
+      "std_offset": -18000
+    },
+    "ruyks": {
+      "std_offset": -32400
+    },
+    "saruh": {
+      "std_offset": -10800
+    },
+    "sbhir": {
+      "std_offset": -39600
+    },
+    "sdkrt": {
+      "std_offset": -7200
+    },
+    "sgsin": {
+      "std_offset": -28800
+    },
+    "srpbm": {
+      "std_offset": 10800
+    },
+    "ssjub": {
+      "std_offset": -7200
+    },
+    "sttms": {
+      "std_offset": 0
+    },
+    "svsal": {
+      "std_offset": 21600
+    },
+    "sydam": {
+      "std_offset": -10800
+    },
+    "tcgdt": {
+      "std_offset": 18000,
+      "dst_offset": 14400,
+      "dst_start": 10267639415299,
+      "dst_end": 10267639415051
+    },
+    "tdndj": {
+      "std_offset": -3600
+    },
+    "thbkk": {
+      "std_offset": -25200
+    },
+    "tjdyu": {
+      "std_offset": -18000
+    },
+    "tkfko": {
+      "std_offset": -46800
+    },
+    "tldil": {
+      "std_offset": -32400
+    },
+    "tmasb": {
+      "std_offset": -18000
+    },
+    "tntun": {
+      "std_offset": -3600
+    },
+    "totbu": {
+      "std_offset": -46800
+    },
+    "trist": {
+      "std_offset": -10800
+    },
+    "twtpe": {
+      "std_offset": -28800
+    },
+    "uaiev": {
+      "std_offset": -7200,
+      "dst_offset": -10800,
+      "dst_start": 10328037393667,
+      "dst_end": 10388435371274
+    },
+    "uasip": {
+      "std_offset": -10800
+    },
+    "usadk": {
+      "std_offset": 36000,
+      "dst_offset": 32400,
+      "dst_start": 10267639415299,
+      "dst_end": 10267639415051
+    },
+    "usaeg": {
+      "std_offset": 18000,
+      "dst_offset": 14400,
+      "dst_start": 10267639415299,
+      "dst_end": 10267639415051
+    },
+    "usanc": {
+      "std_offset": 32400,
+      "dst_offset": 28800,
+      "dst_start": 10267639415299,
+      "dst_end": 10267639415051
+    },
+    "usboi": {
+      "std_offset": 25200,
+      "dst_offset": 21600,
+      "dst_start": 10267639415299,
+      "dst_end": 10267639415051
+    },
+    "uschi": {
+      "std_offset": 21600,
+      "dst_offset": 18000,
+      "dst_start": 10267639415299,
+      "dst_end": 10267639415051
+    },
+    "usden": {
+      "std_offset": 25200,
+      "dst_offset": 21600,
+      "dst_start": 10267639415299,
+      "dst_end": 10267639415051
+    },
+    "usdet": {
+      "std_offset": 18000,
+      "dst_offset": 14400,
+      "dst_start": 10267639415299,
+      "dst_end": 10267639415051
+    },
+    "ushnl": {
+      "std_offset": 36000
+    },
+    "usind": {
+      "std_offset": 18000,
+      "dst_offset": 14400,
+      "dst_start": 10267639415299,
+      "dst_end": 10267639415051
+    },
+    "usinvev": {
+      "std_offset": 18000,
+      "dst_offset": 14400,
+      "dst_start": 10267639415299,
+      "dst_end": 10267639415051
+    },
+    "usjnu": {
+      "std_offset": 32400,
+      "dst_offset": 28800,
+      "dst_start": 10267639415299,
+      "dst_end": 10267639415051
+    },
+    "usknx": {
+      "std_offset": 21600,
+      "dst_offset": 18000,
+      "dst_start": 10267639415299,
+      "dst_end": 10267639415051
+    },
+    "uslax": {
+      "std_offset": 28800,
+      "dst_offset": 25200,
+      "dst_start": 10267639415299,
+      "dst_end": 10267639415051
+    },
+    "uslui": {
+      "std_offset": 18000,
+      "dst_offset": 14400,
+      "dst_start": 10267639415299,
+      "dst_end": 10267639415051
+    },
+    "usmnm": {
+      "std_offset": 21600,
+      "dst_offset": 18000,
+      "dst_start": 10267639415299,
+      "dst_end": 10267639415051
+    },
+    "usmoc": {
+      "std_offset": 18000,
+      "dst_offset": 14400,
+      "dst_start": 10267639415299,
+      "dst_end": 10267639415051
+    },
+    "usmtm": {
+      "std_offset": 32400,
+      "dst_offset": 28800,
+      "dst_start": 10267639415299,
+      "dst_end": 10267639415051
+    },
+    "usndcnt": {
+      "std_offset": 21600,
+      "dst_offset": 18000,
+      "dst_start": 10267639415299,
+      "dst_end": 10267639415051
+    },
+    "usndnsl": {
+      "std_offset": 21600,
+      "dst_offset": 18000,
+      "dst_start": 10267639415299,
+      "dst_end": 10267639415051
+    },
+    "usnyc": {
+      "std_offset": 18000,
+      "dst_offset": 14400,
+      "dst_start": 10267639415299,
+      "dst_end": 10267639415051
+    },
+    "usoea": {
+      "std_offset": 18000,
+      "dst_offset": 14400,
+      "dst_start": 10267639415299,
+      "dst_end": 10267639415051
+    },
+    "usome": {
+      "std_offset": 32400,
+      "dst_offset": 28800,
+      "dst_start": 10267639415299,
+      "dst_end": 10267639415051
+    },
+    "usphx": {
+      "std_offset": 25200
+    },
+    "ussit": {
+      "std_offset": 32400,
+      "dst_offset": 28800,
+      "dst_start": 10267639415299,
+      "dst_end": 10267639415051
+    },
+    "ustel": {
+      "std_offset": 21600,
+      "dst_offset": 18000,
+      "dst_start": 10267639415299,
+      "dst_end": 10267639415051
+    },
+    "uswlz": {
+      "std_offset": 18000,
+      "dst_offset": 14400,
+      "dst_start": 10267639415299,
+      "dst_end": 10267639415051
+    },
+    "uswsq": {
+      "std_offset": 18000,
+      "dst_offset": 14400,
+      "dst_start": 10267639415299,
+      "dst_end": 10267639415051
+    },
+    "usxul": {
+      "std_offset": 21600,
+      "dst_offset": 18000,
+      "dst_start": 10267639415299,
+      "dst_end": 10267639415051
+    },
+    "usyak": {
+      "std_offset": 32400,
+      "dst_offset": 28800,
+      "dst_start": 10267639415299,
+      "dst_end": 10267639415051
+    },
+    "utc": {
+      "std_offset": 0
+    },
+    "utce01": {
+      "std_offset": -3600
+    },
+    "utce02": {
+      "std_offset": -7200
+    },
+    "utce03": {
+      "std_offset": -10800
+    },
+    "utce04": {
+      "std_offset": -14400
+    },
+    "utce05": {
+      "std_offset": -18000
+    },
+    "utce06": {
+      "std_offset": -21600
+    },
+    "utce07": {
+      "std_offset": -25200
+    },
+    "utce08": {
+      "std_offset": -28800
+    },
+    "utce09": {
+      "std_offset": -32400
+    },
+    "utce10": {
+      "std_offset": -36000
+    },
+    "utce11": {
+      "std_offset": -39600
+    },
+    "utce12": {
+      "std_offset": -43200
+    },
+    "utce13": {
+      "std_offset": -46800
+    },
+    "utce14": {
+      "std_offset": -50400
+    },
+    "utcw01": {
+      "std_offset": 3600
+    },
+    "utcw02": {
+      "std_offset": 7200
+    },
+    "utcw03": {
+      "std_offset": 10800
+    },
+    "utcw04": {
+      "std_offset": 14400
+    },
+    "utcw05": {
+      "std_offset": 18000
+    },
+    "utcw06": {
+      "std_offset": 21600
+    },
+    "utcw07": {
+      "std_offset": 25200
+    },
+    "utcw08": {
+      "std_offset": 28800
+    },
+    "utcw09": {
+      "std_offset": 32400
+    },
+    "utcw10": {
+      "std_offset": 36000
+    },
+    "utcw11": {
+      "std_offset": 39600
+    },
+    "utcw12": {
+      "std_offset": 43200
+    },
+    "uymvd": {
+      "std_offset": 10800
+    },
+    "uzskd": {
+      "std_offset": -18000
+    },
+    "uztas": {
+      "std_offset": -18000
+    },
+    "veccs": {
+      "std_offset": 14400
+    },
+    "vnsgn": {
+      "std_offset": -25200
+    },
+    "vuvli": {
+      "std_offset": -39600
+    },
+    "wsapw": {
+      "std_offset": -46800
+    },
+    "zajnb": {
+      "std_offset": -7200
+    }
+  }
+}

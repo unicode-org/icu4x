@@ -85,7 +85,7 @@ impl SerdeCache {
     }
 
     pub fn list(&self, path: &str) -> Result<impl Iterator<Item = String>, DataError> {
-        self.root.list(path)
+        self.root.list(path, false)
     }
 
     pub fn file_exists(&self, path: &str) -> Result<bool, DataError> {
@@ -177,7 +177,71 @@ impl AbstractFs {
         Ok(())
     }
 
-    fn read_to_buf(&self, path: &str) -> Result<Vec<u8>, DataError> {
+    /// Returns the size, in bytes, of the entry at `path`.
+    pub fn size(&self, path: &str) -> Result<u64, DataError> {
+        self.init()?;
+        match self {
+            AbstractFs::Fs(root) => root
+                .join(path)
+                .metadata()
+                .map(|metadata| metadata.len())
+                .map_err(Into::into),
+            AbstractFs::Zip(zip) => zip
+                .write()
+                .expect("poison")
+                .as_mut()
+                .ok()
+                .unwrap() // init called
+                .archive
+                .by_name(path)
+                .map(|entry| entry.size())
+                .map_err(|e| {
+                    DataError::custom("Zip")
+                        .with_display_context(&e)
+                        .with_display_context(path)
+                }),
+            #[cfg(feature = "legacy_api")]
+            AbstractFs::Memory(map) => {
+                map.get(path)
+                    .copied()
+                    .map(|b| b.len() as u64)
+                    .ok_or_else(|| {
+                        DataError::custom("Not found in icu4x-datagen's data/")
+                            .with_display_context(path)
+                    })
+            }
+        }
+    }
+
+    /// Returns [`true`] if the entry at `path` is a file, otherwise [`false`]
+    pub fn is_file(&self, path: &str) -> Result<bool, DataError> {
+        self.init()?;
+        match self {
+            AbstractFs::Fs(root) => root
+                .join(path)
+                .metadata()
+                .map(|metadata| metadata.is_file())
+                .map_err(Into::into),
+            AbstractFs::Zip(zip) => zip
+                .write()
+                .expect("poison")
+                .as_mut()
+                .ok()
+                .unwrap() // init called
+                .archive
+                .by_name(path)
+                .map(|entry| entry.is_file())
+                .map_err(|e| {
+                    DataError::custom("Zip")
+                        .with_display_context(&e)
+                        .with_display_context(path)
+                }),
+            #[cfg(feature = "legacy_api")]
+            AbstractFs::Memory(map) => Ok(map.contains_key(path)),
+        }
+    }
+
+    pub fn read_to_buf(&self, path: &str) -> Result<Vec<u8>, DataError> {
         self.init()?;
         match self {
             Self::Fs(root) => {
@@ -211,6 +275,47 @@ impl AbstractFs {
         }
     }
 
+    pub fn read_to_buf_exact(&self, n: usize, path: &str) -> Result<Vec<u8>, DataError> {
+        self.init()?;
+        match self {
+            Self::Fs(root) => {
+                log::trace!("Reading: {}/{}", root.display(), path);
+                let mut buf = vec![0; n];
+                let mut file = std::fs::File::open(root.join(path))?;
+                file.read_exact(&mut buf)
+                    .map(|_| buf)
+                    .map_err(|e| DataError::from(e).with_path_context(&root.join(path)))
+            }
+            Self::Zip(zip) => {
+                log::trace!("Reading: <zip>/{}", path);
+                let mut buf = vec![0; n];
+                zip.write()
+                    .expect("poison")
+                    .as_mut()
+                    .ok()
+                    .unwrap() // init called
+                    .archive
+                    .by_name(path)
+                    .map_err(|e| {
+                        DataError::custom("Zip")
+                            .with_display_context(&e)
+                            .with_display_context(path)
+                    })?
+                    .read_exact(&mut buf)?;
+                Ok(buf)
+            }
+            #[cfg(feature = "legacy_api")]
+            Self::Memory(map) => map
+                .get(path)
+                .copied()
+                .and_then(|d| d.get(..n).map(Vec::from))
+                .ok_or_else(|| {
+                    DataError::custom("Not found in icu4x-datagen's data/")
+                        .with_display_context(path)
+                }),
+        }
+    }
+
     #[allow(dead_code)]
     pub(crate) fn read_to_string(&self, path: &str) -> Result<String, DataError> {
         let vec = self.read_to_buf(path)?;
@@ -219,14 +324,40 @@ impl AbstractFs {
         Ok(s)
     }
 
-    fn list(&self, path: &str) -> Result<impl Iterator<Item = String>, DataError> {
+    pub fn list(
+        &self,
+        path: &str,
+        recursive: bool,
+    ) -> Result<impl Iterator<Item = String>, DataError> {
         self.init()?;
         Ok(match self {
-            Self::Fs(root) => std::fs::read_dir(root.join(path))
-                .map_err(|e| DataError::from(e).with_display_context(path))?
-                .map(|e| -> Result<_, DataError> { Ok(e?.file_name().into_string().unwrap()) })
-                .collect::<Result<HashSet<_>, DataError>>()
-                .map(HashSet::into_iter)?,
+            Self::Fs(root) => {
+                let path = root.join(path);
+                if recursive {
+                    walkdir::WalkDir::new(&path)
+                        .follow_links(true)
+                        .into_iter()
+                        .flatten()
+                        .filter(|entry| entry.file_type().is_file())
+                        .map(|file| {
+                            file.into_path()
+                                .strip_prefix(&path)
+                                .unwrap()
+                                .to_string_lossy()
+                                .into_owned()
+                        })
+                        .collect::<HashSet<_>>()
+                        .into_iter()
+                } else {
+                    std::fs::read_dir(&path)
+                        .map_err(|e| DataError::from(e).with_display_context(&path.display()))?
+                        .map(|e| -> Result<_, DataError> {
+                            Ok(e?.file_name().to_string_lossy().into_owned())
+                        })
+                        .collect::<Result<HashSet<_>, DataError>>()
+                        .map(HashSet::into_iter)?
+                }
+            }
             Self::Zip(zip) => zip
                 .read()
                 .expect("poison")
@@ -236,15 +367,28 @@ impl AbstractFs {
                 .file_list
                 .iter()
                 .filter_map(|p| p.strip_prefix(path))
-                .filter_map(|suffix| suffix.split('/').find(|s| !s.is_empty()))
-                .map(String::from)
+                .filter_map(|suffix| {
+                    if recursive {
+                        Some(suffix)
+                    } else {
+                        suffix.split('/').find(|s| !s.is_empty())
+                    }
+                })
+                .map(ToOwned::to_owned)
                 .collect::<HashSet<_>>()
                 .into_iter(),
             #[cfg(feature = "legacy_api")]
             Self::Memory(map) => map
                 .keys()
-                .copied()
-                .map(String::from)
+                .filter_map(|p| p.strip_prefix(path))
+                .filter_map(|suffix| {
+                    if recursive {
+                        Some(suffix)
+                    } else {
+                        suffix.split('/').find(|s| !s.is_empty())
+                    }
+                })
+                .map(ToOwned::to_owned)
                 .collect::<HashSet<_>>()
                 .into_iter(),
         })

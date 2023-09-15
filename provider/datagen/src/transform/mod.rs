@@ -5,6 +5,7 @@
 pub mod cldr;
 pub mod icuexport;
 pub mod segmenter;
+pub mod tzif;
 
 use crate::DatagenProvider;
 use icu_provider::datagen::*;

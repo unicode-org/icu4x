@@ -28,6 +28,8 @@ pub struct Config {
     #[serde(default)]
     pub icu_export: PathOrTag,
     #[serde(default)]
+    pub tzif: PathOrTag,
+    #[serde(default)]
     pub segmenter_lstm: PathOrTag,
     #[serde(default, skip_serializing_if = "is_default")]
     pub trie_type: TrieType,

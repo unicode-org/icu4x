@@ -137,6 +137,10 @@ pub struct Cli {
     )]
     icuexport_root: Option<PathBuf>,
 
+    #[arg(long, value_name = "PATH", default_value = "/usr/share/zoneinfo")]
+    #[arg(help = "Path to a local directory contining TZif files.")]
+    tzif_root: Option<PathBuf>,
+
     #[arg(long, value_name = "TAG", default_value = "latest")]
     #[arg(
         help = "Download segmentation LSTM models from this GitHub tag (https://github.com/unicode-org/lstm_word_segmentation/tags)\n\
@@ -254,6 +258,7 @@ impl Cli {
             for path_or_tag in [
                 &mut config.cldr,
                 &mut config.icu_export,
+                &mut config.tzif,
                 &mut config.segmenter_lstm,
             ] {
                 if let config::PathOrTag::Path(ref mut path) = path_or_tag {
@@ -295,6 +300,7 @@ impl Cli {
                     &self.icuexport_tag,
                     "icuexport-root",
                 )?,
+                tzif: self.make_path(&self.tzif_root, "todo", "tzif")?,
                 segmenter_lstm: self.make_path(
                     &self.segmenter_lstm_root,
                     &self.segmenter_lstm_tag,

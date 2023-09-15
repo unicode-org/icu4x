@@ -34,10 +34,12 @@ icu_timezone_data = { workspace = true, optional = true }
 
 [dev-dependencies]
 icu = { workspace = true }
+serde_json = "1.0"
 
 [features]
 default = ["compiled_data"]
 std = ["icu_calendar/std", "icu_locid/std", "icu_provider/std"]
 serde = ["dep:serde", "zerovec/serde", "tinystr/serde", "icu_provider/serde"]
 datagen = ["serde", "dep:databake", "zerovec/databake", "tinystr/databake"]
+experimental = []
 compiled_data = ["dep:icu_timezone_data"]
