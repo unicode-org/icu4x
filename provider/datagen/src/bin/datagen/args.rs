@@ -72,7 +72,7 @@ impl CollationTable {
 #[command(author = "The ICU4X Project Developers", version = option_env!("CARGO_PKG_VERSION"))]
 #[command(about = format!("Learn more at: https://docs.rs/icu_datagen/{}", option_env!("CARGO_PKG_VERSION").unwrap_or("")), long_about = None)]
 pub struct Cli {
-    #[arg(help = "Load a JSON config. All options other than --verbose are ignored.")]
+    #[arg(long, hide = true)]
     config: Option<PathBuf>,
 
     #[arg(short, long)]

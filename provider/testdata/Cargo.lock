@@ -296,7 +296,6 @@ dependencies = [
  "icu_properties",
  "icu_provider",
  "writeable",
- "yoke",
  "zerovec",
 ]
 
@@ -374,7 +373,6 @@ dependencies = [
 name = "icu_displaynames"
 version = "0.10.0"
 dependencies = [
- "icu_collections",
  "icu_locid",
  "icu_provider",
  "tinystr",
@@ -478,7 +476,6 @@ dependencies = [
  "icu_provider",
  "serde",
  "tinystr",
- "yoke",
  "zerovec",
 ]
 
@@ -490,7 +487,6 @@ dependencies = [
  "postcard",
  "serde",
  "writeable",
- "yoke",
  "zerovec",
 ]
 
@@ -1104,5 +1100,4 @@ dependencies = [
  "proc-macro2",
  "quote",
  "syn",
- "synstructure",
 ]
