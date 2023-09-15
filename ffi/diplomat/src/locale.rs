@@ -185,19 +185,17 @@ pub mod ffi {
             self.0.strict_cmp(other).into()
         }
 
-        /// Construct an [`ICU4XLocale`] for the English language.
+        /// Deprecated
         ///
-        /// This convenience constructor is intended for testing only
-        /// and requires the `provider_test` feature.
+        /// Use `create_from_string("en").
         #[cfg(feature = "provider_test")]
         pub fn create_en() -> Box<ICU4XLocale> {
             Box::new(ICU4XLocale(icu_locid::locale!("en")))
         }
 
-        /// Construct an [`ICU4XLocale`] for the Bangla language.
+        /// Deprecated
         ///
-        /// This convenience constructor is intended for testing only
-        /// and requires the `provider_test` feature.
+        /// Use `create_from_string("bn").
         #[cfg(feature = "provider_test")]
         pub fn create_bn() -> Box<ICU4XLocale> {
             Box::new(ICU4XLocale(icu_locid::locale!("bn")))

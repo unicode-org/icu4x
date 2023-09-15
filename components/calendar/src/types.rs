@@ -5,11 +5,12 @@
 //! This module contains various types used by `icu_calendar` and `icu_datetime`
 
 use crate::error::CalendarError;
-use crate::helpers;
 use core::convert::TryFrom;
 use core::convert::TryInto;
 use core::fmt;
+use core::num::NonZeroU8;
 use core::str::FromStr;
+use tinystr::TinyAsciiStr;
 use tinystr::{TinyStr16, TinyStr4};
 use zerovec::maps::ZeroMapKV;
 use zerovec::ule::AsULE;
@@ -18,6 +19,10 @@ use zerovec::ule::AsULE;
 ///
 /// Different calendars use different era codes, see their documentation
 /// for details.
+///
+/// Era codes are shared with Temporal, [see Temporal proposal][era-proposal].
+///
+/// [era-proposal]: https://tc39.es/proposal-intl-era-monthcode/
 #[derive(Copy, Clone, Debug, PartialEq)]
 #[allow(clippy::exhaustive_structs)] // this is a newtype
 pub struct Era(pub TinyStr16);
@@ -37,21 +42,31 @@ impl FromStr for Era {
 
 /// Representation of a formattable year.
 ///
-/// More fields may be added in the future, for things like
-/// the cyclic or extended year
+/// More fields may be added in the future for things like extended year
 #[derive(Copy, Clone, Debug, PartialEq)]
 #[non_exhaustive]
 pub struct FormattableYear {
     /// The era containing the year.
+    ///
+    /// This may not always be the canonical era for the calendar and could be an alias,
+    /// for example all `islamic` calendars return `islamic` as the formattable era code
+    /// which allows them to share data.
     pub era: Era,
 
     /// The year number in the current era (usually 1-based).
     pub number: i32,
 
+    /// The year in the current cycle for cyclic calendars (1-indexed)
+    /// can be set to `None` for non-cyclic calendars
+    ///
+    /// For chinese and dangi it will be
+    /// a number between 1 and 60, for hypothetical other calendars it may be something else.
+    pub cyclic: Option<NonZeroU8>,
+
     /// The related ISO year. This is normally the ISO (proleptic Gregorian) year having the greatest
     /// overlap with the calendar year. It is used in certain date formatting patterns.
     ///
-    /// Can be None if the calendar does not typically use related_iso (and CLDR does not contain patterns
+    /// Can be `None` if the calendar does not typically use `related_iso` (and CLDR does not contain patterns
     /// using it)
     pub related_iso: Option<i32>,
 }
@@ -61,10 +76,11 @@ impl FormattableYear {
     ///
     /// Other fields can be set mutably after construction
     /// as needed
-    pub fn new(era: Era, number: i32) -> Self {
+    pub fn new(era: Era, number: i32, cyclic: Option<NonZeroU8>) -> Self {
         Self {
             era,
             number,
+            cyclic,
             related_iso: None,
         }
     }
@@ -76,6 +92,10 @@ impl FormattableYear {
 /// (`M03L`) in lunar calendars. Solar calendars will have codes between `M01` and `M12`
 /// potentially with an `M13` for epagomenal months. Check the docs for a particular calendar
 /// for details on what its month codes are.
+///
+/// Month codes are shared with Temporal, [see Temporal proposal][era-proposal].
+///
+/// [era-proposal]: https://tc39.es/proposal-intl-era-monthcode/
 #[derive(Clone, Copy, Debug, PartialEq, Eq, PartialOrd, Ord, Hash)]
 #[allow(clippy::exhaustive_structs)] // this is a newtype
 #[cfg_attr(
@@ -85,6 +105,35 @@ impl FormattableYear {
 )]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 pub struct MonthCode(pub TinyStr4);
+
+impl MonthCode {
+    /// Returns an option which is `Some` containing the non-month version of a leap month
+    /// if the [`MonthCode`] this method is called upon is a leap month, and `None` otherwise.
+    /// This method assumes the [`MonthCode`] is valid.
+    pub fn get_normal_if_leap(self) -> Option<MonthCode> {
+        let bytes = self.0.all_bytes();
+        if bytes[3] == b'L' {
+            Some(MonthCode(TinyAsciiStr::from_bytes(&bytes[0..3]).ok()?))
+        } else {
+            None
+        }
+    }
+}
+
+#[test]
+fn test_get_normal_month_code_if_leap() {
+    let mc1 = MonthCode(tinystr::tinystr!(4, "M01L"));
+    let result1 = mc1.get_normal_if_leap();
+    assert_eq!(result1, Some(MonthCode(tinystr::tinystr!(4, "M01"))));
+
+    let mc2 = MonthCode(tinystr::tinystr!(4, "M11L"));
+    let result2 = mc2.get_normal_if_leap();
+    assert_eq!(result2, Some(MonthCode(tinystr::tinystr!(4, "M11"))));
+
+    let mc_invalid = MonthCode(tinystr::tinystr!(4, "M10"));
+    let result_invalid = mc_invalid.get_normal_if_leap();
+    assert_eq!(result_invalid, None);
+}
 
 impl AsULE for MonthCode {
     type ULE = TinyStr4;
@@ -132,6 +181,11 @@ pub struct FormattableMonth {
     pub ordinal: u32,
 
     /// The month code, used to distinguish months during leap years.
+    ///
+    /// This may not necessarily be the canonical month code for a month in cases where a month has different
+    /// formatting in a leap year, for example Adar/Adar II in the Hebrew calendar in a leap year has
+    /// the code M06, but for formatting specifically the Hebrew calendar will return M06L since it is formatted
+    /// differently.
     pub code: MonthCode,
 }
 
@@ -142,13 +196,13 @@ pub struct FormattableMonth {
 #[allow(clippy::exhaustive_structs)] // this type is stable
 pub struct DayOfYearInfo {
     /// The current day of the year, 1-based.
-    pub day_of_year: u32,
+    pub day_of_year: u16,
     /// The number of days in a year.
-    pub days_in_year: u32,
+    pub days_in_year: u16,
     /// The previous year.
     pub prev_year: FormattableYear,
     /// The number of days in the previous year.
-    pub days_in_prev_year: u32,
+    pub days_in_prev_year: u16,
     /// The next year.
     pub next_year: FormattableYear,
 }
@@ -317,7 +371,7 @@ dt_unit!(
     61,
     "An ISO-8601 second component, for use with ISO calendars.
 
-Must be within inclusive bounds `[0, 61]`. `60` accomodates for leap seconds.
+Must be within inclusive bounds `[0, 61]`. `60` accommodates for leap seconds.
 
 The value could also be equal to 60 or 61, to indicate the end of a leap second,
 with the writing `23:59:61.000000000Z` or `23:59:60.000000000Z`. These examples,
@@ -479,6 +533,16 @@ impl Time {
         }
     }
 
+    /// Construct a new [`Time`] representing midnight (00:00.000)
+    pub const fn midnight() -> Self {
+        Self {
+            hour: IsoHour::zero(),
+            minute: IsoMinute::zero(),
+            second: IsoSecond::zero(),
+            nanosecond: NanoSecond::zero(),
+        }
+    }
+
     /// Construct a new [`Time`], whilst validating that all components are in range
     pub fn try_new(
         hour: u8,
@@ -497,7 +561,7 @@ impl Time {
     /// Takes a number of minutes, which could be positive or negative, and returns the Time
     /// and the day number, which could be positive or negative.
     pub(crate) fn from_minute_with_remainder_days(minute: i32) -> (Time, i32) {
-        let (extra_days, minute_in_day) = helpers::div_rem_euclid(minute, 1440);
+        let (extra_days, minute_in_day) = (minute.div_euclid(1440), minute.rem_euclid(1440));
         let (hours, minutes) = (minute_in_day / 60, minute_in_day % 60);
         #[allow(clippy::unwrap_used)] // values are moduloed to be in range
         (

@@ -45,6 +45,16 @@ enum CollationTable {
     SearchAll,
 }
 
+// Mirrors crate::options::FallbackMode
+#[derive(Copy, Clone, PartialEq, Eq, PartialOrd, Ord, ValueEnum, Debug)]
+enum Fallback {
+    Auto,
+    Hybrid,
+    Runtime,
+    RuntimeManual,
+    Preresolved,
+}
+
 impl CollationTable {
     fn to_datagen_value(self) -> &'static str {
         match self {
@@ -61,12 +71,10 @@ impl CollationTable {
 #[command(name = "icu4x-datagen")]
 #[command(author = "The ICU4X Project Developers", version = option_env!("CARGO_PKG_VERSION"))]
 #[command(about = format!("Learn more at: https://docs.rs/icu_datagen/{}", option_env!("CARGO_PKG_VERSION").unwrap_or("")), long_about = None)]
-#[command(group(
-            ArgGroup::new("key_mode")
-                // .required(true)
-                .args(["keys", "key_file", "keys_for_bin", "all_keys"]),
-        ))]
 pub struct Cli {
+    #[arg(help = "Load a JSON config. All options other than --verbose are ignored.")]
+    config: Option<PathBuf>,
+
     #[arg(short, long)]
     #[arg(help = "Requests verbose output")]
     pub verbose: bool,
@@ -89,8 +97,10 @@ pub struct Cli {
     #[arg(help = "--format=mod, --format=dir only: pretty-print the Rust or JSON output files.")]
     pretty: bool,
 
-    #[arg(long)]
-    #[arg(help = "--format=dir only: whether to add a fingerprints file to the output.")]
+    #[arg(long, hide = true)]
+    #[arg(
+        help = "--format=dir only: whether to add a fingerprints file to the output. This feature will be removed in a future version."
+    )]
     fingerprint: bool,
 
     #[arg(short = 't', long, value_name = "TAG", default_value = "latest")]
@@ -121,7 +131,6 @@ pub struct Cli {
     icuexport_tag: String,
 
     #[arg(long, value_name = "PATH")]
-    #[cfg_attr(not(feature = "networking"), arg(default_value = "builtin"))]
     #[arg(
         help = "Path to a local icuexport directory (see https://github.com/unicode-org/icu/releases).\n\
                   Note that some keys do not support versions before release-71-1."
@@ -132,14 +141,13 @@ pub struct Cli {
     #[arg(help = "Path to a local directory contining TZif files.")]
     tzif_root: Option<PathBuf>,
 
-    #[arg(long, value_name = "TAG")]
+    #[arg(long, value_name = "TAG", default_value = "latest")]
     #[arg(
         help = "Download segmentation LSTM models from this GitHub tag (https://github.com/unicode-org/lstm_word_segmentation/tags)\n\
                   Use 'latest' for the latest version verified to work with this version of the binary.\n\
                   Ignored if '--segmenter-lstm-root' is present. Requires binary to be built with `networking` Cargo feature (enabled by default)."
     )]
     #[cfg_attr(not(feature = "networking"), arg(hide = true))]
-    #[cfg_attr(feature = "networking", arg(default_value = "latest"))]
     segmenter_lstm_tag: String,
 
     #[arg(long, value_name = "PATH")]
@@ -181,8 +189,10 @@ pub struct Cli {
     #[arg(long, value_name = "KEY_FILE")]
     #[arg(
         help = "Path to text file with resource keys to include, one per line. Empty lines \
-                  and lines starting with '#' are ignored."
+                  and lines starting with '#' are ignored.\n
+                  Requires the `legacy_api` Cargo feature."
     )]
+    #[cfg(feature = "legacy_api")]
     key_file: Option<PathBuf>,
 
     #[arg(long, value_name = "BINARY")]
@@ -193,10 +203,11 @@ pub struct Cli {
     #[arg(help = "Deprecated: alias for --keys all")]
     all_keys: bool,
 
-    #[arg(long, short, num_args = 0..)]
+    #[arg(long, short, num_args = 0.., default_value = "recommended")]
     #[arg(
         help = "Include this locale in the output. Accepts multiple arguments. \
-                  Set to 'full' or 'modern' for the respective CLDR locale sets, or 'none' for no locales."
+                  Set to 'full' or 'modern' for the respective CLDR locale sets, 'none' for no locales, \
+                  or 'recommended' for the recommended set of locales."
     )]
     locales: Vec<String>,
 
@@ -213,7 +224,7 @@ pub struct Cli {
     )]
     output: Option<PathBuf>,
 
-    #[arg(long)]
+    #[arg(long, hide = true)]
     #[arg(
         help = "--format=mod only: insert feature gates for individual `icu_*` crates. Requires --use-separate-crates"
     )]
@@ -225,43 +236,100 @@ pub struct Cli {
     )]
     use_separate_crates: bool,
 
-    #[arg(long)]
-    #[arg(help = "Load a TOML config")]
-    pub config: Option<PathBuf>,
+    // TODO(#2856): Change the default to Auto in 2.0
+    #[arg(short, long, value_enum, default_value_t = Fallback::Hybrid)]
+    fallback: Fallback,
+
+    #[arg(long, num_args = 0.., default_value = "recommended")]
+    #[arg(
+        help = "Include these segmenter models in the output. Accepts multiple arguments. \
+                Defaults to 'recommended' for the recommended set of models. Use 'none' for no models"
+    )]
+    segmenter_models: Vec<String>,
 }
 
 impl Cli {
     pub fn as_config(&self) -> eyre::Result<config::Config> {
-        Ok(config::Config {
-            keys: self.make_keys()?,
-            locales: self.make_locales()?,
-            cldr: self.make_path(&self.cldr_root, &self.cldr_tag, "cldr-root")?,
-            icu_export: self.make_path(
-                &self.icuexport_root,
-                &self.icuexport_tag,
-                "icuexport-root",
-            )?,
-            tzif: config::PathOrTag::Path(self.tzif_root.clone().unwrap()),
-            segmenter_lstm: self.make_path(
-                &self.segmenter_lstm_root,
-                &self.segmenter_lstm_tag,
-                "segmenter-lstm",
-            )?,
-            trie_type: match self.trie_type {
-                TrieType::Fast => config::TrieType::Fast,
-                TrieType::Small => config::TrieType::Small,
-            },
-            collation_han_database: match self.collation_han_database {
-                CollationHanDatabase::Unihan => config::CollationHanDatabase::Unihan,
-                CollationHanDatabase::Implicit => config::CollationHanDatabase::Implicit,
-            },
-            collations: self
-                .include_collations
-                .iter()
-                .map(|c| c.to_datagen_value().to_owned())
-                .collect(),
-            export: self.make_exporter()?,
-            overwrite: self.overwrite,
+        Ok(if let Some(ref config_path) = self.config {
+            let mut config: config::Config =
+                serde_json::from_str(&std::fs::read_to_string(config_path)?)?;
+            let parent = config_path.parent().unwrap();
+            // all paths in the JSON file are relative to its path, not to pwd.
+            for path_or_tag in [
+                &mut config.cldr,
+                &mut config.icu_export,
+                &mut config.tzif,
+                &mut config.segmenter_lstm,
+            ] {
+                if let config::PathOrTag::Path(ref mut path) = path_or_tag {
+                    if path.is_relative() {
+                        *path = parent.join(path.clone());
+                    }
+                }
+            }
+            if let config::KeyInclude::ForBinary(path) = &mut config.keys {
+                if path.is_relative() {
+                    *path = parent.join(path.clone());
+                }
+            }
+            match &mut config.export {
+                config::Export::FileSystem { path, .. } => {
+                    if path.is_relative() {
+                        *path = parent.join(path.clone());
+                    }
+                }
+                config::Export::Blob { path, .. } => {
+                    if path.is_relative() {
+                        *path = parent.join(path.clone());
+                    }
+                }
+                config::Export::Baked { path, .. } => {
+                    if path.is_relative() {
+                        *path = parent.join(path.clone());
+                    }
+                }
+            }
+            config
+        } else {
+            config::Config {
+                keys: self.make_keys()?,
+                locales: self.make_locales()?,
+                cldr: self.make_path(&self.cldr_root, &self.cldr_tag, "cldr-root")?,
+                icu_export: self.make_path(
+                    &self.icuexport_root,
+                    &self.icuexport_tag,
+                    "icuexport-root",
+                )?,
+                tzif: self.make_path(&self.tzif_root, "todo", "tzif")?,
+                segmenter_lstm: self.make_path(
+                    &self.segmenter_lstm_root,
+                    &self.segmenter_lstm_tag,
+                    "segmenter-lstm",
+                )?,
+                trie_type: match self.trie_type {
+                    TrieType::Fast => config::TrieType::Fast,
+                    TrieType::Small => config::TrieType::Small,
+                },
+                collation_han_database: match self.collation_han_database {
+                    CollationHanDatabase::Unihan => config::CollationHanDatabase::Unihan,
+                    CollationHanDatabase::Implicit => config::CollationHanDatabase::Implicit,
+                },
+                additional_collations: self
+                    .include_collations
+                    .iter()
+                    .map(|c| c.to_datagen_value().to_owned())
+                    .collect(),
+                segmenter_models: self.make_segmenter_models()?,
+                export: self.make_exporter()?,
+                fallback: match self.fallback {
+                    Fallback::Auto => config::FallbackMode::PreferredForExporter,
+                    Fallback::Hybrid => config::FallbackMode::Hybrid,
+                    Fallback::Runtime => config::FallbackMode::Runtime,
+                    Fallback::RuntimeManual => config::FallbackMode::RuntimeManual,
+                    Fallback::Preresolved => config::FallbackMode::Preresolved,
+                },
+                overwrite: self.overwrite,
+            }
         })
     }
 
@@ -272,32 +340,41 @@ impl Cli {
             match self.keys.as_slice() {
                 [x] if x == "none" => config::KeyInclude::None,
                 [x] if x == "all" => config::KeyInclude::All,
-                [x] if x == "experimental-all" => config::KeyInclude::AllWithExperimental,
+                [x] if x == "experimental-all" => {
+                    log::warn!("--keys=experimental-all is deprecated, using --keys=all.");
+                    log::warn!("--keys=all behavior is dependent on activated Cargo features, so");
+                    log::warn!("building with experimental features includes experimental keys");
+                    config::KeyInclude::All
+                }
                 keys => config::KeyInclude::Explicit(
                     keys.iter()
                         .map(|k| icu_datagen::key(k).ok_or(eyre::eyre!(k.to_string())))
                         .collect::<Result<_, _>>()?,
                 ),
             }
-        } else if let Some(key_file_path) = &self.key_file {
-            log::warn!("The --key-file argument is deprecated. Use --options with a JSON file.");
-            #[allow(deprecated)]
-            config::KeyInclude::Explicit(
-                icu_datagen::keys_from_file(key_file_path)
-                    .with_context(|| key_file_path.to_string_lossy().into_owned())?
-                    .into_iter()
-                    .collect(),
-            )
         } else if let Some(bin_path) = &self.keys_for_bin {
             config::KeyInclude::ForBinary(bin_path.clone())
         } else {
-            unreachable!("Argument group");
+            #[cfg(feature = "legacy_api")]
+            if let Some(key_file_path) = &self.key_file {
+                log::warn!("The --key-file argument is deprecated. Use a config.json.");
+                #[allow(deprecated)]
+                return Ok(config::KeyInclude::Explicit(
+                    icu_datagen::keys_from_file(key_file_path)
+                        .with_context(|| key_file_path.to_string_lossy().into_owned())?
+                        .into_iter()
+                        .collect(),
+                ));
+            }
+            eyre::bail!("Without a config, --keys or --keys-from-bin are required.")
         })
     }
 
     fn make_locales(&self) -> eyre::Result<config::LocaleInclude> {
         Ok(if self.locales.as_slice() == ["none"] {
             config::LocaleInclude::None
+        } else if self.locales.as_slice() == ["recommended"] {
+            config::LocaleInclude::Recommended
         } else if self.locales.as_slice() == ["full"] || self.all_locales {
             config::LocaleInclude::All
         } else if let Some(locale_subsets) = self
@@ -313,6 +390,9 @@ impl Cli {
         {
             config::LocaleInclude::CldrSet(locale_subsets.into_iter().collect())
         } else {
+            if self.locales.as_slice() == ["all"] {
+                log::warn!("`--locales all` selects the Allar language. Use `--locales full` for all locales");
+            }
             config::LocaleInclude::Explicit(
                 self.locales
                     .iter()
@@ -338,7 +418,17 @@ impl Cli {
             #[cfg(feature = "networking")]
             (_, tag) => config::PathOrTag::Tag(String::from(tag)),
             #[cfg(not(feature = "networking"))]
-            _ => eyre::bail!("--{root_arg} flag is mandatory unless datagen is built with the `\"networking\"` Cargo feature"),
+            _ => config::PathOrTag::None,
+        })
+    }
+
+    fn make_segmenter_models(&self) -> eyre::Result<config::SegmenterModelInclude> {
+        Ok(if self.segmenter_models.as_slice() == ["none"] {
+            config::SegmenterModelInclude::None
+        } else if self.segmenter_models.as_slice() == ["recommended"] {
+            config::SegmenterModelInclude::Recommended
+        } else {
+            config::SegmenterModelInclude::Explicit(self.segmenter_models.clone())
         })
     }
 
@@ -348,11 +438,8 @@ impl Cli {
                 if v == Format::DeprecatedDefault {
                     log::warn!("Defaulting to --format=dir. This will become a required parameter in the future.");
                 }
-                #[cfg(not(feature = "provider_fs"))]
-                eyre::bail!("FsDataProvider export requires the provider_fs Cargo feature.");
-                #[cfg(feature = "provider_fs")]
-                Ok(config::Export::Fs {
-                    output_path: if let Some(root) = self.output.as_ref() {
+                Ok(config::Export::FileSystem {
+                    path: if let Some(root) = self.output.as_ref() {
                         root.clone()
                     } else {
                         PathBuf::from("icu4x_data")
@@ -366,31 +453,23 @@ impl Cli {
                     fingerprint: self.fingerprint,
                 })
             }
-            Format::Blob => {
-                #[cfg(not(feature = "provider_blob"))]
-                eyre::bail!("BlobDataProvider export requires the provider_blob Cargo feature.");
-                #[cfg(feature = "provider_blob")]
-                Ok(config::Export::Blob(if let Some(path) = &self.output {
+            Format::Blob => Ok(config::Export::Blob {
+                path: if let Some(path) = &self.output {
                     path.clone()
                 } else {
                     PathBuf::from("/stdout")
-                }))
-            }
-            Format::Mod => {
-                #[cfg(not(feature = "provider_baked"))]
-                eyre::bail!("Baked data export requires the provider_baked Cargo feature.");
-                #[cfg(feature = "provider_baked")]
-                Ok(config::Export::Baked {
-                    output_path: if let Some(mod_directory) = self.output.as_ref() {
-                        mod_directory.clone()
-                    } else {
-                        PathBuf::from("icu4x_data")
-                    },
-                    pretty: self.pretty,
-                    insert_feature_gates: self.insert_feature_gates,
-                    use_separate_crates: self.use_separate_crates,
-                })
-            }
+                },
+            }),
+            Format::Mod => Ok(config::Export::Baked {
+                path: if let Some(mod_directory) = self.output.as_ref() {
+                    mod_directory.clone()
+                } else {
+                    PathBuf::from("icu4x_data")
+                },
+                pretty: self.pretty,
+                insert_feature_gates: self.insert_feature_gates,
+                use_separate_crates: self.use_separate_crates,
+            }),
         }
     }
 }

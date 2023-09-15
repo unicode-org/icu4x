@@ -34,11 +34,10 @@
 
 use crate::any_calendar::AnyCalendarKind;
 use crate::calendar_arithmetic::{ArithmeticDate, CalendarArithmetic};
-use crate::coptic::Coptic;
 use crate::iso::Iso;
-use crate::julian::Julian;
 use crate::{types, Calendar, CalendarError, Date, DateDuration, DateDurationUnit, DateTime};
-use core::marker::PhantomData;
+use calendrical_calculations::helpers::I32CastError;
+use calendrical_calculations::rata_die::RataDie;
 use tinystr::tinystr;
 
 /// The number of years the Amete Alem epoch precedes the Amete Mihret epoch
@@ -73,12 +72,17 @@ pub enum EthiopianEraStyle {
 /// This calendar supports three era codes, based on what mode it is in. In the Amete Mihret scheme it has
 /// the `"incar"` and `"pre-incar"` eras, 1 Incarnation is 9 CE. In the Amete Alem scheme, it instead has a single era,
 /// `"mundi`, where 1 Anno Mundi is 5493 BCE. Dates before that use negative year numbers.
+///
+/// # Month codes
+///
+/// This calendar supports 13 solar month codes (`"M01" - "M13"`), with `"M13"` being used for the short epagomenal month
+/// at the end of the year.
 // The bool specifies whether dates should be in the Amete Alem era scheme
-#[derive(Copy, Clone, Debug, Hash, Default, Eq, PartialEq)]
+#[derive(Copy, Clone, Debug, Hash, Default, Eq, PartialEq, PartialOrd, Ord)]
 pub struct Ethiopian(pub(crate) bool);
 
 /// The inner date type used for representing [`Date`]s of [`Ethiopian`]. See [`Date`] and [`Ethiopian`] for more details.
-#[derive(Copy, Clone, Debug, Hash, Eq, PartialEq)]
+#[derive(Copy, Clone, Debug, Hash, Eq, PartialEq, PartialOrd, Ord)]
 pub struct EthiopianDateInner(ArithmeticDate<Ethiopian>);
 
 impl CalendarArithmetic for Ethiopian {
@@ -104,7 +108,15 @@ impl CalendarArithmetic for Ethiopian {
         year % 4 == 3
     }
 
-    fn days_in_provided_year(year: i32) -> u32 {
+    fn last_month_day_in_year(year: i32) -> (u8, u8) {
+        if Self::is_leap_year(year) {
+            (13, 6)
+        } else {
+            (13, 5)
+        }
+    }
+
+    fn days_in_provided_year(year: i32) -> u16 {
         if Self::is_leap_year(year) {
             366
         } else {
@@ -138,7 +150,7 @@ impl Calendar for Ethiopian {
             return Err(CalendarError::UnknownEra(era.0, self.debug_name()));
         };
 
-        ArithmeticDate::new_from_solar(self, year, month_code, day).map(EthiopianDateInner)
+        ArithmeticDate::new_from_codes(self, year, month_code, day).map(EthiopianDateInner)
     }
     fn date_from_iso(&self, iso: Date<Iso>) -> EthiopianDateInner {
         let fixed_iso = Iso::fixed_from_iso(*iso.inner());
@@ -154,7 +166,7 @@ impl Calendar for Ethiopian {
         date.0.months_in_year()
     }
 
-    fn days_in_year(&self, date: &Self::DateInner) -> u32 {
+    fn days_in_year(&self, date: &Self::DateInner) -> u16 {
         date.0.days_in_year()
     }
 
@@ -187,7 +199,7 @@ impl Calendar for Ethiopian {
     }
 
     fn month(&self, date: &Self::DateInner) -> types::FormattableMonth {
-        date.0.solar_month()
+        date.0.month()
     }
 
     fn day_of_month(&self, date: &Self::DateInner) -> types::DayOfMonth {
@@ -219,17 +231,14 @@ impl Calendar for Ethiopian {
     }
 }
 
-const ETHIOPIC_TO_COPTIC_OFFSET: i32 =
-    super::coptic::COPTIC_EPOCH - Julian::fixed_from_julian_integers(8, 8, 29);
-
 impl Ethiopian {
     /// Construct a new Ethiopian Calendar for the Amete Mihret era naming scheme
-    pub fn new() -> Self {
+    pub const fn new() -> Self {
         Self(false)
     }
     /// Construct a new Ethiopian Calendar with a value specifying whether or not it is Amete Alem
-    pub fn new_with_era_style(era_style: EthiopianEraStyle) -> Self {
-        Self(era_style == EthiopianEraStyle::AmeteAlem)
+    pub const fn new_with_era_style(era_style: EthiopianEraStyle) -> Self {
+        Self(matches!(era_style, EthiopianEraStyle::AmeteAlem))
     }
     /// Set whether or not this uses the Amete Alem era scheme
     pub fn set_era_style(&mut self, era_style: EthiopianEraStyle) {
@@ -245,32 +254,25 @@ impl Ethiopian {
         }
     }
 
-    // "Fixed" is a day count representation of calendars staring from Jan 1st of year 1 of the Georgian Calendar.
-    // The fixed date algorithms are from
-    // Dershowitz, Nachum, and Edward M. Reingold. _Calendrical calculations_. Cambridge University Press, 2008.
-    //
-    // Lisp code reference: https://github.com/EdReingold/calendar-code2/blob/1ee51ecfaae6f856b0d7de3e36e9042100b4f424/calendar.l#L2017
-    fn fixed_from_ethiopian(date: ArithmeticDate<Ethiopian>) -> i32 {
-        Coptic::fixed_from_coptic_integers(date.year, date.month, date.day)
-            - ETHIOPIC_TO_COPTIC_OFFSET
+    fn fixed_from_ethiopian(date: ArithmeticDate<Ethiopian>) -> RataDie {
+        calendrical_calculations::ethiopian::fixed_from_ethiopian(date.year, date.month, date.day)
     }
 
-    // Lisp code reference: https://github.com/EdReingold/calendar-code2/blob/1ee51ecfaae6f856b0d7de3e36e9042100b4f424/calendar.l#L2028
-    fn ethiopian_from_fixed(date: i32) -> EthiopianDateInner {
-        let coptic_date = Coptic::coptic_from_fixed(date + ETHIOPIC_TO_COPTIC_OFFSET);
-
-        #[allow(clippy::unwrap_used)] // Coptic and Ethiopic have the same allowed ranges for dates
-        *Date::try_new_ethiopian_date(
-            EthiopianEraStyle::AmeteMihret,
-            coptic_date.0.year,
-            coptic_date.0.month,
-            coptic_date.0.day,
-        )
-        .unwrap()
-        .inner()
+    fn ethiopian_from_fixed(date: RataDie) -> EthiopianDateInner {
+        let (year, month, day) =
+            match calendrical_calculations::ethiopian::ethiopian_from_fixed(date) {
+                Err(I32CastError::BelowMin) => {
+                    return EthiopianDateInner(ArithmeticDate::min_date())
+                }
+                Err(I32CastError::AboveMax) => {
+                    return EthiopianDateInner(ArithmeticDate::max_date())
+                }
+                Ok(ymd) => ymd,
+            };
+        EthiopianDateInner(ArithmeticDate::new_unchecked(year, month, day))
     }
 
-    fn days_in_year_direct(year: i32) -> u32 {
+    fn days_in_year_direct(year: i32) -> u16 {
         if Ethiopian::is_leap_year(year) {
             366
         } else {
@@ -283,18 +285,21 @@ impl Ethiopian {
             types::FormattableYear {
                 era: types::Era(tinystr!(16, "mundi")),
                 number: year + AMETE_ALEM_OFFSET,
+                cyclic: None,
                 related_iso: None,
             }
         } else if year > 0 {
             types::FormattableYear {
                 era: types::Era(tinystr!(16, "incar")),
                 number: year,
+                cyclic: None,
                 related_iso: None,
             }
         } else {
             types::FormattableYear {
                 era: types::Era(tinystr!(16, "pre-incar")),
                 number: 1 - year,
+                cyclic: None,
                 related_iso: None,
             }
         }
@@ -333,22 +338,9 @@ impl Date<Ethiopian> {
         if era_style == EthiopianEraStyle::AmeteAlem {
             year -= AMETE_ALEM_OFFSET;
         }
-        let inner = ArithmeticDate {
-            year,
-            month,
-            day,
-            marker: PhantomData,
-        };
-
-        let bound = inner.days_in_month();
-        if day > bound {
-            return Err(CalendarError::OutOfRange);
-        }
-
-        Ok(Date::from_raw(
-            EthiopianDateInner(inner),
-            Ethiopian::new_with_era_style(era_style),
-        ))
+        ArithmeticDate::new_from_ordinals(year, month, day)
+            .map(EthiopianDateInner)
+            .map(|inner| Date::from_raw(inner, Ethiopian::new_with_era_style(era_style)))
     }
 }
 

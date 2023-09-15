@@ -166,14 +166,14 @@
 
     .. cpp:function:: static ICU4XLocale create_en()
 
-        Construct an :cpp:class:`ICU4XLocale` for the English language.
+        Deprecated
 
-        This convenience constructor is intended for testing only and requires the ``provider_test`` feature.
+        Use `create_from_string("en").
 
 
     .. cpp:function:: static ICU4XLocale create_bn()
 
-        Construct an :cpp:class:`ICU4XLocale` for the Bangla language.
+        Deprecated
 
-        This convenience constructor is intended for testing only and requires the ``provider_test`` feature.
+        Use `create_from_string("bn").
 

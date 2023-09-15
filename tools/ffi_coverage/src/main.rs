@@ -6,7 +6,7 @@ use diplomat_core::*;
 use rustdoc_types::{Crate, Item, ItemEnum};
 use std::collections::{BTreeSet, HashSet};
 use std::fmt;
-use std::fs;
+use std::fs::{self, File};
 use std::path::PathBuf;
 mod allowlist;
 use allowlist::{IGNORED_ASSOCIATED_ITEMS, IGNORED_PATHS, IGNORED_SUBSTRINGS, IGNORED_TRAITS};
@@ -41,6 +41,7 @@ impl fmt::Display for RustLinkInfo {
 }
 
 fn main() {
+    let out_path = std::env::args().nth(1);
     let doc_types = ["icu", "fixed_decimal", "icu_provider_adapters"]
         .into_iter()
         .flat_map(collect_public_types)
@@ -78,10 +79,20 @@ fn main() {
                 typ: rl.typ,
             })
             .collect::<BTreeSet<_>>();
-    println!("{FILE_HEADER}");
+
+    let mut file_anchor = None;
+    let mut stdout_anchor = None;
+    let out_stream = if let Some(out_path) = out_path {
+        let stream = file_anchor.insert(File::create(out_path).expect("opening output file"));
+        stream as &mut dyn std::io::Write
+    } else {
+        let stream = stdout_anchor.insert(std::io::stdout());
+        stream as &mut dyn std::io::Write
+    };
+    writeln!(out_stream, "{FILE_HEADER}").unwrap();
     doc_types
         .difference(&diplomat_types)
-        .for_each(|item| println!("{item}"));
+        .for_each(|item| writeln!(out_stream, "{item}").unwrap());
 }
 
 fn collect_public_types(krate: &str) -> impl Iterator<Item = (Vec<String>, ast::DocType)> {
@@ -95,7 +106,7 @@ fn collect_public_types(krate: &str) -> impl Iterator<Item = (Vec<String>, ast::
             let output = std::process::Command::new("rustup")
                 .args([
                     "run",
-                    "nightly-2022-08-25",
+                    "nightly-2022-09-26",
                     "cargo",
                     "rustdoc",
                     "-p",
@@ -184,6 +195,42 @@ fn collect_public_types(krate: &str) -> impl Iterator<Item = (Vec<String>, ast::
                 if let Some(item) = &krate.index.get(import.id.as_ref().unwrap()) {
                     recurse(item, krate, types, path, true, None);
                 } else if let Some(item) = &krate.paths.get(import.id.as_ref().unwrap()) {
+                    // This is a reexport of a hidden module, which works fine in HTML doc but
+                    // doesn't seem to be reachable anywhere in JSON.
+                    if matches!(import.source.as_str(), "icu_provider::fallback") {
+                        insert_ty(
+                            types,
+                            vec![
+                                "icu".to_string(),
+                                "locid_transform".to_string(),
+                                "fallback".to_string(),
+                                "LocaleFallbackConfig".to_string(),
+                            ],
+                            ast::DocType::Struct,
+                        );
+                        insert_ty(
+                            types,
+                            vec![
+                                "icu".to_string(),
+                                "locid_transform".to_string(),
+                                "fallback".to_string(),
+                                "LocaleFallbackPriority".to_string(),
+                            ],
+                            ast::DocType::Enum,
+                        );
+                        insert_ty(
+                            types,
+                            vec![
+                                "icu".to_string(),
+                                "locid_transform".to_string(),
+                                "fallback".to_string(),
+                                "LocaleFallbackSupplement".to_string(),
+                            ],
+                            ast::DocType::Enum,
+                        );
+                        return;
+                    }
+
                     // External crate. This is quite complicated and while it works, I'm not sure
                     // it's correct. This basically handles the case `pub use other_crate::module::Struct`,
                     // which means we have to parse `other_crate`, then look for `module`, then look
@@ -209,7 +256,7 @@ fn collect_public_types(krate: &str) -> impl Iterator<Item = (Vec<String>, ast::
                                         }
                                         _ => item.name.as_deref() == Some(segment),
                                     })
-                                    .unwrap();
+                                    .expect(&import.source);
                             }
                             _ => unreachable!(),
                         }
@@ -357,6 +404,7 @@ fn collect_public_types(krate: &str) -> impl Iterator<Item = (Vec<String>, ast::
                         };
                         insert_ty(types, path, doc_type);
                     }
+                    ItemEnum::ProcMacro(..) => {}
                     _ => todo!("{:?}", item),
                 }
             }

@@ -10,7 +10,7 @@ use icu_locid_transform::LocaleCanonicalizer;
 use icu_locid_transform::LocaleExpander;
 
 fn canonicalize_bench(c: &mut Criterion) {
-    let lc = LocaleCanonicalizer::try_new_unstable(&icu_testdata::unstable()).unwrap();
+    let lc = LocaleCanonicalizer::new();
 
     let mut group = c.benchmark_group("uncanonicalized");
 
@@ -39,7 +39,7 @@ fn canonicalize_bench(c: &mut Criterion) {
 }
 
 fn canonicalize_noop_bench(c: &mut Criterion) {
-    let lc = LocaleCanonicalizer::try_new_unstable(&icu_testdata::unstable()).unwrap();
+    let lc = LocaleCanonicalizer::new();
 
     let mut group = c.benchmark_group("canonicalized");
 
@@ -70,7 +70,7 @@ fn canonicalize_noop_bench(c: &mut Criterion) {
 }
 
 fn maximize_bench(c: &mut Criterion) {
-    let lc = LocaleExpander::try_new_unstable(&icu_testdata::unstable()).unwrap();
+    let lc = LocaleExpander::new();
 
     let mut group = c.benchmark_group("likelysubtags");
 

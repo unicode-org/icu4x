@@ -16,7 +16,7 @@ extend = [
 default_to_workspace = false
 
 [env]
-ICU4X_NIGHTLY_TOOLCHAIN = { value = "nightly-2022-04-18", condition = { env_not_set = ["ICU4X_NIGHTLY_TOOLCHAIN"] } }
+ICU4X_NIGHTLY_TOOLCHAIN = { value = "nightly-2022-09-26", condition = { env_not_set = ["ICU4X_NIGHTLY_TOOLCHAIN"] } }
 # To install a specific build of GN, set the ICU4X_GN_PACKAGE environment variable. Choices:
 # https://chrome-infra-packages.appspot.com/p/gn/gn
 # TODO: Choose the correct distribution of GN automatically.
@@ -31,7 +31,7 @@ dependencies = [
     "check-no-features",
     "ci-job-fmt",
     "ci-job-clippy",
-    "check-cargo-tutorial-local",
+    "check-tutorials-local",
     "ci-job-tidy",
     "ci-job-doc",
 ]
@@ -54,15 +54,15 @@ args = ["check", "--all-targets", "--all-features"]
 description = "Check ICU4X build with no features (covered in CI via cargo make check-all-features)"
 category = "ICU4X Development"
 command = "cargo"
-args = ["check", "--all-targets", "--no-default-features"]
+args = ["check", "--no-default-features"]
 
 [tasks.ci-job-msrv-check]
 description = "Run all tests for the CI 'check' job"
 category = "ICU4X Development"
 script_runner = "@duckscript"
 script = '''
-exec --fail-on-error rustup install 1.61 --profile minimal
-exec --fail-on-error cargo +1.61 check --all-targets --all-features
+exec --fail-on-error rustup install 1.66 --profile minimal
+exec --fail-on-error cargo +1.66 check --all-targets --all-features
 '''
 
 [tasks.ci-job-test]
@@ -72,11 +72,25 @@ dependencies = [
     "test-all-features",
 ]
 
-[tasks.ci-job-test-cargo-tutorial]
-description = "Run all checks for the CI 'test-cargo-tutorial' job"
+[tasks.ci-job-test-windows]
+description = "Run all tests for the CI 'test' job (with special changes to reduce Windows disk space)"
 category = "CI"
 dependencies = [
-    "test-cargo-tutorial-local",
+    "test-all-features-windows",
+]
+
+[tasks.ci-job-test-tutorials-local]
+description = "Run all checks for the CI 'test-tutorials' job"
+category = "CI"
+dependencies = [
+    "test-tutorials-local",
+]
+
+[tasks.ci-job-test-tutorials-cratesio]
+description = "Run all checks for the CI 'test-tutorials' job"
+category = "CI"
+dependencies = [
+    "test-tutorials-cratesio",
 ]
 
 [tasks.ci-job-testdata]
@@ -84,6 +98,8 @@ description = "Run all tests for the CI 'testdata' job"
 category = "CI"
 dependencies = [
     "testdata-check",
+    "testdata-legacy",
+    "testdata-legacy-test",
 ]
 
 [tasks.ci-job-test-docs]
@@ -97,7 +113,7 @@ dependencies = [
 description = "Run full data generation on latest CLDR and ICU"
 category = "CI"
 dependencies = [
-    "full-data",
+    "bakeddata-check",
 ]
 
 [tasks.ci-job-ffi]
@@ -128,13 +144,31 @@ dependencies = [
     "verify-gn-gen",
 ]
 
-[tasks.ci-job-msrv-features]
-description = "Run all tests for the CI 'features' job"
+[tasks.ci-job-msrv-features-1]
+description = "Run all tests for the CI 'msrv-features-1' job"
 category = "CI"
 script_runner = "@duckscript"
 script = '''
-exec --fail-on-error rustup install 1.61 --profile minimal
-exec --fail-on-error cargo +1.61 make check-all-features
+exec --fail-on-error rustup install 1.66 --profile minimal
+exec --fail-on-error cargo +1.66 make check-all-features-chunked 1
+'''
+
+[tasks.ci-job-msrv-features-2]
+description = "Run all tests for the CI 'msrv-features-2' job"
+category = "CI"
+script_runner = "@duckscript"
+script = '''
+exec --fail-on-error rustup install 1.66 --profile minimal
+exec --fail-on-error cargo +1.66 make check-all-features-chunked 2
+'''
+
+[tasks.ci-job-msrv-features-3]
+description = "Run all tests for the CI 'msrv-features-3' job"
+category = "CI"
+script_runner = "@duckscript"
+script = '''
+exec --fail-on-error rustup install 1.66 --profile minimal
+exec --fail-on-error cargo +1.66 make check-all-features-chunked 3
 '''
 
 [tasks.ci-job-fmt]
@@ -162,9 +196,6 @@ dependencies = [
 ]
 
 [tasks.ci-job-clippy]
-# Note: ci-job-clippy is not actually invoked by CI and instead exists
-# for symmetry and predictability. CI instead uses a special GitHub action
-# that allows it to integrate better with GitHub annotations
 description = "Run all tests for the CI 'clippy' job"
 category = "CI"
 dependencies = [
@@ -174,7 +205,7 @@ dependencies = [
 [tasks.ci-job-doc]
 description = "Runs rustdoc generation for the CI 'doc' job"
 category = "CI"
-env = { RUSTFLAGS = "-Dwarnings" }
+env = { RUSTDOCFLAGS = "-Dwarnings" }
 command = "cargo"
 args = ["doc", "--workspace", "--release", "--all-features", "--no-deps", "--lib"]
 

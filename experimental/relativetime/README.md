@@ -1,5 +1,7 @@
 # icu_relativetime [![crates.io](https://img.shields.io/crates/v/icu_relativetime)](https://crates.io/crates/icu_relativetime)
 
+<!-- cargo-rdme start -->
+
 🚧 \[Experimental\] Relative time formatting
 
 This module is published as its own crate ([`icu_relativetime`](https://docs.rs/icu_relativetime/latest/icu_relativetime/))
@@ -10,6 +12,8 @@ and as part of the [`icu`](https://docs.rs/icu/latest/icu/) crate. See the latte
 including in SemVer minor releases. It can be enabled with the "experimental" Cargo feature
 of the icu meta-crate. Use with caution.
 </div>
+
+<!-- cargo-rdme end -->
 
 ## More Information
 

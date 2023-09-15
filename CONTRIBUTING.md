@@ -69,7 +69,7 @@ Our wider testsuite is organized as `ci-job-foo` make tasks corresponding to eac
  - `cargo doc --no-deps --all-features`: Recreates API docs locally; any warning should be fixed since it will be treated as an error in CI.
  - `cargo make ci-job-ffi`: Runs all of the FFI tests; mostly important if you're changing the FFI interface. This has several additional dependencies:
      + [`Diplomat`](https://github.com/rust-diplomat/diplomat) installed at the appropriate version: `cargo make diplomat-install`
-     + `clang-14` and `lld-14` with the `gold` plugin (APT packages `llvm-14` and `lld-14`)
+     + `clang-15` and `lld-15` with the `gold` plugin (APT packages `llvm-15` and `lld-15`)
  - `cargo make ci-job-wasm`: Runs Rust-to-WASM tests. This also has a couple additional dependencies:
      + Node.js version 16.18.0. This may not the one offered by the package manager; get it from the NodeJS website or `nvm`.
      + [`Twiggy`](https://github.com/rustwasm/twiggy) (at least 0.7.0: `cargo install twiggy`
@@ -89,7 +89,7 @@ The other is the review cycle.
 #### Draft Phase
 
 If the pull request is simple and short lived, it can be initialized with review request.
-If the pull request is more complex and is being developed over time, it may be benefitial to start it in a `Draft` state.
+If the pull request is more complex and is being developed over time, it may be beneficial to start it in a `Draft` state.
 This allows other contributors to monitor the progress and volunteer feedback while annotating that the pull request is not yet ready for review.
 
 If a pull request is particularly large in scope and not release-ready, consider either (1) reducing the scope of the pull request, (2) moving work to the `experimental/` directory, or (3) hiding the work behind the `"experimental"` feature flag. See the section above, "Release Readiness", for more details.
@@ -175,10 +175,10 @@ In such cases, *mentorship model* should be used where a more senior engineer ta
 When the PR author creates a new PR, they should consider three sources of reviewers and informed stakeholders:
 
 * Owners and peers of the component they work with
-* People involved in the preceeding conversation
+* People involved in the preceding conversation
 * Recognized experts in the domain the PR operates in
 
-The goal of the PR author is to find the subset of stakeholders that represent those three groups well. Depending on the scope and priority of the PR, the reviewers group size can be adjusted, with small PRs being sufficent for review by just one stakeholder, and larger PRs, or first-of-a-kind using a larger pool of reviewers.
+The goal of the PR author is to find the subset of stakeholders that represent those three groups well. Depending on the scope and priority of the PR, the reviewers group size can be adjusted, with small PRs being sufficient for review by just one stakeholder, and larger PRs, or first-of-a-kind using a larger pool of reviewers.
 
 ### PR author and reviewers workflow
 
@@ -213,8 +213,6 @@ In order to contribute to this project, the Unicode Consortium must have on file
 - **Corporate CLA**: If you have determined that a Corporate CLA is appropriate, please check the [public list of Corporate CLAs][unicode-corporate-clas] that the Consortium has on file. If your employer has already signed a CLA, then just open a Pull Request and you will have the opportunity to click that your employer has already signed a CLA. If your employer has not already signed a CLA, you will need to arrange for your employer to sign the Corporate CLA, as described in [How to Sign a Unicode CLA][signing].
 
 Unless otherwise noted in the [LICENSE](./LICENSE) file, this project is released under the free and open-source [Unicode License][unicode-license], also known as Unicode, Inc. License Agreement - Data Files and Software.
-
-SPDX-License-Identifier: Unicode-DFS-2016
 
 ### New files
 

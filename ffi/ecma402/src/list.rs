@@ -10,17 +10,29 @@ use ecma402_traits::listformat::{
 use ecma402_traits::Locale;
 use writeable::Writeable;
 
+#[derive(Debug)]
 pub struct ListFormat(icu::list::ListFormatter);
 
 impl ecma402_traits::listformat::Format for ListFormat {
     type Error = icu::list::Error;
 
-    fn try_new<L>(l: L, opts: Options) -> Result<Self, Self::Error>
+    fn try_new<L>(locale: L, opts: Options) -> Result<Self, Self::Error>
     where
         L: Locale,
         Self: Sized,
     {
-        Self::try_new_with_provider(l, opts, &crate::GlobalDataProvider)
+        let locale = crate::DataLocale::from_ecma_locale(locale);
+
+        let style = match opts.style {
+            Style::Long => icu::list::ListLength::Wide,
+            Style::Narrow => icu::list::ListLength::Narrow,
+            Style::Short => icu::list::ListLength::Short,
+        };
+
+        Ok(Self(match opts.in_type {
+            Type::Conjunction => icu::list::ListFormatter::try_new_and_with_length(&locale, style),
+            Type::Disjunction => icu::list::ListFormatter::try_new_or_with_length(&locale, style),
+        }?))
     }
 
     fn format<I, L, W>(&self, list: L, writer: &mut W) -> fmt::Result
@@ -42,36 +54,6 @@ impl ecma402_traits::listformat::Format for ListFormat {
     }
 }
 
-impl ListFormat {
-    /// Creates a new [`ListFormat`], using the specified data provider.
-    pub fn try_new_with_provider<P>(
-        locale: impl Locale,
-        opts: Options,
-        provider: &P,
-    ) -> Result<Self, icu::list::Error>
-    where
-        P: icu_provider::DataProvider<icu::list::provider::AndListV1Marker>
-            + icu_provider::DataProvider<icu::list::provider::OrListV1Marker>,
-    {
-        let locale = crate::DataLocale::from_ecma_locale(locale);
-
-        let style = match opts.style {
-            Style::Long => icu::list::ListLength::Wide,
-            Style::Narrow => icu::list::ListLength::Narrow,
-            Style::Short => icu::list::ListLength::Short,
-        };
-
-        Ok(Self(match opts.in_type {
-            Type::Conjunction => {
-                icu::list::ListFormatter::try_new_and_with_length_unstable(provider, &locale, style)
-            }
-            Type::Disjunction => {
-                icu::list::ListFormatter::try_new_or_with_length_unstable(provider, &locale, style)
-            }
-        }?))
-    }
-}
-
 #[test]
 fn test() {
     use ecma402_traits::listformat::Format;
@@ -86,7 +68,7 @@ fn test() {
         },
     )
     .unwrap()
-    .format(vec!["Mallorca", "Ibiza"], &mut buf)
+    .format(["Mallorca", "Ibiza"], &mut buf)
     .unwrap();
 
     assert_eq!(buf, "Mallorca e Ibiza");

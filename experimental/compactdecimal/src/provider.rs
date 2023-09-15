@@ -16,6 +16,27 @@ use icu_plurals::PluralCategory;
 use icu_provider::prelude::*;
 use zerovec::ZeroMap2d;
 
+#[cfg(feature = "compiled_data")]
+#[derive(Debug)]
+/// Baked data
+///
+/// <div class="stab unstable">
+/// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
+/// including in SemVer minor releases. In particular, the `DataProvider` implementations are only
+/// guaranteed to match with this version's `*_unstable` providers. Use with caution.
+/// </div>
+pub struct Baked;
+
+#[cfg(feature = "compiled_data")]
+const _: () = {
+    pub mod icu {
+        pub use crate as compactdecimal;
+        pub use icu_locid_transform as locid_transform;
+    }
+    icu_compactdecimal_data::impl_compactdecimal_long_v1!(Baked);
+    icu_compactdecimal_data::impl_compactdecimal_short_v1!(Baked);
+};
+
 /// Relative time format V1 data struct.
 /// As in CLDR, this is a mapping from type (a power of ten, corresponding to
 /// the magnitude of the number being formatted) and count (a plural case or an
@@ -42,8 +63,16 @@ use zerovec::ZeroMap2d;
 /// Finally, the pattern indicating noncompact notation for the first few powers
 /// of ten is omitted; that is, there is an implicit (1, other) ↦ 0.
 #[icu_provider::data_struct(
-    LongCompactDecimalFormatDataV1Marker = "compactdecimal/long@1",
-    ShortCompactDecimalFormatDataV1Marker = "compactdecimal/short@1"
+    marker(
+        LongCompactDecimalFormatDataV1Marker,
+        "compactdecimal/long@1",
+        extension_key = "nu"
+    ),
+    marker(
+        ShortCompactDecimalFormatDataV1Marker,
+        "compactdecimal/short@1",
+        extension_key = "nu"
+    )
 )]
 #[derive(Debug, Clone, Default, PartialEq)]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]

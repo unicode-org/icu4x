@@ -5,59 +5,52 @@
 [package]
 name = "icu_normalizer"
 description = "API for normalizing text into Unicode Normalization Forms"
-version = "1.2.0"
-authors = ["The ICU4X Project Developers"]
-edition = "2021"
-readme = "README.md"
-repository = "https://github.com/unicode-org/icu4x"
-license = "Unicode-DFS-2016"
-categories = ["internationalization"]
-# Keep this in sync with other crates unless there are exceptions
-include = [
-    "src/**/*",
-    "examples/**/*",
-    "benches/**/*",
-    "tests/**/*",
-    "Cargo.toml",
-    "LICENSE",
-    "README.md"
-]
+version.workspace = true
+rust-version.workspace = true
+authors.workspace = true
+edition.workspace = true
+repository.workspace = true
+homepage.workspace = true
+license-file.workspace = true
+categories.workspace = true
+include.workspace = true
 
 [package.metadata.docs.rs]
 all-features = true
 
 [dependencies]
 displaydoc = { version = "0.2.3", default-features = false }
-icu_collections = { version = "1.2.0", path = "../../components/collections" }
-icu_properties = { version = "1.2.0", path = "../../components/properties" }
-icu_provider = { version = "1.2.0", path = "../../provider/core", features = ["macros"] }
+icu_collections = { workspace = true }
+icu_properties = { workspace = true }
+icu_provider = { workspace = true, features = ["macros"] }
 smallvec = "1.6"
 utf16_iter = "1.0.3"
 utf8_iter = "1.0.1"
 write16 = { version = "1.0", features = ["alloc"] }
-zerovec = { version = "0.9.4", path = "../../utils/zerovec" }
+zerovec = { workspace = true }
 
-databake = { version = "0.1.3", path = "../../utils/databake", features = ["derive"], optional = true }
+databake = { workspace = true, features = ["derive"], optional = true }
 serde = { version = "1.0", default-features = false, features = ["derive", "alloc"], optional = true }
+
+icu_normalizer_data = { workspace = true, optional = true }
 
 [dev-dependencies]
 arraystring = "0.3.0"
 arrayvec = "0.7.2"
 atoi = "1.0.0"
-icu_testdata = { path = "../../provider/testdata", default-features = false, features = ["icu_normalizer", "icu_properties"] }
 write16 = { version = "1.0", features = ["arrayvec"] }
 detone = "1.0.0"
+
+[target.'cfg(not(target_arch = "wasm32"))'.dev-dependencies]
 criterion = "0.4.0"
 
 [features]
+default = ["compiled_data"]
 std = ["icu_collections/std", "icu_properties/std", "icu_provider/std"]
 serde = ["dep:serde", "icu_collections/serde", "zerovec/serde", "icu_properties/serde"]
 datagen = ["serde", "dep:databake", "icu_collections/databake", "zerovec/databake", "icu_properties/datagen"]
 experimental = []
-
-[[test]]
-name = "tests"
-path = "tests/tests.rs"
+compiled_data = ["dep:icu_normalizer_data", "icu_properties/compiled_data"]
 
 [[bench]]
 name = "bench"

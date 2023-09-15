@@ -6,22 +6,15 @@
 name = "icu_datetime"
 description = "API for formatting date and time to user readable textual representation"
 version = "1.2.1"
-authors = ["The ICU4X Project Developers"]
-edition = "2021"
-readme = "README.md"
-repository = "https://github.com/unicode-org/icu4x"
-license = "Unicode-DFS-2016"
-categories = ["internationalization"]
-# Keep this in sync with other crates unless there are exceptions
-include = [
-    "src/**/*",
-    "examples/**/*",
-    "benches/**/*",
-    "tests/**/*",
-    "Cargo.toml",
-    "LICENSE",
-    "README.md"
-]
+
+authors.workspace = true
+categories.workspace = true
+edition.workspace = true
+homepage.workspace = true
+include.workspace = true
+license-file.workspace = true
+repository.workspace = true
+rust-version.workspace = true
 
 [package.metadata.docs.rs]
 all-features = true
@@ -29,38 +22,43 @@ all-features = true
 [dependencies]
 displaydoc = { version = "0.2.3", default-features = false }
 either = { version = "1.6.1", default-features = false }
-fixed_decimal = { version = "0.5.2", path = "../../utils/fixed_decimal" }
-icu_calendar = { version = "1.2.0", path = "../calendar" }
-icu_decimal = { version = "1.2.0", path = "../decimal" }
-icu_locid = { version = "1.2.0", path = "../locid" }
-icu_plurals = { version = "1.2.0", path = "../plurals" }
-icu_provider = { version = "1.2.0", path = "../../provider/core", features = ["macros"] }
-icu_timezone = { version = "1.2.0", path = "../timezone" }
+fixed_decimal = { workspace = true }
+icu_calendar = { workspace = true }
+icu_decimal = { workspace = true }
+icu_locid = { workspace = true }
+icu_plurals = { workspace = true }
+icu_provider = { workspace = true, features = ["macros"] }
+icu_timezone = { workspace = true }
 smallvec = "1.6"
-tinystr = { version = "0.7.1", path = "../../utils/tinystr", default-features = false, features = ["alloc", "zerovec"] }
-writeable = { version = "0.5.1", path = "../../utils/writeable" }
-zerovec = { version = "0.9.4", path = "../../utils/zerovec", features = ["yoke"] }
+tinystr = { workspace = true, features = ["alloc", "zerovec"] }
+writeable = { workspace = true }
+zerovec = { workspace = true, features = ["yoke"] }
 
 serde = { version = "1.0", default-features = false, features = ["derive", "alloc"], optional = true }
-databake = { version = "0.1.3", path = "../../utils/databake", features = ["derive"], optional = true}
+databake = { workspace = true, features = ["derive"], optional = true}
+
+icu_datetime_data = { workspace = true, optional = true }
+icu_locid_transform = { workspace = true, optional = true, features = ["compiled_data"] }
 
 # Experimental
-litemap = { version = "0.7.0", path = "../../utils/litemap", optional = true }
+litemap = { workspace = true, optional = true }
 
 [dev-dependencies]
-criterion = "0.4"
-icu = { path = "../icu", default-features = false }
-icu_benchmark_macros = { path = "../../tools/benchmark/macros" }
-icu_provider = { path = "../../provider/core" }
-icu_provider_adapters = { path = "../../provider/adapters" }
-icu_testdata = { path = "../../provider/testdata", default-features = false, features = ["buffer", "icu_datetime", "icu_timezone", "icu_calendar", "icu_decimal", "icu_plurals"] }
-litemap = { path = "../../utils/litemap" }
+icu = { workspace = true }
+icu_benchmark_macros = { workspace = true }
+icu_provider_adapters = { workspace = true }
+icu_provider_blob = { workspace = true }
+litemap = { workspace = true }
 
 serde = { version = "1.0", features = ["derive"] }
 serde_json = "1.0"
 bincode = "1.3"
 
+[target.'cfg(not(target_arch = "wasm32"))'.dev-dependencies]
+criterion = "0.4"
+
 [features]
+default = ["compiled_data"]
 std = [
     "icu_calendar/std",
     "icu_decimal/std",
@@ -92,9 +90,9 @@ datagen = [
     ]
 experimental = ["dep:litemap"]
 bench = ["serde"]
+compiled_data = ["dep:icu_datetime_data", "dep:icu_locid_transform", "icu_calendar/compiled_data", "icu_decimal/compiled_data", "icu_plurals/compiled_data", "icu_timezone/compiled_data"]
 
 [lib]
-path = "src/lib.rs"
 bench = false  # This option is required for Benchmark CI
 
 [package.metadata.cargo-all-features]
@@ -105,7 +103,7 @@ denylist = ["bench"]
 [[bench]]
 name = "datetime"
 harness = false
-required-features = ["serde"]
+required-features = ["compiled_data"]
 
 [[bench]]
 name = "pattern"
@@ -114,7 +112,7 @@ required-features = ["bench"]
 
 [[test]]
 name = "datetime"
-required-features = ["serde"]
+required-features = ["compiled_data"]
 
 [[test]]
 name = "resolved_components"
@@ -126,4 +124,4 @@ required-features = ["experimental"]
 
 [[example]]
 name = "work_log"
-required-features = ["serde"]
+required-features = ["compiled_data"]

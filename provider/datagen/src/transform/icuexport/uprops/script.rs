@@ -17,14 +17,14 @@ use zerovec::{VarZeroVec, ZeroSlice, ZeroVec};
 impl DataProvider<ScriptWithExtensionsPropertyV1Marker> for crate::DatagenProvider {
     fn load(
         &self,
-        _: DataRequest,
+        req: DataRequest,
     ) -> Result<DataResponse<ScriptWithExtensionsPropertyV1Marker>, DataError> {
+        self.check_req::<ScriptWithExtensionsPropertyV1Marker>(req)?;
         let scx_data = self
-            .source
             .icuexport()?
             .read_and_parse_toml::<super::uprops_serde::script_extensions::Main>(&format!(
                 "uprops/{}/scx.toml",
-                self.source.options.trie_type,
+                self.trie_type(),
             ))?
             .script_extensions
             .get(0)
@@ -72,7 +72,7 @@ mod tests {
 
     #[test]
     fn test_script_val_from_script_extensions() {
-        let provider = crate::DatagenProvider::for_test();
+        let provider = crate::DatagenProvider::new_testing();
 
         let payload: DataPayload<ScriptWithExtensionsPropertyV1Marker> = provider
             .load(Default::default())
@@ -92,7 +92,7 @@ mod tests {
 
     #[test]
     fn test_scx_array_from_script_extensions() {
-        let provider = crate::DatagenProvider::for_test();
+        let provider = crate::DatagenProvider::new_testing();
 
         let payload: DataPayload<ScriptWithExtensionsPropertyV1Marker> = provider
             .load(Default::default())
@@ -166,7 +166,7 @@ mod tests {
 
     #[test]
     fn test_has_script() {
-        let provider = crate::DatagenProvider::for_test();
+        let provider = crate::DatagenProvider::new_testing();
 
         let payload: DataPayload<ScriptWithExtensionsPropertyV1Marker> = provider
             .load(Default::default())
@@ -246,7 +246,7 @@ mod tests {
 
     #[test]
     fn test_get_script_extensions_set() {
-        let provider = crate::DatagenProvider::for_test();
+        let provider = crate::DatagenProvider::new_testing();
 
         let payload: DataPayload<ScriptWithExtensionsPropertyV1Marker> = provider
             .load(Default::default())

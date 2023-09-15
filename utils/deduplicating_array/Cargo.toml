@@ -6,18 +6,13 @@
 name = "deduplicating_array"
 description = "A serde serialization strategy that uses PartialEq to reduce serialized size."
 version = "0.1.4"
-authors = ["The ICU4X Project Developers"]
-edition = "2021"
-readme = "README.md"
-repository = "https://github.com/unicode-org/icu4x"
-license = "Unicode-DFS-2016"
-include = [
-    "src/**/*",
-    "examples/**/*",
-    "Cargo.toml",
-    "LICENSE",
-    "README.md"
-]
+
+authors.workspace = true
+edition.workspace = true
+include.workspace = true
+license-file.workspace = true
+repository.workspace = true
+rust-version.workspace = true
 
 [package.metadata.workspaces]
 independent = true

@@ -4,6 +4,25 @@
 
 use icu_datetime::time_zone::{FallbackFormat, TimeZoneFormatterOptions};
 
+macro_rules! call_method {
+    ($self:ident, $compiled:ident, $unstable:ident, $provider:expr) => {
+        match &$provider.0 {
+            $crate::provider::ICU4XDataProviderInner::Destroyed => Err(
+                icu_provider::DataError::custom("This provider has been destroyed"),
+            )?,
+            $crate::provider::ICU4XDataProviderInner::Empty => $self
+                .0
+                .$unstable(&icu_provider_adapters::empty::EmptyDataProvider::new()),
+            #[cfg(feature = "buffer_provider")]
+            $crate::provider::ICU4XDataProviderInner::Buffer(buffer_provider) => $self.0.$unstable(
+                &icu_provider::AsDeserializingBufferProvider::as_deserializing(buffer_provider),
+            ),
+            #[cfg(feature = "compiled_data")]
+            $crate::provider::ICU4XDataProviderInner::Compiled => $self.0.$compiled(),
+        }
+    };
+}
+
 #[diplomat::bridge]
 pub mod ffi {
     use crate::errors::ffi::ICU4XError;
@@ -56,10 +75,7 @@ pub mod ffi {
         /// Creates a new [`ICU4XTimeZoneFormatter`] from locale data.
         ///
         /// Uses localized GMT as the fallback format.
-        #[diplomat::rust_link(
-            icu::datetime::time_zone::TimeZoneFormatter::try_new_unstable,
-            FnInStruct
-        )]
+        #[diplomat::rust_link(icu::datetime::time_zone::TimeZoneFormatter::try_new, FnInStruct)]
         #[diplomat::rust_link(icu::datetime::time_zone::FallbackFormat, Enum, compact)]
         #[diplomat::rust_link(icu::datetime::time_zone::TimeZoneFormatterOptions, Struct, hidden)]
         pub fn create_with_localized_gmt_fallback(
@@ -68,22 +84,20 @@ pub mod ffi {
         ) -> Result<Box<ICU4XTimeZoneFormatter>, ICU4XError> {
             let locale = locale.to_datalocale();
 
-            Ok(Box::new(ICU4XTimeZoneFormatter(
-                TimeZoneFormatter::try_new_unstable(
-                    &provider.0,
-                    &locale,
-                    FallbackFormat::LocalizedGmt.into(),
-                )?,
-            )))
+            Ok(Box::new(ICU4XTimeZoneFormatter(call_constructor!(
+                TimeZoneFormatter::try_new,
+                TimeZoneFormatter::try_new_with_any_provider,
+                TimeZoneFormatter::try_new_with_buffer_provider,
+                provider,
+                &locale,
+                FallbackFormat::LocalizedGmt.into(),
+            )?)))
         }
 
         /// Creates a new [`ICU4XTimeZoneFormatter`] from locale data.
         ///
         /// Uses ISO-8601 as the fallback format.
-        #[diplomat::rust_link(
-            icu::datetime::time_zone::TimeZoneFormatter::try_new_unstable,
-            FnInStruct
-        )]
+        #[diplomat::rust_link(icu::datetime::time_zone::TimeZoneFormatter::try_new, FnInStruct)]
         #[diplomat::rust_link(icu::datetime::time_zone::FallbackFormat, Enum, compact)]
         #[diplomat::rust_link(icu::datetime::time_zone::TimeZoneFormatterOptions, Struct, hidden)]
         pub fn create_with_iso_8601_fallback(
@@ -93,96 +107,161 @@ pub mod ffi {
         ) -> Result<Box<ICU4XTimeZoneFormatter>, ICU4XError> {
             let locale = locale.to_datalocale();
 
-            Ok(Box::new(ICU4XTimeZoneFormatter(
-                TimeZoneFormatter::try_new_unstable(&provider.0, &locale, options.into())?,
-            )))
+            Ok(Box::new(ICU4XTimeZoneFormatter(call_constructor!(
+                TimeZoneFormatter::try_new,
+                TimeZoneFormatter::try_new_with_any_provider,
+                TimeZoneFormatter::try_new_with_buffer_provider,
+                provider,
+                &locale,
+                options.into(),
+            )?)))
         }
 
         /// Loads generic non-location long format. Example: "Pacific Time"
         #[diplomat::rust_link(
-            icu::datetime::time_zone::TimeZoneFormatter::load_generic_non_location_long,
+            icu::datetime::time_zone::TimeZoneFormatter::include_generic_non_location_long,
             FnInStruct
+        )]
+        #[diplomat::rust_link(
+            icu::datetime::time_zone::TimeZoneFormatter::load_generic_non_location_long,
+            FnInStruct,
+            hidden
         )]
         pub fn load_generic_non_location_long(
             &mut self,
             provider: &ICU4XDataProvider,
         ) -> Result<(), ICU4XError> {
-            self.0.load_generic_non_location_long(&provider.0)?;
+            call_method!(
+                self,
+                include_generic_non_location_long,
+                load_generic_non_location_long,
+                provider
+            )?;
             Ok(())
         }
 
         /// Loads generic non-location short format. Example: "PT"
         #[diplomat::rust_link(
-            icu::datetime::time_zone::TimeZoneFormatter::load_generic_non_location_short,
+            icu::datetime::time_zone::TimeZoneFormatter::include_generic_non_location_short,
             FnInStruct
+        )]
+        #[diplomat::rust_link(
+            icu::datetime::time_zone::TimeZoneFormatter::load_generic_non_location_short,
+            FnInStruct,
+            hidden
         )]
         pub fn load_generic_non_location_short(
             &mut self,
             provider: &ICU4XDataProvider,
         ) -> Result<(), ICU4XError> {
-            self.0.load_generic_non_location_short(&provider.0)?;
+            call_method!(
+                self,
+                include_generic_non_location_short,
+                load_generic_non_location_short,
+                provider
+            )?;
             Ok(())
         }
 
         /// Loads specific non-location long format. Example: "Pacific Standard Time"
         #[diplomat::rust_link(
-            icu::datetime::time_zone::TimeZoneFormatter::load_specific_non_location_long,
+            icu::datetime::time_zone::TimeZoneFormatter::include_specific_non_location_long,
             FnInStruct
+        )]
+        #[diplomat::rust_link(
+            icu::datetime::time_zone::TimeZoneFormatter::load_specific_non_location_long,
+            FnInStruct,
+            hidden
         )]
         pub fn load_specific_non_location_long(
             &mut self,
             provider: &ICU4XDataProvider,
         ) -> Result<(), ICU4XError> {
-            self.0.load_specific_non_location_long(&provider.0)?;
+            call_method!(
+                self,
+                include_specific_non_location_long,
+                load_specific_non_location_long,
+                provider
+            )?;
             Ok(())
         }
 
         /// Loads specific non-location short format. Example: "PST"
         #[diplomat::rust_link(
-            icu::datetime::time_zone::TimeZoneFormatter::load_specific_non_location_short,
+            icu::datetime::time_zone::TimeZoneFormatter::include_specific_non_location_short,
             FnInStruct
+        )]
+        #[diplomat::rust_link(
+            icu::datetime::time_zone::TimeZoneFormatter::load_specific_non_location_short,
+            FnInStruct,
+            hidden
         )]
         pub fn load_specific_non_location_short(
             &mut self,
             provider: &ICU4XDataProvider,
         ) -> Result<(), ICU4XError> {
-            self.0.load_specific_non_location_short(&provider.0)?;
+            call_method!(
+                self,
+                include_specific_non_location_short,
+                load_specific_non_location_short,
+                provider
+            )?;
             Ok(())
         }
 
         /// Loads generic location format. Example: "Los Angeles Time"
         #[diplomat::rust_link(
-            icu::datetime::time_zone::TimeZoneFormatter::load_generic_location_format,
+            icu::datetime::time_zone::TimeZoneFormatter::include_generic_location_format,
             FnInStruct
+        )]
+        #[diplomat::rust_link(
+            icu::datetime::time_zone::TimeZoneFormatter::load_generic_location_format,
+            FnInStruct,
+            hidden
         )]
         pub fn load_generic_location_format(
             &mut self,
             provider: &ICU4XDataProvider,
         ) -> Result<(), ICU4XError> {
-            self.0.load_generic_location_format(&provider.0)?;
+            call_method!(
+                self,
+                include_generic_location_format,
+                load_generic_location_format,
+                provider
+            )?;
             Ok(())
         }
 
         /// Loads localized GMT format. Example: "GMT-07:00"
         #[diplomat::rust_link(
-            icu::datetime::time_zone::TimeZoneFormatter::load_localized_gmt_format,
+            icu::datetime::time_zone::TimeZoneFormatter::include_localized_gmt_format,
             FnInStruct
         )]
-        pub fn load_localized_gmt_format(&mut self) -> Result<(), ICU4XError> {
-            self.0.load_localized_gmt_format()?;
+        #[diplomat::rust_link(
+            icu::datetime::time_zone::TimeZoneFormatter::load_localized_gmt_format,
+            FnInStruct,
+            hidden
+        )]
+        pub fn include_localized_gmt_format(&mut self) -> Result<(), ICU4XError> {
+            self.0.include_localized_gmt_format()?;
             Ok(())
         }
 
         /// Loads ISO-8601 format. Example: "-07:00"
         #[diplomat::rust_link(
-            icu::datetime::time_zone::TimeZoneFormatter::load_iso_8601_format,
+            icu::datetime::time_zone::TimeZoneFormatter::include_iso_8601_format,
             FnInStruct
+        )]
+        #[diplomat::rust_link(
+            icu::datetime::time_zone::TimeZoneFormatter::load_iso_8601_format,
+            FnInStruct,
+            hidden
         )]
         pub fn load_iso_8601_format(
             &mut self,
             options: ICU4XIsoTimeZoneOptions,
         ) -> Result<(), ICU4XError> {
-            self.0.load_iso_8601_format(
+            self.0.include_iso_8601_format(
                 options.format.into(),
                 options.minutes.into(),
                 options.seconds.into(),

@@ -4,16 +4,17 @@
 
 use clap::{ArgAction, Parser};
 use eyre::WrapErr;
-use icu_datagen::SourceData;
+use icu_datagen::DatagenProvider;
 use icu_locid::*;
+use icu_provider::DataError;
 use simple_logger::SimpleLogger;
 use std::fs::{self, File};
-use std::io::{self, Cursor};
+use std::io::{self, BufWriter, Cursor};
 use std::path::PathBuf;
 use zip::ZipArchive;
 
 include!("../../globs.rs.data");
-include!("../../locales.rs.data");
+include!("../../../../provider/datagen/tests/locales.rs.data");
 
 #[derive(Parser)]
 #[command(
@@ -23,12 +24,6 @@ include!("../../locales.rs.data");
 struct Args {
     #[arg(short, long, help = "Sets the level of verbosity (-v, -vv, or -vvv)", action = ArgAction::Count)]
     verbose: u8,
-    #[arg(
-        short,
-        long,
-        help = "Path to output data directory. The subdirectories 'cldr' and 'icuexport' will be overwritten. Omit this option to write data into the package tree"
-    )]
-    out: PathBuf,
 }
 
 fn main() -> eyre::Result<()> {
@@ -55,20 +50,35 @@ fn main() -> eyre::Result<()> {
         _ => eyre::bail!("Only -v, -vv, and -vvv are supported"),
     }
 
-    let output_path = &args.out;
+    let out_root =
+        std::path::Path::new(std::env!("CARGO_MANIFEST_DIR")).join("../../provider/datagen");
 
-    let cached = cached_path::CacheBuilder::new()
-        .freshness_lifetime(u64::MAX)
-        .build()
-        .unwrap();
+    fn cached(resource: &str) -> Result<PathBuf, DataError> {
+        let root = std::env::var_os("ICU4X_SOURCE_CACHE")
+            .map(PathBuf::from)
+            .unwrap_or_else(|| std::env::temp_dir().join("icu4x-source-cache/"))
+            .join(resource.rsplit("//").next().unwrap());
+
+        if !root.exists() {
+            log::info!("Downloading {resource}");
+            std::fs::create_dir_all(root.parent().unwrap())?;
+            std::io::copy(
+                &mut ureq::get(resource)
+                    .call()
+                    .map_err(|e| DataError::custom("Download").with_display_context(&e))?
+                    .into_reader(),
+                &mut BufWriter::new(File::create(&root)?),
+            )?;
+        }
+
+        Ok(root)
+    }
 
     fn extract(zip: PathBuf, paths: Vec<String>, root: PathBuf) -> eyre::Result<()> {
         let mut zip = ZipArchive::new(Cursor::new(
             std::fs::read(&zip).expect("should just have been downloaded"),
         ))
         .with_context(|| format!("Failed to read zip file {:?}", &zip))?;
-
-        let _ = fs::remove_dir_all(&root);
 
         for path in paths {
             if let Ok(mut file) = zip.by_name(&path) {
@@ -108,65 +118,52 @@ fn main() -> eyre::Result<()> {
         paths
     }
 
+    // TODO(#3736): Remove this workaround when cldr-json has transform rules
+    std::fs::rename(
+        out_root.join("tests/data/cldr/cldr-transforms-full"),
+        out_root.join("tests/data/cldr-transforms-full"),
+    )?;
+
+    std::fs::remove_dir_all(out_root.join("tests/data/cldr"))?;
     extract(
-        cached
-            .cached_path(&format!(
+        cached(&format!(
             "https://github.com/unicode-org/cldr-json/releases/download/{}/cldr-{}-json-full.zip",
-            SourceData::LATEST_TESTED_CLDR_TAG,
-            SourceData::LATEST_TESTED_CLDR_TAG
+            DatagenProvider::LATEST_TESTED_CLDR_TAG,
+            DatagenProvider::LATEST_TESTED_CLDR_TAG
         ))
-            .with_context(|| "Failed to download CLDR ZIP".to_owned())?,
+        .with_context(|| "Failed to download CLDR ZIP".to_owned())?,
         expand_paths(CLDR_JSON_GLOB, false),
-        output_path.join("cldr"),
+        out_root.join("tests/data/cldr"),
     )?;
 
+    // TODO(#3736): Remove this workaround when cldr-json has transform rules
+    std::fs::rename(
+        out_root.join("tests/data/cldr-transforms-full"),
+        out_root.join("tests/data/cldr/cldr-transforms-full"),
+    )?;
+
+    std::fs::remove_dir_all(out_root.join("tests/data/icuexport"))?;
     extract(
-        cached
-            .cached_path(&format!(
-                "https://github.com/unicode-org/icu/releases/download/{}/icuexportdata_{}.zip",
-                SourceData::LATEST_TESTED_ICUEXPORT_TAG,
-                SourceData::LATEST_TESTED_ICUEXPORT_TAG.replace('/', "-")
-            ))
-            .with_context(|| "Failed to download ICU ZIP".to_owned())?,
+        cached(&format!(
+            "https://github.com/unicode-org/icu/releases/download/{}/icuexportdata_{}.zip",
+            DatagenProvider::LATEST_TESTED_ICUEXPORT_TAG,
+            DatagenProvider::LATEST_TESTED_ICUEXPORT_TAG.replace('/', "-")
+        ))
+        .with_context(|| "Failed to download ICU ZIP".to_owned())?,
         expand_paths(ICUEXPORTDATA_GLOB, true),
-        output_path.join("icuexport"),
+        out_root.join("tests/data/icuexport"),
     )?;
 
-    for file in [
-        "burmesedict.toml",
-        "cjdict.toml",
-        "khmerdict.toml",
-        "laodict.toml",
-        "thaidict.toml",
-    ] {
-        std::fs::copy(
-            output_path
-                .join("icuexport/segmenter/dictionary")
-                .join(file),
-            output_path
-                .join("../../datagen/data/segmenter/dictionary")
-                .join(file),
-        )
-        .unwrap();
-    }
-
+    std::fs::remove_dir_all(out_root.join("tests/data/lstm"))?;
     extract(
-        cached
-            .cached_path(&format!(
-                "https://github.com/unicode-org/lstm_word_segmentation/releases/download/{}/models.zip",
-                SourceData::LATEST_TESTED_SEGMENTER_LSTM_TAG,
-            ))
-            .with_context(|| "Failed to download LSTM ZIP".to_owned())?,
+        cached(&format!(
+            "https://github.com/unicode-org/lstm_word_segmentation/releases/download/{}/models.zip",
+            DatagenProvider::LATEST_TESTED_SEGMENTER_LSTM_TAG,
+        ))
+        .with_context(|| "Failed to download LSTM ZIP".to_owned())?,
         LSTM_GLOB.iter().copied().map(String::from).collect(),
-        output_path.join("lstm"),
+        out_root.join("tests/data/lstm"),
     )?;
-
-    for path in &LSTM_GLOB[..4] {
-        std::fs::copy(
-            output_path.join("lstm").join(path),
-            output_path.join("../../datagen/data/lstm").join(path),
-        )?;
-    }
 
     Ok(())
 }

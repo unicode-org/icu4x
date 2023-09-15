@@ -29,7 +29,7 @@ struct ICU4XLocaleFallbackerDeleter {
 /**
  * An object that runs the ICU4X locale fallback algorithm.
  * 
- * See the [Rust documentation for `LocaleFallbacker`](https://docs.rs/icu_provider_adapters/latest/icu_provider_adapters/fallback/struct.LocaleFallbacker.html) for more information.
+ * See the [Rust documentation for `LocaleFallbacker`](https://docs.rs/icu/latest/icu/locid_transform/fallback/struct.LocaleFallbacker.html) for more information.
  */
 class ICU4XLocaleFallbacker {
  public:
@@ -37,21 +37,21 @@ class ICU4XLocaleFallbacker {
   /**
    * Creates a new `ICU4XLocaleFallbacker` from a data provider.
    * 
-   * See the [Rust documentation for `try_new_unstable`](https://docs.rs/icu_provider_adapters/latest/icu_provider_adapters/fallback/struct.LocaleFallbacker.html#method.try_new_unstable) for more information.
+   * See the [Rust documentation for `new`](https://docs.rs/icu/latest/icu/locid_transform/fallback/struct.LocaleFallbacker.html#method.new) for more information.
    */
   static diplomat::result<ICU4XLocaleFallbacker, ICU4XError> create(const ICU4XDataProvider& provider);
 
   /**
    * Creates a new `ICU4XLocaleFallbacker` without data for limited functionality.
    * 
-   * See the [Rust documentation for `new_without_data`](https://docs.rs/icu_provider_adapters/latest/icu_provider_adapters/fallback/struct.LocaleFallbacker.html#method.new_without_data) for more information.
+   * See the [Rust documentation for `new_without_data`](https://docs.rs/icu/latest/icu/locid_transform/fallback/struct.LocaleFallbacker.html#method.new_without_data) for more information.
    */
   static ICU4XLocaleFallbacker create_without_data();
 
   /**
    * Associates this `ICU4XLocaleFallbacker` with configuration options.
    * 
-   * See the [Rust documentation for `for_config`](https://docs.rs/icu_provider_adapters/latest/icu_provider_adapters/fallback/struct.LocaleFallbacker.html#method.for_config) for more information.
+   * See the [Rust documentation for `for_config`](https://docs.rs/icu/latest/icu/locid_transform/fallback/struct.LocaleFallbacker.html#method.for_config) for more information.
    * 
    * Lifetimes: `this` must live at least as long as the output.
    */

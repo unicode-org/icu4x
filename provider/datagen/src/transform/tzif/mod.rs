@@ -21,13 +21,10 @@ impl DataProvider<TimeZoneHistoricTransitionsV1Marker> for crate::DatagenProvide
         &self,
         _req: DataRequest,
     ) -> Result<DataResponse<TimeZoneHistoricTransitionsV1Marker>, DataError> {
-        let tzif_paths = self.source.tzif()?;
+        let tzif_paths = self.tzif()?;
 
-        let bcp47_tzid_resource: &cldr_time_zones::bcp47_tzid::Resource = self
-            .source
-            .cldr()?
-            .bcp47()
-            .read_and_parse("timezone.json")?;
+        let bcp47_tzid_resource: &cldr_time_zones::bcp47_tzid::Resource =
+            self.cldr()?.bcp47().read_and_parse("timezone.json")?;
 
         let bcp47_tzids =
             compute_bcp47_tzids_hashmap(&bcp47_tzid_resource.keyword.u.time_zones.values);
@@ -90,12 +87,9 @@ impl DataProvider<TimeZoneTransitionRulesV1Marker> for crate::DatagenProvider {
         &self,
         _req: DataRequest,
     ) -> Result<DataResponse<TimeZoneTransitionRulesV1Marker>, DataError> {
-        let tzif_paths = self.source.tzif()?;
-        let bcp47_tzid_resource: &cldr_time_zones::bcp47_tzid::Resource = self
-            .source
-            .cldr()?
-            .bcp47()
-            .read_and_parse("timezone.json")?;
+        let tzif_paths = self.tzif()?;
+        let bcp47_tzid_resource: &cldr_time_zones::bcp47_tzid::Resource =
+            self.cldr()?.bcp47().read_and_parse("timezone.json")?;
 
         let bcp47_tzids =
             compute_bcp47_tzids_hashmap(&bcp47_tzid_resource.keyword.u.time_zones.values);
@@ -160,7 +154,7 @@ mod tests {
 
     #[test]
     fn load_tzif_historic_transitions() {
-        let provider = DatagenProvider::for_test();
+        let provider = DatagenProvider::new_testing();
         let payload: DataPayload<TimeZoneHistoricTransitionsV1Marker> = provider
             .load(DataRequest::default())
             .expect("Loading should succeed!")
@@ -195,7 +189,7 @@ mod tests {
 
     #[test]
     fn test_locate_transition() {
-        let provider = DatagenProvider::for_test();
+        let provider = DatagenProvider::new_testing();
         let payload: DataPayload<TimeZoneHistoricTransitionsV1Marker> = provider
             .load(DataRequest::default())
             .expect("Loading should succeed!")
@@ -239,7 +233,7 @@ mod tests {
 
     #[test]
     fn load_tzif_transition_rules() {
-        let provider = DatagenProvider::for_test();
+        let provider = DatagenProvider::new_testing();
         let payload: DataPayload<TimeZoneTransitionRulesV1Marker> = provider
             .load(DataRequest::default())
             .expect("Loading should succeed!")

@@ -22,10 +22,10 @@ macro_rules! exemplar_chars_impls {
     ($data_marker_name:ident, $cldr_serde_field_name:ident) => {
         impl DataProvider<$data_marker_name> for crate::DatagenProvider {
             fn load(&self, req: DataRequest) -> Result<DataResponse<$data_marker_name>, DataError> {
+                self.check_req::<$data_marker_name>(req)?;
                 let langid = req.locale.get_langid();
 
                 let data: &cldr_serde::exemplar_chars::Resource = self
-                    .source
                     .cldr()?
                     .misc()
                     .read_and_parse(&langid, "characters.json")?;
@@ -48,14 +48,12 @@ macro_rules! exemplar_chars_impls {
 
         impl IterableDataProvider<$data_marker_name> for crate::DatagenProvider {
             fn supported_locales(&self) -> Result<Vec<DataLocale>, DataError> {
-                Ok(self.source.options.locales.filter_by_langid_equality(
-                    self.source
-                        .cldr()?
-                        .misc()
-                        .list_langs()?
-                        .map(DataLocale::from)
-                        .collect(),
-                ))
+                Ok(self
+                    .cldr()?
+                    .misc()
+                    .list_langs()?
+                    .map(DataLocale::from)
+                    .collect())
             }
         }
 
@@ -69,11 +67,7 @@ macro_rules! exemplar_chars_impls {
                 let source_data_chars: Option<&String> = annotated_resource
                     .0
                     .main
-                    .0
-                    .iter()
-                    .next()
-                    .unwrap()
-                    .1
+                    .value
                     .characters
                     .$cldr_serde_field_name
                     .as_ref();
@@ -232,7 +226,7 @@ fn insert_chars_from_string(set: &mut HashSet<String>, input: &str) {
     // A range of consecutive code point characters can be represented as <char_start>-<char_end>.
     if s.contains('-') && s.find('-').unwrap() > 0 {
         let (begin, end) = s.split_once('-').unwrap();
-        let begin_char = begin.chars().rev().next().unwrap();
+        let begin_char = begin.chars().next_back().unwrap();
         let end_char = end.chars().next().unwrap();
 
         for code_point in (begin_char as u32)..=(end_char as u32) {
@@ -471,7 +465,7 @@ mod tests {
 
     #[test]
     fn test_basic() {
-        let provider = crate::DatagenProvider::for_test();
+        let provider = crate::DatagenProvider::new_testing();
 
         let data: DataPayload<ExemplarCharactersMainV1Marker> = provider
             .load(DataRequest {
@@ -482,12 +476,11 @@ mod tests {
             .take_payload()
             .unwrap();
 
-        let exp_chars = vec![
+        let exp_chars = [
             "a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q",
             "r", "s", "t", "u", "v", "w", "x", "y", "z",
         ];
-        let exp_chars_cpilsl =
-            CodePointInversionListAndStringList::from_iter(exp_chars.iter().cloned());
+        let exp_chars_cpilsl = CodePointInversionListAndStringList::from_iter(exp_chars);
 
         let actual = UnicodeSetData::from_data(data);
         let act_chars_cpilsl = actual.to_code_point_inversion_list_string_list();

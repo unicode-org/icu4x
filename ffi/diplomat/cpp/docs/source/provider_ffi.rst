@@ -8,6 +8,15 @@
     See the `Rust documentation for icu_provider <https://docs.rs/icu_provider/latest/icu_provider/index.html>`__ for more information.
 
 
+    .. cpp:function:: static ICU4XDataProvider create_compiled()
+
+        Constructs an :cpp:class:`ICU4XDataProvider` that uses compiled data.
+
+        Requires the ``compiled_data`` feature.
+
+        This provider cannot be modified or combined with other providers, so ``enable_fallback``, ``enabled_fallback_with``, ``fork_by_locale``, and ``fork_by_key`` will return ``Err``s.
+
+
     .. cpp:function:: static diplomat::result<ICU4XDataProvider, ICU4XError> create_fs(const std::string_view path)
 
         Constructs an ``FsDataProvider`` and returns it as an :cpp:class:`ICU4XDataProvider`. Requires the ``provider_fs`` Cargo feature. Not supported in WASM.
@@ -17,9 +26,9 @@
 
     .. cpp:function:: static ICU4XDataProvider create_test()
 
-        Constructs a testdata provider and returns it as an :cpp:class:`ICU4XDataProvider`. Requires the ``provider_test`` and one of ``any_provider`` or ``buffer_provider`` Cargo features.
+        Deprecated
 
-        See the `Rust documentation for icu_testdata <https://docs.rs/icu_testdata/latest/icu_testdata/index.html>`__ for more information.
+        Use ``create_compiled()``.
 
 
     .. cpp:function:: static diplomat::result<ICU4XDataProvider, ICU4XError> create_from_byte_slice(const diplomat::span<const uint8_t> blob)
@@ -62,7 +71,7 @@
 
         Note that the test provider (from ``create_test``) already has fallbacking enabled.
 
-        See the `Rust documentation for try_new_unstable <https://docs.rs/icu_provider_adapters/latest/icu_provider_adapters/fallback/struct.LocaleFallbackProvider.html#method.try_new_unstable>`__ for more information.
+        See the `Rust documentation for try_new <https://docs.rs/icu_provider_adapters/latest/icu_provider_adapters/fallback/struct.LocaleFallbackProvider.html#method.try_new>`__ for more information.
 
         Additional information: `1 <https://docs.rs/icu_provider_adapters/latest/icu_provider_adapters/fallback/struct.LocaleFallbackProvider.html>`__
 

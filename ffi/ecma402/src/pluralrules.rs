@@ -133,6 +133,7 @@ pub(crate) mod internal {
     mod testing {
         use super::*;
         use ecma402_traits::pluralrules::options::Type;
+        use icu::plurals::rules::RawPluralOperands;
 
         fn opt(
             minimum_integer_digits: u8,
@@ -159,7 +160,7 @@ pub(crate) mod internal {
                 opts: Options,
                 expected: &'static str,
             }
-            let tests = vec![
+            let tests = [
                 TestCase {
                     n: 0.0,
                     opts: opt(3, 2, 3, 3, 4),
@@ -200,7 +201,7 @@ pub(crate) mod internal {
                 opts: Options,
                 expected: PluralOperands,
             }
-            let tests = vec![TestCase {
+            let tests = [TestCase {
                 n: 1.5,
                 opts: Options {
                     in_type: Type::Cardinal,
@@ -210,14 +211,15 @@ pub(crate) mod internal {
                     minimum_significant_digits: 3,
                     maximum_significant_digits: 4,
                 },
-                expected: PluralOperands {
+                expected: RawPluralOperands {
                     i: 1,
                     v: 2,
                     w: 1,
                     f: 50,
                     t: 5,
                     c: 0,
-                },
+                }
+                .into(),
             }];
             for test in tests {
                 let actual = to_icu4x_operands(test.n, test.opts.clone());
@@ -227,6 +229,7 @@ pub(crate) mod internal {
     }
 }
 
+#[derive(Debug)]
 pub struct PluralRules {
     opts: ecma402_traits::pluralrules::Options,
     rep: ipr::PluralRules,
@@ -240,7 +243,10 @@ impl ecma402_traits::pluralrules::PluralRules for PluralRules {
         L: ecma402_traits::Locale,
         Self: Sized,
     {
-        Self::try_new_with_provider(l, opts, &crate::GlobalDataProvider)
+        let rule_type = internal::to_icu4x_type(&opts.in_type);
+
+        let rep = ipr::PluralRules::try_new(&crate::DataLocale::from_ecma_locale(l), rule_type)?;
+        Ok(Self { opts, rep })
     }
 
     fn select<W>(&self, number: f64, writer: &mut W) -> std::fmt::Result
@@ -250,30 +256,6 @@ impl ecma402_traits::pluralrules::PluralRules for PluralRules {
         let op = internal::to_icu4x_operands(number, self.opts.clone());
         let result = self.rep.category_for(op);
         write!(writer, "{}", internal::as_str(result))
-    }
-}
-
-impl PluralRules {
-    /// Creates a new [`PluralRules`], using the specified data provider.
-    pub fn try_new_with_provider<L, P>(
-        l: L,
-        opts: ecma402_traits::pluralrules::Options,
-        provider: &P,
-    ) -> Result<Self, Error>
-    where
-        L: ecma402_traits::Locale,
-        P: icu_provider::DataProvider<ipr::provider::OrdinalV1Marker>
-            + icu_provider::DataProvider<ipr::provider::CardinalV1Marker>,
-        Self: Sized,
-    {
-        let rule_type = internal::to_icu4x_type(&opts.in_type);
-
-        let rep = ipr::PluralRules::try_new_unstable(
-            provider,
-            &crate::DataLocale::from_ecma_locale(l),
-            rule_type,
-        )?;
-        Ok(Self { opts, rep })
     }
 }
 
@@ -290,15 +272,15 @@ mod testing {
         struct TestCase {
             locale: TestLocale,
             opts: pluralrules::Options,
-            numbers: Vec<f64>,
-            expected: Vec<&'static str>,
+            numbers: &'static [f64],
+            expected: &'static [&'static str],
         }
-        let tests = vec![
+        let tests = [
             TestCase {
                 locale: TestLocale("ar"),
                 opts: Default::default(),
-                numbers: vec![0.0, 1.0, 2.0, 5.0, 6.0, 18.0],
-                expected: vec!["zero", "one", "two", "few", "few", "many"],
+                numbers: &[0.0, 1.0, 2.0, 5.0, 6.0, 18.0],
+                expected: &["zero", "one", "two", "few", "few", "many"],
             },
             TestCase {
                 locale: TestLocale("ar"),
@@ -306,14 +288,14 @@ mod testing {
                     in_type: pluralrules::options::Type::Ordinal,
                     ..Default::default()
                 },
-                numbers: vec![0.0, 1.0, 2.0, 5.0, 6.0, 18.0],
-                expected: vec!["other", "other", "other", "other", "other", "other"],
+                numbers: &[0.0, 1.0, 2.0, 5.0, 6.0, 18.0],
+                expected: &["other", "other", "other", "other", "other", "other"],
             },
             TestCase {
                 locale: TestLocale("sr"),
                 opts: Default::default(),
-                numbers: vec![0.0, 1.0, 2.0, 5.0, 6.0, 18.0],
-                expected: vec!["other", "one", "few", "other", "other", "other"],
+                numbers: &[0.0, 1.0, 2.0, 5.0, 6.0, 18.0],
+                expected: &["other", "one", "few", "other", "other", "other"],
             },
             TestCase {
                 locale: TestLocale("sr"),
@@ -321,8 +303,8 @@ mod testing {
                     in_type: pluralrules::options::Type::Ordinal,
                     ..Default::default()
                 },
-                numbers: vec![0.0, 1.0, 2.0, 5.0, 6.0, 18.0],
-                expected: vec!["other", "other", "other", "other", "other", "other"],
+                numbers: &[0.0, 1.0, 2.0, 5.0, 6.0, 18.0],
+                expected: &["other", "other", "other", "other", "other", "other"],
             },
         ];
         for (i, test) in tests.into_iter().enumerate() {

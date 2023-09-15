@@ -56,7 +56,7 @@ fn bake_derive_impl(input: &DeriveInput) -> TokenStream2 {
     let path = input
         .attrs
         .iter()
-        .find(|a| a.path.is_ident("databake"))
+        .find(|a| a.path().is_ident("databake"))
         .expect("missing databake(path = ...) attribute")
         .parse_args::<PathAttr>()
         .unwrap()
@@ -75,7 +75,7 @@ fn bake_derive_impl(input: &DeriveInput) -> TokenStream2 {
 
         quote! {
             #(#recursive_bakes)*
-            databake::quote! { ::#path::#constructor }
+            databake::quote! { #path::#constructor }
         }
     });
 

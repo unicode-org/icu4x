@@ -33,6 +33,16 @@ class ICU4XDataProvider {
  public:
 
   /**
+   * Constructs an [`ICU4XDataProvider`] that uses compiled data.
+   * 
+   * Requires the `compiled_data` feature.
+   * 
+   * This provider cannot be modified or combined with other providers, so `enable_fallback`,
+   * `enabled_fallback_with`, `fork_by_locale`, and `fork_by_key` will return `Err`s.
+   */
+  static ICU4XDataProvider create_compiled();
+
+  /**
    * Constructs an `FsDataProvider` and returns it as an [`ICU4XDataProvider`].
    * Requires the `provider_fs` Cargo feature.
    * Not supported in WASM.
@@ -42,10 +52,9 @@ class ICU4XDataProvider {
   static diplomat::result<ICU4XDataProvider, ICU4XError> create_fs(const std::string_view path);
 
   /**
-   * Constructs a testdata provider and returns it as an [`ICU4XDataProvider`].
-   * Requires the `provider_test` and one of `any_provider` or `buffer_provider` Cargo features.
+   * Deprecated
    * 
-   * See the [Rust documentation for `icu_testdata`](https://docs.rs/icu_testdata/latest/icu_testdata/index.html) for more information.
+   * Use `create_compiled()`.
    */
   static ICU4XDataProvider create_test();
 
@@ -91,7 +100,7 @@ class ICU4XDataProvider {
    * 
    * Note that the test provider (from `create_test`) already has fallbacking enabled.
    * 
-   * See the [Rust documentation for `try_new_unstable`](https://docs.rs/icu_provider_adapters/latest/icu_provider_adapters/fallback/struct.LocaleFallbackProvider.html#method.try_new_unstable) for more information.
+   * See the [Rust documentation for `try_new`](https://docs.rs/icu_provider_adapters/latest/icu_provider_adapters/fallback/struct.LocaleFallbackProvider.html#method.try_new) for more information.
    * 
    *  Additional information: [1](https://docs.rs/icu_provider_adapters/latest/icu_provider_adapters/fallback/struct.LocaleFallbackProvider.html)
    */
@@ -117,6 +126,9 @@ class ICU4XDataProvider {
 
 #include "ICU4XLocaleFallbacker.hpp"
 
+inline ICU4XDataProvider ICU4XDataProvider::create_compiled() {
+  return ICU4XDataProvider(capi::ICU4XDataProvider_create_compiled());
+}
 inline diplomat::result<ICU4XDataProvider, ICU4XError> ICU4XDataProvider::create_fs(const std::string_view path) {
   auto diplomat_result_raw_out_value = capi::ICU4XDataProvider_create_fs(path.data(), path.size());
   diplomat::result<ICU4XDataProvider, ICU4XError> diplomat_result_out_value;

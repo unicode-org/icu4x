@@ -6,19 +6,13 @@
 name = "icu_pattern"
 description = "ICU pattern utilities"
 version = "0.1.4"
-authors = ["The ICU4X Project Developers"]
-edition = "2021"
-readme = "README.md"
-repository = "https://github.com/unicode-org/icu4x"
-license = "Unicode-DFS-2016"
-include = [
-    "src/**/*",
-    "examples/**/*",
-    "benches/**/*",
-    "Cargo.toml",
-    "LICENSE",
-    "README.md"
-]
+
+authors.workspace = true
+edition.workspace = true
+include.workspace = true
+license-file.workspace = true
+repository.workspace = true
+rust-version.workspace = true
 
 [package.metadata.workspaces]
 independent = true
@@ -28,7 +22,7 @@ all-features = true
 
 [dependencies]
 displaydoc = { version = "0.2.3", default-features = false }
-writeable = { version = "0.5.1", path = "../writeable" }
+writeable = { workspace = true }
 
 [dev-dependencies]
 iai = "0.1"

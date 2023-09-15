@@ -79,7 +79,7 @@ impl AsULE for LocalTimeRecordV1 {
         let is_dst_bit = (self.is_dst as u8) << 1;
         let is_positive_bit = (self.offset >= 0) as u8;
         let tags_byte = is_dst_bit | is_positive_bit;
-        let [offset_byte0, offset_byte1] = (self.offset.abs() as u16).to_le_bytes();
+        let [offset_byte0, offset_byte1] = (self.offset.unsigned_abs() as u16).to_le_bytes();
         LocalTimeRecordULE {
             data: [offset_byte0, offset_byte1, tags_byte],
         }
@@ -175,7 +175,7 @@ const H167_M59_S59: i32 = 604799;
 
 /// A helper function to encode a [`TransitionDateV1`]`::time_of_day` for storage in a [`TransitionDateULE`].
 fn encode_time_of_day(time_of_day: i32) -> [u8; 4] {
-    debug_assert!(-H167_M59_S59 <= time_of_day && time_of_day <= H167_M59_S59);
+    debug_assert!((-H167_M59_S59..=H167_M59_S59).contains(&time_of_day));
     ((time_of_day + H167_M59_S59) as u32).to_le_bytes()
 }
 

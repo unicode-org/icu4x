@@ -8,11 +8,13 @@ use crate::transform::cldr::cldr_serde;
 use icu_provider::datagen::IterableDataProvider;
 use icu_provider::prelude::*;
 use icu_relativetime::provider::*;
-use lazy_static::lazy_static;
+use once_cell::sync::OnceCell;
 use std::collections::{BTreeMap, HashMap};
 
-lazy_static! {
-    static ref DATAKEY_FILTERS: HashMap<DataKey, &'static str> = {
+pub static DATAKEY_FILTERS: OnceCell<HashMap<DataKey, &'static str>> = OnceCell::new();
+
+fn datakey_filters() -> &'static HashMap<DataKey, &'static str> {
+    DATAKEY_FILTERS.get_or_init(|| {
         [
             (LongSecondRelativeTimeFormatDataV1Marker::KEY, "second"),
             (
@@ -62,32 +64,22 @@ lazy_static! {
         ]
         .into_iter()
         .collect()
-    };
+    })
 }
-
 macro_rules! make_data_provider {
     ($($marker: ident),+ $(,)?) => {
         $(
             impl DataProvider<$marker> for crate::DatagenProvider {
-                fn load(
-                    &self,
-                    req: DataRequest,
-                ) -> Result<DataResponse<$marker>, DataError> {
+                fn load(&self, req: DataRequest) -> Result<DataResponse<$marker>, DataError> {
+                    self.check_req::<$marker>(req)?;
                     let langid = req.locale.get_langid();
                     let resource: &cldr_serde::date_fields::Resource = self
-                        .source
                         .cldr()?
                         .dates("gregorian")
                         .read_and_parse(&langid, "dateFields.json")?;
-                    let fields = &resource
-                        .main
-                        .0
-                        .get(&langid)
-                        .ok_or(DataErrorKind::MissingLocale.into_error())?
-                        .dates
-                        .fields;
+                    let fields = &resource.main.value.dates.fields;
 
-                    let field = DATAKEY_FILTERS
+                    let field = datakey_filters()
                         .get(&$marker::KEY)
                         .ok_or(DataErrorKind::MissingDataKey.into_error())?;
 
@@ -104,16 +96,14 @@ macro_rules! make_data_provider {
 
             impl IterableDataProvider<$marker> for crate::DatagenProvider {
                 fn supported_locales(&self) -> Result<Vec<DataLocale>, DataError> {
-                    Ok(self.source.options.locales.filter_by_langid_equality(self
-                        .source
+                    Ok(self
                         .cldr()?
                         .dates("gregorian")
                         .list_langs()?
                         .map(DataLocale::from)
-                        .collect()))
+                        .collect())
                 }
             }
-
         )+
     };
 }
@@ -197,7 +187,7 @@ mod tests {
 
     #[test]
     fn test_basic() {
-        let provider = crate::DatagenProvider::for_test();
+        let provider = crate::DatagenProvider::new_testing();
         let data: DataPayload<ShortQuarterRelativeTimeFormatDataV1Marker> = provider
             .load(DataRequest {
                 locale: &locale!("en").into(),
@@ -217,7 +207,7 @@ mod tests {
 
     #[test]
     fn test_singular_sub_pattern() {
-        let provider = crate::DatagenProvider::for_test();
+        let provider = crate::DatagenProvider::new_testing();
         let data: DataPayload<LongYearRelativeTimeFormatDataV1Marker> = provider
             .load(DataRequest {
                 locale: &locale!("ar").into(),

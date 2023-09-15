@@ -6,15 +6,11 @@ use proc_macro2::TokenStream as TokenStream2;
 use quote::quote;
 
 use crate::utils::{self, FieldInfo, ZeroVecAttrs};
-use syn::spanned::Spanned;
-use syn::{
-    parse_quote, AttributeArgs, Data, DataEnum, DataStruct, DeriveInput, Error, Expr, Fields,
-    Ident, Lit,
-};
-
 use std::collections::HashSet;
+use syn::spanned::Spanned;
+use syn::{parse_quote, Data, DataEnum, DataStruct, DeriveInput, Error, Expr, Fields, Ident, Lit};
 
-pub fn make_ule_impl(attr: AttributeArgs, mut input: DeriveInput) -> TokenStream2 {
+pub fn make_ule_impl(ule_name: Ident, mut input: DeriveInput) -> TokenStream2 {
     if input.generics.type_params().next().is_some()
         || input.generics.lifetimes().next().is_some()
         || input.generics.const_params().next().is_some()
@@ -25,17 +21,6 @@ pub fn make_ule_impl(attr: AttributeArgs, mut input: DeriveInput) -> TokenStream
         )
         .to_compile_error();
     }
-
-    if attr.len() != 1 {
-        return Error::new(
-            input.span(),
-            "#[make_ule] takes one argument for the name of the ULE type it produces",
-        )
-        .to_compile_error();
-    }
-    let arg = &attr[0];
-    let ule_name: Ident = parse_quote!(#arg);
-
     let sp = input.span();
     let attrs = match utils::extract_attributes_common(&mut input.attrs, sp, false) {
         Ok(val) => val,
@@ -112,7 +97,7 @@ fn make_ule_enum_impl(
     let mut not_found = HashSet::new();
 
     for (i, variant) in enu.variants.iter().enumerate() {
-        if variant.fields != Fields::Unit {
+        if !matches!(variant.fields, Fields::Unit) {
             // This can be supported in the future, see zerovec/design_doc.md
             return Error::new(
                 variant.span(),
@@ -225,7 +210,7 @@ fn make_ule_enum_impl(
 
         impl #name {
             /// Attempt to construct the value from its corresponding integer,
-            /// returning None if not possible
+            /// returning `None` if not possible
             pub(crate) fn new_from_u8(value: u8) -> Option<Self> {
                 if value <= #max {
                     unsafe {

@@ -1,0 +1,30 @@
+# This file is part of ICU4X. For terms of use, please see the file
+# called LICENSE at the top level of the ICU4X source tree
+# (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
+
+[package]
+name = "icu_unicodeset_parser"
+description = "API to parse unicode sets as defined in UTS35"
+version = "0.0.0"
+
+authors.workspace = true
+categories.workspace = true
+edition.workspace = true
+include.workspace = true
+license-file.workspace = true
+repository.workspace = true
+
+[package.metadata.docs.rs]
+all-features = true
+
+[dependencies]
+icu_collections = { workspace = true }
+icu_properties = { workspace = true }
+icu_provider = { workspace = true }
+
+tinystr = { workspace = true, features = ["alloc", "zerovec"] }
+zerovec = { workspace = true,  features = ["yoke"] }
+log = "0.4"
+
+[features]
+compiled_data = ["icu_properties/compiled_data"]

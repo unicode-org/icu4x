@@ -24,20 +24,21 @@
 
 extern crate proc_macro;
 use proc_macro::TokenStream;
+use proc_macro2::Span;
 use proc_macro2::TokenStream as TokenStream2;
 use quote::quote;
+use syn::parenthesized;
+use syn::parse::{self, Parse, ParseStream};
 use syn::parse_macro_input;
+use syn::punctuated::Punctuated;
 use syn::spanned::Spanned;
-use syn::AttributeArgs;
 use syn::DeriveInput;
-use syn::Lit;
-use syn::Meta;
-use syn::NestedMeta;
-
+use syn::{Ident, LitStr, Path, Token};
 #[cfg(test)]
 mod tests;
 
 #[proc_macro_attribute]
+
 /// The `#[data_struct]` attribute should be applied to all types intended
 /// for use in a `DataStruct`.
 ///
@@ -50,6 +51,19 @@ mod tests;
 /// by adding symbols with optional key strings:
 ///
 /// ```
+/// # // We DO NOT want to pull in the `icu` crate as a dev-dependency,
+/// # // because that will rebuild the whole tree in proc macro mode
+/// # // when using cargo test --all-features --all-targets.
+/// # pub mod icu {
+/// #   pub mod locid_transform {
+/// #     pub mod fallback {
+/// #       pub use icu_provider::_internal::{LocaleFallbackPriority, LocaleFallbackSupplement};
+/// #     }
+/// #   }
+/// #   pub use icu_provider::_internal::locid;
+/// # }
+/// use icu::locid_transform::fallback::*;
+/// use icu::locid::extensions::unicode::key;
 /// use icu_provider::prelude::*;
 /// use std::borrow::Cow;
 ///
@@ -73,18 +87,18 @@ mod tests;
 /// assert_eq!(&*BarV1Marker::KEY.path(), "demo/bar@1");
 /// assert_eq!(
 ///     BarV1Marker::KEY.metadata().fallback_priority,
-///     icu_provider::FallbackPriority::Language
+///     LocaleFallbackPriority::Language
 /// );
 /// assert_eq!(BarV1Marker::KEY.metadata().extension_key, None);
 ///
 /// assert_eq!(&*BazV1Marker::KEY.path(), "demo/baz@1");
 /// assert_eq!(
 ///     BazV1Marker::KEY.metadata().fallback_priority,
-///     icu_provider::FallbackPriority::Region
+///     LocaleFallbackPriority::Region
 /// );
 /// assert_eq!(
 ///     BazV1Marker::KEY.metadata().extension_key,
-///     Some(icu::locid::extensions_unicode_key!("ca"))
+///     Some(key!("ca"))
 /// );
 /// ```
 ///
@@ -92,12 +106,182 @@ mod tests;
 /// implement it on the markers.
 pub fn data_struct(attr: TokenStream, item: TokenStream) -> TokenStream {
     TokenStream::from(data_struct_impl(
-        parse_macro_input!(attr as AttributeArgs),
+        parse_macro_input!(attr as DataStructArgs),
         parse_macro_input!(item as DeriveInput),
     ))
 }
 
-fn data_struct_impl(attr: AttributeArgs, input: DeriveInput) -> TokenStream2 {
+pub(crate) struct DataStructArgs {
+    args: Punctuated<DataStructArg, Token![,]>,
+}
+
+impl Parse for DataStructArgs {
+    fn parse(input: ParseStream<'_>) -> parse::Result<Self> {
+        let args = input.parse_terminated(DataStructArg::parse, Token![,])?;
+        Ok(Self { args })
+    }
+}
+struct DataStructArg {
+    marker_name: Path,
+    key_lit: Option<LitStr>,
+    fallback_by: Option<LitStr>,
+    extension_key: Option<LitStr>,
+    fallback_supplement: Option<LitStr>,
+    singleton: bool,
+}
+
+impl DataStructArg {
+    fn new(marker_name: Path) -> Self {
+        Self {
+            marker_name,
+            key_lit: None,
+            fallback_by: None,
+            extension_key: None,
+            fallback_supplement: None,
+            singleton: false,
+        }
+    }
+}
+
+impl Parse for DataStructArg {
+    fn parse(input: ParseStream<'_>) -> parse::Result<Self> {
+        let path: Path = input.parse()?;
+
+        fn at_most_one_option<T>(
+            o: &mut Option<T>,
+            new: T,
+            name: &str,
+            span: Span,
+        ) -> parse::Result<()> {
+            if o.replace(new).is_some() {
+                Err(parse::Error::new(
+                    span,
+                    format!("marker() cannot contain multiple {name}s"),
+                ))
+            } else {
+                Ok(())
+            }
+        }
+
+        if path.is_ident("marker") {
+            let content;
+            let paren = parenthesized!(content in input);
+            let mut marker_name: Option<Path> = None;
+            let mut key_lit: Option<LitStr> = None;
+            let mut fallback_by: Option<LitStr> = None;
+            let mut extension_key: Option<LitStr> = None;
+            let mut fallback_supplement: Option<LitStr> = None;
+            let mut singleton = false;
+            let punct = content.parse_terminated(DataStructMarkerArg::parse, Token![,])?;
+
+            for entry in punct {
+                match entry {
+                    DataStructMarkerArg::Path(path) => {
+                        at_most_one_option(&mut marker_name, path, "marker", input.span())?;
+                    }
+                    DataStructMarkerArg::NameValue(name, value) => {
+                        if name == "fallback_by" {
+                            at_most_one_option(
+                                &mut fallback_by,
+                                value,
+                                "fallback_by",
+                                paren.span.join(),
+                            )?;
+                        } else if name == "extension_key" {
+                            at_most_one_option(
+                                &mut extension_key,
+                                value,
+                                "extension_key",
+                                paren.span.join(),
+                            )?;
+                        } else if name == "fallback_supplement" {
+                            at_most_one_option(
+                                &mut fallback_supplement,
+                                value,
+                                "fallback_supplement",
+                                paren.span.join(),
+                            )?;
+                        } else {
+                            return Err(parse::Error::new(
+                                name.span(),
+                                format!("unknown option {name} in marker()"),
+                            ));
+                        }
+                    }
+                    DataStructMarkerArg::Lit(lit) => {
+                        at_most_one_option(&mut key_lit, lit, "literal key", input.span())?;
+                    }
+                    DataStructMarkerArg::Singleton => {
+                        singleton = true;
+                    }
+                }
+            }
+            let marker_name = if let Some(marker_name) = marker_name {
+                marker_name
+            } else {
+                return Err(parse::Error::new(
+                    input.span(),
+                    "marker() must contain a marker!",
+                ));
+            };
+
+            Ok(Self {
+                marker_name,
+                key_lit,
+                fallback_by,
+                extension_key,
+                fallback_supplement,
+                singleton,
+            })
+        } else {
+            let mut this = DataStructArg::new(path);
+            let lookahead = input.lookahead1();
+            if lookahead.peek(Token![=]) {
+                let _t: Token![=] = input.parse()?;
+                let lit: LitStr = input.parse()?;
+                this.key_lit = Some(lit);
+                Ok(this)
+            } else {
+                Ok(this)
+            }
+        }
+    }
+}
+
+/// A single argument to `marker()` in `#[data_struct(..., marker(...), ...)]
+enum DataStructMarkerArg {
+    Path(Path),
+    NameValue(Ident, LitStr),
+    Lit(LitStr),
+    Singleton,
+}
+impl Parse for DataStructMarkerArg {
+    fn parse(input: ParseStream<'_>) -> parse::Result<Self> {
+        let lookahead = input.lookahead1();
+        if lookahead.peek(LitStr) {
+            Ok(DataStructMarkerArg::Lit(input.parse()?))
+        } else {
+            let path: Path = input.parse()?;
+            let lookahead = input.lookahead1();
+            if lookahead.peek(Token![=]) {
+                let _tok: Token![=] = input.parse()?;
+                let ident = path.get_ident().ok_or_else(|| {
+                    parse::Error::new(path.span(), "Expected identifier before `=`, found path")
+                })?;
+                Ok(DataStructMarkerArg::NameValue(
+                    ident.clone(),
+                    input.parse()?,
+                ))
+            } else if path.is_ident("singleton") {
+                Ok(DataStructMarkerArg::Singleton)
+            } else {
+                Ok(DataStructMarkerArg::Path(path))
+            }
+        }
+    }
+}
+
+fn data_struct_impl(attr: DataStructArgs, input: DeriveInput) -> TokenStream2 {
     if input.generics.type_params().count() > 0 {
         return syn::Error::new(
             input.generics.span(),
@@ -126,7 +310,7 @@ fn data_struct_impl(attr: AttributeArgs, input: DeriveInput) -> TokenStream2 {
     let bake_derive = input
         .attrs
         .iter()
-        .find(|a| a.path.is_ident("databake"))
+        .find(|a| a.path().is_ident("databake"))
         .map(|a| {
             quote! {
                 #[derive(databake::Bake)]
@@ -137,74 +321,23 @@ fn data_struct_impl(attr: AttributeArgs, input: DeriveInput) -> TokenStream2 {
 
     let mut result = TokenStream2::new();
 
-    for single_attr in attr.into_iter() {
-        let mut marker_name: Option<syn::Path> = None;
-        let mut key_lit: Option<syn::LitStr> = None;
-        let mut fallback_by: Option<syn::LitStr> = None;
-        let mut extension_key: Option<syn::LitStr> = None;
-        let mut fallback_supplement: Option<syn::LitStr> = None;
+    for single_attr in attr.args {
+        let DataStructArg {
+            marker_name,
+            key_lit,
+            fallback_by,
+            extension_key,
+            fallback_supplement,
+            singleton,
+        } = single_attr;
 
-        match single_attr {
-            NestedMeta::Meta(Meta::List(meta_list)) => {
-                match meta_list.path.get_ident() {
-                    Some(ident) if ident.to_string().as_str() == "marker" => (),
-                    _ => panic!("Meta list must be `marker(...)`"),
-                }
-                for inner_meta in meta_list.nested.into_iter() {
-                    match inner_meta {
-                        NestedMeta::Meta(Meta::Path(path)) => {
-                            marker_name = Some(path);
-                        }
-                        NestedMeta::Lit(Lit::Str(lit_str)) => {
-                            key_lit = Some(lit_str);
-                        }
-                        NestedMeta::Meta(Meta::NameValue(name_value)) => {
-                            let lit_str = match name_value.lit {
-                                Lit::Str(lit_str) => lit_str,
-                                _ => panic!("Values in marker() must be strings"),
-                            };
-                            let name_ident_str = match name_value.path.get_ident() {
-                                Some(ident) => ident.to_string(),
-                                None => panic!("Names in marker() must be identifiers"),
-                            };
-                            match name_ident_str.as_str() {
-                                "fallback_by" => fallback_by = Some(lit_str),
-                                "extension_key" => extension_key = Some(lit_str),
-                                "fallback_supplement" => fallback_supplement = Some(lit_str),
-                                _ => panic!("Invalid argument name in marker()"),
-                            }
-                        }
-                        _ => panic!("Invalid argument in marker()"),
-                    }
-                }
-            }
-            NestedMeta::Meta(Meta::NameValue(name_value)) => {
-                marker_name = Some(name_value.path);
-                match name_value.lit {
-                    syn::Lit::Str(lit_str) => key_lit = Some(lit_str),
-                    _ => panic!("Key must be a string"),
-                };
-            }
-            NestedMeta::Meta(Meta::Path(path)) => {
-                marker_name = Some(path);
-            }
-            _ => {
-                panic!("Invalid attribute to #[data_struct]")
-            }
-        }
-
-        let marker_name = match marker_name {
-            Some(path) => path,
-            None => panic!("#[data_struct] arguments must include a marker name"),
-        };
-
-        let docs = if let Some(key_lit) = &key_lit {
-            let fallback_by_docs_str = match &fallback_by {
-                Some(fallback_by) => fallback_by.value(),
+        let docs = if let Some(ref key_lit) = key_lit {
+            let fallback_by_docs_str = match fallback_by {
+                Some(ref fallback_by) => fallback_by.value(),
                 None => "language (default)".to_string(),
             };
-            let extension_key_docs_str = match &extension_key {
-                Some(extension_key) => extension_key.value(),
+            let extension_key_docs_str = match extension_key {
+                Some(ref extension_key) => extension_key.value(),
                 None => "none (default)".to_string(),
             };
             format!("Marker type for [`{}`]: \"{}\"\n\n- Fallback priority: {}\n- Extension keyword: {}", name, key_lit.value(), fallback_by_docs_str, extension_key_docs_str)
@@ -221,38 +354,48 @@ fn data_struct_impl(attr: AttributeArgs, input: DeriveInput) -> TokenStream2 {
             }
         ));
 
-        if let Some(key_lit) = &key_lit {
+        if let Some(key_lit) = key_lit {
             let key_str = key_lit.value();
             let fallback_by_expr = if let Some(fallback_by_lit) = fallback_by {
                 match fallback_by_lit.value().as_str() {
-                    "region" => quote! {icu_provider::FallbackPriority::Region},
-                    "collation" => quote! {icu_provider::FallbackPriority::Collation},
-                    "language" => quote! {icu_provider::FallbackPriority::Language},
+                    "region" => {
+                        quote! {icu_provider::_internal::LocaleFallbackPriority::Region}
+                    }
+                    "collation" => {
+                        quote! {icu_provider::_internal::LocaleFallbackPriority::Collation}
+                    }
+                    "language" => {
+                        quote! {icu_provider::_internal::LocaleFallbackPriority::Language}
+                    }
                     _ => panic!("Invalid value for fallback_by"),
                 }
             } else {
-                quote! {icu_provider::FallbackPriority::const_default()}
+                quote! {icu_provider::_internal::LocaleFallbackPriority::const_default()}
             };
             let extension_key_expr = if let Some(extension_key_lit) = extension_key {
-                quote! {Some(icu_provider::_internal::extensions_unicode_key!(#extension_key_lit))}
+                quote! {Some(icu_provider::_internal::locid::extensions::unicode::key!(#extension_key_lit))}
             } else {
                 quote! {None}
             };
-            let fallback_supplement_expr =
-                if let Some(fallback_supplement_lit) = fallback_supplement {
-                    match fallback_supplement_lit.value().as_str() {
-                        "collation" => quote! {Some(icu_provider::FallbackSupplement::Collation)},
-                        _ => panic!("Invalid value for fallback_supplement"),
+            let fallback_supplement_expr = if let Some(fallback_supplement_lit) =
+                fallback_supplement
+            {
+                match fallback_supplement_lit.value().as_str() {
+                    "collation" => {
+                        quote! {Some(icu_provider::_internal::LocaleFallbackSupplement::Collation)}
                     }
-                } else {
-                    quote! {None}
-                };
+                    _ => panic!("Invalid value for fallback_supplement"),
+                }
+            } else {
+                quote! {None}
+            };
             result.extend(quote!(
                 impl icu_provider::KeyedDataMarker for #marker_name {
                     const KEY: icu_provider::DataKey = icu_provider::data_key!(#key_str, icu_provider::DataKeyMetadata::construct_internal(
                         #fallback_by_expr,
                         #extension_key_expr,
-                        #fallback_supplement_expr
+                        #fallback_supplement_expr,
+                        #singleton,
                     ));
                 }
             ));

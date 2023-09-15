@@ -1,4 +1,4 @@
-import { u8, i32, u32 } from "./diplomat-runtime"
+import { u8, u16, i32, u32 } from "./diplomat-runtime"
 import { FFIError } from "./diplomat-runtime"
 import { ICU4XCalendar } from "./ICU4XCalendar";
 import { ICU4XDate } from "./ICU4XDate";
@@ -23,6 +23,14 @@ export class ICU4XIsoDate {
    * @throws {@link FFIError}<{@link ICU4XError}>
    */
   static create(year: i32, month: u8, day: u8): ICU4XIsoDate | never;
+
+  /**
+
+   * Creates a new {@link ICU4XIsoDate `ICU4XIsoDate`} representing January 1, 1970.
+
+   * See the {@link https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.unix_epoch Rust documentation for `unix_epoch`} for more information.
+   */
+  static create_for_unix_epoch(): ICU4XIsoDate;
 
   /**
 
@@ -111,5 +119,5 @@ export class ICU4XIsoDate {
 
    * See the {@link https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.days_in_year Rust documentation for `days_in_year`} for more information.
    */
-  days_in_year(): u32;
+  days_in_year(): u16;
 }

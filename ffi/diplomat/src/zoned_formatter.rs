@@ -34,10 +34,7 @@ pub mod ffi {
         ///
         /// This function has `date_length` and `time_length` arguments and uses default options
         /// for the time zone.
-        #[diplomat::rust_link(
-            icu::datetime::TypedZonedDateTimeFormatter::try_new_unstable,
-            FnInStruct
-        )]
+        #[diplomat::rust_link(icu::datetime::TypedZonedDateTimeFormatter::try_new, FnInStruct)]
         pub fn create_with_lengths(
             provider: &ICU4XDataProvider,
             locale: &ICU4XLocale,
@@ -47,8 +44,11 @@ pub mod ffi {
             let locale = locale.to_datalocale();
 
             Ok(Box::new(ICU4XGregorianZonedDateTimeFormatter(
-                TypedZonedDateTimeFormatter::<Gregorian>::try_new_unstable(
-                    &provider.0,
+                call_constructor!(
+                    TypedZonedDateTimeFormatter::<Gregorian>::try_new,
+                    TypedZonedDateTimeFormatter::<Gregorian>::try_new_with_any_provider,
+                    TypedZonedDateTimeFormatter::<Gregorian>::try_new_with_buffer_provider,
+                    provider,
                     &locale,
                     length::Bag::from_date_time_style(date_length.into(), time_length.into())
                         .into(),
@@ -61,10 +61,7 @@ pub mod ffi {
         ///
         /// This function has `date_length` and `time_length` arguments and uses an ISO-8601 style
         /// fallback for the time zone with the given configurations.
-        #[diplomat::rust_link(
-            icu::datetime::TypedZonedDateTimeFormatter::try_new_unstable,
-            FnInStruct
-        )]
+        #[diplomat::rust_link(icu::datetime::TypedZonedDateTimeFormatter::try_new, FnInStruct)]
         pub fn create_with_lengths_and_iso_8601_time_zone_fallback(
             provider: &ICU4XDataProvider,
             locale: &ICU4XLocale,
@@ -75,8 +72,11 @@ pub mod ffi {
             let locale = locale.to_datalocale();
 
             Ok(Box::new(ICU4XGregorianZonedDateTimeFormatter(
-                TypedZonedDateTimeFormatter::<Gregorian>::try_new_unstable(
-                    &provider.0,
+                call_constructor!(
+                    TypedZonedDateTimeFormatter::<Gregorian>::try_new,
+                    TypedZonedDateTimeFormatter::<Gregorian>::try_new_with_any_provider,
+                    TypedZonedDateTimeFormatter::<Gregorian>::try_new_with_buffer_provider,
+                    provider,
                     &locale,
                     length::Bag::from_date_time_style(date_length.into(), time_length.into())
                         .into(),
@@ -114,7 +114,7 @@ pub mod ffi {
         ///
         /// This function has `date_length` and `time_length` arguments and uses default options
         /// for the time zone.
-        #[diplomat::rust_link(icu::datetime::ZonedDateTimeFormatter::try_new_unstable, FnInStruct)]
+        #[diplomat::rust_link(icu::datetime::ZonedDateTimeFormatter::try_new, FnInStruct)]
         pub fn create_with_lengths(
             provider: &ICU4XDataProvider,
             locale: &ICU4XLocale,
@@ -123,22 +123,22 @@ pub mod ffi {
         ) -> Result<Box<ICU4XZonedDateTimeFormatter>, ICU4XError> {
             let locale = locale.to_datalocale();
 
-            Ok(Box::new(ICU4XZonedDateTimeFormatter(
-                ZonedDateTimeFormatter::try_new_unstable(
-                    &provider.0,
-                    &locale,
-                    length::Bag::from_date_time_style(date_length.into(), time_length.into())
-                        .into(),
-                    Default::default(),
-                )?,
-            )))
+            Ok(Box::new(ICU4XZonedDateTimeFormatter(call_constructor!(
+                ZonedDateTimeFormatter::try_new,
+                ZonedDateTimeFormatter::try_new_with_any_provider,
+                ZonedDateTimeFormatter::try_new_with_buffer_provider,
+                provider,
+                &locale,
+                length::Bag::from_date_time_style(date_length.into(), time_length.into()).into(),
+                Default::default(),
+            )?)))
         }
 
         /// Creates a new [`ICU4XZonedDateTimeFormatter`] from locale data.
         ///
         /// This function has `date_length` and `time_length` arguments and uses an ISO-8601 style
         /// fallback for the time zone with the given configurations.
-        #[diplomat::rust_link(icu::datetime::ZonedDateTimeFormatter::try_new_unstable, FnInStruct)]
+        #[diplomat::rust_link(icu::datetime::ZonedDateTimeFormatter::try_new, FnInStruct)]
         pub fn create_with_lengths_and_iso_8601_time_zone_fallback(
             provider: &ICU4XDataProvider,
             locale: &ICU4XLocale,
@@ -148,15 +148,15 @@ pub mod ffi {
         ) -> Result<Box<ICU4XZonedDateTimeFormatter>, ICU4XError> {
             let locale = locale.to_datalocale();
 
-            Ok(Box::new(ICU4XZonedDateTimeFormatter(
-                ZonedDateTimeFormatter::try_new_unstable(
-                    &provider.0,
-                    &locale,
-                    length::Bag::from_date_time_style(date_length.into(), time_length.into())
-                        .into(),
-                    zone_options.into(),
-                )?,
-            )))
+            Ok(Box::new(ICU4XZonedDateTimeFormatter(call_constructor!(
+                ZonedDateTimeFormatter::try_new,
+                ZonedDateTimeFormatter::try_new_with_any_provider,
+                ZonedDateTimeFormatter::try_new_with_buffer_provider,
+                provider,
+                &locale,
+                length::Bag::from_date_time_style(date_length.into(), time_length.into()).into(),
+                zone_options.into(),
+            )?)))
         }
 
         /// Formats a [`ICU4XDateTime`] and [`ICU4XCustomTimeZone`] to a string.

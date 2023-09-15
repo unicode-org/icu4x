@@ -17,7 +17,7 @@ To verify that, open a terminal and check that the results are similar to:
 
 ```console
 $ cargo --version
-cargo 1.64.0 (387270bc7 2022-09-16)
+cargo 1.71.0 (cfd3bbd8f 2023-06-08)
 ```
 
 # 2. Creating an app with ICU4X as a dependency
@@ -112,48 +112,46 @@ Users are also free to design their own providers that best fit into their ecosy
 
 # 5. Using an ICU4X component
 
-We're going to extend our app to use the `icu::datetime` component to format a date and time. This component requires data, but as we don't want to jump into data management just yet, we will use `ICU4X`'s `icu_testdata` crate. This contains test providers that support all ICU4X keys for a small representative set of locales. It contains a `BufferProvider` (`icu_testdata::buffer()`), an `AnyProvider` (`icu_testdata::any()`), and an unstable data provider (`icu_testdata::unstable()`). The latter two require fewer Cargo features, so we will be using those.
-
-First, we need to add the crate to our `Cargo.toml`:
-
-```console
-$ cargo add icu_testdata
-```
-
-We can then use it in our code to format a date:
+We're going to extend our app to use the `icu::datetime` component to format a date and time in the Japanese calendar. This component requires data; we will look at custom data generation later and for now use the default included data,
+which is exposed through constructors such as `try_new`.
 
 ```rust
 use icu::locid::{Locale, locale};
-use icu::calendar::DateTime;
-use icu::datetime::{DateTimeFormatter, options::length};
+use icu::calendar::{DateTime, japanese::Japanese};
+use icu::datetime::{TypedDateTimeFormatter, options::length};
 
 const LOCALE: Locale = locale!("ja"); // let's try some other language
 
 fn main() {
-    let provider = icu_testdata::any();
-
     let options = length::Bag::from_date_time_style(length::Date::Long, length::Time::Medium);
 
-    let dtf = DateTimeFormatter::try_new_with_any_provider(&provider, &LOCALE.into(), options.into())
+    // TypedDateTimeFormatter supports formatting in a single calendar system. To support all
+    // calendars in a single object (recommended for most use cases), use DateTimeFormatter.
+    let dtf = TypedDateTimeFormatter::<Japanese>::try_new_unstable(&icu_testdata::unstable(), &LOCALE.into(), options.into())
         .expect("Failed to initialize DateTimeFormatter");
 
+    // Load the data for the Japanese calendar. Not all calendars require this step, but Japanese
+    // has data-driven eras.
+    let calendar = Japanese::try_new_unstable(&icu_testdata::unstable())
+        .expect("Failed to initialize Japanese calendar data");
+
+    // Create a DateTime object in ISO and then convert it to Japanese.
     let date = DateTime::try_new_iso_datetime(2020, 10, 14, 13, 21, 28)
-        .expect("Failed to create a datetime.");
+        .expect("Failed to create a datetime.")
+        .to_calendar(calendar);
 
-    // DateTimeFormatter supports the ISO and native calendars as input via DateTime<AnyCalendar>.
-    // For smaller codesize you can use TypedDateTimeFormatter<Gregorian> with a DateTime<Gregorian>
-    let date = date.to_any();
-
-    let formatted_date = dtf.format(&date).expect("Formatting should succeed");
+    // Format the date!
+    let formatted_date = dtf.format(&date);
 
     println!("📅: {}", formatted_date);
+    assert_eq!("令和2年10月14日 13:21:28", formatted_date.to_string());
 }
 ```
 
 If all went well, running the app with `cargo run` should display:
 
 ```text
-📅: 2020年10月14日 13:21:28
+📅: 令和2年10月14日 13:21:28
 ```
 
 Here's an internationalized date!

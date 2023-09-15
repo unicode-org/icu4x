@@ -33,7 +33,11 @@ use zerovec::ZeroVecError;
 /// including in SemVer minor releases. While the serde representation of data structs is guaranteed
 /// to be stable, their Rust representation might not be. Use with caution.
 /// </div>
-#[icu_provider::data_struct(BidiAuxiliaryPropertiesV1Marker = "props/bidiauxiliaryprops@1")]
+#[icu_provider::data_struct(marker(
+    BidiAuxiliaryPropertiesV1Marker,
+    "props/bidiauxiliaryprops@1",
+    singleton
+))]
 #[derive(Debug, Eq, PartialEq, Clone)]
 #[cfg_attr(
     feature = "datagen", 
@@ -280,6 +284,6 @@ mod tests {
 
         // deserialize from ULE bytes
         let ule_parse_result = MirroredPairedBracketDataULE::parse_byte_slice(ule_bytes);
-        assert!(matches!(ule_parse_result, Err(_)));
+        assert!(ule_parse_result.is_err());
     }
 }

@@ -12,6 +12,16 @@ export class ICU4XDataProvider {
 
   /**
 
+   * Constructs an {@link ICU4XDataProvider `ICU4XDataProvider`} that uses compiled data.
+
+   * Requires the `compiled_data` feature.
+
+   * This provider cannot be modified or combined with other providers, so `enable_fallback`, `enabled_fallback_with`, `fork_by_locale`, and `fork_by_key` will return `Err`s.
+   */
+  static create_compiled(): ICU4XDataProvider;
+
+  /**
+
    * Constructs an `FsDataProvider` and returns it as an {@link ICU4XDataProvider `ICU4XDataProvider`}. Requires the `provider_fs` Cargo feature. Not supported in WASM.
 
    * See the {@link https://docs.rs/icu_provider_fs/latest/icu_provider_fs/struct.FsDataProvider.html Rust documentation for `FsDataProvider`} for more information.
@@ -21,9 +31,9 @@ export class ICU4XDataProvider {
 
   /**
 
-   * Constructs a testdata provider and returns it as an {@link ICU4XDataProvider `ICU4XDataProvider`}. Requires the `provider_test` and one of `any_provider` or `buffer_provider` Cargo features.
+   * Deprecated
 
-   * See the {@link https://docs.rs/icu_testdata/latest/icu_testdata/index.html Rust documentation for `icu_testdata`} for more information.
+   * Use `create_compiled()`.
    */
   static create_test(): ICU4XDataProvider;
 
@@ -72,7 +82,7 @@ export class ICU4XDataProvider {
 
    * Note that the test provider (from `create_test`) already has fallbacking enabled.
 
-   * See the {@link https://docs.rs/icu_provider_adapters/latest/icu_provider_adapters/fallback/struct.LocaleFallbackProvider.html#method.try_new_unstable Rust documentation for `try_new_unstable`} for more information.
+   * See the {@link https://docs.rs/icu_provider_adapters/latest/icu_provider_adapters/fallback/struct.LocaleFallbackProvider.html#method.try_new Rust documentation for `try_new`} for more information.
 
    * Additional information: {@link https://docs.rs/icu_provider_adapters/latest/icu_provider_adapters/fallback/struct.LocaleFallbackProvider.html 1}
    * @throws {@link FFIError}<{@link ICU4XError}>

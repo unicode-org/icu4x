@@ -9,18 +9,16 @@ version = "0.0.0"
 edition = "2021"
 
 [dependencies]
-crlify = { path = "../../utils/crlify" }
-databake = { path = "../../utils/databake" }
-icu_datagen = { path = "../../provider/datagen", default-features = false, features = ["legacy_api"] }
-icu_locid = { path = "../../components/locid", features = ["databake"] }
-icu_provider = { path = "../../provider/core" }
-repodata = { path = "../../provider/repodata" }
+crlify = { workspace = true }
+databake = { workspace = true }
+icu_datagen = { workspace = true, features = ["legacy_api", "networking", "icu_compactdecimal", "icu_relativetime", "icu_displaynames"] }
+icu_locid = { workspace = true, features = ["databake"] }
+icu_provider = { workspace = true }
 
-cached-path = ">=0.5, <0.7"
 clap = {version = "4", features = ["derive"] }
 eyre = "0.6"
 log = "0.4"
 quote = "1"
-rust-format = { version = "0.3.4", features = ["token_stream"] }
 simple_logger = { version = "4.1.0", default-features = false }
-zip = ">=0.5, <0.7"
+ureq = "2"
+zip = { version = ">=0.5, <0.7", default-features = false, features = ["deflate"] }

@@ -13,7 +13,8 @@ use std::str::FromStr;
 use tinystr::tinystr;
 use tinystr::TinyStr16;
 
-const JAPANESE_FILE: &str = include_str!("./snapshot-japanese@1.json");
+const JAPANEXT_FILE: &str =
+    include_str!("../../../../data/japanese-golden/calendar/japanext@1/und.json");
 
 impl crate::DatagenProvider {
     fn load_japanese_eras(
@@ -24,16 +25,11 @@ impl crate::DatagenProvider {
         // in the `en` locale. We load this data to construct era codes but
         // actual user code only needs to load the data for the locales it cares about.
         let era_name_map = &self
-            .source
             .cldr()?
             .dates("japanese")
             .read_and_parse::<cldr_serde::ca::Resource>(&langid!("en"), "ca-japanese.json")?
             .main
-            .0
-            .get(&langid!("en"))
-            .ok_or(DataError::custom(
-                "ca-japanese.json does not have en locale",
-            ))?
+            .value
             .dates
             .calendars
             .get("japanese")
@@ -44,7 +40,6 @@ impl crate::DatagenProvider {
             .abbr;
 
         let era_dates_map = &self
-            .source
             .cldr()?
             .core()
             .read_and_parse::<cldr_serde::japanese::Resource>("supplemental/calendarData.json")?
@@ -92,20 +87,17 @@ impl crate::DatagenProvider {
         // to catch such cases. It is relatively rare for a new era to be added, and in those cases the integrity check can
         // be disabled when generating new data.
         if japanext && env::var("ICU4X_SKIP_JAPANESE_INTEGRITY_CHECK").is_err() {
-            let snapshot: JapaneseErasV1 = serde_json::from_str(JAPANESE_FILE)
-                .expect("Failed to parse the precached snapshot-japanese@1.json. This is a bug.");
+            let snapshot: JapaneseErasV1 = serde_json::from_str(JAPANEXT_FILE)
+                .expect("Failed to parse the precached golden. This is a bug.");
 
             if snapshot != ret {
                 return Err(DataError::custom(
                     "Era data has changed! This can be for two reasons: Either the CLDR locale data for Japanese eras has \
-                    changed in an incompatible way, or there is a new Japanese era. Please comment out the integrity \
-                    check in icu_datagen's japanese.rs and inspect the update to japanese@1.json (resource key `calendar/japanese`) \
-                    in the generated JSON by rerunning the datagen tool (`cargo make testdata` in the ICU4X repo). \
-                    Rerun with ICU4X_SKIP_JAPANESE_INTEGRITY_CHECK=1 to regenerate testdata properly, and check which situation \
-                    it is. If a new era has been introduced, copy over the new testdata to snapshot-japanese@1.json \
-                    in icu_datagen. If not, it's likely that japanese.rs in icu_datagen will need \
-                    to be updated to handle the data changes. Once done, be sure to regenerate datetime/symbols@1 as well if not \
-                    doing so already"
+                    changed in an incompatible way, or there is a new Japanese era. Run \
+                    `ICU4X_SKIP_JAPANESE_INTEGRITY_CHECK=1 cargo run -p icu_datagen -- --keys calendar/japanext@1 --format dir --syntax json \
+                    --out provider/datagen/data/japanese-golden --pretty --overwrite` in the icu4x repo and inspect the diff to \
+                    check which situation it is. If a new era has been introduced, commit the diff, if not, it's likely that japanese.rs \
+                    in icu_datagen will need to be updated to handle the data changes."
                 ));
             }
         }
@@ -118,7 +110,8 @@ impl crate::DatagenProvider {
 }
 
 impl DataProvider<JapaneseErasV1Marker> for crate::DatagenProvider {
-    fn load(&self, _req: DataRequest) -> Result<DataResponse<JapaneseErasV1Marker>, DataError> {
+    fn load(&self, req: DataRequest) -> Result<DataResponse<JapaneseErasV1Marker>, DataError> {
+        self.check_req::<JapaneseErasV1Marker>(req)?;
         self.load_japanese_eras(false)
     }
 }
@@ -126,8 +119,9 @@ impl DataProvider<JapaneseErasV1Marker> for crate::DatagenProvider {
 impl DataProvider<JapaneseExtendedErasV1Marker> for crate::DatagenProvider {
     fn load(
         &self,
-        _req: DataRequest,
+        req: DataRequest,
     ) -> Result<DataResponse<JapaneseExtendedErasV1Marker>, DataError> {
+        self.check_req::<JapaneseExtendedErasV1Marker>(req)?;
         let DataResponse { metadata, payload } = self.load_japanese_eras(true)?;
         Ok(DataResponse {
             metadata,
@@ -194,8 +188,8 @@ impl IterableDataProvider<JapaneseExtendedErasV1Marker> for crate::DatagenProvid
 }
 
 pub fn get_era_code_map() -> BTreeMap<String, TinyStr16> {
-    let snapshot: JapaneseErasV1 = serde_json::from_str(JAPANESE_FILE)
-        .expect("Failed to parse the precached snapshot-japanese@1.json. This is a bug.");
+    let snapshot: JapaneseErasV1 = serde_json::from_str(JAPANEXT_FILE)
+        .expect("Failed to parse the precached golden. This is a bug.");
     let mut map: BTreeMap<_, _> = snapshot
         .dates_to_eras
         .iter()

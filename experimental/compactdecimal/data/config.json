@@ -1,0 +1,20 @@
+{
+  "keys": {
+    "explicit": [
+      "compactdecimal/long@1",
+      "compactdecimal/short@1"
+    ]
+  },
+  "fallback": "runtime",
+  "locales": "recommended",
+  "cldr": "latest",
+  "icuExport": "latest",
+  "segmenterLstm": "latest",
+  "export": {
+    "baked": {
+      "path": "data",
+      "pretty": true
+    }
+  },
+  "overwrite": true
+}

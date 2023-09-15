@@ -29,21 +29,22 @@ concurrency:
   group: ${{ github.workflow }}-${{ github.head_ref || github.run_id }}
   cancel-in-progress: true
 
-env:
-  RUST_CACHED_PATH_ROOT: /tmp/icu4x
-
 jobs:
 
   # ci-job-check & ci-job-features
-  # Running at MSRV (1.61)
+  # Running at MSRV (1.66)
   msrv:
     runs-on: ubuntu-latest
     # Defined as a matrix so that features can start immediately, but
     # be killed if check fails.
     strategy:
       matrix: 
-        behavior: [check, features]
+        behavior: [check, features-1, features-2, features-3]
       fail-fast: true
+    # Set CARGO_HTTP_MULTIPLEXING=false to work around crates.io curl bug:
+    # <https://rust-lang.zulipchat.com/#narrow/stream/246057-t-cargo/topic/timeout.20investigation>
+    env:
+      CARGO_HTTP_MULTIPLEXING: false
     steps:
     - uses: actions/checkout@v3
 
@@ -64,6 +65,24 @@ jobs:
     - name: Install cargo-make
       if: steps.cargo-make-cache.outputs.cache-hit != 'true'
       run: cargo +stable install cargo-make
+
+    # Cargo-all-features boilerplate
+    - name: Get cargo-all-features version
+      id: cargo-all-features-version
+      run: |
+        echo "hash=$(cargo search cargo-all-features | grep '^cargo-all-features =' | md5sum)" >> $GITHUB_OUTPUT
+      shell: bash
+    - name: Attempt to load cached cargo-all-features
+      uses: actions/cache@v3
+      id: cargo-all-features-cache
+      with:
+        path: |
+          ~/.cargo/bin/cargo-all-features
+          ~/.cargo/bin/cargo-all-features.exe
+        key: ${{ runner.os }}-all-features-${{ steps.cargo-all-features-version.outputs.hash }}
+    - name: Install cargo-all-features
+      if: steps.cargo-all-features-cache.outputs.cache-hit != 'true'
+      run: cargo +stable install cargo-all-features
 
     # No toolchain boilerplate as this runs on MSRV
 
@@ -108,11 +127,19 @@ jobs:
 
     # Actual job
     - name: Run `cargo make ci-job-test`
+      if: matrix.os != 'windows-latest'
       run: cargo make ci-job-test
+    - name: Run `cargo make ci-job-test-windows`
+      if: matrix.os == 'windows-latest'
+      run: cargo make ci-job-test-windows
 
-  # ci-job-test-cargo-tutorial
-  test-cargo-tutorial:
+  # ci-job-test-tutorials
+  test-tutorials:
     runs-on: ubuntu-latest
+    strategy:
+      matrix: 
+        behavior: [local, cratesio]
+      fail-fast: true
     steps:
     - uses: actions/checkout@v3
 
@@ -146,11 +173,11 @@ jobs:
       uses: actions/cache@v3
       with:
         key: download-cache
-        path: /tmp/icu4x
+        path: /tmp/icu4x-source-cache
 
     # Actual job
-    - name: Run `cargo make ci-job-test-cargo-tutorial`
-      run: cargo make ci-job-test-cargo-tutorial
+    - name: Run `cargo make ci-job-test-tutorials-${{ matrix.behavior }}`
+      run: cargo make ci-job-test-tutorials-${{ matrix.behavior }}
 
   # ci-job-testdata
   testdata:
@@ -180,6 +207,24 @@ jobs:
       if: steps.cargo-make-cache.outputs.cache-hit != 'true'
       run: cargo +stable install cargo-make
 
+    # Cargo-all-features boilerplate
+    - name: Get cargo-all-features version
+      id: cargo-all-features-version
+      run: |
+        echo "hash=$(cargo search cargo-all-features | grep '^cargo-all-features =' | md5sum)" >> $GITHUB_OUTPUT
+      shell: bash
+    - name: Attempt to load cached cargo-all-features
+      uses: actions/cache@v3
+      id: cargo-all-features-cache
+      with:
+        path: |
+          ~/.cargo/bin/cargo-all-features
+          ~/.cargo/bin/cargo-all-features.exe
+        key: ${{ runner.os }}-all-features-${{ steps.cargo-all-features-version.outputs.hash }}
+    - name: Install cargo-all-features
+      if: steps.cargo-all-features-cache.outputs.cache-hit != 'true'
+      run: cargo +stable install cargo-all-features
+
     # Toolchain boilerplate
     - name: Potentially override rust version with nightly
       run: cargo make set-nightly-version-for-ci
@@ -191,13 +236,20 @@ jobs:
       uses: actions/cache@v3
       with:
         key: download-cache
-        path: /tmp/icu4x
-    - name: Install rustfmt
-      run: rustup component add rustfmt
+        path: /tmp/icu4x-source-cache
 
     # Actual job
-    - name: Run `cargo make ci-job-testdata`
-      run: cargo make ci-job-testdata
+    - name: Run `cargo make testdata-check`
+      run: cargo make testdata-check
+
+    - name: Run `cargo make testdata-legacy`
+      run: cargo make testdata-legacy
+
+    # This is too slow for Windows and Mac
+    - name: Run `cargo make testdata-legacy-test`
+      if: matrix.os == 'ubuntu-latest'
+      run: cargo make testdata-legacy-test
+
 
   # ci-job-test-docs
   test-docs:
@@ -236,7 +288,6 @@ jobs:
 
   # ci-job-full-datagen
   full-datagen:
-    needs: [testdata]
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v3
@@ -271,7 +322,9 @@ jobs:
       uses: actions/cache@v3
       with:
         key: download-cache
-        path: /tmp/icu4x
+        path: /tmp/icu4x-source-cache
+    - name: Install rustfmt
+      run: rustup component add rustfmt
 
     # Actual job
     - name: Run `cargo make ci-job-full-datagen`
@@ -280,9 +333,31 @@ jobs:
   # ci-job-ffi
   ffi:
     runs-on: ubuntu-latest
+    container:
+      image: rust:bookworm
 
     steps:
     - uses: actions/checkout@v3
+    
+    # Software setup/installation for the container
+    - name: Run apt-get update
+      run: |
+        apt-get update
+    - name: Install Clang-15
+      run: |
+        apt-get install -y clang-15 lld-15 llvm-15-dev libc++-15-dev
+    - name: Install GCC 11
+      run: |
+        apt-get install -y gcc-11 g++-11
+    - name: Install Node.js v16.18.0
+      uses: actions/setup-node@v3
+      with:
+        node-version: 16.18.0
+        cache: 'npm'
+        cache-dependency-path: '**/package-lock.json'
+    - name: Install Rust toolchains
+      run: |
+        rustup toolchain install stable
 
     # Cargo-make boilerplate
     - name: Get cargo-make version
@@ -297,7 +372,8 @@ jobs:
         path: |
           ~/.cargo/bin/cargo-make
           ~/.cargo/bin/cargo-make.exe
-        key: ${{ runner.os }}-make-${{ steps.cargo-make-version.outputs.hash }}
+        # Since this is inside a container, use a different key than the other jobs
+        key: ${{ runner.os }}-make-ffi-${{ steps.cargo-make-version.outputs.hash }}
     - name: Install cargo-make
       if: steps.cargo-make-cache.outputs.cache-hit != 'true'
       run: cargo +stable install cargo-make
@@ -310,22 +386,11 @@ jobs:
       run: rustup show
 
     # Job-specific dependencies
-    - name: Set up Clang-14
-      run: |
-        wget https://apt.llvm.org/llvm.sh
-        chmod +x llvm.sh
-        sudo ./llvm.sh 14
-    - name: Install Node.js v16.18.0
-      uses: actions/setup-node@v3
-      with:
-        node-version: 16.18.0
-        cache: 'npm'
-        cache-dependency-path: '**/package-lock.json'
     - name: Attempt to load download cache
       uses: actions/cache@v3
       with:
         key: download-cache
-        path: /tmp/icu4x
+        path: /tmp/icu4x-source-cache
     - name: Warm up datagen
       # We do this so its compilation doesn't go on the time bugdet of the 
       # first test that uses it.
@@ -335,7 +400,7 @@ jobs:
     - name: Run `cargo make ci-job-ffi`
       run: cargo make ci-job-ffi
       env:
-        CXX: "g++-10"
+        CXX: "g++-11"
 
   # ci-job-verify-ffi
   verify-ffi:
@@ -441,6 +506,26 @@ jobs:
     - name: Install GN Third-Party Tools
       if: steps.gn-third-party-tools-cache.outputs.cache-hit != 'true'
       run: cargo make gn-install
+
+    - name: Get cargo-rdme version
+      id: cargo-readme-version
+      run: |
+        echo "::set-output name=hash::$(cargo search cargo-rdme | grep '^cargo-rdme =' | md5sum)"
+      shell: bash
+    - name: Attempt to load cached cargo-rdme
+      uses: actions/cache@v3
+      id: cargo-rdme-cache
+      with:
+        path: |
+          ~/.cargo/bin/cargo-rdme
+          ~/.cargo/bin/cargo-rdme.exe
+        key: ${{ runner.os }}-readme-${{ steps.cargo-rdme-version.outputs.hash }}
+    - name: Install cargo-rdme
+      if: steps.cargo-rdme-cache.outputs.cache-hit != 'true'
+      uses: actions-rs/install@v0.1.2
+      with:
+        crate: cargo-rdme
+        version: latest
 
     # Actual job
     - name: Run `cargo make ci-job-verify-gn`
@@ -571,24 +656,24 @@ jobs:
       run: rustup show
 
     # Job-specific dependencies
-    - name: Get cargo-readme version
+    - name: Get cargo-rdme version
       id: cargo-readme-version
       run: |
-        echo "::set-output name=hash::$(cargo search cargo-readme | grep '^cargo-readme =' | md5sum)"
+        echo "::set-output name=hash::$(cargo search cargo-rdme | grep '^cargo-rdme =' | md5sum)"
       shell: bash
-    - name: Attempt to load cached cargo-readme
+    - name: Attempt to load cached cargo-rdme
       uses: actions/cache@v3
-      id: cargo-readme-cache
+      id: cargo-rdme-cache
       with:
         path: |
-          ~/.cargo/bin/cargo-readme
-          ~/.cargo/bin/cargo-readme.exe
-        key: ${{ runner.os }}-readme-${{ steps.cargo-readme-version.outputs.hash }}
-    - name: Install cargo-readme
-      if: steps.cargo-readme-cache.outputs.cache-hit != 'true'
+          ~/.cargo/bin/cargo-rdme
+          ~/.cargo/bin/cargo-rdme.exe
+        key: ${{ runner.os }}-readme-${{ steps.cargo-rdme-version.outputs.hash }}
+    - name: Install cargo-rdme
+      if: steps.cargo-rdme-cache.outputs.cache-hit != 'true'
       uses: actions-rs/install@v0.1.2
       with:
-        crate: cargo-readme
+        crate: cargo-rdme
         version: latest
 
     # Actual job
@@ -633,13 +718,8 @@ jobs:
       run: rustup component add clippy
 
     # Actual job
-    # Note: this does not use ci-job-clippy, as the GH Action can create code
-    # annotations (although not in PRs: https://github.com/actions-rs/clippy-check/issues/2)
-    - uses: actions-rs/clippy-check@v1.0.7
-      with:
-        token: ${{ secrets.GITHUB_TOKEN }}
-        # keep args in sync with `clippy-all` in .cargo/config.toml
-        args: --all-targets --all-features -- -D warnings
+    - name: Run `ci-job-clippy`
+      run: cargo make ci-job-clippy
 
   # ci-job-doc
   doc:

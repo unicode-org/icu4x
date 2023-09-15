@@ -6,7 +6,7 @@
 FORCE:
 
 ALL_HEADERS := $(wildcard ../../include/*)
-ICU4X_NIGHTLY_TOOLCHAIN ?= "nightly-2022-04-18"
+ICU4X_NIGHTLY_TOOLCHAIN ?= "nightly-2022-09-26"
 
 $(ALL_HEADERS):
 
@@ -33,6 +33,7 @@ target/wasm32-unknown-unknown/release/icu_capi_cdylib.wasm: FORCE
 		--target wasm32-unknown-unknown \
 		--release \
 		--package icu_capi_cdylib \
+		--no-default-features
 		--features buffer_provider,logging \
 
 icu_capi.wasm: target/wasm32-unknown-unknown/release/icu_capi_cdylib.wasm

@@ -1,8 +1,8 @@
 # Data management in ICU4X
 
-Unless you're happy shipping your app with the ~10 locales supported by `icu_testdata` (and with the size impact of all keys), you will need generate your own data that is customized to suit your needs.
+This tutorial introduces data providers as well as the `icu_datagen` tool.
 
-This tutorial introduces data providers beyond `icu_testdata`, as well as the `icu_datagen` tool.
+If you're happy shipping your app with the recommended set of locales included by the `compiled_data` default feature, you can stop reading now. If you want to reduce code size, do runtime data loading, or build your own complex data pipelines, this tutorial is for you.
 
 # 1. Prerequisites
 
@@ -46,6 +46,10 @@ You should generate it automatically at build time if:
 
 If you check in the generated data, it is recommended that you configure a job in continuous integration that verifies that the data in your repository reflects the latest CLDR/Unicode releases; otherwise, your app may drift out of date.
 
+## Locale Fallbacking
+
+Data generated with `--format blob` or `--format fs` supports only exact matches for locales, not locales requiring _fallback_. For example, if `en-US` is requested but only `en` data is available, then the data request will fail. Because of this, it is often desirable to configure a `LocaleFallbackProvider`, as illustrated in the remainder of the examples on this page.
+
 # 3. Using the generated data
 
 Once we have generated some data, it needs to be loaded as a data provider. The blob format we chose can be loaded by `BlobDataProvider` from the `icu_provider_blob` crate.
@@ -65,6 +69,7 @@ We can then use the provider in our code:
 use icu::locid::{locale, Locale};
 use icu::calendar::DateTime;
 use icu::datetime::{DateTimeFormatter, options::length};
+use icu_provider_adapters::fallback::LocaleFallbackProvider;
 use icu_provider_blob::BlobDataProvider;
 
 const LOCALE: Locale = locale!("ja");
@@ -74,6 +79,11 @@ fn main() {
     let buffer_provider = 
         BlobDataProvider::try_new_from_blob(blob.into_boxed_slice())
             .expect("Failed to initialize Data Provider.");
+
+    // Wrapping the raw BlobDataProvider in a LocaleFallbackProvider enables
+    // locales to fall back to other locales, like "en-US" to "en".
+    let buffer_provider = LocaleFallbackProvider::try_new_with_buffer_provider(buffer_provider)
+        .expect("Provider should contain fallback rules");
 
     let options = length::Bag::from_date_time_style(length::Date::Long, length::Time::Medium);
 
@@ -109,6 +119,7 @@ We can instead use `TypedDateTimeFormatter<Gregorian>`, which only supports form
 use icu::locid::{locale, Locale};
 use icu::calendar::{DateTime, Gregorian};
 use icu::datetime::{TypedDateTimeFormatter, options::length};
+use icu_provider_adapters::fallback::LocaleFallbackProvider;
 use icu_provider_blob::BlobDataProvider;
 
 const LOCALE: Locale = locale!("ja");
@@ -118,6 +129,11 @@ fn main() {
     let buffer_provider = 
         BlobDataProvider::try_new_from_blob(blob.into_boxed_slice())
             .expect("Failed to initialize Data Provider.");
+
+    // Wrapping the raw BlobDataProvider in a LocaleFallbackProvider enables
+    // locales to fall back to other locales, like "en-US" to "en".
+    let buffer_provider = LocaleFallbackProvider::try_new_with_buffer_provider(buffer_provider)
+        .expect("Provider should contain fallback rules");
 
     let options = length::Bag::from_date_time_style(length::Date::Long, length::Time::Medium);
 
@@ -168,6 +184,7 @@ extern crate alloc; // required as my-data-mod is written for #[no_std]
 use icu::locid::{locale, Locale};
 use icu::calendar::DateTime;
 use icu::datetime::{TypedDateTimeFormatter, options::length};
+use icu_provider_adapters::fallback::LocaleFallbackProvider;
 
 const LOCALE: Locale = locale!("ja");
 
@@ -177,6 +194,11 @@ impl_data_provider!(UnstableProvider);
 
 fn main() {
     let unstable_provider = UnstableProvider;
+
+    // Wrapping the raw UnstableProvider in a LocaleFallbackProvider enables
+    // locales to fall back to other locales, like "en-US" to "en".
+    let unstable_provider = LocaleFallbackProvider::try_new_unstable(unstable_provider)
+        .expect("Provider should contain fallback rules");
 
     let options = length::Bag::from_date_time_style(length::Date::Long, length::Time::Medium);
 
@@ -224,6 +246,7 @@ $ cargo add icu_provider_fs
 use icu::locid::{locale, Locale};
 use icu::calendar::DateTime;
 use icu::datetime::{TypedDateTimeFormatter, options::length};
+use icu_provider_adapters::fallback::LocaleFallbackProvider;
 use icu_provider_fs::FsDataProvider;
 
 const LOCALE: Locale = locale!("ja");
@@ -231,6 +254,11 @@ const LOCALE: Locale = locale!("ja");
 fn main() {
     let buffer_provider = FsDataProvider::try_new("my-data-dir")
            .expect("Failed to initialize Data Provider");
+
+    // Wrapping the raw BlobDataProvider in a LocaleFallbackProvider enables
+    // locales to fall back to other locales, like "en-US" to "en".
+    let buffer_provider = LocaleFallbackProvider::try_new_with_buffer_provider(buffer_provider)
+        .expect("Provider should contain fallback rules");
 
     let options = length::Bag::from_date_time_style(length::Date::Long, length::Time::Medium);
 

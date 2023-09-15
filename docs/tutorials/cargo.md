@@ -8,8 +8,8 @@ The most basic Cargo.toml to get you off the ground is the following:
 
 ```toml
 [dependencies]
-icu = "1.1"
-icu_testdata = "1.1"
+icu = "1.2"
+icu_testdata = "1.2"
 ```
 
 In your main.rs, you can use all stable ICU4X components in the small number of test locales available in `icu_testdata`.
@@ -22,8 +22,8 @@ If you wish to use an experimental feature, such as `icu_displaynames`, set up y
 
 ```toml
 [dependencies]
-icu = { version = "1.1", features = ["icu_displaynames"] }
-icu_testdata = { version = "1.1", features = ["icu_displaynames"] }
+icu = { version = "1.2", features = ["icu_displaynames"] }
+icu_testdata = { version = "1.2", features = ["icu_displaynames"] }
 ```
 
 In your main.rs, you can now use the experimental `icu::segmenter` module.
@@ -36,8 +36,8 @@ If you wish to generate your own data in blob format and pass it into ICU4X, ena
 
 ```toml
 [dependencies]
-icu = { version = "1.1", features = ["serde"] }
-icu_provider_blob = "1.1"
+icu = { version = "1.2", features = ["serde"] }
+icu_provider_blob = "1.2"
 ```
 
 To learn about building ICU4X data, including whether to check in the data blob file to your repository, see [data_management.md](./data_management.md).
@@ -50,14 +50,14 @@ If you wish to use baked data for ICU4X, add some additional dependencies as fol
 
 ```toml
 [dependencies]
-icu = "1.1"
-icu_provider = "1.1" # for databake
+icu = "1.2"
+icu_provider = "1.2" # for databake
 zerovec = "0.9" # for databake
 
 # for build.rs:
 [build-dependencies]
-icu = "1.1"
-icu_datagen = "1.1"
+icu = "1.2"
+icu_datagen = "1.2"
 ```
 
 This example has an additional section for auto-generating the data in build.rs. In your build.rs, invoke the ICU4X Datagen API with the set of keys you require. Don't worry; if using databake, you will get a compiler error if you don't specify enough keys.
@@ -72,9 +72,9 @@ If you wish to share ICU4X objects between threads, you must enable the `"sync"`
 
 ```toml
 [dependencies]
-icu = "1.1"
-icu_testdata = "1.1"
-icu_provider = { version = "1.1", features = ["sync"] }
+icu = "1.2"
+icu_testdata = "1.2"
+icu_provider = { version = "1.2", features = ["sync"] }
 ```
 
 You can now use most ICU4X types when `Send + Sync` are required, such as when persisting them in a [lazy_static](https://docs.rs/lazy_static/latest/lazy_static/).

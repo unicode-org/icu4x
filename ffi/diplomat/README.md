@@ -1,5 +1,7 @@
 # icu_capi [![crates.io](https://img.shields.io/crates/v/icu_capi)](https://crates.io/crates/icu_capi)
 
+<!-- cargo-rdme start -->
+
 This crate contains the source of truth for the [Diplomat](https://github.com/rust-diplomat/diplomat)-generated
 FFI bindings. This generates the C, C++, JavaScript, and TypeScript bindings. This crate also contains the `extern "C"`
 FFI for ICU4X.
@@ -20,6 +22,8 @@ an allocator and panic hook.
 More information on using ICU4X from C++ can be found in [our tutorial].
 
 [our tutorial]: https://github.com/unicode-org/icu4x/blob/main/docs/tutorials/cpp.md
+
+<!-- cargo-rdme end -->
 
 ## More Information
 

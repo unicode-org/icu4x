@@ -143,17 +143,17 @@ export class ICU4XLocale {
 
   /**
 
-   * Construct an {@link ICU4XLocale `ICU4XLocale`} for the English language.
+   * Deprecated
 
-   * This convenience constructor is intended for testing only and requires the `provider_test` feature.
+   * Use `create_from_string("en").
    */
   static create_en(): ICU4XLocale;
 
   /**
 
-   * Construct an {@link ICU4XLocale `ICU4XLocale`} for the Bangla language.
+   * Deprecated
 
-   * This convenience constructor is intended for testing only and requires the `provider_test` feature.
+   * Use `create_from_string("bn").
    */
   static create_bn(): ICU4XLocale;
 }

@@ -22,7 +22,6 @@ pub struct SerdeDFA<'data> {
     pattern: Option<Cow<'data, str>>,
 }
 
-#[cfg(feature = "datagen")]
 impl PartialEq for SerdeDFA<'_> {
     fn eq(&self, other: &Self) -> bool {
         self.dfa_bytes == other.dfa_bytes
@@ -38,7 +37,7 @@ impl databake::Bake for SerdeDFA<'_> {
         // Safe because of `to_bytes_little_endian`/`to_bytes_big_endian`'s invariant.
         databake::quote! {
             unsafe {
-                ::icu_list::provider::SerdeDFA::from_dfa_bytes_unchecked(
+                icu_list::provider::SerdeDFA::from_dfa_bytes_unchecked(
                     if cfg!(target_endian = "little") {
                         #le_bytes
                     } else {

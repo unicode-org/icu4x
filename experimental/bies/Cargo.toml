@@ -6,21 +6,14 @@
 name = "bies"
 description = "Helpers for dealing with BIES vectors with text segmentation applications"
 version = "0.2.1"
-authors = ["The ICU4X Project Developers"]
-edition = "2021"
-readme = "README.md"
-repository = "https://github.com/unicode-org/icu4x"
-license = "Unicode-DFS-2016"
-# Keep this in sync with other crates unless there are exceptions
-include = [
-    "src/**/*",
-    "examples/**/*",
-    "benches/**/*",
-    "tests/**/*",
-    "Cargo.toml",
-    "LICENSE",
-    "README.md"
-]
+
+authors.workspace = true
+edition.workspace = true
+homepage.workspace = true
+include.workspace = true
+license-file.workspace = true
+repository.workspace = true
+rust-version.workspace = true
 
 [package.metadata.workspaces]
 independent = true
@@ -30,13 +23,14 @@ all-features = true
 
 [dependencies]
 itertools = "0.10"
-num-traits = "0.2"
 partial-min-max = "0.4"
 strum = { version = "0.20", features = ["derive"] }
-writeable = { version = "0.5.1", path = "../../utils/writeable" }
+writeable = { workspace = true }
 
 [dev-dependencies]
-criterion = "0.4"
 rand = "0.8"
 rand_distr = "0.4"
 rand_pcg = "0.3"
+
+[target.'cfg(not(target_arch = "wasm32"))'.dev-dependencies]
+criterion = "0.4"

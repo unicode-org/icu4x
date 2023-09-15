@@ -1,5 +1,7 @@
 # icu_timezone [![crates.io](https://img.shields.io/crates/v/icu_timezone)](https://crates.io/crates/icu_timezone)
 
+<!-- cargo-rdme start -->
+
 Types for resolving and manipulating time zones.
 
 ## Fields
@@ -92,13 +94,14 @@ time_zone.time_zone_id =
     "uschi".parse::<TinyAsciiStr<8>>().ok().map(Into::into);
 
 // Compute the metazone at January 1, 2022:
-let mzc = MetazoneCalculator::try_new_unstable(&icu_testdata::unstable())
-    .unwrap();
+let mzc = MetazoneCalculator::new();
 let datetime = DateTime::try_new_iso_datetime(2022, 1, 1, 0, 0, 0).unwrap();
 time_zone.maybe_calculate_metazone(&mzc, &datetime);
 
 assert_eq!("amce", time_zone.metazone_id.unwrap().0.as_str());
 ```
+
+<!-- cargo-rdme end -->
 
 ## More Information
 

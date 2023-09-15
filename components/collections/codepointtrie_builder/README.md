@@ -1,5 +1,7 @@
 # icu_codepointtrie_builder [![crates.io](https://img.shields.io/crates/v/icu_codepointtrie_builder)](https://crates.io/crates/icu_codepointtrie_builder)
 
+<!-- cargo-rdme start -->
+
 `icu_codepointtrie_builder` is a utility crate of the [`ICU4X`] project.
 
 This crate exposes functionality to build a [`CodePointTrie`] from values provided at runtime.
@@ -63,7 +65,10 @@ assert_eq!(cpt.get32(u32::MAX), 2); // error value
 ```
 
 [`ICU4X`]: ../icu/index.html
+[`CodePointTrie`]: icu_collections::codepointtrie::CodePointTrie
 [`UMutableCPTrie`]: (https://unicode-org.github.io/icu-docs/apidoc/dev/icu4c/umutablecptrie_8h.html#ad8945cf34ca9d40596a66a1395baa19b)
+
+<!-- cargo-rdme end -->
 
 ## More Information
 

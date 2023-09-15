@@ -16,13 +16,13 @@ impl DataProvider<ScriptDisplayNamesV1Marker> for crate::DatagenProvider {
         &self,
         req: DataRequest,
     ) -> Result<DataResponse<ScriptDisplayNamesV1Marker>, DataError> {
+        self.check_req::<ScriptDisplayNamesV1Marker>(req)?;
         let langid = req.locale.get_langid();
 
-        let data: &cldr_serde::script_displaynames::Resource =
-            self.source
-                .cldr()?
-                .displaynames()
-                .read_and_parse(&langid, "scripts.json")?;
+        let data: &cldr_serde::displaynames::script::Resource = self
+            .cldr()?
+            .displaynames()
+            .read_and_parse(&langid, "scripts.json")?;
 
         Ok(DataResponse {
             metadata: Default::default(),
@@ -37,23 +37,20 @@ impl DataProvider<ScriptDisplayNamesV1Marker> for crate::DatagenProvider {
 
 impl IterableDataProvider<ScriptDisplayNamesV1Marker> for crate::DatagenProvider {
     fn supported_locales(&self) -> Result<Vec<DataLocale>, DataError> {
-        Ok(self.source.options.locales.filter_by_langid_equality(
-            self.source
-                .cldr()?
-                .displaynames()
-                .list_langs()?
-                .filter(|langid| {
-                    // The directory might exist without scripts.json
-                    self.source
-                        .cldr()
-                        .unwrap()
-                        .displaynames()
-                        .file_exists(langid, "scripts.json")
-                        .unwrap_or_default()
-                })
-                .map(DataLocale::from)
-                .collect(),
-        ))
+        Ok(self
+            .cldr()?
+            .displaynames()
+            .list_langs()?
+            .filter(|langid| {
+                // The directory might exist without scripts.json
+                self.cldr()
+                    .unwrap()
+                    .displaynames()
+                    .file_exists(langid, "scripts.json")
+                    .unwrap_or_default()
+            })
+            .map(DataLocale::from)
+            .collect())
     }
 }
 
@@ -63,19 +60,17 @@ const ALT_SUBSTRING: &str = "-alt-";
 /// Substring used to denote short display names data variants for a given script. For example: "az-alt-short".
 const ALT_SHORT_SUBSTRING: &str = "-alt-short";
 
-impl TryFrom<&cldr_serde::script_displaynames::Resource> for ScriptDisplayNamesV1<'static> {
+impl TryFrom<&cldr_serde::displaynames::script::Resource> for ScriptDisplayNamesV1<'static> {
     type Error = ParserError;
 
-    fn try_from(other: &cldr_serde::script_displaynames::Resource) -> Result<Self, Self::Error> {
+    fn try_from(other: &cldr_serde::displaynames::script::Resource) -> Result<Self, Self::Error> {
         let mut names = BTreeMap::new();
         let mut short_names = BTreeMap::new();
-        for lang_data_entry in other.main.0.iter() {
-            for entry in lang_data_entry.1.localedisplaynames.scripts.iter() {
-                if let Some(script) = entry.0.strip_suffix(ALT_SHORT_SUBSTRING) {
-                    short_names.insert(Script::from_str(script)?.into_tinystr(), entry.1.as_str());
-                } else if !entry.0.contains(ALT_SUBSTRING) {
-                    names.insert(Script::from_str(entry.0)?.into_tinystr(), entry.1.as_str());
-                }
+        for entry in other.main.value.localedisplaynames.scripts.iter() {
+            if let Some(script) = entry.0.strip_suffix(ALT_SHORT_SUBSTRING) {
+                short_names.insert(Script::from_str(script)?.into_tinystr(), entry.1.as_str());
+            } else if !entry.0.contains(ALT_SUBSTRING) {
+                names.insert(Script::from_str(entry.0)?.into_tinystr(), entry.1.as_str());
             }
         }
         Ok(Self {
@@ -97,11 +92,11 @@ impl TryFrom<&cldr_serde::script_displaynames::Resource> for ScriptDisplayNamesV
 #[cfg(test)]
 mod tests {
     use super::*;
-    use icu_locid::{locale, subtags_script as script};
+    use icu_locid::{locale, subtags::script};
 
     #[test]
     fn test_basic_script_display_names() {
-        let provider = crate::DatagenProvider::for_test();
+        let provider = crate::DatagenProvider::new_testing();
 
         let data: DataPayload<ScriptDisplayNamesV1Marker> = provider
             .load(DataRequest {
@@ -123,7 +118,7 @@ mod tests {
 
     #[test]
     fn test_basic_script_short_display_names() {
-        let provider = crate::DatagenProvider::for_test();
+        let provider = crate::DatagenProvider::new_testing();
 
         let data: DataPayload<ScriptDisplayNamesV1Marker> = provider
             .load(DataRequest {

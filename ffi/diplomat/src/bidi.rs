@@ -35,7 +35,11 @@ pub mod ffi {
         /// Creates a new [`ICU4XBidi`] from locale data.
         #[diplomat::rust_link(icu::properties::bidi::BidiClassAdapter::new, FnInStruct)]
         pub fn create(provider: &ICU4XDataProvider) -> Result<Box<ICU4XBidi>, ICU4XError> {
-            Ok(Box::new(ICU4XBidi(maps::load_bidi_class(&provider.0)?)))
+            Ok(Box::new(ICU4XBidi(call_constructor_unstable!(
+                maps::bidi_class [m => Ok(m.static_to_owned())],
+                maps::load_bidi_class,
+                provider,
+            )?)))
         }
 
         /// Use the data loaded in this object to process a string and calculate bidi information
@@ -143,7 +147,7 @@ pub mod ffi {
             self.0.paragraphs.len()
         }
 
-        /// Get the nth paragraph, returning None if out of bounds
+        /// Get the nth paragraph, returning `None` if out of bounds
         pub fn paragraph_at(&'text self, n: usize) -> Option<Box<ICU4XBidiParagraph<'text>>> {
             self.0
                 .paragraphs

@@ -197,18 +197,16 @@ class ICU4XLocale {
   ICU4XOrdering strict_cmp(const std::string_view other) const;
 
   /**
-   * Construct an [`ICU4XLocale`] for the English language.
+   * Deprecated
    * 
-   * This convenience constructor is intended for testing only
-   * and requires the `provider_test` feature.
+   * Use `create_from_string("en").
    */
   static ICU4XLocale create_en();
 
   /**
-   * Construct an [`ICU4XLocale`] for the Bangla language.
+   * Deprecated
    * 
-   * This convenience constructor is intended for testing only
-   * and requires the `provider_test` feature.
+   * Use `create_from_string("bn").
    */
   static ICU4XLocale create_bn();
   inline const capi::ICU4XLocale* AsFFI() const { return this->inner.get(); }

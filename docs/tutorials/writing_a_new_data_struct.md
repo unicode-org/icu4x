@@ -47,7 +47,7 @@ When clients use ICU4X, this is generally a manual step, although we may provide
 To download test data into the ICU4X source tree, run: 
 
 ```console
-$ cargo make testdata-download-sources
+$ cargo make download-repo-sources
 ```
 
 ### Source Data Providers
@@ -111,6 +111,7 @@ as well as to the list of keys
 ```rust
 
 use std::borrow::Cow;
+use icu_provider::prelude::*;
 
 #[derive(Debug, PartialEq, Clone)]
 #[icu_provider::data_struct(marker(FooV1Marker, "foo/bar@1"))]
@@ -126,7 +127,7 @@ When finished, run from the top level:
 $ cargo make testdata
 ```
 
-If everything is hooked together properly, JSON files for your new data struct should appear under *provider/testdata/data/json*, and the file *provider/testdata/data/testdata.postcard* should have changed.
+If everything is hooked together properly, JSON files for your new data struct should appear under *provider/datagen/tests/data/json*.
 
 ## Example
 

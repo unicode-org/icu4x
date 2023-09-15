@@ -108,6 +108,9 @@ fn test_dep_list(
     }
 
     'dep_loop: for i in dep_list {
+        if i.crate_name == package {
+            continue;
+        }
         let name = &i.crate_name;
         for s in sets {
             if s.contains(&**name) {
@@ -134,7 +137,9 @@ fn main() {
     let basic_build: BTreeSet<_> = BASIC_BUILD_DEPS.iter().copied().collect();
     let basic: BTreeSet<_> = basic_runtime.union(&basic_build).copied().collect();
     let serde: BTreeSet<_> = EXTRA_SERDE_DEPS.iter().copied().collect();
+    let data: BTreeSet<_> = EXTRA_DATA_DEPS.iter().copied().collect();
     let experimental: BTreeSet<_> = EXTRA_EXPERIMENTAL_DEPS.iter().copied().collect();
+    let experimental_data: BTreeSet<_> = EXTRA_EXPERIMENTAL_DATA_DEPS.iter().copied().collect();
     let lstm: BTreeSet<_> = EXTRA_LSTM_DEPS.iter().copied().collect();
     let ryu: BTreeSet<_> = EXTRA_RYU_DEPS.iter().copied().collect();
     let capi_runtime: BTreeSet<_> = EXTRA_CAPI_DEPS.iter().copied().collect();
@@ -143,7 +148,6 @@ fn main() {
     let logging: BTreeSet<_> = EXTRA_LOGGING_DEPS.iter().copied().collect();
     let blob: BTreeSet<_> = EXTRA_BLOB_DEPS.iter().copied().collect();
     let fs: BTreeSet<_> = EXTRA_FS_DEPS.iter().copied().collect();
-    let test: BTreeSet<_> = EXTRA_TEST_DEPS.iter().copied().collect();
     let zip: BTreeSet<_> = EXTRA_ZIP_DEPS.iter().copied().collect();
     let rayon: BTreeSet<_> = EXTRA_RAYON_DEPS.iter().copied().collect();
     let datagen: BTreeSet<_> = EXTRA_DATAGEN_DEPS.iter().copied().collect();
@@ -159,6 +163,27 @@ fn main() {
         "`BASIC_RUNTIME_DEPS`",
     );
     test_dep_list("icu", "normal", "", &[&basic], "`BASIC_BUILD_DEPS`");
+    test_dep_list(
+        "icu",
+        "normal",
+        "--features compiled_data",
+        &[&basic, &data],
+        "`EXTRA_DATA_DEPS`",
+    );
+    test_dep_list(
+        "icu",
+        "normal",
+        "--features compiled_data,experimental",
+        &[&basic, &data, &experimental_data, &experimental],
+        "`EXTRA_EXPERIMENTAL_DEPS`",
+    );
+    test_dep_list(
+        "icu",
+        "normal",
+        "--features compiled_data,experimental,icu_segmenter/lstm",
+        &[&basic, &data, &experimental, &experimental_data, &lstm],
+        "`EXTRA_LSTM_DEPS`",
+    );
     test_dep_list(
         "icu",
         "normal",
@@ -238,9 +263,9 @@ fn main() {
     test_dep_list(
         "icu_capi",
         "normal",
-        "--features provider_test",
-        &[&basic, &serde, &experimental, &lstm, &ryu, &capi, &test],
-        "`EXTRA_TEST_DEPS`",
+        "--features compiled_data",
+        &[&basic, &serde, &experimental, &lstm, &ryu, &capi, &data],
+        "`EXTRA_DATA_DEPS`",
     );
     test_dep_list(
         "icu_capi",

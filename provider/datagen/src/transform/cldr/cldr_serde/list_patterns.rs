@@ -7,9 +7,9 @@
 //! Sample file:
 //! <https://github.com/unicode-org/cldr-json/blob/main/cldr-json/cldr-misc-full/main/en/listPatterns.json>
 
-use icu_locid::LanguageIdentifier;
 use serde::Deserialize;
-use std::collections::HashMap;
+
+use super::locale_resource::LocaleResource;
 
 #[derive(PartialEq, Debug, Deserialize)]
 pub struct ListPattern {
@@ -48,10 +48,4 @@ pub struct LangListPatterns {
     pub list_patterns: ListPatterns,
 }
 
-#[derive(PartialEq, Debug, Deserialize)]
-pub struct LangData(pub HashMap<LanguageIdentifier, LangListPatterns>);
-
-#[derive(PartialEq, Debug, Deserialize)]
-pub struct Resource {
-    pub main: LangData,
-}
+pub type Resource = LocaleResource<LangListPatterns>;

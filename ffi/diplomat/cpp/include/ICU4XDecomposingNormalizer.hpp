@@ -35,14 +35,14 @@ class ICU4XDecomposingNormalizer {
   /**
    * Construct a new ICU4XDecomposingNormalizer instance for NFC
    * 
-   * See the [Rust documentation for `try_new_nfd_unstable`](https://docs.rs/icu/latest/icu/normalizer/struct.DecomposingNormalizer.html#method.try_new_nfd_unstable) for more information.
+   * See the [Rust documentation for `new_nfd`](https://docs.rs/icu/latest/icu/normalizer/struct.DecomposingNormalizer.html#method.new_nfd) for more information.
    */
   static diplomat::result<ICU4XDecomposingNormalizer, ICU4XError> create_nfd(const ICU4XDataProvider& provider);
 
   /**
    * Construct a new ICU4XDecomposingNormalizer instance for NFKC
    * 
-   * See the [Rust documentation for `try_new_nfkd_unstable`](https://docs.rs/icu/latest/icu/normalizer/struct.DecomposingNormalizer.html#method.try_new_nfkd_unstable) for more information.
+   * See the [Rust documentation for `new_nfkd`](https://docs.rs/icu/latest/icu/normalizer/struct.DecomposingNormalizer.html#method.new_nfkd) for more information.
    */
   static diplomat::result<ICU4XDecomposingNormalizer, ICU4XError> create_nfkd(const ICU4XDataProvider& provider);
 

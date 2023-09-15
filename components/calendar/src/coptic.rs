@@ -33,11 +33,10 @@
 
 use crate::any_calendar::AnyCalendarKind;
 use crate::calendar_arithmetic::{ArithmeticDate, CalendarArithmetic};
-use crate::helpers::quotient;
 use crate::iso::Iso;
-use crate::julian::Julian;
 use crate::{types, Calendar, CalendarError, Date, DateDuration, DateDurationUnit, DateTime};
-use core::marker::PhantomData;
+use calendrical_calculations::helpers::I32CastError;
+use calendrical_calculations::rata_die::RataDie;
 use tinystr::tinystr;
 
 /// The [Coptic Calendar]
@@ -53,12 +52,17 @@ use tinystr::tinystr;
 ///
 /// This calendar supports two era codes: `"bd"`, and `"ad"`, corresponding to the Before Diocletian and After Diocletian/Anno Martyrum
 /// eras. 1 A.M. is equivalent to 284 C.E.
-#[derive(Copy, Clone, Debug, Hash, Default, Eq, PartialEq)]
+///
+/// # Month codes
+///
+/// This calendar supports 13 solar month codes (`"M01" - "M13"`), with `"M13"` being used for the short epagomenal month
+/// at the end of the year.
+#[derive(Copy, Clone, Debug, Hash, Default, Eq, PartialEq, PartialOrd, Ord)]
 #[allow(clippy::exhaustive_structs)] // this type is stable
 pub struct Coptic;
 
 /// The inner date type used for representing [`Date`]s of [`Coptic`]. See [`Date`] and [`Coptic`] for more details.
-#[derive(Copy, Clone, Debug, Hash, Eq, PartialEq)]
+#[derive(Copy, Clone, Debug, Hash, Eq, PartialEq, PartialOrd, Ord)]
 pub struct CopticDateInner(pub(crate) ArithmeticDate<Coptic>);
 
 impl CalendarArithmetic for Coptic {
@@ -84,7 +88,15 @@ impl CalendarArithmetic for Coptic {
         year % 4 == 3
     }
 
-    fn days_in_provided_year(year: i32) -> u32 {
+    fn last_month_day_in_year(year: i32) -> (u8, u8) {
+        if Self::is_leap_year(year) {
+            (13, 6)
+        } else {
+            (13, 5)
+        }
+    }
+
+    fn days_in_provided_year(year: i32) -> u16 {
         if Self::is_leap_year(year) {
             366
         } else {
@@ -116,7 +128,7 @@ impl Calendar for Coptic {
             return Err(CalendarError::UnknownEra(era.0, self.debug_name()));
         };
 
-        ArithmeticDate::new_from_solar(self, year, month_code, day).map(CopticDateInner)
+        ArithmeticDate::new_from_codes(self, year, month_code, day).map(CopticDateInner)
     }
     fn date_from_iso(&self, iso: Date<Iso>) -> CopticDateInner {
         let fixed_iso = Iso::fixed_from_iso(*iso.inner());
@@ -132,7 +144,7 @@ impl Calendar for Coptic {
         date.0.months_in_year()
     }
 
-    fn days_in_year(&self, date: &Self::DateInner) -> u32 {
+    fn days_in_year(&self, date: &Self::DateInner) -> u16 {
         date.0.days_in_year()
     }
 
@@ -165,7 +177,7 @@ impl Calendar for Coptic {
     }
 
     fn month(&self, date: &Self::DateInner) -> types::FormattableMonth {
-        date.0.solar_month()
+        date.0.month()
     }
 
     fn day_of_month(&self, date: &Self::DateInner) -> types::DayOfMonth {
@@ -193,42 +205,22 @@ impl Calendar for Coptic {
     }
 }
 
-pub(crate) const COPTIC_EPOCH: i32 = Julian::fixed_from_julian_integers(284, 8, 29);
-
 impl Coptic {
-    // "Fixed" is a day count representation of calendars staring from Jan 1st of year 1 of the Georgian Calendar.
-    // The fixed date algorithms are from
-    // Dershowitz, Nachum, and Edward M. Reingold. _Calendrical calculations_. Cambridge University Press, 2008.
-    //
-    // Lisp code reference: https://github.com/EdReingold/calendar-code2/blob/1ee51ecfaae6f856b0d7de3e36e9042100b4f424/calendar.l#L1978
-    fn fixed_from_coptic(date: ArithmeticDate<Coptic>) -> i32 {
-        COPTIC_EPOCH - 1
-            + 365 * (date.year - 1)
-            + quotient(date.year, 4)
-            + 30 * (date.month as i32 - 1)
-            + date.day as i32
+    fn fixed_from_coptic(date: ArithmeticDate<Coptic>) -> RataDie {
+        calendrical_calculations::coptic::fixed_from_coptic(date.year, date.month, date.day)
     }
 
-    pub(crate) fn fixed_from_coptic_integers(year: i32, month: u8, day: u8) -> i32 {
-        Self::fixed_from_coptic(ArithmeticDate {
-            year,
-            month,
-            day,
-            marker: PhantomData,
-        })
+    pub(crate) fn coptic_from_fixed(date: RataDie) -> CopticDateInner {
+        let (year, month, day) = match calendrical_calculations::coptic::coptic_from_fixed(date) {
+            Err(I32CastError::BelowMin) => return CopticDateInner(ArithmeticDate::min_date()),
+            Err(I32CastError::AboveMax) => return CopticDateInner(ArithmeticDate::max_date()),
+            Ok(ymd) => ymd,
+        };
+
+        CopticDateInner(ArithmeticDate::new_unchecked(year, month, day))
     }
 
-    // Lisp code reference: https://github.com/EdReingold/calendar-code2/blob/1ee51ecfaae6f856b0d7de3e36e9042100b4f424/calendar.l#L1990
-    pub(crate) fn coptic_from_fixed(date: i32) -> CopticDateInner {
-        let year = quotient(4 * (date - COPTIC_EPOCH) + 1463, 1461);
-        let month = (quotient(date - Self::fixed_from_coptic_integers(year, 1, 1), 30) + 1) as u8; // <= 12 < u8::MAX
-        let day = (date + 1 - Self::fixed_from_coptic_integers(year, month, 1)) as u8; // <= days_in_month < u8::MAX
-
-        #[allow(clippy::unwrap_used)] // day and month have the correct bounds
-        *Date::try_new_coptic_date(year, month, day).unwrap().inner()
-    }
-
-    fn days_in_year_direct(year: i32) -> u32 {
+    fn days_in_year_direct(year: i32) -> u16 {
         if Coptic::is_leap_year(year) {
             366
         } else {
@@ -257,19 +249,9 @@ impl Date<Coptic> {
         month: u8,
         day: u8,
     ) -> Result<Date<Coptic>, CalendarError> {
-        let inner = ArithmeticDate {
-            year,
-            month,
-            day,
-            marker: PhantomData,
-        };
-
-        let bound = inner.days_in_month();
-        if day > bound {
-            return Err(CalendarError::OutOfRange);
-        }
-
-        Ok(Date::from_raw(CopticDateInner(inner), Coptic))
+        ArithmeticDate::new_from_ordinals(year, month, day)
+            .map(CopticDateInner)
+            .map(|inner| Date::from_raw(inner, Coptic))
     }
 }
 
@@ -312,12 +294,14 @@ fn year_as_coptic(year: i32) -> types::FormattableYear {
         types::FormattableYear {
             era: types::Era(tinystr!(16, "ad")),
             number: year,
+            cyclic: None,
             related_iso: None,
         }
     } else {
         types::FormattableYear {
             era: types::Era(tinystr!(16, "bd")),
             number: 1 - year,
+            cyclic: None,
             related_iso: None,
         }
     }

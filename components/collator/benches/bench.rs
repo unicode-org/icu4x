@@ -91,7 +91,7 @@ pub fn collator_with_locale(criterion: &mut Criterion) {
     // In particular, to get full Japanese standard behavior, you need the identical strength.
     // Furthermore, CLDR used to default to quaternary for Japanese but now defaults to tertiary
     // as for every other language for performance reasons.
-    let all_strength = vec![
+    let all_strength = [
         Strength::Primary,
         Strength::Secondary,
         Strength::Tertiary,
@@ -156,12 +156,7 @@ pub fn collator_with_locale(criterion: &mut Criterion) {
             for (index, strength) in benched_strength.iter().enumerate() {
                 let mut options = CollatorOptions::new();
                 options.strength = Some(*strength);
-                let collator = Collator::try_new_unstable(
-                    &icu_testdata::unstable(),
-                    &locale_under_bench,
-                    options,
-                )
-                .unwrap();
+                let collator = Collator::try_new(&locale_under_bench, options).unwrap();
                 // ICU4X collator performance, sort is locale-aware
                 group.bench_function(
                     BenchmarkId::new(

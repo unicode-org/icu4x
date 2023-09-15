@@ -1,0 +1,28 @@
+{
+  "keys": {
+    "explicit": [
+      "datetime/gregory/datelengths@1",
+      "datetime/gregory/datesymbols@1",
+      "datetime/timelengths@1",
+      "datetime/timesymbols@1",
+      "decimal/symbols@1",
+      "time_zone/formats@1",
+      "time_zone/specific_short@1"
+    ]
+  },
+  "fallback": "hybrid",
+  "locales": {
+    "explicit": [
+      "en"
+    ]
+  },
+  "cldr": "latest",
+  "icuExport": "none",
+  "segmenterLstm": "none",
+  "export": {
+    "blob": {
+      "path": "blob.postcard"
+    }
+  },
+  "overwrite": true
+}

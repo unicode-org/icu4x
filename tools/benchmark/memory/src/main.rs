@@ -2,14 +2,13 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use cargo_metadata::Metadata;
 use clap::Parser;
 use serde_json::json;
 use std::io::prelude::*;
 use std::path::{Path, PathBuf};
 use std::process;
 use std::process::Command;
-use std::{env, process::Stdio};
+use std::process::Stdio;
 use std::{fs, io::BufReader};
 
 #[derive(Parser)]
@@ -21,16 +20,9 @@ struct ProcessedArgs {
         help = "Nests the results of the benchmark in a folder per-OS, primarily needed by CI."
     )]
     os: Option<String>,
-    #[arg(value_name = "EXAMPLES", num_args = 1.., index=1)]
-    #[arg(help = "The space separated list of examples to run, with the form <PACKAGE>/<EXAMPLE>")]
+    #[arg(value_name = "EXAMPLES", num_args = 0.., index=1)]
+    #[arg(help = "The space separated list of examples to run. Leave empty for all examples.")]
     examples: Vec<String>,
-    #[arg(
-        long,
-        value_name = "TOOLCHAIN",
-        default_value = "stable",
-        help = "The toolchain for cargo to use.."
-    )]
-    toolchain: String,
 }
 
 fn process_cli_args() -> ProcessedArgs {
@@ -84,21 +76,6 @@ fn extract_bytes_from_log_line(preamble: &str, text: &str) -> u64 {
         .expect("Unable to parse the byte amount");
 }
 
-fn get_meta_data(root_dir: &Path) -> Metadata {
-    let main_cargo_toml_path = {
-        let mut path = root_dir.to_owned();
-        path.push("Cargo.toml");
-        if !path.exists() {
-            panic!("Could not find the root Cargo.toml");
-        }
-        path
-    };
-
-    let mut cmd = cargo_metadata::MetadataCommand::new();
-    cmd.manifest_path(main_cargo_toml_path);
-    cmd.exec().expect("Unable to generate the cargo metadata")
-}
-
 /// This file is intended to be run from CI to gather heap information, but it can also
 /// be run locally. The charts are only generated in CI.
 ///
@@ -112,31 +89,43 @@ fn get_meta_data(root_dir: &Path) -> Metadata {
 ///   d. Add the output to an `ndjson` file.
 ///   e. Move the dhat-heap.json file to the benchmark folder.
 fn main() {
-    let ProcessedArgs {
-        os,
-        examples,
-        toolchain,
-    } = process_cli_args();
+    let ProcessedArgs { os, examples } = process_cli_args();
 
-    let root_dir = {
-        let mut path = PathBuf::from(&env::var("CARGO_MANIFEST_DIR").expect("$CARGO_MANIFEST_DIR"));
-        path.pop();
-        path.pop();
-        path.pop();
-        path
+    let root_dir = PathBuf::from(concat!(std::env!("CARGO_MANIFEST_DIR"), "/../../.."));
+
+    let examples = if !examples.is_empty() {
+        examples
+    } else {
+        Command::new("cargo")
+            .arg("build")
+            .arg("--examples")
+            .arg("--features")
+            .arg("icu_benchmark_macros/benchmark_memory")
+            .arg("--features")
+            .arg("bench")
+            .status()
+            .unwrap_or_else(|err| {
+                eprintln!("Failed to collect examples {err:?}");
+                process::exit(1);
+            });
+        fs::read_dir(root_dir.join("target/debug/examples"))
+            .unwrap()
+            .flat_map(|entry| {
+                entry.ok()?.file_name().into_string().ok().and_then(|s| {
+                    if cfg!(windows) {
+                        s.strip_suffix(".exe").map(ToString::to_string)
+                    } else {
+                        (!s.contains(['-', '.'])).then_some(s)
+                    }
+                })
+            })
+            .collect()
     };
-
-    let metadata = get_meta_data(&root_dir);
 
     // benchmarks/memory/{os}
-    let benchmark_dir = {
-        let mut path = root_dir.clone();
-        path.push("benchmarks/memory");
-        if let Some(os) = os {
-            path.push(os);
-        }
-        path
-    };
+    let benchmark_dir = root_dir
+        .join("benchmarks/memory")
+        .join(os.as_deref().unwrap_or("."));
 
     // Make the directory: benchmarks/memory/{os}
     fs::create_dir_all(&benchmark_dir).unwrap_or_else(|err| {
@@ -144,11 +133,7 @@ fn main() {
     });
 
     // benchmarks/memory/{os}/output.ndjson
-    let benchmark_output_path = {
-        let mut path = benchmark_dir.clone();
-        path.push("output.ndjson");
-        path
-    };
+    let benchmark_output_path = benchmark_dir.join("output.ndjson");
 
     if benchmark_output_path.exists() {
         fs::remove_file(&benchmark_output_path).unwrap_or_else(|err| {
@@ -156,32 +141,7 @@ fn main() {
         });
     }
 
-    for ref package_example in examples {
-        let (package_name, example) = {
-            // Split up the "package_name/example" string.
-            let parts: Vec<&str> = package_example.split('/').collect();
-            if let &[first, second] = &parts[..] {
-                (first, second)
-            } else {
-                eprintln!(
-                    "An example is expected take the form package_name/example: {package_example:?}"
-                );
-                process::exit(1);
-            }
-        };
-
-        let package = match metadata
-            .packages
-            .iter()
-            .find(|package| package.name == package_name)
-        {
-            Some(p) => p,
-            None => {
-                eprintln!("Unable to find the metadata for the package_name: {package_name:?}");
-                process::exit(1);
-            }
-        };
-
+    for ref example in examples {
         let mut benchmark_output = fs::OpenOptions::new()
             .read(true)
             .append(true)
@@ -191,12 +151,7 @@ fn main() {
 
         println!("[memory] Starting example {example:?}");
 
-        let mut run_example = Command::new("rustup")
-            .arg("run")
-            // +nightly is required for unstable options. This option is used by the CI to provide
-            // a pinned version number for nightly.
-            .arg(&toolchain)
-            .arg("cargo")
+        let mut run_example = Command::new("cargo")
             .arg("run")
             .arg("--example")
             .arg(example)
@@ -204,8 +159,6 @@ fn main() {
             .arg("bench")
             // The dhat-rs instrumentation is hidden behind the "benchmark_memory" feature in the
             // icu_benchmark_macros package.
-            .arg("--manifest-path")
-            .arg(&package.manifest_path)
             .arg("--features")
             .arg("icu_benchmark_macros/benchmark_memory")
             .arg("--features")
@@ -245,7 +198,7 @@ fn main() {
             eprintln!(
                 "The {example:?} example needs to be instrumented with icu_benchmark_macros."
             );
-            process::exit(1);
+            continue;
         }
         let (total, gmax, end) = parse_dhat_log(&dhat_log);
 
@@ -256,38 +209,25 @@ fn main() {
                  "value": bytes,
                  "biggerIsBetter": false
             })
-            .to_string()
         };
 
-        let output = format!(
+        write!(
+            benchmark_output,
             "{}\n{}\n{}\n",
-            write_json(total, format!("{package_example} – Total Heap Allocations")),
-            write_json(
-                gmax,
-                format!("{package_example} – Heap at Global Memory Max")
-            ),
-            write_json(
-                end,
-                format!("{package_example} – Heap at End of Program Execution")
-            ),
+            write_json(total, format!("{example} – Total Heap Allocations")),
+            write_json(gmax, format!("{example} – Heap at Global Memory Max")),
+            write_json(end, format!("{example} – Heap at End of Program Execution")),
+        )
+        .expect("Unable to write out the results.");
+
+        let dhat_destination = benchmark_dir.join(format!("{example}-dhat-heap.json"));
+
+        let dhat_source = Path::new("dhat-heap.json");
+
+        assert!(
+            dhat_source.exists(),
+            "The dhat-heap.json file did not exist."
         );
-
-        benchmark_output
-            .write_all(output.as_bytes())
-            .expect("Unable to write out the results.");
-
-        let dhat_destination = {
-            let mut path = benchmark_dir.clone();
-            path.push(format!("{example}-dhat-heap.json"));
-            path
-        };
-
-        let dhat_source = {
-            let mut path = root_dir.clone();
-            path.push("dhat-heap.json");
-            assert!(path.exists(), "The dhat-heap.json file did not exist.");
-            path
-        };
 
         fs::rename(dhat_source, &dhat_destination).expect("Unable to move the dhat-heap.json");
 

@@ -19,7 +19,7 @@ export class ICU4XTimeZoneFormatter {
 
    * Uses localized GMT as the fallback format.
 
-   * See the {@link https://docs.rs/icu/latest/icu/datetime/time_zone/struct.TimeZoneFormatter.html#method.try_new_unstable Rust documentation for `try_new_unstable`} for more information.
+   * See the {@link https://docs.rs/icu/latest/icu/datetime/time_zone/struct.TimeZoneFormatter.html#method.try_new Rust documentation for `try_new`} for more information.
 
    * Additional information: {@link https://docs.rs/icu/latest/icu/datetime/time_zone/enum.FallbackFormat.html 1}
    * @throws {@link FFIError}<{@link ICU4XError}>
@@ -32,7 +32,7 @@ export class ICU4XTimeZoneFormatter {
 
    * Uses ISO-8601 as the fallback format.
 
-   * See the {@link https://docs.rs/icu/latest/icu/datetime/time_zone/struct.TimeZoneFormatter.html#method.try_new_unstable Rust documentation for `try_new_unstable`} for more information.
+   * See the {@link https://docs.rs/icu/latest/icu/datetime/time_zone/struct.TimeZoneFormatter.html#method.try_new Rust documentation for `try_new`} for more information.
 
    * Additional information: {@link https://docs.rs/icu/latest/icu/datetime/time_zone/enum.FallbackFormat.html 1}
    * @throws {@link FFIError}<{@link ICU4XError}>
@@ -43,7 +43,7 @@ export class ICU4XTimeZoneFormatter {
 
    * Loads generic non-location long format. Example: "Pacific Time"
 
-   * See the {@link https://docs.rs/icu/latest/icu/datetime/time_zone/struct.TimeZoneFormatter.html#method.load_generic_non_location_long Rust documentation for `load_generic_non_location_long`} for more information.
+   * See the {@link https://docs.rs/icu/latest/icu/datetime/time_zone/struct.TimeZoneFormatter.html#method.include_generic_non_location_long Rust documentation for `include_generic_non_location_long`} for more information.
    * @throws {@link FFIError}<{@link ICU4XError}>
    */
   load_generic_non_location_long(provider: ICU4XDataProvider): void | never;
@@ -52,7 +52,7 @@ export class ICU4XTimeZoneFormatter {
 
    * Loads generic non-location short format. Example: "PT"
 
-   * See the {@link https://docs.rs/icu/latest/icu/datetime/time_zone/struct.TimeZoneFormatter.html#method.load_generic_non_location_short Rust documentation for `load_generic_non_location_short`} for more information.
+   * See the {@link https://docs.rs/icu/latest/icu/datetime/time_zone/struct.TimeZoneFormatter.html#method.include_generic_non_location_short Rust documentation for `include_generic_non_location_short`} for more information.
    * @throws {@link FFIError}<{@link ICU4XError}>
    */
   load_generic_non_location_short(provider: ICU4XDataProvider): void | never;
@@ -61,7 +61,7 @@ export class ICU4XTimeZoneFormatter {
 
    * Loads specific non-location long format. Example: "Pacific Standard Time"
 
-   * See the {@link https://docs.rs/icu/latest/icu/datetime/time_zone/struct.TimeZoneFormatter.html#method.load_specific_non_location_long Rust documentation for `load_specific_non_location_long`} for more information.
+   * See the {@link https://docs.rs/icu/latest/icu/datetime/time_zone/struct.TimeZoneFormatter.html#method.include_specific_non_location_long Rust documentation for `include_specific_non_location_long`} for more information.
    * @throws {@link FFIError}<{@link ICU4XError}>
    */
   load_specific_non_location_long(provider: ICU4XDataProvider): void | never;
@@ -70,7 +70,7 @@ export class ICU4XTimeZoneFormatter {
 
    * Loads specific non-location short format. Example: "PST"
 
-   * See the {@link https://docs.rs/icu/latest/icu/datetime/time_zone/struct.TimeZoneFormatter.html#method.load_specific_non_location_short Rust documentation for `load_specific_non_location_short`} for more information.
+   * See the {@link https://docs.rs/icu/latest/icu/datetime/time_zone/struct.TimeZoneFormatter.html#method.include_specific_non_location_short Rust documentation for `include_specific_non_location_short`} for more information.
    * @throws {@link FFIError}<{@link ICU4XError}>
    */
   load_specific_non_location_short(provider: ICU4XDataProvider): void | never;
@@ -79,7 +79,7 @@ export class ICU4XTimeZoneFormatter {
 
    * Loads generic location format. Example: "Los Angeles Time"
 
-   * See the {@link https://docs.rs/icu/latest/icu/datetime/time_zone/struct.TimeZoneFormatter.html#method.load_generic_location_format Rust documentation for `load_generic_location_format`} for more information.
+   * See the {@link https://docs.rs/icu/latest/icu/datetime/time_zone/struct.TimeZoneFormatter.html#method.include_generic_location_format Rust documentation for `include_generic_location_format`} for more information.
    * @throws {@link FFIError}<{@link ICU4XError}>
    */
   load_generic_location_format(provider: ICU4XDataProvider): void | never;
@@ -88,16 +88,16 @@ export class ICU4XTimeZoneFormatter {
 
    * Loads localized GMT format. Example: "GMT-07:00"
 
-   * See the {@link https://docs.rs/icu/latest/icu/datetime/time_zone/struct.TimeZoneFormatter.html#method.load_localized_gmt_format Rust documentation for `load_localized_gmt_format`} for more information.
+   * See the {@link https://docs.rs/icu/latest/icu/datetime/time_zone/struct.TimeZoneFormatter.html#method.include_localized_gmt_format Rust documentation for `include_localized_gmt_format`} for more information.
    * @throws {@link FFIError}<{@link ICU4XError}>
    */
-  load_localized_gmt_format(): void | never;
+  include_localized_gmt_format(): void | never;
 
   /**
 
    * Loads ISO-8601 format. Example: "-07:00"
 
-   * See the {@link https://docs.rs/icu/latest/icu/datetime/time_zone/struct.TimeZoneFormatter.html#method.load_iso_8601_format Rust documentation for `load_iso_8601_format`} for more information.
+   * See the {@link https://docs.rs/icu/latest/icu/datetime/time_zone/struct.TimeZoneFormatter.html#method.include_iso_8601_format Rust documentation for `include_iso_8601_format`} for more information.
    * @throws {@link FFIError}<{@link ICU4XError}>
    */
   load_iso_8601_format(options: ICU4XIsoTimeZoneOptions): void | never;

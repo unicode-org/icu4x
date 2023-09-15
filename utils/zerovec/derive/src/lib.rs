@@ -5,8 +5,7 @@
 //! Proc macros for generating `ULE`, `VarULE` impls and types for the `zerovec` crate
 
 use proc_macro::TokenStream;
-use syn::{parse_macro_input, AttributeArgs, DeriveInput};
-
+use syn::{parse_macro_input, DeriveInput, Ident};
 mod make_ule;
 mod make_varule;
 pub(crate) mod ule;
@@ -31,7 +30,7 @@ pub fn varule_derive(input: TokenStream) -> TokenStream {
 #[proc_macro_attribute]
 pub fn make_ule(attr: TokenStream, item: TokenStream) -> TokenStream {
     let input = parse_macro_input!(item as DeriveInput);
-    let attr = parse_macro_input!(attr as AttributeArgs);
+    let attr = parse_macro_input!(attr as Ident);
     TokenStream::from(make_ule::make_ule_impl(attr, input))
 }
 
@@ -39,6 +38,6 @@ pub fn make_ule(attr: TokenStream, item: TokenStream) -> TokenStream {
 #[proc_macro_attribute]
 pub fn make_varule(attr: TokenStream, item: TokenStream) -> TokenStream {
     let input = parse_macro_input!(item as DeriveInput);
-    let attr = parse_macro_input!(attr as AttributeArgs);
+    let attr = parse_macro_input!(attr as Ident);
     TokenStream::from(make_varule::make_varule_impl(attr, input))
 }

@@ -175,7 +175,7 @@ macro_rules! test_bake {
         let bake = $crate::Bake::bake(expr, &env).to_string();
         let expected_bake = $crate::quote!($expr).to_string();
         $(
-            let expected_bake = expected_bake.replace("crate", concat!(":: ", stringify!($krate)));
+            let expected_bake = expected_bake.replace("crate", stringify!($krate));
         )?
         assert_eq!(bake, expected_bake);
 

@@ -9,25 +9,27 @@
 //! command-line utility.
 //!
 //!
-//! Also see our [datagen tutorial](https://github.com/unicode-org/icu4x/blob/main/docs/tutorials/data_management.md)
+//! Also see our [datagen tutorial](https://github.com/unicode-org/icu4x/blob/main/docs/tutorials/data_management.md).
 //!
 //! # Examples
 //!
-//! ## `build.rs`
+//! ## Rust API
 //!
 //! ```no_run
+//! use icu_datagen::blob_exporter::*;
 //! use icu_datagen::prelude::*;
-//! use icu_provider_blob::export::*;
 //! use std::fs::File;
 //!
-//! fn main() {
-//!     DatagenProvider::default()
-//!         .export(
-//!             [icu::list::provider::AndListV1Marker::KEY].into_iter().collect(),
-//!             BlobExporter::new_with_sink(Box::new(File::create("data.postcard").unwrap())),
-//!         )
-//!         .unwrap();
-//! }
+//! DatagenDriver::new()
+//!     .with_keys([icu::list::provider::AndListV1Marker::KEY])
+//!     .with_all_locales()
+//!     .export(
+//!         &DatagenProvider::new_latest_tested(),
+//!         BlobExporter::new_with_sink(Box::new(
+//!             File::create("data.postcard").unwrap(),
+//!         )),
+//!     )
+//!     .unwrap();
 //! ```
 //!
 //! ## Command line
@@ -41,13 +43,82 @@
 //! Once the tool is installed, you can invoke it like this:
 //!
 //! ```bash
-//! $ icu4x-datagen \
-//! >    --keys all \
-//! >    --locales de en-AU \
-//! >    --format blob \
-//! >    --out data.postcard
+//! $ icu4x-datagen --keys all --locales de en-AU --format blob --out data.postcard
 //! ```
+//!
+//! For complex invocations, the CLI also supports configuration files:
+//!
+//! ```bash
+//! $ icu4x-datagen config.json
+//! ```
+//!
+//! <details><summary><code>config.json</code></summary>
+//! <pre><code>{
+//!   "keys": {
+//!     "explicit": [
+//!       "core/helloworld@1",
+//!       "fallback/likelysubtags@1",
+//!       "fallback/parents@1",
+//!       "fallback/supplement/co@1"
+//!     ]
+//!   },
+//!   "fallback": "runtimeManual",
+//!   "locales": "all",
+//!   "segmenterModels": ["burmesedict"],
+//!   "additionalCollations": ["big5han"],<br/>
+//!   "cldr": "latest",
+//!   "icuExport": "73.1",
+//!   "segmenterLstm": "none",<br/>
+//!   "export": {
+//!     "blob": {
+//!       "path": "blob.postcard"
+//!     }
+//!   },
+//!   "overwrite": true
+//! }
+//! </code></pre>
+//! </details>
+//!
 //! More details can be found by running `--help`.
+//!
+//! # Features
+//!
+//! This crate has a lot of dependencies, some of which are not required for all operating modes. These default Cargo features
+//! can be disabled to reduce dependencies:
+//! * `baked_exporter`
+//!   * enables the [`baked_exporter`] module
+//!   * enables the `--format mod` CLI argument
+//! * `blob_exporter`
+//!   * enables the [`blob_exporter`] module, a reexport of [`icu_provider_blob::export`]
+//!   * enables the `--format blob` CLI argument
+//! * `fs_exporter`
+//!   * enables the [`fs_exporter`] module, a reexport of [`icu_provider_fs::export`]
+//!   * enables the `--format dir` CLI argument
+//! * `networking`
+//!   * enables methods on [`DatagenProvider`] that fetch source data from the network
+//!   * enables the `--cldr-tag`, `--icu-export-tag`, and `--segmenter-lstm-tag` CLI arguments that download data
+//! * `rayon`
+//!   * enables parallelism during export
+//! * `use_wasm` / `use_icu4c`
+//!   * see the documentation on [`icu_codepointtrie_builder`](icu_codepointtrie_builder#build-configuration)
+//! * `bin`
+//!   * required by the CLI and enabled by default to make `cargo install` work
+//! * `legacy_api`
+//!   * enables the deprecated pre-1.3 API
+//!   * enabled by default for semver stability
+//!   * will be removed in 2.0.
+//!
+//! Experimental unstable ICU4X components are behind features which are not enabled by default. Note that these features
+//! affect the behaviour of [`all_keys`]:
+//! * `icu_compactdecimal`
+//! * `icu_displaynames`
+//! * `icu_relativetime`
+//! * `icu_singlenumberformatter`
+//! * `icu_transliterate`
+//! * `icu_unitsconversion`
+//! * ...
+//!
+//! The meta-feature `experimental_components` is available to activate all experimental components.
 
 #![cfg_attr(
     not(test),
@@ -64,25 +135,32 @@
 )]
 #![warn(missing_docs)]
 
-mod error;
+mod driver;
+mod provider;
 mod registry;
 mod source;
-#[cfg(test)]
-mod testutil;
 mod transform;
 
-pub use error::{is_missing_cldr_error, is_missing_icuexport_error, is_missing_tzif_error};
-pub use registry::{all_keys, all_keys_with_experimental, deserialize_and_discard};
-pub use source::SourceData;
+pub use driver::DatagenDriver;
+pub use provider::DatagenProvider;
+#[doc(hidden)] // for CLI serde
+pub use provider::TrieType;
+#[allow(deprecated)] // ugh
+pub use registry::*;
 
-#[cfg(feature = "provider_baked")]
+#[cfg(feature = "baked_exporter")]
 pub mod baked_exporter;
-pub mod options;
+#[cfg(feature = "blob_exporter")]
+pub use icu_provider_blob::export as blob_exporter;
+#[cfg(feature = "fs_exporter")]
+pub use icu_provider_fs::export as fs_exporter;
 
 /// A prelude for using the datagen API
 pub mod prelude {
     #[doc(no_inline)]
-    pub use crate::{options, DatagenProvider, SourceData};
+    pub use crate::{
+        CollationHanDatabase, CoverageLevel, DatagenDriver, DatagenProvider, FallbackMode,
+    };
     #[doc(no_inline)]
     pub use icu_locid::{langid, LanguageIdentifier};
     #[doc(no_inline)]
@@ -90,151 +168,160 @@ pub mod prelude {
 
     // SEMVER GRAVEYARD
     #[cfg(feature = "legacy_api")]
-    #[doc(hidden)]
-    pub use crate::options::{CollationHanDatabase, CoverageLevel};
-    #[cfg(feature = "legacy_api")]
     #[allow(deprecated)]
     #[doc(hidden)]
-    pub use crate::{syntax, BakedOptions, CldrLocaleSubset, Out};
+    pub use crate::{syntax, BakedOptions, CldrLocaleSubset, Out, SourceData};
 }
 
-use icu_provider::datagen::*;
 use icu_provider::prelude::*;
-use memchr::memmem;
-use std::collections::HashSet;
 use std::path::Path;
 
-/// [`DataProvider`] backed by [`SourceData`]
+#[cfg(feature = "rayon")]
+pub(crate) use rayon::prelude as rayon_prelude;
+
+#[cfg(not(feature = "rayon"))]
+pub(crate) mod rayon_prelude {
+    pub trait IntoParallelIterator: IntoIterator + Sized {
+        fn into_par_iter(self) -> <Self as IntoIterator>::IntoIter {
+            self.into_iter()
+        }
+    }
+    impl<T: IntoIterator> IntoParallelIterator for T {}
+}
+
+/// Defines how fallback will apply to the generated data.
 ///
-/// If `source` does not contain a specific data source, `DataProvider::load` will
-/// error ([`is_missing_cldr_error`](crate::is_missing_cldr_error) /
-/// [`is_missing_icuexport_error`](crate::is_missing_icuexport_error)) if the data is
-/// required for that key.
-#[derive(Debug, Clone)]
-#[cfg_attr(feature = "networking", derive(Default))]
-#[cfg_attr(not(doc), allow(clippy::exhaustive_structs))]
-#[cfg_attr(doc, non_exhaustive)]
-pub struct DatagenProvider {
-    #[doc(hidden)]
-    pub source: SourceData,
+/// If in doubt, use [`FallbackMode::PreferredForExporter`], which selects the best mode for your
+/// chosen data provider.
+///
+/// # Fallback Mode Comparison
+///
+/// The modes differ primarily in their approaches to runtime fallback and data size.
+///
+/// | Mode | Runtime Fallback | Data Size |
+/// |---|---|---|
+/// | [`Runtime`] | Required, Automatic | Smallest |
+/// | [`RuntimeManual`] | Required, Manual | Smallest |
+/// | [`Preresolved`] | Unsupported | Small |
+/// | [`Hybrid`] | Optional | Medium |
+///
+/// If you are not 100% certain of the closed set of locales you need at runtime, you should
+/// use a provider with runtime fallback enabled.
+///
+/// [`Runtime`]: FallbackMode::Runtime
+/// [`RuntimeManual`]: FallbackMode::RuntimeManual
+/// [`Preresolved`]: FallbackMode::Preresolved
+/// [`Hybrid`]: FallbackMode::Hybrid
+#[derive(Debug, Copy, Clone, PartialEq, Eq, Default, serde::Serialize, serde::Deserialize)]
+#[non_exhaustive]
+#[serde(rename_all = "camelCase")]
+pub enum FallbackMode {
+    /// Selects the fallback mode based on [`DataExporter::supports_built_in_fallback()`](
+    /// icu_provider::datagen::DataExporter::supports_built_in_fallback()), resolving to either
+    /// [`Runtime`] or [`Hybrid`].
+    ///
+    /// [`Runtime`]: Self::Runtime
+    /// [`Hybrid`]: Self::Hybrid
+    #[default]
+    PreferredForExporter,
+    /// This mode generates the minimal set of locales that cover the requested locales when
+    /// fallback is used at runtime. For example, if "en" and "en-US" are both requested but
+    /// they contain the same value, only "en" will be included, since "en-US" falls back to
+    /// "en" at runtime.
+    ///
+    /// If an explicit list of locales is used, this mode includes all ancestors and descendants
+    /// (usually regional variants) of the explicitly listed locales. For example, if "pt-PT" is
+    /// requested, then "pt", "pt-PT", and children like "pt-MO" will be included. Note that the
+    /// children of "pt-PT" usually inherit from it and therefore don't take up a significant
+    /// amount of space in the data file.
+    ///
+    /// This mode is only supported with the baked data provider, and it builds fallback logic
+    /// into the generated code. To use this mode with other providers that don't bundle fallback
+    /// logic, use [`FallbackMode::RuntimeManual`] or [`FallbackMode::Hybrid`].
+    ///
+    /// This is the default fallback mode for the baked provider.
+    Runtime,
+    /// Same as [`FallbackMode::Runtime`] except that the fallback logic is not included in the
+    /// generated code. It must be enabled manually with a [`LocaleFallbackProvider`].
+    ///
+    /// This mode is supported on all data provider implementations.
+    ///
+    /// [`LocaleFallbackProvider`]: icu_provider_adapters::fallback::LocaleFallbackProvider
+    RuntimeManual,
+    /// This mode generates data for exactly the supplied locales. If data doesn't exist for a
+    /// locale, fallback will be performed and the fallback value will be exported.
+    ///
+    /// Requires using an explicit list of locales.
+    ///
+    /// Note: in data exporters that deduplicate values (such as `BakedExporter` and
+    /// `BlobDataExporter`), the impact on data size as compared to [`FallbackMode::Runtime`]
+    /// is limited to the pointers in the explicitly listed locales.
+    ///
+    /// Data generated in this mode can be used without runtime fallback and guarantees that all
+    /// locales are present. If you wish to also support locales that were not explicitly listed
+    /// with runtime fallback, see [`FallbackMode::Hybrid`].
+    Preresolved,
+    /// This mode passes through CLDR data without performing locale deduplication.
+    ///
+    /// If an explicit list of locales is used, this mode includes all ancestors and descendants
+    /// (usually regional variants) of the explicitly listed locales. For example, if "pt-PT" is
+    /// requested, then "pt", "pt-PT", and children like "pt-MO" will be included.
+    ///
+    /// Note: in data exporters that deduplicate values (such as `BakedExporter` and
+    /// `BlobDataExporter`), the impact on data size as compared to [`FallbackMode::Runtime`]
+    /// is limited to the pointers in the explicitly listed locales.
+    ///
+    /// Data generated in this mode is suitable for use with or without runtime fallback. To
+    /// enable runtime fallback, use a [`LocaleFallbackProvider`].
+    ///
+    /// This is the default fallback mode for the blob and filesystem providers.
+    ///
+    /// [`LocaleFallbackProvider`]: icu_provider_adapters::fallback::LocaleFallbackProvider
+    Hybrid,
 }
 
-impl DatagenProvider {
-    /// Creates a new data provider with the given `source` and `options`.
-    ///
-    /// Fails if `options` is using CLDR locale sets and `source` does not contain CLDR data.
-    pub fn try_new(options: options::Options, mut source: SourceData) -> Result<Self, DataError> {
-        if source.options != Default::default() {
-            log::warn!("Trie type, collation database, or collations set on SourceData. These will be ignored in favor of options.");
+/// Specifies the collation Han database to use.
+///
+/// Unihan is more precise but significantly increases data size. See
+/// <https://github.com/unicode-org/icu/blob/main/docs/userguide/icu_data/buildtool.md#collation-ucadata>
+#[derive(Debug, Copy, Clone, PartialEq, Eq, Default, serde::Serialize, serde::Deserialize)]
+#[non_exhaustive]
+pub enum CollationHanDatabase {
+    /// Implicit
+    #[serde(rename = "implicit")]
+    #[default]
+    Implicit,
+    /// Unihan
+    #[serde(rename = "unihan")]
+    Unihan,
+}
+
+impl std::fmt::Display for CollationHanDatabase {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> Result<(), std::fmt::Error> {
+        match self {
+            CollationHanDatabase::Implicit => write!(f, "implicithan"),
+            CollationHanDatabase::Unihan => write!(f, "unihan"),
         }
-
-        source.options = options;
-
-        source.options.locales = match core::mem::take(&mut source.options.locales) {
-            options::LocaleInclude::None => options::LocaleInclude::Explicit(Default::default()),
-            options::LocaleInclude::CldrSet(levels) => options::LocaleInclude::Explicit(
-                source
-                    .locales(levels.iter().copied().collect::<Vec<_>>().as_slice())?
-                    .into_iter()
-                    .collect(),
-            ),
-            s => s,
-        };
-
-        Ok(Self { source })
-    }
-
-    #[cfg(test)]
-    pub fn for_test() -> Self {
-        // Singleton so that all instantiations share the same cache.
-        lazy_static::lazy_static! {
-            static ref TEST_PROVIDER: DatagenProvider = DatagenProvider {
-                // This is equivalent to `latest_tested` for the files defined in
-                // `tools/testdata-scripts/globs.rs.data`.
-                source: SourceData::offline()
-                    .with_cldr(repodata::paths::cldr(), Default::default()).unwrap()
-                    .with_icuexport(repodata::paths::icuexport()).unwrap()
-                    .with_segmenter_lstm(repodata::paths::lstm()).unwrap()
-                    .with_tzif(repodata::paths::tzif()).unwrap(),
-            };
-        }
-        TEST_PROVIDER.clone()
-    }
-
-    /// Exports data for the set of keys to the given exporter.
-    ///
-    /// See
-    /// [`BlobExporter`](icu_provider_blob::export),
-    /// [`FileSystemExporter`](icu_provider_fs::export),
-    /// and [`BakedExporter`](crate::baked_exporter).
-    pub fn export(
-        &self,
-        keys: HashSet<DataKey>,
-        mut exporter: impl DataExporter,
-    ) -> Result<(), DataError> {
-        if keys.is_empty() {
-            log::warn!("No keys selected");
-        }
-
-        // Avoid multiple monomorphizations
-        fn internal(
-            provider: &DatagenProvider,
-            keys: HashSet<DataKey>,
-            exporter: &mut dyn DataExporter,
-        ) -> Result<(), DataError> {
-            use rayon::prelude::*;
-
-            keys.into_par_iter().try_for_each(|key| {
-                provider
-                    .supported_locales_for_key(key)
-                    .map_err(|e| e.with_key(key))?
-                    .into_par_iter()
-                    .try_for_each(|locale| {
-                        let req = DataRequest {
-                            locale: &locale,
-                            metadata: Default::default(),
-                        };
-                        let payload = provider
-                            .load_data(key, req)
-                            .and_then(DataResponse::take_payload)
-                            .map_err(|e| e.with_req(key, req))?;
-                        log::trace!("Writing payload: {key}/{locale}");
-                        exporter
-                            .put_payload(key, &locale, &payload)
-                            .map_err(|e| e.with_req(key, req))
-                    })?;
-
-                log::info!("Writing key: {key}");
-                exporter.flush(key).map_err(|e| e.with_key(key))
-            })?;
-
-            exporter.close()
-        }
-        internal(self, keys, &mut exporter)
     }
 }
 
-/// Parses a human-readable key identifier into a [`DataKey`].
-//  Supports the hello world key
-/// # Example
-/// ```
-/// # use icu_provider::KeyedDataMarker;
-/// assert_eq!(
-///     icu_datagen::key("list/and@1"),
-///     Some(icu::list::provider::AndListV1Marker::KEY),
-/// );
-/// ```
-pub fn key<S: AsRef<str>>(string: S) -> Option<DataKey> {
-    lazy_static::lazy_static! {
-        static ref LOOKUP: std::collections::HashMap<&'static str, DataKey> = all_keys_with_experimental()
-                    .into_iter()
-                    .chain(std::iter::once(
-                        icu_provider::hello_world::HelloWorldV1Marker::KEY,
-                    ))
-                    .map(|k| (k.path().get(), k))
-                    .collect();
-    }
-    LOOKUP.get(string.as_ref()).copied()
+/// A language's CLDR coverage level.
+#[derive(Debug, Copy, Clone, PartialEq, Eq, serde::Deserialize, serde::Serialize, Hash)]
+#[non_exhaustive]
+#[serde(rename_all = "camelCase")]
+pub enum CoverageLevel {
+    /// Locales listed as modern coverage targets by the CLDR subcomittee.
+    ///
+    /// This is the highest level of coverage.
+    Modern,
+    /// Locales listed as moderate coverage targets by the CLDR subcomittee.
+    ///
+    /// This is a medium level of coverage.
+    Moderate,
+    /// Locales listed as basic coverage targets by the CLDR subcomittee.
+    ///
+    /// This is the lowest level of coverage.
+    Basic,
 }
 
 /// Parses a list of human-readable key identifiers and returns a
@@ -284,6 +371,8 @@ pub fn keys<S: AsRef<str>>(strings: &[S]) -> Vec<DataKey> {
 /// # Ok(())
 /// # }
 /// ```
+#[deprecated(since = "1.3.0", note = "use Rust code")]
+#[cfg(feature = "legacy_api")]
 pub fn keys_from_file<P: AsRef<Path>>(path: P) -> std::io::Result<Vec<DataKey>> {
     use std::io::{BufRead, BufReader};
     BufReader::new(std::fs::File::open(path.as_ref())?)
@@ -292,10 +381,13 @@ pub fn keys_from_file<P: AsRef<Path>>(path: P) -> std::io::Result<Vec<DataKey>> 
         .collect()
 }
 
-/// Parses a compiled binary and returns a list of [`DataKey`]s used by it.
+/// Parses a compiled binary and returns a list of [`DataKey`]s that it uses *at runtime*.
 ///
-/// Unknown key names are ignored.
-//  Supports the hello world key
+/// This function is intended to be used for binaries that use `AnyProvider` or `BufferProvider`,
+/// for which the compiler cannot remove unused data. Using this function on a binary that only
+/// uses compiled data (through the `compiled_data` feature or manual baked data) will not return
+/// any keys, as the keys only exist in the type system.
+///
 /// # Example
 ///
 /// #### build.rs
@@ -313,16 +405,19 @@ pub fn keys_from_file<P: AsRef<Path>>(path: P) -> std::io::Result<Vec<DataKey>> 
 /// # Ok(())
 /// # }
 /// ```
+//  Supports the hello world key
 pub fn keys_from_bin<P: AsRef<Path>>(path: P) -> std::io::Result<Vec<DataKey>> {
+    use memchr::memmem::*;
+
     let file = std::fs::read(path.as_ref())?;
     let file = file.as_slice();
 
     const LEADING_TAG: &[u8] = icu_provider::leading_tag!().as_bytes();
     const TRAILING_TAG: &[u8] = icu_provider::trailing_tag!().as_bytes();
 
-    let trailing_tag = memmem::Finder::new(TRAILING_TAG);
+    let trailing_tag = Finder::new(TRAILING_TAG);
 
-    let mut result: Vec<DataKey> = memmem::find_iter(file, LEADING_TAG)
+    let mut result: Vec<DataKey> = find_iter(file, LEADING_TAG)
         .map(|tag_position| tag_position + LEADING_TAG.len())
         .map(|key_start| &file[key_start..])
         .filter_map(move |key_fragment| {
@@ -341,13 +436,15 @@ pub fn keys_from_bin<P: AsRef<Path>>(path: P) -> std::io::Result<Vec<DataKey>> {
     Ok(result)
 }
 
-/// Requires `legacy_api` Cargo feature
+#[deprecated(since = "1.3.0", note = "use `DatagenDriver`")]
+#[allow(deprecated)]
+#[cfg(feature = "legacy_api")]
+pub use provider::SourceData;
+
+/// The output format for [`datagen`].
 ///
-/// The output format.
-#[deprecated(
-    since = "1.3.0",
-    note = "use `DatagenProvider::export` with self-constructed `DataExporter`s"
-)]
+/// ✨ *Enabled with the `legacy_api` Cargo feature.*
+#[deprecated(since = "1.3.0", note = "use `DatagenDriver`")]
 #[non_exhaustive]
 #[cfg(feature = "legacy_api")]
 pub enum Out {
@@ -377,8 +474,8 @@ pub enum Out {
     Module {
         mod_directory: std::path::PathBuf,
         pretty: bool,
-        insert_feature_gates: bool,
         use_separate_crates: bool,
+        insert_feature_gates: bool,
     },
 }
 
@@ -412,8 +509,8 @@ impl core::fmt::Debug for Out {
             Self::Module {
                 mod_directory,
                 pretty,
-                insert_feature_gates,
                 use_separate_crates,
+                insert_feature_gates,
             } => f
                 .debug_struct("Module")
                 .field("mod_directory", mod_directory)
@@ -425,10 +522,12 @@ impl core::fmt::Debug for Out {
     }
 }
 
-#[deprecated(since = "1.3.0", note = "use `DatagenProvider::export`")]
+#[deprecated(since = "1.3.0", note = "use `DatagenDriver`")]
 #[cfg(feature = "legacy_api")]
 #[allow(deprecated)]
-/// Requires `legacy_api` Cargo feature
+/// Runs data generation
+///
+/// ✨ *Enabled with the `legacy_api` Cargo feature.*
 ///
 /// The argument are used as follows:
 /// * `locales`: If this is present, only locales that are either `und` or
@@ -445,99 +544,89 @@ pub fn datagen(
     source: &SourceData,
     outs: Vec<Out>,
 ) -> Result<(), DataError> {
-    use options::*;
-    let provider = DatagenProvider::try_new(
-        Options {
-            locales: locales
-                .map(|ls| {
-                    LocaleInclude::Explicit(
-                        ls.iter()
-                            .cloned()
-                            .chain(core::iter::once(icu_locid::LanguageIdentifier::UND))
-                            .collect(),
-                    )
-                })
-                .unwrap_or(options::LocaleInclude::All),
-            ..source.options.clone()
-        },
-        {
-            let mut source = source.clone();
-            source.options = Default::default();
-            source
-        },
-    )?;
-
-    struct MultiExporter(Vec<Box<dyn DataExporter>>);
-
-    impl DataExporter for MultiExporter {
-        fn put_payload(
-            &self,
-            key: DataKey,
-            locale: &DataLocale,
-            payload: &DataPayload<ExportMarker>,
-        ) -> Result<(), DataError> {
-            self.0
-                .iter()
-                .try_for_each(|e| e.put_payload(key, locale, payload))
-        }
-
-        fn flush(&self, key: DataKey) -> Result<(), DataError> {
-            self.0.iter().try_for_each(|e| e.flush(key))
-        }
-
-        fn close(&mut self) -> Result<(), DataError> {
-            self.0.iter_mut().try_for_each(|e| e.close())
-        }
+    let exporter = DatagenDriver::new()
+        .with_keys(keys.iter().cloned())
+        .with_fallback_mode(FallbackMode::Hybrid)
+        .with_additional_collations(source.collations.clone());
+    match locales {
+        Some(locales) => exporter
+            .with_locales(
+                locales
+                    .iter()
+                    .cloned()
+                    .chain([icu_locid::LanguageIdentifier::UND]),
+            )
+            .with_segmenter_models({
+                let mut models = vec![];
+                for locale in locales {
+                    let locale = locale.into();
+                    if let Some(model) =
+                        transform::segmenter::lstm::data_locale_to_model_name(&locale)
+                    {
+                        models.push(model.into());
+                    }
+                    if let Some(model) =
+                        transform::segmenter::dictionary::data_locale_to_model_name(&locale)
+                    {
+                        models.push(model.into());
+                    }
+                }
+                models
+            }),
+        _ => exporter.with_all_locales(),
     }
-
-    provider.export(
-        keys.iter().cloned().collect(),
-        MultiExporter(
+    .export(
+        &DatagenProvider {
+            source: source.clone(),
+        },
+        icu_provider::datagen::MultiExporter::new(
             outs.into_iter()
-                .map(|out| -> Result<Box<dyn DataExporter>, DataError> {
-                    use baked_exporter::*;
-                    use icu_provider_blob::export::*;
-                    use icu_provider_fs::export::*;
+                .map(
+                    |out| -> Result<Box<dyn icu_provider::datagen::DataExporter>, DataError> {
+                        use baked_exporter::*;
+                        use icu_provider_blob::export::*;
+                        use icu_provider_fs::export::*;
 
-                    Ok(match out {
-                        Out::Fs {
-                            output_path,
-                            serializer,
-                            overwrite,
-                            fingerprint,
-                        } => {
-                            let mut options = ExporterOptions::default();
-                            options.root = output_path;
-                            if overwrite {
-                                options.overwrite = OverwriteOption::RemoveAndReplace
+                        Ok(match out {
+                            Out::Fs {
+                                output_path,
+                                serializer,
+                                overwrite,
+                                fingerprint,
+                            } => {
+                                let mut options = ExporterOptions::default();
+                                options.root = output_path;
+                                if overwrite {
+                                    options.overwrite = OverwriteOption::RemoveAndReplace
+                                }
+                                options.fingerprint = fingerprint;
+                                Box::new(FilesystemExporter::try_new(serializer, options)?)
                             }
-                            options.fingerprint = fingerprint;
-                            Box::new(FilesystemExporter::try_new(serializer, options)?)
-                        }
-                        Out::Blob(write) => Box::new(BlobExporter::new_with_sink(write)),
-                        Out::Baked {
-                            mod_directory,
-                            options,
-                        } => Box::new(BakedExporter::new(mod_directory, options)?),
-                        #[allow(deprecated)]
-                        Out::Module {
-                            mod_directory,
-                            pretty,
-                            insert_feature_gates,
-                            use_separate_crates,
-                        } => Box::new(BakedExporter::new(
-                            mod_directory,
-                            Options {
+                            Out::Blob(write) => Box::new(BlobExporter::new_with_sink(write)),
+                            Out::Baked {
+                                mod_directory,
+                                options,
+                            } => Box::new(BakedExporter::new(mod_directory, options)?),
+                            #[allow(deprecated)]
+                            Out::Module {
+                                mod_directory,
                                 pretty,
                                 insert_feature_gates,
                                 use_separate_crates,
-                                // Note: overwrite behavior was `true` in 1.0 but `false` in 1.1;
-                                // 1.1.2 made it an option in Options.
-                                overwrite: false,
-                            },
-                        )?),
-                    })
-                })
+                            } => Box::new(BakedExporter::new(
+                                mod_directory,
+                                Options {
+                                    pretty,
+                                    insert_feature_gates,
+                                    use_separate_crates,
+                                    // Note: overwrite behavior was `true` in 1.0 but `false` in 1.1;
+                                    // 1.1.2 made it an option in Options.
+                                    overwrite: false,
+                                },
+                            )?),
+                        })
+                    },
+                )
                 .collect::<Result<_, _>>()?,
         ),
     )
@@ -561,11 +650,13 @@ fn test_keys() {
 }
 
 #[test]
+#[cfg(feature = "legacy_api")]
 fn test_keys_from_file() {
+    #![allow(deprecated)]
     assert_eq!(
         keys_from_file(concat!(
             env!("CARGO_MANIFEST_DIR"),
-            "/tests/data/work_log+keys.txt"
+            "/tests/data/tutorial_buffer+keys.txt"
         ))
         .unwrap(),
         vec![
@@ -581,13 +672,12 @@ fn test_keys_from_file() {
 
 #[test]
 fn test_keys_from_bin() {
-    // File obtained by changing work_log.rs to use `try_new_with_buffer_provider` & `icu_testdata::small_buffer`
-    // and running `cargo +nightly-2022-04-18 wasm-build-release --examples -p icu_datetime --features serde \
-    // && cp target/wasm32-unknown-unknown/release-opt-size/examples/work_log.wasm provider/datagen/tests/data/`
+    // File obtained by running
+    // cargo +nightly --config docs/tutorials/testing/patch.toml build -p tutorial_buffer --target wasm32-unknown-unknown --release -Z build-std=std,panic_abort -Z build-std-features=panic_immediate_abort --manifest-path docs/tutorials/crates/buffer/Cargo.toml && cp docs/tutorials/target/wasm32-unknown-unknown/release/tutorial_buffer.wasm provider/datagen/tests/data/
     assert_eq!(
         keys_from_bin(concat!(
             env!("CARGO_MANIFEST_DIR"),
-            "/tests/data/work_log.wasm"
+            "/tests/data/tutorial_buffer.wasm"
         ))
         .unwrap(),
         vec![
@@ -605,8 +695,36 @@ fn test_keys_from_bin() {
 // SEMVER GRAVEYARD
 
 #[cfg(feature = "legacy_api")]
-#[doc(hidden)]
-pub use source::{CollationHanDatabase, CoverageLevel};
+#[deprecated(since = "1.3.0", note = "use methods on `DatagenProvider`")]
+/// Identifies errors that are due to missing CLDR data.
+///
+/// ✨ *Enabled with the `legacy_api` Cargo feature.*
+pub fn is_missing_cldr_error(e: DataError) -> bool {
+    DatagenProvider::is_missing_cldr_error(e)
+}
+
+#[cfg(feature = "legacy_api")]
+#[deprecated(since = "1.3.0", note = "use methods on `DatagenProvider`")]
+/// Identifies errors that are due to missing ICU export data.
+///
+/// ✨ *Enabled with the `legacy_api` Cargo feature.*
+pub fn is_missing_icuexport_error(e: DataError) -> bool {
+    DatagenProvider::is_missing_icuexport_error(e)
+}
+
+#[cfg(feature = "legacy_api")]
+/// [`Out::Fs`] serialization formats.
+///
+/// ✨ *Enabled with the `legacy_api` Cargo feature.*
+#[deprecated(since = "1.3.0", note = "use `fs_exporter::serializers`")]
+pub mod syntax {
+    #[doc(no_inline)]
+    pub use crate::fs_exporter::serializers::Bincode;
+    #[doc(no_inline)]
+    pub use crate::fs_exporter::serializers::Json;
+    #[doc(no_inline)]
+    pub use crate::fs_exporter::serializers::Postcard;
+}
 
 #[cfg(feature = "legacy_api")]
 #[doc(hidden)]
@@ -615,16 +733,19 @@ pub use baked_exporter::Options as BakedOptions;
 #[allow(clippy::exhaustive_enums)] // exists for backwards compatibility
 #[doc(hidden)]
 #[derive(Debug)]
+#[cfg(feature = "legacy_api")]
 pub enum CldrLocaleSubset {
     Ignored,
 }
 
+#[cfg(feature = "legacy_api")]
 impl Default for CldrLocaleSubset {
     fn default() -> Self {
         Self::Ignored
     }
 }
 
+#[cfg(feature = "legacy_api")]
 impl CldrLocaleSubset {
     #[allow(non_upper_case_globals)]
     pub const Full: Self = Self::Ignored;
@@ -633,13 +754,7 @@ impl CldrLocaleSubset {
 }
 
 #[cfg(feature = "legacy_api")]
-#[doc(hidden)]
-pub mod syntax {
-    pub use icu_provider_fs::export::serializers::bincode::Serializer as Bincode;
-    pub use icu_provider_fs::export::serializers::json::Serializer as Json;
-    pub use icu_provider_fs::export::serializers::postcard::Serializer as Postcard;
-}
-
+/// ✨ *Enabled with the `legacy_api` Cargo feature.*
 impl AnyProvider for DatagenProvider {
     fn load_any(&self, key: DataKey, req: DataRequest) -> Result<AnyResponse, DataError> {
         self.as_any_provider().load_any(key, req)

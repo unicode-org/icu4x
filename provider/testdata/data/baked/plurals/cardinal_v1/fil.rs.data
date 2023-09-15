@@ -1,9 +1,0 @@
-::icu_plurals::provider::PluralRulesV1 {
-    zero: None,
-    one: Some(::icu_plurals::rules::runtime::ast::Rule(unsafe {
-        :: zerovec :: VarZeroVec :: from_bytes_unchecked (b"\x06\0\0\0\0\0\r\0*\x007\0T\0a\0\xC2\0\0\0\0\0\0\0\0\0\0\0\0\xC1\0\0\0\0\x01\0\0\0\x01\0\0\0\x02\0\0\0\x02\0\0\0\x03\0\0\0\x03\0\0\0B\0\0\0\0\0\0\0\0\0\0\0\0\x81\n\0\0\0\x04\0\0\0\x04\0\0\0\x06\0\0\0\x06\0\0\0\t\0\0\0\t\0\0\0\x02\0\0\0\0\0\0\0\0\0\0\0\0\x84\n\0\0\0\x04\0\0\0\x04\0\0\0\x06\0\0\0\x06\0\0\0\t\0\0\0\t\0\0\0")
-    })),
-    two: None,
-    few: None,
-    many: None,
-}

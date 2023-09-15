@@ -1,4 +1,0 @@
-::icu_calendar::provider::WeekDataV1 {
-    first_weekday: ::icu_calendar::types::IsoWeekday::Sunday,
-    min_week_days: 4u8,
-}

@@ -1,0 +1,21 @@
+{
+  "keys": {
+    "explicit": [
+      "list/and@1",
+      "list/or@1",
+      "list/unit@1"
+    ]
+  },
+  "fallback": "runtime",
+  "locales": "recommended",
+  "cldr": "latest",
+  "icuExport": "latest",
+  "segmenterLstm": "latest",
+  "export": {
+    "baked": {
+      "path": "data",
+      "pretty": true
+    }
+  },
+  "overwrite": true
+}

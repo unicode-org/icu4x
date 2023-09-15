@@ -149,7 +149,7 @@ impl<A: AsCalendar> Date<A> {
 
     /// The number of days in the year of this date
     #[inline]
-    pub fn days_in_year(&self) -> u32 {
+    pub fn days_in_year(&self) -> u16 {
         self.calendar.as_calendar().days_in_year(self.inner())
     }
 
@@ -355,6 +355,29 @@ where
 
 impl<A: AsCalendar> Eq for Date<A> {}
 
+impl<C, A, B> PartialOrd<Date<B>> for Date<A>
+where
+    C: Calendar,
+    C::DateInner: PartialOrd,
+    A: AsCalendar<Calendar = C>,
+    B: AsCalendar<Calendar = C>,
+{
+    fn partial_cmp(&self, other: &Date<B>) -> Option<core::cmp::Ordering> {
+        self.inner.partial_cmp(&other.inner)
+    }
+}
+
+impl<C, A> Ord for Date<A>
+where
+    C: Calendar,
+    C::DateInner: Ord,
+    A: AsCalendar<Calendar = C>,
+{
+    fn cmp(&self, other: &Self) -> core::cmp::Ordering {
+        self.inner.cmp(&other.inner)
+    }
+}
+
 impl<A: AsCalendar> fmt::Debug for Date<A> {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> Result<(), fmt::Error> {
         write!(
@@ -380,4 +403,38 @@ where
     A: AsCalendar + Copy,
     <<A as AsCalendar>::Calendar as Calendar>::DateInner: Copy,
 {
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_ord() {
+        let dates_in_order = [
+            Date::try_new_iso_date(-10, 1, 1).unwrap(),
+            Date::try_new_iso_date(-10, 1, 2).unwrap(),
+            Date::try_new_iso_date(-10, 2, 1).unwrap(),
+            Date::try_new_iso_date(-1, 1, 1).unwrap(),
+            Date::try_new_iso_date(-1, 1, 2).unwrap(),
+            Date::try_new_iso_date(-1, 2, 1).unwrap(),
+            Date::try_new_iso_date(0, 1, 1).unwrap(),
+            Date::try_new_iso_date(0, 1, 2).unwrap(),
+            Date::try_new_iso_date(0, 2, 1).unwrap(),
+            Date::try_new_iso_date(1, 1, 1).unwrap(),
+            Date::try_new_iso_date(1, 1, 2).unwrap(),
+            Date::try_new_iso_date(1, 2, 1).unwrap(),
+            Date::try_new_iso_date(10, 1, 1).unwrap(),
+            Date::try_new_iso_date(10, 1, 2).unwrap(),
+            Date::try_new_iso_date(10, 2, 1).unwrap(),
+        ];
+        for (i, i_date) in dates_in_order.iter().enumerate() {
+            for (j, j_date) in dates_in_order.iter().enumerate() {
+                let result1 = i_date.cmp(j_date);
+                let result2 = j_date.cmp(i_date);
+                assert_eq!(result1.reverse(), result2);
+                assert_eq!(i.cmp(&j), i_date.cmp(j_date));
+            }
+        }
+    }
 }

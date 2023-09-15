@@ -8,11 +8,11 @@ use proc_macro2::TokenStream as TokenStream2;
 use quote::{quote, ToTokens};
 use syn::spanned::Spanned;
 use syn::{
-    parse_quote, AttributeArgs, Data, DeriveInput, Error, Field, Fields, GenericArgument, Ident,
-    Lifetime, PathArguments, Type,
+    parse_quote, Data, DeriveInput, Error, Field, Fields, GenericArgument, Ident, Lifetime,
+    PathArguments, Type, TypePath,
 };
 
-pub fn make_varule_impl(attr: AttributeArgs, mut input: DeriveInput) -> TokenStream2 {
+pub fn make_varule_impl(ule_name: Ident, mut input: DeriveInput) -> TokenStream2 {
     if input.generics.type_params().next().is_some()
         || input.generics.const_params().next().is_some()
         || input.generics.lifetimes().count() > 1
@@ -44,20 +44,11 @@ pub fn make_varule_impl(attr: AttributeArgs, mut input: DeriveInput) -> TokenStr
 
     let lt = lt.map(|l| &l.lifetime);
 
-    if attr.len() != 1 {
-        return Error::new(
-            input.span(),
-            "#[make_ule] takes one argument for the name of the ULE type it produces",
-        )
-        .to_compile_error();
-    }
-    let arg = &attr[0];
-    let ule_name: Ident = parse_quote!(#arg);
-
     let name = &input.ident;
+    let input_span = input.span();
 
     let fields = match input.data {
-        Data::Struct(ref s) => &s.fields,
+        Data::Struct(ref mut s) => &mut s.fields,
         _ => {
             return Error::new(input.span(), "#[make_varule] must be applied to a struct")
                 .to_compile_error();
@@ -75,16 +66,32 @@ pub fn make_varule_impl(attr: AttributeArgs, mut input: DeriveInput) -> TokenStr
     let mut sized_fields = vec![];
     let mut unsized_fields = vec![];
 
+    let mut custom_varule_idents = vec![];
+
+    for field in fields.iter_mut() {
+        match utils::extract_field_attributes(&mut field.attrs) {
+            Ok(i) => custom_varule_idents.push(i),
+            Err(e) => return e.to_compile_error(),
+        }
+    }
+
     for (i, field) in fields.iter().enumerate() {
-        match UnsizedField::new(field, i) {
+        match UnsizedField::new(field, i, custom_varule_idents[i].clone()) {
             Ok(o) => unsized_fields.push(o),
             Err(_) => sized_fields.push(FieldInfo::new_for_field(field, i)),
         }
     }
 
     if unsized_fields.is_empty() {
+        let last_field_index = fields.len() - 1;
         let last_field = fields.iter().next_back().unwrap();
-        let e = UnsizedField::new(last_field, fields.len() - 1).unwrap_err();
+
+        let e = UnsizedField::new(
+            last_field,
+            last_field_index,
+            custom_varule_idents[last_field_index].clone(),
+        )
+        .unwrap_err();
         return Error::new(last_field.span(), e).to_compile_error();
     }
 
@@ -112,10 +119,13 @@ pub fn make_varule_impl(attr: AttributeArgs, mut input: DeriveInput) -> TokenStr
     let field_inits = utils::wrap_field_inits(&field_inits, fields);
     let vis = &input.vis;
 
-    let doc = format!("[`VarULE`](zerovec::ule::VarULE) type for {name}");
+    let doc = format!(
+        "[`VarULE`](zerovec::ule::VarULE) type for [`{name}`]. See [`{name}`] for documentation."
+    );
     let varule_struct: DeriveInput = parse_quote!(
         #[repr(#repr_attr)]
         #[doc = #doc]
+        #[allow(missing_docs)]
         #vis struct #ule_name #field_inits #semi
     );
 
@@ -138,7 +148,7 @@ pub fn make_varule_impl(attr: AttributeArgs, mut input: DeriveInput) -> TokenStr
         name,
         &ule_name,
         lt,
-        input.span(),
+        input_span,
     );
 
     let eq_impl = quote!(
@@ -409,11 +419,13 @@ enum OwnULETy<'a> {
 }
 
 /// Represents the type of the last field of the struct
-#[derive(Copy, Clone, Debug)]
+#[derive(Clone, Debug)]
 enum UnsizedFieldKind<'a> {
     Cow(OwnULETy<'a>),
     ZeroVec(&'a Type),
     VarZeroVec(&'a Type),
+    /// Custom VarULE type, and the identifier corresponding to the VarULE type
+    Custom(&'a TypePath, Ident),
 
     // Generally you should be using the above ones for maximum zero-copy, but these will still work
     Growable(OwnULETy<'a>),
@@ -568,9 +580,13 @@ impl<'a> UnsizedFields<'a> {
 }
 
 impl<'a> UnsizedField<'a> {
-    fn new(field: &'a Field, index: usize) -> Result<Self, String> {
+    fn new(
+        field: &'a Field,
+        index: usize,
+        custom_varule_ident: Option<Ident>,
+    ) -> Result<Self, String> {
         Ok(UnsizedField {
-            kind: UnsizedFieldKind::new(&field.ty)?,
+            kind: UnsizedFieldKind::new(&field.ty, custom_varule_ident)?,
             field: FieldInfo::new_for_field(field, index),
         })
     }
@@ -596,7 +612,10 @@ impl<'a> UnsizedField<'a> {
 
 impl<'a> UnsizedFieldKind<'a> {
     /// Construct a UnsizedFieldKind for the type of a UnsizedFieldKind if possible
-    fn new(ty: &'a Type) -> Result<UnsizedFieldKind<'a>, String> {
+    fn new(
+        ty: &'a Type,
+        custom_varule_ident: Option<Ident>,
+    ) -> Result<UnsizedFieldKind<'a>, String> {
         static PATH_TYPE_IDENTITY_ERROR: &str =
             "Can only automatically detect corresponding VarULE types for path types \
             that are Cow, ZeroVec, VarZeroVec, Box, String, or Vec";
@@ -607,6 +626,9 @@ impl<'a> UnsizedFieldKind<'a> {
         match *ty {
             Type::Reference(ref tyref) => OwnULETy::new(&tyref.elem, "reference").map(UnsizedFieldKind::Ref),
             Type::Path(ref typath) => {
+                if let Some(custom_varule_ident) = custom_varule_ident {
+                    return Ok(UnsizedFieldKind::Custom(typath, custom_varule_ident));
+                }
                 if typath.path.segments.len() != 1 {
                     return Err("Can only automatically detect corresponding VarULE types for \
                                 path types with a single path segment".into());
@@ -678,6 +700,7 @@ impl<'a> UnsizedFieldKind<'a> {
                 let inner_ule = inner.varule_ty();
                 quote!(#inner_ule)
             }
+            Self::Custom(_, ref name) => quote!(#name),
             Self::ZeroVec(ref inner) => quote!(zerovec::ZeroSlice<#inner>),
             Self::VarZeroVec(ref inner) => quote!(zerovec::VarZeroSlice<#inner>),
         }
@@ -688,8 +711,8 @@ impl<'a> UnsizedFieldKind<'a> {
         match *self {
             Self::Ref(_) | Self::Cow(_) | Self::Growable(_) | Self::Boxed(_) => quote!(&*#value),
 
-            Self::ZeroVec(_) => quote!(&*#value),
-            Self::VarZeroVec(_) => quote!(&*#value),
+            Self::Custom(..) => quote!(&#value),
+            Self::ZeroVec(_) | Self::VarZeroVec(_) => quote!(&*#value),
         }
     }
 
@@ -701,15 +724,16 @@ impl<'a> UnsizedFieldKind<'a> {
             | Self::Growable(ref inner)
             | Self::Boxed(ref inner) => inner.varule_ty(),
 
-            Self::ZeroVec(ty) => quote!(zerovec::ZeroSlice<#ty>),
-            Self::VarZeroVec(ty) => quote!(zerovec::VarZeroSlice<#ty>),
+            Self::Custom(ref path, _) => quote!(#path),
+            Self::ZeroVec(ref ty) => quote!(zerovec::ZeroSlice<#ty>),
+            Self::VarZeroVec(ref ty) => quote!(zerovec::VarZeroSlice<#ty>),
         }
     }
 
     fn has_zf(&self) -> bool {
         matches!(
             *self,
-            Self::Ref(_) | Self::Cow(_) | Self::ZeroVec(_) | Self::VarZeroVec(_)
+            Self::Ref(_) | Self::Cow(_) | Self::ZeroVec(_) | Self::VarZeroVec(_) | Self::Custom(..)
         )
     }
 }

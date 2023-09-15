@@ -24,6 +24,7 @@ use crate::{
 };
 
 use icu_calendar::provider::WeekDataV1Marker;
+use icu_calendar::week::WeekCalculator;
 use icu_decimal::{
     options::{FixedDecimalFormatterOptions, GroupingStrategy},
     provider::DecimalSymbolsV1Marker,
@@ -40,24 +41,15 @@ pub(crate) struct TimeFormatter {
 }
 
 impl TimeFormatter {
-    /// Constructor that takes a selected [`DataLocale`], reference to a [`DataProvider`] and
-    /// a list of options, then collects all data necessary to format time values into the given locale,
-    /// using the short style.
     #[inline(never)]
-    pub fn try_new<D>(
-        data_provider: &D,
+    #[cfg(feature = "compiled_data")]
+    pub fn try_new(
         locale: &DataLocale,
         length: length::Time,
         preferences: Option<preferences::Bag>,
-    ) -> Result<Self, DateTimeError>
-    where
-        D: DataProvider<TimeLengthsV1Marker>
-            + DataProvider<TimeSymbolsV1Marker>
-            + DataProvider<DecimalSymbolsV1Marker>
-            + ?Sized,
-    {
+    ) -> Result<Self, DateTimeError> {
         let patterns = provider::date_time::pattern_for_time_length(
-            data_provider,
+            &crate::provider::Baked,
             locale,
             length,
             preferences,
@@ -68,7 +60,7 @@ impl TimeFormatter {
 
         let symbols_data = if required.time_symbols_data {
             Some(
-                data_provider
+                crate::provider::Baked
                     .load(DataRequest {
                         locale,
                         metadata: Default::default(),
@@ -82,12 +74,51 @@ impl TimeFormatter {
         let mut fixed_decimal_format_options = FixedDecimalFormatterOptions::default();
         fixed_decimal_format_options.grouping_strategy = GroupingStrategy::Never;
 
-        let fixed_decimal_format = FixedDecimalFormatter::try_new_unstable(
-            data_provider,
-            locale,
-            fixed_decimal_format_options,
-        )
-        .map_err(DateTimeError::FixedDecimalFormatter)?;
+        let fixed_decimal_format =
+            FixedDecimalFormatter::try_new(locale, fixed_decimal_format_options)
+                .map_err(DateTimeError::FixedDecimalFormatter)?;
+
+        Ok(Self::new(patterns, symbols_data, fixed_decimal_format))
+    }
+
+    #[inline(never)]
+    pub fn try_new_unstable<D>(
+        provider: &D,
+        locale: &DataLocale,
+        length: length::Time,
+        preferences: Option<preferences::Bag>,
+    ) -> Result<Self, DateTimeError>
+    where
+        D: DataProvider<TimeLengthsV1Marker>
+            + DataProvider<TimeSymbolsV1Marker>
+            + DataProvider<DecimalSymbolsV1Marker>
+            + ?Sized,
+    {
+        let patterns =
+            provider::date_time::pattern_for_time_length(provider, locale, length, preferences)?;
+
+        let required = datetime::analyze_patterns(&patterns.get().0, false)
+            .map_err(|field| DateTimeError::UnsupportedField(field.symbol))?;
+
+        let symbols_data = if required.time_symbols_data {
+            Some(
+                provider
+                    .load(DataRequest {
+                        locale,
+                        metadata: Default::default(),
+                    })?
+                    .take_payload()?,
+            )
+        } else {
+            None
+        };
+
+        let mut fixed_decimal_format_options = FixedDecimalFormatterOptions::default();
+        fixed_decimal_format_options.grouping_strategy = GroupingStrategy::Never;
+
+        let fixed_decimal_format =
+            FixedDecimalFormatter::try_new_unstable(provider, locale, fixed_decimal_format_options)
+                .map_err(DateTimeError::FixedDecimalFormatter)?;
 
         Ok(Self::new(patterns, symbols_data, fixed_decimal_format))
     }
@@ -129,17 +160,66 @@ pub(crate) struct DateFormatter {
     pub generic_pattern: DataPayload<GenericPatternV1Marker>,
     pub patterns: DataPayload<PatternPluralsFromPatternsV1Marker>,
     pub symbols: Option<DataPayload<ErasedDateSymbolsV1Marker>>,
-    pub week_data: Option<DataPayload<WeekDataV1Marker>>,
+    pub week_data: Option<WeekCalculator>,
     pub ordinal_rules: Option<PluralRules>,
     pub fixed_decimal_format: FixedDecimalFormatter,
 }
 
 impl DateFormatter {
-    /// Constructor that takes a selected [`DataLocale`], reference to a [`DataProvider`] and
-    /// a list of options, then collects all data necessary to format date values into the given locale.
+    #[cfg(feature = "compiled_data")]
     #[inline(never)]
-    pub fn try_new<D>(
-        data_provider: &D,
+    pub fn try_new(
+        patterns_data: DataPayload<ErasedDateLengthsV1Marker>,
+        symbols_data_fn: impl FnOnce() -> Result<DataPayload<ErasedDateSymbolsV1Marker>, DataError>,
+        locale: &DataLocale,
+        length: length::Date,
+    ) -> Result<Self, DateTimeError> {
+        let patterns = provider::date_time::pattern_for_date_length(length, patterns_data.clone());
+
+        let generic_pattern =
+            provider::date_time::generic_pattern_for_date_length(length, patterns_data);
+
+        let required = datetime::analyze_patterns(&patterns.get().0, false)
+            .map_err(|field| DateTimeError::UnsupportedField(field.symbol))?;
+
+        let week_data = if required.week_data {
+            Some(icu_calendar::week::WeekCalculator::try_new(locale)?)
+        } else {
+            None
+        };
+
+        let ordinal_rules = if let PatternPlurals::MultipleVariants(_) = &patterns.get().0 {
+            Some(PluralRules::try_new_ordinal(locale)?)
+        } else {
+            None
+        };
+
+        let symbols_data = if required.date_symbols_data {
+            Some(symbols_data_fn()?)
+        } else {
+            None
+        };
+
+        let mut fixed_decimal_format_options = FixedDecimalFormatterOptions::default();
+        fixed_decimal_format_options.grouping_strategy = GroupingStrategy::Never;
+
+        let fixed_decimal_format =
+            FixedDecimalFormatter::try_new(locale, fixed_decimal_format_options)
+                .map_err(DateTimeError::FixedDecimalFormatter)?;
+
+        Ok(Self::new(
+            generic_pattern,
+            patterns,
+            symbols_data,
+            week_data,
+            ordinal_rules,
+            fixed_decimal_format,
+        ))
+    }
+
+    #[inline(never)]
+    pub fn try_new_unstable<D>(
+        provider: &D,
         patterns_data: DataPayload<ErasedDateLengthsV1Marker>,
         symbols_data_fn: impl FnOnce() -> Result<DataPayload<ErasedDateSymbolsV1Marker>, DataError>,
         locale: &DataLocale,
@@ -159,22 +239,16 @@ impl DateFormatter {
         let required = datetime::analyze_patterns(&patterns.get().0, false)
             .map_err(|field| DateTimeError::UnsupportedField(field.symbol))?;
 
-        let req = DataRequest {
-            locale,
-            metadata: Default::default(),
-        };
-
         let week_data = if required.week_data {
-            Some(data_provider.load(req)?.take_payload()?)
+            Some(icu_calendar::week::WeekCalculator::try_new_unstable(
+                provider, locale,
+            )?)
         } else {
             None
         };
 
         let ordinal_rules = if let PatternPlurals::MultipleVariants(_) = &patterns.get().0 {
-            Some(PluralRules::try_new_ordinal_unstable(
-                data_provider,
-                locale,
-            )?)
+            Some(PluralRules::try_new_ordinal_unstable(provider, locale)?)
         } else {
             None
         };
@@ -188,12 +262,9 @@ impl DateFormatter {
         let mut fixed_decimal_format_options = FixedDecimalFormatterOptions::default();
         fixed_decimal_format_options.grouping_strategy = GroupingStrategy::Never;
 
-        let fixed_decimal_format = FixedDecimalFormatter::try_new_unstable(
-            data_provider,
-            locale,
-            fixed_decimal_format_options,
-        )
-        .map_err(DateTimeError::FixedDecimalFormatter)?;
+        let fixed_decimal_format =
+            FixedDecimalFormatter::try_new_unstable(provider, locale, fixed_decimal_format_options)
+                .map_err(DateTimeError::FixedDecimalFormatter)?;
 
         Ok(Self::new(
             generic_pattern,
@@ -210,7 +281,7 @@ impl DateFormatter {
         generic_pattern: DataPayload<GenericPatternV1Marker>,
         patterns: DataPayload<PatternPluralsFromPatternsV1Marker>,
         symbols: Option<DataPayload<ErasedDateSymbolsV1Marker>>,
-        week_data: Option<DataPayload<WeekDataV1Marker>>,
+        week_data: Option<WeekCalculator>,
         ordinal_rules: Option<PluralRules>,
         fixed_decimal_format: FixedDecimalFormatter,
     ) -> Self {
@@ -250,14 +321,12 @@ pub(crate) struct DateTimeFormatter {
     pub patterns: DataPayload<PatternPluralsFromPatternsV1Marker>,
     pub date_symbols: Option<DataPayload<ErasedDateSymbolsV1Marker>>,
     pub time_symbols: Option<DataPayload<TimeSymbolsV1Marker>>,
-    pub week_data: Option<DataPayload<WeekDataV1Marker>>,
+    pub week_data: Option<WeekCalculator>,
     pub ordinal_rules: Option<PluralRules>,
     pub fixed_decimal_format: FixedDecimalFormatter,
 }
 
 impl DateTimeFormatter {
-    /// Constructor that takes previously constructed [`TimeFormatter`] and [`DateFormatter`] instances and builds a
-    /// new [`DateTimeFormatter`] instance from them.
     #[inline(never)]
     pub fn try_from_date_and_time(
         date: DateFormatter,
@@ -297,11 +366,65 @@ impl DateTimeFormatter {
         })
     }
 
-    /// Constructor that takes a selected [`Locale`], reference to a [`DataProvider`] and
-    /// a list of options, then collects all data necessary to format date and time values into the given locale.
     #[inline(never)]
-    pub fn try_new<D>(
-        data_provider: &D,
+    #[cfg(feature = "compiled_data")]
+    pub fn try_new(
+        patterns: DataPayload<PatternPluralsFromPatternsV1Marker>,
+        symbols_data_fn: impl FnOnce() -> Result<DataPayload<ErasedDateSymbolsV1Marker>, DataError>,
+        locale: &DataLocale,
+    ) -> Result<Self, DateTimeError> {
+        let required = datetime::analyze_patterns(&patterns.get().0, false)
+            .map_err(|field| DateTimeError::UnsupportedField(field.symbol))?;
+
+        let req = DataRequest {
+            locale,
+            metadata: Default::default(),
+        };
+
+        let week_data = if required.week_data {
+            Some(icu_calendar::week::WeekCalculator::try_new(locale)?)
+        } else {
+            None
+        };
+
+        let ordinal_rules = if let PatternPlurals::MultipleVariants(_) = &patterns.get().0 {
+            Some(PluralRules::try_new_ordinal(locale)?)
+        } else {
+            None
+        };
+
+        let date_symbols_data = if required.date_symbols_data {
+            Some(symbols_data_fn()?)
+        } else {
+            None
+        };
+
+        let time_symbols_data = if required.time_symbols_data {
+            Some(crate::provider::Baked.load(req)?.take_payload()?)
+        } else {
+            None
+        };
+
+        let mut fixed_decimal_format_options = FixedDecimalFormatterOptions::default();
+        fixed_decimal_format_options.grouping_strategy = GroupingStrategy::Never;
+
+        let fixed_decimal_format =
+            FixedDecimalFormatter::try_new(locale, fixed_decimal_format_options)
+                .map_err(DateTimeError::FixedDecimalFormatter)?;
+
+        Ok(Self::new(
+            patterns,
+            date_symbols_data,
+            time_symbols_data,
+            week_data,
+            ordinal_rules,
+            fixed_decimal_format,
+        ))
+    }
+
+    #[inline(never)]
+    pub fn try_new_unstable<D>(
+        provider: &D,
         patterns: DataPayload<PatternPluralsFromPatternsV1Marker>,
         symbols_data_fn: impl FnOnce() -> Result<DataPayload<ErasedDateSymbolsV1Marker>, DataError>,
         locale: &DataLocale,
@@ -323,16 +446,15 @@ impl DateTimeFormatter {
         };
 
         let week_data = if required.week_data {
-            Some(data_provider.load(req)?.take_payload()?)
+            Some(icu_calendar::week::WeekCalculator::try_new_unstable(
+                provider, locale,
+            )?)
         } else {
             None
         };
 
         let ordinal_rules = if let PatternPlurals::MultipleVariants(_) = &patterns.get().0 {
-            Some(PluralRules::try_new_ordinal_unstable(
-                data_provider,
-                locale,
-            )?)
+            Some(PluralRules::try_new_ordinal_unstable(provider, locale)?)
         } else {
             None
         };
@@ -344,7 +466,7 @@ impl DateTimeFormatter {
         };
 
         let time_symbols_data = if required.time_symbols_data {
-            Some(data_provider.load(req)?.take_payload()?)
+            Some(provider.load(req)?.take_payload()?)
         } else {
             None
         };
@@ -352,12 +474,9 @@ impl DateTimeFormatter {
         let mut fixed_decimal_format_options = FixedDecimalFormatterOptions::default();
         fixed_decimal_format_options.grouping_strategy = GroupingStrategy::Never;
 
-        let fixed_decimal_format = FixedDecimalFormatter::try_new_unstable(
-            data_provider,
-            locale,
-            fixed_decimal_format_options,
-        )
-        .map_err(DateTimeError::FixedDecimalFormatter)?;
+        let fixed_decimal_format =
+            FixedDecimalFormatter::try_new_unstable(provider, locale, fixed_decimal_format_options)
+                .map_err(DateTimeError::FixedDecimalFormatter)?;
 
         Ok(Self::new(
             patterns,
@@ -374,7 +493,7 @@ impl DateTimeFormatter {
         patterns: DataPayload<PatternPluralsFromPatternsV1Marker>,
         date_symbols: Option<DataPayload<ErasedDateSymbolsV1Marker>>,
         time_symbols: Option<DataPayload<TimeSymbolsV1Marker>>,
-        week_data: Option<DataPayload<WeekDataV1Marker>>,
+        week_data: Option<WeekCalculator>,
         ordinal_rules: Option<PluralRules>,
         fixed_decimal_format: FixedDecimalFormatter,
     ) -> Self {
@@ -401,7 +520,7 @@ impl DateTimeFormatter {
             date_symbols: self.date_symbols.as_ref().map(|s| s.get()),
             time_symbols: self.time_symbols.as_ref().map(|s| s.get()),
             datetime: ExtractedDateTimeInput::extract_from(value),
-            week_data: self.week_data.as_ref().map(|s| s.get()),
+            week_data: self.week_data.as_ref(),
             ordinal_rules: self.ordinal_rules.as_ref(),
             fixed_decimal_format: &self.fixed_decimal_format,
         }

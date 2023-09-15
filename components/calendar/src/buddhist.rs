@@ -55,8 +55,11 @@ const BUDDHIST_ERA_OFFSET: i32 = 543;
 ///
 /// # Era codes
 ///
-/// This calendar supports one era, `"be"`, with 1 B.E. being 543 BCE
-
+/// This calendar supports one era, `"be"`, with 1 B.E. being 543 BCE.
+///
+/// # Month codes
+///
+/// This calendar supports 12 solar month codes (`"M01" - "M12"`)
 #[allow(clippy::exhaustive_structs)] // this type is stable
 pub struct Buddhist;
 
@@ -75,7 +78,7 @@ impl Calendar for Buddhist {
         }
         let year = year - BUDDHIST_ERA_OFFSET;
 
-        ArithmeticDate::new_from_solar(self, year, month_code, day).map(IsoDateInner)
+        ArithmeticDate::new_from_codes(self, year, month_code, day).map(IsoDateInner)
     }
     fn date_from_iso(&self, iso: Date<Iso>) -> IsoDateInner {
         *iso.inner()
@@ -89,7 +92,7 @@ impl Calendar for Buddhist {
         Iso.months_in_year(date)
     }
 
-    fn days_in_year(&self, date: &Self::DateInner) -> u32 {
+    fn days_in_year(&self, date: &Self::DateInner) -> u16 {
         Iso.days_in_year(date)
     }
 
@@ -216,6 +219,263 @@ fn iso_year_as_buddhist(year: i32) -> types::FormattableYear {
     types::FormattableYear {
         era: types::Era(tinystr!(16, "be")),
         number: buddhist_year,
+        cyclic: None,
         related_iso: None,
+    }
+}
+
+#[cfg(test)]
+mod test {
+    use calendrical_calculations::rata_die::RataDie;
+
+    use super::*;
+
+    #[test]
+    fn test_buddhist_roundtrip_near_rd_zero() {
+        for i in -10000..=10000 {
+            let rd = RataDie::new(i);
+            let iso1 = Iso::iso_from_fixed(rd);
+            let buddhist = iso1.to_calendar(Buddhist);
+            let iso2 = buddhist.to_calendar(Iso);
+            let result = Iso::fixed_from_iso(iso2.inner);
+            assert_eq!(rd, result);
+        }
+    }
+
+    #[test]
+    fn test_buddhist_roundtrip_near_epoch() {
+        // Buddhist epoch start RD: -198326
+        for i in -208326..=-188326 {
+            let rd = RataDie::new(i);
+            let iso1 = Iso::iso_from_fixed(rd);
+            let buddhist = iso1.to_calendar(Buddhist);
+            let iso2 = buddhist.to_calendar(Iso);
+            let result = Iso::fixed_from_iso(iso2.inner);
+            assert_eq!(rd, result);
+        }
+    }
+
+    #[test]
+    fn test_buddhist_directionality_near_rd_zero() {
+        for i in -100..=100 {
+            for j in -100..=100 {
+                let iso_i = Iso::iso_from_fixed(RataDie::new(i));
+                let iso_j = Iso::iso_from_fixed(RataDie::new(j));
+
+                let buddhist_i = Date::new_from_iso(iso_i, Buddhist);
+                let buddhist_j = Date::new_from_iso(iso_j, Buddhist);
+
+                assert_eq!(
+                    i.cmp(&j),
+                    iso_i.cmp(&iso_j),
+                    "ISO directionality inconsistent with directionality for i: {i}, j: {j}"
+                );
+
+                assert_eq!(
+                    i.cmp(&j),
+                    buddhist_i.cmp(&buddhist_j),
+                    "Buddhist directionality inconsistent with directionality for i: {i}, j: {j}"
+                );
+            }
+        }
+    }
+
+    #[test]
+    fn test_buddhist_directionality_near_epoch() {
+        // Buddhist epoch start RD: -198326
+        for i in -198426..=-198226 {
+            for j in -198426..=-198226 {
+                let iso_i = Iso::iso_from_fixed(RataDie::new(i));
+                let iso_j = Iso::iso_from_fixed(RataDie::new(j));
+
+                let buddhist_i = Date::new_from_iso(iso_i, Buddhist);
+                let buddhist_j = Date::new_from_iso(iso_j, Buddhist);
+
+                assert_eq!(
+                    i.cmp(&j),
+                    iso_i.cmp(&iso_j),
+                    "ISO directionality inconsistent with directionality for i: {i}, j: {j}"
+                );
+
+                assert_eq!(
+                    i.cmp(&j),
+                    buddhist_i.cmp(&buddhist_j),
+                    "Buddhist directionality inconsistent with directionality for i: {i}, j: {j}"
+                );
+            }
+        }
+    }
+
+    #[derive(Debug)]
+    struct TestCase {
+        iso_year: i32,
+        iso_month: u8,
+        iso_day: u8,
+        buddhist_year: i32,
+        buddhist_month: u8,
+        buddhist_day: u8,
+    }
+
+    fn check_test_case(case: TestCase) {
+        let iso_year = case.iso_year;
+        let iso_month = case.iso_month;
+        let iso_day = case.iso_day;
+        let buddhist_year = case.buddhist_year;
+        let buddhist_month = case.buddhist_month;
+        let buddhist_day = case.buddhist_day;
+
+        let iso1 = Date::try_new_iso_date(iso_year, iso_month, iso_day).unwrap();
+        let buddhist1 = iso1.to_calendar(Buddhist);
+        assert_eq!(
+            buddhist1.year().number,
+            buddhist_year,
+            "Iso -> Buddhist year check failed for case: {case:?}"
+        );
+        assert_eq!(
+            buddhist1.month().ordinal,
+            buddhist_month as u32,
+            "Iso -> Buddhist month check failed for case: {case:?}"
+        );
+        assert_eq!(
+            buddhist1.day_of_month().0,
+            buddhist_day as u32,
+            "Iso -> Buddhist day check failed for case: {case:?}"
+        );
+
+        let buddhist2 =
+            Date::try_new_buddhist_date(buddhist_year, buddhist_month, buddhist_day).unwrap();
+        let iso2 = buddhist2.to_calendar(Iso);
+        assert_eq!(
+            iso2.year().number,
+            iso_year,
+            "Buddhist -> Iso year check failed for case: {case:?}"
+        );
+        assert_eq!(
+            iso2.month().ordinal,
+            iso_month as u32,
+            "Buddhist -> Iso month check failed for case: {case:?}"
+        );
+        assert_eq!(
+            iso2.day_of_month().0,
+            iso_day as u32,
+            "Buddhist -> Iso day check failed for case: {case:?}"
+        );
+    }
+
+    #[test]
+    fn test_buddhist_cases_near_rd_zero() {
+        let cases = [
+            TestCase {
+                iso_year: -100,
+                iso_month: 2,
+                iso_day: 15,
+                buddhist_year: 443,
+                buddhist_month: 2,
+                buddhist_day: 15,
+            },
+            TestCase {
+                iso_year: -3,
+                iso_month: 10,
+                iso_day: 29,
+                buddhist_year: 540,
+                buddhist_month: 10,
+                buddhist_day: 29,
+            },
+            TestCase {
+                iso_year: 0,
+                iso_month: 12,
+                iso_day: 31,
+                buddhist_year: 543,
+                buddhist_month: 12,
+                buddhist_day: 31,
+            },
+            TestCase {
+                iso_year: 1,
+                iso_month: 1,
+                iso_day: 1,
+                buddhist_year: 544,
+                buddhist_month: 1,
+                buddhist_day: 1,
+            },
+            TestCase {
+                iso_year: 4,
+                iso_month: 2,
+                iso_day: 29,
+                buddhist_year: 547,
+                buddhist_month: 2,
+                buddhist_day: 29,
+            },
+        ];
+
+        for case in cases {
+            check_test_case(case);
+        }
+    }
+
+    #[test]
+    fn test_buddhist_cases_near_epoch() {
+        // 1 BE = 543 BCE = -542 ISO
+        let cases = [
+            TestCase {
+                iso_year: -554,
+                iso_month: 12,
+                iso_day: 31,
+                buddhist_year: -11,
+                buddhist_month: 12,
+                buddhist_day: 31,
+            },
+            TestCase {
+                iso_year: -553,
+                iso_month: 1,
+                iso_day: 1,
+                buddhist_year: -10,
+                buddhist_month: 1,
+                buddhist_day: 1,
+            },
+            TestCase {
+                iso_year: -544,
+                iso_month: 8,
+                iso_day: 31,
+                buddhist_year: -1,
+                buddhist_month: 8,
+                buddhist_day: 31,
+            },
+            TestCase {
+                iso_year: -543,
+                iso_month: 5,
+                iso_day: 12,
+                buddhist_year: 0,
+                buddhist_month: 5,
+                buddhist_day: 12,
+            },
+            TestCase {
+                iso_year: -543,
+                iso_month: 12,
+                iso_day: 31,
+                buddhist_year: 0,
+                buddhist_month: 12,
+                buddhist_day: 31,
+            },
+            TestCase {
+                iso_year: -542,
+                iso_month: 1,
+                iso_day: 1,
+                buddhist_year: 1,
+                buddhist_month: 1,
+                buddhist_day: 1,
+            },
+            TestCase {
+                iso_year: -541,
+                iso_month: 7,
+                iso_day: 9,
+                buddhist_year: 2,
+                buddhist_month: 7,
+                buddhist_day: 9,
+            },
+        ];
+
+        for case in cases {
+            check_test_case(case);
+        }
     }
 }

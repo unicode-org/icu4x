@@ -37,23 +37,24 @@ icu_testdata = "1.0.0"
 `src/main.rs`:
 
 ```rust
-use icu::calendar::DateTime;
-use icu::datetime::{options::length, DateTimeFormatter};
+use icu::calendar::{DateTime, indian::Indian};
+use icu::datetime::{options::length, TypedDateTimeFormatter};
 use icu::locid::locale;
 
 let options =
     length::Bag::from_date_time_style(length::Date::Long, length::Time::Medium).into();
 
-let dtf = DateTimeFormatter::try_new_unstable(&icu_testdata::unstable(), &locale!("es").into(), options)
+let dtf = TypedDateTimeFormatter::<Indian>::try_new_unstable(&icu_testdata::unstable(), &locale!("es").into(), options)
     .expect("Failed to create DateTimeFormatter instance.");
 
-let date = DateTime::try_new_iso_datetime(2020, 9, 12, 12, 35, 0).expect("Failed to parse date.");
-let date = date.to_any();
+let date = DateTime::try_new_iso_datetime(2020, 9, 12, 12, 35, 0)
+    .expect("Failed to parse date.")
+    .to_calendar(Indian);
 
-let formatted_date = dtf.format(&date).expect("Formatting failed");
+let formatted_date = dtf.format(&date);
 assert_eq!(
     formatted_date.to_string(),
-    "12 de septiembre de 2020, 12:35:00"
+    "21 de bhadra de 1942 saka, 12:35:00"
 );
 ```
 
@@ -77,3 +78,11 @@ ICU4X, or "ICU for X", will be built from the start with several key design cons
 4. Written by internationalization experts to encourage best practices.
 
 ICU4X will provide an ECMA-402-compatible API surface in the target client-side platforms, including the web platform, iOS, Android, WearOS, WatchOS, Flutter, and Fuchsia, supported in programming languages including Rust, JavaScript, Objective-C, Java, Dart, and C++.
+
+## Licensing and Copyright
+
+Copyright © 2020-2023 Unicode, Inc. Unicode and the Unicode Logo are registered trademarks of Unicode, Inc. in the United States and other countries.
+
+The project is released under [LICENSE](./LICENSE).
+
+A CLA is required to contribute to this project - please refer to the [CONTRIBUTING.md](./CONTRIBUTING.md) file (or start a Pull Request) for more information.

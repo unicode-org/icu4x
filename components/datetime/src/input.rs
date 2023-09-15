@@ -123,7 +123,7 @@ pub trait LocalizedDateTimeInput<T: DateTimeInput> {
 
 pub(crate) struct DateTimeInputWithWeekConfig<'data, T: DateTimeInput> {
     data: &'data T,
-    calendar: Option<WeekCalculator>,
+    calendar: Option<&'data WeekCalculator>,
 }
 
 /// A [`DateTimeInput`] type with all of the fields pre-extracted
@@ -264,7 +264,7 @@ impl TimeZoneInput for ExtractedTimeZoneInput {
 }
 
 impl<'data, T: DateTimeInput> DateTimeInputWithWeekConfig<'data, T> {
-    pub(crate) fn new(data: &'data T, calendar: Option<WeekCalculator>) -> Self {
+    pub(crate) fn new(data: &'data T, calendar: Option<&'data WeekCalculator>) -> Self {
         Self { data, calendar }
     }
 }

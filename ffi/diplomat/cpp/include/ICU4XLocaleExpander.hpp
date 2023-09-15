@@ -37,14 +37,14 @@ class ICU4XLocaleExpander {
   /**
    * Create a new [`ICU4XLocaleExpander`].
    * 
-   * See the [Rust documentation for `try_new_unstable`](https://docs.rs/icu/latest/icu/locid_transform/struct.LocaleExpander.html#method.try_new_unstable) for more information.
+   * See the [Rust documentation for `new`](https://docs.rs/icu/latest/icu/locid_transform/struct.LocaleExpander.html#method.new) for more information.
    */
   static diplomat::result<ICU4XLocaleExpander, ICU4XError> create(const ICU4XDataProvider& provider);
 
   /**
    * Create a new [`ICU4XLocaleExpander`] with extended data.
    * 
-   * See the [Rust documentation for `try_new_extended_unstable`](https://docs.rs/icu/latest/icu/locid_transform/struct.LocaleExpander.html#method.try_new_extended_unstable) for more information.
+   * See the [Rust documentation for `new_extended`](https://docs.rs/icu/latest/icu/locid_transform/struct.LocaleExpander.html#method.new_extended) for more information.
    */
   static diplomat::result<ICU4XLocaleExpander, ICU4XError> create_extended(const ICU4XDataProvider& provider);
 

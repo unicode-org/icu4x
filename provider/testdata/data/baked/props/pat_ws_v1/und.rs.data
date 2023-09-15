@@ -1,9 +1,0 @@
-::icu_properties::provider::PropertyCodePointSetV1::InversionList(unsafe {
-    #[allow(unused_unsafe)]
-    ::icu_collections::codepointinvlist::CodePointInversionList::from_parts_unchecked(
-        unsafe {
-            :: zerovec :: ZeroVec :: from_bytes_unchecked (b"\t\0\0\0\x0E\0\0\0 \0\0\0!\0\0\0\x85\0\0\0\x86\0\0\0\x0E \0\0\x10 \0\0( \0\0* \0\0")
-        },
-        11usize,
-    )
-})

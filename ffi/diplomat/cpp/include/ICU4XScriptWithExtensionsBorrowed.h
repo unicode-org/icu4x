@@ -15,6 +15,7 @@ typedef struct ICU4XScriptWithExtensionsBorrowed ICU4XScriptWithExtensionsBorrow
 } // namespace capi
 #endif
 #include "ICU4XScriptExtensionsSet.h"
+#include "ICU4XCodePointSetData.h"
 #ifdef __cplusplus
 namespace capi {
 extern "C" {
@@ -25,6 +26,8 @@ uint16_t ICU4XScriptWithExtensionsBorrowed_get_script_val(const ICU4XScriptWithE
 ICU4XScriptExtensionsSet* ICU4XScriptWithExtensionsBorrowed_get_script_extensions_val(const ICU4XScriptWithExtensionsBorrowed* self, uint32_t code_point);
 
 bool ICU4XScriptWithExtensionsBorrowed_has_script(const ICU4XScriptWithExtensionsBorrowed* self, uint32_t code_point, uint16_t script);
+
+ICU4XCodePointSetData* ICU4XScriptWithExtensionsBorrowed_get_script_extensions_set(const ICU4XScriptWithExtensionsBorrowed* self, uint16_t script);
 void ICU4XScriptWithExtensionsBorrowed_destroy(ICU4XScriptWithExtensionsBorrowed* self);
 
 #ifdef __cplusplus

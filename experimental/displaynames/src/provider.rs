@@ -14,6 +14,30 @@ use tinystr::UnvalidatedTinyAsciiStr;
 use zerovec::ule::UnvalidatedStr;
 use zerovec::ZeroMap;
 
+#[cfg(feature = "compiled_data")]
+#[derive(Debug)]
+/// Baked data
+///
+/// <div class="stab unstable">
+/// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
+/// including in SemVer minor releases. In particular, the `DataProvider` implementations are only
+/// guaranteed to match with this version's `*_unstable` providers. Use with caution.
+/// </div>
+pub struct Baked;
+
+#[cfg(feature = "compiled_data")]
+const _: () = {
+    pub mod icu {
+        pub use crate as displaynames;
+        pub use icu_locid_transform as locid_transform;
+    }
+    icu_displaynames_data::impl_displaynames_languages_v1!(Baked);
+    icu_displaynames_data::impl_displaynames_locales_v1!(Baked);
+    icu_displaynames_data::impl_displaynames_regions_v1!(Baked);
+    icu_displaynames_data::impl_displaynames_scripts_v1!(Baked);
+    icu_displaynames_data::impl_displaynames_variants_v1!(Baked);
+};
+
 // We use raw TinyAsciiStrs for map keys, as we then don't have to
 // validate them as subtags on deserialization. Map lookup can be
 // done even if they are not valid tags (an invalid key will just
@@ -22,6 +46,7 @@ type UnvalidatedRegion = UnvalidatedTinyAsciiStr<3>;
 type UnvalidatedLanguage = UnvalidatedTinyAsciiStr<3>;
 type UnvalidatedScript = UnvalidatedTinyAsciiStr<4>;
 type UnvalidatedLocale = UnvalidatedStr;
+type UnvalidatedVariant = UnvalidatedTinyAsciiStr<8>;
 
 #[icu_provider::data_struct(RegionDisplayNamesV1Marker = "displaynames/regions@1")]
 #[derive(Debug, PartialEq, Clone, Default)]
@@ -109,4 +134,20 @@ pub struct LocaleDisplayNamesV1<'data> {
     /// Mapping for locale to menu variant display name.
     #[cfg_attr(feature = "serde", serde(borrow))]
     pub menu_names: ZeroMap<'data, UnvalidatedLocale, str>,
+}
+
+#[icu_provider::data_struct(VariantDisplayNamesV1Marker = "displaynames/variants@1")]
+#[derive(Debug, PartialEq, Clone, Default)]
+#[cfg_attr(feature = "serde", derive(serde::Deserialize))]
+#[cfg_attr(
+    feature = "datagen",
+    derive(serde::Serialize, databake::Bake),
+    databake(path = icu_displaynames::provider),
+)]
+#[yoke(prove_covariance_manually)]
+/// VariantDisplayNames provides the user-translated names for the variant-code values.
+pub struct VariantDisplayNamesV1<'data> {
+    /// Mapping for Variant to locale display name.
+    #[cfg_attr(feature = "serde", serde(borrow))]
+    pub names: ZeroMap<'data, UnvalidatedVariant, str>,
 }

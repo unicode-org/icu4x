@@ -88,7 +88,7 @@ impl<'l> LstmSegmenter<'l> {
             timew_fw,
             timew_bw,
             time_b: MatrixZero::from(&lstm.time_b),
-            grapheme: (lstm.model == ModelType::GraphemeClusters).then(|| grapheme),
+            grapheme: (lstm.model == ModelType::GraphemeClusters).then_some(grapheme),
         }
     }
 
@@ -355,8 +355,7 @@ mod tests {
 
     #[test]
     fn segment_file_by_lstm() {
-        let lstm: DataPayload<LstmForWordLineAutoV1Marker> = icu_testdata::buffer()
-            .as_deserializing()
+        let lstm: DataPayload<LstmForWordLineAutoV1Marker> = crate::provider::Baked
             .load(DataRequest {
                 locale: &locale!("th").into(),
                 metadata: Default::default(),
@@ -364,13 +363,10 @@ mod tests {
             .unwrap()
             .take_payload()
             .unwrap();
-        let grapheme: DataPayload<GraphemeClusterBreakDataV1Marker> = icu_testdata::buffer()
-            .as_deserializing()
-            .load(Default::default())
-            .unwrap()
-            .take_payload()
-            .unwrap();
-        let lstm = LstmSegmenter::new(lstm.get(), grapheme.get());
+        let lstm = LstmSegmenter::new(
+            lstm.get(),
+            crate::provider::Baked::SINGLETON_SEGMENTER_GRAPHEME_V1,
+        );
 
         // Importing the test data
         let test_text_data = load_test_text(&format!(

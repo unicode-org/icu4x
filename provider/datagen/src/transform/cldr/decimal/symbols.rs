@@ -4,7 +4,7 @@
 
 use crate::transform::cldr::cldr_serde;
 use icu_decimal::provider::*;
-use icu_locid::extensions_unicode_key as key;
+use icu_locid::extensions::unicode::key;
 use icu_provider::datagen::IterableDataProvider;
 use icu_provider::prelude::*;
 use std::borrow::Cow;
@@ -13,20 +13,15 @@ use tinystr::TinyAsciiStr;
 
 impl DataProvider<DecimalSymbolsV1Marker> for crate::DatagenProvider {
     fn load(&self, req: DataRequest) -> Result<DataResponse<DecimalSymbolsV1Marker>, DataError> {
+        self.check_req::<DecimalSymbolsV1Marker>(req)?;
         let langid = req.locale.get_langid();
 
         let resource: &cldr_serde::numbers::Resource = self
-            .source
             .cldr()?
             .numbers()
             .read_and_parse(&langid, "numbers.json")?;
 
-        let numbers = &resource
-            .main
-            .0
-            .get(&langid)
-            .expect("CLDR file contains the expected language")
-            .numbers;
+        let numbers = &resource.main.value.numbers;
 
         let nsname = match req.locale.get_unicode_ext(&key!("nu")) {
             Some(v) => *v
@@ -100,7 +95,7 @@ impl TryFrom<NumbersWithNumsys<'_>> for DecimalSymbolsV1<'static> {
 fn test_basic() {
     use icu_locid::locale;
 
-    let provider = crate::DatagenProvider::for_test();
+    let provider = crate::DatagenProvider::new_testing();
 
     let ar_decimal: DataPayload<DecimalSymbolsV1Marker> = provider
         .load(DataRequest {

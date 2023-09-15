@@ -128,7 +128,7 @@
         See the `Rust documentation for days_in_month <https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.days_in_month>`__ for more information.
 
 
-    .. cpp:function:: uint32_t days_in_year() const
+    .. cpp:function:: uint16_t days_in_year() const
 
         Returns the number of days in the year represented by this date
 
@@ -154,6 +154,13 @@
         Creates a new :cpp:class:`ICU4XIsoDate` from the specified date and time.
 
         See the `Rust documentation for try_new_iso_date <https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.try_new_iso_date>`__ for more information.
+
+
+    .. cpp:function:: static ICU4XIsoDate create_for_unix_epoch()
+
+        Creates a new :cpp:class:`ICU4XIsoDate` representing January 1, 1970.
+
+        See the `Rust documentation for unix_epoch <https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.unix_epoch>`__ for more information.
 
 
     .. cpp:function:: ICU4XDate to_calendar(const ICU4XCalendar& calendar) const
@@ -226,7 +233,7 @@
         See the `Rust documentation for days_in_month <https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.days_in_month>`__ for more information.
 
 
-    .. cpp:function:: uint32_t days_in_year() const
+    .. cpp:function:: uint16_t days_in_year() const
 
         Returns the number of days in the year represented by this date
 

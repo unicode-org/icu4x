@@ -13,9 +13,9 @@ use crate::LocaleExpander;
 use crate::TransformResult;
 use icu_locid::subtags::{Language, Region, Script};
 use icu_locid::{
-    extensions_unicode_key as key,
-    subtags::{Variant, Variants},
-    subtags_language as language, LanguageIdentifier, Locale,
+    extensions::unicode::key,
+    subtags::{language, Variant, Variants},
+    LanguageIdentifier, Locale,
 };
 use icu_provider::prelude::*;
 use tinystr::TinyAsciiStr;
@@ -32,8 +32,7 @@ use tinystr::TinyAsciiStr;
 /// use icu_locid::Locale;
 /// use icu_locid_transform::{LocaleCanonicalizer, TransformResult};
 ///
-/// let lc = LocaleCanonicalizer::try_new_unstable(&icu_testdata::unstable())
-///     .expect("create failed");
+/// let lc = LocaleCanonicalizer::new();
 ///
 /// let mut locale: Locale = "ja-Latn-fonipa-hepburn-heploc".parse().unwrap();
 /// assert_eq!(lc.canonicalize(&mut locale), TransformResult::Modified);
@@ -209,13 +208,44 @@ where
     true
 }
 
+#[cfg(feature = "compiled_data")]
+impl Default for LocaleCanonicalizer {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
 impl LocaleCanonicalizer {
-    /// A constructor which takes a [`DataProvider`] and creates a [`LocaleCanonicalizer`].
+    /// A constructor which creates a [`LocaleCanonicalizer`] from compiled data.
+    ///
+    /// ✨ *Enabled with the `compiled_data` Cargo feature.*
     ///
     /// [📚 Help choosing a constructor](icu_provider::constructors)
-    /// <div class="stab unstable">
-    /// ⚠️ The bounds on this function may change over time, including in SemVer minor releases.
-    /// </div>
+    #[cfg(feature = "compiled_data")]
+    pub const fn new() -> Self {
+        Self::new_with_expander(LocaleExpander::new_extended())
+    }
+
+    // Note: This is a custom impl because the bounds on LocaleExpander::try_new_unstable changed
+    #[doc = icu_provider::gen_any_buffer_unstable_docs!(ANY, Self::new)]
+    pub fn try_new_with_any_provider(
+        provider: &(impl AnyProvider + ?Sized),
+    ) -> Result<LocaleCanonicalizer, LocaleTransformError> {
+        let expander = LocaleExpander::try_new_with_any_provider(provider)?;
+        Self::try_new_with_expander_unstable(&provider.as_downcasting(), expander)
+    }
+
+    // Note: This is a custom impl because the bounds on LocaleExpander::try_new_unstable changed
+    #[doc = icu_provider::gen_any_buffer_unstable_docs!(BUFFER, Self::new)]
+    #[cfg(feature = "serde")]
+    pub fn try_new_with_buffer_provider(
+        provider: &(impl BufferProvider + ?Sized),
+    ) -> Result<LocaleCanonicalizer, LocaleTransformError> {
+        let expander = LocaleExpander::try_new_with_buffer_provider(provider)?;
+        Self::try_new_with_expander_unstable(&provider.as_deserializing(), expander)
+    }
+
+    #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::new)]
     pub fn try_new_unstable<P>(provider: &P) -> Result<LocaleCanonicalizer, LocaleTransformError>
     where
         P: DataProvider<AliasesV1Marker>
@@ -227,28 +257,22 @@ impl LocaleCanonicalizer {
         Self::try_new_with_expander_unstable(provider, expander)
     }
 
-    // Note: This is a custom impl because the bounds on LocaleExpander::try_new_unstable changed
-    #[doc = icu_provider::gen_any_buffer_docs!(ANY, icu_provider, Self::try_new_unstable)]
-    pub fn try_new_with_any_provider(
-        provider: &(impl AnyProvider + ?Sized),
-    ) -> Result<LocaleCanonicalizer, LocaleTransformError> {
-        let expander = LocaleExpander::try_new_with_any_provider(provider)?;
-        Self::try_new_with_expander_unstable(&provider.as_downcasting(), expander)
-    }
-
-    // Note: This is a custom impl because the bounds on LocaleExpander::try_new_unstable changed
-    #[doc = icu_provider::gen_any_buffer_docs!(BUFFER, icu_provider, Self::try_new_unstable)]
-    #[cfg(feature = "serde")]
-    pub fn try_new_with_buffer_provider(
-        provider: &(impl BufferProvider + ?Sized),
-    ) -> Result<LocaleCanonicalizer, LocaleTransformError> {
-        let expander = LocaleExpander::try_new_with_buffer_provider(provider)?;
-        Self::try_new_with_expander_unstable(&provider.as_deserializing(), expander)
-    }
-
-    /// Creates a [`LocaleCanonicalizer`] with a custom [`LocaleExpander`] object.
+    /// Creates a [`LocaleCanonicalizer`] with a custom [`LocaleExpander`] and compiled data.
     ///
-    /// For example, use this constructor if you wish to support all languages.
+    /// ✨ *Enabled with the `compiled_data` Cargo feature.*
+    ///
+    /// [📚 Help choosing a constructor](icu_provider::constructors)
+    #[cfg(feature = "compiled_data")]
+    pub const fn new_with_expander(expander: LocaleExpander) -> Self {
+        Self {
+            aliases: DataPayload::from_static_ref(
+                crate::provider::Baked::SINGLETON_LOCID_TRANSFORM_ALIASES_V1,
+            ),
+            expander,
+        }
+    }
+
+    #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::new_with_expander)]
     pub fn try_new_with_expander_unstable<P>(
         provider: &P,
         expander: LocaleExpander,
@@ -262,6 +286,20 @@ impl LocaleCanonicalizer {
         Ok(LocaleCanonicalizer { aliases, expander })
     }
 
+    icu_provider::gen_any_buffer_data_constructors!(
+        locale: skip,
+        options: LocaleExpander,
+        error: LocaleTransformError,
+        #[cfg(skip)]
+        functions: [
+            new_with_expander,
+            try_new_with_expander_with_any_provider,
+            try_new_with_expander_with_buffer_provider,
+            try_new_with_expander_unstable,
+            Self,
+        ]
+    );
+
     /// The canonicalize method potentially updates a passed in locale in place
     /// depending up the results of running the canonicalization algorithm
     /// from <http://unicode.org/reports/tr35/#LocaleId_Canonicalization>.
@@ -269,7 +307,8 @@ impl LocaleCanonicalizer {
     /// Some BCP47 canonicalization data is not part of the CLDR json package. Because
     /// of this, some canonicalizations are not performed, e.g. the canonicalization of
     /// `und-u-ca-islamicc` to `und-u-ca-islamic-civil`. This will be fixed in a future
-    /// release once the missing data has been added to the CLDR json data.
+    /// release once the missing data has been added to the CLDR json data. See:
+    /// <https://github.com/unicode-org/icu4x/issues/746>
     ///
     /// # Examples
     ///
@@ -277,8 +316,7 @@ impl LocaleCanonicalizer {
     /// use icu_locid::Locale;
     /// use icu_locid_transform::{LocaleCanonicalizer, TransformResult};
     ///
-    /// let lc = LocaleCanonicalizer::try_new_unstable(&icu_testdata::unstable())
-    ///     .expect("create failed");
+    /// let lc = LocaleCanonicalizer::new();
     ///
     /// let mut locale: Locale = "ja-Latn-fonipa-hepburn-heploc".parse().unwrap();
     /// assert_eq!(lc.canonicalize(&mut locale), TransformResult::Modified);

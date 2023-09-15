@@ -38,7 +38,7 @@ class ICU4XSentenceSegmenter {
   /**
    * Construct an [`ICU4XSentenceSegmenter`].
    * 
-   * See the [Rust documentation for `try_new_unstable`](https://docs.rs/icu/latest/icu/segmenter/struct.SentenceSegmenter.html#method.try_new_unstable) for more information.
+   * See the [Rust documentation for `new`](https://docs.rs/icu/latest/icu/segmenter/struct.SentenceSegmenter.html#method.new) for more information.
    */
   static diplomat::result<ICU4XSentenceSegmenter, ICU4XError> create(const ICU4XDataProvider& provider);
 

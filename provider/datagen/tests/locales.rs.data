@@ -1,0 +1,61 @@
+// This file is part of ICU4X. For terms of use, please see the file
+// called LICENSE at the top level of the ICU4X source tree
+// (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
+
+// Locales to include in test data. Keep this list somewhat short, but cover all features.
+// We use 12 base languages with a small number of variants to allow for 12 languages to be
+// used in microbenchmarks.
+const LOCALES: &[LanguageIdentifier] = &[
+    // Arabic:
+    // - Good example for RTL
+    // - Non-latin numerals in Egypt
+    langid!("ar"),
+    langid!("ar-EG"),
+    // Bangla:
+    // - Uses non-Latin numerals
+    langid!("bn"),
+    // Chakma:
+    // - High-coverage language that uses non-BMP code points
+    langid!("ccp"),
+    // English:
+    // - Widely understood language in software engineering
+    // - Includes regional variants to test similar-data fallbacks
+    langid!("en"),
+    langid!("en-001"),
+    langid!("en-ZA"),
+    // Spanish:
+    //  - Most popular Romance language
+    //  - South American dialect
+    //  - Has context dependent list fragments
+    langid!("es"),
+    langid!("es-AR"),
+    // French:
+    // - Often the first non-English locale to receive new data in CLDR
+    langid!("fr"),
+    // Filipino:
+    // - Week of month/year have plural variants.
+    langid!("fil"),
+    // Japanese:
+    // - Four scripts
+    // - Complex date patterns
+    langid!("ja"),
+    // Russian:
+    // - Cyrillic script
+    // - Interesting plural rules
+    // - Hightly inflected, many gramatical cases
+    langid!("ru"),
+    // Serbian:
+    // - Multiple scripts
+    // - Southern Europe
+    // - Hightly inflected, many gramatical cases
+    langid!("sr"),
+    langid!("sr-Latn"),
+    // Thai:
+    // - Complex word breaking
+    langid!("th"),
+    // Turkish:
+    // - Interesting case-mappings
+    langid!("tr"),
+    // Root data
+    langid!("und"),
+];

@@ -43,6 +43,12 @@ pub mod ffi {
             )?)))
         }
 
+        /// Creates a new [`ICU4XIsoDate`] representing January 1, 1970.
+        #[diplomat::rust_link(icu::calendar::Date::unix_epoch, FnInStruct)]
+        pub fn create_for_unix_epoch() -> Box<ICU4XIsoDate> {
+            Box::new(ICU4XIsoDate(Date::unix_epoch()))
+        }
+
         /// Convert this date to one in a different calendar
         #[diplomat::rust_link(icu::calendar::Date::to_calendar, FnInStruct)]
         pub fn to_calendar(&self, calendar: &ICU4XCalendar) -> Box<ICU4XDate> {
@@ -121,7 +127,7 @@ pub mod ffi {
 
         /// Returns the number of days in the year represented by this date
         #[diplomat::rust_link(icu::calendar::Date::days_in_year, FnInStruct)]
-        pub fn days_in_year(&self) -> u32 {
+        pub fn days_in_year(&self) -> u16 {
             self.0.days_in_year()
         }
     }
@@ -274,7 +280,7 @@ pub mod ffi {
 
         /// Returns the number of days in the year represented by this date
         #[diplomat::rust_link(icu::calendar::Date::days_in_year, FnInStruct)]
-        pub fn days_in_year(&self) -> u32 {
+        pub fn days_in_year(&self) -> u16 {
             self.0.days_in_year()
         }
 

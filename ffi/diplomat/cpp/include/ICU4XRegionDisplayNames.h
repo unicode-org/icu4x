@@ -23,7 +23,7 @@ namespace capi {
 extern "C" {
 #endif
 
-diplomat_result_box_ICU4XRegionDisplayNames_ICU4XError ICU4XRegionDisplayNames_try_new_unstable(const ICU4XDataProvider* provider, const ICU4XLocale* locale);
+diplomat_result_box_ICU4XRegionDisplayNames_ICU4XError ICU4XRegionDisplayNames_try_new(const ICU4XDataProvider* provider, const ICU4XLocale* locale);
 
 diplomat_result_void_ICU4XError ICU4XRegionDisplayNames_of(const ICU4XRegionDisplayNames* self, const char* region_data, size_t region_len, DiplomatWriteable* write);
 void ICU4XRegionDisplayNames_destroy(ICU4XRegionDisplayNames* self);

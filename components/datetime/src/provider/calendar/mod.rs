@@ -22,13 +22,19 @@ pub use symbols::*;
 /// to be stable, their Rust representation might not be. Use with caution.
 /// </div>
 #[icu_provider::data_struct(
-    marker(GregorianDateLengthsV1Marker, "datetime/gregory/datelengths@1"),
     marker(BuddhistDateLengthsV1Marker, "datetime/buddhist/datelengths@1"),
+    marker(ChineseDateLengthsV1Marker, "datetime/chinese/datelengths@1"),
+    marker(CopticDateLengthsV1Marker, "datetime/coptic/datelengths@1"),
+    marker(DangiDateLengthsV1Marker, "datetime/dangi/datelengths@1"),
+    marker(EthiopianDateLengthsV1Marker, "datetime/ethiopic/datelengths@1"),
+    marker(GregorianDateLengthsV1Marker, "datetime/gregory/datelengths@1"),
+    marker(HebrewDateLengthsV1Marker, "datetime/hebrew/datelengths@1"),
+    marker(IndianDateLengthsV1Marker, "datetime/indian/datelengths@1"),
+    marker(IslamicDateLengthsV1Marker, "datetime/islamic/datelengths@1"),
     marker(JapaneseDateLengthsV1Marker, "datetime/japanese/datelengths@1"),
     marker(JapaneseExtendedDateLengthsV1Marker, "datetime/japanext/datelengths@1"),
-    marker(CopticDateLengthsV1Marker, "datetime/coptic/datelengths@1"),
-    marker(IndianDateLengthsV1Marker, "datetime/indian/datelengths@1"),
-    marker(EthiopianDateLengthsV1Marker, "datetime/ethiopic/datelengths@1")
+    marker(PersianDateLengthsV1Marker, "datetime/persian/datelengths@1"),
+    marker(RocDateLengthsV1Marker, "datetime/roc/datelengths@1")
 )]
 #[derive(Debug, PartialEq, Clone, Default)]
 #[cfg_attr(

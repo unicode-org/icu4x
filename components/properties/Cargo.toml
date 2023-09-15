@@ -5,44 +5,41 @@
 [package]
 name = "icu_properties"
 description = "Definitions for Unicode properties"
-version = "1.2.0"
-authors = ["The ICU4X Project Developers"]
-edition = "2021"
-readme = "README.md"
-repository = "https://github.com/unicode-org/icu4x"
-license = "Unicode-DFS-2016"
-categories = ["internationalization"]
-# Keep this in sync with other crates unless there are exceptions
-include = [
-    "src/**/*",
-    "examples/**/*",
-    "benches/**/*",
-    "tests/**/*",
-    "Cargo.toml",
-    "LICENSE",
-    "README.md"
-]
+
+authors.workspace = true
+categories.workspace = true
+edition.workspace = true
+homepage.workspace = true
+include.workspace = true
+license-file.workspace = true
+repository.workspace = true
+rust-version.workspace = true
+version.workspace = true
 
 [package.metadata.docs.rs]
 all-features = true
 
 [dependencies]
 displaydoc = { version = "0.2.3", default-features = false }
-icu_collections = { version = "1.2.0", path = "../../components/collections"}
-icu_provider = { version = "1.2.0", path = "../../provider/core", features = ["macros"] }
-zerovec = { version = "0.9.4", path = "../../utils/zerovec", features = ["derive"] }
-databake = { version = "0.1.3", path = "../../utils/databake", features = ["derive"], optional = true}
+icu_collections = { workspace = true }
+icu_provider = { workspace = true, features = ["macros"] }
+zerovec = { workspace = true, features = ["derive"] }
+databake = { workspace = true, features = ["derive"], optional = true}
 serde = { version = "1.0", default-features = false, features = ["derive", "alloc"], optional = true }
-tinystr = { version = "0.7.1", path = "../../utils/tinystr", default-features = false, features = ["alloc", "zerovec"] }
+tinystr = { workspace = true, features = ["alloc", "zerovec"] }
 
 unicode-bidi = { version = "0.3.13", default-features = false, optional = true }
 
+icu_properties_data = { workspace = true, optional = true }
+icu_locid_transform = { workspace = true, optional = true, features = ["compiled_data"] }
+
 [dev-dependencies]
-icu = { path = "../icu", default-features = false }
-icu_testdata = { path = "../../provider/testdata", default-features = false, features = ["icu_properties"] }
+icu = { workspace = true, default-features = false }
 
 [features]
+default = ["compiled_data"]
 std = ["icu_collections/std", "icu_provider/std"]
 serde = ["dep:serde", "tinystr/serde", "zerovec/serde", "icu_collections/serde", "icu_provider/serde"]
-datagen = ["serde", "dep:databake", "zerovec/databake", "icu_collections/databake"]
+datagen = ["serde", "dep:databake", "zerovec/databake", "icu_collections/databake", "tinystr/databake"]
 bidi = [ "dep:unicode-bidi" ]
+compiled_data = ["dep:icu_properties_data", "dep:icu_locid_transform"]

@@ -4,6 +4,9 @@
 
 //! This module contains provider implementations backed by built-in segmentation data.
 
+#![allow(dead_code)]
+#![allow(unused_imports)]
+
 use icu_codepointtrie_builder::{CodePointTrieBuilder, CodePointTrieBuilderData};
 use icu_collections::codepointtrie::CodePointTrie;
 use icu_properties::{
@@ -17,8 +20,8 @@ use icu_segmenter::symbols::*;
 use std::fmt::Debug;
 use zerovec::ZeroVec;
 
-mod dictionary;
-mod lstm;
+pub(crate) mod dictionary;
+pub(crate) mod lstm;
 
 // state machine name define by builtin name
 // [[tables]]
@@ -79,21 +82,9 @@ struct SegmenterRuleTable {
 
 #[cfg(any(feature = "use_wasm", feature = "use_icu4c"))]
 impl crate::DatagenProvider {
-    fn generate_rule_break_data(
-        &self,
-        key: DataKey,
-    ) -> Result<RuleBreakDataV1<'static>, DataError> {
-        let segmenter = self
-            .source
-            .builtin()
-            .read_and_parse_toml::<SegmenterRuleTable>(&format!(
-                "segmenter/rules/{}.toml",
-                key.path()
-                    .split(&['/', '@'])
-                    .nth(1)
-                    .expect("DataKey format should be valid!")
-            ))
-            .unwrap();
+    fn generate_rule_break_data(&self, rules: &str) -> RuleBreakDataV1<'static> {
+        let segmenter: SegmenterRuleTable =
+            toml::from_str(rules).expect("The data should be valid!");
 
         let data = maps::load_word_break(self).expect("The data should be valid!");
         let wb = data.as_borrowed();
@@ -594,9 +585,9 @@ impl crate::DatagenProvider {
             data: CodePointTrieBuilderData::ValuesByCodePoint(&properties_map),
             default_value: 0,
             error_value: 0,
-            trie_type: match self.source.options.trie_type {
-                crate::options::TrieType::Fast => icu_collections::codepointtrie::TrieType::Fast,
-                crate::options::TrieType::Small => icu_collections::codepointtrie::TrieType::Small,
+            trie_type: match self.trie_type() {
+                crate::TrieType::Fast => icu_collections::codepointtrie::TrieType::Fast,
+                crate::TrieType::Small => icu_collections::codepointtrie::TrieType::Small,
             },
         }
         .build();
@@ -635,7 +626,7 @@ impl crate::DatagenProvider {
             }
         }
 
-        Ok(RuleBreakDataV1 {
+        RuleBreakDataV1 {
             property_table: RuleBreakPropertyTable(property_trie),
             break_state_table: RuleBreakStateTable(ZeroVec::new_owned(break_state_table)),
             rule_status_table: RuleStatusTable(ZeroVec::new_owned(rule_status_table)),
@@ -644,12 +635,12 @@ impl crate::DatagenProvider {
             sot_property: (property_length - 2) as u8,
             eot_property: (property_length - 1) as u8,
             complex_property: complex_property as u8,
-        })
+        }
     }
 }
 
 macro_rules! implement {
-    ($marker:ident) => {
+    ($marker:ident, $rules:literal) => {
         impl DataProvider<$marker> for crate::DatagenProvider {
             fn load(&self, req: DataRequest) -> Result<DataResponse<$marker>, DataError> {
                 #[cfg(not(any(feature = "use_wasm", feature = "use_icu4c")))]
@@ -658,10 +649,12 @@ macro_rules! implement {
                 )
                 .with_req($marker::KEY, req));
                 #[cfg(any(feature = "use_wasm", feature = "use_icu4c"))]
+                self.check_req::<$marker>(req)?;
+                #[cfg(any(feature = "use_wasm", feature = "use_icu4c"))]
                 return Ok(DataResponse {
                     metadata: DataResponseMetadata::default(),
                     payload: Some(DataPayload::from_owned(
-                        self.generate_rule_break_data($marker::KEY).map_err(|e| e.with_req($marker::KEY, req))?,
+                        self.generate_rule_break_data(include_str!(concat!("rules/", $rules))),
                     )),
                 });
             }
@@ -675,10 +668,10 @@ macro_rules! implement {
     }
 }
 
-implement!(LineBreakDataV1Marker);
-implement!(GraphemeClusterBreakDataV1Marker);
-implement!(WordBreakDataV1Marker);
-implement!(SentenceBreakDataV1Marker);
+implement!(LineBreakDataV1Marker, "line.toml");
+implement!(GraphemeClusterBreakDataV1Marker, "grapheme.toml");
+implement!(WordBreakDataV1Marker, "word.toml");
+implement!(SentenceBreakDataV1Marker, "sentence.toml");
 
 #[cfg(test)]
 mod tests {
@@ -686,7 +679,7 @@ mod tests {
 
     #[test]
     fn load_grapheme_cluster_data() {
-        let provider = crate::DatagenProvider::for_test();
+        let provider = crate::DatagenProvider::new_testing();
         let payload: DataPayload<GraphemeClusterBreakDataV1Marker> = provider
             .load(Default::default())
             .expect("Loading should succeed!")

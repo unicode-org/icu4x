@@ -106,26 +106,7 @@ impl databake::Bake for DateSkeletonPatternsV1Marker {
     fn bake(&self, env: &databake::CrateEnv) -> databake::TokenStream {
         env.insert("icu_datetime");
         databake::quote! {
-            ::icu_datetime::provider::calendar::DateSkeletonPatternsV1Marker
+            icu_datetime::provider::calendar::DateSkeletonPatternsV1Marker
         }
-    }
-}
-
-type BakedDateSkeletonPatternsV1 =
-    &'static [(&'static [crate::fields::Field], PatternPlurals<'static>)];
-
-impl zerofrom::ZeroFrom<'static, BakedDateSkeletonPatternsV1> for DateSkeletonPatternsV1<'static> {
-    fn zero_from(other: &'static BakedDateSkeletonPatternsV1) -> Self {
-        Self(
-            other
-                .iter()
-                .map(|(fields, pattern)| {
-                    (
-                        SkeletonV1(Skeleton(fields.iter().cloned().collect())),
-                        zerofrom::ZeroFrom::zero_from(pattern),
-                    )
-                })
-                .collect(),
-        )
     }
 }

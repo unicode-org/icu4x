@@ -6,22 +6,14 @@
 name = "fixed_decimal"
 description = "An API for representing numbers in a human-readable form"
 version = "0.5.3"
-authors = ["The ICU4X Project Developers"]
-edition = "2021"
-readme = "README.md"
-repository = "https://github.com/unicode-org/icu4x"
-license = "Unicode-DFS-2016"
-categories = ["internationalization"]
-# Keep this in sync with other crates unless there are exceptions
-include = [
-    "src/**/*",
-    "examples/**/*",
-    "benches/**/*",
-    "tests/**/*",
-    "Cargo.toml",
-    "LICENSE",
-    "README.md"
-]
+
+authors.workspace = true
+categories.workspace = true
+edition.workspace = true
+include.workspace = true
+license-file.workspace = true
+repository.workspace = true
+rust-version.workspace = true
 
 [package.metadata.workspaces]
 independent = true
@@ -32,25 +24,27 @@ all-features = true
 [dependencies]
 displaydoc = { version = "0.2.3", default-features = false }
 smallvec = "1.9"
-writeable = { version = "0.5.1", path = "../../utils/writeable" }
+writeable = { workspace = true }
 
 ryu = { version = "1.0.5", features = ["small"], optional = true }
 
 [dev-dependencies]
-criterion = "0.4"
 getrandom = { version = "0.2", features = ["js"] }
-icu_benchmark_macros = { path = "../../tools/benchmark/macros" }
+icu_benchmark_macros = { workspace = true }
 rand = "0.8"
 rand_distr = "0.4"
 rand_pcg = "0.3"
 
+[target.'cfg(not(target_arch = "wasm32"))'.dev-dependencies]
+criterion = "0.4"
+
 [features]
 std = []
 bench = []
+ryu = ["dep:ryu"]
 
 [lib]
 bench = false  # This option is required for Benchmark CI
-path = "src/lib.rs"
 
 [package.metadata.cargo-all-features]
 # Bench feature gets tested separately and is only relevant for CI

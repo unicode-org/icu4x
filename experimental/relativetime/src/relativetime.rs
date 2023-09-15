@@ -26,12 +26,11 @@ use crate::{options::RelativeTimeFormatterOptions, RelativeTimeError};
 /// use writeable::assert_writeable_eq;
 ///
 /// let relative_time_formatter =
-///     RelativeTimeFormatter::try_new_long_second_unstable(
-///         &icu_testdata::unstable(),
+///     RelativeTimeFormatter::try_new_long_second(
 ///         &locale!("en").into(),
 ///         RelativeTimeFormatterOptions::default(),
 ///     )
-///     .expect("Data should load successfully.");
+///     .expect("locale should be present");
 ///
 /// assert_writeable_eq!(
 ///     relative_time_formatter.format(FixedDecimal::from(5i8)),
@@ -55,14 +54,13 @@ use crate::{options::RelativeTimeFormatterOptions, RelativeTimeError};
 /// use writeable::assert_writeable_eq;
 ///
 /// let relative_time_formatter =
-///     RelativeTimeFormatter::try_new_short_day_unstable(
-///         &icu_testdata::unstable(),
+///     RelativeTimeFormatter::try_new_short_day(
 ///         &locale!("es").into(),
 ///         RelativeTimeFormatterOptions {
 ///             numeric: Numeric::Auto,
 ///         },
 ///     )
-///     .expect("Data should load successfully.");
+///     .expect("locale should be present");
 ///
 /// assert_writeable_eq!(
 ///     relative_time_formatter.format(FixedDecimal::from(0u8)),
@@ -93,12 +91,11 @@ use crate::{options::RelativeTimeFormatterOptions, RelativeTimeError};
 /// use writeable::assert_writeable_eq;
 ///
 /// let relative_time_formatter =
-///     RelativeTimeFormatter::try_new_narrow_year_unstable(
-///         &icu_testdata::unstable(),
+///     RelativeTimeFormatter::try_new_narrow_year(
 ///         &locale!("bn").into(),
 ///         RelativeTimeFormatterOptions::default(),
 ///     )
-///     .expect("Data should load successfully.");
+///     .expect("locale should be present");
 ///
 /// assert_writeable_eq!(
 ///     relative_time_formatter.format(FixedDecimal::from(3u8)),
@@ -117,10 +114,57 @@ pub struct RelativeTimeFormatter {
 }
 
 macro_rules! constructor {
-    ($name: ident, $marker: ty) => {
-        #[doc = concat!("Create a new [`RelativeTimeFormatter`]")]
-        pub fn $name<D>(
-            data_provider: &D,
+    ($unstable: ident, $baked: ident, $any: ident, $buffer: ident, $marker: ty) => {
+
+        /// Create a new [`RelativeTimeFormatter`] from compiled data.
+        ///
+        /// ✨ *Enabled with the `compiled_data` Cargo feature.*
+        ///
+        /// [📚 Help choosing a constructor](icu_provider::constructors)
+        #[cfg(feature = "compiled_data")]
+        pub fn $baked(
+            locale: &DataLocale,
+            options: RelativeTimeFormatterOptions,
+        ) -> Result<Self, RelativeTimeError> {
+            let plural_rules = PluralRules::try_new_cardinal(locale)?;
+            // Initialize FixedDecimalFormatter with default options
+            let fixed_decimal_format = FixedDecimalFormatter::try_new(
+                locale,
+                FixedDecimalFormatterOptions::default(),
+            )?;
+            let rt: DataPayload<$marker> = crate::provider::Baked
+                .load(DataRequest {
+                    locale,
+                    metadata: Default::default(),
+                })?
+                .take_payload()?;
+            let rt = rt.cast();
+            Ok(RelativeTimeFormatter {
+                plural_rules,
+                options,
+                rt,
+                fixed_decimal_format,
+            })
+        }
+
+        icu_provider::gen_any_buffer_data_constructors!(
+            locale: include,
+            options: RelativeTimeFormatterOptions,
+            error: RelativeTimeError,
+            #[cfg(skip)]
+            functions: [
+                $baked,
+                $any,
+                $buffer,
+                $unstable,
+                Self,
+            ]
+        );
+
+
+        #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::$baked)]
+        pub fn $unstable<D>(
+            provider: &D,
             locale: &DataLocale,
             options: RelativeTimeFormatterOptions,
         ) -> Result<Self, RelativeTimeError>
@@ -130,14 +174,14 @@ macro_rules! constructor {
                 + DataProvider<DecimalSymbolsV1Marker>
                 + ?Sized,
         {
-            let plural_rules = PluralRules::try_new_cardinal_unstable(data_provider, locale)?;
+            let plural_rules = PluralRules::try_new_cardinal_unstable(provider, locale)?;
             // Initialize FixedDecimalFormatter with default options
             let fixed_decimal_format = FixedDecimalFormatter::try_new_unstable(
-                data_provider,
+                provider,
                 locale,
                 FixedDecimalFormatterOptions::default(),
             )?;
-            let rt: DataPayload<$marker> = data_provider
+            let rt: DataPayload<$marker> = provider
                 .load(DataRequest {
                     locale,
                     metadata: Default::default(),
@@ -157,98 +201,170 @@ macro_rules! constructor {
 impl RelativeTimeFormatter {
     constructor!(
         try_new_long_second_unstable,
+        try_new_long_second,
+        try_new_long_second_with_any_provider,
+        try_new_long_second_with_buffer_provider,
         LongSecondRelativeTimeFormatDataV1Marker
     );
     constructor!(
         try_new_long_minute_unstable,
+        try_new_long_minute,
+        try_new_long_minute_with_any_provider,
+        try_new_long_minute_with_buffer_provider,
         LongMinuteRelativeTimeFormatDataV1Marker
     );
     constructor!(
         try_new_long_hour_unstable,
+        try_new_long_hour,
+        try_new_long_hour_with_any_provider,
+        try_new_long_hour_with_buffer_provider,
         LongHourRelativeTimeFormatDataV1Marker
     );
     constructor!(
         try_new_long_day_unstable,
+        try_new_long_day,
+        try_new_long_day_with_any_provider,
+        try_new_long_day_with_buffer_provider,
         LongDayRelativeTimeFormatDataV1Marker
     );
     constructor!(
         try_new_long_week_unstable,
+        try_new_long_week,
+        try_new_long_week_with_any_provider,
+        try_new_long_week_with_buffer_provider,
         LongWeekRelativeTimeFormatDataV1Marker
     );
     constructor!(
         try_new_long_month_unstable,
+        try_new_long_month,
+        try_new_long_month_with_any_provider,
+        try_new_long_month_with_buffer_provider,
         LongMonthRelativeTimeFormatDataV1Marker
     );
     constructor!(
         try_new_long_quarter_unstable,
+        try_new_long_quarter,
+        try_new_long_quarter_with_any_provider,
+        try_new_long_quarter_with_buffer_provider,
         LongQuarterRelativeTimeFormatDataV1Marker
     );
     constructor!(
         try_new_long_year_unstable,
+        try_new_long_year,
+        try_new_long_year_with_any_provider,
+        try_new_long_year_with_buffer_provider,
         LongYearRelativeTimeFormatDataV1Marker
     );
     constructor!(
         try_new_short_second_unstable,
+        try_new_short_second,
+        try_new_short_second_with_any_provider,
+        try_new_short_second_with_buffer_provider,
         ShortSecondRelativeTimeFormatDataV1Marker
     );
     constructor!(
         try_new_short_minute_unstable,
+        try_new_short_minute,
+        try_new_short_minute_with_any_provider,
+        try_new_short_minute_with_buffer_provider,
         ShortMinuteRelativeTimeFormatDataV1Marker
     );
     constructor!(
         try_new_short_hour_unstable,
+        try_new_short_hour,
+        try_new_short_hour_with_any_provider,
+        try_new_short_hour_with_buffer_provider,
         ShortHourRelativeTimeFormatDataV1Marker
     );
     constructor!(
         try_new_short_day_unstable,
+        try_new_short_day,
+        try_new_short_day_with_any_provider,
+        try_new_short_day_with_buffer_provider,
         ShortDayRelativeTimeFormatDataV1Marker
     );
     constructor!(
         try_new_short_week_unstable,
+        try_new_short_week,
+        try_new_short_week_with_any_provider,
+        try_new_short_week_with_buffer_provider,
         ShortWeekRelativeTimeFormatDataV1Marker
     );
     constructor!(
         try_new_short_month_unstable,
+        try_new_short_month,
+        try_new_short_month_with_any_provider,
+        try_new_short_month_with_buffer_provider,
         ShortMonthRelativeTimeFormatDataV1Marker
     );
     constructor!(
         try_new_short_quarter_unstable,
+        try_new_short_quarter,
+        try_new_short_quarter_with_any_provider,
+        try_new_short_quarter_with_buffer_provider,
         ShortQuarterRelativeTimeFormatDataV1Marker
     );
     constructor!(
         try_new_short_year_unstable,
+        try_new_short_year,
+        try_new_short_year_with_any_provider,
+        try_new_short_year_with_buffer_provider,
         ShortYearRelativeTimeFormatDataV1Marker
     );
     constructor!(
         try_new_narrow_second_unstable,
+        try_new_narrow_second,
+        try_new_narrow_second_with_any_provider,
+        try_new_narrow_second_with_buffer_provider,
         NarrowSecondRelativeTimeFormatDataV1Marker
     );
     constructor!(
         try_new_narrow_minute_unstable,
+        try_new_narrow_minute,
+        try_new_narrow_minute_with_any_provider,
+        try_new_narrow_minute_with_buffer_provider,
         NarrowMinuteRelativeTimeFormatDataV1Marker
     );
     constructor!(
         try_new_narrow_hour_unstable,
+        try_new_narrow_hour,
+        try_new_narrow_hour_with_any_provider,
+        try_new_narrow_hour_with_buffer_provider,
         NarrowHourRelativeTimeFormatDataV1Marker
     );
     constructor!(
         try_new_narrow_day_unstable,
+        try_new_narrow_day,
+        try_new_narrow_day_with_any_provider,
+        try_new_narrow_day_with_buffer_provider,
         NarrowDayRelativeTimeFormatDataV1Marker
     );
     constructor!(
         try_new_narrow_week_unstable,
+        try_new_narrow_week,
+        try_new_narrow_week_with_any_provider,
+        try_new_narrow_week_with_buffer_provider,
         NarrowWeekRelativeTimeFormatDataV1Marker
     );
     constructor!(
         try_new_narrow_month_unstable,
+        try_new_narrow_month,
+        try_new_narrow_month_with_any_provider,
+        try_new_narrow_month_with_buffer_provider,
         NarrowMonthRelativeTimeFormatDataV1Marker
     );
     constructor!(
         try_new_narrow_quarter_unstable,
+        try_new_narrow_quarter,
+        try_new_narrow_quarter_with_any_provider,
+        try_new_narrow_quarter_with_buffer_provider,
         NarrowQuarterRelativeTimeFormatDataV1Marker
     );
     constructor!(
         try_new_narrow_year_unstable,
+        try_new_narrow_year,
+        try_new_narrow_year_with_any_provider,
+        try_new_narrow_year_with_buffer_provider,
         NarrowYearRelativeTimeFormatDataV1Marker
     );
 

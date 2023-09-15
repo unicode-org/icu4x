@@ -38,7 +38,7 @@
 
     .. cpp:function:: static diplomat::result<ICU4XScriptWithExtensions, ICU4XError> create(const ICU4XDataProvider& provider)
 
-        See the `Rust documentation for load_script_with_extensions_unstable <https://docs.rs/icu/latest/icu/properties/script/fn.load_script_with_extensions_unstable.html>`__ for more information.
+        See the `Rust documentation for script_with_extensions <https://docs.rs/icu/latest/icu/properties/script/fn.script_with_extensions.html>`__ for more information.
 
 
     .. cpp:function:: uint16_t get_script_val(uint32_t code_point) const
@@ -101,4 +101,11 @@
         Check if the Script_Extensions property of the given code point covers the given script
 
         See the `Rust documentation for has_script <https://docs.rs/icu/latest/icu/properties/script/struct.ScriptWithExtensionsBorrowed.html#method.has_script>`__ for more information.
+
+
+    .. cpp:function:: ICU4XCodePointSetData get_script_extensions_set(uint16_t script) const
+
+        Build the CodePointSetData corresponding to a codepoints matching a particular script in their Script_Extensions
+
+        See the `Rust documentation for get_script_extensions_set <https://docs.rs/icu/latest/icu/properties/script/struct.ScriptWithExtensionsBorrowed.html#method.get_script_extensions_set>`__ for more information.
 

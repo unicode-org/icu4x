@@ -8,8 +8,6 @@ pub mod ffi {
     use crate::provider::ffi::ICU4XDataProvider;
     use alloc::boxed::Box;
     use core::convert::TryFrom;
-    use icu_provider::DataProvider;
-    use icu_segmenter::provider::GraphemeClusterBreakDataV1Marker;
     use icu_segmenter::{
         GraphemeClusterBreakIteratorLatin1, GraphemeClusterBreakIteratorPotentiallyIllFormedUtf8,
         GraphemeClusterBreakIteratorUtf16, GraphemeClusterSegmenter,
@@ -48,23 +46,16 @@ pub mod ffi {
 
     impl ICU4XGraphemeClusterSegmenter {
         /// Construct an [`ICU4XGraphemeClusterSegmenter`].
-        #[diplomat::rust_link(
-            icu::segmenter::GraphemeClusterSegmenter::try_new_unstable,
-            FnInStruct
-        )]
+        #[diplomat::rust_link(icu::segmenter::GraphemeClusterSegmenter::new, FnInStruct)]
         pub fn create(
             provider: &ICU4XDataProvider,
         ) -> Result<Box<ICU4XGraphemeClusterSegmenter>, ICU4XError> {
-            Self::try_new_impl(&provider.0)
-        }
-
-        fn try_new_impl<D>(provider: &D) -> Result<Box<ICU4XGraphemeClusterSegmenter>, ICU4XError>
-        where
-            D: DataProvider<GraphemeClusterBreakDataV1Marker> + ?Sized,
-        {
-            Ok(Box::new(ICU4XGraphemeClusterSegmenter(
-                GraphemeClusterSegmenter::try_new_unstable(provider)?,
-            )))
+            Ok(Box::new(ICU4XGraphemeClusterSegmenter(call_constructor!(
+                GraphemeClusterSegmenter::new [r => Ok(r)],
+                GraphemeClusterSegmenter::try_new_with_any_provider,
+                GraphemeClusterSegmenter::try_new_with_buffer_provider,
+                provider,
+            )?)))
         }
 
         /// Segments a (potentially ill-formed) UTF-8 string.

@@ -21,17 +21,35 @@ pub struct ListFormatter {
 }
 
 macro_rules! constructor {
-    ($name: ident, $name_any: ident, $name_buffer: ident, $marker: ty, $doc: literal) => {
-        #[doc = concat!("Creates a new [`ListFormatter`] that produces a ", $doc, "-type list.\n\nSee the [CLDR spec]",
-            "(https://unicode.org/reports/tr35/tr35-general.html#ListPatterns) for an explanation of the different types.\n\n",
-            "[📚 Help choosing a constructor](icu_provider::constructors)\n\n",
-            "<div class=\"stab unstable\">⚠️ The bounds on this function may change over time, including in SemVer minor releases.</div>")]
-        pub fn $name<D: DataProvider<$marker> + ?Sized>(
-            data_provider: &D,
+    ($name: ident, $name_any: ident, $name_buffer: ident, $name_unstable: ident, $marker: ty, $doc: literal) => {
+        icu_provider::gen_any_buffer_data_constructors!(
+            locale: include,
+            style: ListLength,
+            error: ListError,
+            #[doc = concat!("Creates a new [`ListFormatter`] that produces a ", $doc, "-type list using compiled data.")]
+            ///
+            /// See the [CLDR spec](https://unicode.org/reports/tr35/tr35-general.html#ListPatterns) for
+            /// an explanation of the different types.
+            ///
+            /// ✨ *Enabled with the `compiled_data` Cargo feature.*
+            ///
+            /// [📚 Help choosing a constructor](icu_provider::constructors)
+            functions: [
+                $name,
+                $name_any,
+                $name_buffer,
+                $name_unstable,
+                Self
+            ]
+        );
+
+        #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::$name)]
+        pub fn $name_unstable(
+            provider: &(impl DataProvider<$marker> + ?Sized),
             locale: &DataLocale,
             length: ListLength,
         ) -> Result<Self, ListError> {
-            let data = data_provider
+            let data = provider
                 .load(DataRequest {
                     locale,
                     metadata: Default::default(),
@@ -39,38 +57,31 @@ macro_rules! constructor {
                 .take_payload()?.cast();
             Ok(Self { data, length })
         }
-        icu_provider::gen_any_buffer_constructors!(
-            locale: include,
-            style: ListLength,
-            error: ListError,
-            functions: [
-                Self::$name,
-                $name_any,
-                $name_buffer
-            ]
-        );
     };
 }
 
 impl ListFormatter {
     constructor!(
-        try_new_and_with_length_unstable,
+        try_new_and_with_length,
         try_new_and_with_length_with_any_provider,
         try_new_and_with_length_with_buffer_provider,
+        try_new_and_with_length_unstable,
         AndListV1Marker,
         "and"
     );
     constructor!(
-        try_new_or_with_length_unstable,
+        try_new_or_with_length,
         try_new_or_with_length_with_any_provider,
         try_new_or_with_length_with_buffer_provider,
+        try_new_or_with_length_unstable,
         OrListV1Marker,
         "or"
     );
     constructor!(
-        try_new_unit_with_length_unstable,
+        try_new_unit_with_length,
         try_new_unit_with_length_with_any_provider,
         try_new_unit_with_length_with_buffer_provider,
+        try_new_unit_with_length_unstable,
         UnitListV1Marker,
         "unit"
     );
@@ -87,8 +98,7 @@ impl ListFormatter {
     /// use icu::list::*;
     /// # use icu::locid::locale;
     /// # use writeable::*;
-    /// let formatteur = ListFormatter::try_new_and_with_length_unstable(
-    ///     &icu_testdata::unstable(),
+    /// let formatteur = ListFormatter::try_new_and_with_length(
     ///     &locale!("fr").into(),
     ///     ListLength::Wide,
     /// )
@@ -357,5 +367,69 @@ mod tests {
         let formatter = formatter(ListLength::Narrow);
 
         assert_writeable_eq!(formatter.format(["Beta", "Alpha"].iter()), "Beta :o Alpha");
+    }
+
+    macro_rules! test {
+        ($locale:literal, $type:ident, $(($input:expr, $output:literal),)+) => {
+            let f = ListFormatter::$type(
+                &icu::locid::locale!($locale).into(),
+                ListLength::Wide
+            ).unwrap();
+            $(
+                assert_writeable_eq!(f.format($input.iter()), $output);
+            )+
+        };
+    }
+
+    #[test]
+    fn test_basic() {
+        test!("fr", try_new_or_with_length, (["A", "B"], "A ou B"),);
+    }
+
+    #[test]
+    fn test_spanish() {
+        test!(
+            "es",
+            try_new_and_with_length,
+            (["x", "Mallorca"], "x y Mallorca"),
+            (["x", "Ibiza"], "x e Ibiza"),
+            (["x", "Hidalgo"], "x e Hidalgo"),
+            (["x", "Hierva"], "x y Hierva"),
+        );
+
+        test!(
+            "es",
+            try_new_or_with_length,
+            (["x", "Ibiza"], "x o Ibiza"),
+            (["x", "Okinawa"], "x u Okinawa"),
+            (["x", "8 más"], "x u 8 más"),
+            (["x", "8"], "x u 8"),
+            (["x", "87 más"], "x u 87 más"),
+            (["x", "87"], "x u 87"),
+            (["x", "11 más"], "x u 11 más"),
+            (["x", "11"], "x u 11"),
+            (["x", "110 más"], "x o 110 más"),
+            (["x", "110"], "x o 110"),
+            (["x", "11.000 más"], "x u 11.000 más"),
+            (["x", "11.000"], "x u 11.000"),
+            (["x", "11.000,92 más"], "x u 11.000,92 más"),
+            (["x", "11.000,92"], "x u 11.000,92"),
+        );
+
+        test!(
+            "es-AR",
+            try_new_and_with_length,
+            (["x", "Ibiza"], "x e Ibiza"),
+        );
+    }
+
+    #[test]
+    fn test_hebrew() {
+        test!(
+            "he",
+            try_new_and_with_length,
+            (["x", "יפו"], "x ויפו"),
+            (["x", "Ibiza"], "x ו‑Ibiza"),
+        );
     }
 }

@@ -1,0 +1,24 @@
+{
+  "keys": {
+    "explicit": [
+      "time_zone/metazone_period@1",
+      "tzif/historic_transitions@1",
+      "tzif/transition_rules@1"
+    ]
+  },
+  "fallback": "runtime",
+  "locales": "recommended",
+  "cldr": "latest",
+  "icuExport": "latest",
+  "tzif": {
+    "path": "../../../provider/datagen/tests/data/tzif"
+  },
+  "segmenterLstm": "latest",
+  "export": {
+    "baked": {
+      "path": "data",
+      "pretty": true
+    }
+  },
+  "overwrite": true
+}

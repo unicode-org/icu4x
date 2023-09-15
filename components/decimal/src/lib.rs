@@ -22,12 +22,11 @@
 //! use icu::locid::locale;
 //! use writeable::assert_writeable_eq;
 //!
-//! let fdf = FixedDecimalFormatter::try_new_unstable(
-//!     &icu_testdata::unstable(),
+//! let fdf = FixedDecimalFormatter::try_new(
 //!     &locale!("bn").into(),
 //!     Default::default(),
 //! )
-//! .expect("Data should load successfully");
+//! .expect("locale should be present");
 //!
 //! let fixed_decimal = FixedDecimal::from(1000007);
 //!
@@ -42,12 +41,11 @@
 //! use icu::locid::Locale;
 //! use writeable::assert_writeable_eq;
 //!
-//! let fdf = FixedDecimalFormatter::try_new_unstable(
-//!     &icu_testdata::unstable(),
+//! let fdf = FixedDecimalFormatter::try_new(
 //!     &Locale::UND.into(),
 //!     Default::default(),
 //! )
-//! .expect("Data should load successfully");
+//! .expect("locale should be present");
 //!
 //! let fixed_decimal = FixedDecimal::from(200050).multiplied_pow10(-2);
 //!
@@ -65,12 +63,11 @@
 //! use icu::locid::locale;
 //! use writeable::assert_writeable_eq;
 //!
-//! let fdf = FixedDecimalFormatter::try_new_unstable(
-//!     &icu_testdata::unstable(),
+//! let fdf = FixedDecimalFormatter::try_new(
 //!     &locale!("th-u-nu-thai").into(),
 //!     Default::default(),
 //! )
-//! .expect("Data should load successfully");
+//! .expect("locale should be present");
 //!
 //! let fixed_decimal = FixedDecimal::from(1000007);
 //!
@@ -132,18 +129,24 @@ pub struct FixedDecimalFormatter {
 }
 
 impl FixedDecimalFormatter {
-    /// Creates a new [`FixedDecimalFormatter`] from locale data and an options bag.
-    ///
-    /// [📚 Help choosing a constructor](icu_provider::constructors)
-    /// <div class="stab unstable">
-    /// ⚠️ The bounds on this function may change over time, including in SemVer minor releases.
-    /// </div>
+    icu_provider::gen_any_buffer_data_constructors!(
+        locale: include,
+        options: options::FixedDecimalFormatterOptions,
+        error: DecimalError,
+        /// Creates a new [`FixedDecimalFormatter`] from compiled locale data and an options bag.
+        ///
+        /// ✨ *Enabled with the `compiled_data` Cargo feature.*
+        ///
+        /// [📚 Help choosing a constructor](icu_provider::constructors)
+    );
+
+    #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::try_new)]
     pub fn try_new_unstable<D: DataProvider<provider::DecimalSymbolsV1Marker> + ?Sized>(
-        data_provider: &D,
+        provider: &D,
         locale: &DataLocale,
         options: options::FixedDecimalFormatterOptions,
     ) -> Result<Self, DecimalError> {
-        let symbols = data_provider
+        let symbols = provider
             .load(DataRequest {
                 locale,
                 metadata: Default::default(),
@@ -151,12 +154,6 @@ impl FixedDecimalFormatter {
             .take_payload()?;
         Ok(Self { options, symbols })
     }
-
-    icu_provider::gen_any_buffer_constructors!(
-        locale: include,
-        options: options::FixedDecimalFormatterOptions,
-        error: DecimalError
-    );
 
     /// Formats a [`FixedDecimal`], returning a [`FormattedFixedDecimal`].
     pub fn format<'l>(&'l self, value: &'l FixedDecimal) -> FormattedFixedDecimal<'l> {

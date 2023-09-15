@@ -1,5 +1,7 @@
 # icu_locid_transform [![crates.io](https://img.shields.io/crates/v/icu_locid_transform)](https://crates.io/crates/icu_locid_transform)
 
+<!-- cargo-rdme start -->
+
 Canonicalization of locale identifiers based on [`CLDR`] data.
 
 This module is published as its own crate ([`icu_locid_transform`](https://docs.rs/icu_locid_transform/latest/icu_locid_transform/))
@@ -23,8 +25,7 @@ This minimize method returns a new Locale that is the result of running the
 use icu::locid::Locale;
 use icu::locid_transform::{LocaleCanonicalizer, TransformResult};
 
-let lc = LocaleCanonicalizer::try_new_unstable(&icu_testdata::unstable())
-    .expect("create failed");
+let lc = LocaleCanonicalizer::new();
 
 let mut locale: Locale = "ja-Latn-fonipa-hepburn-heploc"
     .parse()
@@ -37,8 +38,7 @@ assert_eq!(locale, "ja-Latn-alalc97-fonipa".parse::<Locale>().unwrap());
 use icu::locid::locale;
 use icu::locid_transform::{LocaleExpander, TransformResult};
 
-let lc = LocaleExpander::try_new_unstable(&icu_testdata::unstable())
-    .expect("create failed");
+let lc = LocaleExpander::new();
 
 let mut locale = locale!("zh-CN");
 assert_eq!(lc.maximize(&mut locale), TransformResult::Modified);
@@ -54,8 +54,7 @@ use icu::locid::locale;
 use icu::locid_transform::{LocaleExpander, TransformResult};
 use writeable::assert_writeable_eq;
 
-let lc = LocaleExpander::try_new_unstable(&icu_testdata::unstable())
-    .expect("create failed");
+let lc = LocaleExpander::new();
 
 let mut locale = locale!("zh-Hans-CN");
 assert_eq!(lc.minimize(&mut locale), TransformResult::Modified);
@@ -70,6 +69,8 @@ assert_eq!(locale, locale!("zh"));
 [`CLDR`]: http://cldr.unicode.org/
 [`UTS #35: Unicode LDML 3. Likely Subtags`]: https://www.unicode.org/reports/tr35/#Likely_Subtags.
 [`UTS #35: Unicode LDML 3. LocaleId Canonicalization`]: http://unicode.org/reports/tr35/#LocaleId_Canonicalization,
+
+<!-- cargo-rdme end -->
 
 ## More Information
 

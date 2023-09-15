@@ -48,9 +48,9 @@ pub struct AdditiveIdentity(char);
 impl AdditiveIdentity {
     pub fn try_new<L: Into<Locale>, P: DataProvider<DecimalSymbolsV1Marker>>(
         locale: L,
-        data_provider: &P,
+        provider: &P,
     ) -> Result<Self, MyError> {
-        let response = data_provider.load(DataRequest {
+        let response = provider.load(DataRequest {
             locale: &locale.into().into(),
             metadata: Default::default(),
         })?.take_payload()?;
@@ -102,7 +102,7 @@ let mut get_hello_world_formatter = |loc: &DataLocale| {
     // Note: This assumes data is split by language subtag, which may or may not be the best
     // strategy for all use cases.
     let path_buf = 
-        Path::new("../../provider/adapters/tests/data/langtest")
+        Path::new("../../../provider/adapters/tests/data/langtest")
         .join(loc.language().as_str());
     let lang_provider = match FsDataProvider::try_new(&path_buf) {
         Ok(p) => p,
@@ -258,43 +258,122 @@ ICU4X's explicit data pipeline allows for specific data entries to be overwritte
 The following example illustrates how to overwrite the decimal separators for a region.
 
 ```rust
+use core::any::Any;
 use icu::decimal::FixedDecimalFormatter;
+use icu::decimal::provider::DecimalSymbolsV1Marker;
 use icu_provider::prelude::*;
+use icu_provider_adapters::any_payload::AnyPayloadProvider;
 use icu::locid::locale;
-use icu::locid::subtags_region as region;
+use icu::locid::{subtags_region as region};
 use std::borrow::Cow;
 use tinystr::tinystr;
 
 pub struct CustomDecimalSymbolsProvider<P>(P);
 
-impl<P> AnyProvider for CustomDecimalSymbolsProvider<P>
+impl<P, M> DataProvider<M> for CustomDecimalSymbolsProvider<P>
 where
-    P: AnyProvider
+    P: DataProvider<M>,
+    M: KeyedDataMarker,
 {
-    fn load_any(&self, key: DataKey, req: DataRequest) -> Result<AnyResponse, DataError> {
-        use icu::decimal::provider::DecimalSymbolsV1Marker;
-        let mut any_res = self.0.load_any(key, req)?;
-        if key == DecimalSymbolsV1Marker::KEY && req.locale.region() == Some(region!("CH")) {
-            let mut res: DataResponse<DecimalSymbolsV1Marker> = any_res.downcast()?;
-            if let Some(payload) = &mut res.payload.as_mut() {
-                payload.with_mut(|data| {
-                    // Change the grouping separator for all Swiss locales to '🐮'
-                    data.grouping_separator = Cow::Borrowed("🐮");
-                });
+    #[inline]
+    fn load(&self, req: DataRequest) -> Result<DataResponse<M>, DataError> {
+        let mut res = self.0.load(req)?;
+        if let Some(mut generic_payload) = res.payload.as_mut() {
+            // Cast from `DataPayload<M>` to `DataPayload<DecimalSymbolsV1Marker>`
+            let mut any_payload = generic_payload as &mut dyn Any;
+            if let Some(mut decimal_payload) = any_payload.downcast_mut::<DataPayload<DecimalSymbolsV1Marker>>() {
+                if req.locale.region() == Some(region!("CH")) {
+                    decimal_payload.with_mut(|data| {
+                        // Change the grouping separator for all Swiss locales to '🐮'
+                        data.grouping_separator = Cow::Borrowed("🐮");
+                    });
+                }
             }
-            any_res = res.wrap_into_any_response();
         }
-        Ok(any_res)
+        Ok(res)
     }
 }
 
-let provider = CustomDecimalSymbolsProvider(icu_testdata::any());
-let formatter = FixedDecimalFormatter::try_new_with_any_provider(
+let provider = CustomDecimalSymbolsProvider(
+    AnyPayloadProvider::new_default::<DecimalSymbolsV1Marker>()
+);
+
+let formatter = FixedDecimalFormatter::try_new_unstable(
     &provider,
-    &locale!("de-CH").into(),
+    &locale!("und").into(),
+    Default::default(),
+)
+.unwrap();
+
+assert_eq!(formatter.format_to_string(&100007i64.into()), "100,007");
+
+let formatter = FixedDecimalFormatter::try_new_unstable(
+    &provider,
+    &locale!("und-CH").into(),
     Default::default(),
 )
 .unwrap();
 
 assert_eq!(formatter.format_to_string(&100007i64.into()), "100🐮007");
+```
+
+## Accessing the Resolved Locale
+
+ICU4X objects do not store their "resolved locale" because that is not a well-defined concept. Components can load data from many sources, and fallbacks to parent locales or root does not necesarily mean that a locale is not supported.
+
+However, for environments that require this behavior, such as ECMA-402, the data provider can be instrumented to access the resolved locale from `DataResponseMetadata`, as shown in the following example.
+
+```rust
+use icu_provider::prelude::*;
+use icu_provider::hello_world::*;
+use icu_provider_adapters::fallback::LocaleFallbackProvider;
+use icu_provider_adapters::fallback::LocaleFallbacker;
+use icu::locid::locale;
+use std::sync::RwLock;
+
+pub struct ResolvedLocaleProvider<P> {
+    inner: P,
+    // This could be a RefCell if thread safety is not required:
+    resolved_locale: RwLock<Option<DataLocale>>,
+}
+
+impl<M, P> DataProvider<M> for ResolvedLocaleProvider<P>
+where
+    M: KeyedDataMarker,
+    P: DataProvider<M>
+{
+    fn load(&self, req: DataRequest) -> Result<DataResponse<M>, DataError> {
+        let mut res = self.inner.load(req)?;
+        // Whichever locale gets loaded for `HelloWorldV1Marker::KEY` will be the one
+        // we consider the "resolved locale". Although `HelloWorldFormatter` only loads
+        // one key, this is a useful distinction for most other formatters.
+        if M::KEY == HelloWorldV1Marker::KEY {
+            let mut w = self.resolved_locale.write().expect("poison");
+            *w = res.metadata.locale.take();
+        }
+        Ok(res)
+    }
+}
+
+// Set up a HelloWorldProvider with fallback
+let provider = ResolvedLocaleProvider {
+    inner: LocaleFallbackProvider::new_with_fallbacker(
+        HelloWorldProvider,
+        LocaleFallbacker::try_new_unstable(&icu_testdata::unstable()).unwrap(),
+    ),
+    resolved_locale: Default::default(),
+};
+
+// Request data for ru-RU...
+HelloWorldFormatter::try_new_unstable(
+    &provider,
+    &locale!("ru-RU").into(),
+)
+.unwrap();
+
+// ...which loads data from ru.
+assert_eq!(
+    *provider.resolved_locale.read().expect("poison"),
+    Some(locale!("ru").into()),
+);
 ```

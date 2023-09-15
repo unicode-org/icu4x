@@ -36,7 +36,11 @@ pub struct LocalTimeRecordV1 {
 /// so to get around having to use a larger 64-bit index, we split the map into two data members
 /// that each use a 32-bit index. The final values of `historic_transitions_indices` are indices
 /// corresponding to the location of the relevant slice of timestamps in `historic_transitions`.
-#[icu_provider::data_struct(TimeZoneHistoricTransitionsV1Marker = "tzif/historic_transitions@1")]
+#[icu_provider::data_struct(marker(
+    TimeZoneHistoricTransitionsV1Marker,
+    "tzif/historic_transitions@1",
+    singleton
+))]
 #[derive(Debug, PartialEq)]
 #[cfg_attr(
     feature = "datagen",
@@ -125,7 +129,11 @@ pub struct TimeZoneTransitionRuleV1 {
 
 /// A map from TZID to its transition rules.
 /// See [`TimeZoneTransitionRuleV1`] for more info.
-#[icu_provider::data_struct(TimeZoneTransitionRulesV1Marker = "tzif/transition_rules@1")]
+#[icu_provider::data_struct(marker(
+    TimeZoneTransitionRulesV1Marker,
+    "tzif/transition_rules@1",
+    singleton
+))]
 #[derive(Debug, PartialEq)]
 #[cfg_attr(
     feature = "datagen",

@@ -59,6 +59,9 @@ impl<'data> BlobSchemaV1<'data> {
             .get0(&key.hashed())
             .ok_or(DataErrorKind::MissingDataKey)
             .and_then(|cursor| {
+                if key.metadata().singleton && !req.locale.is_empty() {
+                    return Err(DataErrorKind::ExtraneousLocale);
+                }
                 cursor
                     .get1_copied_by(|bytes| req.locale.strict_cmp(&bytes.0).reverse())
                     .ok_or(DataErrorKind::MissingLocale)
@@ -78,10 +81,10 @@ impl<'data> BlobSchemaV1<'data> {
         // Note: We could check that every index occurs at least once, but that's a more expensive
         // operation, so we will just check for the min and max index.
         let mut seen_min = false;
-        let mut seen_max = false;
+        let mut seen_max = self.buffers.is_empty();
         for cursor in self.keys.iter0() {
-            for (_, idx) in cursor.iter1_copied() {
-                debug_assert!(idx < self.buffers.len());
+            for (locale, idx) in cursor.iter1_copied() {
+                debug_assert!(idx < self.buffers.len() || locale == Index32U8::SENTINEL);
                 if idx == 0 {
                     seen_min = true;
                 }
@@ -120,4 +123,9 @@ impl<'a> ZeroMapKV<'a> for Index32U8 {
     type Slice = VarZeroSlice<Index32U8, Index32>;
     type GetType = Index32U8;
     type OwnedType = Box<Index32U8>;
+}
+
+impl Index32U8 {
+    #[allow(dead_code)]
+    pub(crate) const SENTINEL: &'static Self = unsafe { &*(&[] as *const [u8] as *const Self) };
 }

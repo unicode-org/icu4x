@@ -29,7 +29,6 @@ use combine::{stream, Parser};
 use data::{posix::PosixTzString, tzif::TzifData};
 use error::Error;
 use std::{fs::File, path::Path};
-
 /// The parsed data representations.
 pub mod data;
 

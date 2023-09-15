@@ -47,14 +47,12 @@ mod test {
             locale: &locale,
             metadata: Default::default(),
         };
-        let patterns = icu_testdata::buffer()
-            .as_deserializing()
+        let patterns = crate::provider::Baked
             .load(req)
             .expect("Failed to load payload")
             .take_payload()
             .expect("Failed to retrieve payload");
-        let skeletons = icu_testdata::buffer()
-            .as_deserializing()
+        let skeletons = crate::provider::Baked
             .load(req)
             .expect("Failed to load payload")
             .take_payload()
@@ -214,8 +212,7 @@ mod test {
 
     // NOTE: If you are moving this to the SUPPORTED section, make sure to remove the match
     //       on your symbol from impl From<fields::SymbolError> for SkeletonError
-    //       and then regenerate the test data.
-    //       https://github.com/unicode-org/icu4x/blob/main/provider/testdata/README.md
+    //       and then regenerate baked data (`cargo make bakeddata components/datetime`)
     #[rustfmt::skip]
     const UNSUPPORTED_STRING_SKELETONS: &[&str] = &[
         // TODO(#487) - Flexible day periods

@@ -49,9 +49,10 @@ extern crate alloc;
 pub mod common;
 pub mod data_struct;
 pub mod errors;
-pub mod fallbacker;
 pub mod locale;
+#[cfg(feature = "logging")]
 pub mod logging;
+#[macro_use]
 pub mod provider;
 
 #[cfg(target_arch = "wasm32")]
@@ -67,8 +68,12 @@ pub mod bidi;
     feature = "icu_calendar"
 ))]
 pub mod calendar;
+#[cfg(feature = "icu_casemap")]
+pub mod casemap;
 #[cfg(feature = "icu_collator")]
 pub mod collator;
+#[cfg(feature = "icu_properties")]
+pub mod collections_sets;
 #[cfg(any(
     feature = "icu_datetime",
     feature = "icu_timezone",
@@ -87,6 +92,8 @@ pub mod datetime_formatter;
 pub mod decimal;
 #[cfg(feature = "icu_displaynames")]
 pub mod displaynames;
+#[cfg(feature = "icu_locid_transform")]
+pub mod fallbacker;
 #[cfg(feature = "icu_decimal")]
 pub mod fixed_decimal;
 #[cfg(feature = "icu_list")]
@@ -131,7 +138,7 @@ pub mod time;
 pub mod timezone;
 #[cfg(feature = "icu_datetime")]
 pub mod timezone_formatter;
-#[cfg(any(feature = "icu_calendar"))]
+#[cfg(feature = "icu_calendar")]
 pub mod week;
 #[cfg(feature = "icu_datetime")]
 pub mod zoned_formatter;
