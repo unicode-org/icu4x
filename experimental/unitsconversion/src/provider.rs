@@ -80,6 +80,8 @@ pub struct ConstantValue<'data> {
     pub numerator: ZeroVec<'data, u8>,
     #[serde(borrow)]
     pub denominator: ZeroVec<'data, u8>,
+
     pub sign: Sign,
+
     pub constant_type: ConstantType,
 }
