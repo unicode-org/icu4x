@@ -247,6 +247,12 @@ impl Collator {
         })
     }
 
+    /// The resolved options showing how the default options, the requested options,
+    /// and the options from locale data were combined.
+    pub fn resolved_options(&self) -> CollatorOptions {
+        self.options.into()
+    }
+
     /// Compare potentially ill-formed UTF-16 slices. Unpaired surrogates
     /// are compared as if each one was a REPLACEMENT CHARACTER.
     pub fn compare_utf16(&self, left: &[u16], right: &[u16]) -> Ordering {

@@ -359,6 +359,32 @@ impl CollatorOptions {
     }
 }
 
+impl From<CollatorOptionsBitField> for CollatorOptions {
+    fn from(options: CollatorOptionsBitField) -> CollatorOptions {
+        Self {
+            strength: Some(options.strength()),
+            alternate_handling: Some(options.alternate_handling()),
+            case_first: Some(options.case_first()),
+            max_variable: Some(options.max_variable()),
+            case_level: Some(if options.case_level() {
+                CaseLevel::On
+            } else {
+                CaseLevel::Off
+            }),
+            numeric: Some(if options.numeric() {
+                Numeric::On
+            } else {
+                Numeric::Off
+            }),
+            backward_second_level: Some(if options.backward_second_level() {
+                BackwardSecondLevel::On
+            } else {
+                BackwardSecondLevel::Off
+            }),
+        }
+    }
+}
+
 #[derive(Copy, Clone, Debug)]
 pub(crate) struct CollatorOptionsBitField(u32);
 
@@ -518,6 +544,18 @@ impl CollatorOptionsBitField {
                 self.set_case_level(Some(false));
             }
             _ => self.set_case_level(None),
+        }
+    }
+
+    fn case_first(&self) -> CaseFirst {
+        if (self.0 & CollatorOptionsBitField::CASE_FIRST_MASK) != 0 {
+            if (self.0 & CollatorOptionsBitField::UPPER_FIRST_MASK) != 0 {
+                CaseFirst::UpperFirst
+            } else {
+                CaseFirst::LowerFirst
+            }
+        } else {
+            CaseFirst::Off
         }
     }
 

@@ -1453,6 +1453,158 @@ fn test_case_level() {
     );
 }
 
+#[test]
+fn test_default_resolved_options() {
+    let collator = Collator::try_new(&Default::default(), CollatorOptions::new()).unwrap();
+    let resolved = collator.resolved_options();
+    assert_eq!(resolved.strength, Some(Strength::Tertiary));
+    assert_eq!(
+        resolved.alternate_handling,
+        Some(AlternateHandling::NonIgnorable)
+    );
+    assert_eq!(resolved.case_first, Some(CaseFirst::Off));
+    assert_eq!(resolved.max_variable, Some(MaxVariable::Punctuation));
+    assert_eq!(resolved.case_level, Some(CaseLevel::Off));
+    assert_eq!(resolved.numeric, Some(Numeric::Off));
+    assert_eq!(
+        resolved.backward_second_level,
+        Some(BackwardSecondLevel::Off)
+    );
+
+    assert_eq!(collator.compare("𝕒", "A"), core::cmp::Ordering::Less);
+    assert_eq!(collator.compare("coté", "côte"), core::cmp::Ordering::Less);
+}
+
+#[test]
+fn test_data_resolved_options_th() {
+    let locale: DataLocale = langid!("th").into();
+    let collator = Collator::try_new(&locale, CollatorOptions::new()).unwrap();
+    let resolved = collator.resolved_options();
+    assert_eq!(resolved.strength, Some(Strength::Tertiary));
+    assert_eq!(
+        resolved.alternate_handling,
+        Some(AlternateHandling::Shifted)
+    );
+    assert_eq!(resolved.case_first, Some(CaseFirst::Off));
+    assert_eq!(resolved.max_variable, Some(MaxVariable::Punctuation));
+    assert_eq!(resolved.case_level, Some(CaseLevel::Off));
+    assert_eq!(resolved.numeric, Some(Numeric::Off));
+    assert_eq!(
+        resolved.backward_second_level,
+        Some(BackwardSecondLevel::Off)
+    );
+
+    // There's a separate more comprehensive test for the shifted behavior
+    assert_eq!(collator.compare("𝕒", "A"), core::cmp::Ordering::Less);
+    assert_eq!(collator.compare("coté", "côte"), core::cmp::Ordering::Less);
+}
+
+#[test]
+fn test_data_resolved_options_da() {
+    let locale: DataLocale = langid!("da").into();
+    let collator = Collator::try_new(&locale, CollatorOptions::new()).unwrap();
+    let resolved = collator.resolved_options();
+    assert_eq!(resolved.strength, Some(Strength::Tertiary));
+    assert_eq!(
+        resolved.alternate_handling,
+        Some(AlternateHandling::NonIgnorable)
+    );
+    assert_eq!(resolved.case_first, Some(CaseFirst::UpperFirst));
+    assert_eq!(resolved.max_variable, Some(MaxVariable::Punctuation));
+    assert_eq!(resolved.case_level, Some(CaseLevel::Off));
+    assert_eq!(resolved.numeric, Some(Numeric::Off));
+    assert_eq!(
+        resolved.backward_second_level,
+        Some(BackwardSecondLevel::Off)
+    );
+
+    assert_eq!(collator.compare("𝕒", "A"), core::cmp::Ordering::Greater);
+    assert_eq!(collator.compare("coté", "côte"), core::cmp::Ordering::Less);
+}
+
+#[test]
+fn test_data_resolved_options_fr_ca() {
+    let locale: DataLocale = langid!("fr-CA").into();
+    let collator = Collator::try_new(&locale, CollatorOptions::new()).unwrap();
+    let resolved = collator.resolved_options();
+    assert_eq!(resolved.strength, Some(Strength::Tertiary));
+    assert_eq!(
+        resolved.alternate_handling,
+        Some(AlternateHandling::NonIgnorable)
+    );
+    assert_eq!(resolved.case_first, Some(CaseFirst::Off));
+    assert_eq!(resolved.max_variable, Some(MaxVariable::Punctuation));
+    assert_eq!(resolved.case_level, Some(CaseLevel::Off));
+    assert_eq!(resolved.numeric, Some(Numeric::Off));
+    assert_eq!(
+        resolved.backward_second_level,
+        Some(BackwardSecondLevel::On)
+    );
+
+    assert_eq!(collator.compare("𝕒", "A"), core::cmp::Ordering::Less);
+    assert_eq!(
+        collator.compare("coté", "côte"),
+        core::cmp::Ordering::Greater
+    );
+}
+
+#[test]
+fn test_manual_and_data_resolved_options_fr_ca() {
+    let locale: DataLocale = langid!("fr-CA").into();
+
+    let mut options = CollatorOptions::new();
+    options.case_first = Some(CaseFirst::UpperFirst);
+
+    let collator = Collator::try_new(&locale, options).unwrap();
+    let resolved = collator.resolved_options();
+    assert_eq!(resolved.strength, Some(Strength::Tertiary));
+    assert_eq!(
+        resolved.alternate_handling,
+        Some(AlternateHandling::NonIgnorable)
+    );
+    assert_eq!(resolved.case_first, Some(CaseFirst::UpperFirst));
+    assert_eq!(resolved.max_variable, Some(MaxVariable::Punctuation));
+    assert_eq!(resolved.case_level, Some(CaseLevel::Off));
+    assert_eq!(resolved.numeric, Some(Numeric::Off));
+    assert_eq!(
+        resolved.backward_second_level,
+        Some(BackwardSecondLevel::On)
+    );
+
+    assert_eq!(collator.compare("𝕒", "A"), core::cmp::Ordering::Greater);
+    assert_eq!(
+        collator.compare("coté", "côte"),
+        core::cmp::Ordering::Greater
+    );
+}
+
+#[test]
+fn test_manual_resolved_options_da() {
+    let locale: DataLocale = langid!("da").into();
+
+    let mut options = CollatorOptions::new();
+    options.case_first = Some(CaseFirst::Off);
+
+    let collator = Collator::try_new(&locale, options).unwrap();
+    let resolved = collator.resolved_options();
+    assert_eq!(resolved.strength, Some(Strength::Tertiary));
+    assert_eq!(
+        resolved.alternate_handling,
+        Some(AlternateHandling::NonIgnorable)
+    );
+    assert_eq!(resolved.case_first, Some(CaseFirst::Off));
+    assert_eq!(resolved.max_variable, Some(MaxVariable::Punctuation));
+    assert_eq!(resolved.case_level, Some(CaseLevel::Off));
+    assert_eq!(resolved.numeric, Some(Numeric::Off));
+    assert_eq!(
+        resolved.backward_second_level,
+        Some(BackwardSecondLevel::Off)
+    );
+
+    assert_eq!(collator.compare("𝕒", "A"), core::cmp::Ordering::Less);
+    assert_eq!(collator.compare("coté", "côte"), core::cmp::Ordering::Less);
+}
+
 // TODO: Test languages that map to the root.
 // The languages that map to root without script reordering are:
 // ca (at least for now)
@@ -1499,6 +1651,3 @@ fn test_case_level() {
 // TODO: Test Tibetan
 
 // TODO: Test de-AT-u-co-phonebk vs de-DE-u-co-phonebk
-
-// TODO: Test da defaulting to [caseFirst upper]
-// TODO: Test fr-CA defaulting to backward second level
