@@ -30,6 +30,7 @@ tinystr = { workspace = true, features = ["zerovec"], default-features = false }
 zerovec = { workspace = true, features = ["yoke"] }
 num-bigint = { version = "0.4.4", default-features = false }
 num-traits = { version = "0.2.14", default-features = false }
+fraction = { version = "0.13.1", default-features = false }
 
 [features]
 default = []

@@ -7,17 +7,20 @@ mod helpers;
 use std::collections::BTreeMap;
 
 use crate::transform::cldr::cldr_serde;
+use fraction::GenericFraction;
 use icu_provider::{
     datagen::IterableDataProvider, DataError, DataLocale, DataPayload, DataProvider, DataRequest,
     DataResponse,
 };
 use icu_unitsconversion::provider::{
-    ConstantType, ConstantValue, UnitsConstantsV1, UnitsConstantsV1Marker,
+    ConstantType, ConstantValue, ConstantValueULE, UnitsConstantsV1, UnitsConstantsV1Marker,
 };
-use zerovec::{ZeroMap};
+use num_bigint::BigUint;
+use zerovec::{ZeroMap, ZeroVec};
 
 use self::helpers::{
-    convert_any_constant_value_to_fractional, convert_constant_value_in_scientific_to_fractional,
+    convert_array_of_strings_to_fraction, convert_fractional_to_constant_value, has_letters,
+    remove_whitespace, split_constant_string,
 };
 
 impl DataProvider<UnitsConstantsV1Marker> for crate::DatagenProvider {
@@ -31,52 +34,100 @@ impl DataProvider<UnitsConstantsV1Marker> for crate::DatagenProvider {
         let mut constants_map = BTreeMap::<&str, ConstantValue>::new();
 
         let constants = &_units_data.supplemental.unit_constants.constants;
-        let mut constants_need_map = Vec::<(&str, &str, ConstantType)>::new();
-        for (key, constant) in constants {
-            let constant_type = match &constant.status {
-                Some(status) => match status.as_str() {
-                    "approximate" => ConstantType::Approximate,
-                    _ => return Err(DataError::custom("Unknown constant type")),
-                },
-                None => ConstantType::Actual,
-            };
 
-            let constant_str = constant.value.as_str();
-            let constant_value = match convert_constant_value_in_scientific_to_fractional(
-                constant_str,
-                constant_type,
-            ) {
-                Ok(value) => value,
-                Err(_) => {
-                    constants_need_map.push((key, constant_str, constant_type));
-                    continue;
+        // Constants that has a constants in their value.
+        //      For exmaple: "ft2_to_m2": "ft_to_m * ft_to_m",
+        let mut constants_with_constants_map =
+            BTreeMap::<&str, (Vec<&str>, Vec<&str>, ConstantType)>::new();
+
+        for (cons_name, cons_value) in constants {
+            let value = remove_whitespace(&cons_value.value);
+            let (num, den) = match split_constant_string(&value) {
+                Ok((num, den)) => (num, den),
+                Err(e) => {
+                    return Err(e);
                 }
             };
 
-            constants_map.insert(key, constant_value);
+            let constant_type = match cons_value.status.as_deref() {
+                Some("approximate") => ConstantType::Approximate,
+                _ => ConstantType::Actual,
+            };
+
+            constants_with_constants_map.insert(cons_name, (num, den, constant_type));
         }
 
-        for (key, constant_str, constant_type) in constants_need_map {
-            let constant_value = convert_any_constant_value_to_fractional(
-                constant_str,
-                &constants_map,
-                constant_type,
-            );
+        // This loop will replace all the constants in the value of a constant with their values.
+        loop {
+            let mut cons_with_text: u16 = 0;
+            for (cons_name, (num, den, constant_type)) in constants_with_constants_map.iter() {
+                for i in 0..num.len() {
+                    if !has_letters(num[i]) {
+                        continue;
+                    }
 
-            match constant_value {
-                Ok(constant_value) => {
-                    constants_map.insert(key, constant_value);
+                    if constants_with_constants_map.contains_key(num[i]) {
+                        let (rnum, rden, rconstant_type) =
+                            constants_with_constants_map.get(num[i]).unwrap();
+                        num.remove(i);
+                        // append the elements in rnum to num and rden to den
+                        num.append(&mut rnum.clone());
+                        den.append(&mut rden.clone());
+
+                        if *rconstant_type == ConstantType::Approximate {
+                            *constant_type = ConstantType::Approximate;
+                        }
+                    } else {
+                        cons_with_text += 1;
+                    }
                 }
-                Err(_) => {
-                    return Err(DataError::custom("Failed to convert constant_str")
-                        .with_debug_context(constant_str))
+
+                for i in 0..den.len() {
+                    if !has_letters(den[i]) {
+                        continue;
+                    }
+
+                    if constants_with_constants_map.contains_key(den[i]) {
+                        let (rnum, rden, constant_type) =
+                            constants_with_constants_map.get(den[i]).unwrap();
+                        den.remove(i);
+                        // append the elements in rden to num and rnum to den
+                        num.append(&mut rden.clone());
+                        den.append(&mut rnum.clone());
+
+                        if *constant_type == ConstantType::Approximate {
+                            *constant_type = ConstantType::Approximate;
+                        }
+                    } else {
+                        cons_with_text += 1;
+                    }
                 }
+            }
+
+            if cons_with_text == 0 {
+                break;
             }
         }
 
-        let result = UnitsConstantsV1 {
-            constants_map: ZeroMap::from_iter(constants_map),
-        };
+        let mut constants_map = BTreeMap::<&str, ConstantValue>::new();
+
+        for (cons_name, (num, den, constant_type)) in constants_with_constants_map.iter() {
+            let value = convert_array_of_strings_to_fraction(num, den)?;
+            let (num, den, sign, cons_type) =
+                convert_fractional_to_constant_value(value, *constant_type)?;
+            constants_map.insert(
+                cons_name,
+                ConstantValue {
+                    numerator: ZeroVec::from_iter(num),
+                    denominator: ZeroVec::from_iter(den),
+                    sign,
+                    constant_type: cons_type,
+                },
+            );
+        }
+
+        let constants_map = ZeroMap::from_iter(constants_map.into_iter());
+        let result = UnitsConstantsV1 { constants_map };
 
         Ok(DataResponse {
             metadata: Default::default(),

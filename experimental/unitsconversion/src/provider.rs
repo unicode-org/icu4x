@@ -9,13 +9,8 @@
 //!
 //! Read more about data providers: [`icu_provider`]
 
-use std::borrow::Cow;
-
 use icu_provider::prelude::*;
 use zerovec::{ZeroMap, ZeroVec};
-use num_bigint::BigUint;
-
-use crate::{helpers::gcd, Error};
 
 /// This type contains all of the constants data for units conversion.
 ///
@@ -33,7 +28,7 @@ use crate::{helpers::gcd, Error};
 )]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[yoke(prove_covariance_manually)]
-pub struct UnitsConstantsV1 <'data> {
+pub struct UnitsConstantsV1<'data> {
     // TODO(#3882): Use a more efficient representation for the values with numerators and denominators.
     // Also, the constant types.
     /// Maps from constant name (e.g. ft_to_m) to the value of the constant (e.g. 0.3048).
@@ -56,6 +51,21 @@ pub enum ConstantType {
     Approximate = 1,
 }
 
+#[zerovec::make_ule(SignULE)]
+#[cfg_attr(
+    feature = "datagen",
+    derive(serde::Serialize, databake::Bake),
+    databake(path = icu_unitsconversion::provider),
+)]
+#[cfg_attr(feature = "serde", derive(serde::Deserialize))]
+#[derive(Copy, Clone, Debug, PartialOrd, Ord, PartialEq, Eq, Default)]
+#[repr(u8)]
+pub enum Sign {
+    #[default]
+    Positive = 0,
+    Negative = 1,
+}
+
 #[zerovec::make_varule(ConstantValueULE)]
 #[cfg_attr(
     feature = "datagen",
@@ -65,11 +75,11 @@ pub enum ConstantType {
 #[zerovec::derive(Serialize, Deserialize, Debug)]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[derive(Clone, Debug, PartialOrd, Ord, PartialEq, Eq, Default)]
-pub struct ConstantValue <'data> {
+pub struct ConstantValue<'data> {
     #[serde(borrow)]
     pub numerator: ZeroVec<'data, u8>,
     #[serde(borrow)]
     pub denominator: ZeroVec<'data, u8>,
-
+    pub sign: Sign,
     pub constant_type: ConstantType,
 }
