@@ -126,12 +126,8 @@ impl DataProvider<UnitsConstantsV1Marker> for crate::DatagenProvider {
             );
         }
 
-
-        
         let constants_map = ZeroMap::from_iter(constants_map.into_iter());
-        let result = UnitsConstantsV1 {
-            constants_map,
-        };
+        let result = UnitsConstantsV1 { constants_map };
 
         Ok(DataResponse {
             metadata: Default::default(),
