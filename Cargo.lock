@@ -1154,6 +1154,7 @@ dependencies = [
 name = "hashcmp"
 version = "0.1.0"
 dependencies = [
+ "crc32fast",
  "t1ha",
  "twox-hash",
  "wyhash",
