@@ -3,11 +3,11 @@ use crate::pattern_regex_selector::PersonNamePattern;
 
 pub(crate) fn find_best_applicable_pattern<'lt>(
     applicable_pattern: &'lt [PersonNamePattern<'lt>],
-    available_name_fields: &'lt Vec<&NameField>,
+    available_name_fields: &'lt [&NameField],
 ) -> Result<&'lt PersonNamePattern<'lt>, PersonNamesFormatterError> {
     let (_, _, max_applicable_pattern) =
         applicable_pattern
-            .into_iter()
+            .iter()
             .fold((0, u8::MAX as usize, None), |current_max, element| {
                 let (max_used_field_count, max_missing_field_count, _) = &current_max;
                 let (used_field_count, missing_field_count) =
@@ -17,8 +17,8 @@ pub(crate) fn find_best_applicable_pattern<'lt>(
                 }
                 if used_field_count > max_used_field_count {
                     return (
-                        used_field_count.clone(),
-                        missing_field_count.clone(),
+                        *used_field_count,
+                        *missing_field_count,
                         Some(element),
                     );
                 }
@@ -27,13 +27,13 @@ pub(crate) fn find_best_applicable_pattern<'lt>(
                     return current_max;
                 }
                 (
-                    used_field_count.clone(),
-                    missing_field_count.clone(),
+                    *used_field_count,
+                    *missing_field_count,
                     Some(element),
                 )
             });
     max_applicable_pattern
-        .map(|l| Ok(l))
+        .map(Ok)
         .unwrap_or(Err(PersonNamesFormatterError::ParseError(String::from(
             "Invalid Person name pattern",
         ))))

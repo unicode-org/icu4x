@@ -199,6 +199,6 @@ impl PersonNamesFormatter<'_> {
 /// If the person name is not valid, it will not be formatted.
 pub(crate) fn validate_person_name(available_name_fields: &[&NameField]) -> bool {
     available_name_fields
-        .into_iter()
+        .iter()
         .any(|field| field.kind == Given || field.kind == Surname)
 }

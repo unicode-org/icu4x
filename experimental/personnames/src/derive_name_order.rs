@@ -32,15 +32,14 @@ pub(crate) fn name_order_derive(
 
         if given_first
             .iter()
-            .find(|&i| i == chain_locale_str || i == chain_locale_und_str)
-            .is_some()
+            .any(|i| i == chain_locale_str || i == chain_locale_und_str)
         {
             return FormattingOrder::GivenFirst;
         }
         if surname_first
             .iter()
-            .find(|&i| i == chain_locale_str || i == chain_locale_und_str)
-            .is_some()
+            .any(|i| i == chain_locale_str || i == chain_locale_und_str)
+
         {
             return FormattingOrder::SurnameFirst;
         }

@@ -3,7 +3,6 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use core::fmt::{Debug, Formatter};
-
 use icu_locid::Locale;
 use icu_locid_transform::LocaleExpander;
 
@@ -145,20 +144,13 @@ pub struct FieldModifierSet {
 impl FieldModifierSet {
     /// Return true of the field modifier is set. (None will always return true.)
     pub(crate) fn has_field(&self, modifier: FieldModifier) -> bool {
-        &self.value & modifier.bit_value() == modifier.bit_value()
+        self.value & modifier.bit_value() == modifier.bit_value()
     }
 
-    /// Returns a copy of the field modifier set with the formality changed.
-    pub(crate) fn with_formality(&self, formality: FieldFormality) -> FieldModifierSet {
-        FieldModifierSet {
-            value: (&self.value & (u32::MAX ^ FieldModifier::Informal.bit_value()))
-                | FieldModifier::from(formality).bit_value(),
-        }
-    }
     /// Returns a copy of the field modifier set with the part changed.
     pub(crate) fn with_part(&self, part: FieldPart) -> FieldModifierSet {
         FieldModifierSet {
-            value: (&self.value
+            value: (self.value
                 & (u32::MAX
                     ^ (FieldModifier::Core.bit_value() | FieldModifier::Prefix.bit_value())))
                 | FieldModifier::from(part).bit_value(),
@@ -167,22 +159,13 @@ impl FieldModifierSet {
     /// Returns a copy of the field modifier set with the length changed.
     pub(crate) fn with_length(&self, length: FieldLength) -> FieldModifierSet {
         FieldModifierSet {
-            value: (&self.value
+            value: (self.value
                 & (u32::MAX
                     ^ (FieldModifier::Monogram.bit_value() | FieldModifier::Initial.bit_value())))
                 | FieldModifier::from(length).bit_value(),
         }
     }
-    /// Returns a copy of the field modifier set with the style changed.
-    pub(crate) fn with_style(&self, style: FieldCapsStyle) -> FieldModifierSet {
-        FieldModifierSet {
-            value: (&self.value
-                & (u32::MAX
-                    ^ (FieldModifier::AllCaps.bit_value()
-                        | FieldModifier::InitialCap.bit_value())))
-                | FieldModifier::from(style).bit_value(),
-        }
-    }
+
     pub fn formality(formality: FieldFormality) -> Self {
         Self::new(
             FieldCapsStyle::Auto,

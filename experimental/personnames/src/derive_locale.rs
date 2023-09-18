@@ -1,9 +1,9 @@
-use icu_locid::{subtags, Locale};
+use icu_locid::{Locale, subtags};
 use icu_properties::script::ScriptWithExtensionsBorrowed;
 use subtags::Script;
 
-use crate::api::NameFieldKind::{Given, Surname};
 use crate::api::{NameFieldKind, PersonName, PersonNamesFormatterError};
+use crate::api::NameFieldKind::{Given, Surname};
 
 /// Override the formatting payload to use based on specification rules.
 ///
@@ -22,7 +22,7 @@ pub(crate) fn effective_locale<'a>(
     if !compatible_scripts(name_script, formatter_script) {
         return Ok(person_name_locale);
     }
-    Ok(&formatter_locale)
+    Ok(formatter_locale)
 }
 
 // TODO: proper handling of compatible scripts.
@@ -36,7 +36,7 @@ fn compatible_scripts(sc1: Script, sc2: Script) -> bool {
     if sc2_str == "Jpan" && jpan_compatible.contains(&sc1_str) {
         return true;
     }
-    return sc1_str == sc2_str;
+    sc1_str == sc2_str
 }
 
 /// https://www.unicode.org/reports/tr35/tr35-personNames.html#derive-the-name-locale

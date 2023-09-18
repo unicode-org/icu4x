@@ -3,7 +3,7 @@ use crate::api::{NameField, NameFieldKind};
 /// Returns a remapped field for missing surname.
 /// https://www.unicode.org/reports/tr35/tr35-personNames.html#handle-missing-surname
 ///
-pub(crate) fn derive_missing_surname<'lt>(
+pub(crate) fn derive_missing_surname(
     available_name_field: &[&NameField],
     requested_name_field: &NameField,
     requires_given_name: bool,
@@ -17,14 +17,14 @@ pub(crate) fn derive_missing_surname<'lt>(
                 if requested_name_field.kind == NameFieldKind::Surname {
                     return Some(NameField {
                         kind: NameFieldKind::Given,
-                        modifier: requested_name_field.modifier.clone(),
+                        modifier: requested_name_field.modifier,
                     });
                 }
                 return None;
             }
-            return Some(requested_name_field.clone());
+            return Some(*requested_name_field);
         }
-        _ => Some(requested_name_field.clone()),
+        _ => Some(*requested_name_field),
     };
 }
 

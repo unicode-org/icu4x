@@ -77,7 +77,7 @@ pub(crate) fn derive_missing_initials(
         return build_initials.join("").trim().to_string();
     }
     // If it had the field, it would have been returned earlier.
-    return String::from("");
+    String::from("")
 }
 
 #[cfg(test)]

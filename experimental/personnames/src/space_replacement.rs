@@ -21,7 +21,7 @@ pub(crate) fn space_replacement<'lt>(
     if formatting_locale.id.language == person_name_locale.id.language {
         return native_space_replacement;
     }
-    return foreign_space_replacement.unwrap_or(DEFAULT_FOREIGN_SPACE_REPLACEMENT);
+    foreign_space_replacement.unwrap_or(DEFAULT_FOREIGN_SPACE_REPLACEMENT)
 }
 
 #[cfg(test)]
