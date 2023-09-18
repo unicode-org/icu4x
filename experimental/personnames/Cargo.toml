@@ -32,9 +32,9 @@ icu_personnames_data = { workspace = true, optional = true }
 icu_locid_transform = { workspace = true }
 
 serde = { version = "1.0", default-features = false, features = ["derive", "alloc"], optional = true }
-litemap = { version = "0.7.0", path = "../../utils/litemap" }
-zerofrom = { version = "0.1.2", path = "../../utils/zerofrom" }
-regex = { version = "1.8.4" }
+litemap = { workspace = true }
+zerofrom = { workspace = true }
+regex = "=1.8.4"
 lazy_static = "1.4"
 
 [features]

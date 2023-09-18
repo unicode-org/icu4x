@@ -296,7 +296,6 @@ dependencies = [
  "icu_properties",
  "icu_provider",
  "writeable",
- "yoke",
  "zerovec",
 ]
 
@@ -374,7 +373,6 @@ dependencies = [
 name = "icu_displaynames"
 version = "0.10.0"
 dependencies = [
- "icu_collections",
  "icu_locid",
  "icu_provider",
  "tinystr",
@@ -387,7 +385,7 @@ version = "1.2.0"
 dependencies = [
  "displaydoc",
  "icu_provider",
- "regex-automata 0.2.0",
+ "regex-automata",
  "writeable",
 ]
 
@@ -409,11 +407,16 @@ version = "1.2.1"
 dependencies = [
  "displaydoc",
  "icu_locid",
+ "icu_locid_transform_data",
  "icu_provider",
  "serde",
  "tinystr",
  "zerovec",
 ]
+
+[[package]]
+name = "icu_locid_transform_data"
+version = "1.2.0"
 
 [[package]]
 name = "icu_normalizer"
@@ -427,6 +430,21 @@ dependencies = [
  "utf16_iter",
  "utf8_iter",
  "write16",
+ "zerovec",
+]
+
+[[package]]
+name = "icu_personnames"
+version = "0.1.0"
+dependencies = [
+ "icu_locid",
+ "icu_locid_transform",
+ "icu_properties",
+ "icu_provider",
+ "lazy_static",
+ "litemap",
+ "regex",
+ "zerofrom",
  "zerovec",
 ]
 
@@ -447,10 +465,16 @@ version = "1.2.0"
 dependencies = [
  "displaydoc",
  "icu_collections",
+ "icu_locid_transform",
+ "icu_properties_data",
  "icu_provider",
  "tinystr",
  "zerovec",
 ]
+
+[[package]]
+name = "icu_properties_data"
+version = "1.2.0"
 
 [[package]]
 name = "icu_provider"
@@ -478,7 +502,6 @@ dependencies = [
  "icu_provider",
  "serde",
  "tinystr",
- "yoke",
  "zerovec",
 ]
 
@@ -490,7 +513,6 @@ dependencies = [
  "postcard",
  "serde",
  "writeable",
- "yoke",
  "zerovec",
 ]
 
@@ -546,6 +568,7 @@ dependencies = [
  "icu_locid",
  "icu_locid_transform",
  "icu_normalizer",
+ "icu_personnames",
  "icu_plurals",
  "icu_properties",
  "icu_provider",
@@ -763,13 +786,12 @@ dependencies = [
 
 [[package]]
 name = "regex"
-version = "1.9.0"
+version = "1.8.4"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "89089e897c013b3deb627116ae56a6955a72b8bed395c9526af31c9fe528b484"
+checksum = "d0ab3ca65655bb1e41f2a8c8cd662eb4fb035e67c3f78da1d61dffe89d07300f"
 dependencies = [
  "aho-corasick",
  "memchr",
- "regex-automata 0.3.0",
  "regex-syntax",
 ]
 
@@ -780,17 +802,6 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "e9368763f5a9b804326f3af749e16f9abf378d227bcdee7634b13d8f17793782"
 dependencies = [
  "memchr",
-]
-
-[[package]]
-name = "regex-automata"
-version = "0.3.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "fa250384981ea14565685dea16a9ccc4d1c541a13f82b9c168572264d1df8c56"
-dependencies = [
- "aho-corasick",
- "memchr",
- "regex-syntax",
 ]
 
 [[package]]
@@ -1104,5 +1115,4 @@ dependencies = [
  "proc-macro2",
  "quote",
  "syn",
- "synstructure",
 ]
