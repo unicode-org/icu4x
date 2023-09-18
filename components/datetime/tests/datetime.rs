@@ -74,18 +74,21 @@ fn test_fixture(fixture_name: &str) {
         };
         let input_value = mock::parse_gregorian_from_str(&fx.input.value).unwrap();
         let input_buddhist = input_value.to_calendar(Buddhist);
-        let input_chinese = input_value.to_calendar(Chinese);
+        let input_chinese = input_value.to_calendar(Chinese::new_always_calculating());
         let input_coptic = input_value.to_calendar(Coptic);
-        let input_dangi = input_value.to_calendar(Dangi);
+        let input_dangi = input_value.to_calendar(Dangi::new_always_calculating());
         let input_ethiopian = input_value.to_calendar(Ethiopian::new());
         let input_ethioaa =
             input_value.to_calendar(Ethiopian::new_with_era_style(EthiopianEraStyle::AmeteAlem));
-        let input_hebrew = input_value.to_calendar(Hebrew);
+        let input_hebrew = input_value.to_calendar(Hebrew::new_always_calculating());
         let input_indian = input_value.to_calendar(Indian);
-        let input_islamic_civil = input_value.to_calendar(IslamicCivil);
-        let input_islamic_observational = input_value.to_calendar(IslamicObservational);
-        let input_islamic_tabular = input_value.to_calendar(IslamicTabular);
-        let input_islamic_umm_al_qura = input_value.to_calendar(IslamicUmmAlQura);
+        let input_islamic_civil = input_value.to_calendar(IslamicCivil::new_always_calculating());
+        let input_islamic_observational =
+            input_value.to_calendar(IslamicObservational::new_always_calculating());
+        let input_islamic_tabular =
+            input_value.to_calendar(IslamicTabular::new_always_calculating());
+        let input_islamic_umm_al_qura =
+            input_value.to_calendar(IslamicUmmAlQura::new_always_calculating());
         let input_iso = input_value.to_calendar(Iso);
         let input_japanese = input_value.to_calendar(japanese);
         let input_japanext = input_value.to_calendar(japanext);

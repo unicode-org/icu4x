@@ -123,8 +123,16 @@ fn date_benches(c: &mut Criterion) {
         &mut group,
         "calendar/chinese",
         &fxs,
-        icu::calendar::chinese::Chinese,
-        |y, m, d| Date::try_new_chinese_date(y, m, d).unwrap(),
+        icu::calendar::chinese::Chinese::new_always_calculating(),
+        |y, m, d| {
+            Date::try_new_chinese_date_with_calendar(
+                y,
+                m,
+                d,
+                icu::calendar::chinese::Chinese::new_always_calculating(),
+            )
+            .unwrap()
+        },
     );
 
     #[cfg(feature = "bench")]
@@ -141,8 +149,16 @@ fn date_benches(c: &mut Criterion) {
         &mut group,
         "calendar/islamic/civil",
         &fxs,
-        icu::calendar::islamic::IslamicCivil,
-        |y, m, d| Date::try_new_islamic_civil_date(y, m, d).unwrap(),
+        icu::calendar::islamic::IslamicCivil::new_always_calculating(),
+        |y, m, d| {
+            Date::try_new_islamic_civil_date_with_calendar(
+                y,
+                m,
+                d,
+                icu::calendar::islamic::IslamicCivil::new_always_calculating(),
+            )
+            .unwrap()
+        },
     );
 
     #[cfg(feature = "bench")]
@@ -150,8 +166,16 @@ fn date_benches(c: &mut Criterion) {
         &mut group,
         "calendar/islamic/tabular",
         &fxs,
-        icu::calendar::islamic::IslamicTabular,
-        |y, m, d| Date::try_new_islamic_tabular_date(y, m, d).unwrap(),
+        icu::calendar::islamic::IslamicTabular::new_always_calculating(),
+        |y, m, d| {
+            Date::try_new_islamic_tabular_date_with_calendar(
+                y,
+                m,
+                d,
+                icu::calendar::islamic::IslamicTabular::new_always_calculating(),
+            )
+            .unwrap()
+        },
     );
 
     #[cfg(feature = "bench")]
@@ -159,8 +183,16 @@ fn date_benches(c: &mut Criterion) {
         &mut group,
         "calendar/islamic/ummalqura",
         &fxs,
-        icu::calendar::islamic::IslamicUmmAlQura,
-        |y, m, d| Date::try_new_ummalqura_date(y, m, d).unwrap(),
+        icu::calendar::islamic::IslamicUmmAlQura::new_always_calculating(),
+        |y, m, d| {
+            Date::try_new_ummalqura_date(
+                y,
+                m,
+                d,
+                icu::calendar::islamic::IslamicUmmAlQura::new_always_calculating(),
+            )
+            .unwrap()
+        },
     );
 
     #[cfg(feature = "bench")]
@@ -168,8 +200,16 @@ fn date_benches(c: &mut Criterion) {
         &mut group,
         "calendar/islamic/observational",
         &fxs,
-        icu::calendar::islamic::IslamicObservational,
-        |y, m, d| Date::try_new_observational_islamic_date(y, m, d).unwrap(),
+        icu::calendar::islamic::IslamicObservational::new_always_calculating(),
+        |y, m, d| {
+            Date::try_new_observational_islamic_date(
+                y,
+                m,
+                d,
+                icu::calendar::islamic::IslamicObservational::new_always_calculating(),
+            )
+            .unwrap()
+        },
     );
 
     group.finish();

@@ -5,14 +5,17 @@
 //! This module contains types and implementations for the Hebrew calendar.
 //!
 //! ```rust
-//! use icu::calendar::{Date, DateTime};
+//! use icu::calendar::{Ref, Date, DateTime, hebrew::Hebrew};
+//!
+//! let hebrew = Hebrew::new_always_calculating();
+//! let hebrew = Ref(&hebrew); // to avoid cloning
 //!
 //! // `Date` type
-//! let hebrew_date = Date::try_new_hebrew_date(3425, 10, 11)
+//! let hebrew_date = Date::try_new_hebrew_date_with_calendar(3425, 10, 11, hebrew)
 //!     .expect("Failed to initialize hebrew Date instance.");
 //!
 //! // `DateTime` type
-//! let hebrew_datetime = DateTime::try_new_hebrew_datetime(3425, 10, 11, 13, 1, 0)
+//! let hebrew_datetime = DateTime::try_new_hebrew_datetime_with_calendar(3425, 10, 11, 13, 1, 0, hebrew)
 //!     .expect("Failed to initialize hebrew DateTime instance.");
 //!
 //! // `Date` checks
@@ -31,6 +34,7 @@
 
 use crate::calendar_arithmetic::{ArithmeticDate, CalendarArithmetic};
 use crate::types::FormattableMonth;
+use crate::AsCalendar;
 use crate::Iso;
 use crate::{types, Calendar, CalendarError, Date, DateDuration, DateDurationUnit, DateTime};
 use ::tinystr::tinystr;
@@ -58,8 +62,8 @@ use calendrical_calculations::rata_die::RataDie;
 /// objects it creates.
 ///
 /// [Hebrew calendar]: https://en.wikipedia.org/wiki/Hebrew_calendar
-#[derive(Copy, Clone, Debug, Default, Hash, Eq, PartialEq, PartialOrd, Ord)]
-#[allow(clippy::exhaustive_structs)]
+#[derive(Clone, Debug, Default, Hash, Eq, PartialEq, PartialOrd, Ord)]
+#[non_exhaustive] // we'll be adding precompiled data to this
 pub struct Hebrew;
 
 /// The inner date type used for representing [`Date`]s of [`BookHebrew`]. See [`Date`] and [`BookHebrew`] for more details.
@@ -68,6 +72,16 @@ struct BookHebrewDateInner;
 /// The inner date type used for representing [`Date`]s of [`Hebrew`]. See [`Date`] and [`Hebrew`] for more details.
 #[derive(Copy, Clone, Debug, Hash, Eq, PartialEq, PartialOrd, Ord)]
 pub struct HebrewDateInner(ArithmeticDate<Hebrew>);
+
+impl Hebrew {
+    /// Construct a new [`Hebrew`] without any precomputed calendrical calculations.
+    ///
+    /// This is the only mode currently possible, but once precomputing is available (#3933)
+    /// there will be additional constructors that load from data providers.
+    pub fn new_always_calculating() -> Self {
+        Hebrew
+    }
+}
 
 //  HEBREW CALENDAR
 
@@ -326,38 +340,51 @@ impl Hebrew {
     }
 }
 
-impl Date<Hebrew> {
+impl<A: AsCalendar<Calendar = Hebrew>> Date<A> {
     /// Construct new Hebrew Date.
+    ///
+    /// This datetime will not use any precomputed calendrical calculations,
+    /// one that loads such data from a provider will be added in the future (#3933)
     ///
     ///
     /// ```rust
     /// use icu::calendar::Date;
+    /// use icu::calendar::hebrew::Hebrew;
     ///
-    /// let date_hebrew = Date::try_new_hebrew_date(3425, 4, 25)
+    /// let hebrew = Hebrew::new_always_calculating();
+    ///
+    /// let date_hebrew = Date::try_new_hebrew_date_with_calendar(3425, 4, 25, hebrew)
     ///     .expect("Failed to initialize Hebrew Date instance.");
     ///
     /// assert_eq!(date_hebrew.year().number, 3425);
     /// assert_eq!(date_hebrew.month().ordinal, 4);
     /// assert_eq!(date_hebrew.day_of_month().0, 25);
     /// ```
-    pub fn try_new_hebrew_date(
+    pub fn try_new_hebrew_date_with_calendar(
         year: i32,
         month: u8,
         day: u8,
-    ) -> Result<Date<Hebrew>, CalendarError> {
+        calendar: A,
+    ) -> Result<Date<A>, CalendarError> {
         ArithmeticDate::new_from_lunar_ordinals(year, month, day)
             .map(HebrewDateInner)
-            .map(|inner| Date::from_raw(inner, Hebrew))
+            .map(|inner| Date::from_raw(inner, calendar))
     }
 }
 
-impl DateTime<Hebrew> {
+impl<A: AsCalendar<Calendar = Hebrew>> DateTime<A> {
     /// Construct a new Hebrew datetime from integers.
+    ///
+    /// This datetime will not use any precomputed calendrical calculations,
+    /// one that loads such data from a provider will be added in the future (#3933)
     ///
     /// ```rust
     /// use icu::calendar::DateTime;
+    /// use icu::calendar::hebrew::Hebrew;
     ///
-    /// let datetime_hebrew = DateTime::try_new_hebrew_datetime(4201, 10, 11, 13, 1, 0)
+    /// let hebrew = Hebrew::new_always_calculating();
+    ///
+    /// let datetime_hebrew = DateTime::try_new_hebrew_datetime_with_calendar(4201, 10, 11, 13, 1, 0, hebrew)
     ///     .expect("Failed to initialize Hebrew DateTime instance");
     ///
     /// assert_eq!(datetime_hebrew.date.year().number, 4201);
@@ -367,16 +394,17 @@ impl DateTime<Hebrew> {
     /// assert_eq!(datetime_hebrew.time.minute.number(), 1);
     /// assert_eq!(datetime_hebrew.time.second.number(), 0);
     /// ```
-    pub fn try_new_hebrew_datetime(
+    pub fn try_new_hebrew_datetime_with_calendar(
         year: i32,
         month: u8,
         day: u8,
         hour: u8,
         minute: u8,
         second: u8,
-    ) -> Result<DateTime<Hebrew>, CalendarError> {
+        calendar: A,
+    ) -> Result<DateTime<A>, CalendarError> {
         Ok(DateTime {
-            date: Date::try_new_hebrew_date(year, month, day)?,
+            date: Date::try_new_hebrew_date_with_calendar(year, month, day, calendar)?,
             time: types::Time::try_new(hour, minute, second, 0)?,
         })
     }

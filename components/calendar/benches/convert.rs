@@ -7,9 +7,9 @@ mod fixtures;
 use criterion::{
     black_box, criterion_group, criterion_main, measurement::WallTime, BenchmarkGroup, Criterion,
 };
-use icu_calendar::{Calendar, Date};
+use icu_calendar::{Calendar, Date, Ref};
 
-fn bench_calendar<C: Copy + Calendar>(
+fn bench_calendar<C: Clone + Calendar>(
     group: &mut BenchmarkGroup<WallTime>,
     name: &str,
     calendar: C,
@@ -17,7 +17,7 @@ fn bench_calendar<C: Copy + Calendar>(
     let iso = Date::try_new_iso_date(2023, 8, 16).unwrap();
     group.bench_function(name, |b| {
         b.iter(|| {
-            let converted = black_box(iso).to_calendar(calendar);
+            let converted = black_box(iso).to_calendar(Ref(&calendar));
             let year = black_box(converted.year().number);
             let month = black_box(converted.month().ordinal);
             let day = black_box(converted.day_of_month().0);
@@ -58,7 +58,7 @@ fn convert_benches(c: &mut Criterion) {
     bench_calendar(
         &mut group,
         "calendar/chinese",
-        icu::calendar::chinese::Chinese,
+        icu::calendar::chinese::Chinese::new_always_calculating(),
     );
 
     #[cfg(feature = "bench")]
@@ -72,28 +72,28 @@ fn convert_benches(c: &mut Criterion) {
     bench_calendar(
         &mut group,
         "calendar/islamic/observational",
-        icu::calendar::islamic::IslamicObservational,
+        icu::calendar::islamic::IslamicObservational::new_always_calculating(),
     );
 
     #[cfg(feature = "bench")]
     bench_calendar(
         &mut group,
         "calendar/islamic/civil",
-        icu::calendar::islamic::IslamicCivil,
+        icu::calendar::islamic::IslamicCivil::new_always_calculating(),
     );
 
     #[cfg(feature = "bench")]
     bench_calendar(
         &mut group,
         "calendar/islamic/ummalqura",
-        icu::calendar::islamic::IslamicUmmAlQura,
+        icu::calendar::islamic::IslamicUmmAlQura::new_always_calculating(),
     );
 
     #[cfg(feature = "bench")]
     bench_calendar(
         &mut group,
         "calendar/islamic/tabular",
-        icu::calendar::islamic::IslamicTabular,
+        icu::calendar::islamic::IslamicTabular::new_always_calculating(),
     );
 
     group.finish();
