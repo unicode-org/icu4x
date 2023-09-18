@@ -16,9 +16,12 @@ pub(crate) fn handle_field_modifier_core_prefix(
     let mut has_plain_version_available = false;
     for &field in available_fields {
         if field.kind == requested_field.kind {
-            has_plain_version_available |= field.modifier == requested_field.modifier.with_part(FieldPart::Auto);
-            has_prefix_version_available |= field.modifier == requested_field.modifier.with_part(FieldPart::Prefix);
-            has_core_version_available |= field.modifier == requested_field.modifier.with_part(FieldPart::Core);
+            has_plain_version_available |=
+                field.modifier == requested_field.modifier.with_part(FieldPart::Auto);
+            has_prefix_version_available |=
+                field.modifier == requested_field.modifier.with_part(FieldPart::Prefix);
+            has_core_version_available |=
+                field.modifier == requested_field.modifier.with_part(FieldPart::Core);
         }
     }
     let mut result = vec![];
@@ -88,7 +91,7 @@ mod tests {
     use crate::api::{FieldModifierSet, FieldPart, NameField, NameFieldKind};
     use crate::derive_core_prefix::handle_field_modifier_core_prefix;
 
-// Each case is named after the combination if the field is present in spec table.
+    // Each case is named after the combination if the field is present in spec table.
     // e.g. : cp = core + plain, pc = prefix + core, pp = prefix + plain, pcp = all fields
 
     #[test]
@@ -180,9 +183,7 @@ mod tests {
             .collect::<Vec<NameField>>();
         assert_eq!(
             handle_field_modifier_core_prefix(
-                &available_fields
-                    .iter()
-                    .collect::<Vec<&NameField>>(),
+                &available_fields.iter().collect::<Vec<&NameField>>(),
                 &NameField {
                     kind: NameFieldKind::Given,
                     modifier: FieldModifierSet::part(field_part),

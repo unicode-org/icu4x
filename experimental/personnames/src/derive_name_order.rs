@@ -39,7 +39,6 @@ pub(crate) fn name_order_derive(
         if surname_first
             .iter()
             .any(|i| i == chain_locale_str || i == chain_locale_und_str)
-
         {
             return FormattingOrder::SurnameFirst;
         }

@@ -1,9 +1,9 @@
-use icu_locid::{Locale, subtags};
+use icu_locid::{subtags, Locale};
 use icu_properties::script::ScriptWithExtensionsBorrowed;
 use subtags::Script;
 
-use crate::api::{NameFieldKind, PersonName, PersonNamesFormatterError};
 use crate::api::NameFieldKind::{Given, Surname};
+use crate::api::{NameFieldKind, PersonName, PersonNamesFormatterError};
 
 /// Override the formatting payload to use based on specification rules.
 ///

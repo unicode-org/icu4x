@@ -16,21 +16,13 @@ pub(crate) fn find_best_applicable_pattern<'lt>(
                     return current_max;
                 }
                 if used_field_count > max_used_field_count {
-                    return (
-                        *used_field_count,
-                        *missing_field_count,
-                        Some(element),
-                    );
+                    return (*used_field_count, *missing_field_count, Some(element));
                 }
                 // check if used_field_count == max_used_field_count
                 if max_missing_field_count < missing_field_count {
                     return current_max;
                 }
-                (
-                    *used_field_count,
-                    *missing_field_count,
-                    Some(element),
-                )
+                (*used_field_count, *missing_field_count, Some(element))
             });
     max_applicable_pattern
         .map(Ok)
