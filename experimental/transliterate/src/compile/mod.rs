@@ -344,10 +344,6 @@ where
                 .with_req(TransliteratorRulesV1Marker::KEY, req)
         })?;
 
-        // TODO(#3736): decide if validation should be direction dependent
-        //  example: transliterator with direction "forward", and a rule `[a-z] < b ;` (invalid)
-        //  - if validation is dependent, this rule is valid because it's not used in the forward direction
-        //  - if validation is independent, this rule is invalid because the reverse direction is also checked
         let pass1 = pass1::Pass1::run(
             if reverse {
                 Direction::Reverse
@@ -670,7 +666,7 @@ mod tests {
 
             let expected_id_group1 = vec![ds::SimpleId {
                 filter: parse::FilterSet::all(),
-                id: Cow::Borrowed("x-latin-interind"),
+                id: Cow::Borrowed("x-latin-interindic"),
             }];
             let expected_id_group2 = vec![ds::SimpleId {
                 filter: parse_set_cp(r"[\ ]"),
@@ -679,7 +675,7 @@ mod tests {
             let expected_id_group3 = vec![
                 ds::SimpleId {
                     filter: parse::FilterSet::all(),
-                    id: Cow::Borrowed("x-interind-devanaga"),
+                    id: Cow::Borrowed("x-interindic-devanagari"),
                 },
                 ds::SimpleId {
                     filter: parse::FilterSet::all(),
@@ -763,8 +759,8 @@ mod tests {
                 HashSet::from_iter([
                     Cow::Borrowed("x-any-nfc"),
                     Cow::Borrowed("x-any-remove"),
-                    Cow::Borrowed("x-interind-devanaga"),
-                    Cow::Borrowed("x-latin-interind"),
+                    Cow::Borrowed("x-interindic-devanagari"),
+                    Cow::Borrowed("x-latin-interindic"),
                 ])
             );
         }
@@ -778,7 +774,7 @@ mod tests {
                 },
                 ds::SimpleId {
                     filter: parse::FilterSet::all(),
-                    id: Cow::Borrowed("x-devanaga-interind"),
+                    id: Cow::Borrowed("x-devanagari-interindic"),
                 },
                 ds::SimpleId {
                     filter: parse::FilterSet::all(),
@@ -787,7 +783,7 @@ mod tests {
             ];
             let expected_id_group2 = vec![ds::SimpleId {
                 filter: parse::FilterSet::all(),
-                id: Cow::Borrowed("x-interind-latin"),
+                id: Cow::Borrowed("x-interindic-latin"),
             }];
 
             let expected_id_group_list: Vec<VarZeroVec<'_, ds::SimpleIdULE>> = vec![
@@ -838,7 +834,7 @@ mod tests {
                 arg: Cow::Borrowed("\u{F000B}padding"), // $1 and 'padding'
                 translit: ds::SimpleId {
                     filter: parse::FilterSet::all(),
-                    id: Cow::Borrowed("x-any-revfncal"),
+                    id: Cow::Borrowed("x-any-revfncall"),
                 },
             }];
 
@@ -868,9 +864,9 @@ mod tests {
                 HashSet::from_iter([
                     Cow::Borrowed("und-t-d0-addrndsp-m0-fifty-s0-anyrev"),
                     Cow::Borrowed("x-any-nfd"),
-                    Cow::Borrowed("x-any-revfncal"),
-                    Cow::Borrowed("x-devanaga-interind"),
-                    Cow::Borrowed("x-interind-latin"),
+                    Cow::Borrowed("x-any-revfncall"),
+                    Cow::Borrowed("x-devanagari-interindic"),
+                    Cow::Borrowed("x-interindic-latin"),
                 ])
             );
         }

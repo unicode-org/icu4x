@@ -258,6 +258,10 @@ pub(crate) struct Pass1<'p> {
 }
 
 impl<'p> Pass1<'p> {
+    // TODO(#3736): decide if validation should be direction dependent
+    //  example: transliterator with direction "forward", and a rule `[a-z] < b ;` (invalid)
+    //  - if validation is dependent, this rule is valid because it's not used in the forward direction
+    //  - if validation is independent, this rule is invalid because the reverse direction is also checked
     pub(super) fn run(direction: Direction, rules: &'p [parse::Rule]) -> Result<Pass1Result<'p>> {
         let mut s = Self {
             direction,

@@ -13,23 +13,15 @@ use icu_transliterate::RuleCollection;
 impl CldrCache {
     fn transforms(&self) -> Result<&RuleCollection, DataError> {
         self.transforms.get_or_try_init(|| {
-            fn find_or_build_bcp47(
-                aliases: &[transforms::TransformAlias],
-                source: &str,
-                target: &str,
-                variant: Option<&str>,
-            ) -> Locale {
+            fn find_bcp47(aliases: &[transforms::TransformAlias]) -> Option<&Locale> {
                 aliases
                     .iter()
                     .find_map(|alias| {
                         if let transforms::TransformAlias::Bcp47(locale) = alias {
-                            Some(locale.clone())
+                            Some(locale)
                         } else {
                             None
                         }
-                    })
-                    .unwrap_or_else(|| {
-                        icu_transliterate::legacy_id_to_bcp_47(source, target, variant)
                     })
             }
 
@@ -51,68 +43,66 @@ impl CldrCache {
                     metadata.direction,
                     transforms::Direction::Forward | transforms::Direction::Both
                 ) {
-                    provider.register_source(
-                        &find_or_build_bcp47(
-                            &metadata.alias,
-                            &metadata.source,
-                            &metadata.target,
-                            metadata.variant.as_deref(),
-                        ),
-                        source.clone(),
-                        metadata
-                            .alias
-                            .iter()
-                            .filter_map(|alias| match alias {
-                                transforms::TransformAlias::LegacyId(s) => Some(s.as_str()),
-                                _ => None,
-                            })
-                            .chain([
-                                // source, target, and variant may also be used
-                                if let Some(variant) = &metadata.variant {
-                                    format!("{}-{}/{}", metadata.source, metadata.target, variant)
-                                } else {
-                                    format!("{}-{}", metadata.source, metadata.target)
-                                }
-                                .to_ascii_lowercase()
-                                .as_str(),
-                            ]),
-                        false,
-                        metadata.visibility == transforms::Visibility::External,
-                    );
+                    if let Some(bcp47) = find_bcp47(&metadata.alias) {
+                        provider.register_source(
+                            bcp47,
+                            source.clone(),
+                            metadata
+                                .alias
+                                .iter()
+                                .filter_map(|alias| match alias {
+                                    transforms::TransformAlias::LegacyId(s) => Some(s.as_str()),
+                                    _ => None,
+                                })
+                                .chain([
+                                    // source, target, and variant may also be used
+                                    if let Some(variant) = &metadata.variant {
+                                        format!("{}-{}/{}", metadata.source, metadata.target, variant)
+                                    } else {
+                                        format!("{}-{}", metadata.source, metadata.target)
+                                    }
+                                    .to_ascii_lowercase()
+                                    .as_str(),
+                                ]),
+                            false,
+                            metadata.visibility == transforms::Visibility::External,
+                        );
+                    } else {
+                        log::warn!("Skipping transliterator {transform} (forward) as it does not have a BCP-47 identifier.")
+                    }
                 }
 
                 if matches!(
                     metadata.direction,
                     transforms::Direction::Backward | transforms::Direction::Both
                 ) {
-                    provider.register_source(
-                        &find_or_build_bcp47(
-                            &metadata.backward_alias,
-                            &metadata.target,
-                            &metadata.source,
-                            metadata.variant.as_deref(),
-                        ),
-                        source,
-                        metadata
-                            .backward_alias
-                            .iter()
-                            .filter_map(|alias| match alias {
-                                transforms::TransformAlias::LegacyId(s) => Some(s.as_str()),
-                                _ => None,
-                            })
-                            .chain([
-                                // source, target, and variant may also be used
-                                if let Some(variant) = &metadata.variant {
-                                    format!("{}-{}/{}", metadata.target, metadata.source, variant)
-                                } else {
-                                    format!("{}-{}", metadata.target, metadata.source)
-                                }
-                                .to_ascii_lowercase()
-                                .as_str(),
-                            ]),
-                        true,
-                        metadata.visibility == transforms::Visibility::External,
-                    );
+                    if let Some(bcp47) = find_bcp47(&metadata.backward_alias) {
+                        provider.register_source(
+                            bcp47,
+                            source,
+                            metadata
+                                .backward_alias
+                                .iter()
+                                .filter_map(|alias| match alias {
+                                    transforms::TransformAlias::LegacyId(s) => Some(s.as_str()),
+                                    _ => None,
+                                })
+                                .chain([
+                                    // source, target, and variant may also be used
+                                    if let Some(variant) = &metadata.variant {
+                                        format!("{}-{}/{}", metadata.target, metadata.source, variant)
+                                    } else {
+                                        format!("{}-{}", metadata.target, metadata.source)
+                                    }
+                                    .to_ascii_lowercase()
+                                    .as_str(),
+                                ]),
+                            true,
+                            metadata.visibility == transforms::Visibility::External,
+                        );
+                    } else {
+                        log::warn!("Skipping transliterator {transform} (backward) as it does not have a BCP-47 identifier.")
+                    }
                 }
             }
             Ok(provider)

@@ -367,19 +367,19 @@ impl Transliterator {
             )),
             "any-null" => Ok(InternalTransliterator::Null),
             "any-remove" => Ok(InternalTransliterator::Remove),
-            "any-hex-unicode" => Ok(InternalTransliterator::Hex(
+            "any-hex/unicode" => Ok(InternalTransliterator::Hex(
                 hardcoded::HexTransliterator::new("U+", "", 4, Case::Upper),
             )),
-            "any-hex-rust" => Ok(InternalTransliterator::Hex(
+            "any-hex/rust" => Ok(InternalTransliterator::Hex(
                 hardcoded::HexTransliterator::new("\\u{", "}", 2, Case::Lower),
             )),
-            "any-hex-xml" => Ok(InternalTransliterator::Hex(
+            "any-hex/xml" => Ok(InternalTransliterator::Hex(
                 hardcoded::HexTransliterator::new("&#x", ";", 1, Case::Upper),
             )),
-            "any-hex-perl" => Ok(InternalTransliterator::Hex(
+            "any-hex/perl" => Ok(InternalTransliterator::Hex(
                 hardcoded::HexTransliterator::new("\\x{", "}", 1, Case::Upper),
             )),
-            "any-hex-plain" => Ok(InternalTransliterator::Hex(
+            "any-hex/plain" => Ok(InternalTransliterator::Hex(
                 hardcoded::HexTransliterator::new("", "", 4, Case::Upper),
             )),
             s => Err(DataError::custom("unavailable transliterator")

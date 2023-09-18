@@ -126,7 +126,7 @@ macro_rules! __impl_transliterator_rules_v1 {
                         #[allow(unused_unsafe)]
                         icu_collections::codepointinvlist::CodePointInversionList::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\0\0\0\0\0\0\x11\0") }, 1114112u32)
                     },
-                    id_group_list: unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0\x01\0\0\0\0\0\x02\0\0\0\0\0\0\0\x0C\0\0\0\0\0\x11\0\0\0\0\0\0\0\x11\0x-any-hex-rust") },
+                    id_group_list: unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0\x01\0\0\0\0\0\x02\0\0\0\0\0\0\0\x0C\0\0\0\0\0\x11\0\0\0\0\0\0\0\x11\0x-any-hex/rust") },
                     rule_group_list: unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0") },
                 };
                 static UND__UND_T_UND_D0_TEST_M0_HEXUNI_S0_TEST: <icu_transliterate::provider::TransliteratorRulesV1Marker as icu_provider::DataMarker>::Yokeable = icu_transliterate::provider::RuleBasedTransliterator {
@@ -136,7 +136,7 @@ macro_rules! __impl_transliterator_rules_v1 {
                         #[allow(unused_unsafe)]
                         icu_collections::codepointinvlist::CodePointInversionList::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\0\0\0\0\0\0\x11\0") }, 1114112u32)
                     },
-                    id_group_list: unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0\x01\0\0\0\0\0\x02\0\0\0\0\0\0\0\x0C\0\0\0\0\0\x11\0\0\0\0\0\0\0\x11\0x-any-hex-unicode") },
+                    id_group_list: unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0\x01\0\0\0\0\0\x02\0\0\0\0\0\0\0\x0C\0\0\0\0\0\x11\0\0\0\0\0\0\0\x11\0x-any-hex/unicode") },
                     rule_group_list: unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x01\0\0\0\0\0") },
                 };
                 static UND__UND_LATN_T_S0_ASCII: <icu_transliterate::provider::TransliteratorRulesV1Marker as icu_provider::DataMarker>::Yokeable = icu_transliterate::provider::RuleBasedTransliterator {
