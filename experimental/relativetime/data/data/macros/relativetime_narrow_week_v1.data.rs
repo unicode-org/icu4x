@@ -5,7 +5,9 @@
 #[doc(hidden)]
 #[macro_export]
 macro_rules! __impl_relativetime_narrow_week_v1 {
-    ($ provider : path) => {
+    ($ provider : ty) => {
+        #[clippy::msrv = "1.66"]
+        const _: () = <$provider>::MUST_USE_MAKE_PROVIDER_MACRO;
         #[clippy::msrv = "1.66"]
         impl icu_provider::DataProvider<icu::relativetime::provider::NarrowWeekRelativeTimeFormatDataV1Marker> for $provider {
             fn load(&self, req: icu_provider::DataRequest) -> Result<icu_provider::DataResponse<icu::relativetime::provider::NarrowWeekRelativeTimeFormatDataV1Marker>, icu_provider::DataError> {
