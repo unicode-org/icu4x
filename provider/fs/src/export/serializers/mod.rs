@@ -11,11 +11,11 @@ pub mod json;
 pub mod postcard;
 
 #[doc(no_inline)]
-pub use bincode::Serializer as Bincode;
+pub use self::bincode::Serializer as Bincode;
 #[doc(no_inline)]
-pub use json::Serializer as Json;
+pub use self::json::Serializer as Json;
 #[doc(no_inline)]
-pub use postcard::Serializer as Postcard;
+pub use self::postcard::Serializer as Postcard;
 
 use icu_provider::buf::BufferFormat;
 use icu_provider::datagen::*;
