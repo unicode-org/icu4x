@@ -7,9 +7,9 @@
 // the Apache License, Version 2.0 which can be found at the calendrical_calculations
 // package root or at http://www.apache.org/licenses/LICENSE-2.0.
 
-#[allow(unused_imports)]
-use crate::helpers::CoreFloat;
 use core::ops::{Add, AddAssign, Sub, SubAssign};
+#[allow(unused_imports)]
+use core_maths::*;
 
 /// The *Rata Die*, or *R.D.*, or `fixed_date`: number of days since January 1, 1 CE.
 ///

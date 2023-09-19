@@ -22,8 +22,8 @@ rust_library("calendrical_calculations-v0_1_0") {
   output_name = "calendrical_calculations-6d1745975698a042"
 
   deps = []
+  deps += [ ":core_maths-v0_1_0" ]
   deps += [ ":displaydoc-v0_2_4($host_toolchain)" ]
-  deps += [ ":libm-v0_2_6" ]
 
   rustenv = []
 
@@ -32,6 +32,26 @@ rust_library("calendrical_calculations-v0_1_0") {
     "--edition=2021",
     "-Cmetadata=6d1745975698a042",
     "-Cextra-filename=-6d1745975698a042",
+  ]
+
+  visibility = [ ":*" ]
+}
+
+rust_library("core_maths-v0_1_0") {
+  crate_name = "core_maths"
+  crate_root = "//ffi/gn/vendor/core_maths/src/lib.rs"
+  output_name = "core_maths-3f07b66a3ebfab6e"
+
+  deps = []
+  deps += [ ":libm-v0_2_6" ]
+
+  rustenv = []
+
+  rustflags = [
+    "--cap-lints=allow",
+    "--edition=2015",
+    "-Cmetadata=3f07b66a3ebfab6e",
+    "-Cextra-filename=-3f07b66a3ebfab6e",
   ]
 
   visibility = [ ":*" ]
@@ -649,11 +669,11 @@ rust_library("icu_segmenter-v1_2_1") {
   output_name = "icu_segmenter-9c67817750522b21"
 
   deps = []
+  deps += [ ":core_maths-v0_1_0" ]
   deps += [ ":displaydoc-v0_2_4($host_toolchain)" ]
   deps += [ ":icu_collections-v1_2_0" ]
   deps += [ ":icu_locid-v1_2_0" ]
   deps += [ ":icu_provider-v1_2_0" ]
-  deps += [ ":libm-v0_2_6" ]
   deps += [ ":utf8_iter-v1_0_3" ]
   deps += [ ":zerovec-v0_9_4" ]
 

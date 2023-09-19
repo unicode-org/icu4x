@@ -199,8 +199,8 @@ checksum = "89b2fd2a0dcf38d7971e2194b6b6eebab45ae01067456a7fd93d5547a61b70be"
 name = "calendrical_calculations"
 version = "0.1.0"
 dependencies = [
+ "core_maths",
  "displaydoc",
- "libm",
 ]
 
 [[package]]
@@ -405,6 +405,15 @@ dependencies = [
  "core-graphics",
  "foreign-types",
  "libc",
+]
+
+[[package]]
+name = "core_maths"
+version = "0.1.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "e3b02505ccb8c50b0aa21ace0fc08c3e53adebd4e58caa18a36152803c7709a3"
+dependencies = [
+ "libm",
 ]
 
 [[package]]
@@ -1751,6 +1760,7 @@ version = "1.2.0"
 name = "icu_segmenter"
 version = "1.2.1"
 dependencies = [
+ "core_maths",
  "criterion",
  "databake",
  "displaydoc",
@@ -1761,7 +1771,6 @@ dependencies = [
  "icu_provider",
  "icu_segmenter_data",
  "itertools",
- "libm",
  "serde",
  "serde_json",
  "utf8_iter",
