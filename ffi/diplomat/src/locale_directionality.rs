@@ -81,12 +81,18 @@ pub mod ffi {
             }
         }
 
-        #[diplomat::rust_link(icu::locid_transform::LocaleDirectionality::is_left_to_right, FnInStruct)]
+        #[diplomat::rust_link(
+            icu::locid_transform::LocaleDirectionality::is_left_to_right,
+            FnInStruct
+        )]
         pub fn is_left_to_right(&self, locale: &ICU4XLocale) -> bool {
             self.0.is_left_to_right(&locale.0)
         }
 
-        #[diplomat::rust_link(icu::locid_transform::LocaleDirectionality::is_right_to_left, FnInStruct)]
+        #[diplomat::rust_link(
+            icu::locid_transform::LocaleDirectionality::is_right_to_left,
+            FnInStruct
+        )]
         pub fn is_right_to_left(&self, locale: &ICU4XLocale) -> bool {
             self.0.is_right_to_left(&locale.0)
         }

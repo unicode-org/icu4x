@@ -73,7 +73,7 @@ use crate::TransformResult;
 ///
 /// [`CLDR`]: http://cldr.unicode.org/
 /// [`UTS #35: Unicode LDML 3. Likely Subtags`]: https://www.unicode.org/reports/tr35/#Likely_Subtags.
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct LocaleExpander {
     likely_subtags_l: DataPayload<LikelySubtagsForLanguageV1Marker>,
     likely_subtags_sr: DataPayload<LikelySubtagsForScriptRegionV1Marker>,
