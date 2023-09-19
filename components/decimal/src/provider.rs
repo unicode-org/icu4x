@@ -36,6 +36,7 @@ const _: () = {
         pub use crate as decimal;
         pub use icu_locid_transform as locid_transform;
     }
+    icu_decimal_data::make_provider!(Baked);
     icu_decimal_data::impl_decimal_symbols_v1!(Baked);
 };
 

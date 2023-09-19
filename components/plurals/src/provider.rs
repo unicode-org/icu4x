@@ -36,6 +36,7 @@ const _: () = {
         pub use crate as plurals;
         pub use icu_locid_transform as locid_transform;
     }
+    icu_plurals_data::make_provider!(Baked);
     icu_plurals_data::impl_plurals_ordinal_v1!(Baked);
     icu_plurals_data::impl_plurals_cardinal_v1!(Baked);
 };

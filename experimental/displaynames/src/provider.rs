@@ -31,6 +31,7 @@ const _: () = {
         pub use crate as displaynames;
         pub use icu_locid_transform as locid_transform;
     }
+    icu_displaynames_data::make_provider!(Baked);
     icu_displaynames_data::impl_displaynames_languages_v1!(Baked);
     icu_displaynames_data::impl_displaynames_locales_v1!(Baked);
     icu_displaynames_data::impl_displaynames_regions_v1!(Baked);

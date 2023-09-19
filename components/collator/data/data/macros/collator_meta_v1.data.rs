@@ -5,7 +5,9 @@
 #[doc(hidden)]
 #[macro_export]
 macro_rules! __impl_collator_meta_v1 {
-    ($ provider : path) => {
+    ($ provider : ty) => {
+        #[clippy::msrv = "1.66"]
+        const _: () = <$provider>::MUST_USE_MAKE_PROVIDER_MACRO;
         #[clippy::msrv = "1.66"]
         impl icu_provider::DataProvider<icu::collator::provider::CollationMetadataV1Marker> for $provider {
             fn load(&self, req: icu_provider::DataRequest) -> Result<icu_provider::DataResponse<icu::collator::provider::CollationMetadataV1Marker>, icu_provider::DataError> {
