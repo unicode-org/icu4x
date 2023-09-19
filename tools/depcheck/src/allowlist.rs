@@ -87,10 +87,8 @@ pub const EXTRA_DATA_DEPS: &[&str] = &[
 /// This will likely grow when we add experimental crates
 pub const EXTRA_EXPERIMENTAL_DEPS: &[&str] = &[
     "icu_displaynames",
-    "icu_personnames",
     "icu_relativetime",
     "icu_compactdecimal",
-    "icu_unicodeset_parser",
 ];
 
 /// Dependencies allowed when opting in to compiled data

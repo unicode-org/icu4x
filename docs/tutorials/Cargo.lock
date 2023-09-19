@@ -3093,7 +3093,7 @@ name = "icu_transliterate_data"
 version = "0.0.0"
 
 [[patch.unused]]
-name = "icu_unicodeset_parser"
+name = "icu_unicodeset_parse"
 version = "0.0.0"
 
 [[patch.unused]]
