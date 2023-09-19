@@ -41,7 +41,7 @@ exec --fail-on-error cargo build -p icu_datagen --no-default-features --features
 configs = array provider/fs/tests/data/json.json provider/fs/tests/data/bincode.json provider/fs/tests/data/postcard.json provider/blob/tests/data/config.json provider/adapters/tests/data/config.json provider/adapters/tests/data/langtest/de.json provider/adapters/tests/data/langtest/ro.json
 
 for config in ${configs}
-    exec --fail-on-error target/debug/icu4x-datagen "${config}"
+    exec --fail-on-error target/debug/icu4x-datagen --config-unstable "${config}"
 end
 '''
 
@@ -109,7 +109,7 @@ else
 end
 
 for component in ${components}
-    exec --fail-on-error ${bin} "${component}/data/config.json"
+    exec --fail-on-error ${bin} --config-unstable "${component}/data/config.json"
 end
 '''
 
