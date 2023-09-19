@@ -85,6 +85,7 @@ impl Direction {
 /// let t = Transliterator::try_new_unstable("de-t-de-d0-ascii".parse().unwrap(), &collection.as_provider()).unwrap();
 /// assert_eq!(t.transliterate("Käse".into()), "Kaese");
 ///
+#[allow(clippy::type_complexity)] // well
 pub struct RuleCollection {
     id_mapping: HashMap<String, Locale>, // alias -> bcp id
     // these two maps need to lock together
