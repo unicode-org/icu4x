@@ -89,8 +89,8 @@ pub fn convert_fractional_to_constant_value(
 
 /// Converts an array of strings of numerator or denominator to fraction.
 pub fn convert_array_of_strings_to_fraction(
-    num: &[&str],
-    den: &[&str],
+    num: &Vec<String>,
+    den: &Vec<String>,
 ) -> Result<GenericFraction<BigUint>, DataError> {
     let mut result = GenericFraction::new(BigUint::from(1u32), BigUint::from(1u32));
 
@@ -117,10 +117,12 @@ pub fn convert_array_of_strings_to_fraction(
 /// The numerator and denominator are represented as array of strings.
 ///    For example: "1/2" -> (["1"], ["2"])
 ///                 "1 * 2 / 3 * ft_to_m" -> (["1", "2"], ["3" , "ft_to_m"])
-pub fn split_constant_string(constant_string: &str) -> Result<(Vec<&str>, Vec<&str>), DataError> {
+pub fn split_constant_string(
+    constant_string: &str,
+) -> Result<(Vec<String>, Vec<String>), DataError> {
     let constant_string = remove_whitespace(constant_string);
-    let mut numerator = Vec::<&str>::new();
-    let mut denominator = Vec::<&str>::new();
+    let mut numerator = Vec::<String>::new();
+    let mut denominator = Vec::<String>::new();
 
     let mut split = constant_string.split('/');
     if split.clone().count() > 2 {
@@ -131,12 +133,12 @@ pub fn split_constant_string(constant_string: &str) -> Result<(Vec<&str>, Vec<&s
 
     let mut split = numerator_string.split('*');
     for num in split {
-        numerator.push(num);
+        numerator.push(num.to_string());
     }
 
     let mut split = denominator_string.split('*');
     for num in split {
-        denominator.push(num);
+        denominator.push(num.to_string());
     }
 
     Ok((numerator, denominator))

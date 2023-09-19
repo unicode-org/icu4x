@@ -13,7 +13,7 @@ use icu_provider::{
     DataResponse,
 };
 use icu_unitsconversion::provider::{
-    ConstantType, ConstantValue, ConstantValueULE, UnitsConstantsV1, UnitsConstantsV1Marker,
+    ConstantType, ConstantValue, UnitsConstantsV1, UnitsConstantsV1Marker,
 };
 use num_bigint::BigUint;
 use zerovec::{ZeroMap, ZeroVec};
@@ -38,7 +38,7 @@ impl DataProvider<UnitsConstantsV1Marker> for crate::DatagenProvider {
         // Constants that has a constants in their value.
         //      For exmaple: "ft2_to_m2": "ft_to_m * ft_to_m",
         let mut constants_with_constants_map =
-            BTreeMap::<&str, (Vec<&str>, Vec<&str>, ConstantType)>::new();
+            BTreeMap::<&str, (Vec<String>, Vec<String>, ConstantType)>::new();
 
         for (cons_name, cons_value) in constants {
             let value = remove_whitespace(&cons_value.value);
@@ -60,15 +60,18 @@ impl DataProvider<UnitsConstantsV1Marker> for crate::DatagenProvider {
         // This loop will replace all the constants in the value of a constant with their values.
         loop {
             let mut cons_with_text: u16 = 0;
-            for (cons_name, (num, den, constant_type)) in constants_with_constants_map.iter() {
+            for (cons_name, (num, den, constant_type)) in constants_with_constants_map.iter_mut() {
                 for i in 0..num.len() {
-                    if !has_letters(num[i]) {
+                    if !has_letters(num[i].as_str()) {
                         continue;
                     }
 
-                    if constants_with_constants_map.contains_key(num[i]) {
-                        let (rnum, rden, rconstant_type) =
-                            constants_with_constants_map.get(num[i]).unwrap();
+                    cons_with_text += 1;
+
+                    if constants_with_constants_map.contains_key(num[i].as_str()) {
+                        let (rnum, rden, rconstant_type) = constants_with_constants_map
+                            .get_mut(num[i].as_str())
+                            .unwrap();
                         num.remove(i);
                         // append the elements in rnum to num and rden to den
                         num.append(&mut rnum.clone());
@@ -77,29 +80,25 @@ impl DataProvider<UnitsConstantsV1Marker> for crate::DatagenProvider {
                         if *rconstant_type == ConstantType::Approximate {
                             *constant_type = ConstantType::Approximate;
                         }
-                    } else {
-                        cons_with_text += 1;
                     }
                 }
 
                 for i in 0..den.len() {
-                    if !has_letters(den[i]) {
+                    if !has_letters(den[i].as_str()) {
                         continue;
                     }
-
-                    if constants_with_constants_map.contains_key(den[i]) {
-                        let (rnum, rden, constant_type) =
-                            constants_with_constants_map.get(den[i]).unwrap();
+                    cons_with_text += 1;
+                    if constants_with_constants_map.contains_key(den[i].as_str()) {
+                        let (rnum, rden, mut rconstant_type) =
+                            constants_with_constants_map.get(den[i].as_str()).unwrap();
                         den.remove(i);
                         // append the elements in rden to num and rnum to den
                         num.append(&mut rden.clone());
                         den.append(&mut rnum.clone());
 
-                        if *constant_type == ConstantType::Approximate {
+                        if rconstant_type == ConstantType::Approximate {
                             *constant_type = ConstantType::Approximate;
                         }
-                    } else {
-                        cons_with_text += 1;
                     }
                 }
             }
@@ -112,7 +111,7 @@ impl DataProvider<UnitsConstantsV1Marker> for crate::DatagenProvider {
         let mut constants_map = BTreeMap::<&str, ConstantValue>::new();
 
         for (cons_name, (num, den, constant_type)) in constants_with_constants_map.iter() {
-            let value = convert_array_of_strings_to_fraction(num, den)?;
+            let value = convert_array_of_strings_to_fraction(&num, &den)?;
             let (num, den, sign, cons_type) =
                 convert_fractional_to_constant_value(value, *constant_type)?;
             constants_map.insert(
@@ -125,8 +124,11 @@ impl DataProvider<UnitsConstantsV1Marker> for crate::DatagenProvider {
                 },
             );
         }
-
-        let constants_map = ZeroMap::from_iter(constants_map.into_iter());
+        let constants_map = ZeroMap::from_iter(
+            constants_map
+                .into_iter()
+                .map(|(k, v)| (k, zerovec::ule::encode_varule_to_box(&v))),
+        );
         let result = UnitsConstantsV1 { constants_map };
 
         Ok(DataResponse {
