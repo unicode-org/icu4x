@@ -130,7 +130,6 @@ experimental = [
     "icu_compactdecimal",
     "icu_datetime_experimental",
     "icu_displaynames",
-    "icu_locid_transform/experimental",
     "icu_plurals/experimental",
     "icu_relativetime",
 ]
