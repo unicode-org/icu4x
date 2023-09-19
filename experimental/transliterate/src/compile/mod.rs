@@ -548,8 +548,8 @@ enum CompileErrorKind {
     InvalidNumber,
     /// Duplicate variable definition.
     DuplicateVariable,
-    /// Invalid UnicodeSet syntax. See `icu_unicodeset_parser`'s [`ParseError`](icu_unicodeset_parser::ParseError).
-    UnicodeSetError(icu_unicodeset_parser::ParseError),
+    /// Invalid UnicodeSet syntax. See `icu_unicodeset_parse`'s [`ParseError`](icu_unicodeset_parse::ParseError).
+    UnicodeSetError(icu_unicodeset_parse::ParseError),
 
     // errors originating from compilation step
     /// A global filter (forward or backward) in an unexpected position.
@@ -604,13 +604,13 @@ mod tests {
     use zerovec::VarZeroVec;
 
     fn parse_set(source: &str) -> parse::UnicodeSet {
-        icu_unicodeset_parser::parse_unstable(source, &icu_properties::provider::Baked)
+        icu_unicodeset_parse::parse_unstable(source, &icu_properties::provider::Baked)
             .expect("Parsing failed")
             .0
     }
 
     fn parse_set_cp(source: &str) -> parse::FilterSet {
-        icu_unicodeset_parser::parse_unstable(source, &icu_properties::provider::Baked)
+        icu_unicodeset_parse::parse_unstable(source, &icu_properties::provider::Baked)
             .expect("Parsing failed")
             .0
             .code_points()

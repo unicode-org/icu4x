@@ -8,7 +8,7 @@ use alloc::fmt::{Display, Formatter};
 use core::{iter::Peekable, str::CharIndices};
 use icu_collections::codepointinvlist::CodePointInversionList;
 use icu_collections::codepointinvliststringlist::CodePointInversionListAndStringList;
-use icu_unicodeset_parser::{VariableMap, VariableValue};
+use icu_unicodeset_parse::{VariableMap, VariableValue};
 
 type Result<T> = core::result::Result<T, CompileError>;
 
@@ -912,8 +912,8 @@ where
         Ok(buf)
     }
 
-    // parses all supported escapes. code is somewhat duplicated from icu_unicodeset_parser
-    // might want to deduplicate this with unicodeset_parser somehow
+    // parses all supported escapes. code is somewhat duplicated from icu_unicodeset_parse
+    // might want to deduplicate this with unicodeset_parse somehow
     fn parse_escaped_char_into_buf(&mut self, buf: &mut String) -> Result<()> {
         self.consume(Self::ESCAPE)?;
 
@@ -1032,7 +1032,7 @@ where
         // was created from self.source
         #[allow(clippy::indexing_slicing)]
         let set_source = &self.source[pre_offset..];
-        let (set, consumed_bytes) = icu_unicodeset_parser::parse_unstable_with_variables(
+        let (set, consumed_bytes) = icu_unicodeset_parse::parse_unstable_with_variables(
             set_source,
             &self.variable_map,
             self.property_provider,
@@ -1042,7 +1042,7 @@ where
         let mut last_offset = pre_offset;
         // advance self.iter consumed_bytes bytes
         while let Some(offset) = self.peek_index() {
-            // we can use equality because unicodeset_parser also lexes on char boundaries
+            // we can use equality because unicodeset_parse also lexes on char boundaries
             // note: we must not consume this final token because it is the first non-consumed char
             if offset == pre_offset + consumed_bytes {
                 break;
@@ -1059,7 +1059,7 @@ where
             Some(set) => Ok(set.clone()),
             None => {
                 let (set, _) =
-                    icu_unicodeset_parser::parse_unstable(Self::DOT_SET, self.property_provider)
+                    icu_unicodeset_parse::parse_unstable(Self::DOT_SET, self.property_provider)
                         .map_err(|_| CompileErrorKind::Internal("dot set syntax not valid"))?;
                 self.dot_set = Some(set.clone());
                 Ok(set)

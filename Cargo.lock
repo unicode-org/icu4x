@@ -1839,7 +1839,7 @@ dependencies = [
  "icu_normalizer",
  "icu_properties",
  "icu_provider",
- "icu_unicodeset_parser",
+ "icu_unicodeset_parse",
  "litemap",
  "log",
  "serde",
@@ -1847,7 +1847,7 @@ dependencies = [
 ]
 
 [[package]]
-name = "icu_unicodeset_parser"
+name = "icu_unicodeset_parse"
 version = "0.0.0"
 dependencies = [
  "icu_collections",
