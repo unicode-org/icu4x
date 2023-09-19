@@ -10,6 +10,13 @@ pub mod bincode;
 pub mod json;
 pub mod postcard;
 
+#[doc(no_inline)]
+pub use bincode::Serializer as Bincode;
+#[doc(no_inline)]
+pub use json::Serializer as Json;
+#[doc(no_inline)]
+pub use postcard::Serializer as Postcard;
+
 use icu_provider::buf::BufferFormat;
 use icu_provider::datagen::*;
 use icu_provider::prelude::*;
