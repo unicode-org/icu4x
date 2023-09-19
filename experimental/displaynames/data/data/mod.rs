@@ -10,6 +10,7 @@ macro_rules! impl_data_provider {
         impl_displaynames_variants_v1!($provider);
     };
 }
+#[allow(unused_macros)]
 macro_rules! impl_any_provider {
     ($ provider : ty) => {
         #[clippy::msrv = "1.66"]

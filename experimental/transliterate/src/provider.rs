@@ -26,27 +26,6 @@ use icu_collections::{
 use icu_provider::prelude::*;
 use zerovec::*;
 
-#[cfg(feature = "compiled_data")]
-#[derive(Debug)]
-/// Baked data
-///
-/// <div class="stab unstable">
-/// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
-/// including in SemVer minor releases. In particular, the `DataProvider` implementations are only
-/// guaranteed to match with this version's `*_unstable` providers. Use with caution.
-/// </div>
-pub struct Baked;
-
-#[cfg(feature = "compiled_data")]
-const _: () = {
-    mod icu {
-        pub use crate as transliterate;
-        pub use icu_collections as collections;
-    }
-    icu_transliterate_data::make_provider!(Baked);
-    icu_transliterate_data::impl_transliterator_rules_v1!(Baked);
-};
-
 // TODO(#3776): Improve the documentation of this datastruct.
 
 /// The data struct representing [UTS #35 transform rules](https://unicode.org/reports/tr35/tr35-general.html#Transforms).

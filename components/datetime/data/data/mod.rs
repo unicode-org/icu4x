@@ -40,6 +40,7 @@ macro_rules! impl_data_provider {
         impl_time_zone_specific_short_v1!($provider);
     };
 }
+#[allow(unused_macros)]
 macro_rules! impl_any_provider {
     ($ provider : ty) => {
         #[clippy::msrv = "1.66"]

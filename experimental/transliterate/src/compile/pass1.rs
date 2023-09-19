@@ -145,6 +145,8 @@ as described in the zero-copy format, and the maps here are just arrays)
 use super::*;
 use std::collections::{HashMap, HashSet};
 
+type Result<T> = core::result::Result<T, CompileError>;
+
 enum SingleDirection {
     Forward,
     Reverse,
@@ -256,7 +258,11 @@ pub(crate) struct Pass1<'p> {
 }
 
 impl<'p> Pass1<'p> {
-    pub(crate) fn run(direction: Direction, rules: &'p [parse::Rule]) -> Result<Pass1Result<'p>> {
+    // TODO(#3736): decide if validation should be direction dependent
+    //  example: transliterator with direction "forward", and a rule `[a-z] < b ;` (invalid)
+    //  - if validation is dependent, this rule is valid because it's not used in the forward direction
+    //  - if validation is independent, this rule is invalid because the reverse direction is also checked
+    pub(super) fn run(direction: Direction, rules: &'p [parse::Rule]) -> Result<Pass1Result<'p>> {
         let mut s = Self {
             direction,
             forward_data: Pass1Data::default(),
@@ -902,12 +908,10 @@ mod tests {
     }
     use ExpectedOutcome::*;
 
-    const BOTH: Direction = Direction::Both;
-
     fn parse(s: &str) -> Vec<parse::Rule> {
         match parse::parse(s) {
             Ok(rules) => rules,
-            Err(e) => panic!("unexpected error parsing rules {s:?}: {:?}", e),
+            Err(e) => panic!("unexpected error parsing rules {s:?}: {:?}", e.explain(s)),
         }
     }
 
@@ -951,7 +955,9 @@ mod tests {
         ";
 
         let rules = parse(source);
-        let result = Pass1::run(BOTH, &rules).expect("pass1 failed");
+        let result = Pass1::run(Direction::Both, &rules)
+            .map_err(|e| e.explain(source))
+            .expect("pass1 failed");
         {
             let vars_with_data: HashSet<_> = result
                 .variable_definitions
@@ -1085,12 +1091,18 @@ mod tests {
         ];
 
         for (expected_outcome, source) in sources {
-            match (expected_outcome, Pass1::run(BOTH, &parse(source))) {
+            match (
+                expected_outcome,
+                Pass1::run(Direction::Both, &parse(source)),
+            ) {
                 (Fail, Ok(_)) => {
                     panic!("unexpected successful pass1 validation for rules {source:?}")
                 }
                 (Pass, Err(e)) => {
-                    panic!("unexpected error in pass1 validation for rules {source:?}: {e:?}")
+                    panic!(
+                        "unexpected error in pass1 validation for rules {source:?}: {:?}",
+                        e.explain(source)
+                    )
                 }
                 _ => {}
             }
@@ -1114,12 +1126,18 @@ mod tests {
         ];
 
         for (expected_outcome, source) in sources {
-            match (expected_outcome, Pass1::run(BOTH, &parse(source))) {
+            match (
+                expected_outcome,
+                Pass1::run(Direction::Both, &parse(source)),
+            ) {
                 (Fail, Ok(_)) => {
                     panic!("unexpected successful pass1 validation for rules {source:?}")
                 }
                 (Pass, Err(e)) => {
-                    panic!("unexpected error in pass1 validation for rules {source:?}: {e:?}")
+                    panic!(
+                        "unexpected error in pass1 validation for rules {source:?}: {:?}",
+                        e.explain(source)
+                    )
                 }
                 _ => {}
             }
@@ -1142,13 +1160,16 @@ mod tests {
 
         for (expected_outcome, source) in sources {
             let rules = parse(source);
-            let result = Pass1::run(BOTH, &rules);
+            let result = Pass1::run(Direction::Both, &rules);
             match (expected_outcome, result) {
                 (Fail, Ok(_)) => {
                     panic!("unexpected successful pass1 validation for rules {source:?}")
                 }
                 (Pass, Err(e)) => {
-                    panic!("unexpected error in pass1 validation for rules {source:?}: {e:?}")
+                    panic!(
+                        "unexpected error in pass1 validation for rules {source:?}: {:?}",
+                        e.explain(source)
+                    )
                 }
                 _ => {}
             }

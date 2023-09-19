@@ -3,12 +3,14 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use super::*;
+use alloc::borrow::Cow;
+use alloc::fmt::{Display, Formatter};
+use core::{iter::Peekable, str::CharIndices};
 use icu_collections::codepointinvlist::CodePointInversionList;
 use icu_collections::codepointinvliststringlist::CodePointInversionListAndStringList;
 use icu_unicodeset_parse::{VariableMap, VariableValue};
-use std::borrow::Cow;
-use std::fmt::{Display, Formatter};
-use std::{iter::Peekable, str::CharIndices};
+
+type Result<T> = core::result::Result<T, CompileError>;
 
 /// An element that can appear in a rule. Used for error reporting in [`CompileError`].
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
@@ -136,9 +138,14 @@ impl Default for BasicId {
 
 impl Display for BasicId {
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
-        write!(f, "{}-{}", self.source, self.target)?;
+        write!(
+            f,
+            "{}-{}",
+            self.source.to_ascii_lowercase(),
+            self.target.to_ascii_lowercase()
+        )?;
         if let Some(variant) = &self.variant {
-            write!(f, "/{}", variant)?;
+            write!(f, "/{}", variant.to_ascii_lowercase())?;
         }
         Ok(())
     }
@@ -356,7 +363,7 @@ where
     // before or after a cursor
     const CURSOR_PLACEHOLDER: char = '@';
 
-    pub(crate) fn run(
+    pub(super) fn run(
         source: &'a str,
         xid_start: &'a CodePointInversionList<'a>,
         xid_continue: &'a CodePointInversionList<'a>,
@@ -1267,7 +1274,7 @@ where
 }
 
 #[cfg(test)]
-pub(crate) fn parse(source: &str) -> Result<Vec<Rule>> {
+pub(super) fn parse(source: &str) -> Result<Vec<Rule>> {
     Parser::run(
         source,
         &sets::xid_start()
@@ -1313,9 +1320,7 @@ fn test_full() {
     :: ([inverse-filter]) ;
     ";
 
-    if let Err(e) = parse(source) {
-        panic!("Failed to parse {:?}: {:?}", source, e);
-    }
+    parse(source).map_err(|e| e.explain(source)).unwrap();
 }
 
 #[test]
@@ -1343,9 +1348,7 @@ fn test_conversion_rules_ok() {
     ];
 
     for source in sources {
-        if let Err(e) = parse(source) {
-            panic!("Failed to parse {:?}: {:?}", source, e);
-        }
+        parse(source).map_err(|e| e.explain(source)).unwrap();
     }
 }
 
@@ -1372,9 +1375,7 @@ fn test_conversion_rules_err() {
     ];
 
     for source in sources {
-        if let Ok(rules) = parse(source) {
-            panic!("Parsed invalid source {:?}: {:?}", source, rules);
-        }
+        parse(source).unwrap_err();
     }
 }
 
@@ -1395,9 +1396,7 @@ fn test_variable_rules_ok() {
     ];
 
     for source in sources {
-        if let Err(e) = parse(source) {
-            panic!("Failed to parse {:?}: {:?}", source, e);
-        }
+        parse(source).map_err(|e| e.explain(source)).unwrap();
     }
 }
 
@@ -1433,9 +1432,7 @@ fn test_global_filters_ok() {
     ];
 
     for source in sources {
-        if let Err(e) = parse(source) {
-            panic!("Failed to parse {:?}: {:?}", source, e);
-        }
+        parse(source).map_err(|e| e.explain(source)).unwrap();
     }
 }
 
@@ -1476,9 +1473,7 @@ fn test_function_calls_ok() {
     ];
 
     for source in sources {
-        if let Err(e) = parse(source) {
-            panic!("Failed to parse {:?}: {:?}", source, e);
-        }
+        parse(source).map_err(|e| e.explain(source)).unwrap();
     }
 }
 
@@ -1517,9 +1512,7 @@ fn test_transform_rules_ok() {
     ];
 
     for source in sources {
-        if let Err(e) = parse(source) {
-            panic!("Failed to parse {:?}: {:?}", source, e);
-        }
+        parse(source).map_err(|e| e.explain(source)).unwrap();
     }
 }
 

@@ -1848,17 +1848,12 @@ dependencies = [
  "icu_normalizer",
  "icu_properties",
  "icu_provider",
- "icu_transliterate_data",
  "icu_unicodeset_parse",
  "litemap",
  "log",
  "serde",
  "zerovec",
 ]
-
-[[package]]
-name = "icu_transliterate_data"
-version = "0.0.0"
 
 [[package]]
 name = "icu_unicodeset_parse"
