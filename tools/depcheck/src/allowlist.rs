@@ -92,7 +92,7 @@ pub const EXTRA_EXPERIMENTAL_DEPS: &[&str] = &[
     "icu_relativetime",
     "icu_compactdecimal",
     "icu_transliterate",
-    "icu_unicodeset_parser",
+    "icu_unicodeset_parse",
 ];
 
 /// Dependencies allowed when opting in to compiled data
