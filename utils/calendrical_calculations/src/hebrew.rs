@@ -7,10 +7,10 @@
 // the Apache License, Version 2.0 which can be found at the calendrical_calculations
 // package root or at http://www.apache.org/licenses/LICENSE-2.0.
 
-#[allow(unused_imports)]
-use crate::helpers::CoreFloat;
 use crate::helpers::{final_func, i64_to_i32, next_u8};
 use crate::rata_die::{Moment, RataDie};
+#[allow(unused_imports)]
+use core_maths::*;
 
 /// Lisp code reference: <https://github.com/EdReingold/calendar-code2/blob/main/calendar.l#L2206>
 const FIXED_HEBREW_EPOCH: RataDie = crate::julian::fixed_from_julian_book_version(-3761, 10, 7);

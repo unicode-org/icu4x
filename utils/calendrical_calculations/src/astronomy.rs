@@ -14,11 +14,11 @@
 //! TODO(#3709): Address inconcistencies with existing ICU code for extreme dates.
 
 use crate::error::LocationOutOfBoundsError;
-#[allow(unused_imports)]
-use crate::helpers::CoreFloat;
 use crate::helpers::{binary_search, i64_to_i32, invert_angular, next_moment, poly};
 use crate::rata_die::{Moment, RataDie};
 use core::f64::consts::PI;
+#[allow(unused_imports)]
+use core_maths::*;
 
 // TODO: this isn't f64::div_euclid as defined in std. Figure out what the call sites
 // mean to do.
