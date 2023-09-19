@@ -43,6 +43,7 @@ const _: () = {
         pub use crate as transliterate;
         pub use icu_collections as collections;
     }
+    icu_transliterate_data::make_provider!(Baked);
     icu_transliterate_data::impl_transliterator_rules_v1!(Baked);
 };
 
