@@ -8,6 +8,7 @@ use alloc::collections::BTreeMap;
 use alloc::format;
 use alloc::string::{String, ToString};
 use alloc::vec::Vec;
+use core::cell::RefCell;
 use icu_locid::Locale;
 use icu_normalizer::provider::*;
 use icu_properties::{provider::*, sets, PropertiesError};
@@ -17,7 +18,6 @@ mod parse;
 mod pass1;
 mod pass2;
 mod rule_group_agg;
-mod spin_lock;
 
 /// The direction of a rule-based transliterator in respect to its source.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
@@ -93,7 +93,7 @@ impl Direction {
 pub struct RuleCollection {
     id_mapping: BTreeMap<String, Locale>, // alias -> bcp id
     // these two maps need to lock together
-    data: spin_lock::SpinLock<(
+    data: RefCell<(
         BTreeMap<String, (String, bool, bool)>, // locale -> source/reverse/visible
         BTreeMap<String, Result<DataResponse<TransliteratorRulesV1Marker>, DataError>>, // cache
     )>,
@@ -109,7 +109,7 @@ impl RuleCollection {
         reverse: bool,
         visible: bool,
     ) {
-        self.data.get_mut().0.insert(
+        self.data.borrow_mut().0.insert(
             crate::ids::bcp47_to_data_locale(id).to_string(),
             (source, reverse, visible),
         );
@@ -306,7 +306,7 @@ where
     ) -> Result<DataResponse<TransliteratorRulesV1Marker>, DataError> {
         let locale = req.locale.to_string();
 
-        let mut exclusive_data = self.collection.data.lock();
+        let mut exclusive_data = self.collection.data.borrow_mut();
 
         if let Some(response) = exclusive_data.1.get(&locale) {
             return response.clone();
@@ -455,7 +455,7 @@ where
     NP: ?Sized,
 {
     fn supported_locales(&self) -> Result<Vec<DataLocale>, DataError> {
-        let exclusive_data = self.collection.data.lock();
+        let exclusive_data = self.collection.data.borrow();
         #[allow(clippy::unwrap_used)] // the maps' keys are valid DataLocales
         Ok(exclusive_data
             .0

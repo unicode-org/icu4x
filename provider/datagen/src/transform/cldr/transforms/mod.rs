@@ -9,9 +9,10 @@ use icu_provider::datagen::IterableDataProvider;
 use icu_provider::prelude::*;
 use icu_transliterate::provider::*;
 use icu_transliterate::RuleCollection;
+use std::sync::Mutex;
 
 impl CldrCache {
-    fn transforms(&self) -> Result<&RuleCollection, DataError> {
+    fn transforms(&self) -> Result<&Mutex<RuleCollection>, DataError> {
         self.transforms.get_or_try_init(|| {
             fn find_bcp47(aliases: &[transforms::TransformAlias]) -> Option<&Locale> {
                 aliases
@@ -105,7 +106,7 @@ impl CldrCache {
                     }
                 }
             }
-            Ok(provider)
+            Ok(Mutex::new(provider))
         })
     }
 }
@@ -118,6 +119,8 @@ impl DataProvider<TransliteratorRulesV1Marker> for crate::DatagenProvider {
         self.check_req::<TransliteratorRulesV1Marker>(req)?;
         self.cldr()?
             .transforms()?
+            .lock()
+            .expect("poison")
             .as_provider_unstable(self, self)?
             .load(req)
     }
@@ -127,6 +130,8 @@ impl IterableDataProvider<TransliteratorRulesV1Marker> for crate::DatagenProvide
     fn supported_locales(&self) -> Result<Vec<DataLocale>, DataError> {
         self.cldr()?
             .transforms()?
+            .lock()
+            .expect("poison")
             .as_provider_unstable(self, self)?
             .supported_locales()
     }
