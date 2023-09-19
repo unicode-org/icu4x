@@ -86,8 +86,11 @@ impl Direction {
 ///
 pub struct RuleCollection {
     id_mapping: HashMap<String, Locale>, // alias -> bcp id
-    data: RwLock<HashMap<DataLocale, (String, bool, bool)>>, // locale -> source/reverse/visible
-    cache: RwLock<HashMap<DataLocale, DataResponse<TransliteratorRulesV1Marker>>>,
+    // these two maps need to lock together
+    data: RwLock<(
+        HashMap<DataLocale, (String, bool, bool)>, // locale -> source/reverse/visible
+        HashMap<DataLocale, Result<DataResponse<TransliteratorRulesV1Marker>, DataError>>, // cache
+    )>,
 }
 
 impl RuleCollection {
@@ -101,7 +104,7 @@ impl RuleCollection {
         visible: bool,
     ) {
         #[allow(clippy::expect_used)]
-        self.data.get_mut().expect("poison").insert(
+        self.data.get_mut().expect("poison").0.insert(
             crate::ids::bcp47_to_data_locale(id),
             (source, reverse, visible),
         );
@@ -311,81 +314,83 @@ where
         req: DataRequest,
     ) -> Result<DataResponse<TransliteratorRulesV1Marker>, DataError> {
         #[allow(clippy::expect_used)]
-        if let Some(response) = self
-            .collection
-            .cache
-            .read()
-            .expect("poison")
-            .get(req.locale)
-        {
-            return Ok(response.clone());
-        }
-
-        #[allow(clippy::expect_used)]
-        let (source, reverse, visible) = self
+        if let Some(result) = self
             .collection
             .data
-            .write()
+            .read()
             .expect("poison")
-            .remove(req.locale)
-            .ok_or_else(|| {
-                DataErrorKind::MissingLocale.with_req(TransliteratorRulesV1Marker::KEY, req)
-            })?;
+            .1
+            .get(req.locale)
+        {
+            return result.clone();
+        }
 
-        let rules = parse::Parser::run(
-            &source,
-            &self.xid_start.to_code_point_inversion_list(),
-            &self.xid_continue.to_code_point_inversion_list(),
-            &self.pat_ws.to_code_point_inversion_list(),
-            self.properties_provider,
-        )
-        .map_err(|e| {
-            e.explain(&source)
-                .with_req(TransliteratorRulesV1Marker::KEY, req)
-        })?;
+        // We're taking the source, so we need to hold the lock until we're putting it
+        // in the cache.
+        #[allow(clippy::expect_used)]
+        let mut exclusive_data = self.collection.data.write().expect("poison");
 
-        let pass1 = pass1::Pass1::run(
-            if reverse {
-                Direction::Reverse
-            } else {
-                Direction::Forward
-            },
-            &rules,
-        )
-        .map_err(|e| {
-            e.explain(&source)
-                .with_req(TransliteratorRulesV1Marker::KEY, req)
-        })?;
-
-        let mut transliterator = pass2::Pass2::run(
-            if reverse {
-                pass1.reverse_result
-            } else {
-                pass1.forward_result
-            },
-            &pass1.variable_definitions,
-            &self.collection.id_mapping,
-        )
-        .map_err(|e| {
-            e.explain(&source)
-                .with_req(TransliteratorRulesV1Marker::KEY, req)
-        })?;
-
-        transliterator.visibility = visible;
-
-        let response = DataResponse {
-            metadata: Default::default(),
-            payload: Some(DataPayload::from_owned(transliterator)),
+        if let Some(response) = exclusive_data.1.get(req.locale) {
+            return response.clone();
         };
 
-        #[allow(clippy::expect_used)]
-        self.collection
-            .cache
-            .write()
-            .expect("poison")
-            .insert(req.locale.clone(), response.clone());
+        let result = |value: Option<(String, bool, bool)>| -> Result<DataResponse<TransliteratorRulesV1Marker>, DataError> {
+            let Some((source, reverse, visible)) = value else {
+                return Err(
+                    DataErrorKind::MissingLocale.with_req(TransliteratorRulesV1Marker::KEY, req)
+                );
+            };
 
-        Ok(response)
+            let rules = parse::Parser::run(
+                &source,
+                &self.xid_start.to_code_point_inversion_list(),
+                &self.xid_continue.to_code_point_inversion_list(),
+                &self.pat_ws.to_code_point_inversion_list(),
+                self.properties_provider,
+            )
+            .map_err(|e| {
+                e.explain(&source)
+                    .with_req(TransliteratorRulesV1Marker::KEY, req)
+            })?;
+
+            let pass1 = pass1::Pass1::run(
+                if reverse {
+                    Direction::Reverse
+                } else {
+                    Direction::Forward
+                },
+                &rules,
+            )
+            .map_err(|e| {
+                e.explain(&source)
+                    .with_req(TransliteratorRulesV1Marker::KEY, req)
+            })?;
+
+            let mut transliterator = pass2::Pass2::run(
+                if reverse {
+                    pass1.reverse_result
+                } else {
+                    pass1.forward_result
+                },
+                &pass1.variable_definitions,
+                &self.collection.id_mapping,
+            )
+            .map_err(|e| {
+                e.explain(&source)
+                    .with_req(TransliteratorRulesV1Marker::KEY, req)
+            })?;
+
+            transliterator.visibility = visible;
+
+            Ok(DataResponse {
+                metadata: Default::default(),
+                payload: Some(DataPayload::from_owned(transliterator)),
+            })
+        }(exclusive_data.0.remove(req.locale));
+
+        exclusive_data.1.insert(req.locale.clone(), result.clone());
+
+        result
     }
 }
 
@@ -472,13 +477,12 @@ where
 {
     fn supported_locales(&self) -> Result<Vec<DataLocale>, DataError> {
         #[allow(clippy::expect_used)]
-        Ok(self
-            .collection
-            .data
-            .read()
-            .expect("poison")
+        let read_access = self.collection.data.read().expect("poison");
+        Ok(read_access
+            .0
             .keys()
             .cloned()
+            .chain(read_access.1.keys().cloned())
             .collect::<Vec<_>>())
     }
 }
