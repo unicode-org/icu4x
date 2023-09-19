@@ -91,6 +91,14 @@ pub const EXTRA_EXPERIMENTAL_DEPS: &[&str] = &[
     "icu_relativetime",
     "icu_compactdecimal",
     "icu_unicodeset_parser",
+
+    "regex",
+    "lazy_static",
+    "aho-corasick",
+    "regex-syntax",
+    "serde",
+    "icu_locid_transform_data",
+    "icu_properties_data",
 ];
 
 /// Dependencies allowed when opting in to compiled data
@@ -155,6 +163,8 @@ pub const EXTRA_DATAGEN_DEPS: &[&str] = &[
     "serde-aux",
     "serde_json",
     "toml",
+    "hashbrown",
+    "indexmap"
 ];
 
 /// Dependencies needed by the `log` crate
