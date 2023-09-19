@@ -46,7 +46,7 @@
 //!
 //! pub struct MyDataProvider;
 //!
-//! mod baked {
+//! const _: () = {
 //!     # macro_rules! include {
 //!     #   ($path:literal) => {}
 //!     # }
@@ -61,15 +61,13 @@
 //!     #     }
 //!     #   }
 //!     # }
-//!     include!("/path/to/mod.rs");
-//!     impl_data_provider!(super::MyDataProvider);
-//! }
+//!     include!("/tmp/icu4x_baked_demo/mod.rs");
+//!     impl_data_provider!(MyDataProvider);
+//! };
 //!
-//! # fn main() {
 //! let formatter = HelloWorldFormatter::try_new_unstable(&MyDataProvider, &langid!("en").into()).unwrap();
 //!
 //! assert_eq!(formatter.format_to_string(), "Hello World");
-//! # }
 //! ```
 //!
 //! ## `compiled_data`
