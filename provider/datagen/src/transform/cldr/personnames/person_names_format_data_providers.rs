@@ -116,7 +116,7 @@ impl TryFrom<&'_ Resource> for PersonNamesFormatV1<'_> {
                                 let mut formal_pattern = vec![];
                                 let mut informal_pattern = vec![];
                                 for (formality, pattern) in &formality_formatting.0 {
-                                    if json_field_to_formatting_attribute(&formality).unwrap()
+                                    if json_field_to_formatting_attribute(formality).unwrap()
                                         == PersonNamesFormattingAttributes::Formal.bit_value()
                                     {
                                         formal_pattern.push(pattern.as_str());
@@ -124,7 +124,7 @@ impl TryFrom<&'_ Resource> for PersonNamesFormatV1<'_> {
                                         informal_pattern.push(pattern.as_str());
                                     }
                                 }
-                                return [
+                                [
                                     to_mask(ordering, size, referring, "formal").map(|mask| {
                                         PersonNamesFormattingData {
                                             attributes: mask,
@@ -137,7 +137,7 @@ impl TryFrom<&'_ Resource> for PersonNamesFormatV1<'_> {
                                             patterns: VarZeroVec::<str>::from(&informal_pattern),
                                         }
                                     }),
-                                ];
+                                ]
                             },
                         )
                     })
@@ -146,14 +146,14 @@ impl TryFrom<&'_ Resource> for PersonNamesFormatV1<'_> {
 
         let person_names_patterns = collected_patterns.map(|value| VarZeroVec::from(&value))?;
 
-        return Ok(Self {
+        Ok(Self {
             surname_first_locales,
             given_first_locales,
             foreign_space_replacement,
             initial_pattern,
             initial_pattern_sequence,
             person_names_patterns,
-        });
+        })
     }
 }
 
@@ -166,7 +166,7 @@ mod tests {
 
     #[test]
     fn test_initial_pattern() -> Result<(), DataError> {
-        let provider = crate::DatagenProvider::for_test();
+        let provider = crate::DatagenProvider::new_testing();
 
         let data_payload: DataPayload<PersonNamesFormatV1Marker> = provider
             .load(DataRequest {
@@ -189,7 +189,7 @@ mod tests {
 
     #[test]
     fn test_have_pattern() -> Result<(), DataError> {
-        let provider = crate::DatagenProvider::for_test();
+        let provider = crate::DatagenProvider::new_testing();
 
         let data_payload: DataPayload<PersonNamesFormatV1Marker> = provider
             .load(DataRequest {
@@ -208,7 +208,7 @@ mod tests {
         let first_pattern_data = real_data
             .person_names_patterns
             .iter()
-            .map(|raw_pattern: &PersonNamesFormattingDataVarULE| ZeroFrom::zero_from(raw_pattern))
+            .map(ZeroFrom::zero_from)
             .find(|pattern: &PersonNamesFormattingData| {
                 // The data provider should flip all bits to 1 for mutually exclusive
                 // attributes not provided by the source.
@@ -237,7 +237,7 @@ mod tests {
 
     #[test]
     fn test_have_pattern_multi_formality() -> Result<(), DataError> {
-        let provider = crate::DatagenProvider::for_test();
+        let provider = crate::DatagenProvider::new_testing();
 
         let data_payload: DataPayload<PersonNamesFormatV1Marker> = provider
             .load(DataRequest {
@@ -256,7 +256,7 @@ mod tests {
         let first_pattern_data = real_data
             .person_names_patterns
             .iter()
-            .map(|raw_pattern: &PersonNamesFormattingDataVarULE| ZeroFrom::zero_from(raw_pattern))
+            .map(ZeroFrom::zero_from)
             .find(|pattern: &PersonNamesFormattingData| {
                 // The data provider should flip all bits to 1 for mutually exclusive
                 // attributes not provided by the source.

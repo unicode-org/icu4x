@@ -2,7 +2,6 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-
 use lazy_static::lazy_static;
 use regex::CaptureMatches;
 use regex::Regex;

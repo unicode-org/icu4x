@@ -444,6 +444,7 @@ dependencies = [
  "lazy_static",
  "litemap",
  "regex",
+ "serde",
  "zerofrom",
  "zerovec",
 ]

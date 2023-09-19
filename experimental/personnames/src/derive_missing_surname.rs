@@ -2,7 +2,6 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-
 use crate::api::{NameField, NameFieldKind};
 
 /// Returns a remapped field for missing surname.
