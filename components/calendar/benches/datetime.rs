@@ -119,8 +119,19 @@ fn datetime_benches(c: &mut Criterion) {
         &mut group,
         "calendar/chinese",
         &fxs,
-        icu::calendar::chinese::Chinese,
-        |y, m, d, h, min, s| DateTime::try_new_chinese_datetime(y, m, d, h, min, s).unwrap(),
+        icu::calendar::chinese::Chinese::new_always_calculating(),
+        |y, m, d, h, min, s| {
+            DateTime::try_new_chinese_datetime_with_calendar(
+                y,
+                m,
+                d,
+                h,
+                min,
+                s,
+                icu::calendar::chinese::Chinese::new_always_calculating(),
+            )
+            .unwrap()
+        },
     );
 
     #[cfg(feature = "bench")]
@@ -155,8 +166,19 @@ fn datetime_benches(c: &mut Criterion) {
         &mut group,
         "calendar/islamic/civil",
         &fxs,
-        icu::calendar::islamic::IslamicCivil,
-        |y, m, d, h, min, s| DateTime::try_new_islamic_civil_datetime(y, m, d, h, min, s).unwrap(),
+        icu::calendar::islamic::IslamicCivil::new_always_calculating(),
+        |y, m, d, h, min, s| {
+            DateTime::try_new_islamic_civil_datetime_with_calendar(
+                y,
+                m,
+                d,
+                h,
+                min,
+                s,
+                icu::calendar::islamic::IslamicCivil::new_always_calculating(),
+            )
+            .unwrap()
+        },
     );
 
     #[cfg(feature = "bench")]
@@ -164,9 +186,18 @@ fn datetime_benches(c: &mut Criterion) {
         &mut group,
         "calendar/islamic/tabular",
         &fxs,
-        icu::calendar::islamic::IslamicTabular,
+        icu::calendar::islamic::IslamicTabular::new_always_calculating(),
         |y, m, d, h, min, s| {
-            DateTime::try_new_islamic_tabular_datetime(y, m, d, h, min, s).unwrap()
+            DateTime::try_new_islamic_tabular_datetime_with_calendar(
+                y,
+                m,
+                d,
+                h,
+                min,
+                s,
+                icu::calendar::islamic::IslamicTabular::new_always_calculating(),
+            )
+            .unwrap()
         },
     );
 
@@ -175,8 +206,19 @@ fn datetime_benches(c: &mut Criterion) {
         &mut group,
         "calendar/islamic/ummalqura",
         &fxs,
-        icu::calendar::islamic::IslamicUmmAlQura,
-        |y, m, d, h, min, s| DateTime::try_new_ummalqura_datetime(y, m, d, h, min, s).unwrap(),
+        icu::calendar::islamic::IslamicUmmAlQura::new_always_calculating(),
+        |y, m, d, h, min, s| {
+            DateTime::try_new_ummalqura_datetime(
+                y,
+                m,
+                d,
+                h,
+                min,
+                s,
+                icu::calendar::islamic::IslamicUmmAlQura::new_always_calculating(),
+            )
+            .unwrap()
+        },
     );
 
     #[cfg(feature = "bench")]
@@ -184,9 +226,18 @@ fn datetime_benches(c: &mut Criterion) {
         &mut group,
         "calendar/islamic/observational",
         &fxs,
-        icu::calendar::islamic::IslamicObservational,
+        icu::calendar::islamic::IslamicObservational::new_always_calculating(),
         |y, m, d, h, min, s| {
-            DateTime::try_new_observational_islamic_datetime(y, m, d, h, min, s).unwrap()
+            DateTime::try_new_observational_islamic_datetime(
+                y,
+                m,
+                d,
+                h,
+                min,
+                s,
+                icu::calendar::islamic::IslamicObservational::new_always_calculating(),
+            )
+            .unwrap()
         },
     );
 
