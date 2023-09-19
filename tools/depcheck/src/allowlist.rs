@@ -91,7 +91,6 @@ pub const EXTRA_EXPERIMENTAL_DEPS: &[&str] = &[
     "icu_relativetime",
     "icu_compactdecimal",
     "icu_unicodeset_parser",
-
     "regex",
     "lazy_static",
     "aho-corasick",
@@ -164,7 +163,7 @@ pub const EXTRA_DATAGEN_DEPS: &[&str] = &[
     "serde_json",
     "toml",
     "hashbrown",
-    "indexmap"
+    "indexmap",
 ];
 
 /// Dependencies needed by the `log` crate
