@@ -307,12 +307,13 @@ impl std::fmt::Display for CollationHanDatabase {
 
 /// A language's CLDR coverage level.
 ///
-/// Note that in CLDR usage, these levels are understood to be additive, i.e. the "basic"
-/// level includes all languages that are either "basic", "moderate", or "modern". In ICU4X on the
-/// other hand, a language is only part of a single coverage level. This allows generating different
-/// data files for different coverage levels without duplicating data. However, the data itself is
-/// still additive (e.g. for fallback to work correctly), so data for moderate (basic)
-/// languages should only be loaded if modern (modern and moderate) data is already present.
+/// In ICU4X, these are disjoint sets: a language belongs to a single coverage level. This
+/// contrasts with CLDR usage, where these levels are understood to be additive (i.e., "basic"
+/// includes all language with "basic", or better coverage). The ICU4X semantics allow
+/// generating different data files for different coverage levels without duplicating data.
+/// However, the data itself is still additive (e.g. for fallback to work correctly), so data
+/// for moderate (basic) languages should only be loaded if modern (modern and moderate) data
+/// is already present.
 #[derive(Debug, Copy, Clone, PartialEq, Eq, serde::Deserialize, serde::Serialize, Hash)]
 #[non_exhaustive]
 #[serde(rename_all = "camelCase")]
