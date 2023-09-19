@@ -22,6 +22,7 @@ Documentation
    fixed_decimal_ffi
    list_ffi
    locale_ffi
+   locale_directionality_ffi
    locid_transform_ffi
    logging_ffi
    metazone_calculator_ffi

@@ -74,6 +74,8 @@ export { ICU4XListFormatter } from './ICU4XListFormatter.js';
 export { ICU4XListLength } from './ICU4XListLength.js';
 export { ICU4XLocale } from './ICU4XLocale.js';
 export { ICU4XLocaleCanonicalizer } from './ICU4XLocaleCanonicalizer.js';
+export { ICU4XLocaleDirection } from './ICU4XLocaleDirection.js';
+export { ICU4XLocaleDirectionality } from './ICU4XLocaleDirectionality.js';
 export { ICU4XLocaleDisplayNamesFormatter } from './ICU4XLocaleDisplayNamesFormatter.js';
 export { ICU4XLocaleExpander } from './ICU4XLocaleExpander.js';
 export { ICU4XLocaleFallbackConfig } from './ICU4XLocaleFallbackConfig.js';

@@ -59,7 +59,7 @@ pub mod ffi {
 
     impl ICU4XListFormatter {
         /// Construct a new ICU4XListFormatter instance for And patterns
-        #[diplomat::rust_link(icu::normalizer::ListFormatter::try_new_and_with_length, FnInStruct)]
+        #[diplomat::rust_link(icu::list::ListFormatter::try_new_and_with_length, FnInStruct)]
         pub fn create_and_with_length(
             provider: &ICU4XDataProvider,
             locale: &ICU4XLocale,
@@ -76,7 +76,7 @@ pub mod ffi {
             )?)))
         }
         /// Construct a new ICU4XListFormatter instance for And patterns
-        #[diplomat::rust_link(icu::normalizer::ListFormatter::try_new_or_with_length, FnInStruct)]
+        #[diplomat::rust_link(icu::list::ListFormatter::try_new_or_with_length, FnInStruct)]
         pub fn create_or_with_length(
             provider: &ICU4XDataProvider,
             locale: &ICU4XLocale,
@@ -93,7 +93,7 @@ pub mod ffi {
             )?)))
         }
         /// Construct a new ICU4XListFormatter instance for And patterns
-        #[diplomat::rust_link(icu::normalizer::ListFormatter::try_new_unit_with_length, FnInStruct)]
+        #[diplomat::rust_link(icu::list::ListFormatter::try_new_unit_with_length, FnInStruct)]
         pub fn create_unit_with_length(
             provider: &ICU4XDataProvider,
             locale: &ICU4XLocale,
@@ -110,7 +110,7 @@ pub mod ffi {
             )?)))
         }
 
-        #[diplomat::rust_link(icu::normalizer::ListFormatter::format, FnInStruct)]
+        #[diplomat::rust_link(icu::list::ListFormatter::format, FnInStruct)]
         pub fn format(
             &self,
             list: &ICU4XList,

@@ -99,6 +99,8 @@ pub mod fixed_decimal;
 #[cfg(feature = "icu_list")]
 pub mod list;
 #[cfg(feature = "icu_locid_transform")]
+pub mod locale_directionality;
+#[cfg(feature = "icu_locid_transform")]
 pub mod locid_transform;
 #[cfg(feature = "icu_timezone")]
 pub mod metazone_calculator;
