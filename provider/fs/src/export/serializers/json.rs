@@ -79,17 +79,19 @@ impl AbstractSerializer for Serializer {
 }
 
 impl Serializer {
-    #[doc(hidden)]
+    /// Creates a new serializer for [`serde_json`].
     pub fn new(options: Options) -> Self {
         Self {
             style: options.style,
         }
     }
 
-    /// A JSON serializer that pretty-prints the output.
+    /// Convenience function to create a JSON serializer with the
+    /// [`StyleOption::Pretty`] format.
     pub fn pretty() -> Self {
-        Self {
+        Self::new(Options {
             style: StyleOption::Pretty,
-        }
+            ..Default::default()
+        })
     }
 }

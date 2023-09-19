@@ -59,7 +59,7 @@ impl AbstractSerializer for Serializer {
 }
 
 impl Serializer {
-    #[doc(hidden)]
+    /// Creates a new serializer for [`bincode`].
     pub fn new(_options: Options) -> Self {
         Self {}
     }
