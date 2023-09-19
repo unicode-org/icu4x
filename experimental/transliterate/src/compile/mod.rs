@@ -41,6 +41,8 @@ impl Direction {
 #[derive(Debug, Default)]
 /// A collection of transliteration rules.
 ///
+/// ✨ *Enabled with the `compile` Cargo feature.*
+///
 /// # Example
 /// ```
 /// use icu_transliterate::{RuleCollection, Transliterator};

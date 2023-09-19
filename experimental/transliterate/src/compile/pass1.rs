@@ -366,9 +366,11 @@ impl<'p> Pass1<'p> {
     ) -> Result<()> {
         // TODO(#3736): include source location/actual source text in these logs
         // logging for useless contexts
+        #[cfg(feature = "datagen")]
         if dir == Direction::Forward && (!target.ante.is_empty() || !target.post.is_empty()) {
             log::warn!("forward conversion rule has ignored context on target side");
         }
+        #[cfg(feature = "datagen")]
         if dir == Direction::Reverse && (!source.ante.is_empty() || !source.post.is_empty()) {
             log::warn!("reverse conversion rule has ignored context on target side");
         }
