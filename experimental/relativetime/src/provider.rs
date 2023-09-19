@@ -30,6 +30,7 @@ const _: () = {
         pub use crate as relativetime;
         pub use icu_locid_transform as locid_transform;
     }
+    icu_relativetime_data::make_provider!(Baked);
     icu_relativetime_data::impl_relativetime_long_day_v1!(Baked);
     icu_relativetime_data::impl_relativetime_long_hour_v1!(Baked);
     icu_relativetime_data::impl_relativetime_long_minute_v1!(Baked);

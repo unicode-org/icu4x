@@ -47,6 +47,7 @@ const _: () = {
         pub use crate as casemap;
         pub use icu_collections as collections;
     }
+    icu_casemap_data::make_provider!(Baked);
     icu_casemap_data::impl_props_casemap_v1!(Baked);
     icu_casemap_data::impl_props_casemap_unfold_v1!(Baked);
 };
