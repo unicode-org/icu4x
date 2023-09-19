@@ -51,6 +51,7 @@ Once the release checklist is complete, the assigned release driver will perform
 * Land the changelog (see below)
 * Announce the release to public
   * Send an email to [icu4x-announce](https://groups.google.com/u/0/a/unicode.org/g/icu4x-announce)
+  * Submit to This Week In Rust
 
 
 ## Publishing utils

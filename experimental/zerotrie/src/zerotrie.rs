@@ -99,6 +99,7 @@ pub(crate) enum ZeroTrieFlavor<Store> {
 #[repr(transparent)]
 #[derive(Debug, Default, Clone, Copy, PartialEq, Eq)]
 #[cfg_attr(feature = "databake", derive(databake::Bake), databake(path = zerotrie))]
+#[allow(clippy::exhaustive_structs)] // databake hidden fields
 pub struct ZeroTrieSimpleAscii<Store: ?Sized> {
     #[doc(hidden)] // for databake, but there are no invariants
     pub store: Store,
@@ -131,6 +132,7 @@ pub struct ZeroTrieSimpleAscii<Store: ?Sized> {
 #[repr(transparent)]
 #[derive(Debug, Default, Clone, Copy, PartialEq, Eq)]
 #[cfg_attr(feature = "databake", derive(databake::Bake), databake(path = zerotrie))]
+#[allow(clippy::exhaustive_structs)] // databake hidden fields
 pub struct ZeroTriePerfectHash<Store: ?Sized> {
     #[doc(hidden)] // for databake, but there are no invariants
     pub store: Store,
@@ -142,6 +144,7 @@ pub struct ZeroTriePerfectHash<Store: ?Sized> {
 #[repr(transparent)]
 #[derive(Debug, Default, Clone, Copy, PartialEq, Eq)]
 #[cfg_attr(feature = "databake", derive(databake::Bake), databake(path = zerotrie))]
+#[allow(clippy::exhaustive_structs)] // databake hidden fields
 pub struct ZeroTrieExtendedCapacity<Store: ?Sized> {
     #[doc(hidden)] // for databake, but there are no invariants
     pub store: Store,
@@ -236,7 +239,7 @@ macro_rules! impl_zerotrie_subtype {
         {
             /// Converts a possibly-borrowed $name to an owned one.
             ///
-            /// ***Enable this impl with the `"alloc"` feature.***
+            /// ✨ *Enabled with the `alloc` Cargo feature.*
             ///
             /// # Examples
             ///
@@ -255,6 +258,23 @@ macro_rules! impl_zerotrie_subtype {
                     Vec::from(self.store.as_ref()),
                 )
             }
+            /// Returns an iterator over the key/value pairs in this trie.
+            ///
+            /// ✨ *Enabled with the `alloc` Cargo feature.*
+            ///
+            /// # Examples
+            ///
+            /// ```
+            #[doc = concat!("use zerotrie::", stringify!($name), ";")]
+            ///
+            /// // A trie with two values: "abc" and "abcdef"
+            #[doc = concat!("let trie: &", stringify!($name), "<[u8]> = ", stringify!($name), "::from_bytes(b\"abc\\x80def\\x81\");")]
+            ///
+            /// let mut it = trie.iter();
+            /// assert_eq!(it.next(), Some(("abc".into(), 0)));
+            /// assert_eq!(it.next(), Some(("abcdef".into(), 1)));
+            /// assert_eq!(it.next(), None);
+            /// ```
             #[inline]
             pub fn iter(&self) -> impl Iterator<Item = ($iter_ty, usize)> + '_ {
                  $iter_fn(self.as_bytes())
@@ -321,7 +341,7 @@ macro_rules! impl_zerotrie_subtype {
         {
             /// Exports the data from this ZeroTrie type into a BTreeMap.
             ///
-            /// ***Enable this impl with the `"alloc"` feature.***
+            /// ✨ *Enabled with the `alloc` Cargo feature.*
             ///
             /// # Examples
             ///
@@ -379,7 +399,7 @@ macro_rules! impl_zerotrie_subtype {
         {
             /// Exports the data from this ZeroTrie type into a LiteMap.
             ///
-            /// ***Enable this function with the `"litemap"` feature.***
+            /// ✨ *Enabled with the `litemap` Cargo feature.*
             ///
             /// # Examples
             ///
@@ -454,7 +474,7 @@ macro_rules! impl_zerotrie_subtype {
             ///
             #[doc = concat!("Note that it is also possible to use `", stringify!($name), "<ZeroVec<u8>>` for a similar result.")]
             ///
-            /// ***Enable this impl with the `"alloc"` feature.***
+            /// ✨ *Enabled with the `alloc` Cargo feature.*
             ///
             /// # Examples
             ///

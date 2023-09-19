@@ -37,6 +37,7 @@ const _: () = {
     pub mod icu {
         pub use crate as timezone;
     }
+    icu_timezone_data::make_provider!(Baked);
     icu_timezone_data::impl_time_zone_metazone_period_v1!(Baked);
 };
 
