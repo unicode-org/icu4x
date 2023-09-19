@@ -187,13 +187,13 @@ mod tests {
     use zerovec::VarZeroVec;
 
     fn parse_set(source: &str) -> parse::UnicodeSet {
-        icu_unicodeset_parser::parse_unstable(source, &icu_properties::provider::Baked)
+        icu_unicodeset_parse::parse_unstable(source, &icu_properties::provider::Baked)
             .expect("Parsing failed")
             .0
     }
 
     fn parse_set_cp(source: &str) -> parse::FilterSet {
-        icu_unicodeset_parser::parse_unstable(source, &icu_properties::provider::Baked)
+        icu_unicodeset_parse::parse_unstable(source, &icu_properties::provider::Baked)
             .expect("Parsing failed")
             .0
             .code_points()

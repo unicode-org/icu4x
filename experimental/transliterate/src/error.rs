@@ -63,8 +63,8 @@ pub enum CompileErrorKind {
     InvalidNumber,
     /// Duplicate variable definition.
     DuplicateVariable,
-    /// Invalid UnicodeSet syntax. See `icu_unicodeset_parser`'s [`ParseError`](icu_unicodeset_parser::ParseError).
-    UnicodeSetError(icu_unicodeset_parser::ParseError),
+    /// Invalid UnicodeSet syntax. See `icu_unicodeset_parse`'s [`ParseError`](icu_unicodeset_parse::ParseError).
+    UnicodeSetError(icu_unicodeset_parse::ParseError),
 
     // errors originating from compilation step
     /// A global filter (forward or backward) in an unexpected position.
