@@ -55,28 +55,28 @@ pub fn convert_scientific_notation_number_to_fractional(
     Ok(result)
 }
 
-/// Checks if a string has letters.
-/// Returns true if the string has letters, false otherwise.
-pub fn has_letters(s: &str) -> bool {
-    s.chars().any(|c| c.is_alphabetic())
+/// Determines if a string contains any alphabetic characters.
+/// Returns true if the string contains at least one alphabetic character, false otherwise.
+pub fn contains_alphabetic_chars(s: &str) -> bool {
+    s.chars().any(char::is_alphabetic)
 }
 
 /// Checks if a string is a valid scientific notation number.
 /// Returns true if the string is a valid scientific notation number, false otherwise.  
 pub fn is_scientific_number(s: &str) -> bool {
-    let mut split = s.split('E');
-    if split.clone().count() > 2 {
+    let parts: Vec<&str> = s.split('E').collect();
+    if parts.len() > 2 {
         return false;
     }
 
-    let base = split.next().unwrap_or("0");
-    let exponent = split.next().unwrap_or("0");
+    let base = parts.get(0).unwrap_or(&"0");
+    let exponent = parts.get(1).unwrap_or(&"0");
 
-    !has_letters(base) && !has_letters(exponent)
+    !contains_alphabetic_chars(base) && !contains_alphabetic_chars(exponent)
 }
 
-/// Converts a fractional number to a constant value.
-pub fn convert_fractional_to_constant_value(
+/// Transforms a fractional number into a constant value.
+pub fn transform_fraction_to_constant_value(
     fraction: GenericFraction<BigUint>,
     constant_type: ConstantType,
 ) -> Result<(Vec<u8>, Vec<u8>, Sign, ConstantType), DataError> {

@@ -6,10 +6,7 @@ mod helpers;
 
 use std::collections::BTreeMap;
 
-use crate::transform::cldr::{
-    cldr_serde,
-    units::helpers::{is_scientific_number},
-};
+use crate::transform::cldr::{cldr_serde, units::helpers::is_scientific_number};
 
 use icu_provider::{
     datagen::IterableDataProvider, DataError, DataLocale, DataPayload, DataProvider, DataRequest,
@@ -22,8 +19,8 @@ use icu_unitsconversion::provider::{
 use zerovec::{ZeroMap, ZeroVec};
 
 use self::helpers::{
-    convert_array_of_strings_to_fraction, convert_fractional_to_constant_value, has_letters,
-    remove_whitespace, split_constant_string,
+    contains_alphabetic_chars, convert_array_of_strings_to_fraction,
+    transform_fraction_to_constant_value, remove_whitespace, split_constant_string,
 };
 
 impl DataProvider<UnitsConstantsV1Marker> for crate::DatagenProvider {
@@ -72,7 +69,7 @@ impl DataProvider<UnitsConstantsV1Marker> for crate::DatagenProvider {
                 let mut temp_constant_type = *constant_type;
 
                 for i in 0..temp_num.len() {
-                    if !has_letters(temp_num[i].as_str())
+                    if !contains_alphabetic_chars(temp_num[i].as_str())
                         || is_scientific_number(temp_num[i].as_str())
                     {
                         continue;
@@ -94,7 +91,7 @@ impl DataProvider<UnitsConstantsV1Marker> for crate::DatagenProvider {
                 }
 
                 for i in 0..temp_den.len() {
-                    if !has_letters(temp_den[i].as_str())
+                    if !contains_alphabetic_chars(temp_den[i].as_str())
                         || is_scientific_number(temp_den[i].as_str())
                     {
                         continue;
@@ -132,7 +129,7 @@ impl DataProvider<UnitsConstantsV1Marker> for crate::DatagenProvider {
         for (cons_name, (num, den, constant_type)) in constants_with_constants_map.iter() {
             let value = convert_array_of_strings_to_fraction(num, den)?;
             let (num, den, sign, cons_type) =
-                convert_fractional_to_constant_value(value, *constant_type)?;
+                transform_fraction_to_constant_value(value, *constant_type)?;
             constants_map.insert(
                 cons_name,
                 ConstantValue {
