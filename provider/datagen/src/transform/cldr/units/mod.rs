@@ -122,7 +122,6 @@ impl DataProvider<UnitsConstantsV1Marker> for crate::DatagenProvider {
             constants_with_constants_map.clear();
             constants_with_constants_map = constants_with_constants_map_replaceable;
 
-            print!("cons_with_text: {} \n", cons_with_text);
             if cons_with_text == 0 {
                 break;
             }
