@@ -171,6 +171,13 @@ pub fn transform_fraction_to_constant_value(
 }
 
 /// Converts vectors of numerator and denominator strings to a fraction.
+/// Examples:
+/// - ["1"], ["2"] is converted to 1*2 --> 2
+/// - ["1", "2"], ["3", "1E2"] is converted to 1*2/(3*1E2) --> 2/300
+/// - ["1", "2"], ["3", "1E-2"] is converted to 1*2/(3*1E-2) --> 200/3
+/// - ["1", "2"], ["3", "1E-2.5"] is an invalid scientific notation number
+/// - ["1E2"], ["2"] is converted to 1E2/2 --> 100/2 --> 50/1
+/// - ["1E2", "2"], ["3", "1E2"] is converted to 1E2*2/(3*1E2) --> 2/3 
 pub fn convert_array_of_strings_to_fraction(
     numerator_strings: &[String],
     denominator_strings: &[String],
@@ -188,6 +195,46 @@ pub fn convert_array_of_strings_to_fraction(
     }
 
     Ok(fraction)
+}
+
+
+// TODO: move some of these tests to the comment above.
+#[test]
+fn test_convert_array_of_strings_to_fraction() {
+    let numerator = vec!["1".to_string()];
+    let denominator = vec!["2".to_string()];
+    let expected = GenericFraction::new(BigUint::from(1u32), BigUint::from(2u32));
+    let actual = convert_array_of_strings_to_fraction(&numerator, &denominator).unwrap();
+    assert_eq!(expected, actual);
+
+    let numerator = vec!["1".to_string(), "2".to_string()];
+    let denominator = vec!["3".to_string(), "1E2".to_string()];
+    let expected = GenericFraction::new(BigUint::from(2u32), BigUint::from(300u32));
+    let actual = convert_array_of_strings_to_fraction(&numerator, &denominator).unwrap();
+    assert_eq!(expected, actual);
+
+    let numerator = vec!["1".to_string(), "2".to_string()];
+    let denominator = vec!["3".to_string(), "1E-2".to_string()];
+    let expected = GenericFraction::new(BigUint::from(200u32), BigUint::from(3u32));
+    let actual = convert_array_of_strings_to_fraction(&numerator, &denominator).unwrap();
+    assert_eq!(expected, actual);
+
+    let numerator = vec!["1".to_string(), "2".to_string()];
+    let denominator = vec!["3".to_string(), "1E-2.5".to_string()];
+    let actual = convert_array_of_strings_to_fraction(&numerator, &denominator);
+    assert!(actual.is_err());
+
+    let numerator = vec!["1E2".to_string()];
+    let denominator = vec!["2".to_string()];
+    let expected = GenericFraction::new(BigUint::from(50u32), BigUint::from(1u32));
+    let actual = convert_array_of_strings_to_fraction(&numerator, &denominator).unwrap();
+    assert_eq!(expected, actual);
+
+    let numerator = vec!["1E2".to_string(), "2".to_string()];
+    let denominator = vec!["3".to_string(), "1E2".to_string()];
+    let expected = GenericFraction::new(BigUint::from(2u32), BigUint::from(3u32));
+    let actual = convert_array_of_strings_to_fraction(&numerator, &denominator).unwrap();
+    assert_eq!(expected, actual);
 }
 
 /// Splits a constant string into a tuple of (numerator, denominator).
