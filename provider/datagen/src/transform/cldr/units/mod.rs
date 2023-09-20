@@ -34,7 +34,7 @@ impl DataProvider<UnitsConstantsV1Marker> for crate::DatagenProvider {
             BTreeMap::<&str, (Vec<String>, Vec<String>, ConstantType)>::new();
         for (cons_name, cons_value) in constants {
             let value = remove_whitespace(&cons_value.value);
-            let (num, den) = split_constant_string(&value).map_err(|e| e)?;
+            let (num, den) = split_constant_string(&value)?;
 
             let constant_type = match cons_value.status.as_deref() {
                 Some("approximate") => ConstantType::Approximate,
