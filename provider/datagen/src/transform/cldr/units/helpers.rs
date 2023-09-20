@@ -26,8 +26,8 @@ fn test_remove_whitespace() {
     assert_eq!(expected, actual);
 }
 
-/// Converts a scientific notation number represented as a string into a tuple of (numerator, denominator).
-pub fn convert_scientific_notation_number_to_fractional(
+/// Converts a scientific notation number represented as a string into a GenericFraction.
+pub fn convert_scientific_notation_to_fraction(
     number: &str,
 ) -> Result<GenericFraction<BigUint>, DataError> {
     let number = remove_whitespace(number); // TODO: check this.
@@ -118,7 +118,7 @@ pub fn convert_array_of_strings_to_fraction(
     let mut result = GenericFraction::new(BigUint::from(1u32), BigUint::from(1u32));
 
     for vnum in num.iter() {
-        let num = match convert_scientific_notation_number_to_fractional(vnum) {
+        let num = match convert_scientific_notation_to_fraction(vnum) {
             Ok(num) => num,
             Err(e) => return Err(e),
         };
@@ -126,7 +126,7 @@ pub fn convert_array_of_strings_to_fraction(
     }
 
     for vden in den.iter() {
-        let den = match convert_scientific_notation_number_to_fractional(vden) {
+        let den = match convert_scientific_notation_to_fraction(vden) {
             Ok(den) => den,
             Err(e) => return Err(e),
         };
