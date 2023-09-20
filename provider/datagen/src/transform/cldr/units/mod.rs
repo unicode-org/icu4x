@@ -8,9 +8,9 @@ use std::collections::BTreeMap;
 
 use crate::transform::cldr::{
     cldr_serde,
-    units::helpers::{convert_scientific_notation_number_to_fractional, is_scientific_number},
+    units::helpers::{is_scientific_number},
 };
-use fraction::GenericFraction;
+
 use icu_provider::{
     datagen::IterableDataProvider, DataError, DataLocale, DataPayload, DataProvider, DataRequest,
     DataResponse,
@@ -18,7 +18,7 @@ use icu_provider::{
 use icu_unitsconversion::provider::{
     ConstantType, ConstantValue, UnitsConstantsV1, UnitsConstantsV1Marker,
 };
-use num_bigint::BigUint;
+
 use zerovec::{ZeroMap, ZeroVec};
 
 use self::helpers::{
@@ -34,7 +34,7 @@ impl DataProvider<UnitsConstantsV1Marker> for crate::DatagenProvider {
             .cldr()?
             .core()
             .read_and_parse("supplemental/units.json")?;
-        let mut constants_map = BTreeMap::<&str, ConstantValue>::new();
+        let _constants_map = BTreeMap::<&str, ConstantValue>::new();
 
         let constants = &_units_data.supplemental.unit_constants.constants;
 
@@ -130,7 +130,7 @@ impl DataProvider<UnitsConstantsV1Marker> for crate::DatagenProvider {
         let mut constants_map = BTreeMap::<&str, ConstantValue>::new();
 
         for (cons_name, (num, den, constant_type)) in constants_with_constants_map.iter() {
-            let value = convert_array_of_strings_to_fraction(&num, &den)?;
+            let value = convert_array_of_strings_to_fraction(num, den)?;
             let (num, den, sign, cons_type) =
                 convert_fractional_to_constant_value(value, *constant_type)?;
             constants_map.insert(
@@ -171,7 +171,7 @@ fn test_basic() {
 
     let provider = crate::DatagenProvider::latest_tested_offline_subset();
 
-    let und: DataPayload<UnitsConstantsV1Marker> = provider
+    let _und: DataPayload<UnitsConstantsV1Marker> = provider
         .load(DataRequest {
             locale: &locale!("und").into(),
             metadata: Default::default(),

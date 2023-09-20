@@ -145,12 +145,12 @@ pub fn split_constant_string(
     let numerator_string = split.next().unwrap_or("1");
     let denominator_string = split.next().unwrap_or("1");
 
-    let mut split = numerator_string.split('*');
+    let split = numerator_string.split('*');
     for num in split {
         numerator.push(num.to_string());
     }
 
-    let mut split = denominator_string.split('*');
+    let split = denominator_string.split('*');
     for num in split {
         denominator.push(num.to_string());
     }
