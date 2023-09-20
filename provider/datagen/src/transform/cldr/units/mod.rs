@@ -61,7 +61,7 @@ impl DataProvider<UnitsConstantsV1Marker> for crate::DatagenProvider {
         }
 
         // This loop will replace all the constants in the value of a constant with their values.
-        let mut cons_with_text: u16 = 0;
+        let mut cons_with_text;
         loop {
             cons_with_text = 0;
             let mut constants_with_constants_map_replaceable =
