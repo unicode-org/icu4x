@@ -127,35 +127,70 @@ pub fn convert_array_of_strings_to_fraction(
     Ok(result)
 }
 
-/// Splits the constant string into a tuple of (numerator, denominator).
-/// The numerator and denominator are represented as array of strings.
-///    For example: "1/2" -> (["1"], ["2"])
-///                 "1 * 2 / 3 * ft_to_m" -> (["1", "2"], ["3" , "ft_to_m"])
+/// Splits a constant string into a tuple of (numerator, denominator).
+/// The numerator and denominator are represented as arrays of strings.
+/// Examples:
+/// - "1/2" is split into (["1"], ["2"])
+/// - "1 * 2 / 3 * ft_to_m" is split into (["1", "2"], ["3" , "ft_to_m"])
+/// - "/2" is split into (["1"], ["2"])
+/// - "2" is split into (["2"], ["1"])
 pub fn split_constant_string(
     constant_string: &str,
 ) -> Result<(Vec<String>, Vec<String>), DataError> {
-    let constant_string = remove_whitespace(constant_string);
+    let cleaned_string = remove_whitespace(constant_string);
     let mut numerator = Vec::<String>::new();
     let mut denominator = Vec::<String>::new();
 
-    let mut split = constant_string.split('/');
+    let mut split = cleaned_string.split('/');
     if split.clone().count() > 2 {
-        return Err(DataError::custom("the constant string is not valid"));
+        return Err(DataError::custom("Invalid constant string"));
     }
+
     let numerator_string = split.next().unwrap_or("1");
     let denominator_string = split.next().unwrap_or("1");
 
-    let split = numerator_string.split('*');
-    for num in split {
-        numerator.push(num.to_string());
-    }
+    let numerator_values = if numerator_string.is_empty() {
+        vec!["1".to_string()]
+    } else {
+        numerator_string.split('*').map(|s| s.to_string()).collect()
+    };
 
-    let split = denominator_string.split('*');
-    for num in split {
-        denominator.push(num.to_string());
-    }
+    let denominator_values = if denominator_string.is_empty() {
+        vec!["1".to_string()]
+    } else {
+        denominator_string.split('*').map(|s| s.to_string()).collect()
+    };
+
+    numerator.extend(numerator_values);
+    denominator.extend(denominator_values);
 
     Ok((numerator, denominator))
+}
+// TODO: move this to the comment above.
+#[test]
+fn test_split_constant_string() {
+    let input = "1/2";
+    let expected = (vec!["1".to_string()], vec!["2".to_string()]);
+    let actual = split_constant_string(input).unwrap();
+    assert_eq!(expected, actual);
+
+    let input = "1 * 2 / 3 * ft_to_m";
+    let expected = (
+        vec!["1".to_string(), "2".to_string()],
+        vec!["3".to_string(), "ft_to_m".to_string()],
+    );
+    let actual = split_constant_string(input).unwrap();
+    assert_eq!(expected, actual);
+
+    let input = "/2";
+    let expected = (vec!["1".to_string()], vec!["2".to_string()]);
+    let actual = split_constant_string(input).unwrap();
+    assert_eq!(expected, actual);
+
+    let input = "2";
+    let expected = (vec!["2".to_string()], vec!["1".to_string()]);
+    let actual = split_constant_string(input).unwrap();
+    assert_eq!(expected, actual);
 }
 
 #[test]
