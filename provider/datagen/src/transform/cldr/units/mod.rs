@@ -221,7 +221,7 @@ fn test_basic() {
         .as_ref()
     );
 
-    // TODO: Test the cases where the constant value has another constant in the denominator.
-    //          For example, "12/ft2_to_m2"
-    // This is not existing in CLDR data yet. but we should test this case anyway.
+    // TODO: Implement tests for cases where the constant value includes another constant in the denominator.
+    // Example: "12/ft2_to_m2"
+    // Although this case is not currently present in CLDR data, it's important to test for it.
 }
