@@ -3,6 +3,23 @@
 version = 3
 
 [[package]]
+name = "calendrical_calculations"
+version = "0.1.0"
+dependencies = [
+ "core_maths",
+ "displaydoc",
+]
+
+[[package]]
+name = "core_maths"
+version = "0.1.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "e3b02505ccb8c50b0aa21ace0fc08c3e53adebd4e58caa18a36152803c7709a3"
+dependencies = [
+ "libm",
+]
+
+[[package]]
 name = "diplomat"
 version = "0.5.2"
 source = "git+https://github.com/rust-diplomat/diplomat?rev=8d125999893fedfdf30595e97334c21ec4b18da9#8d125999893fedfdf30595e97334c21ec4b18da9"
@@ -72,12 +89,12 @@ dependencies = [
 name = "icu_calendar"
 version = "1.2.0"
 dependencies = [
+ "calendrical_calculations",
  "displaydoc",
  "icu_calendar_data",
  "icu_locid",
  "icu_locid_transform",
  "icu_provider",
- "libm",
  "tinystr",
  "writeable",
  "zerovec",
@@ -85,7 +102,7 @@ dependencies = [
 
 [[package]]
 name = "icu_calendar_data"
-version = "1.3.0"
+version = "1.2.0"
 
 [[package]]
 name = "icu_capi"
@@ -133,13 +150,12 @@ dependencies = [
  "icu_properties",
  "icu_provider",
  "writeable",
- "yoke",
  "zerovec",
 ]
 
 [[package]]
 name = "icu_casemap_data"
-version = "1.3.0"
+version = "1.2.0"
 
 [[package]]
 name = "icu_collator"
@@ -161,7 +177,7 @@ dependencies = [
 
 [[package]]
 name = "icu_collator_data"
-version = "1.3.0"
+version = "1.2.0"
 
 [[package]]
 name = "icu_collections"
@@ -196,7 +212,7 @@ dependencies = [
 
 [[package]]
 name = "icu_datetime_data"
-version = "1.3.0"
+version = "1.2.0"
 
 [[package]]
 name = "icu_decimal"
@@ -213,13 +229,12 @@ dependencies = [
 
 [[package]]
 name = "icu_decimal_data"
-version = "1.3.0"
+version = "1.2.0"
 
 [[package]]
 name = "icu_displaynames"
 version = "0.10.0"
 dependencies = [
- "icu_collections",
  "icu_displaynames_data",
  "icu_locid",
  "icu_locid_transform",
@@ -230,7 +245,7 @@ dependencies = [
 
 [[package]]
 name = "icu_displaynames_data"
-version = "1.3.0"
+version = "1.2.0"
 
 [[package]]
 name = "icu_list"
@@ -246,7 +261,7 @@ dependencies = [
 
 [[package]]
 name = "icu_list_data"
-version = "1.3.0"
+version = "1.2.0"
 
 [[package]]
 name = "icu_locid"
@@ -273,7 +288,7 @@ dependencies = [
 
 [[package]]
 name = "icu_locid_transform_data"
-version = "1.3.0"
+version = "1.2.0"
 
 [[package]]
 name = "icu_normalizer"
@@ -293,7 +308,7 @@ dependencies = [
 
 [[package]]
 name = "icu_normalizer_data"
-version = "1.3.0"
+version = "1.2.0"
 
 [[package]]
 name = "icu_plurals"
@@ -310,7 +325,7 @@ dependencies = [
 
 [[package]]
 name = "icu_plurals_data"
-version = "1.3.0"
+version = "1.2.0"
 
 [[package]]
 name = "icu_properties"
@@ -328,7 +343,7 @@ dependencies = [
 
 [[package]]
 name = "icu_properties_data"
-version = "1.3.0"
+version = "1.2.0"
 
 [[package]]
 name = "icu_provider"
@@ -338,6 +353,7 @@ dependencies = [
  "icu_locid",
  "icu_provider_macros",
  "stable_deref_trait",
+ "tinystr",
  "writeable",
  "yoke",
  "zerofrom",
@@ -352,7 +368,6 @@ dependencies = [
  "icu_locid_transform",
  "icu_provider",
  "tinystr",
- "yoke",
  "zerovec",
 ]
 
@@ -369,19 +384,19 @@ dependencies = [
 name = "icu_segmenter"
 version = "1.2.1"
 dependencies = [
+ "core_maths",
  "displaydoc",
  "icu_collections",
  "icu_locid",
  "icu_provider",
  "icu_segmenter_data",
- "libm",
  "utf8_iter",
  "zerovec",
 ]
 
 [[package]]
 name = "icu_segmenter_data"
-version = "1.3.0"
+version = "1.2.0"
 
 [[package]]
 name = "icu_timezone"
@@ -393,12 +408,13 @@ dependencies = [
  "icu_provider",
  "icu_timezone_data",
  "tinystr",
+ "zerotrie",
  "zerovec",
 ]
 
 [[package]]
 name = "icu_timezone_data"
-version = "1.3.0"
+version = "1.2.0"
 
 [[package]]
 name = "lazy_static"
@@ -618,6 +634,15 @@ dependencies = [
 ]
 
 [[package]]
+name = "zerotrie"
+version = "0.0.0"
+dependencies = [
+ "displaydoc",
+ "yoke",
+ "zerofrom",
+]
+
+[[package]]
 name = "zerovec"
 version = "0.9.4"
 dependencies = [
@@ -633,5 +658,4 @@ dependencies = [
  "proc-macro2",
  "quote",
  "syn",
- "synstructure",
 ]
