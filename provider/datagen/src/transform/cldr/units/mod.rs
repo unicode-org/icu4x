@@ -34,8 +34,7 @@ impl DataProvider<UnitsConstantsV1Marker> for crate::DatagenProvider {
             BTreeMap::<&str, (Vec<String>, Vec<String>, ConstantType)>::new();
         for (cons_name, cons_value) in constants {
             let value = remove_whitespace(&cons_value.value);
-            let (num, den) = split_constant_string(&value)
-                .map_err(|e| e)?;
+            let (num, den) = split_constant_string(&value).map_err(|e| e)?;
 
             let constant_type = match cons_value.status.as_deref() {
                 Some("approximate") => ConstantType::Approximate,
@@ -221,4 +220,8 @@ fn test_basic() {
         })
         .as_ref()
     );
+
+    // TODO: Test the cases where the constant value has another constant in the denominator.
+    //          For example, "12/ft2_to_m2"
+    // This is not existing in CLDR data yet. but we should test this case anyway.
 }
