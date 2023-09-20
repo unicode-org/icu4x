@@ -21,13 +21,13 @@ pub struct FormalityFormatting(
 );
 
 #[derive(PartialEq, Debug, Deserialize)]
-pub struct ReferringFormatting(pub HashMap<String, FormalityFormatting>);
+pub struct ReferringFormatting(pub IndexMap<String, FormalityFormatting>);
 
 #[derive(PartialEq, Debug, Deserialize)]
-pub struct SizedFormatting(pub HashMap<String, ReferringFormatting>);
+pub struct SizedFormatting(pub IndexMap<String, ReferringFormatting>);
 
 #[derive(PartialEq, Debug, Deserialize)]
-pub struct OrderFormatting(pub HashMap<String, SizedFormatting>);
+pub struct OrderFormatting(pub IndexMap<String, SizedFormatting>);
 
 #[derive(PartialEq, Debug, Deserialize)]
 pub struct PersonNames {
