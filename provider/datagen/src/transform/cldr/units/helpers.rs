@@ -43,7 +43,7 @@ pub fn convert_scientific_notation_to_fraction(
             "the number is not a scientific notation number",
         ));
     }
-    let base = parts.get(0).unwrap_or(&"0");
+    let base = parts.first().unwrap_or(&"0");
     let exponent = parts.get(1).unwrap_or(&"0");
     let base: GenericFraction<BigUint> = GenericFraction::from_str(base)
         .map_err(|_| DataError::custom("the number is not a valid number"))?;
@@ -136,7 +136,7 @@ pub fn is_scientific_number(s: &str) -> bool {
         return false;
     }
 
-    let base = parts.get(0).unwrap_or(&"0");
+    let base = parts.first().unwrap_or(&"0");
     let exponent = parts.get(1).unwrap_or(&"0");
 
     !contains_alphabetic_chars(base) && !contains_alphabetic_chars(exponent)
