@@ -5,8 +5,10 @@
 #[doc(hidden)]
 #[macro_export]
 macro_rules! __impl_relativetime_long_week_v1 {
-    ($ provider : path) => {
-        #[clippy::msrv = "1.65"]
+    ($ provider : ty) => {
+        #[clippy::msrv = "1.66"]
+        const _: () = <$provider>::MUST_USE_MAKE_PROVIDER_MACRO;
+        #[clippy::msrv = "1.66"]
         impl icu_provider::DataProvider<icu::relativetime::provider::LongWeekRelativeTimeFormatDataV1Marker> for $provider {
             fn load(&self, req: icu_provider::DataRequest) -> Result<icu_provider::DataResponse<icu::relativetime::provider::LongWeekRelativeTimeFormatDataV1Marker>, icu_provider::DataError> {
                 static RU: <icu::relativetime::provider::LongWeekRelativeTimeFormatDataV1Marker as icu_provider::DataMarker>::Yokeable = icu::relativetime::provider::RelativeTimePatternDataV1 {

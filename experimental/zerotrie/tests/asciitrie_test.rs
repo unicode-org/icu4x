@@ -9,7 +9,7 @@ use zerotrie::ZeroTrieSimpleAscii;
 use zerovec::ZeroMap;
 
 mod testdata {
-    include!("data.rs");
+    include!("data/data.rs");
 }
 
 #[test]

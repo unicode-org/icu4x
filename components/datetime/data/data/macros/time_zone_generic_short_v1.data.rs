@@ -5,8 +5,10 @@
 #[doc(hidden)]
 #[macro_export]
 macro_rules! __impl_time_zone_generic_short_v1 {
-    ($ provider : path) => {
-        #[clippy::msrv = "1.65"]
+    ($ provider : ty) => {
+        #[clippy::msrv = "1.66"]
+        const _: () = <$provider>::MUST_USE_MAKE_PROVIDER_MACRO;
+        #[clippy::msrv = "1.66"]
         impl icu_provider::DataProvider<icu::datetime::provider::time_zones::MetazoneGenericNamesShortV1Marker> for $provider {
             fn load(&self, req: icu_provider::DataRequest) -> Result<icu_provider::DataResponse<icu::datetime::provider::time_zones::MetazoneGenericNamesShortV1Marker>, icu_provider::DataError> {
                 static KGP: <icu::datetime::provider::time_zones::MetazoneGenericNamesShortV1Marker as icu_provider::DataMarker>::Yokeable = icu::datetime::provider::time_zones::MetazoneGenericNamesShortV1 {

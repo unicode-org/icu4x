@@ -22,7 +22,6 @@ independent = true
 all-features = true
 
 [dependencies]
-icu_collections = { workspace = true }
 icu_locid = { workspace = true }
 icu_provider = { workspace = true, features = ["macros"] }
 tinystr = { workspace = true, features = ["alloc", "zerovec"] }
@@ -36,7 +35,7 @@ icu_locid_transform = { workspace = true, optional = true, features = ["compiled
 
 [features]
 default = ["compiled_data"]
-std = ["icu_collections/std", "icu_locid/std", "icu_provider/std"]
-serde = ["dep:serde", "zerovec/serde", "icu_collections/serde", "tinystr/serde", "icu_provider/serde"]
-datagen = ["serde", "std", "dep:databake", "zerovec/databake", "icu_collections/databake", "tinystr/databake"]
+std = ["icu_locid/std", "icu_provider/std"]
+serde = ["dep:serde", "zerovec/serde", "tinystr/serde", "icu_provider/serde"]
+datagen = ["serde", "std", "dep:databake", "zerovec/databake", "tinystr/databake"]
 compiled_data = ["dep:icu_displaynames_data", "dep:icu_locid_transform"]

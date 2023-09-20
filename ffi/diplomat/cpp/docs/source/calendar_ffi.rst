@@ -58,6 +58,46 @@
         The kind of a Dangi calendar
 
 
+    .. cpp:enumerator:: Chinese
+
+        The kind of a Chinese calendar
+
+
+    .. cpp:enumerator:: Hebrew
+
+        The kind of a Hebrew calendar
+
+
+    .. cpp:enumerator:: IslamicCivil
+
+        The kind of a Islamic civil calendar
+
+
+    .. cpp:enumerator:: IslamicObservational
+
+        The kind of a Islamic observational calendar
+
+
+    .. cpp:enumerator:: IslamicTabular
+
+        The kind of a Islamic tabular calendar
+
+
+    .. cpp:enumerator:: IslamicUmmAlQura
+
+        The kind of a Islamic Umm al-Qura calendar
+
+
+    .. cpp:enumerator:: Persian
+
+        The kind of a Persian calendar
+
+
+    .. cpp:enumerator:: Roc
+
+        The kind of a Roc calendar
+
+
     .. cpp:function:: static diplomat::result<ICU4XAnyCalendarKind, std::monostate> get_for_locale(const ICU4XLocale& locale)
 
         Read the calendar type off of the -u-ca- extension on a locale.

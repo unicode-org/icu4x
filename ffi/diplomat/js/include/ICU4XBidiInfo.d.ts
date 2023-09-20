@@ -17,7 +17,7 @@ export class ICU4XBidiInfo {
 
   /**
 
-   * Get the nth paragraph, returning None if out of bounds
+   * Get the nth paragraph, returning `None` if out of bounds
    */
   paragraph_at(n: usize): ICU4XBidiParagraph | undefined;
 

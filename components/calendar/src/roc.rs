@@ -33,11 +33,11 @@
 
 use crate::{
     calendar_arithmetic::ArithmeticDate,
-    helpers::{i64_to_i32, I32Result},
     iso::IsoDateInner,
     types::{self, Era},
     Calendar, CalendarError, Date, DateTime, Iso,
 };
+use calendrical_calculations::helpers::i64_to_saturated_i32;
 use tinystr::tinystr;
 
 /// Year of the beginning of the Taiwanese (ROC/Minguo) calendar.
@@ -252,11 +252,7 @@ impl DateTime<Roc> {
 }
 
 pub(crate) fn year_as_roc(year: i64) -> types::FormattableYear {
-    let year_i32 = match i64_to_i32(year) {
-        I32Result::BelowMin(_) => i32::MIN,
-        I32Result::AboveMax(_) => i32::MAX,
-        I32Result::WithinRange(y) => y,
-    };
+    let year_i32 = i64_to_saturated_i32(year);
     let offset_i64 = ROC_ERA_OFFSET as i64;
     if year > offset_i64 {
         types::FormattableYear {
@@ -279,7 +275,7 @@ pub(crate) fn year_as_roc(year: i64) -> types::FormattableYear {
 mod test {
 
     use super::*;
-    use crate::rata_die::RataDie;
+    use calendrical_calculations::rata_die::RataDie;
 
     #[derive(Debug)]
     struct TestCase {
@@ -460,7 +456,7 @@ mod test {
                 assert_eq!(
                     i.cmp(&j),
                     iso_i.cmp(&iso_j),
-                    "ISO directionality inconcistent with directionality for i: {i}, j: {j}"
+                    "ISO directionality inconsistent with directionality for i: {i}, j: {j}"
                 );
                 assert_eq!(
                     i.cmp(&j),
@@ -485,7 +481,7 @@ mod test {
                 assert_eq!(
                     i.cmp(&j),
                     iso_i.cmp(&iso_j),
-                    "ISO directionality inconcistent with directionality for i: {i}, j: {j}"
+                    "ISO directionality inconsistent with directionality for i: {i}, j: {j}"
                 );
                 assert_eq!(
                     i.cmp(&j),

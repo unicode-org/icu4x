@@ -129,6 +129,8 @@
 
     .. cpp:enumerator:: TimeZoneMissingInputError
 
+    .. cpp:enumerator:: TimeZoneInvalidIdError
+
     .. cpp:enumerator:: NormalizerFutureExtensionError
 
     .. cpp:enumerator:: NormalizerValidationError

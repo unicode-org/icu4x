@@ -47,6 +47,14 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "a3e2c3daef883ecc1b5d58c15adae93470a91d425f3532ba1695849656af3fc1"
 
 [[package]]
+name = "calendrical_calculations"
+version = "0.1.0"
+dependencies = [
+ "displaydoc",
+ "libm",
+]
+
+[[package]]
 name = "cast"
 version = "0.3.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -269,10 +277,10 @@ dependencies = [
 name = "icu_calendar"
 version = "1.2.0"
 dependencies = [
+ "calendrical_calculations",
  "displaydoc",
  "icu_locid",
  "icu_provider",
- "libm",
  "tinystr",
  "writeable",
  "zerovec",
@@ -288,7 +296,6 @@ dependencies = [
  "icu_properties",
  "icu_provider",
  "writeable",
- "yoke",
  "zerovec",
 ]
 
@@ -366,7 +373,6 @@ dependencies = [
 name = "icu_displaynames"
 version = "0.10.0"
 dependencies = [
- "icu_collections",
  "icu_locid",
  "icu_provider",
  "tinystr",
@@ -470,7 +476,6 @@ dependencies = [
  "icu_provider",
  "serde",
  "tinystr",
- "yoke",
  "zerovec",
 ]
 
@@ -482,7 +487,6 @@ dependencies = [
  "postcard",
  "serde",
  "writeable",
- "yoke",
  "zerovec",
 ]
 
@@ -546,6 +550,7 @@ dependencies = [
  "icu_relativetime",
  "icu_segmenter",
  "icu_timezone",
+ "zerotrie",
  "zerovec",
 ]
 
@@ -558,6 +563,7 @@ dependencies = [
  "icu_locid",
  "icu_provider",
  "tinystr",
+ "zerotrie",
  "zerovec",
 ]
 
@@ -1080,6 +1086,15 @@ dependencies = [
 ]
 
 [[package]]
+name = "zerotrie"
+version = "0.0.0"
+dependencies = [
+ "displaydoc",
+ "yoke",
+ "zerofrom",
+]
+
+[[package]]
 name = "zerovec"
 version = "0.9.4"
 dependencies = [
@@ -1096,5 +1111,4 @@ dependencies = [
  "proc-macro2",
  "quote",
  "syn",
- "synstructure",
 ]

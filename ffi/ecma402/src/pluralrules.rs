@@ -160,7 +160,7 @@ pub(crate) mod internal {
                 opts: Options,
                 expected: &'static str,
             }
-            let tests = vec![
+            let tests = [
                 TestCase {
                     n: 0.0,
                     opts: opt(3, 2, 3, 3, 4),
@@ -201,7 +201,7 @@ pub(crate) mod internal {
                 opts: Options,
                 expected: PluralOperands,
             }
-            let tests = vec![TestCase {
+            let tests = [TestCase {
                 n: 1.5,
                 opts: Options {
                     in_type: Type::Cardinal,
@@ -272,15 +272,15 @@ mod testing {
         struct TestCase {
             locale: TestLocale,
             opts: pluralrules::Options,
-            numbers: Vec<f64>,
-            expected: Vec<&'static str>,
+            numbers: &'static [f64],
+            expected: &'static [&'static str],
         }
-        let tests = vec![
+        let tests = [
             TestCase {
                 locale: TestLocale("ar"),
                 opts: Default::default(),
-                numbers: vec![0.0, 1.0, 2.0, 5.0, 6.0, 18.0],
-                expected: vec!["zero", "one", "two", "few", "few", "many"],
+                numbers: &[0.0, 1.0, 2.0, 5.0, 6.0, 18.0],
+                expected: &["zero", "one", "two", "few", "few", "many"],
             },
             TestCase {
                 locale: TestLocale("ar"),
@@ -288,14 +288,14 @@ mod testing {
                     in_type: pluralrules::options::Type::Ordinal,
                     ..Default::default()
                 },
-                numbers: vec![0.0, 1.0, 2.0, 5.0, 6.0, 18.0],
-                expected: vec!["other", "other", "other", "other", "other", "other"],
+                numbers: &[0.0, 1.0, 2.0, 5.0, 6.0, 18.0],
+                expected: &["other", "other", "other", "other", "other", "other"],
             },
             TestCase {
                 locale: TestLocale("sr"),
                 opts: Default::default(),
-                numbers: vec![0.0, 1.0, 2.0, 5.0, 6.0, 18.0],
-                expected: vec!["other", "one", "few", "other", "other", "other"],
+                numbers: &[0.0, 1.0, 2.0, 5.0, 6.0, 18.0],
+                expected: &["other", "one", "few", "other", "other", "other"],
             },
             TestCase {
                 locale: TestLocale("sr"),
@@ -303,8 +303,8 @@ mod testing {
                     in_type: pluralrules::options::Type::Ordinal,
                     ..Default::default()
                 },
-                numbers: vec![0.0, 1.0, 2.0, 5.0, 6.0, 18.0],
-                expected: vec!["other", "other", "other", "other", "other", "other"],
+                numbers: &[0.0, 1.0, 2.0, 5.0, 6.0, 18.0],
+                expected: &["other", "other", "other", "other", "other", "other"],
             },
         ];
         for (i, test) in tests.into_iter().enumerate() {

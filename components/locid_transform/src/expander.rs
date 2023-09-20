@@ -73,7 +73,7 @@ use crate::TransformResult;
 ///
 /// [`CLDR`]: http://cldr.unicode.org/
 /// [`UTS #35: Unicode LDML 3. Likely Subtags`]: https://www.unicode.org/reports/tr35/#Likely_Subtags.
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct LocaleExpander {
     likely_subtags_l: DataPayload<LikelySubtagsForLanguageV1Marker>,
     likely_subtags_sr: DataPayload<LikelySubtagsForScriptRegionV1Marker>,
@@ -190,14 +190,39 @@ fn update_langid(
 }
 
 impl LocaleExpander {
-    /// Creates a [`LocaleExpander`] with compiled data for all locales.
+    /// Creates a [`LocaleExpander`] with compiled data for commonly-used locales
+    /// (locales with *Basic* or higher [CLDR coverage]).
     ///
-    /// Use this constructor if you are using likely subtags for comprehensive support of all
-    /// languages and regions, including ones that may not have CLDR data.
+    /// Use this constructor if you want limited likely subtags for data-oriented use cases.
     ///
     /// ✨ *Enabled with the `compiled_data` Cargo feature.*
     ///
     /// [📚 Help choosing a constructor](icu_provider::constructors)
+    ///
+    /// [CLDR coverage]: https://www.unicode.org/reports/tr35/tr35-info.html#Coverage_Levels
+    #[cfg(feature = "compiled_data")]
+    pub const fn new() -> Self {
+        LocaleExpander {
+            likely_subtags_l: DataPayload::from_static_ref(
+                crate::provider::Baked::SINGLETON_LOCID_TRANSFORM_LIKELYSUBTAGS_L_V1,
+            ),
+            likely_subtags_sr: DataPayload::from_static_ref(
+                crate::provider::Baked::SINGLETON_LOCID_TRANSFORM_LIKELYSUBTAGS_SR_V1,
+            ),
+            likely_subtags_ext: None,
+        }
+    }
+
+    /// Creates a [`LocaleExpander`] with compiled data for all locales.
+    ///
+    /// Use this constructor if you want to include data for all locales, including ones
+    /// that may not have data for other services (i.e. [CLDR coverage] below *Basic*).
+    ///
+    /// ✨ *Enabled with the `compiled_data` Cargo feature.*
+    ///
+    /// [📚 Help choosing a constructor](icu_provider::constructors)
+    ///
+    /// [CLDR coverage]: https://www.unicode.org/reports/tr35/tr35-info.html#Coverage_Levels
     #[cfg(feature = "compiled_data")]
     pub const fn new_extended() -> Self {
         LocaleExpander {
@@ -244,35 +269,14 @@ impl LocaleExpander {
         Self
     ]);
 
-    /// Creates a [`LocaleExpander`] with compiled data for CLDR locales with Basic or higher coverage.
-    ///
-    /// Use this constructor if you are using likely subtags for comprehensive support of all
-    /// languages and regions, including ones that may not have CLDR data.
-    ///
-    /// ✨ *Enabled with the `compiled_data` Cargo feature.*
-    ///
-    /// [📚 Help choosing a constructor](icu_provider::constructors)
-    #[cfg(feature = "compiled_data")]
-    pub const fn new() -> Self {
-        LocaleExpander {
-            likely_subtags_l: DataPayload::from_static_ref(
-                crate::provider::Baked::SINGLETON_LOCID_TRANSFORM_LIKELYSUBTAGS_L_V1,
-            ),
-            likely_subtags_sr: DataPayload::from_static_ref(
-                crate::provider::Baked::SINGLETON_LOCID_TRANSFORM_LIKELYSUBTAGS_SR_V1,
-            ),
-            likely_subtags_ext: None,
-        }
-    }
-
-    #[doc = icu_provider::gen_any_buffer_unstable_docs!(ANY, Self::try_new_unstable)]
+    #[doc = icu_provider::gen_any_buffer_unstable_docs!(ANY, Self::new)]
     pub fn try_new_with_any_provider(
         provider: &(impl AnyProvider + ?Sized),
     ) -> Result<LocaleExpander, LocaleTransformError> {
         Self::try_new_compat(&provider.as_downcasting())
     }
 
-    #[doc = icu_provider::gen_any_buffer_unstable_docs!(BUFFER, Self::try_new_unstable)]
+    #[doc = icu_provider::gen_any_buffer_unstable_docs!(BUFFER, Self::new)]
     #[cfg(feature = "serde")]
     pub fn try_new_with_buffer_provider(
         provider: &(impl BufferProvider + ?Sized),
@@ -545,7 +549,6 @@ impl LocaleExpander {
     }
 
     // TODO(3492): consider turning this and a future get_likely_region/get_likely_language public
-    #[allow(dead_code)]
     #[inline]
     pub(crate) fn get_likely_script<T: AsRef<LanguageIdentifier>>(
         &self,

@@ -5,8 +5,10 @@
 #[doc(hidden)]
 #[macro_export]
 macro_rules! __impl_segmenter_lstm_wl_auto_v1 {
-    ($ provider : path) => {
-        #[clippy::msrv = "1.65"]
+    ($ provider : ty) => {
+        #[clippy::msrv = "1.66"]
+        const _: () = <$provider>::MUST_USE_MAKE_PROVIDER_MACRO;
+        #[clippy::msrv = "1.66"]
         impl icu_provider::DataProvider<icu::segmenter::provider::LstmForWordLineAutoV1Marker> for $provider {
             fn load(&self, req: icu_provider::DataRequest) -> Result<icu_provider::DataResponse<icu::segmenter::provider::LstmForWordLineAutoV1Marker>, icu_provider::DataError> {
                 static LO: <icu::segmenter::provider::LstmForWordLineAutoV1Marker as icu_provider::DataMarker>::Yokeable = icu::segmenter::provider::LstmDataV1::Float32(icu::segmenter::provider::LstmDataFloat32::from_parts_unchecked(

@@ -28,7 +28,7 @@ impl DataProvider<UnitsConstantsV1Marker> for crate::DatagenProvider {
         }
 
         let result = UnitsConstantsV1 {
-            constants_map: ZeroMap::from_iter(constants_map.into_iter()),
+            constants_map: ZeroMap::from_iter(constants_map),
         };
 
         Ok(DataResponse {
@@ -50,7 +50,7 @@ fn test_basic() {
     use icu_provider::prelude::*;
     use icu_unitsconversion::provider::*;
 
-    let provider = crate::DatagenProvider::latest_tested_offline_subset();
+    let provider = crate::DatagenProvider::new_testing();
 
     let und: DataPayload<UnitsConstantsV1Marker> = provider
         .load(DataRequest {

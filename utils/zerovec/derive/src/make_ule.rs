@@ -210,7 +210,7 @@ fn make_ule_enum_impl(
 
         impl #name {
             /// Attempt to construct the value from its corresponding integer,
-            /// returning None if not possible
+            /// returning `None` if not possible
             pub(crate) fn new_from_u8(value: u8) -> Option<Self> {
                 if value <= #max {
                     unsafe {

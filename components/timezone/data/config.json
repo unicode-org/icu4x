@@ -1,7 +1,9 @@
 {
   "keys": {
     "explicit": [
-      "time_zone/metazone_period@1"
+      "time_zone/metazone_period@1",
+      "time_zone/iana_to_bcp47@1",
+      "time_zone/bcp47_to_iana@1"
     ]
   },
   "fallback": "runtime",

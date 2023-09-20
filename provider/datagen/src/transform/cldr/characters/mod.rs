@@ -465,7 +465,7 @@ mod tests {
 
     #[test]
     fn test_basic() {
-        let provider = crate::DatagenProvider::latest_tested_offline_subset();
+        let provider = crate::DatagenProvider::new_testing();
 
         let data: DataPayload<ExemplarCharactersMainV1Marker> = provider
             .load(DataRequest {
@@ -476,12 +476,11 @@ mod tests {
             .take_payload()
             .unwrap();
 
-        let exp_chars = vec![
+        let exp_chars = [
             "a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q",
             "r", "s", "t", "u", "v", "w", "x", "y", "z",
         ];
-        let exp_chars_cpilsl =
-            CodePointInversionListAndStringList::from_iter(exp_chars.iter().cloned());
+        let exp_chars_cpilsl = CodePointInversionListAndStringList::from_iter(exp_chars);
 
         let actual = UnicodeSetData::from_data(data);
         let act_chars_cpilsl = actual.to_code_point_inversion_list_string_list();

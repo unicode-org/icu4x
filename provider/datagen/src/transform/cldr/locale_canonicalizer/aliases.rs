@@ -270,7 +270,7 @@ fn test_appendix_c_cmp() {
 fn test_basic() {
     use icu_locid::subtags::{language, region, script};
 
-    let provider = crate::DatagenProvider::latest_tested_offline_subset();
+    let provider = crate::DatagenProvider::new_testing();
     let data: DataPayload<AliasesV1Marker> = provider
         .load(Default::default())
         .unwrap()

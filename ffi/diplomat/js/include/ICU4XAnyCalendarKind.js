@@ -13,6 +13,14 @@ export const ICU4XAnyCalendarKind_js_to_rust = {
   "Indian": 7,
   "Coptic": 8,
   "Dangi": 9,
+  "Chinese": 10,
+  "Hebrew": 11,
+  "IslamicCivil": 12,
+  "IslamicObservational": 13,
+  "IslamicTabular": 14,
+  "IslamicUmmAlQura": 15,
+  "Persian": 16,
+  "Roc": 17,
 };
 
 export const ICU4XAnyCalendarKind_rust_to_js = {
@@ -26,6 +34,14 @@ export const ICU4XAnyCalendarKind_rust_to_js = {
   [7]: "Indian",
   [8]: "Coptic",
   [9]: "Dangi",
+  [10]: "Chinese",
+  [11]: "Hebrew",
+  [12]: "IslamicCivil",
+  [13]: "IslamicObservational",
+  [14]: "IslamicTabular",
+  [15]: "IslamicUmmAlQura",
+  [16]: "Persian",
+  [17]: "Roc",
 };
 
 export const ICU4XAnyCalendarKind = {
@@ -39,4 +55,12 @@ export const ICU4XAnyCalendarKind = {
   "Indian": "Indian",
   "Coptic": "Coptic",
   "Dangi": "Dangi",
+  "Chinese": "Chinese",
+  "Hebrew": "Hebrew",
+  "IslamicCivil": "IslamicCivil",
+  "IslamicObservational": "IslamicObservational",
+  "IslamicTabular": "IslamicTabular",
+  "IslamicUmmAlQura": "IslamicUmmAlQura",
+  "Persian": "Persian",
+  "Roc": "Roc",
 };

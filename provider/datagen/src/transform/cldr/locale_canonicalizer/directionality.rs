@@ -51,49 +51,43 @@ impl From<&cldr_serde::directionality::Resource> for ScriptDirectionV1<'_> {
 fn test_basic() {
     use icu_locid::subtags::script;
 
-    let provider = crate::DatagenProvider::latest_tested_offline_subset();
+    let provider = crate::DatagenProvider::new_testing();
     let data: DataPayload<ScriptDirectionV1Marker> = provider
         .load(Default::default())
         .unwrap()
         .take_payload()
         .unwrap();
 
-    assert!(matches!(
-        data.get()
-            .rtl
-            .binary_search(&script!("Avst").into_tinystr().to_unvalidated()),
-        Ok(_)
-    ));
-    assert!(matches!(
-        data.get()
-            .ltr
-            .binary_search(&script!("Avst").into_tinystr().to_unvalidated()),
-        Err(_)
-    ));
+    assert!(data
+        .get()
+        .rtl
+        .binary_search(&script!("Avst").into_tinystr().to_unvalidated())
+        .is_ok());
+    assert!(data
+        .get()
+        .ltr
+        .binary_search(&script!("Avst").into_tinystr().to_unvalidated())
+        .is_err());
 
-    assert!(matches!(
-        data.get()
-            .ltr
-            .binary_search(&script!("Latn").into_tinystr().to_unvalidated()),
-        Ok(_)
-    ));
-    assert!(matches!(
-        data.get()
-            .rtl
-            .binary_search(&script!("Latn").into_tinystr().to_unvalidated()),
-        Err(_)
-    ));
+    assert!(data
+        .get()
+        .ltr
+        .binary_search(&script!("Latn").into_tinystr().to_unvalidated())
+        .is_ok());
+    assert!(data
+        .get()
+        .rtl
+        .binary_search(&script!("Latn").into_tinystr().to_unvalidated())
+        .is_err());
 
-    assert!(matches!(
-        data.get()
-            .ltr
-            .binary_search(&script!("Zzzz").into_tinystr().to_unvalidated()),
-        Err(_)
-    ));
-    assert!(matches!(
-        data.get()
-            .rtl
-            .binary_search(&script!("Zzzz").into_tinystr().to_unvalidated()),
-        Err(_)
-    ));
+    assert!(data
+        .get()
+        .ltr
+        .binary_search(&script!("Zzzz").into_tinystr().to_unvalidated())
+        .is_err());
+    assert!(data
+        .get()
+        .rtl
+        .binary_search(&script!("Zzzz").into_tinystr().to_unvalidated())
+        .is_err());
 }

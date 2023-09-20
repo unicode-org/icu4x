@@ -31,16 +31,11 @@
 
 use crate::any_calendar::AnyCalendarKind;
 use crate::calendar_arithmetic::{ArithmeticDate, CalendarArithmetic};
-use crate::helpers::{ceil_div, div_rem_euclid64, i64_to_i32, I32Result};
 use crate::iso::Iso;
-use crate::julian::Julian;
-use crate::rata_die::RataDie;
 use crate::{types, Calendar, CalendarError, Date, DateDuration, DateDurationUnit, DateTime};
 use ::tinystr::tinystr;
-
-// Lisp code reference: https://github.com/EdReingold/calendar-code2/blob/main/calendar.l#L4720
-// Book states that the Persian epoch is the date: 3/19/622 and since the Persian Calendar has no year 0, the best choice was to use the Julian function.
-const FIXED_PERSIAN_EPOCH: RataDie = Julian::fixed_from_julian_integers(622, 3, 19);
+use calendrical_calculations::helpers::I32CastError;
+use calendrical_calculations::rata_die::RataDie;
 
 /// The Persian Calendar
 ///
@@ -70,8 +65,8 @@ pub struct PersianDateInner(ArithmeticDate<Persian>);
 impl CalendarArithmetic for Persian {
     fn month_days(year: i32, month: u8) -> u8 {
         match month {
-            1 | 2 | 3 | 4 | 5 | 6 => 31,
-            7 | 8 | 9 | 10 | 11 => 30,
+            1..=6 => 31,
+            7..=11 => 30,
             12 if Self::is_leap_year(year) => 30,
             12 => 29,
             _ => 0,
@@ -89,10 +84,9 @@ impl CalendarArithmetic for Persian {
         } else {
             p_year -= 473;
         };
-        let d = div_rem_euclid64(p_year, 2820);
-        let year = d.1 + 474;
+        let year = p_year.rem_euclid(2820) + 474;
 
-        div_rem_euclid64((year + 38) * 31, 128).1 < 31
+        ((year + 38) * 31).rem_euclid(128) < 31
     }
 
     fn days_in_provided_year(year: i32) -> u16 {
@@ -132,7 +126,7 @@ impl Calendar for Persian {
 
     fn date_from_iso(&self, iso: Date<Iso>) -> PersianDateInner {
         let fixed_iso = Iso::fixed_from_iso(*iso.inner());
-        Self::arithmetic_persian_from_fixed(fixed_iso).inner
+        Self::arithmetic_persian_from_fixed(fixed_iso)
     }
 
     fn date_to_iso(&self, date: &Self::DateInner) -> Date<Iso> {
@@ -211,87 +205,22 @@ impl Persian {
         Self
     }
 
-    // "Fixed" is a day count representation of calendars staring from Jan 1st of year 1 of the Georgian Calendar.
-    // The fixed date algorithms are from
-    // Dershowitz, Nachum, and Edward M. Reingold. _Calendrical calculations_. Cambridge University Press, 2008.
-    //
-    // Lisp code reference: https://github.com/EdReingold/calendar-code2/blob/main/calendar.l#L4803
     fn fixed_from_arithmetic_persian(p_date: PersianDateInner) -> RataDie {
-        let p_year = i64::from(p_date.0.year);
-        let month = i64::from(p_date.0.month);
-        let day = i64::from(p_date.0.day);
-        let y = if p_year > 0 {
-            p_year - 474
-        } else {
-            p_year - 473
-        };
-        let x = div_rem_euclid64(y, 2820);
-        let year = x.1 + 474;
-        let z = div_rem_euclid64(31 * year - 5, 128);
-
-        RataDie::new(
-            FIXED_PERSIAN_EPOCH.to_i64_date() - 1
-                + 1029983 * x.0
-                + 365 * (year - 1)
-                + z.0
-                + if month <= 7 {
-                    31 * (month - 1)
-                } else {
-                    30 * (month - 1) + 6
-                }
-                + day,
+        calendrical_calculations::persian::fixed_from_arithmetic_persian(
+            p_date.0.year,
+            p_date.0.month,
+            p_date.0.day,
         )
     }
-    // Lisp code reference: https://github.com/EdReingold/calendar-code2/blob/main/calendar.l#L4857
-    fn arithmetic_persian_from_fixed(date: RataDie) -> Date<Persian> {
-        let year = Self::arithmetic_persian_year_from_fixed(date);
-        let year = match i64_to_i32(year) {
-            I32Result::BelowMin(_) => {
-                return Date::from_raw(PersianDateInner(ArithmeticDate::min_date()), Persian)
-            }
-            I32Result::AboveMax(_) => {
-                return Date::from_raw(PersianDateInner(ArithmeticDate::max_date()), Persian)
-            }
-            I32Result::WithinRange(y) => y,
-        };
-        #[allow(clippy::unwrap_used)] // valid month,day
-        let day_of_year = 1_i64 + (date - Self::fixed_from_persian_integers(year, 1, 1).unwrap());
-        let month = if day_of_year <= 186 {
-            ceil_div(day_of_year, 31) as u8
-        } else {
-            ceil_div(day_of_year - 6, 30) as u8
-        };
-        #[allow(clippy::unwrap_used)] // month and day
-        let day = (date - Self::fixed_from_persian_integers(year, month, 1).unwrap() + 1) as u8;
-        #[allow(clippy::unwrap_used)] // valid month and day
-        Date::try_new_persian_date(year, month, day).unwrap()
-    }
+    fn arithmetic_persian_from_fixed(date: RataDie) -> PersianDateInner {
+        let (year, month, day) =
+            match calendrical_calculations::persian::arithmetic_persian_from_fixed(date) {
+                Err(I32CastError::BelowMin) => return PersianDateInner(ArithmeticDate::min_date()),
+                Err(I32CastError::AboveMax) => return PersianDateInner(ArithmeticDate::max_date()),
+                Ok(ymd) => ymd,
+            };
 
-    // Lisp code reference: https://github.com/EdReingold/calendar-code2/blob/main/calendar.l#L4829
-    fn arithmetic_persian_year_from_fixed(date: RataDie) -> i64 {
-        #[allow(clippy::unwrap_used)] // valid year,month,day
-        let d0 = date - Self::fixed_from_persian_integers(475, 1, 1).unwrap();
-        let d = div_rem_euclid64(d0, 1029983);
-        let n2820 = d.0;
-        let d1 = d.1;
-        let y2820 = if d1 == 1029982 {
-            2820
-        } else {
-            div_rem_euclid64(128 * d1 + 46878, 46751).0
-        };
-        let year = 474 + n2820 * 2820 + y2820;
-        if year > 0 {
-            year
-        } else {
-            year - 1
-        }
-    }
-
-    pub(crate) fn fixed_from_persian_integers(year: i32, month: u8, day: u8) -> Option<RataDie> {
-        Date::try_new_persian_date(year, month, day)
-            .ok()
-            .map(|d| *d.inner())
-            .map(Self::fixed_from_arithmetic_persian)
+        PersianDateInner(ArithmeticDate::new_unchecked(year, month, day))
     }
 
     fn year_as_persian(year: i32) -> types::FormattableYear {
@@ -364,7 +293,6 @@ impl DateTime<Persian> {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::Gregorian;
     #[derive(Debug)]
     struct DateCase {
         year: i32,
@@ -546,30 +474,13 @@ mod tests {
         },
     ];
 
-    // Persian New Year occuring in March of Gregorian year (g_year) to fixed date
-    fn nowruz(g_year: i32) -> RataDie {
-        let iso_from_fixed: Date<Iso> =
-            Iso::iso_from_fixed(RataDie::new(FIXED_PERSIAN_EPOCH.to_i64_date()));
-        let greg_date_from_fixed: Date<Gregorian> = Date::new_from_iso(iso_from_fixed, Gregorian);
-        let persian_year = g_year - greg_date_from_fixed.year().number + 1;
-        let _year = if persian_year <= 0 {
-            persian_year - 1
-        } else {
-            persian_year
-        };
-        #[allow(clippy::unwrap_used)] // valid day and month
-        Persian::fixed_from_persian_integers(_year, 1, 1).unwrap()
-    }
-
     fn days_in_provided_year_core(year: i32) -> u16 {
-        #[allow(clippy::unwrap_used)] // valid month and day
-        let fixed_year = Persian::fixed_from_persian_integers(year, 1, 1)
-            .unwrap()
-            .to_i64_date();
-        #[allow(clippy::unwrap_used)] // valid month and day
-        let next_fixed_year = Persian::fixed_from_persian_integers(year + 1, 1, 1)
-            .unwrap()
-            .to_i64_date();
+        let fixed_year =
+            calendrical_calculations::persian::fixed_from_arithmetic_persian(year, 1, 1)
+                .to_i64_date();
+        let next_fixed_year =
+            calendrical_calculations::persian::fixed_from_arithmetic_persian(year + 1, 1, 1)
+                .to_i64_date();
 
         (next_fixed_year - fixed_year) as u16
     }
@@ -615,18 +526,6 @@ mod tests {
     }
 
     #[test]
-    fn test_persian_year_from_fixed() {
-        for (case, f_date) in CASES.iter().zip(TEST_FIXED_DATE.iter()) {
-            let date = Date::try_new_persian_date(case.year, case.month, case.day).unwrap();
-
-            assert_eq!(
-                date.inner().0.year as i64,
-                Persian::arithmetic_persian_year_from_fixed(RataDie::new(*f_date)),
-                "{case:?}"
-            );
-        }
-    }
-    #[test]
     fn test_fixed_from_persian() {
         for (case, f_date) in CASES.iter().zip(TEST_FIXED_DATE.iter()) {
             let date = Date::try_new_persian_date(case.year, case.month, case.day).unwrap();
@@ -644,38 +543,8 @@ mod tests {
             let date = Date::try_new_persian_date(case.year, case.month, case.day).unwrap();
             assert_eq!(
                 Persian::arithmetic_persian_from_fixed(RataDie::new(*f_date)),
-                date,
+                date.inner,
                 "{case:?}"
-            );
-        }
-    }
-    #[test]
-    fn test_persian_epoch() {
-        let epoch = FIXED_PERSIAN_EPOCH.to_i64_date();
-        // Iso year of Persian Epoch
-        let epoch_year_from_fixed = Iso::iso_from_fixed(RataDie::new(epoch)).inner.0.year;
-        // 622 is the correct ISO year for the Persian Epoch
-        assert_eq!(epoch_year_from_fixed, 622);
-    }
-
-    #[test]
-    fn test_nowruz() {
-        let fixed_date = nowruz(622).to_i64_date();
-        assert_eq!(fixed_date, FIXED_PERSIAN_EPOCH.to_i64_date());
-        // These values are used as test data in appendix C of the "Calendrical Calculations" book
-        let nowruz_test_year_start = 2000;
-        let nowruz_test_year_end = 2103;
-
-        for year in nowruz_test_year_start..=nowruz_test_year_end {
-            let two_thousand_eight_to_fixed = nowruz(year).to_i64_date();
-            let iso_date = Date::try_new_iso_date(year, 3, 21).unwrap();
-            let persian_year =
-                Persian::arithmetic_persian_year_from_fixed(Iso::fixed_from_iso(iso_date.inner));
-            assert_eq!(
-                Persian::arithmetic_persian_year_from_fixed(RataDie::new(
-                    two_thousand_eight_to_fixed
-                )),
-                persian_year
             );
         }
     }
@@ -689,7 +558,7 @@ mod tests {
             expected_next: i32,
         }
 
-        let test_cases = vec![
+        let test_cases = [
             TestCase {
                 input: 0,
                 expected_prev: -1,

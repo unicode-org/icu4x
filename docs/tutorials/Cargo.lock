@@ -193,6 +193,14 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "14c189c53d098945499cdfa7ecc63567cf3886b3332b312a5b4585d8d3a6a610"
 
 [[package]]
+name = "calendrical_calculations"
+version = "0.1.0"
+dependencies = [
+ "displaydoc",
+ "libm",
+]
+
+[[package]]
 name = "cc"
 version = "1.0.79"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -722,6 +730,7 @@ dependencies = [
 name = "icu_calendar"
 version = "1.2.0"
 dependencies = [
+ "calendrical_calculations",
  "databake",
  "displaydoc",
  "icu_calendar_data",
@@ -752,7 +761,6 @@ dependencies = [
  "icu_provider",
  "serde",
  "writeable",
- "yoke",
  "zerovec",
 ]
 
@@ -925,7 +933,6 @@ version = "1.2.0"
 name = "icu_displaynames"
 version = "0.10.0"
 dependencies = [
- "icu_collections",
  "icu_displaynames_data",
  "icu_locid",
  "icu_locid_transform",
@@ -1078,8 +1085,8 @@ dependencies = [
  "icu_locid",
  "icu_locid_transform",
  "icu_provider",
+ "serde",
  "tinystr",
- "yoke",
  "zerovec",
 ]
 
@@ -1092,7 +1099,6 @@ dependencies = [
  "postcard",
  "serde",
  "writeable",
- "yoke",
  "zerovec",
 ]
 
@@ -1169,6 +1175,7 @@ dependencies = [
  "icu_decimal",
  "icu_displaynames",
  "icu_list",
+ "icu_locid_transform",
  "icu_plurals",
  "icu_provider",
  "zerovec",
@@ -2286,8 +2293,6 @@ dependencies = [
  "serde-aux",
  "tinystr",
  "writeable",
- "yoke",
- "zerofrom",
 ]
 
 [[package]]
@@ -3017,7 +3022,6 @@ dependencies = [
  "proc-macro2",
  "quote",
  "syn 2.0.25",
- "synstructure",
 ]
 
 [[package]]
@@ -3081,19 +3085,15 @@ name = "icu_singlenumberformatter_data"
 version = "1.2.0"
 
 [[patch.unused]]
-name = "icu_transliteration"
+name = "icu_transliterate"
 version = "0.0.0"
 
 [[patch.unused]]
-name = "icu_transliteration_data"
+name = "icu_transliterate_data"
 version = "0.0.0"
 
 [[patch.unused]]
-name = "icu_transliterator_parser"
-version = "0.0.0"
-
-[[patch.unused]]
-name = "icu_unicodeset_parser"
+name = "icu_unicodeset_parse"
 version = "0.0.0"
 
 [[patch.unused]]

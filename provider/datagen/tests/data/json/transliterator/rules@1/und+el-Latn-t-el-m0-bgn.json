@@ -2351,8 +2351,5 @@
         "replacer": "ó"
       }
     ]
-  ],
-  "dependencies": [
-    "x-any-nfd"
   ]
 }

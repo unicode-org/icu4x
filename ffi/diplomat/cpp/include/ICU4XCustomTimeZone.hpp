@@ -13,6 +13,7 @@
 
 class ICU4XCustomTimeZone;
 #include "ICU4XError.hpp"
+class ICU4XIanaToBcp47Mapper;
 class ICU4XMetazoneCalculator;
 class ICU4XIsoDateTime;
 
@@ -122,7 +123,7 @@ class ICU4XCustomTimeZone {
   diplomat::result<bool, ICU4XError> gmt_offset_has_seconds() const;
 
   /**
-   * Sets the `time_zone_id` field from a string.
+   * Sets the `time_zone_id` field from a BCP-47 string.
    * 
    * Errors if the string is not a valid BCP-47 time zone ID.
    * 
@@ -131,6 +132,16 @@ class ICU4XCustomTimeZone {
    *  Additional information: [1](https://docs.rs/icu/latest/icu/timezone/struct.TimeZoneBcp47Id.html)
    */
   diplomat::result<std::monostate, ICU4XError> try_set_time_zone_id(const std::string_view id);
+
+  /**
+   * Sets the `time_zone_id` field from an IANA string by looking up
+   * the corresponding BCP-47 string.
+   * 
+   * Errors if the string is not a valid BCP-47 time zone ID.
+   * 
+   * See the [Rust documentation for `get`](https://docs.rs/icu/latest/icu/timezone/struct.IanaToBcp47MapperBorrowed.html#method.get) for more information.
+   */
+  diplomat::result<std::monostate, ICU4XError> try_set_iana_time_zone_id(const ICU4XIanaToBcp47Mapper& mapper, const std::string_view id);
 
   /**
    * Clears the `time_zone_id` field.
@@ -305,6 +316,7 @@ class ICU4XCustomTimeZone {
   std::unique_ptr<capi::ICU4XCustomTimeZone, ICU4XCustomTimeZoneDeleter> inner;
 };
 
+#include "ICU4XIanaToBcp47Mapper.hpp"
 #include "ICU4XMetazoneCalculator.hpp"
 #include "ICU4XIsoDateTime.hpp"
 
@@ -389,6 +401,16 @@ inline diplomat::result<bool, ICU4XError> ICU4XCustomTimeZone::gmt_offset_has_se
 }
 inline diplomat::result<std::monostate, ICU4XError> ICU4XCustomTimeZone::try_set_time_zone_id(const std::string_view id) {
   auto diplomat_result_raw_out_value = capi::ICU4XCustomTimeZone_try_set_time_zone_id(this->inner.get(), id.data(), id.size());
+  diplomat::result<std::monostate, ICU4XError> diplomat_result_out_value;
+  if (diplomat_result_raw_out_value.is_ok) {
+    diplomat_result_out_value = diplomat::Ok(std::monostate());
+  } else {
+    diplomat_result_out_value = diplomat::Err<ICU4XError>(std::move(static_cast<ICU4XError>(diplomat_result_raw_out_value.err)));
+  }
+  return diplomat_result_out_value;
+}
+inline diplomat::result<std::monostate, ICU4XError> ICU4XCustomTimeZone::try_set_iana_time_zone_id(const ICU4XIanaToBcp47Mapper& mapper, const std::string_view id) {
+  auto diplomat_result_raw_out_value = capi::ICU4XCustomTimeZone_try_set_iana_time_zone_id(this->inner.get(), mapper.AsFFI(), id.data(), id.size());
   diplomat::result<std::monostate, ICU4XError> diplomat_result_out_value;
   if (diplomat_result_raw_out_value.is_ok) {
     diplomat_result_out_value = diplomat::Ok(std::monostate());

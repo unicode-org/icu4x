@@ -243,7 +243,7 @@ where
     ///     interpolator.try_next()
     /// );
     ///
-    /// // … and then None once it's over.
+    /// // … and then `None` once it's over.
     /// assert_eq!(Ok(None), interpolator.try_next());
     /// ```
     pub fn try_next(&mut self) -> Result<InterpolatedKind<'i, 'p, E>, R::Key>

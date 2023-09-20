@@ -52,7 +52,7 @@ impl WeekCalculator {
     #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::try_new)]
     pub fn try_new_unstable<P>(provider: &P, locale: &DataLocale) -> Result<Self, CalendarError>
     where
-        P: DataProvider<crate::provider::WeekDataV1Marker>,
+        P: DataProvider<crate::provider::WeekDataV1Marker> + ?Sized,
     {
         provider
             .load(DataRequest {
