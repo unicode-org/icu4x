@@ -54,6 +54,7 @@ export const ICU4XError_js_to_rust = {
   "TimeZoneOffsetOutOfBoundsError": 2560,
   "TimeZoneInvalidOffsetError": 2561,
   "TimeZoneMissingInputError": 2562,
+  "TimeZoneInvalidIdError": 2563,
   "NormalizerFutureExtensionError": 2816,
   "NormalizerValidationError": 2817,
 };
@@ -111,6 +112,7 @@ export const ICU4XError_rust_to_js = {
   [2560]: "TimeZoneOffsetOutOfBoundsError",
   [2561]: "TimeZoneInvalidOffsetError",
   [2562]: "TimeZoneMissingInputError",
+  [2563]: "TimeZoneInvalidIdError",
   [2816]: "NormalizerFutureExtensionError",
   [2817]: "NormalizerValidationError",
 };
@@ -168,6 +170,7 @@ export const ICU4XError = {
   "TimeZoneOffsetOutOfBoundsError": "TimeZoneOffsetOutOfBoundsError",
   "TimeZoneInvalidOffsetError": "TimeZoneInvalidOffsetError",
   "TimeZoneMissingInputError": "TimeZoneMissingInputError",
+  "TimeZoneInvalidIdError": "TimeZoneInvalidIdError",
   "NormalizerFutureExtensionError": "NormalizerFutureExtensionError",
   "NormalizerValidationError": "NormalizerValidationError",
 };

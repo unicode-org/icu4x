@@ -53,7 +53,6 @@ std = []
 bench = ["serde"]
 serde = ["dep:serde", "icu_locid/serde", "tinystr/serde", "zerovec/serde", "icu_provider/serde"]
 datagen = ["serde", "dep:databake", "zerovec/databake", "icu_locid/databake", "tinystr/databake"]
-experimental = []
 compiled_data = ["dep:icu_locid_transform_data"]
 
 [[bench]]

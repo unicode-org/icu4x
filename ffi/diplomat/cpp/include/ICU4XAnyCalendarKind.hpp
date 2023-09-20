@@ -69,6 +69,46 @@ enum struct ICU4XAnyCalendarKind {
    * The kind of a Dangi calendar
    */
   Dangi = 9,
+
+  /**
+   * The kind of a Chinese calendar
+   */
+  Chinese = 10,
+
+  /**
+   * The kind of a Hebrew calendar
+   */
+  Hebrew = 11,
+
+  /**
+   * The kind of a Islamic civil calendar
+   */
+  IslamicCivil = 12,
+
+  /**
+   * The kind of a Islamic observational calendar
+   */
+  IslamicObservational = 13,
+
+  /**
+   * The kind of a Islamic tabular calendar
+   */
+  IslamicTabular = 14,
+
+  /**
+   * The kind of a Islamic Umm al-Qura calendar
+   */
+  IslamicUmmAlQura = 15,
+
+  /**
+   * The kind of a Persian calendar
+   */
+  Persian = 16,
+
+  /**
+   * The kind of a Roc calendar
+   */
+  Roc = 17,
 };
 class ICU4XLocale;
 #include "ICU4XError.hpp"

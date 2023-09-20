@@ -274,8 +274,8 @@ checksum = "a2bd12c1caf447e69cd4528f47f94d203fd2582878ecb9e9465484c4148a8223"
 name = "calendrical_calculations"
 version = "0.1.0"
 dependencies = [
+ "core_maths",
  "displaydoc",
- "libm",
 ]
 
 [[package]]
@@ -491,6 +491,15 @@ dependencies = [
  "core-graphics",
  "foreign-types",
  "libc",
+]
+
+[[package]]
+name = "core_maths"
+version = "0.1.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "e3b02505ccb8c50b0aa21ace0fc08c3e53adebd4e58caa18a36152803c7709a3"
+dependencies = [
+ "libm",
 ]
 
 [[package]]
@@ -1458,8 +1467,10 @@ dependencies = [
  "syn 2.0.37",
  "tinystr",
  "toml",
+ "twox-hash",
  "ureq",
  "writeable",
+ "zerotrie",
  "zerovec",
  "zip",
 ]
@@ -1859,6 +1870,7 @@ version = "1.2.0"
 name = "icu_segmenter"
 version = "1.2.1"
 dependencies = [
+ "core_maths",
  "criterion",
  "databake",
  "displaydoc",
@@ -1869,7 +1881,6 @@ dependencies = [
  "icu_provider",
  "icu_segmenter_data",
  "itertools",
- "libm",
  "serde",
  "serde_json",
  "utf8_iter",
@@ -1928,6 +1939,7 @@ dependencies = [
  "icu_timezone_data",
  "serde",
  "tinystr",
+ "zerotrie",
  "zerovec",
 ]
 
@@ -1947,8 +1959,7 @@ dependencies = [
  "icu_normalizer",
  "icu_properties",
  "icu_provider",
- "icu_transliterate_data",
- "icu_unicodeset_parser",
+ "icu_unicodeset_parse",
  "litemap",
  "log",
  "serde",
@@ -1956,11 +1967,7 @@ dependencies = [
 ]
 
 [[package]]
-name = "icu_transliterate_data"
-version = "0.0.0"
-
-[[package]]
-name = "icu_unicodeset_parser"
+name = "icu_unicodeset_parse"
 version = "0.0.0"
 dependencies = [
  "icu_collections",
@@ -2989,6 +2996,12 @@ dependencies = [
 ]
 
 [[package]]
+name = "static_assertions"
+version = "1.1.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "a2eb9349b6444b326872e140eb1cf5e7c522154d69e7a0ffb0fb81c06b37543f"
+
+[[package]]
 name = "stdweb"
 version = "0.4.20"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -3351,6 +3364,16 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "0955b8137a1df6f1a2e9a37d8a6656291ff0297c1a97c24e0d8425fe2312f79a"
 dependencies = [
  "once_cell",
+]
+
+[[package]]
+name = "twox-hash"
+version = "1.6.3"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "97fee6b57c6a41524a810daee9286c02d7752c4253064d0b05472833a438f675"
+dependencies = [
+ "cfg-if 1.0.0",
+ "static_assertions",
 ]
 
 [[package]]

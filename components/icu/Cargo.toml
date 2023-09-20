@@ -132,7 +132,6 @@ experimental = [
     "icu_datetime_experimental",
     "icu_displaynames",
     "icu_personnames",
-    "icu_locid_transform/experimental",
     "icu_plurals/experimental",
     "icu_relativetime",
 ]

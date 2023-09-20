@@ -33,8 +33,10 @@ pub const BASIC_RUNTIME_DEPS: &[&str] = &[
     "writeable",
     "yoke",
     "zerofrom",
+    "zerotrie",
     "zerovec",
     // 3P dependencies
+    "core_maths",
     "either",
     "libm",
     "memchr",
@@ -90,7 +92,6 @@ pub const EXTRA_EXPERIMENTAL_DEPS: &[&str] = &[
     "icu_personnames",
     "icu_relativetime",
     "icu_compactdecimal",
-    "icu_unicodeset_parser",
     "regex",
     "lazy_static",
     "aho-corasick",
@@ -110,7 +111,7 @@ pub const EXTRA_EXPERIMENTAL_DATA_DEPS: &[&str] = &[
 ];
 
 /// Dependencies allowed when opting in to LSTM segmenter
-pub const EXTRA_LSTM_DEPS: &[&str] = &["libm"];
+pub const EXTRA_LSTM_DEPS: &[&str] = &[];
 
 /// Dependencies allowed when opting in to fixed_decimal's `ryu` backend
 /// This should never change
@@ -161,9 +162,11 @@ pub const EXTRA_DATAGEN_DEPS: &[&str] = &[
     "ryu",
     "serde-aux",
     "serde_json",
+    "static_assertions",
     "toml",
     "hashbrown",
     "indexmap",
+    "twox-hash",
 ];
 
 /// Dependencies needed by the `log` crate

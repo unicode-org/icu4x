@@ -1,9 +1,9 @@
 use crate::astronomy::{self, Astronomical, Location, MEAN_SYNODIC_MONTH, MEAN_TROPICAL_YEAR};
 use crate::helpers::i64_to_i32;
-#[allow(unused_imports)]
-use crate::helpers::CoreFloat;
 use crate::rata_die::{Moment, RataDie};
 use core::num::NonZeroU8;
+#[allow(unused_imports)]
+use core_maths::*;
 
 // Don't iterate more than 14 times (which accounts for checking for 13 months)
 const MAX_ITERS_FOR_MONTHS_OF_YEAR: u8 = 14;

@@ -578,6 +578,7 @@ dependencies = [
  "icu_relativetime",
  "icu_segmenter",
  "icu_timezone",
+ "zerotrie",
  "zerovec",
 ]
 
@@ -590,6 +591,7 @@ dependencies = [
  "icu_locid",
  "icu_provider",
  "tinystr",
+ "zerotrie",
  "zerovec",
 ]
 
@@ -1097,6 +1099,15 @@ dependencies = [
  "quote",
  "syn",
  "synstructure",
+]
+
+[[package]]
+name = "zerotrie"
+version = "0.0.0"
+dependencies = [
+ "displaydoc",
+ "yoke",
+ "zerofrom",
 ]
 
 [[package]]

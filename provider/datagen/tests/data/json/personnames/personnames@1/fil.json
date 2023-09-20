@@ -27,18 +27,6 @@
       ]
     },
     {
-      "attributes": 652,
-      "patterns": [
-        "{surname-core}, {given-initial} {given2-initial} {surname-prefix}"
-      ]
-    },
-    {
-      "attributes": 1164,
-      "patterns": [
-        "{surname}, {given-informal}"
-      ]
-    },
-    {
       "attributes": 676,
       "patterns": [
         "{surname-core}, {given} {given2} {surname-prefix}"
@@ -51,15 +39,15 @@
       ]
     },
     {
-      "attributes": 801,
+      "attributes": 652,
       "patterns": [
-        "{given-monogram-allCaps}{given2-monogram-allCaps}{surname-monogram-allCaps}"
+        "{surname-core}, {given-initial} {given2-initial} {surname-prefix}"
       ]
     },
     {
-      "attributes": 1313,
+      "attributes": 1164,
       "patterns": [
-        "{given-informal-monogram-allCaps}{surname-monogram-allCaps}"
+        "{surname}, {given-informal}"
       ]
     },
     {
@@ -72,6 +60,18 @@
       "attributes": 1185,
       "patterns": [
         "{given-informal} {surname}"
+      ]
+    },
+    {
+      "attributes": 801,
+      "patterns": [
+        "{given-monogram-allCaps}{given2-monogram-allCaps}{surname-monogram-allCaps}"
+      ]
+    },
+    {
+      "attributes": 1313,
+      "patterns": [
+        "{given-informal-monogram-allCaps}{surname-monogram-allCaps}"
       ]
     },
     {
@@ -99,18 +99,6 @@
       ]
     },
     {
-      "attributes": 593,
-      "patterns": [
-        "{title} {surname}"
-      ]
-    },
-    {
-      "attributes": 1105,
-      "patterns": [
-        "{given-informal}"
-      ]
-    },
-    {
       "attributes": 657,
       "patterns": [
         "{given} {given2-initial} {surname} {generation}, {credentials}"
@@ -123,27 +111,15 @@
       ]
     },
     {
-      "attributes": 777,
+      "attributes": 593,
       "patterns": [
-        "{surname-monogram-allCaps}"
+        "{title} {surname}"
       ]
     },
     {
-      "attributes": 1289,
+      "attributes": 1105,
       "patterns": [
-        "{given-informal-monogram-allCaps}"
-      ]
-    },
-    {
-      "attributes": 649,
-      "patterns": [
-        "{given-initial} {given2-initial} {surname}"
-      ]
-    },
-    {
-      "attributes": 1161,
-      "patterns": [
-        "{given-informal} {surname-initial}"
+        "{given-informal}"
       ]
     },
     {
@@ -159,75 +135,27 @@
       ]
     },
     {
-      "attributes": 778,
+      "attributes": 649,
+      "patterns": [
+        "{given-initial} {given2-initial} {surname}"
+      ]
+    },
+    {
+      "attributes": 1161,
+      "patterns": [
+        "{given-informal} {surname-initial}"
+      ]
+    },
+    {
+      "attributes": 777,
       "patterns": [
         "{surname-monogram-allCaps}"
       ]
     },
     {
-      "attributes": 1290,
+      "attributes": 1289,
       "patterns": [
         "{given-informal-monogram-allCaps}"
-      ]
-    },
-    {
-      "attributes": 650,
-      "patterns": [
-        "{surname} {given-initial} {given2-initial}"
-      ]
-    },
-    {
-      "attributes": 1162,
-      "patterns": [
-        "{surname} {given-initial}"
-      ]
-    },
-    {
-      "attributes": 586,
-      "patterns": [
-        "{title} {surname}"
-      ]
-    },
-    {
-      "attributes": 1098,
-      "patterns": [
-        "{given-informal}"
-      ]
-    },
-    {
-      "attributes": 786,
-      "patterns": [
-        "{surname-monogram-allCaps}"
-      ]
-    },
-    {
-      "attributes": 1298,
-      "patterns": [
-        "{given-informal-monogram-allCaps}"
-      ]
-    },
-    {
-      "attributes": 594,
-      "patterns": [
-        "{title} {surname}"
-      ]
-    },
-    {
-      "attributes": 1106,
-      "patterns": [
-        "{given-informal}"
-      ]
-    },
-    {
-      "attributes": 658,
-      "patterns": [
-        "{surname} {given} {given2-initial} {generation}, {credentials}"
-      ]
-    },
-    {
-      "attributes": 1170,
-      "patterns": [
-        "{surname} {given-informal}"
       ]
     },
     {
@@ -264,6 +192,78 @@
       "attributes": 1186,
       "patterns": [
         "{surname} {given-informal}"
+      ]
+    },
+    {
+      "attributes": 586,
+      "patterns": [
+        "{title} {surname}"
+      ]
+    },
+    {
+      "attributes": 1098,
+      "patterns": [
+        "{given-informal}"
+      ]
+    },
+    {
+      "attributes": 778,
+      "patterns": [
+        "{surname-monogram-allCaps}"
+      ]
+    },
+    {
+      "attributes": 1290,
+      "patterns": [
+        "{given-informal-monogram-allCaps}"
+      ]
+    },
+    {
+      "attributes": 650,
+      "patterns": [
+        "{surname} {given-initial} {given2-initial}"
+      ]
+    },
+    {
+      "attributes": 1162,
+      "patterns": [
+        "{surname} {given-initial}"
+      ]
+    },
+    {
+      "attributes": 658,
+      "patterns": [
+        "{surname} {given} {given2-initial} {generation}, {credentials}"
+      ]
+    },
+    {
+      "attributes": 1170,
+      "patterns": [
+        "{surname} {given-informal}"
+      ]
+    },
+    {
+      "attributes": 594,
+      "patterns": [
+        "{title} {surname}"
+      ]
+    },
+    {
+      "attributes": 1106,
+      "patterns": [
+        "{given-informal}"
+      ]
+    },
+    {
+      "attributes": 786,
+      "patterns": [
+        "{surname-monogram-allCaps}"
+      ]
+    },
+    {
+      "attributes": 1298,
+      "patterns": [
+        "{given-informal-monogram-allCaps}"
       ]
     }
   ]

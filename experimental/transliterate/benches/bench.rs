@@ -8,6 +8,8 @@ use icu_locid::Locale;
 
 use icu_transliterate::Transliterator;
 
+include!("../tests/data/baked/mod.rs");
+
 struct BenchDataContent {
     pub num: usize,
     pub name: String,
@@ -32,7 +34,7 @@ fn bench_data_from_sources(locale_str: &str, source: &str) -> Vec<BenchDataConte
         .map(|(idx, input)| BenchDataContent {
             num: idx + 1,
             name: locale_str.to_string(),
-            translit: Transliterator::try_new(locale.clone()).unwrap(),
+            translit: Transliterator::try_new_unstable(locale.clone(), &BakedDataProvider).unwrap(),
             input,
         })
         .collect()
@@ -43,7 +45,7 @@ fn bench_data() -> Vec<BenchDataContent> {
     let mut bench_data = Vec::new();
     bench_data.extend(bench_data_from_sources(
         "und-Arab-t-und-beng",
-        include_str!("../tests/cldr_testData/und-Arab-t-und-beng.txt"),
+        include_str!("../tests/data/fixtures/und-Arab-t-und-beng.txt"),
     ));
 
     bench_data.into_iter().take(5).collect()

@@ -215,6 +215,10 @@ registry!(
     icu_displaynames::provider::LocaleDisplayNamesV1Marker = "displaynames/locales@1",
     icu_displaynames::provider::ScriptDisplayNamesV1Marker = "displaynames/scripts@1",
     icu_displaynames::provider::VariantDisplayNamesV1Marker = "displaynames/variants@1",
+    
+    #[cfg(feature = "icu_personnames")]
+    icu_personnames::provider::PersonNamesFormatV1Marker = "personnames/personnames@1",
+
     #[cfg(any(all(), feature = "icu_list"))]
     icu_list::provider::AndListV1Marker = "list/and@1",
     icu_list::provider::OrListV1Marker = "list/or@1",
@@ -240,8 +244,6 @@ registry!(
     icu_normalizer::provider::CompatibilityDecompositionTablesV1Marker = "normalizer/nfkdex@1",
     icu_normalizer::provider::NonRecursiveDecompositionSupplementV1Marker = "normalizer/decomp@1",
     icu_normalizer::provider::Uts46DecompositionSupplementV1Marker = "normalizer/uts46d@1",
-    #[cfg(any(all(), feature = "icu_personnames"))]
-    icu_personnames::provider::PersonNamesFormatV1Marker = "personnames/personnames@1",
     #[cfg(any(all(), feature = "icu_plurals"))]
     icu_plurals::provider::CardinalV1Marker = "plurals/cardinal@1",
     icu_plurals::provider::OrdinalV1Marker = "plurals/ordinal@1",
@@ -428,6 +430,8 @@ registry!(
     icu_segmenter::provider::WordBreakDataV1Marker = "segmenter/word@1",
     #[cfg(any(all(), feature = "icu_timezone"))]
     icu_timezone::provider::MetazonePeriodV1Marker = "time_zone/metazone_period@1",
+    icu_timezone::provider::names::Bcp47ToIanaMapV1Marker = "time_zone/bcp47_to_iana@1",
+    icu_timezone::provider::names::IanaToBcp47MapV1Marker = "time_zone/iana_to_bcp47@1",
     #[cfg(feature = "icu_transliterate")]
     icu_transliterate::provider::TransliteratorRulesV1Marker = "transliterator/rules@1",
 );

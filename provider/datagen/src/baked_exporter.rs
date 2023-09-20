@@ -651,6 +651,7 @@ impl BakedExporter {
 
                 // Not public because `impl_data_provider` isn't. Users can implement `DynamicDataProvider<AnyMarker>`
                 // using `impl_dynamic_data_provider!`.
+                #[allow(unused_macros)]
                 macro_rules! impl_any_provider {
                     ($provider:ty) => {
                         #[clippy::msrv = #MSRV]
