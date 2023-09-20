@@ -7,7 +7,6 @@ pub mod helpers;
 use std::collections::BTreeMap;
 
 use crate::transform::cldr::{cldr_serde, units::helpers::is_scientific_number};
-
 use icu_provider::{
     datagen::IterableDataProvider, DataError, DataLocale, DataPayload, DataProvider, DataRequest,
     DataResponse,
@@ -15,9 +14,7 @@ use icu_provider::{
 use icu_unitsconversion::provider::{
     ConstantType, ConstantValue, UnitsConstantsV1, UnitsConstantsV1Marker,
 };
-
 use zerovec::{ZeroMap, ZeroVec};
-
 use self::helpers::{
     contains_alphabetic_chars, convert_array_of_strings_to_fraction, remove_whitespace,
     split_constant_string, transform_fraction_to_constant_value,
@@ -162,13 +159,17 @@ impl IterableDataProvider<UnitsConstantsV1Marker> for crate::DatagenProvider {
 
 #[test]
 fn test_basic() {
+    use fraction::GenericFraction;
     use icu_locid::locale;
     use icu_provider::prelude::*;
     use icu_unitsconversion::provider::*;
+    use num_bigint::BigUint;
+    use num_traits::ToBytes;
+    use std::ops::Mul;
 
     let provider = crate::DatagenProvider::latest_tested_offline_subset();
 
-    let _und: DataPayload<UnitsConstantsV1Marker> = provider
+    let und: DataPayload<UnitsConstantsV1Marker> = provider
         .load(DataRequest {
             locale: &locale!("und").into(),
             metadata: Default::default(),
@@ -177,19 +178,56 @@ fn test_basic() {
         .take_payload()
         .unwrap();
 
-    // let constants = &und.get().to_owned().constants_map;
+    let constants = &und.get().to_owned().constants_map;
+    let ft_to_m = constants.get("ft_to_m").unwrap();
+    let expected_ft_to_m =
+        GenericFraction::<BigUint>::new(BigUint::from(3048u32), BigUint::from(10000u32));
+    assert_eq!(
+        ft_to_m,
+        zerovec::ule::encode_varule_to_box(&ConstantValue {
+            numerator: expected_ft_to_m.numer().unwrap().to_le_bytes().into(),
+            denominator: expected_ft_to_m.denom().unwrap().to_le_bytes().into(),
+            sign: Sign::Positive,
+            constant_type: ConstantType::Actual,
+        })
+        .as_ref()
+    );
 
-    // let ft_to_m : ConstantValue = constants.get("ft_to_m").unwrap();
+    let ft2_to_m2 = constants.get("ft2_to_m2").unwrap();
+    let expected_ft2_to_m2 = GenericFraction::<BigUint>::new(
+        BigUint::from(3048u32).mul(&BigUint::from(3048u32)),
+        BigUint::from(10000u32).mul(&BigUint::from(10000u32)),
+    );
 
-    // assert_eq!(ft_to_m , ConstantValue {
-    //     numerator: 3048,
-    //     denominator: 10000,
-    //     constant_type: ConstantType::Actual,
-    // });
+    assert_eq!(
+        ft2_to_m2,
+        zerovec::ule::encode_varule_to_box(&ConstantValue {
+            numerator: expected_ft2_to_m2.numer().unwrap().to_le_bytes().into(),
+            denominator: expected_ft2_to_m2.denom().unwrap().to_le_bytes().into(),
+            sign: Sign::Positive,
+            constant_type: ConstantType::Actual,
+        })
+        .as_ref()
+    );
 
-    // assert!(constants.get("ft2_to_m2").eq( ConstantValue {
-    //     numerator: 3048,
-    //     denominator: 10000,
-    //     constant_type: ConstantType::Actual,
-    // }));
+    let ft3_to_m3 = constants.get("ft3_to_m3").unwrap();
+    let expected_ft3_to_m3 = GenericFraction::<BigUint>::new(
+        BigUint::from(3048u32)
+            .mul(&BigUint::from(3048u32))
+            .mul(&BigUint::from(3048u32)),
+        BigUint::from(10000u32)
+            .mul(&BigUint::from(10000u32))
+            .mul(&BigUint::from(10000u32)),
+    );
+
+    assert_eq!(
+        ft3_to_m3,
+        zerovec::ule::encode_varule_to_box(&ConstantValue {
+            numerator: expected_ft3_to_m3.numer().unwrap().to_le_bytes().into(),
+            denominator: expected_ft3_to_m3.denom().unwrap().to_le_bytes().into(),
+            sign: Sign::Positive,
+            constant_type: ConstantType::Actual,
+        })
+        .as_ref()
+    );
 }
