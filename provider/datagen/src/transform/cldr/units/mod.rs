@@ -6,7 +6,10 @@ mod helpers;
 
 use std::collections::BTreeMap;
 
-use crate::transform::cldr::cldr_serde;
+use crate::transform::cldr::{
+    cldr_serde,
+    units::helpers::{convert_scientific_notation_number_to_fractional, is_scientific_number},
+};
 use fraction::GenericFraction;
 use icu_provider::{
     datagen::IterableDataProvider, DataError, DataLocale, DataPayload, DataProvider, DataRequest,
@@ -58,51 +61,68 @@ impl DataProvider<UnitsConstantsV1Marker> for crate::DatagenProvider {
         }
 
         // This loop will replace all the constants in the value of a constant with their values.
+        let mut cons_with_text: u16 = 0;
         loop {
-            let mut cons_with_text: u16 = 0;
-            for (cons_name, (num, den, constant_type)) in constants_with_constants_map.iter_mut() {
-                for i in 0..num.len() {
-                    if !has_letters(num[i].as_str()) {
+            cons_with_text = 0;
+            let mut constants_with_constants_map_replaceable =
+                BTreeMap::<&str, (Vec<String>, Vec<String>, ConstantType)>::new();
+            for (cons_name, (num, den, constant_type)) in constants_with_constants_map.iter() {
+                let mut temp_num = num.clone();
+                let mut temp_den = den.clone();
+                let mut temp_constant_type = *constant_type;
+
+                for i in 0..temp_num.len() {
+                    if !has_letters(temp_num[i].as_str())
+                        || is_scientific_number(temp_num[i].as_str())
+                    {
                         continue;
                     }
 
                     cons_with_text += 1;
-
-                    if constants_with_constants_map.contains_key(num[i].as_str()) {
-                        let (rnum, rden, rconstant_type) = constants_with_constants_map
-                            .get_mut(num[i].as_str())
-                            .unwrap();
-                        num.remove(i);
+                    if let Some((rnum, rden, rconstant_type)) =
+                        constants_with_constants_map.get(temp_num[i].as_str())
+                    {
+                        temp_num.remove(i);
                         // append the elements in rnum to num and rden to den
-                        num.append(&mut rnum.clone());
-                        den.append(&mut rden.clone());
+                        temp_num.append(&mut rnum.clone());
+                        temp_den.append(&mut rden.clone());
 
                         if *rconstant_type == ConstantType::Approximate {
-                            *constant_type = ConstantType::Approximate;
+                            temp_constant_type = ConstantType::Approximate;
                         }
                     }
                 }
 
-                for i in 0..den.len() {
-                    if !has_letters(den[i].as_str()) {
+                for i in 0..temp_den.len() {
+                    if !has_letters(temp_den[i].as_str())
+                        || is_scientific_number(temp_den[i].as_str())
+                    {
                         continue;
                     }
-                    cons_with_text += 1;
-                    if constants_with_constants_map.contains_key(den[i].as_str()) {
-                        let (rnum, rden, mut rconstant_type) =
-                            constants_with_constants_map.get(den[i].as_str()).unwrap();
-                        den.remove(i);
-                        // append the elements in rden to num and rnum to den
-                        num.append(&mut rden.clone());
-                        den.append(&mut rnum.clone());
 
-                        if rconstant_type == ConstantType::Approximate {
-                            *constant_type = ConstantType::Approximate;
+                    cons_with_text += 1;
+                    if let Some((rnum, rden, rconstant_type)) =
+                        constants_with_constants_map.get(temp_den[i].as_str())
+                    {
+                        temp_den.remove(i);
+                        // append the elements in rnum to den and rden to num
+                        temp_num.append(&mut rden.clone());
+                        temp_den.append(&mut rnum.clone());
+
+                        if *rconstant_type == ConstantType::Approximate {
+                            temp_constant_type = ConstantType::Approximate;
                         }
                     }
                 }
+
+                constants_with_constants_map_replaceable
+                    .insert(cons_name, (temp_num, temp_den, temp_constant_type));
             }
 
+            constants_with_constants_map.clear();
+            constants_with_constants_map = constants_with_constants_map_replaceable;
+
+            print!("cons_with_text: {} \n", cons_with_text);
             if cons_with_text == 0 {
                 break;
             }

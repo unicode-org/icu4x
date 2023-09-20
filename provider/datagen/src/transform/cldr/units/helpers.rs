@@ -61,6 +61,20 @@ pub fn has_letters(s: &str) -> bool {
     s.chars().any(|c| c.is_alphabetic())
 }
 
+/// Checks if a string is a valid scientific notation number.
+/// Returns true if the string is a valid scientific notation number, false otherwise.  
+pub fn is_scientific_number(s: &str) -> bool {
+    let mut split = s.split('E');
+    if split.clone().count() > 2 {
+        return false;
+    }
+
+    let base = split.next().unwrap_or("0");
+    let exponent = split.next().unwrap_or("0");
+
+    !has_letters(base) && !has_letters(exponent)
+}
+
 /// Converts a fractional number to a constant value.
 pub fn convert_fractional_to_constant_value(
     fraction: GenericFraction<BigUint>,
