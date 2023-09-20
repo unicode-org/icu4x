@@ -51,7 +51,7 @@ use tinystr::tinystr;
 ///
 /// This calendar is a pure lunar calendar with no leap months. It uses month codes
 /// `"M01" - "M12"`.
-#[derive(Clone, Debug, Default, Hash, Eq, PartialEq, PartialOrd, Ord)]
+#[derive(Clone, Debug, Hash, Eq, PartialEq, PartialOrd, Ord)]
 #[non_exhaustive] // we'll be adding precompiled data to this
 pub struct IslamicObservational;
 
@@ -65,7 +65,7 @@ pub struct IslamicObservational;
 ///
 /// This calendar is a pure lunar calendar with no leap months. It uses month codes
 /// `"M01" - "M12"`.
-#[derive(Clone, Debug, Default, Hash, Eq, PartialEq, PartialOrd, Ord)]
+#[derive(Clone, Debug, Hash, Eq, PartialEq, PartialOrd, Ord)]
 #[non_exhaustive] // we'll be adding precompiled data to this
 pub struct IslamicCivil;
 
@@ -79,7 +79,7 @@ pub struct IslamicCivil;
 ///
 /// This calendar is a pure lunar calendar with no leap months. It uses month codes
 /// `"M01" - "M12"`.
-#[derive(Clone, Debug, Default, Hash, Eq, PartialEq, PartialOrd, Ord)]
+#[derive(Clone, Debug, Hash, Eq, PartialEq, PartialOrd, Ord)]
 #[non_exhaustive] // we'll be adding precompiled data to this
 pub struct IslamicUmmAlQura;
 
@@ -93,7 +93,7 @@ pub struct IslamicUmmAlQura;
 ///
 /// This calendar is a pure lunar calendar with no leap months. It uses month codes
 /// `"M01" - "M12"`.
-#[derive(Clone, Debug, Default, Hash, Eq, PartialEq, PartialOrd, Ord)]
+#[derive(Clone, Debug, Hash, Eq, PartialEq, PartialOrd, Ord)]
 #[non_exhaustive] // we'll be adding precompiled data to this
 pub struct IslamicTabular;
 
@@ -263,11 +263,6 @@ impl Calendar for IslamicObservational {
 }
 
 impl IslamicObservational {
-    /// Constructs a new Islamic Observational Calendar
-    pub fn new() -> Self {
-        Self
-    }
-
     fn fixed_from_islamic(i_date: IslamicDateInner) -> RataDie {
         calendrical_calculations::islamic::fixed_from_islamic_observational(
             i_date.0.year,
@@ -555,11 +550,6 @@ impl<A: AsCalendar<Calendar = IslamicUmmAlQura>> DateTime<A> {
 }
 
 impl IslamicUmmAlQura {
-    /// Constructs a new Islamic Umm al-Qura Calendar
-    pub fn new() -> Self {
-        Self
-    }
-
     fn fixed_from_saudi_islamic(i_date: IslamicUmmAlQuraDateInner) -> RataDie {
         calendrical_calculations::islamic::fixed_from_saudi_islamic(
             i_date.0.year,
@@ -730,11 +720,6 @@ impl Calendar for IslamicCivil {
 }
 
 impl IslamicCivil {
-    /// Constructs a new Islamic Civil Calendar
-    pub fn new() -> Self {
-        Self
-    }
-
     fn fixed_from_islamic(i_date: IslamicCivilDateInner) -> RataDie {
         calendrical_calculations::islamic::fixed_from_islamic_civil(
             i_date.0.year,
@@ -968,11 +953,6 @@ impl Calendar for IslamicTabular {
 }
 
 impl IslamicTabular {
-    /// Constructs a new Islamic Tabular Calendar
-    pub fn new() -> Self {
-        Self
-    }
-
     fn fixed_from_islamic(i_date: IslamicTabularDateInner) -> RataDie {
         calendrical_calculations::islamic::fixed_from_islamic_tabular(
             i_date.0.year,
