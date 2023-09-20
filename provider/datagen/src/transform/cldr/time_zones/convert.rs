@@ -18,6 +18,7 @@ use icu_datetime::provider::time_zones::{
 use icu_timezone::provider::MetazonePeriodV1;
 use icu_timezone::ZoneVariant;
 use std::borrow::Cow;
+use std::collections::BTreeMap;
 use std::collections::HashMap;
 use tinystr::TinyStr8;
 
@@ -41,10 +42,10 @@ fn parse_hour_format(hour_format: &str) -> (Cow<'static, str>, Cow<'static, str>
     (Cow::Owned(positive), Cow::Owned(negative))
 }
 
-fn compute_bcp47_tzids_hashmap(
+pub(crate) fn compute_bcp47_tzids_btreemap(
     bcp47_tzids_resource: &HashMap<TimeZoneBcp47Id, Bcp47TzidAliasData>,
-) -> HashMap<String, TimeZoneBcp47Id> {
-    let mut bcp47_tzids = HashMap::new();
+) -> BTreeMap<String, TimeZoneBcp47Id> {
+    let mut bcp47_tzids = BTreeMap::new();
     for (bcp47_tzid, bcp47_tzid_data) in bcp47_tzids_resource.iter() {
         if let Some(alias) = &bcp47_tzid_data.alias {
             for data_value in alias.split(' ') {
@@ -173,7 +174,7 @@ impl From<CldrTimeZonesData<'_>> for ExemplarCitiesV1<'static> {
 impl From<CldrTimeZonesData<'_>> for MetazonePeriodV1<'static> {
     fn from(other: CldrTimeZonesData<'_>) -> Self {
         let data = other.meta_zone_periods_resource;
-        let bcp47_tzid_data = &compute_bcp47_tzids_hashmap(other.bcp47_tzids_resource);
+        let bcp47_tzid_data = &compute_bcp47_tzids_btreemap(other.bcp47_tzids_resource);
         let meta_zone_id_data = &compute_meta_zone_ids_hashmap(other.meta_zone_ids_resource);
         Self(
             data.iter()
@@ -232,7 +233,7 @@ macro_rules! long_short_impls {
         impl From<CldrTimeZonesData<'_>> for $generic {
             fn from(other: CldrTimeZonesData<'_>) -> Self {
                 let data = other.time_zone_names_resource;
-                let bcp47_tzid_data = &compute_bcp47_tzids_hashmap(other.bcp47_tzids_resource);
+                let bcp47_tzid_data = &compute_bcp47_tzids_btreemap(other.bcp47_tzids_resource);
                 let meta_zone_id_data =
                     &compute_meta_zone_ids_hashmap(other.meta_zone_ids_resource);
                 Self {
@@ -319,7 +320,7 @@ macro_rules! long_short_impls {
         impl From<CldrTimeZonesData<'_>> for $specific {
             fn from(other: CldrTimeZonesData<'_>) -> Self {
                 let data = other.time_zone_names_resource;
-                let bcp47_tzid_data = &compute_bcp47_tzids_hashmap(other.bcp47_tzids_resource);
+                let bcp47_tzid_data = &compute_bcp47_tzids_btreemap(other.bcp47_tzids_resource);
                 let meta_zone_id_data =
                     &compute_meta_zone_ids_hashmap(other.meta_zone_ids_resource);
                 Self {

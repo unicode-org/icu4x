@@ -33,6 +33,7 @@ pub const BASIC_RUNTIME_DEPS: &[&str] = &[
     "writeable",
     "yoke",
     "zerofrom",
+    "zerotrie",
     "zerovec",
     // 3P dependencies
     "core_maths",
@@ -149,7 +150,9 @@ pub const EXTRA_DATAGEN_DEPS: &[&str] = &[
     "ryu",
     "serde-aux",
     "serde_json",
+    "static_assertions",
     "toml",
+    "twox-hash",
 ];
 
 /// Dependencies needed by the `log` crate

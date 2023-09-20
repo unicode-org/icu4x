@@ -74,7 +74,7 @@ where
 ///
 /// ```
 /// use icu::calendar::DateTime;
-/// use icu::timezone::{CustomTimeZone, MetazoneCalculator};
+/// use icu::timezone::{CustomTimeZone, MetazoneCalculator, IanaToBcp47Mapper};
 /// use icu::datetime::{DateTimeError, time_zone::TimeZoneFormatter};
 /// use icu::locid::locale;
 /// use tinystr::tinystr;
@@ -82,12 +82,14 @@ where
 ///
 /// // Set up the time zone. Note: the inputs here are
 /// //   1. The GMT offset
-/// //   2. The BCP-47 time zone ID
+/// //   2. The IANA time zone ID
 /// //   3. A datetime (for metazone resolution)
 /// //   4. Note: we do not need the zone variant because of `load_generic_*()`
 ///
-/// // Set up the Metazone calculator and the DateTime to use in calculation
+/// // Set up the Metazone calculator, time zone ID mapper,
+/// // and the DateTime to use in calculation
 /// let mzc = MetazoneCalculator::new();
+/// let mapper = IanaToBcp47Mapper::new();
 /// let datetime = DateTime::try_new_iso_datetime(2022, 8, 29, 0, 0, 0)
 ///     .unwrap();
 ///
@@ -102,7 +104,7 @@ where
 ///
 /// // "uschi" - has metazone symbol data for generic_non_location_short
 /// let mut time_zone = "-0600".parse::<CustomTimeZone>().unwrap();
-/// time_zone.time_zone_id = Some(tinystr!(8, "uschi").into());
+/// time_zone.time_zone_id = mapper.as_borrowed().get("America/Chicago");
 /// time_zone.maybe_calculate_metazone(&mzc, &datetime);
 /// assert_writeable_eq!(
 ///     tzf.format(&time_zone),
