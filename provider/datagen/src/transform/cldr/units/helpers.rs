@@ -17,6 +17,15 @@ pub fn remove_whitespace(s: &str) -> String {
     s.chars().filter(|c| !c.is_whitespace()).collect()
 }
 
+// TODO: move this to the comment above.
+#[test]
+fn test_remove_whitespace() {
+    let input = "He  llo Wo rld!";
+    let expected = "HelloWorld!";
+    let actual = remove_whitespace(input);
+    assert_eq!(expected, actual);
+}
+
 /// Converts a scientific notation number represented as a string into a tuple of (numerator, denominator).
 pub fn convert_scientific_notation_number_to_fractional(
     number: &str,
@@ -193,10 +202,3 @@ fn test_split_constant_string() {
     assert_eq!(expected, actual);
 }
 
-#[test]
-fn test_remove_whitespace() {
-    let input = "He  llo Wo rld!";
-    let expected = "HelloWorld!";
-    let actual = remove_whitespace(input);
-    assert_eq!(expected, actual);
-}
