@@ -19,8 +19,8 @@ use icu_unitsconversion::provider::{
 use zerovec::{ZeroMap, ZeroVec};
 
 use self::helpers::{
-    contains_alphabetic_chars, convert_array_of_strings_to_fraction,
-    transform_fraction_to_constant_value, remove_whitespace, split_constant_string,
+    contains_alphabetic_chars, convert_array_of_strings_to_fraction, remove_whitespace,
+    split_constant_string, transform_fraction_to_constant_value,
 };
 
 impl DataProvider<UnitsConstantsV1Marker> for crate::DatagenProvider {
