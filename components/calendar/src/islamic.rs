@@ -256,10 +256,9 @@ impl Calendar for IslamicObservational {
         }
     }
 
-    // TODO: ADD TO ANYCALENDAR
-    // fn any_calendar_kind(&self) -> Option<AnyCalendarKind> {
-    //     Some(AnyCalendarKind::IslamicObservational)
-    // }
+    fn any_calendar_kind(&self) -> Option<AnyCalendarKind> {
+        Some(AnyCalendarKind::IslamicObservational)
+    }
 }
 
 impl IslamicObservational {
@@ -717,6 +716,9 @@ impl Calendar for IslamicCivil {
             next_year: Self::year_as_islamic(next_year),
         }
     }
+    fn any_calendar_kind(&self) -> Option<AnyCalendarKind> {
+        Some(AnyCalendarKind::IslamicCivil)
+    }
 }
 
 impl IslamicCivil {
@@ -949,6 +951,9 @@ impl Calendar for IslamicTabular {
             days_in_prev_year: Self::days_in_provided_year(prev_year),
             next_year: Self::year_as_islamic(next_year),
         }
+    }
+    fn any_calendar_kind(&self) -> Option<AnyCalendarKind> {
+        Some(AnyCalendarKind::IslamicTabular)
     }
 }
 

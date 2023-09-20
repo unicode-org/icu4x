@@ -34,6 +34,7 @@
 
 use crate::calendar_arithmetic::{ArithmeticDate, CalendarArithmetic};
 use crate::types::FormattableMonth;
+use crate::AnyCalendarKind;
 use crate::AsCalendar;
 use crate::Iso;
 use crate::{types, Calendar, CalendarError, Date, DateDuration, DateDurationUnit, DateTime};
@@ -282,6 +283,9 @@ impl Calendar for Hebrew {
             days_in_prev_year: Self::days_in_provided_year(prev_year),
             next_year: Self::year_as_hebrew(next_year),
         }
+    }
+    fn any_calendar_kind(&self) -> Option<AnyCalendarKind> {
+        Some(AnyCalendarKind::Hebrew)
     }
 }
 
