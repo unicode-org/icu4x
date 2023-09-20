@@ -27,31 +27,33 @@ fn test_remove_whitespace() {
 }
 
 /// Converts a scientific notation number represented as a string into a GenericFraction.
+/// Examples:
+/// - "1E2" is converted to 100
+/// - "1E-2" is converted to 1/100
+/// - "1.5E2" is converted to 150
+/// - "1.5E-2" is converted to 15/1000
+/// - "1.5E-2.5" is an invalid scientific notation number
 pub fn convert_scientific_notation_to_fraction(
     number: &str,
 ) -> Result<GenericFraction<BigUint>, DataError> {
-    let number = remove_whitespace(number); // TODO: check this.
-    let mut split = number.split('E');
-    if split.clone().count() > 2 {
+    let number = remove_whitespace(number);
+    let parts: Vec<&str> = number.split('E').collect();
+    if parts.len() > 2 {
         return Err(DataError::custom(
             "the number is not a scientific notation number",
         ));
     }
-    let base = split.next().unwrap_or("0");
-    let exponent = split.next().unwrap_or("0");
-    let base: GenericFraction<BigUint> = match GenericFraction::from_str(base) {
-        Ok(base) => base,
-        Err(_) => return Err(DataError::custom("the number is not a valid number")),
-    };
-    let exponent = match f64::from_str(exponent) {
-        Ok(exponent) => exponent,
-        Err(_) => return Err(DataError::custom("the exponent is not a valid number")),
-    };
+    let base = parts.get(0).unwrap_or(&"0");
+    let exponent = parts.get(1).unwrap_or(&"0");
+    let base: GenericFraction<BigUint> = GenericFraction::from_str(base)
+        .map_err(|_| DataError::custom("the number is not a valid number"))?;
+    let exponent = i64::from_str(exponent)
+        .map_err(|_| DataError::custom("the exponent is not a valid number"))?;
 
     let mut result = base;
     let generic_ten: GenericFraction<BigUint> =
-        GenericFraction::new(BigUint::from(10u32), BigUint::from(1u32)); // TODO: fix this
-    if exponent > 0.0 {
+        GenericFraction::new(BigUint::from(10u32), BigUint::from(1u32));
+    if exponent > 0 {
         for _ in 0..exponent as u32 {
             result = result.mul(generic_ten.clone());
         }
@@ -63,6 +65,35 @@ pub fn convert_scientific_notation_to_fraction(
 
     Ok(result)
 }
+
+// TODO: move this to the comment above.
+#[test]
+fn test_convert_scientific_notation_to_fraction() {
+    let input = "1E2";
+    let expected = GenericFraction::new(BigUint::from(100u32), BigUint::from(1u32));
+    let actual = convert_scientific_notation_to_fraction(input).unwrap();
+    assert_eq!(expected, actual);
+
+    let input = "1E-2";
+    let expected = GenericFraction::new(BigUint::from(1u32), BigUint::from(100u32));
+    let actual = convert_scientific_notation_to_fraction(input).unwrap();
+    assert_eq!(expected, actual);
+
+    let input = "1.5E2";
+    let expected = GenericFraction::new(BigUint::from(150u32), BigUint::from(1u32));
+    let actual = convert_scientific_notation_to_fraction(input).unwrap();
+    assert_eq!(expected, actual);
+
+    let input = "1.5E-2";
+    let expected = GenericFraction::new(BigUint::from(15u32), BigUint::from(1000u32));
+    let actual = convert_scientific_notation_to_fraction(input).unwrap();
+    assert_eq!(expected, actual);
+
+    let input = "1.5E-2.5";
+    let actual = convert_scientific_notation_to_fraction(input);
+    assert!(actual.is_err());
+}
+
 
 /// Determines if a string contains any alphabetic characters.
 /// Returns true if the string contains at least one alphabetic character, false otherwise.
