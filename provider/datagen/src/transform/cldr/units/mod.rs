@@ -24,13 +24,13 @@ impl DataProvider<UnitsConstantsV1Marker> for crate::DatagenProvider {
     fn load(&self, _req: DataRequest) -> Result<DataResponse<UnitsConstantsV1Marker>, DataError> {
         self.check_req::<UnitsConstantsV1Marker>(_req)?;
 
-        let _units_data: &cldr_serde::units::units_constants::Resource = self
+        let units_data: &cldr_serde::units::units_constants::Resource = self
             .cldr()?
             .core()
             .read_and_parse("supplemental/units.json")?;
         let _constants_map = BTreeMap::<&str, ConstantValue>::new();
 
-        let constants = &_units_data.supplemental.unit_constants.constants;
+        let constants = &units_data.supplemental.unit_constants.constants;
 
         // Constants that has a constants in their value.
         //      For exmaple: "ft2_to_m2": "ft_to_m * ft_to_m",
