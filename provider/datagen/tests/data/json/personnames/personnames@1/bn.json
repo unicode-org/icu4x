@@ -14,42 +14,6 @@
   "initial_pattern_sequence": "{0} {1}",
   "person_names_patterns": [
     {
-      "attributes": 649,
-      "patterns": [
-        "{title} {given} {given2} {surname} {surname2} {credentials}"
-      ]
-    },
-    {
-      "attributes": 1161,
-      "patterns": [
-        "{given} {given2} {surname} {surname2}"
-      ]
-    },
-    {
-      "attributes": 777,
-      "patterns": [
-        "{given-monogram-allCaps}{given2-monogram-allCaps}{surname-monogram-allCaps}"
-      ]
-    },
-    {
-      "attributes": 1289,
-      "patterns": [
-        "{given-monogram-allCaps}{given2-monogram-allCaps}{surname-monogram-allCaps}"
-      ]
-    },
-    {
-      "attributes": 585,
-      "patterns": [
-        "{title} {given} {given2} {surname} {surname2} {credentials}"
-      ]
-    },
-    {
-      "attributes": 1097,
-      "patterns": [
-        "{given} {given2} {surname} {surname2}"
-      ]
-    },
-    {
       "attributes": 657,
       "patterns": [
         "{title} {given} {given2} {surname} {surname2} {credentials}"
@@ -57,6 +21,18 @@
     },
     {
       "attributes": 1169,
+      "patterns": [
+        "{given} {given2} {surname} {surname2}"
+      ]
+    },
+    {
+      "attributes": 593,
+      "patterns": [
+        "{title} {given} {given2} {surname} {surname2} {credentials}"
+      ]
+    },
+    {
+      "attributes": 1105,
       "patterns": [
         "{given} {given2} {surname} {surname2}"
       ]
@@ -74,13 +50,13 @@
       ]
     },
     {
-      "attributes": 593,
+      "attributes": 609,
       "patterns": [
         "{title} {given} {given2} {surname} {surname2} {credentials}"
       ]
     },
     {
-      "attributes": 1105,
+      "attributes": 1121,
       "patterns": [
         "{given} {given2} {surname} {surname2}"
       ]
@@ -110,61 +86,73 @@
       ]
     },
     {
-      "attributes": 609,
+      "attributes": 585,
       "patterns": [
         "{title} {given} {given2} {surname} {surname2} {credentials}"
       ]
     },
     {
-      "attributes": 1121,
+      "attributes": 1097,
       "patterns": [
         "{given} {given2} {surname} {surname2}"
       ]
     },
     {
-      "attributes": 660,
+      "attributes": 777,
       "patterns": [
-        "{surname} {surname2}, {title} {given} {given2} {credentials}"
+        "{given-monogram-allCaps}{given2-monogram-allCaps}{surname-monogram-allCaps}"
       ]
     },
     {
-      "attributes": 1172,
+      "attributes": 1289,
       "patterns": [
-        "{surname} {surname2}, {given} {given2}"
+        "{given-monogram-allCaps}{given2-monogram-allCaps}{surname-monogram-allCaps}"
       ]
     },
     {
-      "attributes": 652,
+      "attributes": 649,
       "patterns": [
-        "{surname} {surname2}, {title} {given} {given2} {credentials}"
+        "{title} {given} {given2} {surname} {surname2} {credentials}"
       ]
     },
     {
-      "attributes": 1164,
+      "attributes": 1161,
       "patterns": [
-        "{surname} {surname2}, {given} {given2}"
+        "{given} {given2} {surname} {surname2}"
       ]
     },
     {
-      "attributes": 676,
+      "attributes": 674,
       "patterns": [
-        "{surname} {surname2}, {title} {given} {given2} {credentials}"
+        "{surname} {surname2} {title} {given} {given2} {credentials}"
       ]
     },
     {
-      "attributes": 1188,
+      "attributes": 1186,
       "patterns": [
-        "{surname} {surname2}, {given} {given2}"
+        "{surname} {surname2} {given} {given2}"
       ]
     },
     {
-      "attributes": 778,
+      "attributes": 610,
+      "patterns": [
+        "{surname} {surname2} {title} {given} {given2} {credentials}"
+      ]
+    },
+    {
+      "attributes": 1122,
+      "patterns": [
+        "{surname} {surname2} {given} {given2}"
+      ]
+    },
+    {
+      "attributes": 802,
       "patterns": [
         "{surname-monogram-allCaps}{given-monogram-allCaps}{given2-monogram-allCaps}"
       ]
     },
     {
-      "attributes": 1290,
+      "attributes": 1314,
       "patterns": [
         "{surname-monogram-allCaps}{given-monogram-allCaps}{given2-monogram-allCaps}"
       ]
@@ -194,51 +182,15 @@
       ]
     },
     {
-      "attributes": 802,
+      "attributes": 778,
       "patterns": [
         "{surname-monogram-allCaps}{given-monogram-allCaps}{given2-monogram-allCaps}"
       ]
     },
     {
-      "attributes": 1314,
+      "attributes": 1290,
       "patterns": [
         "{surname-monogram-allCaps}{given-monogram-allCaps}{given2-monogram-allCaps}"
-      ]
-    },
-    {
-      "attributes": 610,
-      "patterns": [
-        "{surname} {surname2} {title} {given} {given2} {credentials}"
-      ]
-    },
-    {
-      "attributes": 1122,
-      "patterns": [
-        "{surname} {surname2} {given} {given2}"
-      ]
-    },
-    {
-      "attributes": 674,
-      "patterns": [
-        "{surname} {surname2} {title} {given} {given2} {credentials}"
-      ]
-    },
-    {
-      "attributes": 1186,
-      "patterns": [
-        "{surname} {surname2} {given} {given2}"
-      ]
-    },
-    {
-      "attributes": 594,
-      "patterns": [
-        "{surname} {surname2} {title} {given} {given2} {credentials}"
-      ]
-    },
-    {
-      "attributes": 1106,
-      "patterns": [
-        "{surname} {surname2} {given} {given2}"
       ]
     },
     {
@@ -263,6 +215,54 @@
       "attributes": 1170,
       "patterns": [
         "{surname} {surname2} {given} {given2}"
+      ]
+    },
+    {
+      "attributes": 594,
+      "patterns": [
+        "{surname} {surname2} {title} {given} {given2} {credentials}"
+      ]
+    },
+    {
+      "attributes": 1106,
+      "patterns": [
+        "{surname} {surname2} {given} {given2}"
+      ]
+    },
+    {
+      "attributes": 676,
+      "patterns": [
+        "{surname} {surname2}, {title} {given} {given2} {credentials}"
+      ]
+    },
+    {
+      "attributes": 1188,
+      "patterns": [
+        "{surname} {surname2}, {given} {given2}"
+      ]
+    },
+    {
+      "attributes": 660,
+      "patterns": [
+        "{surname} {surname2}, {title} {given} {given2} {credentials}"
+      ]
+    },
+    {
+      "attributes": 1172,
+      "patterns": [
+        "{surname} {surname2}, {given} {given2}"
+      ]
+    },
+    {
+      "attributes": 652,
+      "patterns": [
+        "{surname} {surname2}, {title} {given} {given2} {credentials}"
+      ]
+    },
+    {
+      "attributes": 1164,
+      "patterns": [
+        "{surname} {surname2}, {given} {given2}"
       ]
     }
   ]

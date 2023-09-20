@@ -31,6 +31,7 @@ const _: () = {
         pub use crate as personnames;
         pub use icu_locid_transform as locid_transform;
     }
+    icu_personnames_data::make_provider!(Baked);
     icu_personnames_data::impl_personnames_personnames_v1!(Baked);
 };
 

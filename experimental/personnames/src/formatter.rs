@@ -148,7 +148,6 @@ impl PersonNamesFormatter<'_> {
         // if formatter is sorting, keep it regardless of person name preference.
         if self.default_options.order == FormattingOrder::Sorting {
             return PersonNamesFormatterOptions {
-                /// the target locale will maximized when passed into the formatter.
                 target_locale: locale.clone(),
                 order: self.default_options.order,
                 length: self.default_options.length,
@@ -158,7 +157,6 @@ impl PersonNamesFormatter<'_> {
         }
         match person_name.preferred_order() {
             Some(PreferredOrder::GivenFirst) => PersonNamesFormatterOptions {
-                /// the target locale will maximized when passed into the formatter.
                 target_locale: locale.clone(),
                 order: FormattingOrder::GivenFirst,
                 length: self.default_options.length,
@@ -166,7 +164,6 @@ impl PersonNamesFormatter<'_> {
                 formality: self.default_options.formality,
             },
             Some(PreferredOrder::SurnameFirst) => PersonNamesFormatterOptions {
-                /// the target locale will maximized when passed into the formatter.
                 target_locale: locale.clone(),
                 order: FormattingOrder::SurnameFirst,
                 length: self.default_options.length,
@@ -175,7 +172,6 @@ impl PersonNamesFormatter<'_> {
             },
             // TODO: https://www.unicode.org/reports/tr35/tr35-personNames.html#derive-the-name-order
             _ => PersonNamesFormatterOptions {
-                /// the target locale will maximized when passed into the formatter.
                 target_locale: locale.clone(),
                 order: person_name
                     .name_locale()

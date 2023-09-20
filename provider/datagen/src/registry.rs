@@ -215,10 +215,8 @@ registry!(
     icu_displaynames::provider::LocaleDisplayNamesV1Marker = "displaynames/locales@1",
     icu_displaynames::provider::ScriptDisplayNamesV1Marker = "displaynames/scripts@1",
     icu_displaynames::provider::VariantDisplayNamesV1Marker = "displaynames/variants@1",
-    
     #[cfg(feature = "icu_personnames")]
     icu_personnames::provider::PersonNamesFormatV1Marker = "personnames/personnames@1",
-
     #[cfg(any(all(), feature = "icu_list"))]
     icu_list::provider::AndListV1Marker = "list/and@1",
     icu_list::provider::OrListV1Marker = "list/or@1",

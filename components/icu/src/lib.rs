@@ -189,6 +189,10 @@ pub use icu_timezone as timezone;
 #[doc(inline)]
 pub use icu_displaynames as displaynames;
 
+#[cfg(feature = "icu_personnames")]
+#[doc(inline)]
+pub use icu_personnames as personnames;
+
 #[cfg(feature = "icu_relativetime")]
 #[doc(inline)]
 pub use icu_relativetime as relativetime;
