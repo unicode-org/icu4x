@@ -22,7 +22,7 @@ use icu_calendar::{
     persian::Persian,
     provider::WeekDataV1Marker,
     roc::Roc,
-    AsCalendar, DateTime, Gregorian, Iso,
+    AsCalendar, Calendar, DateTime, Gregorian, Iso,
 };
 use icu_datetime::provider::time_zones::{
     ExemplarCitiesV1Marker, MetazoneGenericNamesLongV1Marker, MetazoneGenericNamesShortV1Marker,
@@ -264,6 +264,11 @@ fn assert_fixture_element<A>(
     icu_datetime::provider::Baked: DataProvider<<A::Calendar as CldrCalendar>::DateSymbolsV1Marker>,
     icu_datetime::provider::Baked: DataProvider<<A::Calendar as CldrCalendar>::DateLengthsV1Marker>,
 {
+    assert!(
+        input_value.date.calendar().any_calendar_kind().is_some(),
+        "{} has no AsCalendar",
+        input_value.date.calendar().debug_name()
+    );
     let any_input = input_value.to_any();
     let iso_any_input = input_iso.to_any();
     #[cfg(feature = "experimental")]

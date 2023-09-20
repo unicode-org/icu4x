@@ -35,7 +35,7 @@ use crate::{
     calendar_arithmetic::ArithmeticDate,
     iso::IsoDateInner,
     types::{self, Era},
-    Calendar, CalendarError, Date, DateTime, Iso,
+    AnyCalendarKind, Calendar, CalendarError, Date, DateTime, Iso,
 };
 use calendrical_calculations::helpers::i64_to_saturated_i32;
 use tinystr::tinystr;
@@ -166,6 +166,11 @@ impl Calendar for Roc {
             days_in_prev_year: Iso::days_in_year_direct(prev_year),
             next_year: year_as_roc(next_year as i64),
         }
+    }
+
+    /// The [`AnyCalendarKind`] corresponding to this calendar
+    fn any_calendar_kind(&self) -> Option<AnyCalendarKind> {
+        Some(AnyCalendarKind::Roc)
     }
 }
 
