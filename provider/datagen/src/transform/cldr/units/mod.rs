@@ -34,12 +34,8 @@ impl DataProvider<UnitsConstantsV1Marker> for crate::DatagenProvider {
             BTreeMap::<&str, (Vec<String>, Vec<String>, ConstantType)>::new();
         for (cons_name, cons_value) in constants {
             let value = remove_whitespace(&cons_value.value);
-            let (num, den) = match split_constant_string(&value) {
-                Ok((num, den)) => (num, den),
-                Err(e) => {
-                    return Err(e);
-                }
-            };
+            let (num, den) = split_constant_string(&value)
+                .map_err(|e| e)?;
 
             let constant_type = match cons_value.status.as_deref() {
                 Some("approximate") => ConstantType::Approximate,
@@ -49,10 +45,10 @@ impl DataProvider<UnitsConstantsV1Marker> for crate::DatagenProvider {
             constants_map_in_str_form.insert(cons_name, (num, den, constant_type));
         }
 
-        // This loop will replace all the constants in the value of a constant with their values.
-        let mut cons_with_text;
+        // This loop iterates over the constants, replacing any string values with their corresponding constant values.
+        let mut num_of_const_with_text;
         loop {
-            cons_with_text = 0;
+            num_of_const_with_text = 0;
             let mut constants_with_constants_map_replaceable =
                 BTreeMap::<&str, (Vec<String>, Vec<String>, ConstantType)>::new();
             for (cons_name, (num, den, constant_type)) in constants_map_in_str_form.iter() {
@@ -67,7 +63,7 @@ impl DataProvider<UnitsConstantsV1Marker> for crate::DatagenProvider {
                         continue;
                     }
 
-                    cons_with_text += 1;
+                    num_of_const_with_text += 1;
                     if let Some((rnum, rden, rconstant_type)) =
                         constants_map_in_str_form.get(temp_num[i].as_str())
                     {
@@ -89,7 +85,7 @@ impl DataProvider<UnitsConstantsV1Marker> for crate::DatagenProvider {
                         continue;
                     }
 
-                    cons_with_text += 1;
+                    num_of_const_with_text += 1;
                     if let Some((rnum, rden, rconstant_type)) =
                         constants_map_in_str_form.get(temp_den[i].as_str())
                     {
@@ -111,7 +107,7 @@ impl DataProvider<UnitsConstantsV1Marker> for crate::DatagenProvider {
             constants_map_in_str_form.clear();
             constants_map_in_str_form = constants_with_constants_map_replaceable;
 
-            if cons_with_text == 0 {
+            if num_of_const_with_text == 0 {
                 break;
             }
         }
