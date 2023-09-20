@@ -97,9 +97,38 @@ fn test_convert_scientific_notation_to_fraction() {
 
 /// Determines if a string contains any alphabetic characters.
 /// Returns true if the string contains at least one alphabetic character, false otherwise.
+/// Examples:
+/// - "1" returns false
+/// - "ft_to_m" returns true
+/// - "1E2" returns true
+/// - "1.5E-2" returns true
 pub fn contains_alphabetic_chars(s: &str) -> bool {
     s.chars().any(char::is_alphabetic)
 }
+
+#[test]
+fn test_contains_alphabetic_chars() {
+    let input = "1";
+    let expected = false;
+    let actual = contains_alphabetic_chars(input);
+    assert_eq!(expected, actual);
+
+    let input = "ft_to_m";
+    let expected = true;
+    let actual = contains_alphabetic_chars(input);
+    assert_eq!(expected, actual);
+
+    let input = "1E2";
+    let expected = true;
+    let actual = contains_alphabetic_chars(input);
+    assert_eq!(expected, actual);
+
+    let input = "1.5E-2";
+    let expected = true;
+    let actual = contains_alphabetic_chars(input);
+    assert_eq!(expected, actual);
+}
+
 
 /// Checks if a string is a valid scientific notation number.
 /// Returns true if the string is a valid scientific notation number, false otherwise.  
@@ -141,30 +170,24 @@ pub fn transform_fraction_to_constant_value(
     Ok((numerator, denominator, sign, constant_type))
 }
 
-/// Converts an array of strings of numerator or denominator to fraction.
+/// Converts vectors of numerator and denominator strings to a fraction.
 pub fn convert_array_of_strings_to_fraction(
-    num: &Vec<String>,
-    den: &Vec<String>,
+    numerator_strings: &[String],
+    denominator_strings: &[String],
 ) -> Result<GenericFraction<BigUint>, DataError> {
-    let mut result = GenericFraction::new(BigUint::from(1u32), BigUint::from(1u32));
+    let mut fraction = GenericFraction::new(BigUint::from(1u32), BigUint::from(1u32));
 
-    for vnum in num.iter() {
-        let num = match convert_scientific_notation_to_fraction(vnum) {
-            Ok(num) => num,
-            Err(e) => return Err(e),
-        };
-        result = result.mul(num);
+    for numerator in numerator_strings {
+        let num_fraction = convert_scientific_notation_to_fraction(numerator)?;
+        fraction = fraction.mul(num_fraction);
     }
 
-    for vden in den.iter() {
-        let den = match convert_scientific_notation_to_fraction(vden) {
-            Ok(den) => den,
-            Err(e) => return Err(e),
-        };
-        result = result.div(den);
+    for denominator in denominator_strings {
+        let den_fraction = convert_scientific_notation_to_fraction(denominator)?;
+        fraction = fraction.div(den_fraction);
     }
 
-    Ok(result)
+    Ok(fraction)
 }
 
 /// Splits a constant string into a tuple of (numerator, denominator).
