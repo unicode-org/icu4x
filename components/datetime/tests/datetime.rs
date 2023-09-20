@@ -266,7 +266,7 @@ fn assert_fixture_element<A>(
 {
     assert!(
         input_value.date.calendar().any_calendar_kind().is_some(),
-        "{} has no AsCalendar",
+        "{} does not specify its AsCalendarKind",
         input_value.date.calendar().debug_name()
     );
     let any_input = input_value.to_any();
