@@ -94,7 +94,6 @@ fn test_convert_scientific_notation_to_fraction() {
     assert!(actual.is_err());
 }
 
-
 /// Determines if a string contains any alphabetic characters.
 /// Returns true if the string contains at least one alphabetic character, false otherwise.
 /// Examples:
@@ -128,7 +127,6 @@ fn test_contains_alphabetic_chars() {
     let actual = contains_alphabetic_chars(input);
     assert_eq!(expected, actual);
 }
-
 
 /// Checks if a string is a valid scientific notation number.
 /// Returns true if the string is a valid scientific notation number, false otherwise.  
@@ -177,7 +175,7 @@ pub fn transform_fraction_to_constant_value(
 /// - ["1", "2"], ["3", "1E-2"] is converted to 1*2/(3*1E-2) --> 200/3
 /// - ["1", "2"], ["3", "1E-2.5"] is an invalid scientific notation number
 /// - ["1E2"], ["2"] is converted to 1E2/2 --> 100/2 --> 50/1
-/// - ["1E2", "2"], ["3", "1E2"] is converted to 1E2*2/(3*1E2) --> 2/3 
+/// - ["1E2", "2"], ["3", "1E2"] is converted to 1E2*2/(3*1E2) --> 2/3
 pub fn convert_array_of_strings_to_fraction(
     numerator_strings: &[String],
     denominator_strings: &[String],
@@ -196,7 +194,6 @@ pub fn convert_array_of_strings_to_fraction(
 
     Ok(fraction)
 }
-
 
 // TODO: move some of these tests to the comment above.
 #[test]
@@ -268,7 +265,10 @@ pub fn split_constant_string(
     let denominator_values = if denominator_string.is_empty() {
         vec!["1".to_string()]
     } else {
-        denominator_string.split('*').map(|s| s.to_string()).collect()
+        denominator_string
+            .split('*')
+            .map(|s| s.to_string())
+            .collect()
     };
 
     numerator.extend(numerator_values);
@@ -302,4 +302,3 @@ fn test_split_constant_string() {
     let actual = split_constant_string(input).unwrap();
     assert_eq!(expected, actual);
 }
-
