@@ -175,7 +175,9 @@ impl Calendar for Roc {
 impl Date<Roc> {
     /// Construct a new Republic of China calendar Date.
     ///
-    /// Years are specified in the "roc" era, Before Minguo dates are negative (year 0 is 1 Before Minguo)
+    /// Years are specified in the "roc" era. This function accepts an extended year in that era, so dates
+    /// before Minguo are negative and year 0 is 1 Before Minguo. To specify dates using explicit era
+    /// codes, use [`Roc::date_from_codes()`].
     ///
     /// ```rust
     /// use icu::calendar::Date;
