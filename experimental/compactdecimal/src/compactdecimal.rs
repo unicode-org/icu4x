@@ -331,6 +331,8 @@ impl CompactDecimalFormatter {
     /// significand is less than 10. Trailing fractional 0s are omitted, and
     /// a sign is shown only for negative values.
     ///
+    /// ✨ *Enabled with the `ryu` Cargo feature.*
+    ///
     /// # Examples
     ///
     /// ```
