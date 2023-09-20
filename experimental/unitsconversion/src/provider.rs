@@ -12,7 +12,7 @@
 use icu_provider::prelude::*;
 use zerovec::{ZeroMap, ZeroVec};
 
-/// This type contains all of the constants data for units conversion.
+/// This type encapsulates all the constant data required for unit conversions.
 ///
 /// <div class="stab unstable">
 /// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
@@ -36,6 +36,9 @@ pub struct UnitsConstantsV1<'data> {
     pub constants_map: ZeroMap<'data, str, ConstantValueULE>,
 }
 
+/// This enum is used to represent the type of a constant value.
+/// It can be either `ConstantType::Actual` or `ConstantType::Approximate`.
+/// If the constant type is `ConstantType::Approximate`, it indicates that the value is not definitively accurate.
 #[zerovec::make_ule(ConstantTypeULE)]
 #[cfg_attr(
     feature = "datagen",
@@ -51,6 +54,7 @@ pub enum ConstantType {
     Approximate = 1,
 }
 
+/// This enum is used to represent the sign of a constant value.
 #[zerovec::make_ule(SignULE)]
 #[cfg_attr(
     feature = "datagen",
@@ -66,6 +70,7 @@ pub enum Sign {
     Negative = 1,
 }
 
+/// This struct represents a constant value, which is composed of a numerator, denominator, sign, and type.
 #[zerovec::make_varule(ConstantValueULE)]
 #[cfg_attr(
     feature = "datagen",
@@ -76,12 +81,17 @@ pub enum Sign {
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[derive(Clone, Debug, PartialOrd, Ord, PartialEq, Eq, Default)]
 pub struct ConstantValue<'data> {
+    /// The numerator of the constant value.
     #[serde(borrow)]
     pub numerator: ZeroVec<'data, u8>,
+
+    /// The denominator of the constant value.
     #[serde(borrow)]
     pub denominator: ZeroVec<'data, u8>,
 
+    /// The sign of the constant value.
     pub sign: Sign,
 
+    /// The type of the constant value.
     pub constant_type: ConstantType,
 }
