@@ -50,8 +50,8 @@ checksum = "a3e2c3daef883ecc1b5d58c15adae93470a91d425f3532ba1695849656af3fc1"
 name = "calendrical_calculations"
 version = "0.1.0"
 dependencies = [
+ "core_maths",
  "displaydoc",
- "libm",
 ]
 
 [[package]]
@@ -119,6 +119,15 @@ name = "cobs"
 version = "0.2.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "67ba02a97a2bd10f4b59b25c7973101c79642302776489e030cd13cdab09ed15"
+
+[[package]]
+name = "core_maths"
+version = "0.1.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "e3b02505ccb8c50b0aa21ace0fc08c3e53adebd4e58caa18a36152803c7709a3"
+dependencies = [
+ "libm",
+]
 
 [[package]]
 name = "criterion"
@@ -444,7 +453,6 @@ dependencies = [
  "lazy_static",
  "litemap",
  "regex",
- "serde",
  "zerofrom",
  "zerovec",
 ]
