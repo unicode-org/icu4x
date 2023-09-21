@@ -279,6 +279,7 @@ lazy_static::lazy_static! {
         "icu::compactdecimal",
         "icu::relativetime",
         "icu::displaynames",
+        "icu::transliterate",
 
         // Stuff that does not need to be exposed over FFI
         // Especially for stuff that are Rust specific like conversion traits
