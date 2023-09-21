@@ -6,9 +6,10 @@
 
 [workspace]
 members = [
+    "crates/baked",
+    "crates/buffer",
     "crates/custom_compiled",
     "crates/default",
-    "crates/buffer",
     "crates/experimental",
     "crates/sync",
     "testing",

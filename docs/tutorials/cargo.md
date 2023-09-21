@@ -66,3 +66,29 @@ icu = { version = "1.2", features = ["sync"] }
 You can now use most ICU4X types when `Send + Sync` are required, such as when sharing across threads.
 
 [« Fully Working Example »](./crates/sync)
+
+## Cargo.toml with `build.rs` data generation
+
+If you wish to use data generation in a `build.rs` script, you need to manually include the data and any dependencies (the `ICU4X_DATA_DIR` variable won't work as ICU4X cannot access your build script output).
+
+```toml
+[dependencies]
+icu = { version = "1.2", default-features = false } # turn off compiled_data
+icu_provider = "1.2" # for databake
+zerovec = "0.9" # for databake
+
+# for build.rs:
+[build-dependencies]
+icu = "1.2"
+icu_datagen = "1.2"
+```
+
+This example has an additional section for auto-generating the data in build.rs. In your build.rs, invoke the ICU4X Datagen API with the set of keys you require. Don't worry; if using databake, you will get a compiler error if you don't specify enough keys.
+
+The build.rs approach has several downsides and should only be used if Cargo is the only build system you can use, and you cannot check in your data:
+* The build script with the whole of `icu_datagen` in it is slow to build
+* If you're using networking features of `icu_datagen` (behind the `networking` Cargo feature), the build script will access the network
+* Using the data requires ICU4X's [`_unstable`](https://docs.rs/icu_provider/latest/icu_provider/constructors/index.html) APIs with a custom data provider, and that `icu_datagen` is the same *minor* version as the `icu` crate.
+* `build.rs` output is not written to the console so it will appear that the build is hanging
+
+[« Fully Working Example »](./crates/baked)
