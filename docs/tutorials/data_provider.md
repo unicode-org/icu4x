@@ -300,16 +300,16 @@ let provider = ResolvedLocaleProvider {
     resolved_locale: Default::default(),
 };
 
-// Request data for ru-RU...
+// Request data for sr-ME...
 HelloWorldFormatter::try_new_unstable(
     &provider,
-    &locale!("ru-RU").into(),
+    &locale!("sr-ME").into(),
 )
 .unwrap();
 
-// ...which loads data from ru.
+// ...which loads data from sr-Latn.
 assert_eq!(
     *provider.resolved_locale.read().expect("poison"),
-    Some(locale!("ru").into()),
+    Some(locale!("sr-Latn").into()),
 );
 ```
