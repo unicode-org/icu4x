@@ -28,7 +28,7 @@ fn generate_json_and_verify_postcard() {
 
     let data_root = Path::new(concat!(core::env!("CARGO_MANIFEST_DIR"), "/tests/data/"));
 
-    let source = DatagenProvider::default()
+    let source = DatagenProvider::new_custom()
         .with_cldr(data_root.join("cldr"))
         .unwrap()
         .with_icuexport(data_root.join("icuexport"))
@@ -59,7 +59,7 @@ fn generate_json_and_verify_postcard() {
     DatagenDriver::new()
         .with_keys(icu_datagen::all_keys())
         .with_locales(LOCALES.iter().cloned())
-        .with_segmenter_models(vec![
+        .with_segmenter_models([
             "thaidict".into(),
             "Thai_codepoints_exclusive_model4_heavy".into(),
         ])

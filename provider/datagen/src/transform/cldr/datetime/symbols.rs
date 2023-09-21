@@ -27,7 +27,7 @@ fn convert_eras(eras: &cldr_serde::ca::Eras, calendar: &str) -> Eras<'static> {
     let map = get_era_code_map(calendar);
     let mut out_eras = Eras::default();
 
-    for (cldr, code) in map.into_iter() {
+    for (cldr, code) in map {
         if let Some(name) = eras.names.get(&cldr) {
             out_eras.names.insert(code.as_str().into(), name);
         }
@@ -88,18 +88,18 @@ fn get_month_code_map(calendar: &str) -> &'static [TinyStr4] {
 
 fn get_era_code_map(calendar: &str) -> BTreeMap<String, TinyStr16> {
     match calendar {
-        "gregory" => vec![
+        "gregory" => [
             ("0".to_string(), tinystr!(16, "bce")),
             ("1".to_string(), tinystr!(16, "ce")),
         ]
         .into_iter()
         .collect(),
-        "buddhist" => vec![("0".to_string(), tinystr!(16, "be"))]
+        "buddhist" => [("0".to_string(), tinystr!(16, "be"))]
             .into_iter()
             .collect(),
-        "chinese" => vec![].into_iter().collect(),
+        "chinese" => [].into_iter().collect(),
         "japanese" | "japanext" => crate::transform::cldr::calendar::japanese::get_era_code_map(),
-        "coptic" => vec![
+        "coptic" => [
             // Before Diocletian
             ("0".to_string(), tinystr!(16, "bd")),
             // Anno Diocletian/After Diocletian
@@ -107,36 +107,36 @@ fn get_era_code_map(calendar: &str) -> BTreeMap<String, TinyStr16> {
         ]
         .into_iter()
         .collect(),
-        "dangi" => vec![].into_iter().collect(),
-        "indian" => vec![("0".to_string(), tinystr!(16, "saka"))]
+        "dangi" => [].into_iter().collect(),
+        "indian" => [("0".to_string(), tinystr!(16, "saka"))]
             .into_iter()
             .collect(),
-        "islamic" => vec![("0".to_string(), tinystr!(16, "islamic"))]
+        "islamic" => [("0".to_string(), tinystr!(16, "islamic"))]
             .into_iter()
             .collect(),
-        "islamicc" => vec![("0".to_string(), tinystr!(16, "islamic"))]
+        "islamicc" => [("0".to_string(), tinystr!(16, "islamic"))]
             .into_iter()
             .collect(),
-        "umalqura" => vec![("0".to_string(), tinystr!(16, "islamic"))]
+        "umalqura" => [("0".to_string(), tinystr!(16, "islamic"))]
             .into_iter()
             .collect(),
-        "tbla" => vec![("0".to_string(), tinystr!(16, "islamic"))]
+        "tbla" => [("0".to_string(), tinystr!(16, "islamic"))]
             .into_iter()
             .collect(),
-        "persian" => vec![("0".to_string(), tinystr!(16, "ah"))]
+        "persian" => [("0".to_string(), tinystr!(16, "ah"))]
             .into_iter()
             .collect(),
-        "hebrew" => vec![("0".to_string(), tinystr!(16, "hebrew"))]
+        "hebrew" => [("0".to_string(), tinystr!(16, "hebrew"))]
             .into_iter()
             .collect(),
-        "ethiopic" => vec![
+        "ethiopic" => [
             ("0".to_string(), tinystr!(16, "incar")),
             ("1".to_string(), tinystr!(16, "pre-incar")),
             ("2".to_string(), tinystr!(16, "mundi")),
         ]
         .into_iter()
         .collect(),
-        "roc" => vec![
+        "roc" => [
             ("0".to_string(), tinystr!(16, "roc-inverse")),
             ("1".to_string(), tinystr!(16, "roc")),
         ]
@@ -173,7 +173,7 @@ macro_rules! symbols_from {
     };
     ([$symbols: path, $name2: ident], $ctx:ty) => {
         impl $symbols {
-            // Helper function which returns None if the two groups of symbols overlap.
+            // Helper function which returns `None` if the two groups of symbols overlap.
             pub fn get_unaliased(&self, other: &Self) -> Option<Self> {
                 if self == other {
                     None
@@ -195,7 +195,7 @@ macro_rules! symbols_from {
         }
 
         impl ca::StandAloneWidths<$symbols> {
-            // Helper function which returns None if the two groups of symbols overlap.
+            // Helper function which returns `None` if the two groups of symbols overlap.
             pub fn get_unaliased(&self, other: &ca::FormatWidths<$symbols>) -> Option<Self> {
                 let abbreviated = self.abbreviated.as_ref().and_then(|v| v.get_unaliased(&other.abbreviated));
                 let narrow = self.narrow.as_ref().and_then(|v| v.get_unaliased(&other.narrow));

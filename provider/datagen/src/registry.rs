@@ -6,11 +6,10 @@ use icu_provider::prelude::*;
 
 macro_rules! registry {
     ($(#[cfg($feature:meta)] $($marker:path = $path:literal,)+)+) => {
-        /// List of all keys that are available. A key will not be available if the corresponding
-        /// Cargo feature has not been enabled.
+        /// List of all keys that are available.
         ///
-        /// Note that pre-1.3, `all_keys` and `all_keys_with_experimental` behaved differently,
-        /// they now behave the same and depend on which features are enabled.
+        /// Note that since v1.3, `all_keys` also contains experimental keys for which the
+        /// corresponding Cargo features has been enabled.
         // Excludes the hello world key, as that generally should not be generated.
         pub fn all_keys() -> Vec<DataKey> {
             #[cfg(not(all($($feature,)+)))]
@@ -26,7 +25,13 @@ macro_rules! registry {
         }
 
         /// Same as `all_keys`.
+        ///
+        /// Note that since v1.3, `all_keys` also contains experimental keys for which the
+        /// corresponding Cargo features has been enabled.
+        ///
+        /// ✨ *Enabled with the `legacy_api` Cargo feature.*
         #[deprecated(since = "1.3.0", note = "use `all_keys` with the required cargo features")]
+        #[cfg(feature = "legacy_api")]
         pub fn all_keys_with_experimental() -> Vec<DataKey> {
             all_keys()
         }
@@ -95,7 +100,7 @@ macro_rules! registry {
             ]
         );
 
-        #[cfg(feature = "provider_baked")]
+        #[cfg(feature = "baked_exporter")]
         pub(crate) fn key_to_marker_bake(key: DataKey, env: &databake::CrateEnv) -> databake::TokenStream {
             use databake::Bake;
             // This is a bit naughty, we need the marker's type, but we're actually
@@ -421,8 +426,10 @@ registry!(
     icu_segmenter::provider::WordBreakDataV1Marker = "segmenter/word@1",
     #[cfg(any(all(), feature = "icu_timezone"))]
     icu_timezone::provider::MetazonePeriodV1Marker = "time_zone/metazone_period@1",
-    #[cfg(feature = "icu_transliteration")]
-    icu_transliteration::provider::TransliteratorRulesV1Marker = "transliterator/rules@1",
+    icu_timezone::provider::names::Bcp47ToIanaMapV1Marker = "time_zone/bcp47_to_iana@1",
+    icu_timezone::provider::names::IanaToBcp47MapV1Marker = "time_zone/iana_to_bcp47@1",
+    #[cfg(feature = "icu_transliterate")]
+    icu_transliterate::provider::TransliteratorRulesV1Marker = "transliterator/rules@1",
 );
 
 #[test]

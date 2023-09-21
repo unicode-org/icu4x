@@ -21,4 +21,4 @@ log = "0.4"
 quote = "1"
 simple_logger = { version = "4.1.0", default-features = false }
 ureq = "2"
-zip = ">=0.5, <0.7"
+zip = { version = ">=0.5, <0.7", default-features = false, features = ["deflate"] }

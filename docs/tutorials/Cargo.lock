@@ -53,6 +53,14 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "14c189c53d098945499cdfa7ecc63567cf3886b3332b312a5b4585d8d3a6a610"
 
 [[package]]
+name = "calendrical_calculations"
+version = "0.1.0"
+dependencies = [
+ "core_maths",
+ "displaydoc",
+]
+
+[[package]]
 name = "cc"
 version = "1.0.79"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -87,6 +95,15 @@ name = "core-foundation-sys"
 version = "0.8.4"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "e496a50fda8aacccc86d7529e2c1e0892dbd0f898a6b5645b5561b89c3210efa"
+
+[[package]]
+name = "core_maths"
+version = "0.1.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "e3b02505ccb8c50b0aa21ace0fc08c3e53adebd4e58caa18a36152803c7709a3"
+dependencies = [
+ "libm",
+]
 
 [[package]]
 name = "crc32fast"
@@ -257,13 +274,13 @@ dependencies = [
 name = "icu_calendar"
 version = "1.2.0"
 dependencies = [
+ "calendrical_calculations",
  "databake",
  "displaydoc",
  "icu_calendar_data",
  "icu_locid",
  "icu_locid_transform",
  "icu_provider",
- "libm",
  "serde",
  "tinystr",
  "writeable",
@@ -272,7 +289,7 @@ dependencies = [
 
 [[package]]
 name = "icu_calendar_data"
-version = "1.3.0"
+version = "1.2.0"
 
 [[package]]
 name = "icu_casemap"
@@ -287,13 +304,12 @@ dependencies = [
  "icu_provider",
  "serde",
  "writeable",
- "yoke",
  "zerovec",
 ]
 
 [[package]]
 name = "icu_casemap_data"
-version = "1.3.0"
+version = "1.2.0"
 
 [[package]]
 name = "icu_codepointtrie_builder"
@@ -325,7 +341,7 @@ dependencies = [
 
 [[package]]
 name = "icu_collator_data"
-version = "1.3.0"
+version = "1.2.0"
 
 [[package]]
 name = "icu_collections"
@@ -356,7 +372,7 @@ dependencies = [
 
 [[package]]
 name = "icu_compactdecimal_data"
-version = "1.3.0"
+version = "1.2.0"
 
 [[package]]
 name = "icu_datagen"
@@ -391,7 +407,9 @@ dependencies = [
  "serde_json",
  "tinystr",
  "toml",
+ "twox-hash",
  "writeable",
+ "zerotrie",
  "zerovec",
  "zip",
 ]
@@ -422,7 +440,7 @@ dependencies = [
 
 [[package]]
 name = "icu_datetime_data"
-version = "1.3.0"
+version = "1.2.0"
 
 [[package]]
 name = "icu_decimal"
@@ -441,13 +459,12 @@ dependencies = [
 
 [[package]]
 name = "icu_decimal_data"
-version = "1.3.0"
+version = "1.2.0"
 
 [[package]]
 name = "icu_displaynames"
 version = "0.10.0"
 dependencies = [
- "icu_collections",
  "icu_displaynames_data",
  "icu_locid",
  "icu_locid_transform",
@@ -459,7 +476,7 @@ dependencies = [
 
 [[package]]
 name = "icu_displaynames_data"
-version = "1.3.0"
+version = "1.2.0"
 
 [[package]]
 name = "icu_list"
@@ -478,7 +495,7 @@ dependencies = [
 
 [[package]]
 name = "icu_list_data"
-version = "1.3.0"
+version = "1.2.0"
 
 [[package]]
 name = "icu_locid"
@@ -509,7 +526,7 @@ dependencies = [
 
 [[package]]
 name = "icu_locid_transform_data"
-version = "1.3.0"
+version = "1.2.0"
 
 [[package]]
 name = "icu_normalizer"
@@ -531,7 +548,7 @@ dependencies = [
 
 [[package]]
 name = "icu_normalizer_data"
-version = "1.3.0"
+version = "1.2.0"
 
 [[package]]
 name = "icu_plurals"
@@ -550,7 +567,7 @@ dependencies = [
 
 [[package]]
 name = "icu_plurals_data"
-version = "1.3.0"
+version = "1.2.0"
 
 [[package]]
 name = "icu_properties"
@@ -569,7 +586,7 @@ dependencies = [
 
 [[package]]
 name = "icu_properties_data"
-version = "1.3.0"
+version = "1.2.0"
 
 [[package]]
 name = "icu_provider"
@@ -599,8 +616,8 @@ dependencies = [
  "icu_locid",
  "icu_locid_transform",
  "icu_provider",
+ "serde",
  "tinystr",
- "yoke",
  "zerovec",
 ]
 
@@ -612,7 +629,6 @@ dependencies = [
  "postcard",
  "serde",
  "writeable",
- "yoke",
  "zerovec",
 ]
 
@@ -653,19 +669,19 @@ dependencies = [
 
 [[package]]
 name = "icu_relativetime_data"
-version = "1.3.0"
+version = "1.2.0"
 
 [[package]]
 name = "icu_segmenter"
 version = "1.2.1"
 dependencies = [
+ "core_maths",
  "databake",
  "displaydoc",
  "icu_collections",
  "icu_locid",
  "icu_provider",
  "icu_segmenter_data",
- "libm",
  "serde",
  "utf8_iter",
  "zerovec",
@@ -673,7 +689,7 @@ dependencies = [
 
 [[package]]
 name = "icu_segmenter_data"
-version = "1.3.0"
+version = "1.2.0"
 
 [[package]]
 name = "icu_timezone"
@@ -687,12 +703,13 @@ dependencies = [
  "icu_timezone_data",
  "serde",
  "tinystr",
+ "zerotrie",
  "zerovec",
 ]
 
 [[package]]
 name = "icu_timezone_data"
-version = "1.3.0"
+version = "1.2.0"
 
 [[package]]
 name = "itertools"
@@ -948,6 +965,12 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "a8f112729512f8e442d81f95a8a7ddf2b7c6b8a1a6f509a95864142b30cab2d3"
 
 [[package]]
+name = "static_assertions"
+version = "1.1.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "a2eb9349b6444b326872e140eb1cf5e7c522154d69e7a0ffb0fb81c06b37543f"
+
+[[package]]
 name = "syn"
 version = "2.0.26"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1044,8 +1067,16 @@ dependencies = [
  "serde-aux",
  "tinystr",
  "writeable",
- "yoke",
- "zerofrom",
+]
+
+[[package]]
+name = "twox-hash"
+version = "1.6.3"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "97fee6b57c6a41524a810daee9286c02d7752c4253064d0b05472833a438f675"
+dependencies = [
+ "cfg-if",
+ "static_assertions",
 ]
 
 [[package]]
@@ -1274,6 +1305,19 @@ dependencies = [
 ]
 
 [[package]]
+name = "zerotrie"
+version = "0.0.0"
+dependencies = [
+ "databake",
+ "displaydoc",
+ "litemap",
+ "serde",
+ "yoke",
+ "zerofrom",
+ "zerovec",
+]
+
+[[package]]
 name = "zerovec"
 version = "0.9.4"
 dependencies = [
@@ -1291,7 +1335,6 @@ dependencies = [
  "proc-macro2",
  "quote",
  "syn",
- "synstructure",
 ]
 
 [[package]]
@@ -1311,8 +1354,16 @@ name = "bies"
 version = "0.2.1"
 
 [[patch.unused]]
+name = "crlify"
+version = "1.0.2"
+
+[[patch.unused]]
 name = "icu4x_ecma402"
 version = "0.8.0"
+
+[[patch.unused]]
+name = "icu_benchmark_macros"
+version = "0.0.0"
 
 [[patch.unused]]
 name = "icu_capi"
@@ -1339,7 +1390,27 @@ name = "icu_pattern"
 version = "0.1.4"
 
 [[patch.unused]]
-name = "icu_unicodeset_parser"
+name = "icu_personnames"
+version = "0.0.0"
+
+[[patch.unused]]
+name = "icu_singlenumberformatter"
+version = "0.0.0"
+
+[[patch.unused]]
+name = "icu_singlenumberformatter_data"
+version = "1.2.0"
+
+[[patch.unused]]
+name = "icu_transliterate"
+version = "0.0.0"
+
+[[patch.unused]]
+name = "icu_unicodeset_parse"
+version = "0.0.0"
+
+[[patch.unused]]
+name = "icu_unitsconversion"
 version = "0.0.0"
 
 [[patch.unused]]

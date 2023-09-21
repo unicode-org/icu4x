@@ -95,7 +95,7 @@ impl Default for Bag {
 }
 
 impl Bag {
-    /// Constructs a Bag with all fields set to None
+    /// Constructs a `Bag` with all fields set to `None`.
     ///
     /// Note that the [`Default`] implementation returns medium date and time options
     pub fn empty() -> Self {
@@ -113,7 +113,7 @@ impl Bag {
         }
     }
 
-    /// Constructs a Bag given a date field (time set to None)
+    /// Constructs a `Bag` given a `date` field (`time` set to `None`)
     pub fn from_date_style(date: Date) -> Self {
         Self {
             date: Some(date),
@@ -121,7 +121,7 @@ impl Bag {
         }
     }
 
-    /// Constructs a Bag given a time field (date set to None)
+    /// Constructs a `Bag` given a `time` field (`date` set to `None`)
     pub fn from_time_style(time: Time) -> Self {
         Self {
             date: None,

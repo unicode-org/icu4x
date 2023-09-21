@@ -126,7 +126,7 @@ pub mod ffi {
                 .map(GmtOffset::has_seconds)
         }
 
-        /// Sets the `time_zone_id` field from a string.
+        /// Sets the `time_zone_id` field from a BCP-47 string.
         ///
         /// Errors if the string is not a valid BCP-47 time zone ID.
         #[diplomat::rust_link(icu::timezone::CustomTimeZone::time_zone_id, StructField)]
@@ -135,6 +135,25 @@ pub mod ffi {
         pub fn try_set_time_zone_id(&mut self, id: &str) -> Result<(), ICU4XError> {
             self.0.time_zone_id = Some(id.parse()?);
             Ok(())
+        }
+
+        /// Sets the `time_zone_id` field from an IANA string by looking up
+        /// the corresponding BCP-47 string.
+        ///
+        /// Errors if the string is not a valid BCP-47 time zone ID.
+        #[diplomat::rust_link(icu::timezone::IanaToBcp47MapperBorrowed::get, FnInStruct)]
+        pub fn try_set_iana_time_zone_id(
+            &mut self,
+            mapper: &crate::iana_bcp47_mapper::ffi::ICU4XIanaToBcp47Mapper,
+            id: &str,
+        ) -> Result<(), ICU4XError> {
+            match mapper.0.as_borrowed().get(id) {
+                Some(id) => {
+                    self.0.time_zone_id = Some(id);
+                    Ok(())
+                }
+                None => Err(ICU4XError::TimeZoneInvalidIdError),
+            }
         }
 
         /// Clears the `time_zone_id` field.

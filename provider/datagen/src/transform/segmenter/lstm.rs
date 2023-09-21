@@ -249,7 +249,7 @@ mod tests {
 
     #[test]
     fn thai_word_break_with_grapheme_model() {
-        let provider = crate::DatagenProvider::latest_tested_offline_subset();
+        let provider = crate::DatagenProvider::new_testing();
         let raw_data = provider
             .segmenter_lstm()
             .unwrap()
@@ -259,7 +259,7 @@ mod tests {
             AnyPayloadProvider::from_owned::<LstmForWordLineAutoV1Marker>(
                 raw_data.try_convert().unwrap(),
             ),
-            provider,
+            provider.as_any_provider(),
         );
 
         let segmenter = LineSegmenter::try_new_lstm_with_any_provider(&provider).unwrap();

@@ -24,6 +24,7 @@ use crate::{
 };
 
 use icu_calendar::provider::WeekDataV1Marker;
+use icu_calendar::week::WeekCalculator;
 use icu_decimal::{
     options::{FixedDecimalFormatterOptions, GroupingStrategy},
     provider::DecimalSymbolsV1Marker,
@@ -159,7 +160,7 @@ pub(crate) struct DateFormatter {
     pub generic_pattern: DataPayload<GenericPatternV1Marker>,
     pub patterns: DataPayload<PatternPluralsFromPatternsV1Marker>,
     pub symbols: Option<DataPayload<ErasedDateSymbolsV1Marker>>,
-    pub week_data: Option<DataPayload<WeekDataV1Marker>>,
+    pub week_data: Option<WeekCalculator>,
     pub ordinal_rules: Option<PluralRules>,
     pub fixed_decimal_format: FixedDecimalFormatter,
 }
@@ -181,13 +182,8 @@ impl DateFormatter {
         let required = datetime::analyze_patterns(&patterns.get().0, false)
             .map_err(|field| DateTimeError::UnsupportedField(field.symbol))?;
 
-        let req = DataRequest {
-            locale,
-            metadata: Default::default(),
-        };
-
         let week_data = if required.week_data {
-            Some(icu_calendar::provider::Baked.load(req)?.take_payload()?)
+            Some(icu_calendar::week::WeekCalculator::try_new(locale)?)
         } else {
             None
         };
@@ -243,13 +239,10 @@ impl DateFormatter {
         let required = datetime::analyze_patterns(&patterns.get().0, false)
             .map_err(|field| DateTimeError::UnsupportedField(field.symbol))?;
 
-        let req = DataRequest {
-            locale,
-            metadata: Default::default(),
-        };
-
         let week_data = if required.week_data {
-            Some(provider.load(req)?.take_payload()?)
+            Some(icu_calendar::week::WeekCalculator::try_new_unstable(
+                provider, locale,
+            )?)
         } else {
             None
         };
@@ -288,7 +281,7 @@ impl DateFormatter {
         generic_pattern: DataPayload<GenericPatternV1Marker>,
         patterns: DataPayload<PatternPluralsFromPatternsV1Marker>,
         symbols: Option<DataPayload<ErasedDateSymbolsV1Marker>>,
-        week_data: Option<DataPayload<WeekDataV1Marker>>,
+        week_data: Option<WeekCalculator>,
         ordinal_rules: Option<PluralRules>,
         fixed_decimal_format: FixedDecimalFormatter,
     ) -> Self {
@@ -328,7 +321,7 @@ pub(crate) struct DateTimeFormatter {
     pub patterns: DataPayload<PatternPluralsFromPatternsV1Marker>,
     pub date_symbols: Option<DataPayload<ErasedDateSymbolsV1Marker>>,
     pub time_symbols: Option<DataPayload<TimeSymbolsV1Marker>>,
-    pub week_data: Option<DataPayload<WeekDataV1Marker>>,
+    pub week_data: Option<WeekCalculator>,
     pub ordinal_rules: Option<PluralRules>,
     pub fixed_decimal_format: FixedDecimalFormatter,
 }
@@ -389,7 +382,7 @@ impl DateTimeFormatter {
         };
 
         let week_data = if required.week_data {
-            Some(icu_calendar::provider::Baked.load(req)?.take_payload()?)
+            Some(icu_calendar::week::WeekCalculator::try_new(locale)?)
         } else {
             None
         };
@@ -453,7 +446,9 @@ impl DateTimeFormatter {
         };
 
         let week_data = if required.week_data {
-            Some(provider.load(req)?.take_payload()?)
+            Some(icu_calendar::week::WeekCalculator::try_new_unstable(
+                provider, locale,
+            )?)
         } else {
             None
         };
@@ -498,7 +493,7 @@ impl DateTimeFormatter {
         patterns: DataPayload<PatternPluralsFromPatternsV1Marker>,
         date_symbols: Option<DataPayload<ErasedDateSymbolsV1Marker>>,
         time_symbols: Option<DataPayload<TimeSymbolsV1Marker>>,
-        week_data: Option<DataPayload<WeekDataV1Marker>>,
+        week_data: Option<WeekCalculator>,
         ordinal_rules: Option<PluralRules>,
         fixed_decimal_format: FixedDecimalFormatter,
     ) -> Self {
@@ -525,7 +520,7 @@ impl DateTimeFormatter {
             date_symbols: self.date_symbols.as_ref().map(|s| s.get()),
             time_symbols: self.time_symbols.as_ref().map(|s| s.get()),
             datetime: ExtractedDateTimeInput::extract_from(value),
-            week_data: self.week_data.as_ref().map(|s| s.get()),
+            week_data: self.week_data.as_ref(),
             ordinal_rules: self.ordinal_rules.as_ref(),
             fixed_decimal_format: &self.fixed_decimal_format,
         }

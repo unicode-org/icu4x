@@ -36,9 +36,9 @@ impl CaseType {
 
     // The casetype is stored in the codepoint trie as two bits.
     // After masking them to get a value between 0 and 3, this
-    // function converts to CaseType.
+    // function converts to `CaseType`.
     //
-    // Returns None for uncased
+    // Returns `None` for uncased
     #[inline]
     pub(crate) fn from_masked_bits(b: u16) -> Option<Self> {
         debug_assert!(b & Self::CASE_MASK == b);

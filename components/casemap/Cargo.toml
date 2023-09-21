@@ -25,7 +25,6 @@ icu_collections = { workspace = true }
 icu_locid = { workspace = true }
 icu_properties = { workspace = true }
 icu_provider = { workspace = true, features = ["macros"] }
-yoke = { workspace = true, features = ["derive"] }
 zerovec = { workspace = true, features = ["yoke"] }
 writeable = { workspace = true }
 
@@ -36,13 +35,12 @@ icu_casemap_data = { workspace = true, optional = true }
 
 [dev-dependencies]
 icu = { workspace = true }
-icu_normalizer = { workspace = true }
+icu_normalizer = { workspace = true , features = ["compiled_data"]}
 icu_benchmark_macros = { workspace = true  }
 icu_collections = { workspace = true , features = ["databake"] }
 
 [target.'cfg(not(target_arch = "wasm32"))'.dev-dependencies]
 criterion = "0.4"
-icu_codepointtrie_builder = { workspace = true }
 
 [features]
 default = ["compiled_data"]

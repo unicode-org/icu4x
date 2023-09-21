@@ -61,6 +61,8 @@ use litemap::LiteMap;
 /// # Ok::<_, zerotrie::ZeroTrieError>(())
 /// ```
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
+// Note: The absence of the following derive does not cause any test failures in this crate
+#[cfg_attr(feature = "yoke", derive(yoke::Yokeable))]
 pub struct ZeroTrie<Store>(pub(crate) ZeroTrieFlavor<Store>);
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
@@ -96,8 +98,11 @@ pub(crate) enum ZeroTrieFlavor<Store> {
 /// ```
 #[repr(transparent)]
 #[derive(Debug, Default, Clone, Copy, PartialEq, Eq)]
+#[cfg_attr(feature = "databake", derive(databake::Bake), databake(path = zerotrie))]
+#[allow(clippy::exhaustive_structs)] // databake hidden fields
 pub struct ZeroTrieSimpleAscii<Store: ?Sized> {
-    pub(crate) store: Store,
+    #[doc(hidden)] // for databake, but there are no invariants
+    pub store: Store,
 }
 
 /// A data structure that compactly maps from byte strings to integers.
@@ -126,8 +131,11 @@ pub struct ZeroTrieSimpleAscii<Store: ?Sized> {
 /// ```
 #[repr(transparent)]
 #[derive(Debug, Default, Clone, Copy, PartialEq, Eq)]
+#[cfg_attr(feature = "databake", derive(databake::Bake), databake(path = zerotrie))]
+#[allow(clippy::exhaustive_structs)] // databake hidden fields
 pub struct ZeroTriePerfectHash<Store: ?Sized> {
-    pub(crate) store: Store,
+    #[doc(hidden)] // for databake, but there are no invariants
+    pub store: Store,
 }
 
 /// A data structure that maps from a large number of byte strings to integers.
@@ -135,8 +143,11 @@ pub struct ZeroTriePerfectHash<Store: ?Sized> {
 /// For more information, see [`ZeroTrie`].
 #[repr(transparent)]
 #[derive(Debug, Default, Clone, Copy, PartialEq, Eq)]
+#[cfg_attr(feature = "databake", derive(databake::Bake), databake(path = zerotrie))]
+#[allow(clippy::exhaustive_structs)] // databake hidden fields
 pub struct ZeroTrieExtendedCapacity<Store: ?Sized> {
-    pub(crate) store: Store,
+    #[doc(hidden)] // for databake, but there are no invariants
+    pub store: Store,
 }
 
 macro_rules! impl_zerotrie_subtype {
@@ -159,16 +170,23 @@ macro_rules! impl_zerotrie_subtype {
             pub fn take_store(self) -> Store {
                 self.store
             }
-            /// Maps the store into another type.
-            #[inline]
-            #[cfg(feature = "serde")]
-            pub(crate) fn map_store<X>(self, f: impl FnOnce(Store) -> X) -> $name<X> {
-                $name::<X>::from_store(f(self.store))
-            }
-            #[inline]
-            #[cfg(feature = "serde")]
-            pub(crate) fn map_store_into_zerotrie<X>(self, f: impl FnOnce(Store) -> X) -> ZeroTrie<X> {
-                $name::<X>::from_store(f(self.store)).into_zerotrie()
+            /// Converts this trie's store to a different store implementing the `From` trait.
+            ///
+            #[doc = concat!("For example, use this to change `", stringify!($name), "<Vec<u8>>` to `", stringify!($name), "<Cow<[u8]>>`.")]
+            ///
+            /// # Examples
+            ///
+            /// ```
+            /// use std::borrow::Cow;
+            #[doc = concat!("use zerotrie::", stringify!($name), ";")]
+            ///
+            #[doc = concat!("let trie: ", stringify!($name), "<Vec<u8>> = ", stringify!($name), "::from_bytes(b\"abc\\x85\").to_owned();")]
+            #[doc = concat!("let cow: ", stringify!($name), "<Cow<[u8]>> = trie.convert_store();")]
+            ///
+            /// assert_eq!(cow.get(b"abc"), Some(5));
+            /// ```
+            pub fn convert_store<X: From<Store>>(self) -> $name<X> {
+                $name::<X>::from_store(X::from(self.store))
             }
         }
         impl<Store> $name<Store>
@@ -221,12 +239,11 @@ macro_rules! impl_zerotrie_subtype {
         {
             /// Converts a possibly-borrowed $name to an owned one.
             ///
-            /// ***Enable this impl with the `"alloc"` feature.***
+            /// ✨ *Enabled with the `alloc` Cargo feature.*
             ///
             /// # Examples
             ///
             /// ```
-            /// use std::borrow::Cow;
             #[doc = concat!("use zerotrie::", stringify!($name), ";")]
             ///
             #[doc = concat!("let trie: &", stringify!($name), "<[u8]> = ", stringify!($name), "::from_bytes(b\"abc\\x85\");")]
@@ -241,6 +258,23 @@ macro_rules! impl_zerotrie_subtype {
                     Vec::from(self.store.as_ref()),
                 )
             }
+            /// Returns an iterator over the key/value pairs in this trie.
+            ///
+            /// ✨ *Enabled with the `alloc` Cargo feature.*
+            ///
+            /// # Examples
+            ///
+            /// ```
+            #[doc = concat!("use zerotrie::", stringify!($name), ";")]
+            ///
+            /// // A trie with two values: "abc" and "abcdef"
+            #[doc = concat!("let trie: &", stringify!($name), "<[u8]> = ", stringify!($name), "::from_bytes(b\"abc\\x80def\\x81\");")]
+            ///
+            /// let mut it = trie.iter();
+            /// assert_eq!(it.next(), Some(("abc".into(), 0)));
+            /// assert_eq!(it.next(), Some(("abcdef".into(), 1)));
+            /// assert_eq!(it.next(), None);
+            /// ```
             #[inline]
             pub fn iter(&self) -> impl Iterator<Item = ($iter_ty, usize)> + '_ {
                  $iter_fn(self.as_bytes())
@@ -307,7 +341,7 @@ macro_rules! impl_zerotrie_subtype {
         {
             /// Exports the data from this ZeroTrie type into a BTreeMap.
             ///
-            /// ***Enable this impl with the `"alloc"` feature.***
+            /// ✨ *Enabled with the `alloc` Cargo feature.*
             ///
             /// # Examples
             ///
@@ -365,7 +399,7 @@ macro_rules! impl_zerotrie_subtype {
         {
             /// Exports the data from this ZeroTrie type into a LiteMap.
             ///
-            /// ***Enable this function with the `"litemap"` feature.***
+            /// ✨ *Enabled with the `litemap` Cargo feature.*
             ///
             /// # Examples
             ///
@@ -440,7 +474,7 @@ macro_rules! impl_zerotrie_subtype {
             ///
             #[doc = concat!("Note that it is also possible to use `", stringify!($name), "<ZeroVec<u8>>` for a similar result.")]
             ///
-            /// ***Enable this impl with the `"alloc"` feature.***
+            /// ✨ *Enabled with the `alloc` Cargo feature.*
             ///
             /// # Examples
             ///
@@ -472,6 +506,16 @@ macro_rules! impl_zerotrie_subtype {
             #[inline]
             unsafe fn from_byte_slice_unchecked(bytes: &[u8]) -> &Self {
                 core::mem::transmute(Store::from_byte_slice_unchecked(bytes))
+            }
+        }
+        #[cfg(feature = "zerofrom")]
+        impl<'zf, Store1, Store2> zerofrom::ZeroFrom<'zf, $name<Store1>> for $name<Store2>
+        where
+            Store2: zerofrom::ZeroFrom<'zf, Store1>,
+        {
+            #[inline]
+            fn zero_from(other: &'zf $name<Store1>) -> Self {
+                $name::from_store(zerofrom::ZeroFrom::zero_from(&other.store))
             }
         }
     };
@@ -515,6 +559,13 @@ macro_rules! impl_dispatch {
             ZeroTrieFlavor::ExtendedCapacity(subtype) => subtype.$inner_fn(),
         }
     };
+    ($self:ident, $inner_fn:ident().into_zerotrie()) => {
+        match $self.0 {
+            ZeroTrieFlavor::SimpleAscii(subtype) => subtype.$inner_fn().into_zerotrie(),
+            ZeroTrieFlavor::PerfectHash(subtype) => subtype.$inner_fn().into_zerotrie(),
+            ZeroTrieFlavor::ExtendedCapacity(subtype) => subtype.$inner_fn().into_zerotrie(),
+        }
+    };
     (&$self:ident, $inner_fn:ident()) => {
         match &$self.0 {
             ZeroTrieFlavor::SimpleAscii(subtype) => subtype.$inner_fn(),
@@ -536,6 +587,19 @@ macro_rules! impl_dispatch {
             ZeroTrieFlavor::ExtendedCapacity(subtype) => subtype.$inner_fn($arg),
         }
     };
+    (&$self:ident, $trait:ident::$inner_fn:ident()) => {
+        match &$self.0 {
+            ZeroTrieFlavor::SimpleAscii(subtype) => {
+                ZeroTrie(ZeroTrieFlavor::SimpleAscii($trait::$inner_fn(subtype)))
+            }
+            ZeroTrieFlavor::PerfectHash(subtype) => {
+                ZeroTrie(ZeroTrieFlavor::PerfectHash($trait::$inner_fn(subtype)))
+            }
+            ZeroTrieFlavor::ExtendedCapacity(subtype) => {
+                ZeroTrie(ZeroTrieFlavor::ExtendedCapacity($trait::$inner_fn(subtype)))
+            }
+        }
+    };
 }
 
 impl<Store> ZeroTrie<Store> {
@@ -543,13 +607,14 @@ impl<Store> ZeroTrie<Store> {
     pub fn take_store(self) -> Store {
         impl_dispatch!(self, take_store())
     }
-    /// Maps the store into another type.
-    #[cfg(feature = "serde")]
-    pub(crate) fn map_store<NewStore>(
-        self,
-        f: impl FnOnce(Store) -> NewStore,
-    ) -> ZeroTrie<NewStore> {
-        impl_dispatch!(self, map_store_into_zerotrie(f))
+    /// Converts this trie's store to a different store implementing the `From` trait.
+    ///
+    /// For example, use this to change `ZeroTrie<Vec<u8>>` to `ZeroTrie<Cow<[u8]>>`.
+    pub fn convert_store<NewStore>(self) -> ZeroTrie<NewStore>
+    where
+        NewStore: From<Store>,
+    {
+        impl_dispatch!(self, convert_store().into_zerotrie())
     }
 }
 
@@ -623,5 +688,28 @@ where
         let byte_str_slice = ByteStr::from_byte_slice_with_value(&items);
         #[allow(clippy::unwrap_used)] // FromIterator is panicky
         Self::try_from_tuple_slice(byte_str_slice).unwrap()
+    }
+}
+
+#[cfg(feature = "databake")]
+impl<Store> databake::Bake for ZeroTrie<Store>
+where
+    Store: databake::Bake,
+{
+    fn bake(&self, env: &databake::CrateEnv) -> databake::TokenStream {
+        use databake::*;
+        let inner = impl_dispatch!(&self, bake(env));
+        quote! { #inner.into_zerotrie() }
+    }
+}
+
+#[cfg(feature = "zerofrom")]
+impl<'zf, Store1, Store2> zerofrom::ZeroFrom<'zf, ZeroTrie<Store1>> for ZeroTrie<Store2>
+where
+    Store2: zerofrom::ZeroFrom<'zf, Store1>,
+{
+    fn zero_from(other: &'zf ZeroTrie<Store1>) -> Self {
+        use zerofrom::ZeroFrom;
+        impl_dispatch!(&other, ZeroFrom::zero_from())
     }
 }

@@ -71,12 +71,10 @@ impl CollationTable {
 #[command(name = "icu4x-datagen")]
 #[command(author = "The ICU4X Project Developers", version = option_env!("CARGO_PKG_VERSION"))]
 #[command(about = format!("Learn more at: https://docs.rs/icu_datagen/{}", option_env!("CARGO_PKG_VERSION").unwrap_or("")), long_about = None)]
-#[command(group(
-            ArgGroup::new("key_mode")
-                .required(true)
-                .args(["keys", "key_file", "keys_for_bin", "all_keys", "config"]),
-        ))]
 pub struct Cli {
+    #[arg(long = "config-unstable", hide = true)]
+    config: Option<PathBuf>,
+
     #[arg(short, long)]
     #[arg(help = "Requests verbose output")]
     pub verbose: bool,
@@ -187,8 +185,10 @@ pub struct Cli {
     #[arg(long, value_name = "KEY_FILE")]
     #[arg(
         help = "Path to text file with resource keys to include, one per line. Empty lines \
-                  and lines starting with '#' are ignored."
+                  and lines starting with '#' are ignored.\n
+                  Requires the `legacy_api` Cargo feature."
     )]
+    #[cfg(feature = "legacy_api")]
     key_file: Option<PathBuf>,
 
     #[arg(long, value_name = "BINARY")]
@@ -231,10 +231,6 @@ pub struct Cli {
         help = "--format=mod only: use types from individual `icu_*` crates instead of the `icu` meta-crate."
     )]
     use_separate_crates: bool,
-
-    #[arg(long)]
-    #[arg(help = "Load a TOML config")]
-    config: Option<PathBuf>,
 
     // TODO(#2856): Change the default to Auto in 2.0
     #[arg(short, long, value_enum, default_value_t = Fallback::Hybrid)]
@@ -312,7 +308,7 @@ impl Cli {
                     CollationHanDatabase::Unihan => config::CollationHanDatabase::Unihan,
                     CollationHanDatabase::Implicit => config::CollationHanDatabase::Implicit,
                 },
-                collations: self
+                additional_collations: self
                     .include_collations
                     .iter()
                     .map(|c| c.to_datagen_value().to_owned())
@@ -350,19 +346,21 @@ impl Cli {
                         .collect::<Result<_, _>>()?,
                 ),
             }
-        } else if let Some(key_file_path) = &self.key_file {
-            log::warn!("The --key-file argument is deprecated. Use --options with a JSON file.");
-            #[allow(deprecated)]
-            config::KeyInclude::Explicit(
-                icu_datagen::keys_from_file(key_file_path)
-                    .with_context(|| key_file_path.to_string_lossy().into_owned())?
-                    .into_iter()
-                    .collect(),
-            )
         } else if let Some(bin_path) = &self.keys_for_bin {
             config::KeyInclude::ForBinary(bin_path.clone())
         } else {
-            unreachable!("Argument group");
+            #[cfg(feature = "legacy_api")]
+            if let Some(key_file_path) = &self.key_file {
+                log::warn!("The --key-file argument is deprecated. Use a config.json.");
+                #[allow(deprecated)]
+                return Ok(config::KeyInclude::Explicit(
+                    icu_datagen::keys_from_file(key_file_path)
+                        .with_context(|| key_file_path.to_string_lossy().into_owned())?
+                        .into_iter()
+                        .collect(),
+                ));
+            }
+            eyre::bail!("Without a config, --keys or --keys-from-bin are required.")
         })
     }
 
@@ -434,9 +432,6 @@ impl Cli {
                 if v == Format::DeprecatedDefault {
                     log::warn!("Defaulting to --format=dir. This will become a required parameter in the future.");
                 }
-                #[cfg(not(feature = "provider_fs"))]
-                eyre::bail!("FsDataProvider export requires the provider_fs Cargo feature.");
-                #[cfg(feature = "provider_fs")]
                 Ok(config::Export::FileSystem {
                     path: if let Some(root) = self.output.as_ref() {
                         root.clone()
@@ -452,33 +447,23 @@ impl Cli {
                     fingerprint: self.fingerprint,
                 })
             }
-            Format::Blob => {
-                #[cfg(not(feature = "provider_blob"))]
-                eyre::bail!("BlobDataProvider export requires the provider_blob Cargo feature.");
-                #[cfg(feature = "provider_blob")]
-                Ok(config::Export::Blob {
-                    path: if let Some(path) = &self.output {
-                        path.clone()
-                    } else {
-                        PathBuf::from("/stdout")
-                    },
-                })
-            }
-            Format::Mod => {
-                #[cfg(not(feature = "provider_baked"))]
-                eyre::bail!("Baked data export requires the provider_baked Cargo feature.");
-                #[cfg(feature = "provider_baked")]
-                Ok(config::Export::Baked {
-                    path: if let Some(mod_directory) = self.output.as_ref() {
-                        mod_directory.clone()
-                    } else {
-                        PathBuf::from("icu4x_data")
-                    },
-                    pretty: self.pretty,
-                    insert_feature_gates: self.insert_feature_gates,
-                    use_separate_crates: self.use_separate_crates,
-                })
-            }
+            Format::Blob => Ok(config::Export::Blob {
+                path: if let Some(path) = &self.output {
+                    path.clone()
+                } else {
+                    PathBuf::from("/stdout")
+                },
+            }),
+            Format::Mod => Ok(config::Export::Baked {
+                path: if let Some(mod_directory) = self.output.as_ref() {
+                    mod_directory.clone()
+                } else {
+                    PathBuf::from("icu4x_data")
+                },
+                pretty: self.pretty,
+                insert_feature_gates: self.insert_feature_gates,
+                use_separate_crates: self.use_separate_crates,
+            }),
         }
     }
 }

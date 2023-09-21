@@ -716,7 +716,7 @@ mod test {
         assert_eq!(zm2d.get0(&0), None);
 
         let result = zm2d.try_append(&3, "ccc", "CCC");
-        assert!(matches!(result, None));
+        assert!(result.is_none());
 
         assert_eq!(format!("{zm2d:?}"), "ZeroMap2d { keys0: ZeroVec([3]), joiner: ZeroVec([1]), keys1: [\"ccc\"], values: [\"CCC\"] }");
         assert_eq!(zm2d.get0(&0), None);
@@ -725,7 +725,7 @@ mod test {
         assert_eq!(zm2d.get0(&99), None);
 
         let result = zm2d.try_append(&3, "eee", "EEE");
-        assert!(matches!(result, None));
+        assert!(result.is_none());
 
         assert_eq!(format!("{zm2d:?}"), "ZeroMap2d { keys0: ZeroVec([3]), joiner: ZeroVec([2]), keys1: [\"ccc\", \"eee\"], values: [\"CCC\", \"EEE\"] }");
         assert_eq!(zm2d.get0(&0), None);
@@ -737,19 +737,19 @@ mod test {
 
         // Out of order
         let result = zm2d.try_append(&3, "ddd", "DD0");
-        assert!(matches!(result, Some(_)));
+        assert!(result.is_some());
 
         // Append a few more elements
         let result = zm2d.try_append(&5, "ddd", "DD1");
-        assert!(matches!(result, None));
+        assert!(result.is_none());
         let result = zm2d.try_append(&7, "ddd", "DD2");
-        assert!(matches!(result, None));
+        assert!(result.is_none());
         let result = zm2d.try_append(&7, "eee", "EEE");
-        assert!(matches!(result, None));
+        assert!(result.is_none());
         let result = zm2d.try_append(&7, "www", "WWW");
-        assert!(matches!(result, None));
+        assert!(result.is_none());
         let result = zm2d.try_append(&9, "yyy", "YYY");
-        assert!(matches!(result, None));
+        assert!(result.is_none());
 
         assert_eq!(format!("{zm2d:?}"), "ZeroMap2d { keys0: ZeroVec([3, 5, 7, 9]), joiner: ZeroVec([2, 3, 6, 7]), keys1: [\"ccc\", \"eee\", \"ddd\", \"ddd\", \"eee\", \"www\", \"yyy\"], values: [\"CCC\", \"EEE\", \"DD1\", \"DD2\", \"EEE\", \"WWW\", \"YYY\"] }");
         assert_eq!(zm2d.get0(&0), None);

@@ -100,12 +100,12 @@ use icu::datetime::{DateTimeFormatter, options::length};
 
 const LOCALE: Locale = locale!("ja");
 
-struct BakedDataProvider;
+struct UnstableDataProvider;
 include!("../my-data/mod.rs");
-impl_data_provider!(BakedDataProvider);
+impl_data_provider!(UnstableDataProvider);
 
 fn main() {
-    let baked_provider = BakedDataProvider;
+    let baked_provider = UnstableDataProvider;
 
     let options = length::Bag::from_date_time_style(length::Date::Long, length::Time::Medium);
 
@@ -143,12 +143,19 @@ $ icu4x-datagen --keys all --locales ja --format blob --out my_data_blob.postcar
 
 This will generate a `my_data_blob.postcard` file containing the serialized data for all components. The file is several megabytes large; we will optimize it later!
 
+## Locale Fallbacking
+
+Unlike `BakedDataProvider`, `BlobDataProvider` (and `FsDataProvider`) does not perform locale fallbacking. For example, if `en-US` is requested but only `en` data is available, then the data request will fail. To enable fallback, we can wrap the provider in a `LocaleFallbackProvider`.
+
+Note that fallback comes at a cost, as fallbacking code and data has to be included and executed on every request. If you don't need fallback (disclaimer: you probably do), you can use the `BlobDataProvider` directly (for `BakedDataProvider`, see [`FallbackMode::Preresolved`](https://docs.rs/icu_datagen/latest/icu_datagen/enum.FallbackMode.html)).
+
 We can then use the provider in our code:
 
 ```rust,no_run
 use icu::locid::{locale, Locale};
 use icu::calendar::DateTime;
 use icu::datetime::{DateTimeFormatter, options::length};
+use icu_provider_adapters::fallback::LocaleFallbackProvider;
 use icu_provider_blob::BlobDataProvider;
 
 const LOCALE: Locale = locale!("ja");
@@ -158,6 +165,9 @@ fn main() {
     let buffer_provider = 
         BlobDataProvider::try_new_from_blob(blob.into_boxed_slice())
             .expect("blob should be valid");
+
+    let buffer_provider = LocaleFallbackProvider::try_new_with_buffer_provider(buffer_provider)
+        .expect("Provider should contain fallback rules");
 
     let options = length::Bag::from_date_time_style(length::Date::Long, length::Time::Medium);
 
@@ -186,7 +196,7 @@ $ icu4x-datagen --keys-for-bin target/debug/myapp --locales ja --format blob --o
 
 The `--keys-for-bin` argument tells `icu4x-datagen` to analyze the binary and only include keys that are used by its code. This significantly reduces the blob's file size, to 54KB, and our program still works. Quite the improvement!
 
-But there is more to optimize. You might have noticed this in the output of the `icu4x-datagen` invocation, which lists 21 keys, including clearly irrelevant ones like `datetime/ethopic/datesymbols@1`. Remember how we had to convert our `DateTime<Gregorian>` into a `DateTime<AnyCalendar>` in order to use the `DateTimeFormatter`? Turns out, as `DateTimeFormatter` contains logic for many different calendars, datagen includes data for all of these as well.
+But there is more to optimize. You might have noticed this in the output of the `icu4x-datagen` invocation, which lists 24 keys, including clearly irrelevant ones like `datetime/ethopic/datesymbols@1`. Remember how we had to convert our `DateTime<Gregorian>` into a `DateTime<AnyCalendar>` in order to use the `DateTimeFormatter`? Turns out, as `DateTimeFormatter` contains logic for many different calendars, datagen includes data for all of these as well.
 
 We can instead use `TypedDateTimeFormatter<Gregorian>`, which only supports formatting `DateTime<Gregorian>`s:
 
@@ -194,6 +204,7 @@ We can instead use `TypedDateTimeFormatter<Gregorian>`, which only supports form
 use icu::locid::{locale, Locale};
 use icu::calendar::{DateTime, Gregorian};
 use icu::datetime::{TypedDateTimeFormatter, options::length};
+use icu_provider_adapters::fallback::LocaleFallbackProvider;
 use icu_provider_blob::BlobDataProvider;
 
 const LOCALE: Locale = locale!("ja");
@@ -203,6 +214,9 @@ fn main() {
     let buffer_provider = 
         BlobDataProvider::try_new_from_blob(blob.into_boxed_slice())
             .expect("blob should be valid");
+
+    let buffer_provider = LocaleFallbackProvider::try_new_with_buffer_provider(buffer_provider)
+        .expect("Provider should contain fallback rules");
 
     let options = length::Bag::from_date_time_style(length::Date::Long, length::Time::Medium);
 

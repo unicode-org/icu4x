@@ -5,10 +5,16 @@
 
 [package]
 name = "icu_unitsconversion"
-version = "1.2.0"
-edition = "2021"
+version = "0.0.0"
 
-# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+rust-version.workspace = true
+authors.workspace = true
+edition.workspace = true
+repository.workspace = true
+homepage.workspace = true
+license-file.workspace = true
+categories.workspace = true
+include.workspace = true
 
 [package.metadata.docs.rs]
 all-features = true
@@ -16,7 +22,6 @@ all-features = true
 [dependencies]
 databake = { workspace = true, optional = true, features = ["derive"]}
 displaydoc = { version = "0.2.3", default-features = false }
-fixed_decimal = { workspace = true }
 icu_locid = { workspace = true }
 icu_provider = { workspace = true, features = ["macros"] }
 serde = { version = "1.0", default-features = false, features = ["derive", "alloc"], optional = true }

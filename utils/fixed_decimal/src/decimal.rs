@@ -1950,7 +1950,7 @@ impl TryFrom<&[u8]> for FixedDecimal {
 #[non_exhaustive]
 #[cfg(feature = "ryu")]
 #[derive(Debug, Clone, Copy)]
-pub enum DoublePrecision {
+pub enum FloatPrecision {
     /// Specify that the floating point number is integer-valued.
     ///
     /// If the floating point is not actually integer-valued, an error will be returned.
@@ -1979,7 +1979,7 @@ impl FixedDecimal {
     ///
     /// Since f64 values do not carry a notion of their precision, the second argument to this
     /// function specifies the type of precision associated with the f64. For more information,
-    /// see [`DoublePrecision`].
+    /// see [`FloatPrecision`].
     ///
     /// This function uses `ryu`, which is an efficient double-to-string algorithm, but other
     /// implementations may yield higher performance; for more details, see
@@ -1988,21 +1988,21 @@ impl FixedDecimal {
     /// This function can be made available with the `"ryu"` Cargo feature.
     ///
     /// ```rust
-    /// use fixed_decimal::{DoublePrecision, FixedDecimal};
+    /// use fixed_decimal::{FloatPrecision, FixedDecimal};
     /// use writeable::assert_writeable_eq;
     ///
     /// let decimal =
-    ///     FixedDecimal::try_from_f64(-5.1, DoublePrecision::Magnitude(-2))
+    ///     FixedDecimal::try_from_f64(-5.1, FloatPrecision::Magnitude(-2))
     ///         .expect("Finite quantity with limited precision");
     /// assert_writeable_eq!(decimal, "-5.10");
     ///
     /// let decimal =
-    ///     FixedDecimal::try_from_f64(0.012345678, DoublePrecision::Floating)
+    ///     FixedDecimal::try_from_f64(0.012345678, FloatPrecision::Floating)
     ///         .expect("Finite quantity");
     /// assert_writeable_eq!(decimal, "0.012345678");
     ///
     /// let decimal =
-    ///     FixedDecimal::try_from_f64(12345678000., DoublePrecision::Integer)
+    ///     FixedDecimal::try_from_f64(12345678000., FloatPrecision::Integer)
     ///         .expect("Finite, integer-valued quantity");
     /// assert_writeable_eq!(decimal, "12345678000");
     /// ```
@@ -2010,17 +2010,17 @@ impl FixedDecimal {
     /// Negative zero is supported.
     ///
     /// ```rust
-    /// use fixed_decimal::{DoublePrecision, FixedDecimal};
+    /// use fixed_decimal::{FloatPrecision, FixedDecimal};
     /// use writeable::assert_writeable_eq;
     ///
     /// // IEEE 754 for floating point defines the sign bit separate
     /// // from the mantissa and exponent, allowing for -0.
     /// let negative_zero =
-    ///     FixedDecimal::try_from_f64(-0.0, DoublePrecision::Integer)
+    ///     FixedDecimal::try_from_f64(-0.0, FloatPrecision::Integer)
     ///         .expect("Negative zero");
     /// assert_writeable_eq!(negative_zero, "-0");
     /// ```
-    pub fn try_from_f64(float: f64, precision: DoublePrecision) -> Result<Self, Error> {
+    pub fn try_from_f64(float: f64, precision: FloatPrecision) -> Result<Self, Error> {
         let mut decimal = Self::new_from_f64_raw(float)?;
         let n_digits = decimal.digits.len();
         // magnitude of the lowest digit in self.digits
@@ -2031,16 +2031,16 @@ impl FixedDecimal {
             decimal.lower_magnitude = 0;
         }
         match precision {
-            DoublePrecision::Floating => (),
-            DoublePrecision::Integer => {
+            FloatPrecision::Floating => (),
+            FloatPrecision::Integer => {
                 if lowest_magnitude < 0 {
                     return Err(Error::Limit);
                 }
             }
-            DoublePrecision::Magnitude(mag) => {
+            FloatPrecision::Magnitude(mag) => {
                 decimal.half_even(mag);
             }
-            DoublePrecision::SignificantDigits(sig) => {
+            FloatPrecision::SignificantDigits(sig) => {
                 if sig == 0 {
                     return Err(Error::Limit);
                 }
@@ -2078,169 +2078,169 @@ fn test_float() {
     #[derive(Debug)]
     struct TestCase {
         pub input: f64,
-        pub precision: DoublePrecision,
+        pub precision: FloatPrecision,
         pub expected: &'static str,
     }
     let cases = [
         TestCase {
             input: 1.234567,
-            precision: DoublePrecision::Floating,
+            precision: FloatPrecision::Floating,
             expected: "1.234567",
         },
         TestCase {
             input: 888999.,
-            precision: DoublePrecision::Floating,
+            precision: FloatPrecision::Floating,
             expected: "888999",
         },
         // HalfExpand tests
         TestCase {
             input: 1.234567,
-            precision: DoublePrecision::Magnitude(-2),
+            precision: FloatPrecision::Magnitude(-2),
             expected: "1.23",
         },
         TestCase {
             input: 1.235567,
-            precision: DoublePrecision::Magnitude(-2),
+            precision: FloatPrecision::Magnitude(-2),
             expected: "1.24",
         },
         TestCase {
             input: 1.2002,
-            precision: DoublePrecision::Magnitude(-3),
+            precision: FloatPrecision::Magnitude(-3),
             expected: "1.200",
         },
         TestCase {
             input: 888999.,
-            precision: DoublePrecision::Magnitude(2),
+            precision: FloatPrecision::Magnitude(2),
             expected: "889000",
         },
         TestCase {
             input: 888999.,
-            precision: DoublePrecision::Magnitude(4),
+            precision: FloatPrecision::Magnitude(4),
             expected: "890000",
         },
         TestCase {
             input: 0.9,
-            precision: DoublePrecision::Magnitude(0),
+            precision: FloatPrecision::Magnitude(0),
             expected: "1",
         },
         TestCase {
             input: 0.9,
-            precision: DoublePrecision::Magnitude(2),
+            precision: FloatPrecision::Magnitude(2),
             expected: "00",
         },
         TestCase {
             input: 0.009,
-            precision: DoublePrecision::Magnitude(-2),
+            precision: FloatPrecision::Magnitude(-2),
             expected: "0.01",
         },
         TestCase {
             input: 0.009,
-            precision: DoublePrecision::Magnitude(-1),
+            precision: FloatPrecision::Magnitude(-1),
             expected: "0.0",
         },
         TestCase {
             input: 0.009,
-            precision: DoublePrecision::Magnitude(0),
+            precision: FloatPrecision::Magnitude(0),
             expected: "0",
         },
         TestCase {
             input: 0.0000009,
-            precision: DoublePrecision::Magnitude(0),
+            precision: FloatPrecision::Magnitude(0),
             expected: "0",
         },
         TestCase {
             input: 0.0000009,
-            precision: DoublePrecision::Magnitude(-7),
+            precision: FloatPrecision::Magnitude(-7),
             expected: "0.0000009",
         },
         TestCase {
             input: 0.0000009,
-            precision: DoublePrecision::Magnitude(-6),
+            precision: FloatPrecision::Magnitude(-6),
             expected: "0.000001",
         },
         TestCase {
             input: 1.234567,
-            precision: DoublePrecision::SignificantDigits(1),
+            precision: FloatPrecision::SignificantDigits(1),
             expected: "1",
         },
         TestCase {
             input: 1.234567,
-            precision: DoublePrecision::SignificantDigits(2),
+            precision: FloatPrecision::SignificantDigits(2),
             expected: "1.2",
         },
         TestCase {
             input: 1.234567,
-            precision: DoublePrecision::SignificantDigits(4),
+            precision: FloatPrecision::SignificantDigits(4),
             expected: "1.235",
         },
         TestCase {
             input: 1.234567,
-            precision: DoublePrecision::SignificantDigits(10),
+            precision: FloatPrecision::SignificantDigits(10),
             expected: "1.234567000",
         },
         TestCase {
             input: 888999.,
-            precision: DoublePrecision::SignificantDigits(1),
+            precision: FloatPrecision::SignificantDigits(1),
             expected: "900000",
         },
         TestCase {
             input: 888999.,
-            precision: DoublePrecision::SignificantDigits(2),
+            precision: FloatPrecision::SignificantDigits(2),
             expected: "890000",
         },
         TestCase {
             input: 888999.,
-            precision: DoublePrecision::SignificantDigits(4),
+            precision: FloatPrecision::SignificantDigits(4),
             expected: "889000",
         },
         TestCase {
             input: 988999.,
-            precision: DoublePrecision::SignificantDigits(1),
+            precision: FloatPrecision::SignificantDigits(1),
             expected: "1000000",
         },
         TestCase {
             input: 99888.,
-            precision: DoublePrecision::SignificantDigits(1),
+            precision: FloatPrecision::SignificantDigits(1),
             expected: "100000",
         },
         TestCase {
             input: 99888.,
-            precision: DoublePrecision::SignificantDigits(2),
+            precision: FloatPrecision::SignificantDigits(2),
             expected: "100000",
         },
         TestCase {
             input: 99888.,
-            precision: DoublePrecision::SignificantDigits(3),
+            precision: FloatPrecision::SignificantDigits(3),
             expected: "99900",
         },
         TestCase {
             input: 0.0099,
-            precision: DoublePrecision::SignificantDigits(1),
+            precision: FloatPrecision::SignificantDigits(1),
             expected: "0.01",
         },
         TestCase {
             input: 9.9888,
-            precision: DoublePrecision::SignificantDigits(1),
+            precision: FloatPrecision::SignificantDigits(1),
             expected: "10",
         },
         TestCase {
             input: 9.9888,
-            precision: DoublePrecision::SignificantDigits(2),
+            precision: FloatPrecision::SignificantDigits(2),
             expected: "10",
         },
         TestCase {
             input: 99888.0,
-            precision: DoublePrecision::SignificantDigits(1),
+            precision: FloatPrecision::SignificantDigits(1),
             expected: "100000",
         },
         TestCase {
             input: 99888.0,
-            precision: DoublePrecision::SignificantDigits(2),
+            precision: FloatPrecision::SignificantDigits(2),
             expected: "100000",
         },
         TestCase {
             input: 9.9888,
-            precision: DoublePrecision::SignificantDigits(3),
+            precision: FloatPrecision::SignificantDigits(3),
             expected: "9.99",
         },
     ];
@@ -2364,7 +2364,7 @@ fn test_from_str() {
     #[derive(Debug)]
     struct TestCase {
         pub input_str: &'static str,
-        /// The output str, None for roundtrip
+        /// The output str, `None` for roundtrip
         pub output_str: Option<&'static str>,
         /// [upper magnitude, upper nonzero magnitude, lower nonzero magnitude, lower magnitude]
         pub magnitudes: [i16; 4],

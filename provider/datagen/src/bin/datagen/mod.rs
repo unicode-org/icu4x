@@ -35,7 +35,7 @@ fn main() -> eyre::Result<()> {
 
     let config = matches.as_config()?;
 
-    let mut provider = DatagenProvider::default();
+    let mut provider = DatagenProvider::new_custom();
     provider = provider.with_collation_han_database(config.collation_han_database);
     if config.trie_type == crate::config::TrieType::Fast {
         provider = provider.with_fast_tries();
@@ -50,7 +50,7 @@ fn main() -> eyre::Result<()> {
         config::PathOrTag::Tag(tag) => provider.with_cldr_for_tag(&tag),
         config::PathOrTag::None => provider,
         #[cfg(not(feature = "networking"))]
-        _ => eyre::bail!("Download data from tags requires the `networking` Cargo feature"),
+        _ => eyre::bail!("Downloading data from tags requires the `networking` Cargo feature"),
     };
 
     provider = match config.icu_export {
@@ -63,7 +63,7 @@ fn main() -> eyre::Result<()> {
         config::PathOrTag::Tag(tag) => provider.with_icuexport_for_tag(&tag),
         config::PathOrTag::None => provider,
         #[cfg(not(feature = "networking"))]
-        _ => eyre::bail!("Download data from tags requires the `networking` Cargo feature"),
+        _ => eyre::bail!("Downloading data from tags requires the `networking` Cargo feature"),
     };
 
     provider = match config.segmenter_lstm {
@@ -76,7 +76,7 @@ fn main() -> eyre::Result<()> {
         config::PathOrTag::Tag(tag) => provider.with_segmenter_lstm_for_tag(&tag),
         config::PathOrTag::None => provider,
         #[cfg(not(feature = "networking"))]
-        _ => eyre::bail!("Download data from tags requires the `networking` Cargo feature"),
+        _ => eyre::bail!("Downloading data from tags requires the `networking` Cargo feature"),
     };
 
     let mut driver = DatagenDriver::new();
@@ -87,7 +87,7 @@ fn main() -> eyre::Result<()> {
         config::KeyInclude::ForBinary(path) => driver.with_keys(icu_datagen::keys_from_bin(path)?),
     };
     driver = driver.with_fallback_mode(config.fallback);
-    driver = driver.with_collations(config.collations);
+    driver = driver.with_additional_collations(config.additional_collations);
     driver = match config.locales {
         config::LocaleInclude::All => driver.with_all_locales(),
         config::LocaleInclude::None => driver.with_locales([]),
@@ -125,9 +125,9 @@ fn main() -> eyre::Result<()> {
             syntax,
             fingerprint,
         } => {
-            #[cfg(not(feature = "provider_fs"))]
-            eyre::bail!("Exporting to an FsProvider requires the `provider_fs` Cargo feature");
-            #[cfg(feature = "provider_fs")]
+            #[cfg(not(feature = "fs_exporter"))]
+            eyre::bail!("Exporting to an FsProvider requires the `fs_exporter` Cargo feature");
+            #[cfg(feature = "fs_exporter")]
             {
                 use icu_provider_fs::export::{serializers::*, *};
                 let exporter = FilesystemExporter::try_new(
@@ -154,9 +154,9 @@ fn main() -> eyre::Result<()> {
             }
         }
         config::Export::Blob { ref path } => {
-            #[cfg(not(feature = "provider_blob"))]
-            eyre::bail!("Exporting to a BlobProvider requires the `provider_blob` Cargo feature");
-            #[cfg(feature = "provider_blob")]
+            #[cfg(not(feature = "blob_exporter"))]
+            eyre::bail!("Exporting to a BlobProvider requires the `blob_exporter` Cargo feature");
+            #[cfg(feature = "blob_exporter")]
             {
                 let exporter = icu_provider_blob::export::BlobExporter::new_with_sink(
                     if path == std::path::Path::new("/stdout") {
@@ -179,11 +179,11 @@ fn main() -> eyre::Result<()> {
             insert_feature_gates,
             use_separate_crates,
         } => {
-            #[cfg(not(feature = "provider_baked"))]
+            #[cfg(not(feature = "baked_exporter"))]
             eyre::bail!(
-                "Exporting to a baked provider requires the `provider_baked` Cargo feature"
+                "Exporting to a baked provider requires the `baked_exporter` Cargo feature"
             );
-            #[cfg(feature = "provider_baked")]
+            #[cfg(feature = "baked_exporter")]
             {
                 use icu_datagen::baked_exporter::*;
 

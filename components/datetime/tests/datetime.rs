@@ -22,7 +22,7 @@ use icu_calendar::{
     persian::Persian,
     provider::WeekDataV1Marker,
     roc::Roc,
-    AsCalendar, DateTime, Gregorian, Iso,
+    AsCalendar, Calendar, DateTime, Gregorian, Iso,
 };
 use icu_datetime::provider::time_zones::{
     ExemplarCitiesV1Marker, MetazoneGenericNamesLongV1Marker, MetazoneGenericNamesShortV1Marker,
@@ -74,18 +74,21 @@ fn test_fixture(fixture_name: &str) {
         };
         let input_value = mock::parse_gregorian_from_str(&fx.input.value).unwrap();
         let input_buddhist = input_value.to_calendar(Buddhist);
-        let input_chinese = input_value.to_calendar(Chinese);
+        let input_chinese = input_value.to_calendar(Chinese::new_always_calculating());
         let input_coptic = input_value.to_calendar(Coptic);
-        let input_dangi = input_value.to_calendar(Dangi);
+        let input_dangi = input_value.to_calendar(Dangi::new_always_calculating());
         let input_ethiopian = input_value.to_calendar(Ethiopian::new());
         let input_ethioaa =
             input_value.to_calendar(Ethiopian::new_with_era_style(EthiopianEraStyle::AmeteAlem));
-        let input_hebrew = input_value.to_calendar(Hebrew);
+        let input_hebrew = input_value.to_calendar(Hebrew::new_always_calculating());
         let input_indian = input_value.to_calendar(Indian);
-        let input_islamic_civil = input_value.to_calendar(IslamicCivil);
-        let input_islamic_observational = input_value.to_calendar(IslamicObservational);
-        let input_islamic_tabular = input_value.to_calendar(IslamicTabular);
-        let input_islamic_umm_al_qura = input_value.to_calendar(IslamicUmmAlQura);
+        let input_islamic_civil = input_value.to_calendar(IslamicCivil::new_always_calculating());
+        let input_islamic_observational =
+            input_value.to_calendar(IslamicObservational::new_always_calculating());
+        let input_islamic_tabular =
+            input_value.to_calendar(IslamicTabular::new_always_calculating());
+        let input_islamic_umm_al_qura =
+            input_value.to_calendar(IslamicUmmAlQura::new_always_calculating());
         let input_iso = input_value.to_calendar(Iso);
         let input_japanese = input_value.to_calendar(japanese);
         let input_japanext = input_value.to_calendar(japanext);
@@ -98,7 +101,7 @@ fn test_fixture(fixture_name: &str) {
             }
             None => format!("\n  file: {fixture_name}.json\n"),
         };
-        for (locale, output_value) in fx.output.values.into_iter() {
+        for (locale, output_value) in fx.output.values {
             let options = options_base.clone();
             let locale = Locale::from_str(&locale).expect("Expected parseable locale in fixture");
             if let Some(kind) = AnyCalendarKind::get_for_locale(&locale) {
@@ -261,6 +264,11 @@ fn assert_fixture_element<A>(
     icu_datetime::provider::Baked: DataProvider<<A::Calendar as CldrCalendar>::DateSymbolsV1Marker>,
     icu_datetime::provider::Baked: DataProvider<<A::Calendar as CldrCalendar>::DateLengthsV1Marker>,
 {
+    assert!(
+        input_value.date.calendar().any_calendar_kind().is_some(),
+        "{} does not specify its AsCalendarKind",
+        input_value.date.calendar().debug_name()
+    );
     let any_input = input_value.to_any();
     let iso_any_input = input_iso.to_any();
     #[cfg(feature = "experimental")]
@@ -352,7 +360,7 @@ fn test_fixture_with_time_zones(fixture_name: &str, config: TimeZoneConfig) {
             }
             None => format!("\n  file: {fixture_name}.json\n"),
         };
-        for (locale, output_value) in fx.output.values.into_iter() {
+        for (locale, output_value) in fx.output.values {
             let locale: Locale = locale.parse().unwrap();
             #[cfg(feature = "experimental")]
             let dtf = {

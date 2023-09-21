@@ -5,22 +5,16 @@
 [package]
 name = "zerotrie"
 description = "A data structure that efficiently maps strings to integers"
-version = "0.1.0"
-authors = ["The ICU4X Project Developers"]
-edition = "2021"
-readme = "README.md"
-repository = "https://github.com/unicode-org/icu4x"
-license-file = "LICENSE"
-# Keep this in sync with other crates unless there are exceptions
-include = [
-    "src/**/*",
-    "examples/**/*",
-    "benches/**/*",
-    "tests/**/*",
-    "Cargo.toml",
-    "LICENSE",
-    "README.md"
-]
+version = "0.0.0"
+
+rust-version.workspace = true
+authors.workspace = true
+edition.workspace = true
+repository.workspace = true
+homepage.workspace = true
+license-file.workspace = true
+categories.workspace = true
+include.workspace = true
 
 [package.metadata.docs.rs]
 all-features = true
@@ -30,9 +24,12 @@ all-features = true
 denylist = ["bench"]
 
 [dependencies]
+databake = { workspace = true, features = ["derive"], optional = true }
 displaydoc = { version = "0.2.3", default-features = false }
 litemap = { workspace = true, features = ["alloc"], optional = true }
 serde = { version = "1.0", optional = true }
+yoke = { workspace = true, features = ["derive"], optional = true }
+zerofrom = { workspace = true, optional = true }
 zerovec = { workspace = true, optional = true }
 
 [dev-dependencies]
@@ -56,12 +53,20 @@ bench = false  # This option is required for Benchmark CI
 default = []
 bench = ["litemap"]
 alloc = []
+databake = ["dep:databake", "zerovec?/databake"]
 litemap = ["dep:litemap", "alloc"]
 serde = ["dep:serde", "dep:litemap", "alloc", "litemap/serde", "zerovec?/serde"]
+yoke = ["dep:yoke"]
+zerofrom = ["dep:zerofrom"]
 
 [[bench]]
 name = "overview"
 harness = false
+required-features = ["alloc", "litemap"]
+
+[[test]]
+name = "asciitrie_test"
+required-features = ["alloc", "litemap"]
 
 [[test]]
 name = "builder_test"

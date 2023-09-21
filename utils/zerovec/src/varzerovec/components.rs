@@ -128,13 +128,7 @@ pub struct VarZeroVecComponents<'a, T: ?Sized, F> {
 impl<'a, T: ?Sized, F> Copy for VarZeroVecComponents<'a, T, F> {}
 impl<'a, T: ?Sized, F> Clone for VarZeroVecComponents<'a, T, F> {
     fn clone(&self) -> Self {
-        VarZeroVecComponents {
-            len: self.len,
-            indices: self.indices,
-            things: self.things,
-            entire_slice: self.entire_slice,
-            marker: PhantomData,
-        }
+        *self
     }
 }
 
@@ -161,7 +155,7 @@ impl<'a, T: VarULE + ?Sized, F: VarZeroVecFormat> VarZeroVecComponents<'a, T, F>
     /// Construct a new VarZeroVecComponents, checking invariants about the overall buffer size:
     ///
     /// - There must be either zero or at least four bytes (if four, this is the "length" parsed as a usize)
-    /// - There must be at least `4*length + 4` bytes total, to form the the array `indices` of indices
+    /// - There must be at least `4*length + 4` bytes total, to form the array `indices` of indices
     /// - `indices[i]..indices[i+1]` must index into a valid section of
     ///   `things`, such that it parses to a `T::VarULE`
     /// - `indices[len - 1]..things.len()` must index into a valid section of
@@ -569,9 +563,7 @@ where
     let data_len: u32 = elements
         .iter()
         .map(|v| u32::try_from(v.encode_var_ule_len()).ok())
-        .fold(Some(0u32), |s, v| {
-            s.and_then(|s| v.and_then(|v| s.checked_add(v)))
-        })?;
+        .try_fold(0u32, |s, v| s.checked_add(v?))?;
     let ret = idx_len.checked_add(data_len);
     if let Some(r) = ret {
         if r >= F::MAX_VALUE {

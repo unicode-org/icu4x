@@ -59,4 +59,44 @@ export enum ICU4XAnyCalendarKind {
    * The kind of a Dangi calendar
    */
   Dangi = 'Dangi',
+  /**
+
+   * The kind of a Chinese calendar
+   */
+  Chinese = 'Chinese',
+  /**
+
+   * The kind of a Hebrew calendar
+   */
+  Hebrew = 'Hebrew',
+  /**
+
+   * The kind of a Islamic civil calendar
+   */
+  IslamicCivil = 'IslamicCivil',
+  /**
+
+   * The kind of a Islamic observational calendar
+   */
+  IslamicObservational = 'IslamicObservational',
+  /**
+
+   * The kind of a Islamic tabular calendar
+   */
+  IslamicTabular = 'IslamicTabular',
+  /**
+
+   * The kind of a Islamic Umm al-Qura calendar
+   */
+  IslamicUmmAlQura = 'IslamicUmmAlQura',
+  /**
+
+   * The kind of a Persian calendar
+   */
+  Persian = 'Persian',
+  /**
+
+   * The kind of a Roc calendar
+   */
+  Roc = 'Roc',
 }
