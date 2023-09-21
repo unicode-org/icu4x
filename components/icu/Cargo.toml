@@ -122,7 +122,7 @@ compiled_data = [
     "icu_relativetime?/compiled_data",
     "icu_segmenter/compiled_data",
     "icu_timezone/compiled_data",
-    # "icu_transliterate?/compiled_data",
+    "icu_transliterate?/compiled_data",
 ]
 serde_human = [
     "icu_list/serde_human"

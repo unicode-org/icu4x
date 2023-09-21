@@ -4,17 +4,20 @@
 
 use crate::provider::TransliteratorRulesV1Marker;
 
+use alloc::collections::BTreeMap;
+use alloc::format;
+use alloc::string::{String, ToString};
+use alloc::vec::Vec;
 use icu_locid::Locale;
 use icu_normalizer::provider::*;
 use icu_properties::{provider::*, sets, PropertiesError};
 use icu_provider::prelude::*;
-use std::collections::HashMap;
-use std::sync::RwLock;
 
 mod parse;
 mod pass1;
 mod pass2;
 mod rule_group_agg;
+mod spin_lock;
 
 /// The direction of a rule-based transliterator in respect to its source.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
@@ -89,11 +92,11 @@ impl Direction {
 ///
 #[allow(clippy::type_complexity)] // well
 pub struct RuleCollection {
-    id_mapping: HashMap<String, Locale>, // alias -> bcp id
+    id_mapping: BTreeMap<String, Locale>, // alias -> bcp id
     // these two maps need to lock together
-    data: RwLock<(
-        HashMap<DataLocale, (String, bool, bool)>, // locale -> source/reverse/visible
-        HashMap<DataLocale, Result<DataResponse<TransliteratorRulesV1Marker>, DataError>>, // cache
+    data: spin_lock::SpinLock<(
+        BTreeMap<String, (String, bool, bool)>, // locale -> source/reverse/visible
+        BTreeMap<String, Result<DataResponse<TransliteratorRulesV1Marker>, DataError>>, // cache
     )>,
 }
 
@@ -107,9 +110,8 @@ impl RuleCollection {
         reverse: bool,
         visible: bool,
     ) {
-        #[allow(clippy::expect_used)]
-        self.data.get_mut().expect("poison").0.insert(
-            crate::ids::bcp47_to_data_locale(id),
+        self.data.get_mut().0.insert(
+            crate::ids::bcp47_to_data_locale(id).to_string(),
             (source, reverse, visible),
         );
 
@@ -317,24 +319,11 @@ where
         &self,
         req: DataRequest,
     ) -> Result<DataResponse<TransliteratorRulesV1Marker>, DataError> {
-        #[allow(clippy::expect_used)]
-        if let Some(result) = self
-            .collection
-            .data
-            .read()
-            .expect("poison")
-            .1
-            .get(req.locale)
-        {
-            return result.clone();
-        }
+        let locale = req.locale.to_string();
 
-        // We're taking the source, so we need to hold the lock until we're putting it
-        // in the cache.
-        #[allow(clippy::expect_used)]
-        let mut exclusive_data = self.collection.data.write().expect("poison");
+        let mut exclusive_data = self.collection.data.lock();
 
-        if let Some(response) = exclusive_data.1.get(req.locale) {
+        if let Some(response) = exclusive_data.1.get(&locale) {
             return response.clone();
         };
 
@@ -390,9 +379,9 @@ where
                 metadata: Default::default(),
                 payload: Some(DataPayload::from_owned(transliterator)),
             })
-        }(exclusive_data.0.remove(req.locale));
+        }(exclusive_data.0.remove(&locale));
 
-        exclusive_data.1.insert(req.locale.clone(), result.clone());
+        exclusive_data.1.insert(locale, result.clone());
 
         result
     }
@@ -480,13 +469,14 @@ where
     NP: ?Sized,
 {
     fn supported_locales(&self) -> Result<Vec<DataLocale>, DataError> {
-        #[allow(clippy::expect_used)]
-        let read_access = self.collection.data.read().expect("poison");
-        Ok(read_access
+        let exclusive_data = self.collection.data.lock();
+        #[allow(clippy::unwrap_used)] // the maps' keys are valid DataLocales
+        Ok(exclusive_data
             .0
             .keys()
             .cloned()
-            .chain(read_access.1.keys().cloned())
+            .chain(exclusive_data.1.keys().cloned())
+            .map(|s| s.parse().unwrap())
             .collect::<Vec<_>>())
     }
 }

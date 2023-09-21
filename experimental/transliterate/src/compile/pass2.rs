@@ -4,10 +4,12 @@
 
 use super::*;
 use crate::provider as ds;
+use alloc::borrow::ToOwned;
+use alloc::collections::BTreeMap;
+use alloc::string::ToString;
 use core::fmt::{self, Display, Formatter};
 use icu_collections::codepointinvlist::CodePointInversionList;
 use icu_locid::Locale;
-use std::collections::HashMap;
 use zerovec::VarZeroVec;
 
 type Result<T> = core::result::Result<T, CompileError>;
@@ -228,11 +230,11 @@ impl<'a> Display for LiteralOrStandin<'a> {
 
 pub(super) struct Pass2<'a, 'p> {
     var_table: MutVarTable,
-    var_definitions: &'a HashMap<String, &'p [parse::Element]>,
+    var_definitions: &'a BTreeMap<String, &'p [parse::Element]>,
     // transliterators available at datagen time exist in this mapping from legacy ID to BCP47 ID
-    id_mapping: &'a HashMap<String, Locale>,
+    id_mapping: &'a BTreeMap<String, Locale>,
     // the inverse of VarTable.compounds
-    var_to_char: HashMap<String, char>,
+    var_to_char: BTreeMap<String, char>,
     // the current segment index (per conversion rule)
     curr_segment: u16,
 }
@@ -240,14 +242,14 @@ pub(super) struct Pass2<'a, 'p> {
 impl<'a, 'p> Pass2<'a, 'p> {
     pub(super) fn run(
         pass1: pass1::DirectedPass1Result<'p>,
-        var_definitions: &'a HashMap<String, &'p [parse::Element]>,
-        id_mapping: &'a HashMap<String, Locale>,
+        var_definitions: &'a BTreeMap<String, &'p [parse::Element]>,
+        id_mapping: &'a BTreeMap<String, Locale>,
     ) -> Result<ds::RuleBasedTransliterator<'static>> {
         let mut pass2 = Pass2 {
             var_table: MutVarTable::try_new_from_counts(pass1.data.counts)?,
             var_definitions,
             id_mapping,
-            var_to_char: HashMap::new(),
+            var_to_char: BTreeMap::new(),
             curr_segment: 0,
         };
         let mut compiled_transform_groups: Vec<VarZeroVec<'static, ds::SimpleIdULE>> = Vec::new();
