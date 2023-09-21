@@ -99,6 +99,7 @@ pub const EXTRA_EXPERIMENTAL_DEPS: &[&str] = &[
     "serde",
     "icu_locid_transform_data",
     "icu_properties_data",
+    "serde_derive",
 ];
 
 /// Dependencies allowed when opting in to compiled data
