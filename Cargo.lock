@@ -1103,6 +1103,7 @@ dependencies = [
  "icu_relativetime",
  "icu_segmenter",
  "icu_timezone",
+ "icu_transliterate",
  "writeable",
 ]
 

@@ -35,7 +35,7 @@ extern crate alloc;
 
 pub mod provider;
 
-#[cfg(feature = "datagen")]
+#[cfg(feature = "compile")]
 mod compile;
 mod error;
 mod ids;
@@ -48,5 +48,5 @@ pub use transliterator::*;
 #[doc(no_inline)]
 pub use TransliteratorError as Error;
 
-#[cfg(feature = "datagen")]
+#[cfg(feature = "compile")]
 pub use compile::RuleCollection;

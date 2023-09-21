@@ -196,3 +196,7 @@ pub use icu_relativetime as relativetime;
 #[cfg(feature = "icu_compactdecimal")]
 #[doc(inline)]
 pub use icu_compactdecimal as compactdecimal;
+
+#[cfg(feature = "icu_transliterate")]
+#[doc(inline)]
+pub use icu_transliterate as transliterate;
