@@ -599,7 +599,7 @@ version = "0.5.4"
 dependencies = [
  "displaydoc",
  "smallvec",
- "writeable 0.5.3",
+ "writeable",
 ]
 
 [[package]]
@@ -748,6 +748,7 @@ dependencies = [
  "icu_relativetime",
  "icu_segmenter",
  "icu_timezone",
+ "icu_transliterate",
 ]
 
 [[package]]
@@ -762,8 +763,8 @@ dependencies = [
  "icu_locid_transform",
  "icu_provider",
  "serde",
- "tinystr 0.7.2",
- "writeable 0.5.3",
+ "tinystr",
+ "writeable",
  "zerovec 0.9.5",
 ]
 
@@ -783,7 +784,7 @@ dependencies = [
  "icu_properties",
  "icu_provider",
  "serde",
- "writeable 0.5.3",
+ "writeable",
  "zerovec 0.9.5",
 ]
 
@@ -849,7 +850,7 @@ dependencies = [
  "icu_locid_transform",
  "icu_plurals",
  "icu_provider",
- "writeable 0.5.3",
+ "writeable",
  "zerovec 0.9.5",
 ]
 
@@ -897,11 +898,11 @@ dependencies = [
  "serde_json",
  "simple_logger",
  "syn 2.0.37",
- "tinystr 0.7.2",
+ "tinystr",
  "toml",
  "twox-hash",
  "ureq",
- "writeable 0.5.3",
+ "writeable",
  "zerotrie",
  "zerovec 0.9.5",
  "zip",
@@ -926,8 +927,8 @@ dependencies = [
  "litemap 0.7.1",
  "serde",
  "smallvec",
- "tinystr 0.7.2",
- "writeable 0.5.3",
+ "tinystr",
+ "writeable",
  "zerovec 0.9.5",
 ]
 
@@ -947,7 +948,7 @@ dependencies = [
  "icu_locid_transform",
  "icu_provider",
  "serde",
- "writeable 0.5.3",
+ "writeable",
 ]
 
 [[package]]
@@ -963,7 +964,7 @@ dependencies = [
  "icu_locid_transform",
  "icu_provider",
  "serde",
- "tinystr 0.7.2",
+ "tinystr",
  "zerovec 0.9.5",
 ]
 
@@ -983,7 +984,7 @@ dependencies = [
  "icu_provider",
  "regex-automata",
  "serde",
- "writeable 0.5.3",
+ "writeable",
 ]
 
 [[package]]
@@ -998,8 +999,8 @@ dependencies = [
  "displaydoc",
  "litemap 0.7.1",
  "serde",
- "tinystr 0.7.2",
- "writeable 0.5.3",
+ "tinystr",
+ "writeable",
  "zerovec 0.9.5",
 ]
 
@@ -1013,7 +1014,7 @@ dependencies = [
  "icu_locid_transform_data",
  "icu_provider",
  "serde",
- "tinystr 0.7.2",
+ "tinystr",
  "zerovec 0.9.5",
 ]
 
@@ -1073,7 +1074,7 @@ dependencies = [
  "icu_properties_data",
  "icu_provider",
  "serde",
- "tinystr 0.7.2",
+ "tinystr",
  "zerovec 0.9.5",
 ]
 
@@ -1096,8 +1097,8 @@ dependencies = [
  "serde",
  "serde_json",
  "stable_deref_trait",
- "tinystr 0.7.2",
- "writeable 0.5.3",
+ "tinystr",
+ "writeable",
  "yoke",
  "zerofrom 0.1.3",
  "zerovec 0.9.5",
@@ -1111,7 +1112,7 @@ dependencies = [
  "icu_locid_transform",
  "icu_provider",
  "serde",
- "tinystr 0.7.2",
+ "tinystr",
  "zerovec 0.9.5",
 ]
 
@@ -1123,7 +1124,7 @@ dependencies = [
  "log",
  "postcard",
  "serde",
- "writeable 0.5.3",
+ "writeable",
  "zerovec 0.9.5",
 ]
 
@@ -1163,7 +1164,7 @@ dependencies = [
  "icu_provider",
  "icu_relativetime_data",
  "serde",
- "writeable 0.5.3",
+ "writeable",
  "zerovec 0.9.5",
 ]
 
@@ -1217,7 +1218,7 @@ dependencies = [
  "icu_provider",
  "icu_timezone_data",
  "serde",
- "tinystr 0.7.2",
+ "tinystr",
  "zerotrie",
  "zerovec 0.9.5",
 ]
@@ -1225,6 +1226,33 @@ dependencies = [
 [[package]]
 name = "icu_timezone_data"
 version = "1.2.0"
+
+[[package]]
+name = "icu_transliterate"
+version = "0.0.0"
+dependencies = [
+ "displaydoc",
+ "icu_collections",
+ "icu_locid",
+ "icu_normalizer",
+ "icu_properties",
+ "icu_provider",
+ "icu_unicodeset_parse",
+ "litemap 0.7.1",
+ "serde",
+ "zerovec 0.9.5",
+]
+
+[[package]]
+name = "icu_unicodeset_parse"
+version = "0.0.0"
+dependencies = [
+ "icu_collections",
+ "icu_properties",
+ "icu_provider",
+ "tinystr",
+ "zerovec 0.9.5",
+]
 
 [[package]]
 name = "ident_case"
@@ -2150,15 +2178,6 @@ dependencies = [
 
 [[package]]
 name = "tinystr"
-version = "0.7.1"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "7ac3f5b6856e931e15e07b478e98c8045239829a65f9156d4fa7e7788197a5ef"
-dependencies = [
- "displaydoc",
-]
-
-[[package]]
-name = "tinystr"
 version = "0.7.2"
 dependencies = [
  "databake 0.1.6",
@@ -2286,8 +2305,8 @@ dependencies = [
  "lru",
  "serde",
  "serde-aux",
- "tinystr 0.7.1",
- "writeable 0.5.2",
+ "tinystr",
+ "writeable",
 ]
 
 [[package]]
@@ -2962,12 +2981,6 @@ checksum = "d1890f4022759daae28ed4fe62859b1236caebfc61ede2f63ed4e695f3f6d936"
 
 [[package]]
 name = "writeable"
-version = "0.5.2"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "60e49e42bdb1d5dc76f4cd78102f8f0714d32edfa3efb82286eb0f0b1fc0da0f"
-
-[[package]]
-name = "writeable"
 version = "0.5.3"
 
 [[package]]
@@ -3123,14 +3136,6 @@ version = "0.0.0"
 [[patch.unused]]
 name = "icu_singlenumberformatter_data"
 version = "1.2.0"
-
-[[patch.unused]]
-name = "icu_transliterate"
-version = "0.0.0"
-
-[[patch.unused]]
-name = "icu_unicodeset_parse"
-version = "0.0.0"
 
 [[patch.unused]]
 name = "icu_unitsconversion"
