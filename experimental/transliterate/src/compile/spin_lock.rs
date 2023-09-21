@@ -3,7 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 // Adapted from Bos, M. (2022). Rust atomics and locks: Low-Level Concurrency in Practice. O’Reilly Media.
-// Licensed under https://creativecommons.org/licenses/by-nc-nd/4.0/.
+// Licensed under a permissive custom license: https://github.com/m-ou-se/rust-atomics-and-locks/blob/main/LICENSE.
 
 use core::cell::UnsafeCell;
 use core::ops::{Deref, DerefMut};
