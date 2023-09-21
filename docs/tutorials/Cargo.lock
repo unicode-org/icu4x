@@ -1203,7 +1203,7 @@ dependencies = [
  "icu_locid_transform",
  "icu_plurals",
  "icu_provider",
- "zerovec 0.9.4",
+ "zerovec 0.9.5",
 ]
 
 [[package]]
