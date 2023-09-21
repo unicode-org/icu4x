@@ -29,8 +29,7 @@
 //!```rust
 //! use icu::segmenter::LineSegmenter;
 //!
-//! let segmenter =
-//!     LineSegmenter::new_auto();
+//! let segmenter = LineSegmenter::new_auto();
 //!
 //! let breakpoints: Vec<usize> = segmenter
 //!     .segment_str("Hello World. Xin chào thế giới!")
@@ -47,8 +46,7 @@
 //!```rust
 //! use icu::segmenter::GraphemeClusterSegmenter;
 //!
-//! let segmenter =
-//!     GraphemeClusterSegmenter::new();
+//! let segmenter = GraphemeClusterSegmenter::new();
 //!
 //! let breakpoints: Vec<usize> = segmenter
 //!     .segment_str("Hello World. Xin chào thế giới!")
@@ -71,8 +69,7 @@
 //!```rust
 //! use icu::segmenter::WordSegmenter;
 //!
-//! let segmenter =
-//!     WordSegmenter::new_auto();
+//! let segmenter = WordSegmenter::new_auto();
 //!
 //! let breakpoints: Vec<usize> = segmenter
 //!     .segment_str("Hello World. Xin chào thế giới!")
@@ -92,8 +89,7 @@
 //!```rust
 //! use icu::segmenter::SentenceSegmenter;
 //!
-//! let segmenter =
-//!     SentenceSegmenter::new();
+//! let segmenter = SentenceSegmenter::new();
 //!
 //! let breakpoints: Vec<usize> = segmenter
 //!     .segment_str("Hello World. Xin chào thế giới!")

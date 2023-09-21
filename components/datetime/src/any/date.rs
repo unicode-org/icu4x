@@ -85,11 +85,8 @@ impl DateFormatter {
     /// let length = length::Date::Medium;
     /// let locale = locale!("en-u-ca-gregory");
     ///
-    /// let df = DateFormatter::try_new_with_length(
-    ///     &locale.into(),
-    ///     length,
-    /// )
-    /// .expect("Failed to create TypedDateFormatter instance.");
+    /// let df = DateFormatter::try_new_with_length(&locale.into(), length)
+    ///     .expect("Failed to create TypedDateFormatter instance.");
     ///
     /// let datetime =
     ///     Date::try_new_iso_date(2020, 9, 1).expect("Failed to construct Date.");

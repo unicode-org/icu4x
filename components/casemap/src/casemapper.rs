@@ -24,8 +24,14 @@ use writeable::Writeable;
 ///
 /// let cm = CaseMapper::new();
 ///
-/// assert_eq!(cm.uppercase_to_string("hello world", &langid!("und")), "HELLO WORLD");
-/// assert_eq!(cm.lowercase_to_string("Γειά σου Κόσμε", &langid!("und")), "γειά σου κόσμε");
+/// assert_eq!(
+///     cm.uppercase_to_string("hello world", &langid!("und")),
+///     "HELLO WORLD"
+/// );
+/// assert_eq!(
+///     cm.lowercase_to_string("Γειά σου Κόσμε", &langid!("und")),
+///     "γειά σου κόσμε"
+/// );
 /// ```
 ///
 /// <div class="stab unstable">
@@ -67,7 +73,10 @@ impl CaseMapper {
     ///
     /// let cm = CaseMapper::new();
     ///
-    /// assert_eq!(cm.uppercase_to_string("hello world", &langid!("und")), "HELLO WORLD");
+    /// assert_eq!(
+    ///     cm.uppercase_to_string("hello world", &langid!("und")),
+    ///     "HELLO WORLD"
+    /// );
     /// ```
     #[cfg(feature = "compiled_data")]
     pub const fn new() -> Self {

@@ -43,8 +43,7 @@ impl DataMarker for ErasedNameToEnumMapV1Marker {
 /// ```
 /// use icu::properties::GeneralCategory;
 ///
-/// let lookup =
-///     GeneralCategory::name_to_enum_mapper();
+/// let lookup = GeneralCategory::name_to_enum_mapper();
 /// // short name for value
 /// assert_eq!(
 ///     lookup.get_strict("Lu"),
@@ -128,8 +127,7 @@ impl<T: TrieValue> PropertyValueNameToEnumMapperBorrowed<'_, T> {
     /// ```
     /// use icu_properties::GeneralCategory;
     ///
-    /// let lookup =
-    ///     GeneralCategory::name_to_enum_mapper();
+    /// let lookup = GeneralCategory::name_to_enum_mapper();
     /// assert_eq!(
     ///     lookup.get_strict_u16("Lu"),
     ///     Some(GeneralCategory::UppercaseLetter as u16)
@@ -154,8 +152,7 @@ impl<T: TrieValue> PropertyValueNameToEnumMapperBorrowed<'_, T> {
     /// ```
     /// use icu_properties::GeneralCategory;
     ///
-    /// let lookup =
-    ///     GeneralCategory::name_to_enum_mapper();
+    /// let lookup = GeneralCategory::name_to_enum_mapper();
     /// assert_eq!(
     ///     lookup.get_strict("Lu"),
     ///     Some(GeneralCategory::UppercaseLetter)
@@ -181,8 +178,7 @@ impl<T: TrieValue> PropertyValueNameToEnumMapperBorrowed<'_, T> {
     /// ```
     /// use icu_properties::GeneralCategory;
     ///
-    /// let lookup =
-    ///     GeneralCategory::name_to_enum_mapper();
+    /// let lookup = GeneralCategory::name_to_enum_mapper();
     /// assert_eq!(
     ///     lookup.get_loose_u16("Lu"),
     ///     Some(GeneralCategory::UppercaseLetter as u16)
@@ -211,8 +207,7 @@ impl<T: TrieValue> PropertyValueNameToEnumMapperBorrowed<'_, T> {
     /// ```
     /// use icu_properties::GeneralCategory;
     ///
-    /// let lookup =
-    ///     GeneralCategory::name_to_enum_mapper();
+    /// let lookup = GeneralCategory::name_to_enum_mapper();
     /// assert_eq!(
     ///     lookup.get_loose("Lu"),
     ///     Some(GeneralCategory::UppercaseLetter)
@@ -282,8 +277,7 @@ impl DataMarker for ErasedEnumToValueNameSparseMapV1Marker {
 /// ```
 /// use icu::properties::CanonicalCombiningClass;
 ///
-/// let lookup = CanonicalCombiningClass::enum_to_long_name_mapper(
-/// );
+/// let lookup = CanonicalCombiningClass::enum_to_long_name_mapper();
 /// assert_eq!(
 ///     lookup.get(CanonicalCombiningClass::KanaVoicing),
 ///     Some("Kana_Voicing")
@@ -343,8 +337,7 @@ impl<T: TrieValue> PropertyEnumToValueNameSparseMapperBorrowed<'_, T> {
     /// ```rust
     /// use icu::properties::CanonicalCombiningClass;
     ///
-    /// let lookup = CanonicalCombiningClass::enum_to_long_name_mapper(
-    /// );
+    /// let lookup = CanonicalCombiningClass::enum_to_long_name_mapper();
     /// assert_eq!(
     ///     lookup.get(CanonicalCombiningClass::KanaVoicing),
     ///     Some("Kana_Voicing")
@@ -394,8 +387,7 @@ impl DataMarker for ErasedEnumToValueNameLinearMapV1Marker {
 /// ```
 /// use icu::properties::GeneralCategory;
 ///
-/// let lookup = GeneralCategory::enum_to_long_name_mapper(
-/// );
+/// let lookup = GeneralCategory::enum_to_long_name_mapper();
 /// assert_eq!(
 ///     lookup.get(GeneralCategory::UppercaseLetter),
 ///     Some("Uppercase_Letter")
@@ -455,8 +447,7 @@ impl<T: TrieValue> PropertyEnumToValueNameLinearMapperBorrowed<'_, T> {
     /// ```rust
     /// use icu::properties::GeneralCategory;
     ///
-    /// let lookup = GeneralCategory::enum_to_short_name_mapper(
-    /// );
+    /// let lookup = GeneralCategory::enum_to_short_name_mapper();
     /// assert_eq!(lookup.get(GeneralCategory::UppercaseLetter), Some("Lu"));
     /// assert_eq!(lookup.get(GeneralCategory::DashPunctuation), Some("Pd"));
     /// ```
@@ -499,8 +490,7 @@ impl DataMarker for ErasedEnumToValueNameLinearTiny4MapV1Marker {
 /// use icu::properties::Script;
 /// use tinystr::tinystr;
 ///
-/// let lookup =
-///     Script::enum_to_short_name_mapper();
+/// let lookup = Script::enum_to_short_name_mapper();
 /// assert_eq!(lookup.get(Script::Brahmi), Some(tinystr!(4, "Brah")));
 /// assert_eq!(lookup.get(Script::Hangul), Some(tinystr!(4, "Hang")));
 /// ```
@@ -555,8 +545,7 @@ impl<T: TrieValue> PropertyEnumToValueNameLinearTiny4MapperBorrowed<'_, T> {
     /// use icu::properties::Script;
     /// use tinystr::tinystr;
     ///
-    /// let lookup =
-    ///     Script::enum_to_short_name_mapper();
+    /// let lookup = Script::enum_to_short_name_mapper();
     /// assert_eq!(lookup.get(Script::Brahmi), Some(tinystr!(4, "Brah")));
     /// assert_eq!(lookup.get(Script::Hangul), Some(tinystr!(4, "Hang")));
     /// ```

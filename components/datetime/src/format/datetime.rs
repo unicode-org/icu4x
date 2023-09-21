@@ -261,7 +261,7 @@ where
                 // TODO(#3761): This is a hack, we should use actual data for cyclic years
                 let cyclics = match datetime.any_calendar_kind() {
                     Some(AnyCalendarKind::Dangi) => &DANGI_CYCLIC_YEARS,
-                    _ => &CHINESE_CYCLIC_YEARS, // for now assume all other calendars use the stem-branch model
+                    _ => &CHINESE_CYCLIC_YEARS, /* for now assume all other calendars use the stem-branch model */
                 };
                 let cyclic_str = cyclics.get(usize::from(cyclic.get()) - 1).ok_or(
                     icu_calendar::CalendarError::Overflow {

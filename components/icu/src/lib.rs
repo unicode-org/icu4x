@@ -58,9 +58,12 @@
 //!
 //! let data: Box<[u8]> = todo!();
 //!
-//! let provider = BlobDataProvider::try_new_from_blob(data).expect("data should be valid");
+//! let provider = BlobDataProvider::try_new_from_blob(data)
+//!     .expect("data should be valid");
 //!
-//! let provider = LocaleFallbackProvider::try_new_with_buffer_provider(provider).expect("provider should include fallback data");
+//! let provider =
+//!     LocaleFallbackProvider::try_new_with_buffer_provider(provider)
+//!         .expect("provider should include fallback data");
 //!
 //! let dtf = DateTimeFormatter::try_new_with_buffer_provider(
 //!     &provider,

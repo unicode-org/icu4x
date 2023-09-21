@@ -100,7 +100,7 @@ where
     /// ```rust
     /// use litemap::LiteMap;
     ///
-    /// let mut map=
+    /// let mut map =
     ///     LiteMap::<i32, &str, Vec<_>>::from_iter([(1, "uno"), (3, "tres")]);
     ///
     /// assert_eq!(map.first(), Some((&1, &"uno")));
@@ -941,10 +941,8 @@ impl<'a, K, V> LiteMap<K, V, &'a [(K, V)]> {
     /// ```rust
     /// use litemap::LiteMap;
     ///
-    /// static map: LiteMap<&str, usize, &[(&str, usize)]> = LiteMap::from_sorted_store_unchecked(&[
-    ///     ("a", 11),
-    ///     ("b", 22),
-    /// ]);
+    /// static map: LiteMap<&str, usize, &[(&str, usize)]> =
+    ///     LiteMap::from_sorted_store_unchecked(&[("a", 11), ("b", 22)]);
     /// static len: usize = map.const_len();
     /// assert_eq!(len, 2);
     /// ```
@@ -962,7 +960,8 @@ impl<'a, K, V> LiteMap<K, V, &'a [(K, V)]> {
     /// ```rust
     /// use litemap::LiteMap;
     ///
-    /// static map: LiteMap<&str, usize, &[(&str, usize)]> = LiteMap::from_sorted_store_unchecked(&[]);
+    /// static map: LiteMap<&str, usize, &[(&str, usize)]> =
+    ///     LiteMap::from_sorted_store_unchecked(&[]);
     /// static is_empty: bool = map.const_is_empty();
     /// assert!(is_empty);
     /// ```
@@ -984,10 +983,8 @@ impl<'a, K, V> LiteMap<K, V, &'a [(K, V)]> {
     /// ```rust
     /// use litemap::LiteMap;
     ///
-    /// static map: LiteMap<&str, usize, &[(&str, usize)]> = LiteMap::from_sorted_store_unchecked(&[
-    ///     ("a", 11),
-    ///     ("b", 22),
-    /// ]);
+    /// static map: LiteMap<&str, usize, &[(&str, usize)]> =
+    ///     LiteMap::from_sorted_store_unchecked(&[("a", 11), ("b", 22)]);
     /// static t: &(&str, usize) = map.const_get_indexed_or_panic(0);
     /// assert_eq!(t.0, "a");
     /// assert_eq!(t.1, 11);
@@ -1034,13 +1031,14 @@ impl<'a, V> LiteMap<&'a str, V, &'a [(&'a str, V)]> {
     /// ```rust
     /// use litemap::LiteMap;
     ///
-    /// static map: LiteMap<&str, usize, &[(&str, usize)]> = LiteMap::from_sorted_store_unchecked(&[
-    ///     ("abc", 11),
-    ///     ("bcd", 22),
-    ///     ("cde", 33),
-    ///     ("def", 44),
-    ///     ("efg", 55),
-    /// ]);
+    /// static map: LiteMap<&str, usize, &[(&str, usize)]> =
+    ///     LiteMap::from_sorted_store_unchecked(&[
+    ///         ("abc", 11),
+    ///         ("bcd", 22),
+    ///         ("cde", 33),
+    ///         ("def", 44),
+    ///         ("efg", 55),
+    ///     ]);
     ///
     /// static d: Option<(usize, &usize)> = map.const_get_with_index("def");
     /// assert_eq!(d, Some((3, &44)));
@@ -1077,13 +1075,14 @@ impl<'a, V> LiteMap<&'a [u8], V, &'a [(&'a [u8], V)]> {
     /// ```rust
     /// use litemap::LiteMap;
     ///
-    /// static map: LiteMap<&[u8], usize, &[(&[u8], usize)]> = LiteMap::from_sorted_store_unchecked(&[
-    ///     (b"abc", 11),
-    ///     (b"bcd", 22),
-    ///     (b"cde", 33),
-    ///     (b"def", 44),
-    ///     (b"efg", 55),
-    /// ]);
+    /// static map: LiteMap<&[u8], usize, &[(&[u8], usize)]> =
+    ///     LiteMap::from_sorted_store_unchecked(&[
+    ///         (b"abc", 11),
+    ///         (b"bcd", 22),
+    ///         (b"cde", 33),
+    ///         (b"def", 44),
+    ///         (b"efg", 55),
+    ///     ]);
     ///
     /// static d: Option<(usize, &usize)> = map.const_get_with_index(b"def");
     /// assert_eq!(d, Some((3, &44)));

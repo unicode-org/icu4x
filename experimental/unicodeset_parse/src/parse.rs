@@ -93,7 +93,10 @@ impl ParseError {
     /// let set = parse(source);
     /// assert!(set.is_err());
     /// let err = set.unwrap_err();
-    /// assert_eq!(err.fmt_with_source(source).to_string(), "[[abc]-x← error: unexpected character 'x'");
+    /// assert_eq!(
+    ///     err.fmt_with_source(source).to_string(),
+    ///     "[[abc]-x← error: unexpected character 'x'"
+    /// );
     /// ```
     ///
     /// ```
@@ -103,7 +106,10 @@ impl ParseError {
     /// let set = parse(source);
     /// assert!(set.is_err());
     /// let err = set.unwrap_err();
-    /// assert_eq!(err.fmt_with_source(source).to_string(), r"[\N← error: unimplemented");
+    /// assert_eq!(
+    ///     err.fmt_with_source(source).to_string(),
+    ///     r"[\N← error: unimplemented"
+    /// );
     /// ```
     pub fn fmt_with_source(&self, source: &str) -> impl Display {
         let ParseError { offset, kind } = *self;
@@ -1382,7 +1388,8 @@ where
 /// ```
 /// use icu_unicodeset_parse::parse;
 ///
-/// let (set, _) = parse("[[:^ll:]-[^][:gc = Lowercase Letter:]&[^[[^]-[a-z]]]]").unwrap();
+/// let (set, _) =
+///     parse("[[:^ll:]-[^][:gc = Lowercase Letter:]&[^[[^]-[a-z]]]]").unwrap();
 /// let elements = 'a'..='z';
 /// assert!(set.code_points().contains_range(&elements));
 /// assert_eq!(elements.count(), set.size());
@@ -1392,7 +1399,8 @@ where
 /// ```
 /// use icu_unicodeset_parse::parse;
 ///
-/// let (set, _) = parse(r"[[a-z{hello\ world}]&[^a-y{hello\ world}]]").unwrap();
+/// let (set, _) =
+///     parse(r"[[a-z{hello\ world}]&[^a-y{hello\ world}]]").unwrap();
 /// assert!(set.contains_char('z'));
 /// assert_eq!(set.size(), 1);
 /// assert!(!set.has_strings());
@@ -1453,7 +1461,6 @@ pub fn parse(source: &str) -> Result<(CodePointInversionListAndStringList<'stati
 /// assert!(set.code_points().contains_range(&('d'..='z')));
 /// assert!(set.contains("Hello World"));
 /// assert_eq!(set.size(), 1 + ('d'..='z').count());
-///
 #[cfg(feature = "compiled_data")]
 pub fn parse_with_variables(
     source: &str,

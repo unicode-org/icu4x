@@ -19,7 +19,10 @@ use writeable::Writeable;
 /// # Examples
 ///
 /// ```
-/// use icu::locid::{langid, subtags::{language, region}};
+/// use icu::locid::{
+///     langid,
+///     subtags::{language, region},
+/// };
 ///
 /// let li = langid!("en-US");
 ///
@@ -47,7 +50,8 @@ use writeable::Writeable;
 ///
 /// ```
 /// use icu::locid::{
-///     langid, subtags::{language, region, variant, script}
+///     langid,
+///     subtags::{language, region, script, variant},
 /// };
 ///
 /// let li = langid!("eN_latn_Us-Valencia");
@@ -379,9 +383,7 @@ fn test_writeable() {
 /// # Examples
 ///
 /// ```
-/// use icu::locid::{
-///     langid, subtags::language, LanguageIdentifier,
-/// };
+/// use icu::locid::{langid, subtags::language, LanguageIdentifier};
 ///
 /// assert_eq!(LanguageIdentifier::from(language!("en")), langid!("en"));
 /// ```
@@ -438,7 +440,9 @@ impl From<Option<subtags::Region>> for LanguageIdentifier {
 ///
 /// ```
 /// use icu::locid::{
-///     langid, subtags::{language, region, script}, LanguageIdentifier,
+///     langid,
+///     subtags::{language, region, script},
+///     LanguageIdentifier,
 /// };
 ///
 /// let lang = language!("en");
@@ -478,7 +482,8 @@ impl
 ///
 /// ```
 /// use icu::locid::{
-///     langid, subtags::{language, region, script},
+///     langid,
+///     subtags::{language, region, script},
 /// };
 ///
 /// let lid = langid!("en-Latn-US");

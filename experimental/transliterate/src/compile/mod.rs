@@ -84,7 +84,6 @@ impl Direction {
 ///
 /// let t = Transliterator::try_new_unstable("de-t-de-d0-ascii".parse().unwrap(), &collection.as_provider()).unwrap();
 /// assert_eq!(t.transliterate("Käse".into()), "Kaese");
-///
 #[allow(clippy::type_complexity)] // well
 pub struct RuleCollection {
     id_mapping: HashMap<String, Locale>, // alias -> bcp id
@@ -802,7 +801,7 @@ mod tests {
                     ante: Cow::Borrowed(""),
                     key: Cow::Borrowed("\u{F0004}"),
                     post: Cow::Borrowed(""),
-                    replacer: Cow::Borrowed("reverse output:\u{F0008}\u{F000A}"), // `@@|` and function call
+                    replacer: Cow::Borrowed("reverse output:\u{F0008}\u{F000A}"), /* `@@|` and function call */
                 },
                 ds::Rule {
                     ante: Cow::Borrowed("\u{FFFFC}"), // start anchor

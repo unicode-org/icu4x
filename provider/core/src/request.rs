@@ -428,7 +428,10 @@ impl DataLocale {
     /// use icu_provider::DataLocale;
     ///
     /// assert!("und".parse::<DataLocale>().unwrap().is_empty());
-    /// assert!(!"und-u-ca-buddhist".parse::<DataLocale>().unwrap().is_empty());
+    /// assert!(!"und-u-ca-buddhist"
+    ///     .parse::<DataLocale>()
+    ///     .unwrap()
+    ///     .is_empty());
     /// assert!(!"und+auxiliary".parse::<DataLocale>().unwrap().is_empty());
     /// assert!(!"ca-ES".parse::<DataLocale>().unwrap().is_empty());
     /// ```
@@ -474,8 +477,14 @@ impl DataLocale {
     /// use icu_provider::DataLocale;
     ///
     /// assert!("und".parse::<DataLocale>().unwrap().is_langid_und());
-    /// assert!("und-u-ca-buddhist".parse::<DataLocale>().unwrap().is_langid_und());
-    /// assert!("und+auxiliary".parse::<DataLocale>().unwrap().is_langid_und());
+    /// assert!("und-u-ca-buddhist"
+    ///     .parse::<DataLocale>()
+    ///     .unwrap()
+    ///     .is_langid_und());
+    /// assert!("und+auxiliary"
+    ///     .parse::<DataLocale>()
+    ///     .unwrap()
+    ///     .is_langid_und());
     /// assert!(!"ca-ES".parse::<DataLocale>().unwrap().is_langid_und());
     /// ```
     pub fn is_langid_und(&self) -> bool {
@@ -533,7 +542,8 @@ impl DataLocale {
     ///
     /// ```
     /// use icu_locid::{
-    ///     langid, locale, subtags::{language, region},
+    ///     langid, locale,
+    ///     subtags::{language, region},
     ///     Locale,
     /// };
     /// use icu_provider::prelude::*;
@@ -635,7 +645,10 @@ impl DataLocale {
     /// # Examples
     ///
     /// ```
-    /// use icu_locid::{Locale, extensions::unicode::{key, value}};
+    /// use icu_locid::{
+    ///     extensions::unicode::{key, value},
+    ///     Locale,
+    /// };
     /// use icu_provider::prelude::*;
     ///
     /// let locale: Locale = "it-IT-u-ca-coptic".parse().expect("Valid BCP-47");
@@ -717,7 +730,9 @@ impl DataLocale {
     /// use writeable::assert_writeable_eq;
     ///
     /// let mut data_locale: DataLocale = locale!("ar-EG").into();
-    /// let aux = "GBP".parse::<AuxiliaryKeys>().expect("contains valid characters");
+    /// let aux = "GBP"
+    ///     .parse::<AuxiliaryKeys>()
+    ///     .expect("contains valid characters");
     /// data_locale.set_aux(aux);
     /// assert_writeable_eq!(data_locale, "ar-EG+GBP");
     ///
@@ -759,7 +774,9 @@ impl DataLocale {
 /// assert!(!data_locale.has_aux());
 /// assert_eq!(data_locale.get_aux(), None);
 ///
-/// let aux = "GBP".parse::<AuxiliaryKeys>().expect("contains valid characters");
+/// let aux = "GBP"
+///     .parse::<AuxiliaryKeys>()
+///     .expect("contains valid characters");
 ///
 /// data_locale.set_aux(aux);
 /// assert_writeable_eq!(data_locale, "ar-EG+GBP");

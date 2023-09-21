@@ -46,11 +46,8 @@
 //! let locale_es: Locale = locale!("es-u-co-trad");
 //! let mut options = CollatorOptions::new();
 //! options.strength = Some(Strength::Primary);
-//! let collator_es: Collator = Collator::try_new(
-//!     &locale_es.into(),
-//!     options,
-//! )
-//! .unwrap();
+//! let collator_es: Collator =
+//!     Collator::try_new(&locale_es.into(), options).unwrap();
 //!
 //! // "pollo" > "polvo" in traditional Spanish
 //! assert_eq!(collator_es.compare("pollo", "polvo"), Ordering::Greater);
@@ -58,11 +55,8 @@
 //! let locale_en: Locale = locale!("en");
 //! let mut options = CollatorOptions::new();
 //! options.strength = Some(Strength::Primary);
-//! let collator_en: Collator = Collator::try_new(
-//!     &locale_en.into(),
-//!     options,
-//! )
-//! .unwrap();
+//! let collator_en: Collator =
+//!     Collator::try_new(&locale_en.into(), options).unwrap();
 //!
 //! // "pollo" < "polvo" according to English rules
 //! assert_eq!(collator_en.compare("pollo", "polvo"), Ordering::Less);
@@ -85,11 +79,8 @@
 //!
 //! let mut options_l1 = CollatorOptions::new();
 //! options_l1.strength = Some(Strength::Primary);
-//! let collator_l1: Collator = Collator::try_new(
-//!     &Default::default(),
-//!     options_l1,
-//! )
-//! .unwrap();
+//! let collator_l1: Collator =
+//!     Collator::try_new(&Default::default(), options_l1).unwrap();
 //!
 //! assert_eq!(collator_l1.compare("a", "b"), Ordering::Less); // primary
 //! assert_eq!(collator_l1.compare("as", "às"), Ordering::Equal); // secondary
@@ -102,11 +93,8 @@
 //!
 //! let mut options_l2 = CollatorOptions::new();
 //! options_l2.strength = Some(Strength::Secondary);
-//! let collator_l2: Collator = Collator::try_new(
-//!     &Default::default(),
-//!     options_l2,
-//! )
-//! .unwrap();
+//! let collator_l2: Collator =
+//!     Collator::try_new(&Default::default(), options_l2).unwrap();
 //!
 //! assert_eq!(collator_l2.compare("a", "b"), Ordering::Less); // primary
 //! assert_eq!(collator_l2.compare("as", "às"), Ordering::Less); // secondary
@@ -119,11 +107,8 @@
 //!
 //! let mut options_l3 = CollatorOptions::new();
 //! options_l3.strength = Some(Strength::Tertiary);
-//! let collator_l3: Collator = Collator::try_new(
-//!     &Default::default(),
-//!     options_l3,
-//! )
-//! .unwrap();
+//! let collator_l3: Collator =
+//!     Collator::try_new(&Default::default(), options_l3).unwrap();
 //!
 //! assert_eq!(collator_l3.compare("a", "b"), Ordering::Less); // primary
 //! assert_eq!(collator_l3.compare("as", "às"), Ordering::Less); // secondary
@@ -271,22 +256,16 @@
 //!
 //! let mut options_num_off = CollatorOptions::new();
 //! options_num_off.numeric = Some(Numeric::Off);
-//! let collator_num_off: Collator = Collator::try_new(
-//!     &Default::default(),
-//!     options_num_off,
-//! )
-//! .unwrap();
+//! let collator_num_off: Collator =
+//!     Collator::try_new(&Default::default(), options_num_off).unwrap();
 //! assert_eq!(collator_num_off.compare("a10b", "a2b"), Ordering::Less);
 //!
 //! // Numerical sorting on
 //!
 //! let mut options_num_on = CollatorOptions::new();
 //! options_num_on.numeric = Some(Numeric::On);
-//! let collator_num_on: Collator = Collator::try_new(
-//!     &Default::default(),
-//!     options_num_on,
-//! )
-//! .unwrap();
+//! let collator_num_on: Collator =
+//!     Collator::try_new(&Default::default(), options_num_on).unwrap();
 //! assert_eq!(collator_num_on.compare("a10b", "a2b"), Ordering::Greater);
 //! ```
 
