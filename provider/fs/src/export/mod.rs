@@ -2,9 +2,11 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-//! Data exporter for [`FsDataProvider`](crate::FsDataProvider).
+//! Data exporter that creates a file system structure for use with [`FsDataProvider`](crate::FsDataProvider).
 //!
 //! This module can be used as a target for the `icu_datagen` crate.
+//!
+//! See our [datagen tutorial](https://github.com/unicode-org/icu4x/blob/main/docs/tutorials/data_management.md) for more information about different data providers.
 //!
 //! # Examples
 //!
@@ -61,6 +63,4 @@
 mod fs_exporter;
 pub mod serializers;
 
-pub use fs_exporter::ExporterOptions;
-pub use fs_exporter::FilesystemExporter;
-pub use fs_exporter::OverwriteOption;
+pub use fs_exporter::*;

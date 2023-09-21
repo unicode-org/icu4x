@@ -112,6 +112,24 @@ fn date_benches(c: &mut Criterion) {
     #[cfg(feature = "bench")]
     bench_calendar(
         &mut group,
+        "calendar/persian",
+        &fxs,
+        icu::calendar::persian::Persian,
+        |y, m, d| Date::try_new_persian_date(y, m, d).unwrap(),
+    );
+
+    #[cfg(feature = "bench")]
+    bench_calendar(
+        &mut group,
+        "calendar/roc",
+        &fxs,
+        icu::calendar::roc::Roc,
+        |y, m, d| Date::try_new_roc_date(y, m, d).unwrap(),
+    );
+
+    #[cfg(feature = "bench")]
+    bench_calendar(
+        &mut group,
         "calendar/julian",
         &fxs,
         icu::calendar::julian::Julian,
@@ -130,6 +148,40 @@ fn date_benches(c: &mut Criterion) {
                 m,
                 d,
                 icu::calendar::chinese::Chinese::new_always_calculating(),
+            )
+            .unwrap()
+        },
+    );
+
+    #[cfg(feature = "bench")]
+    bench_calendar(
+        &mut group,
+        "calendar/dangi",
+        &fxs,
+        icu::calendar::dangi::Dangi::new_always_calculating(),
+        |y, m, d| {
+            Date::try_new_dangi_date_with_calendar(
+                y,
+                m,
+                d,
+                icu::calendar::dangi::Dangi::new_always_calculating(),
+            )
+            .unwrap()
+        },
+    );
+
+    #[cfg(feature = "bench")]
+    bench_calendar(
+        &mut group,
+        "calendar/hebrew",
+        &fxs,
+        icu::calendar::hebrew::Hebrew::new_always_calculating(),
+        |y, m, d| {
+            Date::try_new_hebrew_date_with_calendar(
+                y,
+                m,
+                d,
+                icu::calendar::hebrew::Hebrew::new_always_calculating(),
             )
             .unwrap()
         },

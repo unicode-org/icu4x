@@ -34,6 +34,7 @@
 
 use crate::calendar_arithmetic::{ArithmeticDate, CalendarArithmetic};
 use crate::types::FormattableMonth;
+use crate::AnyCalendarKind;
 use crate::AsCalendar;
 use crate::Iso;
 use crate::{types, Calendar, CalendarError, Date, DateDuration, DateDurationUnit, DateTime};
@@ -62,7 +63,7 @@ use calendrical_calculations::rata_die::RataDie;
 /// objects it creates.
 ///
 /// [Hebrew calendar]: https://en.wikipedia.org/wiki/Hebrew_calendar
-#[derive(Clone, Debug, Default, Hash, Eq, PartialEq, PartialOrd, Ord)]
+#[derive(Clone, Debug, Hash, Eq, PartialEq, PartialOrd, Ord)]
 #[non_exhaustive] // we'll be adding precompiled data to this
 pub struct Hebrew;
 
@@ -283,14 +284,12 @@ impl Calendar for Hebrew {
             next_year: Self::year_as_hebrew(next_year),
         }
     }
+    fn any_calendar_kind(&self) -> Option<AnyCalendarKind> {
+        Some(AnyCalendarKind::Hebrew)
+    }
 }
 
 impl Hebrew {
-    /// Constructs a new Hebrew Calendar
-    pub fn new() -> Self {
-        Self
-    }
-
     // Converts a Biblical Hebrew Date to a Civil Hebrew Date
     fn biblical_to_civil_date(biblical_date: BookHebrew) -> HebrewDateInner {
         let (y, m, d) = biblical_date.to_civil_date();
