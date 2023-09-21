@@ -20,7 +20,7 @@ rust-version.workspace = true
 all-features = true
 
 [dependencies]
-icu_provider = { workspace = true, features = ["macros"] }
+icu_provider = { workspace = true, features = ["macros", "experimental"] }
 icu_locid = { workspace = true }
 icu_collections = { workspace = true }
 icu_normalizer = { workspace = true }

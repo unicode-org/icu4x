@@ -702,6 +702,7 @@ rust_library("icu_timezone-v1_2_0") {
   deps += [ ":icu_locid-v1_2_0" ]
   deps += [ ":icu_provider-v1_2_0" ]
   deps += [ ":tinystr-v0_7_1" ]
+  deps += [ ":zerotrie-v0_0_0" ]
   deps += [ ":zerovec-v0_9_4" ]
 
   rustenv = []
@@ -1318,6 +1319,30 @@ rust_proc_macro("zerofrom-derive-v0_1_2") {
     "--edition=2021",
     "-Cmetadata=14d5187e3af872ae",
     "-Cextra-filename=-14d5187e3af872ae",
+  ]
+
+  visibility = [ ":*" ]
+}
+
+rust_library("zerotrie-v0_0_0") {
+  crate_name = "zerotrie"
+  crate_root = "//experimental/zerotrie/src/lib.rs"
+  output_name = "zerotrie-f52c13590b7a869c"
+
+  deps = []
+  deps += [ ":displaydoc-v0_2_4($host_toolchain)" ]
+  deps += [ ":yoke-v0_7_1" ]
+  deps += [ ":zerofrom-v0_1_2" ]
+
+  rustenv = []
+
+  rustflags = [
+    "--cap-lints=allow",
+    "--edition=2021",
+    "-Cmetadata=f52c13590b7a869c",
+    "-Cextra-filename=-f52c13590b7a869c",
+    "--cfg=feature=\"yoke\"",
+    "--cfg=feature=\"zerofrom\"",
   ]
 
   visibility = [ ":*" ]

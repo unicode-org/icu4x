@@ -80,7 +80,7 @@ $ icu4x-datagen config.json
 
 More details can be found by running `--help`.
 
-## Features
+## Cargo features
 
 This crate has a lot of dependencies, some of which are not required for all operating modes. These default Cargo features
 can be disabled to reduce dependencies:
@@ -107,14 +107,12 @@ can be disabled to reduce dependencies:
   * enabled by default for semver stability
   * will be removed in 2.0.
 
-Experimental unstable ICU4X components are behind features which are not enabled by default. Note that these features
+Experimental unstable ICU4X components are behind Cargo features which are not enabled by default. Note that these Cargo features
 affect the behaviour of [`all_keys`]:
 * `icu_compactdecimal`
 * `icu_displaynames`
 * `icu_relativetime`
-* `icu_singlenumberformatter`
 * `icu_transliterate`
-* `icu_unitsconversion`
 * ...
 
 The meta-feature `experimental_components` is available to activate all experimental components.

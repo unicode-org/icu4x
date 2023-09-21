@@ -914,6 +914,7 @@ impl_value_getter! {
         /// let lookup = GeneralCategory::enum_to_short_name_mapper();
         /// assert_eq!(lookup.get(GeneralCategory::UppercaseLetter), Some("Lu"));
         /// assert_eq!(lookup.get(GeneralCategory::DashPunctuation), Some("Pd"));
+        /// assert_eq!(lookup.get(GeneralCategory::FinalPunctuation), Some("Pf"));
         /// ```
         pub fn get_enum_to_short_name_mapper() / enum_to_short_name_mapper() -> PropertyEnumToValueNameLinearMapper / PropertyEnumToValueNameLinearMapperBorrowed;
         /// Return a [`PropertyEnumToValueNameLinearMapper`], capable of looking up long names
@@ -931,6 +932,7 @@ impl_value_getter! {
         /// let lookup = GeneralCategory::enum_to_long_name_mapper();
         /// assert_eq!(lookup.get(GeneralCategory::UppercaseLetter), Some("Uppercase_Letter"));
         /// assert_eq!(lookup.get(GeneralCategory::DashPunctuation), Some("Dash_Punctuation"));
+        /// assert_eq!(lookup.get(GeneralCategory::FinalPunctuation), Some("Final_Punctuation"));
         /// ```
         pub fn get_enum_to_long_name_mapper() / enum_to_long_name_mapper() -> PropertyEnumToValueNameLinearMapper / PropertyEnumToValueNameLinearMapperBorrowed;
     }
@@ -1947,6 +1949,7 @@ impl_value_getter! {
         /// assert_eq!(lookup.get_strict("Aletter"), None);
         /// // loose matching of name
         /// assert_eq!(lookup.get_loose("Aletter"), Some(WordBreak::ALetter));
+        /// assert_eq!(lookup.get_loose("w_seg_space"), Some(WordBreak::WSegSpace));
         /// // fake property
         /// assert_eq!(lookup.get_strict("Quadruple_Quote"), None);
         /// ```
@@ -1966,6 +1969,7 @@ impl_value_getter! {
         /// let lookup = WordBreak::enum_to_short_name_mapper();
         /// assert_eq!(lookup.get(WordBreak::Katakana), Some("KA"));
         /// assert_eq!(lookup.get(WordBreak::ALetter), Some("LE"));
+        /// assert_eq!(lookup.get(WordBreak::WSegSpace), Some("WSegSpace"));
         /// ```
         pub fn get_enum_to_short_name_mapper() / enum_to_short_name_mapper() -> PropertyEnumToValueNameLinearMapper / PropertyEnumToValueNameLinearMapperBorrowed;
         /// Return a [`PropertyEnumToValueNameLinearMapper`], capable of looking up long names
@@ -1983,6 +1987,7 @@ impl_value_getter! {
         /// let lookup = WordBreak::enum_to_long_name_mapper();
         /// assert_eq!(lookup.get(WordBreak::Katakana), Some("Katakana"));
         /// assert_eq!(lookup.get(WordBreak::ALetter), Some("ALetter"));
+        /// assert_eq!(lookup.get(WordBreak::WSegSpace), Some("WSegSpace"));
         /// ```
         pub fn get_enum_to_long_name_mapper() / enum_to_long_name_mapper() -> PropertyEnumToValueNameLinearMapper / PropertyEnumToValueNameLinearMapperBorrowed;
     }
@@ -2085,6 +2090,7 @@ impl_value_getter! {
         /// let lookup = SentenceBreak::enum_to_long_name_mapper();
         /// assert_eq!(lookup.get(SentenceBreak::Format), Some("Format"));
         /// assert_eq!(lookup.get(SentenceBreak::Numeric), Some("Numeric"));
+        /// assert_eq!(lookup.get(SentenceBreak::SContinue), Some("SContinue"));
         /// ```
         pub fn get_enum_to_long_name_mapper() / enum_to_long_name_mapper() -> PropertyEnumToValueNameLinearMapper / PropertyEnumToValueNameLinearMapperBorrowed;
     }

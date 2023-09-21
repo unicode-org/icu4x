@@ -4,6 +4,7 @@
     "Ambiguous",
     "Halfwidth",
     "Fullwidth",
-    "Narrow"
+    "Narrow",
+    "Wide"
   ]
 }

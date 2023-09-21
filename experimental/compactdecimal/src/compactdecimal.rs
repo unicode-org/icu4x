@@ -278,15 +278,19 @@ impl CompactDecimalFormatter {
     /// The result may have a fractional digit only if it is compact and its
     /// significand is less than 10. Trailing fractional 0s are omitted, and
     /// a sign is shown only for negative values.
+    ///
+    /// # Examples
+    ///
     /// ```
-    /// # use icu_compactdecimal::CompactDecimalFormatter;
-    /// # use icu_locid::locale;
-    /// # use writeable::assert_writeable_eq;
-    /// #
-    /// # let short_english = CompactDecimalFormatter::try_new_short(
-    /// #    &locale!("en").into(),
-    /// #    Default::default(),
-    /// # ).unwrap();
+    /// use icu_compactdecimal::CompactDecimalFormatter;
+    /// use icu_locid::locale;
+    /// use writeable::assert_writeable_eq;
+    ///
+    /// let short_english = CompactDecimalFormatter::try_new_short(
+    ///     &locale!("en").into(),
+    ///     Default::default(),
+    /// ).unwrap();
+    ///
     /// assert_writeable_eq!(short_english.format_i64(0), "0");
     /// assert_writeable_eq!(short_english.format_i64(2), "2");
     /// assert_writeable_eq!(short_english.format_i64(843), "843");
@@ -295,8 +299,10 @@ impl CompactDecimalFormatter {
     /// assert_writeable_eq!(short_english.format_i64(3_010_349), "3M");
     /// assert_writeable_eq!(short_english.format_i64(-13_132), "-13K");
     /// ```
+    ///
     /// The result is the nearest such compact number, with halfway cases-
     /// rounded towards the number with an even least significant digit.
+    ///
     /// ```
     /// # use icu_compactdecimal::CompactDecimalFormatter;
     /// # use icu_locid::locale;
@@ -315,9 +321,156 @@ impl CompactDecimalFormatter {
     /// ```
     pub fn format_i64(&self, value: i64) -> FormattedCompactDecimal<'_> {
         let unrounded = FixedDecimal::from(value);
-        let log10_type = unrounded.nonzero_magnitude_start();
+        self.format_fixed_decimal(unrounded)
+    }
+
+    /// Formats a floating-point number in compact decimal notation using the default
+    /// precision settings.
+    ///
+    /// The result may have a fractional digit only if it is compact and its
+    /// significand is less than 10. Trailing fractional 0s are omitted, and
+    /// a sign is shown only for negative values.
+    ///
+    /// ✨ *Enabled with the `ryu` Cargo feature.*
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use icu_compactdecimal::CompactDecimalFormatter;
+    /// use icu_locid::locale;
+    /// use writeable::assert_writeable_eq;
+    ///
+    /// let short_english = CompactDecimalFormatter::try_new_short(
+    ///     &locale!("en").into(),
+    ///     Default::default(),
+    /// ).unwrap();
+    ///
+    /// assert_writeable_eq!(short_english.format_f64(0.0).unwrap(), "0");
+    /// assert_writeable_eq!(short_english.format_f64(2.0).unwrap(), "2");
+    /// assert_writeable_eq!(short_english.format_f64(843.0).unwrap(), "843");
+    /// assert_writeable_eq!(short_english.format_f64(2207.0).unwrap(), "2.2K");
+    /// assert_writeable_eq!(short_english.format_f64(15_127.0).unwrap(), "15K");
+    /// assert_writeable_eq!(short_english.format_f64(3_010_349.0).unwrap(), "3M");
+    /// assert_writeable_eq!(short_english.format_f64(-13_132.0).unwrap(), "-13K");
+    /// ```
+    ///
+    /// The result is the nearest such compact number, with halfway cases-
+    /// rounded towards the number with an even least significant digit.
+    ///
+    /// ```
+    /// # use icu_compactdecimal::CompactDecimalFormatter;
+    /// # use icu_locid::locale;
+    /// # use writeable::assert_writeable_eq;
+    /// #
+    /// # let short_english = CompactDecimalFormatter::try_new_short(
+    /// #    &locale!("en").into(),
+    /// #    Default::default(),
+    /// # ).unwrap();
+    /// assert_writeable_eq!(short_english.format_f64(999_499.99).unwrap(), "999K");
+    /// assert_writeable_eq!(short_english.format_f64(999_500.00).unwrap(), "1M");
+    /// assert_writeable_eq!(short_english.format_f64(1650.0).unwrap(), "1.6K");
+    /// assert_writeable_eq!(short_english.format_f64(1750.0).unwrap(), "1.8K");
+    /// assert_writeable_eq!(short_english.format_f64(1950.0).unwrap(), "2K");
+    /// assert_writeable_eq!(short_english.format_f64(-1_172_700.0).unwrap(), "-1.2M");
+    /// ```
+    #[cfg(feature = "ryu")]
+    pub fn format_f64(
+        &self,
+        value: f64,
+    ) -> Result<FormattedCompactDecimal<'_>, CompactDecimalError> {
+        use fixed_decimal::FloatPrecision::Floating;
+        // NOTE: This first gets the shortest representation of the f64, which
+        // manifests as double rounding.
+        let partly_rounded = FixedDecimal::try_from_f64(value, Floating)?;
+        Ok(self.format_fixed_decimal(partly_rounded))
+    }
+
+    /// Formats a [`FixedDecimal`] by automatically scaling and rounding it.
+    ///
+    /// The result may have a fractional digit only if it is compact and its
+    /// significand is less than 10. Trailing fractional 0s are omitted.
+    ///
+    /// Because the FixedDecimal is mutated before formatting, this function
+    /// takes ownership of it.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use fixed_decimal::FixedDecimal;
+    /// use icu_compactdecimal::CompactDecimalFormatter;
+    /// use icu_locid::locale;
+    /// use writeable::assert_writeable_eq;
+    ///
+    /// let short_english = CompactDecimalFormatter::try_new_short(
+    ///     &locale!("en").into(),
+    ///     Default::default(),
+    /// ).unwrap();
+    ///
+    /// assert_writeable_eq!(
+    ///     short_english.format_fixed_decimal(FixedDecimal::from(0)),
+    ///     "0");
+    /// assert_writeable_eq!(
+    ///     short_english.format_fixed_decimal(FixedDecimal::from(2)),
+    ///     "2");
+    /// assert_writeable_eq!(
+    ///     short_english.format_fixed_decimal(FixedDecimal::from(843)),
+    ///     "843");
+    /// assert_writeable_eq!(
+    ///     short_english.format_fixed_decimal(FixedDecimal::from(2207)),
+    ///     "2.2K");
+    /// assert_writeable_eq!(
+    ///     short_english.format_fixed_decimal(FixedDecimal::from(15127)),
+    ///     "15K");
+    /// assert_writeable_eq!(
+    ///     short_english.format_fixed_decimal(FixedDecimal::from(3010349)),
+    ///     "3M");
+    /// assert_writeable_eq!(
+    ///     short_english.format_fixed_decimal(FixedDecimal::from(-13132)),
+    ///     "-13K");
+    ///
+    /// // The sign display on the FixedDecimal is respected:
+    /// assert_writeable_eq!(
+    ///     short_english.format_fixed_decimal(FixedDecimal::from(2500)
+    ///         .with_sign_display(fixed_decimal::SignDisplay::ExceptZero)),
+    ///     "+2.5K");
+    /// ```
+    ///
+    /// The result is the nearest such compact number, with halfway cases-
+    /// rounded towards the number with an even least significant digit.
+    ///
+    /// ```
+    /// # use fixed_decimal::FixedDecimal;
+    /// # use icu_compactdecimal::CompactDecimalFormatter;
+    /// # use icu_locid::locale;
+    /// # use writeable::assert_writeable_eq;
+    /// #
+    /// # let short_english = CompactDecimalFormatter::try_new_short(
+    /// #    &locale!("en").into(),
+    /// #    Default::default(),
+    /// # ).unwrap();
+    /// assert_writeable_eq!(
+    ///     short_english.format_fixed_decimal("999499.99".parse().unwrap()),
+    ///     "999K");
+    /// assert_writeable_eq!(
+    ///     short_english.format_fixed_decimal("999500.00".parse().unwrap()),
+    ///     "1M");
+    /// assert_writeable_eq!(
+    ///     short_english.format_fixed_decimal("1650".parse().unwrap()),
+    ///     "1.6K");
+    /// assert_writeable_eq!(
+    ///     short_english.format_fixed_decimal("1750".parse().unwrap()),
+    ///     "1.8K");
+    /// assert_writeable_eq!(
+    ///     short_english.format_fixed_decimal("1950".parse().unwrap()),
+    ///     "2K");
+    /// assert_writeable_eq!(
+    ///     short_english.format_fixed_decimal("-1172700".parse().unwrap()),
+    ///     "-1.2M");
+    /// ```
+    pub fn format_fixed_decimal(&self, value: FixedDecimal) -> FormattedCompactDecimal<'_> {
+        let log10_type = value.nonzero_magnitude_start();
         let (mut plural_map, mut exponent) = self.plural_map_and_exponent_for_magnitude(log10_type);
-        let mut significand = unrounded.multiplied_pow10(-i16::from(exponent));
+        let mut significand = value.multiplied_pow10(-i16::from(exponent));
         // If we have just one digit before the decimal point…
         if significand.nonzero_magnitude_start() == 0 {
             // …round to one fractional digit…
@@ -373,6 +526,7 @@ impl CompactDecimalFormatter {
     /// be equal to `formatter.compact_exponent_for_magnitude(n.significand().nonzero_magnitude_start() + n.exponent())`.
     ///
     /// # Examples
+    ///
     /// ```
     /// # use icu_compactdecimal::CompactDecimalFormatter;
     /// # use icu_locid::locale;

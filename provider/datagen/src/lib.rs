@@ -81,7 +81,7 @@
 //!
 //! More details can be found by running `--help`.
 //!
-//! # Features
+//! # Cargo features
 //!
 //! This crate has a lot of dependencies, some of which are not required for all operating modes. These default Cargo features
 //! can be disabled to reduce dependencies:
@@ -108,14 +108,12 @@
 //!   * enabled by default for semver stability
 //!   * will be removed in 2.0.
 //!
-//! Experimental unstable ICU4X components are behind features which are not enabled by default. Note that these features
+//! Experimental unstable ICU4X components are behind Cargo features which are not enabled by default. Note that these Cargo features
 //! affect the behaviour of [`all_keys`]:
 //! * `icu_compactdecimal`
 //! * `icu_displaynames`
 //! * `icu_relativetime`
-//! * `icu_singlenumberformatter`
 //! * `icu_transliterate`
-//! * `icu_unitsconversion`
 //! * ...
 //!
 //! The meta-feature `experimental_components` is available to activate all experimental components.
@@ -306,6 +304,14 @@ impl std::fmt::Display for CollationHanDatabase {
 }
 
 /// A language's CLDR coverage level.
+///
+/// In ICU4X, these are disjoint sets: a language belongs to a single coverage level. This
+/// contrasts with CLDR usage, where these levels are understood to be additive (i.e., "basic"
+/// includes all language with "basic", or better coverage). The ICU4X semantics allow
+/// generating different data files for different coverage levels without duplicating data.
+/// However, the data itself is still additive (e.g. for fallback to work correctly), so data
+/// for moderate (basic) languages should only be loaded if modern (modern and moderate) data
+/// is already present.
 #[derive(Debug, Copy, Clone, PartialEq, Eq, serde::Deserialize, serde::Serialize, Hash)]
 #[non_exhaustive]
 #[serde(rename_all = "camelCase")]
@@ -314,11 +320,11 @@ pub enum CoverageLevel {
     ///
     /// This is the highest level of coverage.
     Modern,
-    /// Locales listed as moderate coverage targets by the CLDR subcomittee.
+    /// Locales listed as moderate, but not modern, coverage targets by the CLDR subcomittee.
     ///
     /// This is a medium level of coverage.
     Moderate,
-    /// Locales listed as basic coverage targets by the CLDR subcomittee.
+    /// Locales listed as basic, but not moderate or modern, coverage targets by the CLDR subcomittee.
     ///
     /// This is the lowest level of coverage.
     Basic,
@@ -583,10 +589,6 @@ pub fn datagen(
             outs.into_iter()
                 .map(
                     |out| -> Result<Box<dyn icu_provider::datagen::DataExporter>, DataError> {
-                        use baked_exporter::*;
-                        use icu_provider_blob::export::*;
-                        use icu_provider_fs::export::*;
-
                         Ok(match out {
                             Out::Fs {
                                 output_path,
@@ -594,28 +596,36 @@ pub fn datagen(
                                 overwrite,
                                 fingerprint,
                             } => {
-                                let mut options = ExporterOptions::default();
+                                let mut options = fs_exporter::Options::default();
                                 options.root = output_path;
                                 if overwrite {
-                                    options.overwrite = OverwriteOption::RemoveAndReplace
+                                    options.overwrite =
+                                        fs_exporter::OverwriteOption::RemoveAndReplace
                                 }
                                 options.fingerprint = fingerprint;
-                                Box::new(FilesystemExporter::try_new(serializer, options)?)
+                                Box::new(fs_exporter::FilesystemExporter::try_new(
+                                    serializer, options,
+                                )?)
                             }
-                            Out::Blob(write) => Box::new(BlobExporter::new_with_sink(write)),
+                            Out::Blob(write) => {
+                                Box::new(blob_exporter::BlobExporter::new_with_sink(write))
+                            }
                             Out::Baked {
                                 mod_directory,
                                 options,
-                            } => Box::new(BakedExporter::new(mod_directory, options)?),
+                            } => Box::new(baked_exporter::BakedExporter::new(
+                                mod_directory,
+                                options,
+                            )?),
                             #[allow(deprecated)]
                             Out::Module {
                                 mod_directory,
                                 pretty,
                                 insert_feature_gates,
                                 use_separate_crates,
-                            } => Box::new(BakedExporter::new(
+                            } => Box::new(baked_exporter::BakedExporter::new(
                                 mod_directory,
-                                Options {
+                                baked_exporter::Options {
                                     pretty,
                                     insert_feature_gates,
                                     use_separate_crates,

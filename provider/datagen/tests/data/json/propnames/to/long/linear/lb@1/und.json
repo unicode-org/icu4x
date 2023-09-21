@@ -41,6 +41,7 @@
     "Hebrew_Letter",
     "Regional_Indicator",
     "E_Base",
-    "E_Modifier"
+    "E_Modifier",
+    "ZWJ"
   ]
 }

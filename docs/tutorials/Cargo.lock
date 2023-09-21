@@ -196,8 +196,8 @@ checksum = "14c189c53d098945499cdfa7ecc63567cf3886b3332b312a5b4585d8d3a6a610"
 name = "calendrical_calculations"
 version = "0.1.0"
 dependencies = [
+ "core_maths",
  "displaydoc",
- "libm",
 ]
 
 [[package]]
@@ -288,6 +288,15 @@ name = "core-foundation-sys"
 version = "0.8.4"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "e496a50fda8aacccc86d7529e2c1e0892dbd0f898a6b5645b5561b89c3210efa"
+
+[[package]]
+name = "core_maths"
+version = "0.1.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "e3b02505ccb8c50b0aa21ace0fc08c3e53adebd4e58caa18a36152803c7709a3"
+dependencies = [
+ "libm",
+]
 
 [[package]]
 name = "corosensei"
@@ -737,7 +746,6 @@ dependencies = [
  "icu_locid",
  "icu_locid_transform",
  "icu_provider",
- "libm",
  "serde",
  "tinystr",
  "writeable",
@@ -1150,13 +1158,13 @@ version = "1.2.0"
 name = "icu_segmenter"
 version = "1.2.1"
 dependencies = [
+ "core_maths",
  "databake",
  "displaydoc",
  "icu_collections",
  "icu_locid",
  "icu_provider",
  "icu_segmenter_data",
- "libm",
  "serde",
  "utf8_iter",
  "zerovec",
@@ -3086,10 +3094,6 @@ version = "1.2.0"
 
 [[patch.unused]]
 name = "icu_transliterate"
-version = "0.0.0"
-
-[[patch.unused]]
-name = "icu_transliterate_data"
 version = "0.0.0"
 
 [[patch.unused]]

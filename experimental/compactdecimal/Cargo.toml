@@ -46,3 +46,4 @@ std = ["fixed_decimal/std", "icu_decimal/std", "icu_plurals/std", "icu_provider/
 serde = ["dep:serde", "zerovec/serde", "icu_decimal/serde", "icu_plurals/serde"]
 datagen = ["std", "serde", "dep:databake", "zerovec/databake"]
 compiled_data = ["dep:icu_compactdecimal_data", "dep:icu_locid_transform", "icu_decimal/compiled_data", "icu_plurals/compiled_data"]
+ryu = ["fixed_decimal/ryu"]

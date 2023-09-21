@@ -53,6 +53,7 @@ icu_locid_transform = { workspace = true }
 [features]
 std = ["icu_locid/std"]
 sync = []
+experimental = []
 macros = ["dep:icu_provider_macros"]
 # Enable logging of additional context of data errors
 logging = ["dep:log"]

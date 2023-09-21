@@ -113,7 +113,7 @@ fn map_to_vec<'a>(
     };
 
     let mut v = Vec::new();
-    for i in 0..last {
+    for i in 0..=last {
         if let Some(&val) = map.get(&i) {
             v.push(val)
         } else {

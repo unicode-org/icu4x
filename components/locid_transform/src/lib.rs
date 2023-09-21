@@ -89,7 +89,6 @@
 extern crate alloc;
 
 mod canonicalizer;
-#[cfg(feature = "experimental")]
 mod directionality;
 mod error;
 mod expander;
@@ -97,7 +96,6 @@ pub mod fallback;
 pub mod provider;
 
 pub use canonicalizer::LocaleCanonicalizer;
-#[cfg(feature = "experimental")]
 pub use directionality::{Direction, LocaleDirectionality};
 pub use error::LocaleTransformError;
 pub use expander::LocaleExpander;
