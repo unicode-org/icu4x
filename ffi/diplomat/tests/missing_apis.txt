@@ -77,3 +77,10 @@ icu::properties::names::PropertyEnumToValueNameLinearTiny4MapperBorrowed::get#Fn
 icu::properties::names::PropertyEnumToValueNameSparseMapper#Struct
 icu::properties::names::PropertyEnumToValueNameSparseMapperBorrowed#Struct
 icu::properties::names::PropertyEnumToValueNameSparseMapperBorrowed::get#FnInStruct
+icu::transliterate::CustomTransliterator::transliterate#FnInTrait
+icu::transliterate::Error#Enum
+icu::transliterate::RuleCollection#Struct
+icu::transliterate::RuleCollection::as_provider#FnInStruct
+icu::transliterate::RuleCollection::register_source#FnInStruct
+icu::transliterate::Transliterator#Struct
+icu::transliterate::TransliteratorError#Enum

@@ -300,6 +300,7 @@ lazy_static::lazy_static! {
         "icu::properties::provider",
         "icu::segmenter::provider",
         "icu::timezone::provider",
+        "icu::transliterate::provider",
 
         // Borrowed <-> owned converters
         "icu::locid_transform::fallback::LocaleFallbacker::as_borrowed",
@@ -331,19 +332,20 @@ lazy_static::lazy_static! {
         // Re-exports of errors
         "fixed_decimal::Error",
         "icu::calendar::Error",
+        "icu::collator::Error",
         "icu::compactdecimal::Error",
         "icu::datetime::Error",
         "icu::decimal::Error",
         "icu::list::Error",
-        "icu::locid::Error",
         "icu::locid_transform::Error",
+        "icu::locid::Error",
         "icu::normalizer::Error",
         "icu::plurals::Error",
         "icu::properties::Error",
         "icu::relativetime::Error",
         "icu::segmenter::Error",
         "icu::timezone::Error",
-        "icu::collator::Error",
+        "icu::transliterator::Error",
 
         // "Internal" trait that should never be called directly
         "icu::calendar::Calendar",

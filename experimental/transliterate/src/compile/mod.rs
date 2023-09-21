@@ -121,20 +121,13 @@ impl RuleCollection {
         }
     }
 
-    /// Returns a provider usable by [`Transliterator::try_new_unstable`](crate::Transliterator::try_new_unstable).
+    /// Returns a provider that is usable by [`Transliterator::try_new_unstable`](crate::Transliterator::try_new_unstable).
     ///
     /// ✨ *Enabled with the `compiled_data` Cargo feature.*
     #[cfg(feature = "compiled_data")]
     pub fn as_provider(
         &self,
-    ) -> impl DataProvider<TransliteratorRulesV1Marker>
-           + DataProvider<CanonicalDecompositionDataV1Marker>
-           + DataProvider<CompatibilityDecompositionSupplementV1Marker>
-           + DataProvider<CanonicalDecompositionTablesV1Marker>
-           + DataProvider<CompatibilityDecompositionTablesV1Marker>
-           + DataProvider<CanonicalCompositionsV1Marker>
-           + icu_provider::datagen::IterableDataProvider<TransliteratorRulesV1Marker>
-           + '_ {
+    ) -> RuleCollectionProvider<'_, icu_properties::provider::Baked, icu_normalizer::provider::Baked> {
         RuleCollectionProvider {
             collection: self,
             properties_provider: &icu_properties::provider::Baked,
@@ -150,17 +143,7 @@ impl RuleCollection {
         &'a self,
         properties_provider: &'a PP,
         normalizer_provider: &'a NP,
-    ) -> Result<
-        impl DataProvider<TransliteratorRulesV1Marker>
-            + DataProvider<CanonicalDecompositionDataV1Marker>
-            + DataProvider<CompatibilityDecompositionSupplementV1Marker>
-            + DataProvider<CanonicalDecompositionTablesV1Marker>
-            + DataProvider<CompatibilityDecompositionTablesV1Marker>
-            + DataProvider<CanonicalCompositionsV1Marker>
-            + icu_provider::datagen::IterableDataProvider<TransliteratorRulesV1Marker>
-            + 'a,
-        DataError,
-    >
+    ) -> Result<RuleCollectionProvider<'a, PP, NP>, DataError>
     where
         PP: ?Sized
             + DataProvider<AsciiHexDigitV1Marker>
@@ -246,7 +229,9 @@ impl RuleCollection {
     }
 }
 
-struct RuleCollectionProvider<'a, PP: ?Sized, NP: ?Sized> {
+/// A provider that is usable by [`Transliterator::try_new_unstable`](crate::Transliterator::try_new_unstable).
+#[derive(Debug)]
+pub struct RuleCollectionProvider<'a, PP: ?Sized, NP: ?Sized> {
     collection: &'a RuleCollection,
     properties_provider: &'a PP,
     normalizer_provider: &'a NP,
@@ -407,6 +392,7 @@ redirect!(
     CanonicalCompositionsV1Marker
 );
 
+#[cfg(feature = "datagen")]
 impl<PP, NP> icu_provider::datagen::IterableDataProvider<TransliteratorRulesV1Marker>
     for RuleCollectionProvider<'_, PP, NP>
 where
