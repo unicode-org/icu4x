@@ -31,14 +31,18 @@ impl FormattedCompactDecimal<'_> {
     /// use writeable::assert_writeable_eq;
     ///
     /// let short_english = CompactDecimalFormatter::try_new_short(
-    ///    &locale!("en").into(),
-    ///    Default::default(),
-    /// ).unwrap();
+    ///     &locale!("en").into(),
+    ///     Default::default(),
+    /// )
+    /// .unwrap();
     ///
     /// let formatted_compact_decimal = short_english.format_i64(2207);
     ///
     /// assert_writeable_eq!(formatted_compact_decimal, "2.2K");
-    /// assert_eq!(formatted_compact_decimal.get_compact_decimal().to_string(), "2.2c3");
+    /// assert_eq!(
+    ///     formatted_compact_decimal.get_compact_decimal().to_string(),
+    ///     "2.2c3"
+    /// );
     /// ```
     pub fn get_compact_decimal(&self) -> &CompactDecimal {
         &self.value

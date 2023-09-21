@@ -27,11 +27,9 @@ appropriate [`PluralCategory`].
 use icu::locid::locale;
 use icu::plurals::{PluralCategory, PluralRuleType, PluralRules};
 
-let pr = PluralRules::try_new(
-    &locale!("en").into(),
-    PluralRuleType::Cardinal,
-)
-.expect("locale should be present");
+let pr =
+    PluralRules::try_new(&locale!("en").into(), PluralRuleType::Cardinal)
+        .expect("locale should be present");
 
 assert_eq!(pr.category_for(5_usize), PluralCategory::Other);
 ```

@@ -20,7 +20,8 @@
 //! use icu::properties::exemplar_chars;
 //!
 //! let locale = locale!("en-001").into();
-//! let data = exemplar_chars::exemplars_main(&locale).expect("locale should be present");
+//! let data = exemplar_chars::exemplars_main(&locale)
+//!     .expect("locale should be present");
 //! let exemplars_main = data.as_borrowed();
 //!
 //! assert!(exemplars_main.contains_char('a'));

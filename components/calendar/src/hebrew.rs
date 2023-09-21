@@ -5,18 +5,21 @@
 //! This module contains types and implementations for the Hebrew calendar.
 //!
 //! ```rust
-//! use icu::calendar::{Ref, Date, DateTime, hebrew::Hebrew};
+//! use icu::calendar::{hebrew::Hebrew, Date, DateTime, Ref};
 //!
 //! let hebrew = Hebrew::new_always_calculating();
 //! let hebrew = Ref(&hebrew); // to avoid cloning
 //!
 //! // `Date` type
-//! let hebrew_date = Date::try_new_hebrew_date_with_calendar(3425, 10, 11, hebrew)
-//!     .expect("Failed to initialize hebrew Date instance.");
+//! let hebrew_date =
+//!     Date::try_new_hebrew_date_with_calendar(3425, 10, 11, hebrew)
+//!         .expect("Failed to initialize hebrew Date instance.");
 //!
 //! // `DateTime` type
-//! let hebrew_datetime = DateTime::try_new_hebrew_datetime_with_calendar(3425, 10, 11, 13, 1, 0, hebrew)
-//!     .expect("Failed to initialize hebrew DateTime instance.");
+//! let hebrew_datetime = DateTime::try_new_hebrew_datetime_with_calendar(
+//!     3425, 10, 11, 13, 1, 0, hebrew,
+//! )
+//! .expect("Failed to initialize hebrew DateTime instance.");
 //!
 //! // `Date` checks
 //! assert_eq!(hebrew_date.year().number, 3425);
@@ -347,13 +350,14 @@ impl<A: AsCalendar<Calendar = Hebrew>> Date<A> {
     ///
     ///
     /// ```rust
-    /// use icu::calendar::Date;
     /// use icu::calendar::hebrew::Hebrew;
+    /// use icu::calendar::Date;
     ///
     /// let hebrew = Hebrew::new_always_calculating();
     ///
-    /// let date_hebrew = Date::try_new_hebrew_date_with_calendar(3425, 4, 25, hebrew)
-    ///     .expect("Failed to initialize Hebrew Date instance.");
+    /// let date_hebrew =
+    ///     Date::try_new_hebrew_date_with_calendar(3425, 4, 25, hebrew)
+    ///         .expect("Failed to initialize Hebrew Date instance.");
     ///
     /// assert_eq!(date_hebrew.year().number, 3425);
     /// assert_eq!(date_hebrew.month().ordinal, 4);
@@ -378,13 +382,15 @@ impl<A: AsCalendar<Calendar = Hebrew>> DateTime<A> {
     /// one that loads such data from a provider will be added in the future (#3933)
     ///
     /// ```rust
-    /// use icu::calendar::DateTime;
     /// use icu::calendar::hebrew::Hebrew;
+    /// use icu::calendar::DateTime;
     ///
     /// let hebrew = Hebrew::new_always_calculating();
     ///
-    /// let datetime_hebrew = DateTime::try_new_hebrew_datetime_with_calendar(4201, 10, 11, 13, 1, 0, hebrew)
-    ///     .expect("Failed to initialize Hebrew DateTime instance");
+    /// let datetime_hebrew = DateTime::try_new_hebrew_datetime_with_calendar(
+    ///     4201, 10, 11, 13, 1, 0, hebrew,
+    /// )
+    /// .expect("Failed to initialize Hebrew DateTime instance");
     ///
     /// assert_eq!(datetime_hebrew.date.year().number, 4201);
     /// assert_eq!(datetime_hebrew.date.month().ordinal, 10);

@@ -16,7 +16,7 @@ use core::ops::Deref;
 /// # Examples
 ///
 /// ```
-/// use icu::locid::subtags::{Variants, variant};
+/// use icu::locid::subtags::{variant, Variants};
 ///
 /// let mut v = vec![variant!("posix"), variant!("macos")];
 /// v.sort();
@@ -48,7 +48,7 @@ impl Variants {
     /// # Examples
     ///
     /// ```
-    /// use icu::locid::subtags::{Variants, variant};
+    /// use icu::locid::subtags::{variant, Variants};
     ///
     /// let variants = Variants::from_variant(variant!("posix"));
     /// ```
@@ -64,7 +64,7 @@ impl Variants {
     /// # Examples
     ///
     /// ```
-    /// use icu::locid::subtags::{Variants, variant};
+    /// use icu::locid::subtags::{variant, Variants};
     ///
     /// let mut v = vec![variant!("posix"), variant!("macos")];
     /// v.sort();
@@ -91,7 +91,7 @@ impl Variants {
     /// # Examples
     ///
     /// ```
-    /// use icu::locid::subtags::{Variants, variant};
+    /// use icu::locid::subtags::{variant, Variants};
     ///
     /// let mut v = vec![variant!("posix"), variant!("macos")];
     /// v.sort();

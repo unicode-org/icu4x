@@ -31,11 +31,9 @@
 //!
 //! let phf_example_bytes = [
 //!     // `p` parameter
-//!     1,
-//!     // `q` parameters, one for each of the N buckets
-//!     0, 0, 1, 1,
-//!     // Exact keys to be compared with the input
-//!     b'e', b'a', b'c', b'g'
+//!     1, // `q` parameters, one for each of the N buckets
+//!     0, 0, 1, 1, // Exact keys to be compared with the input
+//!     b'e', b'a', b'c', b'g',
 //! ];
 //!
 //! let phf = PerfectByteHashMap::from_bytes(&phf_example_bytes);

@@ -89,7 +89,9 @@ impl LocaleDirectionality {
     ///
     /// ```
     /// use icu_locid::locale;
-    /// use icu_locid_transform::{Direction, LocaleDirectionality, LocaleExpander};
+    /// use icu_locid_transform::{
+    ///     Direction, LocaleDirectionality, LocaleExpander,
+    /// };
     ///
     /// let ld_default = LocaleDirectionality::new();
     ///
@@ -98,7 +100,10 @@ impl LocaleDirectionality {
     /// let expander = LocaleExpander::new_extended();
     /// let ld_extended = LocaleDirectionality::new_with_expander(expander);
     ///
-    /// assert_eq!(ld_extended.get(&locale!("jbn")), Some(Direction::RightToLeft));
+    /// assert_eq!(
+    ///     ld_extended.get(&locale!("jbn")),
+    ///     Some(Direction::RightToLeft)
+    /// );
     /// ```
     #[cfg(feature = "compiled_data")]
     pub const fn new_with_expander(expander: LocaleExpander) -> Self {
@@ -166,7 +171,10 @@ impl LocaleDirectionality {
     ///
     /// let ld = LocaleDirectionality::new();
     ///
-    /// assert_eq!(ld.get(&Locale::from(Some(script!("Latn")))), Some(Direction::LeftToRight));
+    /// assert_eq!(
+    ///     ld.get(&Locale::from(Some(script!("Latn")))),
+    ///     Some(Direction::LeftToRight)
+    /// );
     /// ```
     pub fn get(&self, locale: impl AsRef<LanguageIdentifier>) -> Option<Direction> {
         let script = self.expander.get_likely_script(locale.as_ref())?;

@@ -45,11 +45,9 @@ use crate::options::components;
 /// use icu::locid::locale;
 /// use writeable::assert_writeable_eq;
 ///
-/// let tf = TimeFormatter::try_new_with_length(
-///     &locale!("en").into(),
-///     Time::Short,
-/// )
-/// .expect("Failed to create TimeFormatter instance.");
+/// let tf =
+///     TimeFormatter::try_new_with_length(&locale!("en").into(), Time::Short)
+///         .expect("Failed to create TimeFormatter instance.");
 ///
 /// let datetime = DateTime::try_new_gregorian_datetime(2020, 9, 1, 12, 34, 28)
 ///     .expect("Failed to construct DateTime.");
@@ -78,11 +76,8 @@ impl TimeFormatter {
     /// use icu::datetime::{options::length::Time, TimeFormatter};
     /// use icu::locid::locale;
     ///
-    /// TimeFormatter::try_new_with_length(
-    ///     &locale!("en").into(),
-    ///     Time::Short,
-    /// )
-    /// .unwrap();
+    /// TimeFormatter::try_new_with_length(&locale!("en").into(), Time::Short)
+    ///     .unwrap();
     /// ```
     #[cfg(feature = "compiled_data")]
     pub fn try_new_with_length(
@@ -146,11 +141,9 @@ impl TimeFormatter {
     /// use icu::locid::locale;
     /// use writeable::assert_writeable_eq;
     ///
-    /// let tf = TimeFormatter::try_new_with_length(
-    ///     &locale!("en").into(),
-    ///     Time::Short,
-    /// )
-    /// .expect("Failed to create TimeFormatter instance.");
+    /// let tf =
+    ///     TimeFormatter::try_new_with_length(&locale!("en").into(), Time::Short)
+    ///         .expect("Failed to create TimeFormatter instance.");
     ///
     /// let datetime = DateTime::try_new_gregorian_datetime(2020, 9, 1, 12, 34, 28)
     ///     .expect("Failed to construct DateTime.");
@@ -173,11 +166,9 @@ impl TimeFormatter {
     /// use icu::calendar::DateTime;
     /// use icu::datetime::{options::length::Time, TimeFormatter};
     /// use icu::locid::locale;
-    /// let tf = TimeFormatter::try_new_with_length(
-    ///     &locale!("en").into(),
-    ///     Time::Short,
-    /// )
-    /// .expect("Failed to create TimeFormatter instance.");
+    /// let tf =
+    ///     TimeFormatter::try_new_with_length(&locale!("en").into(), Time::Short)
+    ///         .expect("Failed to create TimeFormatter instance.");
     ///
     /// let datetime = DateTime::try_new_gregorian_datetime(2020, 9, 1, 12, 34, 28)
     ///     .expect("Failed to construct DateTime.");
@@ -245,12 +236,11 @@ impl<C: CldrCalendar> TypedDateFormatter<C> {
     /// use icu::locid::locale;
     /// use writeable::assert_writeable_eq;
     ///
-    /// let formatter =
-    ///     TypedDateFormatter::<Gregorian>::try_new_with_length(
-    ///         &locale!("en").into(),
-    ///         length::Date::Full,
-    ///     )
-    ///     .unwrap();
+    /// let formatter = TypedDateFormatter::<Gregorian>::try_new_with_length(
+    ///     &locale!("en").into(),
+    ///     length::Date::Full,
+    /// )
+    /// .unwrap();
     ///
     /// assert_writeable_eq!(
     ///     formatter.format(&Date::try_new_gregorian_date(2022, 8, 29).unwrap()),
@@ -625,12 +615,11 @@ where {
     /// options.year = Some(components::Year::Numeric);
     /// options.month = Some(components::Month::Long);
     ///
-    /// let dtf =
-    ///     TypedDateTimeFormatter::<Gregorian>::try_new_experimental(
-    ///         &locale!("en").into(),
-    ///         options.into(),
-    ///     )
-    ///     .unwrap();
+    /// let dtf = TypedDateTimeFormatter::<Gregorian>::try_new_experimental(
+    ///     &locale!("en").into(),
+    ///     options.into(),
+    /// )
+    /// .unwrap();
     ///
     /// let datetime =
     ///     DateTime::try_new_gregorian_datetime(2022, 8, 31, 1, 2, 3).unwrap();
@@ -694,12 +683,11 @@ where {
     /// options.year = Some(components::Year::Numeric);
     /// options.month = Some(components::Month::Long);
     ///
-    /// let dtf =
-    ///     TypedDateTimeFormatter::<Gregorian>::try_new_experimental(
-    ///         &locale!("en").into(),
-    ///         options.into(),
-    ///     )
-    ///     .unwrap();
+    /// let dtf = TypedDateTimeFormatter::<Gregorian>::try_new_experimental(
+    ///     &locale!("en").into(),
+    ///     options.into(),
+    /// )
+    /// .unwrap();
     ///
     /// let datetime =
     ///     DateTime::try_new_gregorian_datetime(2022, 8, 31, 1, 2, 3).unwrap();

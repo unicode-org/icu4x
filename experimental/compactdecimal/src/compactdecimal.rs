@@ -289,7 +289,8 @@ impl CompactDecimalFormatter {
     /// let short_english = CompactDecimalFormatter::try_new_short(
     ///     &locale!("en").into(),
     ///     Default::default(),
-    /// ).unwrap();
+    /// )
+    /// .unwrap();
     ///
     /// assert_writeable_eq!(short_english.format_i64(0), "0");
     /// assert_writeable_eq!(short_english.format_i64(2), "2");
@@ -343,7 +344,8 @@ impl CompactDecimalFormatter {
     /// let short_english = CompactDecimalFormatter::try_new_short(
     ///     &locale!("en").into(),
     ///     Default::default(),
-    /// ).unwrap();
+    /// )
+    /// .unwrap();
     ///
     /// assert_writeable_eq!(short_english.format_f64(0.0).unwrap(), "0");
     /// assert_writeable_eq!(short_english.format_f64(2.0).unwrap(), "2");
@@ -371,7 +373,10 @@ impl CompactDecimalFormatter {
     /// assert_writeable_eq!(short_english.format_f64(1650.0).unwrap(), "1.6K");
     /// assert_writeable_eq!(short_english.format_f64(1750.0).unwrap(), "1.8K");
     /// assert_writeable_eq!(short_english.format_f64(1950.0).unwrap(), "2K");
-    /// assert_writeable_eq!(short_english.format_f64(-1_172_700.0).unwrap(), "-1.2M");
+    /// assert_writeable_eq!(
+    ///     short_english.format_f64(-1_172_700.0).unwrap(),
+    ///     "-1.2M"
+    /// );
     /// ```
     #[cfg(feature = "ryu")]
     pub fn format_f64(
@@ -404,35 +409,46 @@ impl CompactDecimalFormatter {
     /// let short_english = CompactDecimalFormatter::try_new_short(
     ///     &locale!("en").into(),
     ///     Default::default(),
-    /// ).unwrap();
+    /// )
+    /// .unwrap();
     ///
     /// assert_writeable_eq!(
     ///     short_english.format_fixed_decimal(FixedDecimal::from(0)),
-    ///     "0");
+    ///     "0"
+    /// );
     /// assert_writeable_eq!(
     ///     short_english.format_fixed_decimal(FixedDecimal::from(2)),
-    ///     "2");
+    ///     "2"
+    /// );
     /// assert_writeable_eq!(
     ///     short_english.format_fixed_decimal(FixedDecimal::from(843)),
-    ///     "843");
+    ///     "843"
+    /// );
     /// assert_writeable_eq!(
     ///     short_english.format_fixed_decimal(FixedDecimal::from(2207)),
-    ///     "2.2K");
+    ///     "2.2K"
+    /// );
     /// assert_writeable_eq!(
     ///     short_english.format_fixed_decimal(FixedDecimal::from(15127)),
-    ///     "15K");
+    ///     "15K"
+    /// );
     /// assert_writeable_eq!(
     ///     short_english.format_fixed_decimal(FixedDecimal::from(3010349)),
-    ///     "3M");
+    ///     "3M"
+    /// );
     /// assert_writeable_eq!(
     ///     short_english.format_fixed_decimal(FixedDecimal::from(-13132)),
-    ///     "-13K");
+    ///     "-13K"
+    /// );
     ///
     /// // The sign display on the FixedDecimal is respected:
     /// assert_writeable_eq!(
-    ///     short_english.format_fixed_decimal(FixedDecimal::from(2500)
-    ///         .with_sign_display(fixed_decimal::SignDisplay::ExceptZero)),
-    ///     "+2.5K");
+    ///     short_english.format_fixed_decimal(
+    ///         FixedDecimal::from(2500)
+    ///             .with_sign_display(fixed_decimal::SignDisplay::ExceptZero)
+    ///     ),
+    ///     "+2.5K"
+    /// );
     /// ```
     ///
     /// The result is the nearest such compact number, with halfway cases-
@@ -450,22 +466,28 @@ impl CompactDecimalFormatter {
     /// # ).unwrap();
     /// assert_writeable_eq!(
     ///     short_english.format_fixed_decimal("999499.99".parse().unwrap()),
-    ///     "999K");
+    ///     "999K"
+    /// );
     /// assert_writeable_eq!(
     ///     short_english.format_fixed_decimal("999500.00".parse().unwrap()),
-    ///     "1M");
+    ///     "1M"
+    /// );
     /// assert_writeable_eq!(
     ///     short_english.format_fixed_decimal("1650".parse().unwrap()),
-    ///     "1.6K");
+    ///     "1.6K"
+    /// );
     /// assert_writeable_eq!(
     ///     short_english.format_fixed_decimal("1750".parse().unwrap()),
-    ///     "1.8K");
+    ///     "1.8K"
+    /// );
     /// assert_writeable_eq!(
     ///     short_english.format_fixed_decimal("1950".parse().unwrap()),
-    ///     "2K");
+    ///     "2K"
+    /// );
     /// assert_writeable_eq!(
     ///     short_english.format_fixed_decimal("-1172700".parse().unwrap()),
-    ///     "-1.2M");
+    ///     "-1.2M"
+    /// );
     /// ```
     pub fn format_fixed_decimal(&self, value: FixedDecimal) -> FormattedCompactDecimal<'_> {
         let log10_type = value.nonzero_magnitude_start();

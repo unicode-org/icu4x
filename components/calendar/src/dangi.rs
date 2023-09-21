@@ -5,8 +5,8 @@
 //! This module contains types and implementations for the Korean Dangi calendar.
 //!
 //! ```rust
-//! use icu::calendar::{Ref, Date, DateTime};
 //! use icu::calendar::dangi::Dangi;
+//! use icu::calendar::{Date, DateTime, Ref};
 //!
 //! let dangi = Dangi::new_always_calculating();
 //! let dangi = Ref(&dangi); // to avoid cloning
@@ -16,8 +16,10 @@
 //!     .expect("Failed to initialize Dangi Date instance.");
 //!
 //! // `DateTime` type
-//! let dangi_datetime = DateTime::try_new_dangi_datetime_with_calendar(4356, 6, 6, 13, 1, 0, dangi)
-//!     .expect("Failed to initialize Dangi DateTime instance.");
+//! let dangi_datetime = DateTime::try_new_dangi_datetime_with_calendar(
+//!     4356, 6, 6, 13, 1, 0, dangi,
+//! )
+//! .expect("Failed to initialize Dangi DateTime instance.");
 //!
 //! // `Date` checks
 //! assert_eq!(dangi_date.year().number, 4356);
@@ -64,7 +66,7 @@ use tinystr::tinystr;
 /// going to be perfect.
 ///
 /// ```rust
-/// use icu::calendar::{Date, dangi::Dangi, chinese::Chinese};
+/// use icu::calendar::{chinese::Chinese, dangi::Dangi, Date};
 /// use tinystr::tinystr;
 ///
 /// let iso_a = Date::try_new_iso_date(2012, 4, 23).unwrap();
@@ -300,8 +302,8 @@ impl<A: AsCalendar<Calendar = Dangi>> Date<A> {
     /// one that loads such data from a provider will be added in the future (#3933)
     ///
     /// ```rust
-    /// use icu::calendar::Date;
     /// use icu::calendar::dangi::Dangi;
+    /// use icu::calendar::Date;
     ///
     /// let dangi = Dangi::new_always_calculating();
     ///
@@ -336,13 +338,15 @@ impl<A: AsCalendar<Calendar = Dangi>> DateTime<A> {
     /// one that loads such data from a provider will be added in the future (#3933)
     ///
     /// ```rust
-    /// use icu::calendar::DateTime;
     /// use icu::calendar::dangi::Dangi;
+    /// use icu::calendar::DateTime;
     ///
     /// let dangi = Dangi::new_always_calculating();
     ///
-    /// let dangi_datetime = DateTime::try_new_dangi_datetime_with_calendar(4356, 6, 6, 13, 1, 0, dangi)
-    ///     .expect("Failed to initialize Dangi DateTime instance.");
+    /// let dangi_datetime = DateTime::try_new_dangi_datetime_with_calendar(
+    ///     4356, 6, 6, 13, 1, 0, dangi,
+    /// )
+    /// .expect("Failed to initialize Dangi DateTime instance.");
     ///
     /// assert_eq!(dangi_datetime.date.year().number, 4356);
     /// assert_eq!(dangi_datetime.date.year().related_iso, Some(2023));

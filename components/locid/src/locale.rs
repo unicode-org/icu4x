@@ -30,7 +30,7 @@ use writeable::Writeable;
 /// use icu_locid::{
 ///     extensions::unicode::{key, value},
 ///     locale,
-///     subtags::{region, language}
+///     subtags::{language, region},
 /// };
 ///
 /// let loc = locale!("en-US-u-ca-buddhist");
@@ -476,7 +476,8 @@ impl From<Option<subtags::Region>> for Locale {
 /// ```
 /// use icu::locid::Locale;
 /// use icu::locid::{
-///     locale, subtags::{language, region, script}
+///     locale,
+///     subtags::{language, region, script},
 /// };
 ///
 /// assert_eq!(

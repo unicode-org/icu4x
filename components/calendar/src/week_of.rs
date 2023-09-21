@@ -77,10 +77,9 @@ impl WeekCalculator {
     /// use icu_calendar::types::{DayOfMonth, IsoWeekday, WeekOfMonth};
     /// use icu_calendar::week::WeekCalculator;
     ///
-    /// let week_calculator = WeekCalculator::try_new(
-    ///     &icu_locid::locale!("und-GB").into(),
-    /// )
-    /// .expect("locale should be present");
+    /// let week_calculator =
+    ///     WeekCalculator::try_new(&icu_locid::locale!("und-GB").into())
+    ///         .expect("locale should be present");
     ///
     /// // Wednesday the 10th is in week 2:
     /// assert_eq!(
@@ -103,10 +102,9 @@ impl WeekCalculator {
     /// use icu_calendar::week::{RelativeUnit, WeekCalculator, WeekOf};
     /// use icu_calendar::Date;
     ///
-    /// let week_calculator = WeekCalculator::try_new(
-    ///     &icu_locid::locale!("und-GB").into(),
-    /// )
-    /// .expect("locale should be present");
+    /// let week_calculator =
+    ///     WeekCalculator::try_new(&icu_locid::locale!("und-GB").into())
+    ///         .expect("locale should be present");
     ///
     /// let iso_date = Date::try_new_iso_date(2022, 8, 26).unwrap();
     ///
