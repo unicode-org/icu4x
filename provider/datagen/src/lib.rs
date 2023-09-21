@@ -113,9 +113,7 @@
 //! * `icu_compactdecimal`
 //! * `icu_displaynames`
 //! * `icu_relativetime`
-//! * `icu_singlenumberformatter`
 //! * `icu_transliterate`
-//! * `icu_unitsconversion`
 //! * ...
 //!
 //! The meta-feature `experimental_components` is available to activate all experimental components.
