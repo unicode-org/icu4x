@@ -14,7 +14,6 @@
 # Please check in with @Manishearth, @robertbastian, or @sffc if you have questions
 
 
-icu::locid_transform::fallback::LocaleFallbackSupplement#Enum
 icu::properties::bidi_data::BidiAuxiliaryProperties#Struct
 icu::properties::bidi_data::BidiAuxiliaryProperties::from_data#FnInStruct
 icu::properties::bidi_data::BidiAuxiliaryPropertiesBorrowed#Struct
