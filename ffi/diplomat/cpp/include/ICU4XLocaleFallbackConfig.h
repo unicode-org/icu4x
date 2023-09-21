@@ -7,6 +7,7 @@
 #include "diplomat_runtime.h"
 
 #include "ICU4XLocaleFallbackPriority.h"
+#include "ICU4XLocaleFallbackSupplement.h"
 #ifdef __cplusplus
 namespace capi {
 #endif
@@ -14,11 +15,13 @@ namespace capi {
 typedef struct ICU4XLocaleFallbackConfig {
     ICU4XLocaleFallbackPriority priority;
     DiplomatStringView extension_key;
+    ICU4XLocaleFallbackSupplement fallback_supplement;
 } ICU4XLocaleFallbackConfig;
 #ifdef __cplusplus
 } // namespace capi
 #endif
 #include "ICU4XLocaleFallbackPriority.h"
+#include "ICU4XLocaleFallbackSupplement.h"
 #ifdef __cplusplus
 namespace capi {
 extern "C" {

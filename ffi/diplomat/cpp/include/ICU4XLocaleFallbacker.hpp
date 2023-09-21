@@ -85,7 +85,7 @@ inline ICU4XLocaleFallbacker ICU4XLocaleFallbacker::create_without_data() {
 }
 inline diplomat::result<ICU4XLocaleFallbackerWithConfig, ICU4XError> ICU4XLocaleFallbacker::for_config(ICU4XLocaleFallbackConfig config) const {
   ICU4XLocaleFallbackConfig diplomat_wrapped_struct_config = config;
-  auto diplomat_result_raw_out_value = capi::ICU4XLocaleFallbacker_for_config(this->inner.get(), capi::ICU4XLocaleFallbackConfig{ .priority = static_cast<capi::ICU4XLocaleFallbackPriority>(diplomat_wrapped_struct_config.priority), .extension_key = { diplomat_wrapped_struct_config.extension_key.data(), diplomat_wrapped_struct_config.extension_key.size() } });
+  auto diplomat_result_raw_out_value = capi::ICU4XLocaleFallbacker_for_config(this->inner.get(), capi::ICU4XLocaleFallbackConfig{ .priority = static_cast<capi::ICU4XLocaleFallbackPriority>(diplomat_wrapped_struct_config.priority), .extension_key = { diplomat_wrapped_struct_config.extension_key.data(), diplomat_wrapped_struct_config.extension_key.size() }, .fallback_supplement = static_cast<capi::ICU4XLocaleFallbackSupplement>(diplomat_wrapped_struct_config.fallback_supplement) });
   diplomat::result<ICU4XLocaleFallbackerWithConfig, ICU4XError> diplomat_result_out_value;
   if (diplomat_result_raw_out_value.is_ok) {
     diplomat_result_out_value = diplomat::Ok<ICU4XLocaleFallbackerWithConfig>(std::move(ICU4XLocaleFallbackerWithConfig(diplomat_result_raw_out_value.ok)));
