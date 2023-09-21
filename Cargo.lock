@@ -1351,10 +1351,8 @@ dependencies = [
  "icu_provider_fs",
  "icu_relativetime",
  "icu_segmenter",
- "icu_singlenumberformatter",
  "icu_timezone",
  "icu_transliterate",
- "icu_unitsconversion",
  "itertools",
  "log",
  "memchr",
@@ -1885,7 +1883,7 @@ dependencies = [
 
 [[package]]
 name = "icu_unitsconversion_data"
-version = "0.0.0"
+version = "1.2.0"
 
 [[package]]
 name = "ident_case"
