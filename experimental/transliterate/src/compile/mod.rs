@@ -127,7 +127,8 @@ impl RuleCollection {
     #[cfg(feature = "compiled_data")]
     pub fn as_provider(
         &self,
-    ) -> RuleCollectionProvider<'_, icu_properties::provider::Baked, icu_normalizer::provider::Baked> {
+    ) -> RuleCollectionProvider<'_, icu_properties::provider::Baked, icu_normalizer::provider::Baked>
+    {
         RuleCollectionProvider {
             collection: self,
             properties_provider: &icu_properties::provider::Baked,
