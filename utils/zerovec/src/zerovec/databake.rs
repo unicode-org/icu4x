@@ -8,7 +8,7 @@ use databake::*;
 
 impl<T> Bake for ZeroVec<'_, T>
 where
-    T: AsULE + ?Sized + Bake,
+    T: AsULE + ?Sized,
 {
     fn bake(&self, env: &CrateEnv) -> TokenStream {
         env.insert("zerovec");
