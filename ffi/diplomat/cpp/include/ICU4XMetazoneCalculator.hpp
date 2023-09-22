@@ -58,9 +58,9 @@ inline diplomat::result<ICU4XMetazoneCalculator, ICU4XError> ICU4XMetazoneCalcul
   auto diplomat_result_raw_out_value = capi::ICU4XMetazoneCalculator_create(provider.AsFFI());
   diplomat::result<ICU4XMetazoneCalculator, ICU4XError> diplomat_result_out_value;
   if (diplomat_result_raw_out_value.is_ok) {
-    diplomat_result_out_value = diplomat::Ok<ICU4XMetazoneCalculator>(std::move(ICU4XMetazoneCalculator(diplomat_result_raw_out_value.ok)));
+    diplomat_result_out_value = diplomat::Ok<ICU4XMetazoneCalculator>(ICU4XMetazoneCalculator(diplomat_result_raw_out_value.ok));
   } else {
-    diplomat_result_out_value = diplomat::Err<ICU4XError>(std::move(static_cast<ICU4XError>(diplomat_result_raw_out_value.err)));
+    diplomat_result_out_value = diplomat::Err<ICU4XError>(static_cast<ICU4XError>(diplomat_result_raw_out_value.err));
   }
   return diplomat_result_out_value;
 }

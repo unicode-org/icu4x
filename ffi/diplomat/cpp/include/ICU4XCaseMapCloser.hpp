@@ -74,9 +74,9 @@ inline diplomat::result<ICU4XCaseMapCloser, ICU4XError> ICU4XCaseMapCloser::crea
   auto diplomat_result_raw_out_value = capi::ICU4XCaseMapCloser_create(provider.AsFFI());
   diplomat::result<ICU4XCaseMapCloser, ICU4XError> diplomat_result_out_value;
   if (diplomat_result_raw_out_value.is_ok) {
-    diplomat_result_out_value = diplomat::Ok<ICU4XCaseMapCloser>(std::move(ICU4XCaseMapCloser(diplomat_result_raw_out_value.ok)));
+    diplomat_result_out_value = diplomat::Ok<ICU4XCaseMapCloser>(ICU4XCaseMapCloser(diplomat_result_raw_out_value.ok));
   } else {
-    diplomat_result_out_value = diplomat::Err<ICU4XError>(std::move(static_cast<ICU4XError>(diplomat_result_raw_out_value.err)));
+    diplomat_result_out_value = diplomat::Err<ICU4XError>(static_cast<ICU4XError>(diplomat_result_raw_out_value.err));
   }
   return diplomat_result_out_value;
 }
