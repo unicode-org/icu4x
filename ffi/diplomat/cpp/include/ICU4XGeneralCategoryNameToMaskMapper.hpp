@@ -76,9 +76,9 @@ inline diplomat::result<ICU4XGeneralCategoryNameToMaskMapper, ICU4XError> ICU4XG
   auto diplomat_result_raw_out_value = capi::ICU4XGeneralCategoryNameToMaskMapper_load(provider.AsFFI());
   diplomat::result<ICU4XGeneralCategoryNameToMaskMapper, ICU4XError> diplomat_result_out_value;
   if (diplomat_result_raw_out_value.is_ok) {
-    diplomat_result_out_value = diplomat::Ok<ICU4XGeneralCategoryNameToMaskMapper>(std::move(ICU4XGeneralCategoryNameToMaskMapper(diplomat_result_raw_out_value.ok)));
+    diplomat_result_out_value = diplomat::Ok<ICU4XGeneralCategoryNameToMaskMapper>(ICU4XGeneralCategoryNameToMaskMapper(diplomat_result_raw_out_value.ok));
   } else {
-    diplomat_result_out_value = diplomat::Err<ICU4XError>(std::move(static_cast<ICU4XError>(diplomat_result_raw_out_value.err)));
+    diplomat_result_out_value = diplomat::Err<ICU4XError>(static_cast<ICU4XError>(diplomat_result_raw_out_value.err));
   }
   return diplomat_result_out_value;
 }

@@ -129,9 +129,9 @@ inline diplomat::result<ICU4XPropertyValueNameToEnumMapper, ICU4XError> ICU4XPro
   auto diplomat_result_raw_out_value = capi::ICU4XPropertyValueNameToEnumMapper_load_general_category(provider.AsFFI());
   diplomat::result<ICU4XPropertyValueNameToEnumMapper, ICU4XError> diplomat_result_out_value;
   if (diplomat_result_raw_out_value.is_ok) {
-    diplomat_result_out_value = diplomat::Ok<ICU4XPropertyValueNameToEnumMapper>(std::move(ICU4XPropertyValueNameToEnumMapper(diplomat_result_raw_out_value.ok)));
+    diplomat_result_out_value = diplomat::Ok<ICU4XPropertyValueNameToEnumMapper>(ICU4XPropertyValueNameToEnumMapper(diplomat_result_raw_out_value.ok));
   } else {
-    diplomat_result_out_value = diplomat::Err<ICU4XError>(std::move(static_cast<ICU4XError>(diplomat_result_raw_out_value.err)));
+    diplomat_result_out_value = diplomat::Err<ICU4XError>(static_cast<ICU4XError>(diplomat_result_raw_out_value.err));
   }
   return diplomat_result_out_value;
 }
@@ -139,9 +139,9 @@ inline diplomat::result<ICU4XPropertyValueNameToEnumMapper, ICU4XError> ICU4XPro
   auto diplomat_result_raw_out_value = capi::ICU4XPropertyValueNameToEnumMapper_load_bidi_class(provider.AsFFI());
   diplomat::result<ICU4XPropertyValueNameToEnumMapper, ICU4XError> diplomat_result_out_value;
   if (diplomat_result_raw_out_value.is_ok) {
-    diplomat_result_out_value = diplomat::Ok<ICU4XPropertyValueNameToEnumMapper>(std::move(ICU4XPropertyValueNameToEnumMapper(diplomat_result_raw_out_value.ok)));
+    diplomat_result_out_value = diplomat::Ok<ICU4XPropertyValueNameToEnumMapper>(ICU4XPropertyValueNameToEnumMapper(diplomat_result_raw_out_value.ok));
   } else {
-    diplomat_result_out_value = diplomat::Err<ICU4XError>(std::move(static_cast<ICU4XError>(diplomat_result_raw_out_value.err)));
+    diplomat_result_out_value = diplomat::Err<ICU4XError>(static_cast<ICU4XError>(diplomat_result_raw_out_value.err));
   }
   return diplomat_result_out_value;
 }
@@ -149,9 +149,9 @@ inline diplomat::result<ICU4XPropertyValueNameToEnumMapper, ICU4XError> ICU4XPro
   auto diplomat_result_raw_out_value = capi::ICU4XPropertyValueNameToEnumMapper_load_east_asian_width(provider.AsFFI());
   diplomat::result<ICU4XPropertyValueNameToEnumMapper, ICU4XError> diplomat_result_out_value;
   if (diplomat_result_raw_out_value.is_ok) {
-    diplomat_result_out_value = diplomat::Ok<ICU4XPropertyValueNameToEnumMapper>(std::move(ICU4XPropertyValueNameToEnumMapper(diplomat_result_raw_out_value.ok)));
+    diplomat_result_out_value = diplomat::Ok<ICU4XPropertyValueNameToEnumMapper>(ICU4XPropertyValueNameToEnumMapper(diplomat_result_raw_out_value.ok));
   } else {
-    diplomat_result_out_value = diplomat::Err<ICU4XError>(std::move(static_cast<ICU4XError>(diplomat_result_raw_out_value.err)));
+    diplomat_result_out_value = diplomat::Err<ICU4XError>(static_cast<ICU4XError>(diplomat_result_raw_out_value.err));
   }
   return diplomat_result_out_value;
 }
@@ -159,9 +159,9 @@ inline diplomat::result<ICU4XPropertyValueNameToEnumMapper, ICU4XError> ICU4XPro
   auto diplomat_result_raw_out_value = capi::ICU4XPropertyValueNameToEnumMapper_load_line_break(provider.AsFFI());
   diplomat::result<ICU4XPropertyValueNameToEnumMapper, ICU4XError> diplomat_result_out_value;
   if (diplomat_result_raw_out_value.is_ok) {
-    diplomat_result_out_value = diplomat::Ok<ICU4XPropertyValueNameToEnumMapper>(std::move(ICU4XPropertyValueNameToEnumMapper(diplomat_result_raw_out_value.ok)));
+    diplomat_result_out_value = diplomat::Ok<ICU4XPropertyValueNameToEnumMapper>(ICU4XPropertyValueNameToEnumMapper(diplomat_result_raw_out_value.ok));
   } else {
-    diplomat_result_out_value = diplomat::Err<ICU4XError>(std::move(static_cast<ICU4XError>(diplomat_result_raw_out_value.err)));
+    diplomat_result_out_value = diplomat::Err<ICU4XError>(static_cast<ICU4XError>(diplomat_result_raw_out_value.err));
   }
   return diplomat_result_out_value;
 }
@@ -169,9 +169,9 @@ inline diplomat::result<ICU4XPropertyValueNameToEnumMapper, ICU4XError> ICU4XPro
   auto diplomat_result_raw_out_value = capi::ICU4XPropertyValueNameToEnumMapper_load_grapheme_cluster_break(provider.AsFFI());
   diplomat::result<ICU4XPropertyValueNameToEnumMapper, ICU4XError> diplomat_result_out_value;
   if (diplomat_result_raw_out_value.is_ok) {
-    diplomat_result_out_value = diplomat::Ok<ICU4XPropertyValueNameToEnumMapper>(std::move(ICU4XPropertyValueNameToEnumMapper(diplomat_result_raw_out_value.ok)));
+    diplomat_result_out_value = diplomat::Ok<ICU4XPropertyValueNameToEnumMapper>(ICU4XPropertyValueNameToEnumMapper(diplomat_result_raw_out_value.ok));
   } else {
-    diplomat_result_out_value = diplomat::Err<ICU4XError>(std::move(static_cast<ICU4XError>(diplomat_result_raw_out_value.err)));
+    diplomat_result_out_value = diplomat::Err<ICU4XError>(static_cast<ICU4XError>(diplomat_result_raw_out_value.err));
   }
   return diplomat_result_out_value;
 }
@@ -179,9 +179,9 @@ inline diplomat::result<ICU4XPropertyValueNameToEnumMapper, ICU4XError> ICU4XPro
   auto diplomat_result_raw_out_value = capi::ICU4XPropertyValueNameToEnumMapper_load_word_break(provider.AsFFI());
   diplomat::result<ICU4XPropertyValueNameToEnumMapper, ICU4XError> diplomat_result_out_value;
   if (diplomat_result_raw_out_value.is_ok) {
-    diplomat_result_out_value = diplomat::Ok<ICU4XPropertyValueNameToEnumMapper>(std::move(ICU4XPropertyValueNameToEnumMapper(diplomat_result_raw_out_value.ok)));
+    diplomat_result_out_value = diplomat::Ok<ICU4XPropertyValueNameToEnumMapper>(ICU4XPropertyValueNameToEnumMapper(diplomat_result_raw_out_value.ok));
   } else {
-    diplomat_result_out_value = diplomat::Err<ICU4XError>(std::move(static_cast<ICU4XError>(diplomat_result_raw_out_value.err)));
+    diplomat_result_out_value = diplomat::Err<ICU4XError>(static_cast<ICU4XError>(diplomat_result_raw_out_value.err));
   }
   return diplomat_result_out_value;
 }
@@ -189,9 +189,9 @@ inline diplomat::result<ICU4XPropertyValueNameToEnumMapper, ICU4XError> ICU4XPro
   auto diplomat_result_raw_out_value = capi::ICU4XPropertyValueNameToEnumMapper_load_sentence_break(provider.AsFFI());
   diplomat::result<ICU4XPropertyValueNameToEnumMapper, ICU4XError> diplomat_result_out_value;
   if (diplomat_result_raw_out_value.is_ok) {
-    diplomat_result_out_value = diplomat::Ok<ICU4XPropertyValueNameToEnumMapper>(std::move(ICU4XPropertyValueNameToEnumMapper(diplomat_result_raw_out_value.ok)));
+    diplomat_result_out_value = diplomat::Ok<ICU4XPropertyValueNameToEnumMapper>(ICU4XPropertyValueNameToEnumMapper(diplomat_result_raw_out_value.ok));
   } else {
-    diplomat_result_out_value = diplomat::Err<ICU4XError>(std::move(static_cast<ICU4XError>(diplomat_result_raw_out_value.err)));
+    diplomat_result_out_value = diplomat::Err<ICU4XError>(static_cast<ICU4XError>(diplomat_result_raw_out_value.err));
   }
   return diplomat_result_out_value;
 }
@@ -199,9 +199,9 @@ inline diplomat::result<ICU4XPropertyValueNameToEnumMapper, ICU4XError> ICU4XPro
   auto diplomat_result_raw_out_value = capi::ICU4XPropertyValueNameToEnumMapper_load_script(provider.AsFFI());
   diplomat::result<ICU4XPropertyValueNameToEnumMapper, ICU4XError> diplomat_result_out_value;
   if (diplomat_result_raw_out_value.is_ok) {
-    diplomat_result_out_value = diplomat::Ok<ICU4XPropertyValueNameToEnumMapper>(std::move(ICU4XPropertyValueNameToEnumMapper(diplomat_result_raw_out_value.ok)));
+    diplomat_result_out_value = diplomat::Ok<ICU4XPropertyValueNameToEnumMapper>(ICU4XPropertyValueNameToEnumMapper(diplomat_result_raw_out_value.ok));
   } else {
-    diplomat_result_out_value = diplomat::Err<ICU4XError>(std::move(static_cast<ICU4XError>(diplomat_result_raw_out_value.err)));
+    diplomat_result_out_value = diplomat::Err<ICU4XError>(static_cast<ICU4XError>(diplomat_result_raw_out_value.err));
   }
   return diplomat_result_out_value;
 }
