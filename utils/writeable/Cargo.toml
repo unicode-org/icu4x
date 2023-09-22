@@ -5,7 +5,7 @@
 [package]
 name = "writeable"
 description = "A more efficient alternative to fmt::Display"
-version = "0.5.2"
+version = "0.5.3"
 
 authors.workspace = true
 edition.workspace = true

@@ -20,4 +20,4 @@ icu_list = "1.2.0"
 icu_locid_transform = "1.2.0"
 icu_plurals = "1.2.0"
 icu_provider = { version = "1.2.0" }
-zerovec = { version = "0.9.4" }
+zerovec = { version = "0.9.5" }
