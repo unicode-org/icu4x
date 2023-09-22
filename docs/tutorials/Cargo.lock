@@ -3002,7 +3002,7 @@ dependencies = [
 
 [[package]]
 name = "zerovec"
-version = "0.9.6"
+version = "0.9.5"
 dependencies = [
  "databake",
  "serde",
@@ -3013,7 +3013,7 @@ dependencies = [
 
 [[package]]
 name = "zerovec-derive"
-version = "0.9.6"
+version = "0.9.5"
 dependencies = [
  "proc-macro2",
  "quote",
