@@ -56,7 +56,7 @@ impl<'de> Deserialize<'de> for PluralRange {
                 let v = v.strip_prefix("pluralRange-start-").ok_or_else(|| {
                     E::custom("expected prefix `pluralRange-start-` before start category")
                 })?;
-                let (start, v) = v.split_once("-").ok_or_else(|| {
+                let (start, v) = v.split_once('-').ok_or_else(|| {
                     E::custom("missing token `-` between start and end categories")
                 })?;
                 let end = v

@@ -16,7 +16,6 @@
 //! Read more about data providers: [`icu_provider`]
 
 use crate::rules::runtime::ast::Rule;
-use crate::PluralCategory;
 use icu_provider::prelude::*;
 use icu_provider::DataMarker;
 use zerovec::ZeroMap2d;
@@ -41,6 +40,7 @@ const _: () = {
     icu_plurals_data::make_provider!(Baked);
     icu_plurals_data::impl_plurals_ordinal_v1!(Baked);
     icu_plurals_data::impl_plurals_cardinal_v1!(Baked);
+    icu_plurals_data::impl_plurals_ranges_v1!(Baked);
 };
 
 #[cfg(feature = "datagen")]
@@ -51,7 +51,6 @@ pub const KEYS: &[DataKey] = &[
     PluralRangesV1Marker::KEY,
 ];
 
-#[cfg(doc)]
 use crate::PluralCategory;
 
 /// Plural rule strings conforming to UTS 35 syntax. Includes separate fields for five of the six
@@ -99,6 +98,18 @@ impl DataMarker for ErasedPluralRulesV1Marker {
     type Yokeable = PluralRulesV1<'static>;
 }
 
+/// Plural categories for ranges.
+///
+/// Obtains the plural category of a range from the categories of its endpoints. It is required that
+/// the start value must be strictly less than the end value, and both values must be strictly positive.
+///
+/// More information: <https://unicode.org/reports/tr35/tr35-numbers.html#Plural_Ranges>
+///
+/// <div class="stab unstable">
+/// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
+/// including in SemVer minor releases. While the serde representation of data structs is guaranteed
+/// to be stable, their Rust representation might not be. Use with caution.
+/// </div>
 #[icu_provider::data_struct(PluralRangesV1Marker = "plurals/ranges@1")]
 #[derive(Clone, PartialEq, Debug)]
 #[cfg_attr(
@@ -109,6 +120,7 @@ impl DataMarker for ErasedPluralRulesV1Marker {
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[yoke(prove_covariance_manually)]
 pub struct PluralRangesV1<'data> {
+    /// Map between the categories of the endpoints of a range and its corresponding category.
     #[cfg_attr(feature = "serde", serde(borrow))]
     pub ranges: ZeroMap2d<'data, PluralCategory, PluralCategory, PluralCategory>,
 }

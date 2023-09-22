@@ -416,6 +416,8 @@ lazy_static::lazy_static! {
         "icu::plurals::PluralCategory::all",
         // associated type
         "icu::plurals::PluralOperands::Err",
+        // internal to provider but defined in root
+        "icu::plurals::PluralCategoryULE",
 
         // locid macros
         "icu::locid::langid",

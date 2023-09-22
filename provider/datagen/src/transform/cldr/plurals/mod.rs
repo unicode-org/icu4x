@@ -5,7 +5,6 @@
 use std::collections::BTreeMap;
 
 use crate::transform::cldr::cldr_serde;
-use crate::transform::cldr::cldr_serde::plural_ranges::PluralRange;
 use icu_plurals::rules::runtime::ast::Rule;
 use icu_plurals::{provider::*, PluralCategory};
 use icu_provider::datagen::IterableDataProvider;
@@ -132,10 +131,10 @@ impl From<&cldr_serde::plural_ranges::LocalePluralRanges> for PluralRangesV1<'st
         }
         let mut map: BTreeMap<PluralCategory, BTreeMap<PluralCategory, PluralCategory>> =
             BTreeMap::new();
-        for (PluralRange { start, end }, result) in &other.0 {
-            let start = convert(&start);
-            let end = convert(&end);
-            let result = convert(&result);
+        for (range, result) in &other.0 {
+            let start = convert(&range.start);
+            let end = convert(&range.end);
+            let result = convert(result);
 
             // <https://unicode.org/reports/tr35/tr35-numbers.html#Plural_Ranges>
             // "If there is no value for a <start,end> pair, the default result is end."
