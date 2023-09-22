@@ -42,7 +42,7 @@ icu_provider_blob = { version = "~1.2.0", path = "../blob", default-features = f
 # databake deps
 icu_locid = { version = "~1.2.0", path = "../../components/locid", default-features = false }
 icu_collections = { version = "~1.2.0", path = "../../components/collections", default-features = false }
-zerovec = { version = "0.9.4", path = "../../utils/zerovec", default-features = false }
+zerovec = { version = ">= 0.9.6, <0.11.0", path = "../../utils/zerovec", default-features = false }
 zerotrie = { version = "0.0.0", path = "../../experimental/zerotrie" }
 
 # databake options
