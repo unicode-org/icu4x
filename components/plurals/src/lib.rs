@@ -150,10 +150,10 @@ pub enum PluralRuleType {
     databake(path = icu_plurals),
 )]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
-#[allow(clippy::exhaustive_enums)] // this type is mostly stable. new categories may potentially be added in the future,
-// but at a cadence slower than the ICU4X release cycle
 #[zerovec::make_ule(PluralCategoryULE)]
 #[repr(u8)]
+#[allow(clippy::exhaustive_enums)] // this type is mostly stable. new categories may potentially be added in the future,
+                                   // but at a cadence slower than the ICU4X release cycle
 pub enum PluralCategory {
     /// CLDR "zero" plural category. Used in Arabic and Latvian, among others.
     ///
@@ -259,18 +259,6 @@ impl PluralCategory {
             b"many" => Some(PluralCategory::Many),
             b"other" => Some(PluralCategory::Other),
             _ => None,
-        }
-    }
-
-    /// Returns the TR35 string corresponding to the PluralCategory.
-    pub fn as_cldr_str(self) -> &'static str {
-        match self {
-            PluralCategory::Zero => "zero",
-            PluralCategory::One => "one",
-            PluralCategory::Two => "two",
-            PluralCategory::Few => "few",
-            PluralCategory::Many => "many",
-            PluralCategory::Other => "other",
         }
     }
 }
