@@ -15,7 +15,7 @@ publish = false
 [dependencies]
 icu = "1.2"
 icu_provider = "1.2" # for databake
-zerovec = "0.9" # for databake
+zerovec = "0.10" # for databake
 
 [build-dependencies]
 icu = "1.2"
