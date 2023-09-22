@@ -59,11 +59,7 @@ icu_transliterate = { workspace = true, features = ["datagen"], optional = true 
 icu_codepointtrie_builder = { workspace = true }
 icu_collections = { workspace = true, features = ["serde"] }
 icu_locid = { workspace = true, features = ["std", "serde"] }
-<<<<<<< HEAD
-icu_provider = { workspace = true, features = ["std", "logging", "datagen"] }
-=======
 icu_provider = { workspace = true, features = ["std", "logging", "datagen", "experimental"]}
->>>>>>> main
 icu_provider_adapters = { workspace = true }
 tinystr = { workspace = true, features = ["alloc", "serde", "zerovec"] }
 writeable = { workspace = true }
