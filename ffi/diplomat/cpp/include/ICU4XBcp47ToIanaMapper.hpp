@@ -68,9 +68,9 @@ inline diplomat::result<ICU4XBcp47ToIanaMapper, ICU4XError> ICU4XBcp47ToIanaMapp
   auto diplomat_result_raw_out_value = capi::ICU4XBcp47ToIanaMapper_create(provider.AsFFI());
   diplomat::result<ICU4XBcp47ToIanaMapper, ICU4XError> diplomat_result_out_value;
   if (diplomat_result_raw_out_value.is_ok) {
-    diplomat_result_out_value = diplomat::Ok<ICU4XBcp47ToIanaMapper>(std::move(ICU4XBcp47ToIanaMapper(diplomat_result_raw_out_value.ok)));
+    diplomat_result_out_value = diplomat::Ok<ICU4XBcp47ToIanaMapper>(ICU4XBcp47ToIanaMapper(diplomat_result_raw_out_value.ok));
   } else {
-    diplomat_result_out_value = diplomat::Err<ICU4XError>(std::move(static_cast<ICU4XError>(diplomat_result_raw_out_value.err)));
+    diplomat_result_out_value = diplomat::Err<ICU4XError>(static_cast<ICU4XError>(diplomat_result_raw_out_value.err));
   }
   return diplomat_result_out_value;
 }
@@ -81,7 +81,7 @@ template<typename W> inline diplomat::result<std::monostate, ICU4XError> ICU4XBc
   if (diplomat_result_raw_out_value.is_ok) {
     diplomat_result_out_value = diplomat::Ok(std::monostate());
   } else {
-    diplomat_result_out_value = diplomat::Err<ICU4XError>(std::move(static_cast<ICU4XError>(diplomat_result_raw_out_value.err)));
+    diplomat_result_out_value = diplomat::Err<ICU4XError>(static_cast<ICU4XError>(diplomat_result_raw_out_value.err));
   }
   return diplomat_result_out_value;
 }
@@ -93,7 +93,7 @@ inline diplomat::result<std::string, ICU4XError> ICU4XBcp47ToIanaMapper::get(con
   if (diplomat_result_raw_out_value.is_ok) {
     diplomat_result_out_value = diplomat::Ok(std::monostate());
   } else {
-    diplomat_result_out_value = diplomat::Err<ICU4XError>(std::move(static_cast<ICU4XError>(diplomat_result_raw_out_value.err)));
+    diplomat_result_out_value = diplomat::Err<ICU4XError>(static_cast<ICU4XError>(diplomat_result_raw_out_value.err));
   }
   return diplomat_result_out_value.replace_ok(std::move(diplomat_writeable_string));
 }

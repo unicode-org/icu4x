@@ -5,11 +5,10 @@
 #include <variant>
 #include <array>
 #include <optional>
+#include <type_traits>
 
 #if __cplusplus >= 202002L
 #include<span>
-#else
-#include <type_traits>
 #endif
 
 #include "diplomat_runtime.h"
@@ -56,6 +55,10 @@ template<> struct WriteableTrait<std::string> {
 template<class T> struct Ok {
   T inner;
   Ok(T&& i): inner(std::move(i)) {}
+  // We don't want to expose an lvalue-capable constructor in general
+  // however there is no problem doing this for trivially copyable types
+  template<typename X = T, typename = typename std::enable_if<std::is_trivially_copyable<X>::value>::type>
+  Ok(T i): inner(i) {}
   Ok() = default;
   Ok(Ok&&) noexcept = default;
   Ok(const Ok &) = default;
@@ -66,6 +69,10 @@ template<class T> struct Ok {
 template<class T> struct Err {
   T inner;
   Err(T&& i): inner(std::move(i)) {}
+  // We don't want to expose an lvalue-capable constructor in general
+  // however there is no problem doing this for trivially copyable types
+  template<typename X = T, typename = typename std::enable_if<std::is_trivially_copyable<X>::value>::type>
+  Err(T i): inner(i) {}
   Err() = default;
   Err(Err&&) noexcept = default;
   Err(const Err &) = default;
