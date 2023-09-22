@@ -29,6 +29,7 @@ const CLDR_JSON_GLOB: &[&str] = &[
     "cldr-core/supplemental/numberingSystems.json",
     "cldr-core/supplemental/ordinals.json",
     "cldr-core/supplemental/parentLocales.json",
+    "cldr-core/supplemental/pluralRanges.json",
     "cldr-core/supplemental/plurals.json",
     "cldr-core/supplemental/weekData.json",
     "cldr-dates-full/main/$LOCALES/ca-gregorian.json",

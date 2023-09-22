@@ -27,6 +27,7 @@ pub mod numbering_systems;
 pub mod numbers;
 pub mod parent_locales;
 pub mod plurals;
+pub mod plural_ranges;
 pub mod time_zones;
 #[cfg(feature = "icu_transliterate")]
 pub mod transforms;
