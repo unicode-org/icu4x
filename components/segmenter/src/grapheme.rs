@@ -65,8 +65,7 @@ pub type GraphemeClusterBreakIteratorUtf16<'l, 's> =
 ///
 /// ```rust
 /// use icu_segmenter::GraphemeClusterSegmenter;
-/// let segmenter =
-///     GraphemeClusterSegmenter::new();
+/// let segmenter = GraphemeClusterSegmenter::new();
 ///
 /// let breakpoints: Vec<usize> = segmenter.segment_str("Hello 🗺").collect();
 /// // World Map (U+1F5FA) is encoded in four bytes in UTF-8.
@@ -77,8 +76,7 @@ pub type GraphemeClusterBreakIteratorUtf16<'l, 's> =
 ///
 /// ```rust
 /// use icu_segmenter::GraphemeClusterSegmenter;
-/// let segmenter =
-///     GraphemeClusterSegmenter::new();
+/// let segmenter = GraphemeClusterSegmenter::new();
 ///
 /// let breakpoints: Vec<usize> =
 ///     segmenter.segment_latin1(b"Hello World").collect();
@@ -96,10 +94,10 @@ pub type GraphemeClusterBreakIteratorUtf16<'l, 's> =
 /// use itertools::Itertools;
 /// let text = "मांजर";
 /// let grapheme_clusters: Vec<&str> = segmenter
-///    .segment_str(text)
-///    .tuple_windows()
-///    .map(|(i, j)| &text[i..j])
-///    .collect();
+///     .segment_str(text)
+///     .tuple_windows()
+///     .map(|(i, j)| &text[i..j])
+///     .collect();
 /// assert_eq!(&grapheme_clusters, &["मां", "ज", "र"]);
 /// ```
 ///

@@ -4,17 +4,20 @@
 
 use crate::provider::TransliteratorRulesV1Marker;
 
+use alloc::collections::BTreeMap;
+use alloc::format;
+use alloc::string::{String, ToString};
+use alloc::vec::Vec;
 use icu_locid::Locale;
 use icu_normalizer::provider::*;
 use icu_properties::{provider::*, sets, PropertiesError};
 use icu_provider::prelude::*;
-use std::collections::HashMap;
-use std::sync::RwLock;
 
 mod parse;
 mod pass1;
 mod pass2;
 mod rule_group_agg;
+mod spin_lock;
 
 /// The direction of a rule-based transliterator in respect to its source.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
@@ -40,6 +43,8 @@ impl Direction {
 
 #[derive(Debug, Default)]
 /// A collection of transliteration rules.
+///
+/// ✨ *Enabled with the `compile` Cargo feature.*
 ///
 /// # Example
 /// ```
@@ -84,14 +89,13 @@ impl Direction {
 ///
 /// let t = Transliterator::try_new_unstable("de-t-de-d0-ascii".parse().unwrap(), &collection.as_provider()).unwrap();
 /// assert_eq!(t.transliterate("Käse".into()), "Kaese");
-///
 #[allow(clippy::type_complexity)] // well
 pub struct RuleCollection {
-    id_mapping: HashMap<String, Locale>, // alias -> bcp id
+    id_mapping: BTreeMap<String, Locale>, // alias -> bcp id
     // these two maps need to lock together
-    data: RwLock<(
-        HashMap<DataLocale, (String, bool, bool)>, // locale -> source/reverse/visible
-        HashMap<DataLocale, Result<DataResponse<TransliteratorRulesV1Marker>, DataError>>, // cache
+    data: spin_lock::SpinLock<(
+        BTreeMap<String, (String, bool, bool)>, // locale -> source/reverse/visible
+        BTreeMap<String, Result<DataResponse<TransliteratorRulesV1Marker>, DataError>>, // cache
     )>,
 }
 
@@ -105,9 +109,8 @@ impl RuleCollection {
         reverse: bool,
         visible: bool,
     ) {
-        #[allow(clippy::expect_used)]
-        self.data.get_mut().expect("poison").0.insert(
-            crate::ids::bcp47_to_data_locale(id),
+        self.data.get_mut().0.insert(
+            crate::ids::bcp47_to_data_locale(id).to_string(),
             (source, reverse, visible),
         );
 
@@ -117,20 +120,14 @@ impl RuleCollection {
         }
     }
 
-    /// Returns a provider usable by [`Transliterator::try_new_unstable`](crate::Transliterator::try_new_unstable).
+    /// Returns a provider that is usable by [`Transliterator::try_new_unstable`](crate::Transliterator::try_new_unstable).
     ///
     /// ✨ *Enabled with the `compiled_data` Cargo feature.*
     #[cfg(feature = "compiled_data")]
     pub fn as_provider(
         &self,
-    ) -> impl DataProvider<TransliteratorRulesV1Marker>
-           + DataProvider<CanonicalDecompositionDataV1Marker>
-           + DataProvider<CompatibilityDecompositionSupplementV1Marker>
-           + DataProvider<CanonicalDecompositionTablesV1Marker>
-           + DataProvider<CompatibilityDecompositionTablesV1Marker>
-           + DataProvider<CanonicalCompositionsV1Marker>
-           + icu_provider::datagen::IterableDataProvider<TransliteratorRulesV1Marker>
-           + '_ {
+    ) -> RuleCollectionProvider<'_, icu_properties::provider::Baked, icu_normalizer::provider::Baked>
+    {
         RuleCollectionProvider {
             collection: self,
             properties_provider: &icu_properties::provider::Baked,
@@ -146,17 +143,7 @@ impl RuleCollection {
         &'a self,
         properties_provider: &'a PP,
         normalizer_provider: &'a NP,
-    ) -> Result<
-        impl DataProvider<TransliteratorRulesV1Marker>
-            + DataProvider<CanonicalDecompositionDataV1Marker>
-            + DataProvider<CompatibilityDecompositionSupplementV1Marker>
-            + DataProvider<CanonicalDecompositionTablesV1Marker>
-            + DataProvider<CompatibilityDecompositionTablesV1Marker>
-            + DataProvider<CanonicalCompositionsV1Marker>
-            + icu_provider::datagen::IterableDataProvider<TransliteratorRulesV1Marker>
-            + 'a,
-        DataError,
-    >
+    ) -> Result<RuleCollectionProvider<'a, PP, NP>, DataError>
     where
         PP: ?Sized
             + DataProvider<AsciiHexDigitV1Marker>
@@ -242,7 +229,9 @@ impl RuleCollection {
     }
 }
 
-struct RuleCollectionProvider<'a, PP: ?Sized, NP: ?Sized> {
+/// A provider that is usable by [`Transliterator::try_new_unstable`](crate::Transliterator::try_new_unstable).
+#[derive(Debug)]
+pub struct RuleCollectionProvider<'a, PP: ?Sized, NP: ?Sized> {
     collection: &'a RuleCollection,
     properties_provider: &'a PP,
     normalizer_provider: &'a NP,
@@ -315,24 +304,11 @@ where
         &self,
         req: DataRequest,
     ) -> Result<DataResponse<TransliteratorRulesV1Marker>, DataError> {
-        #[allow(clippy::expect_used)]
-        if let Some(result) = self
-            .collection
-            .data
-            .read()
-            .expect("poison")
-            .1
-            .get(req.locale)
-        {
-            return result.clone();
-        }
+        let locale = req.locale.to_string();
 
-        // We're taking the source, so we need to hold the lock until we're putting it
-        // in the cache.
-        #[allow(clippy::expect_used)]
-        let mut exclusive_data = self.collection.data.write().expect("poison");
+        let mut exclusive_data = self.collection.data.lock();
 
-        if let Some(response) = exclusive_data.1.get(req.locale) {
+        if let Some(response) = exclusive_data.1.get(&locale) {
             return response.clone();
         };
 
@@ -388,9 +364,9 @@ where
                 metadata: Default::default(),
                 payload: Some(DataPayload::from_owned(transliterator)),
             })
-        }(exclusive_data.0.remove(req.locale));
+        }(exclusive_data.0.remove(&locale));
 
-        exclusive_data.1.insert(req.locale.clone(), result.clone());
+        exclusive_data.1.insert(locale, result.clone());
 
         result
     }
@@ -416,6 +392,7 @@ redirect!(
     CanonicalCompositionsV1Marker
 );
 
+#[cfg(feature = "datagen")]
 impl<PP, NP> icu_provider::datagen::IterableDataProvider<TransliteratorRulesV1Marker>
     for RuleCollectionProvider<'_, PP, NP>
 where
@@ -478,13 +455,14 @@ where
     NP: ?Sized,
 {
     fn supported_locales(&self) -> Result<Vec<DataLocale>, DataError> {
-        #[allow(clippy::expect_used)]
-        let read_access = self.collection.data.read().expect("poison");
-        Ok(read_access
+        let exclusive_data = self.collection.data.lock();
+        #[allow(clippy::unwrap_used)] // the maps' keys are valid DataLocales
+        Ok(exclusive_data
             .0
             .keys()
             .cloned()
-            .chain(read_access.1.keys().cloned())
+            .chain(exclusive_data.1.keys().cloned())
+            .map(|s| s.parse().unwrap())
             .collect::<Vec<_>>())
     }
 }
@@ -802,7 +780,7 @@ mod tests {
                     ante: Cow::Borrowed(""),
                     key: Cow::Borrowed("\u{F0004}"),
                     post: Cow::Borrowed(""),
-                    replacer: Cow::Borrowed("reverse output:\u{F0008}\u{F000A}"), // `@@|` and function call
+                    replacer: Cow::Borrowed("reverse output:\u{F0008}\u{F000A}"), /* `@@|` and function call */
                 },
                 ds::Rule {
                     ante: Cow::Borrowed("\u{FFFFC}"), // start anchor

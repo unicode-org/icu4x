@@ -25,11 +25,8 @@ use zerovec::ule::UnvalidatedStr;
 ///
 /// let locale = locale!("en-001");
 /// let options: DisplayNamesOptions = Default::default();
-/// let display_name = RegionDisplayNames::try_new(
-///     &locale.into(),
-///     options,
-/// )
-/// .expect("Data should load successfully");
+/// let display_name = RegionDisplayNames::try_new(&locale.into(), options)
+///     .expect("Data should load successfully");
 ///
 /// assert_eq!(display_name.of(region!("AE")), Some("United Arab Emirates"));
 /// ```
@@ -101,11 +98,8 @@ impl RegionDisplayNames {
 ///
 /// let locale = locale!("en-001");
 /// let options: DisplayNamesOptions = Default::default();
-/// let display_name = ScriptDisplayNames::try_new(
-///     &locale.into(),
-///     options,
-/// )
-/// .expect("Data should load successfully");
+/// let display_name = ScriptDisplayNames::try_new(&locale.into(), options)
+///     .expect("Data should load successfully");
 ///
 /// assert_eq!(display_name.of(script!("Maya")), Some("Mayan hieroglyphs"));
 /// ```
@@ -177,11 +171,8 @@ impl ScriptDisplayNames {
 ///
 /// let locale = locale!("en-001");
 /// let options: DisplayNamesOptions = Default::default();
-/// let display_name = VariantDisplayNames::try_new(
-///     &locale.into(),
-///     options,
-/// )
-/// .expect("Data should load successfully");
+/// let display_name = VariantDisplayNames::try_new(&locale.into(), options)
+///     .expect("Data should load successfully");
 ///
 /// assert_eq!(display_name.of(variant!("POSIX")), Some("Computer"));
 /// ```
@@ -248,11 +239,8 @@ impl VariantDisplayNames {
 ///
 /// let locale = locale!("en-001");
 /// let options: DisplayNamesOptions = Default::default();
-/// let display_name = LanguageDisplayNames::try_new(
-///     &locale.into(),
-///     options,
-/// )
-/// .expect("Data should load successfully");
+/// let display_name = LanguageDisplayNames::try_new(&locale.into(), options)
+///     .expect("Data should load successfully");
 ///
 /// assert_eq!(display_name.of(language!("de")), Some("German"));
 /// ```
@@ -330,11 +318,9 @@ impl LanguageDisplayNames {
 ///
 /// let locale = locale!("en-001");
 /// let options: DisplayNamesOptions = Default::default();
-/// let display_name = LocaleDisplayNamesFormatter::try_new(
-///     &locale.into(),
-///     options,
-/// )
-/// .expect("Data should load successfully");
+/// let display_name =
+///     LocaleDisplayNamesFormatter::try_new(&locale.into(), options)
+///         .expect("Data should load successfully");
 ///
 /// assert_eq!(display_name.of(&locale!("en-GB")), "British English");
 /// assert_eq!(display_name.of(&locale!("en")), "English");
@@ -407,7 +393,6 @@ impl LocaleDisplayNamesFormatter {
     /// Returns the display name of a locale.
     /// This implementation is based on the algorithm described in
     /// <https://www.unicode.org/reports/tr35/tr35-general.html#locale_display_name_algorithm>
-    ///
     // TODO: Make this return a writeable instead of using alloc
     pub fn of<'a, 'b: 'a, 'c: 'a>(&'b self, locale: &'c Locale) -> Cow<'a, str> {
         // Step - 1: Construct a locale display name string (LDN) for the longest matching subtag.

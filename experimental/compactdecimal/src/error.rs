@@ -3,6 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use displaydoc::Display;
+use fixed_decimal::FixedDecimalError;
 use icu_decimal::DecimalError;
 use icu_plurals::PluralsError;
 use icu_provider::DataError;
@@ -22,6 +23,9 @@ pub enum CompactDecimalError {
     /// An error originating from [`FixedDecimalFormatter`](icu_decimal::FixedDecimalFormatter).
     #[displaydoc("Error loading FixedDecimalFormatter: {0}")]
     Decimal(DecimalError),
+    /// An error originating from [`FixedDecimal`](fixed_decimal::FixedDecimal).
+    #[displaydoc("Error creating FixedDecimal: {0}")]
+    FixedDecimal(FixedDecimalError),
     /// An error due to a [`CompactDecimal`](fixed_decimal::CompactDecimal) with an
     /// exponent inconsistent with the compact decimal data for the locale, e.g.,
     /// when formatting 1c5 in English (US).
@@ -51,5 +55,11 @@ impl From<DataError> for CompactDecimalError {
 impl From<DecimalError> for CompactDecimalError {
     fn from(e: DecimalError) -> Self {
         CompactDecimalError::Decimal(e)
+    }
+}
+
+impl From<FixedDecimalError> for CompactDecimalError {
+    fn from(e: FixedDecimalError) -> Self {
+        CompactDecimalError::FixedDecimal(e)
     }
 }

@@ -18,6 +18,11 @@
         An empty string is considered ``None``.
 
 
+    .. cpp:member:: ICU4XLocaleFallbackSupplement fallback_supplement
+
+        Fallback supplement data key to customize fallback rules.
+
+
 .. cpp:class:: ICU4XLocaleFallbackIterator
 
     An iterator over the locale under fallback.
@@ -49,6 +54,17 @@
     .. cpp:enumerator:: Language
 
     .. cpp:enumerator:: Region
+
+    .. cpp:enumerator:: Collation
+
+.. cpp:enum-struct:: ICU4XLocaleFallbackSupplement
+
+    What additional data is required to load when performing fallback.
+
+    See the `Rust documentation for LocaleFallbackSupplement <https://docs.rs/icu/latest/icu/locid_transform/fallback/enum.LocaleFallbackSupplement.html>`__ for more information.
+
+
+    .. cpp:enumerator:: None
 
     .. cpp:enumerator:: Collation
 

@@ -123,11 +123,14 @@ pub type WordBreakIteratorUtf16<'l, 's> = WordBreakIterator<'l, 's, WordBreakTyp
 /// use itertools::Itertools;
 /// let text = "Mark’d ye his words?";
 /// let segments: Vec<&str> = segmenter
-///    .segment_str(text)
-///    .tuple_windows()
-///    .map(|(i, j)| &text[i..j])
-///    .collect();
-/// assert_eq!(&segments, &["Mark’d", " ", "ye", " ", "his", " ", "words", "?"]);
+///     .segment_str(text)
+///     .tuple_windows()
+///     .map(|(i, j)| &text[i..j])
+///     .collect();
+/// assert_eq!(
+///     &segments,
+///     &["Mark’d", " ", "ye", " ", "his", " ", "words", "?"]
+/// );
 /// ```
 ///
 /// Not all segments delimited by word boundaries are words; some are interword

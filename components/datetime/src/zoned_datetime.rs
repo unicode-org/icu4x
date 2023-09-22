@@ -95,10 +95,10 @@ impl<C: CldrCalendar> TypedZonedDateTimeFormatter<C> {
     /// # Examples
     ///
     /// ```
-    /// use icu::calendar::{Gregorian, DateTime};
+    /// use icu::calendar::{DateTime, Gregorian};
+    /// use icu::datetime::time_zone::TimeZoneFormatterOptions;
     /// use icu::datetime::{options::components, TypedZonedDateTimeFormatter};
     /// use icu::locid::locale;
-    /// use icu::datetime::time_zone::TimeZoneFormatterOptions;
     /// use icu::timezone::CustomTimeZone;
     /// use icu_provider::AsDeserializingBufferProvider;
     /// use writeable::assert_writeable_eq;
@@ -114,9 +114,11 @@ impl<C: CldrCalendar> TypedZonedDateTimeFormatter<C> {
     ///     &locale!("en").into(),
     ///     options.into(),
     ///     TimeZoneFormatterOptions::default(),
-    /// ).unwrap();
+    /// )
+    /// .unwrap();
     ///
-    /// let datetime = DateTime::try_new_gregorian_datetime(2022, 8, 31, 1, 2, 3).unwrap();
+    /// let datetime =
+    ///     DateTime::try_new_gregorian_datetime(2022, 8, 31, 1, 2, 3).unwrap();
     ///
     /// assert_writeable_eq!(
     ///     zdtf.format(&datetime, &CustomTimeZone::utc()),

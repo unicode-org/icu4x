@@ -27,11 +27,9 @@
 //! use icu::locid::locale;
 //! use icu::plurals::{PluralCategory, PluralRuleType, PluralRules};
 //!
-//! let pr = PluralRules::try_new(
-//!     &locale!("en").into(),
-//!     PluralRuleType::Cardinal,
-//! )
-//! .expect("locale should be present");
+//! let pr =
+//!     PluralRules::try_new(&locale!("en").into(), PluralRuleType::Cardinal)
+//!         .expect("locale should be present");
 //!
 //! assert_eq!(pr.category_for(5_usize), PluralCategory::Other);
 //! ```
@@ -139,11 +137,9 @@ pub enum PluralRuleType {
 /// use icu::locid::locale;
 /// use icu::plurals::{PluralCategory, PluralRuleType, PluralRules};
 ///
-/// let pr = PluralRules::try_new(
-///     &locale!("en").into(),
-///     PluralRuleType::Cardinal,
-/// )
-/// .expect("locale should be present");
+/// let pr =
+///     PluralRules::try_new(&locale!("en").into(), PluralRuleType::Cardinal)
+///         .expect("locale should be present");
 ///
 /// assert_eq!(pr.category_for(5_usize), PluralCategory::Other);
 /// ```
@@ -270,11 +266,9 @@ impl PluralCategory {
 /// use icu::locid::locale;
 /// use icu::plurals::{PluralCategory, PluralRuleType, PluralRules};
 ///
-/// let pr = PluralRules::try_new(
-///     &locale!("en").into(),
-///     PluralRuleType::Cardinal,
-/// )
-/// .expect("locale should be present");
+/// let pr =
+///     PluralRules::try_new(&locale!("en").into(), PluralRuleType::Cardinal)
+///         .expect("locale should be present");
 ///
 /// assert_eq!(pr.category_for(5_usize), PluralCategory::Other);
 /// ```
@@ -450,11 +444,9 @@ impl PluralRules {
     /// use icu::locid::locale;
     /// use icu::plurals::{PluralCategory, PluralRuleType, PluralRules};
     ///
-    /// let pr = PluralRules::try_new(
-    ///     &locale!("en").into(),
-    ///     PluralRuleType::Cardinal,
-    /// )
-    /// .expect("locale should be present");
+    /// let pr =
+    ///     PluralRules::try_new(&locale!("en").into(), PluralRuleType::Cardinal)
+    ///         .expect("locale should be present");
     ///
     /// match pr.category_for(1_usize) {
     ///     PluralCategory::One => "One item",
@@ -525,11 +517,9 @@ impl PluralRules {
     /// use icu::locid::locale;
     /// use icu::plurals::{PluralCategory, PluralRuleType, PluralRules};
     ///
-    /// let pr = PluralRules::try_new(
-    ///     &locale!("fr").into(),
-    ///     PluralRuleType::Cardinal,
-    /// )
-    /// .expect("locale should be present");
+    /// let pr =
+    ///     PluralRules::try_new(&locale!("fr").into(), PluralRuleType::Cardinal)
+    ///         .expect("locale should be present");
     ///
     /// let mut categories = pr.categories();
     /// assert_eq!(categories.next(), Some(PluralCategory::One));

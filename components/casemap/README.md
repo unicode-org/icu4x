@@ -15,8 +15,14 @@ use icu_locid::langid;
 
 let cm = CaseMapper::new();
 
-assert_eq!(cm.uppercase_to_string("hello world", &langid!("und")), "HELLO WORLD");
-assert_eq!(cm.lowercase_to_string("Γειά σου Κόσμε", &langid!("und")), "γειά σου κόσμε");
+assert_eq!(
+    cm.uppercase_to_string("hello world", &langid!("und")),
+    "HELLO WORLD"
+);
+assert_eq!(
+    cm.lowercase_to_string("Γειά σου Κόσμε", &langid!("und")),
+    "γειά σου κόσμε"
+);
 ```
 
 <div class="stab unstable">

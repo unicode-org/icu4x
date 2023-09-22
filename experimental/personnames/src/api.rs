@@ -30,7 +30,6 @@ pub trait PersonName {
 
 ///
 /// Error handling for the person name formatter.
-///
 #[derive(Clone, Eq, PartialEq, Debug)]
 pub enum PersonNamesFormatterError {
     ParseError(String),

@@ -9,7 +9,6 @@ use crate::api::{NameField, NameFieldKind, PersonName, PersonNamesFormatterError
 
 ///
 /// DefaultPersonName, default implementation provided for PersonNameFormatter.
-///
 pub struct DefaultPersonName {
     person_data: LiteMap<NameField, String>,
     locale: Option<Locale>,
@@ -51,11 +50,9 @@ impl PersonName for DefaultPersonName {
 
 ///
 /// Default person name functions.
-///
 impl DefaultPersonName {
     ///
     /// Returns a new person name structure.
-    ///
     pub fn new(
         person_data: LiteMap<NameField, String>,
         locale: Option<Locale>,

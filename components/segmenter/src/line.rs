@@ -160,8 +160,7 @@ pub type LineBreakIteratorUtf16<'l, 's> = LineBreakIterator<'l, 's, LineBreakTyp
 /// ```rust
 /// use icu_segmenter::LineSegmenter;
 ///
-/// let segmenter =
-///     LineSegmenter::new_auto();
+/// let segmenter = LineSegmenter::new_auto();
 ///
 /// let breakpoints: Vec<usize> =
 ///     segmenter.segment_str("Hello World").collect();
@@ -192,8 +191,7 @@ pub type LineBreakIteratorUtf16<'l, 's> = LineBreakIterator<'l, 's, LineBreakTyp
 /// ```rust
 /// use icu_segmenter::LineSegmenter;
 ///
-/// let segmenter =
-///     LineSegmenter::new_auto();
+/// let segmenter = LineSegmenter::new_auto();
 ///
 /// let breakpoints: Vec<usize> =
 ///     segmenter.segment_latin1(b"Hello World").collect();
@@ -221,11 +219,11 @@ pub type LineBreakIteratorUtf16<'l, 's> = LineBreakIterator<'l, 's, LineBreakTyp
 ///                     | LineBreak::CarriageReturn
 ///                     | LineBreak::LineFeed
 ///                     | LineBreak::NextLine
-///                 ) || i == text.len()
+///             ) || i == text.len()
 ///         })
 ///     })
 ///     .collect();
-/// assert_eq!(&mandatory_breaks, &[9,  22]);
+/// assert_eq!(&mandatory_breaks, &[9, 22]);
 /// ```
 #[derive(Debug)]
 pub struct LineSegmenter {

@@ -58,9 +58,12 @@
 //!
 //! let data: Box<[u8]> = todo!();
 //!
-//! let provider = BlobDataProvider::try_new_from_blob(data).expect("data should be valid");
+//! let provider = BlobDataProvider::try_new_from_blob(data)
+//!     .expect("data should be valid");
 //!
-//! let provider = LocaleFallbackProvider::try_new_with_buffer_provider(provider).expect("provider should include fallback data");
+//! let provider =
+//!     LocaleFallbackProvider::try_new_with_buffer_provider(provider)
+//!         .expect("provider should include fallback data");
 //!
 //! let dtf = DateTimeFormatter::try_new_with_buffer_provider(
 //!     &provider,
@@ -200,3 +203,7 @@ pub use icu_relativetime as relativetime;
 #[cfg(feature = "icu_compactdecimal")]
 #[doc(inline)]
 pub use icu_compactdecimal as compactdecimal;
+
+#[cfg(feature = "icu_transliterate")]
+#[doc(inline)]
+pub use icu_transliterate as transliterate;

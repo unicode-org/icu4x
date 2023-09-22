@@ -24,7 +24,8 @@ icu_provider = { workspace = true }
 
 tinystr = { workspace = true, features = ["alloc", "zerovec"] }
 zerovec = { workspace = true,  features = ["yoke"] }
-log = "0.4"
+log = { version = "0.4", optional = true }
 
 [features]
 compiled_data = ["icu_properties/compiled_data"]
+log = ["dep:log"]

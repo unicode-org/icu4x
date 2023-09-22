@@ -5,18 +5,21 @@
 //! This module contains types and implementations for the Chinese calendar.
 //!
 //! ```rust
-//! use icu::calendar::{Ref, Date, DateTime, chinese::Chinese};
+//! use icu::calendar::{chinese::Chinese, Date, DateTime, Ref};
 //!
 //! let chinese = Chinese::new_always_calculating();
 //! let chinese = Ref(&chinese); // to avoid cloning
 //!
 //! // `Date` type
-//! let chinese_date = Date::try_new_chinese_date_with_calendar(4660, 6, 6, chinese)
-//!     .expect("Failed to initialize Chinese Date instance.");
+//! let chinese_date =
+//!     Date::try_new_chinese_date_with_calendar(4660, 6, 6, chinese)
+//!         .expect("Failed to initialize Chinese Date instance.");
 //!
 //! // `DateTime` type
-//! let chinese_datetime = DateTime::try_new_chinese_datetime_with_calendar(4660, 6, 6, 13, 1, 0, chinese)
-//!     .expect("Failed to initialize Chinese DateTime instance");
+//! let chinese_datetime = DateTime::try_new_chinese_datetime_with_calendar(
+//!     4660, 6, 6, 13, 1, 0, chinese,
+//! )
+//! .expect("Failed to initialize Chinese DateTime instance");
 //!
 //! // `Date` checks
 //! assert_eq!(chinese_date.year().number, 4660);
@@ -330,8 +333,9 @@ impl<A: AsCalendar<Calendar = Chinese>> Date<A> {
     ///
     /// let chinese = Chinese::new_always_calculating();
     ///
-    /// let date_chinese = Date::try_new_chinese_date_with_calendar(4660, 6, 11, chinese)
-    ///     .expect("Failed to initialize Chinese Date instance.");
+    /// let date_chinese =
+    ///     Date::try_new_chinese_date_with_calendar(4660, 6, 11, chinese)
+    ///         .expect("Failed to initialize Chinese Date instance.");
     ///
     /// assert_eq!(date_chinese.year().number, 4660);
     /// assert_eq!(date_chinese.year().cyclic.unwrap().get(), 40);
@@ -366,8 +370,10 @@ impl<A: AsCalendar<Calendar = Chinese>> DateTime<A> {
     ///
     /// let chinese = Chinese::new_always_calculating();
     ///
-    /// let chinese_datetime = DateTime::try_new_chinese_datetime_with_calendar(4660, 6, 11, 13, 1, 0, chinese)
-    ///     .expect("Failed to initialize Chinese DateTime instance.");
+    /// let chinese_datetime = DateTime::try_new_chinese_datetime_with_calendar(
+    ///     4660, 6, 11, 13, 1, 0, chinese,
+    /// )
+    /// .expect("Failed to initialize Chinese DateTime instance.");
     ///
     /// assert_eq!(chinese_datetime.date.year().number, 4660);
     /// assert_eq!(chinese_datetime.date.year().related_iso, Some(2023));

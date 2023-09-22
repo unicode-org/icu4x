@@ -39,6 +39,18 @@ pub mod ffi {
         Collation = 2,
     }
 
+    /// What additional data is required to load when performing fallback.
+    #[diplomat::rust_link(icu::locid_transform::fallback::LocaleFallbackSupplement, Enum)]
+    #[diplomat::rust_link(
+        icu::locid_transform::fallback::LocaleFallbackSupplement::const_default,
+        FnInEnum,
+        hidden
+    )]
+    pub enum ICU4XLocaleFallbackSupplement {
+        None = 0,
+        Collation = 1,
+    }
+
     /// Collection of configurations for the ICU4X fallback algorithm.
     #[diplomat::rust_link(icu::locid_transform::fallback::LocaleFallbackConfig, Struct)]
     #[diplomat::rust_link(
@@ -51,6 +63,8 @@ pub mod ffi {
         pub priority: ICU4XLocaleFallbackPriority,
         /// An empty string is considered `None`.
         pub extension_key: &'a str,
+        /// Fallback supplement data key to customize fallback rules.
+        pub fallback_supplement: ICU4XLocaleFallbackSupplement,
     }
 
     /// An object that runs the ICU4X locale fallback algorithm with specific configurations.
@@ -169,6 +183,12 @@ impl TryFrom<ffi::ICU4XLocaleFallbackConfig<'_>>
         result.extension_key = match other.extension_key {
             "" => None,
             s => Some(s.parse()?),
+        };
+        result.fallback_supplement = match other.fallback_supplement {
+            ffi::ICU4XLocaleFallbackSupplement::None => None,
+            ffi::ICU4XLocaleFallbackSupplement::Collation => {
+                Some(icu_locid_transform::fallback::LocaleFallbackSupplement::Collation)
+            }
         };
         Ok(result)
     }
