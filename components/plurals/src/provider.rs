@@ -120,13 +120,11 @@ impl DataMarker for ErasedPluralRulesV1Marker {
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[yoke(prove_covariance_manually)]
 pub struct PluralRangesV1<'data> {
-    /// Map between the categories of the endpoints of a range and its corresponding category.
+    /// Map between the categories of the endpoints of a range and its corresponding
+    /// category.
+    ///
+    /// - `key0` corresponds to the start category of the range.
+    /// - `key1` corresponds to the end category of the range.
     #[cfg_attr(feature = "serde", serde(borrow))]
     pub ranges: ZeroMap2d<'data, PluralCategory, PluralCategory, PluralCategory>,
-}
-
-pub(crate) struct ErasedPluralRangesV1;
-
-impl DataMarker for ErasedPluralRangesV1 {
-    type Yokeable = PluralRangesV1<'static>;
 }

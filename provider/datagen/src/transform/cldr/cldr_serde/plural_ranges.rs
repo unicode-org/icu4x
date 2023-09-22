@@ -11,22 +11,6 @@ use icu_locid::LanguageIdentifier;
 use serde::{de::Visitor, Deserialize};
 use std::collections::HashMap;
 
-#[derive(PartialEq, Debug, Deserialize)]
-pub struct Resource {
-    pub supplemental: Supplemental,
-}
-
-#[derive(PartialEq, Debug, Deserialize)]
-pub struct Supplemental {
-    pub plurals: PluralRanges,
-}
-
-#[derive(PartialEq, Debug, Deserialize)]
-pub struct PluralRanges(pub HashMap<LanguageIdentifier, LocalePluralRanges>);
-
-#[derive(PartialEq, Debug, Deserialize)]
-pub struct LocalePluralRanges(pub HashMap<PluralRange, String>);
-
 #[derive(PartialEq, PartialOrd, Ord, Eq, Hash, Debug)]
 pub struct PluralRange {
     pub start: String,
@@ -72,4 +56,20 @@ impl<'de> Deserialize<'de> for PluralRange {
 
         deserializer.deserialize_string(PluralRangeVisitor)
     }
+}
+
+#[derive(PartialEq, Debug, Deserialize)]
+pub struct LocalePluralRanges(pub HashMap<PluralRange, String>);
+
+#[derive(PartialEq, Debug, Deserialize)]
+pub struct PluralRanges(pub HashMap<LanguageIdentifier, LocalePluralRanges>);
+
+#[derive(PartialEq, Debug, Deserialize)]
+pub struct Supplemental {
+    pub plurals: PluralRanges,
+}
+
+#[derive(PartialEq, Debug, Deserialize)]
+pub struct Resource {
+    pub supplemental: Supplemental,
 }
