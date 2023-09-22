@@ -18,30 +18,30 @@ pub struct Resource {
 
 #[derive(PartialEq, Debug, Deserialize)]
 pub struct Supplemental {
-    pub plurals: Plurals,
+    pub plurals: PluralRanges,
 }
 
 #[derive(PartialEq, Debug, Deserialize)]
-pub struct Plurals(pub HashMap<LanguageIdentifier, LocalePluralRangeRules>);
+pub struct PluralRanges(pub HashMap<LanguageIdentifier, LocalePluralRanges>);
 
 #[derive(PartialEq, Debug, Deserialize)]
-pub struct LocalePluralRangeRules(pub HashMap<PluralRangeRule, String>);
+pub struct LocalePluralRanges(pub HashMap<PluralRange, String>);
 
 #[derive(PartialEq, PartialOrd, Ord, Eq, Hash, Debug)]
-pub struct PluralRangeRule {
-    start: String,
-    end: String,
+pub struct PluralRange {
+    pub start: String,
+    pub end: String,
 }
 
-impl<'de> Deserialize<'de> for PluralRangeRule {
+impl<'de> Deserialize<'de> for PluralRange {
     fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
     where
         D: serde::Deserializer<'de>,
     {
-        struct PluralRangeRuleVisitor;
+        struct PluralRangeVisitor;
 
-        impl<'de> Visitor<'de> for PluralRangeRuleVisitor {
-            type Value = PluralRangeRule;
+        impl<'de> Visitor<'de> for PluralRangeVisitor {
+            type Value = PluralRange;
 
             fn expecting(&self, formatter: &mut std::fmt::Formatter) -> std::fmt::Result {
                 write!(formatter,
@@ -63,13 +63,13 @@ impl<'de> Deserialize<'de> for PluralRangeRule {
                     .strip_prefix("end-")
                     .ok_or_else(|| E::custom("expected prefix `end-` before end category"))?;
 
-                Ok(PluralRangeRule {
+                Ok(PluralRange {
                     start: start.into(),
                     end: end.into(),
                 })
             }
         }
 
-        deserializer.deserialize_string(PluralRangeRuleVisitor)
+        deserializer.deserialize_string(PluralRangeVisitor)
     }
 }

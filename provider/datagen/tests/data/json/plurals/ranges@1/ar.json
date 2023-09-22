@@ -1,0 +1,15 @@
+{
+  "ranges": {
+    "Zero": {
+      "One": "Zero",
+      "Two": "Zero"
+    },
+    "One": {
+      "Two": "Other"
+    },
+    "Other": {
+      "One": "Other",
+      "Two": "Other"
+    }
+  }
+}

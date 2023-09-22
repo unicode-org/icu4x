@@ -144,10 +144,16 @@ pub enum PluralRuleType {
 /// assert_eq!(pr.category_for(5_usize), PluralCategory::Other);
 /// ```
 #[derive(Debug, PartialEq, Eq, Clone, Copy, Hash, Ord, PartialOrd)]
-#[cfg_attr(feature = "datagen", derive(serde::Serialize))]
+#[cfg_attr(
+    feature = "datagen",
+    derive(serde::Serialize, databake::Bake),
+    databake(path = icu_plurals),
+)]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[allow(clippy::exhaustive_enums)] // this type is mostly stable. new categories may potentially be added in the future,
-                                   // but at a cadence slower than the ICU4X release cycle
+// but at a cadence slower than the ICU4X release cycle
+#[zerovec::make_ule(PluralCategoryULE)]
+#[repr(u8)]
 pub enum PluralCategory {
     /// CLDR "zero" plural category. Used in Arabic and Latvian, among others.
     ///
@@ -155,7 +161,7 @@ pub enum PluralCategory {
     ///
     /// - 0 in Arabic (ar), Latvian (lv)
     /// - 10~20, 30, 40, 50, ... in Latvian (lv)
-    Zero,
+    Zero = 0,
     /// CLDR "one" plural category. Signifies the singular form in many languages.
     ///
     /// Examples of numbers having this category:
@@ -164,14 +170,14 @@ pub enum PluralCategory {
     /// - 1 in English (en) and most other languages
     /// - 2.1 in Filipino (fil), Croatian (hr), Latvian (lv), Serbian (sr)
     /// - 2, 3, 5, 7, 8, ... in Filipino (fil)
-    One,
+    One = 1,
     /// CLDR "two" plural category. Used in Arabic, Hebrew, and Slovenian, among others.
     ///
     /// Examples of numbers having this category:
     ///
     /// - 2 in Arabic (ar), Hebrew (iw), Slovenian (sl)
     /// - 2.0 in Arabic (ar)
-    Two,
+    Two = 2,
     /// CLDR "few" plural category. Used in Romanian, Polish, Russian, and others.
     ///
     /// Examples of numbers having this category:
@@ -180,7 +186,7 @@ pub enum PluralCategory {
     /// - 1.2 in Croatian (hr), Romanian (ro), Slovenian (sl), Serbian (sr)
     /// - 2 in Polish (pl), Russian (ru), Czech (cs), ...
     /// - 5 in Arabic (ar), Lithuanian (lt), Romanian (ro)
-    Few,
+    Few = 3,
     /// CLDR "many" plural category. Used in Polish, Russian, Ukrainian, and others.
     ///
     /// Examples of numbers having this category:
@@ -189,7 +195,7 @@ pub enum PluralCategory {
     /// - 1.0 in Czech (cs), Slovak (sk)
     /// - 1.1 in Czech (cs), Lithuanian (lt), Slovak (sk)
     /// - 15 in Arabic (ar), Polish (pl), Russian (ru), Ukrainian (uk)
-    Many,
+    Many = 4,
     /// CLDR "other" plural category, used as a catch-all. Each language supports it, and it
     /// is also used as a fail safe result for in case no better match can be identified.
     ///
@@ -201,7 +207,7 @@ pub enum PluralCategory {
     /// - 0 in English (en), German (de), Spanish (es), ...
     /// - 1 in Japanese (ja), Korean (ko), Chinese (zh), Thai (th), ...
     /// - 2 in English (en), German (de), Spanish (es), ...
-    Other,
+    Other = 5,
 }
 
 impl PluralCategory {
@@ -253,6 +259,18 @@ impl PluralCategory {
             b"many" => Some(PluralCategory::Many),
             b"other" => Some(PluralCategory::Other),
             _ => None,
+        }
+    }
+
+    /// Returns the TR35 string corresponding to the PluralCategory.
+    pub fn as_cldr_str(self) -> &'static str {
+        match self {
+            PluralCategory::Zero => "zero",
+            PluralCategory::One => "one",
+            PluralCategory::Two => "two",
+            PluralCategory::Few => "few",
+            PluralCategory::Many => "many",
+            PluralCategory::Other => "other",
         }
     }
 }

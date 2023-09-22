@@ -2,9 +2,12 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+use std::collections::BTreeMap;
+
 use crate::transform::cldr::cldr_serde;
-use icu_plurals::provider::*;
+use crate::transform::cldr::cldr_serde::plural_ranges::PluralRange;
 use icu_plurals::rules::runtime::ast::Rule;
+use icu_plurals::{provider::*, PluralCategory};
 use icu_provider::datagen::IterableDataProvider;
 use icu_provider::prelude::*;
 
@@ -28,6 +31,17 @@ impl crate::DatagenProvider {
             None
         }
         .ok_or(DataError::custom("Unknown key for PluralRulesV1"))
+    }
+
+    fn get_plural_ranges(&self) -> Result<&cldr_serde::plural_ranges::PluralRanges, DataError> {
+        Ok(&self
+            .cldr()?
+            .core()
+            .read_and_parse::<cldr_serde::plural_ranges::Resource>(
+                "supplemental/pluralRanges.json",
+            )?
+            .supplemental
+            .plurals)
     }
 }
 
@@ -83,6 +97,68 @@ impl From<&cldr_serde::plurals::LocalePluralRules> for PluralRulesV1<'static> {
     }
 }
 
+impl DataProvider<PluralRangesV1Marker> for crate::DatagenProvider {
+    fn load(&self, req: DataRequest) -> Result<DataResponse<PluralRangesV1Marker>, DataError> {
+        self.check_req::<PluralRangesV1Marker>(req)?;
+        Ok(DataResponse {
+            metadata: Default::default(),
+            payload: Some(DataPayload::from_owned(PluralRangesV1::from(
+                self.get_plural_ranges()?
+                    .0
+                    .get(&req.locale.get_langid())
+                    .ok_or(DataErrorKind::MissingLocale.into_error())?,
+            ))),
+        })
+    }
+}
+
+impl IterableDataProvider<PluralRangesV1Marker> for crate::DatagenProvider {
+    fn supported_locales(&self) -> Result<Vec<DataLocale>, DataError> {
+        Ok(self
+            .get_plural_ranges()?
+            .0
+            .keys()
+            // TODO(#568): Avoid the clone
+            .cloned()
+            .map(DataLocale::from)
+            .collect())
+    }
+}
+
+impl From<&cldr_serde::plural_ranges::LocalePluralRanges> for PluralRangesV1<'static> {
+    fn from(other: &cldr_serde::plural_ranges::LocalePluralRanges) -> Self {
+        fn convert(s: &str) -> PluralCategory {
+            PluralCategory::get_for_cldr_string(s).expect("category parsing failed.")
+        }
+        let mut map: BTreeMap<PluralCategory, BTreeMap<PluralCategory, PluralCategory>> =
+            BTreeMap::new();
+        for (PluralRange { start, end }, result) in &other.0 {
+            let start = convert(&start);
+            let end = convert(&end);
+            let result = convert(&result);
+
+            // <https://unicode.org/reports/tr35/tr35-numbers.html#Plural_Ranges>
+            // "If there is no value for a <start,end> pair, the default result is end."
+            //
+            // We can use that to save a lot of memory by not inserting the ranges that
+            // have end == result.
+            if end != result {
+                map.entry(start).or_default().insert(end, result);
+            }
+        }
+
+        PluralRangesV1 {
+            ranges: map
+                .into_iter()
+                .flat_map(|(start, rest)| {
+                    rest.into_iter()
+                        .map(move |(end, result)| (start, end, result))
+                })
+                .collect(),
+        }
+    }
+}
+
 #[test]
 fn test_basic() {
     use icu_locid::langid;
@@ -113,4 +189,58 @@ fn test_basic() {
         Some("v != 0".parse().expect("Failed to parse rule")),
         cs_rules.get().many
     );
+}
+
+#[test]
+fn test_ranges() {
+    use icu_locid::langid;
+
+    let provider = crate::DatagenProvider::new_testing();
+
+    // locale 'sl' seems to have a lot of interesting cases.
+    let plural_ranges: DataPayload<PluralRangesV1Marker> = provider
+        .load(DataRequest {
+            locale: &langid!("sl").into(),
+            metadata: Default::default(),
+        })
+        .unwrap()
+        .take_payload()
+        .unwrap();
+
+    assert_eq!(
+        plural_ranges
+            .get()
+            .ranges
+            .get_copied_2d(&PluralCategory::Few, &PluralCategory::One),
+        Some(PluralCategory::Few)
+    );
+    assert_eq!(
+        plural_ranges
+            .get()
+            .ranges
+            .get_copied_2d(&PluralCategory::Other, &PluralCategory::One),
+        Some(PluralCategory::Few)
+    );
+    assert!(plural_ranges
+        .get()
+        .ranges
+        .get_copied_2d(&PluralCategory::Zero, &PluralCategory::One)
+        .is_none());
+    assert!(plural_ranges
+        .get()
+        .ranges
+        .get_copied_2d(&PluralCategory::One, &PluralCategory::Zero)
+        .is_none());
+
+    // tests that the space optimization succeeds
+    assert!(plural_ranges
+        .get()
+        .ranges
+        .get_copied_2d(&PluralCategory::One, &PluralCategory::Other)
+        .is_none());
+    assert!(plural_ranges
+        .get()
+        .ranges
+        .get_copied_2d(&PluralCategory::Few, &PluralCategory::Two)
+        .is_none());
 }

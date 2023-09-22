@@ -16,8 +16,10 @@
 //! Read more about data providers: [`icu_provider`]
 
 use crate::rules::runtime::ast::Rule;
+use crate::PluralCategory;
 use icu_provider::prelude::*;
 use icu_provider::DataMarker;
+use zerovec::ZeroMap2d;
 
 #[cfg(feature = "compiled_data")]
 #[derive(Debug)]
@@ -43,7 +45,11 @@ const _: () = {
 
 #[cfg(feature = "datagen")]
 /// The latest minimum set of keys required by this component.
-pub const KEYS: &[DataKey] = &[CardinalV1Marker::KEY, OrdinalV1Marker::KEY];
+pub const KEYS: &[DataKey] = &[
+    CardinalV1Marker::KEY,
+    OrdinalV1Marker::KEY,
+    PluralRangesV1Marker::KEY,
+];
 
 #[cfg(doc)]
 use crate::PluralCategory;
@@ -91,4 +97,24 @@ pub(crate) struct ErasedPluralRulesV1Marker;
 
 impl DataMarker for ErasedPluralRulesV1Marker {
     type Yokeable = PluralRulesV1<'static>;
+}
+
+#[icu_provider::data_struct(PluralRangesV1Marker = "plurals/ranges@1")]
+#[derive(Clone, PartialEq, Debug)]
+#[cfg_attr(
+    feature = "datagen",
+    derive(serde::Serialize, databake::Bake),
+    databake(path = icu_plurals::provider),
+)]
+#[cfg_attr(feature = "serde", derive(serde::Deserialize))]
+#[yoke(prove_covariance_manually)]
+pub struct PluralRangesV1<'data> {
+    #[cfg_attr(feature = "serde", serde(borrow))]
+    pub ranges: ZeroMap2d<'data, PluralCategory, PluralCategory, PluralCategory>,
+}
+
+pub(crate) struct ErasedPluralRangesV1;
+
+impl DataMarker for ErasedPluralRangesV1 {
+    type Yokeable = PluralRangesV1<'static>;
 }
