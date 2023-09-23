@@ -205,7 +205,7 @@ deduplicating_array = { version = "0.1.5", path = "utils/deduplicating_array", d
 fixed_decimal = { version = "0.5.4", path = "utils/fixed_decimal", default-features = false }
 litemap = { version = "0.7.1", path = "utils/litemap", default-features = false }
 icu_pattern = { version = "0.1.5", path = "utils/pattern", default-features = false }
-tinystr = { version = "0.7.2", path = "utils/tinystr", default-features = false }
+tinystr = { version = "0.7.3", path = "utils/tinystr", default-features = false }
 tzif = { version = "0.0.0", path = "utils/tzif", default-features = false }
 writeable = { version = "0.5.3", path = "utils/writeable/", default-features = false }
 yoke = { version = "0.7.2", path = "utils/yoke", default-features = false }
