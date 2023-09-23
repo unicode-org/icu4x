@@ -98,6 +98,101 @@ impl DataMarker for ErasedPluralRulesV1Marker {
     type Yokeable = PluralRulesV1<'static>;
 }
 
+/// [`PluralCategory`] but serializable as provider data.
+///
+/// <div class="stab unstable">
+/// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
+/// including in SemVer minor releases. While the serde representation of data structs is guaranteed
+/// to be stable, their Rust representation might not be. Use with caution.
+/// </div>
+#[derive(Debug, PartialEq, Eq, Clone, Copy, Hash, Ord, PartialOrd)]
+#[cfg_attr(
+    feature = "datagen",
+    derive(serde::Serialize, databake::Bake),
+    databake(path = icu_plurals::provider),
+)]
+#[cfg_attr(feature = "serde", derive(serde::Deserialize))]
+#[zerovec::make_ule(RawPluralCategoryULE)]
+#[repr(u8)]
+pub enum RawPluralCategory {
+    /// CLDR "other" plural category.
+    Other = 0,
+    /// CLDR "zero" plural category.
+    Zero = 1,
+    /// CLDR "one" plural category.
+    One = 2,
+    /// CLDR "two" plural category.
+    Two = 3,
+    /// CLDR "few" plural category.
+    Few = 4,
+    /// CLDR "many" plural category.
+    Many = 5,
+}
+
+impl RawPluralCategory {
+    #[inline]
+    /// Converts to an [`UnvalidatedPluralCategory`].
+    pub fn to_unvalidated(self) -> UnvalidatedPluralCategory {
+        UnvalidatedPluralCategory(self as u8)
+    }
+}
+
+impl From<PluralCategory> for RawPluralCategory {
+    fn from(value: PluralCategory) -> Self {
+        match value {
+            PluralCategory::Zero => RawPluralCategory::Zero,
+            PluralCategory::One => RawPluralCategory::One,
+            PluralCategory::Two => RawPluralCategory::Two,
+            PluralCategory::Few => RawPluralCategory::Few,
+            PluralCategory::Many => RawPluralCategory::Many,
+            PluralCategory::Other => RawPluralCategory::Other,
+        }
+    }
+}
+
+/// An `u8` that is expected to be a `PluralCategory` tag but does not enforce this variant.
+///
+/// <div class="stab unstable">
+/// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
+/// including in SemVer minor releases. While the serde representation of data structs is guaranteed
+/// to be stable, their Rust representation might not be. Use with caution.
+/// </div>
+#[derive(Debug, PartialEq, Eq, Clone, Copy, Hash, Ord, PartialOrd)]
+#[cfg_attr(
+    feature = "datagen",
+    derive(databake::Bake),
+    databake(path = icu_plurals::provider),
+)]
+#[zerovec::make_ule(UnvalidatedPluralCategoryULE)]
+pub struct UnvalidatedPluralCategory(pub u8);
+
+#[cfg(feature = "datagen")]
+impl serde::Serialize for UnvalidatedPluralCategory {
+    fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
+    where
+        S: serde::Serializer,
+    {
+        use serde::ser::Error;
+        RawPluralCategory::new_from_u8(self.0)
+            .ok_or_else(|| S::Error::custom("invalid tag in UnvalidatedPluralCategory"))?
+            .serialize(serializer)
+    }
+}
+
+#[cfg(feature = "serde")]
+impl<'de> serde::Deserialize<'de> for UnvalidatedPluralCategory {
+    fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
+    where
+        D: serde::Deserializer<'de>,
+    {
+        if deserializer.is_human_readable() {
+            Ok(RawPluralCategory::deserialize(deserializer)?.to_unvalidated())
+        } else {
+            Ok(Self(<u8>::deserialize(deserializer)?))
+        }
+    }
+}
+
 /// Plural categories for ranges.
 ///
 /// Obtains the plural category of a range from the categories of its endpoints. It is required that
@@ -126,5 +221,6 @@ pub struct PluralRangesV1<'data> {
     /// - `key0` corresponds to the start category of the range.
     /// - `key1` corresponds to the end category of the range.
     #[cfg_attr(feature = "serde", serde(borrow))]
-    pub ranges: ZeroMap2d<'data, PluralCategory, PluralCategory, PluralCategory>,
+    pub ranges:
+        ZeroMap2d<'data, UnvalidatedPluralCategory, UnvalidatedPluralCategory, RawPluralCategory>,
 }

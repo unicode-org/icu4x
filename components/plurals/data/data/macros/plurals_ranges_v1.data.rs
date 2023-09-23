@@ -11,58 +11,58 @@ macro_rules! __impl_plurals_ranges_v1 {
         #[clippy::msrv = "1.66"]
         impl icu_provider::DataProvider<icu::plurals::provider::PluralRangesV1Marker> for $provider {
             fn load(&self, req: icu_provider::DataRequest) -> Result<icu_provider::DataResponse<icu::plurals::provider::PluralRangesV1Marker>, icu_provider::DataError> {
+                static AF: <icu::plurals::provider::PluralRangesV1Marker as icu_provider::DataMarker>::Yokeable = icu::plurals::provider::PluralRangesV1 {
+                    ranges: unsafe {
+                        #[allow(unused_unsafe)]
+                        zerovec::ZeroMap2d::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\0") }, unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x01\0\0\0") }, unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x02") }, unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\0") })
+                    },
+                };
                 static LV: <icu::plurals::provider::PluralRangesV1Marker as icu_provider::DataMarker>::Yokeable = icu::plurals::provider::PluralRangesV1 {
                     ranges: unsafe {
                         #[allow(unused_unsafe)]
-                        zerovec::ZeroMap2d::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\0\x01\x05") }, unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x01\0\0\0\x02\0\0\0\x03\0\0\0") }, unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\0\0\0") }, unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x05\x05\x05") })
+                        zerovec::ZeroMap2d::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\0\x01\x02") }, unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x01\0\0\0\x02\0\0\0\x03\0\0\0") }, unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x01\x01\x01") }, unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\0\0\0") })
                     },
                 };
                 static AR: <icu::plurals::provider::PluralRangesV1Marker as icu_provider::DataMarker>::Yokeable = icu::plurals::provider::PluralRangesV1 {
                     ranges: unsafe {
                         #[allow(unused_unsafe)]
-                        zerovec::ZeroMap2d::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\0\x01\x05") }, unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x02\0\0\0\x03\0\0\0\x05\0\0\0") }, unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x01\x02\x02\x01\x02") }, unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\0\0\x05\x05\x05") })
-                    },
-                };
-                static FA: <icu::plurals::provider::PluralRangesV1Marker as icu_provider::DataMarker>::Yokeable = icu::plurals::provider::PluralRangesV1 {
-                    ranges: unsafe {
-                        #[allow(unused_unsafe)]
-                        zerovec::ZeroMap2d::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x01") }, unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x01\0\0\0") }, unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x01") }, unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x05") })
-                    },
-                };
-                static SL: <icu::plurals::provider::PluralRangesV1Marker as icu_provider::DataMarker>::Yokeable = icu::plurals::provider::PluralRangesV1 {
-                    ranges: unsafe {
-                        #[allow(unused_unsafe)]
-                        zerovec::ZeroMap2d::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x01\x02\x03\x05") }, unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x01\0\0\0\x02\0\0\0\x03\0\0\0\x04\0\0\0") }, unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x01\x01\x01\x01") }, unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x03\x03\x03\x03") })
-                    },
-                };
-                static MK: <icu::plurals::provider::PluralRangesV1Marker as icu_provider::DataMarker>::Yokeable = icu::plurals::provider::PluralRangesV1 {
-                    ranges: unsafe {
-                        #[allow(unused_unsafe)]
-                        zerovec::ZeroMap2d::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x01\x05") }, unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x01\0\0\0\x02\0\0\0") }, unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x01\x01") }, unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x05\x05") })
+                        zerovec::ZeroMap2d::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\0\x01\x02") }, unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x02\0\0\0\x04\0\0\0\x05\0\0\0") }, unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x02\x03\x02\x03\x03") }, unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\0\0\x01\x01\0") })
                     },
                 };
                 static KA: <icu::plurals::provider::PluralRangesV1Marker as icu_provider::DataMarker>::Yokeable = icu::plurals::provider::PluralRangesV1 {
                     ranges: unsafe {
                         #[allow(unused_unsafe)]
-                        zerovec::ZeroMap2d::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x01\x05") }, unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x01\0\0\0\x02\0\0\0") }, unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x05\x01") }, unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x01\x05") })
+                        zerovec::ZeroMap2d::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\0\x02") }, unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x01\0\0\0\x02\0\0\0") }, unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x02\0") }, unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\0\x02") })
+                    },
+                };
+                static MK: <icu::plurals::provider::PluralRangesV1Marker as icu_provider::DataMarker>::Yokeable = icu::plurals::provider::PluralRangesV1 {
+                    ranges: unsafe {
+                        #[allow(unused_unsafe)]
+                        zerovec::ZeroMap2d::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\0\x02") }, unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x01\0\0\0\x02\0\0\0") }, unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x02\x02") }, unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\0\0") })
                     },
                 };
                 static HE: <icu::plurals::provider::PluralRangesV1Marker as icu_provider::DataMarker>::Yokeable = icu::plurals::provider::PluralRangesV1 {
                     ranges: unsafe {
                         #[allow(unused_unsafe)]
-                        zerovec::ZeroMap2d::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x01\x05") }, unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x01\0\0\0\x03\0\0\0") }, unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x02\x01\x02") }, unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x05\x05\x05") })
+                        zerovec::ZeroMap2d::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\0\x02") }, unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x02\0\0\0\x03\0\0\0") }, unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x02\x03\x03") }, unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\0\0\0") })
+                    },
+                };
+                static SL: <icu::plurals::provider::PluralRangesV1Marker as icu_provider::DataMarker>::Yokeable = icu::plurals::provider::PluralRangesV1 {
+                    ranges: unsafe {
+                        #[allow(unused_unsafe)]
+                        zerovec::ZeroMap2d::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\0\x02\x03\x04") }, unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x01\0\0\0\x02\0\0\0\x03\0\0\0\x04\0\0\0") }, unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x02\x02\x02\x02") }, unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x04\x04\x04\x04") })
+                    },
+                };
+                static FA: <icu::plurals::provider::PluralRangesV1Marker as icu_provider::DataMarker>::Yokeable = icu::plurals::provider::PluralRangesV1 {
+                    ranges: unsafe {
+                        #[allow(unused_unsafe)]
+                        zerovec::ZeroMap2d::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x02") }, unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x01\0\0\0") }, unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x02") }, unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\0") })
                     },
                 };
                 static RO: <icu::plurals::provider::PluralRangesV1Marker as icu_provider::DataMarker>::Yokeable = icu::plurals::provider::PluralRangesV1 {
                     ranges: unsafe {
                         #[allow(unused_unsafe)]
-                        zerovec::ZeroMap2d::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x03") }, unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x01\0\0\0") }, unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x01") }, unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x03") })
-                    },
-                };
-                static AF: <icu::plurals::provider::PluralRangesV1Marker as icu_provider::DataMarker>::Yokeable = icu::plurals::provider::PluralRangesV1 {
-                    ranges: unsafe {
-                        #[allow(unused_unsafe)]
-                        zerovec::ZeroMap2d::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x05") }, unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x01\0\0\0") }, unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x01") }, unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x05") })
+                        zerovec::ZeroMap2d::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x04") }, unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x01\0\0\0") }, unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x02") }, unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x04") })
                     },
                 };
                 static AM: <icu::plurals::provider::PluralRangesV1Marker as icu_provider::DataMarker>::Yokeable = icu::plurals::provider::PluralRangesV1 {

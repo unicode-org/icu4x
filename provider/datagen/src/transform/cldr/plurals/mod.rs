@@ -126,10 +126,12 @@ impl IterableDataProvider<PluralRangesV1Marker> for crate::DatagenProvider {
 
 impl From<&cldr_serde::plural_ranges::LocalePluralRanges> for PluralRangesV1<'static> {
     fn from(other: &cldr_serde::plural_ranges::LocalePluralRanges) -> Self {
-        fn convert(s: &str) -> PluralCategory {
-            PluralCategory::get_for_cldr_string(s).expect("category parsing failed.")
+        fn convert(s: &str) -> RawPluralCategory {
+            PluralCategory::get_for_cldr_string(s)
+                .expect("category parsing failed.")
+                .into()
         }
-        let mut map: BTreeMap<PluralCategory, BTreeMap<PluralCategory, PluralCategory>> =
+        let mut map: BTreeMap<RawPluralCategory, BTreeMap<RawPluralCategory, RawPluralCategory>> =
             BTreeMap::new();
         for (range, result) in &other.0 {
             let start = convert(&range.start);
@@ -150,8 +152,9 @@ impl From<&cldr_serde::plural_ranges::LocalePluralRanges> for PluralRangesV1<'st
             ranges: map
                 .into_iter()
                 .flat_map(|(start, rest)| {
-                    rest.into_iter()
-                        .map(move |(end, result)| (start, end, result))
+                    rest.into_iter().map(move |(end, result)| {
+                        (start.to_unvalidated(), end.to_unvalidated(), result)
+                    })
                 })
                 .collect(),
         }
@@ -207,39 +210,51 @@ fn test_ranges() {
         .unwrap();
 
     assert_eq!(
-        plural_ranges
-            .get()
-            .ranges
-            .get_copied_2d(&PluralCategory::Few, &PluralCategory::One),
-        Some(PluralCategory::Few)
+        plural_ranges.get().ranges.get_copied_2d(
+            &RawPluralCategory::Few.to_unvalidated(),
+            &RawPluralCategory::One.to_unvalidated()
+        ),
+        Some(RawPluralCategory::Few)
     );
     assert_eq!(
-        plural_ranges
-            .get()
-            .ranges
-            .get_copied_2d(&PluralCategory::Other, &PluralCategory::One),
-        Some(PluralCategory::Few)
+        plural_ranges.get().ranges.get_copied_2d(
+            &RawPluralCategory::Other.to_unvalidated(),
+            &RawPluralCategory::One.to_unvalidated()
+        ),
+        Some(RawPluralCategory::Few)
     );
     assert!(plural_ranges
         .get()
         .ranges
-        .get_copied_2d(&PluralCategory::Zero, &PluralCategory::One)
+        .get_copied_2d(
+            &RawPluralCategory::Zero.to_unvalidated(),
+            &RawPluralCategory::One.to_unvalidated()
+        )
         .is_none());
     assert!(plural_ranges
         .get()
         .ranges
-        .get_copied_2d(&PluralCategory::One, &PluralCategory::Zero)
+        .get_copied_2d(
+            &RawPluralCategory::One.to_unvalidated(),
+            &RawPluralCategory::Zero.to_unvalidated()
+        )
         .is_none());
 
     // tests that the space optimization succeeds
     assert!(plural_ranges
         .get()
         .ranges
-        .get_copied_2d(&PluralCategory::One, &PluralCategory::Other)
+        .get_copied_2d(
+            &RawPluralCategory::One.to_unvalidated(),
+            &RawPluralCategory::Other.to_unvalidated()
+        )
         .is_none());
     assert!(plural_ranges
         .get()
         .ranges
-        .get_copied_2d(&PluralCategory::Few, &PluralCategory::Two)
+        .get_copied_2d(
+            &RawPluralCategory::Few.to_unvalidated(),
+            &RawPluralCategory::Two.to_unvalidated()
+        )
         .is_none());
 }
