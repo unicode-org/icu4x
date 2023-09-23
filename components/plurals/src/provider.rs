@@ -147,6 +147,19 @@ impl RawPluralCategory {
     }
 }
 
+impl From<RawPluralCategory> for PluralCategory {
+    fn from(value: RawPluralCategory) -> Self {
+        match value {
+            RawPluralCategory::Other => PluralCategory::Other,
+            RawPluralCategory::Zero => PluralCategory::Zero,
+            RawPluralCategory::One => PluralCategory::One,
+            RawPluralCategory::Two => PluralCategory::Two,
+            RawPluralCategory::Few => PluralCategory::Few,
+            RawPluralCategory::Many => PluralCategory::Many,
+        }
+    }
+}
+
 impl From<PluralCategory> for RawPluralCategory {
     fn from(value: PluralCategory) -> Self {
         match value {
@@ -304,4 +317,10 @@ pub struct PluralRangesV1<'data> {
     /// where the key is `(start category, end category)`.
     #[cfg_attr(feature = "serde", serde(borrow))]
     pub ranges: ZeroMap<'data, UnvalidatedPluralRange, RawPluralCategory>,
+}
+
+pub(crate) struct ErasedPluralRangesV1Marker;
+
+impl DataMarker for ErasedPluralRangesV1Marker {
+    type Yokeable = PluralRangesV1<'static>;
 }

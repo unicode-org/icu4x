@@ -86,8 +86,12 @@ pub use error::PluralsError;
 use icu_provider::prelude::*;
 pub use operands::PluralOperands;
 use provider::CardinalV1Marker;
+use provider::ErasedPluralRangesV1Marker;
 use provider::ErasedPluralRulesV1Marker;
 use provider::OrdinalV1Marker;
+use provider::PluralRangesV1Marker;
+use provider::RawPluralCategory;
+use provider::UnvalidatedPluralRange;
 use rules::runtime::test_rule;
 
 #[doc(no_inline)]
@@ -548,5 +552,107 @@ impl PluralRules {
             .chain(test_rule!(few, Few))
             .chain(test_rule!(many, Many))
             .chain(Some(PluralCategory::Other))
+    }
+}
+
+/// A struct which provides the ability to retrieve an appropriate [`Plural Category`] for a number
+/// range from the categories of its endpoints.
+///
+/// # Examples
+///
+/// ```
+/// use icu::locid::locale;
+/// use icu::plurals::{PluralCategory, PluralOperands};
+/// use icu::plurals::{PluralRanges, PluralRuleType, PluralRules};
+/// use std::convert::TryFrom;
+///
+/// let pr =
+///     PluralRules::try_new(&locale!("ar").into(), PluralRuleType::Cardinal)
+///         .expect("locale should be present");
+/// let ranges = PluralRanges::try_new(&locale!("ar").into())
+///     .expect("locale should be present");
+///
+/// let operands =
+///     PluralOperands::try_from(1).expect("Failed to parse to operands.");
+/// let operands2: PluralOperands =
+///     "2.0".parse().expect("Failed to parse to operands.");
+/// let start = pr.category_for(operands);
+/// let end = pr.category_for(operands2);
+///
+/// assert_eq!(ranges.category_for_range(start, end), PluralCategory::Other);
+/// ```
+#[derive(Debug)]
+pub struct PluralRanges(DataPayload<ErasedPluralRangesV1Marker>);
+
+impl PluralRanges {
+    icu_provider::gen_any_buffer_data_constructors!(
+        locale: include,
+        options: skip,
+        error: PluralsError,
+        /// Constructs a new `PluralRanges` for a given locale using compiled data.
+        ///
+        /// ✨ *Enabled with the `compiled_data` Cargo feature.*
+        ///
+        /// [📚 Help choosing a constructor](icu_provider::constructors)
+        ///
+        /// # Examples
+        ///
+        /// ```
+        /// use icu::locid::locale;
+        /// use icu::plurals::PluralRanges;
+        ///
+        /// let _ = PluralRanges::try_new(
+        ///     &locale!("en").into(),
+        /// ).expect("locale should be present");
+        /// ```
+    );
+
+    #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::try_new)]
+    pub fn try_new_unstable(
+        provider: &(impl DataProvider<PluralRangesV1Marker> + ?Sized),
+        locale: &DataLocale,
+    ) -> Result<Self, PluralsError> {
+        Ok(Self(
+            provider
+                .load(DataRequest {
+                    locale,
+                    metadata: Default::default(),
+                })?
+                .take_payload()?
+                .cast(),
+        ))
+    }
+
+    /// Returns the [`Plural Category`] appropriate for a range from the categories of its endpoints.
+    ///
+    /// Note that the returned category is correct only if the original numeric range fulfills the
+    /// following requirements:
+    /// - The start value is strictly less than the end value.
+    /// - Both values are positive.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use icu::locid::locale;
+    /// use icu::plurals::{PluralCategory, PluralRanges};
+    ///
+    /// let ranges = PluralRanges::try_new(&locale!("sl").into())
+    ///     .expect("locale should be present");
+    ///
+    /// assert_eq!(
+    ///     ranges.category_for_range(PluralCategory::Other, PluralCategory::One),
+    ///     PluralCategory::Few
+    /// );
+    /// ```
+    pub fn category_for_range(&self, start: PluralCategory, end: PluralCategory) -> PluralCategory {
+        let plural_ranges = self.0.get();
+        let start: RawPluralCategory = start.into();
+        let end: RawPluralCategory = end.into();
+
+        plural_ranges
+            .ranges
+            .get_copied(&UnvalidatedPluralRange::from_range(start, end))
+            .unwrap_or(end)
+            .into()
     }
 }
