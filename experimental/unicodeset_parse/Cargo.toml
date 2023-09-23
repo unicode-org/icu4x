@@ -5,7 +5,7 @@
 [package]
 name = "icu_unicodeset_parse"
 description = "API to parse unicode sets as defined in UTS35"
-version = "0.0.0"
+version = "0.1.0"
 
 authors.workspace = true
 categories.workspace = true
