@@ -6,13 +6,13 @@
 name = "icu4x_ecma402"
 description = "ECMA-402 API functionality backed by the ICU4X library"
 version = "0.8.0"
+license-file = "LICENSE"
 
 authors.workspace = true
 categories.workspace = true
 edition.workspace = true
 homepage.workspace = true
 include.workspace = true
-license-file.workspace = true
 repository.workspace = true
 rust-version.workspace = true
 

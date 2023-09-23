@@ -8,11 +8,11 @@ description = "A small ASCII-only bounded length string representation."
 version = "0.7.2"
 keywords = ["string", "str", "small", "tiny", "no_std"]
 categories = ["data-structures"]
+license-file = "LICENSE"
 
 authors.workspace = true
 edition.workspace = true
 include.workspace = true
-license-file.workspace = true
 repository.workspace = true
 rust-version.workspace = true
 

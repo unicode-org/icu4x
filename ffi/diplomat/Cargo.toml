@@ -6,6 +6,7 @@
 name = "icu_capi"
 description = "C interface to ICU4X"
 version = "1.3.0"
+license-file = "LICENSE"
 include = [
     "src/**/*",
     "examples/**/*",
@@ -21,7 +22,6 @@ authors.workspace = true
 categories.workspace = true
 edition.workspace = true
 homepage.workspace = true
-license-file.workspace = true
 repository.workspace = true
 rust-version.workspace = true
 

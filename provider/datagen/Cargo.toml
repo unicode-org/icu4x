@@ -6,6 +6,7 @@
 name = "icu_datagen"
 description = "Generate data for ICU4X DataProvider"
 version = "1.3.0"
+license-file = "LICENSE"
 include = [
     "data/**/*",
     "src/**/*",
@@ -24,7 +25,6 @@ authors.workspace = true
 categories.workspace = true
 edition.workspace = true
 homepage.workspace = true
-license-file.workspace = true
 repository.workspace = true
 rust-version.workspace = true
 
