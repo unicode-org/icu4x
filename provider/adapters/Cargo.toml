@@ -27,11 +27,11 @@ databake = { workspace = true, features = ["derive"], optional = true}
 serde = { version = "1.0", default-features = false, features = ["derive", "alloc"], optional = true }
 
 [dev-dependencies]
-icu_provider = { workspace = true, features = ["macros", "deserialize_json"] }
-icu_provider_fs = { workspace = true }
-icu_provider_blob = { workspace = true }
-icu_locid_transform = { workspace = true }
-writeable = { workspace = true }
+icu_provider = { path = "../../provider/core", features = ["macros", "deserialize_json"] }
+icu_provider_fs = { path = "../../provider/fs" }
+icu_provider_blob = { path = "../../provider/blob" }
+icu_locid_transform = { path = "../../components/locid_transform" }
+writeable = { path = "../../utils/writeable" }
 
 [features]
 std = ["icu_locid/std", "icu_provider/std"]

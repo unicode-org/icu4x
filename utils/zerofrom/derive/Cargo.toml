@@ -28,6 +28,6 @@ syn = { version = "2", features = ["derive", "fold", "visit"] }
 synstructure = "0.13"
 
 [dev-dependencies]
-zerofrom = { workspace = true, features = ["derive"]}
-zerovec = { workspace = true, features = ["yoke"] }
+zerofrom = { path = "..", features = ["derive"]}
+zerovec = { path = "../../../utils/zerofrom", features = ["yoke"] }
 

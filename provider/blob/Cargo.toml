@@ -29,8 +29,8 @@ zerovec = { workspace = true, features = ["serde", "yoke"] }
 log = { version = "0.4", optional = true }
 
 [dev-dependencies]
-icu_locid = { workspace = true, features = ["serde"] }
-icu_datagen = { workspace = true, features = ["networking"] }
+icu_locid = { path = "../../components/locid", features = ["serde"] }
+icu_datagen = { path = "../../provider/datagen", features = ["networking"] }
 
 [features]
 std = ["icu_provider/std"]

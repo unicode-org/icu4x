@@ -47,8 +47,8 @@ databake = { workspace = true, optional = true, features = ["derive"] }
 
 [dev-dependencies]
 serde_json = "1.0"
-icu_provider_adapters = { workspace = true }
-icu_locid_transform = { workspace = true }
+icu_provider_adapters = { path = "../../provider/adapters" }
+icu_locid_transform = { path = "../../components/locid_transform" }
 
 [features]
 std = ["icu_locid/std"]

@@ -38,7 +38,7 @@ icu_compactdecimal_data = { workspace = true, optional = true }
 icu_locid_transform = { workspace = true, optional = true, features = ["compiled_data"]}
 
 [dev-dependencies]
-icu_locid = { workspace = true }
+icu_locid = { path = "../../components/locid" }
 
 [features]
 default = ["compiled_data"]

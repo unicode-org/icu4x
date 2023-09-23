@@ -34,7 +34,7 @@ serde = { version = "1.0", default-features = false, features = ["derive", "allo
 icu_timezone_data = { workspace = true, optional = true }
 
 [dev-dependencies]
-icu = { workspace = true }
+icu = { path = "../../components/icu", default-features = false }
 
 [features]
 default = ["compiled_data"]

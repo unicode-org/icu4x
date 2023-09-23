@@ -30,4 +30,4 @@ syn = { version = "2", features = ["derive", "fold"] }
 synstructure = "0.13"
 
 [dev-dependencies]
-databake = { workspace = true, features = ["derive"]}
+databake = { path = "..", features = ["derive"]}

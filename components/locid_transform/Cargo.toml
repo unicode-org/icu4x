@@ -38,8 +38,8 @@ icu_locid_transform_data = { workspace = true, optional = true }
 [dev-dependencies]
 serde = { version = "1.0", features = ["derive"] }
 serde_json = "1.0"
-icu = { workspace = true }
-writeable = { workspace = true }
+icu = { path = "../../components/icu", default-features = false }
+writeable = { path = "../../utils/writeable" }
 
 [target.'cfg(not(target_arch = "wasm32"))'.dev-dependencies]
 criterion = "0.4"

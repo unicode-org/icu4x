@@ -33,9 +33,9 @@ icu_decimal_data = { workspace = true, optional = true }
 icu_locid_transform = { workspace = true, optional = true, features = ["compiled_data"] }
 
 [dev-dependencies]
-icu = { workspace = true }
-icu_benchmark_macros = { workspace = true }
-icu_provider_adapters = { workspace = true }
+icu = { path = "../../components/icu", default-features = false }
+icu_benchmark_macros = { path = "../../tools/benchmark/macros" }
+icu_provider_adapters = { path = "../../provider/adapters" }
 rand = "0.8"
 rand_pcg = "0.3"
 rand_distr = "0.4"
