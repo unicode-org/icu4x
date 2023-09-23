@@ -212,8 +212,9 @@ yoke = { version = "0.7.1", path = "utils/yoke", default-features = false }
 yoke-derive = { version = "0.7.1", path = "utils/yoke/derive", default-features = false }
 zerofrom = { version = "0.1.1", path = "utils/zerofrom", default-features = false }
 zerofrom-derive = { version = "0.1.1", path = "utils/zerofrom/derive", default-features = false }
-zerovec = { version = "0.9.4", path = "utils/zerovec", default-features = false }
-zerovec-derive = { version = "0.9.4", path = "utils/zerovec/derive", default-features = false }
+# Remove this range bound next ICU4X version
+zerovec = { version = ">=0.9.4, <0.11.0", path = "utils/zerovec", default-features = false }
+zerovec-derive = { version = ">=0.9.4, <0.11.0", path = "utils/zerovec/derive", default-features = false }
 bies = { version = "0.2.1", path = "experimental/bies", default-features = false }
 ixdtf = { version = "0.1.0", path = "experimental/ixdtf", default-features = false }
 zerotrie = { version = "0.0.0", path = "experimental/zerotrie", default-features = false }
