@@ -9,9 +9,9 @@ version = "0.7.2"
 categories = ["data-structures", "memory-management", "caching", "no-std"]
 keywords = ["zerocopy", "serialization", "lifetime", "borrow", "self-referential"]
 authors = ["Manish Goregaokar <manishsmail@gmail.com>"]
+license-file = "LICENSE"
 
 edition.workspace = true
-license-file.workspace = true
 repository.workspace = true
 
 [package.metadata.workspaces]

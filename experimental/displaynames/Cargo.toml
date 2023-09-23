@@ -6,12 +6,12 @@
 name = "icu_displaynames"
 description = "API to enable the translation of Language and Region display names"
 version = "0.11.0"
+license-file = "LICENSE"
 
 authors.workspace = true
 edition.workspace = true
 homepage.workspace = true
 include.workspace = true
-license-file.workspace = true
 repository.workspace = true
 rust-version.workspace = true
 

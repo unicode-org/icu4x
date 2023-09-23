@@ -6,13 +6,13 @@
 name = "icu_locid_transform"
 description = "API for Unicode Language and Locale Identifiers canonicalization"
 version = "1.3.0"
+license-file = "LICENSE"
 
 authors.workspace = true
 categories.workspace = true
 edition.workspace = true
 homepage.workspace = true
 include.workspace = true
-license-file.workspace = true
 repository.workspace = true
 rust-version.workspace = true
 

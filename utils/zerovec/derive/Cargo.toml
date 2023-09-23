@@ -9,9 +9,9 @@ version = "0.10.0"
 authors = ["Manish Goregaokar <manishsmail@gmail.com>"]
 categories = ["rust-patterns", "memory-management", "caching", "no-std", "data-structures"]
 keywords = ["zerocopy", "serialization", "zero-copy", "serde"]
+license-file = "LICENSE"
 
 edition.workspace = true
-license-file.workspace = true
 repository.workspace = true
 
 [package.metadata.workspaces]
