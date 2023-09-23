@@ -29,8 +29,8 @@ yoke = { workspace = true, features = ["derive"], optional = true }
 [dev-dependencies]
 bincode = "1"
 bytecheck = "0.6"
-icu_benchmark_macros = { workspace = true }
-icu_locid = { workspace = true }
+icu_benchmark_macros = { path = "../../tools/benchmark/macros" }
+icu_locid = { path = "../../components/locid" }
 postcard = { version = "1.0.0", features = ["use-std"], default-features = false }
 rkyv = { version = "0.7", features = ["validation"] }
 serde = "1"

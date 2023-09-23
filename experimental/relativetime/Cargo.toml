@@ -38,7 +38,7 @@ icu_relativetime_data = { workspace = true, optional = true }
 icu_locid_transform = { workspace = true, optional = true, features = ["compiled_data"] }
 
 [dev-dependencies]
-icu = { workspace = true, features = ["icu_relativetime"] }
+icu = { path = "../../components/icu", default-features = false, features = ["icu_relativetime"] }
 
 [features]
 default = ["compiled_data"]

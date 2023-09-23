@@ -26,4 +26,4 @@ quote = "1.0.9"
 syn = { version = "2", features = ["full", "parsing"]}
 
 [dev-dependencies]
-icu_provider = { workspace = true }
+icu_provider = { path = "../../provider/core" }

@@ -34,14 +34,14 @@ zerovec = { workspace = true, optional = true }
 
 [dev-dependencies]
 bincode = "1.0"
-icu_benchmark_macros = { workspace = true }
-litemap = { workspace = true }
+icu_benchmark_macros = { path = "../../tools/benchmark/macros" }
+litemap = { path = "../../utils/litemap" }
 postcard = { version = "1.0", default-features = false, features = ["alloc"] }
 rand = "0.8"
 rand_pcg = "0.3"
 serde = { version = "1.0", default-features = false }
 serde_json = "1.0"
-zerovec = { workspace = true, features = ["serde", "hashmap"] }
+zerovec = { path = "../../utils/zerovec", features = ["serde", "hashmap"] }
 
 [target.'cfg(not(target_arch = "wasm32"))'.dev-dependencies]
 criterion = "0.4"

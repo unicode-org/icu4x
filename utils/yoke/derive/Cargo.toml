@@ -28,5 +28,5 @@ syn = { version = "2", features = ["derive", "fold"] }
 synstructure = "0.13"
 
 [dev-dependencies]
-yoke = { workspace = true }
-zerovec = { workspace = true }
+yoke = { path = ".." }
+zerovec = { path = "../../../utils/zerovec" }

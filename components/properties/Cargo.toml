@@ -34,7 +34,7 @@ icu_properties_data = { workspace = true, optional = true }
 icu_locid_transform = { workspace = true, optional = true, features = ["compiled_data"] }
 
 [dev-dependencies]
-icu = { workspace = true, default-features = false }
+icu = { path = "../../components/icu", default-features = false }
 
 [features]
 default = ["compiled_data"]

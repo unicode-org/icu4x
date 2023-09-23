@@ -45,10 +45,10 @@ icu_transliterate = { workspace = true, features = ["compile"], optional = true 
 icu_provider = { workspace = true }
 
 [dev-dependencies]
-icu_datetime = { workspace = true, features = ["serde"] }
-icu_provider_adapters = { workspace = true, features = ["serde"] }
-icu_provider_blob = { workspace = true }
-writeable = { workspace = true }
+icu_datetime = { path = "../../components/datetime", features = ["serde"] }
+icu_provider_adapters = { path = "../../provider/adapters", features = ["serde"] }
+icu_provider_blob = { path = "../../provider/blob" }
+writeable = { path = "../../utils/writeable" }
 
 [features]
 default = [
