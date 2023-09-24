@@ -25,12 +25,11 @@ use crate::{options::RelativeTimeFormatterOptions, RelativeTimeError};
 /// };
 /// use writeable::assert_writeable_eq;
 ///
-/// let relative_time_formatter =
-///     RelativeTimeFormatter::try_new_long_second(
-///         &locale!("en").into(),
-///         RelativeTimeFormatterOptions::default(),
-///     )
-///     .expect("locale should be present");
+/// let relative_time_formatter = RelativeTimeFormatter::try_new_long_second(
+///     &locale!("en").into(),
+///     RelativeTimeFormatterOptions::default(),
+/// )
+/// .expect("locale should be present");
 ///
 /// assert_writeable_eq!(
 ///     relative_time_formatter.format(FixedDecimal::from(5i8)),
@@ -53,14 +52,13 @@ use crate::{options::RelativeTimeFormatterOptions, RelativeTimeError};
 /// };
 /// use writeable::assert_writeable_eq;
 ///
-/// let relative_time_formatter =
-///     RelativeTimeFormatter::try_new_short_day(
-///         &locale!("es").into(),
-///         RelativeTimeFormatterOptions {
-///             numeric: Numeric::Auto,
-///         },
-///     )
-///     .expect("locale should be present");
+/// let relative_time_formatter = RelativeTimeFormatter::try_new_short_day(
+///     &locale!("es").into(),
+///     RelativeTimeFormatterOptions {
+///         numeric: Numeric::Auto,
+///     },
+/// )
+/// .expect("locale should be present");
 ///
 /// assert_writeable_eq!(
 ///     relative_time_formatter.format(FixedDecimal::from(0u8)),
@@ -90,12 +88,11 @@ use crate::{options::RelativeTimeFormatterOptions, RelativeTimeError};
 /// };
 /// use writeable::assert_writeable_eq;
 ///
-/// let relative_time_formatter =
-///     RelativeTimeFormatter::try_new_narrow_year(
-///         &locale!("bn").into(),
-///         RelativeTimeFormatterOptions::default(),
-///     )
-///     .expect("locale should be present");
+/// let relative_time_formatter = RelativeTimeFormatter::try_new_narrow_year(
+///     &locale!("bn").into(),
+///     RelativeTimeFormatterOptions::default(),
+/// )
+/// .expect("locale should be present");
 ///
 /// assert_writeable_eq!(
 ///     relative_time_formatter.format(FixedDecimal::from(3u8)),

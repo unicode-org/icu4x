@@ -5,14 +5,14 @@
 [package]
 name = "icu_compactdecimal"
 description = "Compact decimal"
-version = "0.2.0"
+version = "0.2.1"
+license-file = "LICENSE"
 
 authors.workspace = true
 categories.workspace = true
 edition.workspace = true
 homepage.workspace = true
 include.workspace = true
-license-file.workspace = true
 repository.workspace = true
 rust-version.workspace = true
 
@@ -38,7 +38,7 @@ icu_compactdecimal_data = { workspace = true, optional = true }
 icu_locid_transform = { workspace = true, optional = true, features = ["compiled_data"]}
 
 [dev-dependencies]
-icu_locid = { workspace = true }
+icu_locid = { path = "../../components/locid" }
 
 [features]
 default = ["compiled_data"]
@@ -46,3 +46,4 @@ std = ["fixed_decimal/std", "icu_decimal/std", "icu_plurals/std", "icu_provider/
 serde = ["dep:serde", "zerovec/serde", "icu_decimal/serde", "icu_plurals/serde"]
 datagen = ["std", "serde", "dep:databake", "zerovec/databake"]
 compiled_data = ["dep:icu_compactdecimal_data", "dep:icu_locid_transform", "icu_decimal/compiled_data", "icu_plurals/compiled_data"]
+ryu = ["fixed_decimal/ryu"]

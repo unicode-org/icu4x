@@ -11,7 +11,7 @@ macro_rules! __impl_propnames_to_long_linear_ea_v1 {
         #[clippy::msrv = "1.66"]
         impl $provider {
             #[doc(hidden)]
-            pub const SINGLETON_PROPNAMES_TO_LONG_LINEAR_EA_V1: &'static <icu::properties::provider::EastAsianWidthValueToLongNameV1Marker as icu_provider::DataMarker>::Yokeable = &icu::properties::provider::names::PropertyEnumToValueNameLinearMapV1 { map: unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x05\0\0\0\0\0\x07\0\x10\0\x19\0\"\0NeutralAmbiguousHalfwidthFullwidthNarrow") } };
+            pub const SINGLETON_PROPNAMES_TO_LONG_LINEAR_EA_V1: &'static <icu::properties::provider::EastAsianWidthValueToLongNameV1Marker as icu_provider::DataMarker>::Yokeable = &icu::properties::provider::names::PropertyEnumToValueNameLinearMapV1 { map: unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x06\0\0\0\0\0\x07\0\x10\0\x19\0\"\0(\0NeutralAmbiguousHalfwidthFullwidthNarrowWide") } };
         }
         #[clippy::msrv = "1.66"]
         impl icu_provider::DataProvider<icu::properties::provider::EastAsianWidthValueToLongNameV1Marker> for $provider {

@@ -211,8 +211,8 @@ impl DateTime<Roc> {
     /// Years are specified in the "roc" era, Before Minguo dates are negative (year 0 is 1 Before Minguo)
     ///
     /// ```rust
-    /// use icu::calendar::DateTime;
     /// use icu::calendar::gregorian::Gregorian;
+    /// use icu::calendar::DateTime;
     /// use tinystr::tinystr;
     ///
     /// // Create a new ROC DateTime
@@ -221,8 +221,16 @@ impl DateTime<Roc> {
     ///
     /// assert_eq!(datetime_roc.date.year().era.0, tinystr!(16, "roc"));
     /// assert_eq!(datetime_roc.date.year().number, 1, "ROC year check failed!");
-    /// assert_eq!(datetime_roc.date.month().ordinal, 2, "ROC month check failed!");
-    /// assert_eq!(datetime_roc.date.day_of_month().0, 3, "ROC day of month check failed!");
+    /// assert_eq!(
+    ///     datetime_roc.date.month().ordinal,
+    ///     2,
+    ///     "ROC month check failed!"
+    /// );
+    /// assert_eq!(
+    ///     datetime_roc.date.day_of_month().0,
+    ///     3,
+    ///     "ROC day of month check failed!"
+    /// );
     /// assert_eq!(datetime_roc.time.hour.number(), 13);
     /// assert_eq!(datetime_roc.time.minute.number(), 1);
     /// assert_eq!(datetime_roc.time.second.number(), 0);

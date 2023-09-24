@@ -18,6 +18,11 @@
         An empty string is considered ``None``.
 
 
+    .. js:attribute:: fallback_supplement
+
+        Fallback supplement data key to customize fallback rules.
+
+
 .. js:class:: ICU4XLocaleFallbackIterator
 
     An iterator over the locale under fallback.
@@ -44,6 +49,13 @@
     Priority mode for the ICU4X fallback algorithm.
 
     See the `Rust documentation for LocaleFallbackPriority <https://docs.rs/icu/latest/icu/locid_transform/fallback/enum.LocaleFallbackPriority.html>`__ for more information.
+
+
+.. js:class:: ICU4XLocaleFallbackSupplement
+
+    What additional data is required to load when performing fallback.
+
+    See the `Rust documentation for LocaleFallbackSupplement <https://docs.rs/icu/latest/icu/locid_transform/fallback/enum.LocaleFallbackSupplement.html>`__ for more information.
 
 
 .. js:class:: ICU4XLocaleFallbacker

@@ -43,8 +43,8 @@ use litemap::LiteMap;
 /// # Examples
 ///
 /// ```
-/// use zerotrie::ZeroTrie;
 /// use litemap::LiteMap;
+/// use zerotrie::ZeroTrie;
 ///
 /// let mut map = LiteMap::<&[u8], usize>::new_vec();
 /// map.insert("foo".as_bytes(), 1);
@@ -79,8 +79,8 @@ pub(crate) enum ZeroTrieFlavor<Store> {
 /// # Examples
 ///
 /// ```
-/// use zerotrie::ZeroTrieSimpleAscii;
 /// use litemap::LiteMap;
+/// use zerotrie::ZeroTrieSimpleAscii;
 ///
 /// let mut map = LiteMap::new_vec();
 /// map.insert(&b"foo"[..], 1);
@@ -112,8 +112,8 @@ pub struct ZeroTrieSimpleAscii<Store: ?Sized> {
 /// # Examples
 ///
 /// ```
-/// use zerotrie::ZeroTriePerfectHash;
 /// use litemap::LiteMap;
+/// use zerotrie::ZeroTriePerfectHash;
 ///
 /// let mut map = LiteMap::<&[u8], usize>::new_vec();
 /// map.insert("foo".as_bytes(), 1);

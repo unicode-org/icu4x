@@ -54,9 +54,9 @@ inline diplomat::result<ICU4XDataStruct, ICU4XError> ICU4XDataStruct::create_dec
   auto diplomat_result_raw_out_value = capi::ICU4XDataStruct_create_decimal_symbols_v1(plus_sign_prefix.data(), plus_sign_prefix.size(), plus_sign_suffix.data(), plus_sign_suffix.size(), minus_sign_prefix.data(), minus_sign_prefix.size(), minus_sign_suffix.data(), minus_sign_suffix.size(), decimal_separator.data(), decimal_separator.size(), grouping_separator.data(), grouping_separator.size(), primary_group_size, secondary_group_size, min_group_size, digits.data(), digits.size());
   diplomat::result<ICU4XDataStruct, ICU4XError> diplomat_result_out_value;
   if (diplomat_result_raw_out_value.is_ok) {
-    diplomat_result_out_value = diplomat::Ok<ICU4XDataStruct>(std::move(ICU4XDataStruct(diplomat_result_raw_out_value.ok)));
+    diplomat_result_out_value = diplomat::Ok<ICU4XDataStruct>(ICU4XDataStruct(diplomat_result_raw_out_value.ok));
   } else {
-    diplomat_result_out_value = diplomat::Err<ICU4XError>(std::move(static_cast<ICU4XError>(diplomat_result_raw_out_value.err)));
+    diplomat_result_out_value = diplomat::Err<ICU4XError>(static_cast<ICU4XError>(diplomat_result_raw_out_value.err));
   }
   return diplomat_result_out_value;
 }

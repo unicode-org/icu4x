@@ -4,7 +4,10 @@
 
 use super::*;
 use alloc::borrow::Cow;
+use alloc::boxed::Box;
 use alloc::fmt::{Display, Formatter};
+use alloc::string::ToString;
+use alloc::vec;
 use core::{iter::Peekable, str::CharIndices};
 use icu_collections::codepointinvlist::CodePointInversionList;
 use icu_collections::codepointinvliststringlist::CodePointInversionListAndStringList;
@@ -137,7 +140,7 @@ impl Default for BasicId {
 }
 
 impl Display for BasicId {
-    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
+    fn fmt(&self, f: &mut Formatter<'_>) -> core::fmt::Result {
         write!(
             f,
             "{}-{}",

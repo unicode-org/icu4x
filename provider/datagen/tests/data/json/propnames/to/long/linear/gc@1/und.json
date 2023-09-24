@@ -28,6 +28,7 @@
     "Currency_Symbol",
     "Modifier_Symbol",
     "Other_Symbol",
-    "Initial_Punctuation"
+    "Initial_Punctuation",
+    "Final_Punctuation"
   ]
 }

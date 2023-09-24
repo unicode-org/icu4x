@@ -20,7 +20,8 @@ mod serde;
 /// ```
 /// use zerovec::ZeroHashMap;
 ///
-/// let hashmap = ZeroHashMap::<i32, str>::from_iter([(0, "a"), (1, "b"), (2, "c")]);
+/// let hashmap =
+///     ZeroHashMap::<i32, str>::from_iter([(0, "a"), (1, "b"), (2, "c")]);
 /// assert_eq!(hashmap.get(&0), Some("a"));
 /// assert_eq!(hashmap.get(&2), Some("c"));
 /// assert_eq!(hashmap.get(&4), None);
@@ -173,7 +174,12 @@ where
     /// ```
     /// use zerovec::ZeroHashMap;
     ///
-    /// let hashmap = ZeroHashMap::<i32, str>::from_iter([(1, "a"), (2, "b"), (3, "c"), (4, "d")]);
+    /// let hashmap = ZeroHashMap::<i32, str>::from_iter([
+    ///     (1, "a"),
+    ///     (2, "b"),
+    ///     (3, "c"),
+    ///     (4, "d"),
+    /// ]);
     /// assert_eq!(hashmap.get(&1), Some("a"));
     /// assert_eq!(hashmap.get(&2), Some("b"));
     /// assert_eq!(hashmap.get(&3), Some("c"));

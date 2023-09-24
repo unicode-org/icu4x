@@ -88,9 +88,9 @@ inline diplomat::result<ICU4XGraphemeClusterSegmenter, ICU4XError> ICU4XGrapheme
   auto diplomat_result_raw_out_value = capi::ICU4XGraphemeClusterSegmenter_create(provider.AsFFI());
   diplomat::result<ICU4XGraphemeClusterSegmenter, ICU4XError> diplomat_result_out_value;
   if (diplomat_result_raw_out_value.is_ok) {
-    diplomat_result_out_value = diplomat::Ok<ICU4XGraphemeClusterSegmenter>(std::move(ICU4XGraphemeClusterSegmenter(diplomat_result_raw_out_value.ok)));
+    diplomat_result_out_value = diplomat::Ok<ICU4XGraphemeClusterSegmenter>(ICU4XGraphemeClusterSegmenter(diplomat_result_raw_out_value.ok));
   } else {
-    diplomat_result_out_value = diplomat::Err<ICU4XError>(std::move(static_cast<ICU4XError>(diplomat_result_raw_out_value.err)));
+    diplomat_result_out_value = diplomat::Err<ICU4XError>(static_cast<ICU4XError>(diplomat_result_raw_out_value.err));
   }
   return diplomat_result_out_value;
 }

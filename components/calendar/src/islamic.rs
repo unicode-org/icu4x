@@ -5,19 +5,22 @@
 //! This module contains types and implementations for the Islamic calendars.
 //!
 //! ```rust
-//! use icu::calendar::{Date, DateTime, Ref};
 //! use icu::calendar::islamic::IslamicObservational;
+//! use icu::calendar::{Date, DateTime, Ref};
 //!
 //! let islamic = IslamicObservational::new_always_calculating();
 //! let islamic = Ref(&islamic); // to avoid cloning
 //!
 //! // `Date` type
-//! let islamic_date = Date::try_new_observational_islamic_date(1348, 10, 11, islamic)
-//!     .expect("Failed to initialize islamic Date instance.");
+//! let islamic_date =
+//!     Date::try_new_observational_islamic_date(1348, 10, 11, islamic)
+//!         .expect("Failed to initialize islamic Date instance.");
 //!
 //! // `DateTime` type
-//! let islamic_datetime = DateTime::try_new_observational_islamic_datetime(1348, 10, 11, 13, 1, 0, islamic)
-//!     .expect("Failed to initialize islamic DateTime instance.");
+//! let islamic_datetime = DateTime::try_new_observational_islamic_datetime(
+//!     1348, 10, 11, 13, 1, 0, islamic,
+//! )
+//! .expect("Failed to initialize islamic DateTime instance.");
 //!
 //! // `Date` checks
 //! assert_eq!(islamic_date.year().number, 1348);
@@ -302,13 +305,14 @@ impl<A: AsCalendar<Calendar = IslamicObservational>> Date<A> {
     /// Has no negative years, only era is the AH.
     ///
     /// ```rust
-    /// use icu::calendar::Date;
     /// use icu::calendar::islamic::IslamicObservational;
+    /// use icu::calendar::Date;
     ///
     /// let islamic = IslamicObservational::new_always_calculating();
     ///
-    /// let date_islamic = Date::try_new_observational_islamic_date(1392, 4, 25, islamic)
-    ///     .expect("Failed to initialize Islamic Date instance.");
+    /// let date_islamic =
+    ///     Date::try_new_observational_islamic_date(1392, 4, 25, islamic)
+    ///         .expect("Failed to initialize Islamic Date instance.");
     ///
     /// assert_eq!(date_islamic.year().number, 1392);
     /// assert_eq!(date_islamic.month().ordinal, 4);
@@ -330,13 +334,15 @@ impl<A: AsCalendar<Calendar = IslamicObservational>> DateTime<A> {
     /// Construct a new Islamic Observational datetime from integers.
     ///
     /// ```rust
-    /// use icu::calendar::DateTime;
     /// use icu::calendar::islamic::IslamicObservational;
+    /// use icu::calendar::DateTime;
     ///
     /// let islamic = IslamicObservational::new_always_calculating();
     ///
-    /// let datetime_islamic = DateTime::try_new_observational_islamic_datetime(474, 10, 11, 13, 1, 0, islamic)
-    ///     .expect("Failed to initialize Islamic DateTime instance.");
+    /// let datetime_islamic = DateTime::try_new_observational_islamic_datetime(
+    ///     474, 10, 11, 13, 1, 0, islamic,
+    /// )
+    /// .expect("Failed to initialize Islamic DateTime instance.");
     ///
     /// assert_eq!(datetime_islamic.date.year().number, 474);
     /// assert_eq!(datetime_islamic.date.month().ordinal, 10);
@@ -489,8 +495,8 @@ impl<A: AsCalendar<Calendar = IslamicUmmAlQura>> Date<A> {
     /// Has no negative years, only era is the AH.
     ///
     /// ```rust
-    /// use icu::calendar::Date;
     /// use icu::calendar::islamic::IslamicUmmAlQura;
+    /// use icu::calendar::Date;
     ///
     /// let islamic = IslamicUmmAlQura::new_always_calculating();
     ///
@@ -517,13 +523,14 @@ impl<A: AsCalendar<Calendar = IslamicUmmAlQura>> DateTime<A> {
     /// Construct a new Islamic Umm al-Qura datetime from integers.
     ///
     /// ```rust
-    /// use icu::calendar::DateTime;
     /// use icu::calendar::islamic::IslamicUmmAlQura;
+    /// use icu::calendar::DateTime;
     ///
     /// let islamic = IslamicUmmAlQura::new_always_calculating();
     ///
-    /// let datetime_islamic = DateTime::try_new_ummalqura_datetime(474, 10, 11, 13, 1, 0, islamic)
-    ///     .expect("Failed to initialize Islamic DateTime instance.");
+    /// let datetime_islamic =
+    ///     DateTime::try_new_ummalqura_datetime(474, 10, 11, 13, 1, 0, islamic)
+    ///         .expect("Failed to initialize Islamic DateTime instance.");
     ///
     /// assert_eq!(datetime_islamic.date.year().number, 474);
     /// assert_eq!(datetime_islamic.date.month().ordinal, 10);
@@ -762,13 +769,14 @@ impl<A: AsCalendar<Calendar = IslamicCivil>> Date<A> {
     /// Has no negative years, only era is the AH.
     ///
     /// ```rust
-    /// use icu::calendar::Date;
     /// use icu::calendar::islamic::IslamicCivil;
+    /// use icu::calendar::Date;
     ///
     /// let islamic = IslamicCivil::new_always_calculating();
     ///
-    /// let date_islamic = Date::try_new_islamic_civil_date_with_calendar(1392, 4, 25, islamic)
-    ///     .expect("Failed to initialize Islamic Date instance.");
+    /// let date_islamic =
+    ///     Date::try_new_islamic_civil_date_with_calendar(1392, 4, 25, islamic)
+    ///         .expect("Failed to initialize Islamic Date instance.");
     ///
     /// assert_eq!(date_islamic.year().number, 1392);
     /// assert_eq!(date_islamic.month().ordinal, 4);
@@ -790,12 +798,15 @@ impl<A: AsCalendar<Calendar = IslamicCivil>> DateTime<A> {
     /// Construct a new Civil Islamic datetime from integers.
     ///
     /// ```rust
-    /// use icu::calendar::DateTime;
     /// use icu::calendar::islamic::IslamicCivil;
+    /// use icu::calendar::DateTime;
     ///
     /// let islamic = IslamicCivil::new_always_calculating();
     ///
-    /// let datetime_islamic = DateTime::try_new_islamic_civil_datetime_with_calendar(474, 10, 11, 13, 1, 0, islamic)
+    /// let datetime_islamic =
+    ///     DateTime::try_new_islamic_civil_datetime_with_calendar(
+    ///         474, 10, 11, 13, 1, 0, islamic,
+    ///     )
     ///     .expect("Failed to initialize Islamic DateTime instance.");
     ///
     /// assert_eq!(datetime_islamic.date.year().number, 474);
@@ -998,13 +1009,14 @@ impl<A: AsCalendar<Calendar = IslamicTabular>> Date<A> {
     /// Has no negative years, only era is the AH.
     ///
     /// ```rust
-    /// use icu::calendar::Date;
     /// use icu::calendar::islamic::IslamicTabular;
+    /// use icu::calendar::Date;
     ///
     /// let islamic = IslamicTabular::new_always_calculating();
     ///
-    /// let date_islamic = Date::try_new_islamic_tabular_date_with_calendar(1392, 4, 25, islamic)
-    ///     .expect("Failed to initialize Islamic Date instance.");
+    /// let date_islamic =
+    ///     Date::try_new_islamic_tabular_date_with_calendar(1392, 4, 25, islamic)
+    ///         .expect("Failed to initialize Islamic Date instance.");
     ///
     /// assert_eq!(date_islamic.year().number, 1392);
     /// assert_eq!(date_islamic.month().ordinal, 4);
@@ -1026,12 +1038,15 @@ impl<A: AsCalendar<Calendar = IslamicTabular>> DateTime<A> {
     /// Construct a new Tabular Islamic datetime from integers.
     ///
     /// ```rust
-    /// use icu::calendar::DateTime;
     /// use icu::calendar::islamic::IslamicTabular;
+    /// use icu::calendar::DateTime;
     ///
     /// let islamic = IslamicTabular::new_always_calculating();
     ///
-    /// let datetime_islamic = DateTime::try_new_islamic_tabular_datetime_with_calendar(474, 10, 11, 13, 1, 0, islamic)
+    /// let datetime_islamic =
+    ///     DateTime::try_new_islamic_tabular_datetime_with_calendar(
+    ///         474, 10, 11, 13, 1, 0, islamic,
+    ///     )
     ///     .expect("Failed to initialize Islamic DateTime instance.");
     ///
     /// assert_eq!(datetime_islamic.date.year().number, 474);

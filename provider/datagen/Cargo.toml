@@ -5,7 +5,8 @@
 [package]
 name = "icu_datagen"
 description = "Generate data for ICU4X DataProvider"
-version = "1.2.5"
+version = "1.3.0"
+license-file = "LICENSE"
 include = [
     "data/**/*",
     "src/**/*",
@@ -24,7 +25,6 @@ authors.workspace = true
 categories.workspace = true
 edition.workspace = true
 homepage.workspace = true
-license-file.workspace = true
 repository.workspace = true
 rust-version.workspace = true
 
@@ -50,15 +50,15 @@ icu_timezone = { workspace = true, features = ["datagen"] }
 icu_compactdecimal = { workspace = true, features = ["datagen"], optional = true }
 icu_displaynames = { workspace = true, features = ["datagen"], optional = true }
 icu_relativetime = { workspace = true, features = ["datagen"], optional = true }
-icu_singlenumberformatter = { workspace = true, features = ["datagen"], optional = true}
+# icu_singlenumberformatter = { workspace = true, features = ["datagen"], optional = true}
 icu_transliterate = { workspace = true, features = ["datagen"], optional = true }
-icu_unitsconversion = { workspace = true, features = ["datagen"], optional = true}
+# icu_unitsconversion = { workspace = true, features = ["datagen"], optional = true}
 
 # ICU infrastructure
 icu_codepointtrie_builder = { workspace = true }
 icu_collections = { workspace = true, features = ["serde"] }
 icu_locid = { workspace = true, features = ["std", "serde"] }
-icu_provider = { workspace = true, features = ["std", "logging", "datagen"]}
+icu_provider = { workspace = true, features = ["std", "logging", "datagen", "experimental"]}
 icu_provider_adapters = { workspace = true }
 tinystr = { workspace = true, features = ["alloc", "serde", "zerovec"] }
 writeable = { workspace = true }
@@ -74,7 +74,7 @@ syn = {version = "2", features = ["parsing"], optional = true }
 
 # Other external dependencies
 displaydoc = { version = "0.2.3", default-features = false }
-elsa = { git = "https://github.com/Manishearth/elsa", rev = "56d05375eea36596432a0843721d26edf3b0ec75" }
+elsa = "1.9"
 itertools = "0.10"
 log = "0.4"
 memchr = "2.5.0"
@@ -96,8 +96,8 @@ eyre = { version = "0.6", optional = true }
 simple_logger = { version = "4.1.0", default-features = false, optional = true }
 
 [dev-dependencies]
-crlify = { workspace = true }
-icu = { workspace = true }
+crlify = { path = "../../utils/crlify" }
+icu = { path = "../../components/icu" }
 postcard = "1"
 simple_logger = { version = "4.1.0", default-features = false }
 
@@ -122,16 +122,16 @@ networking = ["dep:ureq"]
 icu_compactdecimal = ["dep:icu_compactdecimal"]
 icu_displaynames = ["dep:icu_displaynames"]
 icu_relativetime = ["dep:icu_relativetime"]
-icu_singlenumberformatter = ["dep:icu_singlenumberformatter"]
+# icu_singlenumberformatter = ["dep:icu_singlenumberformatter"]
 icu_transliterate = ["dep:icu_transliterate"]
-icu_unitsconversion = ["dep:icu_unitsconversion"]
+# icu_unitsconversion = ["dep:icu_unitsconversion"]
 experimental_components = [
     "icu_compactdecimal",
     "icu_displaynames",
     "icu_relativetime",
-    "icu_singlenumberformatter",
+    # "icu_singlenumberformatter",
     "icu_transliterate",
-    "icu_unitsconversion"
+    # "icu_unitsconversion"
 ]
 
 [[bin]]
@@ -150,6 +150,6 @@ skip_feature_sets = [["use_icu4c"], ["use_wasm"]]
 skip_optional_dependencies = true
 # Always the experimental deps because we want to all-or-nothing them
 # and the nothing case is already tested in regular check CI
-always_include_features = ["icu_compactdecimal", "icu_displaynames", "icu_relativetime", "icu_singlenumberformatter", "icu_transliterate", "icu_unitsconversion"]
+always_include_features = ["icu_compactdecimal", "icu_displaynames", "icu_relativetime", "icu_transliterate"]
 # We have a *lot* of features here
 max_combination_size = 2

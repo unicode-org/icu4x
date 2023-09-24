@@ -445,7 +445,7 @@ impl Astronomical {
         moment: Moment,
         location: Location,
         alpha: f64,
-        early: bool, // TODO: Replace this bool with an enum with Morning and Evening, or Early and Late
+        early: bool, /* TODO: Replace this bool with an enum with Morning and Evening, or Early and Late */
     ) -> Option<Moment> {
         let date = moment.as_rata_die().to_f64_date().floor();
         let alt = if alpha >= 0.0 {
@@ -492,7 +492,7 @@ impl Astronomical {
         approx: Moment,
         location: Location,
         alpha: f64,
-        early: bool, // TODO: Replace this bool with an enum with Morning and Evening, or Early and Late
+        early: bool, /* TODO: Replace this bool with an enum with Morning and Evening, or Early and Late */
     ) -> Option<Moment> {
         let moment = Self::approx_moment_of_depression(approx, location, alpha, early)?;
         if (approx - moment).abs() < 30.0 {

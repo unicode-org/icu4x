@@ -5,13 +5,13 @@
 [package]
 name = "tzif"
 description = "A parser for TZif files"
-version = "0.2.1"
+version = "0.2.2"
 keywords = ["time-zone", "posix", "iana", "parse", "data"]
 categories = ["date-and-time", "parser-implementations"]
+license-file = "LICENSE"
 
 authors.workspace = true
 edition.workspace = true
-license-file.workspace = true
 repository.workspace = true
 rust-version.workspace = true
 

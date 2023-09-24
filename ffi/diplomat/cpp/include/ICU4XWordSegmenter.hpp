@@ -110,9 +110,9 @@ inline diplomat::result<ICU4XWordSegmenter, ICU4XError> ICU4XWordSegmenter::crea
   auto diplomat_result_raw_out_value = capi::ICU4XWordSegmenter_create_auto(provider.AsFFI());
   diplomat::result<ICU4XWordSegmenter, ICU4XError> diplomat_result_out_value;
   if (diplomat_result_raw_out_value.is_ok) {
-    diplomat_result_out_value = diplomat::Ok<ICU4XWordSegmenter>(std::move(ICU4XWordSegmenter(diplomat_result_raw_out_value.ok)));
+    diplomat_result_out_value = diplomat::Ok<ICU4XWordSegmenter>(ICU4XWordSegmenter(diplomat_result_raw_out_value.ok));
   } else {
-    diplomat_result_out_value = diplomat::Err<ICU4XError>(std::move(static_cast<ICU4XError>(diplomat_result_raw_out_value.err)));
+    diplomat_result_out_value = diplomat::Err<ICU4XError>(static_cast<ICU4XError>(diplomat_result_raw_out_value.err));
   }
   return diplomat_result_out_value;
 }
@@ -120,9 +120,9 @@ inline diplomat::result<ICU4XWordSegmenter, ICU4XError> ICU4XWordSegmenter::crea
   auto diplomat_result_raw_out_value = capi::ICU4XWordSegmenter_create_lstm(provider.AsFFI());
   diplomat::result<ICU4XWordSegmenter, ICU4XError> diplomat_result_out_value;
   if (diplomat_result_raw_out_value.is_ok) {
-    diplomat_result_out_value = diplomat::Ok<ICU4XWordSegmenter>(std::move(ICU4XWordSegmenter(diplomat_result_raw_out_value.ok)));
+    diplomat_result_out_value = diplomat::Ok<ICU4XWordSegmenter>(ICU4XWordSegmenter(diplomat_result_raw_out_value.ok));
   } else {
-    diplomat_result_out_value = diplomat::Err<ICU4XError>(std::move(static_cast<ICU4XError>(diplomat_result_raw_out_value.err)));
+    diplomat_result_out_value = diplomat::Err<ICU4XError>(static_cast<ICU4XError>(diplomat_result_raw_out_value.err));
   }
   return diplomat_result_out_value;
 }
@@ -130,9 +130,9 @@ inline diplomat::result<ICU4XWordSegmenter, ICU4XError> ICU4XWordSegmenter::crea
   auto diplomat_result_raw_out_value = capi::ICU4XWordSegmenter_create_dictionary(provider.AsFFI());
   diplomat::result<ICU4XWordSegmenter, ICU4XError> diplomat_result_out_value;
   if (diplomat_result_raw_out_value.is_ok) {
-    diplomat_result_out_value = diplomat::Ok<ICU4XWordSegmenter>(std::move(ICU4XWordSegmenter(diplomat_result_raw_out_value.ok)));
+    diplomat_result_out_value = diplomat::Ok<ICU4XWordSegmenter>(ICU4XWordSegmenter(diplomat_result_raw_out_value.ok));
   } else {
-    diplomat_result_out_value = diplomat::Err<ICU4XError>(std::move(static_cast<ICU4XError>(diplomat_result_raw_out_value.err)));
+    diplomat_result_out_value = diplomat::Err<ICU4XError>(static_cast<ICU4XError>(diplomat_result_raw_out_value.err));
   }
   return diplomat_result_out_value;
 }

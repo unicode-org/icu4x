@@ -13,6 +13,7 @@
     "Upper",
     "CR",
     "Extend",
-    "LF"
+    "LF",
+    "SContinue"
   ]
 }

@@ -1988,7 +1988,7 @@ impl FixedDecimal {
     /// This function can be made available with the `"ryu"` Cargo feature.
     ///
     /// ```rust
-    /// use fixed_decimal::{FloatPrecision, FixedDecimal};
+    /// use fixed_decimal::{FixedDecimal, FloatPrecision};
     /// use writeable::assert_writeable_eq;
     ///
     /// let decimal =
@@ -2010,7 +2010,7 @@ impl FixedDecimal {
     /// Negative zero is supported.
     ///
     /// ```rust
-    /// use fixed_decimal::{FloatPrecision, FixedDecimal};
+    /// use fixed_decimal::{FixedDecimal, FloatPrecision};
     /// use writeable::assert_writeable_eq;
     ///
     /// // IEEE 754 for floating point defines the sign bit separate

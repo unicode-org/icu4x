@@ -5,13 +5,13 @@
 [package]
 name = "icu_timezone"
 description = "API for resolving and manipulating time zone information"
+license-file = "LICENSE"
 
 authors.workspace = true
 categories.workspace = true
 edition.workspace = true
 homepage.workspace = true
 include.workspace = true
-license-file.workspace = true
 repository.workspace = true
 rust-version.workspace = true
 version.workspace = true
@@ -34,7 +34,7 @@ serde = { version = "1.0", default-features = false, features = ["derive", "allo
 icu_timezone_data = { workspace = true, optional = true }
 
 [dev-dependencies]
-icu = { workspace = true }
+icu = { path = "../../components/icu", default-features = false }
 
 [features]
 default = ["compiled_data"]

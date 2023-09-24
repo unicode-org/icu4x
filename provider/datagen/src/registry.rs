@@ -82,6 +82,7 @@ macro_rules! registry {
         fn test_paths_correct() {
             $(
                 $(
+                    #[cfg($feature)]
                     assert_eq!(<$marker>::KEY.path().get(), $path);
                 )+
             )+

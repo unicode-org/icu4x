@@ -83,6 +83,7 @@ export { ICU4XLocaleExpander } from './ICU4XLocaleExpander.js';
 export { ICU4XLocaleFallbackConfig } from './ICU4XLocaleFallbackConfig.js';
 export { ICU4XLocaleFallbackIterator } from './ICU4XLocaleFallbackIterator.js';
 export { ICU4XLocaleFallbackPriority } from './ICU4XLocaleFallbackPriority.js';
+export { ICU4XLocaleFallbackSupplement } from './ICU4XLocaleFallbackSupplement.js';
 export { ICU4XLocaleFallbacker } from './ICU4XLocaleFallbacker.js';
 export { ICU4XLocaleFallbackerWithConfig } from './ICU4XLocaleFallbackerWithConfig.js';
 export { ICU4XLogger } from './ICU4XLogger.js';

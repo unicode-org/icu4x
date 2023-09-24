@@ -19,6 +19,36 @@ pub struct FormattedCompactDecimal<'l> {
     pub(crate) plural_map: Option<ZeroMap2dCursor<'l, 'l, i8, Count, PatternULE>>,
 }
 
+impl FormattedCompactDecimal<'_> {
+    /// Access the resolved [`CompactDecimal`] after formatting.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use fixed_decimal::FixedDecimal;
+    /// use icu_compactdecimal::CompactDecimalFormatter;
+    /// use icu_locid::locale;
+    /// use writeable::assert_writeable_eq;
+    ///
+    /// let short_english = CompactDecimalFormatter::try_new_short(
+    ///     &locale!("en").into(),
+    ///     Default::default(),
+    /// )
+    /// .unwrap();
+    ///
+    /// let formatted_compact_decimal = short_english.format_i64(2207);
+    ///
+    /// assert_writeable_eq!(formatted_compact_decimal, "2.2K");
+    /// assert_eq!(
+    ///     formatted_compact_decimal.get_compact_decimal().to_string(),
+    ///     "2.2c3"
+    /// );
+    /// ```
+    pub fn get_compact_decimal(&self) -> &CompactDecimal {
+        &self.value
+    }
+}
+
 impl<'l> Writeable for FormattedCompactDecimal<'l> {
     fn write_to<W>(&self, sink: &mut W) -> core::result::Result<(), core::fmt::Error>
     where

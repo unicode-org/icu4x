@@ -86,8 +86,8 @@ the metazone based on a certain local datetime:
 use icu::calendar::DateTime;
 use icu::timezone::CustomTimeZone;
 use icu::timezone::GmtOffset;
-use icu::timezone::MetazoneCalculator;
 use icu::timezone::IanaToBcp47Mapper;
+use icu::timezone::MetazoneCalculator;
 use tinystr::{tinystr, TinyAsciiStr};
 
 // Create a time zone for America/Chicago at GMT-6:
