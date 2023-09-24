@@ -14,7 +14,6 @@ use icu_provider::{yoke, zerofrom};
 use tinystr::UnvalidatedTinyAsciiStr;
 use zerovec::{VarZeroVec, ZeroMap};
 
-
 #[cfg(feature = "compiled_data")]
 #[derive(Debug)]
 /// Baked data
@@ -35,7 +34,6 @@ const _: () = {
     icu_singlenumberformatter_data::make_provider!(Baked);
     icu_singlenumberformatter_data::impl_currency_essentials_v1!(Baked);
 };
-
 
 /// This type contains all of the essential data for currency formatting.
 ///
