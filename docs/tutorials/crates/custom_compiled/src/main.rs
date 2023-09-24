@@ -23,9 +23,6 @@ use icu::plurals::PluralCategory;
 use icu::plurals::PluralRules;
 
 fn main() {
-    PluralRules::try_new_cardinal(&locale!("de").into())
-        .expect_err("locale 'de' should not be present in the compiled data");
-
     let rules = PluralRules::try_new_cardinal(&locale!("ru").into())
         .expect("locale 'ru' should be present in the compiled data");
     let result = rules.category_for(&3.into());

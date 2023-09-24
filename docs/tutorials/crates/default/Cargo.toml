@@ -13,4 +13,4 @@ edition = "2021"
 publish = false
 
 [dependencies]
-icu = "1.2"
+icu = "1.3"

@@ -13,6 +13,7 @@ all: clean buffer_data.postcard
 bin/tutorial_buffer:
 	echo "Target dir: $(CARGO_TARGET_DIR)"
 	cargo build --release
+	mkdir -p bin
 	cp -p "$(CARGO_TARGET_DIR)"/release/tutorial_buffer bin/tutorial_buffer
 
 buffer_data.postcard: ../bin/icu4x-datagen bin/tutorial_buffer

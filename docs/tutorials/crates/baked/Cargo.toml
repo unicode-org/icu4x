@@ -13,10 +13,10 @@ edition = "2021"
 publish = false
 
 [dependencies]
-icu = { version = "1.2", default-features = false } # turn off compiled_data
-icu_provider = "1.2" # for databake
+icu = { version = "1.3", default-features = false } # turn off compiled_data
+icu_provider = "1.3" # for databake
 zerovec = "0.10" # for databake
 
 [build-dependencies]
-icu = "1.2"
-icu_datagen = "1.2"
+icu = "1.3"
+icu_datagen = "1.3"
