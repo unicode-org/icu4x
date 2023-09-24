@@ -74,7 +74,7 @@ syn = {version = "2", features = ["parsing"], optional = true }
 
 # Other external dependencies
 displaydoc = { version = "0.2.3", default-features = false }
-elsa = { git = "https://github.com/Manishearth/elsa", rev = "56d05375eea36596432a0843721d26edf3b0ec75" }
+elsa = "1.9"
 itertools = "0.10"
 log = "0.4"
 memchr = "2.5.0"
