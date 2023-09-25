@@ -170,7 +170,7 @@ pub fn transform_fraction_to_constant_value(
 
 /// Converts vectors of numerator and denominator strings to a fraction.
 /// Examples:
-/// - ["1"], ["2"] is converted to 1*2 --> 2
+/// - ["1"], ["2"] is converted to 1/2
 /// - ["1", "2"], ["3", "1E2"] is converted to 1*2/(3*1E2) --> 2/300
 /// - ["1", "2"], ["3", "1E-2"] is converted to 1*2/(3*1E-2) --> 200/3
 /// - ["1", "2"], ["3", "1E-2.5"] is an invalid scientific notation number
