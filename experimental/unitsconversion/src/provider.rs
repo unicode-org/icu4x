@@ -81,10 +81,12 @@ pub enum Sign {
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[derive(Clone, Debug, PartialOrd, Ord, PartialEq, Eq, Default)]
 pub struct ConstantValue<'data> {
+    // TODO(https://github.com/unicode-org/icu4x/issues/4092).
     /// The numerator of the constant value.
     #[serde(borrow)]
     pub numerator: ZeroVec<'data, u8>,
 
+    // TODO(https://github.com/unicode-org/icu4x/issues/4092).
     /// The denominator of the constant value.
     #[serde(borrow)]
     pub denominator: ZeroVec<'data, u8>,
