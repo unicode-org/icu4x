@@ -52,9 +52,9 @@ inline diplomat::result<ICU4XPluralOperands, ICU4XError> ICU4XPluralOperands::cr
   auto diplomat_result_raw_out_value = capi::ICU4XPluralOperands_create_from_string(s.data(), s.size());
   diplomat::result<ICU4XPluralOperands, ICU4XError> diplomat_result_out_value;
   if (diplomat_result_raw_out_value.is_ok) {
-    diplomat_result_out_value = diplomat::Ok<ICU4XPluralOperands>(std::move(ICU4XPluralOperands(diplomat_result_raw_out_value.ok)));
+    diplomat_result_out_value = diplomat::Ok<ICU4XPluralOperands>(ICU4XPluralOperands(diplomat_result_raw_out_value.ok));
   } else {
-    diplomat_result_out_value = diplomat::Err<ICU4XError>(std::move(static_cast<ICU4XError>(diplomat_result_raw_out_value.err)));
+    diplomat_result_out_value = diplomat::Err<ICU4XError>(static_cast<ICU4XError>(diplomat_result_raw_out_value.err));
   }
   return diplomat_result_out_value;
 }

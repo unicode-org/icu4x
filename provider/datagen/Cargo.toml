@@ -5,7 +5,8 @@
 [package]
 name = "icu_datagen"
 description = "Generate data for ICU4X DataProvider"
-version = "1.2.5"
+version = "1.3.0"
+license-file = "LICENSE"
 include = [
     "data/**/*",
     "src/**/*",
@@ -24,7 +25,6 @@ authors.workspace = true
 categories.workspace = true
 edition.workspace = true
 homepage.workspace = true
-license-file.workspace = true
 repository.workspace = true
 rust-version.workspace = true
 
@@ -75,7 +75,7 @@ syn = { version = "2", features = ["parsing"], optional = true }
 
 # Other external dependencies
 displaydoc = { version = "0.2.3", default-features = false }
-elsa = { git = "https://github.com/Manishearth/elsa", rev = "56d05375eea36596432a0843721d26edf3b0ec75" }
+elsa = "1.9"
 itertools = "0.10"
 log = "0.4"
 memchr = "2.5.0"
@@ -98,8 +98,8 @@ eyre = { version = "0.6", optional = true }
 simple_logger = { version = "4.1.0", default-features = false, optional = true }
 
 [dev-dependencies]
-crlify = { workspace = true }
-icu = { workspace = true }
+crlify = { path = "../../utils/crlify" }
+icu = { path = "../../components/icu" }
 postcard = "1"
 simple_logger = { version = "4.1.0", default-features = false }
 

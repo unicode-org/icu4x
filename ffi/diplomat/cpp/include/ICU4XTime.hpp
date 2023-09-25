@@ -87,9 +87,9 @@ inline diplomat::result<ICU4XTime, ICU4XError> ICU4XTime::create(uint8_t hour, u
   auto diplomat_result_raw_out_value = capi::ICU4XTime_create(hour, minute, second, nanosecond);
   diplomat::result<ICU4XTime, ICU4XError> diplomat_result_out_value;
   if (diplomat_result_raw_out_value.is_ok) {
-    diplomat_result_out_value = diplomat::Ok<ICU4XTime>(std::move(ICU4XTime(diplomat_result_raw_out_value.ok)));
+    diplomat_result_out_value = diplomat::Ok<ICU4XTime>(ICU4XTime(diplomat_result_raw_out_value.ok));
   } else {
-    diplomat_result_out_value = diplomat::Err<ICU4XError>(std::move(static_cast<ICU4XError>(diplomat_result_raw_out_value.err)));
+    diplomat_result_out_value = diplomat::Err<ICU4XError>(static_cast<ICU4XError>(diplomat_result_raw_out_value.err));
   }
   return diplomat_result_out_value;
 }
@@ -97,9 +97,9 @@ inline diplomat::result<ICU4XTime, ICU4XError> ICU4XTime::create_midnight() {
   auto diplomat_result_raw_out_value = capi::ICU4XTime_create_midnight();
   diplomat::result<ICU4XTime, ICU4XError> diplomat_result_out_value;
   if (diplomat_result_raw_out_value.is_ok) {
-    diplomat_result_out_value = diplomat::Ok<ICU4XTime>(std::move(ICU4XTime(diplomat_result_raw_out_value.ok)));
+    diplomat_result_out_value = diplomat::Ok<ICU4XTime>(ICU4XTime(diplomat_result_raw_out_value.ok));
   } else {
-    diplomat_result_out_value = diplomat::Err<ICU4XError>(std::move(static_cast<ICU4XError>(diplomat_result_raw_out_value.err)));
+    diplomat_result_out_value = diplomat::Err<ICU4XError>(static_cast<ICU4XError>(diplomat_result_raw_out_value.err));
   }
   return diplomat_result_out_value;
 }

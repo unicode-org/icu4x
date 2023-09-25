@@ -5,13 +5,13 @@
 [package]
 name = "icu_provider_macros"
 description = "Proc macros for ICU data providers"
+license-file = "LICENSE"
 
 authors.workspace = true
 categories.workspace = true
 edition.workspace = true
 homepage.workspace = true
 include.workspace = true
-license-file.workspace = true
 repository.workspace = true
 rust-version.workspace = true
 version.workspace = true
@@ -26,4 +26,4 @@ quote = "1.0.9"
 syn = { version = "2", features = ["full", "parsing"]}
 
 [dev-dependencies]
-icu_provider = { workspace = true }
+icu_provider = { path = "../../provider/core" }

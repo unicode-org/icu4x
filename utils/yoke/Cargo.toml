@@ -5,14 +5,14 @@
 [package]
 name = "yoke"
 description = "Abstraction allowing borrowed data to be carried along with the backing data it borrows from"
-version = "0.7.1"
+version = "0.7.2"
 authors = ["Manish Goregaokar <manishsmail@gmail.com>"]
 categories = ["data-structures", "memory-management", "caching", "no-std"]
 keywords = ["zerocopy", "serialization", "lifetime", "borrow", "self-referential"]
+license-file = "LICENSE"
 
 edition.workspace = true
 include.workspace = true
-license-file.workspace = true
 repository.workspace = true
 rust-version.workspace = true
 

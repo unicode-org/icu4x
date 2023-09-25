@@ -88,9 +88,9 @@ inline diplomat::result<ICU4XComposingNormalizer, ICU4XError> ICU4XComposingNorm
   auto diplomat_result_raw_out_value = capi::ICU4XComposingNormalizer_create_nfc(provider.AsFFI());
   diplomat::result<ICU4XComposingNormalizer, ICU4XError> diplomat_result_out_value;
   if (diplomat_result_raw_out_value.is_ok) {
-    diplomat_result_out_value = diplomat::Ok<ICU4XComposingNormalizer>(std::move(ICU4XComposingNormalizer(diplomat_result_raw_out_value.ok)));
+    diplomat_result_out_value = diplomat::Ok<ICU4XComposingNormalizer>(ICU4XComposingNormalizer(diplomat_result_raw_out_value.ok));
   } else {
-    diplomat_result_out_value = diplomat::Err<ICU4XError>(std::move(static_cast<ICU4XError>(diplomat_result_raw_out_value.err)));
+    diplomat_result_out_value = diplomat::Err<ICU4XError>(static_cast<ICU4XError>(diplomat_result_raw_out_value.err));
   }
   return diplomat_result_out_value;
 }
@@ -98,9 +98,9 @@ inline diplomat::result<ICU4XComposingNormalizer, ICU4XError> ICU4XComposingNorm
   auto diplomat_result_raw_out_value = capi::ICU4XComposingNormalizer_create_nfkc(provider.AsFFI());
   diplomat::result<ICU4XComposingNormalizer, ICU4XError> diplomat_result_out_value;
   if (diplomat_result_raw_out_value.is_ok) {
-    diplomat_result_out_value = diplomat::Ok<ICU4XComposingNormalizer>(std::move(ICU4XComposingNormalizer(diplomat_result_raw_out_value.ok)));
+    diplomat_result_out_value = diplomat::Ok<ICU4XComposingNormalizer>(ICU4XComposingNormalizer(diplomat_result_raw_out_value.ok));
   } else {
-    diplomat_result_out_value = diplomat::Err<ICU4XError>(std::move(static_cast<ICU4XError>(diplomat_result_raw_out_value.err)));
+    diplomat_result_out_value = diplomat::Err<ICU4XError>(static_cast<ICU4XError>(diplomat_result_raw_out_value.err));
   }
   return diplomat_result_out_value;
 }
@@ -111,7 +111,7 @@ template<typename W> inline diplomat::result<std::monostate, ICU4XError> ICU4XCo
   if (diplomat_result_raw_out_value.is_ok) {
     diplomat_result_out_value = diplomat::Ok(std::monostate());
   } else {
-    diplomat_result_out_value = diplomat::Err<ICU4XError>(std::move(static_cast<ICU4XError>(diplomat_result_raw_out_value.err)));
+    diplomat_result_out_value = diplomat::Err<ICU4XError>(static_cast<ICU4XError>(diplomat_result_raw_out_value.err));
   }
   return diplomat_result_out_value;
 }
@@ -123,7 +123,7 @@ inline diplomat::result<std::string, ICU4XError> ICU4XComposingNormalizer::norma
   if (diplomat_result_raw_out_value.is_ok) {
     diplomat_result_out_value = diplomat::Ok(std::monostate());
   } else {
-    diplomat_result_out_value = diplomat::Err<ICU4XError>(std::move(static_cast<ICU4XError>(diplomat_result_raw_out_value.err)));
+    diplomat_result_out_value = diplomat::Err<ICU4XError>(static_cast<ICU4XError>(diplomat_result_raw_out_value.err));
   }
   return diplomat_result_out_value.replace_ok(std::move(diplomat_writeable_string));
 }

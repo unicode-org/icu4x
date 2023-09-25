@@ -139,7 +139,7 @@ jobs:
     strategy:
       matrix: 
         behavior: [local, cratesio]
-      fail-fast: true
+      fail-fast: false
     steps:
     - uses: actions/checkout@v3
 

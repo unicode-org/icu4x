@@ -45,14 +45,13 @@ fn main() {
     let doc_types = ["icu", "fixed_decimal", "icu_provider_adapters"]
         .into_iter()
         .flat_map(collect_public_types)
-        .map(|(path, typ)| RustLinkInfo {
-            path: ast::Path {
-                elements: path
-                    .into_iter()
-                    .map(|s| ast::Ident::try_from(s).expect("item path is valid"))
-                    .collect(),
-            },
-            typ,
+        .map(|(path_vec, typ)| {
+            let mut path = ast::Path::empty();
+            path.elements = path_vec
+                .into_iter()
+                .map(|s| ast::Ident::try_from(s).expect("item path is valid"))
+                .collect();
+            RustLinkInfo { path, typ }
         })
         .filter(|rl| {
             ![
