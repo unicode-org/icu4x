@@ -73,13 +73,22 @@ pub enum Sign {
 /// This struct represents a constant value, which is composed of a numerator, denominator, sign, and type.
 #[zerovec::make_varule(ConstantValueULE)]
 #[derive(Clone, Debug, PartialOrd, Ord, PartialEq, Eq, Default)]
-#[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[cfg_attr(
     feature = "datagen",
-    derive(serde::Serialize, databake::Bake),
+    derive(databake::Bake),
     databake(path = icu_unitsconversion::provider),
 )]
-#[zerovec::derive(Serialize, Deserialize, Debug)]
+#[cfg_attr(
+    feature = "datagen",
+    derive(serde::Serialize),
+    zerovec::derive(Serialize)
+)]
+#[cfg_attr(
+    feature = "serde",
+    derive(serde::Deserialize),
+    zerovec::derive(Deserialize)
+)]
+#[zerovec::derive(Debug)]
 pub struct ConstantValue<'data> {
     // TODO(https://github.com/unicode-org/icu4x/issues/4092).
     /// The numerator of the constant value.
