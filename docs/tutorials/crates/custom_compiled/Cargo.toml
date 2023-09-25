@@ -7,14 +7,10 @@
 ##########################################
 
 [package]
-name = "tutorial_lazy_static"
+name = "tutorial_custom_compiled"
 version = "0.0.0"
 edition = "2021"
 publish = false
 
 [dependencies]
-icu = "1.2"
-icu_testdata = "1.2"
-icu_provider = { version = "1.2", features = ["sync"] }
-
-lazy_static = "1.4"
+icu = "1.3"
