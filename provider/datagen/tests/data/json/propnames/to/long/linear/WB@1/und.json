@@ -21,6 +21,7 @@
     "E_Base_GAZ",
     "E_Modifier",
     "Glue_After_Zwj",
-    "ZWJ"
+    "ZWJ",
+    "WSegSpace"
   ]
 }

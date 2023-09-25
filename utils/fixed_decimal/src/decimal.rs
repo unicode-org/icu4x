@@ -1988,7 +1988,7 @@ impl FixedDecimal {
     /// This function can be made available with the `"ryu"` Cargo feature.
     ///
     /// ```rust
-    /// use fixed_decimal::{FloatPrecision, FixedDecimal};
+    /// use fixed_decimal::{FixedDecimal, FloatPrecision};
     /// use writeable::assert_writeable_eq;
     ///
     /// let decimal =
@@ -2010,7 +2010,7 @@ impl FixedDecimal {
     /// Negative zero is supported.
     ///
     /// ```rust
-    /// use fixed_decimal::{FloatPrecision, FixedDecimal};
+    /// use fixed_decimal::{FixedDecimal, FloatPrecision};
     /// use writeable::assert_writeable_eq;
     ///
     /// // IEEE 754 for floating point defines the sign bit separate
@@ -2364,7 +2364,7 @@ fn test_from_str() {
     #[derive(Debug)]
     struct TestCase {
         pub input_str: &'static str,
-        /// The output str, None for roundtrip
+        /// The output str, `None` for roundtrip
         pub output_str: Option<&'static str>,
         /// [upper magnitude, upper nonzero magnitude, lower nonzero magnitude, lower magnitude]
         pub magnitudes: [i16; 4],

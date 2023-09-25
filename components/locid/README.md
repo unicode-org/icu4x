@@ -24,7 +24,8 @@ If in doubt, use [`Locale`].
 ```rust
 use icu::locid::Locale;
 use icu::locid::{
-    locale, subtags::{language, region},
+    locale,
+    subtags::{language, region},
 };
 
 let mut loc: Locale = locale!("en-US");

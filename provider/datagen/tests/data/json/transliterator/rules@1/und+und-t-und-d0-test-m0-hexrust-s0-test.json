@@ -20,14 +20,11 @@
         "filter": [
           "\u0000-􏿿"
         ],
-        "id": "x-any-hex-rust"
+        "id": "x-any-hex/rust"
       }
     ]
   ],
   "rule_group_list": [
     []
-  ],
-  "dependencies": [
-    "x-any-hex-rust"
   ]
 }

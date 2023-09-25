@@ -11,7 +11,7 @@ use icu_provider::prelude::*;
 use postcard::ser_flavors::{AllocVec, Flavor};
 use std::io;
 
-/// A serializer for Postcard.
+/// A serializer for [Postcard](postcard).
 ///
 /// # Examples
 ///
@@ -19,7 +19,7 @@ use std::io;
 /// use icu_provider_fs::export::serializers;
 /// use icu_provider_fs::export::FilesystemExporter;
 ///
-/// let serializer = serializers::postcard::Serializer::new(Default::default());
+/// let serializer = serializers::Postcard::default();
 ///
 /// // Then pass it to a FilesystemExporter:
 /// let demo_path = std::env::temp_dir().join("icu4x_postcard_serializer_demo");
@@ -28,10 +28,10 @@ use std::io;
 ///     demo_path.clone().into(),
 /// )
 /// .unwrap();
-/// std::fs::remove_dir_all(&demo_path).expect("Cleaning up test directory");
+/// # std::fs::remove_dir_all(&demo_path).expect("Cleaning up test directory");
 /// ```
 #[allow(clippy::exhaustive_structs)] // this type is stable
-#[derive(Debug)]
+#[derive(Debug, Default)]
 pub struct Serializer;
 
 /// Options bag for initializing a [`postcard::Serializer`].
@@ -67,11 +67,5 @@ impl Serializer {
     /// Creates a new serializer for [`postcard`].
     pub fn new(_options: Options) -> Self {
         Self {}
-    }
-}
-
-impl Default for Serializer {
-    fn default() -> Self {
-        Self::new(Default::default())
     }
 }

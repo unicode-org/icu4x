@@ -5,13 +5,14 @@
 [package]
 name = "icu_normalizer"
 description = "API for normalizing text into Unicode Normalization Forms"
+license-file = "LICENSE"
+
 version.workspace = true
 rust-version.workspace = true
 authors.workspace = true
 edition.workspace = true
 repository.workspace = true
 homepage.workspace = true
-license-file.workspace = true
 categories.workspace = true
 include.workspace = true
 

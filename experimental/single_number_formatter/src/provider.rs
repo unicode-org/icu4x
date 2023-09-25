@@ -14,6 +14,27 @@ use icu_provider::{yoke, zerofrom};
 use tinystr::UnvalidatedTinyAsciiStr;
 use zerovec::{VarZeroVec, ZeroMap};
 
+#[cfg(feature = "compiled_data")]
+#[derive(Debug)]
+/// Baked data
+///
+/// <div class="stab unstable">
+/// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
+/// including in SemVer minor releases. In particular, the `DataProvider` implementations are only
+/// guaranteed to match with this version's `*_unstable` providers. Use with caution.
+/// </div>
+pub struct Baked;
+
+#[cfg(feature = "compiled_data")]
+const _: () = {
+    pub mod icu {
+        pub use crate as singlenumberformatter;
+        pub use icu_locid_transform as locid_transform;
+    }
+    icu_singlenumberformatter_data::make_provider!(Baked);
+    icu_singlenumberformatter_data::impl_currency_essentials_v1!(Baked);
+};
+
 /// This type contains all of the essential data for currency formatting.
 ///
 /// <div class="stab unstable">
@@ -67,12 +88,22 @@ pub enum PatternSelection {
     StandardAlphaNextToNumber = 1,
 }
 
-// TODO(#3836): replace this with Option<PlaceHolder>, enum PlaceHolder { Index(usize), ISO }
-// and encapsulate the encoding in the ULE implementation.
-pub const NO_PLACE_HOLDER: u16 = 0b0111_1111_1111;
-pub const USE_ISO_CODE: u16 = 0b0111_1111_1110;
-pub const MAX_PLACE_HOLDER_INDEX: u16 = 0b0111_1111_1101;
+#[cfg_attr(
+    feature = "datagen",
+    derive(serde::Serialize, databake::Bake),
+    databake(path = icu_singlenumberformatter::provider),
+)]
+#[cfg_attr(feature = "serde", derive(serde::Deserialize))]
+#[derive(Copy, Debug, Clone, PartialEq, PartialOrd, Eq, Ord)]
+#[repr(u16)]
+pub enum PlaceHolder {
+    /// The index of the place holder in the place holders list.
+    /// NOTE: the maximum value is MAX_PLACE_HOLDER_INDEX which is 2045 (0b0111_1111_1101).
+    Index(u16),
 
+    /// The place holder is the iso code.
+    ISO,
+}
 #[cfg_attr(
     feature = "datagen",
     derive(serde::Serialize, databake::Bake),
@@ -90,12 +121,10 @@ pub struct CurrencyPatterns {
     pub narrow_pattern_standard: PatternSelection,
 
     /// The index of the short pattern place holder in the place holders list.
-    /// If the value is `NO_PLACE_HOLDER`, this means that the short pattern does not have a place holder.
-    /// If the value is `USE_ISO_CODE`, this means that the short pattern equals to the iso code.
-    pub short_place_holder_index: u16,
+    /// If the value is `None`, this means that the short pattern does not have a place holder.
+    pub short_place_holder_index: Option<PlaceHolder>,
 
     /// The index of the narrow pattern place holder in the place holders list.
-    /// If the value is `NO_PLACE_HOLDER`, this means that the narrow pattern does not have a place holder.
-    /// If the value is `USE_ISO_CODE`, this means that the narrow pattern equals to the iso code.
-    pub narrow_place_holder_index: u16,
+    /// If the value is `None`, this means that the narrow pattern does not have a place holder.
+    pub narrow_place_holder_index: Option<PlaceHolder>,
 }

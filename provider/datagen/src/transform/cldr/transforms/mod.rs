@@ -2,106 +2,112 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use crate::transform::cldr::cldr_serde::transforms;
-use crate::transform::cldr::source::CldrDirTransform;
+use super::cldr_serde::transforms;
+use super::source::CldrCache;
+use icu_locid::Locale;
 use icu_provider::datagen::IterableDataProvider;
 use icu_provider::prelude::*;
-use icu_transliteration::provider::*;
-use std::collections::HashMap;
+use icu_transliterate::provider::*;
+use icu_transliterate::RuleCollection;
+use std::sync::Mutex;
 
-use super::cldr_serde::transforms::TransformAlias;
-
-// TODO(#3736): This could benefit from avoiding recomputation across `load` calls.
-//  Maybe a OnceCell?
-struct TransliteratorCollection<'a> {
-    cldr_transforms: CldrDirTransform<'a>,
-}
-
-impl<'a> TransliteratorCollection<'a> {
-    fn new(cldr_transforms: CldrDirTransform<'a>) -> Self {
-        Self { cldr_transforms }
-    }
-
-    /// Given an internal ID for an existing transliterator, returns the directory name for a
-    /// source that maps to the given internal ID. Additionally returns the direction (relative to the metadata)
-    /// of the passed internal ID.
-    fn lookup_dir_from_internal_id(
-        &self,
-        internal_id: &str,
-    ) -> Result<Option<(String, icu_transliterator_parser::Direction)>, DataError> {
-        for transform in self.cldr_transforms.list_transforms()? {
-            let metadata = self.cldr_transforms.read_and_parse_metadata(&transform)?;
-            let (forwards, backwards) = internal_ids_from_metadata(metadata);
-            if let Some(forwards) = forwards {
-                if forwards == internal_id {
-                    return Ok(Some((
-                        transform,
-                        icu_transliterator_parser::Direction::Forward,
-                    )));
-                }
-            }
-            if let Some(backwards) = backwards {
-                if backwards == internal_id {
-                    return Ok(Some((
-                        transform,
-                        icu_transliterator_parser::Direction::Reverse,
-                    )));
-                }
-            }
-        }
-        Ok(None)
-    }
-
-    /// Returns a mapping from known legacy IDs to internal ICU4X IDs. The legacy ID keys are normalized to ASCII lowercase.
-    ///
-    /// The compilation process uses this mapping to go from legacy IDs to internal IDs, if possible.
-    /// Otherwise [`icu_transliterator_parser::legacy_id_to_internal_id`](icu_transliterator_parser::legacy_id_to_internal_id) is used.
-    fn generate_mapping(&self) -> Result<HashMap<String, String>, DataError> {
-        let mut mapping = HashMap::new();
-        for transform in self.cldr_transforms.list_transforms()? {
-            let metadata = self.cldr_transforms.read_and_parse_metadata(&transform)?;
-            let (forwards, backwards) = internal_ids_from_metadata(metadata);
-            if let Some(forwards) = forwards {
-                // for all forwards legacy aliases, map them to the internal ID
-                // bcp47 aliases are skipped, because those are not valid legacy IDs
-                let legacy_iter = metadata.alias.iter().filter_map(|alias| match alias {
-                    TransformAlias::LegacyId(s) => Some(s),
-                    _ => None,
-                });
-                for alias in legacy_iter {
-                    mapping.insert(alias.to_ascii_lowercase(), forwards.clone());
-                }
-                // source, target, and variant may also be used
-                let mut legacy_id = format!("{}-{}", metadata.source, metadata.target);
-                if let Some(variant) = &metadata.variant {
-                    legacy_id.push_str(&format!("/{}", variant));
-                }
-                legacy_id.make_ascii_lowercase();
-                mapping.insert(legacy_id, forwards.clone());
-            }
-            if let Some(backwards) = backwards {
-                // for all backwards aliases, map them to the internal ID
-                // bcp47 aliases are skipped, because those are not valid legacy IDs
-                let legacy_iter = metadata
-                    .backward_alias
+impl CldrCache {
+    fn transforms(&self) -> Result<&Mutex<RuleCollection>, DataError> {
+        self.transforms.get_or_try_init(|| {
+            fn find_bcp47(aliases: &[transforms::TransformAlias]) -> Option<&Locale> {
+                aliases
                     .iter()
-                    .filter_map(|alias| match alias {
-                        TransformAlias::LegacyId(s) => Some(s),
-                        _ => None,
-                    });
-                for backward_alias in legacy_iter {
-                    mapping.insert(backward_alias.to_ascii_lowercase(), backwards.clone());
-                }
-                // target, source, and variant may also be used
-                let mut legacy_id = format!("{}-{}", metadata.target, metadata.source);
-                if let Some(variant) = &metadata.variant {
-                    legacy_id.push_str(&format!("/{}", variant));
-                }
-                legacy_id.make_ascii_lowercase();
-                mapping.insert(legacy_id, backwards.clone());
+                    .find_map(|alias| {
+                        if let transforms::TransformAlias::Bcp47(locale) = alias {
+                            Some(locale)
+                        } else {
+                            None
+                        }
+                    })
             }
-        }
-        Ok(mapping)
+
+            let mut provider = RuleCollection::default();
+
+            let transforms = &format!("cldr-transforms-{}/main", self.dir_suffix()?);
+            for transform in self.serde_cache.list(transforms)? {
+                let metadata = self
+                    .serde_cache
+                    .read_and_parse_json::<transforms::Resource>(&format!(
+                        "{transforms}/{transform}/metadata.json"
+                    ))?;
+                let source = self
+                    .serde_cache
+                    .root
+                    .read_to_string(&format!("{transforms}/{transform}/source.txt",))?;
+
+                if matches!(
+                    metadata.direction,
+                    transforms::Direction::Forward | transforms::Direction::Both
+                ) {
+                    if let Some(bcp47) = find_bcp47(&metadata.alias) {
+                        provider.register_source(
+                            bcp47,
+                            source.clone(),
+                            metadata
+                                .alias
+                                .iter()
+                                .filter_map(|alias| match alias {
+                                    transforms::TransformAlias::LegacyId(s) => Some(s.as_str()),
+                                    _ => None,
+                                })
+                                .chain([
+                                    // source, target, and variant may also be used
+                                    if let Some(variant) = &metadata.variant {
+                                        format!("{}-{}/{}", metadata.source, metadata.target, variant)
+                                    } else {
+                                        format!("{}-{}", metadata.source, metadata.target)
+                                    }
+                                    .to_ascii_lowercase()
+                                    .as_str(),
+                                ]),
+                            false,
+                            metadata.visibility == transforms::Visibility::External,
+                        );
+                    } else {
+                        log::warn!("Skipping transliterator {transform} (forward) as it does not have a BCP-47 identifier.")
+                    }
+                }
+
+                if matches!(
+                    metadata.direction,
+                    transforms::Direction::Backward | transforms::Direction::Both
+                ) {
+                    if let Some(bcp47) = find_bcp47(&metadata.backward_alias) {
+                        provider.register_source(
+                            bcp47,
+                            source,
+                            metadata
+                                .backward_alias
+                                .iter()
+                                .filter_map(|alias| match alias {
+                                    transforms::TransformAlias::LegacyId(s) => Some(s.as_str()),
+                                    _ => None,
+                                })
+                                .chain([
+                                    // source, target, and variant may also be used
+                                    if let Some(variant) = &metadata.variant {
+                                        format!("{}-{}/{}", metadata.target, metadata.source, variant)
+                                    } else {
+                                        format!("{}-{}", metadata.target, metadata.source)
+                                    }
+                                    .to_ascii_lowercase()
+                                    .as_str(),
+                                ]),
+                            true,
+                            metadata.visibility == transforms::Visibility::External,
+                        );
+                    } else {
+                        log::warn!("Skipping transliterator {transform} (backward) as it does not have a BCP-47 identifier.")
+                    }
+                }
+            }
+            Ok(Mutex::new(provider))
+        })
     }
 }
 
@@ -111,144 +117,24 @@ impl DataProvider<TransliteratorRulesV1Marker> for crate::DatagenProvider {
         req: DataRequest,
     ) -> Result<DataResponse<TransliteratorRulesV1Marker>, DataError> {
         self.check_req::<TransliteratorRulesV1Marker>(req)?;
-
-        // all our `supported_locales` have an auxiliary key
-        #[allow(clippy::unwrap_used)]
-        let internal_id = req.locale.get_aux().unwrap().to_string();
-
-        let tc = TransliteratorCollection::new(self.cldr()?.transforms());
-
-        let mapping = tc.generate_mapping()?;
-
-        // our `supported_locales` use the same mapping mechanism as in lookup_dir_from_internal_id
-        #[allow(clippy::unwrap_used)]
-        let (transform, want_direction) = tc.lookup_dir_from_internal_id(&internal_id)?.unwrap();
-
-        let metadata = self
-            .cldr()?
-            .transforms()
-            .read_and_parse_metadata(&transform)?;
-        let visibility = metadata.visibility;
-
-        let metadata_dir = match metadata.direction {
-            transforms::Direction::Forward => icu_transliterator_parser::Direction::Forward,
-            transforms::Direction::Backward => icu_transliterator_parser::Direction::Reverse,
-            transforms::Direction::Both => icu_transliterator_parser::Direction::Both,
-        };
-        let metadata = icu_transliterator_parser::Metadata::new(
-            visibility == transforms::Visibility::External,
-            metadata_dir,
-        );
-
-        let source = self.cldr()?.transforms().read_source(&transform)?;
-
-        let (forwards, backwards) = icu_transliterator_parser::parse_unstable(
-            &source,
-            want_direction,
-            metadata,
-            mapping,
-            self,
-        )
-        .map_err(|e| DataError::custom("transliterator parsing failed").with_debug_context(&e))?;
-        let transliterator = match want_direction {
-            icu_transliterator_parser::Direction::Forward => {
-                // the parser guarantees we receive this
-                #[allow(clippy::unwrap_used)]
-                forwards.unwrap()
-            }
-            icu_transliterator_parser::Direction::Reverse => {
-                // the parser guarantees we receive this
-                #[allow(clippy::unwrap_used)]
-                backwards.unwrap()
-            }
-            _ => {
-                // unreachable because `lookup_dir_from_internal_id` only ever returns one direction.
-                unreachable!("unexpected want_direction")
-            }
-        };
-
-        Ok(DataResponse {
-            metadata: Default::default(),
-            payload: Some(DataPayload::from_owned(transliterator)),
-        })
+        self.cldr()?
+            .transforms()?
+            .lock()
+            .expect("poison")
+            .as_provider_unstable(self, self)?
+            .load(req)
     }
 }
 
 impl IterableDataProvider<TransliteratorRulesV1Marker> for crate::DatagenProvider {
     fn supported_locales(&self) -> Result<Vec<DataLocale>, DataError> {
-        let mut locales = Vec::new();
-        for transform in self.cldr()?.transforms().list_transforms()? {
-            let metadata = self
-                .cldr()?
-                .transforms()
-                .read_and_parse_metadata(&transform)?;
-            let (forwards, backwards) = internal_ids_from_metadata(metadata);
-            if let Some(forwards) = forwards {
-                locales.push(format!("und+{forwards}").parse()?);
-            }
-            if let Some(backwards) = backwards {
-                locales.push(format!("und+{backwards}").parse()?);
-            }
-        }
-        Ok(locales)
+        self.cldr()?
+            .transforms()?
+            .lock()
+            .expect("poison")
+            .as_provider_unstable(self, self)?
+            .supported_locales()
     }
-}
-
-/// Get the internal ICU4X ID for this transliterator from CLDR metadata. This is what will end up in
-/// the DataLocale's auxiliary key.
-///
-/// Returns (forwards, backwards) internal IDs if the corresponding direction is supported according
-/// to the metadata.
-fn internal_ids_from_metadata(metadata: &transforms::Resource) -> (Option<String>, Option<String>) {
-    let forwards = if matches!(
-        metadata.direction,
-        transforms::Direction::Forward | transforms::Direction::Both
-    ) {
-        Some(internal_id_from_parts(
-            &metadata.alias,
-            &metadata.source,
-            &metadata.target,
-            metadata.variant.as_deref(),
-        ))
-    } else {
-        None
-    };
-    let backwards = if matches!(
-        metadata.direction,
-        transforms::Direction::Backward | transforms::Direction::Both
-    ) {
-        Some(internal_id_from_parts(
-            &metadata.backward_alias,
-            &metadata.target,
-            &metadata.source,
-            metadata.variant.as_deref(),
-        ))
-    } else {
-        None
-    };
-
-    (forwards, backwards)
-}
-
-fn internal_id_from_parts(
-    aliases: &[TransformAlias],
-    source: &str,
-    target: &str,
-    variant: Option<&str>,
-) -> String {
-    find_bcp47_in_list(aliases).unwrap_or_else(|| {
-        icu_transliterator_parser::legacy_id_to_internal_id(source, target, variant)
-    })
-}
-
-fn find_bcp47_in_list(list: &[TransformAlias]) -> Option<String> {
-    list.iter().find_map(|alias| {
-        if let TransformAlias::Bcp47(locale) = alias {
-            Some(locale.to_string())
-        } else {
-            None
-        }
-    })
 }
 
 #[cfg(test)]
@@ -257,7 +143,7 @@ mod tests {
 
     #[test]
     fn test_de_ascii_forward() {
-        let provider = crate::DatagenProvider::latest_tested_offline_subset();
+        let provider = crate::DatagenProvider::new_testing();
 
         let _data: DataPayload<TransliteratorRulesV1Marker> = provider
             .load(DataRequest {
@@ -271,7 +157,7 @@ mod tests {
 
     #[test]
     fn test_latin_ascii_backward() {
-        let provider = crate::DatagenProvider::latest_tested_offline_subset();
+        let provider = crate::DatagenProvider::new_testing();
 
         let _data: DataPayload<TransliteratorRulesV1Marker> = provider
             .load(DataRequest {

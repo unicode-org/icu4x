@@ -71,7 +71,7 @@ pub mod ffi {
     /// A locale expander.
     #[diplomat::rust_link(icu::locid_transform::LocaleExpander, Struct)]
     #[diplomat::opaque]
-    pub struct ICU4XLocaleExpander(LocaleExpander);
+    pub struct ICU4XLocaleExpander(pub LocaleExpander);
 
     impl ICU4XLocaleExpander {
         /// Create a new [`ICU4XLocaleExpander`].

@@ -151,7 +151,7 @@ impl<const N: usize, T> ConstArrayBuilder<N, T> {
     }
 
     /// Non-const function that returns a slice of the initialized elements.
-    #[cfg(feature = "alloc")]
+    #[cfg(any(test, feature = "alloc"))]
     pub fn as_slice(&self) -> &[T] {
         &self.full_array[self.start..self.limit]
     }

@@ -157,7 +157,7 @@ fn test_basic() {
     use num_traits::ToBytes;
     use std::ops::Mul;
 
-    let provider = crate::DatagenProvider::latest_tested_offline_subset();
+    let provider = crate::DatagenProvider::new_testing();
 
     let und: DataPayload<UnitsConstantsV1Marker> = provider
         .load(DataRequest {

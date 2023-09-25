@@ -223,7 +223,7 @@ pub struct AnyResponse {
     /// Metadata about the returned object.
     pub metadata: DataResponseMetadata,
 
-    /// The object itself; None if it was not loaded.
+    /// The object itself; `None` if it was not loaded.
     pub payload: Option<AnyPayload>,
 }
 

@@ -69,11 +69,7 @@ where
     let patterns = &zoned_datetime_format.datetime_format.patterns;
     let loc_datetime = DateTimeInputWithWeekConfig::new(
         datetime,
-        zoned_datetime_format
-            .datetime_format
-            .week_data
-            .as_ref()
-            .map(|d| d.get().into()),
+        zoned_datetime_format.datetime_format.week_data.as_ref(),
     );
 
     let pattern = patterns.get().0.select(

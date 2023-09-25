@@ -96,13 +96,22 @@
 
     .. js:method:: try_set_time_zone_id(id)
 
-        Sets the ``time_zone_id`` field from a string.
+        Sets the ``time_zone_id`` field from a BCP-47 string.
 
         Errors if the string is not a valid BCP-47 time zone ID.
 
         See the `Rust documentation for time_zone_id <https://docs.rs/icu/latest/icu/timezone/struct.CustomTimeZone.html#structfield.time_zone_id>`__ for more information.
 
         Additional information: `1 <https://docs.rs/icu/latest/icu/timezone/struct.TimeZoneBcp47Id.html>`__
+
+
+    .. js:method:: try_set_iana_time_zone_id(mapper, id)
+
+        Sets the ``time_zone_id`` field from an IANA string by looking up the corresponding BCP-47 string.
+
+        Errors if the string is not a valid BCP-47 time zone ID.
+
+        See the `Rust documentation for get <https://docs.rs/icu/latest/icu/timezone/struct.IanaToBcp47MapperBorrowed.html#method.get>`__ for more information.
 
 
     .. js:method:: clear_time_zone_id()

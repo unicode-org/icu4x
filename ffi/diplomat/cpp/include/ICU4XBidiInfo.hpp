@@ -36,7 +36,7 @@ class ICU4XBidiInfo {
   size_t paragraph_count() const;
 
   /**
-   * Get the nth paragraph, returning None if out of bounds
+   * Get the nth paragraph, returning `None` if out of bounds
    * 
    * Lifetimes: `this` must live at least as long as the output.
    */

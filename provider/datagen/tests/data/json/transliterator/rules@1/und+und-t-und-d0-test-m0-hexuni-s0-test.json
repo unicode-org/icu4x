@@ -20,14 +20,11 @@
         "filter": [
           "\u0000-􏿿"
         ],
-        "id": "x-any-hex-unicode"
+        "id": "x-any-hex/unicode"
       }
     ]
   ],
   "rule_group_list": [
     []
-  ],
-  "dependencies": [
-    "x-any-hex-unicode"
   ]
 }

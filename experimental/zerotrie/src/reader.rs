@@ -34,13 +34,13 @@
 //! use zerotrie::ZeroTrieSimpleAscii;
 //!
 //! let bytes = [
-//!     b'a', // ASCII literal
+//!     b'a',       // ASCII literal
 //!     0b10001010, // value 10
-//!     b'b', // ASCII literal
+//!     b'b',       // ASCII literal
 //!     0b10100011, // span of 3
-//!     0x81, // first byte in span
-//!     0x91, // second byte in span
-//!     0xA1, // third and final byte in span
+//!     0x81,       // first byte in span
+//!     0x91,       // second byte in span
+//!     0xA1,       // third and final byte in span
 //!     0b10000100, // value 4
 //! ];
 //!

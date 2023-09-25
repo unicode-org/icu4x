@@ -37,26 +37,26 @@
 
         Construct a new ICU4XListFormatter instance for And patterns
 
-        See the `Rust documentation for try_new_and_with_length <https://docs.rs/icu/latest/icu/normalizer/struct.ListFormatter.html#method.try_new_and_with_length>`__ for more information.
+        See the `Rust documentation for try_new_and_with_length <https://docs.rs/icu/latest/icu/list/struct.ListFormatter.html#method.try_new_and_with_length>`__ for more information.
 
 
     .. js:function:: create_or_with_length(provider, locale, length)
 
         Construct a new ICU4XListFormatter instance for And patterns
 
-        See the `Rust documentation for try_new_or_with_length <https://docs.rs/icu/latest/icu/normalizer/struct.ListFormatter.html#method.try_new_or_with_length>`__ for more information.
+        See the `Rust documentation for try_new_or_with_length <https://docs.rs/icu/latest/icu/list/struct.ListFormatter.html#method.try_new_or_with_length>`__ for more information.
 
 
     .. js:function:: create_unit_with_length(provider, locale, length)
 
         Construct a new ICU4XListFormatter instance for And patterns
 
-        See the `Rust documentation for try_new_unit_with_length <https://docs.rs/icu/latest/icu/normalizer/struct.ListFormatter.html#method.try_new_unit_with_length>`__ for more information.
+        See the `Rust documentation for try_new_unit_with_length <https://docs.rs/icu/latest/icu/list/struct.ListFormatter.html#method.try_new_unit_with_length>`__ for more information.
 
 
     .. js:method:: format(list)
 
-        See the `Rust documentation for format <https://docs.rs/icu/latest/icu/normalizer/struct.ListFormatter.html#method.format>`__ for more information.
+        See the `Rust documentation for format <https://docs.rs/icu/latest/icu/list/struct.ListFormatter.html#method.format>`__ for more information.
 
 
 .. js:class:: ICU4XListLength

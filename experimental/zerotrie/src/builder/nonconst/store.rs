@@ -32,7 +32,7 @@ pub trait TrieBuilderStore {
     /// Swap the adjacent ranges `self[start..mid]` and `self[mid..limit]`.
     fn atbs_swap_ranges(&mut self, start: usize, mid: usize, limit: usize);
 
-    /// Remove and return the first element in the store, or None if empty.
+    /// Remove and return the first element in the store, or `None` if empty.
     fn atbs_pop_front(&mut self) -> Option<u8>;
 
     /// Prepend `n` zeros to the front of the store.

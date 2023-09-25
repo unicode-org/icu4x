@@ -7,7 +7,7 @@ use zerotrie::ZeroTriePerfectHash;
 use zerotrie::ZeroTrieSimpleAscii;
 
 mod testdata {
-    include!("data.rs");
+    include!("data/data.rs");
 }
 
 use testdata::strings_to_litemap;

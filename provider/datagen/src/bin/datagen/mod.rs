@@ -35,7 +35,7 @@ fn main() -> eyre::Result<()> {
 
     let config = matches.as_config()?;
 
-    let mut provider = DatagenProvider::default();
+    let mut provider = DatagenProvider::new_custom();
     provider = provider.with_collation_han_database(config.collation_han_database);
     if config.trie_type == crate::config::TrieType::Fast {
         provider = provider.with_fast_tries();

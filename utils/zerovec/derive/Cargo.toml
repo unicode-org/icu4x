@@ -5,13 +5,13 @@
 [package]
 name = "zerovec-derive"
 description = "Custom derive for the zerovec crate"
-version = "0.9.4"
+version = "0.10.0"
 authors = ["Manish Goregaokar <manishsmail@gmail.com>"]
 categories = ["rust-patterns", "memory-management", "caching", "no-std", "data-structures"]
 keywords = ["zerocopy", "serialization", "zero-copy", "serde"]
+license-file = "LICENSE"
 
 edition.workspace = true
-license-file.workspace = true
 repository.workspace = true
 
 [package.metadata.workspaces]
@@ -25,11 +25,10 @@ path = "src/lib.rs"
 proc-macro2 = "1.0.27"
 quote = "1.0.9"
 syn = { version = "2", features = ["derive", "parsing", "extra-traits"] }
-synstructure = "0.13"
 
 [dev-dependencies]
-zerovec = { workspace = true, features = ["serde", "derive"] }
+zerovec = { path = "..", features = ["serde", "derive"] }
 serde = { version = "1.0", features = ["derive"] }
-zerofrom = { workspace = true }
+zerofrom = { path = "../../../utils/zerofrom" }
 bincode = "1.3"
 serde_json = "1.0"

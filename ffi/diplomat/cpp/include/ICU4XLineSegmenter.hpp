@@ -130,9 +130,9 @@ inline diplomat::result<ICU4XLineSegmenter, ICU4XError> ICU4XLineSegmenter::crea
   auto diplomat_result_raw_out_value = capi::ICU4XLineSegmenter_create_auto(provider.AsFFI());
   diplomat::result<ICU4XLineSegmenter, ICU4XError> diplomat_result_out_value;
   if (diplomat_result_raw_out_value.is_ok) {
-    diplomat_result_out_value = diplomat::Ok<ICU4XLineSegmenter>(std::move(ICU4XLineSegmenter(diplomat_result_raw_out_value.ok)));
+    diplomat_result_out_value = diplomat::Ok<ICU4XLineSegmenter>(ICU4XLineSegmenter(diplomat_result_raw_out_value.ok));
   } else {
-    diplomat_result_out_value = diplomat::Err<ICU4XError>(std::move(static_cast<ICU4XError>(diplomat_result_raw_out_value.err)));
+    diplomat_result_out_value = diplomat::Err<ICU4XError>(static_cast<ICU4XError>(diplomat_result_raw_out_value.err));
   }
   return diplomat_result_out_value;
 }
@@ -140,9 +140,9 @@ inline diplomat::result<ICU4XLineSegmenter, ICU4XError> ICU4XLineSegmenter::crea
   auto diplomat_result_raw_out_value = capi::ICU4XLineSegmenter_create_lstm(provider.AsFFI());
   diplomat::result<ICU4XLineSegmenter, ICU4XError> diplomat_result_out_value;
   if (diplomat_result_raw_out_value.is_ok) {
-    diplomat_result_out_value = diplomat::Ok<ICU4XLineSegmenter>(std::move(ICU4XLineSegmenter(diplomat_result_raw_out_value.ok)));
+    diplomat_result_out_value = diplomat::Ok<ICU4XLineSegmenter>(ICU4XLineSegmenter(diplomat_result_raw_out_value.ok));
   } else {
-    diplomat_result_out_value = diplomat::Err<ICU4XError>(std::move(static_cast<ICU4XError>(diplomat_result_raw_out_value.err)));
+    diplomat_result_out_value = diplomat::Err<ICU4XError>(static_cast<ICU4XError>(diplomat_result_raw_out_value.err));
   }
   return diplomat_result_out_value;
 }
@@ -150,9 +150,9 @@ inline diplomat::result<ICU4XLineSegmenter, ICU4XError> ICU4XLineSegmenter::crea
   auto diplomat_result_raw_out_value = capi::ICU4XLineSegmenter_create_dictionary(provider.AsFFI());
   diplomat::result<ICU4XLineSegmenter, ICU4XError> diplomat_result_out_value;
   if (diplomat_result_raw_out_value.is_ok) {
-    diplomat_result_out_value = diplomat::Ok<ICU4XLineSegmenter>(std::move(ICU4XLineSegmenter(diplomat_result_raw_out_value.ok)));
+    diplomat_result_out_value = diplomat::Ok<ICU4XLineSegmenter>(ICU4XLineSegmenter(diplomat_result_raw_out_value.ok));
   } else {
-    diplomat_result_out_value = diplomat::Err<ICU4XError>(std::move(static_cast<ICU4XError>(diplomat_result_raw_out_value.err)));
+    diplomat_result_out_value = diplomat::Err<ICU4XError>(static_cast<ICU4XError>(diplomat_result_raw_out_value.err));
   }
   return diplomat_result_out_value;
 }
@@ -161,9 +161,9 @@ inline diplomat::result<ICU4XLineSegmenter, ICU4XError> ICU4XLineSegmenter::crea
   auto diplomat_result_raw_out_value = capi::ICU4XLineSegmenter_create_auto_with_options_v1(provider.AsFFI(), capi::ICU4XLineBreakOptionsV1{ .strictness = static_cast<capi::ICU4XLineBreakStrictness>(diplomat_wrapped_struct_options.strictness), .word_option = static_cast<capi::ICU4XLineBreakWordOption>(diplomat_wrapped_struct_options.word_option), .ja_zh = diplomat_wrapped_struct_options.ja_zh });
   diplomat::result<ICU4XLineSegmenter, ICU4XError> diplomat_result_out_value;
   if (diplomat_result_raw_out_value.is_ok) {
-    diplomat_result_out_value = diplomat::Ok<ICU4XLineSegmenter>(std::move(ICU4XLineSegmenter(diplomat_result_raw_out_value.ok)));
+    diplomat_result_out_value = diplomat::Ok<ICU4XLineSegmenter>(ICU4XLineSegmenter(diplomat_result_raw_out_value.ok));
   } else {
-    diplomat_result_out_value = diplomat::Err<ICU4XError>(std::move(static_cast<ICU4XError>(diplomat_result_raw_out_value.err)));
+    diplomat_result_out_value = diplomat::Err<ICU4XError>(static_cast<ICU4XError>(diplomat_result_raw_out_value.err));
   }
   return diplomat_result_out_value;
 }
@@ -172,9 +172,9 @@ inline diplomat::result<ICU4XLineSegmenter, ICU4XError> ICU4XLineSegmenter::crea
   auto diplomat_result_raw_out_value = capi::ICU4XLineSegmenter_create_lstm_with_options_v1(provider.AsFFI(), capi::ICU4XLineBreakOptionsV1{ .strictness = static_cast<capi::ICU4XLineBreakStrictness>(diplomat_wrapped_struct_options.strictness), .word_option = static_cast<capi::ICU4XLineBreakWordOption>(diplomat_wrapped_struct_options.word_option), .ja_zh = diplomat_wrapped_struct_options.ja_zh });
   diplomat::result<ICU4XLineSegmenter, ICU4XError> diplomat_result_out_value;
   if (diplomat_result_raw_out_value.is_ok) {
-    diplomat_result_out_value = diplomat::Ok<ICU4XLineSegmenter>(std::move(ICU4XLineSegmenter(diplomat_result_raw_out_value.ok)));
+    diplomat_result_out_value = diplomat::Ok<ICU4XLineSegmenter>(ICU4XLineSegmenter(diplomat_result_raw_out_value.ok));
   } else {
-    diplomat_result_out_value = diplomat::Err<ICU4XError>(std::move(static_cast<ICU4XError>(diplomat_result_raw_out_value.err)));
+    diplomat_result_out_value = diplomat::Err<ICU4XError>(static_cast<ICU4XError>(diplomat_result_raw_out_value.err));
   }
   return diplomat_result_out_value;
 }
@@ -183,9 +183,9 @@ inline diplomat::result<ICU4XLineSegmenter, ICU4XError> ICU4XLineSegmenter::crea
   auto diplomat_result_raw_out_value = capi::ICU4XLineSegmenter_create_dictionary_with_options_v1(provider.AsFFI(), capi::ICU4XLineBreakOptionsV1{ .strictness = static_cast<capi::ICU4XLineBreakStrictness>(diplomat_wrapped_struct_options.strictness), .word_option = static_cast<capi::ICU4XLineBreakWordOption>(diplomat_wrapped_struct_options.word_option), .ja_zh = diplomat_wrapped_struct_options.ja_zh });
   diplomat::result<ICU4XLineSegmenter, ICU4XError> diplomat_result_out_value;
   if (diplomat_result_raw_out_value.is_ok) {
-    diplomat_result_out_value = diplomat::Ok<ICU4XLineSegmenter>(std::move(ICU4XLineSegmenter(diplomat_result_raw_out_value.ok)));
+    diplomat_result_out_value = diplomat::Ok<ICU4XLineSegmenter>(ICU4XLineSegmenter(diplomat_result_raw_out_value.ok));
   } else {
-    diplomat_result_out_value = diplomat::Err<ICU4XError>(std::move(static_cast<ICU4XError>(diplomat_result_raw_out_value.err)));
+    diplomat_result_out_value = diplomat::Err<ICU4XError>(static_cast<ICU4XError>(diplomat_result_raw_out_value.err));
   }
   return diplomat_result_out_value;
 }

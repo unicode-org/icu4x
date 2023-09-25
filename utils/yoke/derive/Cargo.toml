@@ -5,13 +5,13 @@
 [package]
 name = "yoke-derive"
 description = "Custom derive for the yoke crate"
-version = "0.7.1"
+version = "0.7.2"
 categories = ["data-structures", "memory-management", "caching", "no-std"]
 keywords = ["zerocopy", "serialization", "lifetime", "borrow", "self-referential"]
 authors = ["Manish Goregaokar <manishsmail@gmail.com>"]
+license-file = "LICENSE"
 
 edition.workspace = true
-license-file.workspace = true
 repository.workspace = true
 
 [package.metadata.workspaces]
@@ -28,5 +28,5 @@ syn = { version = "2", features = ["derive", "fold"] }
 synstructure = "0.13"
 
 [dev-dependencies]
-yoke = { workspace = true }
-zerovec = { workspace = true }
+yoke = { path = ".." }
+zerovec = { path = "../../../utils/zerovec" }

@@ -33,11 +33,8 @@ impl From<GroupingStrategy> for FixedDecimalFormatterOptions {
 /// let locale = Locale::UND;
 /// let mut options: options::FixedDecimalFormatterOptions = Default::default();
 /// options.grouping_strategy = options::GroupingStrategy::Min2;
-/// let fdf = FixedDecimalFormatter::try_new(
-///     &locale.into(),
-///     options,
-/// )
-/// .expect("locale should be present");
+/// let fdf = FixedDecimalFormatter::try_new(&locale.into(), options)
+///     .expect("locale should be present");
 ///
 /// let one_thousand = 1000.into();
 /// assert_writeable_eq!(fdf.format(&one_thousand), "1000");

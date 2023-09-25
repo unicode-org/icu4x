@@ -80,7 +80,7 @@ fn basic_cldr_week_data() {
     use icu_calendar::types::IsoWeekday;
     use icu_locid::langid;
 
-    let provider = crate::DatagenProvider::latest_tested_offline_subset();
+    let provider = crate::DatagenProvider::new_testing();
 
     let default_week_data: DataPayload<WeekDataV1Marker> = provider
         .load(Default::default())

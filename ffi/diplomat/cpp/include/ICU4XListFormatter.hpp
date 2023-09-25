@@ -38,35 +38,35 @@ class ICU4XListFormatter {
   /**
    * Construct a new ICU4XListFormatter instance for And patterns
    * 
-   * See the [Rust documentation for `try_new_and_with_length`](https://docs.rs/icu/latest/icu/normalizer/struct.ListFormatter.html#method.try_new_and_with_length) for more information.
+   * See the [Rust documentation for `try_new_and_with_length`](https://docs.rs/icu/latest/icu/list/struct.ListFormatter.html#method.try_new_and_with_length) for more information.
    */
   static diplomat::result<ICU4XListFormatter, ICU4XError> create_and_with_length(const ICU4XDataProvider& provider, const ICU4XLocale& locale, ICU4XListLength length);
 
   /**
    * Construct a new ICU4XListFormatter instance for And patterns
    * 
-   * See the [Rust documentation for `try_new_or_with_length`](https://docs.rs/icu/latest/icu/normalizer/struct.ListFormatter.html#method.try_new_or_with_length) for more information.
+   * See the [Rust documentation for `try_new_or_with_length`](https://docs.rs/icu/latest/icu/list/struct.ListFormatter.html#method.try_new_or_with_length) for more information.
    */
   static diplomat::result<ICU4XListFormatter, ICU4XError> create_or_with_length(const ICU4XDataProvider& provider, const ICU4XLocale& locale, ICU4XListLength length);
 
   /**
    * Construct a new ICU4XListFormatter instance for And patterns
    * 
-   * See the [Rust documentation for `try_new_unit_with_length`](https://docs.rs/icu/latest/icu/normalizer/struct.ListFormatter.html#method.try_new_unit_with_length) for more information.
+   * See the [Rust documentation for `try_new_unit_with_length`](https://docs.rs/icu/latest/icu/list/struct.ListFormatter.html#method.try_new_unit_with_length) for more information.
    */
   static diplomat::result<ICU4XListFormatter, ICU4XError> create_unit_with_length(const ICU4XDataProvider& provider, const ICU4XLocale& locale, ICU4XListLength length);
 
   /**
    * 
    * 
-   * See the [Rust documentation for `format`](https://docs.rs/icu/latest/icu/normalizer/struct.ListFormatter.html#method.format) for more information.
+   * See the [Rust documentation for `format`](https://docs.rs/icu/latest/icu/list/struct.ListFormatter.html#method.format) for more information.
    */
   template<typename W> diplomat::result<std::monostate, ICU4XError> format_to_writeable(const ICU4XList& list, W& write) const;
 
   /**
    * 
    * 
-   * See the [Rust documentation for `format`](https://docs.rs/icu/latest/icu/normalizer/struct.ListFormatter.html#method.format) for more information.
+   * See the [Rust documentation for `format`](https://docs.rs/icu/latest/icu/list/struct.ListFormatter.html#method.format) for more information.
    */
   diplomat::result<std::string, ICU4XError> format(const ICU4XList& list) const;
   inline const capi::ICU4XListFormatter* AsFFI() const { return this->inner.get(); }
@@ -87,9 +87,9 @@ inline diplomat::result<ICU4XListFormatter, ICU4XError> ICU4XListFormatter::crea
   auto diplomat_result_raw_out_value = capi::ICU4XListFormatter_create_and_with_length(provider.AsFFI(), locale.AsFFI(), static_cast<capi::ICU4XListLength>(length));
   diplomat::result<ICU4XListFormatter, ICU4XError> diplomat_result_out_value;
   if (diplomat_result_raw_out_value.is_ok) {
-    diplomat_result_out_value = diplomat::Ok<ICU4XListFormatter>(std::move(ICU4XListFormatter(diplomat_result_raw_out_value.ok)));
+    diplomat_result_out_value = diplomat::Ok<ICU4XListFormatter>(ICU4XListFormatter(diplomat_result_raw_out_value.ok));
   } else {
-    diplomat_result_out_value = diplomat::Err<ICU4XError>(std::move(static_cast<ICU4XError>(diplomat_result_raw_out_value.err)));
+    diplomat_result_out_value = diplomat::Err<ICU4XError>(static_cast<ICU4XError>(diplomat_result_raw_out_value.err));
   }
   return diplomat_result_out_value;
 }
@@ -97,9 +97,9 @@ inline diplomat::result<ICU4XListFormatter, ICU4XError> ICU4XListFormatter::crea
   auto diplomat_result_raw_out_value = capi::ICU4XListFormatter_create_or_with_length(provider.AsFFI(), locale.AsFFI(), static_cast<capi::ICU4XListLength>(length));
   diplomat::result<ICU4XListFormatter, ICU4XError> diplomat_result_out_value;
   if (diplomat_result_raw_out_value.is_ok) {
-    diplomat_result_out_value = diplomat::Ok<ICU4XListFormatter>(std::move(ICU4XListFormatter(diplomat_result_raw_out_value.ok)));
+    diplomat_result_out_value = diplomat::Ok<ICU4XListFormatter>(ICU4XListFormatter(diplomat_result_raw_out_value.ok));
   } else {
-    diplomat_result_out_value = diplomat::Err<ICU4XError>(std::move(static_cast<ICU4XError>(diplomat_result_raw_out_value.err)));
+    diplomat_result_out_value = diplomat::Err<ICU4XError>(static_cast<ICU4XError>(diplomat_result_raw_out_value.err));
   }
   return diplomat_result_out_value;
 }
@@ -107,9 +107,9 @@ inline diplomat::result<ICU4XListFormatter, ICU4XError> ICU4XListFormatter::crea
   auto diplomat_result_raw_out_value = capi::ICU4XListFormatter_create_unit_with_length(provider.AsFFI(), locale.AsFFI(), static_cast<capi::ICU4XListLength>(length));
   diplomat::result<ICU4XListFormatter, ICU4XError> diplomat_result_out_value;
   if (diplomat_result_raw_out_value.is_ok) {
-    diplomat_result_out_value = diplomat::Ok<ICU4XListFormatter>(std::move(ICU4XListFormatter(diplomat_result_raw_out_value.ok)));
+    diplomat_result_out_value = diplomat::Ok<ICU4XListFormatter>(ICU4XListFormatter(diplomat_result_raw_out_value.ok));
   } else {
-    diplomat_result_out_value = diplomat::Err<ICU4XError>(std::move(static_cast<ICU4XError>(diplomat_result_raw_out_value.err)));
+    diplomat_result_out_value = diplomat::Err<ICU4XError>(static_cast<ICU4XError>(diplomat_result_raw_out_value.err));
   }
   return diplomat_result_out_value;
 }
@@ -120,7 +120,7 @@ template<typename W> inline diplomat::result<std::monostate, ICU4XError> ICU4XLi
   if (diplomat_result_raw_out_value.is_ok) {
     diplomat_result_out_value = diplomat::Ok(std::monostate());
   } else {
-    diplomat_result_out_value = diplomat::Err<ICU4XError>(std::move(static_cast<ICU4XError>(diplomat_result_raw_out_value.err)));
+    diplomat_result_out_value = diplomat::Err<ICU4XError>(static_cast<ICU4XError>(diplomat_result_raw_out_value.err));
   }
   return diplomat_result_out_value;
 }
@@ -132,7 +132,7 @@ inline diplomat::result<std::string, ICU4XError> ICU4XListFormatter::format(cons
   if (diplomat_result_raw_out_value.is_ok) {
     diplomat_result_out_value = diplomat::Ok(std::monostate());
   } else {
-    diplomat_result_out_value = diplomat::Err<ICU4XError>(std::move(static_cast<ICU4XError>(diplomat_result_raw_out_value.err)));
+    diplomat_result_out_value = diplomat::Err<ICU4XError>(static_cast<ICU4XError>(diplomat_result_raw_out_value.err));
   }
   return diplomat_result_out_value.replace_ok(std::move(diplomat_writeable_string));
 }

@@ -21,6 +21,7 @@
     "Boundary_Neutral",
     "First_Strong_Isolate",
     "Left_To_Right_Isolate",
-    "Right_To_Left_Isolate"
+    "Right_To_Left_Isolate",
+    "Pop_Directional_Isolate"
   ]
 }

@@ -114,7 +114,7 @@ impl PartialOrd for NormalizedPropertyNameStr {
 }
 
 /// Normalize a character based on the "loose matching" described in PropertyValueAliases.txt,
-/// returning None for skippable characters
+/// returning `None` for skippable characters
 ///
 /// ICU has [code for this][1] (and [during property lookup][2]) which we emulate.
 /// In particular, ICU only does normalization within ASCII, which makes sense since character names

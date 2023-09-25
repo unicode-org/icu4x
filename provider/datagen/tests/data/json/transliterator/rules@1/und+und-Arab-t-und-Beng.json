@@ -58,11 +58,5 @@
   ],
   "rule_group_list": [
     []
-  ],
-  "dependencies": [
-    "und-Arab-t-s0-intindic",
-    "und-t-und-Beng-d0-intindic",
-    "x-any-nfc",
-    "x-any-nfd"
   ]
 }

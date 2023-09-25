@@ -5,14 +5,14 @@
 [package]
 name = "zerotrie"
 description = "A data structure that efficiently maps strings to integers"
-version = "0.0.0"
+version = "0.1.0"
+license-file = "LICENSE"
 
 rust-version.workspace = true
 authors.workspace = true
 edition.workspace = true
 repository.workspace = true
 homepage.workspace = true
-license-file.workspace = true
 categories.workspace = true
 include.workspace = true
 
@@ -24,21 +24,24 @@ all-features = true
 denylist = ["bench"]
 
 [dependencies]
+databake = { workspace = true, features = ["derive"], optional = true }
 displaydoc = { version = "0.2.3", default-features = false }
 litemap = { workspace = true, features = ["alloc"], optional = true }
 serde = { version = "1.0", optional = true }
+yoke = { workspace = true, features = ["derive"], optional = true }
+zerofrom = { workspace = true, optional = true }
 zerovec = { workspace = true, optional = true }
 
 [dev-dependencies]
 bincode = "1.0"
-icu_benchmark_macros = { workspace = true }
-litemap = { workspace = true }
+icu_benchmark_macros = { path = "../../tools/benchmark/macros" }
+litemap = { path = "../../utils/litemap" }
 postcard = { version = "1.0", default-features = false, features = ["alloc"] }
 rand = "0.8"
 rand_pcg = "0.3"
 serde = { version = "1.0", default-features = false }
 serde_json = "1.0"
-zerovec = { workspace = true, features = ["serde", "hashmap"] }
+zerovec = { path = "../../utils/zerovec", features = ["serde", "hashmap"] }
 
 [target.'cfg(not(target_arch = "wasm32"))'.dev-dependencies]
 criterion = "0.4"
@@ -50,12 +53,20 @@ bench = false  # This option is required for Benchmark CI
 default = []
 bench = ["litemap"]
 alloc = []
+databake = ["dep:databake", "zerovec?/databake"]
 litemap = ["dep:litemap", "alloc"]
 serde = ["dep:serde", "dep:litemap", "alloc", "litemap/serde", "zerovec?/serde"]
+yoke = ["dep:yoke"]
+zerofrom = ["dep:zerofrom"]
 
 [[bench]]
 name = "overview"
 harness = false
+required-features = ["alloc", "litemap"]
+
+[[test]]
+name = "asciitrie_test"
+required-features = ["alloc", "litemap"]
 
 [[test]]
 name = "builder_test"

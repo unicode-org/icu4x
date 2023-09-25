@@ -2031,8 +2031,7 @@ pub fn for_general_category_group(enum_val: GeneralCategoryGroup) -> CodePointSe
 /// ```
 /// use icu::properties::sets;
 ///
-/// let emoji = sets::load_for_ecma262("Emoji")
-///         .expect("loading data failed");
+/// let emoji = sets::load_for_ecma262("Emoji").expect("loading data failed");
 ///
 /// assert!(emoji.contains('🔥')); // U+1F525 FIRE
 /// assert!(!emoji.contains('V'));

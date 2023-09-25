@@ -570,9 +570,9 @@ inline diplomat::result<ICU4XCodePointSetData, ICU4XError> ICU4XCodePointSetData
   auto diplomat_result_raw_out_value = capi::ICU4XCodePointSetData_load_for_general_category_group(provider.AsFFI(), group);
   diplomat::result<ICU4XCodePointSetData, ICU4XError> diplomat_result_out_value;
   if (diplomat_result_raw_out_value.is_ok) {
-    diplomat_result_out_value = diplomat::Ok<ICU4XCodePointSetData>(std::move(ICU4XCodePointSetData(diplomat_result_raw_out_value.ok)));
+    diplomat_result_out_value = diplomat::Ok<ICU4XCodePointSetData>(ICU4XCodePointSetData(diplomat_result_raw_out_value.ok));
   } else {
-    diplomat_result_out_value = diplomat::Err<ICU4XError>(std::move(static_cast<ICU4XError>(diplomat_result_raw_out_value.err)));
+    diplomat_result_out_value = diplomat::Err<ICU4XError>(static_cast<ICU4XError>(diplomat_result_raw_out_value.err));
   }
   return diplomat_result_out_value;
 }
@@ -580,9 +580,9 @@ inline diplomat::result<ICU4XCodePointSetData, ICU4XError> ICU4XCodePointSetData
   auto diplomat_result_raw_out_value = capi::ICU4XCodePointSetData_load_ascii_hex_digit(provider.AsFFI());
   diplomat::result<ICU4XCodePointSetData, ICU4XError> diplomat_result_out_value;
   if (diplomat_result_raw_out_value.is_ok) {
-    diplomat_result_out_value = diplomat::Ok<ICU4XCodePointSetData>(std::move(ICU4XCodePointSetData(diplomat_result_raw_out_value.ok)));
+    diplomat_result_out_value = diplomat::Ok<ICU4XCodePointSetData>(ICU4XCodePointSetData(diplomat_result_raw_out_value.ok));
   } else {
-    diplomat_result_out_value = diplomat::Err<ICU4XError>(std::move(static_cast<ICU4XError>(diplomat_result_raw_out_value.err)));
+    diplomat_result_out_value = diplomat::Err<ICU4XError>(static_cast<ICU4XError>(diplomat_result_raw_out_value.err));
   }
   return diplomat_result_out_value;
 }
@@ -590,9 +590,9 @@ inline diplomat::result<ICU4XCodePointSetData, ICU4XError> ICU4XCodePointSetData
   auto diplomat_result_raw_out_value = capi::ICU4XCodePointSetData_load_alnum(provider.AsFFI());
   diplomat::result<ICU4XCodePointSetData, ICU4XError> diplomat_result_out_value;
   if (diplomat_result_raw_out_value.is_ok) {
-    diplomat_result_out_value = diplomat::Ok<ICU4XCodePointSetData>(std::move(ICU4XCodePointSetData(diplomat_result_raw_out_value.ok)));
+    diplomat_result_out_value = diplomat::Ok<ICU4XCodePointSetData>(ICU4XCodePointSetData(diplomat_result_raw_out_value.ok));
   } else {
-    diplomat_result_out_value = diplomat::Err<ICU4XError>(std::move(static_cast<ICU4XError>(diplomat_result_raw_out_value.err)));
+    diplomat_result_out_value = diplomat::Err<ICU4XError>(static_cast<ICU4XError>(diplomat_result_raw_out_value.err));
   }
   return diplomat_result_out_value;
 }
@@ -600,9 +600,9 @@ inline diplomat::result<ICU4XCodePointSetData, ICU4XError> ICU4XCodePointSetData
   auto diplomat_result_raw_out_value = capi::ICU4XCodePointSetData_load_alphabetic(provider.AsFFI());
   diplomat::result<ICU4XCodePointSetData, ICU4XError> diplomat_result_out_value;
   if (diplomat_result_raw_out_value.is_ok) {
-    diplomat_result_out_value = diplomat::Ok<ICU4XCodePointSetData>(std::move(ICU4XCodePointSetData(diplomat_result_raw_out_value.ok)));
+    diplomat_result_out_value = diplomat::Ok<ICU4XCodePointSetData>(ICU4XCodePointSetData(diplomat_result_raw_out_value.ok));
   } else {
-    diplomat_result_out_value = diplomat::Err<ICU4XError>(std::move(static_cast<ICU4XError>(diplomat_result_raw_out_value.err)));
+    diplomat_result_out_value = diplomat::Err<ICU4XError>(static_cast<ICU4XError>(diplomat_result_raw_out_value.err));
   }
   return diplomat_result_out_value;
 }
@@ -610,9 +610,9 @@ inline diplomat::result<ICU4XCodePointSetData, ICU4XError> ICU4XCodePointSetData
   auto diplomat_result_raw_out_value = capi::ICU4XCodePointSetData_load_bidi_control(provider.AsFFI());
   diplomat::result<ICU4XCodePointSetData, ICU4XError> diplomat_result_out_value;
   if (diplomat_result_raw_out_value.is_ok) {
-    diplomat_result_out_value = diplomat::Ok<ICU4XCodePointSetData>(std::move(ICU4XCodePointSetData(diplomat_result_raw_out_value.ok)));
+    diplomat_result_out_value = diplomat::Ok<ICU4XCodePointSetData>(ICU4XCodePointSetData(diplomat_result_raw_out_value.ok));
   } else {
-    diplomat_result_out_value = diplomat::Err<ICU4XError>(std::move(static_cast<ICU4XError>(diplomat_result_raw_out_value.err)));
+    diplomat_result_out_value = diplomat::Err<ICU4XError>(static_cast<ICU4XError>(diplomat_result_raw_out_value.err));
   }
   return diplomat_result_out_value;
 }
@@ -620,9 +620,9 @@ inline diplomat::result<ICU4XCodePointSetData, ICU4XError> ICU4XCodePointSetData
   auto diplomat_result_raw_out_value = capi::ICU4XCodePointSetData_load_bidi_mirrored(provider.AsFFI());
   diplomat::result<ICU4XCodePointSetData, ICU4XError> diplomat_result_out_value;
   if (diplomat_result_raw_out_value.is_ok) {
-    diplomat_result_out_value = diplomat::Ok<ICU4XCodePointSetData>(std::move(ICU4XCodePointSetData(diplomat_result_raw_out_value.ok)));
+    diplomat_result_out_value = diplomat::Ok<ICU4XCodePointSetData>(ICU4XCodePointSetData(diplomat_result_raw_out_value.ok));
   } else {
-    diplomat_result_out_value = diplomat::Err<ICU4XError>(std::move(static_cast<ICU4XError>(diplomat_result_raw_out_value.err)));
+    diplomat_result_out_value = diplomat::Err<ICU4XError>(static_cast<ICU4XError>(diplomat_result_raw_out_value.err));
   }
   return diplomat_result_out_value;
 }
@@ -630,9 +630,9 @@ inline diplomat::result<ICU4XCodePointSetData, ICU4XError> ICU4XCodePointSetData
   auto diplomat_result_raw_out_value = capi::ICU4XCodePointSetData_load_blank(provider.AsFFI());
   diplomat::result<ICU4XCodePointSetData, ICU4XError> diplomat_result_out_value;
   if (diplomat_result_raw_out_value.is_ok) {
-    diplomat_result_out_value = diplomat::Ok<ICU4XCodePointSetData>(std::move(ICU4XCodePointSetData(diplomat_result_raw_out_value.ok)));
+    diplomat_result_out_value = diplomat::Ok<ICU4XCodePointSetData>(ICU4XCodePointSetData(diplomat_result_raw_out_value.ok));
   } else {
-    diplomat_result_out_value = diplomat::Err<ICU4XError>(std::move(static_cast<ICU4XError>(diplomat_result_raw_out_value.err)));
+    diplomat_result_out_value = diplomat::Err<ICU4XError>(static_cast<ICU4XError>(diplomat_result_raw_out_value.err));
   }
   return diplomat_result_out_value;
 }
@@ -640,9 +640,9 @@ inline diplomat::result<ICU4XCodePointSetData, ICU4XError> ICU4XCodePointSetData
   auto diplomat_result_raw_out_value = capi::ICU4XCodePointSetData_load_cased(provider.AsFFI());
   diplomat::result<ICU4XCodePointSetData, ICU4XError> diplomat_result_out_value;
   if (diplomat_result_raw_out_value.is_ok) {
-    diplomat_result_out_value = diplomat::Ok<ICU4XCodePointSetData>(std::move(ICU4XCodePointSetData(diplomat_result_raw_out_value.ok)));
+    diplomat_result_out_value = diplomat::Ok<ICU4XCodePointSetData>(ICU4XCodePointSetData(diplomat_result_raw_out_value.ok));
   } else {
-    diplomat_result_out_value = diplomat::Err<ICU4XError>(std::move(static_cast<ICU4XError>(diplomat_result_raw_out_value.err)));
+    diplomat_result_out_value = diplomat::Err<ICU4XError>(static_cast<ICU4XError>(diplomat_result_raw_out_value.err));
   }
   return diplomat_result_out_value;
 }
@@ -650,9 +650,9 @@ inline diplomat::result<ICU4XCodePointSetData, ICU4XError> ICU4XCodePointSetData
   auto diplomat_result_raw_out_value = capi::ICU4XCodePointSetData_load_case_ignorable(provider.AsFFI());
   diplomat::result<ICU4XCodePointSetData, ICU4XError> diplomat_result_out_value;
   if (diplomat_result_raw_out_value.is_ok) {
-    diplomat_result_out_value = diplomat::Ok<ICU4XCodePointSetData>(std::move(ICU4XCodePointSetData(diplomat_result_raw_out_value.ok)));
+    diplomat_result_out_value = diplomat::Ok<ICU4XCodePointSetData>(ICU4XCodePointSetData(diplomat_result_raw_out_value.ok));
   } else {
-    diplomat_result_out_value = diplomat::Err<ICU4XError>(std::move(static_cast<ICU4XError>(diplomat_result_raw_out_value.err)));
+    diplomat_result_out_value = diplomat::Err<ICU4XError>(static_cast<ICU4XError>(diplomat_result_raw_out_value.err));
   }
   return diplomat_result_out_value;
 }
@@ -660,9 +660,9 @@ inline diplomat::result<ICU4XCodePointSetData, ICU4XError> ICU4XCodePointSetData
   auto diplomat_result_raw_out_value = capi::ICU4XCodePointSetData_load_full_composition_exclusion(provider.AsFFI());
   diplomat::result<ICU4XCodePointSetData, ICU4XError> diplomat_result_out_value;
   if (diplomat_result_raw_out_value.is_ok) {
-    diplomat_result_out_value = diplomat::Ok<ICU4XCodePointSetData>(std::move(ICU4XCodePointSetData(diplomat_result_raw_out_value.ok)));
+    diplomat_result_out_value = diplomat::Ok<ICU4XCodePointSetData>(ICU4XCodePointSetData(diplomat_result_raw_out_value.ok));
   } else {
-    diplomat_result_out_value = diplomat::Err<ICU4XError>(std::move(static_cast<ICU4XError>(diplomat_result_raw_out_value.err)));
+    diplomat_result_out_value = diplomat::Err<ICU4XError>(static_cast<ICU4XError>(diplomat_result_raw_out_value.err));
   }
   return diplomat_result_out_value;
 }
@@ -670,9 +670,9 @@ inline diplomat::result<ICU4XCodePointSetData, ICU4XError> ICU4XCodePointSetData
   auto diplomat_result_raw_out_value = capi::ICU4XCodePointSetData_load_changes_when_casefolded(provider.AsFFI());
   diplomat::result<ICU4XCodePointSetData, ICU4XError> diplomat_result_out_value;
   if (diplomat_result_raw_out_value.is_ok) {
-    diplomat_result_out_value = diplomat::Ok<ICU4XCodePointSetData>(std::move(ICU4XCodePointSetData(diplomat_result_raw_out_value.ok)));
+    diplomat_result_out_value = diplomat::Ok<ICU4XCodePointSetData>(ICU4XCodePointSetData(diplomat_result_raw_out_value.ok));
   } else {
-    diplomat_result_out_value = diplomat::Err<ICU4XError>(std::move(static_cast<ICU4XError>(diplomat_result_raw_out_value.err)));
+    diplomat_result_out_value = diplomat::Err<ICU4XError>(static_cast<ICU4XError>(diplomat_result_raw_out_value.err));
   }
   return diplomat_result_out_value;
 }
@@ -680,9 +680,9 @@ inline diplomat::result<ICU4XCodePointSetData, ICU4XError> ICU4XCodePointSetData
   auto diplomat_result_raw_out_value = capi::ICU4XCodePointSetData_load_changes_when_casemapped(provider.AsFFI());
   diplomat::result<ICU4XCodePointSetData, ICU4XError> diplomat_result_out_value;
   if (diplomat_result_raw_out_value.is_ok) {
-    diplomat_result_out_value = diplomat::Ok<ICU4XCodePointSetData>(std::move(ICU4XCodePointSetData(diplomat_result_raw_out_value.ok)));
+    diplomat_result_out_value = diplomat::Ok<ICU4XCodePointSetData>(ICU4XCodePointSetData(diplomat_result_raw_out_value.ok));
   } else {
-    diplomat_result_out_value = diplomat::Err<ICU4XError>(std::move(static_cast<ICU4XError>(diplomat_result_raw_out_value.err)));
+    diplomat_result_out_value = diplomat::Err<ICU4XError>(static_cast<ICU4XError>(diplomat_result_raw_out_value.err));
   }
   return diplomat_result_out_value;
 }
@@ -690,9 +690,9 @@ inline diplomat::result<ICU4XCodePointSetData, ICU4XError> ICU4XCodePointSetData
   auto diplomat_result_raw_out_value = capi::ICU4XCodePointSetData_load_changes_when_nfkc_casefolded(provider.AsFFI());
   diplomat::result<ICU4XCodePointSetData, ICU4XError> diplomat_result_out_value;
   if (diplomat_result_raw_out_value.is_ok) {
-    diplomat_result_out_value = diplomat::Ok<ICU4XCodePointSetData>(std::move(ICU4XCodePointSetData(diplomat_result_raw_out_value.ok)));
+    diplomat_result_out_value = diplomat::Ok<ICU4XCodePointSetData>(ICU4XCodePointSetData(diplomat_result_raw_out_value.ok));
   } else {
-    diplomat_result_out_value = diplomat::Err<ICU4XError>(std::move(static_cast<ICU4XError>(diplomat_result_raw_out_value.err)));
+    diplomat_result_out_value = diplomat::Err<ICU4XError>(static_cast<ICU4XError>(diplomat_result_raw_out_value.err));
   }
   return diplomat_result_out_value;
 }
@@ -700,9 +700,9 @@ inline diplomat::result<ICU4XCodePointSetData, ICU4XError> ICU4XCodePointSetData
   auto diplomat_result_raw_out_value = capi::ICU4XCodePointSetData_load_changes_when_lowercased(provider.AsFFI());
   diplomat::result<ICU4XCodePointSetData, ICU4XError> diplomat_result_out_value;
   if (diplomat_result_raw_out_value.is_ok) {
-    diplomat_result_out_value = diplomat::Ok<ICU4XCodePointSetData>(std::move(ICU4XCodePointSetData(diplomat_result_raw_out_value.ok)));
+    diplomat_result_out_value = diplomat::Ok<ICU4XCodePointSetData>(ICU4XCodePointSetData(diplomat_result_raw_out_value.ok));
   } else {
-    diplomat_result_out_value = diplomat::Err<ICU4XError>(std::move(static_cast<ICU4XError>(diplomat_result_raw_out_value.err)));
+    diplomat_result_out_value = diplomat::Err<ICU4XError>(static_cast<ICU4XError>(diplomat_result_raw_out_value.err));
   }
   return diplomat_result_out_value;
 }
@@ -710,9 +710,9 @@ inline diplomat::result<ICU4XCodePointSetData, ICU4XError> ICU4XCodePointSetData
   auto diplomat_result_raw_out_value = capi::ICU4XCodePointSetData_load_changes_when_titlecased(provider.AsFFI());
   diplomat::result<ICU4XCodePointSetData, ICU4XError> diplomat_result_out_value;
   if (diplomat_result_raw_out_value.is_ok) {
-    diplomat_result_out_value = diplomat::Ok<ICU4XCodePointSetData>(std::move(ICU4XCodePointSetData(diplomat_result_raw_out_value.ok)));
+    diplomat_result_out_value = diplomat::Ok<ICU4XCodePointSetData>(ICU4XCodePointSetData(diplomat_result_raw_out_value.ok));
   } else {
-    diplomat_result_out_value = diplomat::Err<ICU4XError>(std::move(static_cast<ICU4XError>(diplomat_result_raw_out_value.err)));
+    diplomat_result_out_value = diplomat::Err<ICU4XError>(static_cast<ICU4XError>(diplomat_result_raw_out_value.err));
   }
   return diplomat_result_out_value;
 }
@@ -720,9 +720,9 @@ inline diplomat::result<ICU4XCodePointSetData, ICU4XError> ICU4XCodePointSetData
   auto diplomat_result_raw_out_value = capi::ICU4XCodePointSetData_load_changes_when_uppercased(provider.AsFFI());
   diplomat::result<ICU4XCodePointSetData, ICU4XError> diplomat_result_out_value;
   if (diplomat_result_raw_out_value.is_ok) {
-    diplomat_result_out_value = diplomat::Ok<ICU4XCodePointSetData>(std::move(ICU4XCodePointSetData(diplomat_result_raw_out_value.ok)));
+    diplomat_result_out_value = diplomat::Ok<ICU4XCodePointSetData>(ICU4XCodePointSetData(diplomat_result_raw_out_value.ok));
   } else {
-    diplomat_result_out_value = diplomat::Err<ICU4XError>(std::move(static_cast<ICU4XError>(diplomat_result_raw_out_value.err)));
+    diplomat_result_out_value = diplomat::Err<ICU4XError>(static_cast<ICU4XError>(diplomat_result_raw_out_value.err));
   }
   return diplomat_result_out_value;
 }
@@ -730,9 +730,9 @@ inline diplomat::result<ICU4XCodePointSetData, ICU4XError> ICU4XCodePointSetData
   auto diplomat_result_raw_out_value = capi::ICU4XCodePointSetData_load_dash(provider.AsFFI());
   diplomat::result<ICU4XCodePointSetData, ICU4XError> diplomat_result_out_value;
   if (diplomat_result_raw_out_value.is_ok) {
-    diplomat_result_out_value = diplomat::Ok<ICU4XCodePointSetData>(std::move(ICU4XCodePointSetData(diplomat_result_raw_out_value.ok)));
+    diplomat_result_out_value = diplomat::Ok<ICU4XCodePointSetData>(ICU4XCodePointSetData(diplomat_result_raw_out_value.ok));
   } else {
-    diplomat_result_out_value = diplomat::Err<ICU4XError>(std::move(static_cast<ICU4XError>(diplomat_result_raw_out_value.err)));
+    diplomat_result_out_value = diplomat::Err<ICU4XError>(static_cast<ICU4XError>(diplomat_result_raw_out_value.err));
   }
   return diplomat_result_out_value;
 }
@@ -740,9 +740,9 @@ inline diplomat::result<ICU4XCodePointSetData, ICU4XError> ICU4XCodePointSetData
   auto diplomat_result_raw_out_value = capi::ICU4XCodePointSetData_load_deprecated(provider.AsFFI());
   diplomat::result<ICU4XCodePointSetData, ICU4XError> diplomat_result_out_value;
   if (diplomat_result_raw_out_value.is_ok) {
-    diplomat_result_out_value = diplomat::Ok<ICU4XCodePointSetData>(std::move(ICU4XCodePointSetData(diplomat_result_raw_out_value.ok)));
+    diplomat_result_out_value = diplomat::Ok<ICU4XCodePointSetData>(ICU4XCodePointSetData(diplomat_result_raw_out_value.ok));
   } else {
-    diplomat_result_out_value = diplomat::Err<ICU4XError>(std::move(static_cast<ICU4XError>(diplomat_result_raw_out_value.err)));
+    diplomat_result_out_value = diplomat::Err<ICU4XError>(static_cast<ICU4XError>(diplomat_result_raw_out_value.err));
   }
   return diplomat_result_out_value;
 }
@@ -750,9 +750,9 @@ inline diplomat::result<ICU4XCodePointSetData, ICU4XError> ICU4XCodePointSetData
   auto diplomat_result_raw_out_value = capi::ICU4XCodePointSetData_load_default_ignorable_code_point(provider.AsFFI());
   diplomat::result<ICU4XCodePointSetData, ICU4XError> diplomat_result_out_value;
   if (diplomat_result_raw_out_value.is_ok) {
-    diplomat_result_out_value = diplomat::Ok<ICU4XCodePointSetData>(std::move(ICU4XCodePointSetData(diplomat_result_raw_out_value.ok)));
+    diplomat_result_out_value = diplomat::Ok<ICU4XCodePointSetData>(ICU4XCodePointSetData(diplomat_result_raw_out_value.ok));
   } else {
-    diplomat_result_out_value = diplomat::Err<ICU4XError>(std::move(static_cast<ICU4XError>(diplomat_result_raw_out_value.err)));
+    diplomat_result_out_value = diplomat::Err<ICU4XError>(static_cast<ICU4XError>(diplomat_result_raw_out_value.err));
   }
   return diplomat_result_out_value;
 }
@@ -760,9 +760,9 @@ inline diplomat::result<ICU4XCodePointSetData, ICU4XError> ICU4XCodePointSetData
   auto diplomat_result_raw_out_value = capi::ICU4XCodePointSetData_load_diacritic(provider.AsFFI());
   diplomat::result<ICU4XCodePointSetData, ICU4XError> diplomat_result_out_value;
   if (diplomat_result_raw_out_value.is_ok) {
-    diplomat_result_out_value = diplomat::Ok<ICU4XCodePointSetData>(std::move(ICU4XCodePointSetData(diplomat_result_raw_out_value.ok)));
+    diplomat_result_out_value = diplomat::Ok<ICU4XCodePointSetData>(ICU4XCodePointSetData(diplomat_result_raw_out_value.ok));
   } else {
-    diplomat_result_out_value = diplomat::Err<ICU4XError>(std::move(static_cast<ICU4XError>(diplomat_result_raw_out_value.err)));
+    diplomat_result_out_value = diplomat::Err<ICU4XError>(static_cast<ICU4XError>(diplomat_result_raw_out_value.err));
   }
   return diplomat_result_out_value;
 }
@@ -770,9 +770,9 @@ inline diplomat::result<ICU4XCodePointSetData, ICU4XError> ICU4XCodePointSetData
   auto diplomat_result_raw_out_value = capi::ICU4XCodePointSetData_load_emoji_modifier_base(provider.AsFFI());
   diplomat::result<ICU4XCodePointSetData, ICU4XError> diplomat_result_out_value;
   if (diplomat_result_raw_out_value.is_ok) {
-    diplomat_result_out_value = diplomat::Ok<ICU4XCodePointSetData>(std::move(ICU4XCodePointSetData(diplomat_result_raw_out_value.ok)));
+    diplomat_result_out_value = diplomat::Ok<ICU4XCodePointSetData>(ICU4XCodePointSetData(diplomat_result_raw_out_value.ok));
   } else {
-    diplomat_result_out_value = diplomat::Err<ICU4XError>(std::move(static_cast<ICU4XError>(diplomat_result_raw_out_value.err)));
+    diplomat_result_out_value = diplomat::Err<ICU4XError>(static_cast<ICU4XError>(diplomat_result_raw_out_value.err));
   }
   return diplomat_result_out_value;
 }
@@ -780,9 +780,9 @@ inline diplomat::result<ICU4XCodePointSetData, ICU4XError> ICU4XCodePointSetData
   auto diplomat_result_raw_out_value = capi::ICU4XCodePointSetData_load_emoji_component(provider.AsFFI());
   diplomat::result<ICU4XCodePointSetData, ICU4XError> diplomat_result_out_value;
   if (diplomat_result_raw_out_value.is_ok) {
-    diplomat_result_out_value = diplomat::Ok<ICU4XCodePointSetData>(std::move(ICU4XCodePointSetData(diplomat_result_raw_out_value.ok)));
+    diplomat_result_out_value = diplomat::Ok<ICU4XCodePointSetData>(ICU4XCodePointSetData(diplomat_result_raw_out_value.ok));
   } else {
-    diplomat_result_out_value = diplomat::Err<ICU4XError>(std::move(static_cast<ICU4XError>(diplomat_result_raw_out_value.err)));
+    diplomat_result_out_value = diplomat::Err<ICU4XError>(static_cast<ICU4XError>(diplomat_result_raw_out_value.err));
   }
   return diplomat_result_out_value;
 }
@@ -790,9 +790,9 @@ inline diplomat::result<ICU4XCodePointSetData, ICU4XError> ICU4XCodePointSetData
   auto diplomat_result_raw_out_value = capi::ICU4XCodePointSetData_load_emoji_modifier(provider.AsFFI());
   diplomat::result<ICU4XCodePointSetData, ICU4XError> diplomat_result_out_value;
   if (diplomat_result_raw_out_value.is_ok) {
-    diplomat_result_out_value = diplomat::Ok<ICU4XCodePointSetData>(std::move(ICU4XCodePointSetData(diplomat_result_raw_out_value.ok)));
+    diplomat_result_out_value = diplomat::Ok<ICU4XCodePointSetData>(ICU4XCodePointSetData(diplomat_result_raw_out_value.ok));
   } else {
-    diplomat_result_out_value = diplomat::Err<ICU4XError>(std::move(static_cast<ICU4XError>(diplomat_result_raw_out_value.err)));
+    diplomat_result_out_value = diplomat::Err<ICU4XError>(static_cast<ICU4XError>(diplomat_result_raw_out_value.err));
   }
   return diplomat_result_out_value;
 }
@@ -800,9 +800,9 @@ inline diplomat::result<ICU4XCodePointSetData, ICU4XError> ICU4XCodePointSetData
   auto diplomat_result_raw_out_value = capi::ICU4XCodePointSetData_load_emoji(provider.AsFFI());
   diplomat::result<ICU4XCodePointSetData, ICU4XError> diplomat_result_out_value;
   if (diplomat_result_raw_out_value.is_ok) {
-    diplomat_result_out_value = diplomat::Ok<ICU4XCodePointSetData>(std::move(ICU4XCodePointSetData(diplomat_result_raw_out_value.ok)));
+    diplomat_result_out_value = diplomat::Ok<ICU4XCodePointSetData>(ICU4XCodePointSetData(diplomat_result_raw_out_value.ok));
   } else {
-    diplomat_result_out_value = diplomat::Err<ICU4XError>(std::move(static_cast<ICU4XError>(diplomat_result_raw_out_value.err)));
+    diplomat_result_out_value = diplomat::Err<ICU4XError>(static_cast<ICU4XError>(diplomat_result_raw_out_value.err));
   }
   return diplomat_result_out_value;
 }
@@ -810,9 +810,9 @@ inline diplomat::result<ICU4XCodePointSetData, ICU4XError> ICU4XCodePointSetData
   auto diplomat_result_raw_out_value = capi::ICU4XCodePointSetData_load_emoji_presentation(provider.AsFFI());
   diplomat::result<ICU4XCodePointSetData, ICU4XError> diplomat_result_out_value;
   if (diplomat_result_raw_out_value.is_ok) {
-    diplomat_result_out_value = diplomat::Ok<ICU4XCodePointSetData>(std::move(ICU4XCodePointSetData(diplomat_result_raw_out_value.ok)));
+    diplomat_result_out_value = diplomat::Ok<ICU4XCodePointSetData>(ICU4XCodePointSetData(diplomat_result_raw_out_value.ok));
   } else {
-    diplomat_result_out_value = diplomat::Err<ICU4XError>(std::move(static_cast<ICU4XError>(diplomat_result_raw_out_value.err)));
+    diplomat_result_out_value = diplomat::Err<ICU4XError>(static_cast<ICU4XError>(diplomat_result_raw_out_value.err));
   }
   return diplomat_result_out_value;
 }
@@ -820,9 +820,9 @@ inline diplomat::result<ICU4XCodePointSetData, ICU4XError> ICU4XCodePointSetData
   auto diplomat_result_raw_out_value = capi::ICU4XCodePointSetData_load_extender(provider.AsFFI());
   diplomat::result<ICU4XCodePointSetData, ICU4XError> diplomat_result_out_value;
   if (diplomat_result_raw_out_value.is_ok) {
-    diplomat_result_out_value = diplomat::Ok<ICU4XCodePointSetData>(std::move(ICU4XCodePointSetData(diplomat_result_raw_out_value.ok)));
+    diplomat_result_out_value = diplomat::Ok<ICU4XCodePointSetData>(ICU4XCodePointSetData(diplomat_result_raw_out_value.ok));
   } else {
-    diplomat_result_out_value = diplomat::Err<ICU4XError>(std::move(static_cast<ICU4XError>(diplomat_result_raw_out_value.err)));
+    diplomat_result_out_value = diplomat::Err<ICU4XError>(static_cast<ICU4XError>(diplomat_result_raw_out_value.err));
   }
   return diplomat_result_out_value;
 }
@@ -830,9 +830,9 @@ inline diplomat::result<ICU4XCodePointSetData, ICU4XError> ICU4XCodePointSetData
   auto diplomat_result_raw_out_value = capi::ICU4XCodePointSetData_load_extended_pictographic(provider.AsFFI());
   diplomat::result<ICU4XCodePointSetData, ICU4XError> diplomat_result_out_value;
   if (diplomat_result_raw_out_value.is_ok) {
-    diplomat_result_out_value = diplomat::Ok<ICU4XCodePointSetData>(std::move(ICU4XCodePointSetData(diplomat_result_raw_out_value.ok)));
+    diplomat_result_out_value = diplomat::Ok<ICU4XCodePointSetData>(ICU4XCodePointSetData(diplomat_result_raw_out_value.ok));
   } else {
-    diplomat_result_out_value = diplomat::Err<ICU4XError>(std::move(static_cast<ICU4XError>(diplomat_result_raw_out_value.err)));
+    diplomat_result_out_value = diplomat::Err<ICU4XError>(static_cast<ICU4XError>(diplomat_result_raw_out_value.err));
   }
   return diplomat_result_out_value;
 }
@@ -840,9 +840,9 @@ inline diplomat::result<ICU4XCodePointSetData, ICU4XError> ICU4XCodePointSetData
   auto diplomat_result_raw_out_value = capi::ICU4XCodePointSetData_load_graph(provider.AsFFI());
   diplomat::result<ICU4XCodePointSetData, ICU4XError> diplomat_result_out_value;
   if (diplomat_result_raw_out_value.is_ok) {
-    diplomat_result_out_value = diplomat::Ok<ICU4XCodePointSetData>(std::move(ICU4XCodePointSetData(diplomat_result_raw_out_value.ok)));
+    diplomat_result_out_value = diplomat::Ok<ICU4XCodePointSetData>(ICU4XCodePointSetData(diplomat_result_raw_out_value.ok));
   } else {
-    diplomat_result_out_value = diplomat::Err<ICU4XError>(std::move(static_cast<ICU4XError>(diplomat_result_raw_out_value.err)));
+    diplomat_result_out_value = diplomat::Err<ICU4XError>(static_cast<ICU4XError>(diplomat_result_raw_out_value.err));
   }
   return diplomat_result_out_value;
 }
@@ -850,9 +850,9 @@ inline diplomat::result<ICU4XCodePointSetData, ICU4XError> ICU4XCodePointSetData
   auto diplomat_result_raw_out_value = capi::ICU4XCodePointSetData_load_grapheme_base(provider.AsFFI());
   diplomat::result<ICU4XCodePointSetData, ICU4XError> diplomat_result_out_value;
   if (diplomat_result_raw_out_value.is_ok) {
-    diplomat_result_out_value = diplomat::Ok<ICU4XCodePointSetData>(std::move(ICU4XCodePointSetData(diplomat_result_raw_out_value.ok)));
+    diplomat_result_out_value = diplomat::Ok<ICU4XCodePointSetData>(ICU4XCodePointSetData(diplomat_result_raw_out_value.ok));
   } else {
-    diplomat_result_out_value = diplomat::Err<ICU4XError>(std::move(static_cast<ICU4XError>(diplomat_result_raw_out_value.err)));
+    diplomat_result_out_value = diplomat::Err<ICU4XError>(static_cast<ICU4XError>(diplomat_result_raw_out_value.err));
   }
   return diplomat_result_out_value;
 }
@@ -860,9 +860,9 @@ inline diplomat::result<ICU4XCodePointSetData, ICU4XError> ICU4XCodePointSetData
   auto diplomat_result_raw_out_value = capi::ICU4XCodePointSetData_load_grapheme_extend(provider.AsFFI());
   diplomat::result<ICU4XCodePointSetData, ICU4XError> diplomat_result_out_value;
   if (diplomat_result_raw_out_value.is_ok) {
-    diplomat_result_out_value = diplomat::Ok<ICU4XCodePointSetData>(std::move(ICU4XCodePointSetData(diplomat_result_raw_out_value.ok)));
+    diplomat_result_out_value = diplomat::Ok<ICU4XCodePointSetData>(ICU4XCodePointSetData(diplomat_result_raw_out_value.ok));
   } else {
-    diplomat_result_out_value = diplomat::Err<ICU4XError>(std::move(static_cast<ICU4XError>(diplomat_result_raw_out_value.err)));
+    diplomat_result_out_value = diplomat::Err<ICU4XError>(static_cast<ICU4XError>(diplomat_result_raw_out_value.err));
   }
   return diplomat_result_out_value;
 }
@@ -870,9 +870,9 @@ inline diplomat::result<ICU4XCodePointSetData, ICU4XError> ICU4XCodePointSetData
   auto diplomat_result_raw_out_value = capi::ICU4XCodePointSetData_load_grapheme_link(provider.AsFFI());
   diplomat::result<ICU4XCodePointSetData, ICU4XError> diplomat_result_out_value;
   if (diplomat_result_raw_out_value.is_ok) {
-    diplomat_result_out_value = diplomat::Ok<ICU4XCodePointSetData>(std::move(ICU4XCodePointSetData(diplomat_result_raw_out_value.ok)));
+    diplomat_result_out_value = diplomat::Ok<ICU4XCodePointSetData>(ICU4XCodePointSetData(diplomat_result_raw_out_value.ok));
   } else {
-    diplomat_result_out_value = diplomat::Err<ICU4XError>(std::move(static_cast<ICU4XError>(diplomat_result_raw_out_value.err)));
+    diplomat_result_out_value = diplomat::Err<ICU4XError>(static_cast<ICU4XError>(diplomat_result_raw_out_value.err));
   }
   return diplomat_result_out_value;
 }
@@ -880,9 +880,9 @@ inline diplomat::result<ICU4XCodePointSetData, ICU4XError> ICU4XCodePointSetData
   auto diplomat_result_raw_out_value = capi::ICU4XCodePointSetData_load_hex_digit(provider.AsFFI());
   diplomat::result<ICU4XCodePointSetData, ICU4XError> diplomat_result_out_value;
   if (diplomat_result_raw_out_value.is_ok) {
-    diplomat_result_out_value = diplomat::Ok<ICU4XCodePointSetData>(std::move(ICU4XCodePointSetData(diplomat_result_raw_out_value.ok)));
+    diplomat_result_out_value = diplomat::Ok<ICU4XCodePointSetData>(ICU4XCodePointSetData(diplomat_result_raw_out_value.ok));
   } else {
-    diplomat_result_out_value = diplomat::Err<ICU4XError>(std::move(static_cast<ICU4XError>(diplomat_result_raw_out_value.err)));
+    diplomat_result_out_value = diplomat::Err<ICU4XError>(static_cast<ICU4XError>(diplomat_result_raw_out_value.err));
   }
   return diplomat_result_out_value;
 }
@@ -890,9 +890,9 @@ inline diplomat::result<ICU4XCodePointSetData, ICU4XError> ICU4XCodePointSetData
   auto diplomat_result_raw_out_value = capi::ICU4XCodePointSetData_load_hyphen(provider.AsFFI());
   diplomat::result<ICU4XCodePointSetData, ICU4XError> diplomat_result_out_value;
   if (diplomat_result_raw_out_value.is_ok) {
-    diplomat_result_out_value = diplomat::Ok<ICU4XCodePointSetData>(std::move(ICU4XCodePointSetData(diplomat_result_raw_out_value.ok)));
+    diplomat_result_out_value = diplomat::Ok<ICU4XCodePointSetData>(ICU4XCodePointSetData(diplomat_result_raw_out_value.ok));
   } else {
-    diplomat_result_out_value = diplomat::Err<ICU4XError>(std::move(static_cast<ICU4XError>(diplomat_result_raw_out_value.err)));
+    diplomat_result_out_value = diplomat::Err<ICU4XError>(static_cast<ICU4XError>(diplomat_result_raw_out_value.err));
   }
   return diplomat_result_out_value;
 }
@@ -900,9 +900,9 @@ inline diplomat::result<ICU4XCodePointSetData, ICU4XError> ICU4XCodePointSetData
   auto diplomat_result_raw_out_value = capi::ICU4XCodePointSetData_load_id_continue(provider.AsFFI());
   diplomat::result<ICU4XCodePointSetData, ICU4XError> diplomat_result_out_value;
   if (diplomat_result_raw_out_value.is_ok) {
-    diplomat_result_out_value = diplomat::Ok<ICU4XCodePointSetData>(std::move(ICU4XCodePointSetData(diplomat_result_raw_out_value.ok)));
+    diplomat_result_out_value = diplomat::Ok<ICU4XCodePointSetData>(ICU4XCodePointSetData(diplomat_result_raw_out_value.ok));
   } else {
-    diplomat_result_out_value = diplomat::Err<ICU4XError>(std::move(static_cast<ICU4XError>(diplomat_result_raw_out_value.err)));
+    diplomat_result_out_value = diplomat::Err<ICU4XError>(static_cast<ICU4XError>(diplomat_result_raw_out_value.err));
   }
   return diplomat_result_out_value;
 }
@@ -910,9 +910,9 @@ inline diplomat::result<ICU4XCodePointSetData, ICU4XError> ICU4XCodePointSetData
   auto diplomat_result_raw_out_value = capi::ICU4XCodePointSetData_load_ideographic(provider.AsFFI());
   diplomat::result<ICU4XCodePointSetData, ICU4XError> diplomat_result_out_value;
   if (diplomat_result_raw_out_value.is_ok) {
-    diplomat_result_out_value = diplomat::Ok<ICU4XCodePointSetData>(std::move(ICU4XCodePointSetData(diplomat_result_raw_out_value.ok)));
+    diplomat_result_out_value = diplomat::Ok<ICU4XCodePointSetData>(ICU4XCodePointSetData(diplomat_result_raw_out_value.ok));
   } else {
-    diplomat_result_out_value = diplomat::Err<ICU4XError>(std::move(static_cast<ICU4XError>(diplomat_result_raw_out_value.err)));
+    diplomat_result_out_value = diplomat::Err<ICU4XError>(static_cast<ICU4XError>(diplomat_result_raw_out_value.err));
   }
   return diplomat_result_out_value;
 }
@@ -920,9 +920,9 @@ inline diplomat::result<ICU4XCodePointSetData, ICU4XError> ICU4XCodePointSetData
   auto diplomat_result_raw_out_value = capi::ICU4XCodePointSetData_load_id_start(provider.AsFFI());
   diplomat::result<ICU4XCodePointSetData, ICU4XError> diplomat_result_out_value;
   if (diplomat_result_raw_out_value.is_ok) {
-    diplomat_result_out_value = diplomat::Ok<ICU4XCodePointSetData>(std::move(ICU4XCodePointSetData(diplomat_result_raw_out_value.ok)));
+    diplomat_result_out_value = diplomat::Ok<ICU4XCodePointSetData>(ICU4XCodePointSetData(diplomat_result_raw_out_value.ok));
   } else {
-    diplomat_result_out_value = diplomat::Err<ICU4XError>(std::move(static_cast<ICU4XError>(diplomat_result_raw_out_value.err)));
+    diplomat_result_out_value = diplomat::Err<ICU4XError>(static_cast<ICU4XError>(diplomat_result_raw_out_value.err));
   }
   return diplomat_result_out_value;
 }
@@ -930,9 +930,9 @@ inline diplomat::result<ICU4XCodePointSetData, ICU4XError> ICU4XCodePointSetData
   auto diplomat_result_raw_out_value = capi::ICU4XCodePointSetData_load_ids_binary_operator(provider.AsFFI());
   diplomat::result<ICU4XCodePointSetData, ICU4XError> diplomat_result_out_value;
   if (diplomat_result_raw_out_value.is_ok) {
-    diplomat_result_out_value = diplomat::Ok<ICU4XCodePointSetData>(std::move(ICU4XCodePointSetData(diplomat_result_raw_out_value.ok)));
+    diplomat_result_out_value = diplomat::Ok<ICU4XCodePointSetData>(ICU4XCodePointSetData(diplomat_result_raw_out_value.ok));
   } else {
-    diplomat_result_out_value = diplomat::Err<ICU4XError>(std::move(static_cast<ICU4XError>(diplomat_result_raw_out_value.err)));
+    diplomat_result_out_value = diplomat::Err<ICU4XError>(static_cast<ICU4XError>(diplomat_result_raw_out_value.err));
   }
   return diplomat_result_out_value;
 }
@@ -940,9 +940,9 @@ inline diplomat::result<ICU4XCodePointSetData, ICU4XError> ICU4XCodePointSetData
   auto diplomat_result_raw_out_value = capi::ICU4XCodePointSetData_load_ids_trinary_operator(provider.AsFFI());
   diplomat::result<ICU4XCodePointSetData, ICU4XError> diplomat_result_out_value;
   if (diplomat_result_raw_out_value.is_ok) {
-    diplomat_result_out_value = diplomat::Ok<ICU4XCodePointSetData>(std::move(ICU4XCodePointSetData(diplomat_result_raw_out_value.ok)));
+    diplomat_result_out_value = diplomat::Ok<ICU4XCodePointSetData>(ICU4XCodePointSetData(diplomat_result_raw_out_value.ok));
   } else {
-    diplomat_result_out_value = diplomat::Err<ICU4XError>(std::move(static_cast<ICU4XError>(diplomat_result_raw_out_value.err)));
+    diplomat_result_out_value = diplomat::Err<ICU4XError>(static_cast<ICU4XError>(diplomat_result_raw_out_value.err));
   }
   return diplomat_result_out_value;
 }
@@ -950,9 +950,9 @@ inline diplomat::result<ICU4XCodePointSetData, ICU4XError> ICU4XCodePointSetData
   auto diplomat_result_raw_out_value = capi::ICU4XCodePointSetData_load_join_control(provider.AsFFI());
   diplomat::result<ICU4XCodePointSetData, ICU4XError> diplomat_result_out_value;
   if (diplomat_result_raw_out_value.is_ok) {
-    diplomat_result_out_value = diplomat::Ok<ICU4XCodePointSetData>(std::move(ICU4XCodePointSetData(diplomat_result_raw_out_value.ok)));
+    diplomat_result_out_value = diplomat::Ok<ICU4XCodePointSetData>(ICU4XCodePointSetData(diplomat_result_raw_out_value.ok));
   } else {
-    diplomat_result_out_value = diplomat::Err<ICU4XError>(std::move(static_cast<ICU4XError>(diplomat_result_raw_out_value.err)));
+    diplomat_result_out_value = diplomat::Err<ICU4XError>(static_cast<ICU4XError>(diplomat_result_raw_out_value.err));
   }
   return diplomat_result_out_value;
 }
@@ -960,9 +960,9 @@ inline diplomat::result<ICU4XCodePointSetData, ICU4XError> ICU4XCodePointSetData
   auto diplomat_result_raw_out_value = capi::ICU4XCodePointSetData_load_logical_order_exception(provider.AsFFI());
   diplomat::result<ICU4XCodePointSetData, ICU4XError> diplomat_result_out_value;
   if (diplomat_result_raw_out_value.is_ok) {
-    diplomat_result_out_value = diplomat::Ok<ICU4XCodePointSetData>(std::move(ICU4XCodePointSetData(diplomat_result_raw_out_value.ok)));
+    diplomat_result_out_value = diplomat::Ok<ICU4XCodePointSetData>(ICU4XCodePointSetData(diplomat_result_raw_out_value.ok));
   } else {
-    diplomat_result_out_value = diplomat::Err<ICU4XError>(std::move(static_cast<ICU4XError>(diplomat_result_raw_out_value.err)));
+    diplomat_result_out_value = diplomat::Err<ICU4XError>(static_cast<ICU4XError>(diplomat_result_raw_out_value.err));
   }
   return diplomat_result_out_value;
 }
@@ -970,9 +970,9 @@ inline diplomat::result<ICU4XCodePointSetData, ICU4XError> ICU4XCodePointSetData
   auto diplomat_result_raw_out_value = capi::ICU4XCodePointSetData_load_lowercase(provider.AsFFI());
   diplomat::result<ICU4XCodePointSetData, ICU4XError> diplomat_result_out_value;
   if (diplomat_result_raw_out_value.is_ok) {
-    diplomat_result_out_value = diplomat::Ok<ICU4XCodePointSetData>(std::move(ICU4XCodePointSetData(diplomat_result_raw_out_value.ok)));
+    diplomat_result_out_value = diplomat::Ok<ICU4XCodePointSetData>(ICU4XCodePointSetData(diplomat_result_raw_out_value.ok));
   } else {
-    diplomat_result_out_value = diplomat::Err<ICU4XError>(std::move(static_cast<ICU4XError>(diplomat_result_raw_out_value.err)));
+    diplomat_result_out_value = diplomat::Err<ICU4XError>(static_cast<ICU4XError>(diplomat_result_raw_out_value.err));
   }
   return diplomat_result_out_value;
 }
@@ -980,9 +980,9 @@ inline diplomat::result<ICU4XCodePointSetData, ICU4XError> ICU4XCodePointSetData
   auto diplomat_result_raw_out_value = capi::ICU4XCodePointSetData_load_math(provider.AsFFI());
   diplomat::result<ICU4XCodePointSetData, ICU4XError> diplomat_result_out_value;
   if (diplomat_result_raw_out_value.is_ok) {
-    diplomat_result_out_value = diplomat::Ok<ICU4XCodePointSetData>(std::move(ICU4XCodePointSetData(diplomat_result_raw_out_value.ok)));
+    diplomat_result_out_value = diplomat::Ok<ICU4XCodePointSetData>(ICU4XCodePointSetData(diplomat_result_raw_out_value.ok));
   } else {
-    diplomat_result_out_value = diplomat::Err<ICU4XError>(std::move(static_cast<ICU4XError>(diplomat_result_raw_out_value.err)));
+    diplomat_result_out_value = diplomat::Err<ICU4XError>(static_cast<ICU4XError>(diplomat_result_raw_out_value.err));
   }
   return diplomat_result_out_value;
 }
@@ -990,9 +990,9 @@ inline diplomat::result<ICU4XCodePointSetData, ICU4XError> ICU4XCodePointSetData
   auto diplomat_result_raw_out_value = capi::ICU4XCodePointSetData_load_noncharacter_code_point(provider.AsFFI());
   diplomat::result<ICU4XCodePointSetData, ICU4XError> diplomat_result_out_value;
   if (diplomat_result_raw_out_value.is_ok) {
-    diplomat_result_out_value = diplomat::Ok<ICU4XCodePointSetData>(std::move(ICU4XCodePointSetData(diplomat_result_raw_out_value.ok)));
+    diplomat_result_out_value = diplomat::Ok<ICU4XCodePointSetData>(ICU4XCodePointSetData(diplomat_result_raw_out_value.ok));
   } else {
-    diplomat_result_out_value = diplomat::Err<ICU4XError>(std::move(static_cast<ICU4XError>(diplomat_result_raw_out_value.err)));
+    diplomat_result_out_value = diplomat::Err<ICU4XError>(static_cast<ICU4XError>(diplomat_result_raw_out_value.err));
   }
   return diplomat_result_out_value;
 }
@@ -1000,9 +1000,9 @@ inline diplomat::result<ICU4XCodePointSetData, ICU4XError> ICU4XCodePointSetData
   auto diplomat_result_raw_out_value = capi::ICU4XCodePointSetData_load_nfc_inert(provider.AsFFI());
   diplomat::result<ICU4XCodePointSetData, ICU4XError> diplomat_result_out_value;
   if (diplomat_result_raw_out_value.is_ok) {
-    diplomat_result_out_value = diplomat::Ok<ICU4XCodePointSetData>(std::move(ICU4XCodePointSetData(diplomat_result_raw_out_value.ok)));
+    diplomat_result_out_value = diplomat::Ok<ICU4XCodePointSetData>(ICU4XCodePointSetData(diplomat_result_raw_out_value.ok));
   } else {
-    diplomat_result_out_value = diplomat::Err<ICU4XError>(std::move(static_cast<ICU4XError>(diplomat_result_raw_out_value.err)));
+    diplomat_result_out_value = diplomat::Err<ICU4XError>(static_cast<ICU4XError>(diplomat_result_raw_out_value.err));
   }
   return diplomat_result_out_value;
 }
@@ -1010,9 +1010,9 @@ inline diplomat::result<ICU4XCodePointSetData, ICU4XError> ICU4XCodePointSetData
   auto diplomat_result_raw_out_value = capi::ICU4XCodePointSetData_load_nfd_inert(provider.AsFFI());
   diplomat::result<ICU4XCodePointSetData, ICU4XError> diplomat_result_out_value;
   if (diplomat_result_raw_out_value.is_ok) {
-    diplomat_result_out_value = diplomat::Ok<ICU4XCodePointSetData>(std::move(ICU4XCodePointSetData(diplomat_result_raw_out_value.ok)));
+    diplomat_result_out_value = diplomat::Ok<ICU4XCodePointSetData>(ICU4XCodePointSetData(diplomat_result_raw_out_value.ok));
   } else {
-    diplomat_result_out_value = diplomat::Err<ICU4XError>(std::move(static_cast<ICU4XError>(diplomat_result_raw_out_value.err)));
+    diplomat_result_out_value = diplomat::Err<ICU4XError>(static_cast<ICU4XError>(diplomat_result_raw_out_value.err));
   }
   return diplomat_result_out_value;
 }
@@ -1020,9 +1020,9 @@ inline diplomat::result<ICU4XCodePointSetData, ICU4XError> ICU4XCodePointSetData
   auto diplomat_result_raw_out_value = capi::ICU4XCodePointSetData_load_nfkc_inert(provider.AsFFI());
   diplomat::result<ICU4XCodePointSetData, ICU4XError> diplomat_result_out_value;
   if (diplomat_result_raw_out_value.is_ok) {
-    diplomat_result_out_value = diplomat::Ok<ICU4XCodePointSetData>(std::move(ICU4XCodePointSetData(diplomat_result_raw_out_value.ok)));
+    diplomat_result_out_value = diplomat::Ok<ICU4XCodePointSetData>(ICU4XCodePointSetData(diplomat_result_raw_out_value.ok));
   } else {
-    diplomat_result_out_value = diplomat::Err<ICU4XError>(std::move(static_cast<ICU4XError>(diplomat_result_raw_out_value.err)));
+    diplomat_result_out_value = diplomat::Err<ICU4XError>(static_cast<ICU4XError>(diplomat_result_raw_out_value.err));
   }
   return diplomat_result_out_value;
 }
@@ -1030,9 +1030,9 @@ inline diplomat::result<ICU4XCodePointSetData, ICU4XError> ICU4XCodePointSetData
   auto diplomat_result_raw_out_value = capi::ICU4XCodePointSetData_load_nfkd_inert(provider.AsFFI());
   diplomat::result<ICU4XCodePointSetData, ICU4XError> diplomat_result_out_value;
   if (diplomat_result_raw_out_value.is_ok) {
-    diplomat_result_out_value = diplomat::Ok<ICU4XCodePointSetData>(std::move(ICU4XCodePointSetData(diplomat_result_raw_out_value.ok)));
+    diplomat_result_out_value = diplomat::Ok<ICU4XCodePointSetData>(ICU4XCodePointSetData(diplomat_result_raw_out_value.ok));
   } else {
-    diplomat_result_out_value = diplomat::Err<ICU4XError>(std::move(static_cast<ICU4XError>(diplomat_result_raw_out_value.err)));
+    diplomat_result_out_value = diplomat::Err<ICU4XError>(static_cast<ICU4XError>(diplomat_result_raw_out_value.err));
   }
   return diplomat_result_out_value;
 }
@@ -1040,9 +1040,9 @@ inline diplomat::result<ICU4XCodePointSetData, ICU4XError> ICU4XCodePointSetData
   auto diplomat_result_raw_out_value = capi::ICU4XCodePointSetData_load_pattern_syntax(provider.AsFFI());
   diplomat::result<ICU4XCodePointSetData, ICU4XError> diplomat_result_out_value;
   if (diplomat_result_raw_out_value.is_ok) {
-    diplomat_result_out_value = diplomat::Ok<ICU4XCodePointSetData>(std::move(ICU4XCodePointSetData(diplomat_result_raw_out_value.ok)));
+    diplomat_result_out_value = diplomat::Ok<ICU4XCodePointSetData>(ICU4XCodePointSetData(diplomat_result_raw_out_value.ok));
   } else {
-    diplomat_result_out_value = diplomat::Err<ICU4XError>(std::move(static_cast<ICU4XError>(diplomat_result_raw_out_value.err)));
+    diplomat_result_out_value = diplomat::Err<ICU4XError>(static_cast<ICU4XError>(diplomat_result_raw_out_value.err));
   }
   return diplomat_result_out_value;
 }
@@ -1050,9 +1050,9 @@ inline diplomat::result<ICU4XCodePointSetData, ICU4XError> ICU4XCodePointSetData
   auto diplomat_result_raw_out_value = capi::ICU4XCodePointSetData_load_pattern_white_space(provider.AsFFI());
   diplomat::result<ICU4XCodePointSetData, ICU4XError> diplomat_result_out_value;
   if (diplomat_result_raw_out_value.is_ok) {
-    diplomat_result_out_value = diplomat::Ok<ICU4XCodePointSetData>(std::move(ICU4XCodePointSetData(diplomat_result_raw_out_value.ok)));
+    diplomat_result_out_value = diplomat::Ok<ICU4XCodePointSetData>(ICU4XCodePointSetData(diplomat_result_raw_out_value.ok));
   } else {
-    diplomat_result_out_value = diplomat::Err<ICU4XError>(std::move(static_cast<ICU4XError>(diplomat_result_raw_out_value.err)));
+    diplomat_result_out_value = diplomat::Err<ICU4XError>(static_cast<ICU4XError>(diplomat_result_raw_out_value.err));
   }
   return diplomat_result_out_value;
 }
@@ -1060,9 +1060,9 @@ inline diplomat::result<ICU4XCodePointSetData, ICU4XError> ICU4XCodePointSetData
   auto diplomat_result_raw_out_value = capi::ICU4XCodePointSetData_load_prepended_concatenation_mark(provider.AsFFI());
   diplomat::result<ICU4XCodePointSetData, ICU4XError> diplomat_result_out_value;
   if (diplomat_result_raw_out_value.is_ok) {
-    diplomat_result_out_value = diplomat::Ok<ICU4XCodePointSetData>(std::move(ICU4XCodePointSetData(diplomat_result_raw_out_value.ok)));
+    diplomat_result_out_value = diplomat::Ok<ICU4XCodePointSetData>(ICU4XCodePointSetData(diplomat_result_raw_out_value.ok));
   } else {
-    diplomat_result_out_value = diplomat::Err<ICU4XError>(std::move(static_cast<ICU4XError>(diplomat_result_raw_out_value.err)));
+    diplomat_result_out_value = diplomat::Err<ICU4XError>(static_cast<ICU4XError>(diplomat_result_raw_out_value.err));
   }
   return diplomat_result_out_value;
 }
@@ -1070,9 +1070,9 @@ inline diplomat::result<ICU4XCodePointSetData, ICU4XError> ICU4XCodePointSetData
   auto diplomat_result_raw_out_value = capi::ICU4XCodePointSetData_load_print(provider.AsFFI());
   diplomat::result<ICU4XCodePointSetData, ICU4XError> diplomat_result_out_value;
   if (diplomat_result_raw_out_value.is_ok) {
-    diplomat_result_out_value = diplomat::Ok<ICU4XCodePointSetData>(std::move(ICU4XCodePointSetData(diplomat_result_raw_out_value.ok)));
+    diplomat_result_out_value = diplomat::Ok<ICU4XCodePointSetData>(ICU4XCodePointSetData(diplomat_result_raw_out_value.ok));
   } else {
-    diplomat_result_out_value = diplomat::Err<ICU4XError>(std::move(static_cast<ICU4XError>(diplomat_result_raw_out_value.err)));
+    diplomat_result_out_value = diplomat::Err<ICU4XError>(static_cast<ICU4XError>(diplomat_result_raw_out_value.err));
   }
   return diplomat_result_out_value;
 }
@@ -1080,9 +1080,9 @@ inline diplomat::result<ICU4XCodePointSetData, ICU4XError> ICU4XCodePointSetData
   auto diplomat_result_raw_out_value = capi::ICU4XCodePointSetData_load_quotation_mark(provider.AsFFI());
   diplomat::result<ICU4XCodePointSetData, ICU4XError> diplomat_result_out_value;
   if (diplomat_result_raw_out_value.is_ok) {
-    diplomat_result_out_value = diplomat::Ok<ICU4XCodePointSetData>(std::move(ICU4XCodePointSetData(diplomat_result_raw_out_value.ok)));
+    diplomat_result_out_value = diplomat::Ok<ICU4XCodePointSetData>(ICU4XCodePointSetData(diplomat_result_raw_out_value.ok));
   } else {
-    diplomat_result_out_value = diplomat::Err<ICU4XError>(std::move(static_cast<ICU4XError>(diplomat_result_raw_out_value.err)));
+    diplomat_result_out_value = diplomat::Err<ICU4XError>(static_cast<ICU4XError>(diplomat_result_raw_out_value.err));
   }
   return diplomat_result_out_value;
 }
@@ -1090,9 +1090,9 @@ inline diplomat::result<ICU4XCodePointSetData, ICU4XError> ICU4XCodePointSetData
   auto diplomat_result_raw_out_value = capi::ICU4XCodePointSetData_load_radical(provider.AsFFI());
   diplomat::result<ICU4XCodePointSetData, ICU4XError> diplomat_result_out_value;
   if (diplomat_result_raw_out_value.is_ok) {
-    diplomat_result_out_value = diplomat::Ok<ICU4XCodePointSetData>(std::move(ICU4XCodePointSetData(diplomat_result_raw_out_value.ok)));
+    diplomat_result_out_value = diplomat::Ok<ICU4XCodePointSetData>(ICU4XCodePointSetData(diplomat_result_raw_out_value.ok));
   } else {
-    diplomat_result_out_value = diplomat::Err<ICU4XError>(std::move(static_cast<ICU4XError>(diplomat_result_raw_out_value.err)));
+    diplomat_result_out_value = diplomat::Err<ICU4XError>(static_cast<ICU4XError>(diplomat_result_raw_out_value.err));
   }
   return diplomat_result_out_value;
 }
@@ -1100,9 +1100,9 @@ inline diplomat::result<ICU4XCodePointSetData, ICU4XError> ICU4XCodePointSetData
   auto diplomat_result_raw_out_value = capi::ICU4XCodePointSetData_load_regional_indicator(provider.AsFFI());
   diplomat::result<ICU4XCodePointSetData, ICU4XError> diplomat_result_out_value;
   if (diplomat_result_raw_out_value.is_ok) {
-    diplomat_result_out_value = diplomat::Ok<ICU4XCodePointSetData>(std::move(ICU4XCodePointSetData(diplomat_result_raw_out_value.ok)));
+    diplomat_result_out_value = diplomat::Ok<ICU4XCodePointSetData>(ICU4XCodePointSetData(diplomat_result_raw_out_value.ok));
   } else {
-    diplomat_result_out_value = diplomat::Err<ICU4XError>(std::move(static_cast<ICU4XError>(diplomat_result_raw_out_value.err)));
+    diplomat_result_out_value = diplomat::Err<ICU4XError>(static_cast<ICU4XError>(diplomat_result_raw_out_value.err));
   }
   return diplomat_result_out_value;
 }
@@ -1110,9 +1110,9 @@ inline diplomat::result<ICU4XCodePointSetData, ICU4XError> ICU4XCodePointSetData
   auto diplomat_result_raw_out_value = capi::ICU4XCodePointSetData_load_soft_dotted(provider.AsFFI());
   diplomat::result<ICU4XCodePointSetData, ICU4XError> diplomat_result_out_value;
   if (diplomat_result_raw_out_value.is_ok) {
-    diplomat_result_out_value = diplomat::Ok<ICU4XCodePointSetData>(std::move(ICU4XCodePointSetData(diplomat_result_raw_out_value.ok)));
+    diplomat_result_out_value = diplomat::Ok<ICU4XCodePointSetData>(ICU4XCodePointSetData(diplomat_result_raw_out_value.ok));
   } else {
-    diplomat_result_out_value = diplomat::Err<ICU4XError>(std::move(static_cast<ICU4XError>(diplomat_result_raw_out_value.err)));
+    diplomat_result_out_value = diplomat::Err<ICU4XError>(static_cast<ICU4XError>(diplomat_result_raw_out_value.err));
   }
   return diplomat_result_out_value;
 }
@@ -1120,9 +1120,9 @@ inline diplomat::result<ICU4XCodePointSetData, ICU4XError> ICU4XCodePointSetData
   auto diplomat_result_raw_out_value = capi::ICU4XCodePointSetData_load_segment_starter(provider.AsFFI());
   diplomat::result<ICU4XCodePointSetData, ICU4XError> diplomat_result_out_value;
   if (diplomat_result_raw_out_value.is_ok) {
-    diplomat_result_out_value = diplomat::Ok<ICU4XCodePointSetData>(std::move(ICU4XCodePointSetData(diplomat_result_raw_out_value.ok)));
+    diplomat_result_out_value = diplomat::Ok<ICU4XCodePointSetData>(ICU4XCodePointSetData(diplomat_result_raw_out_value.ok));
   } else {
-    diplomat_result_out_value = diplomat::Err<ICU4XError>(std::move(static_cast<ICU4XError>(diplomat_result_raw_out_value.err)));
+    diplomat_result_out_value = diplomat::Err<ICU4XError>(static_cast<ICU4XError>(diplomat_result_raw_out_value.err));
   }
   return diplomat_result_out_value;
 }
@@ -1130,9 +1130,9 @@ inline diplomat::result<ICU4XCodePointSetData, ICU4XError> ICU4XCodePointSetData
   auto diplomat_result_raw_out_value = capi::ICU4XCodePointSetData_load_case_sensitive(provider.AsFFI());
   diplomat::result<ICU4XCodePointSetData, ICU4XError> diplomat_result_out_value;
   if (diplomat_result_raw_out_value.is_ok) {
-    diplomat_result_out_value = diplomat::Ok<ICU4XCodePointSetData>(std::move(ICU4XCodePointSetData(diplomat_result_raw_out_value.ok)));
+    diplomat_result_out_value = diplomat::Ok<ICU4XCodePointSetData>(ICU4XCodePointSetData(diplomat_result_raw_out_value.ok));
   } else {
-    diplomat_result_out_value = diplomat::Err<ICU4XError>(std::move(static_cast<ICU4XError>(diplomat_result_raw_out_value.err)));
+    diplomat_result_out_value = diplomat::Err<ICU4XError>(static_cast<ICU4XError>(diplomat_result_raw_out_value.err));
   }
   return diplomat_result_out_value;
 }
@@ -1140,9 +1140,9 @@ inline diplomat::result<ICU4XCodePointSetData, ICU4XError> ICU4XCodePointSetData
   auto diplomat_result_raw_out_value = capi::ICU4XCodePointSetData_load_sentence_terminal(provider.AsFFI());
   diplomat::result<ICU4XCodePointSetData, ICU4XError> diplomat_result_out_value;
   if (diplomat_result_raw_out_value.is_ok) {
-    diplomat_result_out_value = diplomat::Ok<ICU4XCodePointSetData>(std::move(ICU4XCodePointSetData(diplomat_result_raw_out_value.ok)));
+    diplomat_result_out_value = diplomat::Ok<ICU4XCodePointSetData>(ICU4XCodePointSetData(diplomat_result_raw_out_value.ok));
   } else {
-    diplomat_result_out_value = diplomat::Err<ICU4XError>(std::move(static_cast<ICU4XError>(diplomat_result_raw_out_value.err)));
+    diplomat_result_out_value = diplomat::Err<ICU4XError>(static_cast<ICU4XError>(diplomat_result_raw_out_value.err));
   }
   return diplomat_result_out_value;
 }
@@ -1150,9 +1150,9 @@ inline diplomat::result<ICU4XCodePointSetData, ICU4XError> ICU4XCodePointSetData
   auto diplomat_result_raw_out_value = capi::ICU4XCodePointSetData_load_terminal_punctuation(provider.AsFFI());
   diplomat::result<ICU4XCodePointSetData, ICU4XError> diplomat_result_out_value;
   if (diplomat_result_raw_out_value.is_ok) {
-    diplomat_result_out_value = diplomat::Ok<ICU4XCodePointSetData>(std::move(ICU4XCodePointSetData(diplomat_result_raw_out_value.ok)));
+    diplomat_result_out_value = diplomat::Ok<ICU4XCodePointSetData>(ICU4XCodePointSetData(diplomat_result_raw_out_value.ok));
   } else {
-    diplomat_result_out_value = diplomat::Err<ICU4XError>(std::move(static_cast<ICU4XError>(diplomat_result_raw_out_value.err)));
+    diplomat_result_out_value = diplomat::Err<ICU4XError>(static_cast<ICU4XError>(diplomat_result_raw_out_value.err));
   }
   return diplomat_result_out_value;
 }
@@ -1160,9 +1160,9 @@ inline diplomat::result<ICU4XCodePointSetData, ICU4XError> ICU4XCodePointSetData
   auto diplomat_result_raw_out_value = capi::ICU4XCodePointSetData_load_unified_ideograph(provider.AsFFI());
   diplomat::result<ICU4XCodePointSetData, ICU4XError> diplomat_result_out_value;
   if (diplomat_result_raw_out_value.is_ok) {
-    diplomat_result_out_value = diplomat::Ok<ICU4XCodePointSetData>(std::move(ICU4XCodePointSetData(diplomat_result_raw_out_value.ok)));
+    diplomat_result_out_value = diplomat::Ok<ICU4XCodePointSetData>(ICU4XCodePointSetData(diplomat_result_raw_out_value.ok));
   } else {
-    diplomat_result_out_value = diplomat::Err<ICU4XError>(std::move(static_cast<ICU4XError>(diplomat_result_raw_out_value.err)));
+    diplomat_result_out_value = diplomat::Err<ICU4XError>(static_cast<ICU4XError>(diplomat_result_raw_out_value.err));
   }
   return diplomat_result_out_value;
 }
@@ -1170,9 +1170,9 @@ inline diplomat::result<ICU4XCodePointSetData, ICU4XError> ICU4XCodePointSetData
   auto diplomat_result_raw_out_value = capi::ICU4XCodePointSetData_load_uppercase(provider.AsFFI());
   diplomat::result<ICU4XCodePointSetData, ICU4XError> diplomat_result_out_value;
   if (diplomat_result_raw_out_value.is_ok) {
-    diplomat_result_out_value = diplomat::Ok<ICU4XCodePointSetData>(std::move(ICU4XCodePointSetData(diplomat_result_raw_out_value.ok)));
+    diplomat_result_out_value = diplomat::Ok<ICU4XCodePointSetData>(ICU4XCodePointSetData(diplomat_result_raw_out_value.ok));
   } else {
-    diplomat_result_out_value = diplomat::Err<ICU4XError>(std::move(static_cast<ICU4XError>(diplomat_result_raw_out_value.err)));
+    diplomat_result_out_value = diplomat::Err<ICU4XError>(static_cast<ICU4XError>(diplomat_result_raw_out_value.err));
   }
   return diplomat_result_out_value;
 }
@@ -1180,9 +1180,9 @@ inline diplomat::result<ICU4XCodePointSetData, ICU4XError> ICU4XCodePointSetData
   auto diplomat_result_raw_out_value = capi::ICU4XCodePointSetData_load_variation_selector(provider.AsFFI());
   diplomat::result<ICU4XCodePointSetData, ICU4XError> diplomat_result_out_value;
   if (diplomat_result_raw_out_value.is_ok) {
-    diplomat_result_out_value = diplomat::Ok<ICU4XCodePointSetData>(std::move(ICU4XCodePointSetData(diplomat_result_raw_out_value.ok)));
+    diplomat_result_out_value = diplomat::Ok<ICU4XCodePointSetData>(ICU4XCodePointSetData(diplomat_result_raw_out_value.ok));
   } else {
-    diplomat_result_out_value = diplomat::Err<ICU4XError>(std::move(static_cast<ICU4XError>(diplomat_result_raw_out_value.err)));
+    diplomat_result_out_value = diplomat::Err<ICU4XError>(static_cast<ICU4XError>(diplomat_result_raw_out_value.err));
   }
   return diplomat_result_out_value;
 }
@@ -1190,9 +1190,9 @@ inline diplomat::result<ICU4XCodePointSetData, ICU4XError> ICU4XCodePointSetData
   auto diplomat_result_raw_out_value = capi::ICU4XCodePointSetData_load_white_space(provider.AsFFI());
   diplomat::result<ICU4XCodePointSetData, ICU4XError> diplomat_result_out_value;
   if (diplomat_result_raw_out_value.is_ok) {
-    diplomat_result_out_value = diplomat::Ok<ICU4XCodePointSetData>(std::move(ICU4XCodePointSetData(diplomat_result_raw_out_value.ok)));
+    diplomat_result_out_value = diplomat::Ok<ICU4XCodePointSetData>(ICU4XCodePointSetData(diplomat_result_raw_out_value.ok));
   } else {
-    diplomat_result_out_value = diplomat::Err<ICU4XError>(std::move(static_cast<ICU4XError>(diplomat_result_raw_out_value.err)));
+    diplomat_result_out_value = diplomat::Err<ICU4XError>(static_cast<ICU4XError>(diplomat_result_raw_out_value.err));
   }
   return diplomat_result_out_value;
 }
@@ -1200,9 +1200,9 @@ inline diplomat::result<ICU4XCodePointSetData, ICU4XError> ICU4XCodePointSetData
   auto diplomat_result_raw_out_value = capi::ICU4XCodePointSetData_load_xdigit(provider.AsFFI());
   diplomat::result<ICU4XCodePointSetData, ICU4XError> diplomat_result_out_value;
   if (diplomat_result_raw_out_value.is_ok) {
-    diplomat_result_out_value = diplomat::Ok<ICU4XCodePointSetData>(std::move(ICU4XCodePointSetData(diplomat_result_raw_out_value.ok)));
+    diplomat_result_out_value = diplomat::Ok<ICU4XCodePointSetData>(ICU4XCodePointSetData(diplomat_result_raw_out_value.ok));
   } else {
-    diplomat_result_out_value = diplomat::Err<ICU4XError>(std::move(static_cast<ICU4XError>(diplomat_result_raw_out_value.err)));
+    diplomat_result_out_value = diplomat::Err<ICU4XError>(static_cast<ICU4XError>(diplomat_result_raw_out_value.err));
   }
   return diplomat_result_out_value;
 }
@@ -1210,9 +1210,9 @@ inline diplomat::result<ICU4XCodePointSetData, ICU4XError> ICU4XCodePointSetData
   auto diplomat_result_raw_out_value = capi::ICU4XCodePointSetData_load_xid_continue(provider.AsFFI());
   diplomat::result<ICU4XCodePointSetData, ICU4XError> diplomat_result_out_value;
   if (diplomat_result_raw_out_value.is_ok) {
-    diplomat_result_out_value = diplomat::Ok<ICU4XCodePointSetData>(std::move(ICU4XCodePointSetData(diplomat_result_raw_out_value.ok)));
+    diplomat_result_out_value = diplomat::Ok<ICU4XCodePointSetData>(ICU4XCodePointSetData(diplomat_result_raw_out_value.ok));
   } else {
-    diplomat_result_out_value = diplomat::Err<ICU4XError>(std::move(static_cast<ICU4XError>(diplomat_result_raw_out_value.err)));
+    diplomat_result_out_value = diplomat::Err<ICU4XError>(static_cast<ICU4XError>(diplomat_result_raw_out_value.err));
   }
   return diplomat_result_out_value;
 }
@@ -1220,9 +1220,9 @@ inline diplomat::result<ICU4XCodePointSetData, ICU4XError> ICU4XCodePointSetData
   auto diplomat_result_raw_out_value = capi::ICU4XCodePointSetData_load_xid_start(provider.AsFFI());
   diplomat::result<ICU4XCodePointSetData, ICU4XError> diplomat_result_out_value;
   if (diplomat_result_raw_out_value.is_ok) {
-    diplomat_result_out_value = diplomat::Ok<ICU4XCodePointSetData>(std::move(ICU4XCodePointSetData(diplomat_result_raw_out_value.ok)));
+    diplomat_result_out_value = diplomat::Ok<ICU4XCodePointSetData>(ICU4XCodePointSetData(diplomat_result_raw_out_value.ok));
   } else {
-    diplomat_result_out_value = diplomat::Err<ICU4XError>(std::move(static_cast<ICU4XError>(diplomat_result_raw_out_value.err)));
+    diplomat_result_out_value = diplomat::Err<ICU4XError>(static_cast<ICU4XError>(diplomat_result_raw_out_value.err));
   }
   return diplomat_result_out_value;
 }
@@ -1230,9 +1230,9 @@ inline diplomat::result<ICU4XCodePointSetData, ICU4XError> ICU4XCodePointSetData
   auto diplomat_result_raw_out_value = capi::ICU4XCodePointSetData_load_for_ecma262(provider.AsFFI(), property_name.data(), property_name.size());
   diplomat::result<ICU4XCodePointSetData, ICU4XError> diplomat_result_out_value;
   if (diplomat_result_raw_out_value.is_ok) {
-    diplomat_result_out_value = diplomat::Ok<ICU4XCodePointSetData>(std::move(ICU4XCodePointSetData(diplomat_result_raw_out_value.ok)));
+    diplomat_result_out_value = diplomat::Ok<ICU4XCodePointSetData>(ICU4XCodePointSetData(diplomat_result_raw_out_value.ok));
   } else {
-    diplomat_result_out_value = diplomat::Err<ICU4XError>(std::move(static_cast<ICU4XError>(diplomat_result_raw_out_value.err)));
+    diplomat_result_out_value = diplomat::Err<ICU4XError>(static_cast<ICU4XError>(diplomat_result_raw_out_value.err));
   }
   return diplomat_result_out_value;
 }

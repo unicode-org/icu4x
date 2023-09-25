@@ -11,8 +11,8 @@
 //! # Examples
 //!
 //! ```
+//! use icu::locid::extensions::unicode::{attribute, key, value, Unicode};
 //! use icu::locid::Locale;
-//! use icu::locid::extensions::unicode::{Unicode, attribute, key, value};
 //!
 //! let loc: Locale = "en-US-u-foobar-hc-h12".parse().expect("Parsing failed.");
 //!
@@ -62,8 +62,8 @@ use litemap::LiteMap;
 /// # Examples
 ///
 /// ```
-/// use icu::locid::Locale;
 /// use icu::locid::extensions::unicode::{key, value};
+/// use icu::locid::Locale;
 ///
 /// let loc: Locale =
 ///     "de-u-hc-h12-ca-buddhist".parse().expect("Parsing failed.");

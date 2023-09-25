@@ -1,68 +1,4 @@
-# Hooking up a data provider
-
-`DataProvider` is a general mechanism for loading data required for ICU4X components to operate from a source.
-
-At the moment, `DataProvider` is only synchronous, but the model of plugging it in is intended to extend to asynchronous `DataProviders` later.
-
-## Data
-
-The first step is to ensure that the provider has a structures to represent the data which will be collected. The structures live in a `provider` module in your crate and should represent the data efficiently (rather than 1-1 match to CLDR data model).
-
-## Types of providers
-
-Any component that needs to use `DataProvider` should only depend on `icu_provider` crate and use the `DataProvider` trait. The specific implementations such as `icu_provider_blob::BlobDataProvider` will be provided by the downstream consumer of the component.
-
-## Hooking up data provider
-
-Each component should use `DataProvider` only to construct the instance of each main struct that requires data. It means that all heavy data pulling should happen in the constructor, which, in result, must be fallible. Currently, since `DataProvider` is synchronous, the constructor may be synchronous as well, but in the future we expect to have both synchronous and asynchronous data providers and constructors.
-
-## Example
-
-```rust
-use displaydoc::Display;
-use icu_provider::prelude::*;
-use icu::locid::Locale;
-use icu::decimal::provider::{DecimalSymbolsV1Marker, DecimalSymbolsV1};
-
-#[derive(Display, Debug, Copy, Clone)]
-pub enum MyError {
-     /// Some custom error
-     SomeError,
-
-     /// An error originating inside of the data provider.
-     #[displaydoc("{0}")]
-     DataProvider(DataError),
-}
-
-#[cfg(feature = "std")]
-impl std::error::Error for MyError {}
-
-impl From<DataError> for MyError {
-     fn from(e: DataError) -> Self {
-         MyError::DataProvider(e)
-     }
-}
-
-pub struct AdditiveIdentity(char);
-
-impl AdditiveIdentity {
-    pub fn try_new<L: Into<Locale>, P: DataProvider<DecimalSymbolsV1Marker>>(
-        locale: L,
-        provider: &P,
-    ) -> Result<Self, MyError> {
-        let response = provider.load(DataRequest {
-            locale: &locale.into().into(),
-            metadata: Default::default(),
-        })?.take_payload()?;
-
-        let decimal_data: &DecimalSymbolsV1 = response.get();
-
-        Ok(Self(decimal_data.digits[0]))
-    }
-}
-```
-
-## Loading Additional Data at Runtime
+# Loading Additional Data at Runtime
 
 A key feature of ICU4X is the ability to download data dynamically, allowing clients to load additional locales at runtime.
 
@@ -127,7 +63,7 @@ assert_eq!(
 );
 ```
 
-## Caching Data Provider
+# Caching Data Provider
 
 ICU4X has no internal caches because there is no one-size-fits-all solution. It is easy for clients to implement their own cache for ICU4X, and although this is not generally required or recommended, it may be beneficial when latency is of utmost importance and, for example, a less-efficient data provider such as JSON is being used.
 
@@ -251,13 +187,14 @@ assert_eq!(
 assert_eq!(provider.cache.lock().unwrap().len(), 2);
 ```
 
-## Overwriting Specific Data Items
+# Overwriting Specific Data Items
 
 ICU4X's explicit data pipeline allows for specific data entries to be overwritten in order to customize the output or comply with policy.
 
 The following example illustrates how to overwrite the decimal separators for a region.
 
 ```rust
+use core::any::Any;
 use icu::decimal::FixedDecimalFormatter;
 use icu::decimal::provider::DecimalSymbolsV1Marker;
 use icu_provider::prelude::*;
@@ -269,23 +206,27 @@ use tinystr::tinystr;
 
 pub struct CustomDecimalSymbolsProvider<P>(P);
 
-impl<P> AnyProvider for CustomDecimalSymbolsProvider<P>
+impl<P, M> DataProvider<M> for CustomDecimalSymbolsProvider<P>
 where
-    P: AnyProvider
+    P: DataProvider<M>,
+    M: KeyedDataMarker,
 {
-    fn load_any(&self, key: DataKey, req: DataRequest) -> Result<AnyResponse, DataError> {
-        let mut any_res = self.0.load_any(key, req)?;
-        if key == DecimalSymbolsV1Marker::KEY && req.locale.region() == Some(region!("CH")) {
-            let mut res: DataResponse<DecimalSymbolsV1Marker> = any_res.downcast()?;
-            if let Some(payload) = &mut res.payload.as_mut() {
-                payload.with_mut(|data| {
-                    // Change the grouping separator for all Swiss locales to '🐮'
-                    data.grouping_separator = Cow::Borrowed("🐮");
-                });
+    #[inline]
+    fn load(&self, req: DataRequest) -> Result<DataResponse<M>, DataError> {
+        let mut res = self.0.load(req)?;
+        if let Some(mut generic_payload) = res.payload.as_mut() {
+            // Cast from `DataPayload<M>` to `DataPayload<DecimalSymbolsV1Marker>`
+            let mut any_payload = generic_payload as &mut dyn Any;
+            if let Some(mut decimal_payload) = any_payload.downcast_mut::<DataPayload<DecimalSymbolsV1Marker>>() {
+                if req.locale.region() == Some(region!("CH")) {
+                    decimal_payload.with_mut(|data| {
+                        // Change the grouping separator for all Swiss locales to '🐮'
+                        data.grouping_separator = Cow::Borrowed("🐮");
+                    });
+                }
             }
-            any_res = res.wrap_into_any_response();
         }
-        Ok(any_res)
+        Ok(res)
     }
 }
 
@@ -293,7 +234,7 @@ let provider = CustomDecimalSymbolsProvider(
     AnyPayloadProvider::new_default::<DecimalSymbolsV1Marker>()
 );
 
-let formatter = FixedDecimalFormatter::try_new_with_any_provider(
+let formatter = FixedDecimalFormatter::try_new_unstable(
     &provider,
     &locale!("und").into(),
     Default::default(),
@@ -302,7 +243,7 @@ let formatter = FixedDecimalFormatter::try_new_with_any_provider(
 
 assert_eq!(formatter.format_to_string(&100007i64.into()), "100,007");
 
-let formatter = FixedDecimalFormatter::try_new_with_any_provider(
+let formatter = FixedDecimalFormatter::try_new_unstable(
     &provider,
     &locale!("und-CH").into(),
     Default::default(),
@@ -354,21 +295,21 @@ where
 let provider = ResolvedLocaleProvider {
     inner: LocaleFallbackProvider::new_with_fallbacker(
         HelloWorldProvider,
-        LocaleFallbacker::try_new_unstable(&icu_testdata::unstable()).unwrap(),
+        LocaleFallbacker::new().static_to_owned(),
     ),
     resolved_locale: Default::default(),
 };
 
-// Request data for ru-RU...
+// Request data for sr-ME...
 HelloWorldFormatter::try_new_unstable(
     &provider,
-    &locale!("ru-RU").into(),
+    &locale!("sr-ME").into(),
 )
 .unwrap();
 
-// ...which loads data from ru.
+// ...which loads data from sr-Latn.
 assert_eq!(
     *provider.resolved_locale.read().expect("poison"),
-    Some(locale!("ru").into()),
+    Some(locale!("sr-Latn").into()),
 );
 ```

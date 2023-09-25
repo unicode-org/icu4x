@@ -2,9 +2,11 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-//! Data exporter for [`BlobDataProvider`](crate::BlobDataProvider).
+//! Data exporter that creates a binary blob for use with [`BlobDataProvider`](crate::BlobDataProvider).
 //!
 //! This module can be used as a target for the `icu_datagen` crate.
+//!
+//! See our [datagen tutorial](https://github.com/unicode-org/icu4x/blob/main/docs/tutorials/data_management.md) for more information about different data providers.
 //!
 //! # Examples
 //!
@@ -20,7 +22,8 @@
 //! // Export something
 //! DatagenDriver::new()
 //!     .with_keys([icu_provider::hello_world::HelloWorldV1Marker::KEY])
-//!     .export(&DatagenProvider::latest_tested(), exporter)
+//!     .with_all_locales()
+//!     .export(&DatagenProvider::new_latest_tested(), exporter)
 //!     .unwrap();
 //!
 //! // communicate the blob to the client application (network, disk, etc.)

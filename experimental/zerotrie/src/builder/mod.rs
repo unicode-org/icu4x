@@ -108,34 +108,34 @@
 //! ```
 //! use zerotrie::ZeroTrieSimpleAscii;
 //!
-//! const DATA: [(&str, usize); 4] = [
-//!     ("", 11),
-//!     ("ad", 22),
-//!     ("adef", 33),
-//!     ("adghk", 44),
-//! ];
+//! const DATA: [(&str, usize); 4] =
+//!     [("", 11), ("ad", 22), ("adef", 33), ("adghk", 44)];
 //!
 //! // As demonstrated above, the required capacity for this trie is 16 bytes
-//! const TRIE: ZeroTrieSimpleAscii<[u8; 16]> = ZeroTrieSimpleAscii::from_sorted_str_tuples(&DATA);
+//! const TRIE: ZeroTrieSimpleAscii<[u8; 16]> =
+//!     ZeroTrieSimpleAscii::from_sorted_str_tuples(&DATA);
 //!
-//! assert_eq!(TRIE.as_bytes(), &[
-//!     0x8B, // value node 11
-//!     b'a', // ASCII node 'a'
-//!     b'd', // ASCII node 'd'
-//!     0x90, // value node 22 lead byte
-//!     0x06, // value node 22 trail byte
-//!     0xC2, // branch node 2
-//!     b'e', // first target of branch
-//!     b'g', // second target of branch
-//!     3,    // offset
-//!     b'f', // ASCII node 'f'
-//!     0x90, // value node 33 lead byte
-//!     0x11, // value node 33 trail byte
-//!     b'h', // ASCII node 'h'
-//!     b'k', // ASCII node 'k'
-//!     0x90, // value node 44 lead byte
-//!     0x1C, // value node 44 trail byte
-//! ]);
+//! assert_eq!(
+//!     TRIE.as_bytes(),
+//!     &[
+//!         0x8B, // value node 11
+//!         b'a', // ASCII node 'a'
+//!         b'd', // ASCII node 'd'
+//!         0x90, // value node 22 lead byte
+//!         0x06, // value node 22 trail byte
+//!         0xC2, // branch node 2
+//!         b'e', // first target of branch
+//!         b'g', // second target of branch
+//!         3,    // offset
+//!         b'f', // ASCII node 'f'
+//!         0x90, // value node 33 lead byte
+//!         0x11, // value node 33 trail byte
+//!         b'h', // ASCII node 'h'
+//!         b'k', // ASCII node 'k'
+//!         0x90, // value node 44 lead byte
+//!         0x1C, // value node 44 trail byte
+//!     ]
+//! );
 //!
 //! assert_eq!(TRIE.get(b""), Some(11));
 //! assert_eq!(TRIE.get(b"ad"), Some(22));
@@ -175,11 +175,12 @@ impl<const N: usize> ZeroTrieSimpleAscii<[u8; N]> {
     /// use zerotrie::ZeroTrieSimpleAscii;
     ///
     /// // The required capacity for this trie happens to be 17 bytes
-    /// const TRIE: ZeroTrieSimpleAscii<[u8; 17]> = ZeroTrieSimpleAscii::from_sorted_u8_tuples(&[
-    ///     (b"bar", 2),
-    ///     (b"bazzoo", 3),
-    ///     (b"foo", 1),
-    /// ]);
+    /// const TRIE: ZeroTrieSimpleAscii<[u8; 17]> =
+    ///     ZeroTrieSimpleAscii::from_sorted_u8_tuples(&[
+    ///         (b"bar", 2),
+    ///         (b"bazzoo", 3),
+    ///         (b"foo", 1),
+    ///     ]);
     ///
     /// assert_eq!(TRIE.get(b"foo"), Some(1));
     /// assert_eq!(TRIE.get(b"bar"), Some(2));
@@ -248,11 +249,12 @@ impl<const N: usize> ZeroTrieSimpleAscii<[u8; N]> {
     /// use zerotrie::ZeroTrieSimpleAscii;
     ///
     /// // The required capacity for this trie happens to be 17 bytes
-    /// const TRIE: ZeroTrieSimpleAscii<[u8; 17]> = ZeroTrieSimpleAscii::from_sorted_str_tuples(&[
-    ///     ("bar", 2),
-    ///     ("bazzoo", 3),
-    ///     ("foo", 1),
-    /// ]);
+    /// const TRIE: ZeroTrieSimpleAscii<[u8; 17]> =
+    ///     ZeroTrieSimpleAscii::from_sorted_str_tuples(&[
+    ///         ("bar", 2),
+    ///         ("bazzoo", 3),
+    ///         ("foo", 1),
+    ///     ]);
     ///
     /// assert_eq!(TRIE.get(b"foo"), Some(1));
     /// assert_eq!(TRIE.get(b"bar"), Some(2));

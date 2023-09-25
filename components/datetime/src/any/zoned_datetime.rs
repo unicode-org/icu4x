@@ -489,7 +489,7 @@ impl ZonedDateTimeFormatter {
 
     /// Converts a date to the correct calendar if necessary
     ///
-    /// Returns Err if the date is not ISO or compatible with the current calendar, returns Ok(None)
+    /// Returns `Err` if the date is not ISO or compatible with the current calendar, returns `Ok(None)`
     /// if the date is compatible with the current calendar and doesn't need conversion
     fn convert_if_necessary(
         &self,

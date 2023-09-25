@@ -138,11 +138,8 @@ impl DateTimeFormatter {
     /// );
     /// let locale = locale!("en-u-ca-gregory");
     ///
-    /// let dtf = DateTimeFormatter::try_new(
-    ///     &locale.into(),
-    ///     options.into(),
-    /// )
-    /// .expect("Failed to create TypedDateTimeFormatter instance.");
+    /// let dtf = DateTimeFormatter::try_new(&locale.into(), options.into())
+    ///     .expect("Failed to create TypedDateTimeFormatter instance.");
     ///
     /// let datetime = DateTime::try_new_iso_datetime(2020, 9, 1, 12, 34, 28)
     ///     .expect("Failed to construct DateTime.");
@@ -437,11 +434,8 @@ impl DateTimeFormatter {
     /// let length = length::Date::Medium;
     /// let locale = locale!("en-u-ca-gregory");
     ///
-    /// let df = DateFormatter::try_new_with_length(
-    ///     &locale.into(),
-    ///     length,
-    /// )
-    /// .expect("Failed to create TypedDateFormatter instance.");
+    /// let df = DateFormatter::try_new_with_length(&locale.into(), length)
+    ///     .expect("Failed to create TypedDateFormatter instance.");
     ///
     /// let tf = TimeFormatter::try_new_with_length(
     ///     &locale!("en").into(),
@@ -523,11 +517,9 @@ where {
     ///
     /// let options = length::Bag::from_date_style(length::Date::Medium).into();
     ///
-    /// let dtf = DateTimeFormatter::try_new(
-    ///     &locale!("en-u-ca-gregory").into(),
-    ///     options,
-    /// )
-    /// .expect("Failed to create TypedDateTimeFormatter instance.");
+    /// let dtf =
+    ///     DateTimeFormatter::try_new(&locale!("en-u-ca-gregory").into(), options)
+    ///         .expect("Failed to create TypedDateTimeFormatter instance.");
     ///
     /// let mut expected_components_bag = components::Bag::default();
     /// expected_components_bag.year = Some(components::Year::Numeric);
@@ -543,7 +535,7 @@ where {
 
     /// Converts a date to the correct calendar if necessary
     ///
-    /// Returns Err if the date is not ISO or compatible with the current calendar, returns Ok(None)
+    /// Returns `Err` if the date is not ISO or compatible with the current calendar, returns `Ok(None)`
     /// if the date is compatible with the current calendar and doesn't need conversion
     fn convert_if_necessary<'a>(
         &'a self,

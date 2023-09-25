@@ -12,8 +12,9 @@
 //!     .expect("Failed to initialize Persian Date instance.");
 //!
 //! // `DateTime` type
-//! let persian_datetime = DateTime::try_new_persian_datetime(1348, 10, 11, 13, 1, 0)
-//!     .expect("Failed to initialize Persian DateTime instance.");
+//! let persian_datetime =
+//!     DateTime::try_new_persian_datetime(1348, 10, 11, 13, 1, 0)
+//!         .expect("Failed to initialize Persian DateTime instance.");
 //!
 //! // `Date` checks
 //! assert_eq!(persian_date.year().number, 1348);
@@ -31,11 +32,11 @@
 
 use crate::any_calendar::AnyCalendarKind;
 use crate::calendar_arithmetic::{ArithmeticDate, CalendarArithmetic};
-use crate::helpers::{div_rem_euclid64, I32CastError};
 use crate::iso::Iso;
-use crate::rata_die::RataDie;
 use crate::{types, Calendar, CalendarError, Date, DateDuration, DateDurationUnit, DateTime};
 use ::tinystr::tinystr;
+use calendrical_calculations::helpers::I32CastError;
+use calendrical_calculations::rata_die::RataDie;
 
 /// The Persian Calendar
 ///
@@ -84,10 +85,9 @@ impl CalendarArithmetic for Persian {
         } else {
             p_year -= 473;
         };
-        let d = div_rem_euclid64(p_year, 2820);
-        let year = d.1 + 474;
+        let year = p_year.rem_euclid(2820) + 474;
 
-        div_rem_euclid64((year + 38) * 31, 128).1 < 31
+        ((year + 38) * 31).rem_euclid(128) < 31
     }
 
     fn days_in_provided_year(year: i32) -> u16 {
@@ -266,8 +266,9 @@ impl DateTime<Persian> {
     /// ```rust
     /// use icu::calendar::DateTime;
     ///
-    /// let datetime_persian = DateTime::try_new_persian_datetime(474, 10, 11, 13, 1, 0)
-    ///     .expect("Failed to initialize Persian DateTime instance.");
+    /// let datetime_persian =
+    ///     DateTime::try_new_persian_datetime(474, 10, 11, 13, 1, 0)
+    ///         .expect("Failed to initialize Persian DateTime instance.");
     ///
     /// assert_eq!(datetime_persian.date.year().number, 474);
     /// assert_eq!(datetime_persian.date.month().ordinal, 10);
@@ -294,7 +295,6 @@ impl DateTime<Persian> {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::Gregorian;
     #[derive(Debug)]
     struct DateCase {
         year: i32,
@@ -476,21 +476,6 @@ mod tests {
         },
     ];
 
-    // Persian New Year occurring in March of Gregorian year (g_year) to fixed date
-    fn nowruz(g_year: i32) -> RataDie {
-        let iso_from_fixed: Date<Iso> = Iso::iso_from_fixed(RataDie::new(
-            calendrical_calculations::persian::FIXED_PERSIAN_EPOCH.to_i64_date(),
-        ));
-        let greg_date_from_fixed: Date<Gregorian> = Date::new_from_iso(iso_from_fixed, Gregorian);
-        let persian_year = g_year - greg_date_from_fixed.year().number + 1;
-        let year = if persian_year <= 0 {
-            persian_year - 1
-        } else {
-            persian_year
-        };
-        calendrical_calculations::persian::fixed_from_arithmetic_persian(year, 1, 1)
-    }
-
     fn days_in_provided_year_core(year: i32) -> u16 {
         let fixed_year =
             calendrical_calculations::persian::fixed_from_arithmetic_persian(year, 1, 1)
@@ -562,41 +547,6 @@ mod tests {
                 Persian::arithmetic_persian_from_fixed(RataDie::new(*f_date)),
                 date.inner,
                 "{case:?}"
-            );
-        }
-    }
-    #[test]
-    fn test_persian_epoch() {
-        let epoch = calendrical_calculations::persian::FIXED_PERSIAN_EPOCH.to_i64_date();
-        // Iso year of Persian Epoch
-        let epoch_year_from_fixed = Iso::iso_from_fixed(RataDie::new(epoch)).inner.0.year;
-        // 622 is the correct ISO year for the Persian Epoch
-        assert_eq!(epoch_year_from_fixed, 622);
-    }
-
-    #[test]
-    fn test_nowruz() {
-        let fixed_date = nowruz(622).to_i64_date();
-        assert_eq!(
-            fixed_date,
-            calendrical_calculations::persian::FIXED_PERSIAN_EPOCH.to_i64_date()
-        );
-        // These values are used as test data in appendix C of the "Calendrical Calculations" book
-        let nowruz_test_year_start = 2000;
-        let nowruz_test_year_end = 2103;
-
-        for year in nowruz_test_year_start..=nowruz_test_year_end {
-            let two_thousand_eight_to_fixed = nowruz(year).to_i64_date();
-            let iso_date = Date::try_new_iso_date(year, 3, 21).unwrap();
-            let persian_year =
-                Persian::arithmetic_persian_from_fixed(Iso::fixed_from_iso(iso_date.inner))
-                    .0
-                    .year;
-            assert_eq!(
-                Persian::arithmetic_persian_from_fixed(RataDie::new(two_thousand_eight_to_fixed))
-                    .0
-                    .year,
-                persian_year
             );
         }
     }

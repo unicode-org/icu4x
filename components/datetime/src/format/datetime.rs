@@ -17,7 +17,8 @@ use crate::provider::date_time::{DateSymbols, TimeSymbols};
 
 use core::fmt;
 use fixed_decimal::FixedDecimal;
-use icu_calendar::provider::WeekDataV1;
+use icu_calendar::week::WeekCalculator;
+use icu_calendar::AnyCalendarKind;
 use icu_decimal::FixedDecimalFormatter;
 use icu_plurals::PluralRules;
 use icu_provider::DataPayload;
@@ -55,7 +56,7 @@ pub struct FormattedDateTime<'l> {
     pub(crate) date_symbols: Option<&'l provider::calendar::DateSymbolsV1<'l>>,
     pub(crate) time_symbols: Option<&'l provider::calendar::TimeSymbolsV1<'l>>,
     pub(crate) datetime: ExtractedDateTimeInput,
-    pub(crate) week_data: Option<&'l WeekDataV1>,
+    pub(crate) week_data: Option<&'l WeekCalculator>,
     pub(crate) ordinal_rules: Option<&'l PluralRules>,
     pub(crate) fixed_decimal_format: &'l FixedDecimalFormatter,
 }
@@ -160,7 +161,7 @@ pub fn write_pattern_plurals<T, W>(
     date_symbols: Option<&provider::calendar::DateSymbolsV1>,
     time_symbols: Option<&provider::calendar::TimeSymbolsV1>,
     datetime: &T,
-    week_data: Option<&WeekDataV1>,
+    week_data: Option<&WeekCalculator>,
     ordinal_rules: Option<&PluralRules>,
     fixed_decimal_format: &FixedDecimalFormatter,
     w: &mut W,
@@ -169,7 +170,7 @@ where
     T: DateTimeInput,
     W: fmt::Write + ?Sized,
 {
-    let loc_datetime = DateTimeInputWithWeekConfig::new(datetime, week_data.map(|v| v.into()));
+    let loc_datetime = DateTimeInputWithWeekConfig::new(datetime, week_data);
     let pattern = patterns.select(&loc_datetime, ordinal_rules)?;
     write_pattern(
         pattern,
@@ -181,6 +182,24 @@ where
     )
 }
 
+const CHINESE_CYCLIC_YEARS: [&str; 60] = [
+    "甲子", "乙丑", "丙寅", "丁卯", "戊辰", "己巳", "庚午", "辛未", "壬申", "癸酉", "甲戌", "乙亥",
+    "丙子", "丁丑", "戊寅", "己卯", "庚辰", "辛巳", "壬午", "癸未", "甲申", "乙酉", "丙戌", "丁亥",
+    "戊子", "己丑", "庚寅", "辛卯", "壬辰", "癸巳", "甲午", "乙未", "丙申", "丁酉", "戊戌", "己亥",
+    "庚子", "辛丑", "壬寅", "癸卯", "甲辰", "乙巳", "丙午", "丁未", "戊申", "己酉", "庚戌", "辛亥",
+    "壬子", "癸丑", "甲寅", "乙卯", "丙辰", "丁巳", "戊午", "己未", "庚申", "辛酉", "壬戌", "癸亥",
+];
+const DANGI_CYCLIC_YEARS: [&str; 60] = [
+    "갑자", "을축", "병인", "정묘", "무진", "기사", "경오", "신미", "임신", "계유", "갑술", "을해",
+    "병자", "정축", "무인", "기묘", "경진", "신사", "임오", "계미", "갑신", "을유", "병술", "정해",
+    "무자", "기축", "경인", "신묘", "임진", "계사", "갑오", "을미", "병신", "정유", "무술", "기해",
+    "경자", "신축", "임인", "계묘", "갑진", "을사", "병오", "정미", "무신", "기유", "경술", "신해",
+    "임자", "계축", "갑인", "을묘", "병진", "정사", "무오", "기미", "경신", "신유", "임술", "계해",
+];
+
+const CHINESE_LEAP_PREFIX: &str = "閏";
+const DANGI_LEAP_PREFIX: &str = "윤";
+const PLACEHOLDER_LEAP_PREFIX: &str = "(leap)";
 // This function assumes that the correct decision has been
 // made regarding availability of symbols in the caller.
 //
@@ -233,21 +252,24 @@ where
                 field.length,
             )?,
             Year::Cyclic => {
-                w.write_str("(cyclic year: ")?; // TODO(#3761): Add data for cyclic year names
-                format_number(
-                    w,
-                    fixed_decimal_format,
-                    FixedDecimal::from(
-                        datetime
-                            .datetime()
-                            .year()
-                            .ok_or(Error::MissingInputField(Some("year")))?
-                            .cyclic
-                            .ok_or(Error::MissingInputField(Some("cyclic")))?,
-                    ),
-                    field.length,
+                let datetime = datetime.datetime();
+                let cyclic = datetime
+                    .year()
+                    .ok_or(Error::MissingInputField(Some("year")))?
+                    .cyclic
+                    .ok_or(Error::MissingInputField(Some("cyclic")))?;
+                // TODO(#3761): This is a hack, we should use actual data for cyclic years
+                let cyclics = match datetime.any_calendar_kind() {
+                    Some(AnyCalendarKind::Dangi) => &DANGI_CYCLIC_YEARS,
+                    _ => &CHINESE_CYCLIC_YEARS, /* for now assume all other calendars use the stem-branch model */
+                };
+                let cyclic_str = cyclics.get(usize::from(cyclic.get()) - 1).ok_or(
+                    icu_calendar::CalendarError::Overflow {
+                        field: "cyclic",
+                        max: 60,
+                    },
                 )?;
-                w.write_char(')')?;
+                w.write_str(cyclic_str)?;
             }
             Year::RelatedIso => {
                 format_number(
@@ -279,8 +301,8 @@ where
                 field.length,
             )?,
             length => {
+                let datetime = datetime.datetime();
                 let code = datetime
-                    .datetime()
                     .month()
                     .ok_or(Error::MissingInputField(Some("month")))?
                     .code;
@@ -299,8 +321,15 @@ where
                     let symbols = date_symbols
                         .ok_or(Error::MissingDateSymbols)?
                         .get_symbols_for_month(month, length)?;
-                    w.write_str(symbols.get(code).ok_or(Error::MissingMonthSymbol(code))?)?;
-                    w.write_str("(leap)")?; // This is temporary; TODO(#3766) add support for leap months
+                    let symbol = symbols.get(code).ok_or(Error::MissingMonthSymbol(code))?;
+                    // FIXME (#3766) this should be using actual data for leap months
+                    let leap_str = match datetime.any_calendar_kind() {
+                        Some(AnyCalendarKind::Chinese) => CHINESE_LEAP_PREFIX,
+                        Some(AnyCalendarKind::Dangi) => DANGI_LEAP_PREFIX,
+                        _ => PLACEHOLDER_LEAP_PREFIX,
+                    };
+                    w.write_str(leap_str)?;
+                    w.write_str(symbol)?;
                 }
             }
         },

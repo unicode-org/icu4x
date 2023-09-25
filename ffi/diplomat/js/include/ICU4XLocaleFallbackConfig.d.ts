@@ -1,4 +1,5 @@
 import { ICU4XLocaleFallbackPriority } from "./ICU4XLocaleFallbackPriority";
+import { ICU4XLocaleFallbackSupplement } from "./ICU4XLocaleFallbackSupplement";
 
 /**
 
@@ -9,4 +10,5 @@ import { ICU4XLocaleFallbackPriority } from "./ICU4XLocaleFallbackPriority";
 export class ICU4XLocaleFallbackConfig {
   priority: ICU4XLocaleFallbackPriority;
   extension_key: string;
+  fallback_supplement: ICU4XLocaleFallbackSupplement;
 }
