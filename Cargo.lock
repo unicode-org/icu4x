@@ -1977,7 +1977,6 @@ version = "0.0.0"
 dependencies = [
  "databake",
  "displaydoc",
- "fixed_decimal",
  "fraction",
  "icu_locid",
  "icu_provider",
