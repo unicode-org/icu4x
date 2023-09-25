@@ -1977,14 +1977,10 @@ version = "0.0.0"
 dependencies = [
  "databake",
  "displaydoc",
- "fraction",
  "icu_locid",
  "icu_provider",
  "icu_unitsconversion_data",
- "num-bigint",
- "num-traits",
  "serde",
- "tinystr",
  "zerovec",
 ]
 

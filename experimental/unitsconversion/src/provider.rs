@@ -9,7 +9,7 @@
 //!
 //! Read more about data providers: [`icu_provider`]
 
-use icu_provider::prelude::*;
+use icu_provider::{yoke, zerofrom};
 use zerovec::{ZeroMap, ZeroVec};
 
 /// This type encapsulates all the constant data required for unit conversions.
