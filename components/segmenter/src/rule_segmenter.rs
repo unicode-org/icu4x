@@ -167,7 +167,7 @@ impl<'l, 's, Y: RuleBreakType<'l, 's> + ?Sized> Iterator for RuleBreakIterator<'
                     let previous_break_state = break_state;
                     break_state = self.get_break_state_from_table(break_state as u8, prop);
                     println!("> left={:02X} right={:02X} state={:02X}", previous_break_state, prop, break_state);
-                    println!("> left={} right={}", STATE_NAMES[previous_break_state as usize], STATE_NAMES[prop as usize]);
+                    println!("> left={} right={}", STATE_NAMES[(previous_break_state & !INTERMEDIATE_MATCH_RULE) as usize], STATE_NAMES[prop as usize]);
                     if break_state < 0 {
                         break;
                     }
