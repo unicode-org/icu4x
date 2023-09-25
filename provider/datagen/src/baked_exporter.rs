@@ -44,30 +44,30 @@
 //! use icu_locid::langid;
 //! use icu_provider::hello_world::*;
 //!
+//! # macro_rules! include {
+//! #   ($path:literal) => {}
+//! # }
+//! # macro_rules! impl_data_provider {
+//! #   ($p:ty) => {
+//! #     use icu_provider::prelude::*;
+//! #     use icu_provider::hello_world::*;
+//! #     impl DataProvider<HelloWorldV1Marker> for $p {
+//! #       fn load(&self, req: DataRequest) -> Result<DataResponse<HelloWorldV1Marker>, DataError> {
+//! #         HelloWorldProvider.load(req)
+//! #       }
+//! #     }
+//! #   }
+//! # }
+//! include!("/tmp/icu4x_baked_demo/mod.rs");
+//!
 //! pub struct MyDataProvider;
+//! impl_data_provider!(MyDataProvider);
 //!
-//! const _: () = {
-//!     # macro_rules! include {
-//!     #   ($path:literal) => {}
-//!     # }
-//!     # macro_rules! impl_data_provider {
-//!     #   ($p:ty) => {
-//!     #     use icu_provider::prelude::*;
-//!     #     use icu_provider::hello_world::*;
-//!     #     impl DataProvider<HelloWorldV1Marker> for $p {
-//!     #       fn load(&self, req: DataRequest) -> Result<DataResponse<HelloWorldV1Marker>, DataError> {
-//!     #         HelloWorldProvider.load(req)
-//!     #       }
-//!     #     }
-//!     #   }
-//!     # }
-//!     include!("/tmp/icu4x_baked_demo/mod.rs");
-//!     impl_data_provider!(MyDataProvider);
-//! };
-//!
+//! # fn main() {
 //! let formatter = HelloWorldFormatter::try_new_unstable(&MyDataProvider, &langid!("en").into()).unwrap();
 //!
 //! assert_eq!(formatter.format_to_string(), "Hello World");
+//! # }
 //! ```
 //!
 //! ## `compiled_data`

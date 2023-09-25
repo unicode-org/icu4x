@@ -64,7 +64,6 @@ icu_provider_adapters = { path = "../../provider/adapters" }
 icu_provider_blob = { path = "../../provider/blob" }
 icu_provider_fs = { path = "../../provider/fs/" }
 icu_provider_macros = { path = "../../provider/macros" }
-icu_testdata = { path = "testing/legacy_testdata" }
 
 crlify = { path = "../../utils/crlify" }
 databake = { path = "../../utils/databake" }

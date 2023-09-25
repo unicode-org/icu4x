@@ -1170,21 +1170,6 @@ name = "icu_segmenter_data"
 version = "1.3.0"
 
 [[package]]
-name = "icu_testdata"
-version = "1.3.0"
-dependencies = [
- "icu_calendar",
- "icu_datetime",
- "icu_decimal",
- "icu_displaynames",
- "icu_list",
- "icu_locid_transform",
- "icu_plurals",
- "icu_provider",
- "zerovec",
-]
-
-[[package]]
 name = "icu_timezone"
 version = "1.3.0"
 dependencies = [
@@ -2221,29 +2206,31 @@ dependencies = [
 ]
 
 [[package]]
+name = "tutorial_custom_compiled"
+version = "0.0.0"
+dependencies = [
+ "icu",
+]
+
+[[package]]
+name = "tutorial_default"
+version = "0.0.0"
+dependencies = [
+ "icu",
+]
+
+[[package]]
 name = "tutorial_experimental"
 version = "0.0.0"
 dependencies = [
  "icu",
- "icu_testdata",
 ]
 
 [[package]]
-name = "tutorial_lazy_static"
+name = "tutorial_sync"
 version = "0.0.0"
 dependencies = [
  "icu",
- "icu_provider",
- "icu_testdata",
- "lazy_static",
-]
-
-[[package]]
-name = "tutorial_testdata"
-version = "0.0.0"
-dependencies = [
- "icu",
- "icu_testdata",
 ]
 
 [[package]]
@@ -2258,7 +2245,6 @@ dependencies = [
  "icu_provider_adapters",
  "icu_provider_blob",
  "icu_provider_fs",
- "icu_testdata",
  "itertools",
  "litemap",
  "lru",
