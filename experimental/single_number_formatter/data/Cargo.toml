@@ -5,7 +5,6 @@
 [package]
 name = "icu_singlenumberformatter_data"
 description = "Data for the icu_singlenumberformatter crate"
-publish = false
 license-file = "LICENSE"
 
 authors.workspace = true

@@ -14,6 +14,27 @@ use icu_provider::{yoke, zerofrom};
 use tinystr::UnvalidatedTinyAsciiStr;
 use zerovec::{VarZeroVec, ZeroMap};
 
+#[cfg(feature = "compiled_data")]
+#[derive(Debug)]
+/// Baked data
+///
+/// <div class="stab unstable">
+/// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
+/// including in SemVer minor releases. In particular, the `DataProvider` implementations are only
+/// guaranteed to match with this version's `*_unstable` providers. Use with caution.
+/// </div>
+pub struct Baked;
+
+#[cfg(feature = "compiled_data")]
+const _: () = {
+    pub mod icu {
+        pub use crate as singlenumberformatter;
+        pub use icu_locid_transform as locid_transform;
+    }
+    icu_singlenumberformatter_data::make_provider!(Baked);
+    icu_singlenumberformatter_data::impl_currency_essentials_v1!(Baked);
+};
+
 /// This type contains all of the essential data for currency formatting.
 ///
 /// <div class="stab unstable">
