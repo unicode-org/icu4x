@@ -70,7 +70,8 @@ pub enum Sign {
     Negative = 1,
 }
 
-/// This struct represents a constant value, which is composed of a numerator, denominator, sign, and type.
+// TODO(#4098): Improve the ULE representation. Consider using a single byte for sign and type representation.
+/// This struct encapsulates a constant value, comprising a numerator, denominator, sign, and type.
 #[zerovec::make_varule(ConstantValueULE)]
 #[derive(Clone, Debug, PartialOrd, Ord, PartialEq, Eq, Default)]
 #[cfg_attr(
@@ -104,5 +105,5 @@ pub struct ConstantValue<'data> {
     pub sign: Sign,
 
     /// Determines whether the constant value is actual or approximate.
-    pub constant_type: ConstantExactness,
+    pub constant_exactness: ConstantExactness,
 }

@@ -113,27 +113,32 @@ impl DataProvider<UnitsConstantsV1Marker> for crate::DatagenProvider {
             }
         }
 
-        let mut constants_map = BTreeMap::<&str, ConstantValue>::new();
-
-        for (cons_name, (num, den, constant_type)) in constants_map_in_str_form.iter() {
-            let value = convert_slices_to_fraction(num, den)?;
-            let (num, den, sign, cons_type) =
-                transform_fraction_to_constant_value(value, *constant_type)?;
-            constants_map.insert(
-                cons_name,
-                ConstantValue {
-                    numerator: ZeroVec::from_iter(num),
-                    denominator: ZeroVec::from_iter(den),
-                    sign,
-                    constant_type: cons_type,
-                },
-            );
-        }
         let constants_map = ZeroMap::from_iter(
-            constants_map
+            constants_map_in_str_form
                 .into_iter()
-                .map(|(k, v)| (k, zerovec::ule::encode_varule_to_box(&v))),
+                .map(|(cons_name, (num, den, constant_type))| {
+                    let value = match convert_slices_to_fraction(&num, &den) {
+                        Ok(value) => value,
+                        Err(e) => return Err(e),
+                    };
+                    let (num, den, sign, cons_type) =
+                        match transform_fraction_to_constant_value(value, constant_type) {
+                            Ok(value) => value,
+                            Err(e) => return Err(e),
+                        };
+                    Ok((
+                        cons_name,
+                        zerovec::ule::encode_varule_to_box(&ConstantValue {
+                            numerator: ZeroVec::from_iter(num),
+                            denominator: ZeroVec::from_iter(den),
+                            sign,
+                            constant_exactness: cons_type,
+                        }),
+                    ))
+                })
+                .collect::<Result<Vec<_>, _>>()?,
         );
+
         let result = UnitsConstantsV1 { constants_map };
 
         Ok(DataResponse {
@@ -179,7 +184,7 @@ fn test_basic() {
             numerator: expected_ft_to_m.numer().unwrap().to_le_bytes().into(),
             denominator: expected_ft_to_m.denom().unwrap().to_le_bytes().into(),
             sign: Sign::Positive,
-            constant_type: ConstantExactness::Actual,
+            constant_exactness: ConstantExactness::Actual,
         })
         .as_ref()
     );
@@ -196,7 +201,7 @@ fn test_basic() {
             numerator: expected_ft2_to_m2.numer().unwrap().to_le_bytes().into(),
             denominator: expected_ft2_to_m2.denom().unwrap().to_le_bytes().into(),
             sign: Sign::Positive,
-            constant_type: ConstantExactness::Actual,
+            constant_exactness: ConstantExactness::Actual,
         })
         .as_ref()
     );
@@ -213,7 +218,7 @@ fn test_basic() {
             numerator: expected_ft3_to_m3.numer().unwrap().to_le_bytes().into(),
             denominator: expected_ft3_to_m3.denom().unwrap().to_le_bytes().into(),
             sign: Sign::Positive,
-            constant_type: ConstantExactness::Actual,
+            constant_exactness: ConstantExactness::Actual,
         })
         .as_ref()
     );
