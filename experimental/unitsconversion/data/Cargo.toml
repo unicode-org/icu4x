@@ -5,7 +5,6 @@
 [package]
 name = "icu_unitsconversion_data"
 description = "Data for the icu_unitsconversion crate"
-publish = false
 license-file = "LICENSE"
 
 rust-version.workspace = true
