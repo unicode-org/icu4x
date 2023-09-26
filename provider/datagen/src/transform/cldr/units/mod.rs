@@ -45,9 +45,9 @@ impl DataProvider<UnitsConstantsV1Marker> for crate::DatagenProvider {
         }
 
         // This loop iterates over the constants, replacing any string values with their corresponding constant values.
-        let mut num_of_const_with_text;
+        let mut has_internal_constants;
         loop {
-            num_of_const_with_text = false;
+            has_internal_constants = false;
             let mut constants_with_constants_map_replaceable =
                 BTreeMap::<&str, (Vec<String>, Vec<String>, ConstantExactness)>::new();
             for (cons_name, (num, den, constant_type)) in constants_map_in_str_form.iter() {
@@ -62,7 +62,7 @@ impl DataProvider<UnitsConstantsV1Marker> for crate::DatagenProvider {
                         continue;
                     }
 
-                    num_of_const_with_text = true;
+                    has_internal_constants = true;
                     if let Some((rnum, rden, rconstant_type)) =
                         constants_map_in_str_form.get(temp_num[i].as_str())
                     {
@@ -84,7 +84,7 @@ impl DataProvider<UnitsConstantsV1Marker> for crate::DatagenProvider {
                         continue;
                     }
 
-                    num_of_const_with_text = true;
+                    has_internal_constants = true;
                     if let Some((rnum, rden, rconstant_type)) =
                         constants_map_in_str_form.get(temp_den[i].as_str())
                     {
@@ -105,7 +105,7 @@ impl DataProvider<UnitsConstantsV1Marker> for crate::DatagenProvider {
 
             constants_map_in_str_form = constants_with_constants_map_replaceable;
 
-            if !num_of_const_with_text {
+            if !has_internal_constants {
                 break;
             }
         }
