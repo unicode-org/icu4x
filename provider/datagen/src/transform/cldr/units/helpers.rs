@@ -240,11 +240,11 @@ fn test_convert_array_of_strings_to_fraction() {
 /// - "1 * 2 / 3 * ft_to_m" is split into (["1", "2"], ["3" , "ft_to_m"])
 /// - "/2" is split into (["1"], ["2"])
 /// - "2" is split into (["2"], ["1"])
+/// - "1E2" is split into (["1E2"], ["1"])
+/// - "1 2 * 3" is an invalid constant string
 pub fn convert_constant_to_num_denom_strings(
     constant_string: &str,
 ) -> Result<(Vec<String>, Vec<String>), DataError> {
-    let constant_string = remove_whitespace(constant_string);
-
     let mut split = constant_string.split('/');
     if split.clone().count() > 2 {
         return Err(DataError::custom("Invalid constant string"));
@@ -253,10 +253,20 @@ pub fn convert_constant_to_num_denom_strings(
     let numerator_string = split.next().unwrap_or("1");
     let denominator_string = split.next().unwrap_or("1");
 
+    let mut has_whitespace_within = false;
     let numerator_values = if numerator_string.is_empty() {
         vec!["1".to_string()]
     } else {
-        numerator_string.split('*').map(|s| s.to_string()).collect()
+        numerator_string
+            .split('*')
+            .map(|s| {
+                let s = s.trim();
+                if s.chars().any(char::is_whitespace) {
+                    has_whitespace_within = true;
+                }
+                s.to_string()
+            })
+            .collect()
     };
 
     let denominator_values = if denominator_string.is_empty() {
@@ -264,9 +274,21 @@ pub fn convert_constant_to_num_denom_strings(
     } else {
         denominator_string
             .split('*')
-            .map(|s| s.to_string())
-            .collect()
+            .map(|s| {
+                let s = s.trim();
+                if s.chars().any(char::is_whitespace) {
+                    has_whitespace_within = true;
+                }
+                s.to_string()
+            })
+            .collect::<Vec<String>>()
     };
+
+    if has_whitespace_within {
+        return Err(DataError::custom(
+            "The constant string contains internal white spaces",
+        ));
+    }
 
     Ok((numerator_values, denominator_values))
 }
@@ -295,4 +317,13 @@ fn test_split_constant_string() {
     let expected = (vec!["2".to_string()], vec!["1".to_string()]);
     let actual = convert_constant_to_num_denom_strings(input).unwrap();
     assert_eq!(expected, actual);
+
+    let input = "1E2";
+    let expected = (vec!["1E2".to_string()], vec!["1".to_string()]);
+    let actual = convert_constant_to_num_denom_strings(input).unwrap();
+    assert_eq!(expected, actual);
+
+    let input = "1 2 * 3";
+    let actual = convert_constant_to_num_denom_strings(input);
+    assert!(actual.is_err());
 }
