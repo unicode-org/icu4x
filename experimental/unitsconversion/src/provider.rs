@@ -39,7 +39,7 @@ pub struct UnitsConstantsV1<'data> {
 /// This enum is used to represent the type of a constant value.
 /// It can be either `ConstantType::Actual` or `ConstantType::Approximate`.
 /// If the constant type is `ConstantType::Approximate`, it indicates that the value is not numerically accurate.
-#[zerovec::make_ule(ConstantTypeULE)]
+#[zerovec::make_ule(ConstantExactnessULE)]
 #[cfg_attr(
     feature = "datagen",
     derive(serde::Serialize, databake::Bake),
@@ -91,18 +91,18 @@ pub enum Sign {
 #[zerovec::derive(Debug)]
 pub struct ConstantValue<'data> {
     // TODO(https://github.com/unicode-org/icu4x/issues/4092).
-    /// The numerator of the constant value.
+    /// The numerator of the constant value in bytes starting with the least significant byte.
     #[cfg_attr(feature = "serde", serde(borrow))]
     pub numerator: ZeroVec<'data, u8>,
 
     // TODO(https://github.com/unicode-org/icu4x/issues/4092).
-    /// The denominator of the constant value.
+    /// The denominator of the constant value in bytes starting with the least significant byte.
     #[cfg_attr(feature = "serde", serde(borrow))]
     pub denominator: ZeroVec<'data, u8>,
 
-    /// The sign of the constant value.
+    /// Determines whether the constant value is positive or negative.
     pub sign: Sign,
 
-    /// The type of the constant value.
+    /// Determines whether the constant value is actual or approximate.
     pub constant_type: ConstantExactness,
 }
