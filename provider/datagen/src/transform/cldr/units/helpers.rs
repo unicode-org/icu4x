@@ -244,8 +244,6 @@ pub fn convert_constant_to_num_denom_strings(
     constant_string: &str,
 ) -> Result<(Vec<String>, Vec<String>), DataError> {
     let constant_string = remove_whitespace(constant_string);
-    let mut numerator = Vec::<String>::new();
-    let mut denominator = Vec::<String>::new();
 
     let mut split = constant_string.split('/');
     if split.clone().count() > 2 {
@@ -270,10 +268,7 @@ pub fn convert_constant_to_num_denom_strings(
             .collect()
     };
 
-    numerator.extend(numerator_values);
-    denominator.extend(denominator_values);
-
-    Ok((numerator, denominator))
+    Ok((numerator_values, denominator_values))
 }
 // TODO: move this to the comment above.
 #[test]
