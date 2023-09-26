@@ -5,8 +5,6 @@
 //! The collection of code that is needed for handling formatting operations for DateTimes.
 //! Central to this is the [`DateTimeFormatter`].
 
-#[cfg(feature = "experimental")]
-use crate::options::components;
 use crate::{
     format::datetime,
     input::{DateInput, DateTimeInput, ExtractedDateTimeInput, IsoTimeInput},
@@ -526,10 +524,10 @@ impl DateTimeFormatter {
         }
     }
 
-    /// Returns a [`components::Bag`] that represents the resolved components for the
+    /// Returns a [`components::Bag`](crate::options::components::Bag) that represents the resolved components for the
     /// options that were provided to the [`DateTimeFormatter`].
     #[cfg(feature = "experimental")]
-    pub fn resolve_components(&self) -> components::Bag {
-        components::Bag::from(&self.patterns.get().0)
+    pub fn resolve_components(&self) -> crate::options::components::Bag {
+        crate::options::components::Bag::from(&self.patterns.get().0)
     }
 }

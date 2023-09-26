@@ -127,9 +127,16 @@ impl ZonedDateTimeFormatter {
     /// This method will pick the calendar off of the locale; and if unspecified or unknown will fall back to the default
     /// calendar for the locale. See [`AnyCalendarKind`] for a list of supported calendars.
     ///
-    /// ✨ *Enabled with the `compiled_data` Cargo feature.*
+    /// ✨ *Enabled with the `compiled_data` and `experimental` Cargo features.*
     ///
     /// [📚 Help choosing a constructor](icu_provider::constructors)
+    ///
+    /// <div class="stab unstable">
+    /// 🚧 This code is experimental; it may change at any time, in breaking or non-breaking ways,
+    /// including in SemVer minor releases. It can be enabled with the "experimental" Cargo feature
+    /// of the icu meta-crate. Use with caution.
+    /// <a href="https://github.com/unicode-org/icu4x/issues/1317">#1317</a>
+    /// </div>
     ///
     /// # Examples
     ///
