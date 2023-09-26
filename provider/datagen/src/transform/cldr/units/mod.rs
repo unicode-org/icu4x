@@ -68,8 +68,8 @@ impl DataProvider<UnitsConstantsV1Marker> for crate::DatagenProvider {
                     {
                         temp_num.remove(i);
                         // append the elements in rnum to num and rden to den
-                        temp_num.append(&mut rnum.clone());
-                        temp_den.append(&mut rden.clone());
+                        temp_num.extend(rnum.clone().into_iter());
+                        temp_den.extend(rden.clone().into_iter());
 
                         if *rconstant_type == ConstantExactness::Approximate {
                             temp_constant_type = ConstantExactness::Approximate;
@@ -90,8 +90,8 @@ impl DataProvider<UnitsConstantsV1Marker> for crate::DatagenProvider {
                     {
                         temp_den.remove(i);
                         // append the elements in rnum to den and rden to num
-                        temp_num.append(&mut rden.clone());
-                        temp_den.append(&mut rnum.clone());
+                        temp_num.extend(rden.clone().into_iter());
+                        temp_den.extend(rnum.clone().into_iter());
 
                         if *rconstant_type == ConstantExactness::Approximate {
                             temp_constant_type = ConstantExactness::Approximate;
@@ -103,7 +103,6 @@ impl DataProvider<UnitsConstantsV1Marker> for crate::DatagenProvider {
                     .insert(cons_name, (temp_num, temp_den, temp_constant_type));
             }
 
-            constants_map_in_str_form.clear();
             constants_map_in_str_form = constants_with_constants_map_replaceable;
 
             if num_of_const_with_text == false {
