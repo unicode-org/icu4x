@@ -181,10 +181,6 @@ macro_rules! gen_any_buffer_data_constructors {
     (locale: skip, options: skip, result: $result_ty:path, $(#[$doc:meta])+ functions: [$baked:ident, $any:ident, $buffer:ident, $unstable:ident $(, $struct:ident)? $(,)?]) => {
         #[cfg(feature = "compiled_data")]
         $(#[$doc])+
-        ///
-        /// ✨ *Enabled with the `compiled_data` Cargo feature.*
-        ///
-        /// [📚 Help choosing a constructor](icu_provider::constructors)
         pub fn $baked() -> $result_ty {
             $($struct :: )? $unstable(&crate::provider::Baked)
         }
