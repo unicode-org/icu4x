@@ -154,7 +154,6 @@ fn test_basic() {
     use icu_unitsconversion::provider::*;
     use num_bigint::BigUint;
     use num_traits::ToBytes;
-    use std::ops::Mul;
 
     let provider = crate::DatagenProvider::new_testing();
 
@@ -184,8 +183,8 @@ fn test_basic() {
 
     let ft2_to_m2 = constants.get("ft2_to_m2").unwrap();
     let expected_ft2_to_m2 = GenericFraction::<BigUint>::new(
-        BigUint::from(3048u32).mul(&BigUint::from(3048u32)),
-        BigUint::from(10000u32).mul(&BigUint::from(10000u32)),
+        BigUint::from(3048u32).pow(2),
+        BigUint::from(10000u32).pow(2),
     );
 
     assert_eq!(
@@ -201,12 +200,8 @@ fn test_basic() {
 
     let ft3_to_m3 = constants.get("ft3_to_m3").unwrap();
     let expected_ft3_to_m3 = GenericFraction::<BigUint>::new(
-        BigUint::from(3048u32)
-            .mul(&BigUint::from(3048u32))
-            .mul(&BigUint::from(3048u32)),
-        BigUint::from(10000u32)
-            .mul(&BigUint::from(10000u32))
-            .mul(&BigUint::from(10000u32)),
+        BigUint::from(3048u32).pow(3),
+        BigUint::from(10000u32).pow(3),
     );
 
     assert_eq!(
