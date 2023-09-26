@@ -105,7 +105,7 @@ impl DataProvider<UnitsConstantsV1Marker> for crate::DatagenProvider {
 
             constants_map_in_str_form = constants_with_constants_map_replaceable;
 
-            if num_of_const_with_text == false {
+            if !num_of_const_with_text {
                 break;
             }
         }
