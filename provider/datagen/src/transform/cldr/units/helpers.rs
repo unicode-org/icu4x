@@ -145,7 +145,7 @@ pub fn is_scientific_number(s: &str) -> bool {
 /// Transforms a fractional number into a constant value.
 pub fn transform_fraction_to_constant_value(
     fraction: BigRational,
-    constant_type: ConstantExactness,
+    constant_exactness: ConstantExactness,
 ) -> Result<(Vec<u8>, Vec<u8>, Sign, ConstantExactness), DataError> {
     let numerator = match fraction.numer().to_biguint() {
         Some(numerator) => numerator.to_bytes_le(),
@@ -165,7 +165,7 @@ pub fn transform_fraction_to_constant_value(
         }
     };
 
-    Ok((numerator, denominator, sign, constant_type))
+    Ok((numerator, denominator, sign, constant_exactness))
 }
 
 /// Converts slices of numerator and denominator strings to a fraction.

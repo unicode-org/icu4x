@@ -35,12 +35,12 @@ impl DataProvider<UnitsConstantsV1Marker> for crate::DatagenProvider {
         for (cons_name, cons_value) in constants {
             let (num, den) = convert_constant_to_num_denom_strings(&cons_value.value)?;
 
-            let constant_type = match cons_value.status.as_deref() {
+            let constant_exactness = match cons_value.status.as_deref() {
                 Some("approximate") => ConstantExactness::Approximate,
                 _ => ConstantExactness::Actual,
             };
 
-            constants_map_in_str_form.insert(cons_name, (num, den, constant_type));
+            constants_map_in_str_form.insert(cons_name, (num, den, constant_exactness));
         }
 
         // This loop iterates over the constants, replacing any string values with their corresponding constant values.
@@ -53,10 +53,10 @@ impl DataProvider<UnitsConstantsV1Marker> for crate::DatagenProvider {
             has_internal_constants = false;
             let mut constants_with_constants_map_replaceable =
                 BTreeMap::<&str, (Vec<String>, Vec<String>, ConstantExactness)>::new();
-            for (cons_name, (num, den, constant_type)) in constants_map_in_str_form.iter() {
+            for (cons_name, (num, den, constant_exactness)) in constants_map_in_str_form.iter() {
                 let mut temp_num = num.clone();
                 let mut temp_den = den.clone();
-                let mut temp_constant_type = *constant_type;
+                let mut temp_constant_exactness = *constant_exactness;
 
                 for i in 0..temp_num.len() {
                     if !contains_alphabetic_chars(temp_num[i].as_str())
@@ -66,7 +66,7 @@ impl DataProvider<UnitsConstantsV1Marker> for crate::DatagenProvider {
                     }
 
                     has_internal_constants = true;
-                    if let Some((rnum, rden, rconstant_type)) =
+                    if let Some((rnum, rden, rconstant_exactness)) =
                         constants_map_in_str_form.get(temp_num[i].as_str())
                     {
                         temp_num.remove(i);
@@ -74,8 +74,8 @@ impl DataProvider<UnitsConstantsV1Marker> for crate::DatagenProvider {
                         temp_num.extend(rnum.clone().into_iter());
                         temp_den.extend(rden.clone().into_iter());
 
-                        if *rconstant_type == ConstantExactness::Approximate {
-                            temp_constant_type = ConstantExactness::Approximate;
+                        if *rconstant_exactness == ConstantExactness::Approximate {
+                            temp_constant_exactness = ConstantExactness::Approximate;
                         }
                     }
                 }
@@ -88,7 +88,7 @@ impl DataProvider<UnitsConstantsV1Marker> for crate::DatagenProvider {
                     }
 
                     has_internal_constants = true;
-                    if let Some((rnum, rden, rconstant_type)) =
+                    if let Some((rnum, rden, rconstant_exactness)) =
                         constants_map_in_str_form.get(temp_den[i].as_str())
                     {
                         temp_den.remove(i);
@@ -96,14 +96,14 @@ impl DataProvider<UnitsConstantsV1Marker> for crate::DatagenProvider {
                         temp_num.extend(rden.clone().into_iter());
                         temp_den.extend(rnum.clone().into_iter());
 
-                        if *rconstant_type == ConstantExactness::Approximate {
-                            temp_constant_type = ConstantExactness::Approximate;
+                        if *rconstant_exactness == ConstantExactness::Approximate {
+                            temp_constant_exactness = ConstantExactness::Approximate;
                         }
                     }
                 }
 
                 constants_with_constants_map_replaceable
-                    .insert(cons_name, (temp_num, temp_den, temp_constant_type));
+                    .insert(cons_name, (temp_num, temp_den, temp_constant_exactness));
             }
 
             constants_map_in_str_form = constants_with_constants_map_replaceable;
@@ -116,13 +116,13 @@ impl DataProvider<UnitsConstantsV1Marker> for crate::DatagenProvider {
         let constants_map = ZeroMap::from_iter(
             constants_map_in_str_form
                 .into_iter()
-                .map(|(cons_name, (num, den, constant_type))| {
+                .map(|(cons_name, (num, den, constant_exactness))| {
                     let value = match convert_slices_to_fraction(&num, &den) {
                         Ok(value) => value,
                         Err(e) => return Err(e),
                     };
                     let (num, den, sign, cons_type) =
-                        match transform_fraction_to_constant_value(value, constant_type) {
+                        match transform_fraction_to_constant_value(value, constant_exactness) {
                             Ok(value) => value,
                             Err(e) => return Err(e),
                         };

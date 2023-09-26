@@ -15,7 +15,7 @@
         2
       ],
       "sign": "Positive",
-      "constant_type": "Approximate"
+      "constant_exactness": "Approximate"
     },
     "PI": {
       "numerator": [
@@ -31,7 +31,7 @@
         7
       ],
       "sign": "Positive",
-      "constant_type": "Approximate"
+      "constant_exactness": "Approximate"
     },
     "ft2_to_m2": {
       "numerator": [
@@ -45,7 +45,7 @@
         23
       ],
       "sign": "Positive",
-      "constant_type": "Actual"
+      "constant_exactness": "Actual"
     },
     "ft3_to_m3": {
       "numerator": [
@@ -61,7 +61,7 @@
         116
       ],
       "sign": "Positive",
-      "constant_type": "Actual"
+      "constant_exactness": "Actual"
     },
     "ft_to_m": {
       "numerator": [
@@ -73,7 +73,7 @@
         4
       ],
       "sign": "Positive",
-      "constant_type": "Actual"
+      "constant_exactness": "Actual"
     },
     "gal_imp_to_m3": {
       "numerator": [
@@ -88,7 +88,7 @@
         5
       ],
       "sign": "Positive",
-      "constant_type": "Actual"
+      "constant_exactness": "Actual"
     },
     "gal_to_m3": {
       "numerator": [
@@ -105,7 +105,7 @@
         29
       ],
       "sign": "Positive",
-      "constant_type": "Actual"
+      "constant_exactness": "Actual"
     },
     "glucose_molar_mass": {
       "numerator": [
@@ -118,7 +118,7 @@
         39
       ],
       "sign": "Positive",
-      "constant_type": "Actual"
+      "constant_exactness": "Actual"
     },
     "gravity": {
       "numerator": [
@@ -131,7 +131,7 @@
         78
       ],
       "sign": "Positive",
-      "constant_type": "Actual"
+      "constant_exactness": "Actual"
     },
     "in3_to_m3": {
       "numerator": [
@@ -147,7 +147,7 @@
         29
       ],
       "sign": "Positive",
-      "constant_type": "Actual"
+      "constant_exactness": "Actual"
     },
     "item_per_mole": {
       "numerator": [
@@ -166,7 +166,7 @@
         1
       ],
       "sign": "Positive",
-      "constant_type": "Actual"
+      "constant_exactness": "Actual"
     },
     "lb_to_kg": {
       "numerator": [
@@ -182,7 +182,7 @@
         5
       ],
       "sign": "Positive",
-      "constant_type": "Actual"
+      "constant_exactness": "Actual"
     },
     "meters_per_AU": {
       "numerator": [
@@ -196,7 +196,7 @@
         1
       ],
       "sign": "Positive",
-      "constant_type": "Actual"
+      "constant_exactness": "Actual"
     },
     "sec_per_julian_year": {
       "numerator": [
@@ -209,7 +209,7 @@
         1
       ],
       "sign": "Positive",
-      "constant_type": "Actual"
+      "constant_exactness": "Actual"
     },
     "speed_of_light_meters_per_second": {
       "numerator": [
@@ -222,7 +222,7 @@
         1
       ],
       "sign": "Positive",
-      "constant_type": "Actual"
+      "constant_exactness": "Actual"
     }
   }
 }
