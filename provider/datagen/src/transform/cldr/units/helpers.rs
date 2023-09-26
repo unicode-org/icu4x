@@ -295,7 +295,7 @@ pub fn convert_constant_to_num_denom_strings(
 }
 // TODO: move this to the comment above.
 #[test]
-fn test_split_constant_string() {
+fn test_convert_constant_to_num_denom_strings() {
     let input = "1/2";
     let expected = (vec!["1".to_string()], vec!["2".to_string()]);
     let actual = convert_constant_to_num_denom_strings(input).unwrap();
