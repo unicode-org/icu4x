@@ -38,7 +38,7 @@ pub struct UnitsConstantsV1<'data> {
 
 /// This enum is used to represent the type of a constant value.
 /// It can be either `ConstantType::Actual` or `ConstantType::Approximate`.
-/// If the constant type is `ConstantType::Approximate`, it indicates that the value is not definitively accurate.
+/// If the constant type is `ConstantType::Approximate`, it indicates that the value is not numerically accurate.
 #[zerovec::make_ule(ConstantTypeULE)]
 #[cfg_attr(
     feature = "datagen",
