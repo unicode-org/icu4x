@@ -243,11 +243,11 @@ fn test_convert_array_of_strings_to_fraction() {
 pub fn convert_constant_to_num_denom_strings(
     constant_string: &str,
 ) -> Result<(Vec<String>, Vec<String>), DataError> {
-    let cleaned_string = remove_whitespace(constant_string);
+    let constant_string = remove_whitespace(constant_string);
     let mut numerator = Vec::<String>::new();
     let mut denominator = Vec::<String>::new();
 
-    let mut split = cleaned_string.split('/');
+    let mut split = constant_string.split('/');
     if split.clone().count() > 2 {
         return Err(DataError::custom("Invalid constant string"));
     }
