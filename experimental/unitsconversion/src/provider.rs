@@ -48,7 +48,7 @@ pub struct UnitsConstantsV1<'data> {
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[derive(Copy, Clone, Debug, PartialOrd, Ord, PartialEq, Eq, Default)]
 #[repr(u8)]
-pub enum ConstantType {
+pub enum ConstantExactness {
     #[default]
     Actual = 0,
     Approximate = 1,
@@ -104,5 +104,5 @@ pub struct ConstantValue<'data> {
     pub sign: Sign,
 
     /// The type of the constant value.
-    pub constant_type: ConstantType,
+    pub constant_type: ConstantExactness,
 }

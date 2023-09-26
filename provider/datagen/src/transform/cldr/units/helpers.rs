@@ -9,7 +9,7 @@ use std::{
 
 use fraction::GenericFraction;
 use icu_provider::DataError;
-use icu_unitsconversion::provider::{ConstantType, Sign};
+use icu_unitsconversion::provider::{ConstantExactness, Sign};
 use num_bigint::BigUint;
 
 /// Removes all whitespace from a string.
@@ -144,8 +144,8 @@ pub fn is_scientific_number(s: &str) -> bool {
 /// Transforms a fractional number into a constant value.
 pub fn transform_fraction_to_constant_value(
     fraction: GenericFraction<BigUint>,
-    constant_type: ConstantType,
-) -> Result<(Vec<u8>, Vec<u8>, Sign, ConstantType), DataError> {
+    constant_type: ConstantExactness,
+) -> Result<(Vec<u8>, Vec<u8>, Sign, ConstantExactness), DataError> {
     let numerator = match fraction.numer() {
         Some(numerator) => numerator.to_bytes_le(),
         None => return Err(DataError::custom("the numerator is too large")),

@@ -16,7 +16,7 @@ use icu_provider::{
     DataResponse,
 };
 use icu_unitsconversion::provider::{
-    ConstantType, ConstantValue, UnitsConstantsV1, UnitsConstantsV1Marker,
+    ConstantExactness, ConstantValue, UnitsConstantsV1, UnitsConstantsV1Marker,
 };
 use zerovec::{ZeroMap, ZeroVec};
 
@@ -31,14 +31,14 @@ impl DataProvider<UnitsConstantsV1Marker> for crate::DatagenProvider {
         let constants = &units_data.supplemental.unit_constants.constants;
 
         let mut constants_map_in_str_form =
-            BTreeMap::<&str, (Vec<String>, Vec<String>, ConstantType)>::new();
+            BTreeMap::<&str, (Vec<String>, Vec<String>, ConstantExactness)>::new();
         for (cons_name, cons_value) in constants {
             let value = remove_whitespace(&cons_value.value);
             let (num, den) = convert_constant_to_num_denom_strings(&value)?;
 
             let constant_type = match cons_value.status.as_deref() {
-                Some("approximate") => ConstantType::Approximate,
-                _ => ConstantType::Actual,
+                Some("approximate") => ConstantExactness::Approximate,
+                _ => ConstantExactness::Actual,
             };
 
             constants_map_in_str_form.insert(cons_name, (num, den, constant_type));
@@ -49,7 +49,7 @@ impl DataProvider<UnitsConstantsV1Marker> for crate::DatagenProvider {
         loop {
             num_of_const_with_text = 0;
             let mut constants_with_constants_map_replaceable =
-                BTreeMap::<&str, (Vec<String>, Vec<String>, ConstantType)>::new();
+                BTreeMap::<&str, (Vec<String>, Vec<String>, ConstantExactness)>::new();
             for (cons_name, (num, den, constant_type)) in constants_map_in_str_form.iter() {
                 let mut temp_num = num.clone();
                 let mut temp_den = den.clone();
@@ -71,8 +71,8 @@ impl DataProvider<UnitsConstantsV1Marker> for crate::DatagenProvider {
                         temp_num.append(&mut rnum.clone());
                         temp_den.append(&mut rden.clone());
 
-                        if *rconstant_type == ConstantType::Approximate {
-                            temp_constant_type = ConstantType::Approximate;
+                        if *rconstant_type == ConstantExactness::Approximate {
+                            temp_constant_type = ConstantExactness::Approximate;
                         }
                     }
                 }
@@ -93,8 +93,8 @@ impl DataProvider<UnitsConstantsV1Marker> for crate::DatagenProvider {
                         temp_num.append(&mut rden.clone());
                         temp_den.append(&mut rnum.clone());
 
-                        if *rconstant_type == ConstantType::Approximate {
-                            temp_constant_type = ConstantType::Approximate;
+                        if *rconstant_type == ConstantExactness::Approximate {
+                            temp_constant_type = ConstantExactness::Approximate;
                         }
                     }
                 }
@@ -178,7 +178,7 @@ fn test_basic() {
             numerator: expected_ft_to_m.numer().unwrap().to_le_bytes().into(),
             denominator: expected_ft_to_m.denom().unwrap().to_le_bytes().into(),
             sign: Sign::Positive,
-            constant_type: ConstantType::Actual,
+            constant_type: ConstantExactness::Actual,
         })
         .as_ref()
     );
@@ -195,7 +195,7 @@ fn test_basic() {
             numerator: expected_ft2_to_m2.numer().unwrap().to_le_bytes().into(),
             denominator: expected_ft2_to_m2.denom().unwrap().to_le_bytes().into(),
             sign: Sign::Positive,
-            constant_type: ConstantType::Actual,
+            constant_type: ConstantExactness::Actual,
         })
         .as_ref()
     );
@@ -216,7 +216,7 @@ fn test_basic() {
             numerator: expected_ft3_to_m3.numer().unwrap().to_le_bytes().into(),
             denominator: expected_ft3_to_m3.denom().unwrap().to_le_bytes().into(),
             sign: Sign::Positive,
-            constant_type: ConstantType::Actual,
+            constant_type: ConstantExactness::Actual,
         })
         .as_ref()
     );
