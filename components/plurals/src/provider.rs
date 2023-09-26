@@ -18,7 +18,7 @@
 use crate::rules::runtime::ast::Rule;
 use icu_provider::prelude::*;
 use icu_provider::DataMarker;
-use zerovec::ZeroMap2d;
+use zerovec::ZeroMap;
 
 #[cfg(feature = "compiled_data")]
 #[derive(Debug)]
@@ -129,14 +129,6 @@ pub enum RawPluralCategory {
     Many = 5,
 }
 
-impl RawPluralCategory {
-    #[inline]
-    /// Converts to an [`UnvalidatedPluralCategory`].
-    pub fn to_unvalidated(self) -> UnvalidatedPluralCategory {
-        UnvalidatedPluralCategory(self as u8)
-    }
-}
-
 impl From<PluralCategory> for RawPluralCategory {
     fn from(value: PluralCategory) -> Self {
         match value {
@@ -150,7 +142,7 @@ impl From<PluralCategory> for RawPluralCategory {
     }
 }
 
-/// An `u8` that is expected to be a `PluralCategory` tag but does not enforce this variant.
+/// An `u8` that is expected to be a plural range, but does not enforce this invariant.
 ///
 /// <div class="stab unstable">
 /// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
@@ -163,30 +155,52 @@ impl From<PluralCategory> for RawPluralCategory {
     derive(databake::Bake),
     databake(path = icu_plurals::provider),
 )]
-#[zerovec::make_ule(UnvalidatedPluralCategoryULE)]
-pub struct UnvalidatedPluralCategory(pub u8);
+#[zerovec::make_ule(UnvalidatedPluralRangeULE)]
+pub struct UnvalidatedPluralRange(pub u8);
+
+impl UnvalidatedPluralRange {
+    /// Creates a new `UnvalidatedPluralRange` from a category range.
+    pub fn from_range(start: RawPluralCategory, end: RawPluralCategory) -> Self {
+        let start = start as u8;
+        let end = end as u8;
+
+        debug_assert!(start < 16);
+        debug_assert!(end < 16);
+
+        let range = (start << 4) | end;
+
+        Self(range)
+    }
+}
 
 #[cfg(feature = "datagen")]
-impl serde::Serialize for UnvalidatedPluralCategory {
+impl serde::Serialize for UnvalidatedPluralRange {
     fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
     where
         S: serde::Serializer,
     {
         use serde::ser::Error;
-        RawPluralCategory::new_from_u8(self.0)
-            .ok_or_else(|| S::Error::custom("invalid tag in UnvalidatedPluralCategory"))?
-            .serialize(serializer)
+        if serializer.is_human_readable() {
+            let start = RawPluralCategory::new_from_u8(self.0 >> 4)
+                .ok_or_else(|| S::Error::custom("invalid tag in UnvalidatedPluralRange"))?;
+            let end = RawPluralCategory::new_from_u8(self.0 & 0x0F)
+                .ok_or_else(|| S::Error::custom("invalid tag in UnvalidatedPluralRange"))?;
+            (start, end).serialize(serializer)
+        } else {
+            self.0.serialize(serializer)
+        }
     }
 }
 
 #[cfg(feature = "serde")]
-impl<'de> serde::Deserialize<'de> for UnvalidatedPluralCategory {
+impl<'de> serde::Deserialize<'de> for UnvalidatedPluralRange {
     fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
     where
         D: serde::Deserializer<'de>,
     {
         if deserializer.is_human_readable() {
-            Ok(RawPluralCategory::deserialize(deserializer)?.to_unvalidated())
+            let (start, end) = <(RawPluralCategory, RawPluralCategory)>::deserialize(deserializer)?;
+            Ok(UnvalidatedPluralRange::from_range(start, end))
         } else {
             Ok(Self(<u8>::deserialize(deserializer)?))
         }
@@ -218,9 +232,8 @@ pub struct PluralRangesV1<'data> {
     /// Map between the categories of the endpoints of a range and its corresponding
     /// category.
     ///
-    /// - `key0` corresponds to the start category of the range.
-    /// - `key1` corresponds to the end category of the range.
+    /// This is roughly equivalent to a `BTreeMap<(PluralCategory, PluralCategory), PluralCategory>`,
+    /// where the key is `(start category, end category)`.
     #[cfg_attr(feature = "serde", serde(borrow))]
-    pub ranges:
-        ZeroMap2d<'data, UnvalidatedPluralCategory, UnvalidatedPluralCategory, RawPluralCategory>,
+    pub ranges: ZeroMap<'data, UnvalidatedPluralRange, RawPluralCategory>,
 }

@@ -131,7 +131,7 @@ impl From<&cldr_serde::plural_ranges::LocalePluralRanges> for PluralRangesV1<'st
                 .expect("category parsing failed.")
                 .into()
         }
-        let mut map: BTreeMap<RawPluralCategory, BTreeMap<RawPluralCategory, RawPluralCategory>> =
+        let mut map: BTreeMap<(RawPluralCategory, RawPluralCategory), RawPluralCategory> =
             BTreeMap::new();
         for (range, result) in &other.0 {
             let start = convert(&range.start);
@@ -144,17 +144,15 @@ impl From<&cldr_serde::plural_ranges::LocalePluralRanges> for PluralRangesV1<'st
             // We can use that to save a lot of memory by not inserting the ranges that
             // have end == result.
             if end != result {
-                map.entry(start).or_default().insert(end, result);
+                map.insert((start, end), result);
             }
         }
 
         PluralRangesV1 {
             ranges: map
                 .into_iter()
-                .flat_map(|(start, rest)| {
-                    rest.into_iter().map(move |(end, result)| {
-                        (start.to_unvalidated(), end.to_unvalidated(), result)
-                    })
+                .map(|((start, end), result)| {
+                    (UnvalidatedPluralRange::from_range(start, end), result)
                 })
                 .collect(),
         }
@@ -210,51 +208,57 @@ fn test_ranges() {
         .unwrap();
 
     assert_eq!(
-        plural_ranges.get().ranges.get_copied_2d(
-            &RawPluralCategory::Few.to_unvalidated(),
-            &RawPluralCategory::One.to_unvalidated()
-        ),
+        plural_ranges
+            .get()
+            .ranges
+            .get_copied(&UnvalidatedPluralRange::from_range(
+                RawPluralCategory::Few,
+                RawPluralCategory::One
+            )),
         Some(RawPluralCategory::Few)
     );
     assert_eq!(
-        plural_ranges.get().ranges.get_copied_2d(
-            &RawPluralCategory::Other.to_unvalidated(),
-            &RawPluralCategory::One.to_unvalidated()
-        ),
+        plural_ranges
+            .get()
+            .ranges
+            .get_copied(&UnvalidatedPluralRange::from_range(
+                RawPluralCategory::Other,
+                RawPluralCategory::One
+            )),
         Some(RawPluralCategory::Few)
     );
     assert!(plural_ranges
         .get()
         .ranges
-        .get_copied_2d(
-            &RawPluralCategory::Zero.to_unvalidated(),
-            &RawPluralCategory::One.to_unvalidated()
-        )
+        .get_copied(&UnvalidatedPluralRange::from_range(
+            RawPluralCategory::Zero,
+            RawPluralCategory::One
+        ))
         .is_none());
     assert!(plural_ranges
         .get()
         .ranges
-        .get_copied_2d(
-            &RawPluralCategory::One.to_unvalidated(),
-            &RawPluralCategory::Zero.to_unvalidated()
-        )
+        .get_copied(&UnvalidatedPluralRange::from_range(
+            RawPluralCategory::One,
+            RawPluralCategory::Zero
+        ))
         .is_none());
 
     // tests that the space optimization succeeds
     assert!(plural_ranges
         .get()
         .ranges
-        .get_copied_2d(
-            &RawPluralCategory::One.to_unvalidated(),
-            &RawPluralCategory::Other.to_unvalidated()
-        )
+        .get_copied(&UnvalidatedPluralRange::from_range(
+            RawPluralCategory::One,
+            RawPluralCategory::Other
+        ))
         .is_none());
     assert!(plural_ranges
         .get()
         .ranges
-        .get_copied_2d(
-            &RawPluralCategory::Few.to_unvalidated(),
-            &RawPluralCategory::Two.to_unvalidated()
-        )
+        .get_copied(&UnvalidatedPluralRange::from_range(
+            RawPluralCategory::Few,
+            RawPluralCategory::Two
+        ))
         .is_none());
 }

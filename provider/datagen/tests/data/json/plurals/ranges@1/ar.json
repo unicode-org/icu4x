@@ -1,15 +1,39 @@
 {
-  "ranges": {
-    "Other": {
-      "One": "Other",
-      "Two": "Other"
-    },
-    "Zero": {
-      "One": "Zero",
-      "Two": "Zero"
-    },
-    "One": {
-      "Two": "Other"
-    }
-  }
+  "ranges": [
+    [
+      [
+        "Other",
+        "One"
+      ],
+      "Other"
+    ],
+    [
+      [
+        "Other",
+        "Two"
+      ],
+      "Other"
+    ],
+    [
+      [
+        "Zero",
+        "One"
+      ],
+      "Zero"
+    ],
+    [
+      [
+        "Zero",
+        "Two"
+      ],
+      "Zero"
+    ],
+    [
+      [
+        "One",
+        "Two"
+      ],
+      "Other"
+    ]
+  ]
 }
