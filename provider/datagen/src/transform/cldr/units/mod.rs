@@ -7,8 +7,8 @@ pub mod helpers;
 use std::collections::BTreeMap;
 
 use self::helpers::{
-    contains_alphabetic_chars, convert_array_of_strings_to_fraction,
-    convert_constant_to_num_denom_strings, remove_whitespace, transform_fraction_to_constant_value,
+    contains_alphabetic_chars, convert_constant_to_num_denom_strings, convert_slices_to_fraction,
+    remove_whitespace, transform_fraction_to_constant_value,
 };
 use crate::transform::cldr::{cldr_serde, units::helpers::is_scientific_number};
 use icu_provider::{
@@ -113,7 +113,7 @@ impl DataProvider<UnitsConstantsV1Marker> for crate::DatagenProvider {
         let mut constants_map = BTreeMap::<&str, ConstantValue>::new();
 
         for (cons_name, (num, den, constant_type)) in constants_map_in_str_form.iter() {
-            let value = convert_array_of_strings_to_fraction(num, den)?;
+            let value = convert_slices_to_fraction(num, den)?;
             let (num, den, sign, cons_type) =
                 transform_fraction_to_constant_value(value, *constant_type)?;
             constants_map.insert(
