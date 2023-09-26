@@ -184,12 +184,12 @@ pub fn convert_slices_to_fraction(
 
     for numerator in numerator_strings {
         let num_fraction = convert_scientific_notation_to_fraction(numerator)?;
-        fraction = fraction * num_fraction;
+        fraction *= num_fraction;
     }
 
     for denominator in denominator_strings {
         let den_fraction = convert_scientific_notation_to_fraction(denominator)?;
-        fraction = fraction / den_fraction;
+        fraction /= den_fraction;
     }
 
     Ok(fraction)
