@@ -240,7 +240,7 @@ fn test_convert_array_of_strings_to_fraction() {
 /// - "1 * 2 / 3 * ft_to_m" is split into (["1", "2"], ["3" , "ft_to_m"])
 /// - "/2" is split into (["1"], ["2"])
 /// - "2" is split into (["2"], ["1"])
-pub fn split_constant_string(
+pub fn convert_constant_to_num_denom_strings(
     constant_string: &str,
 ) -> Result<(Vec<String>, Vec<String>), DataError> {
     let cleaned_string = remove_whitespace(constant_string);
@@ -280,7 +280,7 @@ pub fn split_constant_string(
 fn test_split_constant_string() {
     let input = "1/2";
     let expected = (vec!["1".to_string()], vec!["2".to_string()]);
-    let actual = split_constant_string(input).unwrap();
+    let actual = convert_constant_to_num_denom_strings(input).unwrap();
     assert_eq!(expected, actual);
 
     let input = "1 * 2 / 3 * ft_to_m";
@@ -288,16 +288,16 @@ fn test_split_constant_string() {
         vec!["1".to_string(), "2".to_string()],
         vec!["3".to_string(), "ft_to_m".to_string()],
     );
-    let actual = split_constant_string(input).unwrap();
+    let actual = convert_constant_to_num_denom_strings(input).unwrap();
     assert_eq!(expected, actual);
 
     let input = "/2";
     let expected = (vec!["1".to_string()], vec!["2".to_string()]);
-    let actual = split_constant_string(input).unwrap();
+    let actual = convert_constant_to_num_denom_strings(input).unwrap();
     assert_eq!(expected, actual);
 
     let input = "2";
     let expected = (vec!["2".to_string()], vec!["1".to_string()]);
-    let actual = split_constant_string(input).unwrap();
+    let actual = convert_constant_to_num_denom_strings(input).unwrap();
     assert_eq!(expected, actual);
 }
