@@ -44,8 +44,12 @@ impl DataProvider<UnitsConstantsV1Marker> for crate::DatagenProvider {
         }
 
         // This loop iterates over the constants, replacing any string values with their corresponding constant values.
+        // For example, if the constant "ft_to_m" has the value "0.3048", and the constant "ft2_to_m2" has the value "ft_to_m * ft_to_m",
+        // the maximum depth represents the maximum number of nested constants that can be replaced.
+        // If CLDR added more constants that are defined in terms of other constants, the maximum depth should be increased.
+        let maximum_depth = 10;
         let mut has_internal_constants;
-        loop {
+        for _ in 0..maximum_depth {
             has_internal_constants = false;
             let mut constants_with_constants_map_replaceable =
                 BTreeMap::<&str, (Vec<String>, Vec<String>, ConstantExactness)>::new();
