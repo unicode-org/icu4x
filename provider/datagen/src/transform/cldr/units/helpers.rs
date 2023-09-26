@@ -50,18 +50,17 @@ pub fn convert_scientific_notation_to_fraction(
     let exponent = i64::from_str(exponent)
         .map_err(|_| DataError::custom("the exponent is not a valid number"))?;
 
-    let mut result = base;
-    let generic_ten: GenericFraction<BigUint> =
-        GenericFraction::new(BigUint::from(10u32), BigUint::from(1u32));
-    if exponent > 0 {
-        for _ in 0..exponent as u32 {
-            result = result.mul(generic_ten.clone());
-        }
+    let result = if exponent >= 0 {
+        base.mul(GenericFraction::new(
+            BigUint::from(10u32).pow(exponent as u32),
+            BigUint::from(1u32),
+        ))
     } else {
-        for _ in 0..(-exponent) as u32 {
-            result = result.div(generic_ten.clone());
-        }
-    }
+        base.div(GenericFraction::new(
+            BigUint::from(10u32).pow((-exponent) as u32),
+            BigUint::from(1u32),
+        ))
+    };
 
     Ok(result)
 }
