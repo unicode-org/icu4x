@@ -4,7 +4,6 @@
 
 // Provider structs must be stable
 #![allow(clippy::exhaustive_structs, clippy::exhaustive_enums)]
-#![warn(unused_imports)]
 //! Data provider struct definitions for this ICU4X component.
 //!
 //! Read more about data providers: [`icu_provider`]
@@ -13,6 +12,8 @@ use alloc::borrow::Cow;
 use core::fmt::{Debug, Formatter};
 
 use icu_provider::prelude::*;
+
+#[cfg(feature = "serde")]
 use icu_provider::serde::borrow_de_utils::option_of_cow;
 
 use zerovec::VarZeroVec;
