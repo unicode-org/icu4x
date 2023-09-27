@@ -50,7 +50,7 @@ pub struct UnitsConstantsV1<'data> {
 #[repr(u8)]
 pub enum ConstantExactness {
     #[default]
-    Actual = 0,
+    Exact = 0,
     Approximate = 1,
 }
 

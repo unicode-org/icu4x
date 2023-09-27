@@ -23,7 +23,17 @@ fn test_remove_whitespace() {
     assert_eq!(expected, actual);
 }
 
-fn convert_decimal_to_bigrational(decimal: &str) -> Result<BigRational, DataError> {
+/// Converts a decimal number represented as a string into a BigRational.
+/// Examples:
+/// - "1" is converted to 1/1
+/// - "1.5" is converted to 15/10
+/// - "1.05" is converted to 105/100
+/// - "1.005" is converted to 1005/1000
+/// - "1.5.5" is an invalid decimal number
+/// NOTE:
+/// - "1." is not a valid decimal number
+/// - BigRational represents a rational number in the simplest form. For example, 15/10 is converted to 3/2.
+pub fn convert_decimal_to_bigrational(decimal: &str) -> Result<BigRational, DataError> {
     let parts: Vec<&str> = decimal.split('.').collect();
     match parts.len() {
         1 => BigRational::from_str(parts[0])
@@ -37,6 +47,33 @@ fn convert_decimal_to_bigrational(decimal: &str) -> Result<BigRational, DataErro
         }
         _ => Err(DataError::custom("the base is not a valid number")),
     }
+}
+
+#[test]
+fn test_convert_decimal_to_bigrational() {
+    let input = "1";
+    let expected = BigRational::new(BigInt::from(1u32), BigInt::from(1u32));
+    let actual = convert_decimal_to_bigrational(input).unwrap();
+    assert_eq!(expected, actual);
+
+    let input = "1.5";
+    let expected = BigRational::new(BigInt::from(15u32), BigInt::from(10u32));
+    let actual = convert_decimal_to_bigrational(input).unwrap();
+    assert_eq!(expected, actual);
+
+    let input = "1.05";
+    let expected = BigRational::new(BigInt::from(105u32), BigInt::from(100u32));
+    let actual = convert_decimal_to_bigrational(input).unwrap();
+    assert_eq!(expected, actual);
+
+    let input = "1.005";
+    let expected = BigRational::new(BigInt::from(1005u32), BigInt::from(1000u32));
+    let actual = convert_decimal_to_bigrational(input).unwrap();
+    assert_eq!(expected, actual);
+
+    let input = "1.5.5";
+    let actual = convert_decimal_to_bigrational(input);
+    assert!(actual.is_err());
 }
 
 /// Converts a scientific notation number represented as a string into a GenericFraction.

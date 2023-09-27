@@ -37,7 +37,7 @@ impl DataProvider<UnitsConstantsV1Marker> for crate::DatagenProvider {
 
             let constant_exactness = match cons_value.status.as_deref() {
                 Some("approximate") => ConstantExactness::Approximate,
-                _ => ConstantExactness::Actual,
+                _ => ConstantExactness::Exact,
             };
 
             constants_map_in_str_form.insert(cons_name, (num, den, constant_exactness));
@@ -159,11 +159,11 @@ impl IterableDataProvider<UnitsConstantsV1Marker> for crate::DatagenProvider {
 
 #[test]
 fn test_basic() {
-    use fraction::GenericFraction;
     use icu_locid::locale;
     use icu_provider::prelude::*;
     use icu_unitsconversion::provider::*;
-    use num_bigint::BigUint;
+    use num_bigint::BigInt;
+    use num_rational::BigRational;
     use num_traits::ToBytes;
 
     let provider = crate::DatagenProvider::new_testing();
@@ -179,49 +179,44 @@ fn test_basic() {
 
     let constants = &und.get().to_owned().constants_map;
     let ft_to_m = constants.get("ft_to_m").unwrap();
-    let expected_ft_to_m =
-        GenericFraction::<BigUint>::new(BigUint::from(3048u32), BigUint::from(10000u32));
+    let expected_ft_to_m = BigRational::new(BigInt::from(3048u32), BigInt::from(10000u32));
     assert_eq!(
         ft_to_m,
         zerovec::ule::encode_varule_to_box(&ConstantValue {
-            numerator: expected_ft_to_m.numer().unwrap().to_le_bytes().into(),
-            denominator: expected_ft_to_m.denom().unwrap().to_le_bytes().into(),
+            numerator: expected_ft_to_m.numer().to_le_bytes().into(),
+            denominator: expected_ft_to_m.denom().to_le_bytes().into(),
             sign: Sign::Positive,
-            constant_exactness: ConstantExactness::Actual,
+            constant_exactness: ConstantExactness::Exact,
         })
         .as_ref()
     );
 
     let ft2_to_m2 = constants.get("ft2_to_m2").unwrap();
-    let expected_ft2_to_m2 = GenericFraction::<BigUint>::new(
-        BigUint::from(3048u32).pow(2),
-        BigUint::from(10000u32).pow(2),
-    );
+    let expected_ft2_to_m2 =
+        BigRational::new(BigInt::from(3048u32).pow(2), BigInt::from(10000u32).pow(2));
 
     assert_eq!(
         ft2_to_m2,
         zerovec::ule::encode_varule_to_box(&ConstantValue {
-            numerator: expected_ft2_to_m2.numer().unwrap().to_le_bytes().into(),
-            denominator: expected_ft2_to_m2.denom().unwrap().to_le_bytes().into(),
+            numerator: expected_ft2_to_m2.numer().to_le_bytes().into(),
+            denominator: expected_ft2_to_m2.denom().to_le_bytes().into(),
             sign: Sign::Positive,
-            constant_exactness: ConstantExactness::Actual,
+            constant_exactness: ConstantExactness::Exact,
         })
         .as_ref()
     );
 
     let ft3_to_m3 = constants.get("ft3_to_m3").unwrap();
-    let expected_ft3_to_m3 = GenericFraction::<BigUint>::new(
-        BigUint::from(3048u32).pow(3),
-        BigUint::from(10000u32).pow(3),
-    );
+    let expected_ft3_to_m3 =
+        BigRational::new(BigInt::from(3048u32).pow(3), BigInt::from(10000u32).pow(3));
 
     assert_eq!(
         ft3_to_m3,
         zerovec::ule::encode_varule_to_box(&ConstantValue {
-            numerator: expected_ft3_to_m3.numer().unwrap().to_le_bytes().into(),
-            denominator: expected_ft3_to_m3.denom().unwrap().to_le_bytes().into(),
+            numerator: expected_ft3_to_m3.numer().to_le_bytes().into(),
+            denominator: expected_ft3_to_m3.denom().to_le_bytes().into(),
             sign: Sign::Positive,
-            constant_exactness: ConstantExactness::Actual,
+            constant_exactness: ConstantExactness::Exact,
         })
         .as_ref()
     );

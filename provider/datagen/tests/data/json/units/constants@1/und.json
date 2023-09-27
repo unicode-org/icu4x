@@ -45,7 +45,7 @@
         23
       ],
       "sign": "Positive",
-      "constant_exactness": "Actual"
+      "constant_exactness": "Exact"
     },
     "ft3_to_m3": {
       "numerator": [
@@ -61,7 +61,7 @@
         116
       ],
       "sign": "Positive",
-      "constant_exactness": "Actual"
+      "constant_exactness": "Exact"
     },
     "ft_to_m": {
       "numerator": [
@@ -73,7 +73,7 @@
         4
       ],
       "sign": "Positive",
-      "constant_exactness": "Actual"
+      "constant_exactness": "Exact"
     },
     "gal_imp_to_m3": {
       "numerator": [
@@ -88,7 +88,7 @@
         5
       ],
       "sign": "Positive",
-      "constant_exactness": "Actual"
+      "constant_exactness": "Exact"
     },
     "gal_to_m3": {
       "numerator": [
@@ -105,7 +105,7 @@
         29
       ],
       "sign": "Positive",
-      "constant_exactness": "Actual"
+      "constant_exactness": "Exact"
     },
     "glucose_molar_mass": {
       "numerator": [
@@ -118,7 +118,7 @@
         39
       ],
       "sign": "Positive",
-      "constant_exactness": "Actual"
+      "constant_exactness": "Exact"
     },
     "gravity": {
       "numerator": [
@@ -131,7 +131,7 @@
         78
       ],
       "sign": "Positive",
-      "constant_exactness": "Actual"
+      "constant_exactness": "Exact"
     },
     "in3_to_m3": {
       "numerator": [
@@ -147,7 +147,7 @@
         29
       ],
       "sign": "Positive",
-      "constant_exactness": "Actual"
+      "constant_exactness": "Exact"
     },
     "item_per_mole": {
       "numerator": [
@@ -166,7 +166,7 @@
         1
       ],
       "sign": "Positive",
-      "constant_exactness": "Actual"
+      "constant_exactness": "Exact"
     },
     "lb_to_kg": {
       "numerator": [
@@ -182,7 +182,7 @@
         5
       ],
       "sign": "Positive",
-      "constant_exactness": "Actual"
+      "constant_exactness": "Exact"
     },
     "meters_per_AU": {
       "numerator": [
@@ -196,7 +196,7 @@
         1
       ],
       "sign": "Positive",
-      "constant_exactness": "Actual"
+      "constant_exactness": "Exact"
     },
     "sec_per_julian_year": {
       "numerator": [
@@ -209,7 +209,7 @@
         1
       ],
       "sign": "Positive",
-      "constant_exactness": "Actual"
+      "constant_exactness": "Exact"
     },
     "speed_of_light_meters_per_second": {
       "numerator": [
@@ -222,7 +222,7 @@
         1
       ],
       "sign": "Positive",
-      "constant_exactness": "Actual"
+      "constant_exactness": "Exact"
     }
   }
 }
