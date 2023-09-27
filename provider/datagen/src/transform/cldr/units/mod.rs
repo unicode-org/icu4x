@@ -64,16 +64,14 @@ impl DataProvider<UnitsConstantsV1Marker> for crate::DatagenProvider {
                     {
                         continue;
                     }
-
                     has_internal_constants = true;
+
                     if let Some((rnum, rden, rconstant_exactness)) =
                         constants_map_in_str_form.get(temp_num[i].as_str())
                     {
                         temp_num.remove(i);
-                        // append the elements in rnum to num and rden to den
-                        temp_num.extend(rnum.clone().into_iter());
-                        temp_den.extend(rden.clone().into_iter());
-
+                        temp_num.extend(rnum.clone());
+                        temp_den.extend(rden.clone());
                         if *rconstant_exactness == ConstantExactness::Approximate {
                             temp_constant_exactness = ConstantExactness::Approximate;
                         }
@@ -86,15 +84,14 @@ impl DataProvider<UnitsConstantsV1Marker> for crate::DatagenProvider {
                     {
                         continue;
                     }
-
                     has_internal_constants = true;
+
                     if let Some((rnum, rden, rconstant_exactness)) =
                         constants_map_in_str_form.get(temp_den[i].as_str())
                     {
                         temp_den.remove(i);
-                        // append the elements in rnum to den and rden to num
-                        temp_num.extend(rden.clone().into_iter());
-                        temp_den.extend(rnum.clone().into_iter());
+                        temp_num.extend(rden.clone());
+                        temp_den.extend(rnum.clone());
 
                         if *rconstant_exactness == ConstantExactness::Approximate {
                             temp_constant_exactness = ConstantExactness::Approximate;
@@ -113,14 +110,20 @@ impl DataProvider<UnitsConstantsV1Marker> for crate::DatagenProvider {
             }
         }
 
+        // Transforming the `constants_map_in_str_form` map into a ZeroMap of `ConstantValue`.
+        // This is done by converting the numerator and denominator slices into a fraction,
+        // and then transforming the fraction into a `ConstantValue`.
         let constants_map = ZeroMap::from_iter(
             constants_map_in_str_form
                 .into_iter()
                 .map(|(cons_name, (num, den, constant_exactness))| {
+                    // Converting slices to fraction
                     let value = match convert_slices_to_fraction(&num, &den) {
                         Ok(value) => value,
                         Err(e) => return Err(e),
                     };
+                    
+                    // Transforming the fraction to a constant value
                     let (num, den, sign, cons_type) =
                         match transform_fraction_to_constant_value(value, constant_exactness) {
                             Ok(value) => value,
