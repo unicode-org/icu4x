@@ -49,53 +49,55 @@ impl DataProvider<UnitsConstantsV1Marker> for crate::DatagenProvider {
         // If CLDR added more constants that are defined in terms of other constants, the maximum depth should be increased.
         let maximum_depth = 10;
         let mut has_internal_constants;
-        for _ in 0..maximum_depth {
+        let mut max_depth_reached = 0;
+        while max_depth_reached < maximum_depth {
             has_internal_constants = false;
+            max_depth_reached += 1;
             let mut constants_with_constants_map_replaceable =
                 BTreeMap::<&str, (Vec<String>, Vec<String>, ConstantExactness)>::new();
             for (cons_name, (num, den, constant_exactness)) in constants_map_in_str_form.iter() {
-                let mut temp_num = num.clone();
-                let mut temp_den = den.clone();
-                let mut temp_constant_exactness = *constant_exactness;
+                let mut temp_num = Vec::<String>::new();
+                let mut temp_den = Vec::<String>::new();
+                let mut temp_constant_exactness = constant_exactness.clone();
 
-                for i in 0..temp_num.len() {
-                    if !contains_alphabetic_chars(temp_num[i].as_str())
-                        || is_scientific_number(temp_num[i].as_str())
-                    {
+                for num_str in num.iter().cloned() {
+                    if !contains_alphabetic_chars(&num_str) || is_scientific_number(&num_str) {
+                        temp_num.push(num_str.clone());
                         continue;
                     }
                     has_internal_constants = true;
 
                     if let Some((rnum, rden, rconstant_exactness)) =
-                        constants_map_in_str_form.get(temp_num[i].as_str())
+                        constants_map_in_str_form.get(num_str.as_str())
                     {
-                        temp_num.remove(i);
                         temp_num.extend(rnum.clone());
                         temp_den.extend(rden.clone());
-                        if *rconstant_exactness == ConstantExactness::Approximate {
+                        if rconstant_exactness == &ConstantExactness::Approximate {
                             temp_constant_exactness = ConstantExactness::Approximate;
                         }
+                    } else {
+                        temp_num.push(num_str.clone());
                     }
                 }
 
-                for i in 0..temp_den.len() {
-                    if !contains_alphabetic_chars(temp_den[i].as_str())
-                        || is_scientific_number(temp_den[i].as_str())
-                    {
+                for den_str in den.iter().cloned() {
+                    if !contains_alphabetic_chars(&den_str) || is_scientific_number(&den_str) {
+                        temp_den.push(den_str.clone());
                         continue;
                     }
                     has_internal_constants = true;
 
                     if let Some((rnum, rden, rconstant_exactness)) =
-                        constants_map_in_str_form.get(temp_den[i].as_str())
+                        constants_map_in_str_form.get(den_str.as_str())
                     {
-                        temp_den.remove(i);
                         temp_num.extend(rden.clone());
                         temp_den.extend(rnum.clone());
 
-                        if *rconstant_exactness == ConstantExactness::Approximate {
-                            temp_constant_exactness = ConstantExactness::Approximate;
+                        if rconstant_exactness == &ConstantExactness::Approximate {
+                            temp_constant_exactness = rconstant_exactness.clone();
                         }
+                    } else {
+                        temp_den.push(den_str.clone());
                     }
                 }
 
@@ -110,6 +112,14 @@ impl DataProvider<UnitsConstantsV1Marker> for crate::DatagenProvider {
             }
         }
 
+        if max_depth_reached >= maximum_depth {
+            return Err(DataError::custom(
+                "Maximum depth reached while parsing constants. \
+                This is likely due to a circular dependency in the constants. \
+                Note: If the depth was increased, you may need to increase the maximum depth in the code.",
+            ));
+        }
+
         // Transforming the `constants_map_in_str_form` map into a ZeroMap of `ConstantValue`.
         // This is done by converting the numerator and denominator slices into a fraction,
         // and then transforming the fraction into a `ConstantValue`.
@@ -118,17 +128,11 @@ impl DataProvider<UnitsConstantsV1Marker> for crate::DatagenProvider {
                 .into_iter()
                 .map(|(cons_name, (num, den, constant_exactness))| {
                     // Converting slices to fraction
-                    let value = match convert_slices_to_fraction(&num, &den) {
-                        Ok(value) => value,
-                        Err(e) => return Err(e),
-                    };
+                    let value = convert_slices_to_fraction(&num, &den)?;
 
                     // Transforming the fraction to a constant value
                     let (num, den, sign, cons_type) =
-                        match transform_fraction_to_constant_value(value, constant_exactness) {
-                            Ok(value) => value,
-                            Err(e) => return Err(e),
-                        };
+                         transform_fraction_to_constant_value(value, constant_exactness)?;
                     Ok((
                         cons_name,
                         zerovec::ule::encode_varule_to_box(&ConstantValue {
@@ -139,7 +143,7 @@ impl DataProvider<UnitsConstantsV1Marker> for crate::DatagenProvider {
                         }),
                     ))
                 })
-                .collect::<Result<Vec<_>, _>>()?,
+                .collect::<Result<Vec<_>, DataError>>()?,
         );
 
         let result = UnitsConstantsV1 { constants_map };
