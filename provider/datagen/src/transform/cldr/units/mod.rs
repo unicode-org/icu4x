@@ -122,7 +122,7 @@ impl DataProvider<UnitsConstantsV1Marker> for crate::DatagenProvider {
                         Ok(value) => value,
                         Err(e) => return Err(e),
                     };
-                    
+
                     // Transforming the fraction to a constant value
                     let (num, den, sign, cons_type) =
                         match transform_fraction_to_constant_value(value, constant_exactness) {
