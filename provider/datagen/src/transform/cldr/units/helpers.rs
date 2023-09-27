@@ -9,20 +9,6 @@ use icu_unitsconversion::provider::{ConstantExactness, Sign};
 use num_bigint::BigInt;
 use num_rational::BigRational;
 
-/// Removes all whitespace from a string.
-pub fn remove_whitespace(s: &str) -> String {
-    s.chars().filter(|c| !c.is_whitespace()).collect()
-}
-
-// TODO: move this to the comment above.
-#[test]
-fn test_remove_whitespace() {
-    let input = "He  llo Wo rld!";
-    let expected = "HelloWorld!";
-    let actual = remove_whitespace(input);
-    assert_eq!(expected, actual);
-}
-
 /// Converts a decimal number represented as a string into a BigRational.
 /// Examples:
 /// - "1" is converted to 1/1
@@ -78,21 +64,22 @@ fn test_convert_decimal_to_bigrational() {
 
 /// Converts a scientific notation number represented as a string into a GenericFraction.
 /// Examples:
-/// - "1E2" is converted to 100
+/// - "1E2" is converted to 100/1
 /// - "1E-2" is converted to 1/100
-/// - "1.5E2" is converted to 150
+/// - "1.5E2" is converted to 150/1
 /// - "1.5E-2" is converted to 15/1000
+/// - " 1.5 E -2 " is converted to 15/1000
+/// - " 1.5 E - 2" is an invalid scientific notation number
 /// - "1.5E-2.5" is an invalid scientific notation number
 pub fn convert_scientific_notation_to_fraction(number: &str) -> Result<BigRational, DataError> {
-    let number = remove_whitespace(number);
     let parts: Vec<&str> = number.split('E').collect();
     if parts.len() > 2 {
         return Err(DataError::custom(
             "the number is not a scientific notation number",
         ));
     }
-    let base = parts.first().unwrap_or(&"1");
-    let exponent = parts.get(1).unwrap_or(&"0");
+    let base = parts.first().unwrap_or(&"1").trim();
+    let exponent = parts.get(1).unwrap_or(&"0").trim();
 
     let ten = BigRational::from(BigInt::from(10u32));
     let base = convert_decimal_to_bigrational(base)
@@ -126,10 +113,20 @@ fn test_convert_scientific_notation_to_fraction() {
     let actual = convert_scientific_notation_to_fraction(input).unwrap();
     assert_eq!(expected, actual);
 
+    let input = " 1.5 E -2 ";
+    let expected = BigRational::new(BigInt::from(15u32), BigInt::from(1000u32));
+    let actual = convert_scientific_notation_to_fraction(input).unwrap();
+    assert_eq!(expected, actual);
+
+    let input = " 1.5 E - 2";
+    let actual = convert_scientific_notation_to_fraction(input);
+    assert!(actual.is_err());
+
     let input = "1.5E-2.5";
     let actual = convert_scientific_notation_to_fraction(input);
     assert!(actual.is_err());
 }
+
 
 /// Determines if a string contains any alphabetic characters.
 /// Returns true if the string contains at least one alphabetic character, false otherwise.
