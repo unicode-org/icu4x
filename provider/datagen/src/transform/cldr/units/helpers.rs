@@ -127,7 +127,6 @@ fn test_convert_scientific_notation_to_fraction() {
     assert!(actual.is_err());
 }
 
-
 /// Determines if a string contains any alphabetic characters.
 /// Returns true if the string contains at least one alphabetic character, false otherwise.
 /// Examples:

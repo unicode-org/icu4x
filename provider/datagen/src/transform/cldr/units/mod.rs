@@ -132,7 +132,7 @@ impl DataProvider<UnitsConstantsV1Marker> for crate::DatagenProvider {
 
                     // Transforming the fraction to a constant value
                     let (num, den, sign, cons_type) =
-                         transform_fraction_to_constant_value(value, constant_exactness)?;
+                        transform_fraction_to_constant_value(value, constant_exactness)?;
                     Ok((
                         cons_name,
                         zerovec::ule::encode_varule_to_box(&ConstantValue {
@@ -184,6 +184,7 @@ fn test_basic() {
     let constants = &und.get().to_owned().constants_map;
     let ft_to_m = constants.get("ft_to_m").unwrap();
     let expected_ft_to_m = BigRational::new(BigInt::from(3048u32), BigInt::from(10000u32));
+
     assert_eq!(
         ft_to_m,
         zerovec::ule::encode_varule_to_box(&ConstantValue {
