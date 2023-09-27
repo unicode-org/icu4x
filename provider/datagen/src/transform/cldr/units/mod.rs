@@ -58,10 +58,10 @@ impl DataProvider<UnitsConstantsV1Marker> for crate::DatagenProvider {
             for (cons_name, (num, den, constant_exactness)) in constants_map_in_str_form.iter() {
                 let mut temp_num = Vec::<String>::new();
                 let mut temp_den = Vec::<String>::new();
-                let mut temp_constant_exactness = constant_exactness.clone();
+                let mut temp_constant_exactness = *constant_exactness;
 
-                for num_str in num.iter().cloned() {
-                    if !contains_alphabetic_chars(&num_str) || is_scientific_number(&num_str) {
+                for num_str in num {
+                    if !contains_alphabetic_chars(num_str) || is_scientific_number(num_str) {
                         temp_num.push(num_str.clone());
                         continue;
                     }
@@ -80,8 +80,8 @@ impl DataProvider<UnitsConstantsV1Marker> for crate::DatagenProvider {
                     }
                 }
 
-                for den_str in den.iter().cloned() {
-                    if !contains_alphabetic_chars(&den_str) || is_scientific_number(&den_str) {
+                for den_str in den {
+                    if !contains_alphabetic_chars(den_str) || is_scientific_number(den_str) {
                         temp_den.push(den_str.clone());
                         continue;
                     }
@@ -94,7 +94,7 @@ impl DataProvider<UnitsConstantsV1Marker> for crate::DatagenProvider {
                         temp_den.extend(rnum.clone());
 
                         if rconstant_exactness == &ConstantExactness::Approximate {
-                            temp_constant_exactness = rconstant_exactness.clone();
+                            temp_constant_exactness = *rconstant_exactness;
                         }
                     } else {
                         temp_den.push(den_str.clone());
