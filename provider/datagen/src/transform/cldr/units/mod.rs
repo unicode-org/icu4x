@@ -60,6 +60,8 @@ impl DataProvider<UnitsConstantsV1Marker> for crate::DatagenProvider {
                 let mut temp_den = Vec::<String>::new();
                 let mut temp_constant_exactness = *constant_exactness;
 
+                // Iterate over the numerator strings,
+                // and replace any strings that are keys in the constants map with their corresponding values.
                 for num_str in num {
                     if !contains_alphabetic_chars(num_str) || is_scientific_number(num_str) {
                         temp_num.push(num_str.clone());
@@ -80,6 +82,8 @@ impl DataProvider<UnitsConstantsV1Marker> for crate::DatagenProvider {
                     }
                 }
 
+                // Iterate over the denominator strings,
+                // and replace any strings that are keys in the constants map with their corresponding values.
                 for den_str in den {
                     if !contains_alphabetic_chars(den_str) || is_scientific_number(den_str) {
                         temp_den.push(den_str.clone());
