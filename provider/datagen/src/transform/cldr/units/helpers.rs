@@ -310,41 +310,25 @@ pub fn convert_constant_to_num_denom_strings(
     if split.len() > 2 {
         return Err(DataError::custom("Invalid constant string"));
     }
-    let numerator_string = split.get(0).unwrap_or(&"1");
-    let denominator_string = split.get(1).unwrap_or(&"1");
 
-    let mut has_whitespace_within = false;
-    let numerator_values = if numerator_string.is_empty() {
-        vec!["1".to_string()]
-    } else {
-        numerator_string
-            .split('*')
-            .map(|s| {
-                let s = s.trim();
-                if s.chars().any(char::is_whitespace) {
-                    has_whitespace_within = true;
-                }
-                s.to_string()
-            })
-            .collect()
+    let process_string = |s: &str| -> Vec<String> {
+        if s.is_empty() {
+            vec!["1".to_string()]
+        } else {
+            s.split('*').map(|s| s.trim().to_string()).collect()
+        }
     };
 
-    let denominator_values = if denominator_string.is_empty() {
-        vec!["1".to_string()]
-    } else {
-        denominator_string
-            .split('*')
-            .map(|s| {
-                let s = s.trim();
-                if s.chars().any(char::is_whitespace) {
-                    has_whitespace_within = true;
-                }
-                s.to_string()
-            })
-            .collect::<Vec<String>>()
-    };
+    let numerator_values = process_string(split.get(0).unwrap_or(&"1"));
+    let denominator_values = process_string(split.get(1).unwrap_or(&"1"));
 
-    if has_whitespace_within {
+    if numerator_values
+        .iter()
+        .any(|s| s.chars().any(char::is_whitespace))
+        || denominator_values
+            .iter()
+            .any(|s| s.chars().any(char::is_whitespace))
+    {
         return Err(DataError::custom(
             "The constant string contains internal white spaces",
         ));
