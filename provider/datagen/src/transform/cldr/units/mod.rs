@@ -127,12 +127,10 @@ impl DataProvider<UnitsConstantsV1Marker> for crate::DatagenProvider {
             constants_map_in_str_form
                 .into_iter()
                 .map(|(cons_name, (num, den, constant_exactness))| {
-                    // Converting slices to fraction
                     let value = convert_slices_to_fraction(&num, &den)?;
-
-                    // Transforming the fraction to a constant value
                     let (num, den, sign, cons_type) =
                         transform_fraction_to_constant_value(value, constant_exactness)?;
+
                     Ok((
                         cons_name,
                         zerovec::ule::encode_varule_to_box(&ConstantValue {
