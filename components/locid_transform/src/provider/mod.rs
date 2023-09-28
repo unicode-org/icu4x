@@ -24,8 +24,6 @@ pub use expander::*;
 mod fallback;
 pub use fallback::*;
 
-use icu_provider::prelude::*;
-
 #[cfg(feature = "compiled_data")]
 #[derive(Debug)]
 /// Baked data
@@ -53,6 +51,9 @@ const _: () = {
     icu_locid_transform_data::impl_locid_transform_likelysubtags_sr_v1!(Baked);
     icu_locid_transform_data::impl_locid_transform_script_dir_v1!(Baked);
 };
+
+#[cfg(feature = "datagen")]
+use icu_provider::prelude::*;
 
 #[cfg(feature = "datagen")]
 /// The latest minimum set of keys required by this component.

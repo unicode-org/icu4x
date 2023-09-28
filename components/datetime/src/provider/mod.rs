@@ -19,8 +19,6 @@ pub mod calendar;
 pub(crate) mod date_time;
 pub mod time_zones;
 
-use icu_provider::prelude::*;
-
 #[cfg(feature = "compiled_data")]
 #[derive(Debug)]
 /// Baked data
@@ -76,6 +74,9 @@ const _: () = {
     icu_datetime_data::impl_time_zone_specific_long_v1!(Baked);
     icu_datetime_data::impl_time_zone_specific_short_v1!(Baked);
 };
+
+#[cfg(feature = "datagen")]
+use icu_provider::prelude::*;
 
 #[cfg(feature = "datagen")]
 /// The latest minimum set of keys required by this component.

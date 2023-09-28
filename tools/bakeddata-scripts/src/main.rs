@@ -66,7 +66,7 @@ fn main() {
         );
         args.skip(1)
             .filter_map(|arg| {
-                map.get(arg.strip_suffix("/").unwrap_or(arg.as_str()))
+                map.get(arg.strip_suffix('/').unwrap_or(arg.as_str()))
                     .map(|k| (arg, *k))
             })
             .collect()
