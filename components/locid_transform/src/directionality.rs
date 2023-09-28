@@ -20,7 +20,7 @@ pub enum Direction {
     RightToLeft,
 }
 
-/// Provides methods to determine the direction of a [`Locale`].
+/// Provides methods to determine the direction of a locale.
 ///
 /// # Examples
 ///
