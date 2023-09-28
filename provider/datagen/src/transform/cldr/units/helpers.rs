@@ -311,6 +311,7 @@ pub fn convert_constant_to_num_denom_strings(
         return Err(DataError::custom("Invalid constant string"));
     }
 
+    // Define a closure to process each part of the split string
     let process_string = |s: &str| -> Vec<String> {
         if s.is_empty() {
             vec!["1".to_string()]
@@ -319,9 +320,11 @@ pub fn convert_constant_to_num_denom_strings(
         }
     };
 
+    // Process the numerator and denominator parts
     let numerator_values = process_string(split.get(0).unwrap_or(&"1"));
     let denominator_values = process_string(split.get(1).unwrap_or(&"1"));
 
+    // If any part contains internal white spaces, return an error
     if numerator_values
         .iter()
         .any(|s| s.chars().any(char::is_whitespace))
