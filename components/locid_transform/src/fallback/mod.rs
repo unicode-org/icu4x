@@ -2,42 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-//! Tools for locale fallback, enabling arbitrary input locales to be mapped into the nearest
-//! locale with data.
-//!
-//! The algorithm implemented in this module is called [Flexible Vertical Fallback](
-//! https://docs.google.com/document/d/1Mp7EUyl-sFh_HZYgyeVwj88vJGpCBIWxzlCwGgLCDwM/edit).
-//! Watch [#2243](https://github.com/unicode-org/icu4x/issues/2243) to track improvements to
-//! this algorithm and steps to enshrine the algorithm in CLDR.
-//!
-//! # Examples
-//!
-//! ```
-//! use icu_locid::locale;
-//! use icu_locid_transform::fallback::LocaleFallbacker;
-//!
-//! // Set up a LocaleFallbacker with data.
-//! let fallbacker = LocaleFallbacker::new();
-//!
-//! // Create a LocaleFallbackerIterator with a default configuration.
-//! // By default, uses language priority with no additional extension keywords.
-//! let mut fallback_iterator = fallbacker
-//!     .for_config(Default::default())
-//!     .fallback_for(locale!("hi-Latn-IN").into());
-//!
-//! // Run the algorithm and check the results.
-//! assert_eq!(fallback_iterator.get(), &locale!("hi-Latn-IN").into());
-//! fallback_iterator.step();
-//! assert_eq!(fallback_iterator.get(), &locale!("hi-Latn").into());
-//! fallback_iterator.step();
-//! assert_eq!(fallback_iterator.get(), &locale!("en-IN").into());
-//! fallback_iterator.step();
-//! assert_eq!(fallback_iterator.get(), &locale!("en-001").into());
-//! fallback_iterator.step();
-//! assert_eq!(fallback_iterator.get(), &locale!("en").into());
-//! fallback_iterator.step();
-//! assert_eq!(fallback_iterator.get(), &locale!("und").into());
-//! ```
+//! Support types for locale fallback.
 
 use crate::provider::*;
 use icu_locid::extensions::unicode::Value;
@@ -49,9 +14,44 @@ pub use icu_provider::fallback::*;
 
 mod algorithms;
 
-/// Entry type for locale fallbacking.
+/// Implements the algorithm defined in *[UTS #35: Locale Inheritance and Matching]*.
+/// 
+/// Note that this implementation performs some additional steps compared to the *UTS #35*
+/// algorithm, see *[the design doc]* for a detailed description, and [#2243](
+/// https://github.com/unicode-org/icu4x/issues/2243) to track aligment with *UTS #35*.
 ///
-/// See the module-level documentation for an example.
+/// # Examples
+///
+/// ```
+/// use icu_locid::locale;
+/// use icu_locid_transform::fallback::LocaleFallbacker;
+///
+/// // Set up a LocaleFallbacker with data.
+/// let fallbacker = LocaleFallbacker::new();
+///
+/// // Create a LocaleFallbackerIterator with a default configuration.
+/// // By default, uses language priority with no additional extension keywords.
+/// let mut fallback_iterator = fallbacker
+///     .for_config(Default::default())
+///     .fallback_for(locale!("hi-Latn-IN").into());
+///
+/// // Run the algorithm and check the results.
+/// assert_eq!(fallback_iterator.get(), &locale!("hi-Latn-IN").into());
+/// fallback_iterator.step();
+/// assert_eq!(fallback_iterator.get(), &locale!("hi-Latn").into());
+/// fallback_iterator.step();
+/// assert_eq!(fallback_iterator.get(), &locale!("en-IN").into());
+/// fallback_iterator.step();
+/// assert_eq!(fallback_iterator.get(), &locale!("en-001").into());
+/// fallback_iterator.step();
+/// assert_eq!(fallback_iterator.get(), &locale!("en").into());
+/// fallback_iterator.step();
+/// assert_eq!(fallback_iterator.get(), &locale!("und").into());
+/// ```
+/// 
+/// [UTS #35: Locale Inheritance and Matching]: https://www.unicode.org/reports/tr35/#Locale_Inheritance
+/// [the design doc]: https://docs.google.com/document/d/1Mp7EUyl-sFh_HZYgyeVwj88vJGpCBIWxzlCwGgLCDwM/edit
+#[doc(hidden)]
 #[derive(Debug, Clone, PartialEq)]
 pub struct LocaleFallbacker {
     likely_subtags: DataPayload<LocaleFallbackLikelySubtagsV1Marker>,
