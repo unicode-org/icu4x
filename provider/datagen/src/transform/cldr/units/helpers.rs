@@ -15,20 +15,26 @@ use num_rational::BigRational;
 /// - "1.5" is converted to 15/10
 /// - "1.05" is converted to 105/100
 /// - "1.005" is converted to 1005/1000
+/// - "10000.0005" is converted to 100000005/10000
+/// - ".5" is converted to 5/10
+/// - ".505" is converted to 505/1000
+/// - "5." is converted to 5/1
 /// - "1.5.5" is an invalid decimal number
 /// NOTE:
 /// - "1." is not a valid decimal number
 /// - BigRational represents a rational number in the simplest form. For example, 15/10 is converted to 3/2.
 pub fn convert_decimal_to_bigrational(decimal: &str) -> Result<BigRational, DataError> {
     let parts: Vec<&str> = decimal.split('.').collect();
+    let integral_part = parts.first().unwrap_or(&"");
+    let fractional_part = parts.last().unwrap_or(&"");
     match parts.len() {
-        1 => BigRational::from_str(parts[0])
+        1 => BigRational::from_str(&integral_part)
             .map_err(|_| DataError::custom("the integer-part is not a valid number")),
         2 => {
             let numerator = BigInt::from_str(parts.join("").as_str()).map_err(|_| {
                 DataError::custom("the integer-part and fractional-part are not a valid number")
             })?;
-            let denominator = BigInt::from(10u32).pow(parts[1].len() as u32);
+            let denominator = BigInt::from(10u32).pow(fractional_part.len() as u32);
             Ok(BigRational::new(numerator, denominator))
         }
         _ => Err(DataError::custom("the base is not a valid number")),
@@ -54,6 +60,26 @@ fn test_convert_decimal_to_bigrational() {
 
     let input = "1.005";
     let expected = BigRational::new(BigInt::from(1005u32), BigInt::from(1000u32));
+    let actual = convert_decimal_to_bigrational(input).unwrap();
+    assert_eq!(expected, actual);
+
+    let input = "10000.0005";
+    let expected = BigRational::new(BigInt::from(100000005u32), BigInt::from(10000u32));
+    let actual = convert_decimal_to_bigrational(input).unwrap();
+    assert_eq!(expected, actual);
+
+    let input = ".5";
+    let expected = BigRational::new(BigInt::from(5u32), BigInt::from(10u32));
+    let actual = convert_decimal_to_bigrational(input).unwrap();
+    assert_eq!(expected, actual);
+
+    let input = ".505";
+    let expected = BigRational::new(BigInt::from(505u32), BigInt::from(1000u32));
+    let actual = convert_decimal_to_bigrational(input).unwrap();
+    assert_eq!(expected, actual);
+
+    let input = "5.";
+    let expected = BigRational::new(BigInt::from(5u32), BigInt::from(1u32));
     let actual = convert_decimal_to_bigrational(input).unwrap();
     assert_eq!(expected, actual);
 
@@ -274,18 +300,18 @@ fn test_convert_array_of_strings_to_fraction() {
 /// - "1 * 2 / 3 * ft_to_m" is split into (["1", "2"], ["3" , "ft_to_m"])
 /// - "/2" is split into (["1"], ["2"])
 /// - "2" is split into (["2"], ["1"])
+/// - "2/" is split into (["2"], ["1"])
 /// - "1E2" is split into (["1E2"], ["1"])
 /// - "1 2 * 3" is an invalid constant string
 pub fn convert_constant_to_num_denom_strings(
     constant_string: &str,
 ) -> Result<(Vec<String>, Vec<String>), DataError> {
-    let mut split = constant_string.split('/');
-    if split.clone().count() > 2 {
+    let split: Vec<&str> = constant_string.split('/').collect();
+    if split.len() > 2 {
         return Err(DataError::custom("Invalid constant string"));
     }
-
-    let numerator_string = split.next().unwrap_or("1");
-    let denominator_string = split.next().unwrap_or("1");
+    let numerator_string = split.get(0).unwrap_or(&"1");
+    let denominator_string = split.get(1).unwrap_or(&"1");
 
     let mut has_whitespace_within = false;
     let numerator_values = if numerator_string.is_empty() {
@@ -348,6 +374,11 @@ fn test_convert_constant_to_num_denom_strings() {
     assert_eq!(expected, actual);
 
     let input = "2";
+    let expected = (vec!["2".to_string()], vec!["1".to_string()]);
+    let actual = convert_constant_to_num_denom_strings(input).unwrap();
+    assert_eq!(expected, actual);
+
+    let input = "2/";
     let expected = (vec!["2".to_string()], vec!["1".to_string()]);
     let actual = convert_constant_to_num_denom_strings(input).unwrap();
     assert_eq!(expected, actual);
