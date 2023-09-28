@@ -62,7 +62,7 @@ fn test_convert_decimal_to_bigrational() {
     assert!(actual.is_err());
 }
 
-/// Converts a scientific notation number represented as a string into a GenericFraction.
+/// Converts a scientific notation number represented as a string into a BigRational.
 /// Examples:
 /// - "1E2" is converted to 100/1
 /// - "1E-2" is converted to 1/100
