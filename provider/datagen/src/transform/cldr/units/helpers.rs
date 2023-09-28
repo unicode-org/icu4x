@@ -28,7 +28,7 @@ pub fn convert_decimal_to_bigrational(decimal: &str) -> Result<BigRational, Data
     let integral_part = parts.first().unwrap_or(&"");
     let fractional_part = parts.last().unwrap_or(&"");
     match parts.len() {
-        1 => BigRational::from_str(&integral_part)
+        1 => BigRational::from_str(integral_part)
             .map_err(|_| DataError::custom("the integer-part is not a valid number")),
         2 => {
             let numerator = BigInt::from_str(parts.join("").as_str()).map_err(|_| {
@@ -321,7 +321,7 @@ pub fn convert_constant_to_num_denom_strings(
     };
 
     // Process the numerator and denominator parts
-    let numerator_values = process_string(split.get(0).unwrap_or(&"1"));
+    let numerator_values = process_string(split.first().unwrap_or(&"1"));
     let denominator_values = process_string(split.get(1).unwrap_or(&"1"));
 
     // If any part contains internal white spaces, return an error
