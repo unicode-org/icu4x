@@ -15,7 +15,7 @@ pub use icu_provider::fallback::*;
 mod algorithms;
 
 /// Implements the algorithm defined in *[UTS #35: Locale Inheritance and Matching]*.
-/// 
+///
 /// Note that this implementation performs some additional steps compared to the *UTS #35*
 /// algorithm, see *[the design doc]* for a detailed description, and [#2243](
 /// https://github.com/unicode-org/icu4x/issues/2243) to track aligment with *UTS #35*.
@@ -48,7 +48,7 @@ mod algorithms;
 /// fallback_iterator.step();
 /// assert_eq!(fallback_iterator.get(), &locale!("und").into());
 /// ```
-/// 
+///
 /// [UTS #35: Locale Inheritance and Matching]: https://www.unicode.org/reports/tr35/#Locale_Inheritance
 /// [the design doc]: https://docs.google.com/document/d/1Mp7EUyl-sFh_HZYgyeVwj88vJGpCBIWxzlCwGgLCDwM/edit
 #[doc(hidden)]

@@ -11,7 +11,7 @@ use icu_provider::prelude::*;
 
 use crate::TransformResult;
 
-/// Implements the *Add Likely Subtags* and *Remove Likely Subtags* 
+/// Implements the *Add Likely Subtags* and *Remove Likely Subtags*
 /// algorithms as defined in *[UTS #35: Likely Subtags]*.
 ///
 /// # Examples
