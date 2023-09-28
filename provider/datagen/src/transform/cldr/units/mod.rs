@@ -43,7 +43,8 @@ impl DataProvider<UnitsConstantsV1Marker> for crate::DatagenProvider {
             constants_map_in_str_form.insert(cons_name, (num, den, constant_exactness));
         }
 
-        // This loop iterates over the constants, replacing any string values with their corresponding constant values.
+        // TODO(#4100): Implement a more efficient algorithm for replacing constants with their values.
+        // This loop iterates over the constants and replaces any string values with their corresponding constant values.
         // For example, if the constant "ft_to_m" has the value "0.3048", and the constant "ft2_to_m2" has the value "ft_to_m * ft_to_m",
         // the maximum depth represents the maximum number of nested constants that can be replaced.
         // If CLDR added more constants that are defined in terms of other constants, the maximum depth should be increased.
