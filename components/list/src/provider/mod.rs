@@ -46,6 +46,14 @@ const _: () = {
     icu_list_data::impl_list_unit_v1!(Baked);
 };
 
+#[cfg(feature = "datagen")]
+/// The latest minimum set of keys required by this component.
+pub const KEYS: &[DataKey] = &[
+    AndListV1Marker::KEY,
+    OrListV1Marker::KEY,
+    UnitListV1Marker::KEY,
+];
+
 /// Symbols and metadata required for [`ListFormatter`](crate::ListFormatter).
 ///
 /// <div class="stab unstable">
