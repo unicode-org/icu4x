@@ -38,6 +38,12 @@ const _: () = {
     icu_personnames_data::impl_personnames_personnames_v1!(Baked);
 };
 
+#[cfg(feature = "datagen")]
+/// The latest minimum set of keys required by this component.
+pub const KEYS: &[DataKey] = &[
+    PersonNamesFormatV1Marker::KEY
+];
+
 /// This is the equivalent of
 /// <https://www.unicode.org/reports/tr35/tr35-personNames.html#personnames-element>
 ///

@@ -35,7 +35,9 @@ icu_locid_transform = { workspace = true }
 serde = { version = "1.0", default-features = false, features = ["derive", "alloc"], optional = true }
 litemap = { workspace = true }
 zerofrom = { workspace = true }
-regex = "=1.8.4"
+# if pulling regex 1.9.x is pulling conflicting dependencies
+# regex-automata => ^0.3.8
+regex = "1.9"
 lazy_static = "1.4"
 
 [features]
@@ -43,7 +45,7 @@ default = ["compiled_data"]
 std = ["icu_locid/std", "icu_provider/std"]
 serde = ["dep:serde", "zerovec/serde", "icu_provider/serde"]
 datagen = ["serde", "std", "dep:databake", "zerovec/databake"]
-compiled_data = ["dep:icu_personnames_data"]
+compiled_data = ["dep:icu_personnames_data", "icu_properties/compiled_data"]
 
 [[test]]
 name = "tests"
