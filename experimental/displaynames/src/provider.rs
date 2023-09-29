@@ -39,6 +39,16 @@ const _: () = {
     icu_displaynames_data::impl_displaynames_variants_v1!(Baked);
 };
 
+#[cfg(feature = "datagen")]
+/// The latest minimum set of keys required by this component.
+pub const KEYS: &[DataKey] = &[
+    LanguageDisplayNamesV1Marker::KEY,
+    LocaleDisplayNamesV1Marker::KEY,
+    RegionDisplayNamesV1Marker::KEY,
+    ScriptDisplayNamesV1Marker::KEY,
+    VariantDisplayNamesV1Marker::KEY,
+];
+
 // We use raw TinyAsciiStrs for map keys, as we then don't have to
 // validate them as subtags on deserialization. Map lookup can be
 // done even if they are not valid tags (an invalid key will just

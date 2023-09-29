@@ -18,7 +18,6 @@ use once_cell::sync::OnceCell;
 use std::collections::HashSet;
 use std::fmt::Debug;
 use std::str::FromStr;
-use std::sync::Mutex;
 
 #[derive(Debug)]
 pub(crate) struct CldrCache {
@@ -27,7 +26,7 @@ pub(crate) struct CldrCache {
     locale_expander: OnceCell<LocaleExpander>,
     #[cfg(feature = "icu_transliterate")]
     // used by transforms/mod.rs
-    pub(super) transforms: OnceCell<Mutex<icu_transliterate::RuleCollection>>,
+    pub(super) transforms: OnceCell<std::sync::Mutex<icu_transliterate::RuleCollection>>,
 }
 
 impl CldrCache {

@@ -92,6 +92,7 @@ members = [
     "experimental/zerotrie",
 
     # Tools
+    "tools/bakeddata-scripts",
     "tools/benchmark/binsize",
     "tools/benchmark/macros",
     "tools/benchmark/memory",

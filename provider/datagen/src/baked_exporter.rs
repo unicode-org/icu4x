@@ -113,7 +113,7 @@ const MSRV: &str = std::env!("CARGO_PKG_RUST_VERSION");
 
 /// Options for configuring the output of [`BakedExporter`].
 #[non_exhaustive]
-#[derive(Debug)]
+#[derive(Debug, Clone, Copy)]
 pub struct Options {
     /// Whether to run `rustfmt` on the generated files.
     pub pretty: bool,

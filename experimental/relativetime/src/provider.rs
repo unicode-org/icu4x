@@ -57,6 +57,35 @@ const _: () = {
     icu_relativetime_data::impl_relativetime_short_year_v1!(Baked);
 };
 
+#[cfg(feature = "datagen")]
+/// The latest minimum set of keys required by this component.
+pub const KEYS: &[DataKey] = &[
+    LongDayRelativeTimeFormatDataV1Marker::KEY,
+    LongHourRelativeTimeFormatDataV1Marker::KEY,
+    LongMinuteRelativeTimeFormatDataV1Marker::KEY,
+    LongMonthRelativeTimeFormatDataV1Marker::KEY,
+    LongQuarterRelativeTimeFormatDataV1Marker::KEY,
+    LongSecondRelativeTimeFormatDataV1Marker::KEY,
+    LongWeekRelativeTimeFormatDataV1Marker::KEY,
+    LongYearRelativeTimeFormatDataV1Marker::KEY,
+    NarrowDayRelativeTimeFormatDataV1Marker::KEY,
+    NarrowHourRelativeTimeFormatDataV1Marker::KEY,
+    NarrowMinuteRelativeTimeFormatDataV1Marker::KEY,
+    NarrowMonthRelativeTimeFormatDataV1Marker::KEY,
+    NarrowQuarterRelativeTimeFormatDataV1Marker::KEY,
+    NarrowSecondRelativeTimeFormatDataV1Marker::KEY,
+    NarrowWeekRelativeTimeFormatDataV1Marker::KEY,
+    NarrowYearRelativeTimeFormatDataV1Marker::KEY,
+    ShortDayRelativeTimeFormatDataV1Marker::KEY,
+    ShortHourRelativeTimeFormatDataV1Marker::KEY,
+    ShortMinuteRelativeTimeFormatDataV1Marker::KEY,
+    ShortMonthRelativeTimeFormatDataV1Marker::KEY,
+    ShortQuarterRelativeTimeFormatDataV1Marker::KEY,
+    ShortSecondRelativeTimeFormatDataV1Marker::KEY,
+    ShortWeekRelativeTimeFormatDataV1Marker::KEY,
+    ShortYearRelativeTimeFormatDataV1Marker::KEY,
+];
+
 /// Relative time format V1 data struct.
 
 #[icu_provider::data_struct(

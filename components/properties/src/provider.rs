@@ -674,6 +674,22 @@ macro_rules! expand {
                     }
                 )?
             )+
+
+        /// All data keys in this module.
+        pub const KEYS: &[DataKey] = &[
+            $($code_point_set_marker::KEY,)+
+            $($unicode_set_marker::KEY,)+
+            $(
+                $code_point_map_marker::KEY,
+                $name_value_marker::KEY,
+                $($value_short_name_marker_sparse::KEY, $value_long_name_marker_sparse::KEY,)?
+                $($value_short_name_marker_linear::KEY, $value_long_name_marker_linear::KEY,)?
+                $($value_short_name_marker_linear4::KEY, $value_long_name_marker_linear4::KEY,)?
+            )+
+            bidi_data::BidiAuxiliaryPropertiesV1Marker::KEY,
+            GeneralCategoryMaskNameToValueV1Marker::KEY,
+            ScriptWithExtensionsPropertyV1Marker::KEY,
+        ];
     };
 }
 
