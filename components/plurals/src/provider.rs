@@ -41,6 +41,10 @@ const _: () = {
     icu_plurals_data::impl_plurals_cardinal_v1!(Baked);
 };
 
+#[cfg(feature = "datagen")]
+/// The latest minimum set of keys required by this component.
+pub const KEYS: &[DataKey] = &[CardinalV1Marker::KEY, OrdinalV1Marker::KEY];
+
 #[cfg(doc)]
 use crate::PluralCategory;
 

@@ -10,7 +10,7 @@
 //! Read more about data providers: [`icu_provider`]
 
 use alloc::borrow::Cow;
-use icu_provider::{yoke, zerofrom};
+use icu_provider::prelude::*;
 use tinystr::UnvalidatedTinyAsciiStr;
 use zerovec::{VarZeroVec, ZeroMap};
 
@@ -34,6 +34,10 @@ const _: () = {
     icu_singlenumberformatter_data::make_provider!(Baked);
     icu_singlenumberformatter_data::impl_currency_essentials_v1!(Baked);
 };
+
+#[cfg(feature = "datagen")]
+/// The latest minimum set of keys required by this component.
+pub const KEYS: &[DataKey] = &[CurrencyEssentialsV1Marker::KEY];
 
 /// This type contains all of the essential data for currency formatting.
 ///

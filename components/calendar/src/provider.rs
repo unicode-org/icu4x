@@ -44,6 +44,14 @@ const _: () = {
     icu_calendar_data::impl_datetime_week_data_v1!(Baked);
 };
 
+#[cfg(feature = "datagen")]
+/// The latest minimum set of keys required by this component.
+pub const KEYS: &[DataKey] = &[
+    JapaneseErasV1Marker::KEY,
+    JapaneseExtendedErasV1Marker::KEY,
+    WeekDataV1Marker::KEY,
+];
+
 /// The date at which an era started
 ///
 /// The order of fields in this struct is important!

@@ -52,6 +52,10 @@ const _: () = {
     icu_casemap_data::impl_props_casemap_unfold_v1!(Baked);
 };
 
+#[cfg(feature = "datagen")]
+/// The latest minimum set of keys required by this component.
+pub const KEYS: &[DataKey] = &[CaseMapUnfoldV1Marker::KEY, CaseMapV1Marker::KEY];
+
 pub use self::unfold::{CaseMapUnfoldV1, CaseMapUnfoldV1Marker};
 
 /// This type contains all of the casemapping data

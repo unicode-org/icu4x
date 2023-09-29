@@ -52,6 +52,22 @@ const _: () = {
     icu_locid_transform_data::impl_locid_transform_script_dir_v1!(Baked);
 };
 
+#[cfg(feature = "datagen")]
+use icu_provider::prelude::*;
+
+#[cfg(feature = "datagen")]
+/// The latest minimum set of keys required by this component.
+pub const KEYS: &[DataKey] = &[
+    AliasesV1Marker::KEY,
+    CollationFallbackSupplementV1Marker::KEY,
+    LikelySubtagsExtendedV1Marker::KEY,
+    LikelySubtagsForLanguageV1Marker::KEY,
+    LikelySubtagsForScriptRegionV1Marker::KEY,
+    LocaleFallbackLikelySubtagsV1Marker::KEY,
+    LocaleFallbackParentsV1Marker::KEY,
+    ScriptDirectionV1Marker::KEY,
+];
+
 use alloc::borrow::Cow;
 use tinystr::{TinyAsciiStr, UnvalidatedTinyAsciiStr};
 

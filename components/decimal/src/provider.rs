@@ -40,6 +40,10 @@ const _: () = {
     icu_decimal_data::impl_decimal_symbols_v1!(Baked);
 };
 
+#[cfg(feature = "datagen")]
+/// The latest minimum set of keys required by this component.
+pub const KEYS: &[DataKey] = &[DecimalSymbolsV1Marker::KEY];
+
 /// A collection of strings to affix to a decimal number.
 ///
 /// <div class="stab unstable">
