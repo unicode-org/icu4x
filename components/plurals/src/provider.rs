@@ -113,6 +113,10 @@ impl DataMarker for ErasedPluralRulesV1Marker {
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[zerovec::make_ule(RawPluralCategoryULE)]
 #[repr(u8)]
+#[cfg_attr(
+    any(feature = "datagen", feature = "serde"),
+    serde(rename_all = "lowercase")
+)]
 pub enum RawPluralCategory {
     /// CLDR "other" plural category.
     Other = 0,
@@ -133,12 +137,12 @@ impl RawPluralCategory {
     #[cfg(any(feature = "datagen", feature = "serde"))]
     const fn as_str(self) -> &'static str {
         match self {
-            Self::Other => "Other",
-            Self::Zero => "Zero",
-            Self::One => "One",
-            Self::Two => "Two",
-            Self::Few => "Few",
-            Self::Many => "Many",
+            Self::Other => "other",
+            Self::Zero => "zero",
+            Self::One => "one",
+            Self::Two => "two",
+            Self::Few => "few",
+            Self::Many => "many",
         }
     }
 }
@@ -193,7 +197,6 @@ impl serde::Serialize for UnvalidatedPluralRange {
     where
         S: serde::Serializer,
     {
-        use core::fmt::Write;
         use serde::ser::Error;
 
         struct PrettyPrinter(RawPluralCategory, RawPluralCategory);
@@ -201,7 +204,7 @@ impl serde::Serialize for UnvalidatedPluralRange {
         impl core::fmt::Display for PrettyPrinter {
             fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
                 f.write_str(self.0.as_str())?;
-                f.write_char('-')?;
+                f.write_str("--")?;
                 f.write_str(self.1.as_str())
             }
         }
@@ -252,8 +255,8 @@ impl<'de> serde::Deserialize<'de> for UnvalidatedPluralRange {
                 ];
 
                 let (start, end) = v
-                    .split_once('-')
-                    .ok_or_else(|| E::custom("expected token `-` in plural range"))?;
+                    .split_once("--")
+                    .ok_or_else(|| E::custom("expected token `--` in plural range"))?;
 
                 let start = PluralCategory::get_for_cldr_string(start)
                     .ok_or_else(|| E::unknown_variant(start, &VARIANTS))?;

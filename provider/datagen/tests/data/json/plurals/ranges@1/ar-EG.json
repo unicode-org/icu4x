@@ -1,9 +1,9 @@
 {
   "ranges": {
-    "Other-One": "Other",
-    "Other-Two": "Other",
-    "Zero-One": "Zero",
-    "Zero-Two": "Zero",
-    "One-Two": "Other"
+    "other--one": "other",
+    "other--two": "other",
+    "zero--one": "zero",
+    "zero--two": "zero",
+    "one--two": "other"
   }
 }
