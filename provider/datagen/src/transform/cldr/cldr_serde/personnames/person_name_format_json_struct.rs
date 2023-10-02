@@ -7,11 +7,7 @@
 //! Sample file:
 //! <https://github.com/unicode-org/cldr-json/blob/main/cldr-json/cldr-person-names-full/main/en/personNames.json>
 
-use std::collections::HashMap;
-
 use serde::Deserialize;
-
-use icu_locid::LanguageIdentifier;
 use indexmap::IndexMap;
 
 #[derive(PartialEq, Debug, Deserialize)]
