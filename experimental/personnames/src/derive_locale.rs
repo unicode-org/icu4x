@@ -2,12 +2,12 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use icu_locid::{subtags, Locale};
+use icu_locid::{Locale, subtags};
 use icu_properties::script::ScriptWithExtensionsBorrowed;
 use subtags::Script;
 
-use crate::api::NameFieldKind::{Given, Surname};
 use crate::api::{NameFieldKind, PersonName, PersonNamesFormatterError};
+use crate::api::NameFieldKind::{Given, Surname};
 
 /// Override the formatting payload to use based on specification rules.
 ///
@@ -61,27 +61,21 @@ where
 
     let lookup = Script::enum_to_short_name_mapper().static_to_owned();
     let lookup = lookup.as_borrowed();
-
+    let locid_script = lookup
+        .get(name_script)
+        .unwrap()
+        .as_str()
+        .parse::<subtags::Script>()
+        .map_err(|_err| PersonNamesFormatterError::InvalidPersonName)?;
     person_name.name_locale().map_or_else(
         || {
-            let default_language_str =
-                "und-".to_owned() + lookup.get(name_script).unwrap().as_str();
-            let effective_locale: Locale = default_language_str.parse().map_err(|_err| {
-                PersonNamesFormatterError::ParseError(String::from(
-                    "Cannot build default locale for parser",
-                ))
-            })?;
+            let mut effective_locale = Locale::UND;
+            effective_locale.id.script = Some(locid_script);
             Ok(effective_locale)
         },
         |locale| {
             let mut effective_locale = locale.clone();
-            let effective_script = lookup
-                .get(name_script)
-                .unwrap()
-                .as_str()
-                .parse::<subtags::Script>()
-                .map_err(|_err| PersonNamesFormatterError::InvalidPersonName)?;
-            effective_locale.id.script = Some(effective_script);
+            effective_locale.id.script = Some(locid_script);
             Ok(effective_locale)
         },
     )
