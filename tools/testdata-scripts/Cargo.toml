@@ -11,7 +11,7 @@ edition = "2021"
 [dependencies]
 crlify = { workspace = true }
 databake = { workspace = true }
-icu_datagen = { workspace = true, features = ["legacy_api", "networking", "icu_compactdecimal", "icu_relativetime", "icu_displaynames", "icu_personnames"] }
+icu_datagen = { workspace = true, features = ["legacy_api", "use_wasm", "networking", "icu_compactdecimal", "icu_relativetime", "icu_displaynames", "icu_personnames"] }
 icu_locid = { workspace = true, features = ["databake"] }
 icu_provider = { workspace = true }
 

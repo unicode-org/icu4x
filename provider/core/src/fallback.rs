@@ -65,7 +65,7 @@ pub struct LocaleFallbackConfig {
     /// use icu_locid::locale;
     /// use icu_locid_transform::fallback::LocaleFallbackConfig;
     /// use icu_locid_transform::fallback::LocaleFallbackPriority;
-    /// use icu_locid_transform::fallback::LocaleFallbacker;
+    /// use icu_locid_transform::LocaleFallbacker;
     ///
     /// // Set up the fallback iterator.
     /// let fallbacker = LocaleFallbacker::new();
@@ -93,7 +93,7 @@ pub struct LocaleFallbackConfig {
     /// use icu_locid::locale;
     /// use icu_locid_transform::fallback::LocaleFallbackConfig;
     /// use icu_locid_transform::fallback::LocaleFallbackPriority;
-    /// use icu_locid_transform::fallback::LocaleFallbacker;
+    /// use icu_locid_transform::LocaleFallbacker;
     ///
     /// // Set up the fallback iterator.
     /// let fallbacker = LocaleFallbacker::new();
@@ -122,7 +122,7 @@ pub struct LocaleFallbackConfig {
     /// ```
     /// use icu_locid::locale;
     /// use icu_locid_transform::fallback::LocaleFallbackConfig;
-    /// use icu_locid_transform::fallback::LocaleFallbacker;
+    /// use icu_locid_transform::LocaleFallbacker;
     ///
     /// // Set up the fallback iterator.
     /// let fallbacker = LocaleFallbacker::new();
@@ -159,7 +159,7 @@ pub struct LocaleFallbackConfig {
     /// use icu_locid_transform::fallback::LocaleFallbackConfig;
     /// use icu_locid_transform::fallback::LocaleFallbackPriority;
     /// use icu_locid_transform::fallback::LocaleFallbackSupplement;
-    /// use icu_locid_transform::fallback::LocaleFallbacker;
+    /// use icu_locid_transform::LocaleFallbacker;
     ///
     /// // Set up the fallback iterator.
     /// let fallbacker = LocaleFallbacker::new();

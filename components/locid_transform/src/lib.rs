@@ -99,6 +99,8 @@ pub use canonicalizer::LocaleCanonicalizer;
 pub use directionality::{Direction, LocaleDirectionality};
 pub use error::LocaleTransformError;
 pub use expander::LocaleExpander;
+#[doc(inline)]
+pub use fallback::LocaleFallbacker;
 
 /// Used to track the result of a transformation operation that potentially modifies its argument in place.
 #[derive(Debug, PartialEq)]

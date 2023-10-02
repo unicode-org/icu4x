@@ -2,8 +2,6 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-#[cfg(feature = "experimental")]
-use crate::options::components;
 use crate::provider::{calendar::*, date_time::PatternSelector};
 use crate::{calendar, options::DateTimeFormatterOptions, raw, DateFormatter, TimeFormatter};
 use crate::{input::DateTimeInput, DateTimeError, FormattedDateTime};
@@ -277,7 +275,7 @@ impl DateTimeFormatter {
 
     /// Constructor that supports experimental options with compiled data.
     ///
-    /// ✨ *Enabled with the `compiled_data` Cargo feature.*
+    /// ✨ *Enabled with the `compiled_data` and `experimental` Cargo features.*
     ///
     /// [📚 Help choosing a constructor](icu_provider::constructors)
     ///
@@ -499,10 +497,19 @@ where {
         Ok(self.format(value)?.write_to_string().into_owned())
     }
 
-    /// Returns a [`components::Bag`] that represents the resolved components for the
+    /// Returns a [`components::Bag`](crate::options::components::Bag) that represents the resolved components for the
     /// options that were provided to the [`DateTimeFormatter`]. The developer may request
     /// a certain set of options for a [`DateTimeFormatter`] but the locale and resolution
     /// algorithm may change certain details of what actually gets resolved.
+    ///
+    /// ✨ *Enabled with the `experimental` Cargo feature.*
+    ///
+    /// <div class="stab unstable">
+    /// 🚧 This code is experimental; it may change at any time, in breaking or non-breaking ways,
+    /// including in SemVer minor releases. It can be enabled with the "experimental" Cargo feature
+    /// of the icu meta-crate. Use with caution.
+    /// <a href="https://github.com/unicode-org/icu4x/issues/1317">#1317</a>
+    /// </div>
     ///
     /// # Examples
     ///
@@ -529,7 +536,7 @@ where {
     /// assert_eq!(dtf.resolve_components(), expected_components_bag);
     /// ```
     #[cfg(feature = "experimental")]
-    pub fn resolve_components(&self) -> components::Bag {
+    pub fn resolve_components(&self) -> crate::options::components::Bag {
         self.0.resolve_components()
     }
 

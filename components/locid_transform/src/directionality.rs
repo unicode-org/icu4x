@@ -20,8 +20,7 @@ pub enum Direction {
     RightToLeft,
 }
 
-/// The `LocaleDirectionality` provides methods to determine the direction of a locale based
-/// on [`CLDR`] data.
+/// Provides methods to determine the direction of a locale.
 ///
 /// # Examples
 ///
@@ -33,8 +32,6 @@ pub enum Direction {
 ///
 /// assert_eq!(ld.get(&locale!("en")), Some(Direction::LeftToRight));
 /// ```
-///
-/// [`CLDR`]: http://cldr.unicode.org/
 #[derive(Debug)]
 pub struct LocaleDirectionality {
     script_direction: DataPayload<ScriptDirectionV1Marker>,
