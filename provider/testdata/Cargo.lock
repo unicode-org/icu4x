@@ -284,7 +284,7 @@ dependencies = [
 
 [[package]]
 name = "icu_calendar"
-version = "1.3.0"
+version = "1.3.1"
 dependencies = [
  "calendrical_calculations",
  "displaydoc",
@@ -297,7 +297,7 @@ dependencies = [
 
 [[package]]
 name = "icu_casemap"
-version = "1.3.0"
+version = "1.3.1"
 dependencies = [
  "displaydoc",
  "icu_collections",
@@ -349,7 +349,7 @@ dependencies = [
 
 [[package]]
 name = "icu_datetime"
-version = "1.3.0"
+version = "1.3.1"
 dependencies = [
  "displaydoc",
  "either",
@@ -412,7 +412,7 @@ dependencies = [
 
 [[package]]
 name = "icu_locid_transform"
-version = "1.3.0"
+version = "1.3.1"
 dependencies = [
  "displaydoc",
  "icu_locid",
@@ -487,7 +487,7 @@ version = "1.3.0"
 
 [[package]]
 name = "icu_provider"
-version = "1.3.0"
+version = "1.3.1"
 dependencies = [
  "displaydoc",
  "icu_locid",
