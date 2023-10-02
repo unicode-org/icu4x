@@ -2,12 +2,12 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use icu_locid::{Locale, subtags};
+use icu_locid::{subtags, Locale};
 use icu_properties::script::ScriptWithExtensionsBorrowed;
 use subtags::Script;
 
-use crate::api::{NameFieldKind, PersonName, PersonNamesFormatterError};
 use crate::api::NameFieldKind::{Given, Surname};
+use crate::api::{NameFieldKind, PersonName, PersonNamesFormatterError};
 
 /// Override the formatting payload to use based on specification rules.
 ///

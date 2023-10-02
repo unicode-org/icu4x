@@ -40,9 +40,7 @@ const _: () = {
 
 #[cfg(feature = "datagen")]
 /// The latest minimum set of keys required by this component.
-pub const KEYS: &[DataKey] = &[
-    PersonNamesFormatV1Marker::KEY
-];
+pub const KEYS: &[DataKey] = &[PersonNamesFormatV1Marker::KEY];
 
 /// This is the equivalent of
 /// <https://www.unicode.org/reports/tr35/tr35-personNames.html#personnames-element>

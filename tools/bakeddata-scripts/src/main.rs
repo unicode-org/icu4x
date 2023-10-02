@@ -32,10 +32,7 @@ const COMPONENTS: &[(&str, &[DataKey])] = &[
         "experimental/displaynames",
         icu::displaynames::provider::KEYS,
     ),
-    (
-        "experimental/personnames",
-        icu::personnames::provider::KEYS,
-    ),
+    ("experimental/personnames", icu::personnames::provider::KEYS),
     (
         "experimental/relativetime",
         icu::relativetime::provider::KEYS,
