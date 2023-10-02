@@ -303,6 +303,7 @@ lazy_static::lazy_static! {
         "icu::compactdecimal",
         "icu::relativetime",
         "icu::displaynames",
+        "icu::personnames",
         "icu::transliterate",
 
         // Stuff that does not need to be exposed over FFI

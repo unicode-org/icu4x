@@ -50,10 +50,4 @@ pub struct CldrData {
     pub person_names: PersonNames,
 }
 
-#[derive(PartialEq, Debug, Deserialize)]
-pub struct LangData(pub HashMap<LanguageIdentifier, CldrData>);
-
-#[derive(PartialEq, Debug, Deserialize)]
-pub struct Resource {
-    pub main: LangData,
-}
+pub type Resource = super::super::LocaleResource<CldrData>;

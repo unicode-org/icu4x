@@ -88,13 +88,9 @@ fn to_mask(ordering: &str, size: &str, referring: &str, formality: &str) -> Resu
 impl TryFrom<&'_ Resource> for PersonNamesFormatV1<'_> {
     type Error = DataError;
     fn try_from(other: &'_ Resource) -> Result<Self, Self::Error> {
-        let (_, cldr_data) = other
+        let person_names = &other
             .main
-            .0
-            .iter()
-            .next()
-            .ok_or_else(|| DataError::custom("no CLDR data found"))?;
-        let person_names = &cldr_data.person_names;
+            .value.person_names;
         let given_first_locales = VarZeroVec::<str>::from(&person_names.given_first);
         let surname_first_locales = VarZeroVec::<str>::from(&person_names.surname_first);
         let foreign_space_replacement = Some(Cow::Owned(

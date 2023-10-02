@@ -21,8 +21,9 @@ dependencies = [
 
 [[package]]
 name = "diplomat"
-version = "0.5.2"
-source = "git+https://github.com/rust-diplomat/diplomat?rev=8d125999893fedfdf30595e97334c21ec4b18da9#8d125999893fedfdf30595e97334c21ec4b18da9"
+version = "0.6.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "c92bd5669c330d5cafd10588707f6b75a1448f9758cb6fad19f83649fe1e2e9c"
 dependencies = [
  "diplomat_core",
  "proc-macro2",
@@ -32,13 +33,15 @@ dependencies = [
 
 [[package]]
 name = "diplomat-runtime"
-version = "0.5.2"
-source = "git+https://github.com/rust-diplomat/diplomat?rev=8d125999893fedfdf30595e97334c21ec4b18da9#8d125999893fedfdf30595e97334c21ec4b18da9"
+version = "0.6.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "d0c0116d8e7fea6b2554fdb90289782b1e4e5e35d259525e4882a48ce09cbe7a"
 
 [[package]]
 name = "diplomat_core"
-version = "0.5.2"
-source = "git+https://github.com/rust-diplomat/diplomat?rev=8d125999893fedfdf30595e97334c21ec4b18da9#8d125999893fedfdf30595e97334c21ec4b18da9"
+version = "0.6.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "96c5577c28e7ed9d8f984ab7286a734a154307d09c976a3d6cb08d6fcb2f2740"
 dependencies = [
  "lazy_static",
  "proc-macro2",
@@ -77,7 +80,7 @@ checksum = "a26ae43d7bcc3b814de94796a5e736d4029efb0ee900c12e2d54c993ad1a1e07"
 
 [[package]]
 name = "fixed_decimal"
-version = "0.5.3"
+version = "0.5.4"
 dependencies = [
  "displaydoc",
  "ryu",
@@ -87,7 +90,7 @@ dependencies = [
 
 [[package]]
 name = "icu_calendar"
-version = "1.2.0"
+version = "1.3.0"
 dependencies = [
  "calendrical_calculations",
  "displaydoc",
@@ -102,11 +105,11 @@ dependencies = [
 
 [[package]]
 name = "icu_calendar_data"
-version = "1.2.0"
+version = "1.3.0"
 
 [[package]]
 name = "icu_capi"
-version = "1.2.2"
+version = "1.3.0"
 dependencies = [
  "diplomat",
  "diplomat-runtime",
@@ -141,7 +144,7 @@ dependencies = [
 
 [[package]]
 name = "icu_casemap"
-version = "1.2.0"
+version = "1.3.0"
 dependencies = [
  "displaydoc",
  "icu_casemap_data",
@@ -155,11 +158,11 @@ dependencies = [
 
 [[package]]
 name = "icu_casemap_data"
-version = "1.2.0"
+version = "1.3.0"
 
 [[package]]
 name = "icu_collator"
-version = "1.2.0"
+version = "1.3.0"
 dependencies = [
  "displaydoc",
  "icu_collator_data",
@@ -177,11 +180,11 @@ dependencies = [
 
 [[package]]
 name = "icu_collator_data"
-version = "1.2.0"
+version = "1.3.0"
 
 [[package]]
 name = "icu_collections"
-version = "1.2.0"
+version = "1.3.0"
 dependencies = [
  "displaydoc",
  "yoke",
@@ -191,7 +194,7 @@ dependencies = [
 
 [[package]]
 name = "icu_datetime"
-version = "1.2.1"
+version = "1.3.0"
 dependencies = [
  "displaydoc",
  "either",
@@ -212,11 +215,11 @@ dependencies = [
 
 [[package]]
 name = "icu_datetime_data"
-version = "1.2.0"
+version = "1.3.0"
 
 [[package]]
 name = "icu_decimal"
-version = "1.2.0"
+version = "1.3.0"
 dependencies = [
  "displaydoc",
  "fixed_decimal",
@@ -229,11 +232,11 @@ dependencies = [
 
 [[package]]
 name = "icu_decimal_data"
-version = "1.2.0"
+version = "1.3.0"
 
 [[package]]
 name = "icu_displaynames"
-version = "0.10.0"
+version = "0.11.0"
 dependencies = [
  "icu_displaynames_data",
  "icu_locid",
@@ -245,11 +248,11 @@ dependencies = [
 
 [[package]]
 name = "icu_displaynames_data"
-version = "1.2.0"
+version = "1.3.0"
 
 [[package]]
 name = "icu_list"
-version = "1.2.0"
+version = "1.3.0"
 dependencies = [
  "displaydoc",
  "icu_list_data",
@@ -261,11 +264,11 @@ dependencies = [
 
 [[package]]
 name = "icu_list_data"
-version = "1.2.0"
+version = "1.3.0"
 
 [[package]]
 name = "icu_locid"
-version = "1.2.0"
+version = "1.3.0"
 dependencies = [
  "displaydoc",
  "litemap",
@@ -276,7 +279,7 @@ dependencies = [
 
 [[package]]
 name = "icu_locid_transform"
-version = "1.2.1"
+version = "1.3.0"
 dependencies = [
  "displaydoc",
  "icu_locid",
@@ -288,11 +291,11 @@ dependencies = [
 
 [[package]]
 name = "icu_locid_transform_data"
-version = "1.2.0"
+version = "1.3.0"
 
 [[package]]
 name = "icu_normalizer"
-version = "1.2.0"
+version = "1.3.0"
 dependencies = [
  "displaydoc",
  "icu_collections",
@@ -308,11 +311,11 @@ dependencies = [
 
 [[package]]
 name = "icu_normalizer_data"
-version = "1.2.0"
+version = "1.3.0"
 
 [[package]]
 name = "icu_plurals"
-version = "1.2.0"
+version = "1.3.0"
 dependencies = [
  "displaydoc",
  "fixed_decimal",
@@ -325,11 +328,11 @@ dependencies = [
 
 [[package]]
 name = "icu_plurals_data"
-version = "1.2.0"
+version = "1.3.0"
 
 [[package]]
 name = "icu_properties"
-version = "1.2.0"
+version = "1.3.0"
 dependencies = [
  "displaydoc",
  "icu_collections",
@@ -343,11 +346,11 @@ dependencies = [
 
 [[package]]
 name = "icu_properties_data"
-version = "1.2.0"
+version = "1.3.0"
 
 [[package]]
 name = "icu_provider"
-version = "1.2.0"
+version = "1.3.0"
 dependencies = [
  "displaydoc",
  "icu_locid",
@@ -362,7 +365,7 @@ dependencies = [
 
 [[package]]
 name = "icu_provider_adapters"
-version = "1.2.0"
+version = "1.3.0"
 dependencies = [
  "icu_locid",
  "icu_locid_transform",
@@ -373,7 +376,7 @@ dependencies = [
 
 [[package]]
 name = "icu_provider_macros"
-version = "1.2.0"
+version = "1.3.0"
 dependencies = [
  "proc-macro2",
  "quote",
@@ -382,7 +385,7 @@ dependencies = [
 
 [[package]]
 name = "icu_segmenter"
-version = "1.2.1"
+version = "1.3.0"
 dependencies = [
  "core_maths",
  "displaydoc",
@@ -396,11 +399,11 @@ dependencies = [
 
 [[package]]
 name = "icu_segmenter_data"
-version = "1.2.0"
+version = "1.3.0"
 
 [[package]]
 name = "icu_timezone"
-version = "1.2.0"
+version = "1.3.0"
 dependencies = [
  "displaydoc",
  "icu_calendar",
@@ -414,7 +417,7 @@ dependencies = [
 
 [[package]]
 name = "icu_timezone_data"
-version = "1.2.0"
+version = "1.3.0"
 
 [[package]]
 name = "lazy_static"
@@ -436,7 +439,7 @@ checksum = "f7012b1bbb0719e1097c47611d3898568c546d597c2e74d66f6087edd5233ff4"
 
 [[package]]
 name = "litemap"
-version = "0.7.0"
+version = "0.7.1"
 
 [[package]]
 name = "memchr"
@@ -550,7 +553,7 @@ dependencies = [
 
 [[package]]
 name = "tinystr"
-version = "0.7.1"
+version = "0.7.3"
 dependencies = [
  "displaydoc",
  "zerovec",
@@ -594,11 +597,11 @@ checksum = "d1890f4022759daae28ed4fe62859b1236caebfc61ede2f63ed4e695f3f6d936"
 
 [[package]]
 name = "writeable"
-version = "0.5.2"
+version = "0.5.3"
 
 [[package]]
 name = "yoke"
-version = "0.7.1"
+version = "0.7.2"
 dependencies = [
  "serde",
  "stable_deref_trait",
@@ -608,7 +611,7 @@ dependencies = [
 
 [[package]]
 name = "yoke-derive"
-version = "0.7.1"
+version = "0.7.2"
 dependencies = [
  "proc-macro2",
  "quote",
@@ -618,14 +621,14 @@ dependencies = [
 
 [[package]]
 name = "zerofrom"
-version = "0.1.2"
+version = "0.1.3"
 dependencies = [
  "zerofrom-derive",
 ]
 
 [[package]]
 name = "zerofrom-derive"
-version = "0.1.2"
+version = "0.1.3"
 dependencies = [
  "proc-macro2",
  "quote",
@@ -635,7 +638,7 @@ dependencies = [
 
 [[package]]
 name = "zerotrie"
-version = "0.0.0"
+version = "0.1.0"
 dependencies = [
  "displaydoc",
  "yoke",
@@ -644,7 +647,7 @@ dependencies = [
 
 [[package]]
 name = "zerovec"
-version = "0.9.4"
+version = "0.10.0"
 dependencies = [
  "yoke",
  "zerofrom",
@@ -653,7 +656,7 @@ dependencies = [
 
 [[package]]
 name = "zerovec-derive"
-version = "0.9.4"
+version = "0.10.0"
 dependencies = [
  "proc-macro2",
  "quote",
