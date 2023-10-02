@@ -126,7 +126,7 @@ impl<P> LocaleFallbackProvider<P> {
     ///
     /// ```
     /// use icu_locid::locale;
-    /// use icu_locid_transform::fallback::LocaleFallbacker;
+    /// use icu_locid_transform::LocaleFallbacker;
     /// use icu_provider::hello_world::*;
     /// use icu_provider::prelude::*;
     /// use icu_provider_adapters::fallback::LocaleFallbackProvider;

@@ -7,7 +7,7 @@ use crate::FallbackMode;
 use icu_locid::extensions::unicode::key;
 use icu_locid::LanguageIdentifier;
 use icu_locid_transform::fallback::LocaleFallbackIterator;
-use icu_locid_transform::fallback::LocaleFallbacker;
+use icu_locid_transform::LocaleFallbacker;
 use icu_provider::datagen::*;
 use icu_provider::prelude::*;
 use once_cell::sync::Lazy;

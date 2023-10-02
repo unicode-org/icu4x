@@ -11,15 +11,8 @@ use icu_provider::prelude::*;
 
 use crate::TransformResult;
 
-/// LocaleExpander supports the `minimize` and `maximize` likely subtags
-/// algorithms as described in [`UTS #35: Unicode LDML 3. Likely Subtags`].
-///
-/// The maximize method potentially updates a passed in locale in place
-/// depending up the results of running the 'Add Likely Subtags' algorithm
-/// from [`UTS #35: Unicode LDML 3. Likely Subtags`].
-///
-/// This minimize method returns a new Locale that is the result of running the
-/// 'Remove Likely Subtags' algorithm from [`UTS #35: Unicode LDML 3. Likely Subtags`].
+/// Implements the *Add Likely Subtags* and *Remove Likely Subtags*
+/// algorithms as defined in *[UTS #35: Likely Subtags]*.
 ///
 /// # Examples
 ///
@@ -71,8 +64,7 @@ use crate::TransformResult;
 /// assert_eq!(locale, locale!("atj-Latn-CA"));
 /// ```
 ///
-/// [`CLDR`]: http://cldr.unicode.org/
-/// [`UTS #35: Unicode LDML 3. Likely Subtags`]: https://www.unicode.org/reports/tr35/#Likely_Subtags.
+/// [UTS #35: Likely Subtags]: https://www.unicode.org/reports/tr35/#Likely_Subtags
 #[derive(Debug, Clone)]
 pub struct LocaleExpander {
     likely_subtags_l: DataPayload<LikelySubtagsForLanguageV1Marker>,
