@@ -5,8 +5,6 @@
 use crate::fields::FieldSymbol;
 use crate::input::CalendarError;
 use crate::pattern::PatternError;
-#[cfg(feature = "experimental")]
-use crate::skeleton::SkeletonError;
 use displaydoc::Display;
 use icu_calendar::any_calendar::AnyCalendarKind;
 use icu_calendar::types::MonthCode;
@@ -39,7 +37,7 @@ pub enum DateTimeError {
     /// An error originating from skeleton matching.
     #[displaydoc("{0}")]
     #[cfg(feature = "experimental")]
-    Skeleton(SkeletonError),
+    Skeleton(crate::skeleton::SkeletonError),
     /// An error originating from an unsupported field in a datetime format.
     #[displaydoc("Unsupported field: {0:?}")]
     UnsupportedField(FieldSymbol),
@@ -93,13 +91,6 @@ impl From<DataError> for DateTimeError {
 impl From<core::fmt::Error> for DateTimeError {
     fn from(e: core::fmt::Error) -> Self {
         DateTimeError::Format(e)
-    }
-}
-
-#[cfg(feature = "experimental")]
-impl From<SkeletonError> for DateTimeError {
-    fn from(e: SkeletonError) -> Self {
-        DateTimeError::Skeleton(e)
     }
 }
 

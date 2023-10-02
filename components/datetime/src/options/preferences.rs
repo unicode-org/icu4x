@@ -4,6 +4,8 @@
 
 //! 🚧 \[Experimental\] Types to hold user preferences to configure a DateTimeFormatter.
 //!
+//! ✨ *Enabled with the `experimental` Cargo feature.*
+//!
 //! Preferences is a bag of options to be associated with either [`length::Bag`] or [`components::Bag`]
 //! which provides information on user preferences that can affect the result of the formatting.
 //!

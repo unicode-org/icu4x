@@ -4,6 +4,8 @@
 
 //! 🚧 \[Experimental\] Options for constructing DateTimeFormatter objects by each component style.
 //!
+//! ✨ *Enabled with the `experimental` Cargo feature.*
+//!
 //! <div class="stab unstable">
 //! 🚧 This code is experimental; it may change at any time, in breaking or non-breaking ways,
 //! including in SemVer minor releases. It can be enabled with the "experimental" Cargo feature
@@ -85,9 +87,6 @@ use crate::{
     pattern::{runtime::PatternPlurals, PatternItem},
 };
 
-#[cfg(feature = "experimental")]
-use alloc::vec::Vec;
-
 use super::preferences;
 #[cfg(feature = "serde")]
 use serde::{Deserialize, Serialize};
@@ -146,8 +145,8 @@ impl Bag {
     /// significant field to least significant. This is the order the fields are listed in
     /// the UTS 35 table - https://unicode.org/reports/tr35/tr35-dates.html#Date_Field_Symbol_Table
     #[cfg(any(test, feature = "experimental"))] // only used in test and experimental code
-    pub(crate) fn to_vec_fields(&self) -> Vec<Field> {
-        let mut fields = Vec::new();
+    pub(crate) fn to_vec_fields(&self) -> alloc::vec::Vec<Field> {
+        let mut fields = alloc::vec::Vec::new();
         if let Some(era) = self.era {
             fields.push(Field {
                 symbol: FieldSymbol::Era,
