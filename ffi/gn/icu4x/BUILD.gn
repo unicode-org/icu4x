@@ -13,7 +13,7 @@ group("icu_capi") {
 }
 
 group("icu_provider") {
-  public_deps = [ ":icu_provider-v1_3_0" ]
+  public_deps = [ ":icu_provider-v1_3_1" ]
 }
 
 rust_library("calendrical_calculations-v0_1_0") {
@@ -196,19 +196,19 @@ rust_library("icu-v1_3_0") {
   output_name = "icu-ca3d00af935d269f"
 
   deps = []
-  deps += [ ":icu_calendar-v1_3_0" ]
-  deps += [ ":icu_casemap-v1_3_0" ]
+  deps += [ ":icu_calendar-v1_3_1" ]
+  deps += [ ":icu_casemap-v1_3_1" ]
   deps += [ ":icu_collator-v1_3_0" ]
   deps += [ ":icu_collections-v1_3_0" ]
-  deps += [ ":icu_datetime-v1_3_0" ]
+  deps += [ ":icu_datetime-v1_3_1" ]
   deps += [ ":icu_decimal-v1_3_0" ]
   deps += [ ":icu_list-v1_3_0" ]
   deps += [ ":icu_locid-v1_3_0" ]
-  deps += [ ":icu_locid_transform-v1_3_0" ]
+  deps += [ ":icu_locid_transform-v1_3_1" ]
   deps += [ ":icu_normalizer-v1_3_0" ]
   deps += [ ":icu_plurals-v1_3_0" ]
   deps += [ ":icu_properties-v1_3_0" ]
-  deps += [ ":icu_provider-v1_3_0" ]
+  deps += [ ":icu_provider-v1_3_1" ]
   deps += [ ":icu_segmenter-v1_3_0" ]
   deps += [ ":icu_timezone-v1_3_0" ]
 
@@ -224,16 +224,16 @@ rust_library("icu-v1_3_0") {
   visibility = [ ":*" ]
 }
 
-rust_library("icu_calendar-v1_3_0") {
+rust_library("icu_calendar-v1_3_1") {
   crate_name = "icu_calendar"
   crate_root = "//components/calendar/src/lib.rs"
-  output_name = "icu_calendar-e33852617b0d8396"
+  output_name = "icu_calendar-71736866cec16154"
 
   deps = []
   deps += [ ":calendrical_calculations-v0_1_0" ]
   deps += [ ":displaydoc-v0_2_4($host_toolchain)" ]
   deps += [ ":icu_locid-v1_3_0" ]
-  deps += [ ":icu_provider-v1_3_0" ]
+  deps += [ ":icu_provider-v1_3_1" ]
   deps += [ ":tinystr-v0_7_3" ]
   deps += [ ":writeable-v0_5_3" ]
   deps += [ ":zerovec-v0_10_0" ]
@@ -243,8 +243,8 @@ rust_library("icu_calendar-v1_3_0") {
   rustflags = [
     "--cap-lints=allow",
     "--edition=2021",
-    "-Cmetadata=e33852617b0d8396",
-    "-Cextra-filename=-e33852617b0d8396",
+    "-Cmetadata=71736866cec16154",
+    "-Cextra-filename=-71736866cec16154",
   ]
 
   visibility = [ ":*" ]
@@ -259,19 +259,19 @@ rust_library("icu_capi-v1_3_0") {
   deps += [ ":diplomat-v0_6_0($host_toolchain)" ]
   deps += [ ":diplomat-runtime-v0_6_0" ]
   deps += [ ":fixed_decimal-v0_5_4" ]
-  deps += [ ":icu_calendar-v1_3_0" ]
-  deps += [ ":icu_casemap-v1_3_0" ]
+  deps += [ ":icu_calendar-v1_3_1" ]
+  deps += [ ":icu_casemap-v1_3_1" ]
   deps += [ ":icu_collator-v1_3_0" ]
   deps += [ ":icu_collections-v1_3_0" ]
-  deps += [ ":icu_datetime-v1_3_0" ]
+  deps += [ ":icu_datetime-v1_3_1" ]
   deps += [ ":icu_decimal-v1_3_0" ]
   deps += [ ":icu_list-v1_3_0" ]
   deps += [ ":icu_locid-v1_3_0" ]
-  deps += [ ":icu_locid_transform-v1_3_0" ]
+  deps += [ ":icu_locid_transform-v1_3_1" ]
   deps += [ ":icu_normalizer-v1_3_0" ]
   deps += [ ":icu_plurals-v1_3_0" ]
   deps += [ ":icu_properties-v1_3_0" ]
-  deps += [ ":icu_provider-v1_3_0" ]
+  deps += [ ":icu_provider-v1_3_1" ]
   deps += [ ":icu_provider_adapters-v1_3_0" ]
   deps += [ ":icu_segmenter-v1_3_0" ]
   deps += [ ":icu_timezone-v1_3_0" ]
@@ -304,17 +304,17 @@ rust_library("icu_capi-v1_3_0") {
   visibility = [ ":*" ]
 }
 
-rust_library("icu_casemap-v1_3_0") {
+rust_library("icu_casemap-v1_3_1") {
   crate_name = "icu_casemap"
   crate_root = "//components/casemap/src/lib.rs"
-  output_name = "icu_casemap-152f5993a607db5e"
+  output_name = "icu_casemap-bf663345aa4a9b57"
 
   deps = []
   deps += [ ":displaydoc-v0_2_4($host_toolchain)" ]
   deps += [ ":icu_collections-v1_3_0" ]
   deps += [ ":icu_locid-v1_3_0" ]
   deps += [ ":icu_properties-v1_3_0" ]
-  deps += [ ":icu_provider-v1_3_0" ]
+  deps += [ ":icu_provider-v1_3_1" ]
   deps += [ ":writeable-v0_5_3" ]
   deps += [ ":zerovec-v0_10_0" ]
 
@@ -323,8 +323,8 @@ rust_library("icu_casemap-v1_3_0") {
   rustflags = [
     "--cap-lints=allow",
     "--edition=2021",
-    "-Cmetadata=152f5993a607db5e",
-    "-Cextra-filename=-152f5993a607db5e",
+    "-Cmetadata=bf663345aa4a9b57",
+    "-Cextra-filename=-bf663345aa4a9b57",
   ]
 
   visibility = [ ":*" ]
@@ -341,7 +341,7 @@ rust_library("icu_collator-v1_3_0") {
   deps += [ ":icu_locid-v1_3_0" ]
   deps += [ ":icu_normalizer-v1_3_0" ]
   deps += [ ":icu_properties-v1_3_0" ]
-  deps += [ ":icu_provider-v1_3_0" ]
+  deps += [ ":icu_provider-v1_3_1" ]
   deps += [ ":smallvec-v1_10_0" ]
   deps += [ ":utf16_iter-v1_0_4" ]
   deps += [ ":utf8_iter-v1_0_3" ]
@@ -382,20 +382,20 @@ rust_library("icu_collections-v1_3_0") {
   visibility = [ ":*" ]
 }
 
-rust_library("icu_datetime-v1_3_0") {
+rust_library("icu_datetime-v1_3_1") {
   crate_name = "icu_datetime"
   crate_root = "//components/datetime/src/lib.rs"
-  output_name = "icu_datetime-874db7cc58104cc2"
+  output_name = "icu_datetime-47408a438f682a83"
 
   deps = []
   deps += [ ":displaydoc-v0_2_4($host_toolchain)" ]
   deps += [ ":either-v1_8_1" ]
   deps += [ ":fixed_decimal-v0_5_4" ]
-  deps += [ ":icu_calendar-v1_3_0" ]
+  deps += [ ":icu_calendar-v1_3_1" ]
   deps += [ ":icu_decimal-v1_3_0" ]
   deps += [ ":icu_locid-v1_3_0" ]
   deps += [ ":icu_plurals-v1_3_0" ]
-  deps += [ ":icu_provider-v1_3_0" ]
+  deps += [ ":icu_provider-v1_3_1" ]
   deps += [ ":icu_timezone-v1_3_0" ]
   deps += [ ":smallvec-v1_10_0" ]
   deps += [ ":tinystr-v0_7_3" ]
@@ -407,8 +407,8 @@ rust_library("icu_datetime-v1_3_0") {
   rustflags = [
     "--cap-lints=allow",
     "--edition=2021",
-    "-Cmetadata=874db7cc58104cc2",
-    "-Cextra-filename=-874db7cc58104cc2",
+    "-Cmetadata=47408a438f682a83",
+    "-Cextra-filename=-47408a438f682a83",
   ]
 
   visibility = [ ":*" ]
@@ -423,7 +423,7 @@ rust_library("icu_decimal-v1_3_0") {
   deps += [ ":displaydoc-v0_2_4($host_toolchain)" ]
   deps += [ ":fixed_decimal-v0_5_4" ]
   deps += [ ":icu_locid-v1_3_0" ]
-  deps += [ ":icu_provider-v1_3_0" ]
+  deps += [ ":icu_provider-v1_3_1" ]
   deps += [ ":writeable-v0_5_3" ]
 
   rustenv = []
@@ -445,7 +445,7 @@ rust_library("icu_list-v1_3_0") {
 
   deps = []
   deps += [ ":displaydoc-v0_2_4($host_toolchain)" ]
-  deps += [ ":icu_provider-v1_3_0" ]
+  deps += [ ":icu_provider-v1_3_1" ]
   deps += [ ":regex-automata-v0_2_0" ]
   deps += [ ":writeable-v0_5_3" ]
 
@@ -486,15 +486,15 @@ rust_library("icu_locid-v1_3_0") {
   visibility = [ ":*" ]
 }
 
-rust_library("icu_locid_transform-v1_3_0") {
+rust_library("icu_locid_transform-v1_3_1") {
   crate_name = "icu_locid_transform"
   crate_root = "//components/locid_transform/src/lib.rs"
-  output_name = "icu_locid_transform-41dd77ecf97f3c44"
+  output_name = "icu_locid_transform-2195bc6d86f5f089"
 
   deps = []
   deps += [ ":displaydoc-v0_2_4($host_toolchain)" ]
   deps += [ ":icu_locid-v1_3_0" ]
-  deps += [ ":icu_provider-v1_3_0" ]
+  deps += [ ":icu_provider-v1_3_1" ]
   deps += [ ":tinystr-v0_7_3" ]
   deps += [ ":zerovec-v0_10_0" ]
 
@@ -503,8 +503,8 @@ rust_library("icu_locid_transform-v1_3_0") {
   rustflags = [
     "--cap-lints=allow",
     "--edition=2021",
-    "-Cmetadata=41dd77ecf97f3c44",
-    "-Cextra-filename=-41dd77ecf97f3c44",
+    "-Cmetadata=2195bc6d86f5f089",
+    "-Cextra-filename=-2195bc6d86f5f089",
   ]
 
   visibility = [ ":*" ]
@@ -519,7 +519,7 @@ rust_library("icu_normalizer-v1_3_0") {
   deps += [ ":displaydoc-v0_2_4($host_toolchain)" ]
   deps += [ ":icu_collections-v1_3_0" ]
   deps += [ ":icu_properties-v1_3_0" ]
-  deps += [ ":icu_provider-v1_3_0" ]
+  deps += [ ":icu_provider-v1_3_1" ]
   deps += [ ":smallvec-v1_10_0" ]
   deps += [ ":utf16_iter-v1_0_4" ]
   deps += [ ":utf8_iter-v1_0_3" ]
@@ -547,7 +547,7 @@ rust_library("icu_plurals-v1_3_0") {
   deps += [ ":displaydoc-v0_2_4($host_toolchain)" ]
   deps += [ ":fixed_decimal-v0_5_4" ]
   deps += [ ":icu_locid-v1_3_0" ]
-  deps += [ ":icu_provider-v1_3_0" ]
+  deps += [ ":icu_provider-v1_3_1" ]
   deps += [ ":zerovec-v0_10_0" ]
 
   rustenv = []
@@ -570,7 +570,7 @@ rust_library("icu_properties-v1_3_0") {
   deps = []
   deps += [ ":displaydoc-v0_2_4($host_toolchain)" ]
   deps += [ ":icu_collections-v1_3_0" ]
-  deps += [ ":icu_provider-v1_3_0" ]
+  deps += [ ":icu_provider-v1_3_1" ]
   deps += [ ":tinystr-v0_7_3" ]
   deps += [ ":unicode-bidi-v0_3_13" ]
   deps += [ ":zerovec-v0_10_0" ]
@@ -588,10 +588,10 @@ rust_library("icu_properties-v1_3_0") {
   visibility = [ ":*" ]
 }
 
-rust_library("icu_provider-v1_3_0") {
+rust_library("icu_provider-v1_3_1") {
   crate_name = "icu_provider"
   crate_root = "//provider/core/src/lib.rs"
-  output_name = "icu_provider-b64d40162d0da41d"
+  output_name = "icu_provider-8b86ad8047dc2a83"
 
   deps = []
   deps += [ ":displaydoc-v0_2_4($host_toolchain)" ]
@@ -609,8 +609,8 @@ rust_library("icu_provider-v1_3_0") {
   rustflags = [
     "--cap-lints=allow",
     "--edition=2021",
-    "-Cmetadata=b64d40162d0da41d",
-    "-Cextra-filename=-b64d40162d0da41d",
+    "-Cmetadata=8b86ad8047dc2a83",
+    "-Cextra-filename=-8b86ad8047dc2a83",
     "--cfg=feature=\"macros\"",
   ]
 
@@ -624,8 +624,8 @@ rust_library("icu_provider_adapters-v1_3_0") {
 
   deps = []
   deps += [ ":icu_locid-v1_3_0" ]
-  deps += [ ":icu_locid_transform-v1_3_0" ]
-  deps += [ ":icu_provider-v1_3_0" ]
+  deps += [ ":icu_locid_transform-v1_3_1" ]
+  deps += [ ":icu_provider-v1_3_1" ]
   deps += [ ":tinystr-v0_7_3" ]
   deps += [ ":zerovec-v0_10_0" ]
 
@@ -673,7 +673,7 @@ rust_library("icu_segmenter-v1_3_0") {
   deps += [ ":displaydoc-v0_2_4($host_toolchain)" ]
   deps += [ ":icu_collections-v1_3_0" ]
   deps += [ ":icu_locid-v1_3_0" ]
-  deps += [ ":icu_provider-v1_3_0" ]
+  deps += [ ":icu_provider-v1_3_1" ]
   deps += [ ":utf8_iter-v1_0_3" ]
   deps += [ ":zerovec-v0_10_0" ]
 
@@ -698,9 +698,9 @@ rust_library("icu_timezone-v1_3_0") {
 
   deps = []
   deps += [ ":displaydoc-v0_2_4($host_toolchain)" ]
-  deps += [ ":icu_calendar-v1_3_0" ]
+  deps += [ ":icu_calendar-v1_3_1" ]
   deps += [ ":icu_locid-v1_3_0" ]
-  deps += [ ":icu_provider-v1_3_0" ]
+  deps += [ ":icu_provider-v1_3_1" ]
   deps += [ ":tinystr-v0_7_3" ]
   deps += [ ":zerotrie-v0_1_0" ]
   deps += [ ":zerovec-v0_10_0" ]
