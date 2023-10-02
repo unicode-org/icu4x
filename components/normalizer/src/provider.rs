@@ -47,6 +47,18 @@ const _: () = {
     icu_normalizer_data::impl_normalizer_uts46d_v1!(Baked);
 };
 
+#[cfg(feature = "datagen")]
+/// The latest minimum set of keys required by this component.
+pub const KEYS: &[DataKey] = &[
+    CanonicalCompositionsV1Marker::KEY,
+    CanonicalDecompositionDataV1Marker::KEY,
+    CanonicalDecompositionTablesV1Marker::KEY,
+    CompatibilityDecompositionSupplementV1Marker::KEY,
+    CompatibilityDecompositionTablesV1Marker::KEY,
+    NonRecursiveDecompositionSupplementV1Marker::KEY,
+    Uts46DecompositionSupplementV1Marker::KEY,
+];
+
 /// Main data for NFD
 ///
 /// <div class="stab unstable">

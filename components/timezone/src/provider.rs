@@ -45,6 +45,14 @@ const _: () = {
     icu_timezone_data::impl_time_zone_metazone_period_v1!(Baked);
 };
 
+#[cfg(feature = "datagen")]
+/// The latest minimum set of keys required by this component.
+pub const KEYS: &[DataKey] = &[
+    MetazonePeriodV1Marker::KEY,
+    names::Bcp47ToIanaMapV1Marker::KEY,
+    names::IanaToBcp47MapV1Marker::KEY,
+];
+
 /// TimeZone ID in BCP47 format
 ///
 /// <div class="stab unstable">

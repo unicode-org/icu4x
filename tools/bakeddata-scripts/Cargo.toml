@@ -1,0 +1,19 @@
+# This file is part of ICU4X. For terms of use, please see the file
+# called LICENSE at the top level of the ICU4X source tree
+# (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
+
+[package]
+name = "bakeddata-scripts"
+version = "0.0.0"
+publish = false
+edition = "2021"
+
+[dependencies]
+icu = { workspace = true, features = ["experimental"] }
+icu_compactdecimal = { workspace = true } # not in meta crate
+icu_unitsconversion = { workspace = true } # not in meta crate
+icu_singlenumberformatter = { workspace = true } # not in meta crate
+
+icu_datagen = { workspace = true, default-features = false, features = ["baked_exporter", "networking", "experimental_components", "rayon", "use_wasm"] }
+log = "0.4"
+simple_logger = "4"
