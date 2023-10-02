@@ -277,7 +277,6 @@ where
         )))
     }
 
-    #[cfg(feature = "experimental")]
     fn skeleton_data_payload(&self) -> Result<DataPayload<DateSkeletonPatternsV1Marker>> {
         use icu_locid::extensions::unicode::{key, value};
         use tinystr::tinystr;
