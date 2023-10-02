@@ -7,8 +7,8 @@
 //! Sample file:
 //! <https://github.com/unicode-org/cldr-json/blob/main/cldr-json/cldr-person-names-full/main/en/personNames.json>
 
-use serde::Deserialize;
 use indexmap::IndexMap;
+use serde::Deserialize;
 
 #[derive(PartialEq, Debug, Deserialize)]
 pub struct FormalityFormatting(
