@@ -541,7 +541,7 @@ jobs:
 
     - name: Generate testdata
       run: |
-        cargo run --bin make-testdata-legacy
+        cargo run --bin make-testdata-legacy --manifest-path tools/testdata-scripts/Cargo.toml
 
     - name: Measure size of selected data package provider/testdata/data/testdata.postcard
       run: |
