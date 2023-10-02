@@ -9,7 +9,7 @@
 //!
 //! Read more about data providers: [`icu_provider`]
 
-use icu_provider::{yoke, zerofrom};
+use icu_provider::prelude::*;
 use zerovec::{ZeroMap, ZeroVec};
 
 #[cfg(feature = "compiled_data")]
