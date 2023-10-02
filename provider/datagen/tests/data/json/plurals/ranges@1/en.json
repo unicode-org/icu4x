@@ -1,11 +1,5 @@
 {
-  "ranges": [
-    [
-      [
-        "Other",
-        "One"
-      ],
-      "Other"
-    ]
-  ]
+  "ranges": {
+    "Other-One": "Other"
+  }
 }

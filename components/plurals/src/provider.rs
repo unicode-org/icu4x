@@ -16,6 +16,7 @@
 //! Read more about data providers: [`icu_provider`]
 
 use crate::rules::runtime::ast::Rule;
+use crate::PluralCategory;
 use icu_provider::prelude::*;
 use icu_provider::DataMarker;
 use zerovec::ZeroMap;
@@ -50,8 +51,6 @@ pub const KEYS: &[DataKey] = &[
     OrdinalV1Marker::KEY,
     PluralRangesV1Marker::KEY,
 ];
-
-use crate::PluralCategory;
 
 /// Plural rule strings conforming to UTS 35 syntax. Includes separate fields for five of the six
 /// standard plural forms. If none of the rules match, the "other" category is assumed.
@@ -129,6 +128,21 @@ pub enum RawPluralCategory {
     Many = 5,
 }
 
+impl RawPluralCategory {
+    /// Gets the corresponding variant string of this `RawPluralCategory`.
+    #[cfg(any(feature = "datagen", feature = "serde"))]
+    const fn as_str(self) -> &'static str {
+        match self {
+            Self::Other => "Other",
+            Self::Zero => "Zero",
+            Self::One => "One",
+            Self::Two => "Two",
+            Self::Few => "Few",
+            Self::Many => "Many",
+        }
+    }
+}
+
 impl From<PluralCategory> for RawPluralCategory {
     fn from(value: PluralCategory) -> Self {
         match value {
@@ -179,13 +193,25 @@ impl serde::Serialize for UnvalidatedPluralRange {
     where
         S: serde::Serializer,
     {
+        use core::fmt::Write;
         use serde::ser::Error;
+
+        struct PrettyPrinter(RawPluralCategory, RawPluralCategory);
+
+        impl core::fmt::Display for PrettyPrinter {
+            fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
+                f.write_str(self.0.as_str())?;
+                f.write_char('-')?;
+                f.write_str(self.1.as_str())
+            }
+        }
+
         if serializer.is_human_readable() {
             let start = RawPluralCategory::new_from_u8(self.0 >> 4)
                 .ok_or_else(|| S::Error::custom("invalid tag in UnvalidatedPluralRange"))?;
             let end = RawPluralCategory::new_from_u8(self.0 & 0x0F)
                 .ok_or_else(|| S::Error::custom("invalid tag in UnvalidatedPluralRange"))?;
-            (start, end).serialize(serializer)
+            serializer.collect_str(&PrettyPrinter(start, end))
         } else {
             self.0.serialize(serializer)
         }
@@ -198,9 +224,48 @@ impl<'de> serde::Deserialize<'de> for UnvalidatedPluralRange {
     where
         D: serde::Deserializer<'de>,
     {
+        use serde::de::{Error, Visitor};
+
+        struct HumanReadableVisitor;
+
+        impl<'de> Visitor<'de> for HumanReadableVisitor {
+            type Value = UnvalidatedPluralRange;
+
+            fn expecting(&self, formatter: &mut alloc::fmt::Formatter) -> alloc::fmt::Result {
+                write!(
+                    formatter,
+                    "a plural range of the form <PluralCategory>-<PluralCategory>",
+                )
+            }
+
+            fn visit_str<E>(self, v: &str) -> Result<Self::Value, E>
+            where
+                E: Error,
+            {
+                const VARIANTS: [&str; 6] = [
+                    RawPluralCategory::Other.as_str(),
+                    RawPluralCategory::Zero.as_str(),
+                    RawPluralCategory::One.as_str(),
+                    RawPluralCategory::Two.as_str(),
+                    RawPluralCategory::Few.as_str(),
+                    RawPluralCategory::Many.as_str(),
+                ];
+
+                let (start, end) = v
+                    .split_once('-')
+                    .ok_or_else(|| E::custom("expected token `-` in plural range"))?;
+
+                let start = PluralCategory::get_for_cldr_string(start)
+                    .ok_or_else(|| E::unknown_variant(start, &VARIANTS))?;
+                let end = PluralCategory::get_for_cldr_string(end)
+                    .ok_or_else(|| E::unknown_variant(end, &VARIANTS))?;
+
+                Ok(UnvalidatedPluralRange::from_range(start.into(), end.into()))
+            }
+        }
+
         if deserializer.is_human_readable() {
-            let (start, end) = <(RawPluralCategory, RawPluralCategory)>::deserialize(deserializer)?;
-            Ok(UnvalidatedPluralRange::from_range(start, end))
+            deserializer.deserialize_str(HumanReadableVisitor)
         } else {
             Ok(Self(<u8>::deserialize(deserializer)?))
         }
