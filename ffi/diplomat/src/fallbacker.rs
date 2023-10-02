@@ -8,8 +8,8 @@ pub mod ffi {
     use icu_locid_transform::fallback::LocaleFallbackConfig;
     use icu_locid_transform::fallback::LocaleFallbackIterator;
     use icu_locid_transform::fallback::LocaleFallbackPriority;
-    use icu_locid_transform::fallback::LocaleFallbacker;
     use icu_locid_transform::fallback::LocaleFallbackerWithConfig;
+    use icu_locid_transform::LocaleFallbacker;
 
     use crate::{
         errors::ffi::ICU4XError, locale::ffi::ICU4XLocale, provider::ffi::ICU4XDataProvider,
