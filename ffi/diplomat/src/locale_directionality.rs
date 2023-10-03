@@ -47,6 +47,7 @@ pub mod ffi {
             provider: &ICU4XDataProvider,
             expander: &ICU4XLocaleExpander,
         ) -> Result<Box<ICU4XLocaleDirectionality>, ICU4XError> {
+            #[allow(unused_imports)]
             use icu_provider::prelude::*;
             Ok(Box::new(ICU4XLocaleDirectionality(match &provider.0 {
                 ICU4XDataProviderInner::Destroyed => Err(icu_provider::DataError::custom(
