@@ -1,5 +1,152 @@
 # Changelog
 
+## icu4x 1.3.2 (Oct 4, 2023)
+
+1.3.2 was released to clean up the range dependency on `zerovec` deliberately introduced in 1.3.0. It includes all previous 1.3.x changes
+
+## icu4x 1.3.1
+
+A subset of crates received a 1.3.1 patch release, to incorporate documentation fixes (#4103). These crates were: `icu_calendar`, `icu_casemap`, `icu_datetime`, `icu_locid_transform`, `icu_provider`.
+
+## icu4x 1.3 (Sep 25, 2023)
+
+- General
+  - All updated crates:
+    - License updated to the [new Unicode license](https://www.unicode.org/license.txt)
+    - MSRV is now 1.66
+  - Components now have the option to use `compiled_data`, an efficient default set of data baked in to the component. This is now recommended over using a data provider unless you have specific needs driving it.
+- Data model and providers
+  - `icu_provider`:
+    - Make `DataPayload` constructible from `&'static M::Yokeable` (#3467)
+    - Add ExportableDataPayload::eq_dyn (#3639)
+    - Better docs (#3740, #3742)
+    - Moving fallback options into `icu_provider` (#3651)
+    - Add DataPayload::dynamic_cast_mut (#3952)
+    - (experimental) Add AuxiliaryKey to DataLocale (#3872)
+  - `icu_datagen`:
+    - Completely revamped API (#3705, #3861, #3951, #4008, #4041, #3669)
+        - The old API is still available behind the `legacy_api` default Cargo feature
+    - Updated baked data output to be usable by `compiled_data` (#3449, #3493, #3549, #3500, #3847)
+    - Add recommended locale set and expand regions in datagen (#3586)
+    - Make datagen faster by caching more things (#3625)
+    - Consume CLDR-JSON resources keyed with default script (#3772, #3786)
+    - (cli) Warn for `--locales all` (#3691)
+  - `icu_provider_adapters`: 
+    - Deprecated `LocaleFallbacker`, use through `icu::locid_transform` (#TODO)
+  - `icu_provider_blob`:
+    - Returning `ExtraneousLocale` in `BlobDataProvider` (#3562)
+    - Fix empty keys in `BlobDataProvider` (#3551) 
+  - `icu_provider_fs`:
+    - Correct error types for `icu_provider_fs` (#3682) 
+- Components:
+  - Cross component:
+    - All component crates now have a default `compiled_data` feature that provides default constructors that do not require using data providers, instead using data compiled into the library
+  - `icu_calendar`
+    - Support for new non-Gregorian calendars: Persian (Solar Hijri), ROC, Hebrew, Chinese, Korean (Dangi), and Islamic (civil, observational, tabular, and Umm al-Qura). Lunar calendars are not yet fully optimized.
+    - Add `Ord` and `PartialOrd` to `icu_calendar` types (#3468)
+    - Add cyclic year to `FormattableYear` (#3581)
+  - `icu_casemap`
+    - Newly stabilized crate
+  - `icu_collator`
+    - No additional changes
+  - `icu_collections`
+    - Fixed JSON serialization of unpaired surrogates (#3892)
+  - `icu_datetime`
+    - Formatting for the new calendars added in `icu_calendar`
+      - Includes preview formatting for Chinese and Korean with cyclic years and leap months
+    - Hardening of edge cases surrounding the `Calendar` trait
+    - `TimeZoneFormatter::load_*_format` functions:
+      - Those with a provider argument gain an equivalent `TimeZoneFormatter::load_*_format` gated by `compiled_data`
+      - Those without a provider argument renamed to `TimeZoneFormatter::include_*_format` with deprecation warning
+  - `icu_decimal`
+    - No additional changes
+  - `icu_list`
+    - No additional changes
+  - `icu_locid`
+    - Declarative macros are now re-exported from their own modules; old exports are deprecated; for example, `use icu::locid::extensions::unicode::value` now works, instead of `use icu::locid::extensions_unicode_value`
+  - `icu_locid_transform`
+    - New home of `LocaleFallbacker` and `fallback` module previously found in `icu_provider_adapters`
+    - New `LocaleDirectionality` to access the right-to-left status of locales
+  - `icu_normalizer`
+    - No additional changes
+  - `icu_plurals`
+    - No additional changes
+  - `icu_properties`
+    - Compiled data functions added to `sets` and `maps` without `load_` prefix: `icu::properties::sets::basic_emoji()`
+  - `icu_segmenter`
+    - Algorithmic bug fixes such as #3392
+  - `icu_timezone`
+    - New `IanaToBcp47Mapper` for converting between IANA time zone names and BCP-47 time zone names (#2909)
+ - Utils:
+    - `calendrical_calculations`: New crate: 0.1.0
+    - `crlify`: 1.0.2 -> 1.0.3
+    - `databake` and `databake_derive`: 1.0.5 -> 1.0.6
+      - `::` paths changed (#3450)
+    - `deduplicating_array`:  0.1.4 -> 0.1.5
+    - `fixed_decimal`: 0.5.3 -> 0.5.4
+      - Fix rounding bug (#3644)
+      - Reexport some types to be more consistent with ICU4X naming (#3945)
+    - `litemap`: 0.7.0 -> 0.7.1
+      - Add const litemap getter functions for common types (#3416)
+    - `icu_pattern`: 0.1.4 -> 0.1.5
+    - `tinystr`: 0.7.1 -> 0.7.2
+      - Add `UnvalidatedTinyAsciiStr` (#3406)
+      - Make compatible with `T: Bake` on `ZeroVec` (#3451)
+    - `tzif`: 0.2.1 -> 0.2.2
+    - `writeable`: 0.5.2 -> 0.5.3
+    - `yoke` and `yoke_derive`: 0.7.1 -> 0.7.2
+      - Make `impl<...> Debug for Yoke<...>` implementation sound (#3686)
+      - Add `KindaSortaDangling` internal type to make Yoke safe under strong protection (#3735)
+    - `zerofrom` and `zerofrom_derive`: 0.1.2 -> 0.1.3
+      - Expand `ZeroFrom` to cover cases where attrs can borrow (#3770)
+      - Expand `ZeroFrom` impl on unsized &T (#3467)
+    - `zerovec` and `zerovec_derive`: 0.9.4 -> (0.9.6)
+      - Add `ZeroTrie`, an efficient string-to-int collection (#2722)
+      - Handle incorrect `VarZeroVec` bytes representation (#3883)
+      - Better soundness under stacked borrows (#3513, #3524, #3515, #3509)
+      - Deserialization for `VarZeroVec<VarZeroSlice>`, take 2 (#3649)
+      - Fix `MultiFieldsULE` (#3642)
+      - Add initial `zeroslice!` and `zerovec!` macros #3453, Update `zerovec!`/`zeroslice!` macro syntax to nested arrays (#3611)
+      - Add support for custom varule fields in #[make_varule] (#3580)
+      - Add `UnvalidatedChar` (#3444)
+      - `get_copied_by` API (#3351)
+    - `zerovec` and `zerovec_derive`: 0.9.6 -> 0.10.0:
+      - Adding `T: Bake` bound on `ZeroVec`'s `Bake` (#3451)
+ - FFI:
+    - Feature support
+      - Case mapping exports:
+        - `ICU4XCaseMapper`
+        - `ICU4XCaseMapCloser`
+        - `ICU4XTitlecaseMapper`
+        - `ICU4XTrailingCase`
+      - Other new exports:
+        - `ICU4XCodePointSetBuilder`
+        - `ICU4XLocaleDirection`
+        - `ICU4XLocaleDirectionality`
+        - `ICU4XLocaleFallbackSupplement`
+        - `ICU4XIanaToBcp47Mapper`
+      - Enum variants added for calendar types and errors
+    - C++
+      - Don't use `std::move` for inline arguments (https://github.com/rust-diplomat/diplomat/pull/336)
+ - Experimental:
+   - `bies`
+     - No additional changes
+   - `icu_compactdecimal`
+     - Convenience functions for formatting `f64` and `FixedDecimal` (#3699)
+   - `displaynames`
+     - New `VariantDisplayNames` for accessing display names of locale variant subtags (#3461)
+     - `LocaleDisplayNamesFormatter` now supports full UTS 35 language identifier formatting (#3587)
+   - `harfbuzz`
+     - No additional changes
+   - `ixdtf`
+     - No additional changes
+   - `relativetime`
+     - No additional changes
+   - `transliterate`: New crate: 0.1.0
+   - `unicodeset_parse`: New crate: 0.1.0
+   - `zerotrie`: New crate: 0.1.0
+
+
 ## icu4x 1.2.x (Apr 17, 2023)
 
 Note: A subset of crates received patch releases in the 1.2 stream.
