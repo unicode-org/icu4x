@@ -116,7 +116,7 @@ exclude = [
 ]
 
 [workspace.package]
-version = "1.3.0"
+version = "1.3.2"
 rust-version = "1.66"
 authors = ["The ICU4X Project Developers"]
 edition = "2021"
@@ -139,66 +139,66 @@ include = [
 # KEEP IN SYNC WITH workspace.members and docs/tutorials/testing/patch.toml
 
 # Components
-icu = { version = "~1.3.0", path = "components/icu", default-features = false }
-icu_calendar = { version = "~1.3.0", path = "components/calendar", default-features = false }
-icu_casemap = { version = "~1.3.0", path = "components/casemap", default-features = false }
-icu_collator = { version = "~1.3.0", path = "components/collator", default-features = false }
-icu_collections = { version = "~1.3.0", path = "components/collections", default-features = false }
-icu_codepointtrie_builder = { version = "0.3.5", path = "components/collections/codepointtrie_builder", default-features = false }
-icu_datetime = { version = "~1.3.0", path = "components/datetime", default-features = false }
-icu_decimal = { version = "~1.3.0", path = "components/decimal", default-features = false }
-icu_list = { version = "~1.3.0", path = "components/list", default-features = false }
-icu_locid = { version = "~1.3.0", path = "components/locid", default-features = false }
-icu_locid_transform = { version = "~1.3.0", path = "components/locid_transform", default-features = false }
-icu_normalizer = { version = "~1.3.0", path = "components/normalizer", default-features = false }
-icu_plurals = { version = "~1.3.0", path = "components/plurals", default-features = false }
-icu_properties = { version = "~1.3.0", path = "components/properties", default-features = false }
-icu_segmenter = { version = "~1.3.0", path = "components/segmenter", default-features = false }
-icu_timezone = { version = "~1.3.0", path = "components/timezone", default-features = false }
-icu_compactdecimal = { version = "0.2.1", path = "experimental/compactdecimal", default-features = false }
-icu_displaynames = { version = "0.11.0", path = "experimental/displaynames", default-features = false }
-icu_personnames = { version = "0.1.0", path = "experimental/personnames", default-features = false }
-icu_relativetime = { version = "0.1.2", path = "experimental/relativetime", default-features = false }
+icu = { version = "~1.3.2", path = "components/icu", default-features = false }
+icu_calendar = { version = "~1.3.2", path = "components/calendar", default-features = false }
+icu_casemap = { version = "~1.3.2", path = "components/casemap", default-features = false }
+icu_collator = { version = "~1.3.2", path = "components/collator", default-features = false }
+icu_collections = { version = "~1.3.2", path = "components/collections", default-features = false }
+icu_codepointtrie_builder = { version = "0.3.6", path = "components/collections/codepointtrie_builder", default-features = false }
+icu_datetime = { version = "~1.3.2", path = "components/datetime", default-features = false }
+icu_decimal = { version = "~1.3.2", path = "components/decimal", default-features = false }
+icu_list = { version = "~1.3.2", path = "components/list", default-features = false }
+icu_locid = { version = "~1.3.2", path = "components/locid", default-features = false }
+icu_locid_transform = { version = "~1.3.2", path = "components/locid_transform", default-features = false }
+icu_normalizer = { version = "~1.3.2", path = "components/normalizer", default-features = false }
+icu_plurals = { version = "~1.3.2", path = "components/plurals", default-features = false }
+icu_properties = { version = "~1.3.2", path = "components/properties", default-features = false }
+icu_segmenter = { version = "~1.3.2", path = "components/segmenter", default-features = false }
+icu_timezone = { version = "~1.3.2", path = "components/timezone", default-features = false }
+icu_compactdecimal = { version = "0.2.2", path = "experimental/compactdecimal", default-features = false }
+icu_displaynames = { version = "0.11.1", path = "experimental/displaynames", default-features = false }
+icu_relativetime = { version = "0.1.3", path = "experimental/relativetime", default-features = false }
 icu_singlenumberformatter = { version = "0.0.0", path = "experimental/single_number_formatter", default-features = false }
-icu_transliterate = { version = "0.1.0", path = "experimental/transliterate", default-features = false }
-icu_unicodeset_parse = { version = "0.1.0", path = "experimental/unicodeset_parse", default-features = false }
+icu_transliterate = { version = "0.1.1", path = "experimental/transliterate", default-features = false }
+icu_unicodeset_parse = { version = "0.1.1", path = "experimental/unicodeset_parse", default-features = false }
 icu_unitsconversion = { version = "0.0.0", path = "experimental/unitsconversion", default-features = false }
+icu_personnames = { version = "0.0.0", path = "experimental/personnames", default-features = false }
 
 # Components data
-icu_calendar_data = { version = "~1.3.0", path = "components/calendar/data", default-features = false }
-icu_casemap_data = { version = "~1.3.0", path = "components/casemap/data", default-features = false }
-icu_collator_data = { version = "~1.3.0", path = "components/collator/data", default-features = false }
-icu_datetime_data = { version = "~1.3.0", path = "components/datetime/data", default-features = false }
-icu_decimal_data = { version = "~1.3.0", path = "components/decimal/data", default-features = false }
-icu_list_data = { version = "~1.3.0", path = "components/list/data", default-features = false }
-icu_locid_transform_data = { version = "~1.3.0", path = "components/locid_transform/data", default-features = false }
-icu_normalizer_data = { version = "~1.3.0", path = "components/normalizer/data", default-features = false }
-icu_plurals_data = { version = "~1.3.0", path = "components/plurals/data", default-features = false }
-icu_properties_data = { version = "~1.3.0", path = "components/properties/data", default-features = false }
-icu_segmenter_data = { version = "~1.3.0", path = "components/segmenter/data", default-features = false }
-icu_timezone_data = { version = "~1.3.0", path = "components/timezone/data", default-features = false }
-icu_compactdecimal_data = { version = "~1.3.0", path = "experimental/compactdecimal/data", default-features = false }
-icu_displaynames_data = { version = "~1.3.0", path = "experimental/displaynames/data", default-features = false }
-icu_relativetime_data = { version = "~1.3.0", path = "experimental/relativetime/data", default-features = false }
-icu_singlenumberformatter_data = { version = "~1.3.0", path = "experimental/single_number_formatter/data", default-features = false }
-icu_personnames_data = { version = "~1.3.0", path = "experimental/personnames/data", default-features = false }
-icu_unitsconversion_data = { version = "~1.3.0", path = "experimental/unitsconversion/data", default-features = false }
+icu_calendar_data = { version = "~1.3.2", path = "components/calendar/data", default-features = false }
+icu_casemap_data = { version = "~1.3.2", path = "components/casemap/data", default-features = false }
+icu_collator_data = { version = "~1.3.2", path = "components/collator/data", default-features = false }
+icu_datetime_data = { version = "~1.3.2", path = "components/datetime/data", default-features = false }
+icu_decimal_data = { version = "~1.3.2", path = "components/decimal/data", default-features = false }
+icu_list_data = { version = "~1.3.2", path = "components/list/data", default-features = false }
+icu_locid_transform_data = { version = "~1.3.2", path = "components/locid_transform/data", default-features = false }
+icu_normalizer_data = { version = "~1.3.2", path = "components/normalizer/data", default-features = false }
+icu_plurals_data = { version = "~1.3.2", path = "components/plurals/data", default-features = false }
+icu_properties_data = { version = "~1.3.2", path = "components/properties/data", default-features = false }
+icu_segmenter_data = { version = "~1.3.2", path = "components/segmenter/data", default-features = false }
+icu_timezone_data = { version = "~1.3.2", path = "components/timezone/data", default-features = false }
+icu_compactdecimal_data = { version = "~1.3.2", path = "experimental/compactdecimal/data", default-features = false }
+icu_displaynames_data = { version = "~1.3.2", path = "experimental/displaynames/data", default-features = false }
+icu_relativetime_data = { version = "~1.3.2", path = "experimental/relativetime/data", default-features = false }
+icu_singlenumberformatter_data = { version = "~1.3.2", path = "experimental/single_number_formatter/data", default-features = false }
+icu_unitsconversion_data = { version = "~1.3.2", path = "experimental/unitsconversion/data", default-features = false }
+icu_personnames_data = { version = "~1.3.2", path = "experimental/personnames/data", default-features = false }
 
 # FFI
-icu_capi = { version = "~1.3.0", path = "ffi/diplomat", default-features = false }
-icu_capi_cdylib = { version = "~1.3.0", path = "ffi/capi_cdylib", default-features = false }
-icu_capi_staticlib = { version = "~1.3.0", path = "ffi/capi_staticlib", default-features = false }
+icu_capi = { version = "~1.3.2", path = "ffi/diplomat", default-features = false }
+icu_capi_cdylib = { version = "~1.3.2", path = "ffi/capi_cdylib", default-features = false }
+icu_capi_staticlib = { version = "~1.3.2", path = "ffi/capi_staticlib", default-features = false }
 icu4x_ecma402 = { version = "0.8.0", path = "ffi/ecma402", default-features = false }
-icu_freertos = { version = "~1.3.0", path = "ffi/freertos", default-features = false }
-icu_harfbuzz = { version = "~1.3.0", path = "experimental/harfbuzz", default-features = false }
+icu_freertos = { version = "~1.3.2", path = "ffi/freertos", default-features = false }
+icu_harfbuzz = { version = "~1.3.2", path = "experimental/harfbuzz", default-features = false }
 
 # Provider
-icu_datagen = { version = "~1.3.0", path = "provider/datagen", default-features = false }
-icu_provider = { version = "~1.3.0", path = "provider/core", default-features = false }
-icu_provider_adapters = { version = "~1.3.0", path = "provider/adapters", default-features = false }
-icu_provider_blob = { version = "~1.3.0", path = "provider/blob", default-features = false }
-icu_provider_fs = { version = "~1.3.0", path = "provider/fs/", default-features = false }
-icu_provider_macros = { version = "~1.3.0", path = "provider/macros", default-features = false }
+icu_datagen = { version = "~1.3.2", path = "provider/datagen", default-features = false }
+icu_provider = { version = "~1.3.2", path = "provider/core", default-features = false }
+icu_provider_adapters = { version = "~1.3.2", path = "provider/adapters", default-features = false }
+icu_provider_blob = { version = "~1.3.2", path = "provider/blob", default-features = false }
+icu_provider_fs = { version = "~1.3.2", path = "provider/fs/", default-features = false }
+icu_provider_macros = { version = "~1.3.2", path = "provider/macros", default-features = false }
 
 # Utils
 calendrical_calculations = { version = "0.1.0", path = "utils/calendrical_calculations", default-features = false }
@@ -216,12 +216,11 @@ yoke = { version = "0.7.2", path = "utils/yoke", default-features = false }
 yoke-derive = { version = "0.7.2", path = "utils/yoke/derive", default-features = false }
 zerofrom = { version = "0.1.2", path = "utils/zerofrom", default-features = false }
 zerofrom-derive = { version = "0.1.2", path = "utils/zerofrom/derive", default-features = false }
-# Remove this range bound next ICU4X version
-zerovec = { version = ">=0.9.4, <0.11.0", path = "utils/zerovec", default-features = false }
-zerovec-derive = { version = ">=0.9.4, <0.11.0", path = "utils/zerovec/derive", default-features = false }
+zerovec = { version = "0.10.0", path = "utils/zerovec", default-features = false }
+zerovec-derive = { version = "0.10.0", path = "utils/zerovec/derive", default-features = false }
 bies = { version = "0.2.2", path = "experimental/bies", default-features = false }
 ixdtf = { version = "0.1.1", path = "experimental/ixdtf", default-features = false }
-zerotrie = { version = "0.1.0", path = "experimental/zerotrie", default-features = false }
+zerotrie = { version = "0.1.1", path = "experimental/zerotrie", default-features = false }
 
 # Tools
 icu_benchmark_macros = { path = "tools/benchmark/macros" }
