@@ -162,7 +162,7 @@ icu_singlenumberformatter = { version = "0.0.0", path = "experimental/single_num
 icu_transliterate = { version = "0.1.1", path = "experimental/transliterate", default-features = false }
 icu_unicodeset_parse = { version = "0.1.1", path = "experimental/unicodeset_parse", default-features = false }
 icu_unitsconversion = { version = "0.0.0", path = "experimental/unitsconversion", default-features = false }
-icu_personnames = { version = "0.0.0", path = "experimental/personnames", default-features = false }
+icu_personnames = { version = "0.1.0", path = "experimental/personnames", default-features = false }
 
 # Components data
 icu_calendar_data = { version = "~1.3.2", path = "components/calendar/data", default-features = false }
