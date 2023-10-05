@@ -23,10 +23,10 @@ components/timezone/              @nordzilla
 experimental/bies/                @sffc
 experimental/compactdecimal/      @eggrobin
 experimental/displaynames/        @sffc @snktd
+experimental/ecma402/             @filmil
 experimental/harfbuzz/            @hsivonen
 experimental/relativetime/        @pdogr
 ffi/capi/                         @Manishearth
-ffi/ecma402/                      @filmil
 ffi/gn/                           @sffc
 provider/blob/                    @sffc @Manishearth
 provider/core/                    @sffc @Manishearth
