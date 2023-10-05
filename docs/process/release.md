@@ -29,6 +29,7 @@ This is a checklist of things that should be done in the weeks leading to the re
 * [ ] Go through `ffi/diplomat/tests/missing_apis.txt` and verify that it is empty. If it is not, component owners should either add FFI APIs, add `rust_link` annotations, or allowlist the relevant APIs as having been punted to the future
 * [ ] Verify that `ffi/diplomat` depends on a released (not Git) version of Diplomat. Get it published (ask manishearth or sffc) otherwise.
 * [ ] Start work on a changelog (see below)
+* [ ] Draft the text for the GitHub release. This text will be sent to GitHub subscribers and can also be used for the mailing list email.
 * [ ] Prepare a PR to update tutorials using the upcoming release. The PR should pass `cargo make test-tutorials-local`, but can fail `cargo make test-tutorials-cratesio` prior to release
 
 ## Release steps
@@ -47,9 +48,9 @@ Once the release checklist is complete, the assigned release driver will perform
     * `cargo owner -a github:unicode-org:icu4x-release`
 * Merge the tutorials PR. `cargo make test-tuturials-cratesio` should now pass
   * If there are any errors, please fix them before advertising the release
-* [Tag the Release](https://github.com/unicode-org/icu4x/releases)
 * Land the changelog (see below)
 * Announce the release to public
+  * [Tag the Release](https://github.com/unicode-org/icu4x/releases) with the text drafted above
   * Send an email to [icu4x-announce](https://groups.google.com/u/0/a/unicode.org/g/icu4x-announce)
   * Submit to This Week In Rust
 
