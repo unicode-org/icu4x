@@ -8,4 +8,4 @@ Due to [cargo #4881](https://github.com/rust-lang/cargo/issues/4881), it's not p
 
 Some platforms and build systems will have special bindings: currently we have one such case: FreeRTOS. If you wish to build ICU4X for FreeRTOS, use the `ffi/freertos` (`icu_freertos`) crate.
 
-The `ffi/ecma402` (`icu4x_ecma402`) crate contains an implementation of the [`ecma402_traits`](https://docs.rs/ecma402_traits) traits, enabling compatibility testing against ICU.
+The `experimental/ecma402` (`icu4x_ecma402`) crate contains an implementation of the [`ecma402_traits`](https://docs.rs/ecma402_traits) traits, enabling compatibility testing against ICU.
