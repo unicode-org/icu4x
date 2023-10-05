@@ -38,6 +38,9 @@ A subset of crates received a 1.3.1 patch release, to incorporate documentation 
     - Fix empty keys in `BlobDataProvider` (https://github.com/unicode-org/icu4x/pull/3551) 
   - `icu_provider_fs`:
     - Correct error types for `icu_provider_fs` (https://github.com/unicode-org/icu4x/pull/3682) 
+  - `icu_testdata`:
+    - This crate has been superseded by `compiled_data` and is now deprecated.
+    - Data for new components will not be added, and it will not be updated for ICU4X 2.0.
 - Components:
   - Cross component:
     - All component crates now have a default `compiled_data` feature that enables constructors that do not require data providers, instead using data compiled into the library
