@@ -616,8 +616,7 @@ impl PluralRanges {
                     locale,
                     metadata: Default::default(),
                 })?
-                .take_payload()?
-                .cast(),
+                .take_payload()?,
         ))
     }
 
