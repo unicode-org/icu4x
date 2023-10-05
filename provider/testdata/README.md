@@ -51,7 +51,7 @@ HelloWorldFormatter::try_new_unstable(
 ).unwrap();
 ```
 
-[`ICU4X`]: icu
+[`ICU4X`]: https://docs.rs/icu/latest/icu/
 
 <!-- cargo-rdme end -->
 
