@@ -681,7 +681,6 @@ dependencies = [
  "databake-derive",
  "proc-macro2",
  "quote",
- "syn 2.0.37",
 ]
 
 [[package]]

@@ -81,7 +81,7 @@ where
 }
 
 fn byte_string(bytes: &[u8]) -> TokenStream {
-    let byte_string = syn::LitByteStr::new(bytes, proc_macro2::Span::call_site());
+    let byte_string = proc_macro2::Literal::byte_string(bytes);
     // Before clippy 1.70 there's a bug (https://github.com/rust-lang/rust-clippy/pull/10603) where a byte
     // string like b"\0\\01" would incorrectly trigger this lint. This was due to it swallowing the slash's
     // escape slash when trying to match the first "\0" with another digit, and then seeing b"\01".
