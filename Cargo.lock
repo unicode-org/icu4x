@@ -1457,7 +1457,6 @@ dependencies = [
  "icu_timezone",
  "icu_transliterate",
  "icu_unitsconversion",
- "indexmap",
  "itertools",
  "log",
  "memchr",
@@ -1467,6 +1466,7 @@ dependencies = [
  "rayon",
  "serde",
  "serde-aux",
+ "serde-tuple-vec-map",
  "serde_json",
  "simple_logger",
  "syn 2.0.37",
@@ -1701,7 +1701,7 @@ dependencies = [
 
 [[package]]
 name = "icu_personnames"
-version = "0.1.0"
+version = "0.0.0"
 dependencies = [
  "databake",
  "icu_locid",
@@ -2876,6 +2876,15 @@ checksum = "8014aeea272bca0f0779778d43253f2f3375b414185b30e6ecc4d3e4a9994781"
 dependencies = [
  "heapless",
  "ryu",
+ "serde",
+]
+
+[[package]]
+name = "serde-tuple-vec-map"
+version = "1.0.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "a04d0ebe0de77d7d445bb729a895dcb0a288854b267ca85f030ce51cdc578c82"
+dependencies = [
  "serde",
 ]
 

@@ -5,7 +5,7 @@
 [package]
 name = "icu_personnames"
 description = "API for formatting person names according to language-dependent conventions"
-version = "0.1.0"
+version = "0.0.0"
 license-file = "LICENSE"
 
 
@@ -46,7 +46,3 @@ std = ["icu_locid/std", "icu_provider/std"]
 serde = ["dep:serde", "zerovec/serde", "icu_provider/serde"]
 datagen = ["serde", "std", "dep:databake", "zerovec/databake"]
 compiled_data = ["dep:icu_personnames_data", "icu_properties/compiled_data"]
-
-[[test]]
-name = "tests"
-path = "tests/tests.rs"

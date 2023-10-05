@@ -227,13 +227,13 @@ impl Default for FieldModifierSet {
 impl Debug for FieldModifierSet {
     fn fmt(&self, f: &mut Formatter<'_>) -> core::fmt::Result {
         let mut debug = f.debug_struct("FieldModifierSet");
-        debug.field("Core", &self.has_field(FieldModifier::Core));
-        debug.field("Informal", &self.has_field(FieldModifier::Informal));
-        debug.field("Monogram", &self.has_field(FieldModifier::Monogram));
-        debug.field("Initial", &self.has_field(FieldModifier::Initial));
-        debug.field("Prefix", &self.has_field(FieldModifier::Prefix));
-        debug.field("AllCaps", &self.has_field(FieldModifier::AllCaps));
-        debug.field("InitialCap", &self.has_field(FieldModifier::InitialCap));
+        debug.field("core", &self.has_field(FieldModifier::Core));
+        debug.field("informal", &self.has_field(FieldModifier::Informal));
+        debug.field("monogram", &self.has_field(FieldModifier::Monogram));
+        debug.field("initial", &self.has_field(FieldModifier::Initial));
+        debug.field("prefix", &self.has_field(FieldModifier::Prefix));
+        debug.field("all_caps", &self.has_field(FieldModifier::AllCaps));
+        debug.field("initial_cap", &self.has_field(FieldModifier::InitialCap));
         debug.finish()
     }
 }

@@ -7,23 +7,23 @@
 //! Sample file:
 //! <https://github.com/unicode-org/cldr-json/blob/main/cldr-json/cldr-person-names-full/main/en/personNames.json>
 
-use indexmap::IndexMap;
+extern crate tuple_vec_map;
+
 use serde::Deserialize;
 
 #[derive(PartialEq, Debug, Deserialize)]
-pub struct FormalityFormatting(
-    /// IndexMap is used here since the order infile matters.
-    pub IndexMap<String, String>,
-);
+pub struct FormalityFormatting(#[serde(with = "tuple_vec_map")] pub Vec<(String, String)>);
 
 #[derive(PartialEq, Debug, Deserialize)]
-pub struct ReferringFormatting(pub IndexMap<String, FormalityFormatting>);
+pub struct ReferringFormatting(#[serde(with = "tuple_vec_map")] pub Vec<(String, FormalityFormatting)>);
 
 #[derive(PartialEq, Debug, Deserialize)]
-pub struct SizedFormatting(pub IndexMap<String, ReferringFormatting>);
+pub struct SizedFormatting(
+    #[serde(with = "tuple_vec_map")] pub Vec<(String, ReferringFormatting)>);
 
 #[derive(PartialEq, Debug, Deserialize)]
-pub struct OrderFormatting(pub IndexMap<String, SizedFormatting>);
+pub struct OrderFormatting(
+    #[serde(with = "tuple_vec_map")] pub Vec<(String, SizedFormatting)>);
 
 #[derive(PartialEq, Debug, Deserialize)]
 pub struct PersonNames {
