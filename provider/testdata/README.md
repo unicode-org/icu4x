@@ -1,5 +1,7 @@
 # icu_testdata [![crates.io](https://img.shields.io/crates/v/icu_testdata)](https://crates.io/crates/icu_testdata)
 
+🚧 This crate has been superseded by `ICU4X`'s `compiled_data` feature and is deprecated. Data for new components will not be added, and it will not be updated for `ICU4X` 2.0.
+
 <!-- cargo-rdme start -->
 
 `icu_testdata` is a unit testing crate for [`ICU4X`].
@@ -49,7 +51,7 @@ HelloWorldFormatter::try_new_unstable(
 ).unwrap();
 ```
 
-[`ICU4X`]: ../icu/index.html
+[`ICU4X`]: icu
 
 <!-- cargo-rdme end -->
 
