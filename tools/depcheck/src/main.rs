@@ -298,11 +298,14 @@ fn main() {
     // (they cannot be shared). Improve build times a little bit by making sure databake/baked_exporter
     // only use proc_macro. It's okay to relax this requirement if we end up really really needing `syn`
     // here.
-    let dep_list = get_dep_list("icu_datagen", "normal,no-proc-macro", "--features baked_exporter,bin");
-    if dep_list.iter().find(|x| x.crate_name == "syn").is_some() {
+    let dep_list = get_dep_list(
+        "icu_datagen",
+        "normal,no-proc-macro",
+        "--features baked_exporter,bin",
+    );
+    if dep_list.iter().any(|x| x.crate_name == "syn") {
         eprintln!("datagen depends on `syn` as a regular dependency!");
         process::exit(1);
-
     }
     // we aren't testing simple-logger, it's mostly for debugging purposes
 }

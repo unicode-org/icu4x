@@ -70,7 +70,7 @@ icu_provider_blob = { workspace = true, features = ["export"], optional = true }
 icu_provider_fs = { workspace = true, features = ["export"], optional = true }
 crlify = { workspace = true, optional = true }
 databake = { workspace = true, optional = true}
-syn = {version = "2", features = ["parsing"], optional = true }
+proc-macro2 = {version = "1", optional = true }
 
 # Other external dependencies
 displaydoc = { version = "0.2.3", default-features = false }
@@ -103,7 +103,7 @@ simple_logger = { version = "4.1.0", default-features = false }
 
 [features]
 default = ["bin", "use_wasm", "networking", "legacy_api", "rayon", "fs_exporter", "blob_exporter", "baked_exporter"]
-baked_exporter = ["dep:crlify", "dep:databake", "dep:syn"]
+baked_exporter = ["dep:crlify", "dep:databake", "dep:proc-macro2"]
 blob_exporter = ["dep:icu_provider_blob"]
 fs_exporter = ["dep:icu_provider_fs"]
 legacy_api = ["fs_exporter", "blob_exporter", "baked_exporter"]
