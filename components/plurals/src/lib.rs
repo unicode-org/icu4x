@@ -90,7 +90,6 @@ use provider::ErasedPluralRangesV1Marker;
 use provider::ErasedPluralRulesV1Marker;
 use provider::OrdinalV1Marker;
 use provider::PluralRangesV1Marker;
-use provider::RawPluralCategory;
 use provider::UnvalidatedPluralRange;
 use rules::runtime::test_rule;
 
@@ -652,7 +651,7 @@ impl PluralRanges {
                 start.into(),
                 end.into(),
             ))
+            .map(PluralCategory::from)
             .unwrap_or(end)
-            .into()
     }
 }
