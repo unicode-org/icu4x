@@ -60,6 +60,27 @@
         See the `Rust documentation for from_str <https://docs.rs/icu/latest/icu/plurals/struct.PluralOperands.html#method.from_str>`__ for more information.
 
 
+.. cpp:class:: ICU4XPluralRanges
+
+    FFI version of ``PluralRanges``.
+
+    See the `Rust documentation for PluralRanges <https://docs.rs/icu/latest/icu/plurals/struct.PluralRanges.html>`__ for more information.
+
+
+    .. cpp:function:: static diplomat::result<ICU4XPluralRanges, ICU4XError> create(const ICU4XDataProvider& provider, const ICU4XLocale& locale)
+
+        Construct an :cpp:class:`ICU4XPluralRanges` for the given locale.
+
+        See the `Rust documentation for try_new <https://docs.rs/icu/latest/icu/plurals/struct.PluralRanges.html#method.try_new>`__ for more information.
+
+
+    .. cpp:function:: ICU4XPluralCategory category_for_range(ICU4XPluralCategory start, ICU4XPluralCategory end) const
+
+        Get the appropriate category for a numeric range from the categories of its endpoints.
+
+        See the `Rust documentation for category_for_range <https://docs.rs/icu/latest/icu/plurals/struct.PluralRanges.html#method.category_for_range>`__ for more information.
+
+
 .. cpp:class:: ICU4XPluralRules
 
     FFI version of ``PluralRules``.

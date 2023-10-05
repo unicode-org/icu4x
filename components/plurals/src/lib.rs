@@ -555,8 +555,8 @@ impl PluralRules {
     }
 }
 
-/// A struct which provides the ability to retrieve an appropriate [`Plural Category`] for a number
-/// range from the categories of its endpoints.
+/// A struct which provides the ability to retrieve an appropriate [`Plural Category`] for a range
+/// from the categories of its endpoints.
 ///
 /// # Examples
 ///
@@ -645,13 +645,13 @@ impl PluralRanges {
     /// );
     /// ```
     pub fn category_for_range(&self, start: PluralCategory, end: PluralCategory) -> PluralCategory {
-        let plural_ranges = self.0.get();
-        let start: RawPluralCategory = start.into();
-        let end: RawPluralCategory = end.into();
-
-        plural_ranges
+        self.0
+            .get()
             .ranges
-            .get_copied(&UnvalidatedPluralRange::from_range(start, end))
+            .get_copied(&UnvalidatedPluralRange::from_range(
+                start.into(),
+                end.into(),
+            ))
             .unwrap_or(end)
             .into()
     }

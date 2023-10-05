@@ -92,6 +92,7 @@ export { ICU4XOrdering } from './ICU4XOrdering.js';
 export { ICU4XPluralCategories } from './ICU4XPluralCategories.js';
 export { ICU4XPluralCategory } from './ICU4XPluralCategory.js';
 export { ICU4XPluralOperands } from './ICU4XPluralOperands.js';
+export { ICU4XPluralRanges } from './ICU4XPluralRanges.js';
 export { ICU4XPluralRules } from './ICU4XPluralRules.js';
 export { ICU4XPropertyValueNameToEnumMapper } from './ICU4XPropertyValueNameToEnumMapper.js';
 export { ICU4XRegionDisplayNames } from './ICU4XRegionDisplayNames.js';

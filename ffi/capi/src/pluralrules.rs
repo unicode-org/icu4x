@@ -9,7 +9,7 @@ pub mod ffi {
     use alloc::boxed::Box;
 
     use fixed_decimal::FixedDecimal;
-    use icu_plurals::{PluralCategory, PluralOperands, PluralRules};
+    use icu_plurals::{PluralCategory, PluralOperands, PluralRanges, PluralRules};
 
     use crate::{locale::ffi::ICU4XLocale, provider::ffi::ICU4XDataProvider};
 
@@ -129,6 +129,39 @@ pub mod ffi {
                 // XXX should this have its own errors?
                 &FixedDecimal::try_from(s).map_err(|_| ICU4XError::PluralsParserError)?,
             ))))
+        }
+    }
+
+    /// FFI version of `PluralRanges`.
+    #[diplomat::opaque]
+    #[diplomat::rust_link(icu::plurals::PluralRanges, Struct)]
+    pub struct ICU4XPluralRanges(pub icu_plurals::PluralRanges);
+
+    impl ICU4XPluralRanges {
+        /// Construct an [`ICU4XPluralRanges`] for the given locale.
+        #[diplomat::rust_link(icu::plurals::PluralRanges::try_new, FnInStruct)]
+        pub fn create(
+            provider: &ICU4XDataProvider,
+            locale: &ICU4XLocale,
+        ) -> Result<Box<ICU4XPluralRanges>, ICU4XError> {
+            let locale = locale.to_datalocale();
+            Ok(Box::new(ICU4XPluralRanges(call_constructor!(
+                PluralRanges::try_new,
+                PluralRanges::try_new_with_any_provider,
+                PluralRanges::try_new_with_buffer_provider,
+                provider,
+                &locale
+            )?)))
+        }
+
+        /// Get the appropriate category for a numeric range from the categories of its endpoints.
+        #[diplomat::rust_link(icu::plurals::PluralRanges::category_for_range, FnInStruct)]
+        pub fn category_for_range(
+            &self,
+            start: ICU4XPluralCategory,
+            end: ICU4XPluralCategory,
+        ) -> ICU4XPluralCategory {
+            self.0.category_for_range(start.into(), end.into()).into()
         }
     }
 

@@ -48,6 +48,27 @@
         See the `Rust documentation for from_str <https://docs.rs/icu/latest/icu/plurals/struct.PluralOperands.html#method.from_str>`__ for more information.
 
 
+.. js:class:: ICU4XPluralRanges
+
+    FFI version of ``PluralRanges``.
+
+    See the `Rust documentation for PluralRanges <https://docs.rs/icu/latest/icu/plurals/struct.PluralRanges.html>`__ for more information.
+
+
+    .. js:function:: create(provider, locale)
+
+        Construct an :js:class:`ICU4XPluralRanges` for the given locale.
+
+        See the `Rust documentation for try_new <https://docs.rs/icu/latest/icu/plurals/struct.PluralRanges.html#method.try_new>`__ for more information.
+
+
+    .. js:method:: category_for_range(start, end)
+
+        Get the appropriate category for a numeric range from the categories of its endpoints.
+
+        See the `Rust documentation for category_for_range <https://docs.rs/icu/latest/icu/plurals/struct.PluralRanges.html#method.category_for_range>`__ for more information.
+
+
 .. js:class:: ICU4XPluralRules
 
     FFI version of ``PluralRules``.
