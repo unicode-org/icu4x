@@ -681,7 +681,6 @@ dependencies = [
  "databake-derive",
  "proc-macro2",
  "quote",
- "syn 2.0.37",
 ]
 
 [[package]]
@@ -1461,12 +1460,12 @@ dependencies = [
  "ndarray",
  "once_cell",
  "postcard",
+ "proc-macro2",
  "rayon",
  "serde",
  "serde-aux",
  "serde_json",
  "simple_logger",
- "syn 2.0.37",
  "tinystr",
  "toml",
  "twox-hash",

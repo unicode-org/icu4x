@@ -276,11 +276,12 @@ impl BakedExporter {
         &self,
         body: TokenStream,
         key: DataKey,
-        marker: syn::Path,
+        marker: TokenStream,
     ) -> Result<(), DataError> {
+        let marker_string = marker.to_string();
         let doc = format!(
             " Implement `DataProvider<{}>` on the given struct using the data",
-            marker.segments.iter().next_back().unwrap().ident
+            marker.into_iter().last().unwrap()
         );
 
         let ident = Self::ident(key);
@@ -308,7 +309,7 @@ impl BakedExporter {
         self.impl_data
             .lock()
             .expect("poison")
-            .insert(key, quote!(#marker).to_string());
+            .insert(key, marker_string);
         Ok(())
     }
 
@@ -346,9 +347,7 @@ impl DataExporter for BakedExporter {
         key: DataKey,
         payload: &DataPayload<ExportMarker>,
     ) -> Result<(), DataError> {
-        let marker =
-            syn::parse2::<syn::Path>(crate::registry::key_to_marker_bake(key, &self.dependencies))
-                .unwrap();
+        let marker = crate::registry::key_to_marker_bake(key, &self.dependencies);
 
         let singleton_ident = format!("SINGLETON_{}", Self::ident(key).to_ascii_uppercase())
             .parse::<TokenStream>()
@@ -410,12 +409,12 @@ impl BakedExporter {
         key: DataKey,
         fallback_mode: Option<BuiltInFallbackMode>,
     ) -> Result<(), DataError> {
-        let marker =
-            syn::parse2::<syn::Path>(crate::registry::key_to_marker_bake(key, &self.dependencies))
-                .unwrap();
+        let marker = crate::registry::key_to_marker_bake(key, &self.dependencies);
 
-        let (struct_type, into_data_payload) = if marker.segments.iter().next_back().unwrap().ident
-            == "DateSkeletonPatternsV1Marker"
+        let (struct_type, into_data_payload) = if marker
+            .to_string()
+            .trim()
+            .ends_with("DateSkeletonPatternsV1Marker")
         {
             (
                 quote! {
@@ -459,7 +458,7 @@ impl BakedExporter {
 
             for (bake, locales) in values {
                 let first_locale = locales.iter().next().unwrap();
-                let anchor = syn::parse_str::<syn::Ident>(
+                let anchor = proc_macro2::Ident::new(
                     &first_locale
                         .chars()
                         .flat_map(|ch| {
@@ -473,8 +472,8 @@ impl BakedExporter {
                             }
                         })
                         .collect::<String>(),
-                )
-                .unwrap();
+                    proc_macro2::Span::call_site(),
+                );
                 let bake = bake.parse::<TokenStream>().unwrap();
                 statics.push(quote! { static #anchor: #struct_type = #bake; });
                 map.extend(locales.into_iter().map(|l| (l, anchor.clone())));
