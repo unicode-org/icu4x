@@ -18,11 +18,11 @@ A subset of crates received a 1.3.1 patch release, to incorporate documentation 
 - Data model and providers
   - `icu_provider`:
     - Make `DataPayload` constructible from `&'static M::Yokeable` (#3467)
-    - Add ExportableDataPayload::eq_dyn (#3639)
+    - Add `ExportableDataPayload::eq_dyn` (#3639)
     - Better docs (#3740, #3742)
     - Moving fallback options into `icu_provider` (#3651)
-    - Add DataPayload::dynamic_cast_mut (#3952)
-    - (experimental) Add AuxiliaryKey to DataLocale (#3872)
+    - Add `DataPayload::dynamic_cast_mut` (#3952)
+    - (experimental) Add `AuxiliaryKey` to `DataLocale` (#3872)
   - `icu_datagen`:
     - Completely revamped API (#3705, #3861, #3951, #4008, #4041, #3669)
         - The old API is still available behind the `legacy_api` default Cargo feature
@@ -32,7 +32,7 @@ A subset of crates received a 1.3.1 patch release, to incorporate documentation 
     - Consume CLDR-JSON resources keyed with default script (#3772, #3786)
     - (cli) Warn for `--locales all` (#3691)
   - `icu_provider_adapters`: 
-    - Deprecated `LocaleFallbacker`, use through `icu::locid_transform` (#TODO)
+    - Deprecated `LocaleFallbacker`, use through `icu_locid_transform`
   - `icu_provider_blob`:
     - Returning `ExtraneousLocale` in `BlobDataProvider` (#3562)
     - Fix empty keys in `BlobDataProvider` (#3551) 
@@ -40,7 +40,7 @@ A subset of crates received a 1.3.1 patch release, to incorporate documentation 
     - Correct error types for `icu_provider_fs` (#3682) 
 - Components:
   - Cross component:
-    - All component crates now have a default `compiled_data` feature that provides default constructors that do not require using data providers, instead using data compiled into the library
+    - All component crates now have a default `compiled_data` feature that enables constructors that do not require data providers, instead using data compiled into the library
   - `icu_calendar`
     - Support for new non-Gregorian calendars: Persian (Solar Hijri), ROC, Hebrew, Chinese, Korean (Dangi), and Islamic (civil, observational, tabular, and Umm al-Qura). Lunar calendars are not yet fully optimized.
     - Add `Ord` and `PartialOrd` to `icu_calendar` types (#3468)
