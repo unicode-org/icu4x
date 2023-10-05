@@ -6,7 +6,7 @@
 
 ## icu4x 1.3.1
 
-A subset of crates received a 1.3.1 patch release, to incorporate documentation fixes (#4103). These crates were: `icu_calendar`, `icu_casemap`, `icu_datetime`, `icu_locid_transform`, `icu_provider`.
+A subset of crates received a 1.3.1 patch release, to incorporate documentation fixes (#4096, #4097, #4099, #4101). These crates were: `icu_calendar`, `icu_casemap`, `icu_datetime`, `icu_locid_transform`, `icu_provider`.
 
 ## icu4x 1.3 (Sep 25, 2023)
 
