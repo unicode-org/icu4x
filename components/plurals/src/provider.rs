@@ -318,9 +318,3 @@ pub struct PluralRangesV1<'data> {
     #[cfg_attr(feature = "serde", serde(borrow))]
     pub ranges: ZeroMap<'data, UnvalidatedPluralRange, RawPluralCategory>,
 }
-
-pub(crate) struct ErasedPluralRangesV1Marker;
-
-impl DataMarker for ErasedPluralRangesV1Marker {
-    type Yokeable = PluralRangesV1<'static>;
-}

@@ -86,7 +86,6 @@ pub use error::PluralsError;
 use icu_provider::prelude::*;
 pub use operands::PluralOperands;
 use provider::CardinalV1Marker;
-use provider::ErasedPluralRangesV1Marker;
 use provider::ErasedPluralRulesV1Marker;
 use provider::OrdinalV1Marker;
 use provider::PluralRangesV1Marker;
@@ -581,7 +580,7 @@ impl PluralRules {
 /// assert_eq!(ranges.category_for_range(start, end), PluralCategory::Other);
 /// ```
 #[derive(Debug)]
-pub struct PluralRanges(DataPayload<ErasedPluralRangesV1Marker>);
+pub struct PluralRanges(DataPayload<PluralRangesV1Marker>);
 
 impl PluralRanges {
     icu_provider::gen_any_buffer_data_constructors!(
