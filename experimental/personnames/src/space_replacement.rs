@@ -17,7 +17,6 @@ pub(crate) fn space_replacement<'lt>(
     let mut native_space_replacement = DEFAULT_FOREIGN_SPACE_REPLACEMENT;
     if let Some(script) = formatting_locale.id.script {
         native_space_replacement = match script.as_str() {
-            "Thai" => " ",
             "Jpan" | "Hant" | "Hans" => "",
             _ => DEFAULT_FOREIGN_SPACE_REPLACEMENT,
         };
