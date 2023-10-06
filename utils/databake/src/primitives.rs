@@ -75,7 +75,7 @@ where
         }
         let data = self.iter().map(|d| d.bake(ctx));
         quote! {
-            [#(#data,)*]
+            [#(#data),*]
         }
     }
 }
@@ -101,10 +101,20 @@ fn byte_string(bytes: &[u8]) -> TokenStream {
 #[test]
 fn slice() {
     // Cannot use test_bake! as it's not possible to write a closed slice expression (&[1] has type &[usize; 1])
+    let slice: &[bool] = &[];
+    assert_eq!(
+        Bake::bake(&slice, &Default::default()).to_string(),
+        "& []",
+    );
+    let slice: &[bool] = &[true];
+    assert_eq!(
+        Bake::bake(&slice, &Default::default()).to_string(),
+        "& [true]",
+    );
     let slice: &[bool] = &[true, false];
     assert_eq!(
         Bake::bake(&slice, &Default::default()).to_string(),
-        "& [true , false ,]",
+        "& [true , false]",
     );
 }
 
@@ -119,14 +129,17 @@ where
 
 #[test]
 fn array() {
-    // https://github.com/rust-lang/rust/issues/98906
-    // test_bake!(
-    //     &[bool; 2],
-    //     const: &[true, false,]
-    // );
-    assert_eq!(
-        [true, false].bake(&Default::default()).to_string(),
-        "[true , false ,]",
+    test_bake!(
+        &[bool; 0],
+        const: &[]
+    );
+    test_bake!(
+        &[bool; 1],
+        const: &[true]
+    );
+    test_bake!(
+        &[bool; 2],
+        const: &[true, false]
     );
 }
 
@@ -193,6 +206,16 @@ fn result() {
 }
 
 macro_rules! tuple {
+    ($ty:ident, $ident:ident) => {
+        impl<$ty> Bake for ($ty,) where $ty: Bake {
+            fn bake(&self, ctx: &CrateEnv) -> TokenStream {
+                let $ident = self.0.bake(ctx);
+                quote! {
+                    (#$ident,)
+                }
+            }
+        }
+    };
     ($($ty:ident, $ident:ident),*) => {
         impl<$($ty),*> Bake for ($($ty,)*) where $($ty: Bake),* {
             fn bake(&self, _ctx: &CrateEnv) -> TokenStream {
@@ -201,7 +224,7 @@ macro_rules! tuple {
                     let $ident = $ident.bake(_ctx);
                 )*
                 quote! {
-                    ($(#$ident,)*)
+                    ($(#$ident),*)
                 }
             }
         }
@@ -222,13 +245,16 @@ tuple!(A, a, B, b, C, c, D, d, E, e, F, f, G, g, H, h, I, i, J, j);
 
 #[test]
 fn tuple() {
-    // https://github.com/rust-lang/rust/issues/98906
-    // test_bake!(
-    //     (u8, i8),
-    //     const: (0u8, 0i8,)
-    // );
-    assert_eq!(
-        (0u8, 0i8).bake(&Default::default()).to_string(),
-        "(0u8 , 0i8 ,)",
+    test_bake!(
+        (),
+        const: ()
+    );
+    test_bake!(
+        (u8,),
+        const: (0u8,)
+    );
+    test_bake!(
+        (u8, i8),
+        const: (0u8, 0i8)
     );
 }
