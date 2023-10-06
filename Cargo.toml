@@ -228,6 +228,13 @@ icu_benchmark_macros = { path = "tools/benchmark/macros" }
 # ffi_coverage never used as a dep
 # testdata-scripts never used as a dep
 
+# Run `cargo make diplomat-install` to get the right diplomat binary installed
+# The version here can either be a `version = ".."` spec or `git = "https://github.com/rust-diplomat/diplomat", rev = ".."`
+# Diplomat must be published preceding a new ICU4X release but may use git versions in between
+diplomat = { version = "0.6" }
+diplomat-runtime = { version = "0.6" }
+diplomat_core = { version = "0.6" }
+
 # LTO is needed for WASM and other size-optimized builds,
 # and it improve the performance of benchmarks
 [profile.release]
