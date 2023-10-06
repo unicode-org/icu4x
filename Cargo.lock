@@ -2731,9 +2731,9 @@ dependencies = [
 
 [[package]]
 name = "rustdoc-types"
-version = "0.17.0"
+version = "0.19.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "a61fb498f838b7da375722c088e3c2571c3fbe7fe38c8fa208a6de1a6fdc3907"
+checksum = "fd62550e9cd1e785b22928008446bdecc4e5b093abecc74186cbf45dee5adf12"
 dependencies = [
  "serde",
 ]
