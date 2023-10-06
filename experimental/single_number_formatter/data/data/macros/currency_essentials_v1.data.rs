@@ -6,9 +6,9 @@
 #[macro_export]
 macro_rules! __impl_currency_essentials_v1 {
     ($ provider : ty) => {
-        #[clippy::msrv = "1.66"]
+        #[clippy::msrv = "1.67"]
         const _: () = <$provider>::MUST_USE_MAKE_PROVIDER_MACRO;
-        #[clippy::msrv = "1.66"]
+        #[clippy::msrv = "1.67"]
         impl icu_provider::DataProvider<icu::singlenumberformatter::provider::CurrencyEssentialsV1Marker> for $provider {
             fn load(&self, req: icu_provider::DataRequest) -> Result<icu_provider::DataResponse<icu::singlenumberformatter::provider::CurrencyEssentialsV1Marker>, icu_provider::DataError> {
                 static GD: <icu::singlenumberformatter::provider::CurrencyEssentialsV1Marker as icu_provider::DataMarker>::Yokeable = icu::singlenumberformatter::provider::CurrencyEssentialsV1 {
