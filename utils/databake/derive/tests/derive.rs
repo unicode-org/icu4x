@@ -34,7 +34,7 @@ pub struct GenericsExample<T> {
 fn test_generics_example() {
     test_bake!(
         GenericsExample<isize>,
-        const: crate::GenericsExample { x: 17, y: 100isize },
+        const: crate::GenericsExample { x: 17u32, y: 100isize },
         test
     );
 }
@@ -53,11 +53,11 @@ pub struct CowExample<'a> {
 fn test_cow_example() {
     test_bake!(
         CowExample<'static>,
-        const: CowExample {
+        const: crate::CowExample {
             x: 17u8,
             y: "foo",
             z: alloc::borrow::Cow::Borrowed("bar"),
-            w: alloc::borrow::Cow::Borrowed(&[1u8, 2u8, 3u8, ]),
+            w: alloc::borrow::Cow::Borrowed(b"\x01\x02\x03"),
         },
         test
     );
