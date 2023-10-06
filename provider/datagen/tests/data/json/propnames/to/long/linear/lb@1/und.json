@@ -42,6 +42,11 @@
     "Regional_Indicator",
     "E_Base",
     "E_Modifier",
-    "ZWJ"
+    "ZWJ",
+    "Aksara",
+    "Aksara_Prebase",
+    "Aksara_Start",
+    "Virama_Final",
+    "Virama"
   ]
 }

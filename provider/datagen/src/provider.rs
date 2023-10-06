@@ -34,7 +34,7 @@ impl DatagenProvider {
     pub const LATEST_TESTED_CLDR_TAG: &'static str = "43.1.0";
 
     /// The latest ICU export tag that has been verified to work with this version of `icu_datagen`.
-    pub const LATEST_TESTED_ICUEXPORT_TAG: &'static str = "icu4x/2023-05-02/73.x";
+    pub const LATEST_TESTED_ICUEXPORT_TAG: &'static str = "release-74-rc";
 
     /// The latest segmentation LSTM model tag that has been verified to work with this version of `icu_datagen`.
     pub const LATEST_TESTED_SEGMENTER_LSTM_TAG: &'static str = "v0.1.0";
