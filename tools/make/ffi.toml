@@ -47,7 +47,7 @@ exit_on_error true
 if "${ICU4X_BUILDING_WITH_FORCED_NIGHTLY}"
     echo "Skipping diplomat-coverage since ICU4X_BUILDING_WITH_FORCED_NIGHTLY is set"
 else
-    exec --fail-on-error cargo run -p icu_ffi_coverage --all-features -- ffi/diplomat/tests/missing_apis.txt
+    exec --fail-on-error cargo run -p icu_ffi_coverage --all-features -- ffi/capi/tests/missing_apis.txt
 end
 '''
 
@@ -60,7 +60,7 @@ dependencies = [
 script_runner = "@duckscript"
 script = '''
 exit_on_error true
-code = exec --get-exit-code git diff --exit-code -- ffi/diplomat/tests
+code = exec --get-exit-code git diff --exit-code -- ffi/capi/tests
 if ${code}
     trigger_error "Diplomat coverage dump need to be regenerated. Please run `cargo make diplomat-coverage` and commit."
 end
@@ -75,7 +75,7 @@ dependencies = [
 script_runner = "@duckscript"
 script = '''
 exit_on_error true
-code = exec --get-exit-code git diff --exit-code -- ffi/diplomat
+code = exec --get-exit-code git diff --exit-code -- ffi/capi
 if ${code}
     trigger_error "Diplomat bindings need to be regenerated. Please run `cargo make diplomat-install`, then `cargo make diplomat-gen`, and commit. (Testing against different Diplomat versions may omit install step.)"
 end
@@ -96,7 +96,7 @@ category = "ICU4X Development"
 script_runner = "@duckscript"
 script = '''
 exit_on_error true
-cd ffi/diplomat/c/examples/pluralrules
+cd ffi/capi/c/examples/pluralrules
 exec --fail-on-error make
 cd ../fixeddecimal
 exec --fail-on-error make
@@ -123,7 +123,7 @@ exit_on_error true
 if "${ICU4X_BUILDING_WITH_FORCED_NIGHTLY}"
     echo "Skipping test-c-tiny since ICU4X_BUILDING_WITH_FORCED_NIGHTLY is set"
 else
-    cd ffi/diplomat/c/examples/fixeddecimal_tiny
+    cd ffi/capi/c/examples/fixeddecimal_tiny
     exec --fail-on-error make
     exec ls -l
     cd ../segmenter_tiny
@@ -138,7 +138,7 @@ category = "ICU4X Development"
 script_runner = "@duckscript"
 script = '''
 exit_on_error true
-cd ffi/diplomat/cpp/examples/properties
+cd ffi/capi/cpp/examples/properties
 exec --fail-on-error make
 cd ../segmenter
 exec --fail-on-error make
@@ -181,7 +181,7 @@ dependencies = ["install-nightly", "install-emscripten"]
 script_runner = "@duckscript"
 script = '''
 exit_on_error true
-cd ffi/diplomat/cpp/examples/fixeddecimal_wasm
+cd ffi/capi/cpp/examples/fixeddecimal_wasm
 exec make test
 '''
 
@@ -191,7 +191,7 @@ category = "ICU4X Development"
 dependencies = ["install-nightly", "install-wasm"]
 script_runner = "@duckscript"
 script = '''
-cd ffi/diplomat/js/examples/node
+cd ffi/capi/js/examples/node
 exec --fail-on-error make
 # --foreground-scripts makes npm forward the output of make
 exec --fail-on-error npm ci --foreground-scripts
@@ -204,7 +204,7 @@ category = "ICU4X Development"
 script_runner = "@duckscript"
 script = '''
 exit_on_error true
-cd ffi/diplomat/cpp/docs;
+cd ffi/capi/cpp/docs;
 exec --fail-on-error make html
 '''
 
@@ -214,7 +214,7 @@ category = "ICU4X Development"
 script_runner = "@duckscript"
 script = '''
 exit_on_error true
-cd ffi/diplomat
+cd ffi/capi
 # Duckscript doesn't support globs in rm, so we delete the dir
 rm -r ./c/include/
 mkdir ./c/include
@@ -227,7 +227,7 @@ category = "ICU4X Development"
 script_runner = "@duckscript"
 script = '''
 exit_on_error true
-cd ffi/diplomat
+cd ffi/capi
 
 
 # Duckscript doesn't support globs in rm, so we delete the dir.
@@ -247,7 +247,7 @@ category = "ICU4X Development"
 script_runner = "bash"
 script = '''
 set -e
-cd ffi/diplomat
+cd ffi/capi
 
 # Duckscript doesn't support globs in rm, so we delete the dir.
 # Preserve conf.py across the deletion.
@@ -313,7 +313,7 @@ if "${ICU4X_BUILDING_WITH_FORCED_NIGHTLY}"
     echo "Skipping test-wasm since ICU4X_BUILDING_WITH_FORCED_NIGHTLY is set"
 else
     echo "Skipping test-wasm since it's slow https://github.com/unicode-org/icu4x/issues/3582"
-    # cd ffi/diplomat/js/examples/tinywasm
+    # cd ffi/capi/js/examples/tinywasm
 
     # exec --fail-on-error make
     # exec --fail-on-error ls -l

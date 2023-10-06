@@ -122,19 +122,19 @@ jobs:
 
     - name: Build CPP docs
       run: |
-        cd ffi/diplomat/cpp/docs
+        cd ffi/capi/cpp/docs
         make html
         cd ../../../..
     - name: Build JS docs
       run: |
-        cd ffi/diplomat/js/docs
+        cd ffi/capi/js/docs
         make html
         cd ../../../..
 
     - name: Upload docs to Google Cloud Storage
       run: |
-        gsutil -m cp -r ffi/diplomat/cpp/docs/build/html gs://${{ env.GCP_PR_BUCKET_ID }}/gha/${{ github.sha }}/ffi/cpp
-        gsutil -m cp -r ffi/diplomat/js/docs/build/html gs://${{ env.GCP_PR_BUCKET_ID }}/gha/${{ github.sha }}/ffi/js
+        gsutil -m cp -r ffi/capi/cpp/docs/build/html gs://${{ env.GCP_PR_BUCKET_ID }}/gha/${{ github.sha }}/ffi/cpp
+        gsutil -m cp -r ffi/capi/js/docs/build/html gs://${{ env.GCP_PR_BUCKET_ID }}/gha/${{ github.sha }}/ffi/js
     - name: "⭐⭐⭐ Links to Uploaded Artifacts ⭐⭐⭐"
       run: |
         echo "::group::📖 CPP Docs Preview"
@@ -172,24 +172,24 @@ jobs:
 
     - name: Init node package
       run: |
-        cd ffi/diplomat/js/examples/node
+        cd ffi/capi/js/examples/node
         make
         cd ../wasm-demo
         npm ci
 
     - name: Run Webpack
       run: |
-        cd ffi/diplomat/js/examples/wasm-demo
+        cd ffi/capi/js/examples/wasm-demo
         npm run build
 
     - name: Put index.html in dist for temp URL
       run: |
-        cp ffi/diplomat/js/examples/wasm-demo/index.html ffi/diplomat/js/examples/wasm-demo/dist/index.html
-        printf "const gcs=document.createElement('script');gcs.setAttribute('src','./bundle.js');document.body.appendChild(gcs);" > ffi/diplomat/js/examples/wasm-demo/dist/index.js
+        cp ffi/capi/js/examples/wasm-demo/index.html ffi/capi/js/examples/wasm-demo/dist/index.html
+        printf "const gcs=document.createElement('script');gcs.setAttribute('src','./bundle.js');document.body.appendChild(gcs);" > ffi/capi/js/examples/wasm-demo/dist/index.js
 
     - name: Upload wasm-demo bundle to Google Cloud Storage
       run: |
-        gsutil -m cp -r ffi/diplomat/js/examples/wasm-demo/dist/* gs://${{ env.GCP_MAIN_BUCKET_ID }}/gha/wasm-demo
+        gsutil -m cp -r ffi/capi/js/examples/wasm-demo/dist/* gs://${{ env.GCP_MAIN_BUCKET_ID }}/gha/wasm-demo
 
     - name: "⭐⭐⭐ Links to Uploaded Artifacts ⭐⭐⭐"
       run: |
