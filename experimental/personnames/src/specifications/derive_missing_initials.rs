@@ -2,18 +2,24 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use lazy_static::lazy_static;
-use regex::CaptureMatches;
+use std::sync::OnceLock;
+
 use regex::Regex;
 
 use crate::api::{FieldLength, FieldModifier, NameField, PersonName};
 
-const CLDR_INITIAL_INITIAL_PATTERN: &str = r"\{(?P<initial_position>\d+)}(?P<trailing>[^{]+)?";
-const CLDR_INITIAL_SEQUENCE_PATTERN: &str = r"\{(?P<initial_position>\d+)}(?P<trailing>[^{]+)?";
+fn initial_pattern_regex() -> &'static Regex {
+    static INITIAL_PATTERN: OnceLock<Regex> = OnceLock::new();
+    INITIAL_PATTERN.get_or_init(|| {
+        Regex::new(r"\{(?P<initial_position>\d+)}(?P<trailing>[^{]+)?").unwrap()
+    })
+}
 
-lazy_static! {
-    static ref INITIAL_PATTERN: Regex = Regex::new(CLDR_INITIAL_INITIAL_PATTERN).unwrap();
-    static ref INITIAL_PATTERN_SEQUENCE: Regex = Regex::new(CLDR_INITIAL_SEQUENCE_PATTERN).unwrap();
+fn initial_pattern_sequence_regex() -> &'static Regex {
+    static INITIAL_PATTERN_SEQUENCE: OnceLock<Regex> = OnceLock::new();
+    INITIAL_PATTERN_SEQUENCE.get_or_init(|| {
+        Regex::new(r"\{(?P<initial_position>\d+)}(?P<trailing>[^{]+)?").unwrap()
+    })
 }
 
 ///
@@ -40,9 +46,9 @@ pub fn derive_missing_initials(
                 .split(' ')
                 .map(|s| s.trim()),
         );
-        let captures: CaptureMatches = INITIAL_PATTERN.captures_iter(initial_pattern);
-        let captures_sequence: CaptureMatches =
-            INITIAL_PATTERN_SEQUENCE.captures_iter(initial_sequence_pattern);
+        let captures = initial_pattern_regex().captures_iter(initial_pattern);
+        let captures_sequence =
+            initial_pattern_sequence_regex().captures_iter(initial_sequence_pattern);
 
         let mut initials = vec![];
         for capture in captures {

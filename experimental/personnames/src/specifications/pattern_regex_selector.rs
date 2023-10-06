@@ -2,8 +2,9 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use lazy_static::lazy_static;
-use regex::{CaptureMatches, Captures, Match, Regex};
+use std::sync::OnceLock;
+
+use regex::{Captures, Match, Regex};
 
 use crate::api::{
     FieldModifier, FieldModifierSet, NameField, NameFieldKind, PersonName,
@@ -11,11 +12,15 @@ use crate::api::{
 };
 use crate::specifications;
 
-const CLDR_PERSON_NAMES_PATTERN: &str = r"\{(?P<name_field_kind>title|given|given2|surname|generation|credentials)(?P<field_mod_1>-informal|-prefix|-core|-allCaps|-initialCap|-initial|-monogram)?(?P<field_mod_2>-informal|-prefix|-core|-allCaps|-initialCap|-initial|-monogram)?(?P<field_mod_3>-informal|-prefix|-core|-allCaps|-initialCap|-initial|-monogram)?(?P<field_mod_4>-informal|-prefix|-core|-allCaps|-initialCap|-initial|-monogram)?}(?P<trailing>[^{]+)?";
-
-lazy_static! {
-    static ref PERSON_NAMES_PATTERN: Regex = Regex::new(CLDR_PERSON_NAMES_PATTERN).unwrap();
+fn person_name_pattern() -> &'static Regex {
+    static PERSON_NAMES_PATTERN: OnceLock<Regex> = OnceLock::new();
+    PERSON_NAMES_PATTERN.get_or_init(|| {
+        Regex::new(r"\{(?P<name_field_kind>title|given|given2|surname|generation|credentials)(?P<field_mod_1>-informal|-prefix|-core|-allCaps|-initialCap|-initial|-monogram)?(?P<field_mod_2>-informal|-prefix|-core|-allCaps|-initialCap|-initial|-monogram)?(?P<field_mod_3>-informal|-prefix|-core|-allCaps|-initialCap|-initial|-monogram)?(?P<field_mod_4>-informal|-prefix|-core|-allCaps|-initialCap|-initial|-monogram)?}(?P<trailing>[^{]+)?")
+            .unwrap()
+    })
 }
+
+
 
 /// Contains meta information about the person name pattern.
 #[derive(PartialEq, Debug)]
@@ -209,7 +214,7 @@ pub fn to_person_name_pattern<'pattern_lt>(
     value: &'pattern_lt str,
 ) -> Result<PersonNamePattern, PersonNamesFormatterError> {
     let mut name_fields_map: Vec<(NameField, &'pattern_lt str)> = Vec::new();
-    let captures: CaptureMatches = PERSON_NAMES_PATTERN.captures_iter(value);
+    let captures = person_name_pattern().captures_iter(value);
     for capture in captures {
         let name_field = NameField::try_from(&capture)?;
         let trailing = capture.name("trailing").map_or("", |m| m.as_str());
