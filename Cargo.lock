@@ -1207,7 +1207,7 @@ dependencies = [
 
 [[package]]
 name = "icu4x_ecma402"
-version = "0.8.0"
+version = "0.8.1"
 dependencies = [
  "ecma402_traits",
  "icu",
@@ -1584,7 +1584,7 @@ dependencies = [
 
 [[package]]
 name = "icu_harfbuzz"
-version = "0.1.0"
+version = "0.1.1"
 dependencies = [
  "displaydoc",
  "harfbuzz",

@@ -5,7 +5,7 @@
 [package]
 name = "icu4x_ecma402"
 description = "ECMA-402 API functionality backed by the ICU4X library"
-version = "0.8.0"
+version = "0.8.1"
 license-file = "LICENSE"
 
 authors.workspace = true
