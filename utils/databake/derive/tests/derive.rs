@@ -49,7 +49,6 @@ pub struct CowExample<'a> {
 }
 
 #[test]
-#[ignore] // https://github.com/rust-lang/rust/issues/98906
 fn test_cow_example() {
     test_bake!(
         CowExample<'static>,
