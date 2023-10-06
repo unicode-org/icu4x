@@ -3,7 +3,7 @@
 
 ## For ICU4X users
 
-Each ICU4X release guarantee a minimum supported rust version (MSRV) of four Rust versions before the release, and attempt an MSRV of six Rust versions. For example, if today's current Rust stable version is 1.70, and we release ICU4X x.y.0, then we guarantee that ICU4X x.y.z will have an MSRV of 1.66 or earlier. We will *attempt* an MSRV of 1.64.
+Each ICU4X release and its patches guarantee a minimum supported rust version (MSRV) of four Rust versions before the release, and attempt an MSRV of six Rust versions. For example, if today's current Rust stable version is 1.70, and we release ICU4X x.y.0, then we guarantee that ICU4X x.y.z will have an MSRV of 1.66 or earlier. We will *attempt* an MSRV of 1.64.
 
 The MSRV shall be included in the `rust-version` Cargo toml key, resulting in an error if used with an insufficiently updated toolchain.
 
