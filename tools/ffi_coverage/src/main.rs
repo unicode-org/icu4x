@@ -104,7 +104,7 @@ fn collect_public_types(krate: &str) -> impl Iterator<Item = (Vec<String>, ast::
             let output = std::process::Command::new("rustup")
                 .args([
                     "run",
-                    "nightly-2022-09-26",
+                    "nightly-2022-12-26",
                     "cargo",
                     "rustdoc",
                     "-p",
@@ -349,15 +349,6 @@ fn collect_public_types(krate: &str) -> impl Iterator<Item = (Vec<String>, ast::
                         insert_ty(types, path, ast::DocType::Constant);
                     }
                     ItemEnum::Function(_) => {
-                        insert_ty(types, path, ast::DocType::Fn);
-                    }
-                    ItemEnum::Macro(_) => {
-                        insert_ty(types, path, ast::DocType::Macro);
-                    }
-                    ItemEnum::Typedef(_) => {
-                        insert_ty(types, path, ast::DocType::Typedef);
-                    }
-                    ItemEnum::Method(_) => {
                         let doc_type = match inside {
                             Some(In::Enum(tr)) | Some(In::Struct(tr))
                                 if check_ignored_assoc_item(item_name, tr) =>
@@ -367,9 +358,15 @@ fn collect_public_types(krate: &str) -> impl Iterator<Item = (Vec<String>, ast::
                             Some(In::Enum(_)) => ast::DocType::FnInEnum,
                             Some(In::Trait) => ast::DocType::FnInTrait,
                             Some(In::Struct(_)) => ast::DocType::FnInStruct,
-                            _ => panic!("Method needs In"),
+                            _ => ast::DocType::Fn,
                         };
                         insert_ty(types, path, doc_type);
+                    }
+                    ItemEnum::Macro(_) => {
+                        insert_ty(types, path, ast::DocType::Macro);
+                    }
+                    ItemEnum::Typedef(_) => {
+                        insert_ty(types, path, ast::DocType::Typedef);
                     }
                     ItemEnum::Variant(_) => {
                         insert_ty(types, path, ast::DocType::EnumVariant);

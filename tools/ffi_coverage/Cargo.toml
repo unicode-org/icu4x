@@ -12,7 +12,7 @@ edition = "2021"
 diplomat_core.workspace = true
 elsa = "1"
 lazy_static ="1"
-rustdoc-types = "0.17"
+rustdoc-types = "0.19"
 serde_json = "1"
 syn-inline-mod = "0.6.0"
 
