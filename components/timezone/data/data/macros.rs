@@ -14,7 +14,7 @@
 #[macro_export]
 macro_rules! __make_provider {
     ($ name : ty) => {
-        #[clippy::msrv = "1.66"]
+        #[clippy::msrv = "1.67"]
         impl $name {
             #[doc(hidden)]
             #[allow(dead_code)]
