@@ -12,10 +12,8 @@ use alloc::borrow::Cow;
 use core::fmt::{Debug, Formatter};
 
 use icu_provider::prelude::*;
-
 #[cfg(feature = "serde")]
 use icu_provider::serde::borrow_de_utils::option_of_cow;
-
 use zerovec::VarZeroVec;
 
 use crate::api::FormattingFormality;
@@ -31,8 +29,9 @@ pub struct Baked;
 #[cfg(feature = "compiled_data")]
 const _: () = {
     pub mod icu {
-        pub use crate as personnames;
         pub use icu_locid_transform as locid_transform;
+
+        pub use crate as personnames;
     }
     icu_personnames_data::make_provider!(Baked);
     icu_personnames_data::impl_personnames_personnames_v1!(Baked);
@@ -201,58 +200,58 @@ impl Debug for PersonNamesFormattingData<'_> {
         let mut debug = f.debug_struct("PersonNamesFormattingData");
 
         debug.field(
-            "GivenFirst",
-            &(self.attributes & PersonNamesFormattingAttributes::GivenFirst.bit_value()
+            "given_first",
+            &(&self.attributes & PersonNamesFormattingAttributes::GivenFirst.bit_value()
                 == PersonNamesFormattingAttributes::GivenFirst.bit_value()),
         );
         debug.field(
-            "SurnameFirst",
-            &(self.attributes & PersonNamesFormattingAttributes::SurnameFirst.bit_value()
+            "surname_first",
+            &(&self.attributes & PersonNamesFormattingAttributes::SurnameFirst.bit_value()
                 == PersonNamesFormattingAttributes::SurnameFirst.bit_value()),
         );
         debug.field(
-            "Sorting",
-            &(self.attributes & PersonNamesFormattingAttributes::Sorting.bit_value()
+            "sorting",
+            &(&self.attributes & PersonNamesFormattingAttributes::Sorting.bit_value()
                 == PersonNamesFormattingAttributes::Sorting.bit_value()),
         );
         debug.field(
-            "Short",
-            &(self.attributes & PersonNamesFormattingAttributes::Short.bit_value()
+            "short",
+            &(&self.attributes & PersonNamesFormattingAttributes::Short.bit_value()
                 == PersonNamesFormattingAttributes::Short.bit_value()),
         );
         debug.field(
-            "Medium",
-            &(self.attributes & PersonNamesFormattingAttributes::Medium.bit_value()
+            "medium",
+            &(&self.attributes & PersonNamesFormattingAttributes::Medium.bit_value()
                 == PersonNamesFormattingAttributes::Medium.bit_value()),
         );
         debug.field(
-            "Long",
-            &(self.attributes & PersonNamesFormattingAttributes::Long.bit_value()
+            "long",
+            &(&self.attributes & PersonNamesFormattingAttributes::Long.bit_value()
                 == PersonNamesFormattingAttributes::Long.bit_value()),
         );
         debug.field(
-            "Addressing",
-            &(self.attributes & PersonNamesFormattingAttributes::Addressing.bit_value()
+            "addressing",
+            &(&self.attributes & PersonNamesFormattingAttributes::Addressing.bit_value()
                 == PersonNamesFormattingAttributes::Addressing.bit_value()),
         );
         debug.field(
-            "Referring",
-            &(self.attributes & PersonNamesFormattingAttributes::Referring.bit_value()
+            "referring",
+            &(&self.attributes & PersonNamesFormattingAttributes::Referring.bit_value()
                 == PersonNamesFormattingAttributes::Referring.bit_value()),
         );
         debug.field(
-            "Monogram",
-            &(self.attributes & PersonNamesFormattingAttributes::Monogram.bit_value()
+            "monogram",
+            &(&self.attributes & PersonNamesFormattingAttributes::Monogram.bit_value()
                 == PersonNamesFormattingAttributes::Monogram.bit_value()),
         );
         debug.field(
-            "Formal",
-            &(self.attributes & PersonNamesFormattingAttributes::Formal.bit_value()
+            "formal",
+            &(&self.attributes & PersonNamesFormattingAttributes::Formal.bit_value()
                 == PersonNamesFormattingAttributes::Formal.bit_value()),
         );
         debug.field(
-            "Informal",
-            &(self.attributes & PersonNamesFormattingAttributes::Informal.bit_value()
+            "informal",
+            &(&self.attributes & PersonNamesFormattingAttributes::Informal.bit_value()
                 == PersonNamesFormattingAttributes::Informal.bit_value()),
         );
         debug.finish()

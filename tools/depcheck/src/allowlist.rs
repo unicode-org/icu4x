@@ -93,7 +93,6 @@ pub const EXTRA_EXPERIMENTAL_DEPS: &[&str] = &[
     "icu_relativetime",
     "icu_compactdecimal",
     "regex",
-    "lazy_static",
     "aho-corasick",
     "regex-syntax",
     "serde",
@@ -167,8 +166,6 @@ pub const EXTRA_DATAGEN_DEPS: &[&str] = &[
     "serde_json",
     "static_assertions",
     "toml",
-    "hashbrown",
-    "indexmap",
     "twox-hash",
 ];
 
