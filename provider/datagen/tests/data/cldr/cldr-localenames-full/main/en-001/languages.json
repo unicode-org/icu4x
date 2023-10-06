@@ -3,7 +3,7 @@
     "en-001": {
       "identity": {
         "version": {
-          "_cldrVersion": "43"
+          "_cldrVersion": "44"
         },
         "language": "en",
         "territory": "001"
@@ -396,7 +396,7 @@
           "mgo": "Metaʼ",
           "mh": "Marshallese",
           "mi": "Māori",
-          "mic": "Mi'kmaq",
+          "mic": "Mi'kmaw",
           "min": "Minangkabau",
           "mk": "Macedonian",
           "ml": "Malayalam",
@@ -649,6 +649,7 @@
           "vi": "Vietnamese",
           "vls": "West Flemish",
           "vmf": "Main-Franconian",
+          "vmw": "Makhuwa",
           "vo": "Volapük",
           "vot": "Votic",
           "vro": "Võro",
