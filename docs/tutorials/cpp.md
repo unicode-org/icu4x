@@ -74,30 +74,19 @@ int main() {
 
 ## Embedded platforms (`no_std`)
 
-Users wishing to use ICU4X on a `no_std` platform will need to write their own crate depending on `icu_capi` that fills in an allocator and panic hooks, similar to what we do in our [example](https://github.com/unicode-org/icu4x/blob/main/ffi/diplomat/c/examples/fixeddecimal_tiny/icu_capi_staticlib_tiny/src/lib.rs):
+Users wishing to use ICU4X on a `no_std` platform will need to write their own crate depending on `icu_capi` that fills in an allocator and a panic hook, similar to what we do in our [example](https://github.com/unicode-org/icu4x/blob/main/ffi/diplomat/c/examples/fixeddecimal_tiny/icu_capi_staticlib_tiny/src/lib.rs):
 
 ```rust,compile_fail
-#![feature(alloc_error_handler)]
-
 #![no_std]
 
+// Expose icu_capi symbols
 extern crate icu_capi;
-extern crate dlmalloc;
-
-use core::alloc::Layout;
-use core::panic::PanicInfo;
-use dlmalloc::GlobalDlmalloc;
 
 #[global_allocator]
-static ALLOCATOR: GlobalDlmalloc = GlobalDlmalloc;
-
-#[alloc_error_handler]
-fn alloc_error(_layout: Layout) -> ! {
-    loop {}
-}
+static ALLOCATOR: dlmalloc::GlobalDlmalloc = dlmalloc::GlobalDlmalloc;
 
 #[panic_handler]
-fn panic(_info: &PanicInfo) -> ! {
+fn panic(_info: &core::panic::PanicInfo) -> ! {
     loop {}
 }
 ```
