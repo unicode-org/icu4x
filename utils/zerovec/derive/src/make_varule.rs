@@ -173,9 +173,7 @@ pub fn make_varule_impl(ule_name: Ident, mut input: DeriveInput) -> TokenStream2
         quote!(
             impl core::cmp::PartialOrd for #ule_name {
                 fn partial_cmp(&self, other: &Self) -> Option<core::cmp::Ordering> {
-                    let this = #zerofrom_fq_path::zero_from(self);
-                    let other = #zerofrom_fq_path::zero_from(other);
-                    <#name as core::cmp::PartialOrd>::partial_cmp(&this, &other)
+                    Some(self.cmp(other))
                 }
             }
 
