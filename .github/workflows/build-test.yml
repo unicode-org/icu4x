@@ -32,7 +32,7 @@ concurrency:
 jobs:
 
   # ci-job-check & ci-job-features
-  # Running at MSRV (1.66)
+  # Running at MSRV (1.67)
   msrv:
     runs-on: ubuntu-latest
     # Defined as a matrix so that features can start immediately, but
