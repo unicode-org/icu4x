@@ -16,7 +16,7 @@ extend = [
 default_to_workspace = false
 
 [env]
-ICU4X_NIGHTLY_TOOLCHAIN = { value = "nightly-2022-09-26", condition = { env_not_set = ["ICU4X_NIGHTLY_TOOLCHAIN"] } }
+ICU4X_NIGHTLY_TOOLCHAIN = { value = "nightly-2022-12-26", condition = { env_not_set = ["ICU4X_NIGHTLY_TOOLCHAIN"] } }
 # To install a specific build of GN, set the ICU4X_GN_PACKAGE environment variable. Choices:
 # https://chrome-infra-packages.appspot.com/p/gn/gn
 # TODO: Choose the correct distribution of GN automatically.

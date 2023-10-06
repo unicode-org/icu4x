@@ -105,7 +105,7 @@ fn collect_public_types(krate: &str) -> impl Iterator<Item = (Vec<String>, ast::
             let output = std::process::Command::new("rustup")
                 .args([
                     "run",
-                    "nightly-2022-09-26",
+                    "nightly-2022-12-26",
                     "cargo",
                     "rustdoc",
                     "-p",
