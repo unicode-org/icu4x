@@ -193,12 +193,17 @@ pub(crate) fn transform<'x>(
                 ) {
                     $stmt;
                 } else {
-                    panic!(
+                    // This will happen when likelysubtags.xml has an expansion that is *changing* subtags
+                    // instead of just adding them.
+                    //
+                    // We should actually handle these (#4130)
+                    log::warn!(
                         "The expansion {:?} -> {:?} can not be stored in the pattern {}",
                         entry.0,
                         entry.1,
                         stringify!($pat)
                     );
+                    continue;
                 }
             };
         }
