@@ -49,10 +49,19 @@ Once the release checklist is complete, the assigned release driver will perform
 * Merge the tutorials PR. `cargo make test-tuturials-cratesio` should now pass
   * If there are any errors, please fix them before advertising the release
 * Land the changelog (see below)
+  * Note: Do this _before_ tagging the release because the changelog is included in the tag
 * Announce the release to public
   * [Tag the Release](https://github.com/unicode-org/icu4x/releases) with the text drafted above
   * Send an email to [icu4x-announce](https://groups.google.com/u/0/a/unicode.org/g/icu4x-announce)
   * Submit to This Week In Rust
+* Keep the main branch relatively stable for 7-14 days following the release to make things easier in case a patch release is needed.
+  * It's okay to land smaller or incremental changes, but avoid breaking changes during this period.
+
+If an ICU metacrate patch release is needed:
+
+* Follow the above steps from the main branch if possible.
+* If changes on the main branch have landed that prevent a patch release, create a branch from the most recent ancestor, perform the release steps from that branch, and then push a _merge commit_ putting that branch back onto main.
+  * It is useful for various Git tooling for tags to be descendants and ancestors in the commit history. Free-floating tags create warnings such as "This commit does not belong to any branch on this repository", and they reduce the efficacy of commands such as `git diff`, `git log`, and `git cherry`.
 
 
 ## Publishing utils
