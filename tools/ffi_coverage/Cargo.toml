@@ -9,7 +9,7 @@ version = "0.0.0"
 edition = "2021"
 
 [dependencies]
-diplomat_core = { version = "0.6" }
+diplomat_core.workspace = true
 elsa = "1"
 lazy_static ="1"
 rustdoc-types = "0.19"

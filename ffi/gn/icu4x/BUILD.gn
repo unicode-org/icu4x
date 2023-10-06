@@ -252,7 +252,7 @@ rust_library("icu_calendar-v1_3_2") {
 
 rust_library("icu_capi-v1_3_2") {
   crate_name = "icu_capi"
-  crate_root = "//ffi/diplomat/src/lib.rs"
+  crate_root = "//ffi/capi/src/lib.rs"
   output_name = "icu_capi-603107f4f666716"
 
   deps = []

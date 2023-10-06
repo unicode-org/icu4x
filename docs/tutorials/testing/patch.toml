@@ -50,7 +50,7 @@ icu_relativetime_data = { path = "../../experimental/relativetime/data" }
 icu_singlenumberformatter_data = { path = "../../experimental/single_number_formatter/data"}
 
 # FFI
-icu_capi = { path = "../../ffi/diplomat" }
+icu_capi = { path = "../../ffi/capi" }
 icu_capi_cdylib = { path = "../../ffi/capi_cdylib" }
 icu_capi_staticlib = { path = "../../ffi/capi_staticlib" }
 icu4x_ecma402 = { path = "../../experimental/ecma402" }
