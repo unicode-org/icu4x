@@ -1,5 +1,6 @@
 {
   "constants_map": {
+    "AMU": "1.66053878283E-27",
     "G": "6.67408E-11",
     "PI": "411557987 / 131002976",
     "ft2_to_m2": "ft_to_m*ft_to_m",
@@ -14,6 +15,9 @@
     "lb_to_kg": "0.45359237",
     "meters_per_AU": "149597870700",
     "sec_per_julian_year": "31557600",
-    "speed_of_light_meters_per_second": "299792458"
+    "shaku_to_m": "4/121",
+    "sho_to_m3": "2401/1331*1000",
+    "speed_of_light_meters_per_second": "299792458",
+    "tsubo_to_m2": "400/121"
   }
 }
