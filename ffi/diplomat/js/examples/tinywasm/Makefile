@@ -33,7 +33,6 @@ target/wasm32-unknown-unknown/release/icu_capi_cdylib.wasm: FORCE
 		--target wasm32-unknown-unknown \
 		--release \
 		--package icu_capi_cdylib \
-		--no-default-features
 		--features buffer_provider,logging \
 
 icu_capi.wasm: target/wasm32-unknown-unknown/release/icu_capi_cdylib.wasm
@@ -44,7 +43,8 @@ data.postcard: icu_capi.wasm
 		--keys-for-bin icu_capi.wasm \
 		--locales full \
 		--format blob \
-		--out data.postcard
+		--out data.postcard \
+		--overwrite
 
 build: icu_capi.wasm data.postcard lib
 
