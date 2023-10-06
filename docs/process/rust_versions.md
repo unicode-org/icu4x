@@ -18,7 +18,7 @@ The main ICU4X library does not use nightly; however nightly is required for bui
 
 Currently ICU4X pins a stable Rust version [in the `rust-toolchain` file](https://github.com/unicode-org/icu4x/blob/main/rust-toolchain), and additionally uses specific nightlies for [WASM tests](https://github.com/unicode-org/icu4x/blob/1f4a9505f21a6d5c9bb4833e0cf3fe969f734c54/Makefile.toml#L158) and [coverage](https://github.com/unicode-org/icu4x/blob/1f4a9505f21a6d5c9bb4833e0cf3fe969f734c54/.github/workflows/build-test.yml#L332). Furthermore, we enforce the current MSRV as a separate CI job.
 
-One may update the MSRV to a Rust version that is 6 or more versions before the current stable (or the stable version that shall exist at the time of the next ICU4X release if it is planned) without needing additional approval by stating which features in that release are useful for ICU4X develoment. One may not update the MSRV to a Rust version that is not at least 4 versions before current stable.
+One may update the MSRV to a Rust version that is 6 or more versions before the current stable (or the stable version that shall exist at the time of the next ICU4X release if it is planned) without needing additional approval by stating which features in that release are useful for ICU4X development. One may not update the MSRV to a Rust version that is not at least 4 versions before current stable.
 
 For updating the MSRV to a Rust version that is between 4 and 6 versions the ICU4X developer must make a per-case argument as to why this update is beneficial to the project. Some example arguments may include that it serves a client need, or fixes a soundness issue.
 
