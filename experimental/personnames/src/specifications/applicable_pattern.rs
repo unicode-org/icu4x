@@ -3,9 +3,9 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::api::{NameField, PersonNamesFormatterError};
-use crate::pattern_regex_selector::PersonNamePattern;
+use crate::specifications::PersonNamePattern;
 
-pub(crate) fn find_best_applicable_pattern<'lt>(
+pub fn find_best_applicable_pattern<'lt>(
     applicable_pattern: &'lt [PersonNamePattern<'lt>],
     available_name_fields: &'lt [&NameField],
 ) -> Result<&'lt PersonNamePattern<'lt>, PersonNamesFormatterError> {
@@ -40,8 +40,8 @@ mod tests {
     use crate::api::{
         FieldLength, FieldModifierSet, NameField, NameFieldKind, PersonNamesFormatterError,
     };
-    use crate::applicable_pattern::find_best_applicable_pattern;
-    use crate::pattern_regex_selector::PersonNamePattern;
+    use crate::specifications::pattern_regex_selector::PersonNamePattern;
+    use crate::specifications::to_person_name_pattern;
 
     #[test]
     fn test_simple_match() -> Result<(), PersonNamesFormatterError> {
@@ -49,7 +49,7 @@ mod tests {
             "{surname}, {title} {given} {given2}",
             "{surname}, {given-initial} {given2-initial}",
         ]
-        .map(crate::pattern_regex_selector::to_person_name_pattern)
+        .map(to_person_name_pattern)
         .map(|v| v.unwrap());
 
         let title = NameField {
@@ -69,7 +69,7 @@ mod tests {
             modifier: Default::default(),
         };
         let name_fields = vec![&title, &surname, &given, &given2];
-        let result = find_best_applicable_pattern(tested_patterns, &name_fields)?;
+        let result = super::find_best_applicable_pattern(tested_patterns, &name_fields)?;
         let expect = &tested_patterns[0];
         assert_eq!(result, expect);
 
@@ -82,7 +82,7 @@ mod tests {
             "{surname}, {title} {given} {given2}",
             "{surname}, {given-initial} {given2-initial}",
         ]
-        .map(crate::pattern_regex_selector::to_person_name_pattern)
+        .map(to_person_name_pattern)
         .map(|v| v.unwrap());
 
         let surname = NameField {
@@ -106,7 +106,7 @@ mod tests {
             modifier: FieldModifierSet::length(FieldLength::Initial),
         };
         let name_fields = vec![&surname, &given, &given_initial, &given2, &given2_initial];
-        let result = find_best_applicable_pattern(tested_patterns, &name_fields)?;
+        let result = super::find_best_applicable_pattern(tested_patterns, &name_fields)?;
         let expect = &tested_patterns[1];
         assert_eq!(result, expect);
 

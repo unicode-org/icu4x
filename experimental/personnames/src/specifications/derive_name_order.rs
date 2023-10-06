@@ -12,7 +12,7 @@ use crate::api::FormattingOrder;
 ///
 /// https://www.unicode.org/reports/tr35/tr35-personNames.html#derive-the-name-order
 ///
-pub(crate) fn name_order_derive(
+pub fn name_order_derive(
     person_name_locale: &Locale,
     surname_first: &VarZeroVec<str>,
     given_first: &VarZeroVec<str>,
@@ -56,7 +56,7 @@ mod tests {
     use zerovec::VarZeroVec;
 
     use crate::api::FormattingOrder;
-    use crate::derive_name_order::name_order_derive;
+    use super::name_order_derive;
 
     #[test]
     fn test_plain_locale() {

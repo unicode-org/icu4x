@@ -3,28 +3,25 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use icu_locid::Locale;
-use icu_provider::zerofrom;
 use icu_provider::DataError;
 use icu_provider::DataLocale;
 use icu_provider::DataPayload;
 use icu_provider::DataProvider;
 use icu_provider::DataRequest;
+use icu_provider::zerofrom;
 use zerofrom::ZeroFrom;
 
+use crate::api::{FormattingOrder, PersonNamesFormatterError, PreferredOrder};
+use crate::api::{NameField, PersonNamesFormatterOptions};
 use crate::api::NameFieldKind::Given;
 use crate::api::NameFieldKind::Surname;
 use crate::api::PersonName;
-use crate::api::{FormattingOrder, PersonNamesFormatterError, PreferredOrder};
-use crate::api::{NameField, PersonNamesFormatterOptions};
-use crate::derive_locale::{effective_locale, likely_person_name_locale};
-use crate::derive_name_order::name_order_derive;
-use crate::pattern_regex_selector::{to_person_name_pattern, PersonNamePattern};
-use crate::provider::PersonNamesFormatV1;
-use crate::provider::PersonNamesFormatV1Marker;
 use crate::provider::PersonNamesFormattingAttributes;
 use crate::provider::PersonNamesFormattingAttributesMask;
 use crate::provider::PersonNamesFormattingData;
-use crate::space_replacement::space_replacement;
+use crate::provider::PersonNamesFormatV1;
+use crate::provider::PersonNamesFormatV1Marker;
+use crate::specifications;
 
 pub struct PersonNamesFormatter<'lt> {
     pub(crate) default_options: PersonNamesFormatterOptions,
@@ -63,9 +60,9 @@ impl PersonNamesFormatter<'_> {
         if !validate_person_name(&available_name_fields) {
             return Err(PersonNamesFormatterError::InvalidPersonName);
         }
-        let person_name_locale = &likely_person_name_locale(person_name)?;
+        let person_name_locale = &specifications::likely_person_name_locale(person_name)?;
         let effective_locale =
-            effective_locale(&self.default_options.target_locale, person_name_locale)?;
+            specifications::effective_locale(&self.default_options.target_locale, person_name_locale)?;
 
         let data_payload: &DataPayload<PersonNamesFormatV1Marker> = &self
             .data_provider
@@ -93,7 +90,7 @@ impl PersonNamesFormatter<'_> {
                 // attributes not provided by the source.
                 // i.e. : you can have 100, 010, 001, 111, but never 000
                 // (000 means nothing is provided, and by specification, this means all are valid)
-                pattern.attributes & applicable_mask == applicable_mask
+                &pattern.attributes & applicable_mask == applicable_mask
             })
             .ok_or_else(|| {
                 PersonNamesFormatterError::ParseError(String::from(
@@ -104,14 +101,14 @@ impl PersonNamesFormatter<'_> {
         let applicable_patterns = pattern_to_apply
             .patterns
             .iter()
-            .map(to_person_name_pattern)
-            .collect::<Result<Vec<PersonNamePattern>, PersonNamesFormatterError>>()?;
-        let best_applicable_pattern = crate::applicable_pattern::find_best_applicable_pattern(
+            .map(specifications::to_person_name_pattern)
+            .collect::<Result<Vec<specifications::PersonNamePattern>, PersonNamesFormatterError>>()?;
+        let best_applicable_pattern = specifications::find_best_applicable_pattern(
             &applicable_patterns,
             &available_name_fields,
         )?;
 
-        let space_replacement = space_replacement(
+        let space_replacement = specifications::space_replacement(
             &self.default_options.target_locale,
             person_name_locale,
             formatting_definition
@@ -176,7 +173,7 @@ impl PersonNamesFormatter<'_> {
                 order: person_name
                     .name_locale()
                     .map(|l| {
-                        name_order_derive(
+                        specifications::name_order_derive(
                             l,
                             &formatting_definition.surname_first_locales,
                             &formatting_definition.given_first_locales,

@@ -21,7 +21,7 @@ lazy_static! {
 ///
 /// https://www.unicode.org/reports/tr35/tr35-personNames.html#derive-initials
 ///
-pub(crate) fn derive_missing_initials(
+pub fn derive_missing_initials(
     person_name: &dyn PersonName,
     requested_field: &NameField,
     initial_pattern: &str,
@@ -89,8 +89,8 @@ mod tests {
     use icu_locid::locale;
     use litemap::LiteMap;
 
-    use crate::api::NameFieldKind::Given;
     use crate::api::{FieldLength, FieldModifierSet, NameField, PersonNamesFormatterError};
+    use crate::api::NameFieldKind::Given;
     use crate::provided_struct::DefaultPersonName;
 
     #[test]
@@ -108,7 +108,7 @@ mod tests {
             kind: Given,
             modifier: FieldModifierSet::length(FieldLength::Initial),
         };
-        let result = crate::derive_missing_initials::derive_missing_initials(
+        let result = super::derive_missing_initials(
             &person_name,
             &requested_field,
             "{0}.",
@@ -133,7 +133,7 @@ mod tests {
             kind: Given,
             modifier: FieldModifierSet::length(FieldLength::Initial),
         };
-        let result = crate::derive_missing_initials::derive_missing_initials(
+        let result = super::derive_missing_initials(
             &person_name,
             &requested_field,
             "{0}.",
@@ -158,7 +158,7 @@ mod tests {
             kind: Given,
             modifier: FieldModifierSet::length(FieldLength::Initial),
         };
-        let result = crate::derive_missing_initials::derive_missing_initials(
+        let result = super::derive_missing_initials(
             &person_name,
             &requested_field,
             "{0}.",

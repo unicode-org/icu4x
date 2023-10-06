@@ -7,7 +7,7 @@ use crate::api::{NameField, NameFieldKind};
 /// Returns a remapped field for missing surname.
 /// https://www.unicode.org/reports/tr35/tr35-personNames.html#handle-missing-surname
 ///
-pub(crate) fn derive_missing_surname(
+pub fn derive_missing_surname(
     available_name_field: &[&NameField],
     requested_name_field: &NameField,
     requires_given_name: bool,
@@ -48,7 +48,7 @@ mod tests {
             kind: Given,
             modifier: Default::default(),
         }];
-        let result = crate::derive_missing_surname::derive_missing_surname(
+        let result = super::derive_missing_surname(
             available_name_field,
             requested_name_field,
             false,
@@ -67,7 +67,7 @@ mod tests {
             kind: Given,
             modifier: Default::default(),
         }];
-        let result = crate::derive_missing_surname::derive_missing_surname(
+        let result = super::derive_missing_surname(
             available_name_field,
             requested_name_field,
             false,
@@ -92,7 +92,7 @@ mod tests {
             kind: Given,
             modifier: Default::default(),
         }];
-        let result = crate::derive_missing_surname::derive_missing_surname(
+        let result = super::derive_missing_surname(
             available_name_field,
             requested_name_field,
             true,
@@ -123,7 +123,7 @@ mod tests {
                 modifier: Default::default(),
             },
         ];
-        let result = crate::derive_missing_surname::derive_missing_surname(
+        let result = super::derive_missing_surname(
             available_name_field,
             requested_name_field,
             true,
@@ -154,7 +154,7 @@ mod tests {
                 modifier: Default::default(),
             },
         ];
-        let result = crate::derive_missing_surname::derive_missing_surname(
+        let result = super::derive_missing_surname(
             available_name_field,
             requested_name_field,
             false,

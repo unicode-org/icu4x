@@ -9,7 +9,7 @@ use crate::api::{
     FieldModifier, FieldModifierSet, NameField, NameFieldKind, PersonName,
     PersonNamesFormatterError,
 };
-use crate::derive_core_prefix::handle_field_modifier_core_prefix;
+use crate::specifications;
 
 const CLDR_PERSON_NAMES_PATTERN: &str = r"\{(?P<name_field_kind>title|given|given2|surname|generation|credentials)(?P<field_mod_1>-informal|-prefix|-core|-allCaps|-initialCap|-initial|-monogram)?(?P<field_mod_2>-informal|-prefix|-core|-allCaps|-initialCap|-initial|-monogram)?(?P<field_mod_3>-informal|-prefix|-core|-allCaps|-initialCap|-initial|-monogram)?(?P<field_mod_4>-informal|-prefix|-core|-allCaps|-initialCap|-initial|-monogram)?}(?P<trailing>[^{]+)?";
 
@@ -19,8 +19,8 @@ lazy_static! {
 
 /// Contains meta information about the person name pattern.
 #[derive(PartialEq, Debug)]
-pub(crate) struct PersonNamePattern<'lt> {
-    pub(crate) name_fields: Vec<(NameField, &'lt str)>,
+pub struct PersonNamePattern<'lt> {
+    pub name_fields: Vec<(NameField, &'lt str)>,
 }
 
 impl<'lt> PersonNamePattern<'lt> {}
@@ -46,7 +46,7 @@ impl PersonNamePattern<'_> {
     }
 
     /// Returns the how many fields can be matched using the current build pattern.
-    pub(crate) fn match_info(&self, available_name_fields: &[&NameField]) -> (usize, usize) {
+    pub fn match_info(&self, available_name_fields: &[&NameField]) -> (usize, usize) {
         let available_fields = available_name_fields.iter().fold(0, |count, &name_field| {
             if self.contains_key(name_field) {
                 count + 1
@@ -76,19 +76,19 @@ impl PersonNamePattern<'_> {
     ) -> Vec<String> {
         let available_name_field = person_name.available_name_fields();
         let effective_name_field =
-            handle_field_modifier_core_prefix(&available_name_field, requested_name_field);
+            specifications::handle_field_modifier_core_prefix(&available_name_field, requested_name_field);
 
         return effective_name_field
             .iter()
             .flat_map(|field| {
-                crate::derive_missing_surname::derive_missing_surname(
+                specifications::derive_missing_surname(
                     &available_name_field,
                     field,
                     self.pattern_requires_given_name(),
                 )
             })
             .map(|field| {
-                crate::derive_missing_initials::derive_missing_initials(
+                specifications::derive_missing_initials(
                     person_name,
                     &field,
                     initial_pattern,
@@ -98,7 +98,7 @@ impl PersonNamePattern<'_> {
             .collect();
     }
 
-    pub(crate) fn format_person_name(
+    pub fn format_person_name(
         &self,
         person_name: &dyn PersonName,
         initial_pattern: &str,
@@ -205,7 +205,7 @@ impl TryFrom<&Captures<'_>> for NameField {
     }
 }
 
-pub(crate) fn to_person_name_pattern<'pattern_lt>(
+pub fn to_person_name_pattern<'pattern_lt>(
     value: &'pattern_lt str,
 ) -> Result<PersonNamePattern, PersonNamesFormatterError> {
     let mut name_fields_map: Vec<(NameField, &'pattern_lt str)> = Vec::new();

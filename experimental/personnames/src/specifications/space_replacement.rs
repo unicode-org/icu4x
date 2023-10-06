@@ -9,7 +9,7 @@ const DEFAULT_FOREIGN_SPACE_REPLACEMENT: &str = " ";
 ///
 /// https://www.unicode.org/reports/tr35/tr35-personNames.html#setting-the-spacereplacement
 ///
-pub(crate) fn space_replacement<'lt>(
+pub fn space_replacement<'lt>(
     formatting_locale: &Locale,
     person_name_locale: &Locale,
     foreign_space_replacement: Option<&'lt str>,
@@ -43,7 +43,7 @@ mod tests {
         lc.maximize(&mut formatting_locale);
         lc.maximize(&mut person_name_locale);
 
-        let result = crate::space_replacement::space_replacement(
+        let result = super::space_replacement(
             &formatting_locale,
             &person_name_locale,
             foreign_space_replacement,
@@ -63,7 +63,7 @@ mod tests {
         lc.maximize(&mut formatting_locale);
         lc.maximize(&mut person_name_locale);
 
-        let result = crate::space_replacement::space_replacement(
+        let result = super::space_replacement(
             &formatting_locale,
             &person_name_locale,
             foreign_space_replacement,
@@ -83,7 +83,7 @@ mod tests {
         lc.maximize(&mut formatting_locale);
         lc.maximize(&mut person_name_locale);
 
-        let result = crate::space_replacement::space_replacement(
+        let result = super::space_replacement(
             &formatting_locale,
             &person_name_locale,
             foreign_space_replacement,
@@ -103,7 +103,7 @@ mod tests {
         lc.maximize(&mut formatting_locale);
         lc.maximize(&mut person_name_locale);
 
-        let result = crate::space_replacement::space_replacement(
+        let result = super::space_replacement(
             &formatting_locale,
             &person_name_locale,
             foreign_space_replacement,
@@ -123,7 +123,7 @@ mod tests {
         lc.maximize(&mut formatting_locale);
         lc.maximize(&mut person_name_locale);
 
-        let result = crate::space_replacement::space_replacement(
+        let result = super::space_replacement(
             &formatting_locale,
             &person_name_locale,
             foreign_space_replacement,

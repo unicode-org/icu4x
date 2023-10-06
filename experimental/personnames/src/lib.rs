@@ -10,14 +10,8 @@ extern crate core;
 pub use crate::formatter::PersonNamesFormatter;
 
 pub mod api;
-mod applicable_pattern;
-mod derive_core_prefix;
-mod derive_locale;
-mod derive_missing_initials;
-mod derive_missing_surname;
-mod derive_name_order;
 pub mod formatter;
-mod pattern_regex_selector;
 pub mod provided_struct;
 pub mod provider;
-mod space_replacement;
+
+mod specifications;

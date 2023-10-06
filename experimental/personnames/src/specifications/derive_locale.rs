@@ -2,12 +2,13 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use icu_locid::{subtags, Locale};
+use icu_locid::{Locale, subtags};
+use icu_locid::subtags::script;
 use icu_properties::script::ScriptWithExtensionsBorrowed;
 use subtags::Script;
 
-use crate::api::NameFieldKind::{Given, Surname};
 use crate::api::{NameFieldKind, PersonName, PersonNamesFormatterError};
+use crate::api::NameFieldKind::{Given, Surname};
 
 /// Override the formatting payload to use based on specification rules.
 ///
@@ -17,7 +18,7 @@ use crate::api::{NameFieldKind, PersonName, PersonNamesFormatterError};
 ///
 /// The formatter locale and name locale must be maximized first.
 ///
-pub(crate) fn effective_locale<'a>(
+pub fn effective_locale<'a>(
     formatter_locale: &'a Locale,
     person_name_locale: &'a Locale,
 ) -> Result<&'a Locale, PersonNamesFormatterError> {
@@ -31,20 +32,18 @@ pub(crate) fn effective_locale<'a>(
 
 // TODO: proper handling of compatible scripts.
 fn compatible_scripts(sc1: Script, sc2: Script) -> bool {
-    let sc1_str = sc1.as_str();
-    let sc2_str = sc2.as_str();
-    let jpan_compatible = ["Hani", "Kana", "Hira"];
-    if sc1_str == "Jpan" && jpan_compatible.contains(&sc2_str) {
+    let jpan_compatible = [script!("Hani"), script!("Kana"), script!("Hira")];
+    if sc1 == script!("Jpan") && jpan_compatible.contains(&sc2) {
         return true;
     }
-    if sc2_str == "Jpan" && jpan_compatible.contains(&sc1_str) {
+    if sc2 == script!("Jpan") && jpan_compatible.contains(&sc1) {
         return true;
     }
-    sc1_str == sc2_str
+    sc1 == sc2
 }
 
 /// https://www.unicode.org/reports/tr35/tr35-personNames.html#derive-the-name-locale
-pub(crate) fn likely_person_name_locale<N>(
+pub fn likely_person_name_locale<N>(
     person_name: &N,
 ) -> Result<Locale, PersonNamesFormatterError>
 where
@@ -113,7 +112,7 @@ mod tests {
     use litemap::LiteMap;
 
     use crate::api::{FieldModifierSet, NameField, NameFieldKind, PersonNamesFormatterError};
-    use crate::derive_locale::{effective_locale, likely_person_name_locale};
+    use super::{effective_locale, likely_person_name_locale};
     use crate::provided_struct::DefaultPersonName;
 
     #[test]

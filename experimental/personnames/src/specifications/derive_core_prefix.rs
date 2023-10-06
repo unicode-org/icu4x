@@ -8,7 +8,7 @@ use crate::api::{FieldModifier, FieldPart, NameField};
 /// a single field can be transformed into 2 fields, or just be removed.
 /// https://www.unicode.org/reports/tr35/tr35-personNames.html#handle-core-and-prefix
 ///
-pub(crate) fn handle_field_modifier_core_prefix(
+pub fn handle_field_modifier_core_prefix(
     available_fields: &[&NameField],
     requested_field: &NameField,
 ) -> Vec<NameField> {
@@ -81,7 +81,7 @@ pub(crate) fn handle_field_modifier_core_prefix(
             }
         }
         (true, false, false) => {
-            if !is_prefix {
+            if !&is_prefix {
                 result.push(*requested_field)
             }
         }
@@ -93,9 +93,8 @@ pub(crate) fn handle_field_modifier_core_prefix(
 #[cfg(test)]
 mod tests {
     use crate::api::{FieldModifierSet, FieldPart, NameField, NameFieldKind};
-    use crate::derive_core_prefix::handle_field_modifier_core_prefix;
 
-    // Each case is named after the combination if the field is present in spec table.
+// Each case is named after the combination if the field is present in spec table.
     // e.g. : cp = core + plain, pc = prefix + core, pp = prefix + plain, pcp = all fields
 
     #[test]
@@ -186,7 +185,7 @@ mod tests {
             })
             .collect::<Vec<NameField>>();
         assert_eq!(
-            handle_field_modifier_core_prefix(
+            super::handle_field_modifier_core_prefix(
                 &available_fields.iter().collect::<Vec<&NameField>>(),
                 &NameField {
                     kind: NameFieldKind::Given,
