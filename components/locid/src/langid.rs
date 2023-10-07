@@ -327,6 +327,38 @@ impl LanguageIdentifier {
         }
         Ok(())
     }
+
+    pub(crate) fn for_each_subtag_str_lowercase<E, F>(&self, f: &mut F) -> Result<(), E>
+    where
+        F: FnMut(&str) -> Result<(), E>,
+    {
+        f(self.language.as_str())?;
+        if let Some(ref script) = self.script {
+            f(script.into_tinystr().to_ascii_lowercase().as_str())?;
+        }
+        if let Some(ref region) = self.region {
+            f(region.into_tinystr().to_ascii_lowercase().as_str())?;
+        }
+        for variant in self.variants.iter() {
+            f(variant.as_str())?;
+        }
+        Ok(())
+    }
+
+    pub(crate) fn write_to_lowercase<W: core::fmt::Write + ?Sized>(
+        &self,
+        sink: &mut W,
+    ) -> core::fmt::Result {
+        let mut initial = true;
+        self.for_each_subtag_str_lowercase(&mut |subtag| {
+            if initial {
+                initial = false;
+            } else {
+                sink.write_char('-')?;
+            }
+            sink.write_str(subtag)
+        })
+    }
 }
 
 impl AsRef<LanguageIdentifier> for LanguageIdentifier {
