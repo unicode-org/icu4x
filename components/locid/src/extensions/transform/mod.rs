@@ -196,7 +196,7 @@ impl Transform {
         }
         f("t")?;
         if let Some(lang) = &self.lang {
-            lang.for_each_subtag_str_lowercase(f)?;
+            lang.for_each_subtag_str_lowercased(f)?;
         }
         self.fields.for_each_subtag_str(f)
     }
@@ -212,7 +212,7 @@ impl writeable::Writeable for Transform {
         sink.write_str("t")?;
         if let Some(lang) = &self.lang {
             sink.write_char('-')?;
-            lang.write_to_lowercase(sink)?;
+            lang.write_lowercased_to(sink)?;
         }
         if !self.fields.is_empty() {
             sink.write_char('-')?;
