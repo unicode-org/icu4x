@@ -36,11 +36,12 @@ jobs:
         if: steps.grcov-cache.outputs.cache-hit != 'true'
         run: |
           cargo +stable install grcov
-  
-      - uses:                   actions-rs/toolchain@v1
-        with:
-          toolchain:            nightly-2022-12-26
-          override:             true
+
+      # Toolchain boilerplate
+      - name: Potentially override rust version with nightly
+        run: cargo make set-nightly-version-for-ci
+      - name: Show the selected Rust toolchain
+        run: rustup show
 
       - run: cargo test --all-features --no-fail-fast
         env:
