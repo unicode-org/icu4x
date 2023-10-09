@@ -6,9 +6,9 @@
 #[macro_export]
 macro_rules! __impl_transliterator_rules_v1 {
     ($ provider : ty) => {
-        #[clippy::msrv = "1.66"]
+        #[clippy::msrv = "1.67"]
         const _: () = <$provider>::MUST_USE_MAKE_PROVIDER_MACRO;
-        #[clippy::msrv = "1.66"]
+        #[clippy::msrv = "1.67"]
         impl icu_provider::DataProvider<icu_transliterate::provider::TransliteratorRulesV1Marker> for $provider {
             fn load(&self, req: icu_provider::DataRequest) -> Result<icu_provider::DataResponse<icu_transliterate::provider::TransliteratorRulesV1Marker>, icu_provider::DataError> {
                 static UND__UND_ARAB_T_S0_INTINDIC: <icu_transliterate::provider::TransliteratorRulesV1Marker as icu_provider::DataMarker>::Yokeable = icu_transliterate::provider::RuleBasedTransliterator {

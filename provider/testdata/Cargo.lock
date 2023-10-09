@@ -263,7 +263,7 @@ checksum = "443144c8cdadd93ebf52ddb4056d257f5b52c04d3c804e657d19eb73fc33668b"
 
 [[package]]
 name = "icu"
-version = "1.3.0"
+version = "1.3.2"
 dependencies = [
  "icu_calendar",
  "icu_casemap",
@@ -284,7 +284,7 @@ dependencies = [
 
 [[package]]
 name = "icu_calendar"
-version = "1.3.0"
+version = "1.3.2"
 dependencies = [
  "calendrical_calculations",
  "displaydoc",
@@ -297,7 +297,7 @@ dependencies = [
 
 [[package]]
 name = "icu_casemap"
-version = "1.3.0"
+version = "1.3.2"
 dependencies = [
  "displaydoc",
  "icu_collections",
@@ -310,7 +310,7 @@ dependencies = [
 
 [[package]]
 name = "icu_collator"
-version = "1.3.0"
+version = "1.3.2"
 dependencies = [
  "displaydoc",
  "icu_collections",
@@ -326,7 +326,7 @@ dependencies = [
 
 [[package]]
 name = "icu_collections"
-version = "1.3.0"
+version = "1.3.2"
 dependencies = [
  "displaydoc",
  "yoke",
@@ -336,7 +336,7 @@ dependencies = [
 
 [[package]]
 name = "icu_compactdecimal"
-version = "0.2.1"
+version = "0.2.2"
 dependencies = [
  "displaydoc",
  "fixed_decimal",
@@ -349,7 +349,7 @@ dependencies = [
 
 [[package]]
 name = "icu_datetime"
-version = "1.3.0"
+version = "1.3.2"
 dependencies = [
  "displaydoc",
  "either",
@@ -369,7 +369,7 @@ dependencies = [
 
 [[package]]
 name = "icu_decimal"
-version = "1.3.0"
+version = "1.3.2"
 dependencies = [
  "displaydoc",
  "fixed_decimal",
@@ -380,7 +380,7 @@ dependencies = [
 
 [[package]]
 name = "icu_displaynames"
-version = "0.11.0"
+version = "0.11.1"
 dependencies = [
  "icu_locid",
  "icu_provider",
@@ -390,7 +390,7 @@ dependencies = [
 
 [[package]]
 name = "icu_list"
-version = "1.3.0"
+version = "1.3.2"
 dependencies = [
  "displaydoc",
  "icu_provider",
@@ -400,7 +400,7 @@ dependencies = [
 
 [[package]]
 name = "icu_locid"
-version = "1.3.0"
+version = "1.3.2"
 dependencies = [
  "displaydoc",
  "litemap",
@@ -412,7 +412,7 @@ dependencies = [
 
 [[package]]
 name = "icu_locid_transform"
-version = "1.3.0"
+version = "1.3.2"
 dependencies = [
  "displaydoc",
  "icu_locid",
@@ -424,7 +424,7 @@ dependencies = [
 
 [[package]]
 name = "icu_normalizer"
-version = "1.3.0"
+version = "1.3.2"
 dependencies = [
  "displaydoc",
  "icu_collections",
@@ -439,7 +439,7 @@ dependencies = [
 
 [[package]]
 name = "icu_plurals"
-version = "1.3.0"
+version = "1.3.2"
 dependencies = [
  "displaydoc",
  "fixed_decimal",
@@ -450,7 +450,7 @@ dependencies = [
 
 [[package]]
 name = "icu_properties"
-version = "1.3.0"
+version = "1.3.2"
 dependencies = [
  "displaydoc",
  "icu_collections",
@@ -461,7 +461,7 @@ dependencies = [
 
 [[package]]
 name = "icu_provider"
-version = "1.3.0"
+version = "1.3.2"
 dependencies = [
  "displaydoc",
  "icu_locid",
@@ -478,7 +478,7 @@ dependencies = [
 
 [[package]]
 name = "icu_provider_adapters"
-version = "1.3.0"
+version = "1.3.2"
 dependencies = [
  "icu_locid",
  "icu_locid_transform",
@@ -490,7 +490,7 @@ dependencies = [
 
 [[package]]
 name = "icu_provider_blob"
-version = "1.3.0"
+version = "1.3.2"
 dependencies = [
  "icu_provider",
  "postcard",
@@ -501,7 +501,7 @@ dependencies = [
 
 [[package]]
 name = "icu_provider_macros"
-version = "1.3.0"
+version = "1.3.2"
 dependencies = [
  "proc-macro2",
  "quote",
@@ -510,7 +510,7 @@ dependencies = [
 
 [[package]]
 name = "icu_relativetime"
-version = "0.1.2"
+version = "0.1.3"
 dependencies = [
  "displaydoc",
  "fixed_decimal",
@@ -523,7 +523,7 @@ dependencies = [
 
 [[package]]
 name = "icu_segmenter"
-version = "1.3.0"
+version = "1.3.2"
 dependencies = [
  "displaydoc",
  "icu_collections",
@@ -535,7 +535,7 @@ dependencies = [
 
 [[package]]
 name = "icu_testdata"
-version = "1.3.0"
+version = "1.3.3"
 dependencies = [
  "criterion",
  "icu",
@@ -565,7 +565,7 @@ dependencies = [
 
 [[package]]
 name = "icu_timezone"
-version = "1.3.0"
+version = "1.3.2"
 dependencies = [
  "displaydoc",
  "icu_calendar",
@@ -901,7 +901,7 @@ checksum = "222a222a5bfe1bba4a77b45ec488a741b3cb8872e5e499451fd7d0129c9c7c3d"
 
 [[package]]
 name = "tinystr"
-version = "0.7.3"
+version = "0.7.4"
 dependencies = [
  "displaydoc",
  "serde",
@@ -1096,7 +1096,7 @@ dependencies = [
 
 [[package]]
 name = "zerotrie"
-version = "0.1.0"
+version = "0.1.1"
 dependencies = [
  "displaydoc",
  "yoke",

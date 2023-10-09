@@ -106,7 +106,7 @@ impl AsULE for char {
 
 impl PartialOrd for CharULE {
     fn partial_cmp(&self, other: &Self) -> Option<Ordering> {
-        char::from_unaligned(*self).partial_cmp(&char::from_unaligned(*other))
+        Some(self.cmp(other))
     }
 }
 

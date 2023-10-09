@@ -30,7 +30,7 @@ An example `ICU4X` powered application in Rust may look like below...
 
 ```toml
 [dependencies]
-icu = "1.2.0"
+icu = "1.3.0"
 ```
 
 `src/main.rs`:

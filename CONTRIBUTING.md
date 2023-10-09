@@ -54,7 +54,7 @@ need to run in order to recreate them.  These files may be run in more comprehen
 
 - `cargo make testdata` - regenerates all test data in the `provider/testdata` directory.
 - `cargo make generate-readmes` - generates README files according to Rust docs. Output files must be committed in git for check to pass.
-- `cargo make diplomat-gen` - recreates the Diplomat generated files in the `ffi/diplomat` directory.
+- `cargo make diplomat-gen` - recreates the Diplomat generated files in the `ffi/capi` directory.
 
 ### Testing
 

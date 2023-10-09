@@ -244,6 +244,7 @@ registry!(
     #[cfg(any(all(), feature = "icu_plurals"))]
     icu_plurals::provider::CardinalV1Marker = "plurals/cardinal@1",
     icu_plurals::provider::OrdinalV1Marker = "plurals/ordinal@1",
+    icu_plurals::provider::PluralRangesV1Marker = "plurals/ranges@1",
     #[cfg(any(all(), feature = "icu_properties"))]
     icu_properties::provider::AlnumV1Marker = "props/alnum@1",
     icu_properties::provider::AlphabeticV1Marker = "props/Alpha@1",
