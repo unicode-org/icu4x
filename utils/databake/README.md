@@ -40,7 +40,7 @@ struct AnotherOne(MyStruct, char);
 ```
 
 ## Testing
-The [`test_bake`] macro can be uses to assert that a particular expression is a `Bake` fixed point.
+The [`test_bake`] macro can be used to assert that a particular expression is a `Bake` fixed point.
 
 ```rust
 test_bake!(
