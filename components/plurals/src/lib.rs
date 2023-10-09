@@ -570,10 +570,9 @@ impl PluralRules {
 /// )
 /// .expect("locale should be present");
 ///
-/// let operands =
-///     PluralOperands::try_from(1).expect("Failed to parse to operands.");
+/// let operands = PluralOperands::from(1_usize);
 /// let operands2: PluralOperands =
-///     "2.0".parse().expect("Failed to parse to operands.");
+///     "2.0".parse().expect("parsing to operands should succeed");
 ///
 /// assert_eq!(
 ///     ranges.category_for_range(operands, operands2),
@@ -804,9 +803,8 @@ impl PluralRulesWithRanges {
     /// )
     /// .expect("locale should be present");
     /// let operands: PluralOperands =
-    ///     "1.5".parse().expect("Failed to parse to operands.");
-    /// let operands2: PluralOperands =
-    ///     PluralOperands::try_from(1).expect("Failed to parse to operands.");
+    ///     "1.5".parse().expect("parsing to operands should succeed");
+    /// let operands2 = PluralOperands::from(1_usize);
     ///
     /// assert_eq!(
     ///     ranges.category_for_range(operands, operands2),
