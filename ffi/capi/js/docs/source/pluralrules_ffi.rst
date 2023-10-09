@@ -48,27 +48,6 @@
         See the `Rust documentation for from_str <https://docs.rs/icu/latest/icu/plurals/struct.PluralOperands.html#method.from_str>`__ for more information.
 
 
-.. js:class:: ICU4XPluralRanges
-
-    FFI version of ``PluralRanges``.
-
-    See the `Rust documentation for PluralRanges <https://docs.rs/icu/latest/icu/plurals/struct.PluralRanges.html>`__ for more information.
-
-
-    .. js:function:: create(provider, locale)
-
-        Construct an :js:class:`ICU4XPluralRanges` for the given locale.
-
-        See the `Rust documentation for try_new <https://docs.rs/icu/latest/icu/plurals/struct.PluralRanges.html#method.try_new>`__ for more information.
-
-
-    .. js:method:: category_for_range(start, end)
-
-        Get the appropriate category for a numeric range from the categories of its endpoints.
-
-        See the `Rust documentation for category_for_range <https://docs.rs/icu/latest/icu/plurals/struct.PluralRanges.html#method.category_for_range>`__ for more information.
-
-
 .. js:class:: ICU4XPluralRules
 
     FFI version of ``PluralRules``.
@@ -102,4 +81,53 @@
         Get all of the categories needed in the current locale
 
         See the `Rust documentation for categories <https://docs.rs/icu/latest/icu/plurals/struct.PluralRules.html#method.categories>`__ for more information.
+
+
+.. js:class:: ICU4XPluralRulesWithRanges
+
+    FFI version of ``PluralRulesWithRanges``.
+
+    See the `Rust documentation for PluralRulesWithRanges <https://docs.rs/icu/latest/icu/plurals/struct.PluralRulesWithRanges.html>`__ for more information.
+
+
+    .. js:function:: create_cardinal(provider, locale)
+
+        Construct an :js:class:`ICU4XPluralRulesWithRanges` for the given locale, for cardinal numbers
+
+        See the `Rust documentation for try_new_cardinal <https://docs.rs/icu/latest/icu/plurals/struct.PluralRulesWithRanges.html#method.try_new_cardinal>`__ for more information.
+
+
+    .. js:function:: create_ordinal(provider, locale)
+
+        Construct an :js:class:`ICU4XPluralRulesWithRanges` for the given locale, for ordinal numbers
+
+        See the `Rust documentation for try_new_ordinal <https://docs.rs/icu/latest/icu/plurals/struct.PluralRulesWithRanges.html#method.try_new_ordinal>`__ for more information.
+
+
+    .. js:method:: category_for(op)
+
+        Get the category for a given number represented as operands
+
+        See the `Rust documentation for category_for <https://docs.rs/icu/latest/icu/plurals/struct.PluralRulesWithRanges.html#method.category_for>`__ for more information.
+
+
+    .. js:method:: categories()
+
+        Get all of the categories needed in the current locale
+
+        See the `Rust documentation for categories <https://docs.rs/icu/latest/icu/plurals/struct.PluralRulesWithRanges.html#method.categories>`__ for more information.
+
+
+    .. js:method:: category_for_range(start, end)
+
+        Get the appropriate category for a numeric range.
+
+        See the `Rust documentation for category_for_range <https://docs.rs/icu/latest/icu/plurals/struct.PluralRulesWithRanges.html#method.category_for_range>`__ for more information.
+
+
+    .. js:method:: resolve_range(start, end)
+
+        Get the appropriate category for a numeric range from the categories of its endpoints.
+
+        See the `Rust documentation for resolve_range <https://docs.rs/icu/latest/icu/plurals/struct.PluralRulesWithRanges.html#method.resolve_range>`__ for more information.
 

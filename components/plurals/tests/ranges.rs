@@ -3,14 +3,14 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use icu_locid::locale;
-use icu_plurals::{PluralCategory, PluralRanges};
+use icu_plurals::{PluralCategory, PluralOperands, PluralRuleType, PluralRulesWithRanges};
 
 #[test]
-fn test_plural_ranges() {
+fn test_plural_ranges_raw() {
     assert_eq!(
-        PluralRanges::try_new(&locale!("he").into())
+        PluralRulesWithRanges::try_new_cardinal(&locale!("he").into())
             .unwrap()
-            .category_for_range(PluralCategory::One, PluralCategory::Two),
+            .resolve_range(PluralCategory::One, PluralCategory::Two),
         PluralCategory::Other
     );
 }
@@ -18,9 +18,9 @@ fn test_plural_ranges() {
 #[test]
 fn test_plural_ranges_optimized_data() {
     assert_eq!(
-        PluralRanges::try_new(&locale!("en").into())
+        PluralRulesWithRanges::try_new_ordinal(&locale!("en").into())
             .unwrap()
-            .category_for_range(PluralCategory::One, PluralCategory::Other),
+            .resolve_range(PluralCategory::One, PluralCategory::Other),
         PluralCategory::Other
     );
 }
@@ -28,9 +28,19 @@ fn test_plural_ranges_optimized_data() {
 #[test]
 fn test_plural_ranges_missing_data_fallback() {
     assert_eq!(
-        PluralRanges::try_new(&locale!("nl").into())
+        PluralRulesWithRanges::try_new_cardinal(&locale!("nl").into())
             .unwrap()
-            .category_for_range(PluralCategory::Two, PluralCategory::Many),
+            .resolve_range(PluralCategory::Two, PluralCategory::Many),
         PluralCategory::Many
     );
+}
+
+#[test]
+fn test_plural_ranges_full() {
+    let ranges =
+        PluralRulesWithRanges::try_new(&locale!("sl").into(), PluralRuleType::Cardinal).unwrap();
+    let start: PluralOperands = "0.5".parse().unwrap(); // PluralCategory::Other
+    let end: PluralOperands = PluralOperands::try_from(1).unwrap(); // PluralCategory::One
+
+    assert_eq!(ranges.category_for_range(start, end), PluralCategory::Few)
 }
