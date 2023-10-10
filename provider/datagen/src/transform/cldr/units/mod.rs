@@ -7,7 +7,7 @@ pub mod helpers;
 use std::collections::BTreeMap;
 
 use self::helpers::{
-    contains_alphabetic_chars, convert_constant_to_num_denom_strings, convert_slices_to_fraction,
+    convert_constant_to_num_denom_strings, convert_slices_to_fraction,
     transform_fraction_to_constant_value,
 };
 use crate::transform::cldr::{cldr_serde, units::helpers::is_scientific_number};
@@ -32,6 +32,9 @@ impl DataProvider<UnitsConstantsV1Marker> for crate::DatagenProvider {
 
         let mut constants_map_in_str_form =
             BTreeMap::<&str, (Vec<String>, Vec<String>, ConstantExactness)>::new();
+        // Contains all the constants that are defined in terms of scientific numbers.
+        let mut clean_constants_map =
+            BTreeMap::<&str, (Vec<String>, Vec<String>, ConstantExactness)>::new();
         for (cons_name, cons_value) in constants {
             let (num, den) = convert_constant_to_num_denom_strings(&cons_value.value)?;
 
@@ -40,96 +43,113 @@ impl DataProvider<UnitsConstantsV1Marker> for crate::DatagenProvider {
                 _ => ConstantExactness::Exact,
             };
 
-            constants_map_in_str_form.insert(cons_name, (num, den, constant_exactness));
+            let mut clean_num = Vec::<String>::new();
+            let mut clean_den = Vec::<String>::new();
+            let mut replaceable_num = Vec::<String>::new();
+            let mut replaceable_den = Vec::<String>::new();
+
+            for num_elem in num.iter() {
+                if is_scientific_number(num_elem) {
+                    clean_num.push(num_elem.clone());
+                    continue;
+                }
+                replaceable_num.push(num_elem.clone());
+            }
+
+            for den_elem in den.iter() {
+                if is_scientific_number(den_elem) {
+                    clean_den.push(den_elem.clone());
+                    continue;
+                }
+                replaceable_den.push(den_elem.clone());
+            }
+
+            constants_map_in_str_form.insert(
+                cons_name.as_str(),
+                (replaceable_num, replaceable_den, constant_exactness),
+            );
+
+            clean_constants_map.insert(
+                cons_name.as_str(),
+                (clean_num, clean_den, constant_exactness),
+            );
+        }
+
+        let mut updated = false;
+        loop {
+            for (key, elem) in constants_map_in_str_form.iter_mut() {
+                let (num_vec, den_vec, _) = elem;
+                for i in (0..num_vec.len()).rev() {
+                    if let Some((clean_num, clean_den, clean_constant_exactness)) =
+                        clean_constants_map.get(num_vec[i].as_str()).cloned()
+                    {
+                        if clean_num.is_empty() || clean_den.is_empty() {
+                            continue;
+                        }
+                        let (add_to_num, add_to_den, add_to_exactness) =
+                            clean_constants_map.get_mut(key).unwrap();
+                        num_vec.remove(i);
+                        add_to_num.extend(clean_num);
+                        add_to_den.extend(clean_den);
+                        if clean_constant_exactness == ConstantExactness::Approximate {
+                            *add_to_exactness = ConstantExactness::Approximate;
+                        }
+                        updated = true;
+                    }
+                }
+
+                for i in (0..den_vec.len()).rev() {
+                    if let Some((clean_num, clean_den, clean_constant_exactness)) =
+                        clean_constants_map.get(den_vec[i].as_str()).cloned()
+                    {
+                        if clean_num.is_empty() || clean_den.is_empty() {
+                            continue;
+                        }
+                        let (add_to_num, add_to_den, add_to_exactness) =
+                            clean_constants_map.get_mut(key).unwrap();
+                        den_vec.remove(i);
+                        add_to_num.extend(clean_den);
+                        add_to_den.extend(clean_num);
+                        if clean_constant_exactness == ConstantExactness::Approximate {
+                            *add_to_exactness = ConstantExactness::Approximate;
+                        }
+
+                        updated = true;
+                    }
+                }
+            }
+
+            if updated {
+                updated = false;
+                println!(
+                    "Updated constants_map_in_str_form: {:?}",
+                    constants_map_in_str_form
+                );
+                continue;
+            }
+
+            // Verify that all vectors in constants_map_in_str_form are empty.
+            // If they are, we have successfully replaced all constants with their values.
+            // If not, return an error due to an infinite loop.
+            for (_, (num_vec, den_vec, _)) in constants_map_in_str_form.iter() {
+                if !num_vec.is_empty() || !den_vec.is_empty() {
+                    return Err(DataError::custom(
+                        "Infinite loop detected while replacing constants with their values.",
+                    ));
+                }
+            }
+
+            break;
         }
 
         // TODO(#4100): Implement a more efficient algorithm for replacing constants with their values.
         // This loop iterates over the constants and replaces any string values with their corresponding constant values.
-        // For example, if the constant "ft_to_m" has the value "0.3048", and the constant "ft2_to_m2" has the value "ft_to_m * ft_to_m",
-        // the maximum depth represents the maximum number of nested constants that can be replaced.
-        // If CLDR added more constants that are defined in terms of other constants, the maximum depth should be increased.
-        let maximum_depth = 10;
-        let mut has_internal_constants;
-        let mut max_depth_reached = 0;
-        while max_depth_reached < maximum_depth {
-            has_internal_constants = false;
-            max_depth_reached += 1;
-            let mut constants_with_constants_map_replaceable =
-                BTreeMap::<&str, (Vec<String>, Vec<String>, ConstantExactness)>::new();
-            for (cons_name, (num, den, constant_exactness)) in constants_map_in_str_form.iter() {
-                let mut temp_num = Vec::<String>::new();
-                let mut temp_den = Vec::<String>::new();
-                let mut temp_constant_exactness = *constant_exactness;
-
-                // Iterate over the numerator strings,
-                // and replace any strings that are keys in the constants map with their corresponding values.
-                for num_str in num {
-                    if !contains_alphabetic_chars(num_str) || is_scientific_number(num_str) {
-                        temp_num.push(num_str.clone());
-                        continue;
-                    }
-                    has_internal_constants = true;
-
-                    if let Some((rnum, rden, rconstant_exactness)) =
-                        constants_map_in_str_form.get(num_str.as_str())
-                    {
-                        temp_num.extend(rnum.clone());
-                        temp_den.extend(rden.clone());
-                        if rconstant_exactness == &ConstantExactness::Approximate {
-                            temp_constant_exactness = ConstantExactness::Approximate;
-                        }
-                    } else {
-                        temp_num.push(num_str.clone());
-                    }
-                }
-
-                // Iterate over the denominator strings,
-                // and replace any strings that are keys in the constants map with their corresponding values.
-                for den_str in den {
-                    if !contains_alphabetic_chars(den_str) || is_scientific_number(den_str) {
-                        temp_den.push(den_str.clone());
-                        continue;
-                    }
-                    has_internal_constants = true;
-
-                    if let Some((rnum, rden, rconstant_exactness)) =
-                        constants_map_in_str_form.get(den_str.as_str())
-                    {
-                        temp_num.extend(rden.clone());
-                        temp_den.extend(rnum.clone());
-
-                        if rconstant_exactness == &ConstantExactness::Approximate {
-                            temp_constant_exactness = *rconstant_exactness;
-                        }
-                    } else {
-                        temp_den.push(den_str.clone());
-                    }
-                }
-
-                constants_with_constants_map_replaceable
-                    .insert(cons_name, (temp_num, temp_den, temp_constant_exactness));
-            }
-
-            constants_map_in_str_form = constants_with_constants_map_replaceable;
-
-            if !has_internal_constants {
-                break;
-            }
-        }
-
-        if max_depth_reached >= maximum_depth {
-            return Err(DataError::custom(
-                "Maximum depth reached while parsing constants. \
-                This is likely due to a circular dependency in the constants. \
-                Note: If the depth was increased, you may need to increase the maximum depth in the code.",
-            ));
-        }
 
         // Transforming the `constants_map_in_str_form` map into a ZeroMap of `ConstantValue`.
         // This is done by converting the numerator and denominator slices into a fraction,
         // and then transforming the fraction into a `ConstantValue`.
         let constants_map = ZeroMap::from_iter(
-            constants_map_in_str_form
+            clean_constants_map
                 .into_iter()
                 .map(|(cons_name, (num, den, constant_exactness))| {
                     let value = convert_slices_to_fraction(&num, &den)?;
