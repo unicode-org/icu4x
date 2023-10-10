@@ -22,14 +22,14 @@ use num_bigint::BigUint;
 pub fn convert_scientific_notation_to_fraction(
     number: &str,
 ) -> Result<GenericFraction<BigUint>, DataError> {
-    let parts: Vec<&str> = number.split('E').collect();
-    if parts.len() > 2 {
+    let mut parts = number.split('E');
+    let base = parts.next().unwrap_or(&"1").trim();
+    let exponent = parts.next().unwrap_or(&"0").trim();
+    if parts.next().is_some() {
         return Err(DataError::custom(
             "the number is not a valid scientific notation number",
         ));
     }
-    let base = parts.get(0).unwrap_or(&"1").trim();
-    let exponent = parts.get(1).unwrap_or(&"0").trim();
 
     let base = GenericFraction::<BigUint>::from_str(base)
         .map_err(|_| DataError::custom("the base is not a valid decimal number"))?;
@@ -125,13 +125,12 @@ fn test_contains_alphabetic_chars() {
 /// Checks if a string is a valid scientific notation number.
 /// Returns true if the string is a valid scientific notation number, false otherwise.  
 pub fn is_scientific_number(s: &str) -> bool {
-    let parts: Vec<&str> = s.split('E').collect();
-    if parts.len() > 2 {
+    let mut parts = s.split('E');
+    let base = parts.next().unwrap_or("0");
+    let exponent = parts.next().unwrap_or("0");
+    if parts.next().is_some() {
         return false;
     }
-
-    let base = parts.first().unwrap_or(&"0");
-    let exponent = parts.get(1).unwrap_or(&"0");
 
     !contains_alphabetic_chars(base) && !contains_alphabetic_chars(exponent)
 }
