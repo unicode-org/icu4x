@@ -65,7 +65,7 @@ jobs:
           cargo +stable install grcov
 
       # Actual job
-      - run: cargo test --all-features --no-fail-fast
+      - run: cargo +${ICU4X_NIGHTLY_TOOLCHAIN} test --all-features --no-fail-fast
         env:
           CARGO_INCREMENTAL:    '0'
           RUSTFLAGS: '-Zprofile -Ccodegen-units=1 -Cinline-threshold=0 -Clink-dead-code -Coverflow-checks=off -Zpanic_abort_tests'
