@@ -23,8 +23,8 @@ pub fn convert_scientific_notation_to_fraction(
     number: &str,
 ) -> Result<GenericFraction<BigUint>, DataError> {
     let mut parts = number.split('E');
-    let base = parts.next().unwrap_or(&"1").trim();
-    let exponent = parts.next().unwrap_or(&"0").trim();
+    let base = parts.next().unwrap_or("1").trim();
+    let exponent = parts.next().unwrap_or("0").trim();
     if parts.next().is_some() {
         return Err(DataError::custom(
             "the number is not a valid scientific notation number",
@@ -177,12 +177,12 @@ pub fn convert_slices_to_fraction(
 
     for numerator in numerator_strings {
         let num_fraction = convert_scientific_notation_to_fraction(numerator)?;
-        fraction = fraction * num_fraction;
+        fraction *= num_fraction;
     }
 
     for denominator in denominator_strings {
         let den_fraction = convert_scientific_notation_to_fraction(denominator)?;
-        fraction = fraction / den_fraction;
+        fraction /= den_fraction;
     }
 
     Ok(fraction)
