@@ -33,8 +33,8 @@ target/wasm32-unknown-unknown/release/icu_capi_cdylib.wasm: FORCE
 		--target wasm32-unknown-unknown \
 		--release \
 		--package icu_capi_cdylib \
-		--no-default-features
-		--features buffer_provider,logging \
+		--no-default-features \
+		--features buffer_provider,logging,icu_capi/icu_decimal
 
 icu_capi.wasm: target/wasm32-unknown-unknown/release/icu_capi_cdylib.wasm
 	cp target/wasm32-unknown-unknown/release/icu_capi_cdylib.wasm icu_capi.wasm
