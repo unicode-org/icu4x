@@ -44,7 +44,8 @@ data.postcard: icu_capi.wasm
 		--keys-for-bin icu_capi.wasm \
 		--locales full \
 		--format blob \
-		--out data.postcard
+		--out data.postcard \
+		--overwrite
 
 build: icu_capi.wasm data.postcard lib
 
