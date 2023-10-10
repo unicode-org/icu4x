@@ -193,6 +193,9 @@ description = "Run all tests for the CI 'wasm' job"
 category = "CI"
 dependencies = [
     "test-cpp-emscripten",
+    "test-tinywasm",
+    "build-wearos-ffi",
+    "test-nostd",
 ]
 
 [tasks.ci-job-clippy]
