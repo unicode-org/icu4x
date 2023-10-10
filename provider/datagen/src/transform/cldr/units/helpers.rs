@@ -2,93 +2,15 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+use core::ops::{Div, Mul};
 use core::str::FromStr;
 
+use fraction::GenericFraction;
 use icu_provider::DataError;
 use icu_unitsconversion::provider::{ConstantExactness, Sign};
-use num_bigint::BigInt;
-use num_rational::BigRational;
+use num_bigint::BigUint;
 
-/// Converts a decimal number represented as a string into a BigRational.
-/// Examples:
-/// - "1" is converted to 1/1
-/// - "1.5" is converted to 15/10
-/// - "1.05" is converted to 105/100
-/// - "1.005" is converted to 1005/1000
-/// - "10000.0005" is converted to 100000005/10000
-/// - ".5" is converted to 5/10
-/// - ".505" is converted to 505/1000
-/// - "5." is converted to 5/1
-/// - "1.5.5" is an invalid decimal number
-/// NOTE:
-/// - "1." is not a valid decimal number
-/// - BigRational represents a rational number in the simplest form. For example, 15/10 is converted to 3/2.
-pub fn convert_decimal_to_bigrational(decimal: &str) -> Result<BigRational, DataError> {
-    let parts: Vec<&str> = decimal.split('.').collect();
-    let integral_part = parts.first().unwrap_or(&"");
-    let fractional_part = parts.last().unwrap_or(&"");
-    match parts.len() {
-        1 => BigRational::from_str(integral_part)
-            .map_err(|_| DataError::custom("the integer-part is not a valid number")),
-        2 => {
-            let numerator = BigInt::from_str(parts.join("").as_str()).map_err(|_| {
-                DataError::custom("the integer-part and fractional-part are not a valid number")
-            })?;
-            let denominator = BigInt::from(10u32).pow(fractional_part.len() as u32);
-            Ok(BigRational::new(numerator, denominator))
-        }
-        _ => Err(DataError::custom("the base is not a valid number")),
-    }
-}
-
-#[test]
-fn test_convert_decimal_to_bigrational() {
-    let input = "1";
-    let expected = BigRational::new(BigInt::from(1u32), BigInt::from(1u32));
-    let actual = convert_decimal_to_bigrational(input).unwrap();
-    assert_eq!(expected, actual);
-
-    let input = "1.5";
-    let expected = BigRational::new(BigInt::from(15u32), BigInt::from(10u32));
-    let actual = convert_decimal_to_bigrational(input).unwrap();
-    assert_eq!(expected, actual);
-
-    let input = "1.05";
-    let expected = BigRational::new(BigInt::from(105u32), BigInt::from(100u32));
-    let actual = convert_decimal_to_bigrational(input).unwrap();
-    assert_eq!(expected, actual);
-
-    let input = "1.005";
-    let expected = BigRational::new(BigInt::from(1005u32), BigInt::from(1000u32));
-    let actual = convert_decimal_to_bigrational(input).unwrap();
-    assert_eq!(expected, actual);
-
-    let input = "10000.0005";
-    let expected = BigRational::new(BigInt::from(100000005u32), BigInt::from(10000u32));
-    let actual = convert_decimal_to_bigrational(input).unwrap();
-    assert_eq!(expected, actual);
-
-    let input = ".5";
-    let expected = BigRational::new(BigInt::from(5u32), BigInt::from(10u32));
-    let actual = convert_decimal_to_bigrational(input).unwrap();
-    assert_eq!(expected, actual);
-
-    let input = ".505";
-    let expected = BigRational::new(BigInt::from(505u32), BigInt::from(1000u32));
-    let actual = convert_decimal_to_bigrational(input).unwrap();
-    assert_eq!(expected, actual);
-
-    let input = "5.";
-    let expected = BigRational::new(BigInt::from(5u32), BigInt::from(1u32));
-    let actual = convert_decimal_to_bigrational(input).unwrap();
-    assert_eq!(expected, actual);
-
-    let input = "1.5.5";
-    let actual = convert_decimal_to_bigrational(input);
-    assert!(actual.is_err());
-}
-
-/// Converts a scientific notation number represented as a string into a BigRational.
+/// Converts a scientific notation number represented as a string to a fraction.
 /// Examples:
 /// - "1E2" is converted to 100/1
 /// - "1E-2" is converted to 1/100
@@ -97,50 +19,63 @@ fn test_convert_decimal_to_bigrational() {
 /// - " 1.5 E -2 " is converted to 15/1000
 /// - " 1.5 E - 2" is an invalid scientific notation number
 /// - "1.5E-2.5" is an invalid scientific notation number
-pub fn convert_scientific_notation_to_fraction(number: &str) -> Result<BigRational, DataError> {
+pub fn convert_scientific_notation_to_fraction(
+    number: &str,
+) -> Result<GenericFraction<BigUint>, DataError> {
     let parts: Vec<&str> = number.split('E').collect();
     if parts.len() > 2 {
         return Err(DataError::custom(
-            "the number is not a scientific notation number",
+            "the number is not a valid scientific notation number",
         ));
     }
-    let base = parts.first().unwrap_or(&"1").trim();
+    let base = parts.get(0).unwrap_or(&"1").trim();
     let exponent = parts.get(1).unwrap_or(&"0").trim();
 
-    let ten = BigRational::from(BigInt::from(10u32));
-    let base = convert_decimal_to_bigrational(base)
-        .map_err(|_| DataError::custom("the base is not a valid number"))?;
+    let base = GenericFraction::<BigUint>::from_str(base)
+        .map_err(|_| DataError::custom("the base is not a valid decimal number"))?;
     let exponent = i32::from_str(exponent)
-        .map_err(|_| DataError::custom("the exponent is not a valid number"))?;
+        .map_err(|_| DataError::custom("the exponent is not a valid integer"))?;
 
-    Ok(base * ten.pow(exponent))
+    let result = if exponent >= 0 {
+        base.mul(GenericFraction::new(
+            BigUint::from(10u32).pow(exponent as u32),
+            BigUint::from(1u32),
+        ))
+    } else {
+        base.div(GenericFraction::new(
+            BigUint::from(10u32).pow((-exponent) as u32),
+            BigUint::from(1u32),
+        ))
+    };
+
+    Ok(result)
 }
 
 // TODO: move this to the comment above.
 #[test]
 fn test_convert_scientific_notation_to_fraction() {
     let input = "1E2";
-    let expected = BigRational::new(BigInt::from(100u32), BigInt::from(1u32));
+    let expected = GenericFraction::<BigUint>::new(BigUint::from(100u32), BigUint::from(1u32));
     let actual = convert_scientific_notation_to_fraction(input).unwrap();
     assert_eq!(expected, actual);
 
     let input = "1E-2";
-    let expected = BigRational::new(BigInt::from(1u32), BigInt::from(100u32));
+    let expected = GenericFraction::<BigUint>::new(BigUint::from(1u32), BigUint::from(100u32));
     let actual = convert_scientific_notation_to_fraction(input).unwrap();
     assert_eq!(expected, actual);
 
     let input = "1.5E2";
-    let expected = BigRational::new(BigInt::from(150u32), BigInt::from(1u32));
+    let expected = GenericFraction::<BigUint>::new(BigUint::from(150u32), BigUint::from(1u32));
     let actual = convert_scientific_notation_to_fraction(input).unwrap();
     assert_eq!(expected, actual);
 
     let input = "1.5E-2";
-    let expected = BigRational::new(BigInt::from(15u32), BigInt::from(1000u32));
+    let expected = GenericFraction::<BigUint>::new(BigUint::from(15u32), BigUint::from(1000u32));
     let actual = convert_scientific_notation_to_fraction(input).unwrap();
     assert_eq!(expected, actual);
 
     let input = " 1.5 E -2 ";
-    let expected = BigRational::new(BigInt::from(15u32), BigInt::from(1000u32));
+    let expected = GenericFraction::<BigUint>::new(BigUint::from(15u32), BigUint::from(1000u32));
     let actual = convert_scientific_notation_to_fraction(input).unwrap();
     assert_eq!(expected, actual);
 
@@ -203,24 +138,24 @@ pub fn is_scientific_number(s: &str) -> bool {
 
 /// Transforms a fractional number into a constant value.
 pub fn transform_fraction_to_constant_value(
-    fraction: BigRational,
+    fraction: GenericFraction<BigUint>,
     constant_exactness: ConstantExactness,
 ) -> Result<(Vec<u8>, Vec<u8>, Sign, ConstantExactness), DataError> {
-    let numerator = match fraction.numer().to_biguint() {
+    let numerator = match fraction.numer() {
         Some(numerator) => numerator.to_bytes_le(),
         None => return Err(DataError::custom("the numerator is too large")),
     };
 
-    let denominator = match fraction.denom().to_biguint() {
+    let denominator = match fraction.denom() {
         Some(denominator) => denominator.to_bytes_le(),
         None => return Err(DataError::custom("the denominator is too large")),
     };
 
-    let sign = match fraction.numer().sign() {
-        num_bigint::Sign::Plus => Sign::Positive,
-        num_bigint::Sign::Minus => Sign::Negative,
-        num_bigint::Sign::NoSign => {
-            return Err(DataError::custom("the numerator is zero"));
+    let sign = match fraction.sign() {
+        Some(fraction::Sign::Plus) => Sign::Positive,
+        Some(fraction::Sign::Minus) => Sign::Negative,
+        None => {
+            return Err(DataError::custom("the sign is not defined"));
         }
     };
 
@@ -238,17 +173,17 @@ pub fn transform_fraction_to_constant_value(
 pub fn convert_slices_to_fraction(
     numerator_strings: &[String],
     denominator_strings: &[String],
-) -> Result<BigRational, DataError> {
-    let mut fraction = BigRational::new(BigInt::from(1u32), BigInt::from(1u32));
+) -> Result<GenericFraction<BigUint>, DataError> {
+    let mut fraction = GenericFraction::new(BigUint::from(1u32), BigUint::from(1u32));
 
     for numerator in numerator_strings {
         let num_fraction = convert_scientific_notation_to_fraction(numerator)?;
-        fraction *= num_fraction;
+        fraction = fraction * num_fraction;
     }
 
     for denominator in denominator_strings {
         let den_fraction = convert_scientific_notation_to_fraction(denominator)?;
-        fraction /= den_fraction;
+        fraction = fraction / den_fraction;
     }
 
     Ok(fraction)
@@ -259,19 +194,19 @@ pub fn convert_slices_to_fraction(
 fn test_convert_array_of_strings_to_fraction() {
     let numerator = vec!["1".to_string()];
     let denominator = vec!["2".to_string()];
-    let expected = BigRational::new(BigInt::from(1u32), BigInt::from(2u32));
+    let expected = GenericFraction::new(BigUint::from(1u32), BigUint::from(2u32));
     let actual = convert_slices_to_fraction(&numerator, &denominator).unwrap();
     assert_eq!(expected, actual);
 
     let numerator = vec!["1".to_string(), "2".to_string()];
     let denominator = vec!["3".to_string(), "1E2".to_string()];
-    let expected = BigRational::new(BigInt::from(2u32), BigInt::from(300u32));
+    let expected = GenericFraction::new(BigUint::from(2u32), BigUint::from(300u32));
     let actual = convert_slices_to_fraction(&numerator, &denominator).unwrap();
     assert_eq!(expected, actual);
 
     let numerator = vec!["1".to_string(), "2".to_string()];
     let denominator = vec!["3".to_string(), "1E-2".to_string()];
-    let expected = BigRational::new(BigInt::from(200u32), BigInt::from(3u32));
+    let expected = GenericFraction::new(BigUint::from(200u32), BigUint::from(3u32));
     let actual = convert_slices_to_fraction(&numerator, &denominator).unwrap();
     assert_eq!(expected, actual);
 
@@ -282,13 +217,13 @@ fn test_convert_array_of_strings_to_fraction() {
 
     let numerator = vec!["1E2".to_string()];
     let denominator = vec!["2".to_string()];
-    let expected = BigRational::new(BigInt::from(50u32), BigInt::from(1u32));
+    let expected = GenericFraction::new(BigUint::from(50u32), BigUint::from(1u32));
     let actual = convert_slices_to_fraction(&numerator, &denominator).unwrap();
     assert_eq!(expected, actual);
 
     let numerator = vec!["1E2".to_string(), "2".to_string()];
     let denominator = vec!["3".to_string(), "1E2".to_string()];
-    let expected = BigRational::new(BigInt::from(2u32), BigInt::from(3u32));
+    let expected = GenericFraction::new(BigUint::from(2u32), BigUint::from(3u32));
     let actual = convert_slices_to_fraction(&numerator, &denominator).unwrap();
     assert_eq!(expected, actual);
 }
