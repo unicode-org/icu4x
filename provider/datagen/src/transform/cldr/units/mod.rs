@@ -75,8 +75,12 @@ impl DataProvider<UnitsConstantsV1Marker> for crate::DatagenProvider {
             );
         }
 
+        // TODO(#4100): Implement a more efficient algorithm for replacing constants with their values.
+        // This loop iterates over the constants and replaces any string values with their corresponding constant values.
         let mut updated = false;
         loop {
+            // TODO(#4100): remove this copy.
+            let constants_map_in_str_form_copy = constants_map_in_str_form.clone();
             for (key, elem) in constants_map_in_str_form.iter_mut() {
                 let (num_vec, den_vec, _) = elem;
                 for i in (0..num_vec.len()).rev() {
@@ -85,6 +89,13 @@ impl DataProvider<UnitsConstantsV1Marker> for crate::DatagenProvider {
                     {
                         if clean_num.is_empty() || clean_den.is_empty() {
                             continue;
+                        }
+                        if let Some((clean_num_from_str, clean_den_from_str, _)) =
+                            constants_map_in_str_form_copy.get(num_vec[i].as_str())
+                        {
+                            if !clean_num_from_str.is_empty() || !clean_den_from_str.is_empty() {
+                                continue;
+                            }
                         }
                         let (add_to_num, add_to_den, add_to_exactness) =
                             clean_constants_map.get_mut(key).unwrap();
@@ -105,6 +116,13 @@ impl DataProvider<UnitsConstantsV1Marker> for crate::DatagenProvider {
                         if clean_num.is_empty() || clean_den.is_empty() {
                             continue;
                         }
+                        if let Some((clean_num_from_str, clean_den_from_str, _)) =
+                            constants_map_in_str_form_copy.get(den_vec[i].as_str())
+                        {
+                            if !clean_num_from_str.is_empty() || !clean_den_from_str.is_empty() {
+                                continue;
+                            }
+                        }
                         let (add_to_num, add_to_den, add_to_exactness) =
                             clean_constants_map.get_mut(key).unwrap();
                         den_vec.remove(i);
@@ -121,10 +139,6 @@ impl DataProvider<UnitsConstantsV1Marker> for crate::DatagenProvider {
 
             if updated {
                 updated = false;
-                println!(
-                    "Updated constants_map_in_str_form: {:?}",
-                    constants_map_in_str_form
-                );
                 continue;
             }
 
@@ -141,9 +155,6 @@ impl DataProvider<UnitsConstantsV1Marker> for crate::DatagenProvider {
 
             break;
         }
-
-        // TODO(#4100): Implement a more efficient algorithm for replacing constants with their values.
-        // This loop iterates over the constants and replaces any string values with their corresponding constant values.
 
         // Transforming the `constants_map_in_str_form` map into a ZeroMap of `ConstantValue`.
         // This is done by converting the numerator and denominator slices into a fraction,
