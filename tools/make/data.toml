@@ -81,6 +81,7 @@ command = "cargo"
 args = [
     "run",
     "--bin=make-testdata-legacy",
+    "--release",
     "--manifest-path=tools/testdata-scripts/Cargo.toml", # avoid global feature resolution
 ]
 
