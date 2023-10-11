@@ -4,7 +4,7 @@
 
 pub mod helpers;
 
-use std::collections::BTreeMap;
+use std::collections::{BTreeMap, VecDeque};
 
 use self::helpers::{
     convert_constant_to_num_denom_strings, convert_slices_to_fraction,
@@ -20,6 +20,49 @@ use icu_unitsconversion::provider::{
 };
 use zerovec::{ZeroMap, ZeroVec};
 
+#[derive(Debug)]
+struct CleanAndDirtyConstant {
+    clean_num: Vec<String>,
+    clean_den: Vec<String>,
+    dirty_num: VecDeque<String>,
+    dirty_den: VecDeque<String>,
+    constant_exactness: ConstantExactness,
+}
+
+impl CleanAndDirtyConstant {
+    fn new(num: &[String], den: &[String], exactness: ConstantExactness) -> Self {
+        let mut constant = CleanAndDirtyConstant {
+            clean_num: Vec::new(),
+            clean_den: Vec::new(),
+            dirty_num: VecDeque::new(),
+            dirty_den: VecDeque::new(),
+            constant_exactness: exactness,
+        };
+
+        for n in num {
+            if is_scientific_number(n) {
+                constant.clean_num.push(n.clone());
+            } else {
+                constant.dirty_num.push_back(n.clone());
+            }
+        }
+
+        for d in den {
+            if is_scientific_number(d) {
+                constant.clean_den.push(d.clone());
+            } else {
+                constant.dirty_den.push_back(d.clone());
+            }
+        }
+        constant
+    }
+
+    /// Determines if the constant is free of any dirty elements.
+    fn is_clean(&self) -> bool {
+        self.dirty_num.is_empty() && self.dirty_den.is_empty()
+    }
+}
+
 impl DataProvider<UnitsConstantsV1Marker> for crate::DatagenProvider {
     fn load(&self, _req: DataRequest) -> Result<DataResponse<UnitsConstantsV1Marker>, DataError> {
         self.check_req::<UnitsConstantsV1Marker>(_req)?;
@@ -30,11 +73,10 @@ impl DataProvider<UnitsConstantsV1Marker> for crate::DatagenProvider {
             .read_and_parse("supplemental/units.json")?;
         let constants = &units_data.supplemental.unit_constants.constants;
 
-        let mut constants_map_in_str_form =
-            BTreeMap::<&str, (Vec<String>, Vec<String>, ConstantExactness)>::new();
-        // Contains all the constants that are defined in terms of scientific numbers.
-        let mut clean_constants_map =
-            BTreeMap::<&str, (Vec<String>, Vec<String>, ConstantExactness)>::new();
+        let mut dirty_constants_queue = VecDeque::<(&str, CleanAndDirtyConstant)>::new();
+
+        // Contains all the constants that do not have any dirty data. I.E. dirty_num and dirty_den are empty.
+        let mut clean_constants_map = BTreeMap::<&str, CleanAndDirtyConstant>::new();
         for (cons_name, cons_value) in constants {
             let (num, den) = convert_constant_to_num_denom_strings(&cons_value.value)?;
 
@@ -43,129 +85,84 @@ impl DataProvider<UnitsConstantsV1Marker> for crate::DatagenProvider {
                 _ => ConstantExactness::Exact,
             };
 
-            let mut clean_num = Vec::<String>::new();
-            let mut clean_den = Vec::<String>::new();
-            let mut replaceable_num = Vec::<String>::new();
-            let mut replaceable_den = Vec::<String>::new();
+            let constant = CleanAndDirtyConstant::new(&num, &den, constant_exactness);
 
-            for num_elem in num.iter() {
-                if is_scientific_number(num_elem) {
-                    clean_num.push(num_elem.clone());
-                    continue;
-                }
-                replaceable_num.push(num_elem.clone());
+            if constant.is_clean() {
+                clean_constants_map.insert(&cons_name, constant);
+            } else {
+                dirty_constants_queue.push_back((&cons_name, constant));
             }
-
-            for den_elem in den.iter() {
-                if is_scientific_number(den_elem) {
-                    clean_den.push(den_elem.clone());
-                    continue;
-                }
-                replaceable_den.push(den_elem.clone());
-            }
-
-            constants_map_in_str_form.insert(
-                cons_name.as_str(),
-                (replaceable_num, replaceable_den, constant_exactness),
-            );
-
-            clean_constants_map.insert(
-                cons_name.as_str(),
-                (clean_num, clean_den, constant_exactness),
-            );
         }
 
-        // TODO(#4100): Implement a more efficient algorithm for replacing constants with their values.
-        // This loop iterates over the constants and replaces any string values with their corresponding constant values.
-        let mut updated = false;
-        loop {
-            // TODO(#4100): remove this copy.
-            let constants_map_in_str_form_copy = constants_map_in_str_form.clone();
-            for (key, elem) in constants_map_in_str_form.iter_mut() {
-                let (num_vec, den_vec, _) = elem;
-                for i in (0..num_vec.len()).rev() {
-                    if let Some((clean_num, clean_den, clean_constant_exactness)) =
-                        clean_constants_map.get(num_vec[i].as_str()).cloned()
-                    {
-                        if clean_num.is_empty() || clean_den.is_empty() {
-                            continue;
-                        }
-                        if let Some((clean_num_from_str, clean_den_from_str, _)) =
-                            constants_map_in_str_form_copy.get(num_vec[i].as_str())
-                        {
-                            if !clean_num_from_str.is_empty() || !clean_den_from_str.is_empty() {
-                                continue;
-                            }
-                        }
-                        let (add_to_num, add_to_den, add_to_exactness) =
-                            clean_constants_map.get_mut(key).unwrap();
-                        num_vec.remove(i);
-                        add_to_num.extend(clean_num);
-                        add_to_den.extend(clean_den);
-                        if clean_constant_exactness == ConstantExactness::Approximate {
-                            *add_to_exactness = ConstantExactness::Approximate;
-                        }
-                        updated = true;
-                    }
-                }
+        // Replacing dirty constants with their corresponding clean value.
+        while !dirty_constants_queue.is_empty() {
+            let (constant_key, mut dirty_constant) = dirty_constants_queue
+                .pop_front()
+                .ok_or(DataError::custom("dirty queue defect"))?;
 
-                for i in (0..den_vec.len()).rev() {
-                    if let Some((clean_num, clean_den, clean_constant_exactness)) =
-                        clean_constants_map.get(den_vec[i].as_str()).cloned()
-                    {
-                        if clean_num.is_empty() || clean_den.is_empty() {
-                            continue;
-                        }
-                        if let Some((clean_num_from_str, clean_den_from_str, _)) =
-                            constants_map_in_str_form_copy.get(den_vec[i].as_str())
-                        {
-                            if !clean_num_from_str.is_empty() || !clean_den_from_str.is_empty() {
-                                continue;
-                            }
-                        }
-                        let (add_to_num, add_to_den, add_to_exactness) =
-                            clean_constants_map.get_mut(key).unwrap();
-                        den_vec.remove(i);
-                        add_to_num.extend(clean_den);
-                        add_to_den.extend(clean_num);
-                        if clean_constant_exactness == ConstantExactness::Approximate {
-                            *add_to_exactness = ConstantExactness::Approximate;
-                        }
+            for _ in 0..dirty_constant.dirty_num.len() {
+                let num = dirty_constant
+                    .dirty_num
+                    .pop_front()
+                    .ok_or(DataError::custom("dirty queue defect"))?;
 
-                        updated = true;
-                    }
+                if let Some(clean_constant) = clean_constants_map.get(num.as_str()) {
+                    dirty_constant
+                        .clean_num
+                        .extend(clean_constant.clean_num.clone().into_iter());
+                    dirty_constant
+                        .clean_den
+                        .extend(clean_constant.clean_den.clone().into_iter());
+                } else {
+                    dirty_constant.dirty_num.push_back(num);
                 }
             }
 
-            if updated {
-                updated = false;
-                continue;
-            }
+            for _ in 0..dirty_constant.dirty_den.len() {
+                let den = dirty_constant
+                    .dirty_den
+                    .pop_front()
+                    .ok_or(DataError::custom("dirty queue defect"))?;
 
-            // Verify that all vectors in constants_map_in_str_form are empty.
-            // If they are, we have successfully replaced all constants with their values.
-            // If not, return an error due to an infinite loop.
-            for (_, (num_vec, den_vec, _)) in constants_map_in_str_form.iter() {
-                if !num_vec.is_empty() || !den_vec.is_empty() {
-                    return Err(DataError::custom(
-                        "Infinite loop detected while replacing constants with their values.",
-                    ));
+                if let Some(clean_constant) = clean_constants_map.get(den.as_str()) {
+                    dirty_constant
+                        .clean_num
+                        .extend(clean_constant.clean_den.clone().into_iter());
+                    dirty_constant
+                        .clean_den
+                        .extend(clean_constant.clean_num.clone().into_iter());
+                } else {
+                    dirty_constant.dirty_den.push_back(den);
                 }
             }
 
-            break;
+            if dirty_constant.is_clean() {
+                clean_constants_map.insert(constant_key, dirty_constant);
+            } else {
+                dirty_constants_queue.push_back((constant_key, dirty_constant));
+            }
         }
-
         // Transforming the `constants_map_in_str_form` map into a ZeroMap of `ConstantValue`.
         // This is done by converting the numerator and denominator slices into a fraction,
         // and then transforming the fraction into a `ConstantValue`.
         let constants_map = ZeroMap::from_iter(
             clean_constants_map
                 .into_iter()
-                .map(|(cons_name, (num, den, constant_exactness))| {
-                    let value = convert_slices_to_fraction(&num, &den)?;
+                .map(|(cons_name, constant)| {
+                    let value = convert_slices_to_fraction(
+                        &constant
+                            .clean_num
+                            .iter()
+                            .map(|s| s.to_string())
+                            .collect::<Vec<String>>(),
+                        &constant
+                            .clean_den
+                            .iter()
+                            .map(|s| s.to_string())
+                            .collect::<Vec<String>>(),
+                    )?;
                     let (num, den, sign, cons_type) =
-                        transform_fraction_to_constant_value(value, constant_exactness)?;
+                        transform_fraction_to_constant_value(value, constant.constant_exactness)?;
 
                     Ok((
                         cons_name,
