@@ -385,10 +385,6 @@ jobs:
       with:
         key: download-cache
         path: /tmp/icu4x-source-cache
-    - name: Warm up datagen
-      # We do this so its compilation doesn't go on the time bugdet of the 
-      # first test that uses it.
-      run: cargo build -p icu_datagen
 
     # Actual job
     - name: Run `cargo make ci-job-test-c`
@@ -454,10 +450,6 @@ jobs:
       with:
         key: download-cache
         path: /tmp/icu4x-source-cache
-    - name: Warm up datagen
-      # We do this so its compilation doesn't go on the time bugdet of the 
-      # first test that uses it.
-      run: cargo build -p icu_datagen
 
     # Actual job
     - name: Run `cargo make ci-job-test-js`
