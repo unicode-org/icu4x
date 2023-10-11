@@ -19,6 +19,8 @@ use alloc::string::String;
 #[cfg(feature = "experimental")]
 use core::ops::Deref;
 #[cfg(feature = "experimental")]
+use icu_locid::extensions::private::Subtag;
+#[cfg(feature = "experimental")]
 use tinystr::TinyAsciiStr;
 
 #[cfg(doc)]
@@ -814,8 +816,6 @@ impl DataLocale {
 #[derive(Debug, PartialEq, Clone, Eq, Hash)]
 #[cfg(feature = "experimental")]
 pub struct AuxiliaryKeys {
-    // DISCUSS: SmallStr? TinyStrAuto?
-    // DISCUSS: Make this a dynamically sized type so references can be taken?
     value: AuxiliaryKeysInner,
 }
 
@@ -909,44 +909,27 @@ impl AuxiliaryKeys {
     ///
     /// ```
     /// use icu_provider::prelude::*;
+    /// use icu_locid::extensions::private::subtag;
     ///
     /// // Single auxiliary key:
-    /// let a = AuxiliaryKeys::try_from_iter(["abc"]).unwrap();
+    /// let a = AuxiliaryKeys::try_from_iter([subtag!("abc")]).unwrap();
     /// let b = "abc".parse::<AuxiliaryKeys>().unwrap();
     /// assert_eq!(a, b);
     ///
     /// // Multiple auxiliary keys:
-    /// let a = AuxiliaryKeys::try_from_iter(["abc", "defg"]).unwrap();
+    /// let a = AuxiliaryKeys::try_from_iter([subtag!("abc"), subtag!("defg")]).unwrap();
     /// let b = "abc+defg".parse::<AuxiliaryKeys>().unwrap();
     /// assert_eq!(a, b);
     /// ```
-    ///
-    /// Don't include the auxiliary key separator or other invalid chars in the iterator strings:
-    ///
-    /// ```
-    /// use icu_provider::prelude::*;
-    ///
-    /// assert!(AuxiliaryKeys::try_from_iter(["abc+defg"]).is_err());
-    /// assert!(AuxiliaryKeys::try_from_iter(["AB$C"]).is_err());
-    /// ```
-    pub fn try_from_iter<'a>(iter: impl IntoIterator<Item = &'a str>) -> Result<Self, DataError> {
+    pub fn try_from_iter<'a>(iter: impl IntoIterator<Item = Subtag>) -> Result<Self, DataError> {
+        // TODO: Make this function infallible
         // TODO: Avoid the allocation when possible
         let mut builder = String::new();
         for item in iter {
-            if !item.is_empty()
-                && item
-                    .bytes()
-                    .all(|b| b.is_ascii_alphanumeric() || matches!(b, b'-'))
-            {
-                if !builder.is_empty() {
-                    builder.push(AuxiliaryKeys::separator() as char);
-                }
-                builder.push_str(item)
-            } else {
-                return Err(DataErrorKind::KeyLocaleSyntax
-                    .into_error()
-                    .with_display_context(item));
+            if !builder.is_empty() {
+                builder.push(AuxiliaryKeys::separator() as char);
             }
+            builder.push_str(item.as_str())
         }
         if builder.len() <= 23 {
             #[allow(clippy::unwrap_used)] // we just checked that the string is ascii
