@@ -7,7 +7,7 @@ import sys
 import subprocess
 
 SYMBOLS = [
-    "ICU4XDataProvider_create_from_byte_slice",
+    "ICU4XDataProvider_create_compiled",
     "ICU4XDataProvider_destroy",
     "ICU4XFixedDecimal_create_from_i32",
     "ICU4XFixedDecimal_destroy",
