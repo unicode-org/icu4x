@@ -243,10 +243,7 @@ fn test_basic() {
     );
 
     let ft2_to_m2 = constants.get("ft2_to_m2").unwrap();
-    let expected_ft2_to_m2 = GenericFraction::<BigUint>::new(
-        BigUint::from(3048u32).pow(2),
-        BigUint::from(10000u32).pow(2),
-    );
+    let expected_ft2_to_m2 = &expected_ft_to_m * &expected_ft_to_m;
 
     assert_eq!(
         ft2_to_m2,
@@ -260,10 +257,7 @@ fn test_basic() {
     );
 
     let ft3_to_m3 = constants.get("ft3_to_m3").unwrap();
-    let expected_ft3_to_m3 = GenericFraction::<BigUint>::new(
-        BigUint::from(3048u32).pow(3),
-        BigUint::from(10000u32).pow(3),
-    );
+    let expected_ft3_to_m3 = &expected_ft2_to_m2 * &expected_ft_to_m;
 
     assert_eq!(
         ft3_to_m3,
