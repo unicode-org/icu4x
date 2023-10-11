@@ -229,11 +229,14 @@ impl From<&LanguageIdentifier> for DataLocale {
 
 impl From<&Locale> for DataLocale {
     fn from(locale: &Locale) -> Self {
+        #[cfg(feature = "experimental")]
+        let aux = AuxiliaryKeys::try_from_iter(locale.extensions.private.iter().copied()).ok();
+        #[cfg(not(feature = "experimental"))]
+        let aux = None;
         Self {
             langid: locale.id.clone(),
             keywords: locale.extensions.unicode.keywords.clone(),
-            #[cfg(feature = "experimental")]
-            aux: None,
+            aux
         }
     }
 }
