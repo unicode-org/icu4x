@@ -68,13 +68,13 @@ jobs:
 
     # Cargo-all-features boilerplate
     - name: Get cargo-all-features version
-      if: matrix.behavior != "check"
+      if: matrix.behavior != 'check'
       id: cargo-all-features-version
       run: |
         echo "hash=$(cargo search cargo-all-features | grep '^cargo-all-features =' | md5sum)" >> $GITHUB_OUTPUT
       shell: bash
     - name: Attempt to load cached cargo-all-features
-      if: matrix.behavior != "check"
+      if: matrix.behavior != 'check'
       uses: actions/cache@v3
       id: cargo-all-features-cache
       with:
@@ -83,7 +83,7 @@ jobs:
           ~/.cargo/bin/cargo-all-features.exe
         key: ${{ runner.os }}-all-features-${{ steps.cargo-all-features-version.outputs.hash }}
     - name: Install cargo-all-features
-      if: matrix.behavior != "check" && steps.cargo-all-features-cache.outputs.cache-hit != 'true'
+      if: matrix.behavior != 'check' && steps.cargo-all-features-cache.outputs.cache-hit != 'true'
       run: cargo +stable install cargo-all-features
 
     # No toolchain boilerplate as this runs on MSRV
