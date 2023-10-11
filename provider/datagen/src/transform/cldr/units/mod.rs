@@ -95,44 +95,44 @@ impl DataProvider<UnitsConstantsV1Marker> for crate::DatagenProvider {
         }
 
         // Replacing dirty constants with their corresponding clean value.
+        let mut count = 0;
         while !dirty_constants_queue.is_empty() {
+            let mut updated = false;
             let (constant_key, mut dirty_constant) = dirty_constants_queue
                 .pop_front()
                 .ok_or(DataError::custom("dirty queue defect"))?;
 
             for _ in 0..dirty_constant.dirty_num.len() {
-                let num = dirty_constant
-                    .dirty_num
-                    .pop_front()
-                    .ok_or(DataError::custom("dirty queue defect"))?;
+                if let Some(num) = dirty_constant.dirty_num.pop_front() {
+                    if let Some(clean_constant) = clean_constants_map.get(num.as_str()) {
+                        dirty_constant
+                            .clean_num
+                            .extend(clean_constant.clean_num.clone());
+                        dirty_constant
+                            .clean_den
+                            .extend(clean_constant.clean_den.clone());
 
-                if let Some(clean_constant) = clean_constants_map.get(num.as_str()) {
-                    dirty_constant
-                        .clean_num
-                        .extend(clean_constant.clean_num.clone().into_iter());
-                    dirty_constant
-                        .clean_den
-                        .extend(clean_constant.clean_den.clone().into_iter());
-                } else {
-                    dirty_constant.dirty_num.push_back(num);
+                        updated = true;
+                    } else {
+                        dirty_constant.dirty_num.push_back(num);
+                    }
                 }
             }
 
             for _ in 0..dirty_constant.dirty_den.len() {
-                let den = dirty_constant
-                    .dirty_den
-                    .pop_front()
-                    .ok_or(DataError::custom("dirty queue defect"))?;
+                if let Some(den) = dirty_constant.dirty_den.pop_front() {
+                    if let Some(clean_constant) = clean_constants_map.get(den.as_str()) {
+                        dirty_constant
+                            .clean_num
+                            .extend(clean_constant.clean_den.clone());
+                        dirty_constant
+                            .clean_den
+                            .extend(clean_constant.clean_num.clone());
 
-                if let Some(clean_constant) = clean_constants_map.get(den.as_str()) {
-                    dirty_constant
-                        .clean_num
-                        .extend(clean_constant.clean_den.clone().into_iter());
-                    dirty_constant
-                        .clean_den
-                        .extend(clean_constant.clean_num.clone().into_iter());
-                } else {
-                    dirty_constant.dirty_den.push_back(den);
+                        updated = true;
+                    } else {
+                        dirty_constant.dirty_den.push_back(den);
+                    }
                 }
             }
 
@@ -141,8 +141,16 @@ impl DataProvider<UnitsConstantsV1Marker> for crate::DatagenProvider {
             } else {
                 dirty_constants_queue.push_back((constant_key, dirty_constant));
             }
+
+            count = if !updated { count + 1 } else { 0 };
+            if count > dirty_constants_queue.len() {
+                return Err(DataError::custom(
+                    "An Infinite loop was detected in the CLDR constants data!",
+                ));
+            }
         }
-        // Transforming the `constants_map_in_str_form` map into a ZeroMap of `ConstantValue`.
+
+        // Transforming the `clean_constants_map` map into a ZeroMap of `ConstantValue`.
         // This is done by converting the numerator and denominator slices into a fraction,
         // and then transforming the fraction into a `ConstantValue`.
         let constants_map = ZeroMap::from_iter(
