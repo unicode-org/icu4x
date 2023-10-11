@@ -122,32 +122,46 @@ dependencies = [
     "bakeddata-check",
 ]
 
-[tasks.ci-job-ffi]
-description = "Run all tests for the CI 'ffi' job"
+[tasks.ci-job-test-c]
+description = "Run all tests for the CI 'test-c' job"
 category = "CI"
 dependencies = [
-    "test-ffi",
+    "test-c",
+    "test-c-tiny",
+    "test-cpp",
 ]
 
-[tasks.ci-job-verify-ffi]
-description = "Run all tests for the CI 'verify-ffi' job"
+[tasks.ci-job-test-js]
+description = "Run all tests for the CI 'test-js' job"
 category = "CI"
 dependencies = [
-    "verify-ffi",
+    "test-js",
+    "test-tinywasm",
+]
+
+[tasks.ci-job-nostd]
+description = "Run all tests for the CI 'test-nostd' job"
+category = "CI"
+dependencies = [
+    "check-nostd",
+    "check-freertos-wearos",
+]
+
+
+[tasks.ci-job-diplomat]
+description = "Run all tests for the CI 'diplomat' job"
+category = "CI"
+dependencies = [
+    "verify-diplomat-gen",
+    "verify-diplomat-coverage",
 ]
 
 [tasks.ci-job-gn]
 description = "Run all tests for the CI 'gn' job"
 category = "CI"
 dependencies = [
-    "gn-run",
-]
-
-[tasks.ci-job-verify-gn]
-description = "Run all tests for the CI 'verify-gn' job"
-category = "CI"
-dependencies = [
     "verify-gn-gen",
+    "gn-run",
 ]
 
 [tasks.ci-job-msrv-features-1]
@@ -194,16 +208,6 @@ dependencies = [
     "depcheck",
 ]
 
-[tasks.ci-job-wasm]
-description = "Run all tests for the CI 'wasm' job"
-category = "CI"
-dependencies = [
-    "test-cpp-emscripten",
-    "test-tinywasm",
-    "build-wearos-ffi",
-    "test-nostd",
-]
-
 [tasks.ci-job-clippy]
 description = "Run all tests for the CI 'clippy' job"
 category = "CI"
@@ -233,15 +237,16 @@ dependencies = [
 
     # Get a coffee
     "ci-job-test",
+    "ci-job-nostd",
     "ci-job-test-docs",
     "ci-job-testdata",
     "ci-job-msrv-features",
     "ci-job-full-datagen",
 
     # Needs tools other than Cargo to be installed
-    "ci-job-ffi",
-    "ci-job-wasm",
-    "ci-job-verify-ffi",
+    "ci-job-diplomat",
+    "ci-job-test-c",
+    "ci-job-test-js",
     "ci-job-gn",
 
     # benchmarking and coverage jobs not included
