@@ -173,14 +173,9 @@ fn unescape_exemplar_chars(char_block: &str) -> String {
         return char_block.replace('\\', "");
     }
 
-    // Unescape the escape sequences like \uXXXX and \UXXXXXXXX into the proper code points.
-    // Also, workaround errant extra backslash escaping.
-    // Because JSON does not support \UXXXXXXXX Unicode code point escaping, use the TOML parser.
-    let ch_for_json = format!("x=\"{char_block}\"");
-
-    // Workaround for literal values like "\\-"" that cause problems for the TOML parser.
+    // Workaround for literal values like "\\-" that cause problems for the TOML parser.
     // In such cases, remove the '\\' character preceding the non-Unicode-escape-sequence character.
-    let mut ch_vec = ch_for_json.chars().collect::<Vec<char>>();
+    let mut ch_vec = char_block.chars().collect::<Vec<char>>();
     let mut ch_indices_to_remove: Vec<usize> = vec![];
     for (idx, ch) in ch_vec.iter().enumerate().rev() {
         if ch == &'\\' {
@@ -193,10 +188,27 @@ fn unescape_exemplar_chars(char_block: &str) -> String {
     for idx in ch_indices_to_remove {
         ch_vec.remove(idx);
     }
-    let ch_for_json = ch_vec.iter().collect::<String>();
+    let ch_for_toml = ch_vec.iter().collect::<String>();
+
+    // Workaround for double quotation mark literal values, which can appear in a string as a backslash followed
+    // by the quotation mark itself (\"), but for the purposes of the TOML parser, should be escaped to be 2
+    // slashes followed by the quotation mark (\\").
+    // Start by removing all preceding backslashes from quotation marks, and finally add back 2 backslashes.
+    let mut ch_for_toml = ch_for_toml.to_string();
+    // Remove up to 3 consecutive backslashes preceding a quotation mark. Preprocessing should have already
+    // removed 4-/6-/8-fold preceding backslashes before a character.
+    for _i in 1..=3 {
+        ch_for_toml = ch_for_toml.replace("\\\"", "\"");
+    }
+    ch_for_toml = ch_for_toml.replace("\"", "\\\"");
+
+    // Unescape the escape sequences like \uXXXX and \UXXXXXXXX into the proper code points.
+    // Also, workaround errant extra backslash escaping.
+    // Because JSON does not support \UXXXXXXXX Unicode code point escaping, use the TOML parser.
+    let ch_for_toml = format!("x=\"{ch_for_toml}\"");
 
     let ch_lite_t_val: toml::Value =
-        toml::from_str(&ch_for_json).unwrap_or_else(|_| panic!("{char_block:?}"));
+        toml::from_str(&ch_for_toml).unwrap_or_else(|_| panic!("{char_block:?}"));
     let ch_lite = if let toml::Value::Table(t) = ch_lite_t_val {
         if let Some(toml::Value::String(s)) = t.get("x") {
             s.to_owned()
@@ -461,6 +473,42 @@ mod tests {
 
         assert!(actual.contains("\u{0981}"));
         assert!(actual.contains("ক\u{09CD}ষ"));
+    }
+
+    #[test]
+    fn test_parse_consecutive_main_chars_without_spaces() {
+        let en_aux = "[áàăâåäãā æ ç éèĕêëē íìĭîïī ñ óòŏôöøō œ úùŭûüū ÿ]";
+
+        let actual = parse_exemplar_char_string(en_aux);
+
+        assert!(actual.contains("æ"));
+        assert!(actual.contains("ç"));
+        assert!(actual.contains("á"));
+        assert!(!actual.contains("áàăâåäãā"));
+    }
+
+    #[test]
+    fn test_parse_consecutive_punct_chars_subset() {
+        let input = "[\"“”]";
+        let actual = parse_exemplar_char_string(input);
+        assert!(actual.contains("\""));
+        assert!(actual.contains("“"));
+        assert!(actual.contains("”"));
+        assert!(!actual.contains("\"“”"));
+    }
+
+    #[test]
+    fn test_parse_all_punct_chars() {
+        let en_punct = "[\\- ‐‑ – — , ; \\: ! ? . … '‘’ \"“” ( ) \\[ \\] § @ * / \\& # † ‡ ′ ″]";
+
+        let actual = parse_exemplar_char_string(en_punct);
+
+        assert!(actual.contains("‐"));
+        assert!(actual.contains("‑"));
+        assert!(actual.contains("'"));
+        assert!(actual.contains("‘"));
+        assert!(actual.contains("’"));
+        assert!(!actual.contains("'‘’"));
     }
 
     #[test]
