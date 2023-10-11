@@ -41,7 +41,7 @@
 //! ```
 //!
 //! # Testing
-//! The [`test_bake`] macro can be uses to assert that a particular expression is a `Bake` fixed point.
+//! The [`test_bake`] macro can be used to assert that a particular expression is a `Bake` fixed point.
 //!
 //! ```no_run
 //! # // https://github.com/rust-lang/rust/issues/98906

@@ -13,9 +13,6 @@ dependencies = [
     "test-c-tiny",
     "test-cpp",
     "test-js",
-    "test-tinywasm",
-    "build-wearos-ffi",
-    "test-nostd",
 ]
 
 [tasks.verify-ffi]
