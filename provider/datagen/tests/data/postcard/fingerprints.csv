@@ -1495,13 +1495,13 @@ props/exemplarchars/punctuation@1, es, 148B, 6fc36862866bc1
 props/exemplarchars/punctuation@1, es-AR, 148B, 6fc36862866bc1
 props/exemplarchars/punctuation@1, fil, 115B, bcd01ba9a6f9afd2
 props/exemplarchars/punctuation@1, fr, 140B, c93fbe47124d89f7
-props/exemplarchars/punctuation@1, ja, 308B, 26f8e2db987a5e5c
-props/exemplarchars/punctuation@1, ru, 156B, 4053f13c5d2e0ce1
-props/exemplarchars/punctuation@1, sr, 140B, face2a479b6ba77f
-props/exemplarchars/punctuation@1, sr-Latn, 140B, face2a479b6ba77f
+props/exemplarchars/punctuation@1, ja, 284B, a1bf563cfbda3cc8
+props/exemplarchars/punctuation@1, ru, 132B, bbebf650bbbe15cc
+props/exemplarchars/punctuation@1, sr, 115B, 5f6f5db08f6a0c49
+props/exemplarchars/punctuation@1, sr-Latn, 115B, 5f6f5db08f6a0c49
 props/exemplarchars/punctuation@1, th, 107B, 365776b3531212fd
 props/exemplarchars/punctuation@1, tr, 123B, 2e7906785ab47589
-props/exemplarchars/punctuation@1, und, 83B, 65bb6a9f6c28188f
+props/exemplarchars/punctuation@1, und, 59B, 42e553f11527bac0
 props/gc@1, und, 17012B, 1d6406352436488b
 props/graph@1, und, 5707B, 2fd03ad84767b721
 props/lb@1, und, 14856B, 9add7e1b9033c67d
@@ -2026,7 +2026,7 @@ time_zone/generic_short@1, th, 21B, 70edef5aa0f7a054
 time_zone/generic_short@1, tr, 21B, 70edef5aa0f7a054
 time_zone/generic_short@1, und, 21B, 70edef5aa0f7a054
 time_zone/iana_to_bcp47@1, und, 9668B, 3eddd693286f5c87
-time_zone/metazone_period@1, und, 11015B, 4a88867ce828e998
+time_zone/metazone_period@1, und, 11015B, b6e16c42c41a1e23
 time_zone/specific_long@1, ar, 11362B, a886b0294ef9f145
 time_zone/specific_long@1, ar-EG, 11362B, a886b0294ef9f145
 time_zone/specific_long@1, bn, 16754B, 1bc51489a144ad2c
