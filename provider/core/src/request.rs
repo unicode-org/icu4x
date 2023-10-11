@@ -26,7 +26,7 @@ use tinystr::TinyAsciiStr;
 #[cfg(doc)]
 use icu_locid::subtags::Variant;
 
-const AUXILIARY_KEY_SEPARATOR: u8 = b'+';
+const AUXILIARY_KEY_SEPARATOR: u8 = b'-';
 
 /// The request type passed into all data provider implementations.
 #[derive(Default, Debug, Clone, Copy, PartialEq, Eq)]
@@ -154,7 +154,7 @@ impl Writeable for DataLocale {
         }
         #[cfg(feature = "experimental")]
         if let Some(aux) = self.aux.as_ref() {
-            sink.write_char(AuxiliaryKeys::separator() as char)?;
+            sink.write_str("-x-")?;
             aux.write_to(sink)?;
         }
         Ok(())
@@ -167,7 +167,7 @@ impl Writeable for DataLocale {
         }
         #[cfg(feature = "experimental")]
         if let Some(aux) = self.aux.as_ref() {
-            length_hint += aux.writeable_length_hint() + 1;
+            length_hint += aux.writeable_length_hint() + 3;
         }
         length_hint
     }
@@ -204,11 +204,14 @@ impl From<LanguageIdentifier> for DataLocale {
 
 impl From<Locale> for DataLocale {
     fn from(locale: Locale) -> Self {
+        #[cfg(feature = "experimental")]
+        let aux = AuxiliaryKeys::try_from_iter(locale.extensions.private.iter().copied()).ok();
+        #[cfg(not(feature = "experimental"))]
+        let aux = None;
         Self {
             langid: locale.id,
             keywords: locale.extensions.unicode.keywords,
-            #[cfg(feature = "experimental")]
-            aux: None,
+            aux,
         }
     }
 }
@@ -238,31 +241,13 @@ impl From<&Locale> for DataLocale {
 impl FromStr for DataLocale {
     type Err = DataError;
     fn from_str(s: &str) -> Result<Self, Self::Err> {
-        let mut aux_iter = s.splitn(2, AUXILIARY_KEY_SEPARATOR as char);
-        let Some(locale_str) = aux_iter.next() else {
-            return Err(DataErrorKind::KeyLocaleSyntax
-                .into_error()
-                .with_display_context(s));
-        };
-        let locale = Locale::from_str(locale_str).map_err(|e| {
+        let locale = Locale::from_str(s).map_err(|e| {
             DataErrorKind::KeyLocaleSyntax
                 .into_error()
                 .with_display_context(s)
                 .with_display_context(&e)
         })?;
-        #[cfg_attr(not(feature = "experimental"), allow(unused_mut))]
-        let mut data_locale = DataLocale::from(locale);
-        #[cfg(feature = "experimental")]
-        if let Some(aux_str) = aux_iter.next() {
-            let aux = AuxiliaryKeys::from_str(aux_str)?;
-            data_locale.set_aux(aux);
-        }
-        if aux_iter.next().is_some() {
-            return Err(DataErrorKind::KeyLocaleSyntax
-                .into_error()
-                .with_display_context(s));
-        }
-        Ok(data_locale)
+        Ok(DataLocale::from(locale))
     }
 }
 
@@ -284,20 +269,20 @@ impl DataLocale {
     ///
     /// let bcp47_strings: &[&str] = &[
     ///     "ca",
-    ///     "ca+EUR",
     ///     "ca-ES",
-    ///     "ca-ES+GBP",
-    ///     "ca-ES+GBP+short",
-    ///     "ca-ES+USD",
     ///     "ca-ES-u-ca-buddhist",
     ///     "ca-ES-valencia",
+    ///     "ca-ES-x-gbp",
+    ///     "ca-ES-x-gbp-short",
+    ///     "ca-ES-x-usd",
+    ///     "ca-x-eur",
     ///     "cat",
     ///     "pl-Latn-PL",
     ///     "und",
-    ///     "und+MXN",
     ///     "und-fonipa",
     ///     "und-u-ca-hebrew",
     ///     "und-u-ca-japanese",
+    ///     "und-x-mxn",
     ///     "zh",
     /// ];
     ///
@@ -346,28 +331,22 @@ impl DataLocale {
     /// let invalid_strings: &[&str] = &[
     ///     // Less than "ca-ES"
     ///     "CA",
-    ///     "ar+GBP+FOO",
-    ///     // Greater than "ca-ES+GBP"
+    ///     "ar-x-gbp-FOO",
+    ///     // Greater than "ca-ES-x-gbp"
     ///     "ca_ES",
-    ///     "ca-ES+GBP+FOO",
+    ///     "ca-ES-x-gbp-FOO",
     /// ];
     ///
-    /// let data_locale = "ca-ES+GBP".parse::<DataLocale>().unwrap();
+    /// let data_locale = "ca-ES-x-gbp".parse::<DataLocale>().unwrap();
     ///
     /// for s in invalid_strings.iter() {
-    ///     let expected_ordering = "ca-ES+GBP".cmp(s);
+    ///     let expected_ordering = "ca-ES-x-gbp".cmp(s);
     ///     let actual_ordering = data_locale.strict_cmp(s.as_bytes());
     ///     assert_eq!(expected_ordering, actual_ordering, "{}", s);
     /// }
     /// ```
     pub fn strict_cmp(&self, other: &[u8]) -> Ordering {
-        let mut aux_iter = other.splitn(2, |b| *b == AUXILIARY_KEY_SEPARATOR);
-        let Some(locale_str) = aux_iter.next() else {
-            debug_assert!(other.is_empty());
-            return Ordering::Greater;
-        };
-        let aux_str = aux_iter.next();
-        let subtags = locale_str.split(|b| *b == b'-');
+        let subtags = other.split(|b| *b == b'-');
         let mut subtag_result = self.langid.strict_cmp_iter(subtags);
         if self.has_unicode_ext() {
             let mut subtags = match subtag_result {
@@ -381,38 +360,19 @@ impl DataLocale {
             }
             subtag_result = self.keywords.strict_cmp_iter(subtags);
         }
-        let has_more_subtags = match subtag_result {
-            SubtagOrderingResult::Subtags(mut s) => s.next().is_some(),
-            SubtagOrderingResult::Ordering(o) => return o,
-        };
-        // If we get here, `self` has equal or fewer subtags than the `other`.
-        // There are 2^3 = 8 cases to handle for auxiliary keys, expanded below.
-        match (has_more_subtags, self.get_aux(), aux_str) {
-            (false, None, None) => {
-                // foo == foo
-                Ordering::Equal
+        if let Some(aux) = self.get_aux() {
+            let mut subtags = match subtag_result {
+                SubtagOrderingResult::Subtags(s) => s,
+                SubtagOrderingResult::Ordering(o) => return o,
+            };
+            match subtags.next() {
+                Some(b"x") => (),
+                Some(s) => return s.cmp(b"x").reverse(),
+                None => return Ordering::Greater,
             }
-            (false, Some(self_aux), Some(other_aux)) => {
-                // foo+BAR1 ?= foo+BAR2
-                let aux_ordering = self_aux.as_bytes().cmp(other_aux);
-                if aux_ordering != Ordering::Equal {
-                    return aux_ordering;
-                }
-                Ordering::Equal
-            }
-            (false, Some(_), None) => {
-                // foo+BAR > foo
-                Ordering::Greater
-            }
-            (_, _, _) => {
-                // foo < foo-bar
-                // foo < foo-bar+BAR
-                // foo < foo+BAR
-                // foo+BAR < foo-bar
-                // foo+BAR < foo-bar+BAR
-                Ordering::Less
-            }
+            subtag_result = aux.strict_cmp_iter(subtags);
         }
+        subtag_result.end()
     }
 }
 
@@ -434,7 +394,7 @@ impl DataLocale {
     ///     .parse::<DataLocale>()
     ///     .unwrap()
     ///     .is_empty());
-    /// assert!(!"und+auxiliary".parse::<DataLocale>().unwrap().is_empty());
+    /// assert!(!"und-x-aux".parse::<DataLocale>().unwrap().is_empty());
     /// assert!(!"ca-ES".parse::<DataLocale>().unwrap().is_empty());
     /// ```
     pub fn is_empty(&self) -> bool {
@@ -457,7 +417,7 @@ impl DataLocale {
     ///
     /// assert!("und".parse::<DataLocale>().unwrap().is_und());
     /// assert!(!"und-u-ca-buddhist".parse::<DataLocale>().unwrap().is_und());
-    /// assert!("und+auxiliary".parse::<DataLocale>().unwrap().is_und());
+    /// assert!("und-x-aux".parse::<DataLocale>().unwrap().is_und());
     /// assert!(!"ca-ES".parse::<DataLocale>().unwrap().is_und());
     /// ```
     pub fn is_und(&self) -> bool {
@@ -483,7 +443,7 @@ impl DataLocale {
     ///     .parse::<DataLocale>()
     ///     .unwrap()
     ///     .is_langid_und());
-    /// assert!("und+auxiliary"
+    /// assert!("und-x-aux"
     ///     .parse::<DataLocale>()
     ///     .unwrap()
     ///     .is_langid_und());
@@ -732,15 +692,15 @@ impl DataLocale {
     /// use writeable::assert_writeable_eq;
     ///
     /// let mut data_locale: DataLocale = locale!("ar-EG").into();
-    /// let aux = "GBP"
+    /// let aux = "gbp"
     ///     .parse::<AuxiliaryKeys>()
     ///     .expect("contains valid characters");
     /// data_locale.set_aux(aux);
-    /// assert_writeable_eq!(data_locale, "ar-EG+GBP");
+    /// assert_writeable_eq!(data_locale, "ar-EG-x-gbp");
     ///
     /// let maybe_aux = data_locale.remove_aux();
     /// assert_writeable_eq!(data_locale, "ar-EG");
-    /// assert_writeable_eq!(maybe_aux.unwrap(), "GBP");
+    /// assert_writeable_eq!(maybe_aux.unwrap(), "gbp");
     /// ```
     #[cfg(feature = "experimental")]
     pub fn remove_aux(&mut self) -> Option<AuxiliaryKeys> {
@@ -776,14 +736,14 @@ impl DataLocale {
 /// assert!(!data_locale.has_aux());
 /// assert_eq!(data_locale.get_aux(), None);
 ///
-/// let aux = "GBP"
+/// let aux = "gbp"
 ///     .parse::<AuxiliaryKeys>()
 ///     .expect("contains valid characters");
 ///
 /// data_locale.set_aux(aux);
-/// assert_writeable_eq!(data_locale, "ar-EG+GBP");
+/// assert_writeable_eq!(data_locale, "ar-EG-x-gbp");
 /// assert!(data_locale.has_aux());
-/// assert_eq!(data_locale.get_aux(), Some(&"GBP".parse().unwrap()));
+/// assert_eq!(data_locale.get_aux(), Some(&"gbp".parse().unwrap()));
 /// ```
 ///
 /// Multiple auxiliary keys are allowed:
@@ -793,8 +753,8 @@ impl DataLocale {
 /// use icu_provider::prelude::*;
 /// use writeable::assert_writeable_eq;
 ///
-/// let data_locale = "ar-EG+GBP+long".parse::<DataLocale>().unwrap();
-/// assert_writeable_eq!(data_locale, "ar-EG+GBP+long");
+/// let data_locale = "ar-EG-x-gbp-long".parse::<DataLocale>().unwrap();
+/// assert_writeable_eq!(data_locale, "ar-EG-x-gbp-long");
 /// assert_eq!(data_locale.get_aux().unwrap().iter().count(), 2);
 /// ```
 ///
@@ -918,11 +878,18 @@ impl AuxiliaryKeys {
     ///
     /// // Multiple auxiliary keys:
     /// let a = AuxiliaryKeys::try_from_iter([subtag!("abc"), subtag!("defg")]).unwrap();
-    /// let b = "abc+defg".parse::<AuxiliaryKeys>().unwrap();
+    /// let b = "abc-defg".parse::<AuxiliaryKeys>().unwrap();
     /// assert_eq!(a, b);
     /// ```
+    ///
+    /// The iterator can't be empty:
+    ///
+    /// ```
+    /// use icu_provider::prelude::*;
+    ///
+    /// assert!(AuxiliaryKeys::try_from_iter([]).is_err());
+    /// ```
     pub fn try_from_iter<'a>(iter: impl IntoIterator<Item = Subtag>) -> Result<Self, DataError> {
-        // TODO: Make this function infallible
         // TODO: Avoid the allocation when possible
         let mut builder = String::new();
         for item in iter {
@@ -930,6 +897,9 @@ impl AuxiliaryKeys {
                 builder.push(AuxiliaryKeys::separator() as char);
             }
             builder.push_str(item.as_str())
+        }
+        if builder.is_empty() {
+            return Err(DataErrorKind::KeyLocaleSyntax.with_str_context("empty aux iterator"));
         }
         if builder.len() <= 23 {
             #[allow(clippy::unwrap_used)] // we just checked that the string is ascii
@@ -944,9 +914,10 @@ impl AuxiliaryKeys {
     }
 
     pub(crate) fn try_from_str(s: &str) -> Result<Self, DataError> {
+        // TODO: Think about case normalization
         if !s.is_empty()
-            && s.bytes()
-                .all(|b| b.is_ascii_alphanumeric() || matches!(b, b'-' | b'+'))
+            && s.split(AUXILIARY_KEY_SEPARATOR as char)
+                .all(|b| Subtag::from_str(b).is_ok())
         {
             if s.len() <= 23 {
                 #[allow(clippy::unwrap_used)] // we just checked that the string is ascii
@@ -971,12 +942,32 @@ impl AuxiliaryKeys {
     ///
     /// ```
     /// use icu_provider::AuxiliaryKeys;
+    /// use icu_locid::extensions::private::subtag;
     ///
-    /// let aux: AuxiliaryKeys = "abc+defg".parse().unwrap();
-    /// assert_eq!(aux.iter().collect::<Vec<_>>(), vec!["abc", "defg"]);
+    /// let aux: AuxiliaryKeys = "abc-defg".parse().unwrap();
+    /// assert_eq!(aux.iter().collect::<Vec<_>>(), vec![subtag!("abc"), subtag!("defg")]);
     /// ```
-    pub fn iter(&self) -> impl Iterator<Item = &str> + '_ {
-        self.value.split(Self::separator() as char)
+    pub fn iter(&self) -> impl Iterator<Item = Subtag> + '_ {
+        self.value
+            .split(Self::separator() as char)
+            .flat_map(|x| x.parse().ok())
+    }
+
+    pub(crate) fn strict_cmp_iter<'l, I>(&self, mut subtags: I) -> SubtagOrderingResult<I>
+    where
+        I: Iterator<Item = &'l [u8]>,
+    {
+        for subtag in self.value.split(Self::separator() as char) {
+            if let Some(other) = subtags.next() {
+                match subtag.as_bytes().cmp(other) {
+                    Ordering::Equal => (),
+                    not_equal => return SubtagOrderingResult::Ordering(not_equal),
+                }
+            } else {
+                return SubtagOrderingResult::Ordering(Ordering::Greater);
+            }
+        }
+        SubtagOrderingResult::Subtags(subtags)
     }
 
     /// Returns the separator byte used for auxiliary keys in data locales.
@@ -986,7 +977,7 @@ impl AuxiliaryKeys {
     /// ```
     /// use icu_provider::AuxiliaryKeys;
     ///
-    /// assert_eq!(AuxiliaryKeys::separator(), b'+');
+    /// assert_eq!(AuxiliaryKeys::separator(), b'-');
     /// ```
     #[inline]
     pub const fn separator() -> u8 {
@@ -1023,8 +1014,8 @@ fn test_data_locale_to_string() {
         #[cfg(feature = "experimental")]
         TestCase {
             locale: locale!("en-ZA-u-nu-arab"),
-            aux: Some("GBP"),
-            expected: "en-ZA-u-nu-arab+GBP",
+            aux: Some("gbp"),
+            expected: "en-ZA-u-nu-arab-x-gbp",
         },
     ] {
         let mut data_locale = DataLocale::from(cas.locale);
@@ -1063,12 +1054,12 @@ fn test_data_locale_from_string() {
         },
         #[cfg(feature = "experimental")]
         TestCase {
-            input: "en-ZA-u-nu-arab+GBP",
+            input: "en-ZA-u-nu-arab-x-gbp",
             success: true,
         },
         #[cfg(not(feature = "experimental"))]
         TestCase {
-            input: "en-ZA-u-nu-arab+GBP",
+            input: "en-ZA-u-nu-arab-x-gbp",
             success: false,
         },
     ] {
