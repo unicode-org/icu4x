@@ -857,15 +857,6 @@ impl FromStr for AuxiliaryKeys {
 
 #[cfg(feature = "experimental")]
 impl AuxiliaryKeys {
-    /// Returns this [`AuxiliaryKeys`] as a single byte slice.
-    ///
-    /// NOTE: Do not make this public because we might not always store these in a single string.
-    /// External clients who need this can use `<Self as Writeable>::write_to_string`.
-    #[inline]
-    pub(crate) fn as_bytes(&self) -> &[u8] {
-        self.value.as_bytes()
-    }
-
     /// Creates an [`AuxiliaryKeys`] from an iterator of individual keys.
     ///
     /// # Examples
