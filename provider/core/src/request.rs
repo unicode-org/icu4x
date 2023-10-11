@@ -236,7 +236,7 @@ impl From<&Locale> for DataLocale {
         Self {
             langid: locale.id.clone(),
             keywords: locale.extensions.unicode.keywords.clone(),
-            aux
+            aux,
         }
     }
 }
