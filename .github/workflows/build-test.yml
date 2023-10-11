@@ -68,11 +68,13 @@ jobs:
 
     # Cargo-all-features boilerplate
     - name: Get cargo-all-features version
+      if: matrix.behavior != 'check'
       id: cargo-all-features-version
       run: |
         echo "hash=$(cargo search cargo-all-features | grep '^cargo-all-features =' | md5sum)" >> $GITHUB_OUTPUT
       shell: bash
     - name: Attempt to load cached cargo-all-features
+      if: matrix.behavior != 'check'
       uses: actions/cache@v3
       id: cargo-all-features-cache
       with:
@@ -81,7 +83,7 @@ jobs:
           ~/.cargo/bin/cargo-all-features.exe
         key: ${{ runner.os }}-all-features-${{ steps.cargo-all-features-version.outputs.hash }}
     - name: Install cargo-all-features
-      if: steps.cargo-all-features-cache.outputs.cache-hit != 'true'
+      if: matrix.behavior != 'check' && steps.cargo-all-features-cache.outputs.cache-hit != 'true'
       run: cargo +stable install cargo-all-features
 
     # No toolchain boilerplate as this runs on MSRV
@@ -207,6 +209,48 @@ jobs:
       if: steps.cargo-make-cache.outputs.cache-hit != 'true'
       run: cargo +stable install cargo-make
 
+    # Toolchain boilerplate
+    - name: Potentially override rust version with nightly
+      run: cargo make set-nightly-version-for-ci
+    - name: Show the selected Rust toolchain
+      run: rustup show
+
+    # Job-specific dependencies
+    - name: Attempt to load download cache
+      uses: actions/cache@v3
+      with:
+        key: download-cache
+        path: /tmp/icu4x-source-cache
+
+    # Actual job
+    - name: Run `cargo make ci-job-testdata`
+      run: cargo make ci-job-testdata
+
+  # ci-job-testdata-legacy
+  testdata-legacy:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v3
+
+    # Cargo-make boilerplate
+    - name: Get cargo-make version
+      id: cargo-make-version
+      run: |
+        echo "hash=$(cargo search cargo-make | grep '^cargo-make =' | md5sum)" >> $GITHUB_OUTPUT
+      shell: bash
+    - name: Attempt to load cached cargo-make
+      uses: actions/cache@v3
+      id: cargo-make-cache
+      with:
+        path: |
+          ~/.cargo/bin/cargo-make
+          ~/.cargo/bin/cargo-make.exe
+        key: ${{ runner.os }}-make-${{ steps.cargo-make-version.outputs.hash }}
+    - name: Install cargo-make
+      if: steps.cargo-make-cache.outputs.cache-hit != 'true'
+      run: cargo +stable install cargo-make
+
     # Cargo-all-features boilerplate
     - name: Get cargo-all-features version
       id: cargo-all-features-version
@@ -239,17 +283,8 @@ jobs:
         path: /tmp/icu4x-source-cache
 
     # Actual job
-    - name: Run `cargo make testdata-check`
-      run: cargo make testdata-check
-
-    - name: Run `cargo make testdata-legacy`
-      run: cargo make testdata-legacy
-
-    # This is too slow for Windows and Mac
-    - name: Run `cargo make testdata-legacy-test`
-      if: matrix.os == 'ubuntu-latest'
-      run: cargo make testdata-legacy-test
-
+    - name: Run `cargo make ci-job-testdata-legacy`
+      run: cargo make ci-job-testdata-legacy
 
   # ci-job-test-docs
   test-docs:
@@ -761,7 +796,7 @@ jobs:
   # Notify on slack  
   notify-slack:
     # Skipped tasks: bench-perf, bench-memory, bench-binsize, bench-datasize
-    needs: [msrv, test, testdata, test-docs, full-datagen, ffi, verify-ffi, gn, wasm, fmt, tidy, clippy, doc]
+    needs: [msrv, test, testdata, testdata-legacy, test-docs, full-datagen, ffi, verify-ffi, gn, wasm, fmt, tidy, clippy, doc]
     if: ${{ always() && contains(needs.*.result, 'failure') && (github.event_name == 'schedule' || github.event_name == 'workflow_dispatch' || (github.event_name == 'push' && github.ref_name == 'main')) }}
     runs-on: ubuntu-latest
     steps:
