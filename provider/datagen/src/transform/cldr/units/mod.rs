@@ -20,22 +20,27 @@ use icu_unitsconversion::provider::{
 };
 use zerovec::{ZeroMap, ZeroVec};
 
+/// Represents a general constant which contains scientific and non scientific numbers.
 #[derive(Debug)]
-struct CleanAndDirtyConstant {
+struct GeneralConstant {
+    /// Contains numerator terms that are represented as scientific numbers
     clean_num: Vec<String>,
+    /// Contains denominator terms that are represented as scientific numbers
     clean_den: Vec<String>,
-    dirty_num: VecDeque<String>,
-    dirty_den: VecDeque<String>,
+    /// Contains numerator terms that are not represented as scientific numbers
+    non_scientific_num: VecDeque<String>,
+    /// Contains denominator terms that are not represented as scientific numbers
+    non_scientific_den: VecDeque<String>,
     constant_exactness: ConstantExactness,
 }
 
-impl CleanAndDirtyConstant {
+impl GeneralConstant {
     fn new(num: &[String], den: &[String], exactness: ConstantExactness) -> Self {
-        let mut constant = CleanAndDirtyConstant {
+        let mut constant = GeneralConstant {
             clean_num: Vec::new(),
             clean_den: Vec::new(),
-            dirty_num: VecDeque::new(),
-            dirty_den: VecDeque::new(),
+            non_scientific_num: VecDeque::new(),
+            non_scientific_den: VecDeque::new(),
             constant_exactness: exactness,
         };
 
@@ -43,7 +48,7 @@ impl CleanAndDirtyConstant {
             if is_scientific_number(n) {
                 constant.clean_num.push(n.clone());
             } else {
-                constant.dirty_num.push_back(n.clone());
+                constant.non_scientific_num.push_back(n.clone());
             }
         }
 
@@ -51,15 +56,15 @@ impl CleanAndDirtyConstant {
             if is_scientific_number(d) {
                 constant.clean_den.push(d.clone());
             } else {
-                constant.dirty_den.push_back(d.clone());
+                constant.non_scientific_den.push_back(d.clone());
             }
         }
         constant
     }
 
-    /// Determines if the constant is free of any dirty elements.
-    fn is_clean(&self) -> bool {
-        self.dirty_num.is_empty() && self.dirty_den.is_empty()
+    /// Determines if the constant is free of any non_scientific elements.
+    fn is_free_of_non_scientific(&self) -> bool {
+        self.non_scientific_num.is_empty() && self.non_scientific_den.is_empty()
     }
 }
 
@@ -73,10 +78,10 @@ impl DataProvider<UnitsConstantsV1Marker> for crate::DatagenProvider {
             .read_and_parse("supplemental/units.json")?;
         let constants = &units_data.supplemental.unit_constants.constants;
 
-        let mut dirty_constants_queue = VecDeque::<(&str, CleanAndDirtyConstant)>::new();
+        let mut constants_with_non_scientific = VecDeque::<(&str, GeneralConstant)>::new();
 
-        // Contains all the constants that do not have any dirty data. I.E. dirty_num and dirty_den are empty.
-        let mut clean_constants_map = BTreeMap::<&str, CleanAndDirtyConstant>::new();
+        // Contains all the constants that do not have any non-scientific numbers. I.E., non_scientific_num and non_scientific_den are empty.
+        let mut clean_constants_map = BTreeMap::<&str, GeneralConstant>::new();
         for (cons_name, cons_value) in constants {
             let (num, den) = convert_constant_to_num_denom_strings(&cons_value.value)?;
 
@@ -85,74 +90,76 @@ impl DataProvider<UnitsConstantsV1Marker> for crate::DatagenProvider {
                 _ => ConstantExactness::Exact,
             };
 
-            let constant = CleanAndDirtyConstant::new(&num, &den, constant_exactness);
+            let constant = GeneralConstant::new(&num, &den, constant_exactness);
 
-            if constant.is_clean() {
+            if constant.is_free_of_non_scientific() {
                 clean_constants_map.insert(&cons_name, constant);
             } else {
-                dirty_constants_queue.push_back((&cons_name, constant));
+                constants_with_non_scientific.push_back((&cons_name, constant));
             }
         }
 
-        // Replacing dirty constants with their corresponding clean value.
+        // Replacing non scientific constant terms with their corresponding clean value.
         let mut count = 0;
-        while !dirty_constants_queue.is_empty() {
+        while !constants_with_non_scientific.is_empty() {
             let mut updated = false;
-            let (constant_key, mut dirty_constant) = dirty_constants_queue
+            let (constant_key, mut non_scientific_constant) = constants_with_non_scientific
                 .pop_front()
-                .ok_or(DataError::custom("dirty queue defect"))?;
+                .ok_or(DataError::custom(
+                    "non scientific queue error: an element must exist",
+                ))?;
 
-            for _ in 0..dirty_constant.dirty_num.len() {
-                if let Some(num) = dirty_constant.dirty_num.pop_front() {
+            for _ in 0..non_scientific_constant.non_scientific_num.len() {
+                if let Some(num) = non_scientific_constant.non_scientific_num.pop_front() {
                     if let Some(clean_constant) = clean_constants_map.get(num.as_str()) {
-                        dirty_constant
+                        non_scientific_constant
                             .clean_num
                             .extend(clean_constant.clean_num.clone());
-                        dirty_constant
+                        non_scientific_constant
                             .clean_den
                             .extend(clean_constant.clean_den.clone());
 
                         updated = true;
                     } else {
-                        dirty_constant.dirty_num.push_back(num);
+                        non_scientific_constant.non_scientific_num.push_back(num);
                     }
                 }
             }
 
-            for _ in 0..dirty_constant.dirty_den.len() {
-                if let Some(den) = dirty_constant.dirty_den.pop_front() {
+            for _ in 0..non_scientific_constant.non_scientific_den.len() {
+                if let Some(den) = non_scientific_constant.non_scientific_den.pop_front() {
                     if let Some(clean_constant) = clean_constants_map.get(den.as_str()) {
-                        dirty_constant
+                        non_scientific_constant
                             .clean_num
                             .extend(clean_constant.clean_den.clone());
-                        dirty_constant
+                        non_scientific_constant
                             .clean_den
                             .extend(clean_constant.clean_num.clone());
 
                         updated = true;
                     } else {
-                        dirty_constant.dirty_den.push_back(den);
+                        non_scientific_constant.non_scientific_den.push_back(den);
                     }
                 }
             }
 
-            if dirty_constant.is_clean() {
-                clean_constants_map.insert(constant_key, dirty_constant);
+            if non_scientific_constant.is_free_of_non_scientific() {
+                clean_constants_map.insert(constant_key, non_scientific_constant);
             } else {
-                dirty_constants_queue.push_back((constant_key, dirty_constant));
+                constants_with_non_scientific.push_back((constant_key, non_scientific_constant));
             }
 
             count = if !updated { count + 1 } else { 0 };
-            if count > dirty_constants_queue.len() {
+            if count > constants_with_non_scientific.len() {
                 return Err(DataError::custom(
                     "An Infinite loop was detected in the CLDR constants data!",
                 ));
             }
         }
 
-        // Transforming the `clean_constants_map` map into a ZeroMap of `ConstantValue`.
-        // This is done by converting the numerator and denominator slices into a fraction,
-        // and then transforming the fraction into a `ConstantValue`.
+        // Convert `clean_constants_map` into a ZeroMap of `ConstantValue`.
+        // This involves transforming the numerator and denominator slices into a fraction,
+        // and subsequently converting the fraction into a `ConstantValue`.
         let constants_map = ZeroMap::from_iter(
             clean_constants_map
                 .into_iter()
