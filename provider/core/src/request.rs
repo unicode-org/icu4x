@@ -727,7 +727,7 @@ impl DataLocale {
 /// keys are separated from the BCP-47 locale and from each other with the character returned by
 /// [`AuxiliaryKeys::separator()`].
 ///
-/// An auxiliary key currently allows alphanumerics and `-`.
+/// An auxiliary key currently allows 1-8 lowercase alphanumerics.
 ///
 /// <div class="stab unstable">
 /// 🚧 This code is experimental; it may change at any time, in breaking or non-breaking ways,
