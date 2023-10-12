@@ -877,7 +877,7 @@ impl AuxiliaryKeys {
         let mut builder = String::new();
         for item in iter {
             if !builder.is_empty() {
-                builder.push(AuxiliaryKeys::separator() as char);
+                builder.push(AuxiliaryKeys::separator());
             }
             builder.push_str(item.as_str())
         }
@@ -899,7 +899,7 @@ impl AuxiliaryKeys {
     pub(crate) fn try_from_str(s: &str) -> Result<Self, DataError> {
         // TODO: Think about case normalization
         if !s.is_empty()
-            && s.split(Self::separator() as char)
+            && s.split(Self::separator())
                 .all(|b| Subtag::from_str(b).is_ok())
         {
             if s.len() <= 23 {
@@ -932,7 +932,7 @@ impl AuxiliaryKeys {
     /// ```
     pub fn iter(&self) -> impl Iterator<Item = Subtag> + '_ {
         self.value
-            .split(Self::separator() as char)
+            .split(Self::separator())
             .flat_map(|x| x.parse().ok())
     }
 
@@ -940,7 +940,7 @@ impl AuxiliaryKeys {
     where
         I: Iterator<Item = &'l [u8]>,
     {
-        for subtag in self.value.split(Self::separator() as char) {
+        for subtag in self.value.split(Self::separator()) {
             if let Some(other) = subtags.next() {
                 match subtag.as_bytes().cmp(other) {
                     Ordering::Equal => (),
@@ -953,18 +953,12 @@ impl AuxiliaryKeys {
         SubtagOrderingResult::Subtags(subtags)
     }
 
-    /// Returns the separator byte used for auxiliary keys in data locales.
+    /// Returns the internal separator byte used for auxiliary keys in data locales.
     ///
-    /// # Examples
-    ///
-    /// ```
-    /// use icu_provider::AuxiliaryKeys;
-    ///
-    /// assert_eq!(AuxiliaryKeys::separator(), b'-');
-    /// ```
+    /// This is, according to BCP-47, an ASCII hyphen.
     #[inline]
-    pub const fn separator() -> u8 {
-        b'-'
+    pub(crate) const fn separator() -> char {
+        '-'
     }
 }
 
