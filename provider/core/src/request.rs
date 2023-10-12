@@ -278,6 +278,7 @@ impl DataLocale {
     ///     "ca-ES-x-gbp",
     ///     "ca-ES-x-gbp-short",
     ///     "ca-ES-x-usd",
+    ///     "ca-ES-xyzabc",
     ///     "ca-x-eur",
     ///     "cat",
     ///     "pl-Latn-PL",
@@ -883,7 +884,7 @@ impl AuxiliaryKeys {
     ///
     /// assert!(AuxiliaryKeys::try_from_iter([]).is_err());
     /// ```
-    pub fn try_from_iter<'a>(iter: impl IntoIterator<Item = Subtag>) -> Result<Self, DataError> {
+    pub fn try_from_iter(iter: impl IntoIterator<Item = Subtag>) -> Result<Self, DataError> {
         // TODO: Avoid the allocation when possible
         let mut builder = String::new();
         for item in iter {
