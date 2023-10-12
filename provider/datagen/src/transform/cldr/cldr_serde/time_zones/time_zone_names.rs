@@ -50,11 +50,20 @@ pub struct LocationWithLong {
 }
 
 #[derive(PartialEq, Debug, Clone, Deserialize)]
+pub struct LocationWithoutFields {
+    pub long: Option<ZoneFormat>,
+    pub short: Option<ZoneFormat>,
+    #[serde(rename = "exemplarCity-alt-secondary")]
+    pub exemplar_city: String,
+}
+
+#[derive(PartialEq, Debug, Clone, Deserialize)]
 #[serde(untagged)]
 pub enum Location {
     City(LocationWithExemplarCity),
     Long(LocationWithLong),
     Short(LocationWithShort),
+    Empty(LocationWithoutFields),
 }
 
 #[derive(PartialEq, Debug, Clone, Deserialize)]

@@ -98,6 +98,7 @@ impl Location {
             Self::City(place) => Some(place.exemplar_city.clone()),
             Self::Long(place) => place.exemplar_city.clone(),
             Self::Short(place) => place.exemplar_city.clone(),
+            Self::Empty(place) => Some(place.exemplar_city.clone()),
         }
     }
 
@@ -106,6 +107,7 @@ impl Location {
             Self::City(place) => place.long.clone(),
             Self::Long(place) => Some(place.long.clone()),
             Self::Short(place) => place.long.clone(),
+            Self::Empty(place) => place.long.clone(),
         }
     }
 
@@ -114,6 +116,7 @@ impl Location {
             Self::City(place) => place.short.clone(),
             Self::Long(place) => place.short.clone(),
             Self::Short(place) => Some(place.short.clone()),
+            Self::Empty(place) => place.short.clone(),
         }
     }
 }
