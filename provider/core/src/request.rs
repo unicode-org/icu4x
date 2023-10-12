@@ -770,18 +770,19 @@ impl DataLocale {
 /// assert_eq!(data_locale.get_aux().unwrap().iter().count(), 2);
 /// ```
 ///
-/// Not all strings are valid auxiliary keys:
+/// Not all strings are valid auxiliary keys.
+/// The string must be well-formed and case-normalized:
 ///
 /// ```
 /// use icu_provider::prelude::*;
 ///
 /// assert!("abcdefg".parse::<AuxiliaryKeys>().is_ok());
-/// assert!("ABC123".parse::<AuxiliaryKeys>().is_ok());
 /// assert!("abc-xyz".parse::<AuxiliaryKeys>().is_ok());
 ///
 /// assert!("".parse::<AuxiliaryKeys>().is_err());
 /// assert!("!@#$%".parse::<AuxiliaryKeys>().is_err());
 /// assert!("abc_xyz".parse::<AuxiliaryKeys>().is_err());
+/// assert!("ABC123".parse::<AuxiliaryKeys>().is_err());
 /// ```
 ///
 /// [`Keywords`]: unicode_ext::Keywords
@@ -917,10 +918,15 @@ impl AuxiliaryKeys {
     }
 
     pub(crate) fn try_from_str(s: &str) -> Result<Self, DataError> {
-        // TODO: Think about case normalization
         if !s.is_empty()
-            && s.split(Self::separator())
-                .all(|b| Subtag::from_str(b).is_ok())
+            && s.split(Self::separator()).all(|b| {
+                if let Ok(subtag) = Subtag::from_str(b) {
+                    // Enforces normalization:
+                    b == subtag.as_str()
+                } else {
+                    false
+                }
+            })
         {
             if s.len() <= 23 {
                 #[allow(clippy::unwrap_used)] // we just checked that the string is ascii
