@@ -200,7 +200,7 @@ fn unescape_exemplar_chars(char_block: &str) -> String {
     for _i in 1..=3 {
         ch_for_toml = ch_for_toml.replace("\\\"", "\"");
     }
-    ch_for_toml = ch_for_toml.replace("\"", "\\\"");
+    ch_for_toml = ch_for_toml.replace('\"', "\\\"");
 
     // Unescape the escape sequences like \uXXXX and \UXXXXXXXX into the proper code points.
     // Also, workaround errant extra backslash escaping.
