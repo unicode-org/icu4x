@@ -26,8 +26,6 @@ use tinystr::TinyAsciiStr;
 #[cfg(doc)]
 use icu_locid::subtags::Variant;
 
-const AUXILIARY_KEY_SEPARATOR: u8 = b'-';
-
 /// The request type passed into all data provider implementations.
 #[derive(Default, Debug, Clone, Copy, PartialEq, Eq)]
 #[allow(clippy::exhaustive_structs)] // this type is stable
@@ -204,14 +202,11 @@ impl From<LanguageIdentifier> for DataLocale {
 
 impl From<Locale> for DataLocale {
     fn from(locale: Locale) -> Self {
-        #[cfg(feature = "experimental")]
-        let aux = AuxiliaryKeys::try_from_iter(locale.extensions.private.iter().copied()).ok();
-        #[cfg(not(feature = "experimental"))]
-        let aux = None;
         Self {
             langid: locale.id,
             keywords: locale.extensions.unicode.keywords,
-            aux,
+            #[cfg(feature = "experimental")]
+            aux: AuxiliaryKeys::try_from_iter(locale.extensions.private.iter().copied()).ok(),
         }
     }
 }
@@ -229,14 +224,11 @@ impl From<&LanguageIdentifier> for DataLocale {
 
 impl From<&Locale> for DataLocale {
     fn from(locale: &Locale) -> Self {
-        #[cfg(feature = "experimental")]
-        let aux = AuxiliaryKeys::try_from_iter(locale.extensions.private.iter().copied()).ok();
-        #[cfg(not(feature = "experimental"))]
-        let aux = None;
         Self {
             langid: locale.id.clone(),
             keywords: locale.extensions.unicode.keywords.clone(),
-            aux,
+            #[cfg(feature = "experimental")]
+            aux: AuxiliaryKeys::try_from_iter(locale.extensions.private.iter().copied()).ok(),
         }
     }
 }
@@ -364,6 +356,7 @@ impl DataLocale {
             }
             subtag_result = self.keywords.strict_cmp_iter(subtags);
         }
+        #[cfg(feature = "experimental")]
         if let Some(aux) = self.get_aux() {
             let mut subtags = match subtag_result {
                 SubtagOrderingResult::Subtags(s) => s,
@@ -663,11 +656,6 @@ impl DataLocale {
         self.aux.as_ref()
     }
 
-    #[cfg(not(feature = "experimental"))]
-    pub(crate) fn get_aux(&self) -> Option<&str> {
-        None
-    }
-
     /// Returns whether this [`DataLocale`] has an auxiliary key.
     ///
     /// For more information and examples, see [`AuxiliaryKeys`].
@@ -911,7 +899,7 @@ impl AuxiliaryKeys {
     pub(crate) fn try_from_str(s: &str) -> Result<Self, DataError> {
         // TODO: Think about case normalization
         if !s.is_empty()
-            && s.split(AUXILIARY_KEY_SEPARATOR as char)
+            && s.split(Self::separator() as char)
                 .all(|b| Subtag::from_str(b).is_ok())
         {
             if s.len() <= 23 {
@@ -976,7 +964,7 @@ impl AuxiliaryKeys {
     /// ```
     #[inline]
     pub const fn separator() -> u8 {
-        AUXILIARY_KEY_SEPARATOR
+        b'-'
     }
 }
 
