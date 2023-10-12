@@ -959,7 +959,15 @@ impl AuxiliaryKeys {
     pub fn iter(&self) -> impl Iterator<Item = Subtag> + '_ {
         self.value
             .split(Self::separator())
-            .flat_map(|x| x.parse().ok())
+            .filter_map(|x| {
+                match x.parse() {
+                    Ok(x) => Some(x),
+                    Err(_) => {
+                        debug_assert!(false, "failed to convert to subtag: {x}");
+                        None
+                    }
+                }
+            })
     }
 
     pub(crate) fn strict_cmp_iter<'l, I>(&self, mut subtags: I) -> SubtagOrderingResult<I>
