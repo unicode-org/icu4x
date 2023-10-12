@@ -517,12 +517,32 @@ impl DataLocale {
     /// let locale = locale.into_locale();
     /// assert_eq!(locale, locale!("it-IT-u-ca-coptic"));
     /// ```
+    ///
+    /// Auxiliary keys are retained:
+    ///
+    /// ```
+    /// use icu_locid::Locale;
+    /// use icu_provider::prelude::*;
+    /// use writeable::assert_writeable_eq;
+    ///
+    /// let locale: Locale = "und-u-nu-arab-x-gbp".parse().unwrap();
+    /// let data_locale = DataLocale::from(locale);
+    /// assert_writeable_eq!(data_locale, "und-u-nu-arab-x-gbp");
+    ///
+    /// let recovered_locale = data_locale.into_locale();
+    /// assert_writeable_eq!(recovered_locale, "und-u-nu-arab-x-gbp");
+    /// ```
     pub fn into_locale(self) -> Locale {
         let mut loc = Locale {
             id: self.langid,
             ..Default::default()
         };
         loc.extensions.unicode.keywords = self.keywords;
+        #[cfg(feature = "experimental")]
+        if let Some(aux) = self.aux {
+            loc.extensions.private =
+                icu_locid::extensions::private::Private::from_vec_unchecked(aux.iter().collect());
+        }
         loc
     }
 
