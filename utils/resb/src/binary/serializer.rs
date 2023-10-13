@@ -292,9 +292,12 @@ impl Serializer {
             repr_info,
         };
 
+        let root_descriptor = root
+            .descriptor
+            .ok_or(Error::unexpected("root descriptor was never populated"))?;
         let bundle_struct = BinResBundle {
             header,
-            root_descriptor: root.descriptor.unwrap(),
+            root_descriptor,
             index,
             keys: &keys,
             data_16_bit: &data_16_bit,
@@ -302,7 +305,7 @@ impl Serializer {
         };
 
         // Write the bundle as bytes and return.
-        Ok(Vec::<u8>::from(bundle_struct))
+        Vec::<u8>::try_from(bundle_struct)
     }
 
     /// Collects the set of keys used in tables.
@@ -378,6 +381,9 @@ impl Serializer {
                     // want each instance of a string to share a reference to
                     // the same data in order to allow multiple string resources
                     // to share a single set of bytes in the 16-bit data block.
+                    // We can't use `if let` here because we need to borrow as
+                    // mutable in the `else` case.
+                    #[allow(clippy::unwrap_used)]
                     let data = strings.get(string).unwrap();
                     data.borrow_mut().copy_count += 1;
                     existing_string_data = Some((string, data));
@@ -437,6 +443,9 @@ impl Serializer {
         // Locate strings which are suffixes of other strings and link them to
         // their containing string.
         for (i, string) in sorted_strings.iter().enumerate() {
+            // We can safely unwrap here as `sorted_strings` is just a sorted
+            // list of keys for the map in question.
+            #[allow(clippy::unwrap_used)]
             let data = strings.get(string).unwrap();
 
             if data.borrow().containing_string.is_some() {
@@ -466,7 +475,9 @@ impl Serializer {
                 }
 
                 // Note the offset of the suffix into its containing string and
-                // link the two.
+                // link the two. We can safely unwrap here as `sorted_strings`
+                // are all keys for the map in question.
+                #[allow(clippy::unwrap_used)]
                 let suffix_data = strings.get(suffix).unwrap();
                 suffix_data.borrow_mut().offset =
                     (string.chars().count() - suffix.chars().count()) as u32;
@@ -492,12 +503,13 @@ impl Serializer {
         sorted_strings.sort_unstable_by(cmp_string_ascending_suffix_aware);
 
         for (string, data) in sorted_strings {
-            if data.borrow().containing_string.is_some() {
+            if let Some(containing_string) = data.borrow().containing_string {
                 // This string is a suffix of another. Because suffixes are
                 // sorted to the end, we are guaranteed to have already written
                 // the containing string.
-                let containing_string = data.borrow().containing_string.unwrap();
-                let containing_data = strings.get(containing_string).unwrap();
+                let containing_data = strings.get(containing_string).ok_or(Error::unexpected(
+                    "containing string not present in string map",
+                ))?;
 
                 // Update the offset of the suffix from a relative position in
                 // the containing string to an absolute position in the 16-bit
@@ -774,7 +786,9 @@ impl Serializer {
                 data.append(&mut (map.len() as u16).to_ne_bytes().to_vec());
 
                 for key in map.keys() {
-                    let position = key_position_map.get(key).unwrap();
+                    let position = key_position_map
+                        .get(key)
+                        .ok_or(Error::unexpected("key not present in position map"))?;
                     data.append(&mut (*position as u16).to_ne_bytes().to_vec());
                 }
 
@@ -841,7 +855,9 @@ impl Serializer {
             data.resize(data.len() + (u32_size - position % u32_size), 0xaa);
         }
 
-        Ok(resource.descriptor.unwrap())
+        resource.descriptor.ok_or(Error::unexpected(
+            "resource descriptor has not been populated",
+        ))
     }
 
     /// Generates a vector of bytes representing the 32-bit resource block.
@@ -871,14 +887,14 @@ impl Serializer {
         data_16_bit_end: u32,
     ) -> BinIndex {
         BinIndex {
-            _field_count: field_count,
+            field_count,
             keys_end,
-            _resources_end: resources_end,
-            _bundle_end: resources_end,
-            _largest_table_entry_count: self.largest_table_entry_count,
-            _bundle_attributes: Some(!bundle.is_locale_fallback_enabled() as u32),
+            resources_end,
+            bundle_end: resources_end,
+            largest_table_entry_count: self.largest_table_entry_count,
+            bundle_attributes: Some(!bundle.is_locale_fallback_enabled() as u32),
             data_16_bit_end: Some(data_16_bit_end),
-            _pool_checksum: None,
+            pool_checksum: None,
         }
     }
 }
@@ -1048,8 +1064,10 @@ struct BinResBundle<'a> {
     resources: &'a [u8],
 }
 
-impl From<BinResBundle<'_>> for Vec<u8> {
-    fn from(value: BinResBundle) -> Self {
+impl TryFrom<BinResBundle<'_>> for Vec<u8> {
+    type Error = Error;
+
+    fn try_from(value: BinResBundle<'_>) -> Result<Self, Self::Error> {
         // Manually build the list of bytes to write to the output. There are
         // crates which provide this functionality, but the writing of the body
         // is sufficiently complex as to make the header the only part where
@@ -1060,12 +1078,12 @@ impl From<BinResBundle<'_>> for Vec<u8> {
 
         // Write the body.
         bytes.extend_from_slice(&u32::from(value.root_descriptor).to_ne_bytes());
-        bytes.append(&mut Vec::<u8>::from(value.index));
+        bytes.append(&mut Vec::<u8>::try_from(value.index)?);
         bytes.extend_from_slice(value.keys);
         bytes.extend_from_slice(value.data_16_bit);
         bytes.extend_from_slice(value.resources);
 
-        bytes
+        Ok(bytes)
     }
 }
 
@@ -1104,34 +1122,48 @@ impl From<BinReprInfo> for Vec<u8> {
     }
 }
 
-impl From<BinIndex> for Vec<u8> {
-    fn from(value: BinIndex) -> Self {
+impl TryFrom<BinIndex> for Vec<u8> {
+    type Error = Error;
+
+    fn try_from(value: BinIndex) -> Result<Self, Self::Error> {
         let mut bytes =
-            Vec::with_capacity(value._field_count as usize * core::mem::size_of::<u32>());
+            Vec::with_capacity(value.field_count as usize * core::mem::size_of::<u32>());
 
         // Format version 1.0 did not include an index and so no bytes should be
         // written.
-        if value._field_count >= 5 {
-            bytes.extend_from_slice(&value._field_count.to_ne_bytes());
+        if value.field_count >= 5 {
+            bytes.extend_from_slice(&value.field_count.to_ne_bytes());
             bytes.extend_from_slice(&value.keys_end.to_ne_bytes());
-            bytes.extend_from_slice(&value._resources_end.to_ne_bytes());
-            bytes.extend_from_slice(&value._bundle_end.to_ne_bytes());
-            bytes.extend_from_slice(&value._largest_table_entry_count.to_ne_bytes());
+            bytes.extend_from_slice(&value.resources_end.to_ne_bytes());
+            bytes.extend_from_slice(&value.bundle_end.to_ne_bytes());
+            bytes.extend_from_slice(&value.largest_table_entry_count.to_ne_bytes());
         }
 
-        if value._field_count >= 6 {
-            bytes.extend_from_slice(&value._bundle_attributes.unwrap().to_ne_bytes());
+        if value.field_count >= 6 {
+            let bundle_attributes = value
+                .bundle_attributes
+                .ok_or(Error::unexpected("no bundle attributes field provided"))?;
+
+            bytes.extend_from_slice(&bundle_attributes.to_ne_bytes());
         }
 
-        if value._field_count >= 7 {
-            bytes.extend_from_slice(&value.data_16_bit_end.unwrap().to_ne_bytes());
+        if value.field_count >= 7 {
+            let data_16_bit_end = value
+                .data_16_bit_end
+                .ok_or(Error::unexpected("no 16-bit data end offset provided"))?;
+
+            bytes.extend_from_slice(&data_16_bit_end.to_ne_bytes());
         }
 
-        if value._field_count >= 8 {
-            bytes.extend_from_slice(&value._pool_checksum.unwrap().to_ne_bytes());
+        if value.field_count >= 8 {
+            let pool_checksum = value
+                .pool_checksum
+                .ok_or(Error::unexpected("no pool checksum provided"))?;
+
+            bytes.extend_from_slice(&pool_checksum.to_ne_bytes());
         }
 
-        bytes
+        Ok(bytes)
     }
 }
 

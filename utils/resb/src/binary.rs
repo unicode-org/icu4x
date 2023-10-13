@@ -72,7 +72,7 @@ struct BinReprInfo {
 struct BinIndex {
     /// The number of 32-bit fields written in the index, including the field
     /// count.
-    _field_count: u32,
+    field_count: u32,
 
     /// The offset of the end of the key block in 32-bit values from the
     /// beginning of the body.
@@ -80,22 +80,22 @@ struct BinIndex {
 
     /// The offset of the end of the resources block in 32-bit values from the
     /// beginning of the body.
-    _resources_end: u32,
+    resources_end: u32,
 
     /// The offset of the end of the bundle in 32-bit values from the beginning
     /// of the body.
     ///
     /// In all versions through [`FormatVersion::V3_0`], this is always the same
     /// as `resources_end`.
-    _bundle_end: u32,
+    bundle_end: u32,
 
     /// The number of entries in the largest table in the bundle.
-    _largest_table_entry_count: u32,
+    largest_table_entry_count: u32,
 
     /// Attributes describing resolution of external resources.
     ///
     /// Present from [`FormatVersion::V1_2`] on.
-    _bundle_attributes: Option<u32>,
+    bundle_attributes: Option<u32>,
 
     /// The offset of the end of the 16-bit data block in 32-bit values from the
     /// beginning of the body.
@@ -107,7 +107,7 @@ struct BinIndex {
     ///
     /// Present from [`FormatVersion::V2_0`] on when the bundle either is a pool
     /// bundle or uses a pool bundle for sharing resources.
-    _pool_checksum: Option<u32>,
+    pool_checksum: Option<u32>,
 }
 
 /// Adds convenience properties to an `enum` represented as a primitive type,

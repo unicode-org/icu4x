@@ -28,21 +28,9 @@
 
 pub mod binary;
 
-/// The `text` module provides a reader for the text-based resource bundle
-/// format.
-///
-/// WARNING: This reader is intended for use in development-time tools and is
-/// not written with runtime efficiency in mind.
 #[cfg(feature = "text")]
 pub mod text;
 
-/// The `bundle` module provides data structures for working directly with the
-/// contents of a resource bundle.
-///
-/// WARNING: This module is not suitable for use at runtime due to its reliance
-/// on `std` and `alloc` and therefore not intended for general deserialization
-/// of resource bundles. Rather, it is intended to be used in development-time
-/// tools for working with bundles.
 #[cfg(any(feature = "serialize", feature = "text"))]
 pub mod bundle;
 

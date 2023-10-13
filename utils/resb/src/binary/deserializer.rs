@@ -1272,14 +1272,14 @@ impl TryFrom<&[u8]> for BinIndex {
         };
 
         Ok(Self {
-            _field_count: field_count,
+            field_count,
             keys_end,
-            _resources_end: resources_end,
-            _bundle_end: bundle_end,
-            _largest_table_entry_count: largest_table_entry_count,
-            _bundle_attributes: bundle_attributes,
+            resources_end,
+            bundle_end,
+            largest_table_entry_count,
+            bundle_attributes,
             data_16_bit_end,
-            _pool_checksum: pool_checksum,
+            pool_checksum,
         })
     }
 }

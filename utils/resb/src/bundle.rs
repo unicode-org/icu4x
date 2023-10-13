@@ -10,8 +10,6 @@
 //! of resource bundles. Rather, it is intended to be used in development-time
 //! tools for working with bundles.
 
-use core::ops::Index;
-
 extern crate alloc;
 use alloc::{
     borrow::Cow,
@@ -187,14 +185,6 @@ impl<'a> Table<'a> {
 impl Default for Table<'_> {
     fn default() -> Self {
         Self::new()
-    }
-}
-
-impl<'a> Index<usize> for Table<'a> {
-    type Output = Resource<'a>;
-
-    fn index(&self, index: usize) -> &Self::Output {
-        self.map.values().nth(index).unwrap()
     }
 }
 
