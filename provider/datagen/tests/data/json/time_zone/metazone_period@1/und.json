@@ -1,6 +1,6 @@
 {
   "adalv": {
-    "0": "euce"
+    "0": null
   },
   "aedxb": {
     "0": "gulf"
@@ -9,10 +9,10 @@
     "0": "afgh"
   },
   "aganu": {
-    "0": "atla"
+    "0": "haal"
   },
   "aiaxa": {
-    "0": "atla"
+    "0": "amea"
   },
   "altia": {
     "0": "euce"
@@ -22,13 +22,13 @@
     "11426160": "arme"
   },
   "ancur": {
-    "0": "atla"
+    "0": "amce"
   },
   "aolad": {
     "0": "afwe"
   },
   "aqcas": {
-    "0": "auwe",
+    "0": "amea",
     "20930040": "case",
     "21128580": "auwe",
     "21995640": "case",
@@ -158,9 +158,6 @@
     "0": "aucw"
   },
   "auhba": {
-    "0": "auea"
-  },
-  "aukns": {
     "0": "auea"
   },
   "auldc": {
@@ -308,9 +305,6 @@
   "caedm": {
     "0": "ammo"
   },
-  "caffs": {
-    "0": "amce"
-  },
   "cafne": {
     "0": "ampa",
     "23763480": "ammo"
@@ -334,14 +328,6 @@
   "camon": {
     "0": "atla"
   },
-  "canpg": {
-    "0": "amea"
-  },
-  "capnt": {
-    "0": "amea",
-    "15689160": "amce",
-    "16213380": "amea"
-  },
   "careb": {
     "0": "amce",
     "16213380": "amea",
@@ -354,9 +340,6 @@
   },
   "casjf": {
     "0": "newf"
-  },
-  "cathu": {
-    "0": "amea"
   },
   "cator": {
     "0": "amea"
@@ -401,9 +384,6 @@
   "cayyn": {
     "0": "ammo",
     "1224540": "amce"
-  },
-  "cayzf": {
-    "0": "ammo"
   },
   "cayzs": {
     "0": "amea"
@@ -970,9 +950,6 @@
     "480": "ammo",
     "21172860": "amce"
   },
-  "mxstis": {
-    "0": "meno"
-  },
   "mxtij": {
     "0": "ampa"
   },
@@ -1337,10 +1314,6 @@
     "0": "mosc",
     "10779720": "euea"
   },
-  "uaozh": {
-    "0": "mosc",
-    "10779720": "euea"
-  },
   "uasip": {
     "0": "mosc",
     "10779780": "euea",
@@ -1348,19 +1321,11 @@
     "14328060": "euea",
     "23268960": "mosc"
   },
-  "uauzh": {
-    "0": "mosc",
-    "10779720": "euea"
-  },
   "ugkla": {
     "0": "afea"
   },
   "umawk": {
     "0": "wake"
-  },
-  "umjon": {
-    "0": null,
-    "7272660": "haal"
   },
   "ummdy": {
     "0": null,
