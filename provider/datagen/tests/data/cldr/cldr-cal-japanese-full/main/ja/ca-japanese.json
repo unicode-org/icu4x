@@ -3,7 +3,7 @@
     "ja": {
       "identity": {
         "version": {
-          "_cldrVersion": "43"
+          "_cldrVersion": "44"
         },
         "language": "ja"
       },
@@ -1027,14 +1027,8 @@
               "short": "GGGGGy/M/d"
             },
             "dateSkeletons": {
-              "full": {
-                "_value": "GyMEEEEd",
-                "_numbers": "y=jpanyear"
-              },
-              "long": {
-                "_value": "GyMd",
-                "_numbers": "y=jpanyear"
-              },
+              "full": "GyMEEEEd",
+              "long": "GyMd",
               "medium": {
                 "_value": "GyMd",
                 "_numbers": "y=jpanyear"

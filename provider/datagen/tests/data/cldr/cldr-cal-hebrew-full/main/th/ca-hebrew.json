@@ -3,7 +3,7 @@
     "th": {
       "identity": {
         "version": {
-          "_cldrVersion": "43"
+          "_cldrVersion": "44"
         },
         "language": "th"
       },
@@ -277,10 +277,10 @@
                   "am": "ก่อนเที่ยง",
                   "noon": "เที่ยง",
                   "pm": "หลังเที่ยง",
-                  "morning1": "ในตอนเช้า",
-                  "afternoon1": "ในตอนบ่าย",
+                  "morning1": "ตอนเช้า",
+                  "afternoon1": "ตอนบ่าย",
                   "afternoon2": "บ่าย",
-                  "evening1": "ในตอนเย็น",
+                  "evening1": "ตอนเย็น",
                   "evening2": "ค่ำ",
                   "night1": "กลางคืน"
                 },

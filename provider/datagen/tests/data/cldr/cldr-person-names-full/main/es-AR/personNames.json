@@ -3,7 +3,7 @@
     "es-AR": {
       "identity": {
         "version": {
-          "_cldrVersion": "43"
+          "_cldrVersion": "44"
         },
         "language": "es",
         "territory": "AR"
@@ -19,6 +19,9 @@
           "yue",
           "zh"
         ],
+        "formality": "informal",
+        "length": "medium",
+        "nativeSpaceReplacement": " ",
         "foreignSpaceReplacement": " ",
         "initial": "{0}.",
         "initialSequence": "{0} {1}",
@@ -144,12 +147,12 @@
           },
           "nativeGS": {
             "given": "Lucía",
-            "surname": "García"
+            "surname": "García Pérez"
           },
           "nativeGGS": {
             "given": "Juan",
-            "given2": "Manuel",
-            "surname": "Rodríguez"
+            "given2": "Luis Antonio",
+            "surname": "Rodríguez Ruiz"
           },
           "nativeFull": {
             "title": "Sr.",
