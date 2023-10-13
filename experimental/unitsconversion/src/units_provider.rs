@@ -11,7 +11,7 @@
 
 use alloc::borrow::Cow;
 use icu_provider::prelude::*;
-use zerovec::ZeroMap;
+use zerovec::{ZeroMap, VarZeroVec};
 
 #[cfg(feature = "compiled_data")]
 #[derive(Debug)]
@@ -56,6 +56,13 @@ pub const KEYS: &[DataKey] = &[UnitsInfoV1Marker::KEY];
 pub struct UnitsInfoV1<'data> {
     #[cfg_attr(feature = "serde", serde(borrow))]
     pub units_info: ZeroMap<'data, str, UnitsInfoIndex>,
+
+    #[cfg_attr(feature = "serde", serde(borrow))]
+    pub unit_quantity: VarZeroVec<'data, UnitQuantityULE>,
+
+    #[cfg_attr(feature = "serde", serde(borrow))]
+    pub convert_units: VarZeroVec<'data, ConvertUnitsULE>,
+
 }
 
 #[zerovec::make_ule(UnitsInfoIndexULE)]

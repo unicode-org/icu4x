@@ -3,6 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 pub mod helpers;
+pub mod units_info;
 
 use std::collections::{BTreeMap, VecDeque};
 
