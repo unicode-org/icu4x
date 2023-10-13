@@ -724,8 +724,7 @@ impl DataLocale {
 /// information that does not fit into the [`LanguageIdentifier`] or [`Keywords`].
 ///
 /// A [`DataLocale`] can have multiple auxiliary keys, represented by this struct. The auxiliary
-/// keys are separated from the BCP-47 locale and from each other with the character returned by
-/// [`AuxiliaryKeys::separator()`].
+/// keys are stored as private use subtags following `-x-`.
 ///
 /// An auxiliary key currently allows 1-8 lowercase alphanumerics.
 ///
