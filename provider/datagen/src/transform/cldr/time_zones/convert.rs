@@ -94,27 +94,15 @@ impl From<CldrTimeZonesData<'_>> for TimeZoneFormatsV1<'static> {
 
 impl Location {
     fn exemplar_city(&self) -> Option<String> {
-        match self {
-            Self::City(place) => Some(place.exemplar_city.clone()),
-            Self::Long(place) => place.exemplar_city.clone(),
-            Self::Short(place) => place.exemplar_city.clone(),
-        }
+        self.exemplar_city.clone()
     }
 
     fn long_metazone_names(&self) -> Option<ZoneFormat> {
-        match self {
-            Self::City(place) => place.long.clone(),
-            Self::Long(place) => Some(place.long.clone()),
-            Self::Short(place) => place.long.clone(),
-        }
+        self.long.clone()
     }
 
     fn short_metazone_names(&self) -> Option<ZoneFormat> {
-        match self {
-            Self::City(place) => place.short.clone(),
-            Self::Long(place) => place.short.clone(),
-            Self::Short(place) => Some(place.short.clone()),
-        }
+        self.short.clone()
     }
 }
 
