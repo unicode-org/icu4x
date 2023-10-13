@@ -959,13 +959,11 @@ impl AuxiliaryKeys {
     pub fn iter(&self) -> impl Iterator<Item = Subtag> + '_ {
         self.value
             .split(Self::separator())
-            .filter_map(|x| {
-                match x.parse() {
-                    Ok(x) => Some(x),
-                    Err(_) => {
-                        debug_assert!(false, "failed to convert to subtag: {x}");
-                        None
-                    }
+            .filter_map(|x| match x.parse() {
+                Ok(x) => Some(x),
+                Err(_) => {
+                    debug_assert!(false, "failed to convert to subtag: {x}");
+                    None
                 }
             })
     }
