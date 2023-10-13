@@ -4,67 +4,112 @@
 
 # This is a cargo-make file included in the toplevel Makefile.toml
 
-[tasks.test-ffi]
-description = "Run FFI tests"
-category = "ICU4X Development"
-dependencies = [
-    "cargo-make-min-version",
-    "test-c",
-    "test-c-tiny",
-    "test-cpp",
-    "test-js",
-    "test-tinywasm",
-    "build-wearos-ffi",
-    "test-nostd",
-]
+# C/C++ tasks
 
-[tasks.verify-ffi]
-description = "Run FFI tests that verify checked in code is up to date"
+[tasks.test-c]
+description = "Run C API tests"
 category = "ICU4X Development"
-dependencies = [
-    "cargo-make-min-version",
-    "verify-diplomat-gen",
-    "verify-diplomat-coverage",
-]
+script_runner = "@duckscript"
+script = '''
+exit_on_error true
+exec --fail-on-error make -C ffi/capi/c/examples/pluralrules
+exec --fail-on-error make -C ffi/capi/c/examples/fixeddecimal
+exec --fail-on-error make -C ffi/capi/c/examples/locale
+'''
 
-# Some tasks need a minimum version of cargo-make. Configs within cargo-make
-# task stanzas such as this allow setting the minimum version of deps (including
-# min version for cargo-make itself). But cargo-make might only be applying
-# such dep upgrades defined in the `install_crate` field after the task script
-# has run.
-[tasks.cargo-make-min-version]
-description = "Verify that the minimum version of cargo-make exists"
+[tasks.test-c-tiny]
+description = "Run C API tests for tiny targets"
 category = "ICU4X Development"
-install_crate = { crate_name = "cargo-make", binary = "cargo", test_arg = ["make", "--version"], min_version = "0.36.2" }
-
-[tasks.diplomat-coverage]
-description = "Produces the list of ICU APIs that are not exported through Diplomat"
-category = "ICU4X Development"
-dependencies = ["install-nightly"]
+dependencies = ["install-nightly", "install-unknown-linux"]
 script_runner = "@duckscript"
 script = '''
 exit_on_error true
 if "${ICU4X_BUILDING_WITH_FORCED_NIGHTLY}"
-    echo "Skipping diplomat-coverage since ICU4X_BUILDING_WITH_FORCED_NIGHTLY is set"
+    echo "Skipping test-c-tiny since ICU4X_BUILDING_WITH_FORCED_NIGHTLY is set"
 else
-    exec --fail-on-error cargo run -p icu_ffi_coverage --all-features -- ffi/capi/tests/missing_apis.txt
+    exec --fail-on-error make -C ffi/capi/c/examples/fixeddecimal_tiny
+    exec ls -l ffi/capi/c/examples/fixeddecimal_tiny
+
+    exec --fail-on-error make -C ffi/capi/c/examples/segmenter_tiny
+    exec ls -l ffi/capi/c/examples/segmenter_tiny
 end
 '''
 
-[tasks.verify-diplomat-coverage]
-description = "Verify that checked-in Diplomat coverage is up to date"
+[tasks.test-cpp]
+description = "Run CPP tests"
 category = "ICU4X Development"
-dependencies = [
-    "diplomat-coverage",
-]
 script_runner = "@duckscript"
 script = '''
 exit_on_error true
-code = exec --get-exit-code git diff --exit-code -- ffi/capi/tests
-if ${code}
-    trigger_error "Diplomat coverage dump need to be regenerated. Please run `cargo make diplomat-coverage` and commit."
+exec --fail-on-error make -C ffi/capi/cpp/examples/properties
+exec --fail-on-error make -C ffi/capi/cpp/examples/segmenter 
+exec --fail-on-error make -C ffi/capi/cpp/examples/datetime 
+exec --fail-on-error make -C ffi/capi/cpp/examples/fixeddecimal 
+exec --fail-on-error make -C ffi/capi/cpp/examples/locale 
+exec --fail-on-error make -C ffi/capi/cpp/examples/pluralrules 
+exec --fail-on-error make -C ffi/capi/cpp/examples/bidi 
+exec --fail-on-error make -C ffi/capi/cpp/examples/fixeddecimal_wasm test-host
+'''
+
+
+# JS/WASM tasks
+
+[tasks.test-js]
+description = "Run JS tests"
+category = "ICU4X Development"
+dependencies = ["install-nightly", "install-wasm"]
+script_runner = "@duckscript"
+script = '''
+cd ffi/capi/js/examples/node
+exec --fail-on-error make
+# --foreground-scripts makes npm forward the output of make
+exec --fail-on-error npm ci --foreground-scripts
+exec --fail-on-error npm test
+'''
+
+[tasks.test-tinywasm]
+description = "Test the Tiny WASM example"
+category = "ICU4X Development"
+dependencies = ["install-nightly", "install-wasm"]
+script_runner = "@duckscript"
+script = '''
+exit_on_error true
+if "${ICU4X_BUILDING_WITH_FORCED_NIGHTLY}"
+    echo "Skipping test-wasm since ICU4X_BUILDING_WITH_FORCED_NIGHTLY is set"
+else
+    cd ffi/capi/js/examples/tinywasm
+
+    exec --fail-on-error make
+    exec --fail-on-error ls -l
+    exec --fail-on-error node tiny.mjs
 end
 '''
+
+# no_std tasks
+
+[tasks.check-freertos-wearos]
+description = "Build ICU4X CAPI for Cortex"
+category = "ICU4X FFI"
+dependencies = ["install-nightly", "install-cortex-8"]
+toolchain = "${ICU4X_NIGHTLY_TOOLCHAIN}"
+env = { RUSTFLAGS = "-Ctarget-cpu=cortex-m33 -Cpanic=abort -Copt-level=s" }
+command = "cargo"
+args = ["check", "--package", "icu_freertos",
+        "--target", "thumbv8m.main-none-eabihf",
+        "--no-default-features", "--features=wearos",
+        "-Zbuild-std=core,alloc", "-Zbuild-std-features=panic_immediate_abort"]
+
+
+# Diplomat gen
+
+[tasks.diplomat-gen]
+description = "Regenerate Diplomat bindings"
+category = "ICU4X Development"
+dependencies = [
+    "diplomat-gen-c",
+    "diplomat-gen-cpp",
+    "diplomat-gen-js",
+]
 
 [tasks.verify-diplomat-gen]
 description = "Verify that checked-in Diplomat bindings are up to date"
@@ -81,133 +126,6 @@ if ${code}
 end
 '''
 
-[tasks.diplomat-gen]
-description = "Regenerate Diplomat bindings"
-category = "ICU4X Development"
-dependencies = [
-    "diplomat-gen-c",
-    "diplomat-gen-cpp",
-    "diplomat-gen-js",
-]
-
-[tasks.test-c]
-description = "Run C API tests"
-category = "ICU4X Development"
-script_runner = "@duckscript"
-script = '''
-exit_on_error true
-cd ffi/capi/c/examples/pluralrules
-exec --fail-on-error make
-cd ../fixeddecimal
-exec --fail-on-error make
-cd ../locale
-exec --fail-on-error make
-'''
-
-[tasks.install-unknown-linux]
-description = "Installs the unknown-linux target"
-category = "ICU4X Development"
-dependencies = ["install-nightly"]
-script_runner = "@duckscript"
-script = '''
-exec --fail-on-error rustup target add x86_64-unknown-linux-gnu --toolchain ${ICU4X_NIGHTLY_TOOLCHAIN}
-'''
-
-[tasks.test-c-tiny]
-description = "Run C API tests for tiny targets"
-category = "ICU4X Development"
-dependencies = ["install-nightly", "install-unknown-linux"]
-script_runner = "@duckscript"
-script = '''
-exit_on_error true
-if "${ICU4X_BUILDING_WITH_FORCED_NIGHTLY}"
-    echo "Skipping test-c-tiny since ICU4X_BUILDING_WITH_FORCED_NIGHTLY is set"
-else
-    cd ffi/capi/c/examples/fixeddecimal_tiny
-    exec --fail-on-error make
-    exec ls -l
-    cd ../segmenter_tiny
-    exec --fail-on-error make
-    exec ls -l
-end
-'''
-
-[tasks.test-cpp]
-description = "Run CPP tests"
-category = "ICU4X Development"
-script_runner = "@duckscript"
-script = '''
-exit_on_error true
-cd ffi/capi/cpp/examples/properties
-exec --fail-on-error make
-cd ../segmenter
-exec --fail-on-error make
-cd ../datetime
-exec --fail-on-error make
-cd ../fixeddecimal
-exec --fail-on-error make
-cd ../locale
-exec --fail-on-error make
-cd ../pluralrules
-exec --fail-on-error make
-cd ../bidi
-exec --fail-on-error make
-cd ../fixeddecimal_wasm
-exec --fail-on-error make test-host
-'''
-
-[tasks.install-emscripten]
-description = "Installs the emscripten target"
-category = "ICU4X Development"
-dependencies = ["install-nightly"]
-script_runner = "@duckscript"
-script = '''
-exec --fail-on-error rustup target add wasm32-unknown-emscripten --toolchain ${ICU4X_NIGHTLY_TOOLCHAIN}
-'''
-
-[tasks.install-wasm]
-description = "Installs the wasm target"
-category = "ICU4X Development"
-dependencies = ["install-nightly"]
-script_runner = "@duckscript"
-script = '''
-exec --fail-on-error rustup target add wasm32-unknown-unknown --toolchain ${ICU4X_NIGHTLY_TOOLCHAIN}
-'''
-
-[tasks.test-cpp-emscripten]
-description = "Run the C++-emscripten test (needs emsdk)"
-category = "ICU4X Development"
-dependencies = ["install-nightly", "install-emscripten"]
-script_runner = "@duckscript"
-script = '''
-exit_on_error true
-cd ffi/capi/cpp/examples/fixeddecimal_wasm
-exec make test
-'''
-
-[tasks.test-js]
-description = "Run JS tests"
-category = "ICU4X Development"
-dependencies = ["install-nightly", "install-wasm"]
-script_runner = "@duckscript"
-script = '''
-cd ffi/capi/js/examples/node
-exec --fail-on-error make
-# --foreground-scripts makes npm forward the output of make
-exec --fail-on-error npm ci --foreground-scripts
-exec --fail-on-error npm test
-'''
-
-[tasks.test-cppdoc]
-description = "Build the cpp tests"
-category = "ICU4X Development"
-script_runner = "@duckscript"
-script = '''
-exit_on_error true
-cd ffi/capi/cpp/docs;
-exec --fail-on-error make html
-'''
-
 [tasks.diplomat-gen-c]
 description = "Generate C headers for the FFI with Diplomat"
 category = "ICU4X Development"
@@ -215,6 +133,7 @@ script_runner = "@duckscript"
 script = '''
 exit_on_error true
 cd ffi/capi
+
 # Duckscript doesn't support globs in rm, so we delete the dir
 rm -r ./c/include/
 mkdir ./c/include
@@ -228,7 +147,6 @@ script_runner = "@duckscript"
 script = '''
 exit_on_error true
 cd ffi/capi
-
 
 # Duckscript doesn't support globs in rm, so we delete the dir.
 # Preserve conf.py across the deletion.
@@ -261,63 +179,66 @@ echo "$conf_py" > ./js/docs/source/conf.py
 diplomat-tool js ./js/include/ --docs ./js/docs/source
 '''
 
-[tasks.install-cortex-8]
-description = "Install the thumbv8m target"
-category = "ICU4X FFI"
-dependencies = ["install-nightly"]
-toolchain = "${ICU4X_NIGHTLY_TOOLCHAIN}"
-command = "rustup"
-args = [
-    "target", "add", "thumbv8m.main-none-eabihf",
-]
+# Diplomat coverage
 
-[tasks.build-wearos-ffi]
-description = "Build ICU4X CAPI for Cortex"
-category = "ICU4X FFI"
-dependencies = ["install-nightly", "install-cortex-8"]
-toolchain = "${ICU4X_NIGHTLY_TOOLCHAIN}"
-env = { RUSTFLAGS = "-Ctarget-cpu=cortex-m33 -Cpanic=abort" }
-command = "cargo"
-args = ["build", "--package", "icu_freertos",
-        "--target", "thumbv8m.main-none-eabihf",
-        "--no-default-features", "--features=wearos",
-        "--profile=release-opt-size",
-        "-Zbuild-std", "-Zbuild-std=std,panic_abort", "-Zbuild-std-features=panic_immediate_abort"]
-
-[tasks.install-cortex-7]
-description = "Install the thumbv7m target"
-category = "ICU4X FFI"
-dependencies = ["install-nightly"]
-toolchain = "${ICU4X_NIGHTLY_TOOLCHAIN}"
-command = "rustup"
-args = [
-    "target", "add", "thumbv7m-none-eabi",
-]
-
-[tasks.test-nostd]
-description = "Ensure ICU4X core builds on no-std"
-category = "ICU4X FFI"
-dependencies = ["install-nightly", "install-cortex-7"]
-toolchain = "${ICU4X_NIGHTLY_TOOLCHAIN}"
-command = "cargo"
-args = ["build", "--package", "icu", "--target", "thumbv7m-none-eabi"]
-
-[tasks.test-tinywasm]
-description = "Test the Tiny WASM example"
+[tasks.diplomat-coverage]
+description = "Produces the list of ICU APIs that are not exported through Diplomat"
 category = "ICU4X Development"
-dependencies = ["install-nightly", "install-wasm"]
+dependencies = ["install-nightly"]
 script_runner = "@duckscript"
 script = '''
 exit_on_error true
 if "${ICU4X_BUILDING_WITH_FORCED_NIGHTLY}"
-    echo "Skipping test-wasm since ICU4X_BUILDING_WITH_FORCED_NIGHTLY is set"
+    echo "Skipping diplomat-coverage since ICU4X_BUILDING_WITH_FORCED_NIGHTLY is set"
 else
-    echo "Skipping test-wasm since it's slow https://github.com/unicode-org/icu4x/issues/3582"
-    cd ffi/capi/js/examples/tinywasm
+    exec --fail-on-error cargo run -p icu_ffi_coverage --all-features -- ffi/capi/tests/missing_apis.txt
+end
+'''
 
-    exec --fail-on-error make
-    exec --fail-on-error ls -l
-    exec --fail-on-error node tiny.mjs
+[tasks.verify-diplomat-coverage]
+description = "Verify that checked-in Diplomat coverage is up to date"
+category = "ICU4X Development"
+dependencies = [
+    "diplomat-coverage",
+]
+script_runner = "@duckscript"
+script = '''
+exit_on_error true
+code = exec --get-exit-code git diff --exit-code -- ffi/capi/tests
+if ${code}
+    trigger_error "Diplomat coverage dump need to be regenerated. Please run `cargo make diplomat-coverage` and commit."
+end
+'''
+
+
+# Install tasks
+
+# These tasks need a minimum version of cargo-make. Configs within cargo-make
+# task stanzas such as this allow setting the minimum version of deps (including
+# min version for cargo-make itself). But cargo-make might only be applying
+# such dep upgrades defined in the `install_crate` field after the task script
+# has run.
+[tasks.cargo-make-min-version]
+description = "Verify that the minimum version of cargo-make exists"
+category = "ICU4X Development"
+install_crate = { crate_name = "cargo-make", binary = "cargo", test_arg = ["make", "--version"], min_version = "0.36.2" }
+
+[tasks.diplomat-install]
+description = "Install Diplomat at current Diplomat revision"
+category = "ICU4X Development"
+dependencies = [ "cargo-make-min-version" ]
+script_runner = "@duckscript"
+script = '''
+exit_on_error true
+rev = exec --fail-on-error cargo make --loglevel error diplomat-get-rev
+rev = trim ${rev.stdout}
+if contains ${rev} "."
+    echo "Installing Diplomat version ${rev}"
+    exec --fail-on-error cargo install --version ${rev} diplomat-tool -f
+
+else
+    echo "Installing Diplomat rev ${rev}"
+    exec --fail-on-error cargo install --git https://github.com/rust-diplomat/diplomat.git --rev ${rev} diplomat-tool -f
 end
 '''
 
@@ -361,21 +282,51 @@ end
 release --recursive ${metadata}
 '''
 
-[tasks.diplomat-install]
-description = "Install Diplomat at current Diplomat revision"
+[tasks.install-unknown-linux]
+description = "Installs the unknown-linux target"
 category = "ICU4X Development"
-dependencies = [ "cargo-make-min-version" ]
+dependencies = ["install-nightly"]
+script_runner = "@duckscript"
+script = '''
+exec --fail-on-error rustup target add x86_64-unknown-linux-gnu --toolchain ${ICU4X_NIGHTLY_TOOLCHAIN}
+'''
+
+[tasks.install-emscripten]
+description = "Installs the emscripten target"
+category = "ICU4X Development"
+dependencies = ["install-nightly"]
+script_runner = "@duckscript"
+script = '''
+exec --fail-on-error rustup target add wasm32-unknown-emscripten --toolchain ${ICU4X_NIGHTLY_TOOLCHAIN}
+'''
+
+[tasks.install-wasm]
+description = "Installs the wasm target"
+category = "ICU4X Development"
+dependencies = ["install-nightly"]
+script_runner = "@duckscript"
+script = '''
+exec --fail-on-error rustup target add wasm32-unknown-unknown --toolchain ${ICU4X_NIGHTLY_TOOLCHAIN}
+'''
+
+[tasks.install-cortex-8]
+description = "Install the thumbv8m target"
+category = "ICU4X FFI"
+dependencies = ["install-nightly"]
+toolchain = "${ICU4X_NIGHTLY_TOOLCHAIN}"
+command = "rustup"
+args = [
+    "target", "add", "thumbv8m.main-none-eabihf",
+]
+
+# Unused tasks
+
+[tasks.test-cpp-emscripten]
+description = "Run the C++-emscripten test (needs emsdk)"
+category = "ICU4X Development"
+dependencies = ["install-nightly", "install-emscripten"]
 script_runner = "@duckscript"
 script = '''
 exit_on_error true
-rev = exec --fail-on-error cargo make --loglevel error diplomat-get-rev
-rev = trim ${rev.stdout}
-if contains ${rev} "."
-    echo "Installing Diplomat version ${rev}"
-    exec --fail-on-error cargo install --version ${rev} diplomat-tool -f
-
-else
-    echo "Installing Diplomat rev ${rev}"
-    exec --fail-on-error cargo install --git https://github.com/rust-diplomat/diplomat.git --rev ${rev} diplomat-tool -f
-end
+exec make -C ffi/capi/cpp/examples/fixeddecimal_wasm test
 '''

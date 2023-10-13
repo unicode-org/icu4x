@@ -138,3 +138,18 @@ exec --fail-on-error make -C crates/custom_compiled
 set_env ICU4X_DATA_DIR ${project_dir}/docs/tutorials/crates/custom_compiled/baked_data
 exec --fail-on-error cargo run --release -p tutorial_custom_compiled
 '''
+
+[tasks.install-cortex-7]
+description = "Install the thumbv7m target"
+category = "ICU4X Development"
+command = "rustup"
+args = [
+    "target", "add", "thumbv7m-none-eabi",
+]
+
+[tasks.check-nostd]
+description = "Ensure ICU4X builds on no-std"
+category = "ICU4X Development"
+dependencies = ["install-cortex-7"]
+command = "cargo"
+args = ["check", "--package", "icu", "--target", "thumbv7m-none-eabi"]

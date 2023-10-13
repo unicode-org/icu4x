@@ -147,6 +147,19 @@ impl RawPluralCategory {
     }
 }
 
+impl From<RawPluralCategory> for PluralCategory {
+    fn from(value: RawPluralCategory) -> Self {
+        match value {
+            RawPluralCategory::Other => PluralCategory::Other,
+            RawPluralCategory::Zero => PluralCategory::Zero,
+            RawPluralCategory::One => PluralCategory::One,
+            RawPluralCategory::Two => PluralCategory::Two,
+            RawPluralCategory::Few => PluralCategory::Few,
+            RawPluralCategory::Many => PluralCategory::Many,
+        }
+    }
+}
+
 impl From<PluralCategory> for RawPluralCategory {
     fn from(value: PluralCategory) -> Self {
         match value {

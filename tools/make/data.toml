@@ -22,11 +22,12 @@ command = "cargo"
 args = [
     "test",
     "-p=icu_datagen",
+    "--test=make-testdata",
     "--no-default-features",
     "--features=fs_exporter,use_wasm,rayon,experimental_components",
-    "generate_json_and_verify_postcard",
     "--",
-    "--nocapture"
+    "--ignored",
+    "--nocapture",
 ]
 
 [tasks.testdata-hello-world]
@@ -80,6 +81,7 @@ command = "cargo"
 args = [
     "run",
     "--bin=make-testdata-legacy",
+    "--release",
     "--manifest-path=tools/testdata-scripts/Cargo.toml", # avoid global feature resolution
 ]
 

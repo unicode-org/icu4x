@@ -19,6 +19,7 @@ use std::sync::Mutex;
 include!("locales.rs.data");
 
 #[test]
+#[ignore] // has side effects, run manually
 fn generate_json_and_verify_postcard() {
     simple_logger::SimpleLogger::new()
         .env()

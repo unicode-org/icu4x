@@ -94,3 +94,52 @@
 
         See the `Rust documentation for categories <https://docs.rs/icu/latest/icu/plurals/struct.PluralRules.html#method.categories>`__ for more information.
 
+
+.. cpp:class:: ICU4XPluralRulesWithRanges
+
+    FFI version of ``PluralRulesWithRanges``.
+
+    See the `Rust documentation for PluralRulesWithRanges <https://docs.rs/icu/latest/icu/plurals/struct.PluralRulesWithRanges.html>`__ for more information.
+
+
+    .. cpp:function:: static diplomat::result<ICU4XPluralRulesWithRanges, ICU4XError> create_cardinal(const ICU4XDataProvider& provider, const ICU4XLocale& locale)
+
+        Construct an :cpp:class:`ICU4XPluralRulesWithRanges` for the given locale, for cardinal numbers
+
+        See the `Rust documentation for try_new_cardinal <https://docs.rs/icu/latest/icu/plurals/struct.PluralRulesWithRanges.html#method.try_new_cardinal>`__ for more information.
+
+
+    .. cpp:function:: static diplomat::result<ICU4XPluralRulesWithRanges, ICU4XError> create_ordinal(const ICU4XDataProvider& provider, const ICU4XLocale& locale)
+
+        Construct an :cpp:class:`ICU4XPluralRulesWithRanges` for the given locale, for ordinal numbers
+
+        See the `Rust documentation for try_new_ordinal <https://docs.rs/icu/latest/icu/plurals/struct.PluralRulesWithRanges.html#method.try_new_ordinal>`__ for more information.
+
+
+    .. cpp:function:: ICU4XPluralCategory category_for(const ICU4XPluralOperands& op) const
+
+        Get the category for a given number represented as operands
+
+        See the `Rust documentation for category_for <https://docs.rs/icu/latest/icu/plurals/struct.PluralRulesWithRanges.html#method.category_for>`__ for more information.
+
+
+    .. cpp:function:: ICU4XPluralCategories categories() const
+
+        Get all of the categories needed in the current locale
+
+        See the `Rust documentation for categories <https://docs.rs/icu/latest/icu/plurals/struct.PluralRulesWithRanges.html#method.categories>`__ for more information.
+
+
+    .. cpp:function:: ICU4XPluralCategory category_for_range(const ICU4XPluralOperands& start, const ICU4XPluralOperands& end) const
+
+        Get the appropriate category for a numeric range.
+
+        See the `Rust documentation for category_for_range <https://docs.rs/icu/latest/icu/plurals/struct.PluralRulesWithRanges.html#method.category_for_range>`__ for more information.
+
+
+    .. cpp:function:: ICU4XPluralCategory resolve_range(ICU4XPluralCategory start, ICU4XPluralCategory end) const
+
+        Get the appropriate category for a numeric range from the categories of its endpoints.
+
+        See the `Rust documentation for resolve_range <https://docs.rs/icu/latest/icu/plurals/struct.PluralRulesWithRanges.html#method.resolve_range>`__ for more information.
+
