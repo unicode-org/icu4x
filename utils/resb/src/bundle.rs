@@ -120,7 +120,7 @@ impl<'a> Table<'a> {
     /// Basic usage:
     ///
     /// ```
-    /// use icu_resb::bundle::{Resource, Table};
+    /// use resb::bundle::{Resource, Table};
     ///
     /// let mut table = Table::new();
     /// let previous = table.insert("foo".into(), Resource::String("bar".into()));
@@ -144,7 +144,7 @@ impl<'a> Table<'a> {
     /// Basic usage:
     ///
     /// ```
-    /// use icu_resb::bundle::{Resource, Table};
+    /// use resb::bundle::{Resource, Table};
     ///
     /// let mut table = Table::new();
     /// assert!(table.is_empty());
