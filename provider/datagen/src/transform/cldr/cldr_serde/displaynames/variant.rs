@@ -11,8 +11,18 @@ use serde::Deserialize;
 use std::collections::HashMap;
 
 #[derive(PartialEq, Debug, Deserialize)]
+#[serde(untagged)]
+pub enum StringOrEmptyMap {
+    String(String),
+    // CLDR-JSON 44 contains some empty maps in place of strings in the
+    // variants table. This might be a bug. Track progress:
+    // <https://unicode-org.atlassian.net/browse/CLDR-17171>
+    Empty {},
+}
+
+#[derive(PartialEq, Debug, Deserialize)]
 pub struct Variants {
-    pub variants: HashMap<String, String>,
+    pub variants: HashMap<String, StringOrEmptyMap>,
 }
 
 #[derive(PartialEq, Debug, Deserialize)]
