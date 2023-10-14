@@ -704,6 +704,7 @@ where
 #[cfg(test)]
 mod test {
     use super::*;
+    use alloc::collections::BTreeMap;
 
     #[test]
     fn stress_test() {
@@ -823,5 +824,40 @@ mod test {
         assert_eq!(result.as_deref(), Some("YYY"));
 
         assert_eq!(format!("{zm2d:?}"), "ZeroMap2d { keys0: ZeroVec([3, 6, 7]), joiner: ZeroVec([1, 4, 7]), keys1: [\"eee\", \"ddd\", \"mmm\", \"nnn\", \"ddd\", \"eee\", \"www\"], values: [\"EEE\", \"DD3\", \"MM1\", \"NNN\", \"DD2\", \"EEE\", \"WWW\"] }");
+    }
+
+    #[test]
+    fn zeromap2d_metazone() {
+        let source_data = [
+            (*b"aedxb", 0, Some(*b"gulf")),
+            (*b"afkbl", 0, Some(*b"afgh")),
+            (*b"ushnl", 0, None),
+            (*b"ushnl", 7272660, Some(*b"haal")),
+            (*b"ushnl", 0, None),
+            (*b"ushnl", 7272660, Some(*b"haal")),
+        ];
+
+        let btreemap: BTreeMap<([u8; 5], i32), Option<[u8; 4]>> = source_data
+            .iter()
+            .copied()
+            .map(|(a, b, c)| ((a, b), c))
+            .collect();
+
+        let zeromap2d: ZeroMap2d<[u8; 5], i32, Option<[u8; 4]>> =
+            source_data.iter().copied().collect();
+
+        let mut btreemap_iter = btreemap.iter();
+
+        for cursor in zeromap2d.iter0() {
+            for (key1, value) in cursor.iter1() {
+                // This code runs for every (key0, key1) pair in order
+                let expected = btreemap_iter.next().unwrap();
+                assert_eq!(
+                    (expected.0 .0, expected.0 .1, expected.1),
+                    (*cursor.key0(), key1.as_unsigned_int() as i32, &value.get())
+                );
+            }
+        }
+        assert!(btreemap_iter.next().is_none());
     }
 }
