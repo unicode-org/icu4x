@@ -132,48 +132,33 @@ impl MetazoneCalculator {
 
 #[cfg(test)]
 mod tests {
-    use super::*;
     use alloc::collections::BTreeMap;
-    use tinystr::tinystr;
+    use tinystr::{tinystr, TinyAsciiStr};
     use zerovec::ZeroMap2d;
 
     #[test]
     fn zeromap2d_metazone() {
         let source_data = [
-            (
-                TimeZoneBcp47Id(tinystr!(8, "aedxb")),
-                0,
-                Some(MetazoneId(tinystr!(4, "gulf"))),
-            ),
-            (
-                TimeZoneBcp47Id(tinystr!(8, "afkbl")),
-                0,
-                Some(MetazoneId(tinystr!(4, "afgh"))),
-            ),
-            (TimeZoneBcp47Id(tinystr!(8, "ushnl")), 0, None),
-            (
-                TimeZoneBcp47Id(tinystr!(8, "ushnl")),
-                7272660,
-                Some(MetazoneId(tinystr!(4, "haal"))),
-            ),
-            (TimeZoneBcp47Id(tinystr!(8, "ushnl")), 0, None),
-            (
-                TimeZoneBcp47Id(tinystr!(8, "ushnl")),
-                7272660,
-                Some(MetazoneId(tinystr!(4, "haal"))),
-            ),
+            (tinystr!(8, "aedxb"), 0, Some(tinystr!(4, "gulf"))),
+            (tinystr!(8, "afkbl"), 0, Some(tinystr!(4, "afgh"))),
+            (tinystr!(8, "ushnl"), 0, None),
+            (tinystr!(8, "ushnl"), 7272660, Some(tinystr!(4, "haal"))),
+            (tinystr!(8, "ushnl"), 0, None),
+            (tinystr!(8, "ushnl"), 7272660, Some(tinystr!(4, "haal"))),
         ];
 
-        let btreemap: BTreeMap<(TimeZoneBcp47Id, i32), Option<MetazoneId>> = source_data
+        let btreemap: BTreeMap<(TinyAsciiStr<8>, i32), Option<TinyAsciiStr<4>>> = source_data
             .iter()
             .copied()
             .map(|(a, b, c)| ((a, b), c))
             .collect();
 
-        let zeromap2d: ZeroMap2d<TimeZoneBcp47Id, i32, Option<MetazoneId>> =
+        let zeromap2d: ZeroMap2d<TinyAsciiStr<8>, i32, Option<TinyAsciiStr<4>>> =
             source_data.iter().copied().collect();
 
         let mut btreemap_iter = btreemap.iter();
+
+        eprintln!("{zeromap2d:?}");
 
         for cursor in zeromap2d.iter0() {
             for (key1, value) in cursor.iter1() {
