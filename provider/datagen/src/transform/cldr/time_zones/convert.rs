@@ -41,6 +41,9 @@ fn parse_hour_format(hour_format: &str) -> (Cow<'static, str>, Cow<'static, str>
     (Cow::Owned(positive), Cow::Owned(negative))
 }
 
+/// Returns a map from time zone long identifier to time zone BCP-47 ID.
+///
+/// For example: "America/Chicago" to "uschi"
 pub(crate) fn compute_bcp47_tzids_btreemap(
     bcp47_tzids_resource: &BTreeMap<TimeZoneBcp47Id, Bcp47TzidAliasData>,
 ) -> BTreeMap<String, TimeZoneBcp47Id> {
@@ -55,6 +58,9 @@ pub(crate) fn compute_bcp47_tzids_btreemap(
     bcp47_tzids
 }
 
+/// Returns a map from metazone long identifier to metazone BCP-47 ID.
+///
+/// For example: "America_Central" to "amce"
 fn compute_meta_zone_ids_btreemap(
     meta_zone_ids_resource: &BTreeMap<MetazoneId, MetazoneAliasData>,
 ) -> BTreeMap<String, MetazoneId> {
