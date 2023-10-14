@@ -26,8 +26,6 @@ target/wasm32-unknown-unknown/release/icu_capi_cdylib.wasm: FORCE
 	rustup toolchain install ${ICU4X_NIGHTLY_TOOLCHAIN}
 	rustup component add rust-src --toolchain ${ICU4X_NIGHTLY_TOOLCHAIN}
 	# Build the WASM library
-	# NOTE: the --features below only work within the workspace. Outside of the workspace, you should
-	# create your own cdylib crate that depends on icu_capi and enables the features you need.
 	RUSTFLAGS="-Cpanic=abort -Copt-level=s -C link-arg=-zstack-size=${WASM_STACK_SIZE} -Clinker-plugin-lto -Ccodegen-units=1 -C linker=${BASEDIR}/ld.py -C linker-flavor=wasm-ld" \
 	CARGO_TARGET_DIR="target" `# Special linker flags shouldn't overwrite the top-level target directory` \
 	cargo +${ICU4X_NIGHTLY_TOOLCHAIN} build \

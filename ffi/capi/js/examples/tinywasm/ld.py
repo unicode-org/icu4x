@@ -29,9 +29,6 @@ def main():
             is_export = False
         elif arg == "--export":
             is_export = True
-        elif arg == "--export-dynamic":
-            is_export = False
-            # skip
         else:
             new_argv += [arg]
             is_export = False
