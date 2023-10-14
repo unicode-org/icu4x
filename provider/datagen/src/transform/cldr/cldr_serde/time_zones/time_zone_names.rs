@@ -61,7 +61,7 @@ pub enum Location {
 #[serde(untagged)]
 pub enum LocationOrSubRegion {
     Location(Location),
-    SubRegion(HashMap<String, Location>),
+    SubRegion(BTreeMap<String, Location>),
 }
 
 #[derive(PartialEq, Debug, Clone, Default, Deserialize)]
