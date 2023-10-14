@@ -168,7 +168,7 @@ impl From<CldrTimeZonesData<'_>> for MetazonePeriodV1<'static> {
                 .flat_map(|(key, zone)| match zone {
                     ZonePeriod::Region(periods) => match bcp47_tzid_data.get(key) {
                         Some(bcp47) => {
-                            vec![(*bcp47, periods.clone(), meta_zone_id_data.clone())]
+                            vec![(*bcp47, periods, meta_zone_id_data)]
                         }
                         None => panic!("Cannot find bcp47 for {key:?}."),
                     },
@@ -179,14 +179,14 @@ impl From<CldrTimeZonesData<'_>> for MetazonePeriodV1<'static> {
                             key.push('/');
                             key.push_str(inner_key);
                             match location_or_subregion {
-                                MetaLocationOrSubRegion::Location(periods) => match bcp47_tzid_data
-                                    .get(&key)
-                                {
-                                    Some(bcp47) => {
-                                        vec![(*bcp47, periods.clone(), meta_zone_id_data.clone())]
+                                MetaLocationOrSubRegion::Location(periods) => {
+                                    match bcp47_tzid_data.get(&key) {
+                                        Some(bcp47) => {
+                                            vec![(*bcp47, periods, meta_zone_id_data)]
+                                        }
+                                        None => panic!("Cannot find bcp47 for {key:?}."),
                                     }
-                                    None => panic!("Cannot find bcp47 for {key:?}."),
-                                },
+                                }
                                 MetaLocationOrSubRegion::SubRegion(subregion) => subregion
                                     .iter()
                                     .flat_map(move |(inner_inner_key, periods)| {
@@ -195,11 +195,7 @@ impl From<CldrTimeZonesData<'_>> for MetazonePeriodV1<'static> {
                                         key.push_str(inner_inner_key);
                                         match bcp47_tzid_data.get(&key) {
                                             Some(bcp47) => {
-                                                vec![(
-                                                    *bcp47,
-                                                    periods.clone(),
-                                                    meta_zone_id_data.clone(),
-                                                )]
+                                                vec![(*bcp47, periods, meta_zone_id_data)]
                                             }
                                             None => panic!("Cannot find bcp47 for {key:?}."),
                                         }
@@ -434,13 +430,13 @@ fn iterate_zone_format_for_time_zone_id(
         .map(move |(key, value)| (key1, convert_cldr_zone_variant(&key), value))
 }
 
-fn metazone_periods_iter(
+fn metazone_periods_iter<'a>(
     pair: (
         TimeZoneBcp47Id,
-        Vec<MetazoneForPeriod>,
-        BTreeMap<String, MetazoneId>,
+        &'a Vec<MetazoneForPeriod>,
+        &'a BTreeMap<String, MetazoneId>,
     ),
-) -> impl Iterator<Item = (TimeZoneBcp47Id, i32, Option<MetazoneId>)> {
+) -> impl Iterator<Item = (TimeZoneBcp47Id, i32, Option<MetazoneId>)> + 'a {
     let (time_zone_key, periods, meta_zone_id_data) = pair;
     periods
         .into_iter()
