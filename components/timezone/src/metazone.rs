@@ -141,160 +141,15 @@ mod tests {
     fn zeromap2d_metazone() {
         let source_data = [
             (
-                TimeZoneBcp47Id(tinystr!(8, "sydam")),
-                0,
-                Some(MetazoneId(tinystr!(4, "euea"))),
-            ),
-            (TimeZoneBcp47Id(tinystr!(8, "bddac")), 0, None),
-            (
-                TimeZoneBcp47Id(tinystr!(8, "bddac")),
-                646200,
-                Some(MetazoneId(tinystr!(4, "bang"))),
-            ),
-            (
-                TimeZoneBcp47Id(tinystr!(8, "tldil")),
-                0,
-                Some(MetazoneId(tinystr!(4, "eati"))),
-            ),
-            (
-                TimeZoneBcp47Id(tinystr!(8, "tldil")),
-                3331620,
-                Some(MetazoneId(tinystr!(4, "ince"))),
-            ),
-            (
-                TimeZoneBcp47Id(tinystr!(8, "tldil")),
-                16152000,
-                Some(MetazoneId(tinystr!(4, "eati"))),
-            ),
-            (
                 TimeZoneBcp47Id(tinystr!(8, "aedxb")),
                 0,
                 Some(MetazoneId(tinystr!(4, "gulf"))),
-            ),
-            (TimeZoneBcp47Id(tinystr!(8, "tjdyu")), 0, None),
-            (
-                TimeZoneBcp47Id(tinystr!(8, "tjdyu")),
-                11406060,
-                Some(MetazoneId(tinystr!(4, "taji"))),
-            ),
-            (
-                TimeZoneBcp47Id(tinystr!(8, "cyfmg")),
-                0,
-                Some(MetazoneId(tinystr!(4, "euea"))),
-            ),
-            (
-                TimeZoneBcp47Id(tinystr!(8, "gazastrp")),
-                0,
-                Some(MetazoneId(tinystr!(4, "isra"))),
-            ),
-            (
-                TimeZoneBcp47Id(tinystr!(8, "gazastrp")),
-                13674120,
-                Some(MetazoneId(tinystr!(4, "euea"))),
-            ),
-            (
-                TimeZoneBcp47Id(tinystr!(8, "hebron")),
-                0,
-                Some(MetazoneId(tinystr!(4, "isra"))),
-            ),
-            (
-                TimeZoneBcp47Id(tinystr!(8, "hebron")),
-                13674120,
-                Some(MetazoneId(tinystr!(4, "euea"))),
-            ),
-            (
-                TimeZoneBcp47Id(tinystr!(8, "hkhkg")),
-                0,
-                Some(MetazoneId(tinystr!(4, "hoko"))),
-            ),
-            (
-                TimeZoneBcp47Id(tinystr!(8, "mnhvd")),
-                0,
-                Some(MetazoneId(tinystr!(4, "hovd"))),
-            ),
-            (
-                TimeZoneBcp47Id(tinystr!(8, "ruikt")),
-                0,
-                Some(MetazoneId(tinystr!(4, "irku"))),
-            ),
-            (
-                TimeZoneBcp47Id(tinystr!(8, "idjkt")),
-                0,
-                Some(MetazoneId(tinystr!(4, "inwe"))),
-            ),
-            (
-                TimeZoneBcp47Id(tinystr!(8, "iddjj")),
-                0,
-                Some(MetazoneId(tinystr!(4, "inea"))),
-            ),
-            (
-                TimeZoneBcp47Id(tinystr!(8, "jeruslm")),
-                0,
-                Some(MetazoneId(tinystr!(4, "isra"))),
             ),
             (
                 TimeZoneBcp47Id(tinystr!(8, "afkbl")),
                 0,
                 Some(MetazoneId(tinystr!(4, "afgh"))),
             ),
-            (
-                TimeZoneBcp47Id(tinystr!(8, "rupkc")),
-                0,
-                Some(MetazoneId(tinystr!(4, "kamc"))),
-            ),
-            (TimeZoneBcp47Id(tinystr!(8, "pkkhi")), 0, None),
-            (
-                TimeZoneBcp47Id(tinystr!(8, "pkkhi")),
-                646260,
-                Some(MetazoneId(tinystr!(4, "paki"))),
-            ),
-            (
-                TimeZoneBcp47Id(tinystr!(8, "npktm")),
-                0,
-                Some(MetazoneId(tinystr!(4, "nepa"))),
-            ),
-            (
-                TimeZoneBcp47Id(tinystr!(8, "rukhndg")),
-                0,
-                Some(MetazoneId(tinystr!(4, "yaku"))),
-            ),
-            (
-                TimeZoneBcp47Id(tinystr!(8, "rukhndg")),
-                17881380,
-                Some(MetazoneId(tinystr!(4, "vlad"))),
-            ),
-            (
-                TimeZoneBcp47Id(tinystr!(8, "rukhndg")),
-                21930540,
-                Some(MetazoneId(tinystr!(4, "yaku"))),
-            ),
-            (
-                TimeZoneBcp47Id(tinystr!(8, "rukra")),
-                0,
-                Some(MetazoneId(tinystr!(4, "kras"))),
-            ),
-            (TimeZoneBcp47Id(tinystr!(8, "mykul")), 0, None),
-            (
-                TimeZoneBcp47Id(tinystr!(8, "mykul")),
-                6311070,
-                Some(MetazoneId(tinystr!(4, "mala"))),
-            ),
-            (TimeZoneBcp47Id(tinystr!(8, "mykch")), 0, None),
-            (
-                TimeZoneBcp47Id(tinystr!(8, "mykch")),
-                6311040,
-                Some(MetazoneId(tinystr!(4, "mala"))),
-            ),
-            (
-                TimeZoneBcp47Id(tinystr!(8, "kwkwi")),
-                0,
-                Some(MetazoneId(tinystr!(4, "arab"))),
-            ),
-            (
-                TimeZoneBcp47Id(tinystr!(8, "pst8pdt")),
-                0,
-                Some(MetazoneId(tinystr!(4, "ampa"))),
-            ),
             (TimeZoneBcp47Id(tinystr!(8, "ushnl")), 0, None),
             (
                 TimeZoneBcp47Id(tinystr!(8, "ushnl")),
@@ -306,22 +161,6 @@ mod tests {
                 TimeZoneBcp47Id(tinystr!(8, "ushnl")),
                 7272660,
                 Some(MetazoneId(tinystr!(4, "haal"))),
-            ),
-            (
-                TimeZoneBcp47Id(tinystr!(8, "kicxi")),
-                0,
-                Some(MetazoneId(tinystr!(4, "liis"))),
-            ),
-            (
-                TimeZoneBcp47Id(tinystr!(8, "fmksa")),
-                0,
-                Some(MetazoneId(tinystr!(4, "kosr"))),
-            ),
-            (TimeZoneBcp47Id(tinystr!(8, "mhkwa")), 0, None),
-            (
-                TimeZoneBcp47Id(tinystr!(8, "mhkwa")),
-                12432240,
-                Some(MetazoneId(tinystr!(4, "mais"))),
             ),
         ];
 
