@@ -1,0 +1,1220 @@
+{
+  "units_info": {
+    "100-kilometer": {
+      "quantity": null,
+      "convert_unit": 0
+    },
+    "acre": {
+      "quantity": null,
+      "convert_unit": 1
+    },
+    "ampere": {
+      "quantity": 0,
+      "convert_unit": 2
+    },
+    "ampere-per-meter": {
+      "quantity": 1,
+      "convert_unit": null
+    },
+    "ampere-per-square-meter": {
+      "quantity": 2,
+      "convert_unit": null
+    },
+    "arc-minute": {
+      "quantity": null,
+      "convert_unit": 3
+    },
+    "arc-second": {
+      "quantity": null,
+      "convert_unit": 4
+    },
+    "astronomical-unit": {
+      "quantity": null,
+      "convert_unit": 5
+    },
+    "atmosphere": {
+      "quantity": null,
+      "convert_unit": 6
+    },
+    "bar": {
+      "quantity": null,
+      "convert_unit": 7
+    },
+    "barrel": {
+      "quantity": null,
+      "convert_unit": 8
+    },
+    "bit": {
+      "quantity": 3,
+      "convert_unit": 9
+    },
+    "british-thermal-unit": {
+      "quantity": null,
+      "convert_unit": 10
+    },
+    "bushel": {
+      "quantity": null,
+      "convert_unit": 11
+    },
+    "byte": {
+      "quantity": null,
+      "convert_unit": 12
+    },
+    "calorie": {
+      "quantity": null,
+      "convert_unit": 13
+    },
+    "candela": {
+      "quantity": 4,
+      "convert_unit": 14
+    },
+    "candela-per-square-meter": {
+      "quantity": 5,
+      "convert_unit": null
+    },
+    "candela-square-meter-per-square-meter": {
+      "quantity": 6,
+      "convert_unit": null
+    },
+    "carat": {
+      "quantity": null,
+      "convert_unit": 15
+    },
+    "celsius": {
+      "quantity": null,
+      "convert_unit": 16
+    },
+    "century": {
+      "quantity": null,
+      "convert_unit": 17
+    },
+    "cubic-meter": {
+      "quantity": 7,
+      "convert_unit": null
+    },
+    "cubic-meter-per-kilogram": {
+      "quantity": 8,
+      "convert_unit": null
+    },
+    "cubic-meter-per-meter": {
+      "quantity": 9,
+      "convert_unit": null
+    },
+    "cubic-second-square-ampere-per-kilogram-square-meter": {
+      "quantity": 10,
+      "convert_unit": null
+    },
+    "cup": {
+      "quantity": null,
+      "convert_unit": 18
+    },
+    "cup-metric": {
+      "quantity": null,
+      "convert_unit": 19
+    },
+    "dalton": {
+      "quantity": null,
+      "convert_unit": 20
+    },
+    "day": {
+      "quantity": null,
+      "convert_unit": 21
+    },
+    "day-person": {
+      "quantity": null,
+      "convert_unit": 22
+    },
+    "decade": {
+      "quantity": null,
+      "convert_unit": 23
+    },
+    "degree": {
+      "quantity": null,
+      "convert_unit": 24
+    },
+    "dessert-spoon": {
+      "quantity": null,
+      "convert_unit": 25
+    },
+    "dessert-spoon-imperial": {
+      "quantity": null,
+      "convert_unit": 26
+    },
+    "dot": {
+      "quantity": null,
+      "convert_unit": 27
+    },
+    "dram": {
+      "quantity": null,
+      "convert_unit": 28
+    },
+    "drop": {
+      "quantity": null,
+      "convert_unit": 29
+    },
+    "dunam": {
+      "quantity": null,
+      "convert_unit": 30
+    },
+    "earth-mass": {
+      "quantity": null,
+      "convert_unit": 31
+    },
+    "earth-radius": {
+      "quantity": null,
+      "convert_unit": 32
+    },
+    "electronvolt": {
+      "quantity": null,
+      "convert_unit": 33
+    },
+    "em": {
+      "quantity": 11,
+      "convert_unit": 34
+    },
+    "fahrenheit": {
+      "quantity": null,
+      "convert_unit": 35
+    },
+    "fathom": {
+      "quantity": null,
+      "convert_unit": 36
+    },
+    "fluid-ounce": {
+      "quantity": null,
+      "convert_unit": 37
+    },
+    "fluid-ounce-imperial": {
+      "quantity": null,
+      "convert_unit": 38
+    },
+    "foodcalorie": {
+      "quantity": null,
+      "convert_unit": 39
+    },
+    "foot": {
+      "quantity": null,
+      "convert_unit": 40
+    },
+    "furlong": {
+      "quantity": null,
+      "convert_unit": 41
+    },
+    "g-force": {
+      "quantity": null,
+      "convert_unit": 42
+    },
+    "gallon": {
+      "quantity": null,
+      "convert_unit": 43
+    },
+    "gallon-imperial": {
+      "quantity": null,
+      "convert_unit": 44
+    },
+    "grain": {
+      "quantity": null,
+      "convert_unit": 45
+    },
+    "gram": {
+      "quantity": null,
+      "convert_unit": 46
+    },
+    "hectare": {
+      "quantity": null,
+      "convert_unit": 47
+    },
+    "hertz": {
+      "quantity": null,
+      "convert_unit": 48
+    },
+    "horsepower": {
+      "quantity": null,
+      "convert_unit": 49
+    },
+    "hour": {
+      "quantity": null,
+      "convert_unit": 50
+    },
+    "inch": {
+      "quantity": null,
+      "convert_unit": 51
+    },
+    "item": {
+      "quantity": 12,
+      "convert_unit": 52
+    },
+    "item-per-cubic-meter": {
+      "quantity": 13,
+      "convert_unit": null
+    },
+    "item-per-kilogram": {
+      "quantity": 14,
+      "convert_unit": null
+    },
+    "jigger": {
+      "quantity": null,
+      "convert_unit": 53
+    },
+    "joule": {
+      "quantity": null,
+      "convert_unit": 54
+    },
+    "karat": {
+      "quantity": null,
+      "convert_unit": 55
+    },
+    "kelvin": {
+      "quantity": 15,
+      "convert_unit": 56
+    },
+    "kilogram": {
+      "quantity": 16,
+      "convert_unit": 57
+    },
+    "kilogram-meter-per-square-second": {
+      "quantity": 17,
+      "convert_unit": null
+    },
+    "kilogram-per-cubic-meter": {
+      "quantity": 18,
+      "convert_unit": null
+    },
+    "kilogram-per-kilogram": {
+      "quantity": 19,
+      "convert_unit": null
+    },
+    "kilogram-per-meter-square-second": {
+      "quantity": 20,
+      "convert_unit": null
+    },
+    "kilogram-per-square-meter-square-second": {
+      "quantity": 21,
+      "convert_unit": null
+    },
+    "kilogram-per-square-second-ampere": {
+      "quantity": 22,
+      "convert_unit": null
+    },
+    "kilogram-square-meter-per-cubic-second": {
+      "quantity": 23,
+      "convert_unit": null
+    },
+    "kilogram-square-meter-per-cubic-second-ampere": {
+      "quantity": 24,
+      "convert_unit": null
+    },
+    "kilogram-square-meter-per-cubic-second-square-ampere": {
+      "quantity": 25,
+      "convert_unit": null
+    },
+    "kilogram-square-meter-per-square-second": {
+      "quantity": 26,
+      "convert_unit": null
+    },
+    "kilogram-square-meter-per-square-second-ampere": {
+      "quantity": 27,
+      "convert_unit": null
+    },
+    "kilogram-square-meter-per-square-second-square-ampere": {
+      "quantity": 28,
+      "convert_unit": null
+    },
+    "knot": {
+      "quantity": null,
+      "convert_unit": 58
+    },
+    "light-year": {
+      "quantity": null,
+      "convert_unit": 59
+    },
+    "liter": {
+      "quantity": null,
+      "convert_unit": 60
+    },
+    "lumen": {
+      "quantity": null,
+      "convert_unit": 61
+    },
+    "lux": {
+      "quantity": null,
+      "convert_unit": 62
+    },
+    "meter": {
+      "quantity": 29,
+      "convert_unit": 63
+    },
+    "meter-per-second": {
+      "quantity": 30,
+      "convert_unit": null
+    },
+    "meter-per-square-second": {
+      "quantity": 31,
+      "convert_unit": null
+    },
+    "mile": {
+      "quantity": null,
+      "convert_unit": 64
+    },
+    "mile-scandinavian": {
+      "quantity": null,
+      "convert_unit": 65
+    },
+    "minute": {
+      "quantity": null,
+      "convert_unit": 66
+    },
+    "mole": {
+      "quantity": null,
+      "convert_unit": 67
+    },
+    "month": {
+      "quantity": null,
+      "convert_unit": 68
+    },
+    "month-person": {
+      "quantity": null,
+      "convert_unit": 69
+    },
+    "nautical-mile": {
+      "quantity": null,
+      "convert_unit": 70
+    },
+    "newton": {
+      "quantity": null,
+      "convert_unit": 71
+    },
+    "ofglucose": {
+      "quantity": null,
+      "convert_unit": 72
+    },
+    "ofhg": {
+      "quantity": null,
+      "convert_unit": 73
+    },
+    "ohm": {
+      "quantity": null,
+      "convert_unit": 74
+    },
+    "ounce": {
+      "quantity": null,
+      "convert_unit": 75
+    },
+    "ounce-troy": {
+      "quantity": null,
+      "convert_unit": 76
+    },
+    "parsec": {
+      "quantity": null,
+      "convert_unit": 77
+    },
+    "pascal": {
+      "quantity": null,
+      "convert_unit": 78
+    },
+    "percent": {
+      "quantity": null,
+      "convert_unit": 79
+    },
+    "permille": {
+      "quantity": null,
+      "convert_unit": 80
+    },
+    "permillion": {
+      "quantity": null,
+      "convert_unit": 81
+    },
+    "permyriad": {
+      "quantity": null,
+      "convert_unit": 82
+    },
+    "pinch": {
+      "quantity": null,
+      "convert_unit": 83
+    },
+    "pint": {
+      "quantity": null,
+      "convert_unit": 84
+    },
+    "pint-metric": {
+      "quantity": null,
+      "convert_unit": 85
+    },
+    "pixel": {
+      "quantity": 32,
+      "convert_unit": 86
+    },
+    "pixel-per-meter": {
+      "quantity": 33,
+      "convert_unit": null
+    },
+    "point": {
+      "quantity": null,
+      "convert_unit": 87
+    },
+    "portion": {
+      "quantity": 34,
+      "convert_unit": 88
+    },
+    "pound": {
+      "quantity": null,
+      "convert_unit": 89
+    },
+    "pound-force": {
+      "quantity": null,
+      "convert_unit": 90
+    },
+    "pow4-second-square-ampere-per-kilogram-square-meter": {
+      "quantity": 35,
+      "convert_unit": null
+    },
+    "quart": {
+      "quantity": null,
+      "convert_unit": 91
+    },
+    "quart-imperial": {
+      "quantity": null,
+      "convert_unit": 92
+    },
+    "quarter": {
+      "quantity": null,
+      "convert_unit": 93
+    },
+    "radian": {
+      "quantity": null,
+      "convert_unit": 94
+    },
+    "revolution": {
+      "quantity": 36,
+      "convert_unit": 95
+    },
+    "revolution-per-meter": {
+      "quantity": 37,
+      "convert_unit": null
+    },
+    "revolution-per-second": {
+      "quantity": 38,
+      "convert_unit": null
+    },
+    "second": {
+      "quantity": 39,
+      "convert_unit": 96
+    },
+    "second-ampere": {
+      "quantity": 40,
+      "convert_unit": null
+    },
+    "solar-luminosity": {
+      "quantity": null,
+      "convert_unit": 97
+    },
+    "solar-mass": {
+      "quantity": null,
+      "convert_unit": 98
+    },
+    "solar-radius": {
+      "quantity": null,
+      "convert_unit": 99
+    },
+    "square-meter": {
+      "quantity": 41,
+      "convert_unit": null
+    },
+    "square-meter-per-square-second": {
+      "quantity": 42,
+      "convert_unit": null
+    },
+    "square-revolution": {
+      "quantity": 43,
+      "convert_unit": null
+    },
+    "stone": {
+      "quantity": null,
+      "convert_unit": 100
+    },
+    "tablespoon": {
+      "quantity": null,
+      "convert_unit": 101
+    },
+    "teaspoon": {
+      "quantity": null,
+      "convert_unit": 102
+    },
+    "therm-us": {
+      "quantity": null,
+      "convert_unit": 103
+    },
+    "ton": {
+      "quantity": null,
+      "convert_unit": 104
+    },
+    "tonne": {
+      "quantity": null,
+      "convert_unit": 105
+    },
+    "volt": {
+      "quantity": null,
+      "convert_unit": 106
+    },
+    "watt": {
+      "quantity": null,
+      "convert_unit": 107
+    },
+    "week": {
+      "quantity": null,
+      "convert_unit": 108
+    },
+    "week-person": {
+      "quantity": null,
+      "convert_unit": 109
+    },
+    "yard": {
+      "quantity": null,
+      "convert_unit": 110
+    },
+    "year": {
+      "quantity": 44,
+      "convert_unit": 111
+    },
+    "year-person": {
+      "quantity": null,
+      "convert_unit": 112
+    }
+  },
+  "unit_quantity": [
+    {
+      "quantity": "electric-current",
+      "constant_exactness": "Simple"
+    },
+    {
+      "quantity": "magnetic-field-strength",
+      "constant_exactness": "Complex"
+    },
+    {
+      "quantity": "current-density",
+      "constant_exactness": "Complex"
+    },
+    {
+      "quantity": "digital",
+      "constant_exactness": "Simple"
+    },
+    {
+      "quantity": "luminous-intensity",
+      "constant_exactness": "Simple"
+    },
+    {
+      "quantity": "illuminance",
+      "constant_exactness": "Complex"
+    },
+    {
+      "quantity": "luminous-flux",
+      "constant_exactness": "Complex"
+    },
+    {
+      "quantity": "volume",
+      "constant_exactness": "Complex"
+    },
+    {
+      "quantity": "specific-volume",
+      "constant_exactness": "Complex"
+    },
+    {
+      "quantity": "consumption",
+      "constant_exactness": "Complex"
+    },
+    {
+      "quantity": "electric-conductance",
+      "constant_exactness": "Complex"
+    },
+    {
+      "quantity": "typewidth",
+      "constant_exactness": "Simple"
+    },
+    {
+      "quantity": "substance-amount",
+      "constant_exactness": "Simple"
+    },
+    {
+      "quantity": "concentration",
+      "constant_exactness": "Complex"
+    },
+    {
+      "quantity": "concentration-mass",
+      "constant_exactness": "Complex"
+    },
+    {
+      "quantity": "temperature",
+      "constant_exactness": "Simple"
+    },
+    {
+      "quantity": "mass",
+      "constant_exactness": "Simple"
+    },
+    {
+      "quantity": "force",
+      "constant_exactness": "Complex"
+    },
+    {
+      "quantity": "mass-density",
+      "constant_exactness": "Complex"
+    },
+    {
+      "quantity": "mass-fraction",
+      "constant_exactness": "Complex"
+    },
+    {
+      "quantity": "pressure",
+      "constant_exactness": "Complex"
+    },
+    {
+      "quantity": "pressure-per-length",
+      "constant_exactness": "Complex"
+    },
+    {
+      "quantity": "magnetic-induction",
+      "constant_exactness": "Complex"
+    },
+    {
+      "quantity": "power",
+      "constant_exactness": "Complex"
+    },
+    {
+      "quantity": "voltage",
+      "constant_exactness": "Complex"
+    },
+    {
+      "quantity": "electric-resistance",
+      "constant_exactness": "Complex"
+    },
+    {
+      "quantity": "energy",
+      "constant_exactness": "Complex"
+    },
+    {
+      "quantity": "magnetic-flux",
+      "constant_exactness": "Complex"
+    },
+    {
+      "quantity": "electric-inductance",
+      "constant_exactness": "Complex"
+    },
+    {
+      "quantity": "length",
+      "constant_exactness": "Simple"
+    },
+    {
+      "quantity": "speed",
+      "constant_exactness": "Complex"
+    },
+    {
+      "quantity": "acceleration",
+      "constant_exactness": "Complex"
+    },
+    {
+      "quantity": "graphics",
+      "constant_exactness": "Simple"
+    },
+    {
+      "quantity": "resolution",
+      "constant_exactness": "Complex"
+    },
+    {
+      "quantity": "portion",
+      "constant_exactness": "Simple"
+    },
+    {
+      "quantity": "electric-capacitance",
+      "constant_exactness": "Complex"
+    },
+    {
+      "quantity": "angle",
+      "constant_exactness": "Simple"
+    },
+    {
+      "quantity": "wave-number",
+      "constant_exactness": "Complex"
+    },
+    {
+      "quantity": "frequency",
+      "constant_exactness": "Complex"
+    },
+    {
+      "quantity": "duration",
+      "constant_exactness": "Simple"
+    },
+    {
+      "quantity": "electric-charge",
+      "constant_exactness": "Complex"
+    },
+    {
+      "quantity": "area",
+      "constant_exactness": "Complex"
+    },
+    {
+      "quantity": "dose",
+      "constant_exactness": "Complex"
+    },
+    {
+      "quantity": "solid-angle",
+      "constant_exactness": "Complex"
+    },
+    {
+      "quantity": "year-duration",
+      "constant_exactness": "Simple"
+    }
+  ],
+  "convert_units": [
+    {
+      "base_unit": "meter",
+      "factor": "100000"
+    },
+    {
+      "base_unit": "square-meter",
+      "factor": "ft2_to_m2 * 43560"
+    },
+    {
+      "base_unit": "ampere",
+      "factor": "1"
+    },
+    {
+      "base_unit": "revolution",
+      "factor": "1/360*60"
+    },
+    {
+      "base_unit": "revolution",
+      "factor": "1/360*60*60"
+    },
+    {
+      "base_unit": "meter",
+      "factor": "meters_per_AU"
+    },
+    {
+      "base_unit": "kilogram-per-meter-square-second",
+      "factor": "101325"
+    },
+    {
+      "base_unit": "kilogram-per-meter-square-second",
+      "factor": "100000"
+    },
+    {
+      "base_unit": "cubic-meter",
+      "factor": "42*gal_to_m3"
+    },
+    {
+      "base_unit": "bit",
+      "factor": "1"
+    },
+    {
+      "base_unit": "kilogram-square-meter-per-square-second",
+      "factor": "4.184*2267.96185/9"
+    },
+    {
+      "base_unit": "cubic-meter",
+      "factor": "2150.42*in3_to_m3"
+    },
+    {
+      "base_unit": "bit",
+      "factor": "8"
+    },
+    {
+      "base_unit": "kilogram-square-meter-per-square-second",
+      "factor": "4.184"
+    },
+    {
+      "base_unit": "candela",
+      "factor": "1"
+    },
+    {
+      "base_unit": "kilogram",
+      "factor": "0.0002"
+    },
+    {
+      "base_unit": "kelvin",
+      "factor": "1"
+    },
+    {
+      "base_unit": "year",
+      "factor": "100"
+    },
+    {
+      "base_unit": "cubic-meter",
+      "factor": "gal_to_m3/16"
+    },
+    {
+      "base_unit": "cubic-meter",
+      "factor": "0.00025"
+    },
+    {
+      "base_unit": "kilogram-square-meter-per-square-second",
+      "factor": "1.49241808560E-10"
+    },
+    {
+      "base_unit": "second",
+      "factor": "86400"
+    },
+    {
+      "base_unit": "second",
+      "factor": "86400"
+    },
+    {
+      "base_unit": "year",
+      "factor": "10"
+    },
+    {
+      "base_unit": "revolution",
+      "factor": "1/360"
+    },
+    {
+      "base_unit": "cubic-meter",
+      "factor": "gal_to_m3/16*128"
+    },
+    {
+      "base_unit": "cubic-meter",
+      "factor": "gal_imp_to_m3/16*128"
+    },
+    {
+      "base_unit": "pixel",
+      "factor": "1"
+    },
+    {
+      "base_unit": "cubic-meter",
+      "factor": "gal_to_m3/128*8"
+    },
+    {
+      "base_unit": "cubic-meter",
+      "factor": "gal_to_m3/128*576"
+    },
+    {
+      "base_unit": "square-meter",
+      "factor": "1000"
+    },
+    {
+      "base_unit": "kilogram",
+      "factor": "5.9722E+24"
+    },
+    {
+      "base_unit": "meter",
+      "factor": "6.3781E6"
+    },
+    {
+      "base_unit": "kilogram-square-meter-per-square-second",
+      "factor": "1.602177E-19"
+    },
+    {
+      "base_unit": "em",
+      "factor": "1"
+    },
+    {
+      "base_unit": "kelvin",
+      "factor": "5/9"
+    },
+    {
+      "base_unit": "meter",
+      "factor": "ft_to_m * 6"
+    },
+    {
+      "base_unit": "cubic-meter",
+      "factor": "gal_to_m3/128"
+    },
+    {
+      "base_unit": "cubic-meter",
+      "factor": "gal_imp_to_m3/160"
+    },
+    {
+      "base_unit": "kilogram-square-meter-per-square-second",
+      "factor": "4184"
+    },
+    {
+      "base_unit": "meter",
+      "factor": "ft_to_m"
+    },
+    {
+      "base_unit": "meter",
+      "factor": "ft_to_m*660"
+    },
+    {
+      "base_unit": "meter-per-square-second",
+      "factor": "gravity"
+    },
+    {
+      "base_unit": "cubic-meter",
+      "factor": "gal_to_m3"
+    },
+    {
+      "base_unit": "cubic-meter",
+      "factor": "gal_imp_to_m3"
+    },
+    {
+      "base_unit": "kilogram",
+      "factor": "lb_to_kg/7000"
+    },
+    {
+      "base_unit": "kilogram",
+      "factor": "0.001"
+    },
+    {
+      "base_unit": "square-meter",
+      "factor": "10000"
+    },
+    {
+      "base_unit": "revolution-per-second",
+      "factor": "1"
+    },
+    {
+      "base_unit": "kilogram-square-meter-per-cubic-second",
+      "factor": "ft_to_m * lb_to_kg * gravity * 550"
+    },
+    {
+      "base_unit": "second",
+      "factor": "3600"
+    },
+    {
+      "base_unit": "meter",
+      "factor": "ft_to_m/12"
+    },
+    {
+      "base_unit": "item",
+      "factor": "1"
+    },
+    {
+      "base_unit": "cubic-meter",
+      "factor": "gal_to_m3*3/128*2"
+    },
+    {
+      "base_unit": "kilogram-square-meter-per-square-second",
+      "factor": "1"
+    },
+    {
+      "base_unit": "portion",
+      "factor": "1/24"
+    },
+    {
+      "base_unit": "kelvin",
+      "factor": "1"
+    },
+    {
+      "base_unit": "kilogram",
+      "factor": "1"
+    },
+    {
+      "base_unit": "meter-per-second",
+      "factor": "1852/3600"
+    },
+    {
+      "base_unit": "meter",
+      "factor": "speed_of_light_meters_per_second*sec_per_julian_year"
+    },
+    {
+      "base_unit": "cubic-meter",
+      "factor": "0.001"
+    },
+    {
+      "base_unit": "candela-square-meter-per-square-meter",
+      "factor": "1"
+    },
+    {
+      "base_unit": "candela-per-square-meter",
+      "factor": "1"
+    },
+    {
+      "base_unit": "meter",
+      "factor": "1"
+    },
+    {
+      "base_unit": "meter",
+      "factor": "ft_to_m*5280"
+    },
+    {
+      "base_unit": "meter",
+      "factor": "10000"
+    },
+    {
+      "base_unit": "second",
+      "factor": "60"
+    },
+    {
+      "base_unit": "item",
+      "factor": "item_per_mole"
+    },
+    {
+      "base_unit": "year",
+      "factor": "1/12"
+    },
+    {
+      "base_unit": "year",
+      "factor": "1/12"
+    },
+    {
+      "base_unit": "meter",
+      "factor": "1852"
+    },
+    {
+      "base_unit": "kilogram-meter-per-square-second",
+      "factor": "1"
+    },
+    {
+      "base_unit": "item-per-kilogram",
+      "factor": "1000*item_per_mole/glucose_molar_mass"
+    },
+    {
+      "base_unit": "kilogram-per-square-meter-square-second",
+      "factor": "13595.1*gravity"
+    },
+    {
+      "base_unit": "kilogram-square-meter-per-cubic-second-square-ampere",
+      "factor": "1"
+    },
+    {
+      "base_unit": "kilogram",
+      "factor": "lb_to_kg/16"
+    },
+    {
+      "base_unit": "kilogram",
+      "factor": "0.03110348"
+    },
+    {
+      "base_unit": "meter",
+      "factor": "meters_per_AU*60*60*180/PI"
+    },
+    {
+      "base_unit": "kilogram-per-meter-square-second",
+      "factor": "1"
+    },
+    {
+      "base_unit": "portion",
+      "factor": "1/100"
+    },
+    {
+      "base_unit": "portion",
+      "factor": "1/1000"
+    },
+    {
+      "base_unit": "portion",
+      "factor": "1/1000000"
+    },
+    {
+      "base_unit": "portion",
+      "factor": "1/10000"
+    },
+    {
+      "base_unit": "cubic-meter",
+      "factor": "gal_to_m3/128*128"
+    },
+    {
+      "base_unit": "cubic-meter",
+      "factor": "gal_to_m3/8"
+    },
+    {
+      "base_unit": "cubic-meter",
+      "factor": "0.0005"
+    },
+    {
+      "base_unit": "pixel",
+      "factor": "1"
+    },
+    {
+      "base_unit": "meter",
+      "factor": "ft_to_m/864"
+    },
+    {
+      "base_unit": "portion",
+      "factor": "1"
+    },
+    {
+      "base_unit": "kilogram",
+      "factor": "lb_to_kg"
+    },
+    {
+      "base_unit": "kilogram-meter-per-square-second",
+      "factor": "lb_to_kg * gravity"
+    },
+    {
+      "base_unit": "cubic-meter",
+      "factor": "gal_to_m3/4"
+    },
+    {
+      "base_unit": "cubic-meter",
+      "factor": "gal_imp_to_m3/4"
+    },
+    {
+      "base_unit": "year",
+      "factor": "1/4"
+    },
+    {
+      "base_unit": "revolution",
+      "factor": "1/2*PI"
+    },
+    {
+      "base_unit": "revolution",
+      "factor": "1"
+    },
+    {
+      "base_unit": "second",
+      "factor": "1"
+    },
+    {
+      "base_unit": "kilogram-square-meter-per-cubic-second",
+      "factor": "3.828E+26"
+    },
+    {
+      "base_unit": "kilogram",
+      "factor": "1.98847E+30"
+    },
+    {
+      "base_unit": "meter",
+      "factor": "695700000"
+    },
+    {
+      "base_unit": "kilogram",
+      "factor": "lb_to_kg*14"
+    },
+    {
+      "base_unit": "cubic-meter",
+      "factor": "gal_to_m3/256"
+    },
+    {
+      "base_unit": "cubic-meter",
+      "factor": "gal_to_m3/16*48"
+    },
+    {
+      "base_unit": "kilogram-square-meter-per-square-second",
+      "factor": "105480400"
+    },
+    {
+      "base_unit": "kilogram",
+      "factor": "lb_to_kg*2000"
+    },
+    {
+      "base_unit": "kilogram",
+      "factor": "1000"
+    },
+    {
+      "base_unit": "kilogram-square-meter-per-cubic-second-ampere",
+      "factor": "1"
+    },
+    {
+      "base_unit": "kilogram-square-meter-per-cubic-second",
+      "factor": "1"
+    },
+    {
+      "base_unit": "second",
+      "factor": "604800"
+    },
+    {
+      "base_unit": "second",
+      "factor": "604800"
+    },
+    {
+      "base_unit": "meter",
+      "factor": "ft_to_m*3"
+    },
+    {
+      "base_unit": "year",
+      "factor": "1"
+    },
+    {
+      "base_unit": "year",
+      "factor": "1"
+    }
+  ]
+}
