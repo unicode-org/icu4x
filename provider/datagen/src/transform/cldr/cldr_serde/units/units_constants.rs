@@ -41,9 +41,6 @@ pub struct ConvertUnit {
 
     #[serde(rename = "_factor")]
     pub factor: Option<String>,
-
-    #[serde(flatten)]
-    pub other: BTreeMap<String, String>,
 }
 
 #[derive(PartialEq, Debug, Deserialize)]
@@ -69,7 +66,7 @@ pub struct Supplemental {
     #[serde(rename = "unitConstants")]
     pub unit_constants: UnitConstants,
 
-    #[serde(rename = "UnitQuantities")]
+    #[serde(rename = "unitQuantities")]
     pub unit_quantities: UnitQuantities,
 
     #[serde(rename = "convertUnits")]
