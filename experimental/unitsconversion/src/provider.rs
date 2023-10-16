@@ -10,7 +10,7 @@
 //! Read more about data providers: [`icu_provider`]
 
 use icu_provider::prelude::*;
-use zerovec::ZeroMap;
+use zerovec::{ZeroMap, ZeroVec};
 
 #[cfg(feature = "compiled_data")]
 #[derive(Debug)]
@@ -36,7 +36,7 @@ const _: () = {
 /// The latest minimum set of keys required by this component.
 pub const KEYS: &[DataKey] = &[UnitsConstantsV1Marker::KEY];
 
-/// This type contains all of the constants data for units conversion.
+/// This type encapsulates all the constant data required for unit conversions.
 ///
 /// <div class="stab unstable">
 /// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
@@ -44,7 +44,7 @@ pub const KEYS: &[DataKey] = &[UnitsConstantsV1Marker::KEY];
 /// to be stable, their Rust representation might not be. Use with caution.
 /// </div>
 #[icu_provider::data_struct(marker(UnitsConstantsV1Marker, "units/constants@1", singleton))]
-#[derive(Default, Clone, PartialEq, Debug)]
+#[derive(Clone, PartialEq, Debug)]
 #[cfg_attr(
     feature = "datagen",
     derive(serde::Serialize, databake::Bake),
@@ -57,5 +57,77 @@ pub struct UnitsConstantsV1<'data> {
     // Also, the constant types.
     /// Maps from constant name (e.g. ft_to_m) to the value of the constant (e.g. 0.3048).
     #[cfg_attr(feature = "serde", serde(borrow))]
-    pub constants_map: ZeroMap<'data, str, str>,
+    pub constants_map: ZeroMap<'data, str, ConstantValueULE>,
+}
+
+/// This enum is used to represent the type of a constant value.
+/// It can be either `ConstantType::Actual` or `ConstantType::Approximate`.
+/// If the constant type is `ConstantType::Approximate`, it indicates that the value is not numerically accurate.
+#[zerovec::make_ule(ConstantExactnessULE)]
+#[cfg_attr(
+    feature = "datagen",
+    derive(serde::Serialize, databake::Bake),
+    databake(path = icu_unitsconversion::provider),
+)]
+#[cfg_attr(feature = "serde", derive(serde::Deserialize))]
+#[derive(Copy, Clone, Debug, PartialOrd, Ord, PartialEq, Eq, Default)]
+#[repr(u8)]
+pub enum ConstantExactness {
+    #[default]
+    Exact = 0,
+    Approximate = 1,
+}
+
+/// This enum is used to represent the sign of a constant value.
+#[zerovec::make_ule(SignULE)]
+#[cfg_attr(
+    feature = "datagen",
+    derive(serde::Serialize, databake::Bake),
+    databake(path = icu_unitsconversion::provider),
+)]
+#[cfg_attr(feature = "serde", derive(serde::Deserialize))]
+#[derive(Copy, Clone, Debug, PartialOrd, Ord, PartialEq, Eq, Default)]
+#[repr(u8)]
+pub enum Sign {
+    #[default]
+    Positive = 0,
+    Negative = 1,
+}
+
+// TODO(#4098): Improve the ULE representation. Consider using a single byte for sign and type representation.
+/// This struct encapsulates a constant value, comprising a numerator, denominator, sign, and type.
+#[zerovec::make_varule(ConstantValueULE)]
+#[derive(Clone, Debug, PartialOrd, Ord, PartialEq, Eq, Default)]
+#[cfg_attr(
+    feature = "datagen",
+    derive(databake::Bake),
+    databake(path = icu_unitsconversion::provider),
+)]
+#[cfg_attr(
+    feature = "datagen",
+    derive(serde::Serialize),
+    zerovec::derive(Serialize)
+)]
+#[cfg_attr(
+    feature = "serde",
+    derive(serde::Deserialize),
+    zerovec::derive(Deserialize)
+)]
+#[zerovec::derive(Debug)]
+pub struct ConstantValue<'data> {
+    // TODO(https://github.com/unicode-org/icu4x/issues/4092).
+    /// The numerator of the constant value in bytes starting with the least significant byte.
+    #[cfg_attr(feature = "serde", serde(borrow))]
+    pub numerator: ZeroVec<'data, u8>,
+
+    // TODO(https://github.com/unicode-org/icu4x/issues/4092).
+    /// The denominator of the constant value in bytes starting with the least significant byte.
+    #[cfg_attr(feature = "serde", serde(borrow))]
+    pub denominator: ZeroVec<'data, u8>,
+
+    /// Determines whether the constant value is positive or negative.
+    pub sign: Sign,
+
+    /// Determines whether the constant value is actual or approximate.
+    pub constant_exactness: ConstantExactness,
 }
