@@ -200,6 +200,8 @@ mod tests {
     }
 
     #[test]
+    // TODO(#3413): Delete this test when no longer needed.
+    #[ignore] // Changes too much across nightlies.
     fn check_sizes() {
         check_size_of!(4616, DateFormatter);
         check_size_of!(5488, DateTimeFormatter);
