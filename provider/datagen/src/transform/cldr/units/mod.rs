@@ -168,13 +168,13 @@ impl DataProvider<UnitsConstantsV1Marker> for crate::DatagenProvider {
                         &constant
                             .clean_num
                             .iter()
-                            .map(|s| s.to_string())
-                            .collect::<Vec<String>>(),
+                            .map(|s| s.as_str())
+                            .collect::<Vec<&str>>(),
                         &constant
                             .clean_den
                             .iter()
-                            .map(|s| s.to_string())
-                            .collect::<Vec<String>>(),
+                            .map(|s| s.as_str())
+                            .collect::<Vec<&str>>(),
                     )?;
                     let (num, den, sign, cons_type) =
                         transform_fraction_to_constant_value(value, constant.constant_exactness)?;
