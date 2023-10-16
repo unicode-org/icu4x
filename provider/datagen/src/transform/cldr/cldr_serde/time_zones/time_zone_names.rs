@@ -26,35 +26,22 @@ pub struct Metazone {
 pub struct Metazones(pub BTreeMap<String, Metazone>);
 
 #[derive(PartialEq, Debug, Clone, Deserialize)]
-pub struct LocationWithExemplarCity {
+// Since this value can be either a Location or a table of sub-regions, we use
+// the presence of fields to distinguish the object types. If CLDR-JSON adds
+// more fields to Location in the future, they must also be added here.
+//
+// Example errors that may be caused by this:
+//
+// - Cannot find bcp47 for "America/Argentina".
+// - Cannot find bcp47 for "Etc/UTC/short".
+#[serde(deny_unknown_fields)]
+pub struct Location {
     pub long: Option<ZoneFormat>,
     pub short: Option<ZoneFormat>,
     #[serde(rename = "exemplarCity")]
-    pub exemplar_city: String,
-}
-
-#[derive(PartialEq, Debug, Clone, Deserialize)]
-pub struct LocationWithShort {
-    pub long: Option<ZoneFormat>,
-    pub short: ZoneFormat,
-    #[serde(rename = "exemplarCity")]
     pub exemplar_city: Option<String>,
-}
-
-#[derive(PartialEq, Debug, Clone, Deserialize)]
-pub struct LocationWithLong {
-    pub long: ZoneFormat,
-    pub short: Option<ZoneFormat>,
-    #[serde(rename = "exemplarCity")]
-    pub exemplar_city: Option<String>,
-}
-
-#[derive(PartialEq, Debug, Clone, Deserialize)]
-#[serde(untagged)]
-pub enum Location {
-    City(LocationWithExemplarCity),
-    Long(LocationWithLong),
-    Short(LocationWithShort),
+    #[serde(rename = "exemplarCity-alt-secondary")]
+    pub exemplar_city_alt_secondary: Option<String>,
 }
 
 #[derive(PartialEq, Debug, Clone, Deserialize)]
