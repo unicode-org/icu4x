@@ -11,10 +11,10 @@ use serde::{
     de::{IgnoredAny, MapAccess, Visitor},
     Deserialize, Deserializer,
 };
-use std::collections::{BTreeMap, HashMap};
+use std::collections::BTreeMap;
 
 #[derive(PartialEq, Debug, Clone, Deserialize)]
-pub struct ZoneFormat(pub HashMap<String, String>);
+pub struct ZoneFormat(pub BTreeMap<String, String>);
 
 #[derive(PartialEq, Debug, Clone, Deserialize)]
 pub struct Metazone {
@@ -23,7 +23,7 @@ pub struct Metazone {
 }
 
 #[derive(PartialEq, Debug, Clone, Deserialize)]
-pub struct Metazones(pub HashMap<String, Metazone>);
+pub struct Metazones(pub BTreeMap<String, Metazone>);
 
 #[derive(PartialEq, Debug, Clone, Deserialize)]
 pub struct LocationWithExemplarCity {
@@ -61,14 +61,14 @@ pub enum Location {
 #[serde(untagged)]
 pub enum LocationOrSubRegion {
     Location(Location),
-    SubRegion(HashMap<String, Location>),
+    SubRegion(BTreeMap<String, Location>),
 }
 
 #[derive(PartialEq, Debug, Clone, Default, Deserialize)]
 pub struct Region(pub BTreeMap<String, LocationOrSubRegion>);
 
 #[derive(PartialEq, Debug, Clone, Default, Deserialize)]
-pub struct Zones(pub HashMap<String, Region>);
+pub struct Zones(pub BTreeMap<String, Region>);
 
 #[derive(PartialEq, Debug, Default, Clone)]
 pub struct TimeZoneNames {
@@ -76,7 +76,7 @@ pub struct TimeZoneNames {
     pub gmt_format: String,
     pub gmt_zero_format: String,
     pub region_format: String,
-    pub region_format_variants: HashMap<String, String>,
+    pub region_format_variants: BTreeMap<String, String>,
     pub fallback_format: String,
     pub zone: Zones,
     pub metazone: Option<Metazones>,
