@@ -5,7 +5,7 @@
 use std::borrow::Cow;
 
 use zerofrom::ZeroFrom;
-use zerovec::*;
+use zerovec::{ule::AsULE, *};
 
 #[make_varule(VarStructULE)]
 #[derive(Clone, PartialEq, Eq, PartialOrd, Ord, Debug, serde::Serialize, serde::Deserialize)]
@@ -166,6 +166,15 @@ fn main() {
     assert_zerovec::<VarTupleStructULE, VarTupleStruct, _>(vartuples, |stack, zero| {
         assert_eq!(stack, &VarTupleStruct::zero_from(zero))
     });
+
+    // Test that all fields are accessible on a type using multifieldule
+    let multi_ule = ule::encode_varule_to_box(&TEST_MULTIFIELD[0]);
+    assert_eq!(multi_ule.a, TEST_MULTIFIELD[0].a.to_unaligned());
+    assert_eq!(multi_ule.b, TEST_MULTIFIELD[0].b.to_unaligned());
+    assert_eq!(multi_ule.c(), TEST_MULTIFIELD[0].c);
+    assert_eq!(multi_ule.d, TEST_MULTIFIELD[0].d);
+    assert_eq!(multi_ule.e(), TEST_MULTIFIELD[0].e);
+    assert_eq!(multi_ule.f, TEST_MULTIFIELD[0].f.to_unaligned());
 }
 
 const TEST_VARSTRUCTS: &[VarStruct<'static>] = &[
