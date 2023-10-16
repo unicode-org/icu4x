@@ -4,21 +4,19 @@
 
 use std::{
     borrow::Cow,
-    collections::{BTreeMap, VecDeque},
+    collections::{BTreeMap},
 };
 
 use crate::transform::cldr::{
-    cldr_serde::{self, units::units_constants::ConvertUnit},
-    units::helpers::is_scientific_number,
+    cldr_serde::{self},
 };
 use icu_provider::{
     datagen::IterableDataProvider, DataError, DataLocale, DataPayload, DataProvider, DataRequest,
     DataResponse,
 };
 use icu_unitsconversion::{
-    provider::{ConstantExactness, ConstantValue, UnitsConstantsV1, UnitsConstantsV1Marker},
     units_provider::{
-        ConvertUnits, QuantitySimplicity, UnitQuantity, UnitsInfoIndex, UnitsInfoV1Marker, UnitsInfoV1, UnitQuantityULE, ConvertUnitsULE,
+        ConvertUnits, QuantitySimplicity, UnitQuantity, UnitsInfoIndex, UnitsInfoV1Marker, UnitsInfoV1,
     },
 };
 use zerovec::{ZeroMap, VarZeroVec};
@@ -84,7 +82,7 @@ impl DataProvider<UnitsInfoV1Marker> for crate::DatagenProvider {
 
         let result = 
             UnitsInfoV1 {
-                units_info: ZeroMap::from_iter(conversion_info_map.into_iter()),
+                units_info: ZeroMap::from_iter(conversion_info_map),
                 unit_quantity: VarZeroVec::from(&quantity_vec),
                 convert_units: VarZeroVec::from(&convert_units_vec),
             };
