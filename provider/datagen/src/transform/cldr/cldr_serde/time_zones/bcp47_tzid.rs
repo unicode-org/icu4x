@@ -9,7 +9,7 @@
 
 use icu_datetime::provider::time_zones::TimeZoneBcp47Id;
 use serde::Deserialize;
-use std::collections::HashMap;
+use std::collections::BTreeMap;
 
 #[derive(PartialEq, Debug, Clone, Deserialize)]
 pub struct Bcp47TzidAliasData {
@@ -30,7 +30,7 @@ pub struct Bcp47TimeZoneIds {
     pub _alias: String,
     pub _description: String,
     #[serde(flatten)]
-    pub values: HashMap<TimeZoneBcp47Id, Bcp47TzidAliasData>,
+    pub values: BTreeMap<TimeZoneBcp47Id, Bcp47TzidAliasData>,
 }
 
 #[derive(PartialEq, Debug, Deserialize)]
