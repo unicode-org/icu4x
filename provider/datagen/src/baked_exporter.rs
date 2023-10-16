@@ -461,7 +461,13 @@ impl BakedExporter {
                 let anchor = proc_macro2::Ident::new(
                     &first_locale
                         .chars()
-                        .map(|ch| if ch == '-' { '_' } else { ch })
+                        .map(|ch| {
+                            if ch == '-' {
+                                '_'
+                            } else {
+                                ch.to_ascii_uppercase()
+                            }
+                        })
                         .collect::<String>(),
                     proc_macro2::Span::call_site(),
                 );
