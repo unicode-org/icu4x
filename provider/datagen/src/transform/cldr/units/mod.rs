@@ -100,7 +100,7 @@ impl DataProvider<UnitsConstantsV1Marker> for crate::DatagenProvider {
         }
 
         // Replacing non scientific constant terms with their corresponding clean value.
-        let mut count = 0;
+        let mut no_update_count = 0;
         while !constants_with_non_scientific.is_empty() {
             let mut updated = false;
             let (constant_key, mut non_scientific_constant) = constants_with_non_scientific
@@ -149,8 +149,8 @@ impl DataProvider<UnitsConstantsV1Marker> for crate::DatagenProvider {
                 constants_with_non_scientific.push_back((constant_key, non_scientific_constant));
             }
 
-            count = if !updated { count + 1 } else { 0 };
-            if count > constants_with_non_scientific.len() {
+            no_update_count = if !updated { no_update_count + 1 } else { 0 };
+            if no_update_count > constants_with_non_scientific.len() {
                 return Err(DataError::custom(
                     "An Infinite loop was detected in the CLDR constants data!",
                 ));
