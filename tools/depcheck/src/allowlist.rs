@@ -148,6 +148,7 @@ pub const EXTRA_DATAGEN_DEPS: &[&str] = &[
     "itoa",
     "matrixmultiply",
     "ndarray",
+    "num",
     "num-bigint",
     "num-complex",
     "num-integer",
