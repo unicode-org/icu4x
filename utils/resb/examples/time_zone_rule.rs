@@ -21,7 +21,8 @@ use zerovec::ZeroVec;
 /// A zero-copy representation of a little-endian UTF-16 string.
 ///
 /// Unlike `String`, the contents are not required to be valid UTF-16. Consumers
-/// are expected to validate the contents or use `try_into::<String>()`.
+/// are expected to validate the contents or use `try_into::<String>()`. No zero
+/// terminator is included.
 #[derive(Deserialize, Serialize)]
 #[serde(transparent)]
 pub struct ZeroUTF16String<'a> {
@@ -30,6 +31,11 @@ pub struct ZeroUTF16String<'a> {
 }
 
 impl ZeroUTF16String<'_> {
+    /// Gets whether the UTF-16 string is empty.
+    pub fn is_empty(&self) -> bool {
+        self.units.is_empty()
+    }
+
     /// Gets the count of units in the string.
     ///
     /// This value does not necessarily equal the length of the string in
@@ -86,7 +92,9 @@ pub struct TzDataRuleData<'a> {
 
 #[derive(Debug)]
 pub enum TzDataRule<'a> {
-    Table(TzDataRuleData<'a>),
+    // The rule data is boxed here due to the large size difference between the
+    // `TzDataRuleData` struct and `u32`. It's not strictly necessary.
+    Table(Box<TzDataRuleData<'a>>),
     Int(u32),
 }
 
@@ -125,7 +133,7 @@ impl<'de: 'a, 'a> Visitor<'de> for TzDataRuleEnumVisitor<'a> {
     {
         let value = TzDataRuleData::deserialize(de::value::MapAccessDeserializer::new(map))?;
 
-        Ok(TzDataRule::Table(value))
+        Ok(TzDataRule::Table(Box::new(value)))
     }
 }
 
