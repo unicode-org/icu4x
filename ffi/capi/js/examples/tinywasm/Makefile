@@ -26,6 +26,8 @@ target/wasm32-unknown-unknown/release/icu_capi_cdylib.wasm: FORCE
 	rustup toolchain install ${ICU4X_NIGHTLY_TOOLCHAIN}
 	rustup component add rust-src --toolchain ${ICU4X_NIGHTLY_TOOLCHAIN}
 	# Build the WASM library
+	# NOTE: the --features below only work within the workspace. Outside of the workspace, you should
+	# create your own cdylib crate that depends on icu_capi and enables the features you need.
 	RUSTFLAGS="-Cpanic=abort -Copt-level=s -C link-arg=-zstack-size=${WASM_STACK_SIZE} -Clinker-plugin-lto -Ccodegen-units=1 -C linker=${BASEDIR}/ld.py -C linker-flavor=wasm-ld" \
 	CARGO_TARGET_DIR="target" `# Special linker flags shouldn't overwrite the top-level target directory` \
 	cargo +${ICU4X_NIGHTLY_TOOLCHAIN} build \
@@ -33,8 +35,8 @@ target/wasm32-unknown-unknown/release/icu_capi_cdylib.wasm: FORCE
 		--target wasm32-unknown-unknown \
 		--release \
 		--package icu_capi_cdylib \
-		--no-default-features
-		--features buffer_provider,logging \
+		--no-default-features \
+		--features buffer_provider,logging,icu_capi/icu_decimal
 
 icu_capi.wasm: target/wasm32-unknown-unknown/release/icu_capi_cdylib.wasm
 	cp target/wasm32-unknown-unknown/release/icu_capi_cdylib.wasm icu_capi.wasm
@@ -44,7 +46,8 @@ data.postcard: icu_capi.wasm
 		--keys-for-bin icu_capi.wasm \
 		--locales full \
 		--format blob \
-		--out data.postcard
+		--out data.postcard \
+		--overwrite
 
 build: icu_capi.wasm data.postcard lib
 

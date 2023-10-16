@@ -32,7 +32,6 @@ version.workspace = true
 all-features = true
 
 [dependencies]
-
 # ICU components
 icu_calendar = { workspace = true, features = ["datagen"] }
 icu_casemap = { workspace = true, features = ["datagen"] }
@@ -89,6 +88,10 @@ zip = { version = ">=0.5, <0.7", default-features = false, features = ["deflate"
 
 rayon = { version = "1.5", optional = true }
 ureq = { version = "2", optional = true }
+
+fraction = {version = "0.14.0", default-features = false }
+num-bigint = { version = "0.4.4", default-features = false }
+
 
 # Dependencies for "bin" feature
 clap = { version = "4", optional = true, features = ["derive"] }
