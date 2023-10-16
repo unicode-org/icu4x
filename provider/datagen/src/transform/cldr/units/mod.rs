@@ -152,7 +152,7 @@ impl DataProvider<UnitsConstantsV1Marker> for crate::DatagenProvider {
             no_update_count = if !updated { no_update_count + 1 } else { 0 };
             if no_update_count > constants_with_non_scientific.len() {
                 return Err(DataError::custom(
-                    "An Infinite loop was detected in the CLDR constants data!",
+                    "A loop was detected in the CLDR constants data!",
                 ));
             }
         }
