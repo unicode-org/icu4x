@@ -223,7 +223,6 @@ impl<'data> CollationDataV1<'data> {
     extension_key = "co",
     fallback_by = "collation",
     fallback_supplement = "collation",
-    singleton,
 ))]
 #[derive(Debug, PartialEq, Clone)]
 #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake), databake(path = icu_collator::provider))]
