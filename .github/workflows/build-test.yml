@@ -480,11 +480,6 @@ jobs:
     - name: Install lld-15
       run: |
         apt-get install -y lld-15
-    - name: Attempt to load download cache
-      uses: actions/cache@v3
-      with:
-        key: download-cache
-        path: /tmp/icu4x-source-cache
 
     # Actual job
     - name: Run `cargo make ci-job-test-js`
