@@ -147,7 +147,7 @@ mod tests {
 
         let _data: DataPayload<TransliteratorRulesV1Marker> = provider
             .load(DataRequest {
-                locale: &"und+de-t-de-d0-ascii".parse().unwrap(),
+                locale: &"und-x-de-t-de-d0-ascii".parse().unwrap(),
                 metadata: Default::default(),
             })
             .unwrap()
@@ -161,7 +161,7 @@ mod tests {
 
         let _data: DataPayload<TransliteratorRulesV1Marker> = provider
             .load(DataRequest {
-                locale: &"und+und-Latn-t-s0-ascii".parse().unwrap(),
+                locale: &"und-x-und-Latn-t-s0-ascii".parse().unwrap(),
                 metadata: Default::default(),
             })
             .unwrap()

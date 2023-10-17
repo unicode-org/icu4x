@@ -7,7 +7,7 @@ import sys
 import subprocess
 
 SYMBOLS = [
-    "ICU4XDataProvider_create_from_byte_slice",
+    "ICU4XDataProvider_create_compiled",
     "ICU4XDataProvider_destroy",
     "ICU4XFixedDecimal_create_from_i32",
     "ICU4XFixedDecimal_destroy",
@@ -29,9 +29,6 @@ def main():
             is_export = False
         elif arg == "--export":
             is_export = True
-        elif arg == "--export-dynamic":
-            is_export = False
-            # skip
         else:
             new_argv += [arg]
             is_export = False

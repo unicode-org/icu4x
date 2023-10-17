@@ -4,6 +4,5 @@
 
 // diplomat-wasm.mjs uses fetch when available, but fetch in Node.js is broken,
 // so delete the function to force the wasm to be loaded via the fs module.
-// The Node.js fetch bug may be related to this issue:
-// <https://github.com/nodejs/undici/issues/1248>
+// See <https://github.com/rust-diplomat/diplomat/issues/283>.
 delete globalThis.fetch;

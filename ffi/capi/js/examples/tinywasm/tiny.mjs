@@ -7,13 +7,10 @@ import { ICU4XLocale } from "./lib/ICU4XLocale.js";
 import { ICU4XDataProvider } from "./lib/ICU4XDataProvider.js";
 import { ICU4XFixedDecimalFormatter } from "./lib/ICU4XFixedDecimalFormatter.js";
 import { ICU4XFixedDecimal } from "./lib/ICU4XFixedDecimal.js";
-import { readFileSync } from "fs";
-
-const data = readFileSync("data.postcard");
 
 async function main() {
     const locale = ICU4XLocale.create_from_string("bn");
-    const provider = ICU4XDataProvider.create_from_byte_slice(data);
+    const provider = ICU4XDataProvider.create_compiled();
   
     const format = ICU4XFixedDecimalFormatter.create_with_grouping_strategy(provider, locale, "Auto");
   
