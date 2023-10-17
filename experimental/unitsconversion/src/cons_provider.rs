@@ -29,7 +29,7 @@ const _: () = {
         pub use crate as unitsconversion;
     }
     icu_unitsconversion_data::make_provider!(Baked);
-    icu_unitsconversion_data::imple_units_constants_v1!(Baked);
+    icu_unitsconversion_data::impl_units_constants_v1!(Baked);
 };
 
 #[cfg(feature = "datagen")]
