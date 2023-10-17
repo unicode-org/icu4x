@@ -1185,7 +1185,7 @@ impl From<FormatVersion> for [u8; 4] {
 
 impl From<ResDescriptor> for u32 {
     fn from(value: ResDescriptor) -> Self {
-        ((value.resource_type as u32) << 28) | value.offset
+        ((value.resource_type as u32) << 28) | value.value
     }
 }
 

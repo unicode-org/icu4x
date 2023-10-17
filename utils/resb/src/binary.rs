@@ -316,15 +316,15 @@ enum FormatVersion {
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
 struct ResDescriptor {
     resource_type: ResourceReprType,
-    offset: u32,
+    value: u32,
 }
 
 impl ResDescriptor {
-    /// Makes a new resource descriptor with the given type and 28-bit offset.
-    pub const fn new(resource_type: ResourceReprType, offset: u32) -> Self {
+    /// Makes a new resource descriptor with the given type and 28-bit value.
+    pub const fn new(resource_type: ResourceReprType, value: u32) -> Self {
         Self {
             resource_type,
-            offset,
+            value,
         }
     }
 
@@ -335,12 +335,52 @@ impl ResDescriptor {
 
     /// Returns `true` if the described resource is empty.
     pub fn is_empty(&self) -> bool {
-        self.offset == 0
+        self.value == 0
     }
 
-    /// Gets the 28-bit offset to the described resource.
-    pub fn offset(&self) -> u32 {
-        self.offset
+    /// Gets the offset to the described 16-bit resource in bytes.
+    ///
+    /// The type of the resource representation is not verified. Consumers are
+    /// expected to call the function appropriate to the resource type they are
+    /// querying.
+    fn value_as_16_bit_offset(&self) -> usize {
+        // When the value of a resource descriptor is an offset, it is counted
+        // in units dependent on the resource type (16-bit values for 16-bit
+        // resources, 32-bit values for 32-bit resources). Translate that into
+        // bytes for consumers.
+        (self.value as usize) * core::mem::size_of::<u16>()
+    }
+
+    /// Gets the offset to the described 32-bit resource in bytes.
+    ///
+    /// The type of the resource representation is not verified. Consumers are
+    /// expected to call the function appropriate to the resource type they are
+    /// querying.
+    fn value_as_32_bit_offset(&self) -> usize {
+        // When the value of a resource descriptor is an offset, it is counted
+        // in units dependent on the resource type (16-bit values for 16-bit
+        // resources, 32-bit values for 32-bit resources). Translate that into
+        // bytes for consumers.
+        (self.value as usize) * core::mem::size_of::<u32>()
+    }
+
+    /// Gets the value of the resource descriptor as a signed integer.
+    ///
+    /// The type of the resource representation is not verified. Consumers are
+    /// expected to call the function appropriate to the resource type they are
+    /// querying.
+    fn value_as_signed_int(&self) -> i32 {
+
+        ((self.value as i32) << 4) >> 4
+    }
+
+    /// Gets the value of the resource descriptor as an unsigned integer.
+    ///
+    /// The type of the resource representation is not verified. Consumers are
+    /// expected to call the function appropriate to the resource type they are
+    /// querying.
+    fn value_as_unsigned_int(&self) -> u32 {
+        self.value
     }
 
     /// Gets the resource type of the described resource.
