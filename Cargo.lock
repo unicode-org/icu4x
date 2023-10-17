@@ -1659,6 +1659,7 @@ dependencies = [
  "icu_locid",
  "icu_locid_transform_data",
  "icu_provider",
+ "icu_provider_adapters",
  "serde",
  "serde_json",
  "tinystr",

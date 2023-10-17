@@ -73,11 +73,9 @@ impl DataProvider<WeekDataV2Marker> for crate::DatagenProvider {
             ))?
             .into();
 
-        let weekend: ZeroVec<IsoWeekday>;
         let weekend_distance = (weekend_start as u8).abs_diff(weekend_end as u8);
-
-        if weekend_distance <= 1 {
-            weekend = ZeroVec::alloc_from_slice(&[weekend_start, weekend_end]);
+        let weekend: ZeroVec<IsoWeekday> = if weekend_distance <= 1 {
+            ZeroVec::alloc_from_slice(&[weekend_start, weekend_end])
         } else {
             let mut vec_weekend: Vec<IsoWeekday> = Vec::new();
             vec_weekend.reserve(weekend_distance.into());
@@ -88,8 +86,8 @@ impl DataProvider<WeekDataV2Marker> for crate::DatagenProvider {
                 vec_weekend.push(next_weekend_day);
             }
             vec_weekend.push(weekend_end);
-            weekend = ZeroVec::alloc_from_slice(&vec_weekend);
-        }
+            ZeroVec::alloc_from_slice(&vec_weekend)
+        };
 
         Ok(DataResponse {
             metadata: Default::default(),

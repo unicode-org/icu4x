@@ -40,6 +40,7 @@ serde = { version = "1.0", features = ["derive"] }
 serde_json = "1.0"
 icu = { path = "../../components/icu", default-features = false }
 writeable = { path = "../../utils/writeable" }
+icu_provider_adapters = { path = "../../provider/adapters" }
 
 [target.'cfg(not(target_arch = "wasm32"))'.dev-dependencies]
 criterion = "0.4"

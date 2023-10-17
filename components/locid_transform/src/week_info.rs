@@ -78,7 +78,6 @@ mod tests {
     use super::LocaleWeekInfo;
     use crate::provider::*;
     use icu_locid::locale;
-    use icu_provider::any;
     // TODO: validate how to properly test these flows.
     use icu_provider_adapters::any_payload::AnyPayloadProvider;
     use zerovec::ZeroVec;
@@ -92,7 +91,7 @@ mod tests {
                 weekend: ZeroVec::alloc_from_slice(&[IsoWeekday::Saturday, IsoWeekday::Sunday]),
             });
 
-        let week_info = LocaleWeekInfo::try_new_unstable(provider, &locale!("en").into())
+        let week_info = LocaleWeekInfo::try_new_unstable(&provider, &locale!("en").into())
             .expect("Unable to load Locale Week Info from test provider");
         assert_eq!(week_info.first_weekday, IsoWeekday::Saturday);
         assert_eq!(week_info.min_week_days, 1);
