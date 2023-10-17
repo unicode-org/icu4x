@@ -4,11 +4,155 @@
 
 use core::ops::{Div, Mul};
 use core::str::FromStr;
+use std::collections::{BTreeMap, VecDeque};
 
 use fraction::GenericFraction;
 use icu_provider::DataError;
 use icu_unitsconversion::provider::{ConstantExactness, Sign};
 use num_bigint::BigUint;
+
+use crate::transform::cldr::cldr_serde::units::units_constants::Constant;
+
+
+pub struct ScientificNumber {
+    /// Contains numerator terms that are represented as scientific numbers
+    pub clean_num: Vec<String>,
+    /// Contains denominator terms that are represented as scientific numbers
+    pub clean_den: Vec<String>,
+
+    /// Indicates if the constant is exact or approximate
+    pub constant_exactness: ConstantExactness,
+}
+
+
+/// Represents a general constant which contains scientific and non scientific numbers.
+#[derive(Debug)]
+struct GeneralNonScientificNumber {
+    /// Contains numerator terms that are represented as scientific numbers
+    clean_num: Vec<String>,
+    /// Contains denominator terms that are represented as scientific numbers
+    clean_den: Vec<String>,
+    /// Contains numerator terms that are not represented as scientific numbers
+    non_scientific_num: VecDeque<String>,
+    /// Contains denominator terms that are not represented as scientific numbers
+    non_scientific_den: VecDeque<String>,
+    /// Indicates if the constant is exact or approximate
+    constant_exactness: ConstantExactness,
+}
+
+impl GeneralNonScientificNumber {
+    fn new(num: &[String], den: &[String], exactness: ConstantExactness) -> Self {
+        let mut constant = GeneralNonScientificNumber {
+            clean_num: Vec::new(),
+            clean_den: Vec::new(),
+            non_scientific_num: VecDeque::new(),
+            non_scientific_den: VecDeque::new(),
+            constant_exactness: exactness,
+        };
+
+        for n in num {
+            if is_scientific_number(n) {
+                constant.clean_num.push(n.clone());
+            } else {
+                constant.non_scientific_num.push_back(n.clone());
+            }
+        }
+
+        for d in den {
+            if is_scientific_number(d) {
+                constant.clean_den.push(d.clone());
+            } else {
+                constant.non_scientific_den.push_back(d.clone());
+            }
+        }
+        constant
+    }
+
+    /// Determines if the constant is free of any non_scientific elements.
+    fn is_free_of_non_scientific(&self) -> bool {
+        self.non_scientific_num.is_empty() && self.non_scientific_den.is_empty()
+    }
+}
+
+
+/// Processes the constants and return them in a numerator-denominator form.
+pub fn process_constants<'a>(constants: &'a BTreeMap<String, Constant>) -> Result<BTreeMap<&'a str, ScientificNumber>, DataError> {
+    let mut constants_with_non_scientific = VecDeque::<(&'a str, GeneralNonScientificNumber)>::new();
+    let mut clean_constants_map = BTreeMap::<&str, GeneralNonScientificNumber>::new();
+    for (cons_name, cons_value) in constants {
+        let (num, den) = convert_constant_to_num_denom_strings(&cons_value.value)?;
+        let constant_exactness = match cons_value.status.as_deref() {
+            Some("approximate") => ConstantExactness::Approximate,
+            _ => ConstantExactness::Exact,
+        };
+        let constant = GeneralNonScientificNumber::new(&num, &den, constant_exactness);
+        if constant.is_free_of_non_scientific() {
+            clean_constants_map.insert(cons_name, constant);
+        } else {
+            constants_with_non_scientific.push_back((&cons_name, constant));
+        }
+    }
+    let mut no_update_count = 0;
+    while !constants_with_non_scientific.is_empty() {
+        let mut updated = false;
+        let (constant_key, mut non_scientific_constant) = constants_with_non_scientific
+            .pop_front()
+            .ok_or(DataError::custom(
+                "non scientific queue error: an element must exist",
+            ))?;
+        for _ in 0..non_scientific_constant.non_scientific_num.len() {
+            if let Some(num) = non_scientific_constant.non_scientific_num.pop_front() {
+                if let Some(clean_constant) = clean_constants_map.get(num.as_str()) {
+                    non_scientific_constant
+                        .clean_num
+                        .extend(clean_constant.clean_num.clone());
+                    non_scientific_constant
+                        .clean_den
+                        .extend(clean_constant.clean_den.clone());
+                    updated = true;
+                } else {
+                    non_scientific_constant.non_scientific_num.push_back(num);
+                }
+            }
+        }
+        for _ in 0..non_scientific_constant.non_scientific_den.len() {
+            if let Some(den) = non_scientific_constant.non_scientific_den.pop_front() {
+                if let Some(clean_constant) = clean_constants_map.get(den.as_str()) {
+                    non_scientific_constant
+                        .clean_num
+                        .extend(clean_constant.clean_den.clone());
+                    non_scientific_constant
+                        .clean_den
+                        .extend(clean_constant.clean_num.clone());
+                    updated = true;
+                } else {
+                    non_scientific_constant.non_scientific_den.push_back(den);
+                }
+            }
+        }
+        if non_scientific_constant.is_free_of_non_scientific() {
+            clean_constants_map.insert(constant_key, non_scientific_constant);
+        } else {
+            constants_with_non_scientific.push_back((constant_key, non_scientific_constant));
+        }
+        no_update_count = if !updated { no_update_count + 1 } else { 0 };
+        if no_update_count > constants_with_non_scientific.len() {
+            return Err(DataError::custom(
+                "A loop was detected in the CLDR constants data!",
+            ));
+        }
+    }
+
+    Ok(clean_constants_map.into_iter().map(|(k, v)| (k, {
+        ScientificNumber {
+            clean_num: v.clean_num,
+            clean_den: v.clean_den,
+            constant_exactness: v.constant_exactness,
+        }
+    })).collect())
+}
+
+
 
 /// Converts a scientific notation number represented as a string to a fraction.
 /// Examples:
