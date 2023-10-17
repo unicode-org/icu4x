@@ -473,6 +473,15 @@ expand!(
         "ea"
     ),
     (
+        IndicSyllabicCategoryV1Marker,
+        IndicSyllabicCategoryNameToValueV1Marker,
+        (
+            linear: IndicSyllabicCategoryValueToShortNameV1Marker,
+            IndicSyllabicCategoryValueToLongNameV1Marker
+        ),
+        "InSC"
+    ),
+    (
         LineBreakV1Marker,
         LineBreakNameToValueV1Marker,
         (
