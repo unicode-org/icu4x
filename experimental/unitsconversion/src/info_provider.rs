@@ -22,15 +22,15 @@ use zerovec::{VarZeroVec, ZeroMap};
 /// including in SemVer minor releases. In particular, the `DataProvider` implementations are only
 /// guaranteed to match with this version's `*_unstable` providers. Use with caution.
 /// </div>
-pub struct Baked2;
+pub struct Baked;
 
 #[cfg(feature = "compiled_data")]
 const _: () = {
     pub mod icu {
         pub use crate as unitsconversion;
     }
-    icu_unitsconversion_data::make_provider!(Baked2);
-    icu_unitsconversion_data::impl_units_info_v1!(Baked2);
+    icu_unitsconversion_data::make_provider!(Baked);
+    icu_unitsconversion_data::impl_units_info_v1!(Baked);
 };
 
 #[cfg(feature = "datagen")]
