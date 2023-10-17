@@ -1,7 +1,8 @@
-
 use std::collections::{BTreeMap, VecDeque};
 
-use super::helpers::{convert_slices_to_fraction, transform_fraction_to_constant_value, is_scientific_number};
+use super::helpers::{
+    convert_slices_to_fraction, is_scientific_number, transform_fraction_to_constant_value,
+};
 use crate::transform::cldr::cldr_serde::{self, units::units_constants::Constant};
 use icu_provider::{
     datagen::IterableDataProvider, DataError, DataLocale, DataPayload, DataProvider, DataRequest,

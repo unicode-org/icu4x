@@ -13,7 +13,6 @@ use num_bigint::BigUint;
 
 use crate::transform::cldr::cldr_serde::units::units_constants::Constant;
 
-
 pub struct ScientificNumber {
     /// Contains numerator terms that are represented as scientific numbers
     pub clean_num: Vec<String>,
@@ -23,7 +22,6 @@ pub struct ScientificNumber {
     /// Indicates if the constant is exact or approximate
     pub constant_exactness: ConstantExactness,
 }
-
 
 /// Represents a general constant which contains scientific and non scientific numbers.
 #[derive(Debug)]
@@ -74,10 +72,12 @@ impl GeneralNonScientificNumber {
     }
 }
 
-
 /// Processes the constants and return them in a numerator-denominator form.
-pub fn process_constants<'a>(constants: &'a BTreeMap<String, Constant>) -> Result<BTreeMap<&'a str, ScientificNumber>, DataError> {
-    let mut constants_with_non_scientific = VecDeque::<(&'a str, GeneralNonScientificNumber)>::new();
+pub fn process_constants<'a>(
+    constants: &'a BTreeMap<String, Constant>,
+) -> Result<BTreeMap<&'a str, ScientificNumber>, DataError> {
+    let mut constants_with_non_scientific =
+        VecDeque::<(&'a str, GeneralNonScientificNumber)>::new();
     let mut clean_constants_map = BTreeMap::<&str, GeneralNonScientificNumber>::new();
     for (cons_name, cons_value) in constants {
         let (num, den) = convert_constant_to_num_denom_strings(&cons_value.value)?;
@@ -143,16 +143,19 @@ pub fn process_constants<'a>(constants: &'a BTreeMap<String, Constant>) -> Resul
         }
     }
 
-    Ok(clean_constants_map.into_iter().map(|(k, v)| (k, {
-        ScientificNumber {
-            clean_num: v.clean_num,
-            clean_den: v.clean_den,
-            constant_exactness: v.constant_exactness,
-        }
-    })).collect())
+    Ok(clean_constants_map
+        .into_iter()
+        .map(|(k, v)| {
+            (k, {
+                ScientificNumber {
+                    clean_num: v.clean_num,
+                    clean_den: v.clean_den,
+                    constant_exactness: v.constant_exactness,
+                }
+            })
+        })
+        .collect())
 }
-
-
 
 /// Converts a scientific notation number represented as a string to a fraction.
 /// Examples:

@@ -2,24 +2,17 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use std::{
-    borrow::Cow,
-    collections::{BTreeMap},
-};
+use std::{borrow::Cow, collections::BTreeMap};
 
-use crate::transform::cldr::{
-    cldr_serde::{self},
-};
+use crate::transform::cldr::cldr_serde::{self};
 use icu_provider::{
     datagen::IterableDataProvider, DataError, DataLocale, DataPayload, DataProvider, DataRequest,
     DataResponse,
 };
-use icu_unitsconversion::{
-    units_provider::{
-        ConvertUnits, QuantitySimplicity, UnitQuantity, UnitsInfoIndex, UnitsInfoV1Marker, UnitsInfoV1,
-    },
+use icu_unitsconversion::units_provider::{
+    ConvertUnits, QuantitySimplicity, UnitQuantity, UnitsInfoIndex, UnitsInfoV1, UnitsInfoV1Marker,
 };
-use zerovec::{ZeroMap, VarZeroVec};
+use zerovec::{VarZeroVec, ZeroMap};
 
 impl DataProvider<UnitsInfoV1Marker> for crate::DatagenProvider {
     fn load(&self, _req: DataRequest) -> Result<DataResponse<UnitsInfoV1Marker>, DataError> {
@@ -80,12 +73,11 @@ impl DataProvider<UnitsInfoV1Marker> for crate::DatagenProvider {
             }
         }
 
-        let result = 
-            UnitsInfoV1 {
-                units_info: ZeroMap::from_iter(conversion_info_map),
-                unit_quantity: VarZeroVec::from(&quantity_vec),
-                convert_units: VarZeroVec::from(&convert_units_vec),
-            };
+        let result = UnitsInfoV1 {
+            units_info: ZeroMap::from_iter(conversion_info_map),
+            unit_quantity: VarZeroVec::from(&quantity_vec),
+            convert_units: VarZeroVec::from(&convert_units_vec),
+        };
 
         Ok(DataResponse {
             metadata: Default::default(),
