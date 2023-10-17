@@ -1,16 +1,10 @@
-
-
-use super::helpers::{
-    convert_slices_to_fraction, transform_fraction_to_constant_value,
-};
+use super::helpers::{convert_slices_to_fraction, transform_fraction_to_constant_value};
 use crate::transform::cldr::cldr_serde::{self};
 use icu_provider::{
     datagen::IterableDataProvider, DataError, DataLocale, DataPayload, DataProvider, DataRequest,
     DataResponse,
 };
-use icu_unitsconversion::cons_provider::{
-    ConstantValue, UnitsConstantsV1, UnitsConstantsV1Marker,
-};
+use icu_unitsconversion::cons_provider::{ConstantValue, UnitsConstantsV1, UnitsConstantsV1Marker};
 use zerovec::{ZeroMap, ZeroVec};
 
 use super::helpers::process_constants;

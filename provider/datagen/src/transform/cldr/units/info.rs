@@ -91,3 +91,46 @@ impl IterableDataProvider<UnitsInfoV1Marker> for crate::DatagenProvider {
         Ok(vec![Default::default()])
     }
 }
+
+#[test]
+fn test_basic() {
+    use icu_locid::locale;
+    use icu_provider::prelude::*;
+    use zerovec::maps::ZeroVecLike;
+
+    let provider = crate::DatagenProvider::new_testing();
+
+    let und: DataPayload<UnitsInfoV1Marker> = provider
+        .load(DataRequest {
+            locale: &locale!("und").into(),
+            metadata: Default::default(),
+        })
+        .unwrap()
+        .take_payload()
+        .unwrap();
+
+    let units_info = und.get().to_owned();
+    let units_info_map = &units_info.units_info;
+    let unit_quantity = &units_info.unit_quantity;
+    let convert_units = &units_info.convert_units;
+
+    let meter = units_info_map.get("meter").unwrap();
+    let meter_quantity_index = meter.quantity.get().unwrap().as_unsigned_int() as usize;
+    let meter_quantity = unit_quantity.zvl_get(meter_quantity_index).unwrap();
+    assert_eq!(&meter_quantity.quantity, "length");
+    // TODO: how to test this?
+    // assert_eq!(meter_quantity.constant_exactness as u8, QuantitySimplicity::Simple as u8);
+
+    let meter_convert_index = meter.convert_unit.get().unwrap().as_unsigned_int() as usize;
+    let meter_convert = convert_units.zvl_get(meter_convert_index).unwrap();
+    assert_eq!(meter_convert.base_unit(), "meter");
+    assert_eq!(meter_convert.factor(), "1");
+
+    let foot = units_info_map.get("foot").unwrap();
+    let foot_convert_index = foot.convert_unit.get().unwrap().as_unsigned_int() as usize;
+    let foot_convert = convert_units.zvl_get(foot_convert_index).unwrap();
+    assert_eq!(foot_convert.base_unit(), "meter");
+    assert_eq!(foot_convert.factor(), "ft_to_m");
+
+    // TODO: add more tests
+}
