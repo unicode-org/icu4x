@@ -503,10 +503,13 @@ impl Serializer {
         sorted_strings.sort_unstable_by(cmp_string_ascending_suffix_aware);
 
         for (string, data) in sorted_strings {
-            if let Some(containing_string) = data.borrow().containing_string {
+            if data.borrow().containing_string.is_some() {
                 // This string is a suffix of another. Because suffixes are
                 // sorted to the end, we are guaranteed to have already written
-                // the containing string.
+                // the containing string. We can't use `if let` here because we
+                // need to borrow as mutable, but we can safely unwrap.
+                #[allow(clippy::unwrap_used)]
+                let containing_string = data.borrow().containing_string.unwrap();
                 let containing_data = strings.get(containing_string).ok_or(Error::unexpected(
                     "containing string not present in string map",
                 ))?;
