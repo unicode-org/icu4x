@@ -1,0 +1,315 @@
+// This file is part of ICU4X. For terms of use, please see the file
+// called LICENSE at the top level of the ICU4X source tree
+// (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
+
+use core::ops::{Div, Mul};
+use core::str::FromStr;
+
+use fraction::GenericFraction;
+use icu_provider::DataError;
+use icu_unitsconversion::provider::{ConstantExactness, Sign};
+use num_bigint::BigUint;
+
+/// Converts a scientific notation number represented as a string to a fraction.
+/// Examples:
+/// - "1E2" is converted to 100/1
+/// - "1E-2" is converted to 1/100
+/// - "1.5E2" is converted to 150/1
+/// - "1.5E-2" is converted to 15/1000
+/// - " 1.5 E -2 " is converted to 15/1000
+/// - " 1.5 E - 2" is an invalid scientific notation number
+/// - "1.5E-2.5" is an invalid scientific notation number
+pub fn convert_scientific_notation_to_fraction(
+    number: &str,
+) -> Result<GenericFraction<BigUint>, DataError> {
+    let mut parts = number.split('E');
+    let base = parts.next().unwrap_or("1").trim();
+    let exponent = parts.next().unwrap_or("0").trim();
+    if parts.next().is_some() {
+        return Err(DataError::custom(
+            "the number is not a valid scientific notation number",
+        ));
+    }
+
+    let base = GenericFraction::<BigUint>::from_str(base)
+        .map_err(|_| DataError::custom("the base is not a valid decimal number"))?;
+    let exponent = i32::from_str(exponent)
+        .map_err(|_| DataError::custom("the exponent is not a valid integer"))?;
+
+    let result = if exponent >= 0 {
+        base.mul(GenericFraction::new(
+            BigUint::from(10u32).pow(exponent as u32),
+            BigUint::from(1u32),
+        ))
+    } else {
+        base.div(GenericFraction::new(
+            BigUint::from(10u32).pow((-exponent) as u32),
+            BigUint::from(1u32),
+        ))
+    };
+
+    Ok(result)
+}
+
+// TODO: move this to the comment above.
+#[test]
+fn test_convert_scientific_notation_to_fraction() {
+    let input = "1E2";
+    let expected = GenericFraction::<BigUint>::new(BigUint::from(100u32), BigUint::from(1u32));
+    let actual = convert_scientific_notation_to_fraction(input).unwrap();
+    assert_eq!(expected, actual);
+
+    let input = "1E-2";
+    let expected = GenericFraction::<BigUint>::new(BigUint::from(1u32), BigUint::from(100u32));
+    let actual = convert_scientific_notation_to_fraction(input).unwrap();
+    assert_eq!(expected, actual);
+
+    let input = "1.5E2";
+    let expected = GenericFraction::<BigUint>::new(BigUint::from(150u32), BigUint::from(1u32));
+    let actual = convert_scientific_notation_to_fraction(input).unwrap();
+    assert_eq!(expected, actual);
+
+    let input = "1.5E-2";
+    let expected = GenericFraction::<BigUint>::new(BigUint::from(15u32), BigUint::from(1000u32));
+    let actual = convert_scientific_notation_to_fraction(input).unwrap();
+    assert_eq!(expected, actual);
+
+    let input = " 1.5 E -2 ";
+    let expected = GenericFraction::<BigUint>::new(BigUint::from(15u32), BigUint::from(1000u32));
+    let actual = convert_scientific_notation_to_fraction(input).unwrap();
+    assert_eq!(expected, actual);
+
+    let input = " 1.5 E - 2";
+    let actual = convert_scientific_notation_to_fraction(input);
+    assert!(actual.is_err());
+
+    let input = "1.5E-2.5";
+    let actual = convert_scientific_notation_to_fraction(input);
+    assert!(actual.is_err());
+}
+
+/// Determines if a string contains any alphabetic characters.
+/// Returns true if the string contains at least one alphabetic character, false otherwise.
+/// Examples:
+/// - "1" returns false
+/// - "ft_to_m" returns true
+/// - "1E2" returns true
+/// - "1.5E-2" returns true
+pub fn contains_alphabetic_chars(s: &str) -> bool {
+    s.chars().any(char::is_alphabetic)
+}
+
+#[test]
+fn test_contains_alphabetic_chars() {
+    let input = "1";
+    let expected = false;
+    let actual = contains_alphabetic_chars(input);
+    assert_eq!(expected, actual);
+
+    let input = "ft_to_m";
+    let expected = true;
+    let actual = contains_alphabetic_chars(input);
+    assert_eq!(expected, actual);
+
+    let input = "1E2";
+    let expected = true;
+    let actual = contains_alphabetic_chars(input);
+    assert_eq!(expected, actual);
+
+    let input = "1.5E-2";
+    let expected = true;
+    let actual = contains_alphabetic_chars(input);
+    assert_eq!(expected, actual);
+}
+
+/// Checks if a string is a valid scientific notation number.
+/// Returns true if the string is a valid scientific notation number, false otherwise.  
+pub fn is_scientific_number(s: &str) -> bool {
+    let mut parts = s.split('E');
+    let base = parts.next().unwrap_or("0");
+    let exponent = parts.next().unwrap_or("0");
+    if parts.next().is_some() {
+        return false;
+    }
+
+    !contains_alphabetic_chars(base) && !contains_alphabetic_chars(exponent)
+}
+
+/// Transforms a fractional number into a constant value.
+pub fn transform_fraction_to_constant_value(
+    fraction: GenericFraction<BigUint>,
+    constant_exactness: ConstantExactness,
+) -> Result<(Vec<u8>, Vec<u8>, Sign, ConstantExactness), DataError> {
+    let numerator = match fraction.numer() {
+        Some(numerator) => numerator.to_bytes_le(),
+        None => return Err(DataError::custom("the numerator is too large")),
+    };
+
+    let denominator = match fraction.denom() {
+        Some(denominator) => denominator.to_bytes_le(),
+        None => return Err(DataError::custom("the denominator is too large")),
+    };
+
+    let sign = match fraction.sign() {
+        Some(fraction::Sign::Plus) => Sign::Positive,
+        Some(fraction::Sign::Minus) => Sign::Negative,
+        None => {
+            return Err(DataError::custom("the sign is not defined"));
+        }
+    };
+
+    Ok((numerator, denominator, sign, constant_exactness))
+}
+
+/// Converts slices of numerator and denominator strings to a fraction.
+/// Examples:
+/// - ["1"], ["2"] is converted to 1/2
+/// - ["1", "2"], ["3", "1E2"] is converted to 1*2/(3*1E2) --> 2/300
+/// - ["1", "2"], ["3", "1E-2"] is converted to 1*2/(3*1E-2) --> 200/3
+/// - ["1", "2"], ["3", "1E-2.5"] is an invalid scientific notation number
+/// - ["1E2"], ["2"] is converted to 1E2/2 --> 100/2 --> 50/1
+/// - ["1E2", "2"], ["3", "1E2"] is converted to 1E2*2/(3*1E2) --> 2/3
+pub fn convert_slices_to_fraction(
+    numerator_strings: &[&str],
+    denominator_strings: &[&str],
+) -> Result<GenericFraction<BigUint>, DataError> {
+    let mut fraction = GenericFraction::new(BigUint::from(1u32), BigUint::from(1u32));
+
+    for numerator in numerator_strings {
+        let num_fraction = convert_scientific_notation_to_fraction(numerator)?;
+        fraction *= num_fraction;
+    }
+
+    for denominator in denominator_strings {
+        let den_fraction = convert_scientific_notation_to_fraction(denominator)?;
+        fraction /= den_fraction;
+    }
+
+    Ok(fraction)
+}
+
+// TODO: move some of these tests to the comment above.
+#[test]
+fn test_convert_array_of_strings_to_fraction() {
+    let numerator: Vec<&str> = vec!["1"];
+    let denominator: Vec<&str> = vec!["2"];
+    let expected = GenericFraction::new(BigUint::from(1u32), BigUint::from(2u32));
+    let actual = convert_slices_to_fraction(&numerator, &denominator).unwrap();
+    assert_eq!(expected, actual);
+
+    let numerator = vec!["1", "2"];
+    let denominator = vec!["3", "1E2"];
+    let expected = GenericFraction::new(BigUint::from(2u32), BigUint::from(300u32));
+    let actual = convert_slices_to_fraction(&numerator, &denominator).unwrap();
+    assert_eq!(expected, actual);
+
+    let numerator = vec!["1", "2"];
+    let denominator = vec!["3", "1E-2"];
+    let expected = GenericFraction::new(BigUint::from(200u32), BigUint::from(3u32));
+    let actual = convert_slices_to_fraction(&numerator, &denominator).unwrap();
+    assert_eq!(expected, actual);
+
+    let numerator = vec!["1", "2"];
+    let denominator = vec!["3", "1E-2.5"];
+    let actual = convert_slices_to_fraction(&numerator, &denominator);
+    assert!(actual.is_err());
+
+    let numerator = vec!["1E2"];
+    let denominator = vec!["2"];
+    let expected = GenericFraction::new(BigUint::from(50u32), BigUint::from(1u32));
+    let actual = convert_slices_to_fraction(&numerator, &denominator).unwrap();
+    assert_eq!(expected, actual);
+
+    let numerator = vec!["1E2", "2"];
+    let denominator = vec!["3", "1E2"];
+    let expected = GenericFraction::new(BigUint::from(2u32), BigUint::from(3u32));
+    let actual = convert_slices_to_fraction(&numerator, &denominator).unwrap();
+    assert_eq!(expected, actual);
+}
+
+/// Splits a constant string into a tuple of (numerator, denominator).
+/// The numerator and denominator are represented as arrays of strings.
+/// Examples:
+/// - "1/2" is split into (["1"], ["2"])
+/// - "1 * 2 / 3 * ft_to_m" is split into (["1", "2"], ["3" , "ft_to_m"])
+/// - "/2" is split into (["1"], ["2"])
+/// - "2" is split into (["2"], ["1"])
+/// - "2/" is split into (["2"], ["1"])
+/// - "1E2" is split into (["1E2"], ["1"])
+/// - "1 2 * 3" is an invalid constant string
+pub fn convert_constant_to_num_denom_strings(
+    constant_string: &str,
+) -> Result<(Vec<String>, Vec<String>), DataError> {
+    let split: Vec<&str> = constant_string.split('/').collect();
+    if split.len() > 2 {
+        return Err(DataError::custom("Invalid constant string"));
+    }
+
+    // Define a closure to process each part of the split string
+    let process_string = |s: &str| -> Vec<String> {
+        if s.is_empty() {
+            vec!["1".to_string()]
+        } else {
+            s.split('*').map(|s| s.trim().to_string()).collect()
+        }
+    };
+
+    // Process the numerator and denominator parts
+    let numerator_values = process_string(split.first().unwrap_or(&"1"));
+    let denominator_values = process_string(split.get(1).unwrap_or(&"1"));
+
+    // If any part contains internal white spaces, return an error
+    if numerator_values
+        .iter()
+        .any(|s| s.chars().any(char::is_whitespace))
+        || denominator_values
+            .iter()
+            .any(|s| s.chars().any(char::is_whitespace))
+    {
+        return Err(DataError::custom(
+            "The constant string contains internal white spaces",
+        ));
+    }
+
+    Ok((numerator_values, denominator_values))
+}
+// TODO: move this to the comment above.
+#[test]
+fn test_convert_constant_to_num_denom_strings() {
+    let input = "1/2";
+    let expected = (vec!["1".to_string()], vec!["2".to_string()]);
+    let actual = convert_constant_to_num_denom_strings(input).unwrap();
+    assert_eq!(expected, actual);
+
+    let input = "1 * 2 / 3 * ft_to_m";
+    let expected = (
+        vec!["1".to_string(), "2".to_string()],
+        vec!["3".to_string(), "ft_to_m".to_string()],
+    );
+    let actual = convert_constant_to_num_denom_strings(input).unwrap();
+    assert_eq!(expected, actual);
+
+    let input = "/2";
+    let expected = (vec!["1".to_string()], vec!["2".to_string()]);
+    let actual = convert_constant_to_num_denom_strings(input).unwrap();
+    assert_eq!(expected, actual);
+
+    let input = "2";
+    let expected = (vec!["2".to_string()], vec!["1".to_string()]);
+    let actual = convert_constant_to_num_denom_strings(input).unwrap();
+    assert_eq!(expected, actual);
+
+    let input = "2/";
+    let expected = (vec!["2".to_string()], vec!["1".to_string()]);
+    let actual = convert_constant_to_num_denom_strings(input).unwrap();
+    assert_eq!(expected, actual);
+
+    let input = "1E2";
+    let expected = (vec!["1E2".to_string()], vec!["1".to_string()]);
+    let actual = convert_constant_to_num_denom_strings(input).unwrap();
+    assert_eq!(expected, actual);
+
+    let input = "1 2 * 3";
+    let actual = convert_constant_to_num_denom_strings(input);
+    assert!(actual.is_err());
+}

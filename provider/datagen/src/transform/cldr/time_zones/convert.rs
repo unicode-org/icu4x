@@ -19,7 +19,6 @@ use icu_timezone::provider::MetazonePeriodV1;
 use icu_timezone::ZoneVariant;
 use std::borrow::Cow;
 use std::collections::BTreeMap;
-use std::collections::HashMap;
 use tinystr::TinyStr8;
 
 /// Performs part 1 of type fallback as specified in the UTS-35 spec for TimeZone Goals:
@@ -43,7 +42,7 @@ fn parse_hour_format(hour_format: &str) -> (Cow<'static, str>, Cow<'static, str>
 }
 
 pub(crate) fn compute_bcp47_tzids_btreemap(
-    bcp47_tzids_resource: &HashMap<TimeZoneBcp47Id, Bcp47TzidAliasData>,
+    bcp47_tzids_resource: &BTreeMap<TimeZoneBcp47Id, Bcp47TzidAliasData>,
 ) -> BTreeMap<String, TimeZoneBcp47Id> {
     let mut bcp47_tzids = BTreeMap::new();
     for (bcp47_tzid, bcp47_tzid_data) in bcp47_tzids_resource.iter() {
@@ -56,10 +55,10 @@ pub(crate) fn compute_bcp47_tzids_btreemap(
     bcp47_tzids
 }
 
-fn compute_meta_zone_ids_hashmap(
-    meta_zone_ids_resource: &HashMap<MetazoneId, MetazoneAliasData>,
-) -> HashMap<String, MetazoneId> {
-    let mut meta_zone_ids = HashMap::new();
+fn compute_meta_zone_ids_btreemap(
+    meta_zone_ids_resource: &BTreeMap<MetazoneId, MetazoneAliasData>,
+) -> BTreeMap<String, MetazoneId> {
+    let mut meta_zone_ids = BTreeMap::new();
     for (meta_zone_id, meta_zone_id_data) in meta_zone_ids_resource.iter() {
         meta_zone_ids.insert(meta_zone_id_data.long_id.to_string(), *meta_zone_id);
     }
@@ -94,27 +93,15 @@ impl From<CldrTimeZonesData<'_>> for TimeZoneFormatsV1<'static> {
 
 impl Location {
     fn exemplar_city(&self) -> Option<String> {
-        match self {
-            Self::City(place) => Some(place.exemplar_city.clone()),
-            Self::Long(place) => place.exemplar_city.clone(),
-            Self::Short(place) => place.exemplar_city.clone(),
-        }
+        self.exemplar_city.clone()
     }
 
     fn long_metazone_names(&self) -> Option<ZoneFormat> {
-        match self {
-            Self::City(place) => place.long.clone(),
-            Self::Long(place) => Some(place.long.clone()),
-            Self::Short(place) => place.long.clone(),
-        }
+        self.long.clone()
     }
 
     fn short_metazone_names(&self) -> Option<ZoneFormat> {
-        match self {
-            Self::City(place) => place.short.clone(),
-            Self::Long(place) => place.short.clone(),
-            Self::Short(place) => Some(place.short.clone()),
-        }
+        self.short.clone()
     }
 }
 
@@ -175,7 +162,7 @@ impl From<CldrTimeZonesData<'_>> for MetazonePeriodV1<'static> {
     fn from(other: CldrTimeZonesData<'_>) -> Self {
         let data = other.meta_zone_periods_resource;
         let bcp47_tzid_data = &compute_bcp47_tzids_btreemap(other.bcp47_tzids_resource);
-        let meta_zone_id_data = &compute_meta_zone_ids_hashmap(other.meta_zone_ids_resource);
+        let meta_zone_id_data = &compute_meta_zone_ids_btreemap(other.meta_zone_ids_resource);
         Self(
             data.iter()
                 .flat_map(|(key, zone)| match zone {
@@ -235,7 +222,7 @@ macro_rules! long_short_impls {
                 let data = other.time_zone_names_resource;
                 let bcp47_tzid_data = &compute_bcp47_tzids_btreemap(other.bcp47_tzids_resource);
                 let meta_zone_id_data =
-                    &compute_meta_zone_ids_hashmap(other.meta_zone_ids_resource);
+                    &compute_meta_zone_ids_btreemap(other.meta_zone_ids_resource);
                 Self {
                     defaults: match &data.metazone {
                         None => Default::default(),
@@ -322,7 +309,7 @@ macro_rules! long_short_impls {
                 let data = other.time_zone_names_resource;
                 let bcp47_tzid_data = &compute_bcp47_tzids_btreemap(other.bcp47_tzids_resource);
                 let meta_zone_id_data =
-                    &compute_meta_zone_ids_hashmap(other.meta_zone_ids_resource);
+                    &compute_meta_zone_ids_btreemap(other.meta_zone_ids_resource);
                 Self {
                     defaults: match &data.metazone {
                         None => Default::default(),
@@ -451,7 +438,7 @@ fn metazone_periods_iter(
     pair: (
         TimeZoneBcp47Id,
         Vec<MetazoneForPeriod>,
-        HashMap<String, MetazoneId>,
+        BTreeMap<String, MetazoneId>,
     ),
 ) -> impl Iterator<Item = (TimeZoneBcp47Id, i32, Option<MetazoneId>)> {
     let (time_zone_key, periods, meta_zone_id_data) = pair;

@@ -461,14 +461,11 @@ impl BakedExporter {
                 let anchor = proc_macro2::Ident::new(
                     &first_locale
                         .chars()
-                        .flat_map(|ch| {
-                            if ch == AuxiliaryKeys::separator() as char {
-                                // Replace the aux key separator with double-underscore
-                                ['_'].into_iter().chain(Some('_'))
-                            } else if ch == '-' {
-                                ['_'].into_iter().chain(None)
+                        .map(|ch| {
+                            if ch == '-' {
+                                '_'
                             } else {
-                                [ch.to_ascii_uppercase()].into_iter().chain(None)
+                                ch.to_ascii_uppercase()
                             }
                         })
                         .collect::<String>(),

@@ -153,7 +153,7 @@ The way `ICU4X` handles data is one of its novelties, aimed at making the data m
 
 However, shipping the library with all locales will have a size impact on your binary. It also requires you to update your binary whenever CLDR data changes, which happens twice a year. To learn how to solve these problems, see our [data management](data_management.md) tutorial.
 
-[^1]: All locales with coverage level `basic`, `moderate`, or `modern` in [`CLDR`](https://github.com/unicode-org/cldr-json/blob/43.1.0/cldr-json/cldr-core/coverageLevels.json)
+[^1]: All locales with coverage level `basic`, `moderate`, or `modern` in [`CLDR`](https://github.com/unicode-org/cldr-json/blob/main/cldr-json/cldr-core/coverageLevels.json)
 
 # 6. Summary
 
