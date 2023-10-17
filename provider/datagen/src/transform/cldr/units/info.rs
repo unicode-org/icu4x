@@ -9,7 +9,7 @@ use icu_provider::{
     datagen::IterableDataProvider, DataError, DataLocale, DataPayload, DataProvider, DataRequest,
     DataResponse,
 };
-use icu_unitsconversion::units_provider::{
+use icu_unitsconversion::info_provider::{
     ConvertUnits, QuantitySimplicity, UnitQuantity, UnitsInfoIndex, UnitsInfoV1, UnitsInfoV1Marker,
 };
 use zerovec::{VarZeroVec, ZeroMap};

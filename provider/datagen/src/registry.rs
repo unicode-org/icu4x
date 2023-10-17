@@ -416,9 +416,9 @@ registry!(
     #[cfg(feature = "icu_singlenumberformatter")]
     icu_singlenumberformatter::provider::CurrencyEssentialsV1Marker = "currency/essentials@1",
     #[cfg(feature = "icu_unitsconversion")]
-    icu_unitsconversion::provider::UnitsConstantsV1Marker = "units/constants@1",
+    icu_unitsconversion::cons_provider::UnitsConstantsV1Marker = "units/constants@1",
     #[cfg(feature = "icu_unitsconversion")]
-    icu_unitsconversion::units_provider::UnitsInfoV1Marker = "units/info@1",
+    icu_unitsconversion::info_provider::UnitsInfoV1Marker = "units/info@1",
     #[cfg(any(all(), feature = "icu_segmenter"))]
     icu_segmenter::provider::DictionaryForWordLineExtendedV1Marker =
         "segmenter/dictionary/wl_ext@1",

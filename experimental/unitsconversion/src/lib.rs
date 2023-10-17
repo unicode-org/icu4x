@@ -6,5 +6,5 @@
 
 extern crate alloc;
 
-pub mod provider;
-pub mod units_provider;
+pub mod cons_provider;
+pub mod info_provider;

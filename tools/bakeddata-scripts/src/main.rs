@@ -42,7 +42,7 @@ const COMPONENTS: &[(&str, &[DataKey])] = &[
     ),
     (
         "experimental/unitsconversion",
-        icu_unitsconversion::provider::KEYS,
+        icu_unitsconversion::cons_provider::KEYS,
     ),
 ];
 

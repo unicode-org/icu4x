@@ -1,15 +1,15 @@
-use std::collections::{BTreeMap, VecDeque};
+
 
 use super::helpers::{
-    convert_slices_to_fraction, is_scientific_number, transform_fraction_to_constant_value,
+    convert_slices_to_fraction, transform_fraction_to_constant_value,
 };
-use crate::transform::cldr::cldr_serde::{self, units::units_constants::Constant};
+use crate::transform::cldr::cldr_serde::{self};
 use icu_provider::{
     datagen::IterableDataProvider, DataError, DataLocale, DataPayload, DataProvider, DataRequest,
     DataResponse,
 };
-use icu_unitsconversion::provider::{
-    ConstantExactness, ConstantValue, UnitsConstantsV1, UnitsConstantsV1Marker,
+use icu_unitsconversion::cons_provider::{
+    ConstantValue, UnitsConstantsV1, UnitsConstantsV1Marker,
 };
 use zerovec::{ZeroMap, ZeroVec};
 
@@ -25,7 +25,7 @@ impl DataProvider<UnitsConstantsV1Marker> for crate::DatagenProvider {
             .read_and_parse("supplemental/units.json")?;
         let constants = &units_data.supplemental.unit_constants.constants;
 
-        let clean_constants_map = process_constants(&constants)?;
+        let clean_constants_map = process_constants(constants)?;
         // Convert `clean_constants_map` into a ZeroMap of `ConstantValue`.
         // This involves transforming the numerator and denominator slices into a fraction,
         // and subsequently converting the fraction into a `ConstantValue`.
@@ -81,7 +81,7 @@ fn test_basic() {
     use fraction::GenericFraction;
     use icu_locid::locale;
     use icu_provider::prelude::*;
-    use icu_unitsconversion::provider::*;
+    use icu_unitsconversion::cons_provider::*;
     use num_bigint::BigUint;
 
     let provider = crate::DatagenProvider::new_testing();
