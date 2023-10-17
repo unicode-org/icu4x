@@ -1967,6 +1967,7 @@ dependencies = [
  "litemap",
  "log",
  "serde",
+ "writeable",
  "zerovec",
 ]
 
