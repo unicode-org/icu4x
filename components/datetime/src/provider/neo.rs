@@ -4,8 +4,8 @@
 
 use crate::pattern::{self, runtime};
 use icu_provider::prelude::*;
-
-use zerovec::{ule::UnvalidatedStr, VarZeroVec, ZeroMap};
+use tinystr::UnvalidatedTinyAsciiStr;
+use zerovec::{VarZeroVec, ZeroMap};
 
 /// Symbols used for representing the year name
 ///
@@ -22,7 +22,7 @@ use zerovec::{ule::UnvalidatedStr, VarZeroVec, ZeroMap};
 pub enum YearSymbolsV1<'data> {
     /// This calendar uses eras with numeric years, this stores the era names mapped from
     /// era code to the name
-    Eras(#[cfg_attr(feature = "serde", serde(borrow))] ZeroMap<'data, UnvalidatedStr, str>),
+    Eras(#[cfg_attr(feature = "serde", serde(borrow))] ZeroMap<'data, UnvalidatedTinyAsciiStr<16>, str>),
     /// This calendar is cyclic (Chinese, Dangi), so it uses cyclic year names without any eras
     Cyclic(#[cfg_attr(feature = "serde", serde(borrow))] VarZeroVec<'data, str>),
 }
@@ -47,13 +47,14 @@ pub enum MonthSymbolsV1<'data> {
     /// Month code map that can handle arbitrary month codes including leap months
     ///
     /// Found for lunisolar and lunisidereal calendars
-    Map(#[cfg_attr(feature = "serde", serde(borrow))] ZeroMap<'data, UnvalidatedStr, str>),
+    Map(#[cfg_attr(feature = "serde", serde(borrow))] ZeroMap<'data, UnvalidatedTinyAsciiStr<4>, str>),
 }
 
 /// Symbols that can be stored as a simple linear array.
 ///
-/// - For weekdays, element 0 is Monday
-/// - For dayperiods, the elements are in order: AM, PM, (noon), (midnight), where the latter two are optional
+/// - For weekdays, element 0 is Sunday
+/// - For dayperiods, the elements are in order: AM, PM, (noon), (midnight), where the latter two are optional.
+///   If noon is 
 /// - For day names element 0 is the first day of the month
 ///
 /// This uses an auxiliary key for length.
@@ -72,6 +73,7 @@ pub enum MonthSymbolsV1<'data> {
 #[yoke(prove_covariance_manually)]
 pub struct LinearSymbolsV1<'data> {
     #[cfg_attr(feature = "serde", serde(borrow))]
+    // This uses a VarZeroVec rather than a fixed-size array for weekdays to save stack space
     symbols: VarZeroVec<'data, str>,
 }
 
@@ -80,8 +82,8 @@ pub struct LinearSymbolsV1<'data> {
 /// This uses an auxiliary key for length. time@1 additionally uses
 /// the auxiliary key for representing hour cycle preferences.
 #[icu_provider::data_struct(
-    marker(DateLengthsV1Marker, "datetime/lengths/date@1"),
-    marker(TimeLengthsV1Marker, "datetime/lengths/time@1")
+    marker(DatePatternV1Marker, "datetime/patterns/date@1"),
+    marker(TimePatternV1Marker, "datetime/patterns/time@1")
 )]
 #[derive(Debug, PartialEq, Clone)]
 #[cfg_attr(
@@ -91,13 +93,13 @@ pub struct LinearSymbolsV1<'data> {
 )]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[yoke(prove_covariance_manually)]
-pub struct LengthsV1<'data> {
+pub struct PatternV1<'data> {
     #[cfg_attr(feature = "serde", serde(borrow))]
     pattern: runtime::Pattern<'data>,
 }
 
 /// The default hour cycle intended to be used with a locale
-#[icu_provider::data_struct(marker(PreferredHourCycleV1Marker, "datetime/lengths/hourcycle@1"))]
+#[icu_provider::data_struct(marker(PreferredHourCycleV1Marker, "datetime/patterns/hourcycle@1"))]
 #[derive(Debug, PartialEq, Clone, Copy)]
 #[cfg_attr(
     feature = "datagen",
@@ -113,7 +115,7 @@ pub struct PreferredHourCycleV1 {
 /// The default per-length patterns used for combining dates and times into datetimes
 ///
 /// This uses an auxiliary key for length.
-#[icu_provider::data_struct(marker(DateTimeLengthsV1Marker, "datetime/lengths/datetime@1"))]
+#[icu_provider::data_struct(marker(DateTimePatternV1Marker, "datetime/patterns/datetime@1"))]
 #[derive(Debug, PartialEq, Clone)]
 #[cfg_attr(
     feature = "datagen",
@@ -122,7 +124,7 @@ pub struct PreferredHourCycleV1 {
 )]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[yoke(prove_covariance_manually)]
-pub struct DateTimeLengthsV1<'data> {
+pub struct DateTimePatternV1<'data> {
     #[cfg_attr(feature = "serde", serde(borrow))]
     pattern: runtime::GenericPattern<'data>,
 }
