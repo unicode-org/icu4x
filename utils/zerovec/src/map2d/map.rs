@@ -322,10 +322,11 @@ where
         let (key0_index, range) = self.get_or_insert_range_for_key0(key0);
         debug_assert!(range.start <= range.end); // '<=' because we may have inserted a new key0
         debug_assert!(range.end <= self.keys1.zvl_len());
+        let range_start = range.start;
         #[allow(clippy::unwrap_used)] // by debug_assert! invariants
-        let index = range.start
+        let index = range_start
             + match self.keys1.zvl_binary_search_in_range(key1, range).unwrap() {
-                Ok(index) => return Some(self.values.zvl_replace(index, value)),
+                Ok(index) => return Some(self.values.zvl_replace(range_start + index, value)),
                 Err(index) => index,
             };
         self.keys1.zvl_insert(index, key1);
