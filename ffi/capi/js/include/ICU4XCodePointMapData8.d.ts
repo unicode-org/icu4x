@@ -102,6 +102,13 @@ export class ICU4XCodePointMapData8 {
 
   /**
 
+   * See the {@link https://docs.rs/icu/latest/icu/properties/maps/fn.indic_syllabic_category.html Rust documentation for `indic_syllabic_category`} for more information.
+   * @throws {@link FFIError}<{@link ICU4XError}>
+   */
+  static load_indic_syllabic_category(provider: ICU4XDataProvider): ICU4XCodePointMapData8 | never;
+
+  /**
+
    * See the {@link https://docs.rs/icu/latest/icu/properties/maps/fn.line_break.html Rust documentation for `line_break`} for more information.
    * @throws {@link FFIError}<{@link ICU4XError}>
    */

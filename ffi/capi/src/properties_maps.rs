@@ -165,6 +165,18 @@ pub mod ffi {
             )?))
         }
 
+        #[diplomat::rust_link(icu::properties::maps::indic_syllabic_category, Fn)]
+        #[diplomat::rust_link(icu::properties::maps::load_indic_syllabic_category, Fn, hidden)]
+        pub fn load_indic_syllabic_category(
+            provider: &ICU4XDataProvider,
+        ) -> Result<Box<ICU4XCodePointMapData8>, ICU4XError> {
+            Ok(convert_8(call_constructor_unstable!(
+                maps::indic_syllabic_category [r => Ok(r.static_to_owned())],
+                maps::load_indic_syllabic_category,
+                provider,
+            )?))
+        }
+
         #[diplomat::rust_link(icu::properties::maps::line_break, Fn)]
         #[diplomat::rust_link(icu::properties::maps::load_line_break, Fn, hidden)]
         pub fn load_line_break(

@@ -126,6 +126,13 @@ class ICU4XCodePointMapData8 {
   /**
    * 
    * 
+   * See the [Rust documentation for `indic_syllabic_category`](https://docs.rs/icu/latest/icu/properties/maps/fn.indic_syllabic_category.html) for more information.
+   */
+  static diplomat::result<ICU4XCodePointMapData8, ICU4XError> load_indic_syllabic_category(const ICU4XDataProvider& provider);
+
+  /**
+   * 
+   * 
    * See the [Rust documentation for `line_break`](https://docs.rs/icu/latest/icu/properties/maps/fn.line_break.html) for more information.
    */
   static diplomat::result<ICU4XCodePointMapData8, ICU4XError> load_line_break(const ICU4XDataProvider& provider);
@@ -207,6 +214,16 @@ inline diplomat::result<ICU4XCodePointMapData8, ICU4XError> ICU4XCodePointMapDat
 }
 inline diplomat::result<ICU4XCodePointMapData8, ICU4XError> ICU4XCodePointMapData8::load_east_asian_width(const ICU4XDataProvider& provider) {
   auto diplomat_result_raw_out_value = capi::ICU4XCodePointMapData8_load_east_asian_width(provider.AsFFI());
+  diplomat::result<ICU4XCodePointMapData8, ICU4XError> diplomat_result_out_value;
+  if (diplomat_result_raw_out_value.is_ok) {
+    diplomat_result_out_value = diplomat::Ok<ICU4XCodePointMapData8>(ICU4XCodePointMapData8(diplomat_result_raw_out_value.ok));
+  } else {
+    diplomat_result_out_value = diplomat::Err<ICU4XError>(static_cast<ICU4XError>(diplomat_result_raw_out_value.err));
+  }
+  return diplomat_result_out_value;
+}
+inline diplomat::result<ICU4XCodePointMapData8, ICU4XError> ICU4XCodePointMapData8::load_indic_syllabic_category(const ICU4XDataProvider& provider) {
+  auto diplomat_result_raw_out_value = capi::ICU4XCodePointMapData8_load_indic_syllabic_category(provider.AsFFI());
   diplomat::result<ICU4XCodePointMapData8, ICU4XError> diplomat_result_out_value;
   if (diplomat_result_raw_out_value.is_ok) {
     diplomat_result_out_value = diplomat::Ok<ICU4XCodePointMapData8>(ICU4XCodePointMapData8(diplomat_result_raw_out_value.ok));
