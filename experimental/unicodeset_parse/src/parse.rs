@@ -11,14 +11,16 @@ use icu_collections::{
     codepointinvlist::{CodePointInversionList, CodePointInversionListBuilder},
     codepointinvliststringlist::CodePointInversionListAndStringList,
 };
-use icu_properties::maps::load_script;
+use icu_properties::maps::{
+    load_grapheme_cluster_break, load_script, load_sentence_break, load_word_break,
+};
 use icu_properties::script::load_script_with_extensions_unstable;
 use icu_properties::sets::{
     load_for_ecma262_unstable, load_for_general_category_group, load_pattern_white_space,
     load_xid_continue, load_xid_start,
 };
-use icu_properties::Script;
 use icu_properties::{provider::*, GeneralCategoryGroup};
+use icu_properties::{GraphemeClusterBreak, Script, SentenceBreak, WordBreak};
 use icu_provider::prelude::*;
 
 /// The kind of error that occurred.
@@ -442,6 +444,8 @@ where
         + DataProvider<ExtendedPictographicV1Marker>
         + DataProvider<ExtenderV1Marker>
         + DataProvider<GraphemeBaseV1Marker>
+        + DataProvider<GraphemeClusterBreakV1Marker>
+        + DataProvider<GraphemeClusterBreakNameToValueV1Marker>
         + DataProvider<GraphemeExtendV1Marker>
         + DataProvider<HexDigitV1Marker>
         + DataProvider<IdsBinaryOperatorV1Marker>
@@ -459,6 +463,8 @@ where
         + DataProvider<QuotationMarkV1Marker>
         + DataProvider<RadicalV1Marker>
         + DataProvider<RegionalIndicatorV1Marker>
+        + DataProvider<SentenceBreakV1Marker>
+        + DataProvider<SentenceBreakNameToValueV1Marker>
         + DataProvider<SentenceTerminalV1Marker>
         + DataProvider<SoftDottedV1Marker>
         + DataProvider<TerminalPunctuationV1Marker>
@@ -466,6 +472,8 @@ where
         + DataProvider<UppercaseV1Marker>
         + DataProvider<VariationSelectorV1Marker>
         + DataProvider<WhiteSpaceV1Marker>
+        + DataProvider<WordBreakV1Marker>
+        + DataProvider<WordBreakNameToValueV1Marker>
         + DataProvider<XidContinueV1Marker>
         + DataProvider<GeneralCategoryMaskNameToValueV1Marker>
         + DataProvider<GeneralCategoryV1Marker>
@@ -1099,19 +1107,28 @@ where
         let mut try_sc = Err(PEK::UnknownProperty.into());
         // contains a value for the Script_Extensions property that needs to be tried
         let mut try_scx = Err(PEK::UnknownProperty.into());
+        // contains a value for the Grapheme_Cluster_Break property that needs to be tried
+        let mut try_gcb = Err(PEK::UnknownProperty.into());
+        // contains a value for the Sentence_Break property that needs to be tried
+        let mut try_sb = Err(PEK::UnknownProperty.into());
+        // contains a value for the Word_Break property that needs to be tried
+        let mut try_wb = Err(PEK::UnknownProperty.into());
         // contains a supposed binary property name that needs to be tried
         let mut try_binary = Err(PEK::UnknownProperty.into());
 
         if !value.is_empty() {
-            // key is gc, sc, scx
+            // key is gc, sc, scx, grapheme cluster break, sentence break, word break
             // value is a property value
             // OR
             // key is a binary property and value is a truthy/falsy value
 
             match key {
                 "General_Category" | "gc" => try_gc = Ok(value),
+                "Grapheme_Cluster_Break" => try_gcb = Ok(value),
                 "Script" | "sc" => try_sc = Ok(value),
                 "Script_Extensions" | "scx" => try_scx = Ok(value),
+                "Sentence_Break" => try_sb = Ok(value),
+                "Word_Break" => try_wb = Ok(value),
                 _ => {
                     let normalized_value = value.to_ascii_lowercase();
                     let truthy = matches!(normalized_value.as_str(), "true" | "t" | "yes" | "y");
@@ -1139,7 +1156,10 @@ where
             .and_then(|value| self.try_load_general_category_set(value))
             .or_else(|_| try_sc.and_then(|value| self.try_load_script_set(value)))
             .or_else(|_| try_scx.and_then(|value| self.try_load_script_extensions_set(value)))
-            .or_else(|_| try_binary.and_then(|value| self.try_load_ecma262_binary_set(value)))?;
+            .or_else(|_| try_binary.and_then(|value| self.try_load_ecma262_binary_set(value)))
+            .or_else(|_| try_gcb.and_then(|value| self.try_load_grapheme_cluster_break_set(value)))
+            .or_else(|_| try_sb.and_then(|value| self.try_load_sentence_break_set(value)))
+            .or_else(|_| try_wb.and_then(|value| self.try_load_word_break_set(value)))?;
         Ok(inverted)
     }
 
@@ -1344,6 +1364,50 @@ where
         self.single_set.add_set(&set.to_code_point_inversion_list());
         Ok(())
     }
+
+    fn try_load_grapheme_cluster_break_set(&mut self, name: &str) -> Result<()> {
+        let name_map = GraphemeClusterBreak::get_name_to_enum_mapper(self.property_provider)
+            .map_err(|_| PEK::Internal)?;
+        let gcb_value = name_map
+            .as_borrowed()
+            .get_loose(name)
+            .ok_or(PEK::UnknownProperty)?;
+        // TODO(#3550): This could be cached; does not depend on name.
+        let property_map =
+            load_grapheme_cluster_break(self.property_provider).map_err(|_| PEK::Internal)?;
+        let set = property_map.as_borrowed().get_set_for_value(gcb_value);
+        self.single_set.add_set(&set.to_code_point_inversion_list());
+        Ok(())
+    }
+
+    fn try_load_sentence_break_set(&mut self, name: &str) -> Result<()> {
+        let name_map = SentenceBreak::get_name_to_enum_mapper(self.property_provider)
+            .map_err(|_| PEK::Internal)?;
+        let sb_value = name_map
+            .as_borrowed()
+            .get_loose(name)
+            .ok_or(PEK::UnknownProperty)?;
+        // TODO(#3550): This could be cached; does not depend on name.
+        let property_map =
+            load_sentence_break(self.property_provider).map_err(|_| PEK::Internal)?;
+        let set = property_map.as_borrowed().get_set_for_value(sb_value);
+        self.single_set.add_set(&set.to_code_point_inversion_list());
+        Ok(())
+    }
+
+    fn try_load_word_break_set(&mut self, name: &str) -> Result<()> {
+        let name_map = WordBreak::get_name_to_enum_mapper(self.property_provider)
+            .map_err(|_| PEK::Internal)?;
+        let wb_value = name_map
+            .as_borrowed()
+            .get_loose(name)
+            .ok_or(PEK::UnknownProperty)?;
+        // TODO(#3550): This could be cached; does not depend on name.
+        let property_map = load_word_break(self.property_provider).map_err(|_| PEK::Internal)?;
+        let set = property_map.as_borrowed().get_set_for_value(wb_value);
+        self.single_set.add_set(&set.to_code_point_inversion_list());
+        Ok(())
+    }
 }
 
 /// Parses a UnicodeSet pattern and returns a UnicodeSet in the form of a [`CodePointInversionListAndStringList`](CodePointInversionListAndStringList),
@@ -1502,6 +1566,8 @@ where
         + DataProvider<ExtendedPictographicV1Marker>
         + DataProvider<ExtenderV1Marker>
         + DataProvider<GraphemeBaseV1Marker>
+        + DataProvider<GraphemeClusterBreakV1Marker>
+        + DataProvider<GraphemeClusterBreakNameToValueV1Marker>
         + DataProvider<GraphemeExtendV1Marker>
         + DataProvider<HexDigitV1Marker>
         + DataProvider<IdsBinaryOperatorV1Marker>
@@ -1519,6 +1585,8 @@ where
         + DataProvider<QuotationMarkV1Marker>
         + DataProvider<RadicalV1Marker>
         + DataProvider<RegionalIndicatorV1Marker>
+        + DataProvider<SentenceBreakV1Marker>
+        + DataProvider<SentenceBreakNameToValueV1Marker>
         + DataProvider<SentenceTerminalV1Marker>
         + DataProvider<SoftDottedV1Marker>
         + DataProvider<TerminalPunctuationV1Marker>
@@ -1526,6 +1594,8 @@ where
         + DataProvider<UppercaseV1Marker>
         + DataProvider<VariationSelectorV1Marker>
         + DataProvider<WhiteSpaceV1Marker>
+        + DataProvider<WordBreakV1Marker>
+        + DataProvider<WordBreakNameToValueV1Marker>
         + DataProvider<XidContinueV1Marker>
         + DataProvider<GeneralCategoryMaskNameToValueV1Marker>
         + DataProvider<GeneralCategoryV1Marker>
@@ -1607,6 +1677,8 @@ where
         + DataProvider<ExtendedPictographicV1Marker>
         + DataProvider<ExtenderV1Marker>
         + DataProvider<GraphemeBaseV1Marker>
+        + DataProvider<GraphemeClusterBreakV1Marker>
+        + DataProvider<GraphemeClusterBreakNameToValueV1Marker>
         + DataProvider<GraphemeExtendV1Marker>
         + DataProvider<HexDigitV1Marker>
         + DataProvider<IdsBinaryOperatorV1Marker>
@@ -1624,6 +1696,8 @@ where
         + DataProvider<QuotationMarkV1Marker>
         + DataProvider<RadicalV1Marker>
         + DataProvider<RegionalIndicatorV1Marker>
+        + DataProvider<SentenceBreakV1Marker>
+        + DataProvider<SentenceBreakNameToValueV1Marker>
         + DataProvider<SentenceTerminalV1Marker>
         + DataProvider<SoftDottedV1Marker>
         + DataProvider<TerminalPunctuationV1Marker>
@@ -1631,6 +1705,8 @@ where
         + DataProvider<UppercaseV1Marker>
         + DataProvider<VariationSelectorV1Marker>
         + DataProvider<WhiteSpaceV1Marker>
+        + DataProvider<WordBreakV1Marker>
+        + DataProvider<WordBreakNameToValueV1Marker>
         + DataProvider<XidContinueV1Marker>
         + DataProvider<GeneralCategoryMaskNameToValueV1Marker>
         + DataProvider<GeneralCategoryV1Marker>
@@ -1930,6 +2006,20 @@ mod tests {
             (r"[[:scx=Kana:]&[\u30FC]]", "\u{30FC}\u{30FC}", vec![]),
             (r"[[:sc=Kana:]&[\u30FC]]", "", vec![]),
             (r"[[:sc=Common:]&[\u30FC]]", "\u{30FC}\u{30FC}", vec![]),
+            // grapheme cluster break
+            (
+                r"\p{Grapheme_Cluster_Break=ZWJ}",
+                "\u{200D}\u{200D}",
+                vec![],
+            ),
+            // sentence break
+            (
+                r"\p{Sentence_Break=ATerm}",
+                "\u{002E}\u{002E}\u{2024}\u{2024}\u{FE52}\u{FE52}\u{FF0E}\u{FF0E}",
+                vec![],
+            ),
+            // word break
+            (r"\p{Word_Break=Single_Quote}", "\u{0027}\u{0027}", vec![]),
             // more syntax edge cases from UTS35 directly
             (r"[\^a]", "^^aa", vec![]),
             (r"[{{}]", "{{", vec![]),
