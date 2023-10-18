@@ -715,6 +715,8 @@ where
                 map.insert(key0, key1, value);
             }
         }
+        #[cfg(debug_assertions)]
+        map.check_invariants();
         map
     }
 }
