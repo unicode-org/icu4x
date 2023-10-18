@@ -299,7 +299,25 @@ where
 
     /// Insert `value` with `key`, returning the existing value if it exists.
     ///
-    /// See example in [`Self::get_2d()`].
+    /// ```rust
+    /// use zerovec::ZeroMap2d;
+    ///
+    /// let mut map = ZeroMap2d::new();
+    /// assert_eq!(
+    ///     map.insert(&0, "zero", "foo"),
+    ///     None,
+    /// );
+    /// assert_eq!(
+    ///     map.insert(&1, "one", "bar"),
+    ///     None,
+    /// );
+    /// assert_eq!(
+    ///     map.insert(&1, "one", "baz").as_deref(),
+    ///     Some("bar"),
+    /// );
+    /// assert_eq!(map.get_2d(&1, "one").as_deref(), Some("baz"));
+    /// assert_eq!(map.len(), 2);
+    /// ```
     pub fn insert(&mut self, key0: &K0, key1: &K1, value: &V) -> Option<V::OwnedType> {
         let (key0_index, range) = self.get_or_insert_range_for_key0(key0);
         debug_assert!(range.start <= range.end); // '<=' because we may have inserted a new key0
