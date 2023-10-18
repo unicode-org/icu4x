@@ -523,14 +523,14 @@ impl Reader {
     ///
     /// Returns the parsed resource bundle and a list of the keys encountered in
     /// the resource bundle in the order they were encountered.
-    pub fn read(input: &str) -> Result<(ResourceBundle, Vec<Key>), Error> {
+    pub fn read(input: &str) -> Result<(ResourceBundle, Vec<Key>), TextParserError> {
         let input = ParseState::new(input);
 
         let (mut final_state, bundle) =
             match bundle::<VerboseError<ParseState>>(input.clone()).finish() {
                 Ok(result) => result,
                 Err(err) => {
-                    return Err(Error {
+                    return Err(TextParserError {
                         trace: convert_error(input, err),
                     })
                 }
@@ -543,11 +543,11 @@ impl Reader {
 }
 
 #[derive(Debug)]
-pub struct Error {
+pub struct TextParserError {
     trace: String,
 }
 
-impl fmt::Display for Error {
+impl fmt::Display for TextParserError {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         f.write_fmt(format_args!(
             "Parse error while reading text bundle:\n{}",

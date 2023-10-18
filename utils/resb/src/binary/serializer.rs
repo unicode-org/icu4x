@@ -206,7 +206,7 @@ impl Serializer {
     pub fn to_bytes(
         bundle: &ResourceBundle,
         keys_in_discovery_order: &[Key],
-    ) -> Result<Vec<u8>, Error> {
+    ) -> Result<Vec<u8>, BinarySerializerError> {
         // For now, we hardcode the format version value and do not support
         // writing pool bundles.
         let format_version = FormatVersion::V2_0;
@@ -292,9 +292,9 @@ impl Serializer {
             repr_info,
         };
 
-        let root_descriptor = root
-            .descriptor
-            .ok_or(Error::unexpected("root descriptor was never populated"))?;
+        let root_descriptor = root.descriptor.ok_or(BinarySerializerError::unexpected(
+            "root descriptor was never populated",
+        ))?;
         let bundle_struct = BinResBundle {
             header,
             root_descriptor,
@@ -430,7 +430,7 @@ impl Serializer {
         &mut self,
         root: &mut BinResourceData,
         data_16_bit: &mut Vec<u16>,
-    ) -> Result<(), Error> {
+    ) -> Result<(), BinarySerializerError> {
         let mut strings = HashMap::new();
         Self::collect_strings(root, &mut strings);
         let count = strings.len();
@@ -510,9 +510,12 @@ impl Serializer {
                 // need to borrow as mutable, but we can safely unwrap.
                 #[allow(clippy::unwrap_used)]
                 let containing_string = data.borrow().containing_string.unwrap();
-                let containing_data = strings.get(containing_string).ok_or(Error::unexpected(
-                    "containing string not present in string map",
-                ))?;
+                let containing_data =
+                    strings
+                        .get(containing_string)
+                        .ok_or(BinarySerializerError::unexpected(
+                            "containing string not present in string map",
+                        ))?;
 
                 // Update the offset of the suffix from a relative position in
                 // the containing string to an absolute position in the 16-bit
@@ -543,7 +546,7 @@ impl Serializer {
                     data_16_bit.push((length >> 16) as u16);
                     data_16_bit.push(length as u16);
                 }
-                _ => return Err(Error::string_too_long(length)),
+                _ => return Err(BinarySerializerError::string_too_long(length)),
             };
 
             // Write the string to the 16-bit data block as UTF-16.
@@ -681,7 +684,7 @@ impl Serializer {
         &mut self,
         root: &mut BinResourceData,
         key_position_map: &HashMap<Key, u32>,
-    ) -> Result<Vec<u8>, Error> {
+    ) -> Result<Vec<u8>, BinarySerializerError> {
         // Begin the 16-bit data block with a 16-bit `0`. While ICU4C's `genrb`
         // tool does this in order to provide empty 16-bit collections with an
         // appropriate offset, the tool does not actually generate any such
@@ -717,7 +720,7 @@ impl Serializer {
         block_start_position: u32,
         data: &mut Vec<u8>,
         key_position_map: &HashMap<Key, u32>,
-    ) -> Result<ResDescriptor, Error> {
+    ) -> Result<ResDescriptor, BinarySerializerError> {
         if let Some(descriptor) = resource.descriptor {
             // We've already processed this resource in an earlier step.
             return Ok(descriptor);
@@ -741,7 +744,7 @@ impl Serializer {
                             key_position_map,
                         )
                     })
-                    .collect::<Result<Vec<_>, Error>>()?;
+                    .collect::<Result<Vec<_>, BinarySerializerError>>()?;
 
                 // Build a resource descriptor for this array.
                 let offset = block_start_position + data.len() as u32;
@@ -778,7 +781,7 @@ impl Serializer {
                             key_position_map,
                         )
                     })
-                    .collect::<Result<Vec<_>, Error>>()?;
+                    .collect::<Result<Vec<_>, BinarySerializerError>>()?;
 
                 // Build a resource descriptor for this table.
                 let offset = block_start_position + data.len() as u32;
@@ -789,9 +792,12 @@ impl Serializer {
                 data.append(&mut (map.len() as u16).to_ne_bytes().to_vec());
 
                 for key in map.keys() {
-                    let position = key_position_map
-                        .get(key)
-                        .ok_or(Error::unexpected("key not present in position map"))?;
+                    let position =
+                        key_position_map
+                            .get(key)
+                            .ok_or(BinarySerializerError::unexpected(
+                                "key not present in position map",
+                            ))?;
                     data.append(&mut (*position as u16).to_ne_bytes().to_vec());
                 }
 
@@ -845,7 +851,7 @@ impl Serializer {
             }
             BinResourceTypeData::_Alias => todo!(),
             _ => {
-                return Err(Error::unexpected(
+                return Err(BinarySerializerError::unexpected(
                     "expected resource to have been processed already",
                 ))
             }
@@ -858,7 +864,7 @@ impl Serializer {
             data.resize(data.len() + (u32_size - position % u32_size), 0xaa);
         }
 
-        resource.descriptor.ok_or(Error::unexpected(
+        resource.descriptor.ok_or(BinarySerializerError::unexpected(
             "resource descriptor has not been populated",
         ))
     }
@@ -871,7 +877,7 @@ impl Serializer {
         root: &mut BinResourceData,
         block_start_position: u32,
         key_position_map: &HashMap<Key, u32>,
-    ) -> Result<Vec<u8>, Error> {
+    ) -> Result<Vec<u8>, BinarySerializerError> {
         let mut body = Vec::new();
         self.build_32_bit_resource(root, block_start_position, &mut body, key_position_map)?;
 
@@ -905,7 +911,7 @@ impl Serializer {
 /// Gets the total size of a UTF-16 string in 16-bit characters.
 ///
 /// This count includes the string length marker and a null terminator.
-fn get_total_string_size(string: &str) -> Result<usize, Error> {
+fn get_total_string_size(string: &str) -> Result<usize, BinarySerializerError> {
     Ok(string.chars().count() + get_string_length_marker_size(string)? + 1)
 }
 
@@ -916,13 +922,13 @@ fn get_total_string_size(string: &str) -> Result<usize, Error> {
 /// surrogates to indicate length.`
 ///
 /// For more details, see [`ResourceReprType::StringV2`].
-fn get_string_length_marker_size(string: &str) -> Result<usize, Error> {
+fn get_string_length_marker_size(string: &str) -> Result<usize, BinarySerializerError> {
     let length = match string.chars().count() {
         0..=40 => 0,
         41..=0x3ee => 1,
         0x3ef..=0xf_ffff => 2,
         0x10_0000..=0xffff_ffff => 3,
-        length => return Err(Error::string_too_long(length)),
+        length => return Err(BinarySerializerError::string_too_long(length)),
     };
 
     Ok(length)
@@ -1068,7 +1074,7 @@ struct BinResBundle<'a> {
 }
 
 impl TryFrom<BinResBundle<'_>> for Vec<u8> {
-    type Error = Error;
+    type Error = BinarySerializerError;
 
     fn try_from(value: BinResBundle<'_>) -> Result<Self, Self::Error> {
         // Manually build the list of bytes to write to the output. There are
@@ -1126,7 +1132,7 @@ impl From<BinReprInfo> for Vec<u8> {
 }
 
 impl TryFrom<BinIndex> for Vec<u8> {
-    type Error = Error;
+    type Error = BinarySerializerError;
 
     fn try_from(value: BinIndex) -> Result<Self, Self::Error> {
         let mut bytes =
@@ -1143,17 +1149,23 @@ impl TryFrom<BinIndex> for Vec<u8> {
         }
 
         if value.field_count >= 6 {
-            let bundle_attributes = value
-                .bundle_attributes
-                .ok_or(Error::unexpected("no bundle attributes field provided"))?;
+            let bundle_attributes =
+                value
+                    .bundle_attributes
+                    .ok_or(BinarySerializerError::unexpected(
+                        "no bundle attributes field provided",
+                    ))?;
 
             bytes.extend_from_slice(&bundle_attributes.to_ne_bytes());
         }
 
         if value.field_count >= 7 {
-            let data_16_bit_end = value
-                .data_16_bit_end
-                .ok_or(Error::unexpected("no 16-bit data end offset provided"))?;
+            let data_16_bit_end =
+                value
+                    .data_16_bit_end
+                    .ok_or(BinarySerializerError::unexpected(
+                        "no 16-bit data end offset provided",
+                    ))?;
 
             bytes.extend_from_slice(&data_16_bit_end.to_ne_bytes());
         }
@@ -1161,7 +1173,9 @@ impl TryFrom<BinIndex> for Vec<u8> {
         if value.field_count >= 8 {
             let pool_checksum = value
                 .pool_checksum
-                .ok_or(Error::unexpected("no pool checksum provided"))?;
+                .ok_or(BinarySerializerError::unexpected(
+                    "no pool checksum provided",
+                ))?;
 
             bytes.extend_from_slice(&pool_checksum.to_ne_bytes());
         }
@@ -1192,11 +1206,11 @@ impl From<ResDescriptor> for u32 {
 /// The `Error` type provides basic error handling for serialization of binary
 /// resource bundles.
 #[derive(Debug)]
-pub struct Error {
+pub struct BinarySerializerError {
     kind: ErrorKind,
 }
 
-impl Error {
+impl BinarySerializerError {
     /// Creates a new error indicating that the input data contains a string
     /// longer than a binary resource bundle can encode.
     pub fn string_too_long(length: usize) -> Self {
@@ -1216,7 +1230,7 @@ impl Error {
     }
 }
 
-impl fmt::Display for Error {
+impl fmt::Display for BinarySerializerError {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         match self.kind {
             ErrorKind::StringTooLong(length) => write!(

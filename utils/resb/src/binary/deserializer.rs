@@ -7,8 +7,8 @@ use core::{fmt, slice::SliceIndex};
 use crate::MASK_28_BIT;
 
 use super::{
-    BinHeader, BinIndex, BinReprInfo, CharsetFamily, Endianness, Error, FormatVersion,
-    ResDescriptor, ResourceReprType,
+    BinHeader, BinIndex, BinReprInfo, BinaryDeserializerError, CharsetFamily, Endianness,
+    FormatVersion, ResDescriptor, ResourceReprType,
 };
 
 extern crate alloc;
@@ -23,7 +23,7 @@ const SYSTEM_CHARSET_FAMILY: CharsetFamily = CharsetFamily::Ascii;
 
 /// Deserializes an instance of type `T` from bytes representing a binary ICU
 /// resource bundle.
-pub fn from_bytes<'a, T>(input: &'a [u8]) -> Result<T, Error>
+pub fn from_bytes<'a, T>(input: &'a [u8]) -> Result<T, BinaryDeserializerError>
 where
     T: Deserialize<'a>,
 {
@@ -65,19 +65,19 @@ struct ResourceTreeDeserializer<'de> {
 impl<'de> ResourceTreeDeserializer<'de> {
     /// Creates a new deserializer from the header and index of the resource
     /// bundle.
-    fn from_bytes(input: &'de [u8]) -> Result<Self, Error> {
+    fn from_bytes(input: &'de [u8]) -> Result<Self, BinaryDeserializerError> {
         let header = BinHeader::try_from(input)?;
 
         // Verify that the representation in the resource bundle is one we're
         // prepared to read.
         if header.repr_info.charset_family != SYSTEM_CHARSET_FAMILY {
-            return Err(Error::unsupported_format(
+            return Err(BinaryDeserializerError::unsupported_format(
                 "bundle and system character set families do not match",
             ));
         }
 
         if header.repr_info.size_of_char != 2 {
-            return Err(Error::unsupported_format(
+            return Err(BinaryDeserializerError::unsupported_format(
                 "characters of size other than 2 are not supported",
             ));
         }
@@ -85,7 +85,7 @@ impl<'de> ResourceTreeDeserializer<'de> {
         if header.repr_info.format_version != FormatVersion::V2_0 {
             // Support for other versions can be added at a later time, but for
             // now we can only deal with 2.0.
-            return Err(Error::unsupported_format(
+            return Err(BinaryDeserializerError::unsupported_format(
                 "format versions other than 2.0 are not supported at this time",
             ));
         }
@@ -113,7 +113,7 @@ impl<'de> ResourceTreeDeserializer<'de> {
             )?;
             Some(data_16_bit)
         } else {
-            return Err(Error::invalid_data(
+            return Err(BinaryDeserializerError::invalid_data(
                 "offset to the end of 16-bit data not specified",
             ));
         };
@@ -128,11 +128,15 @@ impl<'de> ResourceTreeDeserializer<'de> {
     }
 
     /// Reads the next resource descriptor without updating the input position.
-    fn peek_next_resource_descriptor(&self) -> Result<ResDescriptor, Error> {
+    fn peek_next_resource_descriptor(&self) -> Result<ResDescriptor, BinaryDeserializerError> {
         let input = get_subslice(self.input, 0..4)?;
         let descriptor = match input.try_into() {
             Ok(value) => value,
-            Err(_) => return Err(Error::invalid_data("unable to read resource descriptor")),
+            Err(_) => {
+                return Err(BinaryDeserializerError::invalid_data(
+                    "unable to read resource descriptor",
+                ))
+            }
         };
         let descriptor = u32::from_le_bytes(descriptor);
 
@@ -140,7 +144,7 @@ impl<'de> ResourceTreeDeserializer<'de> {
     }
 
     /// Reads the next resource descriptor.
-    fn get_next_resource_descriptor(&mut self) -> Result<ResDescriptor, Error> {
+    fn get_next_resource_descriptor(&mut self) -> Result<ResDescriptor, BinaryDeserializerError> {
         let result = self.peek_next_resource_descriptor();
 
         // Pop resource descriptor from input.
@@ -150,7 +154,7 @@ impl<'de> ResourceTreeDeserializer<'de> {
     }
 
     /// Reads a 28-bit integer resource as a signed value.
-    fn parse_signed(&mut self) -> Result<i32, Error> {
+    fn parse_signed(&mut self) -> Result<i32, BinaryDeserializerError> {
         let descriptor = self.get_next_resource_descriptor()?;
         match descriptor.resource_type() {
             // Since integers in the resource bundle are 28-bit, we need to
@@ -159,22 +163,26 @@ impl<'de> ResourceTreeDeserializer<'de> {
             // `>>` is arithmetic right shift on signed ints, so it gives us the
             // desired behavior.
             ResourceReprType::Int => Ok(descriptor.value_as_signed_int()),
-            _ => Err(Error::resource_type_mismatch("expected integer resource")),
+            _ => Err(BinaryDeserializerError::resource_type_mismatch(
+                "expected integer resource",
+            )),
         }
     }
 
     /// Reads a 28-bit integer resource as an unsigned value.
-    fn parse_unsigned(&mut self) -> Result<u32, Error> {
+    fn parse_unsigned(&mut self) -> Result<u32, BinaryDeserializerError> {
         let descriptor = self.get_next_resource_descriptor()?;
         match descriptor.resource_type() {
             ResourceReprType::Int => Ok(descriptor.value_as_unsigned_int()),
-            _ => Err(Error::resource_type_mismatch("expected integer resource")),
+            _ => Err(BinaryDeserializerError::resource_type_mismatch(
+                "expected integer resource",
+            )),
         }
     }
 }
 
 impl<'de, 'a> de::Deserializer<'de> for &'a mut ResourceTreeDeserializer<'de> {
-    type Error = Error;
+    type Error = BinaryDeserializerError;
 
     fn deserialize_any<V>(self, visitor: V) -> Result<V::Value, Self::Error>
     where
@@ -206,7 +214,7 @@ impl<'de, 'a> de::Deserializer<'de> for &'a mut ResourceTreeDeserializer<'de> {
             0 => false,
             1 => true,
             _ => {
-                return Err(Error::resource_type_mismatch(
+                return Err(BinaryDeserializerError::resource_type_mismatch(
                     "expected integer resource representable as boolean",
                 ))
             }
@@ -324,12 +332,14 @@ impl<'de, 'a> de::Deserializer<'de> for &'a mut ResourceTreeDeserializer<'de> {
                     let de = Resource16BitDeserializer::new(input);
                     de.deserialize_string(visitor)
                 } else {
-                    Err(Error::invalid_data(
+                    Err(BinaryDeserializerError::invalid_data(
                         "StringV2 resource without 16-bit data block",
                     ))
                 }
             }
-            _ => Err(Error::resource_type_mismatch("expected string resource")),
+            _ => Err(BinaryDeserializerError::resource_type_mismatch(
+                "expected string resource",
+            )),
         }
     }
 
@@ -384,13 +394,13 @@ impl<'de, 'a> de::Deserializer<'de> for &'a mut ResourceTreeDeserializer<'de> {
                     let (length, input) = get_length_and_start_of_utf16_string(input)?;
                     get_subslice(input, ..length * core::mem::size_of::<u16>())?
                 } else {
-                    return Err(Error::invalid_data(
+                    return Err(BinaryDeserializerError::invalid_data(
                         "StringV2 resource without 16-bit data block",
                     ));
                 }
             }
             _ => {
-                return Err(Error::resource_type_mismatch(
+                return Err(BinaryDeserializerError::resource_type_mismatch(
                     "expected binary data resource",
                 ))
             }
@@ -489,7 +499,9 @@ impl<'de, 'a> de::Deserializer<'de> for &'a mut ResourceTreeDeserializer<'de> {
 
                     result
                 } else {
-                    Err(Error::invalid_data("StringV2 resource with no 16-bit data"))
+                    Err(BinaryDeserializerError::invalid_data(
+                        "StringV2 resource with no 16-bit data",
+                    ))
                 }
             }
             ResourceReprType::IntVector => {
@@ -509,7 +521,9 @@ impl<'de, 'a> de::Deserializer<'de> for &'a mut ResourceTreeDeserializer<'de> {
 
                 result
             }
-            _ => Err(Error::resource_type_mismatch("expected array resource")),
+            _ => Err(BinaryDeserializerError::resource_type_mismatch(
+                "expected array resource",
+            )),
         }
     }
 
@@ -566,7 +580,9 @@ impl<'de, 'a> de::Deserializer<'de> for &'a mut ResourceTreeDeserializer<'de> {
             }
             ResourceReprType::_Table32 => todo!(),
             ResourceReprType::Table16 => todo!(),
-            _ => Err(Error::resource_type_mismatch("expected table resource")),
+            _ => Err(BinaryDeserializerError::resource_type_mismatch(
+                "expected table resource",
+            )),
         }
     }
 
@@ -630,7 +646,7 @@ struct Array16SeqAccess<'de> {
 }
 
 impl<'de> de::SeqAccess<'de> for Array16SeqAccess<'de> {
-    type Error = Error;
+    type Error = BinaryDeserializerError;
 
     fn next_element_seed<T>(&mut self, seed: T) -> Result<Option<T::Value>, Self::Error>
     where
@@ -670,7 +686,7 @@ struct ArraySeqAccess<'a, 'de: 'a> {
 }
 
 impl<'de, 'a> de::SeqAccess<'de> for ArraySeqAccess<'a, 'de> {
-    type Error = Error;
+    type Error = BinaryDeserializerError;
 
     fn next_element_seed<T>(&mut self, seed: T) -> Result<Option<T::Value>, Self::Error>
     where
@@ -708,7 +724,7 @@ struct IntVectorSeqAccess<'de> {
 }
 
 impl<'de> de::SeqAccess<'de> for IntVectorSeqAccess<'de> {
-    type Error = Error;
+    type Error = BinaryDeserializerError;
 
     fn next_element_seed<T>(&mut self, seed: T) -> Result<Option<T::Value>, Self::Error>
     where
@@ -738,7 +754,7 @@ impl<'de> de::SeqAccess<'de> for IntVectorSeqAccess<'de> {
 struct EmptySeqAccess;
 
 impl<'de> de::SeqAccess<'de> for EmptySeqAccess {
-    type Error = Error;
+    type Error = BinaryDeserializerError;
 
     fn next_element_seed<T>(&mut self, _seed: T) -> Result<Option<T::Value>, Self::Error>
     where
@@ -757,7 +773,7 @@ impl<'de> de::SeqAccess<'de> for EmptySeqAccess {
 struct EmptyMapAccess;
 
 impl<'de> de::MapAccess<'de> for EmptyMapAccess {
-    type Error = Error;
+    type Error = BinaryDeserializerError;
 
     fn next_key_seed<K>(&mut self, _seed: K) -> Result<Option<K::Value>, Self::Error>
     where
@@ -795,7 +811,7 @@ struct TableMapAccess<'de, 'a> {
 }
 
 impl<'de, 'a> de::MapAccess<'de> for TableMapAccess<'de, 'a> {
-    type Error = Error;
+    type Error = BinaryDeserializerError;
 
     fn next_key_seed<K>(&mut self, seed: K) -> Result<Option<K::Value>, Self::Error>
     where
@@ -811,9 +827,9 @@ impl<'de, 'a> de::MapAccess<'de> for TableMapAccess<'de, 'a> {
         self.keys = keys;
         self.remaining -= 1;
 
-        let input = get_subslice(self.de.keys, key as usize..).or(Err(Error::invalid_data(
-            "unexpected end of data while deserializing key",
-        )))?;
+        let input = get_subslice(self.de.keys, key as usize..).or(Err(
+            BinaryDeserializerError::invalid_data("unexpected end of data while deserializing key"),
+        ))?;
 
         let de = KeyDeserializer::new(input);
         seed.deserialize(de).map(Some)
@@ -850,14 +866,14 @@ impl<'de> Resource16BitDeserializer<'de> {
     }
 
     /// Reads a UTF-16 string from the 16-bit data block.
-    fn read_string_v2(self) -> Result<String, Error> {
+    fn read_string_v2(self) -> Result<String, BinaryDeserializerError> {
         let (length, input) = get_length_and_start_of_utf16_string(self.input)?;
 
         let byte_slices = input.chunks_exact(2).take(length);
         if byte_slices.len() != length {
             // `take()` will silently return fewer elements than requested if
             // the input is too short, but that's an error during deserialize.
-            return Err(Error::invalid_data(
+            return Err(BinaryDeserializerError::invalid_data(
                 "unexpected end of input while reading string",
             ));
         }
@@ -872,12 +888,14 @@ impl<'de> Resource16BitDeserializer<'de> {
 
         char::decode_utf16(units)
             .collect::<Result<String, _>>()
-            .map_err(|_| Error::invalid_data("string resource is not valid UTF-16"))
+            .map_err(|_| {
+                BinaryDeserializerError::invalid_data("string resource is not valid UTF-16")
+            })
     }
 }
 
 impl<'de> de::Deserializer<'de> for Resource16BitDeserializer<'de> {
-    type Error = Error;
+    type Error = BinaryDeserializerError;
 
     fn deserialize_any<V>(self, visitor: V) -> Result<V::Value, Self::Error>
     where
@@ -933,7 +951,7 @@ impl<'de> IntVectorDeserializer<'de> {
     }
 
     /// Reads a 32-bit integer from the current input as signed.
-    fn read_signed(mut self) -> Result<i32, Error> {
+    fn read_signed(mut self) -> Result<i32, BinaryDeserializerError> {
         let (value, next) = read_u32(self.input)?;
         self.input = next;
 
@@ -941,7 +959,7 @@ impl<'de> IntVectorDeserializer<'de> {
     }
 
     /// Reads a 32-bit integer from the current input as unsigned.
-    fn read_unsigned(mut self) -> Result<u32, Error> {
+    fn read_unsigned(mut self) -> Result<u32, BinaryDeserializerError> {
         let (value, next) = read_u32(self.input)?;
         self.input = next;
 
@@ -950,7 +968,7 @@ impl<'de> IntVectorDeserializer<'de> {
 }
 
 impl<'de> de::Deserializer<'de> for IntVectorDeserializer<'de> {
-    type Error = Error;
+    type Error = BinaryDeserializerError;
 
     fn deserialize_any<V>(self, visitor: V) -> Result<V::Value, Self::Error>
     where
@@ -1035,23 +1053,21 @@ impl<'de> KeyDeserializer<'de> {
     }
 
     /// Reads a key from the current input.
-    fn read_key(self) -> Result<&'de str, Error> {
+    fn read_key(self) -> Result<&'de str, BinaryDeserializerError> {
         // Keys are stored as null-terminated UTF-8 strings. Locate the
         // terminating byte and return as a borrowed string.
-        let terminator_pos = self
-            .input
-            .iter()
-            .position(|&byte| byte == 0)
-            .ok_or(Error::invalid_data("unterminated key string"))?;
+        let terminator_pos = self.input.iter().position(|&byte| byte == 0).ok_or(
+            BinaryDeserializerError::invalid_data("unterminated key string"),
+        )?;
 
         let input = get_subslice(self.input, 0..terminator_pos)?;
         core::str::from_utf8(input)
-            .map_err(|_| Error::invalid_data("key string is not valid UTF-8"))
+            .map_err(|_| BinaryDeserializerError::invalid_data("key string is not valid UTF-8"))
     }
 }
 
 impl<'de> de::Deserializer<'de> for KeyDeserializer<'de> {
-    type Error = Error;
+    type Error = BinaryDeserializerError;
 
     fn deserialize_any<V>(self, visitor: V) -> Result<V::Value, Self::Error>
     where
@@ -1077,7 +1093,9 @@ impl<'de> de::Deserializer<'de> for KeyDeserializer<'de> {
 /// Determines the length in units of a serialized UTF-16 string.
 ///
 /// Returns the length of the string and a slice beginning at the first unit.
-fn get_length_and_start_of_utf16_string(input: &[u8]) -> Result<(usize, &[u8]), Error> {
+fn get_length_and_start_of_utf16_string(
+    input: &[u8],
+) -> Result<(usize, &[u8]), BinaryDeserializerError> {
     let (first, rest) = read_u16(input)?;
 
     let (length, rest) = if (0xdc00..0xdfef).contains(&first) {
@@ -1101,7 +1119,7 @@ fn get_length_and_start_of_utf16_string(input: &[u8]) -> Result<(usize, &[u8]), 
             .chunks_exact(2)
             .take(40)
             .position(|chunk| chunk == [0, 0])
-            .ok_or(Error::invalid_data(
+            .ok_or(BinaryDeserializerError::invalid_data(
                 "unterminated string with implicit length",
             ))?
             + 1;
@@ -1112,9 +1130,9 @@ fn get_length_and_start_of_utf16_string(input: &[u8]) -> Result<(usize, &[u8]), 
     Ok((length, rest))
 }
 
-impl de::StdError for Error {}
+impl de::StdError for BinaryDeserializerError {}
 
-impl de::Error for Error {
+impl de::Error for BinaryDeserializerError {
     fn custom<T>(_msg: T) -> Self
     where
         T: fmt::Display,
@@ -1122,19 +1140,19 @@ impl de::Error for Error {
         #[cfg(feature = "logging")]
         log::warn!("Error during resource bundle deserialization: {_msg}");
 
-        Error::unknown("error during deserialization; see logs")
+        BinaryDeserializerError::unknown("error during deserialization; see logs")
     }
 }
 
 impl TryFrom<&[u8]> for BinHeader {
-    type Error = Error;
+    type Error = BinaryDeserializerError;
 
     // We can safely index in this function as we first guarantee that the input
     // is sufficiently large.
     #[allow(clippy::indexing_slicing)]
     fn try_from(value: &[u8]) -> Result<Self, Self::Error> {
         if value.len() < core::mem::size_of::<BinHeader>() {
-            return Err(Error::invalid_data(
+            return Err(BinaryDeserializerError::invalid_data(
                 "input is too short to contain file header",
             ));
         }
@@ -1146,13 +1164,17 @@ impl TryFrom<&[u8]> for BinHeader {
         let (magic, value) = ([value[0], value[1]], &value[2..]);
         match magic {
             [0xda, 0x27] => (),
-            _ => return Err(Error::invalid_data("magic word does not match")),
+            _ => {
+                return Err(BinaryDeserializerError::invalid_data(
+                    "magic word does not match",
+                ))
+            }
         }
 
         let repr_info = BinReprInfo::try_from(value)?;
 
         if (size as usize) < core::mem::size_of::<BinHeader>() {
-            return Err(Error::invalid_data(
+            return Err(BinaryDeserializerError::invalid_data(
                 "header size specified in file is smaller than expected",
             ));
         }
@@ -1166,14 +1188,14 @@ impl TryFrom<&[u8]> for BinHeader {
 }
 
 impl TryFrom<&[u8]> for BinReprInfo {
-    type Error = Error;
+    type Error = BinaryDeserializerError;
 
     // We can safely index in this function as we first guarantee that the input
     // is sufficiently large.
     #[allow(clippy::indexing_slicing)]
     fn try_from(value: &[u8]) -> Result<Self, Self::Error> {
         if value.len() < core::mem::size_of::<BinReprInfo>() {
-            return Err(Error::invalid_data(
+            return Err(BinaryDeserializerError::invalid_data(
                 "input is too short to contain representation info",
             ));
         }
@@ -1186,7 +1208,7 @@ impl TryFrom<&[u8]> for BinReprInfo {
         // in order to ensure compatibility with `zerovec`.
         let (endianness, value) = (Endianness::try_from(value[0])?, &value[1..]);
         if endianness != Endianness::Little {
-            return Err(Error::unsupported_format(
+            return Err(BinaryDeserializerError::unsupported_format(
                 "big-endian bundles are not supported",
             ));
         }
@@ -1199,7 +1221,9 @@ impl TryFrom<&[u8]> for BinReprInfo {
         // valid resource bundle.
         let (data_format, value) = ([value[0], value[1], value[2], value[3]], &value[4..]);
         if &data_format != b"ResB" {
-            return Err(Error::invalid_data("unexpected data format value"));
+            return Err(BinaryDeserializerError::invalid_data(
+                "unexpected data format value",
+            ));
         }
 
         let (format_version, value) = (FormatVersion::try_from(&value[..4])?, &value[4..]);
@@ -1220,7 +1244,7 @@ impl TryFrom<&[u8]> for BinReprInfo {
 }
 
 impl TryFrom<&[u8]> for BinIndex {
-    type Error = Error;
+    type Error = BinaryDeserializerError;
 
     fn try_from(value: &[u8]) -> Result<Self, Self::Error> {
         let (field_count, value) = read_u32(value)?;
@@ -1229,7 +1253,9 @@ impl TryFrom<&[u8]> for BinIndex {
             // We shouldn't call into this function in format version 1.0, as
             // there is no index count field, and format version 1.1 and up all
             // specify at least five fields.
-            return Err(Error::invalid_data("invalid index field count"));
+            return Err(BinaryDeserializerError::invalid_data(
+                "invalid index field count",
+            ));
         }
 
         let (keys_end, value) = read_u32(value)?;
@@ -1277,7 +1303,7 @@ impl TryFrom<&[u8]> for BinIndex {
 }
 
 impl TryFrom<&[u8]> for FormatVersion {
-    type Error = Error;
+    type Error = BinaryDeserializerError;
 
     fn try_from(value: &[u8]) -> Result<Self, Self::Error> {
         let value = match value {
@@ -1287,7 +1313,11 @@ impl TryFrom<&[u8]> for FormatVersion {
             [1, 3, 0, 0] => FormatVersion::V1_3,
             [2, 0, 0, 0] => FormatVersion::V2_0,
             [3, 0, 0, 0] => FormatVersion::V3_0,
-            _ => return Err(Error::invalid_data("unrecognized format version")),
+            _ => {
+                return Err(BinaryDeserializerError::invalid_data(
+                    "unrecognized format version",
+                ))
+            }
         };
 
         Ok(value)
@@ -1295,7 +1325,7 @@ impl TryFrom<&[u8]> for FormatVersion {
 }
 
 impl TryFrom<u32> for ResDescriptor {
-    type Error = Error;
+    type Error = BinaryDeserializerError;
 
     fn try_from(value: u32) -> Result<Self, Self::Error> {
         let resource_type = ResourceReprType::try_from((value >> 28) as u16)?;
@@ -1309,13 +1339,15 @@ impl TryFrom<u32> for ResDescriptor {
 ///
 /// Returns the subslice. Returns an error if the index is not valid for the
 /// input.
-fn get_subslice<I>(input: &[u8], index: I) -> Result<&[u8], Error>
+fn get_subslice<I>(input: &[u8], index: I) -> Result<&[u8], BinaryDeserializerError>
 where
     I: SliceIndex<[u8], Output = [u8]>,
 {
     input
         .get(index)
-        .ok_or(Error::invalid_data("unexpected end of input"))
+        .ok_or(BinaryDeserializerError::invalid_data(
+            "unexpected end of input",
+        ))
 }
 
 /// Reads the first two bytes of the input and interprets them as a `u16` with
@@ -1323,7 +1355,7 @@ where
 ///
 /// Returns the `u16` and a slice containing all input after the interpreted
 /// bytes. Returns an error if the input is of insufficient length.
-fn read_u16(input: &[u8]) -> Result<(u16, &[u8]), Error> {
+fn read_u16(input: &[u8]) -> Result<(u16, &[u8]), BinaryDeserializerError> {
     // Safe to unwrap at the end of this because `try_into()` for arrays will
     // only fail if the slice is the wrong size.
     #[allow(clippy::unwrap_used)]
@@ -1332,9 +1364,12 @@ fn read_u16(input: &[u8]) -> Result<(u16, &[u8]), Error> {
         .unwrap();
     let value = u16::from_le_bytes(bytes);
 
-    let rest = input
-        .get(core::mem::size_of::<u16>()..)
-        .ok_or(Error::invalid_data("unexpected end of input"))?;
+    let rest =
+        input
+            .get(core::mem::size_of::<u16>()..)
+            .ok_or(BinaryDeserializerError::invalid_data(
+                "unexpected end of input",
+            ))?;
     Ok((value, rest))
 }
 
@@ -1343,19 +1378,24 @@ fn read_u16(input: &[u8]) -> Result<(u16, &[u8]), Error> {
 ///
 /// Returns the `u32` and a slice containing all input after the interpreted
 /// bytes. Returns an error if the input is of insufficient length.
-fn read_u32(input: &[u8]) -> Result<(u32, &[u8]), Error> {
+fn read_u32(input: &[u8]) -> Result<(u32, &[u8]), BinaryDeserializerError> {
     // Safe to unwrap at the end of this because `try_into()` for arrays will
     // only fail if the slice is the wrong size.
     #[allow(clippy::unwrap_used)]
     let bytes = input
         .get(0..core::mem::size_of::<u32>())
-        .ok_or(Error::invalid_data("unexpected end of input"))?
+        .ok_or(BinaryDeserializerError::invalid_data(
+            "unexpected end of input",
+        ))?
         .try_into()
         .unwrap();
     let value = u32::from_le_bytes(bytes);
 
-    let rest = input
-        .get(core::mem::size_of::<u32>()..)
-        .ok_or(Error::invalid_data("unexpected end of input"))?;
+    let rest =
+        input
+            .get(core::mem::size_of::<u32>()..)
+            .ok_or(BinaryDeserializerError::invalid_data(
+                "unexpected end of input",
+            ))?;
     Ok((value, rest))
 }

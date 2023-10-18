@@ -133,12 +133,12 @@ macro_rules! primitive_enum {
         }
 
         impl TryFrom<$type> for $name {
-            type Error = Error;
+            type Error = BinaryDeserializerError;
 
             fn try_from(value: $type) -> Result<Self, Self::Error> {
                 match value {
                     $(x if x == $name::$variant as $type => Ok($name::$variant),)*
-                    _ => Err(Error::invalid_data(
+                    _ => Err(BinaryDeserializerError::invalid_data(
                         concat!("unrecognized value for ", stringify!($name))
                     )),
                 }
@@ -370,7 +370,6 @@ impl ResDescriptor {
     /// expected to call the function appropriate to the resource type they are
     /// querying.
     fn value_as_signed_int(&self) -> i32 {
-
         ((self.value as i32) << 4) >> 4
     }
 
@@ -392,12 +391,12 @@ impl ResDescriptor {
 /// The `Error` type provides basic error handling for deserialization of binary
 /// resource bundles.
 #[derive(Clone, Copy, Debug)]
-pub struct Error {
+pub struct BinaryDeserializerError {
     kind: ErrorKind,
     message: &'static str,
 }
 
-impl Error {
+impl BinaryDeserializerError {
     fn invalid_data(message: &'static str) -> Self {
         Self {
             kind: ErrorKind::InvalidData,
@@ -427,7 +426,7 @@ impl Error {
     }
 }
 
-impl fmt::Display for Error {
+impl fmt::Display for BinaryDeserializerError {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         let description = match self.kind {
             ErrorKind::InvalidData => "Invalid resource bundle data",
