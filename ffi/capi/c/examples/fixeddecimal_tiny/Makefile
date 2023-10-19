@@ -29,11 +29,11 @@ icu_capi_staticlib_tiny/target/x86_64-unknown-linux-gnu/debug/libicu_capi_static
 	cd icu_capi_staticlib_tiny && \
 	RUSTFLAGS="-Clinker-plugin-lto -Clinker=$(CLANG) -Ccodegen-units=1 -Clink-arg=-flto -Cpanic=abort" ICU4X_DATA_DIR=$(shell pwd)/baked_data cargo +${ICU4X_NIGHTLY_TOOLCHAIN} build -Z build-std=std,panic_abort -Z build-std-features=panic_immediate_abort --target x86_64-unknown-linux-gnu
 
-icu_capi_staticlib_tiny/target/x86_64-unknown-linux-gnu/release-opt-size/libicu_capi_staticlib_tiny.a: FORCE baked_data/macros.rs
+icu_capi_staticlib_tiny/target/x86_64-unknown-linux-gnu/release/libicu_capi_staticlib_tiny.a: FORCE baked_data/macros.rs
 	rustup toolchain install ${ICU4X_NIGHTLY_TOOLCHAIN}
 	rustup component add rust-src --toolchain ${ICU4X_NIGHTLY_TOOLCHAIN}
 	cd icu_capi_staticlib_tiny && \
-	RUSTFLAGS="-Clinker-plugin-lto -Clinker=$(CLANG) -Ccodegen-units=1 -Clink-arg=-flto -Cpanic=abort" ICU4X_DATA_DIR=$(shell pwd)/baked_data cargo +${ICU4X_NIGHTLY_TOOLCHAIN} build -Z build-std=std,panic_abort -Z build-std-features=panic_immediate_abort --target x86_64-unknown-linux-gnu --profile=release-opt-size
+	RUSTFLAGS="-Clinker-plugin-lto -Clinker=$(CLANG) -Ccodegen-units=1 -Clink-arg=-flto -Cpanic=abort -Copt-level=s" ICU4X_DATA_DIR=$(shell pwd)/baked_data cargo +${ICU4X_NIGHTLY_TOOLCHAIN} build -Z build-std=std,panic_abort -Z build-std-features=panic_immediate_abort --target x86_64-unknown-linux-gnu --release
 
 # Naive target: no optimizations, full std
 optim0.elf: ../../../../../target/debug/libicu_capi_staticlib.a $(ALL_HEADERS) test.c
@@ -58,15 +58,15 @@ optim4.o: $(ALL_HEADERS) test.c
 	$(CLANG) -c -flto=thin -fdata-sections -ffunction-sections --target=x86_64-unknown-linux-gnu test.c -g -o optim4.o
 
 # optim4.elf: clang two-step with lld, release mode with debug symbols
-optim4.elf: optim4.o icu_capi_staticlib_tiny/target/x86_64-unknown-linux-gnu/release-opt-size/libicu_capi_staticlib_tiny.a
-	$(CLANG) -flto=thin -fuse-ld=$(LLD) -L . -o optim4.elf optim4.o icu_capi_staticlib_tiny/target/x86_64-unknown-linux-gnu/release-opt-size/libicu_capi_staticlib_tiny.a -Wl,--gc-sections
+optim4.elf: optim4.o icu_capi_staticlib_tiny/target/x86_64-unknown-linux-gnu/release/libicu_capi_staticlib_tiny.a
+	$(CLANG) -flto=thin -fuse-ld=$(LLD) -L . -o optim4.elf optim4.o icu_capi_staticlib_tiny/target/x86_64-unknown-linux-gnu/release/libicu_capi_staticlib_tiny.a -Wl,--gc-sections
 
 optim5.o: $(ALL_HEADERS) test.c
 	$(CLANG) -c -flto=thin -fdata-sections -ffunction-sections --target=x86_64-unknown-linux-gnu test.c -o optim5.o
 
 # optim5.elf: clang two-step with lld, release mode stripped of debug symbols
-optim5.elf: optim5.o icu_capi_staticlib_tiny/target/x86_64-unknown-linux-gnu/release-opt-size/libicu_capi_staticlib_tiny.a
-	$(CLANG) -flto=thin -fuse-ld=$(LLD) -L . -o optim5.elf optim5.o icu_capi_staticlib_tiny/target/x86_64-unknown-linux-gnu/release-opt-size/libicu_capi_staticlib_tiny.a -Wl,--gc-sections -Wl,--strip-all
+optim5.elf: optim5.o icu_capi_staticlib_tiny/target/x86_64-unknown-linux-gnu/release/libicu_capi_staticlib_tiny.a
+	$(CLANG) -flto=thin -fuse-ld=$(LLD) -L . -o optim5.elf optim5.o icu_capi_staticlib_tiny/target/x86_64-unknown-linux-gnu/release/libicu_capi_staticlib_tiny.a -Wl,--gc-sections -Wl,--strip-all
 
 build: optim0.elf optim1.elf optim2.elf optim3.elf optim4.elf optim5.elf
 

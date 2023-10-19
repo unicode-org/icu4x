@@ -240,10 +240,6 @@ diplomat_core = { version = "0.6" }
 [profile.release]
 lto = true
 
-[profile.release-opt-size]
-inherits = "release"
-opt-level = "s"
-
 # Enable debug information specifically for memory profiling.
 # https://docs.rs/dhat/0.2.1/dhat/#configuration
 #
