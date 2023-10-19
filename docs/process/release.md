@@ -50,19 +50,29 @@ Once the release checklist is complete, the assigned release driver will perform
   * If there are any errors, please fix them before advertising the release
 * Land the changelog (see below)
   * Note: Do this _before_ tagging the release because the changelog is included in the tag
+* [Tag the Release](https://github.com/unicode-org/icu4x/releases) with the text drafted above
+* Create a branch named `release/x.y` on the release tag and push it to the upstream
 * Announce the release to public
-  * [Tag the Release](https://github.com/unicode-org/icu4x/releases) with the text drafted above
   * Send an email to [icu4x-announce](https://groups.google.com/u/0/a/unicode.org/g/icu4x-announce)
   * Submit to This Week In Rust
 * Keep the main branch relatively stable for 7-14 days following the release to make things easier in case a patch release is needed.
   * It's okay to land smaller or incremental changes, but avoid breaking changes during this period.
 
-If an ICU metacrate patch release is needed:
+## Patch Releases
 
-* Follow the above steps from the main branch if possible.
-* If changes on the main branch have landed that prevent a patch release, create a branch from the most recent ancestor, perform the release steps from that branch, and then push a _merge commit_ putting that branch back onto main.
-  * It is useful for various Git tooling for tags to be descendants and ancestors in the commit history. Free-floating tags create warnings such as "This commit does not belong to any branch on this repository", and they reduce the efficacy of commands such as `git diff`, `git log`, and `git cherry`.
+The ICU4X TC may decide to make a patch release of an ICU4X component on an old release stream, such as to fix a regression in behavior. To make a patch release:
 
+* Fix the issue on the main branch. Get it reviewed and landed.
+  * Include an update to the changelog.
+  * If possible, avoid mixing functional changes with generated files (e.g. data or FFI) in the commit that lands on the main branch.
+* Check out the `release/x.y` branch. On this branch:
+  * Cherry-pick the functional change from the main branch
+  * Cherry-pick the changelog update if it was a separate commit
+  * Land re-generated code or data
+  * Land a commit updating the version number of the component that needs the patch
+  * Have a team member review the branch before continuing
+* Release the updated components from the tip of `release/x.y`
+* Create and push a tag of the format `ind/icu_collator@1.3.3` (for icu_collator patch version 1.3.3)
 
 ## Publishing utils
 
