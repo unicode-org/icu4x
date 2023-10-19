@@ -47,6 +47,12 @@ impl<const N: usize> TinyAsciiStr<N> {
     }
 }
 
+impl<const N: usize> From<TinyAsciiStr<N>> for UnvalidatedTinyAsciiStr<N> {
+    fn from(other: TinyAsciiStr<N>) -> Self {
+        other.to_unvalidated()
+    }
+}
+
 #[cfg(feature = "serde")]
 impl<const N: usize> serde::Serialize for UnvalidatedTinyAsciiStr<N> {
     fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>

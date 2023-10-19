@@ -993,6 +993,17 @@ impl AuxiliaryKeys {
     }
 }
 
+#[cfg(feature = "experimental")]
+impl From<Subtag> for AuxiliaryKeys {
+    fn from(subtag: Subtag) -> Self {
+        Self {
+            value: AuxiliaryKeysInner::Stack(
+                TinyAsciiStr::from_bytes(&subtag.as_str().as_bytes()).unwrap(),
+            ),
+        }
+    }
+}
+
 #[test]
 fn test_data_locale_to_string() {
     use icu_locid::locale;

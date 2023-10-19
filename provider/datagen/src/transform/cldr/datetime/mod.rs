@@ -16,6 +16,7 @@ use std::collections::HashMap;
 use std::collections::HashSet;
 use std::str::FromStr;
 
+mod neo;
 mod patterns;
 mod skeletons;
 mod symbols;

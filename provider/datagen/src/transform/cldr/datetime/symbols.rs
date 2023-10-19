@@ -11,7 +11,9 @@ use tinystr::{tinystr, TinyStr16, TinyStr4};
 
 pub fn convert_dates(other: &cldr_serde::ca::Dates, calendar: &str) -> DateSymbolsV1<'static> {
     DateSymbolsV1 {
-        months: other.months.get(&(get_month_code_map(calendar), calendar)),
+        months: other
+            .months
+            .get(&(get_month_code_map(calendar).0, calendar)),
         weekdays: other.days.get(&()),
         eras: convert_eras(&other.eras, calendar),
     }
@@ -40,8 +42,8 @@ fn convert_eras(eras: &cldr_serde::ca::Eras, calendar: &str) -> Eras<'static> {
     }
     out_eras
 }
-
-fn get_month_code_map(calendar: &str) -> &'static [TinyStr4] {
+/// Returns a month code map and whether the map has leap months
+pub(super) fn get_month_code_map(calendar: &str) -> (&'static [TinyStr4], bool) {
     // This will need to be more complicated to handle lunar calendars
     // https://github.com/unicode-org/icu4x/issues/2066
     static SOLAR_MONTH_CODES: &[TinyStr4] = &[
@@ -79,14 +81,16 @@ fn get_month_code_map(calendar: &str) -> &'static [TinyStr4] {
     ];
     match calendar {
         "gregory" | "buddhist" | "japanese" | "japanext" | "indian" | "persian" | "roc"
-        | "islamic" | "islamicc" | "umalqura" | "tbla" => &SOLAR_MONTH_CODES[0..12],
-        "coptic" | "ethiopic" | "chinese" | "dangi" => SOLAR_MONTH_CODES,
-        "hebrew" => HEBREW_MONTH_CODES,
+        | "islamic" | "islamicc" | "umalqura" | "tbla" | "chinese" | "dangi" => {
+            (&SOLAR_MONTH_CODES[0..12], false)
+        }
+        "coptic" | "ethiopic" => (SOLAR_MONTH_CODES, false),
+        "hebrew" => (HEBREW_MONTH_CODES, true),
         _ => panic!("Month map unknown for {calendar}"),
     }
 }
 
-fn get_era_code_map(calendar: &str) -> impl Iterator<Item = (&str, TinyStr16)> {
+pub(super) fn get_era_code_map(calendar: &str) -> impl Iterator<Item = (&str, TinyStr16)> {
     use either::Either;
 
     let array: &[_] = match calendar {

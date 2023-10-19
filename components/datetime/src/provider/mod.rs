@@ -84,6 +84,64 @@ const _: () = {
     icu_datetime_data::impl_time_zone_generic_short_v1!(Baked);
     icu_datetime_data::impl_time_zone_specific_long_v1!(Baked);
     icu_datetime_data::impl_time_zone_specific_short_v1!(Baked);
+
+    #[cfg(feature = "experimental")]
+    icu_datetime_data::impl_weekday_symbols_v1!(Baked);
+
+    #[cfg(feature = "experimental")]
+    icu_datetime_data::impl_dayperiods_v1!(Baked);
+    #[cfg(feature = "experimental")]
+    icu_datetime_data::impl_buddhist_months_v1!(Baked);
+    #[cfg(feature = "experimental")]
+    icu_datetime_data::impl_buddhist_years_v1!(Baked);
+    #[cfg(feature = "experimental")]
+    icu_datetime_data::impl_chinese_months_v1!(Baked);
+    #[cfg(feature = "experimental")]
+    icu_datetime_data::impl_chinese_years_v1!(Baked);
+    #[cfg(feature = "experimental")]
+    icu_datetime_data::impl_coptic_months_v1!(Baked);
+    #[cfg(feature = "experimental")]
+    icu_datetime_data::impl_coptic_years_v1!(Baked);
+    #[cfg(feature = "experimental")]
+    icu_datetime_data::impl_dangi_months_v1!(Baked);
+    #[cfg(feature = "experimental")]
+    icu_datetime_data::impl_dangi_years_v1!(Baked);
+    #[cfg(feature = "experimental")]
+    icu_datetime_data::impl_ethiopic_months_v1!(Baked);
+    #[cfg(feature = "experimental")]
+    icu_datetime_data::impl_ethiopic_years_v1!(Baked);
+    #[cfg(feature = "experimental")]
+    icu_datetime_data::impl_gregory_months_v1!(Baked);
+    #[cfg(feature = "experimental")]
+    icu_datetime_data::impl_gregory_years_v1!(Baked);
+    #[cfg(feature = "experimental")]
+    icu_datetime_data::impl_hebrew_months_v1!(Baked);
+    #[cfg(feature = "experimental")]
+    icu_datetime_data::impl_hebrew_years_v1!(Baked);
+    #[cfg(feature = "experimental")]
+    icu_datetime_data::impl_indian_months_v1!(Baked);
+    #[cfg(feature = "experimental")]
+    icu_datetime_data::impl_indian_years_v1!(Baked);
+    #[cfg(feature = "experimental")]
+    icu_datetime_data::impl_islamic_months_v1!(Baked);
+    #[cfg(feature = "experimental")]
+    icu_datetime_data::impl_islamic_years_v1!(Baked);
+    #[cfg(feature = "experimental")]
+    icu_datetime_data::impl_japanese_months_v1!(Baked);
+    #[cfg(feature = "experimental")]
+    icu_datetime_data::impl_japanese_years_v1!(Baked);
+    #[cfg(feature = "experimental")]
+    icu_datetime_data::impl_japanext_months_v1!(Baked);
+    #[cfg(feature = "experimental")]
+    icu_datetime_data::impl_japanext_years_v1!(Baked);
+    #[cfg(feature = "experimental")]
+    icu_datetime_data::impl_persian_months_v1!(Baked);
+    #[cfg(feature = "experimental")]
+    icu_datetime_data::impl_persian_years_v1!(Baked);
+    #[cfg(feature = "experimental")]
+    icu_datetime_data::impl_roc_months_v1!(Baked);
+    #[cfg(feature = "experimental")]
+    icu_datetime_data::impl_roc_years_v1!(Baked);
 };
 
 #[cfg(feature = "datagen")]
@@ -128,4 +186,60 @@ pub const KEYS: &[DataKey] = &[
     time_zones::TimeZoneFormatsV1Marker::KEY,
     #[cfg(feature = "experimental")]
     calendar::DateSkeletonPatternsV1Marker::KEY,
+    #[cfg(feature = "experimental")]
+    neo::WeekdaySymbolsV1Marker::KEY,
+    #[cfg(feature = "experimental")]
+    neo::DayPeriodSymbolsV1Marker::KEY,
+    #[cfg(feature = "experimental")]
+    neo::BuddhistYearSymbolsV1Marker::KEY,
+    #[cfg(feature = "experimental")]
+    neo::ChineseYearSymbolsV1Marker::KEY,
+    #[cfg(feature = "experimental")]
+    neo::CopticYearSymbolsV1Marker::KEY,
+    #[cfg(feature = "experimental")]
+    neo::DangiYearSymbolsV1Marker::KEY,
+    #[cfg(feature = "experimental")]
+    neo::EthiopianYearSymbolsV1Marker::KEY,
+    #[cfg(feature = "experimental")]
+    neo::GregorianYearSymbolsV1Marker::KEY,
+    #[cfg(feature = "experimental")]
+    neo::HebrewYearSymbolsV1Marker::KEY,
+    #[cfg(feature = "experimental")]
+    neo::IndianYearSymbolsV1Marker::KEY,
+    #[cfg(feature = "experimental")]
+    neo::IslamicYearSymbolsV1Marker::KEY,
+    #[cfg(feature = "experimental")]
+    neo::JapaneseYearSymbolsV1Marker::KEY,
+    #[cfg(feature = "experimental")]
+    neo::JapaneseExtendedYearSymbolsV1Marker::KEY,
+    #[cfg(feature = "experimental")]
+    neo::PersianYearSymbolsV1Marker::KEY,
+    #[cfg(feature = "experimental")]
+    neo::RocYearSymbolsV1Marker::KEY,
+    #[cfg(feature = "experimental")]
+    neo::BuddhistMonthSymbolsV1Marker::KEY,
+    #[cfg(feature = "experimental")]
+    neo::ChineseMonthSymbolsV1Marker::KEY,
+    #[cfg(feature = "experimental")]
+    neo::CopticMonthSymbolsV1Marker::KEY,
+    #[cfg(feature = "experimental")]
+    neo::DangiMonthSymbolsV1Marker::KEY,
+    #[cfg(feature = "experimental")]
+    neo::EthiopianMonthSymbolsV1Marker::KEY,
+    #[cfg(feature = "experimental")]
+    neo::GregorianMonthSymbolsV1Marker::KEY,
+    #[cfg(feature = "experimental")]
+    neo::HebrewMonthSymbolsV1Marker::KEY,
+    #[cfg(feature = "experimental")]
+    neo::IndianMonthSymbolsV1Marker::KEY,
+    #[cfg(feature = "experimental")]
+    neo::IslamicMonthSymbolsV1Marker::KEY,
+    #[cfg(feature = "experimental")]
+    neo::JapaneseMonthSymbolsV1Marker::KEY,
+    #[cfg(feature = "experimental")]
+    neo::JapaneseExtendedMonthSymbolsV1Marker::KEY,
+    #[cfg(feature = "experimental")]
+    neo::PersianMonthSymbolsV1Marker::KEY,
+    #[cfg(feature = "experimental")]
+    neo::RocMonthSymbolsV1Marker::KEY,
 ];
