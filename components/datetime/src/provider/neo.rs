@@ -16,7 +16,24 @@ use zerovec::{VarZeroVec, ZeroMap};
 /// including in SemVer minor releases. While the serde representation of data structs is guaranteed
 /// to be stable, their Rust representation might not be. Use with caution.
 /// </div>
-#[icu_provider::data_struct(marker(YearSymbolsV1Marker, "datetime/symbols/years@1"))]
+#[icu_provider::data_struct(
+    marker(BuddhistYearSymbolsV1Marker, "datetime/symbols/buddhist/years@1"),
+    marker(ChineseYearSymbolsV1Marker, "datetime/symbols/chinese/years@1"),
+    marker(CopticYearSymbolsV1Marker, "datetime/symbols/coptic/years@1"),
+    marker(DangiYearSymbolsV1Marker, "datetime/symbols/dangi/years@1"),
+    marker(EthiopianYearSymbolsV1Marker, "datetime/symbols/ethiopic/years@1"),
+    marker(GregorianYearSymbolsV1Marker, "datetime/symbols/gregory/years@1"),
+    marker(HebrewYearSymbolsV1Marker, "datetime/symbols/hebrew/years@1"),
+    marker(IndianYearSymbolsV1Marker, "datetime/symbols/indian/years@1"),
+    marker(IslamicYearSymbolsV1Marker, "datetime/symbols/islamic/years@1"),
+    marker(JapaneseYearSymbolsV1Marker, "datetime/symbols/japanese/years@1"),
+    marker(
+        JapaneseExtendedYearSymbolsV1Marker,
+        "datetime/symbols/japanext/years@1"
+    ),
+    marker(PersianYearSymbolsV1Marker, "datetime/symbols/persian/years@1"),
+    marker(RocYearSymbolsV1Marker, "datetime/symbols/roc/years@1")
+)]
 #[derive(Debug, PartialEq, Clone)]
 #[cfg_attr(
     feature = "datagen",
@@ -45,7 +62,24 @@ pub enum YearSymbolsV1<'data> {
 /// including in SemVer minor releases. While the serde representation of data structs is guaranteed
 /// to be stable, their Rust representation might not be. Use with caution.
 /// </div>
-#[icu_provider::data_struct(marker(MonthSymbolsV1Marker, "datetime/symbols/months@1"))]
+#[icu_provider::data_struct(
+    marker(BuddhistMonthSymbolsV1Marker, "datetime/symbols/buddhist/months@1"),
+    marker(ChineseMonthSymbolsV1Marker, "datetime/symbols/chinese/months@1"),
+    marker(CopticMonthSymbolsV1Marker, "datetime/symbols/coptic/months@1"),
+    marker(DangiMonthSymbolsV1Marker, "datetime/symbols/dangi/months@1"),
+    marker(EthiopianMonthSymbolsV1Marker, "datetime/symbols/ethiopic/months@1"),
+    marker(GregorianMonthSymbolsV1Marker, "datetime/symbols/gregory/months@1"),
+    marker(HebrewMonthSymbolsV1Marker, "datetime/symbols/hebrew/months@1"),
+    marker(IndianMonthSymbolsV1Marker, "datetime/symbols/indian/months@1"),
+    marker(IslamicMonthSymbolsV1Marker, "datetime/symbols/islamic/months@1"),
+    marker(JapaneseMonthSymbolsV1Marker, "datetime/symbols/japanese/months@1"),
+    marker(
+        JapaneseExtendedMonthSymbolsV1Marker,
+        "datetime/symbols/japanext/months@1"
+    ),
+    marker(PersianMonthSymbolsV1Marker, "datetime/symbols/persian/months@1"),
+    marker(RocMonthSymbolsV1Marker, "datetime/symbols/roc/months@1")
+)]
 #[derive(Debug, PartialEq, Clone)]
 #[cfg_attr(
     feature = "datagen",
@@ -85,7 +119,10 @@ pub enum MonthSymbolsV1<'data> {
 #[icu_provider::data_struct(
     marker(WeekdaySymbolsV1Marker, "datetime/symbols/weekdays@1"),
     marker(DayPeriodSymbolsV1Marker, "datetime/symbols/dayperiods@1"),
-    marker(DaySymbolsV1Marker, "datetime/symbols/days@1")
+    marker(ChineseDaySymbolsV1Marker, "datetime/symbols/chinese/days@1"),
+    marker(DangiDaySymbolsV1Marker, "datetime/symbols/dangi/days@1"),
+    // for calendars that don't use day symbols
+    marker(PlaceholderDaySymbolsV1Marker, "datetime/symbols/placeholder/days@1"),
 )]
 #[derive(Debug, PartialEq, Clone)]
 #[cfg_attr(
