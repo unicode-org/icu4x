@@ -235,17 +235,13 @@ diplomat = { version = "0.6" }
 diplomat-runtime = { version = "0.6" }
 diplomat_core = { version = "0.6" }
 
-# LTO is needed for WASM and other size-optimized builds,
-# and it improve the performance of benchmarks
-[profile.release]
-lto = true
-
 # Enable debug information specifically for memory profiling.
 # https://docs.rs/dhat/0.2.1/dhat/#configuration
 #
 # 2021-01-08: This would be nicer as a named profile, e.g. [profile.memory]
 # https://github.com/rust-lang/cargo/issues/6988
 [profile.bench]
+lto = true
 debug = true
 debug-assertions = false
 

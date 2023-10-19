@@ -30,7 +30,7 @@ icu_capi_staticlib_tiny/target/x86_64-unknown-linux-gnu/release/libicu_capi_stat
 	rustup toolchain install ${ICU4X_NIGHTLY_TOOLCHAIN}
 	rustup component add rust-src --toolchain ${ICU4X_NIGHTLY_TOOLCHAIN}
 	cd icu_capi_staticlib_tiny && \
-	RUSTFLAGS="-Clinker-plugin-lto -Clinker=$(CLANG) -Ccodegen-units=1 -Clink-arg=-flto -Cpanic=abort -Copt-level=s" cargo +${ICU4X_NIGHTLY_TOOLCHAIN} build -Z build-std=std,panic_abort -Z build-std-features=panic_immediate_abort --target x86_64-unknown-linux-gnu --release
+	RUSTFLAGS="-Clto -Cembed-bitcode -Clinker-plugin-lto -Clinker=$(CLANG) -Ccodegen-units=1 -Clink-arg=-flto -Cpanic=abort -Copt-level=s" cargo +${ICU4X_NIGHTLY_TOOLCHAIN} build -Z build-std=std,panic_abort -Z build-std-features=panic_immediate_abort --target x86_64-unknown-linux-gnu --release
 
 # Naive target: no optimizations, full std
 optim0.elf: ../../../../../target/debug/libicu_capi_staticlib.a $(ALL_HEADERS) test.c

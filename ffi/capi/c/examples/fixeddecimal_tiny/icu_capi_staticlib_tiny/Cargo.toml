@@ -15,7 +15,4 @@ crate-type = ["staticlib"]
 icu_capi = { path = "../../../..", default-features = false, features = ["compiled_data", "icu_decimal"] }
 dlmalloc = { version = "0.2", features = ["global"] }
 
-[profile.release]
-lto = true
-
 [workspace]

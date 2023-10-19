@@ -22,7 +22,7 @@ lib: $(ALL_HEADERS)
 ../../../../../target/wasm32-unknown-unknown/release/icu_capi_cdylib.wasm: FORCE
 	rustup toolchain install ${ICU4X_NIGHTLY_TOOLCHAIN}
 	rustup component add rust-src --toolchain ${ICU4X_NIGHTLY_TOOLCHAIN}
-	RUSTFLAGS="-Cpanic=abort -Copt-level=s -C link-args=-zstack-size=${WASM_STACK_SIZE}" \
+	RUSTFLAGS="-Cpanic=abort -Copt-level=s -C link-args=-zstack-size=${WASM_STACK_SIZE} -Clto -Cembed-bitcode" \
 	cargo +${ICU4X_NIGHTLY_TOOLCHAIN} build \
 		-Z build-std=std,panic_abort -Z build-std-features=panic_immediate_abort \
 		--target wasm32-unknown-unknown \
