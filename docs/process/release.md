@@ -73,6 +73,7 @@ The ICU4X TC may decide to make a patch release of an ICU4X component on an old 
   * Have a team member review the branch before continuing
 * Release the updated components from the tip of `release/x.y`
 * Create and push a tag of the format `ind/icu_collator@1.3.3` (for icu_collator patch version 1.3.3)
+  * It is not necessary to create `ind/icu_collator_data@1.3.3` so long as the component has a tag
 
 ## Publishing utils
 
