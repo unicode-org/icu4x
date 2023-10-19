@@ -1014,7 +1014,7 @@ where
     }
 
     fn parse_property_inner(&mut self, end: char) -> Result<()> {
-        // only supports ECMA-262. UnicodeSet spec ignores whitespace, '-', and '_',
+        // UnicodeSet spec ignores whitespace, '-', and '_',
         // but ECMA-262 requires '_', so we'll allow that.
         // TODO(#3559): support loose matching on property names (e.g., "AS  -_-  CII_Hex_ D-igit")
         // TODO(#3559): support more properties than ECMA-262
@@ -1095,6 +1095,9 @@ where
         // [:gc = value:]
         // [:sc = value:]
         // [:scx = value:]
+        // [:Grapheme_Cluster_Break = value:]
+        // [:Sentence_Break = value:]
+        // [:Word_Break = value:]
         // [:value:] - looks up value in gc, sc
         // [:prop:] - binary property, returns codepoints that have the property
         // [:prop = truthy/falsy:] - same as above
