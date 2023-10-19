@@ -27,7 +27,7 @@ pub mod time_zones;
 /// including in SemVer minor releases. While the serde representation of data structs is guaranteed
 /// to be stable, their Rust representation might not be. Use with caution.
 /// </div>
-#[cfg(feature = "experimental")]
+#[cfg(any(feature = "datagen", feature = "experimental"))]
 pub mod neo;
 
 #[cfg(feature = "compiled_data")]
