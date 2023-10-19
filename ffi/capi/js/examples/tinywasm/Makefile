@@ -12,7 +12,6 @@ $(ALL_HEADERS):
 
 # 100 KiB, working around a bug in older rustc
 # https://github.com/unicode-org/icu4x/issues/2753
-# keep in sync with .cargo/config.toml
 WASM_STACK_SIZE := 100000
 
 BASEDIR := $(dir $(realpath $(lastword $(MAKEFILE_LIST))))
