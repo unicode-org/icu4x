@@ -18,7 +18,9 @@ script_runner = "@duckscript"
 script = '''
 exit_on_error true
 
-set_env RUSTFLAGS "-C panic=abort -C opt-level=s -Clto -Cembed-bitcode"
+# 100 KiB, working around a bug in older rustc
+# https://github.com/unicode-org/icu4x/issues/2753
+set_env RUSTFLAGS "-C panic=abort -C opt-level=s -Clink-args=-zstack-size=100000 -Clto -Cembed-bitcode"
 command = set "build -Z build-std=std,panic_abort -Z build-std-features=panic_immediate_abort --target wasm32-unknown-unknown --release --examples --workspace --features serde --exclude icu_datagen --exclude icu_capi"
 exec --fail-on-error cargo +${ICU4X_NIGHTLY_TOOLCHAIN} %{command}
 # Re-run the build command only to generate the JSON output

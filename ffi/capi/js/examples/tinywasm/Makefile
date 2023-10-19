@@ -10,6 +10,10 @@ ICU4X_NIGHTLY_TOOLCHAIN ?= "nightly-2022-12-26"
 
 $(ALL_HEADERS):
 
+# 100 KiB, working around a bug in older rustc
+# https://github.com/unicode-org/icu4x/issues/2753
+WASM_STACK_SIZE := 100000
+
 BASEDIR := $(dir $(realpath $(lastword $(MAKEFILE_LIST))))
 
 lib: $(ALL_HEADERS)
@@ -21,7 +25,7 @@ target/wasm32-unknown-unknown/release/icu_capi_cdylib.wasm: FORCE
 	rustup toolchain install ${ICU4X_NIGHTLY_TOOLCHAIN}
 	rustup component add rust-src --toolchain ${ICU4X_NIGHTLY_TOOLCHAIN}
 	# Build the WASM library
-	RUSTFLAGS="-Cpanic=abort -Copt-level=s -Clinker-plugin-lto -Ccodegen-units=1 -C linker=${BASEDIR}/ld.py -C linker-flavor=wasm-ld -Clto -Cembed-bitcode" \
+	RUSTFLAGS="-Cpanic=abort -Copt-level=s -C link-arg=-zstack-size=${WASM_STACK_SIZE} -Clinker-plugin-lto -Ccodegen-units=1 -C linker=${BASEDIR}/ld.py -C linker-flavor=wasm-ld -Clto -Cembed-bitcode" \
 	CARGO_TARGET_DIR="target" `# Special linker flags shouldn't overwrite the top-level target directory` \
 	cargo +${ICU4X_NIGHTLY_TOOLCHAIN} build \
 		-Z build-std=std,panic_abort -Z build-std-features=panic_immediate_abort \
