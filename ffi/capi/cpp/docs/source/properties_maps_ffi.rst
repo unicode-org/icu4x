@@ -143,6 +143,11 @@
         See the `Rust documentation for east_asian_width <https://docs.rs/icu/latest/icu/properties/maps/fn.east_asian_width.html>`__ for more information.
 
 
+    .. cpp:function:: static diplomat::result<ICU4XCodePointMapData8, ICU4XError> load_indic_syllabic_category(const ICU4XDataProvider& provider)
+
+        See the `Rust documentation for indic_syllabic_category <https://docs.rs/icu/latest/icu/properties/maps/fn.indic_syllabic_category.html>`__ for more information.
+
+
     .. cpp:function:: static diplomat::result<ICU4XCodePointMapData8, ICU4XError> load_line_break(const ICU4XDataProvider& provider)
 
         See the `Rust documentation for line_break <https://docs.rs/icu/latest/icu/properties/maps/fn.line_break.html>`__ for more information.

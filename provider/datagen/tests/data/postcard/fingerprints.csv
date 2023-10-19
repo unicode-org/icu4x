@@ -1335,6 +1335,7 @@ plurals/ranges@1, sr, 2B, 3a6d9523170345d0
 plurals/ranges@1, th, 2B, 3a6d9523170345d0
 plurals/ranges@1, tr, 2B, 3a6d9523170345d0
 propnames/from/GCB@1, und, 250B, f2e454713aa9d7b7
+propnames/from/InSC@1, und, 658B, 63f03c8b66edf35e
 propnames/from/SB@1, und, 219B, 4c43c3fb27c051da
 propnames/from/WB@1, und, 402B, 47b082a835be1ff2
 propnames/from/bc@1, und, 651B, e2218b08b46d1e15
@@ -1345,6 +1346,7 @@ propnames/from/gcm@1, und, 907B, 43b812154d2d3914
 propnames/from/lb@1, und, 863B, 761c539b10bfcacc
 propnames/from/sc@1, und, 3632B, 536093cd88973193
 propnames/to/long/linear/GCB@1, und, 151B, 9feae38a09898348
+propnames/to/long/linear/InSC@1, und, 585B, 36e854e09df6ac36
 propnames/to/long/linear/SB@1, und, 109B, 1bddbfc00ea789cb
 propnames/to/long/linear/WB@1, und, 245B, 7d725adfd056f4a4
 propnames/to/long/linear/bc@1, und, 460B, 98758a587d562ad1
@@ -1354,6 +1356,7 @@ propnames/to/long/linear/lb@1, und, 538B, 6184af0b8fd4d249
 propnames/to/long/linear/sc@1, und, 1958B, 8397d5c5b16356aa
 propnames/to/long/sparse/ccc@1, und, 652B, 440a07537c221a20
 propnames/to/short/linear/GCB@1, und, 78B, 3f593af98eec2820
+propnames/to/short/linear/InSC@1, und, 585B, 36e854e09df6ac36
 propnames/to/short/linear/SB@1, und, 65B, ce7e882cf77b04e
 propnames/to/short/linear/WB@1, und, 111B, 625b4965d4282611
 propnames/to/short/linear/bc@1, und, 103B, 85ea5db229b1eaba
@@ -1398,6 +1401,7 @@ props/IDS@1, und, 5275B, 35b34f32e2ec3221
 props/IDSB@1, und, 18B, f0c8ea3fb61c993c
 props/IDST@1, und, 10B, f2be1266fa75708d
 props/Ideo@1, und, 163B, fa6c1a98c09f46df
+props/InSC@1, und, 5917B, c34480030d3cff73
 props/Join_C@1, und, 10B, ca93d1f94fc9d2af
 props/LOE@1, und, 58B, dbe045415d3b363d
 props/Lower@1, und, 5371B, 7c979c7a7818dd83

@@ -8,7 +8,8 @@ pub mod ffi {
     use alloc::boxed::Box;
     use icu_properties::{
         names::PropertyValueNameToEnumMapper, BidiClass, EastAsianWidth, GeneralCategory,
-        GeneralCategoryGroup, GraphemeClusterBreak, LineBreak, Script, SentenceBreak, WordBreak,
+        GeneralCategoryGroup, GraphemeClusterBreak, IndicSyllabicCategory, LineBreak, Script,
+        SentenceBreak, WordBreak,
     };
 
     use crate::errors::ffi::ICU4XError;
@@ -104,6 +105,23 @@ pub mod ffi {
                 call_constructor_unstable!(
                     EastAsianWidth::name_to_enum_mapper [r => Ok(r.static_to_owned())],
                     EastAsianWidth::get_name_to_enum_mapper,
+                    provider,
+                )?
+                .erase(),
+            )))
+        }
+
+        #[diplomat::rust_link(
+            icu::properties::IndicSyllabicCategory::name_to_enum_mapper,
+            FnInStruct
+        )]
+        pub fn load_indic_syllabic_category(
+            provider: &ICU4XDataProvider,
+        ) -> Result<Box<ICU4XPropertyValueNameToEnumMapper>, ICU4XError> {
+            Ok(Box::new(ICU4XPropertyValueNameToEnumMapper(
+                call_constructor_unstable!(
+                    IndicSyllabicCategory::name_to_enum_mapper [r => Ok(r.static_to_owned())],
+                    IndicSyllabicCategory::get_name_to_enum_mapper,
                     provider,
                 )?
                 .erase(),

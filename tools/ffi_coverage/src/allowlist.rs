@@ -226,6 +226,7 @@ lazy_static::lazy_static! {
         "icu::properties::GeneralCategory",
         "icu::properties::GeneralCategoryGroup",
         "icu::properties::GraphemeClusterBreak",
+        "icu::properties::IndicSyllabicCategory",
         "icu::properties::LineBreak",
         "icu::properties::Script",
         "icu::properties::SentenceBreak",

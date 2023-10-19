@@ -322,6 +322,12 @@ registry!(
     icu_properties::provider::IdsBinaryOperatorV1Marker = "props/IDSB@1",
     icu_properties::provider::IdStartV1Marker = "props/IDS@1",
     icu_properties::provider::IdsTrinaryOperatorV1Marker = "props/IDST@1",
+    icu_properties::provider::IndicSyllabicCategoryV1Marker = "props/InSC@1",
+    icu_properties::provider::IndicSyllabicCategoryNameToValueV1Marker = "propnames/from/InSC@1",
+    icu_properties::provider::IndicSyllabicCategoryValueToLongNameV1Marker =
+        "propnames/to/long/linear/InSC@1",
+    icu_properties::provider::IndicSyllabicCategoryValueToShortNameV1Marker =
+        "propnames/to/short/linear/InSC@1",
     icu_properties::provider::GraphV1Marker = "props/graph@1",
     icu_properties::provider::JoinControlV1Marker = "props/Join_C@1",
     icu_properties::provider::LineBreakV1Marker = "props/lb@1",

@@ -139,6 +139,7 @@ const ICUEXPORTDATA_GLOB: &[&str] = &[
     "uprops/small/IDS.toml",
     "uprops/small/IDSB.toml",
     "uprops/small/IDST.toml",
+    "uprops/small/InSC.toml",
     "uprops/small/Join_C.toml",
     "uprops/small/lb.toml",
     "uprops/small/LOE.toml",

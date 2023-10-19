@@ -30,6 +30,11 @@ mod propnames_from_gcb_v1;
 #[doc(inline)]
 pub use __impl_propnames_from_gcb_v1 as impl_propnames_from_gcb_v1;
 #[macro_use]
+#[path = "macros/propnames_from_insc_v1.data.rs"]
+mod propnames_from_insc_v1;
+#[doc(inline)]
+pub use __impl_propnames_from_insc_v1 as impl_propnames_from_insc_v1;
+#[macro_use]
 #[path = "macros/propnames_from_sb_v1.data.rs"]
 mod propnames_from_sb_v1;
 #[doc(inline)]
@@ -80,6 +85,11 @@ mod propnames_to_long_linear_gcb_v1;
 #[doc(inline)]
 pub use __impl_propnames_to_long_linear_gcb_v1 as impl_propnames_to_long_linear_gcb_v1;
 #[macro_use]
+#[path = "macros/propnames_to_long_linear_insc_v1.data.rs"]
+mod propnames_to_long_linear_insc_v1;
+#[doc(inline)]
+pub use __impl_propnames_to_long_linear_insc_v1 as impl_propnames_to_long_linear_insc_v1;
+#[macro_use]
 #[path = "macros/propnames_to_long_linear_sb_v1.data.rs"]
 mod propnames_to_long_linear_sb_v1;
 #[doc(inline)]
@@ -124,6 +134,11 @@ pub use __impl_propnames_to_long_sparse_ccc_v1 as impl_propnames_to_long_sparse_
 mod propnames_to_short_linear_gcb_v1;
 #[doc(inline)]
 pub use __impl_propnames_to_short_linear_gcb_v1 as impl_propnames_to_short_linear_gcb_v1;
+#[macro_use]
+#[path = "macros/propnames_to_short_linear_insc_v1.data.rs"]
+mod propnames_to_short_linear_insc_v1;
+#[doc(inline)]
+pub use __impl_propnames_to_short_linear_insc_v1 as impl_propnames_to_short_linear_insc_v1;
 #[macro_use]
 #[path = "macros/propnames_to_short_linear_sb_v1.data.rs"]
 mod propnames_to_short_linear_sb_v1;
@@ -344,6 +359,11 @@ pub use __impl_props_idst_v1 as impl_props_idst_v1;
 mod props_ideo_v1;
 #[doc(inline)]
 pub use __impl_props_ideo_v1 as impl_props_ideo_v1;
+#[macro_use]
+#[path = "macros/props_insc_v1.data.rs"]
+mod props_insc_v1;
+#[doc(inline)]
+pub use __impl_props_insc_v1 as impl_props_insc_v1;
 #[macro_use]
 #[path = "macros/props_join_c_v1.data.rs"]
 mod props_join_c_v1;
