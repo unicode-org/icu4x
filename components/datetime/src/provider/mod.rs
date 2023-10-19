@@ -19,6 +19,17 @@ pub mod calendar;
 pub(crate) mod date_time;
 pub mod time_zones;
 
+/// Module for experimental new DateSymbols design
+/// <https://github.com/unicode-org/icu4x/issues/3865>
+///
+/// <div class="stab unstable">
+/// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
+/// including in SemVer minor releases. While the serde representation of data structs is guaranteed
+/// to be stable, their Rust representation might not be. Use with caution.
+/// </div>
+#[cfg(feature = "experimental")]
+pub mod neo;
+
 #[cfg(feature = "compiled_data")]
 #[derive(Debug)]
 /// Baked data
