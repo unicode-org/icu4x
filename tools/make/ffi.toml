@@ -52,11 +52,8 @@ exec --fail-on-error make -C ffi/capi/cpp/examples/fixeddecimal_wasm test-host
 description = "Run JS tests"
 category = "ICU4X Development"
 dependencies = ["install-nightly", "install-wasm"]
-script_runner = "@duckscript"
-script = '''
-exec --fail-on-error npm -C ffi/capi/js/examples/node ci --foreground-scripts
-exec --fail-on-error npm -C ffi/capi/js/examples/node test
-'''
+command = "npm"
+args = ["-C", "ffi/capi/js/examples/node", "install-ci-test"]
 
 [tasks.test-tinywasm]
 description = "Test the Tiny WASM example"
