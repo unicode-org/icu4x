@@ -1435,6 +1435,7 @@ dependencies = [
  "crlify",
  "databake",
  "displaydoc",
+ "either",
  "elsa",
  "eyre",
  "fraction",

@@ -28,13 +28,13 @@ fn convert_eras(eras: &cldr_serde::ca::Eras, calendar: &str) -> Eras<'static> {
     let mut out_eras = Eras::default();
 
     for (cldr, code) in map {
-        if let Some(name) = eras.names.get(cldr) {
+        if let Some(name) = eras.names.get(&*cldr) {
             out_eras.names.insert(code.as_str().into(), name);
         }
-        if let Some(abbr) = eras.abbr.get(cldr) {
+        if let Some(abbr) = eras.abbr.get(&*cldr) {
             out_eras.abbr.insert(code.as_str().into(), abbr);
         }
-        if let Some(narrow) = eras.narrow.get(cldr) {
+        if let Some(narrow) = eras.narrow.get(&*cldr) {
             out_eras.narrow.insert(code.as_str().into(), narrow);
         }
     }
@@ -86,109 +86,43 @@ fn get_month_code_map(calendar: &str) -> &'static [TinyStr4] {
     }
 }
 
-fn get_era_code_map(calendar: &str) -> &'static BTreeMap<String, TinyStr16> {
-    static MAP: once_cell::sync::OnceCell<BTreeMap<String, BTreeMap<String, TinyStr16>>> =
-        once_cell::sync::OnceCell::new();
-    let map = MAP.get_or_init(|| {
-        let japanese = crate::transform::cldr::calendar::japanese::compute_era_code_map();
-        [
-            (
-                "gregory".to_string(),
-                [
-                    ("0".to_string(), tinystr!(16, "bce")),
-                    ("1".to_string(), tinystr!(16, "ce")),
-                ]
-                .into_iter()
-                .collect(),
-            ),
-            (
-                "buddhist".to_string(),
-                [("0".to_string(), tinystr!(16, "be"))]
-                    .into_iter()
-                    .collect(),
-            ),
-            ("chinese".to_string(), [].into_iter().collect()),
-            ("japanese".to_string(), japanese.clone()),
-            ("japanext".to_string(), japanese),
-            (
-                "coptic".to_string(),
-                [
-                    // Before Diocletian
-                    ("0".to_string(), tinystr!(16, "bd")),
-                    // Anno Diocletian/After Diocletian
-                    ("1".to_string(), tinystr!(16, "ad")),
-                ]
-                .into_iter()
-                .collect(),
-            ),
-            ("dangi".to_string(), [].into_iter().collect()),
-            (
-                "indian".to_string(),
-                [("0".to_string(), tinystr!(16, "saka"))]
-                    .into_iter()
-                    .collect(),
-            ),
-            (
-                "islamic".to_string(),
-                [("0".to_string(), tinystr!(16, "islamic"))]
-                    .into_iter()
-                    .collect(),
-            ),
-            (
-                "islamicc".to_string(),
-                [("0".to_string(), tinystr!(16, "islamic"))]
-                    .into_iter()
-                    .collect(),
-            ),
-            (
-                "umalqura".to_string(),
-                [("0".to_string(), tinystr!(16, "islamic"))]
-                    .into_iter()
-                    .collect(),
-            ),
-            (
-                "tbla".to_string(),
-                [("0".to_string(), tinystr!(16, "islamic"))]
-                    .into_iter()
-                    .collect(),
-            ),
-            (
-                "persian".to_string(),
-                [("0".to_string(), tinystr!(16, "ah"))]
-                    .into_iter()
-                    .collect(),
-            ),
-            (
-                "hebrew".to_string(),
-                [("0".to_string(), tinystr!(16, "hebrew"))]
-                    .into_iter()
-                    .collect(),
-            ),
-            (
-                "ethiopic".to_string(),
-                [
-                    ("0".to_string(), tinystr!(16, "incar")),
-                    ("1".to_string(), tinystr!(16, "pre-incar")),
-                    ("2".to_string(), tinystr!(16, "mundi")),
-                ]
-                .into_iter()
-                .collect(),
-            ),
-            (
-                "roc".to_string(),
-                [
-                    ("0".to_string(), tinystr!(16, "roc-inverse")),
-                    ("1".to_string(), tinystr!(16, "roc")),
-                ]
-                .into_iter()
-                .collect(),
-            ),
-        ]
-        .into_iter()
-        .collect()
-    });
-    map.get(calendar)
-        .unwrap_or_else(|| panic!("Era map unknown for {}", calendar))
+fn get_era_code_map(calendar: &str) -> impl Iterator<Item = (&str, TinyStr16)> {
+    use either::Either;
+
+    let array: &[_] = match calendar {
+        "gregory" => &[("0", tinystr!(16, "bce")), ("1", tinystr!(16, "ce"))],
+        "buddhist" => &[("0", tinystr!(16, "be"))],
+        "japanese" | "japanext" => {
+            return Either::Right(
+                crate::transform::cldr::calendar::japanese::get_era_code_map()
+                    .iter()
+                    .map(|(k, v)| (&**k, *v)),
+            )
+        }
+        "coptic" => &[
+            // Before Diocletian
+            ("0", tinystr!(16, "bd")),
+            // Anno Diocletian/After Diocletian
+            ("1", tinystr!(16, "ad")),
+        ],
+        "dangi" | "chinese" => &[],
+        "indian" => &[("0", tinystr!(16, "saka"))],
+        "islamic" | "islamicc" | "umalqura" | "tbla" => &[("0", tinystr!(16, "islamic"))],
+        "persian" => &[("0", tinystr!(16, "ah"))],
+        "hebrew" => &[("0", tinystr!(16, "hebrew"))],
+        "ethiopic" => &[
+            ("0", tinystr!(16, "incar")),
+            ("1", tinystr!(16, "pre-incar")),
+            ("2", tinystr!(16, "mundi")),
+        ],
+        "roc" => &[
+            ("0", tinystr!(16, "roc-inverse")),
+            ("1", tinystr!(16, "roc")),
+        ],
+        _ => panic!("Era map unknown for {calendar}"),
+    };
+
+    Either::Left(array.iter().copied())
 }
 
 macro_rules! symbols_from {

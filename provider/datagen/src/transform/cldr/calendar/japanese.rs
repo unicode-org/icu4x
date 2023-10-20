@@ -187,19 +187,23 @@ impl IterableDataProvider<JapaneseExtendedErasV1Marker> for crate::DatagenProvid
     }
 }
 
-/// Computes the japanese era code map
-/// Somewhat expensive, prefer caching
-pub fn compute_era_code_map() -> BTreeMap<String, TinyStr16> {
-    let snapshot: JapaneseErasV1 = serde_json::from_str(JAPANEXT_FILE)
-        .expect("Failed to parse the precached golden. This is a bug.");
-    let mut map: BTreeMap<_, _> = snapshot
-        .dates_to_eras
-        .iter()
-        .enumerate()
-        .map(|(i, (_, value))| (i.to_string(), value))
-        .collect();
-    // Splice in details about gregorian eras for pre-meiji dates
-    map.insert("-2".to_string(), tinystr!(16, "bce"));
-    map.insert("-1".to_string(), tinystr!(16, "ce"));
-    map
+/// Computes the japanese era code map or loads from static cache
+pub fn get_era_code_map() -> &'static BTreeMap<String, TinyStr16> {
+    static MAP: once_cell::sync::OnceCell<BTreeMap<String, TinyStr16>> =
+        once_cell::sync::OnceCell::new();
+
+    MAP.get_or_init(|| {
+        let snapshot: JapaneseErasV1 = serde_json::from_str(JAPANEXT_FILE)
+            .expect("Failed to parse the precached golden. This is a bug.");
+        let mut map: BTreeMap<_, _> = snapshot
+            .dates_to_eras
+            .iter()
+            .enumerate()
+            .map(|(i, (_, value))| (i.to_string(), value))
+            .collect();
+        // Splice in details about gregorian eras for pre-meiji dates
+        map.insert("-2".to_string(), tinystr!(16, "bce"));
+        map.insert("-1".to_string(), tinystr!(16, "ce"));
+        map
+    })
 }
