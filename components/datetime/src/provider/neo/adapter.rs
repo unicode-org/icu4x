@@ -62,7 +62,7 @@ where
                     .with_display_context(&subtag))
             }
         };
-        return Ok(result.into());
+        Ok(result.into())
     })?;
     Ok(DataResponse {
         payload: Some(new_payload),
@@ -110,7 +110,7 @@ where
                     .with_display_context(&subtag))
             }
         };
-        return Ok(result.into());
+        Ok(result.into())
     })?;
     Ok(DataResponse {
         payload: Some(new_payload),
@@ -139,7 +139,7 @@ where
                     .with_display_context(&subtag))
             }
         };
-        return Ok(YearSymbolsV1::Eras(result.clone()));
+        Ok(YearSymbolsV1::Eras(result.clone()))
     })?;
     Ok(DataResponse {
         payload: Some(new_payload),
@@ -177,7 +177,7 @@ where
                     .with_display_context(&subtag))
             }
         };
-        return Ok(result.into());
+        Ok(result.into())
     })?;
     Ok(DataResponse {
         payload: Some(new_payload),
