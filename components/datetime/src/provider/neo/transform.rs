@@ -218,6 +218,31 @@ macro_rules! impl_data_provider_adapter {
 }
 
 impl_data_provider_adapter!(
+    BuddhistDateSymbolsV1Marker,
+    BuddhistMonthSymbolsV1Marker,
+    month_symbols_map_project_cloned
+);
+impl_data_provider_adapter!(
+    ChineseDateSymbolsV1Marker,
+    ChineseMonthSymbolsV1Marker,
+    month_symbols_map_project_cloned
+);
+impl_data_provider_adapter!(
+    CopticDateSymbolsV1Marker,
+    CopticMonthSymbolsV1Marker,
+    month_symbols_map_project_cloned
+);
+impl_data_provider_adapter!(
+    DangiDateSymbolsV1Marker,
+    DangiMonthSymbolsV1Marker,
+    month_symbols_map_project_cloned
+);
+impl_data_provider_adapter!(
+    EthiopianDateSymbolsV1Marker,
+    EthiopianMonthSymbolsV1Marker,
+    month_symbols_map_project_cloned
+);
+impl_data_provider_adapter!(
     GregorianDateSymbolsV1Marker,
     GregorianMonthSymbolsV1Marker,
     month_symbols_map_project_cloned
@@ -228,6 +253,62 @@ impl_data_provider_adapter!(
     month_symbols_map_project_cloned
 );
 impl_data_provider_adapter!(
+    IndianDateSymbolsV1Marker,
+    IndianMonthSymbolsV1Marker,
+    month_symbols_map_project_cloned
+);
+impl_data_provider_adapter!(
+    IslamicDateSymbolsV1Marker,
+    IslamicMonthSymbolsV1Marker,
+    month_symbols_map_project_cloned
+);
+impl_data_provider_adapter!(
+    JapaneseDateSymbolsV1Marker,
+    JapaneseMonthSymbolsV1Marker,
+    month_symbols_map_project_cloned
+);
+impl_data_provider_adapter!(
+    JapaneseExtendedDateSymbolsV1Marker,
+    JapaneseExtendedMonthSymbolsV1Marker,
+    month_symbols_map_project_cloned
+);
+impl_data_provider_adapter!(
+    PersianDateSymbolsV1Marker,
+    PersianMonthSymbolsV1Marker,
+    month_symbols_map_project_cloned
+);
+impl_data_provider_adapter!(
+    RocDateSymbolsV1Marker,
+    RocMonthSymbolsV1Marker,
+    month_symbols_map_project_cloned
+);
+
+impl_data_provider_adapter!(
+    BuddhistDateSymbolsV1Marker,
+    WeekdaySymbolsV1Marker,
+    weekday_symbols_map_project_cloned
+);
+impl_data_provider_adapter!(
+    ChineseDateSymbolsV1Marker,
+    WeekdaySymbolsV1Marker,
+    weekday_symbols_map_project_cloned
+);
+impl_data_provider_adapter!(
+    CopticDateSymbolsV1Marker,
+    WeekdaySymbolsV1Marker,
+    weekday_symbols_map_project_cloned
+);
+impl_data_provider_adapter!(
+    DangiDateSymbolsV1Marker,
+    WeekdaySymbolsV1Marker,
+    weekday_symbols_map_project_cloned
+);
+impl_data_provider_adapter!(
+    EthiopianDateSymbolsV1Marker,
+    WeekdaySymbolsV1Marker,
+    weekday_symbols_map_project_cloned
+);
+impl_data_provider_adapter!(
     GregorianDateSymbolsV1Marker,
     WeekdaySymbolsV1Marker,
     weekday_symbols_map_project_cloned
@@ -236,6 +317,62 @@ impl_data_provider_adapter!(
     HebrewDateSymbolsV1Marker,
     WeekdaySymbolsV1Marker,
     weekday_symbols_map_project_cloned
+);
+impl_data_provider_adapter!(
+    IndianDateSymbolsV1Marker,
+    WeekdaySymbolsV1Marker,
+    weekday_symbols_map_project_cloned
+);
+impl_data_provider_adapter!(
+    IslamicDateSymbolsV1Marker,
+    WeekdaySymbolsV1Marker,
+    weekday_symbols_map_project_cloned
+);
+impl_data_provider_adapter!(
+    JapaneseDateSymbolsV1Marker,
+    WeekdaySymbolsV1Marker,
+    weekday_symbols_map_project_cloned
+);
+impl_data_provider_adapter!(
+    JapaneseExtendedDateSymbolsV1Marker,
+    WeekdaySymbolsV1Marker,
+    weekday_symbols_map_project_cloned
+);
+impl_data_provider_adapter!(
+    PersianDateSymbolsV1Marker,
+    WeekdaySymbolsV1Marker,
+    weekday_symbols_map_project_cloned
+);
+impl_data_provider_adapter!(
+    RocDateSymbolsV1Marker,
+    WeekdaySymbolsV1Marker,
+    weekday_symbols_map_project_cloned
+);
+
+impl_data_provider_adapter!(
+    BuddhistDateSymbolsV1Marker,
+    BuddhistYearSymbolsV1Marker,
+    era_symbols_map_project_cloned
+);
+impl_data_provider_adapter!(
+    ChineseDateSymbolsV1Marker,
+    ChineseYearSymbolsV1Marker,
+    era_symbols_map_project_cloned
+);
+impl_data_provider_adapter!(
+    CopticDateSymbolsV1Marker,
+    CopticYearSymbolsV1Marker,
+    era_symbols_map_project_cloned
+);
+impl_data_provider_adapter!(
+    DangiDateSymbolsV1Marker,
+    DangiYearSymbolsV1Marker,
+    era_symbols_map_project_cloned
+);
+impl_data_provider_adapter!(
+    EthiopianDateSymbolsV1Marker,
+    EthiopianYearSymbolsV1Marker,
+    era_symbols_map_project_cloned
 );
 impl_data_provider_adapter!(
     GregorianDateSymbolsV1Marker,
@@ -247,6 +384,37 @@ impl_data_provider_adapter!(
     HebrewYearSymbolsV1Marker,
     era_symbols_map_project_cloned
 );
+impl_data_provider_adapter!(
+    IndianDateSymbolsV1Marker,
+    IndianYearSymbolsV1Marker,
+    era_symbols_map_project_cloned
+);
+impl_data_provider_adapter!(
+    IslamicDateSymbolsV1Marker,
+    IslamicYearSymbolsV1Marker,
+    era_symbols_map_project_cloned
+);
+impl_data_provider_adapter!(
+    JapaneseDateSymbolsV1Marker,
+    JapaneseYearSymbolsV1Marker,
+    era_symbols_map_project_cloned
+);
+impl_data_provider_adapter!(
+    JapaneseExtendedDateSymbolsV1Marker,
+    JapaneseExtendedYearSymbolsV1Marker,
+    era_symbols_map_project_cloned
+);
+impl_data_provider_adapter!(
+    PersianDateSymbolsV1Marker,
+    PersianYearSymbolsV1Marker,
+    era_symbols_map_project_cloned
+);
+impl_data_provider_adapter!(
+    RocDateSymbolsV1Marker,
+    RocYearSymbolsV1Marker,
+    era_symbols_map_project_cloned
+);
+
 impl_data_provider_adapter!(
     TimeSymbolsV1Marker,
     DayPeriodSymbolsV1Marker,
