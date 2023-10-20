@@ -188,7 +188,7 @@ fn get_era_code_map(calendar: &str) -> &'static BTreeMap<String, TinyStr16> {
         .collect()
     });
     map.get(calendar)
-        .unwrap_or_else(|| panic!("Unknown calendar {}", calendar))
+        .unwrap_or_else(|| panic!("Era map unknown for {}", calendar))
 }
 
 macro_rules! symbols_from {
