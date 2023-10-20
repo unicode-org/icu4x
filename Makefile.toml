@@ -238,13 +238,13 @@ dependencies = [
     # Get a coffee
     "ci-job-test",
     "ci-job-nostd",
+    "ci-job-diplomat",
     "ci-job-test-docs",
     "ci-job-testdata",
     "ci-job-msrv-features",
     "ci-job-full-datagen",
 
     # Needs tools other than Cargo to be installed
-    "ci-job-diplomat",
     "ci-job-test-c",
     "ci-job-test-js",
     "ci-job-gn",
