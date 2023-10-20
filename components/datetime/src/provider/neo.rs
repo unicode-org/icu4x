@@ -134,6 +134,7 @@ pub enum MonthSymbolsV1<'data> {
 #[yoke(prove_covariance_manually)]
 pub struct LinearSymbolsV1<'data> {
     #[cfg_attr(feature = "serde", serde(borrow))]
+    /// The symbols, in order. Order specified on the struct docs.
     // This uses a VarZeroVec rather than a fixed-size array for weekdays to save stack space
     pub symbols: VarZeroVec<'data, str>,
 }
@@ -161,6 +162,7 @@ pub struct LinearSymbolsV1<'data> {
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[yoke(prove_covariance_manually)]
 pub struct PatternV1<'data> {
+    /// The pattern
     #[cfg_attr(feature = "serde", serde(borrow))]
     pub pattern: runtime::Pattern<'data>,
 }
@@ -182,6 +184,7 @@ pub struct PatternV1<'data> {
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[yoke(prove_covariance_manually)]
 pub struct PreferredHourCycleV1 {
+    /// The hour cycle preference
     pub cycle: pattern::CoarseHourCycle,
 }
 
@@ -204,6 +207,7 @@ pub struct PreferredHourCycleV1 {
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[yoke(prove_covariance_manually)]
 pub struct DateTimePatternV1<'data> {
+    /// The pattern
     #[cfg_attr(feature = "serde", serde(borrow))]
     pub pattern: runtime::GenericPattern<'data>,
 }
