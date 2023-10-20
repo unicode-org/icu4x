@@ -6,8 +6,7 @@ use std::{
     char::DecodeUtf16Error,
     collections::HashMap,
     fmt::Debug,
-    fs::File,
-    io::{BufReader, Read},
+    path::Path,
     marker::PhantomData,
 };
 
@@ -152,13 +151,10 @@ pub struct ZoneInfo64<'a> {
 }
 
 fn main() {
-    let input = File::open("examples/data/zoneinfo64.res");
-    let mut reader = BufReader::new(input.unwrap());
-
-    let mut in_bytes = Vec::new();
-    reader
-        .read_to_end(&mut in_bytes)
-        .expect("Unable to read resource bundle file");
+    let in_bytes = std::fs::read(&Path::new(concat!(
+        env!("CARGO_MANIFEST_DIR"),
+        "/examples/data/zoneinfo64.res"
+    ))).expect("Unable to read resource bundle file");
 
     let out = resb::binary::from_bytes::<ZoneInfo64>(&in_bytes)
         .expect("Error processing resource bundle file");
