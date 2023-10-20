@@ -232,3 +232,62 @@ fn tuple() {
         "(0u8 , 0i8 ,)",
     );
 }
+
+#[cfg(feature="rend")]
+impl<T: Bake> Bake for rend::NativeEndian<T> {
+    fn bake(&self, ctx: &CrateEnv) -> TokenStream {
+        ctx.insert("rend");
+        let value = self.value.bake(ctx);
+        quote! {
+            rend::NativeEndian { value: #value }
+        }
+    }
+}
+
+#[test]
+#[cfg(feature="rend")]
+fn rend_ne() {
+    test_bake!(
+        rend::NativeEndian<u16>,
+        const: rend::NativeEndian { value: 7u16 }
+    );
+}
+
+macro_rules! impl_bake_for_rend {
+    ( $( $( $int_type:ident )+ : $value:literal )+ ) => {
+        $(
+            $(
+                #[cfg(feature="rend")]
+                impl Bake for rend::$int_type {
+                    fn bake(&self, ctx: &CrateEnv) -> TokenStream {
+                        ctx.insert("rend");
+                        let value = self.value().bake(ctx);
+                        quote! {
+                            rend::$int_type::new(#value)
+                        }
+                    }
+                }
+
+                #[test]
+                #[cfg(feature="rend")]
+                fn $int_type() {
+                    test_bake!(
+                        rend::$int_type,
+                        const: rend::$int_type::new($value)
+                    );
+                }
+            )+
+        )+
+    }
+}
+
+impl_bake_for_rend!(
+    u16_le u16_be: 7u16
+    i16_le i16_be: 7i16
+    u32_le u32_be: 7u32
+    i32_le i32_be: 7i32
+    u64_le u64_be: 7u64
+    i64_le i64_be: 7i64
+    u128_le u128_be: 7u128
+    i128_le i128_be: 7i128
+);

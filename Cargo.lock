@@ -681,6 +681,7 @@ dependencies = [
  "databake-derive",
  "proc-macro2",
  "quote",
+ "rend",
 ]
 
 [[package]]

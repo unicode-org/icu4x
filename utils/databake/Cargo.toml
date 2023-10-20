@@ -29,3 +29,4 @@ derive = ["dep:databake-derive"]
 proc-macro2 = "1.0.27"
 quote = "1.0.9"
 databake-derive = { workspace = true, optional = true}
+rend = { version = "0.4.0", optional = true, default-features = false }
