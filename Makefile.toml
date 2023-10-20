@@ -27,10 +27,10 @@ ICU4X_BUILDING_WITH_FORCED_NIGHTLY = { value = "1", condition = { env_set = ["IC
 description = "Run quick version of all lints and builds (useful before pushing to GitHub)"
 category = "ICU4X Development"
 dependencies = [
-    "check",
-    "check-no-features",
     "ci-job-fmt",
     "ci-job-clippy",
+    "ci-job-nostd",
+    "check-no-features",
     "check-tutorials-local",
     "ci-job-tidy",
     "ci-job-doc",
@@ -191,6 +191,15 @@ exec --fail-on-error rustup install 1.67 --profile minimal
 exec --fail-on-error cargo +1.67 make check-all-features-chunked 3
 '''
 
+[tasks.ci-job-msrv-features]
+description = "Run all tests for the CI 'msrv-features-3' job"
+category = "CI"
+dependencies = [
+    "ci-job-msrv-features-1",
+    "ci-job-msrv-features-2",
+    "ci-job-msrv-features-3",
+]
+
 [tasks.ci-job-fmt]
 description = "Run all tests for the CI 'fmt' job"
 category = "CI"
@@ -229,16 +238,18 @@ description = "Locally run all CI jobs"
 category = "ICU4X Development"
 dependencies = [
     # make quick
-    "ci-job-msrv-check",
     "ci-job-fmt",
     "ci-job-clippy",
+    "ci-job-nostd",
+    "ci-job-msrv-check",
+    "check-tutorials-local",
     "ci-job-tidy",
     "ci-job-doc",
 
     # Get a coffee
     "ci-job-test",
-    "ci-job-nostd",
     "ci-job-test-docs",
+    "ci-job-check-tutorials-cratesio",
     "ci-job-testdata",
     "ci-job-msrv-features",
     "ci-job-full-datagen",

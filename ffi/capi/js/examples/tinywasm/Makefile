@@ -38,6 +38,10 @@ icu_capi.wasm: target/wasm32-unknown-unknown/release/icu_capi_cdylib.wasm
 	cp target/wasm32-unknown-unknown/release/icu_capi_cdylib.wasm icu_capi.wasm
 
 build: icu_capi.wasm lib
+	ls -l
+
+test:
+	node tiny.mjs
 
 clean:
 	git clean -xf *
