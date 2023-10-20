@@ -2,8 +2,6 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-#![allow(dead_code)] // so far only used in tests
-
 use crate::provider::calendar::*;
 use crate::provider::neo::*;
 use icu_locid::extensions::private::{subtag, Subtag};
@@ -427,7 +425,7 @@ mod tests {
     use icu_locid::locale;
 
     #[test]
-    fn test_transform_months_numeric() {
+    fn test_adapter_months_numeric() {
         let symbols: DataPayload<GregorianDateSymbolsV1Marker> = crate::provider::Baked
             .load(DataRequest {
                 locale: &locale!("en").into(),
@@ -452,7 +450,7 @@ mod tests {
     }
 
     #[test]
-    fn test_transform_months_map() {
+    fn test_adapter_months_map() {
         let symbols: DataPayload<HebrewDateSymbolsV1Marker> = crate::provider::Baked
             .load(DataRequest {
                 locale: &locale!("en").into(),
@@ -477,7 +475,7 @@ mod tests {
     }
 
     #[test]
-    fn test_transform_weekdays_abbreviated() {
+    fn test_adapter_weekdays_abbreviated() {
         let symbols: DataPayload<HebrewDateSymbolsV1Marker> = crate::provider::Baked
             .load(DataRequest {
                 locale: &locale!("en").into(),
@@ -502,7 +500,7 @@ mod tests {
     }
 
     #[test]
-    fn test_transform_weekdays_short() {
+    fn test_adapter_weekdays_short() {
         let symbols: DataPayload<HebrewDateSymbolsV1Marker> = crate::provider::Baked
             .load(DataRequest {
                 locale: &locale!("en").into(),
@@ -527,7 +525,7 @@ mod tests {
     }
 
     #[test]
-    fn test_transform_eras() {
+    fn test_adapter_eras() {
         let symbols: DataPayload<GregorianDateSymbolsV1Marker> = crate::provider::Baked
             .load(DataRequest {
                 locale: &locale!("en").into(),
@@ -552,7 +550,7 @@ mod tests {
     }
 
     #[test]
-    fn test_transform_dayperiods() {
+    fn test_adapter_dayperiods() {
         let symbols: DataPayload<TimeSymbolsV1Marker> = crate::provider::Baked
             .load(DataRequest {
                 locale: &locale!("en").into(),
