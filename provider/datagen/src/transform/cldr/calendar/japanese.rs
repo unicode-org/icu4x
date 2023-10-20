@@ -187,7 +187,9 @@ impl IterableDataProvider<JapaneseExtendedErasV1Marker> for crate::DatagenProvid
     }
 }
 
-pub fn get_era_code_map() -> BTreeMap<String, TinyStr16> {
+/// Computes the japanese era code map
+/// Somewhat expensive, prefer caching
+pub fn compute_era_code_map() -> BTreeMap<String, TinyStr16> {
     let snapshot: JapaneseErasV1 = serde_json::from_str(JAPANEXT_FILE)
         .expect("Failed to parse the precached golden. This is a bug.");
     let mut map: BTreeMap<_, _> = snapshot
