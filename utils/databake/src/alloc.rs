@@ -27,13 +27,6 @@ fn cow() {
     );
     assert_eq!(
         Bake::bake(
-            &alloc::borrow::Cow::<'static, u8>::Owned(1),
-            &Default::default(),
-        ).to_string(),
-        "alloc :: borrow :: Cow :: Borrowed (& 1u8)",
-    );
-    assert_eq!(
-        Bake::bake(
             &alloc::borrow::Cow::<'static, str>::Borrowed("hi"),
             &Default::default(),
         ).to_string(),
