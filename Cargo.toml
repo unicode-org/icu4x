@@ -114,6 +114,8 @@ exclude = [
     # Tutorials are tested in their own cargo workspace against released and
     # local crates
     "docs",
+    # Submodule with its own workspace and lock file
+    "utils/diplomat",
 ]
 
 [workspace.package]
@@ -222,6 +224,12 @@ bies = { version = "0.2.2", path = "experimental/bies", default-features = false
 ixdtf = { version = "0.1.1", path = "experimental/ixdtf", default-features = false }
 zerotrie = { version = "0.1.1", path = "experimental/zerotrie", default-features = false }
 
+# Diplomat submodule
+diplomat = { version = "0.6", path = "utils/diplomat/macro" }
+diplomat-runtime = { version = "0.6", path = "utils/diplomat/runtime" }
+diplomat_core = { version = "0.6", path = "utils/diplomat/core" }
+diplomat-tool = { version = "0.6", path = "utils/diplomat/tool" }
+
 # Tools
 icu_benchmark_macros = { path = "tools/benchmark/macros" }
 # icu_benchmark_binsize never used as a dep
@@ -229,13 +237,6 @@ icu_benchmark_macros = { path = "tools/benchmark/macros" }
 # depcheck never used as a dep
 # ffi_coverage never used as a dep
 # testdata-scripts never used as a dep
-
-# The version here can either be a `version = ".."` spec or `git = "https://github.com/rust-diplomat/diplomat", rev = ".."`
-# Diplomat must be published preceding a new ICU4X release but may use git versions in between
-diplomat = { git = "https://github.com/rust-diplomat/diplomat", rev = "354307d4a519a3f42a9dc744ea0d64d766431d1d" }
-diplomat-runtime = { git = "https://github.com/rust-diplomat/diplomat", rev = "354307d4a519a3f42a9dc744ea0d64d766431d1d" }
-diplomat_core = { git = "https://github.com/rust-diplomat/diplomat", rev = "354307d4a519a3f42a9dc744ea0d64d766431d1d" }
-diplomat-tool = { git = "https://github.com/rust-diplomat/diplomat", rev = "354307d4a519a3f42a9dc744ea0d64d766431d1d" }
 
 # LTO is needed for WASM and other size-optimized builds,
 # and it improve the performance of benchmarks

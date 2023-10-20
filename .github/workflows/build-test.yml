@@ -47,6 +47,8 @@ jobs:
       CARGO_HTTP_MULTIPLEXING: false
     steps:
     - uses: actions/checkout@v3
+      with:
+        submodules: 'recursive'
 
     # Cargo-make boilerplate
     - name: Get cargo-make version
@@ -101,6 +103,8 @@ jobs:
 
     steps:
     - uses: actions/checkout@v3
+      with:
+        submodules: 'recursive'
 
     # Cargo-make boilerplate
     - name: Get cargo-make version
@@ -140,6 +144,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v3
+      with:
+        submodules: 'recursive'
 
     # Cargo-make boilerplate
     - name: Get cargo-make version
@@ -179,6 +185,8 @@ jobs:
       fail-fast: false
     steps:
     - uses: actions/checkout@v3
+      with:
+        submodules: 'recursive'
 
     # Cargo-make boilerplate
     - name: Get cargo-make version
@@ -225,6 +233,8 @@ jobs:
 
     steps:
     - uses: actions/checkout@v3
+      with:
+        submodules: 'recursive'
 
     # Cargo-make boilerplate
     - name: Get cargo-make version
@@ -267,6 +277,8 @@ jobs:
 
     steps:
     - uses: actions/checkout@v3
+      with:
+        submodules: 'recursive'
 
     # Cargo-make boilerplate
     - name: Get cargo-make version
@@ -326,6 +338,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v3
+      with:
+        submodules: 'recursive'
 
     # Cargo-make boilerplate
     - name: Get cargo-make version
@@ -373,6 +387,8 @@ jobs:
 
     steps:
     - uses: actions/checkout@v3
+      with:
+        submodules: 'recursive'
     
     # Software setup/installation for the container
     - name: Install Rust toolchains
@@ -435,6 +451,8 @@ jobs:
 
     steps:
     - uses: actions/checkout@v3
+      with:
+        submodules: 'recursive'
     
     # Software setup/installation for the container
     - name: Install Rust toolchains
@@ -490,6 +508,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v3
+      with:
+        submodules: 'recursive'
 
     # Cargo-make boilerplate
     - name: Get cargo-make version
@@ -525,6 +545,8 @@ jobs:
     runs-on: [ ubuntu-latest ]
     steps:
     - uses: actions/checkout@v3
+      with:
+        submodules: 'recursive'
 
     # Cargo-make boilerplate
     - name: Get cargo-make version
@@ -561,6 +583,8 @@ jobs:
 
     steps:
     - uses: actions/checkout@v3
+      with:
+        submodules: 'recursive'
 
     # Cargo-make boilerplate
     - name: Get cargo-make version
@@ -628,6 +652,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v3
+      with:
+        submodules: 'recursive'
 
     # Cargo-make boilerplate
     - name: Get cargo-make version
@@ -667,6 +693,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v3
+      with:
+        submodules: 'recursive'
 
     # Cargo-make boilerplate
     - name: Get cargo-make version
@@ -726,6 +754,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v3
+      with:
+        submodules: 'recursive'
 
     # Cargo-make boilerplate
     - name: Get cargo-make version
@@ -765,6 +795,8 @@ jobs:
 
     steps:
     - uses: actions/checkout@v3
+      with:
+        submodules: 'recursive'
 
     # Cargo-make boilerplate
     - name: Get cargo-make version

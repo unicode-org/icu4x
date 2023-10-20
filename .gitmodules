@@ -1,0 +1,3 @@
+[submodule "utils/diplomat"]
+	path = utils/diplomat
+	url = git@github.com:rust-diplomat/diplomat.git

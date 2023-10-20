@@ -59,6 +59,8 @@ jobs:
     runs-on: "ubuntu-latest"
     steps:
     - uses: actions/checkout@v3
+      with:
+        submodules: 'recursive'
 
     # GCP Boilerplate for jobs in main or forked repository (needs credentials)
     - id: gcp-auth
@@ -99,6 +101,8 @@ jobs:
     runs-on: "ubuntu-latest"
     steps:
     - uses: actions/checkout@v3
+      with:
+        submodules: 'recursive'
 
     # GCP Boilerplate for jobs in main or forked repository (needs credentials)
     - id: gcp-auth
@@ -152,6 +156,8 @@ jobs:
     runs-on: "ubuntu-latest"
     steps:
     - uses: actions/checkout@v3
+      with:
+        submodules: 'recursive'
 
     # GCP Boilerplate for jobs in main repository
     - id: gcp-auth
@@ -229,6 +235,8 @@ jobs:
 
     steps:
     - uses: actions/checkout@v3
+      with:
+        submodules: 'recursive'
 
     # GCP Boilerplate for jobs in main repository
     - id: gcp-auth
@@ -325,6 +333,8 @@ jobs:
 
     steps:
     - uses: actions/checkout@v3
+      with:
+        submodules: 'recursive'
 
     # GCP Boilerplate for jobs in main repository
     - id: gcp-auth
@@ -402,6 +412,8 @@ jobs:
 
     steps:
     - uses: actions/checkout@v3
+      with:
+        submodules: 'recursive'
 
     # GCP Boilerplate for jobs in main repository
     - id: gcp-auth
@@ -520,6 +532,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v3
+      with:
+        submodules: 'recursive'
 
     # GCP Boilerplate for jobs in main repository
     - id: gcp-auth

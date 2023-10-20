@@ -59,7 +59,7 @@ rust_library("core_maths-v0_1_0") {
 
 rust_proc_macro("diplomat-v0_6_0") {
   crate_name = "diplomat"
-  crate_root = "//ffi/gn/vendor/diplomat/src/lib.rs"
+  crate_root = "//utils/diplomat/macro/src/lib.rs"
   output_name = "diplomat-8a1fcb791ba6a84e"
 
   deps = []
@@ -82,7 +82,7 @@ rust_proc_macro("diplomat-v0_6_0") {
 
 rust_library("diplomat-runtime-v0_6_0") {
   crate_name = "diplomat_runtime"
-  crate_root = "//ffi/gn/vendor/diplomat-runtime/src/lib.rs"
+  crate_root = "//utils/diplomat/runtime/src/lib.rs"
   output_name = "diplomat_runtime-3f6b31a382e742d6"
 
   deps = []
@@ -101,7 +101,7 @@ rust_library("diplomat-runtime-v0_6_0") {
 
 rust_library("diplomat_core-v0_6_0") {
   crate_name = "diplomat_core"
-  crate_root = "//ffi/gn/vendor/diplomat_core/src/lib.rs"
+  crate_root = "//utils/diplomat/core/src/lib.rs"
   output_name = "diplomat_core-db39fa56ce5180b2"
 
   deps = []
