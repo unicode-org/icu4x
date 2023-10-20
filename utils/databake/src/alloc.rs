@@ -32,6 +32,16 @@ fn cow() {
         ).to_string(),
         "alloc :: borrow :: Cow :: Borrowed (& 1u8)",
     );
+    assert_eq!(
+        Bake::bake(
+            &alloc::borrow::Cow::<'static, str>::Borrowed("hi"),
+            &Default::default(),
+        ).to_string(),
+        Bake::bake(
+            &alloc::borrow::Cow::<'static, str>::Owned("hi".to_owned()),
+            &Default::default(),
+        ).to_string(),
+    );
 }
 
 impl<T> Bake for Vec<T>
