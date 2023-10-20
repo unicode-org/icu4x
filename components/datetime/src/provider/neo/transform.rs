@@ -21,6 +21,10 @@ mod subtag_consts {
     pub const FORMAT_SHRT: Subtag = subtag!("6");
 }
 
+fn get_single_aux_subtag(locale: &DataLocale) -> Option<Subtag> {
+    locale.get_aux().and_then(|aux| aux.iter().next())
+}
+
 fn month_symbols_map_project_cloned<M, P>(
     payload: &DataPayload<M>,
     req: DataRequest,
@@ -29,11 +33,7 @@ where
     M: KeyedDataMarker<Yokeable = DateSymbolsV1<'static>>,
     P: KeyedDataMarker<Yokeable = MonthSymbolsV1<'static>>,
 {
-    let subtag = req
-        .locale
-        .get_aux()
-        .and_then(|aux| aux.iter().next())
-        .unwrap();
+    let subtag = get_single_aux_subtag(req.locale).unwrap();
     let new_payload = payload.map_project_cloned(|payload, _| {
         use subtag_consts::*;
         let result = match subtag {
@@ -67,11 +67,7 @@ where
     M: KeyedDataMarker<Yokeable = DateSymbolsV1<'static>>,
     P: KeyedDataMarker<Yokeable = LinearSymbolsV1<'static>>,
 {
-    let subtag = req
-        .locale
-        .get_aux()
-        .and_then(|aux| aux.iter().next())
-        .unwrap();
+    let subtag = get_single_aux_subtag(req.locale).unwrap();
     let new_payload = payload.map_project_cloned(|payload, _| {
         use subtag_consts::*;
         let result = match subtag {
@@ -115,11 +111,7 @@ where
     M: KeyedDataMarker<Yokeable = DateSymbolsV1<'static>>,
     P: KeyedDataMarker<Yokeable = YearSymbolsV1<'static>>,
 {
-    let subtag = req
-        .locale
-        .get_aux()
-        .and_then(|aux| aux.iter().next())
-        .unwrap();
+    let subtag = get_single_aux_subtag(req.locale).unwrap();
     let new_payload = payload.map_project_cloned(|payload, _| {
         use subtag_consts::*;
         let result = match subtag {
@@ -144,11 +136,7 @@ where
     M: KeyedDataMarker<Yokeable = TimeSymbolsV1<'static>>,
     P: KeyedDataMarker<Yokeable = LinearSymbolsV1<'static>>,
 {
-    let subtag = req
-        .locale
-        .get_aux()
-        .and_then(|aux| aux.iter().next())
-        .unwrap();
+    let subtag = get_single_aux_subtag(req.locale).unwrap();
     let new_payload = payload.map_project_cloned(|payload, _| {
         use subtag_consts::*;
         let result = match subtag {
@@ -211,7 +199,7 @@ impl<'a> From<&day_periods::SymbolsV1<'a>> for LinearSymbolsV1<'a> {
             (Some(noon), Some(midnight)) => vec![&other.am, &other.pm, &noon, &midnight],
             (Some(noon), None) => vec![&other.am, &other.pm, &noon],
             (None, Some(midnight)) => vec![&other.am, &other.pm, "", &midnight],
-            (None, None) => vec![&other.am, &other.pm]
+            (None, None) => vec![&other.am, &other.pm],
         };
         LinearSymbolsV1 {
             symbols: (&vec).into(),
