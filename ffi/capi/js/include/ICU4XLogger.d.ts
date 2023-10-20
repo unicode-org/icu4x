@@ -17,11 +17,7 @@ export class ICU4XLogger {
 
   /**
 
-   * Initialize the logger to use the WASM console.
-
-   * Only available on `wasm32` targets.
-
-   * Returns `false` if there was already a logger set.
+   * Deprecated: since ICU4X 1.4, this now happens automatically if the `log` feature is enabled.
    */
   static init_console_logger(): boolean;
 }
