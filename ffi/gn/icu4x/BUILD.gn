@@ -611,6 +611,7 @@ rust_library("icu_provider-v1_3_2") {
     "--edition=2021",
     "-Cmetadata=6dd346fc3b8719ba",
     "-Cextra-filename=-6dd346fc3b8719ba",
+    "--cfg=feature=\"experimental\"",
     "--cfg=feature=\"macros\"",
   ]
 
