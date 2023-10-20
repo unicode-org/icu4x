@@ -37,21 +37,9 @@ where
     let new_payload = payload.map_project_cloned(|payload, _| {
         use subtag_consts::*;
         let result = match subtag {
-            STADLN_ABBR => payload
-                .months
-                .stand_alone
-                .as_ref()
-                .and_then(|x| x.abbreviated.as_ref()),
-            STADLN_WIDE => payload
-                .months
-                .stand_alone
-                .as_ref()
-                .and_then(|x| x.wide.as_ref()),
-            STADLN_NARW => payload
-                .months
-                .stand_alone
-                .as_ref()
-                .and_then(|x| x.narrow.as_ref()),
+            STADLN_ABBR => payload.months.stand_alone_abbreviated(),
+            STADLN_WIDE => payload.months.stand_alone_wide(),
+            STADLN_NARW => payload.months.stand_alone_narrow(),
             _ => None,
         };
         if let Some(result) = result {
@@ -87,26 +75,10 @@ where
     let new_payload = payload.map_project_cloned(|payload, _| {
         use subtag_consts::*;
         let result = match subtag {
-            STADLN_ABBR => payload
-                .weekdays
-                .stand_alone
-                .as_ref()
-                .and_then(|x| x.abbreviated.as_ref()),
-            STADLN_WIDE => payload
-                .weekdays
-                .stand_alone
-                .as_ref()
-                .and_then(|x| x.wide.as_ref()),
-            STADLN_NARW => payload
-                .weekdays
-                .stand_alone
-                .as_ref()
-                .and_then(|x| x.narrow.as_ref()),
-            STADLN_SHRT => payload
-                .weekdays
-                .stand_alone
-                .as_ref()
-                .and_then(|x| x.short.as_ref()),
+            STADLN_ABBR => payload.weekdays.stand_alone_abbreviated(),
+            STADLN_WIDE => payload.weekdays.stand_alone_wide(),
+            STADLN_NARW => payload.weekdays.stand_alone_narrow(),
+            STADLN_SHRT => payload.weekdays.stand_alone_short(),
             _ => None,
         };
         if let Some(result) = result {

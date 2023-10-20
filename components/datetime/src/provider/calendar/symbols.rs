@@ -252,6 +252,25 @@ macro_rules! symbols {
                 #[cfg_attr(feature = "serde", serde(borrow))]
                 pub stand_alone: Option<StandAloneWidthsV1<'data>>,
             }
+
+            impl<'data> ContextsV1<'data> {
+                /// Convenience function to return stand-alone abbreviated as an `Option<&>`.
+                pub(crate) fn stand_alone_abbreviated(&self) -> Option<&SymbolsV1<'data>> {
+                    self.stand_alone.as_ref().and_then(|x| x.abbreviated.as_ref())
+                }
+                /// Convenience function to return stand-alone wide as an `Option<&>`.
+                pub(crate) fn stand_alone_wide(&self) -> Option<&SymbolsV1<'data>> {
+                    self.stand_alone.as_ref().and_then(|x| x.wide.as_ref())
+                }
+                /// Convenience function to return stand-alone narrow as an `Option<&>`.
+                pub(crate) fn stand_alone_narrow(&self) -> Option<&SymbolsV1<'data>> {
+                    self.stand_alone.as_ref().and_then(|x| x.narrow.as_ref())
+                }
+                /// Convenience function to return stand-alone short as an `Option<&>`.
+                pub(crate) fn stand_alone_short(&self) -> Option<&SymbolsV1<'data>> {
+                    self.stand_alone.as_ref().and_then(|x| x.short.as_ref())
+                }
+            }
         }
     };
 }
