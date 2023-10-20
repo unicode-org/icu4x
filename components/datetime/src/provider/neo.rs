@@ -134,8 +134,9 @@ pub enum MonthSymbolsV1<'data> {
 #[yoke(prove_covariance_manually)]
 pub struct LinearSymbolsV1<'data> {
     #[cfg_attr(feature = "serde", serde(borrow))]
+    /// The symbols, in order. Order specified on the struct docs.
     // This uses a VarZeroVec rather than a fixed-size array for weekdays to save stack space
-    symbols: VarZeroVec<'data, str>,
+    pub symbols: VarZeroVec<'data, str>,
 }
 
 /// The default per-length patterns associated with dates and times
@@ -161,8 +162,9 @@ pub struct LinearSymbolsV1<'data> {
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[yoke(prove_covariance_manually)]
 pub struct PatternV1<'data> {
+    /// The pattern
     #[cfg_attr(feature = "serde", serde(borrow))]
-    pattern: runtime::Pattern<'data>,
+    pub pattern: runtime::Pattern<'data>,
 }
 
 /// The default hour cycle intended to be used with a locale
@@ -182,7 +184,8 @@ pub struct PatternV1<'data> {
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[yoke(prove_covariance_manually)]
 pub struct PreferredHourCycleV1 {
-    cycle: pattern::CoarseHourCycle,
+    /// The hour cycle preference
+    pub cycle: pattern::CoarseHourCycle,
 }
 
 /// The default per-length patterns used for combining dates and times into datetimes
@@ -204,6 +207,7 @@ pub struct PreferredHourCycleV1 {
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[yoke(prove_covariance_manually)]
 pub struct DateTimePatternV1<'data> {
+    /// The pattern
     #[cfg_attr(feature = "serde", serde(borrow))]
-    pattern: runtime::GenericPattern<'data>,
+    pub pattern: runtime::GenericPattern<'data>,
 }
