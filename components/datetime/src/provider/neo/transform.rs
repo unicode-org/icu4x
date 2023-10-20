@@ -6,56 +6,67 @@
 
 use crate::provider::calendar::*;
 use crate::provider::neo::*;
+use icu_locid::extensions::private::{subtag, Subtag};
+use icu_provider::prelude::*;
 
-pub enum Length {
-    Abbreviated,
-    Narrow,
-    Short,
-    Wide,
+mod subtag_consts {
+    use super::*;
+    pub const STADLN_ABBR: Subtag = subtag!("3s");
+    pub const STADLN_WIDE: Subtag = subtag!("4s");
+    pub const STADLN_NARW: Subtag = subtag!("5s");
+    pub const FORMAT_ABBR: Subtag = subtag!("3");
+    pub const FORMAT_WIDE: Subtag = subtag!("4");
+    pub const FORMAT_NARW: Subtag = subtag!("5");
 }
 
-impl<'a> DateSymbolsV1<'a> {
-    pub(crate) fn neo_months_abbreviated(&self) -> MonthSymbolsV1<'a> {
-        (&self.months.format.abbreviated).into()
-    }
-    pub(crate) fn neo_months_narrow(&self) -> MonthSymbolsV1<'a> {
-        (&self.months.format.narrow).into()
-    }
-    pub(crate) fn neo_months_short(&self) -> Option<MonthSymbolsV1<'a>> {
-        self.months.format.short.as_ref().map(Into::into)
-    }
-    pub(crate) fn neo_months_wide(&self) -> MonthSymbolsV1<'a> {
-        (&self.months.format.wide).into()
-    }
-
-    pub(crate) fn neo_months_standalone_abbreviated(&self) -> Option<MonthSymbolsV1<'a>> {
-        self.months
-            .stand_alone
-            .as_ref()
-            .and_then(|x| x.abbreviated.as_ref())
-            .map(Into::into)
-    }
-    pub(crate) fn neo_months_standalone_narrow(&self) -> Option<MonthSymbolsV1<'a>> {
-        self.months
-            .stand_alone
-            .as_ref()
-            .and_then(|x| x.narrow.as_ref())
-            .map(Into::into)
-    }
-    pub(crate) fn neo_months_standalone_short(&self) -> Option<MonthSymbolsV1<'a>> {
-        self.months
-            .stand_alone
-            .as_ref()
-            .and_then(|x| x.short.as_ref())
-            .map(Into::into)
-    }
-    pub(crate) fn neo_months_standalone_wide(&self) -> Option<MonthSymbolsV1<'a>> {
-        self.months
-            .stand_alone
-            .as_ref()
-            .and_then(|x| x.wide.as_ref())
-            .map(Into::into)
-    }
+fn symbols_map_project_cloned<M, P>(
+    payload: &DataPayload<M>,
+    req: DataRequest,
+) -> Result<DataResponse<P>, DataError>
+where
+    M: KeyedDataMarker<Yokeable = DateSymbolsV1<'static>>,
+    P: KeyedDataMarker<Yokeable = MonthSymbolsV1<'static>>,
+{
+    let subtag = req
+        .locale
+        .get_aux()
+        .and_then(|aux| aux.iter().next())
+        .unwrap();
+    let new_payload = payload.map_project_cloned(|payload, _| {
+        use subtag_consts::*;
+        let result = match subtag {
+            STADLN_ABBR => payload
+                .months
+                .stand_alone
+                .as_ref()
+                .and_then(|x| x.abbreviated.as_ref()),
+            STADLN_WIDE => payload
+                .months
+                .stand_alone
+                .as_ref()
+                .and_then(|x| x.wide.as_ref()),
+            STADLN_NARW => payload
+                .months
+                .stand_alone
+                .as_ref()
+                .and_then(|x| x.narrow.as_ref()),
+            _ => None,
+        };
+        if let Some(result) = result {
+            return result.into();
+        }
+        let result = match subtag {
+            STADLN_ABBR | FORMAT_ABBR => &payload.months.format.abbreviated,
+            STADLN_WIDE | FORMAT_WIDE => &payload.months.format.wide,
+            STADLN_NARW | FORMAT_NARW => &payload.months.format.narrow,
+            _ => panic!("Unknown aux key subtag: {subtag}"),
+        };
+        return result.into();
+    });
+    Ok(DataResponse {
+        payload: Some(new_payload),
+        metadata: Default::default(),
+    })
 }
 
 impl<'a> From<&months::SymbolsV1<'a>> for MonthSymbolsV1<'a> {
@@ -72,11 +83,32 @@ impl<'a> From<&months::SymbolsV1<'a>> for MonthSymbolsV1<'a> {
                 // zero_map has `MonthCode` keys, but we want `UnvalidatedTinyAsciiStr<4>`.
                 // We can do this conversion zero-copy. clone() is no-op on a borrowed ZeroMap.
                 #[allow(clippy::unwrap_used)] // MonthCode to Unvalidated4 is infallible
-                MonthSymbolsV1::Map(zero_map.clone().try_convert_zv_k().unwrap())
+                MonthSymbolsV1::Map(zero_map.clone().try_convert_zv_k_unchecked().unwrap())
             }
         }
     }
 }
+
+macro_rules! impl_data_provider_adapter {
+    ($old_ty:ty, $new_ty:ty, $cnv:ident) => {
+        impl DataProvider<$new_ty> for DataPayload<$old_ty> {
+            fn load(&self, req: DataRequest) -> Result<DataResponse<$new_ty>, DataError> {
+                $cnv(self, req)
+            }
+        }
+    };
+}
+
+impl_data_provider_adapter!(
+    GregorianDateSymbolsV1Marker,
+    GregorianMonthSymbolsV1Marker,
+    symbols_map_project_cloned
+);
+impl_data_provider_adapter!(
+    HebrewDateSymbolsV1Marker,
+    HebrewMonthSymbolsV1Marker,
+    symbols_map_project_cloned
+);
 
 #[cfg(test)]
 mod tests {
@@ -93,8 +125,14 @@ mod tests {
             .unwrap()
             .take_payload()
             .unwrap();
-        let neo_month_abbreviated: DataPayload<GregorianMonthSymbolsV1Marker> =
-            symbols.map_project(|symbols, _| symbols.neo_months_abbreviated());
+        let neo_month_abbreviated: DataPayload<GregorianMonthSymbolsV1Marker> = symbols
+            .load(DataRequest {
+                locale: &"en-x-3".parse().unwrap(),
+                metadata: Default::default(),
+            })
+            .unwrap()
+            .take_payload()
+            .unwrap();
 
         assert_eq!(
             format!("{neo_month_abbreviated:?}"),
@@ -112,8 +150,14 @@ mod tests {
             .unwrap()
             .take_payload()
             .unwrap();
-        let neo_month_abbreviated: DataPayload<HebrewMonthSymbolsV1Marker> =
-            symbols.map_project(|symbols, _| symbols.neo_months_abbreviated());
+        let neo_month_abbreviated: DataPayload<HebrewMonthSymbolsV1Marker> = symbols
+            .load(DataRequest {
+                locale: &"en-x-3".parse().unwrap(),
+                metadata: Default::default(),
+            })
+            .unwrap()
+            .take_payload()
+            .unwrap();
 
         assert_eq!(
             format!("{neo_month_abbreviated:?}"),
