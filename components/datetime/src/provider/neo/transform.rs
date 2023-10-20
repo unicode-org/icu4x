@@ -107,6 +107,44 @@ where
     })
 }
 
+fn dayperiod_symbols_map_project_cloned<M, P>(
+    payload: &DataPayload<M>,
+    req: DataRequest,
+) -> Result<DataResponse<P>, DataError>
+where
+    M: KeyedDataMarker<Yokeable = TimeSymbolsV1<'static>>,
+    P: KeyedDataMarker<Yokeable = LinearSymbolsV1<'static>>,
+{
+    let subtag = req
+        .locale
+        .get_aux()
+        .and_then(|aux| aux.iter().next())
+        .unwrap();
+    let new_payload = payload.map_project_cloned(|payload, _| {
+        use subtag_consts::*;
+        let result = match subtag {
+            STADLN_ABBR => payload.day_periods.stand_alone_abbreviated(),
+            STADLN_WIDE => payload.day_periods.stand_alone_wide(),
+            STADLN_NARW => payload.day_periods.stand_alone_narrow(),
+            _ => None,
+        };
+        if let Some(result) = result {
+            return result.into();
+        }
+        let result = match subtag {
+            STADLN_ABBR | FORMAT_ABBR => &payload.day_periods.format.abbreviated,
+            STADLN_WIDE | FORMAT_WIDE => &payload.day_periods.format.wide,
+            STADLN_NARW | FORMAT_NARW => &payload.day_periods.format.narrow,
+            _ => panic!("Unknown aux key subtag: {subtag}"),
+        };
+        return result.into();
+    });
+    Ok(DataResponse {
+        payload: Some(new_payload),
+        metadata: Default::default(),
+    })
+}
+
 impl<'a> From<&months::SymbolsV1<'a>> for MonthSymbolsV1<'a> {
     fn from(other: &months::SymbolsV1<'a>) -> Self {
         match other {
@@ -131,6 +169,21 @@ impl<'a> From<&weekdays::SymbolsV1<'a>> for LinearSymbolsV1<'a> {
     fn from(other: &weekdays::SymbolsV1<'a>) -> Self {
         // Input is a cow array of length 7. Need to make it a VarZeroVec.
         let vec: alloc::vec::Vec<&str> = other.0.iter().map(|x| &**x).collect();
+        LinearSymbolsV1 {
+            symbols: (&vec).into(),
+        }
+    }
+}
+
+impl<'a> From<&day_periods::SymbolsV1<'a>> for LinearSymbolsV1<'a> {
+    fn from(other: &day_periods::SymbolsV1<'a>) -> Self {
+        // Input is a struct with four fields. Need to make it a VarZeroVec.
+        let vec: alloc::vec::Vec<&str> = match (other.noon.as_ref(), other.midnight.as_ref()) {
+            (Some(noon), Some(midnight)) => vec![&other.am, &other.pm, &noon, &midnight],
+            (Some(noon), None) => vec![&other.am, &other.pm, &noon],
+            (None, Some(midnight)) => vec![&other.am, &other.pm, "", &midnight],
+            (None, None) => vec![&other.am, &other.pm]
+        };
         LinearSymbolsV1 {
             symbols: (&vec).into(),
         }
@@ -166,6 +219,11 @@ impl_data_provider_adapter!(
     HebrewDateSymbolsV1Marker,
     WeekdaySymbolsV1Marker,
     weekday_symbols_map_project_cloned
+);
+impl_data_provider_adapter!(
+    TimeSymbolsV1Marker,
+    DayPeriodSymbolsV1Marker,
+    dayperiod_symbols_map_project_cloned
 );
 
 #[cfg(test)]
@@ -258,7 +316,7 @@ mod tests {
             .unwrap()
             .take_payload()
             .unwrap();
-        let neo_weekdays_abbreviated: DataPayload<WeekdaySymbolsV1Marker> = symbols
+        let neo_weekdays_short: DataPayload<WeekdaySymbolsV1Marker> = symbols
             .load(DataRequest {
                 locale: &"en-x-6s".parse().unwrap(),
                 metadata: Default::default(),
@@ -268,8 +326,33 @@ mod tests {
             .unwrap();
 
         assert_eq!(
-            format!("{neo_weekdays_abbreviated:?}"),
+            format!("{neo_weekdays_short:?}"),
             "LinearSymbolsV1 { symbols: [\"Su\", \"Mo\", \"Tu\", \"We\", \"Th\", \"Fr\", \"Sa\"] }"
+        );
+    }
+
+    #[test]
+    fn test_transform_dayperiods() {
+        let symbols: DataPayload<TimeSymbolsV1Marker> = crate::provider::Baked
+            .load(DataRequest {
+                locale: &locale!("en").into(),
+                metadata: Default::default(),
+            })
+            .unwrap()
+            .take_payload()
+            .unwrap();
+        let neo_dayperiods_abbreviated: DataPayload<DayPeriodSymbolsV1Marker> = symbols
+            .load(DataRequest {
+                locale: &"en-x-3s".parse().unwrap(),
+                metadata: Default::default(),
+            })
+            .unwrap()
+            .take_payload()
+            .unwrap();
+
+        assert_eq!(
+            format!("{neo_dayperiods_abbreviated:?}"),
+            "LinearSymbolsV1 { symbols: [\"AM\", \"PM\", \"noon\", \"midnight\"] }"
         );
     }
 }

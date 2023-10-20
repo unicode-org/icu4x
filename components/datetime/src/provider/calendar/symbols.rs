@@ -267,6 +267,7 @@ macro_rules! symbols {
                     self.stand_alone.as_ref().and_then(|x| x.narrow.as_ref())
                 }
                 /// Convenience function to return stand-alone short as an `Option<&>`.
+                #[allow(dead_code)] // not all symbols have a short variant
                 pub(crate) fn stand_alone_short(&self) -> Option<&SymbolsV1<'data>> {
                     self.stand_alone.as_ref().and_then(|x| x.short.as_ref())
                 }
