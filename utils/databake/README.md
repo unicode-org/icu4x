@@ -15,7 +15,7 @@ use alloc::borrow::Cow;
 let data = [Some((18, Cow::Borrowed("hi")))];
 assert_eq!(
     data.bake(&Default::default()).to_string(),
-    r#"[Some ((18i32 , alloc :: borrow :: Cow :: Borrowed ("hi") ,)) ,]"#,
+    r#"[Some ((18i32 , alloc :: borrow :: Cow :: Borrowed ("hi")))]"#,
 );
 ```
 
