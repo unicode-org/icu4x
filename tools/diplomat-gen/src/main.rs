@@ -4,32 +4,35 @@
 
 use std::path::Path;
 
-fn main() {
+fn main() -> std::io::Result<()> {
     let capi = Path::new(concat!(env!("CARGO_MANIFEST_DIR"), "/../../ffi/capi"));
 
-    let lang = std::env::args().nth(1).unwrap();
-
-    let include = capi.join(&lang).join("include");
-    let docs = capi.join(&lang).join("docs/source");
-
-    std::fs::remove_dir_all(&include).unwrap();
-    std::fs::create_dir(&include).unwrap();
-
-    if lang != "c" {
-        let conf = std::fs::read_to_string(docs.join("conf.py")).unwrap();
-        std::fs::remove_dir_all(&docs).unwrap();
-        std::fs::create_dir(&docs).unwrap();
-        std::fs::write(docs.join("conf.py"), conf).unwrap();
-    }
+    let Some(lang) = std::env::args().nth(1) else {
+        panic!("Missing argument <language>");
+    };
 
     diplomat_tool::gen(
         &capi.join("src/lib.rs"),
         &lang,
-        &include,
-        (lang != "c").then_some(&docs),
+        &{
+            let include = capi.join(&lang).join("include");
+            std::fs::remove_dir_all(&include)?;
+            std::fs::create_dir(&include)?;
+            include
+        },
+        if lang == "cpp" || lang == "js" {
+            let docs = capi.join(&lang).join("docs/source");
+            let conf = std::fs::read_to_string(docs.join("conf.py"))?;
+            std::fs::remove_dir_all(&docs)?;
+            std::fs::create_dir(&docs)?;
+            std::fs::write(docs.join("conf.py"), conf)?;
+            Some(docs)
+        } else {
+            None
+        }
+        .as_deref(),
         &Default::default(),
         None,
         false,
     )
-    .unwrap()
 }
