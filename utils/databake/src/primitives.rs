@@ -102,10 +102,7 @@ fn byte_string(bytes: &[u8]) -> TokenStream {
 fn slice() {
     // Cannot use test_bake! as it's not possible to write a closed slice expression (&[1] has type &[usize; 1])
     let slice: &[bool] = &[];
-    assert_eq!(
-        Bake::bake(&slice, &Default::default()).to_string(),
-        "& []",
-    );
+    assert_eq!(Bake::bake(&slice, &Default::default()).to_string(), "& []");
     let slice: &[bool] = &[true];
     assert_eq!(
         Bake::bake(&slice, &Default::default()).to_string(),

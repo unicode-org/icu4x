@@ -29,11 +29,13 @@ fn cow() {
         Bake::bake(
             &alloc::borrow::Cow::<'static, str>::Borrowed("hi"),
             &Default::default(),
-        ).to_string(),
+        )
+        .to_string(),
         Bake::bake(
             &alloc::borrow::Cow::<'static, str>::Owned("hi".to_owned()),
             &Default::default(),
-        ).to_string(),
+        )
+        .to_string(),
     );
 }
 
