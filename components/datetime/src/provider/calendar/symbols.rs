@@ -253,6 +253,7 @@ macro_rules! symbols {
                 pub stand_alone: Option<StandAloneWidthsV1<'data>>,
             }
 
+            #[cfg(any(feature = "datagen", feature = "experimental"))]
             impl<'data> ContextsV1<'data> {
                 /// Convenience function to return stand-alone abbreviated as an `Option<&>`.
                 pub(crate) fn stand_alone_abbreviated(&self) -> Option<&SymbolsV1<'data>> {

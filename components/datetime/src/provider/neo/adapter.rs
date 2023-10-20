@@ -4,6 +4,7 @@
 
 use crate::provider::calendar::*;
 use crate::provider::neo::*;
+use alloc::vec;
 use icu_locid::extensions::private::{subtag, Subtag};
 use icu_provider::prelude::*;
 
@@ -19,8 +20,16 @@ mod subtag_consts {
     pub const FORMAT_SHRT: Subtag = subtag!("6");
 }
 
-fn get_single_aux_subtag(locale: &DataLocale) -> Option<Subtag> {
-    locale.get_aux().and_then(|aux| aux.iter().next())
+fn single_aux_subtag<M: KeyedDataMarker>(locale: &DataLocale) -> Result<Subtag, DataError> {
+    #[allow(clippy::unwrap_used)]
+    locale
+        .get_aux()
+        .and_then(|aux| aux.iter().next())
+        .ok_or_else(|| {
+            DataError::custom("Expected aux key")
+                .with_key(M::KEY)
+                .with_debug_context(locale)
+        })
 }
 
 fn month_symbols_map_project_cloned<M, P>(
@@ -31,8 +40,8 @@ where
     M: KeyedDataMarker<Yokeable = DateSymbolsV1<'static>>,
     P: KeyedDataMarker<Yokeable = MonthSymbolsV1<'static>>,
 {
-    let subtag = get_single_aux_subtag(req.locale).unwrap();
-    let new_payload = payload.map_project_cloned(|payload, _| {
+    let subtag = single_aux_subtag::<M>(req.locale)?;
+    let new_payload = payload.try_map_project_cloned(|payload, _| {
         use subtag_consts::*;
         let result = match subtag {
             STADLN_ABBR => payload.months.stand_alone_abbreviated(),
@@ -41,16 +50,20 @@ where
             _ => None,
         };
         if let Some(result) = result {
-            return result.into();
+            return Ok(result.into());
         }
         let result = match subtag {
             STADLN_ABBR | FORMAT_ABBR => &payload.months.format.abbreviated,
             STADLN_WIDE | FORMAT_WIDE => &payload.months.format.wide,
             STADLN_NARW | FORMAT_NARW => &payload.months.format.narrow,
-            _ => panic!("Unknown aux key subtag for months: {subtag}"),
+            _ => {
+                return Err(DataError::custom("Unknown aux key")
+                    .with_key(M::KEY)
+                    .with_display_context(&subtag))
+            }
         };
-        return result.into();
-    });
+        return Ok(result.into());
+    })?;
     Ok(DataResponse {
         payload: Some(new_payload),
         metadata: Default::default(),
@@ -65,8 +78,8 @@ where
     M: KeyedDataMarker<Yokeable = DateSymbolsV1<'static>>,
     P: KeyedDataMarker<Yokeable = LinearSymbolsV1<'static>>,
 {
-    let subtag = get_single_aux_subtag(req.locale).unwrap();
-    let new_payload = payload.map_project_cloned(|payload, _| {
+    let subtag = single_aux_subtag::<M>(req.locale)?;
+    let new_payload = payload.try_map_project_cloned(|payload, _| {
         use subtag_consts::*;
         let result = match subtag {
             STADLN_ABBR => payload.weekdays.stand_alone_abbreviated(),
@@ -76,14 +89,14 @@ where
             _ => None,
         };
         if let Some(result) = result {
-            return result.into();
+            return Ok(result.into());
         }
         let result = match subtag {
             STADLN_SHRT | FORMAT_SHRT => payload.weekdays.format.short.as_ref(),
             _ => None,
         };
         if let Some(result) = result {
-            return result.into();
+            return Ok(result.into());
         }
         let result = match subtag {
             STADLN_ABBR | FORMAT_ABBR | STADLN_SHRT | FORMAT_SHRT => {
@@ -91,10 +104,14 @@ where
             }
             STADLN_WIDE | FORMAT_WIDE => &payload.weekdays.format.wide,
             STADLN_NARW | FORMAT_NARW => &payload.weekdays.format.narrow,
-            _ => panic!("Unknown aux key subtag for weekdays: {subtag}"),
+            _ => {
+                return Err(DataError::custom("Unknown aux key")
+                    .with_key(M::KEY)
+                    .with_display_context(&subtag))
+            }
         };
-        return result.into();
-    });
+        return Ok(result.into());
+    })?;
     Ok(DataResponse {
         payload: Some(new_payload),
         metadata: Default::default(),
@@ -109,17 +126,21 @@ where
     M: KeyedDataMarker<Yokeable = DateSymbolsV1<'static>>,
     P: KeyedDataMarker<Yokeable = YearSymbolsV1<'static>>,
 {
-    let subtag = get_single_aux_subtag(req.locale).unwrap();
-    let new_payload = payload.map_project_cloned(|payload, _| {
+    let subtag = single_aux_subtag::<M>(req.locale)?;
+    let new_payload = payload.try_map_project_cloned(|payload, _| {
         use subtag_consts::*;
         let result = match subtag {
             FORMAT_ABBR => &payload.eras.abbr,
             FORMAT_WIDE => &payload.eras.names,
             FORMAT_NARW => &payload.eras.narrow,
-            _ => panic!("Unknown aux key subtag for eras: {subtag}"),
+            _ => {
+                return Err(DataError::custom("Unknown aux key")
+                    .with_key(M::KEY)
+                    .with_display_context(&subtag))
+            }
         };
-        return YearSymbolsV1::Eras(result.clone());
-    });
+        return Ok(YearSymbolsV1::Eras(result.clone()));
+    })?;
     Ok(DataResponse {
         payload: Some(new_payload),
         metadata: Default::default(),
@@ -134,8 +155,8 @@ where
     M: KeyedDataMarker<Yokeable = TimeSymbolsV1<'static>>,
     P: KeyedDataMarker<Yokeable = LinearSymbolsV1<'static>>,
 {
-    let subtag = get_single_aux_subtag(req.locale).unwrap();
-    let new_payload = payload.map_project_cloned(|payload, _| {
+    let subtag = single_aux_subtag::<M>(req.locale)?;
+    let new_payload = payload.try_map_project_cloned(|payload, _| {
         use subtag_consts::*;
         let result = match subtag {
             STADLN_ABBR => payload.day_periods.stand_alone_abbreviated(),
@@ -144,16 +165,20 @@ where
             _ => None,
         };
         if let Some(result) = result {
-            return result.into();
+            return Ok(result.into());
         }
         let result = match subtag {
             STADLN_ABBR | FORMAT_ABBR => &payload.day_periods.format.abbreviated,
             STADLN_WIDE | FORMAT_WIDE => &payload.day_periods.format.wide,
             STADLN_NARW | FORMAT_NARW => &payload.day_periods.format.narrow,
-            _ => panic!("Unknown aux key subtag for day periods: {subtag}"),
+            _ => {
+                return Err(DataError::custom("Unknown aux key")
+                    .with_key(M::KEY)
+                    .with_display_context(&subtag))
+            }
         };
-        return result.into();
-    });
+        return Ok(result.into());
+    })?;
     Ok(DataResponse {
         payload: Some(new_payload),
         metadata: Default::default(),
