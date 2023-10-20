@@ -49,7 +49,7 @@ where
             STADLN_ABBR | FORMAT_ABBR => &payload.months.format.abbreviated,
             STADLN_WIDE | FORMAT_WIDE => &payload.months.format.wide,
             STADLN_NARW | FORMAT_NARW => &payload.months.format.narrow,
-            _ => panic!("Unknown aux key subtag: {subtag}"),
+            _ => panic!("Unknown aux key subtag for months: {subtag}"),
         };
         return result.into();
     });
@@ -97,9 +97,38 @@ where
             }
             STADLN_WIDE | FORMAT_WIDE => &payload.weekdays.format.wide,
             STADLN_NARW | FORMAT_NARW => &payload.weekdays.format.narrow,
-            _ => panic!("Unknown aux key subtag: {subtag}"),
+            _ => panic!("Unknown aux key subtag for weekdays: {subtag}"),
         };
         return result.into();
+    });
+    Ok(DataResponse {
+        payload: Some(new_payload),
+        metadata: Default::default(),
+    })
+}
+
+fn era_symbols_map_project_cloned<M, P>(
+    payload: &DataPayload<M>,
+    req: DataRequest,
+) -> Result<DataResponse<P>, DataError>
+where
+    M: KeyedDataMarker<Yokeable = DateSymbolsV1<'static>>,
+    P: KeyedDataMarker<Yokeable = YearSymbolsV1<'static>>,
+{
+    let subtag = req
+        .locale
+        .get_aux()
+        .and_then(|aux| aux.iter().next())
+        .unwrap();
+    let new_payload = payload.map_project_cloned(|payload, _| {
+        use subtag_consts::*;
+        let result = match subtag {
+            FORMAT_ABBR => &payload.eras.abbr,
+            FORMAT_WIDE => &payload.eras.names,
+            FORMAT_NARW => &payload.eras.narrow,
+            _ => panic!("Unknown aux key subtag for eras: {subtag}"),
+        };
+        return YearSymbolsV1::Eras(result.clone());
     });
     Ok(DataResponse {
         payload: Some(new_payload),
@@ -135,7 +164,7 @@ where
             STADLN_ABBR | FORMAT_ABBR => &payload.day_periods.format.abbreviated,
             STADLN_WIDE | FORMAT_WIDE => &payload.day_periods.format.wide,
             STADLN_NARW | FORMAT_NARW => &payload.day_periods.format.narrow,
-            _ => panic!("Unknown aux key subtag: {subtag}"),
+            _ => panic!("Unknown aux key subtag for day periods: {subtag}"),
         };
         return result.into();
     });
@@ -219,6 +248,16 @@ impl_data_provider_adapter!(
     HebrewDateSymbolsV1Marker,
     WeekdaySymbolsV1Marker,
     weekday_symbols_map_project_cloned
+);
+impl_data_provider_adapter!(
+    GregorianDateSymbolsV1Marker,
+    GregorianYearSymbolsV1Marker,
+    era_symbols_map_project_cloned
+);
+impl_data_provider_adapter!(
+    HebrewDateSymbolsV1Marker,
+    HebrewYearSymbolsV1Marker,
+    era_symbols_map_project_cloned
 );
 impl_data_provider_adapter!(
     TimeSymbolsV1Marker,
@@ -328,6 +367,31 @@ mod tests {
         assert_eq!(
             format!("{neo_weekdays_short:?}"),
             "LinearSymbolsV1 { symbols: [\"Su\", \"Mo\", \"Tu\", \"We\", \"Th\", \"Fr\", \"Sa\"] }"
+        );
+    }
+
+    #[test]
+    fn test_transform_eras() {
+        let symbols: DataPayload<GregorianDateSymbolsV1Marker> = crate::provider::Baked
+            .load(DataRequest {
+                locale: &locale!("en").into(),
+                metadata: Default::default(),
+            })
+            .unwrap()
+            .take_payload()
+            .unwrap();
+        let neo_eras_wide: DataPayload<GregorianYearSymbolsV1Marker> = symbols
+            .load(DataRequest {
+                locale: &"en-x-4".parse().unwrap(),
+                metadata: Default::default(),
+            })
+            .unwrap()
+            .take_payload()
+            .unwrap();
+
+        assert_eq!(
+            format!("{neo_eras_wide:?}"),
+            "Eras(ZeroMap { keys: [\"bce\", \"ce\"], values: [\"Before Christ\", \"Anno Domini\"] })"
         );
     }
 
