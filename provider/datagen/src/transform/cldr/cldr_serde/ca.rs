@@ -163,6 +163,20 @@ pub struct Eras {
     pub narrow: HashMap<String, String>,
 }
 
+impl Eras {
+    /// Load the era corresponding to a [`Length`] value
+    ///
+    /// Panics on Length::Short
+    pub(crate) fn load(&self, length: Length) -> &HashMap<String, String> {
+         match length {
+            Length::Abbr => &self.abbr,
+            Length::Narrow => &self.narrow,
+            Length::Wide => &self.names,
+            Length::Short => unreachable!("Years do not have short symbols!"),
+        }
+    }
+}
+
 #[derive(PartialEq, Debug, Deserialize, Clone)]
 pub struct LengthPatterns {
     pub full: LengthPattern,

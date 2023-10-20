@@ -3,6 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use super::supported_cals;
+use crate::DatagenProvider;
 use crate::transform::cldr::cldr_serde::ca::{self, Context, Length};
 
 use icu_datetime::provider::neo::*;
@@ -65,7 +66,7 @@ const FULL_KEY_LENGTHS: &[Subtag] = &[
     SHORT_STANDALONE,
 ];
 
-impl crate::DatagenProvider {
+impl DatagenProvider {
     fn load_calendar_dates(
         &self,
         langid: &LanguageIdentifier,
@@ -94,7 +95,7 @@ impl crate::DatagenProvider {
         &self,
         req: DataRequest,
         calendar: Value,
-        conversion: impl FnOnce(&ca::Dates, &Value, Context, Length) -> Result<M::Yokeable, DataError>,
+        conversion: impl FnOnce(&DatagenProvider, &LanguageIdentifier, &ca::Dates, &Value, Context, Length) -> Result<M::Yokeable, DataError>,
     ) -> Result<DataResponse<M>, DataError>
     where
         Self: IterableDataProvider<M>,
@@ -117,7 +118,7 @@ impl crate::DatagenProvider {
         );
         let (context, length) = aux_subtag_info(aux);
 
-        let data = conversion(&data, &calendar, context, length)?;
+        let data = conversion(self, &langid, &data, &calendar, context, length)?;
 
         #[allow(clippy::redundant_closure_call)]
         Ok(DataResponse {
@@ -152,6 +153,8 @@ impl crate::DatagenProvider {
 }
 
 fn weekday_convert(
+    _datagen: &DatagenProvider,
+    _langid: &LanguageIdentifier,
     data: &ca::Dates,
     _calendar: &Value,
     context: Context,
@@ -175,6 +178,8 @@ fn weekday_convert(
 }
 
 fn dayperiods_convert(
+    _datagen: &DatagenProvider,
+    _langid: &LanguageIdentifier,
     data: &ca::Dates,
     _calendar: &Value,
     context: Context,
@@ -200,6 +205,8 @@ fn dayperiods_convert(
 }
 
 fn years_convert(
+    datagen: &DatagenProvider,
+    langid: &LanguageIdentifier,
     data: &ca::Dates,
     calendar: &Value,
     context: Context,
@@ -211,23 +218,53 @@ fn years_convert(
         "Eras do not participate in standalone formatting"
     );
 
-    let eras = match length {
-        Length::Abbr => &data.eras.abbr,
-        Length::Narrow => &data.eras.narrow,
-        Length::Wide => &data.eras.names,
-        Length::Short => unreachable!("Years do not have short symbols!"),
-    };
+    let eras = data.eras.load(length);
 
     // Tostring can be removed when we delete symbols.rs, or we can perhaps refactor it to use Value
     let calendar_str = calendar.to_string();
     let map = super::symbols::get_era_code_map(&calendar_str);
     let mut out_eras: BTreeMap<TinyAsciiStr<16>, &str> = BTreeMap::new();
 
+
+    // CLDR treats ethiopian and ethioaa as separate calendars; however we treat them as a single resource key that
+    // supports symbols for both era patterns based on the settings on the date. Load in ethioaa data as well when dealing with
+    // ethiopian.
+    let extra_ethiopic = if *calendar == value!("ethiopic") {
+        let ethioaa: &ca::Resource = datagen
+            .cldr()?
+            .dates("ethiopic")
+            .read_and_parse(&langid, "ca-ethiopic-amete-alem.json")?;
+
+        let ethioaa_data = ethioaa
+            .main
+            .value
+            .dates
+            .calendars
+            .get("ethiopic-amete-alem")
+            .expect("CLDR ca-ethiopic-amete-alem.json contains the expected calendar")
+            ;
+
+        Some(ethioaa_data
+            .eras
+            .load(length)
+            .get("0")
+            .expect("ethiopic-amete-alem calendar must have 0 era"))
+    } else {
+        None
+    };
+
     for (cldr, code) in map {
         if let Some(name) = eras.get(&*cldr) {
             out_eras.insert(code, &**name);
+        } else if let Some(extra_ethiopic) = extra_ethiopic {
+            if cldr == "2" {
+                out_eras.insert(code, extra_ethiopic);
+            }
+        } else {
+            // panic!("Did not find era data for era {code} (#{cldr}) for {calendar} and {langid}");
         }
     }
+
     // Todo: Cyclic years (#3761)
     Ok(YearSymbolsV1::Eras(
         out_eras
@@ -238,6 +275,8 @@ fn years_convert(
 }
 
 fn months_convert(
+    _datagen: &DatagenProvider,
+    _langid: &LanguageIdentifier,
     data: &ca::Dates,
     calendar: &Value,
     context: Context,
@@ -293,13 +332,13 @@ fn months_convert(
 
 macro_rules! impl_symbols_datagen {
     ($marker:ident, $calendar:expr, $lengths:ident, $convert:expr) => {
-        impl DataProvider<$marker> for crate::DatagenProvider {
+        impl DataProvider<$marker> for DatagenProvider {
             fn load(&self, req: DataRequest) -> Result<DataResponse<$marker>, DataError> {
                 self.load_neo_key::<$marker>(req, value!($calendar), $convert)
             }
         }
 
-        impl IterableDataProvider<$marker> for crate::DatagenProvider {
+        impl IterableDataProvider<$marker> for DatagenProvider {
             fn supported_locales(&self) -> Result<Vec<DataLocale>, DataError> {
                 self.supported_locales_neo(value!($calendar), $lengths)
             }
