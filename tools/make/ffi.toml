@@ -20,19 +20,13 @@ exec --fail-on-error make -C ffi/capi/c/examples/locale
 [tasks.test-c-tiny]
 description = "Run C API tests for tiny targets"
 category = "ICU4X Development"
+condition = { env_not_set = ["ICU4X_BUILDING_WITH_FORCED_NIGHTLY"] }
 dependencies = ["install-nightly", "install-unknown-linux"]
 script_runner = "@duckscript"
 script = '''
 exit_on_error true
-if "${ICU4X_BUILDING_WITH_FORCED_NIGHTLY}"
-    echo "Skipping test-c-tiny since ICU4X_BUILDING_WITH_FORCED_NIGHTLY is set"
-else
-    exec --fail-on-error make -C ffi/capi/c/examples/fixeddecimal_tiny
-    exec ls -l ffi/capi/c/examples/fixeddecimal_tiny
-
-    exec --fail-on-error make -C ffi/capi/c/examples/segmenter_tiny
-    exec ls -l ffi/capi/c/examples/segmenter_tiny
-end
+exec --fail-on-error make -C ffi/capi/c/examples/fixeddecimal_tiny
+exec --fail-on-error make -C ffi/capi/c/examples/segmenter_tiny
 '''
 
 [tasks.test-cpp]
@@ -60,30 +54,17 @@ category = "ICU4X Development"
 dependencies = ["install-nightly", "install-wasm"]
 script_runner = "@duckscript"
 script = '''
-cd ffi/capi/js/examples/node
-exec --fail-on-error make
-# --foreground-scripts makes npm forward the output of make
-exec --fail-on-error npm ci --foreground-scripts
-exec --fail-on-error npm test
+exec --fail-on-error npm -C ffi/capi/js/examples/node ci --foreground-scripts
+exec --fail-on-error npm -C ffi/capi/js/examples/node test
 '''
 
 [tasks.test-tinywasm]
 description = "Test the Tiny WASM example"
 category = "ICU4X Development"
+condition = { env_not_set = ["ICU4X_BUILDING_WITH_FORCED_NIGHTLY"] }
 dependencies = ["install-nightly", "install-wasm"]
-script_runner = "@duckscript"
-script = '''
-exit_on_error true
-if "${ICU4X_BUILDING_WITH_FORCED_NIGHTLY}"
-    echo "Skipping test-wasm since ICU4X_BUILDING_WITH_FORCED_NIGHTLY is set"
-else
-    cd ffi/capi/js/examples/tinywasm
-
-    exec --fail-on-error make
-    exec --fail-on-error ls -l
-    exec --fail-on-error node tiny.mjs
-end
-'''
+command = "make"
+args = ["-C", "ffi/capi/js/examples/tinywasm", "build", "test"]
 
 # no_std tasks
 
@@ -184,16 +165,10 @@ diplomat-tool js ./js/include/ --docs ./js/docs/source
 [tasks.diplomat-coverage]
 description = "Produces the list of ICU APIs that are not exported through Diplomat"
 category = "ICU4X Development"
+condition = { env_not_set = ["ICU4X_BUILDING_WITH_FORCED_NIGHTLY"] }
 dependencies = ["install-nightly"]
-script_runner = "@duckscript"
-script = '''
-exit_on_error true
-if "${ICU4X_BUILDING_WITH_FORCED_NIGHTLY}"
-    echo "Skipping diplomat-coverage since ICU4X_BUILDING_WITH_FORCED_NIGHTLY is set"
-else
-    exec --fail-on-error cargo run -p icu_ffi_coverage --all-features -- ffi/capi/tests/missing_apis.txt
-end
-'''
+command = "cargo"
+args = ["run", "-p=icu_ffi_coverage", "--", "ffi/capi/tests/missing_apis.txt"]
 
 [tasks.verify-diplomat-coverage]
 description = "Verify that checked-in Diplomat coverage is up to date"
@@ -286,28 +261,22 @@ release --recursive ${metadata}
 description = "Installs the unknown-linux target"
 category = "ICU4X Development"
 dependencies = ["install-nightly"]
-script_runner = "@duckscript"
-script = '''
-exec --fail-on-error rustup target add x86_64-unknown-linux-gnu --toolchain ${ICU4X_NIGHTLY_TOOLCHAIN}
-'''
+command = "rustup"
+args = ["target", "add", "x86_64-unknown-linux-gnu", "--toolchain=${ICU4X_NIGHTLY_TOOLCHAIN}"]
 
 [tasks.install-emscripten]
 description = "Installs the emscripten target"
 category = "ICU4X Development"
 dependencies = ["install-nightly"]
-script_runner = "@duckscript"
-script = '''
-exec --fail-on-error rustup target add wasm32-unknown-emscripten --toolchain ${ICU4X_NIGHTLY_TOOLCHAIN}
-'''
+command = "rustup"
+args = ["target", "add", "wasm32-unknown-emscripten", "--toolchain=${ICU4X_NIGHTLY_TOOLCHAIN}"]
 
 [tasks.install-wasm]
 description = "Installs the wasm target"
 category = "ICU4X Development"
 dependencies = ["install-nightly"]
-script_runner = "@duckscript"
-script = '''
-exec --fail-on-error rustup target add wasm32-unknown-unknown --toolchain ${ICU4X_NIGHTLY_TOOLCHAIN}
-'''
+command = "rustup"
+args = ["target", "add", "wasm32-unknown-unknown", "--toolchain=${ICU4X_NIGHTLY_TOOLCHAIN}"]
 
 [tasks.install-cortex-8]
 description = "Install the thumbv8m target"
@@ -315,9 +284,7 @@ category = "ICU4X FFI"
 dependencies = ["install-nightly"]
 toolchain = "${ICU4X_NIGHTLY_TOOLCHAIN}"
 command = "rustup"
-args = [
-    "target", "add", "thumbv8m.main-none-eabihf",
-]
+args = ["target", "add", "thumbv8m.main-none-eabihf"]
 
 # Unused tasks
 
@@ -325,8 +292,5 @@ args = [
 description = "Run the C++-emscripten test (needs emsdk)"
 category = "ICU4X Development"
 dependencies = ["install-nightly", "install-emscripten"]
-script_runner = "@duckscript"
-script = '''
-exit_on_error true
-exec make -C ffi/capi/cpp/examples/fixeddecimal_wasm test
-'''
+command = "make"
+args = ["-C", "ffi/capi/cpp/examples/fixeddecimal_wasm", "test"]
