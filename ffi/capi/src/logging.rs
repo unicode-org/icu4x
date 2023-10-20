@@ -21,37 +21,15 @@ pub mod ffi {
             simple_logger::init().is_ok()
         }
 
-        /// Initialize the logger to use the WASM console.
-        ///
-        /// Only available on `wasm32` targets.
-        ///
-        /// Returns `false` if there was already a logger set.
+        /// Deprecated: since ICU4X 1.4, this now happens automatically if the `log` feature is enabled.
         #[cfg(target_arch = "wasm32")]
         pub fn init_console_logger() -> bool {
-            // Define a custom `log::Log` that uses the `diplomat_runtime` bindings.
-            // TODO: Maybe this logger should be defined in `diplomat_runtime` and use
-            // console.{error, warn, log, debug, info} instead of just {warn, log}.
-            struct ConsoleLogger;
-            impl log::Log for ConsoleLogger {
-                fn enabled(&self, _: &log::Metadata) -> bool {
-                    true
-                }
-
-                fn log(&self, record: &log::Record) {
-                    let msg = alloc::format!("[{}] {}", record.level(), record.args());
-                    if record.level() <= log::Level::Warn {
-                        diplomat_runtime::console_warn(&msg);
-                    } else {
-                        diplomat_runtime::console_log(&msg);
-                    }
-                }
-
-                fn flush(&self) {}
-            }
-
-            log::set_logger(&ConsoleLogger)
-                .map(|()| log::set_max_level(log::LevelFilter::Debug))
-                .is_ok()
+            false
         }
     }
 }
+
+// semver?
+#[no_mangle]
+#[cfg(target_arch = "wasm32")]
+pub unsafe extern "C" fn icu4x_init() {}
