@@ -107,6 +107,7 @@ const FULL_KEY_LENGTHS: &[Subtag] = &[
 const NORMAL_PATTERN_KEY_LENGTHS: &[Subtag] =
     &[PATTERN_FULL, PATTERN_LONG, PATTERN_MEDIUM, PATTERN_SHORT];
 
+#[allow(unused)]
 const H12_PATTERN_KEY_LENGTHS: &[Subtag] = &[
     PATTERN_FULL,
     PATTERN_LONG,
@@ -118,6 +119,7 @@ const H12_PATTERN_KEY_LENGTHS: &[Subtag] = &[
     PATTERN_SHORT12,
 ];
 
+#[allow(unused)]
 const H24_PATTERN_KEY_LENGTHS: &[Subtag] = &[
     PATTERN_FULL,
     PATTERN_LONG,
@@ -128,6 +130,7 @@ const H24_PATTERN_KEY_LENGTHS: &[Subtag] = &[
     PATTERN_MEDIUM24,
     PATTERN_SHORT24,
 ];
+
 impl DatagenProvider {
     fn load_calendar_dates(
         &self,
@@ -156,6 +159,45 @@ impl DatagenProvider {
     fn load_neo_key<M: KeyedDataMarker>(
         &self,
         req: DataRequest,
+        calendar: &Value,
+        conversion: impl FnOnce(
+            &LanguageIdentifier,
+            &ca::Dates,
+            Subtag,
+        ) -> Result<M::Yokeable, DataError>,
+    ) -> Result<DataResponse<M>, DataError>
+    where
+        Self: IterableDataProvider<M>,
+    {
+        self.check_req::<M>(req)?;
+        let langid = req.locale.get_langid();
+        let private = &req
+            .locale
+            .get_aux()
+            .expect("Symbols data provider called without aux subtag");
+        let data = self.load_calendar_dates(&langid, calendar)?;
+
+        let mut aux_iter = private.iter();
+        let aux = aux_iter
+            .next()
+            .expect("Symbols data provider called with empty aux subtag");
+        assert!(
+            aux_iter.next().is_none(),
+            "Symbols data provider called with too many aux subtags"
+        );
+
+        let data = conversion(&langid, data, aux)?;
+
+        #[allow(clippy::redundant_closure_call)]
+        Ok(DataResponse {
+            metadata: Default::default(),
+            payload: Some(DataPayload::from_owned(data)),
+        })
+    }
+
+    fn load_neo_symbols_key<M: KeyedDataMarker>(
+        &self,
+        req: DataRequest,
         calendar: Value,
         conversion: impl FnOnce(
             &DatagenProvider,
@@ -169,30 +211,28 @@ impl DatagenProvider {
     where
         Self: IterableDataProvider<M>,
     {
-        self.check_req::<M>(req)?;
-        let langid = req.locale.get_langid();
-        let private = &req
-            .locale
-            .get_aux()
-            .expect("Symbols data provider called without aux subtag");
-        let data = self.load_calendar_dates(&langid, &calendar)?;
+        self.load_neo_key(req, &calendar, |langid, data, aux| {
+            let (context, length) = aux_subtag_info(aux);
+            conversion(self, langid, data, &calendar, context, length)
+        })
+    }
 
-        let mut aux_iter = private.iter();
-        let aux = aux_iter
-            .next()
-            .expect("Symbols data provider called with empty aux subtag");
-        assert!(
-            aux_iter.next().is_none(),
-            "Symbols data provider called with too many aux subtags"
-        );
-        let (context, length) = aux_subtag_info(aux);
-
-        let data = conversion(self, &langid, data, &calendar, context, length)?;
-
-        #[allow(clippy::redundant_closure_call)]
-        Ok(DataResponse {
-            metadata: Default::default(),
-            payload: Some(DataPayload::from_owned(data)),
+    fn load_neo_patterns_key<M: KeyedDataMarker>(
+        &self,
+        req: DataRequest,
+        calendar: Value,
+        conversion: impl FnOnce(
+            &ca::Dates,
+            PatternLength,
+            Option<pattern::CoarseHourCycle>,
+        ) -> Result<M::Yokeable, DataError>,
+    ) -> Result<DataResponse<M>, DataError>
+    where
+        Self: IterableDataProvider<M>,
+    {
+        self.load_neo_key(req, &calendar, |_langid, data, aux| {
+            let (length, hc) = aux_pattern_subtag_info(aux);
+            conversion(data, length, hc)
         })
     }
 
@@ -445,11 +485,55 @@ fn months_convert(
     }
 }
 
+fn datepattern_convert(
+    data: &ca::Dates,
+    length: PatternLength,
+    _hc: Option<pattern::CoarseHourCycle>,
+) -> Result<DatePatternV1<'static>, DataError> {
+    let pattern = data.date_formats.get_pattern(length);
+
+    let pattern = pattern
+        .get_pattern()
+        .parse()
+        .expect("failed to parse pattern");
+    Ok(DatePatternV1 { pattern })
+}
+
+fn datetimepattern_convert(
+    data: &ca::Dates,
+    length: PatternLength,
+    _hc: Option<pattern::CoarseHourCycle>,
+) -> Result<DateTimePatternV1<'static>, DataError> {
+    let pattern = data.datetime_formats.get_pattern(length);
+
+    let pattern = pattern
+        .get_pattern()
+        .parse()
+        .expect("failed to parse pattern");
+    Ok(DateTimePatternV1 { pattern })
+}
+
 macro_rules! impl_symbols_datagen {
     ($marker:ident, $calendar:expr, $lengths:ident, $convert:expr) => {
         impl DataProvider<$marker> for DatagenProvider {
             fn load(&self, req: DataRequest) -> Result<DataResponse<$marker>, DataError> {
-                self.load_neo_key::<$marker>(req, value!($calendar), $convert)
+                self.load_neo_symbols_key::<$marker>(req, value!($calendar), $convert)
+            }
+        }
+
+        impl IterableDataProvider<$marker> for DatagenProvider {
+            fn supported_locales(&self) -> Result<Vec<DataLocale>, DataError> {
+                self.supported_locales_neo(value!($calendar), $lengths)
+            }
+        }
+    };
+}
+
+macro_rules! impl_pattern_datagen {
+    ($marker:ident, $calendar:expr, $lengths:ident, $convert:expr) => {
+        impl DataProvider<$marker> for DatagenProvider {
+            fn load(&self, req: DataRequest) -> Result<DataResponse<$marker>, DataError> {
+                self.load_neo_patterns_key::<$marker>(req, value!($calendar), $convert)
             }
         }
 
@@ -635,4 +719,92 @@ impl_symbols_datagen!(
     "roc",
     NORMAL_KEY_LENGTHS,
     months_convert
+);
+
+// Datetime patterns
+impl_pattern_datagen!(
+    DateTimePatternV1Marker,
+    "gregory",
+    NORMAL_PATTERN_KEY_LENGTHS,
+    datetimepattern_convert
+);
+
+// Date patterns
+impl_pattern_datagen!(
+    BuddhistDatePatternV1Marker,
+    "buddhist",
+    NORMAL_PATTERN_KEY_LENGTHS,
+    datepattern_convert
+);
+impl_pattern_datagen!(
+    ChineseDatePatternV1Marker,
+    "chinese",
+    NORMAL_PATTERN_KEY_LENGTHS,
+    datepattern_convert
+);
+impl_pattern_datagen!(
+    CopticDatePatternV1Marker,
+    "coptic",
+    NORMAL_PATTERN_KEY_LENGTHS,
+    datepattern_convert
+);
+impl_pattern_datagen!(
+    DangiDatePatternV1Marker,
+    "dangi",
+    NORMAL_PATTERN_KEY_LENGTHS,
+    datepattern_convert
+);
+impl_pattern_datagen!(
+    EthiopianDatePatternV1Marker,
+    "ethiopic",
+    NORMAL_PATTERN_KEY_LENGTHS,
+    datepattern_convert
+);
+impl_pattern_datagen!(
+    GregorianDatePatternV1Marker,
+    "gregory",
+    NORMAL_PATTERN_KEY_LENGTHS,
+    datepattern_convert
+);
+impl_pattern_datagen!(
+    HebrewDatePatternV1Marker,
+    "hebrew",
+    NORMAL_PATTERN_KEY_LENGTHS,
+    datepattern_convert
+);
+impl_pattern_datagen!(
+    IndianDatePatternV1Marker,
+    "indian",
+    NORMAL_PATTERN_KEY_LENGTHS,
+    datepattern_convert
+);
+impl_pattern_datagen!(
+    IslamicDatePatternV1Marker,
+    "islamic",
+    NORMAL_PATTERN_KEY_LENGTHS,
+    datepattern_convert
+);
+impl_pattern_datagen!(
+    JapaneseDatePatternV1Marker,
+    "japanese",
+    NORMAL_PATTERN_KEY_LENGTHS,
+    datepattern_convert
+);
+impl_pattern_datagen!(
+    JapaneseExtendedDatePatternV1Marker,
+    "japanext",
+    NORMAL_PATTERN_KEY_LENGTHS,
+    datepattern_convert
+);
+impl_pattern_datagen!(
+    PersianDatePatternV1Marker,
+    "persian",
+    NORMAL_PATTERN_KEY_LENGTHS,
+    datepattern_convert
+);
+impl_pattern_datagen!(
+    RocDatePatternV1Marker,
+    "roc",
+    NORMAL_PATTERN_KEY_LENGTHS,
+    datepattern_convert
 );

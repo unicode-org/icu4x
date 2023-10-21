@@ -171,7 +171,10 @@ pub struct LinearSymbolsV1<'data> {
     marker(HebrewDatePatternV1Marker, "datetime/patterns/hebrew/date@1"),
     marker(IndianDatePatternV1Marker, "datetime/patterns/indian/date@1"),
     marker(IslamicDatePatternV1Marker, "datetime/patterns/islamic/date@1"),
-    marker(JapaneseDatePatternV1Marker, "datetime/patterns/japanese/date@1")
+    marker(JapaneseDatePatternV1Marker, "datetime/patterns/japanese/date@1"),
+    marker(JapaneseExtendedDatePatternV1Marker, "datetime/patterns/japanext/date@1"),
+    marker(PersianDatePatternV1Marker, "datetime/patterns/persian/date@1"),
+    marker(RocDatePatternV1Marker, "datetime/patterns/roc/date@1")
 )]
 #[derive(Debug, PartialEq, Clone)]
 #[cfg_attr(
