@@ -21,15 +21,23 @@ mod subtag_consts {
 }
 
 fn single_aux_subtag<M: KeyedDataMarker>(locale: &DataLocale) -> Result<Subtag, DataError> {
-    #[allow(clippy::unwrap_used)]
-    locale
-        .get_aux()
-        .and_then(|aux| aux.iter().next())
-        .ok_or_else(|| {
-            DataError::custom("Expected aux key")
-                .with_key(M::KEY)
-                .with_debug_context(locale)
-        })
+    let Some(aux) = locale.get_aux() else {
+        return Err(DataError::custom("Expected a single aux key")
+            .with_key(M::KEY)
+            .with_debug_context(locale));
+    };
+    let mut iter = aux.iter();
+    let Some(subtag) = iter.next() else {
+        return Err(DataError::custom("Expected a single aux key")
+            .with_key(M::KEY)
+            .with_debug_context(locale));
+    };
+    if iter.next().is_some() {
+        return Err(DataError::custom("Expected a single aux key")
+            .with_key(M::KEY)
+            .with_debug_context(locale));
+    }
+    Ok(subtag)
 }
 
 fn month_symbols_map_project_cloned<M, P>(
