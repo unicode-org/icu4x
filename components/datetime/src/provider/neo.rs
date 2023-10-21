@@ -2,9 +2,12 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+mod adapter;
+
 use crate::pattern::{self, runtime};
 use icu_provider::prelude::*;
 use tinystr::UnvalidatedTinyAsciiStr;
+use zerovec::ule::UnvalidatedStr;
 use zerovec::{VarZeroVec, ZeroMap};
 
 /// Symbols used for representing the year name
@@ -45,10 +48,7 @@ use zerovec::{VarZeroVec, ZeroMap};
 pub enum YearSymbolsV1<'data> {
     /// This calendar uses eras with numeric years, this stores the era names mapped from
     /// era code to the name
-    Eras(
-        #[cfg_attr(feature = "serde", serde(borrow))]
-        ZeroMap<'data, UnvalidatedTinyAsciiStr<16>, str>,
-    ),
+    Eras(#[cfg_attr(feature = "serde", serde(borrow))] ZeroMap<'data, UnvalidatedStr, str>),
     /// This calendar is cyclic (Chinese, Dangi), so it uses cyclic year names without any eras
     Cyclic(#[cfg_attr(feature = "serde", serde(borrow))] VarZeroVec<'data, str>),
 }

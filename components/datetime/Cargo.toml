@@ -27,7 +27,7 @@ icu_calendar = { workspace = true }
 icu_decimal = { workspace = true }
 icu_locid = { workspace = true }
 icu_plurals = { workspace = true }
-icu_provider = { workspace = true, features = ["macros"] }
+icu_provider = { workspace = true, features = ["macros", "experimental"] }
 icu_timezone = { workspace = true }
 smallvec = "1.6"
 tinystr = { workspace = true, features = ["alloc", "zerovec"] }
