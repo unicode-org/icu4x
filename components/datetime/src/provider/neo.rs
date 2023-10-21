@@ -21,7 +21,7 @@ use zerovec::{VarZeroVec, ZeroMap};
 /// - 3 is "abbreviated"
 /// - 4 is "narrow"
 /// - 5 is "wide"
-/// - 6 is "short" (months only)
+/// - 6 is "short" (weekdays only)
 ///
 /// <div class="stab unstable">
 /// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
