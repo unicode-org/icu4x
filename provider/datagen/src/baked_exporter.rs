@@ -586,7 +586,8 @@ impl BakedExporter {
                     quote!()
                 } else if *key
                     == icu_datetime::provider::calendar::DateSkeletonPatternsV1Marker::KEY
-                    || key.path().contains("neo")
+                    // neo keys are also experimental
+                    || key.path().contains("datetime/symbols") || key.path().contains("datetime/patterns")
                 {
                     quote! { #[cfg(feature = "icu_datetime_experimental")] }
                 } else if *key == icu_provider::hello_world::HelloWorldV1Marker::KEY {
