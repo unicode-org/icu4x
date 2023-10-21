@@ -79,7 +79,7 @@ impl DatagenProvider {
         let resource: &ca::Resource = self
             .cldr()?
             .dates(cldr_cal)
-            .read_and_parse(&langid, &format!("ca-{}.json", cldr_cal))?;
+            .read_and_parse(langid, &format!("ca-{}.json", cldr_cal))?;
 
         let data = resource
             .main
@@ -125,7 +125,7 @@ impl DatagenProvider {
         );
         let (context, length) = aux_subtag_info(aux);
 
-        let data = conversion(self, &langid, &data, &calendar, context, length)?;
+        let data = conversion(self, &langid, data, &calendar, context, length)?;
 
         #[allow(clippy::redundant_closure_call)]
         Ok(DataResponse {
@@ -145,7 +145,7 @@ impl DatagenProvider {
             .get(&calendar)
             .ok_or_else(|| DataErrorKind::MissingLocale.into_error())?;
         r.extend(self.cldr()?.dates(cldr_cal).list_langs()?.flat_map(|lid| {
-            keylengths.into_iter().map(move |length| {
+            keylengths.iter().map(move |length| {
                 let locale: Locale = lid.clone().into();
 
                 let mut locale = DataLocale::from(locale);
@@ -239,7 +239,7 @@ fn years_convert(
         let ethioaa: &ca::Resource = datagen
             .cldr()?
             .dates("ethiopic")
-            .read_and_parse(&langid, "ca-ethiopic-amete-alem.json")?;
+            .read_and_parse(langid, "ca-ethiopic-amete-alem.json")?;
 
         let ethioaa_data = ethioaa
             .main
@@ -270,7 +270,7 @@ fn years_convert(
         let greg: &ca::Resource = datagen
             .cldr()?
             .dates("gregorian")
-            .read_and_parse(&langid, "ca-gregorian.json")?;
+            .read_and_parse(langid, "ca-gregorian.json")?;
 
         let greg_data = greg
             .main
@@ -290,7 +290,7 @@ fn years_convert(
     };
 
     for (cldr, code) in map {
-        if let Some(name) = eras.get(&*cldr) {
+        if let Some(name) = eras.get(cldr) {
             if let Some(modern_japanese_eras) = modern_japanese_eras {
                 if !modern_japanese_eras.contains(cldr) {
                     continue;
@@ -322,7 +322,7 @@ fn years_convert(
     Ok(YearSymbolsV1::Eras(
         out_eras
             .iter()
-            .map(|(k, v)| (UnvalidatedStr::from_str(&k), &**v))
+            .map(|(k, v)| (UnvalidatedStr::from_str(k), &**v))
             .collect(),
     ))
 }
