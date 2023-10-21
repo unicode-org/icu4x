@@ -103,7 +103,7 @@ impl Private {
     ///
     /// let subtag: Subtag = "foo".parse().expect("Failed to parse a Subtag.");
     ///
-    /// let private = Private::from_single(subtag);
+    /// let private = Private::new_single(subtag);
     /// assert_eq!(&private.to_string(), "x-foo");
     /// ```
     pub const fn new_single(input: Subtag) -> Self {
