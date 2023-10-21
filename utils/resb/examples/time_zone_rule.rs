@@ -147,7 +147,7 @@ pub struct ZoneInfo64<'a> {
 }
 
 fn main() {
-    let in_bytes = std::fs::read(&Path::new(concat!(
+    let in_bytes = std::fs::read(Path::new(concat!(
         env!("CARGO_MANIFEST_DIR"),
         "/examples/data/zoneinfo64.res"
     )))
