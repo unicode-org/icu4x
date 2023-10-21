@@ -260,15 +260,61 @@ fn years_convert(
         None
     };
 
+    let modern_japanese_eras = if *calendar == value!("japanese") {
+        Some(datagen.cldr()?.modern_japanese_eras()?)
+    } else {
+        None
+    };
+
+    let extra_japanese = if *calendar == value!("japanese") || *calendar == value!("japanext") {
+        let greg: &ca::Resource = datagen
+            .cldr()?
+            .dates("gregorian")
+            .read_and_parse(&langid, "ca-gregorian.json")?;
+
+        let greg_data = greg
+            .main
+            .value
+            .dates
+            .calendars
+            .get("gregorian")
+            .expect("CLDR gregorian.json contains the expected calendar");
+
+        let eras = greg_data.eras.load(length);
+        Some((
+            eras.get("0").expect("gregorian calendar must have 0 era"),
+            eras.get("1").expect("gregorian calendar must have 1 era"),
+        ))
+    } else {
+        None
+    };
+
     for (cldr, code) in map {
         if let Some(name) = eras.get(&*cldr) {
+            if let Some(modern_japanese_eras) = modern_japanese_eras {
+                if !modern_japanese_eras.contains(cldr) {
+                    continue;
+                }
+            }
             out_eras.insert(code, &**name);
         } else if let Some(extra_ethiopic) = extra_ethiopic {
             if cldr == "2" {
                 out_eras.insert(code, extra_ethiopic);
+            } else {
+                panic!("Unknown ethiopic era number {cldr}");
+            }
+        } else if let Some(extra_japanese) = extra_japanese {
+            if cldr == "-1" {
+                // AD era
+                out_eras.insert(code, extra_japanese.0);
+            } else if cldr == "-2" {
+                // BC era
+                out_eras.insert(code, extra_japanese.1);
+            } else {
+                panic!("Unknown japanese era number {cldr}");
             }
         } else {
-            // panic!("Did not find era data for era {code} (#{cldr}) for {calendar} and {langid}");
+            panic!("Did not find era data for era {code} (#{cldr}) for {calendar} and {langid}");
         }
     }
 
