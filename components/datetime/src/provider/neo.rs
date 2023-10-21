@@ -139,10 +139,9 @@ pub struct LinearSymbolsV1<'data> {
     pub symbols: VarZeroVec<'data, str>,
 }
 
-/// The default per-length patterns associated with dates and times
+/// The default per-length patterns associated with dates
 ///
-/// This uses an auxiliary key for length. time@1 additionally uses
-/// the auxiliary key for representing hour cycle preferences.
+/// This uses an auxiliary key for length
 ///
 /// <div class="stab unstable">
 /// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
@@ -150,9 +149,6 @@ pub struct LinearSymbolsV1<'data> {
 /// to be stable, their Rust representation might not be. Use with caution.
 /// </div>
 #[icu_provider::data_struct(
-    // time patterns
-    marker(TimePatternV1Marker, "datetime/patterns/time@1"),
-
     // date patterns
     marker(BuddhistDatePatternV1Marker, "datetime/patterns/buddhist/date@1"),
     marker(ChineseDatePatternV1Marker, "datetime/patterns/chinese/date@1"),
@@ -173,21 +169,25 @@ pub struct LinearSymbolsV1<'data> {
 )]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[yoke(prove_covariance_manually)]
-pub struct PatternV1<'data> {
+pub struct DatePatternV1<'data> {
     /// The pattern
     #[cfg_attr(feature = "serde", serde(borrow))]
     pub pattern: runtime::Pattern<'data>,
 }
 
-/// The default hour cycle intended to be used with a locale
+/// The default per-length patterns associated with times
+///
+/// This uses an auxiliary key for length. as well as hour cycle preferences.
+/// Unlike lengths, the hour cycle subkey is optional: it can either be absent, or "alt",
+/// indicating a non-default hour cycle.
 ///
 /// <div class="stab unstable">
 /// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
 /// including in SemVer minor releases. While the serde representation of data structs is guaranteed
 /// to be stable, their Rust representation might not be. Use with caution.
 /// </div>
-#[icu_provider::data_struct(marker(PreferredHourCycleV1Marker, "datetime/patterns/hourcycle@1"))]
-#[derive(Debug, PartialEq, Clone, Copy)]
+#[icu_provider::data_struct(marker(TimePatternV1Marker, "datetime/patterns/time@1"))]
+#[derive(Debug, PartialEq, Clone)]
 #[cfg_attr(
     feature = "datagen",
     derive(serde::Serialize, databake::Bake),
@@ -195,8 +195,12 @@ pub struct PatternV1<'data> {
 )]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[yoke(prove_covariance_manually)]
-pub struct PreferredHourCycleV1 {
-    /// The hour cycle preference
+pub struct TimePatternV1<'data> {
+    /// The pattern
+    #[cfg_attr(feature = "serde", serde(borrow))]
+    pub pattern: runtime::Pattern<'data>,
+
+    /// The default hour cycle for this locale
     pub cycle: pattern::CoarseHourCycle,
 }
 
