@@ -4,7 +4,7 @@
 
 mod adapter;
 
-use crate::pattern::{self, runtime};
+use crate::pattern::runtime;
 use icu_provider::prelude::*;
 use tinystr::UnvalidatedTinyAsciiStr;
 use zerovec::ule::UnvalidatedStr;
@@ -12,7 +12,16 @@ use zerovec::{VarZeroVec, ZeroMap};
 
 /// Symbols used for representing the year name
 ///
-/// This uses an auxiliary key for length.
+/// This uses an auxiliary subtag for length. The subtag is simply the number of
+/// characters in the equivalent CLDR field syntax name, plus "s" for standalone contexts. For example,
+/// "abbreviated" (e.g. `MMM`) is `-x-3` or `-x-3s` depending on whether it is format or standalone
+/// respectively.
+///
+/// The full list is:
+/// - 3 is "abbreviated"
+/// - 4 is "narrow"
+/// - 5 is "wide"
+/// - 6 is "short" (weekdays only)
 ///
 /// <div class="stab unstable">
 /// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
@@ -55,7 +64,7 @@ pub enum YearSymbolsV1<'data> {
 
 /// Symbols used for representing the month name
 ///
-/// This uses an auxiliary key for length.
+/// This uses an auxiliary subtag for length. See [`YearSymbolsV1`] for more information on the scheme.
 ///
 /// <div class="stab unstable">
 /// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
@@ -109,7 +118,7 @@ pub enum MonthSymbolsV1<'data> {
 ///   In the case noon is missing but midnight is present, the noon value can be the empty string. This is unlikely.
 /// - For day names element 0 is the first day of the month
 ///
-/// This uses an auxiliary key for length.
+/// This uses an auxiliary subtag for length. See [`YearSymbolsV1`] for more information on the scheme.
 ///
 /// <div class="stab unstable">
 /// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
@@ -139,10 +148,10 @@ pub struct LinearSymbolsV1<'data> {
     pub symbols: VarZeroVec<'data, str>,
 }
 
-/// The default per-length patterns associated with dates and times
+/// The default per-length patterns associated with dates
 ///
-/// This uses an auxiliary key for length. time@1 additionally uses
-/// the auxiliary key for representing hour cycle preferences.
+/// This uses an auxiliary subtag for length. The subtag can be "f", "l", "m", "s" for
+/// "full", "long", "medium", or "short".
 ///
 /// <div class="stab unstable">
 /// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
@@ -150,8 +159,17 @@ pub struct LinearSymbolsV1<'data> {
 /// to be stable, their Rust representation might not be. Use with caution.
 /// </div>
 #[icu_provider::data_struct(
-    marker(DatePatternV1Marker, "datetime/patterns/date@1"),
-    marker(TimePatternV1Marker, "datetime/patterns/time@1")
+    // date patterns
+    marker(BuddhistDatePatternV1Marker, "datetime/patterns/buddhist/date@1"),
+    marker(ChineseDatePatternV1Marker, "datetime/patterns/chinese/date@1"),
+    marker(CopticDatePatternV1Marker, "datetime/patterns/coptic/date@1"),
+    marker(DangiDatePatternV1Marker, "datetime/patterns/dangi/date@1"),
+    marker(EthiopianDatePatternV1Marker, "datetime/patterns/ethiopic/date@1"),
+    marker(GregorianDatePatternV1Marker, "datetime/patterns/gregory/date@1"),
+    marker(HebrewDatePatternV1Marker, "datetime/patterns/hebrew/date@1"),
+    marker(IndianDatePatternV1Marker, "datetime/patterns/indian/date@1"),
+    marker(IslamicDatePatternV1Marker, "datetime/patterns/islamic/date@1"),
+    marker(JapaneseDatePatternV1Marker, "datetime/patterns/japanese/date@1")
 )]
 #[derive(Debug, PartialEq, Clone)]
 #[cfg_attr(
@@ -161,21 +179,28 @@ pub struct LinearSymbolsV1<'data> {
 )]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[yoke(prove_covariance_manually)]
-pub struct PatternV1<'data> {
+pub struct DatePatternV1<'data> {
     /// The pattern
     #[cfg_attr(feature = "serde", serde(borrow))]
     pub pattern: runtime::Pattern<'data>,
 }
 
-/// The default hour cycle intended to be used with a locale
+/// The default per-length patterns associated with times
+///
+/// This uses an auxiliary subtag for length. See [`DatePatternV1`] for more information on the scheme.
+///
+/// It also uses the subtag to track hour cycles; the data for the default hour cycle will
+/// use a regular length auxiliary subtag (e.g. `-x-f` for full), and the non-default
+/// one will tack on a `h` or `k` depending on whether it is H11H12 or H23H24
+/// (`-x-fk` for full, non-default, 23/24 hours)
 ///
 /// <div class="stab unstable">
 /// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
 /// including in SemVer minor releases. While the serde representation of data structs is guaranteed
 /// to be stable, their Rust representation might not be. Use with caution.
 /// </div>
-#[icu_provider::data_struct(marker(PreferredHourCycleV1Marker, "datetime/patterns/hourcycle@1"))]
-#[derive(Debug, PartialEq, Clone, Copy)]
+#[icu_provider::data_struct(marker(TimePatternV1Marker, "datetime/patterns/time@1"))]
+#[derive(Debug, PartialEq, Clone)]
 #[cfg_attr(
     feature = "datagen",
     derive(serde::Serialize, databake::Bake),
@@ -183,14 +208,15 @@ pub struct PatternV1<'data> {
 )]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[yoke(prove_covariance_manually)]
-pub struct PreferredHourCycleV1 {
-    /// The hour cycle preference
-    pub cycle: pattern::CoarseHourCycle,
+pub struct TimePatternV1<'data> {
+    /// The pattern
+    #[cfg_attr(feature = "serde", serde(borrow))]
+    pub pattern: runtime::Pattern<'data>,
 }
 
 /// The default per-length patterns used for combining dates and times into datetimes
 ///
-/// This uses an auxiliary key for length.
+/// This uses an auxiliary subtag for length. See [`DatePatternV1`] for more information on the scheme.
 ///
 /// <div class="stab unstable">
 /// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
