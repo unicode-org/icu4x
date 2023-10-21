@@ -12,7 +12,16 @@ use zerovec::{VarZeroVec, ZeroMap};
 
 /// Symbols used for representing the year name
 ///
-/// This uses an auxiliary key for length.
+/// This uses an auxiliary subtag for length. The subtag is simply the number of
+/// characters in the equivalent CLDR field syntax name, plus "s" for standalone contexts. For example,
+/// "abbreviated" (e.g. `MMM`) is `-x-3` or `-x-3s` depending on whether it is format or standalone
+/// respectively.
+///
+/// The full list is:
+/// - 3 is "abbreviated"
+/// - 4 is "narrow"
+/// - 5 is "wide"
+/// - 6 is "short" (months only)
 ///
 /// <div class="stab unstable">
 /// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
@@ -55,7 +64,7 @@ pub enum YearSymbolsV1<'data> {
 
 /// Symbols used for representing the month name
 ///
-/// This uses an auxiliary key for length.
+/// This uses an auxiliary subtag for length. See [`YearSymbolsV1`] for more information on the scheme.
 ///
 /// <div class="stab unstable">
 /// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
@@ -109,7 +118,7 @@ pub enum MonthSymbolsV1<'data> {
 ///   In the case noon is missing but midnight is present, the noon value can be the empty string. This is unlikely.
 /// - For day names element 0 is the first day of the month
 ///
-/// This uses an auxiliary key for length.
+/// This uses an auxiliary subtag for length. See [`YearSymbolsV1`] for more information on the scheme.
 ///
 /// <div class="stab unstable">
 /// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
@@ -141,7 +150,8 @@ pub struct LinearSymbolsV1<'data> {
 
 /// The default per-length patterns associated with dates
 ///
-/// This uses an auxiliary key for length
+/// This uses an auxiliary subtag for length. The subtag can be "a", "n", "s", or "w", for
+/// "abbreviated", "narrow", "short", or "wide".
 ///
 /// <div class="stab unstable">
 /// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
@@ -177,9 +187,11 @@ pub struct DatePatternV1<'data> {
 
 /// The default per-length patterns associated with times
 ///
-/// This uses an auxiliary key for length. as well as hour cycle preferences.
-/// Unlike lengths, the hour cycle subkey is optional: it can either be absent, or "alt",
-/// indicating a non-default hour cycle.
+/// This uses an auxiliary subtag for length. See [`DatePatternV1`] for more information on the scheme.
+///
+/// It also uses the subtag to track hour cycles; the data for the default hour cycle will
+/// use a regular length auxiliary subtag (e.g. `-x-a` for abbreviated), and the non-default
+/// one will tack on an `x` (`-x-ax` for abbreviated, non-default)
 ///
 /// <div class="stab unstable">
 /// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
@@ -206,7 +218,7 @@ pub struct TimePatternV1<'data> {
 
 /// The default per-length patterns used for combining dates and times into datetimes
 ///
-/// This uses an auxiliary key for length.
+/// This uses an auxiliary subtag for length. See [`DatePatternV1`] for more information on the scheme.
 ///
 /// <div class="stab unstable">
 /// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
