@@ -4,7 +4,7 @@
 
 mod adapter;
 
-use crate::pattern::{self, runtime};
+use crate::pattern::runtime;
 use icu_provider::prelude::*;
 use tinystr::UnvalidatedTinyAsciiStr;
 use zerovec::ule::UnvalidatedStr;
@@ -150,8 +150,8 @@ pub struct LinearSymbolsV1<'data> {
 
 /// The default per-length patterns associated with dates
 ///
-/// This uses an auxiliary subtag for length. The subtag can be "a", "n", "s", or "w", for
-/// "abbreviated", "narrow", "short", or "wide".
+/// This uses an auxiliary subtag for length. The subtag can be "f", "l", "m", "s" for
+/// "full", "long", "medium", or "short".
 ///
 /// <div class="stab unstable">
 /// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
@@ -190,8 +190,8 @@ pub struct DatePatternV1<'data> {
 /// This uses an auxiliary subtag for length. See [`DatePatternV1`] for more information on the scheme.
 ///
 /// It also uses the subtag to track hour cycles; the data for the default hour cycle will
-/// use a regular length auxiliary subtag (e.g. `-x-a` for abbreviated), and the non-default
-/// one will tack on an `x` (`-x-ax` for abbreviated, non-default)
+/// use a regular length auxiliary subtag (e.g. `-x-f` for full), and the non-default
+/// one will tack on a `h` or `k` depending on whether it is H11H12 or H23H24 (`-x-ak` for full, non-default, 11/12 hours)
 ///
 /// <div class="stab unstable">
 /// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
@@ -211,9 +211,6 @@ pub struct TimePatternV1<'data> {
     /// The pattern
     #[cfg_attr(feature = "serde", serde(borrow))]
     pub pattern: runtime::Pattern<'data>,
-
-    /// The default hour cycle for this locale
-    pub cycle: pattern::CoarseHourCycle,
 }
 
 /// The default per-length patterns used for combining dates and times into datetimes
