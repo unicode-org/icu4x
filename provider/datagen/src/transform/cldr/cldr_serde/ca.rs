@@ -168,7 +168,7 @@ impl Eras {
     ///
     /// Panics on Length::Short
     pub(crate) fn load(&self, length: Length) -> &HashMap<String, String> {
-         match length {
+        match length {
             Length::Abbr => &self.abbr,
             Length::Narrow => &self.narrow,
             Length::Wide => &self.names,

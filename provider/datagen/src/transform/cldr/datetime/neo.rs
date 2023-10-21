@@ -3,8 +3,8 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use super::supported_cals;
-use crate::DatagenProvider;
 use crate::transform::cldr::cldr_serde::ca::{self, Context, Length};
+use crate::DatagenProvider;
 
 use icu_datetime::provider::neo::*;
 use icu_locid::{
@@ -95,7 +95,14 @@ impl DatagenProvider {
         &self,
         req: DataRequest,
         calendar: Value,
-        conversion: impl FnOnce(&DatagenProvider, &LanguageIdentifier, &ca::Dates, &Value, Context, Length) -> Result<M::Yokeable, DataError>,
+        conversion: impl FnOnce(
+            &DatagenProvider,
+            &LanguageIdentifier,
+            &ca::Dates,
+            &Value,
+            Context,
+            Length,
+        ) -> Result<M::Yokeable, DataError>,
     ) -> Result<DataResponse<M>, DataError>
     where
         Self: IterableDataProvider<M>,
@@ -225,7 +232,6 @@ fn years_convert(
     let map = super::symbols::get_era_code_map(&calendar_str);
     let mut out_eras: BTreeMap<TinyAsciiStr<16>, &str> = BTreeMap::new();
 
-
     // CLDR treats ethiopian and ethioaa as separate calendars; however we treat them as a single resource key that
     // supports symbols for both era patterns based on the settings on the date. Load in ethioaa data as well when dealing with
     // ethiopian.
@@ -241,14 +247,15 @@ fn years_convert(
             .dates
             .calendars
             .get("ethiopic-amete-alem")
-            .expect("CLDR ca-ethiopic-amete-alem.json contains the expected calendar")
-            ;
+            .expect("CLDR ca-ethiopic-amete-alem.json contains the expected calendar");
 
-        Some(ethioaa_data
-            .eras
-            .load(length)
-            .get("0")
-            .expect("ethiopic-amete-alem calendar must have 0 era"))
+        Some(
+            ethioaa_data
+                .eras
+                .load(length)
+                .get("0")
+                .expect("ethiopic-amete-alem calendar must have 0 era"),
+        )
     } else {
         None
     };
