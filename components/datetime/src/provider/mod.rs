@@ -86,62 +86,61 @@ const _: () = {
     icu_datetime_data::impl_time_zone_specific_short_v1!(Baked);
 
     #[cfg(feature = "experimental")]
-    icu_datetime_data::impl_weekday_symbols_v1!(Baked);
-
+    icu_datetime_data::impl_datetime_symbols_weekdays_v1!(Baked);
     #[cfg(feature = "experimental")]
-    icu_datetime_data::impl_dayperiods_v1!(Baked);
+    icu_datetime_data::impl_datetime_symbols_dayperiods_v1!(Baked);
     #[cfg(feature = "experimental")]
-    icu_datetime_data::impl_buddhist_months_v1!(Baked);
+    icu_datetime_data::impl_datetime_symbols_buddhist_months_v1!(Baked);
     #[cfg(feature = "experimental")]
-    icu_datetime_data::impl_buddhist_years_v1!(Baked);
+    icu_datetime_data::impl_datetime_symbols_buddhist_years_v1!(Baked);
     #[cfg(feature = "experimental")]
-    icu_datetime_data::impl_chinese_months_v1!(Baked);
+    icu_datetime_data::impl_datetime_symbols_chinese_months_v1!(Baked);
     #[cfg(feature = "experimental")]
-    icu_datetime_data::impl_chinese_years_v1!(Baked);
+    icu_datetime_data::impl_datetime_symbols_chinese_years_v1!(Baked);
     #[cfg(feature = "experimental")]
-    icu_datetime_data::impl_coptic_months_v1!(Baked);
+    icu_datetime_data::impl_datetime_symbols_coptic_months_v1!(Baked);
     #[cfg(feature = "experimental")]
-    icu_datetime_data::impl_coptic_years_v1!(Baked);
+    icu_datetime_data::impl_datetime_symbols_coptic_years_v1!(Baked);
     #[cfg(feature = "experimental")]
-    icu_datetime_data::impl_dangi_months_v1!(Baked);
+    icu_datetime_data::impl_datetime_symbols_dangi_months_v1!(Baked);
     #[cfg(feature = "experimental")]
-    icu_datetime_data::impl_dangi_years_v1!(Baked);
+    icu_datetime_data::impl_datetime_symbols_dangi_years_v1!(Baked);
     #[cfg(feature = "experimental")]
-    icu_datetime_data::impl_ethiopic_months_v1!(Baked);
+    icu_datetime_data::impl_datetime_symbols_ethiopic_months_v1!(Baked);
     #[cfg(feature = "experimental")]
-    icu_datetime_data::impl_ethiopic_years_v1!(Baked);
+    icu_datetime_data::impl_datetime_symbols_ethiopic_years_v1!(Baked);
     #[cfg(feature = "experimental")]
-    icu_datetime_data::impl_gregory_months_v1!(Baked);
+    icu_datetime_data::impl_datetime_symbols_gregory_months_v1!(Baked);
     #[cfg(feature = "experimental")]
-    icu_datetime_data::impl_gregory_years_v1!(Baked);
+    icu_datetime_data::impl_datetime_symbols_gregory_years_v1!(Baked);
     #[cfg(feature = "experimental")]
-    icu_datetime_data::impl_hebrew_months_v1!(Baked);
+    icu_datetime_data::impl_datetime_symbols_hebrew_months_v1!(Baked);
     #[cfg(feature = "experimental")]
-    icu_datetime_data::impl_hebrew_years_v1!(Baked);
+    icu_datetime_data::impl_datetime_symbols_hebrew_years_v1!(Baked);
     #[cfg(feature = "experimental")]
-    icu_datetime_data::impl_indian_months_v1!(Baked);
+    icu_datetime_data::impl_datetime_symbols_indian_months_v1!(Baked);
     #[cfg(feature = "experimental")]
-    icu_datetime_data::impl_indian_years_v1!(Baked);
+    icu_datetime_data::impl_datetime_symbols_indian_years_v1!(Baked);
     #[cfg(feature = "experimental")]
-    icu_datetime_data::impl_islamic_months_v1!(Baked);
+    icu_datetime_data::impl_datetime_symbols_islamic_months_v1!(Baked);
     #[cfg(feature = "experimental")]
-    icu_datetime_data::impl_islamic_years_v1!(Baked);
+    icu_datetime_data::impl_datetime_symbols_islamic_years_v1!(Baked);
     #[cfg(feature = "experimental")]
-    icu_datetime_data::impl_japanese_months_v1!(Baked);
+    icu_datetime_data::impl_datetime_symbols_japanese_months_v1!(Baked);
     #[cfg(feature = "experimental")]
-    icu_datetime_data::impl_japanese_years_v1!(Baked);
+    icu_datetime_data::impl_datetime_symbols_japanese_years_v1!(Baked);
     #[cfg(feature = "experimental")]
-    icu_datetime_data::impl_japanext_months_v1!(Baked);
+    icu_datetime_data::impl_datetime_symbols_japanext_months_v1!(Baked);
     #[cfg(feature = "experimental")]
-    icu_datetime_data::impl_japanext_years_v1!(Baked);
+    icu_datetime_data::impl_datetime_symbols_japanext_years_v1!(Baked);
     #[cfg(feature = "experimental")]
-    icu_datetime_data::impl_persian_months_v1!(Baked);
+    icu_datetime_data::impl_datetime_symbols_persian_months_v1!(Baked);
     #[cfg(feature = "experimental")]
-    icu_datetime_data::impl_persian_years_v1!(Baked);
+    icu_datetime_data::impl_datetime_symbols_persian_years_v1!(Baked);
     #[cfg(feature = "experimental")]
-    icu_datetime_data::impl_roc_months_v1!(Baked);
+    icu_datetime_data::impl_datetime_symbols_roc_months_v1!(Baked);
     #[cfg(feature = "experimental")]
-    icu_datetime_data::impl_roc_years_v1!(Baked);
+    icu_datetime_data::impl_datetime_symbols_roc_years_v1!(Baked);
 };
 
 #[cfg(feature = "datagen")]
