@@ -150,8 +150,20 @@ pub struct LinearSymbolsV1<'data> {
 /// to be stable, their Rust representation might not be. Use with caution.
 /// </div>
 #[icu_provider::data_struct(
-    marker(DatePatternV1Marker, "datetime/patterns/date@1"),
-    marker(TimePatternV1Marker, "datetime/patterns/time@1")
+    // time patterns
+    marker(TimePatternV1Marker, "datetime/patterns/time@1"),
+
+    // date patterns
+    marker(BuddhistDatePatternV1Marker, "datetime/patterns/buddhist/date@1"),
+    marker(ChineseDatePatternV1Marker, "datetime/patterns/chinese/date@1"),
+    marker(CopticDatePatternV1Marker, "datetime/patterns/coptic/date@1"),
+    marker(DangiDatePatternV1Marker, "datetime/patterns/dangi/date@1"),
+    marker(EthiopianDatePatternV1Marker, "datetime/patterns/ethiopic/date@1"),
+    marker(GregorianDatePatternV1Marker, "datetime/patterns/gregory/date@1"),
+    marker(HebrewDatePatternV1Marker, "datetime/patterns/hebrew/date@1"),
+    marker(IndianDatePatternV1Marker, "datetime/patterns/indian/date@1"),
+    marker(IslamicDatePatternV1Marker, "datetime/patterns/islamic/date@1"),
+    marker(JapaneseDatePatternV1Marker, "datetime/patterns/japanese/date@1")
 )]
 #[derive(Debug, PartialEq, Clone)]
 #[cfg_attr(
