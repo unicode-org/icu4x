@@ -191,7 +191,8 @@ pub struct DatePatternV1<'data> {
 ///
 /// It also uses the subtag to track hour cycles; the data for the default hour cycle will
 /// use a regular length auxiliary subtag (e.g. `-x-f` for full), and the non-default
-/// one will tack on a `h` or `k` depending on whether it is H11H12 or H23H24 (`-x-ak` for full, non-default, 11/12 hours)
+/// one will tack on a `h` or `k` depending on whether it is H11H12 or H23H24
+/// (`-x-fk` for full, non-default, 23/24 hours)
 ///
 /// <div class="stab unstable">
 /// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
