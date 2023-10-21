@@ -13,7 +13,7 @@ macro_rules! __impl_datetime_symbols_chinese_years_v1 {
             fn load(&self, req: icu_provider::DataRequest) -> Result<icu_provider::DataResponse<icu::datetime::provider::neo::ChineseYearSymbolsV1Marker>, icu_provider::DataError> {
                 static UND_X_3: <icu::datetime::provider::neo::ChineseYearSymbolsV1Marker as icu_provider::DataMarker>::Yokeable = icu::datetime::provider::neo::YearSymbolsV1::Eras(unsafe {
                     #[allow(unused_unsafe)]
-                    zerovec::ZeroMap::from_parts_unchecked(zerovec::ZeroVec::new(), zerovec::VarZeroVec::new())
+                    zerovec::ZeroMap::from_parts_unchecked(zerovec::VarZeroVec::new(), zerovec::VarZeroVec::new())
                 });
                 static VALUES: [&<icu::datetime::provider::neo::ChineseYearSymbolsV1Marker as icu_provider::DataMarker>::Yokeable; 3usize] = [&UND_X_3, &UND_X_3, &UND_X_3];
                 static KEYS: [&str; 3usize] = ["und-x-3", "und-x-4", "und-x-5"];
