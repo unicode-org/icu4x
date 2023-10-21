@@ -3,8 +3,9 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use super::supported_cals;
-use crate::transform::cldr::cldr_serde::ca::{self, Context, Length};
+use crate::transform::cldr::cldr_serde::ca::{self, Context, Length, PatternLength};
 use crate::DatagenProvider;
+use icu_datetime::pattern;
 
 use icu_datetime::provider::neo::*;
 use icu_locid::{
@@ -27,6 +28,21 @@ const NARROW_STANDALONE: Subtag = subtag!("4s");
 const WIDE_STANDALONE: Subtag = subtag!("5s");
 const SHORT_STANDALONE: Subtag = subtag!("6s");
 
+const PATTERN_FULL: Subtag = subtag!("f");
+const PATTERN_LONG: Subtag = subtag!("l");
+const PATTERN_MEDIUM: Subtag = subtag!("m");
+const PATTERN_SHORT: Subtag = subtag!("s");
+
+const PATTERN_FULL12: Subtag = subtag!("f12");
+const PATTERN_LONG12: Subtag = subtag!("l12");
+const PATTERN_MEDIUM12: Subtag = subtag!("m12");
+const PATTERN_SHORT12: Subtag = subtag!("s12");
+
+const PATTERN_FULL24: Subtag = subtag!("f24");
+const PATTERN_LONG24: Subtag = subtag!("l24");
+const PATTERN_MEDIUM24: Subtag = subtag!("m24");
+const PATTERN_SHORT24: Subtag = subtag!("s24");
+
 fn aux_subtag_info(subtag: Subtag) -> (Context, Length) {
     use {Context::*, Length::*};
     match subtag {
@@ -41,6 +57,28 @@ fn aux_subtag_info(subtag: Subtag) -> (Context, Length) {
         _ => panic!("Found unexpected auxiliary subtag {}", subtag),
     }
 }
+
+fn aux_pattern_subtag_info(subtag: Subtag) -> (PatternLength, Option<pattern::CoarseHourCycle>) {
+    use {pattern::CoarseHourCycle::*, PatternLength::*};
+    match subtag {
+        PATTERN_FULL => (Full, None),
+        PATTERN_LONG => (Long, None),
+        PATTERN_MEDIUM => (Medium, None),
+        PATTERN_SHORT => (Short, None),
+
+        PATTERN_FULL12 => (Full, Some(H11H12)),
+        PATTERN_LONG12 => (Long, Some(H11H12)),
+        PATTERN_MEDIUM12 => (Medium, Some(H11H12)),
+        PATTERN_SHORT12 => (Short, Some(H11H12)),
+
+        PATTERN_FULL24 => (Full, Some(H23H24)),
+        PATTERN_LONG24 => (Long, Some(H23H24)),
+        PATTERN_MEDIUM24 => (Medium, Some(H23H24)),
+        PATTERN_SHORT24 => (Short, Some(H23H24)),
+        _ => panic!("Found unexpected auxiliary subtag {}", subtag),
+    }
+}
+
 /// Most keys don't have short symbols (except weekdays)
 ///
 /// We may further investigate and kick out standalone for some keys
@@ -66,6 +104,30 @@ const FULL_KEY_LENGTHS: &[Subtag] = &[
     SHORT_STANDALONE,
 ];
 
+const NORMAL_PATTERN_KEY_LENGTHS: &[Subtag] =
+    &[PATTERN_FULL, PATTERN_LONG, PATTERN_MEDIUM, PATTERN_SHORT];
+
+const H12_PATTERN_KEY_LENGTHS: &[Subtag] = &[
+    PATTERN_FULL,
+    PATTERN_LONG,
+    PATTERN_MEDIUM,
+    PATTERN_SHORT,
+    PATTERN_FULL12,
+    PATTERN_LONG12,
+    PATTERN_MEDIUM12,
+    PATTERN_SHORT12,
+];
+
+const H24_PATTERN_KEY_LENGTHS: &[Subtag] = &[
+    PATTERN_FULL,
+    PATTERN_LONG,
+    PATTERN_MEDIUM,
+    PATTERN_SHORT,
+    PATTERN_FULL24,
+    PATTERN_LONG24,
+    PATTERN_MEDIUM24,
+    PATTERN_SHORT24,
+];
 impl DatagenProvider {
     fn load_calendar_dates(
         &self,
