@@ -27,6 +27,9 @@ pub mod time_zones;
 /// including in SemVer minor releases. While the serde representation of data structs is guaranteed
 /// to be stable, their Rust representation might not be. Use with caution.
 /// </div>
+//
+//
+// WHEN THIS GRADUATES; be sure to update the check for "neo" in baked_exporter!
 #[cfg(any(feature = "datagen", feature = "experimental"))]
 pub mod neo;
 
