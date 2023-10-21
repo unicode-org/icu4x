@@ -999,7 +999,7 @@ impl From<Subtag> for AuxiliaryKeys {
         #[allow(clippy::expect_used)] // subtags definitely fit within auxiliary keys
         Self {
             value: AuxiliaryKeysInner::Stack(
-                TinyAsciiStr::from_bytes(&subtag.as_str().as_bytes())
+                TinyAsciiStr::from_bytes(subtag.as_str().as_bytes())
                     .expect("Subtags are capped to 8 elements, AuxiliaryKeys supports up to 23"),
             ),
         }
