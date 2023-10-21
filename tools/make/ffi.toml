@@ -100,62 +100,27 @@ script = '''
 exit_on_error true
 code = exec --get-exit-code git diff --exit-code -- ffi/capi
 if ${code}
-    trigger_error "Diplomat bindings need to be regenerated. Please run `cargo make diplomat-install`, then `cargo make diplomat-gen`, and commit. (Testing against different Diplomat versions may omit install step.)"
+    trigger_error "Diplomat bindings need to be regenerated. Please run `cargo make diplomat-gen` and commit. (Testing against different Diplomat versions may omit install step.)"
 end
 '''
 
 [tasks.diplomat-gen-c]
 description = "Generate C headers for the FFI with Diplomat"
 category = "ICU4X Development"
-script_runner = "@duckscript"
-script = '''
-exit_on_error true
-cd ffi/capi
-
-# Duckscript doesn't support globs in rm, so we delete the dir
-rm -r ./c/include/
-mkdir ./c/include
-exec --fail-on-error diplomat-tool c ./c/include
-'''
+command = "cargo"
+args = ["run", "-p", "diplomat-gen", "c"]
 
 [tasks.diplomat-gen-cpp]
 description = "Generate C++ headers for the FFI with Diplomat"
 category = "ICU4X Development"
-script_runner = "@duckscript"
-script = '''
-exit_on_error true
-cd ffi/capi
-
-# Duckscript doesn't support globs in rm, so we delete the dir.
-# Preserve conf.py across the deletion.
-conf_py = readfile ./cpp/docs/source/conf.py
-rm -r ./cpp/include
-mkdir ./cpp/include
-rm -r ./cpp/docs/source
-mkdir ./cpp/docs/source
-writefile ./cpp/docs/source/conf.py ${conf_py}
-exec --fail-on-error diplomat-tool cpp ./cpp/include --docs ./cpp/docs/source
-'''
+command = "cargo"
+args = ["run", "-p", "diplomat-gen", "cpp"]
 
 [tasks.diplomat-gen-js]
 description = "Generate JS bindings for the FFI with Diplomat"
 category = "ICU4X Development"
-script_runner = "bash"
-script = '''
-set -e
-cd ffi/capi
-
-# Duckscript doesn't support globs in rm, so we delete the dir.
-# Preserve conf.py across the deletion.
-conf_py=$(<./js/docs/source/conf.py)
-rm -r ./js/include
-mkdir ./js/include
-rm -r ./js/docs/source
-mkdir ./js/docs/source
-echo "$conf_py" > ./js/docs/source/conf.py
-
-diplomat-tool js ./js/include/ --docs ./js/docs/source
-'''
+command = "cargo"
+args = ["run", "-p", "diplomat-gen", "js"]
 
 # Diplomat coverage
 
@@ -184,75 +149,6 @@ end
 
 
 # Install tasks
-
-# These tasks need a minimum version of cargo-make. Configs within cargo-make
-# task stanzas such as this allow setting the minimum version of deps (including
-# min version for cargo-make itself). But cargo-make might only be applying
-# such dep upgrades defined in the `install_crate` field after the task script
-# has run.
-[tasks.cargo-make-min-version]
-description = "Verify that the minimum version of cargo-make exists"
-category = "ICU4X Development"
-install_crate = { crate_name = "cargo-make", binary = "cargo", test_arg = ["make", "--version"], min_version = "0.36.2" }
-
-[tasks.diplomat-install]
-description = "Install Diplomat at current Diplomat revision"
-category = "ICU4X Development"
-dependencies = [ "cargo-make-min-version" ]
-script_runner = "@duckscript"
-script = '''
-exit_on_error true
-rev = exec --fail-on-error cargo make --loglevel error diplomat-get-rev
-rev = trim ${rev.stdout}
-if contains ${rev} "."
-    echo "Installing Diplomat version ${rev}"
-    exec --fail-on-error cargo install --version ${rev} diplomat-tool -f
-
-else
-    echo "Installing Diplomat rev ${rev}"
-    exec --fail-on-error cargo install --git https://github.com/rust-diplomat/diplomat.git --rev ${rev} diplomat-tool -f
-end
-'''
-
-[tasks.diplomat-get-rev]
-description = "Get current Diplomat revision"
-category = "ICU4X Development"
-dependencies = [ "cargo-make-min-version" ]
-script_runner = "@duckscript"
-script = '''
-exit_on_error true
-metadata = exec --fail-on-error cargo metadata
-metadata = set ${metadata.stdout}
-# Parse output
-metadata = json_parse --collection ${metadata}
-# packages = metadata.packages
-packages = map_get ${metadata} packages
-for pkg in ${packages}
-    # find pkg.name
-    name = map_get ${pkg} name
-    # check if it is "diplomat"
-    e = eq ${name} "diplomat"
-    if ${e}
-        # get pkg.source
-        source = map_get ${pkg} source
-        version = map_get ${pkg} version
-        # extract the bit between `rev=` and `#`
-        handle = split ${source} "rev="
-        hash_len = array_length ${handle}
-        if eq ${hash_len} 2
-            hash = array_get ${handle} 1
-            release handle
-            handle = split ${hash} "#"
-            version = array_get ${handle} 0
-        end
-        release handle
-
-        # print it
-        echo ${version}
-    end
-end
-release --recursive ${metadata}
-'''
 
 [tasks.install-unknown-linux]
 description = "Installs the unknown-linux target"

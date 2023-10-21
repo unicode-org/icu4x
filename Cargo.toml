@@ -97,6 +97,7 @@ members = [
     "tools/benchmark/macros",
     "tools/benchmark/memory",
     "tools/depcheck",
+    "tools/diplomat-gen",
     "tools/ffi_coverage",
     "tools/testdata-scripts",
 ]
@@ -229,12 +230,12 @@ icu_benchmark_macros = { path = "tools/benchmark/macros" }
 # ffi_coverage never used as a dep
 # testdata-scripts never used as a dep
 
-# Run `cargo make diplomat-install` to get the right diplomat binary installed
 # The version here can either be a `version = ".."` spec or `git = "https://github.com/rust-diplomat/diplomat", rev = ".."`
 # Diplomat must be published preceding a new ICU4X release but may use git versions in between
-diplomat = { git = "https://github.com/rust-diplomat/diplomat", rev = "5091e173fb2dea945ac7a7f0cba5d41288afbf00" }
-diplomat-runtime = { git = "https://github.com/rust-diplomat/diplomat", rev = "5091e173fb2dea945ac7a7f0cba5d41288afbf00" }
-diplomat_core = { git = "https://github.com/rust-diplomat/diplomat", rev = "5091e173fb2dea945ac7a7f0cba5d41288afbf00" }
+diplomat = { git = "https://github.com/rust-diplomat/diplomat", rev = "354307d4a519a3f42a9dc744ea0d64d766431d1d" }
+diplomat-runtime = { git = "https://github.com/rust-diplomat/diplomat", rev = "354307d4a519a3f42a9dc744ea0d64d766431d1d" }
+diplomat_core = { git = "https://github.com/rust-diplomat/diplomat", rev = "354307d4a519a3f42a9dc744ea0d64d766431d1d" }
+diplomat-tool = { git = "https://github.com/rust-diplomat/diplomat", rev = "354307d4a519a3f42a9dc744ea0d64d766431d1d" }
 
 # LTO is needed for WASM and other size-optimized builds,
 # and it improve the performance of benchmarks

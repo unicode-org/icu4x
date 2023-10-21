@@ -551,32 +551,6 @@ jobs:
     - name: Show the selected Rust toolchain
       run: rustup show
 
-    # Job-specific dependencies
-    - name: Run diplomat-get-rev to ensure it works
-      id: diplomat-getrev-check
-      run: cargo make --loglevel error diplomat-get-rev
-    - name: Get Diplomat version
-      id: diplomat-version
-      run: |
-        echo "::set-output name=rev::$(cargo make --loglevel error diplomat-get-rev |  tr -d '[:space:]')"
-      shell: bash
-    - name: Attempt to load cached Diplomat
-      uses: actions/cache@v3
-      id: diplomat-cache
-      with:
-        path: |
-          ~/.cargo/bin/diplomat-tool
-          ~/.cargo/bin/diplomat-tool.exe
-        key: ${{ runner.os }}-diplomat-${{ steps.diplomat-version.outputs.rev }}
-
-    - name: Install Diplomat (git hash)
-      if: steps.diplomat-cache.outputs.cache-hit != 'true' && !contains(steps.diplomat-version.outputs.rev, '.')
-      run: cargo +stable install --git https://github.com/rust-diplomat/diplomat.git --rev ${{ steps.diplomat-version.outputs.rev }} diplomat-tool
-
-    - name: Install Diplomat (versioned)
-      if: steps.diplomat-cache.outputs.cache-hit != 'true' && contains(steps.diplomat-version.outputs.rev, '.')
-      run: cargo +stable install --git https://github.com/rust-diplomat/diplomat.git --version ${{ steps.diplomat-version.outputs.rev }} diplomat-tool
-
     # Actual job
     - name: Run `cargo make ci-job-diplomat`
       run: cargo make ci-job-diplomat
