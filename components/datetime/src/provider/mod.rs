@@ -93,6 +93,11 @@ const _: () = {
     #[cfg(feature = "experimental")]
     icu_datetime_data::impl_datetime_symbols_dayperiods_v1!(Baked);
     #[cfg(feature = "experimental")]
+    icu_datetime_data::impl_datetime_patterns_datetime_v1!(Baked);
+    #[cfg(feature = "experimental")]
+    icu_datetime_data::impl_datetime_patterns_time_v1!(Baked);
+
+    #[cfg(feature = "experimental")]
     icu_datetime_data::impl_datetime_symbols_buddhist_months_v1!(Baked);
     #[cfg(feature = "experimental")]
     icu_datetime_data::impl_datetime_symbols_buddhist_years_v1!(Baked);
@@ -145,8 +150,6 @@ const _: () = {
     #[cfg(feature = "experimental")]
     icu_datetime_data::impl_datetime_symbols_roc_years_v1!(Baked);
 
-    #[cfg(feature = "experimental")]
-    icu_datetime_data::impl_datetime_patterns_datetime_v1!(Baked);
     #[cfg(feature = "experimental")]
     icu_datetime_data::impl_datetime_patterns_buddhist_date_v1!(Baked);
     #[cfg(feature = "experimental")]
@@ -222,6 +225,10 @@ pub const KEYS: &[DataKey] = &[
     #[cfg(feature = "experimental")]
     neo::DayPeriodSymbolsV1Marker::KEY,
     #[cfg(feature = "experimental")]
+    neo::DateTimePatternV1Marker::KEY,
+    #[cfg(feature = "experimental")]
+    neo::TimePatternV1Marker::KEY,
+    #[cfg(feature = "experimental")]
     neo::BuddhistYearSymbolsV1Marker::KEY,
     #[cfg(feature = "experimental")]
     neo::ChineseYearSymbolsV1Marker::KEY,
@@ -273,8 +280,6 @@ pub const KEYS: &[DataKey] = &[
     neo::PersianMonthSymbolsV1Marker::KEY,
     #[cfg(feature = "experimental")]
     neo::RocMonthSymbolsV1Marker::KEY,
-    #[cfg(feature = "experimental")]
-    neo::DateTimePatternV1Marker::KEY,
     #[cfg(feature = "experimental")]
     neo::BuddhistDatePatternV1Marker::KEY,
     #[cfg(feature = "experimental")]

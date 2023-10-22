@@ -5,13 +5,14 @@
 use super::supported_cals;
 use crate::transform::cldr::cldr_serde::ca::{self, Context, Length, PatternLength};
 use crate::DatagenProvider;
-use icu_datetime::pattern;
+use icu_datetime::pattern::{self, CoarseHourCycle};
 
+use icu_datetime::provider::calendar::{patterns::GenericLengthPatternsV1, DateSkeletonPatternsV1};
 use icu_datetime::provider::neo::*;
 use icu_locid::{
     extensions::private::{subtag, Subtag},
     extensions::unicode::{value, Value},
-    LanguageIdentifier, Locale,
+    langid, LanguageIdentifier, Locale,
 };
 use icu_provider::datagen::IterableDataProvider;
 use icu_provider::prelude::*;
@@ -58,8 +59,8 @@ fn aux_subtag_info(subtag: Subtag) -> (Context, Length) {
     }
 }
 
-fn aux_pattern_subtag_info(subtag: Subtag) -> (PatternLength, Option<pattern::CoarseHourCycle>) {
-    use {pattern::CoarseHourCycle::*, PatternLength::*};
+fn aux_pattern_subtag_info(subtag: Subtag) -> (PatternLength, Option<CoarseHourCycle>) {
+    use {CoarseHourCycle::*, PatternLength::*};
     match subtag {
         PATTERN_FULL => (Full, None),
         PATTERN_LONG => (Long, None),
@@ -107,7 +108,6 @@ const FULL_KEY_LENGTHS: &[Subtag] = &[
 const NORMAL_PATTERN_KEY_LENGTHS: &[Subtag] =
     &[PATTERN_FULL, PATTERN_LONG, PATTERN_MEDIUM, PATTERN_SHORT];
 
-#[allow(unused)]
 const H12_PATTERN_KEY_LENGTHS: &[Subtag] = &[
     PATTERN_FULL,
     PATTERN_LONG,
@@ -119,7 +119,6 @@ const H12_PATTERN_KEY_LENGTHS: &[Subtag] = &[
     PATTERN_SHORT12,
 ];
 
-#[allow(unused)]
 const H24_PATTERN_KEY_LENGTHS: &[Subtag] = &[
     PATTERN_FULL,
     PATTERN_LONG,
@@ -224,7 +223,7 @@ impl DatagenProvider {
         conversion: impl FnOnce(
             &ca::Dates,
             PatternLength,
-            Option<pattern::CoarseHourCycle>,
+            Option<CoarseHourCycle>,
         ) -> Result<M::Yokeable, DataError>,
     ) -> Result<DataResponse<M>, DataError>
     where
@@ -488,7 +487,7 @@ fn months_convert(
 fn datepattern_convert(
     data: &ca::Dates,
     length: PatternLength,
-    _hc: Option<pattern::CoarseHourCycle>,
+    _hc: Option<CoarseHourCycle>,
 ) -> Result<DatePatternV1<'static>, DataError> {
     let pattern = data.date_formats.get_pattern(length);
 
@@ -502,7 +501,7 @@ fn datepattern_convert(
 fn datetimepattern_convert(
     data: &ca::Dates,
     length: PatternLength,
-    _hc: Option<pattern::CoarseHourCycle>,
+    _hc: Option<CoarseHourCycle>,
 ) -> Result<DateTimePatternV1<'static>, DataError> {
     let pattern = data.datetime_formats.get_pattern(length);
 
@@ -511,6 +510,125 @@ fn datetimepattern_convert(
         .parse()
         .expect("failed to parse pattern");
     Ok(DateTimePatternV1 { pattern })
+}
+
+fn timepattern_convert(
+    data: &ca::Dates,
+    length: PatternLength,
+    hc: Option<CoarseHourCycle>,
+) -> Result<TimePatternV1<'static>, DataError> {
+    let pattern = data.time_formats.get_pattern(length);
+
+    let pattern_str = pattern.get_pattern();
+    let pattern = pattern_str.parse().expect("failed to parse pattern");
+    // We only get an hc if we're generating the non-default hc, so we know we must replace it in the pattern
+    let pattern: pattern::runtime::Pattern = if let Some(hc) = hc {
+        let length_combinations_v1 = GenericLengthPatternsV1::from(&data.datetime_formats);
+        let skeletons_v1 = DateSkeletonPatternsV1::from(data);
+        let pattern =
+            hc.apply_on_pattern(&length_combinations_v1, &skeletons_v1, pattern_str, pattern);
+        let pattern = pattern
+            .as_ref()
+            .expect("Failed to apply a coarse hour cycle to a full pattern.");
+        pattern.into()
+    } else {
+        (&pattern).into()
+    };
+    Ok(TimePatternV1 { pattern })
+}
+
+fn hc_for(time_formats: &ca::LengthPatterns, langid: &LanguageIdentifier) -> CoarseHourCycle {
+    let pattern_str_full = time_formats.full.get_pattern();
+    let pattern_str_long = time_formats.long.get_pattern();
+    let pattern_str_medium = time_formats.medium.get_pattern();
+    let pattern_str_short = time_formats.short.get_pattern();
+
+    let pattern_full = pattern_str_full
+        .parse()
+        .expect("Failed to create a full Pattern from bytes.");
+    let pattern_long = pattern_str_long
+        .parse()
+        .expect("Failed to create a long Pattern from bytes.");
+    let pattern_medium = pattern_str_medium
+        .parse()
+        .expect("Failed to create a medium Pattern from bytes.");
+    let pattern_short = pattern_str_short
+        .parse()
+        .expect("Failed to create a short Pattern from bytes.");
+
+    let mut preferred_hour_cycle: Option<CoarseHourCycle> = None;
+    let arr = [
+        CoarseHourCycle::determine(&pattern_full),
+        CoarseHourCycle::determine(&pattern_long),
+        CoarseHourCycle::determine(&pattern_medium),
+        CoarseHourCycle::determine(&pattern_short),
+    ];
+    let iter = arr.iter().flatten();
+
+    if *langid == langid!("byn") || *langid == langid!("ssy") {
+        // byn uses H23H24 for full and H11H12 for the others
+        return CoarseHourCycle::H11H12;
+    }
+
+    for hour_cycle in iter {
+        if let Some(preferred_hour_cycle) = preferred_hour_cycle {
+            assert_eq!(
+                *hour_cycle, preferred_hour_cycle,
+                "Locale {langid} contained a mix of coarse hour cycle types"
+            );
+        } else {
+            preferred_hour_cycle = Some(*hour_cycle);
+        }
+    }
+
+    preferred_hour_cycle.expect("Could not find preferred hour cycle in locale {langid}")
+}
+
+// Time patterns have a manual implementation since they have custom supported_locales logic below
+impl DataProvider<TimePatternV1Marker> for DatagenProvider {
+    fn load(&self, req: DataRequest) -> Result<DataResponse<TimePatternV1Marker>, DataError> {
+        self.load_neo_patterns_key::<TimePatternV1Marker>(
+            req,
+            value!("gregory"),
+            timepattern_convert,
+        )
+    }
+}
+
+// Potential future optimization: if we split out aux subtags from supported_locales into a separate
+// method that eagerly generates all aux subtags (even if unused) and expects load() to figure out if the aux
+// subtag actually should be produced (by returning a special error), then this code is no longer necessary
+// and we can use a union of the H12/H24 key lengths arrays, instead checking for preferred hc
+// in timepattern_convert
+impl IterableDataProvider<TimePatternV1Marker> for DatagenProvider {
+    fn supported_locales(&self) -> Result<Vec<DataLocale>, DataError> {
+        let calendar = value!("gregory");
+        let mut r = Vec::new();
+
+        let cldr_cal = supported_cals()
+            .get(&calendar)
+            .ok_or_else(|| DataErrorKind::MissingLocale.into_error())?;
+        r.extend(self.cldr()?.dates(cldr_cal).list_langs()?.flat_map(|lid| {
+            let data = self
+                .load_calendar_dates(&lid, &calendar)
+                .expect("list_langs returned a language that couldn't be loaded");
+            let hc = hc_for(&data.time_formats, &lid);
+            let keylengths = match hc {
+                CoarseHourCycle::H11H12 => H12_PATTERN_KEY_LENGTHS,
+                CoarseHourCycle::H23H24 => H24_PATTERN_KEY_LENGTHS,
+            };
+            keylengths.iter().map(move |length| {
+                let locale: Locale = lid.clone().into();
+
+                let mut locale = DataLocale::from(locale);
+
+                locale.set_aux((*length).into());
+                locale
+            })
+        }));
+
+        Ok(r)
+    }
 }
 
 macro_rules! impl_symbols_datagen {

@@ -201,6 +201,8 @@ registry!(
     // new datetime symbols stuff (unused so far)
     icu_datetime::provider::neo::WeekdaySymbolsV1Marker = "datetime/symbols/weekdays@1",
     icu_datetime::provider::neo::DayPeriodSymbolsV1Marker = "datetime/symbols/dayperiods@1",
+    icu_datetime::provider::neo::TimePatternV1Marker = "datetime/patterns/time@1",
+    icu_datetime::provider::neo::DateTimePatternV1Marker = "datetime/patterns/datetime@1",
     icu_datetime::provider::neo::BuddhistYearSymbolsV1Marker = "datetime/symbols/buddhist/years@1",
     icu_datetime::provider::neo::ChineseYearSymbolsV1Marker = "datetime/symbols/chinese/years@1",
     icu_datetime::provider::neo::CopticYearSymbolsV1Marker = "datetime/symbols/coptic/years@1",
@@ -233,7 +235,6 @@ registry!(
         "datetime/symbols/japanext/months@1",
     icu_datetime::provider::neo::PersianMonthSymbolsV1Marker = "datetime/symbols/persian/months@1",
     icu_datetime::provider::neo::RocMonthSymbolsV1Marker = "datetime/symbols/roc/months@1",
-    icu_datetime::provider::neo::DateTimePatternV1Marker = "datetime/patterns/datetime@1",
     icu_datetime::provider::neo::BuddhistDatePatternV1Marker = "datetime/patterns/buddhist/date@1",
     icu_datetime::provider::neo::ChineseDatePatternV1Marker = "datetime/patterns/chinese/date@1",
     icu_datetime::provider::neo::CopticDatePatternV1Marker = "datetime/patterns/coptic/date@1",
