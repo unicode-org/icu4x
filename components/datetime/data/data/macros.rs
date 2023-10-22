@@ -205,6 +205,11 @@ mod datetime_patterns_roc_date_v1;
 #[doc(inline)]
 pub use __impl_datetime_patterns_roc_date_v1 as impl_datetime_patterns_roc_date_v1;
 #[macro_use]
+#[path = "macros/datetime_patterns_time_v1.data.rs"]
+mod datetime_patterns_time_v1;
+#[doc(inline)]
+pub use __impl_datetime_patterns_time_v1 as impl_datetime_patterns_time_v1;
+#[macro_use]
 #[path = "macros/datetime_persian_datelengths_v1.data.rs"]
 mod datetime_persian_datelengths_v1;
 #[doc(inline)]
