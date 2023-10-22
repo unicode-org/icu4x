@@ -27,10 +27,10 @@ fn test_combined() {
     // Lookup table size:
     assert_eq!(vzv.as_bytes().len(), 10223);
 
-    // // Size including pointer array:
+    // Size including pointer array:
     assert_eq!(
-        vzv.as_bytes().len() + NUM_UNIQUE_BLOBS * core::mem::size_of::<usize>(),
-        13511
+        vzv.as_bytes().len() + STRINGS.len() * core::mem::size_of::<usize>(),
+        18639
     );
 
     let trie = ZeroTrieSimpleAscii::try_from(&litemap).unwrap();
@@ -148,8 +148,8 @@ fn test_aux_split() {
         8590
     );
     assert_eq!(
-        total_vzv_len + NUM_UNIQUE_BLOBS * core::mem::size_of::<usize>(),
-        8798
+        total_vzv_len + STRINGS.len() * core::mem::size_of::<usize>(),
+        13926
     );
     // 2x for the lookup arrays and value arrays
     assert_eq!(
