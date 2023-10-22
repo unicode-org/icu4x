@@ -90,6 +90,7 @@ fn test_aux_split() {
     let mut cumulative_index = 0;
     let mut total_simpleascii_len = 0;
     let mut total_perfecthash_len = 0;
+    let mut total_vzv_len = 0;
     let mut unique_locales = BTreeSet::new();
     for private in aux_keys.iter() {
         let current_locales: Vec<Locale> = locales
@@ -120,11 +121,19 @@ fn test_aux_split() {
         for k in litemap.iter_keys() {
             unique_locales.insert(k.clone());
         }
+
+        let strs: Vec<String> = current_locales
+            .iter()
+            .map(|l| l.write_to_string().into_owned())
+            .collect();
+        let vzv: VarZeroVec<str> = strs.as_slice().into();
+        total_vzv_len += vzv.as_bytes().len();
     }
     assert_eq!(cumulative_index, locales.len());
 
     assert_eq!(total_simpleascii_len, 5098);
     assert_eq!(total_perfecthash_len, 5302);
+    assert_eq!(total_vzv_len, 5510);
 
     let total_unique_locale_str_len = unique_locales.iter().map(|v| v.len()).sum::<usize>();
     assert_eq!(total_unique_locale_str_len, 945);
@@ -137,6 +146,10 @@ fn test_aux_split() {
     assert_eq!(
         total_perfecthash_len + NUM_UNIQUE_BLOBS * core::mem::size_of::<usize>(),
         8590
+    );
+    assert_eq!(
+        total_vzv_len + NUM_UNIQUE_BLOBS * core::mem::size_of::<usize>(),
+        8798
     );
     // 2x for the lookup arrays and value arrays
     assert_eq!(
