@@ -58,7 +58,7 @@ impl<'w> BlobExporter<'w> {
             unique_resources: Mutex::new(HashMap::new()),
             all_keys: Mutex::new(Vec::new()),
             sink,
-            version: VersionConfig::V001,
+            version: VersionConfig::V002,
         }
     }
 
