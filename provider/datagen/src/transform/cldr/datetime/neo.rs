@@ -12,7 +12,7 @@ use icu_datetime::provider::neo::*;
 use icu_locid::{
     extensions::private::{subtag, Subtag},
     extensions::unicode::{value, Value},
-    langid, LanguageIdentifier, Locale,
+    LanguageIdentifier, Locale,
 };
 use icu_provider::datagen::IterableDataProvider;
 use icu_provider::prelude::*;
@@ -107,28 +107,6 @@ const FULL_KEY_LENGTHS: &[Subtag] = &[
 
 const NORMAL_PATTERN_KEY_LENGTHS: &[Subtag] =
     &[PATTERN_FULL, PATTERN_LONG, PATTERN_MEDIUM, PATTERN_SHORT];
-
-const H12_PATTERN_KEY_LENGTHS: &[Subtag] = &[
-    PATTERN_FULL,
-    PATTERN_LONG,
-    PATTERN_MEDIUM,
-    PATTERN_SHORT,
-    PATTERN_FULL12,
-    PATTERN_LONG12,
-    PATTERN_MEDIUM12,
-    PATTERN_SHORT12,
-];
-
-const H24_PATTERN_KEY_LENGTHS: &[Subtag] = &[
-    PATTERN_FULL,
-    PATTERN_LONG,
-    PATTERN_MEDIUM,
-    PATTERN_SHORT,
-    PATTERN_FULL24,
-    PATTERN_LONG24,
-    PATTERN_MEDIUM24,
-    PATTERN_SHORT24,
-];
 
 impl DatagenProvider {
     fn load_calendar_dates(
@@ -537,51 +515,26 @@ fn timepattern_convert(
     Ok(TimePatternV1 { pattern })
 }
 
-fn hc_for(time_formats: &ca::LengthPatterns, langid: &LanguageIdentifier) -> CoarseHourCycle {
-    let pattern_str_full = time_formats.full.get_pattern();
-    let pattern_str_long = time_formats.long.get_pattern();
-    let pattern_str_medium = time_formats.medium.get_pattern();
-    let pattern_str_short = time_formats.short.get_pattern();
+/// Looks at the hour cycle in `time_pattern`, and return the subtag related to the *opposite* hour cycle; i.e. the
+/// non-default one
+fn nondefault_subtag(
+    time_pattern: &ca::LengthPattern,
+    subtag12: Subtag,
+    subtag24: Subtag,
+) -> Subtag {
+    let pattern = time_pattern.get_pattern();
 
-    let pattern_full = pattern_str_full
+    let pattern = pattern
         .parse()
-        .expect("Failed to create a full Pattern from bytes.");
-    let pattern_long = pattern_str_long
-        .parse()
-        .expect("Failed to create a long Pattern from bytes.");
-    let pattern_medium = pattern_str_medium
-        .parse()
-        .expect("Failed to create a medium Pattern from bytes.");
-    let pattern_short = pattern_str_short
-        .parse()
-        .expect("Failed to create a short Pattern from bytes.");
+        .expect("Failed to create a Pattern from bytes.");
 
-    let mut preferred_hour_cycle: Option<CoarseHourCycle> = None;
-    let arr = [
-        CoarseHourCycle::determine(&pattern_full),
-        CoarseHourCycle::determine(&pattern_long),
-        CoarseHourCycle::determine(&pattern_medium),
-        CoarseHourCycle::determine(&pattern_short),
-    ];
-    let iter = arr.iter().flatten();
-
-    if *langid == langid!("byn") || *langid == langid!("ssy") {
-        // byn uses H23H24 for full and H11H12 for the others
-        return CoarseHourCycle::H11H12;
+    let hc = CoarseHourCycle::determine(&pattern)
+        .expect("Could not find preferred hour cycle in locale");
+    match hc {
+        // this must invert the hour cycle since we're getting the nondefault one
+        CoarseHourCycle::H11H12 => subtag24,
+        CoarseHourCycle::H23H24 => subtag12,
     }
-
-    for hour_cycle in iter {
-        if let Some(preferred_hour_cycle) = preferred_hour_cycle {
-            assert_eq!(
-                *hour_cycle, preferred_hour_cycle,
-                "Locale {langid} contained a mix of coarse hour cycle types"
-            );
-        } else {
-            preferred_hour_cycle = Some(*hour_cycle);
-        }
-    }
-
-    preferred_hour_cycle.expect("Could not find preferred hour cycle in locale {langid}")
 }
 
 // Time patterns have a manual implementation since they have custom supported_locales logic below
@@ -612,17 +565,24 @@ impl IterableDataProvider<TimePatternV1Marker> for DatagenProvider {
             let data = self
                 .load_calendar_dates(&lid, &calendar)
                 .expect("list_langs returned a language that couldn't be loaded");
-            let hc = hc_for(&data.time_formats, &lid);
-            let keylengths = match hc {
-                CoarseHourCycle::H11H12 => H12_PATTERN_KEY_LENGTHS,
-                CoarseHourCycle::H23H24 => H24_PATTERN_KEY_LENGTHS,
-            };
-            keylengths.iter().map(move |length| {
+            let tp = &data.time_formats;
+
+            let keylengths = [
+                PATTERN_FULL,
+                PATTERN_LONG,
+                PATTERN_MEDIUM,
+                PATTERN_SHORT,
+                nondefault_subtag(&tp.full, PATTERN_FULL12, PATTERN_FULL24),
+                nondefault_subtag(&tp.long, PATTERN_LONG12, PATTERN_LONG24),
+                nondefault_subtag(&tp.medium, PATTERN_MEDIUM12, PATTERN_MEDIUM24),
+                nondefault_subtag(&tp.short, PATTERN_SHORT12, PATTERN_SHORT24),
+            ];
+            keylengths.into_iter().map(move |length| {
                 let locale: Locale = lid.clone().into();
 
                 let mut locale = DataLocale::from(locale);
 
-                locale.set_aux((*length).into());
+                locale.set_aux(length.into());
                 locale
             })
         }));
