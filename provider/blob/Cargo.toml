@@ -25,6 +25,7 @@ postcard = { version = "1.0.0", default-features = false, features = ["alloc"] }
 serde = { version = "1.0", default-features = false, features = ["alloc"] }
 writeable = {workspace = true }
 zerovec = { workspace = true, features = ["serde", "yoke"] }
+zerotrie = { workspace = true, features = ["serde", "zerovec"] }
 
 log = { version = "0.4", optional = true }
 
@@ -40,4 +41,6 @@ export = [
     "postcard/alloc",
     "std",
     "zerovec/serde",
+    "zerotrie/alloc",
+    "zerotrie/litemap",
 ]

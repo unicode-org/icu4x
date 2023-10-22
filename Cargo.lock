@@ -1931,6 +1931,7 @@ dependencies = [
  "postcard",
  "serde",
  "writeable",
+ "zerotrie",
  "zerovec",
 ]
 

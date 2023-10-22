@@ -2,7 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use crate::blob_schema::{BlobSchema, BlobSchemaV1};
+use crate::blob_schema::BlobSchema;
 use alloc::boxed::Box;
 use icu_provider::buf::BufferFormat;
 use icu_provider::prelude::*;
@@ -87,7 +87,7 @@ use yoke::*;
 /// ```
 #[derive(Clone)]
 pub struct BlobDataProvider {
-    data: Yoke<BlobSchemaV1<'static>, Option<Cart>>,
+    data: Yoke<BlobSchema<'static>, Option<Cart>>,
 }
 
 impl core::fmt::Debug for BlobDataProvider {
@@ -103,7 +103,7 @@ impl BlobDataProvider {
     pub fn try_new_from_blob(blob: Box<[u8]>) -> Result<Self, DataError> {
         Ok(Self {
             data: Cart::try_make_yoke(blob, |bytes| {
-                BlobSchema::deserialize_v1(&mut postcard::Deserializer::from_bytes(bytes))
+                BlobSchema::deserialize_and_check(&mut postcard::Deserializer::from_bytes(bytes))
             })?,
         })
     }
@@ -112,7 +112,7 @@ impl BlobDataProvider {
     /// [`try_new_from_blob`](BlobDataProvider::try_new_from_blob) and is allocation-free.
     pub fn try_new_from_static_blob(blob: &'static [u8]) -> Result<Self, DataError> {
         Ok(Self {
-            data: Yoke::new_owned(BlobSchema::deserialize_v1(
+            data: Yoke::new_owned(BlobSchema::deserialize_and_check(
                 &mut postcard::Deserializer::from_bytes(blob),
             )?),
         })
