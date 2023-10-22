@@ -9,6 +9,7 @@ use std::collections::BTreeSet;
 use writeable::Writeable;
 use zerotrie::ZeroTriePerfectHash;
 use zerotrie::ZeroTrieSimpleAscii;
+use zerovec::VarZeroVec;
 
 mod testdata {
     include!("data/data.rs");
@@ -20,6 +21,17 @@ use testdata::strings_to_litemap;
 #[test]
 fn test_combined() {
     let litemap = strings_to_litemap(STRINGS);
+
+    let vzv: VarZeroVec<str> = STRINGS.into();
+
+    // Lookup table size:
+    assert_eq!(vzv.as_bytes().len(), 10223);
+
+    // // Size including pointer array:
+    assert_eq!(
+        vzv.as_bytes().len() + NUM_UNIQUE_BLOBS * core::mem::size_of::<usize>(),
+        13511
+    );
 
     let trie = ZeroTrieSimpleAscii::try_from(&litemap).unwrap();
 
