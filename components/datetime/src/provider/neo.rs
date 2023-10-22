@@ -128,6 +128,8 @@ pub enum MonthSymbolsV1<'data> {
 #[icu_provider::data_struct(
     marker(WeekdaySymbolsV1Marker, "datetime/symbols/weekdays@1"),
     marker(DayPeriodSymbolsV1Marker, "datetime/symbols/dayperiods@1"),
+
+    // We're not producing or using day symbols yet, but this is where they would go
     marker(ChineseDaySymbolsV1Marker, "datetime/symbols/chinese/days@1"),
     marker(DangiDaySymbolsV1Marker, "datetime/symbols/dangi/days@1"),
     // for calendars that don't use day symbols

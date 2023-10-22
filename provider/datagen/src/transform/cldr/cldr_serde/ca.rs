@@ -36,6 +36,73 @@ pub struct Contexts<Symbols> {
     pub stand_alone: Option<StandAloneWidths<Symbols>>,
 }
 
+/// A length, for querying Contexts
+#[derive(Copy, Clone, Debug, PartialEq, Eq)]
+pub enum Length {
+    Abbr,
+    Narrow,
+    Wide,
+    Short,
+}
+
+/// A context, for querying Contexts
+#[derive(Copy, Clone, Debug, PartialEq, Eq)]
+pub enum Context {
+    Format,
+    Standalone,
+}
+
+impl<Symbols> Contexts<Symbols> {
+    /// Load
+    fn get_symbols_exact(&self, context: Context, length: Length) -> Option<&Symbols> {
+        use {Context::*, Length::*};
+
+        match (context, length) {
+            (Format, Abbr) => Some(&self.format.abbreviated),
+            (Format, Narrow) => Some(&self.format.narrow),
+            (Format, Wide) => Some(&self.format.wide),
+            (Format, Short) => self.format.short.as_ref(),
+            (Standalone, Abbr) => self
+                .stand_alone
+                .as_ref()
+                .and_then(|s| s.abbreviated.as_ref()),
+            (Standalone, Narrow) => self.stand_alone.as_ref().and_then(|s| s.narrow.as_ref()),
+            (Standalone, Wide) => self.stand_alone.as_ref().and_then(|s| s.wide.as_ref()),
+            (Standalone, Short) => self.stand_alone.as_ref().and_then(|s| s.short.as_ref()),
+        }
+    }
+
+    /// Load the symbols for a given context/length pair, performing horizontal fallback
+    /// if necessary
+    ///
+    /// Horizontal fallback is performed as specified in
+    /// <https://unicode.org/reports/tr35/tr35-dates.html#months_days_quarters_eras>
+    ///
+    /// I.e. missing `standalone`s fall back to `format`, missing `short` falls back to
+    /// `abbr`.
+    pub fn get_symbols(&self, context: Context, length: Length) -> &Symbols {
+        if context == Context::Standalone {
+            if let Some(sym) = self.get_symbols_exact(context, length) {
+                return sym;
+            }
+            // fall back to format
+        }
+
+        if let Some(sym) = self.get_symbols_exact(Context::Format, length) {
+            return sym;
+        }
+
+        // The only case where we reach this far without error is when we're looking
+        // for short lengths
+        debug_assert!(
+            length == Length::Short,
+            "Short is the only nullable format length!"
+        );
+
+        &self.format.abbreviated
+    }
+}
+
 #[derive(Debug, PartialEq, Clone, Deserialize)]
 pub struct MonthSymbols(pub HashMap<String, String>);
 #[derive(Debug, PartialEq, Clone, Deserialize)]
@@ -94,6 +161,20 @@ pub struct Eras {
     pub abbr: HashMap<String, String>,
     #[serde(rename = "eraNarrow")]
     pub narrow: HashMap<String, String>,
+}
+
+impl Eras {
+    /// Load the era corresponding to a [`Length`] value
+    ///
+    /// Panics on Length::Short
+    pub(crate) fn load(&self, length: Length) -> &HashMap<String, String> {
+        match length {
+            Length::Abbr => &self.abbr,
+            Length::Narrow => &self.narrow,
+            Length::Wide => &self.names,
+            Length::Short => unreachable!("Years do not have short symbols!"),
+        }
+    }
 }
 
 #[derive(PartialEq, Debug, Deserialize, Clone)]

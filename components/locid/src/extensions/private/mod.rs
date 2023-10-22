@@ -94,6 +94,22 @@ impl Private {
         Self(input.into())
     }
 
+    /// A constructor which takes a single [`Subtag`].
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use icu::locid::extensions::private::{Private, Subtag};
+    ///
+    /// let subtag: Subtag = "foo".parse().expect("Failed to parse a Subtag.");
+    ///
+    /// let private = Private::new_single(subtag);
+    /// assert_eq!(&private.to_string(), "x-foo");
+    /// ```
+    pub const fn new_single(input: Subtag) -> Self {
+        Self(ShortSlice::new_single(input))
+    }
+
     /// Empties the [`Private`] list.
     ///
     /// # Examples

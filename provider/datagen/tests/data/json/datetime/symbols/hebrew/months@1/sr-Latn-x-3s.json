@@ -1,0 +1,18 @@
+{
+  "Map": {
+    "M01": "Tišri",
+    "M02": "Hešvan",
+    "M03": "Kislev",
+    "M04": "Tevet",
+    "M05": "Ševat",
+    "M05L": "Adar I",
+    "M06": "Adar",
+    "M06L": "Adar II",
+    "M07": "Nisan",
+    "M08": "Ijar",
+    "M09": "Sivan",
+    "M10": "Tamuz",
+    "M11": "Av",
+    "M12": "Elul"
+  }
+}
