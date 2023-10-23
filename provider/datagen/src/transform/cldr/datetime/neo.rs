@@ -304,7 +304,7 @@ fn years_convert(
         "Eras do not participate in standalone formatting"
     );
 
-    let eras = data.eras.load(length);
+    let eras = data.eras.as_ref().unwrap().load(length);
 
     // Tostring can be removed when we delete symbols.rs, or we can perhaps refactor it to use Value
     let calendar_str = calendar.to_string();
@@ -331,6 +331,8 @@ fn years_convert(
         Some(
             ethioaa_data
                 .eras
+                .as_ref()
+                .expect("ethiopic-amete-alem must have eras")
                 .load(length)
                 .get("0")
                 .expect("ethiopic-amete-alem calendar must have 0 era"),
@@ -359,7 +361,11 @@ fn years_convert(
             .get("gregorian")
             .expect("CLDR gregorian.json contains the expected calendar");
 
-        let eras = greg_data.eras.load(length);
+        let eras = greg_data
+            .eras
+            .as_ref()
+            .expect("gregorian must have eras")
+            .load(length);
         Some((
             eras.get("0").expect("gregorian calendar must have 0 era"),
             eras.get("1").expect("gregorian calendar must have 1 era"),

@@ -10,12 +10,17 @@ use std::collections::BTreeMap;
 use tinystr::{tinystr, TinyStr16, TinyStr4};
 
 pub fn convert_dates(other: &cldr_serde::ca::Dates, calendar: &str) -> DateSymbolsV1<'static> {
+    let eras = if let Some(ref eras) = other.eras {
+        convert_eras(eras, calendar)
+    } else {
+        Default::default()
+    };
     DateSymbolsV1 {
         months: other
             .months
             .get(&(get_month_code_map(calendar).0, calendar)),
         weekdays: other.days.get(&()),
-        eras: convert_eras(&other.eras, calendar),
+        eras,
     }
 }
 

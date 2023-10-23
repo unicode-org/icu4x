@@ -240,8 +240,7 @@ pub struct Dates {
     // Not used yet, will be in the future
     pub month_patterns: Option<Contexts<MonthPatternSymbols>>,
     pub days: Contexts<DaySymbols>,
-    #[serde(default)]
-    pub eras: Eras,
+    pub eras: Option<Eras>,
     #[serde(rename = "dayPeriods")]
     pub day_periods: Contexts<DayPeriodSymbols>,
     #[serde(rename = "dateFormats")]
