@@ -135,6 +135,81 @@ mod datetime_japanext_datesymbols_v1;
 #[doc(inline)]
 pub use __impl_datetime_japanext_datesymbols_v1 as impl_datetime_japanext_datesymbols_v1;
 #[macro_use]
+#[path = "macros/datetime_patterns_buddhist_date_v1.data.rs"]
+mod datetime_patterns_buddhist_date_v1;
+#[doc(inline)]
+pub use __impl_datetime_patterns_buddhist_date_v1 as impl_datetime_patterns_buddhist_date_v1;
+#[macro_use]
+#[path = "macros/datetime_patterns_chinese_date_v1.data.rs"]
+mod datetime_patterns_chinese_date_v1;
+#[doc(inline)]
+pub use __impl_datetime_patterns_chinese_date_v1 as impl_datetime_patterns_chinese_date_v1;
+#[macro_use]
+#[path = "macros/datetime_patterns_coptic_date_v1.data.rs"]
+mod datetime_patterns_coptic_date_v1;
+#[doc(inline)]
+pub use __impl_datetime_patterns_coptic_date_v1 as impl_datetime_patterns_coptic_date_v1;
+#[macro_use]
+#[path = "macros/datetime_patterns_dangi_date_v1.data.rs"]
+mod datetime_patterns_dangi_date_v1;
+#[doc(inline)]
+pub use __impl_datetime_patterns_dangi_date_v1 as impl_datetime_patterns_dangi_date_v1;
+#[macro_use]
+#[path = "macros/datetime_patterns_datetime_v1.data.rs"]
+mod datetime_patterns_datetime_v1;
+#[doc(inline)]
+pub use __impl_datetime_patterns_datetime_v1 as impl_datetime_patterns_datetime_v1;
+#[macro_use]
+#[path = "macros/datetime_patterns_ethiopic_date_v1.data.rs"]
+mod datetime_patterns_ethiopic_date_v1;
+#[doc(inline)]
+pub use __impl_datetime_patterns_ethiopic_date_v1 as impl_datetime_patterns_ethiopic_date_v1;
+#[macro_use]
+#[path = "macros/datetime_patterns_gregory_date_v1.data.rs"]
+mod datetime_patterns_gregory_date_v1;
+#[doc(inline)]
+pub use __impl_datetime_patterns_gregory_date_v1 as impl_datetime_patterns_gregory_date_v1;
+#[macro_use]
+#[path = "macros/datetime_patterns_hebrew_date_v1.data.rs"]
+mod datetime_patterns_hebrew_date_v1;
+#[doc(inline)]
+pub use __impl_datetime_patterns_hebrew_date_v1 as impl_datetime_patterns_hebrew_date_v1;
+#[macro_use]
+#[path = "macros/datetime_patterns_indian_date_v1.data.rs"]
+mod datetime_patterns_indian_date_v1;
+#[doc(inline)]
+pub use __impl_datetime_patterns_indian_date_v1 as impl_datetime_patterns_indian_date_v1;
+#[macro_use]
+#[path = "macros/datetime_patterns_islamic_date_v1.data.rs"]
+mod datetime_patterns_islamic_date_v1;
+#[doc(inline)]
+pub use __impl_datetime_patterns_islamic_date_v1 as impl_datetime_patterns_islamic_date_v1;
+#[macro_use]
+#[path = "macros/datetime_patterns_japanese_date_v1.data.rs"]
+mod datetime_patterns_japanese_date_v1;
+#[doc(inline)]
+pub use __impl_datetime_patterns_japanese_date_v1 as impl_datetime_patterns_japanese_date_v1;
+#[macro_use]
+#[path = "macros/datetime_patterns_japanext_date_v1.data.rs"]
+mod datetime_patterns_japanext_date_v1;
+#[doc(inline)]
+pub use __impl_datetime_patterns_japanext_date_v1 as impl_datetime_patterns_japanext_date_v1;
+#[macro_use]
+#[path = "macros/datetime_patterns_persian_date_v1.data.rs"]
+mod datetime_patterns_persian_date_v1;
+#[doc(inline)]
+pub use __impl_datetime_patterns_persian_date_v1 as impl_datetime_patterns_persian_date_v1;
+#[macro_use]
+#[path = "macros/datetime_patterns_roc_date_v1.data.rs"]
+mod datetime_patterns_roc_date_v1;
+#[doc(inline)]
+pub use __impl_datetime_patterns_roc_date_v1 as impl_datetime_patterns_roc_date_v1;
+#[macro_use]
+#[path = "macros/datetime_patterns_time_v1.data.rs"]
+mod datetime_patterns_time_v1;
+#[doc(inline)]
+pub use __impl_datetime_patterns_time_v1 as impl_datetime_patterns_time_v1;
+#[macro_use]
 #[path = "macros/datetime_persian_datelengths_v1.data.rs"]
 mod datetime_persian_datelengths_v1;
 #[doc(inline)]

@@ -195,6 +195,36 @@ pub struct DateTimeFormats {
     pub available_formats: AvailableFormats,
 }
 
+#[derive(Copy, Clone, Debug, PartialEq, Eq)]
+pub enum PatternLength {
+    Full,
+    Long,
+    Medium,
+    Short,
+}
+
+impl LengthPatterns {
+    pub fn get_pattern(&self, length: PatternLength) -> &LengthPattern {
+        match length {
+            PatternLength::Full => &self.full,
+            PatternLength::Long => &self.long,
+            PatternLength::Medium => &self.medium,
+            PatternLength::Short => &self.short,
+        }
+    }
+}
+
+impl DateTimeFormats {
+    pub(crate) fn get_pattern(&self, length: PatternLength) -> &LengthPattern {
+        match length {
+            PatternLength::Full => &self.full,
+            PatternLength::Long => &self.long,
+            PatternLength::Medium => &self.medium,
+            PatternLength::Short => &self.short,
+        }
+    }
+}
+
 #[derive(PartialEq, Clone, Debug, Deserialize)]
 pub struct AvailableFormats(pub HashMap<String, String>);
 
