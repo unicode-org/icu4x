@@ -290,22 +290,14 @@ fn dayperiods_convert(
     })
 }
 
-fn years_convert(
+fn eras_convert(
     datagen: &DatagenProvider,
     langid: &LanguageIdentifier,
-    data: &ca::Dates,
+    eras: &ca::Eras,
     calendar: &Value,
-    context: Context,
     length: Length,
 ) -> Result<YearSymbolsV1<'static>, DataError> {
-    assert_eq!(
-        context,
-        Context::Format,
-        "Eras do not participate in standalone formatting"
-    );
-
-    let eras = data.eras.as_ref().unwrap().load(length);
-
+    let eras = eras.load(length);
     // Tostring can be removed when we delete symbols.rs, or we can perhaps refactor it to use Value
     let calendar_str = calendar.to_string();
     let map = super::symbols::get_era_code_map(&calendar_str);
@@ -403,13 +395,48 @@ fn years_convert(
         }
     }
 
-    // Todo: Cyclic years (#3761)
     Ok(YearSymbolsV1::Eras(
         out_eras
             .iter()
             .map(|(k, v)| (UnvalidatedStr::from_str(k), &**v))
             .collect(),
     ))
+}
+fn years_convert(
+    datagen: &DatagenProvider,
+    langid: &LanguageIdentifier,
+    data: &ca::Dates,
+    calendar: &Value,
+    context: Context,
+    length: Length,
+) -> Result<YearSymbolsV1<'static>, DataError> {
+    assert_eq!(
+        context,
+        Context::Format,
+        "Eras and cyclic years do not participate in standalone formatting"
+    );
+
+    if let Some(ref eras) = data.eras {
+        eras_convert(datagen, langid, eras, calendar, length)
+    } else if let Some(years) = data
+        .cyclic_name_sets
+        .as_ref()
+        .and_then(|c| c.years.as_ref())
+    {
+        let years = years.get_symbols(context, length);
+
+        let years: Vec<_> = years.iter().enumerate().map(|(index, (key, value))| {
+            if *key as usize != index + 1 {
+                panic!("Calendar {calendar} in locale {langid} missing cyclic year name for index {index}");
+            }
+            &**value
+        }).collect();
+        Ok(YearSymbolsV1::Cyclic((&years).into()))
+    } else {
+        panic!(
+            "Calendar {calendar} in locale {langid} has neither eras nor cyclicNameSets for years"
+        )
+    }
 }
 
 fn months_convert(
