@@ -5,6 +5,7 @@
 mod adapter;
 
 use crate::pattern::runtime;
+use alloc::borrow::Cow;
 use icu_provider::prelude::*;
 use tinystr::UnvalidatedTinyAsciiStr;
 use zerovec::ule::UnvalidatedStr;
@@ -65,6 +66,7 @@ pub enum YearSymbolsV1<'data> {
 /// Symbols used for representing the month name
 ///
 /// This uses an auxiliary subtag for length. See [`YearSymbolsV1`] for more information on the scheme.
+/// There is also an additional length value called "numeric" represented by `-x-1` (not yet produced by datagen).
 ///
 /// <div class="stab unstable">
 /// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
@@ -109,6 +111,36 @@ pub enum MonthSymbolsV1<'data> {
         #[cfg_attr(feature = "serde", serde(borrow))]
         ZeroMap<'data, UnvalidatedTinyAsciiStr<4>, str>,
     ),
+    /// Month codes M01, M02, .. plus month codes
+    /// M01L, M02L, ...
+    ///
+    /// Found for lunisolar and lunisidereal calendars which
+    /// do not have a fixed leap month and instead use a pattern
+    /// to format the leap month in numeric mode.
+    NumericWithLeap {
+        /// The names of the months. May be empty if the aux key is numeric
+        #[cfg_attr(feature = "serde", serde(borrow))]
+        months: VarZeroVec<'data, str>,
+        /// The pattern to apply to the month name when it is a leap month (e.g.  三月 =? )
+        leap_pattern: SimpleSubstitutionPattern<'data>,
+    },
+}
+
+/// Represents a simple substitution pattern;
+/// i.e. a string with a single placeholder
+#[derive(Debug, PartialEq, Clone, yoke::Yokeable, zerofrom::ZeroFrom)]
+#[cfg_attr(
+    feature = "datagen",
+    derive(serde::Serialize, databake::Bake),
+    databake(path = icu_datetime::provider::neo),
+)]
+#[cfg_attr(feature = "serde", derive(serde::Deserialize))]
+pub struct SimpleSubstitutionPattern<'data> {
+    /// The pattern
+    #[cfg_attr(feature = "serde", serde(borrow))]
+    pub pattern: Cow<'data, str>,
+    /// The index in which to substitute stuff
+    pub subst_index: usize,
 }
 
 /// Symbols that can be stored as a simple linear array.
