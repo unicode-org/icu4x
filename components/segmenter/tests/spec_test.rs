@@ -6,12 +6,10 @@ use icu_segmenter::GraphemeClusterSegmenter;
 use icu_segmenter::LineSegmenter;
 use icu_segmenter::SentenceSegmenter;
 use icu_segmenter::WordSegmenter;
-use itertools::Itertools;
 use std::char;
 use std::fs::File;
 use std::io::prelude::*;
 use std::io::BufReader;
-use std::ops::Index;
 use std::u32;
 
 struct TestContentIterator {
@@ -244,12 +242,12 @@ fn sentence_break_test(filename: &str) {
                     sb_name
                         .get(sb.get(c))
                         .unwrap_or(&format!("{:?}", sb.get(c))),
-                    "??".to_string(),
+                    "??",
                     c
                 )
             }
             println!("Test case #{}", i);
-            assert!(false)
+            panic!()
         }
 
         let iter = segmenter.segment_utf16(&test.utf16_vec);
