@@ -626,6 +626,7 @@ left = [
   "STerm_Close_Sp_ParaSep",
   "STerm_Close_Sp_CR"
 ]
+# TODO(egg): This has to be wrong in the left=Meow_CR, right=LF case, but let us wait until the monkeys say so.
 right = [ "ATerm", "Lower", "OLetter", "Upper", "Numeric", "STerm", "CR", "LF", "Sep" ]
 break_state = true
 
