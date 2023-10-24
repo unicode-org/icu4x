@@ -52,7 +52,7 @@ serde = ["dep:serde", "zerovec/serde", "icu_collections/serde", "icu_provider/se
 datagen = ["serde", "dep:databake", "zerovec/databake", "icu_collections/databake"]
 lstm = ["dep:core_maths"]
 auto = ["lstm"] # Enabled try_new_auto_unstable constructors
-compiled_data = ["dep:icu_segmenter_data", "icu_properties/compiled_data"]
+compiled_data = ["dep:icu_segmenter_data"]
 bench = []
 
 [lib]
