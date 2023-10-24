@@ -242,7 +242,7 @@ fn sentence_break_test(filename: &str) {
                     sb_name
                         .get(sb.get(c))
                         .unwrap_or(&format!("{:?}", sb.get(c))),
-                    "??",
+                    "?".repeat(5),
                     c
                 )
             }
