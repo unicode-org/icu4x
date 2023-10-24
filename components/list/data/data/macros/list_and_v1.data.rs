@@ -5,8 +5,10 @@
 #[doc(hidden)]
 #[macro_export]
 macro_rules! __impl_list_and_v1 {
-    ($ provider : path) => {
-        #[clippy::msrv = "1.66"]
+    ($ provider : ty) => {
+        #[clippy::msrv = "1.67"]
+        const _: () = <$provider>::MUST_USE_MAKE_PROVIDER_MACRO;
+        #[clippy::msrv = "1.67"]
         impl icu_provider::DataProvider<icu::list::provider::AndListV1Marker> for $provider {
             fn load(&self, req: icu_provider::DataRequest) -> Result<icu_provider::DataResponse<icu::list::provider::AndListV1Marker>, icu_provider::DataError> {
                 static TH: <icu::list::provider::AndListV1Marker as icu_provider::DataMarker>::Yokeable = icu::list::provider::ListFormatterPatternsV1([icu::list::provider::ConditionalListJoinerPattern { default: icu::list::provider::ListJoinerPattern::from_parts(" ", 1u8), special_case: None }, icu::list::provider::ConditionalListJoinerPattern { default: icu::list::provider::ListJoinerPattern::from_parts(" ", 1u8), special_case: None }, icu::list::provider::ConditionalListJoinerPattern { default: icu::list::provider::ListJoinerPattern::from_parts(" และ", 10u8), special_case: None }, icu::list::provider::ConditionalListJoinerPattern { default: icu::list::provider::ListJoinerPattern::from_parts("และ", 9u8), special_case: None }, icu::list::provider::ConditionalListJoinerPattern { default: icu::list::provider::ListJoinerPattern::from_parts(" ", 1u8), special_case: None }, icu::list::provider::ConditionalListJoinerPattern { default: icu::list::provider::ListJoinerPattern::from_parts(" ", 1u8), special_case: None }, icu::list::provider::ConditionalListJoinerPattern { default: icu::list::provider::ListJoinerPattern::from_parts(" และ", 10u8), special_case: None }, icu::list::provider::ConditionalListJoinerPattern { default: icu::list::provider::ListJoinerPattern::from_parts("และ", 9u8), special_case: None }, icu::list::provider::ConditionalListJoinerPattern { default: icu::list::provider::ListJoinerPattern::from_parts(" ", 1u8), special_case: None }, icu::list::provider::ConditionalListJoinerPattern { default: icu::list::provider::ListJoinerPattern::from_parts(" ", 1u8), special_case: None }, icu::list::provider::ConditionalListJoinerPattern { default: icu::list::provider::ListJoinerPattern::from_parts(" และ", 10u8), special_case: None }, icu::list::provider::ConditionalListJoinerPattern { default: icu::list::provider::ListJoinerPattern::from_parts("และ", 9u8), special_case: None }]);

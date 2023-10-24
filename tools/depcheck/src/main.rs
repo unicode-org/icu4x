@@ -293,5 +293,19 @@ fn main() {
         ],
         "`EXTRA_DATAGEN_DEPS` or `EXTRA_ZIP_DEPS` or `EXTRA_RAYON_DEPS`",
     );
+
+    // syn is a large dep, and deps that are both "normal" and "proc macro" get built twice
+    // (they cannot be shared). Improve build times a little bit by making sure databake/baked_exporter
+    // only use proc_macro. It's okay to relax this requirement if we end up really really needing `syn`
+    // here.
+    let dep_list = get_dep_list(
+        "icu_datagen",
+        "normal,no-proc-macro",
+        "--features baked_exporter,bin",
+    );
+    if dep_list.iter().any(|x| x.crate_name == "syn") {
+        eprintln!("datagen depends on `syn` as a regular dependency!");
+        process::exit(1);
+    }
     // we aren't testing simple-logger, it's mostly for debugging purposes
 }

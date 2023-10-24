@@ -5,7 +5,7 @@
 [package]
 name = "icu_datagen"
 description = "Generate data for ICU4X DataProvider"
-version = "1.2.5"
+license-file = "LICENSE"
 include = [
     "data/**/*",
     "src/**/*",
@@ -24,15 +24,14 @@ authors.workspace = true
 categories.workspace = true
 edition.workspace = true
 homepage.workspace = true
-license-file.workspace = true
 repository.workspace = true
 rust-version.workspace = true
+version.workspace = true
 
 [package.metadata.docs.rs]
 all-features = true
 
 [dependencies]
-
 # ICU components
 icu_calendar = { workspace = true, features = ["datagen"] }
 icu_casemap = { workspace = true, features = ["datagen"] }
@@ -58,10 +57,11 @@ icu_unitsconversion = { workspace = true, features = ["datagen"], optional = tru
 icu_codepointtrie_builder = { workspace = true }
 icu_collections = { workspace = true, features = ["serde"] }
 icu_locid = { workspace = true, features = ["std", "serde"] }
-icu_provider = { workspace = true, features = ["std", "logging", "datagen"]}
+icu_provider = { workspace = true, features = ["std", "logging", "datagen", "experimental"]}
 icu_provider_adapters = { workspace = true }
 tinystr = { workspace = true, features = ["alloc", "serde", "zerovec"] }
 writeable = { workspace = true }
+zerotrie = { workspace = true, features = ["alloc"] }
 zerovec = { workspace = true, features = ["serde", "yoke"] }
 
 # Exporters
@@ -69,11 +69,11 @@ icu_provider_blob = { workspace = true, features = ["export"], optional = true }
 icu_provider_fs = { workspace = true, features = ["export"], optional = true }
 crlify = { workspace = true, optional = true }
 databake = { workspace = true, optional = true}
-syn = {version = "2", features = ["parsing"], optional = true }
+proc-macro2 = {version = "1", optional = true }
 
 # Other external dependencies
 displaydoc = { version = "0.2.3", default-features = false }
-elsa = { git = "https://github.com/Manishearth/elsa", rev = "56d05375eea36596432a0843721d26edf3b0ec75" }
+elsa = "1.9"
 itertools = "0.10"
 log = "0.4"
 memchr = "2.5.0"
@@ -83,25 +83,31 @@ serde = { version = "1.0", default-features = false, features = ["derive", "allo
 serde_json = { version = "1.0", default-features = false, features = ["alloc"] }
 serde-aux = { version = "4.1.2", default-features = false }
 toml = "0.5"
+twox-hash = { version = "1.6", default-features = false }
 zip = { version = ">=0.5, <0.7", default-features = false, features = ["deflate"] }
 
 rayon = { version = "1.5", optional = true }
 ureq = { version = "2", optional = true }
 
+fraction = {version = "0.14.0", default-features = false }
+num-bigint = { version = "0.4.4", default-features = false }
+
+
 # Dependencies for "bin" feature
 clap = { version = "4", optional = true, features = ["derive"] }
 eyre = { version = "0.6", optional = true }
 simple_logger = { version = "4.1.0", default-features = false, optional = true }
+either = "1.9.0"
 
 [dev-dependencies]
-crlify = { workspace = true }
-icu = { workspace = true }
+crlify = { path = "../../utils/crlify" }
+icu = { path = "../../components/icu" }
 postcard = "1"
 simple_logger = { version = "4.1.0", default-features = false }
 
 [features]
 default = ["bin", "use_wasm", "networking", "legacy_api", "rayon", "fs_exporter", "blob_exporter", "baked_exporter"]
-baked_exporter = ["dep:crlify", "dep:databake", "dep:syn"]
+baked_exporter = ["dep:crlify", "dep:databake", "dep:proc-macro2"]
 blob_exporter = ["dep:icu_provider_blob"]
 fs_exporter = ["dep:icu_provider_fs"]
 legacy_api = ["fs_exporter", "blob_exporter", "baked_exporter"]

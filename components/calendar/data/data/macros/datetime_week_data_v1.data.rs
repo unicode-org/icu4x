@@ -5,8 +5,10 @@
 #[doc(hidden)]
 #[macro_export]
 macro_rules! __impl_datetime_week_data_v1 {
-    ($ provider : path) => {
-        #[clippy::msrv = "1.66"]
+    ($ provider : ty) => {
+        #[clippy::msrv = "1.67"]
+        const _: () = <$provider>::MUST_USE_MAKE_PROVIDER_MACRO;
+        #[clippy::msrv = "1.67"]
         impl icu_provider::DataProvider<icu::calendar::provider::WeekDataV1Marker> for $provider {
             fn load(&self, req: icu_provider::DataRequest) -> Result<icu_provider::DataResponse<icu::calendar::provider::WeekDataV1Marker>, icu_provider::DataError> {
                 static UND_MV: <icu::calendar::provider::WeekDataV1Marker as icu_provider::DataMarker>::Yokeable = icu::calendar::provider::WeekDataV1 { first_weekday: icu::calendar::types::IsoWeekday::Friday, min_week_days: 1u8 };

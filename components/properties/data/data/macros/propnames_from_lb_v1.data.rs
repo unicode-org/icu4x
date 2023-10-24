@@ -5,8 +5,10 @@
 #[doc(hidden)]
 #[macro_export]
 macro_rules! __impl_propnames_from_lb_v1 {
-    ($ provider : path) => {
-        #[clippy::msrv = "1.66"]
+    ($ provider : ty) => {
+        #[clippy::msrv = "1.67"]
+        const _: () = <$provider>::MUST_USE_MAKE_PROVIDER_MACRO;
+        #[clippy::msrv = "1.67"]
         impl $provider {
             #[doc(hidden)]
             pub const SINGLETON_PROPNAMES_FROM_LB_V1: &'static <icu::properties::provider::LineBreakNameToValueV1Marker as icu_provider::DataMarker>::Yokeable = &icu::properties::provider::names::PropertyValueNameToEnumMapV1 {
@@ -16,7 +18,7 @@ macro_rules! __impl_propnames_from_lb_v1 {
                 },
             };
         }
-        #[clippy::msrv = "1.66"]
+        #[clippy::msrv = "1.67"]
         impl icu_provider::DataProvider<icu::properties::provider::LineBreakNameToValueV1Marker> for $provider {
             fn load(&self, req: icu_provider::DataRequest) -> Result<icu_provider::DataResponse<icu::properties::provider::LineBreakNameToValueV1Marker>, icu_provider::DataError> {
                 if req.locale.is_empty() {

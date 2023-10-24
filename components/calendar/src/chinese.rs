@@ -5,15 +5,21 @@
 //! This module contains types and implementations for the Chinese calendar.
 //!
 //! ```rust
-//! use icu::calendar::{Date, DateTime};
+//! use icu::calendar::{chinese::Chinese, Date, DateTime, Ref};
+//!
+//! let chinese = Chinese::new_always_calculating();
+//! let chinese = Ref(&chinese); // to avoid cloning
 //!
 //! // `Date` type
-//! let chinese_date = Date::try_new_chinese_date(4660, 6, 6)
-//!     .expect("Failed to initialize Chinese Date instance.");
+//! let chinese_date =
+//!     Date::try_new_chinese_date_with_calendar(4660, 6, 6, chinese)
+//!         .expect("Failed to initialize Chinese Date instance.");
 //!
 //! // `DateTime` type
-//! let chinese_datetime = DateTime::try_new_chinese_datetime(4660, 6, 6, 13, 1, 0)
-//!     .expect("Failed to initialize Chinese DateTime instance");
+//! let chinese_datetime = DateTime::try_new_chinese_datetime_with_calendar(
+//!     4660, 6, 6, 13, 1, 0, chinese,
+//! )
+//! .expect("Failed to initialize Chinese DateTime instance");
 //!
 //! // `Date` checks
 //! assert_eq!(chinese_date.year().number, 4660);
@@ -41,6 +47,7 @@ use crate::chinese_based::{
 };
 use crate::iso::Iso;
 use crate::types::{Era, FormattableYear};
+use crate::AsCalendar;
 use crate::{
     chinese_data, types, Calendar, CalendarError, Date, DateDuration, DateDurationUnit, DateTime,
 };
@@ -95,15 +102,33 @@ use tinystr::tinystr;
 ///
 /// This calendar is currently in a preview state: formatting for this calendar is not
 /// going to be perfect.
-#[derive(Copy, Clone, Debug, Default, PartialEq, Eq, PartialOrd, Ord, Hash)]
-#[allow(clippy::exhaustive_structs)] // this type is stable
+#[derive(Clone, Debug, Default, PartialEq, Eq, PartialOrd, Ord, Hash)]
+#[non_exhaustive] // we'll be adding precompiled data to this
 pub struct Chinese;
 
 /// The inner date type used for representing [`Date`]s of [`Chinese`]. See [`Date`] and [`Chinese`] for more details.
-#[derive(Copy, Clone, Debug, Eq, PartialEq, PartialOrd, Ord)]
+#[derive(Debug, Eq, PartialEq, PartialOrd, Ord)]
 pub struct ChineseDateInner(ChineseBasedDateInner<Chinese>);
 
 type Inner = ChineseBasedDateInner<Chinese>;
+
+// we want these impls without the `C: Copy/Clone` bounds
+impl Copy for ChineseDateInner {}
+impl Clone for ChineseDateInner {
+    fn clone(&self) -> Self {
+        *self
+    }
+}
+
+impl Chinese {
+    /// Construct a new [`Chinese`] without any precomputed calendrical calculations.
+    ///
+    /// This is the only mode currently possible, but once precomputing is available (#3933)
+    /// there will be additional constructors that load from data providers.
+    pub fn new_always_calculating() -> Self {
+        Chinese
+    }
+}
 
 impl Calendar for Chinese {
     type DateInner = ChineseDateInner;
@@ -294,17 +319,23 @@ impl Calendar for Chinese {
     }
 }
 
-impl Date<Chinese> {
+impl<A: AsCalendar<Calendar = Chinese>> Date<A> {
     /// Construct a new Chinese date from a `year`, `month`, and `day`.
     /// `year` represents the Chinese year counted infinitely with -2636 (2637 BCE) as Chinese year 1;
     /// `month` represents the month of the year ordinally (ex. if it is a leap year, the last month will be 13, not 12);
     /// `day` indicates the day of month
     ///
-    /// ```rust
-    /// use icu::calendar::Date;
+    /// This date will not use any precomputed calendrical calculations,
+    /// one that loads such data from a provider will be added in the future (#3933)
     ///
-    /// let date_chinese = Date::try_new_chinese_date(4660, 6, 11)
-    ///     .expect("Failed to initialize Chinese Date instance.");
+    /// ```rust
+    /// use icu::calendar::{chinese::Chinese, Date};
+    ///
+    /// let chinese = Chinese::new_always_calculating();
+    ///
+    /// let date_chinese =
+    ///     Date::try_new_chinese_date_with_calendar(4660, 6, 11, chinese)
+    ///         .expect("Failed to initialize Chinese Date instance.");
     ///
     /// assert_eq!(date_chinese.year().number, 4660);
     /// assert_eq!(date_chinese.year().cyclic.unwrap().get(), 40);
@@ -312,29 +343,37 @@ impl Date<Chinese> {
     /// assert_eq!(date_chinese.month().ordinal, 6);
     /// assert_eq!(date_chinese.day_of_month().0, 11);
     /// ```
-    pub fn try_new_chinese_date(
+    pub fn try_new_chinese_date_with_calendar(
         year: i32,
         month: u8,
         day: u8,
-    ) -> Result<Date<Chinese>, CalendarError> {
+        calendar: A,
+    ) -> Result<Date<A>, CalendarError> {
         let cache = ChineseBasedYearInfo::Cache(Inner::compute_cache(year));
         let arithmetic = Inner::new_from_ordinals(year, month, day, &cache);
         Ok(Date::from_raw(
             ChineseDateInner(ChineseBasedDateInner(arithmetic?, cache)),
-            Chinese,
+            calendar,
         ))
     }
 }
 
-impl DateTime<Chinese> {
+impl<A: AsCalendar<Calendar = Chinese>> DateTime<A> {
     /// Construct a new Chinese datetime from integers using the
     /// -2636-based year system
     ///
-    /// ```rust
-    /// use icu::calendar::DateTime;
+    /// This datetime will not use any precomputed calendrical calculations,
+    /// one that loads such data from a provider will be added in the future (#3933)
     ///
-    /// let chinese_datetime = DateTime::try_new_chinese_datetime(4660, 6, 11, 13, 1, 0)
-    ///     .expect("Failed to initialize Chinese DateTime instance.");
+    /// ```rust
+    /// use icu::calendar::{chinese::Chinese, DateTime};
+    ///
+    /// let chinese = Chinese::new_always_calculating();
+    ///
+    /// let chinese_datetime = DateTime::try_new_chinese_datetime_with_calendar(
+    ///     4660, 6, 11, 13, 1, 0, chinese,
+    /// )
+    /// .expect("Failed to initialize Chinese DateTime instance.");
     ///
     /// assert_eq!(chinese_datetime.date.year().number, 4660);
     /// assert_eq!(chinese_datetime.date.year().related_iso, Some(2023));
@@ -345,16 +384,17 @@ impl DateTime<Chinese> {
     /// assert_eq!(chinese_datetime.time.minute.number(), 1);
     /// assert_eq!(chinese_datetime.time.second.number(), 0);
     /// ```
-    pub fn try_new_chinese_datetime(
+    pub fn try_new_chinese_datetime_with_calendar(
         year: i32,
         month: u8,
         day: u8,
         hour: u8,
         minute: u8,
         second: u8,
-    ) -> Result<DateTime<Chinese>, CalendarError> {
+        calendar: A,
+    ) -> Result<DateTime<A>, CalendarError> {
         Ok(DateTime {
-            date: Date::try_new_chinese_date(year, month, day)?,
+            date: Date::try_new_chinese_date_with_calendar(year, month, day, calendar)?,
             time: types::Time::try_new(hour, minute, second, 0)?,
         })
     }
@@ -538,8 +578,12 @@ mod test {
             },
         ];
 
+        let chinese = Chinese::new_always_calculating();
+        let chinese = crate::Ref(&chinese);
         for case in cases {
-            let date = Date::try_new_chinese_date(case.year, case.month, case.day).unwrap();
+            let date =
+                Date::try_new_chinese_date_with_calendar(case.year, case.month, case.day, chinese)
+                    .unwrap();
             let fixed = Inner::fixed_from_chinese_based_date_inner(date.inner.0).to_i64_date();
             let expected = case.expected;
             assert_eq!(fixed, expected, "Fixed from Chinese failed with expected: {fixed} and calculated: {expected}, for test case: {case:?}");

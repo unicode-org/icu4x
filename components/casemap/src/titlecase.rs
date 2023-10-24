@@ -19,8 +19,8 @@ use writeable::Writeable;
 /// # Examples
 ///
 /// ```rust
+/// use icu_casemap::titlecase::{TitlecaseOptions, TrailingCase};
 /// use icu_casemap::TitlecaseMapper;
-/// use icu_casemap::titlecase::{TrailingCase, TitlecaseOptions};
 /// use icu_locid::langid;
 ///
 /// let cm = TitlecaseMapper::new();
@@ -31,8 +31,14 @@ use writeable::Writeable;
 /// preserve_case.trailing_case = TrailingCase::Unchanged;
 ///
 /// // Exhibits trailing case when set:
-/// assert_eq!(cm.titlecase_segment_to_string("spOngeBoB", &root, default_options), "Spongebob");
-/// assert_eq!(cm.titlecase_segment_to_string("spOngeBoB", &root, preserve_case), "SpOngeBoB");
+/// assert_eq!(
+///     cm.titlecase_segment_to_string("spOngeBoB", &root, default_options),
+///     "Spongebob"
+/// );
+/// assert_eq!(
+///     cm.titlecase_segment_to_string("spOngeBoB", &root, preserve_case),
+///     "SpOngeBoB"
+/// );
 /// ```
 #[non_exhaustive]
 #[derive(Copy, Clone, Default, PartialEq, Eq, Hash, Debug)]
@@ -58,8 +64,8 @@ pub enum TrailingCase {
 /// # Examples
 ///
 /// ```rust
-/// use icu_casemap::TitlecaseMapper;
 /// use icu_casemap::titlecase::{LeadingAdjustment, TitlecaseOptions};
+/// use icu_casemap::TitlecaseMapper;
 /// use icu_locid::langid;
 ///
 /// let cm = TitlecaseMapper::new();
@@ -72,19 +78,46 @@ pub enum TrailingCase {
 /// adjust_to_cased.leading_adjustment = LeadingAdjustment::ToCased;
 ///
 /// // Exhibits leading adjustment when set:
-/// assert_eq!(cm.titlecase_segment_to_string("«hello»", &root, default_options), "«Hello»");
-/// assert_eq!(cm.titlecase_segment_to_string("«hello»", &root, adjust_to_cased), "«Hello»");
-/// assert_eq!(cm.titlecase_segment_to_string("«hello»", &root, no_adjust), "«hello»");
+/// assert_eq!(
+///     cm.titlecase_segment_to_string("«hello»", &root, default_options),
+///     "«Hello»"
+/// );
+/// assert_eq!(
+///     cm.titlecase_segment_to_string("«hello»", &root, adjust_to_cased),
+///     "«Hello»"
+/// );
+/// assert_eq!(
+///     cm.titlecase_segment_to_string("«hello»", &root, no_adjust),
+///     "«hello»"
+/// );
 ///
 /// // Only changed in adjust-to-cased mode:
-/// assert_eq!(cm.titlecase_segment_to_string("丰(abc)", &root, default_options), "丰(abc)");
-/// assert_eq!(cm.titlecase_segment_to_string("丰(abc)", &root, adjust_to_cased), "丰(Abc)");
-/// assert_eq!(cm.titlecase_segment_to_string("丰(abc)", &root, no_adjust), "丰(abc)");
+/// assert_eq!(
+///     cm.titlecase_segment_to_string("丰(abc)", &root, default_options),
+///     "丰(abc)"
+/// );
+/// assert_eq!(
+///     cm.titlecase_segment_to_string("丰(abc)", &root, adjust_to_cased),
+///     "丰(Abc)"
+/// );
+/// assert_eq!(
+///     cm.titlecase_segment_to_string("丰(abc)", &root, no_adjust),
+///     "丰(abc)"
+/// );
 ///
 /// // Only changed in adjust-to-cased mode:
-/// assert_eq!(cm.titlecase_segment_to_string("49ers", &root, default_options), "49ers");
-/// assert_eq!(cm.titlecase_segment_to_string("49ers", &root, adjust_to_cased), "49Ers");
-/// assert_eq!(cm.titlecase_segment_to_string("49ers", &root, no_adjust), "49ers");
+/// assert_eq!(
+///     cm.titlecase_segment_to_string("49ers", &root, default_options),
+///     "49ers"
+/// );
+/// assert_eq!(
+///     cm.titlecase_segment_to_string("49ers", &root, adjust_to_cased),
+///     "49Ers"
+/// );
+/// assert_eq!(
+///     cm.titlecase_segment_to_string("49ers", &root, no_adjust),
+///     "49ers"
+/// );
 /// ```
 #[non_exhaustive]
 #[derive(Copy, Clone, Default, PartialEq, Eq, Hash, Debug)]
@@ -165,13 +198,6 @@ pub struct TitlecaseOptions {
 /// assert_eq!(cm.titlecase_segment_to_string("ijkdijk", &root, default_options), "Ijkdijk");
 /// assert_eq!(cm.titlecase_segment_to_string("ijkdijk", &langid!("nl"), default_options), "IJkdijk"); // Dutch IJ digraph
 /// ```
-///
-/// <div class="stab unstable">
-/// 🚧 This code is experimental; it may change at any time, in breaking or non-breaking ways,
-/// including in SemVer minor releases. It can be enabled with the "experimental" Cargo feature
-/// of the icu meta-crate. Use with caution.
-/// <a href="https://github.com/unicode-org/icu4x/issues/2535">#2535</a>
-/// </div>
 #[derive(Clone, Debug)]
 pub struct TitlecaseMapper<CM> {
     cm: CM,
@@ -245,7 +271,6 @@ impl<CM: AsRef<CaseMapper>> TitlecaseMapper<CM> {
     }
 
     /// Construct this object to wrap an existing CaseMapper (or a reference to one), loading additional data as needed.
-    ///
     #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::new_with_mapper)]
     pub fn try_new_with_mapper_unstable<P>(provider: &P, casemapper: CM) -> Result<Self, DataError>
     where
@@ -344,8 +369,8 @@ impl<CM: AsRef<CaseMapper>> TitlecaseMapper<CM> {
     /// Leading adjustment behaviors:
     ///
     /// ```rust
-    /// use icu_casemap::TitlecaseMapper;
     /// use icu_casemap::titlecase::{LeadingAdjustment, TitlecaseOptions};
+    /// use icu_casemap::TitlecaseMapper;
     /// use icu_locid::langid;
     ///
     /// let cm = TitlecaseMapper::new();
@@ -356,21 +381,36 @@ impl<CM: AsRef<CaseMapper>> TitlecaseMapper<CM> {
     /// no_adjust.leading_adjustment = LeadingAdjustment::None;
     ///
     /// // Exhibits leading adjustment when set:
-    /// assert_eq!(cm.titlecase_segment_to_string("«hello»", &root, default_options), "«Hello»");
-    /// assert_eq!(cm.titlecase_segment_to_string("«hello»", &root, no_adjust), "«hello»");
+    /// assert_eq!(
+    ///     cm.titlecase_segment_to_string("«hello»", &root, default_options),
+    ///     "«Hello»"
+    /// );
+    /// assert_eq!(
+    ///     cm.titlecase_segment_to_string("«hello»", &root, no_adjust),
+    ///     "«hello»"
+    /// );
     ///
-    /// assert_eq!(cm.titlecase_segment_to_string("'Twas", &root, default_options), "'Twas");
-    /// assert_eq!(cm.titlecase_segment_to_string("'Twas", &root, no_adjust), "'twas");
+    /// assert_eq!(
+    ///     cm.titlecase_segment_to_string("'Twas", &root, default_options),
+    ///     "'Twas"
+    /// );
+    /// assert_eq!(
+    ///     cm.titlecase_segment_to_string("'Twas", &root, no_adjust),
+    ///     "'twas"
+    /// );
     ///
-    /// assert_eq!(cm.titlecase_segment_to_string("", &root, default_options), "");
+    /// assert_eq!(
+    ///     cm.titlecase_segment_to_string("", &root, default_options),
+    ///     ""
+    /// );
     /// assert_eq!(cm.titlecase_segment_to_string("", &root, no_adjust), "");
     /// ```
     ///
     /// Tail casing behaviors:
     ///
     /// ```rust
+    /// use icu_casemap::titlecase::{TitlecaseOptions, TrailingCase};
     /// use icu_casemap::TitlecaseMapper;
-    /// use icu_casemap::titlecase::{TrailingCase, TitlecaseOptions};
     /// use icu_locid::langid;
     ///
     /// let cm = TitlecaseMapper::new();
@@ -381,8 +421,14 @@ impl<CM: AsRef<CaseMapper>> TitlecaseMapper<CM> {
     /// preserve_case.trailing_case = TrailingCase::Unchanged;
     ///
     /// // Exhibits trailing case when set:
-    /// assert_eq!(cm.titlecase_segment_to_string("spOngeBoB", &root, default_options), "Spongebob");
-    /// assert_eq!(cm.titlecase_segment_to_string("spOngeBoB", &root, preserve_case), "SpOngeBoB");
+    /// assert_eq!(
+    ///     cm.titlecase_segment_to_string("spOngeBoB", &root, default_options),
+    ///     "Spongebob"
+    /// );
+    /// assert_eq!(
+    ///     cm.titlecase_segment_to_string("spOngeBoB", &root, preserve_case),
+    ///     "SpOngeBoB"
+    /// );
     /// ```
     pub fn titlecase_segment_to_string(
         &self,

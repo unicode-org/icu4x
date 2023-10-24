@@ -26,14 +26,14 @@ fn test_provider() {
 
             let expected = HelloWorldProvider
                 .load(req)
-                .unwrap()
+                .unwrap_or_else(|e| panic!("{e}: {req} ({path})"))
                 .take_payload()
                 .unwrap();
 
             let actual: DataPayload<HelloWorldV1Marker> = provider
                 .as_deserializing()
                 .load(req)
-                .unwrap()
+                .unwrap_or_else(|e| panic!("{e}: {req} ({path})"))
                 .take_payload()
                 .unwrap();
             assert_eq!(actual.get(), expected.get());
@@ -41,7 +41,7 @@ fn test_provider() {
             let actual: DataPayload<HelloWorldV1Marker> = (&provider as &dyn BufferProvider)
                 .as_deserializing()
                 .load(req)
-                .unwrap()
+                .unwrap_or_else(|e| panic!("{e}: {req} ({path})"))
                 .take_payload()
                 .unwrap();
             assert_eq!(actual.get(), expected.get());

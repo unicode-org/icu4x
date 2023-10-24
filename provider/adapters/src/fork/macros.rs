@@ -21,11 +21,7 @@
 /// // Combine them into one:
 /// let forking1 = icu_provider_adapters::make_forking_provider!(
 ///     ForkByKeyProvider::new,
-///     [
-///         Provider1,
-///         Provider2,
-///         Provider3,
-///     ]
+///     [Provider1, Provider2, Provider3,]
 /// );
 ///
 /// // This is equivalent to:

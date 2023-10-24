@@ -575,3 +575,28 @@ make_map_property! {
     pub const canonical_combining_class => SINGLETON_PROPS_CCC_V1;
     pub fn load_canonical_combining_class();
 }
+
+make_map_property! {
+    property: "Indic_Syllabic_Category";
+    marker: IndicSyllabicCategoryProperty;
+    value: crate::IndicSyllabicCategory;
+    keyed_data_marker: IndicSyllabicCategoryV1Marker;
+    func:
+    /// Return a [`CodePointMapData`] for the Indic_Syllabic_Category Unicode property. See
+    /// [`IndicSyllabicCategory`].
+    ///
+    /// ✨ *Enabled with the `compiled_data` Cargo feature.*
+    ///
+    /// [📚 Help choosing a constructor](icu_provider::constructors)
+    ///
+    /// # Example
+    ///
+    /// ```
+    /// use icu::properties::{maps, IndicSyllabicCategory};
+    ///
+    /// assert_eq!(maps::indic_syllabic_category().get('a'), IndicSyllabicCategory::Other);
+    /// assert_eq!(maps::indic_syllabic_category().get32(0x0900), IndicSyllabicCategory::Bindu); // U+0900: DEVANAGARI SIGN INVERTED CANDRABINDU
+    /// ```
+    pub const indic_syllabic_category => SINGLETON_PROPS_INSC_V1;
+    pub fn load_indic_syllabic_category();
+}

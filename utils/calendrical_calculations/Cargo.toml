@@ -32,7 +32,7 @@ independent = true
 all-features = true
 
 [dependencies]
-libm = "0.2"
+core_maths = "0.1"
 displaydoc = { version = "0.2.3", default-features = false }
 
 [features]

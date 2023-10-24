@@ -7,16 +7,15 @@
 //! For more information, see the tutorial [cargo.md](../../cargo.md).
 
 use icu::displaynames::RegionDisplayNames;
-use icu::locid::{locale, subtags_region as region};
+use icu::locid::{locale, subtags::region};
 
 fn main() {
-    let names = RegionDisplayNames::try_new_unstable(
-        &icu_testdata::unstable(),
+    let names = RegionDisplayNames::try_new(
         &locale!("fr").into(),
         Default::default(),
     )
-    .expect("Display names should be present in testdata");
+    .expect("locale 'fr' should be present in compiled data");
     let name = names.of(region!("DE")).unwrap();
     assert_eq!(name, "Allemagne");
-    println!("{}", name);
+    println!("{name}");
 }

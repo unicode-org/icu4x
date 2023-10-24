@@ -9,6 +9,8 @@
 
 use crate::astronomy::Location;
 use crate::rata_die::{Moment, RataDie};
+#[allow(unused_imports)]
+use core_maths::*;
 
 pub(crate) trait IntegerRoundings {
     fn div_ceil(self, rhs: Self) -> Self;
@@ -331,119 +333,4 @@ fn test_i64_to_saturated_i32() {
     assert_eq!(i64_to_saturated_i32(2147483648), 2147483647);
     assert_eq!(i64_to_saturated_i32(2147483649), 2147483647);
     assert_eq!(i64_to_saturated_i32(i64::MAX), i32::MAX);
-}
-
-/// Core maths
-pub(crate) trait CoreFloat {
-    fn floor(self) -> Self;
-    fn round(self) -> Self;
-    fn trunc(self) -> Self;
-    fn abs(self) -> Self;
-    fn signum(self) -> Self;
-    fn copysign(self, sign: Self) -> Self;
-    fn div_euclid(self, rhs: Self) -> Self;
-    fn rem_euclid(self, rhs: Self) -> Self;
-    fn powf(self, n: Self) -> Self;
-    fn sqrt(self) -> Self;
-    fn sin(self) -> Self;
-    fn cos(self) -> Self;
-    fn tan(self) -> Self;
-    fn asin(self) -> Self;
-    fn acos(self) -> Self;
-    fn atan2(self, other: Self) -> Self;
-}
-
-impl CoreFloat for f64 {
-    #[inline]
-    fn floor(self) -> Self {
-        libm::floor(self)
-    }
-
-    #[inline]
-    fn round(self) -> Self {
-        libm::round(self)
-    }
-
-    #[inline]
-    fn trunc(self) -> Self {
-        libm::trunc(self)
-    }
-
-    #[inline]
-    fn abs(self) -> Self {
-        libm::fabs(self)
-    }
-
-    #[inline]
-    fn signum(self) -> Self {
-        if self.is_nan() {
-            Self::NAN
-        } else {
-            1.0_f64.copysign(self)
-        }
-    }
-
-    #[inline]
-    fn copysign(self, sign: Self) -> Self {
-        libm::copysign(self, sign)
-    }
-
-    #[inline]
-    fn div_euclid(self, rhs: Self) -> Self {
-        let q = (self / rhs).trunc();
-        if self % rhs < 0.0 {
-            return if rhs > 0.0 { q - 1.0 } else { q + 1.0 };
-        }
-        q
-    }
-
-    #[inline]
-    fn rem_euclid(self, rhs: Self) -> Self {
-        let r = self % rhs;
-        if r < 0.0 {
-            r + rhs.abs()
-        } else {
-            r
-        }
-    }
-
-    #[inline]
-    fn powf(self, n: Self) -> Self {
-        libm::pow(self, n)
-    }
-
-    #[inline]
-    fn sqrt(self) -> Self {
-        libm::sqrt(self)
-    }
-
-    #[inline]
-    fn sin(self) -> Self {
-        libm::sin(self)
-    }
-
-    #[inline]
-    fn cos(self) -> Self {
-        libm::cos(self)
-    }
-
-    #[inline]
-    fn tan(self) -> Self {
-        libm::tan(self)
-    }
-
-    #[inline]
-    fn asin(self) -> Self {
-        libm::asin(self)
-    }
-
-    #[inline]
-    fn acos(self) -> Self {
-        libm::acos(self)
-    }
-
-    #[inline]
-    fn atan2(self, other: Self) -> Self {
-        libm::atan2(self, other)
-    }
 }

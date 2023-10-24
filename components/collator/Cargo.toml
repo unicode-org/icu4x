@@ -5,13 +5,13 @@
 [package]
 name = "icu_collator"
 description = "API for comparing strings according to language-dependent conventions"
+license-file = "LICENSE"
 
 authors.workspace = true
 categories.workspace = true
 edition.workspace = true
 homepage.workspace = true
 include.workspace = true
-license-file.workspace = true
 repository.workspace = true
 rust-version.workspace = true
 version.workspace = true
@@ -40,7 +40,7 @@ icu_locid_transform = { workspace = true, optional = true, features = ["compiled
 [dev-dependencies]
 arraystring = "0.3.0"
 atoi = "1.0.0"
-icu = { workspace = true }
+icu = { path = "../../components/icu", default-features = false }
 
 [target.'cfg(not(target_arch = "wasm32"))'.dev-dependencies]
 criterion = "0.4"

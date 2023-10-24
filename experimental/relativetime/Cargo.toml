@@ -5,14 +5,14 @@
 [package]
 name = "icu_relativetime"
 description = "Relative time formatting"
-version = "0.1.1"
+version = "0.1.3"
+license-file = "LICENSE"
 
 authors.workspace = true
 categories.workspace = true
 edition.workspace = true
 homepage.workspace = true
 include.workspace = true
-license-file.workspace = true
 repository.workspace = true
 rust-version.workspace = true
 
@@ -38,7 +38,7 @@ icu_relativetime_data = { workspace = true, optional = true }
 icu_locid_transform = { workspace = true, optional = true, features = ["compiled_data"] }
 
 [dev-dependencies]
-icu = { workspace = true, features = ["icu_relativetime"] }
+icu = { path = "../../components/icu", default-features = false, features = ["icu_relativetime"] }
 
 [features]
 default = ["compiled_data"]

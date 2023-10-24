@@ -49,12 +49,14 @@ const _: () = {
         pub use icu_collections as collections;
         pub use icu_locid_transform as locid_transform;
     }
+    icu_properties_data::make_provider!(Baked);
     icu_properties_data::impl_propnames_from_gcb_v1!(Baked);
     icu_properties_data::impl_propnames_from_bc_v1!(Baked);
     icu_properties_data::impl_propnames_from_ccc_v1!(Baked);
     icu_properties_data::impl_propnames_from_ea_v1!(Baked);
     icu_properties_data::impl_propnames_from_gc_v1!(Baked);
     icu_properties_data::impl_propnames_from_gcm_v1!(Baked);
+    icu_properties_data::impl_propnames_from_insc_v1!(Baked);
     icu_properties_data::impl_propnames_from_lb_v1!(Baked);
     icu_properties_data::impl_propnames_from_sb_v1!(Baked);
     icu_properties_data::impl_propnames_from_sc_v1!(Baked);
@@ -63,6 +65,7 @@ const _: () = {
     icu_properties_data::impl_propnames_to_long_linear_ea_v1!(Baked);
     icu_properties_data::impl_propnames_to_long_linear_gc_v1!(Baked);
     icu_properties_data::impl_propnames_to_long_linear_gcb_v1!(Baked);
+    icu_properties_data::impl_propnames_to_long_linear_insc_v1!(Baked);
     icu_properties_data::impl_propnames_to_long_linear_lb_v1!(Baked);
     icu_properties_data::impl_propnames_to_long_linear_sb_v1!(Baked);
     icu_properties_data::impl_propnames_to_long_linear_sc_v1!(Baked);
@@ -72,6 +75,7 @@ const _: () = {
     icu_properties_data::impl_propnames_to_short_linear_ea_v1!(Baked);
     icu_properties_data::impl_propnames_to_short_linear_gc_v1!(Baked);
     icu_properties_data::impl_propnames_to_short_linear_gcb_v1!(Baked);
+    icu_properties_data::impl_propnames_to_short_linear_insc_v1!(Baked);
     icu_properties_data::impl_propnames_to_short_linear_lb_v1!(Baked);
     icu_properties_data::impl_propnames_to_short_linear_sb_v1!(Baked);
     icu_properties_data::impl_propnames_to_short_linear_wb_v1!(Baked);
@@ -126,6 +130,7 @@ const _: () = {
     icu_properties_data::impl_props_ids_v1!(Baked);
     icu_properties_data::impl_props_idsb_v1!(Baked);
     icu_properties_data::impl_props_idst_v1!(Baked);
+    icu_properties_data::impl_props_insc_v1!(Baked);
     icu_properties_data::impl_props_join_c_v1!(Baked);
     icu_properties_data::impl_props_lb_v1!(Baked);
     icu_properties_data::impl_props_loe_v1!(Baked);
@@ -673,6 +678,22 @@ macro_rules! expand {
                     }
                 )?
             )+
+
+        /// All data keys in this module.
+        pub const KEYS: &[DataKey] = &[
+            $($code_point_set_marker::KEY,)+
+            $($unicode_set_marker::KEY,)+
+            $(
+                $code_point_map_marker::KEY,
+                $name_value_marker::KEY,
+                $($value_short_name_marker_sparse::KEY, $value_long_name_marker_sparse::KEY,)?
+                $($value_short_name_marker_linear::KEY, $value_long_name_marker_linear::KEY,)?
+                $($value_short_name_marker_linear4::KEY, $value_long_name_marker_linear4::KEY,)?
+            )+
+            bidi_data::BidiAuxiliaryPropertiesV1Marker::KEY,
+            GeneralCategoryMaskNameToValueV1Marker::KEY,
+            ScriptWithExtensionsPropertyV1Marker::KEY,
+        ];
     };
 }
 
@@ -863,6 +884,16 @@ expand!(
             ),
             "SB",
             SentenceBreak
+        ),
+        (
+            IndicSyllabicCategoryV1Marker,
+            IndicSyllabicCategoryNameToValueV1Marker,
+            (
+                linear: IndicSyllabicCategoryValueToShortNameV1Marker,
+                IndicSyllabicCategoryValueToLongNameV1Marker
+            ),
+            "InSC",
+            IndicSyllabicCategory
         ),
         // note: the names key for the GCM mask is handled above
     )

@@ -54,31 +54,45 @@ need to run in order to recreate them.  These files may be run in more comprehen
 
 - `cargo make testdata` - regenerates all test data in the `provider/testdata` directory.
 - `cargo make generate-readmes` - generates README files according to Rust docs. Output files must be committed in git for check to pass.
-- `cargo make diplomat-gen` - recreates the Diplomat generated files in the `ffi/diplomat` directory.
+- `cargo make diplomat-gen` - recreates the Diplomat generated files in the `ffi/capi` directory.
 
 ### Testing
 
 It's recommended to run `cargo test --all-features` in crates you're modifying to ensure that nothing is breaking, and `cargo quick` to get a reasonable check that everything still builds and lint checks pass.
 
-Our wider testsuite is organized as `ci-job-foo` make tasks corresponding to each GitHub Actions CI job, and you can run any testsuites you consider relevant:
+Our wider testsuite is organized as `ci-job-foo` make tasks corresponding to each GitHub Actions CI job, and you can run any suite you consider relevant as `cargo make ci-job-foo`, or everything with `ci-all` (this takes quite a while and is better left to CI to run in parallel).
+ 
+ - `ci-job-fmt`: Runs `cargo fmt`
+ - `ci-job-tidy`: Checks that code has the appropriate license headers and files and that READMEs are in sync.
+     + `ci-job-fmt` and `ci-job-tidy` can be run together as `cargo tidy`.
+ - `ci-job-clippy`: Runs `cargo clippy --all-targets --all-features` on all the crates.
+ <br/>
 
- - `cargo make ci-job-check`: Runs `cargo check` on all the crates. It's usually better to just use `cargo quick`.
- - `cargo make tidy`: A quick test that ensures that `cargo fmt` has been run, that code has the appropriate license headers and files and that READMEs are in sync. This is run as two separate tasks on CI (`ci-job-fmt` and `ci-job-tidy`) to ensure early results.
- - `cargo make ci-job-test`: Runs `cargo test` on all the crates. This takes a while but is the main way of ensuring that nothing has been broken.
- - `cargo make ci-job-clippy`: Runs `cargo clippy` on all the crates.
- - `cargo doc --no-deps --all-features`: Recreates API docs locally; any warning should be fixed since it will be treated as an error in CI.
- - `cargo make ci-job-ffi`: Runs all of the FFI tests; mostly important if you're changing the FFI interface. This has several additional dependencies:
-     + [`Diplomat`](https://github.com/rust-diplomat/diplomat) installed at the appropriate version: `cargo make diplomat-install`
-     + `clang-15` and `lld-15` with the `gold` plugin (APT packages `llvm-15` and `lld-15`)
- - `cargo make ci-job-wasm`: Runs Rust-to-WASM tests. This also has a couple additional dependencies:
-     + Node.js version 16.18.0. This may not the one offered by the package manager; get it from the NodeJS website or `nvm`.
-     + [`Twiggy`](https://github.com/rustwasm/twiggy) (at least 0.7.0: `cargo install twiggy`
-     + [`emsdk`](https://github.com/emscripten-core/emsdk): Make sure to `./emsdk activate latest` it into your shell
- - `cargo make ci-job-features`: This is a pretty slow test that tries to build all ICU4X crates with all feature combinations. It has an additional dependency:
-     + `cargo-all-features`: `cargo install cargo-all-features`
- - `cargo make ci-all`: This runs all of the tests above, and takes quite a while. It is usually preferred to run specific tests you think are relevant and let GitHub Actions run the full suite to uncover additional failures.
+ - `ci-job-msrv-check`: Runs `cargo check` on all the crates at our minimum supported Rust version (MSRV).
+ - `ci-job-msrv-features`: Runs `cargo check-all-features` on all the crates at our MSRV. This checks all features combinations, which is fairly slow.
+     + Requires `cargo-all-features` to be installed: `cargo install cargo-all-features`.
+ - `ci-job-test`: Runs `cargo test` on all the crates. This takes a while but is the main way of ensuring that nothing has been broken.
+<br/>
 
-
+ - `ci-job-doc`: Builds all Rustdoc; any warning is treated as an error.
+ - `ci-job-test-docs`: Runs `cargo test --doc` on all the crates. This takes a while but is the main way of ensuring that nothing has been broken.
+ - `ci-job-test-tutorials`: Builds all our tutorials against both local code (`locale`), and released ICU4X (`cratesio`).
+<br/>
+ 
+ - `ci-job-testdata`: Runs an `icu_datagen` integration test with a subset of CLDR, ICU, and LSTM source data.
+ - `ci-job-testdata-legacy`: Generates data for the deprecated `icu_testdata` crate.
+ - `ci-job-full-datagen`: Generates compiled data for all crates.
+<br/>
+ 
+ - `ci-job-test-c`: Runs all C/C++ FFI tests; mostly important if you're changing the FFI interface.
+     + Requires `clang-15` and `lld-15` with the `gold` plugin (APT packages `llvm-15` and `lld-15`).
+ - `ci-job-test-js`: Runs all JS/WASM/Node FFI tests; mostly important if you're changing the FFI interface.
+     + Requires Node.js version 16.18.0. This may not the one offered by the package manager; get it from the NodeJS website or `nvm`.
+ - `ci-job-nostd`: Builds ICU4X for a `#[no_std]` target to verify that it's compatible.
+ - `ci-job-diplomat`: Verifies that diplomat-generated bindings are up to date.
+ - `ci-job-gn`: Verifies that the GN wrapper is up to date.
+     + Requires GN to be installed: `cargo make gn-install`.
+ 
 ### Structure of commits in a Pull Request
 
 Pull Request lifecycle is divided into two phases.

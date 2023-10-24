@@ -5,28 +5,10 @@
 use alloc::vec;
 use alloc::vec::Vec;
 use core::ops::Range;
+#[allow(unused_imports)]
+use core_maths::*;
 use zerovec::ule::AsULE;
 use zerovec::ZeroSlice;
-
-// This will be used in #[no_std] as f32::exp/f32::tanh are not in core.
-trait CoreFloat {
-    fn exp(self) -> Self;
-    fn tanh(self) -> Self;
-}
-
-// TODO: Find a way to do this without libm. There's an intrinsic
-// that produces `llvm.exp.f32`, but that's not exposed through
-// f32. Another option would be to declare `extern "Rust"` and
-// let clients provide these functions.
-impl CoreFloat for f32 {
-    fn exp(self) -> Self {
-        libm::expf(self)
-    }
-
-    fn tanh(self) -> Self {
-        libm::tanhf(self)
-    }
-}
 
 /// A `D`-dimensional, heap-allocated matrix.
 ///

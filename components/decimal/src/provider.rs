@@ -36,8 +36,13 @@ const _: () = {
         pub use crate as decimal;
         pub use icu_locid_transform as locid_transform;
     }
+    icu_decimal_data::make_provider!(Baked);
     icu_decimal_data::impl_decimal_symbols_v1!(Baked);
 };
+
+#[cfg(feature = "datagen")]
+/// The latest minimum set of keys required by this component.
+pub const KEYS: &[DataKey] = &[DecimalSymbolsV1Marker::KEY];
 
 /// A collection of strings to affix to a decimal number.
 ///

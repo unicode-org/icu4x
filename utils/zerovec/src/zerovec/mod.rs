@@ -974,13 +974,14 @@ impl<T: AsULE> FromIterator<T> for ZeroVec<'_, T> {
 /// Using a custom array-conversion function:
 ///
 /// ```
-/// use zerovec::{ZeroSlice, zeroslice, ule::AsULE, ule::RawBytesULE};
+/// use zerovec::{ule::AsULE, ule::RawBytesULE, zeroslice, ZeroSlice};
 ///
 /// const fn be_convert(num: i16) -> <i16 as AsULE>::ULE {
 ///     RawBytesULE(num.to_be_bytes())
 /// }
 ///
-/// const NUMBERS_BE: &ZeroSlice<i16> = zeroslice!(i16; be_convert; [1, -2, 3, -4, 5]);
+/// const NUMBERS_BE: &ZeroSlice<i16> =
+///     zeroslice!(i16; be_convert; [1, -2, 3, -4, 5]);
 /// ```
 #[macro_export]
 macro_rules! zeroslice {

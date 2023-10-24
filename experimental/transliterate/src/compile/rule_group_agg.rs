@@ -16,8 +16,9 @@
 // allocations could be avoided.
 
 use super::*;
-use std::borrow::Cow;
-use std::collections::VecDeque;
+use alloc::borrow::Cow;
+use alloc::collections::VecDeque;
+use alloc::vec;
 
 // parse::Rule::Conversion but unidirectional
 #[derive(Debug, Clone)]
@@ -320,10 +321,10 @@ impl<'p> ReverseRuleGroup<'p> {
                 None
             }
             (Self::Conversion(_), UniRule::Transform(new_rule)) => {
-                Some(std::mem::replace(self, Self::new_transform(new_rule)))
+                Some(core::mem::replace(self, Self::new_transform(new_rule)))
             }
             (Self::Transform(_), UniRule::Conversion(new_rule)) => {
-                Some(std::mem::replace(self, Self::new_conversion(new_rule)))
+                Some(core::mem::replace(self, Self::new_conversion(new_rule)))
             }
         }
     }

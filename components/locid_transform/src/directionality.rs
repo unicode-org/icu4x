@@ -5,19 +5,12 @@
 use crate::provider::*;
 use crate::{LocaleExpander, LocaleTransformError};
 use icu_locid::subtags::Script;
-use icu_locid::Locale;
+use icu_locid::LanguageIdentifier;
 use icu_provider::prelude::*;
 
 /// Represents the direction of a script.
 ///
 /// [`LocaleDirectionality`] can be used to get this information.
-///
-/// <div class="stab unstable">
-/// 🚧 This code is experimental; it may change at any time, in breaking or non-breaking ways,
-/// including in SemVer minor releases. It can be enabled with the "experimental" Cargo feature
-/// of the icu meta-crate. Use with caution.
-/// <a href="https://github.com/unicode-org/icu4x/issues/3722">#3722</a>
-/// </div>
 #[derive(Debug, PartialEq, Eq, Clone, Copy)]
 #[non_exhaustive]
 pub enum Direction {
@@ -27,15 +20,7 @@ pub enum Direction {
     RightToLeft,
 }
 
-/// The `LocaleDirectionality` provides methods to determine the direction of a locale based
-/// on [`CLDR`] data.
-///
-/// <div class="stab unstable">
-/// 🚧 This code is experimental; it may change at any time, in breaking or non-breaking ways,
-/// including in SemVer minor releases. It can be enabled with the "experimental" Cargo feature
-/// of the icu meta-crate. Use with caution.
-/// <a href="https://github.com/unicode-org/icu4x/issues/3722">#3722</a>
-/// </div>
+/// Provides methods to determine the direction of a locale.
 ///
 /// # Examples
 ///
@@ -47,8 +32,6 @@ pub enum Direction {
 ///
 /// assert_eq!(ld.get(&locale!("en")), Some(Direction::LeftToRight));
 /// ```
-///
-/// [`CLDR`]: http://cldr.unicode.org/
 #[derive(Debug)]
 pub struct LocaleDirectionality {
     script_direction: DataPayload<ScriptDirectionV1Marker>,
@@ -56,7 +39,9 @@ pub struct LocaleDirectionality {
 }
 
 impl LocaleDirectionality {
-    /// A constructor which creates a [`LocaleDirectionality`] from compiled data.
+    /// Creates a [`LocaleDirectionality`] from compiled data.
+    ///
+    /// This includes limited likely subtags data, see [`LocaleExpander::new()`].
     #[cfg(feature = "compiled_data")]
     pub const fn new() -> Self {
         Self::new_with_expander(LocaleExpander::new())
@@ -95,13 +80,15 @@ impl LocaleDirectionality {
 
     /// Creates a [`LocaleDirectionality`] with a custom [`LocaleExpander`] and compiled data.
     ///
-    /// For example, use this constructor if you wish to support all languages.
+    /// This allows using [`LocaleExpander::new_extended()`] with data for all locales.
     ///
     /// # Examples
     ///
     /// ```
     /// use icu_locid::locale;
-    /// use icu_locid_transform::{Direction, LocaleDirectionality, LocaleExpander};
+    /// use icu_locid_transform::{
+    ///     Direction, LocaleDirectionality, LocaleExpander,
+    /// };
     ///
     /// let ld_default = LocaleDirectionality::new();
     ///
@@ -110,7 +97,10 @@ impl LocaleDirectionality {
     /// let expander = LocaleExpander::new_extended();
     /// let ld_extended = LocaleDirectionality::new_with_expander(expander);
     ///
-    /// assert_eq!(ld_extended.get(&locale!("jbn")), Some(Direction::RightToLeft));
+    /// assert_eq!(
+    ///     ld_extended.get(&locale!("jbn")),
+    ///     Some(Direction::RightToLeft)
+    /// );
     /// ```
     #[cfg(feature = "compiled_data")]
     pub const fn new_with_expander(expander: LocaleExpander) -> Self {
@@ -147,6 +137,9 @@ impl LocaleDirectionality {
     /// If you already have a script struct and want to get its direction, you should use
     /// `Locale::from(Some(my_script))` and call this method.
     ///
+    /// This method will return `None` if either a locale's script cannot be determined, or there is no information
+    /// for the script.
+    ///
     /// # Examples
     ///
     /// Using an existing locale:
@@ -161,6 +154,8 @@ impl LocaleDirectionality {
     ///
     /// assert_eq!(ld.get(&locale!("ar")), Some(Direction::RightToLeft));
     ///
+    /// assert_eq!(ld.get(&locale!("en-Arab")), Some(Direction::RightToLeft));
+    ///
     /// assert_eq!(ld.get(&locale!("foo")), None);
     /// ```
     ///
@@ -173,10 +168,13 @@ impl LocaleDirectionality {
     ///
     /// let ld = LocaleDirectionality::new();
     ///
-    /// assert_eq!(ld.get(&Locale::from(Some(script!("Latn")))), Some(Direction::LeftToRight));
+    /// assert_eq!(
+    ///     ld.get(&Locale::from(Some(script!("Latn")))),
+    ///     Some(Direction::LeftToRight)
+    /// );
     /// ```
-    pub fn get(&self, locale: &Locale) -> Option<Direction> {
-        let script = self.expander.get_likely_script(&locale.id)?;
+    pub fn get(&self, locale: impl AsRef<LanguageIdentifier>) -> Option<Direction> {
+        let script = self.expander.get_likely_script(locale.as_ref())?;
 
         if self.script_in_ltr(script) {
             Some(Direction::LeftToRight)
@@ -187,28 +185,30 @@ impl LocaleDirectionality {
         }
     }
 
-    /// Returns true if the given locale is right-to-left.
+    /// Returns whether the given locale is right-to-left.
     ///
-    /// Note that if this method returns `false`, it does not mean that the locale is left-to-right.
-    /// You should use `LocaleDirectionality::get` if you need to differentiate between these cases.
+    /// Note that if this method returns `false`, the locale is either left-to-right or
+    /// the [`LocaleDirectionality`] does not include data for the locale.
+    /// You should use [`LocaleDirectionality::get`] if you need to differentiate between these cases.
     ///
     /// See [`LocaleDirectionality::get`] for more information.
-    pub fn is_right_to_left(&self, locale: &Locale) -> bool {
+    pub fn is_right_to_left(&self, locale: impl AsRef<LanguageIdentifier>) -> bool {
         self.expander
-            .get_likely_script(&locale.id)
+            .get_likely_script(locale.as_ref())
             .map(|s| self.script_in_rtl(s))
             .unwrap_or(false)
     }
 
-    /// Returns true if the given locale is left-to-right.
+    /// Returns whether the given locale is left-to-right.
     ///
-    /// Note that if this method returns `false`, it does not mean that the locale is right-to-left.
-    /// You should use `LocaleDirectionality::get` if you need to differentiate between these cases.
+    /// Note that if this method returns `false`, the locale is either right-to-left or
+    /// the [`LocaleDirectionality`] does not include data for the locale.
+    /// You should use [`LocaleDirectionality::get`] if you need to differentiate between these cases.
     ///
     /// See [`LocaleDirectionality::get`] for more information.
-    pub fn is_left_to_right(&self, locale: &Locale) -> bool {
+    pub fn is_left_to_right(&self, locale: impl AsRef<LanguageIdentifier>) -> bool {
         self.expander
-            .get_likely_script(&locale.id)
+            .get_likely_script(locale.as_ref())
             .map(|s| self.script_in_ltr(s))
             .unwrap_or(false)
     }

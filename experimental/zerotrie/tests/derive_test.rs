@@ -95,7 +95,6 @@ struct DeriveTest_ZeroTrieExtendedCapacity_ZeroVec<'data> {
 }
 
 #[test]
-#[ignore] // https://github.com/rust-lang/rust/issues/98906
 #[cfg(all(feature = "databake", feature = "alloc"))]
 fn bake_ZeroTrieExtendedCapacity_ZeroVec() {
     use databake::*;

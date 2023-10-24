@@ -5,8 +5,10 @@
 #[doc(hidden)]
 #[macro_export]
 macro_rules! __impl_props_join_c_v1 {
-    ($ provider : path) => {
-        #[clippy::msrv = "1.66"]
+    ($ provider : ty) => {
+        #[clippy::msrv = "1.67"]
+        const _: () = <$provider>::MUST_USE_MAKE_PROVIDER_MACRO;
+        #[clippy::msrv = "1.67"]
         impl $provider {
             #[doc(hidden)]
             pub const SINGLETON_PROPS_JOIN_C_V1: &'static <icu::properties::provider::JoinControlV1Marker as icu_provider::DataMarker>::Yokeable = &icu::properties::provider::PropertyCodePointSetV1::InversionList(unsafe {
@@ -14,7 +16,7 @@ macro_rules! __impl_props_join_c_v1 {
                 icu::collections::codepointinvlist::CodePointInversionList::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x0C \0\0\x0E \0\0") }, 2u32)
             });
         }
-        #[clippy::msrv = "1.66"]
+        #[clippy::msrv = "1.67"]
         impl icu_provider::DataProvider<icu::properties::provider::JoinControlV1Marker> for $provider {
             fn load(&self, req: icu_provider::DataRequest) -> Result<icu_provider::DataResponse<icu::properties::provider::JoinControlV1Marker>, icu_provider::DataError> {
                 if req.locale.is_empty() {

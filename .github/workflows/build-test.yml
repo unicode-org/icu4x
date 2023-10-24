@@ -32,7 +32,7 @@ concurrency:
 jobs:
 
   # ci-job-check & ci-job-features
-  # Running at MSRV (1.66)
+  # Running at MSRV
   msrv:
     runs-on: ubuntu-latest
     # Defined as a matrix so that features can start immediately, but
@@ -68,11 +68,13 @@ jobs:
 
     # Cargo-all-features boilerplate
     - name: Get cargo-all-features version
+      if: matrix.behavior != 'check'
       id: cargo-all-features-version
       run: |
         echo "hash=$(cargo search cargo-all-features | grep '^cargo-all-features =' | md5sum)" >> $GITHUB_OUTPUT
       shell: bash
     - name: Attempt to load cached cargo-all-features
+      if: matrix.behavior != 'check'
       uses: actions/cache@v3
       id: cargo-all-features-cache
       with:
@@ -81,7 +83,7 @@ jobs:
           ~/.cargo/bin/cargo-all-features.exe
         key: ${{ runner.os }}-all-features-${{ steps.cargo-all-features-version.outputs.hash }}
     - name: Install cargo-all-features
-      if: steps.cargo-all-features-cache.outputs.cache-hit != 'true'
+      if: matrix.behavior != 'check' && steps.cargo-all-features-cache.outputs.cache-hit != 'true'
       run: cargo +stable install cargo-all-features
 
     # No toolchain boilerplate as this runs on MSRV
@@ -133,13 +135,48 @@ jobs:
       if: matrix.os == 'windows-latest'
       run: cargo make ci-job-test-windows
 
+  # ci-job-test-docs
+  test-docs:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+
+    # Cargo-make boilerplate
+    - name: Get cargo-make version
+      id: cargo-make-version
+      run: |
+        echo "hash=$(cargo search cargo-make | grep '^cargo-make =' | md5sum)" >> $GITHUB_OUTPUT
+      shell: bash
+    - name: Attempt to load cached cargo-make
+      uses: actions/cache@v3
+      id: cargo-make-cache
+      with:
+        path: |
+          ~/.cargo/bin/cargo-make
+          ~/.cargo/bin/cargo-make.exe
+        key: ${{ runner.os }}-make-${{ steps.cargo-make-version.outputs.hash }}
+    - name: Install cargo-make
+      if: steps.cargo-make-cache.outputs.cache-hit != 'true'
+      run: cargo +stable install cargo-make
+
+
+    # Toolchain boilerplate
+    - name: Potentially override rust version with nightly
+      run: cargo make set-nightly-version-for-ci
+    - name: Show the selected Rust toolchain
+      run: rustup show
+
+    # Actual job
+    - name: Run `cargo make ci-job-test-docs`
+      run: cargo make ci-job-test-docs
+
   # ci-job-test-tutorials
   test-tutorials:
     runs-on: ubuntu-latest
     strategy:
       matrix: 
         behavior: [local, cratesio]
-      fail-fast: true
+      fail-fast: false
     steps:
     - uses: actions/checkout@v3
 
@@ -207,6 +244,48 @@ jobs:
       if: steps.cargo-make-cache.outputs.cache-hit != 'true'
       run: cargo +stable install cargo-make
 
+    # Toolchain boilerplate
+    - name: Potentially override rust version with nightly
+      run: cargo make set-nightly-version-for-ci
+    - name: Show the selected Rust toolchain
+      run: rustup show
+
+    # Job-specific dependencies
+    - name: Attempt to load download cache
+      uses: actions/cache@v3
+      with:
+        key: download-cache
+        path: /tmp/icu4x-source-cache
+
+    # Actual job
+    - name: Run `cargo make ci-job-testdata`
+      run: cargo make ci-job-testdata
+
+  # ci-job-testdata-legacy
+  testdata-legacy:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v3
+
+    # Cargo-make boilerplate
+    - name: Get cargo-make version
+      id: cargo-make-version
+      run: |
+        echo "hash=$(cargo search cargo-make | grep '^cargo-make =' | md5sum)" >> $GITHUB_OUTPUT
+      shell: bash
+    - name: Attempt to load cached cargo-make
+      uses: actions/cache@v3
+      id: cargo-make-cache
+      with:
+        path: |
+          ~/.cargo/bin/cargo-make
+          ~/.cargo/bin/cargo-make.exe
+        key: ${{ runner.os }}-make-${{ steps.cargo-make-version.outputs.hash }}
+    - name: Install cargo-make
+      if: steps.cargo-make-cache.outputs.cache-hit != 'true'
+      run: cargo +stable install cargo-make
+
     # Cargo-all-features boilerplate
     - name: Get cargo-all-features version
       id: cargo-all-features-version
@@ -239,52 +318,8 @@ jobs:
         path: /tmp/icu4x-source-cache
 
     # Actual job
-    - name: Run `cargo make testdata-check`
-      run: cargo make testdata-check
-
-    - name: Run `cargo make testdata-legacy`
-      run: cargo make testdata-legacy
-
-    # This is too slow for Windows and Mac
-    - name: Run `cargo make testdata-legacy-test`
-      if: matrix.os == 'ubuntu-latest'
-      run: cargo make testdata-legacy-test
-
-
-  # ci-job-test-docs
-  test-docs:
-    runs-on: ubuntu-latest
-    steps:
-    - uses: actions/checkout@v3
-
-    # Cargo-make boilerplate
-    - name: Get cargo-make version
-      id: cargo-make-version
-      run: |
-        echo "hash=$(cargo search cargo-make | grep '^cargo-make =' | md5sum)" >> $GITHUB_OUTPUT
-      shell: bash
-    - name: Attempt to load cached cargo-make
-      uses: actions/cache@v3
-      id: cargo-make-cache
-      with:
-        path: |
-          ~/.cargo/bin/cargo-make
-          ~/.cargo/bin/cargo-make.exe
-        key: ${{ runner.os }}-make-${{ steps.cargo-make-version.outputs.hash }}
-    - name: Install cargo-make
-      if: steps.cargo-make-cache.outputs.cache-hit != 'true'
-      run: cargo +stable install cargo-make
-
-
-    # Toolchain boilerplate
-    - name: Potentially override rust version with nightly
-      run: cargo make set-nightly-version-for-ci
-    - name: Show the selected Rust toolchain
-      run: rustup show
-
-    # Actual job
-    - name: Run `cargo make ci-job-test-docs`
-      run: cargo make ci-job-test-docs
+    - name: Run `cargo make ci-job-testdata-legacy`
+      run: cargo make ci-job-testdata-legacy
 
   # ci-job-full-datagen
   full-datagen:
@@ -330,8 +365,8 @@ jobs:
     - name: Run `cargo make ci-job-full-datagen`
       run: cargo make ci-job-full-datagen
 
-  # ci-job-ffi
-  ffi:
+  # ci-job-test-c
+  test-c:
     runs-on: ubuntu-latest
     container:
       image: rust:bookworm
@@ -340,21 +375,6 @@ jobs:
     - uses: actions/checkout@v3
     
     # Software setup/installation for the container
-    - name: Run apt-get update
-      run: |
-        apt-get update
-    - name: Install Clang-15
-      run: |
-        apt-get install -y clang-15 lld-15 llvm-15-dev libc++-15-dev
-    - name: Install GCC 11
-      run: |
-        apt-get install -y gcc-11 g++-11
-    - name: Install Node.js v16.18.0
-      uses: actions/setup-node@v3
-      with:
-        node-version: 16.18.0
-        cache: 'npm'
-        cache-dependency-path: '**/package-lock.json'
     - name: Install Rust toolchains
       run: |
         rustup toolchain install stable
@@ -386,24 +406,122 @@ jobs:
       run: rustup show
 
     # Job-specific dependencies
+    - name: Run apt-get update
+      run: |
+        apt-get update
+    - name: Install Clang-15
+      run: |
+        apt-get install -y clang-15 lld-15 llvm-15-dev libc++-15-dev
+    - name: Install GCC 11
+      run: |
+        apt-get install -y gcc-11 g++-11
     - name: Attempt to load download cache
       uses: actions/cache@v3
       with:
         key: download-cache
         path: /tmp/icu4x-source-cache
-    - name: Warm up datagen
-      # We do this so its compilation doesn't go on the time bugdet of the 
-      # first test that uses it.
-      run: cargo build -p icu_datagen
 
     # Actual job
-    - name: Run `cargo make ci-job-ffi`
-      run: cargo make ci-job-ffi
+    - name: Run `cargo make ci-job-test-c`
+      run: cargo make ci-job-test-c
       env:
         CXX: "g++-11"
 
-  # ci-job-verify-ffi
-  verify-ffi:
+  # ci-job-test-js
+  test-js:
+    runs-on: ubuntu-latest
+    container:
+      image: rust:bookworm
+
+    steps:
+    - uses: actions/checkout@v3
+    
+    # Software setup/installation for the container
+    - name: Install Rust toolchains
+      run: |
+        rustup toolchain install stable
+
+    # Cargo-make boilerplate
+    - name: Get cargo-make version
+      id: cargo-make-version
+      run: |
+        echo "hash=$(cargo search cargo-make | grep '^cargo-make =' | md5sum)" >> $GITHUB_OUTPUT
+      shell: bash
+    - name: Attempt to load cached cargo-make
+      uses: actions/cache@v3
+      id: cargo-make-cache
+      with:
+        path: |
+          ~/.cargo/bin/cargo-make
+          ~/.cargo/bin/cargo-make.exe
+        # Since this is inside a container, use a different key than the other jobs
+        key: ${{ runner.os }}-make-ffi-${{ steps.cargo-make-version.outputs.hash }}
+    - name: Install cargo-make
+      if: steps.cargo-make-cache.outputs.cache-hit != 'true'
+      run: cargo +stable install cargo-make
+
+
+    # Toolchain boilerplate
+    - name: Potentially override rust version with nightly
+      run: cargo make set-nightly-version-for-ci
+    - name: Show the selected Rust toolchain
+      run: rustup show
+
+    # Job-specific dependencies
+    - name: Install Node.js v16.18.0
+      uses: actions/setup-node@v3
+      with:
+        node-version: 16.18.0
+        cache: 'npm'
+        cache-dependency-path: '**/package-lock.json'
+    - name: Run apt-get update
+      run: |
+        apt-get update
+    - name: Install lld-15
+      run: |
+        apt-get install -y lld-15
+
+    # Actual job
+    - name: Run `cargo make ci-job-test-js`
+      run: cargo make ci-job-test-js
+ 
+  # ci-job-nostd
+  nostd:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+
+    # Cargo-make boilerplate
+    - name: Get cargo-make version
+      id: cargo-make-version
+      run: |
+        echo "hash=$(cargo search cargo-make | grep '^cargo-make =' | md5sum)" >> $GITHUB_OUTPUT
+      shell: bash
+    - name: Attempt to load cached cargo-make
+      uses: actions/cache@v3
+      id: cargo-make-cache
+      with:
+        path: |
+          ~/.cargo/bin/cargo-make
+          ~/.cargo/bin/cargo-make.exe
+        key: ${{ runner.os }}-make-${{ steps.cargo-make-version.outputs.hash }}
+    - name: Install cargo-make
+      if: steps.cargo-make-cache.outputs.cache-hit != 'true'
+      run: cargo +stable install cargo-make
+
+
+    # Toolchain boilerplate
+    - name: Potentially override rust version with nightly
+      run: cargo make set-nightly-version-for-ci
+    - name: Show the selected Rust toolchain
+      run: rustup show
+
+    # Actual job
+    - name: Run `cargo make ci-job-nostd`
+      run: cargo make ci-job-nostd
+
+  # ci-job-diplomat
+  diplomat:
     runs-on: [ ubuntu-latest ]
     steps:
     - uses: actions/checkout@v3
@@ -433,37 +551,11 @@ jobs:
     - name: Show the selected Rust toolchain
       run: rustup show
 
-    # Job-specific dependencies
-    - name: Run diplomat-get-rev to ensure it works
-      id: diplomat-getrev-check
-      run: cargo make --loglevel error diplomat-get-rev
-    - name: Get Diplomat version
-      id: diplomat-version
-      run: |
-        echo "::set-output name=rev::$(cargo make --loglevel error diplomat-get-rev |  tr -d '[:space:]')"
-      shell: bash
-    - name: Attempt to load cached Diplomat
-      uses: actions/cache@v3
-      id: diplomat-cache
-      with:
-        path: |
-          ~/.cargo/bin/diplomat-tool
-          ~/.cargo/bin/diplomat-tool.exe
-        key: ${{ runner.os }}-diplomat-${{ steps.diplomat-version.outputs.rev }}
-
-    - name: Install Diplomat (git hash)
-      if: steps.diplomat-cache.outputs.cache-hit != 'true' && !contains(steps.diplomat-version.outputs.rev, '.')
-      run: cargo +stable install --git https://github.com/rust-diplomat/diplomat.git --rev ${{ steps.diplomat-version.outputs.rev }} diplomat-tool
-
-    - name: Install Diplomat (versioned)
-      if: steps.diplomat-cache.outputs.cache-hit != 'true' && contains(steps.diplomat-version.outputs.rev, '.')
-      run: cargo +stable install --git https://github.com/rust-diplomat/diplomat.git --version ${{ steps.diplomat-version.outputs.rev }} diplomat-tool
-
     # Actual job
-    - name: Run `cargo make ci-job-verify-ffi`
-      run: cargo make ci-job-verify-ffi
+    - name: Run `cargo make ci-job-diplomat`
+      run: cargo make ci-job-diplomat
 
-  # ci-job-verify-gn, ci-job-gn
+  # ci-job-gn
   gn:
     runs-on: ubuntu-latest
 
@@ -528,62 +620,8 @@ jobs:
         version: latest
 
     # Actual job
-    - name: Run `cargo make ci-job-verify-gn`
-      run: cargo make ci-job-verify-gn
     - name: Run `cargo make ci-job-gn`
       run: cargo make ci-job-gn
-
-  # ci-job-wasm
-  wasm:
-    runs-on: ubuntu-latest
-
-    steps:
-    - uses: actions/checkout@v3
-
-    # Cargo-make boilerplate
-    - name: Get cargo-make version
-      id: cargo-make-version
-      run: |
-        echo "hash=$(cargo search cargo-make | grep '^cargo-make =' | md5sum)" >> $GITHUB_OUTPUT
-      shell: bash
-    - name: Attempt to load cached cargo-make
-      uses: actions/cache@v3
-      id: cargo-make-cache
-      with:
-        path: |
-          ~/.cargo/bin/cargo-make
-          ~/.cargo/bin/cargo-make.exe
-        key: ${{ runner.os }}-make-${{ steps.cargo-make-version.outputs.hash }}
-    - name: Install cargo-make
-      if: steps.cargo-make-cache.outputs.cache-hit != 'true'
-      run: cargo +stable install cargo-make
-
-
-    # Toolchain boilerplate
-    - name: Potentially override rust version with nightly
-      run: cargo make set-nightly-version-for-ci
-    - name: Show the selected Rust toolchain
-      run: rustup show
-
-    # Job-specific dependencies
-    - name: Install emsdk
-      run: |
-        cd ~
-        git clone https://github.com/emscripten-core/emsdk.git --branch 2.0.27
-        cd emsdk
-        ./emsdk install latest
-        ./emsdk activate latest
-    - name: Install Node.js v16.18.0
-      uses: actions/setup-node@v3
-      with:
-        node-version: 16.18.0
-        cache: 'npm'
-        cache-dependency-path: '**/package-lock.json'
-    # Actual job
-    - name: Run emscripten/wasm test
-      run: |
-        . ~/emsdk/emsdk_env.sh
-        cargo make ci-job-wasm
 
   # ci-job-fmt
   fmt:
@@ -760,8 +798,7 @@ jobs:
 
   # Notify on slack  
   notify-slack:
-    # Skipped tasks: bench-perf, bench-memory, bench-binsize, bench-datasize
-    needs: [msrv, test, testdata, test-docs, full-datagen, ffi, verify-ffi, gn, wasm, fmt, tidy, clippy, doc]
+    needs: [msrv, test, testdata, testdata-legacy, test-docs, full-datagen, test-c, test-js, nostd, diplomat, gn, fmt, tidy, clippy, doc]
     if: ${{ always() && contains(needs.*.result, 'failure') && (github.event_name == 'schedule' || github.event_name == 'workflow_dispatch' || (github.event_name == 'push' && github.ref_name == 'main')) }}
     runs-on: ubuntu-latest
     steps:

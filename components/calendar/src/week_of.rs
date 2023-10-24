@@ -47,6 +47,10 @@ impl WeekCalculator {
         options: skip,
         error: CalendarError,
         /// Creates a new [`WeekCalculator`] from compiled locale data.
+        ///
+        /// ✨ *Enabled with the `compiled_data` Cargo feature.*
+        ///
+        /// [📚 Help choosing a constructor](icu_provider::constructors)
     );
 
     #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::try_new)]
@@ -77,10 +81,9 @@ impl WeekCalculator {
     /// use icu_calendar::types::{DayOfMonth, IsoWeekday, WeekOfMonth};
     /// use icu_calendar::week::WeekCalculator;
     ///
-    /// let week_calculator = WeekCalculator::try_new(
-    ///     &icu_locid::locale!("und-GB").into(),
-    /// )
-    /// .expect("locale should be present");
+    /// let week_calculator =
+    ///     WeekCalculator::try_new(&icu_locid::locale!("und-GB").into())
+    ///         .expect("locale should be present");
     ///
     /// // Wednesday the 10th is in week 2:
     /// assert_eq!(
@@ -103,10 +106,9 @@ impl WeekCalculator {
     /// use icu_calendar::week::{RelativeUnit, WeekCalculator, WeekOf};
     /// use icu_calendar::Date;
     ///
-    /// let week_calculator = WeekCalculator::try_new(
-    ///     &icu_locid::locale!("und-GB").into(),
-    /// )
-    /// .expect("locale should be present");
+    /// let week_calculator =
+    ///     WeekCalculator::try_new(&icu_locid::locale!("und-GB").into())
+    ///         .expect("locale should be present");
     ///
     /// let iso_date = Date::try_new_iso_date(2022, 8, 26).unwrap();
     ///

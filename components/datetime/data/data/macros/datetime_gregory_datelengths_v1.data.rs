@@ -5,8 +5,10 @@
 #[doc(hidden)]
 #[macro_export]
 macro_rules! __impl_datetime_gregory_datelengths_v1 {
-    ($ provider : path) => {
-        #[clippy::msrv = "1.66"]
+    ($ provider : ty) => {
+        #[clippy::msrv = "1.67"]
+        const _: () = <$provider>::MUST_USE_MAKE_PROVIDER_MACRO;
+        #[clippy::msrv = "1.67"]
         impl icu_provider::DataProvider<icu::datetime::provider::calendar::GregorianDateLengthsV1Marker> for $provider {
             fn load(&self, req: icu_provider::DataRequest) -> Result<icu_provider::DataResponse<icu::datetime::provider::calendar::GregorianDateLengthsV1Marker>, icu_provider::DataError> {
                 static MNI: <icu::datetime::provider::calendar::GregorianDateLengthsV1Marker as icu_provider::DataMarker>::Yokeable = icu::datetime::provider::calendar::DateLengthsV1 { date: icu::datetime::provider::calendar::patterns::LengthPatternsV1 { full: icu::datetime::pattern::runtime::Pattern { items: unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x80 \x04\0\0 \x80@\x01\0\0,\0\0 \x80\x10\x01\0\0,\0\0 \x80P\x04") }, time_granularity: icu::datetime::pattern::TimeGranularity::None }, long: icu::datetime::pattern::runtime::Pattern { items: unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x80 \x04\0\0 \x80@\x01\0\0,\0\0 \x80\x10\x01") }, time_granularity: icu::datetime::pattern::TimeGranularity::None }, medium: icu::datetime::pattern::runtime::Pattern { items: unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x80 \x03\0\0 \x80@\x01\0\0,\0\0 \x80\x10\x01") }, time_granularity: icu::datetime::pattern::TimeGranularity::None }, short: icu::datetime::pattern::runtime::Pattern { items: unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x80@\x01\0\0/\x80 \x01\0\0/\x80\x10\x02") }, time_granularity: icu::datetime::pattern::TimeGranularity::None } }, length_combinations: icu::datetime::provider::calendar::patterns::GenericLengthPatternsV1 { full: icu::datetime::pattern::runtime::GenericPattern { items: unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x80\0\x01\0\0,\0\0 \x80\0\0") } }, long: icu::datetime::pattern::runtime::GenericPattern { items: unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x80\0\x01\0\0,\0\0 \x80\0\0") } }, medium: icu::datetime::pattern::runtime::GenericPattern { items: unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x80\0\x01\0\0,\0\0 \x80\0\0") } }, short: icu::datetime::pattern::runtime::GenericPattern { items: unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x80\0\x01\0\0,\0\0 \x80\0\0") } } } };

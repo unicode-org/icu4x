@@ -1,19 +1,10 @@
 // @generated
 include!("macros.rs");
-/// Implement `DataProvider<M>` on the given struct using the data
-/// hardcoded in this module. This allows the struct to be used with
-/// `icu`'s `_unstable` constructors.
-///
-/// ```compile_fail
-/// struct MyDataProvider;
-/// include!("/path/to/generated/mod.rs");
-/// impl_data_provider(MyDataProvider);
-/// ```
-#[doc(hidden)]
-#[macro_export]
-macro_rules! __impl_data_provider {
-    ($ provider : path) => {
+macro_rules! impl_data_provider {
+    ($ provider : ty) => {
+        make_provider!($provider);
         impl_propnames_from_gcb_v1!($provider);
+        impl_propnames_from_insc_v1!($provider);
         impl_propnames_from_sb_v1!($provider);
         impl_propnames_from_wb_v1!($provider);
         impl_propnames_from_bc_v1!($provider);
@@ -24,6 +15,7 @@ macro_rules! __impl_data_provider {
         impl_propnames_from_lb_v1!($provider);
         impl_propnames_from_sc_v1!($provider);
         impl_propnames_to_long_linear_gcb_v1!($provider);
+        impl_propnames_to_long_linear_insc_v1!($provider);
         impl_propnames_to_long_linear_sb_v1!($provider);
         impl_propnames_to_long_linear_wb_v1!($provider);
         impl_propnames_to_long_linear_bc_v1!($provider);
@@ -33,6 +25,7 @@ macro_rules! __impl_data_provider {
         impl_propnames_to_long_linear_sc_v1!($provider);
         impl_propnames_to_long_sparse_ccc_v1!($provider);
         impl_propnames_to_short_linear_gcb_v1!($provider);
+        impl_propnames_to_short_linear_insc_v1!($provider);
         impl_propnames_to_short_linear_sb_v1!($provider);
         impl_propnames_to_short_linear_wb_v1!($provider);
         impl_propnames_to_short_linear_bc_v1!($provider);
@@ -77,6 +70,7 @@ macro_rules! __impl_data_provider {
         impl_props_idsb_v1!($provider);
         impl_props_idst_v1!($provider);
         impl_props_ideo_v1!($provider);
+        impl_props_insc_v1!($provider);
         impl_props_join_c_v1!($provider);
         impl_props_loe_v1!($provider);
         impl_props_lower_v1!($provider);
@@ -125,26 +119,15 @@ macro_rules! __impl_data_provider {
         impl_props_xdigit_v1!($provider);
     };
 }
-#[doc(inline)]
-pub use __impl_data_provider as impl_data_provider;
-/// Implement `AnyProvider` on the given struct using the data
-/// hardcoded in this module. This allows the struct to be used with
-/// `icu`'s `_any` constructors.
-///
-/// ```compile_fail
-/// struct MyAnyProvider;
-/// include!("/path/to/generated/mod.rs");
-/// impl_any_provider(MyAnyProvider);
-/// ```
-#[doc(hidden)]
-#[macro_export]
-macro_rules! __impl_any_provider {
-    ($ provider : path) => {
-        #[clippy::msrv = "1.66"]
+#[allow(unused_macros)]
+macro_rules! impl_any_provider {
+    ($ provider : ty) => {
+        #[clippy::msrv = "1.67"]
         impl icu_provider::AnyProvider for $provider {
             fn load_any(&self, key: icu_provider::DataKey, req: icu_provider::DataRequest) -> Result<icu_provider::AnyResponse, icu_provider::DataError> {
                 match key.hashed() {
                     h if h == <icu::properties::provider::GraphemeClusterBreakNameToValueV1Marker as icu_provider::KeyedDataMarker>::KEY.hashed() => icu_provider::DataProvider::<icu::properties::provider::GraphemeClusterBreakNameToValueV1Marker>::load(self, req).map(icu_provider::DataResponse::wrap_into_any_response),
+                    h if h == <icu::properties::provider::IndicSyllabicCategoryNameToValueV1Marker as icu_provider::KeyedDataMarker>::KEY.hashed() => icu_provider::DataProvider::<icu::properties::provider::IndicSyllabicCategoryNameToValueV1Marker>::load(self, req).map(icu_provider::DataResponse::wrap_into_any_response),
                     h if h == <icu::properties::provider::SentenceBreakNameToValueV1Marker as icu_provider::KeyedDataMarker>::KEY.hashed() => icu_provider::DataProvider::<icu::properties::provider::SentenceBreakNameToValueV1Marker>::load(self, req).map(icu_provider::DataResponse::wrap_into_any_response),
                     h if h == <icu::properties::provider::WordBreakNameToValueV1Marker as icu_provider::KeyedDataMarker>::KEY.hashed() => icu_provider::DataProvider::<icu::properties::provider::WordBreakNameToValueV1Marker>::load(self, req).map(icu_provider::DataResponse::wrap_into_any_response),
                     h if h == <icu::properties::provider::BidiClassNameToValueV1Marker as icu_provider::KeyedDataMarker>::KEY.hashed() => icu_provider::DataProvider::<icu::properties::provider::BidiClassNameToValueV1Marker>::load(self, req).map(icu_provider::DataResponse::wrap_into_any_response),
@@ -155,6 +138,7 @@ macro_rules! __impl_any_provider {
                     h if h == <icu::properties::provider::LineBreakNameToValueV1Marker as icu_provider::KeyedDataMarker>::KEY.hashed() => icu_provider::DataProvider::<icu::properties::provider::LineBreakNameToValueV1Marker>::load(self, req).map(icu_provider::DataResponse::wrap_into_any_response),
                     h if h == <icu::properties::provider::ScriptNameToValueV1Marker as icu_provider::KeyedDataMarker>::KEY.hashed() => icu_provider::DataProvider::<icu::properties::provider::ScriptNameToValueV1Marker>::load(self, req).map(icu_provider::DataResponse::wrap_into_any_response),
                     h if h == <icu::properties::provider::GraphemeClusterBreakValueToLongNameV1Marker as icu_provider::KeyedDataMarker>::KEY.hashed() => icu_provider::DataProvider::<icu::properties::provider::GraphemeClusterBreakValueToLongNameV1Marker>::load(self, req).map(icu_provider::DataResponse::wrap_into_any_response),
+                    h if h == <icu::properties::provider::IndicSyllabicCategoryValueToLongNameV1Marker as icu_provider::KeyedDataMarker>::KEY.hashed() => icu_provider::DataProvider::<icu::properties::provider::IndicSyllabicCategoryValueToLongNameV1Marker>::load(self, req).map(icu_provider::DataResponse::wrap_into_any_response),
                     h if h == <icu::properties::provider::SentenceBreakValueToLongNameV1Marker as icu_provider::KeyedDataMarker>::KEY.hashed() => icu_provider::DataProvider::<icu::properties::provider::SentenceBreakValueToLongNameV1Marker>::load(self, req).map(icu_provider::DataResponse::wrap_into_any_response),
                     h if h == <icu::properties::provider::WordBreakValueToLongNameV1Marker as icu_provider::KeyedDataMarker>::KEY.hashed() => icu_provider::DataProvider::<icu::properties::provider::WordBreakValueToLongNameV1Marker>::load(self, req).map(icu_provider::DataResponse::wrap_into_any_response),
                     h if h == <icu::properties::provider::BidiClassValueToLongNameV1Marker as icu_provider::KeyedDataMarker>::KEY.hashed() => icu_provider::DataProvider::<icu::properties::provider::BidiClassValueToLongNameV1Marker>::load(self, req).map(icu_provider::DataResponse::wrap_into_any_response),
@@ -164,6 +148,7 @@ macro_rules! __impl_any_provider {
                     h if h == <icu::properties::provider::ScriptValueToLongNameV1Marker as icu_provider::KeyedDataMarker>::KEY.hashed() => icu_provider::DataProvider::<icu::properties::provider::ScriptValueToLongNameV1Marker>::load(self, req).map(icu_provider::DataResponse::wrap_into_any_response),
                     h if h == <icu::properties::provider::CanonicalCombiningClassValueToLongNameV1Marker as icu_provider::KeyedDataMarker>::KEY.hashed() => icu_provider::DataProvider::<icu::properties::provider::CanonicalCombiningClassValueToLongNameV1Marker>::load(self, req).map(icu_provider::DataResponse::wrap_into_any_response),
                     h if h == <icu::properties::provider::GraphemeClusterBreakValueToShortNameV1Marker as icu_provider::KeyedDataMarker>::KEY.hashed() => icu_provider::DataProvider::<icu::properties::provider::GraphemeClusterBreakValueToShortNameV1Marker>::load(self, req).map(icu_provider::DataResponse::wrap_into_any_response),
+                    h if h == <icu::properties::provider::IndicSyllabicCategoryValueToShortNameV1Marker as icu_provider::KeyedDataMarker>::KEY.hashed() => icu_provider::DataProvider::<icu::properties::provider::IndicSyllabicCategoryValueToShortNameV1Marker>::load(self, req).map(icu_provider::DataResponse::wrap_into_any_response),
                     h if h == <icu::properties::provider::SentenceBreakValueToShortNameV1Marker as icu_provider::KeyedDataMarker>::KEY.hashed() => icu_provider::DataProvider::<icu::properties::provider::SentenceBreakValueToShortNameV1Marker>::load(self, req).map(icu_provider::DataResponse::wrap_into_any_response),
                     h if h == <icu::properties::provider::WordBreakValueToShortNameV1Marker as icu_provider::KeyedDataMarker>::KEY.hashed() => icu_provider::DataProvider::<icu::properties::provider::WordBreakValueToShortNameV1Marker>::load(self, req).map(icu_provider::DataResponse::wrap_into_any_response),
                     h if h == <icu::properties::provider::BidiClassValueToShortNameV1Marker as icu_provider::KeyedDataMarker>::KEY.hashed() => icu_provider::DataProvider::<icu::properties::provider::BidiClassValueToShortNameV1Marker>::load(self, req).map(icu_provider::DataResponse::wrap_into_any_response),
@@ -208,6 +193,7 @@ macro_rules! __impl_any_provider {
                     h if h == <icu::properties::provider::IdsBinaryOperatorV1Marker as icu_provider::KeyedDataMarker>::KEY.hashed() => icu_provider::DataProvider::<icu::properties::provider::IdsBinaryOperatorV1Marker>::load(self, req).map(icu_provider::DataResponse::wrap_into_any_response),
                     h if h == <icu::properties::provider::IdsTrinaryOperatorV1Marker as icu_provider::KeyedDataMarker>::KEY.hashed() => icu_provider::DataProvider::<icu::properties::provider::IdsTrinaryOperatorV1Marker>::load(self, req).map(icu_provider::DataResponse::wrap_into_any_response),
                     h if h == <icu::properties::provider::IdeographicV1Marker as icu_provider::KeyedDataMarker>::KEY.hashed() => icu_provider::DataProvider::<icu::properties::provider::IdeographicV1Marker>::load(self, req).map(icu_provider::DataResponse::wrap_into_any_response),
+                    h if h == <icu::properties::provider::IndicSyllabicCategoryV1Marker as icu_provider::KeyedDataMarker>::KEY.hashed() => icu_provider::DataProvider::<icu::properties::provider::IndicSyllabicCategoryV1Marker>::load(self, req).map(icu_provider::DataResponse::wrap_into_any_response),
                     h if h == <icu::properties::provider::JoinControlV1Marker as icu_provider::KeyedDataMarker>::KEY.hashed() => icu_provider::DataProvider::<icu::properties::provider::JoinControlV1Marker>::load(self, req).map(icu_provider::DataResponse::wrap_into_any_response),
                     h if h == <icu::properties::provider::LogicalOrderExceptionV1Marker as icu_provider::KeyedDataMarker>::KEY.hashed() => icu_provider::DataProvider::<icu::properties::provider::LogicalOrderExceptionV1Marker>::load(self, req).map(icu_provider::DataResponse::wrap_into_any_response),
                     h if h == <icu::properties::provider::LowercaseV1Marker as icu_provider::KeyedDataMarker>::KEY.hashed() => icu_provider::DataProvider::<icu::properties::provider::LowercaseV1Marker>::load(self, req).map(icu_provider::DataResponse::wrap_into_any_response),
@@ -260,8 +246,6 @@ macro_rules! __impl_any_provider {
         }
     };
 }
-#[doc(inline)]
-pub use __impl_any_provider as impl_any_provider;
-#[clippy::msrv = "1.66"]
+#[clippy::msrv = "1.67"]
 pub struct BakedDataProvider;
 impl_data_provider!(BakedDataProvider);

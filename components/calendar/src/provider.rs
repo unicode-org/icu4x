@@ -38,10 +38,19 @@ const _: () = {
         pub use crate as calendar;
         pub use icu_locid_transform as locid_transform;
     }
+    icu_calendar_data::make_provider!(Baked);
     icu_calendar_data::impl_calendar_japanese_v1!(Baked);
     icu_calendar_data::impl_calendar_japanext_v1!(Baked);
     icu_calendar_data::impl_datetime_week_data_v1!(Baked);
 };
+
+#[cfg(feature = "datagen")]
+/// The latest minimum set of keys required by this component.
+pub const KEYS: &[DataKey] = &[
+    JapaneseErasV1Marker::KEY,
+    JapaneseExtendedErasV1Marker::KEY,
+    WeekDataV1Marker::KEY,
+];
 
 /// The date at which an era started
 ///

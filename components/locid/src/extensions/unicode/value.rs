@@ -19,7 +19,7 @@ use tinystr::TinyAsciiStr;
 /// # Examples
 ///
 /// ```
-/// use icu::locid::extensions::unicode::{Value, value};
+/// use icu::locid::extensions::unicode::{value, Value};
 /// use writeable::assert_writeable_eq;
 ///
 /// assert_writeable_eq!(value!("gregory"), "gregory");
@@ -158,8 +158,8 @@ impl_writeable_for_subtag_list!(Value, "islamic", "civil");
 /// # Examples
 ///
 /// ```
-/// use icu::locid::Locale;
 /// use icu::locid::extensions::unicode::{key, value};
+/// use icu::locid::Locale;
 ///
 /// let loc: Locale = "de-u-ca-buddhist".parse().unwrap();
 ///

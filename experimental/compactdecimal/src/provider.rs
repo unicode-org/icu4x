@@ -33,9 +33,17 @@ const _: () = {
         pub use crate as compactdecimal;
         pub use icu_locid_transform as locid_transform;
     }
+    icu_compactdecimal_data::make_provider!(Baked);
     icu_compactdecimal_data::impl_compactdecimal_long_v1!(Baked);
     icu_compactdecimal_data::impl_compactdecimal_short_v1!(Baked);
 };
+
+#[cfg(feature = "datagen")]
+/// The latest minimum set of keys required by this component.
+pub const KEYS: &[DataKey] = &[
+    LongCompactDecimalFormatDataV1Marker::KEY,
+    ShortCompactDecimalFormatDataV1Marker::KEY,
+];
 
 /// Relative time format V1 data struct.
 /// As in CLDR, this is a mapping from type (a power of ten, corresponding to

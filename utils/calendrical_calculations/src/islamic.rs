@@ -1,8 +1,8 @@
 use crate::astronomy::*;
-#[allow(unused_imports)]
-use crate::helpers::CoreFloat;
 use crate::helpers::{i64_to_saturated_i32, next};
 use crate::rata_die::{Moment, RataDie};
+#[allow(unused_imports)]
+use core_maths::*;
 
 // Different islamic calendars use different epochs (Thursday vs Friday) due to disagreement on the exact date of Mohammed's migration to Mecca.
 /// Lisp code reference: <https://github.com/EdReingold/calendar-code2/blob/main/calendar.l#L2066>

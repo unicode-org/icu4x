@@ -5,13 +5,15 @@
 #[doc(hidden)]
 #[macro_export]
 macro_rules! __impl_locid_transform_script_dir_v1 {
-    ($ provider : path) => {
-        #[clippy::msrv = "1.66"]
+    ($ provider : ty) => {
+        #[clippy::msrv = "1.67"]
+        const _: () = <$provider>::MUST_USE_MAKE_PROVIDER_MACRO;
+        #[clippy::msrv = "1.67"]
         impl $provider {
             #[doc(hidden)]
             pub const SINGLETON_LOCID_TRANSFORM_SCRIPT_DIR_V1: &'static <icu::locid_transform::provider::ScriptDirectionV1Marker as icu_provider::DataMarker>::Yokeable = &icu::locid_transform::provider::ScriptDirectionV1 { rtl: unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"AdlmArabArmiAvstChrsCprtElymHatrHebrHungKharLydiMandManiMendMercMeroNarbNbatNkooOrkhOugrPalmPhliPhlpPhnxPrtiRohgSamrSarbSogdSogoSyrcThaaYezi") }, ltr: unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"AghbAhomArmnBaliBamuBassBatkBengBhksBopoBrahBugiBuhdCakmCansCariChamCherCoptCpmnCyrlDevaDiakDogrDsrtDuplEgypElbaEthiGeorGlagGongGonmGothGranGrekGujrGuruHanbHangHaniHanoHansHantHiraHluwHmngHmnpItalJamoJavaJpanKaliKanaKawiKhmrKhojKitsKndaKoreKthiLanaLaooLatnLepcLimbLinaLinbLisuLyciMahjMakaMarcMedfMlymModiMongMrooMteiMultMymrNagmNandNewaNshuOgamOlckOryaOsgeOsmaPaucPermPhagPlrdRjngRunrSaurSgnwShawShrdSiddSindSinhSoraSoyoSundSyloTagbTakrTaleTaluTamlTangTavtTeluTfngTglgThaiTibtTirhTnsaTotoUgarVaiiVithWaraWchoXpeoXsuxYiiiZanb") } };
         }
-        #[clippy::msrv = "1.66"]
+        #[clippy::msrv = "1.67"]
         impl icu_provider::DataProvider<icu::locid_transform::provider::ScriptDirectionV1Marker> for $provider {
             fn load(&self, req: icu_provider::DataRequest) -> Result<icu_provider::DataResponse<icu::locid_transform::provider::ScriptDirectionV1Marker>, icu_provider::DataError> {
                 if req.locale.is_empty() {

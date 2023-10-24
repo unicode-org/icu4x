@@ -5,13 +5,13 @@
 [package]
 name = "icu"
 description = "International Components for Unicode"
+license-file = "LICENSE"
 
 authors.workspace = true
 categories.workspace = true
 edition.workspace = true
 homepage.workspace = true
 include.workspace = true
-license-file.workspace = true
 repository.workspace = true
 rust-version.workspace = true
 version.workspace = true
@@ -39,15 +39,16 @@ icu_timezone = { workspace = true }
 icu_compactdecimal = { workspace = true, optional = true }
 icu_displaynames = { workspace = true, optional = true }
 icu_relativetime = { workspace = true, optional = true }
+icu_transliterate = { workspace = true, features = ["compile"], optional = true } # currently only usable with the compile feature
 
 # For docs links and features
 icu_provider = { workspace = true }
 
 [dev-dependencies]
-icu_datetime = { workspace = true, features = ["serde"] }
-icu_provider_adapters = { workspace = true, features = ["serde"] }
-icu_provider_blob = { workspace = true }
-writeable = { workspace = true }
+icu_datetime = { path = "../../components/datetime", features = ["serde"] }
+icu_provider_adapters = { path = "../../provider/adapters", features = ["serde"] }
+icu_provider_blob = { path = "../../provider/blob" }
+writeable = { path = "../../utils/writeable" }
 
 [features]
 default = [
@@ -84,6 +85,7 @@ std = [
     "icu_relativetime?/std",
     "icu_segmenter/std",
     "icu_timezone/std",
+    "icu_transliterate?/std",
 ]
 serde = [
     "icu_calendar/serde",
@@ -102,6 +104,7 @@ serde = [
     "icu_relativetime?/serde",
     "icu_segmenter/serde",
     "icu_timezone/serde",
+    "icu_transliterate?/serde",
 ]
 compiled_data = [
     "icu_calendar/compiled_data",
@@ -119,6 +122,7 @@ compiled_data = [
     "icu_relativetime?/compiled_data",
     "icu_segmenter/compiled_data",
     "icu_timezone/compiled_data",
+    "icu_transliterate?/compiled_data",
 ]
 serde_human = [
     "icu_list/serde_human"
@@ -130,9 +134,9 @@ experimental = [
     "icu_compactdecimal",
     "icu_datetime_experimental",
     "icu_displaynames",
-    "icu_locid_transform/experimental",
     "icu_plurals/experimental",
     "icu_relativetime",
+    "icu_transliterate",
 ]
 sync = ["icu_provider/sync"]
 logging = ["icu_provider/logging"]

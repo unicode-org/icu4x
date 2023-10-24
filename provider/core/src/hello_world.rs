@@ -86,7 +86,7 @@ impl KeyedDataMarker for HelloWorldV1Marker {
 /// let reverse_hello_world: DataPayload<HelloWorldV1Marker> =
 ///     HelloWorldProvider
 ///         .load(DataRequest {
-///             locale: &"en+reverse".parse().unwrap(),
+///             locale: &"en-x-reverse".parse().unwrap(),
 ///             metadata: Default::default(),
 ///         })
 ///         .expect("Loading should succeed")
@@ -108,19 +108,19 @@ impl HelloWorldProvider {
         ("de-AT", "Servus Welt"),
         ("el", "Καλημέρα κόσμε"),
         ("en", "Hello World"),
-        ("en+reverse", "Olleh Dlrow"),
         ("en-001", "Hello from 🗺️"),            // WORLD
         ("en-002", "Hello from 🌍"),           // AFRICA
         ("en-019", "Hello from 🌎"),           // AMERICAS
         ("en-142", "Hello from 🌏"),           // ASIA
         ("en-GB", "Hello from 🇬🇧"),            // GREAT BRITAIN
         ("en-GB-u-sd-gbeng", "Hello from 🏴󠁧󠁢󠁥󠁮󠁧󠁿"), // ENGLAND
+        ("en-x-reverse", "Olleh Dlrow"),
         ("eo", "Saluton, Mondo"),
         ("fa", "سلام دنیا‎"),
         ("fi", "hei maailma"),
         ("is", "Halló, heimur"),
         ("ja", "こんにちは世界"),
-        ("ja+reverse", "界世はちにんこ"),
+        ("ja-x-reverse", "界世はちにんこ"),
         ("la", "Ave, munde"),
         ("pt", "Olá, mundo"),
         ("ro", "Salut, lume"),
@@ -336,19 +336,19 @@ fn test_iter() {
             locale!("de-AT").into(),
             locale!("el").into(),
             locale!("en").into(),
-            "en+reverse".parse().unwrap(),
             locale!("en-001").into(),
             locale!("en-002").into(),
             locale!("en-019").into(),
             locale!("en-142").into(),
             locale!("en-GB").into(),
             locale!("en-GB-u-sd-gbeng").into(),
+            "en-x-reverse".parse().unwrap(),
             locale!("eo").into(),
             locale!("fa").into(),
             locale!("fi").into(),
             locale!("is").into(),
             locale!("ja").into(),
-            "ja+reverse".parse().unwrap(),
+            "ja-x-reverse".parse().unwrap(),
             locale!("la").into(),
             locale!("pt").into(),
             locale!("ro").into(),
