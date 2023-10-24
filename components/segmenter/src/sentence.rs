@@ -28,6 +28,12 @@ pub struct SentenceBreakIterator<'l, 's, Y: RuleBreakType<'l, 's> + ?Sized>(
     RuleBreakIterator<'l, 's, Y>,
 );
 
+impl<'l, 's, Y: RuleBreakType<'l, 's>> SentenceBreakIterator<'l, 's, Y> {
+    pub fn state(&self) -> u8 {
+        self.0.boundary_property
+    }
+}
+
 derive_usize_iterator_with_type!(SentenceBreakIterator);
 
 /// Sentence break iterator for an `str` (a UTF-8 string).
