@@ -1,16 +1,22 @@
 {
-  "Numeric": [
-    "1yuè",
-    "2yuè",
-    "3yuè",
-    "4yuè",
-    "5yuè",
-    "6yuè",
-    "7yuè",
-    "8yuè",
-    "9yuè",
-    "10yuè",
-    "11yuè",
-    "12yuè"
-  ]
+  "NumericWithLeap": {
+    "months": [
+      "1yuè",
+      "2yuè",
+      "3yuè",
+      "4yuè",
+      "5yuè",
+      "6yuè",
+      "7yuè",
+      "8yuè",
+      "9yuè",
+      "10yuè",
+      "11yuè",
+      "12yuè"
+    ],
+    "leap_pattern": {
+      "pattern": "bis",
+      "subst_index": 0
+    }
+  }
 }

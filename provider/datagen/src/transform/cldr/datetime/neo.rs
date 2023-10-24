@@ -465,11 +465,11 @@ fn months_convert(
 
             let Some(index) = 
                 leap
-                .find("{}")
+                .find("{0}")
                 else {
-                    panic!("Calendar {calendar} for {langid} has leap patterh {leap}, which does not contain {{}} placeholder");
+                    panic!("Calendar {calendar} for {langid} has leap patterh {leap}, which does not contain {{0}} placeholder");
                 };
-            let string = leap.replace("{}", "");
+            let string = leap.replace("{0}", "");
             let pattern = SimpleSubstitutionPattern {
                 pattern: string.into(),
                 subst_index: index,

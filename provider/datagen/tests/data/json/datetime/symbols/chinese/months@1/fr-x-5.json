@@ -1,16 +1,22 @@
 {
-  "Numeric": [
-    "zhēngyuè",
-    "èryuè",
-    "sānyuè",
-    "sìyuè",
-    "wǔyuè",
-    "liùyuè",
-    "qīyuè",
-    "bāyuè",
-    "jiǔyuè",
-    "shíyuè",
-    "shíyīyuè",
-    "shí’èryuè"
-  ]
+  "NumericWithLeap": {
+    "months": [
+      "zhēngyuè",
+      "èryuè",
+      "sānyuè",
+      "sìyuè",
+      "wǔyuè",
+      "liùyuè",
+      "qīyuè",
+      "bāyuè",
+      "jiǔyuè",
+      "shíyuè",
+      "shíyīyuè",
+      "shí’èryuè"
+    ],
+    "leap_pattern": {
+      "pattern": "bis",
+      "subst_index": 0
+    }
+  }
 }
