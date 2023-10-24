@@ -215,7 +215,7 @@ fn run_grapheme_break_test() {
 fn sentence_break_test(filename: &str) {
     let test_iter = TestContentIterator::new(filename);
     let segmenter = SentenceSegmenter::new();
-    for test in test_iter {
+    for (i, test) in test_iter.enumerate() {
         let s: String = test.utf8_vec.into_iter().collect();
         let iter = segmenter.segment_str(&s);
         let result: Vec<usize> = iter.collect();
@@ -225,7 +225,7 @@ fn sentence_break_test(filename: &str) {
             let mut iter = segmenter.segment_str(&s);
             // TODO(egg): It would be really nice to have Name here.
             println!("  | A | E | Code pt. | Sentence_Break | State | Literal");
-            let STATE_NAMES = ["Unknown", "CR", "LF", "Extend", "Sep", "Format", "Sp", "Lower", "Upper", "OLetter", "Numeric", "ATerm", "SContinue", "STerm", "Close", "ATerm_Close", "ATerm_Close_Sp", "STerm_Close", "STerm_Close_Sp", "Upper_ATerm", "Lower_ATerm", "ATerm_Close_Sp_ParaSep", "ATerm_Close_Sp_CR", "STerm_Close_Sp_ParaSep", "STerm_Close_Sp_CR", "ATerm_Close_Sp_SB8", "sot", "eot"];
+            let STATE_NAMES = ["Unknown", "CR", "LF", "Extend", "Sep", "Format", "Sp", "Lower", "Upper", "OLetter", "Numeric", "ATerm", "SContinue", "STerm", "Close", "ATerm_Close", "ATerm_Close_Sp", "STerm_Close", "STerm_Close_Sp", "Upper_ATerm", "Lower_ATerm", "ATerm_Close_Sp_SB8", "ATerm_Close_Sp_ParaSep", "ATerm_Close_Sp_CR", "STerm_Close_Sp_ParaSep", "STerm_Close_Sp_CR", "sot", "eot"];
             for (i, c) in s.char_indices() {
                 let expected_break = test.break_result_utf8.contains(&i);
                 let actual_break = result.contains(&i);
@@ -247,6 +247,7 @@ fn sentence_break_test(filename: &str) {
                     c
                 )
             }
+            println!("Test case #{}", i);
             assert!(false)
         }
 

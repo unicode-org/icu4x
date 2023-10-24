@@ -407,6 +407,13 @@ interm_break_state = true
 [[tables]]
 # SB8
 name = "ATerm_Close_Sp_SB8"
+left = "Upper_ATerm"
+right = "Unknown"
+interm_break_state = true
+
+[[tables]]
+# SB8
+name = "ATerm_Close_Sp_SB8"
 left = "ATerm_Close"
 right = "Numeric"
 interm_break_state = true
@@ -619,7 +626,7 @@ left = [
   "STerm_Close_Sp_ParaSep",
   "STerm_Close_Sp_CR"
 ]
-right = [ "ATerm", "Lower", "OLetter", "Upper", "Numeric", "STerm", "CR" ]
+right = [ "ATerm", "Lower", "OLetter", "Upper", "Numeric", "STerm", "CR", "LF" ]
 break_state = true
 
 [[rules]]
