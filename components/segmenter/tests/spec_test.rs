@@ -228,7 +228,9 @@ fn sentence_break_test(filename: &str) {
             for (i, c) in s.char_indices() {
                 let expected_break = test.break_result_utf8.contains(&i);
                 let actual_break = result.contains(&i);
-                if actual_break { iter.next(); }
+                if actual_break {
+                    iter.next();
+                }
                 println!(
                     "{}| {} | {} | {:>8} | {:>14} | {} | {}",
                     if actual_break != expected_break {
