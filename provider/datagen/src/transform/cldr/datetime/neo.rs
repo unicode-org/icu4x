@@ -17,7 +17,7 @@ use icu_locid::{
 use icu_provider::datagen::IterableDataProvider;
 use icu_provider::prelude::*;
 use std::collections::BTreeMap;
-use tinystr::{tinystr, TinyAsciiStr, UnvalidatedTinyAsciiStr};
+use tinystr::TinyAsciiStr;
 use zerovec::ule::UnvalidatedStr;
 
 const ABBR: Subtag = subtag!("3");
@@ -421,10 +421,10 @@ fn months_convert(
     let (map, has_leap) = super::symbols::get_month_code_map(&calendar_str);
 
     if has_leap {
-        let mut symbols: BTreeMap<UnvalidatedTinyAsciiStr<4>, &str> = BTreeMap::new();
+        let mut symbols = vec![""; 24];
         for (k, v) in months.0.iter() {
-            let code = if k == "7-yeartype-leap" && *calendar == value!("hebrew") {
-                tinystr!(4, "M06L")
+            let index = if k == "7-yeartype-leap" && *calendar == value!("hebrew") {
+                7 + 11
             } else {
                 let index: usize = k
                     .parse()
@@ -433,13 +433,13 @@ fn months_convert(
                 if index == 0 {
                     panic!("CLDR month indices cannot be zero");
                 }
-                *map.get(index - 1)
-                    .expect("Found out of bounds month index for calendar")
+
+                index - 1
             };
 
-            symbols.insert(code.into(), &**v);
+            symbols[index] = &**v;
         }
-        Ok(MonthSymbolsV1::Map(symbols.into_iter().collect()))
+        Ok(MonthSymbolsV1::LeapLinear((&symbols).into()))
     } else {
         let mut symbols = vec![""; map.len()];
 
@@ -458,7 +458,7 @@ fn months_convert(
                 panic!("Calendar {calendar} does not have data for month {i}; found data for {symbols:?}");
             }
         }
-        Ok(MonthSymbolsV1::Numeric((&symbols).into()))
+        Ok(MonthSymbolsV1::Linear((&symbols).into()))
     }
 }
 

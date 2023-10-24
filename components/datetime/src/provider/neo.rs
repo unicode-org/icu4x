@@ -6,7 +6,6 @@ mod adapter;
 
 use crate::pattern::runtime;
 use icu_provider::prelude::*;
-use tinystr::UnvalidatedTinyAsciiStr;
 use zerovec::ule::UnvalidatedStr;
 use zerovec::{VarZeroVec, ZeroMap};
 
@@ -101,14 +100,14 @@ pub enum MonthSymbolsV1<'data> {
     /// Month codes M01, M02, M03, .. (can allow for M13 onwards)
     ///
     /// Found for solar and pure lunar calendars
-    Numeric(#[cfg_attr(feature = "serde", serde(borrow))] VarZeroVec<'data, str>),
-    /// Month code map that can handle arbitrary month codes including leap months
+    Linear(#[cfg_attr(feature = "serde", serde(borrow))] VarZeroVec<'data, str>),
+    /// Month codes M01, M02, M03, .. M01L, M02L, ...
+    ///
+    /// Empty entries for non-present month codes. Will have an equal number of leap and non-leap
+    /// entries.
     ///
     /// Found for lunisolar and lunisidereal calendars
-    Map(
-        #[cfg_attr(feature = "serde", serde(borrow))]
-        ZeroMap<'data, UnvalidatedTinyAsciiStr<4>, str>,
-    ),
+    LeapLinear(#[cfg_attr(feature = "serde", serde(borrow))] VarZeroVec<'data, str>),
 }
 
 /// Symbols that can be stored as a simple linear array.
