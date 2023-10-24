@@ -69,6 +69,7 @@ struct BinReprInfo {
 /// The `BinIndex` struct represents details of the written bundle.
 ///
 /// The index is present from [`FormatVersion::V1_1`] on.
+#[allow(dead_code)]
 struct BinIndex {
     /// The number of 32-bit fields written in the index, including the field
     /// count.

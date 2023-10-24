@@ -47,3 +47,5 @@ required-features = ["serialize", "text"]
 
 [[example]]
 name = "time_zone_rule"
+# run in `cargo test`
+harness = false
