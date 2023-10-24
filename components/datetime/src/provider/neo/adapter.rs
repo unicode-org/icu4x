@@ -214,7 +214,11 @@ impl<'a> From<&months::SymbolsV1<'a>> for MonthSymbolsV1<'a> {
                         continue;
                     };
                     let offset = if leap { 12 } else { 0 };
-                    vec[(number + offset - 1) as usize] = v;
+                    if let Some(entry) = vec.get_mut((number + offset - 1) as usize) {
+                        *entry = v;
+                    } else {
+                        debug_assert!(false, "Found out of bounds hebrew month code {k}")
+                    }
                 }
                 MonthSymbolsV1::LeapLinear((&vec).into())
             }
@@ -487,7 +491,7 @@ mod tests {
 
         assert_eq!(
             format!("{neo_month_abbreviated:?}"),
-            "Numeric([\"Jan\", \"Feb\", \"Mar\", \"Apr\", \"May\", \"Jun\", \"Jul\", \"Aug\", \"Sep\", \"Oct\", \"Nov\", \"Dec\"])"
+            "Linear([\"Jan\", \"Feb\", \"Mar\", \"Apr\", \"May\", \"Jun\", \"Jul\", \"Aug\", \"Sep\", \"Oct\", \"Nov\", \"Dec\"])"
         );
     }
 
@@ -512,7 +516,7 @@ mod tests {
 
         assert_eq!(
             format!("{neo_month_abbreviated:?}"),
-            "Map(ZeroMap { keys: ZeroVec([\"M01\", \"M02\", \"M03\", \"M04\", \"M05\", \"M05L\", \"M06\", \"M06L\", \"M07\", \"M08\", \"M09\", \"M10\", \"M11\", \"M12\"]), values: [\"Tishri\", \"Heshvan\", \"Kislev\", \"Tevet\", \"Shevat\", \"Adar I\", \"Adar\", \"Adar II\", \"Nisan\", \"Iyar\", \"Sivan\", \"Tamuz\", \"Av\", \"Elul\"] })"
+            "LeapLinear([\"Tishri\", \"Heshvan\", \"Kislev\", \"Tevet\", \"Shevat\", \"Adar\", \"Nisan\", \"Iyar\", \"Sivan\", \"Tamuz\", \"Av\", \"Elul\", \"\", \"\", \"\", \"\", \"Adar I\", \"Adar II\", \"\", \"\", \"\", \"\", \"\", \"\"])"
         );
     }
 
