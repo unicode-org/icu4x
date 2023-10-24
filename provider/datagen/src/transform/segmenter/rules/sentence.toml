@@ -414,6 +414,13 @@ interm_break_state = true
 [[tables]]
 # SB8
 name = "ATerm_Close_Sp_SB8"
+left = "Lower_ATerm"
+right = "Unknown"
+interm_break_state = true
+
+[[tables]]
+# SB8
+name = "ATerm_Close_Sp_SB8"
 left = "ATerm_Close"
 right = "Numeric"
 interm_break_state = true
