@@ -105,7 +105,6 @@ impl<'l, 's, Y: RuleBreakType<'l, 's> + ?Sized> Iterator for RuleBreakIterator<'
             let left_prop = self.get_break_property(left_codepoint);
             self.advance_iter();
 
-            let right_codepoint = self.get_current_codepoint().map_or("????".to_string(), |c| format!("U+{:02X}", c.into()));
             let Some(right_prop) = self.get_current_break_property() else {
                 self.boundary_property = left_prop;
                 return Some(self.len);
@@ -127,9 +126,6 @@ impl<'l, 's, Y: RuleBreakType<'l, 's> + ?Sized> Iterator for RuleBreakIterator<'
 
             // If break_state is equals or grater than 0, it is alias of property.
             let mut break_state = self.get_break_state_from_table(left_prop, right_prop);
-            let STATE_NAMES = ["Unknown", "CR", "LF", "Extend", "Sep", "Format", "Sp", "Lower", "Upper", "OLetter", "Numeric", "ATerm", "SContinue", "STerm", "Close", "ATerm_Close", "ATerm_Close_Sp", "STerm_Close", "STerm_Close_Sp", "Upper_ATerm", "Lower_ATerm", "ATerm_Close_Sp_SB8", "ATerm_Close_Sp_ParaSep", "ATerm_Close_Sp_CR", "STerm_Close_Sp_ParaSep", "STerm_Close_Sp_CR", "sot", "eot"];
-            println!("left={:02X} right={:02X} {} state={:02X}", left_prop, right_prop, right_codepoint, break_state);
-            println!("left={} right={} {}", STATE_NAMES[left_prop as usize], STATE_NAMES[right_prop as usize], right_codepoint);
 
             if break_state >= 0 {
                 // This isn't simple rule set. We need marker to restore iterator to previous position.
@@ -137,9 +133,7 @@ impl<'l, 's, Y: RuleBreakType<'l, 's> + ?Sized> Iterator for RuleBreakIterator<'
                 let mut previous_pos_data = self.current_pos_data;
                 let mut previous_left_prop = left_prop;
 
-                println!("Inner loop");
                 if (break_state & INTERMEDIATE_MATCH_RULE) != 0 {
-                    println!("going through intermediate match rule");
                     break_state -= INTERMEDIATE_MATCH_RULE;
                 }
                 loop {
@@ -163,8 +157,6 @@ impl<'l, 's, Y: RuleBreakType<'l, 's> + ?Sized> Iterator for RuleBreakIterator<'
 
                     let previous_break_state = break_state;
                     break_state = self.get_break_state_from_table(break_state as u8, prop);
-                    println!("> left={:02X} right={:02X} state={:02X}", previous_break_state, prop, break_state);
-                    println!("> left={} right={}", STATE_NAMES[(previous_break_state & !INTERMEDIATE_MATCH_RULE) as usize], STATE_NAMES[prop as usize]);
                     if break_state < 0 {
                         break;
                     }
@@ -177,7 +169,6 @@ impl<'l, 's, Y: RuleBreakType<'l, 's> + ?Sized> Iterator for RuleBreakIterator<'
                         previous_left_prop = break_state as u8;
                     }
                     if (break_state & INTERMEDIATE_MATCH_RULE) != 0 {
-                        println!("going through intermediate match rule");
                         break_state -= INTERMEDIATE_MATCH_RULE;
                         previous_iter = self.iter.clone();
                         previous_pos_data = self.current_pos_data;
