@@ -3,7 +3,6 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::transform::cldr::cldr_serde;
-use icu_calendar::provider::EraStartDate;
 use icu_datetime::provider::calendar::*;
 use icu_locid::{
     extensions::unicode::{key, value},
@@ -13,9 +12,8 @@ use icu_provider::datagen::IterableDataProvider;
 use icu_provider::prelude::*;
 use once_cell::sync::OnceCell;
 use std::collections::HashMap;
-use std::collections::HashSet;
-use std::str::FromStr;
 
+mod neo;
 mod patterns;
 mod skeletons;
 mod symbols;
@@ -127,33 +125,16 @@ macro_rules! impl_data_provider {
                 if calendar == value!("japanese") || calendar == value!("japanext") {
                     // Filter out non-modern eras
                     if calendar != value!("japanext") {
-                        let era_dates: &cldr_serde::japanese::Resource = self
-                            .cldr()?
-                            .core()
-                            .read_and_parse("supplemental/calendarData.json")?;
-                        let mut set = HashSet::<String>::new();
-                        for (era_index, date) in era_dates.supplemental.calendar_data.japanese.eras.iter() {
-                            let start_date =
-                                EraStartDate::from_str(if let Some(start_date) = date.start.as_ref() {
-                                    start_date
-                                } else {
-                                    continue;
-                                })
-                                .map_err(|_| {
-                                    DataError::custom(
-                                        "calendarData.json contains unparseable data for a japanese era",
-                                    )
-                                    .with_display_context(&format!("era index {}", era_index))
-                                })?;
-
-                            if start_date.year >= 1868 {
-                                set.insert(era_index.into());
-                            }
-                        }
-
-                        data.eras.names.retain(|e, _| set.contains(e));
-                        data.eras.abbr.retain(|e, _| set.contains(e));
-                        data.eras.narrow.retain(|e, _| set.contains(e));
+                        let modern_japanese_eras = self.cldr()?.modern_japanese_eras()?;
+                        data.eras
+                            .names
+                            .retain(|e, _| modern_japanese_eras.contains(e));
+                        data.eras
+                            .abbr
+                            .retain(|e, _| modern_japanese_eras.contains(e));
+                        data.eras
+                            .narrow
+                            .retain(|e, _| modern_japanese_eras.contains(e));
                     }
 
                     // Splice in gregorian data for pre-meiji

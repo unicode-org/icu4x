@@ -453,9 +453,18 @@ field_type! (
         /// Field symbol for related ISO; some calendars which use different year numbering than ISO, or no year numbering, may express years in an ISO year corresponding to a calendar year.
         'r' => RelatedIso = 3,
     };
-    Numeric;
     YearULE
 );
+
+impl LengthType for Year {
+    fn get_length_type(&self, _length: FieldLength) -> TextOrNumeric {
+        // https://unicode.org/reports/tr35/tr35-dates.html#dfst-year
+        match *self {
+            Year::Cyclic => TextOrNumeric::Text,
+            _ => TextOrNumeric::Numeric,
+        }
+    }
+}
 
 field_type!(
     /// An enum for the possible symbols of a month field in a date pattern.

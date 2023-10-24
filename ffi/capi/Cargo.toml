@@ -60,7 +60,7 @@ buffer_provider = [
     "icu_timezone?/serde",
 ]
 provider_fs = ["dep:icu_provider_fs", "buffer_provider"]
-logging = ["icu_provider/logging", "dep:log"]
+logging = ["icu_provider/logging", "dep:log", "diplomat-runtime/log"]
 simple_logger = ["dep:simple_logger", "logging"]
 
 # Legacy features

@@ -993,6 +993,19 @@ impl AuxiliaryKeys {
     }
 }
 
+#[cfg(feature = "experimental")]
+impl From<Subtag> for AuxiliaryKeys {
+    fn from(subtag: Subtag) -> Self {
+        #[allow(clippy::expect_used)] // subtags definitely fit within auxiliary keys
+        Self {
+            value: AuxiliaryKeysInner::Stack(
+                TinyAsciiStr::from_bytes(subtag.as_str().as_bytes())
+                    .expect("Subtags are capped to 8 elements, AuxiliaryKeys supports up to 23"),
+            ),
+        }
+    }
+}
+
 #[test]
 fn test_data_locale_to_string() {
     use icu_locid::locale;

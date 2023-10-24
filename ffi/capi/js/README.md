@@ -3,7 +3,6 @@
 This folder contains the JavaScript/TypeScript FFI for ICU4X. To re-generate the bindings run:
 
 ```sh
-cargo make diplomat-install
 cargo make diplomat-gen-js
 ```
 

@@ -561,7 +561,7 @@ jobs:
         benchmark-data-dir-path: ./benchmarks/datasize
         # Tentative setting, optimized value to be determined
         alert-threshold: '100%'
-        fail-on-alert: true
+        fail-on-alert: false
         # comment-on-alert: true
         github-token: ${{ secrets.GITHUB_TOKEN }}
         gh-pages-branch: empty

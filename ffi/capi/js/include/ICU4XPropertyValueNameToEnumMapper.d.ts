@@ -56,6 +56,13 @@ export class ICU4XPropertyValueNameToEnumMapper {
 
   /**
 
+   * See the {@link https://docs.rs/icu/latest/icu/properties/struct.IndicSyllabicCategory.html#method.name_to_enum_mapper Rust documentation for `name_to_enum_mapper`} for more information.
+   * @throws {@link FFIError}<{@link ICU4XError}>
+   */
+  static load_indic_syllabic_category(provider: ICU4XDataProvider): ICU4XPropertyValueNameToEnumMapper | never;
+
+  /**
+
    * See the {@link https://docs.rs/icu/latest/icu/properties/struct.LineBreak.html#method.name_to_enum_mapper Rust documentation for `name_to_enum_mapper`} for more information.
    * @throws {@link FFIError}<{@link ICU4XError}>
    */

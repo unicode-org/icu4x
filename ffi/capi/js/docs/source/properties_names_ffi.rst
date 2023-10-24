@@ -71,6 +71,11 @@
         See the `Rust documentation for name_to_enum_mapper <https://docs.rs/icu/latest/icu/properties/struct.EastAsianWidth.html#method.name_to_enum_mapper>`__ for more information.
 
 
+    .. js:function:: load_indic_syllabic_category(provider)
+
+        See the `Rust documentation for name_to_enum_mapper <https://docs.rs/icu/latest/icu/properties/struct.IndicSyllabicCategory.html#method.name_to_enum_mapper>`__ for more information.
+
+
     .. js:function:: load_line_break(provider)
 
         See the `Rust documentation for name_to_enum_mapper <https://docs.rs/icu/latest/icu/properties/struct.LineBreak.html#method.name_to_enum_mapper>`__ for more information.
