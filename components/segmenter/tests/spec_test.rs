@@ -242,6 +242,8 @@ fn sentence_break_test(filename: &str) {
                     sb_name
                         .get(sb.get(c))
                         .unwrap_or(&format!("{:?}", sb.get(c))),
+                    // Placeholder for logging the state if exposed.
+                    // Not "?????" to hide from clippy.
                     "?".repeat(5),
                     c
                 )
