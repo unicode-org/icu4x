@@ -134,7 +134,7 @@ impl<'l, 's, Y: RuleBreakType<'l, 's> + ?Sized> Iterator for RuleBreakIterator<'
                 let mut previous_left_prop = left_prop;
 
                 if (break_state & INTERMEDIATE_MATCH_RULE) != 0 {
-                    break_state -= INTERMEDIATE_MATCH_RULE;
+                    break_state &= !INTERMEDIATE_MATCH_RULE;
                 }
                 loop {
                     self.advance_iter();

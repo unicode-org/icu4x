@@ -40,7 +40,7 @@ serde = { version = "1.0", default-features = false, features = ["derive"] }
 serde_json = "1.0"
 icu = { path = "../../components/icu", default-features = false }
 itertools = "0.10"
-icu_properties = { workspace = true }
+icu_properties = { workspace = true, features = ["compiled_data"] }
 
 [target.'cfg(not(target_arch = "wasm32"))'.dev-dependencies]
 criterion = "0.4"
@@ -52,7 +52,7 @@ serde = ["dep:serde", "zerovec/serde", "icu_collections/serde", "icu_provider/se
 datagen = ["serde", "dep:databake", "zerovec/databake", "icu_collections/databake"]
 lstm = ["dep:core_maths"]
 auto = ["lstm"] # Enabled try_new_auto_unstable constructors
-compiled_data = ["dep:icu_segmenter_data", "icu_properties/compiled_data"]
+compiled_data = ["dep:icu_segmenter_data"]
 bench = []
 
 [lib]
