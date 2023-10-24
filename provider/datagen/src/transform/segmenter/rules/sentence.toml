@@ -626,7 +626,7 @@ left = [
   "STerm_Close_Sp_ParaSep",
   "STerm_Close_Sp_CR"
 ]
-right = [ "ATerm", "Lower", "OLetter", "Upper", "Numeric", "STerm", "CR", "LF" ]
+right = [ "ATerm", "Lower", "OLetter", "Upper", "Numeric", "STerm", "CR", "LF", "Sep" ]
 break_state = true
 
 [[rules]]
