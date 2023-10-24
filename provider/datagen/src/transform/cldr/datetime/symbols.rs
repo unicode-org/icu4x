@@ -42,7 +42,11 @@ fn convert_eras(eras: &cldr_serde::ca::Eras, calendar: &str) -> Eras<'static> {
     }
     out_eras
 }
-/// Returns a month code map and whether the map has leap months
+/// Returns a month code map and whether the map contains leap months
+///
+/// (a return value of false does not necessarily mean the calendar itself does not
+/// contain leap months; just if the map does. calendars like chinese where every month can
+/// be leap will return false here)
 pub(super) fn get_month_code_map(calendar: &str) -> (&'static [TinyStr4], bool) {
     // This will need to be more complicated to handle lunar calendars
     // https://github.com/unicode-org/icu4x/issues/2066

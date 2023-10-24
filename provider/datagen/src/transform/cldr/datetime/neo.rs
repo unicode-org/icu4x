@@ -408,7 +408,7 @@ fn years_convert(
 
 fn months_convert(
     _datagen: &DatagenProvider,
-    _langid: &LanguageIdentifier,
+    langid: &LanguageIdentifier,
     data: &ca::Dates,
     calendar: &Value,
     context: Context,
@@ -458,7 +458,29 @@ fn months_convert(
                 panic!("Calendar {calendar} does not have data for month {i}; found data for {symbols:?}");
             }
         }
-        Ok(MonthSymbolsV1::Numeric((&symbols).into()))
+
+        if let Some(ref patterns) = data.month_patterns {
+            let pattern = patterns.get_symbols(context, length);
+            let leap = &pattern.leap;
+
+            let Some(index) = 
+                leap
+                .find("{}")
+                else {
+                    panic!("Calendar {calendar} for {langid} has leap patterh {leap}, which does not contain {{}} placeholder");
+                };
+            let string = leap.replace("{}", "");
+            let pattern = SimpleSubstitutionPattern {
+                pattern: string.into(),
+                subst_index: index,
+            };
+            Ok(MonthSymbolsV1::NumericWithLeap {
+                months: (&symbols).into(),
+                leap_pattern: pattern,
+            })
+        } else {
+            Ok(MonthSymbolsV1::Numeric((&symbols).into()))
+        }
     }
 }
 
