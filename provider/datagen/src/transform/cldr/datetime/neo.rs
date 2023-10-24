@@ -421,15 +421,25 @@ fn months_convert(
     let (map, has_leap) = super::symbols::get_month_code_map(&calendar_str);
 
     if has_leap {
+        assert!(*calendar == value!("hebrew"));
         let mut symbols = vec![""; 24];
         for (k, v) in months.0.iter() {
-            let index = if k == "7-yeartype-leap" && *calendar == value!("hebrew") {
+            // CLDR's numbering for hebrew has Adar I as 6, Adar as 7, and Adar II as 7-yeartype-leap
+            //
+            // So we need to handle the 6 and 7 cases as leap months, and everything after 6 needs to
+            // be offset by 1
+            let index = if k == "7-yeartype-leap" {
                 7 + 11
+            } else if k == "6" {
+                6 + 11
             } else {
-                let index: usize = k
+                let mut index: usize = k
                     .parse()
                     .expect("CLDR month indices must parse as numbers!");
 
+                if index > 5 {
+                    index += 1;
+                }
                 if index == 0 {
                     panic!("CLDR month indices cannot be zero");
                 }
