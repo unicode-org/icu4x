@@ -365,3 +365,13 @@ pub struct DateTimePatternV1<'data> {
     #[cfg_attr(feature = "serde", serde(borrow))]
     pub pattern: runtime::GenericPattern<'data>,
 }
+
+// pub(crate) struct ErasedYearSymbolsV1Marker;
+// impl DataMarker for ErasedYearSymbolsV1Marker {
+//     type Yokeable = YearSymbolsV1<'static>;
+// }
+
+// pub(crate) struct ErasedMonthSymbolsV1Marker;
+// impl DataMarker for ErasedMonthSymbolsV1Marker {
+//     type Yokeable = MonthSymbolsV1<'static>;
+// }
