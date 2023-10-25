@@ -919,8 +919,8 @@ impl AuxiliaryKeys {
     /// # Examples
     ///
     /// ```
-    /// use icu_locid::extensions::private::subtag;
     /// use icu_provider::prelude::*;
+    /// use icu_locid::extensions::private::subtag;
     ///
     /// // Single auxiliary key:
     /// let a = AuxiliaryKeys::from_subtag(subtag!("abc"));
@@ -929,7 +929,7 @@ impl AuxiliaryKeys {
     /// ```
     pub const fn from_subtag(input: Subtag) -> Self {
         Self {
-            value: AuxiliaryKeysInner::Stack(input.into_tinystr().resize()),
+            value: AuxiliaryKeysInner::Stack(input.into_tinystr().resize())
         }
     }
 
