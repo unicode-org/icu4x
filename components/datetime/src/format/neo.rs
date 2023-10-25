@@ -7,7 +7,7 @@ use crate::calendar::CldrCalendar;
 use crate::error::DateTimeError as Error;
 use crate::fields;
 use crate::input;
-use crate::input::DateInput;
+use crate::input::DateTimeInput;
 use crate::input::DateTimeInputWithWeekConfig;
 use crate::input::ExtractedDateTimeInput;
 use crate::input::LocalizedDateTimeInput;
@@ -25,6 +25,8 @@ use icu_locid::extensions::private::subtag;
 use icu_provider::prelude::*;
 use icu_provider::prelude::*;
 use writeable::Writeable;
+use icu_decimal::options::FixedDecimalFormatterOptions;
+use icu_decimal::options::GroupingStrategy;
 
 /// A low-level type that formats datetime patterns with localized symbols.
 pub struct DateTimePatternInterpolator<C: CldrCalendar> {
@@ -41,7 +43,9 @@ pub struct DateTimePatternInterpolator<C: CldrCalendar> {
 impl<C: CldrCalendar> DateTimePatternInterpolator<C> {
     #[cfg(feature = "compiled_data")]
     pub fn try_new(locale: &DataLocale) -> Result<Self, Error> {
-        let fixed_decimal_formatter = FixedDecimalFormatter::try_new(locale, Default::default())?;
+        let mut fixed_decimal_format_options = FixedDecimalFormatterOptions::default();
+        fixed_decimal_format_options.grouping_strategy = GroupingStrategy::Never;
+        let fixed_decimal_formatter = FixedDecimalFormatter::try_new(locale, fixed_decimal_format_options)?;
         Ok(Self::new_internal(locale.clone(), fixed_decimal_formatter))
     }
 
@@ -49,8 +53,10 @@ impl<C: CldrCalendar> DateTimePatternInterpolator<C> {
     where
         P: DataProvider<DecimalSymbolsV1Marker> + ?Sized,
     {
+        let mut fixed_decimal_format_options = FixedDecimalFormatterOptions::default();
+        fixed_decimal_format_options.grouping_strategy = GroupingStrategy::Never;
         let fixed_decimal_formatter =
-            FixedDecimalFormatter::try_new_unstable(provider, locale, Default::default())?;
+            FixedDecimalFormatter::try_new_unstable(provider, locale, fixed_decimal_format_options)?;
         Ok(Self::new_internal(locale.clone(), fixed_decimal_formatter))
     }
 
@@ -115,14 +121,14 @@ impl<C: CldrCalendar> DateTimePatternInterpolator<C> {
     pub fn format<'l, T>(
         &'l self,
         pattern: &'l Pattern<'l>,
-        value: &T,
+        datetime: &T,
     ) -> FormattedDateTimePattern<'l>
     where
-        T: DateInput<Calendar = C>,
+        T: DateTimeInput<Calendar = C>,
     {
         FormattedDateTimePattern {
             pattern,
-            datetime: ExtractedDateTimeInput::extract_from_date(value),
+            datetime: ExtractedDateTimeInput::extract_from(datetime),
             interpolator: self.as_borrowed(),
         }
     }
@@ -168,8 +174,36 @@ impl<'data> DateSymbols<'data> for ErasedDateTimePatternInterpolatorBorrowed<'da
         length: fields::FieldLength,
         code: MonthCode,
     ) -> Result<(&str, bool), Error> {
-        todo!();
-        // let (month_index, is_leap) = code.parsed();
+        // TODO: This should be MissingMonthSymbols in neo
+        let month_symbols = self.month_symbols.ok_or(Error::MissingDateSymbols)?;
+        let Some((month_number, is_leap)) = code.parsed() else {
+            // TODO: What error to return here?
+            panic!()
+        };
+        // TODO: What error to return here?
+        let month_index = usize::from(month_number.checked_sub(1).unwrap());
+        let symbol = match month_symbols {
+            MonthSymbolsV1::Linear(linear) => {
+                if is_leap {
+                    None
+                } else {
+                    linear.get(month_index)
+                }
+            }
+            MonthSymbolsV1::LeapLinear(leap_linear) => {
+                let num_months = leap_linear.len() / 2;
+                if is_leap {
+                    leap_linear.get(month_index + num_months)
+                } else if month_index < num_months {
+                    leap_linear.get(month_index)
+                } else {
+                    None
+                }
+            }
+        };
+        // Note: Always return `false` for the second argument since neo MonthSymbols
+        // knows how to handle leap months and we don't need the fallback logic
+        symbol.map(|s| (s, false)).ok_or_else(|| Error::MissingMonthSymbol(code))
     }
 
     fn get_symbol_for_weekday(
@@ -220,6 +254,6 @@ mod tests {
         let datetime = DateTime::try_new_gregorian_datetime(2023, 10, 25, 15, 0, 55).unwrap();
         let formatted_pattern = interpolator.format(&pattern, &datetime);
 
-        assert_writeable_eq!(formatted_pattern, "hello");
+        assert_writeable_eq!(formatted_pattern, "It is Oct 25, 2023 at 15:00!");
     }
 }
