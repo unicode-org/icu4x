@@ -25,7 +25,7 @@ macro_rules! __make_provider {
 #[doc(inline)]
 pub use __make_provider as make_provider;
 #[macro_use]
-#[path = "macros/decimal_symbols_v1.data.rs"]
+#[path = "macros/decimal_symbols_v1.rs.data"]
 mod decimal_symbols_v1;
 #[doc(inline)]
 pub use __impl_decimal_symbols_v1 as impl_decimal_symbols_v1;

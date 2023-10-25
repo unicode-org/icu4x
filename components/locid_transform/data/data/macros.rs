@@ -25,42 +25,42 @@ macro_rules! __make_provider {
 #[doc(inline)]
 pub use __make_provider as make_provider;
 #[macro_use]
-#[path = "macros/fallback_likelysubtags_v1.data.rs"]
+#[path = "macros/fallback_likelysubtags_v1.rs.data"]
 mod fallback_likelysubtags_v1;
 #[doc(inline)]
 pub use __impl_fallback_likelysubtags_v1 as impl_fallback_likelysubtags_v1;
 #[macro_use]
-#[path = "macros/fallback_parents_v1.data.rs"]
+#[path = "macros/fallback_parents_v1.rs.data"]
 mod fallback_parents_v1;
 #[doc(inline)]
 pub use __impl_fallback_parents_v1 as impl_fallback_parents_v1;
 #[macro_use]
-#[path = "macros/fallback_supplement_co_v1.data.rs"]
+#[path = "macros/fallback_supplement_co_v1.rs.data"]
 mod fallback_supplement_co_v1;
 #[doc(inline)]
 pub use __impl_fallback_supplement_co_v1 as impl_fallback_supplement_co_v1;
 #[macro_use]
-#[path = "macros/locid_transform_aliases_v1.data.rs"]
+#[path = "macros/locid_transform_aliases_v1.rs.data"]
 mod locid_transform_aliases_v1;
 #[doc(inline)]
 pub use __impl_locid_transform_aliases_v1 as impl_locid_transform_aliases_v1;
 #[macro_use]
-#[path = "macros/locid_transform_likelysubtags_ext_v1.data.rs"]
+#[path = "macros/locid_transform_likelysubtags_ext_v1.rs.data"]
 mod locid_transform_likelysubtags_ext_v1;
 #[doc(inline)]
 pub use __impl_locid_transform_likelysubtags_ext_v1 as impl_locid_transform_likelysubtags_ext_v1;
 #[macro_use]
-#[path = "macros/locid_transform_likelysubtags_l_v1.data.rs"]
+#[path = "macros/locid_transform_likelysubtags_l_v1.rs.data"]
 mod locid_transform_likelysubtags_l_v1;
 #[doc(inline)]
 pub use __impl_locid_transform_likelysubtags_l_v1 as impl_locid_transform_likelysubtags_l_v1;
 #[macro_use]
-#[path = "macros/locid_transform_likelysubtags_sr_v1.data.rs"]
+#[path = "macros/locid_transform_likelysubtags_sr_v1.rs.data"]
 mod locid_transform_likelysubtags_sr_v1;
 #[doc(inline)]
 pub use __impl_locid_transform_likelysubtags_sr_v1 as impl_locid_transform_likelysubtags_sr_v1;
 #[macro_use]
-#[path = "macros/locid_transform_script_dir_v1.data.rs"]
+#[path = "macros/locid_transform_script_dir_v1.rs.data"]
 mod locid_transform_script_dir_v1;
 #[doc(inline)]
 pub use __impl_locid_transform_script_dir_v1 as impl_locid_transform_script_dir_v1;

@@ -289,7 +289,7 @@ impl BakedExporter {
         let prefixed_macro_ident = format!("__impl_{ident}").parse::<TokenStream>().unwrap();
 
         self.write_to_file(
-            PathBuf::from(format!("macros/{}.data.rs", ident)),
+            PathBuf::from(format!("macros/{}.rs.data", ident)),
             quote! {
                 #[doc = #doc]
                 /// hardcoded in this file. This allows the struct to be used with
@@ -618,7 +618,7 @@ impl BakedExporter {
                 // normal scoping that clients can control.
                 format!("__impl_{}", ident).parse::<TokenStream>().unwrap(),
                 ident.parse::<TokenStream>().unwrap(),
-                format!("macros/{}.data.rs", ident),
+                format!("macros/{}.rs.data", ident),
             )
         }));
 
