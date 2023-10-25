@@ -21,6 +21,7 @@ use std::collections::BTreeMap;
 use tinystr::TinyAsciiStr;
 use zerovec::ule::UnvalidatedStr;
 
+const NUMERIC: Subtag = subtag!("1");
 const ABBR: Subtag = subtag!("3");
 const NARROW: Subtag = subtag!("4");
 const WIDE: Subtag = subtag!("5");
@@ -48,6 +49,7 @@ const PATTERN_SHORT24: Subtag = subtag!("s24");
 fn aux_subtag_info(subtag: Subtag) -> (Context, Length) {
     use {Context::*, Length::*};
     match subtag {
+        NUMERIC => (Format, Numeric),
         ABBR => (Format, Abbr),
         NARROW => (Format, Narrow),
         WIDE => (Format, Wide),
@@ -91,6 +93,16 @@ const NORMAL_KEY_LENGTHS: &[Subtag] = &[
     ABBR_STANDALONE,
     NARROW_STANDALONE,
     WIDE_STANDALONE,
+];
+
+const NUMERIC_MONTHS_KEY_LENGTHS: &[Subtag] = &[
+    ABBR,
+    NARROW,
+    WIDE,
+    ABBR_STANDALONE,
+    NARROW_STANDALONE,
+    WIDE_STANDALONE,
+    NUMERIC,
 ];
 
 const YEARS_KEY_LENGTHS: &[Subtag] = &[ABBR, NARROW, WIDE];
@@ -467,12 +479,34 @@ fn calendar_months(cal: &Value) -> (usize, bool) {
 
 fn months_convert(
     _datagen: &DatagenProvider,
-    _langid: &LanguageIdentifier,
+    langid: &LanguageIdentifier,
     data: &ca::Dates,
     calendar: &Value,
     context: Context,
     length: Length,
 ) -> Result<MonthSymbolsV1<'static>, DataError> {
+    if length == Length::Numeric {
+        assert_eq!(
+            context,
+            Context::Format,
+            "numeric months only found for Context::Format"
+        );
+        let Some(ref patterns) = data.month_patterns else {
+            panic!("No month_patterns found but numeric months were requested for {calendar} with {langid}");
+        };
+        let pattern = patterns.get_symbols(context, length);
+        let leap = &pattern.leap;
+        let Some(index) = leap.find("{0}") else {
+            panic!("Calendar {calendar} for {langid} has leap patterh {leap}, which does not contain {{0}} placeholder");
+        };
+        let string = leap.replace("{0}", "");
+        let pattern = SimpleSubstitutionPattern {
+            pattern: string.into(),
+            subst_index: index,
+        };
+        return Ok(MonthSymbolsV1::LeapNumeric(pattern));
+    }
+
     let months = data.months.get_symbols(context, length);
 
     let (month_count, has_leap) = calendar_months(calendar);
@@ -824,7 +858,7 @@ impl_symbols_datagen!(
 impl_symbols_datagen!(
     ChineseMonthSymbolsV1Marker,
     "chinese",
-    NORMAL_KEY_LENGTHS,
+    NUMERIC_MONTHS_KEY_LENGTHS, // has leap month patterns
     months_convert
 );
 impl_symbols_datagen!(
@@ -836,7 +870,7 @@ impl_symbols_datagen!(
 impl_symbols_datagen!(
     DangiMonthSymbolsV1Marker,
     "dangi",
-    NORMAL_KEY_LENGTHS,
+    NUMERIC_MONTHS_KEY_LENGTHS, // has leap month patterns
     months_convert
 );
 impl_symbols_datagen!(
