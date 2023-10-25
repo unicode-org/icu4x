@@ -31,24 +31,6 @@ icu_transliterate = { path = "../../experimental/transliterate" }
 icu_unicodeset_parse = { path = "../../experimental/unicodeset_parse" }
 icu_unitsconversion = { path = "../../experimental/unitsconversion" }
 
-# Components data
-icu_calendar_data = { path = "../../components/calendar/data" }
-icu_casemap_data = { path = "../../components/casemap/data" }
-icu_collator_data = { path = "../../components/collator/data" }
-icu_datetime_data = { path = "../../components/datetime/data" }
-icu_decimal_data = { path = "../../components/decimal/data" }
-icu_list_data = { path = "../../components/list/data" }
-icu_locid_transform_data = { path = "../../components/locid_transform/data" }
-icu_normalizer_data = { path = "../../components/normalizer/data" }
-icu_plurals_data = { path = "../../components/plurals/data" }
-icu_properties_data = { path = "../../components/properties/data"}
-icu_segmenter_data = { path = "../../components/segmenter/data" }
-icu_timezone_data = { path = "../../components/timezone/data" }
-icu_compactdecimal_data = { path = "../../experimental/compactdecimal/data" }
-icu_displaynames_data = { path = "../../experimental/displaynames/data" }
-icu_relativetime_data = { path = "../../experimental/relativetime/data" }
-icu_singlenumberformatter_data = { path = "../../experimental/single_number_formatter/data"}
-
 # FFI
 icu_capi = { path = "../../ffi/capi" }
 icu_capi_cdylib = { path = "../../ffi/capi_cdylib" }
@@ -64,6 +46,24 @@ icu_provider_adapters = { path = "../../provider/adapters" }
 icu_provider_blob = { path = "../../provider/blob" }
 icu_provider_fs = { path = "../../provider/fs/" }
 icu_provider_macros = { path = "../../provider/macros" }
+
+# Baked data
+icu_calendar_data = { path = "../../provider/baked/calendar" }
+icu_casemap_data = { path = "../../provider/baked/casemap" }
+icu_collator_data = { path = "../../provider/baked/collator" }
+icu_compactdecimal_data = { path = "../../provider/baked/compactdecimal" }
+icu_datetime_data = { path = "../../provider/baked/datetime" }
+icu_decimal_data = { path = "../../provider/baked/decimal" }
+icu_displaynames_data = { path = "../../provider/baked/displaynames" }
+icu_list_data = { path = "../../provider/baked/list" }
+icu_locid_transform_data = { path = "../../provider/baked/locid_transform" }
+icu_normalizer_data = { path = "../../provider/baked/normalizer" }
+icu_plurals_data = { path = "../../provider/baked/plurals" }
+icu_properties_data = { path = "../../provider/baked/properties"}
+icu_relativetime_data = { path = "../../provider/baked/relativetime" }
+icu_segmenter_data = { path = "../../provider/baked/segmenter" }
+icu_singlenumberformatter_data = { path = "../../provider/baked/singlenumberformatter"}
+icu_timezone_data = { path = "../../provider/baked/timezone" }
 
 crlify = { path = "../../utils/crlify" }
 databake = { path = "../../utils/databake" }
