@@ -2,6 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+use fixed_decimal::RoundingIncrement;
 use fixed_decimal::Sign;
 use fixed_decimal::SignDisplay;
 
@@ -36,6 +37,15 @@ pub mod ffi {
         Always,
         ExceptZero,
         Negative,
+    }
+
+    /// Increment used in a rounding operation.
+    #[diplomat::rust_link(fixed_decimal::RoundingIncrement, Enum)]
+    pub enum ICU4XRoundingIncrement {
+        MultiplesOf1,
+        MultiplesOf2,
+        MultiplesOf5,
+        MultiplesOf25,
     }
 
     impl ICU4XFixedDecimal {
@@ -220,6 +230,16 @@ pub mod ffi {
             self.0.trunc(position)
         }
 
+        #[diplomat::rust_link(fixed_decimal::FixedDecimal::trunc_to_increment, FnInStruct)]
+        #[diplomat::rust_link(
+            fixed_decimal::FixedDecimal::trunced_to_increment,
+            FnInStruct,
+            hidden
+        )]
+        pub fn trunc_to_increment(&mut self, position: i16, increment: ICU4XRoundingIncrement) {
+            self.0.trunc_to_increment(position, increment.into())
+        }
+
         #[diplomat::rust_link(fixed_decimal::FixedDecimal::half_trunc, FnInStruct)]
         #[diplomat::rust_link(fixed_decimal::FixedDecimal::half_trunced, FnInStruct, hidden)]
         pub fn half_trunc(&mut self, position: i16) {
@@ -318,6 +338,17 @@ impl From<ffi::ICU4XFixedDecimalSignDisplay> for SignDisplay {
             ffi::ICU4XFixedDecimalSignDisplay::Always => Self::Always,
             ffi::ICU4XFixedDecimalSignDisplay::ExceptZero => Self::ExceptZero,
             ffi::ICU4XFixedDecimalSignDisplay::Negative => Self::Negative,
+        }
+    }
+}
+
+impl From<ffi::ICU4XRoundingIncrement> for RoundingIncrement {
+    fn from(value: ffi::ICU4XRoundingIncrement) -> Self {
+        match value {
+            ffi::ICU4XRoundingIncrement::MultiplesOf1 => RoundingIncrement::MultiplesOf1,
+            ffi::ICU4XRoundingIncrement::MultiplesOf2 => RoundingIncrement::MultiplesOf2,
+            ffi::ICU4XRoundingIncrement::MultiplesOf5 => RoundingIncrement::MultiplesOf5,
+            ffi::ICU4XRoundingIncrement::MultiplesOf25 => RoundingIncrement::MultiplesOf25,
         }
     }
 }

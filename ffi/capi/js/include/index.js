@@ -97,6 +97,7 @@ export { ICU4XPluralRulesWithRanges } from './ICU4XPluralRulesWithRanges.js';
 export { ICU4XPropertyValueNameToEnumMapper } from './ICU4XPropertyValueNameToEnumMapper.js';
 export { ICU4XRegionDisplayNames } from './ICU4XRegionDisplayNames.js';
 export { ICU4XReorderedIndexMap } from './ICU4XReorderedIndexMap.js';
+export { ICU4XRoundingIncrement } from './ICU4XRoundingIncrement.js';
 export { ICU4XScriptExtensionsSet } from './ICU4XScriptExtensionsSet.js';
 export { ICU4XScriptWithExtensions } from './ICU4XScriptWithExtensions.js';
 export { ICU4XScriptWithExtensionsBorrowed } from './ICU4XScriptWithExtensionsBorrowed.js';

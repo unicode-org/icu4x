@@ -159,6 +159,26 @@ pub enum SignDisplay {
     Negative,
 }
 
+/// Increment used in a rounding operation.
+///
+/// Forces a rounding operation to round to only multiples of the specified increment.
+#[derive(Debug, Eq, PartialEq, Clone, Copy, Default)]
+#[non_exhaustive]
+pub enum RoundingIncrement {
+    /// Round the last digit to any digit (0-9).
+    ///
+    /// This is the default rounding increment for all the methods that don't take a
+    /// `RoundingIncrement` as an argument.
+    #[default]
+    MultiplesOf1,
+    /// Round the last digit to only multiples of two (0, 2, 4, 6, 8).
+    MultiplesOf2,
+    /// Round the last digit to only multiples of five (0, 5).
+    MultiplesOf5,
+    /// Round the last two digits to only multiples of twenty-five (0, 25, 50, 75).
+    MultiplesOf25,
+}
+
 impl Default for FixedDecimal {
     /// Returns a `FixedDecimal` representing zero.
     fn default() -> Self {
@@ -989,6 +1009,60 @@ impl FixedDecimal {
     /// assert_eq!("1", dec.to_string());
     /// ```
     pub fn trunc(&mut self, position: i16) {
+        self.trunc_to_increment(position, RoundingIncrement::MultiplesOf1)
+    }
+
+    /// Truncates the number on the right to a particular position and rounding
+    /// increment, deleting digits if necessary.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use fixed_decimal::{FixedDecimal, RoundingIncrement};
+    /// # use std::str::FromStr;
+    ///
+    /// let mut dec = FixedDecimal::from_str("-3.5").unwrap();
+    /// assert_eq!("-2", dec.trunced_to_increment(0, RoundingIncrement::MultiplesOf2).to_string());
+    /// let mut dec = FixedDecimal::from_str("7.57").unwrap();
+    /// assert_eq!("7.5", dec.trunced_to_increment(-1, RoundingIncrement::MultiplesOf5).to_string());
+    /// let mut dec = FixedDecimal::from_str("5.45").unwrap();
+    /// assert_eq!("5.25", dec.trunced_to_increment(-2, RoundingIncrement::MultiplesOf25).to_string());
+    /// let mut dec = FixedDecimal::from_str("9.99").unwrap();
+    /// assert_eq!("7.5", dec.trunced_to_increment(-1, RoundingIncrement::MultiplesOf25).to_string());
+    /// let mut dec = FixedDecimal::from_str("9.99").unwrap();
+    /// assert_eq!("9.98", dec.trunced_to_increment(-2, RoundingIncrement::MultiplesOf2).to_string());
+    /// ```
+    pub fn trunced_to_increment(mut self, position: i16, increment: RoundingIncrement) -> Self {
+        self.trunc_to_increment(position, increment);
+        self
+    }
+
+    /// Truncates the number on the right to a particular position and rounding
+    /// increment, deleting digits if necessary.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use fixed_decimal::{FixedDecimal, RoundingIncrement};
+    /// # use std::str::FromStr;
+    ///
+    /// let mut dec = FixedDecimal::from_str("-3.5").unwrap();
+    /// dec.trunc_to_increment(0, RoundingIncrement::MultiplesOf2);
+    /// assert_eq!("-2", dec.to_string());
+    /// let mut dec = FixedDecimal::from_str("7.57").unwrap();
+    /// dec.trunc_to_increment(-1, RoundingIncrement::MultiplesOf5);
+    /// assert_eq!("7.5", dec.to_string());
+    /// let mut dec = FixedDecimal::from_str("5.45").unwrap();
+    /// dec.trunc_to_increment(-2, RoundingIncrement::MultiplesOf25);
+    /// assert_eq!("5.25", dec.to_string());
+    /// let mut dec = FixedDecimal::from_str("9.99").unwrap();
+    /// dec.trunc_to_increment(-1, RoundingIncrement::MultiplesOf25);
+    /// assert_eq!("7.5", dec.to_string());
+    /// let mut dec = FixedDecimal::from_str("9.99").unwrap();
+    /// dec.trunc_to_increment(-2, RoundingIncrement::MultiplesOf2);
+    /// assert_eq!("9.98", dec.to_string());
+    /// ```
+    pub fn trunc_to_increment(&mut self, position: i16, increment: RoundingIncrement) {
         // 1. Set upper and lower magnitude
         self.lower_magnitude = cmp::min(position, 0);
         if position == i16::MIN {
@@ -1000,8 +1074,21 @@ impl FixedDecimal {
         let magnitude = position - 1;
         self.upper_magnitude = cmp::max(self.upper_magnitude, magnitude);
 
-        // 2. If the rounding position is *lower than* the rightmost nonzero digit, exit early
-        if self.is_zero() || magnitude < self.nonzero_magnitude_end() {
+        // 2. If the rounding position is *lower than* the required digits to round to the next
+        // multiple, exit early.
+        let past_required_digits = match increment {
+            RoundingIncrement::MultiplesOf1 => magnitude < self.nonzero_magnitude_end(),
+            RoundingIncrement::MultiplesOf2 | RoundingIncrement::MultiplesOf5 => {
+                // We can early exit if the digit at `magnitude + 1` is zero.
+                magnitude + 1 < self.nonzero_magnitude_end()
+            }
+            RoundingIncrement::MultiplesOf25 => {
+                // We can early exit if the digits at `magniture + 1` and `magnitude + 2` are
+                // both zeroes.
+                magnitude + 2 < self.nonzero_magnitude_end()
+            }
+        };
+        if self.is_zero() || past_required_digits {
             #[cfg(debug_assertions)]
             self.check_invariants();
             return;
@@ -1010,22 +1097,81 @@ impl FixedDecimal {
         // 3. If the rounding position is *in the middle* of the nonzero digits
         if magnitude < self.magnitude {
             // 3a. Calculate the number of digits to retain and remove the rest
-            let digits_to_retain = crate::ops::i16_abs_sub(self.magnitude, magnitude);
-            self.digits.truncate(digits_to_retain as usize);
-            // 3b. Remove trailing zeros from self.digits to retain invariants
-            // Note: this does not affect visible trailing zeros,
-            // which is tracked by self.lower_magnitude
-            let position_past_last_nonzero_digit = self
+            let digits_to_retain = crate::ops::i16_abs_sub(self.magnitude, magnitude) as usize;
+            self.digits.truncate(digits_to_retain);
+
+            // 3b. Truncate to the previous multiple.
+            match increment {
+                RoundingIncrement::MultiplesOf1 => {
+                    // No need to do more work, trailing zeroes are removed below.
+                }
+                RoundingIncrement::MultiplesOf2 => {
+                    let Some(last_digit) = self.digits.last_mut() else {
+                        // Unreachable
+                        return;
+                    };
+
+                    // Equivalent to (n / 2) * 2, which truncates to the previous
+                    // multiple of two
+                    *last_digit &= 0xFE;
+                }
+                RoundingIncrement::MultiplesOf5 => {
+                    let Some(last_digit) = self.digits.last_mut() else {
+                        // Unreachable
+                        return;
+                    };
+
+                    *last_digit = if *last_digit < 5 { 0 } else { 5 };
+                }
+                RoundingIncrement::MultiplesOf25 => {
+                    // Extend with zeroes to have the correct trailing digits.
+                    self.digits.resize(digits_to_retain, 0);
+
+                    let Some((last_digit, digits)) = self.digits.split_last_mut() else {
+                        // Unreachable.
+                        return;
+                    };
+
+                    if let Some(second_last_digit) = digits.last_mut() {
+                        let number = *second_last_digit * 10 + *last_digit;
+
+                        // Trailing zeroes will be removed below. We can defer
+                        // the deletion to there.
+                        (*second_last_digit, *last_digit) = if number < 25 {
+                            (0, 0)
+                        } else if number < 50 {
+                            (2, 5)
+                        } else if number < 75 {
+                            (5, 0)
+                        } else {
+                            (7, 5)
+                        };
+                    } else {
+                        // The number has no other digits aside from the last,
+                        // making it strictly less than 25.
+                        *last_digit = 0;
+                    };
+                }
+            }
+
+            // 3c. Handle the case where `digits` has trailing zeroes after
+            // truncating to the previous multiple.
+            let position_last_nonzero_digit = self
                 .digits
                 .iter()
                 .rposition(|x| *x != 0)
                 .map(|x| x + 1)
                 .unwrap_or(0);
-            self.digits.truncate(position_past_last_nonzero_digit);
-            // 3c. By the invariant, there should still be at least 1 nonzero digit
-            debug_assert!(!self.digits.is_empty());
+            self.digits.truncate(position_last_nonzero_digit);
+
+            // 3d. If `digits` had only trailing zeroes after truncating,
+            // reset to zero.
+            if self.digits.is_empty() {
+                self.magnitude = 0;
+            }
         } else {
-            // 4. If the rounding position is *above* the leftmost nonzero digit, set to zero
+            // 4. If the rounding position is *above* the leftmost nonzero
+            // digit, set to zero
             self.digits.clear();
             self.magnitude = 0;
         }
@@ -3462,4 +3608,58 @@ fn test_concatenate() {
             }
         }
     }
+}
+
+#[test]
+fn test_rounding_increment() {
+    // Test Truncate Right
+    let mut dec = FixedDecimal::from(4235970).multiplied_pow10(-3);
+    assert_eq!("4235.970", dec.to_string());
+
+    dec.trunc_to_increment(-2, RoundingIncrement::MultiplesOf2);
+    assert_eq!("4235.96", dec.to_string());
+
+    dec.trunc_to_increment(-1, RoundingIncrement::MultiplesOf5);
+    assert_eq!("4235.5", dec.to_string());
+
+    dec.trunc_to_increment(0, RoundingIncrement::MultiplesOf25);
+    assert_eq!("4225", dec.to_string());
+
+    dec.trunc_to_increment(5, RoundingIncrement::MultiplesOf5);
+    assert_eq!("00000", dec.to_string());
+
+    dec.trunc_to_increment(2, RoundingIncrement::MultiplesOf2);
+    assert_eq!("00000", dec.to_string());
+
+    let mut dec = FixedDecimal::from_str("-99.999").unwrap();
+    dec.trunc_to_increment(-2, RoundingIncrement::MultiplesOf25);
+    assert_eq!("-99.75", dec.to_string());
+
+    let mut dec = FixedDecimal::from_str("1234.56").unwrap();
+    dec.trunc_to_increment(-1, RoundingIncrement::MultiplesOf2);
+    assert_eq!("1234.4", dec.to_string());
+
+    let mut dec = FixedDecimal::from_str("0.009").unwrap();
+    dec.trunc_to_increment(-1, RoundingIncrement::MultiplesOf5);
+    assert_eq!("0.0", dec.to_string());
+
+    let mut dec = FixedDecimal::from_str("0.60").unwrap();
+    dec.trunc_to_increment(-2, RoundingIncrement::MultiplesOf25);
+    assert_eq!("0.50", dec.to_string());
+
+    let mut dec = FixedDecimal::from_str("0.40").unwrap();
+    dec.trunc_to_increment(-2, RoundingIncrement::MultiplesOf25);
+    assert_eq!("0.25", dec.to_string());
+
+    let mut dec = FixedDecimal::from_str("0.7000000099").unwrap();
+    dec.trunc_to_increment(-3, RoundingIncrement::MultiplesOf2);
+    assert_eq!("0.700", dec.to_string());
+
+    let mut dec = FixedDecimal::from_str("5").unwrap();
+    dec.trunc_to_increment(0, RoundingIncrement::MultiplesOf25);
+    assert_eq!("0", dec.to_string());
+
+    let mut dec = FixedDecimal::from_str("0.3").unwrap();
+    dec.trunc_to_increment(-1, RoundingIncrement::MultiplesOf2);
+    assert_eq!("0.2", dec.to_string());
 }
