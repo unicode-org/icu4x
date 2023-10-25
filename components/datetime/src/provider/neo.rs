@@ -5,6 +5,7 @@
 mod adapter;
 
 use crate::pattern::runtime;
+use alloc::borrow::Cow;
 use icu_provider::prelude::*;
 use zerovec::ule::UnvalidatedStr;
 use zerovec::{VarZeroVec, ZeroMap};
@@ -63,7 +64,8 @@ pub enum YearSymbolsV1<'data> {
 
 /// Symbols used for representing the month name
 ///
-/// This uses an auxiliary subtag for length. See [`YearSymbolsV1`] for more information on the scheme.
+/// This uses an auxiliary subtag for length. See [`YearSymbolsV1`] for more information on the scheme. This
+/// has an additional `-x-1` subtag value used for numeric symbols, only found for calendars with leap months.
 ///
 /// <div class="stab unstable">
 /// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
@@ -108,6 +110,29 @@ pub enum MonthSymbolsV1<'data> {
     ///
     /// Found for lunisolar and lunisidereal calendars
     LeapLinear(#[cfg_attr(feature = "serde", serde(borrow))] VarZeroVec<'data, str>),
+
+    /// This represents the formatting to apply to numeric values to produce the corresponding
+    /// leap month symbol.
+    ///
+    /// For numeric formatting only, on calendars with leap months
+    LeapNumeric(#[cfg_attr(feature = "serde", serde(borrow))] SimpleSubstitutionPattern<'data>),
+}
+
+/// Represents a simple substitution pattern;
+/// i.e. a string with a single placeholder
+#[derive(Debug, PartialEq, Clone, yoke::Yokeable, zerofrom::ZeroFrom)]
+#[cfg_attr(
+ feature = "datagen",
+ derive(serde::Serialize, databake::Bake),
+ databake(path = icu_datetime::provider::neo),
+)]
+#[cfg_attr(feature = "serde", derive(serde::Deserialize))]
+pub struct SimpleSubstitutionPattern<'data> {
+    /// The pattern
+    #[cfg_attr(feature = "serde", serde(borrow))]
+    pub pattern: Cow<'data, str>,
+    /// The index in which to substitute stuff
+    pub subst_index: usize,
 }
 
 /// Symbols that can be stored as a simple linear array.
