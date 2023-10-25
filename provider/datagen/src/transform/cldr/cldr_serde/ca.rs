@@ -31,10 +31,17 @@ pub struct StandAloneWidths<Symbols> {
 }
 
 #[derive(Debug, PartialEq, Clone, Deserialize)]
+pub struct Numeric<Symbols> {
+    pub all: Symbols,
+}
+
+#[derive(Debug, PartialEq, Clone, Deserialize)]
 pub struct Contexts<Symbols> {
     pub format: FormatWidths<Symbols>,
     #[serde(rename = "stand-alone")]
     pub stand_alone: Option<StandAloneWidths<Symbols>>,
+    // currently only found on monthPatterns
+    pub numeric: Option<Numeric<Symbols>>,
 }
 
 /// A length, for querying Contexts
@@ -243,7 +250,6 @@ pub struct CyclicNameSets {
 pub struct Dates {
     pub months: Contexts<MonthSymbols>,
     #[serde(rename = "monthPatterns")]
-    // Not used yet, will be in the future
     pub month_patterns: Option<Contexts<MonthPatternSymbols>>,
     pub days: Contexts<DaySymbols>,
     pub eras: Option<Eras>,

@@ -16,8 +16,9 @@ use icu_locid::{
 };
 use icu_provider::datagen::IterableDataProvider;
 use icu_provider::prelude::*;
+use std::borrow::Cow;
 use std::collections::BTreeMap;
-use tinystr::{tinystr, TinyAsciiStr, UnvalidatedTinyAsciiStr};
+use tinystr::TinyAsciiStr;
 use zerovec::ule::UnvalidatedStr;
 
 const ABBR: Subtag = subtag!("3");
@@ -439,6 +440,31 @@ fn years_convert(
     }
 }
 
+/// Returns the number of regular months in a calendar, as well as whether it is
+/// has leap months
+fn calendar_months(cal: &Value) -> (usize, bool) {
+    if *cal == value!("hebrew") || *cal == value!("chinese") || *cal == value!("dangi") {
+        (24, true)
+    } else if *cal == value!("coptic") || *cal == value!("ethiopic") {
+        (13, false)
+    } else if *cal == value!("gregory")
+        || *cal == value!("buddhist")
+        || *cal == value!("japanese")
+        || *cal == value!("japanext")
+        || *cal == value!("indian")
+        || *cal == value!("persian")
+        || *cal == value!("roc")
+        || *cal == value!("islamic")
+        || *cal == value!("islamicc")
+        || *cal == value!("umalqura")
+        || *cal == value!("tbla")
+    {
+        (12, false)
+    } else {
+        panic!("Month map unknown for {cal}")
+    }
+}
+
 fn months_convert(
     _datagen: &DatagenProvider,
     _langid: &LanguageIdentifier,
@@ -449,33 +475,38 @@ fn months_convert(
 ) -> Result<MonthSymbolsV1<'static>, DataError> {
     let months = data.months.get_symbols(context, length);
 
-    // Tostring can be removed when we delete symbols.rs, or we can perhaps refactor it to use Value
-    let calendar_str = calendar.to_string();
-    let (map, has_leap) = super::symbols::get_month_code_map(&calendar_str);
+    let (month_count, has_leap) = calendar_months(calendar);
+    let mut symbols = vec![Cow::Borrowed(""); month_count];
 
-    if has_leap {
-        let mut symbols: BTreeMap<UnvalidatedTinyAsciiStr<4>, &str> = BTreeMap::new();
+    if *calendar == value!("hebrew") {
         for (k, v) in months.0.iter() {
-            let code = if k == "7-yeartype-leap" && *calendar == value!("hebrew") {
-                tinystr!(4, "M06L")
+            // CLDR's numbering for hebrew has Adar I as 6, Adar as 7, and Adar II as 7-yeartype-leap
+            //
+            // So we need to handle the 6 and 7 cases as leap months, and everything after 6 needs to
+            // be offset by 1
+            let index = if k == "7-yeartype-leap" {
+                7 + 11
+            } else if k == "6" {
+                6 + 11
             } else {
-                let index: usize = k
+                let mut index: usize = k
                     .parse()
                     .expect("CLDR month indices must parse as numbers!");
 
+                if index > 5 {
+                    index -= 1;
+                }
                 if index == 0 {
                     panic!("CLDR month indices cannot be zero");
                 }
-                *map.get(index - 1)
-                    .expect("Found out of bounds month index for calendar")
+
+                index - 1
             };
 
-            symbols.insert(code.into(), &**v);
+            symbols[index] = (&**v).into();
         }
-        Ok(MonthSymbolsV1::Map(symbols.into_iter().collect()))
+        Ok(MonthSymbolsV1::LeapLinear((&symbols).into()))
     } else {
-        let mut symbols = vec![""; map.len()];
-
         for (k, v) in months.0.iter() {
             let index: usize = k
                 .parse()
@@ -484,14 +515,45 @@ fn months_convert(
                 panic!("CLDR month indices cannot be zero");
             }
 
-            symbols[index - 1] = &v;
+            symbols[index - 1] = v.into();
         }
-        for (i, val) in symbols.iter().enumerate() {
+
+        let nonleap = if has_leap {
+            month_count / 2
+        } else {
+            month_count
+        };
+
+        for (i, val) in symbols.iter().take(nonleap).enumerate() {
             if val.is_empty() {
                 panic!("Calendar {calendar} does not have data for month {i}; found data for {symbols:?}");
             }
         }
-        Ok(MonthSymbolsV1::Numeric((&symbols).into()))
+
+        if has_leap {
+            // This branch is only for chinese-like calendars with N regular months and N potential leap months
+            // rather than hebrew-like where there's one or two special leap months
+            debug_assert!(
+                *calendar != value!("hebrew"),
+                "Hebrew calendar should have been handled in the branch above"
+            );
+            let patterns = data
+                .month_patterns
+                .as_ref()
+                .expect("Calendar with leap months must have monthPatterns");
+            let leap = &patterns.get_symbols(context, length).leap;
+
+            for i in 0..nonleap {
+                if symbols[i].is_empty() {
+                    continue;
+                }
+                let replaced = leap.replace("{0}", &symbols[i]);
+                symbols[nonleap + i] = replaced.into();
+            }
+            Ok(MonthSymbolsV1::LeapLinear((&symbols).into()))
+        } else {
+            Ok(MonthSymbolsV1::Linear((&symbols).into()))
+        }
     }
 }
 
