@@ -9,41 +9,26 @@ use icu_datagen::prelude::*;
 use std::path::Path;
 
 const COMPONENTS: &[(&str, &[DataKey])] = &[
-    ("components/calendar", icu::calendar::provider::KEYS),
-    ("components/casemap", icu::casemap::provider::KEYS),
-    ("components/collator", icu::collator::provider::KEYS),
-    ("components/datetime", icu::datetime::provider::KEYS),
-    ("components/decimal", icu::decimal::provider::KEYS),
-    ("components/list", icu::list::provider::KEYS),
+    ("calendar", icu::calendar::provider::KEYS),
+    ("casemap", icu::casemap::provider::KEYS),
+    ("collator", icu::collator::provider::KEYS),
+    ("compactdecimal", icu_compactdecimal::provider::KEYS),
+    ("datetime", icu::datetime::provider::KEYS),
+    ("decimal", icu::decimal::provider::KEYS),
+    ("displaynames", icu::displaynames::provider::KEYS),
+    ("list", icu::list::provider::KEYS),
+    ("locid_transform", icu::locid_transform::provider::KEYS),
+    ("normalizer", icu::normalizer::provider::KEYS),
+    ("plurals", icu::plurals::provider::KEYS),
+    ("properties", icu::properties::provider::KEYS),
+    ("relativetime", icu::relativetime::provider::KEYS),
+    ("segmenter", icu::segmenter::provider::KEYS),
     (
-        "components/locid_transform",
-        icu::locid_transform::provider::KEYS,
-    ),
-    ("components/normalizer", icu::normalizer::provider::KEYS),
-    ("components/plurals", icu::plurals::provider::KEYS),
-    ("components/properties", icu::properties::provider::KEYS),
-    ("components/segmenter", icu::segmenter::provider::KEYS),
-    ("components/timezone", icu::timezone::provider::KEYS),
-    (
-        "experimental/compactdecimal",
-        icu_compactdecimal::provider::KEYS,
-    ),
-    (
-        "experimental/displaynames",
-        icu::displaynames::provider::KEYS,
-    ),
-    (
-        "experimental/relativetime",
-        icu::relativetime::provider::KEYS,
-    ),
-    (
-        "experimental/single_number_formatter",
+        "singlenumberformatter",
         icu_singlenumberformatter::provider::KEYS,
     ),
-    (
-        "experimental/unitsconversion",
-        icu_unitsconversion::cons_provider::KEYS,
-    ),
+    ("timezone", icu::timezone::provider::KEYS),
+    ("unitsconversion", icu_unitsconversion::provider::KEYS),
 ];
 
 fn main() {
@@ -91,8 +76,32 @@ fn main() {
     options.overwrite = true;
     options.pretty = true;
 
-    for (path, keys) in components {
-        if path == "components/segmenter" {
+    let template = Path::new("provider/baked/_template_");
+
+    for (component, keys) in &components {
+        let path = Path::new("provider/baked").join(component);
+
+        let _ = std::fs::remove_dir_all(&path);
+        for dir in ["", "src", "data"] {
+            std::fs::create_dir(&path.join(dir)).unwrap();
+        }
+        for file in [
+            "build.rs",
+            "Cargo.toml",
+            "LICENSE",
+            "README.md",
+            "src/lib.rs",
+        ] {
+            std::fs::write(
+                path.join(file),
+                &std::fs::read_to_string(template.join(file))
+                    .unwrap()
+                    .replace("_component_", component),
+            )
+            .unwrap();
+        }
+
+        if component == "segmenter" {
             // segmenter uses hardcoded locales internally, so fallback is not necessary.
             driver.clone().with_fallback_mode(FallbackMode::Hybrid)
         } else {
@@ -101,8 +110,12 @@ fn main() {
         .with_keys(keys.iter().copied())
         .export(
             &source,
-            BakedExporter::new(Path::new(&path).join("data/data"), options).unwrap(),
+            BakedExporter::new(path.join("data"), options).unwrap(),
         )
         .unwrap();
+
+        for file in ["data/any.rs", "data/mod.rs"] {
+            std::fs::remove_file(path.join(file)).unwrap();
+        }
     }
 }

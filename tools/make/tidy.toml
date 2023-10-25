@@ -136,7 +136,7 @@ script = '''
 exit_on_error true
 
 glob_pattern = set "./**/Cargo.toml"
-glob_skip_pattern = array "ffi/gn/**/*" "ffi/capi/*/examples/**/*" "tools/**/*" "**/fuzz/*" "**/target/**/*" "docs/**/*"
+glob_skip_pattern = array "ffi/gn/**/*" "ffi/capi/*/examples/**/*" "tools/**/*" "**/fuzz/*" "**/target/**/*" "docs/**/*" "provider/baked/_template_/Cargo.toml"
 
 cargo_list = exec cargo --list
 if not contains ${cargo_list.stdout} "rdme"
