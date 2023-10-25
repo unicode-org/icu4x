@@ -58,6 +58,30 @@ pub(crate) fn compute_bcp47_tzids_btreemap(
     bcp47_tzids
 }
 
+/// Returns a map from BCP-47 ID to a single canonical long identifier.
+///
+/// For example: "inccu" to "Asia/Kolkata"
+pub(crate) fn compute_canonical_tzids_btreemap(
+    bcp47_tzids_resource: &BTreeMap<TimeZoneBcp47Id, Bcp47TzidAliasData>,
+) -> BTreeMap<TimeZoneBcp47Id, String> {
+    let mut canonical_tzids = BTreeMap::new();
+    for (bcp47_tzid, bcp47_tzid_data) in bcp47_tzids_resource.iter() {
+        if Some(true) == bcp47_tzid_data.deprecated {
+            // skip
+        } else if let Some(iana) = &bcp47_tzid_data.iana {
+            canonical_tzids.insert(*bcp47_tzid, iana.clone());
+        } else if let Some(iana) = &bcp47_tzid_data.alias.as_ref().and_then(|s| s.split(' ').next()) {
+            canonical_tzids.insert(*bcp47_tzid, String::from(*iana));
+        } else {
+            debug_assert!(
+                false,
+                "Could not find canonical IANA for bcp47 time zone: {bcp47_tzid:?}"
+            );
+        }
+    }
+    canonical_tzids
+}
+
 /// Returns a map from metazone long identifier to metazone BCP-47 ID.
 ///
 /// For example: "America_Central" to "amce"
