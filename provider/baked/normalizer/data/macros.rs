@@ -59,8 +59,3 @@ pub use __impl_normalizer_nfkdex_v1 as impl_normalizer_nfkdex_v1;
 mod normalizer_uts46d_v1;
 #[doc(inline)]
 pub use __impl_normalizer_uts46d_v1 as impl_normalizer_uts46d_v1;
-#[macro_use]
-#[path = "macros/transliterator_rules_v1.rs.data"]
-mod transliterator_rules_v1;
-#[doc(inline)]
-pub use __impl_transliterator_rules_v1 as impl_transliterator_rules_v1;
