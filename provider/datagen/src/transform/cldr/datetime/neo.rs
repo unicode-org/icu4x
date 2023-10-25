@@ -410,9 +410,7 @@ fn years_convert(
 /// Returns the number of regular months in a calendar, as well as whether it is
 /// has leap months
 fn calendar_months(cal: &Value) -> (usize, bool) {
-    if *cal == value!("hebrew") {
-        (24, true)
-    } else if *cal == value!("chinese") || *cal == value!("dangi") {
+    if *cal == value!("hebrew") || *cal == value!("chinese") || *cal == value!("dangi") {
         (24, true)
     } else if *cal == value!("coptic") || *cal == value!("ethiopic") {
         (13, false)
