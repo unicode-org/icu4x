@@ -461,7 +461,7 @@ fn months_convert(
                     .expect("CLDR month indices must parse as numbers!");
 
                 if index > 5 {
-                    index += 1;
+                    index -= 1;
                 }
                 if index == 0 {
                     panic!("CLDR month indices cannot be zero");
@@ -498,6 +498,12 @@ fn months_convert(
         }
 
         if has_leap {
+            // This branch is only for chinese-like calendars with N regular months and N potential leap months
+            // rather than hebrew-like where there's one or two special leap months
+            debug_assert!(
+                *calendar != value!("hebrew"),
+                "Hebrew calendar should have been handled in the branch above"
+            );
             let patterns = data
                 .month_patterns
                 .as_ref()
@@ -505,6 +511,9 @@ fn months_convert(
             let leap = &patterns.get_symbols(context, length).leap;
 
             for i in 0..nonleap {
+                if symbols[i].is_empty() {
+                    continue;
+                }
                 let replaced = leap.replace("{0}", &symbols[i]);
                 symbols[nonleap + i] = replaced.into();
             }
