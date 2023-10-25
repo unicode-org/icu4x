@@ -1,0 +1,225 @@
+// This file is part of ICU4X. For terms of use, please see the file
+// called LICENSE at the top level of the ICU4X source tree
+// (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
+
+use super::datetime::write_pattern;
+use crate::calendar::CldrCalendar;
+use crate::error::DateTimeError as Error;
+use crate::fields;
+use crate::input;
+use crate::input::DateInput;
+use crate::input::DateTimeInputWithWeekConfig;
+use crate::input::ExtractedDateTimeInput;
+use crate::input::LocalizedDateTimeInput;
+use crate::pattern::runtime::Pattern;
+use crate::provider::calendar::months;
+use crate::provider::date_time::{DateSymbols, TimeSymbols};
+use crate::provider::neo::*;
+use core::fmt;
+use icu_calendar::types::Era;
+use icu_calendar::types::MonthCode;
+use icu_calendar::week::WeekCalculator;
+use icu_decimal::provider::DecimalSymbolsV1Marker;
+use icu_decimal::FixedDecimalFormatter;
+use icu_locid::extensions::private::subtag;
+use icu_provider::prelude::*;
+use icu_provider::prelude::*;
+use writeable::Writeable;
+
+/// A low-level type that formats datetime patterns with localized symbols.
+pub struct DateTimePatternInterpolator<C: CldrCalendar> {
+    locale: DataLocale,
+    year_symbols: Option<DataPayload<C::YearSymbolsV1Marker>>,
+    month_symbols: Option<DataPayload<C::MonthSymbolsV1Marker>>,
+    weekday_symbols: Option<DataPayload<WeekdaySymbolsV1Marker>>,
+    dayperiod_symbols: Option<DataPayload<DayPeriodSymbolsV1Marker>>,
+    // TODO: Make the FixedDecimalFormatter optional?
+    fixed_decimal_formatter: FixedDecimalFormatter,
+    week_calculator: Option<WeekCalculator>,
+}
+
+impl<C: CldrCalendar> DateTimePatternInterpolator<C> {
+    #[cfg(feature = "compiled_data")]
+    pub fn try_new(locale: &DataLocale) -> Result<Self, Error> {
+        let fixed_decimal_formatter = FixedDecimalFormatter::try_new(locale, Default::default())?;
+        Ok(Self::new_internal(locale.clone(), fixed_decimal_formatter))
+    }
+
+    pub fn try_new_unstable<P>(provider: &P, locale: &DataLocale) -> Result<Self, Error>
+    where
+        P: DataProvider<DecimalSymbolsV1Marker> + ?Sized,
+    {
+        let fixed_decimal_formatter =
+            FixedDecimalFormatter::try_new_unstable(provider, locale, Default::default())?;
+        Ok(Self::new_internal(locale.clone(), fixed_decimal_formatter))
+    }
+
+    fn new_internal(locale: DataLocale, fixed_decimal_formatter: FixedDecimalFormatter) -> Self {
+        DateTimePatternInterpolator {
+            locale,
+            year_symbols: None,
+            month_symbols: None,
+            weekday_symbols: None,
+            dayperiod_symbols: None,
+            fixed_decimal_formatter,
+            week_calculator: None,
+        }
+    }
+
+    pub fn load_month_symbols_short<P>(&mut self, provider: &P) -> Result<&mut Self, Error>
+    where
+        P: DataProvider<C::MonthSymbolsV1Marker> + ?Sized,
+    {
+        if self.month_symbols.is_some() {
+            // TODO: Discuss what do do here
+            return Err(Error::Data(DataError::custom(
+                "month symbols already loaded",
+            )));
+        }
+        let mut locale = self.locale.clone();
+        locale.set_aux(AuxiliaryKeys::from_subtag(subtag!("3")));
+        let payload = provider
+            .load(DataRequest {
+                locale: &locale,
+                metadata: Default::default(),
+            })?
+            .take_payload()?;
+        self.month_symbols = Some(payload);
+        Ok(self)
+    }
+}
+
+#[derive(Debug, Copy, Clone)]
+struct ErasedDateTimePatternInterpolatorBorrowed<'l> {
+    year_symbols: Option<&'l YearSymbolsV1<'l>>,
+    month_symbols: Option<&'l MonthSymbolsV1<'l>>,
+    weekday_symbols: Option<&'l LinearSymbolsV1<'l>>,
+    dayperiod_symbols: Option<&'l LinearSymbolsV1<'l>>,
+    fixed_decimal_formatter: &'l FixedDecimalFormatter,
+    week_calculator: Option<&'l WeekCalculator>,
+}
+
+impl<C: CldrCalendar> DateTimePatternInterpolator<C> {
+    fn as_borrowed(&self) -> ErasedDateTimePatternInterpolatorBorrowed {
+        ErasedDateTimePatternInterpolatorBorrowed {
+            year_symbols: self.year_symbols.as_ref().map(DataPayload::get),
+            month_symbols: self.month_symbols.as_ref().map(DataPayload::get),
+            weekday_symbols: self.weekday_symbols.as_ref().map(DataPayload::get),
+            dayperiod_symbols: self.dayperiod_symbols.as_ref().map(DataPayload::get),
+            fixed_decimal_formatter: &self.fixed_decimal_formatter,
+            week_calculator: self.week_calculator.as_ref(),
+        }
+    }
+
+    // TODO: Discuss the design of this API
+    pub fn format<'l, T>(
+        &'l self,
+        pattern: &'l Pattern<'l>,
+        value: &T,
+    ) -> FormattedDateTimePattern<'l>
+    where
+        T: DateInput<Calendar = C>,
+    {
+        FormattedDateTimePattern {
+            pattern,
+            datetime: ExtractedDateTimeInput::extract_from_date(value),
+            interpolator: self.as_borrowed(),
+        }
+    }
+}
+
+pub struct FormattedDateTimePattern<'l> {
+    pattern: &'l Pattern<'l>,
+    datetime: ExtractedDateTimeInput,
+    interpolator: ErasedDateTimePatternInterpolatorBorrowed<'l>,
+    // To add later:
+    // week_data: Option<&'l WeekCalculator>,
+    // ordinal_rules: Option<&'l PluralRules>,
+}
+
+impl<'l> Writeable for FormattedDateTimePattern<'l> {
+    fn write_to<W: fmt::Write + ?Sized>(&self, sink: &mut W) -> fmt::Result {
+        let loc_datetime =
+            DateTimeInputWithWeekConfig::new(&self.datetime, self.interpolator.week_calculator);
+        write_pattern(
+            self.pattern,
+            Some(&self.interpolator),
+            Some(&self.interpolator),
+            &loc_datetime,
+            self.interpolator.fixed_decimal_formatter,
+            sink,
+        )
+        .map_err(|_| core::fmt::Error)
+    }
+
+    // TODO(#489): Implement writeable_length_hint
+}
+
+impl<'l> fmt::Display for FormattedDateTimePattern<'l> {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        self.write_to(f)
+    }
+}
+
+impl<'data> DateSymbols<'data> for ErasedDateTimePatternInterpolatorBorrowed<'data> {
+    fn get_symbol_for_month(
+        &self,
+        month: fields::Month,
+        length: fields::FieldLength,
+        code: MonthCode,
+    ) -> Result<(&str, bool), Error> {
+        todo!();
+        // let (month_index, is_leap) = code.parsed();
+    }
+
+    fn get_symbol_for_weekday(
+        &self,
+        weekday: fields::Weekday,
+        length: fields::FieldLength,
+        day: input::IsoWeekday,
+    ) -> Result<&str, Error> {
+        todo!()
+    }
+
+    fn get_symbol_for_era<'a>(&'a self, length: fields::FieldLength, era_code: &'a Era) -> &str {
+        todo!()
+    }
+}
+
+impl<'data> TimeSymbols for ErasedDateTimePatternInterpolatorBorrowed<'data> {
+    fn get_symbol_for_day_period(
+        &self,
+        day_period: fields::DayPeriod,
+        length: fields::FieldLength,
+        hour: input::IsoHour,
+        is_top_of_hour: bool,
+    ) -> Result<&str, Error> {
+        todo!()
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use crate::pattern::reference;
+    use icu_calendar::{DateTime, Gregorian};
+    use icu_locid::locale;
+    use writeable::assert_writeable_eq;
+
+    #[test]
+    fn test_basic_pattern_interpolator() {
+        let locale = locale!("en").into();
+        let mut interpolator: DateTimePatternInterpolator<Gregorian> =
+            DateTimePatternInterpolator::try_new(&locale).unwrap();
+        interpolator
+            .load_month_symbols_short(&crate::provider::Baked)
+            .unwrap();
+        let reference_pattern: reference::Pattern =
+            "'It is' MMM d, y 'at' HH:mm'!'".parse().unwrap();
+        let pattern: Pattern = (&reference_pattern).into();
+        let datetime = DateTime::try_new_gregorian_datetime(2023, 10, 25, 15, 0, 55).unwrap();
+        let formatted_pattern = interpolator.format(&pattern, &datetime);
+
+        assert_writeable_eq!(formatted_pattern, "hello");
+    }
+}
