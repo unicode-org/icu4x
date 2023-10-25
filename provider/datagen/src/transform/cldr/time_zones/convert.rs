@@ -70,7 +70,11 @@ pub(crate) fn compute_canonical_tzids_btreemap(
             // skip
         } else if let Some(iana) = &bcp47_tzid_data.iana {
             canonical_tzids.insert(*bcp47_tzid, iana.clone());
-        } else if let Some(iana) = &bcp47_tzid_data.alias.as_ref().and_then(|s| s.split(' ').next()) {
+        } else if let Some(iana) = &bcp47_tzid_data
+            .alias
+            .as_ref()
+            .and_then(|s| s.split(' ').next())
+        {
             canonical_tzids.insert(*bcp47_tzid, String::from(*iana));
         } else {
             debug_assert!(
