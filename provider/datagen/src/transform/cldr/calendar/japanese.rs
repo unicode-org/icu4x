@@ -37,6 +37,8 @@ impl crate::DatagenProvider {
                 "ca-japanese.json does not contain 'japanese' calendar",
             ))?
             .eras
+            .as_ref()
+            .expect("japanese must have eras")
             .abbr;
 
         let era_dates_map = &self

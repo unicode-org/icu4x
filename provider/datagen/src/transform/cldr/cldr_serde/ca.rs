@@ -11,6 +11,7 @@
 
 use serde::Deserialize;
 use std::borrow::Cow;
+use std::collections::BTreeMap;
 use std::collections::HashMap;
 
 #[derive(Debug, PartialEq, Clone, Deserialize)]
@@ -235,6 +236,11 @@ impl DateTimeFormats {
 #[derive(PartialEq, Clone, Debug, Deserialize)]
 pub struct AvailableFormats(pub HashMap<String, String>);
 
+#[derive(PartialEq, Clone, Debug, Deserialize)]
+pub struct CyclicNameSets {
+    pub years: Option<Contexts<BTreeMap<u8, String>>>,
+}
+
 /// This struct represents a 1:1 mapping of the CLDR ca-gregorian.json data at the key
 /// "main.LANGID.dates.calendars.gregorian" where "LANGID" is the identifier.
 ///
@@ -246,8 +252,9 @@ pub struct Dates {
     #[serde(rename = "monthPatterns")]
     pub month_patterns: Option<Contexts<MonthPatternSymbols>>,
     pub days: Contexts<DaySymbols>,
-    #[serde(default)]
-    pub eras: Eras,
+    pub eras: Option<Eras>,
+    #[serde(rename = "cyclicNameSets")]
+    pub cyclic_name_sets: Option<CyclicNameSets>,
     #[serde(rename = "dayPeriods")]
     pub day_periods: Contexts<DayPeriodSymbols>,
     #[serde(rename = "dateFormats")]

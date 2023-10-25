@@ -99,42 +99,34 @@ macro_rules! impl_data_provider {
                         .expect("CLDR ca-ethiopic-amete-alem.json contains the expected calendar")
                         .clone();
 
-                    let mundi_name = ethioaa_data
-                        .eras
+                    let ethioaa_eras = ethioaa_data.eras.as_ref().expect("ethioaa must have eras");
+                    let mundi_name = ethioaa_eras
                         .names
                         .get("0")
                         .expect("ethiopic-amete-alem calendar must have 0 era");
-                    let mundi_abbr = ethioaa_data
-                        .eras
+                    let mundi_abbr = ethioaa_eras
                         .abbr
                         .get("0")
                         .expect("ethiopic-amete-alem calendar must have 0 era");
-                    let mundi_narrow = ethioaa_data
-                        .eras
+                    let mundi_narrow = ethioaa_eras
                         .narrow
                         .get("0")
                         .expect("ethiopic-amete-alem calendar must have 0 era");
 
-                    data.eras.names.insert("2".to_string(), mundi_name.clone());
-                    data.eras.abbr.insert("2".to_string(), mundi_abbr.clone());
-                    data.eras
-                        .narrow
-                        .insert("2".to_string(), mundi_narrow.clone());
+                    let eras = data.eras.as_mut().expect("ethiopic must have eras");
+                    eras.names.insert("2".to_string(), mundi_name.clone());
+                    eras.abbr.insert("2".to_string(), mundi_abbr.clone());
+                    eras.narrow.insert("2".to_string(), mundi_narrow.clone());
                 }
 
                 if calendar == value!("japanese") || calendar == value!("japanext") {
+                    let eras = data.eras.as_mut().expect("japanese must have eras");
                     // Filter out non-modern eras
                     if calendar != value!("japanext") {
                         let modern_japanese_eras = self.cldr()?.modern_japanese_eras()?;
-                        data.eras
-                            .names
-                            .retain(|e, _| modern_japanese_eras.contains(e));
-                        data.eras
-                            .abbr
-                            .retain(|e, _| modern_japanese_eras.contains(e));
-                        data.eras
-                            .narrow
-                            .retain(|e, _| modern_japanese_eras.contains(e));
+                        eras.names.retain(|e, _| modern_japanese_eras.contains(e));
+                        eras.abbr.retain(|e, _| modern_japanese_eras.contains(e));
+                        eras.narrow.retain(|e, _| modern_japanese_eras.contains(e));
                     }
 
                     // Splice in gregorian data for pre-meiji
@@ -152,49 +144,51 @@ macro_rules! impl_data_provider {
                         .expect("CLDR file contains a gregorian calendar")
                         .clone();
 
-                    data.eras.names.insert(
+                    let greg_eras = greg.eras.as_ref().expect("gregorian must have eras");
+
+                    eras.names.insert(
                         "-2".into(),
-                        greg.eras
+                        greg_eras
                             .names
                             .get("0")
                             .expect("Gregorian calendar must have data for BC")
                             .into(),
                     );
-                    data.eras.names.insert(
+                    eras.names.insert(
                         "-1".into(),
-                        greg.eras
+                        greg_eras
                             .names
                             .get("1")
                             .expect("Gregorian calendar must have data for AD")
                             .into(),
                     );
-                    data.eras.abbr.insert(
+                    eras.abbr.insert(
                         "-2".into(),
-                        greg.eras
+                        greg_eras
                             .abbr
                             .get("0")
                             .expect("Gregorian calendar must have data for BC")
                             .into(),
                     );
-                    data.eras.abbr.insert(
+                    eras.abbr.insert(
                         "-1".into(),
-                        greg.eras
+                        greg_eras
                             .abbr
                             .get("1")
                             .expect("Gregorian calendar must have data for AD")
                             .into(),
                     );
-                    data.eras.narrow.insert(
+                    eras.narrow.insert(
                         "-2".into(),
-                        greg.eras
+                        greg_eras
                             .narrow
                             .get("0")
                             .expect("Gregorian calendar must have data for BC")
                             .into(),
                     );
-                    data.eras.narrow.insert(
+                    eras.narrow.insert(
                         "-1".into(),
-                        greg.eras
+                        greg_eras
                             .narrow
                             .get("1")
                             .expect("Gregorian calendar must have data for AD")
