@@ -28,7 +28,7 @@ members = [
     "experimental/displaynames",
     "experimental/personnames",
     "experimental/relativetime",
-    "experimental/single_number_formatter",
+    "experimental/singlenumberformatter",
     "experimental/transliterate",
     "experimental/unicodeset_parse",
     "experimental/unitsconversion",
@@ -162,7 +162,7 @@ icu_compactdecimal = { version = "0.2.2", path = "experimental/compactdecimal", 
 icu_displaynames = { version = "0.11.1", path = "experimental/displaynames", default-features = false }
 icu_personnames = { version = "0.0.0", path = "experimental/personnames", default-features = false }
 icu_relativetime = { version = "0.1.3", path = "experimental/relativetime", default-features = false }
-icu_singlenumberformatter = { version = "0.0.0", path = "experimental/single_number_formatter", default-features = false }
+icu_singlenumberformatter = { version = "0.0.0", path = "experimental/singlenumberformatter", default-features = false }
 icu_transliterate = { version = "0.1.1", path = "experimental/transliterate", default-features = false }
 icu_unicodeset_parse = { version = "0.1.1", path = "experimental/unicodeset_parse", default-features = false }
 icu_unitsconversion = { version = "0.0.0", path = "experimental/unitsconversion", default-features = false }
