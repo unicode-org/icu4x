@@ -123,10 +123,10 @@ where
     formatted.write_to(result)
 }
 
-fn write_pattern<T, W>(
+pub(crate) fn write_pattern<'data, T, W, DS, TS>(
     pattern: &crate::pattern::runtime::Pattern,
-    date_symbols: Option<&provider::calendar::DateSymbolsV1>,
-    time_symbols: Option<&provider::calendar::TimeSymbolsV1>,
+    date_symbols: Option<&DS>,
+    time_symbols: Option<&TS>,
     loc_datetime: &impl LocalizedDateTimeInput<T>,
     fixed_decimal_format: &FixedDecimalFormatter,
     w: &mut W,
@@ -134,6 +134,8 @@ fn write_pattern<T, W>(
 where
     T: DateTimeInput,
     W: fmt::Write + ?Sized,
+    DS: DateSymbols<'data>,
+    TS: TimeSymbols,
 {
     let mut iter = pattern.items.iter().peekable();
     loop {
@@ -206,12 +208,12 @@ const PLACEHOLDER_LEAP_PREFIX: &str = "(leap)";
 // When modifying the list of fields using symbols,
 // update the matching query in `analyze_pattern` function.
 #[allow(clippy::too_many_arguments)]
-pub(super) fn write_field<T, W>(
+pub(super) fn write_field<'data, T, W, DS, TS>(
     pattern: &crate::pattern::runtime::Pattern,
     field: fields::Field,
     next_item: Option<&PatternItem>,
-    date_symbols: Option<&crate::provider::calendar::DateSymbolsV1>,
-    time_symbols: Option<&crate::provider::calendar::TimeSymbolsV1>,
+    date_symbols: Option<&DS>,
+    time_symbols: Option<&TS>,
     datetime: &impl LocalizedDateTimeInput<T>,
     fixed_decimal_format: &FixedDecimalFormatter,
     w: &mut W,
@@ -219,6 +221,8 @@ pub(super) fn write_field<T, W>(
 where
     T: DateTimeInput,
     W: fmt::Write + ?Sized,
+    DS: DateSymbols<'data>,
+    TS: TimeSymbols,
 {
     match field.symbol {
         FieldSymbol::Era => {
