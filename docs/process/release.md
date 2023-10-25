@@ -49,11 +49,31 @@ Once the release checklist is complete, the assigned release driver will perform
 * Merge the tutorials PR. `cargo make test-tuturials-cratesio` should now pass
   * If there are any errors, please fix them before advertising the release
 * Land the changelog (see below)
+  * Note: Do this _before_ tagging the release because the changelog is included in the tag
+* [Tag the Release](https://github.com/unicode-org/icu4x/releases) with the text drafted above
+* Create a branch named `release/x.y` on the release tag and push it to the upstream
 * Announce the release to public
-  * [Tag the Release](https://github.com/unicode-org/icu4x/releases) with the text drafted above
   * Send an email to [icu4x-announce](https://groups.google.com/u/0/a/unicode.org/g/icu4x-announce)
   * Submit to This Week In Rust
+* Keep the main branch relatively stable for 7-14 days following the release to make things easier in case a patch release is needed.
+  * It's okay to land smaller or incremental changes, but avoid breaking changes during this period.
 
+## Patch Releases
+
+The ICU4X TC may decide to make a patch release of an ICU4X component on an old release stream, such as to fix a regression in behavior. To make a patch release:
+
+* Fix the issue on the main branch. Get it reviewed and landed.
+  * Include an update to the changelog.
+  * If possible, avoid mixing functional changes with generated files (e.g. data or FFI) in the commit that lands on the main branch.
+* Check out the `release/x.y` branch. On this branch:
+  * Cherry-pick the functional change from the main branch
+  * Cherry-pick the changelog update if it was a separate commit
+  * Land re-generated code or data
+  * Land a commit updating the version number of the component that needs the patch
+  * Have a team member review the branch before continuing
+* Release the updated components from the tip of `release/x.y`
+* Create and push a tag of the format `ind/icu_collator@1.3.3` (for icu_collator patch version 1.3.3)
+  * It is not necessary to create `ind/icu_collator_data@1.3.3` so long as the component has a tag
 
 ## Publishing utils
 
