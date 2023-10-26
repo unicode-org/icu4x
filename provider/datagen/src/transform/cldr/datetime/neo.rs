@@ -557,17 +557,59 @@ fn months_convert(
     }
 }
 
+/// Given a lengthpattern, apply any numeric overrides it may have to `pattern`
+fn apply_numeric_overrides(lp: &ca::LengthPattern, pattern: &mut pattern::runtime::Pattern) {
+    use icu_datetime::fields::{self, FieldLength, FieldNumericOverrides::*, FieldSymbol};
+    let ca::LengthPattern::WithNumberingSystems {
+        ref numbering_systems,
+        ..
+    } = *lp
+    else {
+        // no numeric override
+        return;
+    };
+    // symbol_to_replace is None when we need to replace *all* symbols
+    let (numeric, symbol_to_replace) = match &**numbering_systems {
+        "hanidec" => (Hanidec, None),
+        "hebr" => (Hebr, None),
+        "d=hanidays" => (Hanidays, Some(FieldSymbol::Day(fields::Day::DayOfMonth))),
+        "M=romanlow" => (Romanlow, Some(FieldSymbol::Month(fields::Month::Format))),
+        "y=jpanyear" => (Jpnyear, Some(FieldSymbol::Year(fields::Year::Calendar))),
+        _ => panic!("Found unexpected numeric override {numbering_systems}"),
+    };
+
+    pattern.items.for_each_mut(|item| {
+        if let pattern::PatternItem::Field(ref mut field) = *item {
+            // only replace numeric items
+            if field.length != FieldLength::One {
+                return;
+            }
+            // if we need to replace a specific symbol, filter
+            // out everyone else
+            if let Some(symbol) = symbol_to_replace {
+                if symbol != field.symbol {
+                    return;
+                }
+            }
+
+            field.length = FieldLength::NumericOverride(numeric);
+        }
+    })
+}
+
 fn datepattern_convert(
     data: &ca::Dates,
     length: PatternLength,
     _hc: Option<CoarseHourCycle>,
 ) -> Result<DatePatternV1<'static>, DataError> {
-    let pattern = data.date_formats.get_pattern(length);
+    let length_pattern = data.date_formats.get_pattern(length);
 
-    let pattern = pattern
+    let mut pattern = length_pattern
         .get_pattern()
         .parse()
         .expect("failed to parse pattern");
+
+    apply_numeric_overrides(length_pattern, &mut pattern);
     Ok(DatePatternV1 { pattern })
 }
 
