@@ -38,6 +38,8 @@ pub struct DateTimePatternInterpolator<C: CldrCalendar> {
     // TODO: Make the FixedDecimalFormatter optional?
     fixed_decimal_formatter: FixedDecimalFormatter,
     week_calculator: Option<WeekCalculator>,
+    // To add later:
+    // ordinal_rules: Option<PluralRules>,
 }
 
 impl<C: CldrCalendar> DateTimePatternInterpolator<C> {
@@ -138,9 +140,6 @@ pub struct FormattedDateTimePattern<'l> {
     pattern: &'l Pattern<'l>,
     datetime: ExtractedDateTimeInput,
     interpolator: ErasedDateTimePatternInterpolatorBorrowed<'l>,
-    // To add later:
-    // week_data: Option<&'l WeekCalculator>,
-    // ordinal_rules: Option<&'l PluralRules>,
 }
 
 impl<'l> Writeable for FormattedDateTimePattern<'l> {
