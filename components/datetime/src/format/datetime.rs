@@ -73,8 +73,8 @@ impl<'l> Writeable for FormattedDateTime<'l> {
             self.fixed_decimal_format,
             sink,
         )
-        .map_err(|e| {
-            icu_provider::_internal::log::warn!("{e:?}");
+        .map_err(|_e| {
+            icu_provider::_internal::log::warn!("{_e:?}");
             core::fmt::Error
         })
     }
