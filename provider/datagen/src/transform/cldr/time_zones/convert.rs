@@ -473,7 +473,7 @@ fn metazone_periods_iter<'a>(
 ) -> impl Iterator<Item = (TimeZoneBcp47Id, i32, Option<MetazoneId>)> + 'a {
     let (time_zone_key, periods, meta_zone_id_data) = pair;
     periods
-        .into_iter()
+        .iter()
         .map(move |period| match &period.uses_meta_zone.from {
             Some(from) => {
                 // TODO(#2127): Ideally this parsing can move into a library function
