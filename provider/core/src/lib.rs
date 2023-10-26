@@ -264,4 +264,38 @@ pub use zerofrom;
 pub mod _internal {
     pub use super::fallback::{LocaleFallbackPriority, LocaleFallbackSupplement};
     pub use icu_locid as locid;
+
+    #[cfg(feature = "logging")]
+    pub use log;
+
+    #[cfg(all(not(feature = "logging"), debug_assertions, feature = "std"))]
+    pub mod log {
+        pub use std::eprintln as error;
+        pub use std::eprintln as warn;
+        pub use std::eprintln as info;
+        pub use std::eprintln as debug;
+        pub use std::eprintln as trace;
+    }
+
+    #[cfg(all(
+        not(feature = "logging"),
+        any(not(debug_assertions), not(feature = "std"))
+    ))]
+    pub mod log {
+        #[macro_export]
+        macro_rules! _internal_noop_log {
+            ($($t:expr),*) => {};
+        }
+        pub use crate::_internal_noop_log as error;
+        pub use crate::_internal_noop_log as warn;
+        pub use crate::_internal_noop_log as info;
+        pub use crate::_internal_noop_log as debug;
+        pub use crate::_internal_noop_log as trace;
+    }
+}
+
+#[test]
+fn test_logging() {
+    // This should compile on all combinations of features
+    crate::_internal::log::info!("Hello World");
 }
