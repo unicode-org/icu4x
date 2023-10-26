@@ -182,6 +182,18 @@ left = "Lower_ATerm"
 right = "Format"
 
 [[tables]]
+# SB5
+name = "ATerm_Close_Sp_SB8"
+left = "ATerm_Close_Sp_SB8"
+right = "Extend"
+
+[[tables]]
+# SB5
+name = "ATerm_Close_Sp_SB8"
+left = "ATerm_Close_Sp_SB8"
+right = "Format"
+
+[[tables]]
 # SB7
 name = "Upper_ATerm"
 left = "Upper"
@@ -388,6 +400,41 @@ right = "LF"
 [[tables]]
 # SB8
 name = "ATerm_Close_Sp_SB8"
+left = "ATerm"
+right = "Unknown"
+interm_break_state = true
+
+[[tables]]
+# SB8
+name = "ATerm_Close_Sp_SB8"
+left = "Upper_ATerm"
+right = "Unknown"
+interm_break_state = true
+
+[[tables]]
+# SB8
+name = "ATerm_Close_Sp_SB8"
+left = "Lower_ATerm"
+right = "Unknown"
+interm_break_state = true
+
+[[tables]]
+# SB8
+name = "ATerm_Close_Sp_SB8"
+left = "ATerm_Close"
+right = "Numeric"
+interm_break_state = true
+
+[[tables]]
+# SB8
+name = "ATerm_Close_Sp_SB8"
+left = "ATerm_Close"
+right = "Unknown"
+interm_break_state = true
+
+[[tables]]
+# SB8
+name = "ATerm_Close_Sp_SB8"
 left = "ATerm_Close_Sp"
 right = "Close"
 interm_break_state = true
@@ -397,6 +444,13 @@ interm_break_state = true
 name = "ATerm_Close_Sp_SB8"
 left = "ATerm_Close_Sp"
 right = "Numeric"
+interm_break_state = true
+
+[[tables]]
+# SB8
+name = "ATerm_Close_Sp_SB8"
+left = "ATerm_Close_Sp"
+right = "Unknown"
 interm_break_state = true
 
 [[tables]]
@@ -416,6 +470,24 @@ right = "Format"
 name = "ATerm_Close_Sp_SB8"
 left = "ATerm_Close_Sp_SB8"
 right = "Numeric"
+
+[[tables]]
+# SB8
+name = "ATerm_Close_Sp_SB8"
+left = "ATerm_Close_Sp_SB8"
+right = "Sp"
+
+[[tables]]
+# SB8
+name = "ATerm_Close_Sp_SB8"
+left = "ATerm_Close_Sp_SB8"
+right = "Unknown"
+
+[[tables]]
+# SB8
+name = "ATerm_Close_Sp_SB8"
+left = "ATerm_Close_Sp_SB8"
+right = "SContinue"
 
 [[rules]]
 # SB1
@@ -561,19 +633,20 @@ left = [
   "STerm_Close_Sp_ParaSep",
   "STerm_Close_Sp_CR"
 ]
-right = [ "ATerm", "Lower", "OLetter", "Upper", "Numeric", "STerm" ]
+# NOTE(egg): left=Meow_CR, right=LF would be wrong, but it is prevented by another rule above.
+right = [ "ATerm", "Lower", "OLetter", "Upper", "Numeric", "STerm", "CR", "LF", "Sep" ]
 break_state = true
 
 [[rules]]
 # SB11
 left = [ "ATerm_Close_Sp", "STerm_Close_Sp" ]
-right = [ "Numeric", "Upper", "Close", "Unknown", "OLetter" ]
+right = [ "Numeric", "Upper", "Lower", "Close", "Unknown", "OLetter" ]
 break_state = true
 
 [[rules]]
 # SB11
 left = [ "ATerm_Close", "STerm", "STerm_Close" ]
-right = [ "Numeric", "Upper" ]
+right = [ "Numeric", "Upper", "Lower", "OLetter", "Unknown" ]
 break_state = true
 
 [[rules]]
