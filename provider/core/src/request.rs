@@ -931,7 +931,7 @@ impl AuxiliaryKeys {
     /// ```
     pub const fn from_subtag(input: Subtag) -> Self {
         Self {
-            value: AuxiliaryKeysInner::Stack(input.into_tinystr().resize())
+            value: AuxiliaryKeysInner::Stack(input.into_tinystr().resize()),
         }
     }
 
