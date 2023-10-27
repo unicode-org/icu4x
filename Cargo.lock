@@ -1404,11 +1404,11 @@ dependencies = [
 
 [[package]]
 name = "icu_compactdecimal_data"
-version = "1.3.2"
+version = "1.3.3"
 
 [[package]]
 name = "icu_datagen"
-version = "1.3.2"
+version = "1.3.3"
 dependencies = [
  "clap 4.2.1",
  "crlify",
@@ -1495,7 +1495,7 @@ dependencies = [
 
 [[package]]
 name = "icu_datetime_data"
-version = "1.3.2"
+version = "1.3.3"
 
 [[package]]
 name = "icu_decimal"
@@ -1522,7 +1522,7 @@ dependencies = [
 
 [[package]]
 name = "icu_decimal_data"
-version = "1.3.2"
+version = "1.3.3"
 
 [[package]]
 name = "icu_depcheck"
@@ -1544,7 +1544,7 @@ dependencies = [
 
 [[package]]
 name = "icu_displaynames_data"
-version = "1.3.2"
+version = "1.3.3"
 
 [[package]]
 name = "icu_ffi_coverage"
@@ -1735,7 +1735,7 @@ dependencies = [
 
 [[package]]
 name = "icu_properties_data"
-version = "1.3.2"
+version = "1.3.3"
 
 [[package]]
 name = "icu_provider"
