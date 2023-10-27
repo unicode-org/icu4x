@@ -1,5 +1,20 @@
 # Changelog
 
+## icu4x 1.3.3 (later Oct, 2023)
+
+Some crates received a 1.3.3 patch release:
+
+- [Fix #4165, locale "vi" not working in Collator](https://github.com/unicode-org/icu4x/issues/4165):
+    - `icu_collator`
+    - `icu_collator_data`
+- [Fix #4232, some locale data being improperly deduplicated](https://github.com/unicode-org/icu4x/issues/4232):
+    - `icu_compactdecimal_data`
+    - `icu_datagen`
+    - `icu_datetime_data`
+    - `icu_decimal_data`
+    - `icu_displaynames_data`
+    - `icu_properties_data`
+
 ## icu4x 1.3.2 (Oct 4, 2023)
 
 1.3.2 was released to clean up the range dependency on `zerovec` deliberately introduced in 1.3.0. It includes all previous 1.3.x changes
