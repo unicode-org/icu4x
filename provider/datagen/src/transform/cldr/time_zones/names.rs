@@ -2,7 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use super::convert::compute_bcp47_tzids_btreemap;
+use super::convert::{compute_bcp47_tzids_btreemap, compute_canonical_tzids_btreemap};
 use crate::transform::cldr::cldr_serde;
 use icu_provider::datagen::IterableDataProvider;
 use icu_provider::prelude::*;
@@ -68,11 +68,7 @@ impl DataProvider<Bcp47ToIanaMapV1Marker> for crate::DatagenProvider {
             self.cldr()?.bcp47().read_and_parse("timezone.json")?;
         // Note: The BTreeMap retains the order of the aliases, which is important for establishing
         // the canonical order of the IANA names.
-        let iana2bcp = &compute_bcp47_tzids_btreemap(&resource.keyword.u.time_zones.values);
-        let bcp2iana: BTreeMap<TimeZoneBcp47Id, String> = iana2bcp
-            .iter()
-            .map(|(iana, bcp)| (*bcp, iana.clone()))
-            .collect();
+        let bcp2iana = compute_canonical_tzids_btreemap(&resource.keyword.u.time_zones.values);
         let bcp47_ids: ZeroVec<TimeZoneBcp47Id> = bcp2iana.keys().copied().collect();
         let bcp47_ids_checksum = compute_bcp47_ids_hash(&bcp47_ids);
 

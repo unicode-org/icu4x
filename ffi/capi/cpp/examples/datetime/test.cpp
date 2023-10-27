@@ -77,7 +77,7 @@ int main() {
     }
     ICU4XBcp47ToIanaMapper reverse_mapper = ICU4XBcp47ToIanaMapper::create(dp).ok().value();
     std::string recovered_iana_id = reverse_mapper.get("uschi").ok().value();
-    if (recovered_iana_id != "US/Central") {
+    if (recovered_iana_id != "America/Chicago") {
         std::cout << "Time zone ID does not canonicalize to IANA: " << recovered_iana_id << std::endl;
         return 1;
     }
