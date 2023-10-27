@@ -1,19 +1,19 @@
 # Changelog
 
-## icu4x 1.3.3 (later Oct, 2023)
+## icu4x 1.3.x
 
-Some crates received a 1.3.3 patch release:
+Some crates received additional 1.3.x patch releases:
 
 - [Fix #4165, locale "vi" not working in Collator](https://github.com/unicode-org/icu4x/issues/4165):
-    - `icu_collator`
-    - `icu_collator_data`
+    - `icu_collator@1.3.3`
+    - `icu_collator_data@1.3.3`
 - [Fix #4232, some locale data being improperly deduplicated](https://github.com/unicode-org/icu4x/issues/4232):
-    - `icu_compactdecimal_data`
-    - `icu_datagen`
-    - `icu_datetime_data`
-    - `icu_decimal_data`
-    - `icu_displaynames_data`
-    - `icu_properties_data`
+    - `icu_compactdecimal_data@1.3.4`
+    - `icu_datagen@1.3.3`
+    - `icu_datetime_data@1.3.4`
+    - `icu_decimal_data@1.3.4`
+    - `icu_displaynames_data@1.3.4`
+    - `icu_properties_data@1.3.4`
 
 ## icu4x 1.3.2 (Oct 4, 2023)
 
