@@ -1,18 +1,28 @@
 {
-  "Map": {
-    "M01": "Tişri",
-    "M02": "Heşvan",
-    "M03": "Kislev",
-    "M04": "Tevet",
-    "M05": "Şevat",
-    "M05L": "Adar Rişon",
-    "M06": "Adar",
-    "M06L": "Veadar",
-    "M07": "Nisan",
-    "M08": "İyar",
-    "M09": "Sivan",
-    "M10": "Tamuz",
-    "M11": "Av",
-    "M12": "Elul"
-  }
+  "LeapLinear": [
+    "Tişri",
+    "Heşvan",
+    "Kislev",
+    "Tevet",
+    "Şevat",
+    "Adar",
+    "Nisan",
+    "İyar",
+    "Sivan",
+    "Tamuz",
+    "Av",
+    "Elul",
+    "",
+    "",
+    "",
+    "",
+    "",
+    "Adar Rişon",
+    "Veadar",
+    "",
+    "",
+    "",
+    "",
+    ""
+  ]
 }

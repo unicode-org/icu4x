@@ -1,18 +1,28 @@
 {
-  "Map": {
-    "M01": "tichri",
-    "M02": "hèchvan",
-    "M03": "kislev",
-    "M04": "téveth",
-    "M05": "chevat",
-    "M05L": "adar I",
-    "M06": "adar",
-    "M06L": "adar II",
-    "M07": "nissan",
-    "M08": "iyar",
-    "M09": "sivan",
-    "M10": "tamouz",
-    "M11": "av",
-    "M12": "éloul"
-  }
+  "LeapLinear": [
+    "tichri",
+    "hèchvan",
+    "kislev",
+    "téveth",
+    "chevat",
+    "adar",
+    "nissan",
+    "iyar",
+    "sivan",
+    "tamouz",
+    "av",
+    "éloul",
+    "",
+    "",
+    "",
+    "",
+    "",
+    "adar I",
+    "adar II",
+    "",
+    "",
+    "",
+    "",
+    ""
+  ]
 }

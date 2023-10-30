@@ -916,6 +916,25 @@ impl AuxiliaryKeys {
         }
     }
 
+    /// Creates an [`AuxiliaryKeys`] from a single subtag.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use icu_provider::prelude::*;
+    /// use icu_locid::extensions::private::subtag;
+    ///
+    /// // Single auxiliary key:
+    /// let a = AuxiliaryKeys::from_subtag(subtag!("abc"));
+    /// let b = "abc".parse::<AuxiliaryKeys>().unwrap();
+    /// assert_eq!(a, b);
+    /// ```
+    pub const fn from_subtag(input: Subtag) -> Self {
+        Self {
+            value: AuxiliaryKeysInner::Stack(input.into_tinystr().resize()),
+        }
+    }
+
     pub(crate) fn try_from_str(s: &str) -> Result<Self, DataError> {
         if !s.is_empty()
             && s.split(Self::separator()).all(|b| {

@@ -1,5 +1,5 @@
 {
-  "Numeric": [
+  "LeapLinear": [
     "zhēngyuè",
     "èryuè",
     "sānyuè",
@@ -11,6 +11,18 @@
     "jiǔyuè",
     "shíyuè",
     "shíyīyuè",
-    "shí’èryuè"
+    "shí’èryuè",
+    "zhēngyuèbis",
+    "èryuèbis",
+    "sānyuèbis",
+    "sìyuèbis",
+    "wǔyuèbis",
+    "liùyuèbis",
+    "qīyuèbis",
+    "bāyuèbis",
+    "jiǔyuèbis",
+    "shíyuèbis",
+    "shíyīyuèbis",
+    "shí’èryuèbis"
   ]
 }

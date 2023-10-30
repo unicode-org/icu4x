@@ -5,6 +5,7 @@
 use crate::provider::calendar::*;
 use crate::provider::neo::*;
 use alloc::vec;
+use icu_calendar::types::MonthCode;
 use icu_locid::extensions::private::{subtag, Subtag};
 use icu_provider::prelude::*;
 
@@ -201,13 +202,25 @@ impl<'a> From<&months::SymbolsV1<'a>> for MonthSymbolsV1<'a> {
                 // a new VarZeroVec. Since VarZeroVec does not implement `from_iter`, first we
                 // make a Vec of string references.
                 let vec: alloc::vec::Vec<&str> = cow_list.iter().map(|x| &**x).collect();
-                MonthSymbolsV1::Numeric((&vec).into())
+                MonthSymbolsV1::Linear((&vec).into())
             }
             months::SymbolsV1::Other(zero_map) => {
-                // zero_map has `MonthCode` keys, but we want `UnvalidatedTinyAsciiStr<4>`.
-                // We can do this conversion zero-copy. clone() is no-op on a borrowed ZeroMap.
-                #[allow(clippy::unwrap_used)] // MonthCode to Unvalidated4 is infallible
-                MonthSymbolsV1::Map(zero_map.clone().try_convert_zv_k_unchecked().unwrap())
+                // Only calendar that uses this is hebrew, we can assume it is 12-month
+                let mut vec = vec![""; 24];
+
+                for (k, v) in zero_map.iter() {
+                    let Some((number, leap)) = MonthCode(*k).parsed() else {
+                        debug_assert!(false, "Found unknown month code {k}");
+                        continue;
+                    };
+                    let offset = if leap { 12 } else { 0 };
+                    if let Some(entry) = vec.get_mut((number + offset - 1) as usize) {
+                        *entry = v;
+                    } else {
+                        debug_assert!(false, "Found out of bounds hebrew month code {k}")
+                    }
+                }
+                MonthSymbolsV1::LeapLinear((&vec).into())
             }
         }
     }
@@ -478,7 +491,7 @@ mod tests {
 
         assert_eq!(
             format!("{neo_month_abbreviated:?}"),
-            "Numeric([\"Jan\", \"Feb\", \"Mar\", \"Apr\", \"May\", \"Jun\", \"Jul\", \"Aug\", \"Sep\", \"Oct\", \"Nov\", \"Dec\"])"
+            "Linear([\"Jan\", \"Feb\", \"Mar\", \"Apr\", \"May\", \"Jun\", \"Jul\", \"Aug\", \"Sep\", \"Oct\", \"Nov\", \"Dec\"])"
         );
     }
 
@@ -503,7 +516,7 @@ mod tests {
 
         assert_eq!(
             format!("{neo_month_abbreviated:?}"),
-            "Map(ZeroMap { keys: ZeroVec([\"M01\", \"M02\", \"M03\", \"M04\", \"M05\", \"M05L\", \"M06\", \"M06L\", \"M07\", \"M08\", \"M09\", \"M10\", \"M11\", \"M12\"]), values: [\"Tishri\", \"Heshvan\", \"Kislev\", \"Tevet\", \"Shevat\", \"Adar I\", \"Adar\", \"Adar II\", \"Nisan\", \"Iyar\", \"Sivan\", \"Tamuz\", \"Av\", \"Elul\"] })"
+            "LeapLinear([\"Tishri\", \"Heshvan\", \"Kislev\", \"Tevet\", \"Shevat\", \"Adar\", \"Nisan\", \"Iyar\", \"Sivan\", \"Tamuz\", \"Av\", \"Elul\", \"\", \"\", \"\", \"\", \"Adar I\", \"Adar II\", \"\", \"\", \"\", \"\", \"\", \"\"])"
         );
     }
 

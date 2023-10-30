@@ -1998,6 +1998,7 @@ dependencies = [
  "icu_collections",
  "icu_locid",
  "icu_locid_transform",
+ "icu_properties",
  "icu_provider",
  "icu_segmenter_data",
  "itertools",

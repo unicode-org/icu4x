@@ -11,6 +11,7 @@
 
 use serde::Deserialize;
 use std::borrow::Cow;
+use std::collections::BTreeMap;
 use std::collections::HashMap;
 
 #[derive(Debug, PartialEq, Clone, Deserialize)]
@@ -30,10 +31,17 @@ pub struct StandAloneWidths<Symbols> {
 }
 
 #[derive(Debug, PartialEq, Clone, Deserialize)]
+pub struct Numeric<Symbols> {
+    pub all: Symbols,
+}
+
+#[derive(Debug, PartialEq, Clone, Deserialize)]
 pub struct Contexts<Symbols> {
     pub format: FormatWidths<Symbols>,
     #[serde(rename = "stand-alone")]
     pub stand_alone: Option<StandAloneWidths<Symbols>>,
+    // currently only found on monthPatterns
+    pub numeric: Option<Numeric<Symbols>>,
 }
 
 /// A length, for querying Contexts
@@ -228,6 +236,11 @@ impl DateTimeFormats {
 #[derive(PartialEq, Clone, Debug, Deserialize)]
 pub struct AvailableFormats(pub HashMap<String, String>);
 
+#[derive(PartialEq, Clone, Debug, Deserialize)]
+pub struct CyclicNameSets {
+    pub years: Option<Contexts<BTreeMap<u8, String>>>,
+}
+
 /// This struct represents a 1:1 mapping of the CLDR ca-gregorian.json data at the key
 /// "main.LANGID.dates.calendars.gregorian" where "LANGID" is the identifier.
 ///
@@ -237,11 +250,11 @@ pub struct AvailableFormats(pub HashMap<String, String>);
 pub struct Dates {
     pub months: Contexts<MonthSymbols>,
     #[serde(rename = "monthPatterns")]
-    // Not used yet, will be in the future
     pub month_patterns: Option<Contexts<MonthPatternSymbols>>,
     pub days: Contexts<DaySymbols>,
-    #[serde(default)]
-    pub eras: Eras,
+    pub eras: Option<Eras>,
+    #[serde(rename = "cyclicNameSets")]
+    pub cyclic_name_sets: Option<CyclicNameSets>,
     #[serde(rename = "dayPeriods")]
     pub day_periods: Contexts<DayPeriodSymbols>,
     #[serde(rename = "dateFormats")]
