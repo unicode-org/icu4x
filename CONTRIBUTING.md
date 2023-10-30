@@ -16,7 +16,7 @@ To build ICU4X, you will need the following dependencies:
 
  - Rust (and Cargo) installed [via `rustup`](https://doc.rust-lang.org/book/ch01-01-installation.html)
  - `cargo-make` installed via `cargo install cargo-make`
- - `cargo-readme` installed via `cargo install cargo-readme`
+ - `cargo-rdme` installed via `cargo install cargo-rdme`
 
 Certain tests may need further dependencies, these are documented below in the [Testing](#testing) section.
 
