@@ -600,9 +600,9 @@ jobs:
       run: cargo make gn-install
 
     - name: Get cargo-rdme version
-      id: cargo-readme-version
+      id: cargo-rdme-version
       run: |
-        echo "::set-output name=hash::$(cargo search cargo-rdme | grep '^cargo-rdme =' | md5sum)"
+        echo "hash=$(cargo search cargo-rdme | grep '^cargo-rdme =' | md5sum)" >> $GITHUB_OUTPUT
       shell: bash
     - name: Attempt to load cached cargo-rdme
       uses: actions/cache@v3
@@ -695,9 +695,9 @@ jobs:
 
     # Job-specific dependencies
     - name: Get cargo-rdme version
-      id: cargo-readme-version
+      id: cargo-rdme-version
       run: |
-        echo "::set-output name=hash::$(cargo search cargo-rdme | grep '^cargo-rdme =' | md5sum)"
+        echo "hash=$(cargo search cargo-rdme | grep '^cargo-rdme =' | md5sum)" >> $GITHUB_OUTPUT
       shell: bash
     - name: Attempt to load cached cargo-rdme
       uses: actions/cache@v3
