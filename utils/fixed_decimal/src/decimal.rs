@@ -1128,7 +1128,7 @@ impl FixedDecimal {
                 }
                 RoundingIncrement::MultiplesOf2 => {
                     let Some(last_digit) = self.digits.last_mut() else {
-                        // Unreachable
+                        debug_assert!(false, "`self.digits` should have at least a digit");
                         return;
                     };
 
@@ -1138,7 +1138,7 @@ impl FixedDecimal {
                 }
                 RoundingIncrement::MultiplesOf5 => {
                     let Some(last_digit) = self.digits.last_mut() else {
-                        // Unreachable
+                        debug_assert!(false, "`self.digits` should have at least a digit");
                         return;
                     };
 
@@ -1149,7 +1149,7 @@ impl FixedDecimal {
                     self.digits.resize(digits_to_retain as usize, 0);
 
                     let Some((last_digit, digits)) = self.digits.split_last_mut() else {
-                        // Unreachable.
+                        debug_assert!(false, "`self.digits` should have at least a digit");
                         return;
                     };
 
