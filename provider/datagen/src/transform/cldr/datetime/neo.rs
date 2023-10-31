@@ -497,7 +497,7 @@ fn months_convert(
         let pattern = patterns.get_symbols(context, length);
         let leap = &pattern.leap;
         let Some(index) = leap.find("{0}") else {
-            panic!("Calendar {calendar} for {langid} has leap patterh {leap}, which does not contain {{0}} placeholder");
+            panic!("Calendar {calendar} for {langid} has leap pattern {leap}, which does not contain {{0}} placeholder");
         };
         let string = leap.replace("{0}", "");
         let pattern = SimpleSubstitutionPattern {
