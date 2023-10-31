@@ -46,7 +46,7 @@ jobs:
     env:
       CARGO_HTTP_MULTIPLEXING: false
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
 
     # Cargo-make boilerplate
     - name: Get cargo-make version
@@ -100,7 +100,7 @@ jobs:
     runs-on: ${{ matrix.os }}
 
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
 
     # Cargo-make boilerplate
     - name: Get cargo-make version
@@ -139,7 +139,7 @@ jobs:
   test-docs:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
 
     # Cargo-make boilerplate
     - name: Get cargo-make version
@@ -178,7 +178,7 @@ jobs:
         behavior: [local, cratesio]
       fail-fast: false
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
 
     # Cargo-make boilerplate
     - name: Get cargo-make version
@@ -224,7 +224,7 @@ jobs:
     runs-on: ${{ matrix.os }}
 
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
 
     # Cargo-make boilerplate
     - name: Get cargo-make version
@@ -266,7 +266,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
 
     # Cargo-make boilerplate
     - name: Get cargo-make version
@@ -325,7 +325,7 @@ jobs:
   full-datagen:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
 
     # Cargo-make boilerplate
     - name: Get cargo-make version
@@ -372,7 +372,7 @@ jobs:
       image: rust:bookworm
 
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
     
     # Software setup/installation for the container
     - name: Install Rust toolchains
@@ -434,7 +434,7 @@ jobs:
       image: rust:bookworm
 
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
     
     # Software setup/installation for the container
     - name: Install Rust toolchains
@@ -489,7 +489,7 @@ jobs:
   nostd:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
 
     # Cargo-make boilerplate
     - name: Get cargo-make version
@@ -524,7 +524,7 @@ jobs:
   diplomat:
     runs-on: [ ubuntu-latest ]
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
 
     # Cargo-make boilerplate
     - name: Get cargo-make version
@@ -560,7 +560,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
 
     # Cargo-make boilerplate
     - name: Get cargo-make version
@@ -600,9 +600,9 @@ jobs:
       run: cargo make gn-install
 
     - name: Get cargo-rdme version
-      id: cargo-readme-version
+      id: cargo-rdme-version
       run: |
-        echo "::set-output name=hash::$(cargo search cargo-rdme | grep '^cargo-rdme =' | md5sum)"
+        echo "hash=$(cargo search cargo-rdme | grep '^cargo-rdme =' | md5sum)" >> $GITHUB_OUTPUT
       shell: bash
     - name: Attempt to load cached cargo-rdme
       uses: actions/cache@v3
@@ -627,7 +627,7 @@ jobs:
   fmt:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
 
     # Cargo-make boilerplate
     - name: Get cargo-make version
@@ -666,7 +666,7 @@ jobs:
   tidy:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
 
     # Cargo-make boilerplate
     - name: Get cargo-make version
@@ -695,9 +695,9 @@ jobs:
 
     # Job-specific dependencies
     - name: Get cargo-rdme version
-      id: cargo-readme-version
+      id: cargo-rdme-version
       run: |
-        echo "::set-output name=hash::$(cargo search cargo-rdme | grep '^cargo-rdme =' | md5sum)"
+        echo "hash=$(cargo search cargo-rdme | grep '^cargo-rdme =' | md5sum)" >> $GITHUB_OUTPUT
       shell: bash
     - name: Attempt to load cached cargo-rdme
       uses: actions/cache@v3
@@ -725,7 +725,7 @@ jobs:
 
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
 
     # Cargo-make boilerplate
     - name: Get cargo-make version
@@ -764,7 +764,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
 
     # Cargo-make boilerplate
     - name: Get cargo-make version

@@ -58,7 +58,7 @@ jobs:
     needs: credentials
     runs-on: "ubuntu-latest"
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
 
     # GCP Boilerplate for jobs in main or forked repository (needs credentials)
     - id: gcp-auth
@@ -98,7 +98,7 @@ jobs:
     needs: credentials
     runs-on: "ubuntu-latest"
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
 
     # GCP Boilerplate for jobs in main or forked repository (needs credentials)
     - id: gcp-auth
@@ -151,7 +151,7 @@ jobs:
     name: WASM Demo
     runs-on: "ubuntu-latest"
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
 
     # GCP Boilerplate for jobs in main repository
     - id: gcp-auth
@@ -228,7 +228,7 @@ jobs:
     # Example "debugging" workflow: https://github.com/echeran/icu4x/actions/runs/296714990
 
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
 
     # GCP Boilerplate for jobs in main repository
     - id: gcp-auth
@@ -324,7 +324,7 @@ jobs:
       group: bench-memory-${{ matrix.os }}
 
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
 
     # GCP Boilerplate for jobs in main repository
     - id: gcp-auth
@@ -401,7 +401,7 @@ jobs:
       group: bench-binsize
 
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
 
     # GCP Boilerplate for jobs in main repository
     - id: gcp-auth
@@ -519,7 +519,7 @@ jobs:
       group: bench-datasize
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
 
     # GCP Boilerplate for jobs in main repository
     - id: gcp-auth
@@ -583,7 +583,7 @@ jobs:
       group: "pages"
       cancel-in-progress: true
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       # GCP Boilerplate for jobs in main repository
       - id: gcp-auth
         name: "Authenticate to Google Cloud with Workload Identity Provider"
