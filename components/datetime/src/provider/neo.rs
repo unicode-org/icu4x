@@ -131,7 +131,7 @@ pub struct SimpleSubstitutionPattern<'data> {
     /// The pattern
     #[cfg_attr(feature = "serde", serde(borrow))]
     pub pattern: Cow<'data, str>,
-    /// The index in which to substitute stuff
+    /// The byte index in which to substitute stuff. Weak invariant: `subst_index <= pattern.len()`
     pub subst_index: usize,
 }
 

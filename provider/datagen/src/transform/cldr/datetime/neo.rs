@@ -95,6 +95,7 @@ const NORMAL_KEY_LENGTHS: &[Subtag] = &[
     WIDE_STANDALONE,
 ];
 
+/// Lengths for month data (NORMAL_KEY_LENGTHS + numeric)
 const NUMERIC_MONTHS_KEY_LENGTHS: &[Subtag] = &[
     ABBR,
     NARROW,
@@ -105,8 +106,10 @@ const NUMERIC_MONTHS_KEY_LENGTHS: &[Subtag] = &[
     NUMERIC,
 ];
 
+/// Lengths for year data (does not do standalone formatting) 
 const YEARS_KEY_LENGTHS: &[Subtag] = &[ABBR, NARROW, WIDE];
-/// All possible lengths
+
+/// All possible non-numeric lengths
 const FULL_KEY_LENGTHS: &[Subtag] = &[
     ABBR,
     NARROW,
@@ -118,6 +121,7 @@ const FULL_KEY_LENGTHS: &[Subtag] = &[
     SHORT_STANDALONE,
 ];
 
+/// Lengths for normal patterns (not counting hour cycle stuff)
 const NORMAL_PATTERN_KEY_LENGTHS: &[Subtag] =
     &[PATTERN_FULL, PATTERN_LONG, PATTERN_MEDIUM, PATTERN_SHORT];
 
