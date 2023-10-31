@@ -118,6 +118,25 @@ impl MonthCode {
             None
         }
     }
+    /// Get the month number and whether or not it is leap from the month code
+    pub fn parsed(self) -> Option<(u8, bool)> {
+        // Match statements on tinystrs are annoying so instead
+        // we calculate it from the bytes directly
+
+        let bytes = self.0.all_bytes();
+        let is_leap = bytes[3] == b'L';
+        if bytes[0] != b'M' {
+            return None;
+        }
+        if bytes[1] == b'0' {
+            if bytes[2] >= b'1' && bytes[2] <= b'9' {
+                return Some((bytes[2] - b'0', is_leap));
+            }
+        } else if bytes[1] == b'1' && bytes[2] >= b'0' && bytes[2] <= b'3' {
+            return Some((10 + bytes[2] - b'0', is_leap));
+        }
+        None
+    }
 }
 
 #[test]

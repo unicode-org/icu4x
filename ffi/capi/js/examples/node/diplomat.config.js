@@ -4,5 +4,4 @@
 
 export default {
     wasm_path: new URL('icu_capi_cdylib/target/wasm32-unknown-unknown/release/icu_capi_cdylib.wasm', import.meta.url),
-    init: wasm => wasm.icu4x_init(),
 };

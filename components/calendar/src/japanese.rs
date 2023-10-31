@@ -155,8 +155,8 @@ impl Japanese {
         day: u8,
         debug_name: &'static str,
     ) -> Result<JapaneseDateInner, CalendarError> {
-        let month = crate::calendar_arithmetic::ordinal_month_from_code(month_code);
-        let month = if let Some(month) = month {
+        let month = month_code.parsed();
+        let month = if let Some((month, false)) = month {
             month
         } else {
             return Err(CalendarError::UnknownMonthCode(month_code.0, debug_name));

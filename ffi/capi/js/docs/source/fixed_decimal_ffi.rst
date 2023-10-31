@@ -167,6 +167,11 @@
         See the `Rust documentation for trunc <https://docs.rs/fixed_decimal/latest/fixed_decimal/struct.FixedDecimal.html#method.trunc>`__ for more information.
 
 
+    .. js:method:: trunc_to_increment(position, increment)
+
+        See the `Rust documentation for trunc_to_increment <https://docs.rs/fixed_decimal/latest/fixed_decimal/struct.FixedDecimal.html#method.trunc_to_increment>`__ for more information.
+
+
     .. js:method:: half_trunc(position)
 
         See the `Rust documentation for half_trunc <https://docs.rs/fixed_decimal/latest/fixed_decimal/struct.FixedDecimal.html#method.half_trunc>`__ for more information.
@@ -237,4 +242,11 @@
     ECMA-402 compatible sign display preference.
 
     See the `Rust documentation for SignDisplay <https://docs.rs/fixed_decimal/latest/fixed_decimal/enum.SignDisplay.html>`__ for more information.
+
+
+.. js:class:: ICU4XRoundingIncrement
+
+    Increment used in a rounding operation.
+
+    See the `Rust documentation for RoundingIncrement <https://docs.rs/fixed_decimal/latest/fixed_decimal/enum.RoundingIncrement.html>`__ for more information.
 

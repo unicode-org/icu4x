@@ -16,13 +16,15 @@ pub struct Bcp47TzidAliasData {
     #[serde(rename = "_deprecated")]
     pub deprecated: Option<bool>,
     #[serde(rename = "_preferred")]
-    pub preferred: Option<String>,
+    pub preferred: Option<TimeZoneBcp47Id>,
     #[serde(rename = "_description")]
     pub description: String,
     #[serde(rename = "_alias")]
     pub alias: Option<String>,
     #[serde(rename = "_since")]
     pub since: Option<String>,
+    #[serde(rename = "_iana")]
+    pub iana: Option<String>,
 }
 
 #[derive(PartialEq, Debug, Deserialize)]

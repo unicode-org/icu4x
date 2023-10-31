@@ -18,7 +18,7 @@ CLANG := clang-15
 LLD := lld-15
 
 baked_data/macros.rs:
-	cargo run -p icu_datagen -- --locales en bn --keys all --fallback preresolved --format mod --out baked_data
+	cargo run -p icu_datagen -- --locales en bn --keys all --fallback preresolved --format mod --out baked_data --overwrite
 
 ../../../../../target/debug/libicu_capi_staticlib.a: FORCE
 	cargo build -p icu_capi_staticlib --no-default-features --features compiled_data,default_components
@@ -69,6 +69,7 @@ optim5.elf: optim5.o icu_capi_staticlib_tiny/target/x86_64-unknown-linux-gnu/rel
 	$(CLANG) -flto=thin -fuse-ld=$(LLD) -L . -o optim5.elf optim5.o icu_capi_staticlib_tiny/target/x86_64-unknown-linux-gnu/release/libicu_capi_staticlib_tiny.a -Wl,--gc-sections -Wl,--strip-all
 
 build: optim0.elf optim1.elf optim2.elf optim3.elf optim4.elf optim5.elf
+	ls -l optim*.elf
 
 test: build
 	./optim0.elf bn

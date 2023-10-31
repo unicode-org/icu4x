@@ -307,30 +307,20 @@ where
                     .ok_or(Error::MissingInputField(Some("month")))?
                     .code;
 
-                let symbols = date_symbols
+                let (symbol, is_leap) = date_symbols
                     .ok_or(Error::MissingDateSymbols)?
-                    .get_symbols_for_month(month, length)?;
+                    .get_symbol_for_month(month, length, code)?;
 
-                let symbol_option = symbols.get(code);
-                if symbol_option.is_some() {
-                    w.write_str(symbol_option.ok_or(Error::MissingMonthSymbol(code))?)?;
-                } else {
-                    let code = code
-                        .get_normal_if_leap()
-                        .ok_or(Error::MissingMonthSymbol(code))?;
-                    let symbols = date_symbols
-                        .ok_or(Error::MissingDateSymbols)?
-                        .get_symbols_for_month(month, length)?;
-                    let symbol = symbols.get(code).ok_or(Error::MissingMonthSymbol(code))?;
-                    // FIXME (#3766) this should be using actual data for leap months
+                // FIXME (#3766) this should be using actual data for leap months
+                if is_leap {
                     let leap_str = match datetime.any_calendar_kind() {
                         Some(AnyCalendarKind::Chinese) => CHINESE_LEAP_PREFIX,
                         Some(AnyCalendarKind::Dangi) => DANGI_LEAP_PREFIX,
                         _ => PLACEHOLDER_LEAP_PREFIX,
                     };
                     w.write_str(leap_str)?;
-                    w.write_str(symbol)?;
                 }
+                w.write_str(symbol)?;
             }
         },
         FieldSymbol::Week(week) => match week {

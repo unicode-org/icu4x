@@ -55,9 +55,6 @@ pub mod logging;
 #[macro_use]
 pub mod provider;
 
-#[cfg(target_arch = "wasm32")]
-mod wasm_glue;
-
 // Components
 
 #[cfg(feature = "icu_properties")]

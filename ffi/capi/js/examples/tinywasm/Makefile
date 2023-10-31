@@ -32,6 +32,10 @@ icu_capi_cdylib/target/wasm32-unknown-unknown/release/icu_capi_cdylib.wasm: FORC
 		--release
 
 build: icu_capi_cdylib/target/wasm32-unknown-unknown/release/icu_capi_cdylib.wasm lib
+	ls -l
+
+test:
+	node tiny.mjs
 
 clean:
 	git clean -xf *

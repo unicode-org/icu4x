@@ -105,3 +105,9 @@ impl From<CalendarError> for DateTimeError {
         DateTimeError::DateTimeInput(e)
     }
 }
+
+impl From<DecimalError> for DateTimeError {
+    fn from(e: DecimalError) -> Self {
+        DateTimeError::FixedDecimalFormatter(e)
+    }
+}

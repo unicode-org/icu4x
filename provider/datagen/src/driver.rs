@@ -349,13 +349,18 @@ impl DatagenDriver {
                         let mut iter = fallbacker_with_config.fallback_for(locale.clone());
                         while !iter.get().is_und() {
                             iter.step();
-                            if payloads.get(iter.get()) == Some(payload) {
-                                // Found a match: don't need to write anything
-                                log::trace!(
-                                    "Deduplicating {key}/{locale} (inherits from {})",
-                                    iter.get()
-                                );
-                                return Ok(());
+                            if let Some(inherited_payload) = payloads.get(iter.get()) {
+                                if inherited_payload == payload {
+                                    // Found a match: don't need to write anything
+                                    log::trace!(
+                                        "Deduplicating {key}/{locale} (inherits from {})",
+                                        iter.get()
+                                    );
+                                    return Ok(());
+                                } else {
+                                    // Not a match: we must include this
+                                    break;
+                                }
                             }
                         }
                         // Did not find a match: export this payload
@@ -495,11 +500,13 @@ fn select_locales_for_key(
             result
                 .into_iter()
                 .chain(explicit.iter().cloned())
-                .filter(|locale| {
-                    if implicit.contains(locale) {
+                .filter(|locale_orig| {
+                    let mut locale = locale_orig.clone();
+                    locale.remove_aux();
+                    if implicit.contains(&locale) {
                         return true;
                     }
-                    if explicit.contains(locale) {
+                    if explicit.contains(&locale) {
                         return true;
                     }
                     if locale.is_langid_und() && include_und {
@@ -520,14 +527,14 @@ fn select_locales_for_key(
                     {
                         return false;
                     }
-                    let mut iter = fallbacker_with_config.fallback_for(locale.clone());
+                    let mut iter = fallbacker_with_config.fallback_for(locale);
                     while !iter.get().is_und() {
                         if explicit.contains(iter.get()) {
                             return true;
                         }
                         iter.step();
                     }
-                    log::trace!("Filtered out: {key}/{locale}");
+                    log::trace!("Filtered out: {key}/{locale_orig}"); // this will print aux keys too but it avoids a clone
                     false
                 })
                 .collect()

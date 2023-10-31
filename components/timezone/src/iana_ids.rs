@@ -145,8 +145,9 @@ impl<'a> IanaToBcp47MapperBorrowed<'a> {
 /// assert_eq!(bcp47_id, Some("inccu".parse().unwrap()));
 ///
 /// // Get it back as the canonical form "Asia/Kolkata"
+/// // TODO(#4044): Fix after upgrading to CLDR-JSON 44
 /// let iana_id = mapper_borrowed.bcp47_to_iana(bcp47_id.unwrap());
-/// assert_eq!(iana_id, Some("Asia/Kolkata"))
+/// assert_eq!(iana_id, Some("Asia/Calcutta"))
 /// ```
 #[derive(Debug)]
 pub struct IanaBcp47RoundTripMapper {

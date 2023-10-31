@@ -916,6 +916,25 @@ impl AuxiliaryKeys {
         }
     }
 
+    /// Creates an [`AuxiliaryKeys`] from a single subtag.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use icu_provider::prelude::*;
+    /// use icu_locid::extensions::private::subtag;
+    ///
+    /// // Single auxiliary key:
+    /// let a = AuxiliaryKeys::from_subtag(subtag!("abc"));
+    /// let b = "abc".parse::<AuxiliaryKeys>().unwrap();
+    /// assert_eq!(a, b);
+    /// ```
+    pub const fn from_subtag(input: Subtag) -> Self {
+        Self {
+            value: AuxiliaryKeysInner::Stack(input.into_tinystr().resize()),
+        }
+    }
+
     pub(crate) fn try_from_str(s: &str) -> Result<Self, DataError> {
         if !s.is_empty()
             && s.split(Self::separator()).all(|b| {
@@ -990,6 +1009,19 @@ impl AuxiliaryKeys {
     #[inline]
     pub(crate) const fn separator() -> char {
         '-'
+    }
+}
+
+#[cfg(feature = "experimental")]
+impl From<Subtag> for AuxiliaryKeys {
+    fn from(subtag: Subtag) -> Self {
+        #[allow(clippy::expect_used)] // subtags definitely fit within auxiliary keys
+        Self {
+            value: AuxiliaryKeysInner::Stack(
+                TinyAsciiStr::from_bytes(subtag.as_str().as_bytes())
+                    .expect("Subtags are capped to 8 elements, AuxiliaryKeys supports up to 23"),
+            ),
+        }
     }
 }
 
