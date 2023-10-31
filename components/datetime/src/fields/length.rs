@@ -4,7 +4,6 @@
 
 use core::cmp::{Ord, PartialOrd};
 use core::fmt;
-use core::str::FromStr;
 use displaydoc::Display;
 use zerovec::ule::{AsULE, ZeroVecError, ULE};
 
@@ -188,20 +187,6 @@ impl TryFrom<u8> for FieldNumericOverrides {
             3 => Self::Romanlow,
             4 => Self::Jpnyear,
             _ => return Err(LengthError::InvalidLength),
-        })
-    }
-}
-
-impl FromStr for FieldNumericOverrides {
-    type Err = ();
-    fn from_str(s: &str) -> Result<Self, ()> {
-        Ok(match s {
-            "hanidec" => Self::Hanidec,
-            "d=hanidays" => Self::Hanidays,
-            "hebr" => Self::Hebr,
-            "M=romanlow" => Self::Romanlow,
-            "y=jpnyear" => Self::Jpnyear,
-            _ => return Err(()),
         })
     }
 }
