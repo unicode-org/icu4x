@@ -106,7 +106,7 @@ const NUMERIC_MONTHS_KEY_LENGTHS: &[Subtag] = &[
     NUMERIC,
 ];
 
-/// Lengths for year data (does not do standalone formatting) 
+/// Lengths for year data (does not do standalone formatting)
 const YEARS_KEY_LENGTHS: &[Subtag] = &[ABBR, NARROW, WIDE];
 
 /// All possible non-numeric lengths
