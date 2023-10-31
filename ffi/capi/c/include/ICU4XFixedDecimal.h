@@ -17,6 +17,7 @@ typedef struct ICU4XFixedDecimal ICU4XFixedDecimal;
 #include "diplomat_result_box_ICU4XFixedDecimal_ICU4XError.h"
 #include "ICU4XFixedDecimalSign.h"
 #include "ICU4XFixedDecimalSignDisplay.h"
+#include "ICU4XRoundingIncrement.h"
 #include "diplomat_result_void_void.h"
 #ifdef __cplusplus
 namespace capi {
@@ -72,6 +73,8 @@ void ICU4XFixedDecimal_pad_end(ICU4XFixedDecimal* self, int16_t position);
 void ICU4XFixedDecimal_set_max_position(ICU4XFixedDecimal* self, int16_t position);
 
 void ICU4XFixedDecimal_trunc(ICU4XFixedDecimal* self, int16_t position);
+
+void ICU4XFixedDecimal_trunc_to_increment(ICU4XFixedDecimal* self, int16_t position, ICU4XRoundingIncrement increment);
 
 void ICU4XFixedDecimal_half_trunc(ICU4XFixedDecimal* self, int16_t position);
 
