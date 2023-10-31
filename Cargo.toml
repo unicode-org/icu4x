@@ -235,6 +235,14 @@ diplomat = { version = "0.6" }
 diplomat-runtime = { version = "0.6" }
 diplomat_core = { version = "0.6" }
 
+# Size optimized builds
+[profile.release-opt-size]
+inherits = "release"
+lto = true
+opt-level = "s"
+panic = "abort"
+codegen-units = 1
+
 # Enable debug information specifically for memory profiling.
 # https://docs.rs/dhat/0.2.1/dhat/#configuration
 #
