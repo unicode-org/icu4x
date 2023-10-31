@@ -51,6 +51,7 @@ pub enum Length {
     Narrow,
     Wide,
     Short,
+    Numeric,
 }
 
 /// A context, for querying Contexts
@@ -61,11 +62,11 @@ pub enum Context {
 }
 
 impl<Symbols> Contexts<Symbols> {
-    /// Load
     fn get_symbols_exact(&self, context: Context, length: Length) -> Option<&Symbols> {
         use {Context::*, Length::*};
 
         match (context, length) {
+            (_, Numeric) => self.numeric.as_ref().map(|n| &n.all),
             (Format, Abbr) => Some(&self.format.abbreviated),
             (Format, Narrow) => Some(&self.format.narrow),
             (Format, Wide) => Some(&self.format.wide),
@@ -180,7 +181,9 @@ impl Eras {
             Length::Abbr => &self.abbr,
             Length::Narrow => &self.narrow,
             Length::Wide => &self.names,
-            Length::Short => unreachable!("Years do not have short symbols!"),
+            Length::Short | Length::Numeric => {
+                unreachable!("Years do not have short/numeric symbols!")
+            }
         }
     }
 }
