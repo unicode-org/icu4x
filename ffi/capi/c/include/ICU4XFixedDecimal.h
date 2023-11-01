@@ -80,6 +80,8 @@ void ICU4XFixedDecimal_half_trunc(ICU4XFixedDecimal* self, int16_t position);
 
 void ICU4XFixedDecimal_expand(ICU4XFixedDecimal* self, int16_t position);
 
+void ICU4XFixedDecimal_expand_to_increment(ICU4XFixedDecimal* self, int16_t position, ICU4XRoundingIncrement increment);
+
 void ICU4XFixedDecimal_half_expand(ICU4XFixedDecimal* self, int16_t position);
 
 void ICU4XFixedDecimal_ceil(ICU4XFixedDecimal* self, int16_t position);
