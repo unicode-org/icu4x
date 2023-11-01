@@ -618,9 +618,10 @@ impl<'data> From<&PatternPlurals<'data>> for Bag {
             match field.symbol {
                 FieldSymbol::Era => {
                     bag.era = Some(match field.length {
-                        FieldLength::One | FieldLength::TwoDigit | FieldLength::Abbreviated => {
-                            Text::Short
-                        }
+                        FieldLength::One
+                        | FieldLength::NumericOverride(_)
+                        | FieldLength::TwoDigit
+                        | FieldLength::Abbreviated => Text::Short,
                         FieldLength::Wide => Text::Long,
                         FieldLength::Narrow | FieldLength::Six | FieldLength::Fixed(_) => {
                             Text::Narrow
@@ -645,6 +646,7 @@ impl<'data> From<&PatternPlurals<'data>> for Bag {
                     // on the field length.
                     bag.month = Some(match field.length {
                         FieldLength::One => Month::Numeric,
+                        FieldLength::NumericOverride(_) => Month::Numeric,
                         FieldLength::TwoDigit => Month::TwoDigit,
                         FieldLength::Abbreviated => Month::Short,
                         FieldLength::Wide => Month::Long,
@@ -685,7 +687,9 @@ impl<'data> From<&PatternPlurals<'data>> for Bag {
                             _ => Text::Narrow,
                         },
                         fields::Weekday::StandAlone => match field.length {
-                            FieldLength::One | FieldLength::TwoDigit => {
+                            FieldLength::One
+                            | FieldLength::TwoDigit
+                            | FieldLength::NumericOverride(_) => {
                                 // Stand-alone fields also support a numeric 1 digit per UTS-35, but there is
                                 // no way to request it using the current system. As of 2021-12-06
                                 // no skeletons resolve to patterns containing this symbol.

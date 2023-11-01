@@ -96,7 +96,7 @@ where
     W: fmt::Write + ?Sized,
 {
     match length {
-        FieldLength::One => {}
+        FieldLength::One | FieldLength::NumericOverride(_) => {}
         FieldLength::TwoDigit => {
             num.pad_start(2);
             num.set_max_position(2);

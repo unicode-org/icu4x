@@ -481,6 +481,7 @@ impl LengthType for Month {
     fn get_length_type(&self, length: FieldLength) -> TextOrNumeric {
         match length {
             FieldLength::One => TextOrNumeric::Numeric,
+            FieldLength::NumericOverride(_) => TextOrNumeric::Numeric,
             FieldLength::TwoDigit => TextOrNumeric::Numeric,
             FieldLength::Abbreviated => TextOrNumeric::Text,
             FieldLength::Wide => TextOrNumeric::Text,
