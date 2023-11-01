@@ -153,12 +153,12 @@ fn main() -> eyre::Result<()> {
                 Ok(driver.export(&provider, exporter)?)
             }
         }
-        config::Export::Blob { ref path } => {
+        config::Export::Blob { ref path } | config::Export::Blob2 { ref path } => {
             #[cfg(not(feature = "blob_exporter"))]
             eyre::bail!("Exporting to a BlobProvider requires the `blob_exporter` Cargo feature");
             #[cfg(feature = "blob_exporter")]
             {
-                let exporter = icu_provider_blob::export::BlobExporter::new_with_sink(
+                let mut exporter = icu_provider_blob::export::BlobExporter::new_with_sink(
                     if path == std::path::Path::new("/stdout") {
                         Box::new(std::io::stdout())
                     } else if !config.overwrite && path.exists() {
@@ -170,6 +170,11 @@ fn main() -> eyre::Result<()> {
                         )
                     },
                 );
+                if matches!(config.export, config::Export::Blob { .. }) {
+                    exporter.set_v1();
+                } else {
+                    exporter.set_v2();
+                }
                 Ok(driver.export(&provider, exporter)?)
             }
         }
