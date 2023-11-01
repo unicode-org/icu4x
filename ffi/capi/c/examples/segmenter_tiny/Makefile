@@ -78,4 +78,3 @@ test: build
 
 clean:
 	git clean -xf *
-	rm -f crate/target/debug/libcrate.a
