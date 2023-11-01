@@ -8,7 +8,7 @@
 use crate::blob_schema::*;
 use icu_provider::datagen::*;
 use icu_provider::prelude::*;
-use std::collections::{BTreeMap, HashMap};
+use std::collections::{BTreeMap, BTreeSet, HashMap};
 use std::sync::Mutex;
 use writeable::Writeable;
 use zerotrie::ZeroTrieSimpleAscii;
@@ -32,7 +32,7 @@ pub struct BlobExporter<'w> {
     #[allow(clippy::type_complexity)]
     resources: Mutex<BTreeMap<DataKeyHash, BTreeMap<Vec<u8>, usize>>>,
     // All seen keys
-    all_keys: Mutex<Vec<DataKeyHash>>,
+    all_keys: Mutex<BTreeSet<DataKeyHash>>,
     /// Map from blob to blob ID
     unique_resources: Mutex<HashMap<Vec<u8>, usize>>,
     sink: Box<dyn std::io::Write + Sync + 'w>,
@@ -56,9 +56,9 @@ impl<'w> BlobExporter<'w> {
         Self {
             resources: Mutex::new(BTreeMap::new()),
             unique_resources: Mutex::new(HashMap::new()),
-            all_keys: Mutex::new(Vec::new()),
+            all_keys: Mutex::new(BTreeSet::new()),
             sink,
-            version: VersionConfig::V002,
+            version: VersionConfig::V001,
         }
     }
 
@@ -105,7 +105,7 @@ impl DataExporter for BlobExporter<'_> {
     }
 
     fn flush(&self, key: DataKey) -> Result<(), DataError> {
-        self.all_keys.lock().expect("poison").push(key.hashed());
+        self.all_keys.lock().expect("poison").insert(key.hashed());
         Ok(())
     }
 
@@ -199,26 +199,26 @@ impl BlobExporter<'_> {
     fn close_v2(&mut self) -> Result<(), DataError> {
         let FinalizedBuffers { vzv, remap } = self.finalize_buffers();
 
-        let keys: ZeroVec<DataKeyHash> = self
-            .resources
-            .lock()
-            .expect("poison")
-            .keys()
-            .copied()
-            .collect();
+        let all_keys = self.all_keys.lock().expect("poison");
+        let resources = self.resources.lock().expect("poison");
 
-        let locales_vec: Vec<Vec<u8>> = self
-            .resources
-            .lock()
-            .expect("poison")
-            .values()
-            .map(|sub_map| {
-                let mut sub_map = sub_map.clone();
-                sub_map
-                    .iter_mut()
-                    .for_each(|(_, id)| *id = *remap.get(id).expect("in-bound index"));
-                let zerotrie = ZeroTrieSimpleAscii::try_from(&sub_map).expect("in-bounds");
-                zerotrie.take_store()
+        let keys: ZeroVec<DataKeyHash> = all_keys.iter().copied().collect();
+
+        let locales_vec: Vec<Vec<u8>> = all_keys
+            .iter()
+            .map(|data_key_hash| resources.get(data_key_hash))
+            .map(|option_sub_map| {
+                if let Some(sub_map) = option_sub_map {
+                    let mut sub_map = sub_map.clone();
+                    sub_map
+                        .iter_mut()
+                        .for_each(|(_, id)| *id = *remap.get(id).expect("in-bound index"));
+                    let zerotrie = ZeroTrieSimpleAscii::try_from(&sub_map).expect("in-bounds");
+                    zerotrie.take_store()
+                } else {
+                    // Key with no locales: insert an empty ZeroTrie
+                    ZeroTrieSimpleAscii::default().take_store()
+                }
             })
             .collect();
 

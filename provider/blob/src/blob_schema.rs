@@ -156,6 +156,9 @@ impl<'data> BlobSchemaV2<'data> {
             .binary_search(&key.hashed())
             .ok()
             .ok_or_else(|| DataErrorKind::MissingDataKey.with_req(key, req))?;
+        if key.metadata().singleton && !req.locale.is_empty() {
+            return Err(DataErrorKind::ExtraneousLocale.with_req(key, req));
+        }
         let zerotrie = self
             .locales
             .get(idx0)
@@ -181,7 +184,7 @@ impl<'data> BlobSchemaV2<'data> {
         debug_assert_eq!(self.keys.len(), self.locales.len());
         // Note: We could check that every index occurs at least once, but that's a more expensive
         // operation, so we will just check for the min and max index.
-        let mut seen_min = false;
+        let mut seen_min = self.buffers.is_empty();
         let mut seen_max = self.buffers.is_empty();
         for zerotrie in self.locales.iter() {
             for (_locale, idx) in ZeroTrieSimpleAscii::from_store(zerotrie).iter() {

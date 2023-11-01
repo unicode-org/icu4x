@@ -150,61 +150,94 @@ mod test {
 
     #[test]
     fn test_empty() {
-        let mut blob: Vec<u8> = Vec::new();
+        let mut version = 1;
 
-        {
-            let mut exporter = BlobExporter::new_with_sink(Box::new(&mut blob));
+        while version <= 2 {
+            let mut blob: Vec<u8> = Vec::new();
 
-            exporter.flush(HelloWorldV1Marker::KEY).unwrap();
+            {
+                let mut exporter = BlobExporter::new_with_sink(Box::new(&mut blob));
 
-            exporter.close().unwrap();
+                if version == 1 {
+                    exporter.set_v1();
+                } else {
+                    exporter.set_v2();
+                }
+
+                exporter.flush(HelloWorldV1Marker::KEY).unwrap();
+
+                exporter.close().unwrap();
+            }
+
+            let provider = BlobDataProvider::try_new_from_blob(blob.into()).unwrap();
+
+            assert!(
+                matches!(
+                    provider.load_buffer(HelloWorldV1Marker::KEY, Default::default()),
+                    Err(DataError {
+                        kind: DataErrorKind::MissingLocale,
+                        ..
+                    })
+                ),
+                "(version: {version})"
+            );
+
+            version += 1;
         }
-
-        let provider = BlobDataProvider::try_new_from_blob(blob.into()).unwrap();
-
-        assert!(matches!(
-            provider.load_buffer(HelloWorldV1Marker::KEY, Default::default()),
-            Err(DataError {
-                kind: DataErrorKind::MissingLocale,
-                ..
-            })
-        ));
     }
 
     #[test]
     fn test_singleton() {
-        let mut blob: Vec<u8> = Vec::new();
+        let mut version = 1;
 
-        {
-            let mut exporter = BlobExporter::new_with_sink(Box::new(&mut blob));
+        while version <= 2 {
+            let mut blob: Vec<u8> = Vec::new();
 
-            exporter.flush(HelloSingletonV1Marker::KEY).unwrap();
+            {
+                let mut exporter = BlobExporter::new_with_sink(Box::new(&mut blob));
 
-            exporter.close().unwrap();
-        }
-
-        let provider = BlobDataProvider::try_new_from_blob(blob.into()).unwrap();
-
-        assert!(matches!(
-            provider.load_buffer(
-                HelloSingletonV1Marker::KEY,
-                DataRequest {
-                    locale: &icu_locid::locale!("de").into(),
-                    metadata: Default::default()
+                if version == 1 {
+                    exporter.set_v1();
+                } else {
+                    exporter.set_v2();
                 }
-            ),
-            Err(DataError {
-                kind: DataErrorKind::ExtraneousLocale,
-                ..
-            })
-        ));
 
-        assert!(matches!(
-            provider.load_buffer(HelloSingletonV1Marker::KEY, Default::default()),
-            Err(DataError {
-                kind: DataErrorKind::MissingLocale,
-                ..
-            })
-        ));
+                exporter.flush(HelloSingletonV1Marker::KEY).unwrap();
+
+                exporter.close().unwrap();
+            }
+
+            let provider = BlobDataProvider::try_new_from_blob(blob.into()).unwrap();
+
+            assert!(
+                matches!(
+                    provider.load_buffer(
+                        HelloSingletonV1Marker::KEY,
+                        DataRequest {
+                            locale: &icu_locid::locale!("de").into(),
+                            metadata: Default::default()
+                        }
+                    ),
+                    Err(DataError {
+                        kind: DataErrorKind::ExtraneousLocale,
+                        ..
+                    })
+                ),
+                "(version: {version})"
+            );
+
+            assert!(
+                matches!(
+                    provider.load_buffer(HelloSingletonV1Marker::KEY, Default::default()),
+                    Err(DataError {
+                        kind: DataErrorKind::MissingLocale,
+                        ..
+                    })
+                ),
+                "(version: {version})"
+            );
+
+            version += 1;
+        }
     }
 }
