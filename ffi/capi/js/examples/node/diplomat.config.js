@@ -3,5 +3,5 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 export default {
-    wasm_path: new URL('crate/target/wasm32-unknown-unknown/release/icu_capi_cdylib.wasm', import.meta.url),
+    wasm_path: new URL('crate/target/wasm32-unknown-unknown/release/crate.wasm', import.meta.url),
 };
