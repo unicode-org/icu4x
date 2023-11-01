@@ -526,15 +526,15 @@ impl Reader {
     pub fn read(input: &str) -> Result<(ResourceBundle, Vec<Key>), TextParserError> {
         let input = ParseState::new(input);
 
-        let (mut final_state, bundle) =
-            match bundle::<VerboseError<ParseState>>(input.clone()).finish() {
-                Ok(result) => result,
-                Err(err) => {
-                    return Err(TextParserError {
-                        trace: convert_error(input, err),
-                    })
-                }
-            };
+        let (final_state, bundle) = match bundle::<VerboseError<ParseState>>(input.clone()).finish()
+        {
+            Ok(result) => result,
+            Err(err) => {
+                return Err(TextParserError {
+                    trace: convert_error(input, err),
+                })
+            }
+        };
 
         let keys_in_discovery_order = final_state.take_keys().iter().cloned().collect();
 
