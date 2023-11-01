@@ -19,16 +19,16 @@ lib: $(ALL_HEADERS)
 	mkdir lib;
 	cp ../../include/* lib/
  
-icu_capi_cdylib/target/wasm32-unknown-unknown/release/icu_capi_cdylib.wasm: FORCE
+crate/target/wasm32-unknown-unknown/release/crate.wasm: FORCE
 	rustup toolchain install ${ICU4X_NIGHTLY_TOOLCHAIN}
 	rustup component add rust-src --toolchain ${ICU4X_NIGHTLY_TOOLCHAIN}
 	RUSTFLAGS="-Cpanic=abort -Copt-level=s -C link-args=-zstack-size=${WASM_STACK_SIZE} -Clto -Cembed-bitcode" \
-	cd icu_capi_cdylib && cargo +${ICU4X_NIGHTLY_TOOLCHAIN} build \
+	cd crate && cargo +${ICU4X_NIGHTLY_TOOLCHAIN} build \
 		-Z build-std=std,panic_abort -Z build-std-features=panic_immediate_abort \
 		--target wasm32-unknown-unknown \
 		--release
 
-build: icu_capi_cdylib/target/wasm32-unknown-unknown/release/icu_capi_cdylib.wasm lib
+build: crate/target/wasm32-unknown-unknown/release/crate.wasm lib
 
 clean:
 	git clean -xf *

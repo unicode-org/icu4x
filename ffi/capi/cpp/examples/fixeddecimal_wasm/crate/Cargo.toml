@@ -3,12 +3,12 @@
 # (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 [package]
-name = "icu_capi_cdylib"
+name = "crate"
 version = "0.0.0"
 publish = false
 
 [lib]
-crate-type = ["cdylib"]
+crate-type = ["staticlib"]
 
 [dependencies]
 icu_capi = { path = "../../../.." }
