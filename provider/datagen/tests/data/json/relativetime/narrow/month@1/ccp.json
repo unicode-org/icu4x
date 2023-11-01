@@ -20,10 +20,7 @@
   },
   "future": {
     "zero": null,
-    "one": {
-      "pattern": " 𑄟𑄏𑄬",
-      "index": 0
-    },
+    "one": null,
     "two": null,
     "few": null,
     "many": null,
