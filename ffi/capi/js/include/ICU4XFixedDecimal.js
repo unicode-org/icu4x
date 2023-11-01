@@ -199,6 +199,10 @@ export class ICU4XFixedDecimal {
     wasm.ICU4XFixedDecimal_expand(this.underlying, arg_position);
   }
 
+  expand_to_increment(arg_position, arg_increment) {
+    wasm.ICU4XFixedDecimal_expand_to_increment(this.underlying, arg_position, ICU4XRoundingIncrement_js_to_rust[arg_increment]);
+  }
+
   half_expand(arg_position) {
     wasm.ICU4XFixedDecimal_half_expand(this.underlying, arg_position);
   }

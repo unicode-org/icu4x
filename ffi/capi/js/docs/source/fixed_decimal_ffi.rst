@@ -182,6 +182,11 @@
         See the `Rust documentation for expand <https://docs.rs/fixed_decimal/latest/fixed_decimal/struct.FixedDecimal.html#method.expand>`__ for more information.
 
 
+    .. js:method:: expand_to_increment(position, increment)
+
+        See the `Rust documentation for expand_to_increment <https://docs.rs/fixed_decimal/latest/fixed_decimal/struct.FixedDecimal.html#method.expand_to_increment>`__ for more information.
+
+
     .. js:method:: half_expand(position)
 
         See the `Rust documentation for half_expand <https://docs.rs/fixed_decimal/latest/fixed_decimal/struct.FixedDecimal.html#method.half_expand>`__ for more information.

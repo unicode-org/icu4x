@@ -222,6 +222,12 @@ export class ICU4XFixedDecimal {
 
   /**
 
+   * See the {@link https://docs.rs/fixed_decimal/latest/fixed_decimal/struct.FixedDecimal.html#method.expand_to_increment Rust documentation for `expand_to_increment`} for more information.
+   */
+  expand_to_increment(position: i16, increment: ICU4XRoundingIncrement): void;
+
+  /**
+
    * See the {@link https://docs.rs/fixed_decimal/latest/fixed_decimal/struct.FixedDecimal.html#method.half_expand Rust documentation for `half_expand`} for more information.
    */
   half_expand(position: i16): void;

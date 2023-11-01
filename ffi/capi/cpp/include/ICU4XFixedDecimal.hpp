@@ -243,6 +243,13 @@ class ICU4XFixedDecimal {
   /**
    * 
    * 
+   * See the [Rust documentation for `expand_to_increment`](https://docs.rs/fixed_decimal/latest/fixed_decimal/struct.FixedDecimal.html#method.expand_to_increment) for more information.
+   */
+  void expand_to_increment(int16_t position, ICU4XRoundingIncrement increment);
+
+  /**
+   * 
+   * 
    * See the [Rust documentation for `half_expand`](https://docs.rs/fixed_decimal/latest/fixed_decimal/struct.FixedDecimal.html#method.half_expand) for more information.
    */
   void half_expand(int16_t position);
@@ -435,6 +442,9 @@ inline void ICU4XFixedDecimal::half_trunc(int16_t position) {
 }
 inline void ICU4XFixedDecimal::expand(int16_t position) {
   capi::ICU4XFixedDecimal_expand(this->inner.get(), position);
+}
+inline void ICU4XFixedDecimal::expand_to_increment(int16_t position, ICU4XRoundingIncrement increment) {
+  capi::ICU4XFixedDecimal_expand_to_increment(this->inner.get(), position, static_cast<capi::ICU4XRoundingIncrement>(increment));
 }
 inline void ICU4XFixedDecimal::half_expand(int16_t position) {
   capi::ICU4XFixedDecimal_half_expand(this->inner.get(), position);

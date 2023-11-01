@@ -182,6 +182,11 @@
         See the `Rust documentation for expand <https://docs.rs/fixed_decimal/latest/fixed_decimal/struct.FixedDecimal.html#method.expand>`__ for more information.
 
 
+    .. cpp:function:: void expand_to_increment(int16_t position, ICU4XRoundingIncrement increment)
+
+        See the `Rust documentation for expand_to_increment <https://docs.rs/fixed_decimal/latest/fixed_decimal/struct.FixedDecimal.html#method.expand_to_increment>`__ for more information.
+
+
     .. cpp:function:: void half_expand(int16_t position)
 
         See the `Rust documentation for half_expand <https://docs.rs/fixed_decimal/latest/fixed_decimal/struct.FixedDecimal.html#method.half_expand>`__ for more information.

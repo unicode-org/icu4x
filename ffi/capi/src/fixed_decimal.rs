@@ -252,6 +252,16 @@ pub mod ffi {
             self.0.expand(position)
         }
 
+        #[diplomat::rust_link(fixed_decimal::FixedDecimal::expand_to_increment, FnInStruct)]
+        #[diplomat::rust_link(
+            fixed_decimal::FixedDecimal::expanded_to_increment,
+            FnInStruct,
+            hidden
+        )]
+        pub fn expand_to_increment(&mut self, position: i16, increment: ICU4XRoundingIncrement) {
+            self.0.expand_to_increment(position, increment.into())
+        }
+
         #[diplomat::rust_link(fixed_decimal::FixedDecimal::half_expand, FnInStruct)]
         #[diplomat::rust_link(fixed_decimal::FixedDecimal::half_expanded, FnInStruct, hidden)]
         pub fn half_expand(&mut self, position: i16) {
