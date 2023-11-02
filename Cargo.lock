@@ -799,6 +799,7 @@ dependencies = [
 [[package]]
 name = "diplomat"
 version = "0.6.0"
+source = "git+https://github.com/rust-diplomat/diplomat?rev=0958a621dcdde4aa8bdb32118c42ed31ade4afae#0958a621dcdde4aa8bdb32118c42ed31ade4afae"
 dependencies = [
  "diplomat_core",
  "proc-macro2",
@@ -816,6 +817,7 @@ dependencies = [
 [[package]]
 name = "diplomat-runtime"
 version = "0.6.0"
+source = "git+https://github.com/rust-diplomat/diplomat?rev=0958a621dcdde4aa8bdb32118c42ed31ade4afae#0958a621dcdde4aa8bdb32118c42ed31ade4afae"
 dependencies = [
  "log",
 ]
@@ -823,6 +825,7 @@ dependencies = [
 [[package]]
 name = "diplomat-tool"
 version = "0.6.0"
+source = "git+https://github.com/rust-diplomat/diplomat?rev=0958a621dcdde4aa8bdb32118c42ed31ade4afae#0958a621dcdde4aa8bdb32118c42ed31ade4afae"
 dependencies = [
  "askama",
  "clap 3.2.25",
@@ -842,6 +845,7 @@ dependencies = [
 [[package]]
 name = "diplomat_core"
 version = "0.6.0"
+source = "git+https://github.com/rust-diplomat/diplomat?rev=0958a621dcdde4aa8bdb32118c42ed31ade4afae#0958a621dcdde4aa8bdb32118c42ed31ade4afae"
 dependencies = [
  "displaydoc",
  "lazy_static",
@@ -4487,3 +4491,19 @@ dependencies = [
  "crossbeam-utils",
  "flate2",
 ]
+
+[[patch.unused]]
+name = "diplomat"
+version = "0.6.0"
+
+[[patch.unused]]
+name = "diplomat-runtime"
+version = "0.6.0"
+
+[[patch.unused]]
+name = "diplomat-tool"
+version = "0.6.0"
+
+[[patch.unused]]
+name = "diplomat_core"
+version = "0.6.0"
