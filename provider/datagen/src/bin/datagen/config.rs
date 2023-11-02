@@ -130,6 +130,9 @@ pub enum Export {
     Blob {
         path: PathBuf,
     },
+    Blob2 {
+        path: PathBuf,
+    },
     Baked {
         path: PathBuf,
         #[serde(default, skip_serializing_if = "is_default")]

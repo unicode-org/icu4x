@@ -15,7 +15,7 @@ fn main() -> std::io::Result<()> {
         &capi.join("src/lib.rs"),
         &lang,
         &{
-            let include = capi.join(&lang).join(if lang == "dart" {
+            let include = capi.join(&lang).join(if lang == "js" || lang == "dart" {
                 "package/lib"
             } else {
                 "include"
@@ -25,7 +25,11 @@ fn main() -> std::io::Result<()> {
             include
         },
         if lang == "cpp" || lang == "js" {
-            let docs = capi.join(&lang).join("docs/source");
+            let docs = capi.join(&lang).join(if lang == "cpp" {
+                "docs/source"
+            } else {
+                "package/docs/source"
+            });
             let conf = std::fs::read_to_string(docs.join("conf.py"))?;
             std::fs::remove_dir_all(&docs)?;
             std::fs::create_dir(&docs)?;

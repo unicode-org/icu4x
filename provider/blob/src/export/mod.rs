@@ -38,7 +38,7 @@
 //! use icu_provider_blob::BlobDataProvider;
 //!
 //! // obtain the data blob
-//! # let blob = std::fs::read(concat!(env!("CARGO_MANIFEST_DIR"), "/tests/data/hello_world.postcard")).unwrap();
+//! # let blob = std::fs::read(concat!(env!("CARGO_MANIFEST_DIR"), "/tests/data/v2.postcard")).unwrap();
 //!
 //! // Create a provider reading from the blob
 //! let provider =
