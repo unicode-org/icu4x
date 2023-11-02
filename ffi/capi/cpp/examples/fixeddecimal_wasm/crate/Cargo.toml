@@ -2,7 +2,15 @@
 # called LICENSE at the top level of the ICU4X source tree
 # (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-[alias]
-quick = "make quick"
-tidy = "make tidy"
-clippy-all = "clippy --all-features --all-targets -- -D warnings"
+[package]
+name = "crate"
+version = "0.0.0"
+publish = false
+
+[lib]
+crate-type = ["staticlib"]
+
+[dependencies]
+icu_capi = { path = "../../../.." }
+
+[workspace]

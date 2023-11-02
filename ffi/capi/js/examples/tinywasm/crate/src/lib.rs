@@ -2,6 +2,5 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-export default {
-    wasm_path: new URL('crate/target/wasm32-unknown-unknown/release/crate.wasm', import.meta.url),
-};
+// Necessary for symbols to be linked in
+extern crate icu_capi;

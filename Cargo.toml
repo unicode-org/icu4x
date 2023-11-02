@@ -239,14 +239,13 @@ diplomat-runtime = { git = "https://github.com/rust-diplomat/diplomat", rev = "3
 diplomat_core = { git = "https://github.com/rust-diplomat/diplomat", rev = "354307d4a519a3f42a9dc744ea0d64d766431d1d" }
 diplomat-tool = { git = "https://github.com/rust-diplomat/diplomat", rev = "354307d4a519a3f42a9dc744ea0d64d766431d1d" }
 
-# LTO is needed for WASM and other size-optimized builds,
-# and it improve the performance of benchmarks
-[profile.release]
-lto = true
-
+# Size optimized builds
 [profile.release-opt-size]
 inherits = "release"
+lto = true
 opt-level = "s"
+panic = "abort"
+codegen-units = 1
 
 # Enable debug information specifically for memory profiling.
 # https://docs.rs/dhat/0.2.1/dhat/#configuration
@@ -254,6 +253,7 @@ opt-level = "s"
 # 2021-01-08: This would be nicer as a named profile, e.g. [profile.memory]
 # https://github.com/rust-lang/cargo/issues/6988
 [profile.bench]
+lto = true
 debug = true
 debug-assertions = false
 

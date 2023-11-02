@@ -12,7 +12,6 @@ $(ALL_HEADERS):
 
 # 100 KiB, working around a bug in older rustc
 # https://github.com/unicode-org/icu4x/issues/2753
-# keep in sync with .cargo/config.toml
 WASM_STACK_SIZE := 100000
 
 lib: $(ALL_HEADERS)
@@ -20,21 +19,16 @@ lib: $(ALL_HEADERS)
 	mkdir lib;
 	cp ../../include/* lib/
  
-../../../../../target/wasm32-unknown-unknown/release/icu_capi_cdylib.wasm: FORCE
+crate/target/wasm32-unknown-unknown/release/crate.wasm: FORCE
 	rustup toolchain install ${ICU4X_NIGHTLY_TOOLCHAIN}
 	rustup component add rust-src --toolchain ${ICU4X_NIGHTLY_TOOLCHAIN}
-	RUSTFLAGS="-Cpanic=abort -Copt-level=s -C link-args=-zstack-size=${WASM_STACK_SIZE}" \
-	cargo +${ICU4X_NIGHTLY_TOOLCHAIN} build \
+	RUSTFLAGS="-Cpanic=abort -Copt-level=s -C link-args=-zstack-size=${WASM_STACK_SIZE} -Clto -Cembed-bitcode" \
+	cd crate && cargo +${ICU4X_NIGHTLY_TOOLCHAIN} build \
 		-Z build-std=std,panic_abort -Z build-std-features=panic_immediate_abort \
 		--target wasm32-unknown-unknown \
-		--release \
-		--package icu_capi_cdylib
+		--release
 
-icu_capi.wasm: ../../../../../target/wasm32-unknown-unknown/release/icu_capi_cdylib.wasm
-	cp ../../../../../target/wasm32-unknown-unknown/release/icu_capi_cdylib.wasm icu_capi.wasm
-
-build: icu_capi.wasm lib
+build: crate/target/wasm32-unknown-unknown/release/crate.wasm lib
 
 clean:
 	git clean -xf *
-	rm -f ../../../../../target/wasm32-unknown-unknown/release/icu_capi_cdylib.wasm
