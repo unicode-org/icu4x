@@ -4491,19 +4491,3 @@ dependencies = [
  "crossbeam-utils",
  "flate2",
 ]
-
-[[patch.unused]]
-name = "diplomat"
-version = "0.6.0"
-
-[[patch.unused]]
-name = "diplomat-runtime"
-version = "0.6.0"
-
-[[patch.unused]]
-name = "diplomat-tool"
-version = "0.6.0"
-
-[[patch.unused]]
-name = "diplomat_core"
-version = "0.6.0"
