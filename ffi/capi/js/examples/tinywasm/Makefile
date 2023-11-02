@@ -25,14 +25,15 @@ crate/target/wasm32-unknown-unknown/release/crate.wasm: FORCE
 	rustup toolchain install ${ICU4X_NIGHTLY_TOOLCHAIN}
 	rustup component add rust-src --toolchain ${ICU4X_NIGHTLY_TOOLCHAIN}
 	# Build the WASM library
+	cd crate && \
 	RUSTFLAGS="-Cpanic=abort -Copt-level=s -C link-arg=-zstack-size=${WASM_STACK_SIZE} -Clinker-plugin-lto -Ccodegen-units=1 -C linker=${BASEDIR}/ld.py -C linker-flavor=wasm-ld -Clto -Cembed-bitcode" \
-	cd crate && cargo +${ICU4X_NIGHTLY_TOOLCHAIN} build \
+	cargo +${ICU4X_NIGHTLY_TOOLCHAIN} build \
 		-Z build-std=std,panic_abort -Z build-std-features=panic_immediate_abort \
 		--target wasm32-unknown-unknown \
 		--release
 
 build: crate/target/wasm32-unknown-unknown/release/crate.wasm lib
-	ls -l
+	ls -l crate/target/wasm32-unknown-unknown/release/crate.wasm
 
 test:
 	node tiny.mjs
