@@ -1,0 +1,13 @@
+name: icu
+version: 1.0.0
+repository: https://github.com/unicode-org/icu4x
+
+environment:
+  sdk: '>=2.18.0'
+
+dependencies:
+  ffi: '>=1.1.0'
+
+dev_dependencies:
+  lints: ^2.0.0
+  test: ^1.21.0

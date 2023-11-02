@@ -89,9 +89,8 @@ jobs:
         gsutil -m cp -r target/doc gs://${{ env.GCP_PR_BUCKET_ID }}/gha/${{ github.sha }}/docs
     - name: "⭐⭐⭐ Links to Uploaded Artifacts ⭐⭐⭐"
       run: |
-        echo "::group::📖 Docs Preview"
+        echo "📖 Docs Preview"
         echo "http://${{ env.GCP_PR_BUCKET_ID }}.storage.googleapis.com/gha/${{ github.sha }}/docs/icu/index.html"
-        echo "::endgroup::"
 
   ffi-docs:
     name: "FFI Preview"
@@ -119,31 +118,42 @@ jobs:
         packages: |
           sphinx
           sphinx-rtd-theme
+    - name: Install Dart
+      uses: dart-lang/setup-dart@v1
 
     - name: Build CPP docs
       run: |
         cd ffi/capi/cpp/docs
         make html
         cd ../../../..
+        
     - name: Build JS docs
       run: |
         cd ffi/capi/js/docs
         make html
+        cd ../../../..
+        
+    - name: Build Dart docs
+      run: |
+        cd ffi/capi/dart/package
+        dart doc
         cd ../../../..
 
     - name: Upload docs to Google Cloud Storage
       run: |
         gsutil -m cp -r ffi/capi/cpp/docs/build/html gs://${{ env.GCP_PR_BUCKET_ID }}/gha/${{ github.sha }}/ffi/cpp
         gsutil -m cp -r ffi/capi/js/docs/build/html gs://${{ env.GCP_PR_BUCKET_ID }}/gha/${{ github.sha }}/ffi/js
+        gsutil -m cp -r ffi/capi/dart/package/doc/api gs://${{ env.GCP_PR_BUCKET_ID }}/gha/${{ github.sha }}/ffi/dart
     - name: "⭐⭐⭐ Links to Uploaded Artifacts ⭐⭐⭐"
       run: |
-        echo "::group::📖 CPP Docs Preview"
+        echo "📖 CPP Docs Preview"
         echo "http://${{ env.GCP_PR_BUCKET_ID }}.storage.googleapis.com/gha/${{ github.sha }}/ffi/cpp/index.html"
-        echo "::endgroup::"
-
-        echo "::group::📖 JS Docs Preview"
+        echo
+        echo "📖 JS Docs Preview"
         echo "http://${{ env.GCP_PR_BUCKET_ID }}.storage.googleapis.com/gha/${{ github.sha }}/ffi/js/index.html"
-        echo "::endgroup::"
+        echo
+        echo "📖 Dart Docs Preview"
+        echo "http://${{ env.GCP_PR_BUCKET_ID }}.storage.googleapis.com/gha/${{ github.sha }}/ffi/dart/index.html"
 
   wasm-demo:
     # This is too expensive to run on every push, so only run it on main.

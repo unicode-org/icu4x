@@ -15,7 +15,11 @@ fn main() -> std::io::Result<()> {
         &capi.join("src/lib.rs"),
         &lang,
         &{
-            let include = capi.join(&lang).join("include");
+            let include = capi.join(&lang).join(if lang == "dart" {
+                "package/lib"
+            } else {
+                "include"
+            });
             std::fs::remove_dir_all(&include)?;
             std::fs::create_dir(&include)?;
             include

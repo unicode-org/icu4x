@@ -63,6 +63,15 @@ dependencies = ["install-nightly", "install-wasm"]
 command = "make"
 args = ["-C", "ffi/capi/js/examples/tinywasm", "build", "test"]
 
+
+# Dart tasks
+
+[tasks.test-dart]
+description = "Run Dart tests"
+category = "ICU4X Development"
+command = "make"
+args = ["-C", "ffi/capi/dart/package", "test"]
+
 # no_std tasks
 
 [tasks.check-freertos-wearos]
@@ -87,6 +96,7 @@ dependencies = [
     "diplomat-gen-c",
     "diplomat-gen-cpp",
     "diplomat-gen-js",
+    "diplomat-gen-dart",
 ]
 
 [tasks.verify-diplomat-gen]
@@ -121,6 +131,12 @@ description = "Generate JS bindings for the FFI with Diplomat"
 category = "ICU4X Development"
 command = "cargo"
 args = ["run", "-p", "diplomat-gen", "js"]
+
+[tasks.diplomat-gen-dart]
+description = "Generate Dart bindings for the FFI with Diplomat"
+category = "ICU4X Development"
+command = "cargo"
+args = ["run", "-p", "diplomat-gen", "dart"]
 
 # Diplomat coverage
 
