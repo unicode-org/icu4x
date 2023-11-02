@@ -19,7 +19,7 @@ BASEDIR := $(dir $(realpath $(lastword $(MAKEFILE_LIST))))
 lib: $(ALL_HEADERS)
 	rm -rf lib;
 	mkdir lib;
-	cp ../../include/* lib
+	cp ../../package/lib/* lib
 
 crate/target/wasm32-unknown-unknown/release/crate.wasm: FORCE
 	rustup toolchain install ${ICU4X_NIGHTLY_TOOLCHAIN}
