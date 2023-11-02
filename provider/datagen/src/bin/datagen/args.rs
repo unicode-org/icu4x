@@ -13,6 +13,7 @@ use std::path::PathBuf;
 enum Format {
     Dir,
     Blob,
+    Blob2,
     Mod,
     DeprecatedDefault,
 }
@@ -212,7 +213,7 @@ pub struct Cli {
     #[arg(
         help = "Path to output directory or file. Must be empty or non-existent, unless \
                   --overwrite is present, in which case the directory is deleted first. \
-                  For --format=blob, omit this option to dump to stdout. \
+                  For --format={blob,blob2}, omit this option to dump to stdout. \
                   For --format={dir,mod} defaults to 'icu4x_data'."
     )]
     output: Option<PathBuf>,
@@ -404,6 +405,13 @@ impl Cli {
                 })
             }
             Format::Blob => Ok(config::Export::Blob {
+                path: if let Some(path) = &self.output {
+                    path.clone()
+                } else {
+                    PathBuf::from("/stdout")
+                },
+            }),
+            Format::Blob2 => Ok(config::Export::Blob2 {
                 path: if let Some(path) = &self.output {
                     path.clone()
                 } else {
