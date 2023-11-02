@@ -3,7 +3,7 @@
     "sr-Latn": {
       "identity": {
         "version": {
-          "_cldrVersion": "43"
+          "_cldrVersion": "44"
         },
         "language": "sr",
         "script": "Latn"
@@ -55,6 +55,7 @@
           "bem": "bemba",
           "bez": "bena",
           "bg": "bugarski",
+          "bgc": "harijanski",
           "bgn": "zapadni belučki",
           "bho": "bodžpuri",
           "bi": "bislama",
@@ -516,7 +517,7 @@
           "twq": "tasavak",
           "ty": "tahićanski",
           "tyv": "tuvinski",
-          "tzm": "centralnoatlaski tamazigt",
+          "tzm": "centralnoatlaski tamašek",
           "udm": "udmurtski",
           "ug": "ujgurski",
           "uga": "ugaritski",

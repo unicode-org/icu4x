@@ -404,7 +404,7 @@
         "Index": 13
       }
     },
-    "KHR": {
+    "KGS": {
       "short_pattern_standard": "Standard",
       "narrow_pattern_standard": "Standard",
       "short_place_holder_index": null,
@@ -412,12 +412,20 @@
         "Index": 33
       }
     },
+    "KHR": {
+      "short_pattern_standard": "Standard",
+      "narrow_pattern_standard": "Standard",
+      "short_place_holder_index": null,
+      "narrow_place_holder_index": {
+        "Index": 34
+      }
+    },
     "KMF": {
       "short_pattern_standard": "Standard",
       "narrow_pattern_standard": "StandardAlphaNextToNumber",
       "short_place_holder_index": null,
       "narrow_place_holder_index": {
-        "Index": 34
+        "Index": 35
       }
     },
     "KPW": {
@@ -425,17 +433,17 @@
       "narrow_pattern_standard": "Standard",
       "short_place_holder_index": null,
       "narrow_place_holder_index": {
-        "Index": 35
+        "Index": 36
       }
     },
     "KRW": {
       "short_pattern_standard": "Standard",
       "narrow_pattern_standard": "Standard",
       "short_place_holder_index": {
-        "Index": 35
+        "Index": 36
       },
       "narrow_place_holder_index": {
-        "Index": 35
+        "Index": 36
       }
     },
     "KYD": {
@@ -451,7 +459,7 @@
       "narrow_pattern_standard": "Standard",
       "short_place_holder_index": null,
       "narrow_place_holder_index": {
-        "Index": 36
+        "Index": 37
       }
     },
     "LAK": {
@@ -459,7 +467,7 @@
       "narrow_pattern_standard": "Standard",
       "short_place_holder_index": null,
       "narrow_place_holder_index": {
-        "Index": 37
+        "Index": 38
       }
     },
     "LBP": {
@@ -467,7 +475,7 @@
       "narrow_pattern_standard": "Standard",
       "short_place_holder_index": null,
       "narrow_place_holder_index": {
-        "Index": 38
+        "Index": 39
       }
     },
     "LKR": {
@@ -475,7 +483,7 @@
       "narrow_pattern_standard": "StandardAlphaNextToNumber",
       "short_place_holder_index": null,
       "narrow_place_holder_index": {
-        "Index": 39
+        "Index": 40
       }
     },
     "LRD": {
@@ -491,7 +499,7 @@
       "narrow_pattern_standard": "StandardAlphaNextToNumber",
       "short_place_holder_index": null,
       "narrow_place_holder_index": {
-        "Index": 40
+        "Index": 41
       }
     },
     "LVL": {
@@ -499,7 +507,7 @@
       "narrow_pattern_standard": "StandardAlphaNextToNumber",
       "short_place_holder_index": null,
       "narrow_place_holder_index": {
-        "Index": 41
+        "Index": 42
       }
     },
     "MGA": {
@@ -507,7 +515,7 @@
       "narrow_pattern_standard": "StandardAlphaNextToNumber",
       "short_place_holder_index": null,
       "narrow_place_holder_index": {
-        "Index": 42
+        "Index": 43
       }
     },
     "MMK": {
@@ -515,7 +523,7 @@
       "narrow_pattern_standard": "StandardAlphaNextToNumber",
       "short_place_holder_index": null,
       "narrow_place_holder_index": {
-        "Index": 43
+        "Index": 44
       }
     },
     "MNT": {
@@ -523,7 +531,7 @@
       "narrow_pattern_standard": "Standard",
       "short_place_holder_index": null,
       "narrow_place_holder_index": {
-        "Index": 44
+        "Index": 45
       }
     },
     "MUR": {
@@ -531,14 +539,14 @@
       "narrow_pattern_standard": "StandardAlphaNextToNumber",
       "short_place_holder_index": null,
       "narrow_place_holder_index": {
-        "Index": 39
+        "Index": 40
       }
     },
     "MXN": {
       "short_pattern_standard": "Standard",
       "narrow_pattern_standard": "Standard",
       "short_place_holder_index": {
-        "Index": 45
+        "Index": 46
       },
       "narrow_place_holder_index": {
         "Index": 3
@@ -549,7 +557,7 @@
       "narrow_pattern_standard": "StandardAlphaNextToNumber",
       "short_place_holder_index": null,
       "narrow_place_holder_index": {
-        "Index": 46
+        "Index": 47
       }
     },
     "NAD": {
@@ -565,7 +573,7 @@
       "narrow_pattern_standard": "Standard",
       "short_place_holder_index": null,
       "narrow_place_holder_index": {
-        "Index": 47
+        "Index": 48
       }
     },
     "NIO": {
@@ -573,7 +581,7 @@
       "narrow_pattern_standard": "Standard",
       "short_place_holder_index": null,
       "narrow_place_holder_index": {
-        "Index": 48
+        "Index": 49
       }
     },
     "NOK": {
@@ -589,14 +597,14 @@
       "narrow_pattern_standard": "StandardAlphaNextToNumber",
       "short_place_holder_index": null,
       "narrow_place_holder_index": {
-        "Index": 39
+        "Index": 40
       }
     },
     "NZD": {
       "short_pattern_standard": "Standard",
       "narrow_pattern_standard": "Standard",
       "short_place_holder_index": {
-        "Index": 49
+        "Index": 50
       },
       "narrow_place_holder_index": {
         "Index": 3
@@ -606,10 +614,10 @@
       "short_pattern_standard": "Standard",
       "narrow_pattern_standard": "Standard",
       "short_place_holder_index": {
-        "Index": 50
+        "Index": 51
       },
       "narrow_place_holder_index": {
-        "Index": 50
+        "Index": 51
       }
     },
     "PKR": {
@@ -617,7 +625,7 @@
       "narrow_pattern_standard": "StandardAlphaNextToNumber",
       "short_place_holder_index": null,
       "narrow_place_holder_index": {
-        "Index": 39
+        "Index": 40
       }
     },
     "PLN": {
@@ -625,7 +633,7 @@
       "narrow_pattern_standard": "StandardAlphaNextToNumber",
       "short_place_holder_index": null,
       "narrow_place_holder_index": {
-        "Index": 51
+        "Index": 52
       }
     },
     "PYG": {
@@ -633,7 +641,7 @@
       "narrow_pattern_standard": "Standard",
       "short_place_holder_index": null,
       "narrow_place_holder_index": {
-        "Index": 52
+        "Index": 53
       }
     },
     "RON": {
@@ -641,7 +649,7 @@
       "narrow_pattern_standard": "StandardAlphaNextToNumber",
       "short_place_holder_index": null,
       "narrow_place_holder_index": {
-        "Index": 53
+        "Index": 54
       }
     },
     "RUB": {
@@ -649,7 +657,7 @@
       "narrow_pattern_standard": "Standard",
       "short_place_holder_index": null,
       "narrow_place_holder_index": {
-        "Index": 54
+        "Index": 55
       }
     },
     "RWF": {
@@ -657,7 +665,7 @@
       "narrow_pattern_standard": "StandardAlphaNextToNumber",
       "short_place_holder_index": null,
       "narrow_place_holder_index": {
-        "Index": 55
+        "Index": 56
       }
     },
     "SBD": {
@@ -713,7 +721,7 @@
       "narrow_pattern_standard": "StandardAlphaNextToNumber",
       "short_place_holder_index": null,
       "narrow_place_holder_index": {
-        "Index": 56
+        "Index": 57
       }
     },
     "SYP": {
@@ -729,7 +737,7 @@
       "narrow_pattern_standard": "Standard",
       "short_place_holder_index": null,
       "narrow_place_holder_index": {
-        "Index": 57
+        "Index": 58
       }
     },
     "TOP": {
@@ -737,7 +745,7 @@
       "narrow_pattern_standard": "Standard",
       "short_place_holder_index": null,
       "narrow_place_holder_index": {
-        "Index": 58
+        "Index": 59
       }
     },
     "TRY": {
@@ -745,7 +753,7 @@
       "narrow_pattern_standard": "Standard",
       "short_place_holder_index": null,
       "narrow_place_holder_index": {
-        "Index": 59
+        "Index": 60
       }
     },
     "TTD": {
@@ -760,7 +768,7 @@
       "short_pattern_standard": "Standard",
       "narrow_pattern_standard": "Standard",
       "short_place_holder_index": {
-        "Index": 60
+        "Index": 61
       },
       "narrow_place_holder_index": {
         "Index": 3
@@ -771,14 +779,14 @@
       "narrow_pattern_standard": "Standard",
       "short_place_holder_index": null,
       "narrow_place_holder_index": {
-        "Index": 61
+        "Index": 62
       }
     },
     "USD": {
       "short_pattern_standard": "Standard",
       "narrow_pattern_standard": "Standard",
       "short_place_holder_index": {
-        "Index": 62
+        "Index": 63
       },
       "narrow_place_holder_index": {
         "Index": 3
@@ -804,17 +812,17 @@
       "short_pattern_standard": "Standard",
       "narrow_pattern_standard": "Standard",
       "short_place_holder_index": {
-        "Index": 63
+        "Index": 64
       },
       "narrow_place_holder_index": {
-        "Index": 63
+        "Index": 64
       }
     },
     "XAF": {
       "short_pattern_standard": "StandardAlphaNextToNumber",
       "narrow_pattern_standard": "StandardAlphaNextToNumber",
       "short_place_holder_index": {
-        "Index": 64
+        "Index": 65
       },
       "narrow_place_holder_index": null
     },
@@ -822,7 +830,7 @@
       "short_pattern_standard": "Standard",
       "narrow_pattern_standard": "Standard",
       "short_place_holder_index": {
-        "Index": 65
+        "Index": 66
       },
       "narrow_place_holder_index": {
         "Index": 3
@@ -832,7 +840,7 @@
       "short_pattern_standard": "StandardAlphaNextToNumber",
       "narrow_pattern_standard": "StandardAlphaNextToNumber",
       "short_place_holder_index": {
-        "Index": 66
+        "Index": 67
       },
       "narrow_place_holder_index": null
     },
@@ -840,7 +848,7 @@
       "short_pattern_standard": "StandardAlphaNextToNumber",
       "narrow_pattern_standard": "StandardAlphaNextToNumber",
       "short_place_holder_index": {
-        "Index": 67
+        "Index": 68
       },
       "narrow_place_holder_index": null
     },
@@ -848,7 +856,7 @@
       "short_pattern_standard": "Standard",
       "narrow_pattern_standard": "Standard",
       "short_place_holder_index": {
-        "Index": 68
+        "Index": 69
       },
       "narrow_place_holder_index": null
     },
@@ -857,7 +865,7 @@
       "narrow_pattern_standard": "StandardAlphaNextToNumber",
       "short_place_holder_index": null,
       "narrow_place_holder_index": {
-        "Index": 69
+        "Index": 70
       }
     },
     "ZMW": {
@@ -865,7 +873,7 @@
       "narrow_pattern_standard": "StandardAlphaNextToNumber",
       "short_place_holder_index": null,
       "narrow_place_holder_index": {
-        "Index": 70
+        "Index": 71
       }
     }
   },
@@ -905,6 +913,7 @@
     "₪",
     "₹",
     "JP¥",
+    "⃀",
     "៛",
     "CF",
     "₩",

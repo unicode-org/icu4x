@@ -2,9 +2,14 @@
   "supplemental": {
     "version": {
       "_unicodeVersion": "15.0.0",
-      "_cldrVersion": "43"
+      "_cldrVersion": "44"
     },
     "unitConstants": {
+      "AMU": {
+        "_description": "https://www.nist.gov/pml/special-publication-811/nist-guide-si-chapter-5-units-outside-si#table7",
+        "_value": "1.66053878283E-27",
+        "_status": "approximate"
+      },
       "ft_to_m": {
         "_value": "0.3048"
       },
@@ -15,6 +20,7 @@
         "_value": "ft_to_m*ft_to_m*ft_to_m"
       },
       "G": {
+        "_description": "https://arxiv.org/pdf/1510.07674.pdf see 2014 CODATA",
         "_value": "6.67408E-11",
         "_status": "approximate"
       },
@@ -51,8 +57,20 @@
       "sec_per_julian_year": {
         "_value": "31557600"
       },
+      "shaku_to_m": {
+        "_description": "https://en.wikipedia.org/wiki/Japanese_units_of_measurement",
+        "_value": "4/121"
+      },
+      "sho_to_m3": {
+        "_description": "https://en.wikipedia.org/wiki/Japanese_units_of_measurement",
+        "_value": "2401/1331*1000"
+      },
       "speed_of_light_meters_per_second": {
         "_value": "299792458"
+      },
+      "tsubo_to_m2": {
+        "_description": "https://en.wikipedia.org/wiki/Japanese_units_of_measurement",
+        "_value": "400/121"
       }
     },
     "unitQuantities": {
@@ -105,6 +123,9 @@
       },
       "item-per-kilogram": {
         "_quantity": "concentration-mass"
+      },
+      "item-per-second": {
+        "_quantity": "catalytic-activity"
       },
       "kelvin": {
         "_quantity": "temperature",
@@ -160,6 +181,9 @@
       "meter-per-square-second": {
         "_quantity": "acceleration"
       },
+      "per-second": {
+        "_quantity": "radioactivity"
+      },
       "pixel": {
         "_quantity": "graphics",
         "_status": "simple"
@@ -195,7 +219,7 @@
         "_quantity": "area"
       },
       "square-meter-per-square-second": {
-        "_quantity": "dose"
+        "_quantity": "ionizing-radiation"
       },
       "square-revolution": {
         "_quantity": "solid-angle"
@@ -209,6 +233,7 @@
       "100-kilometer": {
         "_baseUnit": "meter",
         "_systems": [
+          "si",
           "metric"
         ],
         "_factor": "100000"
@@ -224,36 +249,55 @@
       "ampere": {
         "_baseUnit": "ampere",
         "_systems": [
+          "si",
           "metric",
-          "si"
+          "prefixable"
         ]
       },
       "arc-minute": {
         "_baseUnit": "revolution",
         "_systems": [
-          "metric"
+          "si_acceptable",
+          "metric_adjacent",
+          "ussystem",
+          "uksystem",
+          "astronomical"
         ],
         "_factor": "1/360*60"
       },
       "arc-second": {
         "_baseUnit": "revolution",
         "_systems": [
-          "metric"
+          "si_acceptable",
+          "metric_adjacent",
+          "ussystem",
+          "uksystem",
+          "astronomical"
         ],
         "_factor": "1/360*60*60"
       },
       "astronomical-unit": {
         "_baseUnit": "meter",
+        "_systems": [
+          "astronomical",
+          "si_acceptable"
+        ],
         "_factor": "meters_per_AU"
       },
       "atmosphere": {
         "_baseUnit": "kilogram-per-meter-square-second",
+        "_systems": [
+          "ussystem",
+          "uksystem"
+        ],
         "_factor": "101325"
       },
       "bar": {
         "_baseUnit": "kilogram-per-meter-square-second",
         "_systems": [
-          "metric"
+          "si_acceptable",
+          "metric",
+          "prefixable"
         ],
         "_factor": "100000"
       },
@@ -264,10 +308,21 @@
         ],
         "_factor": "42*gal_to_m3"
       },
+      "becquerel": {
+        "_baseUnit": "per-second",
+        "_systems": [
+          "si",
+          "metric",
+          "prefixable"
+        ]
+      },
       "bit": {
         "_baseUnit": "bit",
         "_systems": [
-          "metric"
+          "metric_adjacent",
+          "prefixable",
+          "ussystem",
+          "uksystem"
         ]
       },
       "british-thermal-unit": {
@@ -277,6 +332,21 @@
           "uksystem"
         ],
         "_factor": "4.184*2267.96185/9"
+      },
+      "british-thermal-unit-it": {
+        "_baseUnit": "kilogram-square-meter-per-square-second",
+        "_systems": [
+          "ussystem",
+          "uksystem"
+        ],
+        "_factor": "4.1868*2267.96185/9"
+      },
+      "bu-jp": {
+        "_baseUnit": "square-meter",
+        "_systems": [
+          "jpsystem"
+        ],
+        "_factor": "tsubo_to_m2*1"
       },
       "bushel": {
         "_baseUnit": "cubic-meter",
@@ -288,25 +358,43 @@
       "byte": {
         "_baseUnit": "bit",
         "_systems": [
-          "metric"
+          "metric_adjacent",
+          "prefixable",
+          "ussystem",
+          "uksystem"
         ],
         "_factor": "8"
       },
       "calorie": {
         "_baseUnit": "kilogram-square-meter-per-square-second",
+        "_systems": [
+          "metric_adjacent",
+          "prefixable"
+        ],
         "_factor": "4.184"
+      },
+      "calorie-it": {
+        "_baseUnit": "kilogram-square-meter-per-square-second",
+        "_systems": [
+          "metric_adjacent",
+          "prefixable"
+        ],
+        "_factor": "4.1868"
       },
       "candela": {
         "_baseUnit": "candela",
         "_systems": [
+          "si",
           "metric",
-          "si"
+          "prefixable"
         ]
       },
       "carat": {
         "_baseUnit": "kilogram",
         "_systems": [
-          "metric"
+          "metric_adjacent",
+          "ussystem",
+          "uksystem"
         ],
         "_factor": "0.0002"
       },
@@ -314,15 +402,42 @@
         "_baseUnit": "kelvin",
         "_offset": "273.15",
         "_systems": [
+          "si",
           "metric"
         ]
       },
       "century": {
         "_baseUnit": "year",
         "_systems": [
-          "metric"
+          "metric_adjacent",
+          "ussystem",
+          "uksystem",
+          "astronomical"
         ],
         "_factor": "100"
+      },
+      "chain": {
+        "_baseUnit": "meter",
+        "_systems": [
+          "ussystem",
+          "uksystem"
+        ],
+        "_factor": "ft_to_m*66"
+      },
+      "cho": {
+        "_baseUnit": "square-meter",
+        "_systems": [
+          "jpsystem"
+        ],
+        "_factor": "tsubo_to_m2*3000"
+      },
+      "coulomb": {
+        "_baseUnit": "second-ampere",
+        "_systems": [
+          "si",
+          "metric",
+          "prefixable"
+        ]
       },
       "cup": {
         "_baseUnit": "cubic-meter",
@@ -331,39 +446,66 @@
         ],
         "_factor": "gal_to_m3/16"
       },
+      "cup-jp": {
+        "_baseUnit": "cubic-meter",
+        "_systems": [
+          "jpsystem"
+        ],
+        "_factor": "1*100*0.000001"
+      },
       "cup-metric": {
         "_baseUnit": "cubic-meter",
         "_systems": [
-          "metric"
+          "metric_adjacent"
         ],
         "_factor": "0.00025"
       },
       "dalton": {
-        "_baseUnit": "kilogram-square-meter-per-square-second",
-        "_factor": "1.49241808560E-10"
+        "_baseUnit": "kilogram",
+        "_systems": [
+          "si_acceptable",
+          "metric",
+          "prefixable"
+        ],
+        "_factor": "AMU"
       },
       "day": {
         "_baseUnit": "second",
         "_systems": [
-          "metric"
+          "si_acceptable",
+          "metric_adjacent",
+          "prefixable",
+          "ussystem",
+          "uksystem",
+          "astronomical"
         ],
         "_factor": "86400"
       },
       "day-person": {
         "_baseUnit": "second",
+        "_systems": [
+          "person_age"
+        ],
         "_factor": "86400"
       },
       "decade": {
         "_baseUnit": "year",
         "_systems": [
-          "metric"
+          "metric_adjacent",
+          "ussystem",
+          "uksystem",
+          "astronomical"
         ],
         "_factor": "10"
       },
       "degree": {
         "_baseUnit": "revolution",
         "_systems": [
-          "metric"
+          "si_acceptable",
+          "metric_adjacent",
+          "ussystem",
+          "uksystem",
+          "astronomical"
         ],
         "_factor": "1/360"
       },
@@ -382,7 +524,12 @@
         "_factor": "gal_imp_to_m3/16*128"
       },
       "dot": {
-        "_baseUnit": "pixel"
+        "_baseUnit": "pixel",
+        "_systems": [
+          "metric_adjacent",
+          "ussystem",
+          "uksystem"
+        ]
       },
       "dram": {
         "_baseUnit": "cubic-meter",
@@ -400,24 +547,39 @@
       },
       "dunam": {
         "_baseUnit": "square-meter",
+        "_systems": [
+          "metric_adjacent"
+        ],
         "_factor": "1000"
       },
       "earth-mass": {
         "_baseUnit": "kilogram",
+        "_systems": [
+          "astronomical"
+        ],
         "_factor": "5.9722E+24"
       },
       "earth-radius": {
         "_baseUnit": "meter",
+        "_systems": [
+          "astronomical"
+        ],
         "_factor": "6.3781E6"
       },
       "electronvolt": {
         "_baseUnit": "kilogram-square-meter-per-square-second",
+        "_systems": [
+          "si_acceptable",
+          "metric_adjacent"
+        ],
         "_factor": "1.602177E-19"
       },
       "em": {
         "_baseUnit": "em",
         "_systems": [
-          "metric"
+          "metric_adjacent",
+          "ussystem",
+          "uksystem"
         ]
       },
       "fahrenheit": {
@@ -428,6 +590,15 @@
           "uksystem"
         ],
         "_factor": "5/9"
+      },
+      "farad": {
+        "_baseUnit": "pow4-second-square-ampere-per-kilogram-square-meter",
+        "_systems": [
+          "si",
+          "metric",
+          "prefixable"
+        ],
+        "_factor": "1"
       },
       "fathom": {
         "_baseUnit": "meter",
@@ -467,6 +638,21 @@
         ],
         "_factor": "ft_to_m"
       },
+      "fortnight": {
+        "_baseUnit": "second",
+        "_systems": [
+          "ussystem",
+          "uksystem"
+        ],
+        "_factor": "86400*14"
+      },
+      "fun": {
+        "_baseUnit": "kilogram",
+        "_systems": [
+          "jpsystem"
+        ],
+        "_factor": "1*3/8000"
+      },
       "furlong": {
         "_baseUnit": "meter",
         "_systems": [
@@ -477,6 +663,11 @@
       },
       "g-force": {
         "_baseUnit": "meter-per-square-second",
+        "_systems": [
+          "metric_adjacent",
+          "ussystem",
+          "uksystem"
+        ],
         "_factor": "gravity"
       },
       "gallon": {
@@ -493,6 +684,16 @@
         ],
         "_factor": "gal_imp_to_m3"
       },
+      "gasoline-energy-density": {
+        "_baseUnit": "kilogram-per-meter-square-second",
+        "_systems": [
+          "metric_adjacent",
+          "ussystem",
+          "uksystem"
+        ],
+        "_description": "Constructed so that 1 gallon-gasoline-energy-density = 33.705 kWh as per https://www3.epa.gov/otaq/gvg/learn-more-technology.htm",
+        "_factor": "33.705 * 3600 * 1000/gal_to_m3"
+      },
       "grain": {
         "_baseUnit": "kilogram",
         "_systems": [
@@ -504,23 +705,42 @@
       "gram": {
         "_baseUnit": "kilogram",
         "_systems": [
+          "si",
           "metric",
-          "si"
+          "prefixable"
         ],
         "_factor": "0.001"
+      },
+      "gray": {
+        "_baseUnit": "square-meter-per-square-second",
+        "_systems": [
+          "si",
+          "metric",
+          "prefixable"
+        ]
       },
       "hectare": {
         "_baseUnit": "square-meter",
         "_systems": [
+          "si_acceptable",
           "metric"
         ],
         "_factor": "10000"
       },
+      "henry": {
+        "_baseUnit": "kilogram-square-meter-per-square-second-square-ampere",
+        "_systems": [
+          "si",
+          "metric",
+          "prefixable"
+        ]
+      },
       "hertz": {
         "_baseUnit": "revolution-per-second",
         "_systems": [
+          "si",
           "metric",
-          "si"
+          "prefixable"
         ]
       },
       "horsepower": {
@@ -534,7 +754,12 @@
       "hour": {
         "_baseUnit": "second",
         "_systems": [
-          "metric"
+          "si_acceptable",
+          "metric_adjacent",
+          "prefixable",
+          "ussystem",
+          "uksystem",
+          "astronomical"
         ],
         "_factor": "3600"
       },
@@ -549,7 +774,9 @@
       "item": {
         "_baseUnit": "item",
         "_systems": [
-          "metric"
+          "metric_adjacent",
+          "ussystem",
+          "uksystem"
         ]
       },
       "jigger": {
@@ -559,69 +786,128 @@
         ],
         "_factor": "gal_to_m3*3/128*2"
       },
+      "jo-jp": {
+        "_baseUnit": "meter",
+        "_systems": [
+          "jpsystem"
+        ],
+        "_factor": "shaku_to_m*10"
+      },
       "joule": {
         "_baseUnit": "kilogram-square-meter-per-square-second",
         "_systems": [
+          "si",
           "metric",
-          "si"
+          "prefixable"
         ]
       },
       "karat": {
         "_baseUnit": "portion",
+        "_systems": [
+          "metric_adjacent",
+          "ussystem",
+          "uksystem"
+        ],
         "_factor": "1/24"
+      },
+      "katal": {
+        "_baseUnit": "item-per-second",
+        "_systems": [
+          "si",
+          "metric"
+        ],
+        "_factor": "item_per_mole"
       },
       "kelvin": {
         "_baseUnit": "kelvin",
         "_systems": [
+          "si",
           "metric",
-          "si"
+          "prefixable"
         ]
+      },
+      "ken": {
+        "_baseUnit": "meter",
+        "_systems": [
+          "jpsystem"
+        ],
+        "_factor": "shaku_to_m*6"
       },
       "kilogram": {
         "_baseUnit": "kilogram",
         "_systems": [
-          "metric",
-          "si"
+          "si",
+          "metric"
         ]
+      },
+      "kilogram-force": {
+        "_baseUnit": "kilogram-meter-per-square-second",
+        "_systems": [
+          "metric_adjacent"
+        ],
+        "_factor": "gravity"
       },
       "knot": {
         "_baseUnit": "meter-per-second",
         "_systems": [
           "ussystem",
-          "uksystem"
+          "uksystem",
+          "si_acceptable"
         ],
         "_factor": "1852/3600"
       },
+      "koku": {
+        "_baseUnit": "cubic-meter",
+        "_systems": [
+          "jpsystem"
+        ],
+        "_factor": "sho_to_m3*100"
+      },
+      "kosaji": {
+        "_baseUnit": "cubic-meter",
+        "_systems": [
+          "jpsystem"
+        ],
+        "_factor": "1*5*0.000001"
+      },
       "light-year": {
         "_baseUnit": "meter",
+        "_systems": [
+          "astronomical"
+        ],
         "_factor": "speed_of_light_meters_per_second*sec_per_julian_year"
       },
       "liter": {
         "_baseUnit": "cubic-meter",
         "_systems": [
-          "metric"
+          "si_acceptable",
+          "metric",
+          "prefixable"
         ],
         "_factor": "0.001"
       },
       "lumen": {
         "_baseUnit": "candela-square-meter-per-square-meter",
         "_systems": [
+          "si",
           "metric",
-          "si"
+          "prefixable"
         ]
       },
       "lux": {
         "_baseUnit": "candela-per-square-meter",
         "_systems": [
+          "si",
           "metric",
-          "si"
+          "prefixable"
         ]
       },
       "meter": {
         "_baseUnit": "meter",
         "_systems": [
+          "si",
           "metric",
-          "si"
+          "prefixable"
         ]
       },
       "mile": {
@@ -635,65 +921,95 @@
       "mile-scandinavian": {
         "_baseUnit": "meter",
         "_systems": [
-          "metric"
+          "metric_adjacent"
         ],
         "_factor": "10000"
       },
       "minute": {
         "_baseUnit": "second",
         "_systems": [
-          "metric"
+          "si_acceptable",
+          "metric_adjacent",
+          "prefixable",
+          "ussystem",
+          "uksystem",
+          "astronomical"
         ],
         "_factor": "60"
       },
       "mole": {
         "_baseUnit": "item",
         "_systems": [
+          "si",
           "metric",
-          "si"
+          "prefixable"
         ],
         "_factor": "item_per_mole"
       },
       "month": {
         "_baseUnit": "year",
         "_systems": [
-          "metric"
+          "metric_adjacent",
+          "ussystem",
+          "uksystem",
+          "astronomical"
         ],
         "_factor": "1/12"
       },
       "month-person": {
         "_baseUnit": "year",
+        "_systems": [
+          "person_age"
+        ],
         "_factor": "1/12"
       },
       "nautical-mile": {
         "_baseUnit": "meter",
         "_systems": [
           "ussystem",
-          "uksystem"
+          "uksystem",
+          "si_acceptable"
         ],
         "_factor": "1852"
       },
       "newton": {
         "_baseUnit": "kilogram-meter-per-square-second",
         "_systems": [
+          "si",
           "metric",
-          "si"
+          "prefixable"
         ]
       },
       "ofglucose": {
         "_baseUnit": "item-per-kilogram",
+        "_systems": [
+          "metric_adjacent"
+        ],
         "_factor": "1000*item_per_mole/glucose_molar_mass"
       },
       "ofhg": {
         "_baseUnit": "kilogram-per-square-meter-square-second",
+        "_systems": [
+          "metric_adjacent",
+          "uksystem",
+          "ussystem"
+        ],
         "_factor": "13595.1*gravity"
       },
       "ohm": {
         "_baseUnit": "kilogram-square-meter-per-cubic-second-square-ampere",
         "_systems": [
+          "si",
           "metric",
-          "si"
+          "prefixable"
         ]
+      },
+      "osaji": {
+        "_baseUnit": "cubic-meter",
+        "_systems": [
+          "jpsystem"
+        ],
+        "_factor": "1*15*0.000001"
       },
       "ounce": {
         "_baseUnit": "kilogram",
@@ -713,40 +1029,53 @@
       },
       "parsec": {
         "_baseUnit": "meter",
+        "_systems": [
+          "astronomical",
+          "prefixable"
+        ],
         "_factor": "meters_per_AU*60*60*180/PI"
       },
       "pascal": {
         "_baseUnit": "kilogram-per-meter-square-second",
         "_systems": [
+          "si",
           "metric",
-          "si"
+          "prefixable"
         ]
       },
       "percent": {
         "_baseUnit": "portion",
         "_systems": [
-          "metric"
+          "metric_adjacent",
+          "ussystem",
+          "uksystem"
         ],
         "_factor": "1/100"
       },
       "permille": {
         "_baseUnit": "portion",
         "_systems": [
-          "metric"
+          "metric_adjacent",
+          "ussystem",
+          "uksystem"
         ],
         "_factor": "1/1000"
       },
       "permillion": {
         "_baseUnit": "portion",
         "_systems": [
-          "metric"
+          "metric_adjacent",
+          "ussystem",
+          "uksystem"
         ],
         "_factor": "1/1000000"
       },
       "permyriad": {
         "_baseUnit": "portion",
         "_systems": [
-          "metric"
+          "metric_adjacent",
+          "ussystem",
+          "uksystem"
         ],
         "_factor": "1/10000"
       },
@@ -764,29 +1093,45 @@
         ],
         "_factor": "gal_to_m3/8"
       },
+      "pint-imperial": {
+        "_baseUnit": "cubic-meter",
+        "_systems": [
+          "uksystem"
+        ],
+        "_factor": "gal_imp_to_m3/8"
+      },
       "pint-metric": {
         "_baseUnit": "cubic-meter",
         "_systems": [
-          "metric"
+          "metric_adjacent"
         ],
         "_factor": "0.0005"
       },
       "pixel": {
         "_baseUnit": "pixel",
         "_systems": [
-          "metric"
+          "metric_adjacent",
+          "ussystem",
+          "uksystem",
+          "prefixable"
         ]
       },
       "point": {
         "_baseUnit": "meter",
         "_systems": [
+          "metric_adjacent",
           "ussystem",
           "uksystem"
         ],
         "_factor": "ft_to_m/864"
       },
       "portion": {
-        "_baseUnit": "portion"
+        "_baseUnit": "portion",
+        "_systems": [
+          "metric_adjacent",
+          "ussystem",
+          "uksystem"
+        ]
       },
       "pound": {
         "_baseUnit": "kilogram",
@@ -821,42 +1166,154 @@
       "quarter": {
         "_baseUnit": "year",
         "_systems": [
-          "metric"
+          "metric_adjacent"
         ],
         "_factor": "1/4"
       },
       "radian": {
         "_baseUnit": "revolution",
         "_systems": [
-          "metric",
-          "si"
+          "si",
+          "metric"
         ],
         "_factor": "1/2*PI"
+      },
+      "rankine": {
+        "_baseUnit": "kelvin",
+        "_systems": [
+          "ussystem",
+          "uksystem"
+        ],
+        "_factor": "5/9"
       },
       "revolution": {
         "_baseUnit": "revolution",
         "_systems": [
-          "metric"
+          "metric_adjacent",
+          "ussystem",
+          "uksystem"
         ]
+      },
+      "ri-jp": {
+        "_baseUnit": "meter",
+        "_systems": [
+          "jpsystem"
+        ],
+        "_factor": "shaku_to_m*12960"
+      },
+      "rin": {
+        "_baseUnit": "meter",
+        "_systems": [
+          "jpsystem"
+        ],
+        "_factor": "shaku_to_m/1000"
+      },
+      "rod": {
+        "_baseUnit": "meter",
+        "_systems": [
+          "ussystem",
+          "uksystem"
+        ],
+        "_factor": "ft_to_m*16.5"
+      },
+      "sai": {
+        "_baseUnit": "cubic-meter",
+        "_systems": [
+          "jpsystem"
+        ],
+        "_factor": "sho_to_m3/1000"
+      },
+      "se-jp": {
+        "_baseUnit": "square-meter",
+        "_systems": [
+          "jpsystem"
+        ],
+        "_factor": "tsubo_to_m2*30"
       },
       "second": {
         "_baseUnit": "second",
         "_systems": [
           "si",
-          "metric"
+          "metric",
+          "prefixable",
+          "ussystem",
+          "uksystem",
+          "astronomical"
         ]
+      },
+      "shaku": {
+        "_baseUnit": "cubic-meter",
+        "_systems": [
+          "jpsystem"
+        ],
+        "_factor": "sho_to_m3/100"
+      },
+      "shaku-cloth": {
+        "_baseUnit": "meter",
+        "_systems": [
+          "jpsystem"
+        ],
+        "_factor": "shaku_to_m*5/4"
+      },
+      "shaku-length": {
+        "_baseUnit": "meter",
+        "_systems": [
+          "jpsystem"
+        ],
+        "_factor": "shaku_to_m"
+      },
+      "siemens": {
+        "_baseUnit": "cubic-second-square-ampere-per-kilogram-square-meter",
+        "_systems": [
+          "si",
+          "metric",
+          "prefixable"
+        ]
+      },
+      "sievert": {
+        "_baseUnit": "square-meter-per-square-second",
+        "_systems": [
+          "si",
+          "metric",
+          "prefixable"
+        ]
+      },
+      "slug": {
+        "_baseUnit": "kilogram",
+        "_systems": [
+          "ussystem",
+          "uksystem"
+        ],
+        "_factor": "lb_to_kg*gravity/ft_to_m"
       },
       "solar-luminosity": {
         "_baseUnit": "kilogram-square-meter-per-cubic-second",
+        "_systems": [
+          "astronomical"
+        ],
         "_factor": "3.828E+26"
       },
       "solar-mass": {
         "_baseUnit": "kilogram",
+        "_systems": [
+          "astronomical"
+        ],
         "_factor": "1.98847E+30"
       },
       "solar-radius": {
         "_baseUnit": "meter",
+        "_systems": [
+          "astronomical"
+        ],
         "_factor": "695700000"
+      },
+      "steradian": {
+        "_baseUnit": "square-revolution",
+        "_systems": [
+          "si",
+          "metric"
+        ],
+        "_factor": "1/4*PI*PI"
       },
       "stone": {
         "_baseUnit": "kilogram",
@@ -864,6 +1321,13 @@
           "uksystem"
         ],
         "_factor": "lb_to_kg*14"
+      },
+      "sun": {
+        "_baseUnit": "meter",
+        "_systems": [
+          "jpsystem"
+        ],
+        "_factor": "shaku_to_m/10"
       },
       "tablespoon": {
         "_baseUnit": "cubic-meter",
@@ -879,12 +1343,27 @@
         ],
         "_factor": "gal_to_m3/16*48"
       },
+      "tesla": {
+        "_baseUnit": "kilogram-per-square-second-ampere",
+        "_systems": [
+          "si",
+          "metric",
+          "prefixable"
+        ]
+      },
       "therm-us": {
         "_baseUnit": "kilogram-square-meter-per-square-second",
         "_systems": [
           "ussystem"
         ],
         "_factor": "105480400"
+      },
+      "to-jp": {
+        "_baseUnit": "cubic-meter",
+        "_systems": [
+          "jpsystem"
+        ],
+        "_factor": "sho_to_m3*10"
       },
       "ton": {
         "_baseUnit": "kilogram",
@@ -897,34 +1376,52 @@
       "tonne": {
         "_baseUnit": "kilogram",
         "_systems": [
-          "metric"
+          "si_acceptable",
+          "metric",
+          "prefixable"
         ],
         "_factor": "1000"
       },
       "volt": {
         "_baseUnit": "kilogram-square-meter-per-cubic-second-ampere",
         "_systems": [
+          "si",
           "metric",
-          "si"
+          "prefixable"
         ]
       },
       "watt": {
         "_baseUnit": "kilogram-square-meter-per-cubic-second",
         "_systems": [
+          "si",
           "metric",
-          "si"
+          "prefixable"
+        ]
+      },
+      "weber": {
+        "_baseUnit": "kilogram-square-meter-per-square-second-ampere",
+        "_systems": [
+          "si",
+          "metric",
+          "prefixable"
         ]
       },
       "week": {
         "_baseUnit": "second",
         "_systems": [
-          "metric"
+          "metric_adjacent",
+          "ussystem",
+          "uksystem",
+          "astronomical"
         ],
-        "_factor": "604800"
+        "_factor": "86400*7"
       },
       "week-person": {
         "_baseUnit": "second",
-        "_factor": "604800"
+        "_systems": [
+          "person_age"
+        ],
+        "_factor": "86400*7"
       },
       "yard": {
         "_baseUnit": "meter",
@@ -937,11 +1434,18 @@
       "year": {
         "_baseUnit": "year",
         "_systems": [
-          "metric"
+          "metric_adjacent",
+          "prefixable",
+          "ussystem",
+          "uksystem",
+          "astronomical"
         ]
       },
       "year-person": {
-        "_baseUnit": "year"
+        "_baseUnit": "year",
+        "_systems": [
+          "person_age"
+        ]
       }
     }
   }

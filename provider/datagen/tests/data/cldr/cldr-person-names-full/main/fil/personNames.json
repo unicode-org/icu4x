@@ -3,7 +3,7 @@
     "fil": {
       "identity": {
         "version": {
-          "_cldrVersion": "43"
+          "_cldrVersion": "44"
         },
         "language": "fil"
       },
@@ -19,6 +19,9 @@
           "yue",
           "zh"
         ],
+        "formality": "informal",
+        "length": "medium",
+        "nativeSpaceReplacement": " ",
         "foreignSpaceReplacement": " ",
         "initial": "{0}.",
         "initialSequence": "{0} {1}",
@@ -141,7 +144,7 @@
             "surname": "Adler"
           },
           "nativeGGS": {
-            "given": "John",
+            "given": "Mary Sue",
             "given2": "Hamish",
             "surname": "Watson"
           },
