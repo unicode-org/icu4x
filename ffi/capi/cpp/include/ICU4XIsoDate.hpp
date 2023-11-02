@@ -58,8 +58,6 @@ class ICU4XIsoDate {
   ICU4XDate to_calendar(const ICU4XCalendar& calendar) const;
 
   /**
-   * 
-   * 
    * See the [Rust documentation for `to_any`](https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.to_any) for more information.
    */
   ICU4XDate to_any() const;

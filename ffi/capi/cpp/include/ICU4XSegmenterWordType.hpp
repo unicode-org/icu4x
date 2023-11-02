@@ -14,8 +14,6 @@
 
 
 /**
- * 
- * 
  * See the [Rust documentation for `WordType`](https://docs.rs/icu/latest/icu/segmenter/enum.WordType.html) for more information.
  */
 enum struct ICU4XSegmenterWordType {

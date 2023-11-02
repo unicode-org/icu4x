@@ -135,7 +135,7 @@ class ICU4XDate {
    * 
    * See the [Rust documentation for `year`](https://docs.rs/icu/latest/icu/struct.Date.html#method.year) for more information.
    * 
-   *  Additional information: [1](https://docs.rs/icu/latest/icu/types/struct.Era.html)
+   * Additional information: [1](https://docs.rs/icu/latest/icu/types/struct.Era.html)
    */
   template<typename W> diplomat::result<std::monostate, ICU4XError> era_to_writeable(W& write) const;
 
@@ -144,7 +144,7 @@ class ICU4XDate {
    * 
    * See the [Rust documentation for `year`](https://docs.rs/icu/latest/icu/struct.Date.html#method.year) for more information.
    * 
-   *  Additional information: [1](https://docs.rs/icu/latest/icu/types/struct.Era.html)
+   * Additional information: [1](https://docs.rs/icu/latest/icu/types/struct.Era.html)
    */
   diplomat::result<std::string, ICU4XError> era() const;
 

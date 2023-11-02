@@ -14,8 +14,6 @@
 
 
 /**
- * 
- * 
  * See the [Rust documentation for `Style`](https://docs.rs/icu/latest/icu/displaynames/options/enum.Style.html) for more information.
  */
 enum struct ICU4XDisplayNamesStyle {

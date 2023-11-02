@@ -14,8 +14,6 @@
 
 
 /**
- * 
- * 
  * See the [Rust documentation for `ListLength`](https://docs.rs/icu/latest/icu/list/enum.ListLength.html) for more information.
  */
 enum struct ICU4XListLength {

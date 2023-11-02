@@ -23,8 +23,6 @@ struct ICU4XWordBreakIteratorUtf8Deleter {
 };
 
 /**
- * 
- * 
  * See the [Rust documentation for `WordBreakIterator`](https://docs.rs/icu/latest/icu/segmenter/struct.WordBreakIterator.html) for more information.
  */
 class ICU4XWordBreakIteratorUtf8 {

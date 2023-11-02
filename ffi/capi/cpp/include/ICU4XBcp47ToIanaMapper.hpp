@@ -33,8 +33,6 @@ class ICU4XBcp47ToIanaMapper {
  public:
 
   /**
-   * 
-   * 
    * See the [Rust documentation for `new`](https://docs.rs/icu/latest/icu/timezone/struct.IanaBcp47RoundTripMapper.html#method.new) for more information.
    */
   static diplomat::result<ICU4XBcp47ToIanaMapper, ICU4XError> create(const ICU4XDataProvider& provider);

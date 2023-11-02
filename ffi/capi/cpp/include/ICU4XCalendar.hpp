@@ -27,8 +27,6 @@ struct ICU4XCalendarDeleter {
 };
 
 /**
- * 
- * 
  * See the [Rust documentation for `AnyCalendar`](https://docs.rs/icu/latest/icu/calendar/enum.AnyCalendar.html) for more information.
  */
 class ICU4XCalendar {

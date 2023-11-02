@@ -27,8 +27,6 @@ struct ICU4XCustomTimeZoneDeleter {
 };
 
 /**
- * 
- * 
  * See the [Rust documentation for `CustomTimeZone`](https://docs.rs/icu/latest/icu/timezone/struct.CustomTimeZone.html) for more information.
  */
 class ICU4XCustomTimeZone {
@@ -62,7 +60,7 @@ class ICU4XCustomTimeZone {
    * 
    * See the [Rust documentation for `try_from_offset_seconds`](https://docs.rs/icu/latest/icu/timezone/struct.GmtOffset.html#method.try_from_offset_seconds) for more information.
    * 
-   *  Additional information: [1](https://docs.rs/icu/latest/icu/timezone/struct.GmtOffset.html)
+   * Additional information: [1](https://docs.rs/icu/latest/icu/timezone/struct.GmtOffset.html)
    */
   diplomat::result<std::monostate, ICU4XError> try_set_gmt_offset_seconds(int32_t offset_seconds);
 
@@ -71,7 +69,7 @@ class ICU4XCustomTimeZone {
    * 
    * See the [Rust documentation for `offset_seconds`](https://docs.rs/icu/latest/icu/timezone/struct.GmtOffset.html#method.offset_seconds) for more information.
    * 
-   *  Additional information: [1](https://docs.rs/icu/latest/icu/timezone/struct.GmtOffset.html)
+   * Additional information: [1](https://docs.rs/icu/latest/icu/timezone/struct.GmtOffset.html)
    */
   void clear_gmt_offset();
 
@@ -82,7 +80,7 @@ class ICU4XCustomTimeZone {
    * 
    * See the [Rust documentation for `offset_seconds`](https://docs.rs/icu/latest/icu/timezone/struct.GmtOffset.html#method.offset_seconds) for more information.
    * 
-   *  Additional information: [1](https://docs.rs/icu/latest/icu/timezone/struct.GmtOffset.html)
+   * Additional information: [1](https://docs.rs/icu/latest/icu/timezone/struct.GmtOffset.html)
    */
   diplomat::result<int32_t, ICU4XError> gmt_offset_seconds() const;
 
@@ -129,7 +127,7 @@ class ICU4XCustomTimeZone {
    * 
    * See the [Rust documentation for `time_zone_id`](https://docs.rs/icu/latest/icu/timezone/struct.CustomTimeZone.html#structfield.time_zone_id) for more information.
    * 
-   *  Additional information: [1](https://docs.rs/icu/latest/icu/timezone/struct.TimeZoneBcp47Id.html)
+   * Additional information: [1](https://docs.rs/icu/latest/icu/timezone/struct.TimeZoneBcp47Id.html)
    */
   diplomat::result<std::monostate, ICU4XError> try_set_time_zone_id(const std::string_view id);
 
@@ -148,7 +146,7 @@ class ICU4XCustomTimeZone {
    * 
    * See the [Rust documentation for `time_zone_id`](https://docs.rs/icu/latest/icu/timezone/struct.CustomTimeZone.html#structfield.time_zone_id) for more information.
    * 
-   *  Additional information: [1](https://docs.rs/icu/latest/icu/timezone/struct.TimeZoneBcp47Id.html)
+   * Additional information: [1](https://docs.rs/icu/latest/icu/timezone/struct.TimeZoneBcp47Id.html)
    */
   void clear_time_zone_id();
 
@@ -159,7 +157,7 @@ class ICU4XCustomTimeZone {
    * 
    * See the [Rust documentation for `time_zone_id`](https://docs.rs/icu/latest/icu/timezone/struct.CustomTimeZone.html#structfield.time_zone_id) for more information.
    * 
-   *  Additional information: [1](https://docs.rs/icu/latest/icu/timezone/struct.TimeZoneBcp47Id.html)
+   * Additional information: [1](https://docs.rs/icu/latest/icu/timezone/struct.TimeZoneBcp47Id.html)
    */
   template<typename W> diplomat::result<std::monostate, ICU4XError> time_zone_id_to_writeable(W& write) const;
 
@@ -170,7 +168,7 @@ class ICU4XCustomTimeZone {
    * 
    * See the [Rust documentation for `time_zone_id`](https://docs.rs/icu/latest/icu/timezone/struct.CustomTimeZone.html#structfield.time_zone_id) for more information.
    * 
-   *  Additional information: [1](https://docs.rs/icu/latest/icu/timezone/struct.TimeZoneBcp47Id.html)
+   * Additional information: [1](https://docs.rs/icu/latest/icu/timezone/struct.TimeZoneBcp47Id.html)
    */
   diplomat::result<std::string, ICU4XError> time_zone_id() const;
 
@@ -181,7 +179,7 @@ class ICU4XCustomTimeZone {
    * 
    * See the [Rust documentation for `metazone_id`](https://docs.rs/icu/latest/icu/timezone/struct.CustomTimeZone.html#structfield.metazone_id) for more information.
    * 
-   *  Additional information: [1](https://docs.rs/icu/latest/icu/timezone/struct.MetazoneId.html)
+   * Additional information: [1](https://docs.rs/icu/latest/icu/timezone/struct.MetazoneId.html)
    */
   diplomat::result<std::monostate, ICU4XError> try_set_metazone_id(const std::string_view id);
 
@@ -190,7 +188,7 @@ class ICU4XCustomTimeZone {
    * 
    * See the [Rust documentation for `metazone_id`](https://docs.rs/icu/latest/icu/timezone/struct.CustomTimeZone.html#structfield.metazone_id) for more information.
    * 
-   *  Additional information: [1](https://docs.rs/icu/latest/icu/timezone/struct.MetazoneId.html)
+   * Additional information: [1](https://docs.rs/icu/latest/icu/timezone/struct.MetazoneId.html)
    */
   void clear_metazone_id();
 
@@ -201,7 +199,7 @@ class ICU4XCustomTimeZone {
    * 
    * See the [Rust documentation for `metazone_id`](https://docs.rs/icu/latest/icu/timezone/struct.CustomTimeZone.html#structfield.metazone_id) for more information.
    * 
-   *  Additional information: [1](https://docs.rs/icu/latest/icu/timezone/struct.MetazoneId.html)
+   * Additional information: [1](https://docs.rs/icu/latest/icu/timezone/struct.MetazoneId.html)
    */
   template<typename W> diplomat::result<std::monostate, ICU4XError> metazone_id_to_writeable(W& write) const;
 
@@ -212,7 +210,7 @@ class ICU4XCustomTimeZone {
    * 
    * See the [Rust documentation for `metazone_id`](https://docs.rs/icu/latest/icu/timezone/struct.CustomTimeZone.html#structfield.metazone_id) for more information.
    * 
-   *  Additional information: [1](https://docs.rs/icu/latest/icu/timezone/struct.MetazoneId.html)
+   * Additional information: [1](https://docs.rs/icu/latest/icu/timezone/struct.MetazoneId.html)
    */
   diplomat::result<std::string, ICU4XError> metazone_id() const;
 
@@ -223,7 +221,7 @@ class ICU4XCustomTimeZone {
    * 
    * See the [Rust documentation for `zone_variant`](https://docs.rs/icu/latest/icu/timezone/struct.CustomTimeZone.html#structfield.zone_variant) for more information.
    * 
-   *  Additional information: [1](https://docs.rs/icu/latest/icu/timezone/struct.ZoneVariant.html)
+   * Additional information: [1](https://docs.rs/icu/latest/icu/timezone/struct.ZoneVariant.html)
    */
   diplomat::result<std::monostate, ICU4XError> try_set_zone_variant(const std::string_view id);
 
@@ -232,7 +230,7 @@ class ICU4XCustomTimeZone {
    * 
    * See the [Rust documentation for `zone_variant`](https://docs.rs/icu/latest/icu/timezone/struct.CustomTimeZone.html#structfield.zone_variant) for more information.
    * 
-   *  Additional information: [1](https://docs.rs/icu/latest/icu/timezone/struct.ZoneVariant.html)
+   * Additional information: [1](https://docs.rs/icu/latest/icu/timezone/struct.ZoneVariant.html)
    */
   void clear_zone_variant();
 
@@ -243,7 +241,7 @@ class ICU4XCustomTimeZone {
    * 
    * See the [Rust documentation for `zone_variant`](https://docs.rs/icu/latest/icu/timezone/struct.CustomTimeZone.html#structfield.zone_variant) for more information.
    * 
-   *  Additional information: [1](https://docs.rs/icu/latest/icu/timezone/struct.ZoneVariant.html)
+   * Additional information: [1](https://docs.rs/icu/latest/icu/timezone/struct.ZoneVariant.html)
    */
   template<typename W> diplomat::result<std::monostate, ICU4XError> zone_variant_to_writeable(W& write) const;
 
@@ -254,7 +252,7 @@ class ICU4XCustomTimeZone {
    * 
    * See the [Rust documentation for `zone_variant`](https://docs.rs/icu/latest/icu/timezone/struct.CustomTimeZone.html#structfield.zone_variant) for more information.
    * 
-   *  Additional information: [1](https://docs.rs/icu/latest/icu/timezone/struct.ZoneVariant.html)
+   * Additional information: [1](https://docs.rs/icu/latest/icu/timezone/struct.ZoneVariant.html)
    */
   diplomat::result<std::string, ICU4XError> zone_variant() const;
 
@@ -263,7 +261,7 @@ class ICU4XCustomTimeZone {
    * 
    * See the [Rust documentation for `standard`](https://docs.rs/icu/latest/icu/timezone/struct.ZoneVariant.html#method.standard) for more information.
    * 
-   *  Additional information: [1](https://docs.rs/icu/latest/icu/timezone/struct.CustomTimeZone.html#structfield.zone_variant)
+   * Additional information: [1](https://docs.rs/icu/latest/icu/timezone/struct.CustomTimeZone.html#structfield.zone_variant)
    */
   void set_standard_time();
 
@@ -272,7 +270,7 @@ class ICU4XCustomTimeZone {
    * 
    * See the [Rust documentation for `daylight`](https://docs.rs/icu/latest/icu/timezone/struct.ZoneVariant.html#method.daylight) for more information.
    * 
-   *  Additional information: [1](https://docs.rs/icu/latest/icu/timezone/struct.CustomTimeZone.html#structfield.zone_variant)
+   * Additional information: [1](https://docs.rs/icu/latest/icu/timezone/struct.CustomTimeZone.html#structfield.zone_variant)
    */
   void set_daylight_time();
 
@@ -283,7 +281,7 @@ class ICU4XCustomTimeZone {
    * 
    * See the [Rust documentation for `standard`](https://docs.rs/icu/latest/icu/timezone/struct.ZoneVariant.html#method.standard) for more information.
    * 
-   *  Additional information: [1](https://docs.rs/icu/latest/icu/timezone/struct.CustomTimeZone.html#structfield.zone_variant)
+   * Additional information: [1](https://docs.rs/icu/latest/icu/timezone/struct.CustomTimeZone.html#structfield.zone_variant)
    */
   diplomat::result<bool, ICU4XError> is_standard_time() const;
 
@@ -294,7 +292,7 @@ class ICU4XCustomTimeZone {
    * 
    * See the [Rust documentation for `daylight`](https://docs.rs/icu/latest/icu/timezone/struct.ZoneVariant.html#method.daylight) for more information.
    * 
-   *  Additional information: [1](https://docs.rs/icu/latest/icu/timezone/struct.CustomTimeZone.html#structfield.zone_variant)
+   * Additional information: [1](https://docs.rs/icu/latest/icu/timezone/struct.CustomTimeZone.html#structfield.zone_variant)
    */
   diplomat::result<bool, ICU4XError> is_daylight_time() const;
 
@@ -303,7 +301,7 @@ class ICU4XCustomTimeZone {
    * 
    * See the [Rust documentation for `maybe_calculate_metazone`](https://docs.rs/icu/latest/icu/timezone/struct.CustomTimeZone.html#method.maybe_calculate_metazone) for more information.
    * 
-   *  Additional information: [1](https://docs.rs/icu/latest/icu/timezone/struct.MetazoneCalculator.html#method.compute_metazone_from_time_zone)
+   * Additional information: [1](https://docs.rs/icu/latest/icu/timezone/struct.MetazoneCalculator.html#method.compute_metazone_from_time_zone)
    */
   void maybe_calculate_metazone(const ICU4XMetazoneCalculator& metazone_calculator, const ICU4XIsoDateTime& local_datetime);
   inline const capi::ICU4XCustomTimeZone* AsFFI() const { return this->inner.get(); }

@@ -14,8 +14,6 @@
 
 
 /**
- * 
- * 
  * See the [Rust documentation for `IsoMinutes`](https://docs.rs/icu/latest/icu/datetime/time_zone/enum.IsoMinutes.html) for more information.
  */
 enum struct ICU4XIsoTimeZoneMinuteDisplay {

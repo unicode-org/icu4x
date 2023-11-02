@@ -26,8 +26,6 @@ struct ICU4XCaseMapCloserDeleter {
 };
 
 /**
- * 
- * 
  * See the [Rust documentation for `CaseMapCloser`](https://docs.rs/icu/latest/icu/casemap/struct.CaseMapCloser.html) for more information.
  */
 class ICU4XCaseMapCloser {

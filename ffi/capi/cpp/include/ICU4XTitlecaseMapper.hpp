@@ -27,8 +27,6 @@ struct ICU4XTitlecaseMapperDeleter {
 };
 
 /**
- * 
- * 
  * See the [Rust documentation for `TitlecaseMapper`](https://docs.rs/icu/latest/icu/casemap/struct.TitlecaseMapper.html) for more information.
  */
 class ICU4XTitlecaseMapper {
