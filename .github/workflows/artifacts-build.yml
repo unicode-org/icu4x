@@ -170,17 +170,13 @@ jobs:
         cache: 'npm'
         cache-dependency-path: '**/package-lock.json'
 
-    - name: Init node package
+    - name: Init packages
       run: |
-        cd ffi/capi/js/examples/node
-        make
-        cd ../wasm-demo
-        npm ci
+        npm -C ffi/capi/js/package ci
+        npm -C ffi/capi/js/examples/wasm-demo ci
 
     - name: Run Webpack
-      run: |
-        cd ffi/capi/js/examples/wasm-demo
-        npm run build
+      run: npm -C ffi/capi/js/examples/wasm-demo run build
 
     - name: Put index.html in dist for temp URL
       run: |
@@ -193,9 +189,8 @@ jobs:
 
     - name: "⭐⭐⭐ Links to Uploaded Artifacts ⭐⭐⭐"
       run: |
-        echo "::group::Wasm Demo Preview"
+        echo "Wasm Demo Preview"
         echo "https://storage.googleapis.com/${{ env.GCP_MAIN_BUCKET_ID }}/gha/wasm-demo/index.html"
-        echo "::endgroup::"
 
   bench-perf:
     # This is too expensive to run on every push, so only run it on main.
