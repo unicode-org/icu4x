@@ -158,7 +158,7 @@ fn main() -> eyre::Result<()> {
             eyre::bail!("Exporting to a BlobProvider requires the `blob_exporter` Cargo feature");
             #[cfg(feature = "blob_exporter")]
             {
-                let mut exporter = icu_provider_blob::export::BlobExporter::new_with_sink(
+                let sink: Box<dyn std::io::Write + Sync> =
                     if path == std::path::Path::new("/stdout") {
                         Box::new(std::io::stdout())
                     } else if !config.overwrite && path.exists() {
@@ -168,13 +168,12 @@ fn main() -> eyre::Result<()> {
                             std::fs::File::create(path)
                                 .with_context(|| path.to_string_lossy().to_string())?,
                         )
-                    },
-                );
-                if matches!(config.export, config::Export::Blob { .. }) {
-                    exporter.set_v1();
+                    };
+                let exporter = if matches!(config.export, config::Export::Blob { .. }) {
+                    icu_provider_blob::export::BlobExporter::new_with_sink(sink)
                 } else {
-                    exporter.set_v2();
-                }
+                    icu_provider_blob::export::BlobExporter::new_v2_with_sink(sink)
+                };
                 Ok(driver.export(&provider, exporter)?)
             }
         }

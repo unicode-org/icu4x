@@ -51,7 +51,10 @@ impl core::fmt::Debug for BlobExporter<'_> {
 }
 
 impl<'w> BlobExporter<'w> {
-    /// Create a [`BlobExporter`] that writes to the given I/O stream.
+    /// Creates a version 1 [`BlobExporter`] that writes to the given I/O stream.
+    ///
+    /// Version 1 is needed if the blob may be consumed by ICU4X versions 1.0 through 1.3. If
+    /// targeting only ICU4X 1.4 and above, see [BlobExporter::new_v2_with_sink()].
     pub fn new_with_sink(sink: Box<dyn std::io::Write + Sync + 'w>) -> Self {
         Self {
             resources: Mutex::new(BTreeMap::new()),
@@ -62,14 +65,19 @@ impl<'w> BlobExporter<'w> {
         }
     }
 
-    /// Set the exporter to produce v1 blobs.
-    pub fn set_v1(&mut self) {
-        self.version = VersionConfig::V001;
-    }
-
-    /// Set the exporter to produce v2 blobs.
-    pub fn set_v2(&mut self) {
-        self.version = VersionConfig::V002;
+    /// Creates a version 2 [`BlobExporter`] that writes to the given I/O stream.
+    ///
+    /// Version 2 produces a smaller postcard file than version 1 without sacrificing performance.
+    /// It is compatible with ICU4X 1.4 and above. If you need to support older version of ICU4X,
+    /// see [BlobExporter::new_with_sink()].
+    pub fn new_v2_with_sink(sink: Box<dyn std::io::Write + Sync + 'w>) -> Self {
+        Self {
+            resources: Mutex::new(BTreeMap::new()),
+            unique_resources: Mutex::new(HashMap::new()),
+            all_keys: Mutex::new(BTreeSet::new()),
+            sink,
+            version: VersionConfig::V002,
+        }
     }
 }
 
@@ -98,7 +106,7 @@ impl DataExporter for BlobExporter<'_> {
             .lock()
             .expect("poison")
             .entry(key.hashed())
-            .or_insert_with(Default::default)
+            .or_default()
             .entry(locale.write_to_string().into_owned().into_bytes())
             .or_insert(idx);
         Ok(())
@@ -226,8 +234,8 @@ impl BlobExporter<'_> {
 
         if !keys.is_empty() {
             let blob = BlobSchema::V002(BlobSchemaV2 {
-                keys: &*keys,
-                locales: &*locales_vzv,
+                keys: &keys,
+                locales: &locales_vzv,
                 buffers: &vzv,
             });
             log::info!("Serializing blob to output stream...");

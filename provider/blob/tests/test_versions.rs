@@ -20,7 +20,7 @@ fn run_driver(exporter: BlobExporter) -> Result<(), DataError> {
 }
 
 fn check_hello_world(blob_provider: impl DataProvider<HelloWorldV1Marker>) {
-    let hello_world_provider = HelloWorldProvider::default();
+    let hello_world_provider = HelloWorldProvider;
     for locale in hello_world_provider.supported_locales().unwrap() {
         let blob_result = blob_provider
             .load(DataRequest {
@@ -56,8 +56,7 @@ fn test_v1() {
 #[test]
 fn test_v2() {
     let mut blob: Vec<u8> = Vec::new();
-    let mut exporter = BlobExporter::new_with_sink(Box::new(&mut blob));
-    exporter.set_v2();
+    let exporter = BlobExporter::new_v2_with_sink(Box::new(&mut blob));
     run_driver(exporter).unwrap();
     assert_eq!(BLOB_V2, blob.as_slice());
 

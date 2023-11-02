@@ -156,13 +156,11 @@ mod test {
             let mut blob: Vec<u8> = Vec::new();
 
             {
-                let mut exporter = BlobExporter::new_with_sink(Box::new(&mut blob));
-
-                if version == 1 {
-                    exporter.set_v1();
+                let mut exporter = if version == 1 {
+                    BlobExporter::new_with_sink(Box::new(&mut blob))
                 } else {
-                    exporter.set_v2();
-                }
+                    BlobExporter::new_v2_with_sink(Box::new(&mut blob))
+                };
 
                 exporter.flush(HelloWorldV1Marker::KEY).unwrap();
 
@@ -194,13 +192,11 @@ mod test {
             let mut blob: Vec<u8> = Vec::new();
 
             {
-                let mut exporter = BlobExporter::new_with_sink(Box::new(&mut blob));
-
-                if version == 1 {
-                    exporter.set_v1();
+                let mut exporter = if version == 1 {
+                    BlobExporter::new_with_sink(Box::new(&mut blob))
                 } else {
-                    exporter.set_v2();
-                }
+                    BlobExporter::new_v2_with_sink(Box::new(&mut blob))
+                };
 
                 exporter.flush(HelloSingletonV1Marker::KEY).unwrap();
 
