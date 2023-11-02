@@ -209,6 +209,12 @@ export class ICU4XFixedDecimal {
 
   /**
 
+   * See the {@link https://docs.rs/fixed_decimal/latest/fixed_decimal/struct.FixedDecimal.html#method.half_trunc_to_increment Rust documentation for `half_trunc_to_increment`} for more information.
+   */
+  half_trunc_to_increment(position: i16, increment: ICU4XRoundingIncrement): void;
+
+  /**
+
    * See the {@link https://docs.rs/fixed_decimal/latest/fixed_decimal/struct.FixedDecimal.html#method.expand Rust documentation for `expand`} for more information.
    */
   expand(position: i16): void;
@@ -221,9 +227,21 @@ export class ICU4XFixedDecimal {
 
   /**
 
+   * See the {@link https://docs.rs/fixed_decimal/latest/fixed_decimal/struct.FixedDecimal.html#method.half_expand_to_increment Rust documentation for `half_expand_to_increment`} for more information.
+   */
+  half_expand_to_increment(position: i16, increment: ICU4XRoundingIncrement): void;
+
+  /**
+
    * See the {@link https://docs.rs/fixed_decimal/latest/fixed_decimal/struct.FixedDecimal.html#method.ceil Rust documentation for `ceil`} for more information.
    */
   ceil(position: i16): void;
+
+  /**
+
+   * See the {@link https://docs.rs/fixed_decimal/latest/fixed_decimal/struct.FixedDecimal.html#method.ceil_to_increment Rust documentation for `ceil_to_increment`} for more information.
+   */
+  ceil_to_increment(position: i16, increment: ICU4XRoundingIncrement): void;
 
   /**
 
@@ -233,9 +251,21 @@ export class ICU4XFixedDecimal {
 
   /**
 
+   * See the {@link https://docs.rs/fixed_decimal/latest/fixed_decimal/struct.FixedDecimal.html#method.half_ceil_to_increment Rust documentation for `half_ceil_to_increment`} for more information.
+   */
+  half_ceil_to_increment(position: i16, increment: ICU4XRoundingIncrement): void;
+
+  /**
+
    * See the {@link https://docs.rs/fixed_decimal/latest/fixed_decimal/struct.FixedDecimal.html#method.floor Rust documentation for `floor`} for more information.
    */
   floor(position: i16): void;
+
+  /**
+
+   * See the {@link https://docs.rs/fixed_decimal/latest/fixed_decimal/struct.FixedDecimal.html#method.floor_to_increment Rust documentation for `floor_to_increment`} for more information.
+   */
+  floor_to_increment(position: i16, increment: ICU4XRoundingIncrement): void;
 
   /**
 
@@ -245,9 +275,21 @@ export class ICU4XFixedDecimal {
 
   /**
 
+   * See the {@link https://docs.rs/fixed_decimal/latest/fixed_decimal/struct.FixedDecimal.html#method.half_floor_to_increment Rust documentation for `half_floor_to_increment`} for more information.
+   */
+  half_floor_to_increment(position: i16, increment: ICU4XRoundingIncrement): void;
+
+  /**
+
    * See the {@link https://docs.rs/fixed_decimal/latest/fixed_decimal/struct.FixedDecimal.html#method.half_even Rust documentation for `half_even`} for more information.
    */
   half_even(position: i16): void;
+
+  /**
+
+   * See the {@link https://docs.rs/fixed_decimal/latest/fixed_decimal/struct.FixedDecimal.html#method.half_even_to_increment Rust documentation for `half_even_to_increment`} for more information.
+   */
+  half_even_to_increment(position: i16, increment: ICU4XRoundingIncrement): void;
 
   /**
 
