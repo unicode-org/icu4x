@@ -57,9 +57,9 @@ impl<'w> BlobExporter<'w> {
     /// targeting only ICU4X 1.4 and above, see [BlobExporter::new_v2_with_sink()].
     pub fn new_with_sink(sink: Box<dyn std::io::Write + Sync + 'w>) -> Self {
         Self {
-            resources: Mutex::new(BTreeMap::new()),
-            unique_resources: Mutex::new(HashMap::new()),
-            all_keys: Mutex::new(BTreeSet::new()),
+            resources: Mutex::new(Default::default()),
+            unique_resources: Mutex::new(Default::default()),
+            all_keys: Mutex::new(Default::default()),
             sink,
             version: VersionConfig::V001,
         }
@@ -72,9 +72,9 @@ impl<'w> BlobExporter<'w> {
     /// see [BlobExporter::new_with_sink()].
     pub fn new_v2_with_sink(sink: Box<dyn std::io::Write + Sync + 'w>) -> Self {
         Self {
-            resources: Mutex::new(BTreeMap::new()),
-            unique_resources: Mutex::new(HashMap::new()),
-            all_keys: Mutex::new(BTreeSet::new()),
+            resources: Mutex::new(Default::default()),
+            unique_resources: Mutex::new(Default::default()),
+            all_keys: Mutex::new(Default::default()),
             sink,
             version: VersionConfig::V002,
         }

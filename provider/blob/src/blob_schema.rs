@@ -151,7 +151,7 @@ impl Default for BlobSchemaV2<'_> {
 
 impl<'data> BlobSchemaV2<'data> {
     pub fn load(&self, key: DataKey, req: DataRequest) -> Result<&'data [u8], DataError> {
-        let idx0 = self
+        let key_index = self
             .keys
             .binary_search(&key.hashed())
             .ok()
@@ -161,16 +161,16 @@ impl<'data> BlobSchemaV2<'data> {
         }
         let zerotrie = self
             .locales
-            .get(idx0)
+            .get(key_index)
             .ok_or_else(|| DataError::custom("Invalid blob bytes").with_req(key, req))?;
-        // TODO: Add a lookup function to zerotrie so we don't need to stringify
+        // TODO(#4249): Add a lookup function to zerotrie so we don't need to stringify
         let locale_str = req.locale.write_to_string();
-        let idx1 = ZeroTrieSimpleAscii::from_store(zerotrie)
+        let blob_index = ZeroTrieSimpleAscii::from_store(zerotrie)
             .get(locale_str.as_bytes())
             .ok_or_else(|| DataErrorKind::MissingLocale.with_req(key, req))?;
         let buffer = self
             .buffers
-            .get(idx1)
+            .get(blob_index)
             .ok_or_else(|| DataError::custom("Invalid blob bytes").with_req(key, req))?;
         Ok(buffer)
     }

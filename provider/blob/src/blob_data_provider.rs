@@ -150,9 +150,7 @@ mod test {
 
     #[test]
     fn test_empty() {
-        let mut version = 1;
-
-        while version <= 2 {
+        for version in [1, 2] {
             let mut blob: Vec<u8> = Vec::new();
 
             {
@@ -179,16 +177,12 @@ mod test {
                 ),
                 "(version: {version})"
             );
-
-            version += 1;
         }
     }
 
     #[test]
     fn test_singleton() {
-        let mut version = 1;
-
-        while version <= 2 {
+        for version in [1, 2] {
             let mut blob: Vec<u8> = Vec::new();
 
             {
@@ -232,8 +226,6 @@ mod test {
                 ),
                 "(version: {version})"
             );
-
-            version += 1;
         }
     }
 }

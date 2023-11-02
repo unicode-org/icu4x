@@ -214,6 +214,7 @@ jobs:
           - components/segmenter
           - experimental/transliterate
           - experimental/zerotrie
+          - provider/blob
           - utils/fixed_decimal
           - utils/litemap
           - utils/tinystr

@@ -49,8 +49,8 @@ fn test_v1() {
     run_driver(exporter).unwrap();
     assert_eq!(BLOB_V1, blob.as_slice());
 
-    let blob_privider = BlobDataProvider::try_new_from_blob(blob.into_boxed_slice()).unwrap();
-    check_hello_world(blob_privider.as_deserializing());
+    let blob_provider = BlobDataProvider::try_new_from_blob(blob.into_boxed_slice()).unwrap();
+    check_hello_world(blob_provider.as_deserializing());
 }
 
 #[test]
@@ -60,6 +60,6 @@ fn test_v2() {
     run_driver(exporter).unwrap();
     assert_eq!(BLOB_V2, blob.as_slice());
 
-    let blob_privider = BlobDataProvider::try_new_from_blob(blob.into_boxed_slice()).unwrap();
-    check_hello_world(blob_privider.as_deserializing());
+    let blob_provider = BlobDataProvider::try_new_from_blob(blob.into_boxed_slice()).unwrap();
+    check_hello_world(blob_provider.as_deserializing());
 }
