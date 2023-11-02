@@ -75,7 +75,7 @@ command = "cargo"
 args = ["check", "--package", "icu_freertos",
         "--target", "thumbv8m.main-none-eabihf",
         "--no-default-features", "--features=wearos",
-        "-Zbuild-std=core,alloc", "-Zbuild-std-features=panic_immediate_abort"]
+        "-Zbuild-std=std,panic_abort", "-Zbuild-std-features=panic_immediate_abort"]
 
 
 # Diplomat gen

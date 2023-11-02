@@ -21,6 +21,7 @@ use std::collections::BTreeMap;
 use tinystr::TinyAsciiStr;
 use zerovec::ule::UnvalidatedStr;
 
+const NUMERIC: Subtag = subtag!("1");
 const ABBR: Subtag = subtag!("3");
 const NARROW: Subtag = subtag!("4");
 const WIDE: Subtag = subtag!("5");
@@ -48,6 +49,7 @@ const PATTERN_SHORT24: Subtag = subtag!("s24");
 fn aux_subtag_info(subtag: Subtag) -> (Context, Length) {
     use {Context::*, Length::*};
     match subtag {
+        NUMERIC => (Format, Numeric),
         ABBR => (Format, Abbr),
         NARROW => (Format, Narrow),
         WIDE => (Format, Wide),
@@ -93,8 +95,21 @@ const NORMAL_KEY_LENGTHS: &[Subtag] = &[
     WIDE_STANDALONE,
 ];
 
+/// Lengths for month data (NORMAL_KEY_LENGTHS + numeric)
+const NUMERIC_MONTHS_KEY_LENGTHS: &[Subtag] = &[
+    ABBR,
+    NARROW,
+    WIDE,
+    ABBR_STANDALONE,
+    NARROW_STANDALONE,
+    WIDE_STANDALONE,
+    NUMERIC,
+];
+
+/// Lengths for year data (does not do standalone formatting)
 const YEARS_KEY_LENGTHS: &[Subtag] = &[ABBR, NARROW, WIDE];
-/// All possible lengths
+
+/// All possible non-numeric lengths
 const FULL_KEY_LENGTHS: &[Subtag] = &[
     ABBR,
     NARROW,
@@ -106,6 +121,7 @@ const FULL_KEY_LENGTHS: &[Subtag] = &[
     SHORT_STANDALONE,
 ];
 
+/// Lengths for normal patterns (not counting hour cycle stuff)
 const NORMAL_PATTERN_KEY_LENGTHS: &[Subtag] =
     &[PATTERN_FULL, PATTERN_LONG, PATTERN_MEDIUM, PATTERN_SHORT];
 
@@ -467,12 +483,34 @@ fn calendar_months(cal: &Value) -> (usize, bool) {
 
 fn months_convert(
     _datagen: &DatagenProvider,
-    _langid: &LanguageIdentifier,
+    langid: &LanguageIdentifier,
     data: &ca::Dates,
     calendar: &Value,
     context: Context,
     length: Length,
 ) -> Result<MonthSymbolsV1<'static>, DataError> {
+    if length == Length::Numeric {
+        assert_eq!(
+            context,
+            Context::Format,
+            "numeric months only found for Context::Format"
+        );
+        let Some(ref patterns) = data.month_patterns else {
+            panic!("No month_patterns found but numeric months were requested for {calendar} with {langid}");
+        };
+        let pattern = patterns.get_symbols(context, length);
+        let leap = &pattern.leap;
+        let Some(index) = leap.find("{0}") else {
+            panic!("Calendar {calendar} for {langid} has leap pattern {leap}, which does not contain {{0}} placeholder");
+        };
+        let string = leap.replace("{0}", "");
+        let pattern = SimpleSubstitutionPattern {
+            pattern: string.into(),
+            subst_index: index,
+        };
+        return Ok(MonthSymbolsV1::LeapNumeric(pattern));
+    }
+
     let months = data.months.get_symbols(context, length);
 
     let (month_count, has_leap) = calendar_months(calendar);
@@ -557,17 +595,65 @@ fn months_convert(
     }
 }
 
+/// Given a lengthpattern, apply any numeric overrides it may have to `pattern`
+fn apply_numeric_overrides(lp: &ca::LengthPattern, pattern: &mut pattern::runtime::Pattern) {
+    use icu_datetime::fields::{self, FieldLength, FieldNumericOverrides::*, FieldSymbol};
+    let ca::LengthPattern::WithNumberingSystems {
+        ref numbering_systems,
+        ..
+    } = *lp
+    else {
+        // no numeric override
+        return;
+    };
+    // symbol_to_replace is None when we need to replace *all* symbols
+    let (numeric, symbol_to_replace) = match &**numbering_systems {
+        "hanidec" => (Hanidec, None),
+        "hebr" => (Hebr, None),
+        "d=hanidays" => (Hanidays, Some(FieldSymbol::Day(fields::Day::DayOfMonth))),
+        "M=romanlow" => (Romanlow, Some(FieldSymbol::Month(fields::Month::Format))),
+        "y=jpanyear" => (Jpnyear, Some(FieldSymbol::Year(fields::Year::Calendar))),
+        _ => panic!("Found unexpected numeric override {numbering_systems}"),
+    };
+
+    pattern.items.for_each_mut(|item| {
+        if let pattern::PatternItem::Field(ref mut field) = *item {
+            // only replace numeric items
+            if field.length != FieldLength::One {
+                assert!(
+                    field.length != FieldLength::TwoDigit
+                        || symbol_to_replace != Some(field.symbol),
+                    "We don't know what to do when there is a non-targeted numeric override \
+                         on a two-digit numeric field"
+                );
+                return;
+            }
+            // if we need to replace a specific symbol, filter
+            // out everyone else
+            if let Some(symbol) = symbol_to_replace {
+                if symbol != field.symbol {
+                    return;
+                }
+            }
+
+            field.length = FieldLength::NumericOverride(numeric);
+        }
+    })
+}
+
 fn datepattern_convert(
     data: &ca::Dates,
     length: PatternLength,
     _hc: Option<CoarseHourCycle>,
 ) -> Result<DatePatternV1<'static>, DataError> {
-    let pattern = data.date_formats.get_pattern(length);
+    let length_pattern = data.date_formats.get_pattern(length);
 
-    let pattern = pattern
+    let mut pattern = length_pattern
         .get_pattern()
         .parse()
         .expect("failed to parse pattern");
+
+    apply_numeric_overrides(length_pattern, &mut pattern);
     Ok(DatePatternV1 { pattern })
 }
 
@@ -824,7 +910,7 @@ impl_symbols_datagen!(
 impl_symbols_datagen!(
     ChineseMonthSymbolsV1Marker,
     "chinese",
-    NORMAL_KEY_LENGTHS,
+    NUMERIC_MONTHS_KEY_LENGTHS, // has leap month patterns
     months_convert
 );
 impl_symbols_datagen!(
@@ -836,7 +922,7 @@ impl_symbols_datagen!(
 impl_symbols_datagen!(
     DangiMonthSymbolsV1Marker,
     "dangi",
-    NORMAL_KEY_LENGTHS,
+    NUMERIC_MONTHS_KEY_LENGTHS, // has leap month patterns
     months_convert
 );
 impl_symbols_datagen!(

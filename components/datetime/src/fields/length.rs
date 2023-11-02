@@ -3,6 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use core::cmp::{Ord, PartialOrd};
+use core::fmt;
 use displaydoc::Display;
 use zerovec::ule::{AsULE, ZeroVecError, ULE};
 
@@ -54,6 +55,8 @@ pub enum FieldLength {
     Six,
     /// A fixed size format for numeric-only fields that is at most 127 digits.
     Fixed(u8),
+    /// FieldLength::One (numeric), but overridden with a different numbering system
+    NumericOverride(FieldNumericOverrides),
 }
 
 impl FieldLength {
@@ -66,6 +69,7 @@ impl FieldLength {
             FieldLength::Wide => 4,
             FieldLength::Narrow => 5,
             FieldLength::Six => 6,
+            FieldLength::NumericOverride(o) => 64 + (*o as u8).min(63),
             FieldLength::Fixed(p) => 128 + p.min(&127), /* truncate to at most 127 digits to avoid overflow */
         }
     }
@@ -80,10 +84,14 @@ impl FieldLength {
             5 => Self::Narrow,
             6 => Self::Six,
             idx => {
-                if idx < 128 {
+                if idx < 64 {
                     return Err(LengthError::InvalidLength);
                 }
-                Self::Fixed(idx - 128)
+                if idx < 128 {
+                    Self::NumericOverride((idx - 64).try_into()?)
+                } else {
+                    Self::Fixed(idx - 128)
+                }
             }
         })
     }
@@ -98,6 +106,7 @@ impl FieldLength {
             FieldLength::Wide => 4,
             FieldLength::Narrow => 5,
             FieldLength::Six => 6,
+            FieldLength::NumericOverride(o) => 64 + o as usize,
             FieldLength::Fixed(p) => p as usize,
         }
     }
@@ -142,5 +151,61 @@ unsafe impl ULE for FieldLengthULE {
             Self::validate_byte(*byte)?;
         }
         Ok(())
+    }
+}
+
+/// Various numeric overrides for datetime patterns
+/// as found in CLDR
+#[derive(Debug, Eq, PartialEq, Clone, Copy, Ord, PartialOrd)]
+#[cfg_attr(
+    feature = "datagen",
+    derive(serde::Serialize, databake::Bake),
+    databake(path = icu_datetime::fields),
+)]
+#[cfg_attr(feature = "serde", derive(serde::Deserialize))]
+#[non_exhaustive]
+pub enum FieldNumericOverrides {
+    /// `hanidec`
+    Hanidec = 0,
+    /// `hanidays`
+    Hanidays = 1,
+    /// `hebr`
+    Hebr = 2,
+    /// `romanlow`
+    Romanlow = 3,
+    /// `jpnyear`
+    Jpnyear = 4,
+}
+
+impl TryFrom<u8> for FieldNumericOverrides {
+    type Error = LengthError;
+    fn try_from(other: u8) -> Result<Self, LengthError> {
+        Ok(match other {
+            0 => Self::Hanidec,
+            1 => Self::Hanidays,
+            2 => Self::Hebr,
+            3 => Self::Romanlow,
+            4 => Self::Jpnyear,
+            _ => return Err(LengthError::InvalidLength),
+        })
+    }
+}
+
+impl FieldNumericOverrides {
+    /// Conver this to the corresponding string code
+    pub fn as_str(self) -> &'static str {
+        match self {
+            Self::Hanidec => "hanidec",
+            Self::Hanidays => "hanidays",
+            Self::Hebr => "hebr",
+            Self::Romanlow => "romanlow",
+            Self::Jpnyear => "jpnyear",
+        }
+    }
+}
+
+impl fmt::Display for FieldNumericOverrides {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        self.as_str().fmt(f)
     }
 }

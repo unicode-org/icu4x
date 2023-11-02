@@ -10,7 +10,7 @@ mod length;
 pub(crate) mod symbols;
 
 use displaydoc::Display;
-pub use length::{FieldLength, LengthError};
+pub use length::{FieldLength, FieldNumericOverrides, LengthError};
 pub use symbols::*;
 
 use core::{

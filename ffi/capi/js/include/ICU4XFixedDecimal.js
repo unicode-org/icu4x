@@ -3,6 +3,7 @@ import * as diplomatRuntime from "./diplomat-runtime.js"
 import { ICU4XError_js_to_rust, ICU4XError_rust_to_js } from "./ICU4XError.js"
 import { ICU4XFixedDecimalSign_js_to_rust, ICU4XFixedDecimalSign_rust_to_js } from "./ICU4XFixedDecimalSign.js"
 import { ICU4XFixedDecimalSignDisplay_js_to_rust, ICU4XFixedDecimalSignDisplay_rust_to_js } from "./ICU4XFixedDecimalSignDisplay.js"
+import { ICU4XRoundingIncrement_js_to_rust, ICU4XRoundingIncrement_rust_to_js } from "./ICU4XRoundingIncrement.js"
 
 const ICU4XFixedDecimal_box_destroy_registry = new FinalizationRegistry(underlying => {
   wasm.ICU4XFixedDecimal_destroy(underlying);
@@ -186,12 +187,20 @@ export class ICU4XFixedDecimal {
     wasm.ICU4XFixedDecimal_trunc(this.underlying, arg_position);
   }
 
+  trunc_to_increment(arg_position, arg_increment) {
+    wasm.ICU4XFixedDecimal_trunc_to_increment(this.underlying, arg_position, ICU4XRoundingIncrement_js_to_rust[arg_increment]);
+  }
+
   half_trunc(arg_position) {
     wasm.ICU4XFixedDecimal_half_trunc(this.underlying, arg_position);
   }
 
   expand(arg_position) {
     wasm.ICU4XFixedDecimal_expand(this.underlying, arg_position);
+  }
+
+  expand_to_increment(arg_position, arg_increment) {
+    wasm.ICU4XFixedDecimal_expand_to_increment(this.underlying, arg_position, ICU4XRoundingIncrement_js_to_rust[arg_increment]);
   }
 
   half_expand(arg_position) {

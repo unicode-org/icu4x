@@ -286,6 +286,8 @@ where
         + DataProvider<ExtendedPictographicV1Marker>
         + DataProvider<ExtenderV1Marker>
         + DataProvider<GraphemeBaseV1Marker>
+        + DataProvider<GraphemeClusterBreakV1Marker>
+        + DataProvider<GraphemeClusterBreakNameToValueV1Marker>
         + DataProvider<GraphemeExtendV1Marker>
         + DataProvider<HexDigitV1Marker>
         + DataProvider<IdsBinaryOperatorV1Marker>
@@ -303,6 +305,8 @@ where
         + DataProvider<QuotationMarkV1Marker>
         + DataProvider<RadicalV1Marker>
         + DataProvider<RegionalIndicatorV1Marker>
+        + DataProvider<SentenceBreakV1Marker>
+        + DataProvider<SentenceBreakNameToValueV1Marker>
         + DataProvider<SentenceTerminalV1Marker>
         + DataProvider<SoftDottedV1Marker>
         + DataProvider<TerminalPunctuationV1Marker>
@@ -310,6 +314,8 @@ where
         + DataProvider<UppercaseV1Marker>
         + DataProvider<VariationSelectorV1Marker>
         + DataProvider<WhiteSpaceV1Marker>
+        + DataProvider<WordBreakV1Marker>
+        + DataProvider<WordBreakNameToValueV1Marker>
         + DataProvider<XidContinueV1Marker>
         + DataProvider<GeneralCategoryMaskNameToValueV1Marker>
         + DataProvider<GeneralCategoryV1Marker>
