@@ -37,8 +37,6 @@ class ICU4XMetazoneCalculator {
  public:
 
   /**
-   * 
-   * 
    * See the [Rust documentation for `new`](https://docs.rs/icu/latest/icu/timezone/struct.MetazoneCalculator.html#method.new) for more information.
    */
   static diplomat::result<ICU4XMetazoneCalculator, ICU4XError> create(const ICU4XDataProvider& provider);

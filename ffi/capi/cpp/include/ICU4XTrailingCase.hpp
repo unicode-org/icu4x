@@ -14,8 +14,6 @@
 
 
 /**
- * 
- * 
  * See the [Rust documentation for `TrailingCase`](https://docs.rs/icu/latest/icu/casemap/titlecase/enum.TrailingCase.html) for more information.
  */
 enum struct ICU4XTrailingCase {

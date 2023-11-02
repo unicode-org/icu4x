@@ -17,8 +17,6 @@ struct ICU4XTitlecaseOptionsV1;
 
 
 /**
- * 
- * 
  * See the [Rust documentation for `TitlecaseOptions`](https://docs.rs/icu/latest/icu/casemap/titlecase/struct.TitlecaseOptions.html) for more information.
  */
 struct ICU4XTitlecaseOptionsV1 {
@@ -27,8 +25,6 @@ struct ICU4XTitlecaseOptionsV1 {
   ICU4XTrailingCase trailing_case;
 
   /**
-   * 
-   * 
    * See the [Rust documentation for `default`](https://docs.rs/icu/latest/icu/casemap/titlecase/struct.TitlecaseOptions.html#method.default) for more information.
    */
   static ICU4XTitlecaseOptionsV1 default_options();

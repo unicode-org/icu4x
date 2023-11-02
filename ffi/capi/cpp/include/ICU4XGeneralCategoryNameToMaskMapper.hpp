@@ -49,8 +49,6 @@ class ICU4XGeneralCategoryNameToMaskMapper {
   uint32_t get_loose(const std::string_view name) const;
 
   /**
-   * 
-   * 
    * See the [Rust documentation for `get_name_to_enum_mapper`](https://docs.rs/icu/latest/icu/properties/struct.GeneralCategoryGroup.html#method.get_name_to_enum_mapper) for more information.
    */
   static diplomat::result<ICU4XGeneralCategoryNameToMaskMapper, ICU4XError> load(const ICU4XDataProvider& provider);

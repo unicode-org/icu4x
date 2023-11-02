@@ -27,8 +27,6 @@ struct ICU4XFixedDecimalDeleter {
 };
 
 /**
- * 
- * 
  * See the [Rust documentation for `FixedDecimal`](https://docs.rs/fixed_decimal/latest/fixed_decimal/struct.FixedDecimal.html) for more information.
  */
 class ICU4XFixedDecimal {
@@ -107,43 +105,31 @@ class ICU4XFixedDecimal {
   static diplomat::result<ICU4XFixedDecimal, ICU4XError> create_from_string(const std::string_view v);
 
   /**
-   * 
-   * 
    * See the [Rust documentation for `digit_at`](https://docs.rs/fixed_decimal/latest/fixed_decimal/struct.FixedDecimal.html#method.digit_at) for more information.
    */
   uint8_t digit_at(int16_t magnitude) const;
 
   /**
-   * 
-   * 
    * See the [Rust documentation for `magnitude_range`](https://docs.rs/fixed_decimal/latest/fixed_decimal/struct.FixedDecimal.html#method.magnitude_range) for more information.
    */
   int16_t magnitude_start() const;
 
   /**
-   * 
-   * 
    * See the [Rust documentation for `magnitude_range`](https://docs.rs/fixed_decimal/latest/fixed_decimal/struct.FixedDecimal.html#method.magnitude_range) for more information.
    */
   int16_t magnitude_end() const;
 
   /**
-   * 
-   * 
    * See the [Rust documentation for `nonzero_magnitude_start`](https://docs.rs/fixed_decimal/latest/fixed_decimal/struct.FixedDecimal.html#method.nonzero_magnitude_start) for more information.
    */
   int16_t nonzero_magnitude_start() const;
 
   /**
-   * 
-   * 
    * See the [Rust documentation for `nonzero_magnitude_end`](https://docs.rs/fixed_decimal/latest/fixed_decimal/struct.FixedDecimal.html#method.nonzero_magnitude_end) for more information.
    */
   int16_t nonzero_magnitude_end() const;
 
   /**
-   * 
-   * 
    * See the [Rust documentation for `is_zero`](https://docs.rs/fixed_decimal/latest/fixed_decimal/struct.FixedDecimal.html#method.is_zero) for more information.
    */
   bool is_zero() const;
@@ -156,8 +142,6 @@ class ICU4XFixedDecimal {
   void multiply_pow10(int16_t power);
 
   /**
-   * 
-   * 
    * See the [Rust documentation for `sign`](https://docs.rs/fixed_decimal/latest/fixed_decimal/struct.FixedDecimal.html#method.sign) for more information.
    */
   ICU4XFixedDecimalSign sign() const;
@@ -170,22 +154,16 @@ class ICU4XFixedDecimal {
   void set_sign(ICU4XFixedDecimalSign sign);
 
   /**
-   * 
-   * 
    * See the [Rust documentation for `apply_sign_display`](https://docs.rs/fixed_decimal/latest/fixed_decimal/struct.FixedDecimal.html#method.apply_sign_display) for more information.
    */
   void apply_sign_display(ICU4XFixedDecimalSignDisplay sign_display);
 
   /**
-   * 
-   * 
    * See the [Rust documentation for `trim_start`](https://docs.rs/fixed_decimal/latest/fixed_decimal/struct.FixedDecimal.html#method.trim_start) for more information.
    */
   void trim_start();
 
   /**
-   * 
-   * 
    * See the [Rust documentation for `trim_end`](https://docs.rs/fixed_decimal/latest/fixed_decimal/struct.FixedDecimal.html#method.trim_end) for more information.
    */
   void trim_end();
@@ -213,78 +191,56 @@ class ICU4XFixedDecimal {
   void set_max_position(int16_t position);
 
   /**
-   * 
-   * 
    * See the [Rust documentation for `trunc`](https://docs.rs/fixed_decimal/latest/fixed_decimal/struct.FixedDecimal.html#method.trunc) for more information.
    */
   void trunc(int16_t position);
 
   /**
-   * 
-   * 
    * See the [Rust documentation for `trunc_to_increment`](https://docs.rs/fixed_decimal/latest/fixed_decimal/struct.FixedDecimal.html#method.trunc_to_increment) for more information.
    */
   void trunc_to_increment(int16_t position, ICU4XRoundingIncrement increment);
 
   /**
-   * 
-   * 
    * See the [Rust documentation for `half_trunc`](https://docs.rs/fixed_decimal/latest/fixed_decimal/struct.FixedDecimal.html#method.half_trunc) for more information.
    */
   void half_trunc(int16_t position);
 
   /**
-   * 
-   * 
    * See the [Rust documentation for `expand`](https://docs.rs/fixed_decimal/latest/fixed_decimal/struct.FixedDecimal.html#method.expand) for more information.
    */
   void expand(int16_t position);
 
   /**
-   * 
-   * 
    * See the [Rust documentation for `expand_to_increment`](https://docs.rs/fixed_decimal/latest/fixed_decimal/struct.FixedDecimal.html#method.expand_to_increment) for more information.
    */
   void expand_to_increment(int16_t position, ICU4XRoundingIncrement increment);
 
   /**
-   * 
-   * 
    * See the [Rust documentation for `half_expand`](https://docs.rs/fixed_decimal/latest/fixed_decimal/struct.FixedDecimal.html#method.half_expand) for more information.
    */
   void half_expand(int16_t position);
 
   /**
-   * 
-   * 
    * See the [Rust documentation for `ceil`](https://docs.rs/fixed_decimal/latest/fixed_decimal/struct.FixedDecimal.html#method.ceil) for more information.
    */
   void ceil(int16_t position);
 
   /**
-   * 
-   * 
    * See the [Rust documentation for `half_ceil`](https://docs.rs/fixed_decimal/latest/fixed_decimal/struct.FixedDecimal.html#method.half_ceil) for more information.
    */
   void half_ceil(int16_t position);
 
   /**
-   * 
-   * 
    * See the [Rust documentation for `floor`](https://docs.rs/fixed_decimal/latest/fixed_decimal/struct.FixedDecimal.html#method.floor) for more information.
    */
   void floor(int16_t position);
 
   /**
-   * 
-   * 
    * See the [Rust documentation for `half_floor`](https://docs.rs/fixed_decimal/latest/fixed_decimal/struct.FixedDecimal.html#method.half_floor) for more information.
    */
   void half_floor(int16_t position);
 
   /**
-   * 
-   * 
    * See the [Rust documentation for `half_even`](https://docs.rs/fixed_decimal/latest/fixed_decimal/struct.FixedDecimal.html#method.half_even) for more information.
    */
   void half_even(int16_t position);

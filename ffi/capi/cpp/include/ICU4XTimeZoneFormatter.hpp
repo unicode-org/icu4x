@@ -42,7 +42,7 @@ class ICU4XTimeZoneFormatter {
    * 
    * See the [Rust documentation for `try_new`](https://docs.rs/icu/latest/icu/datetime/time_zone/struct.TimeZoneFormatter.html#method.try_new) for more information.
    * 
-   *  Additional information: [1](https://docs.rs/icu/latest/icu/datetime/time_zone/enum.FallbackFormat.html)
+   * Additional information: [1](https://docs.rs/icu/latest/icu/datetime/time_zone/enum.FallbackFormat.html)
    */
   static diplomat::result<ICU4XTimeZoneFormatter, ICU4XError> create_with_localized_gmt_fallback(const ICU4XDataProvider& provider, const ICU4XLocale& locale);
 
@@ -53,7 +53,7 @@ class ICU4XTimeZoneFormatter {
    * 
    * See the [Rust documentation for `try_new`](https://docs.rs/icu/latest/icu/datetime/time_zone/struct.TimeZoneFormatter.html#method.try_new) for more information.
    * 
-   *  Additional information: [1](https://docs.rs/icu/latest/icu/datetime/time_zone/enum.FallbackFormat.html)
+   * Additional information: [1](https://docs.rs/icu/latest/icu/datetime/time_zone/enum.FallbackFormat.html)
    */
   static diplomat::result<ICU4XTimeZoneFormatter, ICU4XError> create_with_iso_8601_fallback(const ICU4XDataProvider& provider, const ICU4XLocale& locale, ICU4XIsoTimeZoneOptions options);
 

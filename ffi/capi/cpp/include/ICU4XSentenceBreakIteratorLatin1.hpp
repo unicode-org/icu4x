@@ -22,8 +22,6 @@ struct ICU4XSentenceBreakIteratorLatin1Deleter {
 };
 
 /**
- * 
- * 
  * See the [Rust documentation for `SentenceBreakIterator`](https://docs.rs/icu/latest/icu/segmenter/struct.SentenceBreakIterator.html) for more information.
  */
 class ICU4XSentenceBreakIteratorLatin1 {

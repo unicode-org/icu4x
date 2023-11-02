@@ -42,9 +42,7 @@ class ICU4XWeekCalculator {
   static diplomat::result<ICU4XWeekCalculator, ICU4XError> create(const ICU4XDataProvider& provider, const ICU4XLocale& locale);
 
   /**
-   * 
-   * 
-   *  Additional information: [1](https://docs.rs/icu/latest/icu/calendar/week/struct.WeekCalculator.html#structfield.first_weekday), [2](https://docs.rs/icu/latest/icu/calendar/week/struct.WeekCalculator.html#structfield.min_week_days)
+   * Additional information: [1](https://docs.rs/icu/latest/icu/calendar/week/struct.WeekCalculator.html#structfield.first_weekday), [2](https://docs.rs/icu/latest/icu/calendar/week/struct.WeekCalculator.html#structfield.min_week_days)
    */
   static ICU4XWeekCalculator create_from_first_day_of_week_and_min_week_days(ICU4XIsoWeekday first_weekday, uint8_t min_week_days);
 

@@ -35,8 +35,6 @@ class ICU4XScriptWithExtensions {
  public:
 
   /**
-   * 
-   * 
    * See the [Rust documentation for `script_with_extensions`](https://docs.rs/icu/latest/icu/properties/script/fn.script_with_extensions.html) for more information.
    */
   static diplomat::result<ICU4XScriptWithExtensions, ICU4XError> create(const ICU4XDataProvider& provider);

@@ -28,8 +28,6 @@ struct ICU4XCollatorDeleter {
 };
 
 /**
- * 
- * 
  * See the [Rust documentation for `Collator`](https://docs.rs/icu/latest/icu/collator/struct.Collator.html) for more information.
  */
 class ICU4XCollator {

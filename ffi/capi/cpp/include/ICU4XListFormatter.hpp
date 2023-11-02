@@ -28,8 +28,6 @@ struct ICU4XListFormatterDeleter {
 };
 
 /**
- * 
- * 
  * See the [Rust documentation for `ListFormatter`](https://docs.rs/icu/latest/icu/list/struct.ListFormatter.html) for more information.
  */
 class ICU4XListFormatter {
@@ -57,15 +55,11 @@ class ICU4XListFormatter {
   static diplomat::result<ICU4XListFormatter, ICU4XError> create_unit_with_length(const ICU4XDataProvider& provider, const ICU4XLocale& locale, ICU4XListLength length);
 
   /**
-   * 
-   * 
    * See the [Rust documentation for `format`](https://docs.rs/icu/latest/icu/list/struct.ListFormatter.html#method.format) for more information.
    */
   template<typename W> diplomat::result<std::monostate, ICU4XError> format_to_writeable(const ICU4XList& list, W& write) const;
 
   /**
-   * 
-   * 
    * See the [Rust documentation for `format`](https://docs.rs/icu/latest/icu/list/struct.ListFormatter.html#method.format) for more information.
    */
   diplomat::result<std::string, ICU4XError> format(const ICU4XList& list) const;

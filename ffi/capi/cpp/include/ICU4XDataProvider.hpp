@@ -102,16 +102,14 @@ class ICU4XDataProvider {
    * 
    * See the [Rust documentation for `try_new`](https://docs.rs/icu_provider_adapters/latest/icu_provider_adapters/fallback/struct.LocaleFallbackProvider.html#method.try_new) for more information.
    * 
-   *  Additional information: [1](https://docs.rs/icu_provider_adapters/latest/icu_provider_adapters/fallback/struct.LocaleFallbackProvider.html)
+   * Additional information: [1](https://docs.rs/icu_provider_adapters/latest/icu_provider_adapters/fallback/struct.LocaleFallbackProvider.html)
    */
   diplomat::result<std::monostate, ICU4XError> enable_locale_fallback();
 
   /**
-   * 
-   * 
    * See the [Rust documentation for `new_with_fallbacker`](https://docs.rs/icu_provider_adapters/latest/icu_provider_adapters/fallback/struct.LocaleFallbackProvider.html#method.new_with_fallbacker) for more information.
    * 
-   *  Additional information: [1](https://docs.rs/icu_provider_adapters/latest/icu_provider_adapters/fallback/struct.LocaleFallbackProvider.html)
+   * Additional information: [1](https://docs.rs/icu_provider_adapters/latest/icu_provider_adapters/fallback/struct.LocaleFallbackProvider.html)
    */
   diplomat::result<std::monostate, ICU4XError> enable_locale_fallback_with(const ICU4XLocaleFallbacker& fallbacker);
   inline const capi::ICU4XDataProvider* AsFFI() const { return this->inner.get(); }

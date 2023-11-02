@@ -25,8 +25,6 @@ struct ICU4XDecomposingNormalizerDeleter {
 };
 
 /**
- * 
- * 
  * See the [Rust documentation for `DecomposingNormalizer`](https://docs.rs/icu/latest/icu/normalizer/struct.DecomposingNormalizer.html) for more information.
  */
 class ICU4XDecomposingNormalizer {

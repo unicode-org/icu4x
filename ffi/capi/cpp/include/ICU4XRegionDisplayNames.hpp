@@ -26,8 +26,6 @@ struct ICU4XRegionDisplayNamesDeleter {
 };
 
 /**
- * 
- * 
  * See the [Rust documentation for `RegionDisplayNames`](https://docs.rs/icu/latest/icu/displaynames/struct.RegionDisplayNames.html) for more information.
  */
 class ICU4XRegionDisplayNames {
