@@ -28,7 +28,7 @@ enum VersionConfig {
 /// A data exporter that writes data to a single-file blob.
 /// See the module-level docs for an example.
 pub struct BlobExporter<'w> {
-    /// Map of (key hash, locale byte string, blob ID)
+    /// Map of key hash -> locale byte string -> blob ID
     #[allow(clippy::type_complexity)]
     resources: Mutex<BTreeMap<DataKeyHash, BTreeMap<Vec<u8>, usize>>>,
     // All seen keys
