@@ -2726,7 +2726,7 @@ impl FixedDecimal {
     /// assert_eq!("10.0", dec.to_string());
     /// let mut dec = FixedDecimal::from_str("9.99").unwrap();
     /// dec.half_even_to_increment(-2, RoundingIncrement::MultiplesOf2);
-    /// assert_eq!("9.98", dec.to_string());
+    /// assert_eq!("10.00", dec.to_string());
     /// ```
     pub fn half_even_to_increment(&mut self, position: i16, increment: RoundingIncrement) {
         let should_expand = match increment {
@@ -2856,7 +2856,7 @@ impl FixedDecimal {
     /// );
     /// let mut dec = FixedDecimal::from_str("9.99").unwrap();
     /// assert_eq!(
-    ///     "9.98",
+    ///     "10.00",
     ///     dec.half_evened_to_increment(-2, RoundingIncrement::MultiplesOf2)
     ///         .to_string()
     /// );
