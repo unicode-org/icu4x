@@ -349,6 +349,35 @@ impl FixedDecimal {
         }
     }
 
+    /// Returns the relative ordering of the digits at the right
+    /// of `magnitude` with respect to 5.
+    fn half_at_next_magnitude(&self, magnitude: i16) -> Ordering {
+        match self.digit_at_next_position(magnitude).cmp(&5) {
+            // If the next digit is equal to 5, we can know if we're at exactly 5
+            // by comparing the next magnitude with the last nonzero magnitude of
+            // the number.
+            Ordering::Equal => match (magnitude - 1).cmp(&self.nonzero_magnitude_end()) {
+                Ordering::Greater => {
+                    // `magnitude - 1` has non-zero digits at its right,
+                    // meaning the number overall must be greater than 5.
+                    Ordering::Greater
+                }
+                Ordering::Equal => {
+                    // `magnitude - 1` is the last digit of the number,
+                    // meaning the number is exactly 5.
+                    Ordering::Equal
+                }
+                Ordering::Less => {
+                    debug_assert!(false, "unreachable, `magnitude - 1` should not be zero");
+                    Ordering::Less
+                }
+            },
+            // If the next digit is either greater or less than 5,
+            // we know that the digits cannot sum to exactly 5.
+            ord => ord,
+        }
+    }
+
     /// Checks if this number is already rounded to the specified magnitude and
     /// increment.
     #[cfg(feature = "experimental")]
@@ -1409,22 +1438,10 @@ impl FixedDecimal {
     /// assert_eq!("9.98", dec.to_string());
     /// ```
     pub fn half_trunc_to_increment(&mut self, position: i16, increment: RoundingIncrement) {
-        fn next_digits_exceed_five(number: &mut FixedDecimal, position: i16) -> bool {
-            let digit_after_position = number.digit_at_next_position(position);
-            match digit_after_position.cmp(&5) {
-                Ordering::Less => false,
-                Ordering::Greater => true,
-                Ordering::Equal =>
-                // NOTE: `digit_after_position` equals 5, this means that `position`
-                // does not equal `i16::MIN`.
-                {
-                    number.nonzero_magnitude_end() < position - 1
-                }
-            }
-        }
-
         let should_expand = match increment {
-            RoundingIncrement::MultiplesOf1 => next_digits_exceed_five(self, position),
+            RoundingIncrement::MultiplesOf1 => {
+                self.half_at_next_magnitude(position) == Ordering::Greater
+            }
             RoundingIncrement::MultiplesOf2 => {
                 let current_digit = self.digit_at(position);
 
@@ -1443,7 +1460,7 @@ impl FixedDecimal {
                     Ordering::Greater => true,
                     Ordering::Equal => {
                         // Need to know if the number exceeds 2.5.
-                        next_digits_exceed_five(self, position)
+                        self.half_at_next_magnitude(position) == Ordering::Greater
                     }
                 }
             }
@@ -1457,7 +1474,7 @@ impl FixedDecimal {
                     Ordering::Greater => true,
                     Ordering::Equal => {
                         // Need to know if the number exceeds 12.5.
-                        next_digits_exceed_five(self, position)
+                        self.half_at_next_magnitude(position) == Ordering::Greater
                     }
                 }
             }
@@ -2033,16 +2050,18 @@ impl FixedDecimal {
     /// assert_eq!("10.00", dec.to_string());
     /// ```
     pub fn half_expand_to_increment(&mut self, position: i16, increment: RoundingIncrement) {
-        let should_expand = match increment {
-            RoundingIncrement::MultiplesOf1 => self.digit_at_next_position(position) >= 5,
-            RoundingIncrement::MultiplesOf2 => self.digit_at(position) & 0x01 == 1,
+        let should_trunc = match increment {
+            RoundingIncrement::MultiplesOf1 => {
+                self.half_at_next_magnitude(position) == Ordering::Less
+            }
+            RoundingIncrement::MultiplesOf2 => self.digit_at(position) & 0x01 == 0,
             RoundingIncrement::MultiplesOf5 => {
                 // Need to know if the number is greater or equal than 2.5.
                 let current_digit = self.digit_at(position);
                 match (current_digit % 5).cmp(&2) {
-                    Ordering::Less => false,
-                    Ordering::Greater => true,
-                    Ordering::Equal => self.digit_at_next_position(position) >= 5,
+                    Ordering::Less => true,
+                    Ordering::Greater => false,
+                    Ordering::Equal => self.half_at_next_magnitude(position) == Ordering::Less,
                 }
             }
             RoundingIncrement::MultiplesOf25 => {
@@ -2052,17 +2071,17 @@ impl FixedDecimal {
 
                 // Need to know if the number is greater or equal than 12.5.
                 match (number % 25).cmp(&12) {
-                    Ordering::Less => false,
-                    Ordering::Greater => true,
-                    Ordering::Equal => self.digit_at_next_position(position) >= 5,
+                    Ordering::Less => true,
+                    Ordering::Greater => false,
+                    Ordering::Equal => self.half_at_next_magnitude(position) == Ordering::Less,
                 }
             }
         };
 
-        if should_expand {
-            self.expand_to_increment(position, increment);
-        } else {
+        if should_trunc {
             self.trunc_to_increment(position, increment);
+        } else {
+            self.expand_to_increment(position, increment);
         }
     }
 
@@ -2711,22 +2730,12 @@ impl FixedDecimal {
     /// ```
     pub fn half_even_to_increment(&mut self, position: i16, increment: RoundingIncrement) {
         let should_expand = match increment {
-            RoundingIncrement::MultiplesOf1 => {
-                let digit_after_position = self.digit_at_next_position(position);
-                match digit_after_position.cmp(&5) {
-                    Ordering::Less => false,
-                    Ordering::Greater => true,
-                    Ordering::Equal => {
-                        // NOTE: `digit_after_position` equals to 5, this means that `position`
-                        // does not equal i16::MIN.
-                        if self.nonzero_magnitude_end() < position - 1 {
-                            true
-                        } else {
-                            self.digit_at(position) % 2 != 0
-                        }
-                    }
-                }
-            }
+            RoundingIncrement::MultiplesOf1 => match self.half_at_next_magnitude(position) {
+                Ordering::Less => false,
+                Ordering::Greater => true,
+                // Expand if odd, truncate if even.
+                Ordering::Equal => self.digit_at(position) & 0x01 == 1,
+            },
             RoundingIncrement::MultiplesOf2 => {
                 let current_digit = self.digit_at(position);
 
@@ -2735,11 +2744,13 @@ impl FixedDecimal {
                     if self.nonzero_magnitude_end() < position {
                         true
                     } else {
+                        let previous_digit = self.digit_at_previous_position(position);
+                        let full = previous_digit * 10 + current_digit;
                         // This essentially expands to the "even" increments,
                         // or the increments that are in the even places on the
-                        // rounding range: [0, 4, 8]
+                        // rounding range: [0, 4, 8, 12, 16, 20].
                         // Equivalent to `(current_digit / 2) is odd`.
-                        (current_digit >> 1) & 0x01 == 1
+                        (full >> 1) & 0x01 == 1
                     }
                 } else {
                     // Even numbers are always below the threshold to expand.
@@ -2751,24 +2762,13 @@ impl FixedDecimal {
                 match (current_digit % 5).cmp(&2) {
                     Ordering::Less => false,
                     Ordering::Greater => true,
-                    Ordering::Equal => {
-                        // Need to know if the number exceeds 2.5.
-                        let digit_after_position = self.digit_at_next_position(position);
-                        match digit_after_position.cmp(&5) {
-                            Ordering::Less => false,
-                            Ordering::Greater => true,
-                            Ordering::Equal => {
-                                // NOTE: `digit_after_position` equals to 5, this means that `position`
-                                // does not equal i16::MIN.
-                                if self.nonzero_magnitude_end() < position - 1 {
-                                    true
-                                } else {
-                                    // Expand 7.5 to 10 and truncate 2.5 to 0.
-                                    current_digit == 7
-                                }
-                            }
-                        }
-                    }
+                    // Need to know if the number exceeds 2.5.
+                    Ordering::Equal => match self.half_at_next_magnitude(position) {
+                        Ordering::Less => false,
+                        Ordering::Greater => true,
+                        // Expand 7.5 to 10 and truncate 2.5 to 0.
+                        Ordering::Equal => current_digit == 7,
+                    },
                 }
             }
             RoundingIncrement::MultiplesOf25 => {
@@ -2779,25 +2779,14 @@ impl FixedDecimal {
                 match (full_number % 25).cmp(&12) {
                     Ordering::Less => false,
                     Ordering::Greater => true,
-                    Ordering::Equal => {
-                        // Need to know if the number exceeds 12.5.
-                        let digit_after_position = self.digit_at_next_position(position);
-                        match digit_after_position.cmp(&5) {
-                            Ordering::Less => false,
-                            Ordering::Greater => true,
-                            Ordering::Equal => {
-                                // NOTE: `digit_after_position` equals to 5, this means that `position`
-                                // does not equal i16::MIN.
-                                if self.nonzero_magnitude_end() < position - 1 {
-                                    true
-                                } else {
-                                    // Expand `37.5` to 50 and `87.5` to 100.
-                                    // Truncate `12.5` to 0 and `62.5` to 50.
-                                    full_number == 37 || full_number == 87
-                                }
-                            }
-                        }
-                    }
+                    // Need to know if the number exceeds 12.5.
+                    Ordering::Equal => match self.half_at_next_magnitude(position) {
+                        Ordering::Less => false,
+                        Ordering::Greater => true,
+                        // Expand `37.5` to 50 and `87.5` to 100.
+                        // Truncate `12.5` to 0 and `62.5` to 50.
+                        Ordering::Equal => full_number == 37 || full_number == 87,
+                    },
                 }
             }
         };
@@ -5305,7 +5294,7 @@ fn test_rounding_increment() {
     assert_eq!("4235.970", dec.to_string());
 
     dec.half_even_to_increment(-2, RoundingIncrement::MultiplesOf2);
-    assert_eq!("4235.98", dec.to_string());
+    assert_eq!("4235.96", dec.to_string());
 
     dec.half_even_to_increment(-1, RoundingIncrement::MultiplesOf5);
     assert_eq!("4236.0", dec.to_string());
@@ -5502,23 +5491,43 @@ fn test_rounding_increment() {
 
     let mut dec = FixedDecimal::from_str("2.71").unwrap();
     dec.half_even_to_increment(-2, RoundingIncrement::MultiplesOf2);
-    assert_eq!("2.70", dec.to_string());
+    assert_eq!("2.72", dec.to_string());
 
     let mut dec = FixedDecimal::from_str("2.73").unwrap();
     dec.half_even_to_increment(-2, RoundingIncrement::MultiplesOf2);
-    assert_eq!("2.74", dec.to_string());
+    assert_eq!("2.72", dec.to_string());
 
     let mut dec = FixedDecimal::from_str("2.75").unwrap();
     dec.half_even_to_increment(-2, RoundingIncrement::MultiplesOf2);
-    assert_eq!("2.74", dec.to_string());
+    assert_eq!("2.76", dec.to_string());
 
     let mut dec = FixedDecimal::from_str("2.77").unwrap();
     dec.half_even_to_increment(-2, RoundingIncrement::MultiplesOf2);
-    assert_eq!("2.78", dec.to_string());
+    assert_eq!("2.76", dec.to_string());
 
     let mut dec = FixedDecimal::from_str("2.79").unwrap();
     dec.half_even_to_increment(-2, RoundingIncrement::MultiplesOf2);
-    assert_eq!("2.78", dec.to_string());
+    assert_eq!("2.80", dec.to_string());
+
+    let mut dec = FixedDecimal::from_str("2.41").unwrap();
+    dec.half_even_to_increment(-2, RoundingIncrement::MultiplesOf2);
+    assert_eq!("2.40", dec.to_string());
+
+    let mut dec = FixedDecimal::from_str("2.43").unwrap();
+    dec.half_even_to_increment(-2, RoundingIncrement::MultiplesOf2);
+    assert_eq!("2.44", dec.to_string());
+
+    let mut dec = FixedDecimal::from_str("2.45").unwrap();
+    dec.half_even_to_increment(-2, RoundingIncrement::MultiplesOf2);
+    assert_eq!("2.44", dec.to_string());
+
+    let mut dec = FixedDecimal::from_str("2.47").unwrap();
+    dec.half_even_to_increment(-2, RoundingIncrement::MultiplesOf2);
+    assert_eq!("2.48", dec.to_string());
+
+    let mut dec = FixedDecimal::from_str("2.49").unwrap();
+    dec.half_even_to_increment(-2, RoundingIncrement::MultiplesOf2);
+    assert_eq!("2.48", dec.to_string());
 
     let mut dec = FixedDecimal::from_str("2.725").unwrap();
     dec.half_even_to_increment(-2, RoundingIncrement::MultiplesOf5);
