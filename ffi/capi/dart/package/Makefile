@@ -4,11 +4,11 @@
 
 FORCE:
 
-../../../../target/debug/libicu_capi_cdylib.so: FORCE
-	cargo build -p icu_capi_cdylib
+../../../../target/release/libicu_capi_cdylib.so: FORCE
+	cargo build -p icu_capi_cdylib --release
 
-test/libicu_capi_cdylib.so: ../../../../target/debug/libicu_capi_cdylib.so
-	cp ../../../../target/debug/libicu_capi_cdylib.so test/libicu_capi_cdylib.so
+test/libicu_capi_cdylib.so: ../../../../target/release/libicu_capi_cdylib.so
+	cp ../../../../target/release/libicu_capi_cdylib.so test/libicu_capi_cdylib.so
 
 test: test/libicu_capi_cdylib.so
 	dart test test/test.dart
