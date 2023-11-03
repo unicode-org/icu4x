@@ -192,7 +192,7 @@ enum ICU4XAnyCalendarKind {
   /// Obtain the string suitable for use in the -u-ca- extension in a BCP47 locale.
   ///
   /// See the [Rust documentation for `as_bcp47_string`](https://docs.rs/icu/latest/icu/calendar/enum.AnyCalendarKind.html#method.as_bcp47_string) for more information.
-  String bcp47() {
+  String get bcp47 {
     final writeable = _Writeable();
     final result = _bcp47Ffi(this._id, writeable._underlying);
     return result.isOk
@@ -222,7 +222,7 @@ class ICU4XBcp47ToIanaMapper implements ffi.Finalizable {
       ffi.NativeFinalizer(_capi('ICU4XBcp47ToIanaMapper_destroy'));
 
   /// See the [Rust documentation for `new`](https://docs.rs/icu/latest/icu/timezone/struct.IanaBcp47RoundTripMapper.html#method.new) for more information.
-  factory ICU4XBcp47ToIanaMapper.create(ICU4XDataProvider provider) {
+  factory ICU4XBcp47ToIanaMapper(ICU4XDataProvider provider) {
     final result = _createFfi(provider._underlying);
     return result.isOk
         ? ICU4XBcp47ToIanaMapper._(result.union.ok)
@@ -288,7 +288,7 @@ class ICU4XBidi implements ffi.Finalizable {
   /// Creates a new [`ICU4XBidi`] from locale data.
   ///
   /// See the [Rust documentation for `new`](https://docs.rs/icu/latest/icu/properties/bidi/struct.BidiClassAdapter.html#method.new) for more information.
-  factory ICU4XBidi.create(ICU4XDataProvider provider) {
+  factory ICU4XBidi(ICU4XDataProvider provider) {
     final result = _createFfi(provider._underlying);
     return result.isOk
         ? ICU4XBidi._(result.union.ok)
@@ -398,26 +398,16 @@ class ICU4XBidi implements ffi.Finalizable {
   /// Get a basic RTL Level value
   ///
   /// See the [Rust documentation for `rtl`](https://docs.rs/unicode_bidi/latest/unicode_bidi/struct.Level.html#method.rtl) for more information.
-  static int levelRtl() {
-    final result = _levelRtlFfi();
-    return result;
-  }
-
-  static late final _levelRtlFfi =
+  static late final int levelRtl =
       _capi<ffi.NativeFunction<ffi.Uint8 Function()>>('ICU4XBidi_level_rtl')
-          .asFunction<int Function()>(isLeaf: true);
+          .asFunction<int Function()>(isLeaf: true)();
 
   /// Get a simple LTR Level value
   ///
   /// See the [Rust documentation for `ltr`](https://docs.rs/unicode_bidi/latest/unicode_bidi/struct.Level.html#method.ltr) for more information.
-  static int levelLtr() {
-    final result = _levelLtrFfi();
-    return result;
-  }
-
-  static late final _levelLtrFfi =
+  static late final int levelLtr =
       _capi<ffi.NativeFunction<ffi.Uint8 Function()>>('ICU4XBidi_level_ltr')
-          .asFunction<int Function()>(isLeaf: true);
+          .asFunction<int Function()>(isLeaf: true)();
 }
 
 enum ICU4XBidiDirection {
@@ -447,7 +437,7 @@ class ICU4XBidiInfo implements ffi.Finalizable {
       ffi.NativeFinalizer(_capi('ICU4XBidiInfo_destroy'));
 
   /// The number of paragraphs contained here
-  int paragraphCount() {
+  int get paragraphCount {
     final result = _paragraphCountFfi(this._underlying);
     return result;
   }
@@ -472,7 +462,7 @@ class ICU4XBidiInfo implements ffi.Finalizable {
               ffi.Pointer<ffi.Opaque>, int)>(isLeaf: true);
 
   /// The number of bytes in this full text
-  int size() {
+  int get size {
     final result = _sizeFfi(this._underlying);
     return result;
   }
@@ -532,7 +522,7 @@ class ICU4XBidiParagraph implements ffi.Finalizable {
   /// The primary direction of this paragraph
   ///
   /// See the [Rust documentation for `level_at`](https://docs.rs/unicode_bidi/latest/unicode_bidi/struct.Paragraph.html#method.level_at) for more information.
-  ICU4XBidiDirection direction() {
+  ICU4XBidiDirection get direction {
     final result = _directionFfi(this._underlying);
     return ICU4XBidiDirection._(result);
   }
@@ -545,7 +535,7 @@ class ICU4XBidiParagraph implements ffi.Finalizable {
   /// The number of bytes in this paragraph
   ///
   /// See the [Rust documentation for `len`](https://docs.rs/unicode_bidi/latest/unicode_bidi/struct.ParagraphInfo.html#method.len) for more information.
-  int size() {
+  int get size {
     final result = _sizeFfi(this._underlying);
     return result;
   }
@@ -556,7 +546,7 @@ class ICU4XBidiParagraph implements ffi.Finalizable {
           .asFunction<int Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
 
   /// The start index of this paragraph within the source text
-  int rangeStart() {
+  int get rangeStart {
     final result = _rangeStartFfi(this._underlying);
     return result;
   }
@@ -567,7 +557,7 @@ class ICU4XBidiParagraph implements ffi.Finalizable {
           .asFunction<int Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
 
   /// The end index of this paragraph within the source text
-  int rangeEnd() {
+  int get rangeEnd {
     final result = _rangeEndFfi(this._underlying);
     return result;
   }
@@ -634,7 +624,7 @@ class ICU4XCalendar implements ffi.Finalizable {
   /// Creates a new [`ICU4XCalendar`] from the specified date and time.
   ///
   /// See the [Rust documentation for `new_for_locale`](https://docs.rs/icu/latest/icu/calendar/enum.AnyCalendar.html#method.new_for_locale) for more information.
-  factory ICU4XCalendar.createForLocale(
+  factory ICU4XCalendar.forLocale(
       ICU4XDataProvider provider, ICU4XLocale locale) {
     final result =
         _createForLocaleFfi(provider._underlying, locale._underlying);
@@ -653,7 +643,7 @@ class ICU4XCalendar implements ffi.Finalizable {
   /// Creates a new [`ICU4XCalendar`] from the specified date and time.
   ///
   /// See the [Rust documentation for `new`](https://docs.rs/icu/latest/icu/calendar/enum.AnyCalendar.html#method.new) for more information.
-  factory ICU4XCalendar.createForKind(
+  factory ICU4XCalendar.forKind(
       ICU4XDataProvider provider, ICU4XAnyCalendarKind kind) {
     final result = _createForKindFfi(provider._underlying, kind._id);
     return result.isOk
@@ -670,7 +660,7 @@ class ICU4XCalendar implements ffi.Finalizable {
   /// Returns the kind of this calendar
   ///
   /// See the [Rust documentation for `kind`](https://docs.rs/icu/latest/icu/calendar/enum.AnyCalendar.html#method.kind) for more information.
-  ICU4XAnyCalendarKind kind() {
+  ICU4XAnyCalendarKind get kind {
     final result = _kindFfi(this._underlying);
     return ICU4XAnyCalendarKind._(result);
   }
@@ -697,7 +687,7 @@ class ICU4XCanonicalCombiningClassMap implements ffi.Finalizable {
   /// Construct a new ICU4XCanonicalCombiningClassMap instance for NFC
   ///
   /// See the [Rust documentation for `new`](https://docs.rs/icu/latest/icu/normalizer/properties/struct.CanonicalCombiningClassMap.html#method.new) for more information.
-  factory ICU4XCanonicalCombiningClassMap.create(ICU4XDataProvider provider) {
+  factory ICU4XCanonicalCombiningClassMap(ICU4XDataProvider provider) {
     final result = _createFfi(provider._underlying);
     return result.isOk
         ? ICU4XCanonicalCombiningClassMap._(result.union.ok)
@@ -757,7 +747,7 @@ class ICU4XCanonicalComposition implements ffi.Finalizable {
   /// Construct a new ICU4XCanonicalComposition instance for NFC
   ///
   /// See the [Rust documentation for `new`](https://docs.rs/icu/latest/icu/normalizer/properties/struct.CanonicalComposition.html#method.new) for more information.
-  factory ICU4XCanonicalComposition.create(ICU4XDataProvider provider) {
+  factory ICU4XCanonicalComposition(ICU4XDataProvider provider) {
     final result = _createFfi(provider._underlying);
     return result.isOk
         ? ICU4XCanonicalComposition._(result.union.ok)
@@ -805,7 +795,7 @@ class ICU4XCanonicalDecomposition implements ffi.Finalizable {
   /// Construct a new ICU4XCanonicalDecomposition instance for NFC
   ///
   /// See the [Rust documentation for `new`](https://docs.rs/icu/latest/icu/normalizer/properties/struct.CanonicalDecomposition.html#method.new) for more information.
-  factory ICU4XCanonicalDecomposition.create(ICU4XDataProvider provider) {
+  factory ICU4XCanonicalDecomposition(ICU4XDataProvider provider) {
     final result = _createFfi(provider._underlying);
     return result.isOk
         ? ICU4XCanonicalDecomposition._(result.union.ok)
@@ -848,7 +838,7 @@ class ICU4XCaseMapCloser implements ffi.Finalizable {
   /// Construct a new ICU4XCaseMapper instance
   ///
   /// See the [Rust documentation for `new`](https://docs.rs/icu/latest/icu/casemap/struct.CaseMapCloser.html#method.new) for more information.
-  factory ICU4XCaseMapCloser.create(ICU4XDataProvider provider) {
+  factory ICU4XCaseMapCloser(ICU4XDataProvider provider) {
     final result = _createFfi(provider._underlying);
     return result.isOk
         ? ICU4XCaseMapCloser._(result.union.ok)
@@ -924,7 +914,7 @@ class ICU4XCaseMapper implements ffi.Finalizable {
   /// Construct a new ICU4XCaseMapper instance
   ///
   /// See the [Rust documentation for `new`](https://docs.rs/icu/latest/icu/casemap/struct.CaseMapper.html#method.new) for more information.
-  factory ICU4XCaseMapper.create(ICU4XDataProvider provider) {
+  factory ICU4XCaseMapper(ICU4XDataProvider provider) {
     final result = _createFfi(provider._underlying);
     return result.isOk
         ? ICU4XCaseMapper._(result.union.ok)
@@ -1609,7 +1599,7 @@ class ICU4XCodePointSetBuilder implements ffi.Finalizable {
   /// Make a new set builder containing nothing
   ///
   /// See the [Rust documentation for `new`](https://docs.rs/icu/latest/icu/collections/codepointinvlist/struct.CodePointInversionListBuilder.html#method.new) for more information.
-  factory ICU4XCodePointSetBuilder.create() {
+  factory ICU4XCodePointSetBuilder() {
     final result = _createFfi();
     return ICU4XCodePointSetBuilder._(result);
   }
@@ -1652,7 +1642,7 @@ class ICU4XCodePointSetBuilder implements ffi.Finalizable {
   /// Returns whether this set is empty
   ///
   /// See the [Rust documentation for `is_empty`](https://docs.rs/icu/latest/icu/collections/codepointinvlist/struct.CodePointInversionListBuilder.html#method.is_empty) for more information.
-  bool isEmpty() {
+  bool get isEmpty {
     final result = _isEmptyFfi(this._underlying);
     return result;
   }
@@ -1917,7 +1907,7 @@ class ICU4XCodePointSetData implements ffi.Finalizable {
   /// Produces an iterator over ranges of code points contained in this set
   ///
   /// See the [Rust documentation for `iter_ranges`](https://docs.rs/icu/latest/icu/properties/sets/struct.CodePointSetDataBorrowed.html#method.iter_ranges) for more information.
-  CodePointRangeIterator iterRanges() {
+  CodePointRangeIterator get iterRanges {
     final result = _iterRangesFfi(this._underlying);
     return CodePointRangeIterator._(result);
   }
@@ -1932,7 +1922,7 @@ class ICU4XCodePointSetData implements ffi.Finalizable {
   /// Produces an iterator over ranges of code points not contained in this set
   ///
   /// See the [Rust documentation for `iter_ranges_complemented`](https://docs.rs/icu/latest/icu/properties/sets/struct.CodePointSetDataBorrowed.html#method.iter_ranges_complemented) for more information.
-  CodePointRangeIterator iterRangesComplemented() {
+  CodePointRangeIterator get iterRangesComplemented {
     final result = _iterRangesComplementedFfi(this._underlying);
     return CodePointRangeIterator._(result);
   }
@@ -2946,7 +2936,7 @@ class ICU4XCollator implements ffi.Finalizable {
   /// Construct a new Collator instance.
   ///
   /// See the [Rust documentation for `try_new`](https://docs.rs/icu/latest/icu/collator/struct.Collator.html#method.try_new) for more information.
-  factory ICU4XCollator.createV1(ICU4XDataProvider provider, ICU4XLocale locale,
+  factory ICU4XCollator.v1(ICU4XDataProvider provider, ICU4XLocale locale,
       ICU4XCollatorOptionsV1 options) {
     final result = _createV1Ffi(
         provider._underlying, locale._underlying, options._underlying);
@@ -3274,7 +3264,7 @@ class ICU4XComposingNormalizer implements ffi.Finalizable {
   /// Construct a new ICU4XComposingNormalizer instance for NFC
   ///
   /// See the [Rust documentation for `new_nfc`](https://docs.rs/icu/latest/icu/normalizer/struct.ComposingNormalizer.html#method.new_nfc) for more information.
-  factory ICU4XComposingNormalizer.createNfc(ICU4XDataProvider provider) {
+  factory ICU4XComposingNormalizer.nfc(ICU4XDataProvider provider) {
     final result = _createNfcFfi(provider._underlying);
     return result.isOk
         ? ICU4XComposingNormalizer._(result.union.ok)
@@ -3290,7 +3280,7 @@ class ICU4XComposingNormalizer implements ffi.Finalizable {
   /// Construct a new ICU4XComposingNormalizer instance for NFKC
   ///
   /// See the [Rust documentation for `new_nfkc`](https://docs.rs/icu/latest/icu/normalizer/struct.ComposingNormalizer.html#method.new_nfkc) for more information.
-  factory ICU4XComposingNormalizer.createNfkc(ICU4XDataProvider provider) {
+  factory ICU4XComposingNormalizer.nfkc(ICU4XDataProvider provider) {
     final result = _createNfkcFfi(provider._underlying);
     return result.isOk
         ? ICU4XComposingNormalizer._(result.union.ok)
@@ -3380,7 +3370,7 @@ class ICU4XCustomTimeZone implements ffi.Finalizable {
   /// Creates a time zone from an offset string.
   ///
   /// See the [Rust documentation for `from_str`](https://docs.rs/icu/latest/icu/timezone/struct.CustomTimeZone.html#method.from_str) for more information.
-  factory ICU4XCustomTimeZone.createFromString(String s) {
+  factory ICU4XCustomTimeZone.fromString(String s) {
     final alloc = allocators.Arena();
 
     final sList = Utf8Encoder().convert(s);
@@ -3403,7 +3393,7 @@ class ICU4XCustomTimeZone implements ffi.Finalizable {
   /// Creates a time zone with no information.
   ///
   /// See the [Rust documentation for `new_empty`](https://docs.rs/icu/latest/icu/timezone/struct.CustomTimeZone.html#method.new_empty) for more information.
-  factory ICU4XCustomTimeZone.createEmpty() {
+  factory ICU4XCustomTimeZone.empty() {
     final result = _createEmptyFfi();
     return ICU4XCustomTimeZone._(result);
   }
@@ -3415,7 +3405,7 @@ class ICU4XCustomTimeZone implements ffi.Finalizable {
   /// Creates a time zone for UTC.
   ///
   /// See the [Rust documentation for `utc`](https://docs.rs/icu/latest/icu/timezone/struct.CustomTimeZone.html#method.utc) for more information.
-  factory ICU4XCustomTimeZone.createUtc() {
+  factory ICU4XCustomTimeZone.utc() {
     final result = _createUtcFfi();
     return ICU4XCustomTimeZone._(result);
   }
@@ -3466,7 +3456,7 @@ class ICU4XCustomTimeZone implements ffi.Finalizable {
   /// See the [Rust documentation for `offset_seconds`](https://docs.rs/icu/latest/icu/timezone/struct.GmtOffset.html#method.offset_seconds) for more information.
   ///
   /// Additional information: [1](https://docs.rs/icu/latest/icu/timezone/struct.GmtOffset.html)
-  int gmtOffsetSeconds() {
+  int get gmtOffsetSeconds {
     final result = _gmtOffsetSecondsFfi(this._underlying);
     return result.isOk ? result.union.ok : throw ICU4XError._(result.union.err);
   }
@@ -3483,7 +3473,7 @@ class ICU4XCustomTimeZone implements ffi.Finalizable {
   /// Errors if the `gmt_offset` field is empty.
   ///
   /// See the [Rust documentation for `is_positive`](https://docs.rs/icu/latest/icu/timezone/struct.GmtOffset.html#method.is_positive) for more information.
-  bool isGmtOffsetPositive() {
+  bool get isGmtOffsetPositive {
     final result = _isGmtOffsetPositiveFfi(this._underlying);
     return result.isOk ? result.union.ok : throw ICU4XError._(result.union.err);
   }
@@ -3500,7 +3490,7 @@ class ICU4XCustomTimeZone implements ffi.Finalizable {
   /// Errors if the `gmt_offset` field is empty (which is not the same as zero).
   ///
   /// See the [Rust documentation for `is_zero`](https://docs.rs/icu/latest/icu/timezone/struct.GmtOffset.html#method.is_zero) for more information.
-  bool isGmtOffsetZero() {
+  bool get isGmtOffsetZero {
     final result = _isGmtOffsetZeroFfi(this._underlying);
     return result.isOk ? result.union.ok : throw ICU4XError._(result.union.err);
   }
@@ -3634,7 +3624,7 @@ class ICU4XCustomTimeZone implements ffi.Finalizable {
   /// See the [Rust documentation for `time_zone_id`](https://docs.rs/icu/latest/icu/timezone/struct.CustomTimeZone.html#structfield.time_zone_id) for more information.
   ///
   /// Additional information: [1](https://docs.rs/icu/latest/icu/timezone/struct.TimeZoneBcp47Id.html)
-  String timeZoneId() {
+  String get timeZoneId {
     final writeable = _Writeable();
     final result = _timeZoneIdFfi(this._underlying, writeable._underlying);
     return result.isOk
@@ -3703,7 +3693,7 @@ class ICU4XCustomTimeZone implements ffi.Finalizable {
   /// See the [Rust documentation for `metazone_id`](https://docs.rs/icu/latest/icu/timezone/struct.CustomTimeZone.html#structfield.metazone_id) for more information.
   ///
   /// Additional information: [1](https://docs.rs/icu/latest/icu/timezone/struct.MetazoneId.html)
-  String metazoneId() {
+  String get metazoneId {
     final writeable = _Writeable();
     final result = _metazoneIdFfi(this._underlying, writeable._underlying);
     return result.isOk
@@ -3772,7 +3762,7 @@ class ICU4XCustomTimeZone implements ffi.Finalizable {
   /// See the [Rust documentation for `zone_variant`](https://docs.rs/icu/latest/icu/timezone/struct.CustomTimeZone.html#structfield.zone_variant) for more information.
   ///
   /// Additional information: [1](https://docs.rs/icu/latest/icu/timezone/struct.ZoneVariant.html)
-  String zoneVariant() {
+  String get zoneVariant {
     final writeable = _Writeable();
     final result = _zoneVariantFfi(this._underlying, writeable._underlying);
     return result.isOk
@@ -3823,7 +3813,7 @@ class ICU4XCustomTimeZone implements ffi.Finalizable {
   /// See the [Rust documentation for `standard`](https://docs.rs/icu/latest/icu/timezone/struct.ZoneVariant.html#method.standard) for more information.
   ///
   /// Additional information: [1](https://docs.rs/icu/latest/icu/timezone/struct.CustomTimeZone.html#structfield.zone_variant)
-  bool isStandardTime() {
+  bool get isStandardTime {
     final result = _isStandardTimeFfi(this._underlying);
     return result.isOk ? result.union.ok : throw ICU4XError._(result.union.err);
   }
@@ -3842,7 +3832,7 @@ class ICU4XCustomTimeZone implements ffi.Finalizable {
   /// See the [Rust documentation for `daylight`](https://docs.rs/icu/latest/icu/timezone/struct.ZoneVariant.html#method.daylight) for more information.
   ///
   /// Additional information: [1](https://docs.rs/icu/latest/icu/timezone/struct.CustomTimeZone.html#structfield.zone_variant)
-  bool isDaylightTime() {
+  bool get isDaylightTime {
     final result = _isDaylightTimeFfi(this._underlying);
     return result.isOk ? result.union.ok : throw ICU4XError._(result.union.err);
   }
@@ -3894,7 +3884,7 @@ class ICU4XDataProvider implements ffi.Finalizable {
   ///
   /// This provider cannot be modified or combined with other providers, so `enable_fallback`,
   /// `enabled_fallback_with`, `fork_by_locale`, and `fork_by_key` will return `Err`s.
-  factory ICU4XDataProvider.createCompiled() {
+  factory ICU4XDataProvider.compiled() {
     final result = _createCompiledFfi();
     return ICU4XDataProvider._(result);
   }
@@ -3908,7 +3898,7 @@ class ICU4XDataProvider implements ffi.Finalizable {
   /// Not supported in WASM.
   ///
   /// See the [Rust documentation for `FsDataProvider`](https://docs.rs/icu_provider_fs/latest/icu_provider_fs/struct.FsDataProvider.html) for more information.
-  factory ICU4XDataProvider.createFs(String path) {
+  factory ICU4XDataProvider.fs(String path) {
     final alloc = allocators.Arena();
 
     final pathList = Utf8Encoder().convert(path);
@@ -3934,7 +3924,7 @@ class ICU4XDataProvider implements ffi.Finalizable {
   /// Deprecated
   ///
   /// Use `create_compiled()`.
-  factory ICU4XDataProvider.createTest() {
+  factory ICU4XDataProvider.test() {
     final result = _createTestFfi();
     return ICU4XDataProvider._(result);
   }
@@ -3946,7 +3936,7 @@ class ICU4XDataProvider implements ffi.Finalizable {
   /// Constructs a `BlobDataProvider` and returns it as an [`ICU4XDataProvider`].
   ///
   /// See the [Rust documentation for `BlobDataProvider`](https://docs.rs/icu_provider_blob/latest/icu_provider_blob/struct.BlobDataProvider.html) for more information.
-  factory ICU4XDataProvider.createFromByteSlice(Uint8List blob) {
+  factory ICU4XDataProvider.fromByteSlice(Uint8List blob) {
     final alloc = allocators.Arena();
 
     final blobBytes = alloc.call<ffi.Uint8>(blob.length);
@@ -3968,7 +3958,7 @@ class ICU4XDataProvider implements ffi.Finalizable {
   /// Constructs an empty [`ICU4XDataProvider`].
   ///
   /// See the [Rust documentation for `EmptyDataProvider`](https://docs.rs/icu_provider_adapters/latest/icu_provider_adapters/empty/struct.EmptyDataProvider.html) for more information.
-  factory ICU4XDataProvider.createEmpty() {
+  factory ICU4XDataProvider.empty() {
     final result = _createEmptyFfi();
     return ICU4XDataProvider._(result);
   }
@@ -4080,7 +4070,7 @@ class ICU4XDataStruct implements ffi.Finalizable {
   /// C++ users: All string arguments must be valid UTF8
   ///
   /// See the [Rust documentation for `DecimalSymbolsV1`](https://docs.rs/icu/latest/icu/decimal/provider/struct.DecimalSymbolsV1.html) for more information.
-  factory ICU4XDataStruct.createDecimalSymbolsV1(
+  factory ICU4XDataStruct.decimalSymbolsV1(
       String plusSignPrefix,
       String plusSignSuffix,
       String minusSignPrefix,
@@ -4223,7 +4213,7 @@ class ICU4XDate implements ffi.Finalizable {
   /// given but in a given calendar
   ///
   /// See the [Rust documentation for `new_from_iso`](https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.new_from_iso) for more information.
-  factory ICU4XDate.createFromIsoInCalendar(
+  factory ICU4XDate.fromIsoInCalendar(
       int year, int month, int day, ICU4XCalendar calendar) {
     final result =
         _createFromIsoInCalendarFfi(year, month, day, calendar._underlying);
@@ -4243,7 +4233,7 @@ class ICU4XDate implements ffi.Finalizable {
   /// Creates a new [`ICU4XDate`] from the given codes, which are interpreted in the given calendar system
   ///
   /// See the [Rust documentation for `try_new_from_codes`](https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.try_new_from_codes) for more information.
-  factory ICU4XDate.createFromCodesInCalendar(String eraCode, int year,
+  factory ICU4XDate.fromCodesInCalendar(String eraCode, int year,
       String monthCode, int day, ICU4XCalendar calendar) {
     final alloc = allocators.Arena();
 
@@ -4329,7 +4319,7 @@ class ICU4XDate implements ffi.Finalizable {
   /// Returns the 1-indexed day in the month for this date
   ///
   /// See the [Rust documentation for `day_of_month`](https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.day_of_month) for more information.
-  int dayOfMonth() {
+  int get dayOfMonth {
     final result = _dayOfMonthFfi(this._underlying);
     return result;
   }
@@ -4342,7 +4332,7 @@ class ICU4XDate implements ffi.Finalizable {
   /// Returns the day in the week for this day
   ///
   /// See the [Rust documentation for `day_of_week`](https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.day_of_week) for more information.
-  ICU4XIsoWeekday dayOfWeek() {
+  ICU4XIsoWeekday get dayOfWeek {
     final result = _dayOfWeekFfi(this._underlying);
     return ICU4XIsoWeekday._(result);
   }
@@ -4394,7 +4384,7 @@ class ICU4XDate implements ffi.Finalizable {
   /// about month identity.
   ///
   /// See the [Rust documentation for `month`](https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.month) for more information.
-  int ordinalMonth() {
+  int get ordinalMonth {
     final result = _ordinalMonthFfi(this._underlying);
     return result;
   }
@@ -4408,7 +4398,7 @@ class ICU4XDate implements ffi.Finalizable {
   /// like "M01", "M02", but can be more complicated for lunar calendars.
   ///
   /// See the [Rust documentation for `month`](https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.month) for more information.
-  String monthCode() {
+  String get monthCode {
     final writeable = _Writeable();
     final result = _monthCodeFfi(this._underlying, writeable._underlying);
     return result.isOk
@@ -4427,7 +4417,7 @@ class ICU4XDate implements ffi.Finalizable {
   /// Returns the year number in the current era for this date
   ///
   /// See the [Rust documentation for `year`](https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.year) for more information.
-  int yearInEra() {
+  int get yearInEra {
     final result = _yearInEraFfi(this._underlying);
     return result;
   }
@@ -4442,7 +4432,7 @@ class ICU4XDate implements ffi.Finalizable {
   /// See the [Rust documentation for `year`](https://docs.rs/icu/latest/icu/struct.Date.html#method.year) for more information.
   ///
   /// Additional information: [1](https://docs.rs/icu/latest/icu/types/struct.Era.html)
-  String era() {
+  String get era {
     final writeable = _Writeable();
     final result = _eraFfi(this._underlying, writeable._underlying);
     return result.isOk
@@ -4461,7 +4451,7 @@ class ICU4XDate implements ffi.Finalizable {
   /// Returns the number of months in the year represented by this date
   ///
   /// See the [Rust documentation for `months_in_year`](https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.months_in_year) for more information.
-  int monthsInYear() {
+  int get monthsInYear {
     final result = _monthsInYearFfi(this._underlying);
     return result;
   }
@@ -4474,7 +4464,7 @@ class ICU4XDate implements ffi.Finalizable {
   /// Returns the number of days in the month represented by this date
   ///
   /// See the [Rust documentation for `days_in_month`](https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.days_in_month) for more information.
-  int daysInMonth() {
+  int get daysInMonth {
     final result = _daysInMonthFfi(this._underlying);
     return result;
   }
@@ -4487,7 +4477,7 @@ class ICU4XDate implements ffi.Finalizable {
   /// Returns the number of days in the year represented by this date
   ///
   /// See the [Rust documentation for `days_in_year`](https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.days_in_year) for more information.
-  int daysInYear() {
+  int get daysInYear {
     final result = _daysInYearFfi(this._underlying);
     return result;
   }
@@ -4500,7 +4490,7 @@ class ICU4XDate implements ffi.Finalizable {
   /// Returns the [`ICU4XCalendar`] object backing this date
   ///
   /// See the [Rust documentation for `calendar`](https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.calendar) for more information.
-  ICU4XCalendar calendar() {
+  ICU4XCalendar get calendar {
     final result = _calendarFfi(this._underlying);
     return ICU4XCalendar._(result);
   }
@@ -4530,7 +4520,7 @@ class ICU4XDateFormatter implements ffi.Finalizable {
   /// Creates a new [`ICU4XDateFormatter`] from locale data.
   ///
   /// See the [Rust documentation for `try_new_with_length`](https://docs.rs/icu/latest/icu/datetime/struct.DateFormatter.html#method.try_new_with_length) for more information.
-  factory ICU4XDateFormatter.createWithLength(ICU4XDataProvider provider,
+  factory ICU4XDateFormatter.withLength(ICU4XDataProvider provider,
       ICU4XLocale locale, ICU4XDateLength dateLength) {
     final result = _createWithLengthFfi(
         provider._underlying, locale._underlying, dateLength._id);
@@ -4670,7 +4660,7 @@ class ICU4XDateTime implements ffi.Finalizable {
   /// given but in a given calendar
   ///
   /// See the [Rust documentation for `new_from_iso`](https://docs.rs/icu/latest/icu/struct.DateTime.html#method.new_from_iso) for more information.
-  factory ICU4XDateTime.createFromIsoInCalendar(
+  factory ICU4XDateTime.fromIsoInCalendar(
       int year,
       int month,
       int day,
@@ -4704,7 +4694,7 @@ class ICU4XDateTime implements ffi.Finalizable {
   /// Creates a new [`ICU4XDateTime`] from the given codes, which are interpreted in the given calendar system
   ///
   /// See the [Rust documentation for `try_new_from_codes`](https://docs.rs/icu/latest/icu/calendar/struct.DateTime.html#method.try_new_from_codes) for more information.
-  factory ICU4XDateTime.createFromCodesInCalendar(
+  factory ICU4XDateTime.fromCodesInCalendar(
       String eraCode,
       int year,
       String monthCode,
@@ -4779,7 +4769,7 @@ class ICU4XDateTime implements ffi.Finalizable {
   /// Creates a new [`ICU4XDateTime`] from an [`ICU4XDate`] and [`ICU4XTime`] object
   ///
   /// See the [Rust documentation for `new`](https://docs.rs/icu/latest/icu/calendar/struct.DateTime.html#method.new) for more information.
-  factory ICU4XDateTime.createFromDateAndTime(ICU4XDate date, ICU4XTime time) {
+  factory ICU4XDateTime.fromDateAndTime(ICU4XDate date, ICU4XTime time) {
     final result =
         _createFromDateAndTimeFfi(date._underlying, time._underlying);
     return ICU4XDateTime._(result);
@@ -4796,7 +4786,7 @@ class ICU4XDateTime implements ffi.Finalizable {
   /// Gets a copy of the date contained in this object
   ///
   /// See the [Rust documentation for `date`](https://docs.rs/icu/latest/icu/calendar/struct.DateTime.html#structfield.date) for more information.
-  ICU4XDate date() {
+  ICU4XDate get date {
     final result = _dateFfi(this._underlying);
     return ICU4XDate._(result);
   }
@@ -4811,7 +4801,7 @@ class ICU4XDateTime implements ffi.Finalizable {
   /// Gets the time contained in this object
   ///
   /// See the [Rust documentation for `time`](https://docs.rs/icu/latest/icu/calendar/struct.DateTime.html#structfield.time) for more information.
-  ICU4XTime time() {
+  ICU4XTime get time {
     final result = _timeFfi(this._underlying);
     return ICU4XTime._(result);
   }
@@ -4857,7 +4847,7 @@ class ICU4XDateTime implements ffi.Finalizable {
   /// Returns the hour in this time
   ///
   /// See the [Rust documentation for `hour`](https://docs.rs/icu/latest/icu/calendar/types/struct.Time.html#structfield.hour) for more information.
-  int hour() {
+  int get hour {
     final result = _hourFfi(this._underlying);
     return result;
   }
@@ -4870,7 +4860,7 @@ class ICU4XDateTime implements ffi.Finalizable {
   /// Returns the minute in this time
   ///
   /// See the [Rust documentation for `minute`](https://docs.rs/icu/latest/icu/calendar/types/struct.Time.html#structfield.minute) for more information.
-  int minute() {
+  int get minute {
     final result = _minuteFfi(this._underlying);
     return result;
   }
@@ -4883,7 +4873,7 @@ class ICU4XDateTime implements ffi.Finalizable {
   /// Returns the second in this time
   ///
   /// See the [Rust documentation for `second`](https://docs.rs/icu/latest/icu/calendar/types/struct.Time.html#structfield.second) for more information.
-  int second() {
+  int get second {
     final result = _secondFfi(this._underlying);
     return result;
   }
@@ -4896,7 +4886,7 @@ class ICU4XDateTime implements ffi.Finalizable {
   /// Returns the nanosecond in this time
   ///
   /// See the [Rust documentation for `nanosecond`](https://docs.rs/icu/latest/icu/calendar/types/struct.Time.html#structfield.nanosecond) for more information.
-  int nanosecond() {
+  int get nanosecond {
     final result = _nanosecondFfi(this._underlying);
     return result;
   }
@@ -4909,7 +4899,7 @@ class ICU4XDateTime implements ffi.Finalizable {
   /// Returns the 1-indexed day in the month for this date
   ///
   /// See the [Rust documentation for `day_of_month`](https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.day_of_month) for more information.
-  int dayOfMonth() {
+  int get dayOfMonth {
     final result = _dayOfMonthFfi(this._underlying);
     return result;
   }
@@ -4922,7 +4912,7 @@ class ICU4XDateTime implements ffi.Finalizable {
   /// Returns the day in the week for this day
   ///
   /// See the [Rust documentation for `day_of_week`](https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.day_of_week) for more information.
-  ICU4XIsoWeekday dayOfWeek() {
+  ICU4XIsoWeekday get dayOfWeek {
     final result = _dayOfWeekFfi(this._underlying);
     return ICU4XIsoWeekday._(result);
   }
@@ -4974,7 +4964,7 @@ class ICU4XDateTime implements ffi.Finalizable {
   /// about month identity.
   ///
   /// See the [Rust documentation for `month`](https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.month) for more information.
-  int ordinalMonth() {
+  int get ordinalMonth {
     final result = _ordinalMonthFfi(this._underlying);
     return result;
   }
@@ -4988,7 +4978,7 @@ class ICU4XDateTime implements ffi.Finalizable {
   /// like "M01", "M02", but can be more complicated for lunar calendars.
   ///
   /// See the [Rust documentation for `month`](https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.month) for more information.
-  String monthCode() {
+  String get monthCode {
     final writeable = _Writeable();
     final result = _monthCodeFfi(this._underlying, writeable._underlying);
     return result.isOk
@@ -5007,7 +4997,7 @@ class ICU4XDateTime implements ffi.Finalizable {
   /// Returns the year number in the current era for this date
   ///
   /// See the [Rust documentation for `year`](https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.year) for more information.
-  int yearInEra() {
+  int get yearInEra {
     final result = _yearInEraFfi(this._underlying);
     return result;
   }
@@ -5020,7 +5010,7 @@ class ICU4XDateTime implements ffi.Finalizable {
   /// Returns the era for this date,
   ///
   /// See the [Rust documentation for `year`](https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.year) for more information.
-  String era() {
+  String get era {
     final writeable = _Writeable();
     final result = _eraFfi(this._underlying, writeable._underlying);
     return result.isOk
@@ -5039,7 +5029,7 @@ class ICU4XDateTime implements ffi.Finalizable {
   /// Returns the number of months in the year represented by this date
   ///
   /// See the [Rust documentation for `months_in_year`](https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.months_in_year) for more information.
-  int monthsInYear() {
+  int get monthsInYear {
     final result = _monthsInYearFfi(this._underlying);
     return result;
   }
@@ -5052,7 +5042,7 @@ class ICU4XDateTime implements ffi.Finalizable {
   /// Returns the number of days in the month represented by this date
   ///
   /// See the [Rust documentation for `days_in_month`](https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.days_in_month) for more information.
-  int daysInMonth() {
+  int get daysInMonth {
     final result = _daysInMonthFfi(this._underlying);
     return result;
   }
@@ -5065,7 +5055,7 @@ class ICU4XDateTime implements ffi.Finalizable {
   /// Returns the number of days in the year represented by this date
   ///
   /// See the [Rust documentation for `days_in_year`](https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.days_in_year) for more information.
-  int daysInYear() {
+  int get daysInYear {
     final result = _daysInYearFfi(this._underlying);
     return result;
   }
@@ -5078,7 +5068,7 @@ class ICU4XDateTime implements ffi.Finalizable {
   /// Returns the [`ICU4XCalendar`] object backing this date
   ///
   /// See the [Rust documentation for `calendar`](https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.calendar) for more information.
-  ICU4XCalendar calendar() {
+  ICU4XCalendar get calendar {
     final result = _calendarFfi(this._underlying);
     return ICU4XCalendar._(result);
   }
@@ -5108,7 +5098,7 @@ class ICU4XDateTimeFormatter implements ffi.Finalizable {
   /// Creates a new [`ICU4XDateTimeFormatter`] from locale data.
   ///
   /// See the [Rust documentation for `try_new`](https://docs.rs/icu/latest/icu/datetime/struct.DateTimeFormatter.html#method.try_new) for more information.
-  factory ICU4XDateTimeFormatter.createWithLengths(
+  factory ICU4XDateTimeFormatter.withLengths(
       ICU4XDataProvider provider,
       ICU4XLocale locale,
       ICU4XDateLength dateLength,
@@ -5225,7 +5215,7 @@ class ICU4XDecomposingNormalizer implements ffi.Finalizable {
   /// Construct a new ICU4XDecomposingNormalizer instance for NFC
   ///
   /// See the [Rust documentation for `new_nfd`](https://docs.rs/icu/latest/icu/normalizer/struct.DecomposingNormalizer.html#method.new_nfd) for more information.
-  factory ICU4XDecomposingNormalizer.createNfd(ICU4XDataProvider provider) {
+  factory ICU4XDecomposingNormalizer.nfd(ICU4XDataProvider provider) {
     final result = _createNfdFfi(provider._underlying);
     return result.isOk
         ? ICU4XDecomposingNormalizer._(result.union.ok)
@@ -5241,7 +5231,7 @@ class ICU4XDecomposingNormalizer implements ffi.Finalizable {
   /// Construct a new ICU4XDecomposingNormalizer instance for NFKC
   ///
   /// See the [Rust documentation for `new_nfkd`](https://docs.rs/icu/latest/icu/normalizer/struct.DecomposingNormalizer.html#method.new_nfkd) for more information.
-  factory ICU4XDecomposingNormalizer.createNfkd(ICU4XDataProvider provider) {
+  factory ICU4XDecomposingNormalizer.nfkd(ICU4XDataProvider provider) {
     final result = _createNfkdFfi(provider._underlying);
     return result.isOk
         ? ICU4XDecomposingNormalizer._(result.union.ok)
@@ -5483,7 +5473,7 @@ class ICU4XFixedDecimal implements ffi.Finalizable {
   /// Construct an [`ICU4XFixedDecimal`] from an integer.
   ///
   /// See the [Rust documentation for `FixedDecimal`](https://docs.rs/fixed_decimal/latest/fixed_decimal/struct.FixedDecimal.html) for more information.
-  factory ICU4XFixedDecimal.createFromI32(int v) {
+  factory ICU4XFixedDecimal.fromI32(int v) {
     final result = _createFromI32Ffi(v);
     return ICU4XFixedDecimal._(result);
   }
@@ -5495,7 +5485,7 @@ class ICU4XFixedDecimal implements ffi.Finalizable {
   /// Construct an [`ICU4XFixedDecimal`] from an integer.
   ///
   /// See the [Rust documentation for `FixedDecimal`](https://docs.rs/fixed_decimal/latest/fixed_decimal/struct.FixedDecimal.html) for more information.
-  factory ICU4XFixedDecimal.createFromU32(int v) {
+  factory ICU4XFixedDecimal.fromU32(int v) {
     final result = _createFromU32Ffi(v);
     return ICU4XFixedDecimal._(result);
   }
@@ -5507,7 +5497,7 @@ class ICU4XFixedDecimal implements ffi.Finalizable {
   /// Construct an [`ICU4XFixedDecimal`] from an integer.
   ///
   /// See the [Rust documentation for `FixedDecimal`](https://docs.rs/fixed_decimal/latest/fixed_decimal/struct.FixedDecimal.html) for more information.
-  factory ICU4XFixedDecimal.createFromI64(int v) {
+  factory ICU4XFixedDecimal.fromI64(int v) {
     final result = _createFromI64Ffi(v);
     return ICU4XFixedDecimal._(result);
   }
@@ -5519,7 +5509,7 @@ class ICU4XFixedDecimal implements ffi.Finalizable {
   /// Construct an [`ICU4XFixedDecimal`] from an integer.
   ///
   /// See the [Rust documentation for `FixedDecimal`](https://docs.rs/fixed_decimal/latest/fixed_decimal/struct.FixedDecimal.html) for more information.
-  factory ICU4XFixedDecimal.createFromU64(int v) {
+  factory ICU4XFixedDecimal.fromU64(int v) {
     final result = _createFromU64Ffi(v);
     return ICU4XFixedDecimal._(result);
   }
@@ -5533,7 +5523,7 @@ class ICU4XFixedDecimal implements ffi.Finalizable {
   /// See the [Rust documentation for `try_from_f64`](https://docs.rs/fixed_decimal/latest/fixed_decimal/struct.FixedDecimal.html#method.try_from_f64) for more information.
   ///
   /// See the [Rust documentation for `FloatPrecision`](https://docs.rs/fixed_decimal/latest/fixed_decimal/enum.FloatPrecision.html) for more information.
-  factory ICU4XFixedDecimal.createFromF64WithIntegerPrecision(double f) {
+  factory ICU4XFixedDecimal.fromF64WithIntegerPrecision(double f) {
     final result = _createFromF64WithIntegerPrecisionFfi(f);
     return result.isOk
         ? ICU4XFixedDecimal._(result.union.ok)
@@ -5549,8 +5539,7 @@ class ICU4XFixedDecimal implements ffi.Finalizable {
   /// See the [Rust documentation for `try_from_f64`](https://docs.rs/fixed_decimal/latest/fixed_decimal/struct.FixedDecimal.html#method.try_from_f64) for more information.
   ///
   /// See the [Rust documentation for `FloatPrecision`](https://docs.rs/fixed_decimal/latest/fixed_decimal/enum.FloatPrecision.html) for more information.
-  factory ICU4XFixedDecimal.createFromF64WithLowerMagnitude(
-      double f, int magnitude) {
+  factory ICU4XFixedDecimal.fromF64WithLowerMagnitude(double f, int magnitude) {
     final result = _createFromF64WithLowerMagnitudeFfi(f, magnitude);
     return result.isOk
         ? ICU4XFixedDecimal._(result.union.ok)
@@ -5567,8 +5556,7 @@ class ICU4XFixedDecimal implements ffi.Finalizable {
   /// See the [Rust documentation for `try_from_f64`](https://docs.rs/fixed_decimal/latest/fixed_decimal/struct.FixedDecimal.html#method.try_from_f64) for more information.
   ///
   /// See the [Rust documentation for `FloatPrecision`](https://docs.rs/fixed_decimal/latest/fixed_decimal/enum.FloatPrecision.html) for more information.
-  factory ICU4XFixedDecimal.createFromF64WithSignificantDigits(
-      double f, int digits) {
+  factory ICU4XFixedDecimal.fromF64WithSignificantDigits(double f, int digits) {
     final result = _createFromF64WithSignificantDigitsFfi(f, digits);
     return result.isOk
         ? ICU4XFixedDecimal._(result.union.ok)
@@ -5586,7 +5574,7 @@ class ICU4XFixedDecimal implements ffi.Finalizable {
   /// See the [Rust documentation for `try_from_f64`](https://docs.rs/fixed_decimal/latest/fixed_decimal/struct.FixedDecimal.html#method.try_from_f64) for more information.
   ///
   /// See the [Rust documentation for `FloatPrecision`](https://docs.rs/fixed_decimal/latest/fixed_decimal/enum.FloatPrecision.html) for more information.
-  factory ICU4XFixedDecimal.createFromF64WithFloatingPrecision(double f) {
+  factory ICU4XFixedDecimal.fromF64WithFloatingPrecision(double f) {
     final result = _createFromF64WithFloatingPrecisionFfi(f);
     return result.isOk
         ? ICU4XFixedDecimal._(result.union.ok)
@@ -5600,7 +5588,7 @@ class ICU4XFixedDecimal implements ffi.Finalizable {
   /// Construct an [`ICU4XFixedDecimal`] from a string.
   ///
   /// See the [Rust documentation for `from_str`](https://docs.rs/fixed_decimal/latest/fixed_decimal/struct.FixedDecimal.html#method.from_str) for more information.
-  factory ICU4XFixedDecimal.createFromString(String v) {
+  factory ICU4XFixedDecimal.fromString(String v) {
     final alloc = allocators.Arena();
 
     final vList = Utf8Encoder().convert(v);
@@ -5633,7 +5621,7 @@ class ICU4XFixedDecimal implements ffi.Finalizable {
       .asFunction<int Function(ffi.Pointer<ffi.Opaque>, int)>(isLeaf: true);
 
   /// See the [Rust documentation for `magnitude_range`](https://docs.rs/fixed_decimal/latest/fixed_decimal/struct.FixedDecimal.html#method.magnitude_range) for more information.
-  int magnitudeStart() {
+  int get magnitudeStart {
     final result = _magnitudeStartFfi(this._underlying);
     return result;
   }
@@ -5644,7 +5632,7 @@ class ICU4XFixedDecimal implements ffi.Finalizable {
           .asFunction<int Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
 
   /// See the [Rust documentation for `magnitude_range`](https://docs.rs/fixed_decimal/latest/fixed_decimal/struct.FixedDecimal.html#method.magnitude_range) for more information.
-  int magnitudeEnd() {
+  int get magnitudeEnd {
     final result = _magnitudeEndFfi(this._underlying);
     return result;
   }
@@ -5655,7 +5643,7 @@ class ICU4XFixedDecimal implements ffi.Finalizable {
           .asFunction<int Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
 
   /// See the [Rust documentation for `nonzero_magnitude_start`](https://docs.rs/fixed_decimal/latest/fixed_decimal/struct.FixedDecimal.html#method.nonzero_magnitude_start) for more information.
-  int nonzeroMagnitudeStart() {
+  int get nonzeroMagnitudeStart {
     final result = _nonzeroMagnitudeStartFfi(this._underlying);
     return result;
   }
@@ -5666,7 +5654,7 @@ class ICU4XFixedDecimal implements ffi.Finalizable {
           .asFunction<int Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
 
   /// See the [Rust documentation for `nonzero_magnitude_end`](https://docs.rs/fixed_decimal/latest/fixed_decimal/struct.FixedDecimal.html#method.nonzero_magnitude_end) for more information.
-  int nonzeroMagnitudeEnd() {
+  int get nonzeroMagnitudeEnd {
     final result = _nonzeroMagnitudeEndFfi(this._underlying);
     return result;
   }
@@ -5677,7 +5665,7 @@ class ICU4XFixedDecimal implements ffi.Finalizable {
           .asFunction<int Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
 
   /// See the [Rust documentation for `is_zero`](https://docs.rs/fixed_decimal/latest/fixed_decimal/struct.FixedDecimal.html#method.is_zero) for more information.
-  bool isZero() {
+  bool get isZero {
     final result = _isZeroFfi(this._underlying);
     return result;
   }
@@ -5701,7 +5689,7 @@ class ICU4XFixedDecimal implements ffi.Finalizable {
       .asFunction<void Function(ffi.Pointer<ffi.Opaque>, int)>(isLeaf: true);
 
   /// See the [Rust documentation for `sign`](https://docs.rs/fixed_decimal/latest/fixed_decimal/struct.FixedDecimal.html#method.sign) for more information.
-  ICU4XFixedDecimalSign sign() {
+  ICU4XFixedDecimalSign get sign {
     final result = _signFfi(this._underlying);
     return ICU4XFixedDecimalSign._(result);
   }
@@ -5714,7 +5702,7 @@ class ICU4XFixedDecimal implements ffi.Finalizable {
   /// Set the sign of the [`ICU4XFixedDecimal`].
   ///
   /// See the [Rust documentation for `set_sign`](https://docs.rs/fixed_decimal/latest/fixed_decimal/struct.FixedDecimal.html#method.set_sign) for more information.
-  void setSign(ICU4XFixedDecimalSign sign) {
+  void set sign(ICU4XFixedDecimalSign sign) {
     _setSignFfi(this._underlying, sign._id);
   }
 
@@ -5975,7 +5963,7 @@ class ICU4XFixedDecimalFormatter implements ffi.Finalizable {
   /// Creates a new [`ICU4XFixedDecimalFormatter`] from locale data.
   ///
   /// See the [Rust documentation for `try_new`](https://docs.rs/icu/latest/icu/decimal/struct.FixedDecimalFormatter.html#method.try_new) for more information.
-  factory ICU4XFixedDecimalFormatter.createWithGroupingStrategy(
+  factory ICU4XFixedDecimalFormatter.withGroupingStrategy(
       ICU4XDataProvider provider,
       ICU4XLocale locale,
       ICU4XFixedDecimalGroupingStrategy groupingStrategy) {
@@ -5999,7 +5987,7 @@ class ICU4XFixedDecimalFormatter implements ffi.Finalizable {
   ///
   /// The contents of the data struct will be consumed: if you wish to use the struct again it will have to be reconstructed.
   /// Passing a consumed struct to this method will return an error.
-  factory ICU4XFixedDecimalFormatter.createWithDecimalSymbolsV1(
+  factory ICU4XFixedDecimalFormatter.withDecimalSymbolsV1(
       ICU4XDataStruct dataStruct,
       ICU4XFixedDecimalGroupingStrategy groupingStrategy) {
     final result = _createWithDecimalSymbolsV1Ffi(
@@ -6276,7 +6264,7 @@ class ICU4XGraphemeClusterSegmenter implements ffi.Finalizable {
   /// Construct an [`ICU4XGraphemeClusterSegmenter`].
   ///
   /// See the [Rust documentation for `new`](https://docs.rs/icu/latest/icu/segmenter/struct.GraphemeClusterSegmenter.html#method.new) for more information.
-  factory ICU4XGraphemeClusterSegmenter.create(ICU4XDataProvider provider) {
+  factory ICU4XGraphemeClusterSegmenter(ICU4XDataProvider provider) {
     final result = _createFfi(provider._underlying);
     return result.isOk
         ? ICU4XGraphemeClusterSegmenter._(result.union.ok)
@@ -6386,7 +6374,7 @@ class ICU4XGregorianDateFormatter implements ffi.Finalizable {
   /// Creates a new [`ICU4XGregorianDateFormatter`] from locale data.
   ///
   /// See the [Rust documentation for `try_new_with_length`](https://docs.rs/icu/latest/icu/datetime/struct.TypedDateFormatter.html#method.try_new_with_length) for more information.
-  factory ICU4XGregorianDateFormatter.createWithLength(
+  factory ICU4XGregorianDateFormatter.withLength(
       ICU4XDataProvider provider, ICU4XLocale locale, ICU4XDateLength length) {
     final result = _createWithLengthFfi(
         provider._underlying, locale._underlying, length._id);
@@ -6463,7 +6451,7 @@ class ICU4XGregorianDateTimeFormatter implements ffi.Finalizable {
   /// Creates a new [`ICU4XGregorianDateFormatter`] from locale data.
   ///
   /// See the [Rust documentation for `try_new`](https://docs.rs/icu/latest/icu/datetime/struct.TypedDateTimeFormatter.html#method.try_new) for more information.
-  factory ICU4XGregorianDateTimeFormatter.createWithLengths(
+  factory ICU4XGregorianDateTimeFormatter.withLengths(
       ICU4XDataProvider provider,
       ICU4XLocale locale,
       ICU4XDateLength dateLength,
@@ -6524,7 +6512,7 @@ class ICU4XGregorianZonedDateTimeFormatter implements ffi.Finalizable {
   /// for the time zone.
   ///
   /// See the [Rust documentation for `try_new`](https://docs.rs/icu/latest/icu/datetime/struct.TypedZonedDateTimeFormatter.html#method.try_new) for more information.
-  factory ICU4XGregorianZonedDateTimeFormatter.createWithLengths(
+  factory ICU4XGregorianZonedDateTimeFormatter.withLengths(
       ICU4XDataProvider provider,
       ICU4XLocale locale,
       ICU4XDateLength dateLength,
@@ -6550,7 +6538,7 @@ class ICU4XGregorianZonedDateTimeFormatter implements ffi.Finalizable {
   /// fallback for the time zone with the given configurations.
   ///
   /// See the [Rust documentation for `try_new`](https://docs.rs/icu/latest/icu/datetime/struct.TypedZonedDateTimeFormatter.html#method.try_new) for more information.
-  factory ICU4XGregorianZonedDateTimeFormatter.createWithLengthsAndIso8601TimeZoneFallback(
+  factory ICU4XGregorianZonedDateTimeFormatter.withLengthsAndIso8601TimeZoneFallback(
       ICU4XDataProvider provider,
       ICU4XLocale locale,
       ICU4XDateLength dateLength,
@@ -6630,7 +6618,7 @@ class ICU4XIanaToBcp47Mapper implements ffi.Finalizable {
       ffi.NativeFinalizer(_capi('ICU4XIanaToBcp47Mapper_destroy'));
 
   /// See the [Rust documentation for `new`](https://docs.rs/icu/latest/icu/timezone/struct.IanaToBcp47Mapper.html#method.new) for more information.
-  factory ICU4XIanaToBcp47Mapper.create(ICU4XDataProvider provider) {
+  factory ICU4XIanaToBcp47Mapper(ICU4XDataProvider provider) {
     final result = _createFfi(provider._underlying);
     return result.isOk
         ? ICU4XIanaToBcp47Mapper._(result.union.ok)
@@ -6660,7 +6648,7 @@ class ICU4XIsoDate implements ffi.Finalizable {
   /// Creates a new [`ICU4XIsoDate`] from the specified date and time.
   ///
   /// See the [Rust documentation for `try_new_iso_date`](https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.try_new_iso_date) for more information.
-  factory ICU4XIsoDate.create(int year, int month, int day) {
+  factory ICU4XIsoDate(int year, int month, int day) {
     final result = _createFfi(year, month, day);
     return result.isOk
         ? ICU4XIsoDate._(result.union.ok)
@@ -6675,7 +6663,7 @@ class ICU4XIsoDate implements ffi.Finalizable {
   /// Creates a new [`ICU4XIsoDate`] representing January 1, 1970.
   ///
   /// See the [Rust documentation for `unix_epoch`](https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.unix_epoch) for more information.
-  factory ICU4XIsoDate.createForUnixEpoch() {
+  factory ICU4XIsoDate.forUnixEpoch() {
     final result = _createForUnixEpochFfi();
     return ICU4XIsoDate._(result);
   }
@@ -6716,7 +6704,7 @@ class ICU4XIsoDate implements ffi.Finalizable {
   /// Returns the 1-indexed day in the month for this date
   ///
   /// See the [Rust documentation for `day_of_month`](https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.day_of_month) for more information.
-  int dayOfMonth() {
+  int get dayOfMonth {
     final result = _dayOfMonthFfi(this._underlying);
     return result;
   }
@@ -6729,7 +6717,7 @@ class ICU4XIsoDate implements ffi.Finalizable {
   /// Returns the day in the week for this day
   ///
   /// See the [Rust documentation for `day_of_week`](https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.day_of_week) for more information.
-  ICU4XIsoWeekday dayOfWeek() {
+  ICU4XIsoWeekday get dayOfWeek {
     final result = _dayOfWeekFfi(this._underlying);
     return ICU4XIsoWeekday._(result);
   }
@@ -6777,7 +6765,7 @@ class ICU4XIsoDate implements ffi.Finalizable {
   /// Returns 1-indexed number of the month of this date in its year
   ///
   /// See the [Rust documentation for `month`](https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.month) for more information.
-  int month() {
+  int get month {
     final result = _monthFfi(this._underlying);
     return result;
   }
@@ -6790,7 +6778,7 @@ class ICU4XIsoDate implements ffi.Finalizable {
   /// Returns the year number for this date
   ///
   /// See the [Rust documentation for `year`](https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.year) for more information.
-  int year() {
+  int get year {
     final result = _yearFfi(this._underlying);
     return result;
   }
@@ -6803,7 +6791,7 @@ class ICU4XIsoDate implements ffi.Finalizable {
   /// Returns the number of months in the year represented by this date
   ///
   /// See the [Rust documentation for `months_in_year`](https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.months_in_year) for more information.
-  int monthsInYear() {
+  int get monthsInYear {
     final result = _monthsInYearFfi(this._underlying);
     return result;
   }
@@ -6816,7 +6804,7 @@ class ICU4XIsoDate implements ffi.Finalizable {
   /// Returns the number of days in the month represented by this date
   ///
   /// See the [Rust documentation for `days_in_month`](https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.days_in_month) for more information.
-  int daysInMonth() {
+  int get daysInMonth {
     final result = _daysInMonthFfi(this._underlying);
     return result;
   }
@@ -6829,7 +6817,7 @@ class ICU4XIsoDate implements ffi.Finalizable {
   /// Returns the number of days in the year represented by this date
   ///
   /// See the [Rust documentation for `days_in_year`](https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.days_in_year) for more information.
-  int daysInYear() {
+  int get daysInYear {
     final result = _daysInYearFfi(this._underlying);
     return result;
   }
@@ -6856,8 +6844,8 @@ class ICU4XIsoDateTime implements ffi.Finalizable {
   /// Creates a new [`ICU4XIsoDateTime`] from the specified date and time.
   ///
   /// See the [Rust documentation for `try_new_iso_datetime`](https://docs.rs/icu/latest/icu/calendar/struct.DateTime.html#method.try_new_iso_datetime) for more information.
-  factory ICU4XIsoDateTime.create(int year, int month, int day, int hour,
-      int minute, int second, int nanosecond) {
+  factory ICU4XIsoDateTime(int year, int month, int day, int hour, int minute,
+      int second, int nanosecond) {
     final result =
         _createFfi(year, month, day, hour, minute, second, nanosecond);
     return result.isOk
@@ -6898,7 +6886,7 @@ class ICU4XIsoDateTime implements ffi.Finalizable {
   /// Construct from the minutes since the local unix epoch for this date (Jan 1 1970, 00:00)
   ///
   /// See the [Rust documentation for `from_minutes_since_local_unix_epoch`](https://docs.rs/icu/latest/icu/calendar/struct.DateTime.html#method.from_minutes_since_local_unix_epoch) for more information.
-  factory ICU4XIsoDateTime.createFromMinutesSinceLocalUnixEpoch(int minutes) {
+  factory ICU4XIsoDateTime.fromMinutesSinceLocalUnixEpoch(int minutes) {
     final result = _createFromMinutesSinceLocalUnixEpochFfi(minutes);
     return ICU4XIsoDateTime._(result);
   }
@@ -6910,7 +6898,7 @@ class ICU4XIsoDateTime implements ffi.Finalizable {
   /// Gets the date contained in this object
   ///
   /// See the [Rust documentation for `date`](https://docs.rs/icu/latest/icu/calendar/struct.DateTime.html#structfield.date) for more information.
-  ICU4XIsoDate date() {
+  ICU4XIsoDate get date {
     final result = _dateFfi(this._underlying);
     return ICU4XIsoDate._(result);
   }
@@ -6925,7 +6913,7 @@ class ICU4XIsoDateTime implements ffi.Finalizable {
   /// Gets the time contained in this object
   ///
   /// See the [Rust documentation for `time`](https://docs.rs/icu/latest/icu/calendar/struct.DateTime.html#structfield.time) for more information.
-  ICU4XTime time() {
+  ICU4XTime get time {
     final result = _timeFfi(this._underlying);
     return ICU4XTime._(result);
   }
@@ -6956,7 +6944,7 @@ class ICU4XIsoDateTime implements ffi.Finalizable {
   /// Gets the minutes since the local unix epoch for this date (Jan 1 1970, 00:00)
   ///
   /// See the [Rust documentation for `minutes_since_local_unix_epoch`](https://docs.rs/icu/latest/icu/calendar/struct.DateTime.html#method.minutes_since_local_unix_epoch) for more information.
-  int minutesSinceLocalUnixEpoch() {
+  int get minutesSinceLocalUnixEpoch {
     final result = _minutesSinceLocalUnixEpochFfi(this._underlying);
     return result;
   }
@@ -6985,7 +6973,7 @@ class ICU4XIsoDateTime implements ffi.Finalizable {
   /// Returns the hour in this time
   ///
   /// See the [Rust documentation for `hour`](https://docs.rs/icu/latest/icu/calendar/types/struct.Time.html#structfield.hour) for more information.
-  int hour() {
+  int get hour {
     final result = _hourFfi(this._underlying);
     return result;
   }
@@ -6998,7 +6986,7 @@ class ICU4XIsoDateTime implements ffi.Finalizable {
   /// Returns the minute in this time
   ///
   /// See the [Rust documentation for `minute`](https://docs.rs/icu/latest/icu/calendar/types/struct.Time.html#structfield.minute) for more information.
-  int minute() {
+  int get minute {
     final result = _minuteFfi(this._underlying);
     return result;
   }
@@ -7011,7 +6999,7 @@ class ICU4XIsoDateTime implements ffi.Finalizable {
   /// Returns the second in this time
   ///
   /// See the [Rust documentation for `second`](https://docs.rs/icu/latest/icu/calendar/types/struct.Time.html#structfield.second) for more information.
-  int second() {
+  int get second {
     final result = _secondFfi(this._underlying);
     return result;
   }
@@ -7024,7 +7012,7 @@ class ICU4XIsoDateTime implements ffi.Finalizable {
   /// Returns the nanosecond in this time
   ///
   /// See the [Rust documentation for `nanosecond`](https://docs.rs/icu/latest/icu/calendar/types/struct.Time.html#structfield.nanosecond) for more information.
-  int nanosecond() {
+  int get nanosecond {
     final result = _nanosecondFfi(this._underlying);
     return result;
   }
@@ -7037,7 +7025,7 @@ class ICU4XIsoDateTime implements ffi.Finalizable {
   /// Returns the 1-indexed day in the month for this date
   ///
   /// See the [Rust documentation for `day_of_month`](https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.day_of_month) for more information.
-  int dayOfMonth() {
+  int get dayOfMonth {
     final result = _dayOfMonthFfi(this._underlying);
     return result;
   }
@@ -7050,7 +7038,7 @@ class ICU4XIsoDateTime implements ffi.Finalizable {
   /// Returns the day in the week for this day
   ///
   /// See the [Rust documentation for `day_of_week`](https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.day_of_week) for more information.
-  ICU4XIsoWeekday dayOfWeek() {
+  ICU4XIsoWeekday get dayOfWeek {
     final result = _dayOfWeekFfi(this._underlying);
     return ICU4XIsoWeekday._(result);
   }
@@ -7098,7 +7086,7 @@ class ICU4XIsoDateTime implements ffi.Finalizable {
   /// Returns 1-indexed number of the month of this date in its year
   ///
   /// See the [Rust documentation for `month`](https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.month) for more information.
-  int month() {
+  int get month {
     final result = _monthFfi(this._underlying);
     return result;
   }
@@ -7111,7 +7099,7 @@ class ICU4XIsoDateTime implements ffi.Finalizable {
   /// Returns the year number for this date
   ///
   /// See the [Rust documentation for `year`](https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.year) for more information.
-  int year() {
+  int get year {
     final result = _yearFfi(this._underlying);
     return result;
   }
@@ -7124,7 +7112,7 @@ class ICU4XIsoDateTime implements ffi.Finalizable {
   /// Returns the number of months in the year represented by this date
   ///
   /// See the [Rust documentation for `months_in_year`](https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.months_in_year) for more information.
-  int monthsInYear() {
+  int get monthsInYear {
     final result = _monthsInYearFfi(this._underlying);
     return result;
   }
@@ -7137,7 +7125,7 @@ class ICU4XIsoDateTime implements ffi.Finalizable {
   /// Returns the number of days in the month represented by this date
   ///
   /// See the [Rust documentation for `days_in_month`](https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.days_in_month) for more information.
-  int daysInMonth() {
+  int get daysInMonth {
     final result = _daysInMonthFfi(this._underlying);
     return result;
   }
@@ -7150,7 +7138,7 @@ class ICU4XIsoDateTime implements ffi.Finalizable {
   /// Returns the number of days in the year represented by this date
   ///
   /// See the [Rust documentation for `days_in_year`](https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.days_in_year) for more information.
-  int daysInYear() {
+  int get daysInYear {
     final result = _daysInYearFfi(this._underlying);
     return result;
   }
@@ -7458,7 +7446,7 @@ class ICU4XLineSegmenter implements ffi.Finalizable {
   /// available payload data for Burmese, Khmer, Lao, and Thai.
   ///
   /// See the [Rust documentation for `new_auto`](https://docs.rs/icu/latest/icu/segmenter/struct.LineSegmenter.html#method.new_auto) for more information.
-  factory ICU4XLineSegmenter.createAuto(ICU4XDataProvider provider) {
+  factory ICU4XLineSegmenter.auto(ICU4XDataProvider provider) {
     final result = _createAutoFfi(provider._underlying);
     return result.isOk
         ? ICU4XLineSegmenter._(result.union.ok)
@@ -7475,7 +7463,7 @@ class ICU4XLineSegmenter implements ffi.Finalizable {
   /// Burmese, Khmer, Lao, and Thai.
   ///
   /// See the [Rust documentation for `new_lstm`](https://docs.rs/icu/latest/icu/segmenter/struct.LineSegmenter.html#method.new_lstm) for more information.
-  factory ICU4XLineSegmenter.createLstm(ICU4XDataProvider provider) {
+  factory ICU4XLineSegmenter.lstm(ICU4XDataProvider provider) {
     final result = _createLstmFfi(provider._underlying);
     return result.isOk
         ? ICU4XLineSegmenter._(result.union.ok)
@@ -7492,7 +7480,7 @@ class ICU4XLineSegmenter implements ffi.Finalizable {
   /// Burmese, Khmer, Lao, and Thai..
   ///
   /// See the [Rust documentation for `new_dictionary`](https://docs.rs/icu/latest/icu/segmenter/struct.LineSegmenter.html#method.new_dictionary) for more information.
-  factory ICU4XLineSegmenter.createDictionary(ICU4XDataProvider provider) {
+  factory ICU4XLineSegmenter.dictionary(ICU4XDataProvider provider) {
     final result = _createDictionaryFfi(provider._underlying);
     return result.isOk
         ? ICU4XLineSegmenter._(result.union.ok)
@@ -7509,7 +7497,7 @@ class ICU4XLineSegmenter implements ffi.Finalizable {
   /// available payload data for Burmese, Khmer, Lao, and Thai.
   ///
   /// See the [Rust documentation for `new_auto_with_options`](https://docs.rs/icu/latest/icu/segmenter/struct.LineSegmenter.html#method.new_auto_with_options) for more information.
-  factory ICU4XLineSegmenter.createAutoWithOptionsV1(
+  factory ICU4XLineSegmenter.autoWithOptionsV1(
       ICU4XDataProvider provider, ICU4XLineBreakOptionsV1 options) {
     final result =
         _createAutoWithOptionsV1Ffi(provider._underlying, options._underlying);
@@ -7530,7 +7518,7 @@ class ICU4XLineSegmenter implements ffi.Finalizable {
   /// Burmese, Khmer, Lao, and Thai.
   ///
   /// See the [Rust documentation for `new_lstm_with_options`](https://docs.rs/icu/latest/icu/segmenter/struct.LineSegmenter.html#method.new_lstm_with_options) for more information.
-  factory ICU4XLineSegmenter.createLstmWithOptionsV1(
+  factory ICU4XLineSegmenter.lstmWithOptionsV1(
       ICU4XDataProvider provider, ICU4XLineBreakOptionsV1 options) {
     final result =
         _createLstmWithOptionsV1Ffi(provider._underlying, options._underlying);
@@ -7551,7 +7539,7 @@ class ICU4XLineSegmenter implements ffi.Finalizable {
   /// Burmese, Khmer, Lao, and Thai.
   ///
   /// See the [Rust documentation for `new_dictionary_with_options`](https://docs.rs/icu/latest/icu/segmenter/struct.LineSegmenter.html#method.new_dictionary_with_options) for more information.
-  factory ICU4XLineSegmenter.createDictionaryWithOptionsV1(
+  factory ICU4XLineSegmenter.dictionaryWithOptionsV1(
       ICU4XDataProvider provider, ICU4XLineBreakOptionsV1 options) {
     final result = _createDictionaryWithOptionsV1Ffi(
         provider._underlying, options._underlying);
@@ -7660,7 +7648,7 @@ class ICU4XList implements ffi.Finalizable {
       ffi.NativeFinalizer(_capi('ICU4XList_destroy'));
 
   /// Create a new list of strings
-  factory ICU4XList.create() {
+  factory ICU4XList() {
     final result = _createFfi();
     return ICU4XList._(result);
   }
@@ -7671,7 +7659,7 @@ class ICU4XList implements ffi.Finalizable {
 
   /// Create a new list of strings with preallocated space to hold
   /// at least `capacity` elements
-  factory ICU4XList.createWithCapacity(int capacity) {
+  factory ICU4XList.withCapacity(int capacity) {
     final result = _createWithCapacityFfi(capacity);
     return ICU4XList._(result);
   }
@@ -7704,7 +7692,7 @@ class ICU4XList implements ffi.Finalizable {
               int)>(isLeaf: true);
 
   /// The number of elements in this list
-  int len() {
+  int get len {
     final result = _lenFfi(this._underlying);
     return result;
   }
@@ -7729,7 +7717,7 @@ class ICU4XListFormatter implements ffi.Finalizable {
   /// Construct a new ICU4XListFormatter instance for And patterns
   ///
   /// See the [Rust documentation for `try_new_and_with_length`](https://docs.rs/icu/latest/icu/list/struct.ListFormatter.html#method.try_new_and_with_length) for more information.
-  factory ICU4XListFormatter.createAndWithLength(
+  factory ICU4XListFormatter.andWithLength(
       ICU4XDataProvider provider, ICU4XLocale locale, ICU4XListLength length) {
     final result = _createAndWithLengthFfi(
         provider._underlying, locale._underlying, length._id);
@@ -7750,7 +7738,7 @@ class ICU4XListFormatter implements ffi.Finalizable {
   /// Construct a new ICU4XListFormatter instance for And patterns
   ///
   /// See the [Rust documentation for `try_new_or_with_length`](https://docs.rs/icu/latest/icu/list/struct.ListFormatter.html#method.try_new_or_with_length) for more information.
-  factory ICU4XListFormatter.createOrWithLength(
+  factory ICU4XListFormatter.orWithLength(
       ICU4XDataProvider provider, ICU4XLocale locale, ICU4XListLength length) {
     final result = _createOrWithLengthFfi(
         provider._underlying, locale._underlying, length._id);
@@ -7771,7 +7759,7 @@ class ICU4XListFormatter implements ffi.Finalizable {
   /// Construct a new ICU4XListFormatter instance for And patterns
   ///
   /// See the [Rust documentation for `try_new_unit_with_length`](https://docs.rs/icu/latest/icu/list/struct.ListFormatter.html#method.try_new_unit_with_length) for more information.
-  factory ICU4XListFormatter.createUnitWithLength(
+  factory ICU4XListFormatter.unitWithLength(
       ICU4XDataProvider provider, ICU4XLocale locale, ICU4XListLength length) {
     final result = _createUnitWithLengthFfi(
         provider._underlying, locale._underlying, length._id);
@@ -7844,7 +7832,7 @@ class ICU4XLocale implements ffi.Finalizable {
   /// `aa-BB`) use `create_und`, `set_language`, `set_script`, and `set_region`.
   ///
   /// See the [Rust documentation for `try_from_bytes`](https://docs.rs/icu/latest/icu/locid/struct.Locale.html#method.try_from_bytes) for more information.
-  factory ICU4XLocale.createFromString(String name) {
+  factory ICU4XLocale.fromString(String name) {
     final alloc = allocators.Arena();
 
     final nameList = Utf8Encoder().convert(name);
@@ -7870,7 +7858,7 @@ class ICU4XLocale implements ffi.Finalizable {
   /// Construct a default undefined [`ICU4XLocale`] "und".
   ///
   /// See the [Rust documentation for `UND`](https://docs.rs/icu/latest/icu/locid/struct.Locale.html#associatedconstant.UND) for more information.
-  factory ICU4XLocale.createUnd() {
+  factory ICU4XLocale.und() {
     final result = _createUndFfi();
     return ICU4XLocale._(result);
   }
@@ -7898,7 +7886,7 @@ class ICU4XLocale implements ffi.Finalizable {
   /// [`ICU4XLocale`] to `write`.
   ///
   /// See the [Rust documentation for `id`](https://docs.rs/icu/latest/icu/locid/struct.Locale.html#structfield.id) for more information.
-  String basename() {
+  String get basename {
     final writeable = _Writeable();
     final result = _basenameFfi(this._underlying, writeable._underlying);
     return result.isOk
@@ -7954,7 +7942,7 @@ class ICU4XLocale implements ffi.Finalizable {
   /// Write a string representation of [`ICU4XLocale`] language to `write`
   ///
   /// See the [Rust documentation for `id`](https://docs.rs/icu/latest/icu/locid/struct.Locale.html#structfield.id) for more information.
-  String language() {
+  String get language {
     final writeable = _Writeable();
     final result = _languageFfi(this._underlying, writeable._underlying);
     return result.isOk
@@ -7973,7 +7961,7 @@ class ICU4XLocale implements ffi.Finalizable {
   /// Set the language part of the [`ICU4XLocale`].
   ///
   /// See the [Rust documentation for `try_from_bytes`](https://docs.rs/icu/latest/icu/locid/struct.Locale.html#method.try_from_bytes) for more information.
-  void setLanguage(String bytes) {
+  void set language(String bytes) {
     final alloc = allocators.Arena();
 
     final bytesList = Utf8Encoder().convert(bytes);
@@ -8002,7 +7990,7 @@ class ICU4XLocale implements ffi.Finalizable {
   /// Write a string representation of [`ICU4XLocale`] region to `write`
   ///
   /// See the [Rust documentation for `id`](https://docs.rs/icu/latest/icu/locid/struct.Locale.html#structfield.id) for more information.
-  String region() {
+  String get region {
     final writeable = _Writeable();
     final result = _regionFfi(this._underlying, writeable._underlying);
     return result.isOk
@@ -8021,7 +8009,7 @@ class ICU4XLocale implements ffi.Finalizable {
   /// Set the region part of the [`ICU4XLocale`].
   ///
   /// See the [Rust documentation for `try_from_bytes`](https://docs.rs/icu/latest/icu/locid/struct.Locale.html#method.try_from_bytes) for more information.
-  void setRegion(String bytes) {
+  void set region(String bytes) {
     final alloc = allocators.Arena();
 
     final bytesList = Utf8Encoder().convert(bytes);
@@ -8050,7 +8038,7 @@ class ICU4XLocale implements ffi.Finalizable {
   /// Write a string representation of [`ICU4XLocale`] script to `write`
   ///
   /// See the [Rust documentation for `id`](https://docs.rs/icu/latest/icu/locid/struct.Locale.html#structfield.id) for more information.
-  String script() {
+  String get script {
     final writeable = _Writeable();
     final result = _scriptFfi(this._underlying, writeable._underlying);
     return result.isOk
@@ -8069,7 +8057,7 @@ class ICU4XLocale implements ffi.Finalizable {
   /// Set the script part of the [`ICU4XLocale`]. Pass an empty string to remove the script.
   ///
   /// See the [Rust documentation for `try_from_bytes`](https://docs.rs/icu/latest/icu/locid/struct.Locale.html#method.try_from_bytes) for more information.
-  void setScript(String bytes) {
+  void set script(String bytes) {
     final alloc = allocators.Arena();
 
     final bytesList = Utf8Encoder().convert(bytes);
@@ -8199,7 +8187,7 @@ class ICU4XLocale implements ffi.Finalizable {
   /// Deprecated
   ///
   /// Use `create_from_string("en").
-  factory ICU4XLocale.createEn() {
+  factory ICU4XLocale.en() {
     final result = _createEnFfi();
     return ICU4XLocale._(result);
   }
@@ -8211,7 +8199,7 @@ class ICU4XLocale implements ffi.Finalizable {
   /// Deprecated
   ///
   /// Use `create_from_string("bn").
-  factory ICU4XLocale.createBn() {
+  factory ICU4XLocale.bn() {
     final result = _createBnFfi();
     return ICU4XLocale._(result);
   }
@@ -8237,7 +8225,7 @@ class ICU4XLocaleCanonicalizer implements ffi.Finalizable {
   /// Create a new [`ICU4XLocaleCanonicalizer`].
   ///
   /// See the [Rust documentation for `new`](https://docs.rs/icu/latest/icu/locid_transform/struct.LocaleCanonicalizer.html#method.new) for more information.
-  factory ICU4XLocaleCanonicalizer.create(ICU4XDataProvider provider) {
+  factory ICU4XLocaleCanonicalizer(ICU4XDataProvider provider) {
     final result = _createFfi(provider._underlying);
     return result.isOk
         ? ICU4XLocaleCanonicalizer._(result.union.ok)
@@ -8253,7 +8241,7 @@ class ICU4XLocaleCanonicalizer implements ffi.Finalizable {
   /// Create a new [`ICU4XLocaleCanonicalizer`] with extended data.
   ///
   /// See the [Rust documentation for `new_with_expander`](https://docs.rs/icu/latest/icu/locid_transform/struct.LocaleCanonicalizer.html#method.new_with_expander) for more information.
-  factory ICU4XLocaleCanonicalizer.createExtended(ICU4XDataProvider provider) {
+  factory ICU4XLocaleCanonicalizer.extended(ICU4XDataProvider provider) {
     final result = _createExtendedFfi(provider._underlying);
     return result.isOk
         ? ICU4XLocaleCanonicalizer._(result.union.ok)
@@ -8312,7 +8300,7 @@ class ICU4XLocaleDirectionality implements ffi.Finalizable {
   /// Construct a new ICU4XLocaleDirectionality instance
   ///
   /// See the [Rust documentation for `new`](https://docs.rs/icu/latest/icu/locid_transform/struct.LocaleDirectionality.html#method.new) for more information.
-  factory ICU4XLocaleDirectionality.create(ICU4XDataProvider provider) {
+  factory ICU4XLocaleDirectionality(ICU4XDataProvider provider) {
     final result = _createFfi(provider._underlying);
     return result.isOk
         ? ICU4XLocaleDirectionality._(result.union.ok)
@@ -8328,7 +8316,7 @@ class ICU4XLocaleDirectionality implements ffi.Finalizable {
   /// Construct a new ICU4XLocaleDirectionality instance with a custom expander
   ///
   /// See the [Rust documentation for `new_with_expander`](https://docs.rs/icu/latest/icu/locid_transform/struct.LocaleDirectionality.html#method.new_with_expander) for more information.
-  factory ICU4XLocaleDirectionality.createWithExpander(
+  factory ICU4XLocaleDirectionality.withExpander(
       ICU4XDataProvider provider, ICU4XLocaleExpander expander) {
     final result =
         _createWithExpanderFfi(provider._underlying, expander._underlying);
@@ -8463,7 +8451,7 @@ class ICU4XLocaleExpander implements ffi.Finalizable {
   /// Create a new [`ICU4XLocaleExpander`].
   ///
   /// See the [Rust documentation for `new`](https://docs.rs/icu/latest/icu/locid_transform/struct.LocaleExpander.html#method.new) for more information.
-  factory ICU4XLocaleExpander.create(ICU4XDataProvider provider) {
+  factory ICU4XLocaleExpander(ICU4XDataProvider provider) {
     final result = _createFfi(provider._underlying);
     return result.isOk
         ? ICU4XLocaleExpander._(result.union.ok)
@@ -8479,7 +8467,7 @@ class ICU4XLocaleExpander implements ffi.Finalizable {
   /// Create a new [`ICU4XLocaleExpander`] with extended data.
   ///
   /// See the [Rust documentation for `new_extended`](https://docs.rs/icu/latest/icu/locid_transform/struct.LocaleExpander.html#method.new_extended) for more information.
-  factory ICU4XLocaleExpander.createExtended(ICU4XDataProvider provider) {
+  factory ICU4XLocaleExpander.extended(ICU4XDataProvider provider) {
     final result = _createExtendedFfi(provider._underlying);
     return result.isOk
         ? ICU4XLocaleExpander._(result.union.ok)
@@ -8598,7 +8586,7 @@ class ICU4XLocaleFallbackIterator implements ffi.Finalizable {
   /// Gets a snapshot of the current state of the locale.
   ///
   /// See the [Rust documentation for `get`](https://docs.rs/icu/latest/icu/locid_transform/fallback/struct.LocaleFallbackIterator.html#method.get) for more information.
-  ICU4XLocale get() {
+  ICU4XLocale get get {
     final result = _getFfi(this._underlying);
     return ICU4XLocale._(result);
   }
@@ -8670,7 +8658,7 @@ class ICU4XLocaleFallbacker implements ffi.Finalizable {
   /// Creates a new `ICU4XLocaleFallbacker` from a data provider.
   ///
   /// See the [Rust documentation for `new`](https://docs.rs/icu/latest/icu/locid_transform/fallback/struct.LocaleFallbacker.html#method.new) for more information.
-  factory ICU4XLocaleFallbacker.create(ICU4XDataProvider provider) {
+  factory ICU4XLocaleFallbacker(ICU4XDataProvider provider) {
     final result = _createFfi(provider._underlying);
     return result.isOk
         ? ICU4XLocaleFallbacker._(result.union.ok)
@@ -8686,7 +8674,7 @@ class ICU4XLocaleFallbacker implements ffi.Finalizable {
   /// Creates a new `ICU4XLocaleFallbacker` without data for limited functionality.
   ///
   /// See the [Rust documentation for `new_without_data`](https://docs.rs/icu/latest/icu/locid_transform/fallback/struct.LocaleFallbacker.html#method.new_without_data) for more information.
-  factory ICU4XLocaleFallbacker.createWithoutData() {
+  factory ICU4XLocaleFallbacker.withoutData() {
     final result = _createWithoutDataFfi();
     return ICU4XLocaleFallbacker._(result);
   }
@@ -8804,7 +8792,7 @@ class ICU4XMetazoneCalculator implements ffi.Finalizable {
       ffi.NativeFinalizer(_capi('ICU4XMetazoneCalculator_destroy'));
 
   /// See the [Rust documentation for `new`](https://docs.rs/icu/latest/icu/timezone/struct.MetazoneCalculator.html#method.new) for more information.
-  factory ICU4XMetazoneCalculator.create(ICU4XDataProvider provider) {
+  factory ICU4XMetazoneCalculator(ICU4XDataProvider provider) {
     final result = _createFfi(provider._underlying);
     return result.isOk
         ? ICU4XMetazoneCalculator._(result.union.ok)
@@ -8953,7 +8941,7 @@ class ICU4XPluralOperands implements ffi.Finalizable {
   /// Construct for a given string representing a number
   ///
   /// See the [Rust documentation for `from_str`](https://docs.rs/icu/latest/icu/plurals/struct.PluralOperands.html#method.from_str) for more information.
-  factory ICU4XPluralOperands.createFromString(String s) {
+  factory ICU4XPluralOperands.fromString(String s) {
     final alloc = allocators.Arena();
 
     final sList = Utf8Encoder().convert(s);
@@ -8990,7 +8978,7 @@ class ICU4XPluralRules implements ffi.Finalizable {
   /// Construct an [`ICU4XPluralRules`] for the given locale, for cardinal numbers
   ///
   /// See the [Rust documentation for `try_new_cardinal`](https://docs.rs/icu/latest/icu/plurals/struct.PluralRules.html#method.try_new_cardinal) for more information.
-  factory ICU4XPluralRules.createCardinal(
+  factory ICU4XPluralRules.cardinal(
       ICU4XDataProvider provider, ICU4XLocale locale) {
     final result = _createCardinalFfi(provider._underlying, locale._underlying);
     return result.isOk
@@ -9008,7 +8996,7 @@ class ICU4XPluralRules implements ffi.Finalizable {
   /// Construct an [`ICU4XPluralRules`] for the given locale, for ordinal numbers
   ///
   /// See the [Rust documentation for `try_new_ordinal`](https://docs.rs/icu/latest/icu/plurals/struct.PluralRules.html#method.try_new_ordinal) for more information.
-  factory ICU4XPluralRules.createOrdinal(
+  factory ICU4XPluralRules.ordinal(
       ICU4XDataProvider provider, ICU4XLocale locale) {
     final result = _createOrdinalFfi(provider._underlying, locale._underlying);
     return result.isOk
@@ -9042,7 +9030,7 @@ class ICU4XPluralRules implements ffi.Finalizable {
   /// Get all of the categories needed in the current locale
   ///
   /// See the [Rust documentation for `categories`](https://docs.rs/icu/latest/icu/plurals/struct.PluralRules.html#method.categories) for more information.
-  ICU4XPluralCategories categories() {
+  ICU4XPluralCategories get categories {
     final result = _categoriesFfi(this._underlying);
     return ICU4XPluralCategories._(result);
   }
@@ -9071,7 +9059,7 @@ class ICU4XPluralRulesWithRanges implements ffi.Finalizable {
   /// Construct an [`ICU4XPluralRulesWithRanges`] for the given locale, for cardinal numbers
   ///
   /// See the [Rust documentation for `try_new_cardinal`](https://docs.rs/icu/latest/icu/plurals/struct.PluralRulesWithRanges.html#method.try_new_cardinal) for more information.
-  factory ICU4XPluralRulesWithRanges.createCardinal(
+  factory ICU4XPluralRulesWithRanges.cardinal(
       ICU4XDataProvider provider, ICU4XLocale locale) {
     final result = _createCardinalFfi(provider._underlying, locale._underlying);
     return result.isOk
@@ -9090,7 +9078,7 @@ class ICU4XPluralRulesWithRanges implements ffi.Finalizable {
   /// Construct an [`ICU4XPluralRulesWithRanges`] for the given locale, for ordinal numbers
   ///
   /// See the [Rust documentation for `try_new_ordinal`](https://docs.rs/icu/latest/icu/plurals/struct.PluralRulesWithRanges.html#method.try_new_ordinal) for more information.
-  factory ICU4XPluralRulesWithRanges.createOrdinal(
+  factory ICU4XPluralRulesWithRanges.ordinal(
       ICU4XDataProvider provider, ICU4XLocale locale) {
     final result = _createOrdinalFfi(provider._underlying, locale._underlying);
     return result.isOk
@@ -9126,7 +9114,7 @@ class ICU4XPluralRulesWithRanges implements ffi.Finalizable {
   /// Get all of the categories needed in the current locale
   ///
   /// See the [Rust documentation for `categories`](https://docs.rs/icu/latest/icu/plurals/struct.PluralRulesWithRanges.html#method.categories) for more information.
-  ICU4XPluralCategories categories() {
+  ICU4XPluralCategories get categories {
     final result = _categoriesFfi(this._underlying);
     return ICU4XPluralCategories._(result);
   }
@@ -9467,7 +9455,7 @@ class ICU4XReorderedIndexMap implements ffi.Finalizable {
       ffi.NativeFinalizer(_capi('ICU4XReorderedIndexMap_destroy'));
 
   /// Get this as a slice/array of indices
-  Uint64List asSlice() {
+  Uint64List get asSlice {
     final result = _asSliceFfi(this._underlying);
     return result.bytes.cast<ffi.Uint64>().asTypedList(result.length);
   }
@@ -9478,7 +9466,7 @@ class ICU4XReorderedIndexMap implements ffi.Finalizable {
           .asFunction<_Slice Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
 
   /// The length of this map
-  int len() {
+  int get len {
     final result = _lenFfi(this._underlying);
     return result;
   }
@@ -9550,7 +9538,7 @@ class ICU4XScriptExtensionsSet implements ffi.Finalizable {
   /// Get the number of scripts contained in here
   ///
   /// See the [Rust documentation for `iter`](https://docs.rs/icu/latest/icu/properties/script/struct.ScriptExtensionsSet.html#method.iter) for more information.
-  int count() {
+  int get count {
     final result = _countFfi(this._underlying);
     return result;
   }
@@ -9590,7 +9578,7 @@ class ICU4XScriptWithExtensions implements ffi.Finalizable {
       ffi.NativeFinalizer(_capi('ICU4XScriptWithExtensions_destroy'));
 
   /// See the [Rust documentation for `script_with_extensions`](https://docs.rs/icu/latest/icu/properties/script/fn.script_with_extensions.html) for more information.
-  factory ICU4XScriptWithExtensions.create(ICU4XDataProvider provider) {
+  factory ICU4XScriptWithExtensions(ICU4XDataProvider provider) {
     final result = _createFfi(provider._underlying);
     return result.isOk
         ? ICU4XScriptWithExtensions._(result.union.ok)
@@ -9635,7 +9623,7 @@ class ICU4XScriptWithExtensions implements ffi.Finalizable {
   /// Borrow this object for a slightly faster variant with more operations
   ///
   /// See the [Rust documentation for `as_borrowed`](https://docs.rs/icu/latest/icu/properties/script/struct.ScriptWithExtensions.html#method.as_borrowed) for more information.
-  ICU4XScriptWithExtensionsBorrowed asBorrowed() {
+  ICU4XScriptWithExtensionsBorrowed get asBorrowed {
     final result = _asBorrowedFfi(this._underlying);
     return ICU4XScriptWithExtensionsBorrowed._(result);
   }
@@ -9851,7 +9839,7 @@ class ICU4XSentenceSegmenter implements ffi.Finalizable {
   /// Construct an [`ICU4XSentenceSegmenter`].
   ///
   /// See the [Rust documentation for `new`](https://docs.rs/icu/latest/icu/segmenter/struct.SentenceSegmenter.html#method.new) for more information.
-  factory ICU4XSentenceSegmenter.create(ICU4XDataProvider provider) {
+  factory ICU4XSentenceSegmenter(ICU4XDataProvider provider) {
     final result = _createFfi(provider._underlying);
     return result.isOk
         ? ICU4XSentenceSegmenter._(result.union.ok)
@@ -9960,7 +9948,7 @@ class ICU4XTime implements ffi.Finalizable {
   /// Creates a new [`ICU4XTime`] given field values
   ///
   /// See the [Rust documentation for `Time`](https://docs.rs/icu/latest/icu/calendar/types/struct.Time.html) for more information.
-  factory ICU4XTime.create(int hour, int minute, int second, int nanosecond) {
+  factory ICU4XTime(int hour, int minute, int second, int nanosecond) {
     final result = _createFfi(hour, minute, second, nanosecond);
     return result.isOk
         ? ICU4XTime._(result.union.ok)
@@ -9976,7 +9964,7 @@ class ICU4XTime implements ffi.Finalizable {
   /// Creates a new [`ICU4XTime`] representing midnight (00:00.000).
   ///
   /// See the [Rust documentation for `Time`](https://docs.rs/icu/latest/icu/calendar/types/struct.Time.html) for more information.
-  factory ICU4XTime.createMidnight() {
+  factory ICU4XTime.midnight() {
     final result = _createMidnightFfi();
     return result.isOk
         ? ICU4XTime._(result.union.ok)
@@ -9990,7 +9978,7 @@ class ICU4XTime implements ffi.Finalizable {
   /// Returns the hour in this time
   ///
   /// See the [Rust documentation for `hour`](https://docs.rs/icu/latest/icu/calendar/types/struct.Time.html#structfield.hour) for more information.
-  int hour() {
+  int get hour {
     final result = _hourFfi(this._underlying);
     return result;
   }
@@ -10003,7 +9991,7 @@ class ICU4XTime implements ffi.Finalizable {
   /// Returns the minute in this time
   ///
   /// See the [Rust documentation for `minute`](https://docs.rs/icu/latest/icu/calendar/types/struct.Time.html#structfield.minute) for more information.
-  int minute() {
+  int get minute {
     final result = _minuteFfi(this._underlying);
     return result;
   }
@@ -10016,7 +10004,7 @@ class ICU4XTime implements ffi.Finalizable {
   /// Returns the second in this time
   ///
   /// See the [Rust documentation for `second`](https://docs.rs/icu/latest/icu/calendar/types/struct.Time.html#structfield.second) for more information.
-  int second() {
+  int get second {
     final result = _secondFfi(this._underlying);
     return result;
   }
@@ -10029,7 +10017,7 @@ class ICU4XTime implements ffi.Finalizable {
   /// Returns the nanosecond in this time
   ///
   /// See the [Rust documentation for `nanosecond`](https://docs.rs/icu/latest/icu/calendar/types/struct.Time.html#structfield.nanosecond) for more information.
-  int nanosecond() {
+  int get nanosecond {
     final result = _nanosecondFfi(this._underlying);
     return result;
   }
@@ -10056,7 +10044,7 @@ class ICU4XTimeFormatter implements ffi.Finalizable {
   /// Creates a new [`ICU4XTimeFormatter`] from locale data.
   ///
   /// See the [Rust documentation for `try_new_with_length`](https://docs.rs/icu/latest/icu/datetime/struct.TimeFormatter.html#method.try_new_with_length) for more information.
-  factory ICU4XTimeFormatter.createWithLength(
+  factory ICU4XTimeFormatter.withLength(
       ICU4XDataProvider provider, ICU4XLocale locale, ICU4XTimeLength length) {
     final result = _createWithLengthFfi(
         provider._underlying, locale._underlying, length._id);
@@ -10174,7 +10162,7 @@ class ICU4XTimeZoneFormatter implements ffi.Finalizable {
   /// See the [Rust documentation for `try_new`](https://docs.rs/icu/latest/icu/datetime/time_zone/struct.TimeZoneFormatter.html#method.try_new) for more information.
   ///
   /// Additional information: [1](https://docs.rs/icu/latest/icu/datetime/time_zone/enum.FallbackFormat.html)
-  factory ICU4XTimeZoneFormatter.createWithLocalizedGmtFallback(
+  factory ICU4XTimeZoneFormatter.withLocalizedGmtFallback(
       ICU4XDataProvider provider, ICU4XLocale locale) {
     final result = _createWithLocalizedGmtFallbackFfi(
         provider._underlying, locale._underlying);
@@ -10198,10 +10186,8 @@ class ICU4XTimeZoneFormatter implements ffi.Finalizable {
   /// See the [Rust documentation for `try_new`](https://docs.rs/icu/latest/icu/datetime/time_zone/struct.TimeZoneFormatter.html#method.try_new) for more information.
   ///
   /// Additional information: [1](https://docs.rs/icu/latest/icu/datetime/time_zone/enum.FallbackFormat.html)
-  factory ICU4XTimeZoneFormatter.createWithIso8601Fallback(
-      ICU4XDataProvider provider,
-      ICU4XLocale locale,
-      ICU4XIsoTimeZoneOptions options) {
+  factory ICU4XTimeZoneFormatter.withIso8601Fallback(ICU4XDataProvider provider,
+      ICU4XLocale locale, ICU4XIsoTimeZoneOptions options) {
     final result = _createWithIso8601FallbackFfi(
         provider._underlying, locale._underlying, options._underlying);
     return result.isOk
@@ -10393,7 +10379,7 @@ class ICU4XTitlecaseMapper implements ffi.Finalizable {
   /// Construct a new `ICU4XTitlecaseMapper` instance
   ///
   /// See the [Rust documentation for `new`](https://docs.rs/icu/latest/icu/casemap/struct.TitlecaseMapper.html#method.new) for more information.
-  factory ICU4XTitlecaseMapper.create(ICU4XDataProvider provider) {
+  factory ICU4XTitlecaseMapper(ICU4XDataProvider provider) {
     final result = _createFfi(provider._underlying);
     return result.isOk
         ? ICU4XTitlecaseMapper._(result.union.ok)
@@ -10487,7 +10473,7 @@ class ICU4XTitlecaseOptionsV1 {
   }
 
   /// See the [Rust documentation for `default`](https://docs.rs/icu/latest/icu/casemap/titlecase/struct.TitlecaseOptions.html#method.default) for more information.
-  factory ICU4XTitlecaseOptionsV1.defaultOptions() {
+  factory ICU4XTitlecaseOptionsV1.options() {
     final result = _defaultOptionsFfi();
     return ICU4XTitlecaseOptionsV1._(result);
   }
@@ -10712,8 +10698,7 @@ class ICU4XWeekCalculator implements ffi.Finalizable {
   /// Creates a new [`ICU4XWeekCalculator`] from locale data.
   ///
   /// See the [Rust documentation for `try_new`](https://docs.rs/icu/latest/icu/calendar/week/struct.WeekCalculator.html#method.try_new) for more information.
-  factory ICU4XWeekCalculator.create(
-      ICU4XDataProvider provider, ICU4XLocale locale) {
+  factory ICU4XWeekCalculator(ICU4XDataProvider provider, ICU4XLocale locale) {
     final result = _createFfi(provider._underlying, locale._underlying);
     return result.isOk
         ? ICU4XWeekCalculator._(result.union.ok)
@@ -10728,7 +10713,7 @@ class ICU4XWeekCalculator implements ffi.Finalizable {
               ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
 
   /// Additional information: [1](https://docs.rs/icu/latest/icu/calendar/week/struct.WeekCalculator.html#structfield.first_weekday), [2](https://docs.rs/icu/latest/icu/calendar/week/struct.WeekCalculator.html#structfield.min_week_days)
-  factory ICU4XWeekCalculator.createFromFirstDayOfWeekAndMinWeekDays(
+  factory ICU4XWeekCalculator.fromFirstDayOfWeekAndMinWeekDays(
       ICU4XIsoWeekday firstWeekday, int minWeekDays) {
     final result = _createFromFirstDayOfWeekAndMinWeekDaysFfi(
         firstWeekday._id, minWeekDays);
@@ -10743,7 +10728,7 @@ class ICU4XWeekCalculator implements ffi.Finalizable {
   /// Returns the weekday that starts the week for this object's locale
   ///
   /// See the [Rust documentation for `first_weekday`](https://docs.rs/icu/latest/icu/calendar/week/struct.WeekCalculator.html#structfield.first_weekday) for more information.
-  ICU4XIsoWeekday firstWeekday() {
+  ICU4XIsoWeekday get firstWeekday {
     final result = _firstWeekdayFfi(this._underlying);
     return ICU4XIsoWeekday._(result);
   }
@@ -10757,7 +10742,7 @@ class ICU4XWeekCalculator implements ffi.Finalizable {
   /// considered part of that year
   ///
   /// See the [Rust documentation for `min_week_days`](https://docs.rs/icu/latest/icu/calendar/week/struct.WeekCalculator.html#structfield.min_week_days) for more information.
-  int minWeekDays() {
+  int get minWeekDays {
     final result = _minWeekDaysFfi(this._underlying);
     return result;
   }
@@ -10843,7 +10828,7 @@ class ICU4XWordBreakIteratorLatin1 implements ffi.Finalizable {
   /// Return the status value of break boundary.
   ///
   /// See the [Rust documentation for `word_type`](https://docs.rs/icu/latest/icu/segmenter/struct.WordBreakIterator.html#method.word_type) for more information.
-  ICU4XSegmenterWordType wordType() {
+  ICU4XSegmenterWordType get wordType {
     final result = _wordTypeFfi(this._underlying);
     return ICU4XSegmenterWordType._(result);
   }
@@ -10856,7 +10841,7 @@ class ICU4XWordBreakIteratorLatin1 implements ffi.Finalizable {
   /// Return true when break boundary is word-like such as letter/number/CJK
   ///
   /// See the [Rust documentation for `is_word_like`](https://docs.rs/icu/latest/icu/segmenter/struct.WordBreakIterator.html#method.is_word_like) for more information.
-  bool isWordLike() {
+  bool get isWordLike {
     final result = _isWordLikeFfi(this._underlying);
     return result;
   }
@@ -10895,7 +10880,7 @@ class ICU4XWordBreakIteratorUtf16 implements ffi.Finalizable {
   /// Return the status value of break boundary.
   ///
   /// See the [Rust documentation for `word_type`](https://docs.rs/icu/latest/icu/segmenter/struct.WordBreakIterator.html#method.word_type) for more information.
-  ICU4XSegmenterWordType wordType() {
+  ICU4XSegmenterWordType get wordType {
     final result = _wordTypeFfi(this._underlying);
     return ICU4XSegmenterWordType._(result);
   }
@@ -10908,7 +10893,7 @@ class ICU4XWordBreakIteratorUtf16 implements ffi.Finalizable {
   /// Return true when break boundary is word-like such as letter/number/CJK
   ///
   /// See the [Rust documentation for `is_word_like`](https://docs.rs/icu/latest/icu/segmenter/struct.WordBreakIterator.html#method.is_word_like) for more information.
-  bool isWordLike() {
+  bool get isWordLike {
     final result = _isWordLikeFfi(this._underlying);
     return result;
   }
@@ -10947,7 +10932,7 @@ class ICU4XWordBreakIteratorUtf8 implements ffi.Finalizable {
   /// Return the status value of break boundary.
   ///
   /// See the [Rust documentation for `word_type`](https://docs.rs/icu/latest/icu/segmenter/struct.WordBreakIterator.html#method.word_type) for more information.
-  ICU4XSegmenterWordType wordType() {
+  ICU4XSegmenterWordType get wordType {
     final result = _wordTypeFfi(this._underlying);
     return ICU4XSegmenterWordType._(result);
   }
@@ -10960,7 +10945,7 @@ class ICU4XWordBreakIteratorUtf8 implements ffi.Finalizable {
   /// Return true when break boundary is word-like such as letter/number/CJK
   ///
   /// See the [Rust documentation for `is_word_like`](https://docs.rs/icu/latest/icu/segmenter/struct.WordBreakIterator.html#method.is_word_like) for more information.
-  bool isWordLike() {
+  bool get isWordLike {
     final result = _isWordLikeFfi(this._underlying);
     return result;
   }
@@ -10991,7 +10976,7 @@ class ICU4XWordSegmenter implements ffi.Finalizable {
   /// Khmer, Lao, and Thai.
   ///
   /// See the [Rust documentation for `new_auto`](https://docs.rs/icu/latest/icu/segmenter/struct.WordSegmenter.html#method.new_auto) for more information.
-  factory ICU4XWordSegmenter.createAuto(ICU4XDataProvider provider) {
+  factory ICU4XWordSegmenter.auto(ICU4XDataProvider provider) {
     final result = _createAutoFfi(provider._underlying);
     return result.isOk
         ? ICU4XWordSegmenter._(result.union.ok)
@@ -11011,7 +10996,7 @@ class ICU4XWordSegmenter implements ffi.Finalizable {
   /// Japanese.
   ///
   /// See the [Rust documentation for `new_lstm`](https://docs.rs/icu/latest/icu/segmenter/struct.WordSegmenter.html#method.new_lstm) for more information.
-  factory ICU4XWordSegmenter.createLstm(ICU4XDataProvider provider) {
+  factory ICU4XWordSegmenter.lstm(ICU4XDataProvider provider) {
     final result = _createLstmFfi(provider._underlying);
     return result.isOk
         ? ICU4XWordSegmenter._(result.union.ok)
@@ -11028,7 +11013,7 @@ class ICU4XWordSegmenter implements ffi.Finalizable {
   /// Burmese, Khmer, Lao, and Thai.
   ///
   /// See the [Rust documentation for `new_dictionary`](https://docs.rs/icu/latest/icu/segmenter/struct.WordSegmenter.html#method.new_dictionary) for more information.
-  factory ICU4XWordSegmenter.createDictionary(ICU4XDataProvider provider) {
+  factory ICU4XWordSegmenter.dictionary(ICU4XDataProvider provider) {
     final result = _createDictionaryFfi(provider._underlying);
     return result.isOk
         ? ICU4XWordSegmenter._(result.union.ok)
@@ -11140,7 +11125,7 @@ class ICU4XZonedDateTimeFormatter implements ffi.Finalizable {
   /// for the time zone.
   ///
   /// See the [Rust documentation for `try_new`](https://docs.rs/icu/latest/icu/datetime/struct.ZonedDateTimeFormatter.html#method.try_new) for more information.
-  factory ICU4XZonedDateTimeFormatter.createWithLengths(
+  factory ICU4XZonedDateTimeFormatter.withLengths(
       ICU4XDataProvider provider,
       ICU4XLocale locale,
       ICU4XDateLength dateLength,
@@ -11166,7 +11151,7 @@ class ICU4XZonedDateTimeFormatter implements ffi.Finalizable {
   /// fallback for the time zone with the given configurations.
   ///
   /// See the [Rust documentation for `try_new`](https://docs.rs/icu/latest/icu/datetime/struct.ZonedDateTimeFormatter.html#method.try_new) for more information.
-  factory ICU4XZonedDateTimeFormatter.createWithLengthsAndIso8601TimeZoneFallback(
+  factory ICU4XZonedDateTimeFormatter.withLengthsAndIso8601TimeZoneFallback(
       ICU4XDataProvider provider,
       ICU4XLocale locale,
       ICU4XDateLength dateLength,
