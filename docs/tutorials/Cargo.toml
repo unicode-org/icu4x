@@ -9,6 +9,7 @@ members = [
     "crates/baked",
     "crates/buffer",
     "crates/custom_compiled",
+    "crates/datetime_cli",
     "crates/default",
     "crates/experimental",
     "crates/sync",

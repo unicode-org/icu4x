@@ -92,3 +92,7 @@ The build.rs approach has several downsides and should only be used if Cargo is 
 * `build.rs` output is not written to the console so it will appear that the build is hanging
 
 [« Fully Working Example »](./crates/baked)
+
+## Other Project Examples
+
+- [CLI application for formatting the current datetime](./crates/datetime_cli)
