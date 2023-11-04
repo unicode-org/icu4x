@@ -129,7 +129,7 @@ jobs:
         
     - name: Build JS docs
       run: |
-        cd ffi/capi/js/docs
+        cd ffi/capi/js/package/docs
         make html
         cd ../../../..
         
@@ -142,7 +142,7 @@ jobs:
     - name: Upload docs to Google Cloud Storage
       run: |
         gsutil -m cp -r ffi/capi/cpp/docs/build/html gs://${{ env.GCP_PR_BUCKET_ID }}/gha/${{ github.sha }}/ffi/cpp
-        gsutil -m cp -r ffi/capi/js/docs/build/html gs://${{ env.GCP_PR_BUCKET_ID }}/gha/${{ github.sha }}/ffi/js
+        gsutil -m cp -r ffi/capi/js/package/docs/build/html gs://${{ env.GCP_PR_BUCKET_ID }}/gha/${{ github.sha }}/ffi/js
         gsutil -m cp -r ffi/capi/dart/package/doc/api gs://${{ env.GCP_PR_BUCKET_ID }}/gha/${{ github.sha }}/ffi/dart
     - name: "⭐⭐⭐ Links to Uploaded Artifacts ⭐⭐⭐"
       run: |
