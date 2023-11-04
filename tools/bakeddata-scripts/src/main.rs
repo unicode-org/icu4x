@@ -8,27 +8,46 @@ use icu_datagen::baked_exporter::*;
 use icu_datagen::prelude::*;
 use std::path::Path;
 
-const COMPONENTS: &[(&str, &[DataKey])] = &[
-    ("calendar", icu::calendar::provider::KEYS),
-    ("casemap", icu::casemap::provider::KEYS),
-    ("collator", icu::collator::provider::KEYS),
-    ("compactdecimal", icu_compactdecimal::provider::KEYS),
-    ("datetime", icu::datetime::provider::KEYS),
-    ("decimal", icu::decimal::provider::KEYS),
-    ("displaynames", icu::displaynames::provider::KEYS),
-    ("list", icu::list::provider::KEYS),
-    ("locid_transform", icu::locid_transform::provider::KEYS),
-    ("normalizer", icu::normalizer::provider::KEYS),
-    ("plurals", icu::plurals::provider::KEYS),
-    ("properties", icu::properties::provider::KEYS),
-    ("relativetime", icu::relativetime::provider::KEYS),
-    ("segmenter", icu::segmenter::provider::KEYS),
+const REPO_VERSION: &str = env!("CARGO_PKG_VERSION");
+
+const COMPONENTS: &[(&str, &[DataKey], &str)] = &[
+    ("calendar", icu::calendar::provider::KEYS, REPO_VERSION),
+    ("casemap", icu::casemap::provider::KEYS, REPO_VERSION),
+    ("collator", icu::collator::provider::KEYS, "1.3.3"),
+    (
+        "compactdecimal",
+        icu_compactdecimal::provider::KEYS,
+        "1.3.4",
+    ),
+    ("datetime", icu::datetime::provider::KEYS, "1.3.4"),
+    ("decimal", icu::decimal::provider::KEYS, "1.3.4"),
+    ("displaynames", icu::displaynames::provider::KEYS, "1.3.4"),
+    ("list", icu::list::provider::KEYS, REPO_VERSION),
+    (
+        "locid_transform",
+        icu::locid_transform::provider::KEYS,
+        REPO_VERSION,
+    ),
+    ("normalizer", icu::normalizer::provider::KEYS, REPO_VERSION),
+    ("plurals", icu::plurals::provider::KEYS, REPO_VERSION),
+    ("properties", icu::properties::provider::KEYS, "1.3.4"),
+    (
+        "relativetime",
+        icu::relativetime::provider::KEYS,
+        REPO_VERSION,
+    ),
+    ("segmenter", icu::segmenter::provider::KEYS, REPO_VERSION),
     (
         "singlenumberformatter",
         icu_singlenumberformatter::provider::KEYS,
+        REPO_VERSION,
     ),
-    ("timezone", icu::timezone::provider::KEYS),
-    ("unitsconversion", icu_unitsconversion::provider::KEYS),
+    ("timezone", icu::timezone::provider::KEYS, REPO_VERSION),
+    (
+        "unitsconversion",
+        icu_unitsconversion::provider::KEYS,
+        REPO_VERSION,
+    ),
 ];
 
 fn main() {
@@ -43,16 +62,18 @@ fn main() {
     let components = if args.len() == 1 {
         COMPONENTS
             .iter()
-            .map(|(k, v)| (k.to_string(), *v))
+            .map(|(krate, keys, version)| (krate.to_string(), *keys, *version))
             .collect::<Vec<_>>()
     } else {
-        let map = std::collections::HashMap::<&str, &'static [DataKey]>::from_iter(
-            COMPONENTS.iter().copied(),
+        let map = std::collections::HashMap::<&str, (&'static [DataKey], &'static str)>::from_iter(
+            COMPONENTS
+                .iter()
+                .map(|(krate, keys, version)| (*krate, (*keys, *version))),
         );
         args.skip(1)
-            .filter_map(|arg| {
-                map.get(arg.strip_suffix('/').unwrap_or(arg.as_str()))
-                    .map(|k| (arg, *k))
+            .filter_map(|krate| {
+                map.get(krate.as_str())
+                    .map(|(keys, version)| (krate, *keys, *version))
             })
             .collect()
     };
@@ -78,7 +99,7 @@ fn main() {
 
     let template = Path::new("provider/baked/_template_");
 
-    for (component, keys) in &components {
+    for (component, keys, version) in &components {
         let path = Path::new("provider/baked").join(component);
 
         let _ = std::fs::remove_dir_all(&path);
@@ -96,7 +117,8 @@ fn main() {
                 path.join(file),
                 &std::fs::read_to_string(template.join(file))
                     .unwrap()
-                    .replace("_component_", component),
+                    .replace("_component_", component)
+                    .replace("_version_", version),
             )
             .unwrap();
         }
