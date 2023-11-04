@@ -349,8 +349,7 @@ impl FixedDecimal {
         }
     }
 
-    /// Returns the relative ordering of the digits at the right
-    /// of `magnitude` with respect to 5.
+    /// Returns the relative ordering of the digits after `magnitude` with respect to 5.
     fn half_at_next_magnitude(&self, magnitude: i16) -> Ordering {
         match self.digit_at_next_position(magnitude).cmp(&5) {
             // If the next digit is equal to 5, we can know if we're at exactly 5
@@ -368,13 +367,79 @@ impl FixedDecimal {
                     Ordering::Equal
                 }
                 Ordering::Less => {
-                    debug_assert!(false, "unreachable, `magnitude - 1` should not be zero");
+                    debug_assert!(false, "digit `magnitude - 1` should not be zero");
                     Ordering::Less
                 }
             },
             // If the next digit is either greater or less than 5,
             // we know that the digits cannot sum to exactly 5.
             ord => ord,
+        }
+    }
+
+    /// Returns the relative ordering of the digits from `magnitude` onwards
+    /// with respect to the half increment of `increment`.
+    fn half_increment_at_magnitude(
+        &self,
+        magnitude: i16,
+        increment: RoundingIncrement,
+    ) -> Ordering {
+        match increment {
+            RoundingIncrement::MultiplesOf1 => self.half_at_next_magnitude(magnitude),
+            RoundingIncrement::MultiplesOf2 => {
+                let current_digit = self.digit_at(magnitude);
+
+                // Equivalent to "if current_digit is odd".
+                if current_digit & 0x01 == 1 {
+                    match magnitude.cmp(&self.nonzero_magnitude_end()) {
+                        Ordering::Greater => {
+                            // `magnitude` has non-zero digits at its right,
+                            // meaning the number overall must be greater than
+                            // the half increment.
+                            Ordering::Greater
+                        }
+                        Ordering::Equal => {
+                            // `magnitude` is the last digit of the number,
+                            // meaning the number is exactly at a half increment.
+                            Ordering::Equal
+                        }
+                        Ordering::Less => {
+                            debug_assert!(false, "digit `magnitude` should not be zero");
+                            Ordering::Less
+                        }
+                    }
+                } else {
+                    // Even numbers are always below the half increment.
+                    Ordering::Less
+                }
+            }
+            RoundingIncrement::MultiplesOf5 => {
+                let current_digit = self.digit_at(magnitude);
+                match (current_digit % 5).cmp(&2) {
+                    Ordering::Equal => {
+                        // Need to know if the number exceeds 2.5.
+                        self.half_at_next_magnitude(magnitude)
+                    }
+                    // If the next digit is either greater or less than the half increment,
+                    // we know that the digits cannot sum to exactly it.
+                    ord => ord,
+                }
+            }
+            RoundingIncrement::MultiplesOf25 => {
+                let current_digit = self.digit_at(magnitude);
+                let prev_digit = self.digit_at_previous_position(magnitude);
+                let number = prev_digit * 10 + current_digit;
+
+                match (number % 25).cmp(&12) {
+                    Ordering::Equal => {
+                        // Need to know if the number exceeds 12.5.
+                        self.half_at_next_magnitude(magnitude)
+                    }
+                    // If the next digit is either greater or less than the half increment,
+                    // we know that the digits cannot sum to exactly it.
+                    ord => ord,
+                }
+            }
         }
     }
 
@@ -1438,47 +1503,10 @@ impl FixedDecimal {
     /// assert_eq!("9.98", dec.to_string());
     /// ```
     pub fn half_trunc_to_increment(&mut self, position: i16, increment: RoundingIncrement) {
-        let should_expand = match increment {
-            RoundingIncrement::MultiplesOf1 => {
-                self.half_at_next_magnitude(position) == Ordering::Greater
-            }
-            RoundingIncrement::MultiplesOf2 => {
-                let current_digit = self.digit_at(position);
-
-                // Equivalent to "if current_digit is odd".
-                if current_digit & 0x01 == 1 {
-                    self.nonzero_magnitude_end() < position
-                } else {
-                    // Even numbers are always below the threshold to expand.
-                    false
-                }
-            }
-            RoundingIncrement::MultiplesOf5 => {
-                let current_digit = self.digit_at(position);
-                match (current_digit % 5).cmp(&2) {
-                    Ordering::Less => false,
-                    Ordering::Greater => true,
-                    Ordering::Equal => {
-                        // Need to know if the number exceeds 2.5.
-                        self.half_at_next_magnitude(position) == Ordering::Greater
-                    }
-                }
-            }
-            RoundingIncrement::MultiplesOf25 => {
-                let current_digit = self.digit_at(position);
-                let prev_digit = self.digit_at_previous_position(position);
-                let number = prev_digit * 10 + current_digit;
-
-                match (number % 25).cmp(&12) {
-                    Ordering::Less => false,
-                    Ordering::Greater => true,
-                    Ordering::Equal => {
-                        // Need to know if the number exceeds 12.5.
-                        self.half_at_next_magnitude(position) == Ordering::Greater
-                    }
-                }
-            }
-        };
+        // Only expand if the rounding position is strictly greater than the half increment.
+        // At the half increment, `half_trunc` always truncates.
+        let should_expand =
+            self.half_increment_at_magnitude(position, increment) == Ordering::Greater;
 
         if should_expand {
             self.expand_to_increment(position, increment);
@@ -2050,33 +2078,9 @@ impl FixedDecimal {
     /// assert_eq!("10.00", dec.to_string());
     /// ```
     pub fn half_expand_to_increment(&mut self, position: i16, increment: RoundingIncrement) {
-        let should_trunc = match increment {
-            RoundingIncrement::MultiplesOf1 => {
-                self.half_at_next_magnitude(position) == Ordering::Less
-            }
-            RoundingIncrement::MultiplesOf2 => self.digit_at(position) & 0x01 == 0,
-            RoundingIncrement::MultiplesOf5 => {
-                // Need to know if the number is greater or equal than 2.5.
-                let current_digit = self.digit_at(position);
-                match (current_digit % 5).cmp(&2) {
-                    Ordering::Less => true,
-                    Ordering::Greater => false,
-                    Ordering::Equal => self.half_at_next_magnitude(position) == Ordering::Less,
-                }
-            }
-            RoundingIncrement::MultiplesOf25 => {
-                let current_digit = self.digit_at(position);
-                let prev_digit = self.digit_at_previous_position(position);
-                let number = prev_digit * 10 + current_digit;
-
-                // Need to know if the number is greater or equal than 12.5.
-                match (number % 25).cmp(&12) {
-                    Ordering::Less => true,
-                    Ordering::Greater => false,
-                    Ordering::Equal => self.half_at_next_magnitude(position) == Ordering::Less,
-                }
-            }
-        };
+        // Only truncate if the rounding position is strictly less than the half increment.
+        // At the half increment, `half_expand` always expands.
+        let should_trunc = self.half_increment_at_magnitude(position, increment) == Ordering::Less;
 
         if should_trunc {
             self.trunc_to_increment(position, increment);
@@ -2729,66 +2733,45 @@ impl FixedDecimal {
     /// assert_eq!("10.00", dec.to_string());
     /// ```
     pub fn half_even_to_increment(&mut self, position: i16, increment: RoundingIncrement) {
-        let should_expand = match increment {
-            RoundingIncrement::MultiplesOf1 => match self.half_at_next_magnitude(position) {
-                Ordering::Less => false,
-                Ordering::Greater => true,
-                // Expand if odd, truncate if even.
-                Ordering::Equal => self.digit_at(position) & 0x01 == 1,
+        let should_expand = match self.half_increment_at_magnitude(position, increment) {
+            Ordering::Greater => true,
+            Ordering::Less => false,
+            Ordering::Equal => match increment {
+                RoundingIncrement::MultiplesOf1 => {
+                    // Expand if odd, truncate if even.
+                    self.digit_at(position) & 0x01 == 1
+                }
+                RoundingIncrement::MultiplesOf2 => {
+                    let current_digit = self.digit_at(position);
+                    let previous_digit = self.digit_at_previous_position(position);
+                    let full = previous_digit * 10 + current_digit;
+
+                    // This essentially expands to the "even" increments,
+                    // or the increments that are in the even places on the
+                    // rounding range: [0, 4, 8, 12, 16, 20, ...].
+                    // Equivalent to `(full / 2) is odd`.
+                    //
+                    // Examples:
+                    // - 37 should truncate, since 37 % 20 = 17, which truncates to 16.
+                    //   37 / 2 = 18, which is even.
+                    // - 83 should expand, since 83 % 20 = 3, which expands to 4.
+                    //   83 / 2 = 41, which is odd.
+                    (full >> 1) & 0x01 == 1
+                }
+                RoundingIncrement::MultiplesOf5 => {
+                    // Expand 7.5 to 10 and truncate 2.5 to 0.
+                    self.digit_at(position) == 7
+                }
+                RoundingIncrement::MultiplesOf25 => {
+                    let current_digit = self.digit_at(position);
+                    let prev_digit = self.digit_at_previous_position(position);
+                    let full_number = prev_digit * 10 + current_digit;
+
+                    // Expand `37.5` to 50 and `87.5` to 100.
+                    // Truncate `12.5` to 0 and `62.5` to 50.
+                    full_number == 37 || full_number == 87
+                }
             },
-            RoundingIncrement::MultiplesOf2 => {
-                let current_digit = self.digit_at(position);
-
-                // Equivalent to "if current_digit is odd".
-                if (current_digit & 0x01) == 1 {
-                    if self.nonzero_magnitude_end() < position {
-                        true
-                    } else {
-                        let previous_digit = self.digit_at_previous_position(position);
-                        let full = previous_digit * 10 + current_digit;
-                        // This essentially expands to the "even" increments,
-                        // or the increments that are in the even places on the
-                        // rounding range: [0, 4, 8, 12, 16, 20].
-                        // Equivalent to `(current_digit / 2) is odd`.
-                        (full >> 1) & 0x01 == 1
-                    }
-                } else {
-                    // Even numbers are always below the threshold to expand.
-                    false
-                }
-            }
-            RoundingIncrement::MultiplesOf5 => {
-                let current_digit = self.digit_at(position);
-                match (current_digit % 5).cmp(&2) {
-                    Ordering::Less => false,
-                    Ordering::Greater => true,
-                    // Need to know if the number exceeds 2.5.
-                    Ordering::Equal => match self.half_at_next_magnitude(position) {
-                        Ordering::Less => false,
-                        Ordering::Greater => true,
-                        // Expand 7.5 to 10 and truncate 2.5 to 0.
-                        Ordering::Equal => current_digit == 7,
-                    },
-                }
-            }
-            RoundingIncrement::MultiplesOf25 => {
-                let current_digit = self.digit_at(position);
-                let prev_digit = self.digit_at_previous_position(position);
-                let full_number = prev_digit * 10 + current_digit;
-
-                match (full_number % 25).cmp(&12) {
-                    Ordering::Less => false,
-                    Ordering::Greater => true,
-                    // Need to know if the number exceeds 12.5.
-                    Ordering::Equal => match self.half_at_next_magnitude(position) {
-                        Ordering::Less => false,
-                        Ordering::Greater => true,
-                        // Expand `37.5` to 50 and `87.5` to 100.
-                        // Truncate `12.5` to 0 and `62.5` to 50.
-                        Ordering::Equal => full_number == 37 || full_number == 87,
-                    },
-                }
-            }
         };
 
         if should_expand {
