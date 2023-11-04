@@ -17,5 +17,5 @@ We hope to fill in these docs over time with more examples.
  [discussions forum]: https://github.com/unicode-org/icu4x/discussions
  [Diplomat]: https://github.com/rust-diplomat/diplomat
  [`ffi/capi/js/package`]: https://github.com/unicode-org/icu4x/tree/main/ffi/capi/js/package
- [`ffi/capi/js/docs`]: https://github.com/unicode-org/icu4x/tree/main/ffi/capi/js/docs
+ [`ffi/capi/js/package/docs`]: https://github.com/unicode-org/icu4x/tree/main/ffi/capi/js/package/docs
  [`ffi/capi/js/examples/wasm-demo`]: https://github.com/unicode-org/icu4x/tree/main/ffi/capi/js/examples/wasm-demo
