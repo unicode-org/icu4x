@@ -6,6 +6,7 @@
 name = "icu__component__data"
 description = "Data for the icu__component_ crate"
 license-file = "LICENSE"
+version = "_version_"
 
 authors.workspace = true
 categories.workspace = true
@@ -14,4 +15,3 @@ homepage.workspace = true
 include.workspace = true
 repository.workspace = true
 rust-version.workspace = true
-version.workspace = true
