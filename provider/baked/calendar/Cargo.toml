@@ -6,6 +6,7 @@
 name = "icu_calendar_data"
 description = "Data for the icu_calendar crate"
 license-file = "LICENSE"
+version = "1.3.2"
 
 authors.workspace = true
 categories.workspace = true
@@ -14,4 +15,3 @@ homepage.workspace = true
 include.workspace = true
 repository.workspace = true
 rust-version.workspace = true
-version.workspace = true
