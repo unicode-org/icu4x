@@ -10,8 +10,6 @@
 use icu::calendar::DateTime;
 use icu::datetime::options::length;
 use icu::datetime::DateFormatter;
-use icu::datetime::DateTimeFormatter;
-use icu::datetime::TimeFormatter;
 use icu::locid::Locale;
 
 fn main() {
@@ -21,39 +19,30 @@ fn main() {
     std::io::Write::flush(&mut std::io::stdout()).unwrap();
     std::io::stdin().read_line(&mut locale_str).unwrap();
 
-    let parsed_locale: Locale = locale_str.trim().parse().expect("locale should be valid");
+    let locale = match locale_str.trim().parse::<Locale>() {
+        Ok(locale) => {
+            println!("You entered: {locale}");
+            locale
+        }
+        Err(e) => {
+            panic!("Error parsing locale! {e}");
+        }
+    };
+
     println!();
-    println!("OUTPUT:");
 
     // Get the datetime for formatting:
     let icu4x_datetime = get_current_datetime();
 
     // Create and use an ICU4X date formatter:
     let date_formatter =
-        DateFormatter::try_new_with_length(&(&parsed_locale).into(), length::Date::Medium)
+        DateFormatter::try_new_with_length(&(&locale).into(), length::Date::Medium)
             .expect("should have data for specified locale");
     println!(
         "Date: {}",
         date_formatter
             .format(&icu4x_datetime.to_any())
             .expect("date should format successfully")
-    );
-
-    // Create and use an ICU4X time formatter:
-    let time_formatter =
-        TimeFormatter::try_new_with_length(&(&parsed_locale).into(), length::Time::Medium)
-            .expect("should have data for specified locale");
-    println!("Time: {}", time_formatter.format(&icu4x_datetime.to_any()));
-
-    // Create and use an ICU4X datetime formatter:
-    let datetime_formatter =
-        DateTimeFormatter::try_from_date_and_time(date_formatter, time_formatter)
-            .expect("date and time formatters should merge successfully");
-    println!(
-        "DateTime: {}",
-        datetime_formatter
-            .format(&icu4x_datetime.to_any())
-            .expect("datetime should format successfully")
     );
 }
 
