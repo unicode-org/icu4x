@@ -175,6 +175,8 @@ println!(
 );
 ```
 
+Try this in several locales, like `en` (English), `en-GB` (British English), and `th` (Thai). Observe how differently dates are represented in locales around the world! You can explicitly specify arbitrary calendar systems using the `u-ca` Unicode extension keyword in the locale. Try `en-u-ca-hebrew`!
+
 ### JavaScript Part 3
 
 In JavaScript, we will create a datetime input field.
@@ -214,6 +216,8 @@ let dateFormatter = ICU4XDateFormatter.create_with_length(
 textResult = dateFormatter.format_iso_date(isoDate);
 ```
 
+Try this in several locales, like `en` (English), `en-GB` (British English), and `th` (Thai). Observe how differently dates are represented in locales around the world! You can explicitly specify arbitrary calendar systems using the `u-ca` Unicode extension keyword in the locale. Try `en-u-ca-hebrew`!
+
 ## 4. Formatting date and time
 
 Now we would also like to format the current time.
@@ -239,13 +243,3 @@ Hint: You can create a `Date` from `dateStr` and `timeStr` with
 ```javascript
 let dateObj = dateStr && timeStr ? new Date(dateStr + " " + timeStr) : new Date();
 ```
-
-## 5. Formatting in a different calendar system
-
-There are two ways to format in different calendar systems.
-
-The first is to use the `u-ca` Unicode extension keyword in the locale. If the date is provided in the ISO calendar, ICU4X will automatically convert it into the correct calendar system as specified in the locale. For example, try formatting with the locale `en-u-ca-hebrew` and see what happens!
-
-Note that some locales use a calendar other than Gregorian as their default. For example, try formatting with the Thai (`th`) locale!
-
-The second is to use the API to explicitly opt to format in a specific calendar. By specifying the calendar system in the API, ICU4X will not include code and data required for the other calendar systems, resulting in a smaller binary size. This is currently possible in Rust for arbitrary calendar systems and in JavaScript for the Gregorian calendar system. In Rust, try [`TypedDateTimeFormatter`](https://docs.rs/icu/latest/icu/datetime/struct.TypedDateTimeFormatter.html); in JavaScript, try [`ICU4XGregorianDateFormatter`](https://unicode-org.github.io/icu4x/docs/ffi/js/datetime_formatter_ffi.html#ICU4XGregorianDateFormatter).
