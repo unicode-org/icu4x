@@ -224,20 +224,28 @@ Use the API documentation for [`icu::calendar::DateTime`](https://docs.rs/icu/la
 
 Hint: You can use `Default::default()` for the `DateTimeFormatterOptions` argument.
 
-### JavaScript Part
+### JavaScript Part 4
 
 Use the API documentation for [`ICU4XDateTime`](https://unicode-org.github.io/icu4x/docs/ffi/js/datetime_ffi.html) and [`ICU4XDateTimeFormatter`](https://unicode-org.github.io/icu4x/docs/ffi/js/datetime_formatter_ffi.html) to expand your app to format both a date and a time.
 
 Hint: You can create an HTML time picker with
+
 ```html
 <input type="time" id="timeinput" value="10:10"/>
 ```
 
 Hint: You can create a `Date` from `dateStr` and `timeStr` with
+
 ```javascript
 let dateObj = dateStr && timeStr ? new Date(dateStr + " " + timeStr) : new Date();
 ```
 
 ## 5. Formatting in a different calendar system
 
-So far we have used the ISO calendar. You can now try converting the date to a different calendar system and formatting that. Again, the API docs should put you on the correct path.
+There are two ways to format in different calendar systems.
+
+The first is to use the `u-ca` Unicode extension keyword in the locale. If the date is provided in the ISO calendar, ICU4X will automatically convert it into the correct calendar system as specified in the locale. For example, try formatting with the locale `en-u-ca-hebrew` and see what happens!
+
+Note that some locales use a calendar other than Gregorian as their default. For example, try formatting with the Thai (`th`) locale!
+
+The second is to use the API to explicitly opt to format in a specific calendar. By specifying the calendar system in the API, ICU4X will not include code and data required for the other calendar systems, resulting in a smaller binary size. This is currently possible in Rust for arbitrary calendar systems and in JavaScript for the Gregorian calendar system. In Rust, try [`TypedDateTimeFormatter`](https://docs.rs/icu/latest/icu/datetime/struct.TypedDateTimeFormatter.html); in JavaScript, try [`ICU4XGregorianDateFormatter`](https://unicode-org.github.io/icu4x/docs/ffi/js/datetime_formatter_ffi.html#ICU4XGregorianDateFormatter).
