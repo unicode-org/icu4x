@@ -192,7 +192,7 @@ enum ICU4XAnyCalendarKind {
   /// See the [Rust documentation for `get_for_bcp47_value`](https://docs.rs/icu/latest/icu/calendar/enum.AnyCalendarKind.html#method.get_for_bcp47_value) for more information.
   factory ICU4XAnyCalendarKind.getForBcp47(String s) {
     final alloc = ffi2.Arena();
-    final sSlice = _SliceFfi2Utf8.fromDart(s, alloc);
+    final sSlice = _SliceFfi2Utf8._fromDart(s, alloc);
 
     final result = _getForBcp47Ffi(sSlice.bytes, sSlice.length);
     alloc.releaseAll();
@@ -258,7 +258,7 @@ class ICU4XBcp47ToIanaMapper implements ffi.Finalizable {
   /// See the [Rust documentation for `bcp47_to_iana`](https://docs.rs/icu/latest/icu/datetime/time_zone/struct.IanaBcp47RoundTripMapper.html#method.bcp47_to_iana) for more information.
   String get(String value) {
     final alloc = ffi2.Arena();
-    final valueSlice = _SliceFfi2Utf8.fromDart(value, alloc);
+    final valueSlice = _SliceFfi2Utf8._fromDart(value, alloc);
 
     final writeable = _Writeable();
     final result = _getFfi(_underlying, valueSlice.bytes, valueSlice.length,
@@ -320,7 +320,7 @@ class ICU4XBidi implements ffi.Finalizable {
   /// See the [Rust documentation for `new_with_data_source`](https://docs.rs/unicode_bidi/latest/unicode_bidi/struct.BidiInfo.html#method.new_with_data_source) for more information.
   ICU4XBidiInfo forText(String text, int defaultLevel) {
     final alloc = ffi2.Arena();
-    final textSlice = _SliceFfi2Utf8.fromDart(text, alloc);
+    final textSlice = _SliceFfi2Utf8._fromDart(text, alloc);
 
     final result = _forTextFfi(
         _underlying, textSlice.bytes, textSlice.length, defaultLevel);
@@ -351,7 +351,7 @@ class ICU4XBidi implements ffi.Finalizable {
   /// See the [Rust documentation for `reorder_visual`](https://docs.rs/unicode_bidi/latest/unicode_bidi/struct.BidiInfo.html#method.reorder_visual) for more information.
   ICU4XReorderedIndexMap reorderVisual(Uint8List levels) {
     final alloc = ffi2.Arena();
-    final levelsSlice = _SliceFfiUint8.fromDart(levels, alloc);
+    final levelsSlice = _SliceFfiUint8._fromDart(levels, alloc);
 
     final result =
         _reorderVisualFfi(_underlying, levelsSlice.bytes, levelsSlice.length);
@@ -881,7 +881,7 @@ class ICU4XCaseMapCloser implements ffi.Finalizable {
   /// See the [Rust documentation for `add_string_case_closure_to`](https://docs.rs/icu/latest/icu/casemap/struct.CaseMapCloser.html#method.add_string_case_closure_to) for more information.
   bool addStringCaseClosureTo(String s, ICU4XCodePointSetBuilder builder) {
     final alloc = ffi2.Arena();
-    final sSlice = _SliceFfi2Utf8.fromDart(s, alloc);
+    final sSlice = _SliceFfi2Utf8._fromDart(s, alloc);
 
     final result = _addStringCaseClosureToFfi(
         _underlying, sSlice.bytes, sSlice.length, builder._underlying);
@@ -934,7 +934,7 @@ class ICU4XCaseMapper implements ffi.Finalizable {
   /// See the [Rust documentation for `lowercase`](https://docs.rs/icu/latest/icu/casemap/struct.CaseMapper.html#method.lowercase) for more information.
   String lowercase(String s, ICU4XLocale locale) {
     final alloc = ffi2.Arena();
-    final sSlice = _SliceFfi2Utf8.fromDart(s, alloc);
+    final sSlice = _SliceFfi2Utf8._fromDart(s, alloc);
 
     final writeable = _Writeable();
     final result = _lowercaseFfi(_underlying, sSlice.bytes, sSlice.length,
@@ -966,7 +966,7 @@ class ICU4XCaseMapper implements ffi.Finalizable {
   /// See the [Rust documentation for `uppercase`](https://docs.rs/icu/latest/icu/casemap/struct.CaseMapper.html#method.uppercase) for more information.
   String uppercase(String s, ICU4XLocale locale) {
     final alloc = ffi2.Arena();
-    final sSlice = _SliceFfi2Utf8.fromDart(s, alloc);
+    final sSlice = _SliceFfi2Utf8._fromDart(s, alloc);
 
     final writeable = _Writeable();
     final result = _uppercaseFfi(_underlying, sSlice.bytes, sSlice.length,
@@ -1003,7 +1003,7 @@ class ICU4XCaseMapper implements ffi.Finalizable {
   String titlecaseSegmentWithOnlyCaseDataV1(
       String s, ICU4XLocale locale, ICU4XTitlecaseOptionsV1 options) {
     final alloc = ffi2.Arena();
-    final sSlice = _SliceFfi2Utf8.fromDart(s, alloc);
+    final sSlice = _SliceFfi2Utf8._fromDart(s, alloc);
 
     final writeable = _Writeable();
     final result = _titlecaseSegmentWithOnlyCaseDataV1Ffi(
@@ -1043,7 +1043,7 @@ class ICU4XCaseMapper implements ffi.Finalizable {
   /// See the [Rust documentation for `fold`](https://docs.rs/icu/latest/icu/casemap/struct.CaseMapper.html#method.fold) for more information.
   String fold(String s) {
     final alloc = ffi2.Arena();
-    final sSlice = _SliceFfi2Utf8.fromDart(s, alloc);
+    final sSlice = _SliceFfi2Utf8._fromDart(s, alloc);
 
     final writeable = _Writeable();
     final result = _foldFfi(
@@ -1074,7 +1074,7 @@ class ICU4XCaseMapper implements ffi.Finalizable {
   /// See the [Rust documentation for `fold_turkic`](https://docs.rs/icu/latest/icu/casemap/struct.CaseMapper.html#method.fold_turkic) for more information.
   String foldTurkic(String s) {
     final alloc = ffi2.Arena();
-    final sSlice = _SliceFfi2Utf8.fromDart(s, alloc);
+    final sSlice = _SliceFfi2Utf8._fromDart(s, alloc);
 
     final writeable = _Writeable();
     final result = _foldTurkicFfi(
@@ -2883,7 +2883,7 @@ class ICU4XCodePointSetData implements ffi.Finalizable {
   factory ICU4XCodePointSetData.loadForEcma262(
       ICU4XDataProvider provider, String propertyName) {
     final alloc = ffi2.Arena();
-    final propertyNameSlice = _SliceFfi2Utf8.fromDart(propertyName, alloc);
+    final propertyNameSlice = _SliceFfi2Utf8._fromDart(propertyName, alloc);
 
     final result = _loadForEcma262Ffi(provider._underlying,
         propertyNameSlice.bytes, propertyNameSlice.length);
@@ -2946,8 +2946,8 @@ class ICU4XCollator implements ffi.Finalizable {
   /// See the [Rust documentation for `compare_utf8`](https://docs.rs/icu/latest/icu/collator/struct.Collator.html#method.compare_utf8) for more information.
   ICU4XOrdering compare(String left, String right) {
     final alloc = ffi2.Arena();
-    final leftSlice = _SliceFfi2Utf8.fromDart(left, alloc);
-    final rightSlice = _SliceFfi2Utf8.fromDart(right, alloc);
+    final leftSlice = _SliceFfi2Utf8._fromDart(left, alloc);
+    final rightSlice = _SliceFfi2Utf8._fromDart(right, alloc);
 
     final result = _compareFfi(_underlying, leftSlice.bytes, leftSlice.length,
         rightSlice.bytes, rightSlice.length);
@@ -2975,8 +2975,8 @@ class ICU4XCollator implements ffi.Finalizable {
   /// See the [Rust documentation for `compare`](https://docs.rs/icu/latest/icu/collator/struct.Collator.html#method.compare) for more information.
   ICU4XOrdering compareValidUtf8(String left, String right) {
     final alloc = ffi2.Arena();
-    final leftSlice = _SliceFfi2Utf8.fromDart(left, alloc);
-    final rightSlice = _SliceFfi2Utf8.fromDart(right, alloc);
+    final leftSlice = _SliceFfi2Utf8._fromDart(left, alloc);
+    final rightSlice = _SliceFfi2Utf8._fromDart(right, alloc);
 
     final result = _compareValidUtf8Ffi(_underlying, leftSlice.bytes,
         leftSlice.length, rightSlice.bytes, rightSlice.length);
@@ -3002,8 +3002,8 @@ class ICU4XCollator implements ffi.Finalizable {
   /// See the [Rust documentation for `compare_utf16`](https://docs.rs/icu/latest/icu/collator/struct.Collator.html#method.compare_utf16) for more information.
   ICU4XOrdering compareUtf16(Uint16List left, Uint16List right) {
     final alloc = ffi2.Arena();
-    final leftSlice = _SliceFfiUint16.fromDart(left, alloc);
-    final rightSlice = _SliceFfiUint16.fromDart(right, alloc);
+    final leftSlice = _SliceFfiUint16._fromDart(left, alloc);
+    final rightSlice = _SliceFfiUint16._fromDart(right, alloc);
 
     final result = _compareUtf16Ffi(_underlying, leftSlice.bytes,
         leftSlice.length, rightSlice.bytes, rightSlice.length);
@@ -3282,7 +3282,7 @@ class ICU4XComposingNormalizer implements ffi.Finalizable {
   /// See the [Rust documentation for `normalize_utf8`](https://docs.rs/icu/latest/icu/normalizer/struct.ComposingNormalizer.html#method.normalize_utf8) for more information.
   String normalize(String s) {
     final alloc = ffi2.Arena();
-    final sSlice = _SliceFfi2Utf8.fromDart(s, alloc);
+    final sSlice = _SliceFfi2Utf8._fromDart(s, alloc);
 
     final writeable = _Writeable();
     final result = _normalizeFfi(
@@ -3315,7 +3315,7 @@ class ICU4XComposingNormalizer implements ffi.Finalizable {
   /// See the [Rust documentation for `is_normalized_utf8`](https://docs.rs/icu/latest/icu/normalizer/struct.ComposingNormalizer.html#method.is_normalized_utf8) for more information.
   bool isNormalized(String s) {
     final alloc = ffi2.Arena();
-    final sSlice = _SliceFfi2Utf8.fromDart(s, alloc);
+    final sSlice = _SliceFfi2Utf8._fromDart(s, alloc);
 
     final result = _isNormalizedFfi(_underlying, sSlice.bytes, sSlice.length);
     alloc.releaseAll();
@@ -3347,7 +3347,7 @@ class ICU4XCustomTimeZone implements ffi.Finalizable {
   /// See the [Rust documentation for `from_str`](https://docs.rs/icu/latest/icu/timezone/struct.CustomTimeZone.html#method.from_str) for more information.
   factory ICU4XCustomTimeZone.fromString(String s) {
     final alloc = ffi2.Arena();
-    final sSlice = _SliceFfi2Utf8.fromDart(s, alloc);
+    final sSlice = _SliceFfi2Utf8._fromDart(s, alloc);
 
     final result = _createFromStringFfi(sSlice.bytes, sSlice.length);
     alloc.releaseAll();
@@ -3517,7 +3517,7 @@ class ICU4XCustomTimeZone implements ffi.Finalizable {
   /// Additional information: [1](https://docs.rs/icu/latest/icu/timezone/struct.TimeZoneBcp47Id.html)
   void trySetTimeZoneId(String id) {
     final alloc = ffi2.Arena();
-    final idSlice = _SliceFfi2Utf8.fromDart(id, alloc);
+    final idSlice = _SliceFfi2Utf8._fromDart(id, alloc);
 
     final result =
         _trySetTimeZoneIdFfi(_underlying, idSlice.bytes, idSlice.length);
@@ -3545,7 +3545,7 @@ class ICU4XCustomTimeZone implements ffi.Finalizable {
   /// See the [Rust documentation for `get`](https://docs.rs/icu/latest/icu/timezone/struct.IanaToBcp47MapperBorrowed.html#method.get) for more information.
   void trySetIanaTimeZoneId(ICU4XIanaToBcp47Mapper mapper, String id) {
     final alloc = ffi2.Arena();
-    final idSlice = _SliceFfi2Utf8.fromDart(id, alloc);
+    final idSlice = _SliceFfi2Utf8._fromDart(id, alloc);
 
     final result = _trySetIanaTimeZoneIdFfi(
         _underlying, mapper._underlying, idSlice.bytes, idSlice.length);
@@ -3615,7 +3615,7 @@ class ICU4XCustomTimeZone implements ffi.Finalizable {
   /// Additional information: [1](https://docs.rs/icu/latest/icu/timezone/struct.MetazoneId.html)
   void trySetMetazoneId(String id) {
     final alloc = ffi2.Arena();
-    final idSlice = _SliceFfi2Utf8.fromDart(id, alloc);
+    final idSlice = _SliceFfi2Utf8._fromDart(id, alloc);
 
     final result =
         _trySetMetazoneIdFfi(_underlying, idSlice.bytes, idSlice.length);
@@ -3681,7 +3681,7 @@ class ICU4XCustomTimeZone implements ffi.Finalizable {
   /// Additional information: [1](https://docs.rs/icu/latest/icu/timezone/struct.ZoneVariant.html)
   void trySetZoneVariant(String id) {
     final alloc = ffi2.Arena();
-    final idSlice = _SliceFfi2Utf8.fromDart(id, alloc);
+    final idSlice = _SliceFfi2Utf8._fromDart(id, alloc);
 
     final result =
         _trySetZoneVariantFfi(_underlying, idSlice.bytes, idSlice.length);
@@ -3860,7 +3860,7 @@ class ICU4XDataProvider implements ffi.Finalizable {
   /// See the [Rust documentation for `FsDataProvider`](https://docs.rs/icu_provider_fs/latest/icu_provider_fs/struct.FsDataProvider.html) for more information.
   factory ICU4XDataProvider.fs(String path) {
     final alloc = ffi2.Arena();
-    final pathSlice = _SliceFfi2Utf8.fromDart(path, alloc);
+    final pathSlice = _SliceFfi2Utf8._fromDart(path, alloc);
 
     final result = _createFsFfi(pathSlice.bytes, pathSlice.length);
     alloc.releaseAll();
@@ -3892,7 +3892,7 @@ class ICU4XDataProvider implements ffi.Finalizable {
   /// See the [Rust documentation for `BlobDataProvider`](https://docs.rs/icu_provider_blob/latest/icu_provider_blob/struct.BlobDataProvider.html) for more information.
   factory ICU4XDataProvider.fromByteSlice(Uint8List blob) {
     final alloc = ffi2.Arena();
-    final blobSlice = _SliceFfiUint8.fromDart(blob, alloc);
+    final blobSlice = _SliceFfiUint8._fromDart(blob, alloc);
 
     final result = _createFromByteSliceFfi(blobSlice.bytes, blobSlice.length);
     alloc.releaseAll();
@@ -4034,17 +4034,17 @@ class ICU4XDataStruct implements ffi.Finalizable {
       int minGroupSize,
       Uint32List digits) {
     final alloc = ffi2.Arena();
-    final plusSignPrefixSlice = _SliceFfi2Utf8.fromDart(plusSignPrefix, alloc);
-    final plusSignSuffixSlice = _SliceFfi2Utf8.fromDart(plusSignSuffix, alloc);
+    final plusSignPrefixSlice = _SliceFfi2Utf8._fromDart(plusSignPrefix, alloc);
+    final plusSignSuffixSlice = _SliceFfi2Utf8._fromDart(plusSignSuffix, alloc);
     final minusSignPrefixSlice =
-        _SliceFfi2Utf8.fromDart(minusSignPrefix, alloc);
+        _SliceFfi2Utf8._fromDart(minusSignPrefix, alloc);
     final minusSignSuffixSlice =
-        _SliceFfi2Utf8.fromDart(minusSignSuffix, alloc);
+        _SliceFfi2Utf8._fromDart(minusSignSuffix, alloc);
     final decimalSeparatorSlice =
-        _SliceFfi2Utf8.fromDart(decimalSeparator, alloc);
+        _SliceFfi2Utf8._fromDart(decimalSeparator, alloc);
     final groupingSeparatorSlice =
-        _SliceFfi2Utf8.fromDart(groupingSeparator, alloc);
-    final digitsSlice = _SliceFfiUint32.fromDart(digits, alloc);
+        _SliceFfi2Utf8._fromDart(groupingSeparator, alloc);
+    final digitsSlice = _SliceFfiUint32._fromDart(digits, alloc);
 
     final result = _createDecimalSymbolsV1Ffi(
         plusSignPrefixSlice.bytes,
@@ -4150,8 +4150,8 @@ class ICU4XDate implements ffi.Finalizable {
   factory ICU4XDate.fromCodesInCalendar(String eraCode, int year,
       String monthCode, int day, ICU4XCalendar calendar) {
     final alloc = ffi2.Arena();
-    final eraCodeSlice = _SliceFfi2Utf8.fromDart(eraCode, alloc);
-    final monthCodeSlice = _SliceFfi2Utf8.fromDart(monthCode, alloc);
+    final eraCodeSlice = _SliceFfi2Utf8._fromDart(eraCode, alloc);
+    final monthCodeSlice = _SliceFfi2Utf8._fromDart(monthCode, alloc);
 
     final result = _createFromCodesInCalendarFfi(
         eraCodeSlice.bytes,
@@ -4608,8 +4608,8 @@ class ICU4XDateTime implements ffi.Finalizable {
       int nanosecond,
       ICU4XCalendar calendar) {
     final alloc = ffi2.Arena();
-    final eraCodeSlice = _SliceFfi2Utf8.fromDart(eraCode, alloc);
-    final monthCodeSlice = _SliceFfi2Utf8.fromDart(monthCode, alloc);
+    final eraCodeSlice = _SliceFfi2Utf8._fromDart(eraCode, alloc);
+    final monthCodeSlice = _SliceFfi2Utf8._fromDart(monthCode, alloc);
 
     final result = _createFromCodesInCalendarFfi(
         eraCodeSlice.bytes,
@@ -5154,7 +5154,7 @@ class ICU4XDecomposingNormalizer implements ffi.Finalizable {
   /// See the [Rust documentation for `normalize_utf8`](https://docs.rs/icu/latest/icu/normalizer/struct.DecomposingNormalizer.html#method.normalize_utf8) for more information.
   String normalize(String s) {
     final alloc = ffi2.Arena();
-    final sSlice = _SliceFfi2Utf8.fromDart(s, alloc);
+    final sSlice = _SliceFfi2Utf8._fromDart(s, alloc);
 
     final writeable = _Writeable();
     final result = _normalizeFfi(
@@ -5187,7 +5187,7 @@ class ICU4XDecomposingNormalizer implements ffi.Finalizable {
   /// See the [Rust documentation for `is_normalized_utf8`](https://docs.rs/icu/latest/icu/normalizer/struct.DecomposingNormalizer.html#method.is_normalized_utf8) for more information.
   bool isNormalized(String s) {
     final alloc = ffi2.Arena();
-    final sSlice = _SliceFfi2Utf8.fromDart(s, alloc);
+    final sSlice = _SliceFfi2Utf8._fromDart(s, alloc);
 
     final result = _isNormalizedFfi(_underlying, sSlice.bytes, sSlice.length);
     alloc.releaseAll();
@@ -5503,7 +5503,7 @@ class ICU4XFixedDecimal implements ffi.Finalizable {
   /// See the [Rust documentation for `from_str`](https://docs.rs/fixed_decimal/latest/fixed_decimal/struct.FixedDecimal.html#method.from_str) for more information.
   factory ICU4XFixedDecimal.fromString(String v) {
     final alloc = ffi2.Arena();
-    final vSlice = _SliceFfi2Utf8.fromDart(v, alloc);
+    final vSlice = _SliceFfi2Utf8._fromDart(v, alloc);
 
     final result = _createFromStringFfi(vSlice.bytes, vSlice.length);
     alloc.releaseAll();
@@ -6014,7 +6014,7 @@ class ICU4XGeneralCategoryNameToMaskMapper implements ffi.Finalizable {
   /// Returns 0 if the name is unknown for this property
   int getStrict(String name) {
     final alloc = ffi2.Arena();
-    final nameSlice = _SliceFfi2Utf8.fromDart(name, alloc);
+    final nameSlice = _SliceFfi2Utf8._fromDart(name, alloc);
 
     final result =
         _getStrictFfi(_underlying, nameSlice.bytes, nameSlice.length);
@@ -6037,7 +6037,7 @@ class ICU4XGeneralCategoryNameToMaskMapper implements ffi.Finalizable {
   /// Returns 0 if the name is unknown for this property
   int getLoose(String name) {
     final alloc = ffi2.Arena();
-    final nameSlice = _SliceFfi2Utf8.fromDart(name, alloc);
+    final nameSlice = _SliceFfi2Utf8._fromDart(name, alloc);
 
     final result = _getLooseFfi(_underlying, nameSlice.bytes, nameSlice.length);
     alloc.releaseAll();
@@ -6183,7 +6183,7 @@ class ICU4XGraphemeClusterSegmenter implements ffi.Finalizable {
   /// See the [Rust documentation for `segment_utf8`](https://docs.rs/icu/latest/icu/segmenter/struct.GraphemeClusterSegmenter.html#method.segment_utf8) for more information.
   ICU4XGraphemeClusterBreakIteratorUtf8 segmentUtf8(String input) {
     final alloc = ffi2.Arena();
-    final inputSlice = _SliceFfi2Utf8.fromDart(input, alloc);
+    final inputSlice = _SliceFfi2Utf8._fromDart(input, alloc);
 
     final result =
         _segmentUtf8Ffi(_underlying, inputSlice.bytes, inputSlice.length);
@@ -6206,7 +6206,7 @@ class ICU4XGraphemeClusterSegmenter implements ffi.Finalizable {
   /// See the [Rust documentation for `segment_utf16`](https://docs.rs/icu/latest/icu/segmenter/struct.GraphemeClusterSegmenter.html#method.segment_utf16) for more information.
   ICU4XGraphemeClusterBreakIteratorUtf16 segmentUtf16(Uint16List input) {
     final alloc = ffi2.Arena();
-    final inputSlice = _SliceFfiUint16.fromDart(input, alloc);
+    final inputSlice = _SliceFfiUint16._fromDart(input, alloc);
 
     final result =
         _segmentUtf16Ffi(_underlying, inputSlice.bytes, inputSlice.length);
@@ -6229,7 +6229,7 @@ class ICU4XGraphemeClusterSegmenter implements ffi.Finalizable {
   /// See the [Rust documentation for `segment_latin1`](https://docs.rs/icu/latest/icu/segmenter/struct.GraphemeClusterSegmenter.html#method.segment_latin1) for more information.
   ICU4XGraphemeClusterBreakIteratorLatin1 segmentLatin1(Uint8List input) {
     final alloc = ffi2.Arena();
-    final inputSlice = _SliceFfiUint8.fromDart(input, alloc);
+    final inputSlice = _SliceFfiUint8._fromDart(input, alloc);
 
     final result =
         _segmentLatin1Ffi(_underlying, inputSlice.bytes, inputSlice.length);
@@ -7488,7 +7488,7 @@ class ICU4XLineSegmenter implements ffi.Finalizable {
   /// See the [Rust documentation for `segment_utf8`](https://docs.rs/icu/latest/icu/segmenter/struct.LineSegmenter.html#method.segment_utf8) for more information.
   ICU4XLineBreakIteratorUtf8 segmentUtf8(String input) {
     final alloc = ffi2.Arena();
-    final inputSlice = _SliceFfi2Utf8.fromDart(input, alloc);
+    final inputSlice = _SliceFfi2Utf8._fromDart(input, alloc);
 
     final result =
         _segmentUtf8Ffi(_underlying, inputSlice.bytes, inputSlice.length);
@@ -7511,7 +7511,7 @@ class ICU4XLineSegmenter implements ffi.Finalizable {
   /// See the [Rust documentation for `segment_utf16`](https://docs.rs/icu/latest/icu/segmenter/struct.LineSegmenter.html#method.segment_utf16) for more information.
   ICU4XLineBreakIteratorUtf16 segmentUtf16(Uint16List input) {
     final alloc = ffi2.Arena();
-    final inputSlice = _SliceFfiUint16.fromDart(input, alloc);
+    final inputSlice = _SliceFfiUint16._fromDart(input, alloc);
 
     final result =
         _segmentUtf16Ffi(_underlying, inputSlice.bytes, inputSlice.length);
@@ -7534,7 +7534,7 @@ class ICU4XLineSegmenter implements ffi.Finalizable {
   /// See the [Rust documentation for `segment_latin1`](https://docs.rs/icu/latest/icu/segmenter/struct.LineSegmenter.html#method.segment_latin1) for more information.
   ICU4XLineBreakIteratorLatin1 segmentLatin1(Uint8List input) {
     final alloc = ffi2.Arena();
-    final inputSlice = _SliceFfiUint8.fromDart(input, alloc);
+    final inputSlice = _SliceFfiUint8._fromDart(input, alloc);
 
     final result =
         _segmentLatin1Ffi(_underlying, inputSlice.bytes, inputSlice.length);
@@ -7591,7 +7591,7 @@ class ICU4XList implements ffi.Finalizable {
   /// REPLACEMENT CHARACTERs
   void push(String val) {
     final alloc = ffi2.Arena();
-    final valSlice = _SliceFfi2Utf8.fromDart(val, alloc);
+    final valSlice = _SliceFfi2Utf8._fromDart(val, alloc);
 
     _pushFfi(_underlying, valSlice.bytes, valSlice.length);
     alloc.releaseAll();
@@ -7749,7 +7749,7 @@ class ICU4XLocale implements ffi.Finalizable {
   /// See the [Rust documentation for `try_from_bytes`](https://docs.rs/icu/latest/icu/locid/struct.Locale.html#method.try_from_bytes) for more information.
   factory ICU4XLocale.fromString(String name) {
     final alloc = ffi2.Arena();
-    final nameSlice = _SliceFfi2Utf8.fromDart(name, alloc);
+    final nameSlice = _SliceFfi2Utf8._fromDart(name, alloc);
 
     final result = _createFromStringFfi(nameSlice.bytes, nameSlice.length);
     alloc.releaseAll();
@@ -7816,7 +7816,7 @@ class ICU4XLocale implements ffi.Finalizable {
   /// See the [Rust documentation for `extensions`](https://docs.rs/icu/latest/icu/locid/struct.Locale.html#structfield.extensions) for more information.
   String getUnicodeExtension(String bytes) {
     final alloc = ffi2.Arena();
-    final bytesSlice = _SliceFfi2Utf8.fromDart(bytes, alloc);
+    final bytesSlice = _SliceFfi2Utf8._fromDart(bytes, alloc);
 
     final writeable = _Writeable();
     final result = _getUnicodeExtensionFfi(_underlying, bytesSlice.bytes,
@@ -7866,7 +7866,7 @@ class ICU4XLocale implements ffi.Finalizable {
   /// See the [Rust documentation for `try_from_bytes`](https://docs.rs/icu/latest/icu/locid/struct.Locale.html#method.try_from_bytes) for more information.
   set language(String bytes) {
     final alloc = ffi2.Arena();
-    final bytesSlice = _SliceFfi2Utf8.fromDart(bytes, alloc);
+    final bytesSlice = _SliceFfi2Utf8._fromDart(bytes, alloc);
 
     final result =
         _setLanguageFfi(_underlying, bytesSlice.bytes, bytesSlice.length);
@@ -7910,7 +7910,7 @@ class ICU4XLocale implements ffi.Finalizable {
   /// See the [Rust documentation for `try_from_bytes`](https://docs.rs/icu/latest/icu/locid/struct.Locale.html#method.try_from_bytes) for more information.
   set region(String bytes) {
     final alloc = ffi2.Arena();
-    final bytesSlice = _SliceFfi2Utf8.fromDart(bytes, alloc);
+    final bytesSlice = _SliceFfi2Utf8._fromDart(bytes, alloc);
 
     final result =
         _setRegionFfi(_underlying, bytesSlice.bytes, bytesSlice.length);
@@ -7952,7 +7952,7 @@ class ICU4XLocale implements ffi.Finalizable {
   /// See the [Rust documentation for `try_from_bytes`](https://docs.rs/icu/latest/icu/locid/struct.Locale.html#method.try_from_bytes) for more information.
   set script(String bytes) {
     final alloc = ffi2.Arena();
-    final bytesSlice = _SliceFfi2Utf8.fromDart(bytes, alloc);
+    final bytesSlice = _SliceFfi2Utf8._fromDart(bytes, alloc);
 
     final result =
         _setScriptFfi(_underlying, bytesSlice.bytes, bytesSlice.length);
@@ -7977,7 +7977,7 @@ class ICU4XLocale implements ffi.Finalizable {
   /// See the [Rust documentation for `canonicalize`](https://docs.rs/icu/latest/icu/locid/struct.Locale.html#method.canonicalize) for more information.
   static String canonicalize(String bytes) {
     final alloc = ffi2.Arena();
-    final bytesSlice = _SliceFfi2Utf8.fromDart(bytes, alloc);
+    final bytesSlice = _SliceFfi2Utf8._fromDart(bytes, alloc);
 
     final writeable = _Writeable();
     final result = _canonicalizeFfi(
@@ -8019,7 +8019,7 @@ class ICU4XLocale implements ffi.Finalizable {
   /// See the [Rust documentation for `normalizing_eq`](https://docs.rs/icu/latest/icu/locid/struct.Locale.html#method.normalizing_eq) for more information.
   bool normalizingEq(String other) {
     final alloc = ffi2.Arena();
-    final otherSlice = _SliceFfi2Utf8.fromDart(other, alloc);
+    final otherSlice = _SliceFfi2Utf8._fromDart(other, alloc);
 
     final result =
         _normalizingEqFfi(_underlying, otherSlice.bytes, otherSlice.length);
@@ -8038,7 +8038,7 @@ class ICU4XLocale implements ffi.Finalizable {
   /// See the [Rust documentation for `strict_cmp`](https://docs.rs/icu/latest/icu/locid/struct.Locale.html#method.strict_cmp) for more information.
   ICU4XOrdering strictCmp(String other) {
     final alloc = ffi2.Arena();
-    final otherSlice = _SliceFfi2Utf8.fromDart(other, alloc);
+    final otherSlice = _SliceFfi2Utf8._fromDart(other, alloc);
 
     final result =
         _strictCmpFfi(_underlying, otherSlice.bytes, otherSlice.length);
@@ -8414,11 +8414,11 @@ class ICU4XLocaleFallbackConfig {
     _underlying.priority = priority._id;
   }
 
-  String get extensionKey => _underlying.extensionKey.asDart;
+  String get extensionKey => _underlying.extensionKey._asDart;
   set extensionKey(String extensionKey) {
     final alloc = ffi2.calloc;
     alloc.free(_underlying.extensionKey.bytes);
-    final extensionKeySlice = _SliceFfi2Utf8.fromDart(extensionKey, alloc);
+    final extensionKeySlice = _SliceFfi2Utf8._fromDart(extensionKey, alloc);
     _underlying.extensionKey = extensionKeySlice;
   }
 
@@ -8803,7 +8803,7 @@ enum ICU4XPluralCategory {
   /// See the [Rust documentation for `get_for_cldr_bytes`](https://docs.rs/icu/latest/icu/plurals/enum.PluralCategory.html#method.get_for_cldr_bytes) for more information.
   factory ICU4XPluralCategory.getForCldrString(String s) {
     final alloc = ffi2.Arena();
-    final sSlice = _SliceFfi2Utf8.fromDart(s, alloc);
+    final sSlice = _SliceFfi2Utf8._fromDart(s, alloc);
 
     final result = _getForCldrStringFfi(sSlice.bytes, sSlice.length);
     alloc.releaseAll();
@@ -8837,7 +8837,7 @@ class ICU4XPluralOperands implements ffi.Finalizable {
   /// See the [Rust documentation for `from_str`](https://docs.rs/icu/latest/icu/plurals/struct.PluralOperands.html#method.from_str) for more information.
   factory ICU4XPluralOperands.fromString(String s) {
     final alloc = ffi2.Arena();
-    final sSlice = _SliceFfi2Utf8.fromDart(s, alloc);
+    final sSlice = _SliceFfi2Utf8._fromDart(s, alloc);
 
     final result = _createFromStringFfi(sSlice.bytes, sSlice.length);
     alloc.releaseAll();
@@ -9075,7 +9075,7 @@ class ICU4XPropertyValueNameToEnumMapper implements ffi.Finalizable {
   /// See the [Rust documentation for `get_strict`](https://docs.rs/icu/latest/icu/properties/names/struct.PropertyValueNameToEnumMapperBorrowed.html#method.get_strict) for more information.
   int getStrict(String name) {
     final alloc = ffi2.Arena();
-    final nameSlice = _SliceFfi2Utf8.fromDart(name, alloc);
+    final nameSlice = _SliceFfi2Utf8._fromDart(name, alloc);
 
     final result =
         _getStrictFfi(_underlying, nameSlice.bytes, nameSlice.length);
@@ -9100,7 +9100,7 @@ class ICU4XPropertyValueNameToEnumMapper implements ffi.Finalizable {
   /// See the [Rust documentation for `get_loose`](https://docs.rs/icu/latest/icu/properties/names/struct.PropertyValueNameToEnumMapperBorrowed.html#method.get_loose) for more information.
   int getLoose(String name) {
     final alloc = ffi2.Arena();
-    final nameSlice = _SliceFfi2Utf8.fromDart(name, alloc);
+    final nameSlice = _SliceFfi2Utf8._fromDart(name, alloc);
 
     final result = _getLooseFfi(_underlying, nameSlice.bytes, nameSlice.length);
     alloc.releaseAll();
@@ -9289,7 +9289,7 @@ class ICU4XRegionDisplayNames implements ffi.Finalizable {
   /// See the [Rust documentation for `of`](https://docs.rs/icu/latest/icu/displaynames/struct.RegionDisplayNames.html#method.of) for more information.
   String of(String region) {
     final alloc = ffi2.Arena();
-    final regionSlice = _SliceFfi2Utf8.fromDart(region, alloc);
+    final regionSlice = _SliceFfi2Utf8._fromDart(region, alloc);
 
     final writeable = _Writeable();
     final result = _ofFfi(_underlying, regionSlice.bytes, regionSlice.length,
@@ -9331,17 +9331,15 @@ class ICU4XReorderedIndexMap implements ffi.Finalizable {
       ffi.NativeFinalizer(_capi('ICU4XReorderedIndexMap_destroy'));
 
   /// Get this as a slice/array of indices
-  Uint64List get asSlice {
+  SizeList get asSlice {
     final result = _asSliceFfi(_underlying);
-    return result.asDart;
+    return result._asDart;
   }
 
-  static late final _asSliceFfi = _capi<
-          ffi.NativeFunction<
-              _SliceFfiUint64 Function(
-                  ffi.Pointer<ffi.Opaque>)>>('ICU4XReorderedIndexMap_as_slice')
-      .asFunction<_SliceFfiUint64 Function(ffi.Pointer<ffi.Opaque>)>(
-          isLeaf: true);
+  static late final _asSliceFfi =
+      _capi<ffi.NativeFunction<SizeList Function(ffi.Pointer<ffi.Opaque>)>>(
+              'ICU4XReorderedIndexMap_as_slice')
+          .asFunction<SizeList Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
 
   /// The length of this map
   int get len {
@@ -9737,7 +9735,7 @@ class ICU4XSentenceSegmenter implements ffi.Finalizable {
   /// See the [Rust documentation for `segment_utf8`](https://docs.rs/icu/latest/icu/segmenter/struct.SentenceSegmenter.html#method.segment_utf8) for more information.
   ICU4XSentenceBreakIteratorUtf8 segmentUtf8(String input) {
     final alloc = ffi2.Arena();
-    final inputSlice = _SliceFfi2Utf8.fromDart(input, alloc);
+    final inputSlice = _SliceFfi2Utf8._fromDart(input, alloc);
 
     final result =
         _segmentUtf8Ffi(_underlying, inputSlice.bytes, inputSlice.length);
@@ -9760,7 +9758,7 @@ class ICU4XSentenceSegmenter implements ffi.Finalizable {
   /// See the [Rust documentation for `segment_utf16`](https://docs.rs/icu/latest/icu/segmenter/struct.SentenceSegmenter.html#method.segment_utf16) for more information.
   ICU4XSentenceBreakIteratorUtf16 segmentUtf16(Uint16List input) {
     final alloc = ffi2.Arena();
-    final inputSlice = _SliceFfiUint16.fromDart(input, alloc);
+    final inputSlice = _SliceFfiUint16._fromDart(input, alloc);
 
     final result =
         _segmentUtf16Ffi(_underlying, inputSlice.bytes, inputSlice.length);
@@ -9783,7 +9781,7 @@ class ICU4XSentenceSegmenter implements ffi.Finalizable {
   /// See the [Rust documentation for `segment_latin1`](https://docs.rs/icu/latest/icu/segmenter/struct.SentenceSegmenter.html#method.segment_latin1) for more information.
   ICU4XSentenceBreakIteratorLatin1 segmentLatin1(Uint8List input) {
     final alloc = ffi2.Arena();
-    final inputSlice = _SliceFfiUint8.fromDart(input, alloc);
+    final inputSlice = _SliceFfiUint8._fromDart(input, alloc);
 
     final result =
         _segmentLatin1Ffi(_underlying, inputSlice.bytes, inputSlice.length);
@@ -10271,7 +10269,7 @@ class ICU4XTitlecaseMapper implements ffi.Finalizable {
   String titlecaseSegmentV1(
       String s, ICU4XLocale locale, ICU4XTitlecaseOptionsV1 options) {
     final alloc = ffi2.Arena();
-    final sSlice = _SliceFfi2Utf8.fromDart(s, alloc);
+    final sSlice = _SliceFfi2Utf8._fromDart(s, alloc);
 
     final writeable = _Writeable();
     final result = _titlecaseSegmentV1Ffi(
@@ -10415,7 +10413,7 @@ class ICU4XUnicodeSetData implements ffi.Finalizable {
   /// See the [Rust documentation for `contains`](https://docs.rs/icu/latest/icu/properties/sets/struct.UnicodeSetDataBorrowed.html#method.contains) for more information.
   bool contains(String s) {
     final alloc = ffi2.Arena();
-    final sSlice = _SliceFfi2Utf8.fromDart(s, alloc);
+    final sSlice = _SliceFfi2Utf8._fromDart(s, alloc);
 
     final result = _containsFfi(_underlying, sSlice.bytes, sSlice.length);
     alloc.releaseAll();
@@ -10922,7 +10920,7 @@ class ICU4XWordSegmenter implements ffi.Finalizable {
   /// See the [Rust documentation for `segment_utf8`](https://docs.rs/icu/latest/icu/segmenter/struct.WordSegmenter.html#method.segment_utf8) for more information.
   ICU4XWordBreakIteratorUtf8 segmentUtf8(String input) {
     final alloc = ffi2.Arena();
-    final inputSlice = _SliceFfi2Utf8.fromDart(input, alloc);
+    final inputSlice = _SliceFfi2Utf8._fromDart(input, alloc);
 
     final result =
         _segmentUtf8Ffi(_underlying, inputSlice.bytes, inputSlice.length);
@@ -10945,7 +10943,7 @@ class ICU4XWordSegmenter implements ffi.Finalizable {
   /// See the [Rust documentation for `segment_utf16`](https://docs.rs/icu/latest/icu/segmenter/struct.WordSegmenter.html#method.segment_utf16) for more information.
   ICU4XWordBreakIteratorUtf16 segmentUtf16(Uint16List input) {
     final alloc = ffi2.Arena();
-    final inputSlice = _SliceFfiUint16.fromDart(input, alloc);
+    final inputSlice = _SliceFfiUint16._fromDart(input, alloc);
 
     final result =
         _segmentUtf16Ffi(_underlying, inputSlice.bytes, inputSlice.length);
@@ -10968,7 +10966,7 @@ class ICU4XWordSegmenter implements ffi.Finalizable {
   /// See the [Rust documentation for `segment_latin1`](https://docs.rs/icu/latest/icu/segmenter/struct.WordSegmenter.html#method.segment_latin1) for more information.
   ICU4XWordBreakIteratorLatin1 segmentLatin1(Uint8List input) {
     final alloc = ffi2.Arena();
-    final inputSlice = _SliceFfiUint8.fromDart(input, alloc);
+    final inputSlice = _SliceFfiUint8._fromDart(input, alloc);
 
     final result =
         _segmentLatin1Ffi(_underlying, inputSlice.bytes, inputSlice.length);
@@ -11122,6 +11120,35 @@ class ICU4XZonedDateTimeFormatter implements ffi.Finalizable {
               ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
 }
 
+class SizeList extends ffi.Struct {
+  external ffi.Pointer<ffi.Size> _bytes;
+
+  @ffi.Size()
+  external int _length;
+
+  // ignore: unused_element
+  SizeList get _asDart => this;
+
+  // This is expensive
+  @override
+  bool operator ==(Object other) {
+    if (other is! SizeList || other._length != _length) {
+      return false;
+    }
+
+    for (var i = 0; i < _length; i++) {
+      if (other._bytes[i] != _bytes[i]) {
+        return false;
+      }
+    }
+    return true;
+  }
+
+  // This is cheap
+  @override
+  int get hashCode => _length.hashCode;
+}
+
 class _ResultBoolUint32Union extends ffi.Union {
   @ffi.Bool()
   external bool ok;
@@ -11222,38 +11249,37 @@ class _ResultVoidVoid extends ffi.Struct {
 }
 
 class _SliceFfi2Utf8 extends ffi.Struct {
-  external ffi.Pointer<ffi2.Utf8> bytes;
+  external ffi.Pointer<ffi2.Utf8> _bytes;
 
   @ffi.Size()
-  external int length;
-
+  external int _length;
   // Produces a slice from a Dart object. The Dart object's data is copied into the given allocator
   // as it cannot be borrowed directly, and gets freed with the slice object.
   // ignore: unused_element
-  static _SliceFfi2Utf8 fromDart(String value, ffi.Allocator allocator) {
+  static _SliceFfi2Utf8 _fromDart(String value, ffi.Allocator allocator) {
     final pointer = allocator<_SliceFfi2Utf8>();
     final slice = pointer.ref;
     final units = Utf8Encoder().convert(value);
-    slice.length = units.length;
-    slice.bytes = allocator<ffi.Uint8>(slice.length).cast();
-    slice.bytes.cast<ffi.Uint8>().asTypedList(slice.length).setAll(0, units);
+    slice._length = units.length;
+    slice._bytes = allocator<ffi.Uint8>(slice._length).cast();
+    slice._bytes.cast<ffi.Uint8>().asTypedList(slice._length).setAll(0, units);
 
     return slice;
   }
 
   // ignore: unused_element
-  String get asDart =>
+  String get _asDart =>
       Utf8Decoder().convert(bytes.cast<ffi.Uint8>().asTypedList(length));
 
   // This is expensive
   @override
   bool operator ==(Object other) {
-    if (other is! _SliceFfi2Utf8 || other.length != length) {
+    if (other is! _SliceFfi2Utf8 || other._length != _length) {
       return false;
     }
 
-    for (var i = 0; i < length; i++) {
-      if (other.bytes.cast<ffi.Uint8>()[i] != bytes.cast<ffi.Uint8>()[i]) {
+    for (var i = 0; i < _length; i++) {
+      if (other._bytes.cast<ffi.Uint8>()[i] != _bytes.cast<ffi.Uint8>()[i]) {
         return false;
       }
     }
@@ -11262,40 +11288,39 @@ class _SliceFfi2Utf8 extends ffi.Struct {
 
   // This is cheap
   @override
-  int get hashCode => length.hashCode;
+  int get hashCode => _length.hashCode;
 }
 
 class _SliceFfiUint16 extends ffi.Struct {
-  external ffi.Pointer<ffi.Uint16> bytes;
+  external ffi.Pointer<ffi.Uint16> _bytes;
 
   @ffi.Size()
-  external int length;
-
+  external int _length;
   // Produces a slice from a Dart object. The Dart object's data is copied into the given allocator
   // as it cannot be borrowed directly, and gets freed with the slice object.
   // ignore: unused_element
-  static _SliceFfiUint16 fromDart(Uint16List value, ffi.Allocator allocator) {
+  static _SliceFfiUint16 _fromDart(Uint16List value, ffi.Allocator allocator) {
     final pointer = allocator<_SliceFfiUint16>();
     final slice = pointer.ref;
-    slice.length = value.length;
-    slice.bytes = allocator(slice.length);
-    slice.bytes.asTypedList(slice.length).setAll(0, value);
+    slice._length = value.length;
+    slice._bytes = allocator(slice._length);
+    slice._bytes.asTypedList(slice._length).setAll(0, value);
 
     return slice;
   }
 
   // ignore: unused_element
-  Uint16List get asDart => bytes.asTypedList(length);
+  Uint16List get _asDart => bytes.asTypedList(length);
 
   // This is expensive
   @override
   bool operator ==(Object other) {
-    if (other is! _SliceFfiUint16 || other.length != length) {
+    if (other is! _SliceFfiUint16 || other._length != _length) {
       return false;
     }
 
-    for (var i = 0; i < length; i++) {
-      if (other.bytes[i] != bytes[i]) {
+    for (var i = 0; i < _length; i++) {
+      if (other._bytes[i] != _bytes[i]) {
         return false;
       }
     }
@@ -11304,40 +11329,39 @@ class _SliceFfiUint16 extends ffi.Struct {
 
   // This is cheap
   @override
-  int get hashCode => length.hashCode;
+  int get hashCode => _length.hashCode;
 }
 
 class _SliceFfiUint32 extends ffi.Struct {
-  external ffi.Pointer<ffi.Uint32> bytes;
+  external ffi.Pointer<ffi.Uint32> _bytes;
 
   @ffi.Size()
-  external int length;
-
+  external int _length;
   // Produces a slice from a Dart object. The Dart object's data is copied into the given allocator
   // as it cannot be borrowed directly, and gets freed with the slice object.
   // ignore: unused_element
-  static _SliceFfiUint32 fromDart(Uint32List value, ffi.Allocator allocator) {
+  static _SliceFfiUint32 _fromDart(Uint32List value, ffi.Allocator allocator) {
     final pointer = allocator<_SliceFfiUint32>();
     final slice = pointer.ref;
-    slice.length = value.length;
-    slice.bytes = allocator(slice.length);
-    slice.bytes.asTypedList(slice.length).setAll(0, value);
+    slice._length = value.length;
+    slice._bytes = allocator(slice._length);
+    slice._bytes.asTypedList(slice._length).setAll(0, value);
 
     return slice;
   }
 
   // ignore: unused_element
-  Uint32List get asDart => bytes.asTypedList(length);
+  Uint32List get _asDart => bytes.asTypedList(length);
 
   // This is expensive
   @override
   bool operator ==(Object other) {
-    if (other is! _SliceFfiUint32 || other.length != length) {
+    if (other is! _SliceFfiUint32 || other._length != _length) {
       return false;
     }
 
-    for (var i = 0; i < length; i++) {
-      if (other.bytes[i] != bytes[i]) {
+    for (var i = 0; i < _length; i++) {
+      if (other._bytes[i] != _bytes[i]) {
         return false;
       }
     }
@@ -11346,79 +11370,39 @@ class _SliceFfiUint32 extends ffi.Struct {
 
   // This is cheap
   @override
-  int get hashCode => length.hashCode;
-}
-
-class _SliceFfiUint64 extends ffi.Struct {
-  external ffi.Pointer<ffi.Size> bytes;
-
-  @ffi.Size()
-  external int length;
-
-  // Produces a slice from a Dart object. The Dart object's data is copied into the given allocator
-  // as it cannot be borrowed directly, and gets freed with the slice object.
-  // ignore: unused_element
-  static _SliceFfiUint64 fromDart(Uint64List value, ffi.Allocator allocator) {
-    final pointer = allocator<_SliceFfiUint64>();
-    final slice = pointer.ref;
-    throw 'unimplemented';
-    return slice;
-  }
-
-  // ignore: unused_element
-  Uint64List get asDart => throw 'unimplemented';
-
-  // This is expensive
-  @override
-  bool operator ==(Object other) {
-    if (other is! _SliceFfiUint64 || other.length != length) {
-      return false;
-    }
-
-    for (var i = 0; i < length; i++) {
-      if (other.bytes[i] != bytes[i]) {
-        return false;
-      }
-    }
-    return true;
-  }
-
-  // This is cheap
-  @override
-  int get hashCode => length.hashCode;
+  int get hashCode => _length.hashCode;
 }
 
 class _SliceFfiUint8 extends ffi.Struct {
-  external ffi.Pointer<ffi.Uint8> bytes;
+  external ffi.Pointer<ffi.Uint8> _bytes;
 
   @ffi.Size()
-  external int length;
-
+  external int _length;
   // Produces a slice from a Dart object. The Dart object's data is copied into the given allocator
   // as it cannot be borrowed directly, and gets freed with the slice object.
   // ignore: unused_element
-  static _SliceFfiUint8 fromDart(Uint8List value, ffi.Allocator allocator) {
+  static _SliceFfiUint8 _fromDart(Uint8List value, ffi.Allocator allocator) {
     final pointer = allocator<_SliceFfiUint8>();
     final slice = pointer.ref;
-    slice.length = value.length;
-    slice.bytes = allocator(slice.length);
-    slice.bytes.asTypedList(slice.length).setAll(0, value);
+    slice._length = value.length;
+    slice._bytes = allocator(slice._length);
+    slice._bytes.asTypedList(slice._length).setAll(0, value);
 
     return slice;
   }
 
   // ignore: unused_element
-  Uint8List get asDart => bytes.asTypedList(length);
+  Uint8List get _asDart => bytes.asTypedList(length);
 
   // This is expensive
   @override
   bool operator ==(Object other) {
-    if (other is! _SliceFfiUint8 || other.length != length) {
+    if (other is! _SliceFfiUint8 || other._length != _length) {
       return false;
     }
 
-    for (var i = 0; i < length; i++) {
-      if (other.bytes[i] != bytes[i]) {
+    for (var i = 0; i < _length; i++) {
+      if (other._bytes[i] != _bytes[i]) {
         return false;
       }
     }
@@ -11427,7 +11411,7 @@ class _SliceFfiUint8 extends ffi.Struct {
 
   // This is cheap
   @override
-  int get hashCode => length.hashCode;
+  int get hashCode => _length.hashCode;
 }
 
 /// An unspecified error value
