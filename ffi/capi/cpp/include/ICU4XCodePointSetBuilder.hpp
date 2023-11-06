@@ -24,8 +24,6 @@ struct ICU4XCodePointSetBuilderDeleter {
 };
 
 /**
- * 
- * 
  * See the [Rust documentation for `CodePointInversionListBuilder`](https://docs.rs/icu/latest/icu/collections/codepointinvlist/struct.CodePointInversionListBuilder.html) for more information.
  */
 class ICU4XCodePointSetBuilder {

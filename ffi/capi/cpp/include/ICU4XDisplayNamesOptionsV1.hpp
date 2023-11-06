@@ -17,8 +17,6 @@
 
 
 /**
- * 
- * 
  * See the [Rust documentation for `DisplayNamesOptions`](https://docs.rs/icu/latest/icu/displaynames/options/struct.DisplayNamesOptions.html) for more information.
  */
 struct ICU4XDisplayNamesOptionsV1 {

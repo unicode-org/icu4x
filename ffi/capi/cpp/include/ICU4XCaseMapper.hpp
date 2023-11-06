@@ -28,8 +28,6 @@ struct ICU4XCaseMapperDeleter {
 };
 
 /**
- * 
- * 
  * See the [Rust documentation for `CaseMapper`](https://docs.rs/icu/latest/icu/casemap/struct.CaseMapper.html) for more information.
  */
 class ICU4XCaseMapper {

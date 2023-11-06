@@ -78,8 +78,6 @@ class ICU4XCodePointMapData16 {
   ICU4XCodePointSetData get_set_for_value(uint16_t value) const;
 
   /**
-   * 
-   * 
    * See the [Rust documentation for `script`](https://docs.rs/icu/latest/icu/properties/maps/fn.script.html) for more information.
    */
   static diplomat::result<ICU4XCodePointMapData16, ICU4XError> load_script(const ICU4XDataProvider& provider);

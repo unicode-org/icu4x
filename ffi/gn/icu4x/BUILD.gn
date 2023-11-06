@@ -198,7 +198,7 @@ rust_library("icu-v1_3_2") {
   deps = []
   deps += [ ":icu_calendar-v1_3_2" ]
   deps += [ ":icu_casemap-v1_3_2" ]
-  deps += [ ":icu_collator-v1_3_2" ]
+  deps += [ ":icu_collator-v1_3_3" ]
   deps += [ ":icu_collections-v1_3_2" ]
   deps += [ ":icu_datetime-v1_3_2" ]
   deps += [ ":icu_decimal-v1_3_2" ]
@@ -261,7 +261,7 @@ rust_library("icu_capi-v1_3_2") {
   deps += [ ":fixed_decimal-v0_5_4" ]
   deps += [ ":icu_calendar-v1_3_2" ]
   deps += [ ":icu_casemap-v1_3_2" ]
-  deps += [ ":icu_collator-v1_3_2" ]
+  deps += [ ":icu_collator-v1_3_3" ]
   deps += [ ":icu_collections-v1_3_2" ]
   deps += [ ":icu_datetime-v1_3_2" ]
   deps += [ ":icu_decimal-v1_3_2" ]
@@ -330,10 +330,10 @@ rust_library("icu_casemap-v1_3_2") {
   visibility = [ ":*" ]
 }
 
-rust_library("icu_collator-v1_3_2") {
+rust_library("icu_collator-v1_3_3") {
   crate_name = "icu_collator"
   crate_root = "//components/collator/src/lib.rs"
-  output_name = "icu_collator-731fa0206ad840a4"
+  output_name = "icu_collator-24ead9739dd9201"
 
   deps = []
   deps += [ ":displaydoc-v0_2_4($host_toolchain)" ]
@@ -352,8 +352,8 @@ rust_library("icu_collator-v1_3_2") {
   rustflags = [
     "--cap-lints=allow",
     "--edition=2021",
-    "-Cmetadata=731fa0206ad840a4",
-    "-Cextra-filename=-731fa0206ad840a4",
+    "-Cmetadata=24ead9739dd9201",
+    "-Cextra-filename=-24ead9739dd9201",
   ]
 
   visibility = [ ":*" ]

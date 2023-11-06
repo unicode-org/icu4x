@@ -38,7 +38,7 @@ macro_rules! __impl_compactdecimal_short_v1 {
                 static AR: <icu::compactdecimal::provider::ShortCompactDecimalFormatDataV1Marker as icu_provider::DataMarker>::Yokeable = icu::compactdecimal::provider::CompactDecimalPatternDataV1 {
                     patterns: unsafe {
                         #[allow(unused_unsafe)]
-                        zerovec::ZeroMap2d::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x03\x04\x06\t\x0C") }, unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x02\0\0\0\x03\0\0\0\x04\0\0\0\x05\0\0\0\x06\0\0\0") }, unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x03\x05\x05\x05\x05\x05") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x06\0\0\0\0\0\x0C\0\x16\0 \0.\0<\0\x03\0\xC2\xA0\xD8\xA2\xD9\x84\xD8\xA7\xD9\x81\x03\0\xC2\xA0\xD8\xA3\xD9\x84\xD9\x81\x03\0\xC2\xA0\xD8\xA3\xD9\x84\xD9\x81\x06\0\xC2\xA0\xD9\x85\xD9\x84\xD9\x8A\xD9\x88\xD9\x86\t\0\xC2\xA0\xD9\x85\xD9\x84\xD9\x8A\xD8\xA7\xD8\xB1\x0C\0\xC2\xA0\xD8\xAA\xD8\xB1\xD9\x84\xD9\x8A\xD9\x88\xD9\x86") })
+                        zerovec::ZeroMap2d::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x03\x04\x06\t\x0C") }, unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x02\0\0\0\x03\0\0\0\x08\0\0\0\r\0\0\0\x12\0\0\0") }, unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x03\x05\x05\0\x02\x03\x04\x05\0\x02\x03\x04\x05\0\x02\x03\x04\x05") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x12\0\0\0\0\0\x0C\0\x16\0 \0\"\0$\0&\0(\x006\08\0:\0<\0>\0L\0N\0P\0R\0T\0\x03\0\xC2\xA0\xD8\xA2\xD9\x84\xD8\xA7\xD9\x81\x03\0\xC2\xA0\xD8\xA3\xD9\x84\xD9\x81\x03\0\xC2\xA0\xD8\xA3\xD9\x84\xD9\x81\0\0\0\0\0\0\0\0\x06\0\xC2\xA0\xD9\x85\xD9\x84\xD9\x8A\xD9\x88\xD9\x86\0\0\0\0\0\0\0\0\t\0\xC2\xA0\xD9\x85\xD9\x84\xD9\x8A\xD8\xA7\xD8\xB1\0\0\0\0\0\0\0\0\x0C\0\xC2\xA0\xD8\xAA\xD8\xB1\xD9\x84\xD9\x8A\xD9\x88\xD9\x86") })
                     },
                 };
                 static YUE: <icu::compactdecimal::provider::ShortCompactDecimalFormatDataV1Marker as icu_provider::DataMarker>::Yokeable = icu::compactdecimal::provider::CompactDecimalPatternDataV1 {
@@ -164,7 +164,7 @@ macro_rules! __impl_compactdecimal_short_v1 {
                 static PS: <icu::compactdecimal::provider::ShortCompactDecimalFormatDataV1Marker as icu_provider::DataMarker>::Yokeable = icu::compactdecimal::provider::CompactDecimalPatternDataV1 {
                     patterns: unsafe {
                         #[allow(unused_unsafe)]
-                        zerovec::ZeroMap2d::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x03\x06\t\x0B\x0C") }, unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x01\0\0\0\x02\0\0\0\x03\0\0\0\x05\0\0\0\x06\0\0\0") }, unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x05\x05\x05\x01\x05\x05") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x06\0\0\0\0\0\x03\0\x06\0\t\0\x0C\0\x0F\0\x03\0K\x06\0M\t\0B\t\0G\t\0B\x0C\0T") })
+                        zerovec::ZeroMap2d::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x03\x06\t\x0B\x0C") }, unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x02\0\0\0\x04\0\0\0\x05\0\0\0\x07\0\0\0\t\0\0\0") }, unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x01\x05\x01\x05\x05\x01\x05\x01\x05") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\t\0\0\0\0\0\x02\0\x05\0\x07\0\n\0\r\0\x10\0\x13\0\x15\0\0\0\x03\0K\0\0\x06\0M\t\0B\t\0G\t\0B\0\0\x0C\0T") })
                     },
                 };
                 static UZ_CYRL: <icu::compactdecimal::provider::ShortCompactDecimalFormatDataV1Marker as icu_provider::DataMarker>::Yokeable = icu::compactdecimal::provider::CompactDecimalPatternDataV1 {
@@ -200,12 +200,6 @@ macro_rules! __impl_compactdecimal_short_v1 {
                 static BS: <icu::compactdecimal::provider::ShortCompactDecimalFormatDataV1Marker as icu_provider::DataMarker>::Yokeable = icu::compactdecimal::provider::CompactDecimalPatternDataV1 {
                     patterns: unsafe {
                         #[allow(unused_unsafe)]
-                        zerovec::ZeroMap2d::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x03\x06\t\x0C") }, unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x01\0\0\0\x02\0\0\0\x03\0\0\0\x04\0\0\0") }, unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x05\x05\x05\x05") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x04\0\0\0\0\0\t\0\x11\0\x19\0\x03\0\xC2\xA0hilj.\x06\0\xC2\xA0mil.\t\0\xC2\xA0mlr.\x0C\0\xC2\xA0bil.") })
-                    },
-                };
-                static SR_LATN: <icu::compactdecimal::provider::ShortCompactDecimalFormatDataV1Marker as icu_provider::DataMarker>::Yokeable = icu::compactdecimal::provider::CompactDecimalPatternDataV1 {
-                    patterns: unsafe {
-                        #[allow(unused_unsafe)]
                         zerovec::ZeroMap2d::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x03\x06\t\x0C") }, unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x01\0\0\0\x02\0\0\0\x03\0\0\0\x04\0\0\0") }, unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x05\x05\x05\x05") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x04\0\0\0\0\0\t\0\x11\0\x1A\0\x03\0\xC2\xA0hilj.\x06\0\xC2\xA0mil.\t\0\xC2\xA0mlrd.\x0C\0\xC2\xA0bil.") })
                     },
                 };
@@ -215,25 +209,13 @@ macro_rules! __impl_compactdecimal_short_v1 {
                         zerovec::ZeroMap2d::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x03\x06\t\x0C") }, unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x01\0\0\0\x02\0\0\0\x03\0\0\0\x04\0\0\0") }, unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x05\x05\x05\x05") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x04\0\0\0\0\0\t\0\x12\0\x1A\0\x03\0\xC2\xA0t\xC3\xBAs.\x06\0\xC2\xA0mi\xC3\xB3.\t\0\xC2\xA0mia.\x0C\0\xC2\xA0bi\xC3\xB3.") })
                     },
                 };
-                static AZ: <icu::compactdecimal::provider::ShortCompactDecimalFormatDataV1Marker as icu_provider::DataMarker>::Yokeable = icu::compactdecimal::provider::CompactDecimalPatternDataV1 {
-                    patterns: unsafe {
-                        #[allow(unused_unsafe)]
-                        zerovec::ZeroMap2d::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x03\x06\t\x0C") }, unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x01\0\0\0\x02\0\0\0\x03\0\0\0\x04\0\0\0") }, unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x05\x05\x05\x05") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x04\0\0\0\0\0\x03\0\n\0\x12\0\x03\0K\x06\0\xC2\xA0mln\t\0\xC2\xA0mlrd\x0C\0\xC2\xA0trln") })
-                    },
-                };
-                static HA: <icu::compactdecimal::provider::ShortCompactDecimalFormatDataV1Marker as icu_provider::DataMarker>::Yokeable = icu::compactdecimal::provider::CompactDecimalPatternDataV1 {
-                    patterns: unsafe {
-                        #[allow(unused_unsafe)]
-                        zerovec::ZeroMap2d::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x03\x06\t\x0C") }, unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x01\0\0\0\x02\0\0\0\x03\0\0\0\x04\0\0\0") }, unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x05\x05\x05\x05") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x04\0\0\0\0\0\x03\0\x06\0\t\0\x03\0D\x06\0M\t\0B\x0C\0T") })
-                    },
-                };
                 static MS: <icu::compactdecimal::provider::ShortCompactDecimalFormatDataV1Marker as icu_provider::DataMarker>::Yokeable = icu::compactdecimal::provider::CompactDecimalPatternDataV1 {
                     patterns: unsafe {
                         #[allow(unused_unsafe)]
                         zerovec::ZeroMap2d::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x03\x06\t\x0C") }, unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x01\0\0\0\x02\0\0\0\x03\0\0\0\x04\0\0\0") }, unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x05\x05\x05\x05") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x04\0\0\0\0\0\x03\0\x06\0\t\0\x03\0K\x06\0J\t\0B\x0C\0T") })
                     },
                 };
-                static CHR: <icu::compactdecimal::provider::ShortCompactDecimalFormatDataV1Marker as icu_provider::DataMarker>::Yokeable = icu::compactdecimal::provider::CompactDecimalPatternDataV1 {
+                static EN: <icu::compactdecimal::provider::ShortCompactDecimalFormatDataV1Marker as icu_provider::DataMarker>::Yokeable = icu::compactdecimal::provider::CompactDecimalPatternDataV1 {
                     patterns: unsafe {
                         #[allow(unused_unsafe)]
                         zerovec::ZeroMap2d::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x03\x06\t\x0C") }, unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x01\0\0\0\x02\0\0\0\x03\0\0\0\x04\0\0\0") }, unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x05\x05\x05\x05") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x04\0\0\0\0\0\x03\0\x06\0\t\0\x03\0K\x06\0M\t\0B\x0C\0T") })
@@ -243,24 +225,6 @@ macro_rules! __impl_compactdecimal_short_v1 {
                     patterns: unsafe {
                         #[allow(unused_unsafe)]
                         zerovec::ZeroMap2d::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x03\x06\t\x0C") }, unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x01\0\0\0\x02\0\0\0\x03\0\0\0\x04\0\0\0") }, unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x05\x05\x05\x05") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x04\0\0\0\0\0\x03\0\x06\0\t\0\x03\0K\x06\0M\t\0G\x0C\0T") })
-                    },
-                };
-                static GA: <icu::compactdecimal::provider::ShortCompactDecimalFormatDataV1Marker as icu_provider::DataMarker>::Yokeable = icu::compactdecimal::provider::CompactDecimalPatternDataV1 {
-                    patterns: unsafe {
-                        #[allow(unused_unsafe)]
-                        zerovec::ZeroMap2d::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x03\x06\t\x0C") }, unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x01\0\0\0\x02\0\0\0\x03\0\0\0\x04\0\0\0") }, unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x05\x05\x05\x05") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x04\0\0\0\0\0\x03\0\x06\0\t\0\x03\0k\x06\0M\t\0B\x0C\0T") })
-                    },
-                };
-                static BR: <icu::compactdecimal::provider::ShortCompactDecimalFormatDataV1Marker as icu_provider::DataMarker>::Yokeable = icu::compactdecimal::provider::CompactDecimalPatternDataV1 {
-                    patterns: unsafe {
-                        #[allow(unused_unsafe)]
-                        zerovec::ZeroMap2d::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x03\x06\t\x0C") }, unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x01\0\0\0\x02\0\0\0\x03\0\0\0\x04\0\0\0") }, unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x05\x05\x05\x05") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x04\0\0\0\0\0\x03\0\x06\0\t\0\x03\0k\x06\0M\t\0G\x0C\0T") })
-                    },
-                };
-                static NL: <icu::compactdecimal::provider::ShortCompactDecimalFormatDataV1Marker as icu_provider::DataMarker>::Yokeable = icu::compactdecimal::provider::CompactDecimalPatternDataV1 {
-                    patterns: unsafe {
-                        #[allow(unused_unsafe)]
-                        zerovec::ZeroMap2d::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x03\x06\t\x0C") }, unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x01\0\0\0\x02\0\0\0\x03\0\0\0\x04\0\0\0") }, unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x05\x05\x05\x05") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x04\0\0\0\0\0\x03\0\x0B\0\x13\0\x03\0K\x06\0\xC2\xA0mln.\t\0\xC2\xA0mld.\x0C\0\xC2\xA0bln.") })
                     },
                 };
                 static NO: <icu::compactdecimal::provider::ShortCompactDecimalFormatDataV1Marker as icu_provider::DataMarker>::Yokeable = icu::compactdecimal::provider::CompactDecimalPatternDataV1 {
@@ -449,6 +413,12 @@ macro_rules! __impl_compactdecimal_short_v1 {
                         zerovec::ZeroMap2d::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x03\x06\t\x0C") }, unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x01\0\0\0\x02\0\0\0\x03\0\0\0\x04\0\0\0") }, unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x05\x05\x05\x05") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x04\0\0\0\0\0\x08\0\x0F\0\x17\0\x03\0\xC2\xA0ming\x06\0\xC2\xA0mln\t\0\xC2\xA0mlrd\x0C\0\xC2\xA0trln") })
                     },
                 };
+                static LB: <icu::compactdecimal::provider::ShortCompactDecimalFormatDataV1Marker as icu_provider::DataMarker>::Yokeable = icu::compactdecimal::provider::CompactDecimalPatternDataV1 {
+                    patterns: unsafe {
+                        #[allow(unused_unsafe)]
+                        zerovec::ZeroMap2d::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x03\x06\t\x0C") }, unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x01\0\0\0\x02\0\0\0\x03\0\0\0\x04\0\0\0") }, unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x05\x05\x05\x05") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x04\0\0\0\0\0\x08\0\x10\0\x18\0\x03\0\xC2\xA0Dsd.\x06\0\xC2\xA0Mio.\t\0\xC2\xA0Mrd.\x0C\0\xC2\xA0Bio.") })
+                    },
+                };
                 static CS: <icu::compactdecimal::provider::ShortCompactDecimalFormatDataV1Marker as icu_provider::DataMarker>::Yokeable = icu::compactdecimal::provider::CompactDecimalPatternDataV1 {
                     patterns: unsafe {
                         #[allow(unused_unsafe)]
@@ -521,6 +491,12 @@ macro_rules! __impl_compactdecimal_short_v1 {
                         zerovec::ZeroMap2d::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x03\x06\t\x0C") }, unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x01\0\0\0\x02\0\0\0\x03\0\0\0\x04\0\0\0") }, unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x05\x05\x05\x05") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x04\0\0\0\0\0\x0B\0\x15\0!\0\x03\0\xC2\xA0\xD1\x82\xD1\x8B\xD1\x81.\x06\0\xC2\xA0\xD0\xBC\xD0\xBB\xD0\xBD\t\0\xC2\xA0\xD0\xBC\xD0\xBB\xD1\x80\xD0\xB4\x0C\0\xC2\xA0\xD1\x82\xD1\x80\xD0\xBB\xD0\xBD") })
                     },
                 };
+                static SAH: <icu::compactdecimal::provider::ShortCompactDecimalFormatDataV1Marker as icu_provider::DataMarker>::Yokeable = icu::compactdecimal::provider::CompactDecimalPatternDataV1 {
+                    patterns: unsafe {
+                        #[allow(unused_unsafe)]
+                        zerovec::ZeroMap2d::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x03\x06\t\x0C") }, unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x01\0\0\0\x02\0\0\0\x03\0\0\0\x04\0\0\0") }, unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x05\x05\x05\x05") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x04\0\0\0\0\0\x0B\0\x15\0!\0\x03\0\xC2\xA0\xD1\x82\xD1\x8B\xD2\xBB.\x06\0\xC2\xA0\xD0\xBC\xD3\xA9\xD0\xBB\t\0\xC2\xA0\xD0\xBC\xD0\xBB\xD1\x80\xD0\xB4\x0C\0\xC2\xA0\xD1\x82\xD1\x80\xD0\xBB\xD0\xBD") })
+                    },
+                };
                 static BG: <icu::compactdecimal::provider::ShortCompactDecimalFormatDataV1Marker as icu_provider::DataMarker>::Yokeable = icu::compactdecimal::provider::CompactDecimalPatternDataV1 {
                     patterns: unsafe {
                         #[allow(unused_unsafe)]
@@ -555,6 +531,48 @@ macro_rules! __impl_compactdecimal_short_v1 {
                     patterns: unsafe {
                         #[allow(unused_unsafe)]
                         zerovec::ZeroMap2d::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x03\x06\t\x0C") }, unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x01\0\0\0\x02\0\0\0\x03\0\0\0\x05\0\0\0") }, unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x05\x05\x05\x01\x05") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x05\0\0\0\0\0\x08\0\x0B\0\x0E\0\x11\0\x03\x06elfu\xC2\xA0\x06\0M\t\0B\x0C\0B\x0C\0T") })
+                    },
+                };
+                static UG: <icu::compactdecimal::provider::ShortCompactDecimalFormatDataV1Marker as icu_provider::DataMarker>::Yokeable = icu::compactdecimal::provider::CompactDecimalPatternDataV1 {
+                    patterns: unsafe {
+                        #[allow(unused_unsafe)]
+                        zerovec::ZeroMap2d::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x03\x06\t\x0C") }, unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x01\0\0\0\x02\0\0\0\x03\0\0\0\x05\0\0\0") }, unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x05\x05\x05\x01\x05") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x05\0\0\0\0\0\x08\0\x16\0&\0(\0\x03\0\xD9\x85\xD9\x89\xDA\xAD\x06\0\xD9\x85\xD9\x89\xD9\x84\xD9\x8A\xD9\x88\xD9\x86\t\0\xD9\x85\xD9\x89\xD9\x84\xD9\x8A\xD8\xA7\xD8\xB1\xD8\xAF\0\0\x0C\0T") })
+                    },
+                };
+                static HA: <icu::compactdecimal::provider::ShortCompactDecimalFormatDataV1Marker as icu_provider::DataMarker>::Yokeable = icu::compactdecimal::provider::CompactDecimalPatternDataV1 {
+                    patterns: unsafe {
+                        #[allow(unused_unsafe)]
+                        zerovec::ZeroMap2d::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x03\x06\t\x0C") }, unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x01\0\0\0\x03\0\0\0\x04\0\0\0\x06\0\0\0") }, unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x05\x01\x05\x05\x01\x05") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x06\0\0\0\0\0\x03\0\x05\0\x08\0\x0B\0\r\0\x03\0D\0\0\x06\0M\t\0B\0\0\x0C\0T") })
+                    },
+                };
+                static GA: <icu::compactdecimal::provider::ShortCompactDecimalFormatDataV1Marker as icu_provider::DataMarker>::Yokeable = icu::compactdecimal::provider::CompactDecimalPatternDataV1 {
+                    patterns: unsafe {
+                        #[allow(unused_unsafe)]
+                        zerovec::ZeroMap2d::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x03\x06\t\x0C") }, unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x01\0\0\0\x03\0\0\0\x04\0\0\0\x06\0\0\0") }, unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x05\x01\x05\x05\x01\x05") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x06\0\0\0\0\0\x03\0\x05\0\x08\0\x0B\0\r\0\x03\0k\0\0\x06\0M\t\0B\0\0\x0C\0T") })
+                    },
+                };
+                static BR: <icu::compactdecimal::provider::ShortCompactDecimalFormatDataV1Marker as icu_provider::DataMarker>::Yokeable = icu::compactdecimal::provider::CompactDecimalPatternDataV1 {
+                    patterns: unsafe {
+                        #[allow(unused_unsafe)]
+                        zerovec::ZeroMap2d::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x03\x06\t\x0C") }, unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x01\0\0\0\x03\0\0\0\x05\0\0\0\x07\0\0\0") }, unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x05\x01\x05\x01\x05\x01\x05") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x07\0\0\0\0\0\x03\0\x05\0\x08\0\n\0\r\0\x0F\0\x03\0k\0\0\x06\0M\0\0\t\0G\0\0\x0C\0T") })
+                    },
+                };
+                static FY: <icu::compactdecimal::provider::ShortCompactDecimalFormatDataV1Marker as icu_provider::DataMarker>::Yokeable = icu::compactdecimal::provider::CompactDecimalPatternDataV1 {
+                    patterns: unsafe {
+                        #[allow(unused_unsafe)]
+                        zerovec::ZeroMap2d::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x03\x06\t\x0C") }, unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x02\0\0\0\x03\0\0\0\x04\0\0\0\x05\0\0\0") }, unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x01\x05\x05\x05\x05") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x05\0\0\0\0\0\x02\0\x05\0\r\0\x15\0\0\0\x03\0K\x06\0\xC2\xA0mln.\t\0\xC2\xA0mld.\x0C\0\xC2\xA0bln.") })
+                    },
+                };
+                static AZ: <icu::compactdecimal::provider::ShortCompactDecimalFormatDataV1Marker as icu_provider::DataMarker>::Yokeable = icu::compactdecimal::provider::CompactDecimalPatternDataV1 {
+                    patterns: unsafe {
+                        #[allow(unused_unsafe)]
+                        zerovec::ZeroMap2d::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x03\x06\t\x0C") }, unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x02\0\0\0\x03\0\0\0\x04\0\0\0\x05\0\0\0") }, unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x01\x05\x05\x05\x05") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x05\0\0\0\0\0\x02\0\x05\0\x0C\0\x14\0\0\0\x03\0K\x06\0\xC2\xA0mln\t\0\xC2\xA0mlrd\x0C\0\xC2\xA0trln") })
+                    },
+                };
+                static CHR: <icu::compactdecimal::provider::ShortCompactDecimalFormatDataV1Marker as icu_provider::DataMarker>::Yokeable = icu::compactdecimal::provider::CompactDecimalPatternDataV1 {
+                    patterns: unsafe {
+                        #[allow(unused_unsafe)]
+                        zerovec::ZeroMap2d::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x03\x06\t\x0C") }, unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x02\0\0\0\x04\0\0\0\x05\0\0\0\x07\0\0\0") }, unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x01\x05\x01\x05\x05\x01\x05") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x07\0\0\0\0\0\x02\0\x05\0\x07\0\n\0\r\0\x0F\0\0\0\x03\0K\0\0\x06\0M\t\0B\0\0\x0C\0T") })
                     },
                 };
                 static MK: <icu::compactdecimal::provider::ShortCompactDecimalFormatDataV1Marker as icu_provider::DataMarker>::Yokeable = icu::compactdecimal::provider::CompactDecimalPatternDataV1 {
@@ -596,7 +614,7 @@ macro_rules! __impl_compactdecimal_short_v1 {
                 static IT: <icu::compactdecimal::provider::ShortCompactDecimalFormatDataV1Marker as icu_provider::DataMarker>::Yokeable = icu::compactdecimal::provider::CompactDecimalPatternDataV1 {
                     patterns: unsafe {
                         #[allow(unused_unsafe)]
-                        zerovec::ZeroMap2d::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x06\t\x0C") }, unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x01\0\0\0\x02\0\0\0\x03\0\0\0") }, unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x05\x05\x05") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\x07\0\x0E\0\x06\0\xC2\xA0Mln\t\0\xC2\xA0Mrd\x0C\0\xC2\xA0Bln") })
+                        zerovec::ZeroMap2d::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x06\t\x0C") }, unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x01\0\0\0\x02\0\0\0\x03\0\0\0") }, unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x05\x05\x05") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x03\0\0\0\0\0\x07\0\x0E\0\x06\0\xC2\xA0Mio\t\0\xC2\xA0Mrd\x0C\0\xC2\xA0Bln") })
                     },
                 };
                 static DE: <icu::compactdecimal::provider::ShortCompactDecimalFormatDataV1Marker as icu_provider::DataMarker>::Yokeable = icu::compactdecimal::provider::CompactDecimalPatternDataV1 {
@@ -611,8 +629,8 @@ macro_rules! __impl_compactdecimal_short_v1 {
                         zerovec::ZeroMap2d::from_parts_unchecked(unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x06\x0C") }, unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x01\0\0\0\x02\0\0\0") }, unsafe { zerovec::ZeroVec::from_bytes_unchecked(b"\x05\x05") }, unsafe { zerovec::VarZeroVec::from_bytes_unchecked(b"\x02\0\0\0\0\0\x05\0\x06\0\xC2\xA0M\x0C\0\xC2\xA0B") })
                     },
                 };
-                static VALUES: [&<icu::compactdecimal::provider::ShortCompactDecimalFormatDataV1Marker as icu_provider::DataMarker>::Yokeable; 117usize] = [&AF, &AM, &AR, &AS, &AZ, &BE, &BG, &BN, &BR, &BRX, &BS, &BS_CYRL, &CA, &CHR, &CS, &CHR, &DA, &DE, &DSB, &EL, &CHR, &EN_IN, &ES, &ES_419, &ES_MX, &ES_US, &ET, &EU, &FA, &FF_ADLM, &FI, &CHR, &FO, &FR, &FR_CA, &GA, &CHR, &EU, &GU, &HA, &HE, &HI, &HR, &DSB, &HU, &HY, &IA, &ID, &IS, &IT, &JA, &JV, &KA, &KEA, &KGP, &KK, &KM, &KN, &KO, &CHR, &KY, &LO, &LO_U_NU_LAOO, &LT, &LV, &MK, &CHR, &MN, &MR, &MS, &MY, &NE, &NL, &NO, &OR, &PA, &CHR, &PL, &PS, &KGP, &PT_PT, &RO, &BE, &SC, &SD, &SI, &CS, &SL, &CHR, &SQ, &SR, &SR_LATN, &SV, &SW, &SW_KE, &TA, &TE, &TG, &CHR, &TI, &TK, &TO, &TR, &UK, &UND, &UR, &UZ, &UZ_CYRL, &VI, &YRL, &YUE, &YUE_HANS, &ZH, &CHR, &ZH_HANT, &CHR, &CHR];
-                static KEYS: [&str; 117usize] = ["af", "am", "ar", "as", "az", "be", "bg", "bn", "br", "brx", "bs", "bs-Cyrl", "ca", "chr", "cs", "cy", "da", "de", "dsb", "el", "en", "en-IN", "es", "es-419", "es-MX", "es-US", "et", "eu", "fa", "ff-Adlm", "fi", "fil", "fo", "fr", "fr-CA", "ga", "gd", "gl", "gu", "ha", "he", "hi", "hr", "hsb", "hu", "hy", "ia", "id", "is", "it", "ja", "jv", "ka", "kea", "kgp", "kk", "km", "kn", "ko", "kok", "ky", "lo", "lo-u-nu-laoo", "lt", "lv", "mk", "ml", "mn", "mr", "ms", "my", "ne", "nl", "no", "or", "pa", "pcm", "pl", "ps", "pt", "pt-PT", "ro", "ru", "sc", "sd", "si", "sk", "sl", "so", "sq", "sr", "sr-Latn", "sv", "sw", "sw-KE", "ta", "te", "tg", "th", "ti", "tk", "to", "tr", "uk", "und", "ur", "uz", "uz-Cyrl", "vi", "yrl", "yue", "yue-Hans", "zh", "zh-HK", "zh-Hant", "zh-MO", "zu"];
+                static VALUES: [&<icu::compactdecimal::provider::ShortCompactDecimalFormatDataV1Marker as icu_provider::DataMarker>::Yokeable; 121usize] = [&AF, &AM, &AR, &AS, &AZ, &BE, &BG, &BN, &BR, &BRX, &BS, &BS_CYRL, &CA, &CHR, &CS, &CHR, &DA, &DE, &DSB, &EL, &EN, &EN_IN, &ES, &ES_419, &ES_MX, &ES_US, &ET, &EU, &FA, &FF_ADLM, &FI, &CHR, &FO, &FR, &FR_CA, &FY, &GA, &CHR, &EU, &GU, &HA, &HE, &HI, &HR, &DSB, &HU, &HY, &IA, &ID, &IS, &IT, &JA, &JV, &KA, &KEA, &KGP, &KK, &KM, &KN, &KO, &EN, &KY, &LB, &LO, &LO_U_NU_LAOO, &LT, &LV, &MK, &CHR, &MN, &MR, &MS, &MY, &NE, &FY, &NO, &OR, &PA, &CHR, &PL, &PS, &KGP, &PT_PT, &RO, &BE, &SAH, &SC, &SD, &SI, &CS, &SL, &CHR, &SQ, &SR, &BS, &SV, &SW, &SW_KE, &TA, &TE, &TG, &EN, &TI, &TK, &TO, &TR, &UG, &UK, &UND, &UR, &UZ, &UZ_CYRL, &VI, &YRL, &YUE, &YUE_HANS, &ZH, &EN, &ZH_HANT, &EN, &CHR];
+                static KEYS: [&str; 121usize] = ["af", "am", "ar", "as", "az", "be", "bg", "bn", "br", "brx", "bs", "bs-Cyrl", "ca", "chr", "cs", "cy", "da", "de", "dsb", "el", "en", "en-IN", "es", "es-419", "es-MX", "es-US", "et", "eu", "fa", "ff-Adlm", "fi", "fil", "fo", "fr", "fr-CA", "fy", "ga", "gd", "gl", "gu", "ha", "he", "hi", "hr", "hsb", "hu", "hy", "ia", "id", "is", "it", "ja", "jv", "ka", "kea", "kgp", "kk", "km", "kn", "ko", "kok", "ky", "lb", "lo", "lo-u-nu-laoo", "lt", "lv", "mk", "ml", "mn", "mr", "ms", "my", "ne", "nl", "no", "or", "pa", "pcm", "pl", "ps", "pt", "pt-PT", "ro", "ru", "sah", "sc", "sd", "si", "sk", "sl", "so", "sq", "sr", "sr-Latn", "sv", "sw", "sw-KE", "ta", "te", "tg", "th", "ti", "tk", "to", "tr", "ug", "uk", "und", "ur", "uz", "uz-Cyrl", "vi", "yrl", "yue", "yue-Hans", "zh", "zh-HK", "zh-Hant", "zh-MO", "zu"];
                 let mut metadata = icu_provider::DataResponseMetadata::default();
                 let payload = if let Ok(payload) = KEYS.binary_search_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse()).map(|i| *unsafe { VALUES.get_unchecked(i) }) {
                     payload

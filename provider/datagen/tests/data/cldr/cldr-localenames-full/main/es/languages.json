@@ -3,7 +3,7 @@
     "es": {
       "identity": {
         "version": {
-          "_cldrVersion": "43"
+          "_cldrVersion": "44"
         },
         "language": "es"
       },
@@ -57,6 +57,7 @@
           "bez": "bena",
           "bfd": "bafut",
           "bg": "búlgaro",
+          "bgc": "haryanvi",
           "bgn": "baluchi occidental",
           "bho": "bhoyapurí",
           "bi": "bislama",
@@ -249,7 +250,7 @@
           "jv": "javanés",
           "ka": "georgiano",
           "kaa": "karakalpako",
-          "kab": "cabila",
+          "kab": "cabileño",
           "kac": "kachin",
           "kaj": "jju",
           "kam": "kamba",

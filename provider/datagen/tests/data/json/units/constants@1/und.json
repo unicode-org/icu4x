@@ -1,5 +1,34 @@
 {
   "constants_map": {
+    "AMU": {
+      "numerator": [
+        11,
+        26,
+        149,
+        169,
+        38
+      ],
+      "denominator": [
+        0,
+        0,
+        0,
+        0,
+        64,
+        34,
+        138,
+        9,
+        122,
+        196,
+        134,
+        90,
+        168,
+        76,
+        59,
+        75
+      ],
+      "sign": "Positive",
+      "constant_exactness": "Approximate"
+    },
     "G": {
       "numerator": [
         241,
@@ -211,6 +240,29 @@
       "sign": "Positive",
       "constant_exactness": "Exact"
     },
+    "shaku_to_m": {
+      "numerator": [
+        4
+      ],
+      "denominator": [
+        121
+      ],
+      "sign": "Positive",
+      "constant_exactness": "Exact"
+    },
+    "sho_to_m3": {
+      "numerator": [
+        97,
+        9
+      ],
+      "denominator": [
+        56,
+        79,
+        20
+      ],
+      "sign": "Positive",
+      "constant_exactness": "Exact"
+    },
     "speed_of_light_meters_per_second": {
       "numerator": [
         74,
@@ -220,6 +272,17 @@
       ],
       "denominator": [
         1
+      ],
+      "sign": "Positive",
+      "constant_exactness": "Exact"
+    },
+    "tsubo_to_m2": {
+      "numerator": [
+        144,
+        1
+      ],
+      "denominator": [
+        121
       ],
       "sign": "Positive",
       "constant_exactness": "Exact"

@@ -53,7 +53,7 @@ description = "Run JS tests"
 category = "ICU4X Development"
 dependencies = ["install-nightly", "install-wasm"]
 command = "npm"
-args = ["-C", "ffi/capi/js/examples/node", "install-ci-test"]
+args = ["-C", "ffi/capi/js/package", "install-ci-test"]
 
 [tasks.test-tinywasm]
 description = "Test the Tiny WASM example"

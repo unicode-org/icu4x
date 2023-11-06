@@ -3,7 +3,7 @@
     "ar": {
       "identity": {
         "version": {
-          "_cldrVersion": "43"
+          "_cldrVersion": "44"
         },
         "language": "ar"
       },
@@ -13,11 +13,15 @@
           "ar"
         ],
         "surnameFirst": [
+          "ja",
           "ko",
           "vi",
           "yue",
           "zh"
         ],
+        "formality": "formal",
+        "length": "long",
+        "nativeSpaceReplacement": " ",
         "foreignSpaceReplacement": " ",
         "initial": "{0}.",
         "initialSequence": "{0} {1}",

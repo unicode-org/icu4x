@@ -4,7 +4,7 @@
 
 [package]
 name = "bakeddata-scripts"
-version = "0.0.0"
+version.workspace = true
 publish = false
 edition = "2021"
 

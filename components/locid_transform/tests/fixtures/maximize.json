@@ -121,7 +121,7 @@
   },
   {
     "input": "tuq",
-    "output": "tuq-Latn-ZZ"
+    "output": "tuq-Latn-TD"
   },
   {
     "input": "sr-ME",
@@ -133,7 +133,7 @@
   },
   {
     "input": "klx",
-    "output": "klx-Latn-ZZ"
+    "output": "klx-Latn-PG"
   },
   {
     "input": "kk-Arab",
@@ -177,6 +177,6 @@
   },
   {
     "input": "und-latn-AQ",
-    "output": "und-Latn-AQ"
+    "output": "en-Latn-AQ"
   }
 ]

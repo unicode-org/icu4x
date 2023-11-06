@@ -3,7 +3,7 @@
     "tr": {
       "identity": {
         "version": {
-          "_cldrVersion": "43"
+          "_cldrVersion": "44"
         },
         "language": "tr"
       },
@@ -380,7 +380,7 @@
                 "MEd": "d/MM E",
                 "MMM": "LLL",
                 "MMMd": "d MMM",
-                "MMMEd": "d MMMM E",
+                "MMMEd": "d MMM E",
                 "MMMMd": "d MMMM",
                 "MMMMEd": "d MMMM E",
                 "MMMMW-count-one": "MMMM 'ayının' W. 'haftası'",

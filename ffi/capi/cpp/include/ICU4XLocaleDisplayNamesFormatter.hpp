@@ -27,8 +27,6 @@ struct ICU4XLocaleDisplayNamesFormatterDeleter {
 };
 
 /**
- * 
- * 
  * See the [Rust documentation for `LocaleDisplayNamesFormatter`](https://docs.rs/icu/latest/icu/displaynames/struct.LocaleDisplayNamesFormatter.html) for more information.
  */
 class ICU4XLocaleDisplayNamesFormatter {

@@ -183,15 +183,11 @@ class ICU4XLocale {
   diplomat::result<std::string, ICU4XError> to_string() const;
 
   /**
-   * 
-   * 
    * See the [Rust documentation for `normalizing_eq`](https://docs.rs/icu/latest/icu/locid/struct.Locale.html#method.normalizing_eq) for more information.
    */
   bool normalizing_eq(const std::string_view other) const;
 
   /**
-   * 
-   * 
    * See the [Rust documentation for `strict_cmp`](https://docs.rs/icu/latest/icu/locid/struct.Locale.html#method.strict_cmp) for more information.
    */
   ICU4XOrdering strict_cmp(const std::string_view other) const;

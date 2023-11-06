@@ -25,8 +25,6 @@ struct ICU4XComposingNormalizerDeleter {
 };
 
 /**
- * 
- * 
  * See the [Rust documentation for `ComposingNormalizer`](https://docs.rs/icu/latest/icu/normalizer/struct.ComposingNormalizer.html) for more information.
  */
 class ICU4XComposingNormalizer {

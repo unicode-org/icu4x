@@ -40,20 +40,16 @@ class ICU4XCanonicalCombiningClassMap {
   static diplomat::result<ICU4XCanonicalCombiningClassMap, ICU4XError> create(const ICU4XDataProvider& provider);
 
   /**
-   * 
-   * 
    * See the [Rust documentation for `get`](https://docs.rs/icu/latest/icu/normalizer/properties/struct.CanonicalCombiningClassMap.html#method.get) for more information.
    * 
-   *  Additional information: [1](https://docs.rs/icu/latest/icu/properties/properties/struct.CanonicalCombiningClass.html)
+   * Additional information: [1](https://docs.rs/icu/latest/icu/properties/properties/struct.CanonicalCombiningClass.html)
    */
   uint8_t get(char32_t ch) const;
 
   /**
-   * 
-   * 
    * See the [Rust documentation for `get32`](https://docs.rs/icu/latest/icu/normalizer/properties/struct.CanonicalCombiningClassMap.html#method.get32) for more information.
    * 
-   *  Additional information: [1](https://docs.rs/icu/latest/icu/properties/properties/struct.CanonicalCombiningClass.html)
+   * Additional information: [1](https://docs.rs/icu/latest/icu/properties/properties/struct.CanonicalCombiningClass.html)
    */
   uint8_t get32(uint32_t ch) const;
   inline const capi::ICU4XCanonicalCombiningClassMap* AsFFI() const { return this->inner.get(); }

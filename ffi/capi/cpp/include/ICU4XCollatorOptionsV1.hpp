@@ -21,8 +21,6 @@
 
 
 /**
- * 
- * 
  * See the [Rust documentation for `CollatorOptions`](https://docs.rs/icu/latest/icu/collator/struct.CollatorOptions.html) for more information.
  */
 struct ICU4XCollatorOptionsV1 {

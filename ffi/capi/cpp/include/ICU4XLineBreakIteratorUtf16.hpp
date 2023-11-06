@@ -22,11 +22,9 @@ struct ICU4XLineBreakIteratorUtf16Deleter {
 };
 
 /**
- * 
- * 
  * See the [Rust documentation for `LineBreakIterator`](https://docs.rs/icu/latest/icu/segmenter/struct.LineBreakIterator.html) for more information.
  * 
- *  Additional information: [1](https://docs.rs/icu/latest/icu/segmenter/type.LineBreakIteratorUtf16.html)
+ * Additional information: [1](https://docs.rs/icu/latest/icu/segmenter/type.LineBreakIteratorUtf16.html)
  */
 class ICU4XLineBreakIteratorUtf16 {
  public:

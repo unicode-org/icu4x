@@ -15,8 +15,6 @@
 
 
 /**
- * 
- * 
  * See the [Rust documentation for `WeekOf`](https://docs.rs/icu/latest/icu/calendar/week/struct.WeekOf.html) for more information.
  */
 struct ICU4XWeekOf {
