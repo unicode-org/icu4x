@@ -10,16 +10,27 @@ Installing dependencies is always your first step.
 
 ### Rust Part 1
 
-Please create a new Rust crate with icu4x as a dependency. For instructions, please follow steps 1-2 in [intro.md](./intro.md).
+Verify that Rust is installed. If it's not, you can install it in a few seconds from [https://rustup.rs/](https://rustup.rs/).
 
-Some of this tutorial overlaps with steps 3-5 in the intro tutorial.
+```console
+$ cargo --version
+cargo 1.71.1 (7f1d04c00 2023-07-29)
+```
+
+Create a new Rust binary crate with icu4x as a dependency:
+
+```console
+cargo new --bin tutorial
+cd tutorial
+$ cargo add icu
+```
 
 ### JavaScript Part 1
 
 We recommend using [CodePen](https://codepen.io/pen/?editors=1011) to follow along. To load ICU4X into CodePen, you can use this snippet in the JavaScript editor:
 
 ```javascript
-import { ICU4XLocale, ICU4XDataProvider } from "https://storage.googleapis.com/static-493776/icu4x_2023-11-03/js/index.js";
+import { ICU4XLocale, ICU4XDataProvider, ICU4XDateFormatter, ICU4XDateTimeFormatter, ICU4XDateLength, ICU4XIsoDate, ICU4XIsoDateTime, ICU4XTimeLength } from "https://storage.googleapis.com/static-493776/icu4x_2023-11-03/js/index.js";
 ```
 
 This loads the full development ICU4X WebAssembly file. Since it may take some time to load on slow connections, we'll create a loading div. In future tutorials you will learn how to build an optimized WebAssembly file, reducing the size of the WASM file by 99% or more. Add this to your HTML:
@@ -48,14 +59,17 @@ Here, we will accept a locale string from the user and parse it into an ICU4X Lo
 First, we will use Rust APIs to accept a string from user input on the command line. Then we can parse the input string as an ICU4X `Locale`. Add the following to your `fn main()`:
 
 ```rust,no_run
-// At top of file:
+// At the top of the file:
 use icu::locid::Locale;
 
 // In the main() function:
-let mut locale_str = String::new();
 print!("Enter your locale: ");
 std::io::Write::flush(&mut std::io::stdout()).unwrap();
-std::io::stdin().read_line(&mut locale_str).unwrap();
+let locale_str = {
+    let mut buf = String::new();
+    std::io::stdin().read_line(&mut buf).unwrap();
+    buf
+};
 
 // Since the string contains whitespace, we must call `.trim()`:
 let locale = match locale_str.trim().parse::<Locale>() {
@@ -130,29 +144,24 @@ $ cargo add time --features local-offset
 Now we can write the Rust code:
 
 ```rust
-// At top of file:
-use icu::calendar::DateTime;
+// At the top of the file:
+use icu::calendar::{Date, Iso};
 use icu::datetime::options::length;
 use icu::datetime::DateFormatter;
 
 /// Helper function to create an ICU4X DateTime for the current local time:
-fn get_current_datetime() -> DateTime<icu::calendar::Iso> {
+fn get_current_date() -> Date<Iso> {
     let current_offset_date_time = time::OffsetDateTime::now_local().unwrap();
-    DateTime::try_new_iso_datetime(
+    DateTime::try_new_iso_date(
         current_offset_date_time.year(),
         current_offset_date_time.month() as u8,
         current_offset_date_time.day(),
-        current_offset_date_time.hour(),
-        current_offset_date_time.minute(),
-        current_offset_date_time.second(),
     )
     .unwrap()
 }
 
-let locale = icu::locid::Locale::default(); // so the example compiles; don't include this
-
 // Put the following in the main() function:
-let icu4x_datetime = get_current_datetime();
+let iso_date = get_current_datetime();
 
 // Create and use an ICU4X date formatter:
 let date_formatter =
@@ -161,7 +170,7 @@ let date_formatter =
 println!(
     "Date: {}",
     date_formatter
-        .format(&icu4x_datetime.to_any())
+        .format(&iso_date.to_any())
         .expect("date should format successfully")
 );
 ```
@@ -177,9 +186,13 @@ Add this to the HTML:
 <p><label>Date: <input type="date" id="dateinput"/></label></p>
 ```
 
-And to JavaScript:
+And this to JavaScript:
 
 ```javascript
+
+// Run the function whenever the date input changes:
+document.getElementById("dateinput").addEventListener("input", update, false);
+
 /// Helper function to convert the date input to an ICU4X Date:
 function getDateFromInput() {
     let dateStr = document.getElementById("dateinput").value;
@@ -192,12 +205,39 @@ function getDateFromInput() {
 }
 
 // Put the following in the update() function, inside the try block:
-let isoDateTime = getDateFromInput();
-let dataProvider = ICU4XDataProvider.create_compiled();
+let isoDate = getDateFromInput();
 let dateFormatter = ICU4XDateFormatter.create_with_length(
-    dataProvider,
+    ICU4XDataProvider.create_compiled(), // we will learn what this means later
     locale,
     ICU4XDateLength.Medium,
 );
-textResult += ": " + dateFormatter.format_iso_date(isoDateTime);
+textResult = dateFormatter.format_iso_date(isoDate);
 ```
+
+## 4. Formatting date and time
+
+Now we would also like to format the current time.
+
+### Rust Part 4
+
+Use the API documentation for [`icu::calendar::DateTime`](https://docs.rs/icu/latest/icu/calendar/struct.DateTime.html) and [`icu::datetime::DateTimeFormatter`](https://docs.rs/icu/latest/icu/datetime/struct.DateTimeFormatter.html) to expand your app to format both date and time.
+
+Hint: You can use `Default::default()` for the `DateTimeFormatterOptions` argument.
+
+### JavaScript Part
+
+Use the API documentation for [`ICU4XDateTime`](https://unicode-org.github.io/icu4x/docs/ffi/js/datetime_ffi.html) and [`ICU4XDateTimeFormatter`](https://unicode-org.github.io/icu4x/docs/ffi/js/datetime_formatter_ffi.html) to expand your app to format both a date and a time.
+
+Hint: You can create an HTML time picker with
+```html
+<input type="time" id="timeinput" value="10:10"/>
+```
+
+Hint: You can create a `Date` from `dateStr` and `timeStr` with
+```javascript
+let dateObj = dateStr && timeStr ? new Date(dateStr + " " + timeStr) : new Date();
+```
+
+## 5. Formatting in a different calendar system
+
+So far we have used the ISO calendar. You can now try converting the date to a different calendar system and formatting that. Again, the API docs should put you on the correct path.
