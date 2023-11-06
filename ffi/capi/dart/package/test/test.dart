@@ -1,4 +1,4 @@
-import 'package:icu/lib.dart';
+import 'package:icu/icu.dart';
 import 'package:path/path.dart' as path;
 import 'package:test/test.dart';
 

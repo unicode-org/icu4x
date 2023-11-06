@@ -1,5 +1,4 @@
-// I believe these two lints produce false positives:
-// ignore_for_file: unnecessary_late
+// https://github.com/dart-lang/sdk/issues/53946
 // ignore_for_file: non_native_function_type_argument_to_pointer
 
 import 'dart:convert';
@@ -10,7 +9,7 @@ import 'package:ffi/ffi.dart' as ffi2;
 late final ffi.Pointer<T> Function<T extends ffi.NativeType>(String) _capi;
 void init(String path) => _capi = ffi.DynamicLibrary.open(path).lookup;
 
-late final _callocFree = Finalizer(ffi2.calloc.free);
+final _callocFree = Finalizer(ffi2.calloc.free);
 
 /// An iterator over code point ranges, produced by `ICU4XCodePointSetData` or
 /// one of the `ICU4XCodePointMapData` types
@@ -21,7 +20,7 @@ class CodePointRangeIterator implements ffi.Finalizable {
     _finalizer.attach(this, _underlying.cast());
   }
 
-  static late final _finalizer =
+  static final _finalizer =
       ffi.NativeFinalizer(_capi('CodePointRangeIterator_destroy'));
 
   /// Advance the iterator by one and return the next range.
@@ -32,7 +31,7 @@ class CodePointRangeIterator implements ffi.Finalizable {
     return CodePointRangeIteratorResult._(result);
   }
 
-  static late final _nextFfi = _capi<
+  static final _nextFfi = _capi<
           ffi.NativeFunction<
               _CodePointRangeIteratorResultFfi Function(
                   ffi.Pointer<ffi.Opaque>)>>('CodePointRangeIterator_next')
@@ -178,7 +177,7 @@ enum ICU4XAnyCalendarKind {
         ? ICU4XAnyCalendarKind._(result.union.ok)
         : throw VoidError();
   }
-  static late final _getForLocaleFfi = _capi<
+  static final _getForLocaleFfi = _capi<
               ffi.NativeFunction<
                   _ResultUint32Void Function(ffi.Pointer<ffi.Opaque>)>>(
           'ICU4XAnyCalendarKind_get_for_locale')
@@ -194,13 +193,13 @@ enum ICU4XAnyCalendarKind {
     final alloc = ffi2.Arena();
     final sSlice = _SliceFfi2Utf8._fromDart(s, alloc);
 
-    final result = _getForBcp47Ffi(sSlice.bytes, sSlice.length);
+    final result = _getForBcp47Ffi(sSlice._bytes, sSlice._length);
     alloc.releaseAll();
     return result.isOk
         ? ICU4XAnyCalendarKind._(result.union.ok)
         : throw VoidError();
   }
-  static late final _getForBcp47Ffi = _capi<
+  static final _getForBcp47Ffi = _capi<
           ffi.NativeFunction<
               _ResultUint32Void Function(ffi.Pointer<ffi2.Utf8>,
                   ffi.Size)>>('ICU4XAnyCalendarKind_get_for_bcp47')
@@ -218,7 +217,7 @@ enum ICU4XAnyCalendarKind {
         : throw ICU4XError._(result.union.err);
   }
 
-  static late final _bcp47Ffi = _capi<
+  static final _bcp47Ffi = _capi<
           ffi.NativeFunction<
               _ResultVoidUint32 Function(ffi.Uint32,
                   ffi.Pointer<ffi.Opaque>)>>('ICU4XAnyCalendarKind_bcp47')
@@ -236,7 +235,7 @@ class ICU4XBcp47ToIanaMapper implements ffi.Finalizable {
     _finalizer.attach(this, _underlying.cast());
   }
 
-  static late final _finalizer =
+  static final _finalizer =
       ffi.NativeFinalizer(_capi('ICU4XBcp47ToIanaMapper_destroy'));
 
   /// See the [Rust documentation for `new`](https://docs.rs/icu/latest/icu/timezone/struct.IanaBcp47RoundTripMapper.html#method.new) for more information.
@@ -246,7 +245,7 @@ class ICU4XBcp47ToIanaMapper implements ffi.Finalizable {
         ? ICU4XBcp47ToIanaMapper._(result.union.ok)
         : throw ICU4XError._(result.union.err);
   }
-  static late final _createFfi = _capi<
+  static final _createFfi = _capi<
           ffi.NativeFunction<
               _ResultOpaqueUint32 Function(
                   ffi.Pointer<ffi.Opaque>)>>('ICU4XBcp47ToIanaMapper_create')
@@ -261,7 +260,7 @@ class ICU4XBcp47ToIanaMapper implements ffi.Finalizable {
     final valueSlice = _SliceFfi2Utf8._fromDart(value, alloc);
 
     final writeable = _Writeable();
-    final result = _getFfi(_underlying, valueSlice.bytes, valueSlice.length,
+    final result = _getFfi(_underlying, valueSlice._bytes, valueSlice._length,
         writeable._underlying);
     alloc.releaseAll();
     return result.isOk
@@ -269,7 +268,7 @@ class ICU4XBcp47ToIanaMapper implements ffi.Finalizable {
         : throw ICU4XError._(result.union.err);
   }
 
-  static late final _getFfi = _capi<
+  static final _getFfi = _capi<
           ffi.NativeFunction<
               _ResultVoidUint32 Function(
                   ffi.Pointer<ffi.Opaque>,
@@ -294,8 +293,7 @@ class ICU4XBidi implements ffi.Finalizable {
     _finalizer.attach(this, _underlying.cast());
   }
 
-  static late final _finalizer =
-      ffi.NativeFinalizer(_capi('ICU4XBidi_destroy'));
+  static final _finalizer = ffi.NativeFinalizer(_capi('ICU4XBidi_destroy'));
 
   /// Creates a new [`ICU4XBidi`] from locale data.
   ///
@@ -306,7 +304,7 @@ class ICU4XBidi implements ffi.Finalizable {
         ? ICU4XBidi._(result.union.ok)
         : throw ICU4XError._(result.union.err);
   }
-  static late final _createFfi = _capi<
+  static final _createFfi = _capi<
           ffi.NativeFunction<
               _ResultOpaqueUint32 Function(
                   ffi.Pointer<ffi.Opaque>)>>('ICU4XBidi_create')
@@ -323,12 +321,12 @@ class ICU4XBidi implements ffi.Finalizable {
     final textSlice = _SliceFfi2Utf8._fromDart(text, alloc);
 
     final result = _forTextFfi(
-        _underlying, textSlice.bytes, textSlice.length, defaultLevel);
+        _underlying, textSlice._bytes, textSlice._length, defaultLevel);
     alloc.releaseAll();
     return ICU4XBidiInfo._(result);
   }
 
-  static late final _forTextFfi = _capi<
+  static final _forTextFfi = _capi<
           ffi.NativeFunction<
               ffi.Pointer<ffi.Opaque> Function(
                   ffi.Pointer<ffi.Opaque>,
@@ -354,12 +352,12 @@ class ICU4XBidi implements ffi.Finalizable {
     final levelsSlice = _SliceFfiUint8._fromDart(levels, alloc);
 
     final result =
-        _reorderVisualFfi(_underlying, levelsSlice.bytes, levelsSlice.length);
+        _reorderVisualFfi(_underlying, levelsSlice._bytes, levelsSlice._length);
     alloc.releaseAll();
     return ICU4XReorderedIndexMap._(result);
   }
 
-  static late final _reorderVisualFfi = _capi<
+  static final _reorderVisualFfi = _capi<
           ffi.NativeFunction<
               ffi.Pointer<ffi.Opaque> Function(
                   ffi.Pointer<ffi.Opaque>,
@@ -379,7 +377,7 @@ class ICU4XBidi implements ffi.Finalizable {
     return result;
   }
 
-  static late final _levelIsRtlFfi =
+  static final _levelIsRtlFfi =
       _capi<ffi.NativeFunction<ffi.Bool Function(ffi.Uint8)>>(
               'ICU4XBidi_level_is_rtl')
           .asFunction<bool Function(int)>(isLeaf: true);
@@ -394,7 +392,7 @@ class ICU4XBidi implements ffi.Finalizable {
     return result;
   }
 
-  static late final _levelIsLtrFfi =
+  static final _levelIsLtrFfi =
       _capi<ffi.NativeFunction<ffi.Bool Function(ffi.Uint8)>>(
               'ICU4XBidi_level_is_ltr')
           .asFunction<bool Function(int)>(isLeaf: true);
@@ -402,14 +400,14 @@ class ICU4XBidi implements ffi.Finalizable {
   /// Get a basic RTL Level value
   ///
   /// See the [Rust documentation for `rtl`](https://docs.rs/unicode_bidi/latest/unicode_bidi/struct.Level.html#method.rtl) for more information.
-  static late final int levelRtl =
+  static final int levelRtl =
       _capi<ffi.NativeFunction<ffi.Uint8 Function()>>('ICU4XBidi_level_rtl')
           .asFunction<int Function()>(isLeaf: true)();
 
   /// Get a simple LTR Level value
   ///
   /// See the [Rust documentation for `ltr`](https://docs.rs/unicode_bidi/latest/unicode_bidi/struct.Level.html#method.ltr) for more information.
-  static late final int levelLtr =
+  static final int levelLtr =
       _capi<ffi.NativeFunction<ffi.Uint8 Function()>>('ICU4XBidi_level_ltr')
           .asFunction<int Function()>(isLeaf: true)();
 }
@@ -438,8 +436,7 @@ class ICU4XBidiInfo implements ffi.Finalizable {
     _finalizer.attach(this, _underlying.cast());
   }
 
-  static late final _finalizer =
-      ffi.NativeFinalizer(_capi('ICU4XBidiInfo_destroy'));
+  static final _finalizer = ffi.NativeFinalizer(_capi('ICU4XBidiInfo_destroy'));
 
   /// The number of paragraphs contained here
   int get paragraphCount {
@@ -447,7 +444,7 @@ class ICU4XBidiInfo implements ffi.Finalizable {
     return result;
   }
 
-  static late final _paragraphCountFfi =
+  static final _paragraphCountFfi =
       _capi<ffi.NativeFunction<ffi.Size Function(ffi.Pointer<ffi.Opaque>)>>(
               'ICU4XBidiInfo_paragraph_count')
           .asFunction<int Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
@@ -458,7 +455,7 @@ class ICU4XBidiInfo implements ffi.Finalizable {
     return result.address == 0 ? null : ICU4XBidiParagraph._(result);
   }
 
-  static late final _paragraphAtFfi = _capi<
+  static final _paragraphAtFfi = _capi<
           ffi.NativeFunction<
               ffi.Pointer<ffi.Opaque> Function(ffi.Pointer<ffi.Opaque>,
                   ffi.Size)>>('ICU4XBidiInfo_paragraph_at')
@@ -472,7 +469,7 @@ class ICU4XBidiInfo implements ffi.Finalizable {
     return result;
   }
 
-  static late final _sizeFfi =
+  static final _sizeFfi =
       _capi<ffi.NativeFunction<ffi.Size Function(ffi.Pointer<ffi.Opaque>)>>(
               'ICU4XBidiInfo_size')
           .asFunction<int Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
@@ -487,7 +484,7 @@ class ICU4XBidiInfo implements ffi.Finalizable {
     return result;
   }
 
-  static late final _levelAtFfi = _capi<
+  static final _levelAtFfi = _capi<
           ffi.NativeFunction<
               ffi.Uint8 Function(
                   ffi.Pointer<ffi.Opaque>, ffi.Size)>>('ICU4XBidiInfo_level_at')
@@ -502,7 +499,7 @@ class ICU4XBidiParagraph implements ffi.Finalizable {
     _finalizer.attach(this, _underlying.cast());
   }
 
-  static late final _finalizer =
+  static final _finalizer =
       ffi.NativeFinalizer(_capi('ICU4XBidiParagraph_destroy'));
 
   /// Given a paragraph index `n` within the surrounding text, this sets this
@@ -517,7 +514,7 @@ class ICU4XBidiParagraph implements ffi.Finalizable {
     }
   }
 
-  static late final _setParagraphInTextFfi = _capi<
+  static final _setParagraphInTextFfi = _capi<
           ffi.NativeFunction<
               _ResultVoidUint32 Function(ffi.Pointer<ffi.Opaque>,
                   ffi.Size)>>('ICU4XBidiParagraph_set_paragraph_in_text')
@@ -532,7 +529,7 @@ class ICU4XBidiParagraph implements ffi.Finalizable {
     return ICU4XBidiDirection._(result);
   }
 
-  static late final _directionFfi =
+  static final _directionFfi =
       _capi<ffi.NativeFunction<ffi.Uint32 Function(ffi.Pointer<ffi.Opaque>)>>(
               'ICU4XBidiParagraph_direction')
           .asFunction<int Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
@@ -545,7 +542,7 @@ class ICU4XBidiParagraph implements ffi.Finalizable {
     return result;
   }
 
-  static late final _sizeFfi =
+  static final _sizeFfi =
       _capi<ffi.NativeFunction<ffi.Size Function(ffi.Pointer<ffi.Opaque>)>>(
               'ICU4XBidiParagraph_size')
           .asFunction<int Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
@@ -556,7 +553,7 @@ class ICU4XBidiParagraph implements ffi.Finalizable {
     return result;
   }
 
-  static late final _rangeStartFfi =
+  static final _rangeStartFfi =
       _capi<ffi.NativeFunction<ffi.Size Function(ffi.Pointer<ffi.Opaque>)>>(
               'ICU4XBidiParagraph_range_start')
           .asFunction<int Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
@@ -567,7 +564,7 @@ class ICU4XBidiParagraph implements ffi.Finalizable {
     return result;
   }
 
-  static late final _rangeEndFfi =
+  static final _rangeEndFfi =
       _capi<ffi.NativeFunction<ffi.Size Function(ffi.Pointer<ffi.Opaque>)>>(
               'ICU4XBidiParagraph_range_end')
           .asFunction<int Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
@@ -585,7 +582,7 @@ class ICU4XBidiParagraph implements ffi.Finalizable {
         : throw ICU4XError._(result.union.err);
   }
 
-  static late final _reorderLineFfi = _capi<
+  static final _reorderLineFfi = _capi<
           ffi.NativeFunction<
               _ResultVoidUint32 Function(
                   ffi.Pointer<ffi.Opaque>,
@@ -608,7 +605,7 @@ class ICU4XBidiParagraph implements ffi.Finalizable {
     return result;
   }
 
-  static late final _levelAtFfi = _capi<
+  static final _levelAtFfi = _capi<
           ffi.NativeFunction<
               ffi.Uint8 Function(ffi.Pointer<ffi.Opaque>,
                   ffi.Size)>>('ICU4XBidiParagraph_level_at')
@@ -623,8 +620,7 @@ class ICU4XCalendar implements ffi.Finalizable {
     _finalizer.attach(this, _underlying.cast());
   }
 
-  static late final _finalizer =
-      ffi.NativeFinalizer(_capi('ICU4XCalendar_destroy'));
+  static final _finalizer = ffi.NativeFinalizer(_capi('ICU4XCalendar_destroy'));
 
   /// Creates a new [`ICU4XCalendar`] from the specified date and time.
   ///
@@ -637,7 +633,7 @@ class ICU4XCalendar implements ffi.Finalizable {
         ? ICU4XCalendar._(result.union.ok)
         : throw ICU4XError._(result.union.err);
   }
-  static late final _createForLocaleFfi = _capi<
+  static final _createForLocaleFfi = _capi<
           ffi.NativeFunction<
               _ResultOpaqueUint32 Function(ffi.Pointer<ffi.Opaque>,
                   ffi.Pointer<ffi.Opaque>)>>('ICU4XCalendar_create_for_locale')
@@ -655,7 +651,7 @@ class ICU4XCalendar implements ffi.Finalizable {
         ? ICU4XCalendar._(result.union.ok)
         : throw ICU4XError._(result.union.err);
   }
-  static late final _createForKindFfi = _capi<
+  static final _createForKindFfi = _capi<
           ffi.NativeFunction<
               _ResultOpaqueUint32 Function(ffi.Pointer<ffi.Opaque>,
                   ffi.Uint32)>>('ICU4XCalendar_create_for_kind')
@@ -670,7 +666,7 @@ class ICU4XCalendar implements ffi.Finalizable {
     return ICU4XAnyCalendarKind._(result);
   }
 
-  static late final _kindFfi =
+  static final _kindFfi =
       _capi<ffi.NativeFunction<ffi.Uint32 Function(ffi.Pointer<ffi.Opaque>)>>(
               'ICU4XCalendar_kind')
           .asFunction<int Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
@@ -686,7 +682,7 @@ class ICU4XCanonicalCombiningClassMap implements ffi.Finalizable {
     _finalizer.attach(this, _underlying.cast());
   }
 
-  static late final _finalizer =
+  static final _finalizer =
       ffi.NativeFinalizer(_capi('ICU4XCanonicalCombiningClassMap_destroy'));
 
   /// Construct a new ICU4XCanonicalCombiningClassMap instance for NFC
@@ -698,7 +694,7 @@ class ICU4XCanonicalCombiningClassMap implements ffi.Finalizable {
         ? ICU4XCanonicalCombiningClassMap._(result.union.ok)
         : throw ICU4XError._(result.union.err);
   }
-  static late final _createFfi = _capi<
+  static final _createFfi = _capi<
               ffi.NativeFunction<
                   _ResultOpaqueUint32 Function(ffi.Pointer<ffi.Opaque>)>>(
           'ICU4XCanonicalCombiningClassMap_create')
@@ -713,7 +709,7 @@ class ICU4XCanonicalCombiningClassMap implements ffi.Finalizable {
     return result;
   }
 
-  static late final _getFfi = _capi<
+  static final _getFfi = _capi<
           ffi.NativeFunction<
               ffi.Uint8 Function(ffi.Pointer<ffi.Opaque>,
                   ffi.Uint32)>>('ICU4XCanonicalCombiningClassMap_get')
@@ -727,7 +723,7 @@ class ICU4XCanonicalCombiningClassMap implements ffi.Finalizable {
     return result;
   }
 
-  static late final _get32Ffi = _capi<
+  static final _get32Ffi = _capi<
           ffi.NativeFunction<
               ffi.Uint8 Function(ffi.Pointer<ffi.Opaque>,
                   ffi.Uint32)>>('ICU4XCanonicalCombiningClassMap_get32')
@@ -746,7 +742,7 @@ class ICU4XCanonicalComposition implements ffi.Finalizable {
     _finalizer.attach(this, _underlying.cast());
   }
 
-  static late final _finalizer =
+  static final _finalizer =
       ffi.NativeFinalizer(_capi('ICU4XCanonicalComposition_destroy'));
 
   /// Construct a new ICU4XCanonicalComposition instance for NFC
@@ -758,7 +754,7 @@ class ICU4XCanonicalComposition implements ffi.Finalizable {
         ? ICU4XCanonicalComposition._(result.union.ok)
         : throw ICU4XError._(result.union.err);
   }
-  static late final _createFfi = _capi<
+  static final _createFfi = _capi<
           ffi.NativeFunction<
               _ResultOpaqueUint32 Function(
                   ffi.Pointer<ffi.Opaque>)>>('ICU4XCanonicalComposition_create')
@@ -774,7 +770,7 @@ class ICU4XCanonicalComposition implements ffi.Finalizable {
     return result;
   }
 
-  static late final _composeFfi = _capi<
+  static final _composeFfi = _capi<
           ffi.NativeFunction<
               ffi.Uint32 Function(ffi.Pointer<ffi.Opaque>, ffi.Uint32,
                   ffi.Uint32)>>('ICU4XCanonicalComposition_compose')
@@ -794,7 +790,7 @@ class ICU4XCanonicalDecomposition implements ffi.Finalizable {
     _finalizer.attach(this, _underlying.cast());
   }
 
-  static late final _finalizer =
+  static final _finalizer =
       ffi.NativeFinalizer(_capi('ICU4XCanonicalDecomposition_destroy'));
 
   /// Construct a new ICU4XCanonicalDecomposition instance for NFC
@@ -806,7 +802,7 @@ class ICU4XCanonicalDecomposition implements ffi.Finalizable {
         ? ICU4XCanonicalDecomposition._(result.union.ok)
         : throw ICU4XError._(result.union.err);
   }
-  static late final _createFfi = _capi<
+  static final _createFfi = _capi<
               ffi.NativeFunction<
                   _ResultOpaqueUint32 Function(ffi.Pointer<ffi.Opaque>)>>(
           'ICU4XCanonicalDecomposition_create')
@@ -821,7 +817,7 @@ class ICU4XCanonicalDecomposition implements ffi.Finalizable {
     return ICU4XDecomposed._(result);
   }
 
-  static late final _decomposeFfi = _capi<
+  static final _decomposeFfi = _capi<
           ffi.NativeFunction<
               _ICU4XDecomposedFfi Function(ffi.Pointer<ffi.Opaque>,
                   ffi.Uint32)>>('ICU4XCanonicalDecomposition_decompose')
@@ -837,7 +833,7 @@ class ICU4XCaseMapCloser implements ffi.Finalizable {
     _finalizer.attach(this, _underlying.cast());
   }
 
-  static late final _finalizer =
+  static final _finalizer =
       ffi.NativeFinalizer(_capi('ICU4XCaseMapCloser_destroy'));
 
   /// Construct a new ICU4XCaseMapper instance
@@ -849,7 +845,7 @@ class ICU4XCaseMapCloser implements ffi.Finalizable {
         ? ICU4XCaseMapCloser._(result.union.ok)
         : throw ICU4XError._(result.union.err);
   }
-  static late final _createFfi = _capi<
+  static final _createFfi = _capi<
           ffi.NativeFunction<
               _ResultOpaqueUint32 Function(
                   ffi.Pointer<ffi.Opaque>)>>('ICU4XCaseMapCloser_create')
@@ -864,7 +860,7 @@ class ICU4XCaseMapCloser implements ffi.Finalizable {
     _addCaseClosureToFfi(_underlying, c, builder._underlying);
   }
 
-  static late final _addCaseClosureToFfi = _capi<
+  static final _addCaseClosureToFfi = _capi<
               ffi.NativeFunction<
                   ffi.Void Function(ffi.Pointer<ffi.Opaque>, ffi.Uint32,
                       ffi.Pointer<ffi.Opaque>)>>(
@@ -884,12 +880,12 @@ class ICU4XCaseMapCloser implements ffi.Finalizable {
     final sSlice = _SliceFfi2Utf8._fromDart(s, alloc);
 
     final result = _addStringCaseClosureToFfi(
-        _underlying, sSlice.bytes, sSlice.length, builder._underlying);
+        _underlying, sSlice._bytes, sSlice._length, builder._underlying);
     alloc.releaseAll();
     return result;
   }
 
-  static late final _addStringCaseClosureToFfi = _capi<
+  static final _addStringCaseClosureToFfi = _capi<
               ffi.NativeFunction<
                   ffi.Bool Function(
                       ffi.Pointer<ffi.Opaque>,
@@ -910,7 +906,7 @@ class ICU4XCaseMapper implements ffi.Finalizable {
     _finalizer.attach(this, _underlying.cast());
   }
 
-  static late final _finalizer =
+  static final _finalizer =
       ffi.NativeFinalizer(_capi('ICU4XCaseMapper_destroy'));
 
   /// Construct a new ICU4XCaseMapper instance
@@ -922,7 +918,7 @@ class ICU4XCaseMapper implements ffi.Finalizable {
         ? ICU4XCaseMapper._(result.union.ok)
         : throw ICU4XError._(result.union.err);
   }
-  static late final _createFfi = _capi<
+  static final _createFfi = _capi<
           ffi.NativeFunction<
               _ResultOpaqueUint32 Function(
                   ffi.Pointer<ffi.Opaque>)>>('ICU4XCaseMapper_create')
@@ -937,7 +933,7 @@ class ICU4XCaseMapper implements ffi.Finalizable {
     final sSlice = _SliceFfi2Utf8._fromDart(s, alloc);
 
     final writeable = _Writeable();
-    final result = _lowercaseFfi(_underlying, sSlice.bytes, sSlice.length,
+    final result = _lowercaseFfi(_underlying, sSlice._bytes, sSlice._length,
         locale._underlying, writeable._underlying);
     alloc.releaseAll();
     return result.isOk
@@ -945,7 +941,7 @@ class ICU4XCaseMapper implements ffi.Finalizable {
         : throw ICU4XError._(result.union.err);
   }
 
-  static late final _lowercaseFfi = _capi<
+  static final _lowercaseFfi = _capi<
           ffi.NativeFunction<
               _ResultVoidUint32 Function(
                   ffi.Pointer<ffi.Opaque>,
@@ -969,7 +965,7 @@ class ICU4XCaseMapper implements ffi.Finalizable {
     final sSlice = _SliceFfi2Utf8._fromDart(s, alloc);
 
     final writeable = _Writeable();
-    final result = _uppercaseFfi(_underlying, sSlice.bytes, sSlice.length,
+    final result = _uppercaseFfi(_underlying, sSlice._bytes, sSlice._length,
         locale._underlying, writeable._underlying);
     alloc.releaseAll();
     return result.isOk
@@ -977,7 +973,7 @@ class ICU4XCaseMapper implements ffi.Finalizable {
         : throw ICU4XError._(result.union.err);
   }
 
-  static late final _uppercaseFfi = _capi<
+  static final _uppercaseFfi = _capi<
           ffi.NativeFunction<
               _ResultVoidUint32 Function(
                   ffi.Pointer<ffi.Opaque>,
@@ -1008,8 +1004,8 @@ class ICU4XCaseMapper implements ffi.Finalizable {
     final writeable = _Writeable();
     final result = _titlecaseSegmentWithOnlyCaseDataV1Ffi(
         _underlying,
-        sSlice.bytes,
-        sSlice.length,
+        sSlice._bytes,
+        sSlice._length,
         locale._underlying,
         options._underlying,
         writeable._underlying);
@@ -1019,7 +1015,7 @@ class ICU4XCaseMapper implements ffi.Finalizable {
         : throw ICU4XError._(result.union.err);
   }
 
-  static late final _titlecaseSegmentWithOnlyCaseDataV1Ffi = _capi<
+  static final _titlecaseSegmentWithOnlyCaseDataV1Ffi = _capi<
               ffi.NativeFunction<
                   _ResultVoidUint32 Function(
                       ffi.Pointer<ffi.Opaque>,
@@ -1047,14 +1043,14 @@ class ICU4XCaseMapper implements ffi.Finalizable {
 
     final writeable = _Writeable();
     final result = _foldFfi(
-        _underlying, sSlice.bytes, sSlice.length, writeable._underlying);
+        _underlying, sSlice._bytes, sSlice._length, writeable._underlying);
     alloc.releaseAll();
     return result.isOk
         ? writeable.finalize()
         : throw ICU4XError._(result.union.err);
   }
 
-  static late final _foldFfi = _capi<
+  static final _foldFfi = _capi<
           ffi.NativeFunction<
               _ResultVoidUint32 Function(
                   ffi.Pointer<ffi.Opaque>,
@@ -1078,14 +1074,14 @@ class ICU4XCaseMapper implements ffi.Finalizable {
 
     final writeable = _Writeable();
     final result = _foldTurkicFfi(
-        _underlying, sSlice.bytes, sSlice.length, writeable._underlying);
+        _underlying, sSlice._bytes, sSlice._length, writeable._underlying);
     alloc.releaseAll();
     return result.isOk
         ? writeable.finalize()
         : throw ICU4XError._(result.union.err);
   }
 
-  static late final _foldTurkicFfi = _capi<
+  static final _foldTurkicFfi = _capi<
           ffi.NativeFunction<
               _ResultVoidUint32 Function(
                   ffi.Pointer<ffi.Opaque>,
@@ -1116,7 +1112,7 @@ class ICU4XCaseMapper implements ffi.Finalizable {
     _addCaseClosureToFfi(_underlying, c, builder._underlying);
   }
 
-  static late final _addCaseClosureToFfi = _capi<
+  static final _addCaseClosureToFfi = _capi<
               ffi.NativeFunction<
                   ffi.Void Function(ffi.Pointer<ffi.Opaque>, ffi.Uint32,
                       ffi.Pointer<ffi.Opaque>)>>(
@@ -1137,7 +1133,7 @@ class ICU4XCaseMapper implements ffi.Finalizable {
     return result;
   }
 
-  static late final _simpleLowercaseFfi = _capi<
+  static final _simpleLowercaseFfi = _capi<
           ffi.NativeFunction<
               ffi.Uint32 Function(ffi.Pointer<ffi.Opaque>,
                   ffi.Uint32)>>('ICU4XCaseMapper_simple_lowercase')
@@ -1155,7 +1151,7 @@ class ICU4XCaseMapper implements ffi.Finalizable {
     return result;
   }
 
-  static late final _simpleUppercaseFfi = _capi<
+  static final _simpleUppercaseFfi = _capi<
           ffi.NativeFunction<
               ffi.Uint32 Function(ffi.Pointer<ffi.Opaque>,
                   ffi.Uint32)>>('ICU4XCaseMapper_simple_uppercase')
@@ -1173,7 +1169,7 @@ class ICU4XCaseMapper implements ffi.Finalizable {
     return result;
   }
 
-  static late final _simpleTitlecaseFfi = _capi<
+  static final _simpleTitlecaseFfi = _capi<
           ffi.NativeFunction<
               ffi.Uint32 Function(ffi.Pointer<ffi.Opaque>,
                   ffi.Uint32)>>('ICU4XCaseMapper_simple_titlecase')
@@ -1190,7 +1186,7 @@ class ICU4XCaseMapper implements ffi.Finalizable {
     return result;
   }
 
-  static late final _simpleFoldFfi = _capi<
+  static final _simpleFoldFfi = _capi<
           ffi.NativeFunction<
               ffi.Uint32 Function(ffi.Pointer<ffi.Opaque>,
                   ffi.Uint32)>>('ICU4XCaseMapper_simple_fold')
@@ -1207,7 +1203,7 @@ class ICU4XCaseMapper implements ffi.Finalizable {
     return result;
   }
 
-  static late final _simpleFoldTurkicFfi = _capi<
+  static final _simpleFoldTurkicFfi = _capi<
           ffi.NativeFunction<
               ffi.Uint32 Function(ffi.Pointer<ffi.Opaque>,
                   ffi.Uint32)>>('ICU4XCaseMapper_simple_fold_turkic')
@@ -1230,7 +1226,7 @@ class ICU4XCodePointMapData16 implements ffi.Finalizable {
     _finalizer.attach(this, _underlying.cast());
   }
 
-  static late final _finalizer =
+  static final _finalizer =
       ffi.NativeFinalizer(_capi('ICU4XCodePointMapData16_destroy'));
 
   /// Gets the value for a code point.
@@ -1241,7 +1237,7 @@ class ICU4XCodePointMapData16 implements ffi.Finalizable {
     return result;
   }
 
-  static late final _getFfi = _capi<
+  static final _getFfi = _capi<
           ffi.NativeFunction<
               ffi.Uint16 Function(ffi.Pointer<ffi.Opaque>,
                   ffi.Uint32)>>('ICU4XCodePointMapData16_get')
@@ -1253,7 +1249,7 @@ class ICU4XCodePointMapData16 implements ffi.Finalizable {
     return result;
   }
 
-  static late final _get32Ffi = _capi<
+  static final _get32Ffi = _capi<
           ffi.NativeFunction<
               ffi.Uint16 Function(ffi.Pointer<ffi.Opaque>,
                   ffi.Uint32)>>('ICU4XCodePointMapData16_get32')
@@ -1267,7 +1263,7 @@ class ICU4XCodePointMapData16 implements ffi.Finalizable {
     return CodePointRangeIterator._(result);
   }
 
-  static late final _iterRangesForValueFfi = _capi<
+  static final _iterRangesForValueFfi = _capi<
           ffi.NativeFunction<
               ffi.Pointer<ffi.Opaque> Function(ffi.Pointer<ffi.Opaque>,
                   ffi.Uint16)>>('ICU4XCodePointMapData16_iter_ranges_for_value')
@@ -1283,7 +1279,7 @@ class ICU4XCodePointMapData16 implements ffi.Finalizable {
     return CodePointRangeIterator._(result);
   }
 
-  static late final _iterRangesForValueComplementedFfi = _capi<
+  static final _iterRangesForValueComplementedFfi = _capi<
               ffi.NativeFunction<
                   ffi.Pointer<ffi.Opaque> Function(
                       ffi.Pointer<ffi.Opaque>, ffi.Uint16)>>(
@@ -1300,7 +1296,7 @@ class ICU4XCodePointMapData16 implements ffi.Finalizable {
     return ICU4XCodePointSetData._(result);
   }
 
-  static late final _getSetForValueFfi = _capi<
+  static final _getSetForValueFfi = _capi<
           ffi.NativeFunction<
               ffi.Pointer<ffi.Opaque> Function(ffi.Pointer<ffi.Opaque>,
                   ffi.Uint16)>>('ICU4XCodePointMapData16_get_set_for_value')
@@ -1315,7 +1311,7 @@ class ICU4XCodePointMapData16 implements ffi.Finalizable {
         ? ICU4XCodePointMapData16._(result.union.ok)
         : throw ICU4XError._(result.union.err);
   }
-  static late final _loadScriptFfi = _capi<
+  static final _loadScriptFfi = _capi<
               ffi.NativeFunction<
                   _ResultOpaqueUint32 Function(ffi.Pointer<ffi.Opaque>)>>(
           'ICU4XCodePointMapData16_load_script')
@@ -1339,7 +1335,7 @@ class ICU4XCodePointMapData8 implements ffi.Finalizable {
     _finalizer.attach(this, _underlying.cast());
   }
 
-  static late final _finalizer =
+  static final _finalizer =
       ffi.NativeFinalizer(_capi('ICU4XCodePointMapData8_destroy'));
 
   /// Gets the value for a code point.
@@ -1350,7 +1346,7 @@ class ICU4XCodePointMapData8 implements ffi.Finalizable {
     return result;
   }
 
-  static late final _getFfi = _capi<
+  static final _getFfi = _capi<
           ffi.NativeFunction<
               ffi.Uint8 Function(ffi.Pointer<ffi.Opaque>,
                   ffi.Uint32)>>('ICU4XCodePointMapData8_get')
@@ -1362,7 +1358,7 @@ class ICU4XCodePointMapData8 implements ffi.Finalizable {
     return result;
   }
 
-  static late final _get32Ffi = _capi<
+  static final _get32Ffi = _capi<
           ffi.NativeFunction<
               ffi.Uint8 Function(ffi.Pointer<ffi.Opaque>,
                   ffi.Uint32)>>('ICU4XCodePointMapData8_get32')
@@ -1378,7 +1374,7 @@ class ICU4XCodePointMapData8 implements ffi.Finalizable {
     return result;
   }
 
-  static late final _generalCategoryToMaskFfi =
+  static final _generalCategoryToMaskFfi =
       _capi<ffi.NativeFunction<ffi.Uint32 Function(ffi.Uint8)>>(
               'ICU4XCodePointMapData8_general_category_to_mask')
           .asFunction<int Function(int)>(isLeaf: true);
@@ -1391,7 +1387,7 @@ class ICU4XCodePointMapData8 implements ffi.Finalizable {
     return CodePointRangeIterator._(result);
   }
 
-  static late final _iterRangesForValueFfi = _capi<
+  static final _iterRangesForValueFfi = _capi<
           ffi.NativeFunction<
               ffi.Pointer<ffi.Opaque> Function(ffi.Pointer<ffi.Opaque>,
                   ffi.Uint8)>>('ICU4XCodePointMapData8_iter_ranges_for_value')
@@ -1407,7 +1403,7 @@ class ICU4XCodePointMapData8 implements ffi.Finalizable {
     return CodePointRangeIterator._(result);
   }
 
-  static late final _iterRangesForValueComplementedFfi = _capi<
+  static final _iterRangesForValueComplementedFfi = _capi<
               ffi.NativeFunction<
                   ffi.Pointer<ffi.Opaque> Function(
                       ffi.Pointer<ffi.Opaque>, ffi.Uint8)>>(
@@ -1431,7 +1427,7 @@ class ICU4XCodePointMapData8 implements ffi.Finalizable {
     return CodePointRangeIterator._(result);
   }
 
-  static late final _iterRangesForMaskFfi = _capi<
+  static final _iterRangesForMaskFfi = _capi<
           ffi.NativeFunction<
               ffi.Pointer<ffi.Opaque> Function(ffi.Pointer<ffi.Opaque>,
                   ffi.Uint32)>>('ICU4XCodePointMapData8_iter_ranges_for_mask')
@@ -1447,7 +1443,7 @@ class ICU4XCodePointMapData8 implements ffi.Finalizable {
     return ICU4XCodePointSetData._(result);
   }
 
-  static late final _getSetForValueFfi = _capi<
+  static final _getSetForValueFfi = _capi<
           ffi.NativeFunction<
               ffi.Pointer<ffi.Opaque> Function(ffi.Pointer<ffi.Opaque>,
                   ffi.Uint8)>>('ICU4XCodePointMapData8_get_set_for_value')
@@ -1463,7 +1459,7 @@ class ICU4XCodePointMapData8 implements ffi.Finalizable {
         ? ICU4XCodePointMapData8._(result.union.ok)
         : throw ICU4XError._(result.union.err);
   }
-  static late final _loadGeneralCategoryFfi = _capi<
+  static final _loadGeneralCategoryFfi = _capi<
               ffi.NativeFunction<
                   _ResultOpaqueUint32 Function(ffi.Pointer<ffi.Opaque>)>>(
           'ICU4XCodePointMapData8_load_general_category')
@@ -1477,7 +1473,7 @@ class ICU4XCodePointMapData8 implements ffi.Finalizable {
         ? ICU4XCodePointMapData8._(result.union.ok)
         : throw ICU4XError._(result.union.err);
   }
-  static late final _loadBidiClassFfi = _capi<
+  static final _loadBidiClassFfi = _capi<
               ffi.NativeFunction<
                   _ResultOpaqueUint32 Function(ffi.Pointer<ffi.Opaque>)>>(
           'ICU4XCodePointMapData8_load_bidi_class')
@@ -1492,7 +1488,7 @@ class ICU4XCodePointMapData8 implements ffi.Finalizable {
         ? ICU4XCodePointMapData8._(result.union.ok)
         : throw ICU4XError._(result.union.err);
   }
-  static late final _loadEastAsianWidthFfi = _capi<
+  static final _loadEastAsianWidthFfi = _capi<
               ffi.NativeFunction<
                   _ResultOpaqueUint32 Function(ffi.Pointer<ffi.Opaque>)>>(
           'ICU4XCodePointMapData8_load_east_asian_width')
@@ -1507,7 +1503,7 @@ class ICU4XCodePointMapData8 implements ffi.Finalizable {
         ? ICU4XCodePointMapData8._(result.union.ok)
         : throw ICU4XError._(result.union.err);
   }
-  static late final _loadIndicSyllabicCategoryFfi = _capi<
+  static final _loadIndicSyllabicCategoryFfi = _capi<
               ffi.NativeFunction<
                   _ResultOpaqueUint32 Function(ffi.Pointer<ffi.Opaque>)>>(
           'ICU4XCodePointMapData8_load_indic_syllabic_category')
@@ -1521,7 +1517,7 @@ class ICU4XCodePointMapData8 implements ffi.Finalizable {
         ? ICU4XCodePointMapData8._(result.union.ok)
         : throw ICU4XError._(result.union.err);
   }
-  static late final _loadLineBreakFfi = _capi<
+  static final _loadLineBreakFfi = _capi<
               ffi.NativeFunction<
                   _ResultOpaqueUint32 Function(ffi.Pointer<ffi.Opaque>)>>(
           'ICU4XCodePointMapData8_load_line_break')
@@ -1536,7 +1532,7 @@ class ICU4XCodePointMapData8 implements ffi.Finalizable {
         ? ICU4XCodePointMapData8._(result.union.ok)
         : throw ICU4XError._(result.union.err);
   }
-  static late final _tryGraphemeClusterBreakFfi = _capi<
+  static final _tryGraphemeClusterBreakFfi = _capi<
               ffi.NativeFunction<
                   _ResultOpaqueUint32 Function(ffi.Pointer<ffi.Opaque>)>>(
           'ICU4XCodePointMapData8_try_grapheme_cluster_break')
@@ -1550,7 +1546,7 @@ class ICU4XCodePointMapData8 implements ffi.Finalizable {
         ? ICU4XCodePointMapData8._(result.union.ok)
         : throw ICU4XError._(result.union.err);
   }
-  static late final _loadWordBreakFfi = _capi<
+  static final _loadWordBreakFfi = _capi<
               ffi.NativeFunction<
                   _ResultOpaqueUint32 Function(ffi.Pointer<ffi.Opaque>)>>(
           'ICU4XCodePointMapData8_load_word_break')
@@ -1564,7 +1560,7 @@ class ICU4XCodePointMapData8 implements ffi.Finalizable {
         ? ICU4XCodePointMapData8._(result.union.ok)
         : throw ICU4XError._(result.union.err);
   }
-  static late final _loadSentenceBreakFfi = _capi<
+  static final _loadSentenceBreakFfi = _capi<
               ffi.NativeFunction<
                   _ResultOpaqueUint32 Function(ffi.Pointer<ffi.Opaque>)>>(
           'ICU4XCodePointMapData8_load_sentence_break')
@@ -1580,7 +1576,7 @@ class ICU4XCodePointSetBuilder implements ffi.Finalizable {
     _finalizer.attach(this, _underlying.cast());
   }
 
-  static late final _finalizer =
+  static final _finalizer =
       ffi.NativeFinalizer(_capi('ICU4XCodePointSetBuilder_destroy'));
 
   /// Make a new set builder containing nothing
@@ -1590,7 +1586,7 @@ class ICU4XCodePointSetBuilder implements ffi.Finalizable {
     final result = _createFfi();
     return ICU4XCodePointSetBuilder._(result);
   }
-  static late final _createFfi =
+  static final _createFfi =
       _capi<ffi.NativeFunction<ffi.Pointer<ffi.Opaque> Function()>>(
               'ICU4XCodePointSetBuilder_create')
           .asFunction<ffi.Pointer<ffi.Opaque> Function()>(isLeaf: true);
@@ -1605,7 +1601,7 @@ class ICU4XCodePointSetBuilder implements ffi.Finalizable {
     return ICU4XCodePointSetData._(result);
   }
 
-  static late final _buildFfi = _capi<
+  static final _buildFfi = _capi<
           ffi.NativeFunction<
               ffi.Pointer<ffi.Opaque> Function(
                   ffi.Pointer<ffi.Opaque>)>>('ICU4XCodePointSetBuilder_build')
@@ -1621,7 +1617,7 @@ class ICU4XCodePointSetBuilder implements ffi.Finalizable {
     _complementFfi(_underlying);
   }
 
-  static late final _complementFfi =
+  static final _complementFfi =
       _capi<ffi.NativeFunction<ffi.Void Function(ffi.Pointer<ffi.Opaque>)>>(
               'ICU4XCodePointSetBuilder_complement')
           .asFunction<void Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
@@ -1634,7 +1630,7 @@ class ICU4XCodePointSetBuilder implements ffi.Finalizable {
     return result;
   }
 
-  static late final _isEmptyFfi =
+  static final _isEmptyFfi =
       _capi<ffi.NativeFunction<ffi.Bool Function(ffi.Pointer<ffi.Opaque>)>>(
               'ICU4XCodePointSetBuilder_is_empty')
           .asFunction<bool Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
@@ -1646,7 +1642,7 @@ class ICU4XCodePointSetBuilder implements ffi.Finalizable {
     _addCharFfi(_underlying, ch);
   }
 
-  static late final _addCharFfi = _capi<
+  static final _addCharFfi = _capi<
           ffi.NativeFunction<
               ffi.Void Function(ffi.Pointer<ffi.Opaque>,
                   ffi.Uint32)>>('ICU4XCodePointSetBuilder_add_char')
@@ -1659,7 +1655,7 @@ class ICU4XCodePointSetBuilder implements ffi.Finalizable {
     _addU32Ffi(_underlying, ch);
   }
 
-  static late final _addU32Ffi = _capi<
+  static final _addU32Ffi = _capi<
           ffi.NativeFunction<
               ffi.Void Function(ffi.Pointer<ffi.Opaque>,
                   ffi.Uint32)>>('ICU4XCodePointSetBuilder_add_u32')
@@ -1672,7 +1668,7 @@ class ICU4XCodePointSetBuilder implements ffi.Finalizable {
     _addInclusiveRangeFfi(_underlying, start, end);
   }
 
-  static late final _addInclusiveRangeFfi = _capi<
+  static final _addInclusiveRangeFfi = _capi<
           ffi.NativeFunction<
               ffi.Void Function(ffi.Pointer<ffi.Opaque>, ffi.Uint32,
                   ffi.Uint32)>>('ICU4XCodePointSetBuilder_add_inclusive_range')
@@ -1686,7 +1682,7 @@ class ICU4XCodePointSetBuilder implements ffi.Finalizable {
     _addInclusiveRangeU32Ffi(_underlying, start, end);
   }
 
-  static late final _addInclusiveRangeU32Ffi = _capi<
+  static final _addInclusiveRangeU32Ffi = _capi<
               ffi.NativeFunction<
                   ffi.Void Function(
                       ffi.Pointer<ffi.Opaque>, ffi.Uint32, ffi.Uint32)>>(
@@ -1701,7 +1697,7 @@ class ICU4XCodePointSetBuilder implements ffi.Finalizable {
     _addSetFfi(_underlying, data._underlying);
   }
 
-  static late final _addSetFfi = _capi<
+  static final _addSetFfi = _capi<
           ffi.NativeFunction<
               ffi.Void Function(ffi.Pointer<ffi.Opaque>,
                   ffi.Pointer<ffi.Opaque>)>>('ICU4XCodePointSetBuilder_add_set')
@@ -1716,7 +1712,7 @@ class ICU4XCodePointSetBuilder implements ffi.Finalizable {
     _removeCharFfi(_underlying, ch);
   }
 
-  static late final _removeCharFfi = _capi<
+  static final _removeCharFfi = _capi<
           ffi.NativeFunction<
               ffi.Void Function(ffi.Pointer<ffi.Opaque>,
                   ffi.Uint32)>>('ICU4XCodePointSetBuilder_remove_char')
@@ -1729,7 +1725,7 @@ class ICU4XCodePointSetBuilder implements ffi.Finalizable {
     _removeInclusiveRangeFfi(_underlying, start, end);
   }
 
-  static late final _removeInclusiveRangeFfi = _capi<
+  static final _removeInclusiveRangeFfi = _capi<
               ffi.NativeFunction<
                   ffi.Void Function(
                       ffi.Pointer<ffi.Opaque>, ffi.Uint32, ffi.Uint32)>>(
@@ -1744,7 +1740,7 @@ class ICU4XCodePointSetBuilder implements ffi.Finalizable {
     _removeSetFfi(_underlying, data._underlying);
   }
 
-  static late final _removeSetFfi = _capi<
+  static final _removeSetFfi = _capi<
               ffi.NativeFunction<
                   ffi.Void Function(
                       ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>>(
@@ -1760,7 +1756,7 @@ class ICU4XCodePointSetBuilder implements ffi.Finalizable {
     _retainCharFfi(_underlying, ch);
   }
 
-  static late final _retainCharFfi = _capi<
+  static final _retainCharFfi = _capi<
           ffi.NativeFunction<
               ffi.Void Function(ffi.Pointer<ffi.Opaque>,
                   ffi.Uint32)>>('ICU4XCodePointSetBuilder_retain_char')
@@ -1773,7 +1769,7 @@ class ICU4XCodePointSetBuilder implements ffi.Finalizable {
     _retainInclusiveRangeFfi(_underlying, start, end);
   }
 
-  static late final _retainInclusiveRangeFfi = _capi<
+  static final _retainInclusiveRangeFfi = _capi<
               ffi.NativeFunction<
                   ffi.Void Function(
                       ffi.Pointer<ffi.Opaque>, ffi.Uint32, ffi.Uint32)>>(
@@ -1788,7 +1784,7 @@ class ICU4XCodePointSetBuilder implements ffi.Finalizable {
     _retainSetFfi(_underlying, data._underlying);
   }
 
-  static late final _retainSetFfi = _capi<
+  static final _retainSetFfi = _capi<
               ffi.NativeFunction<
                   ffi.Void Function(
                       ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>>(
@@ -1806,7 +1802,7 @@ class ICU4XCodePointSetBuilder implements ffi.Finalizable {
     _complementCharFfi(_underlying, ch);
   }
 
-  static late final _complementCharFfi = _capi<
+  static final _complementCharFfi = _capi<
           ffi.NativeFunction<
               ffi.Void Function(ffi.Pointer<ffi.Opaque>,
                   ffi.Uint32)>>('ICU4XCodePointSetBuilder_complement_char')
@@ -1821,7 +1817,7 @@ class ICU4XCodePointSetBuilder implements ffi.Finalizable {
     _complementInclusiveRangeFfi(_underlying, start, end);
   }
 
-  static late final _complementInclusiveRangeFfi = _capi<
+  static final _complementInclusiveRangeFfi = _capi<
               ffi.NativeFunction<
                   ffi.Void Function(
                       ffi.Pointer<ffi.Opaque>, ffi.Uint32, ffi.Uint32)>>(
@@ -1838,7 +1834,7 @@ class ICU4XCodePointSetBuilder implements ffi.Finalizable {
     _complementSetFfi(_underlying, data._underlying);
   }
 
-  static late final _complementSetFfi = _capi<
+  static final _complementSetFfi = _capi<
               ffi.NativeFunction<
                   ffi.Void Function(
                       ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>>(
@@ -1862,7 +1858,7 @@ class ICU4XCodePointSetData implements ffi.Finalizable {
     _finalizer.attach(this, _underlying.cast());
   }
 
-  static late final _finalizer =
+  static final _finalizer =
       ffi.NativeFinalizer(_capi('ICU4XCodePointSetData_destroy'));
 
   /// Checks whether the code point is in the set.
@@ -1873,7 +1869,7 @@ class ICU4XCodePointSetData implements ffi.Finalizable {
     return result;
   }
 
-  static late final _containsFfi = _capi<
+  static final _containsFfi = _capi<
           ffi.NativeFunction<
               ffi.Bool Function(ffi.Pointer<ffi.Opaque>,
                   ffi.Uint32)>>('ICU4XCodePointSetData_contains')
@@ -1885,7 +1881,7 @@ class ICU4XCodePointSetData implements ffi.Finalizable {
     return result;
   }
 
-  static late final _contains32Ffi = _capi<
+  static final _contains32Ffi = _capi<
           ffi.NativeFunction<
               ffi.Bool Function(ffi.Pointer<ffi.Opaque>,
                   ffi.Uint32)>>('ICU4XCodePointSetData_contains32')
@@ -1899,7 +1895,7 @@ class ICU4XCodePointSetData implements ffi.Finalizable {
     return CodePointRangeIterator._(result);
   }
 
-  static late final _iterRangesFfi = _capi<
+  static final _iterRangesFfi = _capi<
               ffi.NativeFunction<
                   ffi.Pointer<ffi.Opaque> Function(ffi.Pointer<ffi.Opaque>)>>(
           'ICU4XCodePointSetData_iter_ranges')
@@ -1914,7 +1910,7 @@ class ICU4XCodePointSetData implements ffi.Finalizable {
     return CodePointRangeIterator._(result);
   }
 
-  static late final _iterRangesComplementedFfi = _capi<
+  static final _iterRangesComplementedFfi = _capi<
               ffi.NativeFunction<
                   ffi.Pointer<ffi.Opaque> Function(ffi.Pointer<ffi.Opaque>)>>(
           'ICU4XCodePointSetData_iter_ranges_complemented')
@@ -1931,7 +1927,7 @@ class ICU4XCodePointSetData implements ffi.Finalizable {
         ? ICU4XCodePointSetData._(result.union.ok)
         : throw ICU4XError._(result.union.err);
   }
-  static late final _loadForGeneralCategoryGroupFfi = _capi<
+  static final _loadForGeneralCategoryGroupFfi = _capi<
               ffi.NativeFunction<
                   _ResultOpaqueUint32 Function(
                       ffi.Pointer<ffi.Opaque>, ffi.Uint32)>>(
@@ -1946,7 +1942,7 @@ class ICU4XCodePointSetData implements ffi.Finalizable {
         ? ICU4XCodePointSetData._(result.union.ok)
         : throw ICU4XError._(result.union.err);
   }
-  static late final _loadAsciiHexDigitFfi = _capi<
+  static final _loadAsciiHexDigitFfi = _capi<
               ffi.NativeFunction<
                   _ResultOpaqueUint32 Function(ffi.Pointer<ffi.Opaque>)>>(
           'ICU4XCodePointSetData_load_ascii_hex_digit')
@@ -1960,7 +1956,7 @@ class ICU4XCodePointSetData implements ffi.Finalizable {
         ? ICU4XCodePointSetData._(result.union.ok)
         : throw ICU4XError._(result.union.err);
   }
-  static late final _loadAlnumFfi = _capi<
+  static final _loadAlnumFfi = _capi<
           ffi.NativeFunction<
               _ResultOpaqueUint32 Function(
                   ffi.Pointer<ffi.Opaque>)>>('ICU4XCodePointSetData_load_alnum')
@@ -1974,7 +1970,7 @@ class ICU4XCodePointSetData implements ffi.Finalizable {
         ? ICU4XCodePointSetData._(result.union.ok)
         : throw ICU4XError._(result.union.err);
   }
-  static late final _loadAlphabeticFfi = _capi<
+  static final _loadAlphabeticFfi = _capi<
               ffi.NativeFunction<
                   _ResultOpaqueUint32 Function(ffi.Pointer<ffi.Opaque>)>>(
           'ICU4XCodePointSetData_load_alphabetic')
@@ -1988,7 +1984,7 @@ class ICU4XCodePointSetData implements ffi.Finalizable {
         ? ICU4XCodePointSetData._(result.union.ok)
         : throw ICU4XError._(result.union.err);
   }
-  static late final _loadBidiControlFfi = _capi<
+  static final _loadBidiControlFfi = _capi<
               ffi.NativeFunction<
                   _ResultOpaqueUint32 Function(ffi.Pointer<ffi.Opaque>)>>(
           'ICU4XCodePointSetData_load_bidi_control')
@@ -2002,7 +1998,7 @@ class ICU4XCodePointSetData implements ffi.Finalizable {
         ? ICU4XCodePointSetData._(result.union.ok)
         : throw ICU4XError._(result.union.err);
   }
-  static late final _loadBidiMirroredFfi = _capi<
+  static final _loadBidiMirroredFfi = _capi<
               ffi.NativeFunction<
                   _ResultOpaqueUint32 Function(ffi.Pointer<ffi.Opaque>)>>(
           'ICU4XCodePointSetData_load_bidi_mirrored')
@@ -2016,7 +2012,7 @@ class ICU4XCodePointSetData implements ffi.Finalizable {
         ? ICU4XCodePointSetData._(result.union.ok)
         : throw ICU4XError._(result.union.err);
   }
-  static late final _loadBlankFfi = _capi<
+  static final _loadBlankFfi = _capi<
           ffi.NativeFunction<
               _ResultOpaqueUint32 Function(
                   ffi.Pointer<ffi.Opaque>)>>('ICU4XCodePointSetData_load_blank')
@@ -2030,7 +2026,7 @@ class ICU4XCodePointSetData implements ffi.Finalizable {
         ? ICU4XCodePointSetData._(result.union.ok)
         : throw ICU4XError._(result.union.err);
   }
-  static late final _loadCasedFfi = _capi<
+  static final _loadCasedFfi = _capi<
           ffi.NativeFunction<
               _ResultOpaqueUint32 Function(
                   ffi.Pointer<ffi.Opaque>)>>('ICU4XCodePointSetData_load_cased')
@@ -2044,7 +2040,7 @@ class ICU4XCodePointSetData implements ffi.Finalizable {
         ? ICU4XCodePointSetData._(result.union.ok)
         : throw ICU4XError._(result.union.err);
   }
-  static late final _loadCaseIgnorableFfi = _capi<
+  static final _loadCaseIgnorableFfi = _capi<
               ffi.NativeFunction<
                   _ResultOpaqueUint32 Function(ffi.Pointer<ffi.Opaque>)>>(
           'ICU4XCodePointSetData_load_case_ignorable')
@@ -2059,7 +2055,7 @@ class ICU4XCodePointSetData implements ffi.Finalizable {
         ? ICU4XCodePointSetData._(result.union.ok)
         : throw ICU4XError._(result.union.err);
   }
-  static late final _loadFullCompositionExclusionFfi = _capi<
+  static final _loadFullCompositionExclusionFfi = _capi<
               ffi.NativeFunction<
                   _ResultOpaqueUint32 Function(ffi.Pointer<ffi.Opaque>)>>(
           'ICU4XCodePointSetData_load_full_composition_exclusion')
@@ -2074,7 +2070,7 @@ class ICU4XCodePointSetData implements ffi.Finalizable {
         ? ICU4XCodePointSetData._(result.union.ok)
         : throw ICU4XError._(result.union.err);
   }
-  static late final _loadChangesWhenCasefoldedFfi = _capi<
+  static final _loadChangesWhenCasefoldedFfi = _capi<
               ffi.NativeFunction<
                   _ResultOpaqueUint32 Function(ffi.Pointer<ffi.Opaque>)>>(
           'ICU4XCodePointSetData_load_changes_when_casefolded')
@@ -2089,7 +2085,7 @@ class ICU4XCodePointSetData implements ffi.Finalizable {
         ? ICU4XCodePointSetData._(result.union.ok)
         : throw ICU4XError._(result.union.err);
   }
-  static late final _loadChangesWhenCasemappedFfi = _capi<
+  static final _loadChangesWhenCasemappedFfi = _capi<
               ffi.NativeFunction<
                   _ResultOpaqueUint32 Function(ffi.Pointer<ffi.Opaque>)>>(
           'ICU4XCodePointSetData_load_changes_when_casemapped')
@@ -2104,7 +2100,7 @@ class ICU4XCodePointSetData implements ffi.Finalizable {
         ? ICU4XCodePointSetData._(result.union.ok)
         : throw ICU4XError._(result.union.err);
   }
-  static late final _loadChangesWhenNfkcCasefoldedFfi = _capi<
+  static final _loadChangesWhenNfkcCasefoldedFfi = _capi<
               ffi.NativeFunction<
                   _ResultOpaqueUint32 Function(ffi.Pointer<ffi.Opaque>)>>(
           'ICU4XCodePointSetData_load_changes_when_nfkc_casefolded')
@@ -2119,7 +2115,7 @@ class ICU4XCodePointSetData implements ffi.Finalizable {
         ? ICU4XCodePointSetData._(result.union.ok)
         : throw ICU4XError._(result.union.err);
   }
-  static late final _loadChangesWhenLowercasedFfi = _capi<
+  static final _loadChangesWhenLowercasedFfi = _capi<
               ffi.NativeFunction<
                   _ResultOpaqueUint32 Function(ffi.Pointer<ffi.Opaque>)>>(
           'ICU4XCodePointSetData_load_changes_when_lowercased')
@@ -2134,7 +2130,7 @@ class ICU4XCodePointSetData implements ffi.Finalizable {
         ? ICU4XCodePointSetData._(result.union.ok)
         : throw ICU4XError._(result.union.err);
   }
-  static late final _loadChangesWhenTitlecasedFfi = _capi<
+  static final _loadChangesWhenTitlecasedFfi = _capi<
               ffi.NativeFunction<
                   _ResultOpaqueUint32 Function(ffi.Pointer<ffi.Opaque>)>>(
           'ICU4XCodePointSetData_load_changes_when_titlecased')
@@ -2149,7 +2145,7 @@ class ICU4XCodePointSetData implements ffi.Finalizable {
         ? ICU4XCodePointSetData._(result.union.ok)
         : throw ICU4XError._(result.union.err);
   }
-  static late final _loadChangesWhenUppercasedFfi = _capi<
+  static final _loadChangesWhenUppercasedFfi = _capi<
               ffi.NativeFunction<
                   _ResultOpaqueUint32 Function(ffi.Pointer<ffi.Opaque>)>>(
           'ICU4XCodePointSetData_load_changes_when_uppercased')
@@ -2163,7 +2159,7 @@ class ICU4XCodePointSetData implements ffi.Finalizable {
         ? ICU4XCodePointSetData._(result.union.ok)
         : throw ICU4XError._(result.union.err);
   }
-  static late final _loadDashFfi = _capi<
+  static final _loadDashFfi = _capi<
           ffi.NativeFunction<
               _ResultOpaqueUint32 Function(
                   ffi.Pointer<ffi.Opaque>)>>('ICU4XCodePointSetData_load_dash')
@@ -2177,7 +2173,7 @@ class ICU4XCodePointSetData implements ffi.Finalizable {
         ? ICU4XCodePointSetData._(result.union.ok)
         : throw ICU4XError._(result.union.err);
   }
-  static late final _loadDeprecatedFfi = _capi<
+  static final _loadDeprecatedFfi = _capi<
               ffi.NativeFunction<
                   _ResultOpaqueUint32 Function(ffi.Pointer<ffi.Opaque>)>>(
           'ICU4XCodePointSetData_load_deprecated')
@@ -2192,7 +2188,7 @@ class ICU4XCodePointSetData implements ffi.Finalizable {
         ? ICU4XCodePointSetData._(result.union.ok)
         : throw ICU4XError._(result.union.err);
   }
-  static late final _loadDefaultIgnorableCodePointFfi = _capi<
+  static final _loadDefaultIgnorableCodePointFfi = _capi<
               ffi.NativeFunction<
                   _ResultOpaqueUint32 Function(ffi.Pointer<ffi.Opaque>)>>(
           'ICU4XCodePointSetData_load_default_ignorable_code_point')
@@ -2206,7 +2202,7 @@ class ICU4XCodePointSetData implements ffi.Finalizable {
         ? ICU4XCodePointSetData._(result.union.ok)
         : throw ICU4XError._(result.union.err);
   }
-  static late final _loadDiacriticFfi = _capi<
+  static final _loadDiacriticFfi = _capi<
               ffi.NativeFunction<
                   _ResultOpaqueUint32 Function(ffi.Pointer<ffi.Opaque>)>>(
           'ICU4XCodePointSetData_load_diacritic')
@@ -2221,7 +2217,7 @@ class ICU4XCodePointSetData implements ffi.Finalizable {
         ? ICU4XCodePointSetData._(result.union.ok)
         : throw ICU4XError._(result.union.err);
   }
-  static late final _loadEmojiModifierBaseFfi = _capi<
+  static final _loadEmojiModifierBaseFfi = _capi<
               ffi.NativeFunction<
                   _ResultOpaqueUint32 Function(ffi.Pointer<ffi.Opaque>)>>(
           'ICU4XCodePointSetData_load_emoji_modifier_base')
@@ -2235,7 +2231,7 @@ class ICU4XCodePointSetData implements ffi.Finalizable {
         ? ICU4XCodePointSetData._(result.union.ok)
         : throw ICU4XError._(result.union.err);
   }
-  static late final _loadEmojiComponentFfi = _capi<
+  static final _loadEmojiComponentFfi = _capi<
               ffi.NativeFunction<
                   _ResultOpaqueUint32 Function(ffi.Pointer<ffi.Opaque>)>>(
           'ICU4XCodePointSetData_load_emoji_component')
@@ -2249,7 +2245,7 @@ class ICU4XCodePointSetData implements ffi.Finalizable {
         ? ICU4XCodePointSetData._(result.union.ok)
         : throw ICU4XError._(result.union.err);
   }
-  static late final _loadEmojiModifierFfi = _capi<
+  static final _loadEmojiModifierFfi = _capi<
               ffi.NativeFunction<
                   _ResultOpaqueUint32 Function(ffi.Pointer<ffi.Opaque>)>>(
           'ICU4XCodePointSetData_load_emoji_modifier')
@@ -2263,7 +2259,7 @@ class ICU4XCodePointSetData implements ffi.Finalizable {
         ? ICU4XCodePointSetData._(result.union.ok)
         : throw ICU4XError._(result.union.err);
   }
-  static late final _loadEmojiFfi = _capi<
+  static final _loadEmojiFfi = _capi<
           ffi.NativeFunction<
               _ResultOpaqueUint32 Function(
                   ffi.Pointer<ffi.Opaque>)>>('ICU4XCodePointSetData_load_emoji')
@@ -2278,7 +2274,7 @@ class ICU4XCodePointSetData implements ffi.Finalizable {
         ? ICU4XCodePointSetData._(result.union.ok)
         : throw ICU4XError._(result.union.err);
   }
-  static late final _loadEmojiPresentationFfi = _capi<
+  static final _loadEmojiPresentationFfi = _capi<
               ffi.NativeFunction<
                   _ResultOpaqueUint32 Function(ffi.Pointer<ffi.Opaque>)>>(
           'ICU4XCodePointSetData_load_emoji_presentation')
@@ -2292,7 +2288,7 @@ class ICU4XCodePointSetData implements ffi.Finalizable {
         ? ICU4XCodePointSetData._(result.union.ok)
         : throw ICU4XError._(result.union.err);
   }
-  static late final _loadExtenderFfi = _capi<
+  static final _loadExtenderFfi = _capi<
               ffi.NativeFunction<
                   _ResultOpaqueUint32 Function(ffi.Pointer<ffi.Opaque>)>>(
           'ICU4XCodePointSetData_load_extender')
@@ -2307,7 +2303,7 @@ class ICU4XCodePointSetData implements ffi.Finalizable {
         ? ICU4XCodePointSetData._(result.union.ok)
         : throw ICU4XError._(result.union.err);
   }
-  static late final _loadExtendedPictographicFfi = _capi<
+  static final _loadExtendedPictographicFfi = _capi<
               ffi.NativeFunction<
                   _ResultOpaqueUint32 Function(ffi.Pointer<ffi.Opaque>)>>(
           'ICU4XCodePointSetData_load_extended_pictographic')
@@ -2321,7 +2317,7 @@ class ICU4XCodePointSetData implements ffi.Finalizable {
         ? ICU4XCodePointSetData._(result.union.ok)
         : throw ICU4XError._(result.union.err);
   }
-  static late final _loadGraphFfi = _capi<
+  static final _loadGraphFfi = _capi<
           ffi.NativeFunction<
               _ResultOpaqueUint32 Function(
                   ffi.Pointer<ffi.Opaque>)>>('ICU4XCodePointSetData_load_graph')
@@ -2335,7 +2331,7 @@ class ICU4XCodePointSetData implements ffi.Finalizable {
         ? ICU4XCodePointSetData._(result.union.ok)
         : throw ICU4XError._(result.union.err);
   }
-  static late final _loadGraphemeBaseFfi = _capi<
+  static final _loadGraphemeBaseFfi = _capi<
               ffi.NativeFunction<
                   _ResultOpaqueUint32 Function(ffi.Pointer<ffi.Opaque>)>>(
           'ICU4XCodePointSetData_load_grapheme_base')
@@ -2349,7 +2345,7 @@ class ICU4XCodePointSetData implements ffi.Finalizable {
         ? ICU4XCodePointSetData._(result.union.ok)
         : throw ICU4XError._(result.union.err);
   }
-  static late final _loadGraphemeExtendFfi = _capi<
+  static final _loadGraphemeExtendFfi = _capi<
               ffi.NativeFunction<
                   _ResultOpaqueUint32 Function(ffi.Pointer<ffi.Opaque>)>>(
           'ICU4XCodePointSetData_load_grapheme_extend')
@@ -2363,7 +2359,7 @@ class ICU4XCodePointSetData implements ffi.Finalizable {
         ? ICU4XCodePointSetData._(result.union.ok)
         : throw ICU4XError._(result.union.err);
   }
-  static late final _loadGraphemeLinkFfi = _capi<
+  static final _loadGraphemeLinkFfi = _capi<
               ffi.NativeFunction<
                   _ResultOpaqueUint32 Function(ffi.Pointer<ffi.Opaque>)>>(
           'ICU4XCodePointSetData_load_grapheme_link')
@@ -2377,7 +2373,7 @@ class ICU4XCodePointSetData implements ffi.Finalizable {
         ? ICU4XCodePointSetData._(result.union.ok)
         : throw ICU4XError._(result.union.err);
   }
-  static late final _loadHexDigitFfi = _capi<
+  static final _loadHexDigitFfi = _capi<
               ffi.NativeFunction<
                   _ResultOpaqueUint32 Function(ffi.Pointer<ffi.Opaque>)>>(
           'ICU4XCodePointSetData_load_hex_digit')
@@ -2391,7 +2387,7 @@ class ICU4XCodePointSetData implements ffi.Finalizable {
         ? ICU4XCodePointSetData._(result.union.ok)
         : throw ICU4XError._(result.union.err);
   }
-  static late final _loadHyphenFfi = _capi<
+  static final _loadHyphenFfi = _capi<
               ffi.NativeFunction<
                   _ResultOpaqueUint32 Function(ffi.Pointer<ffi.Opaque>)>>(
           'ICU4XCodePointSetData_load_hyphen')
@@ -2405,7 +2401,7 @@ class ICU4XCodePointSetData implements ffi.Finalizable {
         ? ICU4XCodePointSetData._(result.union.ok)
         : throw ICU4XError._(result.union.err);
   }
-  static late final _loadIdContinueFfi = _capi<
+  static final _loadIdContinueFfi = _capi<
               ffi.NativeFunction<
                   _ResultOpaqueUint32 Function(ffi.Pointer<ffi.Opaque>)>>(
           'ICU4XCodePointSetData_load_id_continue')
@@ -2419,7 +2415,7 @@ class ICU4XCodePointSetData implements ffi.Finalizable {
         ? ICU4XCodePointSetData._(result.union.ok)
         : throw ICU4XError._(result.union.err);
   }
-  static late final _loadIdeographicFfi = _capi<
+  static final _loadIdeographicFfi = _capi<
               ffi.NativeFunction<
                   _ResultOpaqueUint32 Function(ffi.Pointer<ffi.Opaque>)>>(
           'ICU4XCodePointSetData_load_ideographic')
@@ -2433,7 +2429,7 @@ class ICU4XCodePointSetData implements ffi.Finalizable {
         ? ICU4XCodePointSetData._(result.union.ok)
         : throw ICU4XError._(result.union.err);
   }
-  static late final _loadIdStartFfi = _capi<
+  static final _loadIdStartFfi = _capi<
               ffi.NativeFunction<
                   _ResultOpaqueUint32 Function(ffi.Pointer<ffi.Opaque>)>>(
           'ICU4XCodePointSetData_load_id_start')
@@ -2448,7 +2444,7 @@ class ICU4XCodePointSetData implements ffi.Finalizable {
         ? ICU4XCodePointSetData._(result.union.ok)
         : throw ICU4XError._(result.union.err);
   }
-  static late final _loadIdsBinaryOperatorFfi = _capi<
+  static final _loadIdsBinaryOperatorFfi = _capi<
               ffi.NativeFunction<
                   _ResultOpaqueUint32 Function(ffi.Pointer<ffi.Opaque>)>>(
           'ICU4XCodePointSetData_load_ids_binary_operator')
@@ -2463,7 +2459,7 @@ class ICU4XCodePointSetData implements ffi.Finalizable {
         ? ICU4XCodePointSetData._(result.union.ok)
         : throw ICU4XError._(result.union.err);
   }
-  static late final _loadIdsTrinaryOperatorFfi = _capi<
+  static final _loadIdsTrinaryOperatorFfi = _capi<
               ffi.NativeFunction<
                   _ResultOpaqueUint32 Function(ffi.Pointer<ffi.Opaque>)>>(
           'ICU4XCodePointSetData_load_ids_trinary_operator')
@@ -2477,7 +2473,7 @@ class ICU4XCodePointSetData implements ffi.Finalizable {
         ? ICU4XCodePointSetData._(result.union.ok)
         : throw ICU4XError._(result.union.err);
   }
-  static late final _loadJoinControlFfi = _capi<
+  static final _loadJoinControlFfi = _capi<
               ffi.NativeFunction<
                   _ResultOpaqueUint32 Function(ffi.Pointer<ffi.Opaque>)>>(
           'ICU4XCodePointSetData_load_join_control')
@@ -2492,7 +2488,7 @@ class ICU4XCodePointSetData implements ffi.Finalizable {
         ? ICU4XCodePointSetData._(result.union.ok)
         : throw ICU4XError._(result.union.err);
   }
-  static late final _loadLogicalOrderExceptionFfi = _capi<
+  static final _loadLogicalOrderExceptionFfi = _capi<
               ffi.NativeFunction<
                   _ResultOpaqueUint32 Function(ffi.Pointer<ffi.Opaque>)>>(
           'ICU4XCodePointSetData_load_logical_order_exception')
@@ -2506,7 +2502,7 @@ class ICU4XCodePointSetData implements ffi.Finalizable {
         ? ICU4XCodePointSetData._(result.union.ok)
         : throw ICU4XError._(result.union.err);
   }
-  static late final _loadLowercaseFfi = _capi<
+  static final _loadLowercaseFfi = _capi<
               ffi.NativeFunction<
                   _ResultOpaqueUint32 Function(ffi.Pointer<ffi.Opaque>)>>(
           'ICU4XCodePointSetData_load_lowercase')
@@ -2520,7 +2516,7 @@ class ICU4XCodePointSetData implements ffi.Finalizable {
         ? ICU4XCodePointSetData._(result.union.ok)
         : throw ICU4XError._(result.union.err);
   }
-  static late final _loadMathFfi = _capi<
+  static final _loadMathFfi = _capi<
           ffi.NativeFunction<
               _ResultOpaqueUint32 Function(
                   ffi.Pointer<ffi.Opaque>)>>('ICU4XCodePointSetData_load_math')
@@ -2535,7 +2531,7 @@ class ICU4XCodePointSetData implements ffi.Finalizable {
         ? ICU4XCodePointSetData._(result.union.ok)
         : throw ICU4XError._(result.union.err);
   }
-  static late final _loadNoncharacterCodePointFfi = _capi<
+  static final _loadNoncharacterCodePointFfi = _capi<
               ffi.NativeFunction<
                   _ResultOpaqueUint32 Function(ffi.Pointer<ffi.Opaque>)>>(
           'ICU4XCodePointSetData_load_noncharacter_code_point')
@@ -2549,7 +2545,7 @@ class ICU4XCodePointSetData implements ffi.Finalizable {
         ? ICU4XCodePointSetData._(result.union.ok)
         : throw ICU4XError._(result.union.err);
   }
-  static late final _loadNfcInertFfi = _capi<
+  static final _loadNfcInertFfi = _capi<
               ffi.NativeFunction<
                   _ResultOpaqueUint32 Function(ffi.Pointer<ffi.Opaque>)>>(
           'ICU4XCodePointSetData_load_nfc_inert')
@@ -2563,7 +2559,7 @@ class ICU4XCodePointSetData implements ffi.Finalizable {
         ? ICU4XCodePointSetData._(result.union.ok)
         : throw ICU4XError._(result.union.err);
   }
-  static late final _loadNfdInertFfi = _capi<
+  static final _loadNfdInertFfi = _capi<
               ffi.NativeFunction<
                   _ResultOpaqueUint32 Function(ffi.Pointer<ffi.Opaque>)>>(
           'ICU4XCodePointSetData_load_nfd_inert')
@@ -2577,7 +2573,7 @@ class ICU4XCodePointSetData implements ffi.Finalizable {
         ? ICU4XCodePointSetData._(result.union.ok)
         : throw ICU4XError._(result.union.err);
   }
-  static late final _loadNfkcInertFfi = _capi<
+  static final _loadNfkcInertFfi = _capi<
               ffi.NativeFunction<
                   _ResultOpaqueUint32 Function(ffi.Pointer<ffi.Opaque>)>>(
           'ICU4XCodePointSetData_load_nfkc_inert')
@@ -2591,7 +2587,7 @@ class ICU4XCodePointSetData implements ffi.Finalizable {
         ? ICU4XCodePointSetData._(result.union.ok)
         : throw ICU4XError._(result.union.err);
   }
-  static late final _loadNfkdInertFfi = _capi<
+  static final _loadNfkdInertFfi = _capi<
               ffi.NativeFunction<
                   _ResultOpaqueUint32 Function(ffi.Pointer<ffi.Opaque>)>>(
           'ICU4XCodePointSetData_load_nfkd_inert')
@@ -2605,7 +2601,7 @@ class ICU4XCodePointSetData implements ffi.Finalizable {
         ? ICU4XCodePointSetData._(result.union.ok)
         : throw ICU4XError._(result.union.err);
   }
-  static late final _loadPatternSyntaxFfi = _capi<
+  static final _loadPatternSyntaxFfi = _capi<
               ffi.NativeFunction<
                   _ResultOpaqueUint32 Function(ffi.Pointer<ffi.Opaque>)>>(
           'ICU4XCodePointSetData_load_pattern_syntax')
@@ -2620,7 +2616,7 @@ class ICU4XCodePointSetData implements ffi.Finalizable {
         ? ICU4XCodePointSetData._(result.union.ok)
         : throw ICU4XError._(result.union.err);
   }
-  static late final _loadPatternWhiteSpaceFfi = _capi<
+  static final _loadPatternWhiteSpaceFfi = _capi<
               ffi.NativeFunction<
                   _ResultOpaqueUint32 Function(ffi.Pointer<ffi.Opaque>)>>(
           'ICU4XCodePointSetData_load_pattern_white_space')
@@ -2635,7 +2631,7 @@ class ICU4XCodePointSetData implements ffi.Finalizable {
         ? ICU4XCodePointSetData._(result.union.ok)
         : throw ICU4XError._(result.union.err);
   }
-  static late final _loadPrependedConcatenationMarkFfi = _capi<
+  static final _loadPrependedConcatenationMarkFfi = _capi<
               ffi.NativeFunction<
                   _ResultOpaqueUint32 Function(ffi.Pointer<ffi.Opaque>)>>(
           'ICU4XCodePointSetData_load_prepended_concatenation_mark')
@@ -2649,7 +2645,7 @@ class ICU4XCodePointSetData implements ffi.Finalizable {
         ? ICU4XCodePointSetData._(result.union.ok)
         : throw ICU4XError._(result.union.err);
   }
-  static late final _loadPrintFfi = _capi<
+  static final _loadPrintFfi = _capi<
           ffi.NativeFunction<
               _ResultOpaqueUint32 Function(
                   ffi.Pointer<ffi.Opaque>)>>('ICU4XCodePointSetData_load_print')
@@ -2663,7 +2659,7 @@ class ICU4XCodePointSetData implements ffi.Finalizable {
         ? ICU4XCodePointSetData._(result.union.ok)
         : throw ICU4XError._(result.union.err);
   }
-  static late final _loadQuotationMarkFfi = _capi<
+  static final _loadQuotationMarkFfi = _capi<
               ffi.NativeFunction<
                   _ResultOpaqueUint32 Function(ffi.Pointer<ffi.Opaque>)>>(
           'ICU4XCodePointSetData_load_quotation_mark')
@@ -2677,7 +2673,7 @@ class ICU4XCodePointSetData implements ffi.Finalizable {
         ? ICU4XCodePointSetData._(result.union.ok)
         : throw ICU4XError._(result.union.err);
   }
-  static late final _loadRadicalFfi = _capi<
+  static final _loadRadicalFfi = _capi<
               ffi.NativeFunction<
                   _ResultOpaqueUint32 Function(ffi.Pointer<ffi.Opaque>)>>(
           'ICU4XCodePointSetData_load_radical')
@@ -2692,7 +2688,7 @@ class ICU4XCodePointSetData implements ffi.Finalizable {
         ? ICU4XCodePointSetData._(result.union.ok)
         : throw ICU4XError._(result.union.err);
   }
-  static late final _loadRegionalIndicatorFfi = _capi<
+  static final _loadRegionalIndicatorFfi = _capi<
               ffi.NativeFunction<
                   _ResultOpaqueUint32 Function(ffi.Pointer<ffi.Opaque>)>>(
           'ICU4XCodePointSetData_load_regional_indicator')
@@ -2706,7 +2702,7 @@ class ICU4XCodePointSetData implements ffi.Finalizable {
         ? ICU4XCodePointSetData._(result.union.ok)
         : throw ICU4XError._(result.union.err);
   }
-  static late final _loadSoftDottedFfi = _capi<
+  static final _loadSoftDottedFfi = _capi<
               ffi.NativeFunction<
                   _ResultOpaqueUint32 Function(ffi.Pointer<ffi.Opaque>)>>(
           'ICU4XCodePointSetData_load_soft_dotted')
@@ -2720,7 +2716,7 @@ class ICU4XCodePointSetData implements ffi.Finalizable {
         ? ICU4XCodePointSetData._(result.union.ok)
         : throw ICU4XError._(result.union.err);
   }
-  static late final _loadSegmentStarterFfi = _capi<
+  static final _loadSegmentStarterFfi = _capi<
               ffi.NativeFunction<
                   _ResultOpaqueUint32 Function(ffi.Pointer<ffi.Opaque>)>>(
           'ICU4XCodePointSetData_load_segment_starter')
@@ -2734,7 +2730,7 @@ class ICU4XCodePointSetData implements ffi.Finalizable {
         ? ICU4XCodePointSetData._(result.union.ok)
         : throw ICU4XError._(result.union.err);
   }
-  static late final _loadCaseSensitiveFfi = _capi<
+  static final _loadCaseSensitiveFfi = _capi<
               ffi.NativeFunction<
                   _ResultOpaqueUint32 Function(ffi.Pointer<ffi.Opaque>)>>(
           'ICU4XCodePointSetData_load_case_sensitive')
@@ -2749,7 +2745,7 @@ class ICU4XCodePointSetData implements ffi.Finalizable {
         ? ICU4XCodePointSetData._(result.union.ok)
         : throw ICU4XError._(result.union.err);
   }
-  static late final _loadSentenceTerminalFfi = _capi<
+  static final _loadSentenceTerminalFfi = _capi<
               ffi.NativeFunction<
                   _ResultOpaqueUint32 Function(ffi.Pointer<ffi.Opaque>)>>(
           'ICU4XCodePointSetData_load_sentence_terminal')
@@ -2764,7 +2760,7 @@ class ICU4XCodePointSetData implements ffi.Finalizable {
         ? ICU4XCodePointSetData._(result.union.ok)
         : throw ICU4XError._(result.union.err);
   }
-  static late final _loadTerminalPunctuationFfi = _capi<
+  static final _loadTerminalPunctuationFfi = _capi<
               ffi.NativeFunction<
                   _ResultOpaqueUint32 Function(ffi.Pointer<ffi.Opaque>)>>(
           'ICU4XCodePointSetData_load_terminal_punctuation')
@@ -2779,7 +2775,7 @@ class ICU4XCodePointSetData implements ffi.Finalizable {
         ? ICU4XCodePointSetData._(result.union.ok)
         : throw ICU4XError._(result.union.err);
   }
-  static late final _loadUnifiedIdeographFfi = _capi<
+  static final _loadUnifiedIdeographFfi = _capi<
               ffi.NativeFunction<
                   _ResultOpaqueUint32 Function(ffi.Pointer<ffi.Opaque>)>>(
           'ICU4XCodePointSetData_load_unified_ideograph')
@@ -2793,7 +2789,7 @@ class ICU4XCodePointSetData implements ffi.Finalizable {
         ? ICU4XCodePointSetData._(result.union.ok)
         : throw ICU4XError._(result.union.err);
   }
-  static late final _loadUppercaseFfi = _capi<
+  static final _loadUppercaseFfi = _capi<
               ffi.NativeFunction<
                   _ResultOpaqueUint32 Function(ffi.Pointer<ffi.Opaque>)>>(
           'ICU4XCodePointSetData_load_uppercase')
@@ -2808,7 +2804,7 @@ class ICU4XCodePointSetData implements ffi.Finalizable {
         ? ICU4XCodePointSetData._(result.union.ok)
         : throw ICU4XError._(result.union.err);
   }
-  static late final _loadVariationSelectorFfi = _capi<
+  static final _loadVariationSelectorFfi = _capi<
               ffi.NativeFunction<
                   _ResultOpaqueUint32 Function(ffi.Pointer<ffi.Opaque>)>>(
           'ICU4XCodePointSetData_load_variation_selector')
@@ -2822,7 +2818,7 @@ class ICU4XCodePointSetData implements ffi.Finalizable {
         ? ICU4XCodePointSetData._(result.union.ok)
         : throw ICU4XError._(result.union.err);
   }
-  static late final _loadWhiteSpaceFfi = _capi<
+  static final _loadWhiteSpaceFfi = _capi<
               ffi.NativeFunction<
                   _ResultOpaqueUint32 Function(ffi.Pointer<ffi.Opaque>)>>(
           'ICU4XCodePointSetData_load_white_space')
@@ -2836,7 +2832,7 @@ class ICU4XCodePointSetData implements ffi.Finalizable {
         ? ICU4XCodePointSetData._(result.union.ok)
         : throw ICU4XError._(result.union.err);
   }
-  static late final _loadXdigitFfi = _capi<
+  static final _loadXdigitFfi = _capi<
               ffi.NativeFunction<
                   _ResultOpaqueUint32 Function(ffi.Pointer<ffi.Opaque>)>>(
           'ICU4XCodePointSetData_load_xdigit')
@@ -2850,7 +2846,7 @@ class ICU4XCodePointSetData implements ffi.Finalizable {
         ? ICU4XCodePointSetData._(result.union.ok)
         : throw ICU4XError._(result.union.err);
   }
-  static late final _loadXidContinueFfi = _capi<
+  static final _loadXidContinueFfi = _capi<
               ffi.NativeFunction<
                   _ResultOpaqueUint32 Function(ffi.Pointer<ffi.Opaque>)>>(
           'ICU4XCodePointSetData_load_xid_continue')
@@ -2864,7 +2860,7 @@ class ICU4XCodePointSetData implements ffi.Finalizable {
         ? ICU4XCodePointSetData._(result.union.ok)
         : throw ICU4XError._(result.union.err);
   }
-  static late final _loadXidStartFfi = _capi<
+  static final _loadXidStartFfi = _capi<
               ffi.NativeFunction<
                   _ResultOpaqueUint32 Function(ffi.Pointer<ffi.Opaque>)>>(
           'ICU4XCodePointSetData_load_xid_start')
@@ -2886,13 +2882,13 @@ class ICU4XCodePointSetData implements ffi.Finalizable {
     final propertyNameSlice = _SliceFfi2Utf8._fromDart(propertyName, alloc);
 
     final result = _loadForEcma262Ffi(provider._underlying,
-        propertyNameSlice.bytes, propertyNameSlice.length);
+        propertyNameSlice._bytes, propertyNameSlice._length);
     alloc.releaseAll();
     return result.isOk
         ? ICU4XCodePointSetData._(result.union.ok)
         : throw ICU4XError._(result.union.err);
   }
-  static late final _loadForEcma262Ffi = _capi<
+  static final _loadForEcma262Ffi = _capi<
           ffi.NativeFunction<
               _ResultOpaqueUint32 Function(
                   ffi.Pointer<ffi.Opaque>,
@@ -2911,8 +2907,7 @@ class ICU4XCollator implements ffi.Finalizable {
     _finalizer.attach(this, _underlying.cast());
   }
 
-  static late final _finalizer =
-      ffi.NativeFinalizer(_capi('ICU4XCollator_destroy'));
+  static final _finalizer = ffi.NativeFinalizer(_capi('ICU4XCollator_destroy'));
 
   /// Construct a new Collator instance.
   ///
@@ -2925,7 +2920,7 @@ class ICU4XCollator implements ffi.Finalizable {
         ? ICU4XCollator._(result.union.ok)
         : throw ICU4XError._(result.union.err);
   }
-  static late final _createV1Ffi = _capi<
+  static final _createV1Ffi = _capi<
           ffi.NativeFunction<
               _ResultOpaqueUint32 Function(
                   ffi.Pointer<ffi.Opaque>,
@@ -2949,13 +2944,13 @@ class ICU4XCollator implements ffi.Finalizable {
     final leftSlice = _SliceFfi2Utf8._fromDart(left, alloc);
     final rightSlice = _SliceFfi2Utf8._fromDart(right, alloc);
 
-    final result = _compareFfi(_underlying, leftSlice.bytes, leftSlice.length,
-        rightSlice.bytes, rightSlice.length);
+    final result = _compareFfi(_underlying, leftSlice._bytes, leftSlice._length,
+        rightSlice._bytes, rightSlice._length);
     alloc.releaseAll();
     return ICU4XOrdering._(result);
   }
 
-  static late final _compareFfi = _capi<
+  static final _compareFfi = _capi<
           ffi.NativeFunction<
               ffi.Uint32 Function(
                   ffi.Pointer<ffi.Opaque>,
@@ -2978,13 +2973,13 @@ class ICU4XCollator implements ffi.Finalizable {
     final leftSlice = _SliceFfi2Utf8._fromDart(left, alloc);
     final rightSlice = _SliceFfi2Utf8._fromDart(right, alloc);
 
-    final result = _compareValidUtf8Ffi(_underlying, leftSlice.bytes,
-        leftSlice.length, rightSlice.bytes, rightSlice.length);
+    final result = _compareValidUtf8Ffi(_underlying, leftSlice._bytes,
+        leftSlice._length, rightSlice._bytes, rightSlice._length);
     alloc.releaseAll();
     return ICU4XOrdering._(result);
   }
 
-  static late final _compareValidUtf8Ffi = _capi<
+  static final _compareValidUtf8Ffi = _capi<
           ffi.NativeFunction<
               ffi.Uint32 Function(
                   ffi.Pointer<ffi.Opaque>,
@@ -3005,13 +3000,13 @@ class ICU4XCollator implements ffi.Finalizable {
     final leftSlice = _SliceFfiUint16._fromDart(left, alloc);
     final rightSlice = _SliceFfiUint16._fromDart(right, alloc);
 
-    final result = _compareUtf16Ffi(_underlying, leftSlice.bytes,
-        leftSlice.length, rightSlice.bytes, rightSlice.length);
+    final result = _compareUtf16Ffi(_underlying, leftSlice._bytes,
+        leftSlice._length, rightSlice._bytes, rightSlice._length);
     alloc.releaseAll();
     return ICU4XOrdering._(result);
   }
 
-  static late final _compareUtf16Ffi = _capi<
+  static final _compareUtf16Ffi = _capi<
           ffi.NativeFunction<
               ffi.Uint32 Function(
                   ffi.Pointer<ffi.Opaque>,
@@ -3240,7 +3235,7 @@ class ICU4XComposingNormalizer implements ffi.Finalizable {
     _finalizer.attach(this, _underlying.cast());
   }
 
-  static late final _finalizer =
+  static final _finalizer =
       ffi.NativeFinalizer(_capi('ICU4XComposingNormalizer_destroy'));
 
   /// Construct a new ICU4XComposingNormalizer instance for NFC
@@ -3252,7 +3247,7 @@ class ICU4XComposingNormalizer implements ffi.Finalizable {
         ? ICU4XComposingNormalizer._(result.union.ok)
         : throw ICU4XError._(result.union.err);
   }
-  static late final _createNfcFfi = _capi<
+  static final _createNfcFfi = _capi<
               ffi.NativeFunction<
                   _ResultOpaqueUint32 Function(ffi.Pointer<ffi.Opaque>)>>(
           'ICU4XComposingNormalizer_create_nfc')
@@ -3268,7 +3263,7 @@ class ICU4XComposingNormalizer implements ffi.Finalizable {
         ? ICU4XComposingNormalizer._(result.union.ok)
         : throw ICU4XError._(result.union.err);
   }
-  static late final _createNfkcFfi = _capi<
+  static final _createNfkcFfi = _capi<
               ffi.NativeFunction<
                   _ResultOpaqueUint32 Function(ffi.Pointer<ffi.Opaque>)>>(
           'ICU4XComposingNormalizer_create_nfkc')
@@ -3286,14 +3281,14 @@ class ICU4XComposingNormalizer implements ffi.Finalizable {
 
     final writeable = _Writeable();
     final result = _normalizeFfi(
-        _underlying, sSlice.bytes, sSlice.length, writeable._underlying);
+        _underlying, sSlice._bytes, sSlice._length, writeable._underlying);
     alloc.releaseAll();
     return result.isOk
         ? writeable.finalize()
         : throw ICU4XError._(result.union.err);
   }
 
-  static late final _normalizeFfi = _capi<
+  static final _normalizeFfi = _capi<
               ffi.NativeFunction<
                   _ResultVoidUint32 Function(
                       ffi.Pointer<ffi.Opaque>,
@@ -3317,12 +3312,12 @@ class ICU4XComposingNormalizer implements ffi.Finalizable {
     final alloc = ffi2.Arena();
     final sSlice = _SliceFfi2Utf8._fromDart(s, alloc);
 
-    final result = _isNormalizedFfi(_underlying, sSlice.bytes, sSlice.length);
+    final result = _isNormalizedFfi(_underlying, sSlice._bytes, sSlice._length);
     alloc.releaseAll();
     return result;
   }
 
-  static late final _isNormalizedFfi = _capi<
+  static final _isNormalizedFfi = _capi<
           ffi.NativeFunction<
               ffi.Bool Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi2.Utf8>,
                   ffi.Size)>>('ICU4XComposingNormalizer_is_normalized')
@@ -3339,7 +3334,7 @@ class ICU4XCustomTimeZone implements ffi.Finalizable {
     _finalizer.attach(this, _underlying.cast());
   }
 
-  static late final _finalizer =
+  static final _finalizer =
       ffi.NativeFinalizer(_capi('ICU4XCustomTimeZone_destroy'));
 
   /// Creates a time zone from an offset string.
@@ -3349,13 +3344,13 @@ class ICU4XCustomTimeZone implements ffi.Finalizable {
     final alloc = ffi2.Arena();
     final sSlice = _SliceFfi2Utf8._fromDart(s, alloc);
 
-    final result = _createFromStringFfi(sSlice.bytes, sSlice.length);
+    final result = _createFromStringFfi(sSlice._bytes, sSlice._length);
     alloc.releaseAll();
     return result.isOk
         ? ICU4XCustomTimeZone._(result.union.ok)
         : throw ICU4XError._(result.union.err);
   }
-  static late final _createFromStringFfi = _capi<
+  static final _createFromStringFfi = _capi<
           ffi.NativeFunction<
               _ResultOpaqueUint32 Function(ffi.Pointer<ffi2.Utf8>,
                   ffi.Size)>>('ICU4XCustomTimeZone_create_from_string')
@@ -3369,7 +3364,7 @@ class ICU4XCustomTimeZone implements ffi.Finalizable {
     final result = _createEmptyFfi();
     return ICU4XCustomTimeZone._(result);
   }
-  static late final _createEmptyFfi =
+  static final _createEmptyFfi =
       _capi<ffi.NativeFunction<ffi.Pointer<ffi.Opaque> Function()>>(
               'ICU4XCustomTimeZone_create_empty')
           .asFunction<ffi.Pointer<ffi.Opaque> Function()>(isLeaf: true);
@@ -3381,7 +3376,7 @@ class ICU4XCustomTimeZone implements ffi.Finalizable {
     final result = _createUtcFfi();
     return ICU4XCustomTimeZone._(result);
   }
-  static late final _createUtcFfi =
+  static final _createUtcFfi =
       _capi<ffi.NativeFunction<ffi.Pointer<ffi.Opaque> Function()>>(
               'ICU4XCustomTimeZone_create_utc')
           .asFunction<ffi.Pointer<ffi.Opaque> Function()>(isLeaf: true);
@@ -3400,7 +3395,7 @@ class ICU4XCustomTimeZone implements ffi.Finalizable {
     }
   }
 
-  static late final _trySetGmtOffsetSecondsFfi = _capi<
+  static final _trySetGmtOffsetSecondsFfi = _capi<
           ffi.NativeFunction<
               _ResultVoidUint32 Function(ffi.Pointer<ffi.Opaque>,
                   ffi.Int32)>>('ICU4XCustomTimeZone_try_set_gmt_offset_seconds')
@@ -3416,7 +3411,7 @@ class ICU4XCustomTimeZone implements ffi.Finalizable {
     _clearGmtOffsetFfi(_underlying);
   }
 
-  static late final _clearGmtOffsetFfi =
+  static final _clearGmtOffsetFfi =
       _capi<ffi.NativeFunction<ffi.Void Function(ffi.Pointer<ffi.Opaque>)>>(
               'ICU4XCustomTimeZone_clear_gmt_offset')
           .asFunction<void Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
@@ -3433,7 +3428,7 @@ class ICU4XCustomTimeZone implements ffi.Finalizable {
     return result.isOk ? result.union.ok : throw ICU4XError._(result.union.err);
   }
 
-  static late final _gmtOffsetSecondsFfi = _capi<
+  static final _gmtOffsetSecondsFfi = _capi<
               ffi.NativeFunction<
                   _ResultInt32Uint32 Function(ffi.Pointer<ffi.Opaque>)>>(
           'ICU4XCustomTimeZone_gmt_offset_seconds')
@@ -3450,7 +3445,7 @@ class ICU4XCustomTimeZone implements ffi.Finalizable {
     return result.isOk ? result.union.ok : throw ICU4XError._(result.union.err);
   }
 
-  static late final _isGmtOffsetPositiveFfi = _capi<
+  static final _isGmtOffsetPositiveFfi = _capi<
               ffi.NativeFunction<
                   _ResultBoolUint32 Function(ffi.Pointer<ffi.Opaque>)>>(
           'ICU4XCustomTimeZone_is_gmt_offset_positive')
@@ -3467,7 +3462,7 @@ class ICU4XCustomTimeZone implements ffi.Finalizable {
     return result.isOk ? result.union.ok : throw ICU4XError._(result.union.err);
   }
 
-  static late final _isGmtOffsetZeroFfi = _capi<
+  static final _isGmtOffsetZeroFfi = _capi<
               ffi.NativeFunction<
                   _ResultBoolUint32 Function(ffi.Pointer<ffi.Opaque>)>>(
           'ICU4XCustomTimeZone_is_gmt_offset_zero')
@@ -3484,7 +3479,7 @@ class ICU4XCustomTimeZone implements ffi.Finalizable {
     return result.isOk ? result.union.ok : throw ICU4XError._(result.union.err);
   }
 
-  static late final _gmtOffsetHasMinutesFfi = _capi<
+  static final _gmtOffsetHasMinutesFfi = _capi<
               ffi.NativeFunction<
                   _ResultBoolUint32 Function(ffi.Pointer<ffi.Opaque>)>>(
           'ICU4XCustomTimeZone_gmt_offset_has_minutes')
@@ -3501,7 +3496,7 @@ class ICU4XCustomTimeZone implements ffi.Finalizable {
     return result.isOk ? result.union.ok : throw ICU4XError._(result.union.err);
   }
 
-  static late final _gmtOffsetHasSecondsFfi = _capi<
+  static final _gmtOffsetHasSecondsFfi = _capi<
               ffi.NativeFunction<
                   _ResultBoolUint32 Function(ffi.Pointer<ffi.Opaque>)>>(
           'ICU4XCustomTimeZone_gmt_offset_has_seconds')
@@ -3520,14 +3515,14 @@ class ICU4XCustomTimeZone implements ffi.Finalizable {
     final idSlice = _SliceFfi2Utf8._fromDart(id, alloc);
 
     final result =
-        _trySetTimeZoneIdFfi(_underlying, idSlice.bytes, idSlice.length);
+        _trySetTimeZoneIdFfi(_underlying, idSlice._bytes, idSlice._length);
     alloc.releaseAll();
     if (!result.isOk) {
       throw ICU4XError._(result.union.err);
     }
   }
 
-  static late final _trySetTimeZoneIdFfi = _capi<
+  static final _trySetTimeZoneIdFfi = _capi<
           ffi.NativeFunction<
               _ResultVoidUint32 Function(
                   ffi.Pointer<ffi.Opaque>,
@@ -3548,14 +3543,14 @@ class ICU4XCustomTimeZone implements ffi.Finalizable {
     final idSlice = _SliceFfi2Utf8._fromDart(id, alloc);
 
     final result = _trySetIanaTimeZoneIdFfi(
-        _underlying, mapper._underlying, idSlice.bytes, idSlice.length);
+        _underlying, mapper._underlying, idSlice._bytes, idSlice._length);
     alloc.releaseAll();
     if (!result.isOk) {
       throw ICU4XError._(result.union.err);
     }
   }
 
-  static late final _trySetIanaTimeZoneIdFfi = _capi<
+  static final _trySetIanaTimeZoneIdFfi = _capi<
           ffi.NativeFunction<
               _ResultVoidUint32 Function(
                   ffi.Pointer<ffi.Opaque>,
@@ -3578,7 +3573,7 @@ class ICU4XCustomTimeZone implements ffi.Finalizable {
     _clearTimeZoneIdFfi(_underlying);
   }
 
-  static late final _clearTimeZoneIdFfi =
+  static final _clearTimeZoneIdFfi =
       _capi<ffi.NativeFunction<ffi.Void Function(ffi.Pointer<ffi.Opaque>)>>(
               'ICU4XCustomTimeZone_clear_time_zone_id')
           .asFunction<void Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
@@ -3598,7 +3593,7 @@ class ICU4XCustomTimeZone implements ffi.Finalizable {
         : throw ICU4XError._(result.union.err);
   }
 
-  static late final _timeZoneIdFfi = _capi<
+  static final _timeZoneIdFfi = _capi<
           ffi.NativeFunction<
               _ResultVoidUint32 Function(ffi.Pointer<ffi.Opaque>,
                   ffi.Pointer<ffi.Opaque>)>>('ICU4XCustomTimeZone_time_zone_id')
@@ -3618,14 +3613,14 @@ class ICU4XCustomTimeZone implements ffi.Finalizable {
     final idSlice = _SliceFfi2Utf8._fromDart(id, alloc);
 
     final result =
-        _trySetMetazoneIdFfi(_underlying, idSlice.bytes, idSlice.length);
+        _trySetMetazoneIdFfi(_underlying, idSlice._bytes, idSlice._length);
     alloc.releaseAll();
     if (!result.isOk) {
       throw ICU4XError._(result.union.err);
     }
   }
 
-  static late final _trySetMetazoneIdFfi = _capi<
+  static final _trySetMetazoneIdFfi = _capi<
           ffi.NativeFunction<
               _ResultVoidUint32 Function(
                   ffi.Pointer<ffi.Opaque>,
@@ -3644,7 +3639,7 @@ class ICU4XCustomTimeZone implements ffi.Finalizable {
     _clearMetazoneIdFfi(_underlying);
   }
 
-  static late final _clearMetazoneIdFfi =
+  static final _clearMetazoneIdFfi =
       _capi<ffi.NativeFunction<ffi.Void Function(ffi.Pointer<ffi.Opaque>)>>(
               'ICU4XCustomTimeZone_clear_metazone_id')
           .asFunction<void Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
@@ -3664,7 +3659,7 @@ class ICU4XCustomTimeZone implements ffi.Finalizable {
         : throw ICU4XError._(result.union.err);
   }
 
-  static late final _metazoneIdFfi = _capi<
+  static final _metazoneIdFfi = _capi<
           ffi.NativeFunction<
               _ResultVoidUint32 Function(ffi.Pointer<ffi.Opaque>,
                   ffi.Pointer<ffi.Opaque>)>>('ICU4XCustomTimeZone_metazone_id')
@@ -3684,14 +3679,14 @@ class ICU4XCustomTimeZone implements ffi.Finalizable {
     final idSlice = _SliceFfi2Utf8._fromDart(id, alloc);
 
     final result =
-        _trySetZoneVariantFfi(_underlying, idSlice.bytes, idSlice.length);
+        _trySetZoneVariantFfi(_underlying, idSlice._bytes, idSlice._length);
     alloc.releaseAll();
     if (!result.isOk) {
       throw ICU4XError._(result.union.err);
     }
   }
 
-  static late final _trySetZoneVariantFfi = _capi<
+  static final _trySetZoneVariantFfi = _capi<
           ffi.NativeFunction<
               _ResultVoidUint32 Function(
                   ffi.Pointer<ffi.Opaque>,
@@ -3710,7 +3705,7 @@ class ICU4XCustomTimeZone implements ffi.Finalizable {
     _clearZoneVariantFfi(_underlying);
   }
 
-  static late final _clearZoneVariantFfi =
+  static final _clearZoneVariantFfi =
       _capi<ffi.NativeFunction<ffi.Void Function(ffi.Pointer<ffi.Opaque>)>>(
               'ICU4XCustomTimeZone_clear_zone_variant')
           .asFunction<void Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
@@ -3730,7 +3725,7 @@ class ICU4XCustomTimeZone implements ffi.Finalizable {
         : throw ICU4XError._(result.union.err);
   }
 
-  static late final _zoneVariantFfi = _capi<
+  static final _zoneVariantFfi = _capi<
           ffi.NativeFunction<
               _ResultVoidUint32 Function(ffi.Pointer<ffi.Opaque>,
                   ffi.Pointer<ffi.Opaque>)>>('ICU4XCustomTimeZone_zone_variant')
@@ -3747,7 +3742,7 @@ class ICU4XCustomTimeZone implements ffi.Finalizable {
     _setStandardTimeFfi(_underlying);
   }
 
-  static late final _setStandardTimeFfi =
+  static final _setStandardTimeFfi =
       _capi<ffi.NativeFunction<ffi.Void Function(ffi.Pointer<ffi.Opaque>)>>(
               'ICU4XCustomTimeZone_set_standard_time')
           .asFunction<void Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
@@ -3761,7 +3756,7 @@ class ICU4XCustomTimeZone implements ffi.Finalizable {
     _setDaylightTimeFfi(_underlying);
   }
 
-  static late final _setDaylightTimeFfi =
+  static final _setDaylightTimeFfi =
       _capi<ffi.NativeFunction<ffi.Void Function(ffi.Pointer<ffi.Opaque>)>>(
               'ICU4XCustomTimeZone_set_daylight_time')
           .asFunction<void Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
@@ -3778,7 +3773,7 @@ class ICU4XCustomTimeZone implements ffi.Finalizable {
     return result.isOk ? result.union.ok : throw ICU4XError._(result.union.err);
   }
 
-  static late final _isStandardTimeFfi = _capi<
+  static final _isStandardTimeFfi = _capi<
               ffi.NativeFunction<
                   _ResultBoolUint32 Function(ffi.Pointer<ffi.Opaque>)>>(
           'ICU4XCustomTimeZone_is_standard_time')
@@ -3797,7 +3792,7 @@ class ICU4XCustomTimeZone implements ffi.Finalizable {
     return result.isOk ? result.union.ok : throw ICU4XError._(result.union.err);
   }
 
-  static late final _isDaylightTimeFfi = _capi<
+  static final _isDaylightTimeFfi = _capi<
               ffi.NativeFunction<
                   _ResultBoolUint32 Function(ffi.Pointer<ffi.Opaque>)>>(
           'ICU4XCustomTimeZone_is_daylight_time')
@@ -3815,7 +3810,7 @@ class ICU4XCustomTimeZone implements ffi.Finalizable {
         _underlying, metazoneCalculator._underlying, localDatetime._underlying);
   }
 
-  static late final _maybeCalculateMetazoneFfi = _capi<
+  static final _maybeCalculateMetazoneFfi = _capi<
               ffi.NativeFunction<
                   ffi.Void Function(ffi.Pointer<ffi.Opaque>,
                       ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>>(
@@ -3835,7 +3830,7 @@ class ICU4XDataProvider implements ffi.Finalizable {
     _finalizer.attach(this, _underlying.cast());
   }
 
-  static late final _finalizer =
+  static final _finalizer =
       ffi.NativeFinalizer(_capi('ICU4XDataProvider_destroy'));
 
   /// Constructs an [`ICU4XDataProvider`] that uses compiled data.
@@ -3848,7 +3843,7 @@ class ICU4XDataProvider implements ffi.Finalizable {
     final result = _createCompiledFfi();
     return ICU4XDataProvider._(result);
   }
-  static late final _createCompiledFfi =
+  static final _createCompiledFfi =
       _capi<ffi.NativeFunction<ffi.Pointer<ffi.Opaque> Function()>>(
               'ICU4XDataProvider_create_compiled')
           .asFunction<ffi.Pointer<ffi.Opaque> Function()>(isLeaf: true);
@@ -3862,13 +3857,13 @@ class ICU4XDataProvider implements ffi.Finalizable {
     final alloc = ffi2.Arena();
     final pathSlice = _SliceFfi2Utf8._fromDart(path, alloc);
 
-    final result = _createFsFfi(pathSlice.bytes, pathSlice.length);
+    final result = _createFsFfi(pathSlice._bytes, pathSlice._length);
     alloc.releaseAll();
     return result.isOk
         ? ICU4XDataProvider._(result.union.ok)
         : throw ICU4XError._(result.union.err);
   }
-  static late final _createFsFfi = _capi<
+  static final _createFsFfi = _capi<
           ffi.NativeFunction<
               _ResultOpaqueUint32 Function(ffi.Pointer<ffi2.Utf8>,
                   ffi.Size)>>('ICU4XDataProvider_create_fs')
@@ -3882,7 +3877,7 @@ class ICU4XDataProvider implements ffi.Finalizable {
     final result = _createTestFfi();
     return ICU4XDataProvider._(result);
   }
-  static late final _createTestFfi =
+  static final _createTestFfi =
       _capi<ffi.NativeFunction<ffi.Pointer<ffi.Opaque> Function()>>(
               'ICU4XDataProvider_create_test')
           .asFunction<ffi.Pointer<ffi.Opaque> Function()>(isLeaf: true);
@@ -3894,13 +3889,13 @@ class ICU4XDataProvider implements ffi.Finalizable {
     final alloc = ffi2.Arena();
     final blobSlice = _SliceFfiUint8._fromDart(blob, alloc);
 
-    final result = _createFromByteSliceFfi(blobSlice.bytes, blobSlice.length);
+    final result = _createFromByteSliceFfi(blobSlice._bytes, blobSlice._length);
     alloc.releaseAll();
     return result.isOk
         ? ICU4XDataProvider._(result.union.ok)
         : throw ICU4XError._(result.union.err);
   }
-  static late final _createFromByteSliceFfi = _capi<
+  static final _createFromByteSliceFfi = _capi<
           ffi.NativeFunction<
               _ResultOpaqueUint32 Function(ffi.Pointer<ffi.Uint8>,
                   ffi.Size)>>('ICU4XDataProvider_create_from_byte_slice')
@@ -3914,7 +3909,7 @@ class ICU4XDataProvider implements ffi.Finalizable {
     final result = _createEmptyFfi();
     return ICU4XDataProvider._(result);
   }
-  static late final _createEmptyFfi =
+  static final _createEmptyFfi =
       _capi<ffi.NativeFunction<ffi.Pointer<ffi.Opaque> Function()>>(
               'ICU4XDataProvider_create_empty')
           .asFunction<ffi.Pointer<ffi.Opaque> Function()>(isLeaf: true);
@@ -3936,7 +3931,7 @@ class ICU4XDataProvider implements ffi.Finalizable {
     }
   }
 
-  static late final _forkByKeyFfi = _capi<
+  static final _forkByKeyFfi = _capi<
           ffi.NativeFunction<
               _ResultVoidUint32 Function(ffi.Pointer<ffi.Opaque>,
                   ffi.Pointer<ffi.Opaque>)>>('ICU4XDataProvider_fork_by_key')
@@ -3954,7 +3949,7 @@ class ICU4XDataProvider implements ffi.Finalizable {
     }
   }
 
-  static late final _forkByLocaleFfi = _capi<
+  static final _forkByLocaleFfi = _capi<
           ffi.NativeFunction<
               _ResultVoidUint32 Function(ffi.Pointer<ffi.Opaque>,
                   ffi.Pointer<ffi.Opaque>)>>('ICU4XDataProvider_fork_by_locale')
@@ -3976,7 +3971,7 @@ class ICU4XDataProvider implements ffi.Finalizable {
     }
   }
 
-  static late final _enableLocaleFallbackFfi = _capi<
+  static final _enableLocaleFallbackFfi = _capi<
               ffi.NativeFunction<
                   _ResultVoidUint32 Function(ffi.Pointer<ffi.Opaque>)>>(
           'ICU4XDataProvider_enable_locale_fallback')
@@ -3994,7 +3989,7 @@ class ICU4XDataProvider implements ffi.Finalizable {
     }
   }
 
-  static late final _enableLocaleFallbackWithFfi = _capi<
+  static final _enableLocaleFallbackWithFfi = _capi<
               ffi.NativeFunction<
                   _ResultVoidUint32 Function(
                       ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>>(
@@ -4014,7 +4009,7 @@ class ICU4XDataStruct implements ffi.Finalizable {
     _finalizer.attach(this, _underlying.cast());
   }
 
-  static late final _finalizer =
+  static final _finalizer =
       ffi.NativeFinalizer(_capi('ICU4XDataStruct_destroy'));
 
   /// Construct a new DecimalSymbolsV1 data struct.
@@ -4047,29 +4042,29 @@ class ICU4XDataStruct implements ffi.Finalizable {
     final digitsSlice = _SliceFfiUint32._fromDart(digits, alloc);
 
     final result = _createDecimalSymbolsV1Ffi(
-        plusSignPrefixSlice.bytes,
-        plusSignPrefixSlice.length,
-        plusSignSuffixSlice.bytes,
-        plusSignSuffixSlice.length,
-        minusSignPrefixSlice.bytes,
-        minusSignPrefixSlice.length,
-        minusSignSuffixSlice.bytes,
-        minusSignSuffixSlice.length,
-        decimalSeparatorSlice.bytes,
-        decimalSeparatorSlice.length,
-        groupingSeparatorSlice.bytes,
-        groupingSeparatorSlice.length,
+        plusSignPrefixSlice._bytes,
+        plusSignPrefixSlice._length,
+        plusSignSuffixSlice._bytes,
+        plusSignSuffixSlice._length,
+        minusSignPrefixSlice._bytes,
+        minusSignPrefixSlice._length,
+        minusSignSuffixSlice._bytes,
+        minusSignSuffixSlice._length,
+        decimalSeparatorSlice._bytes,
+        decimalSeparatorSlice._length,
+        groupingSeparatorSlice._bytes,
+        groupingSeparatorSlice._length,
         primaryGroupSize,
         secondaryGroupSize,
         minGroupSize,
-        digitsSlice.bytes,
-        digitsSlice.length);
+        digitsSlice._bytes,
+        digitsSlice._length);
     alloc.releaseAll();
     return result.isOk
         ? ICU4XDataStruct._(result.union.ok)
         : throw ICU4XError._(result.union.err);
   }
-  static late final _createDecimalSymbolsV1Ffi = _capi<
+  static final _createDecimalSymbolsV1Ffi = _capi<
           ffi.NativeFunction<
               _ResultOpaqueUint32 Function(
                   ffi.Pointer<ffi2.Utf8>,
@@ -4120,8 +4115,7 @@ class ICU4XDate implements ffi.Finalizable {
     _finalizer.attach(this, _underlying.cast());
   }
 
-  static late final _finalizer =
-      ffi.NativeFinalizer(_capi('ICU4XDate_destroy'));
+  static final _finalizer = ffi.NativeFinalizer(_capi('ICU4XDate_destroy'));
 
   /// Creates a new [`ICU4XDate`] representing the ISO date and time
   /// given but in a given calendar
@@ -4135,7 +4129,7 @@ class ICU4XDate implements ffi.Finalizable {
         ? ICU4XDate._(result.union.ok)
         : throw ICU4XError._(result.union.err);
   }
-  static late final _createFromIsoInCalendarFfi = _capi<
+  static final _createFromIsoInCalendarFfi = _capi<
               ffi.NativeFunction<
                   _ResultOpaqueUint32 Function(ffi.Int32, ffi.Uint8, ffi.Uint8,
                       ffi.Pointer<ffi.Opaque>)>>(
@@ -4154,11 +4148,11 @@ class ICU4XDate implements ffi.Finalizable {
     final monthCodeSlice = _SliceFfi2Utf8._fromDart(monthCode, alloc);
 
     final result = _createFromCodesInCalendarFfi(
-        eraCodeSlice.bytes,
-        eraCodeSlice.length,
+        eraCodeSlice._bytes,
+        eraCodeSlice._length,
         year,
-        monthCodeSlice.bytes,
-        monthCodeSlice.length,
+        monthCodeSlice._bytes,
+        monthCodeSlice._length,
         day,
         calendar._underlying);
     alloc.releaseAll();
@@ -4166,7 +4160,7 @@ class ICU4XDate implements ffi.Finalizable {
         ? ICU4XDate._(result.union.ok)
         : throw ICU4XError._(result.union.err);
   }
-  static late final _createFromCodesInCalendarFfi = _capi<
+  static final _createFromCodesInCalendarFfi = _capi<
               ffi.NativeFunction<
                   _ResultOpaqueUint32 Function(
                       ffi.Pointer<ffi2.Utf8>,
@@ -4195,7 +4189,7 @@ class ICU4XDate implements ffi.Finalizable {
     return ICU4XDate._(result);
   }
 
-  static late final _toCalendarFfi = _capi<
+  static final _toCalendarFfi = _capi<
           ffi.NativeFunction<
               ffi.Pointer<ffi.Opaque> Function(ffi.Pointer<ffi.Opaque>,
                   ffi.Pointer<ffi.Opaque>)>>('ICU4XDate_to_calendar')
@@ -4211,7 +4205,7 @@ class ICU4XDate implements ffi.Finalizable {
     return ICU4XIsoDate._(result);
   }
 
-  static late final _toIsoFfi = _capi<
+  static final _toIsoFfi = _capi<
           ffi.NativeFunction<
               ffi.Pointer<ffi.Opaque> Function(
                   ffi.Pointer<ffi.Opaque>)>>('ICU4XDate_to_iso')
@@ -4226,7 +4220,7 @@ class ICU4XDate implements ffi.Finalizable {
     return result;
   }
 
-  static late final _dayOfMonthFfi =
+  static final _dayOfMonthFfi =
       _capi<ffi.NativeFunction<ffi.Uint32 Function(ffi.Pointer<ffi.Opaque>)>>(
               'ICU4XDate_day_of_month')
           .asFunction<int Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
@@ -4239,7 +4233,7 @@ class ICU4XDate implements ffi.Finalizable {
     return ICU4XIsoWeekday._(result);
   }
 
-  static late final _dayOfWeekFfi =
+  static final _dayOfWeekFfi =
       _capi<ffi.NativeFunction<ffi.Uint32 Function(ffi.Pointer<ffi.Opaque>)>>(
               'ICU4XDate_day_of_week')
           .asFunction<int Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
@@ -4255,7 +4249,7 @@ class ICU4XDate implements ffi.Finalizable {
     return result;
   }
 
-  static late final _weekOfMonthFfi = _capi<
+  static final _weekOfMonthFfi = _capi<
           ffi.NativeFunction<
               ffi.Uint32 Function(ffi.Pointer<ffi.Opaque>,
                   ffi.Uint32)>>('ICU4XDate_week_of_month')
@@ -4271,7 +4265,7 @@ class ICU4XDate implements ffi.Finalizable {
         : throw ICU4XError._(result.union.err);
   }
 
-  static late final _weekOfYearFfi = _capi<
+  static final _weekOfYearFfi = _capi<
           ffi.NativeFunction<
               _ResultICU4XWeekOfFfiUint32 Function(ffi.Pointer<ffi.Opaque>,
                   ffi.Pointer<ffi.Opaque>)>>('ICU4XDate_week_of_year')
@@ -4291,7 +4285,7 @@ class ICU4XDate implements ffi.Finalizable {
     return result;
   }
 
-  static late final _ordinalMonthFfi =
+  static final _ordinalMonthFfi =
       _capi<ffi.NativeFunction<ffi.Uint32 Function(ffi.Pointer<ffi.Opaque>)>>(
               'ICU4XDate_ordinal_month')
           .asFunction<int Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
@@ -4308,7 +4302,7 @@ class ICU4XDate implements ffi.Finalizable {
         : throw ICU4XError._(result.union.err);
   }
 
-  static late final _monthCodeFfi = _capi<
+  static final _monthCodeFfi = _capi<
           ffi.NativeFunction<
               _ResultVoidUint32 Function(ffi.Pointer<ffi.Opaque>,
                   ffi.Pointer<ffi.Opaque>)>>('ICU4XDate_month_code')
@@ -4324,7 +4318,7 @@ class ICU4XDate implements ffi.Finalizable {
     return result;
   }
 
-  static late final _yearInEraFfi =
+  static final _yearInEraFfi =
       _capi<ffi.NativeFunction<ffi.Int32 Function(ffi.Pointer<ffi.Opaque>)>>(
               'ICU4XDate_year_in_era')
           .asFunction<int Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
@@ -4342,7 +4336,7 @@ class ICU4XDate implements ffi.Finalizable {
         : throw ICU4XError._(result.union.err);
   }
 
-  static late final _eraFfi = _capi<
+  static final _eraFfi = _capi<
           ffi.NativeFunction<
               _ResultVoidUint32 Function(ffi.Pointer<ffi.Opaque>,
                   ffi.Pointer<ffi.Opaque>)>>('ICU4XDate_era')
@@ -4358,7 +4352,7 @@ class ICU4XDate implements ffi.Finalizable {
     return result;
   }
 
-  static late final _monthsInYearFfi =
+  static final _monthsInYearFfi =
       _capi<ffi.NativeFunction<ffi.Uint8 Function(ffi.Pointer<ffi.Opaque>)>>(
               'ICU4XDate_months_in_year')
           .asFunction<int Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
@@ -4371,7 +4365,7 @@ class ICU4XDate implements ffi.Finalizable {
     return result;
   }
 
-  static late final _daysInMonthFfi =
+  static final _daysInMonthFfi =
       _capi<ffi.NativeFunction<ffi.Uint8 Function(ffi.Pointer<ffi.Opaque>)>>(
               'ICU4XDate_days_in_month')
           .asFunction<int Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
@@ -4384,7 +4378,7 @@ class ICU4XDate implements ffi.Finalizable {
     return result;
   }
 
-  static late final _daysInYearFfi =
+  static final _daysInYearFfi =
       _capi<ffi.NativeFunction<ffi.Uint16 Function(ffi.Pointer<ffi.Opaque>)>>(
               'ICU4XDate_days_in_year')
           .asFunction<int Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
@@ -4397,7 +4391,7 @@ class ICU4XDate implements ffi.Finalizable {
     return ICU4XCalendar._(result);
   }
 
-  static late final _calendarFfi = _capi<
+  static final _calendarFfi = _capi<
           ffi.NativeFunction<
               ffi.Pointer<ffi.Opaque> Function(
                   ffi.Pointer<ffi.Opaque>)>>('ICU4XDate_calendar')
@@ -4416,7 +4410,7 @@ class ICU4XDateFormatter implements ffi.Finalizable {
     _finalizer.attach(this, _underlying.cast());
   }
 
-  static late final _finalizer =
+  static final _finalizer =
       ffi.NativeFinalizer(_capi('ICU4XDateFormatter_destroy'));
 
   /// Creates a new [`ICU4XDateFormatter`] from locale data.
@@ -4430,7 +4424,7 @@ class ICU4XDateFormatter implements ffi.Finalizable {
         ? ICU4XDateFormatter._(result.union.ok)
         : throw ICU4XError._(result.union.err);
   }
-  static late final _createWithLengthFfi = _capi<
+  static final _createWithLengthFfi = _capi<
           ffi.NativeFunction<
               _ResultOpaqueUint32 Function(
                   ffi.Pointer<ffi.Opaque>,
@@ -4452,7 +4446,7 @@ class ICU4XDateFormatter implements ffi.Finalizable {
         : throw ICU4XError._(result.union.err);
   }
 
-  static late final _formatDateFfi = _capi<
+  static final _formatDateFfi = _capi<
           ffi.NativeFunction<
               _ResultVoidUint32 Function(
                   ffi.Pointer<ffi.Opaque>,
@@ -4476,7 +4470,7 @@ class ICU4XDateFormatter implements ffi.Finalizable {
         : throw ICU4XError._(result.union.err);
   }
 
-  static late final _formatIsoDateFfi = _capi<
+  static final _formatIsoDateFfi = _capi<
               ffi.NativeFunction<
                   _ResultVoidUint32 Function(ffi.Pointer<ffi.Opaque>,
                       ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>>(
@@ -4497,7 +4491,7 @@ class ICU4XDateFormatter implements ffi.Finalizable {
         : throw ICU4XError._(result.union.err);
   }
 
-  static late final _formatDatetimeFfi = _capi<
+  static final _formatDatetimeFfi = _capi<
               ffi.NativeFunction<
                   _ResultVoidUint32 Function(ffi.Pointer<ffi.Opaque>,
                       ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>>(
@@ -4520,7 +4514,7 @@ class ICU4XDateFormatter implements ffi.Finalizable {
         : throw ICU4XError._(result.union.err);
   }
 
-  static late final _formatIsoDatetimeFfi = _capi<
+  static final _formatIsoDatetimeFfi = _capi<
               ffi.NativeFunction<
                   _ResultVoidUint32 Function(ffi.Pointer<ffi.Opaque>,
                       ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>>(
@@ -4556,8 +4550,7 @@ class ICU4XDateTime implements ffi.Finalizable {
     _finalizer.attach(this, _underlying.cast());
   }
 
-  static late final _finalizer =
-      ffi.NativeFinalizer(_capi('ICU4XDateTime_destroy'));
+  static final _finalizer = ffi.NativeFinalizer(_capi('ICU4XDateTime_destroy'));
 
   /// Creates a new [`ICU4XDateTime`] representing the ISO date and time
   /// given but in a given calendar
@@ -4578,7 +4571,7 @@ class ICU4XDateTime implements ffi.Finalizable {
         ? ICU4XDateTime._(result.union.ok)
         : throw ICU4XError._(result.union.err);
   }
-  static late final _createFromIsoInCalendarFfi = _capi<
+  static final _createFromIsoInCalendarFfi = _capi<
               ffi.NativeFunction<
                   _ResultOpaqueUint32 Function(
                       ffi.Int32,
@@ -4612,11 +4605,11 @@ class ICU4XDateTime implements ffi.Finalizable {
     final monthCodeSlice = _SliceFfi2Utf8._fromDart(monthCode, alloc);
 
     final result = _createFromCodesInCalendarFfi(
-        eraCodeSlice.bytes,
-        eraCodeSlice.length,
+        eraCodeSlice._bytes,
+        eraCodeSlice._length,
         year,
-        monthCodeSlice.bytes,
-        monthCodeSlice.length,
+        monthCodeSlice._bytes,
+        monthCodeSlice._length,
         day,
         hour,
         minute,
@@ -4628,7 +4621,7 @@ class ICU4XDateTime implements ffi.Finalizable {
         ? ICU4XDateTime._(result.union.ok)
         : throw ICU4XError._(result.union.err);
   }
-  static late final _createFromCodesInCalendarFfi = _capi<
+  static final _createFromCodesInCalendarFfi = _capi<
               ffi.NativeFunction<
                   _ResultOpaqueUint32 Function(
                       ffi.Pointer<ffi2.Utf8>,
@@ -4665,7 +4658,7 @@ class ICU4XDateTime implements ffi.Finalizable {
         _createFromDateAndTimeFfi(date._underlying, time._underlying);
     return ICU4XDateTime._(result);
   }
-  static late final _createFromDateAndTimeFfi = _capi<
+  static final _createFromDateAndTimeFfi = _capi<
               ffi.NativeFunction<
                   ffi.Pointer<ffi.Opaque> Function(
                       ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>>(
@@ -4682,7 +4675,7 @@ class ICU4XDateTime implements ffi.Finalizable {
     return ICU4XDate._(result);
   }
 
-  static late final _dateFfi = _capi<
+  static final _dateFfi = _capi<
           ffi.NativeFunction<
               ffi.Pointer<ffi.Opaque> Function(
                   ffi.Pointer<ffi.Opaque>)>>('ICU4XDateTime_date')
@@ -4697,7 +4690,7 @@ class ICU4XDateTime implements ffi.Finalizable {
     return ICU4XTime._(result);
   }
 
-  static late final _timeFfi = _capi<
+  static final _timeFfi = _capi<
           ffi.NativeFunction<
               ffi.Pointer<ffi.Opaque> Function(
                   ffi.Pointer<ffi.Opaque>)>>('ICU4XDateTime_time')
@@ -4712,7 +4705,7 @@ class ICU4XDateTime implements ffi.Finalizable {
     return ICU4XIsoDateTime._(result);
   }
 
-  static late final _toIsoFfi = _capi<
+  static final _toIsoFfi = _capi<
           ffi.NativeFunction<
               ffi.Pointer<ffi.Opaque> Function(
                   ffi.Pointer<ffi.Opaque>)>>('ICU4XDateTime_to_iso')
@@ -4727,7 +4720,7 @@ class ICU4XDateTime implements ffi.Finalizable {
     return ICU4XDateTime._(result);
   }
 
-  static late final _toCalendarFfi = _capi<
+  static final _toCalendarFfi = _capi<
           ffi.NativeFunction<
               ffi.Pointer<ffi.Opaque> Function(ffi.Pointer<ffi.Opaque>,
                   ffi.Pointer<ffi.Opaque>)>>('ICU4XDateTime_to_calendar')
@@ -4743,7 +4736,7 @@ class ICU4XDateTime implements ffi.Finalizable {
     return result;
   }
 
-  static late final _hourFfi =
+  static final _hourFfi =
       _capi<ffi.NativeFunction<ffi.Uint8 Function(ffi.Pointer<ffi.Opaque>)>>(
               'ICU4XDateTime_hour')
           .asFunction<int Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
@@ -4756,7 +4749,7 @@ class ICU4XDateTime implements ffi.Finalizable {
     return result;
   }
 
-  static late final _minuteFfi =
+  static final _minuteFfi =
       _capi<ffi.NativeFunction<ffi.Uint8 Function(ffi.Pointer<ffi.Opaque>)>>(
               'ICU4XDateTime_minute')
           .asFunction<int Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
@@ -4769,7 +4762,7 @@ class ICU4XDateTime implements ffi.Finalizable {
     return result;
   }
 
-  static late final _secondFfi =
+  static final _secondFfi =
       _capi<ffi.NativeFunction<ffi.Uint8 Function(ffi.Pointer<ffi.Opaque>)>>(
               'ICU4XDateTime_second')
           .asFunction<int Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
@@ -4782,7 +4775,7 @@ class ICU4XDateTime implements ffi.Finalizable {
     return result;
   }
 
-  static late final _nanosecondFfi =
+  static final _nanosecondFfi =
       _capi<ffi.NativeFunction<ffi.Uint32 Function(ffi.Pointer<ffi.Opaque>)>>(
               'ICU4XDateTime_nanosecond')
           .asFunction<int Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
@@ -4795,7 +4788,7 @@ class ICU4XDateTime implements ffi.Finalizable {
     return result;
   }
 
-  static late final _dayOfMonthFfi =
+  static final _dayOfMonthFfi =
       _capi<ffi.NativeFunction<ffi.Uint32 Function(ffi.Pointer<ffi.Opaque>)>>(
               'ICU4XDateTime_day_of_month')
           .asFunction<int Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
@@ -4808,7 +4801,7 @@ class ICU4XDateTime implements ffi.Finalizable {
     return ICU4XIsoWeekday._(result);
   }
 
-  static late final _dayOfWeekFfi =
+  static final _dayOfWeekFfi =
       _capi<ffi.NativeFunction<ffi.Uint32 Function(ffi.Pointer<ffi.Opaque>)>>(
               'ICU4XDateTime_day_of_week')
           .asFunction<int Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
@@ -4824,7 +4817,7 @@ class ICU4XDateTime implements ffi.Finalizable {
     return result;
   }
 
-  static late final _weekOfMonthFfi = _capi<
+  static final _weekOfMonthFfi = _capi<
           ffi.NativeFunction<
               ffi.Uint32 Function(ffi.Pointer<ffi.Opaque>,
                   ffi.Uint32)>>('ICU4XDateTime_week_of_month')
@@ -4840,7 +4833,7 @@ class ICU4XDateTime implements ffi.Finalizable {
         : throw ICU4XError._(result.union.err);
   }
 
-  static late final _weekOfYearFfi = _capi<
+  static final _weekOfYearFfi = _capi<
           ffi.NativeFunction<
               _ResultICU4XWeekOfFfiUint32 Function(ffi.Pointer<ffi.Opaque>,
                   ffi.Pointer<ffi.Opaque>)>>('ICU4XDateTime_week_of_year')
@@ -4860,7 +4853,7 @@ class ICU4XDateTime implements ffi.Finalizable {
     return result;
   }
 
-  static late final _ordinalMonthFfi =
+  static final _ordinalMonthFfi =
       _capi<ffi.NativeFunction<ffi.Uint32 Function(ffi.Pointer<ffi.Opaque>)>>(
               'ICU4XDateTime_ordinal_month')
           .asFunction<int Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
@@ -4877,7 +4870,7 @@ class ICU4XDateTime implements ffi.Finalizable {
         : throw ICU4XError._(result.union.err);
   }
 
-  static late final _monthCodeFfi = _capi<
+  static final _monthCodeFfi = _capi<
           ffi.NativeFunction<
               _ResultVoidUint32 Function(ffi.Pointer<ffi.Opaque>,
                   ffi.Pointer<ffi.Opaque>)>>('ICU4XDateTime_month_code')
@@ -4893,7 +4886,7 @@ class ICU4XDateTime implements ffi.Finalizable {
     return result;
   }
 
-  static late final _yearInEraFfi =
+  static final _yearInEraFfi =
       _capi<ffi.NativeFunction<ffi.Int32 Function(ffi.Pointer<ffi.Opaque>)>>(
               'ICU4XDateTime_year_in_era')
           .asFunction<int Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
@@ -4909,7 +4902,7 @@ class ICU4XDateTime implements ffi.Finalizable {
         : throw ICU4XError._(result.union.err);
   }
 
-  static late final _eraFfi = _capi<
+  static final _eraFfi = _capi<
           ffi.NativeFunction<
               _ResultVoidUint32 Function(ffi.Pointer<ffi.Opaque>,
                   ffi.Pointer<ffi.Opaque>)>>('ICU4XDateTime_era')
@@ -4925,7 +4918,7 @@ class ICU4XDateTime implements ffi.Finalizable {
     return result;
   }
 
-  static late final _monthsInYearFfi =
+  static final _monthsInYearFfi =
       _capi<ffi.NativeFunction<ffi.Uint8 Function(ffi.Pointer<ffi.Opaque>)>>(
               'ICU4XDateTime_months_in_year')
           .asFunction<int Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
@@ -4938,7 +4931,7 @@ class ICU4XDateTime implements ffi.Finalizable {
     return result;
   }
 
-  static late final _daysInMonthFfi =
+  static final _daysInMonthFfi =
       _capi<ffi.NativeFunction<ffi.Uint8 Function(ffi.Pointer<ffi.Opaque>)>>(
               'ICU4XDateTime_days_in_month')
           .asFunction<int Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
@@ -4951,7 +4944,7 @@ class ICU4XDateTime implements ffi.Finalizable {
     return result;
   }
 
-  static late final _daysInYearFfi =
+  static final _daysInYearFfi =
       _capi<ffi.NativeFunction<ffi.Uint16 Function(ffi.Pointer<ffi.Opaque>)>>(
               'ICU4XDateTime_days_in_year')
           .asFunction<int Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
@@ -4964,7 +4957,7 @@ class ICU4XDateTime implements ffi.Finalizable {
     return ICU4XCalendar._(result);
   }
 
-  static late final _calendarFfi = _capi<
+  static final _calendarFfi = _capi<
           ffi.NativeFunction<
               ffi.Pointer<ffi.Opaque> Function(
                   ffi.Pointer<ffi.Opaque>)>>('ICU4XDateTime_calendar')
@@ -4983,7 +4976,7 @@ class ICU4XDateTimeFormatter implements ffi.Finalizable {
     _finalizer.attach(this, _underlying.cast());
   }
 
-  static late final _finalizer =
+  static final _finalizer =
       ffi.NativeFinalizer(_capi('ICU4XDateTimeFormatter_destroy'));
 
   /// Creates a new [`ICU4XDateTimeFormatter`] from locale data.
@@ -5000,7 +4993,7 @@ class ICU4XDateTimeFormatter implements ffi.Finalizable {
         ? ICU4XDateTimeFormatter._(result.union.ok)
         : throw ICU4XError._(result.union.err);
   }
-  static late final _createWithLengthsFfi = _capi<
+  static final _createWithLengthsFfi = _capi<
           ffi.NativeFunction<
               _ResultOpaqueUint32 Function(
                   ffi.Pointer<ffi.Opaque>,
@@ -5023,7 +5016,7 @@ class ICU4XDateTimeFormatter implements ffi.Finalizable {
         : throw ICU4XError._(result.union.err);
   }
 
-  static late final _formatDatetimeFfi = _capi<
+  static final _formatDatetimeFfi = _capi<
               ffi.NativeFunction<
                   _ResultVoidUint32 Function(ffi.Pointer<ffi.Opaque>,
                       ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>>(
@@ -5046,7 +5039,7 @@ class ICU4XDateTimeFormatter implements ffi.Finalizable {
         : throw ICU4XError._(result.union.err);
   }
 
-  static late final _formatIsoDatetimeFfi = _capi<
+  static final _formatIsoDatetimeFfi = _capi<
               ffi.NativeFunction<
                   _ResultVoidUint32 Function(ffi.Pointer<ffi.Opaque>,
                       ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>>(
@@ -5112,7 +5105,7 @@ class ICU4XDecomposingNormalizer implements ffi.Finalizable {
     _finalizer.attach(this, _underlying.cast());
   }
 
-  static late final _finalizer =
+  static final _finalizer =
       ffi.NativeFinalizer(_capi('ICU4XDecomposingNormalizer_destroy'));
 
   /// Construct a new ICU4XDecomposingNormalizer instance for NFC
@@ -5124,7 +5117,7 @@ class ICU4XDecomposingNormalizer implements ffi.Finalizable {
         ? ICU4XDecomposingNormalizer._(result.union.ok)
         : throw ICU4XError._(result.union.err);
   }
-  static late final _createNfdFfi = _capi<
+  static final _createNfdFfi = _capi<
               ffi.NativeFunction<
                   _ResultOpaqueUint32 Function(ffi.Pointer<ffi.Opaque>)>>(
           'ICU4XDecomposingNormalizer_create_nfd')
@@ -5140,7 +5133,7 @@ class ICU4XDecomposingNormalizer implements ffi.Finalizable {
         ? ICU4XDecomposingNormalizer._(result.union.ok)
         : throw ICU4XError._(result.union.err);
   }
-  static late final _createNfkdFfi = _capi<
+  static final _createNfkdFfi = _capi<
               ffi.NativeFunction<
                   _ResultOpaqueUint32 Function(ffi.Pointer<ffi.Opaque>)>>(
           'ICU4XDecomposingNormalizer_create_nfkd')
@@ -5158,14 +5151,14 @@ class ICU4XDecomposingNormalizer implements ffi.Finalizable {
 
     final writeable = _Writeable();
     final result = _normalizeFfi(
-        _underlying, sSlice.bytes, sSlice.length, writeable._underlying);
+        _underlying, sSlice._bytes, sSlice._length, writeable._underlying);
     alloc.releaseAll();
     return result.isOk
         ? writeable.finalize()
         : throw ICU4XError._(result.union.err);
   }
 
-  static late final _normalizeFfi = _capi<
+  static final _normalizeFfi = _capi<
               ffi.NativeFunction<
                   _ResultVoidUint32 Function(
                       ffi.Pointer<ffi.Opaque>,
@@ -5189,12 +5182,12 @@ class ICU4XDecomposingNormalizer implements ffi.Finalizable {
     final alloc = ffi2.Arena();
     final sSlice = _SliceFfi2Utf8._fromDart(s, alloc);
 
-    final result = _isNormalizedFfi(_underlying, sSlice.bytes, sSlice.length);
+    final result = _isNormalizedFfi(_underlying, sSlice._bytes, sSlice._length);
     alloc.releaseAll();
     return result;
   }
 
-  static late final _isNormalizedFfi = _capi<
+  static final _isNormalizedFfi = _capi<
           ffi.NativeFunction<
               ffi.Bool Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi2.Utf8>,
                   ffi.Size)>>('ICU4XDecomposingNormalizer_is_normalized')
@@ -5380,7 +5373,7 @@ class ICU4XFixedDecimal implements ffi.Finalizable {
     _finalizer.attach(this, _underlying.cast());
   }
 
-  static late final _finalizer =
+  static final _finalizer =
       ffi.NativeFinalizer(_capi('ICU4XFixedDecimal_destroy'));
 
   /// Construct an [`ICU4XFixedDecimal`] from an integer.
@@ -5390,7 +5383,7 @@ class ICU4XFixedDecimal implements ffi.Finalizable {
     final result = _createFromI32Ffi(v);
     return ICU4XFixedDecimal._(result);
   }
-  static late final _createFromI32Ffi =
+  static final _createFromI32Ffi =
       _capi<ffi.NativeFunction<ffi.Pointer<ffi.Opaque> Function(ffi.Int32)>>(
               'ICU4XFixedDecimal_create_from_i32')
           .asFunction<ffi.Pointer<ffi.Opaque> Function(int)>(isLeaf: true);
@@ -5402,7 +5395,7 @@ class ICU4XFixedDecimal implements ffi.Finalizable {
     final result = _createFromU32Ffi(v);
     return ICU4XFixedDecimal._(result);
   }
-  static late final _createFromU32Ffi =
+  static final _createFromU32Ffi =
       _capi<ffi.NativeFunction<ffi.Pointer<ffi.Opaque> Function(ffi.Uint32)>>(
               'ICU4XFixedDecimal_create_from_u32')
           .asFunction<ffi.Pointer<ffi.Opaque> Function(int)>(isLeaf: true);
@@ -5414,7 +5407,7 @@ class ICU4XFixedDecimal implements ffi.Finalizable {
     final result = _createFromI64Ffi(v);
     return ICU4XFixedDecimal._(result);
   }
-  static late final _createFromI64Ffi =
+  static final _createFromI64Ffi =
       _capi<ffi.NativeFunction<ffi.Pointer<ffi.Opaque> Function(ffi.Int64)>>(
               'ICU4XFixedDecimal_create_from_i64')
           .asFunction<ffi.Pointer<ffi.Opaque> Function(int)>(isLeaf: true);
@@ -5426,7 +5419,7 @@ class ICU4XFixedDecimal implements ffi.Finalizable {
     final result = _createFromU64Ffi(v);
     return ICU4XFixedDecimal._(result);
   }
-  static late final _createFromU64Ffi =
+  static final _createFromU64Ffi =
       _capi<ffi.NativeFunction<ffi.Pointer<ffi.Opaque> Function(ffi.Uint64)>>(
               'ICU4XFixedDecimal_create_from_u64')
           .asFunction<ffi.Pointer<ffi.Opaque> Function(int)>(isLeaf: true);
@@ -5442,7 +5435,7 @@ class ICU4XFixedDecimal implements ffi.Finalizable {
         ? ICU4XFixedDecimal._(result.union.ok)
         : throw ICU4XError._(result.union.err);
   }
-  static late final _createFromF64WithIntegerPrecisionFfi =
+  static final _createFromF64WithIntegerPrecisionFfi =
       _capi<ffi.NativeFunction<_ResultOpaqueUint32 Function(ffi.Double)>>(
               'ICU4XFixedDecimal_create_from_f64_with_integer_precision')
           .asFunction<_ResultOpaqueUint32 Function(double)>(isLeaf: true);
@@ -5458,7 +5451,7 @@ class ICU4XFixedDecimal implements ffi.Finalizable {
         ? ICU4XFixedDecimal._(result.union.ok)
         : throw ICU4XError._(result.union.err);
   }
-  static late final _createFromF64WithLowerMagnitudeFfi = _capi<
+  static final _createFromF64WithLowerMagnitudeFfi = _capi<
               ffi.NativeFunction<
                   _ResultOpaqueUint32 Function(ffi.Double, ffi.Int16)>>(
           'ICU4XFixedDecimal_create_from_f64_with_lower_magnitude')
@@ -5475,7 +5468,7 @@ class ICU4XFixedDecimal implements ffi.Finalizable {
         ? ICU4XFixedDecimal._(result.union.ok)
         : throw ICU4XError._(result.union.err);
   }
-  static late final _createFromF64WithSignificantDigitsFfi = _capi<
+  static final _createFromF64WithSignificantDigitsFfi = _capi<
               ffi.NativeFunction<
                   _ResultOpaqueUint32 Function(ffi.Double, ffi.Uint8)>>(
           'ICU4XFixedDecimal_create_from_f64_with_significant_digits')
@@ -5493,7 +5486,7 @@ class ICU4XFixedDecimal implements ffi.Finalizable {
         ? ICU4XFixedDecimal._(result.union.ok)
         : throw ICU4XError._(result.union.err);
   }
-  static late final _createFromF64WithFloatingPrecisionFfi =
+  static final _createFromF64WithFloatingPrecisionFfi =
       _capi<ffi.NativeFunction<_ResultOpaqueUint32 Function(ffi.Double)>>(
               'ICU4XFixedDecimal_create_from_f64_with_floating_precision')
           .asFunction<_ResultOpaqueUint32 Function(double)>(isLeaf: true);
@@ -5505,13 +5498,13 @@ class ICU4XFixedDecimal implements ffi.Finalizable {
     final alloc = ffi2.Arena();
     final vSlice = _SliceFfi2Utf8._fromDart(v, alloc);
 
-    final result = _createFromStringFfi(vSlice.bytes, vSlice.length);
+    final result = _createFromStringFfi(vSlice._bytes, vSlice._length);
     alloc.releaseAll();
     return result.isOk
         ? ICU4XFixedDecimal._(result.union.ok)
         : throw ICU4XError._(result.union.err);
   }
-  static late final _createFromStringFfi = _capi<
+  static final _createFromStringFfi = _capi<
           ffi.NativeFunction<
               _ResultOpaqueUint32 Function(ffi.Pointer<ffi2.Utf8>,
                   ffi.Size)>>('ICU4XFixedDecimal_create_from_string')
@@ -5524,7 +5517,7 @@ class ICU4XFixedDecimal implements ffi.Finalizable {
     return result;
   }
 
-  static late final _digitAtFfi = _capi<
+  static final _digitAtFfi = _capi<
           ffi.NativeFunction<
               ffi.Uint8 Function(ffi.Pointer<ffi.Opaque>,
                   ffi.Int16)>>('ICU4XFixedDecimal_digit_at')
@@ -5536,7 +5529,7 @@ class ICU4XFixedDecimal implements ffi.Finalizable {
     return result;
   }
 
-  static late final _magnitudeStartFfi =
+  static final _magnitudeStartFfi =
       _capi<ffi.NativeFunction<ffi.Int16 Function(ffi.Pointer<ffi.Opaque>)>>(
               'ICU4XFixedDecimal_magnitude_start')
           .asFunction<int Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
@@ -5547,7 +5540,7 @@ class ICU4XFixedDecimal implements ffi.Finalizable {
     return result;
   }
 
-  static late final _magnitudeEndFfi =
+  static final _magnitudeEndFfi =
       _capi<ffi.NativeFunction<ffi.Int16 Function(ffi.Pointer<ffi.Opaque>)>>(
               'ICU4XFixedDecimal_magnitude_end')
           .asFunction<int Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
@@ -5558,7 +5551,7 @@ class ICU4XFixedDecimal implements ffi.Finalizable {
     return result;
   }
 
-  static late final _nonzeroMagnitudeStartFfi =
+  static final _nonzeroMagnitudeStartFfi =
       _capi<ffi.NativeFunction<ffi.Int16 Function(ffi.Pointer<ffi.Opaque>)>>(
               'ICU4XFixedDecimal_nonzero_magnitude_start')
           .asFunction<int Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
@@ -5569,7 +5562,7 @@ class ICU4XFixedDecimal implements ffi.Finalizable {
     return result;
   }
 
-  static late final _nonzeroMagnitudeEndFfi =
+  static final _nonzeroMagnitudeEndFfi =
       _capi<ffi.NativeFunction<ffi.Int16 Function(ffi.Pointer<ffi.Opaque>)>>(
               'ICU4XFixedDecimal_nonzero_magnitude_end')
           .asFunction<int Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
@@ -5580,7 +5573,7 @@ class ICU4XFixedDecimal implements ffi.Finalizable {
     return result;
   }
 
-  static late final _isZeroFfi =
+  static final _isZeroFfi =
       _capi<ffi.NativeFunction<ffi.Bool Function(ffi.Pointer<ffi.Opaque>)>>(
               'ICU4XFixedDecimal_is_zero')
           .asFunction<bool Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
@@ -5592,7 +5585,7 @@ class ICU4XFixedDecimal implements ffi.Finalizable {
     _multiplyPow10Ffi(_underlying, power);
   }
 
-  static late final _multiplyPow10Ffi = _capi<
+  static final _multiplyPow10Ffi = _capi<
           ffi.NativeFunction<
               ffi.Void Function(ffi.Pointer<ffi.Opaque>,
                   ffi.Int16)>>('ICU4XFixedDecimal_multiply_pow10')
@@ -5604,7 +5597,7 @@ class ICU4XFixedDecimal implements ffi.Finalizable {
     return ICU4XFixedDecimalSign._(result);
   }
 
-  static late final _signFfi =
+  static final _signFfi =
       _capi<ffi.NativeFunction<ffi.Uint32 Function(ffi.Pointer<ffi.Opaque>)>>(
               'ICU4XFixedDecimal_sign')
           .asFunction<int Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
@@ -5616,7 +5609,7 @@ class ICU4XFixedDecimal implements ffi.Finalizable {
     _setSignFfi(_underlying, sign._id);
   }
 
-  static late final _setSignFfi = _capi<
+  static final _setSignFfi = _capi<
           ffi.NativeFunction<
               ffi.Void Function(ffi.Pointer<ffi.Opaque>,
                   ffi.Uint32)>>('ICU4XFixedDecimal_set_sign')
@@ -5627,7 +5620,7 @@ class ICU4XFixedDecimal implements ffi.Finalizable {
     _applySignDisplayFfi(_underlying, signDisplay._id);
   }
 
-  static late final _applySignDisplayFfi = _capi<
+  static final _applySignDisplayFfi = _capi<
           ffi.NativeFunction<
               ffi.Void Function(ffi.Pointer<ffi.Opaque>,
                   ffi.Uint32)>>('ICU4XFixedDecimal_apply_sign_display')
@@ -5638,7 +5631,7 @@ class ICU4XFixedDecimal implements ffi.Finalizable {
     _trimStartFfi(_underlying);
   }
 
-  static late final _trimStartFfi =
+  static final _trimStartFfi =
       _capi<ffi.NativeFunction<ffi.Void Function(ffi.Pointer<ffi.Opaque>)>>(
               'ICU4XFixedDecimal_trim_start')
           .asFunction<void Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
@@ -5648,7 +5641,7 @@ class ICU4XFixedDecimal implements ffi.Finalizable {
     _trimEndFfi(_underlying);
   }
 
-  static late final _trimEndFfi =
+  static final _trimEndFfi =
       _capi<ffi.NativeFunction<ffi.Void Function(ffi.Pointer<ffi.Opaque>)>>(
               'ICU4XFixedDecimal_trim_end')
           .asFunction<void Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
@@ -5660,7 +5653,7 @@ class ICU4XFixedDecimal implements ffi.Finalizable {
     _padStartFfi(_underlying, position);
   }
 
-  static late final _padStartFfi = _capi<
+  static final _padStartFfi = _capi<
           ffi.NativeFunction<
               ffi.Void Function(ffi.Pointer<ffi.Opaque>,
                   ffi.Int16)>>('ICU4XFixedDecimal_pad_start')
@@ -5673,7 +5666,7 @@ class ICU4XFixedDecimal implements ffi.Finalizable {
     _padEndFfi(_underlying, position);
   }
 
-  static late final _padEndFfi = _capi<
+  static final _padEndFfi = _capi<
           ffi.NativeFunction<
               ffi.Void Function(ffi.Pointer<ffi.Opaque>,
                   ffi.Int16)>>('ICU4XFixedDecimal_pad_end')
@@ -5687,7 +5680,7 @@ class ICU4XFixedDecimal implements ffi.Finalizable {
     _setMaxPositionFfi(_underlying, position);
   }
 
-  static late final _setMaxPositionFfi = _capi<
+  static final _setMaxPositionFfi = _capi<
           ffi.NativeFunction<
               ffi.Void Function(ffi.Pointer<ffi.Opaque>,
                   ffi.Int16)>>('ICU4XFixedDecimal_set_max_position')
@@ -5698,7 +5691,7 @@ class ICU4XFixedDecimal implements ffi.Finalizable {
     _truncFfi(_underlying, position);
   }
 
-  static late final _truncFfi = _capi<
+  static final _truncFfi = _capi<
           ffi.NativeFunction<
               ffi.Void Function(ffi.Pointer<ffi.Opaque>,
                   ffi.Int16)>>('ICU4XFixedDecimal_trunc')
@@ -5709,7 +5702,7 @@ class ICU4XFixedDecimal implements ffi.Finalizable {
     _truncToIncrementFfi(_underlying, position, increment._id);
   }
 
-  static late final _truncToIncrementFfi = _capi<
+  static final _truncToIncrementFfi = _capi<
           ffi.NativeFunction<
               ffi.Void Function(ffi.Pointer<ffi.Opaque>, ffi.Int16,
                   ffi.Uint32)>>('ICU4XFixedDecimal_trunc_to_increment')
@@ -5721,7 +5714,7 @@ class ICU4XFixedDecimal implements ffi.Finalizable {
     _halfTruncFfi(_underlying, position);
   }
 
-  static late final _halfTruncFfi = _capi<
+  static final _halfTruncFfi = _capi<
           ffi.NativeFunction<
               ffi.Void Function(ffi.Pointer<ffi.Opaque>,
                   ffi.Int16)>>('ICU4XFixedDecimal_half_trunc')
@@ -5732,7 +5725,7 @@ class ICU4XFixedDecimal implements ffi.Finalizable {
     _expandFfi(_underlying, position);
   }
 
-  static late final _expandFfi = _capi<
+  static final _expandFfi = _capi<
           ffi.NativeFunction<
               ffi.Void Function(ffi.Pointer<ffi.Opaque>,
                   ffi.Int16)>>('ICU4XFixedDecimal_expand')
@@ -5743,7 +5736,7 @@ class ICU4XFixedDecimal implements ffi.Finalizable {
     _expandToIncrementFfi(_underlying, position, increment._id);
   }
 
-  static late final _expandToIncrementFfi = _capi<
+  static final _expandToIncrementFfi = _capi<
           ffi.NativeFunction<
               ffi.Void Function(ffi.Pointer<ffi.Opaque>, ffi.Int16,
                   ffi.Uint32)>>('ICU4XFixedDecimal_expand_to_increment')
@@ -5755,7 +5748,7 @@ class ICU4XFixedDecimal implements ffi.Finalizable {
     _halfExpandFfi(_underlying, position);
   }
 
-  static late final _halfExpandFfi = _capi<
+  static final _halfExpandFfi = _capi<
           ffi.NativeFunction<
               ffi.Void Function(ffi.Pointer<ffi.Opaque>,
                   ffi.Int16)>>('ICU4XFixedDecimal_half_expand')
@@ -5766,7 +5759,7 @@ class ICU4XFixedDecimal implements ffi.Finalizable {
     _ceilFfi(_underlying, position);
   }
 
-  static late final _ceilFfi = _capi<
+  static final _ceilFfi = _capi<
           ffi.NativeFunction<
               ffi.Void Function(ffi.Pointer<ffi.Opaque>,
                   ffi.Int16)>>('ICU4XFixedDecimal_ceil')
@@ -5777,7 +5770,7 @@ class ICU4XFixedDecimal implements ffi.Finalizable {
     _halfCeilFfi(_underlying, position);
   }
 
-  static late final _halfCeilFfi = _capi<
+  static final _halfCeilFfi = _capi<
           ffi.NativeFunction<
               ffi.Void Function(ffi.Pointer<ffi.Opaque>,
                   ffi.Int16)>>('ICU4XFixedDecimal_half_ceil')
@@ -5788,7 +5781,7 @@ class ICU4XFixedDecimal implements ffi.Finalizable {
     _floorFfi(_underlying, position);
   }
 
-  static late final _floorFfi = _capi<
+  static final _floorFfi = _capi<
           ffi.NativeFunction<
               ffi.Void Function(ffi.Pointer<ffi.Opaque>,
                   ffi.Int16)>>('ICU4XFixedDecimal_floor')
@@ -5799,7 +5792,7 @@ class ICU4XFixedDecimal implements ffi.Finalizable {
     _halfFloorFfi(_underlying, position);
   }
 
-  static late final _halfFloorFfi = _capi<
+  static final _halfFloorFfi = _capi<
           ffi.NativeFunction<
               ffi.Void Function(ffi.Pointer<ffi.Opaque>,
                   ffi.Int16)>>('ICU4XFixedDecimal_half_floor')
@@ -5810,7 +5803,7 @@ class ICU4XFixedDecimal implements ffi.Finalizable {
     _halfEvenFfi(_underlying, position);
   }
 
-  static late final _halfEvenFfi = _capi<
+  static final _halfEvenFfi = _capi<
           ffi.NativeFunction<
               ffi.Void Function(ffi.Pointer<ffi.Opaque>,
                   ffi.Int16)>>('ICU4XFixedDecimal_half_even')
@@ -5830,7 +5823,7 @@ class ICU4XFixedDecimal implements ffi.Finalizable {
     }
   }
 
-  static late final _concatenateEndFfi = _capi<
+  static final _concatenateEndFfi = _capi<
               ffi.NativeFunction<
                   _ResultVoidVoid Function(
                       ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>>(
@@ -5849,7 +5842,7 @@ class ICU4XFixedDecimal implements ffi.Finalizable {
     return writeable.finalize();
   }
 
-  static late final _toStringFfi = _capi<
+  static final _toStringFfi = _capi<
           ffi.NativeFunction<
               ffi.Void Function(ffi.Pointer<ffi.Opaque>,
                   ffi.Pointer<ffi.Opaque>)>>('ICU4XFixedDecimal_to_string')
@@ -5868,7 +5861,7 @@ class ICU4XFixedDecimalFormatter implements ffi.Finalizable {
     _finalizer.attach(this, _underlying.cast());
   }
 
-  static late final _finalizer =
+  static final _finalizer =
       ffi.NativeFinalizer(_capi('ICU4XFixedDecimalFormatter_destroy'));
 
   /// Creates a new [`ICU4XFixedDecimalFormatter`] from locale data.
@@ -5884,7 +5877,7 @@ class ICU4XFixedDecimalFormatter implements ffi.Finalizable {
         ? ICU4XFixedDecimalFormatter._(result.union.ok)
         : throw ICU4XError._(result.union.err);
   }
-  static late final _createWithGroupingStrategyFfi = _capi<
+  static final _createWithGroupingStrategyFfi = _capi<
               ffi.NativeFunction<
                   _ResultOpaqueUint32 Function(ffi.Pointer<ffi.Opaque>,
                       ffi.Pointer<ffi.Opaque>, ffi.Uint32)>>(
@@ -5907,7 +5900,7 @@ class ICU4XFixedDecimalFormatter implements ffi.Finalizable {
         ? ICU4XFixedDecimalFormatter._(result.union.ok)
         : throw ICU4XError._(result.union.err);
   }
-  static late final _createWithDecimalSymbolsV1Ffi = _capi<
+  static final _createWithDecimalSymbolsV1Ffi = _capi<
               ffi.NativeFunction<
                   _ResultOpaqueUint32 Function(
                       ffi.Pointer<ffi.Opaque>, ffi.Uint32)>>(
@@ -5927,7 +5920,7 @@ class ICU4XFixedDecimalFormatter implements ffi.Finalizable {
         : throw ICU4XError._(result.union.err);
   }
 
-  static late final _formatFfi = _capi<
+  static final _formatFfi = _capi<
               ffi.NativeFunction<
                   _ResultVoidUint32 Function(ffi.Pointer<ffi.Opaque>,
                       ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>>(
@@ -6006,7 +5999,7 @@ class ICU4XGeneralCategoryNameToMaskMapper implements ffi.Finalizable {
     _finalizer.attach(this, _underlying.cast());
   }
 
-  static late final _finalizer = ffi.NativeFinalizer(
+  static final _finalizer = ffi.NativeFinalizer(
       _capi('ICU4XGeneralCategoryNameToMaskMapper_destroy'));
 
   /// Get the mask value matching the given name, using strict matching
@@ -6017,12 +6010,12 @@ class ICU4XGeneralCategoryNameToMaskMapper implements ffi.Finalizable {
     final nameSlice = _SliceFfi2Utf8._fromDart(name, alloc);
 
     final result =
-        _getStrictFfi(_underlying, nameSlice.bytes, nameSlice.length);
+        _getStrictFfi(_underlying, nameSlice._bytes, nameSlice._length);
     alloc.releaseAll();
     return result;
   }
 
-  static late final _getStrictFfi = _capi<
+  static final _getStrictFfi = _capi<
           ffi.NativeFunction<
               ffi.Uint32 Function(
                   ffi.Pointer<ffi.Opaque>,
@@ -6039,12 +6032,13 @@ class ICU4XGeneralCategoryNameToMaskMapper implements ffi.Finalizable {
     final alloc = ffi2.Arena();
     final nameSlice = _SliceFfi2Utf8._fromDart(name, alloc);
 
-    final result = _getLooseFfi(_underlying, nameSlice.bytes, nameSlice.length);
+    final result =
+        _getLooseFfi(_underlying, nameSlice._bytes, nameSlice._length);
     alloc.releaseAll();
     return result;
   }
 
-  static late final _getLooseFfi = _capi<
+  static final _getLooseFfi = _capi<
           ffi.NativeFunction<
               ffi.Uint32 Function(
                   ffi.Pointer<ffi.Opaque>,
@@ -6062,7 +6056,7 @@ class ICU4XGeneralCategoryNameToMaskMapper implements ffi.Finalizable {
         ? ICU4XGeneralCategoryNameToMaskMapper._(result.union.ok)
         : throw ICU4XError._(result.union.err);
   }
-  static late final _loadFfi = _capi<
+  static final _loadFfi = _capi<
               ffi.NativeFunction<
                   _ResultOpaqueUint32 Function(ffi.Pointer<ffi.Opaque>)>>(
           'ICU4XGeneralCategoryNameToMaskMapper_load')
@@ -6078,7 +6072,7 @@ class ICU4XGraphemeClusterBreakIteratorLatin1 implements ffi.Finalizable {
     _finalizer.attach(this, _underlying.cast());
   }
 
-  static late final _finalizer = ffi.NativeFinalizer(
+  static final _finalizer = ffi.NativeFinalizer(
       _capi('ICU4XGraphemeClusterBreakIteratorLatin1_destroy'));
 
   /// Finds the next breakpoint. Returns -1 if at the end of the string or if the index is
@@ -6090,7 +6084,7 @@ class ICU4XGraphemeClusterBreakIteratorLatin1 implements ffi.Finalizable {
     return result;
   }
 
-  static late final _nextFfi =
+  static final _nextFfi =
       _capi<ffi.NativeFunction<ffi.Int32 Function(ffi.Pointer<ffi.Opaque>)>>(
               'ICU4XGraphemeClusterBreakIteratorLatin1_next')
           .asFunction<int Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
@@ -6104,7 +6098,7 @@ class ICU4XGraphemeClusterBreakIteratorUtf16 implements ffi.Finalizable {
     _finalizer.attach(this, _underlying.cast());
   }
 
-  static late final _finalizer = ffi.NativeFinalizer(
+  static final _finalizer = ffi.NativeFinalizer(
       _capi('ICU4XGraphemeClusterBreakIteratorUtf16_destroy'));
 
   /// Finds the next breakpoint. Returns -1 if at the end of the string or if the index is
@@ -6116,7 +6110,7 @@ class ICU4XGraphemeClusterBreakIteratorUtf16 implements ffi.Finalizable {
     return result;
   }
 
-  static late final _nextFfi =
+  static final _nextFfi =
       _capi<ffi.NativeFunction<ffi.Int32 Function(ffi.Pointer<ffi.Opaque>)>>(
               'ICU4XGraphemeClusterBreakIteratorUtf16_next')
           .asFunction<int Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
@@ -6130,7 +6124,7 @@ class ICU4XGraphemeClusterBreakIteratorUtf8 implements ffi.Finalizable {
     _finalizer.attach(this, _underlying.cast());
   }
 
-  static late final _finalizer = ffi.NativeFinalizer(
+  static final _finalizer = ffi.NativeFinalizer(
       _capi('ICU4XGraphemeClusterBreakIteratorUtf8_destroy'));
 
   /// Finds the next breakpoint. Returns -1 if at the end of the string or if the index is
@@ -6142,7 +6136,7 @@ class ICU4XGraphemeClusterBreakIteratorUtf8 implements ffi.Finalizable {
     return result;
   }
 
-  static late final _nextFfi =
+  static final _nextFfi =
       _capi<ffi.NativeFunction<ffi.Int32 Function(ffi.Pointer<ffi.Opaque>)>>(
               'ICU4XGraphemeClusterBreakIteratorUtf8_next')
           .asFunction<int Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
@@ -6159,7 +6153,7 @@ class ICU4XGraphemeClusterSegmenter implements ffi.Finalizable {
     _finalizer.attach(this, _underlying.cast());
   }
 
-  static late final _finalizer =
+  static final _finalizer =
       ffi.NativeFinalizer(_capi('ICU4XGraphemeClusterSegmenter_destroy'));
 
   /// Construct an [`ICU4XGraphemeClusterSegmenter`].
@@ -6171,7 +6165,7 @@ class ICU4XGraphemeClusterSegmenter implements ffi.Finalizable {
         ? ICU4XGraphemeClusterSegmenter._(result.union.ok)
         : throw ICU4XError._(result.union.err);
   }
-  static late final _createFfi = _capi<
+  static final _createFfi = _capi<
               ffi.NativeFunction<
                   _ResultOpaqueUint32 Function(ffi.Pointer<ffi.Opaque>)>>(
           'ICU4XGraphemeClusterSegmenter_create')
@@ -6186,12 +6180,12 @@ class ICU4XGraphemeClusterSegmenter implements ffi.Finalizable {
     final inputSlice = _SliceFfi2Utf8._fromDart(input, alloc);
 
     final result =
-        _segmentUtf8Ffi(_underlying, inputSlice.bytes, inputSlice.length);
+        _segmentUtf8Ffi(_underlying, inputSlice._bytes, inputSlice._length);
     alloc.releaseAll();
     return ICU4XGraphemeClusterBreakIteratorUtf8._(result);
   }
 
-  static late final _segmentUtf8Ffi = _capi<
+  static final _segmentUtf8Ffi = _capi<
           ffi.NativeFunction<
               ffi.Pointer<ffi.Opaque> Function(
                   ffi.Pointer<ffi.Opaque>,
@@ -6209,12 +6203,12 @@ class ICU4XGraphemeClusterSegmenter implements ffi.Finalizable {
     final inputSlice = _SliceFfiUint16._fromDart(input, alloc);
 
     final result =
-        _segmentUtf16Ffi(_underlying, inputSlice.bytes, inputSlice.length);
+        _segmentUtf16Ffi(_underlying, inputSlice._bytes, inputSlice._length);
     alloc.releaseAll();
     return ICU4XGraphemeClusterBreakIteratorUtf16._(result);
   }
 
-  static late final _segmentUtf16Ffi = _capi<
+  static final _segmentUtf16Ffi = _capi<
           ffi.NativeFunction<
               ffi.Pointer<ffi.Opaque> Function(
                   ffi.Pointer<ffi.Opaque>,
@@ -6232,12 +6226,12 @@ class ICU4XGraphemeClusterSegmenter implements ffi.Finalizable {
     final inputSlice = _SliceFfiUint8._fromDart(input, alloc);
 
     final result =
-        _segmentLatin1Ffi(_underlying, inputSlice.bytes, inputSlice.length);
+        _segmentLatin1Ffi(_underlying, inputSlice._bytes, inputSlice._length);
     alloc.releaseAll();
     return ICU4XGraphemeClusterBreakIteratorLatin1._(result);
   }
 
-  static late final _segmentLatin1Ffi = _capi<
+  static final _segmentLatin1Ffi = _capi<
           ffi.NativeFunction<
               ffi.Pointer<ffi.Opaque> Function(
                   ffi.Pointer<ffi.Opaque>,
@@ -6259,7 +6253,7 @@ class ICU4XGregorianDateFormatter implements ffi.Finalizable {
     _finalizer.attach(this, _underlying.cast());
   }
 
-  static late final _finalizer =
+  static final _finalizer =
       ffi.NativeFinalizer(_capi('ICU4XGregorianDateFormatter_destroy'));
 
   /// Creates a new [`ICU4XGregorianDateFormatter`] from locale data.
@@ -6273,7 +6267,7 @@ class ICU4XGregorianDateFormatter implements ffi.Finalizable {
         ? ICU4XGregorianDateFormatter._(result.union.ok)
         : throw ICU4XError._(result.union.err);
   }
-  static late final _createWithLengthFfi = _capi<
+  static final _createWithLengthFfi = _capi<
               ffi.NativeFunction<
                   _ResultOpaqueUint32 Function(ffi.Pointer<ffi.Opaque>,
                       ffi.Pointer<ffi.Opaque>, ffi.Uint32)>>(
@@ -6294,7 +6288,7 @@ class ICU4XGregorianDateFormatter implements ffi.Finalizable {
         : throw ICU4XError._(result.union.err);
   }
 
-  static late final _formatIsoDateFfi = _capi<
+  static final _formatIsoDateFfi = _capi<
               ffi.NativeFunction<
                   _ResultVoidUint32 Function(ffi.Pointer<ffi.Opaque>,
                       ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>>(
@@ -6315,7 +6309,7 @@ class ICU4XGregorianDateFormatter implements ffi.Finalizable {
         : throw ICU4XError._(result.union.err);
   }
 
-  static late final _formatIsoDatetimeFfi = _capi<
+  static final _formatIsoDatetimeFfi = _capi<
               ffi.NativeFunction<
                   _ResultVoidUint32 Function(ffi.Pointer<ffi.Opaque>,
                       ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>>(
@@ -6336,7 +6330,7 @@ class ICU4XGregorianDateTimeFormatter implements ffi.Finalizable {
     _finalizer.attach(this, _underlying.cast());
   }
 
-  static late final _finalizer =
+  static final _finalizer =
       ffi.NativeFinalizer(_capi('ICU4XGregorianDateTimeFormatter_destroy'));
 
   /// Creates a new [`ICU4XGregorianDateFormatter`] from locale data.
@@ -6353,7 +6347,7 @@ class ICU4XGregorianDateTimeFormatter implements ffi.Finalizable {
         ? ICU4XGregorianDateTimeFormatter._(result.union.ok)
         : throw ICU4XError._(result.union.err);
   }
-  static late final _createWithLengthsFfi = _capi<
+  static final _createWithLengthsFfi = _capi<
               ffi.NativeFunction<
                   _ResultOpaqueUint32 Function(ffi.Pointer<ffi.Opaque>,
                       ffi.Pointer<ffi.Opaque>, ffi.Uint32, ffi.Uint32)>>(
@@ -6374,7 +6368,7 @@ class ICU4XGregorianDateTimeFormatter implements ffi.Finalizable {
         : throw ICU4XError._(result.union.err);
   }
 
-  static late final _formatIsoDatetimeFfi = _capi<
+  static final _formatIsoDatetimeFfi = _capi<
               ffi.NativeFunction<
                   _ResultVoidUint32 Function(ffi.Pointer<ffi.Opaque>,
                       ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>>(
@@ -6394,7 +6388,7 @@ class ICU4XGregorianZonedDateTimeFormatter implements ffi.Finalizable {
     _finalizer.attach(this, _underlying.cast());
   }
 
-  static late final _finalizer = ffi.NativeFinalizer(
+  static final _finalizer = ffi.NativeFinalizer(
       _capi('ICU4XGregorianZonedDateTimeFormatter_destroy'));
 
   /// Creates a new [`ICU4XGregorianZonedDateTimeFormatter`] from locale data.
@@ -6414,7 +6408,7 @@ class ICU4XGregorianZonedDateTimeFormatter implements ffi.Finalizable {
         ? ICU4XGregorianZonedDateTimeFormatter._(result.union.ok)
         : throw ICU4XError._(result.union.err);
   }
-  static late final _createWithLengthsFfi = _capi<
+  static final _createWithLengthsFfi = _capi<
               ffi.NativeFunction<
                   _ResultOpaqueUint32 Function(ffi.Pointer<ffi.Opaque>,
                       ffi.Pointer<ffi.Opaque>, ffi.Uint32, ffi.Uint32)>>(
@@ -6445,7 +6439,7 @@ class ICU4XGregorianZonedDateTimeFormatter implements ffi.Finalizable {
         ? ICU4XGregorianZonedDateTimeFormatter._(result.union.ok)
         : throw ICU4XError._(result.union.err);
   }
-  static late final _createWithLengthsAndIso8601TimeZoneFallbackFfi = _capi<
+  static final _createWithLengthsAndIso8601TimeZoneFallbackFfi = _capi<
               ffi.NativeFunction<
                   _ResultOpaqueUint32 Function(
                       ffi.Pointer<ffi.Opaque>,
@@ -6475,7 +6469,7 @@ class ICU4XGregorianZonedDateTimeFormatter implements ffi.Finalizable {
         : throw ICU4XError._(result.union.err);
   }
 
-  static late final _formatIsoDatetimeWithCustomTimeZoneFfi = _capi<
+  static final _formatIsoDatetimeWithCustomTimeZoneFfi = _capi<
               ffi.NativeFunction<
                   _ResultVoidUint32 Function(
                       ffi.Pointer<ffi.Opaque>,
@@ -6505,7 +6499,7 @@ class ICU4XIanaToBcp47Mapper implements ffi.Finalizable {
     _finalizer.attach(this, _underlying.cast());
   }
 
-  static late final _finalizer =
+  static final _finalizer =
       ffi.NativeFinalizer(_capi('ICU4XIanaToBcp47Mapper_destroy'));
 
   /// See the [Rust documentation for `new`](https://docs.rs/icu/latest/icu/timezone/struct.IanaToBcp47Mapper.html#method.new) for more information.
@@ -6515,7 +6509,7 @@ class ICU4XIanaToBcp47Mapper implements ffi.Finalizable {
         ? ICU4XIanaToBcp47Mapper._(result.union.ok)
         : throw ICU4XError._(result.union.err);
   }
-  static late final _createFfi = _capi<
+  static final _createFfi = _capi<
           ffi.NativeFunction<
               _ResultOpaqueUint32 Function(
                   ffi.Pointer<ffi.Opaque>)>>('ICU4XIanaToBcp47Mapper_create')
@@ -6533,8 +6527,7 @@ class ICU4XIsoDate implements ffi.Finalizable {
     _finalizer.attach(this, _underlying.cast());
   }
 
-  static late final _finalizer =
-      ffi.NativeFinalizer(_capi('ICU4XIsoDate_destroy'));
+  static final _finalizer = ffi.NativeFinalizer(_capi('ICU4XIsoDate_destroy'));
 
   /// Creates a new [`ICU4XIsoDate`] from the specified date and time.
   ///
@@ -6545,7 +6538,7 @@ class ICU4XIsoDate implements ffi.Finalizable {
         ? ICU4XIsoDate._(result.union.ok)
         : throw ICU4XError._(result.union.err);
   }
-  static late final _createFfi = _capi<
+  static final _createFfi = _capi<
           ffi.NativeFunction<
               _ResultOpaqueUint32 Function(
                   ffi.Int32, ffi.Uint8, ffi.Uint8)>>('ICU4XIsoDate_create')
@@ -6558,7 +6551,7 @@ class ICU4XIsoDate implements ffi.Finalizable {
     final result = _createForUnixEpochFfi();
     return ICU4XIsoDate._(result);
   }
-  static late final _createForUnixEpochFfi =
+  static final _createForUnixEpochFfi =
       _capi<ffi.NativeFunction<ffi.Pointer<ffi.Opaque> Function()>>(
               'ICU4XIsoDate_create_for_unix_epoch')
           .asFunction<ffi.Pointer<ffi.Opaque> Function()>(isLeaf: true);
@@ -6571,7 +6564,7 @@ class ICU4XIsoDate implements ffi.Finalizable {
     return ICU4XDate._(result);
   }
 
-  static late final _toCalendarFfi = _capi<
+  static final _toCalendarFfi = _capi<
           ffi.NativeFunction<
               ffi.Pointer<ffi.Opaque> Function(ffi.Pointer<ffi.Opaque>,
                   ffi.Pointer<ffi.Opaque>)>>('ICU4XIsoDate_to_calendar')
@@ -6585,7 +6578,7 @@ class ICU4XIsoDate implements ffi.Finalizable {
     return ICU4XDate._(result);
   }
 
-  static late final _toAnyFfi = _capi<
+  static final _toAnyFfi = _capi<
           ffi.NativeFunction<
               ffi.Pointer<ffi.Opaque> Function(
                   ffi.Pointer<ffi.Opaque>)>>('ICU4XIsoDate_to_any')
@@ -6600,7 +6593,7 @@ class ICU4XIsoDate implements ffi.Finalizable {
     return result;
   }
 
-  static late final _dayOfMonthFfi =
+  static final _dayOfMonthFfi =
       _capi<ffi.NativeFunction<ffi.Uint32 Function(ffi.Pointer<ffi.Opaque>)>>(
               'ICU4XIsoDate_day_of_month')
           .asFunction<int Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
@@ -6613,7 +6606,7 @@ class ICU4XIsoDate implements ffi.Finalizable {
     return ICU4XIsoWeekday._(result);
   }
 
-  static late final _dayOfWeekFfi =
+  static final _dayOfWeekFfi =
       _capi<ffi.NativeFunction<ffi.Uint32 Function(ffi.Pointer<ffi.Opaque>)>>(
               'ICU4XIsoDate_day_of_week')
           .asFunction<int Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
@@ -6629,7 +6622,7 @@ class ICU4XIsoDate implements ffi.Finalizable {
     return result;
   }
 
-  static late final _weekOfMonthFfi = _capi<
+  static final _weekOfMonthFfi = _capi<
           ffi.NativeFunction<
               ffi.Uint32 Function(ffi.Pointer<ffi.Opaque>,
                   ffi.Uint32)>>('ICU4XIsoDate_week_of_month')
@@ -6645,7 +6638,7 @@ class ICU4XIsoDate implements ffi.Finalizable {
         : throw ICU4XError._(result.union.err);
   }
 
-  static late final _weekOfYearFfi = _capi<
+  static final _weekOfYearFfi = _capi<
           ffi.NativeFunction<
               _ResultICU4XWeekOfFfiUint32 Function(ffi.Pointer<ffi.Opaque>,
                   ffi.Pointer<ffi.Opaque>)>>('ICU4XIsoDate_week_of_year')
@@ -6661,7 +6654,7 @@ class ICU4XIsoDate implements ffi.Finalizable {
     return result;
   }
 
-  static late final _monthFfi =
+  static final _monthFfi =
       _capi<ffi.NativeFunction<ffi.Uint32 Function(ffi.Pointer<ffi.Opaque>)>>(
               'ICU4XIsoDate_month')
           .asFunction<int Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
@@ -6674,7 +6667,7 @@ class ICU4XIsoDate implements ffi.Finalizable {
     return result;
   }
 
-  static late final _yearFfi =
+  static final _yearFfi =
       _capi<ffi.NativeFunction<ffi.Int32 Function(ffi.Pointer<ffi.Opaque>)>>(
               'ICU4XIsoDate_year')
           .asFunction<int Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
@@ -6687,7 +6680,7 @@ class ICU4XIsoDate implements ffi.Finalizable {
     return result;
   }
 
-  static late final _monthsInYearFfi =
+  static final _monthsInYearFfi =
       _capi<ffi.NativeFunction<ffi.Uint8 Function(ffi.Pointer<ffi.Opaque>)>>(
               'ICU4XIsoDate_months_in_year')
           .asFunction<int Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
@@ -6700,7 +6693,7 @@ class ICU4XIsoDate implements ffi.Finalizable {
     return result;
   }
 
-  static late final _daysInMonthFfi =
+  static final _daysInMonthFfi =
       _capi<ffi.NativeFunction<ffi.Uint8 Function(ffi.Pointer<ffi.Opaque>)>>(
               'ICU4XIsoDate_days_in_month')
           .asFunction<int Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
@@ -6713,7 +6706,7 @@ class ICU4XIsoDate implements ffi.Finalizable {
     return result;
   }
 
-  static late final _daysInYearFfi =
+  static final _daysInYearFfi =
       _capi<ffi.NativeFunction<ffi.Uint16 Function(ffi.Pointer<ffi.Opaque>)>>(
               'ICU4XIsoDate_days_in_year')
           .asFunction<int Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
@@ -6729,7 +6722,7 @@ class ICU4XIsoDateTime implements ffi.Finalizable {
     _finalizer.attach(this, _underlying.cast());
   }
 
-  static late final _finalizer =
+  static final _finalizer =
       ffi.NativeFinalizer(_capi('ICU4XIsoDateTime_destroy'));
 
   /// Creates a new [`ICU4XIsoDateTime`] from the specified date and time.
@@ -6743,7 +6736,7 @@ class ICU4XIsoDateTime implements ffi.Finalizable {
         ? ICU4XIsoDateTime._(result.union.ok)
         : throw ICU4XError._(result.union.err);
   }
-  static late final _createFfi = _capi<
+  static final _createFfi = _capi<
           ffi.NativeFunction<
               _ResultOpaqueUint32 Function(
                   ffi.Int32,
@@ -6765,7 +6758,7 @@ class ICU4XIsoDateTime implements ffi.Finalizable {
     final result = _crateFromDateAndTimeFfi(date._underlying, time._underlying);
     return ICU4XIsoDateTime._(result);
   }
-  static late final _crateFromDateAndTimeFfi = _capi<
+  static final _crateFromDateAndTimeFfi = _capi<
               ffi.NativeFunction<
                   ffi.Pointer<ffi.Opaque> Function(
                       ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>>(
@@ -6781,7 +6774,7 @@ class ICU4XIsoDateTime implements ffi.Finalizable {
     final result = _createFromMinutesSinceLocalUnixEpochFfi(minutes);
     return ICU4XIsoDateTime._(result);
   }
-  static late final _createFromMinutesSinceLocalUnixEpochFfi =
+  static final _createFromMinutesSinceLocalUnixEpochFfi =
       _capi<ffi.NativeFunction<ffi.Pointer<ffi.Opaque> Function(ffi.Int32)>>(
               'ICU4XIsoDateTime_create_from_minutes_since_local_unix_epoch')
           .asFunction<ffi.Pointer<ffi.Opaque> Function(int)>(isLeaf: true);
@@ -6794,7 +6787,7 @@ class ICU4XIsoDateTime implements ffi.Finalizable {
     return ICU4XIsoDate._(result);
   }
 
-  static late final _dateFfi = _capi<
+  static final _dateFfi = _capi<
           ffi.NativeFunction<
               ffi.Pointer<ffi.Opaque> Function(
                   ffi.Pointer<ffi.Opaque>)>>('ICU4XIsoDateTime_date')
@@ -6809,7 +6802,7 @@ class ICU4XIsoDateTime implements ffi.Finalizable {
     return ICU4XTime._(result);
   }
 
-  static late final _timeFfi = _capi<
+  static final _timeFfi = _capi<
           ffi.NativeFunction<
               ffi.Pointer<ffi.Opaque> Function(
                   ffi.Pointer<ffi.Opaque>)>>('ICU4XIsoDateTime_time')
@@ -6825,7 +6818,7 @@ class ICU4XIsoDateTime implements ffi.Finalizable {
     return ICU4XDateTime._(result);
   }
 
-  static late final _toAnyFfi = _capi<
+  static final _toAnyFfi = _capi<
           ffi.NativeFunction<
               ffi.Pointer<ffi.Opaque> Function(
                   ffi.Pointer<ffi.Opaque>)>>('ICU4XIsoDateTime_to_any')
@@ -6840,7 +6833,7 @@ class ICU4XIsoDateTime implements ffi.Finalizable {
     return result;
   }
 
-  static late final _minutesSinceLocalUnixEpochFfi =
+  static final _minutesSinceLocalUnixEpochFfi =
       _capi<ffi.NativeFunction<ffi.Int32 Function(ffi.Pointer<ffi.Opaque>)>>(
               'ICU4XIsoDateTime_minutes_since_local_unix_epoch')
           .asFunction<int Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
@@ -6853,7 +6846,7 @@ class ICU4XIsoDateTime implements ffi.Finalizable {
     return ICU4XDateTime._(result);
   }
 
-  static late final _toCalendarFfi = _capi<
+  static final _toCalendarFfi = _capi<
           ffi.NativeFunction<
               ffi.Pointer<ffi.Opaque> Function(ffi.Pointer<ffi.Opaque>,
                   ffi.Pointer<ffi.Opaque>)>>('ICU4XIsoDateTime_to_calendar')
@@ -6869,7 +6862,7 @@ class ICU4XIsoDateTime implements ffi.Finalizable {
     return result;
   }
 
-  static late final _hourFfi =
+  static final _hourFfi =
       _capi<ffi.NativeFunction<ffi.Uint8 Function(ffi.Pointer<ffi.Opaque>)>>(
               'ICU4XIsoDateTime_hour')
           .asFunction<int Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
@@ -6882,7 +6875,7 @@ class ICU4XIsoDateTime implements ffi.Finalizable {
     return result;
   }
 
-  static late final _minuteFfi =
+  static final _minuteFfi =
       _capi<ffi.NativeFunction<ffi.Uint8 Function(ffi.Pointer<ffi.Opaque>)>>(
               'ICU4XIsoDateTime_minute')
           .asFunction<int Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
@@ -6895,7 +6888,7 @@ class ICU4XIsoDateTime implements ffi.Finalizable {
     return result;
   }
 
-  static late final _secondFfi =
+  static final _secondFfi =
       _capi<ffi.NativeFunction<ffi.Uint8 Function(ffi.Pointer<ffi.Opaque>)>>(
               'ICU4XIsoDateTime_second')
           .asFunction<int Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
@@ -6908,7 +6901,7 @@ class ICU4XIsoDateTime implements ffi.Finalizable {
     return result;
   }
 
-  static late final _nanosecondFfi =
+  static final _nanosecondFfi =
       _capi<ffi.NativeFunction<ffi.Uint32 Function(ffi.Pointer<ffi.Opaque>)>>(
               'ICU4XIsoDateTime_nanosecond')
           .asFunction<int Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
@@ -6921,7 +6914,7 @@ class ICU4XIsoDateTime implements ffi.Finalizable {
     return result;
   }
 
-  static late final _dayOfMonthFfi =
+  static final _dayOfMonthFfi =
       _capi<ffi.NativeFunction<ffi.Uint32 Function(ffi.Pointer<ffi.Opaque>)>>(
               'ICU4XIsoDateTime_day_of_month')
           .asFunction<int Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
@@ -6934,7 +6927,7 @@ class ICU4XIsoDateTime implements ffi.Finalizable {
     return ICU4XIsoWeekday._(result);
   }
 
-  static late final _dayOfWeekFfi =
+  static final _dayOfWeekFfi =
       _capi<ffi.NativeFunction<ffi.Uint32 Function(ffi.Pointer<ffi.Opaque>)>>(
               'ICU4XIsoDateTime_day_of_week')
           .asFunction<int Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
@@ -6950,7 +6943,7 @@ class ICU4XIsoDateTime implements ffi.Finalizable {
     return result;
   }
 
-  static late final _weekOfMonthFfi = _capi<
+  static final _weekOfMonthFfi = _capi<
           ffi.NativeFunction<
               ffi.Uint32 Function(ffi.Pointer<ffi.Opaque>,
                   ffi.Uint32)>>('ICU4XIsoDateTime_week_of_month')
@@ -6966,7 +6959,7 @@ class ICU4XIsoDateTime implements ffi.Finalizable {
         : throw ICU4XError._(result.union.err);
   }
 
-  static late final _weekOfYearFfi = _capi<
+  static final _weekOfYearFfi = _capi<
           ffi.NativeFunction<
               _ResultICU4XWeekOfFfiUint32 Function(ffi.Pointer<ffi.Opaque>,
                   ffi.Pointer<ffi.Opaque>)>>('ICU4XIsoDateTime_week_of_year')
@@ -6982,7 +6975,7 @@ class ICU4XIsoDateTime implements ffi.Finalizable {
     return result;
   }
 
-  static late final _monthFfi =
+  static final _monthFfi =
       _capi<ffi.NativeFunction<ffi.Uint32 Function(ffi.Pointer<ffi.Opaque>)>>(
               'ICU4XIsoDateTime_month')
           .asFunction<int Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
@@ -6995,7 +6988,7 @@ class ICU4XIsoDateTime implements ffi.Finalizable {
     return result;
   }
 
-  static late final _yearFfi =
+  static final _yearFfi =
       _capi<ffi.NativeFunction<ffi.Int32 Function(ffi.Pointer<ffi.Opaque>)>>(
               'ICU4XIsoDateTime_year')
           .asFunction<int Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
@@ -7008,7 +7001,7 @@ class ICU4XIsoDateTime implements ffi.Finalizable {
     return result;
   }
 
-  static late final _monthsInYearFfi =
+  static final _monthsInYearFfi =
       _capi<ffi.NativeFunction<ffi.Uint8 Function(ffi.Pointer<ffi.Opaque>)>>(
               'ICU4XIsoDateTime_months_in_year')
           .asFunction<int Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
@@ -7021,7 +7014,7 @@ class ICU4XIsoDateTime implements ffi.Finalizable {
     return result;
   }
 
-  static late final _daysInMonthFfi =
+  static final _daysInMonthFfi =
       _capi<ffi.NativeFunction<ffi.Uint8 Function(ffi.Pointer<ffi.Opaque>)>>(
               'ICU4XIsoDateTime_days_in_month')
           .asFunction<int Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
@@ -7034,7 +7027,7 @@ class ICU4XIsoDateTime implements ffi.Finalizable {
     return result;
   }
 
-  static late final _daysInYearFfi =
+  static final _daysInYearFfi =
       _capi<ffi.NativeFunction<ffi.Uint16 Function(ffi.Pointer<ffi.Opaque>)>>(
               'ICU4XIsoDateTime_days_in_year')
           .asFunction<int Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
@@ -7196,7 +7189,7 @@ class ICU4XLineBreakIteratorLatin1 implements ffi.Finalizable {
     _finalizer.attach(this, _underlying.cast());
   }
 
-  static late final _finalizer =
+  static final _finalizer =
       ffi.NativeFinalizer(_capi('ICU4XLineBreakIteratorLatin1_destroy'));
 
   /// Finds the next breakpoint. Returns -1 if at the end of the string or if the index is
@@ -7208,7 +7201,7 @@ class ICU4XLineBreakIteratorLatin1 implements ffi.Finalizable {
     return result;
   }
 
-  static late final _nextFfi =
+  static final _nextFfi =
       _capi<ffi.NativeFunction<ffi.Int32 Function(ffi.Pointer<ffi.Opaque>)>>(
               'ICU4XLineBreakIteratorLatin1_next')
           .asFunction<int Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
@@ -7224,7 +7217,7 @@ class ICU4XLineBreakIteratorUtf16 implements ffi.Finalizable {
     _finalizer.attach(this, _underlying.cast());
   }
 
-  static late final _finalizer =
+  static final _finalizer =
       ffi.NativeFinalizer(_capi('ICU4XLineBreakIteratorUtf16_destroy'));
 
   /// Finds the next breakpoint. Returns -1 if at the end of the string or if the index is
@@ -7236,7 +7229,7 @@ class ICU4XLineBreakIteratorUtf16 implements ffi.Finalizable {
     return result;
   }
 
-  static late final _nextFfi =
+  static final _nextFfi =
       _capi<ffi.NativeFunction<ffi.Int32 Function(ffi.Pointer<ffi.Opaque>)>>(
               'ICU4XLineBreakIteratorUtf16_next')
           .asFunction<int Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
@@ -7252,7 +7245,7 @@ class ICU4XLineBreakIteratorUtf8 implements ffi.Finalizable {
     _finalizer.attach(this, _underlying.cast());
   }
 
-  static late final _finalizer =
+  static final _finalizer =
       ffi.NativeFinalizer(_capi('ICU4XLineBreakIteratorUtf8_destroy'));
 
   /// Finds the next breakpoint. Returns -1 if at the end of the string or if the index is
@@ -7264,7 +7257,7 @@ class ICU4XLineBreakIteratorUtf8 implements ffi.Finalizable {
     return result;
   }
 
-  static late final _nextFfi =
+  static final _nextFfi =
       _capi<ffi.NativeFunction<ffi.Int32 Function(ffi.Pointer<ffi.Opaque>)>>(
               'ICU4XLineBreakIteratorUtf8_next')
           .asFunction<int Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
@@ -7366,7 +7359,7 @@ class ICU4XLineSegmenter implements ffi.Finalizable {
     _finalizer.attach(this, _underlying.cast());
   }
 
-  static late final _finalizer =
+  static final _finalizer =
       ffi.NativeFinalizer(_capi('ICU4XLineSegmenter_destroy'));
 
   /// Construct a [`ICU4XLineSegmenter`] with default options. It automatically loads the best
@@ -7379,7 +7372,7 @@ class ICU4XLineSegmenter implements ffi.Finalizable {
         ? ICU4XLineSegmenter._(result.union.ok)
         : throw ICU4XError._(result.union.err);
   }
-  static late final _createAutoFfi = _capi<
+  static final _createAutoFfi = _capi<
           ffi.NativeFunction<
               _ResultOpaqueUint32 Function(
                   ffi.Pointer<ffi.Opaque>)>>('ICU4XLineSegmenter_create_auto')
@@ -7396,7 +7389,7 @@ class ICU4XLineSegmenter implements ffi.Finalizable {
         ? ICU4XLineSegmenter._(result.union.ok)
         : throw ICU4XError._(result.union.err);
   }
-  static late final _createLstmFfi = _capi<
+  static final _createLstmFfi = _capi<
           ffi.NativeFunction<
               _ResultOpaqueUint32 Function(
                   ffi.Pointer<ffi.Opaque>)>>('ICU4XLineSegmenter_create_lstm')
@@ -7413,7 +7406,7 @@ class ICU4XLineSegmenter implements ffi.Finalizable {
         ? ICU4XLineSegmenter._(result.union.ok)
         : throw ICU4XError._(result.union.err);
   }
-  static late final _createDictionaryFfi = _capi<
+  static final _createDictionaryFfi = _capi<
               ffi.NativeFunction<
                   _ResultOpaqueUint32 Function(ffi.Pointer<ffi.Opaque>)>>(
           'ICU4XLineSegmenter_create_dictionary')
@@ -7432,7 +7425,7 @@ class ICU4XLineSegmenter implements ffi.Finalizable {
         ? ICU4XLineSegmenter._(result.union.ok)
         : throw ICU4XError._(result.union.err);
   }
-  static late final _createAutoWithOptionsV1Ffi = _capi<
+  static final _createAutoWithOptionsV1Ffi = _capi<
               ffi.NativeFunction<
                   _ResultOpaqueUint32 Function(
                       ffi.Pointer<ffi.Opaque>, _ICU4XLineBreakOptionsV1Ffi)>>(
@@ -7453,7 +7446,7 @@ class ICU4XLineSegmenter implements ffi.Finalizable {
         ? ICU4XLineSegmenter._(result.union.ok)
         : throw ICU4XError._(result.union.err);
   }
-  static late final _createLstmWithOptionsV1Ffi = _capi<
+  static final _createLstmWithOptionsV1Ffi = _capi<
               ffi.NativeFunction<
                   _ResultOpaqueUint32 Function(
                       ffi.Pointer<ffi.Opaque>, _ICU4XLineBreakOptionsV1Ffi)>>(
@@ -7474,7 +7467,7 @@ class ICU4XLineSegmenter implements ffi.Finalizable {
         ? ICU4XLineSegmenter._(result.union.ok)
         : throw ICU4XError._(result.union.err);
   }
-  static late final _createDictionaryWithOptionsV1Ffi = _capi<
+  static final _createDictionaryWithOptionsV1Ffi = _capi<
               ffi.NativeFunction<
                   _ResultOpaqueUint32 Function(
                       ffi.Pointer<ffi.Opaque>, _ICU4XLineBreakOptionsV1Ffi)>>(
@@ -7491,12 +7484,12 @@ class ICU4XLineSegmenter implements ffi.Finalizable {
     final inputSlice = _SliceFfi2Utf8._fromDart(input, alloc);
 
     final result =
-        _segmentUtf8Ffi(_underlying, inputSlice.bytes, inputSlice.length);
+        _segmentUtf8Ffi(_underlying, inputSlice._bytes, inputSlice._length);
     alloc.releaseAll();
     return ICU4XLineBreakIteratorUtf8._(result);
   }
 
-  static late final _segmentUtf8Ffi = _capi<
+  static final _segmentUtf8Ffi = _capi<
           ffi.NativeFunction<
               ffi.Pointer<ffi.Opaque> Function(
                   ffi.Pointer<ffi.Opaque>,
@@ -7514,12 +7507,12 @@ class ICU4XLineSegmenter implements ffi.Finalizable {
     final inputSlice = _SliceFfiUint16._fromDart(input, alloc);
 
     final result =
-        _segmentUtf16Ffi(_underlying, inputSlice.bytes, inputSlice.length);
+        _segmentUtf16Ffi(_underlying, inputSlice._bytes, inputSlice._length);
     alloc.releaseAll();
     return ICU4XLineBreakIteratorUtf16._(result);
   }
 
-  static late final _segmentUtf16Ffi = _capi<
+  static final _segmentUtf16Ffi = _capi<
           ffi.NativeFunction<
               ffi.Pointer<ffi.Opaque> Function(
                   ffi.Pointer<ffi.Opaque>,
@@ -7537,12 +7530,12 @@ class ICU4XLineSegmenter implements ffi.Finalizable {
     final inputSlice = _SliceFfiUint8._fromDart(input, alloc);
 
     final result =
-        _segmentLatin1Ffi(_underlying, inputSlice.bytes, inputSlice.length);
+        _segmentLatin1Ffi(_underlying, inputSlice._bytes, inputSlice._length);
     alloc.releaseAll();
     return ICU4XLineBreakIteratorLatin1._(result);
   }
 
-  static late final _segmentLatin1Ffi = _capi<
+  static final _segmentLatin1Ffi = _capi<
           ffi.NativeFunction<
               ffi.Pointer<ffi.Opaque> Function(
                   ffi.Pointer<ffi.Opaque>,
@@ -7561,15 +7554,14 @@ class ICU4XList implements ffi.Finalizable {
     _finalizer.attach(this, _underlying.cast());
   }
 
-  static late final _finalizer =
-      ffi.NativeFinalizer(_capi('ICU4XList_destroy'));
+  static final _finalizer = ffi.NativeFinalizer(_capi('ICU4XList_destroy'));
 
   /// Create a new list of strings
   factory ICU4XList() {
     final result = _createFfi();
     return ICU4XList._(result);
   }
-  static late final _createFfi =
+  static final _createFfi =
       _capi<ffi.NativeFunction<ffi.Pointer<ffi.Opaque> Function()>>(
               'ICU4XList_create')
           .asFunction<ffi.Pointer<ffi.Opaque> Function()>(isLeaf: true);
@@ -7580,7 +7572,7 @@ class ICU4XList implements ffi.Finalizable {
     final result = _createWithCapacityFfi(capacity);
     return ICU4XList._(result);
   }
-  static late final _createWithCapacityFfi =
+  static final _createWithCapacityFfi =
       _capi<ffi.NativeFunction<ffi.Pointer<ffi.Opaque> Function(ffi.Size)>>(
               'ICU4XList_create_with_capacity')
           .asFunction<ffi.Pointer<ffi.Opaque> Function(int)>(isLeaf: true);
@@ -7593,11 +7585,11 @@ class ICU4XList implements ffi.Finalizable {
     final alloc = ffi2.Arena();
     final valSlice = _SliceFfi2Utf8._fromDart(val, alloc);
 
-    _pushFfi(_underlying, valSlice.bytes, valSlice.length);
+    _pushFfi(_underlying, valSlice._bytes, valSlice._length);
     alloc.releaseAll();
   }
 
-  static late final _pushFfi = _capi<
+  static final _pushFfi = _capi<
           ffi.NativeFunction<
               ffi.Void Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi2.Utf8>,
                   ffi.Size)>>('ICU4XList_push')
@@ -7611,7 +7603,7 @@ class ICU4XList implements ffi.Finalizable {
     return result;
   }
 
-  static late final _lenFfi =
+  static final _lenFfi =
       _capi<ffi.NativeFunction<ffi.Size Function(ffi.Pointer<ffi.Opaque>)>>(
               'ICU4XList_len')
           .asFunction<int Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
@@ -7625,7 +7617,7 @@ class ICU4XListFormatter implements ffi.Finalizable {
     _finalizer.attach(this, _underlying.cast());
   }
 
-  static late final _finalizer =
+  static final _finalizer =
       ffi.NativeFinalizer(_capi('ICU4XListFormatter_destroy'));
 
   /// Construct a new ICU4XListFormatter instance for And patterns
@@ -7639,7 +7631,7 @@ class ICU4XListFormatter implements ffi.Finalizable {
         ? ICU4XListFormatter._(result.union.ok)
         : throw ICU4XError._(result.union.err);
   }
-  static late final _createAndWithLengthFfi = _capi<
+  static final _createAndWithLengthFfi = _capi<
           ffi.NativeFunction<
               _ResultOpaqueUint32 Function(
                   ffi.Pointer<ffi.Opaque>,
@@ -7660,7 +7652,7 @@ class ICU4XListFormatter implements ffi.Finalizable {
         ? ICU4XListFormatter._(result.union.ok)
         : throw ICU4XError._(result.union.err);
   }
-  static late final _createOrWithLengthFfi = _capi<
+  static final _createOrWithLengthFfi = _capi<
           ffi.NativeFunction<
               _ResultOpaqueUint32 Function(
                   ffi.Pointer<ffi.Opaque>,
@@ -7681,7 +7673,7 @@ class ICU4XListFormatter implements ffi.Finalizable {
         ? ICU4XListFormatter._(result.union.ok)
         : throw ICU4XError._(result.union.err);
   }
-  static late final _createUnitWithLengthFfi = _capi<
+  static final _createUnitWithLengthFfi = _capi<
           ffi.NativeFunction<
               _ResultOpaqueUint32 Function(
                   ffi.Pointer<ffi.Opaque>,
@@ -7701,7 +7693,7 @@ class ICU4XListFormatter implements ffi.Finalizable {
         : throw ICU4XError._(result.union.err);
   }
 
-  static late final _formatFfi = _capi<
+  static final _formatFfi = _capi<
           ffi.NativeFunction<
               _ResultVoidUint32 Function(
                   ffi.Pointer<ffi.Opaque>,
@@ -7737,8 +7729,7 @@ class ICU4XLocale implements ffi.Finalizable {
     _finalizer.attach(this, _underlying.cast());
   }
 
-  static late final _finalizer =
-      ffi.NativeFinalizer(_capi('ICU4XLocale_destroy'));
+  static final _finalizer = ffi.NativeFinalizer(_capi('ICU4XLocale_destroy'));
 
   /// Construct an [`ICU4XLocale`] from an locale identifier.
   ///
@@ -7751,13 +7742,13 @@ class ICU4XLocale implements ffi.Finalizable {
     final alloc = ffi2.Arena();
     final nameSlice = _SliceFfi2Utf8._fromDart(name, alloc);
 
-    final result = _createFromStringFfi(nameSlice.bytes, nameSlice.length);
+    final result = _createFromStringFfi(nameSlice._bytes, nameSlice._length);
     alloc.releaseAll();
     return result.isOk
         ? ICU4XLocale._(result.union.ok)
         : throw ICU4XError._(result.union.err);
   }
-  static late final _createFromStringFfi = _capi<
+  static final _createFromStringFfi = _capi<
           ffi.NativeFunction<
               _ResultOpaqueUint32 Function(ffi.Pointer<ffi2.Utf8>,
                   ffi.Size)>>('ICU4XLocale_create_from_string')
@@ -7771,7 +7762,7 @@ class ICU4XLocale implements ffi.Finalizable {
     final result = _createUndFfi();
     return ICU4XLocale._(result);
   }
-  static late final _createUndFfi =
+  static final _createUndFfi =
       _capi<ffi.NativeFunction<ffi.Pointer<ffi.Opaque> Function()>>(
               'ICU4XLocale_create_und')
           .asFunction<ffi.Pointer<ffi.Opaque> Function()>(isLeaf: true);
@@ -7784,7 +7775,7 @@ class ICU4XLocale implements ffi.Finalizable {
     return ICU4XLocale._(result);
   }
 
-  static late final _cloneFfi = _capi<
+  static final _cloneFfi = _capi<
           ffi.NativeFunction<
               ffi.Pointer<ffi.Opaque> Function(
                   ffi.Pointer<ffi.Opaque>)>>('ICU4XLocale_clone')
@@ -7803,7 +7794,7 @@ class ICU4XLocale implements ffi.Finalizable {
         : throw ICU4XError._(result.union.err);
   }
 
-  static late final _basenameFfi = _capi<
+  static final _basenameFfi = _capi<
           ffi.NativeFunction<
               _ResultVoidUint32 Function(ffi.Pointer<ffi.Opaque>,
                   ffi.Pointer<ffi.Opaque>)>>('ICU4XLocale_basename')
@@ -7819,15 +7810,15 @@ class ICU4XLocale implements ffi.Finalizable {
     final bytesSlice = _SliceFfi2Utf8._fromDart(bytes, alloc);
 
     final writeable = _Writeable();
-    final result = _getUnicodeExtensionFfi(_underlying, bytesSlice.bytes,
-        bytesSlice.length, writeable._underlying);
+    final result = _getUnicodeExtensionFfi(_underlying, bytesSlice._bytes,
+        bytesSlice._length, writeable._underlying);
     alloc.releaseAll();
     return result.isOk
         ? writeable.finalize()
         : throw ICU4XError._(result.union.err);
   }
 
-  static late final _getUnicodeExtensionFfi = _capi<
+  static final _getUnicodeExtensionFfi = _capi<
               ffi.NativeFunction<
                   _ResultVoidUint32 Function(
                       ffi.Pointer<ffi.Opaque>,
@@ -7853,7 +7844,7 @@ class ICU4XLocale implements ffi.Finalizable {
         : throw ICU4XError._(result.union.err);
   }
 
-  static late final _languageFfi = _capi<
+  static final _languageFfi = _capi<
           ffi.NativeFunction<
               _ResultVoidUint32 Function(ffi.Pointer<ffi.Opaque>,
                   ffi.Pointer<ffi.Opaque>)>>('ICU4XLocale_language')
@@ -7869,14 +7860,14 @@ class ICU4XLocale implements ffi.Finalizable {
     final bytesSlice = _SliceFfi2Utf8._fromDart(bytes, alloc);
 
     final result =
-        _setLanguageFfi(_underlying, bytesSlice.bytes, bytesSlice.length);
+        _setLanguageFfi(_underlying, bytesSlice._bytes, bytesSlice._length);
     alloc.releaseAll();
     if (!result.isOk) {
       throw ICU4XError._(result.union.err);
     }
   }
 
-  static late final _setLanguageFfi = _capi<
+  static final _setLanguageFfi = _capi<
           ffi.NativeFunction<
               _ResultVoidUint32 Function(
                   ffi.Pointer<ffi.Opaque>,
@@ -7897,7 +7888,7 @@ class ICU4XLocale implements ffi.Finalizable {
         : throw ICU4XError._(result.union.err);
   }
 
-  static late final _regionFfi = _capi<
+  static final _regionFfi = _capi<
           ffi.NativeFunction<
               _ResultVoidUint32 Function(ffi.Pointer<ffi.Opaque>,
                   ffi.Pointer<ffi.Opaque>)>>('ICU4XLocale_region')
@@ -7913,14 +7904,14 @@ class ICU4XLocale implements ffi.Finalizable {
     final bytesSlice = _SliceFfi2Utf8._fromDart(bytes, alloc);
 
     final result =
-        _setRegionFfi(_underlying, bytesSlice.bytes, bytesSlice.length);
+        _setRegionFfi(_underlying, bytesSlice._bytes, bytesSlice._length);
     alloc.releaseAll();
     if (!result.isOk) {
       throw ICU4XError._(result.union.err);
     }
   }
 
-  static late final _setRegionFfi = _capi<
+  static final _setRegionFfi = _capi<
           ffi.NativeFunction<
               _ResultVoidUint32 Function(ffi.Pointer<ffi.Opaque>,
                   ffi.Pointer<ffi2.Utf8>, ffi.Size)>>('ICU4XLocale_set_region')
@@ -7939,7 +7930,7 @@ class ICU4XLocale implements ffi.Finalizable {
         : throw ICU4XError._(result.union.err);
   }
 
-  static late final _scriptFfi = _capi<
+  static final _scriptFfi = _capi<
           ffi.NativeFunction<
               _ResultVoidUint32 Function(ffi.Pointer<ffi.Opaque>,
                   ffi.Pointer<ffi.Opaque>)>>('ICU4XLocale_script')
@@ -7955,14 +7946,14 @@ class ICU4XLocale implements ffi.Finalizable {
     final bytesSlice = _SliceFfi2Utf8._fromDart(bytes, alloc);
 
     final result =
-        _setScriptFfi(_underlying, bytesSlice.bytes, bytesSlice.length);
+        _setScriptFfi(_underlying, bytesSlice._bytes, bytesSlice._length);
     alloc.releaseAll();
     if (!result.isOk) {
       throw ICU4XError._(result.union.err);
     }
   }
 
-  static late final _setScriptFfi = _capi<
+  static final _setScriptFfi = _capi<
           ffi.NativeFunction<
               _ResultVoidUint32 Function(ffi.Pointer<ffi.Opaque>,
                   ffi.Pointer<ffi2.Utf8>, ffi.Size)>>('ICU4XLocale_set_script')
@@ -7981,14 +7972,14 @@ class ICU4XLocale implements ffi.Finalizable {
 
     final writeable = _Writeable();
     final result = _canonicalizeFfi(
-        bytesSlice.bytes, bytesSlice.length, writeable._underlying);
+        bytesSlice._bytes, bytesSlice._length, writeable._underlying);
     alloc.releaseAll();
     return result.isOk
         ? writeable.finalize()
         : throw ICU4XError._(result.union.err);
   }
 
-  static late final _canonicalizeFfi = _capi<
+  static final _canonicalizeFfi = _capi<
           ffi.NativeFunction<
               _ResultVoidUint32 Function(ffi.Pointer<ffi2.Utf8>, ffi.Size,
                   ffi.Pointer<ffi.Opaque>)>>('ICU4XLocale_canonicalize')
@@ -8008,7 +7999,7 @@ class ICU4XLocale implements ffi.Finalizable {
         : throw ICU4XError._(result.union.err);
   }
 
-  static late final _toStringFfi = _capi<
+  static final _toStringFfi = _capi<
           ffi.NativeFunction<
               _ResultVoidUint32 Function(ffi.Pointer<ffi.Opaque>,
                   ffi.Pointer<ffi.Opaque>)>>('ICU4XLocale_to_string')
@@ -8022,12 +8013,12 @@ class ICU4XLocale implements ffi.Finalizable {
     final otherSlice = _SliceFfi2Utf8._fromDart(other, alloc);
 
     final result =
-        _normalizingEqFfi(_underlying, otherSlice.bytes, otherSlice.length);
+        _normalizingEqFfi(_underlying, otherSlice._bytes, otherSlice._length);
     alloc.releaseAll();
     return result;
   }
 
-  static late final _normalizingEqFfi = _capi<
+  static final _normalizingEqFfi = _capi<
           ffi.NativeFunction<
               ffi.Bool Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi2.Utf8>,
                   ffi.Size)>>('ICU4XLocale_normalizing_eq')
@@ -8041,12 +8032,12 @@ class ICU4XLocale implements ffi.Finalizable {
     final otherSlice = _SliceFfi2Utf8._fromDart(other, alloc);
 
     final result =
-        _strictCmpFfi(_underlying, otherSlice.bytes, otherSlice.length);
+        _strictCmpFfi(_underlying, otherSlice._bytes, otherSlice._length);
     alloc.releaseAll();
     return ICU4XOrdering._(result);
   }
 
-  static late final _strictCmpFfi = _capi<
+  static final _strictCmpFfi = _capi<
           ffi.NativeFunction<
               ffi.Uint32 Function(ffi.Pointer<ffi.Opaque>,
                   ffi.Pointer<ffi2.Utf8>, ffi.Size)>>('ICU4XLocale_strict_cmp')
@@ -8061,7 +8052,7 @@ class ICU4XLocale implements ffi.Finalizable {
     final result = _createEnFfi();
     return ICU4XLocale._(result);
   }
-  static late final _createEnFfi =
+  static final _createEnFfi =
       _capi<ffi.NativeFunction<ffi.Pointer<ffi.Opaque> Function()>>(
               'ICU4XLocale_create_en')
           .asFunction<ffi.Pointer<ffi.Opaque> Function()>(isLeaf: true);
@@ -8073,7 +8064,7 @@ class ICU4XLocale implements ffi.Finalizable {
     final result = _createBnFfi();
     return ICU4XLocale._(result);
   }
-  static late final _createBnFfi =
+  static final _createBnFfi =
       _capi<ffi.NativeFunction<ffi.Pointer<ffi.Opaque> Function()>>(
               'ICU4XLocale_create_bn')
           .asFunction<ffi.Pointer<ffi.Opaque> Function()>(isLeaf: true);
@@ -8089,7 +8080,7 @@ class ICU4XLocaleCanonicalizer implements ffi.Finalizable {
     _finalizer.attach(this, _underlying.cast());
   }
 
-  static late final _finalizer =
+  static final _finalizer =
       ffi.NativeFinalizer(_capi('ICU4XLocaleCanonicalizer_destroy'));
 
   /// Create a new [`ICU4XLocaleCanonicalizer`].
@@ -8101,7 +8092,7 @@ class ICU4XLocaleCanonicalizer implements ffi.Finalizable {
         ? ICU4XLocaleCanonicalizer._(result.union.ok)
         : throw ICU4XError._(result.union.err);
   }
-  static late final _createFfi = _capi<
+  static final _createFfi = _capi<
           ffi.NativeFunction<
               _ResultOpaqueUint32 Function(
                   ffi.Pointer<ffi.Opaque>)>>('ICU4XLocaleCanonicalizer_create')
@@ -8117,7 +8108,7 @@ class ICU4XLocaleCanonicalizer implements ffi.Finalizable {
         ? ICU4XLocaleCanonicalizer._(result.union.ok)
         : throw ICU4XError._(result.union.err);
   }
-  static late final _createExtendedFfi = _capi<
+  static final _createExtendedFfi = _capi<
               ffi.NativeFunction<
                   _ResultOpaqueUint32 Function(ffi.Pointer<ffi.Opaque>)>>(
           'ICU4XLocaleCanonicalizer_create_extended')
@@ -8132,7 +8123,7 @@ class ICU4XLocaleCanonicalizer implements ffi.Finalizable {
     return ICU4XTransformResult._(result);
   }
 
-  static late final _canonicalizeFfi = _capi<
+  static final _canonicalizeFfi = _capi<
               ffi.NativeFunction<
                   ffi.Uint32 Function(
                       ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>>(
@@ -8165,7 +8156,7 @@ class ICU4XLocaleDirectionality implements ffi.Finalizable {
     _finalizer.attach(this, _underlying.cast());
   }
 
-  static late final _finalizer =
+  static final _finalizer =
       ffi.NativeFinalizer(_capi('ICU4XLocaleDirectionality_destroy'));
 
   /// Construct a new ICU4XLocaleDirectionality instance
@@ -8177,7 +8168,7 @@ class ICU4XLocaleDirectionality implements ffi.Finalizable {
         ? ICU4XLocaleDirectionality._(result.union.ok)
         : throw ICU4XError._(result.union.err);
   }
-  static late final _createFfi = _capi<
+  static final _createFfi = _capi<
           ffi.NativeFunction<
               _ResultOpaqueUint32 Function(
                   ffi.Pointer<ffi.Opaque>)>>('ICU4XLocaleDirectionality_create')
@@ -8195,7 +8186,7 @@ class ICU4XLocaleDirectionality implements ffi.Finalizable {
         ? ICU4XLocaleDirectionality._(result.union.ok)
         : throw ICU4XError._(result.union.err);
   }
-  static late final _createWithExpanderFfi = _capi<
+  static final _createWithExpanderFfi = _capi<
               ffi.NativeFunction<
                   _ResultOpaqueUint32 Function(
                       ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>>(
@@ -8210,7 +8201,7 @@ class ICU4XLocaleDirectionality implements ffi.Finalizable {
     return ICU4XLocaleDirection._(result);
   }
 
-  static late final _getFfi = _capi<
+  static final _getFfi = _capi<
           ffi.NativeFunction<
               ffi.Uint32 Function(ffi.Pointer<ffi.Opaque>,
                   ffi.Pointer<ffi.Opaque>)>>('ICU4XLocaleDirectionality_get')
@@ -8224,7 +8215,7 @@ class ICU4XLocaleDirectionality implements ffi.Finalizable {
     return result;
   }
 
-  static late final _isLeftToRightFfi = _capi<
+  static final _isLeftToRightFfi = _capi<
               ffi.NativeFunction<
                   ffi.Bool Function(
                       ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>>(
@@ -8239,7 +8230,7 @@ class ICU4XLocaleDirectionality implements ffi.Finalizable {
     return result;
   }
 
-  static late final _isRightToLeftFfi = _capi<
+  static final _isRightToLeftFfi = _capi<
               ffi.NativeFunction<
                   ffi.Bool Function(
                       ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>>(
@@ -8257,7 +8248,7 @@ class ICU4XLocaleDisplayNamesFormatter implements ffi.Finalizable {
     _finalizer.attach(this, _underlying.cast());
   }
 
-  static late final _finalizer =
+  static final _finalizer =
       ffi.NativeFinalizer(_capi('ICU4XLocaleDisplayNamesFormatter_destroy'));
 
   /// Creates a new `LocaleDisplayNamesFormatter` from locale data and an options bag.
@@ -8271,7 +8262,7 @@ class ICU4XLocaleDisplayNamesFormatter implements ffi.Finalizable {
         ? ICU4XLocaleDisplayNamesFormatter._(result.union.ok)
         : throw ICU4XError._(result.union.err);
   }
-  static late final _tryNewFfi = _capi<
+  static final _tryNewFfi = _capi<
               ffi.NativeFunction<
                   _ResultOpaqueUint32 Function(
                       ffi.Pointer<ffi.Opaque>,
@@ -8296,7 +8287,7 @@ class ICU4XLocaleDisplayNamesFormatter implements ffi.Finalizable {
         : throw ICU4XError._(result.union.err);
   }
 
-  static late final _ofFfi = _capi<
+  static final _ofFfi = _capi<
               ffi.NativeFunction<
                   _ResultVoidUint32 Function(ffi.Pointer<ffi.Opaque>,
                       ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>>(
@@ -8316,7 +8307,7 @@ class ICU4XLocaleExpander implements ffi.Finalizable {
     _finalizer.attach(this, _underlying.cast());
   }
 
-  static late final _finalizer =
+  static final _finalizer =
       ffi.NativeFinalizer(_capi('ICU4XLocaleExpander_destroy'));
 
   /// Create a new [`ICU4XLocaleExpander`].
@@ -8328,7 +8319,7 @@ class ICU4XLocaleExpander implements ffi.Finalizable {
         ? ICU4XLocaleExpander._(result.union.ok)
         : throw ICU4XError._(result.union.err);
   }
-  static late final _createFfi = _capi<
+  static final _createFfi = _capi<
           ffi.NativeFunction<
               _ResultOpaqueUint32 Function(
                   ffi.Pointer<ffi.Opaque>)>>('ICU4XLocaleExpander_create')
@@ -8344,7 +8335,7 @@ class ICU4XLocaleExpander implements ffi.Finalizable {
         ? ICU4XLocaleExpander._(result.union.ok)
         : throw ICU4XError._(result.union.err);
   }
-  static late final _createExtendedFfi = _capi<
+  static final _createExtendedFfi = _capi<
               ffi.NativeFunction<
                   _ResultOpaqueUint32 Function(ffi.Pointer<ffi.Opaque>)>>(
           'ICU4XLocaleExpander_create_extended')
@@ -8359,7 +8350,7 @@ class ICU4XLocaleExpander implements ffi.Finalizable {
     return ICU4XTransformResult._(result);
   }
 
-  static late final _maximizeFfi = _capi<
+  static final _maximizeFfi = _capi<
           ffi.NativeFunction<
               ffi.Uint32 Function(ffi.Pointer<ffi.Opaque>,
                   ffi.Pointer<ffi.Opaque>)>>('ICU4XLocaleExpander_maximize')
@@ -8375,7 +8366,7 @@ class ICU4XLocaleExpander implements ffi.Finalizable {
     return ICU4XTransformResult._(result);
   }
 
-  static late final _minimizeFfi = _capi<
+  static final _minimizeFfi = _capi<
           ffi.NativeFunction<
               ffi.Uint32 Function(ffi.Pointer<ffi.Opaque>,
                   ffi.Pointer<ffi.Opaque>)>>('ICU4XLocaleExpander_minimize')
@@ -8417,7 +8408,7 @@ class ICU4XLocaleFallbackConfig {
   String get extensionKey => _underlying.extensionKey._asDart;
   set extensionKey(String extensionKey) {
     final alloc = ffi2.calloc;
-    alloc.free(_underlying.extensionKey.bytes);
+    alloc.free(_underlying.extensionKey._bytes);
     final extensionKeySlice = _SliceFfi2Utf8._fromDart(extensionKey, alloc);
     _underlying.extensionKey = extensionKeySlice;
   }
@@ -8453,7 +8444,7 @@ class ICU4XLocaleFallbackIterator implements ffi.Finalizable {
     _finalizer.attach(this, _underlying.cast());
   }
 
-  static late final _finalizer =
+  static final _finalizer =
       ffi.NativeFinalizer(_capi('ICU4XLocaleFallbackIterator_destroy'));
 
   /// Gets a snapshot of the current state of the locale.
@@ -8464,7 +8455,7 @@ class ICU4XLocaleFallbackIterator implements ffi.Finalizable {
     return ICU4XLocale._(result);
   }
 
-  static late final _getFfi = _capi<
+  static final _getFfi = _capi<
           ffi.NativeFunction<
               ffi.Pointer<ffi.Opaque> Function(
                   ffi.Pointer<ffi.Opaque>)>>('ICU4XLocaleFallbackIterator_get')
@@ -8478,7 +8469,7 @@ class ICU4XLocaleFallbackIterator implements ffi.Finalizable {
     _stepFfi(_underlying);
   }
 
-  static late final _stepFfi =
+  static final _stepFfi =
       _capi<ffi.NativeFunction<ffi.Void Function(ffi.Pointer<ffi.Opaque>)>>(
               'ICU4XLocaleFallbackIterator_step')
           .asFunction<void Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
@@ -8527,7 +8518,7 @@ class ICU4XLocaleFallbacker implements ffi.Finalizable {
     _finalizer.attach(this, _underlying.cast());
   }
 
-  static late final _finalizer =
+  static final _finalizer =
       ffi.NativeFinalizer(_capi('ICU4XLocaleFallbacker_destroy'));
 
   /// Creates a new `ICU4XLocaleFallbacker` from a data provider.
@@ -8539,7 +8530,7 @@ class ICU4XLocaleFallbacker implements ffi.Finalizable {
         ? ICU4XLocaleFallbacker._(result.union.ok)
         : throw ICU4XError._(result.union.err);
   }
-  static late final _createFfi = _capi<
+  static final _createFfi = _capi<
           ffi.NativeFunction<
               _ResultOpaqueUint32 Function(
                   ffi.Pointer<ffi.Opaque>)>>('ICU4XLocaleFallbacker_create')
@@ -8553,7 +8544,7 @@ class ICU4XLocaleFallbacker implements ffi.Finalizable {
     final result = _createWithoutDataFfi();
     return ICU4XLocaleFallbacker._(result);
   }
-  static late final _createWithoutDataFfi =
+  static final _createWithoutDataFfi =
       _capi<ffi.NativeFunction<ffi.Pointer<ffi.Opaque> Function()>>(
               'ICU4XLocaleFallbacker_create_without_data')
           .asFunction<ffi.Pointer<ffi.Opaque> Function()>(isLeaf: true);
@@ -8568,7 +8559,7 @@ class ICU4XLocaleFallbacker implements ffi.Finalizable {
         : throw ICU4XError._(result.union.err);
   }
 
-  static late final _forConfigFfi = _capi<
+  static final _forConfigFfi = _capi<
               ffi.NativeFunction<
                   _ResultOpaqueUint32 Function(
                       ffi.Pointer<ffi.Opaque>, _ICU4XLocaleFallbackConfigFfi)>>(
@@ -8590,7 +8581,7 @@ class ICU4XLocaleFallbackerWithConfig implements ffi.Finalizable {
     _finalizer.attach(this, _underlying.cast());
   }
 
-  static late final _finalizer =
+  static final _finalizer =
       ffi.NativeFinalizer(_capi('ICU4XLocaleFallbackerWithConfig_destroy'));
 
   /// Creates an iterator from a locale with each step of fallback.
@@ -8601,7 +8592,7 @@ class ICU4XLocaleFallbackerWithConfig implements ffi.Finalizable {
     return ICU4XLocaleFallbackIterator._(result);
   }
 
-  static late final _fallbackForLocaleFfi = _capi<
+  static final _fallbackForLocaleFfi = _capi<
               ffi.NativeFunction<
                   ffi.Pointer<ffi.Opaque> Function(
                       ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>>(
@@ -8619,8 +8610,7 @@ class ICU4XLogger implements ffi.Finalizable {
     _finalizer.attach(this, _underlying.cast());
   }
 
-  static late final _finalizer =
-      ffi.NativeFinalizer(_capi('ICU4XLogger_destroy'));
+  static final _finalizer = ffi.NativeFinalizer(_capi('ICU4XLogger_destroy'));
 
   /// Initialize the logger using `simple_logger`
   ///
@@ -8632,7 +8622,7 @@ class ICU4XLogger implements ffi.Finalizable {
     return result;
   }
 
-  static late final _initSimpleLoggerFfi =
+  static final _initSimpleLoggerFfi =
       _capi<ffi.NativeFunction<ffi.Bool Function()>>(
               'ICU4XLogger_init_simple_logger')
           .asFunction<bool Function()>(isLeaf: true);
@@ -8643,7 +8633,7 @@ class ICU4XLogger implements ffi.Finalizable {
     return result;
   }
 
-  static late final _initConsoleLoggerFfi =
+  static final _initConsoleLoggerFfi =
       _capi<ffi.NativeFunction<ffi.Bool Function()>>(
               'ICU4XLogger_init_console_logger')
           .asFunction<bool Function()>(isLeaf: true);
@@ -8663,7 +8653,7 @@ class ICU4XMetazoneCalculator implements ffi.Finalizable {
     _finalizer.attach(this, _underlying.cast());
   }
 
-  static late final _finalizer =
+  static final _finalizer =
       ffi.NativeFinalizer(_capi('ICU4XMetazoneCalculator_destroy'));
 
   /// See the [Rust documentation for `new`](https://docs.rs/icu/latest/icu/timezone/struct.MetazoneCalculator.html#method.new) for more information.
@@ -8673,7 +8663,7 @@ class ICU4XMetazoneCalculator implements ffi.Finalizable {
         ? ICU4XMetazoneCalculator._(result.union.ok)
         : throw ICU4XError._(result.union.err);
   }
-  static late final _createFfi = _capi<
+  static final _createFfi = _capi<
           ffi.NativeFunction<
               _ResultOpaqueUint32 Function(
                   ffi.Pointer<ffi.Opaque>)>>('ICU4XMetazoneCalculator_create')
@@ -8805,13 +8795,13 @@ enum ICU4XPluralCategory {
     final alloc = ffi2.Arena();
     final sSlice = _SliceFfi2Utf8._fromDart(s, alloc);
 
-    final result = _getForCldrStringFfi(sSlice.bytes, sSlice.length);
+    final result = _getForCldrStringFfi(sSlice._bytes, sSlice._length);
     alloc.releaseAll();
     return result.isOk
         ? ICU4XPluralCategory._(result.union.ok)
         : throw VoidError();
   }
-  static late final _getForCldrStringFfi = _capi<
+  static final _getForCldrStringFfi = _capi<
           ffi.NativeFunction<
               _ResultUint32Void Function(ffi.Pointer<ffi2.Utf8>,
                   ffi.Size)>>('ICU4XPluralCategory_get_for_cldr_string')
@@ -8829,7 +8819,7 @@ class ICU4XPluralOperands implements ffi.Finalizable {
     _finalizer.attach(this, _underlying.cast());
   }
 
-  static late final _finalizer =
+  static final _finalizer =
       ffi.NativeFinalizer(_capi('ICU4XPluralOperands_destroy'));
 
   /// Construct for a given string representing a number
@@ -8839,13 +8829,13 @@ class ICU4XPluralOperands implements ffi.Finalizable {
     final alloc = ffi2.Arena();
     final sSlice = _SliceFfi2Utf8._fromDart(s, alloc);
 
-    final result = _createFromStringFfi(sSlice.bytes, sSlice.length);
+    final result = _createFromStringFfi(sSlice._bytes, sSlice._length);
     alloc.releaseAll();
     return result.isOk
         ? ICU4XPluralOperands._(result.union.ok)
         : throw ICU4XError._(result.union.err);
   }
-  static late final _createFromStringFfi = _capi<
+  static final _createFromStringFfi = _capi<
           ffi.NativeFunction<
               _ResultOpaqueUint32 Function(ffi.Pointer<ffi2.Utf8>,
                   ffi.Size)>>('ICU4XPluralOperands_create_from_string')
@@ -8863,7 +8853,7 @@ class ICU4XPluralRules implements ffi.Finalizable {
     _finalizer.attach(this, _underlying.cast());
   }
 
-  static late final _finalizer =
+  static final _finalizer =
       ffi.NativeFinalizer(_capi('ICU4XPluralRules_destroy'));
 
   /// Construct an [`ICU4XPluralRules`] for the given locale, for cardinal numbers
@@ -8876,7 +8866,7 @@ class ICU4XPluralRules implements ffi.Finalizable {
         ? ICU4XPluralRules._(result.union.ok)
         : throw ICU4XError._(result.union.err);
   }
-  static late final _createCardinalFfi = _capi<
+  static final _createCardinalFfi = _capi<
           ffi.NativeFunction<
               _ResultOpaqueUint32 Function(ffi.Pointer<ffi.Opaque>,
                   ffi.Pointer<ffi.Opaque>)>>('ICU4XPluralRules_create_cardinal')
@@ -8894,7 +8884,7 @@ class ICU4XPluralRules implements ffi.Finalizable {
         ? ICU4XPluralRules._(result.union.ok)
         : throw ICU4XError._(result.union.err);
   }
-  static late final _createOrdinalFfi = _capi<
+  static final _createOrdinalFfi = _capi<
           ffi.NativeFunction<
               _ResultOpaqueUint32 Function(ffi.Pointer<ffi.Opaque>,
                   ffi.Pointer<ffi.Opaque>)>>('ICU4XPluralRules_create_ordinal')
@@ -8910,7 +8900,7 @@ class ICU4XPluralRules implements ffi.Finalizable {
     return ICU4XPluralCategory._(result);
   }
 
-  static late final _categoryForFfi = _capi<
+  static final _categoryForFfi = _capi<
           ffi.NativeFunction<
               ffi.Uint32 Function(ffi.Pointer<ffi.Opaque>,
                   ffi.Pointer<ffi.Opaque>)>>('ICU4XPluralRules_category_for')
@@ -8926,7 +8916,7 @@ class ICU4XPluralRules implements ffi.Finalizable {
     return ICU4XPluralCategories._(result);
   }
 
-  static late final _categoriesFfi = _capi<
+  static final _categoriesFfi = _capi<
           ffi.NativeFunction<
               _ICU4XPluralCategoriesFfi Function(
                   ffi.Pointer<ffi.Opaque>)>>('ICU4XPluralRules_categories')
@@ -8944,7 +8934,7 @@ class ICU4XPluralRulesWithRanges implements ffi.Finalizable {
     _finalizer.attach(this, _underlying.cast());
   }
 
-  static late final _finalizer =
+  static final _finalizer =
       ffi.NativeFinalizer(_capi('ICU4XPluralRulesWithRanges_destroy'));
 
   /// Construct an [`ICU4XPluralRulesWithRanges`] for the given locale, for cardinal numbers
@@ -8957,7 +8947,7 @@ class ICU4XPluralRulesWithRanges implements ffi.Finalizable {
         ? ICU4XPluralRulesWithRanges._(result.union.ok)
         : throw ICU4XError._(result.union.err);
   }
-  static late final _createCardinalFfi = _capi<
+  static final _createCardinalFfi = _capi<
               ffi.NativeFunction<
                   _ResultOpaqueUint32 Function(
                       ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>>(
@@ -8976,7 +8966,7 @@ class ICU4XPluralRulesWithRanges implements ffi.Finalizable {
         ? ICU4XPluralRulesWithRanges._(result.union.ok)
         : throw ICU4XError._(result.union.err);
   }
-  static late final _createOrdinalFfi = _capi<
+  static final _createOrdinalFfi = _capi<
               ffi.NativeFunction<
                   _ResultOpaqueUint32 Function(
                       ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>>(
@@ -8993,7 +8983,7 @@ class ICU4XPluralRulesWithRanges implements ffi.Finalizable {
     return ICU4XPluralCategory._(result);
   }
 
-  static late final _categoryForFfi = _capi<
+  static final _categoryForFfi = _capi<
               ffi.NativeFunction<
                   ffi.Uint32 Function(
                       ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>>(
@@ -9010,7 +9000,7 @@ class ICU4XPluralRulesWithRanges implements ffi.Finalizable {
     return ICU4XPluralCategories._(result);
   }
 
-  static late final _categoriesFfi = _capi<
+  static final _categoriesFfi = _capi<
               ffi.NativeFunction<
                   _ICU4XPluralCategoriesFfi Function(ffi.Pointer<ffi.Opaque>)>>(
           'ICU4XPluralRulesWithRanges_categories')
@@ -9027,7 +9017,7 @@ class ICU4XPluralRulesWithRanges implements ffi.Finalizable {
     return ICU4XPluralCategory._(result);
   }
 
-  static late final _categoryForRangeFfi = _capi<
+  static final _categoryForRangeFfi = _capi<
               ffi.NativeFunction<
                   ffi.Uint32 Function(ffi.Pointer<ffi.Opaque>,
                       ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>>(
@@ -9045,7 +9035,7 @@ class ICU4XPluralRulesWithRanges implements ffi.Finalizable {
     return ICU4XPluralCategory._(result);
   }
 
-  static late final _resolveRangeFfi = _capi<
+  static final _resolveRangeFfi = _capi<
           ffi.NativeFunction<
               ffi.Uint32 Function(ffi.Pointer<ffi.Opaque>, ffi.Uint32,
                   ffi.Uint32)>>('ICU4XPluralRulesWithRanges_resolve_range')
@@ -9065,7 +9055,7 @@ class ICU4XPropertyValueNameToEnumMapper implements ffi.Finalizable {
     _finalizer.attach(this, _underlying.cast());
   }
 
-  static late final _finalizer =
+  static final _finalizer =
       ffi.NativeFinalizer(_capi('ICU4XPropertyValueNameToEnumMapper_destroy'));
 
   /// Get the property value matching the given name, using strict matching
@@ -9078,12 +9068,12 @@ class ICU4XPropertyValueNameToEnumMapper implements ffi.Finalizable {
     final nameSlice = _SliceFfi2Utf8._fromDart(name, alloc);
 
     final result =
-        _getStrictFfi(_underlying, nameSlice.bytes, nameSlice.length);
+        _getStrictFfi(_underlying, nameSlice._bytes, nameSlice._length);
     alloc.releaseAll();
     return result;
   }
 
-  static late final _getStrictFfi = _capi<
+  static final _getStrictFfi = _capi<
           ffi.NativeFunction<
               ffi.Int16 Function(
                   ffi.Pointer<ffi.Opaque>,
@@ -9102,12 +9092,13 @@ class ICU4XPropertyValueNameToEnumMapper implements ffi.Finalizable {
     final alloc = ffi2.Arena();
     final nameSlice = _SliceFfi2Utf8._fromDart(name, alloc);
 
-    final result = _getLooseFfi(_underlying, nameSlice.bytes, nameSlice.length);
+    final result =
+        _getLooseFfi(_underlying, nameSlice._bytes, nameSlice._length);
     alloc.releaseAll();
     return result;
   }
 
-  static late final _getLooseFfi = _capi<
+  static final _getLooseFfi = _capi<
           ffi.NativeFunction<
               ffi.Int16 Function(
                   ffi.Pointer<ffi.Opaque>,
@@ -9125,7 +9116,7 @@ class ICU4XPropertyValueNameToEnumMapper implements ffi.Finalizable {
         ? ICU4XPropertyValueNameToEnumMapper._(result.union.ok)
         : throw ICU4XError._(result.union.err);
   }
-  static late final _loadGeneralCategoryFfi = _capi<
+  static final _loadGeneralCategoryFfi = _capi<
               ffi.NativeFunction<
                   _ResultOpaqueUint32 Function(ffi.Pointer<ffi.Opaque>)>>(
           'ICU4XPropertyValueNameToEnumMapper_load_general_category')
@@ -9140,7 +9131,7 @@ class ICU4XPropertyValueNameToEnumMapper implements ffi.Finalizable {
         ? ICU4XPropertyValueNameToEnumMapper._(result.union.ok)
         : throw ICU4XError._(result.union.err);
   }
-  static late final _loadBidiClassFfi = _capi<
+  static final _loadBidiClassFfi = _capi<
               ffi.NativeFunction<
                   _ResultOpaqueUint32 Function(ffi.Pointer<ffi.Opaque>)>>(
           'ICU4XPropertyValueNameToEnumMapper_load_bidi_class')
@@ -9155,7 +9146,7 @@ class ICU4XPropertyValueNameToEnumMapper implements ffi.Finalizable {
         ? ICU4XPropertyValueNameToEnumMapper._(result.union.ok)
         : throw ICU4XError._(result.union.err);
   }
-  static late final _loadEastAsianWidthFfi = _capi<
+  static final _loadEastAsianWidthFfi = _capi<
               ffi.NativeFunction<
                   _ResultOpaqueUint32 Function(ffi.Pointer<ffi.Opaque>)>>(
           'ICU4XPropertyValueNameToEnumMapper_load_east_asian_width')
@@ -9170,7 +9161,7 @@ class ICU4XPropertyValueNameToEnumMapper implements ffi.Finalizable {
         ? ICU4XPropertyValueNameToEnumMapper._(result.union.ok)
         : throw ICU4XError._(result.union.err);
   }
-  static late final _loadIndicSyllabicCategoryFfi = _capi<
+  static final _loadIndicSyllabicCategoryFfi = _capi<
               ffi.NativeFunction<
                   _ResultOpaqueUint32 Function(ffi.Pointer<ffi.Opaque>)>>(
           'ICU4XPropertyValueNameToEnumMapper_load_indic_syllabic_category')
@@ -9185,7 +9176,7 @@ class ICU4XPropertyValueNameToEnumMapper implements ffi.Finalizable {
         ? ICU4XPropertyValueNameToEnumMapper._(result.union.ok)
         : throw ICU4XError._(result.union.err);
   }
-  static late final _loadLineBreakFfi = _capi<
+  static final _loadLineBreakFfi = _capi<
               ffi.NativeFunction<
                   _ResultOpaqueUint32 Function(ffi.Pointer<ffi.Opaque>)>>(
           'ICU4XPropertyValueNameToEnumMapper_load_line_break')
@@ -9200,7 +9191,7 @@ class ICU4XPropertyValueNameToEnumMapper implements ffi.Finalizable {
         ? ICU4XPropertyValueNameToEnumMapper._(result.union.ok)
         : throw ICU4XError._(result.union.err);
   }
-  static late final _loadGraphemeClusterBreakFfi = _capi<
+  static final _loadGraphemeClusterBreakFfi = _capi<
               ffi.NativeFunction<
                   _ResultOpaqueUint32 Function(ffi.Pointer<ffi.Opaque>)>>(
           'ICU4XPropertyValueNameToEnumMapper_load_grapheme_cluster_break')
@@ -9215,7 +9206,7 @@ class ICU4XPropertyValueNameToEnumMapper implements ffi.Finalizable {
         ? ICU4XPropertyValueNameToEnumMapper._(result.union.ok)
         : throw ICU4XError._(result.union.err);
   }
-  static late final _loadWordBreakFfi = _capi<
+  static final _loadWordBreakFfi = _capi<
               ffi.NativeFunction<
                   _ResultOpaqueUint32 Function(ffi.Pointer<ffi.Opaque>)>>(
           'ICU4XPropertyValueNameToEnumMapper_load_word_break')
@@ -9230,7 +9221,7 @@ class ICU4XPropertyValueNameToEnumMapper implements ffi.Finalizable {
         ? ICU4XPropertyValueNameToEnumMapper._(result.union.ok)
         : throw ICU4XError._(result.union.err);
   }
-  static late final _loadSentenceBreakFfi = _capi<
+  static final _loadSentenceBreakFfi = _capi<
               ffi.NativeFunction<
                   _ResultOpaqueUint32 Function(ffi.Pointer<ffi.Opaque>)>>(
           'ICU4XPropertyValueNameToEnumMapper_load_sentence_break')
@@ -9245,7 +9236,7 @@ class ICU4XPropertyValueNameToEnumMapper implements ffi.Finalizable {
         ? ICU4XPropertyValueNameToEnumMapper._(result.union.ok)
         : throw ICU4XError._(result.union.err);
   }
-  static late final _loadScriptFfi = _capi<
+  static final _loadScriptFfi = _capi<
               ffi.NativeFunction<
                   _ResultOpaqueUint32 Function(ffi.Pointer<ffi.Opaque>)>>(
           'ICU4XPropertyValueNameToEnumMapper_load_script')
@@ -9261,7 +9252,7 @@ class ICU4XRegionDisplayNames implements ffi.Finalizable {
     _finalizer.attach(this, _underlying.cast());
   }
 
-  static late final _finalizer =
+  static final _finalizer =
       ffi.NativeFinalizer(_capi('ICU4XRegionDisplayNames_destroy'));
 
   /// Creates a new `RegionDisplayNames` from locale data and an options bag.
@@ -9274,7 +9265,7 @@ class ICU4XRegionDisplayNames implements ffi.Finalizable {
         ? ICU4XRegionDisplayNames._(result.union.ok)
         : throw ICU4XError._(result.union.err);
   }
-  static late final _tryNewFfi = _capi<
+  static final _tryNewFfi = _capi<
           ffi.NativeFunction<
               _ResultOpaqueUint32 Function(ffi.Pointer<ffi.Opaque>,
                   ffi.Pointer<ffi.Opaque>)>>('ICU4XRegionDisplayNames_try_new')
@@ -9292,7 +9283,7 @@ class ICU4XRegionDisplayNames implements ffi.Finalizable {
     final regionSlice = _SliceFfi2Utf8._fromDart(region, alloc);
 
     final writeable = _Writeable();
-    final result = _ofFfi(_underlying, regionSlice.bytes, regionSlice.length,
+    final result = _ofFfi(_underlying, regionSlice._bytes, regionSlice._length,
         writeable._underlying);
     alloc.releaseAll();
     return result.isOk
@@ -9300,7 +9291,7 @@ class ICU4XRegionDisplayNames implements ffi.Finalizable {
         : throw ICU4XError._(result.union.err);
   }
 
-  static late final _ofFfi = _capi<
+  static final _ofFfi = _capi<
           ffi.NativeFunction<
               _ResultVoidUint32 Function(
                   ffi.Pointer<ffi.Opaque>,
@@ -9327,7 +9318,7 @@ class ICU4XReorderedIndexMap implements ffi.Finalizable {
     _finalizer.attach(this, _underlying.cast());
   }
 
-  static late final _finalizer =
+  static final _finalizer =
       ffi.NativeFinalizer(_capi('ICU4XReorderedIndexMap_destroy'));
 
   /// Get this as a slice/array of indices
@@ -9336,7 +9327,7 @@ class ICU4XReorderedIndexMap implements ffi.Finalizable {
     return result._asDart;
   }
 
-  static late final _asSliceFfi =
+  static final _asSliceFfi =
       _capi<ffi.NativeFunction<SizeList Function(ffi.Pointer<ffi.Opaque>)>>(
               'ICU4XReorderedIndexMap_as_slice')
           .asFunction<SizeList Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
@@ -9347,7 +9338,7 @@ class ICU4XReorderedIndexMap implements ffi.Finalizable {
     return result;
   }
 
-  static late final _lenFfi =
+  static final _lenFfi =
       _capi<ffi.NativeFunction<ffi.Size Function(ffi.Pointer<ffi.Opaque>)>>(
               'ICU4XReorderedIndexMap_len')
           .asFunction<int Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
@@ -9360,7 +9351,7 @@ class ICU4XReorderedIndexMap implements ffi.Finalizable {
     return result;
   }
 
-  static late final _getFfi = _capi<
+  static final _getFfi = _capi<
           ffi.NativeFunction<
               ffi.Size Function(ffi.Pointer<ffi.Opaque>,
                   ffi.Size)>>('ICU4XReorderedIndexMap_get')
@@ -9395,7 +9386,7 @@ class ICU4XScriptExtensionsSet implements ffi.Finalizable {
     _finalizer.attach(this, _underlying.cast());
   }
 
-  static late final _finalizer =
+  static final _finalizer =
       ffi.NativeFinalizer(_capi('ICU4XScriptExtensionsSet_destroy'));
 
   /// Check if the Script_Extensions property of the given code point covers the given script
@@ -9406,7 +9397,7 @@ class ICU4XScriptExtensionsSet implements ffi.Finalizable {
     return result;
   }
 
-  static late final _containsFfi = _capi<
+  static final _containsFfi = _capi<
           ffi.NativeFunction<
               ffi.Bool Function(ffi.Pointer<ffi.Opaque>,
                   ffi.Uint16)>>('ICU4XScriptExtensionsSet_contains')
@@ -9420,7 +9411,7 @@ class ICU4XScriptExtensionsSet implements ffi.Finalizable {
     return result;
   }
 
-  static late final _countFfi =
+  static final _countFfi =
       _capi<ffi.NativeFunction<ffi.Size Function(ffi.Pointer<ffi.Opaque>)>>(
               'ICU4XScriptExtensionsSet_count')
           .asFunction<int Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
@@ -9433,7 +9424,7 @@ class ICU4XScriptExtensionsSet implements ffi.Finalizable {
     return result.isOk ? result.union.ok : throw VoidError();
   }
 
-  static late final _scriptAtFfi = _capi<
+  static final _scriptAtFfi = _capi<
           ffi.NativeFunction<
               _ResultUint16Void Function(ffi.Pointer<ffi.Opaque>,
                   ffi.Size)>>('ICU4XScriptExtensionsSet_script_at')
@@ -9451,7 +9442,7 @@ class ICU4XScriptWithExtensions implements ffi.Finalizable {
     _finalizer.attach(this, _underlying.cast());
   }
 
-  static late final _finalizer =
+  static final _finalizer =
       ffi.NativeFinalizer(_capi('ICU4XScriptWithExtensions_destroy'));
 
   /// See the [Rust documentation for `script_with_extensions`](https://docs.rs/icu/latest/icu/properties/script/fn.script_with_extensions.html) for more information.
@@ -9461,7 +9452,7 @@ class ICU4XScriptWithExtensions implements ffi.Finalizable {
         ? ICU4XScriptWithExtensions._(result.union.ok)
         : throw ICU4XError._(result.union.err);
   }
-  static late final _createFfi = _capi<
+  static final _createFfi = _capi<
           ffi.NativeFunction<
               _ResultOpaqueUint32 Function(
                   ffi.Pointer<ffi.Opaque>)>>('ICU4XScriptWithExtensions_create')
@@ -9476,7 +9467,7 @@ class ICU4XScriptWithExtensions implements ffi.Finalizable {
     return result;
   }
 
-  static late final _getScriptValFfi = _capi<
+  static final _getScriptValFfi = _capi<
           ffi.NativeFunction<
               ffi.Uint16 Function(ffi.Pointer<ffi.Opaque>,
                   ffi.Uint32)>>('ICU4XScriptWithExtensions_get_script_val')
@@ -9490,7 +9481,7 @@ class ICU4XScriptWithExtensions implements ffi.Finalizable {
     return result;
   }
 
-  static late final _hasScriptFfi = _capi<
+  static final _hasScriptFfi = _capi<
           ffi.NativeFunction<
               ffi.Bool Function(ffi.Pointer<ffi.Opaque>, ffi.Uint32,
                   ffi.Uint16)>>('ICU4XScriptWithExtensions_has_script')
@@ -9505,7 +9496,7 @@ class ICU4XScriptWithExtensions implements ffi.Finalizable {
     return ICU4XScriptWithExtensionsBorrowed._(result);
   }
 
-  static late final _asBorrowedFfi = _capi<
+  static final _asBorrowedFfi = _capi<
               ffi.NativeFunction<
                   ffi.Pointer<ffi.Opaque> Function(ffi.Pointer<ffi.Opaque>)>>(
           'ICU4XScriptWithExtensions_as_borrowed')
@@ -9520,7 +9511,7 @@ class ICU4XScriptWithExtensions implements ffi.Finalizable {
     return CodePointRangeIterator._(result);
   }
 
-  static late final _iterRangesForScriptFfi = _capi<
+  static final _iterRangesForScriptFfi = _capi<
               ffi.NativeFunction<
                   ffi.Pointer<ffi.Opaque> Function(
                       ffi.Pointer<ffi.Opaque>, ffi.Uint16)>>(
@@ -9540,7 +9531,7 @@ class ICU4XScriptWithExtensionsBorrowed implements ffi.Finalizable {
     _finalizer.attach(this, _underlying.cast());
   }
 
-  static late final _finalizer =
+  static final _finalizer =
       ffi.NativeFinalizer(_capi('ICU4XScriptWithExtensionsBorrowed_destroy'));
 
   /// Get the Script property value for a code point
@@ -9551,7 +9542,7 @@ class ICU4XScriptWithExtensionsBorrowed implements ffi.Finalizable {
     return result;
   }
 
-  static late final _getScriptValFfi = _capi<
+  static final _getScriptValFfi = _capi<
               ffi.NativeFunction<
                   ffi.Uint16 Function(ffi.Pointer<ffi.Opaque>, ffi.Uint32)>>(
           'ICU4XScriptWithExtensionsBorrowed_get_script_val')
@@ -9565,7 +9556,7 @@ class ICU4XScriptWithExtensionsBorrowed implements ffi.Finalizable {
     return ICU4XScriptExtensionsSet._(result);
   }
 
-  static late final _getScriptExtensionsValFfi = _capi<
+  static final _getScriptExtensionsValFfi = _capi<
               ffi.NativeFunction<
                   ffi.Pointer<ffi.Opaque> Function(
                       ffi.Pointer<ffi.Opaque>, ffi.Uint32)>>(
@@ -9582,7 +9573,7 @@ class ICU4XScriptWithExtensionsBorrowed implements ffi.Finalizable {
     return result;
   }
 
-  static late final _hasScriptFfi = _capi<
+  static final _hasScriptFfi = _capi<
           ffi.NativeFunction<
               ffi.Bool Function(ffi.Pointer<ffi.Opaque>, ffi.Uint32,
                   ffi.Uint16)>>('ICU4XScriptWithExtensionsBorrowed_has_script')
@@ -9598,7 +9589,7 @@ class ICU4XScriptWithExtensionsBorrowed implements ffi.Finalizable {
     return ICU4XCodePointSetData._(result);
   }
 
-  static late final _getScriptExtensionsSetFfi = _capi<
+  static final _getScriptExtensionsSetFfi = _capi<
               ffi.NativeFunction<
                   ffi.Pointer<ffi.Opaque> Function(
                       ffi.Pointer<ffi.Opaque>, ffi.Uint16)>>(
@@ -9631,7 +9622,7 @@ class ICU4XSentenceBreakIteratorLatin1 implements ffi.Finalizable {
     _finalizer.attach(this, _underlying.cast());
   }
 
-  static late final _finalizer =
+  static final _finalizer =
       ffi.NativeFinalizer(_capi('ICU4XSentenceBreakIteratorLatin1_destroy'));
 
   /// Finds the next breakpoint. Returns -1 if at the end of the string or if the index is
@@ -9643,7 +9634,7 @@ class ICU4XSentenceBreakIteratorLatin1 implements ffi.Finalizable {
     return result;
   }
 
-  static late final _nextFfi =
+  static final _nextFfi =
       _capi<ffi.NativeFunction<ffi.Int32 Function(ffi.Pointer<ffi.Opaque>)>>(
               'ICU4XSentenceBreakIteratorLatin1_next')
           .asFunction<int Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
@@ -9657,7 +9648,7 @@ class ICU4XSentenceBreakIteratorUtf16 implements ffi.Finalizable {
     _finalizer.attach(this, _underlying.cast());
   }
 
-  static late final _finalizer =
+  static final _finalizer =
       ffi.NativeFinalizer(_capi('ICU4XSentenceBreakIteratorUtf16_destroy'));
 
   /// Finds the next breakpoint. Returns -1 if at the end of the string or if the index is
@@ -9669,7 +9660,7 @@ class ICU4XSentenceBreakIteratorUtf16 implements ffi.Finalizable {
     return result;
   }
 
-  static late final _nextFfi =
+  static final _nextFfi =
       _capi<ffi.NativeFunction<ffi.Int32 Function(ffi.Pointer<ffi.Opaque>)>>(
               'ICU4XSentenceBreakIteratorUtf16_next')
           .asFunction<int Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
@@ -9683,7 +9674,7 @@ class ICU4XSentenceBreakIteratorUtf8 implements ffi.Finalizable {
     _finalizer.attach(this, _underlying.cast());
   }
 
-  static late final _finalizer =
+  static final _finalizer =
       ffi.NativeFinalizer(_capi('ICU4XSentenceBreakIteratorUtf8_destroy'));
 
   /// Finds the next breakpoint. Returns -1 if at the end of the string or if the index is
@@ -9695,7 +9686,7 @@ class ICU4XSentenceBreakIteratorUtf8 implements ffi.Finalizable {
     return result;
   }
 
-  static late final _nextFfi =
+  static final _nextFfi =
       _capi<ffi.NativeFunction<ffi.Int32 Function(ffi.Pointer<ffi.Opaque>)>>(
               'ICU4XSentenceBreakIteratorUtf8_next')
           .asFunction<int Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
@@ -9711,7 +9702,7 @@ class ICU4XSentenceSegmenter implements ffi.Finalizable {
     _finalizer.attach(this, _underlying.cast());
   }
 
-  static late final _finalizer =
+  static final _finalizer =
       ffi.NativeFinalizer(_capi('ICU4XSentenceSegmenter_destroy'));
 
   /// Construct an [`ICU4XSentenceSegmenter`].
@@ -9723,7 +9714,7 @@ class ICU4XSentenceSegmenter implements ffi.Finalizable {
         ? ICU4XSentenceSegmenter._(result.union.ok)
         : throw ICU4XError._(result.union.err);
   }
-  static late final _createFfi = _capi<
+  static final _createFfi = _capi<
           ffi.NativeFunction<
               _ResultOpaqueUint32 Function(
                   ffi.Pointer<ffi.Opaque>)>>('ICU4XSentenceSegmenter_create')
@@ -9738,12 +9729,12 @@ class ICU4XSentenceSegmenter implements ffi.Finalizable {
     final inputSlice = _SliceFfi2Utf8._fromDart(input, alloc);
 
     final result =
-        _segmentUtf8Ffi(_underlying, inputSlice.bytes, inputSlice.length);
+        _segmentUtf8Ffi(_underlying, inputSlice._bytes, inputSlice._length);
     alloc.releaseAll();
     return ICU4XSentenceBreakIteratorUtf8._(result);
   }
 
-  static late final _segmentUtf8Ffi = _capi<
+  static final _segmentUtf8Ffi = _capi<
           ffi.NativeFunction<
               ffi.Pointer<ffi.Opaque> Function(
                   ffi.Pointer<ffi.Opaque>,
@@ -9761,12 +9752,12 @@ class ICU4XSentenceSegmenter implements ffi.Finalizable {
     final inputSlice = _SliceFfiUint16._fromDart(input, alloc);
 
     final result =
-        _segmentUtf16Ffi(_underlying, inputSlice.bytes, inputSlice.length);
+        _segmentUtf16Ffi(_underlying, inputSlice._bytes, inputSlice._length);
     alloc.releaseAll();
     return ICU4XSentenceBreakIteratorUtf16._(result);
   }
 
-  static late final _segmentUtf16Ffi = _capi<
+  static final _segmentUtf16Ffi = _capi<
           ffi.NativeFunction<
               ffi.Pointer<ffi.Opaque> Function(
                   ffi.Pointer<ffi.Opaque>,
@@ -9784,12 +9775,12 @@ class ICU4XSentenceSegmenter implements ffi.Finalizable {
     final inputSlice = _SliceFfiUint8._fromDart(input, alloc);
 
     final result =
-        _segmentLatin1Ffi(_underlying, inputSlice.bytes, inputSlice.length);
+        _segmentLatin1Ffi(_underlying, inputSlice._bytes, inputSlice._length);
     alloc.releaseAll();
     return ICU4XSentenceBreakIteratorLatin1._(result);
   }
 
-  static late final _segmentLatin1Ffi = _capi<
+  static final _segmentLatin1Ffi = _capi<
           ffi.NativeFunction<
               ffi.Pointer<ffi.Opaque> Function(
                   ffi.Pointer<ffi.Opaque>,
@@ -9810,8 +9801,7 @@ class ICU4XTime implements ffi.Finalizable {
     _finalizer.attach(this, _underlying.cast());
   }
 
-  static late final _finalizer =
-      ffi.NativeFinalizer(_capi('ICU4XTime_destroy'));
+  static final _finalizer = ffi.NativeFinalizer(_capi('ICU4XTime_destroy'));
 
   /// Creates a new [`ICU4XTime`] given field values
   ///
@@ -9822,7 +9812,7 @@ class ICU4XTime implements ffi.Finalizable {
         ? ICU4XTime._(result.union.ok)
         : throw ICU4XError._(result.union.err);
   }
-  static late final _createFfi = _capi<
+  static final _createFfi = _capi<
           ffi.NativeFunction<
               _ResultOpaqueUint32 Function(ffi.Uint8, ffi.Uint8, ffi.Uint8,
                   ffi.Uint32)>>('ICU4XTime_create')
@@ -9838,7 +9828,7 @@ class ICU4XTime implements ffi.Finalizable {
         ? ICU4XTime._(result.union.ok)
         : throw ICU4XError._(result.union.err);
   }
-  static late final _createMidnightFfi =
+  static final _createMidnightFfi =
       _capi<ffi.NativeFunction<_ResultOpaqueUint32 Function()>>(
               'ICU4XTime_create_midnight')
           .asFunction<_ResultOpaqueUint32 Function()>(isLeaf: true);
@@ -9851,7 +9841,7 @@ class ICU4XTime implements ffi.Finalizable {
     return result;
   }
 
-  static late final _hourFfi =
+  static final _hourFfi =
       _capi<ffi.NativeFunction<ffi.Uint8 Function(ffi.Pointer<ffi.Opaque>)>>(
               'ICU4XTime_hour')
           .asFunction<int Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
@@ -9864,7 +9854,7 @@ class ICU4XTime implements ffi.Finalizable {
     return result;
   }
 
-  static late final _minuteFfi =
+  static final _minuteFfi =
       _capi<ffi.NativeFunction<ffi.Uint8 Function(ffi.Pointer<ffi.Opaque>)>>(
               'ICU4XTime_minute')
           .asFunction<int Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
@@ -9877,7 +9867,7 @@ class ICU4XTime implements ffi.Finalizable {
     return result;
   }
 
-  static late final _secondFfi =
+  static final _secondFfi =
       _capi<ffi.NativeFunction<ffi.Uint8 Function(ffi.Pointer<ffi.Opaque>)>>(
               'ICU4XTime_second')
           .asFunction<int Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
@@ -9890,7 +9880,7 @@ class ICU4XTime implements ffi.Finalizable {
     return result;
   }
 
-  static late final _nanosecondFfi =
+  static final _nanosecondFfi =
       _capi<ffi.NativeFunction<ffi.Uint32 Function(ffi.Pointer<ffi.Opaque>)>>(
               'ICU4XTime_nanosecond')
           .asFunction<int Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
@@ -9906,7 +9896,7 @@ class ICU4XTimeFormatter implements ffi.Finalizable {
     _finalizer.attach(this, _underlying.cast());
   }
 
-  static late final _finalizer =
+  static final _finalizer =
       ffi.NativeFinalizer(_capi('ICU4XTimeFormatter_destroy'));
 
   /// Creates a new [`ICU4XTimeFormatter`] from locale data.
@@ -9920,7 +9910,7 @@ class ICU4XTimeFormatter implements ffi.Finalizable {
         ? ICU4XTimeFormatter._(result.union.ok)
         : throw ICU4XError._(result.union.err);
   }
-  static late final _createWithLengthFfi = _capi<
+  static final _createWithLengthFfi = _capi<
           ffi.NativeFunction<
               _ResultOpaqueUint32 Function(
                   ffi.Pointer<ffi.Opaque>,
@@ -9942,7 +9932,7 @@ class ICU4XTimeFormatter implements ffi.Finalizable {
         : throw ICU4XError._(result.union.err);
   }
 
-  static late final _formatTimeFfi = _capi<
+  static final _formatTimeFfi = _capi<
           ffi.NativeFunction<
               _ResultVoidUint32 Function(
                   ffi.Pointer<ffi.Opaque>,
@@ -9964,7 +9954,7 @@ class ICU4XTimeFormatter implements ffi.Finalizable {
         : throw ICU4XError._(result.union.err);
   }
 
-  static late final _formatDatetimeFfi = _capi<
+  static final _formatDatetimeFfi = _capi<
               ffi.NativeFunction<
                   _ResultVoidUint32 Function(ffi.Pointer<ffi.Opaque>,
                       ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>>(
@@ -9985,7 +9975,7 @@ class ICU4XTimeFormatter implements ffi.Finalizable {
         : throw ICU4XError._(result.union.err);
   }
 
-  static late final _formatIsoDatetimeFfi = _capi<
+  static final _formatIsoDatetimeFfi = _capi<
               ffi.NativeFunction<
                   _ResultVoidUint32 Function(ffi.Pointer<ffi.Opaque>,
                       ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>>(
@@ -10021,7 +10011,7 @@ class ICU4XTimeZoneFormatter implements ffi.Finalizable {
     _finalizer.attach(this, _underlying.cast());
   }
 
-  static late final _finalizer =
+  static final _finalizer =
       ffi.NativeFinalizer(_capi('ICU4XTimeZoneFormatter_destroy'));
 
   /// Creates a new [`ICU4XTimeZoneFormatter`] from locale data.
@@ -10039,7 +10029,7 @@ class ICU4XTimeZoneFormatter implements ffi.Finalizable {
         ? ICU4XTimeZoneFormatter._(result.union.ok)
         : throw ICU4XError._(result.union.err);
   }
-  static late final _createWithLocalizedGmtFallbackFfi = _capi<
+  static final _createWithLocalizedGmtFallbackFfi = _capi<
               ffi.NativeFunction<
                   _ResultOpaqueUint32 Function(
                       ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>>(
@@ -10063,7 +10053,7 @@ class ICU4XTimeZoneFormatter implements ffi.Finalizable {
         ? ICU4XTimeZoneFormatter._(result.union.ok)
         : throw ICU4XError._(result.union.err);
   }
-  static late final _createWithIso8601FallbackFfi = _capi<
+  static final _createWithIso8601FallbackFfi = _capi<
               ffi.NativeFunction<
                   _ResultOpaqueUint32 Function(ffi.Pointer<ffi.Opaque>,
                       ffi.Pointer<ffi.Opaque>, _ICU4XIsoTimeZoneOptionsFfi)>>(
@@ -10085,7 +10075,7 @@ class ICU4XTimeZoneFormatter implements ffi.Finalizable {
     }
   }
 
-  static late final _loadGenericNonLocationLongFfi = _capi<
+  static final _loadGenericNonLocationLongFfi = _capi<
               ffi.NativeFunction<
                   _ResultVoidUint32 Function(
                       ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>>(
@@ -10105,7 +10095,7 @@ class ICU4XTimeZoneFormatter implements ffi.Finalizable {
     }
   }
 
-  static late final _loadGenericNonLocationShortFfi = _capi<
+  static final _loadGenericNonLocationShortFfi = _capi<
               ffi.NativeFunction<
                   _ResultVoidUint32 Function(
                       ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>>(
@@ -10125,7 +10115,7 @@ class ICU4XTimeZoneFormatter implements ffi.Finalizable {
     }
   }
 
-  static late final _loadSpecificNonLocationLongFfi = _capi<
+  static final _loadSpecificNonLocationLongFfi = _capi<
               ffi.NativeFunction<
                   _ResultVoidUint32 Function(
                       ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>>(
@@ -10145,7 +10135,7 @@ class ICU4XTimeZoneFormatter implements ffi.Finalizable {
     }
   }
 
-  static late final _loadSpecificNonLocationShortFfi = _capi<
+  static final _loadSpecificNonLocationShortFfi = _capi<
               ffi.NativeFunction<
                   _ResultVoidUint32 Function(
                       ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>>(
@@ -10165,7 +10155,7 @@ class ICU4XTimeZoneFormatter implements ffi.Finalizable {
     }
   }
 
-  static late final _loadGenericLocationFormatFfi = _capi<
+  static final _loadGenericLocationFormatFfi = _capi<
               ffi.NativeFunction<
                   _ResultVoidUint32 Function(
                       ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>>(
@@ -10184,7 +10174,7 @@ class ICU4XTimeZoneFormatter implements ffi.Finalizable {
     }
   }
 
-  static late final _includeLocalizedGmtFormatFfi = _capi<
+  static final _includeLocalizedGmtFormatFfi = _capi<
               ffi.NativeFunction<
                   _ResultVoidUint32 Function(ffi.Pointer<ffi.Opaque>)>>(
           'ICU4XTimeZoneFormatter_include_localized_gmt_format')
@@ -10201,7 +10191,7 @@ class ICU4XTimeZoneFormatter implements ffi.Finalizable {
     }
   }
 
-  static late final _loadIso8601FormatFfi = _capi<
+  static final _loadIso8601FormatFfi = _capi<
               ffi.NativeFunction<
                   _ResultVoidUint32 Function(
                       ffi.Pointer<ffi.Opaque>, _ICU4XIsoTimeZoneOptionsFfi)>>(
@@ -10224,7 +10214,7 @@ class ICU4XTimeZoneFormatter implements ffi.Finalizable {
         : throw ICU4XError._(result.union.err);
   }
 
-  static late final _formatCustomTimeZoneFfi = _capi<
+  static final _formatCustomTimeZoneFfi = _capi<
               ffi.NativeFunction<
                   _ResultVoidUint32 Function(ffi.Pointer<ffi.Opaque>,
                       ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>>(
@@ -10242,7 +10232,7 @@ class ICU4XTitlecaseMapper implements ffi.Finalizable {
     _finalizer.attach(this, _underlying.cast());
   }
 
-  static late final _finalizer =
+  static final _finalizer =
       ffi.NativeFinalizer(_capi('ICU4XTitlecaseMapper_destroy'));
 
   /// Construct a new `ICU4XTitlecaseMapper` instance
@@ -10254,7 +10244,7 @@ class ICU4XTitlecaseMapper implements ffi.Finalizable {
         ? ICU4XTitlecaseMapper._(result.union.ok)
         : throw ICU4XError._(result.union.err);
   }
-  static late final _createFfi = _capi<
+  static final _createFfi = _capi<
           ffi.NativeFunction<
               _ResultOpaqueUint32 Function(
                   ffi.Pointer<ffi.Opaque>)>>('ICU4XTitlecaseMapper_create')
@@ -10274,8 +10264,8 @@ class ICU4XTitlecaseMapper implements ffi.Finalizable {
     final writeable = _Writeable();
     final result = _titlecaseSegmentV1Ffi(
         _underlying,
-        sSlice.bytes,
-        sSlice.length,
+        sSlice._bytes,
+        sSlice._length,
         locale._underlying,
         options._underlying,
         writeable._underlying);
@@ -10285,7 +10275,7 @@ class ICU4XTitlecaseMapper implements ffi.Finalizable {
         : throw ICU4XError._(result.union.err);
   }
 
-  static late final _titlecaseSegmentV1Ffi = _capi<
+  static final _titlecaseSegmentV1Ffi = _capi<
               ffi.NativeFunction<
                   _ResultVoidUint32 Function(
                       ffi.Pointer<ffi.Opaque>,
@@ -10343,7 +10333,7 @@ class ICU4XTitlecaseOptionsV1 {
     final result = _defaultOptionsFfi();
     return ICU4XTitlecaseOptionsV1._(result);
   }
-  static late final _defaultOptionsFfi =
+  static final _defaultOptionsFfi =
       _capi<ffi.NativeFunction<_ICU4XTitlecaseOptionsV1Ffi Function()>>(
               'ICU4XTitlecaseOptionsV1_default_options')
           .asFunction<_ICU4XTitlecaseOptionsV1Ffi Function()>(isLeaf: true);
@@ -10405,7 +10395,7 @@ class ICU4XUnicodeSetData implements ffi.Finalizable {
     _finalizer.attach(this, _underlying.cast());
   }
 
-  static late final _finalizer =
+  static final _finalizer =
       ffi.NativeFinalizer(_capi('ICU4XUnicodeSetData_destroy'));
 
   /// Checks whether the string is in the set.
@@ -10415,12 +10405,12 @@ class ICU4XUnicodeSetData implements ffi.Finalizable {
     final alloc = ffi2.Arena();
     final sSlice = _SliceFfi2Utf8._fromDart(s, alloc);
 
-    final result = _containsFfi(_underlying, sSlice.bytes, sSlice.length);
+    final result = _containsFfi(_underlying, sSlice._bytes, sSlice._length);
     alloc.releaseAll();
     return result;
   }
 
-  static late final _containsFfi = _capi<
+  static final _containsFfi = _capi<
           ffi.NativeFunction<
               ffi.Bool Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi2.Utf8>,
                   ffi.Size)>>('ICU4XUnicodeSetData_contains')
@@ -10436,7 +10426,7 @@ class ICU4XUnicodeSetData implements ffi.Finalizable {
     return result;
   }
 
-  static late final _containsCharFfi = _capi<
+  static final _containsCharFfi = _capi<
           ffi.NativeFunction<
               ffi.Bool Function(ffi.Pointer<ffi.Opaque>,
                   ffi.Uint32)>>('ICU4XUnicodeSetData_contains_char')
@@ -10448,7 +10438,7 @@ class ICU4XUnicodeSetData implements ffi.Finalizable {
     return result;
   }
 
-  static late final _contains32Ffi = _capi<
+  static final _contains32Ffi = _capi<
           ffi.NativeFunction<
               ffi.Bool Function(ffi.Pointer<ffi.Opaque>,
                   ffi.Uint32)>>('ICU4XUnicodeSetData_contains32')
@@ -10461,7 +10451,7 @@ class ICU4XUnicodeSetData implements ffi.Finalizable {
         ? ICU4XUnicodeSetData._(result.union.ok)
         : throw ICU4XError._(result.union.err);
   }
-  static late final _loadBasicEmojiFfi = _capi<
+  static final _loadBasicEmojiFfi = _capi<
               ffi.NativeFunction<
                   _ResultOpaqueUint32 Function(ffi.Pointer<ffi.Opaque>)>>(
           'ICU4XUnicodeSetData_load_basic_emoji')
@@ -10477,7 +10467,7 @@ class ICU4XUnicodeSetData implements ffi.Finalizable {
         ? ICU4XUnicodeSetData._(result.union.ok)
         : throw ICU4XError._(result.union.err);
   }
-  static late final _loadExemplarsMainFfi = _capi<
+  static final _loadExemplarsMainFfi = _capi<
               ffi.NativeFunction<
                   _ResultOpaqueUint32 Function(
                       ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>>(
@@ -10495,7 +10485,7 @@ class ICU4XUnicodeSetData implements ffi.Finalizable {
         ? ICU4XUnicodeSetData._(result.union.ok)
         : throw ICU4XError._(result.union.err);
   }
-  static late final _loadExemplarsAuxiliaryFfi = _capi<
+  static final _loadExemplarsAuxiliaryFfi = _capi<
               ffi.NativeFunction<
                   _ResultOpaqueUint32 Function(
                       ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>>(
@@ -10513,7 +10503,7 @@ class ICU4XUnicodeSetData implements ffi.Finalizable {
         ? ICU4XUnicodeSetData._(result.union.ok)
         : throw ICU4XError._(result.union.err);
   }
-  static late final _loadExemplarsPunctuationFfi = _capi<
+  static final _loadExemplarsPunctuationFfi = _capi<
               ffi.NativeFunction<
                   _ResultOpaqueUint32 Function(
                       ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>>(
@@ -10531,7 +10521,7 @@ class ICU4XUnicodeSetData implements ffi.Finalizable {
         ? ICU4XUnicodeSetData._(result.union.ok)
         : throw ICU4XError._(result.union.err);
   }
-  static late final _loadExemplarsNumbersFfi = _capi<
+  static final _loadExemplarsNumbersFfi = _capi<
               ffi.NativeFunction<
                   _ResultOpaqueUint32 Function(
                       ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>>(
@@ -10549,7 +10539,7 @@ class ICU4XUnicodeSetData implements ffi.Finalizable {
         ? ICU4XUnicodeSetData._(result.union.ok)
         : throw ICU4XError._(result.union.err);
   }
-  static late final _loadExemplarsIndexFfi = _capi<
+  static final _loadExemplarsIndexFfi = _capi<
               ffi.NativeFunction<
                   _ResultOpaqueUint32 Function(
                       ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>>(
@@ -10569,7 +10559,7 @@ class ICU4XWeekCalculator implements ffi.Finalizable {
     _finalizer.attach(this, _underlying.cast());
   }
 
-  static late final _finalizer =
+  static final _finalizer =
       ffi.NativeFinalizer(_capi('ICU4XWeekCalculator_destroy'));
 
   /// Creates a new [`ICU4XWeekCalculator`] from locale data.
@@ -10581,7 +10571,7 @@ class ICU4XWeekCalculator implements ffi.Finalizable {
         ? ICU4XWeekCalculator._(result.union.ok)
         : throw ICU4XError._(result.union.err);
   }
-  static late final _createFfi = _capi<
+  static final _createFfi = _capi<
           ffi.NativeFunction<
               _ResultOpaqueUint32 Function(ffi.Pointer<ffi.Opaque>,
                   ffi.Pointer<ffi.Opaque>)>>('ICU4XWeekCalculator_create')
@@ -10596,7 +10586,7 @@ class ICU4XWeekCalculator implements ffi.Finalizable {
         firstWeekday._id, minWeekDays);
     return ICU4XWeekCalculator._(result);
   }
-  static late final _createFromFirstDayOfWeekAndMinWeekDaysFfi = _capi<
+  static final _createFromFirstDayOfWeekAndMinWeekDaysFfi = _capi<
               ffi.NativeFunction<
                   ffi.Pointer<ffi.Opaque> Function(ffi.Uint32, ffi.Uint8)>>(
           'ICU4XWeekCalculator_create_from_first_day_of_week_and_min_week_days')
@@ -10610,7 +10600,7 @@ class ICU4XWeekCalculator implements ffi.Finalizable {
     return ICU4XIsoWeekday._(result);
   }
 
-  static late final _firstWeekdayFfi =
+  static final _firstWeekdayFfi =
       _capi<ffi.NativeFunction<ffi.Uint32 Function(ffi.Pointer<ffi.Opaque>)>>(
               'ICU4XWeekCalculator_first_weekday')
           .asFunction<int Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
@@ -10624,7 +10614,7 @@ class ICU4XWeekCalculator implements ffi.Finalizable {
     return result;
   }
 
-  static late final _minWeekDaysFfi =
+  static final _minWeekDaysFfi =
       _capi<ffi.NativeFunction<ffi.Uint8 Function(ffi.Pointer<ffi.Opaque>)>>(
               'ICU4XWeekCalculator_min_week_days')
           .asFunction<int Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
@@ -10697,7 +10687,7 @@ class ICU4XWordBreakIteratorLatin1 implements ffi.Finalizable {
     _finalizer.attach(this, _underlying.cast());
   }
 
-  static late final _finalizer =
+  static final _finalizer =
       ffi.NativeFinalizer(_capi('ICU4XWordBreakIteratorLatin1_destroy'));
 
   /// Finds the next breakpoint. Returns -1 if at the end of the string or if the index is
@@ -10709,7 +10699,7 @@ class ICU4XWordBreakIteratorLatin1 implements ffi.Finalizable {
     return result;
   }
 
-  static late final _nextFfi =
+  static final _nextFfi =
       _capi<ffi.NativeFunction<ffi.Int32 Function(ffi.Pointer<ffi.Opaque>)>>(
               'ICU4XWordBreakIteratorLatin1_next')
           .asFunction<int Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
@@ -10722,7 +10712,7 @@ class ICU4XWordBreakIteratorLatin1 implements ffi.Finalizable {
     return ICU4XSegmenterWordType._(result);
   }
 
-  static late final _wordTypeFfi =
+  static final _wordTypeFfi =
       _capi<ffi.NativeFunction<ffi.Uint32 Function(ffi.Pointer<ffi.Opaque>)>>(
               'ICU4XWordBreakIteratorLatin1_word_type')
           .asFunction<int Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
@@ -10735,7 +10725,7 @@ class ICU4XWordBreakIteratorLatin1 implements ffi.Finalizable {
     return result;
   }
 
-  static late final _isWordLikeFfi =
+  static final _isWordLikeFfi =
       _capi<ffi.NativeFunction<ffi.Bool Function(ffi.Pointer<ffi.Opaque>)>>(
               'ICU4XWordBreakIteratorLatin1_is_word_like')
           .asFunction<bool Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
@@ -10749,7 +10739,7 @@ class ICU4XWordBreakIteratorUtf16 implements ffi.Finalizable {
     _finalizer.attach(this, _underlying.cast());
   }
 
-  static late final _finalizer =
+  static final _finalizer =
       ffi.NativeFinalizer(_capi('ICU4XWordBreakIteratorUtf16_destroy'));
 
   /// Finds the next breakpoint. Returns -1 if at the end of the string or if the index is
@@ -10761,7 +10751,7 @@ class ICU4XWordBreakIteratorUtf16 implements ffi.Finalizable {
     return result;
   }
 
-  static late final _nextFfi =
+  static final _nextFfi =
       _capi<ffi.NativeFunction<ffi.Int32 Function(ffi.Pointer<ffi.Opaque>)>>(
               'ICU4XWordBreakIteratorUtf16_next')
           .asFunction<int Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
@@ -10774,7 +10764,7 @@ class ICU4XWordBreakIteratorUtf16 implements ffi.Finalizable {
     return ICU4XSegmenterWordType._(result);
   }
 
-  static late final _wordTypeFfi =
+  static final _wordTypeFfi =
       _capi<ffi.NativeFunction<ffi.Uint32 Function(ffi.Pointer<ffi.Opaque>)>>(
               'ICU4XWordBreakIteratorUtf16_word_type')
           .asFunction<int Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
@@ -10787,7 +10777,7 @@ class ICU4XWordBreakIteratorUtf16 implements ffi.Finalizable {
     return result;
   }
 
-  static late final _isWordLikeFfi =
+  static final _isWordLikeFfi =
       _capi<ffi.NativeFunction<ffi.Bool Function(ffi.Pointer<ffi.Opaque>)>>(
               'ICU4XWordBreakIteratorUtf16_is_word_like')
           .asFunction<bool Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
@@ -10801,7 +10791,7 @@ class ICU4XWordBreakIteratorUtf8 implements ffi.Finalizable {
     _finalizer.attach(this, _underlying.cast());
   }
 
-  static late final _finalizer =
+  static final _finalizer =
       ffi.NativeFinalizer(_capi('ICU4XWordBreakIteratorUtf8_destroy'));
 
   /// Finds the next breakpoint. Returns -1 if at the end of the string or if the index is
@@ -10813,7 +10803,7 @@ class ICU4XWordBreakIteratorUtf8 implements ffi.Finalizable {
     return result;
   }
 
-  static late final _nextFfi =
+  static final _nextFfi =
       _capi<ffi.NativeFunction<ffi.Int32 Function(ffi.Pointer<ffi.Opaque>)>>(
               'ICU4XWordBreakIteratorUtf8_next')
           .asFunction<int Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
@@ -10826,7 +10816,7 @@ class ICU4XWordBreakIteratorUtf8 implements ffi.Finalizable {
     return ICU4XSegmenterWordType._(result);
   }
 
-  static late final _wordTypeFfi =
+  static final _wordTypeFfi =
       _capi<ffi.NativeFunction<ffi.Uint32 Function(ffi.Pointer<ffi.Opaque>)>>(
               'ICU4XWordBreakIteratorUtf8_word_type')
           .asFunction<int Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
@@ -10839,7 +10829,7 @@ class ICU4XWordBreakIteratorUtf8 implements ffi.Finalizable {
     return result;
   }
 
-  static late final _isWordLikeFfi =
+  static final _isWordLikeFfi =
       _capi<ffi.NativeFunction<ffi.Bool Function(ffi.Pointer<ffi.Opaque>)>>(
               'ICU4XWordBreakIteratorUtf8_is_word_like')
           .asFunction<bool Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
@@ -10855,7 +10845,7 @@ class ICU4XWordSegmenter implements ffi.Finalizable {
     _finalizer.attach(this, _underlying.cast());
   }
 
-  static late final _finalizer =
+  static final _finalizer =
       ffi.NativeFinalizer(_capi('ICU4XWordSegmenter_destroy'));
 
   /// Construct an [`ICU4XWordSegmenter`] with automatically selecting the best available LSTM
@@ -10871,7 +10861,7 @@ class ICU4XWordSegmenter implements ffi.Finalizable {
         ? ICU4XWordSegmenter._(result.union.ok)
         : throw ICU4XError._(result.union.err);
   }
-  static late final _createAutoFfi = _capi<
+  static final _createAutoFfi = _capi<
           ffi.NativeFunction<
               _ResultOpaqueUint32 Function(
                   ffi.Pointer<ffi.Opaque>)>>('ICU4XWordSegmenter_create_auto')
@@ -10891,7 +10881,7 @@ class ICU4XWordSegmenter implements ffi.Finalizable {
         ? ICU4XWordSegmenter._(result.union.ok)
         : throw ICU4XError._(result.union.err);
   }
-  static late final _createLstmFfi = _capi<
+  static final _createLstmFfi = _capi<
           ffi.NativeFunction<
               _ResultOpaqueUint32 Function(
                   ffi.Pointer<ffi.Opaque>)>>('ICU4XWordSegmenter_create_lstm')
@@ -10908,7 +10898,7 @@ class ICU4XWordSegmenter implements ffi.Finalizable {
         ? ICU4XWordSegmenter._(result.union.ok)
         : throw ICU4XError._(result.union.err);
   }
-  static late final _createDictionaryFfi = _capi<
+  static final _createDictionaryFfi = _capi<
               ffi.NativeFunction<
                   _ResultOpaqueUint32 Function(ffi.Pointer<ffi.Opaque>)>>(
           'ICU4XWordSegmenter_create_dictionary')
@@ -10923,12 +10913,12 @@ class ICU4XWordSegmenter implements ffi.Finalizable {
     final inputSlice = _SliceFfi2Utf8._fromDart(input, alloc);
 
     final result =
-        _segmentUtf8Ffi(_underlying, inputSlice.bytes, inputSlice.length);
+        _segmentUtf8Ffi(_underlying, inputSlice._bytes, inputSlice._length);
     alloc.releaseAll();
     return ICU4XWordBreakIteratorUtf8._(result);
   }
 
-  static late final _segmentUtf8Ffi = _capi<
+  static final _segmentUtf8Ffi = _capi<
           ffi.NativeFunction<
               ffi.Pointer<ffi.Opaque> Function(
                   ffi.Pointer<ffi.Opaque>,
@@ -10946,12 +10936,12 @@ class ICU4XWordSegmenter implements ffi.Finalizable {
     final inputSlice = _SliceFfiUint16._fromDart(input, alloc);
 
     final result =
-        _segmentUtf16Ffi(_underlying, inputSlice.bytes, inputSlice.length);
+        _segmentUtf16Ffi(_underlying, inputSlice._bytes, inputSlice._length);
     alloc.releaseAll();
     return ICU4XWordBreakIteratorUtf16._(result);
   }
 
-  static late final _segmentUtf16Ffi = _capi<
+  static final _segmentUtf16Ffi = _capi<
           ffi.NativeFunction<
               ffi.Pointer<ffi.Opaque> Function(
                   ffi.Pointer<ffi.Opaque>,
@@ -10969,12 +10959,12 @@ class ICU4XWordSegmenter implements ffi.Finalizable {
     final inputSlice = _SliceFfiUint8._fromDart(input, alloc);
 
     final result =
-        _segmentLatin1Ffi(_underlying, inputSlice.bytes, inputSlice.length);
+        _segmentLatin1Ffi(_underlying, inputSlice._bytes, inputSlice._length);
     alloc.releaseAll();
     return ICU4XWordBreakIteratorLatin1._(result);
   }
 
-  static late final _segmentLatin1Ffi = _capi<
+  static final _segmentLatin1Ffi = _capi<
           ffi.NativeFunction<
               ffi.Pointer<ffi.Opaque> Function(
                   ffi.Pointer<ffi.Opaque>,
@@ -10995,7 +10985,7 @@ class ICU4XZonedDateTimeFormatter implements ffi.Finalizable {
     _finalizer.attach(this, _underlying.cast());
   }
 
-  static late final _finalizer =
+  static final _finalizer =
       ffi.NativeFinalizer(_capi('ICU4XZonedDateTimeFormatter_destroy'));
 
   /// Creates a new [`ICU4XZonedDateTimeFormatter`] from locale data.
@@ -11015,7 +11005,7 @@ class ICU4XZonedDateTimeFormatter implements ffi.Finalizable {
         ? ICU4XZonedDateTimeFormatter._(result.union.ok)
         : throw ICU4XError._(result.union.err);
   }
-  static late final _createWithLengthsFfi = _capi<
+  static final _createWithLengthsFfi = _capi<
               ffi.NativeFunction<
                   _ResultOpaqueUint32 Function(ffi.Pointer<ffi.Opaque>,
                       ffi.Pointer<ffi.Opaque>, ffi.Uint32, ffi.Uint32)>>(
@@ -11046,7 +11036,7 @@ class ICU4XZonedDateTimeFormatter implements ffi.Finalizable {
         ? ICU4XZonedDateTimeFormatter._(result.union.ok)
         : throw ICU4XError._(result.union.err);
   }
-  static late final _createWithLengthsAndIso8601TimeZoneFallbackFfi = _capi<
+  static final _createWithLengthsAndIso8601TimeZoneFallbackFfi = _capi<
               ffi.NativeFunction<
                   _ResultOpaqueUint32 Function(
                       ffi.Pointer<ffi.Opaque>,
@@ -11076,7 +11066,7 @@ class ICU4XZonedDateTimeFormatter implements ffi.Finalizable {
         : throw ICU4XError._(result.union.err);
   }
 
-  static late final _formatDatetimeWithCustomTimeZoneFfi = _capi<
+  static final _formatDatetimeWithCustomTimeZoneFfi = _capi<
               ffi.NativeFunction<
                   _ResultVoidUint32 Function(
                       ffi.Pointer<ffi.Opaque>,
@@ -11104,7 +11094,7 @@ class ICU4XZonedDateTimeFormatter implements ffi.Finalizable {
         : throw ICU4XError._(result.union.err);
   }
 
-  static late final _formatIsoDatetimeWithCustomTimeZoneFfi = _capi<
+  static final _formatIsoDatetimeWithCustomTimeZoneFfi = _capi<
               ffi.NativeFunction<
                   _ResultVoidUint32 Function(
                       ffi.Pointer<ffi.Opaque>,
@@ -11270,7 +11260,7 @@ class _SliceFfi2Utf8 extends ffi.Struct {
 
   // ignore: unused_element
   String get _asDart =>
-      Utf8Decoder().convert(bytes.cast<ffi.Uint8>().asTypedList(length));
+      Utf8Decoder().convert(_bytes.cast<ffi.Uint8>().asTypedList(_length));
 
   // This is expensive
   @override
@@ -11312,7 +11302,7 @@ class _SliceFfiUint16 extends ffi.Struct {
   }
 
   // ignore: unused_element
-  Uint16List get _asDart => bytes.asTypedList(length);
+  Uint16List get _asDart => _bytes.asTypedList(_length);
 
   // This is expensive
   @override
@@ -11354,7 +11344,7 @@ class _SliceFfiUint32 extends ffi.Struct {
   }
 
   // ignore: unused_element
-  Uint32List get _asDart => bytes.asTypedList(length);
+  Uint32List get _asDart => _bytes.asTypedList(_length);
 
   // This is expensive
   @override
@@ -11396,7 +11386,7 @@ class _SliceFfiUint8 extends ffi.Struct {
   }
 
   // ignore: unused_element
-  Uint8List get _asDart => bytes.asTypedList(length);
+  Uint8List get _asDart => _bytes.asTypedList(_length);
 
   // This is expensive
   @override
@@ -11425,7 +11415,7 @@ class _Writeable {
   final ffi.Pointer<ffi.Opaque> _underlying;
 
   _Writeable() : _underlying = _create(0);
-  static late final _create =
+  static final _create =
       _capi<ffi.NativeFunction<ffi.Pointer<ffi.Opaque> Function(ffi.Size)>>(
               'diplomat_buffer_writeable_create')
           .asFunction<ffi.Pointer<ffi.Opaque> Function(int)>();
@@ -11437,17 +11427,17 @@ class _Writeable {
     return string;
   }
 
-  static late final _len =
+  static final _len =
       _capi<ffi.NativeFunction<ffi.Size Function(ffi.Pointer<ffi.Opaque>)>>(
               'diplomat_buffer_writeable_len')
           .asFunction<int Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
-  static late final _getBytes = _capi<
+  static final _getBytes = _capi<
               ffi.NativeFunction<
                   ffi.Pointer<ffi2.Utf8> Function(ffi.Pointer<ffi.Opaque>)>>(
           'diplomat_buffer_writeable_get_bytes')
       .asFunction<ffi.Pointer<ffi2.Utf8> Function(ffi.Pointer<ffi.Opaque>)>(
           isLeaf: true);
-  static late final _destroy =
+  static final _destroy =
       _capi<ffi.NativeFunction<ffi.Void Function(ffi.Pointer<ffi.Opaque>)>>(
               'diplomat_buffer_writeable_destroy')
           .asFunction<void Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
