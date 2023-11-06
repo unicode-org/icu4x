@@ -11253,8 +11253,9 @@ class _SliceFfi2Utf8 extends ffi.Struct {
 
   @ffi.Size()
   external int _length;
-  // Produces a slice from a Dart object. The Dart object's data is copied into the given allocator
-  // as it cannot be borrowed directly, and gets freed with the slice object.
+
+  /// Produces a slice from a Dart object. The Dart object's data is copied into the given allocator
+  /// as it cannot be borrowed directly, and gets freed with the slice object.
   // ignore: unused_element
   static _SliceFfi2Utf8 _fromDart(String value, ffi.Allocator allocator) {
     final pointer = allocator<_SliceFfi2Utf8>();
@@ -11296,8 +11297,9 @@ class _SliceFfiUint16 extends ffi.Struct {
 
   @ffi.Size()
   external int _length;
-  // Produces a slice from a Dart object. The Dart object's data is copied into the given allocator
-  // as it cannot be borrowed directly, and gets freed with the slice object.
+
+  /// Produces a slice from a Dart object. The Dart object's data is copied into the given allocator
+  /// as it cannot be borrowed directly, and gets freed with the slice object.
   // ignore: unused_element
   static _SliceFfiUint16 _fromDart(Uint16List value, ffi.Allocator allocator) {
     final pointer = allocator<_SliceFfiUint16>();
@@ -11337,8 +11339,9 @@ class _SliceFfiUint32 extends ffi.Struct {
 
   @ffi.Size()
   external int _length;
-  // Produces a slice from a Dart object. The Dart object's data is copied into the given allocator
-  // as it cannot be borrowed directly, and gets freed with the slice object.
+
+  /// Produces a slice from a Dart object. The Dart object's data is copied into the given allocator
+  /// as it cannot be borrowed directly, and gets freed with the slice object.
   // ignore: unused_element
   static _SliceFfiUint32 _fromDart(Uint32List value, ffi.Allocator allocator) {
     final pointer = allocator<_SliceFfiUint32>();
@@ -11378,8 +11381,9 @@ class _SliceFfiUint8 extends ffi.Struct {
 
   @ffi.Size()
   external int _length;
-  // Produces a slice from a Dart object. The Dart object's data is copied into the given allocator
-  // as it cannot be borrowed directly, and gets freed with the slice object.
+
+  /// Produces a slice from a Dart object. The Dart object's data is copied into the given allocator
+  /// as it cannot be borrowed directly, and gets freed with the slice object.
   // ignore: unused_element
   static _SliceFfiUint8 _fromDart(Uint8List value, ffi.Allocator allocator) {
     final pointer = allocator<_SliceFfiUint8>();
