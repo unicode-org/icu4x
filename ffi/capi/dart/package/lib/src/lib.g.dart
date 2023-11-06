@@ -27,11 +27,12 @@ class CodePointRangeIterator implements ffi.Finalizable {
   ///
   /// If the iterator is out of items, `done` will be true
   CodePointRangeIteratorResult next() {
-    final result = _nextFfi(_underlying);
+    final result = _CodePointRangeIterator_next(_underlying);
     return CodePointRangeIteratorResult._(result);
   }
 
-  static final _nextFfi = _capi<
+  // ignore: non_constant_identifier_names
+  static final _CodePointRangeIterator_next = _capi<
           ffi.NativeFunction<
               _CodePointRangeIteratorResultFfi Function(
                   ffi.Pointer<ffi.Opaque>)>>('CodePointRangeIterator_next')
@@ -172,12 +173,13 @@ enum ICU4XAnyCalendarKind {
   ///
   /// See the [Rust documentation for `get_for_locale`](https://docs.rs/icu/latest/icu/calendar/enum.AnyCalendarKind.html#method.get_for_locale) for more information.
   factory ICU4XAnyCalendarKind.getForLocale(ICU4XLocale locale) {
-    final result = _getForLocaleFfi(locale._underlying);
+    final result = _ICU4XAnyCalendarKind_get_for_locale(locale._underlying);
     return result.isOk
         ? ICU4XAnyCalendarKind._(result.union.ok)
         : throw VoidError();
   }
-  static final _getForLocaleFfi = _capi<
+  // ignore: non_constant_identifier_names
+  static final _ICU4XAnyCalendarKind_get_for_locale = _capi<
               ffi.NativeFunction<
                   _ResultUint32Void Function(ffi.Pointer<ffi.Opaque>)>>(
           'ICU4XAnyCalendarKind_get_for_locale')
@@ -193,13 +195,15 @@ enum ICU4XAnyCalendarKind {
     final alloc = ffi2.Arena();
     final sSlice = _SliceFfi2Utf8._fromDart(s, alloc);
 
-    final result = _getForBcp47Ffi(sSlice._bytes, sSlice._length);
+    final result =
+        _ICU4XAnyCalendarKind_get_for_bcp47(sSlice._bytes, sSlice._length);
     alloc.releaseAll();
     return result.isOk
         ? ICU4XAnyCalendarKind._(result.union.ok)
         : throw VoidError();
   }
-  static final _getForBcp47Ffi = _capi<
+  // ignore: non_constant_identifier_names
+  static final _ICU4XAnyCalendarKind_get_for_bcp47 = _capi<
           ffi.NativeFunction<
               _ResultUint32Void Function(ffi.Pointer<ffi2.Utf8>,
                   ffi.Size)>>('ICU4XAnyCalendarKind_get_for_bcp47')
@@ -211,13 +215,14 @@ enum ICU4XAnyCalendarKind {
   /// See the [Rust documentation for `as_bcp47_string`](https://docs.rs/icu/latest/icu/calendar/enum.AnyCalendarKind.html#method.as_bcp47_string) for more information.
   String get bcp47 {
     final writeable = _Writeable();
-    final result = _bcp47Ffi(_id, writeable._underlying);
+    final result = _ICU4XAnyCalendarKind_bcp47(_id, writeable._underlying);
     return result.isOk
         ? writeable.finalize()
         : throw ICU4XError._(result.union.err);
   }
 
-  static final _bcp47Ffi = _capi<
+  // ignore: non_constant_identifier_names
+  static final _ICU4XAnyCalendarKind_bcp47 = _capi<
           ffi.NativeFunction<
               _ResultVoidUint32 Function(ffi.Uint32,
                   ffi.Pointer<ffi.Opaque>)>>('ICU4XAnyCalendarKind_bcp47')
@@ -240,12 +245,13 @@ class ICU4XBcp47ToIanaMapper implements ffi.Finalizable {
 
   /// See the [Rust documentation for `new`](https://docs.rs/icu/latest/icu/timezone/struct.IanaBcp47RoundTripMapper.html#method.new) for more information.
   factory ICU4XBcp47ToIanaMapper(ICU4XDataProvider provider) {
-    final result = _createFfi(provider._underlying);
+    final result = _ICU4XBcp47ToIanaMapper_create(provider._underlying);
     return result.isOk
         ? ICU4XBcp47ToIanaMapper._(result.union.ok)
         : throw ICU4XError._(result.union.err);
   }
-  static final _createFfi = _capi<
+  // ignore: non_constant_identifier_names
+  static final _ICU4XBcp47ToIanaMapper_create = _capi<
           ffi.NativeFunction<
               _ResultOpaqueUint32 Function(
                   ffi.Pointer<ffi.Opaque>)>>('ICU4XBcp47ToIanaMapper_create')
@@ -260,15 +266,16 @@ class ICU4XBcp47ToIanaMapper implements ffi.Finalizable {
     final valueSlice = _SliceFfi2Utf8._fromDart(value, alloc);
 
     final writeable = _Writeable();
-    final result = _getFfi(_underlying, valueSlice._bytes, valueSlice._length,
-        writeable._underlying);
+    final result = _ICU4XBcp47ToIanaMapper_get(_underlying, valueSlice._bytes,
+        valueSlice._length, writeable._underlying);
     alloc.releaseAll();
     return result.isOk
         ? writeable.finalize()
         : throw ICU4XError._(result.union.err);
   }
 
-  static final _getFfi = _capi<
+  // ignore: non_constant_identifier_names
+  static final _ICU4XBcp47ToIanaMapper_get = _capi<
           ffi.NativeFunction<
               _ResultVoidUint32 Function(
                   ffi.Pointer<ffi.Opaque>,
@@ -299,12 +306,13 @@ class ICU4XBidi implements ffi.Finalizable {
   ///
   /// See the [Rust documentation for `new`](https://docs.rs/icu/latest/icu/properties/bidi/struct.BidiClassAdapter.html#method.new) for more information.
   factory ICU4XBidi(ICU4XDataProvider provider) {
-    final result = _createFfi(provider._underlying);
+    final result = _ICU4XBidi_create(provider._underlying);
     return result.isOk
         ? ICU4XBidi._(result.union.ok)
         : throw ICU4XError._(result.union.err);
   }
-  static final _createFfi = _capi<
+  // ignore: non_constant_identifier_names
+  static final _ICU4XBidi_create = _capi<
           ffi.NativeFunction<
               _ResultOpaqueUint32 Function(
                   ffi.Pointer<ffi.Opaque>)>>('ICU4XBidi_create')
@@ -320,13 +328,14 @@ class ICU4XBidi implements ffi.Finalizable {
     final alloc = ffi2.Arena();
     final textSlice = _SliceFfi2Utf8._fromDart(text, alloc);
 
-    final result = _forTextFfi(
+    final result = _ICU4XBidi_for_text(
         _underlying, textSlice._bytes, textSlice._length, defaultLevel);
     alloc.releaseAll();
     return ICU4XBidiInfo._(result);
   }
 
-  static final _forTextFfi = _capi<
+  // ignore: non_constant_identifier_names
+  static final _ICU4XBidi_for_text = _capi<
           ffi.NativeFunction<
               ffi.Pointer<ffi.Opaque> Function(
                   ffi.Pointer<ffi.Opaque>,
@@ -351,13 +360,14 @@ class ICU4XBidi implements ffi.Finalizable {
     final alloc = ffi2.Arena();
     final levelsSlice = _SliceFfiUint8._fromDart(levels, alloc);
 
-    final result =
-        _reorderVisualFfi(_underlying, levelsSlice._bytes, levelsSlice._length);
+    final result = _ICU4XBidi_reorder_visual(
+        _underlying, levelsSlice._bytes, levelsSlice._length);
     alloc.releaseAll();
     return ICU4XReorderedIndexMap._(result);
   }
 
-  static final _reorderVisualFfi = _capi<
+  // ignore: non_constant_identifier_names
+  static final _ICU4XBidi_reorder_visual = _capi<
           ffi.NativeFunction<
               ffi.Pointer<ffi.Opaque> Function(
                   ffi.Pointer<ffi.Opaque>,
@@ -373,11 +383,12 @@ class ICU4XBidi implements ffi.Finalizable {
   ///
   /// See the [Rust documentation for `is_rtl`](https://docs.rs/unicode_bidi/latest/unicode_bidi/struct.Level.html#method.is_rtl) for more information.
   static bool levelIsRtl(int level) {
-    final result = _levelIsRtlFfi(level);
+    final result = _ICU4XBidi_level_is_rtl(level);
     return result;
   }
 
-  static final _levelIsRtlFfi =
+  // ignore: non_constant_identifier_names
+  static final _ICU4XBidi_level_is_rtl =
       _capi<ffi.NativeFunction<ffi.Bool Function(ffi.Uint8)>>(
               'ICU4XBidi_level_is_rtl')
           .asFunction<bool Function(int)>(isLeaf: true);
@@ -388,11 +399,12 @@ class ICU4XBidi implements ffi.Finalizable {
   ///
   /// See the [Rust documentation for `is_ltr`](https://docs.rs/unicode_bidi/latest/unicode_bidi/struct.Level.html#method.is_ltr) for more information.
   static bool levelIsLtr(int level) {
-    final result = _levelIsLtrFfi(level);
+    final result = _ICU4XBidi_level_is_ltr(level);
     return result;
   }
 
-  static final _levelIsLtrFfi =
+  // ignore: non_constant_identifier_names
+  static final _ICU4XBidi_level_is_ltr =
       _capi<ffi.NativeFunction<ffi.Bool Function(ffi.Uint8)>>(
               'ICU4XBidi_level_is_ltr')
           .asFunction<bool Function(int)>(isLeaf: true);
@@ -440,22 +452,24 @@ class ICU4XBidiInfo implements ffi.Finalizable {
 
   /// The number of paragraphs contained here
   int get paragraphCount {
-    final result = _paragraphCountFfi(_underlying);
+    final result = _ICU4XBidiInfo_paragraph_count(_underlying);
     return result;
   }
 
-  static final _paragraphCountFfi =
+  // ignore: non_constant_identifier_names
+  static final _ICU4XBidiInfo_paragraph_count =
       _capi<ffi.NativeFunction<ffi.Size Function(ffi.Pointer<ffi.Opaque>)>>(
               'ICU4XBidiInfo_paragraph_count')
           .asFunction<int Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
 
   /// Get the nth paragraph, returning `None` if out of bounds
   ICU4XBidiParagraph? paragraphAt(int n) {
-    final result = _paragraphAtFfi(_underlying, n);
+    final result = _ICU4XBidiInfo_paragraph_at(_underlying, n);
     return result.address == 0 ? null : ICU4XBidiParagraph._(result);
   }
 
-  static final _paragraphAtFfi = _capi<
+  // ignore: non_constant_identifier_names
+  static final _ICU4XBidiInfo_paragraph_at = _capi<
           ffi.NativeFunction<
               ffi.Pointer<ffi.Opaque> Function(ffi.Pointer<ffi.Opaque>,
                   ffi.Size)>>('ICU4XBidiInfo_paragraph_at')
@@ -465,11 +479,12 @@ class ICU4XBidiInfo implements ffi.Finalizable {
 
   /// The number of bytes in this full text
   int get size {
-    final result = _sizeFfi(_underlying);
+    final result = _ICU4XBidiInfo_size(_underlying);
     return result;
   }
 
-  static final _sizeFfi =
+  // ignore: non_constant_identifier_names
+  static final _ICU4XBidiInfo_size =
       _capi<ffi.NativeFunction<ffi.Size Function(ffi.Pointer<ffi.Opaque>)>>(
               'ICU4XBidiInfo_size')
           .asFunction<int Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
@@ -480,11 +495,12 @@ class ICU4XBidiInfo implements ffi.Finalizable {
   ///
   /// Returns 0 (equivalent to `Level::ltr()`) on error
   int levelAt(int pos) {
-    final result = _levelAtFfi(_underlying, pos);
+    final result = _ICU4XBidiInfo_level_at(_underlying, pos);
     return result;
   }
 
-  static final _levelAtFfi = _capi<
+  // ignore: non_constant_identifier_names
+  static final _ICU4XBidiInfo_level_at = _capi<
           ffi.NativeFunction<
               ffi.Uint8 Function(
                   ffi.Pointer<ffi.Opaque>, ffi.Size)>>('ICU4XBidiInfo_level_at')
@@ -508,13 +524,14 @@ class ICU4XBidiParagraph implements ffi.Finalizable {
   /// This is equivalent to calling `paragraph_at()` on `ICU4XBidiInfo` but doesn't
   /// create a new object
   void setParagraphInText(int n) {
-    final result = _setParagraphInTextFfi(_underlying, n);
+    final result = _ICU4XBidiParagraph_set_paragraph_in_text(_underlying, n);
     if (!result.isOk) {
       throw ICU4XError._(result.union.err);
     }
   }
 
-  static final _setParagraphInTextFfi = _capi<
+  // ignore: non_constant_identifier_names
+  static final _ICU4XBidiParagraph_set_paragraph_in_text = _capi<
           ffi.NativeFunction<
               _ResultVoidUint32 Function(ffi.Pointer<ffi.Opaque>,
                   ffi.Size)>>('ICU4XBidiParagraph_set_paragraph_in_text')
@@ -525,11 +542,12 @@ class ICU4XBidiParagraph implements ffi.Finalizable {
   ///
   /// See the [Rust documentation for `level_at`](https://docs.rs/unicode_bidi/latest/unicode_bidi/struct.Paragraph.html#method.level_at) for more information.
   ICU4XBidiDirection get direction {
-    final result = _directionFfi(_underlying);
+    final result = _ICU4XBidiParagraph_direction(_underlying);
     return ICU4XBidiDirection._(result);
   }
 
-  static final _directionFfi =
+  // ignore: non_constant_identifier_names
+  static final _ICU4XBidiParagraph_direction =
       _capi<ffi.NativeFunction<ffi.Uint32 Function(ffi.Pointer<ffi.Opaque>)>>(
               'ICU4XBidiParagraph_direction')
           .asFunction<int Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
@@ -538,33 +556,36 @@ class ICU4XBidiParagraph implements ffi.Finalizable {
   ///
   /// See the [Rust documentation for `len`](https://docs.rs/unicode_bidi/latest/unicode_bidi/struct.ParagraphInfo.html#method.len) for more information.
   int get size {
-    final result = _sizeFfi(_underlying);
+    final result = _ICU4XBidiParagraph_size(_underlying);
     return result;
   }
 
-  static final _sizeFfi =
+  // ignore: non_constant_identifier_names
+  static final _ICU4XBidiParagraph_size =
       _capi<ffi.NativeFunction<ffi.Size Function(ffi.Pointer<ffi.Opaque>)>>(
               'ICU4XBidiParagraph_size')
           .asFunction<int Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
 
   /// The start index of this paragraph within the source text
   int get rangeStart {
-    final result = _rangeStartFfi(_underlying);
+    final result = _ICU4XBidiParagraph_range_start(_underlying);
     return result;
   }
 
-  static final _rangeStartFfi =
+  // ignore: non_constant_identifier_names
+  static final _ICU4XBidiParagraph_range_start =
       _capi<ffi.NativeFunction<ffi.Size Function(ffi.Pointer<ffi.Opaque>)>>(
               'ICU4XBidiParagraph_range_start')
           .asFunction<int Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
 
   /// The end index of this paragraph within the source text
   int get rangeEnd {
-    final result = _rangeEndFfi(_underlying);
+    final result = _ICU4XBidiParagraph_range_end(_underlying);
     return result;
   }
 
-  static final _rangeEndFfi =
+  // ignore: non_constant_identifier_names
+  static final _ICU4XBidiParagraph_range_end =
       _capi<ffi.NativeFunction<ffi.Size Function(ffi.Pointer<ffi.Opaque>)>>(
               'ICU4XBidiParagraph_range_end')
           .asFunction<int Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
@@ -575,14 +596,15 @@ class ICU4XBidiParagraph implements ffi.Finalizable {
   /// See the [Rust documentation for `level_at`](https://docs.rs/unicode_bidi/latest/unicode_bidi/struct.Paragraph.html#method.level_at) for more information.
   String reorderLine(int rangeStart, int rangeEnd) {
     final writeable = _Writeable();
-    final result = _reorderLineFfi(
+    final result = _ICU4XBidiParagraph_reorder_line(
         _underlying, rangeStart, rangeEnd, writeable._underlying);
     return result.isOk
         ? writeable.finalize()
         : throw ICU4XError._(result.union.err);
   }
 
-  static final _reorderLineFfi = _capi<
+  // ignore: non_constant_identifier_names
+  static final _ICU4XBidiParagraph_reorder_line = _capi<
           ffi.NativeFunction<
               _ResultVoidUint32 Function(
                   ffi.Pointer<ffi.Opaque>,
@@ -601,11 +623,12 @@ class ICU4XBidiParagraph implements ffi.Finalizable {
   ///
   /// See the [Rust documentation for `level_at`](https://docs.rs/unicode_bidi/latest/unicode_bidi/struct.Paragraph.html#method.level_at) for more information.
   int levelAt(int pos) {
-    final result = _levelAtFfi(_underlying, pos);
+    final result = _ICU4XBidiParagraph_level_at(_underlying, pos);
     return result;
   }
 
-  static final _levelAtFfi = _capi<
+  // ignore: non_constant_identifier_names
+  static final _ICU4XBidiParagraph_level_at = _capi<
           ffi.NativeFunction<
               ffi.Uint8 Function(ffi.Pointer<ffi.Opaque>,
                   ffi.Size)>>('ICU4XBidiParagraph_level_at')
@@ -627,13 +650,14 @@ class ICU4XCalendar implements ffi.Finalizable {
   /// See the [Rust documentation for `new_for_locale`](https://docs.rs/icu/latest/icu/calendar/enum.AnyCalendar.html#method.new_for_locale) for more information.
   factory ICU4XCalendar.forLocale(
       ICU4XDataProvider provider, ICU4XLocale locale) {
-    final result =
-        _createForLocaleFfi(provider._underlying, locale._underlying);
+    final result = _ICU4XCalendar_create_for_locale(
+        provider._underlying, locale._underlying);
     return result.isOk
         ? ICU4XCalendar._(result.union.ok)
         : throw ICU4XError._(result.union.err);
   }
-  static final _createForLocaleFfi = _capi<
+  // ignore: non_constant_identifier_names
+  static final _ICU4XCalendar_create_for_locale = _capi<
           ffi.NativeFunction<
               _ResultOpaqueUint32 Function(ffi.Pointer<ffi.Opaque>,
                   ffi.Pointer<ffi.Opaque>)>>('ICU4XCalendar_create_for_locale')
@@ -646,12 +670,14 @@ class ICU4XCalendar implements ffi.Finalizable {
   /// See the [Rust documentation for `new`](https://docs.rs/icu/latest/icu/calendar/enum.AnyCalendar.html#method.new) for more information.
   factory ICU4XCalendar.forKind(
       ICU4XDataProvider provider, ICU4XAnyCalendarKind kind) {
-    final result = _createForKindFfi(provider._underlying, kind._id);
+    final result =
+        _ICU4XCalendar_create_for_kind(provider._underlying, kind._id);
     return result.isOk
         ? ICU4XCalendar._(result.union.ok)
         : throw ICU4XError._(result.union.err);
   }
-  static final _createForKindFfi = _capi<
+  // ignore: non_constant_identifier_names
+  static final _ICU4XCalendar_create_for_kind = _capi<
           ffi.NativeFunction<
               _ResultOpaqueUint32 Function(ffi.Pointer<ffi.Opaque>,
                   ffi.Uint32)>>('ICU4XCalendar_create_for_kind')
@@ -662,11 +688,12 @@ class ICU4XCalendar implements ffi.Finalizable {
   ///
   /// See the [Rust documentation for `kind`](https://docs.rs/icu/latest/icu/calendar/enum.AnyCalendar.html#method.kind) for more information.
   ICU4XAnyCalendarKind get kind {
-    final result = _kindFfi(_underlying);
+    final result = _ICU4XCalendar_kind(_underlying);
     return ICU4XAnyCalendarKind._(result);
   }
 
-  static final _kindFfi =
+  // ignore: non_constant_identifier_names
+  static final _ICU4XCalendar_kind =
       _capi<ffi.NativeFunction<ffi.Uint32 Function(ffi.Pointer<ffi.Opaque>)>>(
               'ICU4XCalendar_kind')
           .asFunction<int Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
@@ -689,12 +716,14 @@ class ICU4XCanonicalCombiningClassMap implements ffi.Finalizable {
   ///
   /// See the [Rust documentation for `new`](https://docs.rs/icu/latest/icu/normalizer/properties/struct.CanonicalCombiningClassMap.html#method.new) for more information.
   factory ICU4XCanonicalCombiningClassMap(ICU4XDataProvider provider) {
-    final result = _createFfi(provider._underlying);
+    final result =
+        _ICU4XCanonicalCombiningClassMap_create(provider._underlying);
     return result.isOk
         ? ICU4XCanonicalCombiningClassMap._(result.union.ok)
         : throw ICU4XError._(result.union.err);
   }
-  static final _createFfi = _capi<
+  // ignore: non_constant_identifier_names
+  static final _ICU4XCanonicalCombiningClassMap_create = _capi<
               ffi.NativeFunction<
                   _ResultOpaqueUint32 Function(ffi.Pointer<ffi.Opaque>)>>(
           'ICU4XCanonicalCombiningClassMap_create')
@@ -705,11 +734,12 @@ class ICU4XCanonicalCombiningClassMap implements ffi.Finalizable {
   ///
   /// Additional information: [1](https://docs.rs/icu/latest/icu/properties/properties/struct.CanonicalCombiningClass.html)
   int get(int ch) {
-    final result = _getFfi(_underlying, ch);
+    final result = _ICU4XCanonicalCombiningClassMap_get(_underlying, ch);
     return result;
   }
 
-  static final _getFfi = _capi<
+  // ignore: non_constant_identifier_names
+  static final _ICU4XCanonicalCombiningClassMap_get = _capi<
           ffi.NativeFunction<
               ffi.Uint8 Function(ffi.Pointer<ffi.Opaque>,
                   ffi.Uint32)>>('ICU4XCanonicalCombiningClassMap_get')
@@ -719,11 +749,12 @@ class ICU4XCanonicalCombiningClassMap implements ffi.Finalizable {
   ///
   /// Additional information: [1](https://docs.rs/icu/latest/icu/properties/properties/struct.CanonicalCombiningClass.html)
   int get32(int ch) {
-    final result = _get32Ffi(_underlying, ch);
+    final result = _ICU4XCanonicalCombiningClassMap_get32(_underlying, ch);
     return result;
   }
 
-  static final _get32Ffi = _capi<
+  // ignore: non_constant_identifier_names
+  static final _ICU4XCanonicalCombiningClassMap_get32 = _capi<
           ffi.NativeFunction<
               ffi.Uint8 Function(ffi.Pointer<ffi.Opaque>,
                   ffi.Uint32)>>('ICU4XCanonicalCombiningClassMap_get32')
@@ -749,12 +780,13 @@ class ICU4XCanonicalComposition implements ffi.Finalizable {
   ///
   /// See the [Rust documentation for `new`](https://docs.rs/icu/latest/icu/normalizer/properties/struct.CanonicalComposition.html#method.new) for more information.
   factory ICU4XCanonicalComposition(ICU4XDataProvider provider) {
-    final result = _createFfi(provider._underlying);
+    final result = _ICU4XCanonicalComposition_create(provider._underlying);
     return result.isOk
         ? ICU4XCanonicalComposition._(result.union.ok)
         : throw ICU4XError._(result.union.err);
   }
-  static final _createFfi = _capi<
+  // ignore: non_constant_identifier_names
+  static final _ICU4XCanonicalComposition_create = _capi<
           ffi.NativeFunction<
               _ResultOpaqueUint32 Function(
                   ffi.Pointer<ffi.Opaque>)>>('ICU4XCanonicalComposition_create')
@@ -766,11 +798,13 @@ class ICU4XCanonicalComposition implements ffi.Finalizable {
   ///
   /// See the [Rust documentation for `compose`](https://docs.rs/icu/latest/icu/normalizer/properties/struct.CanonicalComposition.html#method.compose) for more information.
   int compose(int starter, int second) {
-    final result = _composeFfi(_underlying, starter, second);
+    final result =
+        _ICU4XCanonicalComposition_compose(_underlying, starter, second);
     return result;
   }
 
-  static final _composeFfi = _capi<
+  // ignore: non_constant_identifier_names
+  static final _ICU4XCanonicalComposition_compose = _capi<
           ffi.NativeFunction<
               ffi.Uint32 Function(ffi.Pointer<ffi.Opaque>, ffi.Uint32,
                   ffi.Uint32)>>('ICU4XCanonicalComposition_compose')
@@ -797,12 +831,13 @@ class ICU4XCanonicalDecomposition implements ffi.Finalizable {
   ///
   /// See the [Rust documentation for `new`](https://docs.rs/icu/latest/icu/normalizer/properties/struct.CanonicalDecomposition.html#method.new) for more information.
   factory ICU4XCanonicalDecomposition(ICU4XDataProvider provider) {
-    final result = _createFfi(provider._underlying);
+    final result = _ICU4XCanonicalDecomposition_create(provider._underlying);
     return result.isOk
         ? ICU4XCanonicalDecomposition._(result.union.ok)
         : throw ICU4XError._(result.union.err);
   }
-  static final _createFfi = _capi<
+  // ignore: non_constant_identifier_names
+  static final _ICU4XCanonicalDecomposition_create = _capi<
               ffi.NativeFunction<
                   _ResultOpaqueUint32 Function(ffi.Pointer<ffi.Opaque>)>>(
           'ICU4XCanonicalDecomposition_create')
@@ -813,11 +848,12 @@ class ICU4XCanonicalDecomposition implements ffi.Finalizable {
   ///
   /// See the [Rust documentation for `decompose`](https://docs.rs/icu/latest/icu/normalizer/properties/struct.CanonicalDecomposition.html#method.decompose) for more information.
   ICU4XDecomposed decompose(int c) {
-    final result = _decomposeFfi(_underlying, c);
+    final result = _ICU4XCanonicalDecomposition_decompose(_underlying, c);
     return ICU4XDecomposed._(result);
   }
 
-  static final _decomposeFfi = _capi<
+  // ignore: non_constant_identifier_names
+  static final _ICU4XCanonicalDecomposition_decompose = _capi<
           ffi.NativeFunction<
               _ICU4XDecomposedFfi Function(ffi.Pointer<ffi.Opaque>,
                   ffi.Uint32)>>('ICU4XCanonicalDecomposition_decompose')
@@ -840,12 +876,13 @@ class ICU4XCaseMapCloser implements ffi.Finalizable {
   ///
   /// See the [Rust documentation for `new`](https://docs.rs/icu/latest/icu/casemap/struct.CaseMapCloser.html#method.new) for more information.
   factory ICU4XCaseMapCloser(ICU4XDataProvider provider) {
-    final result = _createFfi(provider._underlying);
+    final result = _ICU4XCaseMapCloser_create(provider._underlying);
     return result.isOk
         ? ICU4XCaseMapCloser._(result.union.ok)
         : throw ICU4XError._(result.union.err);
   }
-  static final _createFfi = _capi<
+  // ignore: non_constant_identifier_names
+  static final _ICU4XCaseMapCloser_create = _capi<
           ffi.NativeFunction<
               _ResultOpaqueUint32 Function(
                   ffi.Pointer<ffi.Opaque>)>>('ICU4XCaseMapCloser_create')
@@ -857,10 +894,12 @@ class ICU4XCaseMapCloser implements ffi.Finalizable {
   ///
   /// See the [Rust documentation for `add_case_closure_to`](https://docs.rs/icu/latest/icu/casemap/struct.CaseMapCloser.html#method.add_case_closure_to) for more information.
   void addCaseClosureTo(int c, ICU4XCodePointSetBuilder builder) {
-    _addCaseClosureToFfi(_underlying, c, builder._underlying);
+    _ICU4XCaseMapCloser_add_case_closure_to(
+        _underlying, c, builder._underlying);
   }
 
-  static final _addCaseClosureToFfi = _capi<
+  // ignore: non_constant_identifier_names
+  static final _ICU4XCaseMapCloser_add_case_closure_to = _capi<
               ffi.NativeFunction<
                   ffi.Void Function(ffi.Pointer<ffi.Opaque>, ffi.Uint32,
                       ffi.Pointer<ffi.Opaque>)>>(
@@ -879,13 +918,14 @@ class ICU4XCaseMapCloser implements ffi.Finalizable {
     final alloc = ffi2.Arena();
     final sSlice = _SliceFfi2Utf8._fromDart(s, alloc);
 
-    final result = _addStringCaseClosureToFfi(
+    final result = _ICU4XCaseMapCloser_add_string_case_closure_to(
         _underlying, sSlice._bytes, sSlice._length, builder._underlying);
     alloc.releaseAll();
     return result;
   }
 
-  static final _addStringCaseClosureToFfi = _capi<
+  // ignore: non_constant_identifier_names
+  static final _ICU4XCaseMapCloser_add_string_case_closure_to = _capi<
               ffi.NativeFunction<
                   ffi.Bool Function(
                       ffi.Pointer<ffi.Opaque>,
@@ -913,12 +953,13 @@ class ICU4XCaseMapper implements ffi.Finalizable {
   ///
   /// See the [Rust documentation for `new`](https://docs.rs/icu/latest/icu/casemap/struct.CaseMapper.html#method.new) for more information.
   factory ICU4XCaseMapper(ICU4XDataProvider provider) {
-    final result = _createFfi(provider._underlying);
+    final result = _ICU4XCaseMapper_create(provider._underlying);
     return result.isOk
         ? ICU4XCaseMapper._(result.union.ok)
         : throw ICU4XError._(result.union.err);
   }
-  static final _createFfi = _capi<
+  // ignore: non_constant_identifier_names
+  static final _ICU4XCaseMapper_create = _capi<
           ffi.NativeFunction<
               _ResultOpaqueUint32 Function(
                   ffi.Pointer<ffi.Opaque>)>>('ICU4XCaseMapper_create')
@@ -933,15 +974,16 @@ class ICU4XCaseMapper implements ffi.Finalizable {
     final sSlice = _SliceFfi2Utf8._fromDart(s, alloc);
 
     final writeable = _Writeable();
-    final result = _lowercaseFfi(_underlying, sSlice._bytes, sSlice._length,
-        locale._underlying, writeable._underlying);
+    final result = _ICU4XCaseMapper_lowercase(_underlying, sSlice._bytes,
+        sSlice._length, locale._underlying, writeable._underlying);
     alloc.releaseAll();
     return result.isOk
         ? writeable.finalize()
         : throw ICU4XError._(result.union.err);
   }
 
-  static final _lowercaseFfi = _capi<
+  // ignore: non_constant_identifier_names
+  static final _ICU4XCaseMapper_lowercase = _capi<
           ffi.NativeFunction<
               _ResultVoidUint32 Function(
                   ffi.Pointer<ffi.Opaque>,
@@ -965,15 +1007,16 @@ class ICU4XCaseMapper implements ffi.Finalizable {
     final sSlice = _SliceFfi2Utf8._fromDart(s, alloc);
 
     final writeable = _Writeable();
-    final result = _uppercaseFfi(_underlying, sSlice._bytes, sSlice._length,
-        locale._underlying, writeable._underlying);
+    final result = _ICU4XCaseMapper_uppercase(_underlying, sSlice._bytes,
+        sSlice._length, locale._underlying, writeable._underlying);
     alloc.releaseAll();
     return result.isOk
         ? writeable.finalize()
         : throw ICU4XError._(result.union.err);
   }
 
-  static final _uppercaseFfi = _capi<
+  // ignore: non_constant_identifier_names
+  static final _ICU4XCaseMapper_uppercase = _capi<
           ffi.NativeFunction<
               _ResultVoidUint32 Function(
                   ffi.Pointer<ffi.Opaque>,
@@ -1002,7 +1045,7 @@ class ICU4XCaseMapper implements ffi.Finalizable {
     final sSlice = _SliceFfi2Utf8._fromDart(s, alloc);
 
     final writeable = _Writeable();
-    final result = _titlecaseSegmentWithOnlyCaseDataV1Ffi(
+    final result = _ICU4XCaseMapper_titlecase_segment_with_only_case_data_v1(
         _underlying,
         sSlice._bytes,
         sSlice._length,
@@ -1015,24 +1058,26 @@ class ICU4XCaseMapper implements ffi.Finalizable {
         : throw ICU4XError._(result.union.err);
   }
 
-  static final _titlecaseSegmentWithOnlyCaseDataV1Ffi = _capi<
-              ffi.NativeFunction<
-                  _ResultVoidUint32 Function(
-                      ffi.Pointer<ffi.Opaque>,
-                      ffi.Pointer<ffi2.Utf8>,
-                      ffi.Size,
-                      ffi.Pointer<ffi.Opaque>,
-                      _ICU4XTitlecaseOptionsV1Ffi,
-                      ffi.Pointer<ffi.Opaque>)>>(
-          'ICU4XCaseMapper_titlecase_segment_with_only_case_data_v1')
-      .asFunction<
-          _ResultVoidUint32 Function(
-              ffi.Pointer<ffi.Opaque>,
-              ffi.Pointer<ffi2.Utf8>,
-              int,
-              ffi.Pointer<ffi.Opaque>,
-              _ICU4XTitlecaseOptionsV1Ffi,
-              ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
+  // ignore: non_constant_identifier_names
+  static final _ICU4XCaseMapper_titlecase_segment_with_only_case_data_v1 =
+      _capi<
+                  ffi.NativeFunction<
+                      _ResultVoidUint32 Function(
+                          ffi.Pointer<ffi.Opaque>,
+                          ffi.Pointer<ffi2.Utf8>,
+                          ffi.Size,
+                          ffi.Pointer<ffi.Opaque>,
+                          _ICU4XTitlecaseOptionsV1Ffi,
+                          ffi.Pointer<ffi.Opaque>)>>(
+              'ICU4XCaseMapper_titlecase_segment_with_only_case_data_v1')
+          .asFunction<
+              _ResultVoidUint32 Function(
+                  ffi.Pointer<ffi.Opaque>,
+                  ffi.Pointer<ffi2.Utf8>,
+                  int,
+                  ffi.Pointer<ffi.Opaque>,
+                  _ICU4XTitlecaseOptionsV1Ffi,
+                  ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
 
   /// Case-folds the characters in the given string
   ///
@@ -1042,7 +1087,7 @@ class ICU4XCaseMapper implements ffi.Finalizable {
     final sSlice = _SliceFfi2Utf8._fromDart(s, alloc);
 
     final writeable = _Writeable();
-    final result = _foldFfi(
+    final result = _ICU4XCaseMapper_fold(
         _underlying, sSlice._bytes, sSlice._length, writeable._underlying);
     alloc.releaseAll();
     return result.isOk
@@ -1050,7 +1095,8 @@ class ICU4XCaseMapper implements ffi.Finalizable {
         : throw ICU4XError._(result.union.err);
   }
 
-  static final _foldFfi = _capi<
+  // ignore: non_constant_identifier_names
+  static final _ICU4XCaseMapper_fold = _capi<
           ffi.NativeFunction<
               _ResultVoidUint32 Function(
                   ffi.Pointer<ffi.Opaque>,
@@ -1073,7 +1119,7 @@ class ICU4XCaseMapper implements ffi.Finalizable {
     final sSlice = _SliceFfi2Utf8._fromDart(s, alloc);
 
     final writeable = _Writeable();
-    final result = _foldTurkicFfi(
+    final result = _ICU4XCaseMapper_fold_turkic(
         _underlying, sSlice._bytes, sSlice._length, writeable._underlying);
     alloc.releaseAll();
     return result.isOk
@@ -1081,7 +1127,8 @@ class ICU4XCaseMapper implements ffi.Finalizable {
         : throw ICU4XError._(result.union.err);
   }
 
-  static final _foldTurkicFfi = _capi<
+  // ignore: non_constant_identifier_names
+  static final _ICU4XCaseMapper_fold_turkic = _capi<
           ffi.NativeFunction<
               _ResultVoidUint32 Function(
                   ffi.Pointer<ffi.Opaque>,
@@ -1109,10 +1156,11 @@ class ICU4XCaseMapper implements ffi.Finalizable {
   ///
   /// See the [Rust documentation for `add_case_closure_to`](https://docs.rs/icu/latest/icu/casemap/struct.CaseMapper.html#method.add_case_closure_to) for more information.
   void addCaseClosureTo(int c, ICU4XCodePointSetBuilder builder) {
-    _addCaseClosureToFfi(_underlying, c, builder._underlying);
+    _ICU4XCaseMapper_add_case_closure_to(_underlying, c, builder._underlying);
   }
 
-  static final _addCaseClosureToFfi = _capi<
+  // ignore: non_constant_identifier_names
+  static final _ICU4XCaseMapper_add_case_closure_to = _capi<
               ffi.NativeFunction<
                   ffi.Void Function(ffi.Pointer<ffi.Opaque>, ffi.Uint32,
                       ffi.Pointer<ffi.Opaque>)>>(
@@ -1129,11 +1177,12 @@ class ICU4XCaseMapper implements ffi.Finalizable {
   ///
   /// See the [Rust documentation for `simple_lowercase`](https://docs.rs/icu/latest/icu/casemap/struct.CaseMapper.html#method.simple_lowercase) for more information.
   int simpleLowercase(int ch) {
-    final result = _simpleLowercaseFfi(_underlying, ch);
+    final result = _ICU4XCaseMapper_simple_lowercase(_underlying, ch);
     return result;
   }
 
-  static final _simpleLowercaseFfi = _capi<
+  // ignore: non_constant_identifier_names
+  static final _ICU4XCaseMapper_simple_lowercase = _capi<
           ffi.NativeFunction<
               ffi.Uint32 Function(ffi.Pointer<ffi.Opaque>,
                   ffi.Uint32)>>('ICU4XCaseMapper_simple_lowercase')
@@ -1147,11 +1196,12 @@ class ICU4XCaseMapper implements ffi.Finalizable {
   ///
   /// See the [Rust documentation for `simple_uppercase`](https://docs.rs/icu/latest/icu/casemap/struct.CaseMapper.html#method.simple_uppercase) for more information.
   int simpleUppercase(int ch) {
-    final result = _simpleUppercaseFfi(_underlying, ch);
+    final result = _ICU4XCaseMapper_simple_uppercase(_underlying, ch);
     return result;
   }
 
-  static final _simpleUppercaseFfi = _capi<
+  // ignore: non_constant_identifier_names
+  static final _ICU4XCaseMapper_simple_uppercase = _capi<
           ffi.NativeFunction<
               ffi.Uint32 Function(ffi.Pointer<ffi.Opaque>,
                   ffi.Uint32)>>('ICU4XCaseMapper_simple_uppercase')
@@ -1165,11 +1215,12 @@ class ICU4XCaseMapper implements ffi.Finalizable {
   ///
   /// See the [Rust documentation for `simple_titlecase`](https://docs.rs/icu/latest/icu/casemap/struct.CaseMapper.html#method.simple_titlecase) for more information.
   int simpleTitlecase(int ch) {
-    final result = _simpleTitlecaseFfi(_underlying, ch);
+    final result = _ICU4XCaseMapper_simple_titlecase(_underlying, ch);
     return result;
   }
 
-  static final _simpleTitlecaseFfi = _capi<
+  // ignore: non_constant_identifier_names
+  static final _ICU4XCaseMapper_simple_titlecase = _capi<
           ffi.NativeFunction<
               ffi.Uint32 Function(ffi.Pointer<ffi.Opaque>,
                   ffi.Uint32)>>('ICU4XCaseMapper_simple_titlecase')
@@ -1182,11 +1233,12 @@ class ICU4XCaseMapper implements ffi.Finalizable {
   ///
   /// See the [Rust documentation for `simple_fold`](https://docs.rs/icu/latest/icu/casemap/struct.CaseMapper.html#method.simple_fold) for more information.
   int simpleFold(int ch) {
-    final result = _simpleFoldFfi(_underlying, ch);
+    final result = _ICU4XCaseMapper_simple_fold(_underlying, ch);
     return result;
   }
 
-  static final _simpleFoldFfi = _capi<
+  // ignore: non_constant_identifier_names
+  static final _ICU4XCaseMapper_simple_fold = _capi<
           ffi.NativeFunction<
               ffi.Uint32 Function(ffi.Pointer<ffi.Opaque>,
                   ffi.Uint32)>>('ICU4XCaseMapper_simple_fold')
@@ -1199,11 +1251,12 @@ class ICU4XCaseMapper implements ffi.Finalizable {
   ///
   /// See the [Rust documentation for `simple_fold_turkic`](https://docs.rs/icu/latest/icu/casemap/struct.CaseMapper.html#method.simple_fold_turkic) for more information.
   int simpleFoldTurkic(int ch) {
-    final result = _simpleFoldTurkicFfi(_underlying, ch);
+    final result = _ICU4XCaseMapper_simple_fold_turkic(_underlying, ch);
     return result;
   }
 
-  static final _simpleFoldTurkicFfi = _capi<
+  // ignore: non_constant_identifier_names
+  static final _ICU4XCaseMapper_simple_fold_turkic = _capi<
           ffi.NativeFunction<
               ffi.Uint32 Function(ffi.Pointer<ffi.Opaque>,
                   ffi.Uint32)>>('ICU4XCaseMapper_simple_fold_turkic')
@@ -1233,11 +1286,12 @@ class ICU4XCodePointMapData16 implements ffi.Finalizable {
   ///
   /// See the [Rust documentation for `get`](https://docs.rs/icu/latest/icu/properties/maps/struct.CodePointMapDataBorrowed.html#method.get) for more information.
   int get(int cp) {
-    final result = _getFfi(_underlying, cp);
+    final result = _ICU4XCodePointMapData16_get(_underlying, cp);
     return result;
   }
 
-  static final _getFfi = _capi<
+  // ignore: non_constant_identifier_names
+  static final _ICU4XCodePointMapData16_get = _capi<
           ffi.NativeFunction<
               ffi.Uint16 Function(ffi.Pointer<ffi.Opaque>,
                   ffi.Uint32)>>('ICU4XCodePointMapData16_get')
@@ -1245,11 +1299,12 @@ class ICU4XCodePointMapData16 implements ffi.Finalizable {
 
   /// Gets the value for a code point (specified as a 32 bit integer, in UTF-32)
   int get32(int cp) {
-    final result = _get32Ffi(_underlying, cp);
+    final result = _ICU4XCodePointMapData16_get32(_underlying, cp);
     return result;
   }
 
-  static final _get32Ffi = _capi<
+  // ignore: non_constant_identifier_names
+  static final _ICU4XCodePointMapData16_get32 = _capi<
           ffi.NativeFunction<
               ffi.Uint16 Function(ffi.Pointer<ffi.Opaque>,
                   ffi.Uint32)>>('ICU4XCodePointMapData16_get32')
@@ -1259,11 +1314,13 @@ class ICU4XCodePointMapData16 implements ffi.Finalizable {
   ///
   /// See the [Rust documentation for `iter_ranges_for_value`](https://docs.rs/icu/latest/icu/properties/maps/struct.CodePointMapDataBorrowed.html#method.iter_ranges_for_value) for more information.
   CodePointRangeIterator iterRangesForValue(int value) {
-    final result = _iterRangesForValueFfi(_underlying, value);
+    final result =
+        _ICU4XCodePointMapData16_iter_ranges_for_value(_underlying, value);
     return CodePointRangeIterator._(result);
   }
 
-  static final _iterRangesForValueFfi = _capi<
+  // ignore: non_constant_identifier_names
+  static final _ICU4XCodePointMapData16_iter_ranges_for_value = _capi<
           ffi.NativeFunction<
               ffi.Pointer<ffi.Opaque> Function(ffi.Pointer<ffi.Opaque>,
                   ffi.Uint16)>>('ICU4XCodePointMapData16_iter_ranges_for_value')
@@ -1275,28 +1332,33 @@ class ICU4XCodePointMapData16 implements ffi.Finalizable {
   ///
   /// See the [Rust documentation for `iter_ranges_for_value_complemented`](https://docs.rs/icu/latest/icu/properties/maps/struct.CodePointMapDataBorrowed.html#method.iter_ranges_for_value_complemented) for more information.
   CodePointRangeIterator iterRangesForValueComplemented(int value) {
-    final result = _iterRangesForValueComplementedFfi(_underlying, value);
+    final result = _ICU4XCodePointMapData16_iter_ranges_for_value_complemented(
+        _underlying, value);
     return CodePointRangeIterator._(result);
   }
 
-  static final _iterRangesForValueComplementedFfi = _capi<
-              ffi.NativeFunction<
-                  ffi.Pointer<ffi.Opaque> Function(
-                      ffi.Pointer<ffi.Opaque>, ffi.Uint16)>>(
-          'ICU4XCodePointMapData16_iter_ranges_for_value_complemented')
-      .asFunction<
-          ffi.Pointer<ffi.Opaque> Function(
-              ffi.Pointer<ffi.Opaque>, int)>(isLeaf: true);
+  // ignore: non_constant_identifier_names
+  static final _ICU4XCodePointMapData16_iter_ranges_for_value_complemented =
+      _capi<
+                  ffi.NativeFunction<
+                      ffi.Pointer<ffi.Opaque> Function(
+                          ffi.Pointer<ffi.Opaque>, ffi.Uint16)>>(
+              'ICU4XCodePointMapData16_iter_ranges_for_value_complemented')
+          .asFunction<
+              ffi.Pointer<ffi.Opaque> Function(
+                  ffi.Pointer<ffi.Opaque>, int)>(isLeaf: true);
 
   /// Gets a [`ICU4XCodePointSetData`] representing all entries in this map that map to the given value
   ///
   /// See the [Rust documentation for `get_set_for_value`](https://docs.rs/icu/latest/icu/properties/maps/struct.CodePointMapDataBorrowed.html#method.get_set_for_value) for more information.
   ICU4XCodePointSetData getSetForValue(int value) {
-    final result = _getSetForValueFfi(_underlying, value);
+    final result =
+        _ICU4XCodePointMapData16_get_set_for_value(_underlying, value);
     return ICU4XCodePointSetData._(result);
   }
 
-  static final _getSetForValueFfi = _capi<
+  // ignore: non_constant_identifier_names
+  static final _ICU4XCodePointMapData16_get_set_for_value = _capi<
           ffi.NativeFunction<
               ffi.Pointer<ffi.Opaque> Function(ffi.Pointer<ffi.Opaque>,
                   ffi.Uint16)>>('ICU4XCodePointMapData16_get_set_for_value')
@@ -1306,12 +1368,13 @@ class ICU4XCodePointMapData16 implements ffi.Finalizable {
 
   /// See the [Rust documentation for `script`](https://docs.rs/icu/latest/icu/properties/maps/fn.script.html) for more information.
   factory ICU4XCodePointMapData16.loadScript(ICU4XDataProvider provider) {
-    final result = _loadScriptFfi(provider._underlying);
+    final result = _ICU4XCodePointMapData16_load_script(provider._underlying);
     return result.isOk
         ? ICU4XCodePointMapData16._(result.union.ok)
         : throw ICU4XError._(result.union.err);
   }
-  static final _loadScriptFfi = _capi<
+  // ignore: non_constant_identifier_names
+  static final _ICU4XCodePointMapData16_load_script = _capi<
               ffi.NativeFunction<
                   _ResultOpaqueUint32 Function(ffi.Pointer<ffi.Opaque>)>>(
           'ICU4XCodePointMapData16_load_script')
@@ -1342,11 +1405,12 @@ class ICU4XCodePointMapData8 implements ffi.Finalizable {
   ///
   /// See the [Rust documentation for `get`](https://docs.rs/icu/latest/icu/properties/maps/struct.CodePointMapDataBorrowed.html#method.get) for more information.
   int get(int cp) {
-    final result = _getFfi(_underlying, cp);
+    final result = _ICU4XCodePointMapData8_get(_underlying, cp);
     return result;
   }
 
-  static final _getFfi = _capi<
+  // ignore: non_constant_identifier_names
+  static final _ICU4XCodePointMapData8_get = _capi<
           ffi.NativeFunction<
               ffi.Uint8 Function(ffi.Pointer<ffi.Opaque>,
                   ffi.Uint32)>>('ICU4XCodePointMapData8_get')
@@ -1354,11 +1418,12 @@ class ICU4XCodePointMapData8 implements ffi.Finalizable {
 
   /// Gets the value for a code point (specified as a 32 bit integer, in UTF-32)
   int get32(int cp) {
-    final result = _get32Ffi(_underlying, cp);
+    final result = _ICU4XCodePointMapData8_get32(_underlying, cp);
     return result;
   }
 
-  static final _get32Ffi = _capi<
+  // ignore: non_constant_identifier_names
+  static final _ICU4XCodePointMapData8_get32 = _capi<
           ffi.NativeFunction<
               ffi.Uint8 Function(ffi.Pointer<ffi.Opaque>,
                   ffi.Uint32)>>('ICU4XCodePointMapData8_get32')
@@ -1370,11 +1435,12 @@ class ICU4XCodePointMapData8 implements ffi.Finalizable {
   ///
   /// See the [Rust documentation for `GeneralCategoryGroup`](https://docs.rs/icu/latest/icu/properties/struct.GeneralCategoryGroup.html) for more information.
   static int generalCategoryToMask(int gc) {
-    final result = _generalCategoryToMaskFfi(gc);
+    final result = _ICU4XCodePointMapData8_general_category_to_mask(gc);
     return result;
   }
 
-  static final _generalCategoryToMaskFfi =
+  // ignore: non_constant_identifier_names
+  static final _ICU4XCodePointMapData8_general_category_to_mask =
       _capi<ffi.NativeFunction<ffi.Uint32 Function(ffi.Uint8)>>(
               'ICU4XCodePointMapData8_general_category_to_mask')
           .asFunction<int Function(int)>(isLeaf: true);
@@ -1383,11 +1449,13 @@ class ICU4XCodePointMapData8 implements ffi.Finalizable {
   ///
   /// See the [Rust documentation for `iter_ranges_for_value`](https://docs.rs/icu/latest/icu/properties/maps/struct.CodePointMapDataBorrowed.html#method.iter_ranges_for_value) for more information.
   CodePointRangeIterator iterRangesForValue(int value) {
-    final result = _iterRangesForValueFfi(_underlying, value);
+    final result =
+        _ICU4XCodePointMapData8_iter_ranges_for_value(_underlying, value);
     return CodePointRangeIterator._(result);
   }
 
-  static final _iterRangesForValueFfi = _capi<
+  // ignore: non_constant_identifier_names
+  static final _ICU4XCodePointMapData8_iter_ranges_for_value = _capi<
           ffi.NativeFunction<
               ffi.Pointer<ffi.Opaque> Function(ffi.Pointer<ffi.Opaque>,
                   ffi.Uint8)>>('ICU4XCodePointMapData8_iter_ranges_for_value')
@@ -1399,18 +1467,21 @@ class ICU4XCodePointMapData8 implements ffi.Finalizable {
   ///
   /// See the [Rust documentation for `iter_ranges_for_value_complemented`](https://docs.rs/icu/latest/icu/properties/maps/struct.CodePointMapDataBorrowed.html#method.iter_ranges_for_value_complemented) for more information.
   CodePointRangeIterator iterRangesForValueComplemented(int value) {
-    final result = _iterRangesForValueComplementedFfi(_underlying, value);
+    final result = _ICU4XCodePointMapData8_iter_ranges_for_value_complemented(
+        _underlying, value);
     return CodePointRangeIterator._(result);
   }
 
-  static final _iterRangesForValueComplementedFfi = _capi<
-              ffi.NativeFunction<
-                  ffi.Pointer<ffi.Opaque> Function(
-                      ffi.Pointer<ffi.Opaque>, ffi.Uint8)>>(
-          'ICU4XCodePointMapData8_iter_ranges_for_value_complemented')
-      .asFunction<
-          ffi.Pointer<ffi.Opaque> Function(
-              ffi.Pointer<ffi.Opaque>, int)>(isLeaf: true);
+  // ignore: non_constant_identifier_names
+  static final _ICU4XCodePointMapData8_iter_ranges_for_value_complemented =
+      _capi<
+                  ffi.NativeFunction<
+                      ffi.Pointer<ffi.Opaque> Function(
+                          ffi.Pointer<ffi.Opaque>, ffi.Uint8)>>(
+              'ICU4XCodePointMapData8_iter_ranges_for_value_complemented')
+          .asFunction<
+              ffi.Pointer<ffi.Opaque> Function(
+                  ffi.Pointer<ffi.Opaque>, int)>(isLeaf: true);
 
   /// Given a mask value (the nth bit marks property value = n), produce an iterator over ranges of code points
   /// whose property values are contained in the mask.
@@ -1423,11 +1494,13 @@ class ICU4XCodePointMapData8 implements ffi.Finalizable {
   ///
   /// See the [Rust documentation for `iter_ranges_for_group`](https://docs.rs/icu/latest/icu/properties/maps/struct.CodePointMapDataBorrowed.html#method.iter_ranges_for_group) for more information.
   CodePointRangeIterator iterRangesForMask(int mask) {
-    final result = _iterRangesForMaskFfi(_underlying, mask);
+    final result =
+        _ICU4XCodePointMapData8_iter_ranges_for_mask(_underlying, mask);
     return CodePointRangeIterator._(result);
   }
 
-  static final _iterRangesForMaskFfi = _capi<
+  // ignore: non_constant_identifier_names
+  static final _ICU4XCodePointMapData8_iter_ranges_for_mask = _capi<
           ffi.NativeFunction<
               ffi.Pointer<ffi.Opaque> Function(ffi.Pointer<ffi.Opaque>,
                   ffi.Uint32)>>('ICU4XCodePointMapData8_iter_ranges_for_mask')
@@ -1439,11 +1512,13 @@ class ICU4XCodePointMapData8 implements ffi.Finalizable {
   ///
   /// See the [Rust documentation for `get_set_for_value`](https://docs.rs/icu/latest/icu/properties/maps/struct.CodePointMapDataBorrowed.html#method.get_set_for_value) for more information.
   ICU4XCodePointSetData getSetForValue(int value) {
-    final result = _getSetForValueFfi(_underlying, value);
+    final result =
+        _ICU4XCodePointMapData8_get_set_for_value(_underlying, value);
     return ICU4XCodePointSetData._(result);
   }
 
-  static final _getSetForValueFfi = _capi<
+  // ignore: non_constant_identifier_names
+  static final _ICU4XCodePointMapData8_get_set_for_value = _capi<
           ffi.NativeFunction<
               ffi.Pointer<ffi.Opaque> Function(ffi.Pointer<ffi.Opaque>,
                   ffi.Uint8)>>('ICU4XCodePointMapData8_get_set_for_value')
@@ -1454,12 +1529,14 @@ class ICU4XCodePointMapData8 implements ffi.Finalizable {
   /// See the [Rust documentation for `general_category`](https://docs.rs/icu/latest/icu/properties/maps/fn.general_category.html) for more information.
   factory ICU4XCodePointMapData8.loadGeneralCategory(
       ICU4XDataProvider provider) {
-    final result = _loadGeneralCategoryFfi(provider._underlying);
+    final result =
+        _ICU4XCodePointMapData8_load_general_category(provider._underlying);
     return result.isOk
         ? ICU4XCodePointMapData8._(result.union.ok)
         : throw ICU4XError._(result.union.err);
   }
-  static final _loadGeneralCategoryFfi = _capi<
+  // ignore: non_constant_identifier_names
+  static final _ICU4XCodePointMapData8_load_general_category = _capi<
               ffi.NativeFunction<
                   _ResultOpaqueUint32 Function(ffi.Pointer<ffi.Opaque>)>>(
           'ICU4XCodePointMapData8_load_general_category')
@@ -1468,12 +1545,14 @@ class ICU4XCodePointMapData8 implements ffi.Finalizable {
 
   /// See the [Rust documentation for `bidi_class`](https://docs.rs/icu/latest/icu/properties/maps/fn.bidi_class.html) for more information.
   factory ICU4XCodePointMapData8.loadBidiClass(ICU4XDataProvider provider) {
-    final result = _loadBidiClassFfi(provider._underlying);
+    final result =
+        _ICU4XCodePointMapData8_load_bidi_class(provider._underlying);
     return result.isOk
         ? ICU4XCodePointMapData8._(result.union.ok)
         : throw ICU4XError._(result.union.err);
   }
-  static final _loadBidiClassFfi = _capi<
+  // ignore: non_constant_identifier_names
+  static final _ICU4XCodePointMapData8_load_bidi_class = _capi<
               ffi.NativeFunction<
                   _ResultOpaqueUint32 Function(ffi.Pointer<ffi.Opaque>)>>(
           'ICU4XCodePointMapData8_load_bidi_class')
@@ -1483,12 +1562,14 @@ class ICU4XCodePointMapData8 implements ffi.Finalizable {
   /// See the [Rust documentation for `east_asian_width`](https://docs.rs/icu/latest/icu/properties/maps/fn.east_asian_width.html) for more information.
   factory ICU4XCodePointMapData8.loadEastAsianWidth(
       ICU4XDataProvider provider) {
-    final result = _loadEastAsianWidthFfi(provider._underlying);
+    final result =
+        _ICU4XCodePointMapData8_load_east_asian_width(provider._underlying);
     return result.isOk
         ? ICU4XCodePointMapData8._(result.union.ok)
         : throw ICU4XError._(result.union.err);
   }
-  static final _loadEastAsianWidthFfi = _capi<
+  // ignore: non_constant_identifier_names
+  static final _ICU4XCodePointMapData8_load_east_asian_width = _capi<
               ffi.NativeFunction<
                   _ResultOpaqueUint32 Function(ffi.Pointer<ffi.Opaque>)>>(
           'ICU4XCodePointMapData8_load_east_asian_width')
@@ -1498,12 +1579,14 @@ class ICU4XCodePointMapData8 implements ffi.Finalizable {
   /// See the [Rust documentation for `indic_syllabic_category`](https://docs.rs/icu/latest/icu/properties/maps/fn.indic_syllabic_category.html) for more information.
   factory ICU4XCodePointMapData8.loadIndicSyllabicCategory(
       ICU4XDataProvider provider) {
-    final result = _loadIndicSyllabicCategoryFfi(provider._underlying);
+    final result = _ICU4XCodePointMapData8_load_indic_syllabic_category(
+        provider._underlying);
     return result.isOk
         ? ICU4XCodePointMapData8._(result.union.ok)
         : throw ICU4XError._(result.union.err);
   }
-  static final _loadIndicSyllabicCategoryFfi = _capi<
+  // ignore: non_constant_identifier_names
+  static final _ICU4XCodePointMapData8_load_indic_syllabic_category = _capi<
               ffi.NativeFunction<
                   _ResultOpaqueUint32 Function(ffi.Pointer<ffi.Opaque>)>>(
           'ICU4XCodePointMapData8_load_indic_syllabic_category')
@@ -1512,12 +1595,14 @@ class ICU4XCodePointMapData8 implements ffi.Finalizable {
 
   /// See the [Rust documentation for `line_break`](https://docs.rs/icu/latest/icu/properties/maps/fn.line_break.html) for more information.
   factory ICU4XCodePointMapData8.loadLineBreak(ICU4XDataProvider provider) {
-    final result = _loadLineBreakFfi(provider._underlying);
+    final result =
+        _ICU4XCodePointMapData8_load_line_break(provider._underlying);
     return result.isOk
         ? ICU4XCodePointMapData8._(result.union.ok)
         : throw ICU4XError._(result.union.err);
   }
-  static final _loadLineBreakFfi = _capi<
+  // ignore: non_constant_identifier_names
+  static final _ICU4XCodePointMapData8_load_line_break = _capi<
               ffi.NativeFunction<
                   _ResultOpaqueUint32 Function(ffi.Pointer<ffi.Opaque>)>>(
           'ICU4XCodePointMapData8_load_line_break')
@@ -1527,12 +1612,14 @@ class ICU4XCodePointMapData8 implements ffi.Finalizable {
   /// See the [Rust documentation for `grapheme_cluster_break`](https://docs.rs/icu/latest/icu/properties/maps/fn.grapheme_cluster_break.html) for more information.
   factory ICU4XCodePointMapData8.tryGraphemeClusterBreak(
       ICU4XDataProvider provider) {
-    final result = _tryGraphemeClusterBreakFfi(provider._underlying);
+    final result = _ICU4XCodePointMapData8_try_grapheme_cluster_break(
+        provider._underlying);
     return result.isOk
         ? ICU4XCodePointMapData8._(result.union.ok)
         : throw ICU4XError._(result.union.err);
   }
-  static final _tryGraphemeClusterBreakFfi = _capi<
+  // ignore: non_constant_identifier_names
+  static final _ICU4XCodePointMapData8_try_grapheme_cluster_break = _capi<
               ffi.NativeFunction<
                   _ResultOpaqueUint32 Function(ffi.Pointer<ffi.Opaque>)>>(
           'ICU4XCodePointMapData8_try_grapheme_cluster_break')
@@ -1541,12 +1628,14 @@ class ICU4XCodePointMapData8 implements ffi.Finalizable {
 
   /// See the [Rust documentation for `word_break`](https://docs.rs/icu/latest/icu/properties/maps/fn.word_break.html) for more information.
   factory ICU4XCodePointMapData8.loadWordBreak(ICU4XDataProvider provider) {
-    final result = _loadWordBreakFfi(provider._underlying);
+    final result =
+        _ICU4XCodePointMapData8_load_word_break(provider._underlying);
     return result.isOk
         ? ICU4XCodePointMapData8._(result.union.ok)
         : throw ICU4XError._(result.union.err);
   }
-  static final _loadWordBreakFfi = _capi<
+  // ignore: non_constant_identifier_names
+  static final _ICU4XCodePointMapData8_load_word_break = _capi<
               ffi.NativeFunction<
                   _ResultOpaqueUint32 Function(ffi.Pointer<ffi.Opaque>)>>(
           'ICU4XCodePointMapData8_load_word_break')
@@ -1555,12 +1644,14 @@ class ICU4XCodePointMapData8 implements ffi.Finalizable {
 
   /// See the [Rust documentation for `sentence_break`](https://docs.rs/icu/latest/icu/properties/maps/fn.sentence_break.html) for more information.
   factory ICU4XCodePointMapData8.loadSentenceBreak(ICU4XDataProvider provider) {
-    final result = _loadSentenceBreakFfi(provider._underlying);
+    final result =
+        _ICU4XCodePointMapData8_load_sentence_break(provider._underlying);
     return result.isOk
         ? ICU4XCodePointMapData8._(result.union.ok)
         : throw ICU4XError._(result.union.err);
   }
-  static final _loadSentenceBreakFfi = _capi<
+  // ignore: non_constant_identifier_names
+  static final _ICU4XCodePointMapData8_load_sentence_break = _capi<
               ffi.NativeFunction<
                   _ResultOpaqueUint32 Function(ffi.Pointer<ffi.Opaque>)>>(
           'ICU4XCodePointMapData8_load_sentence_break')
@@ -1583,10 +1674,11 @@ class ICU4XCodePointSetBuilder implements ffi.Finalizable {
   ///
   /// See the [Rust documentation for `new`](https://docs.rs/icu/latest/icu/collections/codepointinvlist/struct.CodePointInversionListBuilder.html#method.new) for more information.
   factory ICU4XCodePointSetBuilder() {
-    final result = _createFfi();
+    final result = _ICU4XCodePointSetBuilder_create();
     return ICU4XCodePointSetBuilder._(result);
   }
-  static final _createFfi =
+  // ignore: non_constant_identifier_names
+  static final _ICU4XCodePointSetBuilder_create =
       _capi<ffi.NativeFunction<ffi.Pointer<ffi.Opaque> Function()>>(
               'ICU4XCodePointSetBuilder_create')
           .asFunction<ffi.Pointer<ffi.Opaque> Function()>(isLeaf: true);
@@ -1597,11 +1689,12 @@ class ICU4XCodePointSetBuilder implements ffi.Finalizable {
   ///
   /// See the [Rust documentation for `build`](https://docs.rs/icu/latest/icu/collections/codepointinvlist/struct.CodePointInversionListBuilder.html#method.build) for more information.
   ICU4XCodePointSetData build() {
-    final result = _buildFfi(_underlying);
+    final result = _ICU4XCodePointSetBuilder_build(_underlying);
     return ICU4XCodePointSetData._(result);
   }
 
-  static final _buildFfi = _capi<
+  // ignore: non_constant_identifier_names
+  static final _ICU4XCodePointSetBuilder_build = _capi<
           ffi.NativeFunction<
               ffi.Pointer<ffi.Opaque> Function(
                   ffi.Pointer<ffi.Opaque>)>>('ICU4XCodePointSetBuilder_build')
@@ -1614,10 +1707,11 @@ class ICU4XCodePointSetBuilder implements ffi.Finalizable {
   ///
   /// See the [Rust documentation for `complement`](https://docs.rs/icu/latest/icu/collections/codepointinvlist/struct.CodePointInversionListBuilder.html#method.complement) for more information.
   void complement() {
-    _complementFfi(_underlying);
+    _ICU4XCodePointSetBuilder_complement(_underlying);
   }
 
-  static final _complementFfi =
+  // ignore: non_constant_identifier_names
+  static final _ICU4XCodePointSetBuilder_complement =
       _capi<ffi.NativeFunction<ffi.Void Function(ffi.Pointer<ffi.Opaque>)>>(
               'ICU4XCodePointSetBuilder_complement')
           .asFunction<void Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
@@ -1626,11 +1720,12 @@ class ICU4XCodePointSetBuilder implements ffi.Finalizable {
   ///
   /// See the [Rust documentation for `is_empty`](https://docs.rs/icu/latest/icu/collections/codepointinvlist/struct.CodePointInversionListBuilder.html#method.is_empty) for more information.
   bool get isEmpty {
-    final result = _isEmptyFfi(_underlying);
+    final result = _ICU4XCodePointSetBuilder_is_empty(_underlying);
     return result;
   }
 
-  static final _isEmptyFfi =
+  // ignore: non_constant_identifier_names
+  static final _ICU4XCodePointSetBuilder_is_empty =
       _capi<ffi.NativeFunction<ffi.Bool Function(ffi.Pointer<ffi.Opaque>)>>(
               'ICU4XCodePointSetBuilder_is_empty')
           .asFunction<bool Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
@@ -1639,10 +1734,11 @@ class ICU4XCodePointSetBuilder implements ffi.Finalizable {
   ///
   /// See the [Rust documentation for `add_char`](https://docs.rs/icu/latest/icu/collections/codepointinvlist/struct.CodePointInversionListBuilder.html#method.add_char) for more information.
   void addChar(int ch) {
-    _addCharFfi(_underlying, ch);
+    _ICU4XCodePointSetBuilder_add_char(_underlying, ch);
   }
 
-  static final _addCharFfi = _capi<
+  // ignore: non_constant_identifier_names
+  static final _ICU4XCodePointSetBuilder_add_char = _capi<
           ffi.NativeFunction<
               ffi.Void Function(ffi.Pointer<ffi.Opaque>,
                   ffi.Uint32)>>('ICU4XCodePointSetBuilder_add_char')
@@ -1652,10 +1748,11 @@ class ICU4XCodePointSetBuilder implements ffi.Finalizable {
   ///
   /// See the [Rust documentation for `add_u32`](https://docs.rs/icu/latest/icu/collections/codepointinvlist/struct.CodePointInversionListBuilder.html#method.add_u32) for more information.
   void addU32(int ch) {
-    _addU32Ffi(_underlying, ch);
+    _ICU4XCodePointSetBuilder_add_u32(_underlying, ch);
   }
 
-  static final _addU32Ffi = _capi<
+  // ignore: non_constant_identifier_names
+  static final _ICU4XCodePointSetBuilder_add_u32 = _capi<
           ffi.NativeFunction<
               ffi.Void Function(ffi.Pointer<ffi.Opaque>,
                   ffi.Uint32)>>('ICU4XCodePointSetBuilder_add_u32')
@@ -1665,10 +1762,11 @@ class ICU4XCodePointSetBuilder implements ffi.Finalizable {
   ///
   /// See the [Rust documentation for `add_range`](https://docs.rs/icu/latest/icu/collections/codepointinvlist/struct.CodePointInversionListBuilder.html#method.add_range) for more information.
   void addInclusiveRange(int start, int end) {
-    _addInclusiveRangeFfi(_underlying, start, end);
+    _ICU4XCodePointSetBuilder_add_inclusive_range(_underlying, start, end);
   }
 
-  static final _addInclusiveRangeFfi = _capi<
+  // ignore: non_constant_identifier_names
+  static final _ICU4XCodePointSetBuilder_add_inclusive_range = _capi<
           ffi.NativeFunction<
               ffi.Void Function(ffi.Pointer<ffi.Opaque>, ffi.Uint32,
                   ffi.Uint32)>>('ICU4XCodePointSetBuilder_add_inclusive_range')
@@ -1679,10 +1777,11 @@ class ICU4XCodePointSetBuilder implements ffi.Finalizable {
   ///
   /// See the [Rust documentation for `add_range_u32`](https://docs.rs/icu/latest/icu/collections/codepointinvlist/struct.CodePointInversionListBuilder.html#method.add_range_u32) for more information.
   void addInclusiveRangeU32(int start, int end) {
-    _addInclusiveRangeU32Ffi(_underlying, start, end);
+    _ICU4XCodePointSetBuilder_add_inclusive_range_u32(_underlying, start, end);
   }
 
-  static final _addInclusiveRangeU32Ffi = _capi<
+  // ignore: non_constant_identifier_names
+  static final _ICU4XCodePointSetBuilder_add_inclusive_range_u32 = _capi<
               ffi.NativeFunction<
                   ffi.Void Function(
                       ffi.Pointer<ffi.Opaque>, ffi.Uint32, ffi.Uint32)>>(
@@ -1694,10 +1793,11 @@ class ICU4XCodePointSetBuilder implements ffi.Finalizable {
   ///
   /// See the [Rust documentation for `add_set`](https://docs.rs/icu/latest/icu/collections/codepointinvlist/struct.CodePointInversionListBuilder.html#method.add_set) for more information.
   void addSet(ICU4XCodePointSetData data) {
-    _addSetFfi(_underlying, data._underlying);
+    _ICU4XCodePointSetBuilder_add_set(_underlying, data._underlying);
   }
 
-  static final _addSetFfi = _capi<
+  // ignore: non_constant_identifier_names
+  static final _ICU4XCodePointSetBuilder_add_set = _capi<
           ffi.NativeFunction<
               ffi.Void Function(ffi.Pointer<ffi.Opaque>,
                   ffi.Pointer<ffi.Opaque>)>>('ICU4XCodePointSetBuilder_add_set')
@@ -1709,10 +1809,11 @@ class ICU4XCodePointSetBuilder implements ffi.Finalizable {
   ///
   /// See the [Rust documentation for `remove_char`](https://docs.rs/icu/latest/icu/collections/codepointinvlist/struct.CodePointInversionListBuilder.html#method.remove_char) for more information.
   void removeChar(int ch) {
-    _removeCharFfi(_underlying, ch);
+    _ICU4XCodePointSetBuilder_remove_char(_underlying, ch);
   }
 
-  static final _removeCharFfi = _capi<
+  // ignore: non_constant_identifier_names
+  static final _ICU4XCodePointSetBuilder_remove_char = _capi<
           ffi.NativeFunction<
               ffi.Void Function(ffi.Pointer<ffi.Opaque>,
                   ffi.Uint32)>>('ICU4XCodePointSetBuilder_remove_char')
@@ -1722,10 +1823,11 @@ class ICU4XCodePointSetBuilder implements ffi.Finalizable {
   ///
   /// See the [Rust documentation for `remove_range`](https://docs.rs/icu/latest/icu/collections/codepointinvlist/struct.CodePointInversionListBuilder.html#method.remove_range) for more information.
   void removeInclusiveRange(int start, int end) {
-    _removeInclusiveRangeFfi(_underlying, start, end);
+    _ICU4XCodePointSetBuilder_remove_inclusive_range(_underlying, start, end);
   }
 
-  static final _removeInclusiveRangeFfi = _capi<
+  // ignore: non_constant_identifier_names
+  static final _ICU4XCodePointSetBuilder_remove_inclusive_range = _capi<
               ffi.NativeFunction<
                   ffi.Void Function(
                       ffi.Pointer<ffi.Opaque>, ffi.Uint32, ffi.Uint32)>>(
@@ -1737,10 +1839,11 @@ class ICU4XCodePointSetBuilder implements ffi.Finalizable {
   ///
   /// See the [Rust documentation for `remove_set`](https://docs.rs/icu/latest/icu/collections/codepointinvlist/struct.CodePointInversionListBuilder.html#method.remove_set) for more information.
   void removeSet(ICU4XCodePointSetData data) {
-    _removeSetFfi(_underlying, data._underlying);
+    _ICU4XCodePointSetBuilder_remove_set(_underlying, data._underlying);
   }
 
-  static final _removeSetFfi = _capi<
+  // ignore: non_constant_identifier_names
+  static final _ICU4XCodePointSetBuilder_remove_set = _capi<
               ffi.NativeFunction<
                   ffi.Void Function(
                       ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>>(
@@ -1753,10 +1856,11 @@ class ICU4XCodePointSetBuilder implements ffi.Finalizable {
   ///
   /// See the [Rust documentation for `retain_char`](https://docs.rs/icu/latest/icu/collections/codepointinvlist/struct.CodePointInversionListBuilder.html#method.retain_char) for more information.
   void retainChar(int ch) {
-    _retainCharFfi(_underlying, ch);
+    _ICU4XCodePointSetBuilder_retain_char(_underlying, ch);
   }
 
-  static final _retainCharFfi = _capi<
+  // ignore: non_constant_identifier_names
+  static final _ICU4XCodePointSetBuilder_retain_char = _capi<
           ffi.NativeFunction<
               ffi.Void Function(ffi.Pointer<ffi.Opaque>,
                   ffi.Uint32)>>('ICU4XCodePointSetBuilder_retain_char')
@@ -1766,10 +1870,11 @@ class ICU4XCodePointSetBuilder implements ffi.Finalizable {
   ///
   /// See the [Rust documentation for `retain_range`](https://docs.rs/icu/latest/icu/collections/codepointinvlist/struct.CodePointInversionListBuilder.html#method.retain_range) for more information.
   void retainInclusiveRange(int start, int end) {
-    _retainInclusiveRangeFfi(_underlying, start, end);
+    _ICU4XCodePointSetBuilder_retain_inclusive_range(_underlying, start, end);
   }
 
-  static final _retainInclusiveRangeFfi = _capi<
+  // ignore: non_constant_identifier_names
+  static final _ICU4XCodePointSetBuilder_retain_inclusive_range = _capi<
               ffi.NativeFunction<
                   ffi.Void Function(
                       ffi.Pointer<ffi.Opaque>, ffi.Uint32, ffi.Uint32)>>(
@@ -1781,10 +1886,11 @@ class ICU4XCodePointSetBuilder implements ffi.Finalizable {
   ///
   /// See the [Rust documentation for `retain_set`](https://docs.rs/icu/latest/icu/collections/codepointinvlist/struct.CodePointInversionListBuilder.html#method.retain_set) for more information.
   void retainSet(ICU4XCodePointSetData data) {
-    _retainSetFfi(_underlying, data._underlying);
+    _ICU4XCodePointSetBuilder_retain_set(_underlying, data._underlying);
   }
 
-  static final _retainSetFfi = _capi<
+  // ignore: non_constant_identifier_names
+  static final _ICU4XCodePointSetBuilder_retain_set = _capi<
               ffi.NativeFunction<
                   ffi.Void Function(
                       ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>>(
@@ -1799,10 +1905,11 @@ class ICU4XCodePointSetBuilder implements ffi.Finalizable {
   ///
   /// See the [Rust documentation for `complement_char`](https://docs.rs/icu/latest/icu/collections/codepointinvlist/struct.CodePointInversionListBuilder.html#method.complement_char) for more information.
   void complementChar(int ch) {
-    _complementCharFfi(_underlying, ch);
+    _ICU4XCodePointSetBuilder_complement_char(_underlying, ch);
   }
 
-  static final _complementCharFfi = _capi<
+  // ignore: non_constant_identifier_names
+  static final _ICU4XCodePointSetBuilder_complement_char = _capi<
           ffi.NativeFunction<
               ffi.Void Function(ffi.Pointer<ffi.Opaque>,
                   ffi.Uint32)>>('ICU4XCodePointSetBuilder_complement_char')
@@ -1814,10 +1921,12 @@ class ICU4XCodePointSetBuilder implements ffi.Finalizable {
   ///
   /// See the [Rust documentation for `complement_range`](https://docs.rs/icu/latest/icu/collections/codepointinvlist/struct.CodePointInversionListBuilder.html#method.complement_range) for more information.
   void complementInclusiveRange(int start, int end) {
-    _complementInclusiveRangeFfi(_underlying, start, end);
+    _ICU4XCodePointSetBuilder_complement_inclusive_range(
+        _underlying, start, end);
   }
 
-  static final _complementInclusiveRangeFfi = _capi<
+  // ignore: non_constant_identifier_names
+  static final _ICU4XCodePointSetBuilder_complement_inclusive_range = _capi<
               ffi.NativeFunction<
                   ffi.Void Function(
                       ffi.Pointer<ffi.Opaque>, ffi.Uint32, ffi.Uint32)>>(
@@ -1831,10 +1940,11 @@ class ICU4XCodePointSetBuilder implements ffi.Finalizable {
   ///
   /// See the [Rust documentation for `complement_set`](https://docs.rs/icu/latest/icu/collections/codepointinvlist/struct.CodePointInversionListBuilder.html#method.complement_set) for more information.
   void complementSet(ICU4XCodePointSetData data) {
-    _complementSetFfi(_underlying, data._underlying);
+    _ICU4XCodePointSetBuilder_complement_set(_underlying, data._underlying);
   }
 
-  static final _complementSetFfi = _capi<
+  // ignore: non_constant_identifier_names
+  static final _ICU4XCodePointSetBuilder_complement_set = _capi<
               ffi.NativeFunction<
                   ffi.Void Function(
                       ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>>(
@@ -1865,11 +1975,12 @@ class ICU4XCodePointSetData implements ffi.Finalizable {
   ///
   /// See the [Rust documentation for `contains`](https://docs.rs/icu/latest/icu/properties/sets/struct.CodePointSetDataBorrowed.html#method.contains) for more information.
   bool contains(int cp) {
-    final result = _containsFfi(_underlying, cp);
+    final result = _ICU4XCodePointSetData_contains(_underlying, cp);
     return result;
   }
 
-  static final _containsFfi = _capi<
+  // ignore: non_constant_identifier_names
+  static final _ICU4XCodePointSetData_contains = _capi<
           ffi.NativeFunction<
               ffi.Bool Function(ffi.Pointer<ffi.Opaque>,
                   ffi.Uint32)>>('ICU4XCodePointSetData_contains')
@@ -1877,11 +1988,12 @@ class ICU4XCodePointSetData implements ffi.Finalizable {
 
   /// Checks whether the code point (specified as a 32 bit integer, in UTF-32) is in the set.
   bool contains32(int cp) {
-    final result = _contains32Ffi(_underlying, cp);
+    final result = _ICU4XCodePointSetData_contains32(_underlying, cp);
     return result;
   }
 
-  static final _contains32Ffi = _capi<
+  // ignore: non_constant_identifier_names
+  static final _ICU4XCodePointSetData_contains32 = _capi<
           ffi.NativeFunction<
               ffi.Bool Function(ffi.Pointer<ffi.Opaque>,
                   ffi.Uint32)>>('ICU4XCodePointSetData_contains32')
@@ -1891,11 +2003,12 @@ class ICU4XCodePointSetData implements ffi.Finalizable {
   ///
   /// See the [Rust documentation for `iter_ranges`](https://docs.rs/icu/latest/icu/properties/sets/struct.CodePointSetDataBorrowed.html#method.iter_ranges) for more information.
   CodePointRangeIterator get iterRanges {
-    final result = _iterRangesFfi(_underlying);
+    final result = _ICU4XCodePointSetData_iter_ranges(_underlying);
     return CodePointRangeIterator._(result);
   }
 
-  static final _iterRangesFfi = _capi<
+  // ignore: non_constant_identifier_names
+  static final _ICU4XCodePointSetData_iter_ranges = _capi<
               ffi.NativeFunction<
                   ffi.Pointer<ffi.Opaque> Function(ffi.Pointer<ffi.Opaque>)>>(
           'ICU4XCodePointSetData_iter_ranges')
@@ -1906,11 +2019,12 @@ class ICU4XCodePointSetData implements ffi.Finalizable {
   ///
   /// See the [Rust documentation for `iter_ranges_complemented`](https://docs.rs/icu/latest/icu/properties/sets/struct.CodePointSetDataBorrowed.html#method.iter_ranges_complemented) for more information.
   CodePointRangeIterator get iterRangesComplemented {
-    final result = _iterRangesComplementedFfi(_underlying);
+    final result = _ICU4XCodePointSetData_iter_ranges_complemented(_underlying);
     return CodePointRangeIterator._(result);
   }
 
-  static final _iterRangesComplementedFfi = _capi<
+  // ignore: non_constant_identifier_names
+  static final _ICU4XCodePointSetData_iter_ranges_complemented = _capi<
               ffi.NativeFunction<
                   ffi.Pointer<ffi.Opaque> Function(ffi.Pointer<ffi.Opaque>)>>(
           'ICU4XCodePointSetData_iter_ranges_complemented')
@@ -1922,12 +2036,14 @@ class ICU4XCodePointSetData implements ffi.Finalizable {
   /// See the [Rust documentation for `for_general_category_group`](https://docs.rs/icu/latest/icu/properties/sets/fn.for_general_category_group.html) for more information.
   factory ICU4XCodePointSetData.loadForGeneralCategoryGroup(
       ICU4XDataProvider provider, int group) {
-    final result = _loadForGeneralCategoryGroupFfi(provider._underlying, group);
+    final result = _ICU4XCodePointSetData_load_for_general_category_group(
+        provider._underlying, group);
     return result.isOk
         ? ICU4XCodePointSetData._(result.union.ok)
         : throw ICU4XError._(result.union.err);
   }
-  static final _loadForGeneralCategoryGroupFfi = _capi<
+  // ignore: non_constant_identifier_names
+  static final _ICU4XCodePointSetData_load_for_general_category_group = _capi<
               ffi.NativeFunction<
                   _ResultOpaqueUint32 Function(
                       ffi.Pointer<ffi.Opaque>, ffi.Uint32)>>(
@@ -1937,12 +2053,14 @@ class ICU4XCodePointSetData implements ffi.Finalizable {
 
   /// See the [Rust documentation for `ascii_hex_digit`](https://docs.rs/icu/latest/icu/properties/sets/fn.ascii_hex_digit.html) for more information.
   factory ICU4XCodePointSetData.loadAsciiHexDigit(ICU4XDataProvider provider) {
-    final result = _loadAsciiHexDigitFfi(provider._underlying);
+    final result =
+        _ICU4XCodePointSetData_load_ascii_hex_digit(provider._underlying);
     return result.isOk
         ? ICU4XCodePointSetData._(result.union.ok)
         : throw ICU4XError._(result.union.err);
   }
-  static final _loadAsciiHexDigitFfi = _capi<
+  // ignore: non_constant_identifier_names
+  static final _ICU4XCodePointSetData_load_ascii_hex_digit = _capi<
               ffi.NativeFunction<
                   _ResultOpaqueUint32 Function(ffi.Pointer<ffi.Opaque>)>>(
           'ICU4XCodePointSetData_load_ascii_hex_digit')
@@ -1951,12 +2069,13 @@ class ICU4XCodePointSetData implements ffi.Finalizable {
 
   /// See the [Rust documentation for `alnum`](https://docs.rs/icu/latest/icu/properties/sets/fn.alnum.html) for more information.
   factory ICU4XCodePointSetData.loadAlnum(ICU4XDataProvider provider) {
-    final result = _loadAlnumFfi(provider._underlying);
+    final result = _ICU4XCodePointSetData_load_alnum(provider._underlying);
     return result.isOk
         ? ICU4XCodePointSetData._(result.union.ok)
         : throw ICU4XError._(result.union.err);
   }
-  static final _loadAlnumFfi = _capi<
+  // ignore: non_constant_identifier_names
+  static final _ICU4XCodePointSetData_load_alnum = _capi<
           ffi.NativeFunction<
               _ResultOpaqueUint32 Function(
                   ffi.Pointer<ffi.Opaque>)>>('ICU4XCodePointSetData_load_alnum')
@@ -1965,12 +2084,13 @@ class ICU4XCodePointSetData implements ffi.Finalizable {
 
   /// See the [Rust documentation for `alphabetic`](https://docs.rs/icu/latest/icu/properties/sets/fn.alphabetic.html) for more information.
   factory ICU4XCodePointSetData.loadAlphabetic(ICU4XDataProvider provider) {
-    final result = _loadAlphabeticFfi(provider._underlying);
+    final result = _ICU4XCodePointSetData_load_alphabetic(provider._underlying);
     return result.isOk
         ? ICU4XCodePointSetData._(result.union.ok)
         : throw ICU4XError._(result.union.err);
   }
-  static final _loadAlphabeticFfi = _capi<
+  // ignore: non_constant_identifier_names
+  static final _ICU4XCodePointSetData_load_alphabetic = _capi<
               ffi.NativeFunction<
                   _ResultOpaqueUint32 Function(ffi.Pointer<ffi.Opaque>)>>(
           'ICU4XCodePointSetData_load_alphabetic')
@@ -1979,12 +2099,14 @@ class ICU4XCodePointSetData implements ffi.Finalizable {
 
   /// See the [Rust documentation for `bidi_control`](https://docs.rs/icu/latest/icu/properties/sets/fn.bidi_control.html) for more information.
   factory ICU4XCodePointSetData.loadBidiControl(ICU4XDataProvider provider) {
-    final result = _loadBidiControlFfi(provider._underlying);
+    final result =
+        _ICU4XCodePointSetData_load_bidi_control(provider._underlying);
     return result.isOk
         ? ICU4XCodePointSetData._(result.union.ok)
         : throw ICU4XError._(result.union.err);
   }
-  static final _loadBidiControlFfi = _capi<
+  // ignore: non_constant_identifier_names
+  static final _ICU4XCodePointSetData_load_bidi_control = _capi<
               ffi.NativeFunction<
                   _ResultOpaqueUint32 Function(ffi.Pointer<ffi.Opaque>)>>(
           'ICU4XCodePointSetData_load_bidi_control')
@@ -1993,12 +2115,14 @@ class ICU4XCodePointSetData implements ffi.Finalizable {
 
   /// See the [Rust documentation for `bidi_mirrored`](https://docs.rs/icu/latest/icu/properties/sets/fn.bidi_mirrored.html) for more information.
   factory ICU4XCodePointSetData.loadBidiMirrored(ICU4XDataProvider provider) {
-    final result = _loadBidiMirroredFfi(provider._underlying);
+    final result =
+        _ICU4XCodePointSetData_load_bidi_mirrored(provider._underlying);
     return result.isOk
         ? ICU4XCodePointSetData._(result.union.ok)
         : throw ICU4XError._(result.union.err);
   }
-  static final _loadBidiMirroredFfi = _capi<
+  // ignore: non_constant_identifier_names
+  static final _ICU4XCodePointSetData_load_bidi_mirrored = _capi<
               ffi.NativeFunction<
                   _ResultOpaqueUint32 Function(ffi.Pointer<ffi.Opaque>)>>(
           'ICU4XCodePointSetData_load_bidi_mirrored')
@@ -2007,12 +2131,13 @@ class ICU4XCodePointSetData implements ffi.Finalizable {
 
   /// See the [Rust documentation for `blank`](https://docs.rs/icu/latest/icu/properties/sets/fn.blank.html) for more information.
   factory ICU4XCodePointSetData.loadBlank(ICU4XDataProvider provider) {
-    final result = _loadBlankFfi(provider._underlying);
+    final result = _ICU4XCodePointSetData_load_blank(provider._underlying);
     return result.isOk
         ? ICU4XCodePointSetData._(result.union.ok)
         : throw ICU4XError._(result.union.err);
   }
-  static final _loadBlankFfi = _capi<
+  // ignore: non_constant_identifier_names
+  static final _ICU4XCodePointSetData_load_blank = _capi<
           ffi.NativeFunction<
               _ResultOpaqueUint32 Function(
                   ffi.Pointer<ffi.Opaque>)>>('ICU4XCodePointSetData_load_blank')
@@ -2021,12 +2146,13 @@ class ICU4XCodePointSetData implements ffi.Finalizable {
 
   /// See the [Rust documentation for `cased`](https://docs.rs/icu/latest/icu/properties/sets/fn.cased.html) for more information.
   factory ICU4XCodePointSetData.loadCased(ICU4XDataProvider provider) {
-    final result = _loadCasedFfi(provider._underlying);
+    final result = _ICU4XCodePointSetData_load_cased(provider._underlying);
     return result.isOk
         ? ICU4XCodePointSetData._(result.union.ok)
         : throw ICU4XError._(result.union.err);
   }
-  static final _loadCasedFfi = _capi<
+  // ignore: non_constant_identifier_names
+  static final _ICU4XCodePointSetData_load_cased = _capi<
           ffi.NativeFunction<
               _ResultOpaqueUint32 Function(
                   ffi.Pointer<ffi.Opaque>)>>('ICU4XCodePointSetData_load_cased')
@@ -2035,12 +2161,14 @@ class ICU4XCodePointSetData implements ffi.Finalizable {
 
   /// See the [Rust documentation for `case_ignorable`](https://docs.rs/icu/latest/icu/properties/sets/fn.case_ignorable.html) for more information.
   factory ICU4XCodePointSetData.loadCaseIgnorable(ICU4XDataProvider provider) {
-    final result = _loadCaseIgnorableFfi(provider._underlying);
+    final result =
+        _ICU4XCodePointSetData_load_case_ignorable(provider._underlying);
     return result.isOk
         ? ICU4XCodePointSetData._(result.union.ok)
         : throw ICU4XError._(result.union.err);
   }
-  static final _loadCaseIgnorableFfi = _capi<
+  // ignore: non_constant_identifier_names
+  static final _ICU4XCodePointSetData_load_case_ignorable = _capi<
               ffi.NativeFunction<
                   _ResultOpaqueUint32 Function(ffi.Pointer<ffi.Opaque>)>>(
           'ICU4XCodePointSetData_load_case_ignorable')
@@ -2050,12 +2178,14 @@ class ICU4XCodePointSetData implements ffi.Finalizable {
   /// See the [Rust documentation for `full_composition_exclusion`](https://docs.rs/icu/latest/icu/properties/sets/fn.full_composition_exclusion.html) for more information.
   factory ICU4XCodePointSetData.loadFullCompositionExclusion(
       ICU4XDataProvider provider) {
-    final result = _loadFullCompositionExclusionFfi(provider._underlying);
+    final result = _ICU4XCodePointSetData_load_full_composition_exclusion(
+        provider._underlying);
     return result.isOk
         ? ICU4XCodePointSetData._(result.union.ok)
         : throw ICU4XError._(result.union.err);
   }
-  static final _loadFullCompositionExclusionFfi = _capi<
+  // ignore: non_constant_identifier_names
+  static final _ICU4XCodePointSetData_load_full_composition_exclusion = _capi<
               ffi.NativeFunction<
                   _ResultOpaqueUint32 Function(ffi.Pointer<ffi.Opaque>)>>(
           'ICU4XCodePointSetData_load_full_composition_exclusion')
@@ -2065,12 +2195,14 @@ class ICU4XCodePointSetData implements ffi.Finalizable {
   /// See the [Rust documentation for `changes_when_casefolded`](https://docs.rs/icu/latest/icu/properties/sets/fn.changes_when_casefolded.html) for more information.
   factory ICU4XCodePointSetData.loadChangesWhenCasefolded(
       ICU4XDataProvider provider) {
-    final result = _loadChangesWhenCasefoldedFfi(provider._underlying);
+    final result = _ICU4XCodePointSetData_load_changes_when_casefolded(
+        provider._underlying);
     return result.isOk
         ? ICU4XCodePointSetData._(result.union.ok)
         : throw ICU4XError._(result.union.err);
   }
-  static final _loadChangesWhenCasefoldedFfi = _capi<
+  // ignore: non_constant_identifier_names
+  static final _ICU4XCodePointSetData_load_changes_when_casefolded = _capi<
               ffi.NativeFunction<
                   _ResultOpaqueUint32 Function(ffi.Pointer<ffi.Opaque>)>>(
           'ICU4XCodePointSetData_load_changes_when_casefolded')
@@ -2080,12 +2212,14 @@ class ICU4XCodePointSetData implements ffi.Finalizable {
   /// See the [Rust documentation for `changes_when_casemapped`](https://docs.rs/icu/latest/icu/properties/sets/fn.changes_when_casemapped.html) for more information.
   factory ICU4XCodePointSetData.loadChangesWhenCasemapped(
       ICU4XDataProvider provider) {
-    final result = _loadChangesWhenCasemappedFfi(provider._underlying);
+    final result = _ICU4XCodePointSetData_load_changes_when_casemapped(
+        provider._underlying);
     return result.isOk
         ? ICU4XCodePointSetData._(result.union.ok)
         : throw ICU4XError._(result.union.err);
   }
-  static final _loadChangesWhenCasemappedFfi = _capi<
+  // ignore: non_constant_identifier_names
+  static final _ICU4XCodePointSetData_load_changes_when_casemapped = _capi<
               ffi.NativeFunction<
                   _ResultOpaqueUint32 Function(ffi.Pointer<ffi.Opaque>)>>(
           'ICU4XCodePointSetData_load_changes_when_casemapped')
@@ -2095,12 +2229,14 @@ class ICU4XCodePointSetData implements ffi.Finalizable {
   /// See the [Rust documentation for `changes_when_nfkc_casefolded`](https://docs.rs/icu/latest/icu/properties/sets/fn.changes_when_nfkc_casefolded.html) for more information.
   factory ICU4XCodePointSetData.loadChangesWhenNfkcCasefolded(
       ICU4XDataProvider provider) {
-    final result = _loadChangesWhenNfkcCasefoldedFfi(provider._underlying);
+    final result = _ICU4XCodePointSetData_load_changes_when_nfkc_casefolded(
+        provider._underlying);
     return result.isOk
         ? ICU4XCodePointSetData._(result.union.ok)
         : throw ICU4XError._(result.union.err);
   }
-  static final _loadChangesWhenNfkcCasefoldedFfi = _capi<
+  // ignore: non_constant_identifier_names
+  static final _ICU4XCodePointSetData_load_changes_when_nfkc_casefolded = _capi<
               ffi.NativeFunction<
                   _ResultOpaqueUint32 Function(ffi.Pointer<ffi.Opaque>)>>(
           'ICU4XCodePointSetData_load_changes_when_nfkc_casefolded')
@@ -2110,12 +2246,14 @@ class ICU4XCodePointSetData implements ffi.Finalizable {
   /// See the [Rust documentation for `changes_when_lowercased`](https://docs.rs/icu/latest/icu/properties/sets/fn.changes_when_lowercased.html) for more information.
   factory ICU4XCodePointSetData.loadChangesWhenLowercased(
       ICU4XDataProvider provider) {
-    final result = _loadChangesWhenLowercasedFfi(provider._underlying);
+    final result = _ICU4XCodePointSetData_load_changes_when_lowercased(
+        provider._underlying);
     return result.isOk
         ? ICU4XCodePointSetData._(result.union.ok)
         : throw ICU4XError._(result.union.err);
   }
-  static final _loadChangesWhenLowercasedFfi = _capi<
+  // ignore: non_constant_identifier_names
+  static final _ICU4XCodePointSetData_load_changes_when_lowercased = _capi<
               ffi.NativeFunction<
                   _ResultOpaqueUint32 Function(ffi.Pointer<ffi.Opaque>)>>(
           'ICU4XCodePointSetData_load_changes_when_lowercased')
@@ -2125,12 +2263,14 @@ class ICU4XCodePointSetData implements ffi.Finalizable {
   /// See the [Rust documentation for `changes_when_titlecased`](https://docs.rs/icu/latest/icu/properties/sets/fn.changes_when_titlecased.html) for more information.
   factory ICU4XCodePointSetData.loadChangesWhenTitlecased(
       ICU4XDataProvider provider) {
-    final result = _loadChangesWhenTitlecasedFfi(provider._underlying);
+    final result = _ICU4XCodePointSetData_load_changes_when_titlecased(
+        provider._underlying);
     return result.isOk
         ? ICU4XCodePointSetData._(result.union.ok)
         : throw ICU4XError._(result.union.err);
   }
-  static final _loadChangesWhenTitlecasedFfi = _capi<
+  // ignore: non_constant_identifier_names
+  static final _ICU4XCodePointSetData_load_changes_when_titlecased = _capi<
               ffi.NativeFunction<
                   _ResultOpaqueUint32 Function(ffi.Pointer<ffi.Opaque>)>>(
           'ICU4XCodePointSetData_load_changes_when_titlecased')
@@ -2140,12 +2280,14 @@ class ICU4XCodePointSetData implements ffi.Finalizable {
   /// See the [Rust documentation for `changes_when_uppercased`](https://docs.rs/icu/latest/icu/properties/sets/fn.changes_when_uppercased.html) for more information.
   factory ICU4XCodePointSetData.loadChangesWhenUppercased(
       ICU4XDataProvider provider) {
-    final result = _loadChangesWhenUppercasedFfi(provider._underlying);
+    final result = _ICU4XCodePointSetData_load_changes_when_uppercased(
+        provider._underlying);
     return result.isOk
         ? ICU4XCodePointSetData._(result.union.ok)
         : throw ICU4XError._(result.union.err);
   }
-  static final _loadChangesWhenUppercasedFfi = _capi<
+  // ignore: non_constant_identifier_names
+  static final _ICU4XCodePointSetData_load_changes_when_uppercased = _capi<
               ffi.NativeFunction<
                   _ResultOpaqueUint32 Function(ffi.Pointer<ffi.Opaque>)>>(
           'ICU4XCodePointSetData_load_changes_when_uppercased')
@@ -2154,12 +2296,13 @@ class ICU4XCodePointSetData implements ffi.Finalizable {
 
   /// See the [Rust documentation for `dash`](https://docs.rs/icu/latest/icu/properties/sets/fn.dash.html) for more information.
   factory ICU4XCodePointSetData.loadDash(ICU4XDataProvider provider) {
-    final result = _loadDashFfi(provider._underlying);
+    final result = _ICU4XCodePointSetData_load_dash(provider._underlying);
     return result.isOk
         ? ICU4XCodePointSetData._(result.union.ok)
         : throw ICU4XError._(result.union.err);
   }
-  static final _loadDashFfi = _capi<
+  // ignore: non_constant_identifier_names
+  static final _ICU4XCodePointSetData_load_dash = _capi<
           ffi.NativeFunction<
               _ResultOpaqueUint32 Function(
                   ffi.Pointer<ffi.Opaque>)>>('ICU4XCodePointSetData_load_dash')
@@ -2168,12 +2311,13 @@ class ICU4XCodePointSetData implements ffi.Finalizable {
 
   /// See the [Rust documentation for `deprecated`](https://docs.rs/icu/latest/icu/properties/sets/fn.deprecated.html) for more information.
   factory ICU4XCodePointSetData.loadDeprecated(ICU4XDataProvider provider) {
-    final result = _loadDeprecatedFfi(provider._underlying);
+    final result = _ICU4XCodePointSetData_load_deprecated(provider._underlying);
     return result.isOk
         ? ICU4XCodePointSetData._(result.union.ok)
         : throw ICU4XError._(result.union.err);
   }
-  static final _loadDeprecatedFfi = _capi<
+  // ignore: non_constant_identifier_names
+  static final _ICU4XCodePointSetData_load_deprecated = _capi<
               ffi.NativeFunction<
                   _ResultOpaqueUint32 Function(ffi.Pointer<ffi.Opaque>)>>(
           'ICU4XCodePointSetData_load_deprecated')
@@ -2183,12 +2327,14 @@ class ICU4XCodePointSetData implements ffi.Finalizable {
   /// See the [Rust documentation for `default_ignorable_code_point`](https://docs.rs/icu/latest/icu/properties/sets/fn.default_ignorable_code_point.html) for more information.
   factory ICU4XCodePointSetData.loadDefaultIgnorableCodePoint(
       ICU4XDataProvider provider) {
-    final result = _loadDefaultIgnorableCodePointFfi(provider._underlying);
+    final result = _ICU4XCodePointSetData_load_default_ignorable_code_point(
+        provider._underlying);
     return result.isOk
         ? ICU4XCodePointSetData._(result.union.ok)
         : throw ICU4XError._(result.union.err);
   }
-  static final _loadDefaultIgnorableCodePointFfi = _capi<
+  // ignore: non_constant_identifier_names
+  static final _ICU4XCodePointSetData_load_default_ignorable_code_point = _capi<
               ffi.NativeFunction<
                   _ResultOpaqueUint32 Function(ffi.Pointer<ffi.Opaque>)>>(
           'ICU4XCodePointSetData_load_default_ignorable_code_point')
@@ -2197,12 +2343,13 @@ class ICU4XCodePointSetData implements ffi.Finalizable {
 
   /// See the [Rust documentation for `diacritic`](https://docs.rs/icu/latest/icu/properties/sets/fn.diacritic.html) for more information.
   factory ICU4XCodePointSetData.loadDiacritic(ICU4XDataProvider provider) {
-    final result = _loadDiacriticFfi(provider._underlying);
+    final result = _ICU4XCodePointSetData_load_diacritic(provider._underlying);
     return result.isOk
         ? ICU4XCodePointSetData._(result.union.ok)
         : throw ICU4XError._(result.union.err);
   }
-  static final _loadDiacriticFfi = _capi<
+  // ignore: non_constant_identifier_names
+  static final _ICU4XCodePointSetData_load_diacritic = _capi<
               ffi.NativeFunction<
                   _ResultOpaqueUint32 Function(ffi.Pointer<ffi.Opaque>)>>(
           'ICU4XCodePointSetData_load_diacritic')
@@ -2212,12 +2359,14 @@ class ICU4XCodePointSetData implements ffi.Finalizable {
   /// See the [Rust documentation for `emoji_modifier_base`](https://docs.rs/icu/latest/icu/properties/sets/fn.emoji_modifier_base.html) for more information.
   factory ICU4XCodePointSetData.loadEmojiModifierBase(
       ICU4XDataProvider provider) {
-    final result = _loadEmojiModifierBaseFfi(provider._underlying);
+    final result =
+        _ICU4XCodePointSetData_load_emoji_modifier_base(provider._underlying);
     return result.isOk
         ? ICU4XCodePointSetData._(result.union.ok)
         : throw ICU4XError._(result.union.err);
   }
-  static final _loadEmojiModifierBaseFfi = _capi<
+  // ignore: non_constant_identifier_names
+  static final _ICU4XCodePointSetData_load_emoji_modifier_base = _capi<
               ffi.NativeFunction<
                   _ResultOpaqueUint32 Function(ffi.Pointer<ffi.Opaque>)>>(
           'ICU4XCodePointSetData_load_emoji_modifier_base')
@@ -2226,12 +2375,14 @@ class ICU4XCodePointSetData implements ffi.Finalizable {
 
   /// See the [Rust documentation for `emoji_component`](https://docs.rs/icu/latest/icu/properties/sets/fn.emoji_component.html) for more information.
   factory ICU4XCodePointSetData.loadEmojiComponent(ICU4XDataProvider provider) {
-    final result = _loadEmojiComponentFfi(provider._underlying);
+    final result =
+        _ICU4XCodePointSetData_load_emoji_component(provider._underlying);
     return result.isOk
         ? ICU4XCodePointSetData._(result.union.ok)
         : throw ICU4XError._(result.union.err);
   }
-  static final _loadEmojiComponentFfi = _capi<
+  // ignore: non_constant_identifier_names
+  static final _ICU4XCodePointSetData_load_emoji_component = _capi<
               ffi.NativeFunction<
                   _ResultOpaqueUint32 Function(ffi.Pointer<ffi.Opaque>)>>(
           'ICU4XCodePointSetData_load_emoji_component')
@@ -2240,12 +2391,14 @@ class ICU4XCodePointSetData implements ffi.Finalizable {
 
   /// See the [Rust documentation for `emoji_modifier`](https://docs.rs/icu/latest/icu/properties/sets/fn.emoji_modifier.html) for more information.
   factory ICU4XCodePointSetData.loadEmojiModifier(ICU4XDataProvider provider) {
-    final result = _loadEmojiModifierFfi(provider._underlying);
+    final result =
+        _ICU4XCodePointSetData_load_emoji_modifier(provider._underlying);
     return result.isOk
         ? ICU4XCodePointSetData._(result.union.ok)
         : throw ICU4XError._(result.union.err);
   }
-  static final _loadEmojiModifierFfi = _capi<
+  // ignore: non_constant_identifier_names
+  static final _ICU4XCodePointSetData_load_emoji_modifier = _capi<
               ffi.NativeFunction<
                   _ResultOpaqueUint32 Function(ffi.Pointer<ffi.Opaque>)>>(
           'ICU4XCodePointSetData_load_emoji_modifier')
@@ -2254,12 +2407,13 @@ class ICU4XCodePointSetData implements ffi.Finalizable {
 
   /// See the [Rust documentation for `emoji`](https://docs.rs/icu/latest/icu/properties/sets/fn.emoji.html) for more information.
   factory ICU4XCodePointSetData.loadEmoji(ICU4XDataProvider provider) {
-    final result = _loadEmojiFfi(provider._underlying);
+    final result = _ICU4XCodePointSetData_load_emoji(provider._underlying);
     return result.isOk
         ? ICU4XCodePointSetData._(result.union.ok)
         : throw ICU4XError._(result.union.err);
   }
-  static final _loadEmojiFfi = _capi<
+  // ignore: non_constant_identifier_names
+  static final _ICU4XCodePointSetData_load_emoji = _capi<
           ffi.NativeFunction<
               _ResultOpaqueUint32 Function(
                   ffi.Pointer<ffi.Opaque>)>>('ICU4XCodePointSetData_load_emoji')
@@ -2269,12 +2423,14 @@ class ICU4XCodePointSetData implements ffi.Finalizable {
   /// See the [Rust documentation for `emoji_presentation`](https://docs.rs/icu/latest/icu/properties/sets/fn.emoji_presentation.html) for more information.
   factory ICU4XCodePointSetData.loadEmojiPresentation(
       ICU4XDataProvider provider) {
-    final result = _loadEmojiPresentationFfi(provider._underlying);
+    final result =
+        _ICU4XCodePointSetData_load_emoji_presentation(provider._underlying);
     return result.isOk
         ? ICU4XCodePointSetData._(result.union.ok)
         : throw ICU4XError._(result.union.err);
   }
-  static final _loadEmojiPresentationFfi = _capi<
+  // ignore: non_constant_identifier_names
+  static final _ICU4XCodePointSetData_load_emoji_presentation = _capi<
               ffi.NativeFunction<
                   _ResultOpaqueUint32 Function(ffi.Pointer<ffi.Opaque>)>>(
           'ICU4XCodePointSetData_load_emoji_presentation')
@@ -2283,12 +2439,13 @@ class ICU4XCodePointSetData implements ffi.Finalizable {
 
   /// See the [Rust documentation for `extender`](https://docs.rs/icu/latest/icu/properties/sets/fn.extender.html) for more information.
   factory ICU4XCodePointSetData.loadExtender(ICU4XDataProvider provider) {
-    final result = _loadExtenderFfi(provider._underlying);
+    final result = _ICU4XCodePointSetData_load_extender(provider._underlying);
     return result.isOk
         ? ICU4XCodePointSetData._(result.union.ok)
         : throw ICU4XError._(result.union.err);
   }
-  static final _loadExtenderFfi = _capi<
+  // ignore: non_constant_identifier_names
+  static final _ICU4XCodePointSetData_load_extender = _capi<
               ffi.NativeFunction<
                   _ResultOpaqueUint32 Function(ffi.Pointer<ffi.Opaque>)>>(
           'ICU4XCodePointSetData_load_extender')
@@ -2298,12 +2455,14 @@ class ICU4XCodePointSetData implements ffi.Finalizable {
   /// See the [Rust documentation for `extended_pictographic`](https://docs.rs/icu/latest/icu/properties/sets/fn.extended_pictographic.html) for more information.
   factory ICU4XCodePointSetData.loadExtendedPictographic(
       ICU4XDataProvider provider) {
-    final result = _loadExtendedPictographicFfi(provider._underlying);
+    final result =
+        _ICU4XCodePointSetData_load_extended_pictographic(provider._underlying);
     return result.isOk
         ? ICU4XCodePointSetData._(result.union.ok)
         : throw ICU4XError._(result.union.err);
   }
-  static final _loadExtendedPictographicFfi = _capi<
+  // ignore: non_constant_identifier_names
+  static final _ICU4XCodePointSetData_load_extended_pictographic = _capi<
               ffi.NativeFunction<
                   _ResultOpaqueUint32 Function(ffi.Pointer<ffi.Opaque>)>>(
           'ICU4XCodePointSetData_load_extended_pictographic')
@@ -2312,12 +2471,13 @@ class ICU4XCodePointSetData implements ffi.Finalizable {
 
   /// See the [Rust documentation for `graph`](https://docs.rs/icu/latest/icu/properties/sets/fn.graph.html) for more information.
   factory ICU4XCodePointSetData.loadGraph(ICU4XDataProvider provider) {
-    final result = _loadGraphFfi(provider._underlying);
+    final result = _ICU4XCodePointSetData_load_graph(provider._underlying);
     return result.isOk
         ? ICU4XCodePointSetData._(result.union.ok)
         : throw ICU4XError._(result.union.err);
   }
-  static final _loadGraphFfi = _capi<
+  // ignore: non_constant_identifier_names
+  static final _ICU4XCodePointSetData_load_graph = _capi<
           ffi.NativeFunction<
               _ResultOpaqueUint32 Function(
                   ffi.Pointer<ffi.Opaque>)>>('ICU4XCodePointSetData_load_graph')
@@ -2326,12 +2486,14 @@ class ICU4XCodePointSetData implements ffi.Finalizable {
 
   /// See the [Rust documentation for `grapheme_base`](https://docs.rs/icu/latest/icu/properties/sets/fn.grapheme_base.html) for more information.
   factory ICU4XCodePointSetData.loadGraphemeBase(ICU4XDataProvider provider) {
-    final result = _loadGraphemeBaseFfi(provider._underlying);
+    final result =
+        _ICU4XCodePointSetData_load_grapheme_base(provider._underlying);
     return result.isOk
         ? ICU4XCodePointSetData._(result.union.ok)
         : throw ICU4XError._(result.union.err);
   }
-  static final _loadGraphemeBaseFfi = _capi<
+  // ignore: non_constant_identifier_names
+  static final _ICU4XCodePointSetData_load_grapheme_base = _capi<
               ffi.NativeFunction<
                   _ResultOpaqueUint32 Function(ffi.Pointer<ffi.Opaque>)>>(
           'ICU4XCodePointSetData_load_grapheme_base')
@@ -2340,12 +2502,14 @@ class ICU4XCodePointSetData implements ffi.Finalizable {
 
   /// See the [Rust documentation for `grapheme_extend`](https://docs.rs/icu/latest/icu/properties/sets/fn.grapheme_extend.html) for more information.
   factory ICU4XCodePointSetData.loadGraphemeExtend(ICU4XDataProvider provider) {
-    final result = _loadGraphemeExtendFfi(provider._underlying);
+    final result =
+        _ICU4XCodePointSetData_load_grapheme_extend(provider._underlying);
     return result.isOk
         ? ICU4XCodePointSetData._(result.union.ok)
         : throw ICU4XError._(result.union.err);
   }
-  static final _loadGraphemeExtendFfi = _capi<
+  // ignore: non_constant_identifier_names
+  static final _ICU4XCodePointSetData_load_grapheme_extend = _capi<
               ffi.NativeFunction<
                   _ResultOpaqueUint32 Function(ffi.Pointer<ffi.Opaque>)>>(
           'ICU4XCodePointSetData_load_grapheme_extend')
@@ -2354,12 +2518,14 @@ class ICU4XCodePointSetData implements ffi.Finalizable {
 
   /// See the [Rust documentation for `grapheme_link`](https://docs.rs/icu/latest/icu/properties/sets/fn.grapheme_link.html) for more information.
   factory ICU4XCodePointSetData.loadGraphemeLink(ICU4XDataProvider provider) {
-    final result = _loadGraphemeLinkFfi(provider._underlying);
+    final result =
+        _ICU4XCodePointSetData_load_grapheme_link(provider._underlying);
     return result.isOk
         ? ICU4XCodePointSetData._(result.union.ok)
         : throw ICU4XError._(result.union.err);
   }
-  static final _loadGraphemeLinkFfi = _capi<
+  // ignore: non_constant_identifier_names
+  static final _ICU4XCodePointSetData_load_grapheme_link = _capi<
               ffi.NativeFunction<
                   _ResultOpaqueUint32 Function(ffi.Pointer<ffi.Opaque>)>>(
           'ICU4XCodePointSetData_load_grapheme_link')
@@ -2368,12 +2534,13 @@ class ICU4XCodePointSetData implements ffi.Finalizable {
 
   /// See the [Rust documentation for `hex_digit`](https://docs.rs/icu/latest/icu/properties/sets/fn.hex_digit.html) for more information.
   factory ICU4XCodePointSetData.loadHexDigit(ICU4XDataProvider provider) {
-    final result = _loadHexDigitFfi(provider._underlying);
+    final result = _ICU4XCodePointSetData_load_hex_digit(provider._underlying);
     return result.isOk
         ? ICU4XCodePointSetData._(result.union.ok)
         : throw ICU4XError._(result.union.err);
   }
-  static final _loadHexDigitFfi = _capi<
+  // ignore: non_constant_identifier_names
+  static final _ICU4XCodePointSetData_load_hex_digit = _capi<
               ffi.NativeFunction<
                   _ResultOpaqueUint32 Function(ffi.Pointer<ffi.Opaque>)>>(
           'ICU4XCodePointSetData_load_hex_digit')
@@ -2382,12 +2549,13 @@ class ICU4XCodePointSetData implements ffi.Finalizable {
 
   /// See the [Rust documentation for `hyphen`](https://docs.rs/icu/latest/icu/properties/sets/fn.hyphen.html) for more information.
   factory ICU4XCodePointSetData.loadHyphen(ICU4XDataProvider provider) {
-    final result = _loadHyphenFfi(provider._underlying);
+    final result = _ICU4XCodePointSetData_load_hyphen(provider._underlying);
     return result.isOk
         ? ICU4XCodePointSetData._(result.union.ok)
         : throw ICU4XError._(result.union.err);
   }
-  static final _loadHyphenFfi = _capi<
+  // ignore: non_constant_identifier_names
+  static final _ICU4XCodePointSetData_load_hyphen = _capi<
               ffi.NativeFunction<
                   _ResultOpaqueUint32 Function(ffi.Pointer<ffi.Opaque>)>>(
           'ICU4XCodePointSetData_load_hyphen')
@@ -2396,12 +2564,14 @@ class ICU4XCodePointSetData implements ffi.Finalizable {
 
   /// See the [Rust documentation for `id_continue`](https://docs.rs/icu/latest/icu/properties/sets/fn.id_continue.html) for more information.
   factory ICU4XCodePointSetData.loadIdContinue(ICU4XDataProvider provider) {
-    final result = _loadIdContinueFfi(provider._underlying);
+    final result =
+        _ICU4XCodePointSetData_load_id_continue(provider._underlying);
     return result.isOk
         ? ICU4XCodePointSetData._(result.union.ok)
         : throw ICU4XError._(result.union.err);
   }
-  static final _loadIdContinueFfi = _capi<
+  // ignore: non_constant_identifier_names
+  static final _ICU4XCodePointSetData_load_id_continue = _capi<
               ffi.NativeFunction<
                   _ResultOpaqueUint32 Function(ffi.Pointer<ffi.Opaque>)>>(
           'ICU4XCodePointSetData_load_id_continue')
@@ -2410,12 +2580,14 @@ class ICU4XCodePointSetData implements ffi.Finalizable {
 
   /// See the [Rust documentation for `ideographic`](https://docs.rs/icu/latest/icu/properties/sets/fn.ideographic.html) for more information.
   factory ICU4XCodePointSetData.loadIdeographic(ICU4XDataProvider provider) {
-    final result = _loadIdeographicFfi(provider._underlying);
+    final result =
+        _ICU4XCodePointSetData_load_ideographic(provider._underlying);
     return result.isOk
         ? ICU4XCodePointSetData._(result.union.ok)
         : throw ICU4XError._(result.union.err);
   }
-  static final _loadIdeographicFfi = _capi<
+  // ignore: non_constant_identifier_names
+  static final _ICU4XCodePointSetData_load_ideographic = _capi<
               ffi.NativeFunction<
                   _ResultOpaqueUint32 Function(ffi.Pointer<ffi.Opaque>)>>(
           'ICU4XCodePointSetData_load_ideographic')
@@ -2424,12 +2596,13 @@ class ICU4XCodePointSetData implements ffi.Finalizable {
 
   /// See the [Rust documentation for `id_start`](https://docs.rs/icu/latest/icu/properties/sets/fn.id_start.html) for more information.
   factory ICU4XCodePointSetData.loadIdStart(ICU4XDataProvider provider) {
-    final result = _loadIdStartFfi(provider._underlying);
+    final result = _ICU4XCodePointSetData_load_id_start(provider._underlying);
     return result.isOk
         ? ICU4XCodePointSetData._(result.union.ok)
         : throw ICU4XError._(result.union.err);
   }
-  static final _loadIdStartFfi = _capi<
+  // ignore: non_constant_identifier_names
+  static final _ICU4XCodePointSetData_load_id_start = _capi<
               ffi.NativeFunction<
                   _ResultOpaqueUint32 Function(ffi.Pointer<ffi.Opaque>)>>(
           'ICU4XCodePointSetData_load_id_start')
@@ -2439,12 +2612,14 @@ class ICU4XCodePointSetData implements ffi.Finalizable {
   /// See the [Rust documentation for `ids_binary_operator`](https://docs.rs/icu/latest/icu/properties/sets/fn.ids_binary_operator.html) for more information.
   factory ICU4XCodePointSetData.loadIdsBinaryOperator(
       ICU4XDataProvider provider) {
-    final result = _loadIdsBinaryOperatorFfi(provider._underlying);
+    final result =
+        _ICU4XCodePointSetData_load_ids_binary_operator(provider._underlying);
     return result.isOk
         ? ICU4XCodePointSetData._(result.union.ok)
         : throw ICU4XError._(result.union.err);
   }
-  static final _loadIdsBinaryOperatorFfi = _capi<
+  // ignore: non_constant_identifier_names
+  static final _ICU4XCodePointSetData_load_ids_binary_operator = _capi<
               ffi.NativeFunction<
                   _ResultOpaqueUint32 Function(ffi.Pointer<ffi.Opaque>)>>(
           'ICU4XCodePointSetData_load_ids_binary_operator')
@@ -2454,12 +2629,14 @@ class ICU4XCodePointSetData implements ffi.Finalizable {
   /// See the [Rust documentation for `ids_trinary_operator`](https://docs.rs/icu/latest/icu/properties/sets/fn.ids_trinary_operator.html) for more information.
   factory ICU4XCodePointSetData.loadIdsTrinaryOperator(
       ICU4XDataProvider provider) {
-    final result = _loadIdsTrinaryOperatorFfi(provider._underlying);
+    final result =
+        _ICU4XCodePointSetData_load_ids_trinary_operator(provider._underlying);
     return result.isOk
         ? ICU4XCodePointSetData._(result.union.ok)
         : throw ICU4XError._(result.union.err);
   }
-  static final _loadIdsTrinaryOperatorFfi = _capi<
+  // ignore: non_constant_identifier_names
+  static final _ICU4XCodePointSetData_load_ids_trinary_operator = _capi<
               ffi.NativeFunction<
                   _ResultOpaqueUint32 Function(ffi.Pointer<ffi.Opaque>)>>(
           'ICU4XCodePointSetData_load_ids_trinary_operator')
@@ -2468,12 +2645,14 @@ class ICU4XCodePointSetData implements ffi.Finalizable {
 
   /// See the [Rust documentation for `join_control`](https://docs.rs/icu/latest/icu/properties/sets/fn.join_control.html) for more information.
   factory ICU4XCodePointSetData.loadJoinControl(ICU4XDataProvider provider) {
-    final result = _loadJoinControlFfi(provider._underlying);
+    final result =
+        _ICU4XCodePointSetData_load_join_control(provider._underlying);
     return result.isOk
         ? ICU4XCodePointSetData._(result.union.ok)
         : throw ICU4XError._(result.union.err);
   }
-  static final _loadJoinControlFfi = _capi<
+  // ignore: non_constant_identifier_names
+  static final _ICU4XCodePointSetData_load_join_control = _capi<
               ffi.NativeFunction<
                   _ResultOpaqueUint32 Function(ffi.Pointer<ffi.Opaque>)>>(
           'ICU4XCodePointSetData_load_join_control')
@@ -2483,12 +2662,14 @@ class ICU4XCodePointSetData implements ffi.Finalizable {
   /// See the [Rust documentation for `logical_order_exception`](https://docs.rs/icu/latest/icu/properties/sets/fn.logical_order_exception.html) for more information.
   factory ICU4XCodePointSetData.loadLogicalOrderException(
       ICU4XDataProvider provider) {
-    final result = _loadLogicalOrderExceptionFfi(provider._underlying);
+    final result = _ICU4XCodePointSetData_load_logical_order_exception(
+        provider._underlying);
     return result.isOk
         ? ICU4XCodePointSetData._(result.union.ok)
         : throw ICU4XError._(result.union.err);
   }
-  static final _loadLogicalOrderExceptionFfi = _capi<
+  // ignore: non_constant_identifier_names
+  static final _ICU4XCodePointSetData_load_logical_order_exception = _capi<
               ffi.NativeFunction<
                   _ResultOpaqueUint32 Function(ffi.Pointer<ffi.Opaque>)>>(
           'ICU4XCodePointSetData_load_logical_order_exception')
@@ -2497,12 +2678,13 @@ class ICU4XCodePointSetData implements ffi.Finalizable {
 
   /// See the [Rust documentation for `lowercase`](https://docs.rs/icu/latest/icu/properties/sets/fn.lowercase.html) for more information.
   factory ICU4XCodePointSetData.loadLowercase(ICU4XDataProvider provider) {
-    final result = _loadLowercaseFfi(provider._underlying);
+    final result = _ICU4XCodePointSetData_load_lowercase(provider._underlying);
     return result.isOk
         ? ICU4XCodePointSetData._(result.union.ok)
         : throw ICU4XError._(result.union.err);
   }
-  static final _loadLowercaseFfi = _capi<
+  // ignore: non_constant_identifier_names
+  static final _ICU4XCodePointSetData_load_lowercase = _capi<
               ffi.NativeFunction<
                   _ResultOpaqueUint32 Function(ffi.Pointer<ffi.Opaque>)>>(
           'ICU4XCodePointSetData_load_lowercase')
@@ -2511,12 +2693,13 @@ class ICU4XCodePointSetData implements ffi.Finalizable {
 
   /// See the [Rust documentation for `math`](https://docs.rs/icu/latest/icu/properties/sets/fn.math.html) for more information.
   factory ICU4XCodePointSetData.loadMath(ICU4XDataProvider provider) {
-    final result = _loadMathFfi(provider._underlying);
+    final result = _ICU4XCodePointSetData_load_math(provider._underlying);
     return result.isOk
         ? ICU4XCodePointSetData._(result.union.ok)
         : throw ICU4XError._(result.union.err);
   }
-  static final _loadMathFfi = _capi<
+  // ignore: non_constant_identifier_names
+  static final _ICU4XCodePointSetData_load_math = _capi<
           ffi.NativeFunction<
               _ResultOpaqueUint32 Function(
                   ffi.Pointer<ffi.Opaque>)>>('ICU4XCodePointSetData_load_math')
@@ -2526,12 +2709,14 @@ class ICU4XCodePointSetData implements ffi.Finalizable {
   /// See the [Rust documentation for `noncharacter_code_point`](https://docs.rs/icu/latest/icu/properties/sets/fn.noncharacter_code_point.html) for more information.
   factory ICU4XCodePointSetData.loadNoncharacterCodePoint(
       ICU4XDataProvider provider) {
-    final result = _loadNoncharacterCodePointFfi(provider._underlying);
+    final result = _ICU4XCodePointSetData_load_noncharacter_code_point(
+        provider._underlying);
     return result.isOk
         ? ICU4XCodePointSetData._(result.union.ok)
         : throw ICU4XError._(result.union.err);
   }
-  static final _loadNoncharacterCodePointFfi = _capi<
+  // ignore: non_constant_identifier_names
+  static final _ICU4XCodePointSetData_load_noncharacter_code_point = _capi<
               ffi.NativeFunction<
                   _ResultOpaqueUint32 Function(ffi.Pointer<ffi.Opaque>)>>(
           'ICU4XCodePointSetData_load_noncharacter_code_point')
@@ -2540,12 +2725,13 @@ class ICU4XCodePointSetData implements ffi.Finalizable {
 
   /// See the [Rust documentation for `nfc_inert`](https://docs.rs/icu/latest/icu/properties/sets/fn.nfc_inert.html) for more information.
   factory ICU4XCodePointSetData.loadNfcInert(ICU4XDataProvider provider) {
-    final result = _loadNfcInertFfi(provider._underlying);
+    final result = _ICU4XCodePointSetData_load_nfc_inert(provider._underlying);
     return result.isOk
         ? ICU4XCodePointSetData._(result.union.ok)
         : throw ICU4XError._(result.union.err);
   }
-  static final _loadNfcInertFfi = _capi<
+  // ignore: non_constant_identifier_names
+  static final _ICU4XCodePointSetData_load_nfc_inert = _capi<
               ffi.NativeFunction<
                   _ResultOpaqueUint32 Function(ffi.Pointer<ffi.Opaque>)>>(
           'ICU4XCodePointSetData_load_nfc_inert')
@@ -2554,12 +2740,13 @@ class ICU4XCodePointSetData implements ffi.Finalizable {
 
   /// See the [Rust documentation for `nfd_inert`](https://docs.rs/icu/latest/icu/properties/sets/fn.nfd_inert.html) for more information.
   factory ICU4XCodePointSetData.loadNfdInert(ICU4XDataProvider provider) {
-    final result = _loadNfdInertFfi(provider._underlying);
+    final result = _ICU4XCodePointSetData_load_nfd_inert(provider._underlying);
     return result.isOk
         ? ICU4XCodePointSetData._(result.union.ok)
         : throw ICU4XError._(result.union.err);
   }
-  static final _loadNfdInertFfi = _capi<
+  // ignore: non_constant_identifier_names
+  static final _ICU4XCodePointSetData_load_nfd_inert = _capi<
               ffi.NativeFunction<
                   _ResultOpaqueUint32 Function(ffi.Pointer<ffi.Opaque>)>>(
           'ICU4XCodePointSetData_load_nfd_inert')
@@ -2568,12 +2755,13 @@ class ICU4XCodePointSetData implements ffi.Finalizable {
 
   /// See the [Rust documentation for `nfkc_inert`](https://docs.rs/icu/latest/icu/properties/sets/fn.nfkc_inert.html) for more information.
   factory ICU4XCodePointSetData.loadNfkcInert(ICU4XDataProvider provider) {
-    final result = _loadNfkcInertFfi(provider._underlying);
+    final result = _ICU4XCodePointSetData_load_nfkc_inert(provider._underlying);
     return result.isOk
         ? ICU4XCodePointSetData._(result.union.ok)
         : throw ICU4XError._(result.union.err);
   }
-  static final _loadNfkcInertFfi = _capi<
+  // ignore: non_constant_identifier_names
+  static final _ICU4XCodePointSetData_load_nfkc_inert = _capi<
               ffi.NativeFunction<
                   _ResultOpaqueUint32 Function(ffi.Pointer<ffi.Opaque>)>>(
           'ICU4XCodePointSetData_load_nfkc_inert')
@@ -2582,12 +2770,13 @@ class ICU4XCodePointSetData implements ffi.Finalizable {
 
   /// See the [Rust documentation for `nfkd_inert`](https://docs.rs/icu/latest/icu/properties/sets/fn.nfkd_inert.html) for more information.
   factory ICU4XCodePointSetData.loadNfkdInert(ICU4XDataProvider provider) {
-    final result = _loadNfkdInertFfi(provider._underlying);
+    final result = _ICU4XCodePointSetData_load_nfkd_inert(provider._underlying);
     return result.isOk
         ? ICU4XCodePointSetData._(result.union.ok)
         : throw ICU4XError._(result.union.err);
   }
-  static final _loadNfkdInertFfi = _capi<
+  // ignore: non_constant_identifier_names
+  static final _ICU4XCodePointSetData_load_nfkd_inert = _capi<
               ffi.NativeFunction<
                   _ResultOpaqueUint32 Function(ffi.Pointer<ffi.Opaque>)>>(
           'ICU4XCodePointSetData_load_nfkd_inert')
@@ -2596,12 +2785,14 @@ class ICU4XCodePointSetData implements ffi.Finalizable {
 
   /// See the [Rust documentation for `pattern_syntax`](https://docs.rs/icu/latest/icu/properties/sets/fn.pattern_syntax.html) for more information.
   factory ICU4XCodePointSetData.loadPatternSyntax(ICU4XDataProvider provider) {
-    final result = _loadPatternSyntaxFfi(provider._underlying);
+    final result =
+        _ICU4XCodePointSetData_load_pattern_syntax(provider._underlying);
     return result.isOk
         ? ICU4XCodePointSetData._(result.union.ok)
         : throw ICU4XError._(result.union.err);
   }
-  static final _loadPatternSyntaxFfi = _capi<
+  // ignore: non_constant_identifier_names
+  static final _ICU4XCodePointSetData_load_pattern_syntax = _capi<
               ffi.NativeFunction<
                   _ResultOpaqueUint32 Function(ffi.Pointer<ffi.Opaque>)>>(
           'ICU4XCodePointSetData_load_pattern_syntax')
@@ -2611,12 +2802,14 @@ class ICU4XCodePointSetData implements ffi.Finalizable {
   /// See the [Rust documentation for `pattern_white_space`](https://docs.rs/icu/latest/icu/properties/sets/fn.pattern_white_space.html) for more information.
   factory ICU4XCodePointSetData.loadPatternWhiteSpace(
       ICU4XDataProvider provider) {
-    final result = _loadPatternWhiteSpaceFfi(provider._underlying);
+    final result =
+        _ICU4XCodePointSetData_load_pattern_white_space(provider._underlying);
     return result.isOk
         ? ICU4XCodePointSetData._(result.union.ok)
         : throw ICU4XError._(result.union.err);
   }
-  static final _loadPatternWhiteSpaceFfi = _capi<
+  // ignore: non_constant_identifier_names
+  static final _ICU4XCodePointSetData_load_pattern_white_space = _capi<
               ffi.NativeFunction<
                   _ResultOpaqueUint32 Function(ffi.Pointer<ffi.Opaque>)>>(
           'ICU4XCodePointSetData_load_pattern_white_space')
@@ -2626,12 +2819,14 @@ class ICU4XCodePointSetData implements ffi.Finalizable {
   /// See the [Rust documentation for `prepended_concatenation_mark`](https://docs.rs/icu/latest/icu/properties/sets/fn.prepended_concatenation_mark.html) for more information.
   factory ICU4XCodePointSetData.loadPrependedConcatenationMark(
       ICU4XDataProvider provider) {
-    final result = _loadPrependedConcatenationMarkFfi(provider._underlying);
+    final result = _ICU4XCodePointSetData_load_prepended_concatenation_mark(
+        provider._underlying);
     return result.isOk
         ? ICU4XCodePointSetData._(result.union.ok)
         : throw ICU4XError._(result.union.err);
   }
-  static final _loadPrependedConcatenationMarkFfi = _capi<
+  // ignore: non_constant_identifier_names
+  static final _ICU4XCodePointSetData_load_prepended_concatenation_mark = _capi<
               ffi.NativeFunction<
                   _ResultOpaqueUint32 Function(ffi.Pointer<ffi.Opaque>)>>(
           'ICU4XCodePointSetData_load_prepended_concatenation_mark')
@@ -2640,12 +2835,13 @@ class ICU4XCodePointSetData implements ffi.Finalizable {
 
   /// See the [Rust documentation for `print`](https://docs.rs/icu/latest/icu/properties/sets/fn.print.html) for more information.
   factory ICU4XCodePointSetData.loadPrint(ICU4XDataProvider provider) {
-    final result = _loadPrintFfi(provider._underlying);
+    final result = _ICU4XCodePointSetData_load_print(provider._underlying);
     return result.isOk
         ? ICU4XCodePointSetData._(result.union.ok)
         : throw ICU4XError._(result.union.err);
   }
-  static final _loadPrintFfi = _capi<
+  // ignore: non_constant_identifier_names
+  static final _ICU4XCodePointSetData_load_print = _capi<
           ffi.NativeFunction<
               _ResultOpaqueUint32 Function(
                   ffi.Pointer<ffi.Opaque>)>>('ICU4XCodePointSetData_load_print')
@@ -2654,12 +2850,14 @@ class ICU4XCodePointSetData implements ffi.Finalizable {
 
   /// See the [Rust documentation for `quotation_mark`](https://docs.rs/icu/latest/icu/properties/sets/fn.quotation_mark.html) for more information.
   factory ICU4XCodePointSetData.loadQuotationMark(ICU4XDataProvider provider) {
-    final result = _loadQuotationMarkFfi(provider._underlying);
+    final result =
+        _ICU4XCodePointSetData_load_quotation_mark(provider._underlying);
     return result.isOk
         ? ICU4XCodePointSetData._(result.union.ok)
         : throw ICU4XError._(result.union.err);
   }
-  static final _loadQuotationMarkFfi = _capi<
+  // ignore: non_constant_identifier_names
+  static final _ICU4XCodePointSetData_load_quotation_mark = _capi<
               ffi.NativeFunction<
                   _ResultOpaqueUint32 Function(ffi.Pointer<ffi.Opaque>)>>(
           'ICU4XCodePointSetData_load_quotation_mark')
@@ -2668,12 +2866,13 @@ class ICU4XCodePointSetData implements ffi.Finalizable {
 
   /// See the [Rust documentation for `radical`](https://docs.rs/icu/latest/icu/properties/sets/fn.radical.html) for more information.
   factory ICU4XCodePointSetData.loadRadical(ICU4XDataProvider provider) {
-    final result = _loadRadicalFfi(provider._underlying);
+    final result = _ICU4XCodePointSetData_load_radical(provider._underlying);
     return result.isOk
         ? ICU4XCodePointSetData._(result.union.ok)
         : throw ICU4XError._(result.union.err);
   }
-  static final _loadRadicalFfi = _capi<
+  // ignore: non_constant_identifier_names
+  static final _ICU4XCodePointSetData_load_radical = _capi<
               ffi.NativeFunction<
                   _ResultOpaqueUint32 Function(ffi.Pointer<ffi.Opaque>)>>(
           'ICU4XCodePointSetData_load_radical')
@@ -2683,12 +2882,14 @@ class ICU4XCodePointSetData implements ffi.Finalizable {
   /// See the [Rust documentation for `regional_indicator`](https://docs.rs/icu/latest/icu/properties/sets/fn.regional_indicator.html) for more information.
   factory ICU4XCodePointSetData.loadRegionalIndicator(
       ICU4XDataProvider provider) {
-    final result = _loadRegionalIndicatorFfi(provider._underlying);
+    final result =
+        _ICU4XCodePointSetData_load_regional_indicator(provider._underlying);
     return result.isOk
         ? ICU4XCodePointSetData._(result.union.ok)
         : throw ICU4XError._(result.union.err);
   }
-  static final _loadRegionalIndicatorFfi = _capi<
+  // ignore: non_constant_identifier_names
+  static final _ICU4XCodePointSetData_load_regional_indicator = _capi<
               ffi.NativeFunction<
                   _ResultOpaqueUint32 Function(ffi.Pointer<ffi.Opaque>)>>(
           'ICU4XCodePointSetData_load_regional_indicator')
@@ -2697,12 +2898,14 @@ class ICU4XCodePointSetData implements ffi.Finalizable {
 
   /// See the [Rust documentation for `soft_dotted`](https://docs.rs/icu/latest/icu/properties/sets/fn.soft_dotted.html) for more information.
   factory ICU4XCodePointSetData.loadSoftDotted(ICU4XDataProvider provider) {
-    final result = _loadSoftDottedFfi(provider._underlying);
+    final result =
+        _ICU4XCodePointSetData_load_soft_dotted(provider._underlying);
     return result.isOk
         ? ICU4XCodePointSetData._(result.union.ok)
         : throw ICU4XError._(result.union.err);
   }
-  static final _loadSoftDottedFfi = _capi<
+  // ignore: non_constant_identifier_names
+  static final _ICU4XCodePointSetData_load_soft_dotted = _capi<
               ffi.NativeFunction<
                   _ResultOpaqueUint32 Function(ffi.Pointer<ffi.Opaque>)>>(
           'ICU4XCodePointSetData_load_soft_dotted')
@@ -2711,12 +2914,14 @@ class ICU4XCodePointSetData implements ffi.Finalizable {
 
   /// See the [Rust documentation for `segment_starter`](https://docs.rs/icu/latest/icu/properties/sets/fn.segment_starter.html) for more information.
   factory ICU4XCodePointSetData.loadSegmentStarter(ICU4XDataProvider provider) {
-    final result = _loadSegmentStarterFfi(provider._underlying);
+    final result =
+        _ICU4XCodePointSetData_load_segment_starter(provider._underlying);
     return result.isOk
         ? ICU4XCodePointSetData._(result.union.ok)
         : throw ICU4XError._(result.union.err);
   }
-  static final _loadSegmentStarterFfi = _capi<
+  // ignore: non_constant_identifier_names
+  static final _ICU4XCodePointSetData_load_segment_starter = _capi<
               ffi.NativeFunction<
                   _ResultOpaqueUint32 Function(ffi.Pointer<ffi.Opaque>)>>(
           'ICU4XCodePointSetData_load_segment_starter')
@@ -2725,12 +2930,14 @@ class ICU4XCodePointSetData implements ffi.Finalizable {
 
   /// See the [Rust documentation for `case_sensitive`](https://docs.rs/icu/latest/icu/properties/sets/fn.case_sensitive.html) for more information.
   factory ICU4XCodePointSetData.loadCaseSensitive(ICU4XDataProvider provider) {
-    final result = _loadCaseSensitiveFfi(provider._underlying);
+    final result =
+        _ICU4XCodePointSetData_load_case_sensitive(provider._underlying);
     return result.isOk
         ? ICU4XCodePointSetData._(result.union.ok)
         : throw ICU4XError._(result.union.err);
   }
-  static final _loadCaseSensitiveFfi = _capi<
+  // ignore: non_constant_identifier_names
+  static final _ICU4XCodePointSetData_load_case_sensitive = _capi<
               ffi.NativeFunction<
                   _ResultOpaqueUint32 Function(ffi.Pointer<ffi.Opaque>)>>(
           'ICU4XCodePointSetData_load_case_sensitive')
@@ -2740,12 +2947,14 @@ class ICU4XCodePointSetData implements ffi.Finalizable {
   /// See the [Rust documentation for `sentence_terminal`](https://docs.rs/icu/latest/icu/properties/sets/fn.sentence_terminal.html) for more information.
   factory ICU4XCodePointSetData.loadSentenceTerminal(
       ICU4XDataProvider provider) {
-    final result = _loadSentenceTerminalFfi(provider._underlying);
+    final result =
+        _ICU4XCodePointSetData_load_sentence_terminal(provider._underlying);
     return result.isOk
         ? ICU4XCodePointSetData._(result.union.ok)
         : throw ICU4XError._(result.union.err);
   }
-  static final _loadSentenceTerminalFfi = _capi<
+  // ignore: non_constant_identifier_names
+  static final _ICU4XCodePointSetData_load_sentence_terminal = _capi<
               ffi.NativeFunction<
                   _ResultOpaqueUint32 Function(ffi.Pointer<ffi.Opaque>)>>(
           'ICU4XCodePointSetData_load_sentence_terminal')
@@ -2755,12 +2964,14 @@ class ICU4XCodePointSetData implements ffi.Finalizable {
   /// See the [Rust documentation for `terminal_punctuation`](https://docs.rs/icu/latest/icu/properties/sets/fn.terminal_punctuation.html) for more information.
   factory ICU4XCodePointSetData.loadTerminalPunctuation(
       ICU4XDataProvider provider) {
-    final result = _loadTerminalPunctuationFfi(provider._underlying);
+    final result =
+        _ICU4XCodePointSetData_load_terminal_punctuation(provider._underlying);
     return result.isOk
         ? ICU4XCodePointSetData._(result.union.ok)
         : throw ICU4XError._(result.union.err);
   }
-  static final _loadTerminalPunctuationFfi = _capi<
+  // ignore: non_constant_identifier_names
+  static final _ICU4XCodePointSetData_load_terminal_punctuation = _capi<
               ffi.NativeFunction<
                   _ResultOpaqueUint32 Function(ffi.Pointer<ffi.Opaque>)>>(
           'ICU4XCodePointSetData_load_terminal_punctuation')
@@ -2770,12 +2981,14 @@ class ICU4XCodePointSetData implements ffi.Finalizable {
   /// See the [Rust documentation for `unified_ideograph`](https://docs.rs/icu/latest/icu/properties/sets/fn.unified_ideograph.html) for more information.
   factory ICU4XCodePointSetData.loadUnifiedIdeograph(
       ICU4XDataProvider provider) {
-    final result = _loadUnifiedIdeographFfi(provider._underlying);
+    final result =
+        _ICU4XCodePointSetData_load_unified_ideograph(provider._underlying);
     return result.isOk
         ? ICU4XCodePointSetData._(result.union.ok)
         : throw ICU4XError._(result.union.err);
   }
-  static final _loadUnifiedIdeographFfi = _capi<
+  // ignore: non_constant_identifier_names
+  static final _ICU4XCodePointSetData_load_unified_ideograph = _capi<
               ffi.NativeFunction<
                   _ResultOpaqueUint32 Function(ffi.Pointer<ffi.Opaque>)>>(
           'ICU4XCodePointSetData_load_unified_ideograph')
@@ -2784,12 +2997,13 @@ class ICU4XCodePointSetData implements ffi.Finalizable {
 
   /// See the [Rust documentation for `uppercase`](https://docs.rs/icu/latest/icu/properties/sets/fn.uppercase.html) for more information.
   factory ICU4XCodePointSetData.loadUppercase(ICU4XDataProvider provider) {
-    final result = _loadUppercaseFfi(provider._underlying);
+    final result = _ICU4XCodePointSetData_load_uppercase(provider._underlying);
     return result.isOk
         ? ICU4XCodePointSetData._(result.union.ok)
         : throw ICU4XError._(result.union.err);
   }
-  static final _loadUppercaseFfi = _capi<
+  // ignore: non_constant_identifier_names
+  static final _ICU4XCodePointSetData_load_uppercase = _capi<
               ffi.NativeFunction<
                   _ResultOpaqueUint32 Function(ffi.Pointer<ffi.Opaque>)>>(
           'ICU4XCodePointSetData_load_uppercase')
@@ -2799,12 +3013,14 @@ class ICU4XCodePointSetData implements ffi.Finalizable {
   /// See the [Rust documentation for `variation_selector`](https://docs.rs/icu/latest/icu/properties/sets/fn.variation_selector.html) for more information.
   factory ICU4XCodePointSetData.loadVariationSelector(
       ICU4XDataProvider provider) {
-    final result = _loadVariationSelectorFfi(provider._underlying);
+    final result =
+        _ICU4XCodePointSetData_load_variation_selector(provider._underlying);
     return result.isOk
         ? ICU4XCodePointSetData._(result.union.ok)
         : throw ICU4XError._(result.union.err);
   }
-  static final _loadVariationSelectorFfi = _capi<
+  // ignore: non_constant_identifier_names
+  static final _ICU4XCodePointSetData_load_variation_selector = _capi<
               ffi.NativeFunction<
                   _ResultOpaqueUint32 Function(ffi.Pointer<ffi.Opaque>)>>(
           'ICU4XCodePointSetData_load_variation_selector')
@@ -2813,12 +3029,14 @@ class ICU4XCodePointSetData implements ffi.Finalizable {
 
   /// See the [Rust documentation for `white_space`](https://docs.rs/icu/latest/icu/properties/sets/fn.white_space.html) for more information.
   factory ICU4XCodePointSetData.loadWhiteSpace(ICU4XDataProvider provider) {
-    final result = _loadWhiteSpaceFfi(provider._underlying);
+    final result =
+        _ICU4XCodePointSetData_load_white_space(provider._underlying);
     return result.isOk
         ? ICU4XCodePointSetData._(result.union.ok)
         : throw ICU4XError._(result.union.err);
   }
-  static final _loadWhiteSpaceFfi = _capi<
+  // ignore: non_constant_identifier_names
+  static final _ICU4XCodePointSetData_load_white_space = _capi<
               ffi.NativeFunction<
                   _ResultOpaqueUint32 Function(ffi.Pointer<ffi.Opaque>)>>(
           'ICU4XCodePointSetData_load_white_space')
@@ -2827,12 +3045,13 @@ class ICU4XCodePointSetData implements ffi.Finalizable {
 
   /// See the [Rust documentation for `xdigit`](https://docs.rs/icu/latest/icu/properties/sets/fn.xdigit.html) for more information.
   factory ICU4XCodePointSetData.loadXdigit(ICU4XDataProvider provider) {
-    final result = _loadXdigitFfi(provider._underlying);
+    final result = _ICU4XCodePointSetData_load_xdigit(provider._underlying);
     return result.isOk
         ? ICU4XCodePointSetData._(result.union.ok)
         : throw ICU4XError._(result.union.err);
   }
-  static final _loadXdigitFfi = _capi<
+  // ignore: non_constant_identifier_names
+  static final _ICU4XCodePointSetData_load_xdigit = _capi<
               ffi.NativeFunction<
                   _ResultOpaqueUint32 Function(ffi.Pointer<ffi.Opaque>)>>(
           'ICU4XCodePointSetData_load_xdigit')
@@ -2841,12 +3060,14 @@ class ICU4XCodePointSetData implements ffi.Finalizable {
 
   /// See the [Rust documentation for `xid_continue`](https://docs.rs/icu/latest/icu/properties/sets/fn.xid_continue.html) for more information.
   factory ICU4XCodePointSetData.loadXidContinue(ICU4XDataProvider provider) {
-    final result = _loadXidContinueFfi(provider._underlying);
+    final result =
+        _ICU4XCodePointSetData_load_xid_continue(provider._underlying);
     return result.isOk
         ? ICU4XCodePointSetData._(result.union.ok)
         : throw ICU4XError._(result.union.err);
   }
-  static final _loadXidContinueFfi = _capi<
+  // ignore: non_constant_identifier_names
+  static final _ICU4XCodePointSetData_load_xid_continue = _capi<
               ffi.NativeFunction<
                   _ResultOpaqueUint32 Function(ffi.Pointer<ffi.Opaque>)>>(
           'ICU4XCodePointSetData_load_xid_continue')
@@ -2855,12 +3076,13 @@ class ICU4XCodePointSetData implements ffi.Finalizable {
 
   /// See the [Rust documentation for `xid_start`](https://docs.rs/icu/latest/icu/properties/sets/fn.xid_start.html) for more information.
   factory ICU4XCodePointSetData.loadXidStart(ICU4XDataProvider provider) {
-    final result = _loadXidStartFfi(provider._underlying);
+    final result = _ICU4XCodePointSetData_load_xid_start(provider._underlying);
     return result.isOk
         ? ICU4XCodePointSetData._(result.union.ok)
         : throw ICU4XError._(result.union.err);
   }
-  static final _loadXidStartFfi = _capi<
+  // ignore: non_constant_identifier_names
+  static final _ICU4XCodePointSetData_load_xid_start = _capi<
               ffi.NativeFunction<
                   _ResultOpaqueUint32 Function(ffi.Pointer<ffi.Opaque>)>>(
           'ICU4XCodePointSetData_load_xid_start')
@@ -2881,14 +3103,15 @@ class ICU4XCodePointSetData implements ffi.Finalizable {
     final alloc = ffi2.Arena();
     final propertyNameSlice = _SliceFfi2Utf8._fromDart(propertyName, alloc);
 
-    final result = _loadForEcma262Ffi(provider._underlying,
+    final result = _ICU4XCodePointSetData_load_for_ecma262(provider._underlying,
         propertyNameSlice._bytes, propertyNameSlice._length);
     alloc.releaseAll();
     return result.isOk
         ? ICU4XCodePointSetData._(result.union.ok)
         : throw ICU4XError._(result.union.err);
   }
-  static final _loadForEcma262Ffi = _capi<
+  // ignore: non_constant_identifier_names
+  static final _ICU4XCodePointSetData_load_for_ecma262 = _capi<
           ffi.NativeFunction<
               _ResultOpaqueUint32 Function(
                   ffi.Pointer<ffi.Opaque>,
@@ -2914,13 +3137,14 @@ class ICU4XCollator implements ffi.Finalizable {
   /// See the [Rust documentation for `try_new`](https://docs.rs/icu/latest/icu/collator/struct.Collator.html#method.try_new) for more information.
   factory ICU4XCollator.v1(ICU4XDataProvider provider, ICU4XLocale locale,
       ICU4XCollatorOptionsV1 options) {
-    final result = _createV1Ffi(
+    final result = _ICU4XCollator_create_v1(
         provider._underlying, locale._underlying, options._underlying);
     return result.isOk
         ? ICU4XCollator._(result.union.ok)
         : throw ICU4XError._(result.union.err);
   }
-  static final _createV1Ffi = _capi<
+  // ignore: non_constant_identifier_names
+  static final _ICU4XCollator_create_v1 = _capi<
           ffi.NativeFunction<
               _ResultOpaqueUint32 Function(
                   ffi.Pointer<ffi.Opaque>,
@@ -2944,13 +3168,14 @@ class ICU4XCollator implements ffi.Finalizable {
     final leftSlice = _SliceFfi2Utf8._fromDart(left, alloc);
     final rightSlice = _SliceFfi2Utf8._fromDart(right, alloc);
 
-    final result = _compareFfi(_underlying, leftSlice._bytes, leftSlice._length,
-        rightSlice._bytes, rightSlice._length);
+    final result = _ICU4XCollator_compare(_underlying, leftSlice._bytes,
+        leftSlice._length, rightSlice._bytes, rightSlice._length);
     alloc.releaseAll();
     return ICU4XOrdering._(result);
   }
 
-  static final _compareFfi = _capi<
+  // ignore: non_constant_identifier_names
+  static final _ICU4XCollator_compare = _capi<
           ffi.NativeFunction<
               ffi.Uint32 Function(
                   ffi.Pointer<ffi.Opaque>,
@@ -2973,13 +3198,18 @@ class ICU4XCollator implements ffi.Finalizable {
     final leftSlice = _SliceFfi2Utf8._fromDart(left, alloc);
     final rightSlice = _SliceFfi2Utf8._fromDart(right, alloc);
 
-    final result = _compareValidUtf8Ffi(_underlying, leftSlice._bytes,
-        leftSlice._length, rightSlice._bytes, rightSlice._length);
+    final result = _ICU4XCollator_compare_valid_utf8(
+        _underlying,
+        leftSlice._bytes,
+        leftSlice._length,
+        rightSlice._bytes,
+        rightSlice._length);
     alloc.releaseAll();
     return ICU4XOrdering._(result);
   }
 
-  static final _compareValidUtf8Ffi = _capi<
+  // ignore: non_constant_identifier_names
+  static final _ICU4XCollator_compare_valid_utf8 = _capi<
           ffi.NativeFunction<
               ffi.Uint32 Function(
                   ffi.Pointer<ffi.Opaque>,
@@ -3000,13 +3230,14 @@ class ICU4XCollator implements ffi.Finalizable {
     final leftSlice = _SliceFfiUint16._fromDart(left, alloc);
     final rightSlice = _SliceFfiUint16._fromDart(right, alloc);
 
-    final result = _compareUtf16Ffi(_underlying, leftSlice._bytes,
+    final result = _ICU4XCollator_compare_utf16(_underlying, leftSlice._bytes,
         leftSlice._length, rightSlice._bytes, rightSlice._length);
     alloc.releaseAll();
     return ICU4XOrdering._(result);
   }
 
-  static final _compareUtf16Ffi = _capi<
+  // ignore: non_constant_identifier_names
+  static final _ICU4XCollator_compare_utf16 = _capi<
           ffi.NativeFunction<
               ffi.Uint32 Function(
                   ffi.Pointer<ffi.Opaque>,
@@ -3242,12 +3473,13 @@ class ICU4XComposingNormalizer implements ffi.Finalizable {
   ///
   /// See the [Rust documentation for `new_nfc`](https://docs.rs/icu/latest/icu/normalizer/struct.ComposingNormalizer.html#method.new_nfc) for more information.
   factory ICU4XComposingNormalizer.nfc(ICU4XDataProvider provider) {
-    final result = _createNfcFfi(provider._underlying);
+    final result = _ICU4XComposingNormalizer_create_nfc(provider._underlying);
     return result.isOk
         ? ICU4XComposingNormalizer._(result.union.ok)
         : throw ICU4XError._(result.union.err);
   }
-  static final _createNfcFfi = _capi<
+  // ignore: non_constant_identifier_names
+  static final _ICU4XComposingNormalizer_create_nfc = _capi<
               ffi.NativeFunction<
                   _ResultOpaqueUint32 Function(ffi.Pointer<ffi.Opaque>)>>(
           'ICU4XComposingNormalizer_create_nfc')
@@ -3258,12 +3490,13 @@ class ICU4XComposingNormalizer implements ffi.Finalizable {
   ///
   /// See the [Rust documentation for `new_nfkc`](https://docs.rs/icu/latest/icu/normalizer/struct.ComposingNormalizer.html#method.new_nfkc) for more information.
   factory ICU4XComposingNormalizer.nfkc(ICU4XDataProvider provider) {
-    final result = _createNfkcFfi(provider._underlying);
+    final result = _ICU4XComposingNormalizer_create_nfkc(provider._underlying);
     return result.isOk
         ? ICU4XComposingNormalizer._(result.union.ok)
         : throw ICU4XError._(result.union.err);
   }
-  static final _createNfkcFfi = _capi<
+  // ignore: non_constant_identifier_names
+  static final _ICU4XComposingNormalizer_create_nfkc = _capi<
               ffi.NativeFunction<
                   _ResultOpaqueUint32 Function(ffi.Pointer<ffi.Opaque>)>>(
           'ICU4XComposingNormalizer_create_nfkc')
@@ -3280,7 +3513,7 @@ class ICU4XComposingNormalizer implements ffi.Finalizable {
     final sSlice = _SliceFfi2Utf8._fromDart(s, alloc);
 
     final writeable = _Writeable();
-    final result = _normalizeFfi(
+    final result = _ICU4XComposingNormalizer_normalize(
         _underlying, sSlice._bytes, sSlice._length, writeable._underlying);
     alloc.releaseAll();
     return result.isOk
@@ -3288,7 +3521,8 @@ class ICU4XComposingNormalizer implements ffi.Finalizable {
         : throw ICU4XError._(result.union.err);
   }
 
-  static final _normalizeFfi = _capi<
+  // ignore: non_constant_identifier_names
+  static final _ICU4XComposingNormalizer_normalize = _capi<
               ffi.NativeFunction<
                   _ResultVoidUint32 Function(
                       ffi.Pointer<ffi.Opaque>,
@@ -3312,12 +3546,14 @@ class ICU4XComposingNormalizer implements ffi.Finalizable {
     final alloc = ffi2.Arena();
     final sSlice = _SliceFfi2Utf8._fromDart(s, alloc);
 
-    final result = _isNormalizedFfi(_underlying, sSlice._bytes, sSlice._length);
+    final result = _ICU4XComposingNormalizer_is_normalized(
+        _underlying, sSlice._bytes, sSlice._length);
     alloc.releaseAll();
     return result;
   }
 
-  static final _isNormalizedFfi = _capi<
+  // ignore: non_constant_identifier_names
+  static final _ICU4XComposingNormalizer_is_normalized = _capi<
           ffi.NativeFunction<
               ffi.Bool Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi2.Utf8>,
                   ffi.Size)>>('ICU4XComposingNormalizer_is_normalized')
@@ -3344,13 +3580,15 @@ class ICU4XCustomTimeZone implements ffi.Finalizable {
     final alloc = ffi2.Arena();
     final sSlice = _SliceFfi2Utf8._fromDart(s, alloc);
 
-    final result = _createFromStringFfi(sSlice._bytes, sSlice._length);
+    final result =
+        _ICU4XCustomTimeZone_create_from_string(sSlice._bytes, sSlice._length);
     alloc.releaseAll();
     return result.isOk
         ? ICU4XCustomTimeZone._(result.union.ok)
         : throw ICU4XError._(result.union.err);
   }
-  static final _createFromStringFfi = _capi<
+  // ignore: non_constant_identifier_names
+  static final _ICU4XCustomTimeZone_create_from_string = _capi<
           ffi.NativeFunction<
               _ResultOpaqueUint32 Function(ffi.Pointer<ffi2.Utf8>,
                   ffi.Size)>>('ICU4XCustomTimeZone_create_from_string')
@@ -3361,10 +3599,11 @@ class ICU4XCustomTimeZone implements ffi.Finalizable {
   ///
   /// See the [Rust documentation for `new_empty`](https://docs.rs/icu/latest/icu/timezone/struct.CustomTimeZone.html#method.new_empty) for more information.
   factory ICU4XCustomTimeZone.empty() {
-    final result = _createEmptyFfi();
+    final result = _ICU4XCustomTimeZone_create_empty();
     return ICU4XCustomTimeZone._(result);
   }
-  static final _createEmptyFfi =
+  // ignore: non_constant_identifier_names
+  static final _ICU4XCustomTimeZone_create_empty =
       _capi<ffi.NativeFunction<ffi.Pointer<ffi.Opaque> Function()>>(
               'ICU4XCustomTimeZone_create_empty')
           .asFunction<ffi.Pointer<ffi.Opaque> Function()>(isLeaf: true);
@@ -3373,10 +3612,11 @@ class ICU4XCustomTimeZone implements ffi.Finalizable {
   ///
   /// See the [Rust documentation for `utc`](https://docs.rs/icu/latest/icu/timezone/struct.CustomTimeZone.html#method.utc) for more information.
   factory ICU4XCustomTimeZone.utc() {
-    final result = _createUtcFfi();
+    final result = _ICU4XCustomTimeZone_create_utc();
     return ICU4XCustomTimeZone._(result);
   }
-  static final _createUtcFfi =
+  // ignore: non_constant_identifier_names
+  static final _ICU4XCustomTimeZone_create_utc =
       _capi<ffi.NativeFunction<ffi.Pointer<ffi.Opaque> Function()>>(
               'ICU4XCustomTimeZone_create_utc')
           .asFunction<ffi.Pointer<ffi.Opaque> Function()>(isLeaf: true);
@@ -3389,13 +3629,15 @@ class ICU4XCustomTimeZone implements ffi.Finalizable {
   ///
   /// Additional information: [1](https://docs.rs/icu/latest/icu/timezone/struct.GmtOffset.html)
   void trySetGmtOffsetSeconds(int offsetSeconds) {
-    final result = _trySetGmtOffsetSecondsFfi(_underlying, offsetSeconds);
+    final result = _ICU4XCustomTimeZone_try_set_gmt_offset_seconds(
+        _underlying, offsetSeconds);
     if (!result.isOk) {
       throw ICU4XError._(result.union.err);
     }
   }
 
-  static final _trySetGmtOffsetSecondsFfi = _capi<
+  // ignore: non_constant_identifier_names
+  static final _ICU4XCustomTimeZone_try_set_gmt_offset_seconds = _capi<
           ffi.NativeFunction<
               _ResultVoidUint32 Function(ffi.Pointer<ffi.Opaque>,
                   ffi.Int32)>>('ICU4XCustomTimeZone_try_set_gmt_offset_seconds')
@@ -3408,10 +3650,11 @@ class ICU4XCustomTimeZone implements ffi.Finalizable {
   ///
   /// Additional information: [1](https://docs.rs/icu/latest/icu/timezone/struct.GmtOffset.html)
   void clearGmtOffset() {
-    _clearGmtOffsetFfi(_underlying);
+    _ICU4XCustomTimeZone_clear_gmt_offset(_underlying);
   }
 
-  static final _clearGmtOffsetFfi =
+  // ignore: non_constant_identifier_names
+  static final _ICU4XCustomTimeZone_clear_gmt_offset =
       _capi<ffi.NativeFunction<ffi.Void Function(ffi.Pointer<ffi.Opaque>)>>(
               'ICU4XCustomTimeZone_clear_gmt_offset')
           .asFunction<void Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
@@ -3424,11 +3667,12 @@ class ICU4XCustomTimeZone implements ffi.Finalizable {
   ///
   /// Additional information: [1](https://docs.rs/icu/latest/icu/timezone/struct.GmtOffset.html)
   int get gmtOffsetSeconds {
-    final result = _gmtOffsetSecondsFfi(_underlying);
+    final result = _ICU4XCustomTimeZone_gmt_offset_seconds(_underlying);
     return result.isOk ? result.union.ok : throw ICU4XError._(result.union.err);
   }
 
-  static final _gmtOffsetSecondsFfi = _capi<
+  // ignore: non_constant_identifier_names
+  static final _ICU4XCustomTimeZone_gmt_offset_seconds = _capi<
               ffi.NativeFunction<
                   _ResultInt32Uint32 Function(ffi.Pointer<ffi.Opaque>)>>(
           'ICU4XCustomTimeZone_gmt_offset_seconds')
@@ -3441,11 +3685,12 @@ class ICU4XCustomTimeZone implements ffi.Finalizable {
   ///
   /// See the [Rust documentation for `is_positive`](https://docs.rs/icu/latest/icu/timezone/struct.GmtOffset.html#method.is_positive) for more information.
   bool get isGmtOffsetPositive {
-    final result = _isGmtOffsetPositiveFfi(_underlying);
+    final result = _ICU4XCustomTimeZone_is_gmt_offset_positive(_underlying);
     return result.isOk ? result.union.ok : throw ICU4XError._(result.union.err);
   }
 
-  static final _isGmtOffsetPositiveFfi = _capi<
+  // ignore: non_constant_identifier_names
+  static final _ICU4XCustomTimeZone_is_gmt_offset_positive = _capi<
               ffi.NativeFunction<
                   _ResultBoolUint32 Function(ffi.Pointer<ffi.Opaque>)>>(
           'ICU4XCustomTimeZone_is_gmt_offset_positive')
@@ -3458,11 +3703,12 @@ class ICU4XCustomTimeZone implements ffi.Finalizable {
   ///
   /// See the [Rust documentation for `is_zero`](https://docs.rs/icu/latest/icu/timezone/struct.GmtOffset.html#method.is_zero) for more information.
   bool get isGmtOffsetZero {
-    final result = _isGmtOffsetZeroFfi(_underlying);
+    final result = _ICU4XCustomTimeZone_is_gmt_offset_zero(_underlying);
     return result.isOk ? result.union.ok : throw ICU4XError._(result.union.err);
   }
 
-  static final _isGmtOffsetZeroFfi = _capi<
+  // ignore: non_constant_identifier_names
+  static final _ICU4XCustomTimeZone_is_gmt_offset_zero = _capi<
               ffi.NativeFunction<
                   _ResultBoolUint32 Function(ffi.Pointer<ffi.Opaque>)>>(
           'ICU4XCustomTimeZone_is_gmt_offset_zero')
@@ -3475,11 +3721,12 @@ class ICU4XCustomTimeZone implements ffi.Finalizable {
   ///
   /// See the [Rust documentation for `has_minutes`](https://docs.rs/icu/latest/icu/timezone/struct.GmtOffset.html#method.has_minutes) for more information.
   bool gmtOffsetHasMinutes() {
-    final result = _gmtOffsetHasMinutesFfi(_underlying);
+    final result = _ICU4XCustomTimeZone_gmt_offset_has_minutes(_underlying);
     return result.isOk ? result.union.ok : throw ICU4XError._(result.union.err);
   }
 
-  static final _gmtOffsetHasMinutesFfi = _capi<
+  // ignore: non_constant_identifier_names
+  static final _ICU4XCustomTimeZone_gmt_offset_has_minutes = _capi<
               ffi.NativeFunction<
                   _ResultBoolUint32 Function(ffi.Pointer<ffi.Opaque>)>>(
           'ICU4XCustomTimeZone_gmt_offset_has_minutes')
@@ -3492,11 +3739,12 @@ class ICU4XCustomTimeZone implements ffi.Finalizable {
   ///
   /// See the [Rust documentation for `has_seconds`](https://docs.rs/icu/latest/icu/timezone/struct.GmtOffset.html#method.has_seconds) for more information.
   bool gmtOffsetHasSeconds() {
-    final result = _gmtOffsetHasSecondsFfi(_underlying);
+    final result = _ICU4XCustomTimeZone_gmt_offset_has_seconds(_underlying);
     return result.isOk ? result.union.ok : throw ICU4XError._(result.union.err);
   }
 
-  static final _gmtOffsetHasSecondsFfi = _capi<
+  // ignore: non_constant_identifier_names
+  static final _ICU4XCustomTimeZone_gmt_offset_has_seconds = _capi<
               ffi.NativeFunction<
                   _ResultBoolUint32 Function(ffi.Pointer<ffi.Opaque>)>>(
           'ICU4XCustomTimeZone_gmt_offset_has_seconds')
@@ -3514,15 +3762,16 @@ class ICU4XCustomTimeZone implements ffi.Finalizable {
     final alloc = ffi2.Arena();
     final idSlice = _SliceFfi2Utf8._fromDart(id, alloc);
 
-    final result =
-        _trySetTimeZoneIdFfi(_underlying, idSlice._bytes, idSlice._length);
+    final result = _ICU4XCustomTimeZone_try_set_time_zone_id(
+        _underlying, idSlice._bytes, idSlice._length);
     alloc.releaseAll();
     if (!result.isOk) {
       throw ICU4XError._(result.union.err);
     }
   }
 
-  static final _trySetTimeZoneIdFfi = _capi<
+  // ignore: non_constant_identifier_names
+  static final _ICU4XCustomTimeZone_try_set_time_zone_id = _capi<
           ffi.NativeFunction<
               _ResultVoidUint32 Function(
                   ffi.Pointer<ffi.Opaque>,
@@ -3542,7 +3791,7 @@ class ICU4XCustomTimeZone implements ffi.Finalizable {
     final alloc = ffi2.Arena();
     final idSlice = _SliceFfi2Utf8._fromDart(id, alloc);
 
-    final result = _trySetIanaTimeZoneIdFfi(
+    final result = _ICU4XCustomTimeZone_try_set_iana_time_zone_id(
         _underlying, mapper._underlying, idSlice._bytes, idSlice._length);
     alloc.releaseAll();
     if (!result.isOk) {
@@ -3550,7 +3799,8 @@ class ICU4XCustomTimeZone implements ffi.Finalizable {
     }
   }
 
-  static final _trySetIanaTimeZoneIdFfi = _capi<
+  // ignore: non_constant_identifier_names
+  static final _ICU4XCustomTimeZone_try_set_iana_time_zone_id = _capi<
           ffi.NativeFunction<
               _ResultVoidUint32 Function(
                   ffi.Pointer<ffi.Opaque>,
@@ -3570,10 +3820,11 @@ class ICU4XCustomTimeZone implements ffi.Finalizable {
   ///
   /// Additional information: [1](https://docs.rs/icu/latest/icu/timezone/struct.TimeZoneBcp47Id.html)
   void clearTimeZoneId() {
-    _clearTimeZoneIdFfi(_underlying);
+    _ICU4XCustomTimeZone_clear_time_zone_id(_underlying);
   }
 
-  static final _clearTimeZoneIdFfi =
+  // ignore: non_constant_identifier_names
+  static final _ICU4XCustomTimeZone_clear_time_zone_id =
       _capi<ffi.NativeFunction<ffi.Void Function(ffi.Pointer<ffi.Opaque>)>>(
               'ICU4XCustomTimeZone_clear_time_zone_id')
           .asFunction<void Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
@@ -3587,13 +3838,15 @@ class ICU4XCustomTimeZone implements ffi.Finalizable {
   /// Additional information: [1](https://docs.rs/icu/latest/icu/timezone/struct.TimeZoneBcp47Id.html)
   String get timeZoneId {
     final writeable = _Writeable();
-    final result = _timeZoneIdFfi(_underlying, writeable._underlying);
+    final result =
+        _ICU4XCustomTimeZone_time_zone_id(_underlying, writeable._underlying);
     return result.isOk
         ? writeable.finalize()
         : throw ICU4XError._(result.union.err);
   }
 
-  static final _timeZoneIdFfi = _capi<
+  // ignore: non_constant_identifier_names
+  static final _ICU4XCustomTimeZone_time_zone_id = _capi<
           ffi.NativeFunction<
               _ResultVoidUint32 Function(ffi.Pointer<ffi.Opaque>,
                   ffi.Pointer<ffi.Opaque>)>>('ICU4XCustomTimeZone_time_zone_id')
@@ -3612,15 +3865,16 @@ class ICU4XCustomTimeZone implements ffi.Finalizable {
     final alloc = ffi2.Arena();
     final idSlice = _SliceFfi2Utf8._fromDart(id, alloc);
 
-    final result =
-        _trySetMetazoneIdFfi(_underlying, idSlice._bytes, idSlice._length);
+    final result = _ICU4XCustomTimeZone_try_set_metazone_id(
+        _underlying, idSlice._bytes, idSlice._length);
     alloc.releaseAll();
     if (!result.isOk) {
       throw ICU4XError._(result.union.err);
     }
   }
 
-  static final _trySetMetazoneIdFfi = _capi<
+  // ignore: non_constant_identifier_names
+  static final _ICU4XCustomTimeZone_try_set_metazone_id = _capi<
           ffi.NativeFunction<
               _ResultVoidUint32 Function(
                   ffi.Pointer<ffi.Opaque>,
@@ -3636,10 +3890,11 @@ class ICU4XCustomTimeZone implements ffi.Finalizable {
   ///
   /// Additional information: [1](https://docs.rs/icu/latest/icu/timezone/struct.MetazoneId.html)
   void clearMetazoneId() {
-    _clearMetazoneIdFfi(_underlying);
+    _ICU4XCustomTimeZone_clear_metazone_id(_underlying);
   }
 
-  static final _clearMetazoneIdFfi =
+  // ignore: non_constant_identifier_names
+  static final _ICU4XCustomTimeZone_clear_metazone_id =
       _capi<ffi.NativeFunction<ffi.Void Function(ffi.Pointer<ffi.Opaque>)>>(
               'ICU4XCustomTimeZone_clear_metazone_id')
           .asFunction<void Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
@@ -3653,13 +3908,15 @@ class ICU4XCustomTimeZone implements ffi.Finalizable {
   /// Additional information: [1](https://docs.rs/icu/latest/icu/timezone/struct.MetazoneId.html)
   String get metazoneId {
     final writeable = _Writeable();
-    final result = _metazoneIdFfi(_underlying, writeable._underlying);
+    final result =
+        _ICU4XCustomTimeZone_metazone_id(_underlying, writeable._underlying);
     return result.isOk
         ? writeable.finalize()
         : throw ICU4XError._(result.union.err);
   }
 
-  static final _metazoneIdFfi = _capi<
+  // ignore: non_constant_identifier_names
+  static final _ICU4XCustomTimeZone_metazone_id = _capi<
           ffi.NativeFunction<
               _ResultVoidUint32 Function(ffi.Pointer<ffi.Opaque>,
                   ffi.Pointer<ffi.Opaque>)>>('ICU4XCustomTimeZone_metazone_id')
@@ -3678,15 +3935,16 @@ class ICU4XCustomTimeZone implements ffi.Finalizable {
     final alloc = ffi2.Arena();
     final idSlice = _SliceFfi2Utf8._fromDart(id, alloc);
 
-    final result =
-        _trySetZoneVariantFfi(_underlying, idSlice._bytes, idSlice._length);
+    final result = _ICU4XCustomTimeZone_try_set_zone_variant(
+        _underlying, idSlice._bytes, idSlice._length);
     alloc.releaseAll();
     if (!result.isOk) {
       throw ICU4XError._(result.union.err);
     }
   }
 
-  static final _trySetZoneVariantFfi = _capi<
+  // ignore: non_constant_identifier_names
+  static final _ICU4XCustomTimeZone_try_set_zone_variant = _capi<
           ffi.NativeFunction<
               _ResultVoidUint32 Function(
                   ffi.Pointer<ffi.Opaque>,
@@ -3702,10 +3960,11 @@ class ICU4XCustomTimeZone implements ffi.Finalizable {
   ///
   /// Additional information: [1](https://docs.rs/icu/latest/icu/timezone/struct.ZoneVariant.html)
   void clearZoneVariant() {
-    _clearZoneVariantFfi(_underlying);
+    _ICU4XCustomTimeZone_clear_zone_variant(_underlying);
   }
 
-  static final _clearZoneVariantFfi =
+  // ignore: non_constant_identifier_names
+  static final _ICU4XCustomTimeZone_clear_zone_variant =
       _capi<ffi.NativeFunction<ffi.Void Function(ffi.Pointer<ffi.Opaque>)>>(
               'ICU4XCustomTimeZone_clear_zone_variant')
           .asFunction<void Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
@@ -3719,13 +3978,15 @@ class ICU4XCustomTimeZone implements ffi.Finalizable {
   /// Additional information: [1](https://docs.rs/icu/latest/icu/timezone/struct.ZoneVariant.html)
   String get zoneVariant {
     final writeable = _Writeable();
-    final result = _zoneVariantFfi(_underlying, writeable._underlying);
+    final result =
+        _ICU4XCustomTimeZone_zone_variant(_underlying, writeable._underlying);
     return result.isOk
         ? writeable.finalize()
         : throw ICU4XError._(result.union.err);
   }
 
-  static final _zoneVariantFfi = _capi<
+  // ignore: non_constant_identifier_names
+  static final _ICU4XCustomTimeZone_zone_variant = _capi<
           ffi.NativeFunction<
               _ResultVoidUint32 Function(ffi.Pointer<ffi.Opaque>,
                   ffi.Pointer<ffi.Opaque>)>>('ICU4XCustomTimeZone_zone_variant')
@@ -3739,10 +4000,11 @@ class ICU4XCustomTimeZone implements ffi.Finalizable {
   ///
   /// Additional information: [1](https://docs.rs/icu/latest/icu/timezone/struct.CustomTimeZone.html#structfield.zone_variant)
   void setStandardTime() {
-    _setStandardTimeFfi(_underlying);
+    _ICU4XCustomTimeZone_set_standard_time(_underlying);
   }
 
-  static final _setStandardTimeFfi =
+  // ignore: non_constant_identifier_names
+  static final _ICU4XCustomTimeZone_set_standard_time =
       _capi<ffi.NativeFunction<ffi.Void Function(ffi.Pointer<ffi.Opaque>)>>(
               'ICU4XCustomTimeZone_set_standard_time')
           .asFunction<void Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
@@ -3753,10 +4015,11 @@ class ICU4XCustomTimeZone implements ffi.Finalizable {
   ///
   /// Additional information: [1](https://docs.rs/icu/latest/icu/timezone/struct.CustomTimeZone.html#structfield.zone_variant)
   void setDaylightTime() {
-    _setDaylightTimeFfi(_underlying);
+    _ICU4XCustomTimeZone_set_daylight_time(_underlying);
   }
 
-  static final _setDaylightTimeFfi =
+  // ignore: non_constant_identifier_names
+  static final _ICU4XCustomTimeZone_set_daylight_time =
       _capi<ffi.NativeFunction<ffi.Void Function(ffi.Pointer<ffi.Opaque>)>>(
               'ICU4XCustomTimeZone_set_daylight_time')
           .asFunction<void Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
@@ -3769,11 +4032,12 @@ class ICU4XCustomTimeZone implements ffi.Finalizable {
   ///
   /// Additional information: [1](https://docs.rs/icu/latest/icu/timezone/struct.CustomTimeZone.html#structfield.zone_variant)
   bool get isStandardTime {
-    final result = _isStandardTimeFfi(_underlying);
+    final result = _ICU4XCustomTimeZone_is_standard_time(_underlying);
     return result.isOk ? result.union.ok : throw ICU4XError._(result.union.err);
   }
 
-  static final _isStandardTimeFfi = _capi<
+  // ignore: non_constant_identifier_names
+  static final _ICU4XCustomTimeZone_is_standard_time = _capi<
               ffi.NativeFunction<
                   _ResultBoolUint32 Function(ffi.Pointer<ffi.Opaque>)>>(
           'ICU4XCustomTimeZone_is_standard_time')
@@ -3788,11 +4052,12 @@ class ICU4XCustomTimeZone implements ffi.Finalizable {
   ///
   /// Additional information: [1](https://docs.rs/icu/latest/icu/timezone/struct.CustomTimeZone.html#structfield.zone_variant)
   bool get isDaylightTime {
-    final result = _isDaylightTimeFfi(_underlying);
+    final result = _ICU4XCustomTimeZone_is_daylight_time(_underlying);
     return result.isOk ? result.union.ok : throw ICU4XError._(result.union.err);
   }
 
-  static final _isDaylightTimeFfi = _capi<
+  // ignore: non_constant_identifier_names
+  static final _ICU4XCustomTimeZone_is_daylight_time = _capi<
               ffi.NativeFunction<
                   _ResultBoolUint32 Function(ffi.Pointer<ffi.Opaque>)>>(
           'ICU4XCustomTimeZone_is_daylight_time')
@@ -3806,11 +4071,12 @@ class ICU4XCustomTimeZone implements ffi.Finalizable {
   /// Additional information: [1](https://docs.rs/icu/latest/icu/timezone/struct.MetazoneCalculator.html#method.compute_metazone_from_time_zone)
   void maybeCalculateMetazone(ICU4XMetazoneCalculator metazoneCalculator,
       ICU4XIsoDateTime localDatetime) {
-    _maybeCalculateMetazoneFfi(
+    _ICU4XCustomTimeZone_maybe_calculate_metazone(
         _underlying, metazoneCalculator._underlying, localDatetime._underlying);
   }
 
-  static final _maybeCalculateMetazoneFfi = _capi<
+  // ignore: non_constant_identifier_names
+  static final _ICU4XCustomTimeZone_maybe_calculate_metazone = _capi<
               ffi.NativeFunction<
                   ffi.Void Function(ffi.Pointer<ffi.Opaque>,
                       ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>>(
@@ -3840,10 +4106,11 @@ class ICU4XDataProvider implements ffi.Finalizable {
   /// This provider cannot be modified or combined with other providers, so `enable_fallback`,
   /// `enabled_fallback_with`, `fork_by_locale`, and `fork_by_key` will return `Err`s.
   factory ICU4XDataProvider.compiled() {
-    final result = _createCompiledFfi();
+    final result = _ICU4XDataProvider_create_compiled();
     return ICU4XDataProvider._(result);
   }
-  static final _createCompiledFfi =
+  // ignore: non_constant_identifier_names
+  static final _ICU4XDataProvider_create_compiled =
       _capi<ffi.NativeFunction<ffi.Pointer<ffi.Opaque> Function()>>(
               'ICU4XDataProvider_create_compiled')
           .asFunction<ffi.Pointer<ffi.Opaque> Function()>(isLeaf: true);
@@ -3857,13 +4124,15 @@ class ICU4XDataProvider implements ffi.Finalizable {
     final alloc = ffi2.Arena();
     final pathSlice = _SliceFfi2Utf8._fromDart(path, alloc);
 
-    final result = _createFsFfi(pathSlice._bytes, pathSlice._length);
+    final result =
+        _ICU4XDataProvider_create_fs(pathSlice._bytes, pathSlice._length);
     alloc.releaseAll();
     return result.isOk
         ? ICU4XDataProvider._(result.union.ok)
         : throw ICU4XError._(result.union.err);
   }
-  static final _createFsFfi = _capi<
+  // ignore: non_constant_identifier_names
+  static final _ICU4XDataProvider_create_fs = _capi<
           ffi.NativeFunction<
               _ResultOpaqueUint32 Function(ffi.Pointer<ffi2.Utf8>,
                   ffi.Size)>>('ICU4XDataProvider_create_fs')
@@ -3874,10 +4143,11 @@ class ICU4XDataProvider implements ffi.Finalizable {
   ///
   /// Use `create_compiled()`.
   factory ICU4XDataProvider.test() {
-    final result = _createTestFfi();
+    final result = _ICU4XDataProvider_create_test();
     return ICU4XDataProvider._(result);
   }
-  static final _createTestFfi =
+  // ignore: non_constant_identifier_names
+  static final _ICU4XDataProvider_create_test =
       _capi<ffi.NativeFunction<ffi.Pointer<ffi.Opaque> Function()>>(
               'ICU4XDataProvider_create_test')
           .asFunction<ffi.Pointer<ffi.Opaque> Function()>(isLeaf: true);
@@ -3889,13 +4159,15 @@ class ICU4XDataProvider implements ffi.Finalizable {
     final alloc = ffi2.Arena();
     final blobSlice = _SliceFfiUint8._fromDart(blob, alloc);
 
-    final result = _createFromByteSliceFfi(blobSlice._bytes, blobSlice._length);
+    final result = _ICU4XDataProvider_create_from_byte_slice(
+        blobSlice._bytes, blobSlice._length);
     alloc.releaseAll();
     return result.isOk
         ? ICU4XDataProvider._(result.union.ok)
         : throw ICU4XError._(result.union.err);
   }
-  static final _createFromByteSliceFfi = _capi<
+  // ignore: non_constant_identifier_names
+  static final _ICU4XDataProvider_create_from_byte_slice = _capi<
           ffi.NativeFunction<
               _ResultOpaqueUint32 Function(ffi.Pointer<ffi.Uint8>,
                   ffi.Size)>>('ICU4XDataProvider_create_from_byte_slice')
@@ -3906,10 +4178,11 @@ class ICU4XDataProvider implements ffi.Finalizable {
   ///
   /// See the [Rust documentation for `EmptyDataProvider`](https://docs.rs/icu_provider_adapters/latest/icu_provider_adapters/empty/struct.EmptyDataProvider.html) for more information.
   factory ICU4XDataProvider.empty() {
-    final result = _createEmptyFfi();
+    final result = _ICU4XDataProvider_create_empty();
     return ICU4XDataProvider._(result);
   }
-  static final _createEmptyFfi =
+  // ignore: non_constant_identifier_names
+  static final _ICU4XDataProvider_create_empty =
       _capi<ffi.NativeFunction<ffi.Pointer<ffi.Opaque> Function()>>(
               'ICU4XDataProvider_create_empty')
           .asFunction<ffi.Pointer<ffi.Opaque> Function()>(isLeaf: true);
@@ -3925,13 +4198,15 @@ class ICU4XDataProvider implements ffi.Finalizable {
   ///
   /// See the [Rust documentation for `ForkByKeyProvider`](https://docs.rs/icu_provider_adapters/latest/icu_provider_adapters/fork/type.ForkByKeyProvider.html) for more information.
   void forkByKey(ICU4XDataProvider other) {
-    final result = _forkByKeyFfi(_underlying, other._underlying);
+    final result =
+        _ICU4XDataProvider_fork_by_key(_underlying, other._underlying);
     if (!result.isOk) {
       throw ICU4XError._(result.union.err);
     }
   }
 
-  static final _forkByKeyFfi = _capi<
+  // ignore: non_constant_identifier_names
+  static final _ICU4XDataProvider_fork_by_key = _capi<
           ffi.NativeFunction<
               _ResultVoidUint32 Function(ffi.Pointer<ffi.Opaque>,
                   ffi.Pointer<ffi.Opaque>)>>('ICU4XDataProvider_fork_by_key')
@@ -3943,13 +4218,15 @@ class ICU4XDataProvider implements ffi.Finalizable {
   ///
   /// See the [Rust documentation for `MissingLocalePredicate`](https://docs.rs/icu_provider_adapters/latest/icu_provider_adapters/fork/predicates/struct.MissingLocalePredicate.html) for more information.
   void forkByLocale(ICU4XDataProvider other) {
-    final result = _forkByLocaleFfi(_underlying, other._underlying);
+    final result =
+        _ICU4XDataProvider_fork_by_locale(_underlying, other._underlying);
     if (!result.isOk) {
       throw ICU4XError._(result.union.err);
     }
   }
 
-  static final _forkByLocaleFfi = _capi<
+  // ignore: non_constant_identifier_names
+  static final _ICU4XDataProvider_fork_by_locale = _capi<
           ffi.NativeFunction<
               _ResultVoidUint32 Function(ffi.Pointer<ffi.Opaque>,
                   ffi.Pointer<ffi.Opaque>)>>('ICU4XDataProvider_fork_by_locale')
@@ -3965,13 +4242,14 @@ class ICU4XDataProvider implements ffi.Finalizable {
   ///
   /// Additional information: [1](https://docs.rs/icu_provider_adapters/latest/icu_provider_adapters/fallback/struct.LocaleFallbackProvider.html)
   void enableLocaleFallback() {
-    final result = _enableLocaleFallbackFfi(_underlying);
+    final result = _ICU4XDataProvider_enable_locale_fallback(_underlying);
     if (!result.isOk) {
       throw ICU4XError._(result.union.err);
     }
   }
 
-  static final _enableLocaleFallbackFfi = _capi<
+  // ignore: non_constant_identifier_names
+  static final _ICU4XDataProvider_enable_locale_fallback = _capi<
               ffi.NativeFunction<
                   _ResultVoidUint32 Function(ffi.Pointer<ffi.Opaque>)>>(
           'ICU4XDataProvider_enable_locale_fallback')
@@ -3982,14 +4260,15 @@ class ICU4XDataProvider implements ffi.Finalizable {
   ///
   /// Additional information: [1](https://docs.rs/icu_provider_adapters/latest/icu_provider_adapters/fallback/struct.LocaleFallbackProvider.html)
   void enableLocaleFallbackWith(ICU4XLocaleFallbacker fallbacker) {
-    final result =
-        _enableLocaleFallbackWithFfi(_underlying, fallbacker._underlying);
+    final result = _ICU4XDataProvider_enable_locale_fallback_with(
+        _underlying, fallbacker._underlying);
     if (!result.isOk) {
       throw ICU4XError._(result.union.err);
     }
   }
 
-  static final _enableLocaleFallbackWithFfi = _capi<
+  // ignore: non_constant_identifier_names
+  static final _ICU4XDataProvider_enable_locale_fallback_with = _capi<
               ffi.NativeFunction<
                   _ResultVoidUint32 Function(
                       ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>>(
@@ -4041,7 +4320,7 @@ class ICU4XDataStruct implements ffi.Finalizable {
         _SliceFfi2Utf8._fromDart(groupingSeparator, alloc);
     final digitsSlice = _SliceFfiUint32._fromDart(digits, alloc);
 
-    final result = _createDecimalSymbolsV1Ffi(
+    final result = _ICU4XDataStruct_create_decimal_symbols_v1(
         plusSignPrefixSlice._bytes,
         plusSignPrefixSlice._length,
         plusSignSuffixSlice._bytes,
@@ -4064,7 +4343,8 @@ class ICU4XDataStruct implements ffi.Finalizable {
         ? ICU4XDataStruct._(result.union.ok)
         : throw ICU4XError._(result.union.err);
   }
-  static final _createDecimalSymbolsV1Ffi = _capi<
+  // ignore: non_constant_identifier_names
+  static final _ICU4XDataStruct_create_decimal_symbols_v1 = _capi<
           ffi.NativeFunction<
               _ResultOpaqueUint32 Function(
                   ffi.Pointer<ffi2.Utf8>,
@@ -4123,13 +4403,14 @@ class ICU4XDate implements ffi.Finalizable {
   /// See the [Rust documentation for `new_from_iso`](https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.new_from_iso) for more information.
   factory ICU4XDate.fromIsoInCalendar(
       int year, int month, int day, ICU4XCalendar calendar) {
-    final result =
-        _createFromIsoInCalendarFfi(year, month, day, calendar._underlying);
+    final result = _ICU4XDate_create_from_iso_in_calendar(
+        year, month, day, calendar._underlying);
     return result.isOk
         ? ICU4XDate._(result.union.ok)
         : throw ICU4XError._(result.union.err);
   }
-  static final _createFromIsoInCalendarFfi = _capi<
+  // ignore: non_constant_identifier_names
+  static final _ICU4XDate_create_from_iso_in_calendar = _capi<
               ffi.NativeFunction<
                   _ResultOpaqueUint32 Function(ffi.Int32, ffi.Uint8, ffi.Uint8,
                       ffi.Pointer<ffi.Opaque>)>>(
@@ -4147,7 +4428,7 @@ class ICU4XDate implements ffi.Finalizable {
     final eraCodeSlice = _SliceFfi2Utf8._fromDart(eraCode, alloc);
     final monthCodeSlice = _SliceFfi2Utf8._fromDart(monthCode, alloc);
 
-    final result = _createFromCodesInCalendarFfi(
+    final result = _ICU4XDate_create_from_codes_in_calendar(
         eraCodeSlice._bytes,
         eraCodeSlice._length,
         year,
@@ -4160,7 +4441,8 @@ class ICU4XDate implements ffi.Finalizable {
         ? ICU4XDate._(result.union.ok)
         : throw ICU4XError._(result.union.err);
   }
-  static final _createFromCodesInCalendarFfi = _capi<
+  // ignore: non_constant_identifier_names
+  static final _ICU4XDate_create_from_codes_in_calendar = _capi<
               ffi.NativeFunction<
                   _ResultOpaqueUint32 Function(
                       ffi.Pointer<ffi2.Utf8>,
@@ -4185,11 +4467,12 @@ class ICU4XDate implements ffi.Finalizable {
   ///
   /// See the [Rust documentation for `to_calendar`](https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.to_calendar) for more information.
   ICU4XDate toCalendar(ICU4XCalendar calendar) {
-    final result = _toCalendarFfi(_underlying, calendar._underlying);
+    final result = _ICU4XDate_to_calendar(_underlying, calendar._underlying);
     return ICU4XDate._(result);
   }
 
-  static final _toCalendarFfi = _capi<
+  // ignore: non_constant_identifier_names
+  static final _ICU4XDate_to_calendar = _capi<
           ffi.NativeFunction<
               ffi.Pointer<ffi.Opaque> Function(ffi.Pointer<ffi.Opaque>,
                   ffi.Pointer<ffi.Opaque>)>>('ICU4XDate_to_calendar')
@@ -4201,11 +4484,12 @@ class ICU4XDate implements ffi.Finalizable {
   ///
   /// See the [Rust documentation for `to_iso`](https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.to_iso) for more information.
   ICU4XIsoDate toIso() {
-    final result = _toIsoFfi(_underlying);
+    final result = _ICU4XDate_to_iso(_underlying);
     return ICU4XIsoDate._(result);
   }
 
-  static final _toIsoFfi = _capi<
+  // ignore: non_constant_identifier_names
+  static final _ICU4XDate_to_iso = _capi<
           ffi.NativeFunction<
               ffi.Pointer<ffi.Opaque> Function(
                   ffi.Pointer<ffi.Opaque>)>>('ICU4XDate_to_iso')
@@ -4216,11 +4500,12 @@ class ICU4XDate implements ffi.Finalizable {
   ///
   /// See the [Rust documentation for `day_of_month`](https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.day_of_month) for more information.
   int get dayOfMonth {
-    final result = _dayOfMonthFfi(_underlying);
+    final result = _ICU4XDate_day_of_month(_underlying);
     return result;
   }
 
-  static final _dayOfMonthFfi =
+  // ignore: non_constant_identifier_names
+  static final _ICU4XDate_day_of_month =
       _capi<ffi.NativeFunction<ffi.Uint32 Function(ffi.Pointer<ffi.Opaque>)>>(
               'ICU4XDate_day_of_month')
           .asFunction<int Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
@@ -4229,11 +4514,12 @@ class ICU4XDate implements ffi.Finalizable {
   ///
   /// See the [Rust documentation for `day_of_week`](https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.day_of_week) for more information.
   ICU4XIsoWeekday get dayOfWeek {
-    final result = _dayOfWeekFfi(_underlying);
+    final result = _ICU4XDate_day_of_week(_underlying);
     return ICU4XIsoWeekday._(result);
   }
 
-  static final _dayOfWeekFfi =
+  // ignore: non_constant_identifier_names
+  static final _ICU4XDate_day_of_week =
       _capi<ffi.NativeFunction<ffi.Uint32 Function(ffi.Pointer<ffi.Opaque>)>>(
               'ICU4XDate_day_of_week')
           .asFunction<int Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
@@ -4245,11 +4531,12 @@ class ICU4XDate implements ffi.Finalizable {
   ///
   /// See the [Rust documentation for `week_of_month`](https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.week_of_month) for more information.
   int weekOfMonth(ICU4XIsoWeekday firstWeekday) {
-    final result = _weekOfMonthFfi(_underlying, firstWeekday._id);
+    final result = _ICU4XDate_week_of_month(_underlying, firstWeekday._id);
     return result;
   }
 
-  static final _weekOfMonthFfi = _capi<
+  // ignore: non_constant_identifier_names
+  static final _ICU4XDate_week_of_month = _capi<
           ffi.NativeFunction<
               ffi.Uint32 Function(ffi.Pointer<ffi.Opaque>,
                   ffi.Uint32)>>('ICU4XDate_week_of_month')
@@ -4259,13 +4546,14 @@ class ICU4XDate implements ffi.Finalizable {
   ///
   /// See the [Rust documentation for `week_of_year`](https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.week_of_year) for more information.
   ICU4XWeekOf weekOfYear(ICU4XWeekCalculator calculator) {
-    final result = _weekOfYearFfi(_underlying, calculator._underlying);
+    final result = _ICU4XDate_week_of_year(_underlying, calculator._underlying);
     return result.isOk
         ? ICU4XWeekOf._(result.union.ok)
         : throw ICU4XError._(result.union.err);
   }
 
-  static final _weekOfYearFfi = _capi<
+  // ignore: non_constant_identifier_names
+  static final _ICU4XDate_week_of_year = _capi<
           ffi.NativeFunction<
               _ResultICU4XWeekOfFfiUint32 Function(ffi.Pointer<ffi.Opaque>,
                   ffi.Pointer<ffi.Opaque>)>>('ICU4XDate_week_of_year')
@@ -4281,11 +4569,12 @@ class ICU4XDate implements ffi.Finalizable {
   ///
   /// See the [Rust documentation for `month`](https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.month) for more information.
   int get ordinalMonth {
-    final result = _ordinalMonthFfi(_underlying);
+    final result = _ICU4XDate_ordinal_month(_underlying);
     return result;
   }
 
-  static final _ordinalMonthFfi =
+  // ignore: non_constant_identifier_names
+  static final _ICU4XDate_ordinal_month =
       _capi<ffi.NativeFunction<ffi.Uint32 Function(ffi.Pointer<ffi.Opaque>)>>(
               'ICU4XDate_ordinal_month')
           .asFunction<int Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
@@ -4296,13 +4585,14 @@ class ICU4XDate implements ffi.Finalizable {
   /// See the [Rust documentation for `month`](https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.month) for more information.
   String get monthCode {
     final writeable = _Writeable();
-    final result = _monthCodeFfi(_underlying, writeable._underlying);
+    final result = _ICU4XDate_month_code(_underlying, writeable._underlying);
     return result.isOk
         ? writeable.finalize()
         : throw ICU4XError._(result.union.err);
   }
 
-  static final _monthCodeFfi = _capi<
+  // ignore: non_constant_identifier_names
+  static final _ICU4XDate_month_code = _capi<
           ffi.NativeFunction<
               _ResultVoidUint32 Function(ffi.Pointer<ffi.Opaque>,
                   ffi.Pointer<ffi.Opaque>)>>('ICU4XDate_month_code')
@@ -4314,11 +4604,12 @@ class ICU4XDate implements ffi.Finalizable {
   ///
   /// See the [Rust documentation for `year`](https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.year) for more information.
   int get yearInEra {
-    final result = _yearInEraFfi(_underlying);
+    final result = _ICU4XDate_year_in_era(_underlying);
     return result;
   }
 
-  static final _yearInEraFfi =
+  // ignore: non_constant_identifier_names
+  static final _ICU4XDate_year_in_era =
       _capi<ffi.NativeFunction<ffi.Int32 Function(ffi.Pointer<ffi.Opaque>)>>(
               'ICU4XDate_year_in_era')
           .asFunction<int Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
@@ -4330,13 +4621,14 @@ class ICU4XDate implements ffi.Finalizable {
   /// Additional information: [1](https://docs.rs/icu/latest/icu/types/struct.Era.html)
   String get era {
     final writeable = _Writeable();
-    final result = _eraFfi(_underlying, writeable._underlying);
+    final result = _ICU4XDate_era(_underlying, writeable._underlying);
     return result.isOk
         ? writeable.finalize()
         : throw ICU4XError._(result.union.err);
   }
 
-  static final _eraFfi = _capi<
+  // ignore: non_constant_identifier_names
+  static final _ICU4XDate_era = _capi<
           ffi.NativeFunction<
               _ResultVoidUint32 Function(ffi.Pointer<ffi.Opaque>,
                   ffi.Pointer<ffi.Opaque>)>>('ICU4XDate_era')
@@ -4348,11 +4640,12 @@ class ICU4XDate implements ffi.Finalizable {
   ///
   /// See the [Rust documentation for `months_in_year`](https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.months_in_year) for more information.
   int get monthsInYear {
-    final result = _monthsInYearFfi(_underlying);
+    final result = _ICU4XDate_months_in_year(_underlying);
     return result;
   }
 
-  static final _monthsInYearFfi =
+  // ignore: non_constant_identifier_names
+  static final _ICU4XDate_months_in_year =
       _capi<ffi.NativeFunction<ffi.Uint8 Function(ffi.Pointer<ffi.Opaque>)>>(
               'ICU4XDate_months_in_year')
           .asFunction<int Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
@@ -4361,11 +4654,12 @@ class ICU4XDate implements ffi.Finalizable {
   ///
   /// See the [Rust documentation for `days_in_month`](https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.days_in_month) for more information.
   int get daysInMonth {
-    final result = _daysInMonthFfi(_underlying);
+    final result = _ICU4XDate_days_in_month(_underlying);
     return result;
   }
 
-  static final _daysInMonthFfi =
+  // ignore: non_constant_identifier_names
+  static final _ICU4XDate_days_in_month =
       _capi<ffi.NativeFunction<ffi.Uint8 Function(ffi.Pointer<ffi.Opaque>)>>(
               'ICU4XDate_days_in_month')
           .asFunction<int Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
@@ -4374,11 +4668,12 @@ class ICU4XDate implements ffi.Finalizable {
   ///
   /// See the [Rust documentation for `days_in_year`](https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.days_in_year) for more information.
   int get daysInYear {
-    final result = _daysInYearFfi(_underlying);
+    final result = _ICU4XDate_days_in_year(_underlying);
     return result;
   }
 
-  static final _daysInYearFfi =
+  // ignore: non_constant_identifier_names
+  static final _ICU4XDate_days_in_year =
       _capi<ffi.NativeFunction<ffi.Uint16 Function(ffi.Pointer<ffi.Opaque>)>>(
               'ICU4XDate_days_in_year')
           .asFunction<int Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
@@ -4387,11 +4682,12 @@ class ICU4XDate implements ffi.Finalizable {
   ///
   /// See the [Rust documentation for `calendar`](https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.calendar) for more information.
   ICU4XCalendar get calendar {
-    final result = _calendarFfi(_underlying);
+    final result = _ICU4XDate_calendar(_underlying);
     return ICU4XCalendar._(result);
   }
 
-  static final _calendarFfi = _capi<
+  // ignore: non_constant_identifier_names
+  static final _ICU4XDate_calendar = _capi<
           ffi.NativeFunction<
               ffi.Pointer<ffi.Opaque> Function(
                   ffi.Pointer<ffi.Opaque>)>>('ICU4XDate_calendar')
@@ -4418,13 +4714,14 @@ class ICU4XDateFormatter implements ffi.Finalizable {
   /// See the [Rust documentation for `try_new_with_length`](https://docs.rs/icu/latest/icu/datetime/struct.DateFormatter.html#method.try_new_with_length) for more information.
   factory ICU4XDateFormatter.withLength(ICU4XDataProvider provider,
       ICU4XLocale locale, ICU4XDateLength dateLength) {
-    final result = _createWithLengthFfi(
+    final result = _ICU4XDateFormatter_create_with_length(
         provider._underlying, locale._underlying, dateLength._id);
     return result.isOk
         ? ICU4XDateFormatter._(result.union.ok)
         : throw ICU4XError._(result.union.err);
   }
-  static final _createWithLengthFfi = _capi<
+  // ignore: non_constant_identifier_names
+  static final _ICU4XDateFormatter_create_with_length = _capi<
           ffi.NativeFunction<
               _ResultOpaqueUint32 Function(
                   ffi.Pointer<ffi.Opaque>,
@@ -4439,14 +4736,15 @@ class ICU4XDateFormatter implements ffi.Finalizable {
   /// See the [Rust documentation for `format`](https://docs.rs/icu/latest/icu/datetime/struct.DateFormatter.html#method.format) for more information.
   String formatDate(ICU4XDate value) {
     final writeable = _Writeable();
-    final result =
-        _formatDateFfi(_underlying, value._underlying, writeable._underlying);
+    final result = _ICU4XDateFormatter_format_date(
+        _underlying, value._underlying, writeable._underlying);
     return result.isOk
         ? writeable.finalize()
         : throw ICU4XError._(result.union.err);
   }
 
-  static final _formatDateFfi = _capi<
+  // ignore: non_constant_identifier_names
+  static final _ICU4XDateFormatter_format_date = _capi<
           ffi.NativeFunction<
               _ResultVoidUint32 Function(
                   ffi.Pointer<ffi.Opaque>,
@@ -4463,14 +4761,15 @@ class ICU4XDateFormatter implements ffi.Finalizable {
   /// See the [Rust documentation for `format`](https://docs.rs/icu/latest/icu/datetime/struct.DateFormatter.html#method.format) for more information.
   String formatIsoDate(ICU4XIsoDate value) {
     final writeable = _Writeable();
-    final result = _formatIsoDateFfi(
+    final result = _ICU4XDateFormatter_format_iso_date(
         _underlying, value._underlying, writeable._underlying);
     return result.isOk
         ? writeable.finalize()
         : throw ICU4XError._(result.union.err);
   }
 
-  static final _formatIsoDateFfi = _capi<
+  // ignore: non_constant_identifier_names
+  static final _ICU4XDateFormatter_format_iso_date = _capi<
               ffi.NativeFunction<
                   _ResultVoidUint32 Function(ffi.Pointer<ffi.Opaque>,
                       ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>>(
@@ -4484,14 +4783,15 @@ class ICU4XDateFormatter implements ffi.Finalizable {
   /// See the [Rust documentation for `format`](https://docs.rs/icu/latest/icu/datetime/struct.DateFormatter.html#method.format) for more information.
   String formatDatetime(ICU4XDateTime value) {
     final writeable = _Writeable();
-    final result = _formatDatetimeFfi(
+    final result = _ICU4XDateFormatter_format_datetime(
         _underlying, value._underlying, writeable._underlying);
     return result.isOk
         ? writeable.finalize()
         : throw ICU4XError._(result.union.err);
   }
 
-  static final _formatDatetimeFfi = _capi<
+  // ignore: non_constant_identifier_names
+  static final _ICU4XDateFormatter_format_datetime = _capi<
               ffi.NativeFunction<
                   _ResultVoidUint32 Function(ffi.Pointer<ffi.Opaque>,
                       ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>>(
@@ -4507,14 +4807,15 @@ class ICU4XDateFormatter implements ffi.Finalizable {
   /// See the [Rust documentation for `format`](https://docs.rs/icu/latest/icu/datetime/struct.DateFormatter.html#method.format) for more information.
   String formatIsoDatetime(ICU4XIsoDateTime value) {
     final writeable = _Writeable();
-    final result = _formatIsoDatetimeFfi(
+    final result = _ICU4XDateFormatter_format_iso_datetime(
         _underlying, value._underlying, writeable._underlying);
     return result.isOk
         ? writeable.finalize()
         : throw ICU4XError._(result.union.err);
   }
 
-  static final _formatIsoDatetimeFfi = _capi<
+  // ignore: non_constant_identifier_names
+  static final _ICU4XDateFormatter_format_iso_datetime = _capi<
               ffi.NativeFunction<
                   _ResultVoidUint32 Function(ffi.Pointer<ffi.Opaque>,
                       ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>>(
@@ -4565,13 +4866,14 @@ class ICU4XDateTime implements ffi.Finalizable {
       int second,
       int nanosecond,
       ICU4XCalendar calendar) {
-    final result = _createFromIsoInCalendarFfi(year, month, day, hour, minute,
-        second, nanosecond, calendar._underlying);
+    final result = _ICU4XDateTime_create_from_iso_in_calendar(year, month, day,
+        hour, minute, second, nanosecond, calendar._underlying);
     return result.isOk
         ? ICU4XDateTime._(result.union.ok)
         : throw ICU4XError._(result.union.err);
   }
-  static final _createFromIsoInCalendarFfi = _capi<
+  // ignore: non_constant_identifier_names
+  static final _ICU4XDateTime_create_from_iso_in_calendar = _capi<
               ffi.NativeFunction<
                   _ResultOpaqueUint32 Function(
                       ffi.Int32,
@@ -4604,7 +4906,7 @@ class ICU4XDateTime implements ffi.Finalizable {
     final eraCodeSlice = _SliceFfi2Utf8._fromDart(eraCode, alloc);
     final monthCodeSlice = _SliceFfi2Utf8._fromDart(monthCode, alloc);
 
-    final result = _createFromCodesInCalendarFfi(
+    final result = _ICU4XDateTime_create_from_codes_in_calendar(
         eraCodeSlice._bytes,
         eraCodeSlice._length,
         year,
@@ -4621,7 +4923,8 @@ class ICU4XDateTime implements ffi.Finalizable {
         ? ICU4XDateTime._(result.union.ok)
         : throw ICU4XError._(result.union.err);
   }
-  static final _createFromCodesInCalendarFfi = _capi<
+  // ignore: non_constant_identifier_names
+  static final _ICU4XDateTime_create_from_codes_in_calendar = _capi<
               ffi.NativeFunction<
                   _ResultOpaqueUint32 Function(
                       ffi.Pointer<ffi2.Utf8>,
@@ -4654,11 +4957,12 @@ class ICU4XDateTime implements ffi.Finalizable {
   ///
   /// See the [Rust documentation for `new`](https://docs.rs/icu/latest/icu/calendar/struct.DateTime.html#method.new) for more information.
   factory ICU4XDateTime.fromDateAndTime(ICU4XDate date, ICU4XTime time) {
-    final result =
-        _createFromDateAndTimeFfi(date._underlying, time._underlying);
+    final result = _ICU4XDateTime_create_from_date_and_time(
+        date._underlying, time._underlying);
     return ICU4XDateTime._(result);
   }
-  static final _createFromDateAndTimeFfi = _capi<
+  // ignore: non_constant_identifier_names
+  static final _ICU4XDateTime_create_from_date_and_time = _capi<
               ffi.NativeFunction<
                   ffi.Pointer<ffi.Opaque> Function(
                       ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>>(
@@ -4671,11 +4975,12 @@ class ICU4XDateTime implements ffi.Finalizable {
   ///
   /// See the [Rust documentation for `date`](https://docs.rs/icu/latest/icu/calendar/struct.DateTime.html#structfield.date) for more information.
   ICU4XDate get date {
-    final result = _dateFfi(_underlying);
+    final result = _ICU4XDateTime_date(_underlying);
     return ICU4XDate._(result);
   }
 
-  static final _dateFfi = _capi<
+  // ignore: non_constant_identifier_names
+  static final _ICU4XDateTime_date = _capi<
           ffi.NativeFunction<
               ffi.Pointer<ffi.Opaque> Function(
                   ffi.Pointer<ffi.Opaque>)>>('ICU4XDateTime_date')
@@ -4686,11 +4991,12 @@ class ICU4XDateTime implements ffi.Finalizable {
   ///
   /// See the [Rust documentation for `time`](https://docs.rs/icu/latest/icu/calendar/struct.DateTime.html#structfield.time) for more information.
   ICU4XTime get time {
-    final result = _timeFfi(_underlying);
+    final result = _ICU4XDateTime_time(_underlying);
     return ICU4XTime._(result);
   }
 
-  static final _timeFfi = _capi<
+  // ignore: non_constant_identifier_names
+  static final _ICU4XDateTime_time = _capi<
           ffi.NativeFunction<
               ffi.Pointer<ffi.Opaque> Function(
                   ffi.Pointer<ffi.Opaque>)>>('ICU4XDateTime_time')
@@ -4701,11 +5007,12 @@ class ICU4XDateTime implements ffi.Finalizable {
   ///
   /// See the [Rust documentation for `to_iso`](https://docs.rs/icu/latest/icu/calendar/struct.DateTime.html#method.to_iso) for more information.
   ICU4XIsoDateTime toIso() {
-    final result = _toIsoFfi(_underlying);
+    final result = _ICU4XDateTime_to_iso(_underlying);
     return ICU4XIsoDateTime._(result);
   }
 
-  static final _toIsoFfi = _capi<
+  // ignore: non_constant_identifier_names
+  static final _ICU4XDateTime_to_iso = _capi<
           ffi.NativeFunction<
               ffi.Pointer<ffi.Opaque> Function(
                   ffi.Pointer<ffi.Opaque>)>>('ICU4XDateTime_to_iso')
@@ -4716,11 +5023,13 @@ class ICU4XDateTime implements ffi.Finalizable {
   ///
   /// See the [Rust documentation for `to_calendar`](https://docs.rs/icu/latest/icu/calendar/struct.DateTime.html#method.to_calendar) for more information.
   ICU4XDateTime toCalendar(ICU4XCalendar calendar) {
-    final result = _toCalendarFfi(_underlying, calendar._underlying);
+    final result =
+        _ICU4XDateTime_to_calendar(_underlying, calendar._underlying);
     return ICU4XDateTime._(result);
   }
 
-  static final _toCalendarFfi = _capi<
+  // ignore: non_constant_identifier_names
+  static final _ICU4XDateTime_to_calendar = _capi<
           ffi.NativeFunction<
               ffi.Pointer<ffi.Opaque> Function(ffi.Pointer<ffi.Opaque>,
                   ffi.Pointer<ffi.Opaque>)>>('ICU4XDateTime_to_calendar')
@@ -4732,11 +5041,12 @@ class ICU4XDateTime implements ffi.Finalizable {
   ///
   /// See the [Rust documentation for `hour`](https://docs.rs/icu/latest/icu/calendar/types/struct.Time.html#structfield.hour) for more information.
   int get hour {
-    final result = _hourFfi(_underlying);
+    final result = _ICU4XDateTime_hour(_underlying);
     return result;
   }
 
-  static final _hourFfi =
+  // ignore: non_constant_identifier_names
+  static final _ICU4XDateTime_hour =
       _capi<ffi.NativeFunction<ffi.Uint8 Function(ffi.Pointer<ffi.Opaque>)>>(
               'ICU4XDateTime_hour')
           .asFunction<int Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
@@ -4745,11 +5055,12 @@ class ICU4XDateTime implements ffi.Finalizable {
   ///
   /// See the [Rust documentation for `minute`](https://docs.rs/icu/latest/icu/calendar/types/struct.Time.html#structfield.minute) for more information.
   int get minute {
-    final result = _minuteFfi(_underlying);
+    final result = _ICU4XDateTime_minute(_underlying);
     return result;
   }
 
-  static final _minuteFfi =
+  // ignore: non_constant_identifier_names
+  static final _ICU4XDateTime_minute =
       _capi<ffi.NativeFunction<ffi.Uint8 Function(ffi.Pointer<ffi.Opaque>)>>(
               'ICU4XDateTime_minute')
           .asFunction<int Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
@@ -4758,11 +5069,12 @@ class ICU4XDateTime implements ffi.Finalizable {
   ///
   /// See the [Rust documentation for `second`](https://docs.rs/icu/latest/icu/calendar/types/struct.Time.html#structfield.second) for more information.
   int get second {
-    final result = _secondFfi(_underlying);
+    final result = _ICU4XDateTime_second(_underlying);
     return result;
   }
 
-  static final _secondFfi =
+  // ignore: non_constant_identifier_names
+  static final _ICU4XDateTime_second =
       _capi<ffi.NativeFunction<ffi.Uint8 Function(ffi.Pointer<ffi.Opaque>)>>(
               'ICU4XDateTime_second')
           .asFunction<int Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
@@ -4771,11 +5083,12 @@ class ICU4XDateTime implements ffi.Finalizable {
   ///
   /// See the [Rust documentation for `nanosecond`](https://docs.rs/icu/latest/icu/calendar/types/struct.Time.html#structfield.nanosecond) for more information.
   int get nanosecond {
-    final result = _nanosecondFfi(_underlying);
+    final result = _ICU4XDateTime_nanosecond(_underlying);
     return result;
   }
 
-  static final _nanosecondFfi =
+  // ignore: non_constant_identifier_names
+  static final _ICU4XDateTime_nanosecond =
       _capi<ffi.NativeFunction<ffi.Uint32 Function(ffi.Pointer<ffi.Opaque>)>>(
               'ICU4XDateTime_nanosecond')
           .asFunction<int Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
@@ -4784,11 +5097,12 @@ class ICU4XDateTime implements ffi.Finalizable {
   ///
   /// See the [Rust documentation for `day_of_month`](https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.day_of_month) for more information.
   int get dayOfMonth {
-    final result = _dayOfMonthFfi(_underlying);
+    final result = _ICU4XDateTime_day_of_month(_underlying);
     return result;
   }
 
-  static final _dayOfMonthFfi =
+  // ignore: non_constant_identifier_names
+  static final _ICU4XDateTime_day_of_month =
       _capi<ffi.NativeFunction<ffi.Uint32 Function(ffi.Pointer<ffi.Opaque>)>>(
               'ICU4XDateTime_day_of_month')
           .asFunction<int Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
@@ -4797,11 +5111,12 @@ class ICU4XDateTime implements ffi.Finalizable {
   ///
   /// See the [Rust documentation for `day_of_week`](https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.day_of_week) for more information.
   ICU4XIsoWeekday get dayOfWeek {
-    final result = _dayOfWeekFfi(_underlying);
+    final result = _ICU4XDateTime_day_of_week(_underlying);
     return ICU4XIsoWeekday._(result);
   }
 
-  static final _dayOfWeekFfi =
+  // ignore: non_constant_identifier_names
+  static final _ICU4XDateTime_day_of_week =
       _capi<ffi.NativeFunction<ffi.Uint32 Function(ffi.Pointer<ffi.Opaque>)>>(
               'ICU4XDateTime_day_of_week')
           .asFunction<int Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
@@ -4813,11 +5128,12 @@ class ICU4XDateTime implements ffi.Finalizable {
   ///
   /// See the [Rust documentation for `week_of_month`](https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.week_of_month) for more information.
   int weekOfMonth(ICU4XIsoWeekday firstWeekday) {
-    final result = _weekOfMonthFfi(_underlying, firstWeekday._id);
+    final result = _ICU4XDateTime_week_of_month(_underlying, firstWeekday._id);
     return result;
   }
 
-  static final _weekOfMonthFfi = _capi<
+  // ignore: non_constant_identifier_names
+  static final _ICU4XDateTime_week_of_month = _capi<
           ffi.NativeFunction<
               ffi.Uint32 Function(ffi.Pointer<ffi.Opaque>,
                   ffi.Uint32)>>('ICU4XDateTime_week_of_month')
@@ -4827,13 +5143,15 @@ class ICU4XDateTime implements ffi.Finalizable {
   ///
   /// See the [Rust documentation for `week_of_year`](https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.week_of_year) for more information.
   ICU4XWeekOf weekOfYear(ICU4XWeekCalculator calculator) {
-    final result = _weekOfYearFfi(_underlying, calculator._underlying);
+    final result =
+        _ICU4XDateTime_week_of_year(_underlying, calculator._underlying);
     return result.isOk
         ? ICU4XWeekOf._(result.union.ok)
         : throw ICU4XError._(result.union.err);
   }
 
-  static final _weekOfYearFfi = _capi<
+  // ignore: non_constant_identifier_names
+  static final _ICU4XDateTime_week_of_year = _capi<
           ffi.NativeFunction<
               _ResultICU4XWeekOfFfiUint32 Function(ffi.Pointer<ffi.Opaque>,
                   ffi.Pointer<ffi.Opaque>)>>('ICU4XDateTime_week_of_year')
@@ -4849,11 +5167,12 @@ class ICU4XDateTime implements ffi.Finalizable {
   ///
   /// See the [Rust documentation for `month`](https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.month) for more information.
   int get ordinalMonth {
-    final result = _ordinalMonthFfi(_underlying);
+    final result = _ICU4XDateTime_ordinal_month(_underlying);
     return result;
   }
 
-  static final _ordinalMonthFfi =
+  // ignore: non_constant_identifier_names
+  static final _ICU4XDateTime_ordinal_month =
       _capi<ffi.NativeFunction<ffi.Uint32 Function(ffi.Pointer<ffi.Opaque>)>>(
               'ICU4XDateTime_ordinal_month')
           .asFunction<int Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
@@ -4864,13 +5183,15 @@ class ICU4XDateTime implements ffi.Finalizable {
   /// See the [Rust documentation for `month`](https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.month) for more information.
   String get monthCode {
     final writeable = _Writeable();
-    final result = _monthCodeFfi(_underlying, writeable._underlying);
+    final result =
+        _ICU4XDateTime_month_code(_underlying, writeable._underlying);
     return result.isOk
         ? writeable.finalize()
         : throw ICU4XError._(result.union.err);
   }
 
-  static final _monthCodeFfi = _capi<
+  // ignore: non_constant_identifier_names
+  static final _ICU4XDateTime_month_code = _capi<
           ffi.NativeFunction<
               _ResultVoidUint32 Function(ffi.Pointer<ffi.Opaque>,
                   ffi.Pointer<ffi.Opaque>)>>('ICU4XDateTime_month_code')
@@ -4882,11 +5203,12 @@ class ICU4XDateTime implements ffi.Finalizable {
   ///
   /// See the [Rust documentation for `year`](https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.year) for more information.
   int get yearInEra {
-    final result = _yearInEraFfi(_underlying);
+    final result = _ICU4XDateTime_year_in_era(_underlying);
     return result;
   }
 
-  static final _yearInEraFfi =
+  // ignore: non_constant_identifier_names
+  static final _ICU4XDateTime_year_in_era =
       _capi<ffi.NativeFunction<ffi.Int32 Function(ffi.Pointer<ffi.Opaque>)>>(
               'ICU4XDateTime_year_in_era')
           .asFunction<int Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
@@ -4896,13 +5218,14 @@ class ICU4XDateTime implements ffi.Finalizable {
   /// See the [Rust documentation for `year`](https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.year) for more information.
   String get era {
     final writeable = _Writeable();
-    final result = _eraFfi(_underlying, writeable._underlying);
+    final result = _ICU4XDateTime_era(_underlying, writeable._underlying);
     return result.isOk
         ? writeable.finalize()
         : throw ICU4XError._(result.union.err);
   }
 
-  static final _eraFfi = _capi<
+  // ignore: non_constant_identifier_names
+  static final _ICU4XDateTime_era = _capi<
           ffi.NativeFunction<
               _ResultVoidUint32 Function(ffi.Pointer<ffi.Opaque>,
                   ffi.Pointer<ffi.Opaque>)>>('ICU4XDateTime_era')
@@ -4914,11 +5237,12 @@ class ICU4XDateTime implements ffi.Finalizable {
   ///
   /// See the [Rust documentation for `months_in_year`](https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.months_in_year) for more information.
   int get monthsInYear {
-    final result = _monthsInYearFfi(_underlying);
+    final result = _ICU4XDateTime_months_in_year(_underlying);
     return result;
   }
 
-  static final _monthsInYearFfi =
+  // ignore: non_constant_identifier_names
+  static final _ICU4XDateTime_months_in_year =
       _capi<ffi.NativeFunction<ffi.Uint8 Function(ffi.Pointer<ffi.Opaque>)>>(
               'ICU4XDateTime_months_in_year')
           .asFunction<int Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
@@ -4927,11 +5251,12 @@ class ICU4XDateTime implements ffi.Finalizable {
   ///
   /// See the [Rust documentation for `days_in_month`](https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.days_in_month) for more information.
   int get daysInMonth {
-    final result = _daysInMonthFfi(_underlying);
+    final result = _ICU4XDateTime_days_in_month(_underlying);
     return result;
   }
 
-  static final _daysInMonthFfi =
+  // ignore: non_constant_identifier_names
+  static final _ICU4XDateTime_days_in_month =
       _capi<ffi.NativeFunction<ffi.Uint8 Function(ffi.Pointer<ffi.Opaque>)>>(
               'ICU4XDateTime_days_in_month')
           .asFunction<int Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
@@ -4940,11 +5265,12 @@ class ICU4XDateTime implements ffi.Finalizable {
   ///
   /// See the [Rust documentation for `days_in_year`](https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.days_in_year) for more information.
   int get daysInYear {
-    final result = _daysInYearFfi(_underlying);
+    final result = _ICU4XDateTime_days_in_year(_underlying);
     return result;
   }
 
-  static final _daysInYearFfi =
+  // ignore: non_constant_identifier_names
+  static final _ICU4XDateTime_days_in_year =
       _capi<ffi.NativeFunction<ffi.Uint16 Function(ffi.Pointer<ffi.Opaque>)>>(
               'ICU4XDateTime_days_in_year')
           .asFunction<int Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
@@ -4953,11 +5279,12 @@ class ICU4XDateTime implements ffi.Finalizable {
   ///
   /// See the [Rust documentation for `calendar`](https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.calendar) for more information.
   ICU4XCalendar get calendar {
-    final result = _calendarFfi(_underlying);
+    final result = _ICU4XDateTime_calendar(_underlying);
     return ICU4XCalendar._(result);
   }
 
-  static final _calendarFfi = _capi<
+  // ignore: non_constant_identifier_names
+  static final _ICU4XDateTime_calendar = _capi<
           ffi.NativeFunction<
               ffi.Pointer<ffi.Opaque> Function(
                   ffi.Pointer<ffi.Opaque>)>>('ICU4XDateTime_calendar')
@@ -4987,13 +5314,17 @@ class ICU4XDateTimeFormatter implements ffi.Finalizable {
       ICU4XLocale locale,
       ICU4XDateLength dateLength,
       ICU4XTimeLength timeLength) {
-    final result = _createWithLengthsFfi(provider._underlying,
-        locale._underlying, dateLength._id, timeLength._id);
+    final result = _ICU4XDateTimeFormatter_create_with_lengths(
+        provider._underlying,
+        locale._underlying,
+        dateLength._id,
+        timeLength._id);
     return result.isOk
         ? ICU4XDateTimeFormatter._(result.union.ok)
         : throw ICU4XError._(result.union.err);
   }
-  static final _createWithLengthsFfi = _capi<
+  // ignore: non_constant_identifier_names
+  static final _ICU4XDateTimeFormatter_create_with_lengths = _capi<
           ffi.NativeFunction<
               _ResultOpaqueUint32 Function(
                   ffi.Pointer<ffi.Opaque>,
@@ -5009,14 +5340,15 @@ class ICU4XDateTimeFormatter implements ffi.Finalizable {
   /// See the [Rust documentation for `format`](https://docs.rs/icu/latest/icu/datetime/struct.DateTimeFormatter.html#method.format) for more information.
   String formatDatetime(ICU4XDateTime value) {
     final writeable = _Writeable();
-    final result = _formatDatetimeFfi(
+    final result = _ICU4XDateTimeFormatter_format_datetime(
         _underlying, value._underlying, writeable._underlying);
     return result.isOk
         ? writeable.finalize()
         : throw ICU4XError._(result.union.err);
   }
 
-  static final _formatDatetimeFfi = _capi<
+  // ignore: non_constant_identifier_names
+  static final _ICU4XDateTimeFormatter_format_datetime = _capi<
               ffi.NativeFunction<
                   _ResultVoidUint32 Function(ffi.Pointer<ffi.Opaque>,
                       ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>>(
@@ -5032,14 +5364,15 @@ class ICU4XDateTimeFormatter implements ffi.Finalizable {
   /// See the [Rust documentation for `format`](https://docs.rs/icu/latest/icu/datetime/struct.DateTimeFormatter.html#method.format) for more information.
   String formatIsoDatetime(ICU4XIsoDateTime value) {
     final writeable = _Writeable();
-    final result = _formatIsoDatetimeFfi(
+    final result = _ICU4XDateTimeFormatter_format_iso_datetime(
         _underlying, value._underlying, writeable._underlying);
     return result.isOk
         ? writeable.finalize()
         : throw ICU4XError._(result.union.err);
   }
 
-  static final _formatIsoDatetimeFfi = _capi<
+  // ignore: non_constant_identifier_names
+  static final _ICU4XDateTimeFormatter_format_iso_datetime = _capi<
               ffi.NativeFunction<
                   _ResultVoidUint32 Function(ffi.Pointer<ffi.Opaque>,
                       ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>>(
@@ -5112,12 +5445,13 @@ class ICU4XDecomposingNormalizer implements ffi.Finalizable {
   ///
   /// See the [Rust documentation for `new_nfd`](https://docs.rs/icu/latest/icu/normalizer/struct.DecomposingNormalizer.html#method.new_nfd) for more information.
   factory ICU4XDecomposingNormalizer.nfd(ICU4XDataProvider provider) {
-    final result = _createNfdFfi(provider._underlying);
+    final result = _ICU4XDecomposingNormalizer_create_nfd(provider._underlying);
     return result.isOk
         ? ICU4XDecomposingNormalizer._(result.union.ok)
         : throw ICU4XError._(result.union.err);
   }
-  static final _createNfdFfi = _capi<
+  // ignore: non_constant_identifier_names
+  static final _ICU4XDecomposingNormalizer_create_nfd = _capi<
               ffi.NativeFunction<
                   _ResultOpaqueUint32 Function(ffi.Pointer<ffi.Opaque>)>>(
           'ICU4XDecomposingNormalizer_create_nfd')
@@ -5128,12 +5462,14 @@ class ICU4XDecomposingNormalizer implements ffi.Finalizable {
   ///
   /// See the [Rust documentation for `new_nfkd`](https://docs.rs/icu/latest/icu/normalizer/struct.DecomposingNormalizer.html#method.new_nfkd) for more information.
   factory ICU4XDecomposingNormalizer.nfkd(ICU4XDataProvider provider) {
-    final result = _createNfkdFfi(provider._underlying);
+    final result =
+        _ICU4XDecomposingNormalizer_create_nfkd(provider._underlying);
     return result.isOk
         ? ICU4XDecomposingNormalizer._(result.union.ok)
         : throw ICU4XError._(result.union.err);
   }
-  static final _createNfkdFfi = _capi<
+  // ignore: non_constant_identifier_names
+  static final _ICU4XDecomposingNormalizer_create_nfkd = _capi<
               ffi.NativeFunction<
                   _ResultOpaqueUint32 Function(ffi.Pointer<ffi.Opaque>)>>(
           'ICU4XDecomposingNormalizer_create_nfkd')
@@ -5150,7 +5486,7 @@ class ICU4XDecomposingNormalizer implements ffi.Finalizable {
     final sSlice = _SliceFfi2Utf8._fromDart(s, alloc);
 
     final writeable = _Writeable();
-    final result = _normalizeFfi(
+    final result = _ICU4XDecomposingNormalizer_normalize(
         _underlying, sSlice._bytes, sSlice._length, writeable._underlying);
     alloc.releaseAll();
     return result.isOk
@@ -5158,7 +5494,8 @@ class ICU4XDecomposingNormalizer implements ffi.Finalizable {
         : throw ICU4XError._(result.union.err);
   }
 
-  static final _normalizeFfi = _capi<
+  // ignore: non_constant_identifier_names
+  static final _ICU4XDecomposingNormalizer_normalize = _capi<
               ffi.NativeFunction<
                   _ResultVoidUint32 Function(
                       ffi.Pointer<ffi.Opaque>,
@@ -5182,12 +5519,14 @@ class ICU4XDecomposingNormalizer implements ffi.Finalizable {
     final alloc = ffi2.Arena();
     final sSlice = _SliceFfi2Utf8._fromDart(s, alloc);
 
-    final result = _isNormalizedFfi(_underlying, sSlice._bytes, sSlice._length);
+    final result = _ICU4XDecomposingNormalizer_is_normalized(
+        _underlying, sSlice._bytes, sSlice._length);
     alloc.releaseAll();
     return result;
   }
 
-  static final _isNormalizedFfi = _capi<
+  // ignore: non_constant_identifier_names
+  static final _ICU4XDecomposingNormalizer_is_normalized = _capi<
           ffi.NativeFunction<
               ffi.Bool Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi2.Utf8>,
                   ffi.Size)>>('ICU4XDecomposingNormalizer_is_normalized')
@@ -5380,10 +5719,11 @@ class ICU4XFixedDecimal implements ffi.Finalizable {
   ///
   /// See the [Rust documentation for `FixedDecimal`](https://docs.rs/fixed_decimal/latest/fixed_decimal/struct.FixedDecimal.html) for more information.
   factory ICU4XFixedDecimal.fromI32(int v) {
-    final result = _createFromI32Ffi(v);
+    final result = _ICU4XFixedDecimal_create_from_i32(v);
     return ICU4XFixedDecimal._(result);
   }
-  static final _createFromI32Ffi =
+  // ignore: non_constant_identifier_names
+  static final _ICU4XFixedDecimal_create_from_i32 =
       _capi<ffi.NativeFunction<ffi.Pointer<ffi.Opaque> Function(ffi.Int32)>>(
               'ICU4XFixedDecimal_create_from_i32')
           .asFunction<ffi.Pointer<ffi.Opaque> Function(int)>(isLeaf: true);
@@ -5392,10 +5732,11 @@ class ICU4XFixedDecimal implements ffi.Finalizable {
   ///
   /// See the [Rust documentation for `FixedDecimal`](https://docs.rs/fixed_decimal/latest/fixed_decimal/struct.FixedDecimal.html) for more information.
   factory ICU4XFixedDecimal.fromU32(int v) {
-    final result = _createFromU32Ffi(v);
+    final result = _ICU4XFixedDecimal_create_from_u32(v);
     return ICU4XFixedDecimal._(result);
   }
-  static final _createFromU32Ffi =
+  // ignore: non_constant_identifier_names
+  static final _ICU4XFixedDecimal_create_from_u32 =
       _capi<ffi.NativeFunction<ffi.Pointer<ffi.Opaque> Function(ffi.Uint32)>>(
               'ICU4XFixedDecimal_create_from_u32')
           .asFunction<ffi.Pointer<ffi.Opaque> Function(int)>(isLeaf: true);
@@ -5404,10 +5745,11 @@ class ICU4XFixedDecimal implements ffi.Finalizable {
   ///
   /// See the [Rust documentation for `FixedDecimal`](https://docs.rs/fixed_decimal/latest/fixed_decimal/struct.FixedDecimal.html) for more information.
   factory ICU4XFixedDecimal.fromI64(int v) {
-    final result = _createFromI64Ffi(v);
+    final result = _ICU4XFixedDecimal_create_from_i64(v);
     return ICU4XFixedDecimal._(result);
   }
-  static final _createFromI64Ffi =
+  // ignore: non_constant_identifier_names
+  static final _ICU4XFixedDecimal_create_from_i64 =
       _capi<ffi.NativeFunction<ffi.Pointer<ffi.Opaque> Function(ffi.Int64)>>(
               'ICU4XFixedDecimal_create_from_i64')
           .asFunction<ffi.Pointer<ffi.Opaque> Function(int)>(isLeaf: true);
@@ -5416,10 +5758,11 @@ class ICU4XFixedDecimal implements ffi.Finalizable {
   ///
   /// See the [Rust documentation for `FixedDecimal`](https://docs.rs/fixed_decimal/latest/fixed_decimal/struct.FixedDecimal.html) for more information.
   factory ICU4XFixedDecimal.fromU64(int v) {
-    final result = _createFromU64Ffi(v);
+    final result = _ICU4XFixedDecimal_create_from_u64(v);
     return ICU4XFixedDecimal._(result);
   }
-  static final _createFromU64Ffi =
+  // ignore: non_constant_identifier_names
+  static final _ICU4XFixedDecimal_create_from_u64 =
       _capi<ffi.NativeFunction<ffi.Pointer<ffi.Opaque> Function(ffi.Uint64)>>(
               'ICU4XFixedDecimal_create_from_u64')
           .asFunction<ffi.Pointer<ffi.Opaque> Function(int)>(isLeaf: true);
@@ -5430,12 +5773,13 @@ class ICU4XFixedDecimal implements ffi.Finalizable {
   ///
   /// See the [Rust documentation for `FloatPrecision`](https://docs.rs/fixed_decimal/latest/fixed_decimal/enum.FloatPrecision.html) for more information.
   factory ICU4XFixedDecimal.fromF64WithIntegerPrecision(double f) {
-    final result = _createFromF64WithIntegerPrecisionFfi(f);
+    final result = _ICU4XFixedDecimal_create_from_f64_with_integer_precision(f);
     return result.isOk
         ? ICU4XFixedDecimal._(result.union.ok)
         : throw ICU4XError._(result.union.err);
   }
-  static final _createFromF64WithIntegerPrecisionFfi =
+  // ignore: non_constant_identifier_names
+  static final _ICU4XFixedDecimal_create_from_f64_with_integer_precision =
       _capi<ffi.NativeFunction<_ResultOpaqueUint32 Function(ffi.Double)>>(
               'ICU4XFixedDecimal_create_from_f64_with_integer_precision')
           .asFunction<_ResultOpaqueUint32 Function(double)>(isLeaf: true);
@@ -5446,12 +5790,14 @@ class ICU4XFixedDecimal implements ffi.Finalizable {
   ///
   /// See the [Rust documentation for `FloatPrecision`](https://docs.rs/fixed_decimal/latest/fixed_decimal/enum.FloatPrecision.html) for more information.
   factory ICU4XFixedDecimal.fromF64WithLowerMagnitude(double f, int magnitude) {
-    final result = _createFromF64WithLowerMagnitudeFfi(f, magnitude);
+    final result =
+        _ICU4XFixedDecimal_create_from_f64_with_lower_magnitude(f, magnitude);
     return result.isOk
         ? ICU4XFixedDecimal._(result.union.ok)
         : throw ICU4XError._(result.union.err);
   }
-  static final _createFromF64WithLowerMagnitudeFfi = _capi<
+  // ignore: non_constant_identifier_names
+  static final _ICU4XFixedDecimal_create_from_f64_with_lower_magnitude = _capi<
               ffi.NativeFunction<
                   _ResultOpaqueUint32 Function(ffi.Double, ffi.Int16)>>(
           'ICU4XFixedDecimal_create_from_f64_with_lower_magnitude')
@@ -5463,16 +5809,19 @@ class ICU4XFixedDecimal implements ffi.Finalizable {
   ///
   /// See the [Rust documentation for `FloatPrecision`](https://docs.rs/fixed_decimal/latest/fixed_decimal/enum.FloatPrecision.html) for more information.
   factory ICU4XFixedDecimal.fromF64WithSignificantDigits(double f, int digits) {
-    final result = _createFromF64WithSignificantDigitsFfi(f, digits);
+    final result =
+        _ICU4XFixedDecimal_create_from_f64_with_significant_digits(f, digits);
     return result.isOk
         ? ICU4XFixedDecimal._(result.union.ok)
         : throw ICU4XError._(result.union.err);
   }
-  static final _createFromF64WithSignificantDigitsFfi = _capi<
-              ffi.NativeFunction<
-                  _ResultOpaqueUint32 Function(ffi.Double, ffi.Uint8)>>(
-          'ICU4XFixedDecimal_create_from_f64_with_significant_digits')
-      .asFunction<_ResultOpaqueUint32 Function(double, int)>(isLeaf: true);
+  // ignore: non_constant_identifier_names
+  static final _ICU4XFixedDecimal_create_from_f64_with_significant_digits =
+      _capi<
+                  ffi.NativeFunction<
+                      _ResultOpaqueUint32 Function(ffi.Double, ffi.Uint8)>>(
+              'ICU4XFixedDecimal_create_from_f64_with_significant_digits')
+          .asFunction<_ResultOpaqueUint32 Function(double, int)>(isLeaf: true);
 
   /// Construct an [`ICU4XFixedDecimal`] from an float, with enough digits to recover
   /// the original floating point in IEEE 754 without needing trailing zeros
@@ -5481,12 +5830,14 @@ class ICU4XFixedDecimal implements ffi.Finalizable {
   ///
   /// See the [Rust documentation for `FloatPrecision`](https://docs.rs/fixed_decimal/latest/fixed_decimal/enum.FloatPrecision.html) for more information.
   factory ICU4XFixedDecimal.fromF64WithFloatingPrecision(double f) {
-    final result = _createFromF64WithFloatingPrecisionFfi(f);
+    final result =
+        _ICU4XFixedDecimal_create_from_f64_with_floating_precision(f);
     return result.isOk
         ? ICU4XFixedDecimal._(result.union.ok)
         : throw ICU4XError._(result.union.err);
   }
-  static final _createFromF64WithFloatingPrecisionFfi =
+  // ignore: non_constant_identifier_names
+  static final _ICU4XFixedDecimal_create_from_f64_with_floating_precision =
       _capi<ffi.NativeFunction<_ResultOpaqueUint32 Function(ffi.Double)>>(
               'ICU4XFixedDecimal_create_from_f64_with_floating_precision')
           .asFunction<_ResultOpaqueUint32 Function(double)>(isLeaf: true);
@@ -5498,13 +5849,15 @@ class ICU4XFixedDecimal implements ffi.Finalizable {
     final alloc = ffi2.Arena();
     final vSlice = _SliceFfi2Utf8._fromDart(v, alloc);
 
-    final result = _createFromStringFfi(vSlice._bytes, vSlice._length);
+    final result =
+        _ICU4XFixedDecimal_create_from_string(vSlice._bytes, vSlice._length);
     alloc.releaseAll();
     return result.isOk
         ? ICU4XFixedDecimal._(result.union.ok)
         : throw ICU4XError._(result.union.err);
   }
-  static final _createFromStringFfi = _capi<
+  // ignore: non_constant_identifier_names
+  static final _ICU4XFixedDecimal_create_from_string = _capi<
           ffi.NativeFunction<
               _ResultOpaqueUint32 Function(ffi.Pointer<ffi2.Utf8>,
                   ffi.Size)>>('ICU4XFixedDecimal_create_from_string')
@@ -5513,11 +5866,12 @@ class ICU4XFixedDecimal implements ffi.Finalizable {
 
   /// See the [Rust documentation for `digit_at`](https://docs.rs/fixed_decimal/latest/fixed_decimal/struct.FixedDecimal.html#method.digit_at) for more information.
   int digitAt(int magnitude) {
-    final result = _digitAtFfi(_underlying, magnitude);
+    final result = _ICU4XFixedDecimal_digit_at(_underlying, magnitude);
     return result;
   }
 
-  static final _digitAtFfi = _capi<
+  // ignore: non_constant_identifier_names
+  static final _ICU4XFixedDecimal_digit_at = _capi<
           ffi.NativeFunction<
               ffi.Uint8 Function(ffi.Pointer<ffi.Opaque>,
                   ffi.Int16)>>('ICU4XFixedDecimal_digit_at')
@@ -5525,55 +5879,60 @@ class ICU4XFixedDecimal implements ffi.Finalizable {
 
   /// See the [Rust documentation for `magnitude_range`](https://docs.rs/fixed_decimal/latest/fixed_decimal/struct.FixedDecimal.html#method.magnitude_range) for more information.
   int get magnitudeStart {
-    final result = _magnitudeStartFfi(_underlying);
+    final result = _ICU4XFixedDecimal_magnitude_start(_underlying);
     return result;
   }
 
-  static final _magnitudeStartFfi =
+  // ignore: non_constant_identifier_names
+  static final _ICU4XFixedDecimal_magnitude_start =
       _capi<ffi.NativeFunction<ffi.Int16 Function(ffi.Pointer<ffi.Opaque>)>>(
               'ICU4XFixedDecimal_magnitude_start')
           .asFunction<int Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
 
   /// See the [Rust documentation for `magnitude_range`](https://docs.rs/fixed_decimal/latest/fixed_decimal/struct.FixedDecimal.html#method.magnitude_range) for more information.
   int get magnitudeEnd {
-    final result = _magnitudeEndFfi(_underlying);
+    final result = _ICU4XFixedDecimal_magnitude_end(_underlying);
     return result;
   }
 
-  static final _magnitudeEndFfi =
+  // ignore: non_constant_identifier_names
+  static final _ICU4XFixedDecimal_magnitude_end =
       _capi<ffi.NativeFunction<ffi.Int16 Function(ffi.Pointer<ffi.Opaque>)>>(
               'ICU4XFixedDecimal_magnitude_end')
           .asFunction<int Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
 
   /// See the [Rust documentation for `nonzero_magnitude_start`](https://docs.rs/fixed_decimal/latest/fixed_decimal/struct.FixedDecimal.html#method.nonzero_magnitude_start) for more information.
   int get nonzeroMagnitudeStart {
-    final result = _nonzeroMagnitudeStartFfi(_underlying);
+    final result = _ICU4XFixedDecimal_nonzero_magnitude_start(_underlying);
     return result;
   }
 
-  static final _nonzeroMagnitudeStartFfi =
+  // ignore: non_constant_identifier_names
+  static final _ICU4XFixedDecimal_nonzero_magnitude_start =
       _capi<ffi.NativeFunction<ffi.Int16 Function(ffi.Pointer<ffi.Opaque>)>>(
               'ICU4XFixedDecimal_nonzero_magnitude_start')
           .asFunction<int Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
 
   /// See the [Rust documentation for `nonzero_magnitude_end`](https://docs.rs/fixed_decimal/latest/fixed_decimal/struct.FixedDecimal.html#method.nonzero_magnitude_end) for more information.
   int get nonzeroMagnitudeEnd {
-    final result = _nonzeroMagnitudeEndFfi(_underlying);
+    final result = _ICU4XFixedDecimal_nonzero_magnitude_end(_underlying);
     return result;
   }
 
-  static final _nonzeroMagnitudeEndFfi =
+  // ignore: non_constant_identifier_names
+  static final _ICU4XFixedDecimal_nonzero_magnitude_end =
       _capi<ffi.NativeFunction<ffi.Int16 Function(ffi.Pointer<ffi.Opaque>)>>(
               'ICU4XFixedDecimal_nonzero_magnitude_end')
           .asFunction<int Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
 
   /// See the [Rust documentation for `is_zero`](https://docs.rs/fixed_decimal/latest/fixed_decimal/struct.FixedDecimal.html#method.is_zero) for more information.
   bool get isZero {
-    final result = _isZeroFfi(_underlying);
+    final result = _ICU4XFixedDecimal_is_zero(_underlying);
     return result;
   }
 
-  static final _isZeroFfi =
+  // ignore: non_constant_identifier_names
+  static final _ICU4XFixedDecimal_is_zero =
       _capi<ffi.NativeFunction<ffi.Bool Function(ffi.Pointer<ffi.Opaque>)>>(
               'ICU4XFixedDecimal_is_zero')
           .asFunction<bool Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
@@ -5582,10 +5941,11 @@ class ICU4XFixedDecimal implements ffi.Finalizable {
   ///
   /// See the [Rust documentation for `multiply_pow10`](https://docs.rs/fixed_decimal/latest/fixed_decimal/struct.FixedDecimal.html#method.multiply_pow10) for more information.
   void multiplyPow10(int power) {
-    _multiplyPow10Ffi(_underlying, power);
+    _ICU4XFixedDecimal_multiply_pow10(_underlying, power);
   }
 
-  static final _multiplyPow10Ffi = _capi<
+  // ignore: non_constant_identifier_names
+  static final _ICU4XFixedDecimal_multiply_pow10 = _capi<
           ffi.NativeFunction<
               ffi.Void Function(ffi.Pointer<ffi.Opaque>,
                   ffi.Int16)>>('ICU4XFixedDecimal_multiply_pow10')
@@ -5593,11 +5953,12 @@ class ICU4XFixedDecimal implements ffi.Finalizable {
 
   /// See the [Rust documentation for `sign`](https://docs.rs/fixed_decimal/latest/fixed_decimal/struct.FixedDecimal.html#method.sign) for more information.
   ICU4XFixedDecimalSign get sign {
-    final result = _signFfi(_underlying);
+    final result = _ICU4XFixedDecimal_sign(_underlying);
     return ICU4XFixedDecimalSign._(result);
   }
 
-  static final _signFfi =
+  // ignore: non_constant_identifier_names
+  static final _ICU4XFixedDecimal_sign =
       _capi<ffi.NativeFunction<ffi.Uint32 Function(ffi.Pointer<ffi.Opaque>)>>(
               'ICU4XFixedDecimal_sign')
           .asFunction<int Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
@@ -5606,10 +5967,11 @@ class ICU4XFixedDecimal implements ffi.Finalizable {
   ///
   /// See the [Rust documentation for `set_sign`](https://docs.rs/fixed_decimal/latest/fixed_decimal/struct.FixedDecimal.html#method.set_sign) for more information.
   set sign(ICU4XFixedDecimalSign sign) {
-    _setSignFfi(_underlying, sign._id);
+    _ICU4XFixedDecimal_set_sign(_underlying, sign._id);
   }
 
-  static final _setSignFfi = _capi<
+  // ignore: non_constant_identifier_names
+  static final _ICU4XFixedDecimal_set_sign = _capi<
           ffi.NativeFunction<
               ffi.Void Function(ffi.Pointer<ffi.Opaque>,
                   ffi.Uint32)>>('ICU4XFixedDecimal_set_sign')
@@ -5617,10 +5979,11 @@ class ICU4XFixedDecimal implements ffi.Finalizable {
 
   /// See the [Rust documentation for `apply_sign_display`](https://docs.rs/fixed_decimal/latest/fixed_decimal/struct.FixedDecimal.html#method.apply_sign_display) for more information.
   void applySignDisplay(ICU4XFixedDecimalSignDisplay signDisplay) {
-    _applySignDisplayFfi(_underlying, signDisplay._id);
+    _ICU4XFixedDecimal_apply_sign_display(_underlying, signDisplay._id);
   }
 
-  static final _applySignDisplayFfi = _capi<
+  // ignore: non_constant_identifier_names
+  static final _ICU4XFixedDecimal_apply_sign_display = _capi<
           ffi.NativeFunction<
               ffi.Void Function(ffi.Pointer<ffi.Opaque>,
                   ffi.Uint32)>>('ICU4XFixedDecimal_apply_sign_display')
@@ -5628,20 +5991,22 @@ class ICU4XFixedDecimal implements ffi.Finalizable {
 
   /// See the [Rust documentation for `trim_start`](https://docs.rs/fixed_decimal/latest/fixed_decimal/struct.FixedDecimal.html#method.trim_start) for more information.
   void trimStart() {
-    _trimStartFfi(_underlying);
+    _ICU4XFixedDecimal_trim_start(_underlying);
   }
 
-  static final _trimStartFfi =
+  // ignore: non_constant_identifier_names
+  static final _ICU4XFixedDecimal_trim_start =
       _capi<ffi.NativeFunction<ffi.Void Function(ffi.Pointer<ffi.Opaque>)>>(
               'ICU4XFixedDecimal_trim_start')
           .asFunction<void Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
 
   /// See the [Rust documentation for `trim_end`](https://docs.rs/fixed_decimal/latest/fixed_decimal/struct.FixedDecimal.html#method.trim_end) for more information.
   void trimEnd() {
-    _trimEndFfi(_underlying);
+    _ICU4XFixedDecimal_trim_end(_underlying);
   }
 
-  static final _trimEndFfi =
+  // ignore: non_constant_identifier_names
+  static final _ICU4XFixedDecimal_trim_end =
       _capi<ffi.NativeFunction<ffi.Void Function(ffi.Pointer<ffi.Opaque>)>>(
               'ICU4XFixedDecimal_trim_end')
           .asFunction<void Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
@@ -5650,10 +6015,11 @@ class ICU4XFixedDecimal implements ffi.Finalizable {
   ///
   /// See the [Rust documentation for `pad_start`](https://docs.rs/fixed_decimal/latest/fixed_decimal/struct.FixedDecimal.html#method.pad_start) for more information.
   void padStart(int position) {
-    _padStartFfi(_underlying, position);
+    _ICU4XFixedDecimal_pad_start(_underlying, position);
   }
 
-  static final _padStartFfi = _capi<
+  // ignore: non_constant_identifier_names
+  static final _ICU4XFixedDecimal_pad_start = _capi<
           ffi.NativeFunction<
               ffi.Void Function(ffi.Pointer<ffi.Opaque>,
                   ffi.Int16)>>('ICU4XFixedDecimal_pad_start')
@@ -5663,10 +6029,11 @@ class ICU4XFixedDecimal implements ffi.Finalizable {
   ///
   /// See the [Rust documentation for `pad_end`](https://docs.rs/fixed_decimal/latest/fixed_decimal/struct.FixedDecimal.html#method.pad_end) for more information.
   void padEnd(int position) {
-    _padEndFfi(_underlying, position);
+    _ICU4XFixedDecimal_pad_end(_underlying, position);
   }
 
-  static final _padEndFfi = _capi<
+  // ignore: non_constant_identifier_names
+  static final _ICU4XFixedDecimal_pad_end = _capi<
           ffi.NativeFunction<
               ffi.Void Function(ffi.Pointer<ffi.Opaque>,
                   ffi.Int16)>>('ICU4XFixedDecimal_pad_end')
@@ -5677,10 +6044,11 @@ class ICU4XFixedDecimal implements ffi.Finalizable {
   ///
   /// See the [Rust documentation for `set_max_position`](https://docs.rs/fixed_decimal/latest/fixed_decimal/struct.FixedDecimal.html#method.set_max_position) for more information.
   void setMaxPosition(int position) {
-    _setMaxPositionFfi(_underlying, position);
+    _ICU4XFixedDecimal_set_max_position(_underlying, position);
   }
 
-  static final _setMaxPositionFfi = _capi<
+  // ignore: non_constant_identifier_names
+  static final _ICU4XFixedDecimal_set_max_position = _capi<
           ffi.NativeFunction<
               ffi.Void Function(ffi.Pointer<ffi.Opaque>,
                   ffi.Int16)>>('ICU4XFixedDecimal_set_max_position')
@@ -5688,10 +6056,11 @@ class ICU4XFixedDecimal implements ffi.Finalizable {
 
   /// See the [Rust documentation for `trunc`](https://docs.rs/fixed_decimal/latest/fixed_decimal/struct.FixedDecimal.html#method.trunc) for more information.
   void trunc(int position) {
-    _truncFfi(_underlying, position);
+    _ICU4XFixedDecimal_trunc(_underlying, position);
   }
 
-  static final _truncFfi = _capi<
+  // ignore: non_constant_identifier_names
+  static final _ICU4XFixedDecimal_trunc = _capi<
           ffi.NativeFunction<
               ffi.Void Function(ffi.Pointer<ffi.Opaque>,
                   ffi.Int16)>>('ICU4XFixedDecimal_trunc')
@@ -5699,10 +6068,11 @@ class ICU4XFixedDecimal implements ffi.Finalizable {
 
   /// See the [Rust documentation for `trunc_to_increment`](https://docs.rs/fixed_decimal/latest/fixed_decimal/struct.FixedDecimal.html#method.trunc_to_increment) for more information.
   void truncToIncrement(int position, ICU4XRoundingIncrement increment) {
-    _truncToIncrementFfi(_underlying, position, increment._id);
+    _ICU4XFixedDecimal_trunc_to_increment(_underlying, position, increment._id);
   }
 
-  static final _truncToIncrementFfi = _capi<
+  // ignore: non_constant_identifier_names
+  static final _ICU4XFixedDecimal_trunc_to_increment = _capi<
           ffi.NativeFunction<
               ffi.Void Function(ffi.Pointer<ffi.Opaque>, ffi.Int16,
                   ffi.Uint32)>>('ICU4XFixedDecimal_trunc_to_increment')
@@ -5711,10 +6081,11 @@ class ICU4XFixedDecimal implements ffi.Finalizable {
 
   /// See the [Rust documentation for `half_trunc`](https://docs.rs/fixed_decimal/latest/fixed_decimal/struct.FixedDecimal.html#method.half_trunc) for more information.
   void halfTrunc(int position) {
-    _halfTruncFfi(_underlying, position);
+    _ICU4XFixedDecimal_half_trunc(_underlying, position);
   }
 
-  static final _halfTruncFfi = _capi<
+  // ignore: non_constant_identifier_names
+  static final _ICU4XFixedDecimal_half_trunc = _capi<
           ffi.NativeFunction<
               ffi.Void Function(ffi.Pointer<ffi.Opaque>,
                   ffi.Int16)>>('ICU4XFixedDecimal_half_trunc')
@@ -5722,10 +6093,11 @@ class ICU4XFixedDecimal implements ffi.Finalizable {
 
   /// See the [Rust documentation for `expand`](https://docs.rs/fixed_decimal/latest/fixed_decimal/struct.FixedDecimal.html#method.expand) for more information.
   void expand(int position) {
-    _expandFfi(_underlying, position);
+    _ICU4XFixedDecimal_expand(_underlying, position);
   }
 
-  static final _expandFfi = _capi<
+  // ignore: non_constant_identifier_names
+  static final _ICU4XFixedDecimal_expand = _capi<
           ffi.NativeFunction<
               ffi.Void Function(ffi.Pointer<ffi.Opaque>,
                   ffi.Int16)>>('ICU4XFixedDecimal_expand')
@@ -5733,10 +6105,12 @@ class ICU4XFixedDecimal implements ffi.Finalizable {
 
   /// See the [Rust documentation for `expand_to_increment`](https://docs.rs/fixed_decimal/latest/fixed_decimal/struct.FixedDecimal.html#method.expand_to_increment) for more information.
   void expandToIncrement(int position, ICU4XRoundingIncrement increment) {
-    _expandToIncrementFfi(_underlying, position, increment._id);
+    _ICU4XFixedDecimal_expand_to_increment(
+        _underlying, position, increment._id);
   }
 
-  static final _expandToIncrementFfi = _capi<
+  // ignore: non_constant_identifier_names
+  static final _ICU4XFixedDecimal_expand_to_increment = _capi<
           ffi.NativeFunction<
               ffi.Void Function(ffi.Pointer<ffi.Opaque>, ffi.Int16,
                   ffi.Uint32)>>('ICU4XFixedDecimal_expand_to_increment')
@@ -5745,10 +6119,11 @@ class ICU4XFixedDecimal implements ffi.Finalizable {
 
   /// See the [Rust documentation for `half_expand`](https://docs.rs/fixed_decimal/latest/fixed_decimal/struct.FixedDecimal.html#method.half_expand) for more information.
   void halfExpand(int position) {
-    _halfExpandFfi(_underlying, position);
+    _ICU4XFixedDecimal_half_expand(_underlying, position);
   }
 
-  static final _halfExpandFfi = _capi<
+  // ignore: non_constant_identifier_names
+  static final _ICU4XFixedDecimal_half_expand = _capi<
           ffi.NativeFunction<
               ffi.Void Function(ffi.Pointer<ffi.Opaque>,
                   ffi.Int16)>>('ICU4XFixedDecimal_half_expand')
@@ -5756,10 +6131,11 @@ class ICU4XFixedDecimal implements ffi.Finalizable {
 
   /// See the [Rust documentation for `ceil`](https://docs.rs/fixed_decimal/latest/fixed_decimal/struct.FixedDecimal.html#method.ceil) for more information.
   void ceil(int position) {
-    _ceilFfi(_underlying, position);
+    _ICU4XFixedDecimal_ceil(_underlying, position);
   }
 
-  static final _ceilFfi = _capi<
+  // ignore: non_constant_identifier_names
+  static final _ICU4XFixedDecimal_ceil = _capi<
           ffi.NativeFunction<
               ffi.Void Function(ffi.Pointer<ffi.Opaque>,
                   ffi.Int16)>>('ICU4XFixedDecimal_ceil')
@@ -5767,10 +6143,11 @@ class ICU4XFixedDecimal implements ffi.Finalizable {
 
   /// See the [Rust documentation for `half_ceil`](https://docs.rs/fixed_decimal/latest/fixed_decimal/struct.FixedDecimal.html#method.half_ceil) for more information.
   void halfCeil(int position) {
-    _halfCeilFfi(_underlying, position);
+    _ICU4XFixedDecimal_half_ceil(_underlying, position);
   }
 
-  static final _halfCeilFfi = _capi<
+  // ignore: non_constant_identifier_names
+  static final _ICU4XFixedDecimal_half_ceil = _capi<
           ffi.NativeFunction<
               ffi.Void Function(ffi.Pointer<ffi.Opaque>,
                   ffi.Int16)>>('ICU4XFixedDecimal_half_ceil')
@@ -5778,10 +6155,11 @@ class ICU4XFixedDecimal implements ffi.Finalizable {
 
   /// See the [Rust documentation for `floor`](https://docs.rs/fixed_decimal/latest/fixed_decimal/struct.FixedDecimal.html#method.floor) for more information.
   void floor(int position) {
-    _floorFfi(_underlying, position);
+    _ICU4XFixedDecimal_floor(_underlying, position);
   }
 
-  static final _floorFfi = _capi<
+  // ignore: non_constant_identifier_names
+  static final _ICU4XFixedDecimal_floor = _capi<
           ffi.NativeFunction<
               ffi.Void Function(ffi.Pointer<ffi.Opaque>,
                   ffi.Int16)>>('ICU4XFixedDecimal_floor')
@@ -5789,10 +6167,11 @@ class ICU4XFixedDecimal implements ffi.Finalizable {
 
   /// See the [Rust documentation for `half_floor`](https://docs.rs/fixed_decimal/latest/fixed_decimal/struct.FixedDecimal.html#method.half_floor) for more information.
   void halfFloor(int position) {
-    _halfFloorFfi(_underlying, position);
+    _ICU4XFixedDecimal_half_floor(_underlying, position);
   }
 
-  static final _halfFloorFfi = _capi<
+  // ignore: non_constant_identifier_names
+  static final _ICU4XFixedDecimal_half_floor = _capi<
           ffi.NativeFunction<
               ffi.Void Function(ffi.Pointer<ffi.Opaque>,
                   ffi.Int16)>>('ICU4XFixedDecimal_half_floor')
@@ -5800,10 +6179,11 @@ class ICU4XFixedDecimal implements ffi.Finalizable {
 
   /// See the [Rust documentation for `half_even`](https://docs.rs/fixed_decimal/latest/fixed_decimal/struct.FixedDecimal.html#method.half_even) for more information.
   void halfEven(int position) {
-    _halfEvenFfi(_underlying, position);
+    _ICU4XFixedDecimal_half_even(_underlying, position);
   }
 
-  static final _halfEvenFfi = _capi<
+  // ignore: non_constant_identifier_names
+  static final _ICU4XFixedDecimal_half_even = _capi<
           ffi.NativeFunction<
               ffi.Void Function(ffi.Pointer<ffi.Opaque>,
                   ffi.Int16)>>('ICU4XFixedDecimal_half_even')
@@ -5817,13 +6197,15 @@ class ICU4XFixedDecimal implements ffi.Finalizable {
   ///
   /// See the [Rust documentation for `concatenate_end`](https://docs.rs/fixed_decimal/latest/fixed_decimal/struct.FixedDecimal.html#method.concatenate_end) for more information.
   void concatenateEnd(ICU4XFixedDecimal other) {
-    final result = _concatenateEndFfi(_underlying, other._underlying);
+    final result =
+        _ICU4XFixedDecimal_concatenate_end(_underlying, other._underlying);
     if (!result.isOk) {
       throw VoidError();
     }
   }
 
-  static final _concatenateEndFfi = _capi<
+  // ignore: non_constant_identifier_names
+  static final _ICU4XFixedDecimal_concatenate_end = _capi<
               ffi.NativeFunction<
                   _ResultVoidVoid Function(
                       ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>>(
@@ -5838,11 +6220,12 @@ class ICU4XFixedDecimal implements ffi.Finalizable {
   @override
   String toString() {
     final writeable = _Writeable();
-    _toStringFfi(_underlying, writeable._underlying);
+    _ICU4XFixedDecimal_to_string(_underlying, writeable._underlying);
     return writeable.finalize();
   }
 
-  static final _toStringFfi = _capi<
+  // ignore: non_constant_identifier_names
+  static final _ICU4XFixedDecimal_to_string = _capi<
           ffi.NativeFunction<
               ffi.Void Function(ffi.Pointer<ffi.Opaque>,
                   ffi.Pointer<ffi.Opaque>)>>('ICU4XFixedDecimal_to_string')
@@ -5871,20 +6254,22 @@ class ICU4XFixedDecimalFormatter implements ffi.Finalizable {
       ICU4XDataProvider provider,
       ICU4XLocale locale,
       ICU4XFixedDecimalGroupingStrategy groupingStrategy) {
-    final result = _createWithGroupingStrategyFfi(
+    final result = _ICU4XFixedDecimalFormatter_create_with_grouping_strategy(
         provider._underlying, locale._underlying, groupingStrategy._id);
     return result.isOk
         ? ICU4XFixedDecimalFormatter._(result.union.ok)
         : throw ICU4XError._(result.union.err);
   }
-  static final _createWithGroupingStrategyFfi = _capi<
-              ffi.NativeFunction<
-                  _ResultOpaqueUint32 Function(ffi.Pointer<ffi.Opaque>,
-                      ffi.Pointer<ffi.Opaque>, ffi.Uint32)>>(
-          'ICU4XFixedDecimalFormatter_create_with_grouping_strategy')
-      .asFunction<
-          _ResultOpaqueUint32 Function(ffi.Pointer<ffi.Opaque>,
-              ffi.Pointer<ffi.Opaque>, int)>(isLeaf: true);
+  // ignore: non_constant_identifier_names
+  static final _ICU4XFixedDecimalFormatter_create_with_grouping_strategy =
+      _capi<
+                  ffi.NativeFunction<
+                      _ResultOpaqueUint32 Function(ffi.Pointer<ffi.Opaque>,
+                          ffi.Pointer<ffi.Opaque>, ffi.Uint32)>>(
+              'ICU4XFixedDecimalFormatter_create_with_grouping_strategy')
+          .asFunction<
+              _ResultOpaqueUint32 Function(ffi.Pointer<ffi.Opaque>,
+                  ffi.Pointer<ffi.Opaque>, int)>(isLeaf: true);
 
   /// Creates a new [`ICU4XFixedDecimalFormatter`] from preconstructed locale data in the form of an [`ICU4XDataStruct`]
   /// constructed from `ICU4XDataStruct::create_decimal_symbols()`.
@@ -5894,33 +6279,37 @@ class ICU4XFixedDecimalFormatter implements ffi.Finalizable {
   factory ICU4XFixedDecimalFormatter.withDecimalSymbolsV1(
       ICU4XDataStruct dataStruct,
       ICU4XFixedDecimalGroupingStrategy groupingStrategy) {
-    final result = _createWithDecimalSymbolsV1Ffi(
+    final result = _ICU4XFixedDecimalFormatter_create_with_decimal_symbols_v1(
         dataStruct._underlying, groupingStrategy._id);
     return result.isOk
         ? ICU4XFixedDecimalFormatter._(result.union.ok)
         : throw ICU4XError._(result.union.err);
   }
-  static final _createWithDecimalSymbolsV1Ffi = _capi<
-              ffi.NativeFunction<
-                  _ResultOpaqueUint32 Function(
-                      ffi.Pointer<ffi.Opaque>, ffi.Uint32)>>(
-          'ICU4XFixedDecimalFormatter_create_with_decimal_symbols_v1')
-      .asFunction<_ResultOpaqueUint32 Function(ffi.Pointer<ffi.Opaque>, int)>(
-          isLeaf: true);
+  // ignore: non_constant_identifier_names
+  static final _ICU4XFixedDecimalFormatter_create_with_decimal_symbols_v1 =
+      _capi<
+                  ffi.NativeFunction<
+                      _ResultOpaqueUint32 Function(
+                          ffi.Pointer<ffi.Opaque>, ffi.Uint32)>>(
+              'ICU4XFixedDecimalFormatter_create_with_decimal_symbols_v1')
+          .asFunction<
+              _ResultOpaqueUint32 Function(
+                  ffi.Pointer<ffi.Opaque>, int)>(isLeaf: true);
 
   /// Formats a [`ICU4XFixedDecimal`] to a string.
   ///
   /// See the [Rust documentation for `format`](https://docs.rs/icu/latest/icu/decimal/struct.FixedDecimalFormatter.html#method.format) for more information.
   String format(ICU4XFixedDecimal value) {
     final writeable = _Writeable();
-    final result =
-        _formatFfi(_underlying, value._underlying, writeable._underlying);
+    final result = _ICU4XFixedDecimalFormatter_format(
+        _underlying, value._underlying, writeable._underlying);
     return result.isOk
         ? writeable.finalize()
         : throw ICU4XError._(result.union.err);
   }
 
-  static final _formatFfi = _capi<
+  // ignore: non_constant_identifier_names
+  static final _ICU4XFixedDecimalFormatter_format = _capi<
               ffi.NativeFunction<
                   _ResultVoidUint32 Function(ffi.Pointer<ffi.Opaque>,
                       ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>>(
@@ -6009,13 +6398,14 @@ class ICU4XGeneralCategoryNameToMaskMapper implements ffi.Finalizable {
     final alloc = ffi2.Arena();
     final nameSlice = _SliceFfi2Utf8._fromDart(name, alloc);
 
-    final result =
-        _getStrictFfi(_underlying, nameSlice._bytes, nameSlice._length);
+    final result = _ICU4XGeneralCategoryNameToMaskMapper_get_strict(
+        _underlying, nameSlice._bytes, nameSlice._length);
     alloc.releaseAll();
     return result;
   }
 
-  static final _getStrictFfi = _capi<
+  // ignore: non_constant_identifier_names
+  static final _ICU4XGeneralCategoryNameToMaskMapper_get_strict = _capi<
           ffi.NativeFunction<
               ffi.Uint32 Function(
                   ffi.Pointer<ffi.Opaque>,
@@ -6032,13 +6422,14 @@ class ICU4XGeneralCategoryNameToMaskMapper implements ffi.Finalizable {
     final alloc = ffi2.Arena();
     final nameSlice = _SliceFfi2Utf8._fromDart(name, alloc);
 
-    final result =
-        _getLooseFfi(_underlying, nameSlice._bytes, nameSlice._length);
+    final result = _ICU4XGeneralCategoryNameToMaskMapper_get_loose(
+        _underlying, nameSlice._bytes, nameSlice._length);
     alloc.releaseAll();
     return result;
   }
 
-  static final _getLooseFfi = _capi<
+  // ignore: non_constant_identifier_names
+  static final _ICU4XGeneralCategoryNameToMaskMapper_get_loose = _capi<
           ffi.NativeFunction<
               ffi.Uint32 Function(
                   ffi.Pointer<ffi.Opaque>,
@@ -6051,12 +6442,14 @@ class ICU4XGeneralCategoryNameToMaskMapper implements ffi.Finalizable {
   /// See the [Rust documentation for `get_name_to_enum_mapper`](https://docs.rs/icu/latest/icu/properties/struct.GeneralCategoryGroup.html#method.get_name_to_enum_mapper) for more information.
   factory ICU4XGeneralCategoryNameToMaskMapper.load(
       ICU4XDataProvider provider) {
-    final result = _loadFfi(provider._underlying);
+    final result =
+        _ICU4XGeneralCategoryNameToMaskMapper_load(provider._underlying);
     return result.isOk
         ? ICU4XGeneralCategoryNameToMaskMapper._(result.union.ok)
         : throw ICU4XError._(result.union.err);
   }
-  static final _loadFfi = _capi<
+  // ignore: non_constant_identifier_names
+  static final _ICU4XGeneralCategoryNameToMaskMapper_load = _capi<
               ffi.NativeFunction<
                   _ResultOpaqueUint32 Function(ffi.Pointer<ffi.Opaque>)>>(
           'ICU4XGeneralCategoryNameToMaskMapper_load')
@@ -6080,11 +6473,12 @@ class ICU4XGraphemeClusterBreakIteratorLatin1 implements ffi.Finalizable {
   ///
   /// See the [Rust documentation for `next`](https://docs.rs/icu/latest/icu/segmenter/struct.GraphemeClusterBreakIterator.html#method.next) for more information.
   int next() {
-    final result = _nextFfi(_underlying);
+    final result = _ICU4XGraphemeClusterBreakIteratorLatin1_next(_underlying);
     return result;
   }
 
-  static final _nextFfi =
+  // ignore: non_constant_identifier_names
+  static final _ICU4XGraphemeClusterBreakIteratorLatin1_next =
       _capi<ffi.NativeFunction<ffi.Int32 Function(ffi.Pointer<ffi.Opaque>)>>(
               'ICU4XGraphemeClusterBreakIteratorLatin1_next')
           .asFunction<int Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
@@ -6106,11 +6500,12 @@ class ICU4XGraphemeClusterBreakIteratorUtf16 implements ffi.Finalizable {
   ///
   /// See the [Rust documentation for `next`](https://docs.rs/icu/latest/icu/segmenter/struct.GraphemeClusterBreakIterator.html#method.next) for more information.
   int next() {
-    final result = _nextFfi(_underlying);
+    final result = _ICU4XGraphemeClusterBreakIteratorUtf16_next(_underlying);
     return result;
   }
 
-  static final _nextFfi =
+  // ignore: non_constant_identifier_names
+  static final _ICU4XGraphemeClusterBreakIteratorUtf16_next =
       _capi<ffi.NativeFunction<ffi.Int32 Function(ffi.Pointer<ffi.Opaque>)>>(
               'ICU4XGraphemeClusterBreakIteratorUtf16_next')
           .asFunction<int Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
@@ -6132,11 +6527,12 @@ class ICU4XGraphemeClusterBreakIteratorUtf8 implements ffi.Finalizable {
   ///
   /// See the [Rust documentation for `next`](https://docs.rs/icu/latest/icu/segmenter/struct.GraphemeClusterBreakIterator.html#method.next) for more information.
   int next() {
-    final result = _nextFfi(_underlying);
+    final result = _ICU4XGraphemeClusterBreakIteratorUtf8_next(_underlying);
     return result;
   }
 
-  static final _nextFfi =
+  // ignore: non_constant_identifier_names
+  static final _ICU4XGraphemeClusterBreakIteratorUtf8_next =
       _capi<ffi.NativeFunction<ffi.Int32 Function(ffi.Pointer<ffi.Opaque>)>>(
               'ICU4XGraphemeClusterBreakIteratorUtf8_next')
           .asFunction<int Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
@@ -6160,12 +6556,13 @@ class ICU4XGraphemeClusterSegmenter implements ffi.Finalizable {
   ///
   /// See the [Rust documentation for `new`](https://docs.rs/icu/latest/icu/segmenter/struct.GraphemeClusterSegmenter.html#method.new) for more information.
   factory ICU4XGraphemeClusterSegmenter(ICU4XDataProvider provider) {
-    final result = _createFfi(provider._underlying);
+    final result = _ICU4XGraphemeClusterSegmenter_create(provider._underlying);
     return result.isOk
         ? ICU4XGraphemeClusterSegmenter._(result.union.ok)
         : throw ICU4XError._(result.union.err);
   }
-  static final _createFfi = _capi<
+  // ignore: non_constant_identifier_names
+  static final _ICU4XGraphemeClusterSegmenter_create = _capi<
               ffi.NativeFunction<
                   _ResultOpaqueUint32 Function(ffi.Pointer<ffi.Opaque>)>>(
           'ICU4XGraphemeClusterSegmenter_create')
@@ -6179,13 +6576,14 @@ class ICU4XGraphemeClusterSegmenter implements ffi.Finalizable {
     final alloc = ffi2.Arena();
     final inputSlice = _SliceFfi2Utf8._fromDart(input, alloc);
 
-    final result =
-        _segmentUtf8Ffi(_underlying, inputSlice._bytes, inputSlice._length);
+    final result = _ICU4XGraphemeClusterSegmenter_segment_utf8(
+        _underlying, inputSlice._bytes, inputSlice._length);
     alloc.releaseAll();
     return ICU4XGraphemeClusterBreakIteratorUtf8._(result);
   }
 
-  static final _segmentUtf8Ffi = _capi<
+  // ignore: non_constant_identifier_names
+  static final _ICU4XGraphemeClusterSegmenter_segment_utf8 = _capi<
           ffi.NativeFunction<
               ffi.Pointer<ffi.Opaque> Function(
                   ffi.Pointer<ffi.Opaque>,
@@ -6202,13 +6600,14 @@ class ICU4XGraphemeClusterSegmenter implements ffi.Finalizable {
     final alloc = ffi2.Arena();
     final inputSlice = _SliceFfiUint16._fromDart(input, alloc);
 
-    final result =
-        _segmentUtf16Ffi(_underlying, inputSlice._bytes, inputSlice._length);
+    final result = _ICU4XGraphemeClusterSegmenter_segment_utf16(
+        _underlying, inputSlice._bytes, inputSlice._length);
     alloc.releaseAll();
     return ICU4XGraphemeClusterBreakIteratorUtf16._(result);
   }
 
-  static final _segmentUtf16Ffi = _capi<
+  // ignore: non_constant_identifier_names
+  static final _ICU4XGraphemeClusterSegmenter_segment_utf16 = _capi<
           ffi.NativeFunction<
               ffi.Pointer<ffi.Opaque> Function(
                   ffi.Pointer<ffi.Opaque>,
@@ -6225,13 +6624,14 @@ class ICU4XGraphemeClusterSegmenter implements ffi.Finalizable {
     final alloc = ffi2.Arena();
     final inputSlice = _SliceFfiUint8._fromDart(input, alloc);
 
-    final result =
-        _segmentLatin1Ffi(_underlying, inputSlice._bytes, inputSlice._length);
+    final result = _ICU4XGraphemeClusterSegmenter_segment_latin1(
+        _underlying, inputSlice._bytes, inputSlice._length);
     alloc.releaseAll();
     return ICU4XGraphemeClusterBreakIteratorLatin1._(result);
   }
 
-  static final _segmentLatin1Ffi = _capi<
+  // ignore: non_constant_identifier_names
+  static final _ICU4XGraphemeClusterSegmenter_segment_latin1 = _capi<
           ffi.NativeFunction<
               ffi.Pointer<ffi.Opaque> Function(
                   ffi.Pointer<ffi.Opaque>,
@@ -6261,13 +6661,14 @@ class ICU4XGregorianDateFormatter implements ffi.Finalizable {
   /// See the [Rust documentation for `try_new_with_length`](https://docs.rs/icu/latest/icu/datetime/struct.TypedDateFormatter.html#method.try_new_with_length) for more information.
   factory ICU4XGregorianDateFormatter.withLength(
       ICU4XDataProvider provider, ICU4XLocale locale, ICU4XDateLength length) {
-    final result = _createWithLengthFfi(
+    final result = _ICU4XGregorianDateFormatter_create_with_length(
         provider._underlying, locale._underlying, length._id);
     return result.isOk
         ? ICU4XGregorianDateFormatter._(result.union.ok)
         : throw ICU4XError._(result.union.err);
   }
-  static final _createWithLengthFfi = _capi<
+  // ignore: non_constant_identifier_names
+  static final _ICU4XGregorianDateFormatter_create_with_length = _capi<
               ffi.NativeFunction<
                   _ResultOpaqueUint32 Function(ffi.Pointer<ffi.Opaque>,
                       ffi.Pointer<ffi.Opaque>, ffi.Uint32)>>(
@@ -6281,14 +6682,15 @@ class ICU4XGregorianDateFormatter implements ffi.Finalizable {
   /// See the [Rust documentation for `format`](https://docs.rs/icu/latest/icu/datetime/struct.TypedDateFormatter.html#method.format) for more information.
   String formatIsoDate(ICU4XIsoDate value) {
     final writeable = _Writeable();
-    final result = _formatIsoDateFfi(
+    final result = _ICU4XGregorianDateFormatter_format_iso_date(
         _underlying, value._underlying, writeable._underlying);
     return result.isOk
         ? writeable.finalize()
         : throw ICU4XError._(result.union.err);
   }
 
-  static final _formatIsoDateFfi = _capi<
+  // ignore: non_constant_identifier_names
+  static final _ICU4XGregorianDateFormatter_format_iso_date = _capi<
               ffi.NativeFunction<
                   _ResultVoidUint32 Function(ffi.Pointer<ffi.Opaque>,
                       ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>>(
@@ -6302,14 +6704,15 @@ class ICU4XGregorianDateFormatter implements ffi.Finalizable {
   /// See the [Rust documentation for `format`](https://docs.rs/icu/latest/icu/datetime/struct.TypedDateFormatter.html#method.format) for more information.
   String formatIsoDatetime(ICU4XIsoDateTime value) {
     final writeable = _Writeable();
-    final result = _formatIsoDatetimeFfi(
+    final result = _ICU4XGregorianDateFormatter_format_iso_datetime(
         _underlying, value._underlying, writeable._underlying);
     return result.isOk
         ? writeable.finalize()
         : throw ICU4XError._(result.union.err);
   }
 
-  static final _formatIsoDatetimeFfi = _capi<
+  // ignore: non_constant_identifier_names
+  static final _ICU4XGregorianDateFormatter_format_iso_datetime = _capi<
               ffi.NativeFunction<
                   _ResultVoidUint32 Function(ffi.Pointer<ffi.Opaque>,
                       ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>>(
@@ -6341,13 +6744,17 @@ class ICU4XGregorianDateTimeFormatter implements ffi.Finalizable {
       ICU4XLocale locale,
       ICU4XDateLength dateLength,
       ICU4XTimeLength timeLength) {
-    final result = _createWithLengthsFfi(provider._underlying,
-        locale._underlying, dateLength._id, timeLength._id);
+    final result = _ICU4XGregorianDateTimeFormatter_create_with_lengths(
+        provider._underlying,
+        locale._underlying,
+        dateLength._id,
+        timeLength._id);
     return result.isOk
         ? ICU4XGregorianDateTimeFormatter._(result.union.ok)
         : throw ICU4XError._(result.union.err);
   }
-  static final _createWithLengthsFfi = _capi<
+  // ignore: non_constant_identifier_names
+  static final _ICU4XGregorianDateTimeFormatter_create_with_lengths = _capi<
               ffi.NativeFunction<
                   _ResultOpaqueUint32 Function(ffi.Pointer<ffi.Opaque>,
                       ffi.Pointer<ffi.Opaque>, ffi.Uint32, ffi.Uint32)>>(
@@ -6361,14 +6768,15 @@ class ICU4XGregorianDateTimeFormatter implements ffi.Finalizable {
   /// See the [Rust documentation for `format`](https://docs.rs/icu/latest/icu/datetime/struct.TypedDateTimeFormatter.html#method.format) for more information.
   String formatIsoDatetime(ICU4XIsoDateTime value) {
     final writeable = _Writeable();
-    final result = _formatIsoDatetimeFfi(
+    final result = _ICU4XGregorianDateTimeFormatter_format_iso_datetime(
         _underlying, value._underlying, writeable._underlying);
     return result.isOk
         ? writeable.finalize()
         : throw ICU4XError._(result.union.err);
   }
 
-  static final _formatIsoDatetimeFfi = _capi<
+  // ignore: non_constant_identifier_names
+  static final _ICU4XGregorianDateTimeFormatter_format_iso_datetime = _capi<
               ffi.NativeFunction<
                   _ResultVoidUint32 Function(ffi.Pointer<ffi.Opaque>,
                       ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>>(
@@ -6402,20 +6810,25 @@ class ICU4XGregorianZonedDateTimeFormatter implements ffi.Finalizable {
       ICU4XLocale locale,
       ICU4XDateLength dateLength,
       ICU4XTimeLength timeLength) {
-    final result = _createWithLengthsFfi(provider._underlying,
-        locale._underlying, dateLength._id, timeLength._id);
+    final result = _ICU4XGregorianZonedDateTimeFormatter_create_with_lengths(
+        provider._underlying,
+        locale._underlying,
+        dateLength._id,
+        timeLength._id);
     return result.isOk
         ? ICU4XGregorianZonedDateTimeFormatter._(result.union.ok)
         : throw ICU4XError._(result.union.err);
   }
-  static final _createWithLengthsFfi = _capi<
-              ffi.NativeFunction<
-                  _ResultOpaqueUint32 Function(ffi.Pointer<ffi.Opaque>,
-                      ffi.Pointer<ffi.Opaque>, ffi.Uint32, ffi.Uint32)>>(
-          'ICU4XGregorianZonedDateTimeFormatter_create_with_lengths')
-      .asFunction<
-          _ResultOpaqueUint32 Function(ffi.Pointer<ffi.Opaque>,
-              ffi.Pointer<ffi.Opaque>, int, int)>(isLeaf: true);
+  // ignore: non_constant_identifier_names
+  static final _ICU4XGregorianZonedDateTimeFormatter_create_with_lengths =
+      _capi<
+                  ffi.NativeFunction<
+                      _ResultOpaqueUint32 Function(ffi.Pointer<ffi.Opaque>,
+                          ffi.Pointer<ffi.Opaque>, ffi.Uint32, ffi.Uint32)>>(
+              'ICU4XGregorianZonedDateTimeFormatter_create_with_lengths')
+          .asFunction<
+              _ResultOpaqueUint32 Function(ffi.Pointer<ffi.Opaque>,
+                  ffi.Pointer<ffi.Opaque>, int, int)>(isLeaf: true);
 
   /// Creates a new [`ICU4XGregorianZonedDateTimeFormatter`] from locale data.
   ///
@@ -6429,32 +6842,35 @@ class ICU4XGregorianZonedDateTimeFormatter implements ffi.Finalizable {
       ICU4XDateLength dateLength,
       ICU4XTimeLength timeLength,
       ICU4XIsoTimeZoneOptions zoneOptions) {
-    final result = _createWithLengthsAndIso8601TimeZoneFallbackFfi(
-        provider._underlying,
-        locale._underlying,
-        dateLength._id,
-        timeLength._id,
-        zoneOptions._underlying);
+    final result =
+        _ICU4XGregorianZonedDateTimeFormatter_create_with_lengths_and_iso_8601_time_zone_fallback(
+            provider._underlying,
+            locale._underlying,
+            dateLength._id,
+            timeLength._id,
+            zoneOptions._underlying);
     return result.isOk
         ? ICU4XGregorianZonedDateTimeFormatter._(result.union.ok)
         : throw ICU4XError._(result.union.err);
   }
-  static final _createWithLengthsAndIso8601TimeZoneFallbackFfi = _capi<
-              ffi.NativeFunction<
-                  _ResultOpaqueUint32 Function(
-                      ffi.Pointer<ffi.Opaque>,
-                      ffi.Pointer<ffi.Opaque>,
-                      ffi.Uint32,
-                      ffi.Uint32,
-                      _ICU4XIsoTimeZoneOptionsFfi)>>(
-          'ICU4XGregorianZonedDateTimeFormatter_create_with_lengths_and_iso_8601_time_zone_fallback')
-      .asFunction<
-          _ResultOpaqueUint32 Function(
-              ffi.Pointer<ffi.Opaque>,
-              ffi.Pointer<ffi.Opaque>,
-              int,
-              int,
-              _ICU4XIsoTimeZoneOptionsFfi)>(isLeaf: true);
+  // ignore: non_constant_identifier_names
+  static final _ICU4XGregorianZonedDateTimeFormatter_create_with_lengths_and_iso_8601_time_zone_fallback =
+      _capi<
+                  ffi.NativeFunction<
+                      _ResultOpaqueUint32 Function(
+                          ffi.Pointer<ffi.Opaque>,
+                          ffi.Pointer<ffi.Opaque>,
+                          ffi.Uint32,
+                          ffi.Uint32,
+                          _ICU4XIsoTimeZoneOptionsFfi)>>(
+              'ICU4XGregorianZonedDateTimeFormatter_create_with_lengths_and_iso_8601_time_zone_fallback')
+          .asFunction<
+              _ResultOpaqueUint32 Function(
+                  ffi.Pointer<ffi.Opaque>,
+                  ffi.Pointer<ffi.Opaque>,
+                  int,
+                  int,
+                  _ICU4XIsoTimeZoneOptionsFfi)>(isLeaf: true);
 
   /// Formats a [`ICU4XIsoDateTime`] and [`ICU4XCustomTimeZone`] to a string.
   ///
@@ -6462,27 +6878,33 @@ class ICU4XGregorianZonedDateTimeFormatter implements ffi.Finalizable {
   String formatIsoDatetimeWithCustomTimeZone(
       ICU4XIsoDateTime datetime, ICU4XCustomTimeZone timeZone) {
     final writeable = _Writeable();
-    final result = _formatIsoDatetimeWithCustomTimeZoneFfi(_underlying,
-        datetime._underlying, timeZone._underlying, writeable._underlying);
+    final result =
+        _ICU4XGregorianZonedDateTimeFormatter_format_iso_datetime_with_custom_time_zone(
+            _underlying,
+            datetime._underlying,
+            timeZone._underlying,
+            writeable._underlying);
     return result.isOk
         ? writeable.finalize()
         : throw ICU4XError._(result.union.err);
   }
 
-  static final _formatIsoDatetimeWithCustomTimeZoneFfi = _capi<
-              ffi.NativeFunction<
-                  _ResultVoidUint32 Function(
-                      ffi.Pointer<ffi.Opaque>,
-                      ffi.Pointer<ffi.Opaque>,
-                      ffi.Pointer<ffi.Opaque>,
-                      ffi.Pointer<ffi.Opaque>)>>(
-          'ICU4XGregorianZonedDateTimeFormatter_format_iso_datetime_with_custom_time_zone')
-      .asFunction<
-          _ResultVoidUint32 Function(
-              ffi.Pointer<ffi.Opaque>,
-              ffi.Pointer<ffi.Opaque>,
-              ffi.Pointer<ffi.Opaque>,
-              ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
+  // ignore: non_constant_identifier_names
+  static final _ICU4XGregorianZonedDateTimeFormatter_format_iso_datetime_with_custom_time_zone =
+      _capi<
+                  ffi.NativeFunction<
+                      _ResultVoidUint32 Function(
+                          ffi.Pointer<ffi.Opaque>,
+                          ffi.Pointer<ffi.Opaque>,
+                          ffi.Pointer<ffi.Opaque>,
+                          ffi.Pointer<ffi.Opaque>)>>(
+              'ICU4XGregorianZonedDateTimeFormatter_format_iso_datetime_with_custom_time_zone')
+          .asFunction<
+              _ResultVoidUint32 Function(
+                  ffi.Pointer<ffi.Opaque>,
+                  ffi.Pointer<ffi.Opaque>,
+                  ffi.Pointer<ffi.Opaque>,
+                  ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
 }
 
 /// An object capable of mapping from an IANA time zone ID to a BCP-47 ID.
@@ -6504,12 +6926,13 @@ class ICU4XIanaToBcp47Mapper implements ffi.Finalizable {
 
   /// See the [Rust documentation for `new`](https://docs.rs/icu/latest/icu/timezone/struct.IanaToBcp47Mapper.html#method.new) for more information.
   factory ICU4XIanaToBcp47Mapper(ICU4XDataProvider provider) {
-    final result = _createFfi(provider._underlying);
+    final result = _ICU4XIanaToBcp47Mapper_create(provider._underlying);
     return result.isOk
         ? ICU4XIanaToBcp47Mapper._(result.union.ok)
         : throw ICU4XError._(result.union.err);
   }
-  static final _createFfi = _capi<
+  // ignore: non_constant_identifier_names
+  static final _ICU4XIanaToBcp47Mapper_create = _capi<
           ffi.NativeFunction<
               _ResultOpaqueUint32 Function(
                   ffi.Pointer<ffi.Opaque>)>>('ICU4XIanaToBcp47Mapper_create')
@@ -6533,12 +6956,13 @@ class ICU4XIsoDate implements ffi.Finalizable {
   ///
   /// See the [Rust documentation for `try_new_iso_date`](https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.try_new_iso_date) for more information.
   factory ICU4XIsoDate(int year, int month, int day) {
-    final result = _createFfi(year, month, day);
+    final result = _ICU4XIsoDate_create(year, month, day);
     return result.isOk
         ? ICU4XIsoDate._(result.union.ok)
         : throw ICU4XError._(result.union.err);
   }
-  static final _createFfi = _capi<
+  // ignore: non_constant_identifier_names
+  static final _ICU4XIsoDate_create = _capi<
           ffi.NativeFunction<
               _ResultOpaqueUint32 Function(
                   ffi.Int32, ffi.Uint8, ffi.Uint8)>>('ICU4XIsoDate_create')
@@ -6548,10 +6972,11 @@ class ICU4XIsoDate implements ffi.Finalizable {
   ///
   /// See the [Rust documentation for `unix_epoch`](https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.unix_epoch) for more information.
   factory ICU4XIsoDate.forUnixEpoch() {
-    final result = _createForUnixEpochFfi();
+    final result = _ICU4XIsoDate_create_for_unix_epoch();
     return ICU4XIsoDate._(result);
   }
-  static final _createForUnixEpochFfi =
+  // ignore: non_constant_identifier_names
+  static final _ICU4XIsoDate_create_for_unix_epoch =
       _capi<ffi.NativeFunction<ffi.Pointer<ffi.Opaque> Function()>>(
               'ICU4XIsoDate_create_for_unix_epoch')
           .asFunction<ffi.Pointer<ffi.Opaque> Function()>(isLeaf: true);
@@ -6560,11 +6985,12 @@ class ICU4XIsoDate implements ffi.Finalizable {
   ///
   /// See the [Rust documentation for `to_calendar`](https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.to_calendar) for more information.
   ICU4XDate toCalendar(ICU4XCalendar calendar) {
-    final result = _toCalendarFfi(_underlying, calendar._underlying);
+    final result = _ICU4XIsoDate_to_calendar(_underlying, calendar._underlying);
     return ICU4XDate._(result);
   }
 
-  static final _toCalendarFfi = _capi<
+  // ignore: non_constant_identifier_names
+  static final _ICU4XIsoDate_to_calendar = _capi<
           ffi.NativeFunction<
               ffi.Pointer<ffi.Opaque> Function(ffi.Pointer<ffi.Opaque>,
                   ffi.Pointer<ffi.Opaque>)>>('ICU4XIsoDate_to_calendar')
@@ -6574,11 +7000,12 @@ class ICU4XIsoDate implements ffi.Finalizable {
 
   /// See the [Rust documentation for `to_any`](https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.to_any) for more information.
   ICU4XDate toAny() {
-    final result = _toAnyFfi(_underlying);
+    final result = _ICU4XIsoDate_to_any(_underlying);
     return ICU4XDate._(result);
   }
 
-  static final _toAnyFfi = _capi<
+  // ignore: non_constant_identifier_names
+  static final _ICU4XIsoDate_to_any = _capi<
           ffi.NativeFunction<
               ffi.Pointer<ffi.Opaque> Function(
                   ffi.Pointer<ffi.Opaque>)>>('ICU4XIsoDate_to_any')
@@ -6589,11 +7016,12 @@ class ICU4XIsoDate implements ffi.Finalizable {
   ///
   /// See the [Rust documentation for `day_of_month`](https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.day_of_month) for more information.
   int get dayOfMonth {
-    final result = _dayOfMonthFfi(_underlying);
+    final result = _ICU4XIsoDate_day_of_month(_underlying);
     return result;
   }
 
-  static final _dayOfMonthFfi =
+  // ignore: non_constant_identifier_names
+  static final _ICU4XIsoDate_day_of_month =
       _capi<ffi.NativeFunction<ffi.Uint32 Function(ffi.Pointer<ffi.Opaque>)>>(
               'ICU4XIsoDate_day_of_month')
           .asFunction<int Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
@@ -6602,11 +7030,12 @@ class ICU4XIsoDate implements ffi.Finalizable {
   ///
   /// See the [Rust documentation for `day_of_week`](https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.day_of_week) for more information.
   ICU4XIsoWeekday get dayOfWeek {
-    final result = _dayOfWeekFfi(_underlying);
+    final result = _ICU4XIsoDate_day_of_week(_underlying);
     return ICU4XIsoWeekday._(result);
   }
 
-  static final _dayOfWeekFfi =
+  // ignore: non_constant_identifier_names
+  static final _ICU4XIsoDate_day_of_week =
       _capi<ffi.NativeFunction<ffi.Uint32 Function(ffi.Pointer<ffi.Opaque>)>>(
               'ICU4XIsoDate_day_of_week')
           .asFunction<int Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
@@ -6618,11 +7047,12 @@ class ICU4XIsoDate implements ffi.Finalizable {
   ///
   /// See the [Rust documentation for `week_of_month`](https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.week_of_month) for more information.
   int weekOfMonth(ICU4XIsoWeekday firstWeekday) {
-    final result = _weekOfMonthFfi(_underlying, firstWeekday._id);
+    final result = _ICU4XIsoDate_week_of_month(_underlying, firstWeekday._id);
     return result;
   }
 
-  static final _weekOfMonthFfi = _capi<
+  // ignore: non_constant_identifier_names
+  static final _ICU4XIsoDate_week_of_month = _capi<
           ffi.NativeFunction<
               ffi.Uint32 Function(ffi.Pointer<ffi.Opaque>,
                   ffi.Uint32)>>('ICU4XIsoDate_week_of_month')
@@ -6632,13 +7062,15 @@ class ICU4XIsoDate implements ffi.Finalizable {
   ///
   /// See the [Rust documentation for `week_of_year`](https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.week_of_year) for more information.
   ICU4XWeekOf weekOfYear(ICU4XWeekCalculator calculator) {
-    final result = _weekOfYearFfi(_underlying, calculator._underlying);
+    final result =
+        _ICU4XIsoDate_week_of_year(_underlying, calculator._underlying);
     return result.isOk
         ? ICU4XWeekOf._(result.union.ok)
         : throw ICU4XError._(result.union.err);
   }
 
-  static final _weekOfYearFfi = _capi<
+  // ignore: non_constant_identifier_names
+  static final _ICU4XIsoDate_week_of_year = _capi<
           ffi.NativeFunction<
               _ResultICU4XWeekOfFfiUint32 Function(ffi.Pointer<ffi.Opaque>,
                   ffi.Pointer<ffi.Opaque>)>>('ICU4XIsoDate_week_of_year')
@@ -6650,11 +7082,12 @@ class ICU4XIsoDate implements ffi.Finalizable {
   ///
   /// See the [Rust documentation for `month`](https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.month) for more information.
   int get month {
-    final result = _monthFfi(_underlying);
+    final result = _ICU4XIsoDate_month(_underlying);
     return result;
   }
 
-  static final _monthFfi =
+  // ignore: non_constant_identifier_names
+  static final _ICU4XIsoDate_month =
       _capi<ffi.NativeFunction<ffi.Uint32 Function(ffi.Pointer<ffi.Opaque>)>>(
               'ICU4XIsoDate_month')
           .asFunction<int Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
@@ -6663,11 +7096,12 @@ class ICU4XIsoDate implements ffi.Finalizable {
   ///
   /// See the [Rust documentation for `year`](https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.year) for more information.
   int get year {
-    final result = _yearFfi(_underlying);
+    final result = _ICU4XIsoDate_year(_underlying);
     return result;
   }
 
-  static final _yearFfi =
+  // ignore: non_constant_identifier_names
+  static final _ICU4XIsoDate_year =
       _capi<ffi.NativeFunction<ffi.Int32 Function(ffi.Pointer<ffi.Opaque>)>>(
               'ICU4XIsoDate_year')
           .asFunction<int Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
@@ -6676,11 +7110,12 @@ class ICU4XIsoDate implements ffi.Finalizable {
   ///
   /// See the [Rust documentation for `months_in_year`](https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.months_in_year) for more information.
   int get monthsInYear {
-    final result = _monthsInYearFfi(_underlying);
+    final result = _ICU4XIsoDate_months_in_year(_underlying);
     return result;
   }
 
-  static final _monthsInYearFfi =
+  // ignore: non_constant_identifier_names
+  static final _ICU4XIsoDate_months_in_year =
       _capi<ffi.NativeFunction<ffi.Uint8 Function(ffi.Pointer<ffi.Opaque>)>>(
               'ICU4XIsoDate_months_in_year')
           .asFunction<int Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
@@ -6689,11 +7124,12 @@ class ICU4XIsoDate implements ffi.Finalizable {
   ///
   /// See the [Rust documentation for `days_in_month`](https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.days_in_month) for more information.
   int get daysInMonth {
-    final result = _daysInMonthFfi(_underlying);
+    final result = _ICU4XIsoDate_days_in_month(_underlying);
     return result;
   }
 
-  static final _daysInMonthFfi =
+  // ignore: non_constant_identifier_names
+  static final _ICU4XIsoDate_days_in_month =
       _capi<ffi.NativeFunction<ffi.Uint8 Function(ffi.Pointer<ffi.Opaque>)>>(
               'ICU4XIsoDate_days_in_month')
           .asFunction<int Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
@@ -6702,11 +7138,12 @@ class ICU4XIsoDate implements ffi.Finalizable {
   ///
   /// See the [Rust documentation for `days_in_year`](https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.days_in_year) for more information.
   int get daysInYear {
-    final result = _daysInYearFfi(_underlying);
+    final result = _ICU4XIsoDate_days_in_year(_underlying);
     return result;
   }
 
-  static final _daysInYearFfi =
+  // ignore: non_constant_identifier_names
+  static final _ICU4XIsoDate_days_in_year =
       _capi<ffi.NativeFunction<ffi.Uint16 Function(ffi.Pointer<ffi.Opaque>)>>(
               'ICU4XIsoDate_days_in_year')
           .asFunction<int Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
@@ -6730,13 +7167,14 @@ class ICU4XIsoDateTime implements ffi.Finalizable {
   /// See the [Rust documentation for `try_new_iso_datetime`](https://docs.rs/icu/latest/icu/calendar/struct.DateTime.html#method.try_new_iso_datetime) for more information.
   factory ICU4XIsoDateTime(int year, int month, int day, int hour, int minute,
       int second, int nanosecond) {
-    final result =
-        _createFfi(year, month, day, hour, minute, second, nanosecond);
+    final result = _ICU4XIsoDateTime_create(
+        year, month, day, hour, minute, second, nanosecond);
     return result.isOk
         ? ICU4XIsoDateTime._(result.union.ok)
         : throw ICU4XError._(result.union.err);
   }
-  static final _createFfi = _capi<
+  // ignore: non_constant_identifier_names
+  static final _ICU4XIsoDateTime_create = _capi<
           ffi.NativeFunction<
               _ResultOpaqueUint32 Function(
                   ffi.Int32,
@@ -6755,10 +7193,12 @@ class ICU4XIsoDateTime implements ffi.Finalizable {
   /// See the [Rust documentation for `new`](https://docs.rs/icu/latest/icu/calendar/struct.DateTime.html#method.new) for more information.
   factory ICU4XIsoDateTime.crateFromDateAndTime(
       ICU4XIsoDate date, ICU4XTime time) {
-    final result = _crateFromDateAndTimeFfi(date._underlying, time._underlying);
+    final result = _ICU4XIsoDateTime_crate_from_date_and_time(
+        date._underlying, time._underlying);
     return ICU4XIsoDateTime._(result);
   }
-  static final _crateFromDateAndTimeFfi = _capi<
+  // ignore: non_constant_identifier_names
+  static final _ICU4XIsoDateTime_crate_from_date_and_time = _capi<
               ffi.NativeFunction<
                   ffi.Pointer<ffi.Opaque> Function(
                       ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>>(
@@ -6771,10 +7211,12 @@ class ICU4XIsoDateTime implements ffi.Finalizable {
   ///
   /// See the [Rust documentation for `from_minutes_since_local_unix_epoch`](https://docs.rs/icu/latest/icu/calendar/struct.DateTime.html#method.from_minutes_since_local_unix_epoch) for more information.
   factory ICU4XIsoDateTime.fromMinutesSinceLocalUnixEpoch(int minutes) {
-    final result = _createFromMinutesSinceLocalUnixEpochFfi(minutes);
+    final result =
+        _ICU4XIsoDateTime_create_from_minutes_since_local_unix_epoch(minutes);
     return ICU4XIsoDateTime._(result);
   }
-  static final _createFromMinutesSinceLocalUnixEpochFfi =
+  // ignore: non_constant_identifier_names
+  static final _ICU4XIsoDateTime_create_from_minutes_since_local_unix_epoch =
       _capi<ffi.NativeFunction<ffi.Pointer<ffi.Opaque> Function(ffi.Int32)>>(
               'ICU4XIsoDateTime_create_from_minutes_since_local_unix_epoch')
           .asFunction<ffi.Pointer<ffi.Opaque> Function(int)>(isLeaf: true);
@@ -6783,11 +7225,12 @@ class ICU4XIsoDateTime implements ffi.Finalizable {
   ///
   /// See the [Rust documentation for `date`](https://docs.rs/icu/latest/icu/calendar/struct.DateTime.html#structfield.date) for more information.
   ICU4XIsoDate get date {
-    final result = _dateFfi(_underlying);
+    final result = _ICU4XIsoDateTime_date(_underlying);
     return ICU4XIsoDate._(result);
   }
 
-  static final _dateFfi = _capi<
+  // ignore: non_constant_identifier_names
+  static final _ICU4XIsoDateTime_date = _capi<
           ffi.NativeFunction<
               ffi.Pointer<ffi.Opaque> Function(
                   ffi.Pointer<ffi.Opaque>)>>('ICU4XIsoDateTime_date')
@@ -6798,11 +7241,12 @@ class ICU4XIsoDateTime implements ffi.Finalizable {
   ///
   /// See the [Rust documentation for `time`](https://docs.rs/icu/latest/icu/calendar/struct.DateTime.html#structfield.time) for more information.
   ICU4XTime get time {
-    final result = _timeFfi(_underlying);
+    final result = _ICU4XIsoDateTime_time(_underlying);
     return ICU4XTime._(result);
   }
 
-  static final _timeFfi = _capi<
+  // ignore: non_constant_identifier_names
+  static final _ICU4XIsoDateTime_time = _capi<
           ffi.NativeFunction<
               ffi.Pointer<ffi.Opaque> Function(
                   ffi.Pointer<ffi.Opaque>)>>('ICU4XIsoDateTime_time')
@@ -6814,11 +7258,12 @@ class ICU4XIsoDateTime implements ffi.Finalizable {
   ///
   /// See the [Rust documentation for `to_any`](https://docs.rs/icu/latest/icu/calendar/struct.DateTime.html#method.to_any) for more information.
   ICU4XDateTime toAny() {
-    final result = _toAnyFfi(_underlying);
+    final result = _ICU4XIsoDateTime_to_any(_underlying);
     return ICU4XDateTime._(result);
   }
 
-  static final _toAnyFfi = _capi<
+  // ignore: non_constant_identifier_names
+  static final _ICU4XIsoDateTime_to_any = _capi<
           ffi.NativeFunction<
               ffi.Pointer<ffi.Opaque> Function(
                   ffi.Pointer<ffi.Opaque>)>>('ICU4XIsoDateTime_to_any')
@@ -6829,11 +7274,13 @@ class ICU4XIsoDateTime implements ffi.Finalizable {
   ///
   /// See the [Rust documentation for `minutes_since_local_unix_epoch`](https://docs.rs/icu/latest/icu/calendar/struct.DateTime.html#method.minutes_since_local_unix_epoch) for more information.
   int get minutesSinceLocalUnixEpoch {
-    final result = _minutesSinceLocalUnixEpochFfi(_underlying);
+    final result =
+        _ICU4XIsoDateTime_minutes_since_local_unix_epoch(_underlying);
     return result;
   }
 
-  static final _minutesSinceLocalUnixEpochFfi =
+  // ignore: non_constant_identifier_names
+  static final _ICU4XIsoDateTime_minutes_since_local_unix_epoch =
       _capi<ffi.NativeFunction<ffi.Int32 Function(ffi.Pointer<ffi.Opaque>)>>(
               'ICU4XIsoDateTime_minutes_since_local_unix_epoch')
           .asFunction<int Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
@@ -6842,11 +7289,13 @@ class ICU4XIsoDateTime implements ffi.Finalizable {
   ///
   /// See the [Rust documentation for `to_calendar`](https://docs.rs/icu/latest/icu/calendar/struct.DateTime.html#method.to_calendar) for more information.
   ICU4XDateTime toCalendar(ICU4XCalendar calendar) {
-    final result = _toCalendarFfi(_underlying, calendar._underlying);
+    final result =
+        _ICU4XIsoDateTime_to_calendar(_underlying, calendar._underlying);
     return ICU4XDateTime._(result);
   }
 
-  static final _toCalendarFfi = _capi<
+  // ignore: non_constant_identifier_names
+  static final _ICU4XIsoDateTime_to_calendar = _capi<
           ffi.NativeFunction<
               ffi.Pointer<ffi.Opaque> Function(ffi.Pointer<ffi.Opaque>,
                   ffi.Pointer<ffi.Opaque>)>>('ICU4XIsoDateTime_to_calendar')
@@ -6858,11 +7307,12 @@ class ICU4XIsoDateTime implements ffi.Finalizable {
   ///
   /// See the [Rust documentation for `hour`](https://docs.rs/icu/latest/icu/calendar/types/struct.Time.html#structfield.hour) for more information.
   int get hour {
-    final result = _hourFfi(_underlying);
+    final result = _ICU4XIsoDateTime_hour(_underlying);
     return result;
   }
 
-  static final _hourFfi =
+  // ignore: non_constant_identifier_names
+  static final _ICU4XIsoDateTime_hour =
       _capi<ffi.NativeFunction<ffi.Uint8 Function(ffi.Pointer<ffi.Opaque>)>>(
               'ICU4XIsoDateTime_hour')
           .asFunction<int Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
@@ -6871,11 +7321,12 @@ class ICU4XIsoDateTime implements ffi.Finalizable {
   ///
   /// See the [Rust documentation for `minute`](https://docs.rs/icu/latest/icu/calendar/types/struct.Time.html#structfield.minute) for more information.
   int get minute {
-    final result = _minuteFfi(_underlying);
+    final result = _ICU4XIsoDateTime_minute(_underlying);
     return result;
   }
 
-  static final _minuteFfi =
+  // ignore: non_constant_identifier_names
+  static final _ICU4XIsoDateTime_minute =
       _capi<ffi.NativeFunction<ffi.Uint8 Function(ffi.Pointer<ffi.Opaque>)>>(
               'ICU4XIsoDateTime_minute')
           .asFunction<int Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
@@ -6884,11 +7335,12 @@ class ICU4XIsoDateTime implements ffi.Finalizable {
   ///
   /// See the [Rust documentation for `second`](https://docs.rs/icu/latest/icu/calendar/types/struct.Time.html#structfield.second) for more information.
   int get second {
-    final result = _secondFfi(_underlying);
+    final result = _ICU4XIsoDateTime_second(_underlying);
     return result;
   }
 
-  static final _secondFfi =
+  // ignore: non_constant_identifier_names
+  static final _ICU4XIsoDateTime_second =
       _capi<ffi.NativeFunction<ffi.Uint8 Function(ffi.Pointer<ffi.Opaque>)>>(
               'ICU4XIsoDateTime_second')
           .asFunction<int Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
@@ -6897,11 +7349,12 @@ class ICU4XIsoDateTime implements ffi.Finalizable {
   ///
   /// See the [Rust documentation for `nanosecond`](https://docs.rs/icu/latest/icu/calendar/types/struct.Time.html#structfield.nanosecond) for more information.
   int get nanosecond {
-    final result = _nanosecondFfi(_underlying);
+    final result = _ICU4XIsoDateTime_nanosecond(_underlying);
     return result;
   }
 
-  static final _nanosecondFfi =
+  // ignore: non_constant_identifier_names
+  static final _ICU4XIsoDateTime_nanosecond =
       _capi<ffi.NativeFunction<ffi.Uint32 Function(ffi.Pointer<ffi.Opaque>)>>(
               'ICU4XIsoDateTime_nanosecond')
           .asFunction<int Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
@@ -6910,11 +7363,12 @@ class ICU4XIsoDateTime implements ffi.Finalizable {
   ///
   /// See the [Rust documentation for `day_of_month`](https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.day_of_month) for more information.
   int get dayOfMonth {
-    final result = _dayOfMonthFfi(_underlying);
+    final result = _ICU4XIsoDateTime_day_of_month(_underlying);
     return result;
   }
 
-  static final _dayOfMonthFfi =
+  // ignore: non_constant_identifier_names
+  static final _ICU4XIsoDateTime_day_of_month =
       _capi<ffi.NativeFunction<ffi.Uint32 Function(ffi.Pointer<ffi.Opaque>)>>(
               'ICU4XIsoDateTime_day_of_month')
           .asFunction<int Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
@@ -6923,11 +7377,12 @@ class ICU4XIsoDateTime implements ffi.Finalizable {
   ///
   /// See the [Rust documentation for `day_of_week`](https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.day_of_week) for more information.
   ICU4XIsoWeekday get dayOfWeek {
-    final result = _dayOfWeekFfi(_underlying);
+    final result = _ICU4XIsoDateTime_day_of_week(_underlying);
     return ICU4XIsoWeekday._(result);
   }
 
-  static final _dayOfWeekFfi =
+  // ignore: non_constant_identifier_names
+  static final _ICU4XIsoDateTime_day_of_week =
       _capi<ffi.NativeFunction<ffi.Uint32 Function(ffi.Pointer<ffi.Opaque>)>>(
               'ICU4XIsoDateTime_day_of_week')
           .asFunction<int Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
@@ -6939,11 +7394,13 @@ class ICU4XIsoDateTime implements ffi.Finalizable {
   ///
   /// See the [Rust documentation for `week_of_month`](https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.week_of_month) for more information.
   int weekOfMonth(ICU4XIsoWeekday firstWeekday) {
-    final result = _weekOfMonthFfi(_underlying, firstWeekday._id);
+    final result =
+        _ICU4XIsoDateTime_week_of_month(_underlying, firstWeekday._id);
     return result;
   }
 
-  static final _weekOfMonthFfi = _capi<
+  // ignore: non_constant_identifier_names
+  static final _ICU4XIsoDateTime_week_of_month = _capi<
           ffi.NativeFunction<
               ffi.Uint32 Function(ffi.Pointer<ffi.Opaque>,
                   ffi.Uint32)>>('ICU4XIsoDateTime_week_of_month')
@@ -6953,13 +7410,15 @@ class ICU4XIsoDateTime implements ffi.Finalizable {
   ///
   /// See the [Rust documentation for `week_of_year`](https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.week_of_year) for more information.
   ICU4XWeekOf weekOfYear(ICU4XWeekCalculator calculator) {
-    final result = _weekOfYearFfi(_underlying, calculator._underlying);
+    final result =
+        _ICU4XIsoDateTime_week_of_year(_underlying, calculator._underlying);
     return result.isOk
         ? ICU4XWeekOf._(result.union.ok)
         : throw ICU4XError._(result.union.err);
   }
 
-  static final _weekOfYearFfi = _capi<
+  // ignore: non_constant_identifier_names
+  static final _ICU4XIsoDateTime_week_of_year = _capi<
           ffi.NativeFunction<
               _ResultICU4XWeekOfFfiUint32 Function(ffi.Pointer<ffi.Opaque>,
                   ffi.Pointer<ffi.Opaque>)>>('ICU4XIsoDateTime_week_of_year')
@@ -6971,11 +7430,12 @@ class ICU4XIsoDateTime implements ffi.Finalizable {
   ///
   /// See the [Rust documentation for `month`](https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.month) for more information.
   int get month {
-    final result = _monthFfi(_underlying);
+    final result = _ICU4XIsoDateTime_month(_underlying);
     return result;
   }
 
-  static final _monthFfi =
+  // ignore: non_constant_identifier_names
+  static final _ICU4XIsoDateTime_month =
       _capi<ffi.NativeFunction<ffi.Uint32 Function(ffi.Pointer<ffi.Opaque>)>>(
               'ICU4XIsoDateTime_month')
           .asFunction<int Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
@@ -6984,11 +7444,12 @@ class ICU4XIsoDateTime implements ffi.Finalizable {
   ///
   /// See the [Rust documentation for `year`](https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.year) for more information.
   int get year {
-    final result = _yearFfi(_underlying);
+    final result = _ICU4XIsoDateTime_year(_underlying);
     return result;
   }
 
-  static final _yearFfi =
+  // ignore: non_constant_identifier_names
+  static final _ICU4XIsoDateTime_year =
       _capi<ffi.NativeFunction<ffi.Int32 Function(ffi.Pointer<ffi.Opaque>)>>(
               'ICU4XIsoDateTime_year')
           .asFunction<int Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
@@ -6997,11 +7458,12 @@ class ICU4XIsoDateTime implements ffi.Finalizable {
   ///
   /// See the [Rust documentation for `months_in_year`](https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.months_in_year) for more information.
   int get monthsInYear {
-    final result = _monthsInYearFfi(_underlying);
+    final result = _ICU4XIsoDateTime_months_in_year(_underlying);
     return result;
   }
 
-  static final _monthsInYearFfi =
+  // ignore: non_constant_identifier_names
+  static final _ICU4XIsoDateTime_months_in_year =
       _capi<ffi.NativeFunction<ffi.Uint8 Function(ffi.Pointer<ffi.Opaque>)>>(
               'ICU4XIsoDateTime_months_in_year')
           .asFunction<int Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
@@ -7010,11 +7472,12 @@ class ICU4XIsoDateTime implements ffi.Finalizable {
   ///
   /// See the [Rust documentation for `days_in_month`](https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.days_in_month) for more information.
   int get daysInMonth {
-    final result = _daysInMonthFfi(_underlying);
+    final result = _ICU4XIsoDateTime_days_in_month(_underlying);
     return result;
   }
 
-  static final _daysInMonthFfi =
+  // ignore: non_constant_identifier_names
+  static final _ICU4XIsoDateTime_days_in_month =
       _capi<ffi.NativeFunction<ffi.Uint8 Function(ffi.Pointer<ffi.Opaque>)>>(
               'ICU4XIsoDateTime_days_in_month')
           .asFunction<int Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
@@ -7023,11 +7486,12 @@ class ICU4XIsoDateTime implements ffi.Finalizable {
   ///
   /// See the [Rust documentation for `days_in_year`](https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.days_in_year) for more information.
   int get daysInYear {
-    final result = _daysInYearFfi(_underlying);
+    final result = _ICU4XIsoDateTime_days_in_year(_underlying);
     return result;
   }
 
-  static final _daysInYearFfi =
+  // ignore: non_constant_identifier_names
+  static final _ICU4XIsoDateTime_days_in_year =
       _capi<ffi.NativeFunction<ffi.Uint16 Function(ffi.Pointer<ffi.Opaque>)>>(
               'ICU4XIsoDateTime_days_in_year')
           .asFunction<int Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
@@ -7197,11 +7661,12 @@ class ICU4XLineBreakIteratorLatin1 implements ffi.Finalizable {
   ///
   /// See the [Rust documentation for `next`](https://docs.rs/icu/latest/icu/segmenter/struct.LineBreakIterator.html#method.next) for more information.
   int next() {
-    final result = _nextFfi(_underlying);
+    final result = _ICU4XLineBreakIteratorLatin1_next(_underlying);
     return result;
   }
 
-  static final _nextFfi =
+  // ignore: non_constant_identifier_names
+  static final _ICU4XLineBreakIteratorLatin1_next =
       _capi<ffi.NativeFunction<ffi.Int32 Function(ffi.Pointer<ffi.Opaque>)>>(
               'ICU4XLineBreakIteratorLatin1_next')
           .asFunction<int Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
@@ -7225,11 +7690,12 @@ class ICU4XLineBreakIteratorUtf16 implements ffi.Finalizable {
   ///
   /// See the [Rust documentation for `next`](https://docs.rs/icu/latest/icu/segmenter/struct.LineBreakIterator.html#method.next) for more information.
   int next() {
-    final result = _nextFfi(_underlying);
+    final result = _ICU4XLineBreakIteratorUtf16_next(_underlying);
     return result;
   }
 
-  static final _nextFfi =
+  // ignore: non_constant_identifier_names
+  static final _ICU4XLineBreakIteratorUtf16_next =
       _capi<ffi.NativeFunction<ffi.Int32 Function(ffi.Pointer<ffi.Opaque>)>>(
               'ICU4XLineBreakIteratorUtf16_next')
           .asFunction<int Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
@@ -7253,11 +7719,12 @@ class ICU4XLineBreakIteratorUtf8 implements ffi.Finalizable {
   ///
   /// See the [Rust documentation for `next`](https://docs.rs/icu/latest/icu/segmenter/struct.LineBreakIterator.html#method.next) for more information.
   int next() {
-    final result = _nextFfi(_underlying);
+    final result = _ICU4XLineBreakIteratorUtf8_next(_underlying);
     return result;
   }
 
-  static final _nextFfi =
+  // ignore: non_constant_identifier_names
+  static final _ICU4XLineBreakIteratorUtf8_next =
       _capi<ffi.NativeFunction<ffi.Int32 Function(ffi.Pointer<ffi.Opaque>)>>(
               'ICU4XLineBreakIteratorUtf8_next')
           .asFunction<int Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
@@ -7367,12 +7834,13 @@ class ICU4XLineSegmenter implements ffi.Finalizable {
   ///
   /// See the [Rust documentation for `new_auto`](https://docs.rs/icu/latest/icu/segmenter/struct.LineSegmenter.html#method.new_auto) for more information.
   factory ICU4XLineSegmenter.auto(ICU4XDataProvider provider) {
-    final result = _createAutoFfi(provider._underlying);
+    final result = _ICU4XLineSegmenter_create_auto(provider._underlying);
     return result.isOk
         ? ICU4XLineSegmenter._(result.union.ok)
         : throw ICU4XError._(result.union.err);
   }
-  static final _createAutoFfi = _capi<
+  // ignore: non_constant_identifier_names
+  static final _ICU4XLineSegmenter_create_auto = _capi<
           ffi.NativeFunction<
               _ResultOpaqueUint32 Function(
                   ffi.Pointer<ffi.Opaque>)>>('ICU4XLineSegmenter_create_auto')
@@ -7384,12 +7852,13 @@ class ICU4XLineSegmenter implements ffi.Finalizable {
   ///
   /// See the [Rust documentation for `new_lstm`](https://docs.rs/icu/latest/icu/segmenter/struct.LineSegmenter.html#method.new_lstm) for more information.
   factory ICU4XLineSegmenter.lstm(ICU4XDataProvider provider) {
-    final result = _createLstmFfi(provider._underlying);
+    final result = _ICU4XLineSegmenter_create_lstm(provider._underlying);
     return result.isOk
         ? ICU4XLineSegmenter._(result.union.ok)
         : throw ICU4XError._(result.union.err);
   }
-  static final _createLstmFfi = _capi<
+  // ignore: non_constant_identifier_names
+  static final _ICU4XLineSegmenter_create_lstm = _capi<
           ffi.NativeFunction<
               _ResultOpaqueUint32 Function(
                   ffi.Pointer<ffi.Opaque>)>>('ICU4XLineSegmenter_create_lstm')
@@ -7401,12 +7870,13 @@ class ICU4XLineSegmenter implements ffi.Finalizable {
   ///
   /// See the [Rust documentation for `new_dictionary`](https://docs.rs/icu/latest/icu/segmenter/struct.LineSegmenter.html#method.new_dictionary) for more information.
   factory ICU4XLineSegmenter.dictionary(ICU4XDataProvider provider) {
-    final result = _createDictionaryFfi(provider._underlying);
+    final result = _ICU4XLineSegmenter_create_dictionary(provider._underlying);
     return result.isOk
         ? ICU4XLineSegmenter._(result.union.ok)
         : throw ICU4XError._(result.union.err);
   }
-  static final _createDictionaryFfi = _capi<
+  // ignore: non_constant_identifier_names
+  static final _ICU4XLineSegmenter_create_dictionary = _capi<
               ffi.NativeFunction<
                   _ResultOpaqueUint32 Function(ffi.Pointer<ffi.Opaque>)>>(
           'ICU4XLineSegmenter_create_dictionary')
@@ -7419,13 +7889,14 @@ class ICU4XLineSegmenter implements ffi.Finalizable {
   /// See the [Rust documentation for `new_auto_with_options`](https://docs.rs/icu/latest/icu/segmenter/struct.LineSegmenter.html#method.new_auto_with_options) for more information.
   factory ICU4XLineSegmenter.autoWithOptionsV1(
       ICU4XDataProvider provider, ICU4XLineBreakOptionsV1 options) {
-    final result =
-        _createAutoWithOptionsV1Ffi(provider._underlying, options._underlying);
+    final result = _ICU4XLineSegmenter_create_auto_with_options_v1(
+        provider._underlying, options._underlying);
     return result.isOk
         ? ICU4XLineSegmenter._(result.union.ok)
         : throw ICU4XError._(result.union.err);
   }
-  static final _createAutoWithOptionsV1Ffi = _capi<
+  // ignore: non_constant_identifier_names
+  static final _ICU4XLineSegmenter_create_auto_with_options_v1 = _capi<
               ffi.NativeFunction<
                   _ResultOpaqueUint32 Function(
                       ffi.Pointer<ffi.Opaque>, _ICU4XLineBreakOptionsV1Ffi)>>(
@@ -7440,13 +7911,14 @@ class ICU4XLineSegmenter implements ffi.Finalizable {
   /// See the [Rust documentation for `new_lstm_with_options`](https://docs.rs/icu/latest/icu/segmenter/struct.LineSegmenter.html#method.new_lstm_with_options) for more information.
   factory ICU4XLineSegmenter.lstmWithOptionsV1(
       ICU4XDataProvider provider, ICU4XLineBreakOptionsV1 options) {
-    final result =
-        _createLstmWithOptionsV1Ffi(provider._underlying, options._underlying);
+    final result = _ICU4XLineSegmenter_create_lstm_with_options_v1(
+        provider._underlying, options._underlying);
     return result.isOk
         ? ICU4XLineSegmenter._(result.union.ok)
         : throw ICU4XError._(result.union.err);
   }
-  static final _createLstmWithOptionsV1Ffi = _capi<
+  // ignore: non_constant_identifier_names
+  static final _ICU4XLineSegmenter_create_lstm_with_options_v1 = _capi<
               ffi.NativeFunction<
                   _ResultOpaqueUint32 Function(
                       ffi.Pointer<ffi.Opaque>, _ICU4XLineBreakOptionsV1Ffi)>>(
@@ -7461,13 +7933,14 @@ class ICU4XLineSegmenter implements ffi.Finalizable {
   /// See the [Rust documentation for `new_dictionary_with_options`](https://docs.rs/icu/latest/icu/segmenter/struct.LineSegmenter.html#method.new_dictionary_with_options) for more information.
   factory ICU4XLineSegmenter.dictionaryWithOptionsV1(
       ICU4XDataProvider provider, ICU4XLineBreakOptionsV1 options) {
-    final result = _createDictionaryWithOptionsV1Ffi(
+    final result = _ICU4XLineSegmenter_create_dictionary_with_options_v1(
         provider._underlying, options._underlying);
     return result.isOk
         ? ICU4XLineSegmenter._(result.union.ok)
         : throw ICU4XError._(result.union.err);
   }
-  static final _createDictionaryWithOptionsV1Ffi = _capi<
+  // ignore: non_constant_identifier_names
+  static final _ICU4XLineSegmenter_create_dictionary_with_options_v1 = _capi<
               ffi.NativeFunction<
                   _ResultOpaqueUint32 Function(
                       ffi.Pointer<ffi.Opaque>, _ICU4XLineBreakOptionsV1Ffi)>>(
@@ -7483,13 +7956,14 @@ class ICU4XLineSegmenter implements ffi.Finalizable {
     final alloc = ffi2.Arena();
     final inputSlice = _SliceFfi2Utf8._fromDart(input, alloc);
 
-    final result =
-        _segmentUtf8Ffi(_underlying, inputSlice._bytes, inputSlice._length);
+    final result = _ICU4XLineSegmenter_segment_utf8(
+        _underlying, inputSlice._bytes, inputSlice._length);
     alloc.releaseAll();
     return ICU4XLineBreakIteratorUtf8._(result);
   }
 
-  static final _segmentUtf8Ffi = _capi<
+  // ignore: non_constant_identifier_names
+  static final _ICU4XLineSegmenter_segment_utf8 = _capi<
           ffi.NativeFunction<
               ffi.Pointer<ffi.Opaque> Function(
                   ffi.Pointer<ffi.Opaque>,
@@ -7506,13 +7980,14 @@ class ICU4XLineSegmenter implements ffi.Finalizable {
     final alloc = ffi2.Arena();
     final inputSlice = _SliceFfiUint16._fromDart(input, alloc);
 
-    final result =
-        _segmentUtf16Ffi(_underlying, inputSlice._bytes, inputSlice._length);
+    final result = _ICU4XLineSegmenter_segment_utf16(
+        _underlying, inputSlice._bytes, inputSlice._length);
     alloc.releaseAll();
     return ICU4XLineBreakIteratorUtf16._(result);
   }
 
-  static final _segmentUtf16Ffi = _capi<
+  // ignore: non_constant_identifier_names
+  static final _ICU4XLineSegmenter_segment_utf16 = _capi<
           ffi.NativeFunction<
               ffi.Pointer<ffi.Opaque> Function(
                   ffi.Pointer<ffi.Opaque>,
@@ -7529,13 +8004,14 @@ class ICU4XLineSegmenter implements ffi.Finalizable {
     final alloc = ffi2.Arena();
     final inputSlice = _SliceFfiUint8._fromDart(input, alloc);
 
-    final result =
-        _segmentLatin1Ffi(_underlying, inputSlice._bytes, inputSlice._length);
+    final result = _ICU4XLineSegmenter_segment_latin1(
+        _underlying, inputSlice._bytes, inputSlice._length);
     alloc.releaseAll();
     return ICU4XLineBreakIteratorLatin1._(result);
   }
 
-  static final _segmentLatin1Ffi = _capi<
+  // ignore: non_constant_identifier_names
+  static final _ICU4XLineSegmenter_segment_latin1 = _capi<
           ffi.NativeFunction<
               ffi.Pointer<ffi.Opaque> Function(
                   ffi.Pointer<ffi.Opaque>,
@@ -7558,10 +8034,11 @@ class ICU4XList implements ffi.Finalizable {
 
   /// Create a new list of strings
   factory ICU4XList() {
-    final result = _createFfi();
+    final result = _ICU4XList_create();
     return ICU4XList._(result);
   }
-  static final _createFfi =
+  // ignore: non_constant_identifier_names
+  static final _ICU4XList_create =
       _capi<ffi.NativeFunction<ffi.Pointer<ffi.Opaque> Function()>>(
               'ICU4XList_create')
           .asFunction<ffi.Pointer<ffi.Opaque> Function()>(isLeaf: true);
@@ -7569,10 +8046,11 @@ class ICU4XList implements ffi.Finalizable {
   /// Create a new list of strings with preallocated space to hold
   /// at least `capacity` elements
   factory ICU4XList.withCapacity(int capacity) {
-    final result = _createWithCapacityFfi(capacity);
+    final result = _ICU4XList_create_with_capacity(capacity);
     return ICU4XList._(result);
   }
-  static final _createWithCapacityFfi =
+  // ignore: non_constant_identifier_names
+  static final _ICU4XList_create_with_capacity =
       _capi<ffi.NativeFunction<ffi.Pointer<ffi.Opaque> Function(ffi.Size)>>(
               'ICU4XList_create_with_capacity')
           .asFunction<ffi.Pointer<ffi.Opaque> Function(int)>(isLeaf: true);
@@ -7585,11 +8063,12 @@ class ICU4XList implements ffi.Finalizable {
     final alloc = ffi2.Arena();
     final valSlice = _SliceFfi2Utf8._fromDart(val, alloc);
 
-    _pushFfi(_underlying, valSlice._bytes, valSlice._length);
+    _ICU4XList_push(_underlying, valSlice._bytes, valSlice._length);
     alloc.releaseAll();
   }
 
-  static final _pushFfi = _capi<
+  // ignore: non_constant_identifier_names
+  static final _ICU4XList_push = _capi<
           ffi.NativeFunction<
               ffi.Void Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi2.Utf8>,
                   ffi.Size)>>('ICU4XList_push')
@@ -7599,11 +8078,12 @@ class ICU4XList implements ffi.Finalizable {
 
   /// The number of elements in this list
   int get len {
-    final result = _lenFfi(_underlying);
+    final result = _ICU4XList_len(_underlying);
     return result;
   }
 
-  static final _lenFfi =
+  // ignore: non_constant_identifier_names
+  static final _ICU4XList_len =
       _capi<ffi.NativeFunction<ffi.Size Function(ffi.Pointer<ffi.Opaque>)>>(
               'ICU4XList_len')
           .asFunction<int Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
@@ -7625,13 +8105,14 @@ class ICU4XListFormatter implements ffi.Finalizable {
   /// See the [Rust documentation for `try_new_and_with_length`](https://docs.rs/icu/latest/icu/list/struct.ListFormatter.html#method.try_new_and_with_length) for more information.
   factory ICU4XListFormatter.andWithLength(
       ICU4XDataProvider provider, ICU4XLocale locale, ICU4XListLength length) {
-    final result = _createAndWithLengthFfi(
+    final result = _ICU4XListFormatter_create_and_with_length(
         provider._underlying, locale._underlying, length._id);
     return result.isOk
         ? ICU4XListFormatter._(result.union.ok)
         : throw ICU4XError._(result.union.err);
   }
-  static final _createAndWithLengthFfi = _capi<
+  // ignore: non_constant_identifier_names
+  static final _ICU4XListFormatter_create_and_with_length = _capi<
           ffi.NativeFunction<
               _ResultOpaqueUint32 Function(
                   ffi.Pointer<ffi.Opaque>,
@@ -7646,13 +8127,14 @@ class ICU4XListFormatter implements ffi.Finalizable {
   /// See the [Rust documentation for `try_new_or_with_length`](https://docs.rs/icu/latest/icu/list/struct.ListFormatter.html#method.try_new_or_with_length) for more information.
   factory ICU4XListFormatter.orWithLength(
       ICU4XDataProvider provider, ICU4XLocale locale, ICU4XListLength length) {
-    final result = _createOrWithLengthFfi(
+    final result = _ICU4XListFormatter_create_or_with_length(
         provider._underlying, locale._underlying, length._id);
     return result.isOk
         ? ICU4XListFormatter._(result.union.ok)
         : throw ICU4XError._(result.union.err);
   }
-  static final _createOrWithLengthFfi = _capi<
+  // ignore: non_constant_identifier_names
+  static final _ICU4XListFormatter_create_or_with_length = _capi<
           ffi.NativeFunction<
               _ResultOpaqueUint32 Function(
                   ffi.Pointer<ffi.Opaque>,
@@ -7667,13 +8149,14 @@ class ICU4XListFormatter implements ffi.Finalizable {
   /// See the [Rust documentation for `try_new_unit_with_length`](https://docs.rs/icu/latest/icu/list/struct.ListFormatter.html#method.try_new_unit_with_length) for more information.
   factory ICU4XListFormatter.unitWithLength(
       ICU4XDataProvider provider, ICU4XLocale locale, ICU4XListLength length) {
-    final result = _createUnitWithLengthFfi(
+    final result = _ICU4XListFormatter_create_unit_with_length(
         provider._underlying, locale._underlying, length._id);
     return result.isOk
         ? ICU4XListFormatter._(result.union.ok)
         : throw ICU4XError._(result.union.err);
   }
-  static final _createUnitWithLengthFfi = _capi<
+  // ignore: non_constant_identifier_names
+  static final _ICU4XListFormatter_create_unit_with_length = _capi<
           ffi.NativeFunction<
               _ResultOpaqueUint32 Function(
                   ffi.Pointer<ffi.Opaque>,
@@ -7686,14 +8169,15 @@ class ICU4XListFormatter implements ffi.Finalizable {
   /// See the [Rust documentation for `format`](https://docs.rs/icu/latest/icu/list/struct.ListFormatter.html#method.format) for more information.
   String format(ICU4XList list) {
     final writeable = _Writeable();
-    final result =
-        _formatFfi(_underlying, list._underlying, writeable._underlying);
+    final result = _ICU4XListFormatter_format(
+        _underlying, list._underlying, writeable._underlying);
     return result.isOk
         ? writeable.finalize()
         : throw ICU4XError._(result.union.err);
   }
 
-  static final _formatFfi = _capi<
+  // ignore: non_constant_identifier_names
+  static final _ICU4XListFormatter_format = _capi<
           ffi.NativeFunction<
               _ResultVoidUint32 Function(
                   ffi.Pointer<ffi.Opaque>,
@@ -7742,13 +8226,15 @@ class ICU4XLocale implements ffi.Finalizable {
     final alloc = ffi2.Arena();
     final nameSlice = _SliceFfi2Utf8._fromDart(name, alloc);
 
-    final result = _createFromStringFfi(nameSlice._bytes, nameSlice._length);
+    final result =
+        _ICU4XLocale_create_from_string(nameSlice._bytes, nameSlice._length);
     alloc.releaseAll();
     return result.isOk
         ? ICU4XLocale._(result.union.ok)
         : throw ICU4XError._(result.union.err);
   }
-  static final _createFromStringFfi = _capi<
+  // ignore: non_constant_identifier_names
+  static final _ICU4XLocale_create_from_string = _capi<
           ffi.NativeFunction<
               _ResultOpaqueUint32 Function(ffi.Pointer<ffi2.Utf8>,
                   ffi.Size)>>('ICU4XLocale_create_from_string')
@@ -7759,10 +8245,11 @@ class ICU4XLocale implements ffi.Finalizable {
   ///
   /// See the [Rust documentation for `UND`](https://docs.rs/icu/latest/icu/locid/struct.Locale.html#associatedconstant.UND) for more information.
   factory ICU4XLocale.und() {
-    final result = _createUndFfi();
+    final result = _ICU4XLocale_create_und();
     return ICU4XLocale._(result);
   }
-  static final _createUndFfi =
+  // ignore: non_constant_identifier_names
+  static final _ICU4XLocale_create_und =
       _capi<ffi.NativeFunction<ffi.Pointer<ffi.Opaque> Function()>>(
               'ICU4XLocale_create_und')
           .asFunction<ffi.Pointer<ffi.Opaque> Function()>(isLeaf: true);
@@ -7771,11 +8258,12 @@ class ICU4XLocale implements ffi.Finalizable {
   ///
   /// See the [Rust documentation for `Locale`](https://docs.rs/icu/latest/icu/locid/struct.Locale.html) for more information.
   ICU4XLocale clone() {
-    final result = _cloneFfi(_underlying);
+    final result = _ICU4XLocale_clone(_underlying);
     return ICU4XLocale._(result);
   }
 
-  static final _cloneFfi = _capi<
+  // ignore: non_constant_identifier_names
+  static final _ICU4XLocale_clone = _capi<
           ffi.NativeFunction<
               ffi.Pointer<ffi.Opaque> Function(
                   ffi.Pointer<ffi.Opaque>)>>('ICU4XLocale_clone')
@@ -7788,13 +8276,14 @@ class ICU4XLocale implements ffi.Finalizable {
   /// See the [Rust documentation for `id`](https://docs.rs/icu/latest/icu/locid/struct.Locale.html#structfield.id) for more information.
   String get basename {
     final writeable = _Writeable();
-    final result = _basenameFfi(_underlying, writeable._underlying);
+    final result = _ICU4XLocale_basename(_underlying, writeable._underlying);
     return result.isOk
         ? writeable.finalize()
         : throw ICU4XError._(result.union.err);
   }
 
-  static final _basenameFfi = _capi<
+  // ignore: non_constant_identifier_names
+  static final _ICU4XLocale_basename = _capi<
           ffi.NativeFunction<
               _ResultVoidUint32 Function(ffi.Pointer<ffi.Opaque>,
                   ffi.Pointer<ffi.Opaque>)>>('ICU4XLocale_basename')
@@ -7810,15 +8299,16 @@ class ICU4XLocale implements ffi.Finalizable {
     final bytesSlice = _SliceFfi2Utf8._fromDart(bytes, alloc);
 
     final writeable = _Writeable();
-    final result = _getUnicodeExtensionFfi(_underlying, bytesSlice._bytes,
-        bytesSlice._length, writeable._underlying);
+    final result = _ICU4XLocale_get_unicode_extension(_underlying,
+        bytesSlice._bytes, bytesSlice._length, writeable._underlying);
     alloc.releaseAll();
     return result.isOk
         ? writeable.finalize()
         : throw ICU4XError._(result.union.err);
   }
 
-  static final _getUnicodeExtensionFfi = _capi<
+  // ignore: non_constant_identifier_names
+  static final _ICU4XLocale_get_unicode_extension = _capi<
               ffi.NativeFunction<
                   _ResultVoidUint32 Function(
                       ffi.Pointer<ffi.Opaque>,
@@ -7838,13 +8328,14 @@ class ICU4XLocale implements ffi.Finalizable {
   /// See the [Rust documentation for `id`](https://docs.rs/icu/latest/icu/locid/struct.Locale.html#structfield.id) for more information.
   String get language {
     final writeable = _Writeable();
-    final result = _languageFfi(_underlying, writeable._underlying);
+    final result = _ICU4XLocale_language(_underlying, writeable._underlying);
     return result.isOk
         ? writeable.finalize()
         : throw ICU4XError._(result.union.err);
   }
 
-  static final _languageFfi = _capi<
+  // ignore: non_constant_identifier_names
+  static final _ICU4XLocale_language = _capi<
           ffi.NativeFunction<
               _ResultVoidUint32 Function(ffi.Pointer<ffi.Opaque>,
                   ffi.Pointer<ffi.Opaque>)>>('ICU4XLocale_language')
@@ -7859,15 +8350,16 @@ class ICU4XLocale implements ffi.Finalizable {
     final alloc = ffi2.Arena();
     final bytesSlice = _SliceFfi2Utf8._fromDart(bytes, alloc);
 
-    final result =
-        _setLanguageFfi(_underlying, bytesSlice._bytes, bytesSlice._length);
+    final result = _ICU4XLocale_set_language(
+        _underlying, bytesSlice._bytes, bytesSlice._length);
     alloc.releaseAll();
     if (!result.isOk) {
       throw ICU4XError._(result.union.err);
     }
   }
 
-  static final _setLanguageFfi = _capi<
+  // ignore: non_constant_identifier_names
+  static final _ICU4XLocale_set_language = _capi<
           ffi.NativeFunction<
               _ResultVoidUint32 Function(
                   ffi.Pointer<ffi.Opaque>,
@@ -7882,13 +8374,14 @@ class ICU4XLocale implements ffi.Finalizable {
   /// See the [Rust documentation for `id`](https://docs.rs/icu/latest/icu/locid/struct.Locale.html#structfield.id) for more information.
   String get region {
     final writeable = _Writeable();
-    final result = _regionFfi(_underlying, writeable._underlying);
+    final result = _ICU4XLocale_region(_underlying, writeable._underlying);
     return result.isOk
         ? writeable.finalize()
         : throw ICU4XError._(result.union.err);
   }
 
-  static final _regionFfi = _capi<
+  // ignore: non_constant_identifier_names
+  static final _ICU4XLocale_region = _capi<
           ffi.NativeFunction<
               _ResultVoidUint32 Function(ffi.Pointer<ffi.Opaque>,
                   ffi.Pointer<ffi.Opaque>)>>('ICU4XLocale_region')
@@ -7903,15 +8396,16 @@ class ICU4XLocale implements ffi.Finalizable {
     final alloc = ffi2.Arena();
     final bytesSlice = _SliceFfi2Utf8._fromDart(bytes, alloc);
 
-    final result =
-        _setRegionFfi(_underlying, bytesSlice._bytes, bytesSlice._length);
+    final result = _ICU4XLocale_set_region(
+        _underlying, bytesSlice._bytes, bytesSlice._length);
     alloc.releaseAll();
     if (!result.isOk) {
       throw ICU4XError._(result.union.err);
     }
   }
 
-  static final _setRegionFfi = _capi<
+  // ignore: non_constant_identifier_names
+  static final _ICU4XLocale_set_region = _capi<
           ffi.NativeFunction<
               _ResultVoidUint32 Function(ffi.Pointer<ffi.Opaque>,
                   ffi.Pointer<ffi2.Utf8>, ffi.Size)>>('ICU4XLocale_set_region')
@@ -7924,13 +8418,14 @@ class ICU4XLocale implements ffi.Finalizable {
   /// See the [Rust documentation for `id`](https://docs.rs/icu/latest/icu/locid/struct.Locale.html#structfield.id) for more information.
   String get script {
     final writeable = _Writeable();
-    final result = _scriptFfi(_underlying, writeable._underlying);
+    final result = _ICU4XLocale_script(_underlying, writeable._underlying);
     return result.isOk
         ? writeable.finalize()
         : throw ICU4XError._(result.union.err);
   }
 
-  static final _scriptFfi = _capi<
+  // ignore: non_constant_identifier_names
+  static final _ICU4XLocale_script = _capi<
           ffi.NativeFunction<
               _ResultVoidUint32 Function(ffi.Pointer<ffi.Opaque>,
                   ffi.Pointer<ffi.Opaque>)>>('ICU4XLocale_script')
@@ -7945,15 +8440,16 @@ class ICU4XLocale implements ffi.Finalizable {
     final alloc = ffi2.Arena();
     final bytesSlice = _SliceFfi2Utf8._fromDart(bytes, alloc);
 
-    final result =
-        _setScriptFfi(_underlying, bytesSlice._bytes, bytesSlice._length);
+    final result = _ICU4XLocale_set_script(
+        _underlying, bytesSlice._bytes, bytesSlice._length);
     alloc.releaseAll();
     if (!result.isOk) {
       throw ICU4XError._(result.union.err);
     }
   }
 
-  static final _setScriptFfi = _capi<
+  // ignore: non_constant_identifier_names
+  static final _ICU4XLocale_set_script = _capi<
           ffi.NativeFunction<
               _ResultVoidUint32 Function(ffi.Pointer<ffi.Opaque>,
                   ffi.Pointer<ffi2.Utf8>, ffi.Size)>>('ICU4XLocale_set_script')
@@ -7971,7 +8467,7 @@ class ICU4XLocale implements ffi.Finalizable {
     final bytesSlice = _SliceFfi2Utf8._fromDart(bytes, alloc);
 
     final writeable = _Writeable();
-    final result = _canonicalizeFfi(
+    final result = _ICU4XLocale_canonicalize(
         bytesSlice._bytes, bytesSlice._length, writeable._underlying);
     alloc.releaseAll();
     return result.isOk
@@ -7979,7 +8475,8 @@ class ICU4XLocale implements ffi.Finalizable {
         : throw ICU4XError._(result.union.err);
   }
 
-  static final _canonicalizeFfi = _capi<
+  // ignore: non_constant_identifier_names
+  static final _ICU4XLocale_canonicalize = _capi<
           ffi.NativeFunction<
               _ResultVoidUint32 Function(ffi.Pointer<ffi2.Utf8>, ffi.Size,
                   ffi.Pointer<ffi.Opaque>)>>('ICU4XLocale_canonicalize')
@@ -7993,13 +8490,14 @@ class ICU4XLocale implements ffi.Finalizable {
   @override
   String toString() {
     final writeable = _Writeable();
-    final result = _toStringFfi(_underlying, writeable._underlying);
+    final result = _ICU4XLocale_to_string(_underlying, writeable._underlying);
     return result.isOk
         ? writeable.finalize()
         : throw ICU4XError._(result.union.err);
   }
 
-  static final _toStringFfi = _capi<
+  // ignore: non_constant_identifier_names
+  static final _ICU4XLocale_to_string = _capi<
           ffi.NativeFunction<
               _ResultVoidUint32 Function(ffi.Pointer<ffi.Opaque>,
                   ffi.Pointer<ffi.Opaque>)>>('ICU4XLocale_to_string')
@@ -8012,13 +8510,14 @@ class ICU4XLocale implements ffi.Finalizable {
     final alloc = ffi2.Arena();
     final otherSlice = _SliceFfi2Utf8._fromDart(other, alloc);
 
-    final result =
-        _normalizingEqFfi(_underlying, otherSlice._bytes, otherSlice._length);
+    final result = _ICU4XLocale_normalizing_eq(
+        _underlying, otherSlice._bytes, otherSlice._length);
     alloc.releaseAll();
     return result;
   }
 
-  static final _normalizingEqFfi = _capi<
+  // ignore: non_constant_identifier_names
+  static final _ICU4XLocale_normalizing_eq = _capi<
           ffi.NativeFunction<
               ffi.Bool Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi2.Utf8>,
                   ffi.Size)>>('ICU4XLocale_normalizing_eq')
@@ -8031,13 +8530,14 @@ class ICU4XLocale implements ffi.Finalizable {
     final alloc = ffi2.Arena();
     final otherSlice = _SliceFfi2Utf8._fromDart(other, alloc);
 
-    final result =
-        _strictCmpFfi(_underlying, otherSlice._bytes, otherSlice._length);
+    final result = _ICU4XLocale_strict_cmp(
+        _underlying, otherSlice._bytes, otherSlice._length);
     alloc.releaseAll();
     return ICU4XOrdering._(result);
   }
 
-  static final _strictCmpFfi = _capi<
+  // ignore: non_constant_identifier_names
+  static final _ICU4XLocale_strict_cmp = _capi<
           ffi.NativeFunction<
               ffi.Uint32 Function(ffi.Pointer<ffi.Opaque>,
                   ffi.Pointer<ffi2.Utf8>, ffi.Size)>>('ICU4XLocale_strict_cmp')
@@ -8049,10 +8549,11 @@ class ICU4XLocale implements ffi.Finalizable {
   ///
   /// Use `create_from_string("en").
   factory ICU4XLocale.en() {
-    final result = _createEnFfi();
+    final result = _ICU4XLocale_create_en();
     return ICU4XLocale._(result);
   }
-  static final _createEnFfi =
+  // ignore: non_constant_identifier_names
+  static final _ICU4XLocale_create_en =
       _capi<ffi.NativeFunction<ffi.Pointer<ffi.Opaque> Function()>>(
               'ICU4XLocale_create_en')
           .asFunction<ffi.Pointer<ffi.Opaque> Function()>(isLeaf: true);
@@ -8061,10 +8562,11 @@ class ICU4XLocale implements ffi.Finalizable {
   ///
   /// Use `create_from_string("bn").
   factory ICU4XLocale.bn() {
-    final result = _createBnFfi();
+    final result = _ICU4XLocale_create_bn();
     return ICU4XLocale._(result);
   }
-  static final _createBnFfi =
+  // ignore: non_constant_identifier_names
+  static final _ICU4XLocale_create_bn =
       _capi<ffi.NativeFunction<ffi.Pointer<ffi.Opaque> Function()>>(
               'ICU4XLocale_create_bn')
           .asFunction<ffi.Pointer<ffi.Opaque> Function()>(isLeaf: true);
@@ -8087,12 +8589,13 @@ class ICU4XLocaleCanonicalizer implements ffi.Finalizable {
   ///
   /// See the [Rust documentation for `new`](https://docs.rs/icu/latest/icu/locid_transform/struct.LocaleCanonicalizer.html#method.new) for more information.
   factory ICU4XLocaleCanonicalizer(ICU4XDataProvider provider) {
-    final result = _createFfi(provider._underlying);
+    final result = _ICU4XLocaleCanonicalizer_create(provider._underlying);
     return result.isOk
         ? ICU4XLocaleCanonicalizer._(result.union.ok)
         : throw ICU4XError._(result.union.err);
   }
-  static final _createFfi = _capi<
+  // ignore: non_constant_identifier_names
+  static final _ICU4XLocaleCanonicalizer_create = _capi<
           ffi.NativeFunction<
               _ResultOpaqueUint32 Function(
                   ffi.Pointer<ffi.Opaque>)>>('ICU4XLocaleCanonicalizer_create')
@@ -8103,12 +8606,14 @@ class ICU4XLocaleCanonicalizer implements ffi.Finalizable {
   ///
   /// See the [Rust documentation for `new_with_expander`](https://docs.rs/icu/latest/icu/locid_transform/struct.LocaleCanonicalizer.html#method.new_with_expander) for more information.
   factory ICU4XLocaleCanonicalizer.extended(ICU4XDataProvider provider) {
-    final result = _createExtendedFfi(provider._underlying);
+    final result =
+        _ICU4XLocaleCanonicalizer_create_extended(provider._underlying);
     return result.isOk
         ? ICU4XLocaleCanonicalizer._(result.union.ok)
         : throw ICU4XError._(result.union.err);
   }
-  static final _createExtendedFfi = _capi<
+  // ignore: non_constant_identifier_names
+  static final _ICU4XLocaleCanonicalizer_create_extended = _capi<
               ffi.NativeFunction<
                   _ResultOpaqueUint32 Function(ffi.Pointer<ffi.Opaque>)>>(
           'ICU4XLocaleCanonicalizer_create_extended')
@@ -8119,11 +8624,13 @@ class ICU4XLocaleCanonicalizer implements ffi.Finalizable {
   ///
   /// See the [Rust documentation for `canonicalize`](https://docs.rs/icu/latest/icu/locid_transform/struct.LocaleCanonicalizer.html#method.canonicalize) for more information.
   ICU4XTransformResult canonicalize(ICU4XLocale locale) {
-    final result = _canonicalizeFfi(_underlying, locale._underlying);
+    final result =
+        _ICU4XLocaleCanonicalizer_canonicalize(_underlying, locale._underlying);
     return ICU4XTransformResult._(result);
   }
 
-  static final _canonicalizeFfi = _capi<
+  // ignore: non_constant_identifier_names
+  static final _ICU4XLocaleCanonicalizer_canonicalize = _capi<
               ffi.NativeFunction<
                   ffi.Uint32 Function(
                       ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>>(
@@ -8163,12 +8670,13 @@ class ICU4XLocaleDirectionality implements ffi.Finalizable {
   ///
   /// See the [Rust documentation for `new`](https://docs.rs/icu/latest/icu/locid_transform/struct.LocaleDirectionality.html#method.new) for more information.
   factory ICU4XLocaleDirectionality(ICU4XDataProvider provider) {
-    final result = _createFfi(provider._underlying);
+    final result = _ICU4XLocaleDirectionality_create(provider._underlying);
     return result.isOk
         ? ICU4XLocaleDirectionality._(result.union.ok)
         : throw ICU4XError._(result.union.err);
   }
-  static final _createFfi = _capi<
+  // ignore: non_constant_identifier_names
+  static final _ICU4XLocaleDirectionality_create = _capi<
           ffi.NativeFunction<
               _ResultOpaqueUint32 Function(
                   ffi.Pointer<ffi.Opaque>)>>('ICU4XLocaleDirectionality_create')
@@ -8180,13 +8688,14 @@ class ICU4XLocaleDirectionality implements ffi.Finalizable {
   /// See the [Rust documentation for `new_with_expander`](https://docs.rs/icu/latest/icu/locid_transform/struct.LocaleDirectionality.html#method.new_with_expander) for more information.
   factory ICU4XLocaleDirectionality.withExpander(
       ICU4XDataProvider provider, ICU4XLocaleExpander expander) {
-    final result =
-        _createWithExpanderFfi(provider._underlying, expander._underlying);
+    final result = _ICU4XLocaleDirectionality_create_with_expander(
+        provider._underlying, expander._underlying);
     return result.isOk
         ? ICU4XLocaleDirectionality._(result.union.ok)
         : throw ICU4XError._(result.union.err);
   }
-  static final _createWithExpanderFfi = _capi<
+  // ignore: non_constant_identifier_names
+  static final _ICU4XLocaleDirectionality_create_with_expander = _capi<
               ffi.NativeFunction<
                   _ResultOpaqueUint32 Function(
                       ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>>(
@@ -8197,11 +8706,13 @@ class ICU4XLocaleDirectionality implements ffi.Finalizable {
 
   /// See the [Rust documentation for `get`](https://docs.rs/icu/latest/icu/locid_transform/struct.LocaleDirectionality.html#method.get) for more information.
   ICU4XLocaleDirection get(ICU4XLocale locale) {
-    final result = _getFfi(_underlying, locale._underlying);
+    final result =
+        _ICU4XLocaleDirectionality_get(_underlying, locale._underlying);
     return ICU4XLocaleDirection._(result);
   }
 
-  static final _getFfi = _capi<
+  // ignore: non_constant_identifier_names
+  static final _ICU4XLocaleDirectionality_get = _capi<
           ffi.NativeFunction<
               ffi.Uint32 Function(ffi.Pointer<ffi.Opaque>,
                   ffi.Pointer<ffi.Opaque>)>>('ICU4XLocaleDirectionality_get')
@@ -8211,11 +8722,13 @@ class ICU4XLocaleDirectionality implements ffi.Finalizable {
 
   /// See the [Rust documentation for `is_left_to_right`](https://docs.rs/icu/latest/icu/locid_transform/struct.LocaleDirectionality.html#method.is_left_to_right) for more information.
   bool isLeftToRight(ICU4XLocale locale) {
-    final result = _isLeftToRightFfi(_underlying, locale._underlying);
+    final result = _ICU4XLocaleDirectionality_is_left_to_right(
+        _underlying, locale._underlying);
     return result;
   }
 
-  static final _isLeftToRightFfi = _capi<
+  // ignore: non_constant_identifier_names
+  static final _ICU4XLocaleDirectionality_is_left_to_right = _capi<
               ffi.NativeFunction<
                   ffi.Bool Function(
                       ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>>(
@@ -8226,11 +8739,13 @@ class ICU4XLocaleDirectionality implements ffi.Finalizable {
 
   /// See the [Rust documentation for `is_right_to_left`](https://docs.rs/icu/latest/icu/locid_transform/struct.LocaleDirectionality.html#method.is_right_to_left) for more information.
   bool isRightToLeft(ICU4XLocale locale) {
-    final result = _isRightToLeftFfi(_underlying, locale._underlying);
+    final result = _ICU4XLocaleDirectionality_is_right_to_left(
+        _underlying, locale._underlying);
     return result;
   }
 
-  static final _isRightToLeftFfi = _capi<
+  // ignore: non_constant_identifier_names
+  static final _ICU4XLocaleDirectionality_is_right_to_left = _capi<
               ffi.NativeFunction<
                   ffi.Bool Function(
                       ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>>(
@@ -8256,13 +8771,14 @@ class ICU4XLocaleDisplayNamesFormatter implements ffi.Finalizable {
   /// See the [Rust documentation for `try_new`](https://docs.rs/icu/latest/icu/displaynames/struct.LocaleDisplayNamesFormatter.html#method.try_new) for more information.
   factory ICU4XLocaleDisplayNamesFormatter.tryNew(ICU4XDataProvider provider,
       ICU4XLocale locale, ICU4XDisplayNamesOptionsV1 options) {
-    final result = _tryNewFfi(
+    final result = _ICU4XLocaleDisplayNamesFormatter_try_new(
         provider._underlying, locale._underlying, options._underlying);
     return result.isOk
         ? ICU4XLocaleDisplayNamesFormatter._(result.union.ok)
         : throw ICU4XError._(result.union.err);
   }
-  static final _tryNewFfi = _capi<
+  // ignore: non_constant_identifier_names
+  static final _ICU4XLocaleDisplayNamesFormatter_try_new = _capi<
               ffi.NativeFunction<
                   _ResultOpaqueUint32 Function(
                       ffi.Pointer<ffi.Opaque>,
@@ -8280,14 +8796,15 @@ class ICU4XLocaleDisplayNamesFormatter implements ffi.Finalizable {
   /// See the [Rust documentation for `of`](https://docs.rs/icu/latest/icu/displaynames/struct.LocaleDisplayNamesFormatter.html#method.of) for more information.
   String of(ICU4XLocale locale) {
     final writeable = _Writeable();
-    final result =
-        _ofFfi(_underlying, locale._underlying, writeable._underlying);
+    final result = _ICU4XLocaleDisplayNamesFormatter_of(
+        _underlying, locale._underlying, writeable._underlying);
     return result.isOk
         ? writeable.finalize()
         : throw ICU4XError._(result.union.err);
   }
 
-  static final _ofFfi = _capi<
+  // ignore: non_constant_identifier_names
+  static final _ICU4XLocaleDisplayNamesFormatter_of = _capi<
               ffi.NativeFunction<
                   _ResultVoidUint32 Function(ffi.Pointer<ffi.Opaque>,
                       ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>>(
@@ -8314,12 +8831,13 @@ class ICU4XLocaleExpander implements ffi.Finalizable {
   ///
   /// See the [Rust documentation for `new`](https://docs.rs/icu/latest/icu/locid_transform/struct.LocaleExpander.html#method.new) for more information.
   factory ICU4XLocaleExpander(ICU4XDataProvider provider) {
-    final result = _createFfi(provider._underlying);
+    final result = _ICU4XLocaleExpander_create(provider._underlying);
     return result.isOk
         ? ICU4XLocaleExpander._(result.union.ok)
         : throw ICU4XError._(result.union.err);
   }
-  static final _createFfi = _capi<
+  // ignore: non_constant_identifier_names
+  static final _ICU4XLocaleExpander_create = _capi<
           ffi.NativeFunction<
               _ResultOpaqueUint32 Function(
                   ffi.Pointer<ffi.Opaque>)>>('ICU4XLocaleExpander_create')
@@ -8330,12 +8848,13 @@ class ICU4XLocaleExpander implements ffi.Finalizable {
   ///
   /// See the [Rust documentation for `new_extended`](https://docs.rs/icu/latest/icu/locid_transform/struct.LocaleExpander.html#method.new_extended) for more information.
   factory ICU4XLocaleExpander.extended(ICU4XDataProvider provider) {
-    final result = _createExtendedFfi(provider._underlying);
+    final result = _ICU4XLocaleExpander_create_extended(provider._underlying);
     return result.isOk
         ? ICU4XLocaleExpander._(result.union.ok)
         : throw ICU4XError._(result.union.err);
   }
-  static final _createExtendedFfi = _capi<
+  // ignore: non_constant_identifier_names
+  static final _ICU4XLocaleExpander_create_extended = _capi<
               ffi.NativeFunction<
                   _ResultOpaqueUint32 Function(ffi.Pointer<ffi.Opaque>)>>(
           'ICU4XLocaleExpander_create_extended')
@@ -8346,11 +8865,13 @@ class ICU4XLocaleExpander implements ffi.Finalizable {
   ///
   /// See the [Rust documentation for `maximize`](https://docs.rs/icu/latest/icu/locid_transform/struct.LocaleExpander.html#method.maximize) for more information.
   ICU4XTransformResult maximize(ICU4XLocale locale) {
-    final result = _maximizeFfi(_underlying, locale._underlying);
+    final result =
+        _ICU4XLocaleExpander_maximize(_underlying, locale._underlying);
     return ICU4XTransformResult._(result);
   }
 
-  static final _maximizeFfi = _capi<
+  // ignore: non_constant_identifier_names
+  static final _ICU4XLocaleExpander_maximize = _capi<
           ffi.NativeFunction<
               ffi.Uint32 Function(ffi.Pointer<ffi.Opaque>,
                   ffi.Pointer<ffi.Opaque>)>>('ICU4XLocaleExpander_maximize')
@@ -8362,11 +8883,13 @@ class ICU4XLocaleExpander implements ffi.Finalizable {
   ///
   /// See the [Rust documentation for `minimize`](https://docs.rs/icu/latest/icu/locid_transform/struct.LocaleExpander.html#method.minimize) for more information.
   ICU4XTransformResult minimize(ICU4XLocale locale) {
-    final result = _minimizeFfi(_underlying, locale._underlying);
+    final result =
+        _ICU4XLocaleExpander_minimize(_underlying, locale._underlying);
     return ICU4XTransformResult._(result);
   }
 
-  static final _minimizeFfi = _capi<
+  // ignore: non_constant_identifier_names
+  static final _ICU4XLocaleExpander_minimize = _capi<
           ffi.NativeFunction<
               ffi.Uint32 Function(ffi.Pointer<ffi.Opaque>,
                   ffi.Pointer<ffi.Opaque>)>>('ICU4XLocaleExpander_minimize')
@@ -8451,11 +8974,12 @@ class ICU4XLocaleFallbackIterator implements ffi.Finalizable {
   ///
   /// See the [Rust documentation for `get`](https://docs.rs/icu/latest/icu/locid_transform/fallback/struct.LocaleFallbackIterator.html#method.get) for more information.
   ICU4XLocale get get {
-    final result = _getFfi(_underlying);
+    final result = _ICU4XLocaleFallbackIterator_get(_underlying);
     return ICU4XLocale._(result);
   }
 
-  static final _getFfi = _capi<
+  // ignore: non_constant_identifier_names
+  static final _ICU4XLocaleFallbackIterator_get = _capi<
           ffi.NativeFunction<
               ffi.Pointer<ffi.Opaque> Function(
                   ffi.Pointer<ffi.Opaque>)>>('ICU4XLocaleFallbackIterator_get')
@@ -8466,10 +8990,11 @@ class ICU4XLocaleFallbackIterator implements ffi.Finalizable {
   ///
   /// See the [Rust documentation for `step`](https://docs.rs/icu/latest/icu/locid_transform/fallback/struct.LocaleFallbackIterator.html#method.step) for more information.
   void step() {
-    _stepFfi(_underlying);
+    _ICU4XLocaleFallbackIterator_step(_underlying);
   }
 
-  static final _stepFfi =
+  // ignore: non_constant_identifier_names
+  static final _ICU4XLocaleFallbackIterator_step =
       _capi<ffi.NativeFunction<ffi.Void Function(ffi.Pointer<ffi.Opaque>)>>(
               'ICU4XLocaleFallbackIterator_step')
           .asFunction<void Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
@@ -8525,12 +9050,13 @@ class ICU4XLocaleFallbacker implements ffi.Finalizable {
   ///
   /// See the [Rust documentation for `new`](https://docs.rs/icu/latest/icu/locid_transform/fallback/struct.LocaleFallbacker.html#method.new) for more information.
   factory ICU4XLocaleFallbacker(ICU4XDataProvider provider) {
-    final result = _createFfi(provider._underlying);
+    final result = _ICU4XLocaleFallbacker_create(provider._underlying);
     return result.isOk
         ? ICU4XLocaleFallbacker._(result.union.ok)
         : throw ICU4XError._(result.union.err);
   }
-  static final _createFfi = _capi<
+  // ignore: non_constant_identifier_names
+  static final _ICU4XLocaleFallbacker_create = _capi<
           ffi.NativeFunction<
               _ResultOpaqueUint32 Function(
                   ffi.Pointer<ffi.Opaque>)>>('ICU4XLocaleFallbacker_create')
@@ -8541,10 +9067,11 @@ class ICU4XLocaleFallbacker implements ffi.Finalizable {
   ///
   /// See the [Rust documentation for `new_without_data`](https://docs.rs/icu/latest/icu/locid_transform/fallback/struct.LocaleFallbacker.html#method.new_without_data) for more information.
   factory ICU4XLocaleFallbacker.withoutData() {
-    final result = _createWithoutDataFfi();
+    final result = _ICU4XLocaleFallbacker_create_without_data();
     return ICU4XLocaleFallbacker._(result);
   }
-  static final _createWithoutDataFfi =
+  // ignore: non_constant_identifier_names
+  static final _ICU4XLocaleFallbacker_create_without_data =
       _capi<ffi.NativeFunction<ffi.Pointer<ffi.Opaque> Function()>>(
               'ICU4XLocaleFallbacker_create_without_data')
           .asFunction<ffi.Pointer<ffi.Opaque> Function()>(isLeaf: true);
@@ -8553,13 +9080,15 @@ class ICU4XLocaleFallbacker implements ffi.Finalizable {
   ///
   /// See the [Rust documentation for `for_config`](https://docs.rs/icu/latest/icu/locid_transform/fallback/struct.LocaleFallbacker.html#method.for_config) for more information.
   ICU4XLocaleFallbackerWithConfig forConfig(ICU4XLocaleFallbackConfig config) {
-    final result = _forConfigFfi(_underlying, config._underlying);
+    final result =
+        _ICU4XLocaleFallbacker_for_config(_underlying, config._underlying);
     return result.isOk
         ? ICU4XLocaleFallbackerWithConfig._(result.union.ok)
         : throw ICU4XError._(result.union.err);
   }
 
-  static final _forConfigFfi = _capi<
+  // ignore: non_constant_identifier_names
+  static final _ICU4XLocaleFallbacker_for_config = _capi<
               ffi.NativeFunction<
                   _ResultOpaqueUint32 Function(
                       ffi.Pointer<ffi.Opaque>, _ICU4XLocaleFallbackConfigFfi)>>(
@@ -8588,11 +9117,13 @@ class ICU4XLocaleFallbackerWithConfig implements ffi.Finalizable {
   ///
   /// See the [Rust documentation for `fallback_for`](https://docs.rs/icu/latest/icu/locid_transform/fallback/struct.LocaleFallbacker.html#method.fallback_for) for more information.
   ICU4XLocaleFallbackIterator fallbackForLocale(ICU4XLocale locale) {
-    final result = _fallbackForLocaleFfi(_underlying, locale._underlying);
+    final result = _ICU4XLocaleFallbackerWithConfig_fallback_for_locale(
+        _underlying, locale._underlying);
     return ICU4XLocaleFallbackIterator._(result);
   }
 
-  static final _fallbackForLocaleFfi = _capi<
+  // ignore: non_constant_identifier_names
+  static final _ICU4XLocaleFallbackerWithConfig_fallback_for_locale = _capi<
               ffi.NativeFunction<
                   ffi.Pointer<ffi.Opaque> Function(
                       ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>>(
@@ -8618,22 +9149,24 @@ class ICU4XLogger implements ffi.Finalizable {
   ///
   /// Returns `false` if there was already a logger set.
   static bool initSimpleLogger() {
-    final result = _initSimpleLoggerFfi();
+    final result = _ICU4XLogger_init_simple_logger();
     return result;
   }
 
-  static final _initSimpleLoggerFfi =
+  // ignore: non_constant_identifier_names
+  static final _ICU4XLogger_init_simple_logger =
       _capi<ffi.NativeFunction<ffi.Bool Function()>>(
               'ICU4XLogger_init_simple_logger')
           .asFunction<bool Function()>(isLeaf: true);
 
   /// Deprecated: since ICU4X 1.4, this now happens automatically if the `log` feature is enabled.
   static bool initConsoleLogger() {
-    final result = _initConsoleLoggerFfi();
+    final result = _ICU4XLogger_init_console_logger();
     return result;
   }
 
-  static final _initConsoleLoggerFfi =
+  // ignore: non_constant_identifier_names
+  static final _ICU4XLogger_init_console_logger =
       _capi<ffi.NativeFunction<ffi.Bool Function()>>(
               'ICU4XLogger_init_console_logger')
           .asFunction<bool Function()>(isLeaf: true);
@@ -8658,12 +9191,13 @@ class ICU4XMetazoneCalculator implements ffi.Finalizable {
 
   /// See the [Rust documentation for `new`](https://docs.rs/icu/latest/icu/timezone/struct.MetazoneCalculator.html#method.new) for more information.
   factory ICU4XMetazoneCalculator(ICU4XDataProvider provider) {
-    final result = _createFfi(provider._underlying);
+    final result = _ICU4XMetazoneCalculator_create(provider._underlying);
     return result.isOk
         ? ICU4XMetazoneCalculator._(result.union.ok)
         : throw ICU4XError._(result.union.err);
   }
-  static final _createFfi = _capi<
+  // ignore: non_constant_identifier_names
+  static final _ICU4XMetazoneCalculator_create = _capi<
           ffi.NativeFunction<
               _ResultOpaqueUint32 Function(
                   ffi.Pointer<ffi.Opaque>)>>('ICU4XMetazoneCalculator_create')
@@ -8795,13 +9329,15 @@ enum ICU4XPluralCategory {
     final alloc = ffi2.Arena();
     final sSlice = _SliceFfi2Utf8._fromDart(s, alloc);
 
-    final result = _getForCldrStringFfi(sSlice._bytes, sSlice._length);
+    final result =
+        _ICU4XPluralCategory_get_for_cldr_string(sSlice._bytes, sSlice._length);
     alloc.releaseAll();
     return result.isOk
         ? ICU4XPluralCategory._(result.union.ok)
         : throw VoidError();
   }
-  static final _getForCldrStringFfi = _capi<
+  // ignore: non_constant_identifier_names
+  static final _ICU4XPluralCategory_get_for_cldr_string = _capi<
           ffi.NativeFunction<
               _ResultUint32Void Function(ffi.Pointer<ffi2.Utf8>,
                   ffi.Size)>>('ICU4XPluralCategory_get_for_cldr_string')
@@ -8829,13 +9365,15 @@ class ICU4XPluralOperands implements ffi.Finalizable {
     final alloc = ffi2.Arena();
     final sSlice = _SliceFfi2Utf8._fromDart(s, alloc);
 
-    final result = _createFromStringFfi(sSlice._bytes, sSlice._length);
+    final result =
+        _ICU4XPluralOperands_create_from_string(sSlice._bytes, sSlice._length);
     alloc.releaseAll();
     return result.isOk
         ? ICU4XPluralOperands._(result.union.ok)
         : throw ICU4XError._(result.union.err);
   }
-  static final _createFromStringFfi = _capi<
+  // ignore: non_constant_identifier_names
+  static final _ICU4XPluralOperands_create_from_string = _capi<
           ffi.NativeFunction<
               _ResultOpaqueUint32 Function(ffi.Pointer<ffi2.Utf8>,
                   ffi.Size)>>('ICU4XPluralOperands_create_from_string')
@@ -8861,12 +9399,14 @@ class ICU4XPluralRules implements ffi.Finalizable {
   /// See the [Rust documentation for `try_new_cardinal`](https://docs.rs/icu/latest/icu/plurals/struct.PluralRules.html#method.try_new_cardinal) for more information.
   factory ICU4XPluralRules.cardinal(
       ICU4XDataProvider provider, ICU4XLocale locale) {
-    final result = _createCardinalFfi(provider._underlying, locale._underlying);
+    final result = _ICU4XPluralRules_create_cardinal(
+        provider._underlying, locale._underlying);
     return result.isOk
         ? ICU4XPluralRules._(result.union.ok)
         : throw ICU4XError._(result.union.err);
   }
-  static final _createCardinalFfi = _capi<
+  // ignore: non_constant_identifier_names
+  static final _ICU4XPluralRules_create_cardinal = _capi<
           ffi.NativeFunction<
               _ResultOpaqueUint32 Function(ffi.Pointer<ffi.Opaque>,
                   ffi.Pointer<ffi.Opaque>)>>('ICU4XPluralRules_create_cardinal')
@@ -8879,12 +9419,14 @@ class ICU4XPluralRules implements ffi.Finalizable {
   /// See the [Rust documentation for `try_new_ordinal`](https://docs.rs/icu/latest/icu/plurals/struct.PluralRules.html#method.try_new_ordinal) for more information.
   factory ICU4XPluralRules.ordinal(
       ICU4XDataProvider provider, ICU4XLocale locale) {
-    final result = _createOrdinalFfi(provider._underlying, locale._underlying);
+    final result = _ICU4XPluralRules_create_ordinal(
+        provider._underlying, locale._underlying);
     return result.isOk
         ? ICU4XPluralRules._(result.union.ok)
         : throw ICU4XError._(result.union.err);
   }
-  static final _createOrdinalFfi = _capi<
+  // ignore: non_constant_identifier_names
+  static final _ICU4XPluralRules_create_ordinal = _capi<
           ffi.NativeFunction<
               _ResultOpaqueUint32 Function(ffi.Pointer<ffi.Opaque>,
                   ffi.Pointer<ffi.Opaque>)>>('ICU4XPluralRules_create_ordinal')
@@ -8896,11 +9438,12 @@ class ICU4XPluralRules implements ffi.Finalizable {
   ///
   /// See the [Rust documentation for `category_for`](https://docs.rs/icu/latest/icu/plurals/struct.PluralRules.html#method.category_for) for more information.
   ICU4XPluralCategory categoryFor(ICU4XPluralOperands op) {
-    final result = _categoryForFfi(_underlying, op._underlying);
+    final result = _ICU4XPluralRules_category_for(_underlying, op._underlying);
     return ICU4XPluralCategory._(result);
   }
 
-  static final _categoryForFfi = _capi<
+  // ignore: non_constant_identifier_names
+  static final _ICU4XPluralRules_category_for = _capi<
           ffi.NativeFunction<
               ffi.Uint32 Function(ffi.Pointer<ffi.Opaque>,
                   ffi.Pointer<ffi.Opaque>)>>('ICU4XPluralRules_category_for')
@@ -8912,11 +9455,12 @@ class ICU4XPluralRules implements ffi.Finalizable {
   ///
   /// See the [Rust documentation for `categories`](https://docs.rs/icu/latest/icu/plurals/struct.PluralRules.html#method.categories) for more information.
   ICU4XPluralCategories get categories {
-    final result = _categoriesFfi(_underlying);
+    final result = _ICU4XPluralRules_categories(_underlying);
     return ICU4XPluralCategories._(result);
   }
 
-  static final _categoriesFfi = _capi<
+  // ignore: non_constant_identifier_names
+  static final _ICU4XPluralRules_categories = _capi<
           ffi.NativeFunction<
               _ICU4XPluralCategoriesFfi Function(
                   ffi.Pointer<ffi.Opaque>)>>('ICU4XPluralRules_categories')
@@ -8942,12 +9486,14 @@ class ICU4XPluralRulesWithRanges implements ffi.Finalizable {
   /// See the [Rust documentation for `try_new_cardinal`](https://docs.rs/icu/latest/icu/plurals/struct.PluralRulesWithRanges.html#method.try_new_cardinal) for more information.
   factory ICU4XPluralRulesWithRanges.cardinal(
       ICU4XDataProvider provider, ICU4XLocale locale) {
-    final result = _createCardinalFfi(provider._underlying, locale._underlying);
+    final result = _ICU4XPluralRulesWithRanges_create_cardinal(
+        provider._underlying, locale._underlying);
     return result.isOk
         ? ICU4XPluralRulesWithRanges._(result.union.ok)
         : throw ICU4XError._(result.union.err);
   }
-  static final _createCardinalFfi = _capi<
+  // ignore: non_constant_identifier_names
+  static final _ICU4XPluralRulesWithRanges_create_cardinal = _capi<
               ffi.NativeFunction<
                   _ResultOpaqueUint32 Function(
                       ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>>(
@@ -8961,12 +9507,14 @@ class ICU4XPluralRulesWithRanges implements ffi.Finalizable {
   /// See the [Rust documentation for `try_new_ordinal`](https://docs.rs/icu/latest/icu/plurals/struct.PluralRulesWithRanges.html#method.try_new_ordinal) for more information.
   factory ICU4XPluralRulesWithRanges.ordinal(
       ICU4XDataProvider provider, ICU4XLocale locale) {
-    final result = _createOrdinalFfi(provider._underlying, locale._underlying);
+    final result = _ICU4XPluralRulesWithRanges_create_ordinal(
+        provider._underlying, locale._underlying);
     return result.isOk
         ? ICU4XPluralRulesWithRanges._(result.union.ok)
         : throw ICU4XError._(result.union.err);
   }
-  static final _createOrdinalFfi = _capi<
+  // ignore: non_constant_identifier_names
+  static final _ICU4XPluralRulesWithRanges_create_ordinal = _capi<
               ffi.NativeFunction<
                   _ResultOpaqueUint32 Function(
                       ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>>(
@@ -8979,11 +9527,13 @@ class ICU4XPluralRulesWithRanges implements ffi.Finalizable {
   ///
   /// See the [Rust documentation for `category_for`](https://docs.rs/icu/latest/icu/plurals/struct.PluralRulesWithRanges.html#method.category_for) for more information.
   ICU4XPluralCategory categoryFor(ICU4XPluralOperands op) {
-    final result = _categoryForFfi(_underlying, op._underlying);
+    final result =
+        _ICU4XPluralRulesWithRanges_category_for(_underlying, op._underlying);
     return ICU4XPluralCategory._(result);
   }
 
-  static final _categoryForFfi = _capi<
+  // ignore: non_constant_identifier_names
+  static final _ICU4XPluralRulesWithRanges_category_for = _capi<
               ffi.NativeFunction<
                   ffi.Uint32 Function(
                       ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>>(
@@ -8996,11 +9546,12 @@ class ICU4XPluralRulesWithRanges implements ffi.Finalizable {
   ///
   /// See the [Rust documentation for `categories`](https://docs.rs/icu/latest/icu/plurals/struct.PluralRulesWithRanges.html#method.categories) for more information.
   ICU4XPluralCategories get categories {
-    final result = _categoriesFfi(_underlying);
+    final result = _ICU4XPluralRulesWithRanges_categories(_underlying);
     return ICU4XPluralCategories._(result);
   }
 
-  static final _categoriesFfi = _capi<
+  // ignore: non_constant_identifier_names
+  static final _ICU4XPluralRulesWithRanges_categories = _capi<
               ffi.NativeFunction<
                   _ICU4XPluralCategoriesFfi Function(ffi.Pointer<ffi.Opaque>)>>(
           'ICU4XPluralRulesWithRanges_categories')
@@ -9012,12 +9563,13 @@ class ICU4XPluralRulesWithRanges implements ffi.Finalizable {
   /// See the [Rust documentation for `category_for_range`](https://docs.rs/icu/latest/icu/plurals/struct.PluralRulesWithRanges.html#method.category_for_range) for more information.
   ICU4XPluralCategory categoryForRange(
       ICU4XPluralOperands start, ICU4XPluralOperands end) {
-    final result =
-        _categoryForRangeFfi(_underlying, start._underlying, end._underlying);
+    final result = _ICU4XPluralRulesWithRanges_category_for_range(
+        _underlying, start._underlying, end._underlying);
     return ICU4XPluralCategory._(result);
   }
 
-  static final _categoryForRangeFfi = _capi<
+  // ignore: non_constant_identifier_names
+  static final _ICU4XPluralRulesWithRanges_category_for_range = _capi<
               ffi.NativeFunction<
                   ffi.Uint32 Function(ffi.Pointer<ffi.Opaque>,
                       ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>>(
@@ -9031,11 +9583,13 @@ class ICU4XPluralRulesWithRanges implements ffi.Finalizable {
   /// See the [Rust documentation for `resolve_range`](https://docs.rs/icu/latest/icu/plurals/struct.PluralRulesWithRanges.html#method.resolve_range) for more information.
   ICU4XPluralCategory resolveRange(
       ICU4XPluralCategory start, ICU4XPluralCategory end) {
-    final result = _resolveRangeFfi(_underlying, start._id, end._id);
+    final result = _ICU4XPluralRulesWithRanges_resolve_range(
+        _underlying, start._id, end._id);
     return ICU4XPluralCategory._(result);
   }
 
-  static final _resolveRangeFfi = _capi<
+  // ignore: non_constant_identifier_names
+  static final _ICU4XPluralRulesWithRanges_resolve_range = _capi<
           ffi.NativeFunction<
               ffi.Uint32 Function(ffi.Pointer<ffi.Opaque>, ffi.Uint32,
                   ffi.Uint32)>>('ICU4XPluralRulesWithRanges_resolve_range')
@@ -9067,13 +9621,14 @@ class ICU4XPropertyValueNameToEnumMapper implements ffi.Finalizable {
     final alloc = ffi2.Arena();
     final nameSlice = _SliceFfi2Utf8._fromDart(name, alloc);
 
-    final result =
-        _getStrictFfi(_underlying, nameSlice._bytes, nameSlice._length);
+    final result = _ICU4XPropertyValueNameToEnumMapper_get_strict(
+        _underlying, nameSlice._bytes, nameSlice._length);
     alloc.releaseAll();
     return result;
   }
 
-  static final _getStrictFfi = _capi<
+  // ignore: non_constant_identifier_names
+  static final _ICU4XPropertyValueNameToEnumMapper_get_strict = _capi<
           ffi.NativeFunction<
               ffi.Int16 Function(
                   ffi.Pointer<ffi.Opaque>,
@@ -9092,13 +9647,14 @@ class ICU4XPropertyValueNameToEnumMapper implements ffi.Finalizable {
     final alloc = ffi2.Arena();
     final nameSlice = _SliceFfi2Utf8._fromDart(name, alloc);
 
-    final result =
-        _getLooseFfi(_underlying, nameSlice._bytes, nameSlice._length);
+    final result = _ICU4XPropertyValueNameToEnumMapper_get_loose(
+        _underlying, nameSlice._bytes, nameSlice._length);
     alloc.releaseAll();
     return result;
   }
 
-  static final _getLooseFfi = _capi<
+  // ignore: non_constant_identifier_names
+  static final _ICU4XPropertyValueNameToEnumMapper_get_loose = _capi<
           ffi.NativeFunction<
               ffi.Int16 Function(
                   ffi.Pointer<ffi.Opaque>,
@@ -9111,27 +9667,32 @@ class ICU4XPropertyValueNameToEnumMapper implements ffi.Finalizable {
   /// See the [Rust documentation for `get_name_to_enum_mapper`](https://docs.rs/icu/latest/icu/properties/struct.GeneralCategory.html#method.get_name_to_enum_mapper) for more information.
   factory ICU4XPropertyValueNameToEnumMapper.loadGeneralCategory(
       ICU4XDataProvider provider) {
-    final result = _loadGeneralCategoryFfi(provider._underlying);
+    final result = _ICU4XPropertyValueNameToEnumMapper_load_general_category(
+        provider._underlying);
     return result.isOk
         ? ICU4XPropertyValueNameToEnumMapper._(result.union.ok)
         : throw ICU4XError._(result.union.err);
   }
-  static final _loadGeneralCategoryFfi = _capi<
-              ffi.NativeFunction<
-                  _ResultOpaqueUint32 Function(ffi.Pointer<ffi.Opaque>)>>(
-          'ICU4XPropertyValueNameToEnumMapper_load_general_category')
-      .asFunction<_ResultOpaqueUint32 Function(ffi.Pointer<ffi.Opaque>)>(
-          isLeaf: true);
+  // ignore: non_constant_identifier_names
+  static final _ICU4XPropertyValueNameToEnumMapper_load_general_category =
+      _capi<
+                  ffi.NativeFunction<
+                      _ResultOpaqueUint32 Function(ffi.Pointer<ffi.Opaque>)>>(
+              'ICU4XPropertyValueNameToEnumMapper_load_general_category')
+          .asFunction<_ResultOpaqueUint32 Function(ffi.Pointer<ffi.Opaque>)>(
+              isLeaf: true);
 
   /// See the [Rust documentation for `name_to_enum_mapper`](https://docs.rs/icu/latest/icu/properties/struct.BidiClass.html#method.name_to_enum_mapper) for more information.
   factory ICU4XPropertyValueNameToEnumMapper.loadBidiClass(
       ICU4XDataProvider provider) {
-    final result = _loadBidiClassFfi(provider._underlying);
+    final result = _ICU4XPropertyValueNameToEnumMapper_load_bidi_class(
+        provider._underlying);
     return result.isOk
         ? ICU4XPropertyValueNameToEnumMapper._(result.union.ok)
         : throw ICU4XError._(result.union.err);
   }
-  static final _loadBidiClassFfi = _capi<
+  // ignore: non_constant_identifier_names
+  static final _ICU4XPropertyValueNameToEnumMapper_load_bidi_class = _capi<
               ffi.NativeFunction<
                   _ResultOpaqueUint32 Function(ffi.Pointer<ffi.Opaque>)>>(
           'ICU4XPropertyValueNameToEnumMapper_load_bidi_class')
@@ -9141,42 +9702,51 @@ class ICU4XPropertyValueNameToEnumMapper implements ffi.Finalizable {
   /// See the [Rust documentation for `name_to_enum_mapper`](https://docs.rs/icu/latest/icu/properties/struct.EastAsianWidth.html#method.name_to_enum_mapper) for more information.
   factory ICU4XPropertyValueNameToEnumMapper.loadEastAsianWidth(
       ICU4XDataProvider provider) {
-    final result = _loadEastAsianWidthFfi(provider._underlying);
+    final result = _ICU4XPropertyValueNameToEnumMapper_load_east_asian_width(
+        provider._underlying);
     return result.isOk
         ? ICU4XPropertyValueNameToEnumMapper._(result.union.ok)
         : throw ICU4XError._(result.union.err);
   }
-  static final _loadEastAsianWidthFfi = _capi<
-              ffi.NativeFunction<
-                  _ResultOpaqueUint32 Function(ffi.Pointer<ffi.Opaque>)>>(
-          'ICU4XPropertyValueNameToEnumMapper_load_east_asian_width')
-      .asFunction<_ResultOpaqueUint32 Function(ffi.Pointer<ffi.Opaque>)>(
-          isLeaf: true);
+  // ignore: non_constant_identifier_names
+  static final _ICU4XPropertyValueNameToEnumMapper_load_east_asian_width =
+      _capi<
+                  ffi.NativeFunction<
+                      _ResultOpaqueUint32 Function(ffi.Pointer<ffi.Opaque>)>>(
+              'ICU4XPropertyValueNameToEnumMapper_load_east_asian_width')
+          .asFunction<_ResultOpaqueUint32 Function(ffi.Pointer<ffi.Opaque>)>(
+              isLeaf: true);
 
   /// See the [Rust documentation for `name_to_enum_mapper`](https://docs.rs/icu/latest/icu/properties/struct.IndicSyllabicCategory.html#method.name_to_enum_mapper) for more information.
   factory ICU4XPropertyValueNameToEnumMapper.loadIndicSyllabicCategory(
       ICU4XDataProvider provider) {
-    final result = _loadIndicSyllabicCategoryFfi(provider._underlying);
+    final result =
+        _ICU4XPropertyValueNameToEnumMapper_load_indic_syllabic_category(
+            provider._underlying);
     return result.isOk
         ? ICU4XPropertyValueNameToEnumMapper._(result.union.ok)
         : throw ICU4XError._(result.union.err);
   }
-  static final _loadIndicSyllabicCategoryFfi = _capi<
-              ffi.NativeFunction<
-                  _ResultOpaqueUint32 Function(ffi.Pointer<ffi.Opaque>)>>(
-          'ICU4XPropertyValueNameToEnumMapper_load_indic_syllabic_category')
-      .asFunction<_ResultOpaqueUint32 Function(ffi.Pointer<ffi.Opaque>)>(
-          isLeaf: true);
+  // ignore: non_constant_identifier_names
+  static final _ICU4XPropertyValueNameToEnumMapper_load_indic_syllabic_category =
+      _capi<
+                  ffi.NativeFunction<
+                      _ResultOpaqueUint32 Function(ffi.Pointer<ffi.Opaque>)>>(
+              'ICU4XPropertyValueNameToEnumMapper_load_indic_syllabic_category')
+          .asFunction<_ResultOpaqueUint32 Function(ffi.Pointer<ffi.Opaque>)>(
+              isLeaf: true);
 
   /// See the [Rust documentation for `name_to_enum_mapper`](https://docs.rs/icu/latest/icu/properties/struct.LineBreak.html#method.name_to_enum_mapper) for more information.
   factory ICU4XPropertyValueNameToEnumMapper.loadLineBreak(
       ICU4XDataProvider provider) {
-    final result = _loadLineBreakFfi(provider._underlying);
+    final result = _ICU4XPropertyValueNameToEnumMapper_load_line_break(
+        provider._underlying);
     return result.isOk
         ? ICU4XPropertyValueNameToEnumMapper._(result.union.ok)
         : throw ICU4XError._(result.union.err);
   }
-  static final _loadLineBreakFfi = _capi<
+  // ignore: non_constant_identifier_names
+  static final _ICU4XPropertyValueNameToEnumMapper_load_line_break = _capi<
               ffi.NativeFunction<
                   _ResultOpaqueUint32 Function(ffi.Pointer<ffi.Opaque>)>>(
           'ICU4XPropertyValueNameToEnumMapper_load_line_break')
@@ -9186,27 +9756,33 @@ class ICU4XPropertyValueNameToEnumMapper implements ffi.Finalizable {
   /// See the [Rust documentation for `get_name_to_enum_mapper`](https://docs.rs/icu/latest/icu/properties/struct.GraphemeClusterBreak.html#method.get_name_to_enum_mapper) for more information.
   factory ICU4XPropertyValueNameToEnumMapper.loadGraphemeClusterBreak(
       ICU4XDataProvider provider) {
-    final result = _loadGraphemeClusterBreakFfi(provider._underlying);
+    final result =
+        _ICU4XPropertyValueNameToEnumMapper_load_grapheme_cluster_break(
+            provider._underlying);
     return result.isOk
         ? ICU4XPropertyValueNameToEnumMapper._(result.union.ok)
         : throw ICU4XError._(result.union.err);
   }
-  static final _loadGraphemeClusterBreakFfi = _capi<
-              ffi.NativeFunction<
-                  _ResultOpaqueUint32 Function(ffi.Pointer<ffi.Opaque>)>>(
-          'ICU4XPropertyValueNameToEnumMapper_load_grapheme_cluster_break')
-      .asFunction<_ResultOpaqueUint32 Function(ffi.Pointer<ffi.Opaque>)>(
-          isLeaf: true);
+  // ignore: non_constant_identifier_names
+  static final _ICU4XPropertyValueNameToEnumMapper_load_grapheme_cluster_break =
+      _capi<
+                  ffi.NativeFunction<
+                      _ResultOpaqueUint32 Function(ffi.Pointer<ffi.Opaque>)>>(
+              'ICU4XPropertyValueNameToEnumMapper_load_grapheme_cluster_break')
+          .asFunction<_ResultOpaqueUint32 Function(ffi.Pointer<ffi.Opaque>)>(
+              isLeaf: true);
 
   /// See the [Rust documentation for `name_to_enum_mapper`](https://docs.rs/icu/latest/icu/properties/struct.WordBreak.html#method.name_to_enum_mapper) for more information.
   factory ICU4XPropertyValueNameToEnumMapper.loadWordBreak(
       ICU4XDataProvider provider) {
-    final result = _loadWordBreakFfi(provider._underlying);
+    final result = _ICU4XPropertyValueNameToEnumMapper_load_word_break(
+        provider._underlying);
     return result.isOk
         ? ICU4XPropertyValueNameToEnumMapper._(result.union.ok)
         : throw ICU4XError._(result.union.err);
   }
-  static final _loadWordBreakFfi = _capi<
+  // ignore: non_constant_identifier_names
+  static final _ICU4XPropertyValueNameToEnumMapper_load_word_break = _capi<
               ffi.NativeFunction<
                   _ResultOpaqueUint32 Function(ffi.Pointer<ffi.Opaque>)>>(
           'ICU4XPropertyValueNameToEnumMapper_load_word_break')
@@ -9216,12 +9792,14 @@ class ICU4XPropertyValueNameToEnumMapper implements ffi.Finalizable {
   /// See the [Rust documentation for `name_to_enum_mapper`](https://docs.rs/icu/latest/icu/properties/struct.SentenceBreak.html#method.name_to_enum_mapper) for more information.
   factory ICU4XPropertyValueNameToEnumMapper.loadSentenceBreak(
       ICU4XDataProvider provider) {
-    final result = _loadSentenceBreakFfi(provider._underlying);
+    final result = _ICU4XPropertyValueNameToEnumMapper_load_sentence_break(
+        provider._underlying);
     return result.isOk
         ? ICU4XPropertyValueNameToEnumMapper._(result.union.ok)
         : throw ICU4XError._(result.union.err);
   }
-  static final _loadSentenceBreakFfi = _capi<
+  // ignore: non_constant_identifier_names
+  static final _ICU4XPropertyValueNameToEnumMapper_load_sentence_break = _capi<
               ffi.NativeFunction<
                   _ResultOpaqueUint32 Function(ffi.Pointer<ffi.Opaque>)>>(
           'ICU4XPropertyValueNameToEnumMapper_load_sentence_break')
@@ -9231,12 +9809,14 @@ class ICU4XPropertyValueNameToEnumMapper implements ffi.Finalizable {
   /// See the [Rust documentation for `name_to_enum_mapper`](https://docs.rs/icu/latest/icu/properties/struct.Script.html#method.name_to_enum_mapper) for more information.
   factory ICU4XPropertyValueNameToEnumMapper.loadScript(
       ICU4XDataProvider provider) {
-    final result = _loadScriptFfi(provider._underlying);
+    final result =
+        _ICU4XPropertyValueNameToEnumMapper_load_script(provider._underlying);
     return result.isOk
         ? ICU4XPropertyValueNameToEnumMapper._(result.union.ok)
         : throw ICU4XError._(result.union.err);
   }
-  static final _loadScriptFfi = _capi<
+  // ignore: non_constant_identifier_names
+  static final _ICU4XPropertyValueNameToEnumMapper_load_script = _capi<
               ffi.NativeFunction<
                   _ResultOpaqueUint32 Function(ffi.Pointer<ffi.Opaque>)>>(
           'ICU4XPropertyValueNameToEnumMapper_load_script')
@@ -9260,12 +9840,14 @@ class ICU4XRegionDisplayNames implements ffi.Finalizable {
   /// See the [Rust documentation for `try_new`](https://docs.rs/icu/latest/icu/displaynames/struct.RegionDisplayNames.html#method.try_new) for more information.
   factory ICU4XRegionDisplayNames.tryNew(
       ICU4XDataProvider provider, ICU4XLocale locale) {
-    final result = _tryNewFfi(provider._underlying, locale._underlying);
+    final result = _ICU4XRegionDisplayNames_try_new(
+        provider._underlying, locale._underlying);
     return result.isOk
         ? ICU4XRegionDisplayNames._(result.union.ok)
         : throw ICU4XError._(result.union.err);
   }
-  static final _tryNewFfi = _capi<
+  // ignore: non_constant_identifier_names
+  static final _ICU4XRegionDisplayNames_try_new = _capi<
           ffi.NativeFunction<
               _ResultOpaqueUint32 Function(ffi.Pointer<ffi.Opaque>,
                   ffi.Pointer<ffi.Opaque>)>>('ICU4XRegionDisplayNames_try_new')
@@ -9283,15 +9865,16 @@ class ICU4XRegionDisplayNames implements ffi.Finalizable {
     final regionSlice = _SliceFfi2Utf8._fromDart(region, alloc);
 
     final writeable = _Writeable();
-    final result = _ofFfi(_underlying, regionSlice._bytes, regionSlice._length,
-        writeable._underlying);
+    final result = _ICU4XRegionDisplayNames_of(_underlying, regionSlice._bytes,
+        regionSlice._length, writeable._underlying);
     alloc.releaseAll();
     return result.isOk
         ? writeable.finalize()
         : throw ICU4XError._(result.union.err);
   }
 
-  static final _ofFfi = _capi<
+  // ignore: non_constant_identifier_names
+  static final _ICU4XRegionDisplayNames_of = _capi<
           ffi.NativeFunction<
               _ResultVoidUint32 Function(
                   ffi.Pointer<ffi.Opaque>,
@@ -9323,22 +9906,24 @@ class ICU4XReorderedIndexMap implements ffi.Finalizable {
 
   /// Get this as a slice/array of indices
   SizeList get asSlice {
-    final result = _asSliceFfi(_underlying);
+    final result = _ICU4XReorderedIndexMap_as_slice(_underlying);
     return result._asDart;
   }
 
-  static final _asSliceFfi =
+  // ignore: non_constant_identifier_names
+  static final _ICU4XReorderedIndexMap_as_slice =
       _capi<ffi.NativeFunction<SizeList Function(ffi.Pointer<ffi.Opaque>)>>(
               'ICU4XReorderedIndexMap_as_slice')
           .asFunction<SizeList Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
 
   /// The length of this map
   int get len {
-    final result = _lenFfi(_underlying);
+    final result = _ICU4XReorderedIndexMap_len(_underlying);
     return result;
   }
 
-  static final _lenFfi =
+  // ignore: non_constant_identifier_names
+  static final _ICU4XReorderedIndexMap_len =
       _capi<ffi.NativeFunction<ffi.Size Function(ffi.Pointer<ffi.Opaque>)>>(
               'ICU4XReorderedIndexMap_len')
           .asFunction<int Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
@@ -9347,11 +9932,12 @@ class ICU4XReorderedIndexMap implements ffi.Finalizable {
   /// (note that 0 is also a valid in-bounds value, please use `len()`
   /// to avoid out-of-bounds)
   int get(int index) {
-    final result = _getFfi(_underlying, index);
+    final result = _ICU4XReorderedIndexMap_get(_underlying, index);
     return result;
   }
 
-  static final _getFfi = _capi<
+  // ignore: non_constant_identifier_names
+  static final _ICU4XReorderedIndexMap_get = _capi<
           ffi.NativeFunction<
               ffi.Size Function(ffi.Pointer<ffi.Opaque>,
                   ffi.Size)>>('ICU4XReorderedIndexMap_get')
@@ -9393,11 +9979,12 @@ class ICU4XScriptExtensionsSet implements ffi.Finalizable {
   ///
   /// See the [Rust documentation for `contains`](https://docs.rs/icu/latest/icu/properties/script/struct.ScriptExtensionsSet.html#method.contains) for more information.
   bool contains(int script) {
-    final result = _containsFfi(_underlying, script);
+    final result = _ICU4XScriptExtensionsSet_contains(_underlying, script);
     return result;
   }
 
-  static final _containsFfi = _capi<
+  // ignore: non_constant_identifier_names
+  static final _ICU4XScriptExtensionsSet_contains = _capi<
           ffi.NativeFunction<
               ffi.Bool Function(ffi.Pointer<ffi.Opaque>,
                   ffi.Uint16)>>('ICU4XScriptExtensionsSet_contains')
@@ -9407,11 +9994,12 @@ class ICU4XScriptExtensionsSet implements ffi.Finalizable {
   ///
   /// See the [Rust documentation for `iter`](https://docs.rs/icu/latest/icu/properties/script/struct.ScriptExtensionsSet.html#method.iter) for more information.
   int get count {
-    final result = _countFfi(_underlying);
+    final result = _ICU4XScriptExtensionsSet_count(_underlying);
     return result;
   }
 
-  static final _countFfi =
+  // ignore: non_constant_identifier_names
+  static final _ICU4XScriptExtensionsSet_count =
       _capi<ffi.NativeFunction<ffi.Size Function(ffi.Pointer<ffi.Opaque>)>>(
               'ICU4XScriptExtensionsSet_count')
           .asFunction<int Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
@@ -9420,11 +10008,12 @@ class ICU4XScriptExtensionsSet implements ffi.Finalizable {
   ///
   /// See the [Rust documentation for `iter`](https://docs.rs/icu/latest/icu/properties/script/struct.ScriptExtensionsSet.html#method.iter) for more information.
   int scriptAt(int index) {
-    final result = _scriptAtFfi(_underlying, index);
+    final result = _ICU4XScriptExtensionsSet_script_at(_underlying, index);
     return result.isOk ? result.union.ok : throw VoidError();
   }
 
-  static final _scriptAtFfi = _capi<
+  // ignore: non_constant_identifier_names
+  static final _ICU4XScriptExtensionsSet_script_at = _capi<
           ffi.NativeFunction<
               _ResultUint16Void Function(ffi.Pointer<ffi.Opaque>,
                   ffi.Size)>>('ICU4XScriptExtensionsSet_script_at')
@@ -9447,12 +10036,13 @@ class ICU4XScriptWithExtensions implements ffi.Finalizable {
 
   /// See the [Rust documentation for `script_with_extensions`](https://docs.rs/icu/latest/icu/properties/script/fn.script_with_extensions.html) for more information.
   factory ICU4XScriptWithExtensions(ICU4XDataProvider provider) {
-    final result = _createFfi(provider._underlying);
+    final result = _ICU4XScriptWithExtensions_create(provider._underlying);
     return result.isOk
         ? ICU4XScriptWithExtensions._(result.union.ok)
         : throw ICU4XError._(result.union.err);
   }
-  static final _createFfi = _capi<
+  // ignore: non_constant_identifier_names
+  static final _ICU4XScriptWithExtensions_create = _capi<
           ffi.NativeFunction<
               _ResultOpaqueUint32 Function(
                   ffi.Pointer<ffi.Opaque>)>>('ICU4XScriptWithExtensions_create')
@@ -9463,11 +10053,13 @@ class ICU4XScriptWithExtensions implements ffi.Finalizable {
   ///
   /// See the [Rust documentation for `get_script_val`](https://docs.rs/icu/latest/icu/properties/script/struct.ScriptWithExtensionsBorrowed.html#method.get_script_val) for more information.
   int getScriptVal(int codePoint) {
-    final result = _getScriptValFfi(_underlying, codePoint);
+    final result =
+        _ICU4XScriptWithExtensions_get_script_val(_underlying, codePoint);
     return result;
   }
 
-  static final _getScriptValFfi = _capi<
+  // ignore: non_constant_identifier_names
+  static final _ICU4XScriptWithExtensions_get_script_val = _capi<
           ffi.NativeFunction<
               ffi.Uint16 Function(ffi.Pointer<ffi.Opaque>,
                   ffi.Uint32)>>('ICU4XScriptWithExtensions_get_script_val')
@@ -9477,11 +10069,13 @@ class ICU4XScriptWithExtensions implements ffi.Finalizable {
   ///
   /// See the [Rust documentation for `has_script`](https://docs.rs/icu/latest/icu/properties/script/struct.ScriptWithExtensionsBorrowed.html#method.has_script) for more information.
   bool hasScript(int codePoint, int script) {
-    final result = _hasScriptFfi(_underlying, codePoint, script);
+    final result =
+        _ICU4XScriptWithExtensions_has_script(_underlying, codePoint, script);
     return result;
   }
 
-  static final _hasScriptFfi = _capi<
+  // ignore: non_constant_identifier_names
+  static final _ICU4XScriptWithExtensions_has_script = _capi<
           ffi.NativeFunction<
               ffi.Bool Function(ffi.Pointer<ffi.Opaque>, ffi.Uint32,
                   ffi.Uint16)>>('ICU4XScriptWithExtensions_has_script')
@@ -9492,11 +10086,12 @@ class ICU4XScriptWithExtensions implements ffi.Finalizable {
   ///
   /// See the [Rust documentation for `as_borrowed`](https://docs.rs/icu/latest/icu/properties/script/struct.ScriptWithExtensions.html#method.as_borrowed) for more information.
   ICU4XScriptWithExtensionsBorrowed get asBorrowed {
-    final result = _asBorrowedFfi(_underlying);
+    final result = _ICU4XScriptWithExtensions_as_borrowed(_underlying);
     return ICU4XScriptWithExtensionsBorrowed._(result);
   }
 
-  static final _asBorrowedFfi = _capi<
+  // ignore: non_constant_identifier_names
+  static final _ICU4XScriptWithExtensions_as_borrowed = _capi<
               ffi.NativeFunction<
                   ffi.Pointer<ffi.Opaque> Function(ffi.Pointer<ffi.Opaque>)>>(
           'ICU4XScriptWithExtensions_as_borrowed')
@@ -9507,11 +10102,13 @@ class ICU4XScriptWithExtensions implements ffi.Finalizable {
   ///
   /// See the [Rust documentation for `get_script_extensions_ranges`](https://docs.rs/icu/latest/icu/properties/script/struct.ScriptWithExtensionsBorrowed.html#method.get_script_extensions_ranges) for more information.
   CodePointRangeIterator iterRangesForScript(int script) {
-    final result = _iterRangesForScriptFfi(_underlying, script);
+    final result =
+        _ICU4XScriptWithExtensions_iter_ranges_for_script(_underlying, script);
     return CodePointRangeIterator._(result);
   }
 
-  static final _iterRangesForScriptFfi = _capi<
+  // ignore: non_constant_identifier_names
+  static final _ICU4XScriptWithExtensions_iter_ranges_for_script = _capi<
               ffi.NativeFunction<
                   ffi.Pointer<ffi.Opaque> Function(
                       ffi.Pointer<ffi.Opaque>, ffi.Uint16)>>(
@@ -9538,11 +10135,13 @@ class ICU4XScriptWithExtensionsBorrowed implements ffi.Finalizable {
   ///
   /// See the [Rust documentation for `get_script_val`](https://docs.rs/icu/latest/icu/properties/script/struct.ScriptWithExtensionsBorrowed.html#method.get_script_val) for more information.
   int getScriptVal(int codePoint) {
-    final result = _getScriptValFfi(_underlying, codePoint);
+    final result = _ICU4XScriptWithExtensionsBorrowed_get_script_val(
+        _underlying, codePoint);
     return result;
   }
 
-  static final _getScriptValFfi = _capi<
+  // ignore: non_constant_identifier_names
+  static final _ICU4XScriptWithExtensionsBorrowed_get_script_val = _capi<
               ffi.NativeFunction<
                   ffi.Uint16 Function(ffi.Pointer<ffi.Opaque>, ffi.Uint32)>>(
           'ICU4XScriptWithExtensionsBorrowed_get_script_val')
@@ -9552,28 +10151,34 @@ class ICU4XScriptWithExtensionsBorrowed implements ffi.Finalizable {
   ///
   /// See the [Rust documentation for `get_script_extensions_val`](https://docs.rs/icu/latest/icu/properties/script/struct.ScriptWithExtensionsBorrowed.html#method.get_script_extensions_val) for more information.
   ICU4XScriptExtensionsSet getScriptExtensionsVal(int codePoint) {
-    final result = _getScriptExtensionsValFfi(_underlying, codePoint);
+    final result = _ICU4XScriptWithExtensionsBorrowed_get_script_extensions_val(
+        _underlying, codePoint);
     return ICU4XScriptExtensionsSet._(result);
   }
 
-  static final _getScriptExtensionsValFfi = _capi<
-              ffi.NativeFunction<
-                  ffi.Pointer<ffi.Opaque> Function(
-                      ffi.Pointer<ffi.Opaque>, ffi.Uint32)>>(
-          'ICU4XScriptWithExtensionsBorrowed_get_script_extensions_val')
-      .asFunction<
-          ffi.Pointer<ffi.Opaque> Function(
-              ffi.Pointer<ffi.Opaque>, int)>(isLeaf: true);
+  // ignore: non_constant_identifier_names
+  static final _ICU4XScriptWithExtensionsBorrowed_get_script_extensions_val =
+      _capi<
+                  ffi.NativeFunction<
+                      ffi.Pointer<
+                              ffi.Opaque>
+                          Function(ffi.Pointer<ffi.Opaque>, ffi.Uint32)>>(
+              'ICU4XScriptWithExtensionsBorrowed_get_script_extensions_val')
+          .asFunction<
+              ffi.Pointer<ffi.Opaque> Function(
+                  ffi.Pointer<ffi.Opaque>, int)>(isLeaf: true);
 
   /// Check if the Script_Extensions property of the given code point covers the given script
   ///
   /// See the [Rust documentation for `has_script`](https://docs.rs/icu/latest/icu/properties/script/struct.ScriptWithExtensionsBorrowed.html#method.has_script) for more information.
   bool hasScript(int codePoint, int script) {
-    final result = _hasScriptFfi(_underlying, codePoint, script);
+    final result = _ICU4XScriptWithExtensionsBorrowed_has_script(
+        _underlying, codePoint, script);
     return result;
   }
 
-  static final _hasScriptFfi = _capi<
+  // ignore: non_constant_identifier_names
+  static final _ICU4XScriptWithExtensionsBorrowed_has_script = _capi<
           ffi.NativeFunction<
               ffi.Bool Function(ffi.Pointer<ffi.Opaque>, ffi.Uint32,
                   ffi.Uint16)>>('ICU4XScriptWithExtensionsBorrowed_has_script')
@@ -9585,18 +10190,22 @@ class ICU4XScriptWithExtensionsBorrowed implements ffi.Finalizable {
   ///
   /// See the [Rust documentation for `get_script_extensions_set`](https://docs.rs/icu/latest/icu/properties/script/struct.ScriptWithExtensionsBorrowed.html#method.get_script_extensions_set) for more information.
   ICU4XCodePointSetData getScriptExtensionsSet(int script) {
-    final result = _getScriptExtensionsSetFfi(_underlying, script);
+    final result = _ICU4XScriptWithExtensionsBorrowed_get_script_extensions_set(
+        _underlying, script);
     return ICU4XCodePointSetData._(result);
   }
 
-  static final _getScriptExtensionsSetFfi = _capi<
-              ffi.NativeFunction<
-                  ffi.Pointer<ffi.Opaque> Function(
-                      ffi.Pointer<ffi.Opaque>, ffi.Uint16)>>(
-          'ICU4XScriptWithExtensionsBorrowed_get_script_extensions_set')
-      .asFunction<
-          ffi.Pointer<ffi.Opaque> Function(
-              ffi.Pointer<ffi.Opaque>, int)>(isLeaf: true);
+  // ignore: non_constant_identifier_names
+  static final _ICU4XScriptWithExtensionsBorrowed_get_script_extensions_set =
+      _capi<
+                  ffi.NativeFunction<
+                      ffi.Pointer<
+                              ffi.Opaque>
+                          Function(ffi.Pointer<ffi.Opaque>, ffi.Uint16)>>(
+              'ICU4XScriptWithExtensionsBorrowed_get_script_extensions_set')
+          .asFunction<
+              ffi.Pointer<ffi.Opaque> Function(
+                  ffi.Pointer<ffi.Opaque>, int)>(isLeaf: true);
 }
 
 /// See the [Rust documentation for `WordType`](https://docs.rs/icu/latest/icu/segmenter/enum.WordType.html) for more information.
@@ -9630,11 +10239,12 @@ class ICU4XSentenceBreakIteratorLatin1 implements ffi.Finalizable {
   ///
   /// See the [Rust documentation for `next`](https://docs.rs/icu/latest/icu/segmenter/struct.SentenceBreakIterator.html#method.next) for more information.
   int next() {
-    final result = _nextFfi(_underlying);
+    final result = _ICU4XSentenceBreakIteratorLatin1_next(_underlying);
     return result;
   }
 
-  static final _nextFfi =
+  // ignore: non_constant_identifier_names
+  static final _ICU4XSentenceBreakIteratorLatin1_next =
       _capi<ffi.NativeFunction<ffi.Int32 Function(ffi.Pointer<ffi.Opaque>)>>(
               'ICU4XSentenceBreakIteratorLatin1_next')
           .asFunction<int Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
@@ -9656,11 +10266,12 @@ class ICU4XSentenceBreakIteratorUtf16 implements ffi.Finalizable {
   ///
   /// See the [Rust documentation for `next`](https://docs.rs/icu/latest/icu/segmenter/struct.SentenceBreakIterator.html#method.next) for more information.
   int next() {
-    final result = _nextFfi(_underlying);
+    final result = _ICU4XSentenceBreakIteratorUtf16_next(_underlying);
     return result;
   }
 
-  static final _nextFfi =
+  // ignore: non_constant_identifier_names
+  static final _ICU4XSentenceBreakIteratorUtf16_next =
       _capi<ffi.NativeFunction<ffi.Int32 Function(ffi.Pointer<ffi.Opaque>)>>(
               'ICU4XSentenceBreakIteratorUtf16_next')
           .asFunction<int Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
@@ -9682,11 +10293,12 @@ class ICU4XSentenceBreakIteratorUtf8 implements ffi.Finalizable {
   ///
   /// See the [Rust documentation for `next`](https://docs.rs/icu/latest/icu/segmenter/struct.SentenceBreakIterator.html#method.next) for more information.
   int next() {
-    final result = _nextFfi(_underlying);
+    final result = _ICU4XSentenceBreakIteratorUtf8_next(_underlying);
     return result;
   }
 
-  static final _nextFfi =
+  // ignore: non_constant_identifier_names
+  static final _ICU4XSentenceBreakIteratorUtf8_next =
       _capi<ffi.NativeFunction<ffi.Int32 Function(ffi.Pointer<ffi.Opaque>)>>(
               'ICU4XSentenceBreakIteratorUtf8_next')
           .asFunction<int Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
@@ -9709,12 +10321,13 @@ class ICU4XSentenceSegmenter implements ffi.Finalizable {
   ///
   /// See the [Rust documentation for `new`](https://docs.rs/icu/latest/icu/segmenter/struct.SentenceSegmenter.html#method.new) for more information.
   factory ICU4XSentenceSegmenter(ICU4XDataProvider provider) {
-    final result = _createFfi(provider._underlying);
+    final result = _ICU4XSentenceSegmenter_create(provider._underlying);
     return result.isOk
         ? ICU4XSentenceSegmenter._(result.union.ok)
         : throw ICU4XError._(result.union.err);
   }
-  static final _createFfi = _capi<
+  // ignore: non_constant_identifier_names
+  static final _ICU4XSentenceSegmenter_create = _capi<
           ffi.NativeFunction<
               _ResultOpaqueUint32 Function(
                   ffi.Pointer<ffi.Opaque>)>>('ICU4XSentenceSegmenter_create')
@@ -9728,13 +10341,14 @@ class ICU4XSentenceSegmenter implements ffi.Finalizable {
     final alloc = ffi2.Arena();
     final inputSlice = _SliceFfi2Utf8._fromDart(input, alloc);
 
-    final result =
-        _segmentUtf8Ffi(_underlying, inputSlice._bytes, inputSlice._length);
+    final result = _ICU4XSentenceSegmenter_segment_utf8(
+        _underlying, inputSlice._bytes, inputSlice._length);
     alloc.releaseAll();
     return ICU4XSentenceBreakIteratorUtf8._(result);
   }
 
-  static final _segmentUtf8Ffi = _capi<
+  // ignore: non_constant_identifier_names
+  static final _ICU4XSentenceSegmenter_segment_utf8 = _capi<
           ffi.NativeFunction<
               ffi.Pointer<ffi.Opaque> Function(
                   ffi.Pointer<ffi.Opaque>,
@@ -9751,13 +10365,14 @@ class ICU4XSentenceSegmenter implements ffi.Finalizable {
     final alloc = ffi2.Arena();
     final inputSlice = _SliceFfiUint16._fromDart(input, alloc);
 
-    final result =
-        _segmentUtf16Ffi(_underlying, inputSlice._bytes, inputSlice._length);
+    final result = _ICU4XSentenceSegmenter_segment_utf16(
+        _underlying, inputSlice._bytes, inputSlice._length);
     alloc.releaseAll();
     return ICU4XSentenceBreakIteratorUtf16._(result);
   }
 
-  static final _segmentUtf16Ffi = _capi<
+  // ignore: non_constant_identifier_names
+  static final _ICU4XSentenceSegmenter_segment_utf16 = _capi<
           ffi.NativeFunction<
               ffi.Pointer<ffi.Opaque> Function(
                   ffi.Pointer<ffi.Opaque>,
@@ -9774,13 +10389,14 @@ class ICU4XSentenceSegmenter implements ffi.Finalizable {
     final alloc = ffi2.Arena();
     final inputSlice = _SliceFfiUint8._fromDart(input, alloc);
 
-    final result =
-        _segmentLatin1Ffi(_underlying, inputSlice._bytes, inputSlice._length);
+    final result = _ICU4XSentenceSegmenter_segment_latin1(
+        _underlying, inputSlice._bytes, inputSlice._length);
     alloc.releaseAll();
     return ICU4XSentenceBreakIteratorLatin1._(result);
   }
 
-  static final _segmentLatin1Ffi = _capi<
+  // ignore: non_constant_identifier_names
+  static final _ICU4XSentenceSegmenter_segment_latin1 = _capi<
           ffi.NativeFunction<
               ffi.Pointer<ffi.Opaque> Function(
                   ffi.Pointer<ffi.Opaque>,
@@ -9807,12 +10423,13 @@ class ICU4XTime implements ffi.Finalizable {
   ///
   /// See the [Rust documentation for `Time`](https://docs.rs/icu/latest/icu/calendar/types/struct.Time.html) for more information.
   factory ICU4XTime(int hour, int minute, int second, int nanosecond) {
-    final result = _createFfi(hour, minute, second, nanosecond);
+    final result = _ICU4XTime_create(hour, minute, second, nanosecond);
     return result.isOk
         ? ICU4XTime._(result.union.ok)
         : throw ICU4XError._(result.union.err);
   }
-  static final _createFfi = _capi<
+  // ignore: non_constant_identifier_names
+  static final _ICU4XTime_create = _capi<
           ffi.NativeFunction<
               _ResultOpaqueUint32 Function(ffi.Uint8, ffi.Uint8, ffi.Uint8,
                   ffi.Uint32)>>('ICU4XTime_create')
@@ -9823,12 +10440,13 @@ class ICU4XTime implements ffi.Finalizable {
   ///
   /// See the [Rust documentation for `Time`](https://docs.rs/icu/latest/icu/calendar/types/struct.Time.html) for more information.
   factory ICU4XTime.midnight() {
-    final result = _createMidnightFfi();
+    final result = _ICU4XTime_create_midnight();
     return result.isOk
         ? ICU4XTime._(result.union.ok)
         : throw ICU4XError._(result.union.err);
   }
-  static final _createMidnightFfi =
+  // ignore: non_constant_identifier_names
+  static final _ICU4XTime_create_midnight =
       _capi<ffi.NativeFunction<_ResultOpaqueUint32 Function()>>(
               'ICU4XTime_create_midnight')
           .asFunction<_ResultOpaqueUint32 Function()>(isLeaf: true);
@@ -9837,11 +10455,12 @@ class ICU4XTime implements ffi.Finalizable {
   ///
   /// See the [Rust documentation for `hour`](https://docs.rs/icu/latest/icu/calendar/types/struct.Time.html#structfield.hour) for more information.
   int get hour {
-    final result = _hourFfi(_underlying);
+    final result = _ICU4XTime_hour(_underlying);
     return result;
   }
 
-  static final _hourFfi =
+  // ignore: non_constant_identifier_names
+  static final _ICU4XTime_hour =
       _capi<ffi.NativeFunction<ffi.Uint8 Function(ffi.Pointer<ffi.Opaque>)>>(
               'ICU4XTime_hour')
           .asFunction<int Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
@@ -9850,11 +10469,12 @@ class ICU4XTime implements ffi.Finalizable {
   ///
   /// See the [Rust documentation for `minute`](https://docs.rs/icu/latest/icu/calendar/types/struct.Time.html#structfield.minute) for more information.
   int get minute {
-    final result = _minuteFfi(_underlying);
+    final result = _ICU4XTime_minute(_underlying);
     return result;
   }
 
-  static final _minuteFfi =
+  // ignore: non_constant_identifier_names
+  static final _ICU4XTime_minute =
       _capi<ffi.NativeFunction<ffi.Uint8 Function(ffi.Pointer<ffi.Opaque>)>>(
               'ICU4XTime_minute')
           .asFunction<int Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
@@ -9863,11 +10483,12 @@ class ICU4XTime implements ffi.Finalizable {
   ///
   /// See the [Rust documentation for `second`](https://docs.rs/icu/latest/icu/calendar/types/struct.Time.html#structfield.second) for more information.
   int get second {
-    final result = _secondFfi(_underlying);
+    final result = _ICU4XTime_second(_underlying);
     return result;
   }
 
-  static final _secondFfi =
+  // ignore: non_constant_identifier_names
+  static final _ICU4XTime_second =
       _capi<ffi.NativeFunction<ffi.Uint8 Function(ffi.Pointer<ffi.Opaque>)>>(
               'ICU4XTime_second')
           .asFunction<int Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
@@ -9876,11 +10497,12 @@ class ICU4XTime implements ffi.Finalizable {
   ///
   /// See the [Rust documentation for `nanosecond`](https://docs.rs/icu/latest/icu/calendar/types/struct.Time.html#structfield.nanosecond) for more information.
   int get nanosecond {
-    final result = _nanosecondFfi(_underlying);
+    final result = _ICU4XTime_nanosecond(_underlying);
     return result;
   }
 
-  static final _nanosecondFfi =
+  // ignore: non_constant_identifier_names
+  static final _ICU4XTime_nanosecond =
       _capi<ffi.NativeFunction<ffi.Uint32 Function(ffi.Pointer<ffi.Opaque>)>>(
               'ICU4XTime_nanosecond')
           .asFunction<int Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
@@ -9904,13 +10526,14 @@ class ICU4XTimeFormatter implements ffi.Finalizable {
   /// See the [Rust documentation for `try_new_with_length`](https://docs.rs/icu/latest/icu/datetime/struct.TimeFormatter.html#method.try_new_with_length) for more information.
   factory ICU4XTimeFormatter.withLength(
       ICU4XDataProvider provider, ICU4XLocale locale, ICU4XTimeLength length) {
-    final result = _createWithLengthFfi(
+    final result = _ICU4XTimeFormatter_create_with_length(
         provider._underlying, locale._underlying, length._id);
     return result.isOk
         ? ICU4XTimeFormatter._(result.union.ok)
         : throw ICU4XError._(result.union.err);
   }
-  static final _createWithLengthFfi = _capi<
+  // ignore: non_constant_identifier_names
+  static final _ICU4XTimeFormatter_create_with_length = _capi<
           ffi.NativeFunction<
               _ResultOpaqueUint32 Function(
                   ffi.Pointer<ffi.Opaque>,
@@ -9925,14 +10548,15 @@ class ICU4XTimeFormatter implements ffi.Finalizable {
   /// See the [Rust documentation for `format`](https://docs.rs/icu/latest/icu/datetime/struct.TimeFormatter.html#method.format) for more information.
   String formatTime(ICU4XTime value) {
     final writeable = _Writeable();
-    final result =
-        _formatTimeFfi(_underlying, value._underlying, writeable._underlying);
+    final result = _ICU4XTimeFormatter_format_time(
+        _underlying, value._underlying, writeable._underlying);
     return result.isOk
         ? writeable.finalize()
         : throw ICU4XError._(result.union.err);
   }
 
-  static final _formatTimeFfi = _capi<
+  // ignore: non_constant_identifier_names
+  static final _ICU4XTimeFormatter_format_time = _capi<
           ffi.NativeFunction<
               _ResultVoidUint32 Function(
                   ffi.Pointer<ffi.Opaque>,
@@ -9947,14 +10571,15 @@ class ICU4XTimeFormatter implements ffi.Finalizable {
   /// See the [Rust documentation for `format`](https://docs.rs/icu/latest/icu/datetime/struct.TimeFormatter.html#method.format) for more information.
   String formatDatetime(ICU4XDateTime value) {
     final writeable = _Writeable();
-    final result = _formatDatetimeFfi(
+    final result = _ICU4XTimeFormatter_format_datetime(
         _underlying, value._underlying, writeable._underlying);
     return result.isOk
         ? writeable.finalize()
         : throw ICU4XError._(result.union.err);
   }
 
-  static final _formatDatetimeFfi = _capi<
+  // ignore: non_constant_identifier_names
+  static final _ICU4XTimeFormatter_format_datetime = _capi<
               ffi.NativeFunction<
                   _ResultVoidUint32 Function(ffi.Pointer<ffi.Opaque>,
                       ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>>(
@@ -9968,14 +10593,15 @@ class ICU4XTimeFormatter implements ffi.Finalizable {
   /// See the [Rust documentation for `format`](https://docs.rs/icu/latest/icu/datetime/struct.TimeFormatter.html#method.format) for more information.
   String formatIsoDatetime(ICU4XIsoDateTime value) {
     final writeable = _Writeable();
-    final result = _formatIsoDatetimeFfi(
+    final result = _ICU4XTimeFormatter_format_iso_datetime(
         _underlying, value._underlying, writeable._underlying);
     return result.isOk
         ? writeable.finalize()
         : throw ICU4XError._(result.union.err);
   }
 
-  static final _formatIsoDatetimeFfi = _capi<
+  // ignore: non_constant_identifier_names
+  static final _ICU4XTimeFormatter_format_iso_datetime = _capi<
               ffi.NativeFunction<
                   _ResultVoidUint32 Function(ffi.Pointer<ffi.Opaque>,
                       ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>>(
@@ -10023,20 +10649,22 @@ class ICU4XTimeZoneFormatter implements ffi.Finalizable {
   /// Additional information: [1](https://docs.rs/icu/latest/icu/datetime/time_zone/enum.FallbackFormat.html)
   factory ICU4XTimeZoneFormatter.withLocalizedGmtFallback(
       ICU4XDataProvider provider, ICU4XLocale locale) {
-    final result = _createWithLocalizedGmtFallbackFfi(
+    final result = _ICU4XTimeZoneFormatter_create_with_localized_gmt_fallback(
         provider._underlying, locale._underlying);
     return result.isOk
         ? ICU4XTimeZoneFormatter._(result.union.ok)
         : throw ICU4XError._(result.union.err);
   }
-  static final _createWithLocalizedGmtFallbackFfi = _capi<
-              ffi.NativeFunction<
-                  _ResultOpaqueUint32 Function(
-                      ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>>(
-          'ICU4XTimeZoneFormatter_create_with_localized_gmt_fallback')
-      .asFunction<
-          _ResultOpaqueUint32 Function(
-              ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
+  // ignore: non_constant_identifier_names
+  static final _ICU4XTimeZoneFormatter_create_with_localized_gmt_fallback =
+      _capi<
+                  ffi.NativeFunction<
+                      _ResultOpaqueUint32 Function(
+                          ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>>(
+              'ICU4XTimeZoneFormatter_create_with_localized_gmt_fallback')
+          .asFunction<
+              _ResultOpaqueUint32 Function(ffi.Pointer<ffi.Opaque>,
+                  ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
 
   /// Creates a new [`ICU4XTimeZoneFormatter`] from locale data.
   ///
@@ -10047,13 +10675,14 @@ class ICU4XTimeZoneFormatter implements ffi.Finalizable {
   /// Additional information: [1](https://docs.rs/icu/latest/icu/datetime/time_zone/enum.FallbackFormat.html)
   factory ICU4XTimeZoneFormatter.withIso8601Fallback(ICU4XDataProvider provider,
       ICU4XLocale locale, ICU4XIsoTimeZoneOptions options) {
-    final result = _createWithIso8601FallbackFfi(
+    final result = _ICU4XTimeZoneFormatter_create_with_iso_8601_fallback(
         provider._underlying, locale._underlying, options._underlying);
     return result.isOk
         ? ICU4XTimeZoneFormatter._(result.union.ok)
         : throw ICU4XError._(result.union.err);
   }
-  static final _createWithIso8601FallbackFfi = _capi<
+  // ignore: non_constant_identifier_names
+  static final _ICU4XTimeZoneFormatter_create_with_iso_8601_fallback = _capi<
               ffi.NativeFunction<
                   _ResultOpaqueUint32 Function(ffi.Pointer<ffi.Opaque>,
                       ffi.Pointer<ffi.Opaque>, _ICU4XIsoTimeZoneOptionsFfi)>>(
@@ -10068,14 +10697,15 @@ class ICU4XTimeZoneFormatter implements ffi.Finalizable {
   ///
   /// See the [Rust documentation for `include_generic_non_location_long`](https://docs.rs/icu/latest/icu/datetime/time_zone/struct.TimeZoneFormatter.html#method.include_generic_non_location_long) for more information.
   void loadGenericNonLocationLong(ICU4XDataProvider provider) {
-    final result =
-        _loadGenericNonLocationLongFfi(_underlying, provider._underlying);
+    final result = _ICU4XTimeZoneFormatter_load_generic_non_location_long(
+        _underlying, provider._underlying);
     if (!result.isOk) {
       throw ICU4XError._(result.union.err);
     }
   }
 
-  static final _loadGenericNonLocationLongFfi = _capi<
+  // ignore: non_constant_identifier_names
+  static final _ICU4XTimeZoneFormatter_load_generic_non_location_long = _capi<
               ffi.NativeFunction<
                   _ResultVoidUint32 Function(
                       ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>>(
@@ -10088,14 +10718,15 @@ class ICU4XTimeZoneFormatter implements ffi.Finalizable {
   ///
   /// See the [Rust documentation for `include_generic_non_location_short`](https://docs.rs/icu/latest/icu/datetime/time_zone/struct.TimeZoneFormatter.html#method.include_generic_non_location_short) for more information.
   void loadGenericNonLocationShort(ICU4XDataProvider provider) {
-    final result =
-        _loadGenericNonLocationShortFfi(_underlying, provider._underlying);
+    final result = _ICU4XTimeZoneFormatter_load_generic_non_location_short(
+        _underlying, provider._underlying);
     if (!result.isOk) {
       throw ICU4XError._(result.union.err);
     }
   }
 
-  static final _loadGenericNonLocationShortFfi = _capi<
+  // ignore: non_constant_identifier_names
+  static final _ICU4XTimeZoneFormatter_load_generic_non_location_short = _capi<
               ffi.NativeFunction<
                   _ResultVoidUint32 Function(
                       ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>>(
@@ -10108,14 +10739,15 @@ class ICU4XTimeZoneFormatter implements ffi.Finalizable {
   ///
   /// See the [Rust documentation for `include_specific_non_location_long`](https://docs.rs/icu/latest/icu/datetime/time_zone/struct.TimeZoneFormatter.html#method.include_specific_non_location_long) for more information.
   void loadSpecificNonLocationLong(ICU4XDataProvider provider) {
-    final result =
-        _loadSpecificNonLocationLongFfi(_underlying, provider._underlying);
+    final result = _ICU4XTimeZoneFormatter_load_specific_non_location_long(
+        _underlying, provider._underlying);
     if (!result.isOk) {
       throw ICU4XError._(result.union.err);
     }
   }
 
-  static final _loadSpecificNonLocationLongFfi = _capi<
+  // ignore: non_constant_identifier_names
+  static final _ICU4XTimeZoneFormatter_load_specific_non_location_long = _capi<
               ffi.NativeFunction<
                   _ResultVoidUint32 Function(
                       ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>>(
@@ -10128,14 +10760,15 @@ class ICU4XTimeZoneFormatter implements ffi.Finalizable {
   ///
   /// See the [Rust documentation for `include_specific_non_location_short`](https://docs.rs/icu/latest/icu/datetime/time_zone/struct.TimeZoneFormatter.html#method.include_specific_non_location_short) for more information.
   void loadSpecificNonLocationShort(ICU4XDataProvider provider) {
-    final result =
-        _loadSpecificNonLocationShortFfi(_underlying, provider._underlying);
+    final result = _ICU4XTimeZoneFormatter_load_specific_non_location_short(
+        _underlying, provider._underlying);
     if (!result.isOk) {
       throw ICU4XError._(result.union.err);
     }
   }
 
-  static final _loadSpecificNonLocationShortFfi = _capi<
+  // ignore: non_constant_identifier_names
+  static final _ICU4XTimeZoneFormatter_load_specific_non_location_short = _capi<
               ffi.NativeFunction<
                   _ResultVoidUint32 Function(
                       ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>>(
@@ -10148,14 +10781,15 @@ class ICU4XTimeZoneFormatter implements ffi.Finalizable {
   ///
   /// See the [Rust documentation for `include_generic_location_format`](https://docs.rs/icu/latest/icu/datetime/time_zone/struct.TimeZoneFormatter.html#method.include_generic_location_format) for more information.
   void loadGenericLocationFormat(ICU4XDataProvider provider) {
-    final result =
-        _loadGenericLocationFormatFfi(_underlying, provider._underlying);
+    final result = _ICU4XTimeZoneFormatter_load_generic_location_format(
+        _underlying, provider._underlying);
     if (!result.isOk) {
       throw ICU4XError._(result.union.err);
     }
   }
 
-  static final _loadGenericLocationFormatFfi = _capi<
+  // ignore: non_constant_identifier_names
+  static final _ICU4XTimeZoneFormatter_load_generic_location_format = _capi<
               ffi.NativeFunction<
                   _ResultVoidUint32 Function(
                       ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>>(
@@ -10168,13 +10802,15 @@ class ICU4XTimeZoneFormatter implements ffi.Finalizable {
   ///
   /// See the [Rust documentation for `include_localized_gmt_format`](https://docs.rs/icu/latest/icu/datetime/time_zone/struct.TimeZoneFormatter.html#method.include_localized_gmt_format) for more information.
   void includeLocalizedGmtFormat() {
-    final result = _includeLocalizedGmtFormatFfi(_underlying);
+    final result =
+        _ICU4XTimeZoneFormatter_include_localized_gmt_format(_underlying);
     if (!result.isOk) {
       throw ICU4XError._(result.union.err);
     }
   }
 
-  static final _includeLocalizedGmtFormatFfi = _capi<
+  // ignore: non_constant_identifier_names
+  static final _ICU4XTimeZoneFormatter_include_localized_gmt_format = _capi<
               ffi.NativeFunction<
                   _ResultVoidUint32 Function(ffi.Pointer<ffi.Opaque>)>>(
           'ICU4XTimeZoneFormatter_include_localized_gmt_format')
@@ -10185,13 +10821,15 @@ class ICU4XTimeZoneFormatter implements ffi.Finalizable {
   ///
   /// See the [Rust documentation for `include_iso_8601_format`](https://docs.rs/icu/latest/icu/datetime/time_zone/struct.TimeZoneFormatter.html#method.include_iso_8601_format) for more information.
   void loadIso8601Format(ICU4XIsoTimeZoneOptions options) {
-    final result = _loadIso8601FormatFfi(_underlying, options._underlying);
+    final result = _ICU4XTimeZoneFormatter_load_iso_8601_format(
+        _underlying, options._underlying);
     if (!result.isOk) {
       throw ICU4XError._(result.union.err);
     }
   }
 
-  static final _loadIso8601FormatFfi = _capi<
+  // ignore: non_constant_identifier_names
+  static final _ICU4XTimeZoneFormatter_load_iso_8601_format = _capi<
               ffi.NativeFunction<
                   _ResultVoidUint32 Function(
                       ffi.Pointer<ffi.Opaque>, _ICU4XIsoTimeZoneOptionsFfi)>>(
@@ -10207,14 +10845,15 @@ class ICU4XTimeZoneFormatter implements ffi.Finalizable {
   /// See the [Rust documentation for `format_to_string`](https://docs.rs/icu/latest/icu/datetime/time_zone/struct.TimeZoneFormatter.html#method.format_to_string) for more information.
   String formatCustomTimeZone(ICU4XCustomTimeZone value) {
     final writeable = _Writeable();
-    final result = _formatCustomTimeZoneFfi(
+    final result = _ICU4XTimeZoneFormatter_format_custom_time_zone(
         _underlying, value._underlying, writeable._underlying);
     return result.isOk
         ? writeable.finalize()
         : throw ICU4XError._(result.union.err);
   }
 
-  static final _formatCustomTimeZoneFfi = _capi<
+  // ignore: non_constant_identifier_names
+  static final _ICU4XTimeZoneFormatter_format_custom_time_zone = _capi<
               ffi.NativeFunction<
                   _ResultVoidUint32 Function(ffi.Pointer<ffi.Opaque>,
                       ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>>(
@@ -10239,12 +10878,13 @@ class ICU4XTitlecaseMapper implements ffi.Finalizable {
   ///
   /// See the [Rust documentation for `new`](https://docs.rs/icu/latest/icu/casemap/struct.TitlecaseMapper.html#method.new) for more information.
   factory ICU4XTitlecaseMapper(ICU4XDataProvider provider) {
-    final result = _createFfi(provider._underlying);
+    final result = _ICU4XTitlecaseMapper_create(provider._underlying);
     return result.isOk
         ? ICU4XTitlecaseMapper._(result.union.ok)
         : throw ICU4XError._(result.union.err);
   }
-  static final _createFfi = _capi<
+  // ignore: non_constant_identifier_names
+  static final _ICU4XTitlecaseMapper_create = _capi<
           ffi.NativeFunction<
               _ResultOpaqueUint32 Function(
                   ffi.Pointer<ffi.Opaque>)>>('ICU4XTitlecaseMapper_create')
@@ -10262,7 +10902,7 @@ class ICU4XTitlecaseMapper implements ffi.Finalizable {
     final sSlice = _SliceFfi2Utf8._fromDart(s, alloc);
 
     final writeable = _Writeable();
-    final result = _titlecaseSegmentV1Ffi(
+    final result = _ICU4XTitlecaseMapper_titlecase_segment_v1(
         _underlying,
         sSlice._bytes,
         sSlice._length,
@@ -10275,7 +10915,8 @@ class ICU4XTitlecaseMapper implements ffi.Finalizable {
         : throw ICU4XError._(result.union.err);
   }
 
-  static final _titlecaseSegmentV1Ffi = _capi<
+  // ignore: non_constant_identifier_names
+  static final _ICU4XTitlecaseMapper_titlecase_segment_v1 = _capi<
               ffi.NativeFunction<
                   _ResultVoidUint32 Function(
                       ffi.Pointer<ffi.Opaque>,
@@ -10330,10 +10971,11 @@ class ICU4XTitlecaseOptionsV1 {
 
   /// See the [Rust documentation for `default`](https://docs.rs/icu/latest/icu/casemap/titlecase/struct.TitlecaseOptions.html#method.default) for more information.
   factory ICU4XTitlecaseOptionsV1.options() {
-    final result = _defaultOptionsFfi();
+    final result = _ICU4XTitlecaseOptionsV1_default_options();
     return ICU4XTitlecaseOptionsV1._(result);
   }
-  static final _defaultOptionsFfi =
+  // ignore: non_constant_identifier_names
+  static final _ICU4XTitlecaseOptionsV1_default_options =
       _capi<ffi.NativeFunction<_ICU4XTitlecaseOptionsV1Ffi Function()>>(
               'ICU4XTitlecaseOptionsV1_default_options')
           .asFunction<_ICU4XTitlecaseOptionsV1Ffi Function()>(isLeaf: true);
@@ -10405,12 +11047,14 @@ class ICU4XUnicodeSetData implements ffi.Finalizable {
     final alloc = ffi2.Arena();
     final sSlice = _SliceFfi2Utf8._fromDart(s, alloc);
 
-    final result = _containsFfi(_underlying, sSlice._bytes, sSlice._length);
+    final result = _ICU4XUnicodeSetData_contains(
+        _underlying, sSlice._bytes, sSlice._length);
     alloc.releaseAll();
     return result;
   }
 
-  static final _containsFfi = _capi<
+  // ignore: non_constant_identifier_names
+  static final _ICU4XUnicodeSetData_contains = _capi<
           ffi.NativeFunction<
               ffi.Bool Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi2.Utf8>,
                   ffi.Size)>>('ICU4XUnicodeSetData_contains')
@@ -10422,11 +11066,12 @@ class ICU4XUnicodeSetData implements ffi.Finalizable {
   ///
   /// See the [Rust documentation for `contains_char`](https://docs.rs/icu/latest/icu/properties/sets/struct.UnicodeSetDataBorrowed.html#method.contains_char) for more information.
   bool containsChar(int cp) {
-    final result = _containsCharFfi(_underlying, cp);
+    final result = _ICU4XUnicodeSetData_contains_char(_underlying, cp);
     return result;
   }
 
-  static final _containsCharFfi = _capi<
+  // ignore: non_constant_identifier_names
+  static final _ICU4XUnicodeSetData_contains_char = _capi<
           ffi.NativeFunction<
               ffi.Bool Function(ffi.Pointer<ffi.Opaque>,
                   ffi.Uint32)>>('ICU4XUnicodeSetData_contains_char')
@@ -10434,11 +11079,12 @@ class ICU4XUnicodeSetData implements ffi.Finalizable {
 
   /// Checks whether the code point (specified as a 32 bit integer, in UTF-32) is in the set.
   bool contains32(int cp) {
-    final result = _contains32Ffi(_underlying, cp);
+    final result = _ICU4XUnicodeSetData_contains32(_underlying, cp);
     return result;
   }
 
-  static final _contains32Ffi = _capi<
+  // ignore: non_constant_identifier_names
+  static final _ICU4XUnicodeSetData_contains32 = _capi<
           ffi.NativeFunction<
               ffi.Bool Function(ffi.Pointer<ffi.Opaque>,
                   ffi.Uint32)>>('ICU4XUnicodeSetData_contains32')
@@ -10446,12 +11092,13 @@ class ICU4XUnicodeSetData implements ffi.Finalizable {
 
   /// See the [Rust documentation for `basic_emoji`](https://docs.rs/icu/latest/icu/properties/sets/fn.basic_emoji.html) for more information.
   factory ICU4XUnicodeSetData.loadBasicEmoji(ICU4XDataProvider provider) {
-    final result = _loadBasicEmojiFfi(provider._underlying);
+    final result = _ICU4XUnicodeSetData_load_basic_emoji(provider._underlying);
     return result.isOk
         ? ICU4XUnicodeSetData._(result.union.ok)
         : throw ICU4XError._(result.union.err);
   }
-  static final _loadBasicEmojiFfi = _capi<
+  // ignore: non_constant_identifier_names
+  static final _ICU4XUnicodeSetData_load_basic_emoji = _capi<
               ffi.NativeFunction<
                   _ResultOpaqueUint32 Function(ffi.Pointer<ffi.Opaque>)>>(
           'ICU4XUnicodeSetData_load_basic_emoji')
@@ -10461,13 +11108,14 @@ class ICU4XUnicodeSetData implements ffi.Finalizable {
   /// See the [Rust documentation for `exemplars_main`](https://docs.rs/icu/latest/icu/properties/exemplar_chars/fn.exemplars_main.html) for more information.
   factory ICU4XUnicodeSetData.loadExemplarsMain(
       ICU4XDataProvider provider, ICU4XLocale locale) {
-    final result =
-        _loadExemplarsMainFfi(provider._underlying, locale._underlying);
+    final result = _ICU4XUnicodeSetData_load_exemplars_main(
+        provider._underlying, locale._underlying);
     return result.isOk
         ? ICU4XUnicodeSetData._(result.union.ok)
         : throw ICU4XError._(result.union.err);
   }
-  static final _loadExemplarsMainFfi = _capi<
+  // ignore: non_constant_identifier_names
+  static final _ICU4XUnicodeSetData_load_exemplars_main = _capi<
               ffi.NativeFunction<
                   _ResultOpaqueUint32 Function(
                       ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>>(
@@ -10479,13 +11127,14 @@ class ICU4XUnicodeSetData implements ffi.Finalizable {
   /// See the [Rust documentation for `exemplars_auxiliary`](https://docs.rs/icu/latest/icu/properties/exemplar_chars/fn.exemplars_auxiliary.html) for more information.
   factory ICU4XUnicodeSetData.loadExemplarsAuxiliary(
       ICU4XDataProvider provider, ICU4XLocale locale) {
-    final result =
-        _loadExemplarsAuxiliaryFfi(provider._underlying, locale._underlying);
+    final result = _ICU4XUnicodeSetData_load_exemplars_auxiliary(
+        provider._underlying, locale._underlying);
     return result.isOk
         ? ICU4XUnicodeSetData._(result.union.ok)
         : throw ICU4XError._(result.union.err);
   }
-  static final _loadExemplarsAuxiliaryFfi = _capi<
+  // ignore: non_constant_identifier_names
+  static final _ICU4XUnicodeSetData_load_exemplars_auxiliary = _capi<
               ffi.NativeFunction<
                   _ResultOpaqueUint32 Function(
                       ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>>(
@@ -10497,13 +11146,14 @@ class ICU4XUnicodeSetData implements ffi.Finalizable {
   /// See the [Rust documentation for `exemplars_punctuation`](https://docs.rs/icu/latest/icu/properties/exemplar_chars/fn.exemplars_punctuation.html) for more information.
   factory ICU4XUnicodeSetData.loadExemplarsPunctuation(
       ICU4XDataProvider provider, ICU4XLocale locale) {
-    final result =
-        _loadExemplarsPunctuationFfi(provider._underlying, locale._underlying);
+    final result = _ICU4XUnicodeSetData_load_exemplars_punctuation(
+        provider._underlying, locale._underlying);
     return result.isOk
         ? ICU4XUnicodeSetData._(result.union.ok)
         : throw ICU4XError._(result.union.err);
   }
-  static final _loadExemplarsPunctuationFfi = _capi<
+  // ignore: non_constant_identifier_names
+  static final _ICU4XUnicodeSetData_load_exemplars_punctuation = _capi<
               ffi.NativeFunction<
                   _ResultOpaqueUint32 Function(
                       ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>>(
@@ -10515,13 +11165,14 @@ class ICU4XUnicodeSetData implements ffi.Finalizable {
   /// See the [Rust documentation for `exemplars_numbers`](https://docs.rs/icu/latest/icu/properties/exemplar_chars/fn.exemplars_numbers.html) for more information.
   factory ICU4XUnicodeSetData.loadExemplarsNumbers(
       ICU4XDataProvider provider, ICU4XLocale locale) {
-    final result =
-        _loadExemplarsNumbersFfi(provider._underlying, locale._underlying);
+    final result = _ICU4XUnicodeSetData_load_exemplars_numbers(
+        provider._underlying, locale._underlying);
     return result.isOk
         ? ICU4XUnicodeSetData._(result.union.ok)
         : throw ICU4XError._(result.union.err);
   }
-  static final _loadExemplarsNumbersFfi = _capi<
+  // ignore: non_constant_identifier_names
+  static final _ICU4XUnicodeSetData_load_exemplars_numbers = _capi<
               ffi.NativeFunction<
                   _ResultOpaqueUint32 Function(
                       ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>>(
@@ -10533,13 +11184,14 @@ class ICU4XUnicodeSetData implements ffi.Finalizable {
   /// See the [Rust documentation for `exemplars_index`](https://docs.rs/icu/latest/icu/properties/exemplar_chars/fn.exemplars_index.html) for more information.
   factory ICU4XUnicodeSetData.loadExemplarsIndex(
       ICU4XDataProvider provider, ICU4XLocale locale) {
-    final result =
-        _loadExemplarsIndexFfi(provider._underlying, locale._underlying);
+    final result = _ICU4XUnicodeSetData_load_exemplars_index(
+        provider._underlying, locale._underlying);
     return result.isOk
         ? ICU4XUnicodeSetData._(result.union.ok)
         : throw ICU4XError._(result.union.err);
   }
-  static final _loadExemplarsIndexFfi = _capi<
+  // ignore: non_constant_identifier_names
+  static final _ICU4XUnicodeSetData_load_exemplars_index = _capi<
               ffi.NativeFunction<
                   _ResultOpaqueUint32 Function(
                       ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>>(
@@ -10566,12 +11218,14 @@ class ICU4XWeekCalculator implements ffi.Finalizable {
   ///
   /// See the [Rust documentation for `try_new`](https://docs.rs/icu/latest/icu/calendar/week/struct.WeekCalculator.html#method.try_new) for more information.
   factory ICU4XWeekCalculator(ICU4XDataProvider provider, ICU4XLocale locale) {
-    final result = _createFfi(provider._underlying, locale._underlying);
+    final result =
+        _ICU4XWeekCalculator_create(provider._underlying, locale._underlying);
     return result.isOk
         ? ICU4XWeekCalculator._(result.union.ok)
         : throw ICU4XError._(result.union.err);
   }
-  static final _createFfi = _capi<
+  // ignore: non_constant_identifier_names
+  static final _ICU4XWeekCalculator_create = _capi<
           ffi.NativeFunction<
               _ResultOpaqueUint32 Function(ffi.Pointer<ffi.Opaque>,
                   ffi.Pointer<ffi.Opaque>)>>('ICU4XWeekCalculator_create')
@@ -10582,25 +11236,29 @@ class ICU4XWeekCalculator implements ffi.Finalizable {
   /// Additional information: [1](https://docs.rs/icu/latest/icu/calendar/week/struct.WeekCalculator.html#structfield.first_weekday), [2](https://docs.rs/icu/latest/icu/calendar/week/struct.WeekCalculator.html#structfield.min_week_days)
   factory ICU4XWeekCalculator.fromFirstDayOfWeekAndMinWeekDays(
       ICU4XIsoWeekday firstWeekday, int minWeekDays) {
-    final result = _createFromFirstDayOfWeekAndMinWeekDaysFfi(
-        firstWeekday._id, minWeekDays);
+    final result =
+        _ICU4XWeekCalculator_create_from_first_day_of_week_and_min_week_days(
+            firstWeekday._id, minWeekDays);
     return ICU4XWeekCalculator._(result);
   }
-  static final _createFromFirstDayOfWeekAndMinWeekDaysFfi = _capi<
-              ffi.NativeFunction<
-                  ffi.Pointer<ffi.Opaque> Function(ffi.Uint32, ffi.Uint8)>>(
-          'ICU4XWeekCalculator_create_from_first_day_of_week_and_min_week_days')
-      .asFunction<ffi.Pointer<ffi.Opaque> Function(int, int)>(isLeaf: true);
+  // ignore: non_constant_identifier_names
+  static final _ICU4XWeekCalculator_create_from_first_day_of_week_and_min_week_days =
+      _capi<
+                  ffi.NativeFunction<
+                      ffi.Pointer<ffi.Opaque> Function(ffi.Uint32, ffi.Uint8)>>(
+              'ICU4XWeekCalculator_create_from_first_day_of_week_and_min_week_days')
+          .asFunction<ffi.Pointer<ffi.Opaque> Function(int, int)>(isLeaf: true);
 
   /// Returns the weekday that starts the week for this object's locale
   ///
   /// See the [Rust documentation for `first_weekday`](https://docs.rs/icu/latest/icu/calendar/week/struct.WeekCalculator.html#structfield.first_weekday) for more information.
   ICU4XIsoWeekday get firstWeekday {
-    final result = _firstWeekdayFfi(_underlying);
+    final result = _ICU4XWeekCalculator_first_weekday(_underlying);
     return ICU4XIsoWeekday._(result);
   }
 
-  static final _firstWeekdayFfi =
+  // ignore: non_constant_identifier_names
+  static final _ICU4XWeekCalculator_first_weekday =
       _capi<ffi.NativeFunction<ffi.Uint32 Function(ffi.Pointer<ffi.Opaque>)>>(
               'ICU4XWeekCalculator_first_weekday')
           .asFunction<int Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
@@ -10610,11 +11268,12 @@ class ICU4XWeekCalculator implements ffi.Finalizable {
   ///
   /// See the [Rust documentation for `min_week_days`](https://docs.rs/icu/latest/icu/calendar/week/struct.WeekCalculator.html#structfield.min_week_days) for more information.
   int get minWeekDays {
-    final result = _minWeekDaysFfi(_underlying);
+    final result = _ICU4XWeekCalculator_min_week_days(_underlying);
     return result;
   }
 
-  static final _minWeekDaysFfi =
+  // ignore: non_constant_identifier_names
+  static final _ICU4XWeekCalculator_min_week_days =
       _capi<ffi.NativeFunction<ffi.Uint8 Function(ffi.Pointer<ffi.Opaque>)>>(
               'ICU4XWeekCalculator_min_week_days')
           .asFunction<int Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
@@ -10695,11 +11354,12 @@ class ICU4XWordBreakIteratorLatin1 implements ffi.Finalizable {
   ///
   /// See the [Rust documentation for `next`](https://docs.rs/icu/latest/icu/segmenter/struct.WordBreakIterator.html#method.next) for more information.
   int next() {
-    final result = _nextFfi(_underlying);
+    final result = _ICU4XWordBreakIteratorLatin1_next(_underlying);
     return result;
   }
 
-  static final _nextFfi =
+  // ignore: non_constant_identifier_names
+  static final _ICU4XWordBreakIteratorLatin1_next =
       _capi<ffi.NativeFunction<ffi.Int32 Function(ffi.Pointer<ffi.Opaque>)>>(
               'ICU4XWordBreakIteratorLatin1_next')
           .asFunction<int Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
@@ -10708,11 +11368,12 @@ class ICU4XWordBreakIteratorLatin1 implements ffi.Finalizable {
   ///
   /// See the [Rust documentation for `word_type`](https://docs.rs/icu/latest/icu/segmenter/struct.WordBreakIterator.html#method.word_type) for more information.
   ICU4XSegmenterWordType get wordType {
-    final result = _wordTypeFfi(_underlying);
+    final result = _ICU4XWordBreakIteratorLatin1_word_type(_underlying);
     return ICU4XSegmenterWordType._(result);
   }
 
-  static final _wordTypeFfi =
+  // ignore: non_constant_identifier_names
+  static final _ICU4XWordBreakIteratorLatin1_word_type =
       _capi<ffi.NativeFunction<ffi.Uint32 Function(ffi.Pointer<ffi.Opaque>)>>(
               'ICU4XWordBreakIteratorLatin1_word_type')
           .asFunction<int Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
@@ -10721,11 +11382,12 @@ class ICU4XWordBreakIteratorLatin1 implements ffi.Finalizable {
   ///
   /// See the [Rust documentation for `is_word_like`](https://docs.rs/icu/latest/icu/segmenter/struct.WordBreakIterator.html#method.is_word_like) for more information.
   bool get isWordLike {
-    final result = _isWordLikeFfi(_underlying);
+    final result = _ICU4XWordBreakIteratorLatin1_is_word_like(_underlying);
     return result;
   }
 
-  static final _isWordLikeFfi =
+  // ignore: non_constant_identifier_names
+  static final _ICU4XWordBreakIteratorLatin1_is_word_like =
       _capi<ffi.NativeFunction<ffi.Bool Function(ffi.Pointer<ffi.Opaque>)>>(
               'ICU4XWordBreakIteratorLatin1_is_word_like')
           .asFunction<bool Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
@@ -10747,11 +11409,12 @@ class ICU4XWordBreakIteratorUtf16 implements ffi.Finalizable {
   ///
   /// See the [Rust documentation for `next`](https://docs.rs/icu/latest/icu/segmenter/struct.WordBreakIterator.html#method.next) for more information.
   int next() {
-    final result = _nextFfi(_underlying);
+    final result = _ICU4XWordBreakIteratorUtf16_next(_underlying);
     return result;
   }
 
-  static final _nextFfi =
+  // ignore: non_constant_identifier_names
+  static final _ICU4XWordBreakIteratorUtf16_next =
       _capi<ffi.NativeFunction<ffi.Int32 Function(ffi.Pointer<ffi.Opaque>)>>(
               'ICU4XWordBreakIteratorUtf16_next')
           .asFunction<int Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
@@ -10760,11 +11423,12 @@ class ICU4XWordBreakIteratorUtf16 implements ffi.Finalizable {
   ///
   /// See the [Rust documentation for `word_type`](https://docs.rs/icu/latest/icu/segmenter/struct.WordBreakIterator.html#method.word_type) for more information.
   ICU4XSegmenterWordType get wordType {
-    final result = _wordTypeFfi(_underlying);
+    final result = _ICU4XWordBreakIteratorUtf16_word_type(_underlying);
     return ICU4XSegmenterWordType._(result);
   }
 
-  static final _wordTypeFfi =
+  // ignore: non_constant_identifier_names
+  static final _ICU4XWordBreakIteratorUtf16_word_type =
       _capi<ffi.NativeFunction<ffi.Uint32 Function(ffi.Pointer<ffi.Opaque>)>>(
               'ICU4XWordBreakIteratorUtf16_word_type')
           .asFunction<int Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
@@ -10773,11 +11437,12 @@ class ICU4XWordBreakIteratorUtf16 implements ffi.Finalizable {
   ///
   /// See the [Rust documentation for `is_word_like`](https://docs.rs/icu/latest/icu/segmenter/struct.WordBreakIterator.html#method.is_word_like) for more information.
   bool get isWordLike {
-    final result = _isWordLikeFfi(_underlying);
+    final result = _ICU4XWordBreakIteratorUtf16_is_word_like(_underlying);
     return result;
   }
 
-  static final _isWordLikeFfi =
+  // ignore: non_constant_identifier_names
+  static final _ICU4XWordBreakIteratorUtf16_is_word_like =
       _capi<ffi.NativeFunction<ffi.Bool Function(ffi.Pointer<ffi.Opaque>)>>(
               'ICU4XWordBreakIteratorUtf16_is_word_like')
           .asFunction<bool Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
@@ -10799,11 +11464,12 @@ class ICU4XWordBreakIteratorUtf8 implements ffi.Finalizable {
   ///
   /// See the [Rust documentation for `next`](https://docs.rs/icu/latest/icu/segmenter/struct.WordBreakIterator.html#method.next) for more information.
   int next() {
-    final result = _nextFfi(_underlying);
+    final result = _ICU4XWordBreakIteratorUtf8_next(_underlying);
     return result;
   }
 
-  static final _nextFfi =
+  // ignore: non_constant_identifier_names
+  static final _ICU4XWordBreakIteratorUtf8_next =
       _capi<ffi.NativeFunction<ffi.Int32 Function(ffi.Pointer<ffi.Opaque>)>>(
               'ICU4XWordBreakIteratorUtf8_next')
           .asFunction<int Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
@@ -10812,11 +11478,12 @@ class ICU4XWordBreakIteratorUtf8 implements ffi.Finalizable {
   ///
   /// See the [Rust documentation for `word_type`](https://docs.rs/icu/latest/icu/segmenter/struct.WordBreakIterator.html#method.word_type) for more information.
   ICU4XSegmenterWordType get wordType {
-    final result = _wordTypeFfi(_underlying);
+    final result = _ICU4XWordBreakIteratorUtf8_word_type(_underlying);
     return ICU4XSegmenterWordType._(result);
   }
 
-  static final _wordTypeFfi =
+  // ignore: non_constant_identifier_names
+  static final _ICU4XWordBreakIteratorUtf8_word_type =
       _capi<ffi.NativeFunction<ffi.Uint32 Function(ffi.Pointer<ffi.Opaque>)>>(
               'ICU4XWordBreakIteratorUtf8_word_type')
           .asFunction<int Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
@@ -10825,11 +11492,12 @@ class ICU4XWordBreakIteratorUtf8 implements ffi.Finalizable {
   ///
   /// See the [Rust documentation for `is_word_like`](https://docs.rs/icu/latest/icu/segmenter/struct.WordBreakIterator.html#method.is_word_like) for more information.
   bool get isWordLike {
-    final result = _isWordLikeFfi(_underlying);
+    final result = _ICU4XWordBreakIteratorUtf8_is_word_like(_underlying);
     return result;
   }
 
-  static final _isWordLikeFfi =
+  // ignore: non_constant_identifier_names
+  static final _ICU4XWordBreakIteratorUtf8_is_word_like =
       _capi<ffi.NativeFunction<ffi.Bool Function(ffi.Pointer<ffi.Opaque>)>>(
               'ICU4XWordBreakIteratorUtf8_is_word_like')
           .asFunction<bool Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
@@ -10856,12 +11524,13 @@ class ICU4XWordSegmenter implements ffi.Finalizable {
   ///
   /// See the [Rust documentation for `new_auto`](https://docs.rs/icu/latest/icu/segmenter/struct.WordSegmenter.html#method.new_auto) for more information.
   factory ICU4XWordSegmenter.auto(ICU4XDataProvider provider) {
-    final result = _createAutoFfi(provider._underlying);
+    final result = _ICU4XWordSegmenter_create_auto(provider._underlying);
     return result.isOk
         ? ICU4XWordSegmenter._(result.union.ok)
         : throw ICU4XError._(result.union.err);
   }
-  static final _createAutoFfi = _capi<
+  // ignore: non_constant_identifier_names
+  static final _ICU4XWordSegmenter_create_auto = _capi<
           ffi.NativeFunction<
               _ResultOpaqueUint32 Function(
                   ffi.Pointer<ffi.Opaque>)>>('ICU4XWordSegmenter_create_auto')
@@ -10876,12 +11545,13 @@ class ICU4XWordSegmenter implements ffi.Finalizable {
   ///
   /// See the [Rust documentation for `new_lstm`](https://docs.rs/icu/latest/icu/segmenter/struct.WordSegmenter.html#method.new_lstm) for more information.
   factory ICU4XWordSegmenter.lstm(ICU4XDataProvider provider) {
-    final result = _createLstmFfi(provider._underlying);
+    final result = _ICU4XWordSegmenter_create_lstm(provider._underlying);
     return result.isOk
         ? ICU4XWordSegmenter._(result.union.ok)
         : throw ICU4XError._(result.union.err);
   }
-  static final _createLstmFfi = _capi<
+  // ignore: non_constant_identifier_names
+  static final _ICU4XWordSegmenter_create_lstm = _capi<
           ffi.NativeFunction<
               _ResultOpaqueUint32 Function(
                   ffi.Pointer<ffi.Opaque>)>>('ICU4XWordSegmenter_create_lstm')
@@ -10893,12 +11563,13 @@ class ICU4XWordSegmenter implements ffi.Finalizable {
   ///
   /// See the [Rust documentation for `new_dictionary`](https://docs.rs/icu/latest/icu/segmenter/struct.WordSegmenter.html#method.new_dictionary) for more information.
   factory ICU4XWordSegmenter.dictionary(ICU4XDataProvider provider) {
-    final result = _createDictionaryFfi(provider._underlying);
+    final result = _ICU4XWordSegmenter_create_dictionary(provider._underlying);
     return result.isOk
         ? ICU4XWordSegmenter._(result.union.ok)
         : throw ICU4XError._(result.union.err);
   }
-  static final _createDictionaryFfi = _capi<
+  // ignore: non_constant_identifier_names
+  static final _ICU4XWordSegmenter_create_dictionary = _capi<
               ffi.NativeFunction<
                   _ResultOpaqueUint32 Function(ffi.Pointer<ffi.Opaque>)>>(
           'ICU4XWordSegmenter_create_dictionary')
@@ -10912,13 +11583,14 @@ class ICU4XWordSegmenter implements ffi.Finalizable {
     final alloc = ffi2.Arena();
     final inputSlice = _SliceFfi2Utf8._fromDart(input, alloc);
 
-    final result =
-        _segmentUtf8Ffi(_underlying, inputSlice._bytes, inputSlice._length);
+    final result = _ICU4XWordSegmenter_segment_utf8(
+        _underlying, inputSlice._bytes, inputSlice._length);
     alloc.releaseAll();
     return ICU4XWordBreakIteratorUtf8._(result);
   }
 
-  static final _segmentUtf8Ffi = _capi<
+  // ignore: non_constant_identifier_names
+  static final _ICU4XWordSegmenter_segment_utf8 = _capi<
           ffi.NativeFunction<
               ffi.Pointer<ffi.Opaque> Function(
                   ffi.Pointer<ffi.Opaque>,
@@ -10935,13 +11607,14 @@ class ICU4XWordSegmenter implements ffi.Finalizable {
     final alloc = ffi2.Arena();
     final inputSlice = _SliceFfiUint16._fromDart(input, alloc);
 
-    final result =
-        _segmentUtf16Ffi(_underlying, inputSlice._bytes, inputSlice._length);
+    final result = _ICU4XWordSegmenter_segment_utf16(
+        _underlying, inputSlice._bytes, inputSlice._length);
     alloc.releaseAll();
     return ICU4XWordBreakIteratorUtf16._(result);
   }
 
-  static final _segmentUtf16Ffi = _capi<
+  // ignore: non_constant_identifier_names
+  static final _ICU4XWordSegmenter_segment_utf16 = _capi<
           ffi.NativeFunction<
               ffi.Pointer<ffi.Opaque> Function(
                   ffi.Pointer<ffi.Opaque>,
@@ -10958,13 +11631,14 @@ class ICU4XWordSegmenter implements ffi.Finalizable {
     final alloc = ffi2.Arena();
     final inputSlice = _SliceFfiUint8._fromDart(input, alloc);
 
-    final result =
-        _segmentLatin1Ffi(_underlying, inputSlice._bytes, inputSlice._length);
+    final result = _ICU4XWordSegmenter_segment_latin1(
+        _underlying, inputSlice._bytes, inputSlice._length);
     alloc.releaseAll();
     return ICU4XWordBreakIteratorLatin1._(result);
   }
 
-  static final _segmentLatin1Ffi = _capi<
+  // ignore: non_constant_identifier_names
+  static final _ICU4XWordSegmenter_segment_latin1 = _capi<
           ffi.NativeFunction<
               ffi.Pointer<ffi.Opaque> Function(
                   ffi.Pointer<ffi.Opaque>,
@@ -10999,13 +11673,17 @@ class ICU4XZonedDateTimeFormatter implements ffi.Finalizable {
       ICU4XLocale locale,
       ICU4XDateLength dateLength,
       ICU4XTimeLength timeLength) {
-    final result = _createWithLengthsFfi(provider._underlying,
-        locale._underlying, dateLength._id, timeLength._id);
+    final result = _ICU4XZonedDateTimeFormatter_create_with_lengths(
+        provider._underlying,
+        locale._underlying,
+        dateLength._id,
+        timeLength._id);
     return result.isOk
         ? ICU4XZonedDateTimeFormatter._(result.union.ok)
         : throw ICU4XError._(result.union.err);
   }
-  static final _createWithLengthsFfi = _capi<
+  // ignore: non_constant_identifier_names
+  static final _ICU4XZonedDateTimeFormatter_create_with_lengths = _capi<
               ffi.NativeFunction<
                   _ResultOpaqueUint32 Function(ffi.Pointer<ffi.Opaque>,
                       ffi.Pointer<ffi.Opaque>, ffi.Uint32, ffi.Uint32)>>(
@@ -11026,32 +11704,35 @@ class ICU4XZonedDateTimeFormatter implements ffi.Finalizable {
       ICU4XDateLength dateLength,
       ICU4XTimeLength timeLength,
       ICU4XIsoTimeZoneOptions zoneOptions) {
-    final result = _createWithLengthsAndIso8601TimeZoneFallbackFfi(
-        provider._underlying,
-        locale._underlying,
-        dateLength._id,
-        timeLength._id,
-        zoneOptions._underlying);
+    final result =
+        _ICU4XZonedDateTimeFormatter_create_with_lengths_and_iso_8601_time_zone_fallback(
+            provider._underlying,
+            locale._underlying,
+            dateLength._id,
+            timeLength._id,
+            zoneOptions._underlying);
     return result.isOk
         ? ICU4XZonedDateTimeFormatter._(result.union.ok)
         : throw ICU4XError._(result.union.err);
   }
-  static final _createWithLengthsAndIso8601TimeZoneFallbackFfi = _capi<
-              ffi.NativeFunction<
-                  _ResultOpaqueUint32 Function(
-                      ffi.Pointer<ffi.Opaque>,
-                      ffi.Pointer<ffi.Opaque>,
-                      ffi.Uint32,
-                      ffi.Uint32,
-                      _ICU4XIsoTimeZoneOptionsFfi)>>(
-          'ICU4XZonedDateTimeFormatter_create_with_lengths_and_iso_8601_time_zone_fallback')
-      .asFunction<
-          _ResultOpaqueUint32 Function(
-              ffi.Pointer<ffi.Opaque>,
-              ffi.Pointer<ffi.Opaque>,
-              int,
-              int,
-              _ICU4XIsoTimeZoneOptionsFfi)>(isLeaf: true);
+  // ignore: non_constant_identifier_names
+  static final _ICU4XZonedDateTimeFormatter_create_with_lengths_and_iso_8601_time_zone_fallback =
+      _capi<
+                  ffi.NativeFunction<
+                      _ResultOpaqueUint32 Function(
+                          ffi.Pointer<ffi.Opaque>,
+                          ffi.Pointer<ffi.Opaque>,
+                          ffi.Uint32,
+                          ffi.Uint32,
+                          _ICU4XIsoTimeZoneOptionsFfi)>>(
+              'ICU4XZonedDateTimeFormatter_create_with_lengths_and_iso_8601_time_zone_fallback')
+          .asFunction<
+              _ResultOpaqueUint32 Function(
+                  ffi.Pointer<ffi.Opaque>,
+                  ffi.Pointer<ffi.Opaque>,
+                  int,
+                  int,
+                  _ICU4XIsoTimeZoneOptionsFfi)>(isLeaf: true);
 
   /// Formats a [`ICU4XDateTime`] and [`ICU4XCustomTimeZone`] to a string.
   ///
@@ -11059,27 +11740,33 @@ class ICU4XZonedDateTimeFormatter implements ffi.Finalizable {
   String formatDatetimeWithCustomTimeZone(
       ICU4XDateTime datetime, ICU4XCustomTimeZone timeZone) {
     final writeable = _Writeable();
-    final result = _formatDatetimeWithCustomTimeZoneFfi(_underlying,
-        datetime._underlying, timeZone._underlying, writeable._underlying);
+    final result =
+        _ICU4XZonedDateTimeFormatter_format_datetime_with_custom_time_zone(
+            _underlying,
+            datetime._underlying,
+            timeZone._underlying,
+            writeable._underlying);
     return result.isOk
         ? writeable.finalize()
         : throw ICU4XError._(result.union.err);
   }
 
-  static final _formatDatetimeWithCustomTimeZoneFfi = _capi<
-              ffi.NativeFunction<
-                  _ResultVoidUint32 Function(
-                      ffi.Pointer<ffi.Opaque>,
-                      ffi.Pointer<ffi.Opaque>,
-                      ffi.Pointer<ffi.Opaque>,
-                      ffi.Pointer<ffi.Opaque>)>>(
-          'ICU4XZonedDateTimeFormatter_format_datetime_with_custom_time_zone')
-      .asFunction<
-          _ResultVoidUint32 Function(
-              ffi.Pointer<ffi.Opaque>,
-              ffi.Pointer<ffi.Opaque>,
-              ffi.Pointer<ffi.Opaque>,
-              ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
+  // ignore: non_constant_identifier_names
+  static final _ICU4XZonedDateTimeFormatter_format_datetime_with_custom_time_zone =
+      _capi<
+                  ffi.NativeFunction<
+                      _ResultVoidUint32 Function(
+                          ffi.Pointer<ffi.Opaque>,
+                          ffi.Pointer<ffi.Opaque>,
+                          ffi.Pointer<ffi.Opaque>,
+                          ffi.Pointer<ffi.Opaque>)>>(
+              'ICU4XZonedDateTimeFormatter_format_datetime_with_custom_time_zone')
+          .asFunction<
+              _ResultVoidUint32 Function(
+                  ffi.Pointer<ffi.Opaque>,
+                  ffi.Pointer<ffi.Opaque>,
+                  ffi.Pointer<ffi.Opaque>,
+                  ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
 
   /// Formats a [`ICU4XIsoDateTime`] and [`ICU4XCustomTimeZone`] to a string.
   ///
@@ -11087,27 +11774,33 @@ class ICU4XZonedDateTimeFormatter implements ffi.Finalizable {
   String formatIsoDatetimeWithCustomTimeZone(
       ICU4XIsoDateTime datetime, ICU4XCustomTimeZone timeZone) {
     final writeable = _Writeable();
-    final result = _formatIsoDatetimeWithCustomTimeZoneFfi(_underlying,
-        datetime._underlying, timeZone._underlying, writeable._underlying);
+    final result =
+        _ICU4XZonedDateTimeFormatter_format_iso_datetime_with_custom_time_zone(
+            _underlying,
+            datetime._underlying,
+            timeZone._underlying,
+            writeable._underlying);
     return result.isOk
         ? writeable.finalize()
         : throw ICU4XError._(result.union.err);
   }
 
-  static final _formatIsoDatetimeWithCustomTimeZoneFfi = _capi<
-              ffi.NativeFunction<
-                  _ResultVoidUint32 Function(
-                      ffi.Pointer<ffi.Opaque>,
-                      ffi.Pointer<ffi.Opaque>,
-                      ffi.Pointer<ffi.Opaque>,
-                      ffi.Pointer<ffi.Opaque>)>>(
-          'ICU4XZonedDateTimeFormatter_format_iso_datetime_with_custom_time_zone')
-      .asFunction<
-          _ResultVoidUint32 Function(
-              ffi.Pointer<ffi.Opaque>,
-              ffi.Pointer<ffi.Opaque>,
-              ffi.Pointer<ffi.Opaque>,
-              ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
+  // ignore: non_constant_identifier_names
+  static final _ICU4XZonedDateTimeFormatter_format_iso_datetime_with_custom_time_zone =
+      _capi<
+                  ffi.NativeFunction<
+                      _ResultVoidUint32 Function(
+                          ffi.Pointer<ffi.Opaque>,
+                          ffi.Pointer<ffi.Opaque>,
+                          ffi.Pointer<ffi.Opaque>,
+                          ffi.Pointer<ffi.Opaque>)>>(
+              'ICU4XZonedDateTimeFormatter_format_iso_datetime_with_custom_time_zone')
+          .asFunction<
+              _ResultVoidUint32 Function(
+                  ffi.Pointer<ffi.Opaque>,
+                  ffi.Pointer<ffi.Opaque>,
+                  ffi.Pointer<ffi.Opaque>,
+                  ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
 }
 
 class SizeList extends ffi.Struct {
