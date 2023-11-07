@@ -60,7 +60,7 @@ set_env CARGO_TARGET_DIR ${pwd}/target
 cd docs/tutorials/testing
 
 exec --fail-on-error cargo --config patch.toml test -p tutorials-test
-exec --fail-on-error cargo --config patch.toml check -p tutorial_datetime_cli
+exec --fail-on-error cargo --config patch.toml check -p datetime_cli
 exec --fail-on-error cargo --config patch.toml check -p tutorial_default
 exec --fail-on-error cargo --config patch.toml check -p tutorial_buffer
 exec --fail-on-error cargo --config patch.toml check -p tutorial_experimental
@@ -87,7 +87,7 @@ mkdir crates/bin
 cp ${project_dir}/target/debug/icu4x-datagen crates/bin/icu4x-datagen
 
 exec --fail-on-error cargo --config testing/patch.toml test -p tutorials-test
-exec --fail-on-error cargo --config testing/patch.toml run -p tutorial_datetime_cli
+exec --fail-on-error cargo --config testing/patch.toml run -p datetime_cli <<< "de-CH"
 exec --fail-on-error cargo --config testing/patch.toml run -p tutorial_default
 exec --fail-on-error cargo --config testing/patch.toml run -p tutorial_experimental
 exec --fail-on-error cargo --config testing/patch.toml run -p tutorial_sync
@@ -123,7 +123,7 @@ set_env CARGO_TARGET_DIR ${pwd}/target/cratesio
 
 
 exec --fail-on-error cargo test --release -p tutorials-test
-exec --fail-on-error cargo run --release -p tutorial_datetime_cli
+exec --fail-on-error cargo run --release -p datetime_cli <<< "de-CH"
 exec --fail-on-error cargo run --release -p tutorial_default
 exec --fail-on-error cargo run --release -p tutorial_experimental
 exec --fail-on-error cargo run --release -p tutorial_sync
