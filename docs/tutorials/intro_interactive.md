@@ -149,10 +149,12 @@ use icu::calendar::{Date, Iso};
 use icu::datetime::options::length;
 use icu::datetime::DateFormatter;
 
+let locale = icu::locid::Locale::UND; // to make this example compile
+
 /// Helper function to create an ICU4X DateTime for the current local time:
 fn get_current_date() -> Date<Iso> {
     let current_offset_date_time = time::OffsetDateTime::now_local().unwrap();
-    DateTime::try_new_iso_date(
+    Date::try_new_iso_date(
         current_offset_date_time.year(),
         current_offset_date_time.month() as u8,
         current_offset_date_time.day(),
@@ -161,7 +163,7 @@ fn get_current_date() -> Date<Iso> {
 }
 
 // Put the following in the main() function:
-let iso_date = get_current_datetime();
+let iso_date = get_current_date();
 
 // Create and use an ICU4X date formatter:
 let date_formatter =
