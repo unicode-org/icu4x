@@ -11,99 +11,10 @@ void init(String path) => _capi = ffi.DynamicLibrary.open(path).lookup;
 
 final _callocFree = Finalizer(ffi2.calloc.free);
 
-/// An iterator over code point ranges, produced by `ICU4XCodePointSetData` or
-/// one of the `ICU4XCodePointMapData` types
-class CodePointRangeIterator implements ffi.Finalizable {
-  final ffi.Pointer<ffi.Opaque> _underlying;
-
-  CodePointRangeIterator._(this._underlying) {
-    _finalizer.attach(this, _underlying.cast());
-  }
-
-  static final _finalizer =
-      ffi.NativeFinalizer(_capi('CodePointRangeIterator_destroy'));
-
-  /// Advance the iterator by one and return the next range.
-  ///
-  /// If the iterator is out of items, `done` will be true
-  CodePointRangeIteratorResult next() {
-    final result = _CodePointRangeIterator_next(_underlying);
-    return CodePointRangeIteratorResult._(result);
-  }
-
-  // ignore: non_constant_identifier_names
-  static final _CodePointRangeIterator_next = _capi<
-          ffi.NativeFunction<
-              _CodePointRangeIteratorResultFfi Function(
-                  ffi.Pointer<ffi.Opaque>)>>('CodePointRangeIterator_next')
-      .asFunction<
-          _CodePointRangeIteratorResultFfi Function(
-              ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
-}
-
-/// Result of a single iteration of [`CodePointRangeIterator`].
-/// Logically can be considered to be an `Option<RangeInclusive<u32>>`,
-///
-/// `start` and `end` represent an inclusive range of code points [start, end],
-/// and `done` will be true if the iterator has already finished. The last contentful
-/// iteration will NOT produce a range done=true, in other words `start` and `end` are useful
-/// values if and only if `done=false`.
-class _CodePointRangeIteratorResultFfi extends ffi.Struct {
-  @ffi.Uint32()
-  external int start;
-  @ffi.Uint32()
-  external int end;
-  @ffi.Bool()
-  external bool done;
-}
-
-class CodePointRangeIteratorResult {
-  final _CodePointRangeIteratorResultFfi _underlying;
-
-  // ignore: unused_element
-  CodePointRangeIteratorResult._(this._underlying);
-
-  factory CodePointRangeIteratorResult() {
-    final pointer = ffi2.calloc<_CodePointRangeIteratorResultFfi>();
-    final result = CodePointRangeIteratorResult._(pointer.ref);
-    _callocFree.attach(result, pointer.cast());
-    return result;
-  }
-
-  int get start => _underlying.start;
-  set start(int start) {
-    _underlying.start = start;
-  }
-
-  int get end => _underlying.end;
-  set end(int end) {
-    _underlying.end = end;
-  }
-
-  bool get done => _underlying.done;
-  set done(bool done) {
-    _underlying.done = done;
-  }
-
-  @override
-  bool operator ==(Object other) =>
-      other is CodePointRangeIteratorResult &&
-      other._underlying.start == _underlying.start &&
-      other._underlying.end == _underlying.end &&
-      other._underlying.done == _underlying.done;
-
-  @override
-  int get hashCode => Object.hashAll([
-        _underlying.start,
-        _underlying.end,
-        _underlying.done,
-      ]);
-}
-
 /// The various calendar types currently supported by [`ICU4XCalendar`]
 ///
 /// See the [Rust documentation for `AnyCalendarKind`](https://docs.rs/icu/latest/icu/calendar/enum.AnyCalendarKind.html) for more information.
-enum ICU4XAnyCalendarKind {
+enum AnyCalendarKind {
   /// The kind of an Iso calendar
   iso,
 
@@ -164,10 +75,10 @@ enum ICU4XAnyCalendarKind {
   /// is not known or supported.
   ///
   /// See the [Rust documentation for `get_for_locale`](https://docs.rs/icu/latest/icu/calendar/enum.AnyCalendarKind.html#method.get_for_locale) for more information.
-  factory ICU4XAnyCalendarKind.getForLocale(ICU4XLocale locale) {
+  factory AnyCalendarKind.getForLocale(Locale locale) {
     final result = _ICU4XAnyCalendarKind_get_for_locale(locale._underlying);
     return result.isOk
-        ? ICU4XAnyCalendarKind.values[result.union.ok]
+        ? AnyCalendarKind.values[result.union.ok]
         : throw VoidError();
   }
   // ignore: non_constant_identifier_names
@@ -183,7 +94,7 @@ enum ICU4XAnyCalendarKind {
   /// Errors if the calendar is not known or supported.
   ///
   /// See the [Rust documentation for `get_for_bcp47_value`](https://docs.rs/icu/latest/icu/calendar/enum.AnyCalendarKind.html#method.get_for_bcp47_value) for more information.
-  factory ICU4XAnyCalendarKind.getForBcp47(String s) {
+  factory AnyCalendarKind.getForBcp47(String s) {
     final alloc = ffi2.Arena();
     final sSlice = _SliceFfi2Utf8._fromDart(s, alloc);
 
@@ -191,7 +102,7 @@ enum ICU4XAnyCalendarKind {
         _ICU4XAnyCalendarKind_get_for_bcp47(sSlice._bytes, sSlice._length);
     alloc.releaseAll();
     return result.isOk
-        ? ICU4XAnyCalendarKind.values[result.union.ok]
+        ? AnyCalendarKind.values[result.union.ok]
         : throw VoidError();
   }
   // ignore: non_constant_identifier_names
@@ -210,7 +121,7 @@ enum ICU4XAnyCalendarKind {
     final result = _ICU4XAnyCalendarKind_bcp47(index, writeable._underlying);
     return result.isOk
         ? writeable.finalize()
-        : throw ICU4XError.values
+        : throw Error.values
             .firstWhere((v) => v._underlying == result.union.err);
   }
 
@@ -226,10 +137,10 @@ enum ICU4XAnyCalendarKind {
 /// An object capable of mapping from a BCP-47 time zone ID to an IANA ID.
 ///
 /// See the [Rust documentation for `IanaBcp47RoundTripMapper`](https://docs.rs/icu/latest/icu/timezone/struct.IanaBcp47RoundTripMapper.html) for more information.
-class ICU4XBcp47ToIanaMapper implements ffi.Finalizable {
+class Bcp47ToIanaMapper implements ffi.Finalizable {
   final ffi.Pointer<ffi.Opaque> _underlying;
 
-  ICU4XBcp47ToIanaMapper._(this._underlying) {
+  Bcp47ToIanaMapper._(this._underlying) {
     _finalizer.attach(this, _underlying.cast());
   }
 
@@ -237,11 +148,11 @@ class ICU4XBcp47ToIanaMapper implements ffi.Finalizable {
       ffi.NativeFinalizer(_capi('ICU4XBcp47ToIanaMapper_destroy'));
 
   /// See the [Rust documentation for `new`](https://docs.rs/icu/latest/icu/timezone/struct.IanaBcp47RoundTripMapper.html#method.new) for more information.
-  factory ICU4XBcp47ToIanaMapper(ICU4XDataProvider provider) {
+  factory Bcp47ToIanaMapper(DataProvider provider) {
     final result = _ICU4XBcp47ToIanaMapper_create(provider._underlying);
     return result.isOk
-        ? ICU4XBcp47ToIanaMapper._(result.union.ok)
-        : throw ICU4XError.values
+        ? Bcp47ToIanaMapper._(result.union.ok)
+        : throw Error.values
             .firstWhere((v) => v._underlying == result.union.err);
   }
   // ignore: non_constant_identifier_names
@@ -265,7 +176,7 @@ class ICU4XBcp47ToIanaMapper implements ffi.Finalizable {
     alloc.releaseAll();
     return result.isOk
         ? writeable.finalize()
-        : throw ICU4XError.values
+        : throw Error.values
             .firstWhere((v) => v._underlying == result.union.err);
   }
 
@@ -288,10 +199,10 @@ class ICU4XBcp47ToIanaMapper implements ffi.Finalizable {
 /// An ICU4X Bidi object, containing loaded bidi data
 ///
 /// See the [Rust documentation for `BidiClassAdapter`](https://docs.rs/icu/latest/icu/properties/bidi/struct.BidiClassAdapter.html) for more information.
-class ICU4XBidi implements ffi.Finalizable {
+class Bidi implements ffi.Finalizable {
   final ffi.Pointer<ffi.Opaque> _underlying;
 
-  ICU4XBidi._(this._underlying) {
+  Bidi._(this._underlying) {
     _finalizer.attach(this, _underlying.cast());
   }
 
@@ -300,11 +211,11 @@ class ICU4XBidi implements ffi.Finalizable {
   /// Creates a new [`ICU4XBidi`] from locale data.
   ///
   /// See the [Rust documentation for `new`](https://docs.rs/icu/latest/icu/properties/bidi/struct.BidiClassAdapter.html#method.new) for more information.
-  factory ICU4XBidi(ICU4XDataProvider provider) {
+  factory Bidi(DataProvider provider) {
     final result = _ICU4XBidi_create(provider._underlying);
     return result.isOk
-        ? ICU4XBidi._(result.union.ok)
-        : throw ICU4XError.values
+        ? Bidi._(result.union.ok)
+        : throw Error.values
             .firstWhere((v) => v._underlying == result.union.err);
   }
   // ignore: non_constant_identifier_names
@@ -320,14 +231,14 @@ class ICU4XBidi implements ffi.Finalizable {
   /// Takes in a Level for the default level, if it is an invalid value it will default to LTR
   ///
   /// See the [Rust documentation for `new_with_data_source`](https://docs.rs/unicode_bidi/latest/unicode_bidi/struct.BidiInfo.html#method.new_with_data_source) for more information.
-  ICU4XBidiInfo forText(String text, int defaultLevel) {
+  BidiInfo forText(String text, int defaultLevel) {
     final alloc = ffi2.Arena();
     final textSlice = _SliceFfi2Utf8._fromDart(text, alloc);
 
     final result = _ICU4XBidi_for_text(
         _underlying, textSlice._bytes, textSlice._length, defaultLevel);
     alloc.releaseAll();
-    return ICU4XBidiInfo._(result);
+    return BidiInfo._(result);
   }
 
   // ignore: non_constant_identifier_names
@@ -352,14 +263,14 @@ class ICU4XBidi implements ffi.Finalizable {
   /// but is still safe.
   ///
   /// See the [Rust documentation for `reorder_visual`](https://docs.rs/unicode_bidi/latest/unicode_bidi/struct.BidiInfo.html#method.reorder_visual) for more information.
-  ICU4XReorderedIndexMap reorderVisual(Uint8List levels) {
+  ReorderedIndexMap reorderVisual(Uint8List levels) {
     final alloc = ffi2.Arena();
     final levelsSlice = _SliceFfiUint8._fromDart(levels, alloc);
 
     final result = _ICU4XBidi_reorder_visual(
         _underlying, levelsSlice._bytes, levelsSlice._length);
     alloc.releaseAll();
-    return ICU4XReorderedIndexMap._(result);
+    return ReorderedIndexMap._(result);
   }
 
   // ignore: non_constant_identifier_names
@@ -420,7 +331,7 @@ class ICU4XBidi implements ffi.Finalizable {
           .asFunction<int Function()>(isLeaf: true)();
 }
 
-enum ICU4XBidiDirection {
+enum BidiDirection {
   ltr,
   rtl,
   mixed;
@@ -429,10 +340,10 @@ enum ICU4XBidiDirection {
 /// An object containing bidi information for a given string, produced by `for_text()` on `ICU4XBidi`
 ///
 /// See the [Rust documentation for `BidiInfo`](https://docs.rs/unicode_bidi/latest/unicode_bidi/struct.BidiInfo.html) for more information.
-class ICU4XBidiInfo implements ffi.Finalizable {
+class BidiInfo implements ffi.Finalizable {
   final ffi.Pointer<ffi.Opaque> _underlying;
 
-  ICU4XBidiInfo._(this._underlying) {
+  BidiInfo._(this._underlying) {
     _finalizer.attach(this, _underlying.cast());
   }
 
@@ -451,9 +362,9 @@ class ICU4XBidiInfo implements ffi.Finalizable {
           .asFunction<int Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
 
   /// Get the nth paragraph, returning `None` if out of bounds
-  ICU4XBidiParagraph? paragraphAt(int n) {
+  BidiParagraph? paragraphAt(int n) {
     final result = _ICU4XBidiInfo_paragraph_at(_underlying, n);
-    return result.address == 0 ? null : ICU4XBidiParagraph._(result);
+    return result.address == 0 ? null : BidiParagraph._(result);
   }
 
   // ignore: non_constant_identifier_names
@@ -496,10 +407,10 @@ class ICU4XBidiInfo implements ffi.Finalizable {
 }
 
 /// Bidi information for a single processed paragraph
-class ICU4XBidiParagraph implements ffi.Finalizable {
+class BidiParagraph implements ffi.Finalizable {
   final ffi.Pointer<ffi.Opaque> _underlying;
 
-  ICU4XBidiParagraph._(this._underlying) {
+  BidiParagraph._(this._underlying) {
     _finalizer.attach(this, _underlying.cast());
   }
 
@@ -514,8 +425,7 @@ class ICU4XBidiParagraph implements ffi.Finalizable {
   void setParagraphInText(int n) {
     final result = _ICU4XBidiParagraph_set_paragraph_in_text(_underlying, n);
     if (!result.isOk) {
-      throw ICU4XError.values
-          .firstWhere((v) => v._underlying == result.union.err);
+      throw Error.values.firstWhere((v) => v._underlying == result.union.err);
     }
   }
 
@@ -530,9 +440,9 @@ class ICU4XBidiParagraph implements ffi.Finalizable {
   /// The primary direction of this paragraph
   ///
   /// See the [Rust documentation for `level_at`](https://docs.rs/unicode_bidi/latest/unicode_bidi/struct.Paragraph.html#method.level_at) for more information.
-  ICU4XBidiDirection get direction {
+  BidiDirection get direction {
     final result = _ICU4XBidiParagraph_direction(_underlying);
-    return ICU4XBidiDirection.values[result];
+    return BidiDirection.values[result];
   }
 
   // ignore: non_constant_identifier_names
@@ -589,7 +499,7 @@ class ICU4XBidiParagraph implements ffi.Finalizable {
         _underlying, rangeStart, rangeEnd, writeable._underlying);
     return result.isOk
         ? writeable.finalize()
-        : throw ICU4XError.values
+        : throw Error.values
             .firstWhere((v) => v._underlying == result.union.err);
   }
 
@@ -626,10 +536,10 @@ class ICU4XBidiParagraph implements ffi.Finalizable {
 }
 
 /// See the [Rust documentation for `AnyCalendar`](https://docs.rs/icu/latest/icu/calendar/enum.AnyCalendar.html) for more information.
-class ICU4XCalendar implements ffi.Finalizable {
+class Calendar implements ffi.Finalizable {
   final ffi.Pointer<ffi.Opaque> _underlying;
 
-  ICU4XCalendar._(this._underlying) {
+  Calendar._(this._underlying) {
     _finalizer.attach(this, _underlying.cast());
   }
 
@@ -638,13 +548,12 @@ class ICU4XCalendar implements ffi.Finalizable {
   /// Creates a new [`ICU4XCalendar`] from the specified date and time.
   ///
   /// See the [Rust documentation for `new_for_locale`](https://docs.rs/icu/latest/icu/calendar/enum.AnyCalendar.html#method.new_for_locale) for more information.
-  factory ICU4XCalendar.forLocale(
-      ICU4XDataProvider provider, ICU4XLocale locale) {
+  factory Calendar.forLocale(DataProvider provider, Locale locale) {
     final result = _ICU4XCalendar_create_for_locale(
         provider._underlying, locale._underlying);
     return result.isOk
-        ? ICU4XCalendar._(result.union.ok)
-        : throw ICU4XError.values
+        ? Calendar._(result.union.ok)
+        : throw Error.values
             .firstWhere((v) => v._underlying == result.union.err);
   }
   // ignore: non_constant_identifier_names
@@ -659,13 +568,12 @@ class ICU4XCalendar implements ffi.Finalizable {
   /// Creates a new [`ICU4XCalendar`] from the specified date and time.
   ///
   /// See the [Rust documentation for `new`](https://docs.rs/icu/latest/icu/calendar/enum.AnyCalendar.html#method.new) for more information.
-  factory ICU4XCalendar.forKind(
-      ICU4XDataProvider provider, ICU4XAnyCalendarKind kind) {
+  factory Calendar.forKind(DataProvider provider, AnyCalendarKind kind) {
     final result =
         _ICU4XCalendar_create_for_kind(provider._underlying, kind.index);
     return result.isOk
-        ? ICU4XCalendar._(result.union.ok)
-        : throw ICU4XError.values
+        ? Calendar._(result.union.ok)
+        : throw Error.values
             .firstWhere((v) => v._underlying == result.union.err);
   }
   // ignore: non_constant_identifier_names
@@ -679,9 +587,9 @@ class ICU4XCalendar implements ffi.Finalizable {
   /// Returns the kind of this calendar
   ///
   /// See the [Rust documentation for `kind`](https://docs.rs/icu/latest/icu/calendar/enum.AnyCalendar.html#method.kind) for more information.
-  ICU4XAnyCalendarKind get kind {
+  AnyCalendarKind get kind {
     final result = _ICU4XCalendar_kind(_underlying);
-    return ICU4XAnyCalendarKind.values[result];
+    return AnyCalendarKind.values[result];
   }
 
   // ignore: non_constant_identifier_names
@@ -694,10 +602,10 @@ class ICU4XCalendar implements ffi.Finalizable {
 /// Lookup of the Canonical_Combining_Class Unicode property
 ///
 /// See the [Rust documentation for `CanonicalCombiningClassMap`](https://docs.rs/icu/latest/icu/normalizer/properties/struct.CanonicalCombiningClassMap.html) for more information.
-class ICU4XCanonicalCombiningClassMap implements ffi.Finalizable {
+class CanonicalCombiningClassMap implements ffi.Finalizable {
   final ffi.Pointer<ffi.Opaque> _underlying;
 
-  ICU4XCanonicalCombiningClassMap._(this._underlying) {
+  CanonicalCombiningClassMap._(this._underlying) {
     _finalizer.attach(this, _underlying.cast());
   }
 
@@ -707,12 +615,12 @@ class ICU4XCanonicalCombiningClassMap implements ffi.Finalizable {
   /// Construct a new ICU4XCanonicalCombiningClassMap instance for NFC
   ///
   /// See the [Rust documentation for `new`](https://docs.rs/icu/latest/icu/normalizer/properties/struct.CanonicalCombiningClassMap.html#method.new) for more information.
-  factory ICU4XCanonicalCombiningClassMap(ICU4XDataProvider provider) {
+  factory CanonicalCombiningClassMap(DataProvider provider) {
     final result =
         _ICU4XCanonicalCombiningClassMap_create(provider._underlying);
     return result.isOk
-        ? ICU4XCanonicalCombiningClassMap._(result.union.ok)
-        : throw ICU4XError.values
+        ? CanonicalCombiningClassMap._(result.union.ok)
+        : throw Error.values
             .firstWhere((v) => v._underlying == result.union.err);
   }
   // ignore: non_constant_identifier_names
@@ -759,10 +667,10 @@ class ICU4XCanonicalCombiningClassMap implements ffi.Finalizable {
 /// Callers should generally use ICU4XComposingNormalizer unless they specifically need raw composition operations
 ///
 /// See the [Rust documentation for `CanonicalComposition`](https://docs.rs/icu/latest/icu/normalizer/properties/struct.CanonicalComposition.html) for more information.
-class ICU4XCanonicalComposition implements ffi.Finalizable {
+class CanonicalComposition implements ffi.Finalizable {
   final ffi.Pointer<ffi.Opaque> _underlying;
 
-  ICU4XCanonicalComposition._(this._underlying) {
+  CanonicalComposition._(this._underlying) {
     _finalizer.attach(this, _underlying.cast());
   }
 
@@ -772,11 +680,11 @@ class ICU4XCanonicalComposition implements ffi.Finalizable {
   /// Construct a new ICU4XCanonicalComposition instance for NFC
   ///
   /// See the [Rust documentation for `new`](https://docs.rs/icu/latest/icu/normalizer/properties/struct.CanonicalComposition.html#method.new) for more information.
-  factory ICU4XCanonicalComposition(ICU4XDataProvider provider) {
+  factory CanonicalComposition(DataProvider provider) {
     final result = _ICU4XCanonicalComposition_create(provider._underlying);
     return result.isOk
-        ? ICU4XCanonicalComposition._(result.union.ok)
-        : throw ICU4XError.values
+        ? CanonicalComposition._(result.union.ok)
+        : throw Error.values
             .firstWhere((v) => v._underlying == result.union.err);
   }
   // ignore: non_constant_identifier_names
@@ -811,10 +719,10 @@ class ICU4XCanonicalComposition implements ffi.Finalizable {
 /// Callers should generally use ICU4XDecomposingNormalizer unless they specifically need raw composition operations
 ///
 /// See the [Rust documentation for `CanonicalDecomposition`](https://docs.rs/icu/latest/icu/normalizer/properties/struct.CanonicalDecomposition.html) for more information.
-class ICU4XCanonicalDecomposition implements ffi.Finalizable {
+class CanonicalDecomposition implements ffi.Finalizable {
   final ffi.Pointer<ffi.Opaque> _underlying;
 
-  ICU4XCanonicalDecomposition._(this._underlying) {
+  CanonicalDecomposition._(this._underlying) {
     _finalizer.attach(this, _underlying.cast());
   }
 
@@ -824,11 +732,11 @@ class ICU4XCanonicalDecomposition implements ffi.Finalizable {
   /// Construct a new ICU4XCanonicalDecomposition instance for NFC
   ///
   /// See the [Rust documentation for `new`](https://docs.rs/icu/latest/icu/normalizer/properties/struct.CanonicalDecomposition.html#method.new) for more information.
-  factory ICU4XCanonicalDecomposition(ICU4XDataProvider provider) {
+  factory CanonicalDecomposition(DataProvider provider) {
     final result = _ICU4XCanonicalDecomposition_create(provider._underlying);
     return result.isOk
-        ? ICU4XCanonicalDecomposition._(result.union.ok)
-        : throw ICU4XError.values
+        ? CanonicalDecomposition._(result.union.ok)
+        : throw Error.values
             .firstWhere((v) => v._underlying == result.union.err);
   }
   // ignore: non_constant_identifier_names
@@ -842,25 +750,25 @@ class ICU4XCanonicalDecomposition implements ffi.Finalizable {
   /// Performs non-recursive canonical decomposition (including for Hangul).
   ///
   /// See the [Rust documentation for `decompose`](https://docs.rs/icu/latest/icu/normalizer/properties/struct.CanonicalDecomposition.html#method.decompose) for more information.
-  ICU4XDecomposed decompose(int c) {
+  Decomposed decompose(int c) {
     final result = _ICU4XCanonicalDecomposition_decompose(_underlying, c);
-    return ICU4XDecomposed._(result);
+    return Decomposed._(result);
   }
 
   // ignore: non_constant_identifier_names
   static final _ICU4XCanonicalDecomposition_decompose = _capi<
           ffi.NativeFunction<
-              _ICU4XDecomposedFfi Function(ffi.Pointer<ffi.Opaque>,
+              _DecomposedFfi Function(ffi.Pointer<ffi.Opaque>,
                   ffi.Uint32)>>('ICU4XCanonicalDecomposition_decompose')
-      .asFunction<_ICU4XDecomposedFfi Function(ffi.Pointer<ffi.Opaque>, int)>(
+      .asFunction<_DecomposedFfi Function(ffi.Pointer<ffi.Opaque>, int)>(
           isLeaf: true);
 }
 
 /// See the [Rust documentation for `CaseMapCloser`](https://docs.rs/icu/latest/icu/casemap/struct.CaseMapCloser.html) for more information.
-class ICU4XCaseMapCloser implements ffi.Finalizable {
+class CaseMapCloser implements ffi.Finalizable {
   final ffi.Pointer<ffi.Opaque> _underlying;
 
-  ICU4XCaseMapCloser._(this._underlying) {
+  CaseMapCloser._(this._underlying) {
     _finalizer.attach(this, _underlying.cast());
   }
 
@@ -870,11 +778,11 @@ class ICU4XCaseMapCloser implements ffi.Finalizable {
   /// Construct a new ICU4XCaseMapper instance
   ///
   /// See the [Rust documentation for `new`](https://docs.rs/icu/latest/icu/casemap/struct.CaseMapCloser.html#method.new) for more information.
-  factory ICU4XCaseMapCloser(ICU4XDataProvider provider) {
+  factory CaseMapCloser(DataProvider provider) {
     final result = _ICU4XCaseMapCloser_create(provider._underlying);
     return result.isOk
-        ? ICU4XCaseMapCloser._(result.union.ok)
-        : throw ICU4XError.values
+        ? CaseMapCloser._(result.union.ok)
+        : throw Error.values
             .firstWhere((v) => v._underlying == result.union.err);
   }
   // ignore: non_constant_identifier_names
@@ -889,7 +797,7 @@ class ICU4XCaseMapCloser implements ffi.Finalizable {
   /// Also adds special case closure mappings.
   ///
   /// See the [Rust documentation for `add_case_closure_to`](https://docs.rs/icu/latest/icu/casemap/struct.CaseMapCloser.html#method.add_case_closure_to) for more information.
-  void addCaseClosureTo(int c, ICU4XCodePointSetBuilder builder) {
+  void addCaseClosureTo(int c, CodePointSetBuilder builder) {
     _ICU4XCaseMapCloser_add_case_closure_to(
         _underlying, c, builder._underlying);
   }
@@ -910,7 +818,7 @@ class ICU4XCaseMapCloser implements ffi.Finalizable {
   /// Returns true if the string was found
   ///
   /// See the [Rust documentation for `add_string_case_closure_to`](https://docs.rs/icu/latest/icu/casemap/struct.CaseMapCloser.html#method.add_string_case_closure_to) for more information.
-  bool addStringCaseClosureTo(String s, ICU4XCodePointSetBuilder builder) {
+  bool addStringCaseClosureTo(String s, CodePointSetBuilder builder) {
     final alloc = ffi2.Arena();
     final sSlice = _SliceFfi2Utf8._fromDart(s, alloc);
 
@@ -935,10 +843,10 @@ class ICU4XCaseMapCloser implements ffi.Finalizable {
 }
 
 /// See the [Rust documentation for `CaseMapper`](https://docs.rs/icu/latest/icu/casemap/struct.CaseMapper.html) for more information.
-class ICU4XCaseMapper implements ffi.Finalizable {
+class CaseMapper implements ffi.Finalizable {
   final ffi.Pointer<ffi.Opaque> _underlying;
 
-  ICU4XCaseMapper._(this._underlying) {
+  CaseMapper._(this._underlying) {
     _finalizer.attach(this, _underlying.cast());
   }
 
@@ -948,11 +856,11 @@ class ICU4XCaseMapper implements ffi.Finalizable {
   /// Construct a new ICU4XCaseMapper instance
   ///
   /// See the [Rust documentation for `new`](https://docs.rs/icu/latest/icu/casemap/struct.CaseMapper.html#method.new) for more information.
-  factory ICU4XCaseMapper(ICU4XDataProvider provider) {
+  factory CaseMapper(DataProvider provider) {
     final result = _ICU4XCaseMapper_create(provider._underlying);
     return result.isOk
-        ? ICU4XCaseMapper._(result.union.ok)
-        : throw ICU4XError.values
+        ? CaseMapper._(result.union.ok)
+        : throw Error.values
             .firstWhere((v) => v._underlying == result.union.err);
   }
   // ignore: non_constant_identifier_names
@@ -966,7 +874,7 @@ class ICU4XCaseMapper implements ffi.Finalizable {
   /// Returns the full lowercase mapping of the given string
   ///
   /// See the [Rust documentation for `lowercase`](https://docs.rs/icu/latest/icu/casemap/struct.CaseMapper.html#method.lowercase) for more information.
-  String lowercase(String s, ICU4XLocale locale) {
+  String lowercase(String s, Locale locale) {
     final alloc = ffi2.Arena();
     final sSlice = _SliceFfi2Utf8._fromDart(s, alloc);
 
@@ -976,7 +884,7 @@ class ICU4XCaseMapper implements ffi.Finalizable {
     alloc.releaseAll();
     return result.isOk
         ? writeable.finalize()
-        : throw ICU4XError.values
+        : throw Error.values
             .firstWhere((v) => v._underlying == result.union.err);
   }
 
@@ -1000,7 +908,7 @@ class ICU4XCaseMapper implements ffi.Finalizable {
   /// Returns the full uppercase mapping of the given string
   ///
   /// See the [Rust documentation for `uppercase`](https://docs.rs/icu/latest/icu/casemap/struct.CaseMapper.html#method.uppercase) for more information.
-  String uppercase(String s, ICU4XLocale locale) {
+  String uppercase(String s, Locale locale) {
     final alloc = ffi2.Arena();
     final sSlice = _SliceFfi2Utf8._fromDart(s, alloc);
 
@@ -1010,7 +918,7 @@ class ICU4XCaseMapper implements ffi.Finalizable {
     alloc.releaseAll();
     return result.isOk
         ? writeable.finalize()
-        : throw ICU4XError.values
+        : throw Error.values
             .firstWhere((v) => v._underlying == result.union.err);
   }
 
@@ -1039,7 +947,7 @@ class ICU4XCaseMapper implements ffi.Finalizable {
   ///
   /// See the [Rust documentation for `titlecase_segment_with_only_case_data`](https://docs.rs/icu/latest/icu/casemap/struct.CaseMapper.html#method.titlecase_segment_with_only_case_data) for more information.
   String titlecaseSegmentWithOnlyCaseDataV1(
-      String s, ICU4XLocale locale, ICU4XTitlecaseOptionsV1 options) {
+      String s, Locale locale, TitlecaseOptionsV1 options) {
     final alloc = ffi2.Arena();
     final sSlice = _SliceFfi2Utf8._fromDart(s, alloc);
 
@@ -1054,7 +962,7 @@ class ICU4XCaseMapper implements ffi.Finalizable {
     alloc.releaseAll();
     return result.isOk
         ? writeable.finalize()
-        : throw ICU4XError.values
+        : throw Error.values
             .firstWhere((v) => v._underlying == result.union.err);
   }
 
@@ -1067,7 +975,7 @@ class ICU4XCaseMapper implements ffi.Finalizable {
                           ffi.Pointer<ffi2.Utf8>,
                           ffi.Size,
                           ffi.Pointer<ffi.Opaque>,
-                          _ICU4XTitlecaseOptionsV1Ffi,
+                          _TitlecaseOptionsV1Ffi,
                           ffi.Pointer<ffi.Opaque>)>>(
               'ICU4XCaseMapper_titlecase_segment_with_only_case_data_v1')
           .asFunction<
@@ -1076,7 +984,7 @@ class ICU4XCaseMapper implements ffi.Finalizable {
                   ffi.Pointer<ffi2.Utf8>,
                   int,
                   ffi.Pointer<ffi.Opaque>,
-                  _ICU4XTitlecaseOptionsV1Ffi,
+                  _TitlecaseOptionsV1Ffi,
                   ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
 
   /// Case-folds the characters in the given string
@@ -1092,7 +1000,7 @@ class ICU4XCaseMapper implements ffi.Finalizable {
     alloc.releaseAll();
     return result.isOk
         ? writeable.finalize()
-        : throw ICU4XError.values
+        : throw Error.values
             .firstWhere((v) => v._underlying == result.union.err);
   }
 
@@ -1125,7 +1033,7 @@ class ICU4XCaseMapper implements ffi.Finalizable {
     alloc.releaseAll();
     return result.isOk
         ? writeable.finalize()
-        : throw ICU4XError.values
+        : throw Error.values
             .firstWhere((v) => v._underlying == result.union.err);
   }
 
@@ -1157,7 +1065,7 @@ class ICU4XCaseMapper implements ffi.Finalizable {
   /// plan on using string case closure mappings too.
   ///
   /// See the [Rust documentation for `add_case_closure_to`](https://docs.rs/icu/latest/icu/casemap/struct.CaseMapper.html#method.add_case_closure_to) for more information.
-  void addCaseClosureTo(int c, ICU4XCodePointSetBuilder builder) {
+  void addCaseClosureTo(int c, CodePointSetBuilder builder) {
     _ICU4XCaseMapper_add_case_closure_to(_underlying, c, builder._underlying);
   }
 
@@ -1274,10 +1182,10 @@ class ICU4XCaseMapper implements ffi.Finalizable {
 /// See the [Rust documentation for `CodePointMapData`](https://docs.rs/icu/latest/icu/properties/maps/struct.CodePointMapData.html) for more information.
 ///
 /// See the [Rust documentation for `CodePointMapDataBorrowed`](https://docs.rs/icu/latest/icu/properties/maps/struct.CodePointMapDataBorrowed.html) for more information.
-class ICU4XCodePointMapData16 implements ffi.Finalizable {
+class CodePointMapData16 implements ffi.Finalizable {
   final ffi.Pointer<ffi.Opaque> _underlying;
 
-  ICU4XCodePointMapData16._(this._underlying) {
+  CodePointMapData16._(this._underlying) {
     _finalizer.attach(this, _underlying.cast());
   }
 
@@ -1353,10 +1261,10 @@ class ICU4XCodePointMapData16 implements ffi.Finalizable {
   /// Gets a [`ICU4XCodePointSetData`] representing all entries in this map that map to the given value
   ///
   /// See the [Rust documentation for `get_set_for_value`](https://docs.rs/icu/latest/icu/properties/maps/struct.CodePointMapDataBorrowed.html#method.get_set_for_value) for more information.
-  ICU4XCodePointSetData getSetForValue(int value) {
+  CodePointSetData getSetForValue(int value) {
     final result =
         _ICU4XCodePointMapData16_get_set_for_value(_underlying, value);
-    return ICU4XCodePointSetData._(result);
+    return CodePointSetData._(result);
   }
 
   // ignore: non_constant_identifier_names
@@ -1369,11 +1277,11 @@ class ICU4XCodePointMapData16 implements ffi.Finalizable {
               ffi.Pointer<ffi.Opaque>, int)>(isLeaf: true);
 
   /// See the [Rust documentation for `script`](https://docs.rs/icu/latest/icu/properties/maps/fn.script.html) for more information.
-  factory ICU4XCodePointMapData16.loadScript(ICU4XDataProvider provider) {
+  factory CodePointMapData16.loadScript(DataProvider provider) {
     final result = _ICU4XCodePointMapData16_load_script(provider._underlying);
     return result.isOk
-        ? ICU4XCodePointMapData16._(result.union.ok)
-        : throw ICU4XError.values
+        ? CodePointMapData16._(result.union.ok)
+        : throw Error.values
             .firstWhere((v) => v._underlying == result.union.err);
   }
   // ignore: non_constant_identifier_names
@@ -1394,10 +1302,10 @@ class ICU4XCodePointMapData16 implements ffi.Finalizable {
 /// See the [Rust documentation for `CodePointMapData`](https://docs.rs/icu/latest/icu/properties/maps/struct.CodePointMapData.html) for more information.
 ///
 /// See the [Rust documentation for `CodePointMapDataBorrowed`](https://docs.rs/icu/latest/icu/properties/maps/struct.CodePointMapDataBorrowed.html) for more information.
-class ICU4XCodePointMapData8 implements ffi.Finalizable {
+class CodePointMapData8 implements ffi.Finalizable {
   final ffi.Pointer<ffi.Opaque> _underlying;
 
-  ICU4XCodePointMapData8._(this._underlying) {
+  CodePointMapData8._(this._underlying) {
     _finalizer.attach(this, _underlying.cast());
   }
 
@@ -1514,10 +1422,10 @@ class ICU4XCodePointMapData8 implements ffi.Finalizable {
   /// Gets a [`ICU4XCodePointSetData`] representing all entries in this map that map to the given value
   ///
   /// See the [Rust documentation for `get_set_for_value`](https://docs.rs/icu/latest/icu/properties/maps/struct.CodePointMapDataBorrowed.html#method.get_set_for_value) for more information.
-  ICU4XCodePointSetData getSetForValue(int value) {
+  CodePointSetData getSetForValue(int value) {
     final result =
         _ICU4XCodePointMapData8_get_set_for_value(_underlying, value);
-    return ICU4XCodePointSetData._(result);
+    return CodePointSetData._(result);
   }
 
   // ignore: non_constant_identifier_names
@@ -1530,13 +1438,12 @@ class ICU4XCodePointMapData8 implements ffi.Finalizable {
               ffi.Pointer<ffi.Opaque>, int)>(isLeaf: true);
 
   /// See the [Rust documentation for `general_category`](https://docs.rs/icu/latest/icu/properties/maps/fn.general_category.html) for more information.
-  factory ICU4XCodePointMapData8.loadGeneralCategory(
-      ICU4XDataProvider provider) {
+  factory CodePointMapData8.loadGeneralCategory(DataProvider provider) {
     final result =
         _ICU4XCodePointMapData8_load_general_category(provider._underlying);
     return result.isOk
-        ? ICU4XCodePointMapData8._(result.union.ok)
-        : throw ICU4XError.values
+        ? CodePointMapData8._(result.union.ok)
+        : throw Error.values
             .firstWhere((v) => v._underlying == result.union.err);
   }
   // ignore: non_constant_identifier_names
@@ -1548,12 +1455,12 @@ class ICU4XCodePointMapData8 implements ffi.Finalizable {
           isLeaf: true);
 
   /// See the [Rust documentation for `bidi_class`](https://docs.rs/icu/latest/icu/properties/maps/fn.bidi_class.html) for more information.
-  factory ICU4XCodePointMapData8.loadBidiClass(ICU4XDataProvider provider) {
+  factory CodePointMapData8.loadBidiClass(DataProvider provider) {
     final result =
         _ICU4XCodePointMapData8_load_bidi_class(provider._underlying);
     return result.isOk
-        ? ICU4XCodePointMapData8._(result.union.ok)
-        : throw ICU4XError.values
+        ? CodePointMapData8._(result.union.ok)
+        : throw Error.values
             .firstWhere((v) => v._underlying == result.union.err);
   }
   // ignore: non_constant_identifier_names
@@ -1565,13 +1472,12 @@ class ICU4XCodePointMapData8 implements ffi.Finalizable {
           isLeaf: true);
 
   /// See the [Rust documentation for `east_asian_width`](https://docs.rs/icu/latest/icu/properties/maps/fn.east_asian_width.html) for more information.
-  factory ICU4XCodePointMapData8.loadEastAsianWidth(
-      ICU4XDataProvider provider) {
+  factory CodePointMapData8.loadEastAsianWidth(DataProvider provider) {
     final result =
         _ICU4XCodePointMapData8_load_east_asian_width(provider._underlying);
     return result.isOk
-        ? ICU4XCodePointMapData8._(result.union.ok)
-        : throw ICU4XError.values
+        ? CodePointMapData8._(result.union.ok)
+        : throw Error.values
             .firstWhere((v) => v._underlying == result.union.err);
   }
   // ignore: non_constant_identifier_names
@@ -1583,13 +1489,12 @@ class ICU4XCodePointMapData8 implements ffi.Finalizable {
           isLeaf: true);
 
   /// See the [Rust documentation for `indic_syllabic_category`](https://docs.rs/icu/latest/icu/properties/maps/fn.indic_syllabic_category.html) for more information.
-  factory ICU4XCodePointMapData8.loadIndicSyllabicCategory(
-      ICU4XDataProvider provider) {
+  factory CodePointMapData8.loadIndicSyllabicCategory(DataProvider provider) {
     final result = _ICU4XCodePointMapData8_load_indic_syllabic_category(
         provider._underlying);
     return result.isOk
-        ? ICU4XCodePointMapData8._(result.union.ok)
-        : throw ICU4XError.values
+        ? CodePointMapData8._(result.union.ok)
+        : throw Error.values
             .firstWhere((v) => v._underlying == result.union.err);
   }
   // ignore: non_constant_identifier_names
@@ -1601,12 +1506,12 @@ class ICU4XCodePointMapData8 implements ffi.Finalizable {
           isLeaf: true);
 
   /// See the [Rust documentation for `line_break`](https://docs.rs/icu/latest/icu/properties/maps/fn.line_break.html) for more information.
-  factory ICU4XCodePointMapData8.loadLineBreak(ICU4XDataProvider provider) {
+  factory CodePointMapData8.loadLineBreak(DataProvider provider) {
     final result =
         _ICU4XCodePointMapData8_load_line_break(provider._underlying);
     return result.isOk
-        ? ICU4XCodePointMapData8._(result.union.ok)
-        : throw ICU4XError.values
+        ? CodePointMapData8._(result.union.ok)
+        : throw Error.values
             .firstWhere((v) => v._underlying == result.union.err);
   }
   // ignore: non_constant_identifier_names
@@ -1618,13 +1523,12 @@ class ICU4XCodePointMapData8 implements ffi.Finalizable {
           isLeaf: true);
 
   /// See the [Rust documentation for `grapheme_cluster_break`](https://docs.rs/icu/latest/icu/properties/maps/fn.grapheme_cluster_break.html) for more information.
-  factory ICU4XCodePointMapData8.tryGraphemeClusterBreak(
-      ICU4XDataProvider provider) {
+  factory CodePointMapData8.tryGraphemeClusterBreak(DataProvider provider) {
     final result = _ICU4XCodePointMapData8_try_grapheme_cluster_break(
         provider._underlying);
     return result.isOk
-        ? ICU4XCodePointMapData8._(result.union.ok)
-        : throw ICU4XError.values
+        ? CodePointMapData8._(result.union.ok)
+        : throw Error.values
             .firstWhere((v) => v._underlying == result.union.err);
   }
   // ignore: non_constant_identifier_names
@@ -1636,12 +1540,12 @@ class ICU4XCodePointMapData8 implements ffi.Finalizable {
           isLeaf: true);
 
   /// See the [Rust documentation for `word_break`](https://docs.rs/icu/latest/icu/properties/maps/fn.word_break.html) for more information.
-  factory ICU4XCodePointMapData8.loadWordBreak(ICU4XDataProvider provider) {
+  factory CodePointMapData8.loadWordBreak(DataProvider provider) {
     final result =
         _ICU4XCodePointMapData8_load_word_break(provider._underlying);
     return result.isOk
-        ? ICU4XCodePointMapData8._(result.union.ok)
-        : throw ICU4XError.values
+        ? CodePointMapData8._(result.union.ok)
+        : throw Error.values
             .firstWhere((v) => v._underlying == result.union.err);
   }
   // ignore: non_constant_identifier_names
@@ -1653,12 +1557,12 @@ class ICU4XCodePointMapData8 implements ffi.Finalizable {
           isLeaf: true);
 
   /// See the [Rust documentation for `sentence_break`](https://docs.rs/icu/latest/icu/properties/maps/fn.sentence_break.html) for more information.
-  factory ICU4XCodePointMapData8.loadSentenceBreak(ICU4XDataProvider provider) {
+  factory CodePointMapData8.loadSentenceBreak(DataProvider provider) {
     final result =
         _ICU4XCodePointMapData8_load_sentence_break(provider._underlying);
     return result.isOk
-        ? ICU4XCodePointMapData8._(result.union.ok)
-        : throw ICU4XError.values
+        ? CodePointMapData8._(result.union.ok)
+        : throw Error.values
             .firstWhere((v) => v._underlying == result.union.err);
   }
   // ignore: non_constant_identifier_names
@@ -1670,11 +1574,100 @@ class ICU4XCodePointMapData8 implements ffi.Finalizable {
           isLeaf: true);
 }
 
-/// See the [Rust documentation for `CodePointInversionListBuilder`](https://docs.rs/icu/latest/icu/collections/codepointinvlist/struct.CodePointInversionListBuilder.html) for more information.
-class ICU4XCodePointSetBuilder implements ffi.Finalizable {
+/// An iterator over code point ranges, produced by `ICU4XCodePointSetData` or
+/// one of the `ICU4XCodePointMapData` types
+class CodePointRangeIterator implements ffi.Finalizable {
   final ffi.Pointer<ffi.Opaque> _underlying;
 
-  ICU4XCodePointSetBuilder._(this._underlying) {
+  CodePointRangeIterator._(this._underlying) {
+    _finalizer.attach(this, _underlying.cast());
+  }
+
+  static final _finalizer =
+      ffi.NativeFinalizer(_capi('CodePointRangeIterator_destroy'));
+
+  /// Advance the iterator by one and return the next range.
+  ///
+  /// If the iterator is out of items, `done` will be true
+  CodePointRangeIteratorResult next() {
+    final result = _CodePointRangeIterator_next(_underlying);
+    return CodePointRangeIteratorResult._(result);
+  }
+
+  // ignore: non_constant_identifier_names
+  static final _CodePointRangeIterator_next = _capi<
+          ffi.NativeFunction<
+              _CodePointRangeIteratorResultFfi Function(
+                  ffi.Pointer<ffi.Opaque>)>>('CodePointRangeIterator_next')
+      .asFunction<
+          _CodePointRangeIteratorResultFfi Function(
+              ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
+}
+
+/// Result of a single iteration of [`CodePointRangeIterator`].
+/// Logically can be considered to be an `Option<RangeInclusive<u32>>`,
+///
+/// `start` and `end` represent an inclusive range of code points [start, end],
+/// and `done` will be true if the iterator has already finished. The last contentful
+/// iteration will NOT produce a range done=true, in other words `start` and `end` are useful
+/// values if and only if `done=false`.
+class _CodePointRangeIteratorResultFfi extends ffi.Struct {
+  @ffi.Uint32()
+  external int start;
+  @ffi.Uint32()
+  external int end;
+  @ffi.Bool()
+  external bool done;
+}
+
+class CodePointRangeIteratorResult {
+  final _CodePointRangeIteratorResultFfi _underlying;
+
+  // ignore: unused_element
+  CodePointRangeIteratorResult._(this._underlying);
+
+  factory CodePointRangeIteratorResult() {
+    final pointer = ffi2.calloc<_CodePointRangeIteratorResultFfi>();
+    final result = CodePointRangeIteratorResult._(pointer.ref);
+    _callocFree.attach(result, pointer.cast());
+    return result;
+  }
+
+  int get start => _underlying.start;
+  set start(int start) {
+    _underlying.start = start;
+  }
+
+  int get end => _underlying.end;
+  set end(int end) {
+    _underlying.end = end;
+  }
+
+  bool get done => _underlying.done;
+  set done(bool done) {
+    _underlying.done = done;
+  }
+
+  @override
+  bool operator ==(Object other) =>
+      other is CodePointRangeIteratorResult &&
+      other._underlying.start == _underlying.start &&
+      other._underlying.end == _underlying.end &&
+      other._underlying.done == _underlying.done;
+
+  @override
+  int get hashCode => Object.hashAll([
+        _underlying.start,
+        _underlying.end,
+        _underlying.done,
+      ]);
+}
+
+/// See the [Rust documentation for `CodePointInversionListBuilder`](https://docs.rs/icu/latest/icu/collections/codepointinvlist/struct.CodePointInversionListBuilder.html) for more information.
+class CodePointSetBuilder implements ffi.Finalizable {
+  final ffi.Pointer<ffi.Opaque> _underlying;
+
+  CodePointSetBuilder._(this._underlying) {
     _finalizer.attach(this, _underlying.cast());
   }
 
@@ -1684,9 +1677,9 @@ class ICU4XCodePointSetBuilder implements ffi.Finalizable {
   /// Make a new set builder containing nothing
   ///
   /// See the [Rust documentation for `new`](https://docs.rs/icu/latest/icu/collections/codepointinvlist/struct.CodePointInversionListBuilder.html#method.new) for more information.
-  factory ICU4XCodePointSetBuilder() {
+  factory CodePointSetBuilder() {
     final result = _ICU4XCodePointSetBuilder_create();
-    return ICU4XCodePointSetBuilder._(result);
+    return CodePointSetBuilder._(result);
   }
   // ignore: non_constant_identifier_names
   static final _ICU4XCodePointSetBuilder_create =
@@ -1699,9 +1692,9 @@ class ICU4XCodePointSetBuilder implements ffi.Finalizable {
   /// This object is repopulated with an empty builder
   ///
   /// See the [Rust documentation for `build`](https://docs.rs/icu/latest/icu/collections/codepointinvlist/struct.CodePointInversionListBuilder.html#method.build) for more information.
-  ICU4XCodePointSetData build() {
+  CodePointSetData build() {
     final result = _ICU4XCodePointSetBuilder_build(_underlying);
-    return ICU4XCodePointSetData._(result);
+    return CodePointSetData._(result);
   }
 
   // ignore: non_constant_identifier_names
@@ -1803,7 +1796,7 @@ class ICU4XCodePointSetBuilder implements ffi.Finalizable {
   /// Add all elements that belong to the provided set to the set
   ///
   /// See the [Rust documentation for `add_set`](https://docs.rs/icu/latest/icu/collections/codepointinvlist/struct.CodePointInversionListBuilder.html#method.add_set) for more information.
-  void addSet(ICU4XCodePointSetData data) {
+  void addSet(CodePointSetData data) {
     _ICU4XCodePointSetBuilder_add_set(_underlying, data._underlying);
   }
 
@@ -1849,7 +1842,7 @@ class ICU4XCodePointSetBuilder implements ffi.Finalizable {
   /// Remove all elements that belong to the provided set from the set
   ///
   /// See the [Rust documentation for `remove_set`](https://docs.rs/icu/latest/icu/collections/codepointinvlist/struct.CodePointInversionListBuilder.html#method.remove_set) for more information.
-  void removeSet(ICU4XCodePointSetData data) {
+  void removeSet(CodePointSetData data) {
     _ICU4XCodePointSetBuilder_remove_set(_underlying, data._underlying);
   }
 
@@ -1896,7 +1889,7 @@ class ICU4XCodePointSetBuilder implements ffi.Finalizable {
   /// Removes all elements from the set except all elements in the provided set
   ///
   /// See the [Rust documentation for `retain_set`](https://docs.rs/icu/latest/icu/collections/codepointinvlist/struct.CodePointInversionListBuilder.html#method.retain_set) for more information.
-  void retainSet(ICU4XCodePointSetData data) {
+  void retainSet(CodePointSetData data) {
     _ICU4XCodePointSetBuilder_retain_set(_underlying, data._underlying);
   }
 
@@ -1950,7 +1943,7 @@ class ICU4XCodePointSetBuilder implements ffi.Finalizable {
   /// (Characters which are in this set are removed and vice versa)
   ///
   /// See the [Rust documentation for `complement_set`](https://docs.rs/icu/latest/icu/collections/codepointinvlist/struct.CodePointInversionListBuilder.html#method.complement_set) for more information.
-  void complementSet(ICU4XCodePointSetData data) {
+  void complementSet(CodePointSetData data) {
     _ICU4XCodePointSetBuilder_complement_set(_underlying, data._underlying);
   }
 
@@ -1972,10 +1965,10 @@ class ICU4XCodePointSetBuilder implements ffi.Finalizable {
 /// See the [Rust documentation for `CodePointSetData`](https://docs.rs/icu/latest/icu/properties/sets/struct.CodePointSetData.html) for more information.
 ///
 /// See the [Rust documentation for `CodePointSetDataBorrowed`](https://docs.rs/icu/latest/icu/properties/sets/struct.CodePointSetDataBorrowed.html) for more information.
-class ICU4XCodePointSetData implements ffi.Finalizable {
+class CodePointSetData implements ffi.Finalizable {
   final ffi.Pointer<ffi.Opaque> _underlying;
 
-  ICU4XCodePointSetData._(this._underlying) {
+  CodePointSetData._(this._underlying) {
     _finalizer.attach(this, _underlying.cast());
   }
 
@@ -2045,13 +2038,13 @@ class ICU4XCodePointSetData implements ffi.Finalizable {
   /// which is a mask with the same format as the `U_GC_XX_MASK` mask in ICU4C
   ///
   /// See the [Rust documentation for `for_general_category_group`](https://docs.rs/icu/latest/icu/properties/sets/fn.for_general_category_group.html) for more information.
-  factory ICU4XCodePointSetData.loadForGeneralCategoryGroup(
-      ICU4XDataProvider provider, int group) {
+  factory CodePointSetData.loadForGeneralCategoryGroup(
+      DataProvider provider, int group) {
     final result = _ICU4XCodePointSetData_load_for_general_category_group(
         provider._underlying, group);
     return result.isOk
-        ? ICU4XCodePointSetData._(result.union.ok)
-        : throw ICU4XError.values
+        ? CodePointSetData._(result.union.ok)
+        : throw Error.values
             .firstWhere((v) => v._underlying == result.union.err);
   }
   // ignore: non_constant_identifier_names
@@ -2064,12 +2057,12 @@ class ICU4XCodePointSetData implements ffi.Finalizable {
           isLeaf: true);
 
   /// See the [Rust documentation for `ascii_hex_digit`](https://docs.rs/icu/latest/icu/properties/sets/fn.ascii_hex_digit.html) for more information.
-  factory ICU4XCodePointSetData.loadAsciiHexDigit(ICU4XDataProvider provider) {
+  factory CodePointSetData.loadAsciiHexDigit(DataProvider provider) {
     final result =
         _ICU4XCodePointSetData_load_ascii_hex_digit(provider._underlying);
     return result.isOk
-        ? ICU4XCodePointSetData._(result.union.ok)
-        : throw ICU4XError.values
+        ? CodePointSetData._(result.union.ok)
+        : throw Error.values
             .firstWhere((v) => v._underlying == result.union.err);
   }
   // ignore: non_constant_identifier_names
@@ -2081,11 +2074,11 @@ class ICU4XCodePointSetData implements ffi.Finalizable {
           isLeaf: true);
 
   /// See the [Rust documentation for `alnum`](https://docs.rs/icu/latest/icu/properties/sets/fn.alnum.html) for more information.
-  factory ICU4XCodePointSetData.loadAlnum(ICU4XDataProvider provider) {
+  factory CodePointSetData.loadAlnum(DataProvider provider) {
     final result = _ICU4XCodePointSetData_load_alnum(provider._underlying);
     return result.isOk
-        ? ICU4XCodePointSetData._(result.union.ok)
-        : throw ICU4XError.values
+        ? CodePointSetData._(result.union.ok)
+        : throw Error.values
             .firstWhere((v) => v._underlying == result.union.err);
   }
   // ignore: non_constant_identifier_names
@@ -2097,11 +2090,11 @@ class ICU4XCodePointSetData implements ffi.Finalizable {
           isLeaf: true);
 
   /// See the [Rust documentation for `alphabetic`](https://docs.rs/icu/latest/icu/properties/sets/fn.alphabetic.html) for more information.
-  factory ICU4XCodePointSetData.loadAlphabetic(ICU4XDataProvider provider) {
+  factory CodePointSetData.loadAlphabetic(DataProvider provider) {
     final result = _ICU4XCodePointSetData_load_alphabetic(provider._underlying);
     return result.isOk
-        ? ICU4XCodePointSetData._(result.union.ok)
-        : throw ICU4XError.values
+        ? CodePointSetData._(result.union.ok)
+        : throw Error.values
             .firstWhere((v) => v._underlying == result.union.err);
   }
   // ignore: non_constant_identifier_names
@@ -2113,12 +2106,12 @@ class ICU4XCodePointSetData implements ffi.Finalizable {
           isLeaf: true);
 
   /// See the [Rust documentation for `bidi_control`](https://docs.rs/icu/latest/icu/properties/sets/fn.bidi_control.html) for more information.
-  factory ICU4XCodePointSetData.loadBidiControl(ICU4XDataProvider provider) {
+  factory CodePointSetData.loadBidiControl(DataProvider provider) {
     final result =
         _ICU4XCodePointSetData_load_bidi_control(provider._underlying);
     return result.isOk
-        ? ICU4XCodePointSetData._(result.union.ok)
-        : throw ICU4XError.values
+        ? CodePointSetData._(result.union.ok)
+        : throw Error.values
             .firstWhere((v) => v._underlying == result.union.err);
   }
   // ignore: non_constant_identifier_names
@@ -2130,12 +2123,12 @@ class ICU4XCodePointSetData implements ffi.Finalizable {
           isLeaf: true);
 
   /// See the [Rust documentation for `bidi_mirrored`](https://docs.rs/icu/latest/icu/properties/sets/fn.bidi_mirrored.html) for more information.
-  factory ICU4XCodePointSetData.loadBidiMirrored(ICU4XDataProvider provider) {
+  factory CodePointSetData.loadBidiMirrored(DataProvider provider) {
     final result =
         _ICU4XCodePointSetData_load_bidi_mirrored(provider._underlying);
     return result.isOk
-        ? ICU4XCodePointSetData._(result.union.ok)
-        : throw ICU4XError.values
+        ? CodePointSetData._(result.union.ok)
+        : throw Error.values
             .firstWhere((v) => v._underlying == result.union.err);
   }
   // ignore: non_constant_identifier_names
@@ -2147,11 +2140,11 @@ class ICU4XCodePointSetData implements ffi.Finalizable {
           isLeaf: true);
 
   /// See the [Rust documentation for `blank`](https://docs.rs/icu/latest/icu/properties/sets/fn.blank.html) for more information.
-  factory ICU4XCodePointSetData.loadBlank(ICU4XDataProvider provider) {
+  factory CodePointSetData.loadBlank(DataProvider provider) {
     final result = _ICU4XCodePointSetData_load_blank(provider._underlying);
     return result.isOk
-        ? ICU4XCodePointSetData._(result.union.ok)
-        : throw ICU4XError.values
+        ? CodePointSetData._(result.union.ok)
+        : throw Error.values
             .firstWhere((v) => v._underlying == result.union.err);
   }
   // ignore: non_constant_identifier_names
@@ -2163,11 +2156,11 @@ class ICU4XCodePointSetData implements ffi.Finalizable {
           isLeaf: true);
 
   /// See the [Rust documentation for `cased`](https://docs.rs/icu/latest/icu/properties/sets/fn.cased.html) for more information.
-  factory ICU4XCodePointSetData.loadCased(ICU4XDataProvider provider) {
+  factory CodePointSetData.loadCased(DataProvider provider) {
     final result = _ICU4XCodePointSetData_load_cased(provider._underlying);
     return result.isOk
-        ? ICU4XCodePointSetData._(result.union.ok)
-        : throw ICU4XError.values
+        ? CodePointSetData._(result.union.ok)
+        : throw Error.values
             .firstWhere((v) => v._underlying == result.union.err);
   }
   // ignore: non_constant_identifier_names
@@ -2179,12 +2172,12 @@ class ICU4XCodePointSetData implements ffi.Finalizable {
           isLeaf: true);
 
   /// See the [Rust documentation for `case_ignorable`](https://docs.rs/icu/latest/icu/properties/sets/fn.case_ignorable.html) for more information.
-  factory ICU4XCodePointSetData.loadCaseIgnorable(ICU4XDataProvider provider) {
+  factory CodePointSetData.loadCaseIgnorable(DataProvider provider) {
     final result =
         _ICU4XCodePointSetData_load_case_ignorable(provider._underlying);
     return result.isOk
-        ? ICU4XCodePointSetData._(result.union.ok)
-        : throw ICU4XError.values
+        ? CodePointSetData._(result.union.ok)
+        : throw Error.values
             .firstWhere((v) => v._underlying == result.union.err);
   }
   // ignore: non_constant_identifier_names
@@ -2196,13 +2189,12 @@ class ICU4XCodePointSetData implements ffi.Finalizable {
           isLeaf: true);
 
   /// See the [Rust documentation for `full_composition_exclusion`](https://docs.rs/icu/latest/icu/properties/sets/fn.full_composition_exclusion.html) for more information.
-  factory ICU4XCodePointSetData.loadFullCompositionExclusion(
-      ICU4XDataProvider provider) {
+  factory CodePointSetData.loadFullCompositionExclusion(DataProvider provider) {
     final result = _ICU4XCodePointSetData_load_full_composition_exclusion(
         provider._underlying);
     return result.isOk
-        ? ICU4XCodePointSetData._(result.union.ok)
-        : throw ICU4XError.values
+        ? CodePointSetData._(result.union.ok)
+        : throw Error.values
             .firstWhere((v) => v._underlying == result.union.err);
   }
   // ignore: non_constant_identifier_names
@@ -2214,13 +2206,12 @@ class ICU4XCodePointSetData implements ffi.Finalizable {
           isLeaf: true);
 
   /// See the [Rust documentation for `changes_when_casefolded`](https://docs.rs/icu/latest/icu/properties/sets/fn.changes_when_casefolded.html) for more information.
-  factory ICU4XCodePointSetData.loadChangesWhenCasefolded(
-      ICU4XDataProvider provider) {
+  factory CodePointSetData.loadChangesWhenCasefolded(DataProvider provider) {
     final result = _ICU4XCodePointSetData_load_changes_when_casefolded(
         provider._underlying);
     return result.isOk
-        ? ICU4XCodePointSetData._(result.union.ok)
-        : throw ICU4XError.values
+        ? CodePointSetData._(result.union.ok)
+        : throw Error.values
             .firstWhere((v) => v._underlying == result.union.err);
   }
   // ignore: non_constant_identifier_names
@@ -2232,13 +2223,12 @@ class ICU4XCodePointSetData implements ffi.Finalizable {
           isLeaf: true);
 
   /// See the [Rust documentation for `changes_when_casemapped`](https://docs.rs/icu/latest/icu/properties/sets/fn.changes_when_casemapped.html) for more information.
-  factory ICU4XCodePointSetData.loadChangesWhenCasemapped(
-      ICU4XDataProvider provider) {
+  factory CodePointSetData.loadChangesWhenCasemapped(DataProvider provider) {
     final result = _ICU4XCodePointSetData_load_changes_when_casemapped(
         provider._underlying);
     return result.isOk
-        ? ICU4XCodePointSetData._(result.union.ok)
-        : throw ICU4XError.values
+        ? CodePointSetData._(result.union.ok)
+        : throw Error.values
             .firstWhere((v) => v._underlying == result.union.err);
   }
   // ignore: non_constant_identifier_names
@@ -2250,13 +2240,13 @@ class ICU4XCodePointSetData implements ffi.Finalizable {
           isLeaf: true);
 
   /// See the [Rust documentation for `changes_when_nfkc_casefolded`](https://docs.rs/icu/latest/icu/properties/sets/fn.changes_when_nfkc_casefolded.html) for more information.
-  factory ICU4XCodePointSetData.loadChangesWhenNfkcCasefolded(
-      ICU4XDataProvider provider) {
+  factory CodePointSetData.loadChangesWhenNfkcCasefolded(
+      DataProvider provider) {
     final result = _ICU4XCodePointSetData_load_changes_when_nfkc_casefolded(
         provider._underlying);
     return result.isOk
-        ? ICU4XCodePointSetData._(result.union.ok)
-        : throw ICU4XError.values
+        ? CodePointSetData._(result.union.ok)
+        : throw Error.values
             .firstWhere((v) => v._underlying == result.union.err);
   }
   // ignore: non_constant_identifier_names
@@ -2268,13 +2258,12 @@ class ICU4XCodePointSetData implements ffi.Finalizable {
           isLeaf: true);
 
   /// See the [Rust documentation for `changes_when_lowercased`](https://docs.rs/icu/latest/icu/properties/sets/fn.changes_when_lowercased.html) for more information.
-  factory ICU4XCodePointSetData.loadChangesWhenLowercased(
-      ICU4XDataProvider provider) {
+  factory CodePointSetData.loadChangesWhenLowercased(DataProvider provider) {
     final result = _ICU4XCodePointSetData_load_changes_when_lowercased(
         provider._underlying);
     return result.isOk
-        ? ICU4XCodePointSetData._(result.union.ok)
-        : throw ICU4XError.values
+        ? CodePointSetData._(result.union.ok)
+        : throw Error.values
             .firstWhere((v) => v._underlying == result.union.err);
   }
   // ignore: non_constant_identifier_names
@@ -2286,13 +2275,12 @@ class ICU4XCodePointSetData implements ffi.Finalizable {
           isLeaf: true);
 
   /// See the [Rust documentation for `changes_when_titlecased`](https://docs.rs/icu/latest/icu/properties/sets/fn.changes_when_titlecased.html) for more information.
-  factory ICU4XCodePointSetData.loadChangesWhenTitlecased(
-      ICU4XDataProvider provider) {
+  factory CodePointSetData.loadChangesWhenTitlecased(DataProvider provider) {
     final result = _ICU4XCodePointSetData_load_changes_when_titlecased(
         provider._underlying);
     return result.isOk
-        ? ICU4XCodePointSetData._(result.union.ok)
-        : throw ICU4XError.values
+        ? CodePointSetData._(result.union.ok)
+        : throw Error.values
             .firstWhere((v) => v._underlying == result.union.err);
   }
   // ignore: non_constant_identifier_names
@@ -2304,13 +2292,12 @@ class ICU4XCodePointSetData implements ffi.Finalizable {
           isLeaf: true);
 
   /// See the [Rust documentation for `changes_when_uppercased`](https://docs.rs/icu/latest/icu/properties/sets/fn.changes_when_uppercased.html) for more information.
-  factory ICU4XCodePointSetData.loadChangesWhenUppercased(
-      ICU4XDataProvider provider) {
+  factory CodePointSetData.loadChangesWhenUppercased(DataProvider provider) {
     final result = _ICU4XCodePointSetData_load_changes_when_uppercased(
         provider._underlying);
     return result.isOk
-        ? ICU4XCodePointSetData._(result.union.ok)
-        : throw ICU4XError.values
+        ? CodePointSetData._(result.union.ok)
+        : throw Error.values
             .firstWhere((v) => v._underlying == result.union.err);
   }
   // ignore: non_constant_identifier_names
@@ -2322,11 +2309,11 @@ class ICU4XCodePointSetData implements ffi.Finalizable {
           isLeaf: true);
 
   /// See the [Rust documentation for `dash`](https://docs.rs/icu/latest/icu/properties/sets/fn.dash.html) for more information.
-  factory ICU4XCodePointSetData.loadDash(ICU4XDataProvider provider) {
+  factory CodePointSetData.loadDash(DataProvider provider) {
     final result = _ICU4XCodePointSetData_load_dash(provider._underlying);
     return result.isOk
-        ? ICU4XCodePointSetData._(result.union.ok)
-        : throw ICU4XError.values
+        ? CodePointSetData._(result.union.ok)
+        : throw Error.values
             .firstWhere((v) => v._underlying == result.union.err);
   }
   // ignore: non_constant_identifier_names
@@ -2338,11 +2325,11 @@ class ICU4XCodePointSetData implements ffi.Finalizable {
           isLeaf: true);
 
   /// See the [Rust documentation for `deprecated`](https://docs.rs/icu/latest/icu/properties/sets/fn.deprecated.html) for more information.
-  factory ICU4XCodePointSetData.loadDeprecated(ICU4XDataProvider provider) {
+  factory CodePointSetData.loadDeprecated(DataProvider provider) {
     final result = _ICU4XCodePointSetData_load_deprecated(provider._underlying);
     return result.isOk
-        ? ICU4XCodePointSetData._(result.union.ok)
-        : throw ICU4XError.values
+        ? CodePointSetData._(result.union.ok)
+        : throw Error.values
             .firstWhere((v) => v._underlying == result.union.err);
   }
   // ignore: non_constant_identifier_names
@@ -2354,13 +2341,13 @@ class ICU4XCodePointSetData implements ffi.Finalizable {
           isLeaf: true);
 
   /// See the [Rust documentation for `default_ignorable_code_point`](https://docs.rs/icu/latest/icu/properties/sets/fn.default_ignorable_code_point.html) for more information.
-  factory ICU4XCodePointSetData.loadDefaultIgnorableCodePoint(
-      ICU4XDataProvider provider) {
+  factory CodePointSetData.loadDefaultIgnorableCodePoint(
+      DataProvider provider) {
     final result = _ICU4XCodePointSetData_load_default_ignorable_code_point(
         provider._underlying);
     return result.isOk
-        ? ICU4XCodePointSetData._(result.union.ok)
-        : throw ICU4XError.values
+        ? CodePointSetData._(result.union.ok)
+        : throw Error.values
             .firstWhere((v) => v._underlying == result.union.err);
   }
   // ignore: non_constant_identifier_names
@@ -2372,11 +2359,11 @@ class ICU4XCodePointSetData implements ffi.Finalizable {
           isLeaf: true);
 
   /// See the [Rust documentation for `diacritic`](https://docs.rs/icu/latest/icu/properties/sets/fn.diacritic.html) for more information.
-  factory ICU4XCodePointSetData.loadDiacritic(ICU4XDataProvider provider) {
+  factory CodePointSetData.loadDiacritic(DataProvider provider) {
     final result = _ICU4XCodePointSetData_load_diacritic(provider._underlying);
     return result.isOk
-        ? ICU4XCodePointSetData._(result.union.ok)
-        : throw ICU4XError.values
+        ? CodePointSetData._(result.union.ok)
+        : throw Error.values
             .firstWhere((v) => v._underlying == result.union.err);
   }
   // ignore: non_constant_identifier_names
@@ -2388,13 +2375,12 @@ class ICU4XCodePointSetData implements ffi.Finalizable {
           isLeaf: true);
 
   /// See the [Rust documentation for `emoji_modifier_base`](https://docs.rs/icu/latest/icu/properties/sets/fn.emoji_modifier_base.html) for more information.
-  factory ICU4XCodePointSetData.loadEmojiModifierBase(
-      ICU4XDataProvider provider) {
+  factory CodePointSetData.loadEmojiModifierBase(DataProvider provider) {
     final result =
         _ICU4XCodePointSetData_load_emoji_modifier_base(provider._underlying);
     return result.isOk
-        ? ICU4XCodePointSetData._(result.union.ok)
-        : throw ICU4XError.values
+        ? CodePointSetData._(result.union.ok)
+        : throw Error.values
             .firstWhere((v) => v._underlying == result.union.err);
   }
   // ignore: non_constant_identifier_names
@@ -2406,12 +2392,12 @@ class ICU4XCodePointSetData implements ffi.Finalizable {
           isLeaf: true);
 
   /// See the [Rust documentation for `emoji_component`](https://docs.rs/icu/latest/icu/properties/sets/fn.emoji_component.html) for more information.
-  factory ICU4XCodePointSetData.loadEmojiComponent(ICU4XDataProvider provider) {
+  factory CodePointSetData.loadEmojiComponent(DataProvider provider) {
     final result =
         _ICU4XCodePointSetData_load_emoji_component(provider._underlying);
     return result.isOk
-        ? ICU4XCodePointSetData._(result.union.ok)
-        : throw ICU4XError.values
+        ? CodePointSetData._(result.union.ok)
+        : throw Error.values
             .firstWhere((v) => v._underlying == result.union.err);
   }
   // ignore: non_constant_identifier_names
@@ -2423,12 +2409,12 @@ class ICU4XCodePointSetData implements ffi.Finalizable {
           isLeaf: true);
 
   /// See the [Rust documentation for `emoji_modifier`](https://docs.rs/icu/latest/icu/properties/sets/fn.emoji_modifier.html) for more information.
-  factory ICU4XCodePointSetData.loadEmojiModifier(ICU4XDataProvider provider) {
+  factory CodePointSetData.loadEmojiModifier(DataProvider provider) {
     final result =
         _ICU4XCodePointSetData_load_emoji_modifier(provider._underlying);
     return result.isOk
-        ? ICU4XCodePointSetData._(result.union.ok)
-        : throw ICU4XError.values
+        ? CodePointSetData._(result.union.ok)
+        : throw Error.values
             .firstWhere((v) => v._underlying == result.union.err);
   }
   // ignore: non_constant_identifier_names
@@ -2440,11 +2426,11 @@ class ICU4XCodePointSetData implements ffi.Finalizable {
           isLeaf: true);
 
   /// See the [Rust documentation for `emoji`](https://docs.rs/icu/latest/icu/properties/sets/fn.emoji.html) for more information.
-  factory ICU4XCodePointSetData.loadEmoji(ICU4XDataProvider provider) {
+  factory CodePointSetData.loadEmoji(DataProvider provider) {
     final result = _ICU4XCodePointSetData_load_emoji(provider._underlying);
     return result.isOk
-        ? ICU4XCodePointSetData._(result.union.ok)
-        : throw ICU4XError.values
+        ? CodePointSetData._(result.union.ok)
+        : throw Error.values
             .firstWhere((v) => v._underlying == result.union.err);
   }
   // ignore: non_constant_identifier_names
@@ -2456,13 +2442,12 @@ class ICU4XCodePointSetData implements ffi.Finalizable {
           isLeaf: true);
 
   /// See the [Rust documentation for `emoji_presentation`](https://docs.rs/icu/latest/icu/properties/sets/fn.emoji_presentation.html) for more information.
-  factory ICU4XCodePointSetData.loadEmojiPresentation(
-      ICU4XDataProvider provider) {
+  factory CodePointSetData.loadEmojiPresentation(DataProvider provider) {
     final result =
         _ICU4XCodePointSetData_load_emoji_presentation(provider._underlying);
     return result.isOk
-        ? ICU4XCodePointSetData._(result.union.ok)
-        : throw ICU4XError.values
+        ? CodePointSetData._(result.union.ok)
+        : throw Error.values
             .firstWhere((v) => v._underlying == result.union.err);
   }
   // ignore: non_constant_identifier_names
@@ -2474,11 +2459,11 @@ class ICU4XCodePointSetData implements ffi.Finalizable {
           isLeaf: true);
 
   /// See the [Rust documentation for `extender`](https://docs.rs/icu/latest/icu/properties/sets/fn.extender.html) for more information.
-  factory ICU4XCodePointSetData.loadExtender(ICU4XDataProvider provider) {
+  factory CodePointSetData.loadExtender(DataProvider provider) {
     final result = _ICU4XCodePointSetData_load_extender(provider._underlying);
     return result.isOk
-        ? ICU4XCodePointSetData._(result.union.ok)
-        : throw ICU4XError.values
+        ? CodePointSetData._(result.union.ok)
+        : throw Error.values
             .firstWhere((v) => v._underlying == result.union.err);
   }
   // ignore: non_constant_identifier_names
@@ -2490,13 +2475,12 @@ class ICU4XCodePointSetData implements ffi.Finalizable {
           isLeaf: true);
 
   /// See the [Rust documentation for `extended_pictographic`](https://docs.rs/icu/latest/icu/properties/sets/fn.extended_pictographic.html) for more information.
-  factory ICU4XCodePointSetData.loadExtendedPictographic(
-      ICU4XDataProvider provider) {
+  factory CodePointSetData.loadExtendedPictographic(DataProvider provider) {
     final result =
         _ICU4XCodePointSetData_load_extended_pictographic(provider._underlying);
     return result.isOk
-        ? ICU4XCodePointSetData._(result.union.ok)
-        : throw ICU4XError.values
+        ? CodePointSetData._(result.union.ok)
+        : throw Error.values
             .firstWhere((v) => v._underlying == result.union.err);
   }
   // ignore: non_constant_identifier_names
@@ -2508,11 +2492,11 @@ class ICU4XCodePointSetData implements ffi.Finalizable {
           isLeaf: true);
 
   /// See the [Rust documentation for `graph`](https://docs.rs/icu/latest/icu/properties/sets/fn.graph.html) for more information.
-  factory ICU4XCodePointSetData.loadGraph(ICU4XDataProvider provider) {
+  factory CodePointSetData.loadGraph(DataProvider provider) {
     final result = _ICU4XCodePointSetData_load_graph(provider._underlying);
     return result.isOk
-        ? ICU4XCodePointSetData._(result.union.ok)
-        : throw ICU4XError.values
+        ? CodePointSetData._(result.union.ok)
+        : throw Error.values
             .firstWhere((v) => v._underlying == result.union.err);
   }
   // ignore: non_constant_identifier_names
@@ -2524,12 +2508,12 @@ class ICU4XCodePointSetData implements ffi.Finalizable {
           isLeaf: true);
 
   /// See the [Rust documentation for `grapheme_base`](https://docs.rs/icu/latest/icu/properties/sets/fn.grapheme_base.html) for more information.
-  factory ICU4XCodePointSetData.loadGraphemeBase(ICU4XDataProvider provider) {
+  factory CodePointSetData.loadGraphemeBase(DataProvider provider) {
     final result =
         _ICU4XCodePointSetData_load_grapheme_base(provider._underlying);
     return result.isOk
-        ? ICU4XCodePointSetData._(result.union.ok)
-        : throw ICU4XError.values
+        ? CodePointSetData._(result.union.ok)
+        : throw Error.values
             .firstWhere((v) => v._underlying == result.union.err);
   }
   // ignore: non_constant_identifier_names
@@ -2541,12 +2525,12 @@ class ICU4XCodePointSetData implements ffi.Finalizable {
           isLeaf: true);
 
   /// See the [Rust documentation for `grapheme_extend`](https://docs.rs/icu/latest/icu/properties/sets/fn.grapheme_extend.html) for more information.
-  factory ICU4XCodePointSetData.loadGraphemeExtend(ICU4XDataProvider provider) {
+  factory CodePointSetData.loadGraphemeExtend(DataProvider provider) {
     final result =
         _ICU4XCodePointSetData_load_grapheme_extend(provider._underlying);
     return result.isOk
-        ? ICU4XCodePointSetData._(result.union.ok)
-        : throw ICU4XError.values
+        ? CodePointSetData._(result.union.ok)
+        : throw Error.values
             .firstWhere((v) => v._underlying == result.union.err);
   }
   // ignore: non_constant_identifier_names
@@ -2558,12 +2542,12 @@ class ICU4XCodePointSetData implements ffi.Finalizable {
           isLeaf: true);
 
   /// See the [Rust documentation for `grapheme_link`](https://docs.rs/icu/latest/icu/properties/sets/fn.grapheme_link.html) for more information.
-  factory ICU4XCodePointSetData.loadGraphemeLink(ICU4XDataProvider provider) {
+  factory CodePointSetData.loadGraphemeLink(DataProvider provider) {
     final result =
         _ICU4XCodePointSetData_load_grapheme_link(provider._underlying);
     return result.isOk
-        ? ICU4XCodePointSetData._(result.union.ok)
-        : throw ICU4XError.values
+        ? CodePointSetData._(result.union.ok)
+        : throw Error.values
             .firstWhere((v) => v._underlying == result.union.err);
   }
   // ignore: non_constant_identifier_names
@@ -2575,11 +2559,11 @@ class ICU4XCodePointSetData implements ffi.Finalizable {
           isLeaf: true);
 
   /// See the [Rust documentation for `hex_digit`](https://docs.rs/icu/latest/icu/properties/sets/fn.hex_digit.html) for more information.
-  factory ICU4XCodePointSetData.loadHexDigit(ICU4XDataProvider provider) {
+  factory CodePointSetData.loadHexDigit(DataProvider provider) {
     final result = _ICU4XCodePointSetData_load_hex_digit(provider._underlying);
     return result.isOk
-        ? ICU4XCodePointSetData._(result.union.ok)
-        : throw ICU4XError.values
+        ? CodePointSetData._(result.union.ok)
+        : throw Error.values
             .firstWhere((v) => v._underlying == result.union.err);
   }
   // ignore: non_constant_identifier_names
@@ -2591,11 +2575,11 @@ class ICU4XCodePointSetData implements ffi.Finalizable {
           isLeaf: true);
 
   /// See the [Rust documentation for `hyphen`](https://docs.rs/icu/latest/icu/properties/sets/fn.hyphen.html) for more information.
-  factory ICU4XCodePointSetData.loadHyphen(ICU4XDataProvider provider) {
+  factory CodePointSetData.loadHyphen(DataProvider provider) {
     final result = _ICU4XCodePointSetData_load_hyphen(provider._underlying);
     return result.isOk
-        ? ICU4XCodePointSetData._(result.union.ok)
-        : throw ICU4XError.values
+        ? CodePointSetData._(result.union.ok)
+        : throw Error.values
             .firstWhere((v) => v._underlying == result.union.err);
   }
   // ignore: non_constant_identifier_names
@@ -2607,12 +2591,12 @@ class ICU4XCodePointSetData implements ffi.Finalizable {
           isLeaf: true);
 
   /// See the [Rust documentation for `id_continue`](https://docs.rs/icu/latest/icu/properties/sets/fn.id_continue.html) for more information.
-  factory ICU4XCodePointSetData.loadIdContinue(ICU4XDataProvider provider) {
+  factory CodePointSetData.loadIdContinue(DataProvider provider) {
     final result =
         _ICU4XCodePointSetData_load_id_continue(provider._underlying);
     return result.isOk
-        ? ICU4XCodePointSetData._(result.union.ok)
-        : throw ICU4XError.values
+        ? CodePointSetData._(result.union.ok)
+        : throw Error.values
             .firstWhere((v) => v._underlying == result.union.err);
   }
   // ignore: non_constant_identifier_names
@@ -2624,12 +2608,12 @@ class ICU4XCodePointSetData implements ffi.Finalizable {
           isLeaf: true);
 
   /// See the [Rust documentation for `ideographic`](https://docs.rs/icu/latest/icu/properties/sets/fn.ideographic.html) for more information.
-  factory ICU4XCodePointSetData.loadIdeographic(ICU4XDataProvider provider) {
+  factory CodePointSetData.loadIdeographic(DataProvider provider) {
     final result =
         _ICU4XCodePointSetData_load_ideographic(provider._underlying);
     return result.isOk
-        ? ICU4XCodePointSetData._(result.union.ok)
-        : throw ICU4XError.values
+        ? CodePointSetData._(result.union.ok)
+        : throw Error.values
             .firstWhere((v) => v._underlying == result.union.err);
   }
   // ignore: non_constant_identifier_names
@@ -2641,11 +2625,11 @@ class ICU4XCodePointSetData implements ffi.Finalizable {
           isLeaf: true);
 
   /// See the [Rust documentation for `id_start`](https://docs.rs/icu/latest/icu/properties/sets/fn.id_start.html) for more information.
-  factory ICU4XCodePointSetData.loadIdStart(ICU4XDataProvider provider) {
+  factory CodePointSetData.loadIdStart(DataProvider provider) {
     final result = _ICU4XCodePointSetData_load_id_start(provider._underlying);
     return result.isOk
-        ? ICU4XCodePointSetData._(result.union.ok)
-        : throw ICU4XError.values
+        ? CodePointSetData._(result.union.ok)
+        : throw Error.values
             .firstWhere((v) => v._underlying == result.union.err);
   }
   // ignore: non_constant_identifier_names
@@ -2657,13 +2641,12 @@ class ICU4XCodePointSetData implements ffi.Finalizable {
           isLeaf: true);
 
   /// See the [Rust documentation for `ids_binary_operator`](https://docs.rs/icu/latest/icu/properties/sets/fn.ids_binary_operator.html) for more information.
-  factory ICU4XCodePointSetData.loadIdsBinaryOperator(
-      ICU4XDataProvider provider) {
+  factory CodePointSetData.loadIdsBinaryOperator(DataProvider provider) {
     final result =
         _ICU4XCodePointSetData_load_ids_binary_operator(provider._underlying);
     return result.isOk
-        ? ICU4XCodePointSetData._(result.union.ok)
-        : throw ICU4XError.values
+        ? CodePointSetData._(result.union.ok)
+        : throw Error.values
             .firstWhere((v) => v._underlying == result.union.err);
   }
   // ignore: non_constant_identifier_names
@@ -2675,13 +2658,12 @@ class ICU4XCodePointSetData implements ffi.Finalizable {
           isLeaf: true);
 
   /// See the [Rust documentation for `ids_trinary_operator`](https://docs.rs/icu/latest/icu/properties/sets/fn.ids_trinary_operator.html) for more information.
-  factory ICU4XCodePointSetData.loadIdsTrinaryOperator(
-      ICU4XDataProvider provider) {
+  factory CodePointSetData.loadIdsTrinaryOperator(DataProvider provider) {
     final result =
         _ICU4XCodePointSetData_load_ids_trinary_operator(provider._underlying);
     return result.isOk
-        ? ICU4XCodePointSetData._(result.union.ok)
-        : throw ICU4XError.values
+        ? CodePointSetData._(result.union.ok)
+        : throw Error.values
             .firstWhere((v) => v._underlying == result.union.err);
   }
   // ignore: non_constant_identifier_names
@@ -2693,12 +2675,12 @@ class ICU4XCodePointSetData implements ffi.Finalizable {
           isLeaf: true);
 
   /// See the [Rust documentation for `join_control`](https://docs.rs/icu/latest/icu/properties/sets/fn.join_control.html) for more information.
-  factory ICU4XCodePointSetData.loadJoinControl(ICU4XDataProvider provider) {
+  factory CodePointSetData.loadJoinControl(DataProvider provider) {
     final result =
         _ICU4XCodePointSetData_load_join_control(provider._underlying);
     return result.isOk
-        ? ICU4XCodePointSetData._(result.union.ok)
-        : throw ICU4XError.values
+        ? CodePointSetData._(result.union.ok)
+        : throw Error.values
             .firstWhere((v) => v._underlying == result.union.err);
   }
   // ignore: non_constant_identifier_names
@@ -2710,13 +2692,12 @@ class ICU4XCodePointSetData implements ffi.Finalizable {
           isLeaf: true);
 
   /// See the [Rust documentation for `logical_order_exception`](https://docs.rs/icu/latest/icu/properties/sets/fn.logical_order_exception.html) for more information.
-  factory ICU4XCodePointSetData.loadLogicalOrderException(
-      ICU4XDataProvider provider) {
+  factory CodePointSetData.loadLogicalOrderException(DataProvider provider) {
     final result = _ICU4XCodePointSetData_load_logical_order_exception(
         provider._underlying);
     return result.isOk
-        ? ICU4XCodePointSetData._(result.union.ok)
-        : throw ICU4XError.values
+        ? CodePointSetData._(result.union.ok)
+        : throw Error.values
             .firstWhere((v) => v._underlying == result.union.err);
   }
   // ignore: non_constant_identifier_names
@@ -2728,11 +2709,11 @@ class ICU4XCodePointSetData implements ffi.Finalizable {
           isLeaf: true);
 
   /// See the [Rust documentation for `lowercase`](https://docs.rs/icu/latest/icu/properties/sets/fn.lowercase.html) for more information.
-  factory ICU4XCodePointSetData.loadLowercase(ICU4XDataProvider provider) {
+  factory CodePointSetData.loadLowercase(DataProvider provider) {
     final result = _ICU4XCodePointSetData_load_lowercase(provider._underlying);
     return result.isOk
-        ? ICU4XCodePointSetData._(result.union.ok)
-        : throw ICU4XError.values
+        ? CodePointSetData._(result.union.ok)
+        : throw Error.values
             .firstWhere((v) => v._underlying == result.union.err);
   }
   // ignore: non_constant_identifier_names
@@ -2744,11 +2725,11 @@ class ICU4XCodePointSetData implements ffi.Finalizable {
           isLeaf: true);
 
   /// See the [Rust documentation for `math`](https://docs.rs/icu/latest/icu/properties/sets/fn.math.html) for more information.
-  factory ICU4XCodePointSetData.loadMath(ICU4XDataProvider provider) {
+  factory CodePointSetData.loadMath(DataProvider provider) {
     final result = _ICU4XCodePointSetData_load_math(provider._underlying);
     return result.isOk
-        ? ICU4XCodePointSetData._(result.union.ok)
-        : throw ICU4XError.values
+        ? CodePointSetData._(result.union.ok)
+        : throw Error.values
             .firstWhere((v) => v._underlying == result.union.err);
   }
   // ignore: non_constant_identifier_names
@@ -2760,13 +2741,12 @@ class ICU4XCodePointSetData implements ffi.Finalizable {
           isLeaf: true);
 
   /// See the [Rust documentation for `noncharacter_code_point`](https://docs.rs/icu/latest/icu/properties/sets/fn.noncharacter_code_point.html) for more information.
-  factory ICU4XCodePointSetData.loadNoncharacterCodePoint(
-      ICU4XDataProvider provider) {
+  factory CodePointSetData.loadNoncharacterCodePoint(DataProvider provider) {
     final result = _ICU4XCodePointSetData_load_noncharacter_code_point(
         provider._underlying);
     return result.isOk
-        ? ICU4XCodePointSetData._(result.union.ok)
-        : throw ICU4XError.values
+        ? CodePointSetData._(result.union.ok)
+        : throw Error.values
             .firstWhere((v) => v._underlying == result.union.err);
   }
   // ignore: non_constant_identifier_names
@@ -2778,11 +2758,11 @@ class ICU4XCodePointSetData implements ffi.Finalizable {
           isLeaf: true);
 
   /// See the [Rust documentation for `nfc_inert`](https://docs.rs/icu/latest/icu/properties/sets/fn.nfc_inert.html) for more information.
-  factory ICU4XCodePointSetData.loadNfcInert(ICU4XDataProvider provider) {
+  factory CodePointSetData.loadNfcInert(DataProvider provider) {
     final result = _ICU4XCodePointSetData_load_nfc_inert(provider._underlying);
     return result.isOk
-        ? ICU4XCodePointSetData._(result.union.ok)
-        : throw ICU4XError.values
+        ? CodePointSetData._(result.union.ok)
+        : throw Error.values
             .firstWhere((v) => v._underlying == result.union.err);
   }
   // ignore: non_constant_identifier_names
@@ -2794,11 +2774,11 @@ class ICU4XCodePointSetData implements ffi.Finalizable {
           isLeaf: true);
 
   /// See the [Rust documentation for `nfd_inert`](https://docs.rs/icu/latest/icu/properties/sets/fn.nfd_inert.html) for more information.
-  factory ICU4XCodePointSetData.loadNfdInert(ICU4XDataProvider provider) {
+  factory CodePointSetData.loadNfdInert(DataProvider provider) {
     final result = _ICU4XCodePointSetData_load_nfd_inert(provider._underlying);
     return result.isOk
-        ? ICU4XCodePointSetData._(result.union.ok)
-        : throw ICU4XError.values
+        ? CodePointSetData._(result.union.ok)
+        : throw Error.values
             .firstWhere((v) => v._underlying == result.union.err);
   }
   // ignore: non_constant_identifier_names
@@ -2810,11 +2790,11 @@ class ICU4XCodePointSetData implements ffi.Finalizable {
           isLeaf: true);
 
   /// See the [Rust documentation for `nfkc_inert`](https://docs.rs/icu/latest/icu/properties/sets/fn.nfkc_inert.html) for more information.
-  factory ICU4XCodePointSetData.loadNfkcInert(ICU4XDataProvider provider) {
+  factory CodePointSetData.loadNfkcInert(DataProvider provider) {
     final result = _ICU4XCodePointSetData_load_nfkc_inert(provider._underlying);
     return result.isOk
-        ? ICU4XCodePointSetData._(result.union.ok)
-        : throw ICU4XError.values
+        ? CodePointSetData._(result.union.ok)
+        : throw Error.values
             .firstWhere((v) => v._underlying == result.union.err);
   }
   // ignore: non_constant_identifier_names
@@ -2826,11 +2806,11 @@ class ICU4XCodePointSetData implements ffi.Finalizable {
           isLeaf: true);
 
   /// See the [Rust documentation for `nfkd_inert`](https://docs.rs/icu/latest/icu/properties/sets/fn.nfkd_inert.html) for more information.
-  factory ICU4XCodePointSetData.loadNfkdInert(ICU4XDataProvider provider) {
+  factory CodePointSetData.loadNfkdInert(DataProvider provider) {
     final result = _ICU4XCodePointSetData_load_nfkd_inert(provider._underlying);
     return result.isOk
-        ? ICU4XCodePointSetData._(result.union.ok)
-        : throw ICU4XError.values
+        ? CodePointSetData._(result.union.ok)
+        : throw Error.values
             .firstWhere((v) => v._underlying == result.union.err);
   }
   // ignore: non_constant_identifier_names
@@ -2842,12 +2822,12 @@ class ICU4XCodePointSetData implements ffi.Finalizable {
           isLeaf: true);
 
   /// See the [Rust documentation for `pattern_syntax`](https://docs.rs/icu/latest/icu/properties/sets/fn.pattern_syntax.html) for more information.
-  factory ICU4XCodePointSetData.loadPatternSyntax(ICU4XDataProvider provider) {
+  factory CodePointSetData.loadPatternSyntax(DataProvider provider) {
     final result =
         _ICU4XCodePointSetData_load_pattern_syntax(provider._underlying);
     return result.isOk
-        ? ICU4XCodePointSetData._(result.union.ok)
-        : throw ICU4XError.values
+        ? CodePointSetData._(result.union.ok)
+        : throw Error.values
             .firstWhere((v) => v._underlying == result.union.err);
   }
   // ignore: non_constant_identifier_names
@@ -2859,13 +2839,12 @@ class ICU4XCodePointSetData implements ffi.Finalizable {
           isLeaf: true);
 
   /// See the [Rust documentation for `pattern_white_space`](https://docs.rs/icu/latest/icu/properties/sets/fn.pattern_white_space.html) for more information.
-  factory ICU4XCodePointSetData.loadPatternWhiteSpace(
-      ICU4XDataProvider provider) {
+  factory CodePointSetData.loadPatternWhiteSpace(DataProvider provider) {
     final result =
         _ICU4XCodePointSetData_load_pattern_white_space(provider._underlying);
     return result.isOk
-        ? ICU4XCodePointSetData._(result.union.ok)
-        : throw ICU4XError.values
+        ? CodePointSetData._(result.union.ok)
+        : throw Error.values
             .firstWhere((v) => v._underlying == result.union.err);
   }
   // ignore: non_constant_identifier_names
@@ -2877,13 +2856,13 @@ class ICU4XCodePointSetData implements ffi.Finalizable {
           isLeaf: true);
 
   /// See the [Rust documentation for `prepended_concatenation_mark`](https://docs.rs/icu/latest/icu/properties/sets/fn.prepended_concatenation_mark.html) for more information.
-  factory ICU4XCodePointSetData.loadPrependedConcatenationMark(
-      ICU4XDataProvider provider) {
+  factory CodePointSetData.loadPrependedConcatenationMark(
+      DataProvider provider) {
     final result = _ICU4XCodePointSetData_load_prepended_concatenation_mark(
         provider._underlying);
     return result.isOk
-        ? ICU4XCodePointSetData._(result.union.ok)
-        : throw ICU4XError.values
+        ? CodePointSetData._(result.union.ok)
+        : throw Error.values
             .firstWhere((v) => v._underlying == result.union.err);
   }
   // ignore: non_constant_identifier_names
@@ -2895,11 +2874,11 @@ class ICU4XCodePointSetData implements ffi.Finalizable {
           isLeaf: true);
 
   /// See the [Rust documentation for `print`](https://docs.rs/icu/latest/icu/properties/sets/fn.print.html) for more information.
-  factory ICU4XCodePointSetData.loadPrint(ICU4XDataProvider provider) {
+  factory CodePointSetData.loadPrint(DataProvider provider) {
     final result = _ICU4XCodePointSetData_load_print(provider._underlying);
     return result.isOk
-        ? ICU4XCodePointSetData._(result.union.ok)
-        : throw ICU4XError.values
+        ? CodePointSetData._(result.union.ok)
+        : throw Error.values
             .firstWhere((v) => v._underlying == result.union.err);
   }
   // ignore: non_constant_identifier_names
@@ -2911,12 +2890,12 @@ class ICU4XCodePointSetData implements ffi.Finalizable {
           isLeaf: true);
 
   /// See the [Rust documentation for `quotation_mark`](https://docs.rs/icu/latest/icu/properties/sets/fn.quotation_mark.html) for more information.
-  factory ICU4XCodePointSetData.loadQuotationMark(ICU4XDataProvider provider) {
+  factory CodePointSetData.loadQuotationMark(DataProvider provider) {
     final result =
         _ICU4XCodePointSetData_load_quotation_mark(provider._underlying);
     return result.isOk
-        ? ICU4XCodePointSetData._(result.union.ok)
-        : throw ICU4XError.values
+        ? CodePointSetData._(result.union.ok)
+        : throw Error.values
             .firstWhere((v) => v._underlying == result.union.err);
   }
   // ignore: non_constant_identifier_names
@@ -2928,11 +2907,11 @@ class ICU4XCodePointSetData implements ffi.Finalizable {
           isLeaf: true);
 
   /// See the [Rust documentation for `radical`](https://docs.rs/icu/latest/icu/properties/sets/fn.radical.html) for more information.
-  factory ICU4XCodePointSetData.loadRadical(ICU4XDataProvider provider) {
+  factory CodePointSetData.loadRadical(DataProvider provider) {
     final result = _ICU4XCodePointSetData_load_radical(provider._underlying);
     return result.isOk
-        ? ICU4XCodePointSetData._(result.union.ok)
-        : throw ICU4XError.values
+        ? CodePointSetData._(result.union.ok)
+        : throw Error.values
             .firstWhere((v) => v._underlying == result.union.err);
   }
   // ignore: non_constant_identifier_names
@@ -2944,13 +2923,12 @@ class ICU4XCodePointSetData implements ffi.Finalizable {
           isLeaf: true);
 
   /// See the [Rust documentation for `regional_indicator`](https://docs.rs/icu/latest/icu/properties/sets/fn.regional_indicator.html) for more information.
-  factory ICU4XCodePointSetData.loadRegionalIndicator(
-      ICU4XDataProvider provider) {
+  factory CodePointSetData.loadRegionalIndicator(DataProvider provider) {
     final result =
         _ICU4XCodePointSetData_load_regional_indicator(provider._underlying);
     return result.isOk
-        ? ICU4XCodePointSetData._(result.union.ok)
-        : throw ICU4XError.values
+        ? CodePointSetData._(result.union.ok)
+        : throw Error.values
             .firstWhere((v) => v._underlying == result.union.err);
   }
   // ignore: non_constant_identifier_names
@@ -2962,12 +2940,12 @@ class ICU4XCodePointSetData implements ffi.Finalizable {
           isLeaf: true);
 
   /// See the [Rust documentation for `soft_dotted`](https://docs.rs/icu/latest/icu/properties/sets/fn.soft_dotted.html) for more information.
-  factory ICU4XCodePointSetData.loadSoftDotted(ICU4XDataProvider provider) {
+  factory CodePointSetData.loadSoftDotted(DataProvider provider) {
     final result =
         _ICU4XCodePointSetData_load_soft_dotted(provider._underlying);
     return result.isOk
-        ? ICU4XCodePointSetData._(result.union.ok)
-        : throw ICU4XError.values
+        ? CodePointSetData._(result.union.ok)
+        : throw Error.values
             .firstWhere((v) => v._underlying == result.union.err);
   }
   // ignore: non_constant_identifier_names
@@ -2979,12 +2957,12 @@ class ICU4XCodePointSetData implements ffi.Finalizable {
           isLeaf: true);
 
   /// See the [Rust documentation for `segment_starter`](https://docs.rs/icu/latest/icu/properties/sets/fn.segment_starter.html) for more information.
-  factory ICU4XCodePointSetData.loadSegmentStarter(ICU4XDataProvider provider) {
+  factory CodePointSetData.loadSegmentStarter(DataProvider provider) {
     final result =
         _ICU4XCodePointSetData_load_segment_starter(provider._underlying);
     return result.isOk
-        ? ICU4XCodePointSetData._(result.union.ok)
-        : throw ICU4XError.values
+        ? CodePointSetData._(result.union.ok)
+        : throw Error.values
             .firstWhere((v) => v._underlying == result.union.err);
   }
   // ignore: non_constant_identifier_names
@@ -2996,12 +2974,12 @@ class ICU4XCodePointSetData implements ffi.Finalizable {
           isLeaf: true);
 
   /// See the [Rust documentation for `case_sensitive`](https://docs.rs/icu/latest/icu/properties/sets/fn.case_sensitive.html) for more information.
-  factory ICU4XCodePointSetData.loadCaseSensitive(ICU4XDataProvider provider) {
+  factory CodePointSetData.loadCaseSensitive(DataProvider provider) {
     final result =
         _ICU4XCodePointSetData_load_case_sensitive(provider._underlying);
     return result.isOk
-        ? ICU4XCodePointSetData._(result.union.ok)
-        : throw ICU4XError.values
+        ? CodePointSetData._(result.union.ok)
+        : throw Error.values
             .firstWhere((v) => v._underlying == result.union.err);
   }
   // ignore: non_constant_identifier_names
@@ -3013,13 +2991,12 @@ class ICU4XCodePointSetData implements ffi.Finalizable {
           isLeaf: true);
 
   /// See the [Rust documentation for `sentence_terminal`](https://docs.rs/icu/latest/icu/properties/sets/fn.sentence_terminal.html) for more information.
-  factory ICU4XCodePointSetData.loadSentenceTerminal(
-      ICU4XDataProvider provider) {
+  factory CodePointSetData.loadSentenceTerminal(DataProvider provider) {
     final result =
         _ICU4XCodePointSetData_load_sentence_terminal(provider._underlying);
     return result.isOk
-        ? ICU4XCodePointSetData._(result.union.ok)
-        : throw ICU4XError.values
+        ? CodePointSetData._(result.union.ok)
+        : throw Error.values
             .firstWhere((v) => v._underlying == result.union.err);
   }
   // ignore: non_constant_identifier_names
@@ -3031,13 +3008,12 @@ class ICU4XCodePointSetData implements ffi.Finalizable {
           isLeaf: true);
 
   /// See the [Rust documentation for `terminal_punctuation`](https://docs.rs/icu/latest/icu/properties/sets/fn.terminal_punctuation.html) for more information.
-  factory ICU4XCodePointSetData.loadTerminalPunctuation(
-      ICU4XDataProvider provider) {
+  factory CodePointSetData.loadTerminalPunctuation(DataProvider provider) {
     final result =
         _ICU4XCodePointSetData_load_terminal_punctuation(provider._underlying);
     return result.isOk
-        ? ICU4XCodePointSetData._(result.union.ok)
-        : throw ICU4XError.values
+        ? CodePointSetData._(result.union.ok)
+        : throw Error.values
             .firstWhere((v) => v._underlying == result.union.err);
   }
   // ignore: non_constant_identifier_names
@@ -3049,13 +3025,12 @@ class ICU4XCodePointSetData implements ffi.Finalizable {
           isLeaf: true);
 
   /// See the [Rust documentation for `unified_ideograph`](https://docs.rs/icu/latest/icu/properties/sets/fn.unified_ideograph.html) for more information.
-  factory ICU4XCodePointSetData.loadUnifiedIdeograph(
-      ICU4XDataProvider provider) {
+  factory CodePointSetData.loadUnifiedIdeograph(DataProvider provider) {
     final result =
         _ICU4XCodePointSetData_load_unified_ideograph(provider._underlying);
     return result.isOk
-        ? ICU4XCodePointSetData._(result.union.ok)
-        : throw ICU4XError.values
+        ? CodePointSetData._(result.union.ok)
+        : throw Error.values
             .firstWhere((v) => v._underlying == result.union.err);
   }
   // ignore: non_constant_identifier_names
@@ -3067,11 +3042,11 @@ class ICU4XCodePointSetData implements ffi.Finalizable {
           isLeaf: true);
 
   /// See the [Rust documentation for `uppercase`](https://docs.rs/icu/latest/icu/properties/sets/fn.uppercase.html) for more information.
-  factory ICU4XCodePointSetData.loadUppercase(ICU4XDataProvider provider) {
+  factory CodePointSetData.loadUppercase(DataProvider provider) {
     final result = _ICU4XCodePointSetData_load_uppercase(provider._underlying);
     return result.isOk
-        ? ICU4XCodePointSetData._(result.union.ok)
-        : throw ICU4XError.values
+        ? CodePointSetData._(result.union.ok)
+        : throw Error.values
             .firstWhere((v) => v._underlying == result.union.err);
   }
   // ignore: non_constant_identifier_names
@@ -3083,13 +3058,12 @@ class ICU4XCodePointSetData implements ffi.Finalizable {
           isLeaf: true);
 
   /// See the [Rust documentation for `variation_selector`](https://docs.rs/icu/latest/icu/properties/sets/fn.variation_selector.html) for more information.
-  factory ICU4XCodePointSetData.loadVariationSelector(
-      ICU4XDataProvider provider) {
+  factory CodePointSetData.loadVariationSelector(DataProvider provider) {
     final result =
         _ICU4XCodePointSetData_load_variation_selector(provider._underlying);
     return result.isOk
-        ? ICU4XCodePointSetData._(result.union.ok)
-        : throw ICU4XError.values
+        ? CodePointSetData._(result.union.ok)
+        : throw Error.values
             .firstWhere((v) => v._underlying == result.union.err);
   }
   // ignore: non_constant_identifier_names
@@ -3101,12 +3075,12 @@ class ICU4XCodePointSetData implements ffi.Finalizable {
           isLeaf: true);
 
   /// See the [Rust documentation for `white_space`](https://docs.rs/icu/latest/icu/properties/sets/fn.white_space.html) for more information.
-  factory ICU4XCodePointSetData.loadWhiteSpace(ICU4XDataProvider provider) {
+  factory CodePointSetData.loadWhiteSpace(DataProvider provider) {
     final result =
         _ICU4XCodePointSetData_load_white_space(provider._underlying);
     return result.isOk
-        ? ICU4XCodePointSetData._(result.union.ok)
-        : throw ICU4XError.values
+        ? CodePointSetData._(result.union.ok)
+        : throw Error.values
             .firstWhere((v) => v._underlying == result.union.err);
   }
   // ignore: non_constant_identifier_names
@@ -3118,11 +3092,11 @@ class ICU4XCodePointSetData implements ffi.Finalizable {
           isLeaf: true);
 
   /// See the [Rust documentation for `xdigit`](https://docs.rs/icu/latest/icu/properties/sets/fn.xdigit.html) for more information.
-  factory ICU4XCodePointSetData.loadXdigit(ICU4XDataProvider provider) {
+  factory CodePointSetData.loadXdigit(DataProvider provider) {
     final result = _ICU4XCodePointSetData_load_xdigit(provider._underlying);
     return result.isOk
-        ? ICU4XCodePointSetData._(result.union.ok)
-        : throw ICU4XError.values
+        ? CodePointSetData._(result.union.ok)
+        : throw Error.values
             .firstWhere((v) => v._underlying == result.union.err);
   }
   // ignore: non_constant_identifier_names
@@ -3134,12 +3108,12 @@ class ICU4XCodePointSetData implements ffi.Finalizable {
           isLeaf: true);
 
   /// See the [Rust documentation for `xid_continue`](https://docs.rs/icu/latest/icu/properties/sets/fn.xid_continue.html) for more information.
-  factory ICU4XCodePointSetData.loadXidContinue(ICU4XDataProvider provider) {
+  factory CodePointSetData.loadXidContinue(DataProvider provider) {
     final result =
         _ICU4XCodePointSetData_load_xid_continue(provider._underlying);
     return result.isOk
-        ? ICU4XCodePointSetData._(result.union.ok)
-        : throw ICU4XError.values
+        ? CodePointSetData._(result.union.ok)
+        : throw Error.values
             .firstWhere((v) => v._underlying == result.union.err);
   }
   // ignore: non_constant_identifier_names
@@ -3151,11 +3125,11 @@ class ICU4XCodePointSetData implements ffi.Finalizable {
           isLeaf: true);
 
   /// See the [Rust documentation for `xid_start`](https://docs.rs/icu/latest/icu/properties/sets/fn.xid_start.html) for more information.
-  factory ICU4XCodePointSetData.loadXidStart(ICU4XDataProvider provider) {
+  factory CodePointSetData.loadXidStart(DataProvider provider) {
     final result = _ICU4XCodePointSetData_load_xid_start(provider._underlying);
     return result.isOk
-        ? ICU4XCodePointSetData._(result.union.ok)
-        : throw ICU4XError.values
+        ? CodePointSetData._(result.union.ok)
+        : throw Error.values
             .firstWhere((v) => v._underlying == result.union.err);
   }
   // ignore: non_constant_identifier_names
@@ -3175,8 +3149,8 @@ class ICU4XCodePointSetData implements ffi.Finalizable {
   /// [ecma]: https://tc39.es/ecma262/#table-binary-unicode-properties
   ///
   /// See the [Rust documentation for `for_ecma262`](https://docs.rs/icu/latest/icu/properties/sets/fn.for_ecma262.html) for more information.
-  factory ICU4XCodePointSetData.loadForEcma262(
-      ICU4XDataProvider provider, String propertyName) {
+  factory CodePointSetData.loadForEcma262(
+      DataProvider provider, String propertyName) {
     final alloc = ffi2.Arena();
     final propertyNameSlice = _SliceFfi2Utf8._fromDart(propertyName, alloc);
 
@@ -3184,8 +3158,8 @@ class ICU4XCodePointSetData implements ffi.Finalizable {
         propertyNameSlice._bytes, propertyNameSlice._length);
     alloc.releaseAll();
     return result.isOk
-        ? ICU4XCodePointSetData._(result.union.ok)
-        : throw ICU4XError.values
+        ? CodePointSetData._(result.union.ok)
+        : throw Error.values
             .firstWhere((v) => v._underlying == result.union.err);
   }
   // ignore: non_constant_identifier_names
@@ -3201,10 +3175,10 @@ class ICU4XCodePointSetData implements ffi.Finalizable {
 }
 
 /// See the [Rust documentation for `Collator`](https://docs.rs/icu/latest/icu/collator/struct.Collator.html) for more information.
-class ICU4XCollator implements ffi.Finalizable {
+class Collator implements ffi.Finalizable {
   final ffi.Pointer<ffi.Opaque> _underlying;
 
-  ICU4XCollator._(this._underlying) {
+  Collator._(this._underlying) {
     _finalizer.attach(this, _underlying.cast());
   }
 
@@ -3213,13 +3187,13 @@ class ICU4XCollator implements ffi.Finalizable {
   /// Construct a new Collator instance.
   ///
   /// See the [Rust documentation for `try_new`](https://docs.rs/icu/latest/icu/collator/struct.Collator.html#method.try_new) for more information.
-  factory ICU4XCollator.v1(ICU4XDataProvider provider, ICU4XLocale locale,
-      ICU4XCollatorOptionsV1 options) {
+  factory Collator.v1(
+      DataProvider provider, Locale locale, CollatorOptionsV1 options) {
     final result = _ICU4XCollator_create_v1(
         provider._underlying, locale._underlying, options._underlying);
     return result.isOk
-        ? ICU4XCollator._(result.union.ok)
-        : throw ICU4XError.values
+        ? Collator._(result.union.ok)
+        : throw Error.values
             .firstWhere((v) => v._underlying == result.union.err);
   }
   // ignore: non_constant_identifier_names
@@ -3228,12 +3202,10 @@ class ICU4XCollator implements ffi.Finalizable {
               _ResultOpaqueUint32 Function(
                   ffi.Pointer<ffi.Opaque>,
                   ffi.Pointer<ffi.Opaque>,
-                  _ICU4XCollatorOptionsV1Ffi)>>('ICU4XCollator_create_v1')
+                  _CollatorOptionsV1Ffi)>>('ICU4XCollator_create_v1')
       .asFunction<
-          _ResultOpaqueUint32 Function(
-              ffi.Pointer<ffi.Opaque>,
-              ffi.Pointer<ffi.Opaque>,
-              _ICU4XCollatorOptionsV1Ffi)>(isLeaf: true);
+          _ResultOpaqueUint32 Function(ffi.Pointer<ffi.Opaque>,
+              ffi.Pointer<ffi.Opaque>, _CollatorOptionsV1Ffi)>(isLeaf: true);
 
   /// Compare potentially ill-formed UTF-8 strings.
   ///
@@ -3242,7 +3214,7 @@ class ICU4XCollator implements ffi.Finalizable {
   /// to the WHATWG Encoding Standard.
   ///
   /// See the [Rust documentation for `compare_utf8`](https://docs.rs/icu/latest/icu/collator/struct.Collator.html#method.compare_utf8) for more information.
-  ICU4XOrdering compare(String left, String right) {
+  Ordering compare(String left, String right) {
     final alloc = ffi2.Arena();
     final leftSlice = _SliceFfi2Utf8._fromDart(left, alloc);
     final rightSlice = _SliceFfi2Utf8._fromDart(right, alloc);
@@ -3250,7 +3222,7 @@ class ICU4XCollator implements ffi.Finalizable {
     final result = _ICU4XCollator_compare(_underlying, leftSlice._bytes,
         leftSlice._length, rightSlice._bytes, rightSlice._length);
     alloc.releaseAll();
-    return ICU4XOrdering.values.firstWhere((v) => v._underlying == result);
+    return Ordering.values.firstWhere((v) => v._underlying == result);
   }
 
   // ignore: non_constant_identifier_names
@@ -3272,7 +3244,7 @@ class ICU4XCollator implements ffi.Finalizable {
   /// (and may be memory-unsafe to do so, too).
   ///
   /// See the [Rust documentation for `compare`](https://docs.rs/icu/latest/icu/collator/struct.Collator.html#method.compare) for more information.
-  ICU4XOrdering compareValidUtf8(String left, String right) {
+  Ordering compareValidUtf8(String left, String right) {
     final alloc = ffi2.Arena();
     final leftSlice = _SliceFfi2Utf8._fromDart(left, alloc);
     final rightSlice = _SliceFfi2Utf8._fromDart(right, alloc);
@@ -3284,7 +3256,7 @@ class ICU4XCollator implements ffi.Finalizable {
         rightSlice._bytes,
         rightSlice._length);
     alloc.releaseAll();
-    return ICU4XOrdering.values.firstWhere((v) => v._underlying == result);
+    return Ordering.values.firstWhere((v) => v._underlying == result);
   }
 
   // ignore: non_constant_identifier_names
@@ -3304,7 +3276,7 @@ class ICU4XCollator implements ffi.Finalizable {
   /// compared as REPLACEMENT CHARACTER.
   ///
   /// See the [Rust documentation for `compare_utf16`](https://docs.rs/icu/latest/icu/collator/struct.Collator.html#method.compare_utf16) for more information.
-  ICU4XOrdering compareUtf16(Uint16List left, Uint16List right) {
+  Ordering compareUtf16(Uint16List left, Uint16List right) {
     final alloc = ffi2.Arena();
     final leftSlice = _SliceFfiUint16._fromDart(left, alloc);
     final rightSlice = _SliceFfiUint16._fromDart(right, alloc);
@@ -3312,7 +3284,7 @@ class ICU4XCollator implements ffi.Finalizable {
     final result = _ICU4XCollator_compare_utf16(_underlying, leftSlice._bytes,
         leftSlice._length, rightSlice._bytes, rightSlice._length);
     alloc.releaseAll();
-    return ICU4XOrdering.values.firstWhere((v) => v._underlying == result);
+    return Ordering.values.firstWhere((v) => v._underlying == result);
   }
 
   // ignore: non_constant_identifier_names
@@ -3330,21 +3302,21 @@ class ICU4XCollator implements ffi.Finalizable {
 }
 
 /// See the [Rust documentation for `AlternateHandling`](https://docs.rs/icu/latest/icu/collator/enum.AlternateHandling.html) for more information.
-enum ICU4XCollatorAlternateHandling {
+enum CollatorAlternateHandling {
   auto,
   nonIgnorable,
   shifted;
 }
 
 /// See the [Rust documentation for `BackwardSecondLevel`](https://docs.rs/icu/latest/icu/collator/enum.BackwardSecondLevel.html) for more information.
-enum ICU4XCollatorBackwardSecondLevel {
+enum CollatorBackwardSecondLevel {
   auto,
   off,
   on;
 }
 
 /// See the [Rust documentation for `CaseFirst`](https://docs.rs/icu/latest/icu/collator/enum.CaseFirst.html) for more information.
-enum ICU4XCollatorCaseFirst {
+enum CollatorCaseFirst {
   auto,
   off,
   lowerFirst,
@@ -3352,14 +3324,14 @@ enum ICU4XCollatorCaseFirst {
 }
 
 /// See the [Rust documentation for `CaseLevel`](https://docs.rs/icu/latest/icu/collator/enum.CaseLevel.html) for more information.
-enum ICU4XCollatorCaseLevel {
+enum CollatorCaseLevel {
   auto,
   off,
   on;
 }
 
 /// See the [Rust documentation for `MaxVariable`](https://docs.rs/icu/latest/icu/collator/enum.MaxVariable.html) for more information.
-enum ICU4XCollatorMaxVariable {
+enum CollatorMaxVariable {
   auto,
   space,
   punctuation,
@@ -3368,14 +3340,14 @@ enum ICU4XCollatorMaxVariable {
 }
 
 /// See the [Rust documentation for `Numeric`](https://docs.rs/icu/latest/icu/collator/enum.Numeric.html) for more information.
-enum ICU4XCollatorNumeric {
+enum CollatorNumeric {
   auto,
   off,
   on;
 }
 
 /// See the [Rust documentation for `CollatorOptions`](https://docs.rs/icu/latest/icu/collator/struct.CollatorOptions.html) for more information.
-class _ICU4XCollatorOptionsV1Ffi extends ffi.Struct {
+class _CollatorOptionsV1Ffi extends ffi.Struct {
   @ffi.Uint32()
   external int strength;
   @ffi.Uint32()
@@ -3392,65 +3364,63 @@ class _ICU4XCollatorOptionsV1Ffi extends ffi.Struct {
   external int backwardSecondLevel;
 }
 
-class ICU4XCollatorOptionsV1 {
-  final _ICU4XCollatorOptionsV1Ffi _underlying;
+class CollatorOptionsV1 {
+  final _CollatorOptionsV1Ffi _underlying;
 
   // ignore: unused_element
-  ICU4XCollatorOptionsV1._(this._underlying);
+  CollatorOptionsV1._(this._underlying);
 
-  factory ICU4XCollatorOptionsV1() {
-    final pointer = ffi2.calloc<_ICU4XCollatorOptionsV1Ffi>();
-    final result = ICU4XCollatorOptionsV1._(pointer.ref);
+  factory CollatorOptionsV1() {
+    final pointer = ffi2.calloc<_CollatorOptionsV1Ffi>();
+    final result = CollatorOptionsV1._(pointer.ref);
     _callocFree.attach(result, pointer.cast());
     return result;
   }
 
-  ICU4XCollatorStrength get strength =>
-      ICU4XCollatorStrength.values[_underlying.strength];
-  set strength(ICU4XCollatorStrength strength) {
+  CollatorStrength get strength =>
+      CollatorStrength.values[_underlying.strength];
+  set strength(CollatorStrength strength) {
     _underlying.strength = strength.index;
   }
 
-  ICU4XCollatorAlternateHandling get alternateHandling =>
-      ICU4XCollatorAlternateHandling.values[_underlying.alternateHandling];
-  set alternateHandling(ICU4XCollatorAlternateHandling alternateHandling) {
+  CollatorAlternateHandling get alternateHandling =>
+      CollatorAlternateHandling.values[_underlying.alternateHandling];
+  set alternateHandling(CollatorAlternateHandling alternateHandling) {
     _underlying.alternateHandling = alternateHandling.index;
   }
 
-  ICU4XCollatorCaseFirst get caseFirst =>
-      ICU4XCollatorCaseFirst.values[_underlying.caseFirst];
-  set caseFirst(ICU4XCollatorCaseFirst caseFirst) {
+  CollatorCaseFirst get caseFirst =>
+      CollatorCaseFirst.values[_underlying.caseFirst];
+  set caseFirst(CollatorCaseFirst caseFirst) {
     _underlying.caseFirst = caseFirst.index;
   }
 
-  ICU4XCollatorMaxVariable get maxVariable =>
-      ICU4XCollatorMaxVariable.values[_underlying.maxVariable];
-  set maxVariable(ICU4XCollatorMaxVariable maxVariable) {
+  CollatorMaxVariable get maxVariable =>
+      CollatorMaxVariable.values[_underlying.maxVariable];
+  set maxVariable(CollatorMaxVariable maxVariable) {
     _underlying.maxVariable = maxVariable.index;
   }
 
-  ICU4XCollatorCaseLevel get caseLevel =>
-      ICU4XCollatorCaseLevel.values[_underlying.caseLevel];
-  set caseLevel(ICU4XCollatorCaseLevel caseLevel) {
+  CollatorCaseLevel get caseLevel =>
+      CollatorCaseLevel.values[_underlying.caseLevel];
+  set caseLevel(CollatorCaseLevel caseLevel) {
     _underlying.caseLevel = caseLevel.index;
   }
 
-  ICU4XCollatorNumeric get numeric =>
-      ICU4XCollatorNumeric.values[_underlying.numeric];
-  set numeric(ICU4XCollatorNumeric numeric) {
+  CollatorNumeric get numeric => CollatorNumeric.values[_underlying.numeric];
+  set numeric(CollatorNumeric numeric) {
     _underlying.numeric = numeric.index;
   }
 
-  ICU4XCollatorBackwardSecondLevel get backwardSecondLevel =>
-      ICU4XCollatorBackwardSecondLevel.values[_underlying.backwardSecondLevel];
-  set backwardSecondLevel(
-      ICU4XCollatorBackwardSecondLevel backwardSecondLevel) {
+  CollatorBackwardSecondLevel get backwardSecondLevel =>
+      CollatorBackwardSecondLevel.values[_underlying.backwardSecondLevel];
+  set backwardSecondLevel(CollatorBackwardSecondLevel backwardSecondLevel) {
     _underlying.backwardSecondLevel = backwardSecondLevel.index;
   }
 
   @override
   bool operator ==(Object other) =>
-      other is ICU4XCollatorOptionsV1 &&
+      other is CollatorOptionsV1 &&
       other._underlying.strength == _underlying.strength &&
       other._underlying.alternateHandling == _underlying.alternateHandling &&
       other._underlying.caseFirst == _underlying.caseFirst &&
@@ -3472,7 +3442,7 @@ class ICU4XCollatorOptionsV1 {
 }
 
 /// See the [Rust documentation for `Strength`](https://docs.rs/icu/latest/icu/collator/enum.Strength.html) for more information.
-enum ICU4XCollatorStrength {
+enum CollatorStrength {
   auto,
   primary,
   secondary,
@@ -3482,10 +3452,10 @@ enum ICU4XCollatorStrength {
 }
 
 /// See the [Rust documentation for `ComposingNormalizer`](https://docs.rs/icu/latest/icu/normalizer/struct.ComposingNormalizer.html) for more information.
-class ICU4XComposingNormalizer implements ffi.Finalizable {
+class ComposingNormalizer implements ffi.Finalizable {
   final ffi.Pointer<ffi.Opaque> _underlying;
 
-  ICU4XComposingNormalizer._(this._underlying) {
+  ComposingNormalizer._(this._underlying) {
     _finalizer.attach(this, _underlying.cast());
   }
 
@@ -3495,11 +3465,11 @@ class ICU4XComposingNormalizer implements ffi.Finalizable {
   /// Construct a new ICU4XComposingNormalizer instance for NFC
   ///
   /// See the [Rust documentation for `new_nfc`](https://docs.rs/icu/latest/icu/normalizer/struct.ComposingNormalizer.html#method.new_nfc) for more information.
-  factory ICU4XComposingNormalizer.nfc(ICU4XDataProvider provider) {
+  factory ComposingNormalizer.nfc(DataProvider provider) {
     final result = _ICU4XComposingNormalizer_create_nfc(provider._underlying);
     return result.isOk
-        ? ICU4XComposingNormalizer._(result.union.ok)
-        : throw ICU4XError.values
+        ? ComposingNormalizer._(result.union.ok)
+        : throw Error.values
             .firstWhere((v) => v._underlying == result.union.err);
   }
   // ignore: non_constant_identifier_names
@@ -3513,11 +3483,11 @@ class ICU4XComposingNormalizer implements ffi.Finalizable {
   /// Construct a new ICU4XComposingNormalizer instance for NFKC
   ///
   /// See the [Rust documentation for `new_nfkc`](https://docs.rs/icu/latest/icu/normalizer/struct.ComposingNormalizer.html#method.new_nfkc) for more information.
-  factory ICU4XComposingNormalizer.nfkc(ICU4XDataProvider provider) {
+  factory ComposingNormalizer.nfkc(DataProvider provider) {
     final result = _ICU4XComposingNormalizer_create_nfkc(provider._underlying);
     return result.isOk
-        ? ICU4XComposingNormalizer._(result.union.ok)
-        : throw ICU4XError.values
+        ? ComposingNormalizer._(result.union.ok)
+        : throw Error.values
             .firstWhere((v) => v._underlying == result.union.err);
   }
   // ignore: non_constant_identifier_names
@@ -3543,7 +3513,7 @@ class ICU4XComposingNormalizer implements ffi.Finalizable {
     alloc.releaseAll();
     return result.isOk
         ? writeable.finalize()
-        : throw ICU4XError.values
+        : throw Error.values
             .firstWhere((v) => v._underlying == result.union.err);
   }
 
@@ -3589,10 +3559,10 @@ class ICU4XComposingNormalizer implements ffi.Finalizable {
 }
 
 /// See the [Rust documentation for `CustomTimeZone`](https://docs.rs/icu/latest/icu/timezone/struct.CustomTimeZone.html) for more information.
-class ICU4XCustomTimeZone implements ffi.Finalizable {
+class CustomTimeZone implements ffi.Finalizable {
   final ffi.Pointer<ffi.Opaque> _underlying;
 
-  ICU4XCustomTimeZone._(this._underlying) {
+  CustomTimeZone._(this._underlying) {
     _finalizer.attach(this, _underlying.cast());
   }
 
@@ -3602,7 +3572,7 @@ class ICU4XCustomTimeZone implements ffi.Finalizable {
   /// Creates a time zone from an offset string.
   ///
   /// See the [Rust documentation for `from_str`](https://docs.rs/icu/latest/icu/timezone/struct.CustomTimeZone.html#method.from_str) for more information.
-  factory ICU4XCustomTimeZone.fromString(String s) {
+  factory CustomTimeZone.fromString(String s) {
     final alloc = ffi2.Arena();
     final sSlice = _SliceFfi2Utf8._fromDart(s, alloc);
 
@@ -3610,8 +3580,8 @@ class ICU4XCustomTimeZone implements ffi.Finalizable {
         _ICU4XCustomTimeZone_create_from_string(sSlice._bytes, sSlice._length);
     alloc.releaseAll();
     return result.isOk
-        ? ICU4XCustomTimeZone._(result.union.ok)
-        : throw ICU4XError.values
+        ? CustomTimeZone._(result.union.ok)
+        : throw Error.values
             .firstWhere((v) => v._underlying == result.union.err);
   }
   // ignore: non_constant_identifier_names
@@ -3625,9 +3595,9 @@ class ICU4XCustomTimeZone implements ffi.Finalizable {
   /// Creates a time zone with no information.
   ///
   /// See the [Rust documentation for `new_empty`](https://docs.rs/icu/latest/icu/timezone/struct.CustomTimeZone.html#method.new_empty) for more information.
-  factory ICU4XCustomTimeZone.empty() {
+  factory CustomTimeZone.empty() {
     final result = _ICU4XCustomTimeZone_create_empty();
-    return ICU4XCustomTimeZone._(result);
+    return CustomTimeZone._(result);
   }
   // ignore: non_constant_identifier_names
   static final _ICU4XCustomTimeZone_create_empty =
@@ -3638,9 +3608,9 @@ class ICU4XCustomTimeZone implements ffi.Finalizable {
   /// Creates a time zone for UTC.
   ///
   /// See the [Rust documentation for `utc`](https://docs.rs/icu/latest/icu/timezone/struct.CustomTimeZone.html#method.utc) for more information.
-  factory ICU4XCustomTimeZone.utc() {
+  factory CustomTimeZone.utc() {
     final result = _ICU4XCustomTimeZone_create_utc();
-    return ICU4XCustomTimeZone._(result);
+    return CustomTimeZone._(result);
   }
   // ignore: non_constant_identifier_names
   static final _ICU4XCustomTimeZone_create_utc =
@@ -3659,8 +3629,7 @@ class ICU4XCustomTimeZone implements ffi.Finalizable {
     final result = _ICU4XCustomTimeZone_try_set_gmt_offset_seconds(
         _underlying, offsetSeconds);
     if (!result.isOk) {
-      throw ICU4XError.values
-          .firstWhere((v) => v._underlying == result.union.err);
+      throw Error.values.firstWhere((v) => v._underlying == result.union.err);
     }
   }
 
@@ -3698,7 +3667,7 @@ class ICU4XCustomTimeZone implements ffi.Finalizable {
     final result = _ICU4XCustomTimeZone_gmt_offset_seconds(_underlying);
     return result.isOk
         ? result.union.ok
-        : throw ICU4XError.values
+        : throw Error.values
             .firstWhere((v) => v._underlying == result.union.err);
   }
 
@@ -3719,7 +3688,7 @@ class ICU4XCustomTimeZone implements ffi.Finalizable {
     final result = _ICU4XCustomTimeZone_is_gmt_offset_positive(_underlying);
     return result.isOk
         ? result.union.ok
-        : throw ICU4XError.values
+        : throw Error.values
             .firstWhere((v) => v._underlying == result.union.err);
   }
 
@@ -3740,7 +3709,7 @@ class ICU4XCustomTimeZone implements ffi.Finalizable {
     final result = _ICU4XCustomTimeZone_is_gmt_offset_zero(_underlying);
     return result.isOk
         ? result.union.ok
-        : throw ICU4XError.values
+        : throw Error.values
             .firstWhere((v) => v._underlying == result.union.err);
   }
 
@@ -3761,7 +3730,7 @@ class ICU4XCustomTimeZone implements ffi.Finalizable {
     final result = _ICU4XCustomTimeZone_gmt_offset_has_minutes(_underlying);
     return result.isOk
         ? result.union.ok
-        : throw ICU4XError.values
+        : throw Error.values
             .firstWhere((v) => v._underlying == result.union.err);
   }
 
@@ -3782,7 +3751,7 @@ class ICU4XCustomTimeZone implements ffi.Finalizable {
     final result = _ICU4XCustomTimeZone_gmt_offset_has_seconds(_underlying);
     return result.isOk
         ? result.union.ok
-        : throw ICU4XError.values
+        : throw Error.values
             .firstWhere((v) => v._underlying == result.union.err);
   }
 
@@ -3809,8 +3778,7 @@ class ICU4XCustomTimeZone implements ffi.Finalizable {
         _underlying, idSlice._bytes, idSlice._length);
     alloc.releaseAll();
     if (!result.isOk) {
-      throw ICU4XError.values
-          .firstWhere((v) => v._underlying == result.union.err);
+      throw Error.values.firstWhere((v) => v._underlying == result.union.err);
     }
   }
 
@@ -3831,7 +3799,7 @@ class ICU4XCustomTimeZone implements ffi.Finalizable {
   /// Errors if the string is not a valid BCP-47 time zone ID.
   ///
   /// See the [Rust documentation for `get`](https://docs.rs/icu/latest/icu/timezone/struct.IanaToBcp47MapperBorrowed.html#method.get) for more information.
-  void trySetIanaTimeZoneId(ICU4XIanaToBcp47Mapper mapper, String id) {
+  void trySetIanaTimeZoneId(IanaToBcp47Mapper mapper, String id) {
     final alloc = ffi2.Arena();
     final idSlice = _SliceFfi2Utf8._fromDart(id, alloc);
 
@@ -3839,8 +3807,7 @@ class ICU4XCustomTimeZone implements ffi.Finalizable {
         _underlying, mapper._underlying, idSlice._bytes, idSlice._length);
     alloc.releaseAll();
     if (!result.isOk) {
-      throw ICU4XError.values
-          .firstWhere((v) => v._underlying == result.union.err);
+      throw Error.values.firstWhere((v) => v._underlying == result.union.err);
     }
   }
 
@@ -3887,7 +3854,7 @@ class ICU4XCustomTimeZone implements ffi.Finalizable {
         _ICU4XCustomTimeZone_time_zone_id(_underlying, writeable._underlying);
     return result.isOk
         ? writeable.finalize()
-        : throw ICU4XError.values
+        : throw Error.values
             .firstWhere((v) => v._underlying == result.union.err);
   }
 
@@ -3915,8 +3882,7 @@ class ICU4XCustomTimeZone implements ffi.Finalizable {
         _underlying, idSlice._bytes, idSlice._length);
     alloc.releaseAll();
     if (!result.isOk) {
-      throw ICU4XError.values
-          .firstWhere((v) => v._underlying == result.union.err);
+      throw Error.values.firstWhere((v) => v._underlying == result.union.err);
     }
   }
 
@@ -3959,7 +3925,7 @@ class ICU4XCustomTimeZone implements ffi.Finalizable {
         _ICU4XCustomTimeZone_metazone_id(_underlying, writeable._underlying);
     return result.isOk
         ? writeable.finalize()
-        : throw ICU4XError.values
+        : throw Error.values
             .firstWhere((v) => v._underlying == result.union.err);
   }
 
@@ -3987,8 +3953,7 @@ class ICU4XCustomTimeZone implements ffi.Finalizable {
         _underlying, idSlice._bytes, idSlice._length);
     alloc.releaseAll();
     if (!result.isOk) {
-      throw ICU4XError.values
-          .firstWhere((v) => v._underlying == result.union.err);
+      throw Error.values.firstWhere((v) => v._underlying == result.union.err);
     }
   }
 
@@ -4031,7 +3996,7 @@ class ICU4XCustomTimeZone implements ffi.Finalizable {
         _ICU4XCustomTimeZone_zone_variant(_underlying, writeable._underlying);
     return result.isOk
         ? writeable.finalize()
-        : throw ICU4XError.values
+        : throw Error.values
             .firstWhere((v) => v._underlying == result.union.err);
   }
 
@@ -4085,7 +4050,7 @@ class ICU4XCustomTimeZone implements ffi.Finalizable {
     final result = _ICU4XCustomTimeZone_is_standard_time(_underlying);
     return result.isOk
         ? result.union.ok
-        : throw ICU4XError.values
+        : throw Error.values
             .firstWhere((v) => v._underlying == result.union.err);
   }
 
@@ -4108,7 +4073,7 @@ class ICU4XCustomTimeZone implements ffi.Finalizable {
     final result = _ICU4XCustomTimeZone_is_daylight_time(_underlying);
     return result.isOk
         ? result.union.ok
-        : throw ICU4XError.values
+        : throw Error.values
             .firstWhere((v) => v._underlying == result.union.err);
   }
 
@@ -4125,8 +4090,8 @@ class ICU4XCustomTimeZone implements ffi.Finalizable {
   /// See the [Rust documentation for `maybe_calculate_metazone`](https://docs.rs/icu/latest/icu/timezone/struct.CustomTimeZone.html#method.maybe_calculate_metazone) for more information.
   ///
   /// Additional information: [1](https://docs.rs/icu/latest/icu/timezone/struct.MetazoneCalculator.html#method.compute_metazone_from_time_zone)
-  void maybeCalculateMetazone(ICU4XMetazoneCalculator metazoneCalculator,
-      ICU4XIsoDateTime localDatetime) {
+  void maybeCalculateMetazone(
+      MetazoneCalculator metazoneCalculator, IsoDateTime localDatetime) {
     _ICU4XCustomTimeZone_maybe_calculate_metazone(
         _underlying, metazoneCalculator._underlying, localDatetime._underlying);
   }
@@ -4145,10 +4110,10 @@ class ICU4XCustomTimeZone implements ffi.Finalizable {
 /// An ICU4X data provider, capable of loading ICU4X data keys from some source.
 ///
 /// See the [Rust documentation for `icu_provider`](https://docs.rs/icu_provider/latest/icu_provider/index.html) for more information.
-class ICU4XDataProvider implements ffi.Finalizable {
+class DataProvider implements ffi.Finalizable {
   final ffi.Pointer<ffi.Opaque> _underlying;
 
-  ICU4XDataProvider._(this._underlying) {
+  DataProvider._(this._underlying) {
     _finalizer.attach(this, _underlying.cast());
   }
 
@@ -4161,9 +4126,9 @@ class ICU4XDataProvider implements ffi.Finalizable {
   ///
   /// This provider cannot be modified or combined with other providers, so `enable_fallback`,
   /// `enabled_fallback_with`, `fork_by_locale`, and `fork_by_key` will return `Err`s.
-  factory ICU4XDataProvider.compiled() {
+  factory DataProvider.compiled() {
     final result = _ICU4XDataProvider_create_compiled();
-    return ICU4XDataProvider._(result);
+    return DataProvider._(result);
   }
   // ignore: non_constant_identifier_names
   static final _ICU4XDataProvider_create_compiled =
@@ -4176,7 +4141,7 @@ class ICU4XDataProvider implements ffi.Finalizable {
   /// Not supported in WASM.
   ///
   /// See the [Rust documentation for `FsDataProvider`](https://docs.rs/icu_provider_fs/latest/icu_provider_fs/struct.FsDataProvider.html) for more information.
-  factory ICU4XDataProvider.fs(String path) {
+  factory DataProvider.fs(String path) {
     final alloc = ffi2.Arena();
     final pathSlice = _SliceFfi2Utf8._fromDart(path, alloc);
 
@@ -4184,8 +4149,8 @@ class ICU4XDataProvider implements ffi.Finalizable {
         _ICU4XDataProvider_create_fs(pathSlice._bytes, pathSlice._length);
     alloc.releaseAll();
     return result.isOk
-        ? ICU4XDataProvider._(result.union.ok)
-        : throw ICU4XError.values
+        ? DataProvider._(result.union.ok)
+        : throw Error.values
             .firstWhere((v) => v._underlying == result.union.err);
   }
   // ignore: non_constant_identifier_names
@@ -4199,9 +4164,9 @@ class ICU4XDataProvider implements ffi.Finalizable {
   /// Deprecated
   ///
   /// Use `create_compiled()`.
-  factory ICU4XDataProvider.test() {
+  factory DataProvider.test() {
     final result = _ICU4XDataProvider_create_test();
-    return ICU4XDataProvider._(result);
+    return DataProvider._(result);
   }
   // ignore: non_constant_identifier_names
   static final _ICU4XDataProvider_create_test =
@@ -4212,7 +4177,7 @@ class ICU4XDataProvider implements ffi.Finalizable {
   /// Constructs a `BlobDataProvider` and returns it as an [`ICU4XDataProvider`].
   ///
   /// See the [Rust documentation for `BlobDataProvider`](https://docs.rs/icu_provider_blob/latest/icu_provider_blob/struct.BlobDataProvider.html) for more information.
-  factory ICU4XDataProvider.fromByteSlice(Uint8List blob) {
+  factory DataProvider.fromByteSlice(Uint8List blob) {
     final alloc = ffi2.Arena();
     final blobSlice = _SliceFfiUint8._fromDart(blob, alloc);
 
@@ -4220,8 +4185,8 @@ class ICU4XDataProvider implements ffi.Finalizable {
         blobSlice._bytes, blobSlice._length);
     alloc.releaseAll();
     return result.isOk
-        ? ICU4XDataProvider._(result.union.ok)
-        : throw ICU4XError.values
+        ? DataProvider._(result.union.ok)
+        : throw Error.values
             .firstWhere((v) => v._underlying == result.union.err);
   }
   // ignore: non_constant_identifier_names
@@ -4235,9 +4200,9 @@ class ICU4XDataProvider implements ffi.Finalizable {
   /// Constructs an empty [`ICU4XDataProvider`].
   ///
   /// See the [Rust documentation for `EmptyDataProvider`](https://docs.rs/icu_provider_adapters/latest/icu_provider_adapters/empty/struct.EmptyDataProvider.html) for more information.
-  factory ICU4XDataProvider.empty() {
+  factory DataProvider.empty() {
     final result = _ICU4XDataProvider_create_empty();
-    return ICU4XDataProvider._(result);
+    return DataProvider._(result);
   }
   // ignore: non_constant_identifier_names
   static final _ICU4XDataProvider_create_empty =
@@ -4255,12 +4220,11 @@ class ICU4XDataProvider implements ffi.Finalizable {
   /// or `create_fs`. If the condition is not upheld, a runtime error occurs.
   ///
   /// See the [Rust documentation for `ForkByKeyProvider`](https://docs.rs/icu_provider_adapters/latest/icu_provider_adapters/fork/type.ForkByKeyProvider.html) for more information.
-  void forkByKey(ICU4XDataProvider other) {
+  void forkByKey(DataProvider other) {
     final result =
         _ICU4XDataProvider_fork_by_key(_underlying, other._underlying);
     if (!result.isOk) {
-      throw ICU4XError.values
-          .firstWhere((v) => v._underlying == result.union.err);
+      throw Error.values.firstWhere((v) => v._underlying == result.union.err);
     }
   }
 
@@ -4276,12 +4240,11 @@ class ICU4XDataProvider implements ffi.Finalizable {
   /// Same as `fork_by_key` but forks by locale instead of key.
   ///
   /// See the [Rust documentation for `MissingLocalePredicate`](https://docs.rs/icu_provider_adapters/latest/icu_provider_adapters/fork/predicates/struct.MissingLocalePredicate.html) for more information.
-  void forkByLocale(ICU4XDataProvider other) {
+  void forkByLocale(DataProvider other) {
     final result =
         _ICU4XDataProvider_fork_by_locale(_underlying, other._underlying);
     if (!result.isOk) {
-      throw ICU4XError.values
-          .firstWhere((v) => v._underlying == result.union.err);
+      throw Error.values.firstWhere((v) => v._underlying == result.union.err);
     }
   }
 
@@ -4304,8 +4267,7 @@ class ICU4XDataProvider implements ffi.Finalizable {
   void enableLocaleFallback() {
     final result = _ICU4XDataProvider_enable_locale_fallback(_underlying);
     if (!result.isOk) {
-      throw ICU4XError.values
-          .firstWhere((v) => v._underlying == result.union.err);
+      throw Error.values.firstWhere((v) => v._underlying == result.union.err);
     }
   }
 
@@ -4320,12 +4282,11 @@ class ICU4XDataProvider implements ffi.Finalizable {
   /// See the [Rust documentation for `new_with_fallbacker`](https://docs.rs/icu_provider_adapters/latest/icu_provider_adapters/fallback/struct.LocaleFallbackProvider.html#method.new_with_fallbacker) for more information.
   ///
   /// Additional information: [1](https://docs.rs/icu_provider_adapters/latest/icu_provider_adapters/fallback/struct.LocaleFallbackProvider.html)
-  void enableLocaleFallbackWith(ICU4XLocaleFallbacker fallbacker) {
+  void enableLocaleFallbackWith(LocaleFallbacker fallbacker) {
     final result = _ICU4XDataProvider_enable_locale_fallback_with(
         _underlying, fallbacker._underlying);
     if (!result.isOk) {
-      throw ICU4XError.values
-          .firstWhere((v) => v._underlying == result.union.err);
+      throw Error.values.firstWhere((v) => v._underlying == result.union.err);
     }
   }
 
@@ -4343,10 +4304,10 @@ class ICU4XDataProvider implements ffi.Finalizable {
 /// A generic data struct to be used by ICU4X
 ///
 /// This can be used to construct a StructDataProvider.
-class ICU4XDataStruct implements ffi.Finalizable {
+class DataStruct implements ffi.Finalizable {
   final ffi.Pointer<ffi.Opaque> _underlying;
 
-  ICU4XDataStruct._(this._underlying) {
+  DataStruct._(this._underlying) {
     _finalizer.attach(this, _underlying.cast());
   }
 
@@ -4358,7 +4319,7 @@ class ICU4XDataStruct implements ffi.Finalizable {
   /// C++ users: All string arguments must be valid UTF8
   ///
   /// See the [Rust documentation for `DecimalSymbolsV1`](https://docs.rs/icu/latest/icu/decimal/provider/struct.DecimalSymbolsV1.html) for more information.
-  factory ICU4XDataStruct.decimalSymbolsV1(
+  factory DataStruct.decimalSymbolsV1(
       String plusSignPrefix,
       String plusSignSuffix,
       String minusSignPrefix,
@@ -4402,8 +4363,8 @@ class ICU4XDataStruct implements ffi.Finalizable {
         digitsSlice._length);
     alloc.releaseAll();
     return result.isOk
-        ? ICU4XDataStruct._(result.union.ok)
-        : throw ICU4XError.values
+        ? DataStruct._(result.union.ok)
+        : throw Error.values
             .firstWhere((v) => v._underlying == result.union.err);
   }
   // ignore: non_constant_identifier_names
@@ -4451,10 +4412,10 @@ class ICU4XDataStruct implements ffi.Finalizable {
 /// An ICU4X Date object capable of containing a date and time for any calendar.
 ///
 /// See the [Rust documentation for `Date`](https://docs.rs/icu/latest/icu/calendar/struct.Date.html) for more information.
-class ICU4XDate implements ffi.Finalizable {
+class Date implements ffi.Finalizable {
   final ffi.Pointer<ffi.Opaque> _underlying;
 
-  ICU4XDate._(this._underlying) {
+  Date._(this._underlying) {
     _finalizer.attach(this, _underlying.cast());
   }
 
@@ -4464,13 +4425,13 @@ class ICU4XDate implements ffi.Finalizable {
   /// given but in a given calendar
   ///
   /// See the [Rust documentation for `new_from_iso`](https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.new_from_iso) for more information.
-  factory ICU4XDate.fromIsoInCalendar(
-      int year, int month, int day, ICU4XCalendar calendar) {
+  factory Date.fromIsoInCalendar(
+      int year, int month, int day, Calendar calendar) {
     final result = _ICU4XDate_create_from_iso_in_calendar(
         year, month, day, calendar._underlying);
     return result.isOk
-        ? ICU4XDate._(result.union.ok)
-        : throw ICU4XError.values
+        ? Date._(result.union.ok)
+        : throw Error.values
             .firstWhere((v) => v._underlying == result.union.err);
   }
   // ignore: non_constant_identifier_names
@@ -4486,8 +4447,8 @@ class ICU4XDate implements ffi.Finalizable {
   /// Creates a new [`ICU4XDate`] from the given codes, which are interpreted in the given calendar system
   ///
   /// See the [Rust documentation for `try_new_from_codes`](https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.try_new_from_codes) for more information.
-  factory ICU4XDate.fromCodesInCalendar(String eraCode, int year,
-      String monthCode, int day, ICU4XCalendar calendar) {
+  factory Date.fromCodesInCalendar(
+      String eraCode, int year, String monthCode, int day, Calendar calendar) {
     final alloc = ffi2.Arena();
     final eraCodeSlice = _SliceFfi2Utf8._fromDart(eraCode, alloc);
     final monthCodeSlice = _SliceFfi2Utf8._fromDart(monthCode, alloc);
@@ -4502,8 +4463,8 @@ class ICU4XDate implements ffi.Finalizable {
         calendar._underlying);
     alloc.releaseAll();
     return result.isOk
-        ? ICU4XDate._(result.union.ok)
-        : throw ICU4XError.values
+        ? Date._(result.union.ok)
+        : throw Error.values
             .firstWhere((v) => v._underlying == result.union.err);
   }
   // ignore: non_constant_identifier_names
@@ -4531,9 +4492,9 @@ class ICU4XDate implements ffi.Finalizable {
   /// Convert this date to one in a different calendar
   ///
   /// See the [Rust documentation for `to_calendar`](https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.to_calendar) for more information.
-  ICU4XDate toCalendar(ICU4XCalendar calendar) {
+  Date toCalendar(Calendar calendar) {
     final result = _ICU4XDate_to_calendar(_underlying, calendar._underlying);
-    return ICU4XDate._(result);
+    return Date._(result);
   }
 
   // ignore: non_constant_identifier_names
@@ -4548,9 +4509,9 @@ class ICU4XDate implements ffi.Finalizable {
   /// Converts this date to ISO
   ///
   /// See the [Rust documentation for `to_iso`](https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.to_iso) for more information.
-  ICU4XIsoDate toIso() {
+  IsoDate toIso() {
     final result = _ICU4XDate_to_iso(_underlying);
-    return ICU4XIsoDate._(result);
+    return IsoDate._(result);
   }
 
   // ignore: non_constant_identifier_names
@@ -4578,9 +4539,9 @@ class ICU4XDate implements ffi.Finalizable {
   /// Returns the day in the week for this day
   ///
   /// See the [Rust documentation for `day_of_week`](https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.day_of_week) for more information.
-  ICU4XIsoWeekday get dayOfWeek {
+  IsoWeekday get dayOfWeek {
     final result = _ICU4XDate_day_of_week(_underlying);
-    return ICU4XIsoWeekday.values.firstWhere((v) => v._underlying == result);
+    return IsoWeekday.values.firstWhere((v) => v._underlying == result);
   }
 
   // ignore: non_constant_identifier_names
@@ -4595,7 +4556,7 @@ class ICU4XDate implements ffi.Finalizable {
   /// `first_weekday` can be obtained via `first_weekday()` on [`ICU4XWeekCalculator`]
   ///
   /// See the [Rust documentation for `week_of_month`](https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.week_of_month) for more information.
-  int weekOfMonth(ICU4XIsoWeekday firstWeekday) {
+  int weekOfMonth(IsoWeekday firstWeekday) {
     final result =
         _ICU4XDate_week_of_month(_underlying, firstWeekday._underlying);
     return result;
@@ -4611,21 +4572,21 @@ class ICU4XDate implements ffi.Finalizable {
   /// Returns the week number in this year, using week data
   ///
   /// See the [Rust documentation for `week_of_year`](https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.week_of_year) for more information.
-  ICU4XWeekOf weekOfYear(ICU4XWeekCalculator calculator) {
+  WeekOf weekOfYear(WeekCalculator calculator) {
     final result = _ICU4XDate_week_of_year(_underlying, calculator._underlying);
     return result.isOk
-        ? ICU4XWeekOf._(result.union.ok)
-        : throw ICU4XError.values
+        ? WeekOf._(result.union.ok)
+        : throw Error.values
             .firstWhere((v) => v._underlying == result.union.err);
   }
 
   // ignore: non_constant_identifier_names
   static final _ICU4XDate_week_of_year = _capi<
           ffi.NativeFunction<
-              _ResultICU4XWeekOfFfiUint32 Function(ffi.Pointer<ffi.Opaque>,
+              _ResultWeekOfFfiUint32 Function(ffi.Pointer<ffi.Opaque>,
                   ffi.Pointer<ffi.Opaque>)>>('ICU4XDate_week_of_year')
       .asFunction<
-          _ResultICU4XWeekOfFfiUint32 Function(
+          _ResultWeekOfFfiUint32 Function(
               ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
 
   /// Returns 1-indexed number of the month of this date in its year
@@ -4655,7 +4616,7 @@ class ICU4XDate implements ffi.Finalizable {
     final result = _ICU4XDate_month_code(_underlying, writeable._underlying);
     return result.isOk
         ? writeable.finalize()
-        : throw ICU4XError.values
+        : throw Error.values
             .firstWhere((v) => v._underlying == result.union.err);
   }
 
@@ -4692,7 +4653,7 @@ class ICU4XDate implements ffi.Finalizable {
     final result = _ICU4XDate_era(_underlying, writeable._underlying);
     return result.isOk
         ? writeable.finalize()
-        : throw ICU4XError.values
+        : throw Error.values
             .firstWhere((v) => v._underlying == result.union.err);
   }
 
@@ -4750,9 +4711,9 @@ class ICU4XDate implements ffi.Finalizable {
   /// Returns the [`ICU4XCalendar`] object backing this date
   ///
   /// See the [Rust documentation for `calendar`](https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.calendar) for more information.
-  ICU4XCalendar get calendar {
+  Calendar get calendar {
     final result = _ICU4XDate_calendar(_underlying);
-    return ICU4XCalendar._(result);
+    return Calendar._(result);
   }
 
   // ignore: non_constant_identifier_names
@@ -4768,10 +4729,10 @@ class ICU4XDate implements ffi.Finalizable {
 /// using some calendar specified at runtime in the locale.
 ///
 /// See the [Rust documentation for `DateFormatter`](https://docs.rs/icu/latest/icu/datetime/struct.DateFormatter.html) for more information.
-class ICU4XDateFormatter implements ffi.Finalizable {
+class DateFormatter implements ffi.Finalizable {
   final ffi.Pointer<ffi.Opaque> _underlying;
 
-  ICU4XDateFormatter._(this._underlying) {
+  DateFormatter._(this._underlying) {
     _finalizer.attach(this, _underlying.cast());
   }
 
@@ -4781,13 +4742,13 @@ class ICU4XDateFormatter implements ffi.Finalizable {
   /// Creates a new [`ICU4XDateFormatter`] from locale data.
   ///
   /// See the [Rust documentation for `try_new_with_length`](https://docs.rs/icu/latest/icu/datetime/struct.DateFormatter.html#method.try_new_with_length) for more information.
-  factory ICU4XDateFormatter.withLength(ICU4XDataProvider provider,
-      ICU4XLocale locale, ICU4XDateLength dateLength) {
+  factory DateFormatter.withLength(
+      DataProvider provider, Locale locale, DateLength dateLength) {
     final result = _ICU4XDateFormatter_create_with_length(
         provider._underlying, locale._underlying, dateLength.index);
     return result.isOk
-        ? ICU4XDateFormatter._(result.union.ok)
-        : throw ICU4XError.values
+        ? DateFormatter._(result.union.ok)
+        : throw Error.values
             .firstWhere((v) => v._underlying == result.union.err);
   }
   // ignore: non_constant_identifier_names
@@ -4804,13 +4765,13 @@ class ICU4XDateFormatter implements ffi.Finalizable {
   /// Formats a [`ICU4XDate`] to a string.
   ///
   /// See the [Rust documentation for `format`](https://docs.rs/icu/latest/icu/datetime/struct.DateFormatter.html#method.format) for more information.
-  String formatDate(ICU4XDate value) {
+  String formatDate(Date value) {
     final writeable = _Writeable();
     final result = _ICU4XDateFormatter_format_date(
         _underlying, value._underlying, writeable._underlying);
     return result.isOk
         ? writeable.finalize()
-        : throw ICU4XError.values
+        : throw Error.values
             .firstWhere((v) => v._underlying == result.union.err);
   }
 
@@ -4830,13 +4791,13 @@ class ICU4XDateFormatter implements ffi.Finalizable {
   /// Will convert to this formatter's calendar first
   ///
   /// See the [Rust documentation for `format`](https://docs.rs/icu/latest/icu/datetime/struct.DateFormatter.html#method.format) for more information.
-  String formatIsoDate(ICU4XIsoDate value) {
+  String formatIsoDate(IsoDate value) {
     final writeable = _Writeable();
     final result = _ICU4XDateFormatter_format_iso_date(
         _underlying, value._underlying, writeable._underlying);
     return result.isOk
         ? writeable.finalize()
-        : throw ICU4XError.values
+        : throw Error.values
             .firstWhere((v) => v._underlying == result.union.err);
   }
 
@@ -4853,13 +4814,13 @@ class ICU4XDateFormatter implements ffi.Finalizable {
   /// Formats a [`ICU4XDateTime`] to a string.
   ///
   /// See the [Rust documentation for `format`](https://docs.rs/icu/latest/icu/datetime/struct.DateFormatter.html#method.format) for more information.
-  String formatDatetime(ICU4XDateTime value) {
+  String formatDatetime(DateTime value) {
     final writeable = _Writeable();
     final result = _ICU4XDateFormatter_format_datetime(
         _underlying, value._underlying, writeable._underlying);
     return result.isOk
         ? writeable.finalize()
-        : throw ICU4XError.values
+        : throw Error.values
             .firstWhere((v) => v._underlying == result.union.err);
   }
 
@@ -4878,13 +4839,13 @@ class ICU4XDateFormatter implements ffi.Finalizable {
   /// Will convert to this formatter's calendar first
   ///
   /// See the [Rust documentation for `format`](https://docs.rs/icu/latest/icu/datetime/struct.DateFormatter.html#method.format) for more information.
-  String formatIsoDatetime(ICU4XIsoDateTime value) {
+  String formatIsoDatetime(IsoDateTime value) {
     final writeable = _Writeable();
     final result = _ICU4XDateFormatter_format_iso_datetime(
         _underlying, value._underlying, writeable._underlying);
     return result.isOk
         ? writeable.finalize()
-        : throw ICU4XError.values
+        : throw Error.values
             .firstWhere((v) => v._underlying == result.union.err);
   }
 
@@ -4900,7 +4861,7 @@ class ICU4XDateFormatter implements ffi.Finalizable {
 }
 
 /// See the [Rust documentation for `Date`](https://docs.rs/icu/latest/icu/datetime/options/length/enum.Date.html) for more information.
-enum ICU4XDateLength {
+enum DateLength {
   full,
   long,
   medium,
@@ -4910,10 +4871,10 @@ enum ICU4XDateLength {
 /// An ICU4X DateTime object capable of containing a date and time for any calendar.
 ///
 /// See the [Rust documentation for `DateTime`](https://docs.rs/icu/latest/icu/calendar/struct.DateTime.html) for more information.
-class ICU4XDateTime implements ffi.Finalizable {
+class DateTime implements ffi.Finalizable {
   final ffi.Pointer<ffi.Opaque> _underlying;
 
-  ICU4XDateTime._(this._underlying) {
+  DateTime._(this._underlying) {
     _finalizer.attach(this, _underlying.cast());
   }
 
@@ -4923,20 +4884,13 @@ class ICU4XDateTime implements ffi.Finalizable {
   /// given but in a given calendar
   ///
   /// See the [Rust documentation for `new_from_iso`](https://docs.rs/icu/latest/icu/struct.DateTime.html#method.new_from_iso) for more information.
-  factory ICU4XDateTime.fromIsoInCalendar(
-      int year,
-      int month,
-      int day,
-      int hour,
-      int minute,
-      int second,
-      int nanosecond,
-      ICU4XCalendar calendar) {
+  factory DateTime.fromIsoInCalendar(int year, int month, int day, int hour,
+      int minute, int second, int nanosecond, Calendar calendar) {
     final result = _ICU4XDateTime_create_from_iso_in_calendar(year, month, day,
         hour, minute, second, nanosecond, calendar._underlying);
     return result.isOk
-        ? ICU4XDateTime._(result.union.ok)
-        : throw ICU4XError.values
+        ? DateTime._(result.union.ok)
+        : throw Error.values
             .firstWhere((v) => v._underlying == result.union.err);
   }
   // ignore: non_constant_identifier_names
@@ -4959,7 +4913,7 @@ class ICU4XDateTime implements ffi.Finalizable {
   /// Creates a new [`ICU4XDateTime`] from the given codes, which are interpreted in the given calendar system
   ///
   /// See the [Rust documentation for `try_new_from_codes`](https://docs.rs/icu/latest/icu/calendar/struct.DateTime.html#method.try_new_from_codes) for more information.
-  factory ICU4XDateTime.fromCodesInCalendar(
+  factory DateTime.fromCodesInCalendar(
       String eraCode,
       int year,
       String monthCode,
@@ -4968,7 +4922,7 @@ class ICU4XDateTime implements ffi.Finalizable {
       int minute,
       int second,
       int nanosecond,
-      ICU4XCalendar calendar) {
+      Calendar calendar) {
     final alloc = ffi2.Arena();
     final eraCodeSlice = _SliceFfi2Utf8._fromDart(eraCode, alloc);
     final monthCodeSlice = _SliceFfi2Utf8._fromDart(monthCode, alloc);
@@ -4987,8 +4941,8 @@ class ICU4XDateTime implements ffi.Finalizable {
         calendar._underlying);
     alloc.releaseAll();
     return result.isOk
-        ? ICU4XDateTime._(result.union.ok)
-        : throw ICU4XError.values
+        ? DateTime._(result.union.ok)
+        : throw Error.values
             .firstWhere((v) => v._underlying == result.union.err);
   }
   // ignore: non_constant_identifier_names
@@ -5024,10 +4978,10 @@ class ICU4XDateTime implements ffi.Finalizable {
   /// Creates a new [`ICU4XDateTime`] from an [`ICU4XDate`] and [`ICU4XTime`] object
   ///
   /// See the [Rust documentation for `new`](https://docs.rs/icu/latest/icu/calendar/struct.DateTime.html#method.new) for more information.
-  factory ICU4XDateTime.fromDateAndTime(ICU4XDate date, ICU4XTime time) {
+  factory DateTime.fromDateAndTime(Date date, Time time) {
     final result = _ICU4XDateTime_create_from_date_and_time(
         date._underlying, time._underlying);
-    return ICU4XDateTime._(result);
+    return DateTime._(result);
   }
   // ignore: non_constant_identifier_names
   static final _ICU4XDateTime_create_from_date_and_time = _capi<
@@ -5042,9 +4996,9 @@ class ICU4XDateTime implements ffi.Finalizable {
   /// Gets a copy of the date contained in this object
   ///
   /// See the [Rust documentation for `date`](https://docs.rs/icu/latest/icu/calendar/struct.DateTime.html#structfield.date) for more information.
-  ICU4XDate get date {
+  Date get date {
     final result = _ICU4XDateTime_date(_underlying);
-    return ICU4XDate._(result);
+    return Date._(result);
   }
 
   // ignore: non_constant_identifier_names
@@ -5058,9 +5012,9 @@ class ICU4XDateTime implements ffi.Finalizable {
   /// Gets the time contained in this object
   ///
   /// See the [Rust documentation for `time`](https://docs.rs/icu/latest/icu/calendar/struct.DateTime.html#structfield.time) for more information.
-  ICU4XTime get time {
+  Time get time {
     final result = _ICU4XDateTime_time(_underlying);
-    return ICU4XTime._(result);
+    return Time._(result);
   }
 
   // ignore: non_constant_identifier_names
@@ -5074,9 +5028,9 @@ class ICU4XDateTime implements ffi.Finalizable {
   /// Converts this date to ISO
   ///
   /// See the [Rust documentation for `to_iso`](https://docs.rs/icu/latest/icu/calendar/struct.DateTime.html#method.to_iso) for more information.
-  ICU4XIsoDateTime toIso() {
+  IsoDateTime toIso() {
     final result = _ICU4XDateTime_to_iso(_underlying);
-    return ICU4XIsoDateTime._(result);
+    return IsoDateTime._(result);
   }
 
   // ignore: non_constant_identifier_names
@@ -5090,10 +5044,10 @@ class ICU4XDateTime implements ffi.Finalizable {
   /// Convert this datetime to one in a different calendar
   ///
   /// See the [Rust documentation for `to_calendar`](https://docs.rs/icu/latest/icu/calendar/struct.DateTime.html#method.to_calendar) for more information.
-  ICU4XDateTime toCalendar(ICU4XCalendar calendar) {
+  DateTime toCalendar(Calendar calendar) {
     final result =
         _ICU4XDateTime_to_calendar(_underlying, calendar._underlying);
-    return ICU4XDateTime._(result);
+    return DateTime._(result);
   }
 
   // ignore: non_constant_identifier_names
@@ -5178,9 +5132,9 @@ class ICU4XDateTime implements ffi.Finalizable {
   /// Returns the day in the week for this day
   ///
   /// See the [Rust documentation for `day_of_week`](https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.day_of_week) for more information.
-  ICU4XIsoWeekday get dayOfWeek {
+  IsoWeekday get dayOfWeek {
     final result = _ICU4XDateTime_day_of_week(_underlying);
-    return ICU4XIsoWeekday.values.firstWhere((v) => v._underlying == result);
+    return IsoWeekday.values.firstWhere((v) => v._underlying == result);
   }
 
   // ignore: non_constant_identifier_names
@@ -5195,7 +5149,7 @@ class ICU4XDateTime implements ffi.Finalizable {
   /// `first_weekday` can be obtained via `first_weekday()` on [`ICU4XWeekCalculator`]
   ///
   /// See the [Rust documentation for `week_of_month`](https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.week_of_month) for more information.
-  int weekOfMonth(ICU4XIsoWeekday firstWeekday) {
+  int weekOfMonth(IsoWeekday firstWeekday) {
     final result =
         _ICU4XDateTime_week_of_month(_underlying, firstWeekday._underlying);
     return result;
@@ -5211,22 +5165,22 @@ class ICU4XDateTime implements ffi.Finalizable {
   /// Returns the week number in this year, using week data
   ///
   /// See the [Rust documentation for `week_of_year`](https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.week_of_year) for more information.
-  ICU4XWeekOf weekOfYear(ICU4XWeekCalculator calculator) {
+  WeekOf weekOfYear(WeekCalculator calculator) {
     final result =
         _ICU4XDateTime_week_of_year(_underlying, calculator._underlying);
     return result.isOk
-        ? ICU4XWeekOf._(result.union.ok)
-        : throw ICU4XError.values
+        ? WeekOf._(result.union.ok)
+        : throw Error.values
             .firstWhere((v) => v._underlying == result.union.err);
   }
 
   // ignore: non_constant_identifier_names
   static final _ICU4XDateTime_week_of_year = _capi<
           ffi.NativeFunction<
-              _ResultICU4XWeekOfFfiUint32 Function(ffi.Pointer<ffi.Opaque>,
+              _ResultWeekOfFfiUint32 Function(ffi.Pointer<ffi.Opaque>,
                   ffi.Pointer<ffi.Opaque>)>>('ICU4XDateTime_week_of_year')
       .asFunction<
-          _ResultICU4XWeekOfFfiUint32 Function(
+          _ResultWeekOfFfiUint32 Function(
               ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
 
   /// Returns 1-indexed number of the month of this date in its year
@@ -5257,7 +5211,7 @@ class ICU4XDateTime implements ffi.Finalizable {
         _ICU4XDateTime_month_code(_underlying, writeable._underlying);
     return result.isOk
         ? writeable.finalize()
-        : throw ICU4XError.values
+        : throw Error.values
             .firstWhere((v) => v._underlying == result.union.err);
   }
 
@@ -5292,7 +5246,7 @@ class ICU4XDateTime implements ffi.Finalizable {
     final result = _ICU4XDateTime_era(_underlying, writeable._underlying);
     return result.isOk
         ? writeable.finalize()
-        : throw ICU4XError.values
+        : throw Error.values
             .firstWhere((v) => v._underlying == result.union.err);
   }
 
@@ -5350,9 +5304,9 @@ class ICU4XDateTime implements ffi.Finalizable {
   /// Returns the [`ICU4XCalendar`] object backing this date
   ///
   /// See the [Rust documentation for `calendar`](https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.calendar) for more information.
-  ICU4XCalendar get calendar {
+  Calendar get calendar {
     final result = _ICU4XDateTime_calendar(_underlying);
-    return ICU4XCalendar._(result);
+    return Calendar._(result);
   }
 
   // ignore: non_constant_identifier_names
@@ -5368,10 +5322,10 @@ class ICU4XDateTime implements ffi.Finalizable {
 /// using some calendar specified at runtime in the locale.
 ///
 /// See the [Rust documentation for `DateTimeFormatter`](https://docs.rs/icu/latest/icu/datetime/struct.DateTimeFormatter.html) for more information.
-class ICU4XDateTimeFormatter implements ffi.Finalizable {
+class DateTimeFormatter implements ffi.Finalizable {
   final ffi.Pointer<ffi.Opaque> _underlying;
 
-  ICU4XDateTimeFormatter._(this._underlying) {
+  DateTimeFormatter._(this._underlying) {
     _finalizer.attach(this, _underlying.cast());
   }
 
@@ -5381,19 +5335,16 @@ class ICU4XDateTimeFormatter implements ffi.Finalizable {
   /// Creates a new [`ICU4XDateTimeFormatter`] from locale data.
   ///
   /// See the [Rust documentation for `try_new`](https://docs.rs/icu/latest/icu/datetime/struct.DateTimeFormatter.html#method.try_new) for more information.
-  factory ICU4XDateTimeFormatter.withLengths(
-      ICU4XDataProvider provider,
-      ICU4XLocale locale,
-      ICU4XDateLength dateLength,
-      ICU4XTimeLength timeLength) {
+  factory DateTimeFormatter.withLengths(DataProvider provider, Locale locale,
+      DateLength dateLength, TimeLength timeLength) {
     final result = _ICU4XDateTimeFormatter_create_with_lengths(
         provider._underlying,
         locale._underlying,
         dateLength.index,
         timeLength.index);
     return result.isOk
-        ? ICU4XDateTimeFormatter._(result.union.ok)
-        : throw ICU4XError.values
+        ? DateTimeFormatter._(result.union.ok)
+        : throw Error.values
             .firstWhere((v) => v._underlying == result.union.err);
   }
   // ignore: non_constant_identifier_names
@@ -5411,13 +5362,13 @@ class ICU4XDateTimeFormatter implements ffi.Finalizable {
   /// Formats a [`ICU4XDateTime`] to a string.
   ///
   /// See the [Rust documentation for `format`](https://docs.rs/icu/latest/icu/datetime/struct.DateTimeFormatter.html#method.format) for more information.
-  String formatDatetime(ICU4XDateTime value) {
+  String formatDatetime(DateTime value) {
     final writeable = _Writeable();
     final result = _ICU4XDateTimeFormatter_format_datetime(
         _underlying, value._underlying, writeable._underlying);
     return result.isOk
         ? writeable.finalize()
-        : throw ICU4XError.values
+        : throw Error.values
             .firstWhere((v) => v._underlying == result.union.err);
   }
 
@@ -5436,13 +5387,13 @@ class ICU4XDateTimeFormatter implements ffi.Finalizable {
   /// Will convert to this formatter's calendar first
   ///
   /// See the [Rust documentation for `format`](https://docs.rs/icu/latest/icu/datetime/struct.DateTimeFormatter.html#method.format) for more information.
-  String formatIsoDatetime(ICU4XIsoDateTime value) {
+  String formatIsoDatetime(IsoDateTime value) {
     final writeable = _Writeable();
     final result = _ICU4XDateTimeFormatter_format_iso_datetime(
         _underlying, value._underlying, writeable._underlying);
     return result.isOk
         ? writeable.finalize()
-        : throw ICU4XError.values
+        : throw Error.values
             .firstWhere((v) => v._underlying == result.union.err);
   }
 
@@ -5462,22 +5413,22 @@ class ICU4XDateTimeFormatter implements ffi.Finalizable {
 /// (which may or may not be the original one)
 ///
 /// See the [Rust documentation for `Decomposed`](https://docs.rs/icu/latest/icu/normalizer/properties/enum.Decomposed.html) for more information.
-class _ICU4XDecomposedFfi extends ffi.Struct {
+class _DecomposedFfi extends ffi.Struct {
   @ffi.Uint32()
   external int first;
   @ffi.Uint32()
   external int second;
 }
 
-class ICU4XDecomposed {
-  final _ICU4XDecomposedFfi _underlying;
+class Decomposed {
+  final _DecomposedFfi _underlying;
 
   // ignore: unused_element
-  ICU4XDecomposed._(this._underlying);
+  Decomposed._(this._underlying);
 
-  factory ICU4XDecomposed() {
-    final pointer = ffi2.calloc<_ICU4XDecomposedFfi>();
-    final result = ICU4XDecomposed._(pointer.ref);
+  factory Decomposed() {
+    final pointer = ffi2.calloc<_DecomposedFfi>();
+    final result = Decomposed._(pointer.ref);
     _callocFree.attach(result, pointer.cast());
     return result;
   }
@@ -5494,7 +5445,7 @@ class ICU4XDecomposed {
 
   @override
   bool operator ==(Object other) =>
-      other is ICU4XDecomposed &&
+      other is Decomposed &&
       other._underlying.first == _underlying.first &&
       other._underlying.second == _underlying.second;
 
@@ -5506,10 +5457,10 @@ class ICU4XDecomposed {
 }
 
 /// See the [Rust documentation for `DecomposingNormalizer`](https://docs.rs/icu/latest/icu/normalizer/struct.DecomposingNormalizer.html) for more information.
-class ICU4XDecomposingNormalizer implements ffi.Finalizable {
+class DecomposingNormalizer implements ffi.Finalizable {
   final ffi.Pointer<ffi.Opaque> _underlying;
 
-  ICU4XDecomposingNormalizer._(this._underlying) {
+  DecomposingNormalizer._(this._underlying) {
     _finalizer.attach(this, _underlying.cast());
   }
 
@@ -5519,11 +5470,11 @@ class ICU4XDecomposingNormalizer implements ffi.Finalizable {
   /// Construct a new ICU4XDecomposingNormalizer instance for NFC
   ///
   /// See the [Rust documentation for `new_nfd`](https://docs.rs/icu/latest/icu/normalizer/struct.DecomposingNormalizer.html#method.new_nfd) for more information.
-  factory ICU4XDecomposingNormalizer.nfd(ICU4XDataProvider provider) {
+  factory DecomposingNormalizer.nfd(DataProvider provider) {
     final result = _ICU4XDecomposingNormalizer_create_nfd(provider._underlying);
     return result.isOk
-        ? ICU4XDecomposingNormalizer._(result.union.ok)
-        : throw ICU4XError.values
+        ? DecomposingNormalizer._(result.union.ok)
+        : throw Error.values
             .firstWhere((v) => v._underlying == result.union.err);
   }
   // ignore: non_constant_identifier_names
@@ -5537,12 +5488,12 @@ class ICU4XDecomposingNormalizer implements ffi.Finalizable {
   /// Construct a new ICU4XDecomposingNormalizer instance for NFKC
   ///
   /// See the [Rust documentation for `new_nfkd`](https://docs.rs/icu/latest/icu/normalizer/struct.DecomposingNormalizer.html#method.new_nfkd) for more information.
-  factory ICU4XDecomposingNormalizer.nfkd(ICU4XDataProvider provider) {
+  factory DecomposingNormalizer.nfkd(DataProvider provider) {
     final result =
         _ICU4XDecomposingNormalizer_create_nfkd(provider._underlying);
     return result.isOk
-        ? ICU4XDecomposingNormalizer._(result.union.ok)
-        : throw ICU4XError.values
+        ? DecomposingNormalizer._(result.union.ok)
+        : throw Error.values
             .firstWhere((v) => v._underlying == result.union.err);
   }
   // ignore: non_constant_identifier_names
@@ -5568,7 +5519,7 @@ class ICU4XDecomposingNormalizer implements ffi.Finalizable {
     alloc.releaseAll();
     return result.isOk
         ? writeable.finalize()
-        : throw ICU4XError.values
+        : throw Error.values
             .firstWhere((v) => v._underlying == result.union.err);
   }
 
@@ -5614,13 +5565,13 @@ class ICU4XDecomposingNormalizer implements ffi.Finalizable {
 }
 
 /// See the [Rust documentation for `Fallback`](https://docs.rs/icu/latest/icu/displaynames/options/enum.Fallback.html) for more information.
-enum ICU4XDisplayNamesFallback {
+enum DisplayNamesFallback {
   code,
   none;
 }
 
 /// See the [Rust documentation for `DisplayNamesOptions`](https://docs.rs/icu/latest/icu/displaynames/options/struct.DisplayNamesOptions.html) for more information.
-class _ICU4XDisplayNamesOptionsV1Ffi extends ffi.Struct {
+class _DisplayNamesOptionsV1Ffi extends ffi.Struct {
   @ffi.Uint32()
   external int style;
   @ffi.Uint32()
@@ -5629,40 +5580,39 @@ class _ICU4XDisplayNamesOptionsV1Ffi extends ffi.Struct {
   external int languageDisplay;
 }
 
-class ICU4XDisplayNamesOptionsV1 {
-  final _ICU4XDisplayNamesOptionsV1Ffi _underlying;
+class DisplayNamesOptionsV1 {
+  final _DisplayNamesOptionsV1Ffi _underlying;
 
   // ignore: unused_element
-  ICU4XDisplayNamesOptionsV1._(this._underlying);
+  DisplayNamesOptionsV1._(this._underlying);
 
-  factory ICU4XDisplayNamesOptionsV1() {
-    final pointer = ffi2.calloc<_ICU4XDisplayNamesOptionsV1Ffi>();
-    final result = ICU4XDisplayNamesOptionsV1._(pointer.ref);
+  factory DisplayNamesOptionsV1() {
+    final pointer = ffi2.calloc<_DisplayNamesOptionsV1Ffi>();
+    final result = DisplayNamesOptionsV1._(pointer.ref);
     _callocFree.attach(result, pointer.cast());
     return result;
   }
 
-  ICU4XDisplayNamesStyle get style =>
-      ICU4XDisplayNamesStyle.values[_underlying.style];
-  set style(ICU4XDisplayNamesStyle style) {
+  DisplayNamesStyle get style => DisplayNamesStyle.values[_underlying.style];
+  set style(DisplayNamesStyle style) {
     _underlying.style = style.index;
   }
 
-  ICU4XDisplayNamesFallback get fallback =>
-      ICU4XDisplayNamesFallback.values[_underlying.fallback];
-  set fallback(ICU4XDisplayNamesFallback fallback) {
+  DisplayNamesFallback get fallback =>
+      DisplayNamesFallback.values[_underlying.fallback];
+  set fallback(DisplayNamesFallback fallback) {
     _underlying.fallback = fallback.index;
   }
 
-  ICU4XLanguageDisplay get languageDisplay =>
-      ICU4XLanguageDisplay.values[_underlying.languageDisplay];
-  set languageDisplay(ICU4XLanguageDisplay languageDisplay) {
+  LanguageDisplay get languageDisplay =>
+      LanguageDisplay.values[_underlying.languageDisplay];
+  set languageDisplay(LanguageDisplay languageDisplay) {
     _underlying.languageDisplay = languageDisplay.index;
   }
 
   @override
   bool operator ==(Object other) =>
-      other is ICU4XDisplayNamesOptionsV1 &&
+      other is DisplayNamesOptionsV1 &&
       other._underlying.style == _underlying.style &&
       other._underlying.fallback == _underlying.fallback &&
       other._underlying.languageDisplay == _underlying.languageDisplay;
@@ -5676,7 +5626,7 @@ class ICU4XDisplayNamesOptionsV1 {
 }
 
 /// See the [Rust documentation for `Style`](https://docs.rs/icu/latest/icu/displaynames/options/enum.Style.html) for more information.
-enum ICU4XDisplayNamesStyle {
+enum DisplayNamesStyle {
   auto,
   narrow,
   short,
@@ -5689,7 +5639,7 @@ enum ICU4XDisplayNamesStyle {
 /// The error names are stable and can be checked against as strings in the JS API
 ///
 /// Additional information: [1](https://docs.rs/fixed_decimal/latest/fixed_decimal/enum.FixedDecimalError.html), [2](https://docs.rs/icu/latest/icu/calendar/enum.CalendarError.html), [3](https://docs.rs/icu/latest/icu/collator/enum.CollatorError.html), [4](https://docs.rs/icu/latest/icu/datetime/enum.DateTimeError.html), [5](https://docs.rs/icu/latest/icu/decimal/enum.DecimalError.html), [6](https://docs.rs/icu/latest/icu/list/enum.ListError.html), [7](https://docs.rs/icu/latest/icu/locid/enum.ParserError.html), [8](https://docs.rs/icu/latest/icu/locid_transform/enum.LocaleTransformError.html), [9](https://docs.rs/icu/latest/icu/normalizer/enum.NormalizerError.html), [10](https://docs.rs/icu/latest/icu/plurals/enum.PluralsError.html), [11](https://docs.rs/icu/latest/icu/properties/enum.PropertiesError.html), [12](https://docs.rs/icu/latest/icu/provider/struct.DataError.html), [13](https://docs.rs/icu/latest/icu/provider/enum.DataErrorKind.html), [14](https://docs.rs/icu/latest/icu/segmenter/enum.SegmenterError.html), [15](https://docs.rs/icu/latest/icu/timezone/enum.TimeZoneError.html)
-enum ICU4XError {
+enum Error {
   /// The error is not currently categorized as ICU4XError.
   /// Please file a bug
   unknownError,
@@ -5875,10 +5825,10 @@ enum ICU4XError {
 }
 
 /// See the [Rust documentation for `FixedDecimal`](https://docs.rs/fixed_decimal/latest/fixed_decimal/struct.FixedDecimal.html) for more information.
-class ICU4XFixedDecimal implements ffi.Finalizable {
+class FixedDecimal implements ffi.Finalizable {
   final ffi.Pointer<ffi.Opaque> _underlying;
 
-  ICU4XFixedDecimal._(this._underlying) {
+  FixedDecimal._(this._underlying) {
     _finalizer.attach(this, _underlying.cast());
   }
 
@@ -5888,9 +5838,9 @@ class ICU4XFixedDecimal implements ffi.Finalizable {
   /// Construct an [`ICU4XFixedDecimal`] from an integer.
   ///
   /// See the [Rust documentation for `FixedDecimal`](https://docs.rs/fixed_decimal/latest/fixed_decimal/struct.FixedDecimal.html) for more information.
-  factory ICU4XFixedDecimal.fromI32(int v) {
+  factory FixedDecimal.fromI32(int v) {
     final result = _ICU4XFixedDecimal_create_from_i32(v);
-    return ICU4XFixedDecimal._(result);
+    return FixedDecimal._(result);
   }
   // ignore: non_constant_identifier_names
   static final _ICU4XFixedDecimal_create_from_i32 =
@@ -5901,9 +5851,9 @@ class ICU4XFixedDecimal implements ffi.Finalizable {
   /// Construct an [`ICU4XFixedDecimal`] from an integer.
   ///
   /// See the [Rust documentation for `FixedDecimal`](https://docs.rs/fixed_decimal/latest/fixed_decimal/struct.FixedDecimal.html) for more information.
-  factory ICU4XFixedDecimal.fromU32(int v) {
+  factory FixedDecimal.fromU32(int v) {
     final result = _ICU4XFixedDecimal_create_from_u32(v);
-    return ICU4XFixedDecimal._(result);
+    return FixedDecimal._(result);
   }
   // ignore: non_constant_identifier_names
   static final _ICU4XFixedDecimal_create_from_u32 =
@@ -5914,9 +5864,9 @@ class ICU4XFixedDecimal implements ffi.Finalizable {
   /// Construct an [`ICU4XFixedDecimal`] from an integer.
   ///
   /// See the [Rust documentation for `FixedDecimal`](https://docs.rs/fixed_decimal/latest/fixed_decimal/struct.FixedDecimal.html) for more information.
-  factory ICU4XFixedDecimal.fromI64(int v) {
+  factory FixedDecimal.fromI64(int v) {
     final result = _ICU4XFixedDecimal_create_from_i64(v);
-    return ICU4XFixedDecimal._(result);
+    return FixedDecimal._(result);
   }
   // ignore: non_constant_identifier_names
   static final _ICU4XFixedDecimal_create_from_i64 =
@@ -5927,9 +5877,9 @@ class ICU4XFixedDecimal implements ffi.Finalizable {
   /// Construct an [`ICU4XFixedDecimal`] from an integer.
   ///
   /// See the [Rust documentation for `FixedDecimal`](https://docs.rs/fixed_decimal/latest/fixed_decimal/struct.FixedDecimal.html) for more information.
-  factory ICU4XFixedDecimal.fromU64(int v) {
+  factory FixedDecimal.fromU64(int v) {
     final result = _ICU4XFixedDecimal_create_from_u64(v);
-    return ICU4XFixedDecimal._(result);
+    return FixedDecimal._(result);
   }
   // ignore: non_constant_identifier_names
   static final _ICU4XFixedDecimal_create_from_u64 =
@@ -5942,11 +5892,11 @@ class ICU4XFixedDecimal implements ffi.Finalizable {
   /// See the [Rust documentation for `try_from_f64`](https://docs.rs/fixed_decimal/latest/fixed_decimal/struct.FixedDecimal.html#method.try_from_f64) for more information.
   ///
   /// See the [Rust documentation for `FloatPrecision`](https://docs.rs/fixed_decimal/latest/fixed_decimal/enum.FloatPrecision.html) for more information.
-  factory ICU4XFixedDecimal.fromF64WithIntegerPrecision(double f) {
+  factory FixedDecimal.fromF64WithIntegerPrecision(double f) {
     final result = _ICU4XFixedDecimal_create_from_f64_with_integer_precision(f);
     return result.isOk
-        ? ICU4XFixedDecimal._(result.union.ok)
-        : throw ICU4XError.values
+        ? FixedDecimal._(result.union.ok)
+        : throw Error.values
             .firstWhere((v) => v._underlying == result.union.err);
   }
   // ignore: non_constant_identifier_names
@@ -5960,12 +5910,12 @@ class ICU4XFixedDecimal implements ffi.Finalizable {
   /// See the [Rust documentation for `try_from_f64`](https://docs.rs/fixed_decimal/latest/fixed_decimal/struct.FixedDecimal.html#method.try_from_f64) for more information.
   ///
   /// See the [Rust documentation for `FloatPrecision`](https://docs.rs/fixed_decimal/latest/fixed_decimal/enum.FloatPrecision.html) for more information.
-  factory ICU4XFixedDecimal.fromF64WithLowerMagnitude(double f, int magnitude) {
+  factory FixedDecimal.fromF64WithLowerMagnitude(double f, int magnitude) {
     final result =
         _ICU4XFixedDecimal_create_from_f64_with_lower_magnitude(f, magnitude);
     return result.isOk
-        ? ICU4XFixedDecimal._(result.union.ok)
-        : throw ICU4XError.values
+        ? FixedDecimal._(result.union.ok)
+        : throw Error.values
             .firstWhere((v) => v._underlying == result.union.err);
   }
   // ignore: non_constant_identifier_names
@@ -5980,12 +5930,12 @@ class ICU4XFixedDecimal implements ffi.Finalizable {
   /// See the [Rust documentation for `try_from_f64`](https://docs.rs/fixed_decimal/latest/fixed_decimal/struct.FixedDecimal.html#method.try_from_f64) for more information.
   ///
   /// See the [Rust documentation for `FloatPrecision`](https://docs.rs/fixed_decimal/latest/fixed_decimal/enum.FloatPrecision.html) for more information.
-  factory ICU4XFixedDecimal.fromF64WithSignificantDigits(double f, int digits) {
+  factory FixedDecimal.fromF64WithSignificantDigits(double f, int digits) {
     final result =
         _ICU4XFixedDecimal_create_from_f64_with_significant_digits(f, digits);
     return result.isOk
-        ? ICU4XFixedDecimal._(result.union.ok)
-        : throw ICU4XError.values
+        ? FixedDecimal._(result.union.ok)
+        : throw Error.values
             .firstWhere((v) => v._underlying == result.union.err);
   }
   // ignore: non_constant_identifier_names
@@ -6002,12 +5952,12 @@ class ICU4XFixedDecimal implements ffi.Finalizable {
   /// See the [Rust documentation for `try_from_f64`](https://docs.rs/fixed_decimal/latest/fixed_decimal/struct.FixedDecimal.html#method.try_from_f64) for more information.
   ///
   /// See the [Rust documentation for `FloatPrecision`](https://docs.rs/fixed_decimal/latest/fixed_decimal/enum.FloatPrecision.html) for more information.
-  factory ICU4XFixedDecimal.fromF64WithFloatingPrecision(double f) {
+  factory FixedDecimal.fromF64WithFloatingPrecision(double f) {
     final result =
         _ICU4XFixedDecimal_create_from_f64_with_floating_precision(f);
     return result.isOk
-        ? ICU4XFixedDecimal._(result.union.ok)
-        : throw ICU4XError.values
+        ? FixedDecimal._(result.union.ok)
+        : throw Error.values
             .firstWhere((v) => v._underlying == result.union.err);
   }
   // ignore: non_constant_identifier_names
@@ -6019,7 +5969,7 @@ class ICU4XFixedDecimal implements ffi.Finalizable {
   /// Construct an [`ICU4XFixedDecimal`] from a string.
   ///
   /// See the [Rust documentation for `from_str`](https://docs.rs/fixed_decimal/latest/fixed_decimal/struct.FixedDecimal.html#method.from_str) for more information.
-  factory ICU4XFixedDecimal.fromString(String v) {
+  factory FixedDecimal.fromString(String v) {
     final alloc = ffi2.Arena();
     final vSlice = _SliceFfi2Utf8._fromDart(v, alloc);
 
@@ -6027,8 +5977,8 @@ class ICU4XFixedDecimal implements ffi.Finalizable {
         _ICU4XFixedDecimal_create_from_string(vSlice._bytes, vSlice._length);
     alloc.releaseAll();
     return result.isOk
-        ? ICU4XFixedDecimal._(result.union.ok)
-        : throw ICU4XError.values
+        ? FixedDecimal._(result.union.ok)
+        : throw Error.values
             .firstWhere((v) => v._underlying == result.union.err);
   }
   // ignore: non_constant_identifier_names
@@ -6127,9 +6077,9 @@ class ICU4XFixedDecimal implements ffi.Finalizable {
       .asFunction<void Function(ffi.Pointer<ffi.Opaque>, int)>(isLeaf: true);
 
   /// See the [Rust documentation for `sign`](https://docs.rs/fixed_decimal/latest/fixed_decimal/struct.FixedDecimal.html#method.sign) for more information.
-  ICU4XFixedDecimalSign get sign {
+  FixedDecimalSign get sign {
     final result = _ICU4XFixedDecimal_sign(_underlying);
-    return ICU4XFixedDecimalSign.values[result];
+    return FixedDecimalSign.values[result];
   }
 
   // ignore: non_constant_identifier_names
@@ -6141,7 +6091,7 @@ class ICU4XFixedDecimal implements ffi.Finalizable {
   /// Set the sign of the [`ICU4XFixedDecimal`].
   ///
   /// See the [Rust documentation for `set_sign`](https://docs.rs/fixed_decimal/latest/fixed_decimal/struct.FixedDecimal.html#method.set_sign) for more information.
-  set sign(ICU4XFixedDecimalSign sign) {
+  set sign(FixedDecimalSign sign) {
     _ICU4XFixedDecimal_set_sign(_underlying, sign.index);
   }
 
@@ -6153,7 +6103,7 @@ class ICU4XFixedDecimal implements ffi.Finalizable {
       .asFunction<void Function(ffi.Pointer<ffi.Opaque>, int)>(isLeaf: true);
 
   /// See the [Rust documentation for `apply_sign_display`](https://docs.rs/fixed_decimal/latest/fixed_decimal/struct.FixedDecimal.html#method.apply_sign_display) for more information.
-  void applySignDisplay(ICU4XFixedDecimalSignDisplay signDisplay) {
+  void applySignDisplay(FixedDecimalSignDisplay signDisplay) {
     _ICU4XFixedDecimal_apply_sign_display(_underlying, signDisplay.index);
   }
 
@@ -6242,7 +6192,7 @@ class ICU4XFixedDecimal implements ffi.Finalizable {
       .asFunction<void Function(ffi.Pointer<ffi.Opaque>, int)>(isLeaf: true);
 
   /// See the [Rust documentation for `trunc_to_increment`](https://docs.rs/fixed_decimal/latest/fixed_decimal/struct.FixedDecimal.html#method.trunc_to_increment) for more information.
-  void truncToIncrement(int position, ICU4XRoundingIncrement increment) {
+  void truncToIncrement(int position, RoundingIncrement increment) {
     _ICU4XFixedDecimal_trunc_to_increment(
         _underlying, position, increment.index);
   }
@@ -6280,7 +6230,7 @@ class ICU4XFixedDecimal implements ffi.Finalizable {
       .asFunction<void Function(ffi.Pointer<ffi.Opaque>, int)>(isLeaf: true);
 
   /// See the [Rust documentation for `expand_to_increment`](https://docs.rs/fixed_decimal/latest/fixed_decimal/struct.FixedDecimal.html#method.expand_to_increment) for more information.
-  void expandToIncrement(int position, ICU4XRoundingIncrement increment) {
+  void expandToIncrement(int position, RoundingIncrement increment) {
     _ICU4XFixedDecimal_expand_to_increment(
         _underlying, position, increment.index);
   }
@@ -6372,7 +6322,7 @@ class ICU4XFixedDecimal implements ffi.Finalizable {
   /// If not successful, `other` will be unchanged and an error is returned.
   ///
   /// See the [Rust documentation for `concatenate_end`](https://docs.rs/fixed_decimal/latest/fixed_decimal/struct.FixedDecimal.html#method.concatenate_end) for more information.
-  void concatenateEnd(ICU4XFixedDecimal other) {
+  void concatenateEnd(FixedDecimal other) {
     final result =
         _ICU4XFixedDecimal_concatenate_end(_underlying, other._underlying);
     if (!result.isOk) {
@@ -6413,10 +6363,10 @@ class ICU4XFixedDecimal implements ffi.Finalizable {
 /// An ICU4X Fixed Decimal Format object, capable of formatting a [`ICU4XFixedDecimal`] as a string.
 ///
 /// See the [Rust documentation for `FixedDecimalFormatter`](https://docs.rs/icu/latest/icu/decimal/struct.FixedDecimalFormatter.html) for more information.
-class ICU4XFixedDecimalFormatter implements ffi.Finalizable {
+class FixedDecimalFormatter implements ffi.Finalizable {
   final ffi.Pointer<ffi.Opaque> _underlying;
 
-  ICU4XFixedDecimalFormatter._(this._underlying) {
+  FixedDecimalFormatter._(this._underlying) {
     _finalizer.attach(this, _underlying.cast());
   }
 
@@ -6426,15 +6376,13 @@ class ICU4XFixedDecimalFormatter implements ffi.Finalizable {
   /// Creates a new [`ICU4XFixedDecimalFormatter`] from locale data.
   ///
   /// See the [Rust documentation for `try_new`](https://docs.rs/icu/latest/icu/decimal/struct.FixedDecimalFormatter.html#method.try_new) for more information.
-  factory ICU4XFixedDecimalFormatter.withGroupingStrategy(
-      ICU4XDataProvider provider,
-      ICU4XLocale locale,
-      ICU4XFixedDecimalGroupingStrategy groupingStrategy) {
+  factory FixedDecimalFormatter.withGroupingStrategy(DataProvider provider,
+      Locale locale, FixedDecimalGroupingStrategy groupingStrategy) {
     final result = _ICU4XFixedDecimalFormatter_create_with_grouping_strategy(
         provider._underlying, locale._underlying, groupingStrategy.index);
     return result.isOk
-        ? ICU4XFixedDecimalFormatter._(result.union.ok)
-        : throw ICU4XError.values
+        ? FixedDecimalFormatter._(result.union.ok)
+        : throw Error.values
             .firstWhere((v) => v._underlying == result.union.err);
   }
   // ignore: non_constant_identifier_names
@@ -6453,14 +6401,13 @@ class ICU4XFixedDecimalFormatter implements ffi.Finalizable {
   ///
   /// The contents of the data struct will be consumed: if you wish to use the struct again it will have to be reconstructed.
   /// Passing a consumed struct to this method will return an error.
-  factory ICU4XFixedDecimalFormatter.withDecimalSymbolsV1(
-      ICU4XDataStruct dataStruct,
-      ICU4XFixedDecimalGroupingStrategy groupingStrategy) {
+  factory FixedDecimalFormatter.withDecimalSymbolsV1(
+      DataStruct dataStruct, FixedDecimalGroupingStrategy groupingStrategy) {
     final result = _ICU4XFixedDecimalFormatter_create_with_decimal_symbols_v1(
         dataStruct._underlying, groupingStrategy.index);
     return result.isOk
-        ? ICU4XFixedDecimalFormatter._(result.union.ok)
-        : throw ICU4XError.values
+        ? FixedDecimalFormatter._(result.union.ok)
+        : throw Error.values
             .firstWhere((v) => v._underlying == result.union.err);
   }
   // ignore: non_constant_identifier_names
@@ -6477,13 +6424,13 @@ class ICU4XFixedDecimalFormatter implements ffi.Finalizable {
   /// Formats a [`ICU4XFixedDecimal`] to a string.
   ///
   /// See the [Rust documentation for `format`](https://docs.rs/icu/latest/icu/decimal/struct.FixedDecimalFormatter.html#method.format) for more information.
-  String format(ICU4XFixedDecimal value) {
+  String format(FixedDecimal value) {
     final writeable = _Writeable();
     final result = _ICU4XFixedDecimalFormatter_format(
         _underlying, value._underlying, writeable._underlying);
     return result.isOk
         ? writeable.finalize()
-        : throw ICU4XError.values
+        : throw Error.values
             .firstWhere((v) => v._underlying == result.union.err);
   }
 
@@ -6499,7 +6446,7 @@ class ICU4XFixedDecimalFormatter implements ffi.Finalizable {
 }
 
 /// See the [Rust documentation for `GroupingStrategy`](https://docs.rs/icu/latest/icu/decimal/options/enum.GroupingStrategy.html) for more information.
-enum ICU4XFixedDecimalGroupingStrategy {
+enum FixedDecimalGroupingStrategy {
   auto,
   never,
   always,
@@ -6509,7 +6456,7 @@ enum ICU4XFixedDecimalGroupingStrategy {
 /// The sign of a FixedDecimal, as shown in formatting.
 ///
 /// See the [Rust documentation for `Sign`](https://docs.rs/fixed_decimal/latest/fixed_decimal/enum.Sign.html) for more information.
-enum ICU4XFixedDecimalSign {
+enum FixedDecimalSign {
   /// No sign (implicitly positive, e.g., 1729).
   none,
 
@@ -6523,7 +6470,7 @@ enum ICU4XFixedDecimalSign {
 /// ECMA-402 compatible sign display preference.
 ///
 /// See the [Rust documentation for `SignDisplay`](https://docs.rs/fixed_decimal/latest/fixed_decimal/enum.SignDisplay.html) for more information.
-enum ICU4XFixedDecimalSignDisplay {
+enum FixedDecimalSignDisplay {
   auto,
   never,
   always,
@@ -6536,10 +6483,10 @@ enum ICU4XFixedDecimalSignDisplay {
 /// See the [Rust documentation for `get_name_to_enum_mapper`](https://docs.rs/icu/latest/icu/properties/struct.GeneralCategoryGroup.html#method.get_name_to_enum_mapper) for more information.
 ///
 /// See the [Rust documentation for `PropertyValueNameToEnumMapper`](https://docs.rs/icu/latest/icu/properties/names/struct.PropertyValueNameToEnumMapper.html) for more information.
-class ICU4XGeneralCategoryNameToMaskMapper implements ffi.Finalizable {
+class GeneralCategoryNameToMaskMapper implements ffi.Finalizable {
   final ffi.Pointer<ffi.Opaque> _underlying;
 
-  ICU4XGeneralCategoryNameToMaskMapper._(this._underlying) {
+  GeneralCategoryNameToMaskMapper._(this._underlying) {
     _finalizer.attach(this, _underlying.cast());
   }
 
@@ -6595,13 +6542,12 @@ class ICU4XGeneralCategoryNameToMaskMapper implements ffi.Finalizable {
               int)>(isLeaf: true);
 
   /// See the [Rust documentation for `get_name_to_enum_mapper`](https://docs.rs/icu/latest/icu/properties/struct.GeneralCategoryGroup.html#method.get_name_to_enum_mapper) for more information.
-  factory ICU4XGeneralCategoryNameToMaskMapper.load(
-      ICU4XDataProvider provider) {
+  factory GeneralCategoryNameToMaskMapper.load(DataProvider provider) {
     final result =
         _ICU4XGeneralCategoryNameToMaskMapper_load(provider._underlying);
     return result.isOk
-        ? ICU4XGeneralCategoryNameToMaskMapper._(result.union.ok)
-        : throw ICU4XError.values
+        ? GeneralCategoryNameToMaskMapper._(result.union.ok)
+        : throw Error.values
             .firstWhere((v) => v._underlying == result.union.err);
   }
   // ignore: non_constant_identifier_names
@@ -6614,10 +6560,10 @@ class ICU4XGeneralCategoryNameToMaskMapper implements ffi.Finalizable {
 }
 
 /// See the [Rust documentation for `GraphemeClusterBreakIterator`](https://docs.rs/icu/latest/icu/segmenter/struct.GraphemeClusterBreakIterator.html) for more information.
-class ICU4XGraphemeClusterBreakIteratorLatin1 implements ffi.Finalizable {
+class GraphemeClusterBreakIteratorLatin1 implements ffi.Finalizable {
   final ffi.Pointer<ffi.Opaque> _underlying;
 
-  ICU4XGraphemeClusterBreakIteratorLatin1._(this._underlying) {
+  GraphemeClusterBreakIteratorLatin1._(this._underlying) {
     _finalizer.attach(this, _underlying.cast());
   }
 
@@ -6641,10 +6587,10 @@ class ICU4XGraphemeClusterBreakIteratorLatin1 implements ffi.Finalizable {
 }
 
 /// See the [Rust documentation for `GraphemeClusterBreakIterator`](https://docs.rs/icu/latest/icu/segmenter/struct.GraphemeClusterBreakIterator.html) for more information.
-class ICU4XGraphemeClusterBreakIteratorUtf16 implements ffi.Finalizable {
+class GraphemeClusterBreakIteratorUtf16 implements ffi.Finalizable {
   final ffi.Pointer<ffi.Opaque> _underlying;
 
-  ICU4XGraphemeClusterBreakIteratorUtf16._(this._underlying) {
+  GraphemeClusterBreakIteratorUtf16._(this._underlying) {
     _finalizer.attach(this, _underlying.cast());
   }
 
@@ -6668,10 +6614,10 @@ class ICU4XGraphemeClusterBreakIteratorUtf16 implements ffi.Finalizable {
 }
 
 /// See the [Rust documentation for `GraphemeClusterBreakIterator`](https://docs.rs/icu/latest/icu/segmenter/struct.GraphemeClusterBreakIterator.html) for more information.
-class ICU4XGraphemeClusterBreakIteratorUtf8 implements ffi.Finalizable {
+class GraphemeClusterBreakIteratorUtf8 implements ffi.Finalizable {
   final ffi.Pointer<ffi.Opaque> _underlying;
 
-  ICU4XGraphemeClusterBreakIteratorUtf8._(this._underlying) {
+  GraphemeClusterBreakIteratorUtf8._(this._underlying) {
     _finalizer.attach(this, _underlying.cast());
   }
 
@@ -6698,10 +6644,10 @@ class ICU4XGraphemeClusterBreakIteratorUtf8 implements ffi.Finalizable {
 /// in strings.
 ///
 /// See the [Rust documentation for `GraphemeClusterSegmenter`](https://docs.rs/icu/latest/icu/segmenter/struct.GraphemeClusterSegmenter.html) for more information.
-class ICU4XGraphemeClusterSegmenter implements ffi.Finalizable {
+class GraphemeClusterSegmenter implements ffi.Finalizable {
   final ffi.Pointer<ffi.Opaque> _underlying;
 
-  ICU4XGraphemeClusterSegmenter._(this._underlying) {
+  GraphemeClusterSegmenter._(this._underlying) {
     _finalizer.attach(this, _underlying.cast());
   }
 
@@ -6711,11 +6657,11 @@ class ICU4XGraphemeClusterSegmenter implements ffi.Finalizable {
   /// Construct an [`ICU4XGraphemeClusterSegmenter`].
   ///
   /// See the [Rust documentation for `new`](https://docs.rs/icu/latest/icu/segmenter/struct.GraphemeClusterSegmenter.html#method.new) for more information.
-  factory ICU4XGraphemeClusterSegmenter(ICU4XDataProvider provider) {
+  factory GraphemeClusterSegmenter(DataProvider provider) {
     final result = _ICU4XGraphemeClusterSegmenter_create(provider._underlying);
     return result.isOk
-        ? ICU4XGraphemeClusterSegmenter._(result.union.ok)
-        : throw ICU4XError.values
+        ? GraphemeClusterSegmenter._(result.union.ok)
+        : throw Error.values
             .firstWhere((v) => v._underlying == result.union.err);
   }
   // ignore: non_constant_identifier_names
@@ -6729,14 +6675,14 @@ class ICU4XGraphemeClusterSegmenter implements ffi.Finalizable {
   /// Segments a (potentially ill-formed) UTF-8 string.
   ///
   /// See the [Rust documentation for `segment_utf8`](https://docs.rs/icu/latest/icu/segmenter/struct.GraphemeClusterSegmenter.html#method.segment_utf8) for more information.
-  ICU4XGraphemeClusterBreakIteratorUtf8 segmentUtf8(String input) {
+  GraphemeClusterBreakIteratorUtf8 segmentUtf8(String input) {
     final alloc = ffi2.Arena();
     final inputSlice = _SliceFfi2Utf8._fromDart(input, alloc);
 
     final result = _ICU4XGraphemeClusterSegmenter_segment_utf8(
         _underlying, inputSlice._bytes, inputSlice._length);
     alloc.releaseAll();
-    return ICU4XGraphemeClusterBreakIteratorUtf8._(result);
+    return GraphemeClusterBreakIteratorUtf8._(result);
   }
 
   // ignore: non_constant_identifier_names
@@ -6753,14 +6699,14 @@ class ICU4XGraphemeClusterSegmenter implements ffi.Finalizable {
   /// Segments a UTF-16 string.
   ///
   /// See the [Rust documentation for `segment_utf16`](https://docs.rs/icu/latest/icu/segmenter/struct.GraphemeClusterSegmenter.html#method.segment_utf16) for more information.
-  ICU4XGraphemeClusterBreakIteratorUtf16 segmentUtf16(Uint16List input) {
+  GraphemeClusterBreakIteratorUtf16 segmentUtf16(Uint16List input) {
     final alloc = ffi2.Arena();
     final inputSlice = _SliceFfiUint16._fromDart(input, alloc);
 
     final result = _ICU4XGraphemeClusterSegmenter_segment_utf16(
         _underlying, inputSlice._bytes, inputSlice._length);
     alloc.releaseAll();
-    return ICU4XGraphemeClusterBreakIteratorUtf16._(result);
+    return GraphemeClusterBreakIteratorUtf16._(result);
   }
 
   // ignore: non_constant_identifier_names
@@ -6777,14 +6723,14 @@ class ICU4XGraphemeClusterSegmenter implements ffi.Finalizable {
   /// Segments a Latin-1 string.
   ///
   /// See the [Rust documentation for `segment_latin1`](https://docs.rs/icu/latest/icu/segmenter/struct.GraphemeClusterSegmenter.html#method.segment_latin1) for more information.
-  ICU4XGraphemeClusterBreakIteratorLatin1 segmentLatin1(Uint8List input) {
+  GraphemeClusterBreakIteratorLatin1 segmentLatin1(Uint8List input) {
     final alloc = ffi2.Arena();
     final inputSlice = _SliceFfiUint8._fromDart(input, alloc);
 
     final result = _ICU4XGraphemeClusterSegmenter_segment_latin1(
         _underlying, inputSlice._bytes, inputSlice._length);
     alloc.releaseAll();
-    return ICU4XGraphemeClusterBreakIteratorLatin1._(result);
+    return GraphemeClusterBreakIteratorLatin1._(result);
   }
 
   // ignore: non_constant_identifier_names
@@ -6803,10 +6749,10 @@ class ICU4XGraphemeClusterSegmenter implements ffi.Finalizable {
 /// using the Gregorian Calendar.
 ///
 /// See the [Rust documentation for `TypedDateFormatter`](https://docs.rs/icu/latest/icu/datetime/struct.TypedDateFormatter.html) for more information.
-class ICU4XGregorianDateFormatter implements ffi.Finalizable {
+class GregorianDateFormatter implements ffi.Finalizable {
   final ffi.Pointer<ffi.Opaque> _underlying;
 
-  ICU4XGregorianDateFormatter._(this._underlying) {
+  GregorianDateFormatter._(this._underlying) {
     _finalizer.attach(this, _underlying.cast());
   }
 
@@ -6816,13 +6762,13 @@ class ICU4XGregorianDateFormatter implements ffi.Finalizable {
   /// Creates a new [`ICU4XGregorianDateFormatter`] from locale data.
   ///
   /// See the [Rust documentation for `try_new_with_length`](https://docs.rs/icu/latest/icu/datetime/struct.TypedDateFormatter.html#method.try_new_with_length) for more information.
-  factory ICU4XGregorianDateFormatter.withLength(
-      ICU4XDataProvider provider, ICU4XLocale locale, ICU4XDateLength length) {
+  factory GregorianDateFormatter.withLength(
+      DataProvider provider, Locale locale, DateLength length) {
     final result = _ICU4XGregorianDateFormatter_create_with_length(
         provider._underlying, locale._underlying, length.index);
     return result.isOk
-        ? ICU4XGregorianDateFormatter._(result.union.ok)
-        : throw ICU4XError.values
+        ? GregorianDateFormatter._(result.union.ok)
+        : throw Error.values
             .firstWhere((v) => v._underlying == result.union.err);
   }
   // ignore: non_constant_identifier_names
@@ -6838,13 +6784,13 @@ class ICU4XGregorianDateFormatter implements ffi.Finalizable {
   /// Formats a [`ICU4XIsoDate`] to a string.
   ///
   /// See the [Rust documentation for `format`](https://docs.rs/icu/latest/icu/datetime/struct.TypedDateFormatter.html#method.format) for more information.
-  String formatIsoDate(ICU4XIsoDate value) {
+  String formatIsoDate(IsoDate value) {
     final writeable = _Writeable();
     final result = _ICU4XGregorianDateFormatter_format_iso_date(
         _underlying, value._underlying, writeable._underlying);
     return result.isOk
         ? writeable.finalize()
-        : throw ICU4XError.values
+        : throw Error.values
             .firstWhere((v) => v._underlying == result.union.err);
   }
 
@@ -6861,13 +6807,13 @@ class ICU4XGregorianDateFormatter implements ffi.Finalizable {
   /// Formats a [`ICU4XIsoDateTime`] to a string.
   ///
   /// See the [Rust documentation for `format`](https://docs.rs/icu/latest/icu/datetime/struct.TypedDateFormatter.html#method.format) for more information.
-  String formatIsoDatetime(ICU4XIsoDateTime value) {
+  String formatIsoDatetime(IsoDateTime value) {
     final writeable = _Writeable();
     final result = _ICU4XGregorianDateFormatter_format_iso_datetime(
         _underlying, value._underlying, writeable._underlying);
     return result.isOk
         ? writeable.finalize()
-        : throw ICU4XError.values
+        : throw Error.values
             .firstWhere((v) => v._underlying == result.union.err);
   }
 
@@ -6886,10 +6832,10 @@ class ICU4XGregorianDateFormatter implements ffi.Finalizable {
 /// using the Gregorian Calendar.
 ///
 /// See the [Rust documentation for `TypedDateTimeFormatter`](https://docs.rs/icu/latest/icu/datetime/struct.TypedDateTimeFormatter.html) for more information.
-class ICU4XGregorianDateTimeFormatter implements ffi.Finalizable {
+class GregorianDateTimeFormatter implements ffi.Finalizable {
   final ffi.Pointer<ffi.Opaque> _underlying;
 
-  ICU4XGregorianDateTimeFormatter._(this._underlying) {
+  GregorianDateTimeFormatter._(this._underlying) {
     _finalizer.attach(this, _underlying.cast());
   }
 
@@ -6899,19 +6845,16 @@ class ICU4XGregorianDateTimeFormatter implements ffi.Finalizable {
   /// Creates a new [`ICU4XGregorianDateFormatter`] from locale data.
   ///
   /// See the [Rust documentation for `try_new`](https://docs.rs/icu/latest/icu/datetime/struct.TypedDateTimeFormatter.html#method.try_new) for more information.
-  factory ICU4XGregorianDateTimeFormatter.withLengths(
-      ICU4XDataProvider provider,
-      ICU4XLocale locale,
-      ICU4XDateLength dateLength,
-      ICU4XTimeLength timeLength) {
+  factory GregorianDateTimeFormatter.withLengths(DataProvider provider,
+      Locale locale, DateLength dateLength, TimeLength timeLength) {
     final result = _ICU4XGregorianDateTimeFormatter_create_with_lengths(
         provider._underlying,
         locale._underlying,
         dateLength.index,
         timeLength.index);
     return result.isOk
-        ? ICU4XGregorianDateTimeFormatter._(result.union.ok)
-        : throw ICU4XError.values
+        ? GregorianDateTimeFormatter._(result.union.ok)
+        : throw Error.values
             .firstWhere((v) => v._underlying == result.union.err);
   }
   // ignore: non_constant_identifier_names
@@ -6927,13 +6870,13 @@ class ICU4XGregorianDateTimeFormatter implements ffi.Finalizable {
   /// Formats a [`ICU4XIsoDateTime`] to a string.
   ///
   /// See the [Rust documentation for `format`](https://docs.rs/icu/latest/icu/datetime/struct.TypedDateTimeFormatter.html#method.format) for more information.
-  String formatIsoDatetime(ICU4XIsoDateTime value) {
+  String formatIsoDatetime(IsoDateTime value) {
     final writeable = _Writeable();
     final result = _ICU4XGregorianDateTimeFormatter_format_iso_datetime(
         _underlying, value._underlying, writeable._underlying);
     return result.isOk
         ? writeable.finalize()
-        : throw ICU4XError.values
+        : throw Error.values
             .firstWhere((v) => v._underlying == result.union.err);
   }
 
@@ -6951,10 +6894,10 @@ class ICU4XGregorianDateTimeFormatter implements ffi.Finalizable {
 /// An object capable of formatting a date time with time zone to a string.
 ///
 /// See the [Rust documentation for `TypedZonedDateTimeFormatter`](https://docs.rs/icu/latest/icu/datetime/struct.TypedZonedDateTimeFormatter.html) for more information.
-class ICU4XGregorianZonedDateTimeFormatter implements ffi.Finalizable {
+class GregorianZonedDateTimeFormatter implements ffi.Finalizable {
   final ffi.Pointer<ffi.Opaque> _underlying;
 
-  ICU4XGregorianZonedDateTimeFormatter._(this._underlying) {
+  GregorianZonedDateTimeFormatter._(this._underlying) {
     _finalizer.attach(this, _underlying.cast());
   }
 
@@ -6967,19 +6910,16 @@ class ICU4XGregorianZonedDateTimeFormatter implements ffi.Finalizable {
   /// for the time zone.
   ///
   /// See the [Rust documentation for `try_new`](https://docs.rs/icu/latest/icu/datetime/struct.TypedZonedDateTimeFormatter.html#method.try_new) for more information.
-  factory ICU4XGregorianZonedDateTimeFormatter.withLengths(
-      ICU4XDataProvider provider,
-      ICU4XLocale locale,
-      ICU4XDateLength dateLength,
-      ICU4XTimeLength timeLength) {
+  factory GregorianZonedDateTimeFormatter.withLengths(DataProvider provider,
+      Locale locale, DateLength dateLength, TimeLength timeLength) {
     final result = _ICU4XGregorianZonedDateTimeFormatter_create_with_lengths(
         provider._underlying,
         locale._underlying,
         dateLength.index,
         timeLength.index);
     return result.isOk
-        ? ICU4XGregorianZonedDateTimeFormatter._(result.union.ok)
-        : throw ICU4XError.values
+        ? GregorianZonedDateTimeFormatter._(result.union.ok)
+        : throw Error.values
             .firstWhere((v) => v._underlying == result.union.err);
   }
   // ignore: non_constant_identifier_names
@@ -6999,12 +6939,12 @@ class ICU4XGregorianZonedDateTimeFormatter implements ffi.Finalizable {
   /// fallback for the time zone with the given configurations.
   ///
   /// See the [Rust documentation for `try_new`](https://docs.rs/icu/latest/icu/datetime/struct.TypedZonedDateTimeFormatter.html#method.try_new) for more information.
-  factory ICU4XGregorianZonedDateTimeFormatter.withLengthsAndIso8601TimeZoneFallback(
-      ICU4XDataProvider provider,
-      ICU4XLocale locale,
-      ICU4XDateLength dateLength,
-      ICU4XTimeLength timeLength,
-      ICU4XIsoTimeZoneOptions zoneOptions) {
+  factory GregorianZonedDateTimeFormatter.withLengthsAndIso8601TimeZoneFallback(
+      DataProvider provider,
+      Locale locale,
+      DateLength dateLength,
+      TimeLength timeLength,
+      IsoTimeZoneOptions zoneOptions) {
     final result =
         _ICU4XGregorianZonedDateTimeFormatter_create_with_lengths_and_iso_8601_time_zone_fallback(
             provider._underlying,
@@ -7013,8 +6953,8 @@ class ICU4XGregorianZonedDateTimeFormatter implements ffi.Finalizable {
             timeLength.index,
             zoneOptions._underlying);
     return result.isOk
-        ? ICU4XGregorianZonedDateTimeFormatter._(result.union.ok)
-        : throw ICU4XError.values
+        ? GregorianZonedDateTimeFormatter._(result.union.ok)
+        : throw Error.values
             .firstWhere((v) => v._underlying == result.union.err);
   }
   // ignore: non_constant_identifier_names
@@ -7026,7 +6966,7 @@ class ICU4XGregorianZonedDateTimeFormatter implements ffi.Finalizable {
                           ffi.Pointer<ffi.Opaque>,
                           ffi.Uint32,
                           ffi.Uint32,
-                          _ICU4XIsoTimeZoneOptionsFfi)>>(
+                          _IsoTimeZoneOptionsFfi)>>(
               'ICU4XGregorianZonedDateTimeFormatter_create_with_lengths_and_iso_8601_time_zone_fallback')
           .asFunction<
               _ResultOpaqueUint32 Function(
@@ -7034,13 +6974,13 @@ class ICU4XGregorianZonedDateTimeFormatter implements ffi.Finalizable {
                   ffi.Pointer<ffi.Opaque>,
                   int,
                   int,
-                  _ICU4XIsoTimeZoneOptionsFfi)>(isLeaf: true);
+                  _IsoTimeZoneOptionsFfi)>(isLeaf: true);
 
   /// Formats a [`ICU4XIsoDateTime`] and [`ICU4XCustomTimeZone`] to a string.
   ///
   /// See the [Rust documentation for `format`](https://docs.rs/icu/latest/icu/datetime/struct.TypedZonedDateTimeFormatter.html#method.format) for more information.
   String formatIsoDatetimeWithCustomTimeZone(
-      ICU4XIsoDateTime datetime, ICU4XCustomTimeZone timeZone) {
+      IsoDateTime datetime, CustomTimeZone timeZone) {
     final writeable = _Writeable();
     final result =
         _ICU4XGregorianZonedDateTimeFormatter_format_iso_datetime_with_custom_time_zone(
@@ -7050,7 +6990,7 @@ class ICU4XGregorianZonedDateTimeFormatter implements ffi.Finalizable {
             writeable._underlying);
     return result.isOk
         ? writeable.finalize()
-        : throw ICU4XError.values
+        : throw Error.values
             .firstWhere((v) => v._underlying == result.union.err);
   }
 
@@ -7079,10 +7019,10 @@ class ICU4XGregorianZonedDateTimeFormatter implements ffi.Finalizable {
 /// [`ICU4XCustomTimeZone`]: crate::timezone::ffi::ICU4XCustomTimeZone
 ///
 /// See the [Rust documentation for `IanaToBcp47Mapper`](https://docs.rs/icu/latest/icu/timezone/struct.IanaToBcp47Mapper.html) for more information.
-class ICU4XIanaToBcp47Mapper implements ffi.Finalizable {
+class IanaToBcp47Mapper implements ffi.Finalizable {
   final ffi.Pointer<ffi.Opaque> _underlying;
 
-  ICU4XIanaToBcp47Mapper._(this._underlying) {
+  IanaToBcp47Mapper._(this._underlying) {
     _finalizer.attach(this, _underlying.cast());
   }
 
@@ -7090,11 +7030,11 @@ class ICU4XIanaToBcp47Mapper implements ffi.Finalizable {
       ffi.NativeFinalizer(_capi('ICU4XIanaToBcp47Mapper_destroy'));
 
   /// See the [Rust documentation for `new`](https://docs.rs/icu/latest/icu/timezone/struct.IanaToBcp47Mapper.html#method.new) for more information.
-  factory ICU4XIanaToBcp47Mapper(ICU4XDataProvider provider) {
+  factory IanaToBcp47Mapper(DataProvider provider) {
     final result = _ICU4XIanaToBcp47Mapper_create(provider._underlying);
     return result.isOk
-        ? ICU4XIanaToBcp47Mapper._(result.union.ok)
-        : throw ICU4XError.values
+        ? IanaToBcp47Mapper._(result.union.ok)
+        : throw Error.values
             .firstWhere((v) => v._underlying == result.union.err);
   }
   // ignore: non_constant_identifier_names
@@ -7109,10 +7049,10 @@ class ICU4XIanaToBcp47Mapper implements ffi.Finalizable {
 /// An ICU4X Date object capable of containing a ISO-8601 date
 ///
 /// See the [Rust documentation for `Date`](https://docs.rs/icu/latest/icu/calendar/struct.Date.html) for more information.
-class ICU4XIsoDate implements ffi.Finalizable {
+class IsoDate implements ffi.Finalizable {
   final ffi.Pointer<ffi.Opaque> _underlying;
 
-  ICU4XIsoDate._(this._underlying) {
+  IsoDate._(this._underlying) {
     _finalizer.attach(this, _underlying.cast());
   }
 
@@ -7121,11 +7061,11 @@ class ICU4XIsoDate implements ffi.Finalizable {
   /// Creates a new [`ICU4XIsoDate`] from the specified date and time.
   ///
   /// See the [Rust documentation for `try_new_iso_date`](https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.try_new_iso_date) for more information.
-  factory ICU4XIsoDate(int year, int month, int day) {
+  factory IsoDate(int year, int month, int day) {
     final result = _ICU4XIsoDate_create(year, month, day);
     return result.isOk
-        ? ICU4XIsoDate._(result.union.ok)
-        : throw ICU4XError.values
+        ? IsoDate._(result.union.ok)
+        : throw Error.values
             .firstWhere((v) => v._underlying == result.union.err);
   }
   // ignore: non_constant_identifier_names
@@ -7138,9 +7078,9 @@ class ICU4XIsoDate implements ffi.Finalizable {
   /// Creates a new [`ICU4XIsoDate`] representing January 1, 1970.
   ///
   /// See the [Rust documentation for `unix_epoch`](https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.unix_epoch) for more information.
-  factory ICU4XIsoDate.forUnixEpoch() {
+  factory IsoDate.forUnixEpoch() {
     final result = _ICU4XIsoDate_create_for_unix_epoch();
-    return ICU4XIsoDate._(result);
+    return IsoDate._(result);
   }
   // ignore: non_constant_identifier_names
   static final _ICU4XIsoDate_create_for_unix_epoch =
@@ -7151,9 +7091,9 @@ class ICU4XIsoDate implements ffi.Finalizable {
   /// Convert this date to one in a different calendar
   ///
   /// See the [Rust documentation for `to_calendar`](https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.to_calendar) for more information.
-  ICU4XDate toCalendar(ICU4XCalendar calendar) {
+  Date toCalendar(Calendar calendar) {
     final result = _ICU4XIsoDate_to_calendar(_underlying, calendar._underlying);
-    return ICU4XDate._(result);
+    return Date._(result);
   }
 
   // ignore: non_constant_identifier_names
@@ -7166,9 +7106,9 @@ class ICU4XIsoDate implements ffi.Finalizable {
               ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
 
   /// See the [Rust documentation for `to_any`](https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.to_any) for more information.
-  ICU4XDate toAny() {
+  Date toAny() {
     final result = _ICU4XIsoDate_to_any(_underlying);
-    return ICU4XDate._(result);
+    return Date._(result);
   }
 
   // ignore: non_constant_identifier_names
@@ -7196,9 +7136,9 @@ class ICU4XIsoDate implements ffi.Finalizable {
   /// Returns the day in the week for this day
   ///
   /// See the [Rust documentation for `day_of_week`](https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.day_of_week) for more information.
-  ICU4XIsoWeekday get dayOfWeek {
+  IsoWeekday get dayOfWeek {
     final result = _ICU4XIsoDate_day_of_week(_underlying);
-    return ICU4XIsoWeekday.values.firstWhere((v) => v._underlying == result);
+    return IsoWeekday.values.firstWhere((v) => v._underlying == result);
   }
 
   // ignore: non_constant_identifier_names
@@ -7213,7 +7153,7 @@ class ICU4XIsoDate implements ffi.Finalizable {
   /// `first_weekday` can be obtained via `first_weekday()` on [`ICU4XWeekCalculator`]
   ///
   /// See the [Rust documentation for `week_of_month`](https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.week_of_month) for more information.
-  int weekOfMonth(ICU4XIsoWeekday firstWeekday) {
+  int weekOfMonth(IsoWeekday firstWeekday) {
     final result =
         _ICU4XIsoDate_week_of_month(_underlying, firstWeekday._underlying);
     return result;
@@ -7229,22 +7169,22 @@ class ICU4XIsoDate implements ffi.Finalizable {
   /// Returns the week number in this year, using week data
   ///
   /// See the [Rust documentation for `week_of_year`](https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.week_of_year) for more information.
-  ICU4XWeekOf weekOfYear(ICU4XWeekCalculator calculator) {
+  WeekOf weekOfYear(WeekCalculator calculator) {
     final result =
         _ICU4XIsoDate_week_of_year(_underlying, calculator._underlying);
     return result.isOk
-        ? ICU4XWeekOf._(result.union.ok)
-        : throw ICU4XError.values
+        ? WeekOf._(result.union.ok)
+        : throw Error.values
             .firstWhere((v) => v._underlying == result.union.err);
   }
 
   // ignore: non_constant_identifier_names
   static final _ICU4XIsoDate_week_of_year = _capi<
           ffi.NativeFunction<
-              _ResultICU4XWeekOfFfiUint32 Function(ffi.Pointer<ffi.Opaque>,
+              _ResultWeekOfFfiUint32 Function(ffi.Pointer<ffi.Opaque>,
                   ffi.Pointer<ffi.Opaque>)>>('ICU4XIsoDate_week_of_year')
       .asFunction<
-          _ResultICU4XWeekOfFfiUint32 Function(
+          _ResultWeekOfFfiUint32 Function(
               ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
 
   /// Returns 1-indexed number of the month of this date in its year
@@ -7321,10 +7261,10 @@ class ICU4XIsoDate implements ffi.Finalizable {
 /// An ICU4X DateTime object capable of containing a ISO-8601 date and time.
 ///
 /// See the [Rust documentation for `DateTime`](https://docs.rs/icu/latest/icu/calendar/struct.DateTime.html) for more information.
-class ICU4XIsoDateTime implements ffi.Finalizable {
+class IsoDateTime implements ffi.Finalizable {
   final ffi.Pointer<ffi.Opaque> _underlying;
 
-  ICU4XIsoDateTime._(this._underlying) {
+  IsoDateTime._(this._underlying) {
     _finalizer.attach(this, _underlying.cast());
   }
 
@@ -7334,13 +7274,13 @@ class ICU4XIsoDateTime implements ffi.Finalizable {
   /// Creates a new [`ICU4XIsoDateTime`] from the specified date and time.
   ///
   /// See the [Rust documentation for `try_new_iso_datetime`](https://docs.rs/icu/latest/icu/calendar/struct.DateTime.html#method.try_new_iso_datetime) for more information.
-  factory ICU4XIsoDateTime(int year, int month, int day, int hour, int minute,
+  factory IsoDateTime(int year, int month, int day, int hour, int minute,
       int second, int nanosecond) {
     final result = _ICU4XIsoDateTime_create(
         year, month, day, hour, minute, second, nanosecond);
     return result.isOk
-        ? ICU4XIsoDateTime._(result.union.ok)
-        : throw ICU4XError.values
+        ? IsoDateTime._(result.union.ok)
+        : throw Error.values
             .firstWhere((v) => v._underlying == result.union.err);
   }
   // ignore: non_constant_identifier_names
@@ -7361,11 +7301,10 @@ class ICU4XIsoDateTime implements ffi.Finalizable {
   /// Creates a new [`ICU4XIsoDateTime`] from an [`ICU4XIsoDate`] and [`ICU4XTime`] object
   ///
   /// See the [Rust documentation for `new`](https://docs.rs/icu/latest/icu/calendar/struct.DateTime.html#method.new) for more information.
-  factory ICU4XIsoDateTime.crateFromDateAndTime(
-      ICU4XIsoDate date, ICU4XTime time) {
+  factory IsoDateTime.crateFromDateAndTime(IsoDate date, Time time) {
     final result = _ICU4XIsoDateTime_crate_from_date_and_time(
         date._underlying, time._underlying);
-    return ICU4XIsoDateTime._(result);
+    return IsoDateTime._(result);
   }
   // ignore: non_constant_identifier_names
   static final _ICU4XIsoDateTime_crate_from_date_and_time = _capi<
@@ -7380,10 +7319,10 @@ class ICU4XIsoDateTime implements ffi.Finalizable {
   /// Construct from the minutes since the local unix epoch for this date (Jan 1 1970, 00:00)
   ///
   /// See the [Rust documentation for `from_minutes_since_local_unix_epoch`](https://docs.rs/icu/latest/icu/calendar/struct.DateTime.html#method.from_minutes_since_local_unix_epoch) for more information.
-  factory ICU4XIsoDateTime.fromMinutesSinceLocalUnixEpoch(int minutes) {
+  factory IsoDateTime.fromMinutesSinceLocalUnixEpoch(int minutes) {
     final result =
         _ICU4XIsoDateTime_create_from_minutes_since_local_unix_epoch(minutes);
-    return ICU4XIsoDateTime._(result);
+    return IsoDateTime._(result);
   }
   // ignore: non_constant_identifier_names
   static final _ICU4XIsoDateTime_create_from_minutes_since_local_unix_epoch =
@@ -7394,9 +7333,9 @@ class ICU4XIsoDateTime implements ffi.Finalizable {
   /// Gets the date contained in this object
   ///
   /// See the [Rust documentation for `date`](https://docs.rs/icu/latest/icu/calendar/struct.DateTime.html#structfield.date) for more information.
-  ICU4XIsoDate get date {
+  IsoDate get date {
     final result = _ICU4XIsoDateTime_date(_underlying);
-    return ICU4XIsoDate._(result);
+    return IsoDate._(result);
   }
 
   // ignore: non_constant_identifier_names
@@ -7410,9 +7349,9 @@ class ICU4XIsoDateTime implements ffi.Finalizable {
   /// Gets the time contained in this object
   ///
   /// See the [Rust documentation for `time`](https://docs.rs/icu/latest/icu/calendar/struct.DateTime.html#structfield.time) for more information.
-  ICU4XTime get time {
+  Time get time {
     final result = _ICU4XIsoDateTime_time(_underlying);
-    return ICU4XTime._(result);
+    return Time._(result);
   }
 
   // ignore: non_constant_identifier_names
@@ -7427,9 +7366,9 @@ class ICU4XIsoDateTime implements ffi.Finalizable {
   /// other calendars
   ///
   /// See the [Rust documentation for `to_any`](https://docs.rs/icu/latest/icu/calendar/struct.DateTime.html#method.to_any) for more information.
-  ICU4XDateTime toAny() {
+  DateTime toAny() {
     final result = _ICU4XIsoDateTime_to_any(_underlying);
-    return ICU4XDateTime._(result);
+    return DateTime._(result);
   }
 
   // ignore: non_constant_identifier_names
@@ -7458,10 +7397,10 @@ class ICU4XIsoDateTime implements ffi.Finalizable {
   /// Convert this datetime to one in a different calendar
   ///
   /// See the [Rust documentation for `to_calendar`](https://docs.rs/icu/latest/icu/calendar/struct.DateTime.html#method.to_calendar) for more information.
-  ICU4XDateTime toCalendar(ICU4XCalendar calendar) {
+  DateTime toCalendar(Calendar calendar) {
     final result =
         _ICU4XIsoDateTime_to_calendar(_underlying, calendar._underlying);
-    return ICU4XDateTime._(result);
+    return DateTime._(result);
   }
 
   // ignore: non_constant_identifier_names
@@ -7546,9 +7485,9 @@ class ICU4XIsoDateTime implements ffi.Finalizable {
   /// Returns the day in the week for this day
   ///
   /// See the [Rust documentation for `day_of_week`](https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.day_of_week) for more information.
-  ICU4XIsoWeekday get dayOfWeek {
+  IsoWeekday get dayOfWeek {
     final result = _ICU4XIsoDateTime_day_of_week(_underlying);
-    return ICU4XIsoWeekday.values.firstWhere((v) => v._underlying == result);
+    return IsoWeekday.values.firstWhere((v) => v._underlying == result);
   }
 
   // ignore: non_constant_identifier_names
@@ -7563,7 +7502,7 @@ class ICU4XIsoDateTime implements ffi.Finalizable {
   /// `first_weekday` can be obtained via `first_weekday()` on [`ICU4XWeekCalculator`]
   ///
   /// See the [Rust documentation for `week_of_month`](https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.week_of_month) for more information.
-  int weekOfMonth(ICU4XIsoWeekday firstWeekday) {
+  int weekOfMonth(IsoWeekday firstWeekday) {
     final result =
         _ICU4XIsoDateTime_week_of_month(_underlying, firstWeekday._underlying);
     return result;
@@ -7579,22 +7518,22 @@ class ICU4XIsoDateTime implements ffi.Finalizable {
   /// Returns the week number in this year, using week data
   ///
   /// See the [Rust documentation for `week_of_year`](https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.week_of_year) for more information.
-  ICU4XWeekOf weekOfYear(ICU4XWeekCalculator calculator) {
+  WeekOf weekOfYear(WeekCalculator calculator) {
     final result =
         _ICU4XIsoDateTime_week_of_year(_underlying, calculator._underlying);
     return result.isOk
-        ? ICU4XWeekOf._(result.union.ok)
-        : throw ICU4XError.values
+        ? WeekOf._(result.union.ok)
+        : throw Error.values
             .firstWhere((v) => v._underlying == result.union.err);
   }
 
   // ignore: non_constant_identifier_names
   static final _ICU4XIsoDateTime_week_of_year = _capi<
           ffi.NativeFunction<
-              _ResultICU4XWeekOfFfiUint32 Function(ffi.Pointer<ffi.Opaque>,
+              _ResultWeekOfFfiUint32 Function(ffi.Pointer<ffi.Opaque>,
                   ffi.Pointer<ffi.Opaque>)>>('ICU4XIsoDateTime_week_of_year')
       .asFunction<
-          _ResultICU4XWeekOfFfiUint32 Function(
+          _ResultWeekOfFfiUint32 Function(
               ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
 
   /// Returns 1-indexed number of the month of this date in its year
@@ -7669,7 +7608,7 @@ class ICU4XIsoDateTime implements ffi.Finalizable {
 }
 
 /// See the [Rust documentation for `IsoFormat`](https://docs.rs/icu/latest/icu/datetime/time_zone/enum.IsoFormat.html) for more information.
-enum ICU4XIsoTimeZoneFormat {
+enum IsoTimeZoneFormat {
   basic,
   extended,
   utcBasic,
@@ -7677,12 +7616,12 @@ enum ICU4XIsoTimeZoneFormat {
 }
 
 /// See the [Rust documentation for `IsoMinutes`](https://docs.rs/icu/latest/icu/datetime/time_zone/enum.IsoMinutes.html) for more information.
-enum ICU4XIsoTimeZoneMinuteDisplay {
+enum IsoTimeZoneMinuteDisplay {
   required,
   optional;
 }
 
-class _ICU4XIsoTimeZoneOptionsFfi extends ffi.Struct {
+class _IsoTimeZoneOptionsFfi extends ffi.Struct {
   @ffi.Uint32()
   external int format;
   @ffi.Uint32()
@@ -7691,40 +7630,39 @@ class _ICU4XIsoTimeZoneOptionsFfi extends ffi.Struct {
   external int seconds;
 }
 
-class ICU4XIsoTimeZoneOptions {
-  final _ICU4XIsoTimeZoneOptionsFfi _underlying;
+class IsoTimeZoneOptions {
+  final _IsoTimeZoneOptionsFfi _underlying;
 
   // ignore: unused_element
-  ICU4XIsoTimeZoneOptions._(this._underlying);
+  IsoTimeZoneOptions._(this._underlying);
 
-  factory ICU4XIsoTimeZoneOptions() {
-    final pointer = ffi2.calloc<_ICU4XIsoTimeZoneOptionsFfi>();
-    final result = ICU4XIsoTimeZoneOptions._(pointer.ref);
+  factory IsoTimeZoneOptions() {
+    final pointer = ffi2.calloc<_IsoTimeZoneOptionsFfi>();
+    final result = IsoTimeZoneOptions._(pointer.ref);
     _callocFree.attach(result, pointer.cast());
     return result;
   }
 
-  ICU4XIsoTimeZoneFormat get format =>
-      ICU4XIsoTimeZoneFormat.values[_underlying.format];
-  set format(ICU4XIsoTimeZoneFormat format) {
+  IsoTimeZoneFormat get format => IsoTimeZoneFormat.values[_underlying.format];
+  set format(IsoTimeZoneFormat format) {
     _underlying.format = format.index;
   }
 
-  ICU4XIsoTimeZoneMinuteDisplay get minutes =>
-      ICU4XIsoTimeZoneMinuteDisplay.values[_underlying.minutes];
-  set minutes(ICU4XIsoTimeZoneMinuteDisplay minutes) {
+  IsoTimeZoneMinuteDisplay get minutes =>
+      IsoTimeZoneMinuteDisplay.values[_underlying.minutes];
+  set minutes(IsoTimeZoneMinuteDisplay minutes) {
     _underlying.minutes = minutes.index;
   }
 
-  ICU4XIsoTimeZoneSecondDisplay get seconds =>
-      ICU4XIsoTimeZoneSecondDisplay.values[_underlying.seconds];
-  set seconds(ICU4XIsoTimeZoneSecondDisplay seconds) {
+  IsoTimeZoneSecondDisplay get seconds =>
+      IsoTimeZoneSecondDisplay.values[_underlying.seconds];
+  set seconds(IsoTimeZoneSecondDisplay seconds) {
     _underlying.seconds = seconds.index;
   }
 
   @override
   bool operator ==(Object other) =>
-      other is ICU4XIsoTimeZoneOptions &&
+      other is IsoTimeZoneOptions &&
       other._underlying.format == _underlying.format &&
       other._underlying.minutes == _underlying.minutes &&
       other._underlying.seconds == _underlying.seconds;
@@ -7738,12 +7676,12 @@ class ICU4XIsoTimeZoneOptions {
 }
 
 /// See the [Rust documentation for `IsoSeconds`](https://docs.rs/icu/latest/icu/datetime/time_zone/enum.IsoSeconds.html) for more information.
-enum ICU4XIsoTimeZoneSecondDisplay {
+enum IsoTimeZoneSecondDisplay {
   optional,
   never;
 }
 
-enum ICU4XIsoWeekday {
+enum IsoWeekday {
   monday,
   tuesday,
   wednesday,
@@ -7773,13 +7711,13 @@ enum ICU4XIsoWeekday {
 }
 
 /// See the [Rust documentation for `LanguageDisplay`](https://docs.rs/icu/latest/icu/displaynames/options/enum.LanguageDisplay.html) for more information.
-enum ICU4XLanguageDisplay {
+enum LanguageDisplay {
   dialect,
   standard;
 }
 
 /// See the [Rust documentation for `LeadingAdjustment`](https://docs.rs/icu/latest/icu/casemap/titlecase/enum.LeadingAdjustment.html) for more information.
-enum ICU4XLeadingAdjustment {
+enum LeadingAdjustment {
   auto,
   none,
   toCased;
@@ -7788,10 +7726,10 @@ enum ICU4XLeadingAdjustment {
 /// See the [Rust documentation for `LineBreakIterator`](https://docs.rs/icu/latest/icu/segmenter/struct.LineBreakIterator.html) for more information.
 ///
 /// Additional information: [1](https://docs.rs/icu/latest/icu/segmenter/type.LineBreakIteratorLatin1.html)
-class ICU4XLineBreakIteratorLatin1 implements ffi.Finalizable {
+class LineBreakIteratorLatin1 implements ffi.Finalizable {
   final ffi.Pointer<ffi.Opaque> _underlying;
 
-  ICU4XLineBreakIteratorLatin1._(this._underlying) {
+  LineBreakIteratorLatin1._(this._underlying) {
     _finalizer.attach(this, _underlying.cast());
   }
 
@@ -7817,10 +7755,10 @@ class ICU4XLineBreakIteratorLatin1 implements ffi.Finalizable {
 /// See the [Rust documentation for `LineBreakIterator`](https://docs.rs/icu/latest/icu/segmenter/struct.LineBreakIterator.html) for more information.
 ///
 /// Additional information: [1](https://docs.rs/icu/latest/icu/segmenter/type.LineBreakIteratorUtf16.html)
-class ICU4XLineBreakIteratorUtf16 implements ffi.Finalizable {
+class LineBreakIteratorUtf16 implements ffi.Finalizable {
   final ffi.Pointer<ffi.Opaque> _underlying;
 
-  ICU4XLineBreakIteratorUtf16._(this._underlying) {
+  LineBreakIteratorUtf16._(this._underlying) {
     _finalizer.attach(this, _underlying.cast());
   }
 
@@ -7846,10 +7784,10 @@ class ICU4XLineBreakIteratorUtf16 implements ffi.Finalizable {
 /// See the [Rust documentation for `LineBreakIterator`](https://docs.rs/icu/latest/icu/segmenter/struct.LineBreakIterator.html) for more information.
 ///
 /// Additional information: [1](https://docs.rs/icu/latest/icu/segmenter/type.LineBreakIteratorPotentiallyIllFormedUtf8.html)
-class ICU4XLineBreakIteratorUtf8 implements ffi.Finalizable {
+class LineBreakIteratorUtf8 implements ffi.Finalizable {
   final ffi.Pointer<ffi.Opaque> _underlying;
 
-  ICU4XLineBreakIteratorUtf8._(this._underlying) {
+  LineBreakIteratorUtf8._(this._underlying) {
     _finalizer.attach(this, _underlying.cast());
   }
 
@@ -7873,7 +7811,7 @@ class ICU4XLineBreakIteratorUtf8 implements ffi.Finalizable {
 }
 
 /// See the [Rust documentation for `LineBreakOptions`](https://docs.rs/icu/latest/icu/segmenter/struct.LineBreakOptions.html) for more information.
-class _ICU4XLineBreakOptionsV1Ffi extends ffi.Struct {
+class _LineBreakOptionsV1Ffi extends ffi.Struct {
   @ffi.Uint32()
   external int strictness;
   @ffi.Uint32()
@@ -7882,28 +7820,28 @@ class _ICU4XLineBreakOptionsV1Ffi extends ffi.Struct {
   external bool jaZh;
 }
 
-class ICU4XLineBreakOptionsV1 {
-  final _ICU4XLineBreakOptionsV1Ffi _underlying;
+class LineBreakOptionsV1 {
+  final _LineBreakOptionsV1Ffi _underlying;
 
   // ignore: unused_element
-  ICU4XLineBreakOptionsV1._(this._underlying);
+  LineBreakOptionsV1._(this._underlying);
 
-  factory ICU4XLineBreakOptionsV1() {
-    final pointer = ffi2.calloc<_ICU4XLineBreakOptionsV1Ffi>();
-    final result = ICU4XLineBreakOptionsV1._(pointer.ref);
+  factory LineBreakOptionsV1() {
+    final pointer = ffi2.calloc<_LineBreakOptionsV1Ffi>();
+    final result = LineBreakOptionsV1._(pointer.ref);
     _callocFree.attach(result, pointer.cast());
     return result;
   }
 
-  ICU4XLineBreakStrictness get strictness =>
-      ICU4XLineBreakStrictness.values[_underlying.strictness];
-  set strictness(ICU4XLineBreakStrictness strictness) {
+  LineBreakStrictness get strictness =>
+      LineBreakStrictness.values[_underlying.strictness];
+  set strictness(LineBreakStrictness strictness) {
     _underlying.strictness = strictness.index;
   }
 
-  ICU4XLineBreakWordOption get wordOption =>
-      ICU4XLineBreakWordOption.values[_underlying.wordOption];
-  set wordOption(ICU4XLineBreakWordOption wordOption) {
+  LineBreakWordOption get wordOption =>
+      LineBreakWordOption.values[_underlying.wordOption];
+  set wordOption(LineBreakWordOption wordOption) {
     _underlying.wordOption = wordOption.index;
   }
 
@@ -7914,7 +7852,7 @@ class ICU4XLineBreakOptionsV1 {
 
   @override
   bool operator ==(Object other) =>
-      other is ICU4XLineBreakOptionsV1 &&
+      other is LineBreakOptionsV1 &&
       other._underlying.strictness == _underlying.strictness &&
       other._underlying.wordOption == _underlying.wordOption &&
       other._underlying.jaZh == _underlying.jaZh;
@@ -7928,7 +7866,7 @@ class ICU4XLineBreakOptionsV1 {
 }
 
 /// See the [Rust documentation for `LineBreakStrictness`](https://docs.rs/icu/latest/icu/segmenter/enum.LineBreakStrictness.html) for more information.
-enum ICU4XLineBreakStrictness {
+enum LineBreakStrictness {
   loose,
   normal,
   strict,
@@ -7936,7 +7874,7 @@ enum ICU4XLineBreakStrictness {
 }
 
 /// See the [Rust documentation for `LineBreakWordOption`](https://docs.rs/icu/latest/icu/segmenter/enum.LineBreakWordOption.html) for more information.
-enum ICU4XLineBreakWordOption {
+enum LineBreakWordOption {
   normal,
   breakAll,
   keepAll;
@@ -7945,10 +7883,10 @@ enum ICU4XLineBreakWordOption {
 /// An ICU4X line-break segmenter, capable of finding breakpoints in strings.
 ///
 /// See the [Rust documentation for `LineSegmenter`](https://docs.rs/icu/latest/icu/segmenter/struct.LineSegmenter.html) for more information.
-class ICU4XLineSegmenter implements ffi.Finalizable {
+class LineSegmenter implements ffi.Finalizable {
   final ffi.Pointer<ffi.Opaque> _underlying;
 
-  ICU4XLineSegmenter._(this._underlying) {
+  LineSegmenter._(this._underlying) {
     _finalizer.attach(this, _underlying.cast());
   }
 
@@ -7959,11 +7897,11 @@ class ICU4XLineSegmenter implements ffi.Finalizable {
   /// available payload data for Burmese, Khmer, Lao, and Thai.
   ///
   /// See the [Rust documentation for `new_auto`](https://docs.rs/icu/latest/icu/segmenter/struct.LineSegmenter.html#method.new_auto) for more information.
-  factory ICU4XLineSegmenter.auto(ICU4XDataProvider provider) {
+  factory LineSegmenter.auto(DataProvider provider) {
     final result = _ICU4XLineSegmenter_create_auto(provider._underlying);
     return result.isOk
-        ? ICU4XLineSegmenter._(result.union.ok)
-        : throw ICU4XError.values
+        ? LineSegmenter._(result.union.ok)
+        : throw Error.values
             .firstWhere((v) => v._underlying == result.union.err);
   }
   // ignore: non_constant_identifier_names
@@ -7978,11 +7916,11 @@ class ICU4XLineSegmenter implements ffi.Finalizable {
   /// Burmese, Khmer, Lao, and Thai.
   ///
   /// See the [Rust documentation for `new_lstm`](https://docs.rs/icu/latest/icu/segmenter/struct.LineSegmenter.html#method.new_lstm) for more information.
-  factory ICU4XLineSegmenter.lstm(ICU4XDataProvider provider) {
+  factory LineSegmenter.lstm(DataProvider provider) {
     final result = _ICU4XLineSegmenter_create_lstm(provider._underlying);
     return result.isOk
-        ? ICU4XLineSegmenter._(result.union.ok)
-        : throw ICU4XError.values
+        ? LineSegmenter._(result.union.ok)
+        : throw Error.values
             .firstWhere((v) => v._underlying == result.union.err);
   }
   // ignore: non_constant_identifier_names
@@ -7997,11 +7935,11 @@ class ICU4XLineSegmenter implements ffi.Finalizable {
   /// Burmese, Khmer, Lao, and Thai..
   ///
   /// See the [Rust documentation for `new_dictionary`](https://docs.rs/icu/latest/icu/segmenter/struct.LineSegmenter.html#method.new_dictionary) for more information.
-  factory ICU4XLineSegmenter.dictionary(ICU4XDataProvider provider) {
+  factory LineSegmenter.dictionary(DataProvider provider) {
     final result = _ICU4XLineSegmenter_create_dictionary(provider._underlying);
     return result.isOk
-        ? ICU4XLineSegmenter._(result.union.ok)
-        : throw ICU4XError.values
+        ? LineSegmenter._(result.union.ok)
+        : throw Error.values
             .firstWhere((v) => v._underlying == result.union.err);
   }
   // ignore: non_constant_identifier_names
@@ -8016,82 +7954,82 @@ class ICU4XLineSegmenter implements ffi.Finalizable {
   /// available payload data for Burmese, Khmer, Lao, and Thai.
   ///
   /// See the [Rust documentation for `new_auto_with_options`](https://docs.rs/icu/latest/icu/segmenter/struct.LineSegmenter.html#method.new_auto_with_options) for more information.
-  factory ICU4XLineSegmenter.autoWithOptionsV1(
-      ICU4XDataProvider provider, ICU4XLineBreakOptionsV1 options) {
+  factory LineSegmenter.autoWithOptionsV1(
+      DataProvider provider, LineBreakOptionsV1 options) {
     final result = _ICU4XLineSegmenter_create_auto_with_options_v1(
         provider._underlying, options._underlying);
     return result.isOk
-        ? ICU4XLineSegmenter._(result.union.ok)
-        : throw ICU4XError.values
+        ? LineSegmenter._(result.union.ok)
+        : throw Error.values
             .firstWhere((v) => v._underlying == result.union.err);
   }
   // ignore: non_constant_identifier_names
   static final _ICU4XLineSegmenter_create_auto_with_options_v1 = _capi<
               ffi.NativeFunction<
                   _ResultOpaqueUint32 Function(
-                      ffi.Pointer<ffi.Opaque>, _ICU4XLineBreakOptionsV1Ffi)>>(
+                      ffi.Pointer<ffi.Opaque>, _LineBreakOptionsV1Ffi)>>(
           'ICU4XLineSegmenter_create_auto_with_options_v1')
       .asFunction<
-          _ResultOpaqueUint32 Function(ffi.Pointer<ffi.Opaque>,
-              _ICU4XLineBreakOptionsV1Ffi)>(isLeaf: true);
+          _ResultOpaqueUint32 Function(
+              ffi.Pointer<ffi.Opaque>, _LineBreakOptionsV1Ffi)>(isLeaf: true);
 
   /// Construct a [`ICU4XLineSegmenter`] with custom options and LSTM payload data for
   /// Burmese, Khmer, Lao, and Thai.
   ///
   /// See the [Rust documentation for `new_lstm_with_options`](https://docs.rs/icu/latest/icu/segmenter/struct.LineSegmenter.html#method.new_lstm_with_options) for more information.
-  factory ICU4XLineSegmenter.lstmWithOptionsV1(
-      ICU4XDataProvider provider, ICU4XLineBreakOptionsV1 options) {
+  factory LineSegmenter.lstmWithOptionsV1(
+      DataProvider provider, LineBreakOptionsV1 options) {
     final result = _ICU4XLineSegmenter_create_lstm_with_options_v1(
         provider._underlying, options._underlying);
     return result.isOk
-        ? ICU4XLineSegmenter._(result.union.ok)
-        : throw ICU4XError.values
+        ? LineSegmenter._(result.union.ok)
+        : throw Error.values
             .firstWhere((v) => v._underlying == result.union.err);
   }
   // ignore: non_constant_identifier_names
   static final _ICU4XLineSegmenter_create_lstm_with_options_v1 = _capi<
               ffi.NativeFunction<
                   _ResultOpaqueUint32 Function(
-                      ffi.Pointer<ffi.Opaque>, _ICU4XLineBreakOptionsV1Ffi)>>(
+                      ffi.Pointer<ffi.Opaque>, _LineBreakOptionsV1Ffi)>>(
           'ICU4XLineSegmenter_create_lstm_with_options_v1')
       .asFunction<
-          _ResultOpaqueUint32 Function(ffi.Pointer<ffi.Opaque>,
-              _ICU4XLineBreakOptionsV1Ffi)>(isLeaf: true);
+          _ResultOpaqueUint32 Function(
+              ffi.Pointer<ffi.Opaque>, _LineBreakOptionsV1Ffi)>(isLeaf: true);
 
   /// Construct a [`ICU4XLineSegmenter`] with custom options and dictionary payload data for
   /// Burmese, Khmer, Lao, and Thai.
   ///
   /// See the [Rust documentation for `new_dictionary_with_options`](https://docs.rs/icu/latest/icu/segmenter/struct.LineSegmenter.html#method.new_dictionary_with_options) for more information.
-  factory ICU4XLineSegmenter.dictionaryWithOptionsV1(
-      ICU4XDataProvider provider, ICU4XLineBreakOptionsV1 options) {
+  factory LineSegmenter.dictionaryWithOptionsV1(
+      DataProvider provider, LineBreakOptionsV1 options) {
     final result = _ICU4XLineSegmenter_create_dictionary_with_options_v1(
         provider._underlying, options._underlying);
     return result.isOk
-        ? ICU4XLineSegmenter._(result.union.ok)
-        : throw ICU4XError.values
+        ? LineSegmenter._(result.union.ok)
+        : throw Error.values
             .firstWhere((v) => v._underlying == result.union.err);
   }
   // ignore: non_constant_identifier_names
   static final _ICU4XLineSegmenter_create_dictionary_with_options_v1 = _capi<
               ffi.NativeFunction<
                   _ResultOpaqueUint32 Function(
-                      ffi.Pointer<ffi.Opaque>, _ICU4XLineBreakOptionsV1Ffi)>>(
+                      ffi.Pointer<ffi.Opaque>, _LineBreakOptionsV1Ffi)>>(
           'ICU4XLineSegmenter_create_dictionary_with_options_v1')
       .asFunction<
-          _ResultOpaqueUint32 Function(ffi.Pointer<ffi.Opaque>,
-              _ICU4XLineBreakOptionsV1Ffi)>(isLeaf: true);
+          _ResultOpaqueUint32 Function(
+              ffi.Pointer<ffi.Opaque>, _LineBreakOptionsV1Ffi)>(isLeaf: true);
 
   /// Segments a (potentially ill-formed) UTF-8 string.
   ///
   /// See the [Rust documentation for `segment_utf8`](https://docs.rs/icu/latest/icu/segmenter/struct.LineSegmenter.html#method.segment_utf8) for more information.
-  ICU4XLineBreakIteratorUtf8 segmentUtf8(String input) {
+  LineBreakIteratorUtf8 segmentUtf8(String input) {
     final alloc = ffi2.Arena();
     final inputSlice = _SliceFfi2Utf8._fromDart(input, alloc);
 
     final result = _ICU4XLineSegmenter_segment_utf8(
         _underlying, inputSlice._bytes, inputSlice._length);
     alloc.releaseAll();
-    return ICU4XLineBreakIteratorUtf8._(result);
+    return LineBreakIteratorUtf8._(result);
   }
 
   // ignore: non_constant_identifier_names
@@ -8108,14 +8046,14 @@ class ICU4XLineSegmenter implements ffi.Finalizable {
   /// Segments a UTF-16 string.
   ///
   /// See the [Rust documentation for `segment_utf16`](https://docs.rs/icu/latest/icu/segmenter/struct.LineSegmenter.html#method.segment_utf16) for more information.
-  ICU4XLineBreakIteratorUtf16 segmentUtf16(Uint16List input) {
+  LineBreakIteratorUtf16 segmentUtf16(Uint16List input) {
     final alloc = ffi2.Arena();
     final inputSlice = _SliceFfiUint16._fromDart(input, alloc);
 
     final result = _ICU4XLineSegmenter_segment_utf16(
         _underlying, inputSlice._bytes, inputSlice._length);
     alloc.releaseAll();
-    return ICU4XLineBreakIteratorUtf16._(result);
+    return LineBreakIteratorUtf16._(result);
   }
 
   // ignore: non_constant_identifier_names
@@ -8132,14 +8070,14 @@ class ICU4XLineSegmenter implements ffi.Finalizable {
   /// Segments a Latin-1 string.
   ///
   /// See the [Rust documentation for `segment_latin1`](https://docs.rs/icu/latest/icu/segmenter/struct.LineSegmenter.html#method.segment_latin1) for more information.
-  ICU4XLineBreakIteratorLatin1 segmentLatin1(Uint8List input) {
+  LineBreakIteratorLatin1 segmentLatin1(Uint8List input) {
     final alloc = ffi2.Arena();
     final inputSlice = _SliceFfiUint8._fromDart(input, alloc);
 
     final result = _ICU4XLineSegmenter_segment_latin1(
         _underlying, inputSlice._bytes, inputSlice._length);
     alloc.releaseAll();
-    return ICU4XLineBreakIteratorLatin1._(result);
+    return LineBreakIteratorLatin1._(result);
   }
 
   // ignore: non_constant_identifier_names
@@ -8155,19 +8093,19 @@ class ICU4XLineSegmenter implements ffi.Finalizable {
 }
 
 /// A list of strings
-class ICU4XList implements ffi.Finalizable {
+class List implements ffi.Finalizable {
   final ffi.Pointer<ffi.Opaque> _underlying;
 
-  ICU4XList._(this._underlying) {
+  List._(this._underlying) {
     _finalizer.attach(this, _underlying.cast());
   }
 
   static final _finalizer = ffi.NativeFinalizer(_capi('ICU4XList_destroy'));
 
   /// Create a new list of strings
-  factory ICU4XList() {
+  factory List() {
     final result = _ICU4XList_create();
-    return ICU4XList._(result);
+    return List._(result);
   }
   // ignore: non_constant_identifier_names
   static final _ICU4XList_create =
@@ -8177,9 +8115,9 @@ class ICU4XList implements ffi.Finalizable {
 
   /// Create a new list of strings with preallocated space to hold
   /// at least `capacity` elements
-  factory ICU4XList.withCapacity(int capacity) {
+  factory List.withCapacity(int capacity) {
     final result = _ICU4XList_create_with_capacity(capacity);
-    return ICU4XList._(result);
+    return List._(result);
   }
   // ignore: non_constant_identifier_names
   static final _ICU4XList_create_with_capacity =
@@ -8222,10 +8160,10 @@ class ICU4XList implements ffi.Finalizable {
 }
 
 /// See the [Rust documentation for `ListFormatter`](https://docs.rs/icu/latest/icu/list/struct.ListFormatter.html) for more information.
-class ICU4XListFormatter implements ffi.Finalizable {
+class ListFormatter implements ffi.Finalizable {
   final ffi.Pointer<ffi.Opaque> _underlying;
 
-  ICU4XListFormatter._(this._underlying) {
+  ListFormatter._(this._underlying) {
     _finalizer.attach(this, _underlying.cast());
   }
 
@@ -8235,13 +8173,13 @@ class ICU4XListFormatter implements ffi.Finalizable {
   /// Construct a new ICU4XListFormatter instance for And patterns
   ///
   /// See the [Rust documentation for `try_new_and_with_length`](https://docs.rs/icu/latest/icu/list/struct.ListFormatter.html#method.try_new_and_with_length) for more information.
-  factory ICU4XListFormatter.andWithLength(
-      ICU4XDataProvider provider, ICU4XLocale locale, ICU4XListLength length) {
+  factory ListFormatter.andWithLength(
+      DataProvider provider, Locale locale, ListLength length) {
     final result = _ICU4XListFormatter_create_and_with_length(
         provider._underlying, locale._underlying, length.index);
     return result.isOk
-        ? ICU4XListFormatter._(result.union.ok)
-        : throw ICU4XError.values
+        ? ListFormatter._(result.union.ok)
+        : throw Error.values
             .firstWhere((v) => v._underlying == result.union.err);
   }
   // ignore: non_constant_identifier_names
@@ -8258,13 +8196,13 @@ class ICU4XListFormatter implements ffi.Finalizable {
   /// Construct a new ICU4XListFormatter instance for And patterns
   ///
   /// See the [Rust documentation for `try_new_or_with_length`](https://docs.rs/icu/latest/icu/list/struct.ListFormatter.html#method.try_new_or_with_length) for more information.
-  factory ICU4XListFormatter.orWithLength(
-      ICU4XDataProvider provider, ICU4XLocale locale, ICU4XListLength length) {
+  factory ListFormatter.orWithLength(
+      DataProvider provider, Locale locale, ListLength length) {
     final result = _ICU4XListFormatter_create_or_with_length(
         provider._underlying, locale._underlying, length.index);
     return result.isOk
-        ? ICU4XListFormatter._(result.union.ok)
-        : throw ICU4XError.values
+        ? ListFormatter._(result.union.ok)
+        : throw Error.values
             .firstWhere((v) => v._underlying == result.union.err);
   }
   // ignore: non_constant_identifier_names
@@ -8281,13 +8219,13 @@ class ICU4XListFormatter implements ffi.Finalizable {
   /// Construct a new ICU4XListFormatter instance for And patterns
   ///
   /// See the [Rust documentation for `try_new_unit_with_length`](https://docs.rs/icu/latest/icu/list/struct.ListFormatter.html#method.try_new_unit_with_length) for more information.
-  factory ICU4XListFormatter.unitWithLength(
-      ICU4XDataProvider provider, ICU4XLocale locale, ICU4XListLength length) {
+  factory ListFormatter.unitWithLength(
+      DataProvider provider, Locale locale, ListLength length) {
     final result = _ICU4XListFormatter_create_unit_with_length(
         provider._underlying, locale._underlying, length.index);
     return result.isOk
-        ? ICU4XListFormatter._(result.union.ok)
-        : throw ICU4XError.values
+        ? ListFormatter._(result.union.ok)
+        : throw Error.values
             .firstWhere((v) => v._underlying == result.union.err);
   }
   // ignore: non_constant_identifier_names
@@ -8302,13 +8240,13 @@ class ICU4XListFormatter implements ffi.Finalizable {
               ffi.Pointer<ffi.Opaque>, int)>(isLeaf: true);
 
   /// See the [Rust documentation for `format`](https://docs.rs/icu/latest/icu/list/struct.ListFormatter.html#method.format) for more information.
-  String format(ICU4XList list) {
+  String format(List list) {
     final writeable = _Writeable();
     final result = _ICU4XListFormatter_format(
         _underlying, list._underlying, writeable._underlying);
     return result.isOk
         ? writeable.finalize()
-        : throw ICU4XError.values
+        : throw Error.values
             .firstWhere((v) => v._underlying == result.union.err);
   }
 
@@ -8325,7 +8263,7 @@ class ICU4XListFormatter implements ffi.Finalizable {
 }
 
 /// See the [Rust documentation for `ListLength`](https://docs.rs/icu/latest/icu/list/enum.ListLength.html) for more information.
-enum ICU4XListLength {
+enum ListLength {
   wide,
   short,
   narrow;
@@ -8334,10 +8272,10 @@ enum ICU4XListLength {
 /// An ICU4X Locale, capable of representing strings like `"en-US"`.
 ///
 /// See the [Rust documentation for `Locale`](https://docs.rs/icu/latest/icu/locid/struct.Locale.html) for more information.
-class ICU4XLocale implements ffi.Finalizable {
+class Locale implements ffi.Finalizable {
   final ffi.Pointer<ffi.Opaque> _underlying;
 
-  ICU4XLocale._(this._underlying) {
+  Locale._(this._underlying) {
     _finalizer.attach(this, _underlying.cast());
   }
 
@@ -8350,7 +8288,7 @@ class ICU4XLocale implements ffi.Finalizable {
   /// `aa-BB`) use `create_und`, `set_language`, `set_script`, and `set_region`.
   ///
   /// See the [Rust documentation for `try_from_bytes`](https://docs.rs/icu/latest/icu/locid/struct.Locale.html#method.try_from_bytes) for more information.
-  factory ICU4XLocale.fromString(String name) {
+  factory Locale.fromString(String name) {
     final alloc = ffi2.Arena();
     final nameSlice = _SliceFfi2Utf8._fromDart(name, alloc);
 
@@ -8358,8 +8296,8 @@ class ICU4XLocale implements ffi.Finalizable {
         _ICU4XLocale_create_from_string(nameSlice._bytes, nameSlice._length);
     alloc.releaseAll();
     return result.isOk
-        ? ICU4XLocale._(result.union.ok)
-        : throw ICU4XError.values
+        ? Locale._(result.union.ok)
+        : throw Error.values
             .firstWhere((v) => v._underlying == result.union.err);
   }
   // ignore: non_constant_identifier_names
@@ -8373,9 +8311,9 @@ class ICU4XLocale implements ffi.Finalizable {
   /// Construct a default undefined [`ICU4XLocale`] "und".
   ///
   /// See the [Rust documentation for `UND`](https://docs.rs/icu/latest/icu/locid/struct.Locale.html#associatedconstant.UND) for more information.
-  factory ICU4XLocale.und() {
+  factory Locale.und() {
     final result = _ICU4XLocale_create_und();
-    return ICU4XLocale._(result);
+    return Locale._(result);
   }
   // ignore: non_constant_identifier_names
   static final _ICU4XLocale_create_und =
@@ -8386,9 +8324,9 @@ class ICU4XLocale implements ffi.Finalizable {
   /// Clones the [`ICU4XLocale`].
   ///
   /// See the [Rust documentation for `Locale`](https://docs.rs/icu/latest/icu/locid/struct.Locale.html) for more information.
-  ICU4XLocale clone() {
+  Locale clone() {
     final result = _ICU4XLocale_clone(_underlying);
-    return ICU4XLocale._(result);
+    return Locale._(result);
   }
 
   // ignore: non_constant_identifier_names
@@ -8408,7 +8346,7 @@ class ICU4XLocale implements ffi.Finalizable {
     final result = _ICU4XLocale_basename(_underlying, writeable._underlying);
     return result.isOk
         ? writeable.finalize()
-        : throw ICU4XError.values
+        : throw Error.values
             .firstWhere((v) => v._underlying == result.union.err);
   }
 
@@ -8434,7 +8372,7 @@ class ICU4XLocale implements ffi.Finalizable {
     alloc.releaseAll();
     return result.isOk
         ? writeable.finalize()
-        : throw ICU4XError.values
+        : throw Error.values
             .firstWhere((v) => v._underlying == result.union.err);
   }
 
@@ -8462,7 +8400,7 @@ class ICU4XLocale implements ffi.Finalizable {
     final result = _ICU4XLocale_language(_underlying, writeable._underlying);
     return result.isOk
         ? writeable.finalize()
-        : throw ICU4XError.values
+        : throw Error.values
             .firstWhere((v) => v._underlying == result.union.err);
   }
 
@@ -8486,8 +8424,7 @@ class ICU4XLocale implements ffi.Finalizable {
         _underlying, bytesSlice._bytes, bytesSlice._length);
     alloc.releaseAll();
     if (!result.isOk) {
-      throw ICU4XError.values
-          .firstWhere((v) => v._underlying == result.union.err);
+      throw Error.values.firstWhere((v) => v._underlying == result.union.err);
     }
   }
 
@@ -8510,7 +8447,7 @@ class ICU4XLocale implements ffi.Finalizable {
     final result = _ICU4XLocale_region(_underlying, writeable._underlying);
     return result.isOk
         ? writeable.finalize()
-        : throw ICU4XError.values
+        : throw Error.values
             .firstWhere((v) => v._underlying == result.union.err);
   }
 
@@ -8534,8 +8471,7 @@ class ICU4XLocale implements ffi.Finalizable {
         _underlying, bytesSlice._bytes, bytesSlice._length);
     alloc.releaseAll();
     if (!result.isOk) {
-      throw ICU4XError.values
-          .firstWhere((v) => v._underlying == result.union.err);
+      throw Error.values.firstWhere((v) => v._underlying == result.union.err);
     }
   }
 
@@ -8556,7 +8492,7 @@ class ICU4XLocale implements ffi.Finalizable {
     final result = _ICU4XLocale_script(_underlying, writeable._underlying);
     return result.isOk
         ? writeable.finalize()
-        : throw ICU4XError.values
+        : throw Error.values
             .firstWhere((v) => v._underlying == result.union.err);
   }
 
@@ -8580,8 +8516,7 @@ class ICU4XLocale implements ffi.Finalizable {
         _underlying, bytesSlice._bytes, bytesSlice._length);
     alloc.releaseAll();
     if (!result.isOk) {
-      throw ICU4XError.values
-          .firstWhere((v) => v._underlying == result.union.err);
+      throw Error.values.firstWhere((v) => v._underlying == result.union.err);
     }
   }
 
@@ -8609,7 +8544,7 @@ class ICU4XLocale implements ffi.Finalizable {
     alloc.releaseAll();
     return result.isOk
         ? writeable.finalize()
-        : throw ICU4XError.values
+        : throw Error.values
             .firstWhere((v) => v._underlying == result.union.err);
   }
 
@@ -8631,7 +8566,7 @@ class ICU4XLocale implements ffi.Finalizable {
     final result = _ICU4XLocale_to_string(_underlying, writeable._underlying);
     return result.isOk
         ? writeable.finalize()
-        : throw ICU4XError.values
+        : throw Error.values
             .firstWhere((v) => v._underlying == result.union.err);
   }
 
@@ -8665,14 +8600,14 @@ class ICU4XLocale implements ffi.Finalizable {
               int)>(isLeaf: true);
 
   /// See the [Rust documentation for `strict_cmp`](https://docs.rs/icu/latest/icu/locid/struct.Locale.html#method.strict_cmp) for more information.
-  ICU4XOrdering strictCmp(String other) {
+  Ordering strictCmp(String other) {
     final alloc = ffi2.Arena();
     final otherSlice = _SliceFfi2Utf8._fromDart(other, alloc);
 
     final result = _ICU4XLocale_strict_cmp(
         _underlying, otherSlice._bytes, otherSlice._length);
     alloc.releaseAll();
-    return ICU4XOrdering.values.firstWhere((v) => v._underlying == result);
+    return Ordering.values.firstWhere((v) => v._underlying == result);
   }
 
   // ignore: non_constant_identifier_names
@@ -8687,9 +8622,9 @@ class ICU4XLocale implements ffi.Finalizable {
   /// Deprecated
   ///
   /// Use `create_from_string("en").
-  factory ICU4XLocale.en() {
+  factory Locale.en() {
     final result = _ICU4XLocale_create_en();
-    return ICU4XLocale._(result);
+    return Locale._(result);
   }
   // ignore: non_constant_identifier_names
   static final _ICU4XLocale_create_en =
@@ -8700,9 +8635,9 @@ class ICU4XLocale implements ffi.Finalizable {
   /// Deprecated
   ///
   /// Use `create_from_string("bn").
-  factory ICU4XLocale.bn() {
+  factory Locale.bn() {
     final result = _ICU4XLocale_create_bn();
-    return ICU4XLocale._(result);
+    return Locale._(result);
   }
   // ignore: non_constant_identifier_names
   static final _ICU4XLocale_create_bn =
@@ -8714,10 +8649,10 @@ class ICU4XLocale implements ffi.Finalizable {
 /// A locale canonicalizer.
 ///
 /// See the [Rust documentation for `LocaleCanonicalizer`](https://docs.rs/icu/latest/icu/locid_transform/struct.LocaleCanonicalizer.html) for more information.
-class ICU4XLocaleCanonicalizer implements ffi.Finalizable {
+class LocaleCanonicalizer implements ffi.Finalizable {
   final ffi.Pointer<ffi.Opaque> _underlying;
 
-  ICU4XLocaleCanonicalizer._(this._underlying) {
+  LocaleCanonicalizer._(this._underlying) {
     _finalizer.attach(this, _underlying.cast());
   }
 
@@ -8727,11 +8662,11 @@ class ICU4XLocaleCanonicalizer implements ffi.Finalizable {
   /// Create a new [`ICU4XLocaleCanonicalizer`].
   ///
   /// See the [Rust documentation for `new`](https://docs.rs/icu/latest/icu/locid_transform/struct.LocaleCanonicalizer.html#method.new) for more information.
-  factory ICU4XLocaleCanonicalizer(ICU4XDataProvider provider) {
+  factory LocaleCanonicalizer(DataProvider provider) {
     final result = _ICU4XLocaleCanonicalizer_create(provider._underlying);
     return result.isOk
-        ? ICU4XLocaleCanonicalizer._(result.union.ok)
-        : throw ICU4XError.values
+        ? LocaleCanonicalizer._(result.union.ok)
+        : throw Error.values
             .firstWhere((v) => v._underlying == result.union.err);
   }
   // ignore: non_constant_identifier_names
@@ -8745,12 +8680,12 @@ class ICU4XLocaleCanonicalizer implements ffi.Finalizable {
   /// Create a new [`ICU4XLocaleCanonicalizer`] with extended data.
   ///
   /// See the [Rust documentation for `new_with_expander`](https://docs.rs/icu/latest/icu/locid_transform/struct.LocaleCanonicalizer.html#method.new_with_expander) for more information.
-  factory ICU4XLocaleCanonicalizer.extended(ICU4XDataProvider provider) {
+  factory LocaleCanonicalizer.extended(DataProvider provider) {
     final result =
         _ICU4XLocaleCanonicalizer_create_extended(provider._underlying);
     return result.isOk
-        ? ICU4XLocaleCanonicalizer._(result.union.ok)
-        : throw ICU4XError.values
+        ? LocaleCanonicalizer._(result.union.ok)
+        : throw Error.values
             .firstWhere((v) => v._underlying == result.union.err);
   }
   // ignore: non_constant_identifier_names
@@ -8764,10 +8699,10 @@ class ICU4XLocaleCanonicalizer implements ffi.Finalizable {
   /// FFI version of `LocaleCanonicalizer::canonicalize()`.
   ///
   /// See the [Rust documentation for `canonicalize`](https://docs.rs/icu/latest/icu/locid_transform/struct.LocaleCanonicalizer.html#method.canonicalize) for more information.
-  ICU4XTransformResult canonicalize(ICU4XLocale locale) {
+  TransformResult canonicalize(Locale locale) {
     final result =
         _ICU4XLocaleCanonicalizer_canonicalize(_underlying, locale._underlying);
-    return ICU4XTransformResult.values[result];
+    return TransformResult.values[result];
   }
 
   // ignore: non_constant_identifier_names
@@ -8782,17 +8717,17 @@ class ICU4XLocaleCanonicalizer implements ffi.Finalizable {
 }
 
 /// See the [Rust documentation for `Direction`](https://docs.rs/icu/latest/icu/locid_transform/enum.Direction.html) for more information.
-enum ICU4XLocaleDirection {
+enum LocaleDirection {
   leftToRight,
   rightToLeft,
   unknown;
 }
 
 /// See the [Rust documentation for `LocaleDirectionality`](https://docs.rs/icu/latest/icu/locid_transform/struct.LocaleDirectionality.html) for more information.
-class ICU4XLocaleDirectionality implements ffi.Finalizable {
+class LocaleDirectionality implements ffi.Finalizable {
   final ffi.Pointer<ffi.Opaque> _underlying;
 
-  ICU4XLocaleDirectionality._(this._underlying) {
+  LocaleDirectionality._(this._underlying) {
     _finalizer.attach(this, _underlying.cast());
   }
 
@@ -8802,11 +8737,11 @@ class ICU4XLocaleDirectionality implements ffi.Finalizable {
   /// Construct a new ICU4XLocaleDirectionality instance
   ///
   /// See the [Rust documentation for `new`](https://docs.rs/icu/latest/icu/locid_transform/struct.LocaleDirectionality.html#method.new) for more information.
-  factory ICU4XLocaleDirectionality(ICU4XDataProvider provider) {
+  factory LocaleDirectionality(DataProvider provider) {
     final result = _ICU4XLocaleDirectionality_create(provider._underlying);
     return result.isOk
-        ? ICU4XLocaleDirectionality._(result.union.ok)
-        : throw ICU4XError.values
+        ? LocaleDirectionality._(result.union.ok)
+        : throw Error.values
             .firstWhere((v) => v._underlying == result.union.err);
   }
   // ignore: non_constant_identifier_names
@@ -8820,13 +8755,13 @@ class ICU4XLocaleDirectionality implements ffi.Finalizable {
   /// Construct a new ICU4XLocaleDirectionality instance with a custom expander
   ///
   /// See the [Rust documentation for `new_with_expander`](https://docs.rs/icu/latest/icu/locid_transform/struct.LocaleDirectionality.html#method.new_with_expander) for more information.
-  factory ICU4XLocaleDirectionality.withExpander(
-      ICU4XDataProvider provider, ICU4XLocaleExpander expander) {
+  factory LocaleDirectionality.withExpander(
+      DataProvider provider, LocaleExpander expander) {
     final result = _ICU4XLocaleDirectionality_create_with_expander(
         provider._underlying, expander._underlying);
     return result.isOk
-        ? ICU4XLocaleDirectionality._(result.union.ok)
-        : throw ICU4XError.values
+        ? LocaleDirectionality._(result.union.ok)
+        : throw Error.values
             .firstWhere((v) => v._underlying == result.union.err);
   }
   // ignore: non_constant_identifier_names
@@ -8840,10 +8775,10 @@ class ICU4XLocaleDirectionality implements ffi.Finalizable {
               ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
 
   /// See the [Rust documentation for `get`](https://docs.rs/icu/latest/icu/locid_transform/struct.LocaleDirectionality.html#method.get) for more information.
-  ICU4XLocaleDirection get(ICU4XLocale locale) {
+  LocaleDirection get(Locale locale) {
     final result =
         _ICU4XLocaleDirectionality_get(_underlying, locale._underlying);
-    return ICU4XLocaleDirection.values[result];
+    return LocaleDirection.values[result];
   }
 
   // ignore: non_constant_identifier_names
@@ -8856,7 +8791,7 @@ class ICU4XLocaleDirectionality implements ffi.Finalizable {
               ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
 
   /// See the [Rust documentation for `is_left_to_right`](https://docs.rs/icu/latest/icu/locid_transform/struct.LocaleDirectionality.html#method.is_left_to_right) for more information.
-  bool isLeftToRight(ICU4XLocale locale) {
+  bool isLeftToRight(Locale locale) {
     final result = _ICU4XLocaleDirectionality_is_left_to_right(
         _underlying, locale._underlying);
     return result;
@@ -8873,7 +8808,7 @@ class ICU4XLocaleDirectionality implements ffi.Finalizable {
               ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
 
   /// See the [Rust documentation for `is_right_to_left`](https://docs.rs/icu/latest/icu/locid_transform/struct.LocaleDirectionality.html#method.is_right_to_left) for more information.
-  bool isRightToLeft(ICU4XLocale locale) {
+  bool isRightToLeft(Locale locale) {
     final result = _ICU4XLocaleDirectionality_is_right_to_left(
         _underlying, locale._underlying);
     return result;
@@ -8891,10 +8826,10 @@ class ICU4XLocaleDirectionality implements ffi.Finalizable {
 }
 
 /// See the [Rust documentation for `LocaleDisplayNamesFormatter`](https://docs.rs/icu/latest/icu/displaynames/struct.LocaleDisplayNamesFormatter.html) for more information.
-class ICU4XLocaleDisplayNamesFormatter implements ffi.Finalizable {
+class LocaleDisplayNamesFormatter implements ffi.Finalizable {
   final ffi.Pointer<ffi.Opaque> _underlying;
 
-  ICU4XLocaleDisplayNamesFormatter._(this._underlying) {
+  LocaleDisplayNamesFormatter._(this._underlying) {
     _finalizer.attach(this, _underlying.cast());
   }
 
@@ -8904,39 +8839,37 @@ class ICU4XLocaleDisplayNamesFormatter implements ffi.Finalizable {
   /// Creates a new `LocaleDisplayNamesFormatter` from locale data and an options bag.
   ///
   /// See the [Rust documentation for `try_new`](https://docs.rs/icu/latest/icu/displaynames/struct.LocaleDisplayNamesFormatter.html#method.try_new) for more information.
-  factory ICU4XLocaleDisplayNamesFormatter.tryNew(ICU4XDataProvider provider,
-      ICU4XLocale locale, ICU4XDisplayNamesOptionsV1 options) {
+  factory LocaleDisplayNamesFormatter.tryNew(
+      DataProvider provider, Locale locale, DisplayNamesOptionsV1 options) {
     final result = _ICU4XLocaleDisplayNamesFormatter_try_new(
         provider._underlying, locale._underlying, options._underlying);
     return result.isOk
-        ? ICU4XLocaleDisplayNamesFormatter._(result.union.ok)
-        : throw ICU4XError.values
+        ? LocaleDisplayNamesFormatter._(result.union.ok)
+        : throw Error.values
             .firstWhere((v) => v._underlying == result.union.err);
   }
   // ignore: non_constant_identifier_names
   static final _ICU4XLocaleDisplayNamesFormatter_try_new = _capi<
               ffi.NativeFunction<
-                  _ResultOpaqueUint32 Function(
-                      ffi.Pointer<ffi.Opaque>,
-                      ffi.Pointer<ffi.Opaque>,
-                      _ICU4XDisplayNamesOptionsV1Ffi)>>(
+                  _ResultOpaqueUint32 Function(ffi.Pointer<ffi.Opaque>,
+                      ffi.Pointer<ffi.Opaque>, _DisplayNamesOptionsV1Ffi)>>(
           'ICU4XLocaleDisplayNamesFormatter_try_new')
       .asFunction<
           _ResultOpaqueUint32 Function(
               ffi.Pointer<ffi.Opaque>,
               ffi.Pointer<ffi.Opaque>,
-              _ICU4XDisplayNamesOptionsV1Ffi)>(isLeaf: true);
+              _DisplayNamesOptionsV1Ffi)>(isLeaf: true);
 
   /// Returns the locale-specific display name of a locale.
   ///
   /// See the [Rust documentation for `of`](https://docs.rs/icu/latest/icu/displaynames/struct.LocaleDisplayNamesFormatter.html#method.of) for more information.
-  String of(ICU4XLocale locale) {
+  String of(Locale locale) {
     final writeable = _Writeable();
     final result = _ICU4XLocaleDisplayNamesFormatter_of(
         _underlying, locale._underlying, writeable._underlying);
     return result.isOk
         ? writeable.finalize()
-        : throw ICU4XError.values
+        : throw Error.values
             .firstWhere((v) => v._underlying == result.union.err);
   }
 
@@ -8954,10 +8887,10 @@ class ICU4XLocaleDisplayNamesFormatter implements ffi.Finalizable {
 /// A locale expander.
 ///
 /// See the [Rust documentation for `LocaleExpander`](https://docs.rs/icu/latest/icu/locid_transform/struct.LocaleExpander.html) for more information.
-class ICU4XLocaleExpander implements ffi.Finalizable {
+class LocaleExpander implements ffi.Finalizable {
   final ffi.Pointer<ffi.Opaque> _underlying;
 
-  ICU4XLocaleExpander._(this._underlying) {
+  LocaleExpander._(this._underlying) {
     _finalizer.attach(this, _underlying.cast());
   }
 
@@ -8967,11 +8900,11 @@ class ICU4XLocaleExpander implements ffi.Finalizable {
   /// Create a new [`ICU4XLocaleExpander`].
   ///
   /// See the [Rust documentation for `new`](https://docs.rs/icu/latest/icu/locid_transform/struct.LocaleExpander.html#method.new) for more information.
-  factory ICU4XLocaleExpander(ICU4XDataProvider provider) {
+  factory LocaleExpander(DataProvider provider) {
     final result = _ICU4XLocaleExpander_create(provider._underlying);
     return result.isOk
-        ? ICU4XLocaleExpander._(result.union.ok)
-        : throw ICU4XError.values
+        ? LocaleExpander._(result.union.ok)
+        : throw Error.values
             .firstWhere((v) => v._underlying == result.union.err);
   }
   // ignore: non_constant_identifier_names
@@ -8985,11 +8918,11 @@ class ICU4XLocaleExpander implements ffi.Finalizable {
   /// Create a new [`ICU4XLocaleExpander`] with extended data.
   ///
   /// See the [Rust documentation for `new_extended`](https://docs.rs/icu/latest/icu/locid_transform/struct.LocaleExpander.html#method.new_extended) for more information.
-  factory ICU4XLocaleExpander.extended(ICU4XDataProvider provider) {
+  factory LocaleExpander.extended(DataProvider provider) {
     final result = _ICU4XLocaleExpander_create_extended(provider._underlying);
     return result.isOk
-        ? ICU4XLocaleExpander._(result.union.ok)
-        : throw ICU4XError.values
+        ? LocaleExpander._(result.union.ok)
+        : throw Error.values
             .firstWhere((v) => v._underlying == result.union.err);
   }
   // ignore: non_constant_identifier_names
@@ -9003,10 +8936,10 @@ class ICU4XLocaleExpander implements ffi.Finalizable {
   /// FFI version of `LocaleExpander::maximize()`.
   ///
   /// See the [Rust documentation for `maximize`](https://docs.rs/icu/latest/icu/locid_transform/struct.LocaleExpander.html#method.maximize) for more information.
-  ICU4XTransformResult maximize(ICU4XLocale locale) {
+  TransformResult maximize(Locale locale) {
     final result =
         _ICU4XLocaleExpander_maximize(_underlying, locale._underlying);
-    return ICU4XTransformResult.values[result];
+    return TransformResult.values[result];
   }
 
   // ignore: non_constant_identifier_names
@@ -9021,10 +8954,10 @@ class ICU4XLocaleExpander implements ffi.Finalizable {
   /// FFI version of `LocaleExpander::minimize()`.
   ///
   /// See the [Rust documentation for `minimize`](https://docs.rs/icu/latest/icu/locid_transform/struct.LocaleExpander.html#method.minimize) for more information.
-  ICU4XTransformResult minimize(ICU4XLocale locale) {
+  TransformResult minimize(Locale locale) {
     final result =
         _ICU4XLocaleExpander_minimize(_underlying, locale._underlying);
-    return ICU4XTransformResult.values[result];
+    return TransformResult.values[result];
   }
 
   // ignore: non_constant_identifier_names
@@ -9040,7 +8973,7 @@ class ICU4XLocaleExpander implements ffi.Finalizable {
 /// Collection of configurations for the ICU4X fallback algorithm.
 ///
 /// See the [Rust documentation for `LocaleFallbackConfig`](https://docs.rs/icu/latest/icu/locid_transform/fallback/struct.LocaleFallbackConfig.html) for more information.
-class _ICU4XLocaleFallbackConfigFfi extends ffi.Struct {
+class _LocaleFallbackConfigFfi extends ffi.Struct {
   @ffi.Uint32()
   external int priority;
   external _SliceFfi2Utf8 extensionKey;
@@ -9048,22 +8981,22 @@ class _ICU4XLocaleFallbackConfigFfi extends ffi.Struct {
   external int fallbackSupplement;
 }
 
-class ICU4XLocaleFallbackConfig {
-  final _ICU4XLocaleFallbackConfigFfi _underlying;
+class LocaleFallbackConfig {
+  final _LocaleFallbackConfigFfi _underlying;
 
   // ignore: unused_element
-  ICU4XLocaleFallbackConfig._(this._underlying);
+  LocaleFallbackConfig._(this._underlying);
 
-  factory ICU4XLocaleFallbackConfig() {
-    final pointer = ffi2.calloc<_ICU4XLocaleFallbackConfigFfi>();
-    final result = ICU4XLocaleFallbackConfig._(pointer.ref);
+  factory LocaleFallbackConfig() {
+    final pointer = ffi2.calloc<_LocaleFallbackConfigFfi>();
+    final result = LocaleFallbackConfig._(pointer.ref);
     _callocFree.attach(result, pointer.cast());
     return result;
   }
 
-  ICU4XLocaleFallbackPriority get priority =>
-      ICU4XLocaleFallbackPriority.values[_underlying.priority];
-  set priority(ICU4XLocaleFallbackPriority priority) {
+  LocaleFallbackPriority get priority =>
+      LocaleFallbackPriority.values[_underlying.priority];
+  set priority(LocaleFallbackPriority priority) {
     _underlying.priority = priority.index;
   }
 
@@ -9075,15 +9008,15 @@ class ICU4XLocaleFallbackConfig {
     _underlying.extensionKey = extensionKeySlice;
   }
 
-  ICU4XLocaleFallbackSupplement get fallbackSupplement =>
-      ICU4XLocaleFallbackSupplement.values[_underlying.fallbackSupplement];
-  set fallbackSupplement(ICU4XLocaleFallbackSupplement fallbackSupplement) {
+  LocaleFallbackSupplement get fallbackSupplement =>
+      LocaleFallbackSupplement.values[_underlying.fallbackSupplement];
+  set fallbackSupplement(LocaleFallbackSupplement fallbackSupplement) {
     _underlying.fallbackSupplement = fallbackSupplement.index;
   }
 
   @override
   bool operator ==(Object other) =>
-      other is ICU4XLocaleFallbackConfig &&
+      other is LocaleFallbackConfig &&
       other._underlying.priority == _underlying.priority &&
       other._underlying.extensionKey == _underlying.extensionKey &&
       other._underlying.fallbackSupplement == _underlying.fallbackSupplement;
@@ -9099,10 +9032,10 @@ class ICU4XLocaleFallbackConfig {
 /// An iterator over the locale under fallback.
 ///
 /// See the [Rust documentation for `LocaleFallbackIterator`](https://docs.rs/icu/latest/icu/locid_transform/fallback/struct.LocaleFallbackIterator.html) for more information.
-class ICU4XLocaleFallbackIterator implements ffi.Finalizable {
+class LocaleFallbackIterator implements ffi.Finalizable {
   final ffi.Pointer<ffi.Opaque> _underlying;
 
-  ICU4XLocaleFallbackIterator._(this._underlying) {
+  LocaleFallbackIterator._(this._underlying) {
     _finalizer.attach(this, _underlying.cast());
   }
 
@@ -9112,9 +9045,9 @@ class ICU4XLocaleFallbackIterator implements ffi.Finalizable {
   /// Gets a snapshot of the current state of the locale.
   ///
   /// See the [Rust documentation for `get`](https://docs.rs/icu/latest/icu/locid_transform/fallback/struct.LocaleFallbackIterator.html#method.get) for more information.
-  ICU4XLocale get get {
+  Locale get get {
     final result = _ICU4XLocaleFallbackIterator_get(_underlying);
-    return ICU4XLocale._(result);
+    return Locale._(result);
   }
 
   // ignore: non_constant_identifier_names
@@ -9142,7 +9075,7 @@ class ICU4XLocaleFallbackIterator implements ffi.Finalizable {
 /// Priority mode for the ICU4X fallback algorithm.
 ///
 /// See the [Rust documentation for `LocaleFallbackPriority`](https://docs.rs/icu/latest/icu/locid_transform/fallback/enum.LocaleFallbackPriority.html) for more information.
-enum ICU4XLocaleFallbackPriority {
+enum LocaleFallbackPriority {
   language,
   region,
   collation;
@@ -9151,7 +9084,7 @@ enum ICU4XLocaleFallbackPriority {
 /// What additional data is required to load when performing fallback.
 ///
 /// See the [Rust documentation for `LocaleFallbackSupplement`](https://docs.rs/icu/latest/icu/locid_transform/fallback/enum.LocaleFallbackSupplement.html) for more information.
-enum ICU4XLocaleFallbackSupplement {
+enum LocaleFallbackSupplement {
   none,
   collation;
 }
@@ -9159,10 +9092,10 @@ enum ICU4XLocaleFallbackSupplement {
 /// An object that runs the ICU4X locale fallback algorithm.
 ///
 /// See the [Rust documentation for `LocaleFallbacker`](https://docs.rs/icu/latest/icu/locid_transform/fallback/struct.LocaleFallbacker.html) for more information.
-class ICU4XLocaleFallbacker implements ffi.Finalizable {
+class LocaleFallbacker implements ffi.Finalizable {
   final ffi.Pointer<ffi.Opaque> _underlying;
 
-  ICU4XLocaleFallbacker._(this._underlying) {
+  LocaleFallbacker._(this._underlying) {
     _finalizer.attach(this, _underlying.cast());
   }
 
@@ -9172,11 +9105,11 @@ class ICU4XLocaleFallbacker implements ffi.Finalizable {
   /// Creates a new `ICU4XLocaleFallbacker` from a data provider.
   ///
   /// See the [Rust documentation for `new`](https://docs.rs/icu/latest/icu/locid_transform/fallback/struct.LocaleFallbacker.html#method.new) for more information.
-  factory ICU4XLocaleFallbacker(ICU4XDataProvider provider) {
+  factory LocaleFallbacker(DataProvider provider) {
     final result = _ICU4XLocaleFallbacker_create(provider._underlying);
     return result.isOk
-        ? ICU4XLocaleFallbacker._(result.union.ok)
-        : throw ICU4XError.values
+        ? LocaleFallbacker._(result.union.ok)
+        : throw Error.values
             .firstWhere((v) => v._underlying == result.union.err);
   }
   // ignore: non_constant_identifier_names
@@ -9190,9 +9123,9 @@ class ICU4XLocaleFallbacker implements ffi.Finalizable {
   /// Creates a new `ICU4XLocaleFallbacker` without data for limited functionality.
   ///
   /// See the [Rust documentation for `new_without_data`](https://docs.rs/icu/latest/icu/locid_transform/fallback/struct.LocaleFallbacker.html#method.new_without_data) for more information.
-  factory ICU4XLocaleFallbacker.withoutData() {
+  factory LocaleFallbacker.withoutData() {
     final result = _ICU4XLocaleFallbacker_create_without_data();
-    return ICU4XLocaleFallbacker._(result);
+    return LocaleFallbacker._(result);
   }
   // ignore: non_constant_identifier_names
   static final _ICU4XLocaleFallbacker_create_without_data =
@@ -9203,12 +9136,12 @@ class ICU4XLocaleFallbacker implements ffi.Finalizable {
   /// Associates this `ICU4XLocaleFallbacker` with configuration options.
   ///
   /// See the [Rust documentation for `for_config`](https://docs.rs/icu/latest/icu/locid_transform/fallback/struct.LocaleFallbacker.html#method.for_config) for more information.
-  ICU4XLocaleFallbackerWithConfig forConfig(ICU4XLocaleFallbackConfig config) {
+  LocaleFallbackerWithConfig forConfig(LocaleFallbackConfig config) {
     final result =
         _ICU4XLocaleFallbacker_for_config(_underlying, config._underlying);
     return result.isOk
-        ? ICU4XLocaleFallbackerWithConfig._(result.union.ok)
-        : throw ICU4XError.values
+        ? LocaleFallbackerWithConfig._(result.union.ok)
+        : throw Error.values
             .firstWhere((v) => v._underlying == result.union.err);
   }
 
@@ -9216,11 +9149,11 @@ class ICU4XLocaleFallbacker implements ffi.Finalizable {
   static final _ICU4XLocaleFallbacker_for_config = _capi<
               ffi.NativeFunction<
                   _ResultOpaqueUint32 Function(
-                      ffi.Pointer<ffi.Opaque>, _ICU4XLocaleFallbackConfigFfi)>>(
+                      ffi.Pointer<ffi.Opaque>, _LocaleFallbackConfigFfi)>>(
           'ICU4XLocaleFallbacker_for_config')
       .asFunction<
-          _ResultOpaqueUint32 Function(ffi.Pointer<ffi.Opaque>,
-              _ICU4XLocaleFallbackConfigFfi)>(isLeaf: true);
+          _ResultOpaqueUint32 Function(
+              ffi.Pointer<ffi.Opaque>, _LocaleFallbackConfigFfi)>(isLeaf: true);
 }
 
 /// An object that runs the ICU4X locale fallback algorithm with specific configurations.
@@ -9228,10 +9161,10 @@ class ICU4XLocaleFallbacker implements ffi.Finalizable {
 /// See the [Rust documentation for `LocaleFallbacker`](https://docs.rs/icu/latest/icu/locid_transform/fallback/struct.LocaleFallbacker.html) for more information.
 ///
 /// See the [Rust documentation for `LocaleFallbackerWithConfig`](https://docs.rs/icu/latest/icu/locid_transform/fallback/struct.LocaleFallbackerWithConfig.html) for more information.
-class ICU4XLocaleFallbackerWithConfig implements ffi.Finalizable {
+class LocaleFallbackerWithConfig implements ffi.Finalizable {
   final ffi.Pointer<ffi.Opaque> _underlying;
 
-  ICU4XLocaleFallbackerWithConfig._(this._underlying) {
+  LocaleFallbackerWithConfig._(this._underlying) {
     _finalizer.attach(this, _underlying.cast());
   }
 
@@ -9241,10 +9174,10 @@ class ICU4XLocaleFallbackerWithConfig implements ffi.Finalizable {
   /// Creates an iterator from a locale with each step of fallback.
   ///
   /// See the [Rust documentation for `fallback_for`](https://docs.rs/icu/latest/icu/locid_transform/fallback/struct.LocaleFallbacker.html#method.fallback_for) for more information.
-  ICU4XLocaleFallbackIterator fallbackForLocale(ICU4XLocale locale) {
+  LocaleFallbackIterator fallbackForLocale(Locale locale) {
     final result = _ICU4XLocaleFallbackerWithConfig_fallback_for_locale(
         _underlying, locale._underlying);
-    return ICU4XLocaleFallbackIterator._(result);
+    return LocaleFallbackIterator._(result);
   }
 
   // ignore: non_constant_identifier_names
@@ -9259,10 +9192,10 @@ class ICU4XLocaleFallbackerWithConfig implements ffi.Finalizable {
 }
 
 /// An object allowing control over the logging used
-class ICU4XLogger implements ffi.Finalizable {
+class Logger implements ffi.Finalizable {
   final ffi.Pointer<ffi.Opaque> _underlying;
 
-  ICU4XLogger._(this._underlying) {
+  Logger._(this._underlying) {
     _finalizer.attach(this, _underlying.cast());
   }
 
@@ -9304,10 +9237,10 @@ class ICU4XLogger implements ffi.Finalizable {
 /// [`ICU4XCustomTimeZone`]: crate::timezone::ffi::ICU4XCustomTimeZone
 ///
 /// See the [Rust documentation for `MetazoneCalculator`](https://docs.rs/icu/latest/icu/timezone/struct.MetazoneCalculator.html) for more information.
-class ICU4XMetazoneCalculator implements ffi.Finalizable {
+class MetazoneCalculator implements ffi.Finalizable {
   final ffi.Pointer<ffi.Opaque> _underlying;
 
-  ICU4XMetazoneCalculator._(this._underlying) {
+  MetazoneCalculator._(this._underlying) {
     _finalizer.attach(this, _underlying.cast());
   }
 
@@ -9315,11 +9248,11 @@ class ICU4XMetazoneCalculator implements ffi.Finalizable {
       ffi.NativeFinalizer(_capi('ICU4XMetazoneCalculator_destroy'));
 
   /// See the [Rust documentation for `new`](https://docs.rs/icu/latest/icu/timezone/struct.MetazoneCalculator.html#method.new) for more information.
-  factory ICU4XMetazoneCalculator(ICU4XDataProvider provider) {
+  factory MetazoneCalculator(DataProvider provider) {
     final result = _ICU4XMetazoneCalculator_create(provider._underlying);
     return result.isOk
-        ? ICU4XMetazoneCalculator._(result.union.ok)
-        : throw ICU4XError.values
+        ? MetazoneCalculator._(result.union.ok)
+        : throw Error.values
             .firstWhere((v) => v._underlying == result.union.err);
   }
   // ignore: non_constant_identifier_names
@@ -9332,7 +9265,7 @@ class ICU4XMetazoneCalculator implements ffi.Finalizable {
 }
 
 /// See the [Rust documentation for `Ordering`](https://docs.rs/core/latest/core/cmp/enum.Ordering.html) for more information.
-enum ICU4XOrdering {
+enum Ordering {
   less,
   equal,
   greater;
@@ -9350,7 +9283,7 @@ enum ICU4XOrdering {
 }
 
 /// FFI version of `PluralRules::categories()` data.
-class _ICU4XPluralCategoriesFfi extends ffi.Struct {
+class _PluralCategoriesFfi extends ffi.Struct {
   @ffi.Bool()
   external bool zero;
   @ffi.Bool()
@@ -9365,15 +9298,15 @@ class _ICU4XPluralCategoriesFfi extends ffi.Struct {
   external bool other;
 }
 
-class ICU4XPluralCategories {
-  final _ICU4XPluralCategoriesFfi _underlying;
+class PluralCategories {
+  final _PluralCategoriesFfi _underlying;
 
   // ignore: unused_element
-  ICU4XPluralCategories._(this._underlying);
+  PluralCategories._(this._underlying);
 
-  factory ICU4XPluralCategories() {
-    final pointer = ffi2.calloc<_ICU4XPluralCategoriesFfi>();
-    final result = ICU4XPluralCategories._(pointer.ref);
+  factory PluralCategories() {
+    final pointer = ffi2.calloc<_PluralCategoriesFfi>();
+    final result = PluralCategories._(pointer.ref);
     _callocFree.attach(result, pointer.cast());
     return result;
   }
@@ -9410,7 +9343,7 @@ class ICU4XPluralCategories {
 
   @override
   bool operator ==(Object other) =>
-      other is ICU4XPluralCategories &&
+      other is PluralCategories &&
       other._underlying.zero == _underlying.zero &&
       other._underlying.one == _underlying.one &&
       other._underlying.two == _underlying.two &&
@@ -9432,7 +9365,7 @@ class ICU4XPluralCategories {
 /// FFI version of `PluralCategory`.
 ///
 /// See the [Rust documentation for `PluralCategory`](https://docs.rs/icu/latest/icu/plurals/enum.PluralCategory.html) for more information.
-enum ICU4XPluralCategory {
+enum PluralCategory {
   zero,
   one,
   two,
@@ -9446,7 +9379,7 @@ enum ICU4XPluralCategory {
   /// See the [Rust documentation for `get_for_cldr_string`](https://docs.rs/icu/latest/icu/plurals/enum.PluralCategory.html#method.get_for_cldr_string) for more information.
   ///
   /// See the [Rust documentation for `get_for_cldr_bytes`](https://docs.rs/icu/latest/icu/plurals/enum.PluralCategory.html#method.get_for_cldr_bytes) for more information.
-  factory ICU4XPluralCategory.getForCldrString(String s) {
+  factory PluralCategory.getForCldrString(String s) {
     final alloc = ffi2.Arena();
     final sSlice = _SliceFfi2Utf8._fromDart(s, alloc);
 
@@ -9454,7 +9387,7 @@ enum ICU4XPluralCategory {
         _ICU4XPluralCategory_get_for_cldr_string(sSlice._bytes, sSlice._length);
     alloc.releaseAll();
     return result.isOk
-        ? ICU4XPluralCategory.values[result.union.ok]
+        ? PluralCategory.values[result.union.ok]
         : throw VoidError();
   }
   // ignore: non_constant_identifier_names
@@ -9469,10 +9402,10 @@ enum ICU4XPluralCategory {
 /// FFI version of `PluralOperands`.
 ///
 /// See the [Rust documentation for `PluralOperands`](https://docs.rs/icu/latest/icu/plurals/struct.PluralOperands.html) for more information.
-class ICU4XPluralOperands implements ffi.Finalizable {
+class PluralOperands implements ffi.Finalizable {
   final ffi.Pointer<ffi.Opaque> _underlying;
 
-  ICU4XPluralOperands._(this._underlying) {
+  PluralOperands._(this._underlying) {
     _finalizer.attach(this, _underlying.cast());
   }
 
@@ -9482,7 +9415,7 @@ class ICU4XPluralOperands implements ffi.Finalizable {
   /// Construct for a given string representing a number
   ///
   /// See the [Rust documentation for `from_str`](https://docs.rs/icu/latest/icu/plurals/struct.PluralOperands.html#method.from_str) for more information.
-  factory ICU4XPluralOperands.fromString(String s) {
+  factory PluralOperands.fromString(String s) {
     final alloc = ffi2.Arena();
     final sSlice = _SliceFfi2Utf8._fromDart(s, alloc);
 
@@ -9490,8 +9423,8 @@ class ICU4XPluralOperands implements ffi.Finalizable {
         _ICU4XPluralOperands_create_from_string(sSlice._bytes, sSlice._length);
     alloc.releaseAll();
     return result.isOk
-        ? ICU4XPluralOperands._(result.union.ok)
-        : throw ICU4XError.values
+        ? PluralOperands._(result.union.ok)
+        : throw Error.values
             .firstWhere((v) => v._underlying == result.union.err);
   }
   // ignore: non_constant_identifier_names
@@ -9506,10 +9439,10 @@ class ICU4XPluralOperands implements ffi.Finalizable {
 /// FFI version of `PluralRules`.
 ///
 /// See the [Rust documentation for `PluralRules`](https://docs.rs/icu/latest/icu/plurals/struct.PluralRules.html) for more information.
-class ICU4XPluralRules implements ffi.Finalizable {
+class PluralRules implements ffi.Finalizable {
   final ffi.Pointer<ffi.Opaque> _underlying;
 
-  ICU4XPluralRules._(this._underlying) {
+  PluralRules._(this._underlying) {
     _finalizer.attach(this, _underlying.cast());
   }
 
@@ -9519,13 +9452,12 @@ class ICU4XPluralRules implements ffi.Finalizable {
   /// Construct an [`ICU4XPluralRules`] for the given locale, for cardinal numbers
   ///
   /// See the [Rust documentation for `try_new_cardinal`](https://docs.rs/icu/latest/icu/plurals/struct.PluralRules.html#method.try_new_cardinal) for more information.
-  factory ICU4XPluralRules.cardinal(
-      ICU4XDataProvider provider, ICU4XLocale locale) {
+  factory PluralRules.cardinal(DataProvider provider, Locale locale) {
     final result = _ICU4XPluralRules_create_cardinal(
         provider._underlying, locale._underlying);
     return result.isOk
-        ? ICU4XPluralRules._(result.union.ok)
-        : throw ICU4XError.values
+        ? PluralRules._(result.union.ok)
+        : throw Error.values
             .firstWhere((v) => v._underlying == result.union.err);
   }
   // ignore: non_constant_identifier_names
@@ -9540,13 +9472,12 @@ class ICU4XPluralRules implements ffi.Finalizable {
   /// Construct an [`ICU4XPluralRules`] for the given locale, for ordinal numbers
   ///
   /// See the [Rust documentation for `try_new_ordinal`](https://docs.rs/icu/latest/icu/plurals/struct.PluralRules.html#method.try_new_ordinal) for more information.
-  factory ICU4XPluralRules.ordinal(
-      ICU4XDataProvider provider, ICU4XLocale locale) {
+  factory PluralRules.ordinal(DataProvider provider, Locale locale) {
     final result = _ICU4XPluralRules_create_ordinal(
         provider._underlying, locale._underlying);
     return result.isOk
-        ? ICU4XPluralRules._(result.union.ok)
-        : throw ICU4XError.values
+        ? PluralRules._(result.union.ok)
+        : throw Error.values
             .firstWhere((v) => v._underlying == result.union.err);
   }
   // ignore: non_constant_identifier_names
@@ -9561,9 +9492,9 @@ class ICU4XPluralRules implements ffi.Finalizable {
   /// Get the category for a given number represented as operands
   ///
   /// See the [Rust documentation for `category_for`](https://docs.rs/icu/latest/icu/plurals/struct.PluralRules.html#method.category_for) for more information.
-  ICU4XPluralCategory categoryFor(ICU4XPluralOperands op) {
+  PluralCategory categoryFor(PluralOperands op) {
     final result = _ICU4XPluralRules_category_for(_underlying, op._underlying);
-    return ICU4XPluralCategory.values[result];
+    return PluralCategory.values[result];
   }
 
   // ignore: non_constant_identifier_names
@@ -9578,27 +9509,27 @@ class ICU4XPluralRules implements ffi.Finalizable {
   /// Get all of the categories needed in the current locale
   ///
   /// See the [Rust documentation for `categories`](https://docs.rs/icu/latest/icu/plurals/struct.PluralRules.html#method.categories) for more information.
-  ICU4XPluralCategories get categories {
+  PluralCategories get categories {
     final result = _ICU4XPluralRules_categories(_underlying);
-    return ICU4XPluralCategories._(result);
+    return PluralCategories._(result);
   }
 
   // ignore: non_constant_identifier_names
   static final _ICU4XPluralRules_categories = _capi<
           ffi.NativeFunction<
-              _ICU4XPluralCategoriesFfi Function(
+              _PluralCategoriesFfi Function(
                   ffi.Pointer<ffi.Opaque>)>>('ICU4XPluralRules_categories')
-      .asFunction<_ICU4XPluralCategoriesFfi Function(ffi.Pointer<ffi.Opaque>)>(
+      .asFunction<_PluralCategoriesFfi Function(ffi.Pointer<ffi.Opaque>)>(
           isLeaf: true);
 }
 
 /// FFI version of `PluralRulesWithRanges`.
 ///
 /// See the [Rust documentation for `PluralRulesWithRanges`](https://docs.rs/icu/latest/icu/plurals/struct.PluralRulesWithRanges.html) for more information.
-class ICU4XPluralRulesWithRanges implements ffi.Finalizable {
+class PluralRulesWithRanges implements ffi.Finalizable {
   final ffi.Pointer<ffi.Opaque> _underlying;
 
-  ICU4XPluralRulesWithRanges._(this._underlying) {
+  PluralRulesWithRanges._(this._underlying) {
     _finalizer.attach(this, _underlying.cast());
   }
 
@@ -9608,13 +9539,12 @@ class ICU4XPluralRulesWithRanges implements ffi.Finalizable {
   /// Construct an [`ICU4XPluralRulesWithRanges`] for the given locale, for cardinal numbers
   ///
   /// See the [Rust documentation for `try_new_cardinal`](https://docs.rs/icu/latest/icu/plurals/struct.PluralRulesWithRanges.html#method.try_new_cardinal) for more information.
-  factory ICU4XPluralRulesWithRanges.cardinal(
-      ICU4XDataProvider provider, ICU4XLocale locale) {
+  factory PluralRulesWithRanges.cardinal(DataProvider provider, Locale locale) {
     final result = _ICU4XPluralRulesWithRanges_create_cardinal(
         provider._underlying, locale._underlying);
     return result.isOk
-        ? ICU4XPluralRulesWithRanges._(result.union.ok)
-        : throw ICU4XError.values
+        ? PluralRulesWithRanges._(result.union.ok)
+        : throw Error.values
             .firstWhere((v) => v._underlying == result.union.err);
   }
   // ignore: non_constant_identifier_names
@@ -9630,13 +9560,12 @@ class ICU4XPluralRulesWithRanges implements ffi.Finalizable {
   /// Construct an [`ICU4XPluralRulesWithRanges`] for the given locale, for ordinal numbers
   ///
   /// See the [Rust documentation for `try_new_ordinal`](https://docs.rs/icu/latest/icu/plurals/struct.PluralRulesWithRanges.html#method.try_new_ordinal) for more information.
-  factory ICU4XPluralRulesWithRanges.ordinal(
-      ICU4XDataProvider provider, ICU4XLocale locale) {
+  factory PluralRulesWithRanges.ordinal(DataProvider provider, Locale locale) {
     final result = _ICU4XPluralRulesWithRanges_create_ordinal(
         provider._underlying, locale._underlying);
     return result.isOk
-        ? ICU4XPluralRulesWithRanges._(result.union.ok)
-        : throw ICU4XError.values
+        ? PluralRulesWithRanges._(result.union.ok)
+        : throw Error.values
             .firstWhere((v) => v._underlying == result.union.err);
   }
   // ignore: non_constant_identifier_names
@@ -9652,10 +9581,10 @@ class ICU4XPluralRulesWithRanges implements ffi.Finalizable {
   /// Get the category for a given number represented as operands
   ///
   /// See the [Rust documentation for `category_for`](https://docs.rs/icu/latest/icu/plurals/struct.PluralRulesWithRanges.html#method.category_for) for more information.
-  ICU4XPluralCategory categoryFor(ICU4XPluralOperands op) {
+  PluralCategory categoryFor(PluralOperands op) {
     final result =
         _ICU4XPluralRulesWithRanges_category_for(_underlying, op._underlying);
-    return ICU4XPluralCategory.values[result];
+    return PluralCategory.values[result];
   }
 
   // ignore: non_constant_identifier_names
@@ -9671,27 +9600,26 @@ class ICU4XPluralRulesWithRanges implements ffi.Finalizable {
   /// Get all of the categories needed in the current locale
   ///
   /// See the [Rust documentation for `categories`](https://docs.rs/icu/latest/icu/plurals/struct.PluralRulesWithRanges.html#method.categories) for more information.
-  ICU4XPluralCategories get categories {
+  PluralCategories get categories {
     final result = _ICU4XPluralRulesWithRanges_categories(_underlying);
-    return ICU4XPluralCategories._(result);
+    return PluralCategories._(result);
   }
 
   // ignore: non_constant_identifier_names
   static final _ICU4XPluralRulesWithRanges_categories = _capi<
               ffi.NativeFunction<
-                  _ICU4XPluralCategoriesFfi Function(ffi.Pointer<ffi.Opaque>)>>(
+                  _PluralCategoriesFfi Function(ffi.Pointer<ffi.Opaque>)>>(
           'ICU4XPluralRulesWithRanges_categories')
-      .asFunction<_ICU4XPluralCategoriesFfi Function(ffi.Pointer<ffi.Opaque>)>(
+      .asFunction<_PluralCategoriesFfi Function(ffi.Pointer<ffi.Opaque>)>(
           isLeaf: true);
 
   /// Get the appropriate category for a numeric range.
   ///
   /// See the [Rust documentation for `category_for_range`](https://docs.rs/icu/latest/icu/plurals/struct.PluralRulesWithRanges.html#method.category_for_range) for more information.
-  ICU4XPluralCategory categoryForRange(
-      ICU4XPluralOperands start, ICU4XPluralOperands end) {
+  PluralCategory categoryForRange(PluralOperands start, PluralOperands end) {
     final result = _ICU4XPluralRulesWithRanges_category_for_range(
         _underlying, start._underlying, end._underlying);
-    return ICU4XPluralCategory.values[result];
+    return PluralCategory.values[result];
   }
 
   // ignore: non_constant_identifier_names
@@ -9707,11 +9635,10 @@ class ICU4XPluralRulesWithRanges implements ffi.Finalizable {
   /// Get the appropriate category for a numeric range from the categories of its endpoints.
   ///
   /// See the [Rust documentation for `resolve_range`](https://docs.rs/icu/latest/icu/plurals/struct.PluralRulesWithRanges.html#method.resolve_range) for more information.
-  ICU4XPluralCategory resolveRange(
-      ICU4XPluralCategory start, ICU4XPluralCategory end) {
+  PluralCategory resolveRange(PluralCategory start, PluralCategory end) {
     final result = _ICU4XPluralRulesWithRanges_resolve_range(
         _underlying, start.index, end.index);
-    return ICU4XPluralCategory.values[result];
+    return PluralCategory.values[result];
   }
 
   // ignore: non_constant_identifier_names
@@ -9728,10 +9655,10 @@ class ICU4XPluralRulesWithRanges implements ffi.Finalizable {
 /// See the [Rust documentation for `PropertyValueNameToEnumMapper`](https://docs.rs/icu/latest/icu/properties/names/struct.PropertyValueNameToEnumMapper.html) for more information.
 ///
 /// See the [Rust documentation for `PropertyValueNameToEnumMapperBorrowed`](https://docs.rs/icu/latest/icu/properties/names/struct.PropertyValueNameToEnumMapperBorrowed.html) for more information.
-class ICU4XPropertyValueNameToEnumMapper implements ffi.Finalizable {
+class PropertyValueNameToEnumMapper implements ffi.Finalizable {
   final ffi.Pointer<ffi.Opaque> _underlying;
 
-  ICU4XPropertyValueNameToEnumMapper._(this._underlying) {
+  PropertyValueNameToEnumMapper._(this._underlying) {
     _finalizer.attach(this, _underlying.cast());
   }
 
@@ -9791,13 +9718,13 @@ class ICU4XPropertyValueNameToEnumMapper implements ffi.Finalizable {
               int)>(isLeaf: true);
 
   /// See the [Rust documentation for `get_name_to_enum_mapper`](https://docs.rs/icu/latest/icu/properties/struct.GeneralCategory.html#method.get_name_to_enum_mapper) for more information.
-  factory ICU4XPropertyValueNameToEnumMapper.loadGeneralCategory(
-      ICU4XDataProvider provider) {
+  factory PropertyValueNameToEnumMapper.loadGeneralCategory(
+      DataProvider provider) {
     final result = _ICU4XPropertyValueNameToEnumMapper_load_general_category(
         provider._underlying);
     return result.isOk
-        ? ICU4XPropertyValueNameToEnumMapper._(result.union.ok)
-        : throw ICU4XError.values
+        ? PropertyValueNameToEnumMapper._(result.union.ok)
+        : throw Error.values
             .firstWhere((v) => v._underlying == result.union.err);
   }
   // ignore: non_constant_identifier_names
@@ -9810,13 +9737,12 @@ class ICU4XPropertyValueNameToEnumMapper implements ffi.Finalizable {
               isLeaf: true);
 
   /// See the [Rust documentation for `name_to_enum_mapper`](https://docs.rs/icu/latest/icu/properties/struct.BidiClass.html#method.name_to_enum_mapper) for more information.
-  factory ICU4XPropertyValueNameToEnumMapper.loadBidiClass(
-      ICU4XDataProvider provider) {
+  factory PropertyValueNameToEnumMapper.loadBidiClass(DataProvider provider) {
     final result = _ICU4XPropertyValueNameToEnumMapper_load_bidi_class(
         provider._underlying);
     return result.isOk
-        ? ICU4XPropertyValueNameToEnumMapper._(result.union.ok)
-        : throw ICU4XError.values
+        ? PropertyValueNameToEnumMapper._(result.union.ok)
+        : throw Error.values
             .firstWhere((v) => v._underlying == result.union.err);
   }
   // ignore: non_constant_identifier_names
@@ -9828,13 +9754,13 @@ class ICU4XPropertyValueNameToEnumMapper implements ffi.Finalizable {
           isLeaf: true);
 
   /// See the [Rust documentation for `name_to_enum_mapper`](https://docs.rs/icu/latest/icu/properties/struct.EastAsianWidth.html#method.name_to_enum_mapper) for more information.
-  factory ICU4XPropertyValueNameToEnumMapper.loadEastAsianWidth(
-      ICU4XDataProvider provider) {
+  factory PropertyValueNameToEnumMapper.loadEastAsianWidth(
+      DataProvider provider) {
     final result = _ICU4XPropertyValueNameToEnumMapper_load_east_asian_width(
         provider._underlying);
     return result.isOk
-        ? ICU4XPropertyValueNameToEnumMapper._(result.union.ok)
-        : throw ICU4XError.values
+        ? PropertyValueNameToEnumMapper._(result.union.ok)
+        : throw Error.values
             .firstWhere((v) => v._underlying == result.union.err);
   }
   // ignore: non_constant_identifier_names
@@ -9847,14 +9773,14 @@ class ICU4XPropertyValueNameToEnumMapper implements ffi.Finalizable {
               isLeaf: true);
 
   /// See the [Rust documentation for `name_to_enum_mapper`](https://docs.rs/icu/latest/icu/properties/struct.IndicSyllabicCategory.html#method.name_to_enum_mapper) for more information.
-  factory ICU4XPropertyValueNameToEnumMapper.loadIndicSyllabicCategory(
-      ICU4XDataProvider provider) {
+  factory PropertyValueNameToEnumMapper.loadIndicSyllabicCategory(
+      DataProvider provider) {
     final result =
         _ICU4XPropertyValueNameToEnumMapper_load_indic_syllabic_category(
             provider._underlying);
     return result.isOk
-        ? ICU4XPropertyValueNameToEnumMapper._(result.union.ok)
-        : throw ICU4XError.values
+        ? PropertyValueNameToEnumMapper._(result.union.ok)
+        : throw Error.values
             .firstWhere((v) => v._underlying == result.union.err);
   }
   // ignore: non_constant_identifier_names
@@ -9867,13 +9793,12 @@ class ICU4XPropertyValueNameToEnumMapper implements ffi.Finalizable {
               isLeaf: true);
 
   /// See the [Rust documentation for `name_to_enum_mapper`](https://docs.rs/icu/latest/icu/properties/struct.LineBreak.html#method.name_to_enum_mapper) for more information.
-  factory ICU4XPropertyValueNameToEnumMapper.loadLineBreak(
-      ICU4XDataProvider provider) {
+  factory PropertyValueNameToEnumMapper.loadLineBreak(DataProvider provider) {
     final result = _ICU4XPropertyValueNameToEnumMapper_load_line_break(
         provider._underlying);
     return result.isOk
-        ? ICU4XPropertyValueNameToEnumMapper._(result.union.ok)
-        : throw ICU4XError.values
+        ? PropertyValueNameToEnumMapper._(result.union.ok)
+        : throw Error.values
             .firstWhere((v) => v._underlying == result.union.err);
   }
   // ignore: non_constant_identifier_names
@@ -9885,14 +9810,14 @@ class ICU4XPropertyValueNameToEnumMapper implements ffi.Finalizable {
           isLeaf: true);
 
   /// See the [Rust documentation for `get_name_to_enum_mapper`](https://docs.rs/icu/latest/icu/properties/struct.GraphemeClusterBreak.html#method.get_name_to_enum_mapper) for more information.
-  factory ICU4XPropertyValueNameToEnumMapper.loadGraphemeClusterBreak(
-      ICU4XDataProvider provider) {
+  factory PropertyValueNameToEnumMapper.loadGraphemeClusterBreak(
+      DataProvider provider) {
     final result =
         _ICU4XPropertyValueNameToEnumMapper_load_grapheme_cluster_break(
             provider._underlying);
     return result.isOk
-        ? ICU4XPropertyValueNameToEnumMapper._(result.union.ok)
-        : throw ICU4XError.values
+        ? PropertyValueNameToEnumMapper._(result.union.ok)
+        : throw Error.values
             .firstWhere((v) => v._underlying == result.union.err);
   }
   // ignore: non_constant_identifier_names
@@ -9905,13 +9830,12 @@ class ICU4XPropertyValueNameToEnumMapper implements ffi.Finalizable {
               isLeaf: true);
 
   /// See the [Rust documentation for `name_to_enum_mapper`](https://docs.rs/icu/latest/icu/properties/struct.WordBreak.html#method.name_to_enum_mapper) for more information.
-  factory ICU4XPropertyValueNameToEnumMapper.loadWordBreak(
-      ICU4XDataProvider provider) {
+  factory PropertyValueNameToEnumMapper.loadWordBreak(DataProvider provider) {
     final result = _ICU4XPropertyValueNameToEnumMapper_load_word_break(
         provider._underlying);
     return result.isOk
-        ? ICU4XPropertyValueNameToEnumMapper._(result.union.ok)
-        : throw ICU4XError.values
+        ? PropertyValueNameToEnumMapper._(result.union.ok)
+        : throw Error.values
             .firstWhere((v) => v._underlying == result.union.err);
   }
   // ignore: non_constant_identifier_names
@@ -9923,13 +9847,13 @@ class ICU4XPropertyValueNameToEnumMapper implements ffi.Finalizable {
           isLeaf: true);
 
   /// See the [Rust documentation for `name_to_enum_mapper`](https://docs.rs/icu/latest/icu/properties/struct.SentenceBreak.html#method.name_to_enum_mapper) for more information.
-  factory ICU4XPropertyValueNameToEnumMapper.loadSentenceBreak(
-      ICU4XDataProvider provider) {
+  factory PropertyValueNameToEnumMapper.loadSentenceBreak(
+      DataProvider provider) {
     final result = _ICU4XPropertyValueNameToEnumMapper_load_sentence_break(
         provider._underlying);
     return result.isOk
-        ? ICU4XPropertyValueNameToEnumMapper._(result.union.ok)
-        : throw ICU4XError.values
+        ? PropertyValueNameToEnumMapper._(result.union.ok)
+        : throw Error.values
             .firstWhere((v) => v._underlying == result.union.err);
   }
   // ignore: non_constant_identifier_names
@@ -9941,13 +9865,12 @@ class ICU4XPropertyValueNameToEnumMapper implements ffi.Finalizable {
           isLeaf: true);
 
   /// See the [Rust documentation for `name_to_enum_mapper`](https://docs.rs/icu/latest/icu/properties/struct.Script.html#method.name_to_enum_mapper) for more information.
-  factory ICU4XPropertyValueNameToEnumMapper.loadScript(
-      ICU4XDataProvider provider) {
+  factory PropertyValueNameToEnumMapper.loadScript(DataProvider provider) {
     final result =
         _ICU4XPropertyValueNameToEnumMapper_load_script(provider._underlying);
     return result.isOk
-        ? ICU4XPropertyValueNameToEnumMapper._(result.union.ok)
-        : throw ICU4XError.values
+        ? PropertyValueNameToEnumMapper._(result.union.ok)
+        : throw Error.values
             .firstWhere((v) => v._underlying == result.union.err);
   }
   // ignore: non_constant_identifier_names
@@ -9960,10 +9883,10 @@ class ICU4XPropertyValueNameToEnumMapper implements ffi.Finalizable {
 }
 
 /// See the [Rust documentation for `RegionDisplayNames`](https://docs.rs/icu/latest/icu/displaynames/struct.RegionDisplayNames.html) for more information.
-class ICU4XRegionDisplayNames implements ffi.Finalizable {
+class RegionDisplayNames implements ffi.Finalizable {
   final ffi.Pointer<ffi.Opaque> _underlying;
 
-  ICU4XRegionDisplayNames._(this._underlying) {
+  RegionDisplayNames._(this._underlying) {
     _finalizer.attach(this, _underlying.cast());
   }
 
@@ -9973,13 +9896,12 @@ class ICU4XRegionDisplayNames implements ffi.Finalizable {
   /// Creates a new `RegionDisplayNames` from locale data and an options bag.
   ///
   /// See the [Rust documentation for `try_new`](https://docs.rs/icu/latest/icu/displaynames/struct.RegionDisplayNames.html#method.try_new) for more information.
-  factory ICU4XRegionDisplayNames.tryNew(
-      ICU4XDataProvider provider, ICU4XLocale locale) {
+  factory RegionDisplayNames.tryNew(DataProvider provider, Locale locale) {
     final result = _ICU4XRegionDisplayNames_try_new(
         provider._underlying, locale._underlying);
     return result.isOk
-        ? ICU4XRegionDisplayNames._(result.union.ok)
-        : throw ICU4XError.values
+        ? RegionDisplayNames._(result.union.ok)
+        : throw Error.values
             .firstWhere((v) => v._underlying == result.union.err);
   }
   // ignore: non_constant_identifier_names
@@ -10006,7 +9928,7 @@ class ICU4XRegionDisplayNames implements ffi.Finalizable {
     alloc.releaseAll();
     return result.isOk
         ? writeable.finalize()
-        : throw ICU4XError.values
+        : throw Error.values
             .firstWhere((v) => v._underlying == result.union.err);
   }
 
@@ -10031,10 +9953,10 @@ class ICU4XRegionDisplayNames implements ffi.Finalizable {
 /// `map[visualIndex] = sourceIndex`
 ///
 /// Produced by `reorder_visual()` on [`ICU4XBidi`].
-class ICU4XReorderedIndexMap implements ffi.Finalizable {
+class ReorderedIndexMap implements ffi.Finalizable {
   final ffi.Pointer<ffi.Opaque> _underlying;
 
-  ICU4XReorderedIndexMap._(this._underlying) {
+  ReorderedIndexMap._(this._underlying) {
     _finalizer.attach(this, _underlying.cast());
   }
 
@@ -10084,7 +10006,7 @@ class ICU4XReorderedIndexMap implements ffi.Finalizable {
 /// Increment used in a rounding operation.
 ///
 /// See the [Rust documentation for `RoundingIncrement`](https://docs.rs/fixed_decimal/latest/fixed_decimal/enum.RoundingIncrement.html) for more information.
-enum ICU4XRoundingIncrement {
+enum RoundingIncrement {
   multiplesOf1,
   multiplesOf2,
   multiplesOf5,
@@ -10094,10 +10016,10 @@ enum ICU4XRoundingIncrement {
 /// An object that represents the Script_Extensions property for a single character
 ///
 /// See the [Rust documentation for `ScriptExtensionsSet`](https://docs.rs/icu/latest/icu/properties/script/struct.ScriptExtensionsSet.html) for more information.
-class ICU4XScriptExtensionsSet implements ffi.Finalizable {
+class ScriptExtensionsSet implements ffi.Finalizable {
   final ffi.Pointer<ffi.Opaque> _underlying;
 
-  ICU4XScriptExtensionsSet._(this._underlying) {
+  ScriptExtensionsSet._(this._underlying) {
     _finalizer.attach(this, _underlying.cast());
   }
 
@@ -10153,10 +10075,10 @@ class ICU4XScriptExtensionsSet implements ffi.Finalizable {
 /// An ICU4X ScriptWithExtensions map object, capable of holding a map of codepoints to scriptextensions values
 ///
 /// See the [Rust documentation for `ScriptWithExtensions`](https://docs.rs/icu/latest/icu/properties/script/struct.ScriptWithExtensions.html) for more information.
-class ICU4XScriptWithExtensions implements ffi.Finalizable {
+class ScriptWithExtensions implements ffi.Finalizable {
   final ffi.Pointer<ffi.Opaque> _underlying;
 
-  ICU4XScriptWithExtensions._(this._underlying) {
+  ScriptWithExtensions._(this._underlying) {
     _finalizer.attach(this, _underlying.cast());
   }
 
@@ -10164,11 +10086,11 @@ class ICU4XScriptWithExtensions implements ffi.Finalizable {
       ffi.NativeFinalizer(_capi('ICU4XScriptWithExtensions_destroy'));
 
   /// See the [Rust documentation for `script_with_extensions`](https://docs.rs/icu/latest/icu/properties/script/fn.script_with_extensions.html) for more information.
-  factory ICU4XScriptWithExtensions(ICU4XDataProvider provider) {
+  factory ScriptWithExtensions(DataProvider provider) {
     final result = _ICU4XScriptWithExtensions_create(provider._underlying);
     return result.isOk
-        ? ICU4XScriptWithExtensions._(result.union.ok)
-        : throw ICU4XError.values
+        ? ScriptWithExtensions._(result.union.ok)
+        : throw Error.values
             .firstWhere((v) => v._underlying == result.union.err);
   }
   // ignore: non_constant_identifier_names
@@ -10215,9 +10137,9 @@ class ICU4XScriptWithExtensions implements ffi.Finalizable {
   /// Borrow this object for a slightly faster variant with more operations
   ///
   /// See the [Rust documentation for `as_borrowed`](https://docs.rs/icu/latest/icu/properties/script/struct.ScriptWithExtensions.html#method.as_borrowed) for more information.
-  ICU4XScriptWithExtensionsBorrowed get asBorrowed {
+  ScriptWithExtensionsBorrowed get asBorrowed {
     final result = _ICU4XScriptWithExtensions_as_borrowed(_underlying);
-    return ICU4XScriptWithExtensionsBorrowed._(result);
+    return ScriptWithExtensionsBorrowed._(result);
   }
 
   // ignore: non_constant_identifier_names
@@ -10251,10 +10173,10 @@ class ICU4XScriptWithExtensions implements ffi.Finalizable {
 /// A slightly faster ICU4XScriptWithExtensions object
 ///
 /// See the [Rust documentation for `ScriptWithExtensionsBorrowed`](https://docs.rs/icu/latest/icu/properties/script/struct.ScriptWithExtensionsBorrowed.html) for more information.
-class ICU4XScriptWithExtensionsBorrowed implements ffi.Finalizable {
+class ScriptWithExtensionsBorrowed implements ffi.Finalizable {
   final ffi.Pointer<ffi.Opaque> _underlying;
 
-  ICU4XScriptWithExtensionsBorrowed._(this._underlying) {
+  ScriptWithExtensionsBorrowed._(this._underlying) {
     _finalizer.attach(this, _underlying.cast());
   }
 
@@ -10280,10 +10202,10 @@ class ICU4XScriptWithExtensionsBorrowed implements ffi.Finalizable {
   /// Get the Script property value for a code point
   ///
   /// See the [Rust documentation for `get_script_extensions_val`](https://docs.rs/icu/latest/icu/properties/script/struct.ScriptWithExtensionsBorrowed.html#method.get_script_extensions_val) for more information.
-  ICU4XScriptExtensionsSet getScriptExtensionsVal(int codePoint) {
+  ScriptExtensionsSet getScriptExtensionsVal(int codePoint) {
     final result = _ICU4XScriptWithExtensionsBorrowed_get_script_extensions_val(
         _underlying, codePoint);
-    return ICU4XScriptExtensionsSet._(result);
+    return ScriptExtensionsSet._(result);
   }
 
   // ignore: non_constant_identifier_names
@@ -10321,10 +10243,10 @@ class ICU4XScriptWithExtensionsBorrowed implements ffi.Finalizable {
   /// in their Script_Extensions
   ///
   /// See the [Rust documentation for `get_script_extensions_set`](https://docs.rs/icu/latest/icu/properties/script/struct.ScriptWithExtensionsBorrowed.html#method.get_script_extensions_set) for more information.
-  ICU4XCodePointSetData getScriptExtensionsSet(int script) {
+  CodePointSetData getScriptExtensionsSet(int script) {
     final result = _ICU4XScriptWithExtensionsBorrowed_get_script_extensions_set(
         _underlying, script);
-    return ICU4XCodePointSetData._(result);
+    return CodePointSetData._(result);
   }
 
   // ignore: non_constant_identifier_names
@@ -10343,17 +10265,17 @@ class ICU4XScriptWithExtensionsBorrowed implements ffi.Finalizable {
 }
 
 /// See the [Rust documentation for `WordType`](https://docs.rs/icu/latest/icu/segmenter/enum.WordType.html) for more information.
-enum ICU4XSegmenterWordType {
+enum SegmenterWordType {
   none,
   number,
   letter;
 }
 
 /// See the [Rust documentation for `SentenceBreakIterator`](https://docs.rs/icu/latest/icu/segmenter/struct.SentenceBreakIterator.html) for more information.
-class ICU4XSentenceBreakIteratorLatin1 implements ffi.Finalizable {
+class SentenceBreakIteratorLatin1 implements ffi.Finalizable {
   final ffi.Pointer<ffi.Opaque> _underlying;
 
-  ICU4XSentenceBreakIteratorLatin1._(this._underlying) {
+  SentenceBreakIteratorLatin1._(this._underlying) {
     _finalizer.attach(this, _underlying.cast());
   }
 
@@ -10377,10 +10299,10 @@ class ICU4XSentenceBreakIteratorLatin1 implements ffi.Finalizable {
 }
 
 /// See the [Rust documentation for `SentenceBreakIterator`](https://docs.rs/icu/latest/icu/segmenter/struct.SentenceBreakIterator.html) for more information.
-class ICU4XSentenceBreakIteratorUtf16 implements ffi.Finalizable {
+class SentenceBreakIteratorUtf16 implements ffi.Finalizable {
   final ffi.Pointer<ffi.Opaque> _underlying;
 
-  ICU4XSentenceBreakIteratorUtf16._(this._underlying) {
+  SentenceBreakIteratorUtf16._(this._underlying) {
     _finalizer.attach(this, _underlying.cast());
   }
 
@@ -10404,10 +10326,10 @@ class ICU4XSentenceBreakIteratorUtf16 implements ffi.Finalizable {
 }
 
 /// See the [Rust documentation for `SentenceBreakIterator`](https://docs.rs/icu/latest/icu/segmenter/struct.SentenceBreakIterator.html) for more information.
-class ICU4XSentenceBreakIteratorUtf8 implements ffi.Finalizable {
+class SentenceBreakIteratorUtf8 implements ffi.Finalizable {
   final ffi.Pointer<ffi.Opaque> _underlying;
 
-  ICU4XSentenceBreakIteratorUtf8._(this._underlying) {
+  SentenceBreakIteratorUtf8._(this._underlying) {
     _finalizer.attach(this, _underlying.cast());
   }
 
@@ -10433,10 +10355,10 @@ class ICU4XSentenceBreakIteratorUtf8 implements ffi.Finalizable {
 /// An ICU4X sentence-break segmenter, capable of finding sentence breakpoints in strings.
 ///
 /// See the [Rust documentation for `SentenceSegmenter`](https://docs.rs/icu/latest/icu/segmenter/struct.SentenceSegmenter.html) for more information.
-class ICU4XSentenceSegmenter implements ffi.Finalizable {
+class SentenceSegmenter implements ffi.Finalizable {
   final ffi.Pointer<ffi.Opaque> _underlying;
 
-  ICU4XSentenceSegmenter._(this._underlying) {
+  SentenceSegmenter._(this._underlying) {
     _finalizer.attach(this, _underlying.cast());
   }
 
@@ -10446,11 +10368,11 @@ class ICU4XSentenceSegmenter implements ffi.Finalizable {
   /// Construct an [`ICU4XSentenceSegmenter`].
   ///
   /// See the [Rust documentation for `new`](https://docs.rs/icu/latest/icu/segmenter/struct.SentenceSegmenter.html#method.new) for more information.
-  factory ICU4XSentenceSegmenter(ICU4XDataProvider provider) {
+  factory SentenceSegmenter(DataProvider provider) {
     final result = _ICU4XSentenceSegmenter_create(provider._underlying);
     return result.isOk
-        ? ICU4XSentenceSegmenter._(result.union.ok)
-        : throw ICU4XError.values
+        ? SentenceSegmenter._(result.union.ok)
+        : throw Error.values
             .firstWhere((v) => v._underlying == result.union.err);
   }
   // ignore: non_constant_identifier_names
@@ -10464,14 +10386,14 @@ class ICU4XSentenceSegmenter implements ffi.Finalizable {
   /// Segments a (potentially ill-formed) UTF-8 string.
   ///
   /// See the [Rust documentation for `segment_utf8`](https://docs.rs/icu/latest/icu/segmenter/struct.SentenceSegmenter.html#method.segment_utf8) for more information.
-  ICU4XSentenceBreakIteratorUtf8 segmentUtf8(String input) {
+  SentenceBreakIteratorUtf8 segmentUtf8(String input) {
     final alloc = ffi2.Arena();
     final inputSlice = _SliceFfi2Utf8._fromDart(input, alloc);
 
     final result = _ICU4XSentenceSegmenter_segment_utf8(
         _underlying, inputSlice._bytes, inputSlice._length);
     alloc.releaseAll();
-    return ICU4XSentenceBreakIteratorUtf8._(result);
+    return SentenceBreakIteratorUtf8._(result);
   }
 
   // ignore: non_constant_identifier_names
@@ -10488,14 +10410,14 @@ class ICU4XSentenceSegmenter implements ffi.Finalizable {
   /// Segments a UTF-16 string.
   ///
   /// See the [Rust documentation for `segment_utf16`](https://docs.rs/icu/latest/icu/segmenter/struct.SentenceSegmenter.html#method.segment_utf16) for more information.
-  ICU4XSentenceBreakIteratorUtf16 segmentUtf16(Uint16List input) {
+  SentenceBreakIteratorUtf16 segmentUtf16(Uint16List input) {
     final alloc = ffi2.Arena();
     final inputSlice = _SliceFfiUint16._fromDart(input, alloc);
 
     final result = _ICU4XSentenceSegmenter_segment_utf16(
         _underlying, inputSlice._bytes, inputSlice._length);
     alloc.releaseAll();
-    return ICU4XSentenceBreakIteratorUtf16._(result);
+    return SentenceBreakIteratorUtf16._(result);
   }
 
   // ignore: non_constant_identifier_names
@@ -10512,14 +10434,14 @@ class ICU4XSentenceSegmenter implements ffi.Finalizable {
   /// Segments a Latin-1 string.
   ///
   /// See the [Rust documentation for `segment_latin1`](https://docs.rs/icu/latest/icu/segmenter/struct.SentenceSegmenter.html#method.segment_latin1) for more information.
-  ICU4XSentenceBreakIteratorLatin1 segmentLatin1(Uint8List input) {
+  SentenceBreakIteratorLatin1 segmentLatin1(Uint8List input) {
     final alloc = ffi2.Arena();
     final inputSlice = _SliceFfiUint8._fromDart(input, alloc);
 
     final result = _ICU4XSentenceSegmenter_segment_latin1(
         _underlying, inputSlice._bytes, inputSlice._length);
     alloc.releaseAll();
-    return ICU4XSentenceBreakIteratorLatin1._(result);
+    return SentenceBreakIteratorLatin1._(result);
   }
 
   // ignore: non_constant_identifier_names
@@ -10537,10 +10459,10 @@ class ICU4XSentenceSegmenter implements ffi.Finalizable {
 /// An ICU4X Time object representing a time in terms of hour, minute, second, nanosecond
 ///
 /// See the [Rust documentation for `Time`](https://docs.rs/icu/latest/icu/calendar/types/struct.Time.html) for more information.
-class ICU4XTime implements ffi.Finalizable {
+class Time implements ffi.Finalizable {
   final ffi.Pointer<ffi.Opaque> _underlying;
 
-  ICU4XTime._(this._underlying) {
+  Time._(this._underlying) {
     _finalizer.attach(this, _underlying.cast());
   }
 
@@ -10549,11 +10471,11 @@ class ICU4XTime implements ffi.Finalizable {
   /// Creates a new [`ICU4XTime`] given field values
   ///
   /// See the [Rust documentation for `Time`](https://docs.rs/icu/latest/icu/calendar/types/struct.Time.html) for more information.
-  factory ICU4XTime(int hour, int minute, int second, int nanosecond) {
+  factory Time(int hour, int minute, int second, int nanosecond) {
     final result = _ICU4XTime_create(hour, minute, second, nanosecond);
     return result.isOk
-        ? ICU4XTime._(result.union.ok)
-        : throw ICU4XError.values
+        ? Time._(result.union.ok)
+        : throw Error.values
             .firstWhere((v) => v._underlying == result.union.err);
   }
   // ignore: non_constant_identifier_names
@@ -10567,11 +10489,11 @@ class ICU4XTime implements ffi.Finalizable {
   /// Creates a new [`ICU4XTime`] representing midnight (00:00.000).
   ///
   /// See the [Rust documentation for `Time`](https://docs.rs/icu/latest/icu/calendar/types/struct.Time.html) for more information.
-  factory ICU4XTime.midnight() {
+  factory Time.midnight() {
     final result = _ICU4XTime_create_midnight();
     return result.isOk
-        ? ICU4XTime._(result.union.ok)
-        : throw ICU4XError.values
+        ? Time._(result.union.ok)
+        : throw Error.values
             .firstWhere((v) => v._underlying == result.union.err);
   }
   // ignore: non_constant_identifier_names
@@ -10640,10 +10562,10 @@ class ICU4XTime implements ffi.Finalizable {
 /// An ICU4X TimeFormatter object capable of formatting an [`ICU4XTime`] type (and others) as a string
 ///
 /// See the [Rust documentation for `TimeFormatter`](https://docs.rs/icu/latest/icu/datetime/struct.TimeFormatter.html) for more information.
-class ICU4XTimeFormatter implements ffi.Finalizable {
+class TimeFormatter implements ffi.Finalizable {
   final ffi.Pointer<ffi.Opaque> _underlying;
 
-  ICU4XTimeFormatter._(this._underlying) {
+  TimeFormatter._(this._underlying) {
     _finalizer.attach(this, _underlying.cast());
   }
 
@@ -10653,13 +10575,13 @@ class ICU4XTimeFormatter implements ffi.Finalizable {
   /// Creates a new [`ICU4XTimeFormatter`] from locale data.
   ///
   /// See the [Rust documentation for `try_new_with_length`](https://docs.rs/icu/latest/icu/datetime/struct.TimeFormatter.html#method.try_new_with_length) for more information.
-  factory ICU4XTimeFormatter.withLength(
-      ICU4XDataProvider provider, ICU4XLocale locale, ICU4XTimeLength length) {
+  factory TimeFormatter.withLength(
+      DataProvider provider, Locale locale, TimeLength length) {
     final result = _ICU4XTimeFormatter_create_with_length(
         provider._underlying, locale._underlying, length.index);
     return result.isOk
-        ? ICU4XTimeFormatter._(result.union.ok)
-        : throw ICU4XError.values
+        ? TimeFormatter._(result.union.ok)
+        : throw Error.values
             .firstWhere((v) => v._underlying == result.union.err);
   }
   // ignore: non_constant_identifier_names
@@ -10676,13 +10598,13 @@ class ICU4XTimeFormatter implements ffi.Finalizable {
   /// Formats a [`ICU4XTime`] to a string.
   ///
   /// See the [Rust documentation for `format`](https://docs.rs/icu/latest/icu/datetime/struct.TimeFormatter.html#method.format) for more information.
-  String formatTime(ICU4XTime value) {
+  String formatTime(Time value) {
     final writeable = _Writeable();
     final result = _ICU4XTimeFormatter_format_time(
         _underlying, value._underlying, writeable._underlying);
     return result.isOk
         ? writeable.finalize()
-        : throw ICU4XError.values
+        : throw Error.values
             .firstWhere((v) => v._underlying == result.union.err);
   }
 
@@ -10700,13 +10622,13 @@ class ICU4XTimeFormatter implements ffi.Finalizable {
   /// Formats a [`ICU4XDateTime`] to a string.
   ///
   /// See the [Rust documentation for `format`](https://docs.rs/icu/latest/icu/datetime/struct.TimeFormatter.html#method.format) for more information.
-  String formatDatetime(ICU4XDateTime value) {
+  String formatDatetime(DateTime value) {
     final writeable = _Writeable();
     final result = _ICU4XTimeFormatter_format_datetime(
         _underlying, value._underlying, writeable._underlying);
     return result.isOk
         ? writeable.finalize()
-        : throw ICU4XError.values
+        : throw Error.values
             .firstWhere((v) => v._underlying == result.union.err);
   }
 
@@ -10723,13 +10645,13 @@ class ICU4XTimeFormatter implements ffi.Finalizable {
   /// Formats a [`ICU4XIsoDateTime`] to a string.
   ///
   /// See the [Rust documentation for `format`](https://docs.rs/icu/latest/icu/datetime/struct.TimeFormatter.html#method.format) for more information.
-  String formatIsoDatetime(ICU4XIsoDateTime value) {
+  String formatIsoDatetime(IsoDateTime value) {
     final writeable = _Writeable();
     final result = _ICU4XTimeFormatter_format_iso_datetime(
         _underlying, value._underlying, writeable._underlying);
     return result.isOk
         ? writeable.finalize()
-        : throw ICU4XError.values
+        : throw Error.values
             .firstWhere((v) => v._underlying == result.union.err);
   }
 
@@ -10745,7 +10667,7 @@ class ICU4XTimeFormatter implements ffi.Finalizable {
 }
 
 /// See the [Rust documentation for `Time`](https://docs.rs/icu/latest/icu/datetime/options/length/enum.Time.html) for more information.
-enum ICU4XTimeLength {
+enum TimeLength {
   full,
   long,
   medium,
@@ -10755,10 +10677,10 @@ enum ICU4XTimeLength {
 /// An ICU4X TimeZoneFormatter object capable of formatting an [`ICU4XCustomTimeZone`] type (and others) as a string
 ///
 /// See the [Rust documentation for `TimeZoneFormatter`](https://docs.rs/icu/latest/icu/datetime/time_zone/struct.TimeZoneFormatter.html) for more information.
-class ICU4XTimeZoneFormatter implements ffi.Finalizable {
+class TimeZoneFormatter implements ffi.Finalizable {
   final ffi.Pointer<ffi.Opaque> _underlying;
 
-  ICU4XTimeZoneFormatter._(this._underlying) {
+  TimeZoneFormatter._(this._underlying) {
     _finalizer.attach(this, _underlying.cast());
   }
 
@@ -10772,13 +10694,13 @@ class ICU4XTimeZoneFormatter implements ffi.Finalizable {
   /// See the [Rust documentation for `try_new`](https://docs.rs/icu/latest/icu/datetime/time_zone/struct.TimeZoneFormatter.html#method.try_new) for more information.
   ///
   /// Additional information: [1](https://docs.rs/icu/latest/icu/datetime/time_zone/enum.FallbackFormat.html)
-  factory ICU4XTimeZoneFormatter.withLocalizedGmtFallback(
-      ICU4XDataProvider provider, ICU4XLocale locale) {
+  factory TimeZoneFormatter.withLocalizedGmtFallback(
+      DataProvider provider, Locale locale) {
     final result = _ICU4XTimeZoneFormatter_create_with_localized_gmt_fallback(
         provider._underlying, locale._underlying);
     return result.isOk
-        ? ICU4XTimeZoneFormatter._(result.union.ok)
-        : throw ICU4XError.values
+        ? TimeZoneFormatter._(result.union.ok)
+        : throw Error.values
             .firstWhere((v) => v._underlying == result.union.err);
   }
   // ignore: non_constant_identifier_names
@@ -10799,36 +10721,33 @@ class ICU4XTimeZoneFormatter implements ffi.Finalizable {
   /// See the [Rust documentation for `try_new`](https://docs.rs/icu/latest/icu/datetime/time_zone/struct.TimeZoneFormatter.html#method.try_new) for more information.
   ///
   /// Additional information: [1](https://docs.rs/icu/latest/icu/datetime/time_zone/enum.FallbackFormat.html)
-  factory ICU4XTimeZoneFormatter.withIso8601Fallback(ICU4XDataProvider provider,
-      ICU4XLocale locale, ICU4XIsoTimeZoneOptions options) {
+  factory TimeZoneFormatter.withIso8601Fallback(
+      DataProvider provider, Locale locale, IsoTimeZoneOptions options) {
     final result = _ICU4XTimeZoneFormatter_create_with_iso_8601_fallback(
         provider._underlying, locale._underlying, options._underlying);
     return result.isOk
-        ? ICU4XTimeZoneFormatter._(result.union.ok)
-        : throw ICU4XError.values
+        ? TimeZoneFormatter._(result.union.ok)
+        : throw Error.values
             .firstWhere((v) => v._underlying == result.union.err);
   }
   // ignore: non_constant_identifier_names
   static final _ICU4XTimeZoneFormatter_create_with_iso_8601_fallback = _capi<
               ffi.NativeFunction<
                   _ResultOpaqueUint32 Function(ffi.Pointer<ffi.Opaque>,
-                      ffi.Pointer<ffi.Opaque>, _ICU4XIsoTimeZoneOptionsFfi)>>(
+                      ffi.Pointer<ffi.Opaque>, _IsoTimeZoneOptionsFfi)>>(
           'ICU4XTimeZoneFormatter_create_with_iso_8601_fallback')
       .asFunction<
-          _ResultOpaqueUint32 Function(
-              ffi.Pointer<ffi.Opaque>,
-              ffi.Pointer<ffi.Opaque>,
-              _ICU4XIsoTimeZoneOptionsFfi)>(isLeaf: true);
+          _ResultOpaqueUint32 Function(ffi.Pointer<ffi.Opaque>,
+              ffi.Pointer<ffi.Opaque>, _IsoTimeZoneOptionsFfi)>(isLeaf: true);
 
   /// Loads generic non-location long format. Example: "Pacific Time"
   ///
   /// See the [Rust documentation for `include_generic_non_location_long`](https://docs.rs/icu/latest/icu/datetime/time_zone/struct.TimeZoneFormatter.html#method.include_generic_non_location_long) for more information.
-  void loadGenericNonLocationLong(ICU4XDataProvider provider) {
+  void loadGenericNonLocationLong(DataProvider provider) {
     final result = _ICU4XTimeZoneFormatter_load_generic_non_location_long(
         _underlying, provider._underlying);
     if (!result.isOk) {
-      throw ICU4XError.values
-          .firstWhere((v) => v._underlying == result.union.err);
+      throw Error.values.firstWhere((v) => v._underlying == result.union.err);
     }
   }
 
@@ -10845,12 +10764,11 @@ class ICU4XTimeZoneFormatter implements ffi.Finalizable {
   /// Loads generic non-location short format. Example: "PT"
   ///
   /// See the [Rust documentation for `include_generic_non_location_short`](https://docs.rs/icu/latest/icu/datetime/time_zone/struct.TimeZoneFormatter.html#method.include_generic_non_location_short) for more information.
-  void loadGenericNonLocationShort(ICU4XDataProvider provider) {
+  void loadGenericNonLocationShort(DataProvider provider) {
     final result = _ICU4XTimeZoneFormatter_load_generic_non_location_short(
         _underlying, provider._underlying);
     if (!result.isOk) {
-      throw ICU4XError.values
-          .firstWhere((v) => v._underlying == result.union.err);
+      throw Error.values.firstWhere((v) => v._underlying == result.union.err);
     }
   }
 
@@ -10867,12 +10785,11 @@ class ICU4XTimeZoneFormatter implements ffi.Finalizable {
   /// Loads specific non-location long format. Example: "Pacific Standard Time"
   ///
   /// See the [Rust documentation for `include_specific_non_location_long`](https://docs.rs/icu/latest/icu/datetime/time_zone/struct.TimeZoneFormatter.html#method.include_specific_non_location_long) for more information.
-  void loadSpecificNonLocationLong(ICU4XDataProvider provider) {
+  void loadSpecificNonLocationLong(DataProvider provider) {
     final result = _ICU4XTimeZoneFormatter_load_specific_non_location_long(
         _underlying, provider._underlying);
     if (!result.isOk) {
-      throw ICU4XError.values
-          .firstWhere((v) => v._underlying == result.union.err);
+      throw Error.values.firstWhere((v) => v._underlying == result.union.err);
     }
   }
 
@@ -10889,12 +10806,11 @@ class ICU4XTimeZoneFormatter implements ffi.Finalizable {
   /// Loads specific non-location short format. Example: "PST"
   ///
   /// See the [Rust documentation for `include_specific_non_location_short`](https://docs.rs/icu/latest/icu/datetime/time_zone/struct.TimeZoneFormatter.html#method.include_specific_non_location_short) for more information.
-  void loadSpecificNonLocationShort(ICU4XDataProvider provider) {
+  void loadSpecificNonLocationShort(DataProvider provider) {
     final result = _ICU4XTimeZoneFormatter_load_specific_non_location_short(
         _underlying, provider._underlying);
     if (!result.isOk) {
-      throw ICU4XError.values
-          .firstWhere((v) => v._underlying == result.union.err);
+      throw Error.values.firstWhere((v) => v._underlying == result.union.err);
     }
   }
 
@@ -10911,12 +10827,11 @@ class ICU4XTimeZoneFormatter implements ffi.Finalizable {
   /// Loads generic location format. Example: "Los Angeles Time"
   ///
   /// See the [Rust documentation for `include_generic_location_format`](https://docs.rs/icu/latest/icu/datetime/time_zone/struct.TimeZoneFormatter.html#method.include_generic_location_format) for more information.
-  void loadGenericLocationFormat(ICU4XDataProvider provider) {
+  void loadGenericLocationFormat(DataProvider provider) {
     final result = _ICU4XTimeZoneFormatter_load_generic_location_format(
         _underlying, provider._underlying);
     if (!result.isOk) {
-      throw ICU4XError.values
-          .firstWhere((v) => v._underlying == result.union.err);
+      throw Error.values.firstWhere((v) => v._underlying == result.union.err);
     }
   }
 
@@ -10937,8 +10852,7 @@ class ICU4XTimeZoneFormatter implements ffi.Finalizable {
     final result =
         _ICU4XTimeZoneFormatter_include_localized_gmt_format(_underlying);
     if (!result.isOk) {
-      throw ICU4XError.values
-          .firstWhere((v) => v._underlying == result.union.err);
+      throw Error.values.firstWhere((v) => v._underlying == result.union.err);
     }
   }
 
@@ -10953,12 +10867,11 @@ class ICU4XTimeZoneFormatter implements ffi.Finalizable {
   /// Loads ISO-8601 format. Example: "-07:00"
   ///
   /// See the [Rust documentation for `include_iso_8601_format`](https://docs.rs/icu/latest/icu/datetime/time_zone/struct.TimeZoneFormatter.html#method.include_iso_8601_format) for more information.
-  void loadIso8601Format(ICU4XIsoTimeZoneOptions options) {
+  void loadIso8601Format(IsoTimeZoneOptions options) {
     final result = _ICU4XTimeZoneFormatter_load_iso_8601_format(
         _underlying, options._underlying);
     if (!result.isOk) {
-      throw ICU4XError.values
-          .firstWhere((v) => v._underlying == result.union.err);
+      throw Error.values.firstWhere((v) => v._underlying == result.union.err);
     }
   }
 
@@ -10966,24 +10879,24 @@ class ICU4XTimeZoneFormatter implements ffi.Finalizable {
   static final _ICU4XTimeZoneFormatter_load_iso_8601_format = _capi<
               ffi.NativeFunction<
                   _ResultVoidUint32 Function(
-                      ffi.Pointer<ffi.Opaque>, _ICU4XIsoTimeZoneOptionsFfi)>>(
+                      ffi.Pointer<ffi.Opaque>, _IsoTimeZoneOptionsFfi)>>(
           'ICU4XTimeZoneFormatter_load_iso_8601_format')
       .asFunction<
-          _ResultVoidUint32 Function(ffi.Pointer<ffi.Opaque>,
-              _ICU4XIsoTimeZoneOptionsFfi)>(isLeaf: true);
+          _ResultVoidUint32 Function(
+              ffi.Pointer<ffi.Opaque>, _IsoTimeZoneOptionsFfi)>(isLeaf: true);
 
   /// Formats a [`ICU4XCustomTimeZone`] to a string.
   ///
   /// See the [Rust documentation for `format`](https://docs.rs/icu/latest/icu/datetime/time_zone/struct.TimeZoneFormatter.html#method.format) for more information.
   ///
   /// See the [Rust documentation for `format_to_string`](https://docs.rs/icu/latest/icu/datetime/time_zone/struct.TimeZoneFormatter.html#method.format_to_string) for more information.
-  String formatCustomTimeZone(ICU4XCustomTimeZone value) {
+  String formatCustomTimeZone(CustomTimeZone value) {
     final writeable = _Writeable();
     final result = _ICU4XTimeZoneFormatter_format_custom_time_zone(
         _underlying, value._underlying, writeable._underlying);
     return result.isOk
         ? writeable.finalize()
-        : throw ICU4XError.values
+        : throw Error.values
             .firstWhere((v) => v._underlying == result.union.err);
   }
 
@@ -10999,10 +10912,10 @@ class ICU4XTimeZoneFormatter implements ffi.Finalizable {
 }
 
 /// See the [Rust documentation for `TitlecaseMapper`](https://docs.rs/icu/latest/icu/casemap/struct.TitlecaseMapper.html) for more information.
-class ICU4XTitlecaseMapper implements ffi.Finalizable {
+class TitlecaseMapper implements ffi.Finalizable {
   final ffi.Pointer<ffi.Opaque> _underlying;
 
-  ICU4XTitlecaseMapper._(this._underlying) {
+  TitlecaseMapper._(this._underlying) {
     _finalizer.attach(this, _underlying.cast());
   }
 
@@ -11012,11 +10925,11 @@ class ICU4XTitlecaseMapper implements ffi.Finalizable {
   /// Construct a new `ICU4XTitlecaseMapper` instance
   ///
   /// See the [Rust documentation for `new`](https://docs.rs/icu/latest/icu/casemap/struct.TitlecaseMapper.html#method.new) for more information.
-  factory ICU4XTitlecaseMapper(ICU4XDataProvider provider) {
+  factory TitlecaseMapper(DataProvider provider) {
     final result = _ICU4XTitlecaseMapper_create(provider._underlying);
     return result.isOk
-        ? ICU4XTitlecaseMapper._(result.union.ok)
-        : throw ICU4XError.values
+        ? TitlecaseMapper._(result.union.ok)
+        : throw Error.values
             .firstWhere((v) => v._underlying == result.union.err);
   }
   // ignore: non_constant_identifier_names
@@ -11033,7 +10946,7 @@ class ICU4XTitlecaseMapper implements ffi.Finalizable {
   ///
   /// See the [Rust documentation for `titlecase_segment`](https://docs.rs/icu/latest/icu/casemap/struct.TitlecaseMapper.html#method.titlecase_segment) for more information.
   String titlecaseSegmentV1(
-      String s, ICU4XLocale locale, ICU4XTitlecaseOptionsV1 options) {
+      String s, Locale locale, TitlecaseOptionsV1 options) {
     final alloc = ffi2.Arena();
     final sSlice = _SliceFfi2Utf8._fromDart(s, alloc);
 
@@ -11048,7 +10961,7 @@ class ICU4XTitlecaseMapper implements ffi.Finalizable {
     alloc.releaseAll();
     return result.isOk
         ? writeable.finalize()
-        : throw ICU4XError.values
+        : throw Error.values
             .firstWhere((v) => v._underlying == result.union.err);
   }
 
@@ -11060,7 +10973,7 @@ class ICU4XTitlecaseMapper implements ffi.Finalizable {
                       ffi.Pointer<ffi2.Utf8>,
                       ffi.Size,
                       ffi.Pointer<ffi.Opaque>,
-                      _ICU4XTitlecaseOptionsV1Ffi,
+                      _TitlecaseOptionsV1Ffi,
                       ffi.Pointer<ffi.Opaque>)>>(
           'ICU4XTitlecaseMapper_titlecase_segment_v1')
       .asFunction<
@@ -11069,57 +10982,57 @@ class ICU4XTitlecaseMapper implements ffi.Finalizable {
               ffi.Pointer<ffi2.Utf8>,
               int,
               ffi.Pointer<ffi.Opaque>,
-              _ICU4XTitlecaseOptionsV1Ffi,
+              _TitlecaseOptionsV1Ffi,
               ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
 }
 
 /// See the [Rust documentation for `TitlecaseOptions`](https://docs.rs/icu/latest/icu/casemap/titlecase/struct.TitlecaseOptions.html) for more information.
-class _ICU4XTitlecaseOptionsV1Ffi extends ffi.Struct {
+class _TitlecaseOptionsV1Ffi extends ffi.Struct {
   @ffi.Uint32()
   external int leadingAdjustment;
   @ffi.Uint32()
   external int trailingCase;
 }
 
-class ICU4XTitlecaseOptionsV1 {
-  final _ICU4XTitlecaseOptionsV1Ffi _underlying;
+class TitlecaseOptionsV1 {
+  final _TitlecaseOptionsV1Ffi _underlying;
 
   // ignore: unused_element
-  ICU4XTitlecaseOptionsV1._(this._underlying);
+  TitlecaseOptionsV1._(this._underlying);
 
-  factory ICU4XTitlecaseOptionsV1() {
-    final pointer = ffi2.calloc<_ICU4XTitlecaseOptionsV1Ffi>();
-    final result = ICU4XTitlecaseOptionsV1._(pointer.ref);
+  factory TitlecaseOptionsV1() {
+    final pointer = ffi2.calloc<_TitlecaseOptionsV1Ffi>();
+    final result = TitlecaseOptionsV1._(pointer.ref);
     _callocFree.attach(result, pointer.cast());
     return result;
   }
 
-  ICU4XLeadingAdjustment get leadingAdjustment =>
-      ICU4XLeadingAdjustment.values[_underlying.leadingAdjustment];
-  set leadingAdjustment(ICU4XLeadingAdjustment leadingAdjustment) {
+  LeadingAdjustment get leadingAdjustment =>
+      LeadingAdjustment.values[_underlying.leadingAdjustment];
+  set leadingAdjustment(LeadingAdjustment leadingAdjustment) {
     _underlying.leadingAdjustment = leadingAdjustment.index;
   }
 
-  ICU4XTrailingCase get trailingCase =>
-      ICU4XTrailingCase.values[_underlying.trailingCase];
-  set trailingCase(ICU4XTrailingCase trailingCase) {
+  TrailingCase get trailingCase =>
+      TrailingCase.values[_underlying.trailingCase];
+  set trailingCase(TrailingCase trailingCase) {
     _underlying.trailingCase = trailingCase.index;
   }
 
   /// See the [Rust documentation for `default`](https://docs.rs/icu/latest/icu/casemap/titlecase/struct.TitlecaseOptions.html#method.default) for more information.
-  factory ICU4XTitlecaseOptionsV1.options() {
+  factory TitlecaseOptionsV1.options() {
     final result = _ICU4XTitlecaseOptionsV1_default_options();
-    return ICU4XTitlecaseOptionsV1._(result);
+    return TitlecaseOptionsV1._(result);
   }
   // ignore: non_constant_identifier_names
   static final _ICU4XTitlecaseOptionsV1_default_options =
-      _capi<ffi.NativeFunction<_ICU4XTitlecaseOptionsV1Ffi Function()>>(
+      _capi<ffi.NativeFunction<_TitlecaseOptionsV1Ffi Function()>>(
               'ICU4XTitlecaseOptionsV1_default_options')
-          .asFunction<_ICU4XTitlecaseOptionsV1Ffi Function()>(isLeaf: true);
+          .asFunction<_TitlecaseOptionsV1Ffi Function()>(isLeaf: true);
 
   @override
   bool operator ==(Object other) =>
-      other is ICU4XTitlecaseOptionsV1 &&
+      other is TitlecaseOptionsV1 &&
       other._underlying.leadingAdjustment == _underlying.leadingAdjustment &&
       other._underlying.trailingCase == _underlying.trailingCase;
 
@@ -11131,7 +11044,7 @@ class ICU4XTitlecaseOptionsV1 {
 }
 
 /// See the [Rust documentation for `TrailingCase`](https://docs.rs/icu/latest/icu/casemap/titlecase/enum.TrailingCase.html) for more information.
-enum ICU4XTrailingCase {
+enum TrailingCase {
   lower,
   unchanged;
 }
@@ -11139,7 +11052,7 @@ enum ICU4XTrailingCase {
 /// FFI version of `TransformResult`.
 ///
 /// See the [Rust documentation for `TransformResult`](https://docs.rs/icu/latest/icu/locid_transform/enum.TransformResult.html) for more information.
-enum ICU4XTransformResult {
+enum TransformResult {
   modified,
   unmodified;
 }
@@ -11151,10 +11064,10 @@ enum ICU4XTransformResult {
 /// See the [Rust documentation for `UnicodeSetData`](https://docs.rs/icu/latest/icu/properties/sets/struct.UnicodeSetData.html) for more information.
 ///
 /// See the [Rust documentation for `UnicodeSetDataBorrowed`](https://docs.rs/icu/latest/icu/properties/sets/struct.UnicodeSetDataBorrowed.html) for more information.
-class ICU4XUnicodeSetData implements ffi.Finalizable {
+class UnicodeSetData implements ffi.Finalizable {
   final ffi.Pointer<ffi.Opaque> _underlying;
 
-  ICU4XUnicodeSetData._(this._underlying) {
+  UnicodeSetData._(this._underlying) {
     _finalizer.attach(this, _underlying.cast());
   }
 
@@ -11212,11 +11125,11 @@ class ICU4XUnicodeSetData implements ffi.Finalizable {
       .asFunction<bool Function(ffi.Pointer<ffi.Opaque>, int)>(isLeaf: true);
 
   /// See the [Rust documentation for `basic_emoji`](https://docs.rs/icu/latest/icu/properties/sets/fn.basic_emoji.html) for more information.
-  factory ICU4XUnicodeSetData.loadBasicEmoji(ICU4XDataProvider provider) {
+  factory UnicodeSetData.loadBasicEmoji(DataProvider provider) {
     final result = _ICU4XUnicodeSetData_load_basic_emoji(provider._underlying);
     return result.isOk
-        ? ICU4XUnicodeSetData._(result.union.ok)
-        : throw ICU4XError.values
+        ? UnicodeSetData._(result.union.ok)
+        : throw Error.values
             .firstWhere((v) => v._underlying == result.union.err);
   }
   // ignore: non_constant_identifier_names
@@ -11228,13 +11141,13 @@ class ICU4XUnicodeSetData implements ffi.Finalizable {
           isLeaf: true);
 
   /// See the [Rust documentation for `exemplars_main`](https://docs.rs/icu/latest/icu/properties/exemplar_chars/fn.exemplars_main.html) for more information.
-  factory ICU4XUnicodeSetData.loadExemplarsMain(
-      ICU4XDataProvider provider, ICU4XLocale locale) {
+  factory UnicodeSetData.loadExemplarsMain(
+      DataProvider provider, Locale locale) {
     final result = _ICU4XUnicodeSetData_load_exemplars_main(
         provider._underlying, locale._underlying);
     return result.isOk
-        ? ICU4XUnicodeSetData._(result.union.ok)
-        : throw ICU4XError.values
+        ? UnicodeSetData._(result.union.ok)
+        : throw Error.values
             .firstWhere((v) => v._underlying == result.union.err);
   }
   // ignore: non_constant_identifier_names
@@ -11248,13 +11161,13 @@ class ICU4XUnicodeSetData implements ffi.Finalizable {
               ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
 
   /// See the [Rust documentation for `exemplars_auxiliary`](https://docs.rs/icu/latest/icu/properties/exemplar_chars/fn.exemplars_auxiliary.html) for more information.
-  factory ICU4XUnicodeSetData.loadExemplarsAuxiliary(
-      ICU4XDataProvider provider, ICU4XLocale locale) {
+  factory UnicodeSetData.loadExemplarsAuxiliary(
+      DataProvider provider, Locale locale) {
     final result = _ICU4XUnicodeSetData_load_exemplars_auxiliary(
         provider._underlying, locale._underlying);
     return result.isOk
-        ? ICU4XUnicodeSetData._(result.union.ok)
-        : throw ICU4XError.values
+        ? UnicodeSetData._(result.union.ok)
+        : throw Error.values
             .firstWhere((v) => v._underlying == result.union.err);
   }
   // ignore: non_constant_identifier_names
@@ -11268,13 +11181,13 @@ class ICU4XUnicodeSetData implements ffi.Finalizable {
               ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
 
   /// See the [Rust documentation for `exemplars_punctuation`](https://docs.rs/icu/latest/icu/properties/exemplar_chars/fn.exemplars_punctuation.html) for more information.
-  factory ICU4XUnicodeSetData.loadExemplarsPunctuation(
-      ICU4XDataProvider provider, ICU4XLocale locale) {
+  factory UnicodeSetData.loadExemplarsPunctuation(
+      DataProvider provider, Locale locale) {
     final result = _ICU4XUnicodeSetData_load_exemplars_punctuation(
         provider._underlying, locale._underlying);
     return result.isOk
-        ? ICU4XUnicodeSetData._(result.union.ok)
-        : throw ICU4XError.values
+        ? UnicodeSetData._(result.union.ok)
+        : throw Error.values
             .firstWhere((v) => v._underlying == result.union.err);
   }
   // ignore: non_constant_identifier_names
@@ -11288,13 +11201,13 @@ class ICU4XUnicodeSetData implements ffi.Finalizable {
               ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
 
   /// See the [Rust documentation for `exemplars_numbers`](https://docs.rs/icu/latest/icu/properties/exemplar_chars/fn.exemplars_numbers.html) for more information.
-  factory ICU4XUnicodeSetData.loadExemplarsNumbers(
-      ICU4XDataProvider provider, ICU4XLocale locale) {
+  factory UnicodeSetData.loadExemplarsNumbers(
+      DataProvider provider, Locale locale) {
     final result = _ICU4XUnicodeSetData_load_exemplars_numbers(
         provider._underlying, locale._underlying);
     return result.isOk
-        ? ICU4XUnicodeSetData._(result.union.ok)
-        : throw ICU4XError.values
+        ? UnicodeSetData._(result.union.ok)
+        : throw Error.values
             .firstWhere((v) => v._underlying == result.union.err);
   }
   // ignore: non_constant_identifier_names
@@ -11308,13 +11221,13 @@ class ICU4XUnicodeSetData implements ffi.Finalizable {
               ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
 
   /// See the [Rust documentation for `exemplars_index`](https://docs.rs/icu/latest/icu/properties/exemplar_chars/fn.exemplars_index.html) for more information.
-  factory ICU4XUnicodeSetData.loadExemplarsIndex(
-      ICU4XDataProvider provider, ICU4XLocale locale) {
+  factory UnicodeSetData.loadExemplarsIndex(
+      DataProvider provider, Locale locale) {
     final result = _ICU4XUnicodeSetData_load_exemplars_index(
         provider._underlying, locale._underlying);
     return result.isOk
-        ? ICU4XUnicodeSetData._(result.union.ok)
-        : throw ICU4XError.values
+        ? UnicodeSetData._(result.union.ok)
+        : throw Error.values
             .firstWhere((v) => v._underlying == result.union.err);
   }
   // ignore: non_constant_identifier_names
@@ -11331,10 +11244,10 @@ class ICU4XUnicodeSetData implements ffi.Finalizable {
 /// A Week calculator, useful to be passed in to `week_of_year()` on Date and DateTime types
 ///
 /// See the [Rust documentation for `WeekCalculator`](https://docs.rs/icu/latest/icu/calendar/week/struct.WeekCalculator.html) for more information.
-class ICU4XWeekCalculator implements ffi.Finalizable {
+class WeekCalculator implements ffi.Finalizable {
   final ffi.Pointer<ffi.Opaque> _underlying;
 
-  ICU4XWeekCalculator._(this._underlying) {
+  WeekCalculator._(this._underlying) {
     _finalizer.attach(this, _underlying.cast());
   }
 
@@ -11344,12 +11257,12 @@ class ICU4XWeekCalculator implements ffi.Finalizable {
   /// Creates a new [`ICU4XWeekCalculator`] from locale data.
   ///
   /// See the [Rust documentation for `try_new`](https://docs.rs/icu/latest/icu/calendar/week/struct.WeekCalculator.html#method.try_new) for more information.
-  factory ICU4XWeekCalculator(ICU4XDataProvider provider, ICU4XLocale locale) {
+  factory WeekCalculator(DataProvider provider, Locale locale) {
     final result =
         _ICU4XWeekCalculator_create(provider._underlying, locale._underlying);
     return result.isOk
-        ? ICU4XWeekCalculator._(result.union.ok)
-        : throw ICU4XError.values
+        ? WeekCalculator._(result.union.ok)
+        : throw Error.values
             .firstWhere((v) => v._underlying == result.union.err);
   }
   // ignore: non_constant_identifier_names
@@ -11362,12 +11275,12 @@ class ICU4XWeekCalculator implements ffi.Finalizable {
               ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
 
   /// Additional information: [1](https://docs.rs/icu/latest/icu/calendar/week/struct.WeekCalculator.html#structfield.first_weekday), [2](https://docs.rs/icu/latest/icu/calendar/week/struct.WeekCalculator.html#structfield.min_week_days)
-  factory ICU4XWeekCalculator.fromFirstDayOfWeekAndMinWeekDays(
-      ICU4XIsoWeekday firstWeekday, int minWeekDays) {
+  factory WeekCalculator.fromFirstDayOfWeekAndMinWeekDays(
+      IsoWeekday firstWeekday, int minWeekDays) {
     final result =
         _ICU4XWeekCalculator_create_from_first_day_of_week_and_min_week_days(
             firstWeekday._underlying, minWeekDays);
-    return ICU4XWeekCalculator._(result);
+    return WeekCalculator._(result);
   }
   // ignore: non_constant_identifier_names
   static final _ICU4XWeekCalculator_create_from_first_day_of_week_and_min_week_days =
@@ -11380,9 +11293,9 @@ class ICU4XWeekCalculator implements ffi.Finalizable {
   /// Returns the weekday that starts the week for this object's locale
   ///
   /// See the [Rust documentation for `first_weekday`](https://docs.rs/icu/latest/icu/calendar/week/struct.WeekCalculator.html#structfield.first_weekday) for more information.
-  ICU4XIsoWeekday get firstWeekday {
+  IsoWeekday get firstWeekday {
     final result = _ICU4XWeekCalculator_first_weekday(_underlying);
-    return ICU4XIsoWeekday.values.firstWhere((v) => v._underlying == result);
+    return IsoWeekday.values.firstWhere((v) => v._underlying == result);
   }
 
   // ignore: non_constant_identifier_names
@@ -11408,22 +11321,22 @@ class ICU4XWeekCalculator implements ffi.Finalizable {
 }
 
 /// See the [Rust documentation for `WeekOf`](https://docs.rs/icu/latest/icu/calendar/week/struct.WeekOf.html) for more information.
-class _ICU4XWeekOfFfi extends ffi.Struct {
+class _WeekOfFfi extends ffi.Struct {
   @ffi.Uint16()
   external int week;
   @ffi.Uint32()
   external int unit;
 }
 
-class ICU4XWeekOf {
-  final _ICU4XWeekOfFfi _underlying;
+class WeekOf {
+  final _WeekOfFfi _underlying;
 
   // ignore: unused_element
-  ICU4XWeekOf._(this._underlying);
+  WeekOf._(this._underlying);
 
-  factory ICU4XWeekOf() {
-    final pointer = ffi2.calloc<_ICU4XWeekOfFfi>();
-    final result = ICU4XWeekOf._(pointer.ref);
+  factory WeekOf() {
+    final pointer = ffi2.calloc<_WeekOfFfi>();
+    final result = WeekOf._(pointer.ref);
     _callocFree.attach(result, pointer.cast());
     return result;
   }
@@ -11433,15 +11346,14 @@ class ICU4XWeekOf {
     _underlying.week = week;
   }
 
-  ICU4XWeekRelativeUnit get unit =>
-      ICU4XWeekRelativeUnit.values[_underlying.unit];
-  set unit(ICU4XWeekRelativeUnit unit) {
+  WeekRelativeUnit get unit => WeekRelativeUnit.values[_underlying.unit];
+  set unit(WeekRelativeUnit unit) {
     _underlying.unit = unit.index;
   }
 
   @override
   bool operator ==(Object other) =>
-      other is ICU4XWeekOf &&
+      other is WeekOf &&
       other._underlying.week == _underlying.week &&
       other._underlying.unit == _underlying.unit;
 
@@ -11453,17 +11365,17 @@ class ICU4XWeekOf {
 }
 
 /// See the [Rust documentation for `RelativeUnit`](https://docs.rs/icu/latest/icu/calendar/week/enum.RelativeUnit.html) for more information.
-enum ICU4XWeekRelativeUnit {
+enum WeekRelativeUnit {
   previous,
   current,
   next;
 }
 
 /// See the [Rust documentation for `WordBreakIterator`](https://docs.rs/icu/latest/icu/segmenter/struct.WordBreakIterator.html) for more information.
-class ICU4XWordBreakIteratorLatin1 implements ffi.Finalizable {
+class WordBreakIteratorLatin1 implements ffi.Finalizable {
   final ffi.Pointer<ffi.Opaque> _underlying;
 
-  ICU4XWordBreakIteratorLatin1._(this._underlying) {
+  WordBreakIteratorLatin1._(this._underlying) {
     _finalizer.attach(this, _underlying.cast());
   }
 
@@ -11488,9 +11400,9 @@ class ICU4XWordBreakIteratorLatin1 implements ffi.Finalizable {
   /// Return the status value of break boundary.
   ///
   /// See the [Rust documentation for `word_type`](https://docs.rs/icu/latest/icu/segmenter/struct.WordBreakIterator.html#method.word_type) for more information.
-  ICU4XSegmenterWordType get wordType {
+  SegmenterWordType get wordType {
     final result = _ICU4XWordBreakIteratorLatin1_word_type(_underlying);
-    return ICU4XSegmenterWordType.values[result];
+    return SegmenterWordType.values[result];
   }
 
   // ignore: non_constant_identifier_names
@@ -11515,10 +11427,10 @@ class ICU4XWordBreakIteratorLatin1 implements ffi.Finalizable {
 }
 
 /// See the [Rust documentation for `WordBreakIterator`](https://docs.rs/icu/latest/icu/segmenter/struct.WordBreakIterator.html) for more information.
-class ICU4XWordBreakIteratorUtf16 implements ffi.Finalizable {
+class WordBreakIteratorUtf16 implements ffi.Finalizable {
   final ffi.Pointer<ffi.Opaque> _underlying;
 
-  ICU4XWordBreakIteratorUtf16._(this._underlying) {
+  WordBreakIteratorUtf16._(this._underlying) {
     _finalizer.attach(this, _underlying.cast());
   }
 
@@ -11543,9 +11455,9 @@ class ICU4XWordBreakIteratorUtf16 implements ffi.Finalizable {
   /// Return the status value of break boundary.
   ///
   /// See the [Rust documentation for `word_type`](https://docs.rs/icu/latest/icu/segmenter/struct.WordBreakIterator.html#method.word_type) for more information.
-  ICU4XSegmenterWordType get wordType {
+  SegmenterWordType get wordType {
     final result = _ICU4XWordBreakIteratorUtf16_word_type(_underlying);
-    return ICU4XSegmenterWordType.values[result];
+    return SegmenterWordType.values[result];
   }
 
   // ignore: non_constant_identifier_names
@@ -11570,10 +11482,10 @@ class ICU4XWordBreakIteratorUtf16 implements ffi.Finalizable {
 }
 
 /// See the [Rust documentation for `WordBreakIterator`](https://docs.rs/icu/latest/icu/segmenter/struct.WordBreakIterator.html) for more information.
-class ICU4XWordBreakIteratorUtf8 implements ffi.Finalizable {
+class WordBreakIteratorUtf8 implements ffi.Finalizable {
   final ffi.Pointer<ffi.Opaque> _underlying;
 
-  ICU4XWordBreakIteratorUtf8._(this._underlying) {
+  WordBreakIteratorUtf8._(this._underlying) {
     _finalizer.attach(this, _underlying.cast());
   }
 
@@ -11598,9 +11510,9 @@ class ICU4XWordBreakIteratorUtf8 implements ffi.Finalizable {
   /// Return the status value of break boundary.
   ///
   /// See the [Rust documentation for `word_type`](https://docs.rs/icu/latest/icu/segmenter/struct.WordBreakIterator.html#method.word_type) for more information.
-  ICU4XSegmenterWordType get wordType {
+  SegmenterWordType get wordType {
     final result = _ICU4XWordBreakIteratorUtf8_word_type(_underlying);
-    return ICU4XSegmenterWordType.values[result];
+    return SegmenterWordType.values[result];
   }
 
   // ignore: non_constant_identifier_names
@@ -11627,10 +11539,10 @@ class ICU4XWordBreakIteratorUtf8 implements ffi.Finalizable {
 /// An ICU4X word-break segmenter, capable of finding word breakpoints in strings.
 ///
 /// See the [Rust documentation for `WordSegmenter`](https://docs.rs/icu/latest/icu/segmenter/struct.WordSegmenter.html) for more information.
-class ICU4XWordSegmenter implements ffi.Finalizable {
+class WordSegmenter implements ffi.Finalizable {
   final ffi.Pointer<ffi.Opaque> _underlying;
 
-  ICU4XWordSegmenter._(this._underlying) {
+  WordSegmenter._(this._underlying) {
     _finalizer.attach(this, _underlying.cast());
   }
 
@@ -11644,11 +11556,11 @@ class ICU4XWordSegmenter implements ffi.Finalizable {
   /// Khmer, Lao, and Thai.
   ///
   /// See the [Rust documentation for `new_auto`](https://docs.rs/icu/latest/icu/segmenter/struct.WordSegmenter.html#method.new_auto) for more information.
-  factory ICU4XWordSegmenter.auto(ICU4XDataProvider provider) {
+  factory WordSegmenter.auto(DataProvider provider) {
     final result = _ICU4XWordSegmenter_create_auto(provider._underlying);
     return result.isOk
-        ? ICU4XWordSegmenter._(result.union.ok)
-        : throw ICU4XError.values
+        ? WordSegmenter._(result.union.ok)
+        : throw Error.values
             .firstWhere((v) => v._underlying == result.union.err);
   }
   // ignore: non_constant_identifier_names
@@ -11666,11 +11578,11 @@ class ICU4XWordSegmenter implements ffi.Finalizable {
   /// Japanese.
   ///
   /// See the [Rust documentation for `new_lstm`](https://docs.rs/icu/latest/icu/segmenter/struct.WordSegmenter.html#method.new_lstm) for more information.
-  factory ICU4XWordSegmenter.lstm(ICU4XDataProvider provider) {
+  factory WordSegmenter.lstm(DataProvider provider) {
     final result = _ICU4XWordSegmenter_create_lstm(provider._underlying);
     return result.isOk
-        ? ICU4XWordSegmenter._(result.union.ok)
-        : throw ICU4XError.values
+        ? WordSegmenter._(result.union.ok)
+        : throw Error.values
             .firstWhere((v) => v._underlying == result.union.err);
   }
   // ignore: non_constant_identifier_names
@@ -11685,11 +11597,11 @@ class ICU4XWordSegmenter implements ffi.Finalizable {
   /// Burmese, Khmer, Lao, and Thai.
   ///
   /// See the [Rust documentation for `new_dictionary`](https://docs.rs/icu/latest/icu/segmenter/struct.WordSegmenter.html#method.new_dictionary) for more information.
-  factory ICU4XWordSegmenter.dictionary(ICU4XDataProvider provider) {
+  factory WordSegmenter.dictionary(DataProvider provider) {
     final result = _ICU4XWordSegmenter_create_dictionary(provider._underlying);
     return result.isOk
-        ? ICU4XWordSegmenter._(result.union.ok)
-        : throw ICU4XError.values
+        ? WordSegmenter._(result.union.ok)
+        : throw Error.values
             .firstWhere((v) => v._underlying == result.union.err);
   }
   // ignore: non_constant_identifier_names
@@ -11703,14 +11615,14 @@ class ICU4XWordSegmenter implements ffi.Finalizable {
   /// Segments a (potentially ill-formed) UTF-8 string.
   ///
   /// See the [Rust documentation for `segment_utf8`](https://docs.rs/icu/latest/icu/segmenter/struct.WordSegmenter.html#method.segment_utf8) for more information.
-  ICU4XWordBreakIteratorUtf8 segmentUtf8(String input) {
+  WordBreakIteratorUtf8 segmentUtf8(String input) {
     final alloc = ffi2.Arena();
     final inputSlice = _SliceFfi2Utf8._fromDart(input, alloc);
 
     final result = _ICU4XWordSegmenter_segment_utf8(
         _underlying, inputSlice._bytes, inputSlice._length);
     alloc.releaseAll();
-    return ICU4XWordBreakIteratorUtf8._(result);
+    return WordBreakIteratorUtf8._(result);
   }
 
   // ignore: non_constant_identifier_names
@@ -11727,14 +11639,14 @@ class ICU4XWordSegmenter implements ffi.Finalizable {
   /// Segments a UTF-16 string.
   ///
   /// See the [Rust documentation for `segment_utf16`](https://docs.rs/icu/latest/icu/segmenter/struct.WordSegmenter.html#method.segment_utf16) for more information.
-  ICU4XWordBreakIteratorUtf16 segmentUtf16(Uint16List input) {
+  WordBreakIteratorUtf16 segmentUtf16(Uint16List input) {
     final alloc = ffi2.Arena();
     final inputSlice = _SliceFfiUint16._fromDart(input, alloc);
 
     final result = _ICU4XWordSegmenter_segment_utf16(
         _underlying, inputSlice._bytes, inputSlice._length);
     alloc.releaseAll();
-    return ICU4XWordBreakIteratorUtf16._(result);
+    return WordBreakIteratorUtf16._(result);
   }
 
   // ignore: non_constant_identifier_names
@@ -11751,14 +11663,14 @@ class ICU4XWordSegmenter implements ffi.Finalizable {
   /// Segments a Latin-1 string.
   ///
   /// See the [Rust documentation for `segment_latin1`](https://docs.rs/icu/latest/icu/segmenter/struct.WordSegmenter.html#method.segment_latin1) for more information.
-  ICU4XWordBreakIteratorLatin1 segmentLatin1(Uint8List input) {
+  WordBreakIteratorLatin1 segmentLatin1(Uint8List input) {
     final alloc = ffi2.Arena();
     final inputSlice = _SliceFfiUint8._fromDart(input, alloc);
 
     final result = _ICU4XWordSegmenter_segment_latin1(
         _underlying, inputSlice._bytes, inputSlice._length);
     alloc.releaseAll();
-    return ICU4XWordBreakIteratorLatin1._(result);
+    return WordBreakIteratorLatin1._(result);
   }
 
   // ignore: non_constant_identifier_names
@@ -11776,10 +11688,10 @@ class ICU4XWordSegmenter implements ffi.Finalizable {
 /// An object capable of formatting a date time with time zone to a string.
 ///
 /// See the [Rust documentation for `ZonedDateTimeFormatter`](https://docs.rs/icu/latest/icu/datetime/struct.ZonedDateTimeFormatter.html) for more information.
-class ICU4XZonedDateTimeFormatter implements ffi.Finalizable {
+class ZonedDateTimeFormatter implements ffi.Finalizable {
   final ffi.Pointer<ffi.Opaque> _underlying;
 
-  ICU4XZonedDateTimeFormatter._(this._underlying) {
+  ZonedDateTimeFormatter._(this._underlying) {
     _finalizer.attach(this, _underlying.cast());
   }
 
@@ -11792,19 +11704,16 @@ class ICU4XZonedDateTimeFormatter implements ffi.Finalizable {
   /// for the time zone.
   ///
   /// See the [Rust documentation for `try_new`](https://docs.rs/icu/latest/icu/datetime/struct.ZonedDateTimeFormatter.html#method.try_new) for more information.
-  factory ICU4XZonedDateTimeFormatter.withLengths(
-      ICU4XDataProvider provider,
-      ICU4XLocale locale,
-      ICU4XDateLength dateLength,
-      ICU4XTimeLength timeLength) {
+  factory ZonedDateTimeFormatter.withLengths(DataProvider provider,
+      Locale locale, DateLength dateLength, TimeLength timeLength) {
     final result = _ICU4XZonedDateTimeFormatter_create_with_lengths(
         provider._underlying,
         locale._underlying,
         dateLength.index,
         timeLength.index);
     return result.isOk
-        ? ICU4XZonedDateTimeFormatter._(result.union.ok)
-        : throw ICU4XError.values
+        ? ZonedDateTimeFormatter._(result.union.ok)
+        : throw Error.values
             .firstWhere((v) => v._underlying == result.union.err);
   }
   // ignore: non_constant_identifier_names
@@ -11823,12 +11732,12 @@ class ICU4XZonedDateTimeFormatter implements ffi.Finalizable {
   /// fallback for the time zone with the given configurations.
   ///
   /// See the [Rust documentation for `try_new`](https://docs.rs/icu/latest/icu/datetime/struct.ZonedDateTimeFormatter.html#method.try_new) for more information.
-  factory ICU4XZonedDateTimeFormatter.withLengthsAndIso8601TimeZoneFallback(
-      ICU4XDataProvider provider,
-      ICU4XLocale locale,
-      ICU4XDateLength dateLength,
-      ICU4XTimeLength timeLength,
-      ICU4XIsoTimeZoneOptions zoneOptions) {
+  factory ZonedDateTimeFormatter.withLengthsAndIso8601TimeZoneFallback(
+      DataProvider provider,
+      Locale locale,
+      DateLength dateLength,
+      TimeLength timeLength,
+      IsoTimeZoneOptions zoneOptions) {
     final result =
         _ICU4XZonedDateTimeFormatter_create_with_lengths_and_iso_8601_time_zone_fallback(
             provider._underlying,
@@ -11837,8 +11746,8 @@ class ICU4XZonedDateTimeFormatter implements ffi.Finalizable {
             timeLength.index,
             zoneOptions._underlying);
     return result.isOk
-        ? ICU4XZonedDateTimeFormatter._(result.union.ok)
-        : throw ICU4XError.values
+        ? ZonedDateTimeFormatter._(result.union.ok)
+        : throw Error.values
             .firstWhere((v) => v._underlying == result.union.err);
   }
   // ignore: non_constant_identifier_names
@@ -11850,7 +11759,7 @@ class ICU4XZonedDateTimeFormatter implements ffi.Finalizable {
                           ffi.Pointer<ffi.Opaque>,
                           ffi.Uint32,
                           ffi.Uint32,
-                          _ICU4XIsoTimeZoneOptionsFfi)>>(
+                          _IsoTimeZoneOptionsFfi)>>(
               'ICU4XZonedDateTimeFormatter_create_with_lengths_and_iso_8601_time_zone_fallback')
           .asFunction<
               _ResultOpaqueUint32 Function(
@@ -11858,13 +11767,13 @@ class ICU4XZonedDateTimeFormatter implements ffi.Finalizable {
                   ffi.Pointer<ffi.Opaque>,
                   int,
                   int,
-                  _ICU4XIsoTimeZoneOptionsFfi)>(isLeaf: true);
+                  _IsoTimeZoneOptionsFfi)>(isLeaf: true);
 
   /// Formats a [`ICU4XDateTime`] and [`ICU4XCustomTimeZone`] to a string.
   ///
   /// See the [Rust documentation for `format`](https://docs.rs/icu/latest/icu/datetime/struct.ZonedDateTimeFormatter.html#method.format) for more information.
   String formatDatetimeWithCustomTimeZone(
-      ICU4XDateTime datetime, ICU4XCustomTimeZone timeZone) {
+      DateTime datetime, CustomTimeZone timeZone) {
     final writeable = _Writeable();
     final result =
         _ICU4XZonedDateTimeFormatter_format_datetime_with_custom_time_zone(
@@ -11874,7 +11783,7 @@ class ICU4XZonedDateTimeFormatter implements ffi.Finalizable {
             writeable._underlying);
     return result.isOk
         ? writeable.finalize()
-        : throw ICU4XError.values
+        : throw Error.values
             .firstWhere((v) => v._underlying == result.union.err);
   }
 
@@ -11899,7 +11808,7 @@ class ICU4XZonedDateTimeFormatter implements ffi.Finalizable {
   ///
   /// See the [Rust documentation for `format`](https://docs.rs/icu/latest/icu/datetime/struct.ZonedDateTimeFormatter.html#method.format) for more information.
   String formatIsoDatetimeWithCustomTimeZone(
-      ICU4XIsoDateTime datetime, ICU4XCustomTimeZone timeZone) {
+      IsoDateTime datetime, CustomTimeZone timeZone) {
     final writeable = _Writeable();
     final result =
         _ICU4XZonedDateTimeFormatter_format_iso_datetime_with_custom_time_zone(
@@ -11909,7 +11818,7 @@ class ICU4XZonedDateTimeFormatter implements ffi.Finalizable {
             writeable._underlying);
     return result.isOk
         ? writeable.finalize()
-        : throw ICU4XError.values
+        : throw Error.values
             .firstWhere((v) => v._underlying == result.union.err);
   }
 
@@ -11970,20 +11879,6 @@ class _ResultBoolUint32Union extends ffi.Union {
 
 class _ResultBoolUint32 extends ffi.Struct {
   external _ResultBoolUint32Union union;
-
-  @ffi.Bool()
-  external bool isOk;
-}
-
-class _ResultICU4XWeekOfFfiUint32Union extends ffi.Union {
-  external _ICU4XWeekOfFfi ok;
-
-  @ffi.Uint32()
-  external int err;
-}
-
-class _ResultICU4XWeekOfFfiUint32 extends ffi.Struct {
-  external _ResultICU4XWeekOfFfiUint32Union union;
 
   @ffi.Bool()
   external bool isOk;
@@ -12055,6 +11950,20 @@ class _ResultVoidUint32 extends ffi.Struct {
 }
 
 class _ResultVoidVoid extends ffi.Struct {
+  @ffi.Bool()
+  external bool isOk;
+}
+
+class _ResultWeekOfFfiUint32Union extends ffi.Union {
+  external _WeekOfFfi ok;
+
+  @ffi.Uint32()
+  external int err;
+}
+
+class _ResultWeekOfFfiUint32 extends ffi.Struct {
+  external _ResultWeekOfFfiUint32Union union;
+
   @ffi.Bool()
   external bool isOk;
 }

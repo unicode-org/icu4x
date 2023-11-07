@@ -5,17 +5,17 @@ import 'package:test/test.dart';
 void main() {
   init(path.absolute('test/libicu_capi_cdylib.so'));
 
-  test('ICU4XFixedDecimal.toString', () {
-    final x = ICU4XFixedDecimal.fromF64WithLowerMagnitude(1.49403, -7);
+  test('FixedDecimal.toString', () {
+    final x = FixedDecimal.fromF64WithLowerMagnitude(1.49403, -7);
     expect(x.toString(), '1.4940300');
   });
 
-  test('ICU4XLocaleFallbacker', () {
-    final iterator = ICU4XLocaleFallbacker(ICU4XDataProvider.compiled())
-        .forConfig(ICU4XLocaleFallbackConfig()
+  test('LocaleFallbacker', () {
+    final iterator = LocaleFallbacker(DataProvider.compiled())
+        .forConfig(LocaleFallbackConfig()
           ..extensionKey = 'ca'
-          ..priority = ICU4XLocaleFallbackPriority.region)
-        .fallbackForLocale(ICU4XLocale.fromString('de-CH-u-ca-japanese'));
+          ..priority = LocaleFallbackPriority.region)
+        .fallbackForLocale(Locale.fromString('de-CH-u-ca-japanese'));
     expect(iterator.get.toString(), 'de-CH-u-ca-japanese');
     iterator.step();
     expect(iterator.get.toString(), 'de-CH');
@@ -29,18 +29,18 @@ void main() {
 
   test('Struct equality', () {
     expect(
-        ICU4XLocaleFallbackConfig()
+        LocaleFallbackConfig()
           ..extensionKey = 'ca'
-          ..priority = ICU4XLocaleFallbackPriority.region,
-        ICU4XLocaleFallbackConfig()
+          ..priority = LocaleFallbackPriority.region,
+        LocaleFallbackConfig()
           ..extensionKey = 'ca'
-          ..priority = ICU4XLocaleFallbackPriority.region);
+          ..priority = LocaleFallbackPriority.region);
     expect(
-        ICU4XLocaleFallbackConfig()
+        LocaleFallbackConfig()
           ..extensionKey = 'nu'
-          ..priority = ICU4XLocaleFallbackPriority.region,
-        isNot(ICU4XLocaleFallbackConfig()
+          ..priority = LocaleFallbackPriority.region,
+        isNot(LocaleFallbackConfig()
           ..extensionKey = 'ca'
-          ..priority = ICU4XLocaleFallbackPriority.region));
+          ..priority = LocaleFallbackPriority.region));
   });
 }

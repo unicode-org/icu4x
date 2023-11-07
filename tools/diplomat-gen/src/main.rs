@@ -42,5 +42,6 @@ fn main() -> std::io::Result<()> {
         &Default::default(),
         None,
         false,
+        Some("ICU4X".into()),
     )
 }
