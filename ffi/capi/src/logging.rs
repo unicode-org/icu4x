@@ -8,6 +8,7 @@ pub mod ffi {
 
     #[diplomat::opaque]
     /// An object allowing control over the logging used
+    #[diplomat::attr(dart, disable)]
     pub struct ICU4XLogger;
 
     impl ICU4XLogger {

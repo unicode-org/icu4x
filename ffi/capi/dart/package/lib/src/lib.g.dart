@@ -4136,44 +4136,6 @@ class DataProvider implements ffi.Finalizable {
               'ICU4XDataProvider_create_compiled')
           .asFunction<ffi.Pointer<ffi.Opaque> Function()>(isLeaf: true);
 
-  /// Constructs an `FsDataProvider` and returns it as an [`ICU4XDataProvider`].
-  /// Requires the `provider_fs` Cargo feature.
-  /// Not supported in WASM.
-  ///
-  /// See the [Rust documentation for `FsDataProvider`](https://docs.rs/icu_provider_fs/latest/icu_provider_fs/struct.FsDataProvider.html) for more information.
-  factory DataProvider.fs(String path) {
-    final alloc = ffi2.Arena();
-    final pathSlice = _SliceFfi2Utf8._fromDart(path, alloc);
-
-    final result =
-        _ICU4XDataProvider_create_fs(pathSlice._bytes, pathSlice._length);
-    alloc.releaseAll();
-    return result.isOk
-        ? DataProvider._(result.union.ok)
-        : throw Error.values
-            .firstWhere((v) => v._underlying == result.union.err);
-  }
-  // ignore: non_constant_identifier_names
-  static final _ICU4XDataProvider_create_fs = _capi<
-          ffi.NativeFunction<
-              _ResultOpaqueUint32 Function(ffi.Pointer<ffi2.Utf8>,
-                  ffi.Size)>>('ICU4XDataProvider_create_fs')
-      .asFunction<_ResultOpaqueUint32 Function(ffi.Pointer<ffi2.Utf8>, int)>(
-          isLeaf: true);
-
-  /// Deprecated
-  ///
-  /// Use `create_compiled()`.
-  factory DataProvider.test() {
-    final result = _ICU4XDataProvider_create_test();
-    return DataProvider._(result);
-  }
-  // ignore: non_constant_identifier_names
-  static final _ICU4XDataProvider_create_test =
-      _capi<ffi.NativeFunction<ffi.Pointer<ffi.Opaque> Function()>>(
-              'ICU4XDataProvider_create_test')
-          .asFunction<ffi.Pointer<ffi.Opaque> Function()>(isLeaf: true);
-
   /// Constructs a `BlobDataProvider` and returns it as an [`ICU4XDataProvider`].
   ///
   /// See the [Rust documentation for `BlobDataProvider`](https://docs.rs/icu_provider_blob/latest/icu_provider_blob/struct.BlobDataProvider.html) for more information.
@@ -8618,32 +8580,6 @@ class Locale implements ffi.Finalizable {
       .asFunction<
           int Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi2.Utf8>,
               int)>(isLeaf: true);
-
-  /// Deprecated
-  ///
-  /// Use `create_from_string("en").
-  factory Locale.en() {
-    final result = _ICU4XLocale_create_en();
-    return Locale._(result);
-  }
-  // ignore: non_constant_identifier_names
-  static final _ICU4XLocale_create_en =
-      _capi<ffi.NativeFunction<ffi.Pointer<ffi.Opaque> Function()>>(
-              'ICU4XLocale_create_en')
-          .asFunction<ffi.Pointer<ffi.Opaque> Function()>(isLeaf: true);
-
-  /// Deprecated
-  ///
-  /// Use `create_from_string("bn").
-  factory Locale.bn() {
-    final result = _ICU4XLocale_create_bn();
-    return Locale._(result);
-  }
-  // ignore: non_constant_identifier_names
-  static final _ICU4XLocale_create_bn =
-      _capi<ffi.NativeFunction<ffi.Pointer<ffi.Opaque> Function()>>(
-              'ICU4XLocale_create_bn')
-          .asFunction<ffi.Pointer<ffi.Opaque> Function()>(isLeaf: true);
 }
 
 /// A locale canonicalizer.
@@ -9189,45 +9125,6 @@ class LocaleFallbackerWithConfig implements ffi.Finalizable {
       .asFunction<
           ffi.Pointer<ffi.Opaque> Function(
               ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
-}
-
-/// An object allowing control over the logging used
-class Logger implements ffi.Finalizable {
-  final ffi.Pointer<ffi.Opaque> _underlying;
-
-  Logger._(this._underlying) {
-    _finalizer.attach(this, _underlying.cast());
-  }
-
-  static final _finalizer = ffi.NativeFinalizer(_capi('ICU4XLogger_destroy'));
-
-  /// Initialize the logger using `simple_logger`
-  ///
-  /// Requires the `simple_logger` Cargo feature.
-  ///
-  /// Returns `false` if there was already a logger set.
-  static bool initSimpleLogger() {
-    final result = _ICU4XLogger_init_simple_logger();
-    return result;
-  }
-
-  // ignore: non_constant_identifier_names
-  static final _ICU4XLogger_init_simple_logger =
-      _capi<ffi.NativeFunction<ffi.Bool Function()>>(
-              'ICU4XLogger_init_simple_logger')
-          .asFunction<bool Function()>(isLeaf: true);
-
-  /// Deprecated: since ICU4X 1.4, this now happens automatically if the `log` feature is enabled.
-  static bool initConsoleLogger() {
-    final result = _ICU4XLogger_init_console_logger();
-    return result;
-  }
-
-  // ignore: non_constant_identifier_names
-  static final _ICU4XLogger_init_console_logger =
-      _capi<ffi.NativeFunction<ffi.Bool Function()>>(
-              'ICU4XLogger_init_console_logger')
-          .asFunction<bool Function()>(isLeaf: true);
 }
 
 /// An object capable of computing the metazone from a timezone.
