@@ -11,10 +11,10 @@ use serde::{
     de::{IgnoredAny, MapAccess, Visitor},
     Deserialize, Deserializer,
 };
-use std::collections::{BTreeMap, HashMap};
+use std::collections::BTreeMap;
 
 #[derive(PartialEq, Debug, Clone, Deserialize)]
-pub struct ZoneFormat(pub HashMap<String, String>);
+pub struct ZoneFormat(pub BTreeMap<String, String>);
 
 #[derive(PartialEq, Debug, Clone, Deserialize)]
 pub struct Metazone {
@@ -23,52 +23,39 @@ pub struct Metazone {
 }
 
 #[derive(PartialEq, Debug, Clone, Deserialize)]
-pub struct Metazones(pub HashMap<String, Metazone>);
+pub struct Metazones(pub BTreeMap<String, Metazone>);
 
 #[derive(PartialEq, Debug, Clone, Deserialize)]
-pub struct LocationWithExemplarCity {
+// Since this value can be either a Location or a table of sub-regions, we use
+// the presence of fields to distinguish the object types. If CLDR-JSON adds
+// more fields to Location in the future, they must also be added here.
+//
+// Example errors that may be caused by this:
+//
+// - Cannot find bcp47 for "America/Argentina".
+// - Cannot find bcp47 for "Etc/UTC/short".
+#[serde(deny_unknown_fields)]
+pub struct Location {
     pub long: Option<ZoneFormat>,
     pub short: Option<ZoneFormat>,
     #[serde(rename = "exemplarCity")]
-    pub exemplar_city: String,
-}
-
-#[derive(PartialEq, Debug, Clone, Deserialize)]
-pub struct LocationWithShort {
-    pub long: Option<ZoneFormat>,
-    pub short: ZoneFormat,
-    #[serde(rename = "exemplarCity")]
     pub exemplar_city: Option<String>,
-}
-
-#[derive(PartialEq, Debug, Clone, Deserialize)]
-pub struct LocationWithLong {
-    pub long: ZoneFormat,
-    pub short: Option<ZoneFormat>,
-    #[serde(rename = "exemplarCity")]
-    pub exemplar_city: Option<String>,
-}
-
-#[derive(PartialEq, Debug, Clone, Deserialize)]
-#[serde(untagged)]
-pub enum Location {
-    City(LocationWithExemplarCity),
-    Long(LocationWithLong),
-    Short(LocationWithShort),
+    #[serde(rename = "exemplarCity-alt-secondary")]
+    pub exemplar_city_alt_secondary: Option<String>,
 }
 
 #[derive(PartialEq, Debug, Clone, Deserialize)]
 #[serde(untagged)]
 pub enum LocationOrSubRegion {
     Location(Location),
-    SubRegion(HashMap<String, Location>),
+    SubRegion(BTreeMap<String, Location>),
 }
 
 #[derive(PartialEq, Debug, Clone, Default, Deserialize)]
 pub struct Region(pub BTreeMap<String, LocationOrSubRegion>);
 
 #[derive(PartialEq, Debug, Clone, Default, Deserialize)]
-pub struct Zones(pub HashMap<String, Region>);
+pub struct Zones(pub BTreeMap<String, Region>);
 
 #[derive(PartialEq, Debug, Default, Clone)]
 pub struct TimeZoneNames {
@@ -76,7 +63,7 @@ pub struct TimeZoneNames {
     pub gmt_format: String,
     pub gmt_zero_format: String,
     pub region_format: String,
-    pub region_format_variants: HashMap<String, String>,
+    pub region_format_variants: BTreeMap<String, String>,
     pub fallback_format: String,
     pub zone: Zones,
     pub metazone: Option<Metazones>,

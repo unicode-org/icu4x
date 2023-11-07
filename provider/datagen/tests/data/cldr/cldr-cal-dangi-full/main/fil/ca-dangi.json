@@ -3,7 +3,7 @@
     "fil": {
       "identity": {
         "version": {
-          "_cldrVersion": "43"
+          "_cldrVersion": "44"
         },
         "language": "fil"
       },
@@ -260,7 +260,7 @@
                   "morning2": "madaling-araw",
                   "afternoon1": "tanghali",
                   "evening1": "ng gabi",
-                  "night1": "gabi"
+                  "night1": "ng gabi"
                 },
                 "narrow": {
                   "midnight": "hatinggabi",
@@ -271,7 +271,7 @@
                   "morning2": "madaling-araw",
                   "afternoon1": "sa hapon",
                   "evening1": "sa gabi",
-                  "night1": "gabi"
+                  "night1": "ng gabi"
                 },
                 "wide": {
                   "midnight": "hatinggabi",
@@ -294,7 +294,7 @@
                   "morning1": "umaga",
                   "morning2": "madaling-araw",
                   "afternoon1": "hapon",
-                  "evening1": "ng gabi",
+                  "evening1": "gabi",
                   "night1": "gabi"
                 },
                 "narrow": {
@@ -305,7 +305,7 @@
                   "morning1": "umaga",
                   "morning2": "madaling-araw",
                   "afternoon1": "hapon",
-                  "evening1": "sa gabi",
+                  "evening1": "gabi",
                   "night1": "gabi"
                 },
                 "wide": {
@@ -316,7 +316,7 @@
                   "morning1": "umaga",
                   "morning2": "madaling-araw",
                   "afternoon1": "hapon",
-                  "evening1": "ng gabi",
+                  "evening1": "gabi",
                   "night1": "gabi"
                 }
               }

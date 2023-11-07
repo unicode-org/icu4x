@@ -56,6 +56,7 @@ const _: () = {
         pub use icu_collections as collections;
         pub use icu_locid_transform as locid_transform;
     }
+    icu_collator_data::make_provider!(Baked);
     icu_collator_data::impl_collator_data_v1!(Baked);
     icu_collator_data::impl_collator_dia_v1!(Baked);
     icu_collator_data::impl_collator_jamo_v1!(Baked);
@@ -63,6 +64,17 @@ const _: () = {
     icu_collator_data::impl_collator_prim_v1!(Baked);
     icu_collator_data::impl_collator_reord_v1!(Baked);
 };
+
+#[cfg(feature = "datagen")]
+/// The latest minimum set of keys required by this component.
+pub const KEYS: &[DataKey] = &[
+    CollationDataV1Marker::KEY,
+    CollationDiacriticsV1Marker::KEY,
+    CollationJamoV1Marker::KEY,
+    CollationMetadataV1Marker::KEY,
+    CollationReorderingV1Marker::KEY,
+    CollationSpecialPrimariesV1Marker::KEY,
+];
 
 const SINGLE_U32: &ZeroSlice<u32> =
     zeroslice!(u32; <u32 as AsULE>::ULE::from_unsigned; [FFFD_CE32_VALUE]);
@@ -222,7 +234,6 @@ impl<'data> CollationDataV1<'data> {
     extension_key = "co",
     fallback_by = "collation",
     fallback_supplement = "collation",
-    singleton,
 ))]
 #[derive(Debug, PartialEq, Clone)]
 #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake), databake(path = icu_collator::provider))]

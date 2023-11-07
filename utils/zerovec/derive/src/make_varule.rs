@@ -173,9 +173,7 @@ pub fn make_varule_impl(ule_name: Ident, mut input: DeriveInput) -> TokenStream2
         quote!(
             impl core::cmp::PartialOrd for #ule_name {
                 fn partial_cmp(&self, other: &Self) -> Option<core::cmp::Ordering> {
-                    let this = #zerofrom_fq_path::zero_from(self);
-                    let other = #zerofrom_fq_path::zero_from(other);
-                    <#name as core::cmp::PartialOrd>::partial_cmp(&this, &other)
+                    Some(self.cmp(other))
                 }
             }
 
@@ -256,10 +254,22 @@ pub fn make_varule_impl(ule_name: Ident, mut input: DeriveInput) -> TokenStream2
         quote!()
     };
 
+    let maybe_multi_getters = if let Some(getters) = unsized_field_info.maybe_multi_getters() {
+        quote! {
+            impl #ule_name {
+                #getters
+            }
+        }
+    } else {
+        quote!()
+    };
+
     quote!(
         #input
 
         #varule_struct
+
+        #maybe_multi_getters
 
         #encode_impl
 
@@ -543,16 +553,41 @@ impl<'a> UnsizedFields<'a> {
             let last_field_ule_ty = self.fields[0].kind.varule_ty();
             field_inits.push(quote!(#setter <#last_field_ty as #zerofrom_trait <#lt, #last_field_ule_ty>>::zero_from(&other.#accessor) ));
         } else {
-            let multi_accessor = self.varule_accessor();
-            for (i, field) in self.fields.iter().enumerate() {
+            for field in self.fields.iter() {
                 let setter = field.field.setter();
+                let getter = field.field.getter();
                 let field_ty = &field.field.field.ty;
                 let field_ule_ty = field.kind.varule_ty();
 
-                field_inits.push(quote!(#setter unsafe {
-                    <#field_ty as #zerofrom_trait <#lt, #field_ule_ty>>::zero_from(&other.#multi_accessor.get_field::<#field_ule_ty>(#i))
-                }));
+                field_inits.push(quote!(#setter
+                    <#field_ty as #zerofrom_trait <#lt, #field_ule_ty>>::zero_from(&other.#getter())
+                ));
             }
+        }
+    }
+
+    fn maybe_multi_getters(&self) -> Option<TokenStream2> {
+        if self.fields.len() == 1 {
+            None
+        } else {
+            let multi_accessor = self.varule_accessor();
+            let field_getters = self.fields.iter().enumerate().map(|(i, field)| {
+                let getter = field.field.getter();
+
+                let field_ule_ty = field.kind.varule_ty();
+                let doc_name = field.field.getter_doc_name();
+                let doc = format!("Access the VarULE type behind {doc_name}");
+                quote!(
+                    #[doc = #doc]
+                    pub fn #getter<'a>(&'a self) -> &'a #field_ule_ty {
+                        unsafe {
+                            self.#multi_accessor.get_field::<#field_ule_ty>(#i)
+                        }
+                    }
+                )
+            });
+
+            Some(quote!(#(#field_getters)*))
         }
     }
 

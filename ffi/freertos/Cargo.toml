@@ -5,7 +5,7 @@
 [package]
 name = "icu_freertos"
 description = "C interface to ICU4X"
-version = "1.2.1"
+license-file = "LICENSE"
 include = [
     "build.rs",
     "src/**/*",
@@ -22,9 +22,9 @@ authors.workspace = true
 categories.workspace = true
 edition.workspace = true
 homepage.workspace = true
-license-file.workspace = true
 repository.workspace = true
 rust-version.workspace = true
+version.workspace = true
 
 [package.metadata.docs.rs]
 all-features = true

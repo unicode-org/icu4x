@@ -143,7 +143,10 @@ as described in the zero-copy format, and the maps here are just arrays)
 */
 
 use super::*;
-use std::collections::{HashMap, HashSet};
+use alloc::borrow::ToOwned;
+use alloc::collections::{BTreeMap, BTreeSet};
+
+type Result<T> = core::result::Result<T, CompileError>;
 
 enum SingleDirection {
     Forward,
@@ -219,7 +222,7 @@ impl SpecialConstructCounts {
 pub(crate) struct Pass1Data {
     pub(crate) counts: SpecialConstructCounts,
     // the variables used by the associated key
-    pub(crate) used_variables: HashSet<String>,
+    pub(crate) used_variables: BTreeSet<String>,
 }
 
 #[derive(Debug, Clone)]
@@ -234,7 +237,7 @@ pub(crate) struct DirectedPass1Result<'p> {
 pub(crate) struct Pass1Result<'p> {
     pub(crate) forward_result: DirectedPass1Result<'p>,
     pub(crate) reverse_result: DirectedPass1Result<'p>,
-    pub(crate) variable_definitions: HashMap<String, &'p [parse::Element]>,
+    pub(crate) variable_definitions: BTreeMap<String, &'p [parse::Element]>,
 }
 
 /// Responsible for the first pass as described in the module-level documentation.
@@ -244,26 +247,30 @@ pub(crate) struct Pass1<'p> {
     // data for *direct* dependencies
     forward_data: Pass1Data,
     reverse_data: Pass1Data,
-    variable_data: HashMap<String, Pass1Data>,
+    variable_data: BTreeMap<String, Pass1Data>,
     forward_filter: Option<parse::FilterSet>,
     reverse_filter: Option<parse::FilterSet>,
     forward_rule_group_agg: rule_group_agg::ForwardRuleGroupAggregator<'p>,
     reverse_rule_group_agg: rule_group_agg::ReverseRuleGroupAggregator<'p>,
-    variable_definitions: HashMap<String, &'p [parse::Element]>,
+    variable_definitions: BTreeMap<String, &'p [parse::Element]>,
     // variables which contain constructs that are only allowed to appear on the source side
     // e.g., $a = c+; $set = [a-z]; ...
-    target_disallowed_variables: HashSet<String>,
+    target_disallowed_variables: BTreeSet<String>,
 }
 
 impl<'p> Pass1<'p> {
-    pub(crate) fn run(direction: Direction, rules: &'p [parse::Rule]) -> Result<Pass1Result<'p>> {
+    // TODO(#3736): decide if validation should be direction dependent
+    //  example: transliterator with direction "forward", and a rule `[a-z] < b ;` (invalid)
+    //  - if validation is dependent, this rule is valid because it's not used in the forward direction
+    //  - if validation is independent, this rule is invalid because the reverse direction is also checked
+    pub(super) fn run(direction: Direction, rules: &'p [parse::Rule]) -> Result<Pass1Result<'p>> {
         let mut s = Self {
             direction,
             forward_data: Pass1Data::default(),
             reverse_data: Pass1Data::default(),
-            variable_data: HashMap::new(),
-            variable_definitions: HashMap::new(),
-            target_disallowed_variables: HashSet::new(),
+            variable_data: BTreeMap::new(),
+            variable_definitions: BTreeMap::new(),
+            target_disallowed_variables: BTreeSet::new(),
             forward_filter: None,
             reverse_filter: None,
             forward_rule_group_agg: rule_group_agg::ForwardRuleGroupAggregator::new(),
@@ -360,9 +367,11 @@ impl<'p> Pass1<'p> {
     ) -> Result<()> {
         // TODO(#3736): include source location/actual source text in these logs
         // logging for useless contexts
+        #[cfg(feature = "datagen")]
         if dir == Direction::Forward && (!target.ante.is_empty() || !target.post.is_empty()) {
             log::warn!("forward conversion rule has ignored context on target side");
         }
+        #[cfg(feature = "datagen")]
         if dir == Direction::Reverse && (!source.ante.is_empty() || !source.post.is_empty()) {
             log::warn!("reverse conversion rule has ignored context on target side");
         }
@@ -540,7 +549,7 @@ impl<'a, 'p, F: Fn(&str) -> bool> SourceValidator<'a, 'p, F> {
 /// back references not being allowed to overflow and only one cursor being allowed.
 struct TargetValidator<'a, 'p, F: Fn(&str) -> bool> {
     is_variable_defined: F,
-    target_disallowed_variables: &'a mut HashSet<String>,
+    target_disallowed_variables: &'a mut BTreeSet<String>,
     data: &'a mut Pass1Data,
     replacer: &'p [parse::Element],
     // the number of segments defined on the corresponding source side. produced by SourceValidator
@@ -552,7 +561,7 @@ struct TargetValidator<'a, 'p, F: Fn(&str) -> bool> {
 impl<'a, 'p, F: Fn(&str) -> bool> TargetValidator<'a, 'p, F> {
     fn new(
         is_variable_defined: F,
-        target_disallowed_variables: &'a mut HashSet<String>,
+        target_disallowed_variables: &'a mut BTreeSet<String>,
         data: &'a mut Pass1Data,
         replacer: &'p [parse::Element],
         num_segments: u32,
@@ -690,7 +699,7 @@ impl<'a, 'p, F: Fn(&str) -> bool> TargetValidator<'a, 'p, F> {
 /// special constructs that are allowed to appear on the target side.
 struct VariableDefinitionValidator<'a, 'p, F: Fn(&str) -> bool> {
     is_variable_defined: F,
-    target_disallowed_variables: &'a HashSet<String>,
+    target_disallowed_variables: &'a BTreeSet<String>,
     data: &'a mut Pass1Data,
     definition: &'p [parse::Element],
     used_target_disallowed_construct: bool,
@@ -700,7 +709,7 @@ impl<'a, 'p, F: Fn(&str) -> bool> VariableDefinitionValidator<'a, 'p, F> {
     fn new(
         is_variable_defined: F,
         data: &'a mut Pass1Data,
-        target_disallowed_variables: &'a HashSet<String>,
+        target_disallowed_variables: &'a BTreeSet<String>,
         definition: &'p [parse::Element],
     ) -> Self {
         Self {
@@ -777,15 +786,15 @@ impl<'a, 'p, F: Fn(&str) -> bool> VariableDefinitionValidator<'a, 'p, F> {
 
 struct Pass1ResultGenerator {
     // for cycle-detection
-    current_vars: HashSet<String>,
-    transitive_var_dependencies: HashMap<String, HashSet<String>>,
+    current_vars: BTreeSet<String>,
+    transitive_var_dependencies: BTreeMap<String, BTreeSet<String>>,
 }
 
 impl Pass1ResultGenerator {
     fn generate(pass: Pass1) -> Result<Pass1Result> {
         let generator = Self {
-            current_vars: HashSet::new(),
-            transitive_var_dependencies: HashMap::new(),
+            current_vars: BTreeSet::new(),
+            transitive_var_dependencies: BTreeMap::new(),
         };
         generator.generate_result(pass)
     }
@@ -831,7 +840,7 @@ impl Pass1ResultGenerator {
     fn generate_result_one_direction(
         &mut self,
         seed_data: &Pass1Data,
-        var_data_map: &HashMap<String, Pass1Data>,
+        var_data_map: &BTreeMap<String, Pass1Data>,
     ) -> Result<Pass1Data> {
         let seed_vars = &seed_data.used_variables;
 
@@ -859,7 +868,7 @@ impl Pass1ResultGenerator {
         })
     }
 
-    fn visit_var(&mut self, name: &str, var_data_map: &HashMap<String, Pass1Data>) -> Result<()> {
+    fn visit_var(&mut self, name: &str, var_data_map: &BTreeMap<String, Pass1Data>) -> Result<()> {
         if self.transitive_var_dependencies.contains_key(name) {
             return Ok(());
         }
@@ -902,12 +911,10 @@ mod tests {
     }
     use ExpectedOutcome::*;
 
-    const BOTH: Direction = Direction::Both;
-
     fn parse(s: &str) -> Vec<parse::Rule> {
         match parse::parse(s) {
             Ok(rules) => rules,
-            Err(e) => panic!("unexpected error parsing rules {s:?}: {:?}", e),
+            Err(e) => panic!("unexpected error parsing rules {s:?}: {:?}", e.explain(s)),
         }
     }
 
@@ -951,15 +958,17 @@ mod tests {
         ";
 
         let rules = parse(source);
-        let result = Pass1::run(BOTH, &rules).expect("pass1 failed");
+        let result = Pass1::run(Direction::Both, &rules)
+            .map_err(|e| e.explain(source))
+            .expect("pass1 failed");
         {
-            let vars_with_data: HashSet<_> = result
+            let vars_with_data: BTreeSet<_> = result
                 .variable_definitions
                 .keys()
                 .map(Deref::deref)
                 .collect();
             let expected_vars_with_data =
-                HashSet::from(["used_both", "used_rev", "used_fwd", "literal1", "literal2"]);
+                BTreeSet::from(["used_both", "used_rev", "used_fwd", "literal1", "literal2"]);
             assert_eq!(expected_vars_with_data, vars_with_data);
         }
         {
@@ -995,13 +1004,13 @@ mod tests {
             assert_eq!(fwd_data, result.forward_result.data);
             assert_eq!(rev_data, result.reverse_result.data);
 
-            let actual_definition_keys: HashSet<_> = result
+            let actual_definition_keys: BTreeSet<_> = result
                 .variable_definitions
                 .keys()
                 .map(Deref::deref)
                 .collect();
             let expected_definition_keys =
-                HashSet::from(["used_both", "used_fwd", "used_rev", "literal1", "literal2"]);
+                BTreeSet::from(["used_both", "used_fwd", "used_rev", "literal1", "literal2"]);
             assert_eq!(expected_definition_keys, actual_definition_keys);
         }
     }
@@ -1085,12 +1094,18 @@ mod tests {
         ];
 
         for (expected_outcome, source) in sources {
-            match (expected_outcome, Pass1::run(BOTH, &parse(source))) {
+            match (
+                expected_outcome,
+                Pass1::run(Direction::Both, &parse(source)),
+            ) {
                 (Fail, Ok(_)) => {
                     panic!("unexpected successful pass1 validation for rules {source:?}")
                 }
                 (Pass, Err(e)) => {
-                    panic!("unexpected error in pass1 validation for rules {source:?}: {e:?}")
+                    panic!(
+                        "unexpected error in pass1 validation for rules {source:?}: {:?}",
+                        e.explain(source)
+                    )
                 }
                 _ => {}
             }
@@ -1114,12 +1129,18 @@ mod tests {
         ];
 
         for (expected_outcome, source) in sources {
-            match (expected_outcome, Pass1::run(BOTH, &parse(source))) {
+            match (
+                expected_outcome,
+                Pass1::run(Direction::Both, &parse(source)),
+            ) {
                 (Fail, Ok(_)) => {
                     panic!("unexpected successful pass1 validation for rules {source:?}")
                 }
                 (Pass, Err(e)) => {
-                    panic!("unexpected error in pass1 validation for rules {source:?}: {e:?}")
+                    panic!(
+                        "unexpected error in pass1 validation for rules {source:?}: {:?}",
+                        e.explain(source)
+                    )
                 }
                 _ => {}
             }
@@ -1142,13 +1163,16 @@ mod tests {
 
         for (expected_outcome, source) in sources {
             let rules = parse(source);
-            let result = Pass1::run(BOTH, &rules);
+            let result = Pass1::run(Direction::Both, &rules);
             match (expected_outcome, result) {
                 (Fail, Ok(_)) => {
                     panic!("unexpected successful pass1 validation for rules {source:?}")
                 }
                 (Pass, Err(e)) => {
-                    panic!("unexpected error in pass1 validation for rules {source:?}: {e:?}")
+                    panic!(
+                        "unexpected error in pass1 validation for rules {source:?}: {:?}",
+                        e.explain(source)
+                    )
                 }
                 _ => {}
             }

@@ -5,8 +5,6 @@
 //! The collection of code that is needed for handling formatting operations for DateTimes.
 //! Central to this is the [`DateTimeFormatter`].
 
-#[cfg(feature = "experimental")]
-use crate::options::components;
 use crate::{
     format::datetime,
     input::{DateInput, DateTimeInput, ExtractedDateTimeInput, IsoTimeInput},
@@ -75,8 +73,7 @@ impl TimeFormatter {
         fixed_decimal_format_options.grouping_strategy = GroupingStrategy::Never;
 
         let fixed_decimal_format =
-            FixedDecimalFormatter::try_new(locale, fixed_decimal_format_options)
-                .map_err(DateTimeError::FixedDecimalFormatter)?;
+            FixedDecimalFormatter::try_new(locale, fixed_decimal_format_options)?;
 
         Ok(Self::new(patterns, symbols_data, fixed_decimal_format))
     }
@@ -116,9 +113,11 @@ impl TimeFormatter {
         let mut fixed_decimal_format_options = FixedDecimalFormatterOptions::default();
         fixed_decimal_format_options.grouping_strategy = GroupingStrategy::Never;
 
-        let fixed_decimal_format =
-            FixedDecimalFormatter::try_new_unstable(provider, locale, fixed_decimal_format_options)
-                .map_err(DateTimeError::FixedDecimalFormatter)?;
+        let fixed_decimal_format = FixedDecimalFormatter::try_new_unstable(
+            provider,
+            locale,
+            fixed_decimal_format_options,
+        )?;
 
         Ok(Self::new(patterns, symbols_data, fixed_decimal_format))
     }
@@ -204,8 +203,7 @@ impl DateFormatter {
         fixed_decimal_format_options.grouping_strategy = GroupingStrategy::Never;
 
         let fixed_decimal_format =
-            FixedDecimalFormatter::try_new(locale, fixed_decimal_format_options)
-                .map_err(DateTimeError::FixedDecimalFormatter)?;
+            FixedDecimalFormatter::try_new(locale, fixed_decimal_format_options)?;
 
         Ok(Self::new(
             generic_pattern,
@@ -262,9 +260,11 @@ impl DateFormatter {
         let mut fixed_decimal_format_options = FixedDecimalFormatterOptions::default();
         fixed_decimal_format_options.grouping_strategy = GroupingStrategy::Never;
 
-        let fixed_decimal_format =
-            FixedDecimalFormatter::try_new_unstable(provider, locale, fixed_decimal_format_options)
-                .map_err(DateTimeError::FixedDecimalFormatter)?;
+        let fixed_decimal_format = FixedDecimalFormatter::try_new_unstable(
+            provider,
+            locale,
+            fixed_decimal_format_options,
+        )?;
 
         Ok(Self::new(
             generic_pattern,
@@ -409,8 +409,7 @@ impl DateTimeFormatter {
         fixed_decimal_format_options.grouping_strategy = GroupingStrategy::Never;
 
         let fixed_decimal_format =
-            FixedDecimalFormatter::try_new(locale, fixed_decimal_format_options)
-                .map_err(DateTimeError::FixedDecimalFormatter)?;
+            FixedDecimalFormatter::try_new(locale, fixed_decimal_format_options)?;
 
         Ok(Self::new(
             patterns,
@@ -474,9 +473,11 @@ impl DateTimeFormatter {
         let mut fixed_decimal_format_options = FixedDecimalFormatterOptions::default();
         fixed_decimal_format_options.grouping_strategy = GroupingStrategy::Never;
 
-        let fixed_decimal_format =
-            FixedDecimalFormatter::try_new_unstable(provider, locale, fixed_decimal_format_options)
-                .map_err(DateTimeError::FixedDecimalFormatter)?;
+        let fixed_decimal_format = FixedDecimalFormatter::try_new_unstable(
+            provider,
+            locale,
+            fixed_decimal_format_options,
+        )?;
 
         Ok(Self::new(
             patterns,
@@ -526,10 +527,10 @@ impl DateTimeFormatter {
         }
     }
 
-    /// Returns a [`components::Bag`] that represents the resolved components for the
+    /// Returns a [`components::Bag`](crate::options::components::Bag) that represents the resolved components for the
     /// options that were provided to the [`DateTimeFormatter`].
     #[cfg(feature = "experimental")]
-    pub fn resolve_components(&self) -> components::Bag {
-        components::Bag::from(&self.patterns.get().0)
+    pub fn resolve_components(&self) -> crate::options::components::Bag {
+        crate::options::components::Bag::from(&self.patterns.get().0)
     }
 }

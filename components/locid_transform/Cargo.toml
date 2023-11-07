@@ -5,16 +5,16 @@
 [package]
 name = "icu_locid_transform"
 description = "API for Unicode Language and Locale Identifiers canonicalization"
-version = "1.2.1"
+license-file = "LICENSE"
 
 authors.workspace = true
 categories.workspace = true
 edition.workspace = true
 homepage.workspace = true
 include.workspace = true
-license-file.workspace = true
 repository.workspace = true
 rust-version.workspace = true
+version.workspace = true
 
 [package.metadata.cargo-all-features]
 skip_optional_dependencies = true
@@ -38,8 +38,8 @@ icu_locid_transform_data = { workspace = true, optional = true }
 [dev-dependencies]
 serde = { version = "1.0", features = ["derive"] }
 serde_json = "1.0"
-icu = { workspace = true }
-writeable = { workspace = true }
+icu = { path = "../../components/icu", default-features = false }
+writeable = { path = "../../utils/writeable" }
 
 [target.'cfg(not(target_arch = "wasm32"))'.dev-dependencies]
 criterion = "0.4"
@@ -53,7 +53,6 @@ std = []
 bench = ["serde"]
 serde = ["dep:serde", "icu_locid/serde", "tinystr/serde", "zerovec/serde", "icu_provider/serde"]
 datagen = ["serde", "dep:databake", "zerovec/databake", "icu_locid/databake", "tinystr/databake"]
-experimental = []
 compiled_data = ["dep:icu_locid_transform_data"]
 
 [[bench]]

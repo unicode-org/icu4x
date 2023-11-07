@@ -5,7 +5,8 @@
 [package]
 name = "icu_codepointtrie_builder"
 description = "Runtime builder for CodePointTrie"
-version = "0.3.5"
+version = "0.3.6"
+license-file = "LICENSE"
 include = [
     "src/**/*",
     "examples/**/*",
@@ -21,7 +22,6 @@ authors.workspace = true
 categories.workspace = true
 edition.workspace = true
 homepage.workspace = true
-license-file.workspace = true
 repository.workspace = true
 rust-version.workspace = true
 

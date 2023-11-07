@@ -6,6 +6,7 @@
 
 use crate::source::SerdeCache;
 use crate::CoverageLevel;
+use icu_calendar::provider::EraStartDate;
 use icu_locid::LanguageIdentifier;
 use icu_locid_transform::provider::LikelySubtagsForLanguageV1Marker;
 use icu_locid_transform::provider::LikelySubtagsForScriptRegionV1Marker;
@@ -15,15 +16,20 @@ use icu_provider::DataError;
 use icu_provider_adapters::any_payload::AnyPayloadProvider;
 use icu_provider_adapters::fork::ForkByKeyProvider;
 use once_cell::sync::OnceCell;
+use std::collections::BTreeSet;
 use std::collections::HashSet;
 use std::fmt::Debug;
 use std::str::FromStr;
 
 #[derive(Debug)]
 pub(crate) struct CldrCache {
-    serde_cache: SerdeCache,
+    pub(super) serde_cache: SerdeCache,
     dir_suffix: OnceCell<&'static str>,
     locale_expander: OnceCell<LocaleExpander>,
+    modern_japanese_eras: OnceCell<BTreeSet<String>>,
+    #[cfg(feature = "icu_transliterate")]
+    // used by transforms/mod.rs
+    pub(super) transforms: OnceCell<std::sync::Mutex<icu_transliterate::RuleCollection>>,
 }
 
 impl CldrCache {
@@ -32,6 +38,9 @@ impl CldrCache {
             serde_cache,
             dir_suffix: Default::default(),
             locale_expander: Default::default(),
+            modern_japanese_eras: Default::default(),
+            #[cfg(feature = "icu_transliterate")]
+            transforms: Default::default(),
         }
     }
 
@@ -53,11 +62,6 @@ impl CldrCache {
 
     pub fn displaynames(&self) -> CldrDirLang<'_> {
         CldrDirLang(self, "cldr-localenames".to_owned())
-    }
-
-    #[cfg(feature = "icu_transliterate")]
-    pub fn transforms(&self) -> CldrDirTransform<'_> {
-        CldrDirTransform(self, "cldr-transforms".to_owned())
     }
 
     pub fn dates(&self, cal: &str) -> CldrDirLang<'_> {
@@ -90,7 +94,7 @@ impl CldrCache {
             .collect())
     }
 
-    fn dir_suffix(&self) -> Result<&'static str, DataError> {
+    pub(super) fn dir_suffix(&self) -> Result<&'static str, DataError> {
         self.dir_suffix
             .get_or_try_init(|| {
                 if self.serde_cache.list("cldr-misc-full")?.next().is_some() {
@@ -115,6 +119,37 @@ impl CldrCache {
             LocaleExpander::try_new_with_any_provider(&provider).map_err(|e| {
                 DataError::custom("creating LocaleExpander in CldrCache").with_display_context(&e)
             })
+        })
+    }
+
+    /// Get the list of eras in the japanese calendar considered "modern" (post-Meiji, inclusive)
+    ///
+    /// These will be in CLDR era index form; these are usually numbers
+    pub(super) fn modern_japanese_eras(&self) -> Result<&BTreeSet<String>, DataError> {
+        self.modern_japanese_eras.get_or_try_init(|| {
+            let era_dates: &super::cldr_serde::japanese::Resource = self
+                .core()
+                .read_and_parse("supplemental/calendarData.json")?;
+            let mut set = BTreeSet::<String>::new();
+            for (era_index, date) in era_dates.supplemental.calendar_data.japanese.eras.iter() {
+                let start_date =
+                    EraStartDate::from_str(if let Some(start_date) = date.start.as_ref() {
+                        start_date
+                    } else {
+                        continue;
+                    })
+                    .map_err(|_| {
+                        DataError::custom(
+                            "calendarData.json contains unparseable data for a japanese era",
+                        )
+                        .with_display_context(&format!("era index {}", era_index))
+                    })?;
+
+                if start_date.year >= 1868 {
+                    set.insert(era_index.into());
+                }
+            }
+            Ok(set)
         })
     }
 
@@ -222,50 +257,6 @@ impl<'a> CldrDirLang<'a> {
             Ok(true)
         } else if let Some(new_langid) = self.0.add_script(lang)? {
             self.file_exists(&new_langid, file_name)
-        } else {
-            Ok(false)
-        }
-    }
-}
-
-#[cfg(feature = "icu_transliterate")]
-pub(crate) struct CldrDirTransform<'a>(&'a CldrCache, String);
-
-#[cfg(feature = "icu_transliterate")]
-impl<'a> CldrDirTransform<'a> {
-    pub fn read_and_parse_metadata(
-        &self,
-        transform: &str,
-    ) -> Result<&'a crate::transform::cldr::cldr_serde::transforms::Resource, DataError> {
-        let dir_suffix = self.0.dir_suffix()?;
-        // using the -NoLang version because `transform` is not a valid LanguageIdentifier
-        let cldr_dir = CldrDirNoLang(self.0, format!("{}-{dir_suffix}/main/{transform}", self.1));
-        cldr_dir.read_and_parse("metadata.json")
-    }
-
-    pub fn read_source(&self, transform: &str) -> Result<String, DataError> {
-        let dir_suffix = self.0.dir_suffix()?;
-        let path = format!("{}-{dir_suffix}/main/{transform}/source.txt", self.1);
-        if self.0.serde_cache.file_exists(&path)? {
-            self.0.serde_cache.root.read_to_string(&path)
-        } else {
-            Err(DataErrorKind::Io(std::io::ErrorKind::NotFound)
-                .into_error()
-                .with_display_context(&path))
-        }
-    }
-
-    pub fn list_transforms(&self) -> Result<impl Iterator<Item = String> + '_, DataError> {
-        let dir_suffix = self.0.dir_suffix()?;
-        let path = format!("{}-{dir_suffix}/main", self.1);
-        self.0.serde_cache.list(&path)
-    }
-
-    pub fn file_exists(&self, transform: &str, file_name: &str) -> Result<bool, DataError> {
-        let dir_suffix = self.0.dir_suffix()?;
-        let path = format!("{}-{dir_suffix}/main/{transform}/{file_name}", self.1);
-        if self.0.serde_cache.file_exists(&path)? {
-            Ok(true)
         } else {
             Ok(false)
         }

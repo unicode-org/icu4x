@@ -41,6 +41,12 @@
     "Hebrew_Letter",
     "Regional_Indicator",
     "E_Base",
-    "E_Modifier"
+    "E_Modifier",
+    "ZWJ",
+    "Aksara",
+    "Aksara_Prebase",
+    "Aksara_Start",
+    "Virama_Final",
+    "Virama"
   ]
 }

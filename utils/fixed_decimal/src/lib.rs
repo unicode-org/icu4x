@@ -67,6 +67,7 @@ pub use FloatPrecision as DoublePrecision;
 
 pub use compact::CompactDecimal;
 pub use decimal::FixedDecimal;
+pub use decimal::RoundingIncrement;
 pub use decimal::Sign;
 pub use decimal::SignDisplay;
 use displaydoc::Display;

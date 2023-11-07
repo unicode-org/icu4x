@@ -13,6 +13,7 @@ use std::path::PathBuf;
 enum Format {
     Dir,
     Blob,
+    Blob2,
     Mod,
     DeprecatedDefault,
 }
@@ -72,9 +73,6 @@ impl CollationTable {
 #[command(author = "The ICU4X Project Developers", version = option_env!("CARGO_PKG_VERSION"))]
 #[command(about = format!("Learn more at: https://docs.rs/icu_datagen/{}", option_env!("CARGO_PKG_VERSION").unwrap_or("")), long_about = None)]
 pub struct Cli {
-    #[arg(help = "Load a JSON config. All options other than --verbose are ignored.")]
-    config: Option<PathBuf>,
-
     #[arg(short, long)]
     #[arg(help = "Requests verbose output")]
     pub verbose: bool,
@@ -215,7 +213,7 @@ pub struct Cli {
     #[arg(
         help = "Path to output directory or file. Must be empty or non-existent, unless \
                   --overwrite is present, in which case the directory is deleted first. \
-                  For --format=blob, omit this option to dump to stdout. \
+                  For --format={blob,blob2}, omit this option to dump to stdout. \
                   For --format={dir,mod} defaults to 'icu4x_data'."
     )]
     output: Option<PathBuf>,
@@ -246,84 +244,43 @@ pub struct Cli {
 
 impl Cli {
     pub fn as_config(&self) -> eyre::Result<config::Config> {
-        Ok(if let Some(ref config_path) = self.config {
-            let mut config: config::Config =
-                serde_json::from_str(&std::fs::read_to_string(config_path)?)?;
-            let parent = config_path.parent().unwrap();
-            // all paths in the JSON file are relative to its path, not to pwd.
-            for path_or_tag in [
-                &mut config.cldr,
-                &mut config.icu_export,
-                &mut config.segmenter_lstm,
-            ] {
-                if let config::PathOrTag::Path(ref mut path) = path_or_tag {
-                    if path.is_relative() {
-                        *path = parent.join(path.clone());
-                    }
-                }
-            }
-            if let config::KeyInclude::ForBinary(path) = &mut config.keys {
-                if path.is_relative() {
-                    *path = parent.join(path.clone());
-                }
-            }
-            match &mut config.export {
-                config::Export::FileSystem { path, .. } => {
-                    if path.is_relative() {
-                        *path = parent.join(path.clone());
-                    }
-                }
-                config::Export::Blob { path, .. } => {
-                    if path.is_relative() {
-                        *path = parent.join(path.clone());
-                    }
-                }
-                config::Export::Baked { path, .. } => {
-                    if path.is_relative() {
-                        *path = parent.join(path.clone());
-                    }
-                }
-            }
-            config
-        } else {
-            config::Config {
-                keys: self.make_keys()?,
-                locales: self.make_locales()?,
-                cldr: self.make_path(&self.cldr_root, &self.cldr_tag, "cldr-root")?,
-                icu_export: self.make_path(
-                    &self.icuexport_root,
-                    &self.icuexport_tag,
-                    "icuexport-root",
-                )?,
-                segmenter_lstm: self.make_path(
-                    &self.segmenter_lstm_root,
-                    &self.segmenter_lstm_tag,
-                    "segmenter-lstm",
-                )?,
-                trie_type: match self.trie_type {
-                    TrieType::Fast => config::TrieType::Fast,
-                    TrieType::Small => config::TrieType::Small,
-                },
-                collation_han_database: match self.collation_han_database {
-                    CollationHanDatabase::Unihan => config::CollationHanDatabase::Unihan,
-                    CollationHanDatabase::Implicit => config::CollationHanDatabase::Implicit,
-                },
-                additional_collations: self
-                    .include_collations
-                    .iter()
-                    .map(|c| c.to_datagen_value().to_owned())
-                    .collect(),
-                segmenter_models: self.make_segmenter_models()?,
-                export: self.make_exporter()?,
-                fallback: match self.fallback {
-                    Fallback::Auto => config::FallbackMode::PreferredForExporter,
-                    Fallback::Hybrid => config::FallbackMode::Hybrid,
-                    Fallback::Runtime => config::FallbackMode::Runtime,
-                    Fallback::RuntimeManual => config::FallbackMode::RuntimeManual,
-                    Fallback::Preresolved => config::FallbackMode::Preresolved,
-                },
-                overwrite: self.overwrite,
-            }
+        Ok(config::Config {
+            keys: self.make_keys()?,
+            locales: self.make_locales()?,
+            cldr: self.make_path(&self.cldr_root, &self.cldr_tag, "cldr-root")?,
+            icu_export: self.make_path(
+                &self.icuexport_root,
+                &self.icuexport_tag,
+                "icuexport-root",
+            )?,
+            segmenter_lstm: self.make_path(
+                &self.segmenter_lstm_root,
+                &self.segmenter_lstm_tag,
+                "segmenter-lstm",
+            )?,
+            trie_type: match self.trie_type {
+                TrieType::Fast => config::TrieType::Fast,
+                TrieType::Small => config::TrieType::Small,
+            },
+            collation_han_database: match self.collation_han_database {
+                CollationHanDatabase::Unihan => config::CollationHanDatabase::Unihan,
+                CollationHanDatabase::Implicit => config::CollationHanDatabase::Implicit,
+            },
+            additional_collations: self
+                .include_collations
+                .iter()
+                .map(|c| c.to_datagen_value().to_owned())
+                .collect(),
+            segmenter_models: self.make_segmenter_models()?,
+            export: self.make_exporter()?,
+            fallback: match self.fallback {
+                Fallback::Auto => config::FallbackMode::PreferredForExporter,
+                Fallback::Hybrid => config::FallbackMode::Hybrid,
+                Fallback::Runtime => config::FallbackMode::Runtime,
+                Fallback::RuntimeManual => config::FallbackMode::RuntimeManual,
+                Fallback::Preresolved => config::FallbackMode::Preresolved,
+            },
+            overwrite: self.overwrite,
         })
     }
 
@@ -448,6 +405,13 @@ impl Cli {
                 })
             }
             Format::Blob => Ok(config::Export::Blob {
+                path: if let Some(path) = &self.output {
+                    path.clone()
+                } else {
+                    PathBuf::from("/stdout")
+                },
+            }),
+            Format::Blob2 => Ok(config::Export::Blob2 {
                 path: if let Some(path) = &self.output {
                     path.clone()
                 } else {

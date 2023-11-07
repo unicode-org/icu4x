@@ -6,6 +6,8 @@
 //!
 //! This module can be used as a target for the `icu_datagen` crate.
 //!
+//! See our [datagen tutorial](https://github.com/unicode-org/icu4x/blob/main/docs/tutorials/data_management.md) for more information about different data providers.
+//!
 //! # Examples
 //!
 //! ```
@@ -29,39 +31,62 @@
 //! # let _ = std::fs::remove_dir_all(&demo_path);
 //! ```
 //!
-//! The resulting module structure can now be used like this:
+//! There are two ways to use baked data: you can build custom data providers for use with
+//! [`_unstable` constructors](icu_provider::constructors), or you can use it with the
+//! `compiled_data` Cargo feature and constructors.
+//!
+//! ## Custom `DataProvider`
+//!
+//! This allows you to use baked data in custom data pipelines, such as including some baked
+//! data and lazily loading more data from the network.
 //!
 //! ```
 //! use icu_locid::langid;
-//! use icu_provider::prelude::*;
 //! use icu_provider::hello_world::*;
 //!
-//! pub struct MyDataProvider;
+//! # macro_rules! include {
+//! #   ($path:literal) => {}
+//! # }
+//! # macro_rules! impl_data_provider {
+//! #   ($p:ty) => {
+//! #     use icu_provider::prelude::*;
+//! #     use icu_provider::hello_world::*;
+//! #     impl DataProvider<HelloWorldV1Marker> for $p {
+//! #       fn load(&self, req: DataRequest) -> Result<DataResponse<HelloWorldV1Marker>, DataError> {
+//! #         HelloWorldProvider.load(req)
+//! #       }
+//! #     }
+//! #   }
+//! # }
+//! include!("/tmp/icu4x_baked_demo/mod.rs");
 //!
-//! mod baked {
-//!     # macro_rules! include {
-//!     #   ($path:literal) => {}
-//!     # }
-//!     # macro_rules! impl_data_provider {
-//!     #   ($p:path) => {
-//!     #     use icu_provider::prelude::*;
-//!     #     use icu_provider::hello_world::*;
-//!     #     impl DataProvider<HelloWorldV1Marker> for $p {
-//!     #       fn load(&self, req: DataRequest) -> Result<DataResponse<HelloWorldV1Marker>, DataError> {
-//!     #         HelloWorldProvider.load(req)
-//!     #       }
-//!     #     }
-//!     #   }
-//!     # }
-//!     include!("/path/to/mod.rs");
-//!     impl_data_provider!(super::MyDataProvider);
-//! }
+//! pub struct MyDataProvider;
+//! impl_data_provider!(MyDataProvider);
 //!
 //! # fn main() {
 //! let formatter = HelloWorldFormatter::try_new_unstable(&MyDataProvider, &langid!("en").into()).unwrap();
 //!
 //! assert_eq!(formatter.format_to_string(), "Hello World");
 //! # }
+//! ```
+//!
+//! ## `compiled_data`
+//!
+//! You can use baked data to overwrite the compiled data that's included in ICU4X.
+//! To do this, build your binary with the `ICU4X_DATA_DIR` environment variable:
+//!
+//! ```console
+//! ICU4X_DATA_DIR=/tmp/icu4x_baked_demo cargo build <...>
+//! ```
+//!
+//! ```
+//! use icu_locid::langid;
+//! use icu_provider::hello_world::*;
+//!
+//! let formatter =
+//!     HelloWorldFormatter::try_new(&langid!("en").into()).unwrap();
+//!
+//! assert_eq!(formatter.format_to_string(), "Hello World");
 //! ```
 
 use databake::*;
@@ -88,11 +113,16 @@ const MSRV: &str = std::env!("CARGO_PKG_RUST_VERSION");
 
 /// Options for configuring the output of [`BakedExporter`].
 #[non_exhaustive]
-#[derive(Debug)]
+#[derive(Debug, Clone, Copy)]
 pub struct Options {
     /// Whether to run `rustfmt` on the generated files.
     pub pretty: bool,
     /// Whether to use separate crates to name types instead of the `icu` metacrate.
+    ///
+    /// By default, types will be named through the `icu` crate, like `icu::list::provider::ListJoinerPattern`.
+    /// With this enabled, the alternative name from the component crates will be used: `icu_list::provider::ListJoinerPattern`.
+    /// This is required when you are not using the `icu` crate, *and* you're building custom data providers;
+    /// data for `compiled_data` constructors uses `icu` names.
     pub use_separate_crates: bool,
     #[doc(hidden)] // deprecated, used by legacy testdata
     pub insert_feature_gates: bool,
@@ -246,11 +276,12 @@ impl BakedExporter {
         &self,
         body: TokenStream,
         key: DataKey,
-        marker: syn::Path,
+        marker: TokenStream,
     ) -> Result<(), DataError> {
+        let marker_string = marker.to_string();
         let doc = format!(
             " Implement `DataProvider<{}>` on the given struct using the data",
-            marker.segments.iter().next_back().unwrap().ident
+            marker.into_iter().last().unwrap()
         );
 
         let ident = Self::ident(key);
@@ -258,7 +289,7 @@ impl BakedExporter {
         let prefixed_macro_ident = format!("__impl_{ident}").parse::<TokenStream>().unwrap();
 
         self.write_to_file(
-            PathBuf::from(format!("macros/{}.data.rs", ident)),
+            PathBuf::from(format!("macros/{}.rs.data", ident)),
             quote! {
                 #[doc = #doc]
                 /// hardcoded in this file. This allows the struct to be used with
@@ -266,7 +297,9 @@ impl BakedExporter {
                 #[doc(hidden)]
                 #[macro_export]
                 macro_rules! #prefixed_macro_ident {
-                    ($provider:path) => {
+                    ($provider:ty) => {
+                        #[clippy::msrv = #MSRV]
+                        const _: () = <$provider>::MUST_USE_MAKE_PROVIDER_MACRO;
                         #body
                     }
                 }
@@ -276,7 +309,7 @@ impl BakedExporter {
         self.impl_data
             .lock()
             .expect("poison")
-            .insert(key, quote!(#marker).to_string());
+            .insert(key, marker_string);
         Ok(())
     }
 
@@ -314,9 +347,7 @@ impl DataExporter for BakedExporter {
         key: DataKey,
         payload: &DataPayload<ExportMarker>,
     ) -> Result<(), DataError> {
-        let marker =
-            syn::parse2::<syn::Path>(crate::registry::key_to_marker_bake(key, &self.dependencies))
-                .unwrap();
+        let marker = crate::registry::key_to_marker_bake(key, &self.dependencies);
 
         let singleton_ident = format!("SINGLETON_{}", Self::ident(key).to_ascii_uppercase())
             .parse::<TokenStream>()
@@ -378,12 +409,12 @@ impl BakedExporter {
         key: DataKey,
         fallback_mode: Option<BuiltInFallbackMode>,
     ) -> Result<(), DataError> {
-        let marker =
-            syn::parse2::<syn::Path>(crate::registry::key_to_marker_bake(key, &self.dependencies))
-                .unwrap();
+        let marker = crate::registry::key_to_marker_bake(key, &self.dependencies);
 
-        let (struct_type, into_data_payload) = if marker.segments.iter().next_back().unwrap().ident
-            == "DateSkeletonPatternsV1Marker"
+        let (struct_type, into_data_payload) = if marker
+            .to_string()
+            .trim()
+            .ends_with("DateSkeletonPatternsV1Marker")
         {
             (
                 quote! {
@@ -427,22 +458,19 @@ impl BakedExporter {
 
             for (bake, locales) in values {
                 let first_locale = locales.iter().next().unwrap();
-                let anchor = syn::parse_str::<syn::Ident>(
+                let anchor = proc_macro2::Ident::new(
                     &first_locale
                         .chars()
-                        .flat_map(|ch| {
-                            if ch == AuxiliaryKeys::separator() as char {
-                                // Replace the aux key separator with double-underscore
-                                ['_'].into_iter().chain(Some('_'))
-                            } else if ch == '-' {
-                                ['_'].into_iter().chain(None)
+                        .map(|ch| {
+                            if ch == '-' {
+                                '_'
                             } else {
-                                [ch.to_ascii_uppercase()].into_iter().chain(None)
+                                ch.to_ascii_uppercase()
                             }
                         })
                         .collect::<String>(),
-                )
-                .unwrap();
+                    proc_macro2::Span::call_site(),
+                );
                 let bake = bake.parse::<TokenStream>().unwrap();
                 statics.push(quote! { static #anchor: #struct_type = #bake; });
                 map.extend(locales.into_iter().map(|l| (l, anchor.clone())));
@@ -558,6 +586,8 @@ impl BakedExporter {
                     quote!()
                 } else if *key
                     == icu_datetime::provider::calendar::DateSkeletonPatternsV1Marker::KEY
+                    // neo keys are also experimental
+                    || key.path().contains("datetime/symbols") || key.path().contains("datetime/patterns")
                 {
                     quote! { #[cfg(feature = "icu_datetime_experimental")] }
                 } else if *key == icu_provider::hello_world::HelloWorldV1Marker::KEY {
@@ -588,7 +618,7 @@ impl BakedExporter {
                 // normal scoping that clients can control.
                 format!("__impl_{}", ident).parse::<TokenStream>().unwrap(),
                 ident.parse::<TokenStream>().unwrap(),
-                format!("macros/{}.data.rs", ident),
+                format!("macros/{}.rs.data", ident),
             )
         }));
 
@@ -596,6 +626,31 @@ impl BakedExporter {
         self.write_to_file(
             PathBuf::from("macros.rs"),
             quote! {
+                /// Marks a type as a data provider. You can then use macros like
+                /// `impl_core_helloworld_v1` to add implementations.
+                ///
+                /// ```ignore
+                /// struct MyProvider;
+                /// const _: () = {
+                ///     include!("path/to/generated/macros.rs");
+                ///     make_provider!(MyProvider);
+                ///     impl_core_helloworld_v1!(MyProvider);
+                /// }
+                /// ```
+                #[doc(hidden)]
+                #[macro_export]
+                macro_rules! __make_provider {
+                    ($name:ty) => {
+                        #[clippy::msrv = #MSRV]
+                        impl $name {
+                            #[doc(hidden)]
+                            #[allow(dead_code)]
+                            pub const MUST_USE_MAKE_PROVIDER_MACRO: () = ();
+                        }
+                    };
+                }
+                #[doc(inline)]
+                pub use __make_provider as make_provider;
                 #(
                     #[macro_use]
                     #[path = #file_paths]
@@ -613,41 +668,22 @@ impl BakedExporter {
             quote! {
                 include!("macros.rs");
 
-                /// Implement `DataProvider<M>` on the given struct using the data
-                /// hardcoded in this module. This allows the struct to be used with
-                /// `icu`'s `_unstable` constructors.
-                ///
-                /// ```compile_fail
-                /// struct MyDataProvider;
-                /// include!("/path/to/generated/mod.rs");
-                /// impl_data_provider(MyDataProvider);
-                /// ```
-                #[doc(hidden)]
-                #[macro_export]
-                macro_rules! __impl_data_provider {
-                    ($provider:path) => {
+                // Not public as it will only work locally due to needing access to the macros from `macros.rs`.
+                macro_rules! impl_data_provider {
+                    ($provider:ty) => {
+                        make_provider!($provider);
                         #(
                             #features
                             #macro_idents ! ($provider);
                         )*
-                    }
+                    };
                 }
-                #[doc(inline)]
-                pub use __impl_data_provider as impl_data_provider;
 
-                /// Implement `AnyProvider` on the given struct using the data
-                /// hardcoded in this module. This allows the struct to be used with
-                /// `icu`'s `_any` constructors.
-                ///
-                /// ```compile_fail
-                /// struct MyAnyProvider;
-                /// include!("/path/to/generated/mod.rs");
-                /// impl_any_provider(MyAnyProvider);
-                /// ```
-                #[doc(hidden)]
-                #[macro_export]
-                macro_rules! __impl_any_provider {
-                    ($provider:path) => {
+                // Not public because `impl_data_provider` isn't. Users can implement `DynamicDataProvider<AnyMarker>`
+                // using `impl_dynamic_data_provider!`.
+                #[allow(unused_macros)]
+                macro_rules! impl_any_provider {
+                    ($provider:ty) => {
                         #[clippy::msrv = #MSRV]
                         impl icu_provider::AnyProvider for $provider {
                             fn load_any(&self, key: icu_provider::DataKey, req: icu_provider::DataRequest) -> Result<icu_provider::AnyResponse, icu_provider::DataError> {
@@ -663,9 +699,8 @@ impl BakedExporter {
                         }
                     }
                 }
-                #[doc(inline)]
-                pub use __impl_any_provider as impl_any_provider;
 
+                // For backwards compatibility
                 #[clippy::msrv = #MSRV]
                 pub struct BakedDataProvider;
                 impl_data_provider!(BakedDataProvider);

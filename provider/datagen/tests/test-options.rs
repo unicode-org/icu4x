@@ -141,7 +141,7 @@ fn test_fallback_options() {
     let all_locales_dedup = [
         "ar",
         // "ar-EG", (same as 'ar')
-        // "ar-EG-u-nu-latn", (same as 'ar-u-nu-latn')
+        "ar-EG-u-nu-latn", // (same as 'ar-u-nu-latn' but DIFFERENT than 'ar-EG')
         "ar-u-nu-latn",
         "bn",
         "bn-u-nu-latn",

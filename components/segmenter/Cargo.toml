@@ -5,16 +5,16 @@
 [package]
 name = "icu_segmenter"
 description = "Unicode line breaking and text segmentation algorithms for text boundaries analysis"
-version = "1.2.1"
+license-file = "LICENSE"
 
 authors.workspace = true
 categories.workspace = true
 edition.workspace = true
 homepage.workspace = true
 include.workspace = true
-license-file.workspace = true
 repository.workspace = true
 rust-version.workspace = true
+version.workspace = true
 
 [package.metadata.docs.rs]
 all-features = true
@@ -30,7 +30,7 @@ zerovec = { workspace = true, features = ["yoke"] }
 databake = { workspace = true, optional = true, features = ["derive"] }
 serde = { version = "1.0", default-features = false, features = ["derive", "alloc"], optional = true }
 
-libm = { version = "0.2", default-features = false, optional = true }
+core_maths = { version = "0.1", optional = true }
 
 icu_segmenter_data = { workspace = true, optional = true }
 icu_locid_transform = { workspace = true, optional = true, features = ["compiled_data"] }
@@ -38,8 +38,9 @@ icu_locid_transform = { workspace = true, optional = true, features = ["compiled
 [dev-dependencies]
 serde = { version = "1.0", default-features = false, features = ["derive"] }
 serde_json = "1.0"
-icu = { workspace = true }
+icu = { path = "../../components/icu", default-features = false }
 itertools = "0.10"
+icu_properties = { workspace = true, features = ["compiled_data"] }
 
 [target.'cfg(not(target_arch = "wasm32"))'.dev-dependencies]
 criterion = "0.4"
@@ -49,7 +50,7 @@ default = ["compiled_data", "auto"]
 std = ["icu_collections/std", "icu_locid/std", "icu_provider/std"]
 serde = ["dep:serde", "zerovec/serde", "icu_collections/serde", "icu_provider/serde"]
 datagen = ["serde", "dep:databake", "zerovec/databake", "icu_collections/databake"]
-lstm = ["dep:libm"]
+lstm = ["dep:core_maths"]
 auto = ["lstm"] # Enabled try_new_auto_unstable constructors
 compiled_data = ["dep:icu_segmenter_data"]
 bench = []

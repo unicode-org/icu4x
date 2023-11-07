@@ -3,12 +3,17 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use super::*;
+use alloc::borrow::Cow;
+use alloc::boxed::Box;
+use alloc::fmt::{Display, Formatter};
+use alloc::string::ToString;
+use alloc::vec;
+use core::{iter::Peekable, str::CharIndices};
 use icu_collections::codepointinvlist::CodePointInversionList;
 use icu_collections::codepointinvliststringlist::CodePointInversionListAndStringList;
-use icu_unicodeset_parser::{VariableMap, VariableValue};
-use std::borrow::Cow;
-use std::fmt::{Display, Formatter};
-use std::{iter::Peekable, str::CharIndices};
+use icu_unicodeset_parse::{VariableMap, VariableValue};
+
+type Result<T> = core::result::Result<T, CompileError>;
 
 /// An element that can appear in a rule. Used for error reporting in [`CompileError`].
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
@@ -135,10 +140,15 @@ impl Default for BasicId {
 }
 
 impl Display for BasicId {
-    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
-        write!(f, "{}-{}", self.source, self.target)?;
+    fn fmt(&self, f: &mut Formatter<'_>) -> core::fmt::Result {
+        write!(
+            f,
+            "{}-{}",
+            self.source.to_ascii_lowercase(),
+            self.target.to_ascii_lowercase()
+        )?;
         if let Some(variant) = &self.variant {
-            write!(f, "/{}", variant)?;
+            write!(f, "/{}", variant.to_ascii_lowercase())?;
         }
         Ok(())
     }
@@ -276,6 +286,8 @@ where
         + DataProvider<ExtendedPictographicV1Marker>
         + DataProvider<ExtenderV1Marker>
         + DataProvider<GraphemeBaseV1Marker>
+        + DataProvider<GraphemeClusterBreakV1Marker>
+        + DataProvider<GraphemeClusterBreakNameToValueV1Marker>
         + DataProvider<GraphemeExtendV1Marker>
         + DataProvider<HexDigitV1Marker>
         + DataProvider<IdsBinaryOperatorV1Marker>
@@ -293,6 +305,8 @@ where
         + DataProvider<QuotationMarkV1Marker>
         + DataProvider<RadicalV1Marker>
         + DataProvider<RegionalIndicatorV1Marker>
+        + DataProvider<SentenceBreakV1Marker>
+        + DataProvider<SentenceBreakNameToValueV1Marker>
         + DataProvider<SentenceTerminalV1Marker>
         + DataProvider<SoftDottedV1Marker>
         + DataProvider<TerminalPunctuationV1Marker>
@@ -300,6 +314,8 @@ where
         + DataProvider<UppercaseV1Marker>
         + DataProvider<VariationSelectorV1Marker>
         + DataProvider<WhiteSpaceV1Marker>
+        + DataProvider<WordBreakV1Marker>
+        + DataProvider<WordBreakNameToValueV1Marker>
         + DataProvider<XidContinueV1Marker>
         + DataProvider<GeneralCategoryMaskNameToValueV1Marker>
         + DataProvider<GeneralCategoryV1Marker>
@@ -356,7 +372,7 @@ where
     // before or after a cursor
     const CURSOR_PLACEHOLDER: char = '@';
 
-    pub(crate) fn run(
+    pub(super) fn run(
         source: &'a str,
         xid_start: &'a CodePointInversionList<'a>,
         xid_continue: &'a CodePointInversionList<'a>,
@@ -905,8 +921,8 @@ where
         Ok(buf)
     }
 
-    // parses all supported escapes. code is somewhat duplicated from icu_unicodeset_parser
-    // might want to deduplicate this with unicodeset_parser somehow
+    // parses all supported escapes. code is somewhat duplicated from icu_unicodeset_parse
+    // might want to deduplicate this with unicodeset_parse somehow
     fn parse_escaped_char_into_buf(&mut self, buf: &mut String) -> Result<()> {
         self.consume(Self::ESCAPE)?;
 
@@ -1025,7 +1041,7 @@ where
         // was created from self.source
         #[allow(clippy::indexing_slicing)]
         let set_source = &self.source[pre_offset..];
-        let (set, consumed_bytes) = icu_unicodeset_parser::parse_unstable_with_variables(
+        let (set, consumed_bytes) = icu_unicodeset_parse::parse_unstable_with_variables(
             set_source,
             &self.variable_map,
             self.property_provider,
@@ -1035,7 +1051,7 @@ where
         let mut last_offset = pre_offset;
         // advance self.iter consumed_bytes bytes
         while let Some(offset) = self.peek_index() {
-            // we can use equality because unicodeset_parser also lexes on char boundaries
+            // we can use equality because unicodeset_parse also lexes on char boundaries
             // note: we must not consume this final token because it is the first non-consumed char
             if offset == pre_offset + consumed_bytes {
                 break;
@@ -1052,7 +1068,7 @@ where
             Some(set) => Ok(set.clone()),
             None => {
                 let (set, _) =
-                    icu_unicodeset_parser::parse_unstable(Self::DOT_SET, self.property_provider)
+                    icu_unicodeset_parse::parse_unstable(Self::DOT_SET, self.property_provider)
                         .map_err(|_| CompileErrorKind::Internal("dot set syntax not valid"))?;
                 self.dot_set = Some(set.clone());
                 Ok(set)
@@ -1267,7 +1283,7 @@ where
 }
 
 #[cfg(test)]
-pub(crate) fn parse(source: &str) -> Result<Vec<Rule>> {
+pub(super) fn parse(source: &str) -> Result<Vec<Rule>> {
     Parser::run(
         source,
         &sets::xid_start()
@@ -1313,9 +1329,7 @@ fn test_full() {
     :: ([inverse-filter]) ;
     ";
 
-    if let Err(e) = parse(source) {
-        panic!("Failed to parse {:?}: {:?}", source, e);
-    }
+    parse(source).map_err(|e| e.explain(source)).unwrap();
 }
 
 #[test]
@@ -1343,9 +1357,7 @@ fn test_conversion_rules_ok() {
     ];
 
     for source in sources {
-        if let Err(e) = parse(source) {
-            panic!("Failed to parse {:?}: {:?}", source, e);
-        }
+        parse(source).map_err(|e| e.explain(source)).unwrap();
     }
 }
 
@@ -1372,9 +1384,7 @@ fn test_conversion_rules_err() {
     ];
 
     for source in sources {
-        if let Ok(rules) = parse(source) {
-            panic!("Parsed invalid source {:?}: {:?}", source, rules);
-        }
+        parse(source).unwrap_err();
     }
 }
 
@@ -1395,9 +1405,7 @@ fn test_variable_rules_ok() {
     ];
 
     for source in sources {
-        if let Err(e) = parse(source) {
-            panic!("Failed to parse {:?}: {:?}", source, e);
-        }
+        parse(source).map_err(|e| e.explain(source)).unwrap();
     }
 }
 
@@ -1433,9 +1441,7 @@ fn test_global_filters_ok() {
     ];
 
     for source in sources {
-        if let Err(e) = parse(source) {
-            panic!("Failed to parse {:?}: {:?}", source, e);
-        }
+        parse(source).map_err(|e| e.explain(source)).unwrap();
     }
 }
 
@@ -1476,9 +1482,7 @@ fn test_function_calls_ok() {
     ];
 
     for source in sources {
-        if let Err(e) = parse(source) {
-            panic!("Failed to parse {:?}: {:?}", source, e);
-        }
+        parse(source).map_err(|e| e.explain(source)).unwrap();
     }
 }
 
@@ -1517,9 +1521,7 @@ fn test_transform_rules_ok() {
     ];
 
     for source in sources {
-        if let Err(e) = parse(source) {
-            panic!("Failed to parse {:?}: {:?}", source, e);
-        }
+        parse(source).map_err(|e| e.explain(source)).unwrap();
     }
 }
 

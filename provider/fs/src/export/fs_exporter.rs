@@ -21,10 +21,10 @@ use std::sync::Mutex;
 #[derive(Copy, Clone, Debug, PartialEq, Serialize, Deserialize)]
 pub enum OverwriteOption {
     /// If the directory doesn't exist, create it.
-    /// If it does exist, remove it safely (rmdir) and re-create it.
+    /// If it does exist, remove it safely (`rmdir`) and re-create it.
     CheckEmpty,
     /// If the directory doesn't exist, create it.
-    /// If it does exist, remove it aggressively (rm -rf) and re-create it.
+    /// If it does exist, remove it aggressively (`rm -rf`) and re-create it.
     RemoveAndReplace,
 }
 
@@ -37,7 +37,7 @@ impl Default for OverwriteOption {
 /// Options bag for initializing a [`FilesystemExporter`].
 #[non_exhaustive]
 #[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
-pub struct ExporterOptions {
+pub struct Options {
     /// Directory in the filesystem to write output.
     pub root: PathBuf,
     /// Option for initializing the output directory.
@@ -50,7 +50,10 @@ pub struct ExporterOptions {
     pub fingerprint: bool,
 }
 
-impl Default for ExporterOptions {
+#[doc(hidden)]
+pub type ExporterOptions = Options;
+
+impl Default for Options {
     fn default() -> Self {
         #[allow(deprecated)] // obviously
         Self {
@@ -61,9 +64,9 @@ impl Default for ExporterOptions {
     }
 }
 
-impl From<PathBuf> for ExporterOptions {
+impl From<PathBuf> for Options {
     fn from(root: PathBuf) -> Self {
-        ExporterOptions {
+        Options {
             root,
             ..Default::default()
         }
@@ -86,10 +89,10 @@ impl FilesystemExporter {
     /// See the module-level docs for an example.
     ///
     /// [serializer]: crate::export::serializers
-    /// [options]: ExporterOptions
+    /// [options]: Options
     pub fn try_new(
         serializer: Box<dyn AbstractSerializer + Sync>,
-        options: ExporterOptions,
+        options: Options,
     ) -> Result<Self, DataError> {
         #[allow(deprecated)] // obviously
         let result = FilesystemExporter {

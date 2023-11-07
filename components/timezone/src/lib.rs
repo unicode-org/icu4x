@@ -30,7 +30,8 @@
 //! 1. IANA time zone IDs, like `"America/Chicago"`
 //! 2. BCP-47 time zone IDs, like `"uschi"`
 //!
-//! ICU4X uses BCP-47 time zone IDs for all of its APIs.
+//! ICU4X uses BCP-47 time zone IDs for all of its APIs. To get a BCP-47 time zone from an
+//! IANA time zone, use [`IanaToBcp47Mapper`].
 //!
 //! ## Metazone
 //!
@@ -51,7 +52,8 @@
 //! ICU4X uses the short form.
 //!
 //! Note: in ICU4X, "metazone" is one word and "time zone" is two words, except for this crate
-//! and module name, where "timezone" is used with no separators.
+//! and module name, where "timezone" is used with no separators. See
+//! <https://github.com/unicode-org/icu4x/issues/2507>.
 //!
 //! ## Zone Variant
 //!
@@ -81,17 +83,21 @@
 //! the metazone based on a certain local datetime:
 //!
 //! ```
-//! use icu_calendar::DateTime;
-//! use icu_timezone::CustomTimeZone;
-//! use icu_timezone::GmtOffset;
-//! use icu_timezone::MetazoneCalculator;
-//! use tinystr::TinyAsciiStr;
+//! use icu::calendar::DateTime;
+//! use icu::timezone::CustomTimeZone;
+//! use icu::timezone::GmtOffset;
+//! use icu::timezone::IanaToBcp47Mapper;
+//! use icu::timezone::MetazoneCalculator;
+//! use tinystr::{tinystr, TinyAsciiStr};
 //!
 //! // Create a time zone for America/Chicago at GMT-6:
 //! let mut time_zone = CustomTimeZone::new_empty();
 //! time_zone.gmt_offset = "-0600".parse::<GmtOffset>().ok();
-//! time_zone.time_zone_id =
-//!     "uschi".parse::<TinyAsciiStr<8>>().ok().map(Into::into);
+//! let mapper = IanaToBcp47Mapper::new();
+//! time_zone.time_zone_id = mapper.as_borrowed().get("America/Chicago");
+//!
+//! // Alternatively, set it directly from the BCP-47 ID
+//! assert_eq!(time_zone.time_zone_id, Some(tinystr!(8, "uschi").into()));
 //!
 //! // Compute the metazone at January 1, 2022:
 //! let mzc = MetazoneCalculator::new();
@@ -120,12 +126,14 @@
 extern crate alloc;
 
 mod error;
+mod iana_ids;
 mod metazone;
 pub mod provider;
 mod time_zone;
 mod types;
 
 pub use error::TimeZoneError;
+pub use iana_ids::{IanaBcp47RoundTripMapper, IanaToBcp47Mapper};
 pub use metazone::MetazoneCalculator;
 pub use provider::{MetazoneId, TimeZoneBcp47Id};
 pub use time_zone::CustomTimeZone;

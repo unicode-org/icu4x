@@ -1,6 +1,11 @@
 {
   "patterns": {
     "3": {
+      "One": {
+        "exponent": 0,
+        "index": 0,
+        "literal_text": ""
+      },
       "Other": {
         "exponent": 3,
         "index": 0,
@@ -8,6 +13,11 @@
       }
     },
     "6": {
+      "One": {
+        "exponent": 0,
+        "index": 0,
+        "literal_text": ""
+      },
       "Other": {
         "exponent": 6,
         "index": 0,
@@ -22,6 +32,11 @@
       }
     },
     "12": {
+      "One": {
+        "exponent": 0,
+        "index": 0,
+        "literal_text": ""
+      },
       "Other": {
         "exponent": 12,
         "index": 0,

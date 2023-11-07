@@ -3,7 +3,7 @@
     "haw": {
       "identity": {
         "version": {
-          "_cldrVersion": "43"
+          "_cldrVersion": "44"
         },
         "language": "haw"
       },
@@ -18,6 +18,9 @@
           "fallbackFormat": "{1} ({0})",
           "zone": {
             "America": {
+              "Asuncion": {
+                "exemplarCity": "Asunción"
+              },
               "Bahia_Banderas": {
                 "exemplarCity": "Bahía de Banderas"
               },
@@ -29,6 +32,9 @@
               },
               "Coral_Harbour": {
                 "exemplarCity": "Atikokan"
+              },
+              "Curacao": {
+                "exemplarCity": "Curaçao"
               },
               "Godthab": {
                 "exemplarCity": "Nuuk"
@@ -82,7 +88,7 @@
                 "exemplarCity": "Ittoqqortoormiit"
               },
               "St_Barthelemy": {
-                "exemplarCity": "St. Barthelemy"
+                "exemplarCity": "St. Barthélemy"
               },
               "St_Johns": {
                 "exemplarCity": "St. John’s"
@@ -116,6 +122,9 @@
             "Africa": {
               "Asmera": {
                 "exemplarCity": "Asmara"
+              },
+              "Sao_Tome": {
+                "exemplarCity": "São Tomé"
               }
             },
             "Asia": {
@@ -133,6 +142,11 @@
               },
               "Saigon": {
                 "exemplarCity": "Ho Chi Minh"
+              }
+            },
+            "Indian": {
+              "Reunion": {
+                "exemplarCity": "Réunion"
               }
             },
             "Pacific": {

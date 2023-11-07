@@ -20,6 +20,9 @@ pub enum TimeZoneError {
     /// The time zone offset was invalid.
     #[displaydoc("Failed to parse time-zone offset")]
     InvalidOffset,
+    /// The data name checksums do not match (data from different sources?)
+    #[displaydoc("Data checksums to not match (mismatched data sources?)")]
+    MismatchedChecksums,
     /// An error originating inside of the [data provider](icu_provider).
     #[displaydoc("{0}")]
     Data(DataError),

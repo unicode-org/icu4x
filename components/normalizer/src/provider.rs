@@ -37,6 +37,7 @@ const _: () = {
         pub use crate as normalizer;
         pub use icu_collections as collections;
     }
+    icu_normalizer_data::make_provider!(Baked);
     icu_normalizer_data::impl_normalizer_comp_v1!(Baked);
     icu_normalizer_data::impl_normalizer_decomp_v1!(Baked);
     icu_normalizer_data::impl_normalizer_nfd_v1!(Baked);
@@ -45,6 +46,18 @@ const _: () = {
     icu_normalizer_data::impl_normalizer_nfkdex_v1!(Baked);
     icu_normalizer_data::impl_normalizer_uts46d_v1!(Baked);
 };
+
+#[cfg(feature = "datagen")]
+/// The latest minimum set of keys required by this component.
+pub const KEYS: &[DataKey] = &[
+    CanonicalCompositionsV1Marker::KEY,
+    CanonicalDecompositionDataV1Marker::KEY,
+    CanonicalDecompositionTablesV1Marker::KEY,
+    CompatibilityDecompositionSupplementV1Marker::KEY,
+    CompatibilityDecompositionTablesV1Marker::KEY,
+    NonRecursiveDecompositionSupplementV1Marker::KEY,
+    Uts46DecompositionSupplementV1Marker::KEY,
+];
 
 /// Main data for NFD
 ///

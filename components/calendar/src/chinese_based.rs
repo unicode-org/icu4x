@@ -6,10 +6,11 @@
 //! as well as in related and derived calendars such as the Korean and Vietnamese lunar calendars.
 //!
 //! ```rust
-//! use icu::calendar::{chinese::Chinese, Iso, Date};
+//! use icu::calendar::{chinese::Chinese, Date, Iso};
 //!
 //! let iso_date = Date::try_new_iso_date(2023, 6, 23).unwrap();
-//! let chinese_date = Date::new_from_iso(iso_date, Chinese);
+//! let chinese_date =
+//!     Date::new_from_iso(iso_date, Chinese::new_always_calculating());
 //!
 //! assert_eq!(chinese_date.year().number, 4660);
 //! assert_eq!(chinese_date.year().related_iso, Some(2023));
@@ -39,11 +40,19 @@ pub(crate) trait ChineseBasedWithDataLoading: CalendarArithmetic {
 }
 
 /// Chinese-based calendars define DateInner as a calendar-specific struct wrapping ChineseBasedDateInner.
-#[derive(Copy, Clone, Debug, Eq, PartialEq, PartialOrd, Ord)]
-pub(crate) struct ChineseBasedDateInner<C: ChineseBasedWithDataLoading>(
+#[derive(Debug, Eq, PartialEq, PartialOrd, Ord)]
+pub(crate) struct ChineseBasedDateInner<C>(
     pub(crate) ArithmeticDate<C>,
     pub(crate) ChineseBasedYearInfo,
 );
+
+// we want these impls without the `C: Copy/Clone` bounds
+impl<C> Copy for ChineseBasedDateInner<C> {}
+impl<C> Clone for ChineseBasedDateInner<C> {
+    fn clone(&self) -> Self {
+        *self
+    }
+}
 
 /// A `ChineseBasedDateInner` has additional information about the year corresponding to the Inner;
 /// if there is available data for that year, the ChineseBasedYearInfo will be in the form of `Data`,

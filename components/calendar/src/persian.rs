@@ -12,8 +12,9 @@
 //!     .expect("Failed to initialize Persian Date instance.");
 //!
 //! // `DateTime` type
-//! let persian_datetime = DateTime::try_new_persian_datetime(1348, 10, 11, 13, 1, 0)
-//!     .expect("Failed to initialize Persian DateTime instance.");
+//! let persian_datetime =
+//!     DateTime::try_new_persian_datetime(1348, 10, 11, 13, 1, 0)
+//!         .expect("Failed to initialize Persian DateTime instance.");
 //!
 //! // `Date` checks
 //! assert_eq!(persian_date.year().number, 1348);
@@ -265,8 +266,9 @@ impl DateTime<Persian> {
     /// ```rust
     /// use icu::calendar::DateTime;
     ///
-    /// let datetime_persian = DateTime::try_new_persian_datetime(474, 10, 11, 13, 1, 0)
-    ///     .expect("Failed to initialize Persian DateTime instance.");
+    /// let datetime_persian =
+    ///     DateTime::try_new_persian_datetime(474, 10, 11, 13, 1, 0)
+    ///         .expect("Failed to initialize Persian DateTime instance.");
     ///
     /// assert_eq!(datetime_persian.date.year().number, 474);
     /// assert_eq!(datetime_persian.date.month().ordinal, 10);

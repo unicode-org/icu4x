@@ -34,13 +34,6 @@ use icu_provider::prelude::*;
 /// assert!(set.contains('ß'));
 /// assert!(set.contains('ẞ'));
 /// ```
-///
-/// <div class="stab unstable">
-/// 🚧 This code is experimental; it may change at any time, in breaking or non-breaking ways,
-/// including in SemVer minor releases. It can be enabled with the "experimental" Cargo feature
-/// of the icu meta-crate. Use with caution.
-/// <a href="https://github.com/unicode-org/icu4x/issues/2535">#2535</a>
-/// </div>
 #[derive(Clone, Debug)]
 pub struct CaseMapCloser<CM> {
     cm: CM,
@@ -144,7 +137,6 @@ impl<CM: AsRef<CaseMapper>> CaseMapCloser<CM> {
     }
 
     /// Construct this object to wrap an existing CaseMapper (or a reference to one), loading additional data as needed.
-    ///
     #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::new_with_mapper)]
     pub fn try_new_with_mapper_unstable<P>(provider: &P, casemapper: CM) -> Result<Self, DataError>
     where

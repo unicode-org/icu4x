@@ -7,7 +7,7 @@ use crate::FallbackMode;
 use icu_locid::extensions::unicode::key;
 use icu_locid::LanguageIdentifier;
 use icu_locid_transform::fallback::LocaleFallbackIterator;
-use icu_locid_transform::fallback::LocaleFallbacker;
+use icu_locid_transform::LocaleFallbacker;
 use icu_provider::datagen::*;
 use icu_provider::prelude::*;
 use once_cell::sync::Lazy;
@@ -17,6 +17,9 @@ use std::collections::HashSet;
 use writeable::Writeable;
 
 /// Configuration for a data export operation.
+///
+/// Note that this only configures *which data* is exported. The input provider, usually
+/// `DatagenProvider`, might expose more options about the data itself.
 ///
 /// # Examples
 ///
@@ -45,6 +48,8 @@ pub struct DatagenDriver {
 
 impl DatagenDriver {
     /// Creates an empty [`DatagenDriver`].
+    ///
+    /// Note that keys and locales need to be set before calling [`export`](Self::export).
     #[allow(clippy::new_without_default)] // this is not directly usable
     pub fn new() -> Self {
         Self {
@@ -57,8 +62,9 @@ impl DatagenDriver {
         .with_recommended_segmenter_models()
     }
 
-    /// Sets this driver to generate the given keys. See [`icu_datagen::keys`],
-    /// [`icu_datagen::all_keys`], [`icu_datagen::key`] and [`icu_datagen::keys_from_bin`].
+    /// Sets this driver to generate the given keys.
+    ///
+    /// See [`icu_datagen::keys`], [`icu_datagen::all_keys`], [`icu_datagen::key`] and [`icu_datagen::keys_from_bin`].
     ///
     /// [`icu_datagen::keys`]: crate::keys
     /// [`icu_datagen::all_keys`]: crate::all_keys
@@ -71,13 +77,13 @@ impl DatagenDriver {
         }
     }
 
-    /// Sets the fallback type that the data should be generated for. If locale fallback is
-    /// used at runtime, smaller data can be generated.
-    pub fn with_fallback_mode(self, fallback: FallbackMode) -> Self {
-        Self { fallback, ..self }
-    }
-
-    /// Sets the locales to generate.
+    /// Sets this driver to generate the given locales.
+    ///
+    /// Use the [`langid!`] macro from the prelude to create an
+    /// explicit list, or [`DatagenProvider::locales_for_coverage_levels`] for CLDR coverage levels.
+    ///
+    /// [`langid!`]: crate::prelude::langid
+    /// [`DatagenProvider::locales_for_coverage_levels`]: crate::DatagenProvider::locales_for_coverage_levels
     pub fn with_locales(self, locales: impl IntoIterator<Item = LanguageIdentifier>) -> Self {
         Self {
             locales: Some(Some(locales.into_iter().collect())),
@@ -91,6 +97,13 @@ impl DatagenDriver {
             locales: Some(None),
             ..self
         }
+    }
+
+    /// Sets the fallback type that the data should be generated for.
+    ///
+    /// If locale fallback is used at runtime, smaller data can be generated.
+    pub fn with_fallback_mode(self, fallback: FallbackMode) -> Self {
+        Self { fallback, ..self }
     }
 
     /// This option is only relevant if using `icu::collator`.
@@ -336,13 +349,18 @@ impl DatagenDriver {
                         let mut iter = fallbacker_with_config.fallback_for(locale.clone());
                         while !iter.get().is_und() {
                             iter.step();
-                            if payloads.get(iter.get()) == Some(payload) {
-                                // Found a match: don't need to write anything
-                                log::trace!(
-                                    "Deduplicating {key}/{locale} (inherits from {})",
-                                    iter.get()
-                                );
-                                return Ok(());
+                            if let Some(inherited_payload) = payloads.get(iter.get()) {
+                                if inherited_payload == payload {
+                                    // Found a match: don't need to write anything
+                                    log::trace!(
+                                        "Deduplicating {key}/{locale} (inherits from {})",
+                                        iter.get()
+                                    );
+                                    return Ok(());
+                                } else {
+                                    // Not a match: we must include this
+                                    break;
+                                }
                             }
                         }
                         // Did not find a match: export this payload
@@ -482,11 +500,13 @@ fn select_locales_for_key(
             result
                 .into_iter()
                 .chain(explicit.iter().cloned())
-                .filter(|locale| {
-                    if implicit.contains(locale) {
+                .filter(|locale_orig| {
+                    let mut locale = locale_orig.clone();
+                    locale.remove_aux();
+                    if implicit.contains(&locale) {
                         return true;
                     }
-                    if explicit.contains(locale) {
+                    if explicit.contains(&locale) {
                         return true;
                     }
                     if locale.is_langid_und() && include_und {
@@ -507,14 +527,14 @@ fn select_locales_for_key(
                     {
                         return false;
                     }
-                    let mut iter = fallbacker_with_config.fallback_for(locale.clone());
+                    let mut iter = fallbacker_with_config.fallback_for(locale);
                     while !iter.get().is_und() {
                         if explicit.contains(iter.get()) {
                             return true;
                         }
                         iter.step();
                     }
-                    log::trace!("Filtered out: {key}/{locale}");
+                    log::trace!("Filtered out: {key}/{locale_orig}"); // this will print aux keys too but it avoids a clone
                     false
                 })
                 .collect()

@@ -24,9 +24,6 @@ use crate::{
     DateTimeError, FormattedDateTime,
 };
 
-#[cfg(feature = "experimental")]
-use crate::options::components;
-
 /// [`TimeFormatter`] is a structure of the [`icu_datetime`] component that provides time formatting only.
 /// When constructed, it uses data from the [data provider], selected locale and provided preferences to
 /// collect all data necessary to format any time into that locale.
@@ -45,11 +42,9 @@ use crate::options::components;
 /// use icu::locid::locale;
 /// use writeable::assert_writeable_eq;
 ///
-/// let tf = TimeFormatter::try_new_with_length(
-///     &locale!("en").into(),
-///     Time::Short,
-/// )
-/// .expect("Failed to create TimeFormatter instance.");
+/// let tf =
+///     TimeFormatter::try_new_with_length(&locale!("en").into(), Time::Short)
+///         .expect("Failed to create TimeFormatter instance.");
 ///
 /// let datetime = DateTime::try_new_gregorian_datetime(2020, 9, 1, 12, 34, 28)
 ///     .expect("Failed to construct DateTime.");
@@ -78,11 +73,8 @@ impl TimeFormatter {
     /// use icu::datetime::{options::length::Time, TimeFormatter};
     /// use icu::locid::locale;
     ///
-    /// TimeFormatter::try_new_with_length(
-    ///     &locale!("en").into(),
-    ///     Time::Short,
-    /// )
-    /// .unwrap();
+    /// TimeFormatter::try_new_with_length(&locale!("en").into(), Time::Short)
+    ///     .unwrap();
     /// ```
     #[cfg(feature = "compiled_data")]
     pub fn try_new_with_length(
@@ -146,11 +138,9 @@ impl TimeFormatter {
     /// use icu::locid::locale;
     /// use writeable::assert_writeable_eq;
     ///
-    /// let tf = TimeFormatter::try_new_with_length(
-    ///     &locale!("en").into(),
-    ///     Time::Short,
-    /// )
-    /// .expect("Failed to create TimeFormatter instance.");
+    /// let tf =
+    ///     TimeFormatter::try_new_with_length(&locale!("en").into(), Time::Short)
+    ///         .expect("Failed to create TimeFormatter instance.");
     ///
     /// let datetime = DateTime::try_new_gregorian_datetime(2020, 9, 1, 12, 34, 28)
     ///     .expect("Failed to construct DateTime.");
@@ -173,11 +163,9 @@ impl TimeFormatter {
     /// use icu::calendar::DateTime;
     /// use icu::datetime::{options::length::Time, TimeFormatter};
     /// use icu::locid::locale;
-    /// let tf = TimeFormatter::try_new_with_length(
-    ///     &locale!("en").into(),
-    ///     Time::Short,
-    /// )
-    /// .expect("Failed to create TimeFormatter instance.");
+    /// let tf =
+    ///     TimeFormatter::try_new_with_length(&locale!("en").into(), Time::Short)
+    ///         .expect("Failed to create TimeFormatter instance.");
     ///
     /// let datetime = DateTime::try_new_gregorian_datetime(2020, 9, 1, 12, 34, 28)
     ///     .expect("Failed to construct DateTime.");
@@ -245,12 +233,11 @@ impl<C: CldrCalendar> TypedDateFormatter<C> {
     /// use icu::locid::locale;
     /// use writeable::assert_writeable_eq;
     ///
-    /// let formatter =
-    ///     TypedDateFormatter::<Gregorian>::try_new_with_length(
-    ///         &locale!("en").into(),
-    ///         length::Date::Full,
-    ///     )
-    ///     .unwrap();
+    /// let formatter = TypedDateFormatter::<Gregorian>::try_new_with_length(
+    ///     &locale!("en").into(),
+    ///     length::Date::Full,
+    /// )
+    /// .unwrap();
     ///
     /// assert_writeable_eq!(
     ///     formatter.format(&Date::try_new_gregorian_date(2022, 8, 29).unwrap()),
@@ -601,7 +588,7 @@ where {
 
     /// Constructor that supports experimental options using compiled data.
     ///
-    /// ✨ *Enabled with the `compiled_data` Cargo feature.*
+    /// ✨ *Enabled with the `compiled_data` and `experimental` Cargo features.*
     ///
     /// [📚 Help choosing a constructor](icu_provider::constructors)
     ///
@@ -625,12 +612,11 @@ where {
     /// options.year = Some(components::Year::Numeric);
     /// options.month = Some(components::Month::Long);
     ///
-    /// let dtf =
-    ///     TypedDateTimeFormatter::<Gregorian>::try_new_experimental(
-    ///         &locale!("en").into(),
-    ///         options.into(),
-    ///     )
-    ///     .unwrap();
+    /// let dtf = TypedDateTimeFormatter::<Gregorian>::try_new_experimental(
+    ///     &locale!("en").into(),
+    ///     options.into(),
+    /// )
+    /// .unwrap();
     ///
     /// let datetime =
     ///     DateTime::try_new_gregorian_datetime(2022, 8, 31, 1, 2, 3).unwrap();
@@ -672,42 +658,7 @@ where {
         ))
     }
 
-    /// Constructor that supports experimental options.
-    ///
-    /// <div class="stab unstable">
-    /// 🚧 This code is experimental; it may change at any time, in breaking or non-breaking ways,
-    /// including in SemVer minor releases. It can be enabled with the "experimental" Cargo feature
-    /// of the icu meta-crate. Use with caution.
-    /// <a href="https://github.com/unicode-org/icu4x/issues/1317">#1317</a>
-    /// </div>
-    ///
-    /// # Examples
-    ///
-    /// ```
-    /// use icu::calendar::{DateTime, Gregorian};
-    /// use icu::datetime::{options::components, TypedDateTimeFormatter};
-    /// use icu::locid::locale;
-    /// use icu_provider::AsDeserializingBufferProvider;
-    /// use writeable::assert_writeable_eq;
-    ///
-    /// let mut options = components::Bag::default();
-    /// options.year = Some(components::Year::Numeric);
-    /// options.month = Some(components::Month::Long);
-    ///
-    /// let dtf =
-    ///     TypedDateTimeFormatter::<Gregorian>::try_new_experimental(
-    ///         &locale!("en").into(),
-    ///         options.into(),
-    ///     )
-    ///     .unwrap();
-    ///
-    /// let datetime =
-    ///     DateTime::try_new_gregorian_datetime(2022, 8, 31, 1, 2, 3).unwrap();
-    ///
-    /// assert_writeable_eq!(dtf.format(&datetime), "August 2022");
-    /// ```
-    ///
-    /// [data provider]: icu_provider
+    #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::try_new_experimental)]
     #[cfg(feature = "experimental")]
     #[inline]
     pub fn try_new_experimental_unstable<D>(
@@ -793,7 +744,7 @@ where {
         self.format(value).write_to_string().into_owned()
     }
 
-    /// Returns a [`components::Bag`] that represents the resolved components for the
+    /// Returns a [`components::Bag`](crate::options::components::Bag) that represents the resolved components for the
     /// options that were provided to the [`TypedDateTimeFormatter`]. The developer may request
     /// a certain set of options for a [`TypedDateTimeFormatter`] but the locale and resolution
     /// algorithm may change certain details of what actually gets resolved.
@@ -823,7 +774,7 @@ where {
     /// assert_eq!(dtf.resolve_components(), expected_components_bag);
     /// ```
     #[cfg(feature = "experimental")]
-    pub fn resolve_components(&self) -> components::Bag {
+    pub fn resolve_components(&self) -> crate::options::components::Bag {
         self.0.resolve_components()
     }
 }

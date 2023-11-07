@@ -4,6 +4,8 @@
 
 //! 🚧 \[Experimental\] Options for constructing DateTimeFormatter objects by each component style.
 //!
+//! ✨ *Enabled with the `experimental` Cargo feature.*
+//!
 //! <div class="stab unstable">
 //! 🚧 This code is experimental; it may change at any time, in breaking or non-breaking ways,
 //! including in SemVer minor releases. It can be enabled with the "experimental" Cargo feature
@@ -85,9 +87,6 @@ use crate::{
     pattern::{runtime::PatternPlurals, PatternItem},
 };
 
-#[cfg(feature = "experimental")]
-use alloc::vec::Vec;
-
 use super::preferences;
 #[cfg(feature = "serde")]
 use serde::{Deserialize, Serialize};
@@ -100,7 +99,7 @@ use serde::{Deserialize, Serialize};
 /// of the icu meta-crate. Use with caution.
 /// <a href="https://github.com/unicode-org/icu4x/issues/1317">#1317</a>
 /// </div>
-#[derive(Debug, Clone, PartialEq, Default, Copy)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Default, Hash)]
 #[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
 #[non_exhaustive]
 pub struct Bag {
@@ -146,8 +145,8 @@ impl Bag {
     /// significant field to least significant. This is the order the fields are listed in
     /// the UTS 35 table - https://unicode.org/reports/tr35/tr35-dates.html#Date_Field_Symbol_Table
     #[cfg(any(test, feature = "experimental"))] // only used in test and experimental code
-    pub(crate) fn to_vec_fields(&self) -> Vec<Field> {
-        let mut fields = Vec::new();
+    pub(crate) fn to_vec_fields(&self) -> alloc::vec::Vec<Field> {
+        let mut fields = alloc::vec::Vec::new();
         if let Some(era) = self.era {
             fields.push(Field {
                 symbol: FieldSymbol::Era,
@@ -373,7 +372,7 @@ impl Bag {
 /// of the icu meta-crate. Use with caution.
 /// <a href="https://github.com/unicode-org/icu4x/issues/1317">#1317</a>
 /// </div>
-#[derive(Debug, Clone, Copy, PartialEq)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 #[cfg_attr(
     feature = "serde",
     derive(Serialize, Deserialize),
@@ -395,7 +394,7 @@ pub enum Numeric {
 /// of the icu meta-crate. Use with caution.
 /// <a href="https://github.com/unicode-org/icu4x/issues/1317">#1317</a>
 /// </div>
-#[derive(Debug, Clone, Copy, PartialEq)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 #[cfg_attr(
     feature = "serde",
     derive(Serialize, Deserialize),
@@ -419,7 +418,7 @@ pub enum Text {
 /// of the icu meta-crate. Use with caution.
 /// <a href="https://github.com/unicode-org/icu4x/issues/1317">#1317</a>
 /// </div>
-#[derive(Debug, Clone, Copy, PartialEq)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 #[cfg_attr(
     feature = "serde",
     derive(Serialize, Deserialize),
@@ -447,7 +446,7 @@ pub enum Year {
 /// of the icu meta-crate. Use with caution.
 /// <a href="https://github.com/unicode-org/icu4x/issues/1317">#1317</a>
 /// </div>
-#[derive(Debug, Clone, Copy, PartialEq)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 #[cfg_attr(
     feature = "serde",
     derive(Serialize, Deserialize),
@@ -480,7 +479,7 @@ pub enum Month {
 /// of the icu meta-crate. Use with caution.
 /// <a href="https://github.com/unicode-org/icu4x/issues/1317">#1317</a>
 /// </div>
-#[derive(Debug, Clone, Copy, PartialEq)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 #[cfg_attr(
     feature = "serde",
     derive(Serialize, Deserialize),
@@ -504,7 +503,7 @@ pub enum Week {
 /// of the icu meta-crate. Use with caution.
 /// <a href="https://github.com/unicode-org/icu4x/issues/1317">#1317</a>
 /// </div>
-#[derive(Debug, Clone, PartialEq, Copy)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 #[cfg_attr(
     feature = "serde",
     derive(Serialize, Deserialize),
@@ -531,7 +530,7 @@ pub enum Day {
 /// of the icu meta-crate. Use with caution.
 /// <a href="https://github.com/unicode-org/icu4x/issues/1317">#1317</a>
 /// </div>
-#[derive(Debug, Clone, Copy, PartialEq)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 #[cfg_attr(
     feature = "serde",
     derive(Serialize, Deserialize),
@@ -619,9 +618,10 @@ impl<'data> From<&PatternPlurals<'data>> for Bag {
             match field.symbol {
                 FieldSymbol::Era => {
                     bag.era = Some(match field.length {
-                        FieldLength::One | FieldLength::TwoDigit | FieldLength::Abbreviated => {
-                            Text::Short
-                        }
+                        FieldLength::One
+                        | FieldLength::NumericOverride(_)
+                        | FieldLength::TwoDigit
+                        | FieldLength::Abbreviated => Text::Short,
                         FieldLength::Wide => Text::Long,
                         FieldLength::Narrow | FieldLength::Six | FieldLength::Fixed(_) => {
                             Text::Narrow
@@ -646,6 +646,7 @@ impl<'data> From<&PatternPlurals<'data>> for Bag {
                     // on the field length.
                     bag.month = Some(match field.length {
                         FieldLength::One => Month::Numeric,
+                        FieldLength::NumericOverride(_) => Month::Numeric,
                         FieldLength::TwoDigit => Month::TwoDigit,
                         FieldLength::Abbreviated => Month::Short,
                         FieldLength::Wide => Month::Long,
@@ -686,7 +687,9 @@ impl<'data> From<&PatternPlurals<'data>> for Bag {
                             _ => Text::Narrow,
                         },
                         fields::Weekday::StandAlone => match field.length {
-                            FieldLength::One | FieldLength::TwoDigit => {
+                            FieldLength::One
+                            | FieldLength::TwoDigit
+                            | FieldLength::NumericOverride(_) => {
                                 // Stand-alone fields also support a numeric 1 digit per UTS-35, but there is
                                 // no way to request it using the current system. As of 2021-12-06
                                 // no skeletons resolve to patterns containing this symbol.

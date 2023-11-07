@@ -22,11 +22,12 @@ command = "cargo"
 args = [
     "test",
     "-p=icu_datagen",
+    "--test=make-testdata",
     "--no-default-features",
     "--features=fs_exporter,use_wasm,rayon,experimental_components",
-    "generate_json_and_verify_postcard",
     "--",
-    "--nocapture"
+    "--ignored",
+    "--nocapture",
 ]
 
 [tasks.testdata-hello-world]
@@ -38,11 +39,16 @@ exit_on_error true
 
 exec --fail-on-error cargo build -p icu_datagen --no-default-features --features fs_exporter,blob_exporter,bin,networking
 
-configs = array provider/fs/tests/data/json.json provider/fs/tests/data/bincode.json provider/fs/tests/data/postcard.json provider/blob/tests/data/config.json provider/adapters/tests/data/config.json provider/adapters/tests/data/langtest/de.json provider/adapters/tests/data/langtest/ro.json
+exec --fail-on-error target/debug/icu4x-datagen --keys "core/helloworld@1" --locales full --format dir --syntax json --out provider/fs/tests/data/json --overwrite
+exec --fail-on-error target/debug/icu4x-datagen --keys "core/helloworld@1" --locales full --format dir --syntax bincode --out provider/fs/tests/data/bincode --overwrite
+exec --fail-on-error target/debug/icu4x-datagen --keys "core/helloworld@1" --locales full --format dir --syntax postcard --out provider/fs/tests/data/postcard --overwrite
 
-for config in ${configs}
-    exec --fail-on-error target/debug/icu4x-datagen "${config}"
-end
+exec --fail-on-error target/debug/icu4x-datagen --keys "core/helloworld@1" --locales full --format blob --overwrite --out provider/blob/tests/data/v1.postcard
+exec --fail-on-error target/debug/icu4x-datagen --keys "core/helloworld@1" --locales full --format blob2 --overwrite --out provider/blob/tests/data/v2.postcard
+
+exec --fail-on-error target/debug/icu4x-datagen --keys "core/helloworld@1" "fallback/likelysubtags@1" "fallback/parents@1" "fallback/supplement/co@1" --locales full --format blob --out provider/adapters/tests/data/blob.postcard --overwrite
+exec --fail-on-error target/debug/icu4x-datagen --keys "core/helloworld@1" --fallback preresolved --locales de --format dir --syntax json --out provider/adapters/tests/data/langtest/de --overwrite
+exec --fail-on-error target/debug/icu4x-datagen --keys "core/helloworld@1" --fallback preresolved --locales ro --format dir --syntax json --out provider/adapters/tests/data/langtest/ro --overwrite
 '''
 
 [tasks.testdata-check]
@@ -76,6 +82,8 @@ command = "cargo"
 args = [
     "run",
     "--bin=make-testdata-legacy",
+    "--release",
+    "--manifest-path=tools/testdata-scripts/Cargo.toml", # avoid global feature resolution
 ]
 
 [tasks.testdata-legacy-test]
@@ -99,17 +107,12 @@ script = '''
 exit_on_error true
 
 if array_is_empty ${@}
-    exec --fail-on-error cargo build -p icu_datagen --no-default-features --features rayon,baked_exporter,bin,use_wasm,networking,experimental_components --release
-    bin = set "target/release/icu4x-datagen"
-    components = array components/calendar components/casemap components/collator components/datetime components/decimal components/list components/locid_transform components/normalizer components/plurals components/properties components/segmenter components/timezone experimental/compactdecimal experimental/displaynames experimental/relativetime experimental/transliterate experimental/unitsconversion
+    exec --fail-on-error cargo run -p bakeddata-scripts --release
 else
-    exec --fail-on-error cargo build -p icu_datagen --no-default-features --features rayon,baked_exporter,bin,use_wasm,networking,experimental_components
-    bin = set "target/debug/icu4x-datagen"
-    components = set ${@}
-end
-
-for component in ${components}
-    exec --fail-on-error ${bin} "${component}/data/config.json"
+    exec --fail-on-error cargo build -p bakeddata-scripts
+    for component in ${@}
+        exec --fail-on-error target/debug/bakeddata-scripts "${component}"
+    end
 end
 '''
 

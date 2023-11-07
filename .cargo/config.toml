@@ -3,25 +3,6 @@
 # (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 [alias]
-
 quick = "make quick"
 tidy = "make tidy"
-
-# Run Clippy on all code paths
-# Keep args in sync with `clippy` job in .github/workflows/build-test.yml
 clippy-all = "clippy --all-features --all-targets -- -D warnings"
-
-# Build configuration for small binary size
-panic-abort-build = "build -Z build-std=std,panic_abort -Z build-std-features=panic_immediate_abort"
-
-wasm-build-release = "panic-abort-build --target wasm32-unknown-unknown --profile=release-opt-size"
-
-[target.wasm32-unknown-unknown]
-rustflags = [
-  # 100 KiB, working around a bug in older rustc
-  # https://github.com/unicode-org/icu4x/issues/2753
-  # keep in sync with wasm's and tinywasm's build.sh
-  "-C", "link-args=-z stack-size=100000",
-  "-C", "panic=abort",
-  "-C", "opt-level=s"
-]

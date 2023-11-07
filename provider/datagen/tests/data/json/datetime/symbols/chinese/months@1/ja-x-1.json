@@ -1,0 +1,6 @@
+{
+  "LeapNumeric": {
+    "pattern": "閏",
+    "subst_index": 3
+  }
+}

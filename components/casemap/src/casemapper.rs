@@ -24,16 +24,15 @@ use writeable::Writeable;
 ///
 /// let cm = CaseMapper::new();
 ///
-/// assert_eq!(cm.uppercase_to_string("hello world", &langid!("und")), "HELLO WORLD");
-/// assert_eq!(cm.lowercase_to_string("Γειά σου Κόσμε", &langid!("und")), "γειά σου κόσμε");
+/// assert_eq!(
+///     cm.uppercase_to_string("hello world", &langid!("und")),
+///     "HELLO WORLD"
+/// );
+/// assert_eq!(
+///     cm.lowercase_to_string("Γειά σου Κόσμε", &langid!("und")),
+///     "γειά σου κόσμε"
+/// );
 /// ```
-///
-/// <div class="stab unstable">
-/// 🚧 This code is experimental; it may change at any time, in breaking or non-breaking ways,
-/// including in SemVer minor releases. It can be enabled with the "experimental" Cargo feature
-/// of the icu meta-crate. Use with caution.
-/// <a href="https://github.com/unicode-org/icu4x/issues/2535">#2535</a>
-/// </div>
 #[derive(Clone, Debug)]
 pub struct CaseMapper {
     pub(crate) data: DataPayload<CaseMapV1Marker>,
@@ -67,7 +66,10 @@ impl CaseMapper {
     ///
     /// let cm = CaseMapper::new();
     ///
-    /// assert_eq!(cm.uppercase_to_string("hello world", &langid!("und")), "HELLO WORLD");
+    /// assert_eq!(
+    ///     cm.uppercase_to_string("hello world", &langid!("und")),
+    ///     "HELLO WORLD"
+    /// );
     /// ```
     #[cfg(feature = "compiled_data")]
     pub const fn new() -> Self {

@@ -16,7 +16,7 @@
 //! use icu::locid::{LanguageIdentifier, Locale};
 //!
 //! let mut loc: Locale =
-//!     "en-US-t-es-AR-h0-hybrid".parse().expect("Parsing failed.");
+//!     "en-US-t-es-ar-h0-hybrid".parse().expect("Parsing failed.");
 //!
 //! let lang: LanguageIdentifier =
 //!     "es-AR".parse().expect("Parsing LanguageIdentifier failed.");
@@ -28,7 +28,7 @@
 //! assert!(loc.extensions.transform.fields.contains_key(&key));
 //! assert_eq!(loc.extensions.transform.fields.get(&key), Some(&value));
 //!
-//! assert_eq!(&loc.extensions.transform.to_string(), "t-es-AR-h0-hybrid");
+//! assert_eq!(&loc.extensions.transform.to_string(), "t-es-ar-h0-hybrid");
 //! ```
 mod fields;
 mod key;
@@ -60,7 +60,7 @@ use litemap::LiteMap;
 /// use icu::locid::{LanguageIdentifier, Locale};
 ///
 /// let mut loc: Locale =
-///     "de-t-en-US-h0-hybrid".parse().expect("Parsing failed.");
+///     "de-t-en-us-h0-hybrid".parse().expect("Parsing failed.");
 ///
 /// let en_us: LanguageIdentifier = "en-US".parse().expect("Parsing failed.");
 ///
@@ -107,7 +107,7 @@ impl Transform {
     /// ```
     /// use icu::locid::Locale;
     ///
-    /// let mut loc: Locale = "en-US-t-es-AR".parse().expect("Parsing failed.");
+    /// let mut loc: Locale = "en-US-t-es-ar".parse().expect("Parsing failed.");
     ///
     /// assert!(!loc.extensions.transform.is_empty());
     /// ```
@@ -122,7 +122,7 @@ impl Transform {
     /// ```
     /// use icu::locid::Locale;
     ///
-    /// let mut loc: Locale = "en-US-t-es-AR".parse().unwrap();
+    /// let mut loc: Locale = "en-US-t-es-ar".parse().unwrap();
     /// loc.extensions.transform.clear();
     /// assert_eq!(loc, "en-US".parse().unwrap());
     /// ```
@@ -196,7 +196,7 @@ impl Transform {
         }
         f("t")?;
         if let Some(lang) = &self.lang {
-            lang.for_each_subtag_str(f)?;
+            lang.for_each_subtag_str_lowercased(f)?;
         }
         self.fields.for_each_subtag_str(f)
     }
@@ -212,7 +212,7 @@ impl writeable::Writeable for Transform {
         sink.write_str("t")?;
         if let Some(lang) = &self.lang {
             sink.write_char('-')?;
-            writeable::Writeable::write_to(lang, sink)?;
+            lang.write_lowercased_to(sink)?;
         }
         if !self.fields.is_empty() {
             sink.write_char('-')?;

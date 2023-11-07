@@ -43,6 +43,7 @@ const _: () = {
         pub use crate as segmenter;
         pub use icu_collections as collections;
     }
+    icu_segmenter_data::make_provider!(Baked);
     icu_segmenter_data::impl_segmenter_dictionary_w_auto_v1!(Baked);
     icu_segmenter_data::impl_segmenter_dictionary_wl_ext_v1!(Baked);
     icu_segmenter_data::impl_segmenter_grapheme_v1!(Baked);
@@ -52,6 +53,18 @@ const _: () = {
     icu_segmenter_data::impl_segmenter_sentence_v1!(Baked);
     icu_segmenter_data::impl_segmenter_word_v1!(Baked);
 };
+
+#[cfg(feature = "datagen")]
+/// The latest minimum set of keys required by this component.
+pub const KEYS: &[DataKey] = &[
+    DictionaryForWordLineExtendedV1Marker::KEY,
+    DictionaryForWordOnlyAutoV1Marker::KEY,
+    GraphemeClusterBreakDataV1Marker::KEY,
+    LineBreakDataV1Marker::KEY,
+    LstmForWordLineAutoV1Marker::KEY,
+    SentenceBreakDataV1Marker::KEY,
+    WordBreakDataV1Marker::KEY,
+];
 
 /// Pre-processed Unicode data in the form of tables to be used for rule-based breaking.
 ///

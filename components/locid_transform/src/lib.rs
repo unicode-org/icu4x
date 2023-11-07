@@ -89,7 +89,6 @@
 extern crate alloc;
 
 mod canonicalizer;
-#[cfg(feature = "experimental")]
 mod directionality;
 mod error;
 mod expander;
@@ -97,10 +96,11 @@ pub mod fallback;
 pub mod provider;
 
 pub use canonicalizer::LocaleCanonicalizer;
-#[cfg(feature = "experimental")]
 pub use directionality::{Direction, LocaleDirectionality};
 pub use error::LocaleTransformError;
 pub use expander::LocaleExpander;
+#[doc(inline)]
+pub use fallback::LocaleFallbacker;
 
 /// Used to track the result of a transformation operation that potentially modifies its argument in place.
 #[derive(Debug, PartialEq)]

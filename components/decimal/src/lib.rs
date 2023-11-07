@@ -41,11 +41,9 @@
 //! use icu::locid::Locale;
 //! use writeable::assert_writeable_eq;
 //!
-//! let fdf = FixedDecimalFormatter::try_new(
-//!     &Locale::UND.into(),
-//!     Default::default(),
-//! )
-//! .expect("locale should be present");
+//! let fdf =
+//!     FixedDecimalFormatter::try_new(&Locale::UND.into(), Default::default())
+//!         .expect("locale should be present");
 //!
 //! let fixed_decimal = FixedDecimal::from(200050).multiplied_pow10(-2);
 //!

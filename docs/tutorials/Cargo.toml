@@ -8,8 +8,9 @@
 members = [
     "crates/baked",
     "crates/buffer",
+    "crates/custom_compiled",
+    "crates/default",
     "crates/experimental",
-    "crates/lazy_static",
-    "crates/testdata",
+    "crates/sync",
     "testing",
 ]

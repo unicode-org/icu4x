@@ -29,11 +29,7 @@ pub enum Strength {
     ///
     /// let mut options = CollatorOptions::new();
     /// options.strength = Some(Strength::Primary);
-    /// let collator = Collator::try_new(
-    ///     &Default::default(),
-    ///     options,
-    /// )
-    /// .unwrap();
+    /// let collator = Collator::try_new(&Default::default(), options).unwrap();
     /// assert_eq!(collator.compare("E", "é"), core::cmp::Ordering::Equal);
     /// ```
     Primary = 0,
@@ -47,11 +43,7 @@ pub enum Strength {
     ///
     /// let mut options = CollatorOptions::new();
     /// options.strength = Some(Strength::Secondary);
-    /// let collator = Collator::try_new(
-    ///     &Default::default(),
-    ///     options,
-    /// )
-    /// .unwrap();
+    /// let collator = Collator::try_new(&Default::default(), options).unwrap();
     /// assert_eq!(collator.compare("E", "e"), core::cmp::Ordering::Equal);
     /// assert_eq!(collator.compare("e", "é"), core::cmp::Ordering::Less);
     /// assert_eq!(collator.compare("あ", "ア"), core::cmp::Ordering::Equal);

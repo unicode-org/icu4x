@@ -133,6 +133,7 @@ impl<'l, 's, Y: RuleBreakType<'l, 's> + ?Sized> Iterator for RuleBreakIterator<'
                 let mut previous_pos_data = self.current_pos_data;
                 let mut previous_left_prop = left_prop;
 
+                break_state &= !INTERMEDIATE_MATCH_RULE;
                 loop {
                     self.advance_iter();
 

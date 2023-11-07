@@ -2,7 +2,7 @@
   "supplemental": {
     "version": {
       "_unicodeVersion": "15.0.0",
-      "_cldrVersion": "43"
+      "_cldrVersion": "44"
     },
     "currencyData": {
       "fractions": {
@@ -1104,7 +1104,8 @@
           },
           {
             "CUC": {
-              "_from": "1994-01-01"
+              "_from": "1994-01-01",
+              "_to": "2021-01-01"
             }
           }
         ],

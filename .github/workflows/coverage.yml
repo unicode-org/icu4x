@@ -15,7 +15,7 @@ jobs:
     runs-on:                    ubuntu-latest
 
     steps:
-      - uses:                   actions/checkout@v3
+      - uses:                   actions/checkout@v4
 
       ## Coverage steps
 
@@ -39,7 +39,7 @@ jobs:
   
       - uses:                   actions-rs/toolchain@v1
         with:
-          toolchain:            nightly-2022-09-26
+          toolchain:            nightly-2022-12-26
           override:             true
 
       - run: cargo test --all-features --no-fail-fast
