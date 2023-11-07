@@ -105,66 +105,58 @@ class CodePointRangeIteratorResult {
 /// See the [Rust documentation for `AnyCalendarKind`](https://docs.rs/icu/latest/icu/calendar/enum.AnyCalendarKind.html) for more information.
 enum ICU4XAnyCalendarKind {
   /// The kind of an Iso calendar
-  iso.__(0),
+  iso,
 
   /// The kind of a Gregorian calendar
-  gregorian.__(1),
+  gregorian,
 
   /// The kind of a Buddhist calendar
-  buddhist.__(2),
+  buddhist,
 
   /// The kind of a Japanese calendar with modern eras
-  japanese.__(3),
+  japanese,
 
   /// The kind of a Japanese calendar with modern and historic eras
-  japaneseExtended.__(4),
+  japaneseExtended,
 
   /// The kind of an Ethiopian calendar, with Amete Mihret era
-  ethiopian.__(5),
+  ethiopian,
 
   /// The kind of an Ethiopian calendar, with Amete Alem era
-  ethiopianAmeteAlem.__(6),
+  ethiopianAmeteAlem,
 
   /// The kind of a Indian calendar
-  indian.__(7),
+  indian,
 
   /// The kind of a Coptic calendar
-  coptic.__(8),
+  coptic,
 
   /// The kind of a Dangi calendar
-  dangi.__(9),
+  dangi,
 
   /// The kind of a Chinese calendar
-  chinese.__(10),
+  chinese,
 
   /// The kind of a Hebrew calendar
-  hebrew.__(11),
+  hebrew,
 
   /// The kind of a Islamic civil calendar
-  islamicCivil.__(12),
+  islamicCivil,
 
   /// The kind of a Islamic observational calendar
-  islamicObservational.__(13),
+  islamicObservational,
 
   /// The kind of a Islamic tabular calendar
-  islamicTabular.__(14),
+  islamicTabular,
 
   /// The kind of a Islamic Umm al-Qura calendar
-  islamicUmmAlQura.__(15),
+  islamicUmmAlQura,
 
   /// The kind of a Persian calendar
-  persian.__(16),
+  persian,
 
   /// The kind of a Roc calendar
-  roc.__(17);
-
-  const ICU4XAnyCalendarKind.__(this._id);
-
-  // ignore: unused_element
-  factory ICU4XAnyCalendarKind._(int id) =>
-      values.firstWhere((value) => value._id == id);
-
-  final int _id;
+  roc;
 
   /// Read the calendar type off of the -u-ca- extension on a locale.
   ///
@@ -175,7 +167,7 @@ enum ICU4XAnyCalendarKind {
   factory ICU4XAnyCalendarKind.getForLocale(ICU4XLocale locale) {
     final result = _ICU4XAnyCalendarKind_get_for_locale(locale._underlying);
     return result.isOk
-        ? ICU4XAnyCalendarKind._(result.union.ok)
+        ? ICU4XAnyCalendarKind.values[result.union.ok]
         : throw VoidError();
   }
   // ignore: non_constant_identifier_names
@@ -199,7 +191,7 @@ enum ICU4XAnyCalendarKind {
         _ICU4XAnyCalendarKind_get_for_bcp47(sSlice._bytes, sSlice._length);
     alloc.releaseAll();
     return result.isOk
-        ? ICU4XAnyCalendarKind._(result.union.ok)
+        ? ICU4XAnyCalendarKind.values[result.union.ok]
         : throw VoidError();
   }
   // ignore: non_constant_identifier_names
@@ -215,10 +207,11 @@ enum ICU4XAnyCalendarKind {
   /// See the [Rust documentation for `as_bcp47_string`](https://docs.rs/icu/latest/icu/calendar/enum.AnyCalendarKind.html#method.as_bcp47_string) for more information.
   String get bcp47 {
     final writeable = _Writeable();
-    final result = _ICU4XAnyCalendarKind_bcp47(_id, writeable._underlying);
+    final result = _ICU4XAnyCalendarKind_bcp47(index, writeable._underlying);
     return result.isOk
         ? writeable.finalize()
-        : throw ICU4XError._(result.union.err);
+        : throw ICU4XError.values
+            .firstWhere((v) => v._underlying == result.union.err);
   }
 
   // ignore: non_constant_identifier_names
@@ -248,7 +241,8 @@ class ICU4XBcp47ToIanaMapper implements ffi.Finalizable {
     final result = _ICU4XBcp47ToIanaMapper_create(provider._underlying);
     return result.isOk
         ? ICU4XBcp47ToIanaMapper._(result.union.ok)
-        : throw ICU4XError._(result.union.err);
+        : throw ICU4XError.values
+            .firstWhere((v) => v._underlying == result.union.err);
   }
   // ignore: non_constant_identifier_names
   static final _ICU4XBcp47ToIanaMapper_create = _capi<
@@ -271,7 +265,8 @@ class ICU4XBcp47ToIanaMapper implements ffi.Finalizable {
     alloc.releaseAll();
     return result.isOk
         ? writeable.finalize()
-        : throw ICU4XError._(result.union.err);
+        : throw ICU4XError.values
+            .firstWhere((v) => v._underlying == result.union.err);
   }
 
   // ignore: non_constant_identifier_names
@@ -309,7 +304,8 @@ class ICU4XBidi implements ffi.Finalizable {
     final result = _ICU4XBidi_create(provider._underlying);
     return result.isOk
         ? ICU4XBidi._(result.union.ok)
-        : throw ICU4XError._(result.union.err);
+        : throw ICU4XError.values
+            .firstWhere((v) => v._underlying == result.union.err);
   }
   // ignore: non_constant_identifier_names
   static final _ICU4XBidi_create = _capi<
@@ -425,17 +421,9 @@ class ICU4XBidi implements ffi.Finalizable {
 }
 
 enum ICU4XBidiDirection {
-  ltr.__(0),
-  rtl.__(1),
-  mixed.__(2);
-
-  const ICU4XBidiDirection.__(this._id);
-
-  // ignore: unused_element
-  factory ICU4XBidiDirection._(int id) =>
-      values.firstWhere((value) => value._id == id);
-
-  final int _id;
+  ltr,
+  rtl,
+  mixed;
 }
 
 /// An object containing bidi information for a given string, produced by `for_text()` on `ICU4XBidi`
@@ -526,7 +514,8 @@ class ICU4XBidiParagraph implements ffi.Finalizable {
   void setParagraphInText(int n) {
     final result = _ICU4XBidiParagraph_set_paragraph_in_text(_underlying, n);
     if (!result.isOk) {
-      throw ICU4XError._(result.union.err);
+      throw ICU4XError.values
+          .firstWhere((v) => v._underlying == result.union.err);
     }
   }
 
@@ -543,7 +532,7 @@ class ICU4XBidiParagraph implements ffi.Finalizable {
   /// See the [Rust documentation for `level_at`](https://docs.rs/unicode_bidi/latest/unicode_bidi/struct.Paragraph.html#method.level_at) for more information.
   ICU4XBidiDirection get direction {
     final result = _ICU4XBidiParagraph_direction(_underlying);
-    return ICU4XBidiDirection._(result);
+    return ICU4XBidiDirection.values[result];
   }
 
   // ignore: non_constant_identifier_names
@@ -600,7 +589,8 @@ class ICU4XBidiParagraph implements ffi.Finalizable {
         _underlying, rangeStart, rangeEnd, writeable._underlying);
     return result.isOk
         ? writeable.finalize()
-        : throw ICU4XError._(result.union.err);
+        : throw ICU4XError.values
+            .firstWhere((v) => v._underlying == result.union.err);
   }
 
   // ignore: non_constant_identifier_names
@@ -654,7 +644,8 @@ class ICU4XCalendar implements ffi.Finalizable {
         provider._underlying, locale._underlying);
     return result.isOk
         ? ICU4XCalendar._(result.union.ok)
-        : throw ICU4XError._(result.union.err);
+        : throw ICU4XError.values
+            .firstWhere((v) => v._underlying == result.union.err);
   }
   // ignore: non_constant_identifier_names
   static final _ICU4XCalendar_create_for_locale = _capi<
@@ -671,10 +662,11 @@ class ICU4XCalendar implements ffi.Finalizable {
   factory ICU4XCalendar.forKind(
       ICU4XDataProvider provider, ICU4XAnyCalendarKind kind) {
     final result =
-        _ICU4XCalendar_create_for_kind(provider._underlying, kind._id);
+        _ICU4XCalendar_create_for_kind(provider._underlying, kind.index);
     return result.isOk
         ? ICU4XCalendar._(result.union.ok)
-        : throw ICU4XError._(result.union.err);
+        : throw ICU4XError.values
+            .firstWhere((v) => v._underlying == result.union.err);
   }
   // ignore: non_constant_identifier_names
   static final _ICU4XCalendar_create_for_kind = _capi<
@@ -689,7 +681,7 @@ class ICU4XCalendar implements ffi.Finalizable {
   /// See the [Rust documentation for `kind`](https://docs.rs/icu/latest/icu/calendar/enum.AnyCalendar.html#method.kind) for more information.
   ICU4XAnyCalendarKind get kind {
     final result = _ICU4XCalendar_kind(_underlying);
-    return ICU4XAnyCalendarKind._(result);
+    return ICU4XAnyCalendarKind.values[result];
   }
 
   // ignore: non_constant_identifier_names
@@ -720,7 +712,8 @@ class ICU4XCanonicalCombiningClassMap implements ffi.Finalizable {
         _ICU4XCanonicalCombiningClassMap_create(provider._underlying);
     return result.isOk
         ? ICU4XCanonicalCombiningClassMap._(result.union.ok)
-        : throw ICU4XError._(result.union.err);
+        : throw ICU4XError.values
+            .firstWhere((v) => v._underlying == result.union.err);
   }
   // ignore: non_constant_identifier_names
   static final _ICU4XCanonicalCombiningClassMap_create = _capi<
@@ -783,7 +776,8 @@ class ICU4XCanonicalComposition implements ffi.Finalizable {
     final result = _ICU4XCanonicalComposition_create(provider._underlying);
     return result.isOk
         ? ICU4XCanonicalComposition._(result.union.ok)
-        : throw ICU4XError._(result.union.err);
+        : throw ICU4XError.values
+            .firstWhere((v) => v._underlying == result.union.err);
   }
   // ignore: non_constant_identifier_names
   static final _ICU4XCanonicalComposition_create = _capi<
@@ -834,7 +828,8 @@ class ICU4XCanonicalDecomposition implements ffi.Finalizable {
     final result = _ICU4XCanonicalDecomposition_create(provider._underlying);
     return result.isOk
         ? ICU4XCanonicalDecomposition._(result.union.ok)
-        : throw ICU4XError._(result.union.err);
+        : throw ICU4XError.values
+            .firstWhere((v) => v._underlying == result.union.err);
   }
   // ignore: non_constant_identifier_names
   static final _ICU4XCanonicalDecomposition_create = _capi<
@@ -879,7 +874,8 @@ class ICU4XCaseMapCloser implements ffi.Finalizable {
     final result = _ICU4XCaseMapCloser_create(provider._underlying);
     return result.isOk
         ? ICU4XCaseMapCloser._(result.union.ok)
-        : throw ICU4XError._(result.union.err);
+        : throw ICU4XError.values
+            .firstWhere((v) => v._underlying == result.union.err);
   }
   // ignore: non_constant_identifier_names
   static final _ICU4XCaseMapCloser_create = _capi<
@@ -956,7 +952,8 @@ class ICU4XCaseMapper implements ffi.Finalizable {
     final result = _ICU4XCaseMapper_create(provider._underlying);
     return result.isOk
         ? ICU4XCaseMapper._(result.union.ok)
-        : throw ICU4XError._(result.union.err);
+        : throw ICU4XError.values
+            .firstWhere((v) => v._underlying == result.union.err);
   }
   // ignore: non_constant_identifier_names
   static final _ICU4XCaseMapper_create = _capi<
@@ -979,7 +976,8 @@ class ICU4XCaseMapper implements ffi.Finalizable {
     alloc.releaseAll();
     return result.isOk
         ? writeable.finalize()
-        : throw ICU4XError._(result.union.err);
+        : throw ICU4XError.values
+            .firstWhere((v) => v._underlying == result.union.err);
   }
 
   // ignore: non_constant_identifier_names
@@ -1012,7 +1010,8 @@ class ICU4XCaseMapper implements ffi.Finalizable {
     alloc.releaseAll();
     return result.isOk
         ? writeable.finalize()
-        : throw ICU4XError._(result.union.err);
+        : throw ICU4XError.values
+            .firstWhere((v) => v._underlying == result.union.err);
   }
 
   // ignore: non_constant_identifier_names
@@ -1055,7 +1054,8 @@ class ICU4XCaseMapper implements ffi.Finalizable {
     alloc.releaseAll();
     return result.isOk
         ? writeable.finalize()
-        : throw ICU4XError._(result.union.err);
+        : throw ICU4XError.values
+            .firstWhere((v) => v._underlying == result.union.err);
   }
 
   // ignore: non_constant_identifier_names
@@ -1092,7 +1092,8 @@ class ICU4XCaseMapper implements ffi.Finalizable {
     alloc.releaseAll();
     return result.isOk
         ? writeable.finalize()
-        : throw ICU4XError._(result.union.err);
+        : throw ICU4XError.values
+            .firstWhere((v) => v._underlying == result.union.err);
   }
 
   // ignore: non_constant_identifier_names
@@ -1124,7 +1125,8 @@ class ICU4XCaseMapper implements ffi.Finalizable {
     alloc.releaseAll();
     return result.isOk
         ? writeable.finalize()
-        : throw ICU4XError._(result.union.err);
+        : throw ICU4XError.values
+            .firstWhere((v) => v._underlying == result.union.err);
   }
 
   // ignore: non_constant_identifier_names
@@ -1371,7 +1373,8 @@ class ICU4XCodePointMapData16 implements ffi.Finalizable {
     final result = _ICU4XCodePointMapData16_load_script(provider._underlying);
     return result.isOk
         ? ICU4XCodePointMapData16._(result.union.ok)
-        : throw ICU4XError._(result.union.err);
+        : throw ICU4XError.values
+            .firstWhere((v) => v._underlying == result.union.err);
   }
   // ignore: non_constant_identifier_names
   static final _ICU4XCodePointMapData16_load_script = _capi<
@@ -1533,7 +1536,8 @@ class ICU4XCodePointMapData8 implements ffi.Finalizable {
         _ICU4XCodePointMapData8_load_general_category(provider._underlying);
     return result.isOk
         ? ICU4XCodePointMapData8._(result.union.ok)
-        : throw ICU4XError._(result.union.err);
+        : throw ICU4XError.values
+            .firstWhere((v) => v._underlying == result.union.err);
   }
   // ignore: non_constant_identifier_names
   static final _ICU4XCodePointMapData8_load_general_category = _capi<
@@ -1549,7 +1553,8 @@ class ICU4XCodePointMapData8 implements ffi.Finalizable {
         _ICU4XCodePointMapData8_load_bidi_class(provider._underlying);
     return result.isOk
         ? ICU4XCodePointMapData8._(result.union.ok)
-        : throw ICU4XError._(result.union.err);
+        : throw ICU4XError.values
+            .firstWhere((v) => v._underlying == result.union.err);
   }
   // ignore: non_constant_identifier_names
   static final _ICU4XCodePointMapData8_load_bidi_class = _capi<
@@ -1566,7 +1571,8 @@ class ICU4XCodePointMapData8 implements ffi.Finalizable {
         _ICU4XCodePointMapData8_load_east_asian_width(provider._underlying);
     return result.isOk
         ? ICU4XCodePointMapData8._(result.union.ok)
-        : throw ICU4XError._(result.union.err);
+        : throw ICU4XError.values
+            .firstWhere((v) => v._underlying == result.union.err);
   }
   // ignore: non_constant_identifier_names
   static final _ICU4XCodePointMapData8_load_east_asian_width = _capi<
@@ -1583,7 +1589,8 @@ class ICU4XCodePointMapData8 implements ffi.Finalizable {
         provider._underlying);
     return result.isOk
         ? ICU4XCodePointMapData8._(result.union.ok)
-        : throw ICU4XError._(result.union.err);
+        : throw ICU4XError.values
+            .firstWhere((v) => v._underlying == result.union.err);
   }
   // ignore: non_constant_identifier_names
   static final _ICU4XCodePointMapData8_load_indic_syllabic_category = _capi<
@@ -1599,7 +1606,8 @@ class ICU4XCodePointMapData8 implements ffi.Finalizable {
         _ICU4XCodePointMapData8_load_line_break(provider._underlying);
     return result.isOk
         ? ICU4XCodePointMapData8._(result.union.ok)
-        : throw ICU4XError._(result.union.err);
+        : throw ICU4XError.values
+            .firstWhere((v) => v._underlying == result.union.err);
   }
   // ignore: non_constant_identifier_names
   static final _ICU4XCodePointMapData8_load_line_break = _capi<
@@ -1616,7 +1624,8 @@ class ICU4XCodePointMapData8 implements ffi.Finalizable {
         provider._underlying);
     return result.isOk
         ? ICU4XCodePointMapData8._(result.union.ok)
-        : throw ICU4XError._(result.union.err);
+        : throw ICU4XError.values
+            .firstWhere((v) => v._underlying == result.union.err);
   }
   // ignore: non_constant_identifier_names
   static final _ICU4XCodePointMapData8_try_grapheme_cluster_break = _capi<
@@ -1632,7 +1641,8 @@ class ICU4XCodePointMapData8 implements ffi.Finalizable {
         _ICU4XCodePointMapData8_load_word_break(provider._underlying);
     return result.isOk
         ? ICU4XCodePointMapData8._(result.union.ok)
-        : throw ICU4XError._(result.union.err);
+        : throw ICU4XError.values
+            .firstWhere((v) => v._underlying == result.union.err);
   }
   // ignore: non_constant_identifier_names
   static final _ICU4XCodePointMapData8_load_word_break = _capi<
@@ -1648,7 +1658,8 @@ class ICU4XCodePointMapData8 implements ffi.Finalizable {
         _ICU4XCodePointMapData8_load_sentence_break(provider._underlying);
     return result.isOk
         ? ICU4XCodePointMapData8._(result.union.ok)
-        : throw ICU4XError._(result.union.err);
+        : throw ICU4XError.values
+            .firstWhere((v) => v._underlying == result.union.err);
   }
   // ignore: non_constant_identifier_names
   static final _ICU4XCodePointMapData8_load_sentence_break = _capi<
@@ -2040,7 +2051,8 @@ class ICU4XCodePointSetData implements ffi.Finalizable {
         provider._underlying, group);
     return result.isOk
         ? ICU4XCodePointSetData._(result.union.ok)
-        : throw ICU4XError._(result.union.err);
+        : throw ICU4XError.values
+            .firstWhere((v) => v._underlying == result.union.err);
   }
   // ignore: non_constant_identifier_names
   static final _ICU4XCodePointSetData_load_for_general_category_group = _capi<
@@ -2057,7 +2069,8 @@ class ICU4XCodePointSetData implements ffi.Finalizable {
         _ICU4XCodePointSetData_load_ascii_hex_digit(provider._underlying);
     return result.isOk
         ? ICU4XCodePointSetData._(result.union.ok)
-        : throw ICU4XError._(result.union.err);
+        : throw ICU4XError.values
+            .firstWhere((v) => v._underlying == result.union.err);
   }
   // ignore: non_constant_identifier_names
   static final _ICU4XCodePointSetData_load_ascii_hex_digit = _capi<
@@ -2072,7 +2085,8 @@ class ICU4XCodePointSetData implements ffi.Finalizable {
     final result = _ICU4XCodePointSetData_load_alnum(provider._underlying);
     return result.isOk
         ? ICU4XCodePointSetData._(result.union.ok)
-        : throw ICU4XError._(result.union.err);
+        : throw ICU4XError.values
+            .firstWhere((v) => v._underlying == result.union.err);
   }
   // ignore: non_constant_identifier_names
   static final _ICU4XCodePointSetData_load_alnum = _capi<
@@ -2087,7 +2101,8 @@ class ICU4XCodePointSetData implements ffi.Finalizable {
     final result = _ICU4XCodePointSetData_load_alphabetic(provider._underlying);
     return result.isOk
         ? ICU4XCodePointSetData._(result.union.ok)
-        : throw ICU4XError._(result.union.err);
+        : throw ICU4XError.values
+            .firstWhere((v) => v._underlying == result.union.err);
   }
   // ignore: non_constant_identifier_names
   static final _ICU4XCodePointSetData_load_alphabetic = _capi<
@@ -2103,7 +2118,8 @@ class ICU4XCodePointSetData implements ffi.Finalizable {
         _ICU4XCodePointSetData_load_bidi_control(provider._underlying);
     return result.isOk
         ? ICU4XCodePointSetData._(result.union.ok)
-        : throw ICU4XError._(result.union.err);
+        : throw ICU4XError.values
+            .firstWhere((v) => v._underlying == result.union.err);
   }
   // ignore: non_constant_identifier_names
   static final _ICU4XCodePointSetData_load_bidi_control = _capi<
@@ -2119,7 +2135,8 @@ class ICU4XCodePointSetData implements ffi.Finalizable {
         _ICU4XCodePointSetData_load_bidi_mirrored(provider._underlying);
     return result.isOk
         ? ICU4XCodePointSetData._(result.union.ok)
-        : throw ICU4XError._(result.union.err);
+        : throw ICU4XError.values
+            .firstWhere((v) => v._underlying == result.union.err);
   }
   // ignore: non_constant_identifier_names
   static final _ICU4XCodePointSetData_load_bidi_mirrored = _capi<
@@ -2134,7 +2151,8 @@ class ICU4XCodePointSetData implements ffi.Finalizable {
     final result = _ICU4XCodePointSetData_load_blank(provider._underlying);
     return result.isOk
         ? ICU4XCodePointSetData._(result.union.ok)
-        : throw ICU4XError._(result.union.err);
+        : throw ICU4XError.values
+            .firstWhere((v) => v._underlying == result.union.err);
   }
   // ignore: non_constant_identifier_names
   static final _ICU4XCodePointSetData_load_blank = _capi<
@@ -2149,7 +2167,8 @@ class ICU4XCodePointSetData implements ffi.Finalizable {
     final result = _ICU4XCodePointSetData_load_cased(provider._underlying);
     return result.isOk
         ? ICU4XCodePointSetData._(result.union.ok)
-        : throw ICU4XError._(result.union.err);
+        : throw ICU4XError.values
+            .firstWhere((v) => v._underlying == result.union.err);
   }
   // ignore: non_constant_identifier_names
   static final _ICU4XCodePointSetData_load_cased = _capi<
@@ -2165,7 +2184,8 @@ class ICU4XCodePointSetData implements ffi.Finalizable {
         _ICU4XCodePointSetData_load_case_ignorable(provider._underlying);
     return result.isOk
         ? ICU4XCodePointSetData._(result.union.ok)
-        : throw ICU4XError._(result.union.err);
+        : throw ICU4XError.values
+            .firstWhere((v) => v._underlying == result.union.err);
   }
   // ignore: non_constant_identifier_names
   static final _ICU4XCodePointSetData_load_case_ignorable = _capi<
@@ -2182,7 +2202,8 @@ class ICU4XCodePointSetData implements ffi.Finalizable {
         provider._underlying);
     return result.isOk
         ? ICU4XCodePointSetData._(result.union.ok)
-        : throw ICU4XError._(result.union.err);
+        : throw ICU4XError.values
+            .firstWhere((v) => v._underlying == result.union.err);
   }
   // ignore: non_constant_identifier_names
   static final _ICU4XCodePointSetData_load_full_composition_exclusion = _capi<
@@ -2199,7 +2220,8 @@ class ICU4XCodePointSetData implements ffi.Finalizable {
         provider._underlying);
     return result.isOk
         ? ICU4XCodePointSetData._(result.union.ok)
-        : throw ICU4XError._(result.union.err);
+        : throw ICU4XError.values
+            .firstWhere((v) => v._underlying == result.union.err);
   }
   // ignore: non_constant_identifier_names
   static final _ICU4XCodePointSetData_load_changes_when_casefolded = _capi<
@@ -2216,7 +2238,8 @@ class ICU4XCodePointSetData implements ffi.Finalizable {
         provider._underlying);
     return result.isOk
         ? ICU4XCodePointSetData._(result.union.ok)
-        : throw ICU4XError._(result.union.err);
+        : throw ICU4XError.values
+            .firstWhere((v) => v._underlying == result.union.err);
   }
   // ignore: non_constant_identifier_names
   static final _ICU4XCodePointSetData_load_changes_when_casemapped = _capi<
@@ -2233,7 +2256,8 @@ class ICU4XCodePointSetData implements ffi.Finalizable {
         provider._underlying);
     return result.isOk
         ? ICU4XCodePointSetData._(result.union.ok)
-        : throw ICU4XError._(result.union.err);
+        : throw ICU4XError.values
+            .firstWhere((v) => v._underlying == result.union.err);
   }
   // ignore: non_constant_identifier_names
   static final _ICU4XCodePointSetData_load_changes_when_nfkc_casefolded = _capi<
@@ -2250,7 +2274,8 @@ class ICU4XCodePointSetData implements ffi.Finalizable {
         provider._underlying);
     return result.isOk
         ? ICU4XCodePointSetData._(result.union.ok)
-        : throw ICU4XError._(result.union.err);
+        : throw ICU4XError.values
+            .firstWhere((v) => v._underlying == result.union.err);
   }
   // ignore: non_constant_identifier_names
   static final _ICU4XCodePointSetData_load_changes_when_lowercased = _capi<
@@ -2267,7 +2292,8 @@ class ICU4XCodePointSetData implements ffi.Finalizable {
         provider._underlying);
     return result.isOk
         ? ICU4XCodePointSetData._(result.union.ok)
-        : throw ICU4XError._(result.union.err);
+        : throw ICU4XError.values
+            .firstWhere((v) => v._underlying == result.union.err);
   }
   // ignore: non_constant_identifier_names
   static final _ICU4XCodePointSetData_load_changes_when_titlecased = _capi<
@@ -2284,7 +2310,8 @@ class ICU4XCodePointSetData implements ffi.Finalizable {
         provider._underlying);
     return result.isOk
         ? ICU4XCodePointSetData._(result.union.ok)
-        : throw ICU4XError._(result.union.err);
+        : throw ICU4XError.values
+            .firstWhere((v) => v._underlying == result.union.err);
   }
   // ignore: non_constant_identifier_names
   static final _ICU4XCodePointSetData_load_changes_when_uppercased = _capi<
@@ -2299,7 +2326,8 @@ class ICU4XCodePointSetData implements ffi.Finalizable {
     final result = _ICU4XCodePointSetData_load_dash(provider._underlying);
     return result.isOk
         ? ICU4XCodePointSetData._(result.union.ok)
-        : throw ICU4XError._(result.union.err);
+        : throw ICU4XError.values
+            .firstWhere((v) => v._underlying == result.union.err);
   }
   // ignore: non_constant_identifier_names
   static final _ICU4XCodePointSetData_load_dash = _capi<
@@ -2314,7 +2342,8 @@ class ICU4XCodePointSetData implements ffi.Finalizable {
     final result = _ICU4XCodePointSetData_load_deprecated(provider._underlying);
     return result.isOk
         ? ICU4XCodePointSetData._(result.union.ok)
-        : throw ICU4XError._(result.union.err);
+        : throw ICU4XError.values
+            .firstWhere((v) => v._underlying == result.union.err);
   }
   // ignore: non_constant_identifier_names
   static final _ICU4XCodePointSetData_load_deprecated = _capi<
@@ -2331,7 +2360,8 @@ class ICU4XCodePointSetData implements ffi.Finalizable {
         provider._underlying);
     return result.isOk
         ? ICU4XCodePointSetData._(result.union.ok)
-        : throw ICU4XError._(result.union.err);
+        : throw ICU4XError.values
+            .firstWhere((v) => v._underlying == result.union.err);
   }
   // ignore: non_constant_identifier_names
   static final _ICU4XCodePointSetData_load_default_ignorable_code_point = _capi<
@@ -2346,7 +2376,8 @@ class ICU4XCodePointSetData implements ffi.Finalizable {
     final result = _ICU4XCodePointSetData_load_diacritic(provider._underlying);
     return result.isOk
         ? ICU4XCodePointSetData._(result.union.ok)
-        : throw ICU4XError._(result.union.err);
+        : throw ICU4XError.values
+            .firstWhere((v) => v._underlying == result.union.err);
   }
   // ignore: non_constant_identifier_names
   static final _ICU4XCodePointSetData_load_diacritic = _capi<
@@ -2363,7 +2394,8 @@ class ICU4XCodePointSetData implements ffi.Finalizable {
         _ICU4XCodePointSetData_load_emoji_modifier_base(provider._underlying);
     return result.isOk
         ? ICU4XCodePointSetData._(result.union.ok)
-        : throw ICU4XError._(result.union.err);
+        : throw ICU4XError.values
+            .firstWhere((v) => v._underlying == result.union.err);
   }
   // ignore: non_constant_identifier_names
   static final _ICU4XCodePointSetData_load_emoji_modifier_base = _capi<
@@ -2379,7 +2411,8 @@ class ICU4XCodePointSetData implements ffi.Finalizable {
         _ICU4XCodePointSetData_load_emoji_component(provider._underlying);
     return result.isOk
         ? ICU4XCodePointSetData._(result.union.ok)
-        : throw ICU4XError._(result.union.err);
+        : throw ICU4XError.values
+            .firstWhere((v) => v._underlying == result.union.err);
   }
   // ignore: non_constant_identifier_names
   static final _ICU4XCodePointSetData_load_emoji_component = _capi<
@@ -2395,7 +2428,8 @@ class ICU4XCodePointSetData implements ffi.Finalizable {
         _ICU4XCodePointSetData_load_emoji_modifier(provider._underlying);
     return result.isOk
         ? ICU4XCodePointSetData._(result.union.ok)
-        : throw ICU4XError._(result.union.err);
+        : throw ICU4XError.values
+            .firstWhere((v) => v._underlying == result.union.err);
   }
   // ignore: non_constant_identifier_names
   static final _ICU4XCodePointSetData_load_emoji_modifier = _capi<
@@ -2410,7 +2444,8 @@ class ICU4XCodePointSetData implements ffi.Finalizable {
     final result = _ICU4XCodePointSetData_load_emoji(provider._underlying);
     return result.isOk
         ? ICU4XCodePointSetData._(result.union.ok)
-        : throw ICU4XError._(result.union.err);
+        : throw ICU4XError.values
+            .firstWhere((v) => v._underlying == result.union.err);
   }
   // ignore: non_constant_identifier_names
   static final _ICU4XCodePointSetData_load_emoji = _capi<
@@ -2427,7 +2462,8 @@ class ICU4XCodePointSetData implements ffi.Finalizable {
         _ICU4XCodePointSetData_load_emoji_presentation(provider._underlying);
     return result.isOk
         ? ICU4XCodePointSetData._(result.union.ok)
-        : throw ICU4XError._(result.union.err);
+        : throw ICU4XError.values
+            .firstWhere((v) => v._underlying == result.union.err);
   }
   // ignore: non_constant_identifier_names
   static final _ICU4XCodePointSetData_load_emoji_presentation = _capi<
@@ -2442,7 +2478,8 @@ class ICU4XCodePointSetData implements ffi.Finalizable {
     final result = _ICU4XCodePointSetData_load_extender(provider._underlying);
     return result.isOk
         ? ICU4XCodePointSetData._(result.union.ok)
-        : throw ICU4XError._(result.union.err);
+        : throw ICU4XError.values
+            .firstWhere((v) => v._underlying == result.union.err);
   }
   // ignore: non_constant_identifier_names
   static final _ICU4XCodePointSetData_load_extender = _capi<
@@ -2459,7 +2496,8 @@ class ICU4XCodePointSetData implements ffi.Finalizable {
         _ICU4XCodePointSetData_load_extended_pictographic(provider._underlying);
     return result.isOk
         ? ICU4XCodePointSetData._(result.union.ok)
-        : throw ICU4XError._(result.union.err);
+        : throw ICU4XError.values
+            .firstWhere((v) => v._underlying == result.union.err);
   }
   // ignore: non_constant_identifier_names
   static final _ICU4XCodePointSetData_load_extended_pictographic = _capi<
@@ -2474,7 +2512,8 @@ class ICU4XCodePointSetData implements ffi.Finalizable {
     final result = _ICU4XCodePointSetData_load_graph(provider._underlying);
     return result.isOk
         ? ICU4XCodePointSetData._(result.union.ok)
-        : throw ICU4XError._(result.union.err);
+        : throw ICU4XError.values
+            .firstWhere((v) => v._underlying == result.union.err);
   }
   // ignore: non_constant_identifier_names
   static final _ICU4XCodePointSetData_load_graph = _capi<
@@ -2490,7 +2529,8 @@ class ICU4XCodePointSetData implements ffi.Finalizable {
         _ICU4XCodePointSetData_load_grapheme_base(provider._underlying);
     return result.isOk
         ? ICU4XCodePointSetData._(result.union.ok)
-        : throw ICU4XError._(result.union.err);
+        : throw ICU4XError.values
+            .firstWhere((v) => v._underlying == result.union.err);
   }
   // ignore: non_constant_identifier_names
   static final _ICU4XCodePointSetData_load_grapheme_base = _capi<
@@ -2506,7 +2546,8 @@ class ICU4XCodePointSetData implements ffi.Finalizable {
         _ICU4XCodePointSetData_load_grapheme_extend(provider._underlying);
     return result.isOk
         ? ICU4XCodePointSetData._(result.union.ok)
-        : throw ICU4XError._(result.union.err);
+        : throw ICU4XError.values
+            .firstWhere((v) => v._underlying == result.union.err);
   }
   // ignore: non_constant_identifier_names
   static final _ICU4XCodePointSetData_load_grapheme_extend = _capi<
@@ -2522,7 +2563,8 @@ class ICU4XCodePointSetData implements ffi.Finalizable {
         _ICU4XCodePointSetData_load_grapheme_link(provider._underlying);
     return result.isOk
         ? ICU4XCodePointSetData._(result.union.ok)
-        : throw ICU4XError._(result.union.err);
+        : throw ICU4XError.values
+            .firstWhere((v) => v._underlying == result.union.err);
   }
   // ignore: non_constant_identifier_names
   static final _ICU4XCodePointSetData_load_grapheme_link = _capi<
@@ -2537,7 +2579,8 @@ class ICU4XCodePointSetData implements ffi.Finalizable {
     final result = _ICU4XCodePointSetData_load_hex_digit(provider._underlying);
     return result.isOk
         ? ICU4XCodePointSetData._(result.union.ok)
-        : throw ICU4XError._(result.union.err);
+        : throw ICU4XError.values
+            .firstWhere((v) => v._underlying == result.union.err);
   }
   // ignore: non_constant_identifier_names
   static final _ICU4XCodePointSetData_load_hex_digit = _capi<
@@ -2552,7 +2595,8 @@ class ICU4XCodePointSetData implements ffi.Finalizable {
     final result = _ICU4XCodePointSetData_load_hyphen(provider._underlying);
     return result.isOk
         ? ICU4XCodePointSetData._(result.union.ok)
-        : throw ICU4XError._(result.union.err);
+        : throw ICU4XError.values
+            .firstWhere((v) => v._underlying == result.union.err);
   }
   // ignore: non_constant_identifier_names
   static final _ICU4XCodePointSetData_load_hyphen = _capi<
@@ -2568,7 +2612,8 @@ class ICU4XCodePointSetData implements ffi.Finalizable {
         _ICU4XCodePointSetData_load_id_continue(provider._underlying);
     return result.isOk
         ? ICU4XCodePointSetData._(result.union.ok)
-        : throw ICU4XError._(result.union.err);
+        : throw ICU4XError.values
+            .firstWhere((v) => v._underlying == result.union.err);
   }
   // ignore: non_constant_identifier_names
   static final _ICU4XCodePointSetData_load_id_continue = _capi<
@@ -2584,7 +2629,8 @@ class ICU4XCodePointSetData implements ffi.Finalizable {
         _ICU4XCodePointSetData_load_ideographic(provider._underlying);
     return result.isOk
         ? ICU4XCodePointSetData._(result.union.ok)
-        : throw ICU4XError._(result.union.err);
+        : throw ICU4XError.values
+            .firstWhere((v) => v._underlying == result.union.err);
   }
   // ignore: non_constant_identifier_names
   static final _ICU4XCodePointSetData_load_ideographic = _capi<
@@ -2599,7 +2645,8 @@ class ICU4XCodePointSetData implements ffi.Finalizable {
     final result = _ICU4XCodePointSetData_load_id_start(provider._underlying);
     return result.isOk
         ? ICU4XCodePointSetData._(result.union.ok)
-        : throw ICU4XError._(result.union.err);
+        : throw ICU4XError.values
+            .firstWhere((v) => v._underlying == result.union.err);
   }
   // ignore: non_constant_identifier_names
   static final _ICU4XCodePointSetData_load_id_start = _capi<
@@ -2616,7 +2663,8 @@ class ICU4XCodePointSetData implements ffi.Finalizable {
         _ICU4XCodePointSetData_load_ids_binary_operator(provider._underlying);
     return result.isOk
         ? ICU4XCodePointSetData._(result.union.ok)
-        : throw ICU4XError._(result.union.err);
+        : throw ICU4XError.values
+            .firstWhere((v) => v._underlying == result.union.err);
   }
   // ignore: non_constant_identifier_names
   static final _ICU4XCodePointSetData_load_ids_binary_operator = _capi<
@@ -2633,7 +2681,8 @@ class ICU4XCodePointSetData implements ffi.Finalizable {
         _ICU4XCodePointSetData_load_ids_trinary_operator(provider._underlying);
     return result.isOk
         ? ICU4XCodePointSetData._(result.union.ok)
-        : throw ICU4XError._(result.union.err);
+        : throw ICU4XError.values
+            .firstWhere((v) => v._underlying == result.union.err);
   }
   // ignore: non_constant_identifier_names
   static final _ICU4XCodePointSetData_load_ids_trinary_operator = _capi<
@@ -2649,7 +2698,8 @@ class ICU4XCodePointSetData implements ffi.Finalizable {
         _ICU4XCodePointSetData_load_join_control(provider._underlying);
     return result.isOk
         ? ICU4XCodePointSetData._(result.union.ok)
-        : throw ICU4XError._(result.union.err);
+        : throw ICU4XError.values
+            .firstWhere((v) => v._underlying == result.union.err);
   }
   // ignore: non_constant_identifier_names
   static final _ICU4XCodePointSetData_load_join_control = _capi<
@@ -2666,7 +2716,8 @@ class ICU4XCodePointSetData implements ffi.Finalizable {
         provider._underlying);
     return result.isOk
         ? ICU4XCodePointSetData._(result.union.ok)
-        : throw ICU4XError._(result.union.err);
+        : throw ICU4XError.values
+            .firstWhere((v) => v._underlying == result.union.err);
   }
   // ignore: non_constant_identifier_names
   static final _ICU4XCodePointSetData_load_logical_order_exception = _capi<
@@ -2681,7 +2732,8 @@ class ICU4XCodePointSetData implements ffi.Finalizable {
     final result = _ICU4XCodePointSetData_load_lowercase(provider._underlying);
     return result.isOk
         ? ICU4XCodePointSetData._(result.union.ok)
-        : throw ICU4XError._(result.union.err);
+        : throw ICU4XError.values
+            .firstWhere((v) => v._underlying == result.union.err);
   }
   // ignore: non_constant_identifier_names
   static final _ICU4XCodePointSetData_load_lowercase = _capi<
@@ -2696,7 +2748,8 @@ class ICU4XCodePointSetData implements ffi.Finalizable {
     final result = _ICU4XCodePointSetData_load_math(provider._underlying);
     return result.isOk
         ? ICU4XCodePointSetData._(result.union.ok)
-        : throw ICU4XError._(result.union.err);
+        : throw ICU4XError.values
+            .firstWhere((v) => v._underlying == result.union.err);
   }
   // ignore: non_constant_identifier_names
   static final _ICU4XCodePointSetData_load_math = _capi<
@@ -2713,7 +2766,8 @@ class ICU4XCodePointSetData implements ffi.Finalizable {
         provider._underlying);
     return result.isOk
         ? ICU4XCodePointSetData._(result.union.ok)
-        : throw ICU4XError._(result.union.err);
+        : throw ICU4XError.values
+            .firstWhere((v) => v._underlying == result.union.err);
   }
   // ignore: non_constant_identifier_names
   static final _ICU4XCodePointSetData_load_noncharacter_code_point = _capi<
@@ -2728,7 +2782,8 @@ class ICU4XCodePointSetData implements ffi.Finalizable {
     final result = _ICU4XCodePointSetData_load_nfc_inert(provider._underlying);
     return result.isOk
         ? ICU4XCodePointSetData._(result.union.ok)
-        : throw ICU4XError._(result.union.err);
+        : throw ICU4XError.values
+            .firstWhere((v) => v._underlying == result.union.err);
   }
   // ignore: non_constant_identifier_names
   static final _ICU4XCodePointSetData_load_nfc_inert = _capi<
@@ -2743,7 +2798,8 @@ class ICU4XCodePointSetData implements ffi.Finalizable {
     final result = _ICU4XCodePointSetData_load_nfd_inert(provider._underlying);
     return result.isOk
         ? ICU4XCodePointSetData._(result.union.ok)
-        : throw ICU4XError._(result.union.err);
+        : throw ICU4XError.values
+            .firstWhere((v) => v._underlying == result.union.err);
   }
   // ignore: non_constant_identifier_names
   static final _ICU4XCodePointSetData_load_nfd_inert = _capi<
@@ -2758,7 +2814,8 @@ class ICU4XCodePointSetData implements ffi.Finalizable {
     final result = _ICU4XCodePointSetData_load_nfkc_inert(provider._underlying);
     return result.isOk
         ? ICU4XCodePointSetData._(result.union.ok)
-        : throw ICU4XError._(result.union.err);
+        : throw ICU4XError.values
+            .firstWhere((v) => v._underlying == result.union.err);
   }
   // ignore: non_constant_identifier_names
   static final _ICU4XCodePointSetData_load_nfkc_inert = _capi<
@@ -2773,7 +2830,8 @@ class ICU4XCodePointSetData implements ffi.Finalizable {
     final result = _ICU4XCodePointSetData_load_nfkd_inert(provider._underlying);
     return result.isOk
         ? ICU4XCodePointSetData._(result.union.ok)
-        : throw ICU4XError._(result.union.err);
+        : throw ICU4XError.values
+            .firstWhere((v) => v._underlying == result.union.err);
   }
   // ignore: non_constant_identifier_names
   static final _ICU4XCodePointSetData_load_nfkd_inert = _capi<
@@ -2789,7 +2847,8 @@ class ICU4XCodePointSetData implements ffi.Finalizable {
         _ICU4XCodePointSetData_load_pattern_syntax(provider._underlying);
     return result.isOk
         ? ICU4XCodePointSetData._(result.union.ok)
-        : throw ICU4XError._(result.union.err);
+        : throw ICU4XError.values
+            .firstWhere((v) => v._underlying == result.union.err);
   }
   // ignore: non_constant_identifier_names
   static final _ICU4XCodePointSetData_load_pattern_syntax = _capi<
@@ -2806,7 +2865,8 @@ class ICU4XCodePointSetData implements ffi.Finalizable {
         _ICU4XCodePointSetData_load_pattern_white_space(provider._underlying);
     return result.isOk
         ? ICU4XCodePointSetData._(result.union.ok)
-        : throw ICU4XError._(result.union.err);
+        : throw ICU4XError.values
+            .firstWhere((v) => v._underlying == result.union.err);
   }
   // ignore: non_constant_identifier_names
   static final _ICU4XCodePointSetData_load_pattern_white_space = _capi<
@@ -2823,7 +2883,8 @@ class ICU4XCodePointSetData implements ffi.Finalizable {
         provider._underlying);
     return result.isOk
         ? ICU4XCodePointSetData._(result.union.ok)
-        : throw ICU4XError._(result.union.err);
+        : throw ICU4XError.values
+            .firstWhere((v) => v._underlying == result.union.err);
   }
   // ignore: non_constant_identifier_names
   static final _ICU4XCodePointSetData_load_prepended_concatenation_mark = _capi<
@@ -2838,7 +2899,8 @@ class ICU4XCodePointSetData implements ffi.Finalizable {
     final result = _ICU4XCodePointSetData_load_print(provider._underlying);
     return result.isOk
         ? ICU4XCodePointSetData._(result.union.ok)
-        : throw ICU4XError._(result.union.err);
+        : throw ICU4XError.values
+            .firstWhere((v) => v._underlying == result.union.err);
   }
   // ignore: non_constant_identifier_names
   static final _ICU4XCodePointSetData_load_print = _capi<
@@ -2854,7 +2916,8 @@ class ICU4XCodePointSetData implements ffi.Finalizable {
         _ICU4XCodePointSetData_load_quotation_mark(provider._underlying);
     return result.isOk
         ? ICU4XCodePointSetData._(result.union.ok)
-        : throw ICU4XError._(result.union.err);
+        : throw ICU4XError.values
+            .firstWhere((v) => v._underlying == result.union.err);
   }
   // ignore: non_constant_identifier_names
   static final _ICU4XCodePointSetData_load_quotation_mark = _capi<
@@ -2869,7 +2932,8 @@ class ICU4XCodePointSetData implements ffi.Finalizable {
     final result = _ICU4XCodePointSetData_load_radical(provider._underlying);
     return result.isOk
         ? ICU4XCodePointSetData._(result.union.ok)
-        : throw ICU4XError._(result.union.err);
+        : throw ICU4XError.values
+            .firstWhere((v) => v._underlying == result.union.err);
   }
   // ignore: non_constant_identifier_names
   static final _ICU4XCodePointSetData_load_radical = _capi<
@@ -2886,7 +2950,8 @@ class ICU4XCodePointSetData implements ffi.Finalizable {
         _ICU4XCodePointSetData_load_regional_indicator(provider._underlying);
     return result.isOk
         ? ICU4XCodePointSetData._(result.union.ok)
-        : throw ICU4XError._(result.union.err);
+        : throw ICU4XError.values
+            .firstWhere((v) => v._underlying == result.union.err);
   }
   // ignore: non_constant_identifier_names
   static final _ICU4XCodePointSetData_load_regional_indicator = _capi<
@@ -2902,7 +2967,8 @@ class ICU4XCodePointSetData implements ffi.Finalizable {
         _ICU4XCodePointSetData_load_soft_dotted(provider._underlying);
     return result.isOk
         ? ICU4XCodePointSetData._(result.union.ok)
-        : throw ICU4XError._(result.union.err);
+        : throw ICU4XError.values
+            .firstWhere((v) => v._underlying == result.union.err);
   }
   // ignore: non_constant_identifier_names
   static final _ICU4XCodePointSetData_load_soft_dotted = _capi<
@@ -2918,7 +2984,8 @@ class ICU4XCodePointSetData implements ffi.Finalizable {
         _ICU4XCodePointSetData_load_segment_starter(provider._underlying);
     return result.isOk
         ? ICU4XCodePointSetData._(result.union.ok)
-        : throw ICU4XError._(result.union.err);
+        : throw ICU4XError.values
+            .firstWhere((v) => v._underlying == result.union.err);
   }
   // ignore: non_constant_identifier_names
   static final _ICU4XCodePointSetData_load_segment_starter = _capi<
@@ -2934,7 +3001,8 @@ class ICU4XCodePointSetData implements ffi.Finalizable {
         _ICU4XCodePointSetData_load_case_sensitive(provider._underlying);
     return result.isOk
         ? ICU4XCodePointSetData._(result.union.ok)
-        : throw ICU4XError._(result.union.err);
+        : throw ICU4XError.values
+            .firstWhere((v) => v._underlying == result.union.err);
   }
   // ignore: non_constant_identifier_names
   static final _ICU4XCodePointSetData_load_case_sensitive = _capi<
@@ -2951,7 +3019,8 @@ class ICU4XCodePointSetData implements ffi.Finalizable {
         _ICU4XCodePointSetData_load_sentence_terminal(provider._underlying);
     return result.isOk
         ? ICU4XCodePointSetData._(result.union.ok)
-        : throw ICU4XError._(result.union.err);
+        : throw ICU4XError.values
+            .firstWhere((v) => v._underlying == result.union.err);
   }
   // ignore: non_constant_identifier_names
   static final _ICU4XCodePointSetData_load_sentence_terminal = _capi<
@@ -2968,7 +3037,8 @@ class ICU4XCodePointSetData implements ffi.Finalizable {
         _ICU4XCodePointSetData_load_terminal_punctuation(provider._underlying);
     return result.isOk
         ? ICU4XCodePointSetData._(result.union.ok)
-        : throw ICU4XError._(result.union.err);
+        : throw ICU4XError.values
+            .firstWhere((v) => v._underlying == result.union.err);
   }
   // ignore: non_constant_identifier_names
   static final _ICU4XCodePointSetData_load_terminal_punctuation = _capi<
@@ -2985,7 +3055,8 @@ class ICU4XCodePointSetData implements ffi.Finalizable {
         _ICU4XCodePointSetData_load_unified_ideograph(provider._underlying);
     return result.isOk
         ? ICU4XCodePointSetData._(result.union.ok)
-        : throw ICU4XError._(result.union.err);
+        : throw ICU4XError.values
+            .firstWhere((v) => v._underlying == result.union.err);
   }
   // ignore: non_constant_identifier_names
   static final _ICU4XCodePointSetData_load_unified_ideograph = _capi<
@@ -3000,7 +3071,8 @@ class ICU4XCodePointSetData implements ffi.Finalizable {
     final result = _ICU4XCodePointSetData_load_uppercase(provider._underlying);
     return result.isOk
         ? ICU4XCodePointSetData._(result.union.ok)
-        : throw ICU4XError._(result.union.err);
+        : throw ICU4XError.values
+            .firstWhere((v) => v._underlying == result.union.err);
   }
   // ignore: non_constant_identifier_names
   static final _ICU4XCodePointSetData_load_uppercase = _capi<
@@ -3017,7 +3089,8 @@ class ICU4XCodePointSetData implements ffi.Finalizable {
         _ICU4XCodePointSetData_load_variation_selector(provider._underlying);
     return result.isOk
         ? ICU4XCodePointSetData._(result.union.ok)
-        : throw ICU4XError._(result.union.err);
+        : throw ICU4XError.values
+            .firstWhere((v) => v._underlying == result.union.err);
   }
   // ignore: non_constant_identifier_names
   static final _ICU4XCodePointSetData_load_variation_selector = _capi<
@@ -3033,7 +3106,8 @@ class ICU4XCodePointSetData implements ffi.Finalizable {
         _ICU4XCodePointSetData_load_white_space(provider._underlying);
     return result.isOk
         ? ICU4XCodePointSetData._(result.union.ok)
-        : throw ICU4XError._(result.union.err);
+        : throw ICU4XError.values
+            .firstWhere((v) => v._underlying == result.union.err);
   }
   // ignore: non_constant_identifier_names
   static final _ICU4XCodePointSetData_load_white_space = _capi<
@@ -3048,7 +3122,8 @@ class ICU4XCodePointSetData implements ffi.Finalizable {
     final result = _ICU4XCodePointSetData_load_xdigit(provider._underlying);
     return result.isOk
         ? ICU4XCodePointSetData._(result.union.ok)
-        : throw ICU4XError._(result.union.err);
+        : throw ICU4XError.values
+            .firstWhere((v) => v._underlying == result.union.err);
   }
   // ignore: non_constant_identifier_names
   static final _ICU4XCodePointSetData_load_xdigit = _capi<
@@ -3064,7 +3139,8 @@ class ICU4XCodePointSetData implements ffi.Finalizable {
         _ICU4XCodePointSetData_load_xid_continue(provider._underlying);
     return result.isOk
         ? ICU4XCodePointSetData._(result.union.ok)
-        : throw ICU4XError._(result.union.err);
+        : throw ICU4XError.values
+            .firstWhere((v) => v._underlying == result.union.err);
   }
   // ignore: non_constant_identifier_names
   static final _ICU4XCodePointSetData_load_xid_continue = _capi<
@@ -3079,7 +3155,8 @@ class ICU4XCodePointSetData implements ffi.Finalizable {
     final result = _ICU4XCodePointSetData_load_xid_start(provider._underlying);
     return result.isOk
         ? ICU4XCodePointSetData._(result.union.ok)
-        : throw ICU4XError._(result.union.err);
+        : throw ICU4XError.values
+            .firstWhere((v) => v._underlying == result.union.err);
   }
   // ignore: non_constant_identifier_names
   static final _ICU4XCodePointSetData_load_xid_start = _capi<
@@ -3108,7 +3185,8 @@ class ICU4XCodePointSetData implements ffi.Finalizable {
     alloc.releaseAll();
     return result.isOk
         ? ICU4XCodePointSetData._(result.union.ok)
-        : throw ICU4XError._(result.union.err);
+        : throw ICU4XError.values
+            .firstWhere((v) => v._underlying == result.union.err);
   }
   // ignore: non_constant_identifier_names
   static final _ICU4XCodePointSetData_load_for_ecma262 = _capi<
@@ -3141,7 +3219,8 @@ class ICU4XCollator implements ffi.Finalizable {
         provider._underlying, locale._underlying, options._underlying);
     return result.isOk
         ? ICU4XCollator._(result.union.ok)
-        : throw ICU4XError._(result.union.err);
+        : throw ICU4XError.values
+            .firstWhere((v) => v._underlying == result.union.err);
   }
   // ignore: non_constant_identifier_names
   static final _ICU4XCollator_create_v1 = _capi<
@@ -3171,7 +3250,7 @@ class ICU4XCollator implements ffi.Finalizable {
     final result = _ICU4XCollator_compare(_underlying, leftSlice._bytes,
         leftSlice._length, rightSlice._bytes, rightSlice._length);
     alloc.releaseAll();
-    return ICU4XOrdering._(result);
+    return ICU4XOrdering.values.firstWhere((v) => v._underlying == result);
   }
 
   // ignore: non_constant_identifier_names
@@ -3205,7 +3284,7 @@ class ICU4XCollator implements ffi.Finalizable {
         rightSlice._bytes,
         rightSlice._length);
     alloc.releaseAll();
-    return ICU4XOrdering._(result);
+    return ICU4XOrdering.values.firstWhere((v) => v._underlying == result);
   }
 
   // ignore: non_constant_identifier_names
@@ -3233,7 +3312,7 @@ class ICU4XCollator implements ffi.Finalizable {
     final result = _ICU4XCollator_compare_utf16(_underlying, leftSlice._bytes,
         leftSlice._length, rightSlice._bytes, rightSlice._length);
     alloc.releaseAll();
-    return ICU4XOrdering._(result);
+    return ICU4XOrdering.values.firstWhere((v) => v._underlying == result);
   }
 
   // ignore: non_constant_identifier_names
@@ -3252,95 +3331,47 @@ class ICU4XCollator implements ffi.Finalizable {
 
 /// See the [Rust documentation for `AlternateHandling`](https://docs.rs/icu/latest/icu/collator/enum.AlternateHandling.html) for more information.
 enum ICU4XCollatorAlternateHandling {
-  auto.__(0),
-  nonIgnorable.__(1),
-  shifted.__(2);
-
-  const ICU4XCollatorAlternateHandling.__(this._id);
-
-  // ignore: unused_element
-  factory ICU4XCollatorAlternateHandling._(int id) =>
-      values.firstWhere((value) => value._id == id);
-
-  final int _id;
+  auto,
+  nonIgnorable,
+  shifted;
 }
 
 /// See the [Rust documentation for `BackwardSecondLevel`](https://docs.rs/icu/latest/icu/collator/enum.BackwardSecondLevel.html) for more information.
 enum ICU4XCollatorBackwardSecondLevel {
-  auto.__(0),
-  off.__(1),
-  on.__(2);
-
-  const ICU4XCollatorBackwardSecondLevel.__(this._id);
-
-  // ignore: unused_element
-  factory ICU4XCollatorBackwardSecondLevel._(int id) =>
-      values.firstWhere((value) => value._id == id);
-
-  final int _id;
+  auto,
+  off,
+  on;
 }
 
 /// See the [Rust documentation for `CaseFirst`](https://docs.rs/icu/latest/icu/collator/enum.CaseFirst.html) for more information.
 enum ICU4XCollatorCaseFirst {
-  auto.__(0),
-  off.__(1),
-  lowerFirst.__(2),
-  upperFirst.__(3);
-
-  const ICU4XCollatorCaseFirst.__(this._id);
-
-  // ignore: unused_element
-  factory ICU4XCollatorCaseFirst._(int id) =>
-      values.firstWhere((value) => value._id == id);
-
-  final int _id;
+  auto,
+  off,
+  lowerFirst,
+  upperFirst;
 }
 
 /// See the [Rust documentation for `CaseLevel`](https://docs.rs/icu/latest/icu/collator/enum.CaseLevel.html) for more information.
 enum ICU4XCollatorCaseLevel {
-  auto.__(0),
-  off.__(1),
-  on.__(2);
-
-  const ICU4XCollatorCaseLevel.__(this._id);
-
-  // ignore: unused_element
-  factory ICU4XCollatorCaseLevel._(int id) =>
-      values.firstWhere((value) => value._id == id);
-
-  final int _id;
+  auto,
+  off,
+  on;
 }
 
 /// See the [Rust documentation for `MaxVariable`](https://docs.rs/icu/latest/icu/collator/enum.MaxVariable.html) for more information.
 enum ICU4XCollatorMaxVariable {
-  auto.__(0),
-  space.__(1),
-  punctuation.__(2),
-  symbol.__(3),
-  currency.__(4);
-
-  const ICU4XCollatorMaxVariable.__(this._id);
-
-  // ignore: unused_element
-  factory ICU4XCollatorMaxVariable._(int id) =>
-      values.firstWhere((value) => value._id == id);
-
-  final int _id;
+  auto,
+  space,
+  punctuation,
+  symbol,
+  currency;
 }
 
 /// See the [Rust documentation for `Numeric`](https://docs.rs/icu/latest/icu/collator/enum.Numeric.html) for more information.
 enum ICU4XCollatorNumeric {
-  auto.__(0),
-  off.__(1),
-  on.__(2);
-
-  const ICU4XCollatorNumeric.__(this._id);
-
-  // ignore: unused_element
-  factory ICU4XCollatorNumeric._(int id) =>
-      values.firstWhere((value) => value._id == id);
-
-  final int _id;
+  auto,
+  off,
+  on;
 }
 
 /// See the [Rust documentation for `CollatorOptions`](https://docs.rs/icu/latest/icu/collator/struct.CollatorOptions.html) for more information.
@@ -3375,46 +3406,46 @@ class ICU4XCollatorOptionsV1 {
   }
 
   ICU4XCollatorStrength get strength =>
-      ICU4XCollatorStrength._(_underlying.strength);
+      ICU4XCollatorStrength.values[_underlying.strength];
   set strength(ICU4XCollatorStrength strength) {
-    _underlying.strength = strength._id;
+    _underlying.strength = strength.index;
   }
 
   ICU4XCollatorAlternateHandling get alternateHandling =>
-      ICU4XCollatorAlternateHandling._(_underlying.alternateHandling);
+      ICU4XCollatorAlternateHandling.values[_underlying.alternateHandling];
   set alternateHandling(ICU4XCollatorAlternateHandling alternateHandling) {
-    _underlying.alternateHandling = alternateHandling._id;
+    _underlying.alternateHandling = alternateHandling.index;
   }
 
   ICU4XCollatorCaseFirst get caseFirst =>
-      ICU4XCollatorCaseFirst._(_underlying.caseFirst);
+      ICU4XCollatorCaseFirst.values[_underlying.caseFirst];
   set caseFirst(ICU4XCollatorCaseFirst caseFirst) {
-    _underlying.caseFirst = caseFirst._id;
+    _underlying.caseFirst = caseFirst.index;
   }
 
   ICU4XCollatorMaxVariable get maxVariable =>
-      ICU4XCollatorMaxVariable._(_underlying.maxVariable);
+      ICU4XCollatorMaxVariable.values[_underlying.maxVariable];
   set maxVariable(ICU4XCollatorMaxVariable maxVariable) {
-    _underlying.maxVariable = maxVariable._id;
+    _underlying.maxVariable = maxVariable.index;
   }
 
   ICU4XCollatorCaseLevel get caseLevel =>
-      ICU4XCollatorCaseLevel._(_underlying.caseLevel);
+      ICU4XCollatorCaseLevel.values[_underlying.caseLevel];
   set caseLevel(ICU4XCollatorCaseLevel caseLevel) {
-    _underlying.caseLevel = caseLevel._id;
+    _underlying.caseLevel = caseLevel.index;
   }
 
   ICU4XCollatorNumeric get numeric =>
-      ICU4XCollatorNumeric._(_underlying.numeric);
+      ICU4XCollatorNumeric.values[_underlying.numeric];
   set numeric(ICU4XCollatorNumeric numeric) {
-    _underlying.numeric = numeric._id;
+    _underlying.numeric = numeric.index;
   }
 
   ICU4XCollatorBackwardSecondLevel get backwardSecondLevel =>
-      ICU4XCollatorBackwardSecondLevel._(_underlying.backwardSecondLevel);
+      ICU4XCollatorBackwardSecondLevel.values[_underlying.backwardSecondLevel];
   set backwardSecondLevel(
       ICU4XCollatorBackwardSecondLevel backwardSecondLevel) {
-    _underlying.backwardSecondLevel = backwardSecondLevel._id;
+    _underlying.backwardSecondLevel = backwardSecondLevel.index;
   }
 
   @override
@@ -3442,20 +3473,12 @@ class ICU4XCollatorOptionsV1 {
 
 /// See the [Rust documentation for `Strength`](https://docs.rs/icu/latest/icu/collator/enum.Strength.html) for more information.
 enum ICU4XCollatorStrength {
-  auto.__(0),
-  primary.__(1),
-  secondary.__(2),
-  tertiary.__(3),
-  quaternary.__(4),
-  identical.__(5);
-
-  const ICU4XCollatorStrength.__(this._id);
-
-  // ignore: unused_element
-  factory ICU4XCollatorStrength._(int id) =>
-      values.firstWhere((value) => value._id == id);
-
-  final int _id;
+  auto,
+  primary,
+  secondary,
+  tertiary,
+  quaternary,
+  identical;
 }
 
 /// See the [Rust documentation for `ComposingNormalizer`](https://docs.rs/icu/latest/icu/normalizer/struct.ComposingNormalizer.html) for more information.
@@ -3476,7 +3499,8 @@ class ICU4XComposingNormalizer implements ffi.Finalizable {
     final result = _ICU4XComposingNormalizer_create_nfc(provider._underlying);
     return result.isOk
         ? ICU4XComposingNormalizer._(result.union.ok)
-        : throw ICU4XError._(result.union.err);
+        : throw ICU4XError.values
+            .firstWhere((v) => v._underlying == result.union.err);
   }
   // ignore: non_constant_identifier_names
   static final _ICU4XComposingNormalizer_create_nfc = _capi<
@@ -3493,7 +3517,8 @@ class ICU4XComposingNormalizer implements ffi.Finalizable {
     final result = _ICU4XComposingNormalizer_create_nfkc(provider._underlying);
     return result.isOk
         ? ICU4XComposingNormalizer._(result.union.ok)
-        : throw ICU4XError._(result.union.err);
+        : throw ICU4XError.values
+            .firstWhere((v) => v._underlying == result.union.err);
   }
   // ignore: non_constant_identifier_names
   static final _ICU4XComposingNormalizer_create_nfkc = _capi<
@@ -3518,7 +3543,8 @@ class ICU4XComposingNormalizer implements ffi.Finalizable {
     alloc.releaseAll();
     return result.isOk
         ? writeable.finalize()
-        : throw ICU4XError._(result.union.err);
+        : throw ICU4XError.values
+            .firstWhere((v) => v._underlying == result.union.err);
   }
 
   // ignore: non_constant_identifier_names
@@ -3585,7 +3611,8 @@ class ICU4XCustomTimeZone implements ffi.Finalizable {
     alloc.releaseAll();
     return result.isOk
         ? ICU4XCustomTimeZone._(result.union.ok)
-        : throw ICU4XError._(result.union.err);
+        : throw ICU4XError.values
+            .firstWhere((v) => v._underlying == result.union.err);
   }
   // ignore: non_constant_identifier_names
   static final _ICU4XCustomTimeZone_create_from_string = _capi<
@@ -3632,7 +3659,8 @@ class ICU4XCustomTimeZone implements ffi.Finalizable {
     final result = _ICU4XCustomTimeZone_try_set_gmt_offset_seconds(
         _underlying, offsetSeconds);
     if (!result.isOk) {
-      throw ICU4XError._(result.union.err);
+      throw ICU4XError.values
+          .firstWhere((v) => v._underlying == result.union.err);
     }
   }
 
@@ -3668,7 +3696,10 @@ class ICU4XCustomTimeZone implements ffi.Finalizable {
   /// Additional information: [1](https://docs.rs/icu/latest/icu/timezone/struct.GmtOffset.html)
   int get gmtOffsetSeconds {
     final result = _ICU4XCustomTimeZone_gmt_offset_seconds(_underlying);
-    return result.isOk ? result.union.ok : throw ICU4XError._(result.union.err);
+    return result.isOk
+        ? result.union.ok
+        : throw ICU4XError.values
+            .firstWhere((v) => v._underlying == result.union.err);
   }
 
   // ignore: non_constant_identifier_names
@@ -3686,7 +3717,10 @@ class ICU4XCustomTimeZone implements ffi.Finalizable {
   /// See the [Rust documentation for `is_positive`](https://docs.rs/icu/latest/icu/timezone/struct.GmtOffset.html#method.is_positive) for more information.
   bool get isGmtOffsetPositive {
     final result = _ICU4XCustomTimeZone_is_gmt_offset_positive(_underlying);
-    return result.isOk ? result.union.ok : throw ICU4XError._(result.union.err);
+    return result.isOk
+        ? result.union.ok
+        : throw ICU4XError.values
+            .firstWhere((v) => v._underlying == result.union.err);
   }
 
   // ignore: non_constant_identifier_names
@@ -3704,7 +3738,10 @@ class ICU4XCustomTimeZone implements ffi.Finalizable {
   /// See the [Rust documentation for `is_zero`](https://docs.rs/icu/latest/icu/timezone/struct.GmtOffset.html#method.is_zero) for more information.
   bool get isGmtOffsetZero {
     final result = _ICU4XCustomTimeZone_is_gmt_offset_zero(_underlying);
-    return result.isOk ? result.union.ok : throw ICU4XError._(result.union.err);
+    return result.isOk
+        ? result.union.ok
+        : throw ICU4XError.values
+            .firstWhere((v) => v._underlying == result.union.err);
   }
 
   // ignore: non_constant_identifier_names
@@ -3722,7 +3759,10 @@ class ICU4XCustomTimeZone implements ffi.Finalizable {
   /// See the [Rust documentation for `has_minutes`](https://docs.rs/icu/latest/icu/timezone/struct.GmtOffset.html#method.has_minutes) for more information.
   bool gmtOffsetHasMinutes() {
     final result = _ICU4XCustomTimeZone_gmt_offset_has_minutes(_underlying);
-    return result.isOk ? result.union.ok : throw ICU4XError._(result.union.err);
+    return result.isOk
+        ? result.union.ok
+        : throw ICU4XError.values
+            .firstWhere((v) => v._underlying == result.union.err);
   }
 
   // ignore: non_constant_identifier_names
@@ -3740,7 +3780,10 @@ class ICU4XCustomTimeZone implements ffi.Finalizable {
   /// See the [Rust documentation for `has_seconds`](https://docs.rs/icu/latest/icu/timezone/struct.GmtOffset.html#method.has_seconds) for more information.
   bool gmtOffsetHasSeconds() {
     final result = _ICU4XCustomTimeZone_gmt_offset_has_seconds(_underlying);
-    return result.isOk ? result.union.ok : throw ICU4XError._(result.union.err);
+    return result.isOk
+        ? result.union.ok
+        : throw ICU4XError.values
+            .firstWhere((v) => v._underlying == result.union.err);
   }
 
   // ignore: non_constant_identifier_names
@@ -3766,7 +3809,8 @@ class ICU4XCustomTimeZone implements ffi.Finalizable {
         _underlying, idSlice._bytes, idSlice._length);
     alloc.releaseAll();
     if (!result.isOk) {
-      throw ICU4XError._(result.union.err);
+      throw ICU4XError.values
+          .firstWhere((v) => v._underlying == result.union.err);
     }
   }
 
@@ -3795,7 +3839,8 @@ class ICU4XCustomTimeZone implements ffi.Finalizable {
         _underlying, mapper._underlying, idSlice._bytes, idSlice._length);
     alloc.releaseAll();
     if (!result.isOk) {
-      throw ICU4XError._(result.union.err);
+      throw ICU4XError.values
+          .firstWhere((v) => v._underlying == result.union.err);
     }
   }
 
@@ -3842,7 +3887,8 @@ class ICU4XCustomTimeZone implements ffi.Finalizable {
         _ICU4XCustomTimeZone_time_zone_id(_underlying, writeable._underlying);
     return result.isOk
         ? writeable.finalize()
-        : throw ICU4XError._(result.union.err);
+        : throw ICU4XError.values
+            .firstWhere((v) => v._underlying == result.union.err);
   }
 
   // ignore: non_constant_identifier_names
@@ -3869,7 +3915,8 @@ class ICU4XCustomTimeZone implements ffi.Finalizable {
         _underlying, idSlice._bytes, idSlice._length);
     alloc.releaseAll();
     if (!result.isOk) {
-      throw ICU4XError._(result.union.err);
+      throw ICU4XError.values
+          .firstWhere((v) => v._underlying == result.union.err);
     }
   }
 
@@ -3912,7 +3959,8 @@ class ICU4XCustomTimeZone implements ffi.Finalizable {
         _ICU4XCustomTimeZone_metazone_id(_underlying, writeable._underlying);
     return result.isOk
         ? writeable.finalize()
-        : throw ICU4XError._(result.union.err);
+        : throw ICU4XError.values
+            .firstWhere((v) => v._underlying == result.union.err);
   }
 
   // ignore: non_constant_identifier_names
@@ -3939,7 +3987,8 @@ class ICU4XCustomTimeZone implements ffi.Finalizable {
         _underlying, idSlice._bytes, idSlice._length);
     alloc.releaseAll();
     if (!result.isOk) {
-      throw ICU4XError._(result.union.err);
+      throw ICU4XError.values
+          .firstWhere((v) => v._underlying == result.union.err);
     }
   }
 
@@ -3982,7 +4031,8 @@ class ICU4XCustomTimeZone implements ffi.Finalizable {
         _ICU4XCustomTimeZone_zone_variant(_underlying, writeable._underlying);
     return result.isOk
         ? writeable.finalize()
-        : throw ICU4XError._(result.union.err);
+        : throw ICU4XError.values
+            .firstWhere((v) => v._underlying == result.union.err);
   }
 
   // ignore: non_constant_identifier_names
@@ -4033,7 +4083,10 @@ class ICU4XCustomTimeZone implements ffi.Finalizable {
   /// Additional information: [1](https://docs.rs/icu/latest/icu/timezone/struct.CustomTimeZone.html#structfield.zone_variant)
   bool get isStandardTime {
     final result = _ICU4XCustomTimeZone_is_standard_time(_underlying);
-    return result.isOk ? result.union.ok : throw ICU4XError._(result.union.err);
+    return result.isOk
+        ? result.union.ok
+        : throw ICU4XError.values
+            .firstWhere((v) => v._underlying == result.union.err);
   }
 
   // ignore: non_constant_identifier_names
@@ -4053,7 +4106,10 @@ class ICU4XCustomTimeZone implements ffi.Finalizable {
   /// Additional information: [1](https://docs.rs/icu/latest/icu/timezone/struct.CustomTimeZone.html#structfield.zone_variant)
   bool get isDaylightTime {
     final result = _ICU4XCustomTimeZone_is_daylight_time(_underlying);
-    return result.isOk ? result.union.ok : throw ICU4XError._(result.union.err);
+    return result.isOk
+        ? result.union.ok
+        : throw ICU4XError.values
+            .firstWhere((v) => v._underlying == result.union.err);
   }
 
   // ignore: non_constant_identifier_names
@@ -4129,7 +4185,8 @@ class ICU4XDataProvider implements ffi.Finalizable {
     alloc.releaseAll();
     return result.isOk
         ? ICU4XDataProvider._(result.union.ok)
-        : throw ICU4XError._(result.union.err);
+        : throw ICU4XError.values
+            .firstWhere((v) => v._underlying == result.union.err);
   }
   // ignore: non_constant_identifier_names
   static final _ICU4XDataProvider_create_fs = _capi<
@@ -4164,7 +4221,8 @@ class ICU4XDataProvider implements ffi.Finalizable {
     alloc.releaseAll();
     return result.isOk
         ? ICU4XDataProvider._(result.union.ok)
-        : throw ICU4XError._(result.union.err);
+        : throw ICU4XError.values
+            .firstWhere((v) => v._underlying == result.union.err);
   }
   // ignore: non_constant_identifier_names
   static final _ICU4XDataProvider_create_from_byte_slice = _capi<
@@ -4201,7 +4259,8 @@ class ICU4XDataProvider implements ffi.Finalizable {
     final result =
         _ICU4XDataProvider_fork_by_key(_underlying, other._underlying);
     if (!result.isOk) {
-      throw ICU4XError._(result.union.err);
+      throw ICU4XError.values
+          .firstWhere((v) => v._underlying == result.union.err);
     }
   }
 
@@ -4221,7 +4280,8 @@ class ICU4XDataProvider implements ffi.Finalizable {
     final result =
         _ICU4XDataProvider_fork_by_locale(_underlying, other._underlying);
     if (!result.isOk) {
-      throw ICU4XError._(result.union.err);
+      throw ICU4XError.values
+          .firstWhere((v) => v._underlying == result.union.err);
     }
   }
 
@@ -4244,7 +4304,8 @@ class ICU4XDataProvider implements ffi.Finalizable {
   void enableLocaleFallback() {
     final result = _ICU4XDataProvider_enable_locale_fallback(_underlying);
     if (!result.isOk) {
-      throw ICU4XError._(result.union.err);
+      throw ICU4XError.values
+          .firstWhere((v) => v._underlying == result.union.err);
     }
   }
 
@@ -4263,7 +4324,8 @@ class ICU4XDataProvider implements ffi.Finalizable {
     final result = _ICU4XDataProvider_enable_locale_fallback_with(
         _underlying, fallbacker._underlying);
     if (!result.isOk) {
-      throw ICU4XError._(result.union.err);
+      throw ICU4XError.values
+          .firstWhere((v) => v._underlying == result.union.err);
     }
   }
 
@@ -4341,7 +4403,8 @@ class ICU4XDataStruct implements ffi.Finalizable {
     alloc.releaseAll();
     return result.isOk
         ? ICU4XDataStruct._(result.union.ok)
-        : throw ICU4XError._(result.union.err);
+        : throw ICU4XError.values
+            .firstWhere((v) => v._underlying == result.union.err);
   }
   // ignore: non_constant_identifier_names
   static final _ICU4XDataStruct_create_decimal_symbols_v1 = _capi<
@@ -4407,7 +4470,8 @@ class ICU4XDate implements ffi.Finalizable {
         year, month, day, calendar._underlying);
     return result.isOk
         ? ICU4XDate._(result.union.ok)
-        : throw ICU4XError._(result.union.err);
+        : throw ICU4XError.values
+            .firstWhere((v) => v._underlying == result.union.err);
   }
   // ignore: non_constant_identifier_names
   static final _ICU4XDate_create_from_iso_in_calendar = _capi<
@@ -4439,7 +4503,8 @@ class ICU4XDate implements ffi.Finalizable {
     alloc.releaseAll();
     return result.isOk
         ? ICU4XDate._(result.union.ok)
-        : throw ICU4XError._(result.union.err);
+        : throw ICU4XError.values
+            .firstWhere((v) => v._underlying == result.union.err);
   }
   // ignore: non_constant_identifier_names
   static final _ICU4XDate_create_from_codes_in_calendar = _capi<
@@ -4515,7 +4580,7 @@ class ICU4XDate implements ffi.Finalizable {
   /// See the [Rust documentation for `day_of_week`](https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.day_of_week) for more information.
   ICU4XIsoWeekday get dayOfWeek {
     final result = _ICU4XDate_day_of_week(_underlying);
-    return ICU4XIsoWeekday._(result);
+    return ICU4XIsoWeekday.values.firstWhere((v) => v._underlying == result);
   }
 
   // ignore: non_constant_identifier_names
@@ -4531,7 +4596,8 @@ class ICU4XDate implements ffi.Finalizable {
   ///
   /// See the [Rust documentation for `week_of_month`](https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.week_of_month) for more information.
   int weekOfMonth(ICU4XIsoWeekday firstWeekday) {
-    final result = _ICU4XDate_week_of_month(_underlying, firstWeekday._id);
+    final result =
+        _ICU4XDate_week_of_month(_underlying, firstWeekday._underlying);
     return result;
   }
 
@@ -4549,7 +4615,8 @@ class ICU4XDate implements ffi.Finalizable {
     final result = _ICU4XDate_week_of_year(_underlying, calculator._underlying);
     return result.isOk
         ? ICU4XWeekOf._(result.union.ok)
-        : throw ICU4XError._(result.union.err);
+        : throw ICU4XError.values
+            .firstWhere((v) => v._underlying == result.union.err);
   }
 
   // ignore: non_constant_identifier_names
@@ -4588,7 +4655,8 @@ class ICU4XDate implements ffi.Finalizable {
     final result = _ICU4XDate_month_code(_underlying, writeable._underlying);
     return result.isOk
         ? writeable.finalize()
-        : throw ICU4XError._(result.union.err);
+        : throw ICU4XError.values
+            .firstWhere((v) => v._underlying == result.union.err);
   }
 
   // ignore: non_constant_identifier_names
@@ -4624,7 +4692,8 @@ class ICU4XDate implements ffi.Finalizable {
     final result = _ICU4XDate_era(_underlying, writeable._underlying);
     return result.isOk
         ? writeable.finalize()
-        : throw ICU4XError._(result.union.err);
+        : throw ICU4XError.values
+            .firstWhere((v) => v._underlying == result.union.err);
   }
 
   // ignore: non_constant_identifier_names
@@ -4715,10 +4784,11 @@ class ICU4XDateFormatter implements ffi.Finalizable {
   factory ICU4XDateFormatter.withLength(ICU4XDataProvider provider,
       ICU4XLocale locale, ICU4XDateLength dateLength) {
     final result = _ICU4XDateFormatter_create_with_length(
-        provider._underlying, locale._underlying, dateLength._id);
+        provider._underlying, locale._underlying, dateLength.index);
     return result.isOk
         ? ICU4XDateFormatter._(result.union.ok)
-        : throw ICU4XError._(result.union.err);
+        : throw ICU4XError.values
+            .firstWhere((v) => v._underlying == result.union.err);
   }
   // ignore: non_constant_identifier_names
   static final _ICU4XDateFormatter_create_with_length = _capi<
@@ -4740,7 +4810,8 @@ class ICU4XDateFormatter implements ffi.Finalizable {
         _underlying, value._underlying, writeable._underlying);
     return result.isOk
         ? writeable.finalize()
-        : throw ICU4XError._(result.union.err);
+        : throw ICU4XError.values
+            .firstWhere((v) => v._underlying == result.union.err);
   }
 
   // ignore: non_constant_identifier_names
@@ -4765,7 +4836,8 @@ class ICU4XDateFormatter implements ffi.Finalizable {
         _underlying, value._underlying, writeable._underlying);
     return result.isOk
         ? writeable.finalize()
-        : throw ICU4XError._(result.union.err);
+        : throw ICU4XError.values
+            .firstWhere((v) => v._underlying == result.union.err);
   }
 
   // ignore: non_constant_identifier_names
@@ -4787,7 +4859,8 @@ class ICU4XDateFormatter implements ffi.Finalizable {
         _underlying, value._underlying, writeable._underlying);
     return result.isOk
         ? writeable.finalize()
-        : throw ICU4XError._(result.union.err);
+        : throw ICU4XError.values
+            .firstWhere((v) => v._underlying == result.union.err);
   }
 
   // ignore: non_constant_identifier_names
@@ -4811,7 +4884,8 @@ class ICU4XDateFormatter implements ffi.Finalizable {
         _underlying, value._underlying, writeable._underlying);
     return result.isOk
         ? writeable.finalize()
-        : throw ICU4XError._(result.union.err);
+        : throw ICU4XError.values
+            .firstWhere((v) => v._underlying == result.union.err);
   }
 
   // ignore: non_constant_identifier_names
@@ -4827,18 +4901,10 @@ class ICU4XDateFormatter implements ffi.Finalizable {
 
 /// See the [Rust documentation for `Date`](https://docs.rs/icu/latest/icu/datetime/options/length/enum.Date.html) for more information.
 enum ICU4XDateLength {
-  full.__(0),
-  long.__(1),
-  medium.__(2),
-  short.__(3);
-
-  const ICU4XDateLength.__(this._id);
-
-  // ignore: unused_element
-  factory ICU4XDateLength._(int id) =>
-      values.firstWhere((value) => value._id == id);
-
-  final int _id;
+  full,
+  long,
+  medium,
+  short;
 }
 
 /// An ICU4X DateTime object capable of containing a date and time for any calendar.
@@ -4870,7 +4936,8 @@ class ICU4XDateTime implements ffi.Finalizable {
         hour, minute, second, nanosecond, calendar._underlying);
     return result.isOk
         ? ICU4XDateTime._(result.union.ok)
-        : throw ICU4XError._(result.union.err);
+        : throw ICU4XError.values
+            .firstWhere((v) => v._underlying == result.union.err);
   }
   // ignore: non_constant_identifier_names
   static final _ICU4XDateTime_create_from_iso_in_calendar = _capi<
@@ -4921,7 +4988,8 @@ class ICU4XDateTime implements ffi.Finalizable {
     alloc.releaseAll();
     return result.isOk
         ? ICU4XDateTime._(result.union.ok)
-        : throw ICU4XError._(result.union.err);
+        : throw ICU4XError.values
+            .firstWhere((v) => v._underlying == result.union.err);
   }
   // ignore: non_constant_identifier_names
   static final _ICU4XDateTime_create_from_codes_in_calendar = _capi<
@@ -5112,7 +5180,7 @@ class ICU4XDateTime implements ffi.Finalizable {
   /// See the [Rust documentation for `day_of_week`](https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.day_of_week) for more information.
   ICU4XIsoWeekday get dayOfWeek {
     final result = _ICU4XDateTime_day_of_week(_underlying);
-    return ICU4XIsoWeekday._(result);
+    return ICU4XIsoWeekday.values.firstWhere((v) => v._underlying == result);
   }
 
   // ignore: non_constant_identifier_names
@@ -5128,7 +5196,8 @@ class ICU4XDateTime implements ffi.Finalizable {
   ///
   /// See the [Rust documentation for `week_of_month`](https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.week_of_month) for more information.
   int weekOfMonth(ICU4XIsoWeekday firstWeekday) {
-    final result = _ICU4XDateTime_week_of_month(_underlying, firstWeekday._id);
+    final result =
+        _ICU4XDateTime_week_of_month(_underlying, firstWeekday._underlying);
     return result;
   }
 
@@ -5147,7 +5216,8 @@ class ICU4XDateTime implements ffi.Finalizable {
         _ICU4XDateTime_week_of_year(_underlying, calculator._underlying);
     return result.isOk
         ? ICU4XWeekOf._(result.union.ok)
-        : throw ICU4XError._(result.union.err);
+        : throw ICU4XError.values
+            .firstWhere((v) => v._underlying == result.union.err);
   }
 
   // ignore: non_constant_identifier_names
@@ -5187,7 +5257,8 @@ class ICU4XDateTime implements ffi.Finalizable {
         _ICU4XDateTime_month_code(_underlying, writeable._underlying);
     return result.isOk
         ? writeable.finalize()
-        : throw ICU4XError._(result.union.err);
+        : throw ICU4XError.values
+            .firstWhere((v) => v._underlying == result.union.err);
   }
 
   // ignore: non_constant_identifier_names
@@ -5221,7 +5292,8 @@ class ICU4XDateTime implements ffi.Finalizable {
     final result = _ICU4XDateTime_era(_underlying, writeable._underlying);
     return result.isOk
         ? writeable.finalize()
-        : throw ICU4XError._(result.union.err);
+        : throw ICU4XError.values
+            .firstWhere((v) => v._underlying == result.union.err);
   }
 
   // ignore: non_constant_identifier_names
@@ -5317,11 +5389,12 @@ class ICU4XDateTimeFormatter implements ffi.Finalizable {
     final result = _ICU4XDateTimeFormatter_create_with_lengths(
         provider._underlying,
         locale._underlying,
-        dateLength._id,
-        timeLength._id);
+        dateLength.index,
+        timeLength.index);
     return result.isOk
         ? ICU4XDateTimeFormatter._(result.union.ok)
-        : throw ICU4XError._(result.union.err);
+        : throw ICU4XError.values
+            .firstWhere((v) => v._underlying == result.union.err);
   }
   // ignore: non_constant_identifier_names
   static final _ICU4XDateTimeFormatter_create_with_lengths = _capi<
@@ -5344,7 +5417,8 @@ class ICU4XDateTimeFormatter implements ffi.Finalizable {
         _underlying, value._underlying, writeable._underlying);
     return result.isOk
         ? writeable.finalize()
-        : throw ICU4XError._(result.union.err);
+        : throw ICU4XError.values
+            .firstWhere((v) => v._underlying == result.union.err);
   }
 
   // ignore: non_constant_identifier_names
@@ -5368,7 +5442,8 @@ class ICU4XDateTimeFormatter implements ffi.Finalizable {
         _underlying, value._underlying, writeable._underlying);
     return result.isOk
         ? writeable.finalize()
-        : throw ICU4XError._(result.union.err);
+        : throw ICU4XError.values
+            .firstWhere((v) => v._underlying == result.union.err);
   }
 
   // ignore: non_constant_identifier_names
@@ -5448,7 +5523,8 @@ class ICU4XDecomposingNormalizer implements ffi.Finalizable {
     final result = _ICU4XDecomposingNormalizer_create_nfd(provider._underlying);
     return result.isOk
         ? ICU4XDecomposingNormalizer._(result.union.ok)
-        : throw ICU4XError._(result.union.err);
+        : throw ICU4XError.values
+            .firstWhere((v) => v._underlying == result.union.err);
   }
   // ignore: non_constant_identifier_names
   static final _ICU4XDecomposingNormalizer_create_nfd = _capi<
@@ -5466,7 +5542,8 @@ class ICU4XDecomposingNormalizer implements ffi.Finalizable {
         _ICU4XDecomposingNormalizer_create_nfkd(provider._underlying);
     return result.isOk
         ? ICU4XDecomposingNormalizer._(result.union.ok)
-        : throw ICU4XError._(result.union.err);
+        : throw ICU4XError.values
+            .firstWhere((v) => v._underlying == result.union.err);
   }
   // ignore: non_constant_identifier_names
   static final _ICU4XDecomposingNormalizer_create_nfkd = _capi<
@@ -5491,7 +5568,8 @@ class ICU4XDecomposingNormalizer implements ffi.Finalizable {
     alloc.releaseAll();
     return result.isOk
         ? writeable.finalize()
-        : throw ICU4XError._(result.union.err);
+        : throw ICU4XError.values
+            .firstWhere((v) => v._underlying == result.union.err);
   }
 
   // ignore: non_constant_identifier_names
@@ -5537,16 +5615,8 @@ class ICU4XDecomposingNormalizer implements ffi.Finalizable {
 
 /// See the [Rust documentation for `Fallback`](https://docs.rs/icu/latest/icu/displaynames/options/enum.Fallback.html) for more information.
 enum ICU4XDisplayNamesFallback {
-  code.__(0),
-  none.__(1);
-
-  const ICU4XDisplayNamesFallback.__(this._id);
-
-  // ignore: unused_element
-  factory ICU4XDisplayNamesFallback._(int id) =>
-      values.firstWhere((value) => value._id == id);
-
-  final int _id;
+  code,
+  none;
 }
 
 /// See the [Rust documentation for `DisplayNamesOptions`](https://docs.rs/icu/latest/icu/displaynames/options/struct.DisplayNamesOptions.html) for more information.
@@ -5573,21 +5643,21 @@ class ICU4XDisplayNamesOptionsV1 {
   }
 
   ICU4XDisplayNamesStyle get style =>
-      ICU4XDisplayNamesStyle._(_underlying.style);
+      ICU4XDisplayNamesStyle.values[_underlying.style];
   set style(ICU4XDisplayNamesStyle style) {
-    _underlying.style = style._id;
+    _underlying.style = style.index;
   }
 
   ICU4XDisplayNamesFallback get fallback =>
-      ICU4XDisplayNamesFallback._(_underlying.fallback);
+      ICU4XDisplayNamesFallback.values[_underlying.fallback];
   set fallback(ICU4XDisplayNamesFallback fallback) {
-    _underlying.fallback = fallback._id;
+    _underlying.fallback = fallback.index;
   }
 
   ICU4XLanguageDisplay get languageDisplay =>
-      ICU4XLanguageDisplay._(_underlying.languageDisplay);
+      ICU4XLanguageDisplay.values[_underlying.languageDisplay];
   set languageDisplay(ICU4XLanguageDisplay languageDisplay) {
-    _underlying.languageDisplay = languageDisplay._id;
+    _underlying.languageDisplay = languageDisplay.index;
   }
 
   @override
@@ -5607,19 +5677,11 @@ class ICU4XDisplayNamesOptionsV1 {
 
 /// See the [Rust documentation for `Style`](https://docs.rs/icu/latest/icu/displaynames/options/enum.Style.html) for more information.
 enum ICU4XDisplayNamesStyle {
-  auto.__(0),
-  narrow.__(1),
-  short.__(2),
-  long.__(3),
-  menu.__(4);
-
-  const ICU4XDisplayNamesStyle.__(this._id);
-
-  // ignore: unused_element
-  factory ICU4XDisplayNamesStyle._(int id) =>
-      values.firstWhere((value) => value._id == id);
-
-  final int _id;
+  auto,
+  narrow,
+  short,
+  long,
+  menu;
 }
 
 /// A common enum for errors that ICU4X may return, organized by API
@@ -5630,78 +5692,186 @@ enum ICU4XDisplayNamesStyle {
 enum ICU4XError {
   /// The error is not currently categorized as ICU4XError.
   /// Please file a bug
-  unknownError.__(0),
+  unknownError,
 
   /// An error arising from writing to a string
   /// Typically found when not enough space is allocated
   /// Most APIs that return a string may return this error
-  writeableError.__(1),
-  outOfBoundsError.__(2),
-  dataMissingDataKeyError.__(256),
-  dataMissingVariantError.__(257),
-  dataMissingLocaleError.__(258),
-  dataNeedsVariantError.__(259),
-  dataNeedsLocaleError.__(260),
-  dataExtraneousLocaleError.__(261),
-  dataFilteredResourceError.__(262),
-  dataMismatchedTypeError.__(263),
-  dataMissingPayloadError.__(264),
-  dataInvalidStateError.__(265),
-  dataCustomError.__(266),
-  dataIoError.__(267),
-  dataUnavailableBufferFormatError.__(268),
-  dataMismatchedAnyBufferError.__(269),
+  writeableError,
+  outOfBoundsError,
+  dataMissingDataKeyError,
+  dataMissingVariantError,
+  dataMissingLocaleError,
+  dataNeedsVariantError,
+  dataNeedsLocaleError,
+  dataExtraneousLocaleError,
+  dataFilteredResourceError,
+  dataMismatchedTypeError,
+  dataMissingPayloadError,
+  dataInvalidStateError,
+  dataCustomError,
+  dataIoError,
+  dataUnavailableBufferFormatError,
+  dataMismatchedAnyBufferError,
 
   /// The subtag being requested was not set
-  localeUndefinedSubtagError.__(512),
+  localeUndefinedSubtagError,
 
   /// The locale or subtag string failed to parse
-  localeParserLanguageError.__(513),
-  localeParserSubtagError.__(514),
-  localeParserExtensionError.__(515),
+  localeParserLanguageError,
+  localeParserSubtagError,
+  localeParserExtensionError,
 
   /// Attempted to construct an invalid data struct
-  dataStructValidityError.__(768),
-  propertyUnknownScriptIdError.__(1024),
-  propertyUnknownGeneralCategoryGroupError.__(1025),
-  propertyUnexpectedPropertyNameError.__(1026),
-  fixedDecimalLimitError.__(1280),
-  fixedDecimalSyntaxError.__(1281),
-  pluralsParserError.__(1536),
-  calendarParseError.__(1792),
-  calendarOverflowError.__(1793),
-  calendarUnderflowError.__(1794),
-  calendarOutOfRangeError.__(1795),
-  calendarUnknownEraError.__(1796),
-  calendarUnknownMonthCodeError.__(1797),
-  calendarMissingInputError.__(1798),
-  calendarUnknownKindError.__(1799),
-  calendarMissingError.__(1800),
-  dateTimePatternError.__(2048),
-  dateTimeMissingInputFieldError.__(2049),
-  dateTimeSkeletonError.__(2050),
-  dateTimeUnsupportedFieldError.__(2051),
-  dateTimeUnsupportedOptionsError.__(2052),
-  dateTimeMissingWeekdaySymbolError.__(2053),
-  dateTimeMissingMonthSymbolError.__(2054),
-  dateTimeFixedDecimalError.__(2055),
-  dateTimeMismatchedCalendarError.__(2056),
-  tinyStrTooLargeError.__(2304),
-  tinyStrContainsNullError.__(2305),
-  tinyStrNonAsciiError.__(2306),
-  timeZoneOffsetOutOfBoundsError.__(2560),
-  timeZoneInvalidOffsetError.__(2561),
-  timeZoneMissingInputError.__(2562),
-  timeZoneInvalidIdError.__(2563),
-  normalizerFutureExtensionError.__(2816),
-  normalizerValidationError.__(2817);
+  dataStructValidityError,
+  propertyUnknownScriptIdError,
+  propertyUnknownGeneralCategoryGroupError,
+  propertyUnexpectedPropertyNameError,
+  fixedDecimalLimitError,
+  fixedDecimalSyntaxError,
+  pluralsParserError,
+  calendarParseError,
+  calendarOverflowError,
+  calendarUnderflowError,
+  calendarOutOfRangeError,
+  calendarUnknownEraError,
+  calendarUnknownMonthCodeError,
+  calendarMissingInputError,
+  calendarUnknownKindError,
+  calendarMissingError,
+  dateTimePatternError,
+  dateTimeMissingInputFieldError,
+  dateTimeSkeletonError,
+  dateTimeUnsupportedFieldError,
+  dateTimeUnsupportedOptionsError,
+  dateTimeMissingWeekdaySymbolError,
+  dateTimeMissingMonthSymbolError,
+  dateTimeFixedDecimalError,
+  dateTimeMismatchedCalendarError,
+  tinyStrTooLargeError,
+  tinyStrContainsNullError,
+  tinyStrNonAsciiError,
+  timeZoneOffsetOutOfBoundsError,
+  timeZoneInvalidOffsetError,
+  timeZoneMissingInputError,
+  timeZoneInvalidIdError,
+  normalizerFutureExtensionError,
+  normalizerValidationError;
 
-  const ICU4XError.__(this._id);
-
-  // ignore: unused_element
-  factory ICU4XError._(int id) => values.firstWhere((value) => value._id == id);
-
-  final int _id;
+  int get _underlying {
+    switch (this) {
+      case unknownError:
+        return 0;
+      case writeableError:
+        return 1;
+      case outOfBoundsError:
+        return 2;
+      case dataMissingDataKeyError:
+        return 256;
+      case dataMissingVariantError:
+        return 257;
+      case dataMissingLocaleError:
+        return 258;
+      case dataNeedsVariantError:
+        return 259;
+      case dataNeedsLocaleError:
+        return 260;
+      case dataExtraneousLocaleError:
+        return 261;
+      case dataFilteredResourceError:
+        return 262;
+      case dataMismatchedTypeError:
+        return 263;
+      case dataMissingPayloadError:
+        return 264;
+      case dataInvalidStateError:
+        return 265;
+      case dataCustomError:
+        return 266;
+      case dataIoError:
+        return 267;
+      case dataUnavailableBufferFormatError:
+        return 268;
+      case dataMismatchedAnyBufferError:
+        return 269;
+      case localeUndefinedSubtagError:
+        return 512;
+      case localeParserLanguageError:
+        return 513;
+      case localeParserSubtagError:
+        return 514;
+      case localeParserExtensionError:
+        return 515;
+      case dataStructValidityError:
+        return 768;
+      case propertyUnknownScriptIdError:
+        return 1024;
+      case propertyUnknownGeneralCategoryGroupError:
+        return 1025;
+      case propertyUnexpectedPropertyNameError:
+        return 1026;
+      case fixedDecimalLimitError:
+        return 1280;
+      case fixedDecimalSyntaxError:
+        return 1281;
+      case pluralsParserError:
+        return 1536;
+      case calendarParseError:
+        return 1792;
+      case calendarOverflowError:
+        return 1793;
+      case calendarUnderflowError:
+        return 1794;
+      case calendarOutOfRangeError:
+        return 1795;
+      case calendarUnknownEraError:
+        return 1796;
+      case calendarUnknownMonthCodeError:
+        return 1797;
+      case calendarMissingInputError:
+        return 1798;
+      case calendarUnknownKindError:
+        return 1799;
+      case calendarMissingError:
+        return 1800;
+      case dateTimePatternError:
+        return 2048;
+      case dateTimeMissingInputFieldError:
+        return 2049;
+      case dateTimeSkeletonError:
+        return 2050;
+      case dateTimeUnsupportedFieldError:
+        return 2051;
+      case dateTimeUnsupportedOptionsError:
+        return 2052;
+      case dateTimeMissingWeekdaySymbolError:
+        return 2053;
+      case dateTimeMissingMonthSymbolError:
+        return 2054;
+      case dateTimeFixedDecimalError:
+        return 2055;
+      case dateTimeMismatchedCalendarError:
+        return 2056;
+      case tinyStrTooLargeError:
+        return 2304;
+      case tinyStrContainsNullError:
+        return 2305;
+      case tinyStrNonAsciiError:
+        return 2306;
+      case timeZoneOffsetOutOfBoundsError:
+        return 2560;
+      case timeZoneInvalidOffsetError:
+        return 2561;
+      case timeZoneMissingInputError:
+        return 2562;
+      case timeZoneInvalidIdError:
+        return 2563;
+      case normalizerFutureExtensionError:
+        return 2816;
+      case normalizerValidationError:
+        return 2817;
+    }
+  }
 }
 
 /// See the [Rust documentation for `FixedDecimal`](https://docs.rs/fixed_decimal/latest/fixed_decimal/struct.FixedDecimal.html) for more information.
@@ -5776,7 +5946,8 @@ class ICU4XFixedDecimal implements ffi.Finalizable {
     final result = _ICU4XFixedDecimal_create_from_f64_with_integer_precision(f);
     return result.isOk
         ? ICU4XFixedDecimal._(result.union.ok)
-        : throw ICU4XError._(result.union.err);
+        : throw ICU4XError.values
+            .firstWhere((v) => v._underlying == result.union.err);
   }
   // ignore: non_constant_identifier_names
   static final _ICU4XFixedDecimal_create_from_f64_with_integer_precision =
@@ -5794,7 +5965,8 @@ class ICU4XFixedDecimal implements ffi.Finalizable {
         _ICU4XFixedDecimal_create_from_f64_with_lower_magnitude(f, magnitude);
     return result.isOk
         ? ICU4XFixedDecimal._(result.union.ok)
-        : throw ICU4XError._(result.union.err);
+        : throw ICU4XError.values
+            .firstWhere((v) => v._underlying == result.union.err);
   }
   // ignore: non_constant_identifier_names
   static final _ICU4XFixedDecimal_create_from_f64_with_lower_magnitude = _capi<
@@ -5813,7 +5985,8 @@ class ICU4XFixedDecimal implements ffi.Finalizable {
         _ICU4XFixedDecimal_create_from_f64_with_significant_digits(f, digits);
     return result.isOk
         ? ICU4XFixedDecimal._(result.union.ok)
-        : throw ICU4XError._(result.union.err);
+        : throw ICU4XError.values
+            .firstWhere((v) => v._underlying == result.union.err);
   }
   // ignore: non_constant_identifier_names
   static final _ICU4XFixedDecimal_create_from_f64_with_significant_digits =
@@ -5834,7 +6007,8 @@ class ICU4XFixedDecimal implements ffi.Finalizable {
         _ICU4XFixedDecimal_create_from_f64_with_floating_precision(f);
     return result.isOk
         ? ICU4XFixedDecimal._(result.union.ok)
-        : throw ICU4XError._(result.union.err);
+        : throw ICU4XError.values
+            .firstWhere((v) => v._underlying == result.union.err);
   }
   // ignore: non_constant_identifier_names
   static final _ICU4XFixedDecimal_create_from_f64_with_floating_precision =
@@ -5854,7 +6028,8 @@ class ICU4XFixedDecimal implements ffi.Finalizable {
     alloc.releaseAll();
     return result.isOk
         ? ICU4XFixedDecimal._(result.union.ok)
-        : throw ICU4XError._(result.union.err);
+        : throw ICU4XError.values
+            .firstWhere((v) => v._underlying == result.union.err);
   }
   // ignore: non_constant_identifier_names
   static final _ICU4XFixedDecimal_create_from_string = _capi<
@@ -5954,7 +6129,7 @@ class ICU4XFixedDecimal implements ffi.Finalizable {
   /// See the [Rust documentation for `sign`](https://docs.rs/fixed_decimal/latest/fixed_decimal/struct.FixedDecimal.html#method.sign) for more information.
   ICU4XFixedDecimalSign get sign {
     final result = _ICU4XFixedDecimal_sign(_underlying);
-    return ICU4XFixedDecimalSign._(result);
+    return ICU4XFixedDecimalSign.values[result];
   }
 
   // ignore: non_constant_identifier_names
@@ -5967,7 +6142,7 @@ class ICU4XFixedDecimal implements ffi.Finalizable {
   ///
   /// See the [Rust documentation for `set_sign`](https://docs.rs/fixed_decimal/latest/fixed_decimal/struct.FixedDecimal.html#method.set_sign) for more information.
   set sign(ICU4XFixedDecimalSign sign) {
-    _ICU4XFixedDecimal_set_sign(_underlying, sign._id);
+    _ICU4XFixedDecimal_set_sign(_underlying, sign.index);
   }
 
   // ignore: non_constant_identifier_names
@@ -5979,7 +6154,7 @@ class ICU4XFixedDecimal implements ffi.Finalizable {
 
   /// See the [Rust documentation for `apply_sign_display`](https://docs.rs/fixed_decimal/latest/fixed_decimal/struct.FixedDecimal.html#method.apply_sign_display) for more information.
   void applySignDisplay(ICU4XFixedDecimalSignDisplay signDisplay) {
-    _ICU4XFixedDecimal_apply_sign_display(_underlying, signDisplay._id);
+    _ICU4XFixedDecimal_apply_sign_display(_underlying, signDisplay.index);
   }
 
   // ignore: non_constant_identifier_names
@@ -6068,7 +6243,8 @@ class ICU4XFixedDecimal implements ffi.Finalizable {
 
   /// See the [Rust documentation for `trunc_to_increment`](https://docs.rs/fixed_decimal/latest/fixed_decimal/struct.FixedDecimal.html#method.trunc_to_increment) for more information.
   void truncToIncrement(int position, ICU4XRoundingIncrement increment) {
-    _ICU4XFixedDecimal_trunc_to_increment(_underlying, position, increment._id);
+    _ICU4XFixedDecimal_trunc_to_increment(
+        _underlying, position, increment.index);
   }
 
   // ignore: non_constant_identifier_names
@@ -6106,7 +6282,7 @@ class ICU4XFixedDecimal implements ffi.Finalizable {
   /// See the [Rust documentation for `expand_to_increment`](https://docs.rs/fixed_decimal/latest/fixed_decimal/struct.FixedDecimal.html#method.expand_to_increment) for more information.
   void expandToIncrement(int position, ICU4XRoundingIncrement increment) {
     _ICU4XFixedDecimal_expand_to_increment(
-        _underlying, position, increment._id);
+        _underlying, position, increment.index);
   }
 
   // ignore: non_constant_identifier_names
@@ -6255,10 +6431,11 @@ class ICU4XFixedDecimalFormatter implements ffi.Finalizable {
       ICU4XLocale locale,
       ICU4XFixedDecimalGroupingStrategy groupingStrategy) {
     final result = _ICU4XFixedDecimalFormatter_create_with_grouping_strategy(
-        provider._underlying, locale._underlying, groupingStrategy._id);
+        provider._underlying, locale._underlying, groupingStrategy.index);
     return result.isOk
         ? ICU4XFixedDecimalFormatter._(result.union.ok)
-        : throw ICU4XError._(result.union.err);
+        : throw ICU4XError.values
+            .firstWhere((v) => v._underlying == result.union.err);
   }
   // ignore: non_constant_identifier_names
   static final _ICU4XFixedDecimalFormatter_create_with_grouping_strategy =
@@ -6280,10 +6457,11 @@ class ICU4XFixedDecimalFormatter implements ffi.Finalizable {
       ICU4XDataStruct dataStruct,
       ICU4XFixedDecimalGroupingStrategy groupingStrategy) {
     final result = _ICU4XFixedDecimalFormatter_create_with_decimal_symbols_v1(
-        dataStruct._underlying, groupingStrategy._id);
+        dataStruct._underlying, groupingStrategy.index);
     return result.isOk
         ? ICU4XFixedDecimalFormatter._(result.union.ok)
-        : throw ICU4XError._(result.union.err);
+        : throw ICU4XError.values
+            .firstWhere((v) => v._underlying == result.union.err);
   }
   // ignore: non_constant_identifier_names
   static final _ICU4XFixedDecimalFormatter_create_with_decimal_symbols_v1 =
@@ -6305,7 +6483,8 @@ class ICU4XFixedDecimalFormatter implements ffi.Finalizable {
         _underlying, value._underlying, writeable._underlying);
     return result.isOk
         ? writeable.finalize()
-        : throw ICU4XError._(result.union.err);
+        : throw ICU4XError.values
+            .firstWhere((v) => v._underlying == result.union.err);
   }
 
   // ignore: non_constant_identifier_names
@@ -6321,18 +6500,10 @@ class ICU4XFixedDecimalFormatter implements ffi.Finalizable {
 
 /// See the [Rust documentation for `GroupingStrategy`](https://docs.rs/icu/latest/icu/decimal/options/enum.GroupingStrategy.html) for more information.
 enum ICU4XFixedDecimalGroupingStrategy {
-  auto.__(0),
-  never.__(1),
-  always.__(2),
-  min2.__(3);
-
-  const ICU4XFixedDecimalGroupingStrategy.__(this._id);
-
-  // ignore: unused_element
-  factory ICU4XFixedDecimalGroupingStrategy._(int id) =>
-      values.firstWhere((value) => value._id == id);
-
-  final int _id;
+  auto,
+  never,
+  always,
+  min2;
 }
 
 /// The sign of a FixedDecimal, as shown in formatting.
@@ -6340,40 +6511,24 @@ enum ICU4XFixedDecimalGroupingStrategy {
 /// See the [Rust documentation for `Sign`](https://docs.rs/fixed_decimal/latest/fixed_decimal/enum.Sign.html) for more information.
 enum ICU4XFixedDecimalSign {
   /// No sign (implicitly positive, e.g., 1729).
-  none.__(0),
+  none,
 
   /// A negative sign, e.g., -1729.
-  negative.__(1),
+  negative,
 
   /// An explicit positive sign, e.g., +1729.
-  positive.__(2);
-
-  const ICU4XFixedDecimalSign.__(this._id);
-
-  // ignore: unused_element
-  factory ICU4XFixedDecimalSign._(int id) =>
-      values.firstWhere((value) => value._id == id);
-
-  final int _id;
+  positive;
 }
 
 /// ECMA-402 compatible sign display preference.
 ///
 /// See the [Rust documentation for `SignDisplay`](https://docs.rs/fixed_decimal/latest/fixed_decimal/enum.SignDisplay.html) for more information.
 enum ICU4XFixedDecimalSignDisplay {
-  auto.__(0),
-  never.__(1),
-  always.__(2),
-  exceptZero.__(3),
-  negative.__(4);
-
-  const ICU4XFixedDecimalSignDisplay.__(this._id);
-
-  // ignore: unused_element
-  factory ICU4XFixedDecimalSignDisplay._(int id) =>
-      values.firstWhere((value) => value._id == id);
-
-  final int _id;
+  auto,
+  never,
+  always,
+  exceptZero,
+  negative;
 }
 
 /// A type capable of looking up General Category mask values from a string name.
@@ -6446,7 +6601,8 @@ class ICU4XGeneralCategoryNameToMaskMapper implements ffi.Finalizable {
         _ICU4XGeneralCategoryNameToMaskMapper_load(provider._underlying);
     return result.isOk
         ? ICU4XGeneralCategoryNameToMaskMapper._(result.union.ok)
-        : throw ICU4XError._(result.union.err);
+        : throw ICU4XError.values
+            .firstWhere((v) => v._underlying == result.union.err);
   }
   // ignore: non_constant_identifier_names
   static final _ICU4XGeneralCategoryNameToMaskMapper_load = _capi<
@@ -6559,7 +6715,8 @@ class ICU4XGraphemeClusterSegmenter implements ffi.Finalizable {
     final result = _ICU4XGraphemeClusterSegmenter_create(provider._underlying);
     return result.isOk
         ? ICU4XGraphemeClusterSegmenter._(result.union.ok)
-        : throw ICU4XError._(result.union.err);
+        : throw ICU4XError.values
+            .firstWhere((v) => v._underlying == result.union.err);
   }
   // ignore: non_constant_identifier_names
   static final _ICU4XGraphemeClusterSegmenter_create = _capi<
@@ -6662,10 +6819,11 @@ class ICU4XGregorianDateFormatter implements ffi.Finalizable {
   factory ICU4XGregorianDateFormatter.withLength(
       ICU4XDataProvider provider, ICU4XLocale locale, ICU4XDateLength length) {
     final result = _ICU4XGregorianDateFormatter_create_with_length(
-        provider._underlying, locale._underlying, length._id);
+        provider._underlying, locale._underlying, length.index);
     return result.isOk
         ? ICU4XGregorianDateFormatter._(result.union.ok)
-        : throw ICU4XError._(result.union.err);
+        : throw ICU4XError.values
+            .firstWhere((v) => v._underlying == result.union.err);
   }
   // ignore: non_constant_identifier_names
   static final _ICU4XGregorianDateFormatter_create_with_length = _capi<
@@ -6686,7 +6844,8 @@ class ICU4XGregorianDateFormatter implements ffi.Finalizable {
         _underlying, value._underlying, writeable._underlying);
     return result.isOk
         ? writeable.finalize()
-        : throw ICU4XError._(result.union.err);
+        : throw ICU4XError.values
+            .firstWhere((v) => v._underlying == result.union.err);
   }
 
   // ignore: non_constant_identifier_names
@@ -6708,7 +6867,8 @@ class ICU4XGregorianDateFormatter implements ffi.Finalizable {
         _underlying, value._underlying, writeable._underlying);
     return result.isOk
         ? writeable.finalize()
-        : throw ICU4XError._(result.union.err);
+        : throw ICU4XError.values
+            .firstWhere((v) => v._underlying == result.union.err);
   }
 
   // ignore: non_constant_identifier_names
@@ -6747,11 +6907,12 @@ class ICU4XGregorianDateTimeFormatter implements ffi.Finalizable {
     final result = _ICU4XGregorianDateTimeFormatter_create_with_lengths(
         provider._underlying,
         locale._underlying,
-        dateLength._id,
-        timeLength._id);
+        dateLength.index,
+        timeLength.index);
     return result.isOk
         ? ICU4XGregorianDateTimeFormatter._(result.union.ok)
-        : throw ICU4XError._(result.union.err);
+        : throw ICU4XError.values
+            .firstWhere((v) => v._underlying == result.union.err);
   }
   // ignore: non_constant_identifier_names
   static final _ICU4XGregorianDateTimeFormatter_create_with_lengths = _capi<
@@ -6772,7 +6933,8 @@ class ICU4XGregorianDateTimeFormatter implements ffi.Finalizable {
         _underlying, value._underlying, writeable._underlying);
     return result.isOk
         ? writeable.finalize()
-        : throw ICU4XError._(result.union.err);
+        : throw ICU4XError.values
+            .firstWhere((v) => v._underlying == result.union.err);
   }
 
   // ignore: non_constant_identifier_names
@@ -6813,11 +6975,12 @@ class ICU4XGregorianZonedDateTimeFormatter implements ffi.Finalizable {
     final result = _ICU4XGregorianZonedDateTimeFormatter_create_with_lengths(
         provider._underlying,
         locale._underlying,
-        dateLength._id,
-        timeLength._id);
+        dateLength.index,
+        timeLength.index);
     return result.isOk
         ? ICU4XGregorianZonedDateTimeFormatter._(result.union.ok)
-        : throw ICU4XError._(result.union.err);
+        : throw ICU4XError.values
+            .firstWhere((v) => v._underlying == result.union.err);
   }
   // ignore: non_constant_identifier_names
   static final _ICU4XGregorianZonedDateTimeFormatter_create_with_lengths =
@@ -6846,12 +7009,13 @@ class ICU4XGregorianZonedDateTimeFormatter implements ffi.Finalizable {
         _ICU4XGregorianZonedDateTimeFormatter_create_with_lengths_and_iso_8601_time_zone_fallback(
             provider._underlying,
             locale._underlying,
-            dateLength._id,
-            timeLength._id,
+            dateLength.index,
+            timeLength.index,
             zoneOptions._underlying);
     return result.isOk
         ? ICU4XGregorianZonedDateTimeFormatter._(result.union.ok)
-        : throw ICU4XError._(result.union.err);
+        : throw ICU4XError.values
+            .firstWhere((v) => v._underlying == result.union.err);
   }
   // ignore: non_constant_identifier_names
   static final _ICU4XGregorianZonedDateTimeFormatter_create_with_lengths_and_iso_8601_time_zone_fallback =
@@ -6886,7 +7050,8 @@ class ICU4XGregorianZonedDateTimeFormatter implements ffi.Finalizable {
             writeable._underlying);
     return result.isOk
         ? writeable.finalize()
-        : throw ICU4XError._(result.union.err);
+        : throw ICU4XError.values
+            .firstWhere((v) => v._underlying == result.union.err);
   }
 
   // ignore: non_constant_identifier_names
@@ -6929,7 +7094,8 @@ class ICU4XIanaToBcp47Mapper implements ffi.Finalizable {
     final result = _ICU4XIanaToBcp47Mapper_create(provider._underlying);
     return result.isOk
         ? ICU4XIanaToBcp47Mapper._(result.union.ok)
-        : throw ICU4XError._(result.union.err);
+        : throw ICU4XError.values
+            .firstWhere((v) => v._underlying == result.union.err);
   }
   // ignore: non_constant_identifier_names
   static final _ICU4XIanaToBcp47Mapper_create = _capi<
@@ -6959,7 +7125,8 @@ class ICU4XIsoDate implements ffi.Finalizable {
     final result = _ICU4XIsoDate_create(year, month, day);
     return result.isOk
         ? ICU4XIsoDate._(result.union.ok)
-        : throw ICU4XError._(result.union.err);
+        : throw ICU4XError.values
+            .firstWhere((v) => v._underlying == result.union.err);
   }
   // ignore: non_constant_identifier_names
   static final _ICU4XIsoDate_create = _capi<
@@ -7031,7 +7198,7 @@ class ICU4XIsoDate implements ffi.Finalizable {
   /// See the [Rust documentation for `day_of_week`](https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.day_of_week) for more information.
   ICU4XIsoWeekday get dayOfWeek {
     final result = _ICU4XIsoDate_day_of_week(_underlying);
-    return ICU4XIsoWeekday._(result);
+    return ICU4XIsoWeekday.values.firstWhere((v) => v._underlying == result);
   }
 
   // ignore: non_constant_identifier_names
@@ -7047,7 +7214,8 @@ class ICU4XIsoDate implements ffi.Finalizable {
   ///
   /// See the [Rust documentation for `week_of_month`](https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.week_of_month) for more information.
   int weekOfMonth(ICU4XIsoWeekday firstWeekday) {
-    final result = _ICU4XIsoDate_week_of_month(_underlying, firstWeekday._id);
+    final result =
+        _ICU4XIsoDate_week_of_month(_underlying, firstWeekday._underlying);
     return result;
   }
 
@@ -7066,7 +7234,8 @@ class ICU4XIsoDate implements ffi.Finalizable {
         _ICU4XIsoDate_week_of_year(_underlying, calculator._underlying);
     return result.isOk
         ? ICU4XWeekOf._(result.union.ok)
-        : throw ICU4XError._(result.union.err);
+        : throw ICU4XError.values
+            .firstWhere((v) => v._underlying == result.union.err);
   }
 
   // ignore: non_constant_identifier_names
@@ -7171,7 +7340,8 @@ class ICU4XIsoDateTime implements ffi.Finalizable {
         year, month, day, hour, minute, second, nanosecond);
     return result.isOk
         ? ICU4XIsoDateTime._(result.union.ok)
-        : throw ICU4XError._(result.union.err);
+        : throw ICU4XError.values
+            .firstWhere((v) => v._underlying == result.union.err);
   }
   // ignore: non_constant_identifier_names
   static final _ICU4XIsoDateTime_create = _capi<
@@ -7378,7 +7548,7 @@ class ICU4XIsoDateTime implements ffi.Finalizable {
   /// See the [Rust documentation for `day_of_week`](https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.day_of_week) for more information.
   ICU4XIsoWeekday get dayOfWeek {
     final result = _ICU4XIsoDateTime_day_of_week(_underlying);
-    return ICU4XIsoWeekday._(result);
+    return ICU4XIsoWeekday.values.firstWhere((v) => v._underlying == result);
   }
 
   // ignore: non_constant_identifier_names
@@ -7395,7 +7565,7 @@ class ICU4XIsoDateTime implements ffi.Finalizable {
   /// See the [Rust documentation for `week_of_month`](https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.week_of_month) for more information.
   int weekOfMonth(ICU4XIsoWeekday firstWeekday) {
     final result =
-        _ICU4XIsoDateTime_week_of_month(_underlying, firstWeekday._id);
+        _ICU4XIsoDateTime_week_of_month(_underlying, firstWeekday._underlying);
     return result;
   }
 
@@ -7414,7 +7584,8 @@ class ICU4XIsoDateTime implements ffi.Finalizable {
         _ICU4XIsoDateTime_week_of_year(_underlying, calculator._underlying);
     return result.isOk
         ? ICU4XWeekOf._(result.union.ok)
-        : throw ICU4XError._(result.union.err);
+        : throw ICU4XError.values
+            .firstWhere((v) => v._underlying == result.union.err);
   }
 
   // ignore: non_constant_identifier_names
@@ -7499,32 +7670,16 @@ class ICU4XIsoDateTime implements ffi.Finalizable {
 
 /// See the [Rust documentation for `IsoFormat`](https://docs.rs/icu/latest/icu/datetime/time_zone/enum.IsoFormat.html) for more information.
 enum ICU4XIsoTimeZoneFormat {
-  basic.__(0),
-  extended.__(1),
-  utcBasic.__(2),
-  utcExtended.__(3);
-
-  const ICU4XIsoTimeZoneFormat.__(this._id);
-
-  // ignore: unused_element
-  factory ICU4XIsoTimeZoneFormat._(int id) =>
-      values.firstWhere((value) => value._id == id);
-
-  final int _id;
+  basic,
+  extended,
+  utcBasic,
+  utcExtended;
 }
 
 /// See the [Rust documentation for `IsoMinutes`](https://docs.rs/icu/latest/icu/datetime/time_zone/enum.IsoMinutes.html) for more information.
 enum ICU4XIsoTimeZoneMinuteDisplay {
-  required.__(0),
-  optional.__(1);
-
-  const ICU4XIsoTimeZoneMinuteDisplay.__(this._id);
-
-  // ignore: unused_element
-  factory ICU4XIsoTimeZoneMinuteDisplay._(int id) =>
-      values.firstWhere((value) => value._id == id);
-
-  final int _id;
+  required,
+  optional;
 }
 
 class _ICU4XIsoTimeZoneOptionsFfi extends ffi.Struct {
@@ -7550,21 +7705,21 @@ class ICU4XIsoTimeZoneOptions {
   }
 
   ICU4XIsoTimeZoneFormat get format =>
-      ICU4XIsoTimeZoneFormat._(_underlying.format);
+      ICU4XIsoTimeZoneFormat.values[_underlying.format];
   set format(ICU4XIsoTimeZoneFormat format) {
-    _underlying.format = format._id;
+    _underlying.format = format.index;
   }
 
   ICU4XIsoTimeZoneMinuteDisplay get minutes =>
-      ICU4XIsoTimeZoneMinuteDisplay._(_underlying.minutes);
+      ICU4XIsoTimeZoneMinuteDisplay.values[_underlying.minutes];
   set minutes(ICU4XIsoTimeZoneMinuteDisplay minutes) {
-    _underlying.minutes = minutes._id;
+    _underlying.minutes = minutes.index;
   }
 
   ICU4XIsoTimeZoneSecondDisplay get seconds =>
-      ICU4XIsoTimeZoneSecondDisplay._(_underlying.seconds);
+      ICU4XIsoTimeZoneSecondDisplay.values[_underlying.seconds];
   set seconds(ICU4XIsoTimeZoneSecondDisplay seconds) {
-    _underlying.seconds = seconds._id;
+    _underlying.seconds = seconds.index;
   }
 
   @override
@@ -7584,63 +7739,50 @@ class ICU4XIsoTimeZoneOptions {
 
 /// See the [Rust documentation for `IsoSeconds`](https://docs.rs/icu/latest/icu/datetime/time_zone/enum.IsoSeconds.html) for more information.
 enum ICU4XIsoTimeZoneSecondDisplay {
-  optional.__(0),
-  never.__(1);
-
-  const ICU4XIsoTimeZoneSecondDisplay.__(this._id);
-
-  // ignore: unused_element
-  factory ICU4XIsoTimeZoneSecondDisplay._(int id) =>
-      values.firstWhere((value) => value._id == id);
-
-  final int _id;
+  optional,
+  never;
 }
 
 enum ICU4XIsoWeekday {
-  monday.__(1),
-  tuesday.__(2),
-  wednesday.__(3),
-  thursday.__(4),
-  friday.__(5),
-  saturday.__(6),
-  sunday.__(7);
+  monday,
+  tuesday,
+  wednesday,
+  thursday,
+  friday,
+  saturday,
+  sunday;
 
-  const ICU4XIsoWeekday.__(this._id);
-
-  // ignore: unused_element
-  factory ICU4XIsoWeekday._(int id) =>
-      values.firstWhere((value) => value._id == id);
-
-  final int _id;
+  int get _underlying {
+    switch (this) {
+      case monday:
+        return 1;
+      case tuesday:
+        return 2;
+      case wednesday:
+        return 3;
+      case thursday:
+        return 4;
+      case friday:
+        return 5;
+      case saturday:
+        return 6;
+      case sunday:
+        return 7;
+    }
+  }
 }
 
 /// See the [Rust documentation for `LanguageDisplay`](https://docs.rs/icu/latest/icu/displaynames/options/enum.LanguageDisplay.html) for more information.
 enum ICU4XLanguageDisplay {
-  dialect.__(0),
-  standard.__(1);
-
-  const ICU4XLanguageDisplay.__(this._id);
-
-  // ignore: unused_element
-  factory ICU4XLanguageDisplay._(int id) =>
-      values.firstWhere((value) => value._id == id);
-
-  final int _id;
+  dialect,
+  standard;
 }
 
 /// See the [Rust documentation for `LeadingAdjustment`](https://docs.rs/icu/latest/icu/casemap/titlecase/enum.LeadingAdjustment.html) for more information.
 enum ICU4XLeadingAdjustment {
-  auto.__(0),
-  none.__(1),
-  toCased.__(2);
-
-  const ICU4XLeadingAdjustment.__(this._id);
-
-  // ignore: unused_element
-  factory ICU4XLeadingAdjustment._(int id) =>
-      values.firstWhere((value) => value._id == id);
-
-  final int _id;
+  auto,
+  none,
+  toCased;
 }
 
 /// See the [Rust documentation for `LineBreakIterator`](https://docs.rs/icu/latest/icu/segmenter/struct.LineBreakIterator.html) for more information.
@@ -7754,15 +7896,15 @@ class ICU4XLineBreakOptionsV1 {
   }
 
   ICU4XLineBreakStrictness get strictness =>
-      ICU4XLineBreakStrictness._(_underlying.strictness);
+      ICU4XLineBreakStrictness.values[_underlying.strictness];
   set strictness(ICU4XLineBreakStrictness strictness) {
-    _underlying.strictness = strictness._id;
+    _underlying.strictness = strictness.index;
   }
 
   ICU4XLineBreakWordOption get wordOption =>
-      ICU4XLineBreakWordOption._(_underlying.wordOption);
+      ICU4XLineBreakWordOption.values[_underlying.wordOption];
   set wordOption(ICU4XLineBreakWordOption wordOption) {
-    _underlying.wordOption = wordOption._id;
+    _underlying.wordOption = wordOption.index;
   }
 
   bool get jaZh => _underlying.jaZh;
@@ -7787,33 +7929,17 @@ class ICU4XLineBreakOptionsV1 {
 
 /// See the [Rust documentation for `LineBreakStrictness`](https://docs.rs/icu/latest/icu/segmenter/enum.LineBreakStrictness.html) for more information.
 enum ICU4XLineBreakStrictness {
-  loose.__(0),
-  normal.__(1),
-  strict.__(2),
-  anywhere.__(3);
-
-  const ICU4XLineBreakStrictness.__(this._id);
-
-  // ignore: unused_element
-  factory ICU4XLineBreakStrictness._(int id) =>
-      values.firstWhere((value) => value._id == id);
-
-  final int _id;
+  loose,
+  normal,
+  strict,
+  anywhere;
 }
 
 /// See the [Rust documentation for `LineBreakWordOption`](https://docs.rs/icu/latest/icu/segmenter/enum.LineBreakWordOption.html) for more information.
 enum ICU4XLineBreakWordOption {
-  normal.__(0),
-  breakAll.__(1),
-  keepAll.__(2);
-
-  const ICU4XLineBreakWordOption.__(this._id);
-
-  // ignore: unused_element
-  factory ICU4XLineBreakWordOption._(int id) =>
-      values.firstWhere((value) => value._id == id);
-
-  final int _id;
+  normal,
+  breakAll,
+  keepAll;
 }
 
 /// An ICU4X line-break segmenter, capable of finding breakpoints in strings.
@@ -7837,7 +7963,8 @@ class ICU4XLineSegmenter implements ffi.Finalizable {
     final result = _ICU4XLineSegmenter_create_auto(provider._underlying);
     return result.isOk
         ? ICU4XLineSegmenter._(result.union.ok)
-        : throw ICU4XError._(result.union.err);
+        : throw ICU4XError.values
+            .firstWhere((v) => v._underlying == result.union.err);
   }
   // ignore: non_constant_identifier_names
   static final _ICU4XLineSegmenter_create_auto = _capi<
@@ -7855,7 +7982,8 @@ class ICU4XLineSegmenter implements ffi.Finalizable {
     final result = _ICU4XLineSegmenter_create_lstm(provider._underlying);
     return result.isOk
         ? ICU4XLineSegmenter._(result.union.ok)
-        : throw ICU4XError._(result.union.err);
+        : throw ICU4XError.values
+            .firstWhere((v) => v._underlying == result.union.err);
   }
   // ignore: non_constant_identifier_names
   static final _ICU4XLineSegmenter_create_lstm = _capi<
@@ -7873,7 +8001,8 @@ class ICU4XLineSegmenter implements ffi.Finalizable {
     final result = _ICU4XLineSegmenter_create_dictionary(provider._underlying);
     return result.isOk
         ? ICU4XLineSegmenter._(result.union.ok)
-        : throw ICU4XError._(result.union.err);
+        : throw ICU4XError.values
+            .firstWhere((v) => v._underlying == result.union.err);
   }
   // ignore: non_constant_identifier_names
   static final _ICU4XLineSegmenter_create_dictionary = _capi<
@@ -7893,7 +8022,8 @@ class ICU4XLineSegmenter implements ffi.Finalizable {
         provider._underlying, options._underlying);
     return result.isOk
         ? ICU4XLineSegmenter._(result.union.ok)
-        : throw ICU4XError._(result.union.err);
+        : throw ICU4XError.values
+            .firstWhere((v) => v._underlying == result.union.err);
   }
   // ignore: non_constant_identifier_names
   static final _ICU4XLineSegmenter_create_auto_with_options_v1 = _capi<
@@ -7915,7 +8045,8 @@ class ICU4XLineSegmenter implements ffi.Finalizable {
         provider._underlying, options._underlying);
     return result.isOk
         ? ICU4XLineSegmenter._(result.union.ok)
-        : throw ICU4XError._(result.union.err);
+        : throw ICU4XError.values
+            .firstWhere((v) => v._underlying == result.union.err);
   }
   // ignore: non_constant_identifier_names
   static final _ICU4XLineSegmenter_create_lstm_with_options_v1 = _capi<
@@ -7937,7 +8068,8 @@ class ICU4XLineSegmenter implements ffi.Finalizable {
         provider._underlying, options._underlying);
     return result.isOk
         ? ICU4XLineSegmenter._(result.union.ok)
-        : throw ICU4XError._(result.union.err);
+        : throw ICU4XError.values
+            .firstWhere((v) => v._underlying == result.union.err);
   }
   // ignore: non_constant_identifier_names
   static final _ICU4XLineSegmenter_create_dictionary_with_options_v1 = _capi<
@@ -8106,10 +8238,11 @@ class ICU4XListFormatter implements ffi.Finalizable {
   factory ICU4XListFormatter.andWithLength(
       ICU4XDataProvider provider, ICU4XLocale locale, ICU4XListLength length) {
     final result = _ICU4XListFormatter_create_and_with_length(
-        provider._underlying, locale._underlying, length._id);
+        provider._underlying, locale._underlying, length.index);
     return result.isOk
         ? ICU4XListFormatter._(result.union.ok)
-        : throw ICU4XError._(result.union.err);
+        : throw ICU4XError.values
+            .firstWhere((v) => v._underlying == result.union.err);
   }
   // ignore: non_constant_identifier_names
   static final _ICU4XListFormatter_create_and_with_length = _capi<
@@ -8128,10 +8261,11 @@ class ICU4XListFormatter implements ffi.Finalizable {
   factory ICU4XListFormatter.orWithLength(
       ICU4XDataProvider provider, ICU4XLocale locale, ICU4XListLength length) {
     final result = _ICU4XListFormatter_create_or_with_length(
-        provider._underlying, locale._underlying, length._id);
+        provider._underlying, locale._underlying, length.index);
     return result.isOk
         ? ICU4XListFormatter._(result.union.ok)
-        : throw ICU4XError._(result.union.err);
+        : throw ICU4XError.values
+            .firstWhere((v) => v._underlying == result.union.err);
   }
   // ignore: non_constant_identifier_names
   static final _ICU4XListFormatter_create_or_with_length = _capi<
@@ -8150,10 +8284,11 @@ class ICU4XListFormatter implements ffi.Finalizable {
   factory ICU4XListFormatter.unitWithLength(
       ICU4XDataProvider provider, ICU4XLocale locale, ICU4XListLength length) {
     final result = _ICU4XListFormatter_create_unit_with_length(
-        provider._underlying, locale._underlying, length._id);
+        provider._underlying, locale._underlying, length.index);
     return result.isOk
         ? ICU4XListFormatter._(result.union.ok)
-        : throw ICU4XError._(result.union.err);
+        : throw ICU4XError.values
+            .firstWhere((v) => v._underlying == result.union.err);
   }
   // ignore: non_constant_identifier_names
   static final _ICU4XListFormatter_create_unit_with_length = _capi<
@@ -8173,7 +8308,8 @@ class ICU4XListFormatter implements ffi.Finalizable {
         _underlying, list._underlying, writeable._underlying);
     return result.isOk
         ? writeable.finalize()
-        : throw ICU4XError._(result.union.err);
+        : throw ICU4XError.values
+            .firstWhere((v) => v._underlying == result.union.err);
   }
 
   // ignore: non_constant_identifier_names
@@ -8190,17 +8326,9 @@ class ICU4XListFormatter implements ffi.Finalizable {
 
 /// See the [Rust documentation for `ListLength`](https://docs.rs/icu/latest/icu/list/enum.ListLength.html) for more information.
 enum ICU4XListLength {
-  wide.__(0),
-  short.__(1),
-  narrow.__(2);
-
-  const ICU4XListLength.__(this._id);
-
-  // ignore: unused_element
-  factory ICU4XListLength._(int id) =>
-      values.firstWhere((value) => value._id == id);
-
-  final int _id;
+  wide,
+  short,
+  narrow;
 }
 
 /// An ICU4X Locale, capable of representing strings like `"en-US"`.
@@ -8231,7 +8359,8 @@ class ICU4XLocale implements ffi.Finalizable {
     alloc.releaseAll();
     return result.isOk
         ? ICU4XLocale._(result.union.ok)
-        : throw ICU4XError._(result.union.err);
+        : throw ICU4XError.values
+            .firstWhere((v) => v._underlying == result.union.err);
   }
   // ignore: non_constant_identifier_names
   static final _ICU4XLocale_create_from_string = _capi<
@@ -8279,7 +8408,8 @@ class ICU4XLocale implements ffi.Finalizable {
     final result = _ICU4XLocale_basename(_underlying, writeable._underlying);
     return result.isOk
         ? writeable.finalize()
-        : throw ICU4XError._(result.union.err);
+        : throw ICU4XError.values
+            .firstWhere((v) => v._underlying == result.union.err);
   }
 
   // ignore: non_constant_identifier_names
@@ -8304,7 +8434,8 @@ class ICU4XLocale implements ffi.Finalizable {
     alloc.releaseAll();
     return result.isOk
         ? writeable.finalize()
-        : throw ICU4XError._(result.union.err);
+        : throw ICU4XError.values
+            .firstWhere((v) => v._underlying == result.union.err);
   }
 
   // ignore: non_constant_identifier_names
@@ -8331,7 +8462,8 @@ class ICU4XLocale implements ffi.Finalizable {
     final result = _ICU4XLocale_language(_underlying, writeable._underlying);
     return result.isOk
         ? writeable.finalize()
-        : throw ICU4XError._(result.union.err);
+        : throw ICU4XError.values
+            .firstWhere((v) => v._underlying == result.union.err);
   }
 
   // ignore: non_constant_identifier_names
@@ -8354,7 +8486,8 @@ class ICU4XLocale implements ffi.Finalizable {
         _underlying, bytesSlice._bytes, bytesSlice._length);
     alloc.releaseAll();
     if (!result.isOk) {
-      throw ICU4XError._(result.union.err);
+      throw ICU4XError.values
+          .firstWhere((v) => v._underlying == result.union.err);
     }
   }
 
@@ -8377,7 +8510,8 @@ class ICU4XLocale implements ffi.Finalizable {
     final result = _ICU4XLocale_region(_underlying, writeable._underlying);
     return result.isOk
         ? writeable.finalize()
-        : throw ICU4XError._(result.union.err);
+        : throw ICU4XError.values
+            .firstWhere((v) => v._underlying == result.union.err);
   }
 
   // ignore: non_constant_identifier_names
@@ -8400,7 +8534,8 @@ class ICU4XLocale implements ffi.Finalizable {
         _underlying, bytesSlice._bytes, bytesSlice._length);
     alloc.releaseAll();
     if (!result.isOk) {
-      throw ICU4XError._(result.union.err);
+      throw ICU4XError.values
+          .firstWhere((v) => v._underlying == result.union.err);
     }
   }
 
@@ -8421,7 +8556,8 @@ class ICU4XLocale implements ffi.Finalizable {
     final result = _ICU4XLocale_script(_underlying, writeable._underlying);
     return result.isOk
         ? writeable.finalize()
-        : throw ICU4XError._(result.union.err);
+        : throw ICU4XError.values
+            .firstWhere((v) => v._underlying == result.union.err);
   }
 
   // ignore: non_constant_identifier_names
@@ -8444,7 +8580,8 @@ class ICU4XLocale implements ffi.Finalizable {
         _underlying, bytesSlice._bytes, bytesSlice._length);
     alloc.releaseAll();
     if (!result.isOk) {
-      throw ICU4XError._(result.union.err);
+      throw ICU4XError.values
+          .firstWhere((v) => v._underlying == result.union.err);
     }
   }
 
@@ -8472,7 +8609,8 @@ class ICU4XLocale implements ffi.Finalizable {
     alloc.releaseAll();
     return result.isOk
         ? writeable.finalize()
-        : throw ICU4XError._(result.union.err);
+        : throw ICU4XError.values
+            .firstWhere((v) => v._underlying == result.union.err);
   }
 
   // ignore: non_constant_identifier_names
@@ -8493,7 +8631,8 @@ class ICU4XLocale implements ffi.Finalizable {
     final result = _ICU4XLocale_to_string(_underlying, writeable._underlying);
     return result.isOk
         ? writeable.finalize()
-        : throw ICU4XError._(result.union.err);
+        : throw ICU4XError.values
+            .firstWhere((v) => v._underlying == result.union.err);
   }
 
   // ignore: non_constant_identifier_names
@@ -8533,7 +8672,7 @@ class ICU4XLocale implements ffi.Finalizable {
     final result = _ICU4XLocale_strict_cmp(
         _underlying, otherSlice._bytes, otherSlice._length);
     alloc.releaseAll();
-    return ICU4XOrdering._(result);
+    return ICU4XOrdering.values.firstWhere((v) => v._underlying == result);
   }
 
   // ignore: non_constant_identifier_names
@@ -8592,7 +8731,8 @@ class ICU4XLocaleCanonicalizer implements ffi.Finalizable {
     final result = _ICU4XLocaleCanonicalizer_create(provider._underlying);
     return result.isOk
         ? ICU4XLocaleCanonicalizer._(result.union.ok)
-        : throw ICU4XError._(result.union.err);
+        : throw ICU4XError.values
+            .firstWhere((v) => v._underlying == result.union.err);
   }
   // ignore: non_constant_identifier_names
   static final _ICU4XLocaleCanonicalizer_create = _capi<
@@ -8610,7 +8750,8 @@ class ICU4XLocaleCanonicalizer implements ffi.Finalizable {
         _ICU4XLocaleCanonicalizer_create_extended(provider._underlying);
     return result.isOk
         ? ICU4XLocaleCanonicalizer._(result.union.ok)
-        : throw ICU4XError._(result.union.err);
+        : throw ICU4XError.values
+            .firstWhere((v) => v._underlying == result.union.err);
   }
   // ignore: non_constant_identifier_names
   static final _ICU4XLocaleCanonicalizer_create_extended = _capi<
@@ -8626,7 +8767,7 @@ class ICU4XLocaleCanonicalizer implements ffi.Finalizable {
   ICU4XTransformResult canonicalize(ICU4XLocale locale) {
     final result =
         _ICU4XLocaleCanonicalizer_canonicalize(_underlying, locale._underlying);
-    return ICU4XTransformResult._(result);
+    return ICU4XTransformResult.values[result];
   }
 
   // ignore: non_constant_identifier_names
@@ -8642,17 +8783,9 @@ class ICU4XLocaleCanonicalizer implements ffi.Finalizable {
 
 /// See the [Rust documentation for `Direction`](https://docs.rs/icu/latest/icu/locid_transform/enum.Direction.html) for more information.
 enum ICU4XLocaleDirection {
-  leftToRight.__(0),
-  rightToLeft.__(1),
-  unknown.__(2);
-
-  const ICU4XLocaleDirection.__(this._id);
-
-  // ignore: unused_element
-  factory ICU4XLocaleDirection._(int id) =>
-      values.firstWhere((value) => value._id == id);
-
-  final int _id;
+  leftToRight,
+  rightToLeft,
+  unknown;
 }
 
 /// See the [Rust documentation for `LocaleDirectionality`](https://docs.rs/icu/latest/icu/locid_transform/struct.LocaleDirectionality.html) for more information.
@@ -8673,7 +8806,8 @@ class ICU4XLocaleDirectionality implements ffi.Finalizable {
     final result = _ICU4XLocaleDirectionality_create(provider._underlying);
     return result.isOk
         ? ICU4XLocaleDirectionality._(result.union.ok)
-        : throw ICU4XError._(result.union.err);
+        : throw ICU4XError.values
+            .firstWhere((v) => v._underlying == result.union.err);
   }
   // ignore: non_constant_identifier_names
   static final _ICU4XLocaleDirectionality_create = _capi<
@@ -8692,7 +8826,8 @@ class ICU4XLocaleDirectionality implements ffi.Finalizable {
         provider._underlying, expander._underlying);
     return result.isOk
         ? ICU4XLocaleDirectionality._(result.union.ok)
-        : throw ICU4XError._(result.union.err);
+        : throw ICU4XError.values
+            .firstWhere((v) => v._underlying == result.union.err);
   }
   // ignore: non_constant_identifier_names
   static final _ICU4XLocaleDirectionality_create_with_expander = _capi<
@@ -8708,7 +8843,7 @@ class ICU4XLocaleDirectionality implements ffi.Finalizable {
   ICU4XLocaleDirection get(ICU4XLocale locale) {
     final result =
         _ICU4XLocaleDirectionality_get(_underlying, locale._underlying);
-    return ICU4XLocaleDirection._(result);
+    return ICU4XLocaleDirection.values[result];
   }
 
   // ignore: non_constant_identifier_names
@@ -8775,7 +8910,8 @@ class ICU4XLocaleDisplayNamesFormatter implements ffi.Finalizable {
         provider._underlying, locale._underlying, options._underlying);
     return result.isOk
         ? ICU4XLocaleDisplayNamesFormatter._(result.union.ok)
-        : throw ICU4XError._(result.union.err);
+        : throw ICU4XError.values
+            .firstWhere((v) => v._underlying == result.union.err);
   }
   // ignore: non_constant_identifier_names
   static final _ICU4XLocaleDisplayNamesFormatter_try_new = _capi<
@@ -8800,7 +8936,8 @@ class ICU4XLocaleDisplayNamesFormatter implements ffi.Finalizable {
         _underlying, locale._underlying, writeable._underlying);
     return result.isOk
         ? writeable.finalize()
-        : throw ICU4XError._(result.union.err);
+        : throw ICU4XError.values
+            .firstWhere((v) => v._underlying == result.union.err);
   }
 
   // ignore: non_constant_identifier_names
@@ -8834,7 +8971,8 @@ class ICU4XLocaleExpander implements ffi.Finalizable {
     final result = _ICU4XLocaleExpander_create(provider._underlying);
     return result.isOk
         ? ICU4XLocaleExpander._(result.union.ok)
-        : throw ICU4XError._(result.union.err);
+        : throw ICU4XError.values
+            .firstWhere((v) => v._underlying == result.union.err);
   }
   // ignore: non_constant_identifier_names
   static final _ICU4XLocaleExpander_create = _capi<
@@ -8851,7 +8989,8 @@ class ICU4XLocaleExpander implements ffi.Finalizable {
     final result = _ICU4XLocaleExpander_create_extended(provider._underlying);
     return result.isOk
         ? ICU4XLocaleExpander._(result.union.ok)
-        : throw ICU4XError._(result.union.err);
+        : throw ICU4XError.values
+            .firstWhere((v) => v._underlying == result.union.err);
   }
   // ignore: non_constant_identifier_names
   static final _ICU4XLocaleExpander_create_extended = _capi<
@@ -8867,7 +9006,7 @@ class ICU4XLocaleExpander implements ffi.Finalizable {
   ICU4XTransformResult maximize(ICU4XLocale locale) {
     final result =
         _ICU4XLocaleExpander_maximize(_underlying, locale._underlying);
-    return ICU4XTransformResult._(result);
+    return ICU4XTransformResult.values[result];
   }
 
   // ignore: non_constant_identifier_names
@@ -8885,7 +9024,7 @@ class ICU4XLocaleExpander implements ffi.Finalizable {
   ICU4XTransformResult minimize(ICU4XLocale locale) {
     final result =
         _ICU4XLocaleExpander_minimize(_underlying, locale._underlying);
-    return ICU4XTransformResult._(result);
+    return ICU4XTransformResult.values[result];
   }
 
   // ignore: non_constant_identifier_names
@@ -8923,9 +9062,9 @@ class ICU4XLocaleFallbackConfig {
   }
 
   ICU4XLocaleFallbackPriority get priority =>
-      ICU4XLocaleFallbackPriority._(_underlying.priority);
+      ICU4XLocaleFallbackPriority.values[_underlying.priority];
   set priority(ICU4XLocaleFallbackPriority priority) {
-    _underlying.priority = priority._id;
+    _underlying.priority = priority.index;
   }
 
   String get extensionKey => _underlying.extensionKey._asDart;
@@ -8937,9 +9076,9 @@ class ICU4XLocaleFallbackConfig {
   }
 
   ICU4XLocaleFallbackSupplement get fallbackSupplement =>
-      ICU4XLocaleFallbackSupplement._(_underlying.fallbackSupplement);
+      ICU4XLocaleFallbackSupplement.values[_underlying.fallbackSupplement];
   set fallbackSupplement(ICU4XLocaleFallbackSupplement fallbackSupplement) {
-    _underlying.fallbackSupplement = fallbackSupplement._id;
+    _underlying.fallbackSupplement = fallbackSupplement.index;
   }
 
   @override
@@ -9004,33 +9143,17 @@ class ICU4XLocaleFallbackIterator implements ffi.Finalizable {
 ///
 /// See the [Rust documentation for `LocaleFallbackPriority`](https://docs.rs/icu/latest/icu/locid_transform/fallback/enum.LocaleFallbackPriority.html) for more information.
 enum ICU4XLocaleFallbackPriority {
-  language.__(0),
-  region.__(1),
-  collation.__(2);
-
-  const ICU4XLocaleFallbackPriority.__(this._id);
-
-  // ignore: unused_element
-  factory ICU4XLocaleFallbackPriority._(int id) =>
-      values.firstWhere((value) => value._id == id);
-
-  final int _id;
+  language,
+  region,
+  collation;
 }
 
 /// What additional data is required to load when performing fallback.
 ///
 /// See the [Rust documentation for `LocaleFallbackSupplement`](https://docs.rs/icu/latest/icu/locid_transform/fallback/enum.LocaleFallbackSupplement.html) for more information.
 enum ICU4XLocaleFallbackSupplement {
-  none.__(0),
-  collation.__(1);
-
-  const ICU4XLocaleFallbackSupplement.__(this._id);
-
-  // ignore: unused_element
-  factory ICU4XLocaleFallbackSupplement._(int id) =>
-      values.firstWhere((value) => value._id == id);
-
-  final int _id;
+  none,
+  collation;
 }
 
 /// An object that runs the ICU4X locale fallback algorithm.
@@ -9053,7 +9176,8 @@ class ICU4XLocaleFallbacker implements ffi.Finalizable {
     final result = _ICU4XLocaleFallbacker_create(provider._underlying);
     return result.isOk
         ? ICU4XLocaleFallbacker._(result.union.ok)
-        : throw ICU4XError._(result.union.err);
+        : throw ICU4XError.values
+            .firstWhere((v) => v._underlying == result.union.err);
   }
   // ignore: non_constant_identifier_names
   static final _ICU4XLocaleFallbacker_create = _capi<
@@ -9084,7 +9208,8 @@ class ICU4XLocaleFallbacker implements ffi.Finalizable {
         _ICU4XLocaleFallbacker_for_config(_underlying, config._underlying);
     return result.isOk
         ? ICU4XLocaleFallbackerWithConfig._(result.union.ok)
-        : throw ICU4XError._(result.union.err);
+        : throw ICU4XError.values
+            .firstWhere((v) => v._underlying == result.union.err);
   }
 
   // ignore: non_constant_identifier_names
@@ -9194,7 +9319,8 @@ class ICU4XMetazoneCalculator implements ffi.Finalizable {
     final result = _ICU4XMetazoneCalculator_create(provider._underlying);
     return result.isOk
         ? ICU4XMetazoneCalculator._(result.union.ok)
-        : throw ICU4XError._(result.union.err);
+        : throw ICU4XError.values
+            .firstWhere((v) => v._underlying == result.union.err);
   }
   // ignore: non_constant_identifier_names
   static final _ICU4XMetazoneCalculator_create = _capi<
@@ -9207,17 +9333,20 @@ class ICU4XMetazoneCalculator implements ffi.Finalizable {
 
 /// See the [Rust documentation for `Ordering`](https://docs.rs/core/latest/core/cmp/enum.Ordering.html) for more information.
 enum ICU4XOrdering {
-  less.__(-1),
-  equal.__(0),
-  greater.__(1);
+  less,
+  equal,
+  greater;
 
-  const ICU4XOrdering.__(this._id);
-
-  // ignore: unused_element
-  factory ICU4XOrdering._(int id) =>
-      values.firstWhere((value) => value._id == id);
-
-  final int _id;
+  int get _underlying {
+    switch (this) {
+      case less:
+        return -1;
+      case equal:
+        return 0;
+      case greater:
+        return 1;
+    }
+  }
 }
 
 /// FFI version of `PluralRules::categories()` data.
@@ -9304,20 +9433,12 @@ class ICU4XPluralCategories {
 ///
 /// See the [Rust documentation for `PluralCategory`](https://docs.rs/icu/latest/icu/plurals/enum.PluralCategory.html) for more information.
 enum ICU4XPluralCategory {
-  zero.__(0),
-  one.__(1),
-  two.__(2),
-  few.__(3),
-  many.__(4),
-  other.__(5);
-
-  const ICU4XPluralCategory.__(this._id);
-
-  // ignore: unused_element
-  factory ICU4XPluralCategory._(int id) =>
-      values.firstWhere((value) => value._id == id);
-
-  final int _id;
+  zero,
+  one,
+  two,
+  few,
+  many,
+  other;
 
   /// Construct from a string in the format
   /// [specified in TR35](https://unicode.org/reports/tr35/tr35-numbers.html#Language_Plural_Rules)
@@ -9333,7 +9454,7 @@ enum ICU4XPluralCategory {
         _ICU4XPluralCategory_get_for_cldr_string(sSlice._bytes, sSlice._length);
     alloc.releaseAll();
     return result.isOk
-        ? ICU4XPluralCategory._(result.union.ok)
+        ? ICU4XPluralCategory.values[result.union.ok]
         : throw VoidError();
   }
   // ignore: non_constant_identifier_names
@@ -9370,7 +9491,8 @@ class ICU4XPluralOperands implements ffi.Finalizable {
     alloc.releaseAll();
     return result.isOk
         ? ICU4XPluralOperands._(result.union.ok)
-        : throw ICU4XError._(result.union.err);
+        : throw ICU4XError.values
+            .firstWhere((v) => v._underlying == result.union.err);
   }
   // ignore: non_constant_identifier_names
   static final _ICU4XPluralOperands_create_from_string = _capi<
@@ -9403,7 +9525,8 @@ class ICU4XPluralRules implements ffi.Finalizable {
         provider._underlying, locale._underlying);
     return result.isOk
         ? ICU4XPluralRules._(result.union.ok)
-        : throw ICU4XError._(result.union.err);
+        : throw ICU4XError.values
+            .firstWhere((v) => v._underlying == result.union.err);
   }
   // ignore: non_constant_identifier_names
   static final _ICU4XPluralRules_create_cardinal = _capi<
@@ -9423,7 +9546,8 @@ class ICU4XPluralRules implements ffi.Finalizable {
         provider._underlying, locale._underlying);
     return result.isOk
         ? ICU4XPluralRules._(result.union.ok)
-        : throw ICU4XError._(result.union.err);
+        : throw ICU4XError.values
+            .firstWhere((v) => v._underlying == result.union.err);
   }
   // ignore: non_constant_identifier_names
   static final _ICU4XPluralRules_create_ordinal = _capi<
@@ -9439,7 +9563,7 @@ class ICU4XPluralRules implements ffi.Finalizable {
   /// See the [Rust documentation for `category_for`](https://docs.rs/icu/latest/icu/plurals/struct.PluralRules.html#method.category_for) for more information.
   ICU4XPluralCategory categoryFor(ICU4XPluralOperands op) {
     final result = _ICU4XPluralRules_category_for(_underlying, op._underlying);
-    return ICU4XPluralCategory._(result);
+    return ICU4XPluralCategory.values[result];
   }
 
   // ignore: non_constant_identifier_names
@@ -9490,7 +9614,8 @@ class ICU4XPluralRulesWithRanges implements ffi.Finalizable {
         provider._underlying, locale._underlying);
     return result.isOk
         ? ICU4XPluralRulesWithRanges._(result.union.ok)
-        : throw ICU4XError._(result.union.err);
+        : throw ICU4XError.values
+            .firstWhere((v) => v._underlying == result.union.err);
   }
   // ignore: non_constant_identifier_names
   static final _ICU4XPluralRulesWithRanges_create_cardinal = _capi<
@@ -9511,7 +9636,8 @@ class ICU4XPluralRulesWithRanges implements ffi.Finalizable {
         provider._underlying, locale._underlying);
     return result.isOk
         ? ICU4XPluralRulesWithRanges._(result.union.ok)
-        : throw ICU4XError._(result.union.err);
+        : throw ICU4XError.values
+            .firstWhere((v) => v._underlying == result.union.err);
   }
   // ignore: non_constant_identifier_names
   static final _ICU4XPluralRulesWithRanges_create_ordinal = _capi<
@@ -9529,7 +9655,7 @@ class ICU4XPluralRulesWithRanges implements ffi.Finalizable {
   ICU4XPluralCategory categoryFor(ICU4XPluralOperands op) {
     final result =
         _ICU4XPluralRulesWithRanges_category_for(_underlying, op._underlying);
-    return ICU4XPluralCategory._(result);
+    return ICU4XPluralCategory.values[result];
   }
 
   // ignore: non_constant_identifier_names
@@ -9565,7 +9691,7 @@ class ICU4XPluralRulesWithRanges implements ffi.Finalizable {
       ICU4XPluralOperands start, ICU4XPluralOperands end) {
     final result = _ICU4XPluralRulesWithRanges_category_for_range(
         _underlying, start._underlying, end._underlying);
-    return ICU4XPluralCategory._(result);
+    return ICU4XPluralCategory.values[result];
   }
 
   // ignore: non_constant_identifier_names
@@ -9584,8 +9710,8 @@ class ICU4XPluralRulesWithRanges implements ffi.Finalizable {
   ICU4XPluralCategory resolveRange(
       ICU4XPluralCategory start, ICU4XPluralCategory end) {
     final result = _ICU4XPluralRulesWithRanges_resolve_range(
-        _underlying, start._id, end._id);
-    return ICU4XPluralCategory._(result);
+        _underlying, start.index, end.index);
+    return ICU4XPluralCategory.values[result];
   }
 
   // ignore: non_constant_identifier_names
@@ -9671,7 +9797,8 @@ class ICU4XPropertyValueNameToEnumMapper implements ffi.Finalizable {
         provider._underlying);
     return result.isOk
         ? ICU4XPropertyValueNameToEnumMapper._(result.union.ok)
-        : throw ICU4XError._(result.union.err);
+        : throw ICU4XError.values
+            .firstWhere((v) => v._underlying == result.union.err);
   }
   // ignore: non_constant_identifier_names
   static final _ICU4XPropertyValueNameToEnumMapper_load_general_category =
@@ -9689,7 +9816,8 @@ class ICU4XPropertyValueNameToEnumMapper implements ffi.Finalizable {
         provider._underlying);
     return result.isOk
         ? ICU4XPropertyValueNameToEnumMapper._(result.union.ok)
-        : throw ICU4XError._(result.union.err);
+        : throw ICU4XError.values
+            .firstWhere((v) => v._underlying == result.union.err);
   }
   // ignore: non_constant_identifier_names
   static final _ICU4XPropertyValueNameToEnumMapper_load_bidi_class = _capi<
@@ -9706,7 +9834,8 @@ class ICU4XPropertyValueNameToEnumMapper implements ffi.Finalizable {
         provider._underlying);
     return result.isOk
         ? ICU4XPropertyValueNameToEnumMapper._(result.union.ok)
-        : throw ICU4XError._(result.union.err);
+        : throw ICU4XError.values
+            .firstWhere((v) => v._underlying == result.union.err);
   }
   // ignore: non_constant_identifier_names
   static final _ICU4XPropertyValueNameToEnumMapper_load_east_asian_width =
@@ -9725,7 +9854,8 @@ class ICU4XPropertyValueNameToEnumMapper implements ffi.Finalizable {
             provider._underlying);
     return result.isOk
         ? ICU4XPropertyValueNameToEnumMapper._(result.union.ok)
-        : throw ICU4XError._(result.union.err);
+        : throw ICU4XError.values
+            .firstWhere((v) => v._underlying == result.union.err);
   }
   // ignore: non_constant_identifier_names
   static final _ICU4XPropertyValueNameToEnumMapper_load_indic_syllabic_category =
@@ -9743,7 +9873,8 @@ class ICU4XPropertyValueNameToEnumMapper implements ffi.Finalizable {
         provider._underlying);
     return result.isOk
         ? ICU4XPropertyValueNameToEnumMapper._(result.union.ok)
-        : throw ICU4XError._(result.union.err);
+        : throw ICU4XError.values
+            .firstWhere((v) => v._underlying == result.union.err);
   }
   // ignore: non_constant_identifier_names
   static final _ICU4XPropertyValueNameToEnumMapper_load_line_break = _capi<
@@ -9761,7 +9892,8 @@ class ICU4XPropertyValueNameToEnumMapper implements ffi.Finalizable {
             provider._underlying);
     return result.isOk
         ? ICU4XPropertyValueNameToEnumMapper._(result.union.ok)
-        : throw ICU4XError._(result.union.err);
+        : throw ICU4XError.values
+            .firstWhere((v) => v._underlying == result.union.err);
   }
   // ignore: non_constant_identifier_names
   static final _ICU4XPropertyValueNameToEnumMapper_load_grapheme_cluster_break =
@@ -9779,7 +9911,8 @@ class ICU4XPropertyValueNameToEnumMapper implements ffi.Finalizable {
         provider._underlying);
     return result.isOk
         ? ICU4XPropertyValueNameToEnumMapper._(result.union.ok)
-        : throw ICU4XError._(result.union.err);
+        : throw ICU4XError.values
+            .firstWhere((v) => v._underlying == result.union.err);
   }
   // ignore: non_constant_identifier_names
   static final _ICU4XPropertyValueNameToEnumMapper_load_word_break = _capi<
@@ -9796,7 +9929,8 @@ class ICU4XPropertyValueNameToEnumMapper implements ffi.Finalizable {
         provider._underlying);
     return result.isOk
         ? ICU4XPropertyValueNameToEnumMapper._(result.union.ok)
-        : throw ICU4XError._(result.union.err);
+        : throw ICU4XError.values
+            .firstWhere((v) => v._underlying == result.union.err);
   }
   // ignore: non_constant_identifier_names
   static final _ICU4XPropertyValueNameToEnumMapper_load_sentence_break = _capi<
@@ -9813,7 +9947,8 @@ class ICU4XPropertyValueNameToEnumMapper implements ffi.Finalizable {
         _ICU4XPropertyValueNameToEnumMapper_load_script(provider._underlying);
     return result.isOk
         ? ICU4XPropertyValueNameToEnumMapper._(result.union.ok)
-        : throw ICU4XError._(result.union.err);
+        : throw ICU4XError.values
+            .firstWhere((v) => v._underlying == result.union.err);
   }
   // ignore: non_constant_identifier_names
   static final _ICU4XPropertyValueNameToEnumMapper_load_script = _capi<
@@ -9844,7 +9979,8 @@ class ICU4XRegionDisplayNames implements ffi.Finalizable {
         provider._underlying, locale._underlying);
     return result.isOk
         ? ICU4XRegionDisplayNames._(result.union.ok)
-        : throw ICU4XError._(result.union.err);
+        : throw ICU4XError.values
+            .firstWhere((v) => v._underlying == result.union.err);
   }
   // ignore: non_constant_identifier_names
   static final _ICU4XRegionDisplayNames_try_new = _capi<
@@ -9870,7 +10006,8 @@ class ICU4XRegionDisplayNames implements ffi.Finalizable {
     alloc.releaseAll();
     return result.isOk
         ? writeable.finalize()
-        : throw ICU4XError._(result.union.err);
+        : throw ICU4XError.values
+            .firstWhere((v) => v._underlying == result.union.err);
   }
 
   // ignore: non_constant_identifier_names
@@ -9948,18 +10085,10 @@ class ICU4XReorderedIndexMap implements ffi.Finalizable {
 ///
 /// See the [Rust documentation for `RoundingIncrement`](https://docs.rs/fixed_decimal/latest/fixed_decimal/enum.RoundingIncrement.html) for more information.
 enum ICU4XRoundingIncrement {
-  multiplesOf1.__(0),
-  multiplesOf2.__(1),
-  multiplesOf5.__(2),
-  multiplesOf25.__(3);
-
-  const ICU4XRoundingIncrement.__(this._id);
-
-  // ignore: unused_element
-  factory ICU4XRoundingIncrement._(int id) =>
-      values.firstWhere((value) => value._id == id);
-
-  final int _id;
+  multiplesOf1,
+  multiplesOf2,
+  multiplesOf5,
+  multiplesOf25;
 }
 
 /// An object that represents the Script_Extensions property for a single character
@@ -10039,7 +10168,8 @@ class ICU4XScriptWithExtensions implements ffi.Finalizable {
     final result = _ICU4XScriptWithExtensions_create(provider._underlying);
     return result.isOk
         ? ICU4XScriptWithExtensions._(result.union.ok)
-        : throw ICU4XError._(result.union.err);
+        : throw ICU4XError.values
+            .firstWhere((v) => v._underlying == result.union.err);
   }
   // ignore: non_constant_identifier_names
   static final _ICU4XScriptWithExtensions_create = _capi<
@@ -10159,10 +10289,12 @@ class ICU4XScriptWithExtensionsBorrowed implements ffi.Finalizable {
   // ignore: non_constant_identifier_names
   static final _ICU4XScriptWithExtensionsBorrowed_get_script_extensions_val =
       _capi<
-                  ffi.NativeFunction<
-                      ffi.Pointer<
-                              ffi.Opaque>
-                          Function(ffi.Pointer<ffi.Opaque>, ffi.Uint32)>>(
+                  ffi
+                  .NativeFunction<
+                      ffi.Pointer<ffi.Opaque> Function(
+                          ffi.Pointer<ffi.Opaque>,
+                          ffi
+                              .Uint32)>>(
               'ICU4XScriptWithExtensionsBorrowed_get_script_extensions_val')
           .asFunction<
               ffi.Pointer<ffi.Opaque> Function(
@@ -10198,10 +10330,12 @@ class ICU4XScriptWithExtensionsBorrowed implements ffi.Finalizable {
   // ignore: non_constant_identifier_names
   static final _ICU4XScriptWithExtensionsBorrowed_get_script_extensions_set =
       _capi<
-                  ffi.NativeFunction<
-                      ffi.Pointer<
-                              ffi.Opaque>
-                          Function(ffi.Pointer<ffi.Opaque>, ffi.Uint16)>>(
+                  ffi
+                  .NativeFunction<
+                      ffi.Pointer<ffi.Opaque> Function(
+                          ffi.Pointer<ffi.Opaque>,
+                          ffi
+                              .Uint16)>>(
               'ICU4XScriptWithExtensionsBorrowed_get_script_extensions_set')
           .asFunction<
               ffi.Pointer<ffi.Opaque> Function(
@@ -10210,17 +10344,9 @@ class ICU4XScriptWithExtensionsBorrowed implements ffi.Finalizable {
 
 /// See the [Rust documentation for `WordType`](https://docs.rs/icu/latest/icu/segmenter/enum.WordType.html) for more information.
 enum ICU4XSegmenterWordType {
-  none.__(0),
-  number.__(1),
-  letter.__(2);
-
-  const ICU4XSegmenterWordType.__(this._id);
-
-  // ignore: unused_element
-  factory ICU4XSegmenterWordType._(int id) =>
-      values.firstWhere((value) => value._id == id);
-
-  final int _id;
+  none,
+  number,
+  letter;
 }
 
 /// See the [Rust documentation for `SentenceBreakIterator`](https://docs.rs/icu/latest/icu/segmenter/struct.SentenceBreakIterator.html) for more information.
@@ -10324,7 +10450,8 @@ class ICU4XSentenceSegmenter implements ffi.Finalizable {
     final result = _ICU4XSentenceSegmenter_create(provider._underlying);
     return result.isOk
         ? ICU4XSentenceSegmenter._(result.union.ok)
-        : throw ICU4XError._(result.union.err);
+        : throw ICU4XError.values
+            .firstWhere((v) => v._underlying == result.union.err);
   }
   // ignore: non_constant_identifier_names
   static final _ICU4XSentenceSegmenter_create = _capi<
@@ -10426,7 +10553,8 @@ class ICU4XTime implements ffi.Finalizable {
     final result = _ICU4XTime_create(hour, minute, second, nanosecond);
     return result.isOk
         ? ICU4XTime._(result.union.ok)
-        : throw ICU4XError._(result.union.err);
+        : throw ICU4XError.values
+            .firstWhere((v) => v._underlying == result.union.err);
   }
   // ignore: non_constant_identifier_names
   static final _ICU4XTime_create = _capi<
@@ -10443,7 +10571,8 @@ class ICU4XTime implements ffi.Finalizable {
     final result = _ICU4XTime_create_midnight();
     return result.isOk
         ? ICU4XTime._(result.union.ok)
-        : throw ICU4XError._(result.union.err);
+        : throw ICU4XError.values
+            .firstWhere((v) => v._underlying == result.union.err);
   }
   // ignore: non_constant_identifier_names
   static final _ICU4XTime_create_midnight =
@@ -10527,10 +10656,11 @@ class ICU4XTimeFormatter implements ffi.Finalizable {
   factory ICU4XTimeFormatter.withLength(
       ICU4XDataProvider provider, ICU4XLocale locale, ICU4XTimeLength length) {
     final result = _ICU4XTimeFormatter_create_with_length(
-        provider._underlying, locale._underlying, length._id);
+        provider._underlying, locale._underlying, length.index);
     return result.isOk
         ? ICU4XTimeFormatter._(result.union.ok)
-        : throw ICU4XError._(result.union.err);
+        : throw ICU4XError.values
+            .firstWhere((v) => v._underlying == result.union.err);
   }
   // ignore: non_constant_identifier_names
   static final _ICU4XTimeFormatter_create_with_length = _capi<
@@ -10552,7 +10682,8 @@ class ICU4XTimeFormatter implements ffi.Finalizable {
         _underlying, value._underlying, writeable._underlying);
     return result.isOk
         ? writeable.finalize()
-        : throw ICU4XError._(result.union.err);
+        : throw ICU4XError.values
+            .firstWhere((v) => v._underlying == result.union.err);
   }
 
   // ignore: non_constant_identifier_names
@@ -10575,7 +10706,8 @@ class ICU4XTimeFormatter implements ffi.Finalizable {
         _underlying, value._underlying, writeable._underlying);
     return result.isOk
         ? writeable.finalize()
-        : throw ICU4XError._(result.union.err);
+        : throw ICU4XError.values
+            .firstWhere((v) => v._underlying == result.union.err);
   }
 
   // ignore: non_constant_identifier_names
@@ -10597,7 +10729,8 @@ class ICU4XTimeFormatter implements ffi.Finalizable {
         _underlying, value._underlying, writeable._underlying);
     return result.isOk
         ? writeable.finalize()
-        : throw ICU4XError._(result.union.err);
+        : throw ICU4XError.values
+            .firstWhere((v) => v._underlying == result.union.err);
   }
 
   // ignore: non_constant_identifier_names
@@ -10613,18 +10746,10 @@ class ICU4XTimeFormatter implements ffi.Finalizable {
 
 /// See the [Rust documentation for `Time`](https://docs.rs/icu/latest/icu/datetime/options/length/enum.Time.html) for more information.
 enum ICU4XTimeLength {
-  full.__(0),
-  long.__(1),
-  medium.__(2),
-  short.__(3);
-
-  const ICU4XTimeLength.__(this._id);
-
-  // ignore: unused_element
-  factory ICU4XTimeLength._(int id) =>
-      values.firstWhere((value) => value._id == id);
-
-  final int _id;
+  full,
+  long,
+  medium,
+  short;
 }
 
 /// An ICU4X TimeZoneFormatter object capable of formatting an [`ICU4XCustomTimeZone`] type (and others) as a string
@@ -10653,7 +10778,8 @@ class ICU4XTimeZoneFormatter implements ffi.Finalizable {
         provider._underlying, locale._underlying);
     return result.isOk
         ? ICU4XTimeZoneFormatter._(result.union.ok)
-        : throw ICU4XError._(result.union.err);
+        : throw ICU4XError.values
+            .firstWhere((v) => v._underlying == result.union.err);
   }
   // ignore: non_constant_identifier_names
   static final _ICU4XTimeZoneFormatter_create_with_localized_gmt_fallback =
@@ -10679,7 +10805,8 @@ class ICU4XTimeZoneFormatter implements ffi.Finalizable {
         provider._underlying, locale._underlying, options._underlying);
     return result.isOk
         ? ICU4XTimeZoneFormatter._(result.union.ok)
-        : throw ICU4XError._(result.union.err);
+        : throw ICU4XError.values
+            .firstWhere((v) => v._underlying == result.union.err);
   }
   // ignore: non_constant_identifier_names
   static final _ICU4XTimeZoneFormatter_create_with_iso_8601_fallback = _capi<
@@ -10700,7 +10827,8 @@ class ICU4XTimeZoneFormatter implements ffi.Finalizable {
     final result = _ICU4XTimeZoneFormatter_load_generic_non_location_long(
         _underlying, provider._underlying);
     if (!result.isOk) {
-      throw ICU4XError._(result.union.err);
+      throw ICU4XError.values
+          .firstWhere((v) => v._underlying == result.union.err);
     }
   }
 
@@ -10721,7 +10849,8 @@ class ICU4XTimeZoneFormatter implements ffi.Finalizable {
     final result = _ICU4XTimeZoneFormatter_load_generic_non_location_short(
         _underlying, provider._underlying);
     if (!result.isOk) {
-      throw ICU4XError._(result.union.err);
+      throw ICU4XError.values
+          .firstWhere((v) => v._underlying == result.union.err);
     }
   }
 
@@ -10742,7 +10871,8 @@ class ICU4XTimeZoneFormatter implements ffi.Finalizable {
     final result = _ICU4XTimeZoneFormatter_load_specific_non_location_long(
         _underlying, provider._underlying);
     if (!result.isOk) {
-      throw ICU4XError._(result.union.err);
+      throw ICU4XError.values
+          .firstWhere((v) => v._underlying == result.union.err);
     }
   }
 
@@ -10763,7 +10893,8 @@ class ICU4XTimeZoneFormatter implements ffi.Finalizable {
     final result = _ICU4XTimeZoneFormatter_load_specific_non_location_short(
         _underlying, provider._underlying);
     if (!result.isOk) {
-      throw ICU4XError._(result.union.err);
+      throw ICU4XError.values
+          .firstWhere((v) => v._underlying == result.union.err);
     }
   }
 
@@ -10784,7 +10915,8 @@ class ICU4XTimeZoneFormatter implements ffi.Finalizable {
     final result = _ICU4XTimeZoneFormatter_load_generic_location_format(
         _underlying, provider._underlying);
     if (!result.isOk) {
-      throw ICU4XError._(result.union.err);
+      throw ICU4XError.values
+          .firstWhere((v) => v._underlying == result.union.err);
     }
   }
 
@@ -10805,7 +10937,8 @@ class ICU4XTimeZoneFormatter implements ffi.Finalizable {
     final result =
         _ICU4XTimeZoneFormatter_include_localized_gmt_format(_underlying);
     if (!result.isOk) {
-      throw ICU4XError._(result.union.err);
+      throw ICU4XError.values
+          .firstWhere((v) => v._underlying == result.union.err);
     }
   }
 
@@ -10824,7 +10957,8 @@ class ICU4XTimeZoneFormatter implements ffi.Finalizable {
     final result = _ICU4XTimeZoneFormatter_load_iso_8601_format(
         _underlying, options._underlying);
     if (!result.isOk) {
-      throw ICU4XError._(result.union.err);
+      throw ICU4XError.values
+          .firstWhere((v) => v._underlying == result.union.err);
     }
   }
 
@@ -10849,7 +10983,8 @@ class ICU4XTimeZoneFormatter implements ffi.Finalizable {
         _underlying, value._underlying, writeable._underlying);
     return result.isOk
         ? writeable.finalize()
-        : throw ICU4XError._(result.union.err);
+        : throw ICU4XError.values
+            .firstWhere((v) => v._underlying == result.union.err);
   }
 
   // ignore: non_constant_identifier_names
@@ -10881,7 +11016,8 @@ class ICU4XTitlecaseMapper implements ffi.Finalizable {
     final result = _ICU4XTitlecaseMapper_create(provider._underlying);
     return result.isOk
         ? ICU4XTitlecaseMapper._(result.union.ok)
-        : throw ICU4XError._(result.union.err);
+        : throw ICU4XError.values
+            .firstWhere((v) => v._underlying == result.union.err);
   }
   // ignore: non_constant_identifier_names
   static final _ICU4XTitlecaseMapper_create = _capi<
@@ -10912,7 +11048,8 @@ class ICU4XTitlecaseMapper implements ffi.Finalizable {
     alloc.releaseAll();
     return result.isOk
         ? writeable.finalize()
-        : throw ICU4XError._(result.union.err);
+        : throw ICU4XError.values
+            .firstWhere((v) => v._underlying == result.union.err);
   }
 
   // ignore: non_constant_identifier_names
@@ -10958,15 +11095,15 @@ class ICU4XTitlecaseOptionsV1 {
   }
 
   ICU4XLeadingAdjustment get leadingAdjustment =>
-      ICU4XLeadingAdjustment._(_underlying.leadingAdjustment);
+      ICU4XLeadingAdjustment.values[_underlying.leadingAdjustment];
   set leadingAdjustment(ICU4XLeadingAdjustment leadingAdjustment) {
-    _underlying.leadingAdjustment = leadingAdjustment._id;
+    _underlying.leadingAdjustment = leadingAdjustment.index;
   }
 
   ICU4XTrailingCase get trailingCase =>
-      ICU4XTrailingCase._(_underlying.trailingCase);
+      ICU4XTrailingCase.values[_underlying.trailingCase];
   set trailingCase(ICU4XTrailingCase trailingCase) {
-    _underlying.trailingCase = trailingCase._id;
+    _underlying.trailingCase = trailingCase.index;
   }
 
   /// See the [Rust documentation for `default`](https://docs.rs/icu/latest/icu/casemap/titlecase/struct.TitlecaseOptions.html#method.default) for more information.
@@ -10995,32 +11132,16 @@ class ICU4XTitlecaseOptionsV1 {
 
 /// See the [Rust documentation for `TrailingCase`](https://docs.rs/icu/latest/icu/casemap/titlecase/enum.TrailingCase.html) for more information.
 enum ICU4XTrailingCase {
-  lower.__(0),
-  unchanged.__(1);
-
-  const ICU4XTrailingCase.__(this._id);
-
-  // ignore: unused_element
-  factory ICU4XTrailingCase._(int id) =>
-      values.firstWhere((value) => value._id == id);
-
-  final int _id;
+  lower,
+  unchanged;
 }
 
 /// FFI version of `TransformResult`.
 ///
 /// See the [Rust documentation for `TransformResult`](https://docs.rs/icu/latest/icu/locid_transform/enum.TransformResult.html) for more information.
 enum ICU4XTransformResult {
-  modified.__(0),
-  unmodified.__(1);
-
-  const ICU4XTransformResult.__(this._id);
-
-  // ignore: unused_element
-  factory ICU4XTransformResult._(int id) =>
-      values.firstWhere((value) => value._id == id);
-
-  final int _id;
+  modified,
+  unmodified;
 }
 
 /// An ICU4X Unicode Set Property object, capable of querying whether a code point is contained in a set based on a Unicode property.
@@ -11095,7 +11216,8 @@ class ICU4XUnicodeSetData implements ffi.Finalizable {
     final result = _ICU4XUnicodeSetData_load_basic_emoji(provider._underlying);
     return result.isOk
         ? ICU4XUnicodeSetData._(result.union.ok)
-        : throw ICU4XError._(result.union.err);
+        : throw ICU4XError.values
+            .firstWhere((v) => v._underlying == result.union.err);
   }
   // ignore: non_constant_identifier_names
   static final _ICU4XUnicodeSetData_load_basic_emoji = _capi<
@@ -11112,7 +11234,8 @@ class ICU4XUnicodeSetData implements ffi.Finalizable {
         provider._underlying, locale._underlying);
     return result.isOk
         ? ICU4XUnicodeSetData._(result.union.ok)
-        : throw ICU4XError._(result.union.err);
+        : throw ICU4XError.values
+            .firstWhere((v) => v._underlying == result.union.err);
   }
   // ignore: non_constant_identifier_names
   static final _ICU4XUnicodeSetData_load_exemplars_main = _capi<
@@ -11131,7 +11254,8 @@ class ICU4XUnicodeSetData implements ffi.Finalizable {
         provider._underlying, locale._underlying);
     return result.isOk
         ? ICU4XUnicodeSetData._(result.union.ok)
-        : throw ICU4XError._(result.union.err);
+        : throw ICU4XError.values
+            .firstWhere((v) => v._underlying == result.union.err);
   }
   // ignore: non_constant_identifier_names
   static final _ICU4XUnicodeSetData_load_exemplars_auxiliary = _capi<
@@ -11150,7 +11274,8 @@ class ICU4XUnicodeSetData implements ffi.Finalizable {
         provider._underlying, locale._underlying);
     return result.isOk
         ? ICU4XUnicodeSetData._(result.union.ok)
-        : throw ICU4XError._(result.union.err);
+        : throw ICU4XError.values
+            .firstWhere((v) => v._underlying == result.union.err);
   }
   // ignore: non_constant_identifier_names
   static final _ICU4XUnicodeSetData_load_exemplars_punctuation = _capi<
@@ -11169,7 +11294,8 @@ class ICU4XUnicodeSetData implements ffi.Finalizable {
         provider._underlying, locale._underlying);
     return result.isOk
         ? ICU4XUnicodeSetData._(result.union.ok)
-        : throw ICU4XError._(result.union.err);
+        : throw ICU4XError.values
+            .firstWhere((v) => v._underlying == result.union.err);
   }
   // ignore: non_constant_identifier_names
   static final _ICU4XUnicodeSetData_load_exemplars_numbers = _capi<
@@ -11188,7 +11314,8 @@ class ICU4XUnicodeSetData implements ffi.Finalizable {
         provider._underlying, locale._underlying);
     return result.isOk
         ? ICU4XUnicodeSetData._(result.union.ok)
-        : throw ICU4XError._(result.union.err);
+        : throw ICU4XError.values
+            .firstWhere((v) => v._underlying == result.union.err);
   }
   // ignore: non_constant_identifier_names
   static final _ICU4XUnicodeSetData_load_exemplars_index = _capi<
@@ -11222,7 +11349,8 @@ class ICU4XWeekCalculator implements ffi.Finalizable {
         _ICU4XWeekCalculator_create(provider._underlying, locale._underlying);
     return result.isOk
         ? ICU4XWeekCalculator._(result.union.ok)
-        : throw ICU4XError._(result.union.err);
+        : throw ICU4XError.values
+            .firstWhere((v) => v._underlying == result.union.err);
   }
   // ignore: non_constant_identifier_names
   static final _ICU4XWeekCalculator_create = _capi<
@@ -11238,7 +11366,7 @@ class ICU4XWeekCalculator implements ffi.Finalizable {
       ICU4XIsoWeekday firstWeekday, int minWeekDays) {
     final result =
         _ICU4XWeekCalculator_create_from_first_day_of_week_and_min_week_days(
-            firstWeekday._id, minWeekDays);
+            firstWeekday._underlying, minWeekDays);
     return ICU4XWeekCalculator._(result);
   }
   // ignore: non_constant_identifier_names
@@ -11254,7 +11382,7 @@ class ICU4XWeekCalculator implements ffi.Finalizable {
   /// See the [Rust documentation for `first_weekday`](https://docs.rs/icu/latest/icu/calendar/week/struct.WeekCalculator.html#structfield.first_weekday) for more information.
   ICU4XIsoWeekday get firstWeekday {
     final result = _ICU4XWeekCalculator_first_weekday(_underlying);
-    return ICU4XIsoWeekday._(result);
+    return ICU4XIsoWeekday.values.firstWhere((v) => v._underlying == result);
   }
 
   // ignore: non_constant_identifier_names
@@ -11305,9 +11433,10 @@ class ICU4XWeekOf {
     _underlying.week = week;
   }
 
-  ICU4XWeekRelativeUnit get unit => ICU4XWeekRelativeUnit._(_underlying.unit);
+  ICU4XWeekRelativeUnit get unit =>
+      ICU4XWeekRelativeUnit.values[_underlying.unit];
   set unit(ICU4XWeekRelativeUnit unit) {
-    _underlying.unit = unit._id;
+    _underlying.unit = unit.index;
   }
 
   @override
@@ -11325,17 +11454,9 @@ class ICU4XWeekOf {
 
 /// See the [Rust documentation for `RelativeUnit`](https://docs.rs/icu/latest/icu/calendar/week/enum.RelativeUnit.html) for more information.
 enum ICU4XWeekRelativeUnit {
-  previous.__(0),
-  current.__(1),
-  next.__(2);
-
-  const ICU4XWeekRelativeUnit.__(this._id);
-
-  // ignore: unused_element
-  factory ICU4XWeekRelativeUnit._(int id) =>
-      values.firstWhere((value) => value._id == id);
-
-  final int _id;
+  previous,
+  current,
+  next;
 }
 
 /// See the [Rust documentation for `WordBreakIterator`](https://docs.rs/icu/latest/icu/segmenter/struct.WordBreakIterator.html) for more information.
@@ -11369,7 +11490,7 @@ class ICU4XWordBreakIteratorLatin1 implements ffi.Finalizable {
   /// See the [Rust documentation for `word_type`](https://docs.rs/icu/latest/icu/segmenter/struct.WordBreakIterator.html#method.word_type) for more information.
   ICU4XSegmenterWordType get wordType {
     final result = _ICU4XWordBreakIteratorLatin1_word_type(_underlying);
-    return ICU4XSegmenterWordType._(result);
+    return ICU4XSegmenterWordType.values[result];
   }
 
   // ignore: non_constant_identifier_names
@@ -11424,7 +11545,7 @@ class ICU4XWordBreakIteratorUtf16 implements ffi.Finalizable {
   /// See the [Rust documentation for `word_type`](https://docs.rs/icu/latest/icu/segmenter/struct.WordBreakIterator.html#method.word_type) for more information.
   ICU4XSegmenterWordType get wordType {
     final result = _ICU4XWordBreakIteratorUtf16_word_type(_underlying);
-    return ICU4XSegmenterWordType._(result);
+    return ICU4XSegmenterWordType.values[result];
   }
 
   // ignore: non_constant_identifier_names
@@ -11479,7 +11600,7 @@ class ICU4XWordBreakIteratorUtf8 implements ffi.Finalizable {
   /// See the [Rust documentation for `word_type`](https://docs.rs/icu/latest/icu/segmenter/struct.WordBreakIterator.html#method.word_type) for more information.
   ICU4XSegmenterWordType get wordType {
     final result = _ICU4XWordBreakIteratorUtf8_word_type(_underlying);
-    return ICU4XSegmenterWordType._(result);
+    return ICU4XSegmenterWordType.values[result];
   }
 
   // ignore: non_constant_identifier_names
@@ -11527,7 +11648,8 @@ class ICU4XWordSegmenter implements ffi.Finalizable {
     final result = _ICU4XWordSegmenter_create_auto(provider._underlying);
     return result.isOk
         ? ICU4XWordSegmenter._(result.union.ok)
-        : throw ICU4XError._(result.union.err);
+        : throw ICU4XError.values
+            .firstWhere((v) => v._underlying == result.union.err);
   }
   // ignore: non_constant_identifier_names
   static final _ICU4XWordSegmenter_create_auto = _capi<
@@ -11548,7 +11670,8 @@ class ICU4XWordSegmenter implements ffi.Finalizable {
     final result = _ICU4XWordSegmenter_create_lstm(provider._underlying);
     return result.isOk
         ? ICU4XWordSegmenter._(result.union.ok)
-        : throw ICU4XError._(result.union.err);
+        : throw ICU4XError.values
+            .firstWhere((v) => v._underlying == result.union.err);
   }
   // ignore: non_constant_identifier_names
   static final _ICU4XWordSegmenter_create_lstm = _capi<
@@ -11566,7 +11689,8 @@ class ICU4XWordSegmenter implements ffi.Finalizable {
     final result = _ICU4XWordSegmenter_create_dictionary(provider._underlying);
     return result.isOk
         ? ICU4XWordSegmenter._(result.union.ok)
-        : throw ICU4XError._(result.union.err);
+        : throw ICU4XError.values
+            .firstWhere((v) => v._underlying == result.union.err);
   }
   // ignore: non_constant_identifier_names
   static final _ICU4XWordSegmenter_create_dictionary = _capi<
@@ -11676,11 +11800,12 @@ class ICU4XZonedDateTimeFormatter implements ffi.Finalizable {
     final result = _ICU4XZonedDateTimeFormatter_create_with_lengths(
         provider._underlying,
         locale._underlying,
-        dateLength._id,
-        timeLength._id);
+        dateLength.index,
+        timeLength.index);
     return result.isOk
         ? ICU4XZonedDateTimeFormatter._(result.union.ok)
-        : throw ICU4XError._(result.union.err);
+        : throw ICU4XError.values
+            .firstWhere((v) => v._underlying == result.union.err);
   }
   // ignore: non_constant_identifier_names
   static final _ICU4XZonedDateTimeFormatter_create_with_lengths = _capi<
@@ -11708,12 +11833,13 @@ class ICU4XZonedDateTimeFormatter implements ffi.Finalizable {
         _ICU4XZonedDateTimeFormatter_create_with_lengths_and_iso_8601_time_zone_fallback(
             provider._underlying,
             locale._underlying,
-            dateLength._id,
-            timeLength._id,
+            dateLength.index,
+            timeLength.index,
             zoneOptions._underlying);
     return result.isOk
         ? ICU4XZonedDateTimeFormatter._(result.union.ok)
-        : throw ICU4XError._(result.union.err);
+        : throw ICU4XError.values
+            .firstWhere((v) => v._underlying == result.union.err);
   }
   // ignore: non_constant_identifier_names
   static final _ICU4XZonedDateTimeFormatter_create_with_lengths_and_iso_8601_time_zone_fallback =
@@ -11748,7 +11874,8 @@ class ICU4XZonedDateTimeFormatter implements ffi.Finalizable {
             writeable._underlying);
     return result.isOk
         ? writeable.finalize()
-        : throw ICU4XError._(result.union.err);
+        : throw ICU4XError.values
+            .firstWhere((v) => v._underlying == result.union.err);
   }
 
   // ignore: non_constant_identifier_names
@@ -11782,7 +11909,8 @@ class ICU4XZonedDateTimeFormatter implements ffi.Finalizable {
             writeable._underlying);
     return result.isOk
         ? writeable.finalize()
-        : throw ICU4XError._(result.union.err);
+        : throw ICU4XError.values
+            .firstWhere((v) => v._underlying == result.union.err);
   }
 
   // ignore: non_constant_identifier_names
