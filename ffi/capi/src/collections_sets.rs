@@ -80,6 +80,7 @@ pub mod ffi {
             icu::collections::codepointinvlist::CodePointInversionListBuilder::add_u32,
             FnInStruct
         )]
+        #[diplomat::attr(dart, disable)]
         pub fn add_u32(&mut self, ch: u32) {
             self.0.add_u32(ch)
         }
@@ -98,6 +99,7 @@ pub mod ffi {
             icu::collections::codepointinvlist::CodePointInversionListBuilder::add_range_u32,
             FnInStruct
         )]
+        #[diplomat::attr(dart, disable)]
         pub fn add_inclusive_range_u32(&mut self, start: u32, end: u32) {
             self.0.add_range_u32(&(start..=end))
         }
