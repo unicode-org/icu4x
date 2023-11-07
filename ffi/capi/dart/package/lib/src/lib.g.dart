@@ -1523,7 +1523,7 @@ class CodePointMapData8 implements ffi.Finalizable {
           isLeaf: true);
 
   /// See the [Rust documentation for `grapheme_cluster_break`](https://docs.rs/icu/latest/icu/properties/maps/fn.grapheme_cluster_break.html) for more information.
-  factory CodePointMapData8.tryGraphemeClusterBreak(DataProvider provider) {
+  factory CodePointMapData8.graphemeClusterBreak(DataProvider provider) {
     final result = _ICU4XCodePointMapData8_try_grapheme_cluster_break(
         provider._underlying);
     return result.isOk
@@ -1748,20 +1748,6 @@ class CodePointSetBuilder implements ffi.Finalizable {
                   ffi.Uint32)>>('ICU4XCodePointSetBuilder_add_char')
       .asFunction<void Function(ffi.Pointer<ffi.Opaque>, int)>(isLeaf: true);
 
-  /// Add a single u32 value to the set
-  ///
-  /// See the [Rust documentation for `add_u32`](https://docs.rs/icu/latest/icu/collections/codepointinvlist/struct.CodePointInversionListBuilder.html#method.add_u32) for more information.
-  void addU32(int ch) {
-    _ICU4XCodePointSetBuilder_add_u32(_underlying, ch);
-  }
-
-  // ignore: non_constant_identifier_names
-  static final _ICU4XCodePointSetBuilder_add_u32 = _capi<
-          ffi.NativeFunction<
-              ffi.Void Function(ffi.Pointer<ffi.Opaque>,
-                  ffi.Uint32)>>('ICU4XCodePointSetBuilder_add_u32')
-      .asFunction<void Function(ffi.Pointer<ffi.Opaque>, int)>(isLeaf: true);
-
   /// Add an inclusive range of characters to the set
   ///
   /// See the [Rust documentation for `add_range`](https://docs.rs/icu/latest/icu/collections/codepointinvlist/struct.CodePointInversionListBuilder.html#method.add_range) for more information.
@@ -1774,22 +1760,6 @@ class CodePointSetBuilder implements ffi.Finalizable {
           ffi.NativeFunction<
               ffi.Void Function(ffi.Pointer<ffi.Opaque>, ffi.Uint32,
                   ffi.Uint32)>>('ICU4XCodePointSetBuilder_add_inclusive_range')
-      .asFunction<void Function(ffi.Pointer<ffi.Opaque>, int, int)>(
-          isLeaf: true);
-
-  /// Add an inclusive range of u32s to the set
-  ///
-  /// See the [Rust documentation for `add_range_u32`](https://docs.rs/icu/latest/icu/collections/codepointinvlist/struct.CodePointInversionListBuilder.html#method.add_range_u32) for more information.
-  void addInclusiveRangeU32(int start, int end) {
-    _ICU4XCodePointSetBuilder_add_inclusive_range_u32(_underlying, start, end);
-  }
-
-  // ignore: non_constant_identifier_names
-  static final _ICU4XCodePointSetBuilder_add_inclusive_range_u32 = _capi<
-              ffi.NativeFunction<
-                  ffi.Void Function(
-                      ffi.Pointer<ffi.Opaque>, ffi.Uint32, ffi.Uint32)>>(
-          'ICU4XCodePointSetBuilder_add_inclusive_range_u32')
       .asFunction<void Function(ffi.Pointer<ffi.Opaque>, int, int)>(
           isLeaf: true);
 
@@ -1988,19 +1958,6 @@ class CodePointSetData implements ffi.Finalizable {
           ffi.NativeFunction<
               ffi.Bool Function(ffi.Pointer<ffi.Opaque>,
                   ffi.Uint32)>>('ICU4XCodePointSetData_contains')
-      .asFunction<bool Function(ffi.Pointer<ffi.Opaque>, int)>(isLeaf: true);
-
-  /// Checks whether the code point (specified as a 32 bit integer, in UTF-32) is in the set.
-  bool contains32(int cp) {
-    final result = _ICU4XCodePointSetData_contains32(_underlying, cp);
-    return result;
-  }
-
-  // ignore: non_constant_identifier_names
-  static final _ICU4XCodePointSetData_contains32 = _capi<
-          ffi.NativeFunction<
-              ffi.Bool Function(ffi.Pointer<ffi.Opaque>,
-                  ffi.Uint32)>>('ICU4XCodePointSetData_contains32')
       .asFunction<bool Function(ffi.Pointer<ffi.Opaque>, int)>(isLeaf: true);
 
   /// Produces an iterator over ranges of code points contained in this set
@@ -3207,44 +3164,13 @@ class Collator implements ffi.Finalizable {
           _ResultOpaqueUint32 Function(ffi.Pointer<ffi.Opaque>,
               ffi.Pointer<ffi.Opaque>, _CollatorOptionsV1Ffi)>(isLeaf: true);
 
-  /// Compare potentially ill-formed UTF-8 strings.
-  ///
-  /// Ill-formed input is compared
-  /// as if errors had been replaced with REPLACEMENT CHARACTERs according
-  /// to the WHATWG Encoding Standard.
-  ///
-  /// See the [Rust documentation for `compare_utf8`](https://docs.rs/icu/latest/icu/collator/struct.Collator.html#method.compare_utf8) for more information.
-  Ordering compare(String left, String right) {
-    final alloc = ffi2.Arena();
-    final leftSlice = _SliceFfi2Utf8._fromDart(left, alloc);
-    final rightSlice = _SliceFfi2Utf8._fromDart(right, alloc);
-
-    final result = _ICU4XCollator_compare(_underlying, leftSlice._bytes,
-        leftSlice._length, rightSlice._bytes, rightSlice._length);
-    alloc.releaseAll();
-    return Ordering.values.firstWhere((v) => v._underlying == result);
-  }
-
-  // ignore: non_constant_identifier_names
-  static final _ICU4XCollator_compare = _capi<
-          ffi.NativeFunction<
-              ffi.Uint32 Function(
-                  ffi.Pointer<ffi.Opaque>,
-                  ffi.Pointer<ffi2.Utf8>,
-                  ffi.Size,
-                  ffi.Pointer<ffi2.Utf8>,
-                  ffi.Size)>>('ICU4XCollator_compare')
-      .asFunction<
-          int Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi2.Utf8>, int,
-              ffi.Pointer<ffi2.Utf8>, int)>(isLeaf: true);
-
   /// Compare guaranteed well-formed UTF-8 strings.
   ///
   /// Note: In C++, passing ill-formed UTF-8 strings is undefined behavior
   /// (and may be memory-unsafe to do so, too).
   ///
   /// See the [Rust documentation for `compare`](https://docs.rs/icu/latest/icu/collator/struct.Collator.html#method.compare) for more information.
-  Ordering compareValidUtf8(String left, String right) {
+  Ordering compare(String left, String right) {
     final alloc = ffi2.Arena();
     final leftSlice = _SliceFfi2Utf8._fromDart(left, alloc);
     final rightSlice = _SliceFfi2Utf8._fromDart(right, alloc);
@@ -4261,114 +4187,6 @@ class DataProvider implements ffi.Finalizable {
       .asFunction<
           _ResultVoidUint32 Function(
               ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
-}
-
-/// A generic data struct to be used by ICU4X
-///
-/// This can be used to construct a StructDataProvider.
-class DataStruct implements ffi.Finalizable {
-  final ffi.Pointer<ffi.Opaque> _underlying;
-
-  DataStruct._(this._underlying) {
-    _finalizer.attach(this, _underlying.cast());
-  }
-
-  static final _finalizer =
-      ffi.NativeFinalizer(_capi('ICU4XDataStruct_destroy'));
-
-  /// Construct a new DecimalSymbolsV1 data struct.
-  ///
-  /// C++ users: All string arguments must be valid UTF8
-  ///
-  /// See the [Rust documentation for `DecimalSymbolsV1`](https://docs.rs/icu/latest/icu/decimal/provider/struct.DecimalSymbolsV1.html) for more information.
-  factory DataStruct.decimalSymbolsV1(
-      String plusSignPrefix,
-      String plusSignSuffix,
-      String minusSignPrefix,
-      String minusSignSuffix,
-      String decimalSeparator,
-      String groupingSeparator,
-      int primaryGroupSize,
-      int secondaryGroupSize,
-      int minGroupSize,
-      Uint32List digits) {
-    final alloc = ffi2.Arena();
-    final plusSignPrefixSlice = _SliceFfi2Utf8._fromDart(plusSignPrefix, alloc);
-    final plusSignSuffixSlice = _SliceFfi2Utf8._fromDart(plusSignSuffix, alloc);
-    final minusSignPrefixSlice =
-        _SliceFfi2Utf8._fromDart(minusSignPrefix, alloc);
-    final minusSignSuffixSlice =
-        _SliceFfi2Utf8._fromDart(minusSignSuffix, alloc);
-    final decimalSeparatorSlice =
-        _SliceFfi2Utf8._fromDart(decimalSeparator, alloc);
-    final groupingSeparatorSlice =
-        _SliceFfi2Utf8._fromDart(groupingSeparator, alloc);
-    final digitsSlice = _SliceFfiUint32._fromDart(digits, alloc);
-
-    final result = _ICU4XDataStruct_create_decimal_symbols_v1(
-        plusSignPrefixSlice._bytes,
-        plusSignPrefixSlice._length,
-        plusSignSuffixSlice._bytes,
-        plusSignSuffixSlice._length,
-        minusSignPrefixSlice._bytes,
-        minusSignPrefixSlice._length,
-        minusSignSuffixSlice._bytes,
-        minusSignSuffixSlice._length,
-        decimalSeparatorSlice._bytes,
-        decimalSeparatorSlice._length,
-        groupingSeparatorSlice._bytes,
-        groupingSeparatorSlice._length,
-        primaryGroupSize,
-        secondaryGroupSize,
-        minGroupSize,
-        digitsSlice._bytes,
-        digitsSlice._length);
-    alloc.releaseAll();
-    return result.isOk
-        ? DataStruct._(result.union.ok)
-        : throw Error.values
-            .firstWhere((v) => v._underlying == result.union.err);
-  }
-  // ignore: non_constant_identifier_names
-  static final _ICU4XDataStruct_create_decimal_symbols_v1 = _capi<
-          ffi.NativeFunction<
-              _ResultOpaqueUint32 Function(
-                  ffi.Pointer<ffi2.Utf8>,
-                  ffi.Size,
-                  ffi.Pointer<ffi2.Utf8>,
-                  ffi.Size,
-                  ffi.Pointer<ffi2.Utf8>,
-                  ffi.Size,
-                  ffi.Pointer<ffi2.Utf8>,
-                  ffi.Size,
-                  ffi.Pointer<ffi2.Utf8>,
-                  ffi.Size,
-                  ffi.Pointer<ffi2.Utf8>,
-                  ffi.Size,
-                  ffi.Uint8,
-                  ffi.Uint8,
-                  ffi.Uint8,
-                  ffi.Pointer<ffi.Uint32>,
-                  ffi.Size)>>('ICU4XDataStruct_create_decimal_symbols_v1')
-      .asFunction<
-          _ResultOpaqueUint32 Function(
-              ffi.Pointer<ffi2.Utf8>,
-              int,
-              ffi.Pointer<ffi2.Utf8>,
-              int,
-              ffi.Pointer<ffi2.Utf8>,
-              int,
-              ffi.Pointer<ffi2.Utf8>,
-              int,
-              ffi.Pointer<ffi2.Utf8>,
-              int,
-              ffi.Pointer<ffi2.Utf8>,
-              int,
-              int,
-              int,
-              int,
-              ffi.Pointer<ffi.Uint32>,
-              int)>(isLeaf: true);
 }
 
 /// An ICU4X Date object capable of containing a date and time for any calendar.
@@ -5800,33 +5618,7 @@ class FixedDecimal implements ffi.Finalizable {
   /// Construct an [`ICU4XFixedDecimal`] from an integer.
   ///
   /// See the [Rust documentation for `FixedDecimal`](https://docs.rs/fixed_decimal/latest/fixed_decimal/struct.FixedDecimal.html) for more information.
-  factory FixedDecimal.fromI32(int v) {
-    final result = _ICU4XFixedDecimal_create_from_i32(v);
-    return FixedDecimal._(result);
-  }
-  // ignore: non_constant_identifier_names
-  static final _ICU4XFixedDecimal_create_from_i32 =
-      _capi<ffi.NativeFunction<ffi.Pointer<ffi.Opaque> Function(ffi.Int32)>>(
-              'ICU4XFixedDecimal_create_from_i32')
-          .asFunction<ffi.Pointer<ffi.Opaque> Function(int)>(isLeaf: true);
-
-  /// Construct an [`ICU4XFixedDecimal`] from an integer.
-  ///
-  /// See the [Rust documentation for `FixedDecimal`](https://docs.rs/fixed_decimal/latest/fixed_decimal/struct.FixedDecimal.html) for more information.
-  factory FixedDecimal.fromU32(int v) {
-    final result = _ICU4XFixedDecimal_create_from_u32(v);
-    return FixedDecimal._(result);
-  }
-  // ignore: non_constant_identifier_names
-  static final _ICU4XFixedDecimal_create_from_u32 =
-      _capi<ffi.NativeFunction<ffi.Pointer<ffi.Opaque> Function(ffi.Uint32)>>(
-              'ICU4XFixedDecimal_create_from_u32')
-          .asFunction<ffi.Pointer<ffi.Opaque> Function(int)>(isLeaf: true);
-
-  /// Construct an [`ICU4XFixedDecimal`] from an integer.
-  ///
-  /// See the [Rust documentation for `FixedDecimal`](https://docs.rs/fixed_decimal/latest/fixed_decimal/struct.FixedDecimal.html) for more information.
-  factory FixedDecimal.fromI64(int v) {
+  factory FixedDecimal.fromInt(int v) {
     final result = _ICU4XFixedDecimal_create_from_i64(v);
     return FixedDecimal._(result);
   }
@@ -5836,43 +5628,12 @@ class FixedDecimal implements ffi.Finalizable {
               'ICU4XFixedDecimal_create_from_i64')
           .asFunction<ffi.Pointer<ffi.Opaque> Function(int)>(isLeaf: true);
 
-  /// Construct an [`ICU4XFixedDecimal`] from an integer.
-  ///
-  /// See the [Rust documentation for `FixedDecimal`](https://docs.rs/fixed_decimal/latest/fixed_decimal/struct.FixedDecimal.html) for more information.
-  factory FixedDecimal.fromU64(int v) {
-    final result = _ICU4XFixedDecimal_create_from_u64(v);
-    return FixedDecimal._(result);
-  }
-  // ignore: non_constant_identifier_names
-  static final _ICU4XFixedDecimal_create_from_u64 =
-      _capi<ffi.NativeFunction<ffi.Pointer<ffi.Opaque> Function(ffi.Uint64)>>(
-              'ICU4XFixedDecimal_create_from_u64')
-          .asFunction<ffi.Pointer<ffi.Opaque> Function(int)>(isLeaf: true);
-
-  /// Construct an [`ICU4XFixedDecimal`] from an integer-valued float
-  ///
-  /// See the [Rust documentation for `try_from_f64`](https://docs.rs/fixed_decimal/latest/fixed_decimal/struct.FixedDecimal.html#method.try_from_f64) for more information.
-  ///
-  /// See the [Rust documentation for `FloatPrecision`](https://docs.rs/fixed_decimal/latest/fixed_decimal/enum.FloatPrecision.html) for more information.
-  factory FixedDecimal.fromF64WithIntegerPrecision(double f) {
-    final result = _ICU4XFixedDecimal_create_from_f64_with_integer_precision(f);
-    return result.isOk
-        ? FixedDecimal._(result.union.ok)
-        : throw Error.values
-            .firstWhere((v) => v._underlying == result.union.err);
-  }
-  // ignore: non_constant_identifier_names
-  static final _ICU4XFixedDecimal_create_from_f64_with_integer_precision =
-      _capi<ffi.NativeFunction<_ResultOpaqueUint32 Function(ffi.Double)>>(
-              'ICU4XFixedDecimal_create_from_f64_with_integer_precision')
-          .asFunction<_ResultOpaqueUint32 Function(double)>(isLeaf: true);
-
   /// Construct an [`ICU4XFixedDecimal`] from an float, with a given power of 10 for the lower magnitude
   ///
   /// See the [Rust documentation for `try_from_f64`](https://docs.rs/fixed_decimal/latest/fixed_decimal/struct.FixedDecimal.html#method.try_from_f64) for more information.
   ///
   /// See the [Rust documentation for `FloatPrecision`](https://docs.rs/fixed_decimal/latest/fixed_decimal/enum.FloatPrecision.html) for more information.
-  factory FixedDecimal.fromF64WithLowerMagnitude(double f, int magnitude) {
+  factory FixedDecimal.fromDoubleWithLowerMagnitude(double f, int magnitude) {
     final result =
         _ICU4XFixedDecimal_create_from_f64_with_lower_magnitude(f, magnitude);
     return result.isOk
@@ -5892,7 +5653,7 @@ class FixedDecimal implements ffi.Finalizable {
   /// See the [Rust documentation for `try_from_f64`](https://docs.rs/fixed_decimal/latest/fixed_decimal/struct.FixedDecimal.html#method.try_from_f64) for more information.
   ///
   /// See the [Rust documentation for `FloatPrecision`](https://docs.rs/fixed_decimal/latest/fixed_decimal/enum.FloatPrecision.html) for more information.
-  factory FixedDecimal.fromF64WithSignificantDigits(double f, int digits) {
+  factory FixedDecimal.fromDoubleWithSignificantDigits(double f, int digits) {
     final result =
         _ICU4XFixedDecimal_create_from_f64_with_significant_digits(f, digits);
     return result.isOk
@@ -5914,7 +5675,7 @@ class FixedDecimal implements ffi.Finalizable {
   /// See the [Rust documentation for `try_from_f64`](https://docs.rs/fixed_decimal/latest/fixed_decimal/struct.FixedDecimal.html#method.try_from_f64) for more information.
   ///
   /// See the [Rust documentation for `FloatPrecision`](https://docs.rs/fixed_decimal/latest/fixed_decimal/enum.FloatPrecision.html) for more information.
-  factory FixedDecimal.fromF64WithFloatingPrecision(double f) {
+  factory FixedDecimal.fromDoubleWithDoublePrecision(double f) {
     final result =
         _ICU4XFixedDecimal_create_from_f64_with_floating_precision(f);
     return result.isOk
@@ -6356,31 +6117,6 @@ class FixedDecimalFormatter implements ffi.Finalizable {
               'ICU4XFixedDecimalFormatter_create_with_grouping_strategy')
           .asFunction<
               _ResultOpaqueUint32 Function(ffi.Pointer<ffi.Opaque>,
-                  ffi.Pointer<ffi.Opaque>, int)>(isLeaf: true);
-
-  /// Creates a new [`ICU4XFixedDecimalFormatter`] from preconstructed locale data in the form of an [`ICU4XDataStruct`]
-  /// constructed from `ICU4XDataStruct::create_decimal_symbols()`.
-  ///
-  /// The contents of the data struct will be consumed: if you wish to use the struct again it will have to be reconstructed.
-  /// Passing a consumed struct to this method will return an error.
-  factory FixedDecimalFormatter.withDecimalSymbolsV1(
-      DataStruct dataStruct, FixedDecimalGroupingStrategy groupingStrategy) {
-    final result = _ICU4XFixedDecimalFormatter_create_with_decimal_symbols_v1(
-        dataStruct._underlying, groupingStrategy.index);
-    return result.isOk
-        ? FixedDecimalFormatter._(result.union.ok)
-        : throw Error.values
-            .firstWhere((v) => v._underlying == result.union.err);
-  }
-  // ignore: non_constant_identifier_names
-  static final _ICU4XFixedDecimalFormatter_create_with_decimal_symbols_v1 =
-      _capi<
-                  ffi.NativeFunction<
-                      _ResultOpaqueUint32 Function(
-                          ffi.Pointer<ffi.Opaque>, ffi.Uint32)>>(
-              'ICU4XFixedDecimalFormatter_create_with_decimal_symbols_v1')
-          .asFunction<
-              _ResultOpaqueUint32 Function(
                   ffi.Pointer<ffi.Opaque>, int)>(isLeaf: true);
 
   /// Formats a [`ICU4XFixedDecimal`] to a string.
@@ -7263,7 +6999,7 @@ class IsoDateTime implements ffi.Finalizable {
   /// Creates a new [`ICU4XIsoDateTime`] from an [`ICU4XIsoDate`] and [`ICU4XTime`] object
   ///
   /// See the [Rust documentation for `new`](https://docs.rs/icu/latest/icu/calendar/struct.DateTime.html#method.new) for more information.
-  factory IsoDateTime.crateFromDateAndTime(IsoDate date, Time time) {
+  factory IsoDateTime.fromDateAndTime(IsoDate date, Time time) {
     final result = _ICU4XIsoDateTime_crate_from_date_and_time(
         date._underlying, time._underlying);
     return IsoDateTime._(result);
@@ -8109,7 +7845,7 @@ class List implements ffi.Finalizable {
               int)>(isLeaf: true);
 
   /// The number of elements in this list
-  int get len {
+  int get length {
     final result = _ICU4XList_len(_underlying);
     return result;
   }
@@ -8775,9 +8511,9 @@ class LocaleDisplayNamesFormatter implements ffi.Finalizable {
   /// Creates a new `LocaleDisplayNamesFormatter` from locale data and an options bag.
   ///
   /// See the [Rust documentation for `try_new`](https://docs.rs/icu/latest/icu/displaynames/struct.LocaleDisplayNamesFormatter.html#method.try_new) for more information.
-  factory LocaleDisplayNamesFormatter.tryNew(
+  factory LocaleDisplayNamesFormatter(
       DataProvider provider, Locale locale, DisplayNamesOptionsV1 options) {
-    final result = _ICU4XLocaleDisplayNamesFormatter_try_new(
+    final result = _ICU4XLocaleDisplayNamesFormatter_create(
         provider._underlying, locale._underlying, options._underlying);
     return result.isOk
         ? LocaleDisplayNamesFormatter._(result.union.ok)
@@ -8785,11 +8521,11 @@ class LocaleDisplayNamesFormatter implements ffi.Finalizable {
             .firstWhere((v) => v._underlying == result.union.err);
   }
   // ignore: non_constant_identifier_names
-  static final _ICU4XLocaleDisplayNamesFormatter_try_new = _capi<
+  static final _ICU4XLocaleDisplayNamesFormatter_create = _capi<
               ffi.NativeFunction<
                   _ResultOpaqueUint32 Function(ffi.Pointer<ffi.Opaque>,
                       ffi.Pointer<ffi.Opaque>, _DisplayNamesOptionsV1Ffi)>>(
-          'ICU4XLocaleDisplayNamesFormatter_try_new')
+          'ICU4XLocaleDisplayNamesFormatter_create')
       .asFunction<
           _ResultOpaqueUint32 Function(
               ffi.Pointer<ffi.Opaque>,
@@ -9793,8 +9529,8 @@ class RegionDisplayNames implements ffi.Finalizable {
   /// Creates a new `RegionDisplayNames` from locale data and an options bag.
   ///
   /// See the [Rust documentation for `try_new`](https://docs.rs/icu/latest/icu/displaynames/struct.RegionDisplayNames.html#method.try_new) for more information.
-  factory RegionDisplayNames.tryNew(DataProvider provider, Locale locale) {
-    final result = _ICU4XRegionDisplayNames_try_new(
+  factory RegionDisplayNames(DataProvider provider, Locale locale) {
+    final result = _ICU4XRegionDisplayNames_create(
         provider._underlying, locale._underlying);
     return result.isOk
         ? RegionDisplayNames._(result.union.ok)
@@ -9802,10 +9538,10 @@ class RegionDisplayNames implements ffi.Finalizable {
             .firstWhere((v) => v._underlying == result.union.err);
   }
   // ignore: non_constant_identifier_names
-  static final _ICU4XRegionDisplayNames_try_new = _capi<
+  static final _ICU4XRegionDisplayNames_create = _capi<
           ffi.NativeFunction<
               _ResultOpaqueUint32 Function(ffi.Pointer<ffi.Opaque>,
-                  ffi.Pointer<ffi.Opaque>)>>('ICU4XRegionDisplayNames_try_new')
+                  ffi.Pointer<ffi.Opaque>)>>('ICU4XRegionDisplayNames_create')
       .asFunction<
           _ResultOpaqueUint32 Function(
               ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
@@ -9873,7 +9609,7 @@ class ReorderedIndexMap implements ffi.Finalizable {
           .asFunction<SizeList Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
 
   /// The length of this map
-  int get len {
+  int get length {
     final result = _ICU4XReorderedIndexMap_len(_underlying);
     return result;
   }
@@ -11008,19 +10744,6 @@ class UnicodeSetData implements ffi.Finalizable {
                   ffi.Uint32)>>('ICU4XUnicodeSetData_contains_char')
       .asFunction<bool Function(ffi.Pointer<ffi.Opaque>, int)>(isLeaf: true);
 
-  /// Checks whether the code point (specified as a 32 bit integer, in UTF-32) is in the set.
-  bool contains32(int cp) {
-    final result = _ICU4XUnicodeSetData_contains32(_underlying, cp);
-    return result;
-  }
-
-  // ignore: non_constant_identifier_names
-  static final _ICU4XUnicodeSetData_contains32 = _capi<
-          ffi.NativeFunction<
-              ffi.Bool Function(ffi.Pointer<ffi.Opaque>,
-                  ffi.Uint32)>>('ICU4XUnicodeSetData_contains32')
-      .asFunction<bool Function(ffi.Pointer<ffi.Opaque>, int)>(isLeaf: true);
-
   /// See the [Rust documentation for `basic_emoji`](https://docs.rs/icu/latest/icu/properties/sets/fn.basic_emoji.html) for more information.
   factory UnicodeSetData.loadBasicEmoji(DataProvider provider) {
     final result = _ICU4XUnicodeSetData_load_basic_emoji(provider._underlying);
@@ -11935,48 +11658,6 @@ class _SliceFfiUint16 extends ffi.Struct {
   @override
   bool operator ==(Object other) {
     if (other is! _SliceFfiUint16 || other._length != _length) {
-      return false;
-    }
-
-    for (var i = 0; i < _length; i++) {
-      if (other._bytes[i] != _bytes[i]) {
-        return false;
-      }
-    }
-    return true;
-  }
-
-  // This is cheap
-  @override
-  int get hashCode => _length.hashCode;
-}
-
-class _SliceFfiUint32 extends ffi.Struct {
-  external ffi.Pointer<ffi.Uint32> _bytes;
-
-  @ffi.Size()
-  external int _length;
-
-  /// Produces a slice from a Dart object. The Dart object's data is copied into the given allocator
-  /// as it cannot be borrowed directly, and gets freed with the slice object.
-  // ignore: unused_element
-  static _SliceFfiUint32 _fromDart(Uint32List value, ffi.Allocator allocator) {
-    final pointer = allocator<_SliceFfiUint32>();
-    final slice = pointer.ref;
-    slice._length = value.length;
-    slice._bytes = allocator(slice._length);
-    slice._bytes.asTypedList(slice._length).setAll(0, value);
-
-    return slice;
-  }
-
-  // ignore: unused_element
-  Uint32List get _asDart => _bytes.asTypedList(_length);
-
-  // This is expensive
-  @override
-  bool operator ==(Object other) {
-    if (other is! _SliceFfiUint32 || other._length != _length) {
       return false;
     }
 

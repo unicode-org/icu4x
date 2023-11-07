@@ -41,6 +41,7 @@ pub mod ffi {
 
         /// The number of elements in this list
         #[allow(clippy::len_without_is_empty)] // don't need to follow Rust conventions over FFI
+        #[diplomat::attr(dart, rename = "length")]
         pub fn len(&self) -> usize {
             self.0.len()
         }
