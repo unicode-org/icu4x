@@ -131,12 +131,20 @@ pub mod ffi {
         pub fn compare_utf16(&self, left: &[u16], right: &[u16]) -> ICU4XOrdering {
             self.0.compare_utf16(left, right).into()
         }
+
+        /// The resolved options showing how the default options, the requested options,
+        /// and the options from locale data were combined. None of the struct fields
+        /// will have `Auto` as the value.
+        #[diplomat::rust_link(icu::collator::Collator::resolved_options, FnInStruct)]
+        pub fn resolved_options(&self) -> ICU4XCollatorOptionsV1 {
+            self.0.resolved_options().into()
+        }
     }
 }
 
 use icu_collator::{
     AlternateHandling, BackwardSecondLevel, CaseFirst, CaseLevel, CollatorOptions, MaxVariable,
-    Numeric, Strength,
+    Numeric, ResolvedCollatorOptions, Strength,
 };
 
 impl From<ffi::ICU4XCollatorStrength> for Option<Strength> {
@@ -219,6 +227,82 @@ impl From<ffi::ICU4XCollatorBackwardSecondLevel> for Option<BackwardSecondLevel>
     }
 }
 
+impl From<Strength> for ffi::ICU4XCollatorStrength {
+    fn from(strength: Strength) -> ffi::ICU4XCollatorStrength {
+        match strength {
+            Strength::Primary => ffi::ICU4XCollatorStrength::Primary,
+            Strength::Secondary => ffi::ICU4XCollatorStrength::Secondary,
+            Strength::Tertiary => ffi::ICU4XCollatorStrength::Tertiary,
+            Strength::Quaternary => ffi::ICU4XCollatorStrength::Quaternary,
+            Strength::Identical => ffi::ICU4XCollatorStrength::Identical,
+            _ => panic!("FFI out of sync"),
+        }
+    }
+}
+
+impl From<AlternateHandling> for ffi::ICU4XCollatorAlternateHandling {
+    fn from(alternate_handling: AlternateHandling) -> ffi::ICU4XCollatorAlternateHandling {
+        match alternate_handling {
+            AlternateHandling::NonIgnorable => ffi::ICU4XCollatorAlternateHandling::NonIgnorable,
+            AlternateHandling::Shifted => ffi::ICU4XCollatorAlternateHandling::Shifted,
+            _ => panic!("FFI out of sync"),
+        }
+    }
+}
+
+impl From<CaseFirst> for ffi::ICU4XCollatorCaseFirst {
+    fn from(case_first: CaseFirst) -> ffi::ICU4XCollatorCaseFirst {
+        match case_first {
+            CaseFirst::Off => ffi::ICU4XCollatorCaseFirst::Off,
+            CaseFirst::LowerFirst => ffi::ICU4XCollatorCaseFirst::LowerFirst,
+            CaseFirst::UpperFirst => ffi::ICU4XCollatorCaseFirst::UpperFirst,
+            _ => panic!("FFI out of sync"),
+        }
+    }
+}
+
+impl From<MaxVariable> for ffi::ICU4XCollatorMaxVariable {
+    fn from(max_variable: MaxVariable) -> ffi::ICU4XCollatorMaxVariable {
+        match max_variable {
+            MaxVariable::Space => ffi::ICU4XCollatorMaxVariable::Space,
+            MaxVariable::Punctuation => ffi::ICU4XCollatorMaxVariable::Punctuation,
+            MaxVariable::Symbol => ffi::ICU4XCollatorMaxVariable::Symbol,
+            MaxVariable::Currency => ffi::ICU4XCollatorMaxVariable::Currency,
+            _ => panic!("FFI out of sync"),
+        }
+    }
+}
+
+impl From<CaseLevel> for ffi::ICU4XCollatorCaseLevel {
+    fn from(case_level: CaseLevel) -> ffi::ICU4XCollatorCaseLevel {
+        match case_level {
+            CaseLevel::Off => ffi::ICU4XCollatorCaseLevel::Off,
+            CaseLevel::On => ffi::ICU4XCollatorCaseLevel::On,
+            _ => panic!("FFI out of sync"),
+        }
+    }
+}
+
+impl From<Numeric> for ffi::ICU4XCollatorNumeric {
+    fn from(numeric: Numeric) -> ffi::ICU4XCollatorNumeric {
+        match numeric {
+            Numeric::Off => ffi::ICU4XCollatorNumeric::Off,
+            Numeric::On => ffi::ICU4XCollatorNumeric::On,
+            _ => panic!("FFI out of sync"),
+        }
+    }
+}
+
+impl From<BackwardSecondLevel> for ffi::ICU4XCollatorBackwardSecondLevel {
+    fn from(backward_second_level: BackwardSecondLevel) -> ffi::ICU4XCollatorBackwardSecondLevel {
+        match backward_second_level {
+            BackwardSecondLevel::Off => ffi::ICU4XCollatorBackwardSecondLevel::Off,
+            BackwardSecondLevel::On => ffi::ICU4XCollatorBackwardSecondLevel::On,
+            _ => panic!("FFI out of sync"),
+        }
+    }
+}
+
 impl From<ffi::ICU4XCollatorOptionsV1> for CollatorOptions {
     fn from(options: ffi::ICU4XCollatorOptionsV1) -> CollatorOptions {
         let mut result = CollatorOptions::new();
@@ -231,5 +315,19 @@ impl From<ffi::ICU4XCollatorOptionsV1> for CollatorOptions {
         result.backward_second_level = options.backward_second_level.into();
 
         result
+    }
+}
+
+impl From<ResolvedCollatorOptions> for ffi::ICU4XCollatorOptionsV1 {
+    fn from(options: ResolvedCollatorOptions) -> ffi::ICU4XCollatorOptionsV1 {
+        Self {
+            strength: options.strength.into(),
+            alternate_handling: options.alternate_handling.into(),
+            case_first: options.case_first.into(),
+            max_variable: options.max_variable.into(),
+            case_level: options.case_level.into(),
+            numeric: options.numeric.into(),
+            backward_second_level: options.backward_second_level.into(),
+        }
     }
 }
