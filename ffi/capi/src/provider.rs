@@ -64,6 +64,7 @@ pub mod ffi {
             feature = "provider_fs",
             not(any(target_arch = "wasm32", target_os = "none"))
         ))]
+        #[diplomat::attr(dart, disable)]
         pub fn create_fs(path: &str) -> Result<Box<ICU4XDataProvider>, ICU4XError> {
             // #2520
             // In the future we can start using OsString APIs to support non-utf8 paths
@@ -82,6 +83,7 @@ pub mod ffi {
             feature = "provider_test",
             any(feature = "any_provider", feature = "buffer_provider")
         ))]
+        #[diplomat::attr(dart, disable)]
         pub fn create_test() -> Box<ICU4XDataProvider> {
             Self::create_compiled()
         }
