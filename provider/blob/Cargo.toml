@@ -37,6 +37,7 @@ icu_datagen = { path = "../../provider/datagen", features = ["networking"] }
 criterion = "0.4"
 
 [features]
+bench = []
 std = ["icu_provider/std"]
 export = [
     "icu_provider/datagen",

@@ -189,6 +189,7 @@ pub mod ffi {
         ///
         /// Use `create_from_string("en").
         #[cfg(feature = "provider_test")]
+        #[diplomat::attr(dart, disable)]
         pub fn create_en() -> Box<ICU4XLocale> {
             Box::new(ICU4XLocale(icu_locid::locale!("en")))
         }
@@ -197,6 +198,7 @@ pub mod ffi {
         ///
         /// Use `create_from_string("bn").
         #[cfg(feature = "provider_test")]
+        #[diplomat::attr(dart, disable)]
         pub fn create_bn() -> Box<ICU4XLocale> {
             Box::new(ICU4XLocale(icu_locid::locale!("bn")))
         }

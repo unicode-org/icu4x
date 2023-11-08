@@ -139,6 +139,13 @@ dependencies = [
     "test-tinywasm",
 ]
 
+[tasks.ci-job-test-dart]
+description = "Run all tests for the CI 'test-dart' job"
+category = "CI"
+dependencies = [
+    "test-dart",
+]
+
 [tasks.ci-job-nostd]
 description = "Run all tests for the CI 'test-nostd' job"
 category = "CI"
@@ -258,6 +265,7 @@ dependencies = [
     # Needs tools other than Cargo to be installed
     "ci-job-test-c",
     "ci-job-test-js",
+    "ci-job-test-dart",
     "ci-job-gn",
 
     # benchmarking and coverage jobs not included

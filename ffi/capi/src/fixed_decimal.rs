@@ -51,24 +51,28 @@ pub mod ffi {
     impl ICU4XFixedDecimal {
         /// Construct an [`ICU4XFixedDecimal`] from an integer.
         #[diplomat::rust_link(fixed_decimal::FixedDecimal, Struct)]
+        #[diplomat::attr(dart, disable)]
         pub fn create_from_i32(v: i32) -> Box<ICU4XFixedDecimal> {
             Box::new(ICU4XFixedDecimal(FixedDecimal::from(v)))
         }
 
         /// Construct an [`ICU4XFixedDecimal`] from an integer.
         #[diplomat::rust_link(fixed_decimal::FixedDecimal, Struct)]
+        #[diplomat::attr(dart, disable)]
         pub fn create_from_u32(v: u32) -> Box<ICU4XFixedDecimal> {
             Box::new(ICU4XFixedDecimal(FixedDecimal::from(v)))
         }
 
         /// Construct an [`ICU4XFixedDecimal`] from an integer.
         #[diplomat::rust_link(fixed_decimal::FixedDecimal, Struct)]
+        #[diplomat::attr(dart, rename = "create_from_int")]
         pub fn create_from_i64(v: i64) -> Box<ICU4XFixedDecimal> {
             Box::new(ICU4XFixedDecimal(FixedDecimal::from(v)))
         }
 
         /// Construct an [`ICU4XFixedDecimal`] from an integer.
         #[diplomat::rust_link(fixed_decimal::FixedDecimal, Struct)]
+        #[diplomat::attr(dart, disable)]
         pub fn create_from_u64(v: u64) -> Box<ICU4XFixedDecimal> {
             Box::new(ICU4XFixedDecimal(FixedDecimal::from(v)))
         }
@@ -77,6 +81,8 @@ pub mod ffi {
         #[diplomat::rust_link(fixed_decimal::FixedDecimal::try_from_f64, FnInStruct)]
         #[diplomat::rust_link(fixed_decimal::FloatPrecision, Enum)]
         #[diplomat::rust_link(fixed_decimal::DoublePrecision, Enum, hidden)]
+        #[diplomat::attr(dart, disable)]
+        #[diplomat::attr(dart, rename = "create_from_double_with_integer_precision")]
         pub fn create_from_f64_with_integer_precision(
             f: f64,
         ) -> Result<Box<ICU4XFixedDecimal>, ICU4XError> {
@@ -90,6 +96,7 @@ pub mod ffi {
         #[diplomat::rust_link(fixed_decimal::FixedDecimal::try_from_f64, FnInStruct)]
         #[diplomat::rust_link(fixed_decimal::FloatPrecision, Enum)]
         #[diplomat::rust_link(fixed_decimal::DoublePrecision, Enum, hidden)]
+        #[diplomat::attr(dart, rename = "create_from_double_with_lower_magnitude")]
         pub fn create_from_f64_with_lower_magnitude(
             f: f64,
             magnitude: i16,
@@ -104,6 +111,7 @@ pub mod ffi {
         #[diplomat::rust_link(fixed_decimal::FixedDecimal::try_from_f64, FnInStruct)]
         #[diplomat::rust_link(fixed_decimal::FloatPrecision, Enum)]
         #[diplomat::rust_link(fixed_decimal::DoublePrecision, Enum, hidden)]
+        #[diplomat::attr(dart, rename = "create_from_double_with_significant_digits")]
         pub fn create_from_f64_with_significant_digits(
             f: f64,
             digits: u8,
@@ -119,6 +127,7 @@ pub mod ffi {
         #[diplomat::rust_link(fixed_decimal::FixedDecimal::try_from_f64, FnInStruct)]
         #[diplomat::rust_link(fixed_decimal::FloatPrecision, Enum)]
         #[diplomat::rust_link(fixed_decimal::DoublePrecision, Enum, hidden)]
+        #[diplomat::attr(dart, rename = "create_from_double_with_double_precision")]
         pub fn create_from_f64_with_floating_precision(
             f: f64,
         ) -> Result<Box<ICU4XFixedDecimal>, ICU4XError> {

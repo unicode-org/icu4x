@@ -124,6 +124,7 @@ pub mod ffi {
 
         /// The length of this map
         #[allow(clippy::len_without_is_empty)]
+        #[diplomat::attr(dart, rename = "length")]
         pub fn len(&self) -> usize {
             self.0.len()
         }
