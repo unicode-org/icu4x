@@ -351,6 +351,25 @@ impl CollatorOptions {
     }
 }
 
+// Make it possible to easily copy the resolved options of
+// one collator into another collator.
+impl From<ResolvedCollatorOptions> for CollatorOptions {
+    /// Convenience conversion for copying the options from an
+    /// existing collator into a new one (overriding any locale-provided
+    /// defaults of the new one!).
+    fn from(options: ResolvedCollatorOptions) -> CollatorOptions {
+        Self {
+            strength: Some(options.strength),
+            alternate_handling: Some(options.alternate_handling),
+            case_first: Some(options.case_first),
+            max_variable: Some(options.max_variable),
+            case_level: Some(options.case_level),
+            numeric: Some(options.numeric),
+            backward_second_level: Some(options.backward_second_level),
+        }
+    }
+}
+
 /// The resolved (actually used) options used by the collator.
 ///
 /// See the documentation of `CollatorOptions`.

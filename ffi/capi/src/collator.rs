@@ -28,7 +28,39 @@ pub mod ffi {
         pub backward_second_level: ICU4XCollatorBackwardSecondLevel,
     }
 
+    // Note the flipped order of the words `Collator` and `Resolved`, because
+    // in FFI `Collator` is part of the `ICU4XCollator` prefix, but in Rust,
+    // `ResolvedCollatorOptions` makes more sense as English.
+    #[diplomat::rust_link(icu::collator::ResolvedCollatorOptions, Struct)]
+    pub struct ICU4XCollatorResolvedOptionsV1 {
+        pub strength: ICU4XCollatorStrength,
+        pub alternate_handling: ICU4XCollatorAlternateHandling,
+        pub case_first: ICU4XCollatorCaseFirst,
+        pub max_variable: ICU4XCollatorMaxVariable,
+        pub case_level: ICU4XCollatorCaseLevel,
+        pub numeric: ICU4XCollatorNumeric,
+        pub backward_second_level: ICU4XCollatorBackwardSecondLevel,
+    }
+
+    impl ICU4XCollatorResolvedOptionsV1 {
+        /// Convenience conversion for copying the options from an
+        /// existing collator into a new one (overriding any locale-provided
+        /// defaults of the new one!).
+        pub fn into_options(&self) -> ICU4XCollatorOptionsV1 {
+            ICU4XCollatorOptionsV1 {
+                strength: self.strength,
+                alternate_handling: self.alternate_handling,
+                case_first: self.case_first,
+                max_variable: self.max_variable,
+                case_level: self.case_level,
+                numeric: self.numeric,
+                backward_second_level: self.backward_second_level,
+            }
+        }
+    }
+
     #[diplomat::rust_link(icu::collator::Strength, Enum)]
+    #[derive(Eq, PartialEq, Debug, Copy, Clone, PartialOrd, Ord)]
     pub enum ICU4XCollatorStrength {
         Auto = 0,
         Primary = 1,
@@ -39,6 +71,7 @@ pub mod ffi {
     }
 
     #[diplomat::rust_link(icu::collator::AlternateHandling, Enum)]
+    #[derive(Eq, PartialEq, Debug, Copy, Clone, PartialOrd, Ord)]
     pub enum ICU4XCollatorAlternateHandling {
         Auto = 0,
         NonIgnorable = 1,
@@ -46,6 +79,7 @@ pub mod ffi {
     }
 
     #[diplomat::rust_link(icu::collator::CaseFirst, Enum)]
+    #[derive(Eq, PartialEq, Debug, Copy, Clone, PartialOrd, Ord)]
     pub enum ICU4XCollatorCaseFirst {
         Auto = 0,
         Off = 1,
@@ -54,6 +88,7 @@ pub mod ffi {
     }
 
     #[diplomat::rust_link(icu::collator::MaxVariable, Enum)]
+    #[derive(Eq, PartialEq, Debug, Copy, Clone, PartialOrd, Ord)]
     pub enum ICU4XCollatorMaxVariable {
         Auto = 0,
         Space = 1,
@@ -63,6 +98,7 @@ pub mod ffi {
     }
 
     #[diplomat::rust_link(icu::collator::CaseLevel, Enum)]
+    #[derive(Eq, PartialEq, Debug, Copy, Clone, PartialOrd, Ord)]
     pub enum ICU4XCollatorCaseLevel {
         Auto = 0,
         Off = 1,
@@ -70,6 +106,7 @@ pub mod ffi {
     }
 
     #[diplomat::rust_link(icu::collator::Numeric, Enum)]
+    #[derive(Eq, PartialEq, Debug, Copy, Clone, PartialOrd, Ord)]
     pub enum ICU4XCollatorNumeric {
         Auto = 0,
         Off = 1,
@@ -77,6 +114,7 @@ pub mod ffi {
     }
 
     #[diplomat::rust_link(icu::collator::BackwardSecondLevel, Enum)]
+    #[derive(Eq, PartialEq, Debug, Copy, Clone, PartialOrd, Ord)]
     pub enum ICU4XCollatorBackwardSecondLevel {
         Auto = 0,
         Off = 1,
@@ -136,7 +174,7 @@ pub mod ffi {
         /// and the options from locale data were combined. None of the struct fields
         /// will have `Auto` as the value.
         #[diplomat::rust_link(icu::collator::Collator::resolved_options, FnInStruct)]
-        pub fn resolved_options(&self) -> ICU4XCollatorOptionsV1 {
+        pub fn resolved_options(&self) -> ICU4XCollatorResolvedOptionsV1 {
             self.0.resolved_options().into()
         }
     }
@@ -235,7 +273,10 @@ impl From<Strength> for ffi::ICU4XCollatorStrength {
             Strength::Tertiary => ffi::ICU4XCollatorStrength::Tertiary,
             Strength::Quaternary => ffi::ICU4XCollatorStrength::Quaternary,
             Strength::Identical => ffi::ICU4XCollatorStrength::Identical,
-            _ => panic!("FFI out of sync"),
+            _ => {
+                debug_assert!(false, "FFI out of sync");
+                ffi::ICU4XCollatorStrength::Identical // Highest we know of
+            }
         }
     }
 }
@@ -245,7 +286,11 @@ impl From<AlternateHandling> for ffi::ICU4XCollatorAlternateHandling {
         match alternate_handling {
             AlternateHandling::NonIgnorable => ffi::ICU4XCollatorAlternateHandling::NonIgnorable,
             AlternateHandling::Shifted => ffi::ICU4XCollatorAlternateHandling::Shifted,
-            _ => panic!("FFI out of sync"),
+            _ => {
+                debug_assert!(false, "FFI out of sync");
+                // Possible future values: ShiftTrimmed, Blanked
+                ffi::ICU4XCollatorAlternateHandling::Shifted // Highest we know of
+            }
         }
     }
 }
@@ -256,7 +301,11 @@ impl From<CaseFirst> for ffi::ICU4XCollatorCaseFirst {
             CaseFirst::Off => ffi::ICU4XCollatorCaseFirst::Off,
             CaseFirst::LowerFirst => ffi::ICU4XCollatorCaseFirst::LowerFirst,
             CaseFirst::UpperFirst => ffi::ICU4XCollatorCaseFirst::UpperFirst,
-            _ => panic!("FFI out of sync"),
+            _ => {
+                debug_assert!(false, "FFI out of sync");
+                // Does it even make sense that `CaseFirst` is non-exhaustive?
+                ffi::ICU4XCollatorCaseFirst::Off // The most neutral value
+            }
         }
     }
 }
@@ -268,7 +317,10 @@ impl From<MaxVariable> for ffi::ICU4XCollatorMaxVariable {
             MaxVariable::Punctuation => ffi::ICU4XCollatorMaxVariable::Punctuation,
             MaxVariable::Symbol => ffi::ICU4XCollatorMaxVariable::Symbol,
             MaxVariable::Currency => ffi::ICU4XCollatorMaxVariable::Currency,
-            _ => panic!("FFI out of sync"),
+            _ => {
+                debug_assert!(false, "FFI out of sync");
+                ffi::ICU4XCollatorMaxVariable::Currency // Highest we know of
+            }
         }
     }
 }
@@ -278,7 +330,10 @@ impl From<CaseLevel> for ffi::ICU4XCollatorCaseLevel {
         match case_level {
             CaseLevel::Off => ffi::ICU4XCollatorCaseLevel::Off,
             CaseLevel::On => ffi::ICU4XCollatorCaseLevel::On,
-            _ => panic!("FFI out of sync"),
+            _ => {
+                debug_assert!(false, "FFI out of sync");
+                ffi::ICU4XCollatorCaseLevel::On // The most enabled that we know of
+            }
         }
     }
 }
@@ -288,7 +343,10 @@ impl From<Numeric> for ffi::ICU4XCollatorNumeric {
         match numeric {
             Numeric::Off => ffi::ICU4XCollatorNumeric::Off,
             Numeric::On => ffi::ICU4XCollatorNumeric::On,
-            _ => panic!("FFI out of sync"),
+            _ => {
+                debug_assert!(false, "FFI out of sync");
+                ffi::ICU4XCollatorNumeric::On // The most enabled that we know of
+            }
         }
     }
 }
@@ -298,7 +356,10 @@ impl From<BackwardSecondLevel> for ffi::ICU4XCollatorBackwardSecondLevel {
         match backward_second_level {
             BackwardSecondLevel::Off => ffi::ICU4XCollatorBackwardSecondLevel::Off,
             BackwardSecondLevel::On => ffi::ICU4XCollatorBackwardSecondLevel::On,
-            _ => panic!("FFI out of sync"),
+            _ => {
+                debug_assert!(false, "FFI out of sync");
+                ffi::ICU4XCollatorBackwardSecondLevel::On // The most enabled that we know of
+            }
         }
     }
 }
@@ -318,8 +379,8 @@ impl From<ffi::ICU4XCollatorOptionsV1> for CollatorOptions {
     }
 }
 
-impl From<ResolvedCollatorOptions> for ffi::ICU4XCollatorOptionsV1 {
-    fn from(options: ResolvedCollatorOptions) -> ffi::ICU4XCollatorOptionsV1 {
+impl From<ResolvedCollatorOptions> for ffi::ICU4XCollatorResolvedOptionsV1 {
+    fn from(options: ResolvedCollatorOptions) -> ffi::ICU4XCollatorResolvedOptionsV1 {
         Self {
             strength: options.strength.into(),
             alternate_handling: options.alternate_handling.into(),
