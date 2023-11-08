@@ -43,7 +43,13 @@ To use blob data, we will need to add the `icu_provider_blob` crate to our proje
 cargo add icu_provider_blob
 ```
 
-Now, update the instatiation of the date formatter to load data from the blob if the
+We also need to enable the `serde` feature on the `icu` crate to enable deserialization support:
+
+```console
+cargo add icu --features serde
+```
+
+Now, update the instatiation of the datetime formatter to load data from the blob if the
 locale is Chakma:
 
 ```rust
@@ -53,7 +59,7 @@ use icu_provider_blob::BlobDataProvider;
 
 const CCP_BLOB_PATH: &str = "<absolute path to ccp.blob>";
 
-let date_formatter = if locale == locale!("ccp") {
+let datetime_formatter = if locale == locale!("ccp") {
     println!("Using buffer provider");
 
     let blob = std::fs::read(CCP_BLOB_PATH)
@@ -63,15 +69,15 @@ let date_formatter = if locale == locale!("ccp") {
     let provider =
         BlobDataProvider::try_new_from_blob(blob).expect("deserialization should succeed");
 
-    DateFormatter::try_new_with_length_with_buffer_provider(
+    DateTimeFormatter::try_new_with_buffer_provider(
         &provider,
         &(&locale).into(),
-        length::Date::Medium,
+        Default::default(),
     )
     .expect("should have data for selected locale")
 } else {
     // As before
-    DateFormatter::try_new_with_length(&(&locale).into(), length::Date::Medium)
+    DateTimeFormatter::try_new(&(&locale).into(), Default::default())
         .expect("should have data for selected locale")
 };
 ```
@@ -98,20 +104,22 @@ function load_blob(url, callback) {
 
 if (localeStr == "ccp") {
     load_blob("https://storage.googleapis.com/static-493776/icu4x_2023-11-03/ccp.blob", (blob) => {
-        let dateFormatter = ICU4XDateFormatter.create_with_length(
+        let dateTimeFormatter = ICU4XDateTimeFormatter.create_with_lengths(
             ICU4XDataProvider.create_from_byte_slice(blob),
             locale,
             ICU4XDateLength.Medium,
+            ICU4XTimeLength.Medium,
         );
-        document.getElementById("output").innerText = dateFormatter.format_iso_date(isoDate);
+        document.getElementById("output").innerText = dateFormatter.format_iso_datetime(isoDateTime);
     })
 } else {
-    let dateFormatter = ICU4XDateFormatter.create_with_length(
+    let dateTimeFormatter = ICU4XDateTimeFormatter.create_with_lengths(
         ICU4XDataProvider.create_compiled(),
         locale,
         ICU4XDateLength.Medium,
+        ICU4XTimeLength.Medium,
     );
-    document.getElementById("output").innerText = dateFormatter.format_iso_date(isoDate);
+    document.getElementById("output").innerText = dateFormatter.format_iso_datetime(isoDateTime);
 }
 ```
 
