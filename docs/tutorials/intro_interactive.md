@@ -1,4 +1,4 @@
-# Building an Interactive DateTime Picker with ICU4X
+# Building an Interactive Date Picker with ICU4X
 
 In this tutorial, you will learn how to build an end-to-end application using ICU4X to format a date and time with some default locales and additional locales loaded dynamically.
 
@@ -13,8 +13,8 @@ Installing dependencies is always your first step.
 Verify that Rust is installed. If it's not, you can install it in a few seconds from [https://rustup.rs/](https://rustup.rs/).
 
 ```console
-$ cargo --version
-cargo 1.71.1 (7f1d04c00 2023-07-29)
+cargo --version
+# cargo 1.71.1 (7f1d04c00 2023-07-29)
 ```
 
 Create a new Rust binary crate with icu4x as a dependency:
@@ -22,7 +22,7 @@ Create a new Rust binary crate with icu4x as a dependency:
 ```console
 cargo new --bin tutorial
 cd tutorial
-$ cargo add icu
+cargo add icu
 ```
 
 ### JavaScript Part 1
@@ -106,15 +106,13 @@ And in JavaScript:
 ```javascript
 // Create a function that updates the UI:
 function update() {
-    let textResult;
     try {
         let localeStr = document.getElementById("localeinput").value;
         let locale = ICU4XLocale.create_from_string(localeStr);
-        textResult = locale.to_string();
+        document.getElementById("output").innerText = locale.to_string();
     } catch(e) {
-        textResult = e + ": " + e.error_value;
+        document.getElementById("output").innerText = e + ": " + e.error_value;
     }
-    document.getElementById("output").innerText = textResult;
 }
 
 // Run the function whenever the locale input changes:
@@ -215,7 +213,7 @@ let dateFormatter = ICU4XDateFormatter.create_with_length(
     locale,
     ICU4XDateLength.Medium,
 );
-textResult = dateFormatter.format_iso_date(isoDate);
+document.getElementById("output").innerText = dateFormatter.format_iso_date(isoDate);
 ```
 
 Try this in several locales, like `en` (English), `en-GB` (British English), and `th` (Thai). Observe how differently dates are represented in locales around the world! You can explicitly specify arbitrary calendar systems using the `u-ca` Unicode extension keyword in the locale. Try `en-u-ca-hebrew`!

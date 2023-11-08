@@ -10,13 +10,12 @@
 use icu::calendar::{Date, Iso};
 use icu::datetime::options::length;
 use icu::datetime::DateFormatter;
-use icu::locid::Locale;
-use writeable::Writeable;
+use icu::locid::{locale, Locale};
 use icu_provider_blob::BlobDataProvider;
 
-fn main() {
-    env_logger::init();
+const CCP_BLOB_PATH: &str = "ccp_smallest.blob";
 
+fn main() {
     // Get the locale from user input:
     print!("Enter your locale: ");
     std::io::Write::flush(&mut std::io::stdout()).unwrap();
@@ -42,41 +41,33 @@ fn main() {
     let iso_date = get_current_date();
 
     // Create and use an ICU4X date formatter:
-    let date_formatter =
+    let date_formatter = if locale == locale!("ccp") {
+        println!("Using buffer provider");
+
+        let blob = std::fs::read(CCP_BLOB_PATH)
+            .expect("blob should read successfully")
+            .into();
+
+        let provider =
+            BlobDataProvider::try_new_from_blob(blob).expect("deserialization should succeed");
+
+        DateFormatter::try_new_with_length_with_buffer_provider(
+            &provider,
+            &(&locale).into(),
+            length::Date::Medium,
+        )
+        .expect("should have data for selected locale")
+    } else {
         DateFormatter::try_new_with_length(&(&locale).into(), length::Date::Medium)
-            .expect("should have data for specified locale");
+            .expect("should have data for selected locale")
+    };
+
     println!(
         "Date: {}",
         date_formatter
             .format(&iso_date.to_any())
             .expect("date should format successfully")
     );
-
-    // Print with a blob provider:
-    if let Ok(s) = format_date_with_blob(&locale, &iso_date) {
-        println!("Blob Provider Date: {s}");
-    }
-}
-
-fn format_date_with_blob(locale: &Locale, iso_date: &Date<Iso>) -> Result<String, std::io::Error> {
-    // Load postcard file for ccp:
-    let mut path = std::path::PathBuf::from(env!("CARGO_MANIFEST_DIR"));
-    path.push("data");
-    path.push(&*locale.write_to_string());
-    path.set_extension("postcard");
-    let blob = std::fs::read(&path)?;
-
-    // Create a DataProvider from it:
-    let provider = BlobDataProvider::try_new_from_blob(blob.into_boxed_slice())
-        .expect("Deserialization should succeed");
-
-    // Format a date in that locale:
-    let date_formatter =
-        DateFormatter::try_new_with_length_with_buffer_provider(&provider, &locale.into(), length::Date::Medium)
-            .expect("should have data for specified locale");
-    let response = date_formatter
-            .format_to_string(&iso_date.to_any()).expect("date should format successfully");
-    Ok(response)
 }
 
 fn get_current_date() -> Date<Iso> {

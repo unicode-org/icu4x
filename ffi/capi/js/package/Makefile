@@ -20,4 +20,5 @@ target/wasm32-unknown-unknown/release/icu_capi_cdylib.wasm: FORCE
 		-Z build-std=std,panic_abort -Z build-std-features=panic_immediate_abort \
 		--target wasm32-unknown-unknown \
 		--release \
-		-p icu_capi_cdylib
+		-p icu_capi_cdylib \
+		--features buffer_provider

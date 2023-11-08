@@ -4,7 +4,7 @@
 
 export CARGO_TARGET_DIR ?= target
 
-all: data/ccp.postcard
+all: data/ccp.blob
 
 ../bin/icu4x-datagen:
 	echo "Target dir: $(CARGO_TARGET_DIR)"
@@ -16,7 +16,7 @@ bin/datetime_cli:
 	mkdir -p bin
 	cp -p "$(CARGO_TARGET_DIR)"/release/datetime_cli bin/datetime_cli
 
-data/%.postcard: ../bin/icu4x-datagen bin/datetime_cli
+data/%.blob: ../bin/icu4x-datagen bin/datetime_cli
 	../bin/icu4x-datagen \
 		--format blob \
 		--keys-for-bin bin/datetime_cli \
