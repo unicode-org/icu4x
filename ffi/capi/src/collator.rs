@@ -42,23 +42,6 @@ pub mod ffi {
         pub backward_second_level: ICU4XCollatorBackwardSecondLevel,
     }
 
-    impl ICU4XCollatorResolvedOptionsV1 {
-        /// Convenience conversion for copying the options from an
-        /// existing collator into a new one (overriding any locale-provided
-        /// defaults of the new one!).
-        pub fn into_options(&self) -> ICU4XCollatorOptionsV1 {
-            ICU4XCollatorOptionsV1 {
-                strength: self.strength,
-                alternate_handling: self.alternate_handling,
-                case_first: self.case_first,
-                max_variable: self.max_variable,
-                case_level: self.case_level,
-                numeric: self.numeric,
-                backward_second_level: self.backward_second_level,
-            }
-        }
-    }
-
     #[diplomat::rust_link(icu::collator::Strength, Enum)]
     #[derive(Eq, PartialEq, Debug, Copy, Clone, PartialOrd, Ord)]
     pub enum ICU4XCollatorStrength {
