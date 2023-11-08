@@ -35,7 +35,7 @@ Note: if you're having technical difficulties, this file is available [here](htt
 
 ## 3. Using the data pack
 
-### Rust
+### Rust Part 3
 
 To use blob data, we will need to add the `icu_provider_blob` crate to our project:
 
@@ -53,12 +53,14 @@ Now, update the instatiation of the datetime formatter to load data from the blo
 locale is Chakma:
 
 ```rust
-// new imports
+// At the top of the file:
 use icu::locid::locale;
 use icu_provider_blob::BlobDataProvider;
 
+// Just below the imports (fill in the path):
 const CCP_BLOB_PATH: &str = "<absolute path to ccp.blob>";
 
+// In the main() function:
 let datetime_formatter = if locale == locale!("ccp") {
     println!("Using buffer provider");
 
@@ -84,7 +86,7 @@ let datetime_formatter = if locale == locale!("ccp") {
 
 Try using `ccp` now!
 
-### JavaScript
+### JavaScript Part 3
 
 Update the formatting logic to load data from the blob if the locale is Chakma. Note that this code uses a callback, as it does an HTTP request:
 
@@ -165,10 +167,9 @@ let date_formatter = TypedDateFormatter::<Gregorian>::try_new_with_length(
 println!(
     "Date: {}",
     date_formatter
-         // Note that we're not converting to a `Date<Any>` with `.to_any()`
-         // anymore. This is where you'll get a compile error if you pass a `Date<Indian>`.
-        .format(&iso_date)
-        .expect("date should format successfully")
+         // We need to convert to the explicit calendar system via `.to_calendar()`
+         // instead of `.to_any()`. We also no longer need to call `.expect()`.
+        .format(&iso_date.to_calendar(Gregorian))
 );
 ```
 
