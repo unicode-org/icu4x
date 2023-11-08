@@ -143,64 +143,9 @@ This is much better! Rerun your app with `ccp_smaller.blob` to make sure it stil
 
 ## 5. Slimming the data pack ... again
 
-The last datagen invocation still produced a lot of keys, as you saw in its output. This is because we used the `DateFormatter` API, which can format dates for a lot of different calendars. However, we are only using it with an ISO/Gregorian calendar date, so we don't *really* need Coptic, Indian, etc. date formatting data. There are two ways to fix this:
+The last datagen invocation still produced a lot of keys, as you saw in its output. This is because we used the `DateFormatter` API, which can format dates for a lot of different calendars. However, if we are only using it with an Gregorian calendar date, so we don't need Coptic, Indian, etc. date formatting data.
 
-### Option 1: Specify keys manually
-
-Recall the output of the last datagen invocation:
-
-```console
-INFO  [icu_datagen] Generating key calendar/japanese@1
-INFO  [icu_datagen] Generating key calendar/japanext@1
-INFO  [icu_datagen] Generating key datetime/buddhist/datelengths@1
-INFO  [icu_datagen] Generating key datetime/buddhist/datesymbols@1
-INFO  [icu_datagen] Generating key datetime/coptic/datelengths@1
-INFO  [icu_datagen] Generating key datetime/coptic/datesymbols@1
-INFO  [icu_datagen] Generating key datetime/ethiopic/datelengths@1
-INFO  [icu_datagen] Generating key datetime/ethiopic/datesymbols@1
-INFO  [icu_datagen] Generating key datetime/gregory/datelengths@1
-INFO  [icu_datagen] Generating key datetime/gregory/datesymbols@1
-INFO  [icu_datagen] Generating key datetime/indian/datelengths@1
-INFO  [icu_datagen] Generating key datetime/indian/datesymbols@1
-INFO  [icu_datagen] Generating key datetime/japanese/datelengths@1
-INFO  [icu_datagen] Generating key datetime/japanese/datesymbols@1
-INFO  [icu_datagen] Generating key datetime/japanext/datelengths@1
-INFO  [icu_datagen] Generating key datetime/japanext/datesymbols@1
-INFO  [icu_datagen] Generating key datetime/week_data@1
-INFO  [icu_datagen] Generating key decimal/symbols@1
-INFO  [icu_datagen] Generating key plurals/ordinal@1
-```
-
-Now let's just remove non-gregorian calendar manually:
-
-```console
-INFO  [icu_datagen] Generating key datetime/gregory/datelengths@1
-INFO  [icu_datagen] Generating key datetime/gregory/datesymbols@1
-INFO  [icu_datagen] Generating key datetime/week_data@1
-INFO  [icu_datagen] Generating key decimal/symbols@1
-INFO  [icu_datagen] Generating key plurals/ordinal@1
-```
-
-We can then use the `--keys` flag to pass these to datagen:
-
-```console
-$ icu4x-datagen --keys datetime/gregory/datelengths@1 datetime/gregory/datesymbols@1 datetime/week_data@1 decimal/symbols@1 plurals/ordinal@1 --locales ccp --format blob --out ccp_smallest.blob
-```
-
-Let's look at the sizes:
-
-```console
-$ wc -c *.blob
-656767 ccp.blob
- 45471 ccp_smaller.blob
-  4639 ccp_smallest.blob
-```
-
-Even better! Rerun your app with `ccp_smallest.blob` to make sure it still works!
-
-### Option 2: Using a more granular API
-
-We've seen that `DateFormatter` pulls in a lot of data. It would be nice if we could tell it that we'll only ever use it with Gregorian dates. Turns out we can! `icu::datetime` also exposes a `TypedDateFormatter<C>`, which is generic in a single calendar type. If you use this API instead (instantiated as `TypedDateFormatter<Greogorian>`), `--keys-for-bin` will give you exactly the keys we manually selected in the last section. However, now you can be sure that you didn't make a mistake selecting the keys (which would be an awkward runtime error), and that you will never accidentally pass a non-Gregorian date into the formatter (which would an awkward runtime error with `DateFormatter`, but is a compile-time error with `TypeDateFormatter`).
+We've seen that `DateFormatter` pulls in a lot of data. It would be nice if we could tell it that we'll only ever use it with Gregorian dates. Turns out we can! `icu::datetime` also exposes a `TypedDateFormatter<C>`, which is generic in a single calendar type. If you use this API instead (instantiated as `TypedDateFormatter<Gregorian>`), `--keys-for-bin` will give you exactly the keys we manually selected in the last section. However, now you can be sure that you didn't make a mistake selecting the keys (which would be an awkward runtime error), and that you will never accidentally pass a non-Gregorian date into the formatter (which would an awkward runtime error with `DateFormatter`, but is a compile-time error with `TypeDateFormatter`).
 
 ```rust
 let date_formatter = TypedDateFormatter::<Gregorian>::try_new_with_length(
@@ -218,3 +163,31 @@ println!(
         .expect("date should format successfully")
 );
 ```
+
+Now we can run datagen with `--keys-for-bin` again:
+
+```console
+$ cargo build
+$ icu4x-datagen --keys-for-bin target/debug/tutorial --locales ccp --format blob --out ccp_smallest.blob
+```
+
+The output will be much shorter:
+
+```console
+INFO  [icu_datagen] Generating key datetime/gregory/datelengths@1
+INFO  [icu_datagen] Generating key datetime/gregory/datesymbols@1
+INFO  [icu_datagen] Generating key datetime/week_data@1
+INFO  [icu_datagen] Generating key decimal/symbols@1
+INFO  [icu_datagen] Generating key plurals/ordinal@1
+```
+
+And the blob will also be much smaller at the sizes:
+
+```console
+$ wc -c *.blob
+656767 ccp.blob
+ 45471 ccp_smaller.blob
+  4639 ccp_smallest.blob
+```
+
+Rerun your app with `ccp_smallest.blob` to make sure it still works!
