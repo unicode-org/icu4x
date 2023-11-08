@@ -16,8 +16,8 @@ We also assume that the user is familiar with a terminal and have `rust` and `ca
 To verify that, open a terminal and check that the results are similar to:
 
 ```console
-cargo --version
-  cargo 1.71.1 (7f1d04c00 2023-07-29)
+$ cargo --version
+cargo 1.71.1 (7f1d04c00 2023-07-29)
 ```
 
 # 2. Creating an app with ICU4X as a dependency

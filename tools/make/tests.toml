@@ -60,7 +60,6 @@ set_env CARGO_TARGET_DIR ${pwd}/target
 cd docs/tutorials/testing
 
 exec --fail-on-error cargo --config patch.toml test -p tutorials-test
-# exec --fail-on-error cargo --config patch.toml check -p datetime_cli
 exec --fail-on-error cargo --config patch.toml check -p tutorial_default
 exec --fail-on-error cargo --config patch.toml check -p tutorial_buffer
 exec --fail-on-error cargo --config patch.toml check -p tutorial_experimental
@@ -99,13 +98,6 @@ cp ${project_dir}/target/debug/tutorial_buffer crates/buffer/bin/tutorial_buffer
 exec --fail-on-error make -C crates/buffer buffer_data.postcard
 exec --fail-on-error cargo --config testing/patch.toml run -p tutorial_buffer
 
-# # Same for datetime_cli
-# exec --fail-on-error cargo --config testing/patch.toml build -p datetime_cli
-# mkdir crates/datetime_cli/bin
-# cp ${project_dir}/target/debug/datetime_cli crates/datetime_cli/bin/datetime_cli
-# exec --fail-on-error make -C crates/datetime_cli data/ccp.blob
-# exec --fail-on-error --input "ccp" cargo --config testing/patch.toml run -p datetime_cli
-
 exec --fail-on-error make -C crates/custom_compiled baked_data/mod.rs
 set_env ICU4X_DATA_DIR ${project_dir}/docs/tutorials/crates/custom_compiled/baked_data
 exec --fail-on-error cargo run --config testing/patch.toml -p tutorial_custom_compiled
@@ -134,18 +126,11 @@ exec --fail-on-error cargo run --release -p tutorial_experimental
 exec --fail-on-error cargo run --release -p tutorial_sync
 exec --fail-on-error cargo run --release -p tutorial_baked
 
-# exec --fail-on-error --input "und" cargo run --release -p datetime_cli
-
-# # Build the postcard file
-# # Use the full Makefile task
-# exec --fail-on-error cargo build --release -p tutorial_buffer
-# exec --fail-on-error make -C crates/buffer
-# exec --fail-on-error cargo run --release -p tutorial_buffer
-
-# # Same for datetime_cli
-# exec --fail-on-error cargo build --release -p datetime_cli
-# exec --fail-on-error make -C crates/datetime_cli
-# exec --fail-on-error --input "ccp" cargo run --release -p datetime_cli
+# Build the postcard file
+# Use the full Makefile task
+exec --fail-on-error cargo build --release -p tutorial_buffer
+exec --fail-on-error make -C crates/buffer
+exec --fail-on-error cargo run --release -p tutorial_buffer
 
 # Build custom compiled data
 # Use the full Makefile task
