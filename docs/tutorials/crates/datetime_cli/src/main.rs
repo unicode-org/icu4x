@@ -13,7 +13,7 @@ use icu::datetime::DateFormatter;
 use icu::locid::{locale, Locale};
 use icu_provider_blob::BlobDataProvider;
 
-const CCP_BLOB_PATH: &str = "ccp_smallest.blob";
+const CCP_BLOB_PATH: &str = "data/cpp.blob";
 
 fn main() {
     // Get the locale from user input:

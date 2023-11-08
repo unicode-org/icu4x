@@ -103,7 +103,7 @@ exec --fail-on-error cargo --config testing/patch.toml run -p tutorial_buffer
 exec --fail-on-error cargo --config testing/patch.toml build -p datetime_cli
 mkdir crates/datetime_cli/bin
 cp ${project_dir}/target/debug/datetime_cli crates/datetime_cli/bin/datetime_cli
-exec --fail-on-error make -C crates/datetime_cli data/ccp.postcard
+exec --fail-on-error make -C crates/datetime_cli data/ccp.blob
 exec --fail-on-error --input "ccp" cargo --config testing/patch.toml run -p datetime_cli
 
 exec --fail-on-error make -C crates/custom_compiled baked_data/mod.rs
