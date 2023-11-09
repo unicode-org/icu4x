@@ -17,6 +17,7 @@
 
 mod canonicalizer;
 pub use canonicalizer::*;
+use icu_locid::subtags::Language;
 mod directionality;
 pub use directionality::*;
 mod expander;
@@ -45,7 +46,7 @@ const _: () = {
     icu_locid_transform_data::impl_fallback_likelysubtags_v1!(Baked);
     icu_locid_transform_data::impl_fallback_parents_v1!(Baked);
     icu_locid_transform_data::impl_fallback_supplement_co_v1!(Baked);
-    icu_locid_transform_data::impl_locid_transform_aliases_v1!(Baked);
+    icu_locid_transform_data::impl_locid_transform_aliases_v2!(Baked);
     icu_locid_transform_data::impl_locid_transform_likelysubtags_ext_v1!(Baked);
     icu_locid_transform_data::impl_locid_transform_likelysubtags_l_v1!(Baked);
     icu_locid_transform_data::impl_locid_transform_likelysubtags_sr_v1!(Baked);
@@ -59,6 +60,7 @@ use icu_provider::prelude::*;
 /// The latest minimum set of keys required by this component.
 pub const KEYS: &[DataKey] = &[
     AliasesV1Marker::KEY,
+    AliasesV2Marker::KEY,
     CollationFallbackSupplementV1Marker::KEY,
     LikelySubtagsExtendedV1Marker::KEY,
     LikelySubtagsForLanguageV1Marker::KEY,
@@ -86,6 +88,7 @@ type SemivalidatedSubdivision = TinyAsciiStr<7>;
 // to store strs and parse when needed.
 type UnvalidatedLanguageIdentifier = str;
 type UnvalidatedLanguageIdentifierPair = StrStrPairVarULE;
+type UnvalidatedLanguageVariantsPair = StrStrStrPairVarULE;
 
 #[zerovec::make_varule(StrStrPairVarULE)]
 #[zerovec::derive(Debug)]
@@ -109,6 +112,27 @@ type UnvalidatedLanguageIdentifierPair = StrStrPairVarULE;
 /// to be stable, their Rust representation might not be. Use with caution.
 /// </div>
 pub struct StrStrPair<'a>(
+    #[cfg_attr(feature = "serde", serde(borrow))] pub Cow<'a, str>,
+    #[cfg_attr(feature = "serde", serde(borrow))] pub Cow<'a, str>,
+);
+
+#[zerovec::make_varule(StrStrStrPairVarULE)]
+#[zerovec::derive(Debug)]
+#[derive(Clone, PartialEq, Eq, PartialOrd, Ord, Debug)]
+#[cfg_attr(
+    feature = "serde",
+    derive(serde::Deserialize),
+    zerovec::derive(Deserialize)
+)]
+#[cfg_attr(
+    feature = "datagen",
+    derive(serde::Serialize, databake::Bake),
+    zerovec::derive(Serialize),
+    databake(path = icu_locid_transform::provider),
+)]
+/// A triplet of strings with a EncodeAsVarULE implementation.
+pub struct StrStrStrPair<'a>(
+    pub Language,
     #[cfg_attr(feature = "serde", serde(borrow))] pub Cow<'a, str>,
     #[cfg_attr(feature = "serde", serde(borrow))] pub Cow<'a, str>,
 );

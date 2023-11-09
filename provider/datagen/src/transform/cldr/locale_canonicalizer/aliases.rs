@@ -23,12 +23,32 @@ impl DataProvider<AliasesV1Marker> for crate::DatagenProvider {
             .read_and_parse("supplemental/aliases.json")?;
         Ok(DataResponse {
             metadata: Default::default(),
-            payload: Some(DataPayload::from_owned(AliasesV1::from(data))),
+            payload: Some(DataPayload::from_owned(AliasesV2::from(data).into())),
         })
     }
 }
 
 impl IterableDataProvider<AliasesV1Marker> for crate::DatagenProvider {
+    fn supported_locales(&self) -> Result<Vec<DataLocale>, DataError> {
+        Ok(vec![Default::default()])
+    }
+}
+
+impl DataProvider<AliasesV2Marker> for crate::DatagenProvider {
+    fn load(&self, req: DataRequest) -> Result<DataResponse<AliasesV2Marker>, DataError> {
+        self.check_req::<AliasesV2Marker>(req)?;
+        let data: &cldr_serde::aliases::Resource = self
+            .cldr()?
+            .core()
+            .read_and_parse("supplemental/aliases.json")?;
+        Ok(DataResponse {
+            metadata: Default::default(),
+            payload: Some(DataPayload::from_owned(AliasesV2::from(data))),
+        })
+    }
+}
+
+impl IterableDataProvider<AliasesV2Marker> for crate::DatagenProvider {
     fn supported_locales(&self) -> Result<Vec<DataLocale>, DataError> {
         Ok(vec![Default::default()])
     }
@@ -57,7 +77,7 @@ fn appendix_c_cmp(langid: &LanguageIdentifier) -> impl Ord {
     )
 }
 
-impl From<&cldr_serde::aliases::Resource> for AliasesV1<'_> {
+impl From<&cldr_serde::aliases::Resource> for AliasesV2<'_> {
     // Step 1. Load the rules from aliases.json
     fn from(other: &cldr_serde::aliases::Resource) -> Self {
         // These all correspond to language aliases in the CLDR data. By storing known
@@ -199,7 +219,13 @@ impl From<&cldr_serde::aliases::Resource> for AliasesV1<'_> {
 
         let language_variants = language_variants
             .iter()
-            .map(|(from, to)| StrStrPair(from.to_string().into(), to.to_string().into()))
+            .map(|(from, to)| {
+                StrStrStrPair(
+                    from.language,
+                    from.variants.to_string().into(),
+                    to.to_string().into(),
+                )
+            })
             .collect::<Vec<_>>();
         let language = language
             .iter()
@@ -271,7 +297,7 @@ fn test_basic() {
     use icu_locid::subtags::{language, region, script};
 
     let provider = crate::DatagenProvider::new_testing();
-    let data: DataPayload<AliasesV1Marker> = provider
+    let data: DataPayload<AliasesV2Marker> = provider
         .load(Default::default())
         .unwrap()
         .take_payload()

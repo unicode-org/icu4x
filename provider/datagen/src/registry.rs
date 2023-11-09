@@ -285,6 +285,7 @@ registry!(
     icu_list::provider::UnitListV1Marker = "list/unit@1",
     #[cfg(all())]
     icu_locid_transform::provider::AliasesV1Marker = "locid_transform/aliases@1",
+    icu_locid_transform::provider::AliasesV2Marker = "locid_transform/aliases@2",
     icu_locid_transform::provider::CollationFallbackSupplementV1Marker = "fallback/supplement/co@1",
     icu_locid_transform::provider::LikelySubtagsV1Marker = "locid_transform/likelysubtags@1",
     icu_locid_transform::provider::LikelySubtagsExtendedV1Marker =
