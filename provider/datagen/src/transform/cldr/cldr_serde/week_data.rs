@@ -45,7 +45,7 @@ impl From<&Weekday> for icu_calendar::types::IsoWeekday {
 ///
 /// For example the "AD" in "weekData": { "minDays": { "AD": 4, } }
 ///
-/// The contained types are strings rather than [icu_locid::subtags::Region]
+/// The contained types are strings rather than [`icu_locid::subtags::Region`]
 /// to avoid an extra parsing step of the variant in data providers.
 #[derive(Clone, Debug, PartialEq, Eq, PartialOrd, Ord)]
 pub enum Territory {

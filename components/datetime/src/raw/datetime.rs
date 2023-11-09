@@ -314,8 +314,8 @@ impl DateFormatter {
     }
 }
 
-/// This is the internal "raw" version of [crate::DateTimeFormatter], i.e. a version of DateTimeFormatter
-/// without the generic parameter. The actual implementation of [crate::DateTimeFormatter] should live here.
+/// This is the internal "raw" version of [`crate::DateTimeFormatter`], i.e. a version of `DateTimeFormatter`
+/// without the generic parameter. The actual implementation of [`crate::DateTimeFormatter`] should live here.
 #[derive(Debug)]
 pub(crate) struct DateTimeFormatter {
     pub patterns: DataPayload<PatternPluralsFromPatternsV1Marker>,

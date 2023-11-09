@@ -44,8 +44,10 @@ pub trait DateInput {
     /// Gets information on the position of the day within the year.
     fn day_of_year_info(&self) -> Option<DayOfYearInfo>;
 
-    /// Gets the kind of calendar this date is for, if associated with AnyCalendar
-    /// In most cases you'll probably want to return AnyCalendarKind::Iso
+    /// Gets the kind of calendar this date is for, if associated with [`AnyCalendar`]
+    /// In most cases you'll probably want to return [`AnyCalendarKind::Iso`].
+    ///
+    /// [`AnyCalendar`]: icu_calendar::any_calendar::AnyCalendar
     fn any_calendar_kind(&self) -> Option<AnyCalendarKind>;
 
     /// Converts date to ISO

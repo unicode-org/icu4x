@@ -248,7 +248,7 @@ pub struct CyclicNameSets {
 /// "main.LANGID.dates.calendars.gregorian" where "LANGID" is the identifier.
 ///
 /// e.g.
-/// https://github.com/unicode-org/cldr-json/blob/master/cldr-json/cldr-dates-full/main/en/ca-gregorian.json
+/// <https://github.com/unicode-org/cldr-json/blob/master/cldr-json/cldr-dates-full/main/en/ca-gregorian.json>
 #[derive(PartialEq, Debug, Deserialize, Clone)]
 pub struct Dates {
     pub months: Contexts<MonthSymbols>,

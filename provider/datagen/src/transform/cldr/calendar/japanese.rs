@@ -132,7 +132,7 @@ impl DataProvider<JapaneseExtendedErasV1Marker> for crate::DatagenProvider {
     }
 }
 
-/// See https://docs.google.com/document/d/1vMVhMHgCYRyx2gmwEfKRyXWDg_lrQadd8iMVU9uPK1o/edit?usp=chrome_omnibox&ouid=111665445991279316689
+/// See <https://docs.google.com/document/d/1vMVhMHgCYRyx2gmwEfKRyXWDg_lrQadd8iMVU9uPK1o/edit?usp=chrome_omnibox&ouid=111665445991279316689>
 /// for the era identifier spec
 fn era_to_code(original: &str, year: i32) -> Result<TinyStr16, String> {
     // Some examples of CLDR era names:

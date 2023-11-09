@@ -85,8 +85,8 @@ fn pattern_for_date_length_inner(data: DateLengthsV1, length: length::Date) -> P
 }
 
 /// Determine the appropriate `Pattern` for a given `options::length::Time` bag.
-/// If a preference for an hour cycle is set, it will look look up a pattern in the time_h11_12 or
-/// time_h23_h24 provider data, and then manually modify the symbol in the pattern if needed.
+/// If a preference for an hour cycle is set, it will look look up a pattern in the `time_h11_12` or
+/// `time_h23_h24` provider data, and then manually modify the symbol in the pattern if needed.
 pub(crate) fn pattern_for_time_length<'a, D>(
     data_provider: &'a D,
     locale: &'a DataLocale,

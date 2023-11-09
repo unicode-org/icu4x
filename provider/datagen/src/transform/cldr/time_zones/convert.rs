@@ -25,7 +25,7 @@ use tinystr::TinyStr8;
 /// https://unicode.org/reports/tr35/tr35-dates.html#Time_Zone_Goals
 ///
 /// Part 2 of type fallback requires access to the IANA TimeZone Database
-/// as well as a specific datetime context, so it is not relevant to DataProvier.
+/// as well as a specific datetime context, so it is not relevant to DataProvider.
 fn type_fallback(zone_format: &ZoneFormat) -> Option<&String> {
     zone_format
         .0

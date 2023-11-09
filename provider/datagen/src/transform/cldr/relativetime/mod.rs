@@ -123,9 +123,9 @@ impl TryFrom<&cldr_serde::date_fields::Field> for RelativeTimePatternDataV1<'_> 
     }
 }
 
-/// Try to convert an Option<String> to SingularSubPattern.
-/// If pattern is None, we return None
-/// If pattern is Some(pattern), we try to parse the pattern as SingularSubPattern failing
+/// Try to convert an `Option<String>` to [`SingularSubPattern`].
+/// If pattern is `None`, we return `None`
+/// If pattern is `Some(pattern)`, we try to parse the pattern as [`SingularSubPattern`] failing
 /// if an error is encountered
 fn optional_convert<'a, B: Borrow<Option<String>>>(
     pattern: B,
