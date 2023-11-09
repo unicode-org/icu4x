@@ -65,17 +65,17 @@ where
         ctx.insert("alloc");
         let data = self.iter().map(|d| d.bake(ctx));
         quote! {
-            alloc::collections::BTreeSet::from([#(#data,)*])
+            alloc::collections::BTreeSet::from([#(#data),*])
         }
     }
 }
 
 #[test]
-fn hash_set() {
+fn btree_set() {
     test_bake!(
         alloc::collections::BTreeSet<u8>,
-        alloc::collections::BTreeSet::from([1u8, 2u8,]),
-        std
+        alloc::collections::BTreeSet::from([1u8, 2u8]),
+        alloc
     );
 }
 
