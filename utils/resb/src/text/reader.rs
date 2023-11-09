@@ -536,7 +536,7 @@ impl Reader {
             }
         };
 
-        let keys_in_discovery_order = final_state.take_keys().iter().cloned().collect();
+        let keys_in_discovery_order = final_state.take_keys().into_iter().collect();
 
         Ok((bundle, keys_in_discovery_order))
     }
