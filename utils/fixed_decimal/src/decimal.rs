@@ -1091,8 +1091,20 @@ impl FixedDecimal {
     /// dec.trunc(0);
     /// assert_eq!("1", dec.to_string());
     /// ```
-    #[cfg(not(feature = "experimental"))]
     pub fn trunc(&mut self, position: i16) {
+        #[cfg(feature = "experimental")]
+        {
+            self.trunc_to_increment(position, RoundingIncrement::MultiplesOf1);
+        }
+
+        #[cfg(not(feature = "experimental"))]
+        {
+            self.trunc_internal(position);
+        }
+    }
+
+    #[cfg(not(feature = "experimental"))]
+    fn trunc_internal(&mut self, position: i16) {
         // 1. Set upper and lower magnitude
         self.lower_magnitude = cmp::min(position, 0);
         if position == i16::MIN {
@@ -1136,38 +1148,6 @@ impl FixedDecimal {
 
         #[cfg(debug_assertions)]
         self.check_invariants();
-    }
-
-    /// Truncates the number on the right to a particular position, deleting
-    /// digits if necessary.
-    ///
-    /// Also see [`FixedDecimal::pad_end()`].
-    ///
-    /// # Examples
-    ///
-    /// ```
-    /// use fixed_decimal::FixedDecimal;
-    /// # use std::str::FromStr;
-    ///
-    /// let mut dec = FixedDecimal::from_str("-1.5").unwrap();
-    /// dec.trunc(0);
-    /// assert_eq!("-1", dec.to_string());
-    /// let mut dec = FixedDecimal::from_str("0.4").unwrap();
-    /// dec.trunc(0);
-    /// assert_eq!("0", dec.to_string());
-    /// let mut dec = FixedDecimal::from_str("0.5").unwrap();
-    /// dec.trunc(0);
-    /// assert_eq!("0", dec.to_string());
-    /// let mut dec = FixedDecimal::from_str("0.6").unwrap();
-    /// dec.trunc(0);
-    /// assert_eq!("0", dec.to_string());
-    /// let mut dec = FixedDecimal::from_str("1.5").unwrap();
-    /// dec.trunc(0);
-    /// assert_eq!("1", dec.to_string());
-    /// ```
-    #[cfg(feature = "experimental")]
-    pub fn trunc(&mut self, position: i16) {
-        self.trunc_to_increment(position, RoundingIncrement::MultiplesOf1)
     }
 
     /// Truncates the number on the right to a particular position and rounding
@@ -1449,8 +1429,20 @@ impl FixedDecimal {
     /// dec.expand(0);
     /// assert_eq!("2", dec.to_string());
     /// ```
-    #[cfg(not(feature = "experimental"))]
     pub fn expand(&mut self, position: i16) {
+        #[cfg(feature = "experimental")]
+        {
+            self.expand_to_increment(position, RoundingIncrement::MultiplesOf1);
+        }
+
+        #[cfg(not(feature = "experimental"))]
+        {
+            self.expand_internal(position);
+        }
+    }
+
+    #[cfg(not(feature = "experimental"))]
+    fn expand_internal(&mut self, position: i16) {
         // 1. Set upper and lower magnitude
         self.lower_magnitude = cmp::min(position, 0);
         if position == i16::MIN {
@@ -1508,35 +1500,6 @@ impl FixedDecimal {
 
         #[cfg(debug_assertions)]
         self.check_invariants();
-    }
-
-    /// Take the expand of the number at a particular position.
-    ///
-    /// # Examples
-    ///
-    /// ```
-    /// use fixed_decimal::FixedDecimal;
-    /// # use std::str::FromStr;
-    ///
-    /// let mut dec = FixedDecimal::from_str("-1.5").unwrap();
-    /// dec.expand(0);
-    /// assert_eq!("-2", dec.to_string());
-    /// let mut dec = FixedDecimal::from_str("0.4").unwrap();
-    /// dec.expand(0);
-    /// assert_eq!("1", dec.to_string());
-    /// let mut dec = FixedDecimal::from_str("0.5").unwrap();
-    /// dec.expand(0);
-    /// assert_eq!("1", dec.to_string());
-    /// let mut dec = FixedDecimal::from_str("0.6").unwrap();
-    /// dec.expand(0);
-    /// assert_eq!("1", dec.to_string());
-    /// let mut dec = FixedDecimal::from_str("1.5").unwrap();
-    /// dec.expand(0);
-    /// assert_eq!("2", dec.to_string());
-    /// ```
-    #[cfg(feature = "experimental")]
-    pub fn expand(&mut self, position: i16) {
-        self.expand_to_increment(position, RoundingIncrement::MultiplesOf1)
     }
 
     /// Take the expand of the number at a particular position and rounding increment.
