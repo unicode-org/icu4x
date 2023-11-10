@@ -31,6 +31,7 @@ pub struct DateTimeFormatOptions {
 
 pub struct DateTimeFormat {
     prefs: DateTimeFormatResolvedPreferences,
+    #[allow(dead_code)]
     options: DateTimeFormatOptions,
 }
 
@@ -46,8 +47,8 @@ impl DateTimeFormat {
         }
     }
 
+    #[allow(dead_code)]
     fn get_time(&self) -> String {
-        println!("{:#?}", self.prefs.hour_cycle);
         match self.prefs.hour_cycle {
             HourCycle::H11 => "00:13 am",
             HourCycle::H12 => "12:13 am",
@@ -57,6 +58,7 @@ impl DateTimeFormat {
         .to_string()
     }
 
+    #[allow(dead_code)]
     fn get_date(&self) -> String {
         "Monday, June 23rd 2022".to_string()
     }
@@ -74,7 +76,7 @@ impl DateTimeFormat {
             }
             _ => {}
         }
-        return format!("{}{}{}", self.get_date(), ", ", self.get_time(),);
+        format!("{}{}{}", self.get_date(), ", ", self.get_time(),)
     }
 
     pub fn resolved_options(&self) -> &DateTimeFormatResolvedPreferences {

@@ -86,6 +86,17 @@ macro_rules! preferences {
                     )*
                 }
             }
+
+            pub fn merge(&mut self, other: $name) -> &mut Self {
+                $(
+                  if let Some(value) = other.$key {
+                      if self.$key.is_none() {
+                          self.$key = Some(value);
+                      }
+                  }
+                )*
+                self
+            }
         }
 
         impl $resolved_name {
