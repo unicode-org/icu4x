@@ -1,6 +1,6 @@
 mod data_provider;
 mod options;
-mod preferences;
+pub mod preferences;
 
 use data_provider::get_defaults;
 use icu_datetime::options::length;
@@ -12,7 +12,6 @@ use preferences::{Calendar, NumberingSystem};
 
 preferences!(
     DateTimeFormatPreferences,
-    DateTimeFormatDefaultPreferences,
     DateTimeFormatResolvedPreferences,
     {
         hour_cycle => Option<HourCycle>, HourCycle, Some(extensions_unicode_key!("hc")),

@@ -1,7 +1,6 @@
 #[macro_export]
 macro_rules! preferences {
     ($name:ident,
-     $default_name:ident,
      $resolved_name:ident,
      {$($key:ident => $pref:ty, $resolved:ty, $ue:expr),*}
      ) => (
@@ -15,12 +14,7 @@ macro_rules! preferences {
         }
 
         #[non_exhaustive]
-        pub struct $default_name {
-            $(
-                pub $key: $resolved,
-            )*
-        }
-
+        #[derive(Clone)]
         pub struct $resolved_name {
             pub lid: icu_locid::LanguageIdentifier,
 
@@ -29,8 +23,8 @@ macro_rules! preferences {
             )*
         }
 
-        impl From<(LanguageIdentifier, &$default_name)> for $resolved_name {
-            fn from(input: (LanguageIdentifier, &$default_name)) -> Self {
+        impl From<(LanguageIdentifier, &$resolved_name)> for $resolved_name {
+            fn from(input: (LanguageIdentifier, &$resolved_name)) -> Self {
                 Self {
                     lid: input.0,
                     $(

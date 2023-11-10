@@ -40,6 +40,10 @@ fn dtf_prefs() {
     prefs.merge_locale(loc);
     let dtf = DateTimeFormat::new(prefs, Default::default());
     assert_eq!(dtf.format(0), String::from("Monday, June 23rd 2022, 24:13"));
+    assert_eq!(
+        dtf.resolved_options().calendar,
+        dtf::preferences::Calendar::Gregory,
+    );
 }
 
 #[test]
@@ -52,6 +56,10 @@ fn dtf_prefs_with_ca() {
     prefs.merge_locale(loc);
     let dtf = DateTimeFormat::new(prefs, Default::default());
     assert_eq!(dtf.format(0), String::from("Monday, June 23rd 2022, 24:13"));
+    assert_eq!(
+        dtf.resolved_options().calendar,
+        dtf::preferences::Calendar::Buddhist,
+    );
 }
 
 #[test]
@@ -67,4 +75,5 @@ fn dtf_prefs_default_region() {
         dtf.resolved_options().lid.region,
         Some(subtags_region!("US"))
     );
+    assert_eq!(dtf.resolved_options().hour_cycle, HourCycle::H12,);
 }

@@ -26,7 +26,6 @@
 //!
 //! preferences!(
 //!     ExampleComponentPreferences,
-//!     ExampleComponentDefaultPreferences,
 //!     ExampleComponentResolvedPreferences,
 //!     {
 //!         hour_cycle => Option<HourCycle>, HourCycle, Some(extensions_unicode_key!("hc"))

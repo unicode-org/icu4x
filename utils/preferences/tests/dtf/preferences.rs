@@ -1,7 +1,7 @@
 use icu_locid::{extensions::unicode, extensions_unicode_value};
 use tinystr::TinyStr8;
 
-#[derive(Clone, Copy)]
+#[derive(Clone, Copy, Debug, PartialEq)]
 pub enum Calendar {
     Gregory,
     Buddhist,
