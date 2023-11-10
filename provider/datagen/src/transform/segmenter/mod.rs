@@ -581,7 +581,8 @@ fn generate_rule_break_data(
     let rule_status_table = if segmenter.segmenter_type == "word" {
         segmenter
             .tables
-            .iter().map(|p| {
+            .iter()
+            .map(|p| {
                 (match &*p.name {
                     "Numeric" => RuleStatusType::Number,
                     "ALetter" | "Hebrew_Letter" | "ExtendNumLet" | "Katakana" | "SA" => {
