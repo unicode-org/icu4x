@@ -86,6 +86,9 @@ default = [
 icu_datetime_experimental = [
     "icu_datetime/experimental",
 ]
+icu_plurals_experimental = [
+    "icu_plurals/experimental",
+]
 buffer = ["dep:icu_provider_blob", "icu_provider/sync", "icu_provider_adapters/serde"]
 std = []
 
