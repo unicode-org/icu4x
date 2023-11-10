@@ -5916,20 +5916,6 @@ class FixedDecimal implements ffi.Finalizable {
                   ffi.Int16)>>('ICU4XFixedDecimal_trunc')
       .asFunction<void Function(ffi.Pointer<ffi.Opaque>, int)>(isLeaf: true);
 
-  /// See the [Rust documentation for `trunc_to_increment`](https://docs.rs/fixed_decimal/latest/fixed_decimal/struct.FixedDecimal.html#method.trunc_to_increment) for more information.
-  void truncToIncrement(int position, RoundingIncrement increment) {
-    _ICU4XFixedDecimal_trunc_to_increment(
-        _underlying, position, increment.index);
-  }
-
-  // ignore: non_constant_identifier_names
-  static final _ICU4XFixedDecimal_trunc_to_increment = _capi<
-          ffi.NativeFunction<
-              ffi.Void Function(ffi.Pointer<ffi.Opaque>, ffi.Int16,
-                  ffi.Uint32)>>('ICU4XFixedDecimal_trunc_to_increment')
-      .asFunction<void Function(ffi.Pointer<ffi.Opaque>, int, int)>(
-          isLeaf: true);
-
   /// See the [Rust documentation for `half_trunc`](https://docs.rs/fixed_decimal/latest/fixed_decimal/struct.FixedDecimal.html#method.half_trunc) for more information.
   void halfTrunc(int position) {
     _ICU4XFixedDecimal_half_trunc(_underlying, position);
@@ -5953,20 +5939,6 @@ class FixedDecimal implements ffi.Finalizable {
               ffi.Void Function(ffi.Pointer<ffi.Opaque>,
                   ffi.Int16)>>('ICU4XFixedDecimal_expand')
       .asFunction<void Function(ffi.Pointer<ffi.Opaque>, int)>(isLeaf: true);
-
-  /// See the [Rust documentation for `expand_to_increment`](https://docs.rs/fixed_decimal/latest/fixed_decimal/struct.FixedDecimal.html#method.expand_to_increment) for more information.
-  void expandToIncrement(int position, RoundingIncrement increment) {
-    _ICU4XFixedDecimal_expand_to_increment(
-        _underlying, position, increment.index);
-  }
-
-  // ignore: non_constant_identifier_names
-  static final _ICU4XFixedDecimal_expand_to_increment = _capi<
-          ffi.NativeFunction<
-              ffi.Void Function(ffi.Pointer<ffi.Opaque>, ffi.Int16,
-                  ffi.Uint32)>>('ICU4XFixedDecimal_expand_to_increment')
-      .asFunction<void Function(ffi.Pointer<ffi.Opaque>, int, int)>(
-          isLeaf: true);
 
   /// See the [Rust documentation for `half_expand`](https://docs.rs/fixed_decimal/latest/fixed_decimal/struct.FixedDecimal.html#method.half_expand) for more information.
   void halfExpand(int position) {

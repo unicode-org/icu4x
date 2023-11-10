@@ -3,7 +3,6 @@ import { FFIError } from "./diplomat-runtime"
 import { ICU4XError } from "./ICU4XError";
 import { ICU4XFixedDecimalSign } from "./ICU4XFixedDecimalSign";
 import { ICU4XFixedDecimalSignDisplay } from "./ICU4XFixedDecimalSignDisplay";
-import { ICU4XRoundingIncrement } from "./ICU4XRoundingIncrement";
 
 /**
 
@@ -204,12 +203,6 @@ export class ICU4XFixedDecimal {
 
   /**
 
-   * See the {@link https://docs.rs/fixed_decimal/latest/fixed_decimal/struct.FixedDecimal.html#method.trunc_to_increment Rust documentation for `trunc_to_increment`} for more information.
-   */
-  trunc_to_increment(position: i16, increment: ICU4XRoundingIncrement): void;
-
-  /**
-
    * See the {@link https://docs.rs/fixed_decimal/latest/fixed_decimal/struct.FixedDecimal.html#method.half_trunc Rust documentation for `half_trunc`} for more information.
    */
   half_trunc(position: i16): void;
@@ -219,12 +212,6 @@ export class ICU4XFixedDecimal {
    * See the {@link https://docs.rs/fixed_decimal/latest/fixed_decimal/struct.FixedDecimal.html#method.expand Rust documentation for `expand`} for more information.
    */
   expand(position: i16): void;
-
-  /**
-
-   * See the {@link https://docs.rs/fixed_decimal/latest/fixed_decimal/struct.FixedDecimal.html#method.expand_to_increment Rust documentation for `expand_to_increment`} for more information.
-   */
-  expand_to_increment(position: i16, increment: ICU4XRoundingIncrement): void;
 
   /**
 

@@ -41,6 +41,7 @@ criterion = "0.4"
 [features]
 std = []
 bench = []
+experimental = []
 ryu = ["dep:ryu"]
 
 [lib]
