@@ -88,9 +88,12 @@ pub use operands::PluralOperands;
 use provider::CardinalV1Marker;
 use provider::ErasedPluralRulesV1Marker;
 use provider::OrdinalV1Marker;
-use provider::PluralRangesV1Marker;
-use provider::UnvalidatedPluralRange;
 use rules::runtime::test_rule;
+
+#[cfg(feature = "experimental")]
+use provider::PluralRangesV1Marker;
+#[cfg(feature = "experimental")]
+use provider::UnvalidatedPluralRange;
 
 #[doc(no_inline)]
 pub use PluralsError as Error;
@@ -556,6 +559,14 @@ impl PluralRules {
 /// A [`PluralRules`] that also has the ability to retrieve an appropriate [`Plural Category`] for a
 /// range.
 ///
+/// ✨ *Enabled with the `experimental` Cargo feature.*
+///
+/// <div class="stab unstable">
+/// 🚧 This code is experimental; it may change at any time, in breaking or non-breaking ways,
+/// including in SemVer minor releases. Use with caution.
+/// <a href="https://github.com/unicode-org/icu4x/issues/4140">#4140</a>
+/// </div>
+///
 /// # Examples
 ///
 /// ```
@@ -581,12 +592,14 @@ impl PluralRules {
 /// ```
 ///
 /// [`Plural Category`]: PluralCategory
+#[cfg(feature = "experimental")]
 #[derive(Debug)]
 pub struct PluralRulesWithRanges {
     rules: PluralRules,
     ranges: DataPayload<PluralRangesV1Marker>,
 }
 
+#[cfg(feature = "experimental")]
 impl PluralRulesWithRanges {
     icu_provider::gen_any_buffer_data_constructors!(
         locale: include,
