@@ -172,11 +172,6 @@
         See the `Rust documentation for half_trunc <https://docs.rs/fixed_decimal/latest/fixed_decimal/struct.FixedDecimal.html#method.half_trunc>`__ for more information.
 
 
-    .. js:method:: half_trunc_to_increment(position, increment)
-
-        See the `Rust documentation for half_trunc_to_increment <https://docs.rs/fixed_decimal/latest/fixed_decimal/struct.FixedDecimal.html#method.half_trunc_to_increment>`__ for more information.
-
-
     .. js:method:: expand(position)
 
         See the `Rust documentation for expand <https://docs.rs/fixed_decimal/latest/fixed_decimal/struct.FixedDecimal.html#method.expand>`__ for more information.
@@ -187,19 +182,9 @@
         See the `Rust documentation for half_expand <https://docs.rs/fixed_decimal/latest/fixed_decimal/struct.FixedDecimal.html#method.half_expand>`__ for more information.
 
 
-    .. js:method:: half_expand_to_increment(position, increment)
-
-        See the `Rust documentation for half_expand_to_increment <https://docs.rs/fixed_decimal/latest/fixed_decimal/struct.FixedDecimal.html#method.half_expand_to_increment>`__ for more information.
-
-
     .. js:method:: ceil(position)
 
         See the `Rust documentation for ceil <https://docs.rs/fixed_decimal/latest/fixed_decimal/struct.FixedDecimal.html#method.ceil>`__ for more information.
-
-
-    .. js:method:: ceil_to_increment(position, increment)
-
-        See the `Rust documentation for ceil_to_increment <https://docs.rs/fixed_decimal/latest/fixed_decimal/struct.FixedDecimal.html#method.ceil_to_increment>`__ for more information.
 
 
     .. js:method:: half_ceil(position)
@@ -207,19 +192,9 @@
         See the `Rust documentation for half_ceil <https://docs.rs/fixed_decimal/latest/fixed_decimal/struct.FixedDecimal.html#method.half_ceil>`__ for more information.
 
 
-    .. js:method:: half_ceil_to_increment(position, increment)
-
-        See the `Rust documentation for half_ceil_to_increment <https://docs.rs/fixed_decimal/latest/fixed_decimal/struct.FixedDecimal.html#method.half_ceil_to_increment>`__ for more information.
-
-
     .. js:method:: floor(position)
 
         See the `Rust documentation for floor <https://docs.rs/fixed_decimal/latest/fixed_decimal/struct.FixedDecimal.html#method.floor>`__ for more information.
-
-
-    .. js:method:: floor_to_increment(position, increment)
-
-        See the `Rust documentation for floor_to_increment <https://docs.rs/fixed_decimal/latest/fixed_decimal/struct.FixedDecimal.html#method.floor_to_increment>`__ for more information.
 
 
     .. js:method:: half_floor(position)
@@ -227,19 +202,9 @@
         See the `Rust documentation for half_floor <https://docs.rs/fixed_decimal/latest/fixed_decimal/struct.FixedDecimal.html#method.half_floor>`__ for more information.
 
 
-    .. js:method:: half_floor_to_increment(position, increment)
-
-        See the `Rust documentation for half_floor_to_increment <https://docs.rs/fixed_decimal/latest/fixed_decimal/struct.FixedDecimal.html#method.half_floor_to_increment>`__ for more information.
-
-
     .. js:method:: half_even(position)
 
         See the `Rust documentation for half_even <https://docs.rs/fixed_decimal/latest/fixed_decimal/struct.FixedDecimal.html#method.half_even>`__ for more information.
-
-
-    .. js:method:: half_even_to_increment(position, increment)
-
-        See the `Rust documentation for half_even_to_increment <https://docs.rs/fixed_decimal/latest/fixed_decimal/struct.FixedDecimal.html#method.half_even_to_increment>`__ for more information.
 
 
     .. js:method:: concatenate_end(other)

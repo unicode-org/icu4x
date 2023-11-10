@@ -75,33 +75,19 @@ void ICU4XFixedDecimal_trunc(ICU4XFixedDecimal* self, int16_t position);
 
 void ICU4XFixedDecimal_half_trunc(ICU4XFixedDecimal* self, int16_t position);
 
-void ICU4XFixedDecimal_half_trunc_to_increment(ICU4XFixedDecimal* self, int16_t position, ICU4XRoundingIncrement increment);
-
 void ICU4XFixedDecimal_expand(ICU4XFixedDecimal* self, int16_t position);
 
 void ICU4XFixedDecimal_half_expand(ICU4XFixedDecimal* self, int16_t position);
 
-void ICU4XFixedDecimal_half_expand_to_increment(ICU4XFixedDecimal* self, int16_t position, ICU4XRoundingIncrement increment);
-
 void ICU4XFixedDecimal_ceil(ICU4XFixedDecimal* self, int16_t position);
-
-void ICU4XFixedDecimal_ceil_to_increment(ICU4XFixedDecimal* self, int16_t position, ICU4XRoundingIncrement increment);
 
 void ICU4XFixedDecimal_half_ceil(ICU4XFixedDecimal* self, int16_t position);
 
-void ICU4XFixedDecimal_half_ceil_to_increment(ICU4XFixedDecimal* self, int16_t position, ICU4XRoundingIncrement increment);
-
 void ICU4XFixedDecimal_floor(ICU4XFixedDecimal* self, int16_t position);
-
-void ICU4XFixedDecimal_floor_to_increment(ICU4XFixedDecimal* self, int16_t position, ICU4XRoundingIncrement increment);
 
 void ICU4XFixedDecimal_half_floor(ICU4XFixedDecimal* self, int16_t position);
 
-void ICU4XFixedDecimal_half_floor_to_increment(ICU4XFixedDecimal* self, int16_t position, ICU4XRoundingIncrement increment);
-
 void ICU4XFixedDecimal_half_even(ICU4XFixedDecimal* self, int16_t position);
-
-void ICU4XFixedDecimal_half_even_to_increment(ICU4XFixedDecimal* self, int16_t position, ICU4XRoundingIncrement increment);
 
 diplomat_result_void_void ICU4XFixedDecimal_concatenate_end(ICU4XFixedDecimal* self, ICU4XFixedDecimal* other);
 
