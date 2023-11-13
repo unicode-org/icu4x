@@ -4,7 +4,8 @@
 
 //! Experimental.
 
+
 extern crate alloc;
 
 pub mod cons_provider;
-pub mod info_provider;
+pub mod provider;
