@@ -79,6 +79,33 @@ fn btree_set() {
     );
 }
 
+impl<K, V> Bake for alloc::collections::BTreeMap<K, V>
+where
+    K: Bake,
+    V: Bake,
+{
+    fn bake(&self, ctx: &CrateEnv) -> TokenStream {
+        ctx.insert("alloc");
+        let data = self.iter().map(|(k, v)| {
+            let k = k.bake(ctx);
+            let v = v.bake(ctx);
+            quote!((#k, #v))
+        });
+        quote! {
+            alloc::collections::BTreeMap::from([#(#data),*])
+        }
+    }
+}
+
+#[test]
+fn btree_map() {
+    test_bake!(
+        alloc::collections::BTreeMap<u8, u8>,
+        alloc::collections::BTreeMap::from([(1u8, 2u8), (2u8, 4u8)]),
+        alloc
+    );
+}
+
 impl Bake for String {
     fn bake(&self, _: &CrateEnv) -> TokenStream {
         quote! {
