@@ -58,15 +58,15 @@ pub struct UnitsInfoV1<'data> {
     #[cfg_attr(feature = "serde", serde(borrow))]
     pub units_info: ZeroMap<'data, str, UnitsInfoIndex>,
 
-    /// Contains the quantity information for the units.
-    /// For example, the quantity for the unit `foot` is `length`.
+    /// Contains the dimensions information for the units.
+    /// For example, the dimension for the unit `foot` is `length`.
     #[cfg_attr(feature = "serde", serde(borrow))]
-    pub unit_quantity: VarZeroVec<'data, UnitQuantityULE>,
+    pub unit_dimensions: VarZeroVec<'data, UnitQuantityULE>,
 
     /// Contains the conversion information, such as the conversion rate and the base unit.
     /// For example, the conversion information for the unit `foot` is `1 foot = 0.3048 meter`.
     #[cfg_attr(feature = "serde", serde(borrow))]
-    pub convert_units: VarZeroVec<'data, ConvertUnitsULE>,
+    pub convert_infos: VarZeroVec<'data, ConvertUnitsULE>,
 }
 
 #[zerovec::make_ule(UnitsInfoIndexULE)]
@@ -78,13 +78,13 @@ pub struct UnitsInfoV1<'data> {
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 #[derive(Copy, Debug, Clone, Default, PartialEq, PartialOrd, Eq, Ord)]
 pub struct UnitsInfoIndex {
-    /// Contains the index of the quantity in the `unit_quantity` vector.
+    /// Contains the index of the dimension in the `unit_dimensions` vector.
     /// If the unit does not have a quantity, this field is `None`.
-    pub quantity: Option<u16>,
+    pub dimension: Option<u16>,
 
-    /// Contains the index of the convert unit in the `convert_units` vector.
+    /// Contains the index of the conversion info in the `convert_infos` vector.
     /// If the unit does not have a convert unit, this field is `None`.
-    pub convert_unit: Option<u16>,
+    pub convert_info: Option<u16>,
 }
 
 /// Specifies if the unit is a base unit or a derived unit.

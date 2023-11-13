@@ -41,8 +41,8 @@ impl DataProvider<UnitsInfoV1Marker> for crate::DatagenProvider {
             });
 
             let units_info_index = UnitsInfoIndex {
-                quantity: Some(quantity_index as u16),
-                convert_unit: None,
+                dimension: Some(quantity_index as u16),
+                convert_info: None,
             };
 
             conversion_info_map.insert(unit_name.as_str(), units_info_index);
@@ -63,11 +63,11 @@ impl DataProvider<UnitsInfoV1Marker> for crate::DatagenProvider {
             });
 
             if let Some(units_info_index) = conversion_info_map.get_mut(unit_name.as_str()) {
-                units_info_index.convert_unit = Some(convert_unit_index as u16);
+                units_info_index.convert_info = Some(convert_unit_index as u16);
             } else {
                 let units_info_index = UnitsInfoIndex {
-                    quantity: None,
-                    convert_unit: Some(convert_unit_index as u16),
+                    dimension: None,
+                    convert_info: Some(convert_unit_index as u16),
                 };
                 conversion_info_map.insert(unit_name.as_str(), units_info_index);
             }
@@ -75,8 +75,8 @@ impl DataProvider<UnitsInfoV1Marker> for crate::DatagenProvider {
 
         let result = UnitsInfoV1 {
             units_info: ZeroMap::from_iter(conversion_info_map),
-            unit_quantity: VarZeroVec::from(&quantity_vec),
-            convert_units: VarZeroVec::from(&convert_units_vec),
+            unit_dimensions: VarZeroVec::from(&quantity_vec),
+            convert_infos: VarZeroVec::from(&convert_units_vec),
         };
 
         Ok(DataResponse {
@@ -111,23 +111,23 @@ fn test_basic() {
 
     let units_info = und.get().to_owned();
     let units_info_map = &units_info.units_info;
-    let unit_quantity = &units_info.unit_quantity;
-    let convert_units = &units_info.convert_units;
+    let unit_quantity = &units_info.unit_dimensions;
+    let convert_units = &units_info.convert_infos;
 
     let meter = units_info_map.get("meter").unwrap();
-    let meter_quantity_index = meter.quantity.get().unwrap().as_unsigned_int() as usize;
+    let meter_quantity_index = meter.dimension.get().unwrap().as_unsigned_int() as usize;
     let meter_quantity = unit_quantity.zvl_get(meter_quantity_index).unwrap();
     assert_eq!(&meter_quantity.quantity, "length");
     // TODO: how to test this?
     // assert_eq!(meter_quantity.constant_exactness as u8, QuantitySimplicity::Simple as u8);
 
-    let meter_convert_index = meter.convert_unit.get().unwrap().as_unsigned_int() as usize;
+    let meter_convert_index = meter.convert_info.get().unwrap().as_unsigned_int() as usize;
     let meter_convert = convert_units.zvl_get(meter_convert_index).unwrap();
     assert_eq!(meter_convert.base_unit(), "meter");
     assert_eq!(meter_convert.factor(), "1");
 
     let foot = units_info_map.get("foot").unwrap();
-    let foot_convert_index = foot.convert_unit.get().unwrap().as_unsigned_int() as usize;
+    let foot_convert_index = foot.convert_info.get().unwrap().as_unsigned_int() as usize;
     let foot_convert = convert_units.zvl_get(foot_convert_index).unwrap();
     assert_eq!(foot_convert.base_unit(), "meter");
     assert_eq!(foot_convert.factor(), "ft_to_m");
