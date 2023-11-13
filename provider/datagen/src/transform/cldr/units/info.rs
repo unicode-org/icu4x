@@ -10,7 +10,7 @@ use icu_provider::{
     DataResponse,
 };
 use icu_unitsconversion::provider::{
-    ConvertUnits, QuantitySimplicity, UnitQuantity, UnitsInfoIndex, UnitsInfoV1, UnitsInfoV1Marker,
+    ConvertUnits, DerivationSpecifier, UnitQuantity, UnitsInfoIndex, UnitsInfoV1, UnitsInfoV1Marker,
 };
 use zerovec::{VarZeroVec, ZeroMap};
 
@@ -29,8 +29,8 @@ impl DataProvider<UnitsInfoV1Marker> for crate::DatagenProvider {
         let mut quantity_vec = Vec::<UnitQuantity>::new();
         for (unit_name, quantity) in quantities {
             let quantity_simplicity = match quantity.status.as_deref() {
-                Some("simple") => QuantitySimplicity::Simple,
-                _ => QuantitySimplicity::Complex,
+                Some("simple") => DerivationSpecifier::Base,
+                _ => DerivationSpecifier::Derived,
             };
 
             let quantity_value = quantity.quantity.as_str();

@@ -96,10 +96,10 @@ pub struct UnitsInfoIndex {
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[derive(Copy, Clone, Debug, PartialOrd, Ord, PartialEq, Eq, Default)]
 #[repr(u8)]
-pub enum QuantitySimplicity {
+pub enum DerivationSpecifier {
     #[default]
-    Simple = 0,
-    Complex = 1,
+    Base = 0,
+    Derived = 1,
 }
 
 #[zerovec::make_varule(UnitQuantityULE)]
@@ -127,7 +127,7 @@ pub struct UnitQuantity<'data> {
     pub quantity: Cow<'data, str>,
 
     /// Represents the simplicity of the quantity.
-    pub constant_exactness: QuantitySimplicity,
+    pub constant_exactness: DerivationSpecifier,
 }
 
 #[zerovec::make_varule(ConvertUnitsULE)]

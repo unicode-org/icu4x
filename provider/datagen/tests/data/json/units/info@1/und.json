@@ -748,191 +748,191 @@
   "unit_quantity": [
     {
       "quantity": "electric-current",
-      "constant_exactness": "Simple"
+      "constant_exactness": "Base"
     },
     {
       "quantity": "magnetic-field-strength",
-      "constant_exactness": "Complex"
+      "constant_exactness": "Derived"
     },
     {
       "quantity": "current-density",
-      "constant_exactness": "Complex"
+      "constant_exactness": "Derived"
     },
     {
       "quantity": "digital",
-      "constant_exactness": "Simple"
+      "constant_exactness": "Base"
     },
     {
       "quantity": "luminous-intensity",
-      "constant_exactness": "Simple"
+      "constant_exactness": "Base"
     },
     {
       "quantity": "illuminance",
-      "constant_exactness": "Complex"
+      "constant_exactness": "Derived"
     },
     {
       "quantity": "luminous-flux",
-      "constant_exactness": "Complex"
+      "constant_exactness": "Derived"
     },
     {
       "quantity": "volume",
-      "constant_exactness": "Complex"
+      "constant_exactness": "Derived"
     },
     {
       "quantity": "specific-volume",
-      "constant_exactness": "Complex"
+      "constant_exactness": "Derived"
     },
     {
       "quantity": "consumption",
-      "constant_exactness": "Complex"
+      "constant_exactness": "Derived"
     },
     {
       "quantity": "electric-conductance",
-      "constant_exactness": "Complex"
+      "constant_exactness": "Derived"
     },
     {
       "quantity": "typewidth",
-      "constant_exactness": "Simple"
+      "constant_exactness": "Base"
     },
     {
       "quantity": "substance-amount",
-      "constant_exactness": "Simple"
+      "constant_exactness": "Base"
     },
     {
       "quantity": "concentration",
-      "constant_exactness": "Complex"
+      "constant_exactness": "Derived"
     },
     {
       "quantity": "concentration-mass",
-      "constant_exactness": "Complex"
+      "constant_exactness": "Derived"
     },
     {
       "quantity": "catalytic-activity",
-      "constant_exactness": "Complex"
+      "constant_exactness": "Derived"
     },
     {
       "quantity": "temperature",
-      "constant_exactness": "Simple"
+      "constant_exactness": "Base"
     },
     {
       "quantity": "mass",
-      "constant_exactness": "Simple"
+      "constant_exactness": "Base"
     },
     {
       "quantity": "force",
-      "constant_exactness": "Complex"
+      "constant_exactness": "Derived"
     },
     {
       "quantity": "mass-density",
-      "constant_exactness": "Complex"
+      "constant_exactness": "Derived"
     },
     {
       "quantity": "mass-fraction",
-      "constant_exactness": "Complex"
+      "constant_exactness": "Derived"
     },
     {
       "quantity": "pressure",
-      "constant_exactness": "Complex"
+      "constant_exactness": "Derived"
     },
     {
       "quantity": "pressure-per-length",
-      "constant_exactness": "Complex"
+      "constant_exactness": "Derived"
     },
     {
       "quantity": "magnetic-induction",
-      "constant_exactness": "Complex"
+      "constant_exactness": "Derived"
     },
     {
       "quantity": "power",
-      "constant_exactness": "Complex"
+      "constant_exactness": "Derived"
     },
     {
       "quantity": "voltage",
-      "constant_exactness": "Complex"
+      "constant_exactness": "Derived"
     },
     {
       "quantity": "electric-resistance",
-      "constant_exactness": "Complex"
+      "constant_exactness": "Derived"
     },
     {
       "quantity": "energy",
-      "constant_exactness": "Complex"
+      "constant_exactness": "Derived"
     },
     {
       "quantity": "magnetic-flux",
-      "constant_exactness": "Complex"
+      "constant_exactness": "Derived"
     },
     {
       "quantity": "electric-inductance",
-      "constant_exactness": "Complex"
+      "constant_exactness": "Derived"
     },
     {
       "quantity": "length",
-      "constant_exactness": "Simple"
+      "constant_exactness": "Base"
     },
     {
       "quantity": "speed",
-      "constant_exactness": "Complex"
+      "constant_exactness": "Derived"
     },
     {
       "quantity": "acceleration",
-      "constant_exactness": "Complex"
+      "constant_exactness": "Derived"
     },
     {
       "quantity": "radioactivity",
-      "constant_exactness": "Complex"
+      "constant_exactness": "Derived"
     },
     {
       "quantity": "graphics",
-      "constant_exactness": "Simple"
+      "constant_exactness": "Base"
     },
     {
       "quantity": "resolution",
-      "constant_exactness": "Complex"
+      "constant_exactness": "Derived"
     },
     {
       "quantity": "portion",
-      "constant_exactness": "Simple"
+      "constant_exactness": "Base"
     },
     {
       "quantity": "electric-capacitance",
-      "constant_exactness": "Complex"
+      "constant_exactness": "Derived"
     },
     {
       "quantity": "angle",
-      "constant_exactness": "Simple"
+      "constant_exactness": "Base"
     },
     {
       "quantity": "wave-number",
-      "constant_exactness": "Complex"
+      "constant_exactness": "Derived"
     },
     {
       "quantity": "frequency",
-      "constant_exactness": "Complex"
+      "constant_exactness": "Derived"
     },
     {
       "quantity": "duration",
-      "constant_exactness": "Simple"
+      "constant_exactness": "Base"
     },
     {
       "quantity": "electric-charge",
-      "constant_exactness": "Complex"
+      "constant_exactness": "Derived"
     },
     {
       "quantity": "area",
-      "constant_exactness": "Complex"
+      "constant_exactness": "Derived"
     },
     {
       "quantity": "ionizing-radiation",
-      "constant_exactness": "Complex"
+      "constant_exactness": "Derived"
     },
     {
       "quantity": "solid-angle",
-      "constant_exactness": "Complex"
+      "constant_exactness": "Derived"
     },
     {
       "quantity": "year-duration",
-      "constant_exactness": "Simple"
+      "constant_exactness": "Base"
     }
   ],
   "convert_units": [
