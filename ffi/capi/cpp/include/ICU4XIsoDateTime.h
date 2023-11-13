@@ -63,6 +63,8 @@ uint32_t ICU4XIsoDateTime_month(const ICU4XIsoDateTime* self);
 
 int32_t ICU4XIsoDateTime_year(const ICU4XIsoDateTime* self);
 
+bool ICU4XIsoDateTime_year_is_leap(const ICU4XIsoDateTime* self);
+
 uint8_t ICU4XIsoDateTime_months_in_year(const ICU4XIsoDateTime* self);
 
 uint8_t ICU4XIsoDateTime_days_in_month(const ICU4XIsoDateTime* self);

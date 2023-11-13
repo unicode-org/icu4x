@@ -120,6 +120,10 @@ export class ICU4XIsoDateTime {
     return wasm.ICU4XIsoDateTime_year(this.underlying);
   }
 
+  year_is_leap() {
+    return wasm.ICU4XIsoDateTime_year_is_leap(this.underlying);
+  }
+
   months_in_year() {
     return wasm.ICU4XIsoDateTime_months_in_year(this.underlying);
   }
