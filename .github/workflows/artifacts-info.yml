@@ -34,6 +34,9 @@ jobs:
         echo "📖 JS Docs Preview"
         echo "http://${{ env.GCP_PR_BUCKET_ID }}.storage.googleapis.com/gha/${{ github.event.pull_request.head.sha }}/ffi/js/index.html"
         echo
+        echo "📖 Dart Docs Preview"
+        echo "http://${{ env.GCP_PR_BUCKET_ID }}.storage.googleapis.com/gha/${{ github.event.pull_request.head.sha }}/ffi/dart/index.html"
+        echo
         echo "🌐 Wasm Demo Preview (main only)" 
         echo "http://${{ env.GCP_PR_BUCKET_ID }}.storage.googleapis.com/gha/${{ github.event.pull_request.head.sha }}/wasm-demo/index.html"
         echo

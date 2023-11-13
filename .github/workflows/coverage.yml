@@ -22,7 +22,7 @@ jobs:
       - name: Get grcov version
         id: grcov-version
         run: |
-          echo "::set-output name=hash::$(cargo search grcov | grep '^grcov =' | md5sum)"
+          echo "hash=$(cargo search grcov | grep '^grcov =' | md5sum)" >> $GITHUB_OUTPUT
         shell: bash
       - name: Attempt to load cached grcov
         uses: actions/cache@v3

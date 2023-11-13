@@ -15,10 +15,10 @@ fn main() -> std::io::Result<()> {
         &capi.join("src/lib.rs"),
         &lang,
         &{
-            let include = capi.join(&lang).join(if lang == "js" {
-                "package/lib"
-            } else {
-                "include"
+            let include = capi.join(&lang).join(match lang.as_str() {
+                "js" => "package/lib",
+                "dart" => "package/lib/src",
+                _ => "include",
             });
             std::fs::remove_dir_all(&include)?;
             std::fs::create_dir(&include)?;
@@ -42,5 +42,6 @@ fn main() -> std::io::Result<()> {
         &Default::default(),
         None,
         false,
+        Some("ICU4X".into()),
     )
 }

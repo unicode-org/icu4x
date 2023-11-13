@@ -350,7 +350,26 @@ pub trait AnyProvider {
     fn load_any(&self, key: DataKey, req: DataRequest) -> Result<AnyResponse, DataError>;
 }
 
+impl<'a, T: AnyProvider + ?Sized> AnyProvider for &'a T {
+    fn load_any(&self, key: DataKey, req: DataRequest) -> Result<AnyResponse, DataError> {
+        (**self).load_any(key, req)
+    }
+}
+
 impl<T: AnyProvider + ?Sized> AnyProvider for alloc::boxed::Box<T> {
+    fn load_any(&self, key: DataKey, req: DataRequest) -> Result<AnyResponse, DataError> {
+        (**self).load_any(key, req)
+    }
+}
+
+impl<T: AnyProvider + ?Sized> AnyProvider for alloc::rc::Rc<T> {
+    fn load_any(&self, key: DataKey, req: DataRequest) -> Result<AnyResponse, DataError> {
+        (**self).load_any(key, req)
+    }
+}
+
+#[cfg(target_has_atomic = "ptr")]
+impl<T: AnyProvider + ?Sized> AnyProvider for alloc::sync::Arc<T> {
     fn load_any(&self, key: DataKey, req: DataRequest) -> Result<AnyResponse, DataError> {
         (**self).load_any(key, req)
     }

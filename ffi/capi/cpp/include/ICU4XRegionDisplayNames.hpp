@@ -36,7 +36,7 @@ class ICU4XRegionDisplayNames {
    * 
    * See the [Rust documentation for `try_new`](https://docs.rs/icu/latest/icu/displaynames/struct.RegionDisplayNames.html#method.try_new) for more information.
    */
-  static diplomat::result<ICU4XRegionDisplayNames, ICU4XError> try_new(const ICU4XDataProvider& provider, const ICU4XLocale& locale);
+  static diplomat::result<ICU4XRegionDisplayNames, ICU4XError> create(const ICU4XDataProvider& provider, const ICU4XLocale& locale);
 
   /**
    * Returns the locale specific display name of a region.
@@ -68,8 +68,8 @@ class ICU4XRegionDisplayNames {
 #include "ICU4XDataProvider.hpp"
 #include "ICU4XLocale.hpp"
 
-inline diplomat::result<ICU4XRegionDisplayNames, ICU4XError> ICU4XRegionDisplayNames::try_new(const ICU4XDataProvider& provider, const ICU4XLocale& locale) {
-  auto diplomat_result_raw_out_value = capi::ICU4XRegionDisplayNames_try_new(provider.AsFFI(), locale.AsFFI());
+inline diplomat::result<ICU4XRegionDisplayNames, ICU4XError> ICU4XRegionDisplayNames::create(const ICU4XDataProvider& provider, const ICU4XLocale& locale) {
+  auto diplomat_result_raw_out_value = capi::ICU4XRegionDisplayNames_create(provider.AsFFI(), locale.AsFFI());
   diplomat::result<ICU4XRegionDisplayNames, ICU4XError> diplomat_result_out_value;
   if (diplomat_result_raw_out_value.is_ok) {
     diplomat_result_out_value = diplomat::Ok<ICU4XRegionDisplayNames>(ICU4XRegionDisplayNames(diplomat_result_raw_out_value.ok));

@@ -37,7 +37,7 @@ class ICU4XLocaleDisplayNamesFormatter {
    * 
    * See the [Rust documentation for `try_new`](https://docs.rs/icu/latest/icu/displaynames/struct.LocaleDisplayNamesFormatter.html#method.try_new) for more information.
    */
-  static diplomat::result<ICU4XLocaleDisplayNamesFormatter, ICU4XError> try_new(const ICU4XDataProvider& provider, const ICU4XLocale& locale, ICU4XDisplayNamesOptionsV1 options);
+  static diplomat::result<ICU4XLocaleDisplayNamesFormatter, ICU4XError> create(const ICU4XDataProvider& provider, const ICU4XLocale& locale, ICU4XDisplayNamesOptionsV1 options);
 
   /**
    * Returns the locale-specific display name of a locale.
@@ -66,9 +66,9 @@ class ICU4XLocaleDisplayNamesFormatter {
 #include "ICU4XLocale.hpp"
 #include "ICU4XDisplayNamesOptionsV1.hpp"
 
-inline diplomat::result<ICU4XLocaleDisplayNamesFormatter, ICU4XError> ICU4XLocaleDisplayNamesFormatter::try_new(const ICU4XDataProvider& provider, const ICU4XLocale& locale, ICU4XDisplayNamesOptionsV1 options) {
+inline diplomat::result<ICU4XLocaleDisplayNamesFormatter, ICU4XError> ICU4XLocaleDisplayNamesFormatter::create(const ICU4XDataProvider& provider, const ICU4XLocale& locale, ICU4XDisplayNamesOptionsV1 options) {
   ICU4XDisplayNamesOptionsV1 diplomat_wrapped_struct_options = options;
-  auto diplomat_result_raw_out_value = capi::ICU4XLocaleDisplayNamesFormatter_try_new(provider.AsFFI(), locale.AsFFI(), capi::ICU4XDisplayNamesOptionsV1{ .style = static_cast<capi::ICU4XDisplayNamesStyle>(diplomat_wrapped_struct_options.style), .fallback = static_cast<capi::ICU4XDisplayNamesFallback>(diplomat_wrapped_struct_options.fallback), .language_display = static_cast<capi::ICU4XLanguageDisplay>(diplomat_wrapped_struct_options.language_display) });
+  auto diplomat_result_raw_out_value = capi::ICU4XLocaleDisplayNamesFormatter_create(provider.AsFFI(), locale.AsFFI(), capi::ICU4XDisplayNamesOptionsV1{ .style = static_cast<capi::ICU4XDisplayNamesStyle>(diplomat_wrapped_struct_options.style), .fallback = static_cast<capi::ICU4XDisplayNamesFallback>(diplomat_wrapped_struct_options.fallback), .language_display = static_cast<capi::ICU4XLanguageDisplay>(diplomat_wrapped_struct_options.language_display) });
   diplomat::result<ICU4XLocaleDisplayNamesFormatter, ICU4XError> diplomat_result_out_value;
   if (diplomat_result_raw_out_value.is_ok) {
     diplomat_result_out_value = diplomat::Ok<ICU4XLocaleDisplayNamesFormatter>(ICU4XLocaleDisplayNamesFormatter(diplomat_result_raw_out_value.ok));

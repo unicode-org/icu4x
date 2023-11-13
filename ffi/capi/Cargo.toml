@@ -7,11 +7,11 @@ name = "icu_capi"
 description = "C interface to ICU4X"
 license-file = "LICENSE"
 include = [
+    "js/**/*",
+    "c/**/*",
+    "cpp/**/*",
     "src/**/*",
-    "examples/**/*",
-    "benches/**/*",
     "tests/**/*",
-    "**/include/**/*",
     "Cargo.toml",
     "LICENSE",
     "README.md"

@@ -35,6 +35,7 @@ pub mod ffi {
             FnInStruct,
             hidden
         )]
+        #[diplomat::attr(dart, disable)]
         pub fn contains32(&self, cp: u32) -> bool {
             self.0.as_borrowed().contains32(cp)
         }

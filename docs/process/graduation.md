@@ -42,3 +42,4 @@ This document contains a checklist for the requirements to migrate a component f
   - [ ] Where applicable, the component should be consistent with ECMA-402 and UTS#35
   - [ ] Any gaps in i18n quality should be fixed, or, if that is not possible, they should have tracking issues and a concrete, resourced path forward. The intent is to not ship components with known i18n correctness problems and no plan to fix them in an upcoming release
   - [ ] The API design should receive sign-off from a non-ICU4X i18n expert such as Markus Scherer
+- [ ] Add the new features to the changelog in the "Unreleased" section

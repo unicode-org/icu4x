@@ -16,10 +16,10 @@ export class ICU4XRegionDisplayNames {
     }
   }
 
-  static try_new(arg_provider, arg_locale) {
+  static create(arg_provider, arg_locale) {
     return (() => {
       const diplomat_receive_buffer = wasm.diplomat_alloc(5, 4);
-      wasm.ICU4XRegionDisplayNames_try_new(diplomat_receive_buffer, arg_provider.underlying, arg_locale.underlying);
+      wasm.ICU4XRegionDisplayNames_create(diplomat_receive_buffer, arg_provider.underlying, arg_locale.underlying);
       const is_ok = diplomatRuntime.resultFlag(wasm, diplomat_receive_buffer, 4);
       if (is_ok) {
         const ok_value = new ICU4XRegionDisplayNames(diplomatRuntime.ptrRead(wasm, diplomat_receive_buffer), true, []);

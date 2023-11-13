@@ -57,6 +57,28 @@ fn vec() {
     test_bake!(Vec<u8>, alloc::vec![1u8, 2u8,], alloc);
 }
 
+impl<T> Bake for alloc::collections::BTreeSet<T>
+where
+    T: Bake,
+{
+    fn bake(&self, ctx: &CrateEnv) -> TokenStream {
+        ctx.insert("alloc");
+        let data = self.iter().map(|d| d.bake(ctx));
+        quote! {
+            alloc::collections::BTreeSet::from([#(#data),*])
+        }
+    }
+}
+
+#[test]
+fn btree_set() {
+    test_bake!(
+        alloc::collections::BTreeSet<u8>,
+        alloc::collections::BTreeSet::from([1u8, 2u8]),
+        alloc
+    );
+}
+
 impl Bake for String {
     fn bake(&self, _: &CrateEnv) -> TokenStream {
         quote! {
