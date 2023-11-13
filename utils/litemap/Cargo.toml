@@ -23,6 +23,7 @@ independent = true
 all-features = true
 
 [dependencies]
+databake = { workspace = true, default-features = false, optional = true }
 serde = {version = "1", optional = true, default-features = false, features = ["alloc"]}
 yoke = { workspace = true, features = ["derive"], optional = true }
 

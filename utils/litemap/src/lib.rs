@@ -44,6 +44,8 @@ extern crate std;
 
 extern crate alloc;
 
+#[cfg(feature = "databake")]
+mod databake;
 mod map;
 #[cfg(feature = "serde")]
 mod serde;
