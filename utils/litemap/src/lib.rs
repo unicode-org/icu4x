@@ -28,7 +28,6 @@
 //! suitable for use with [`databake`]. See [`impl Bake for LiteMap`] for more details.
 //!
 //! [`impl Bake for LiteMap`]: ./struct.LiteMap.html#impl-Bake-for-LiteMap<K,+V,+S>
-//! [`databake`]: ::databake
 //! [`Vec`]: alloc::vec::Vec
 
 // https://github.com/unicode-org/icu4x/blob/main/docs/process/boilerplate.md#library-annotations
@@ -53,7 +52,8 @@ extern crate std;
 extern crate alloc;
 
 #[cfg(feature = "databake")]
-mod databake;
+#[path = "databake.rs"] // to not conflict with `databake` as used in the docs
+mod databake_impls;
 mod map;
 #[cfg(feature = "serde")]
 mod serde;
