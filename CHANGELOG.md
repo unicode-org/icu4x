@@ -25,6 +25,7 @@
         - New CLI option `--format=blob2` (https://github.com/unicode-org/icu4x/pull/4207)
         - CLDR 44 compatibility fixes (https://github.com/unicode-org/icu4x/pull/4134, https://github.com/unicode-org/icu4x/pull/4156, https://github.com/unicode-org/icu4x/pull/4158)
         - Fix `supported_locales` for collator keys (https://github.com/unicode-org/icu4x/pull/4169)
+        - CLI: Fix behavior of `--segmenter-lstm-root` such that it does not override `icuexportdata-root` (https://github.com/unicode-org/icu4x/pull/4277)
 - Utilities
     - `databake`
         - Improvements `databake::test_bake!()` (https://github.com/unicode-org/icu4x/pull/4182)
