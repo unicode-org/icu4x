@@ -87,6 +87,9 @@ pub struct UnitsInfoIndex {
     pub convert_unit: Option<u16>,
 }
 
+/// Specifies if the unit is a base unit or a derived unit.
+/// If derived, this means each unit is derived from a base unit.
+/// For example: "foot-per-second" is derived from "meter" and "second".
 #[zerovec::make_ule(QuantitySimplicityULE)]
 #[cfg_attr(
     feature = "datagen",
@@ -120,7 +123,7 @@ pub enum DerivationSpecifier {
     zerovec::derive(Deserialize)
 )]
 #[zerovec::derive(Debug)]
-pub struct UnitQuantity<'data> {
+pub struct Dimension<'data> {
     /// Contains the quantity name.
     // TODO(#4173): Consider using an enum for the quantity name.
     #[cfg_attr(feature = "serde", serde(borrow))]
@@ -148,7 +151,7 @@ pub struct UnitQuantity<'data> {
     zerovec::derive(Deserialize)
 )]
 #[zerovec::derive(Debug)]
-pub struct ConvertUnits<'data> {
+pub struct ConversionInfo<'data> {
     /// Contains the base unit which the unit is converted to.
     #[cfg_attr(feature = "serde", serde(borrow))]
     pub base_unit: Cow<'data, str>,

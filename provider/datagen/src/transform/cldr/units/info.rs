@@ -10,7 +10,7 @@ use icu_provider::{
     DataResponse,
 };
 use icu_unitsconversion::provider::{
-    ConvertUnits, DerivationSpecifier, UnitQuantity, UnitsInfoIndex, UnitsInfoV1, UnitsInfoV1Marker,
+    ConversionInfo, DerivationSpecifier, Dimension, UnitsInfoIndex, UnitsInfoV1, UnitsInfoV1Marker,
 };
 use zerovec::{VarZeroVec, ZeroMap};
 
@@ -26,7 +26,7 @@ impl DataProvider<UnitsInfoV1Marker> for crate::DatagenProvider {
         let convert_units = &units_data.supplemental.convert_units.convert_units;
 
         let mut conversion_info_map = BTreeMap::<&str, UnitsInfoIndex>::new();
-        let mut quantity_vec = Vec::<UnitQuantity>::new();
+        let mut quantity_vec = Vec::<Dimension>::new();
         for (unit_name, quantity) in quantities {
             let quantity_simplicity = match quantity.status.as_deref() {
                 Some("simple") => DerivationSpecifier::Base,
@@ -35,7 +35,7 @@ impl DataProvider<UnitsInfoV1Marker> for crate::DatagenProvider {
 
             let quantity_value = quantity.quantity.as_str();
             let quantity_index = quantity_vec.len();
-            quantity_vec.push(UnitQuantity {
+            quantity_vec.push(Dimension {
                 quantity: Cow::Borrowed(quantity_value),
                 constant_exactness: quantity_simplicity,
             });
@@ -48,7 +48,7 @@ impl DataProvider<UnitsInfoV1Marker> for crate::DatagenProvider {
             conversion_info_map.insert(unit_name.as_str(), units_info_index);
         }
 
-        let mut convert_units_vec = Vec::<ConvertUnits>::new();
+        let mut convert_units_vec = Vec::<ConversionInfo>::new();
         for (unit_name, convert_unit) in convert_units {
             let base_unit = convert_unit.base_unit.as_str();
             let factor = match convert_unit.factor {
@@ -57,7 +57,7 @@ impl DataProvider<UnitsInfoV1Marker> for crate::DatagenProvider {
             };
 
             let convert_unit_index = convert_units_vec.len();
-            convert_units_vec.push(ConvertUnits {
+            convert_units_vec.push(ConversionInfo {
                 base_unit: Cow::Borrowed(base_unit),
                 factor: Cow::Borrowed(factor),
             });
