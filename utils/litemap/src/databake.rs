@@ -5,6 +5,29 @@
 use crate::LiteMap;
 use databake::*;
 
+/// Bakes a LiteMap into Rust code for fast runtime construction from data. Use this impl during
+/// code generation or in a `build.rs` script.
+///
+/// For the most efficient bake, bake the [`LiteMap`] with a slice store.
+///
+/// # Examples
+///
+/// ```
+/// use databake::*;
+/// use litemap::LiteMap;
+///
+/// let mut litemap = LiteMap::new_vec();
+/// litemap.insert(1usize, "one");
+/// litemap.insert(2usize, "one");
+/// litemap.insert(10usize, "ten");
+///
+/// let litemap_slice = litemap.as_sliced();
+///
+/// assert_eq!(
+///     litemap_slice.bake(&Default::default()).to_string(),
+///     r#"litemap :: LiteMap :: from_sorted_store_unchecked (& [(1usize , "one") , (2usize , "one") , (10usize , "ten")])"#,
+/// );
+/// ```
 impl<K, V, S> Bake for LiteMap<K, V, S>
 where
     S: Bake,
@@ -20,7 +43,7 @@ where
 fn test_baked_map() {
     // Const construction:
     test_bake!(
-        LiteMap<usize, &'static str, &'static [(usize, &'static str)]>,
+        LiteMap<usize, &str, &[(usize, &str)]>,
         const: crate::LiteMap::from_sorted_store_unchecked(
                 &[
                     (1usize, "one"),
