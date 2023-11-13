@@ -4,7 +4,6 @@
 
 // TODO: remove this once the feature is stable
 
-
 // // Provider structs must be stable
 // #![allow(clippy::exhaustive_structs, clippy::exhaustive_enums)]
 
