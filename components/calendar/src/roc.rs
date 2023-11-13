@@ -146,6 +146,10 @@ impl Calendar for Roc {
         year_as_roc(date.0 .0.year as i64)
     }
 
+    fn year_is_leap(&self, date: &Self::DateInner) -> bool {
+        Iso.year_is_leap(&date.0)
+    }
+
     fn month(&self, date: &Self::DateInner) -> crate::types::FormattableMonth {
         Iso.month(&date.0)
     }
