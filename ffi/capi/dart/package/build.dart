@@ -10,8 +10,6 @@ void main(List<String> args) async {
   // Parse the build configuration passed to this CLI from Dart or Flutter.
   final buildConfig = await BuildConfig.fromArgs(args);
 
-  final file = File('${Directory.systemTemp.path}/icu.so');
-
   // await Process.run('cp', [
   //   '-f',
   //   '/home/mosum/projects/icu4x_robert/ffi/capi/dart/package/test/libicu_capi_cdylib.so',
@@ -19,7 +17,6 @@ void main(List<String> args) async {
   // ]);
 
   await Process.run('make', ['test']);
-  await Process.run('cp', ['test/libicu_capi_cdylib.so', file.path]);
 
   // final request = await HttpClient().getUrl(Uri.parse('http://github.com/unicode-org/icu4x/artifacts'));
   // final response = await request.close();
@@ -32,7 +29,8 @@ void main(List<String> args) async {
         id: 'package:icu/lib.g.dart',
         linkMode: LinkMode.dynamic,
         target: buildConfig.target,
-        path: AssetAbsolutePath(file.absolute.uri),
+        path:
+            AssetAbsolutePath(File('test/libicu_capi_cdylib.so').absolute.uri),
       ),
     ],
   );
