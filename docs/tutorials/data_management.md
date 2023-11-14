@@ -135,13 +135,15 @@ $ cargo add icu --features serde
 $ cargo add icu_provider_blob
 ```
 
-We can generate data for it using the `--format blob` flag:
+We can generate data for it using the `--format blob2` flag:
 
 ```console
-$ icu4x-datagen --keys all --locales ja --format blob --out my_data_blob.postcard
+$ icu4x-datagen --keys all --locales ja --format blob2 --out my_data_blob.postcard
 ```
 
 This will generate a `my_data_blob.postcard` file containing the serialized data for all components. The file is several megabytes large; we will optimize it later!
+
+💡 Note: `--format blob2` generates version 2 of the blob format. Alternatively, `--format blob` produces an older blob format which works with ICU4X prior to 1.4 but is not as optimized.
 
 ## Locale Fallbacking
 
@@ -191,7 +193,7 @@ As you can see in the second `expect` message, it's not possible to statically t
 You might have noticed that the blob we generated is a hefty 13MB. This is no surprise, as we used `--keys all`. However, our binary only uses date formatting data in Japanese. There's room for optimization:
 
 ```console
-$ icu4x-datagen --keys-for-bin target/debug/myapp --locales ja --format blob --out my_data_blob.postcard --overwrite
+$ icu4x-datagen --keys-for-bin target/debug/myapp --locales ja --format blob2 --out my_data_blob.postcard --overwrite
 ```
 
 The `--keys-for-bin` argument tells `icu4x-datagen` to analyze the binary and only include keys that are used by its code. This significantly reduces the blob's file size, to 54KB, and our program still works. Quite the improvement!
