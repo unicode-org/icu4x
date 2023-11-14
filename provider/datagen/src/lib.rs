@@ -471,6 +471,8 @@ pub enum Out {
     ///
     /// This supports only version 1 of the blob format. Please use [`DatagenDriver`] with
     /// [`BlobExporter`] to export to blob format version 2.
+    ///
+    /// [`BlobExporter`]: crate::blob_exporter::BlobExporter
     Blob(Box<dyn std::io::Write + Sync>),
     /// Output a module with baked data at the given location.
     Baked {
