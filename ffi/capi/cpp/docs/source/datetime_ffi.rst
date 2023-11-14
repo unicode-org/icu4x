@@ -322,11 +322,11 @@
         See the `Rust documentation for year <https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.year>`__ for more information.
 
 
-    .. cpp:function:: bool year_is_leap() const
+    .. cpp:function:: bool is_in_leap_year() const
 
-        Returns if the year is a leap year for this date
+        Returns whether this date is in a leap year
 
-        See the `Rust documentation for year_is_leap <https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.year_is_leap>`__ for more information.
+        See the `Rust documentation for is_in_leap_year <https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.is_in_leap_year>`__ for more information.
 
 
     .. cpp:function:: uint8_t months_in_year() const

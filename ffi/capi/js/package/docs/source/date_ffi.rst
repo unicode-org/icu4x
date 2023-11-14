@@ -203,11 +203,11 @@
         See the `Rust documentation for year <https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.year>`__ for more information.
 
 
-    .. js:method:: year_is_leap()
+    .. js:method:: is_in_leap_year()
 
         Returns if the year is a leap year for this date
 
-        See the `Rust documentation for year_is_leap <https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.year_is_leap>`__ for more information.
+        See the `Rust documentation for is_in_leap_year <https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.is_in_leap_year>`__ for more information.
 
 
     .. js:method:: months_in_year()
