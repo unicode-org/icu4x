@@ -2244,6 +2244,7 @@ dependencies = [
  "bincode",
  "bytecheck",
  "criterion",
+ "databake",
  "icu_benchmark_macros",
  "icu_locid",
  "postcard",
