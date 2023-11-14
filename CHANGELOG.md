@@ -25,6 +25,7 @@
         - New CLI option `--format=blob2` (https://github.com/unicode-org/icu4x/pull/4207)
         - CLDR 44 compatibility fixes (https://github.com/unicode-org/icu4x/pull/4134, https://github.com/unicode-org/icu4x/pull/4156, https://github.com/unicode-org/icu4x/pull/4158)
         - Fix `supported_locales` for collator keys (https://github.com/unicode-org/icu4x/pull/4169)
+        - Make datagen work without `CARGO_PKG_RUST_VERSION` environment variable (https://github.com/unicode-org/icu4x/pull/4292)
 - Utilities
     - `databake`
         - Improvements `databake::test_bake!()` (https://github.com/unicode-org/icu4x/pull/4182)
