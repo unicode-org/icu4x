@@ -228,7 +228,7 @@ impl Calendar for Hebrew {
         Self::year_as_hebrew(date.0.year)
     }
 
-    fn year_is_leap(&self, date: &Self::DateInner) -> bool {
+    fn is_in_leap_year(&self, date: &Self::DateInner) -> bool {
         Self::is_leap_year(date.0.year)
     }
 

@@ -239,7 +239,7 @@ impl Calendar for IslamicObservational {
         Self::year_as_islamic(date.0.year)
     }
 
-    fn year_is_leap(&self, date: &Self::DateInner) -> bool {
+    fn is_in_leap_year(&self, date: &Self::DateInner) -> bool {
         Self::is_leap_year(date.0.year)
     }
 
@@ -468,7 +468,7 @@ impl Calendar for IslamicUmmAlQura {
         Self::year_as_islamic(date.0.year)
     }
 
-    fn year_is_leap(&self, date: &Self::DateInner) -> bool {
+    fn is_in_leap_year(&self, date: &Self::DateInner) -> bool {
         Self::is_leap_year(date.0.year)
     }
 
@@ -712,7 +712,7 @@ impl Calendar for IslamicCivil {
         Self::year_as_islamic(date.0.year)
     }
 
-    fn year_is_leap(&self, date: &Self::DateInner) -> bool {
+    fn is_in_leap_year(&self, date: &Self::DateInner) -> bool {
         Self::is_leap_year(date.0.year)
     }
 
@@ -956,7 +956,7 @@ impl Calendar for IslamicTabular {
         Self::year_as_islamic(date.0.year)
     }
 
-    fn year_is_leap(&self, date: &Self::DateInner) -> bool {
+    fn is_in_leap_year(&self, date: &Self::DateInner) -> bool {
         Self::is_leap_year(date.0.year)
     }
 
