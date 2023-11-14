@@ -130,11 +130,14 @@ serde_human = [
 icu_datetime_experimental = [
     "icu_datetime/experimental",
 ]
+icu_plurals_experimental = [
+    "icu_plurals/experimental"
+]
 experimental = [
     "icu_compactdecimal",
     "icu_datetime_experimental",
     "icu_displaynames",
-    "icu_plurals/experimental",
+    "icu_plurals_experimental",
     "icu_relativetime",
     "icu_transliterate",
 ]

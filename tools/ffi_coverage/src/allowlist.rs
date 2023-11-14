@@ -305,6 +305,18 @@ lazy_static::lazy_static! {
         "icu::relativetime",
         "icu::displaynames",
         "icu::transliterate",
+        "icu::plurals::PluralRulesWithRanges",
+        "icu::plurals::PluralRulesWithRanges::categories",
+        "icu::plurals::PluralRulesWithRanges::category_for",
+        "icu::plurals::PluralRulesWithRanges::category_for_range",
+        "icu::plurals::PluralRulesWithRanges::resolve_range",
+        "icu::plurals::PluralRulesWithRanges::try_new",
+        "icu::plurals::PluralRulesWithRanges::try_new_cardinal",
+        "icu::plurals::PluralRulesWithRanges::try_new_ordinal",
+        "fixed_decimal::FixedDecimal::expand_to_increment",
+        "fixed_decimal::FixedDecimal::expanded_to_increment",
+        "fixed_decimal::FixedDecimal::trunc_to_increment",
+        "fixed_decimal::FixedDecimal::trunced_to_increment",
 
         // Stuff that does not need to be exposed over FFI
         // Especially for stuff that are Rust specific like conversion traits

@@ -590,6 +590,8 @@ impl BakedExporter {
                     || key.path().contains("datetime/symbols") || key.path().contains("datetime/patterns")
                 {
                     quote! { #[cfg(feature = "icu_datetime_experimental")] }
+                } else if *key == icu_plurals::provider::PluralRangesV1Marker::KEY {
+                    quote! { #[cfg(feature = "icu_plurals_experimental")] }
                 } else if *key == icu_provider::hello_world::HelloWorldV1Marker::KEY {
                     quote!()
                 } else {

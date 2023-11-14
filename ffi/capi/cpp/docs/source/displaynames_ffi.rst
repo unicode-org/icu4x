@@ -59,7 +59,7 @@
     See the `Rust documentation for LocaleDisplayNamesFormatter <https://docs.rs/icu/latest/icu/displaynames/struct.LocaleDisplayNamesFormatter.html>`__ for more information.
 
 
-    .. cpp:function:: static diplomat::result<ICU4XLocaleDisplayNamesFormatter, ICU4XError> try_new(const ICU4XDataProvider& provider, const ICU4XLocale& locale, ICU4XDisplayNamesOptionsV1 options)
+    .. cpp:function:: static diplomat::result<ICU4XLocaleDisplayNamesFormatter, ICU4XError> create(const ICU4XDataProvider& provider, const ICU4XLocale& locale, ICU4XDisplayNamesOptionsV1 options)
 
         Creates a new ``LocaleDisplayNamesFormatter`` from locale data and an options bag.
 
@@ -85,7 +85,7 @@
     See the `Rust documentation for RegionDisplayNames <https://docs.rs/icu/latest/icu/displaynames/struct.RegionDisplayNames.html>`__ for more information.
 
 
-    .. cpp:function:: static diplomat::result<ICU4XRegionDisplayNames, ICU4XError> try_new(const ICU4XDataProvider& provider, const ICU4XLocale& locale)
+    .. cpp:function:: static diplomat::result<ICU4XRegionDisplayNames, ICU4XError> create(const ICU4XDataProvider& provider, const ICU4XLocale& locale)
 
         Creates a new ``RegionDisplayNames`` from locale data and an options bag.
 

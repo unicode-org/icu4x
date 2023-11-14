@@ -46,6 +46,7 @@ pub mod ffi {
 
         /// Creates a new [`ICU4XIsoDateTime`] from an [`ICU4XIsoDate`] and [`ICU4XTime`] object
         #[diplomat::rust_link(icu::calendar::DateTime::new, FnInStruct)]
+        #[diplomat::attr(dart, rename = "create_from_date_and_time")]
         pub fn crate_from_date_and_time(
             date: &ICU4XIsoDate,
             time: &ICU4XTime,

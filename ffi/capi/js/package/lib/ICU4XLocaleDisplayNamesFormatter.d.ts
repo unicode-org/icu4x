@@ -17,7 +17,7 @@ export class ICU4XLocaleDisplayNamesFormatter {
    * See the {@link https://docs.rs/icu/latest/icu/displaynames/struct.LocaleDisplayNamesFormatter.html#method.try_new Rust documentation for `try_new`} for more information.
    * @throws {@link FFIError}<{@link ICU4XError}>
    */
-  static try_new(provider: ICU4XDataProvider, locale: ICU4XLocale, options: ICU4XDisplayNamesOptionsV1): ICU4XLocaleDisplayNamesFormatter | never;
+  static create(provider: ICU4XDataProvider, locale: ICU4XLocale, options: ICU4XDisplayNamesOptionsV1): ICU4XLocaleDisplayNamesFormatter | never;
 
   /**
 

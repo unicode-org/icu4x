@@ -49,9 +49,9 @@ let dtf = DateTimeFormatter::try_new(&locale!("es").into(), options)
 let date = DateTime::try_new_iso_datetime(2020, 9, 12, 12, 35, 0).expect("datetime should be valid");
 let date = date.to_any();
 
-let formatted_date = dtf.format(&date).expect("formatting should succeed");
+let formatted_date = dtf.format_to_string(&date).expect("formatting should succeed");
 assert_eq!(
-    formatted_date.to_string(),
+    formatted_date,
     "12 de septiembre de 2020, 12:35:00"
 );
 ```

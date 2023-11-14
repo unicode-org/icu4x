@@ -9,7 +9,7 @@ pub mod ffi {
     use alloc::boxed::Box;
 
     use fixed_decimal::FixedDecimal;
-    use icu_plurals::{PluralCategory, PluralOperands, PluralRules, PluralRulesWithRanges};
+    use icu_plurals::{PluralCategory, PluralOperands, PluralRules};
 
     use crate::{locale::ffi::ICU4XLocale, provider::ffi::ICU4XDataProvider};
 
@@ -109,81 +109,6 @@ pub mod ffi {
                 // XXX should this have its own errors?
                 &FixedDecimal::try_from(s).map_err(|_| ICU4XError::PluralsParserError)?,
             ))))
-        }
-    }
-
-    /// FFI version of `PluralRulesWithRanges`.
-    #[diplomat::opaque]
-    #[diplomat::rust_link(icu::plurals::PluralRulesWithRanges, Struct)]
-    pub struct ICU4XPluralRulesWithRanges(pub icu_plurals::PluralRulesWithRanges);
-
-    impl ICU4XPluralRulesWithRanges {
-        /// Construct an [`ICU4XPluralRulesWithRanges`] for the given locale, for cardinal numbers
-        #[diplomat::rust_link(icu::plurals::PluralRulesWithRanges::try_new_cardinal, FnInStruct)]
-        #[diplomat::rust_link(icu::plurals::PluralRulesWithRanges::try_new, FnInStruct, hidden)]
-        #[diplomat::rust_link(icu::plurals::PluralRuleType, Enum, hidden)]
-        pub fn create_cardinal(
-            provider: &ICU4XDataProvider,
-            locale: &ICU4XLocale,
-        ) -> Result<Box<ICU4XPluralRulesWithRanges>, ICU4XError> {
-            let locale = locale.to_datalocale();
-            Ok(Box::new(ICU4XPluralRulesWithRanges(call_constructor!(
-                PluralRulesWithRanges::try_new_cardinal,
-                PluralRulesWithRanges::try_new_cardinal_with_any_provider,
-                PluralRulesWithRanges::try_new_cardinal_with_buffer_provider,
-                provider,
-                &locale
-            )?)))
-        }
-
-        /// Construct an [`ICU4XPluralRulesWithRanges`] for the given locale, for ordinal numbers
-        #[diplomat::rust_link(icu::plurals::PluralRulesWithRanges::try_new_ordinal, FnInStruct)]
-        #[diplomat::rust_link(icu::plurals::PluralRulesWithRanges::try_new, FnInStruct, hidden)]
-        #[diplomat::rust_link(icu::plurals::PluralRuleType, Enum, hidden)]
-        pub fn create_ordinal(
-            provider: &ICU4XDataProvider,
-            locale: &ICU4XLocale,
-        ) -> Result<Box<ICU4XPluralRulesWithRanges>, ICU4XError> {
-            let locale = locale.to_datalocale();
-            Ok(Box::new(ICU4XPluralRulesWithRanges(call_constructor!(
-                PluralRulesWithRanges::try_new_ordinal,
-                PluralRulesWithRanges::try_new_ordinal_with_any_provider,
-                PluralRulesWithRanges::try_new_ordinal_with_buffer_provider,
-                provider,
-                &locale
-            )?)))
-        }
-
-        /// Get the category for a given number represented as operands
-        #[diplomat::rust_link(icu::plurals::PluralRulesWithRanges::category_for, FnInStruct)]
-        pub fn category_for(&self, op: &ICU4XPluralOperands) -> ICU4XPluralCategory {
-            self.0.category_for(op.0).into()
-        }
-
-        /// Get all of the categories needed in the current locale
-        #[diplomat::rust_link(icu::plurals::PluralRulesWithRanges::categories, FnInStruct)]
-        pub fn categories(&self) -> ICU4XPluralCategories {
-            ICU4XPluralCategories::from_iter(self.0.categories())
-        }
-
-        /// Get the appropriate category for a numeric range.
-        #[diplomat::rust_link(icu::plurals::PluralRulesWithRanges::category_for_range, FnInStruct)]
-        pub fn category_for_range(
-            &self,
-            start: &ICU4XPluralOperands,
-            end: &ICU4XPluralOperands,
-        ) -> ICU4XPluralCategory {
-            self.0.category_for_range(start.0, end.0).into()
-        }
-
-        /// Get the appropriate category for a numeric range from the categories of its endpoints.
-        #[diplomat::rust_link(icu::plurals::PluralRulesWithRanges::resolve_range, FnInStruct)]
-        pub fn resolve_range(
-            &self,
-            start: ICU4XPluralCategory,
-            end: ICU4XPluralCategory,
-        ) -> ICU4XPluralCategory {
-            self.0.resolve_range(start.into(), end.into()).into()
         }
     }
 

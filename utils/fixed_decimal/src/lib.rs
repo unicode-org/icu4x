@@ -67,12 +67,14 @@ pub use FloatPrecision as DoublePrecision;
 
 pub use compact::CompactDecimal;
 pub use decimal::FixedDecimal;
-pub use decimal::RoundingIncrement;
 pub use decimal::Sign;
 pub use decimal::SignDisplay;
 use displaydoc::Display;
 pub use integer::FixedInteger;
 pub use scientific::ScientificDecimal;
+
+#[cfg(feature = "experimental")]
+pub use decimal::RoundingIncrement;
 
 /// An error involving FixedDecimal operations or conversion.
 #[derive(Display, Debug, Copy, Clone, PartialEq)]
