@@ -29,13 +29,7 @@ fn generate_json_and_verify_postcard() {
 
     let data_root = Path::new(concat!(core::env!("CARGO_MANIFEST_DIR"), "/tests/data/"));
 
-    let source = DatagenProvider::new_custom()
-        .with_cldr(data_root.join("cldr"))
-        .unwrap()
-        .with_icuexport(data_root.join("icuexport"))
-        .unwrap()
-        .with_segmenter_lstm(data_root.join("lstm"))
-        .unwrap();
+    let source = DatagenProvider::new_testing();
 
     let json_out = Box::new(
         FilesystemExporter::try_new(Box::new(Json::pretty()), {

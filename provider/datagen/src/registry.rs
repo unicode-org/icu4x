@@ -120,7 +120,7 @@ macro_rules! registry {
             unreachable!("unregistered key {key:?}")
         }
 
-        #[doc(hidden)]
+        #[cfg(test)]
         pub fn deserialize_and_measure<Measurement>(key: DataKey, buf: DataPayload<BufferMarker>, measure: impl Fn() -> Measurement) -> Result<(Measurement, DataPayload<icu_provider::datagen::ExportMarker>), DataError> {
             if key.path() == icu_provider::hello_world::HelloWorldV1Marker::KEY.path() {
                 let deserialized: DataPayload<icu_provider::hello_world::HelloWorldV1Marker> = buf.into_deserialized(icu_provider::buf::BufferFormat::Postcard1)?;
