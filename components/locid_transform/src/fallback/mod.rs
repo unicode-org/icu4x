@@ -148,7 +148,11 @@ impl LocaleFallbacker {
             parents: crate::provider::Baked::SINGLETON_FALLBACK_PARENTS_V1,
             collation_supplement: Some(crate::provider::Baked::SINGLETON_FALLBACK_SUPPLEMENT_CO_V1),
         };
-        // Shitty covariance because the zeromaps confuse the compiler
+        // Safety: we're transmuting down from LocaleFallbackerBorrowed<'static> to LocaleFallbackerBorrowed<'a>
+        // ZeroMaps use associated types in a way that confuse the compiler which gives up and marks them
+        // as invariant. However, they are covariant, and in non-const code this covariance can be safely triggered
+        // using Yokeable::transform. In const code we must transmute. In the long run we should
+        // be able to `transform()` in const code, and also we will have hopefully improved map polymorphism (#3128)
         unsafe { core::mem::transmute(tickstatic) }
     }
 
