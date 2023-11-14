@@ -147,11 +147,6 @@ name = "icu4x-datagen"
 path = "src/bin/datagen/mod.rs"
 required-features = ["bin"]
 
-[[test]]
-name = "make-testdata"
-path = "tests/make-testdata.rs"
-required-features = ["fs_exporter", "use_wasm"]
-
 [package.metadata.cargo-all-features]
 # We don't need working CPT builders for check
 skip_feature_sets = [["use_icu4c"], ["use_wasm"]]

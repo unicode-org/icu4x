@@ -2,12 +2,12 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+use crate::prelude::*;
 use crlify::BufWriterWithLineEndingFix;
-use icu_datagen::fs_exporter::serializers::Json;
-use icu_datagen::fs_exporter::*;
-use icu_datagen::prelude::*;
 use icu_provider::datagen::*;
 use icu_provider::prelude::*;
+use icu_provider_fs::export::serializers::Json;
+use icu_provider_fs::export::*;
 use std::alloc::{GlobalAlloc, Layout, System};
 use std::cell::Cell;
 use std::collections::{BTreeMap, BTreeSet};
@@ -16,7 +16,7 @@ use std::io::Write;
 use std::path::Path;
 use std::sync::Mutex;
 
-include!("locales.rs.data");
+include!("../../tests/locales.rs.data");
 
 #[test]
 #[ignore] // has side effects, run manually
@@ -28,14 +28,6 @@ fn generate_json_and_verify_postcard() {
         .unwrap();
 
     let data_root = Path::new(concat!(core::env!("CARGO_MANIFEST_DIR"), "/tests/data/"));
-
-    let source = DatagenProvider::new_custom()
-        .with_cldr(data_root.join("cldr"))
-        .unwrap()
-        .with_icuexport(data_root.join("icuexport"))
-        .unwrap()
-        .with_segmenter_lstm(data_root.join("lstm"))
-        .unwrap();
 
     let json_out = Box::new(
         FilesystemExporter::try_new(Box::new(Json::pretty()), {
@@ -58,13 +50,16 @@ fn generate_json_and_verify_postcard() {
     });
 
     DatagenDriver::new()
-        .with_keys(icu_datagen::all_keys())
+        .with_keys(crate::all_keys())
         .with_locales(LOCALES.iter().cloned())
         .with_segmenter_models([
             "thaidict".into(),
             "Thai_codepoints_exclusive_model4_heavy".into(),
         ])
-        .export(&source, MultiExporter::new(vec![json_out, postcard_out]))
+        .export(
+            &DatagenProvider::new_testing(),
+            MultiExporter::new(vec![json_out, postcard_out]),
+        )
         .unwrap();
 }
 
@@ -132,12 +127,9 @@ impl DataExporter for PostcardTestingExporter {
 
         MeasuringAllocator::start_measure();
 
-        let ((allocated, deallocated), payload_after) = icu_datagen::deserialize_and_measure(
-            key,
-            buffer_payload,
-            MeasuringAllocator::end_measure,
-        )
-        .unwrap();
+        let ((allocated, deallocated), payload_after) =
+            crate::deserialize_and_measure(key, buffer_payload, MeasuringAllocator::end_measure)
+                .unwrap();
 
         if payload_before != &payload_after {
             self.rountrip_errors
