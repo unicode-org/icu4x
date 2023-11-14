@@ -3141,7 +3141,8 @@ class Collator implements ffi.Finalizable {
     _finalizer.attach(this, _underlying.cast());
   }
 
-  static final _finalizer = ffi.NativeFinalizer(_capi('ICU4XCollator_destroy'));
+  static final _finalizer = ffi.NativeFinalizer(
+      ffi.DynamicLibrary.process().lookup('ICU4XCollator_destroy'));
 
   /// Construct a new Collator instance.
   ///
@@ -3155,16 +3156,16 @@ class Collator implements ffi.Finalizable {
         : throw Error.values
             .firstWhere((v) => v._underlying == result.union.err);
   }
-  // ignore: non_constant_identifier_names
-  static final _ICU4XCollator_create_v1 = _capi<
-          ffi.NativeFunction<
-              _ResultOpaqueUint32 Function(
-                  ffi.Pointer<ffi.Opaque>,
-                  ffi.Pointer<ffi.Opaque>,
-                  _CollatorOptionsV1Ffi)>>('ICU4XCollator_create_v1')
-      .asFunction<
+
+  @ffi.Native<
           _ResultOpaqueUint32 Function(ffi.Pointer<ffi.Opaque>,
-              ffi.Pointer<ffi.Opaque>, _CollatorOptionsV1Ffi)>(isLeaf: true);
+              ffi.Pointer<ffi.Opaque>, _CollatorOptionsV1Ffi)>(
+      symbol: 'ICU4XCollator_create_v1', isLeaf: true)
+  external static _ResultOpaqueUint32 Function(
+      ffi.Pointer<ffi.Opaque>,
+      // ignore: non_constant_identifier_names
+      ffi.Pointer<ffi.Opaque>,
+      _CollatorOptionsV1Ffi) _ICU4XCollator_create_v1;
 
   /// Compare guaranteed well-formed UTF-8 strings.
   ///
@@ -3187,18 +3188,20 @@ class Collator implements ffi.Finalizable {
     return Ordering.values.firstWhere((v) => v._underlying == result);
   }
 
-  // ignore: non_constant_identifier_names
-  static final _ICU4XCollator_compare_valid_utf8 = _capi<
-          ffi.NativeFunction<
-              ffi.Uint32 Function(
-                  ffi.Pointer<ffi.Opaque>,
-                  ffi.Pointer<ffi2.Utf8>,
-                  ffi.Size,
-                  ffi.Pointer<ffi2.Utf8>,
-                  ffi.Size)>>('ICU4XCollator_compare_valid_utf8')
-      .asFunction<
-          int Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi2.Utf8>, int,
-              ffi.Pointer<ffi2.Utf8>, int)>(isLeaf: true);
+  @ffi.Native<
+      ffi.Uint32 Function(
+          ffi.Pointer<ffi.Opaque>,
+          ffi.Pointer<ffi2.Utf8>,
+          ffi.Size,
+          ffi.Pointer<ffi2.Utf8>,
+          ffi.Size)>(symbol: 'ICU4XCollator_compare_valid_utf8', isLeaf: true)
+  external static ffi.Uint32 Function(
+      ffi.Pointer<ffi.Opaque>,
+      ffi.Pointer<ffi2.Utf8>,
+      int,
+      ffi.Pointer<ffi2.Utf8>,
+      // ignore: non_constant_identifier_names
+      int) _ICU4XCollator_compare_valid_utf8;
 
   /// Compare potentially ill-formed UTF-16 strings, with unpaired surrogates
   /// compared as REPLACEMENT CHARACTER.
@@ -3215,18 +3218,20 @@ class Collator implements ffi.Finalizable {
     return Ordering.values.firstWhere((v) => v._underlying == result);
   }
 
-  // ignore: non_constant_identifier_names
-  static final _ICU4XCollator_compare_utf16 = _capi<
-          ffi.NativeFunction<
-              ffi.Uint32 Function(
-                  ffi.Pointer<ffi.Opaque>,
-                  ffi.Pointer<ffi.Uint16>,
-                  ffi.Size,
-                  ffi.Pointer<ffi.Uint16>,
-                  ffi.Size)>>('ICU4XCollator_compare_utf16')
-      .asFunction<
-          int Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Uint16>, int,
-              ffi.Pointer<ffi.Uint16>, int)>(isLeaf: true);
+  @ffi.Native<
+      ffi.Uint32 Function(
+          ffi.Pointer<ffi.Opaque>,
+          ffi.Pointer<ffi.Uint16>,
+          ffi.Size,
+          ffi.Pointer<ffi.Uint16>,
+          ffi.Size)>(symbol: 'ICU4XCollator_compare_utf16', isLeaf: true)
+  external static ffi.Uint32 Function(
+      ffi.Pointer<ffi.Opaque>,
+      ffi.Pointer<ffi.Uint16>,
+      int,
+      ffi.Pointer<ffi.Uint16>,
+      // ignore: non_constant_identifier_names
+      int) _ICU4XCollator_compare_utf16;
 }
 
 /// See the [Rust documentation for `AlternateHandling`](https://docs.rs/icu/latest/icu/collator/enum.AlternateHandling.html) for more information.
@@ -4045,8 +4050,8 @@ class DataProvider implements ffi.Finalizable {
     _finalizer.attach(this, _underlying.cast());
   }
 
-  static final _finalizer =
-      ffi.NativeFinalizer(_capi('ICU4XDataProvider_destroy'));
+  static final _finalizer = ffi.NativeFinalizer(
+      ffi.DynamicLibrary.process().lookup('ICU4XDataProvider_destroy'));
 
   /// Constructs an [`ICU4XDataProvider`] that uses compiled data.
   ///
@@ -4059,10 +4064,12 @@ class DataProvider implements ffi.Finalizable {
     return DataProvider._(result);
   }
   // ignore: non_constant_identifier_names
-  static final _ICU4XDataProvider_create_compiled =
-      _capi<ffi.NativeFunction<ffi.Pointer<ffi.Opaque> Function()>>(
-              'ICU4XDataProvider_create_compiled')
-          .asFunction<ffi.Pointer<ffi.Opaque> Function()>(isLeaf: true);
+
+  @ffi.Native<ffi.Pointer<ffi.Opaque> Function()>(
+      symbol: 'ICU4XDataProvider_create_compiled', isLeaf: true)
+  external static ffi.Pointer<ffi.Opaque> Function()
+      // ignore: non_constant_identifier_names
+      _ICU4XDataProvider_create_compiled;
 
   /// Constructs a `BlobDataProvider` and returns it as an [`ICU4XDataProvider`].
   ///
@@ -9719,12 +9726,10 @@ class ScriptWithExtensionsBorrowed implements ffi.Finalizable {
   // ignore: non_constant_identifier_names
   static final _ICU4XScriptWithExtensionsBorrowed_get_script_extensions_val =
       _capi<
-                  ffi
-                  .NativeFunction<
-                      ffi.Pointer<ffi.Opaque> Function(
-                          ffi.Pointer<ffi.Opaque>,
-                          ffi
-                              .Uint32)>>(
+                  ffi.NativeFunction<
+                      ffi.Pointer<
+                              ffi.Opaque>
+                          Function(ffi.Pointer<ffi.Opaque>, ffi.Uint32)>>(
               'ICU4XScriptWithExtensionsBorrowed_get_script_extensions_val')
           .asFunction<
               ffi.Pointer<ffi.Opaque> Function(
@@ -9760,12 +9765,10 @@ class ScriptWithExtensionsBorrowed implements ffi.Finalizable {
   // ignore: non_constant_identifier_names
   static final _ICU4XScriptWithExtensionsBorrowed_get_script_extensions_set =
       _capi<
-                  ffi
-                  .NativeFunction<
-                      ffi.Pointer<ffi.Opaque> Function(
-                          ffi.Pointer<ffi.Opaque>,
-                          ffi
-                              .Uint16)>>(
+                  ffi.NativeFunction<
+                      ffi.Pointer<
+                              ffi.Opaque>
+                          Function(ffi.Pointer<ffi.Opaque>, ffi.Uint16)>>(
               'ICU4XScriptWithExtensionsBorrowed_get_script_extensions_set')
           .asFunction<
               ffi.Pointer<ffi.Opaque> Function(
