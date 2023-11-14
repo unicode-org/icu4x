@@ -1,5 +1,10 @@
 # Changelog
 
+## icu4x 1.3.4 (early Nov, 2023)
+
+- `icu_datagen`: 1.3.4
+    - CLI: Fix behavior of `--segmenter-lstm-root` such that it does not override `icuexportdata-root` (https://github.com/unicode-org/icu4x/pull/4277)
+
 ## icu4x 1.3.3 (later Oct, 2023)
 
 Some crates received a 1.3.3 patch release:
