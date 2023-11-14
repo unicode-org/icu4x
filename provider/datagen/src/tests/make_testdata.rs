@@ -29,8 +29,6 @@ fn generate_json_and_verify_postcard() {
 
     let data_root = Path::new(concat!(core::env!("CARGO_MANIFEST_DIR"), "/tests/data/"));
 
-    let source = DatagenProvider::new_testing();
-
     let json_out = Box::new(
         FilesystemExporter::try_new(Box::new(Json::pretty()), {
             let mut options = ExporterOptions::default();
@@ -58,7 +56,10 @@ fn generate_json_and_verify_postcard() {
             "thaidict".into(),
             "Thai_codepoints_exclusive_model4_heavy".into(),
         ])
-        .export(&source, MultiExporter::new(vec![json_out, postcard_out]))
+        .export(
+            &DatagenProvider::new_testing(),
+            MultiExporter::new(vec![json_out, postcard_out]),
+        )
         .unwrap();
 }
 
