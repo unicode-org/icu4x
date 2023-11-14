@@ -122,8 +122,8 @@ impl Calendar for Buddhist {
         iso_year_as_buddhist(date.0.year)
     }
 
-    fn year_is_leap(&self, date: &Self::DateInner) -> bool {
-        Iso.year_is_leap(date)
+    fn is_in_leap_year(&self, date: &Self::DateInner) -> bool {
+        Iso.is_in_leap_year(date)
     }
 
     /// The calendar-specific month represented by `date`

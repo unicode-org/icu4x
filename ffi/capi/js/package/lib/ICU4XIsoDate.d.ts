@@ -101,9 +101,9 @@ export class ICU4XIsoDate {
 
    * Returns if the year is a leap year for this date
 
-   * See the {@link https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.year_is_leap Rust documentation for `year_is_leap`} for more information.
+   * See the {@link https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.is_in_leap_year Rust documentation for `is_in_leap_year`} for more information.
    */
-  year_is_leap(): boolean;
+  is_in_leap_year(): boolean;
 
   /**
 

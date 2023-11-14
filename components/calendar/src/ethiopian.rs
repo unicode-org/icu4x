@@ -198,7 +198,7 @@ impl Calendar for Ethiopian {
         Self::year_as_ethiopian(date.0.year, self.0)
     }
 
-    fn year_is_leap(&self, date: &Self::DateInner) -> bool {
+    fn is_in_leap_year(&self, date: &Self::DateInner) -> bool {
         Self::is_leap_year(date.0.year)
     }
 
