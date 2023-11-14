@@ -158,6 +158,7 @@ skip_feature_sets = [["use_icu4c"], ["use_wasm"]]
 skip_optional_dependencies = true
 # Always the experimental deps because we want to all-or-nothing them
 # and the nothing case is already tested in regular check CI
-always_include_features = ["icu_compactdecimal", "icu_displaynames", "icu_relativetime", "icu_singlenumberformatter", "icu_transliterate", "icu_unitsconversion"]
+# Note: icu_singlenumberformatter and icu_unitsconversion excluded from 1.4 release
+always_include_features = ["icu_compactdecimal", "icu_displaynames", "icu_relativetime", "icu_transliterate"]
 # We have a *lot* of features here
 max_combination_size = 2
