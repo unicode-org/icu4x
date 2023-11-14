@@ -468,6 +468,9 @@ pub enum Out {
         fingerprint: bool,
     },
     /// Output as a postcard blob to the given sink.
+    ///
+    /// This supports only version 1 of the blob format. Please use [`DatagenDriver`] with
+    /// [`BlobExporter`] to export to blob format version 2.
     Blob(Box<dyn std::io::Write + Sync>),
     /// Output a module with baked data at the given location.
     Baked {
