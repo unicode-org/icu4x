@@ -28,6 +28,8 @@
 - Utilities
     - `databake`
         - Improvements `databake::test_bake!()` (https://github.com/unicode-org/icu4x/pull/4182)
+    - `litemap`
+        - Implement `databake::Bake` on `LiteMap` (https://github.com/unicode-org/icu4x/pull/4275)
     - `tinystr`
         - Better Debug impl for UnvalidatedTinyAsciiStr (https://github.com/unicode-org/icu4x/pull/4189)
     - `zerovec`
