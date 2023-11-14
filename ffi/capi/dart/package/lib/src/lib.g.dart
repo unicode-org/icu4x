@@ -3301,10 +3301,10 @@ class Collator implements ffi.Finalizable {
   }
 
   @ffi.Native<
-          _ResultOpaqueUint32 Function(ffi.Pointer<ffi.Opaque>,
+          _ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>,
               ffi.Pointer<ffi.Opaque>, _CollatorOptionsV1Ffi)>(
       symbol: 'ICU4XCollator_create_v1', isLeaf: true)
-  external static _ResultOpaqueUint32 _ICU4XCollator_create_v1(
+  external static _ResultOpaqueInt32 _ICU4XCollator_create_v1(
       ffi.Pointer<ffi.Opaque> provider,
       ffi.Pointer<ffi.Opaque> locale,
       _CollatorOptionsV1Ffi options);
@@ -3331,7 +3331,7 @@ class Collator implements ffi.Finalizable {
   }
 
   @ffi.Native<
-      ffi.Uint32 Function(
+      ffi.Int32 Function(
           ffi.Pointer<ffi.Opaque>,
           ffi.Pointer<ffi2.Utf8>,
           ffi.Size,
@@ -3360,7 +3360,7 @@ class Collator implements ffi.Finalizable {
   }
 
   @ffi.Native<
-      ffi.Uint32 Function(
+      ffi.Int32 Function(
           ffi.Pointer<ffi.Opaque>,
           ffi.Pointer<ffi.Uint16>,
           ffi.Size,
