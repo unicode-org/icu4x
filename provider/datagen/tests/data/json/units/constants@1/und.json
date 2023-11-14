@@ -1,0 +1,291 @@
+{
+  "constants_map": {
+    "AMU": {
+      "numerator": [
+        11,
+        26,
+        149,
+        169,
+        38
+      ],
+      "denominator": [
+        0,
+        0,
+        0,
+        0,
+        64,
+        34,
+        138,
+        9,
+        122,
+        196,
+        134,
+        90,
+        168,
+        76,
+        59,
+        75
+      ],
+      "sign": "Positive",
+      "constant_exactness": "Approximate"
+    },
+    "G": {
+      "numerator": [
+        241,
+        162
+      ],
+      "denominator": [
+        0,
+        16,
+        252,
+        38,
+        111,
+        56,
+        2
+      ],
+      "sign": "Positive",
+      "constant_exactness": "Approximate"
+    },
+    "PI": {
+      "numerator": [
+        99,
+        224,
+        135,
+        24
+      ],
+      "denominator": [
+        96,
+        242,
+        206,
+        7
+      ],
+      "sign": "Positive",
+      "constant_exactness": "Approximate"
+    },
+    "ft2_to_m2": {
+      "numerator": [
+        9,
+        55,
+        2
+      ],
+      "denominator": [
+        132,
+        215,
+        23
+      ],
+      "sign": "Positive",
+      "constant_exactness": "Exact"
+    },
+    "ft3_to_m3": {
+      "numerator": [
+        101,
+        232,
+        75,
+        3
+      ],
+      "denominator": [
+        136,
+        82,
+        106,
+        116
+      ],
+      "sign": "Positive",
+      "constant_exactness": "Exact"
+    },
+    "ft_to_m": {
+      "numerator": [
+        125,
+        1
+      ],
+      "denominator": [
+        226,
+        4
+      ],
+      "sign": "Positive",
+      "constant_exactness": "Exact"
+    },
+    "gal_imp_to_m3": {
+      "numerator": [
+        209,
+        239,
+        6
+      ],
+      "denominator": [
+        0,
+        225,
+        245,
+        5
+      ],
+      "sign": "Positive",
+      "constant_exactness": "Exact"
+    },
+    "gal_to_m3": {
+      "numerator": [
+        153,
+        25,
+        52,
+        28
+      ],
+      "denominator": [
+        0,
+        162,
+        148,
+        26,
+        29
+      ],
+      "sign": "Positive",
+      "constant_exactness": "Exact"
+    },
+    "glucose_molar_mass": {
+      "numerator": [
+        85,
+        125,
+        27
+      ],
+      "denominator": [
+        16,
+        39
+      ],
+      "sign": "Positive",
+      "constant_exactness": "Exact"
+    },
+    "gravity": {
+      "numerator": [
+        37,
+        254,
+        2
+      ],
+      "denominator": [
+        32,
+        78
+      ],
+      "sign": "Positive",
+      "constant_exactness": "Exact"
+    },
+    "in3_to_m3": {
+      "numerator": [
+        127,
+        65,
+        31
+      ],
+      "denominator": [
+        0,
+        162,
+        148,
+        26,
+        29
+      ],
+      "sign": "Positive",
+      "constant_exactness": "Exact"
+    },
+    "item_per_mole": {
+      "numerator": [
+        0,
+        0,
+        198,
+        92,
+        20,
+        95,
+        41,
+        23,
+        134,
+        127
+      ],
+      "denominator": [
+        1
+      ],
+      "sign": "Positive",
+      "constant_exactness": "Exact"
+    },
+    "lb_to_kg": {
+      "numerator": [
+        133,
+        32,
+        180,
+        2
+      ],
+      "denominator": [
+        0,
+        225,
+        245,
+        5
+      ],
+      "sign": "Positive",
+      "constant_exactness": "Exact"
+    },
+    "meters_per_AU": {
+      "numerator": [
+        108,
+        90,
+        186,
+        212,
+        34
+      ],
+      "denominator": [
+        1
+      ],
+      "sign": "Positive",
+      "constant_exactness": "Exact"
+    },
+    "sec_per_julian_year": {
+      "numerator": [
+        224,
+        135,
+        225,
+        1
+      ],
+      "denominator": [
+        1
+      ],
+      "sign": "Positive",
+      "constant_exactness": "Exact"
+    },
+    "shaku_to_m": {
+      "numerator": [
+        4
+      ],
+      "denominator": [
+        121
+      ],
+      "sign": "Positive",
+      "constant_exactness": "Exact"
+    },
+    "sho_to_m3": {
+      "numerator": [
+        97,
+        9
+      ],
+      "denominator": [
+        56,
+        79,
+        20
+      ],
+      "sign": "Positive",
+      "constant_exactness": "Exact"
+    },
+    "speed_of_light_meters_per_second": {
+      "numerator": [
+        74,
+        120,
+        222,
+        17
+      ],
+      "denominator": [
+        1
+      ],
+      "sign": "Positive",
+      "constant_exactness": "Exact"
+    },
+    "tsubo_to_m2": {
+      "numerator": [
+        144,
+        1
+      ],
+      "denominator": [
+        121
+      ],
+      "sign": "Positive",
+      "constant_exactness": "Exact"
+    }
+  }
+}
