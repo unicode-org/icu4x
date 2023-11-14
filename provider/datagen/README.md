@@ -24,7 +24,7 @@ DatagenDriver::new()
     .with_all_locales()
     .export(
         &DatagenProvider::new_latest_tested(),
-        BlobExporter::new_with_sink(Box::new(
+        BlobExporter::new_v2_with_sink(Box::new(
             File::create("data.postcard").unwrap(),
         )),
     )
