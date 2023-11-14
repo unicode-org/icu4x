@@ -45,7 +45,7 @@ uint32_t ICU4XIsoDate_month(const ICU4XIsoDate* self);
 
 int32_t ICU4XIsoDate_year(const ICU4XIsoDate* self);
 
-bool ICU4XIsoDate_year_is_leap(const ICU4XIsoDate* self);
+bool ICU4XIsoDate_is_in_leap_year(const ICU4XIsoDate* self);
 
 uint8_t ICU4XIsoDate_months_in_year(const ICU4XIsoDate* self);
 

@@ -126,8 +126,8 @@ impl Calendar for Gregorian {
         year_as_gregorian(date.0 .0.year)
     }
 
-    fn year_is_leap(&self, date: &Self::DateInner) -> bool {
-        Iso.year_is_leap(&date.0)
+    fn is_in_leap_year(&self, date: &Self::DateInner) -> bool {
+        Iso.is_in_leap_year(&date.0)
     }
 
     /// The calendar-specific month represented by `date`
