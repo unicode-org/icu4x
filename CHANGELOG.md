@@ -7,6 +7,8 @@
  
 - Components
     - Compiled data updated to CLDR 44 and ICU 74 (https://github.com/unicode-org/icu4x/pull/4245)
+    - `icu_calendar`
+      - Expose if a date is in a leap year (https://github.com/unicode-org/icu4x/pull/4273)
     - `icu_locid`
       - Canonicalize transform extensions to lowercase (https://github.com/unicode-org/icu4x/pull/4134)
     - `icu_properties`
@@ -27,7 +29,8 @@
         - CLI: Fix behavior of `--segmenter-lstm-root` such that it does not override `icuexportdata-root` (https://github.com/unicode-org/icu4x/pull/4277)
 - Utilities
     - `databake`
-        - Improvements `databake::test_bake!()` (https://github.com/unicode-org/icu4x/pull/4182)
+        - Add implementations for `BTreeSet`, `BTreeMap` (https://github.com/unicode-org/icu4x/pull/4274)  
+        - Improvements to `databake::test_bake!()` (https://github.com/unicode-org/icu4x/pull/4182)
     - `tinystr`
         - Better Debug impl for UnvalidatedTinyAsciiStr (https://github.com/unicode-org/icu4x/pull/4189)
     - `zerovec`
