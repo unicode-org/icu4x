@@ -11,6 +11,7 @@
       - Canonicalize transform extensions to lowercase (https://github.com/unicode-org/icu4x/pull/4134)
     - `icu_properties`
         - Support Indic_Syllabic_Category in icu_properties. (https://github.com/unicode-org/icu4x/pull/4176)
+        - Add enum constants for new Unicode 15.1 Line_Break properties. (https://github.com/unicode-org/icu4x/issues/4132)
     - `icu_segmenter`
         - Fix Unicode 15.0 sentence segmentation (https://github.com/unicode-org/icu4x/pull/4213)
     - `icu_unicodeset_parse`
