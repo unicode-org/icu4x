@@ -17,7 +17,7 @@
 //! let mut blob: Vec<u8> = Vec::new();
 //!
 //! // Set up the exporter
-//! let mut exporter = BlobExporter::new_with_sink(Box::new(&mut blob));
+//! let mut exporter = BlobExporter::new_v2_with_sink(Box::new(&mut blob));
 //!
 //! // Export something
 //! DatagenDriver::new()
@@ -27,6 +27,8 @@
 //!     .unwrap();
 //!
 //! // communicate the blob to the client application (network, disk, etc.)
+//! # let golden_blob = std::fs::read(concat!(env!("CARGO_MANIFEST_DIR"), "/tests/data/v2.postcard")).unwrap();
+//! # assert_eq!(blob, golden_blob);
 //! ```
 //!
 //! The resulting blob can now be used like this:

@@ -206,6 +206,10 @@ impl Calendar for Dangi {
         Self::format_dangi_year(date.0 .0.year, Some(date.0 .1))
     }
 
+    fn year_is_leap(&self, date: &Self::DateInner) -> bool {
+        Self::is_leap_year(date.0 .0.year)
+    }
+
     fn month(&self, date: &Self::DateInner) -> crate::types::FormattableMonth {
         let ordinal = date.0 .0.month;
         let leap_month_option = date.0 .1.get_leap_month();

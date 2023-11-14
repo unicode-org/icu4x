@@ -515,6 +515,11 @@ impl Calendar for AnyCalendar {
         match_cal_and_date!(match (self, date): (c, d) => c.year(d))
     }
 
+    /// The calendar-specific check if year is a leap year represented by `date`
+    fn year_is_leap(&self, date: &Self::DateInner) -> bool {
+        match_cal_and_date!(match (self, date): (c, d) => c.year_is_leap(d))
+    }
+
     /// The calendar-specific month represented by `date`
     fn month(&self, date: &Self::DateInner) -> types::FormattableMonth {
         match_cal_and_date!(match (self, date): (c, d) => c.month(d))

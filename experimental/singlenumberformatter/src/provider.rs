@@ -100,7 +100,7 @@ pub enum PatternSelection {
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[derive(Copy, Debug, Clone, PartialEq, PartialOrd, Eq, Ord)]
 #[repr(u16)]
-pub enum PlaceHolder {
+pub enum PlaceholderValue {
     /// The index of the place holder in the place holders list.
     /// NOTE: the maximum value is MAX_PLACE_HOLDER_INDEX which is 2045 (0b0111_1111_1101).
     Index(u16),
@@ -126,9 +126,9 @@ pub struct CurrencyPatterns {
 
     /// The index of the short pattern place holder in the place holders list.
     /// If the value is `None`, this means that the short pattern does not have a place holder.
-    pub short_place_holder_index: Option<PlaceHolder>,
+    pub short_place_holder_index: Option<PlaceholderValue>,
 
     /// The index of the narrow pattern place holder in the place holders list.
     /// If the value is `None`, this means that the narrow pattern does not have a place holder.
-    pub narrow_place_holder_index: Option<PlaceHolder>,
+    pub narrow_place_holder_index: Option<PlaceholderValue>,
 }

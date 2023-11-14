@@ -1685,6 +1685,13 @@ impl LineBreak {
     pub const EBase: LineBreak = LineBreak(40); // name="EB"
     pub const EModifier: LineBreak = LineBreak(41); // name="EM"
     pub const ZWJ: LineBreak = LineBreak(42); // name="ZWJ"
+
+    // Added in ICU 74:
+    pub const Aksara: LineBreak = LineBreak(43); // name="AK"
+    pub const AksaraPrebase: LineBreak = LineBreak(44); // name=AP"
+    pub const AksaraStart: LineBreak = LineBreak(45); // name=AS"
+    pub const ViramaFinal: LineBreak = LineBreak(46); // name=VF"
+    pub const Virama: LineBreak = LineBreak(47); // name=VI"
 }
 
 impl_value_getter! {
