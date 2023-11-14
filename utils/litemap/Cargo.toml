@@ -44,6 +44,9 @@ criterion = "0.4"
 bench = ["serde"]
 default = ["alloc"]
 alloc = []
+databake = ["dep:databake"]
+serde = ["dep:serde"]
+yoke = ["dep:yoke"]
 
 # Enables the `testing` module with tools for testing custom stores.
 testing = ["alloc"]

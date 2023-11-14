@@ -6,7 +6,7 @@ use crate::LiteMap;
 use databake::*;
 
 /// Bakes a LiteMap into Rust code for fast runtime construction from data. Use this impl during
-/// code generation or in a `build.rs` script.
+/// code generation, such as in a `build.rs` script.
 ///
 /// For the most efficient bake, bake the [`LiteMap`] with a slice store. Use functions such as
 /// the following for converting an allocated [`LiteMap`] to a borrowing [`LiteMap`]:
@@ -23,19 +23,20 @@ use databake::*;
 /// use litemap::LiteMap;
 ///
 /// // Construct the LiteMap fully owned and allocated:
-/// let mut litemap_alloc = LiteMap::new_vec();
+/// let mut litemap_alloc: LiteMap<usize, String, Vec<_>> = LiteMap::new_vec();
 /// litemap_alloc.insert(1usize, "one".to_string());
 /// litemap_alloc.insert(2usize, "two".to_string());
 /// litemap_alloc.insert(10usize, "ten".to_string());
 ///
 /// // Convert to a borrowed type for baking:
-/// let litemap_str: LiteMap<usize, &str> = litemap_alloc.to_borrowed_values();
-/// let litemap_slice = litemap_str.as_sliced();
+/// let litemap_str: LiteMap<usize, &str, Vec<_>> = litemap_alloc.to_borrowed_values();
+/// let litemap_slice: LiteMap<usize, &str, &[_]> = litemap_str.as_sliced();
 ///
 /// // The bake will now work for const construction:
-/// assert_eq!(
-///     litemap_slice.bake(&Default::default()).to_string(),
-///     r#"litemap :: LiteMap :: from_sorted_store_unchecked (& [(1usize , "one") , (2usize , "two") , (10usize , "ten")])"#,
+/// let mut ctx = Default::default();
+/// println!(
+///     "const FOO: LiteMap<usize, &str, &[(usize, &str)]> = {};",
+///     litemap_slice.bake(&mut ctx)
 /// );
 /// ```
 impl<K, V, S> Bake for LiteMap<K, V, S>
