@@ -141,6 +141,9 @@ mod registry;
 mod source;
 mod transform;
 
+#[cfg(test)]
+mod tests;
+
 pub use driver::DatagenDriver;
 pub use provider::DatagenProvider;
 #[doc(hidden)] // for CLI serde

@@ -2,10 +2,10 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+use crate::fs_exporter::serializers::Json;
+use crate::fs_exporter::*;
+use crate::prelude::*;
 use crlify::BufWriterWithLineEndingFix;
-use icu_datagen::fs_exporter::serializers::Json;
-use icu_datagen::fs_exporter::*;
-use icu_datagen::prelude::*;
 use icu_provider::datagen::*;
 use icu_provider::prelude::*;
 use std::alloc::{GlobalAlloc, Layout, System};
@@ -16,7 +16,7 @@ use std::io::Write;
 use std::path::Path;
 use std::sync::Mutex;
 
-include!("locales.rs.data");
+include!("../../tests/locales.rs.data");
 
 #[test]
 #[ignore] // has side effects, run manually
@@ -58,7 +58,7 @@ fn generate_json_and_verify_postcard() {
     });
 
     DatagenDriver::new()
-        .with_keys(icu_datagen::all_keys())
+        .with_keys(crate::all_keys())
         .with_locales(LOCALES.iter().cloned())
         .with_segmenter_models([
             "thaidict".into(),
@@ -132,12 +132,9 @@ impl DataExporter for PostcardTestingExporter {
 
         MeasuringAllocator::start_measure();
 
-        let ((allocated, deallocated), payload_after) = icu_datagen::deserialize_and_measure(
-            key,
-            buffer_payload,
-            MeasuringAllocator::end_measure,
-        )
-        .unwrap();
+        let ((allocated, deallocated), payload_after) =
+            crate::deserialize_and_measure(key, buffer_payload, MeasuringAllocator::end_measure)
+                .unwrap();
 
         if payload_before != &payload_after {
             self.rountrip_errors
