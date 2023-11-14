@@ -49,7 +49,7 @@ pub const KEYS: &[DataKey] = &[UnitsInfoV1Marker::KEY];
 #[cfg_attr(
     feature = "datagen",
     derive(serde::Serialize, databake::Bake),
-    databake(path = icu_unitsconversion::units_provider),
+    databake(path = icu_unitsconversion::provider),
 )]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[yoke(prove_covariance_manually)]
@@ -73,7 +73,7 @@ pub struct UnitsInfoV1<'data> {
 #[cfg_attr(
     feature = "datagen",
     derive(databake::Bake),
-    databake(path = icu_unitsconversion::units_provider),
+    databake(path = icu_unitsconversion::provider),
 )]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 #[derive(Copy, Debug, Clone, Default, PartialEq, PartialOrd, Eq, Ord)]
@@ -94,7 +94,7 @@ pub struct UnitsInfoIndex {
 #[cfg_attr(
     feature = "datagen",
     derive(serde::Serialize, databake::Bake),
-    databake(path = icu_unitsconversion::units_provider),
+    databake(path = icu_unitsconversion::provider),
 )]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[derive(Copy, Clone, Debug, PartialOrd, Ord, PartialEq, Eq, Default)]
@@ -110,7 +110,7 @@ pub enum DerivationSpecifier {
 #[cfg_attr(
     feature = "datagen",
     derive(databake::Bake),
-    databake(path = icu_unitsconversion::units_provider),
+    databake(path = icu_unitsconversion::provider),
 )]
 #[cfg_attr(
     feature = "datagen",
@@ -138,7 +138,7 @@ pub struct Dimension<'data> {
 #[cfg_attr(
     feature = "datagen",
     derive(databake::Bake),
-    databake(path = icu_unitsconversion::units_provider),
+    databake(path = icu_unitsconversion::provider),
 )]
 #[cfg_attr(
     feature = "datagen",

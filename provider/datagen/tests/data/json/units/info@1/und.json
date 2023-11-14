@@ -1,751 +1,751 @@
 {
   "units_info": {
     "100-kilometer": {
-      "quantity": null,
-      "convert_unit": 0
+      "dimension": null,
+      "convert_info": 0
     },
     "acre": {
-      "quantity": null,
-      "convert_unit": 1
+      "dimension": null,
+      "convert_info": 1
     },
     "ampere": {
-      "quantity": 0,
-      "convert_unit": 2
+      "dimension": 0,
+      "convert_info": 2
     },
     "ampere-per-meter": {
-      "quantity": 1,
-      "convert_unit": null
+      "dimension": 1,
+      "convert_info": null
     },
     "ampere-per-square-meter": {
-      "quantity": 2,
-      "convert_unit": null
+      "dimension": 2,
+      "convert_info": null
     },
     "arc-minute": {
-      "quantity": null,
-      "convert_unit": 3
+      "dimension": null,
+      "convert_info": 3
     },
     "arc-second": {
-      "quantity": null,
-      "convert_unit": 4
+      "dimension": null,
+      "convert_info": 4
     },
     "astronomical-unit": {
-      "quantity": null,
-      "convert_unit": 5
+      "dimension": null,
+      "convert_info": 5
     },
     "atmosphere": {
-      "quantity": null,
-      "convert_unit": 6
+      "dimension": null,
+      "convert_info": 6
     },
     "bar": {
-      "quantity": null,
-      "convert_unit": 7
+      "dimension": null,
+      "convert_info": 7
     },
     "barrel": {
-      "quantity": null,
-      "convert_unit": 8
+      "dimension": null,
+      "convert_info": 8
     },
     "becquerel": {
-      "quantity": null,
-      "convert_unit": 9
+      "dimension": null,
+      "convert_info": 9
     },
     "bit": {
-      "quantity": 3,
-      "convert_unit": 10
+      "dimension": 3,
+      "convert_info": 10
     },
     "british-thermal-unit": {
-      "quantity": null,
-      "convert_unit": 11
+      "dimension": null,
+      "convert_info": 11
     },
     "british-thermal-unit-it": {
-      "quantity": null,
-      "convert_unit": 12
+      "dimension": null,
+      "convert_info": 12
     },
     "bu-jp": {
-      "quantity": null,
-      "convert_unit": 13
+      "dimension": null,
+      "convert_info": 13
     },
     "bushel": {
-      "quantity": null,
-      "convert_unit": 14
+      "dimension": null,
+      "convert_info": 14
     },
     "byte": {
-      "quantity": null,
-      "convert_unit": 15
+      "dimension": null,
+      "convert_info": 15
     },
     "calorie": {
-      "quantity": null,
-      "convert_unit": 16
+      "dimension": null,
+      "convert_info": 16
     },
     "calorie-it": {
-      "quantity": null,
-      "convert_unit": 17
+      "dimension": null,
+      "convert_info": 17
     },
     "candela": {
-      "quantity": 4,
-      "convert_unit": 18
+      "dimension": 4,
+      "convert_info": 18
     },
     "candela-per-square-meter": {
-      "quantity": 5,
-      "convert_unit": null
+      "dimension": 5,
+      "convert_info": null
     },
     "candela-square-meter-per-square-meter": {
-      "quantity": 6,
-      "convert_unit": null
+      "dimension": 6,
+      "convert_info": null
     },
     "carat": {
-      "quantity": null,
-      "convert_unit": 19
+      "dimension": null,
+      "convert_info": 19
     },
     "celsius": {
-      "quantity": null,
-      "convert_unit": 20
+      "dimension": null,
+      "convert_info": 20
     },
     "century": {
-      "quantity": null,
-      "convert_unit": 21
+      "dimension": null,
+      "convert_info": 21
     },
     "chain": {
-      "quantity": null,
-      "convert_unit": 22
+      "dimension": null,
+      "convert_info": 22
     },
     "cho": {
-      "quantity": null,
-      "convert_unit": 23
+      "dimension": null,
+      "convert_info": 23
     },
     "coulomb": {
-      "quantity": null,
-      "convert_unit": 24
+      "dimension": null,
+      "convert_info": 24
     },
     "cubic-meter": {
-      "quantity": 7,
-      "convert_unit": null
+      "dimension": 7,
+      "convert_info": null
     },
     "cubic-meter-per-kilogram": {
-      "quantity": 8,
-      "convert_unit": null
+      "dimension": 8,
+      "convert_info": null
     },
     "cubic-meter-per-meter": {
-      "quantity": 9,
-      "convert_unit": null
+      "dimension": 9,
+      "convert_info": null
     },
     "cubic-second-square-ampere-per-kilogram-square-meter": {
-      "quantity": 10,
-      "convert_unit": null
+      "dimension": 10,
+      "convert_info": null
     },
     "cup": {
-      "quantity": null,
-      "convert_unit": 25
+      "dimension": null,
+      "convert_info": 25
     },
     "cup-jp": {
-      "quantity": null,
-      "convert_unit": 26
+      "dimension": null,
+      "convert_info": 26
     },
     "cup-metric": {
-      "quantity": null,
-      "convert_unit": 27
+      "dimension": null,
+      "convert_info": 27
     },
     "dalton": {
-      "quantity": null,
-      "convert_unit": 28
+      "dimension": null,
+      "convert_info": 28
     },
     "day": {
-      "quantity": null,
-      "convert_unit": 29
+      "dimension": null,
+      "convert_info": 29
     },
     "day-person": {
-      "quantity": null,
-      "convert_unit": 30
+      "dimension": null,
+      "convert_info": 30
     },
     "decade": {
-      "quantity": null,
-      "convert_unit": 31
+      "dimension": null,
+      "convert_info": 31
     },
     "degree": {
-      "quantity": null,
-      "convert_unit": 32
+      "dimension": null,
+      "convert_info": 32
     },
     "dessert-spoon": {
-      "quantity": null,
-      "convert_unit": 33
+      "dimension": null,
+      "convert_info": 33
     },
     "dessert-spoon-imperial": {
-      "quantity": null,
-      "convert_unit": 34
+      "dimension": null,
+      "convert_info": 34
     },
     "dot": {
-      "quantity": null,
-      "convert_unit": 35
+      "dimension": null,
+      "convert_info": 35
     },
     "dram": {
-      "quantity": null,
-      "convert_unit": 36
+      "dimension": null,
+      "convert_info": 36
     },
     "drop": {
-      "quantity": null,
-      "convert_unit": 37
+      "dimension": null,
+      "convert_info": 37
     },
     "dunam": {
-      "quantity": null,
-      "convert_unit": 38
+      "dimension": null,
+      "convert_info": 38
     },
     "earth-mass": {
-      "quantity": null,
-      "convert_unit": 39
+      "dimension": null,
+      "convert_info": 39
     },
     "earth-radius": {
-      "quantity": null,
-      "convert_unit": 40
+      "dimension": null,
+      "convert_info": 40
     },
     "electronvolt": {
-      "quantity": null,
-      "convert_unit": 41
+      "dimension": null,
+      "convert_info": 41
     },
     "em": {
-      "quantity": 11,
-      "convert_unit": 42
+      "dimension": 11,
+      "convert_info": 42
     },
     "fahrenheit": {
-      "quantity": null,
-      "convert_unit": 43
+      "dimension": null,
+      "convert_info": 43
     },
     "farad": {
-      "quantity": null,
-      "convert_unit": 44
+      "dimension": null,
+      "convert_info": 44
     },
     "fathom": {
-      "quantity": null,
-      "convert_unit": 45
+      "dimension": null,
+      "convert_info": 45
     },
     "fluid-ounce": {
-      "quantity": null,
-      "convert_unit": 46
+      "dimension": null,
+      "convert_info": 46
     },
     "fluid-ounce-imperial": {
-      "quantity": null,
-      "convert_unit": 47
+      "dimension": null,
+      "convert_info": 47
     },
     "foodcalorie": {
-      "quantity": null,
-      "convert_unit": 48
+      "dimension": null,
+      "convert_info": 48
     },
     "foot": {
-      "quantity": null,
-      "convert_unit": 49
+      "dimension": null,
+      "convert_info": 49
     },
     "fortnight": {
-      "quantity": null,
-      "convert_unit": 50
+      "dimension": null,
+      "convert_info": 50
     },
     "fun": {
-      "quantity": null,
-      "convert_unit": 51
+      "dimension": null,
+      "convert_info": 51
     },
     "furlong": {
-      "quantity": null,
-      "convert_unit": 52
+      "dimension": null,
+      "convert_info": 52
     },
     "g-force": {
-      "quantity": null,
-      "convert_unit": 53
+      "dimension": null,
+      "convert_info": 53
     },
     "gallon": {
-      "quantity": null,
-      "convert_unit": 54
+      "dimension": null,
+      "convert_info": 54
     },
     "gallon-imperial": {
-      "quantity": null,
-      "convert_unit": 55
+      "dimension": null,
+      "convert_info": 55
     },
     "gasoline-energy-density": {
-      "quantity": null,
-      "convert_unit": 56
+      "dimension": null,
+      "convert_info": 56
     },
     "grain": {
-      "quantity": null,
-      "convert_unit": 57
+      "dimension": null,
+      "convert_info": 57
     },
     "gram": {
-      "quantity": null,
-      "convert_unit": 58
+      "dimension": null,
+      "convert_info": 58
     },
     "gray": {
-      "quantity": null,
-      "convert_unit": 59
+      "dimension": null,
+      "convert_info": 59
     },
     "hectare": {
-      "quantity": null,
-      "convert_unit": 60
+      "dimension": null,
+      "convert_info": 60
     },
     "henry": {
-      "quantity": null,
-      "convert_unit": 61
+      "dimension": null,
+      "convert_info": 61
     },
     "hertz": {
-      "quantity": null,
-      "convert_unit": 62
+      "dimension": null,
+      "convert_info": 62
     },
     "horsepower": {
-      "quantity": null,
-      "convert_unit": 63
+      "dimension": null,
+      "convert_info": 63
     },
     "hour": {
-      "quantity": null,
-      "convert_unit": 64
+      "dimension": null,
+      "convert_info": 64
     },
     "inch": {
-      "quantity": null,
-      "convert_unit": 65
+      "dimension": null,
+      "convert_info": 65
     },
     "item": {
-      "quantity": 12,
-      "convert_unit": 66
+      "dimension": 12,
+      "convert_info": 66
     },
     "item-per-cubic-meter": {
-      "quantity": 13,
-      "convert_unit": null
+      "dimension": 13,
+      "convert_info": null
     },
     "item-per-kilogram": {
-      "quantity": 14,
-      "convert_unit": null
+      "dimension": 14,
+      "convert_info": null
     },
     "item-per-second": {
-      "quantity": 15,
-      "convert_unit": null
+      "dimension": 15,
+      "convert_info": null
     },
     "jigger": {
-      "quantity": null,
-      "convert_unit": 67
+      "dimension": null,
+      "convert_info": 67
     },
     "jo-jp": {
-      "quantity": null,
-      "convert_unit": 68
+      "dimension": null,
+      "convert_info": 68
     },
     "joule": {
-      "quantity": null,
-      "convert_unit": 69
+      "dimension": null,
+      "convert_info": 69
     },
     "karat": {
-      "quantity": null,
-      "convert_unit": 70
+      "dimension": null,
+      "convert_info": 70
     },
     "katal": {
-      "quantity": null,
-      "convert_unit": 71
+      "dimension": null,
+      "convert_info": 71
     },
     "kelvin": {
-      "quantity": 16,
-      "convert_unit": 72
+      "dimension": 16,
+      "convert_info": 72
     },
     "ken": {
-      "quantity": null,
-      "convert_unit": 73
+      "dimension": null,
+      "convert_info": 73
     },
     "kilogram": {
-      "quantity": 17,
-      "convert_unit": 74
+      "dimension": 17,
+      "convert_info": 74
     },
     "kilogram-force": {
-      "quantity": null,
-      "convert_unit": 75
+      "dimension": null,
+      "convert_info": 75
     },
     "kilogram-meter-per-square-second": {
-      "quantity": 18,
-      "convert_unit": null
+      "dimension": 18,
+      "convert_info": null
     },
     "kilogram-per-cubic-meter": {
-      "quantity": 19,
-      "convert_unit": null
+      "dimension": 19,
+      "convert_info": null
     },
     "kilogram-per-kilogram": {
-      "quantity": 20,
-      "convert_unit": null
+      "dimension": 20,
+      "convert_info": null
     },
     "kilogram-per-meter-square-second": {
-      "quantity": 21,
-      "convert_unit": null
+      "dimension": 21,
+      "convert_info": null
     },
     "kilogram-per-square-meter-square-second": {
-      "quantity": 22,
-      "convert_unit": null
+      "dimension": 22,
+      "convert_info": null
     },
     "kilogram-per-square-second-ampere": {
-      "quantity": 23,
-      "convert_unit": null
+      "dimension": 23,
+      "convert_info": null
     },
     "kilogram-square-meter-per-cubic-second": {
-      "quantity": 24,
-      "convert_unit": null
+      "dimension": 24,
+      "convert_info": null
     },
     "kilogram-square-meter-per-cubic-second-ampere": {
-      "quantity": 25,
-      "convert_unit": null
+      "dimension": 25,
+      "convert_info": null
     },
     "kilogram-square-meter-per-cubic-second-square-ampere": {
-      "quantity": 26,
-      "convert_unit": null
+      "dimension": 26,
+      "convert_info": null
     },
     "kilogram-square-meter-per-square-second": {
-      "quantity": 27,
-      "convert_unit": null
+      "dimension": 27,
+      "convert_info": null
     },
     "kilogram-square-meter-per-square-second-ampere": {
-      "quantity": 28,
-      "convert_unit": null
+      "dimension": 28,
+      "convert_info": null
     },
     "kilogram-square-meter-per-square-second-square-ampere": {
-      "quantity": 29,
-      "convert_unit": null
+      "dimension": 29,
+      "convert_info": null
     },
     "knot": {
-      "quantity": null,
-      "convert_unit": 76
+      "dimension": null,
+      "convert_info": 76
     },
     "koku": {
-      "quantity": null,
-      "convert_unit": 77
+      "dimension": null,
+      "convert_info": 77
     },
     "kosaji": {
-      "quantity": null,
-      "convert_unit": 78
+      "dimension": null,
+      "convert_info": 78
     },
     "light-year": {
-      "quantity": null,
-      "convert_unit": 79
+      "dimension": null,
+      "convert_info": 79
     },
     "liter": {
-      "quantity": null,
-      "convert_unit": 80
+      "dimension": null,
+      "convert_info": 80
     },
     "lumen": {
-      "quantity": null,
-      "convert_unit": 81
+      "dimension": null,
+      "convert_info": 81
     },
     "lux": {
-      "quantity": null,
-      "convert_unit": 82
+      "dimension": null,
+      "convert_info": 82
     },
     "meter": {
-      "quantity": 30,
-      "convert_unit": 83
+      "dimension": 30,
+      "convert_info": 83
     },
     "meter-per-second": {
-      "quantity": 31,
-      "convert_unit": null
+      "dimension": 31,
+      "convert_info": null
     },
     "meter-per-square-second": {
-      "quantity": 32,
-      "convert_unit": null
+      "dimension": 32,
+      "convert_info": null
     },
     "mile": {
-      "quantity": null,
-      "convert_unit": 84
+      "dimension": null,
+      "convert_info": 84
     },
     "mile-scandinavian": {
-      "quantity": null,
-      "convert_unit": 85
+      "dimension": null,
+      "convert_info": 85
     },
     "minute": {
-      "quantity": null,
-      "convert_unit": 86
+      "dimension": null,
+      "convert_info": 86
     },
     "mole": {
-      "quantity": null,
-      "convert_unit": 87
+      "dimension": null,
+      "convert_info": 87
     },
     "month": {
-      "quantity": null,
-      "convert_unit": 88
+      "dimension": null,
+      "convert_info": 88
     },
     "month-person": {
-      "quantity": null,
-      "convert_unit": 89
+      "dimension": null,
+      "convert_info": 89
     },
     "nautical-mile": {
-      "quantity": null,
-      "convert_unit": 90
+      "dimension": null,
+      "convert_info": 90
     },
     "newton": {
-      "quantity": null,
-      "convert_unit": 91
+      "dimension": null,
+      "convert_info": 91
     },
     "ofglucose": {
-      "quantity": null,
-      "convert_unit": 92
+      "dimension": null,
+      "convert_info": 92
     },
     "ofhg": {
-      "quantity": null,
-      "convert_unit": 93
+      "dimension": null,
+      "convert_info": 93
     },
     "ohm": {
-      "quantity": null,
-      "convert_unit": 94
+      "dimension": null,
+      "convert_info": 94
     },
     "osaji": {
-      "quantity": null,
-      "convert_unit": 95
+      "dimension": null,
+      "convert_info": 95
     },
     "ounce": {
-      "quantity": null,
-      "convert_unit": 96
+      "dimension": null,
+      "convert_info": 96
     },
     "ounce-troy": {
-      "quantity": null,
-      "convert_unit": 97
+      "dimension": null,
+      "convert_info": 97
     },
     "parsec": {
-      "quantity": null,
-      "convert_unit": 98
+      "dimension": null,
+      "convert_info": 98
     },
     "pascal": {
-      "quantity": null,
-      "convert_unit": 99
+      "dimension": null,
+      "convert_info": 99
     },
     "per-second": {
-      "quantity": 33,
-      "convert_unit": null
+      "dimension": 33,
+      "convert_info": null
     },
     "percent": {
-      "quantity": null,
-      "convert_unit": 100
+      "dimension": null,
+      "convert_info": 100
     },
     "permille": {
-      "quantity": null,
-      "convert_unit": 101
+      "dimension": null,
+      "convert_info": 101
     },
     "permillion": {
-      "quantity": null,
-      "convert_unit": 102
+      "dimension": null,
+      "convert_info": 102
     },
     "permyriad": {
-      "quantity": null,
-      "convert_unit": 103
+      "dimension": null,
+      "convert_info": 103
     },
     "pinch": {
-      "quantity": null,
-      "convert_unit": 104
+      "dimension": null,
+      "convert_info": 104
     },
     "pint": {
-      "quantity": null,
-      "convert_unit": 105
+      "dimension": null,
+      "convert_info": 105
     },
     "pint-imperial": {
-      "quantity": null,
-      "convert_unit": 106
+      "dimension": null,
+      "convert_info": 106
     },
     "pint-metric": {
-      "quantity": null,
-      "convert_unit": 107
+      "dimension": null,
+      "convert_info": 107
     },
     "pixel": {
-      "quantity": 34,
-      "convert_unit": 108
+      "dimension": 34,
+      "convert_info": 108
     },
     "pixel-per-meter": {
-      "quantity": 35,
-      "convert_unit": null
+      "dimension": 35,
+      "convert_info": null
     },
     "point": {
-      "quantity": null,
-      "convert_unit": 109
+      "dimension": null,
+      "convert_info": 109
     },
     "portion": {
-      "quantity": 36,
-      "convert_unit": 110
+      "dimension": 36,
+      "convert_info": 110
     },
     "pound": {
-      "quantity": null,
-      "convert_unit": 111
+      "dimension": null,
+      "convert_info": 111
     },
     "pound-force": {
-      "quantity": null,
-      "convert_unit": 112
+      "dimension": null,
+      "convert_info": 112
     },
     "pow4-second-square-ampere-per-kilogram-square-meter": {
-      "quantity": 37,
-      "convert_unit": null
+      "dimension": 37,
+      "convert_info": null
     },
     "quart": {
-      "quantity": null,
-      "convert_unit": 113
+      "dimension": null,
+      "convert_info": 113
     },
     "quart-imperial": {
-      "quantity": null,
-      "convert_unit": 114
+      "dimension": null,
+      "convert_info": 114
     },
     "quarter": {
-      "quantity": null,
-      "convert_unit": 115
+      "dimension": null,
+      "convert_info": 115
     },
     "radian": {
-      "quantity": null,
-      "convert_unit": 116
+      "dimension": null,
+      "convert_info": 116
     },
     "rankine": {
-      "quantity": null,
-      "convert_unit": 117
+      "dimension": null,
+      "convert_info": 117
     },
     "revolution": {
-      "quantity": 38,
-      "convert_unit": 118
+      "dimension": 38,
+      "convert_info": 118
     },
     "revolution-per-meter": {
-      "quantity": 39,
-      "convert_unit": null
+      "dimension": 39,
+      "convert_info": null
     },
     "revolution-per-second": {
-      "quantity": 40,
-      "convert_unit": null
+      "dimension": 40,
+      "convert_info": null
     },
     "ri-jp": {
-      "quantity": null,
-      "convert_unit": 119
+      "dimension": null,
+      "convert_info": 119
     },
     "rin": {
-      "quantity": null,
-      "convert_unit": 120
+      "dimension": null,
+      "convert_info": 120
     },
     "rod": {
-      "quantity": null,
-      "convert_unit": 121
+      "dimension": null,
+      "convert_info": 121
     },
     "sai": {
-      "quantity": null,
-      "convert_unit": 122
+      "dimension": null,
+      "convert_info": 122
     },
     "se-jp": {
-      "quantity": null,
-      "convert_unit": 123
+      "dimension": null,
+      "convert_info": 123
     },
     "second": {
-      "quantity": 41,
-      "convert_unit": 124
+      "dimension": 41,
+      "convert_info": 124
     },
     "second-ampere": {
-      "quantity": 42,
-      "convert_unit": null
+      "dimension": 42,
+      "convert_info": null
     },
     "shaku": {
-      "quantity": null,
-      "convert_unit": 125
+      "dimension": null,
+      "convert_info": 125
     },
     "shaku-cloth": {
-      "quantity": null,
-      "convert_unit": 126
+      "dimension": null,
+      "convert_info": 126
     },
     "shaku-length": {
-      "quantity": null,
-      "convert_unit": 127
+      "dimension": null,
+      "convert_info": 127
     },
     "siemens": {
-      "quantity": null,
-      "convert_unit": 128
+      "dimension": null,
+      "convert_info": 128
     },
     "sievert": {
-      "quantity": null,
-      "convert_unit": 129
+      "dimension": null,
+      "convert_info": 129
     },
     "slug": {
-      "quantity": null,
-      "convert_unit": 130
+      "dimension": null,
+      "convert_info": 130
     },
     "solar-luminosity": {
-      "quantity": null,
-      "convert_unit": 131
+      "dimension": null,
+      "convert_info": 131
     },
     "solar-mass": {
-      "quantity": null,
-      "convert_unit": 132
+      "dimension": null,
+      "convert_info": 132
     },
     "solar-radius": {
-      "quantity": null,
-      "convert_unit": 133
+      "dimension": null,
+      "convert_info": 133
     },
     "square-meter": {
-      "quantity": 43,
-      "convert_unit": null
+      "dimension": 43,
+      "convert_info": null
     },
     "square-meter-per-square-second": {
-      "quantity": 44,
-      "convert_unit": null
+      "dimension": 44,
+      "convert_info": null
     },
     "square-revolution": {
-      "quantity": 45,
-      "convert_unit": null
+      "dimension": 45,
+      "convert_info": null
     },
     "steradian": {
-      "quantity": null,
-      "convert_unit": 134
+      "dimension": null,
+      "convert_info": 134
     },
     "stone": {
-      "quantity": null,
-      "convert_unit": 135
+      "dimension": null,
+      "convert_info": 135
     },
     "sun": {
-      "quantity": null,
-      "convert_unit": 136
+      "dimension": null,
+      "convert_info": 136
     },
     "tablespoon": {
-      "quantity": null,
-      "convert_unit": 137
+      "dimension": null,
+      "convert_info": 137
     },
     "teaspoon": {
-      "quantity": null,
-      "convert_unit": 138
+      "dimension": null,
+      "convert_info": 138
     },
     "tesla": {
-      "quantity": null,
-      "convert_unit": 139
+      "dimension": null,
+      "convert_info": 139
     },
     "therm-us": {
-      "quantity": null,
-      "convert_unit": 140
+      "dimension": null,
+      "convert_info": 140
     },
     "to-jp": {
-      "quantity": null,
-      "convert_unit": 141
+      "dimension": null,
+      "convert_info": 141
     },
     "ton": {
-      "quantity": null,
-      "convert_unit": 142
+      "dimension": null,
+      "convert_info": 142
     },
     "tonne": {
-      "quantity": null,
-      "convert_unit": 143
+      "dimension": null,
+      "convert_info": 143
     },
     "volt": {
-      "quantity": null,
-      "convert_unit": 144
+      "dimension": null,
+      "convert_info": 144
     },
     "watt": {
-      "quantity": null,
-      "convert_unit": 145
+      "dimension": null,
+      "convert_info": 145
     },
     "weber": {
-      "quantity": null,
-      "convert_unit": 146
+      "dimension": null,
+      "convert_info": 146
     },
     "week": {
-      "quantity": null,
-      "convert_unit": 147
+      "dimension": null,
+      "convert_info": 147
     },
     "week-person": {
-      "quantity": null,
-      "convert_unit": 148
+      "dimension": null,
+      "convert_info": 148
     },
     "yard": {
-      "quantity": null,
-      "convert_unit": 149
+      "dimension": null,
+      "convert_info": 149
     },
     "year": {
-      "quantity": 46,
-      "convert_unit": 150
+      "dimension": 46,
+      "convert_info": 150
     },
     "year-person": {
-      "quantity": null,
-      "convert_unit": 151
+      "dimension": null,
+      "convert_info": 151
     }
   },
-  "unit_quantity": [
+  "unit_dimensions": [
     {
       "quantity": "electric-current",
       "constant_exactness": "Base"
@@ -935,7 +935,7 @@
       "constant_exactness": "Base"
     }
   ],
-  "convert_units": [
+  "convert_infos": [
     {
       "base_unit": "meter",
       "factor": "100000"
