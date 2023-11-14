@@ -690,14 +690,13 @@ fn test_keys_from_file() {
 
 #[test]
 fn test_keys_from_bin() {
+    let mut buffer = std::env::var("CARGO_MANIFEST_DIR")
+        .expect("CARGO_MANIFEST_DIR must be set to run datagen tests");
+    buffer.push_str("/tests/data/tutorial_buffer.wasm");
     // File obtained by running
     // cargo +nightly --config docs/tutorials/testing/patch.toml build -p tutorial_buffer --target wasm32-unknown-unknown --release -Z build-std=std,panic_abort -Z build-std-features=panic_immediate_abort --manifest-path docs/tutorials/crates/buffer/Cargo.toml && cp docs/tutorials/target/wasm32-unknown-unknown/release/tutorial_buffer.wasm provider/datagen/tests/data/
     assert_eq!(
-        keys_from_bin(concat!(
-            env!("CARGO_MANIFEST_DIR"),
-            "/tests/data/tutorial_buffer.wasm"
-        ))
-        .unwrap(),
+        keys_from_bin(buffer).unwrap(),
         vec![
             icu_datetime::provider::calendar::GregorianDateLengthsV1Marker::KEY,
             icu_datetime::provider::calendar::GregorianDateSymbolsV1Marker::KEY,
