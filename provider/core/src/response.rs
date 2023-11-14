@@ -390,7 +390,9 @@ where
             DataPayloadInner::StaticRef(r) => {
                 let output: <M2::Yokeable as Yokeable<'static>>::Output =
                     f(Yokeable::transform(*r), PhantomData);
-                // Safety: <M2::Yokeable as Yokeable<'static>>::Output is the same type as M2::Yokeable
+                // Safety: <M2::Yokeable as Yokeable<'static>>::Output is the same type as M2::Yokeable;
+                // we're going from 'static to 'static, however in a generic context it's not
+                // clear to the compiler that that is the case. We have to use the unsafe make API to do this.
                 let yokeable: M2::Yokeable = unsafe { M2::Yokeable::make(output) };
                 Yoke::new_owned(yokeable)
             }
