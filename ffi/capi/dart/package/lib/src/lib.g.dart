@@ -86,9 +86,9 @@ enum AnyCalendarKind {
   // ignore: non_constant_identifier_names
   static final _ICU4XAnyCalendarKind_get_for_locale = _capi<
               ffi.NativeFunction<
-                  _ResultUint32Void Function(ffi.Pointer<ffi.Opaque>)>>(
+                  _ResultInt32Void Function(ffi.Pointer<ffi.Opaque>)>>(
           'ICU4XAnyCalendarKind_get_for_locale')
-      .asFunction<_ResultUint32Void Function(ffi.Pointer<ffi.Opaque>)>(
+      .asFunction<_ResultInt32Void Function(ffi.Pointer<ffi.Opaque>)>(
           isLeaf: true);
 
   /// Obtain the calendar type given a BCP-47 -u-ca- extension string.
@@ -110,9 +110,9 @@ enum AnyCalendarKind {
   // ignore: non_constant_identifier_names
   static final _ICU4XAnyCalendarKind_get_for_bcp47 = _capi<
           ffi.NativeFunction<
-              _ResultUint32Void Function(ffi.Pointer<ffi2.Utf8>,
+              _ResultInt32Void Function(ffi.Pointer<ffi2.Utf8>,
                   ffi.Size)>>('ICU4XAnyCalendarKind_get_for_bcp47')
-      .asFunction<_ResultUint32Void Function(ffi.Pointer<ffi2.Utf8>, int)>(
+      .asFunction<_ResultInt32Void Function(ffi.Pointer<ffi2.Utf8>, int)>(
           isLeaf: true);
 
   /// Obtain the string suitable for use in the -u-ca- extension in a BCP47 locale.
@@ -130,9 +130,9 @@ enum AnyCalendarKind {
   // ignore: non_constant_identifier_names
   static final _ICU4XAnyCalendarKind_bcp47 = _capi<
           ffi.NativeFunction<
-              _ResultVoidUint32 Function(ffi.Uint32,
+              _ResultVoidInt32 Function(ffi.Int32,
                   ffi.Pointer<ffi.Opaque>)>>('ICU4XAnyCalendarKind_bcp47')
-      .asFunction<_ResultVoidUint32 Function(int, ffi.Pointer<ffi.Opaque>)>(
+      .asFunction<_ResultVoidInt32 Function(int, ffi.Pointer<ffi.Opaque>)>(
           isLeaf: true);
 }
 
@@ -160,9 +160,9 @@ class Bcp47ToIanaMapper implements ffi.Finalizable {
   // ignore: non_constant_identifier_names
   static final _ICU4XBcp47ToIanaMapper_create = _capi<
           ffi.NativeFunction<
-              _ResultOpaqueUint32 Function(
+              _ResultOpaqueInt32 Function(
                   ffi.Pointer<ffi.Opaque>)>>('ICU4XBcp47ToIanaMapper_create')
-      .asFunction<_ResultOpaqueUint32 Function(ffi.Pointer<ffi.Opaque>)>(
+      .asFunction<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(
           isLeaf: true);
 
   /// Writes out the canonical IANA time zone ID corresponding to the given BCP-47 ID.
@@ -185,13 +185,13 @@ class Bcp47ToIanaMapper implements ffi.Finalizable {
   // ignore: non_constant_identifier_names
   static final _ICU4XBcp47ToIanaMapper_get = _capi<
           ffi.NativeFunction<
-              _ResultVoidUint32 Function(
+              _ResultVoidInt32 Function(
                   ffi.Pointer<ffi.Opaque>,
                   ffi.Pointer<ffi2.Utf8>,
                   ffi.Size,
                   ffi.Pointer<ffi.Opaque>)>>('ICU4XBcp47ToIanaMapper_get')
       .asFunction<
-          _ResultVoidUint32 Function(
+          _ResultVoidInt32 Function(
               ffi.Pointer<ffi.Opaque>,
               ffi.Pointer<ffi2.Utf8>,
               int,
@@ -223,9 +223,9 @@ class Bidi implements ffi.Finalizable {
   // ignore: non_constant_identifier_names
   static final _ICU4XBidi_create = _capi<
           ffi.NativeFunction<
-              _ResultOpaqueUint32 Function(
+              _ResultOpaqueInt32 Function(
                   ffi.Pointer<ffi.Opaque>)>>('ICU4XBidi_create')
-      .asFunction<_ResultOpaqueUint32 Function(ffi.Pointer<ffi.Opaque>)>(
+      .asFunction<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(
           isLeaf: true);
 
   /// Use the data loaded in this object to process a string and calculate bidi information
@@ -434,9 +434,9 @@ class BidiParagraph implements ffi.Finalizable {
   // ignore: non_constant_identifier_names
   static final _ICU4XBidiParagraph_set_paragraph_in_text = _capi<
           ffi.NativeFunction<
-              _ResultVoidUint32 Function(ffi.Pointer<ffi.Opaque>,
+              _ResultVoidInt32 Function(ffi.Pointer<ffi.Opaque>,
                   ffi.Size)>>('ICU4XBidiParagraph_set_paragraph_in_text')
-      .asFunction<_ResultVoidUint32 Function(ffi.Pointer<ffi.Opaque>, int)>(
+      .asFunction<_ResultVoidInt32 Function(ffi.Pointer<ffi.Opaque>, int)>(
           isLeaf: true);
 
   /// The primary direction of this paragraph
@@ -449,7 +449,7 @@ class BidiParagraph implements ffi.Finalizable {
 
   // ignore: non_constant_identifier_names
   static final _ICU4XBidiParagraph_direction =
-      _capi<ffi.NativeFunction<ffi.Uint32 Function(ffi.Pointer<ffi.Opaque>)>>(
+      _capi<ffi.NativeFunction<ffi.Int32 Function(ffi.Pointer<ffi.Opaque>)>>(
               'ICU4XBidiParagraph_direction')
           .asFunction<int Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
 
@@ -508,13 +508,13 @@ class BidiParagraph implements ffi.Finalizable {
   // ignore: non_constant_identifier_names
   static final _ICU4XBidiParagraph_reorder_line = _capi<
           ffi.NativeFunction<
-              _ResultVoidUint32 Function(
+              _ResultVoidInt32 Function(
                   ffi.Pointer<ffi.Opaque>,
                   ffi.Size,
                   ffi.Size,
                   ffi.Pointer<ffi.Opaque>)>>('ICU4XBidiParagraph_reorder_line')
       .asFunction<
-          _ResultVoidUint32 Function(ffi.Pointer<ffi.Opaque>, int, int,
+          _ResultVoidInt32 Function(ffi.Pointer<ffi.Opaque>, int, int,
               ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
 
   /// Get the BIDI level at a particular byte index in this paragraph.
@@ -561,10 +561,10 @@ class Calendar implements ffi.Finalizable {
   // ignore: non_constant_identifier_names
   static final _ICU4XCalendar_create_for_locale = _capi<
           ffi.NativeFunction<
-              _ResultOpaqueUint32 Function(ffi.Pointer<ffi.Opaque>,
+              _ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>,
                   ffi.Pointer<ffi.Opaque>)>>('ICU4XCalendar_create_for_locale')
       .asFunction<
-          _ResultOpaqueUint32 Function(
+          _ResultOpaqueInt32 Function(
               ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
 
   /// Creates a new [`ICU4XCalendar`] from the specified date and time.
@@ -581,9 +581,9 @@ class Calendar implements ffi.Finalizable {
   // ignore: non_constant_identifier_names
   static final _ICU4XCalendar_create_for_kind = _capi<
           ffi.NativeFunction<
-              _ResultOpaqueUint32 Function(ffi.Pointer<ffi.Opaque>,
-                  ffi.Uint32)>>('ICU4XCalendar_create_for_kind')
-      .asFunction<_ResultOpaqueUint32 Function(ffi.Pointer<ffi.Opaque>, int)>(
+              _ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>,
+                  ffi.Int32)>>('ICU4XCalendar_create_for_kind')
+      .asFunction<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>, int)>(
           isLeaf: true);
 
   /// Returns the kind of this calendar
@@ -596,7 +596,7 @@ class Calendar implements ffi.Finalizable {
 
   // ignore: non_constant_identifier_names
   static final _ICU4XCalendar_kind =
-      _capi<ffi.NativeFunction<ffi.Uint32 Function(ffi.Pointer<ffi.Opaque>)>>(
+      _capi<ffi.NativeFunction<ffi.Int32 Function(ffi.Pointer<ffi.Opaque>)>>(
               'ICU4XCalendar_kind')
           .asFunction<int Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
 }
@@ -628,9 +628,9 @@ class CanonicalCombiningClassMap implements ffi.Finalizable {
   // ignore: non_constant_identifier_names
   static final _ICU4XCanonicalCombiningClassMap_create = _capi<
               ffi.NativeFunction<
-                  _ResultOpaqueUint32 Function(ffi.Pointer<ffi.Opaque>)>>(
+                  _ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>>(
           'ICU4XCanonicalCombiningClassMap_create')
-      .asFunction<_ResultOpaqueUint32 Function(ffi.Pointer<ffi.Opaque>)>(
+      .asFunction<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(
           isLeaf: true);
 
   /// See the [Rust documentation for `get`](https://docs.rs/icu/latest/icu/normalizer/properties/struct.CanonicalCombiningClassMap.html#method.get) for more information.
@@ -692,9 +692,9 @@ class CanonicalComposition implements ffi.Finalizable {
   // ignore: non_constant_identifier_names
   static final _ICU4XCanonicalComposition_create = _capi<
           ffi.NativeFunction<
-              _ResultOpaqueUint32 Function(
+              _ResultOpaqueInt32 Function(
                   ffi.Pointer<ffi.Opaque>)>>('ICU4XCanonicalComposition_create')
-      .asFunction<_ResultOpaqueUint32 Function(ffi.Pointer<ffi.Opaque>)>(
+      .asFunction<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(
           isLeaf: true);
 
   /// Performs canonical composition (including Hangul) on a pair of characters
@@ -744,9 +744,9 @@ class CanonicalDecomposition implements ffi.Finalizable {
   // ignore: non_constant_identifier_names
   static final _ICU4XCanonicalDecomposition_create = _capi<
               ffi.NativeFunction<
-                  _ResultOpaqueUint32 Function(ffi.Pointer<ffi.Opaque>)>>(
+                  _ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>>(
           'ICU4XCanonicalDecomposition_create')
-      .asFunction<_ResultOpaqueUint32 Function(ffi.Pointer<ffi.Opaque>)>(
+      .asFunction<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(
           isLeaf: true);
 
   /// Performs non-recursive canonical decomposition (including for Hangul).
@@ -790,9 +790,9 @@ class CaseMapCloser implements ffi.Finalizable {
   // ignore: non_constant_identifier_names
   static final _ICU4XCaseMapCloser_create = _capi<
           ffi.NativeFunction<
-              _ResultOpaqueUint32 Function(
+              _ResultOpaqueInt32 Function(
                   ffi.Pointer<ffi.Opaque>)>>('ICU4XCaseMapCloser_create')
-      .asFunction<_ResultOpaqueUint32 Function(ffi.Pointer<ffi.Opaque>)>(
+      .asFunction<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(
           isLeaf: true);
 
   /// Adds all simple case mappings and the full case folding for `c` to `builder`.
@@ -868,9 +868,9 @@ class CaseMapper implements ffi.Finalizable {
   // ignore: non_constant_identifier_names
   static final _ICU4XCaseMapper_create = _capi<
           ffi.NativeFunction<
-              _ResultOpaqueUint32 Function(
+              _ResultOpaqueInt32 Function(
                   ffi.Pointer<ffi.Opaque>)>>('ICU4XCaseMapper_create')
-      .asFunction<_ResultOpaqueUint32 Function(ffi.Pointer<ffi.Opaque>)>(
+      .asFunction<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(
           isLeaf: true);
 
   /// Returns the full lowercase mapping of the given string
@@ -893,14 +893,14 @@ class CaseMapper implements ffi.Finalizable {
   // ignore: non_constant_identifier_names
   static final _ICU4XCaseMapper_lowercase = _capi<
           ffi.NativeFunction<
-              _ResultVoidUint32 Function(
+              _ResultVoidInt32 Function(
                   ffi.Pointer<ffi.Opaque>,
                   ffi.Pointer<ffi2.Utf8>,
                   ffi.Size,
                   ffi.Pointer<ffi.Opaque>,
                   ffi.Pointer<ffi.Opaque>)>>('ICU4XCaseMapper_lowercase')
       .asFunction<
-          _ResultVoidUint32 Function(
+          _ResultVoidInt32 Function(
               ffi.Pointer<ffi.Opaque>,
               ffi.Pointer<ffi2.Utf8>,
               int,
@@ -927,14 +927,14 @@ class CaseMapper implements ffi.Finalizable {
   // ignore: non_constant_identifier_names
   static final _ICU4XCaseMapper_uppercase = _capi<
           ffi.NativeFunction<
-              _ResultVoidUint32 Function(
+              _ResultVoidInt32 Function(
                   ffi.Pointer<ffi.Opaque>,
                   ffi.Pointer<ffi2.Utf8>,
                   ffi.Size,
                   ffi.Pointer<ffi.Opaque>,
                   ffi.Pointer<ffi.Opaque>)>>('ICU4XCaseMapper_uppercase')
       .asFunction<
-          _ResultVoidUint32 Function(
+          _ResultVoidInt32 Function(
               ffi.Pointer<ffi.Opaque>,
               ffi.Pointer<ffi2.Utf8>,
               int,
@@ -972,7 +972,7 @@ class CaseMapper implements ffi.Finalizable {
   static final _ICU4XCaseMapper_titlecase_segment_with_only_case_data_v1 =
       _capi<
                   ffi.NativeFunction<
-                      _ResultVoidUint32 Function(
+                      _ResultVoidInt32 Function(
                           ffi.Pointer<ffi.Opaque>,
                           ffi.Pointer<ffi2.Utf8>,
                           ffi.Size,
@@ -981,7 +981,7 @@ class CaseMapper implements ffi.Finalizable {
                           ffi.Pointer<ffi.Opaque>)>>(
               'ICU4XCaseMapper_titlecase_segment_with_only_case_data_v1')
           .asFunction<
-              _ResultVoidUint32 Function(
+              _ResultVoidInt32 Function(
                   ffi.Pointer<ffi.Opaque>,
                   ffi.Pointer<ffi2.Utf8>,
                   int,
@@ -1009,13 +1009,13 @@ class CaseMapper implements ffi.Finalizable {
   // ignore: non_constant_identifier_names
   static final _ICU4XCaseMapper_fold = _capi<
           ffi.NativeFunction<
-              _ResultVoidUint32 Function(
+              _ResultVoidInt32 Function(
                   ffi.Pointer<ffi.Opaque>,
                   ffi.Pointer<ffi2.Utf8>,
                   ffi.Size,
                   ffi.Pointer<ffi.Opaque>)>>('ICU4XCaseMapper_fold')
       .asFunction<
-          _ResultVoidUint32 Function(
+          _ResultVoidInt32 Function(
               ffi.Pointer<ffi.Opaque>,
               ffi.Pointer<ffi2.Utf8>,
               int,
@@ -1042,13 +1042,13 @@ class CaseMapper implements ffi.Finalizable {
   // ignore: non_constant_identifier_names
   static final _ICU4XCaseMapper_fold_turkic = _capi<
           ffi.NativeFunction<
-              _ResultVoidUint32 Function(
+              _ResultVoidInt32 Function(
                   ffi.Pointer<ffi.Opaque>,
                   ffi.Pointer<ffi2.Utf8>,
                   ffi.Size,
                   ffi.Pointer<ffi.Opaque>)>>('ICU4XCaseMapper_fold_turkic')
       .asFunction<
-          _ResultVoidUint32 Function(
+          _ResultVoidInt32 Function(
               ffi.Pointer<ffi.Opaque>,
               ffi.Pointer<ffi2.Utf8>,
               int,
@@ -1289,9 +1289,9 @@ class CodePointMapData16 implements ffi.Finalizable {
   // ignore: non_constant_identifier_names
   static final _ICU4XCodePointMapData16_load_script = _capi<
               ffi.NativeFunction<
-                  _ResultOpaqueUint32 Function(ffi.Pointer<ffi.Opaque>)>>(
+                  _ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>>(
           'ICU4XCodePointMapData16_load_script')
-      .asFunction<_ResultOpaqueUint32 Function(ffi.Pointer<ffi.Opaque>)>(
+      .asFunction<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(
           isLeaf: true);
 }
 
@@ -1451,9 +1451,9 @@ class CodePointMapData8 implements ffi.Finalizable {
   // ignore: non_constant_identifier_names
   static final _ICU4XCodePointMapData8_load_general_category = _capi<
               ffi.NativeFunction<
-                  _ResultOpaqueUint32 Function(ffi.Pointer<ffi.Opaque>)>>(
+                  _ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>>(
           'ICU4XCodePointMapData8_load_general_category')
-      .asFunction<_ResultOpaqueUint32 Function(ffi.Pointer<ffi.Opaque>)>(
+      .asFunction<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(
           isLeaf: true);
 
   /// See the [Rust documentation for `bidi_class`](https://docs.rs/icu/latest/icu/properties/maps/fn.bidi_class.html) for more information.
@@ -1468,9 +1468,9 @@ class CodePointMapData8 implements ffi.Finalizable {
   // ignore: non_constant_identifier_names
   static final _ICU4XCodePointMapData8_load_bidi_class = _capi<
               ffi.NativeFunction<
-                  _ResultOpaqueUint32 Function(ffi.Pointer<ffi.Opaque>)>>(
+                  _ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>>(
           'ICU4XCodePointMapData8_load_bidi_class')
-      .asFunction<_ResultOpaqueUint32 Function(ffi.Pointer<ffi.Opaque>)>(
+      .asFunction<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(
           isLeaf: true);
 
   /// See the [Rust documentation for `east_asian_width`](https://docs.rs/icu/latest/icu/properties/maps/fn.east_asian_width.html) for more information.
@@ -1485,9 +1485,9 @@ class CodePointMapData8 implements ffi.Finalizable {
   // ignore: non_constant_identifier_names
   static final _ICU4XCodePointMapData8_load_east_asian_width = _capi<
               ffi.NativeFunction<
-                  _ResultOpaqueUint32 Function(ffi.Pointer<ffi.Opaque>)>>(
+                  _ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>>(
           'ICU4XCodePointMapData8_load_east_asian_width')
-      .asFunction<_ResultOpaqueUint32 Function(ffi.Pointer<ffi.Opaque>)>(
+      .asFunction<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(
           isLeaf: true);
 
   /// See the [Rust documentation for `indic_syllabic_category`](https://docs.rs/icu/latest/icu/properties/maps/fn.indic_syllabic_category.html) for more information.
@@ -1502,9 +1502,9 @@ class CodePointMapData8 implements ffi.Finalizable {
   // ignore: non_constant_identifier_names
   static final _ICU4XCodePointMapData8_load_indic_syllabic_category = _capi<
               ffi.NativeFunction<
-                  _ResultOpaqueUint32 Function(ffi.Pointer<ffi.Opaque>)>>(
+                  _ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>>(
           'ICU4XCodePointMapData8_load_indic_syllabic_category')
-      .asFunction<_ResultOpaqueUint32 Function(ffi.Pointer<ffi.Opaque>)>(
+      .asFunction<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(
           isLeaf: true);
 
   /// See the [Rust documentation for `line_break`](https://docs.rs/icu/latest/icu/properties/maps/fn.line_break.html) for more information.
@@ -1519,9 +1519,9 @@ class CodePointMapData8 implements ffi.Finalizable {
   // ignore: non_constant_identifier_names
   static final _ICU4XCodePointMapData8_load_line_break = _capi<
               ffi.NativeFunction<
-                  _ResultOpaqueUint32 Function(ffi.Pointer<ffi.Opaque>)>>(
+                  _ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>>(
           'ICU4XCodePointMapData8_load_line_break')
-      .asFunction<_ResultOpaqueUint32 Function(ffi.Pointer<ffi.Opaque>)>(
+      .asFunction<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(
           isLeaf: true);
 
   /// See the [Rust documentation for `grapheme_cluster_break`](https://docs.rs/icu/latest/icu/properties/maps/fn.grapheme_cluster_break.html) for more information.
@@ -1536,9 +1536,9 @@ class CodePointMapData8 implements ffi.Finalizable {
   // ignore: non_constant_identifier_names
   static final _ICU4XCodePointMapData8_try_grapheme_cluster_break = _capi<
               ffi.NativeFunction<
-                  _ResultOpaqueUint32 Function(ffi.Pointer<ffi.Opaque>)>>(
+                  _ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>>(
           'ICU4XCodePointMapData8_try_grapheme_cluster_break')
-      .asFunction<_ResultOpaqueUint32 Function(ffi.Pointer<ffi.Opaque>)>(
+      .asFunction<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(
           isLeaf: true);
 
   /// See the [Rust documentation for `word_break`](https://docs.rs/icu/latest/icu/properties/maps/fn.word_break.html) for more information.
@@ -1553,9 +1553,9 @@ class CodePointMapData8 implements ffi.Finalizable {
   // ignore: non_constant_identifier_names
   static final _ICU4XCodePointMapData8_load_word_break = _capi<
               ffi.NativeFunction<
-                  _ResultOpaqueUint32 Function(ffi.Pointer<ffi.Opaque>)>>(
+                  _ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>>(
           'ICU4XCodePointMapData8_load_word_break')
-      .asFunction<_ResultOpaqueUint32 Function(ffi.Pointer<ffi.Opaque>)>(
+      .asFunction<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(
           isLeaf: true);
 
   /// See the [Rust documentation for `sentence_break`](https://docs.rs/icu/latest/icu/properties/maps/fn.sentence_break.html) for more information.
@@ -1570,9 +1570,9 @@ class CodePointMapData8 implements ffi.Finalizable {
   // ignore: non_constant_identifier_names
   static final _ICU4XCodePointMapData8_load_sentence_break = _capi<
               ffi.NativeFunction<
-                  _ResultOpaqueUint32 Function(ffi.Pointer<ffi.Opaque>)>>(
+                  _ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>>(
           'ICU4XCodePointMapData8_load_sentence_break')
-      .asFunction<_ResultOpaqueUint32 Function(ffi.Pointer<ffi.Opaque>)>(
+      .asFunction<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(
           isLeaf: true);
 }
 
@@ -2009,10 +2009,10 @@ class CodePointSetData implements ffi.Finalizable {
   // ignore: non_constant_identifier_names
   static final _ICU4XCodePointSetData_load_for_general_category_group = _capi<
               ffi.NativeFunction<
-                  _ResultOpaqueUint32 Function(
+                  _ResultOpaqueInt32 Function(
                       ffi.Pointer<ffi.Opaque>, ffi.Uint32)>>(
           'ICU4XCodePointSetData_load_for_general_category_group')
-      .asFunction<_ResultOpaqueUint32 Function(ffi.Pointer<ffi.Opaque>, int)>(
+      .asFunction<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>, int)>(
           isLeaf: true);
 
   /// See the [Rust documentation for `ascii_hex_digit`](https://docs.rs/icu/latest/icu/properties/sets/fn.ascii_hex_digit.html) for more information.
@@ -2027,9 +2027,9 @@ class CodePointSetData implements ffi.Finalizable {
   // ignore: non_constant_identifier_names
   static final _ICU4XCodePointSetData_load_ascii_hex_digit = _capi<
               ffi.NativeFunction<
-                  _ResultOpaqueUint32 Function(ffi.Pointer<ffi.Opaque>)>>(
+                  _ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>>(
           'ICU4XCodePointSetData_load_ascii_hex_digit')
-      .asFunction<_ResultOpaqueUint32 Function(ffi.Pointer<ffi.Opaque>)>(
+      .asFunction<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(
           isLeaf: true);
 
   /// See the [Rust documentation for `alnum`](https://docs.rs/icu/latest/icu/properties/sets/fn.alnum.html) for more information.
@@ -2043,9 +2043,9 @@ class CodePointSetData implements ffi.Finalizable {
   // ignore: non_constant_identifier_names
   static final _ICU4XCodePointSetData_load_alnum = _capi<
           ffi.NativeFunction<
-              _ResultOpaqueUint32 Function(
+              _ResultOpaqueInt32 Function(
                   ffi.Pointer<ffi.Opaque>)>>('ICU4XCodePointSetData_load_alnum')
-      .asFunction<_ResultOpaqueUint32 Function(ffi.Pointer<ffi.Opaque>)>(
+      .asFunction<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(
           isLeaf: true);
 
   /// See the [Rust documentation for `alphabetic`](https://docs.rs/icu/latest/icu/properties/sets/fn.alphabetic.html) for more information.
@@ -2059,9 +2059,9 @@ class CodePointSetData implements ffi.Finalizable {
   // ignore: non_constant_identifier_names
   static final _ICU4XCodePointSetData_load_alphabetic = _capi<
               ffi.NativeFunction<
-                  _ResultOpaqueUint32 Function(ffi.Pointer<ffi.Opaque>)>>(
+                  _ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>>(
           'ICU4XCodePointSetData_load_alphabetic')
-      .asFunction<_ResultOpaqueUint32 Function(ffi.Pointer<ffi.Opaque>)>(
+      .asFunction<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(
           isLeaf: true);
 
   /// See the [Rust documentation for `bidi_control`](https://docs.rs/icu/latest/icu/properties/sets/fn.bidi_control.html) for more information.
@@ -2076,9 +2076,9 @@ class CodePointSetData implements ffi.Finalizable {
   // ignore: non_constant_identifier_names
   static final _ICU4XCodePointSetData_load_bidi_control = _capi<
               ffi.NativeFunction<
-                  _ResultOpaqueUint32 Function(ffi.Pointer<ffi.Opaque>)>>(
+                  _ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>>(
           'ICU4XCodePointSetData_load_bidi_control')
-      .asFunction<_ResultOpaqueUint32 Function(ffi.Pointer<ffi.Opaque>)>(
+      .asFunction<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(
           isLeaf: true);
 
   /// See the [Rust documentation for `bidi_mirrored`](https://docs.rs/icu/latest/icu/properties/sets/fn.bidi_mirrored.html) for more information.
@@ -2093,9 +2093,9 @@ class CodePointSetData implements ffi.Finalizable {
   // ignore: non_constant_identifier_names
   static final _ICU4XCodePointSetData_load_bidi_mirrored = _capi<
               ffi.NativeFunction<
-                  _ResultOpaqueUint32 Function(ffi.Pointer<ffi.Opaque>)>>(
+                  _ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>>(
           'ICU4XCodePointSetData_load_bidi_mirrored')
-      .asFunction<_ResultOpaqueUint32 Function(ffi.Pointer<ffi.Opaque>)>(
+      .asFunction<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(
           isLeaf: true);
 
   /// See the [Rust documentation for `blank`](https://docs.rs/icu/latest/icu/properties/sets/fn.blank.html) for more information.
@@ -2109,9 +2109,9 @@ class CodePointSetData implements ffi.Finalizable {
   // ignore: non_constant_identifier_names
   static final _ICU4XCodePointSetData_load_blank = _capi<
           ffi.NativeFunction<
-              _ResultOpaqueUint32 Function(
+              _ResultOpaqueInt32 Function(
                   ffi.Pointer<ffi.Opaque>)>>('ICU4XCodePointSetData_load_blank')
-      .asFunction<_ResultOpaqueUint32 Function(ffi.Pointer<ffi.Opaque>)>(
+      .asFunction<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(
           isLeaf: true);
 
   /// See the [Rust documentation for `cased`](https://docs.rs/icu/latest/icu/properties/sets/fn.cased.html) for more information.
@@ -2125,9 +2125,9 @@ class CodePointSetData implements ffi.Finalizable {
   // ignore: non_constant_identifier_names
   static final _ICU4XCodePointSetData_load_cased = _capi<
           ffi.NativeFunction<
-              _ResultOpaqueUint32 Function(
+              _ResultOpaqueInt32 Function(
                   ffi.Pointer<ffi.Opaque>)>>('ICU4XCodePointSetData_load_cased')
-      .asFunction<_ResultOpaqueUint32 Function(ffi.Pointer<ffi.Opaque>)>(
+      .asFunction<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(
           isLeaf: true);
 
   /// See the [Rust documentation for `case_ignorable`](https://docs.rs/icu/latest/icu/properties/sets/fn.case_ignorable.html) for more information.
@@ -2142,9 +2142,9 @@ class CodePointSetData implements ffi.Finalizable {
   // ignore: non_constant_identifier_names
   static final _ICU4XCodePointSetData_load_case_ignorable = _capi<
               ffi.NativeFunction<
-                  _ResultOpaqueUint32 Function(ffi.Pointer<ffi.Opaque>)>>(
+                  _ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>>(
           'ICU4XCodePointSetData_load_case_ignorable')
-      .asFunction<_ResultOpaqueUint32 Function(ffi.Pointer<ffi.Opaque>)>(
+      .asFunction<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(
           isLeaf: true);
 
   /// See the [Rust documentation for `full_composition_exclusion`](https://docs.rs/icu/latest/icu/properties/sets/fn.full_composition_exclusion.html) for more information.
@@ -2159,9 +2159,9 @@ class CodePointSetData implements ffi.Finalizable {
   // ignore: non_constant_identifier_names
   static final _ICU4XCodePointSetData_load_full_composition_exclusion = _capi<
               ffi.NativeFunction<
-                  _ResultOpaqueUint32 Function(ffi.Pointer<ffi.Opaque>)>>(
+                  _ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>>(
           'ICU4XCodePointSetData_load_full_composition_exclusion')
-      .asFunction<_ResultOpaqueUint32 Function(ffi.Pointer<ffi.Opaque>)>(
+      .asFunction<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(
           isLeaf: true);
 
   /// See the [Rust documentation for `changes_when_casefolded`](https://docs.rs/icu/latest/icu/properties/sets/fn.changes_when_casefolded.html) for more information.
@@ -2176,9 +2176,9 @@ class CodePointSetData implements ffi.Finalizable {
   // ignore: non_constant_identifier_names
   static final _ICU4XCodePointSetData_load_changes_when_casefolded = _capi<
               ffi.NativeFunction<
-                  _ResultOpaqueUint32 Function(ffi.Pointer<ffi.Opaque>)>>(
+                  _ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>>(
           'ICU4XCodePointSetData_load_changes_when_casefolded')
-      .asFunction<_ResultOpaqueUint32 Function(ffi.Pointer<ffi.Opaque>)>(
+      .asFunction<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(
           isLeaf: true);
 
   /// See the [Rust documentation for `changes_when_casemapped`](https://docs.rs/icu/latest/icu/properties/sets/fn.changes_when_casemapped.html) for more information.
@@ -2193,9 +2193,9 @@ class CodePointSetData implements ffi.Finalizable {
   // ignore: non_constant_identifier_names
   static final _ICU4XCodePointSetData_load_changes_when_casemapped = _capi<
               ffi.NativeFunction<
-                  _ResultOpaqueUint32 Function(ffi.Pointer<ffi.Opaque>)>>(
+                  _ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>>(
           'ICU4XCodePointSetData_load_changes_when_casemapped')
-      .asFunction<_ResultOpaqueUint32 Function(ffi.Pointer<ffi.Opaque>)>(
+      .asFunction<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(
           isLeaf: true);
 
   /// See the [Rust documentation for `changes_when_nfkc_casefolded`](https://docs.rs/icu/latest/icu/properties/sets/fn.changes_when_nfkc_casefolded.html) for more information.
@@ -2211,9 +2211,9 @@ class CodePointSetData implements ffi.Finalizable {
   // ignore: non_constant_identifier_names
   static final _ICU4XCodePointSetData_load_changes_when_nfkc_casefolded = _capi<
               ffi.NativeFunction<
-                  _ResultOpaqueUint32 Function(ffi.Pointer<ffi.Opaque>)>>(
+                  _ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>>(
           'ICU4XCodePointSetData_load_changes_when_nfkc_casefolded')
-      .asFunction<_ResultOpaqueUint32 Function(ffi.Pointer<ffi.Opaque>)>(
+      .asFunction<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(
           isLeaf: true);
 
   /// See the [Rust documentation for `changes_when_lowercased`](https://docs.rs/icu/latest/icu/properties/sets/fn.changes_when_lowercased.html) for more information.
@@ -2228,9 +2228,9 @@ class CodePointSetData implements ffi.Finalizable {
   // ignore: non_constant_identifier_names
   static final _ICU4XCodePointSetData_load_changes_when_lowercased = _capi<
               ffi.NativeFunction<
-                  _ResultOpaqueUint32 Function(ffi.Pointer<ffi.Opaque>)>>(
+                  _ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>>(
           'ICU4XCodePointSetData_load_changes_when_lowercased')
-      .asFunction<_ResultOpaqueUint32 Function(ffi.Pointer<ffi.Opaque>)>(
+      .asFunction<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(
           isLeaf: true);
 
   /// See the [Rust documentation for `changes_when_titlecased`](https://docs.rs/icu/latest/icu/properties/sets/fn.changes_when_titlecased.html) for more information.
@@ -2245,9 +2245,9 @@ class CodePointSetData implements ffi.Finalizable {
   // ignore: non_constant_identifier_names
   static final _ICU4XCodePointSetData_load_changes_when_titlecased = _capi<
               ffi.NativeFunction<
-                  _ResultOpaqueUint32 Function(ffi.Pointer<ffi.Opaque>)>>(
+                  _ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>>(
           'ICU4XCodePointSetData_load_changes_when_titlecased')
-      .asFunction<_ResultOpaqueUint32 Function(ffi.Pointer<ffi.Opaque>)>(
+      .asFunction<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(
           isLeaf: true);
 
   /// See the [Rust documentation for `changes_when_uppercased`](https://docs.rs/icu/latest/icu/properties/sets/fn.changes_when_uppercased.html) for more information.
@@ -2262,9 +2262,9 @@ class CodePointSetData implements ffi.Finalizable {
   // ignore: non_constant_identifier_names
   static final _ICU4XCodePointSetData_load_changes_when_uppercased = _capi<
               ffi.NativeFunction<
-                  _ResultOpaqueUint32 Function(ffi.Pointer<ffi.Opaque>)>>(
+                  _ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>>(
           'ICU4XCodePointSetData_load_changes_when_uppercased')
-      .asFunction<_ResultOpaqueUint32 Function(ffi.Pointer<ffi.Opaque>)>(
+      .asFunction<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(
           isLeaf: true);
 
   /// See the [Rust documentation for `dash`](https://docs.rs/icu/latest/icu/properties/sets/fn.dash.html) for more information.
@@ -2278,9 +2278,9 @@ class CodePointSetData implements ffi.Finalizable {
   // ignore: non_constant_identifier_names
   static final _ICU4XCodePointSetData_load_dash = _capi<
           ffi.NativeFunction<
-              _ResultOpaqueUint32 Function(
+              _ResultOpaqueInt32 Function(
                   ffi.Pointer<ffi.Opaque>)>>('ICU4XCodePointSetData_load_dash')
-      .asFunction<_ResultOpaqueUint32 Function(ffi.Pointer<ffi.Opaque>)>(
+      .asFunction<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(
           isLeaf: true);
 
   /// See the [Rust documentation for `deprecated`](https://docs.rs/icu/latest/icu/properties/sets/fn.deprecated.html) for more information.
@@ -2294,9 +2294,9 @@ class CodePointSetData implements ffi.Finalizable {
   // ignore: non_constant_identifier_names
   static final _ICU4XCodePointSetData_load_deprecated = _capi<
               ffi.NativeFunction<
-                  _ResultOpaqueUint32 Function(ffi.Pointer<ffi.Opaque>)>>(
+                  _ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>>(
           'ICU4XCodePointSetData_load_deprecated')
-      .asFunction<_ResultOpaqueUint32 Function(ffi.Pointer<ffi.Opaque>)>(
+      .asFunction<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(
           isLeaf: true);
 
   /// See the [Rust documentation for `default_ignorable_code_point`](https://docs.rs/icu/latest/icu/properties/sets/fn.default_ignorable_code_point.html) for more information.
@@ -2312,9 +2312,9 @@ class CodePointSetData implements ffi.Finalizable {
   // ignore: non_constant_identifier_names
   static final _ICU4XCodePointSetData_load_default_ignorable_code_point = _capi<
               ffi.NativeFunction<
-                  _ResultOpaqueUint32 Function(ffi.Pointer<ffi.Opaque>)>>(
+                  _ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>>(
           'ICU4XCodePointSetData_load_default_ignorable_code_point')
-      .asFunction<_ResultOpaqueUint32 Function(ffi.Pointer<ffi.Opaque>)>(
+      .asFunction<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(
           isLeaf: true);
 
   /// See the [Rust documentation for `diacritic`](https://docs.rs/icu/latest/icu/properties/sets/fn.diacritic.html) for more information.
@@ -2328,9 +2328,9 @@ class CodePointSetData implements ffi.Finalizable {
   // ignore: non_constant_identifier_names
   static final _ICU4XCodePointSetData_load_diacritic = _capi<
               ffi.NativeFunction<
-                  _ResultOpaqueUint32 Function(ffi.Pointer<ffi.Opaque>)>>(
+                  _ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>>(
           'ICU4XCodePointSetData_load_diacritic')
-      .asFunction<_ResultOpaqueUint32 Function(ffi.Pointer<ffi.Opaque>)>(
+      .asFunction<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(
           isLeaf: true);
 
   /// See the [Rust documentation for `emoji_modifier_base`](https://docs.rs/icu/latest/icu/properties/sets/fn.emoji_modifier_base.html) for more information.
@@ -2345,9 +2345,9 @@ class CodePointSetData implements ffi.Finalizable {
   // ignore: non_constant_identifier_names
   static final _ICU4XCodePointSetData_load_emoji_modifier_base = _capi<
               ffi.NativeFunction<
-                  _ResultOpaqueUint32 Function(ffi.Pointer<ffi.Opaque>)>>(
+                  _ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>>(
           'ICU4XCodePointSetData_load_emoji_modifier_base')
-      .asFunction<_ResultOpaqueUint32 Function(ffi.Pointer<ffi.Opaque>)>(
+      .asFunction<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(
           isLeaf: true);
 
   /// See the [Rust documentation for `emoji_component`](https://docs.rs/icu/latest/icu/properties/sets/fn.emoji_component.html) for more information.
@@ -2362,9 +2362,9 @@ class CodePointSetData implements ffi.Finalizable {
   // ignore: non_constant_identifier_names
   static final _ICU4XCodePointSetData_load_emoji_component = _capi<
               ffi.NativeFunction<
-                  _ResultOpaqueUint32 Function(ffi.Pointer<ffi.Opaque>)>>(
+                  _ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>>(
           'ICU4XCodePointSetData_load_emoji_component')
-      .asFunction<_ResultOpaqueUint32 Function(ffi.Pointer<ffi.Opaque>)>(
+      .asFunction<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(
           isLeaf: true);
 
   /// See the [Rust documentation for `emoji_modifier`](https://docs.rs/icu/latest/icu/properties/sets/fn.emoji_modifier.html) for more information.
@@ -2379,9 +2379,9 @@ class CodePointSetData implements ffi.Finalizable {
   // ignore: non_constant_identifier_names
   static final _ICU4XCodePointSetData_load_emoji_modifier = _capi<
               ffi.NativeFunction<
-                  _ResultOpaqueUint32 Function(ffi.Pointer<ffi.Opaque>)>>(
+                  _ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>>(
           'ICU4XCodePointSetData_load_emoji_modifier')
-      .asFunction<_ResultOpaqueUint32 Function(ffi.Pointer<ffi.Opaque>)>(
+      .asFunction<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(
           isLeaf: true);
 
   /// See the [Rust documentation for `emoji`](https://docs.rs/icu/latest/icu/properties/sets/fn.emoji.html) for more information.
@@ -2395,9 +2395,9 @@ class CodePointSetData implements ffi.Finalizable {
   // ignore: non_constant_identifier_names
   static final _ICU4XCodePointSetData_load_emoji = _capi<
           ffi.NativeFunction<
-              _ResultOpaqueUint32 Function(
+              _ResultOpaqueInt32 Function(
                   ffi.Pointer<ffi.Opaque>)>>('ICU4XCodePointSetData_load_emoji')
-      .asFunction<_ResultOpaqueUint32 Function(ffi.Pointer<ffi.Opaque>)>(
+      .asFunction<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(
           isLeaf: true);
 
   /// See the [Rust documentation for `emoji_presentation`](https://docs.rs/icu/latest/icu/properties/sets/fn.emoji_presentation.html) for more information.
@@ -2412,9 +2412,9 @@ class CodePointSetData implements ffi.Finalizable {
   // ignore: non_constant_identifier_names
   static final _ICU4XCodePointSetData_load_emoji_presentation = _capi<
               ffi.NativeFunction<
-                  _ResultOpaqueUint32 Function(ffi.Pointer<ffi.Opaque>)>>(
+                  _ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>>(
           'ICU4XCodePointSetData_load_emoji_presentation')
-      .asFunction<_ResultOpaqueUint32 Function(ffi.Pointer<ffi.Opaque>)>(
+      .asFunction<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(
           isLeaf: true);
 
   /// See the [Rust documentation for `extender`](https://docs.rs/icu/latest/icu/properties/sets/fn.extender.html) for more information.
@@ -2428,9 +2428,9 @@ class CodePointSetData implements ffi.Finalizable {
   // ignore: non_constant_identifier_names
   static final _ICU4XCodePointSetData_load_extender = _capi<
               ffi.NativeFunction<
-                  _ResultOpaqueUint32 Function(ffi.Pointer<ffi.Opaque>)>>(
+                  _ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>>(
           'ICU4XCodePointSetData_load_extender')
-      .asFunction<_ResultOpaqueUint32 Function(ffi.Pointer<ffi.Opaque>)>(
+      .asFunction<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(
           isLeaf: true);
 
   /// See the [Rust documentation for `extended_pictographic`](https://docs.rs/icu/latest/icu/properties/sets/fn.extended_pictographic.html) for more information.
@@ -2445,9 +2445,9 @@ class CodePointSetData implements ffi.Finalizable {
   // ignore: non_constant_identifier_names
   static final _ICU4XCodePointSetData_load_extended_pictographic = _capi<
               ffi.NativeFunction<
-                  _ResultOpaqueUint32 Function(ffi.Pointer<ffi.Opaque>)>>(
+                  _ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>>(
           'ICU4XCodePointSetData_load_extended_pictographic')
-      .asFunction<_ResultOpaqueUint32 Function(ffi.Pointer<ffi.Opaque>)>(
+      .asFunction<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(
           isLeaf: true);
 
   /// See the [Rust documentation for `graph`](https://docs.rs/icu/latest/icu/properties/sets/fn.graph.html) for more information.
@@ -2461,9 +2461,9 @@ class CodePointSetData implements ffi.Finalizable {
   // ignore: non_constant_identifier_names
   static final _ICU4XCodePointSetData_load_graph = _capi<
           ffi.NativeFunction<
-              _ResultOpaqueUint32 Function(
+              _ResultOpaqueInt32 Function(
                   ffi.Pointer<ffi.Opaque>)>>('ICU4XCodePointSetData_load_graph')
-      .asFunction<_ResultOpaqueUint32 Function(ffi.Pointer<ffi.Opaque>)>(
+      .asFunction<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(
           isLeaf: true);
 
   /// See the [Rust documentation for `grapheme_base`](https://docs.rs/icu/latest/icu/properties/sets/fn.grapheme_base.html) for more information.
@@ -2478,9 +2478,9 @@ class CodePointSetData implements ffi.Finalizable {
   // ignore: non_constant_identifier_names
   static final _ICU4XCodePointSetData_load_grapheme_base = _capi<
               ffi.NativeFunction<
-                  _ResultOpaqueUint32 Function(ffi.Pointer<ffi.Opaque>)>>(
+                  _ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>>(
           'ICU4XCodePointSetData_load_grapheme_base')
-      .asFunction<_ResultOpaqueUint32 Function(ffi.Pointer<ffi.Opaque>)>(
+      .asFunction<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(
           isLeaf: true);
 
   /// See the [Rust documentation for `grapheme_extend`](https://docs.rs/icu/latest/icu/properties/sets/fn.grapheme_extend.html) for more information.
@@ -2495,9 +2495,9 @@ class CodePointSetData implements ffi.Finalizable {
   // ignore: non_constant_identifier_names
   static final _ICU4XCodePointSetData_load_grapheme_extend = _capi<
               ffi.NativeFunction<
-                  _ResultOpaqueUint32 Function(ffi.Pointer<ffi.Opaque>)>>(
+                  _ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>>(
           'ICU4XCodePointSetData_load_grapheme_extend')
-      .asFunction<_ResultOpaqueUint32 Function(ffi.Pointer<ffi.Opaque>)>(
+      .asFunction<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(
           isLeaf: true);
 
   /// See the [Rust documentation for `grapheme_link`](https://docs.rs/icu/latest/icu/properties/sets/fn.grapheme_link.html) for more information.
@@ -2512,9 +2512,9 @@ class CodePointSetData implements ffi.Finalizable {
   // ignore: non_constant_identifier_names
   static final _ICU4XCodePointSetData_load_grapheme_link = _capi<
               ffi.NativeFunction<
-                  _ResultOpaqueUint32 Function(ffi.Pointer<ffi.Opaque>)>>(
+                  _ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>>(
           'ICU4XCodePointSetData_load_grapheme_link')
-      .asFunction<_ResultOpaqueUint32 Function(ffi.Pointer<ffi.Opaque>)>(
+      .asFunction<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(
           isLeaf: true);
 
   /// See the [Rust documentation for `hex_digit`](https://docs.rs/icu/latest/icu/properties/sets/fn.hex_digit.html) for more information.
@@ -2528,9 +2528,9 @@ class CodePointSetData implements ffi.Finalizable {
   // ignore: non_constant_identifier_names
   static final _ICU4XCodePointSetData_load_hex_digit = _capi<
               ffi.NativeFunction<
-                  _ResultOpaqueUint32 Function(ffi.Pointer<ffi.Opaque>)>>(
+                  _ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>>(
           'ICU4XCodePointSetData_load_hex_digit')
-      .asFunction<_ResultOpaqueUint32 Function(ffi.Pointer<ffi.Opaque>)>(
+      .asFunction<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(
           isLeaf: true);
 
   /// See the [Rust documentation for `hyphen`](https://docs.rs/icu/latest/icu/properties/sets/fn.hyphen.html) for more information.
@@ -2544,9 +2544,9 @@ class CodePointSetData implements ffi.Finalizable {
   // ignore: non_constant_identifier_names
   static final _ICU4XCodePointSetData_load_hyphen = _capi<
               ffi.NativeFunction<
-                  _ResultOpaqueUint32 Function(ffi.Pointer<ffi.Opaque>)>>(
+                  _ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>>(
           'ICU4XCodePointSetData_load_hyphen')
-      .asFunction<_ResultOpaqueUint32 Function(ffi.Pointer<ffi.Opaque>)>(
+      .asFunction<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(
           isLeaf: true);
 
   /// See the [Rust documentation for `id_continue`](https://docs.rs/icu/latest/icu/properties/sets/fn.id_continue.html) for more information.
@@ -2561,9 +2561,9 @@ class CodePointSetData implements ffi.Finalizable {
   // ignore: non_constant_identifier_names
   static final _ICU4XCodePointSetData_load_id_continue = _capi<
               ffi.NativeFunction<
-                  _ResultOpaqueUint32 Function(ffi.Pointer<ffi.Opaque>)>>(
+                  _ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>>(
           'ICU4XCodePointSetData_load_id_continue')
-      .asFunction<_ResultOpaqueUint32 Function(ffi.Pointer<ffi.Opaque>)>(
+      .asFunction<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(
           isLeaf: true);
 
   /// See the [Rust documentation for `ideographic`](https://docs.rs/icu/latest/icu/properties/sets/fn.ideographic.html) for more information.
@@ -2578,9 +2578,9 @@ class CodePointSetData implements ffi.Finalizable {
   // ignore: non_constant_identifier_names
   static final _ICU4XCodePointSetData_load_ideographic = _capi<
               ffi.NativeFunction<
-                  _ResultOpaqueUint32 Function(ffi.Pointer<ffi.Opaque>)>>(
+                  _ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>>(
           'ICU4XCodePointSetData_load_ideographic')
-      .asFunction<_ResultOpaqueUint32 Function(ffi.Pointer<ffi.Opaque>)>(
+      .asFunction<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(
           isLeaf: true);
 
   /// See the [Rust documentation for `id_start`](https://docs.rs/icu/latest/icu/properties/sets/fn.id_start.html) for more information.
@@ -2594,9 +2594,9 @@ class CodePointSetData implements ffi.Finalizable {
   // ignore: non_constant_identifier_names
   static final _ICU4XCodePointSetData_load_id_start = _capi<
               ffi.NativeFunction<
-                  _ResultOpaqueUint32 Function(ffi.Pointer<ffi.Opaque>)>>(
+                  _ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>>(
           'ICU4XCodePointSetData_load_id_start')
-      .asFunction<_ResultOpaqueUint32 Function(ffi.Pointer<ffi.Opaque>)>(
+      .asFunction<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(
           isLeaf: true);
 
   /// See the [Rust documentation for `ids_binary_operator`](https://docs.rs/icu/latest/icu/properties/sets/fn.ids_binary_operator.html) for more information.
@@ -2611,9 +2611,9 @@ class CodePointSetData implements ffi.Finalizable {
   // ignore: non_constant_identifier_names
   static final _ICU4XCodePointSetData_load_ids_binary_operator = _capi<
               ffi.NativeFunction<
-                  _ResultOpaqueUint32 Function(ffi.Pointer<ffi.Opaque>)>>(
+                  _ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>>(
           'ICU4XCodePointSetData_load_ids_binary_operator')
-      .asFunction<_ResultOpaqueUint32 Function(ffi.Pointer<ffi.Opaque>)>(
+      .asFunction<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(
           isLeaf: true);
 
   /// See the [Rust documentation for `ids_trinary_operator`](https://docs.rs/icu/latest/icu/properties/sets/fn.ids_trinary_operator.html) for more information.
@@ -2628,9 +2628,9 @@ class CodePointSetData implements ffi.Finalizable {
   // ignore: non_constant_identifier_names
   static final _ICU4XCodePointSetData_load_ids_trinary_operator = _capi<
               ffi.NativeFunction<
-                  _ResultOpaqueUint32 Function(ffi.Pointer<ffi.Opaque>)>>(
+                  _ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>>(
           'ICU4XCodePointSetData_load_ids_trinary_operator')
-      .asFunction<_ResultOpaqueUint32 Function(ffi.Pointer<ffi.Opaque>)>(
+      .asFunction<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(
           isLeaf: true);
 
   /// See the [Rust documentation for `join_control`](https://docs.rs/icu/latest/icu/properties/sets/fn.join_control.html) for more information.
@@ -2645,9 +2645,9 @@ class CodePointSetData implements ffi.Finalizable {
   // ignore: non_constant_identifier_names
   static final _ICU4XCodePointSetData_load_join_control = _capi<
               ffi.NativeFunction<
-                  _ResultOpaqueUint32 Function(ffi.Pointer<ffi.Opaque>)>>(
+                  _ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>>(
           'ICU4XCodePointSetData_load_join_control')
-      .asFunction<_ResultOpaqueUint32 Function(ffi.Pointer<ffi.Opaque>)>(
+      .asFunction<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(
           isLeaf: true);
 
   /// See the [Rust documentation for `logical_order_exception`](https://docs.rs/icu/latest/icu/properties/sets/fn.logical_order_exception.html) for more information.
@@ -2662,9 +2662,9 @@ class CodePointSetData implements ffi.Finalizable {
   // ignore: non_constant_identifier_names
   static final _ICU4XCodePointSetData_load_logical_order_exception = _capi<
               ffi.NativeFunction<
-                  _ResultOpaqueUint32 Function(ffi.Pointer<ffi.Opaque>)>>(
+                  _ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>>(
           'ICU4XCodePointSetData_load_logical_order_exception')
-      .asFunction<_ResultOpaqueUint32 Function(ffi.Pointer<ffi.Opaque>)>(
+      .asFunction<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(
           isLeaf: true);
 
   /// See the [Rust documentation for `lowercase`](https://docs.rs/icu/latest/icu/properties/sets/fn.lowercase.html) for more information.
@@ -2678,9 +2678,9 @@ class CodePointSetData implements ffi.Finalizable {
   // ignore: non_constant_identifier_names
   static final _ICU4XCodePointSetData_load_lowercase = _capi<
               ffi.NativeFunction<
-                  _ResultOpaqueUint32 Function(ffi.Pointer<ffi.Opaque>)>>(
+                  _ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>>(
           'ICU4XCodePointSetData_load_lowercase')
-      .asFunction<_ResultOpaqueUint32 Function(ffi.Pointer<ffi.Opaque>)>(
+      .asFunction<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(
           isLeaf: true);
 
   /// See the [Rust documentation for `math`](https://docs.rs/icu/latest/icu/properties/sets/fn.math.html) for more information.
@@ -2694,9 +2694,9 @@ class CodePointSetData implements ffi.Finalizable {
   // ignore: non_constant_identifier_names
   static final _ICU4XCodePointSetData_load_math = _capi<
           ffi.NativeFunction<
-              _ResultOpaqueUint32 Function(
+              _ResultOpaqueInt32 Function(
                   ffi.Pointer<ffi.Opaque>)>>('ICU4XCodePointSetData_load_math')
-      .asFunction<_ResultOpaqueUint32 Function(ffi.Pointer<ffi.Opaque>)>(
+      .asFunction<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(
           isLeaf: true);
 
   /// See the [Rust documentation for `noncharacter_code_point`](https://docs.rs/icu/latest/icu/properties/sets/fn.noncharacter_code_point.html) for more information.
@@ -2711,9 +2711,9 @@ class CodePointSetData implements ffi.Finalizable {
   // ignore: non_constant_identifier_names
   static final _ICU4XCodePointSetData_load_noncharacter_code_point = _capi<
               ffi.NativeFunction<
-                  _ResultOpaqueUint32 Function(ffi.Pointer<ffi.Opaque>)>>(
+                  _ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>>(
           'ICU4XCodePointSetData_load_noncharacter_code_point')
-      .asFunction<_ResultOpaqueUint32 Function(ffi.Pointer<ffi.Opaque>)>(
+      .asFunction<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(
           isLeaf: true);
 
   /// See the [Rust documentation for `nfc_inert`](https://docs.rs/icu/latest/icu/properties/sets/fn.nfc_inert.html) for more information.
@@ -2727,9 +2727,9 @@ class CodePointSetData implements ffi.Finalizable {
   // ignore: non_constant_identifier_names
   static final _ICU4XCodePointSetData_load_nfc_inert = _capi<
               ffi.NativeFunction<
-                  _ResultOpaqueUint32 Function(ffi.Pointer<ffi.Opaque>)>>(
+                  _ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>>(
           'ICU4XCodePointSetData_load_nfc_inert')
-      .asFunction<_ResultOpaqueUint32 Function(ffi.Pointer<ffi.Opaque>)>(
+      .asFunction<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(
           isLeaf: true);
 
   /// See the [Rust documentation for `nfd_inert`](https://docs.rs/icu/latest/icu/properties/sets/fn.nfd_inert.html) for more information.
@@ -2743,9 +2743,9 @@ class CodePointSetData implements ffi.Finalizable {
   // ignore: non_constant_identifier_names
   static final _ICU4XCodePointSetData_load_nfd_inert = _capi<
               ffi.NativeFunction<
-                  _ResultOpaqueUint32 Function(ffi.Pointer<ffi.Opaque>)>>(
+                  _ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>>(
           'ICU4XCodePointSetData_load_nfd_inert')
-      .asFunction<_ResultOpaqueUint32 Function(ffi.Pointer<ffi.Opaque>)>(
+      .asFunction<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(
           isLeaf: true);
 
   /// See the [Rust documentation for `nfkc_inert`](https://docs.rs/icu/latest/icu/properties/sets/fn.nfkc_inert.html) for more information.
@@ -2759,9 +2759,9 @@ class CodePointSetData implements ffi.Finalizable {
   // ignore: non_constant_identifier_names
   static final _ICU4XCodePointSetData_load_nfkc_inert = _capi<
               ffi.NativeFunction<
-                  _ResultOpaqueUint32 Function(ffi.Pointer<ffi.Opaque>)>>(
+                  _ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>>(
           'ICU4XCodePointSetData_load_nfkc_inert')
-      .asFunction<_ResultOpaqueUint32 Function(ffi.Pointer<ffi.Opaque>)>(
+      .asFunction<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(
           isLeaf: true);
 
   /// See the [Rust documentation for `nfkd_inert`](https://docs.rs/icu/latest/icu/properties/sets/fn.nfkd_inert.html) for more information.
@@ -2775,9 +2775,9 @@ class CodePointSetData implements ffi.Finalizable {
   // ignore: non_constant_identifier_names
   static final _ICU4XCodePointSetData_load_nfkd_inert = _capi<
               ffi.NativeFunction<
-                  _ResultOpaqueUint32 Function(ffi.Pointer<ffi.Opaque>)>>(
+                  _ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>>(
           'ICU4XCodePointSetData_load_nfkd_inert')
-      .asFunction<_ResultOpaqueUint32 Function(ffi.Pointer<ffi.Opaque>)>(
+      .asFunction<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(
           isLeaf: true);
 
   /// See the [Rust documentation for `pattern_syntax`](https://docs.rs/icu/latest/icu/properties/sets/fn.pattern_syntax.html) for more information.
@@ -2792,9 +2792,9 @@ class CodePointSetData implements ffi.Finalizable {
   // ignore: non_constant_identifier_names
   static final _ICU4XCodePointSetData_load_pattern_syntax = _capi<
               ffi.NativeFunction<
-                  _ResultOpaqueUint32 Function(ffi.Pointer<ffi.Opaque>)>>(
+                  _ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>>(
           'ICU4XCodePointSetData_load_pattern_syntax')
-      .asFunction<_ResultOpaqueUint32 Function(ffi.Pointer<ffi.Opaque>)>(
+      .asFunction<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(
           isLeaf: true);
 
   /// See the [Rust documentation for `pattern_white_space`](https://docs.rs/icu/latest/icu/properties/sets/fn.pattern_white_space.html) for more information.
@@ -2809,9 +2809,9 @@ class CodePointSetData implements ffi.Finalizable {
   // ignore: non_constant_identifier_names
   static final _ICU4XCodePointSetData_load_pattern_white_space = _capi<
               ffi.NativeFunction<
-                  _ResultOpaqueUint32 Function(ffi.Pointer<ffi.Opaque>)>>(
+                  _ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>>(
           'ICU4XCodePointSetData_load_pattern_white_space')
-      .asFunction<_ResultOpaqueUint32 Function(ffi.Pointer<ffi.Opaque>)>(
+      .asFunction<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(
           isLeaf: true);
 
   /// See the [Rust documentation for `prepended_concatenation_mark`](https://docs.rs/icu/latest/icu/properties/sets/fn.prepended_concatenation_mark.html) for more information.
@@ -2827,9 +2827,9 @@ class CodePointSetData implements ffi.Finalizable {
   // ignore: non_constant_identifier_names
   static final _ICU4XCodePointSetData_load_prepended_concatenation_mark = _capi<
               ffi.NativeFunction<
-                  _ResultOpaqueUint32 Function(ffi.Pointer<ffi.Opaque>)>>(
+                  _ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>>(
           'ICU4XCodePointSetData_load_prepended_concatenation_mark')
-      .asFunction<_ResultOpaqueUint32 Function(ffi.Pointer<ffi.Opaque>)>(
+      .asFunction<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(
           isLeaf: true);
 
   /// See the [Rust documentation for `print`](https://docs.rs/icu/latest/icu/properties/sets/fn.print.html) for more information.
@@ -2843,9 +2843,9 @@ class CodePointSetData implements ffi.Finalizable {
   // ignore: non_constant_identifier_names
   static final _ICU4XCodePointSetData_load_print = _capi<
           ffi.NativeFunction<
-              _ResultOpaqueUint32 Function(
+              _ResultOpaqueInt32 Function(
                   ffi.Pointer<ffi.Opaque>)>>('ICU4XCodePointSetData_load_print')
-      .asFunction<_ResultOpaqueUint32 Function(ffi.Pointer<ffi.Opaque>)>(
+      .asFunction<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(
           isLeaf: true);
 
   /// See the [Rust documentation for `quotation_mark`](https://docs.rs/icu/latest/icu/properties/sets/fn.quotation_mark.html) for more information.
@@ -2860,9 +2860,9 @@ class CodePointSetData implements ffi.Finalizable {
   // ignore: non_constant_identifier_names
   static final _ICU4XCodePointSetData_load_quotation_mark = _capi<
               ffi.NativeFunction<
-                  _ResultOpaqueUint32 Function(ffi.Pointer<ffi.Opaque>)>>(
+                  _ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>>(
           'ICU4XCodePointSetData_load_quotation_mark')
-      .asFunction<_ResultOpaqueUint32 Function(ffi.Pointer<ffi.Opaque>)>(
+      .asFunction<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(
           isLeaf: true);
 
   /// See the [Rust documentation for `radical`](https://docs.rs/icu/latest/icu/properties/sets/fn.radical.html) for more information.
@@ -2876,9 +2876,9 @@ class CodePointSetData implements ffi.Finalizable {
   // ignore: non_constant_identifier_names
   static final _ICU4XCodePointSetData_load_radical = _capi<
               ffi.NativeFunction<
-                  _ResultOpaqueUint32 Function(ffi.Pointer<ffi.Opaque>)>>(
+                  _ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>>(
           'ICU4XCodePointSetData_load_radical')
-      .asFunction<_ResultOpaqueUint32 Function(ffi.Pointer<ffi.Opaque>)>(
+      .asFunction<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(
           isLeaf: true);
 
   /// See the [Rust documentation for `regional_indicator`](https://docs.rs/icu/latest/icu/properties/sets/fn.regional_indicator.html) for more information.
@@ -2893,9 +2893,9 @@ class CodePointSetData implements ffi.Finalizable {
   // ignore: non_constant_identifier_names
   static final _ICU4XCodePointSetData_load_regional_indicator = _capi<
               ffi.NativeFunction<
-                  _ResultOpaqueUint32 Function(ffi.Pointer<ffi.Opaque>)>>(
+                  _ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>>(
           'ICU4XCodePointSetData_load_regional_indicator')
-      .asFunction<_ResultOpaqueUint32 Function(ffi.Pointer<ffi.Opaque>)>(
+      .asFunction<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(
           isLeaf: true);
 
   /// See the [Rust documentation for `soft_dotted`](https://docs.rs/icu/latest/icu/properties/sets/fn.soft_dotted.html) for more information.
@@ -2910,9 +2910,9 @@ class CodePointSetData implements ffi.Finalizable {
   // ignore: non_constant_identifier_names
   static final _ICU4XCodePointSetData_load_soft_dotted = _capi<
               ffi.NativeFunction<
-                  _ResultOpaqueUint32 Function(ffi.Pointer<ffi.Opaque>)>>(
+                  _ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>>(
           'ICU4XCodePointSetData_load_soft_dotted')
-      .asFunction<_ResultOpaqueUint32 Function(ffi.Pointer<ffi.Opaque>)>(
+      .asFunction<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(
           isLeaf: true);
 
   /// See the [Rust documentation for `segment_starter`](https://docs.rs/icu/latest/icu/properties/sets/fn.segment_starter.html) for more information.
@@ -2927,9 +2927,9 @@ class CodePointSetData implements ffi.Finalizable {
   // ignore: non_constant_identifier_names
   static final _ICU4XCodePointSetData_load_segment_starter = _capi<
               ffi.NativeFunction<
-                  _ResultOpaqueUint32 Function(ffi.Pointer<ffi.Opaque>)>>(
+                  _ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>>(
           'ICU4XCodePointSetData_load_segment_starter')
-      .asFunction<_ResultOpaqueUint32 Function(ffi.Pointer<ffi.Opaque>)>(
+      .asFunction<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(
           isLeaf: true);
 
   /// See the [Rust documentation for `case_sensitive`](https://docs.rs/icu/latest/icu/properties/sets/fn.case_sensitive.html) for more information.
@@ -2944,9 +2944,9 @@ class CodePointSetData implements ffi.Finalizable {
   // ignore: non_constant_identifier_names
   static final _ICU4XCodePointSetData_load_case_sensitive = _capi<
               ffi.NativeFunction<
-                  _ResultOpaqueUint32 Function(ffi.Pointer<ffi.Opaque>)>>(
+                  _ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>>(
           'ICU4XCodePointSetData_load_case_sensitive')
-      .asFunction<_ResultOpaqueUint32 Function(ffi.Pointer<ffi.Opaque>)>(
+      .asFunction<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(
           isLeaf: true);
 
   /// See the [Rust documentation for `sentence_terminal`](https://docs.rs/icu/latest/icu/properties/sets/fn.sentence_terminal.html) for more information.
@@ -2961,9 +2961,9 @@ class CodePointSetData implements ffi.Finalizable {
   // ignore: non_constant_identifier_names
   static final _ICU4XCodePointSetData_load_sentence_terminal = _capi<
               ffi.NativeFunction<
-                  _ResultOpaqueUint32 Function(ffi.Pointer<ffi.Opaque>)>>(
+                  _ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>>(
           'ICU4XCodePointSetData_load_sentence_terminal')
-      .asFunction<_ResultOpaqueUint32 Function(ffi.Pointer<ffi.Opaque>)>(
+      .asFunction<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(
           isLeaf: true);
 
   /// See the [Rust documentation for `terminal_punctuation`](https://docs.rs/icu/latest/icu/properties/sets/fn.terminal_punctuation.html) for more information.
@@ -2978,9 +2978,9 @@ class CodePointSetData implements ffi.Finalizable {
   // ignore: non_constant_identifier_names
   static final _ICU4XCodePointSetData_load_terminal_punctuation = _capi<
               ffi.NativeFunction<
-                  _ResultOpaqueUint32 Function(ffi.Pointer<ffi.Opaque>)>>(
+                  _ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>>(
           'ICU4XCodePointSetData_load_terminal_punctuation')
-      .asFunction<_ResultOpaqueUint32 Function(ffi.Pointer<ffi.Opaque>)>(
+      .asFunction<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(
           isLeaf: true);
 
   /// See the [Rust documentation for `unified_ideograph`](https://docs.rs/icu/latest/icu/properties/sets/fn.unified_ideograph.html) for more information.
@@ -2995,9 +2995,9 @@ class CodePointSetData implements ffi.Finalizable {
   // ignore: non_constant_identifier_names
   static final _ICU4XCodePointSetData_load_unified_ideograph = _capi<
               ffi.NativeFunction<
-                  _ResultOpaqueUint32 Function(ffi.Pointer<ffi.Opaque>)>>(
+                  _ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>>(
           'ICU4XCodePointSetData_load_unified_ideograph')
-      .asFunction<_ResultOpaqueUint32 Function(ffi.Pointer<ffi.Opaque>)>(
+      .asFunction<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(
           isLeaf: true);
 
   /// See the [Rust documentation for `uppercase`](https://docs.rs/icu/latest/icu/properties/sets/fn.uppercase.html) for more information.
@@ -3011,9 +3011,9 @@ class CodePointSetData implements ffi.Finalizable {
   // ignore: non_constant_identifier_names
   static final _ICU4XCodePointSetData_load_uppercase = _capi<
               ffi.NativeFunction<
-                  _ResultOpaqueUint32 Function(ffi.Pointer<ffi.Opaque>)>>(
+                  _ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>>(
           'ICU4XCodePointSetData_load_uppercase')
-      .asFunction<_ResultOpaqueUint32 Function(ffi.Pointer<ffi.Opaque>)>(
+      .asFunction<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(
           isLeaf: true);
 
   /// See the [Rust documentation for `variation_selector`](https://docs.rs/icu/latest/icu/properties/sets/fn.variation_selector.html) for more information.
@@ -3028,9 +3028,9 @@ class CodePointSetData implements ffi.Finalizable {
   // ignore: non_constant_identifier_names
   static final _ICU4XCodePointSetData_load_variation_selector = _capi<
               ffi.NativeFunction<
-                  _ResultOpaqueUint32 Function(ffi.Pointer<ffi.Opaque>)>>(
+                  _ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>>(
           'ICU4XCodePointSetData_load_variation_selector')
-      .asFunction<_ResultOpaqueUint32 Function(ffi.Pointer<ffi.Opaque>)>(
+      .asFunction<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(
           isLeaf: true);
 
   /// See the [Rust documentation for `white_space`](https://docs.rs/icu/latest/icu/properties/sets/fn.white_space.html) for more information.
@@ -3045,9 +3045,9 @@ class CodePointSetData implements ffi.Finalizable {
   // ignore: non_constant_identifier_names
   static final _ICU4XCodePointSetData_load_white_space = _capi<
               ffi.NativeFunction<
-                  _ResultOpaqueUint32 Function(ffi.Pointer<ffi.Opaque>)>>(
+                  _ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>>(
           'ICU4XCodePointSetData_load_white_space')
-      .asFunction<_ResultOpaqueUint32 Function(ffi.Pointer<ffi.Opaque>)>(
+      .asFunction<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(
           isLeaf: true);
 
   /// See the [Rust documentation for `xdigit`](https://docs.rs/icu/latest/icu/properties/sets/fn.xdigit.html) for more information.
@@ -3061,9 +3061,9 @@ class CodePointSetData implements ffi.Finalizable {
   // ignore: non_constant_identifier_names
   static final _ICU4XCodePointSetData_load_xdigit = _capi<
               ffi.NativeFunction<
-                  _ResultOpaqueUint32 Function(ffi.Pointer<ffi.Opaque>)>>(
+                  _ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>>(
           'ICU4XCodePointSetData_load_xdigit')
-      .asFunction<_ResultOpaqueUint32 Function(ffi.Pointer<ffi.Opaque>)>(
+      .asFunction<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(
           isLeaf: true);
 
   /// See the [Rust documentation for `xid_continue`](https://docs.rs/icu/latest/icu/properties/sets/fn.xid_continue.html) for more information.
@@ -3078,9 +3078,9 @@ class CodePointSetData implements ffi.Finalizable {
   // ignore: non_constant_identifier_names
   static final _ICU4XCodePointSetData_load_xid_continue = _capi<
               ffi.NativeFunction<
-                  _ResultOpaqueUint32 Function(ffi.Pointer<ffi.Opaque>)>>(
+                  _ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>>(
           'ICU4XCodePointSetData_load_xid_continue')
-      .asFunction<_ResultOpaqueUint32 Function(ffi.Pointer<ffi.Opaque>)>(
+      .asFunction<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(
           isLeaf: true);
 
   /// See the [Rust documentation for `xid_start`](https://docs.rs/icu/latest/icu/properties/sets/fn.xid_start.html) for more information.
@@ -3094,9 +3094,9 @@ class CodePointSetData implements ffi.Finalizable {
   // ignore: non_constant_identifier_names
   static final _ICU4XCodePointSetData_load_xid_start = _capi<
               ffi.NativeFunction<
-                  _ResultOpaqueUint32 Function(ffi.Pointer<ffi.Opaque>)>>(
+                  _ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>>(
           'ICU4XCodePointSetData_load_xid_start')
-      .asFunction<_ResultOpaqueUint32 Function(ffi.Pointer<ffi.Opaque>)>(
+      .asFunction<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(
           isLeaf: true);
 
   /// Loads data for a property specified as a string as long as it is one of the
@@ -3124,12 +3124,12 @@ class CodePointSetData implements ffi.Finalizable {
   // ignore: non_constant_identifier_names
   static final _ICU4XCodePointSetData_load_for_ecma262 = _capi<
           ffi.NativeFunction<
-              _ResultOpaqueUint32 Function(
+              _ResultOpaqueInt32 Function(
                   ffi.Pointer<ffi.Opaque>,
                   ffi.Pointer<ffi2.Utf8>,
                   ffi.Size)>>('ICU4XCodePointSetData_load_for_ecma262')
       .asFunction<
-          _ResultOpaqueUint32 Function(ffi.Pointer<ffi.Opaque>,
+          _ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>,
               ffi.Pointer<ffi2.Utf8>, int)>(isLeaf: true);
 }
 
@@ -3141,8 +3141,7 @@ class Collator implements ffi.Finalizable {
     _finalizer.attach(this, _underlying.cast());
   }
 
-  static final _finalizer = ffi.NativeFinalizer(
-      ffi.DynamicLibrary.process().lookup('ICU4XCollator_destroy'));
+  static final _finalizer = ffi.NativeFinalizer(_capi('ICU4XCollator_destroy'));
 
   /// Construct a new Collator instance.
   ///
@@ -3156,16 +3155,16 @@ class Collator implements ffi.Finalizable {
         : throw Error.values
             .firstWhere((v) => v._underlying == result.union.err);
   }
-
-  @ffi.Native<
-          _ResultOpaqueUint32 Function(ffi.Pointer<ffi.Opaque>,
-              ffi.Pointer<ffi.Opaque>, _CollatorOptionsV1Ffi)>(
-      symbol: 'ICU4XCollator_create_v1', isLeaf: true)
-  external static _ResultOpaqueUint32 Function(
-      ffi.Pointer<ffi.Opaque>,
-      // ignore: non_constant_identifier_names
-      ffi.Pointer<ffi.Opaque>,
-      _CollatorOptionsV1Ffi) _ICU4XCollator_create_v1;
+  // ignore: non_constant_identifier_names
+  static final _ICU4XCollator_create_v1 = _capi<
+          ffi.NativeFunction<
+              _ResultOpaqueInt32 Function(
+                  ffi.Pointer<ffi.Opaque>,
+                  ffi.Pointer<ffi.Opaque>,
+                  _CollatorOptionsV1Ffi)>>('ICU4XCollator_create_v1')
+      .asFunction<
+          _ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>,
+              ffi.Pointer<ffi.Opaque>, _CollatorOptionsV1Ffi)>(isLeaf: true);
 
   /// Compare guaranteed well-formed UTF-8 strings.
   ///
@@ -3188,20 +3187,18 @@ class Collator implements ffi.Finalizable {
     return Ordering.values.firstWhere((v) => v._underlying == result);
   }
 
-  @ffi.Native<
-      ffi.Uint32 Function(
-          ffi.Pointer<ffi.Opaque>,
-          ffi.Pointer<ffi2.Utf8>,
-          ffi.Size,
-          ffi.Pointer<ffi2.Utf8>,
-          ffi.Size)>(symbol: 'ICU4XCollator_compare_valid_utf8', isLeaf: true)
-  external static ffi.Uint32 Function(
-      ffi.Pointer<ffi.Opaque>,
-      ffi.Pointer<ffi2.Utf8>,
-      int,
-      ffi.Pointer<ffi2.Utf8>,
-      // ignore: non_constant_identifier_names
-      int) _ICU4XCollator_compare_valid_utf8;
+  // ignore: non_constant_identifier_names
+  static final _ICU4XCollator_compare_valid_utf8 = _capi<
+          ffi.NativeFunction<
+              ffi.Int32 Function(
+                  ffi.Pointer<ffi.Opaque>,
+                  ffi.Pointer<ffi2.Utf8>,
+                  ffi.Size,
+                  ffi.Pointer<ffi2.Utf8>,
+                  ffi.Size)>>('ICU4XCollator_compare_valid_utf8')
+      .asFunction<
+          int Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi2.Utf8>, int,
+              ffi.Pointer<ffi2.Utf8>, int)>(isLeaf: true);
 
   /// Compare potentially ill-formed UTF-16 strings, with unpaired surrogates
   /// compared as REPLACEMENT CHARACTER.
@@ -3218,20 +3215,18 @@ class Collator implements ffi.Finalizable {
     return Ordering.values.firstWhere((v) => v._underlying == result);
   }
 
-  @ffi.Native<
-      ffi.Uint32 Function(
-          ffi.Pointer<ffi.Opaque>,
-          ffi.Pointer<ffi.Uint16>,
-          ffi.Size,
-          ffi.Pointer<ffi.Uint16>,
-          ffi.Size)>(symbol: 'ICU4XCollator_compare_utf16', isLeaf: true)
-  external static ffi.Uint32 Function(
-      ffi.Pointer<ffi.Opaque>,
-      ffi.Pointer<ffi.Uint16>,
-      int,
-      ffi.Pointer<ffi.Uint16>,
-      // ignore: non_constant_identifier_names
-      int) _ICU4XCollator_compare_utf16;
+  // ignore: non_constant_identifier_names
+  static final _ICU4XCollator_compare_utf16 = _capi<
+          ffi.NativeFunction<
+              ffi.Int32 Function(
+                  ffi.Pointer<ffi.Opaque>,
+                  ffi.Pointer<ffi.Uint16>,
+                  ffi.Size,
+                  ffi.Pointer<ffi.Uint16>,
+                  ffi.Size)>>('ICU4XCollator_compare_utf16')
+      .asFunction<
+          int Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Uint16>, int,
+              ffi.Pointer<ffi.Uint16>, int)>(isLeaf: true);
 }
 
 /// See the [Rust documentation for `AlternateHandling`](https://docs.rs/icu/latest/icu/collator/enum.AlternateHandling.html) for more information.
@@ -3281,19 +3276,19 @@ enum CollatorNumeric {
 
 /// See the [Rust documentation for `CollatorOptions`](https://docs.rs/icu/latest/icu/collator/struct.CollatorOptions.html) for more information.
 class _CollatorOptionsV1Ffi extends ffi.Struct {
-  @ffi.Uint32()
+  @ffi.Int32()
   external int strength;
-  @ffi.Uint32()
+  @ffi.Int32()
   external int alternateHandling;
-  @ffi.Uint32()
+  @ffi.Int32()
   external int caseFirst;
-  @ffi.Uint32()
+  @ffi.Int32()
   external int maxVariable;
-  @ffi.Uint32()
+  @ffi.Int32()
   external int caseLevel;
-  @ffi.Uint32()
+  @ffi.Int32()
   external int numeric;
-  @ffi.Uint32()
+  @ffi.Int32()
   external int backwardSecondLevel;
 }
 
@@ -3408,9 +3403,9 @@ class ComposingNormalizer implements ffi.Finalizable {
   // ignore: non_constant_identifier_names
   static final _ICU4XComposingNormalizer_create_nfc = _capi<
               ffi.NativeFunction<
-                  _ResultOpaqueUint32 Function(ffi.Pointer<ffi.Opaque>)>>(
+                  _ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>>(
           'ICU4XComposingNormalizer_create_nfc')
-      .asFunction<_ResultOpaqueUint32 Function(ffi.Pointer<ffi.Opaque>)>(
+      .asFunction<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(
           isLeaf: true);
 
   /// Construct a new ICU4XComposingNormalizer instance for NFKC
@@ -3426,9 +3421,9 @@ class ComposingNormalizer implements ffi.Finalizable {
   // ignore: non_constant_identifier_names
   static final _ICU4XComposingNormalizer_create_nfkc = _capi<
               ffi.NativeFunction<
-                  _ResultOpaqueUint32 Function(ffi.Pointer<ffi.Opaque>)>>(
+                  _ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>>(
           'ICU4XComposingNormalizer_create_nfkc')
-      .asFunction<_ResultOpaqueUint32 Function(ffi.Pointer<ffi.Opaque>)>(
+      .asFunction<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(
           isLeaf: true);
 
   /// Normalize a (potentially ill-formed) UTF8 string
@@ -3453,14 +3448,14 @@ class ComposingNormalizer implements ffi.Finalizable {
   // ignore: non_constant_identifier_names
   static final _ICU4XComposingNormalizer_normalize = _capi<
               ffi.NativeFunction<
-                  _ResultVoidUint32 Function(
+                  _ResultVoidInt32 Function(
                       ffi.Pointer<ffi.Opaque>,
                       ffi.Pointer<ffi2.Utf8>,
                       ffi.Size,
                       ffi.Pointer<ffi.Opaque>)>>(
           'ICU4XComposingNormalizer_normalize')
       .asFunction<
-          _ResultVoidUint32 Function(
+          _ResultVoidInt32 Function(
               ffi.Pointer<ffi.Opaque>,
               ffi.Pointer<ffi2.Utf8>,
               int,
@@ -3520,9 +3515,9 @@ class CustomTimeZone implements ffi.Finalizable {
   // ignore: non_constant_identifier_names
   static final _ICU4XCustomTimeZone_create_from_string = _capi<
           ffi.NativeFunction<
-              _ResultOpaqueUint32 Function(ffi.Pointer<ffi2.Utf8>,
+              _ResultOpaqueInt32 Function(ffi.Pointer<ffi2.Utf8>,
                   ffi.Size)>>('ICU4XCustomTimeZone_create_from_string')
-      .asFunction<_ResultOpaqueUint32 Function(ffi.Pointer<ffi2.Utf8>, int)>(
+      .asFunction<_ResultOpaqueInt32 Function(ffi.Pointer<ffi2.Utf8>, int)>(
           isLeaf: true);
 
   /// Creates a time zone with no information.
@@ -3569,9 +3564,9 @@ class CustomTimeZone implements ffi.Finalizable {
   // ignore: non_constant_identifier_names
   static final _ICU4XCustomTimeZone_try_set_gmt_offset_seconds = _capi<
           ffi.NativeFunction<
-              _ResultVoidUint32 Function(ffi.Pointer<ffi.Opaque>,
+              _ResultVoidInt32 Function(ffi.Pointer<ffi.Opaque>,
                   ffi.Int32)>>('ICU4XCustomTimeZone_try_set_gmt_offset_seconds')
-      .asFunction<_ResultVoidUint32 Function(ffi.Pointer<ffi.Opaque>, int)>(
+      .asFunction<_ResultVoidInt32 Function(ffi.Pointer<ffi.Opaque>, int)>(
           isLeaf: true);
 
   /// Clears the `gmt_offset` field.
@@ -3607,9 +3602,9 @@ class CustomTimeZone implements ffi.Finalizable {
   // ignore: non_constant_identifier_names
   static final _ICU4XCustomTimeZone_gmt_offset_seconds = _capi<
               ffi.NativeFunction<
-                  _ResultInt32Uint32 Function(ffi.Pointer<ffi.Opaque>)>>(
+                  _ResultInt32Int32 Function(ffi.Pointer<ffi.Opaque>)>>(
           'ICU4XCustomTimeZone_gmt_offset_seconds')
-      .asFunction<_ResultInt32Uint32 Function(ffi.Pointer<ffi.Opaque>)>(
+      .asFunction<_ResultInt32Int32 Function(ffi.Pointer<ffi.Opaque>)>(
           isLeaf: true);
 
   /// Returns whether the `gmt_offset` field is positive.
@@ -3628,9 +3623,9 @@ class CustomTimeZone implements ffi.Finalizable {
   // ignore: non_constant_identifier_names
   static final _ICU4XCustomTimeZone_is_gmt_offset_positive = _capi<
               ffi.NativeFunction<
-                  _ResultBoolUint32 Function(ffi.Pointer<ffi.Opaque>)>>(
+                  _ResultBoolInt32 Function(ffi.Pointer<ffi.Opaque>)>>(
           'ICU4XCustomTimeZone_is_gmt_offset_positive')
-      .asFunction<_ResultBoolUint32 Function(ffi.Pointer<ffi.Opaque>)>(
+      .asFunction<_ResultBoolInt32 Function(ffi.Pointer<ffi.Opaque>)>(
           isLeaf: true);
 
   /// Returns whether the `gmt_offset` field is zero.
@@ -3649,9 +3644,9 @@ class CustomTimeZone implements ffi.Finalizable {
   // ignore: non_constant_identifier_names
   static final _ICU4XCustomTimeZone_is_gmt_offset_zero = _capi<
               ffi.NativeFunction<
-                  _ResultBoolUint32 Function(ffi.Pointer<ffi.Opaque>)>>(
+                  _ResultBoolInt32 Function(ffi.Pointer<ffi.Opaque>)>>(
           'ICU4XCustomTimeZone_is_gmt_offset_zero')
-      .asFunction<_ResultBoolUint32 Function(ffi.Pointer<ffi.Opaque>)>(
+      .asFunction<_ResultBoolInt32 Function(ffi.Pointer<ffi.Opaque>)>(
           isLeaf: true);
 
   /// Returns whether the `gmt_offset` field has nonzero minutes.
@@ -3670,9 +3665,9 @@ class CustomTimeZone implements ffi.Finalizable {
   // ignore: non_constant_identifier_names
   static final _ICU4XCustomTimeZone_gmt_offset_has_minutes = _capi<
               ffi.NativeFunction<
-                  _ResultBoolUint32 Function(ffi.Pointer<ffi.Opaque>)>>(
+                  _ResultBoolInt32 Function(ffi.Pointer<ffi.Opaque>)>>(
           'ICU4XCustomTimeZone_gmt_offset_has_minutes')
-      .asFunction<_ResultBoolUint32 Function(ffi.Pointer<ffi.Opaque>)>(
+      .asFunction<_ResultBoolInt32 Function(ffi.Pointer<ffi.Opaque>)>(
           isLeaf: true);
 
   /// Returns whether the `gmt_offset` field has nonzero seconds.
@@ -3691,9 +3686,9 @@ class CustomTimeZone implements ffi.Finalizable {
   // ignore: non_constant_identifier_names
   static final _ICU4XCustomTimeZone_gmt_offset_has_seconds = _capi<
               ffi.NativeFunction<
-                  _ResultBoolUint32 Function(ffi.Pointer<ffi.Opaque>)>>(
+                  _ResultBoolInt32 Function(ffi.Pointer<ffi.Opaque>)>>(
           'ICU4XCustomTimeZone_gmt_offset_has_seconds')
-      .asFunction<_ResultBoolUint32 Function(ffi.Pointer<ffi.Opaque>)>(
+      .asFunction<_ResultBoolInt32 Function(ffi.Pointer<ffi.Opaque>)>(
           isLeaf: true);
 
   /// Sets the `time_zone_id` field from a BCP-47 string.
@@ -3718,12 +3713,12 @@ class CustomTimeZone implements ffi.Finalizable {
   // ignore: non_constant_identifier_names
   static final _ICU4XCustomTimeZone_try_set_time_zone_id = _capi<
           ffi.NativeFunction<
-              _ResultVoidUint32 Function(
+              _ResultVoidInt32 Function(
                   ffi.Pointer<ffi.Opaque>,
                   ffi.Pointer<ffi2.Utf8>,
                   ffi.Size)>>('ICU4XCustomTimeZone_try_set_time_zone_id')
       .asFunction<
-          _ResultVoidUint32 Function(ffi.Pointer<ffi.Opaque>,
+          _ResultVoidInt32 Function(ffi.Pointer<ffi.Opaque>,
               ffi.Pointer<ffi2.Utf8>, int)>(isLeaf: true);
 
   /// Sets the `time_zone_id` field from an IANA string by looking up
@@ -3747,13 +3742,13 @@ class CustomTimeZone implements ffi.Finalizable {
   // ignore: non_constant_identifier_names
   static final _ICU4XCustomTimeZone_try_set_iana_time_zone_id = _capi<
           ffi.NativeFunction<
-              _ResultVoidUint32 Function(
+              _ResultVoidInt32 Function(
                   ffi.Pointer<ffi.Opaque>,
                   ffi.Pointer<ffi.Opaque>,
                   ffi.Pointer<ffi2.Utf8>,
                   ffi.Size)>>('ICU4XCustomTimeZone_try_set_iana_time_zone_id')
       .asFunction<
-          _ResultVoidUint32 Function(
+          _ResultVoidInt32 Function(
               ffi.Pointer<ffi.Opaque>,
               ffi.Pointer<ffi.Opaque>,
               ffi.Pointer<ffi2.Utf8>,
@@ -3794,10 +3789,10 @@ class CustomTimeZone implements ffi.Finalizable {
   // ignore: non_constant_identifier_names
   static final _ICU4XCustomTimeZone_time_zone_id = _capi<
           ffi.NativeFunction<
-              _ResultVoidUint32 Function(ffi.Pointer<ffi.Opaque>,
+              _ResultVoidInt32 Function(ffi.Pointer<ffi.Opaque>,
                   ffi.Pointer<ffi.Opaque>)>>('ICU4XCustomTimeZone_time_zone_id')
       .asFunction<
-          _ResultVoidUint32 Function(
+          _ResultVoidInt32 Function(
               ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
 
   /// Sets the `metazone_id` field from a string.
@@ -3822,12 +3817,12 @@ class CustomTimeZone implements ffi.Finalizable {
   // ignore: non_constant_identifier_names
   static final _ICU4XCustomTimeZone_try_set_metazone_id = _capi<
           ffi.NativeFunction<
-              _ResultVoidUint32 Function(
+              _ResultVoidInt32 Function(
                   ffi.Pointer<ffi.Opaque>,
                   ffi.Pointer<ffi2.Utf8>,
                   ffi.Size)>>('ICU4XCustomTimeZone_try_set_metazone_id')
       .asFunction<
-          _ResultVoidUint32 Function(ffi.Pointer<ffi.Opaque>,
+          _ResultVoidInt32 Function(ffi.Pointer<ffi.Opaque>,
               ffi.Pointer<ffi2.Utf8>, int)>(isLeaf: true);
 
   /// Clears the `metazone_id` field.
@@ -3865,10 +3860,10 @@ class CustomTimeZone implements ffi.Finalizable {
   // ignore: non_constant_identifier_names
   static final _ICU4XCustomTimeZone_metazone_id = _capi<
           ffi.NativeFunction<
-              _ResultVoidUint32 Function(ffi.Pointer<ffi.Opaque>,
+              _ResultVoidInt32 Function(ffi.Pointer<ffi.Opaque>,
                   ffi.Pointer<ffi.Opaque>)>>('ICU4XCustomTimeZone_metazone_id')
       .asFunction<
-          _ResultVoidUint32 Function(
+          _ResultVoidInt32 Function(
               ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
 
   /// Sets the `zone_variant` field from a string.
@@ -3893,12 +3888,12 @@ class CustomTimeZone implements ffi.Finalizable {
   // ignore: non_constant_identifier_names
   static final _ICU4XCustomTimeZone_try_set_zone_variant = _capi<
           ffi.NativeFunction<
-              _ResultVoidUint32 Function(
+              _ResultVoidInt32 Function(
                   ffi.Pointer<ffi.Opaque>,
                   ffi.Pointer<ffi2.Utf8>,
                   ffi.Size)>>('ICU4XCustomTimeZone_try_set_zone_variant')
       .asFunction<
-          _ResultVoidUint32 Function(ffi.Pointer<ffi.Opaque>,
+          _ResultVoidInt32 Function(ffi.Pointer<ffi.Opaque>,
               ffi.Pointer<ffi2.Utf8>, int)>(isLeaf: true);
 
   /// Clears the `zone_variant` field.
@@ -3936,10 +3931,10 @@ class CustomTimeZone implements ffi.Finalizable {
   // ignore: non_constant_identifier_names
   static final _ICU4XCustomTimeZone_zone_variant = _capi<
           ffi.NativeFunction<
-              _ResultVoidUint32 Function(ffi.Pointer<ffi.Opaque>,
+              _ResultVoidInt32 Function(ffi.Pointer<ffi.Opaque>,
                   ffi.Pointer<ffi.Opaque>)>>('ICU4XCustomTimeZone_zone_variant')
       .asFunction<
-          _ResultVoidUint32 Function(
+          _ResultVoidInt32 Function(
               ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
 
   /// Sets the `zone_variant` field to standard time.
@@ -3990,9 +3985,9 @@ class CustomTimeZone implements ffi.Finalizable {
   // ignore: non_constant_identifier_names
   static final _ICU4XCustomTimeZone_is_standard_time = _capi<
               ffi.NativeFunction<
-                  _ResultBoolUint32 Function(ffi.Pointer<ffi.Opaque>)>>(
+                  _ResultBoolInt32 Function(ffi.Pointer<ffi.Opaque>)>>(
           'ICU4XCustomTimeZone_is_standard_time')
-      .asFunction<_ResultBoolUint32 Function(ffi.Pointer<ffi.Opaque>)>(
+      .asFunction<_ResultBoolInt32 Function(ffi.Pointer<ffi.Opaque>)>(
           isLeaf: true);
 
   /// Returns whether the `zone_variant` field is daylight time.
@@ -4013,9 +4008,9 @@ class CustomTimeZone implements ffi.Finalizable {
   // ignore: non_constant_identifier_names
   static final _ICU4XCustomTimeZone_is_daylight_time = _capi<
               ffi.NativeFunction<
-                  _ResultBoolUint32 Function(ffi.Pointer<ffi.Opaque>)>>(
+                  _ResultBoolInt32 Function(ffi.Pointer<ffi.Opaque>)>>(
           'ICU4XCustomTimeZone_is_daylight_time')
-      .asFunction<_ResultBoolUint32 Function(ffi.Pointer<ffi.Opaque>)>(
+      .asFunction<_ResultBoolInt32 Function(ffi.Pointer<ffi.Opaque>)>(
           isLeaf: true);
 
   /// Sets the metazone based on the time zone and the local timestamp.
@@ -4050,8 +4045,8 @@ class DataProvider implements ffi.Finalizable {
     _finalizer.attach(this, _underlying.cast());
   }
 
-  static final _finalizer = ffi.NativeFinalizer(
-      ffi.DynamicLibrary.process().lookup('ICU4XDataProvider_destroy'));
+  static final _finalizer =
+      ffi.NativeFinalizer(_capi('ICU4XDataProvider_destroy'));
 
   /// Constructs an [`ICU4XDataProvider`] that uses compiled data.
   ///
@@ -4064,12 +4059,10 @@ class DataProvider implements ffi.Finalizable {
     return DataProvider._(result);
   }
   // ignore: non_constant_identifier_names
-
-  @ffi.Native<ffi.Pointer<ffi.Opaque> Function()>(
-      symbol: 'ICU4XDataProvider_create_compiled', isLeaf: true)
-  external static ffi.Pointer<ffi.Opaque> Function()
-      // ignore: non_constant_identifier_names
-      _ICU4XDataProvider_create_compiled;
+  static final _ICU4XDataProvider_create_compiled =
+      _capi<ffi.NativeFunction<ffi.Pointer<ffi.Opaque> Function()>>(
+              'ICU4XDataProvider_create_compiled')
+          .asFunction<ffi.Pointer<ffi.Opaque> Function()>(isLeaf: true);
 
   /// Constructs a `BlobDataProvider` and returns it as an [`ICU4XDataProvider`].
   ///
@@ -4089,9 +4082,9 @@ class DataProvider implements ffi.Finalizable {
   // ignore: non_constant_identifier_names
   static final _ICU4XDataProvider_create_from_byte_slice = _capi<
           ffi.NativeFunction<
-              _ResultOpaqueUint32 Function(ffi.Pointer<ffi.Uint8>,
+              _ResultOpaqueInt32 Function(ffi.Pointer<ffi.Uint8>,
                   ffi.Size)>>('ICU4XDataProvider_create_from_byte_slice')
-      .asFunction<_ResultOpaqueUint32 Function(ffi.Pointer<ffi.Uint8>, int)>(
+      .asFunction<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Uint8>, int)>(
           isLeaf: true);
 
   /// Constructs an empty [`ICU4XDataProvider`].
@@ -4128,10 +4121,10 @@ class DataProvider implements ffi.Finalizable {
   // ignore: non_constant_identifier_names
   static final _ICU4XDataProvider_fork_by_key = _capi<
           ffi.NativeFunction<
-              _ResultVoidUint32 Function(ffi.Pointer<ffi.Opaque>,
+              _ResultVoidInt32 Function(ffi.Pointer<ffi.Opaque>,
                   ffi.Pointer<ffi.Opaque>)>>('ICU4XDataProvider_fork_by_key')
       .asFunction<
-          _ResultVoidUint32 Function(
+          _ResultVoidInt32 Function(
               ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
 
   /// Same as `fork_by_key` but forks by locale instead of key.
@@ -4148,10 +4141,10 @@ class DataProvider implements ffi.Finalizable {
   // ignore: non_constant_identifier_names
   static final _ICU4XDataProvider_fork_by_locale = _capi<
           ffi.NativeFunction<
-              _ResultVoidUint32 Function(ffi.Pointer<ffi.Opaque>,
+              _ResultVoidInt32 Function(ffi.Pointer<ffi.Opaque>,
                   ffi.Pointer<ffi.Opaque>)>>('ICU4XDataProvider_fork_by_locale')
       .asFunction<
-          _ResultVoidUint32 Function(
+          _ResultVoidInt32 Function(
               ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
 
   /// Enables locale fallbacking for data requests made to this provider.
@@ -4171,9 +4164,9 @@ class DataProvider implements ffi.Finalizable {
   // ignore: non_constant_identifier_names
   static final _ICU4XDataProvider_enable_locale_fallback = _capi<
               ffi.NativeFunction<
-                  _ResultVoidUint32 Function(ffi.Pointer<ffi.Opaque>)>>(
+                  _ResultVoidInt32 Function(ffi.Pointer<ffi.Opaque>)>>(
           'ICU4XDataProvider_enable_locale_fallback')
-      .asFunction<_ResultVoidUint32 Function(ffi.Pointer<ffi.Opaque>)>(
+      .asFunction<_ResultVoidInt32 Function(ffi.Pointer<ffi.Opaque>)>(
           isLeaf: true);
 
   /// See the [Rust documentation for `new_with_fallbacker`](https://docs.rs/icu_provider_adapters/latest/icu_provider_adapters/fallback/struct.LocaleFallbackProvider.html#method.new_with_fallbacker) for more information.
@@ -4190,11 +4183,11 @@ class DataProvider implements ffi.Finalizable {
   // ignore: non_constant_identifier_names
   static final _ICU4XDataProvider_enable_locale_fallback_with = _capi<
               ffi.NativeFunction<
-                  _ResultVoidUint32 Function(
+                  _ResultVoidInt32 Function(
                       ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>>(
           'ICU4XDataProvider_enable_locale_fallback_with')
       .asFunction<
-          _ResultVoidUint32 Function(
+          _ResultVoidInt32 Function(
               ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
 }
 
@@ -4226,11 +4219,11 @@ class Date implements ffi.Finalizable {
   // ignore: non_constant_identifier_names
   static final _ICU4XDate_create_from_iso_in_calendar = _capi<
               ffi.NativeFunction<
-                  _ResultOpaqueUint32 Function(ffi.Int32, ffi.Uint8, ffi.Uint8,
+                  _ResultOpaqueInt32 Function(ffi.Int32, ffi.Uint8, ffi.Uint8,
                       ffi.Pointer<ffi.Opaque>)>>(
           'ICU4XDate_create_from_iso_in_calendar')
       .asFunction<
-          _ResultOpaqueUint32 Function(
+          _ResultOpaqueInt32 Function(
               int, int, int, ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
 
   /// Creates a new [`ICU4XDate`] from the given codes, which are interpreted in the given calendar system
@@ -4259,7 +4252,7 @@ class Date implements ffi.Finalizable {
   // ignore: non_constant_identifier_names
   static final _ICU4XDate_create_from_codes_in_calendar = _capi<
               ffi.NativeFunction<
-                  _ResultOpaqueUint32 Function(
+                  _ResultOpaqueInt32 Function(
                       ffi.Pointer<ffi2.Utf8>,
                       ffi.Size,
                       ffi.Int32,
@@ -4269,7 +4262,7 @@ class Date implements ffi.Finalizable {
                       ffi.Pointer<ffi.Opaque>)>>(
           'ICU4XDate_create_from_codes_in_calendar')
       .asFunction<
-          _ResultOpaqueUint32 Function(
+          _ResultOpaqueInt32 Function(
               ffi.Pointer<ffi2.Utf8>,
               int,
               int,
@@ -4335,7 +4328,7 @@ class Date implements ffi.Finalizable {
 
   // ignore: non_constant_identifier_names
   static final _ICU4XDate_day_of_week =
-      _capi<ffi.NativeFunction<ffi.Uint32 Function(ffi.Pointer<ffi.Opaque>)>>(
+      _capi<ffi.NativeFunction<ffi.Int32 Function(ffi.Pointer<ffi.Opaque>)>>(
               'ICU4XDate_day_of_week')
           .asFunction<int Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
 
@@ -4355,7 +4348,7 @@ class Date implements ffi.Finalizable {
   static final _ICU4XDate_week_of_month = _capi<
           ffi.NativeFunction<
               ffi.Uint32 Function(ffi.Pointer<ffi.Opaque>,
-                  ffi.Uint32)>>('ICU4XDate_week_of_month')
+                  ffi.Int32)>>('ICU4XDate_week_of_month')
       .asFunction<int Function(ffi.Pointer<ffi.Opaque>, int)>(isLeaf: true);
 
   /// Returns the week number in this year, using week data
@@ -4372,10 +4365,10 @@ class Date implements ffi.Finalizable {
   // ignore: non_constant_identifier_names
   static final _ICU4XDate_week_of_year = _capi<
           ffi.NativeFunction<
-              _ResultWeekOfFfiUint32 Function(ffi.Pointer<ffi.Opaque>,
+              _ResultWeekOfFfiInt32 Function(ffi.Pointer<ffi.Opaque>,
                   ffi.Pointer<ffi.Opaque>)>>('ICU4XDate_week_of_year')
       .asFunction<
-          _ResultWeekOfFfiUint32 Function(
+          _ResultWeekOfFfiInt32 Function(
               ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
 
   /// Returns 1-indexed number of the month of this date in its year
@@ -4412,10 +4405,10 @@ class Date implements ffi.Finalizable {
   // ignore: non_constant_identifier_names
   static final _ICU4XDate_month_code = _capi<
           ffi.NativeFunction<
-              _ResultVoidUint32 Function(ffi.Pointer<ffi.Opaque>,
+              _ResultVoidInt32 Function(ffi.Pointer<ffi.Opaque>,
                   ffi.Pointer<ffi.Opaque>)>>('ICU4XDate_month_code')
       .asFunction<
-          _ResultVoidUint32 Function(
+          _ResultVoidInt32 Function(
               ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
 
   /// Returns the year number in the current era for this date
@@ -4449,10 +4442,10 @@ class Date implements ffi.Finalizable {
   // ignore: non_constant_identifier_names
   static final _ICU4XDate_era = _capi<
           ffi.NativeFunction<
-              _ResultVoidUint32 Function(ffi.Pointer<ffi.Opaque>,
+              _ResultVoidInt32 Function(ffi.Pointer<ffi.Opaque>,
                   ffi.Pointer<ffi.Opaque>)>>('ICU4XDate_era')
       .asFunction<
-          _ResultVoidUint32 Function(
+          _ResultVoidInt32 Function(
               ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
 
   /// Returns the number of months in the year represented by this date
@@ -4543,12 +4536,12 @@ class DateFormatter implements ffi.Finalizable {
   // ignore: non_constant_identifier_names
   static final _ICU4XDateFormatter_create_with_length = _capi<
           ffi.NativeFunction<
-              _ResultOpaqueUint32 Function(
+              _ResultOpaqueInt32 Function(
                   ffi.Pointer<ffi.Opaque>,
                   ffi.Pointer<ffi.Opaque>,
-                  ffi.Uint32)>>('ICU4XDateFormatter_create_with_length')
+                  ffi.Int32)>>('ICU4XDateFormatter_create_with_length')
       .asFunction<
-          _ResultOpaqueUint32 Function(ffi.Pointer<ffi.Opaque>,
+          _ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>,
               ffi.Pointer<ffi.Opaque>, int)>(isLeaf: true);
 
   /// Formats a [`ICU4XDate`] to a string.
@@ -4567,12 +4560,12 @@ class DateFormatter implements ffi.Finalizable {
   // ignore: non_constant_identifier_names
   static final _ICU4XDateFormatter_format_date = _capi<
           ffi.NativeFunction<
-              _ResultVoidUint32 Function(
+              _ResultVoidInt32 Function(
                   ffi.Pointer<ffi.Opaque>,
                   ffi.Pointer<ffi.Opaque>,
                   ffi.Pointer<ffi.Opaque>)>>('ICU4XDateFormatter_format_date')
       .asFunction<
-          _ResultVoidUint32 Function(ffi.Pointer<ffi.Opaque>,
+          _ResultVoidInt32 Function(ffi.Pointer<ffi.Opaque>,
               ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
 
   /// Formats a [`ICU4XIsoDate`] to a string.
@@ -4593,11 +4586,11 @@ class DateFormatter implements ffi.Finalizable {
   // ignore: non_constant_identifier_names
   static final _ICU4XDateFormatter_format_iso_date = _capi<
               ffi.NativeFunction<
-                  _ResultVoidUint32 Function(ffi.Pointer<ffi.Opaque>,
+                  _ResultVoidInt32 Function(ffi.Pointer<ffi.Opaque>,
                       ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>>(
           'ICU4XDateFormatter_format_iso_date')
       .asFunction<
-          _ResultVoidUint32 Function(ffi.Pointer<ffi.Opaque>,
+          _ResultVoidInt32 Function(ffi.Pointer<ffi.Opaque>,
               ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
 
   /// Formats a [`ICU4XDateTime`] to a string.
@@ -4616,11 +4609,11 @@ class DateFormatter implements ffi.Finalizable {
   // ignore: non_constant_identifier_names
   static final _ICU4XDateFormatter_format_datetime = _capi<
               ffi.NativeFunction<
-                  _ResultVoidUint32 Function(ffi.Pointer<ffi.Opaque>,
+                  _ResultVoidInt32 Function(ffi.Pointer<ffi.Opaque>,
                       ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>>(
           'ICU4XDateFormatter_format_datetime')
       .asFunction<
-          _ResultVoidUint32 Function(ffi.Pointer<ffi.Opaque>,
+          _ResultVoidInt32 Function(ffi.Pointer<ffi.Opaque>,
               ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
 
   /// Formats a [`ICU4XIsoDateTime`] to a string.
@@ -4641,11 +4634,11 @@ class DateFormatter implements ffi.Finalizable {
   // ignore: non_constant_identifier_names
   static final _ICU4XDateFormatter_format_iso_datetime = _capi<
               ffi.NativeFunction<
-                  _ResultVoidUint32 Function(ffi.Pointer<ffi.Opaque>,
+                  _ResultVoidInt32 Function(ffi.Pointer<ffi.Opaque>,
                       ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>>(
           'ICU4XDateFormatter_format_iso_datetime')
       .asFunction<
-          _ResultVoidUint32 Function(ffi.Pointer<ffi.Opaque>,
+          _ResultVoidInt32 Function(ffi.Pointer<ffi.Opaque>,
               ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
 }
 
@@ -4685,7 +4678,7 @@ class DateTime implements ffi.Finalizable {
   // ignore: non_constant_identifier_names
   static final _ICU4XDateTime_create_from_iso_in_calendar = _capi<
               ffi.NativeFunction<
-                  _ResultOpaqueUint32 Function(
+                  _ResultOpaqueInt32 Function(
                       ffi.Int32,
                       ffi.Uint8,
                       ffi.Uint8,
@@ -4696,7 +4689,7 @@ class DateTime implements ffi.Finalizable {
                       ffi.Pointer<ffi.Opaque>)>>(
           'ICU4XDateTime_create_from_iso_in_calendar')
       .asFunction<
-          _ResultOpaqueUint32 Function(int, int, int, int, int, int, int,
+          _ResultOpaqueInt32 Function(int, int, int, int, int, int, int,
               ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
 
   /// Creates a new [`ICU4XDateTime`] from the given codes, which are interpreted in the given calendar system
@@ -4737,7 +4730,7 @@ class DateTime implements ffi.Finalizable {
   // ignore: non_constant_identifier_names
   static final _ICU4XDateTime_create_from_codes_in_calendar = _capi<
               ffi.NativeFunction<
-                  _ResultOpaqueUint32 Function(
+                  _ResultOpaqueInt32 Function(
                       ffi.Pointer<ffi2.Utf8>,
                       ffi.Size,
                       ffi.Int32,
@@ -4751,7 +4744,7 @@ class DateTime implements ffi.Finalizable {
                       ffi.Pointer<ffi.Opaque>)>>(
           'ICU4XDateTime_create_from_codes_in_calendar')
       .asFunction<
-          _ResultOpaqueUint32 Function(
+          _ResultOpaqueInt32 Function(
               ffi.Pointer<ffi2.Utf8>,
               int,
               int,
@@ -4928,7 +4921,7 @@ class DateTime implements ffi.Finalizable {
 
   // ignore: non_constant_identifier_names
   static final _ICU4XDateTime_day_of_week =
-      _capi<ffi.NativeFunction<ffi.Uint32 Function(ffi.Pointer<ffi.Opaque>)>>(
+      _capi<ffi.NativeFunction<ffi.Int32 Function(ffi.Pointer<ffi.Opaque>)>>(
               'ICU4XDateTime_day_of_week')
           .asFunction<int Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
 
@@ -4948,7 +4941,7 @@ class DateTime implements ffi.Finalizable {
   static final _ICU4XDateTime_week_of_month = _capi<
           ffi.NativeFunction<
               ffi.Uint32 Function(ffi.Pointer<ffi.Opaque>,
-                  ffi.Uint32)>>('ICU4XDateTime_week_of_month')
+                  ffi.Int32)>>('ICU4XDateTime_week_of_month')
       .asFunction<int Function(ffi.Pointer<ffi.Opaque>, int)>(isLeaf: true);
 
   /// Returns the week number in this year, using week data
@@ -4966,10 +4959,10 @@ class DateTime implements ffi.Finalizable {
   // ignore: non_constant_identifier_names
   static final _ICU4XDateTime_week_of_year = _capi<
           ffi.NativeFunction<
-              _ResultWeekOfFfiUint32 Function(ffi.Pointer<ffi.Opaque>,
+              _ResultWeekOfFfiInt32 Function(ffi.Pointer<ffi.Opaque>,
                   ffi.Pointer<ffi.Opaque>)>>('ICU4XDateTime_week_of_year')
       .asFunction<
-          _ResultWeekOfFfiUint32 Function(
+          _ResultWeekOfFfiInt32 Function(
               ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
 
   /// Returns 1-indexed number of the month of this date in its year
@@ -5007,10 +5000,10 @@ class DateTime implements ffi.Finalizable {
   // ignore: non_constant_identifier_names
   static final _ICU4XDateTime_month_code = _capi<
           ffi.NativeFunction<
-              _ResultVoidUint32 Function(ffi.Pointer<ffi.Opaque>,
+              _ResultVoidInt32 Function(ffi.Pointer<ffi.Opaque>,
                   ffi.Pointer<ffi.Opaque>)>>('ICU4XDateTime_month_code')
       .asFunction<
-          _ResultVoidUint32 Function(
+          _ResultVoidInt32 Function(
               ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
 
   /// Returns the year number in the current era for this date
@@ -5042,10 +5035,10 @@ class DateTime implements ffi.Finalizable {
   // ignore: non_constant_identifier_names
   static final _ICU4XDateTime_era = _capi<
           ffi.NativeFunction<
-              _ResultVoidUint32 Function(ffi.Pointer<ffi.Opaque>,
+              _ResultVoidInt32 Function(ffi.Pointer<ffi.Opaque>,
                   ffi.Pointer<ffi.Opaque>)>>('ICU4XDateTime_era')
       .asFunction<
-          _ResultVoidUint32 Function(
+          _ResultVoidInt32 Function(
               ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
 
   /// Returns the number of months in the year represented by this date
@@ -5139,13 +5132,13 @@ class DateTimeFormatter implements ffi.Finalizable {
   // ignore: non_constant_identifier_names
   static final _ICU4XDateTimeFormatter_create_with_lengths = _capi<
           ffi.NativeFunction<
-              _ResultOpaqueUint32 Function(
+              _ResultOpaqueInt32 Function(
                   ffi.Pointer<ffi.Opaque>,
                   ffi.Pointer<ffi.Opaque>,
-                  ffi.Uint32,
-                  ffi.Uint32)>>('ICU4XDateTimeFormatter_create_with_lengths')
+                  ffi.Int32,
+                  ffi.Int32)>>('ICU4XDateTimeFormatter_create_with_lengths')
       .asFunction<
-          _ResultOpaqueUint32 Function(ffi.Pointer<ffi.Opaque>,
+          _ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>,
               ffi.Pointer<ffi.Opaque>, int, int)>(isLeaf: true);
 
   /// Formats a [`ICU4XDateTime`] to a string.
@@ -5164,11 +5157,11 @@ class DateTimeFormatter implements ffi.Finalizable {
   // ignore: non_constant_identifier_names
   static final _ICU4XDateTimeFormatter_format_datetime = _capi<
               ffi.NativeFunction<
-                  _ResultVoidUint32 Function(ffi.Pointer<ffi.Opaque>,
+                  _ResultVoidInt32 Function(ffi.Pointer<ffi.Opaque>,
                       ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>>(
           'ICU4XDateTimeFormatter_format_datetime')
       .asFunction<
-          _ResultVoidUint32 Function(ffi.Pointer<ffi.Opaque>,
+          _ResultVoidInt32 Function(ffi.Pointer<ffi.Opaque>,
               ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
 
   /// Formats a [`ICU4XIsoDateTime`] to a string.
@@ -5189,11 +5182,11 @@ class DateTimeFormatter implements ffi.Finalizable {
   // ignore: non_constant_identifier_names
   static final _ICU4XDateTimeFormatter_format_iso_datetime = _capi<
               ffi.NativeFunction<
-                  _ResultVoidUint32 Function(ffi.Pointer<ffi.Opaque>,
+                  _ResultVoidInt32 Function(ffi.Pointer<ffi.Opaque>,
                       ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>>(
           'ICU4XDateTimeFormatter_format_iso_datetime')
       .asFunction<
-          _ResultVoidUint32 Function(ffi.Pointer<ffi.Opaque>,
+          _ResultVoidInt32 Function(ffi.Pointer<ffi.Opaque>,
               ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
 }
 
@@ -5269,9 +5262,9 @@ class DecomposingNormalizer implements ffi.Finalizable {
   // ignore: non_constant_identifier_names
   static final _ICU4XDecomposingNormalizer_create_nfd = _capi<
               ffi.NativeFunction<
-                  _ResultOpaqueUint32 Function(ffi.Pointer<ffi.Opaque>)>>(
+                  _ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>>(
           'ICU4XDecomposingNormalizer_create_nfd')
-      .asFunction<_ResultOpaqueUint32 Function(ffi.Pointer<ffi.Opaque>)>(
+      .asFunction<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(
           isLeaf: true);
 
   /// Construct a new ICU4XDecomposingNormalizer instance for NFKC
@@ -5288,9 +5281,9 @@ class DecomposingNormalizer implements ffi.Finalizable {
   // ignore: non_constant_identifier_names
   static final _ICU4XDecomposingNormalizer_create_nfkd = _capi<
               ffi.NativeFunction<
-                  _ResultOpaqueUint32 Function(ffi.Pointer<ffi.Opaque>)>>(
+                  _ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>>(
           'ICU4XDecomposingNormalizer_create_nfkd')
-      .asFunction<_ResultOpaqueUint32 Function(ffi.Pointer<ffi.Opaque>)>(
+      .asFunction<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(
           isLeaf: true);
 
   /// Normalize a (potentially ill-formed) UTF8 string
@@ -5315,14 +5308,14 @@ class DecomposingNormalizer implements ffi.Finalizable {
   // ignore: non_constant_identifier_names
   static final _ICU4XDecomposingNormalizer_normalize = _capi<
               ffi.NativeFunction<
-                  _ResultVoidUint32 Function(
+                  _ResultVoidInt32 Function(
                       ffi.Pointer<ffi.Opaque>,
                       ffi.Pointer<ffi2.Utf8>,
                       ffi.Size,
                       ffi.Pointer<ffi.Opaque>)>>(
           'ICU4XDecomposingNormalizer_normalize')
       .asFunction<
-          _ResultVoidUint32 Function(
+          _ResultVoidInt32 Function(
               ffi.Pointer<ffi.Opaque>,
               ffi.Pointer<ffi2.Utf8>,
               int,
@@ -5361,11 +5354,11 @@ enum DisplayNamesFallback {
 
 /// See the [Rust documentation for `DisplayNamesOptions`](https://docs.rs/icu/latest/icu/displaynames/options/struct.DisplayNamesOptions.html) for more information.
 class _DisplayNamesOptionsV1Ffi extends ffi.Struct {
-  @ffi.Uint32()
+  @ffi.Int32()
   external int style;
-  @ffi.Uint32()
+  @ffi.Int32()
   external int fallback;
-  @ffi.Uint32()
+  @ffi.Int32()
   external int languageDisplay;
 }
 
@@ -5653,9 +5646,9 @@ class FixedDecimal implements ffi.Finalizable {
   // ignore: non_constant_identifier_names
   static final _ICU4XFixedDecimal_create_from_f64_with_lower_magnitude = _capi<
               ffi.NativeFunction<
-                  _ResultOpaqueUint32 Function(ffi.Double, ffi.Int16)>>(
+                  _ResultOpaqueInt32 Function(ffi.Double, ffi.Int16)>>(
           'ICU4XFixedDecimal_create_from_f64_with_lower_magnitude')
-      .asFunction<_ResultOpaqueUint32 Function(double, int)>(isLeaf: true);
+      .asFunction<_ResultOpaqueInt32 Function(double, int)>(isLeaf: true);
 
   /// Construct an [`ICU4XFixedDecimal`] from an float, for a given number of significant digits
   ///
@@ -5674,9 +5667,9 @@ class FixedDecimal implements ffi.Finalizable {
   static final _ICU4XFixedDecimal_create_from_f64_with_significant_digits =
       _capi<
                   ffi.NativeFunction<
-                      _ResultOpaqueUint32 Function(ffi.Double, ffi.Uint8)>>(
+                      _ResultOpaqueInt32 Function(ffi.Double, ffi.Uint8)>>(
               'ICU4XFixedDecimal_create_from_f64_with_significant_digits')
-          .asFunction<_ResultOpaqueUint32 Function(double, int)>(isLeaf: true);
+          .asFunction<_ResultOpaqueInt32 Function(double, int)>(isLeaf: true);
 
   /// Construct an [`ICU4XFixedDecimal`] from an float, with enough digits to recover
   /// the original floating point in IEEE 754 without needing trailing zeros
@@ -5694,9 +5687,9 @@ class FixedDecimal implements ffi.Finalizable {
   }
   // ignore: non_constant_identifier_names
   static final _ICU4XFixedDecimal_create_from_f64_with_floating_precision =
-      _capi<ffi.NativeFunction<_ResultOpaqueUint32 Function(ffi.Double)>>(
+      _capi<ffi.NativeFunction<_ResultOpaqueInt32 Function(ffi.Double)>>(
               'ICU4XFixedDecimal_create_from_f64_with_floating_precision')
-          .asFunction<_ResultOpaqueUint32 Function(double)>(isLeaf: true);
+          .asFunction<_ResultOpaqueInt32 Function(double)>(isLeaf: true);
 
   /// Construct an [`ICU4XFixedDecimal`] from a string.
   ///
@@ -5716,9 +5709,9 @@ class FixedDecimal implements ffi.Finalizable {
   // ignore: non_constant_identifier_names
   static final _ICU4XFixedDecimal_create_from_string = _capi<
           ffi.NativeFunction<
-              _ResultOpaqueUint32 Function(ffi.Pointer<ffi2.Utf8>,
+              _ResultOpaqueInt32 Function(ffi.Pointer<ffi2.Utf8>,
                   ffi.Size)>>('ICU4XFixedDecimal_create_from_string')
-      .asFunction<_ResultOpaqueUint32 Function(ffi.Pointer<ffi2.Utf8>, int)>(
+      .asFunction<_ResultOpaqueInt32 Function(ffi.Pointer<ffi2.Utf8>, int)>(
           isLeaf: true);
 
   /// See the [Rust documentation for `digit_at`](https://docs.rs/fixed_decimal/latest/fixed_decimal/struct.FixedDecimal.html#method.digit_at) for more information.
@@ -5816,7 +5809,7 @@ class FixedDecimal implements ffi.Finalizable {
 
   // ignore: non_constant_identifier_names
   static final _ICU4XFixedDecimal_sign =
-      _capi<ffi.NativeFunction<ffi.Uint32 Function(ffi.Pointer<ffi.Opaque>)>>(
+      _capi<ffi.NativeFunction<ffi.Int32 Function(ffi.Pointer<ffi.Opaque>)>>(
               'ICU4XFixedDecimal_sign')
           .asFunction<int Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
 
@@ -5831,7 +5824,7 @@ class FixedDecimal implements ffi.Finalizable {
   static final _ICU4XFixedDecimal_set_sign = _capi<
           ffi.NativeFunction<
               ffi.Void Function(ffi.Pointer<ffi.Opaque>,
-                  ffi.Uint32)>>('ICU4XFixedDecimal_set_sign')
+                  ffi.Int32)>>('ICU4XFixedDecimal_set_sign')
       .asFunction<void Function(ffi.Pointer<ffi.Opaque>, int)>(isLeaf: true);
 
   /// See the [Rust documentation for `apply_sign_display`](https://docs.rs/fixed_decimal/latest/fixed_decimal/struct.FixedDecimal.html#method.apply_sign_display) for more information.
@@ -5843,7 +5836,7 @@ class FixedDecimal implements ffi.Finalizable {
   static final _ICU4XFixedDecimal_apply_sign_display = _capi<
           ffi.NativeFunction<
               ffi.Void Function(ffi.Pointer<ffi.Opaque>,
-                  ffi.Uint32)>>('ICU4XFixedDecimal_apply_sign_display')
+                  ffi.Int32)>>('ICU4XFixedDecimal_apply_sign_display')
       .asFunction<void Function(ffi.Pointer<ffi.Opaque>, int)>(isLeaf: true);
 
   /// See the [Rust documentation for `trim_start`](https://docs.rs/fixed_decimal/latest/fixed_decimal/struct.FixedDecimal.html#method.trim_start) for more information.
@@ -6093,11 +6086,11 @@ class FixedDecimalFormatter implements ffi.Finalizable {
   static final _ICU4XFixedDecimalFormatter_create_with_grouping_strategy =
       _capi<
                   ffi.NativeFunction<
-                      _ResultOpaqueUint32 Function(ffi.Pointer<ffi.Opaque>,
-                          ffi.Pointer<ffi.Opaque>, ffi.Uint32)>>(
+                      _ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>,
+                          ffi.Pointer<ffi.Opaque>, ffi.Int32)>>(
               'ICU4XFixedDecimalFormatter_create_with_grouping_strategy')
           .asFunction<
-              _ResultOpaqueUint32 Function(ffi.Pointer<ffi.Opaque>,
+              _ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>,
                   ffi.Pointer<ffi.Opaque>, int)>(isLeaf: true);
 
   /// Formats a [`ICU4XFixedDecimal`] to a string.
@@ -6116,11 +6109,11 @@ class FixedDecimalFormatter implements ffi.Finalizable {
   // ignore: non_constant_identifier_names
   static final _ICU4XFixedDecimalFormatter_format = _capi<
               ffi.NativeFunction<
-                  _ResultVoidUint32 Function(ffi.Pointer<ffi.Opaque>,
+                  _ResultVoidInt32 Function(ffi.Pointer<ffi.Opaque>,
                       ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>>(
           'ICU4XFixedDecimalFormatter_format')
       .asFunction<
-          _ResultVoidUint32 Function(ffi.Pointer<ffi.Opaque>,
+          _ResultVoidInt32 Function(ffi.Pointer<ffi.Opaque>,
               ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
 }
 
@@ -6232,9 +6225,9 @@ class GeneralCategoryNameToMaskMapper implements ffi.Finalizable {
   // ignore: non_constant_identifier_names
   static final _ICU4XGeneralCategoryNameToMaskMapper_load = _capi<
               ffi.NativeFunction<
-                  _ResultOpaqueUint32 Function(ffi.Pointer<ffi.Opaque>)>>(
+                  _ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>>(
           'ICU4XGeneralCategoryNameToMaskMapper_load')
-      .asFunction<_ResultOpaqueUint32 Function(ffi.Pointer<ffi.Opaque>)>(
+      .asFunction<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(
           isLeaf: true);
 }
 
@@ -6346,9 +6339,9 @@ class GraphemeClusterSegmenter implements ffi.Finalizable {
   // ignore: non_constant_identifier_names
   static final _ICU4XGraphemeClusterSegmenter_create = _capi<
               ffi.NativeFunction<
-                  _ResultOpaqueUint32 Function(ffi.Pointer<ffi.Opaque>)>>(
+                  _ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>>(
           'ICU4XGraphemeClusterSegmenter_create')
-      .asFunction<_ResultOpaqueUint32 Function(ffi.Pointer<ffi.Opaque>)>(
+      .asFunction<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(
           isLeaf: true);
 
   /// Segments a (potentially ill-formed) UTF-8 string.
@@ -6452,12 +6445,13 @@ class GregorianDateFormatter implements ffi.Finalizable {
   }
   // ignore: non_constant_identifier_names
   static final _ICU4XGregorianDateFormatter_create_with_length = _capi<
-              ffi.NativeFunction<
-                  _ResultOpaqueUint32 Function(ffi.Pointer<ffi.Opaque>,
-                      ffi.Pointer<ffi.Opaque>, ffi.Uint32)>>(
-          'ICU4XGregorianDateFormatter_create_with_length')
+          ffi.NativeFunction<
+              _ResultOpaqueInt32 Function(
+                  ffi.Pointer<ffi.Opaque>,
+                  ffi.Pointer<ffi.Opaque>,
+                  ffi.Int32)>>('ICU4XGregorianDateFormatter_create_with_length')
       .asFunction<
-          _ResultOpaqueUint32 Function(ffi.Pointer<ffi.Opaque>,
+          _ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>,
               ffi.Pointer<ffi.Opaque>, int)>(isLeaf: true);
 
   /// Formats a [`ICU4XIsoDate`] to a string.
@@ -6476,11 +6470,11 @@ class GregorianDateFormatter implements ffi.Finalizable {
   // ignore: non_constant_identifier_names
   static final _ICU4XGregorianDateFormatter_format_iso_date = _capi<
               ffi.NativeFunction<
-                  _ResultVoidUint32 Function(ffi.Pointer<ffi.Opaque>,
+                  _ResultVoidInt32 Function(ffi.Pointer<ffi.Opaque>,
                       ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>>(
           'ICU4XGregorianDateFormatter_format_iso_date')
       .asFunction<
-          _ResultVoidUint32 Function(ffi.Pointer<ffi.Opaque>,
+          _ResultVoidInt32 Function(ffi.Pointer<ffi.Opaque>,
               ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
 
   /// Formats a [`ICU4XIsoDateTime`] to a string.
@@ -6499,11 +6493,11 @@ class GregorianDateFormatter implements ffi.Finalizable {
   // ignore: non_constant_identifier_names
   static final _ICU4XGregorianDateFormatter_format_iso_datetime = _capi<
               ffi.NativeFunction<
-                  _ResultVoidUint32 Function(ffi.Pointer<ffi.Opaque>,
+                  _ResultVoidInt32 Function(ffi.Pointer<ffi.Opaque>,
                       ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>>(
           'ICU4XGregorianDateFormatter_format_iso_datetime')
       .asFunction<
-          _ResultVoidUint32 Function(ffi.Pointer<ffi.Opaque>,
+          _ResultVoidInt32 Function(ffi.Pointer<ffi.Opaque>,
               ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
 }
 
@@ -6539,11 +6533,11 @@ class GregorianDateTimeFormatter implements ffi.Finalizable {
   // ignore: non_constant_identifier_names
   static final _ICU4XGregorianDateTimeFormatter_create_with_lengths = _capi<
               ffi.NativeFunction<
-                  _ResultOpaqueUint32 Function(ffi.Pointer<ffi.Opaque>,
-                      ffi.Pointer<ffi.Opaque>, ffi.Uint32, ffi.Uint32)>>(
+                  _ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>,
+                      ffi.Pointer<ffi.Opaque>, ffi.Int32, ffi.Int32)>>(
           'ICU4XGregorianDateTimeFormatter_create_with_lengths')
       .asFunction<
-          _ResultOpaqueUint32 Function(ffi.Pointer<ffi.Opaque>,
+          _ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>,
               ffi.Pointer<ffi.Opaque>, int, int)>(isLeaf: true);
 
   /// Formats a [`ICU4XIsoDateTime`] to a string.
@@ -6562,11 +6556,11 @@ class GregorianDateTimeFormatter implements ffi.Finalizable {
   // ignore: non_constant_identifier_names
   static final _ICU4XGregorianDateTimeFormatter_format_iso_datetime = _capi<
               ffi.NativeFunction<
-                  _ResultVoidUint32 Function(ffi.Pointer<ffi.Opaque>,
+                  _ResultVoidInt32 Function(ffi.Pointer<ffi.Opaque>,
                       ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>>(
           'ICU4XGregorianDateTimeFormatter_format_iso_datetime')
       .asFunction<
-          _ResultVoidUint32 Function(ffi.Pointer<ffi.Opaque>,
+          _ResultVoidInt32 Function(ffi.Pointer<ffi.Opaque>,
               ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
 }
 
@@ -6605,11 +6599,11 @@ class GregorianZonedDateTimeFormatter implements ffi.Finalizable {
   static final _ICU4XGregorianZonedDateTimeFormatter_create_with_lengths =
       _capi<
                   ffi.NativeFunction<
-                      _ResultOpaqueUint32 Function(ffi.Pointer<ffi.Opaque>,
-                          ffi.Pointer<ffi.Opaque>, ffi.Uint32, ffi.Uint32)>>(
+                      _ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>,
+                          ffi.Pointer<ffi.Opaque>, ffi.Int32, ffi.Int32)>>(
               'ICU4XGregorianZonedDateTimeFormatter_create_with_lengths')
           .asFunction<
-              _ResultOpaqueUint32 Function(ffi.Pointer<ffi.Opaque>,
+              _ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>,
                   ffi.Pointer<ffi.Opaque>, int, int)>(isLeaf: true);
 
   /// Creates a new [`ICU4XGregorianZonedDateTimeFormatter`] from locale data.
@@ -6640,15 +6634,15 @@ class GregorianZonedDateTimeFormatter implements ffi.Finalizable {
   static final _ICU4XGregorianZonedDateTimeFormatter_create_with_lengths_and_iso_8601_time_zone_fallback =
       _capi<
                   ffi.NativeFunction<
-                      _ResultOpaqueUint32 Function(
+                      _ResultOpaqueInt32 Function(
                           ffi.Pointer<ffi.Opaque>,
                           ffi.Pointer<ffi.Opaque>,
-                          ffi.Uint32,
-                          ffi.Uint32,
+                          ffi.Int32,
+                          ffi.Int32,
                           _IsoTimeZoneOptionsFfi)>>(
               'ICU4XGregorianZonedDateTimeFormatter_create_with_lengths_and_iso_8601_time_zone_fallback')
           .asFunction<
-              _ResultOpaqueUint32 Function(
+              _ResultOpaqueInt32 Function(
                   ffi.Pointer<ffi.Opaque>,
                   ffi.Pointer<ffi.Opaque>,
                   int,
@@ -6677,14 +6671,14 @@ class GregorianZonedDateTimeFormatter implements ffi.Finalizable {
   static final _ICU4XGregorianZonedDateTimeFormatter_format_iso_datetime_with_custom_time_zone =
       _capi<
                   ffi.NativeFunction<
-                      _ResultVoidUint32 Function(
+                      _ResultVoidInt32 Function(
                           ffi.Pointer<ffi.Opaque>,
                           ffi.Pointer<ffi.Opaque>,
                           ffi.Pointer<ffi.Opaque>,
                           ffi.Pointer<ffi.Opaque>)>>(
               'ICU4XGregorianZonedDateTimeFormatter_format_iso_datetime_with_custom_time_zone')
           .asFunction<
-              _ResultVoidUint32 Function(
+              _ResultVoidInt32 Function(
                   ffi.Pointer<ffi.Opaque>,
                   ffi.Pointer<ffi.Opaque>,
                   ffi.Pointer<ffi.Opaque>,
@@ -6719,9 +6713,9 @@ class IanaToBcp47Mapper implements ffi.Finalizable {
   // ignore: non_constant_identifier_names
   static final _ICU4XIanaToBcp47Mapper_create = _capi<
           ffi.NativeFunction<
-              _ResultOpaqueUint32 Function(
+              _ResultOpaqueInt32 Function(
                   ffi.Pointer<ffi.Opaque>)>>('ICU4XIanaToBcp47Mapper_create')
-      .asFunction<_ResultOpaqueUint32 Function(ffi.Pointer<ffi.Opaque>)>(
+      .asFunction<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(
           isLeaf: true);
 }
 
@@ -6750,9 +6744,9 @@ class IsoDate implements ffi.Finalizable {
   // ignore: non_constant_identifier_names
   static final _ICU4XIsoDate_create = _capi<
           ffi.NativeFunction<
-              _ResultOpaqueUint32 Function(
+              _ResultOpaqueInt32 Function(
                   ffi.Int32, ffi.Uint8, ffi.Uint8)>>('ICU4XIsoDate_create')
-      .asFunction<_ResultOpaqueUint32 Function(int, int, int)>(isLeaf: true);
+      .asFunction<_ResultOpaqueInt32 Function(int, int, int)>(isLeaf: true);
 
   /// Creates a new [`ICU4XIsoDate`] representing January 1, 1970.
   ///
@@ -6822,7 +6816,7 @@ class IsoDate implements ffi.Finalizable {
 
   // ignore: non_constant_identifier_names
   static final _ICU4XIsoDate_day_of_week =
-      _capi<ffi.NativeFunction<ffi.Uint32 Function(ffi.Pointer<ffi.Opaque>)>>(
+      _capi<ffi.NativeFunction<ffi.Int32 Function(ffi.Pointer<ffi.Opaque>)>>(
               'ICU4XIsoDate_day_of_week')
           .asFunction<int Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
 
@@ -6842,7 +6836,7 @@ class IsoDate implements ffi.Finalizable {
   static final _ICU4XIsoDate_week_of_month = _capi<
           ffi.NativeFunction<
               ffi.Uint32 Function(ffi.Pointer<ffi.Opaque>,
-                  ffi.Uint32)>>('ICU4XIsoDate_week_of_month')
+                  ffi.Int32)>>('ICU4XIsoDate_week_of_month')
       .asFunction<int Function(ffi.Pointer<ffi.Opaque>, int)>(isLeaf: true);
 
   /// Returns the week number in this year, using week data
@@ -6860,10 +6854,10 @@ class IsoDate implements ffi.Finalizable {
   // ignore: non_constant_identifier_names
   static final _ICU4XIsoDate_week_of_year = _capi<
           ffi.NativeFunction<
-              _ResultWeekOfFfiUint32 Function(ffi.Pointer<ffi.Opaque>,
+              _ResultWeekOfFfiInt32 Function(ffi.Pointer<ffi.Opaque>,
                   ffi.Pointer<ffi.Opaque>)>>('ICU4XIsoDate_week_of_year')
       .asFunction<
-          _ResultWeekOfFfiUint32 Function(
+          _ResultWeekOfFfiInt32 Function(
               ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
 
   /// Returns 1-indexed number of the month of this date in its year
@@ -6979,7 +6973,7 @@ class IsoDateTime implements ffi.Finalizable {
   // ignore: non_constant_identifier_names
   static final _ICU4XIsoDateTime_create = _capi<
           ffi.NativeFunction<
-              _ResultOpaqueUint32 Function(
+              _ResultOpaqueInt32 Function(
                   ffi.Int32,
                   ffi.Uint8,
                   ffi.Uint8,
@@ -6988,7 +6982,7 @@ class IsoDateTime implements ffi.Finalizable {
                   ffi.Uint8,
                   ffi.Uint32)>>('ICU4XIsoDateTime_create')
       .asFunction<
-          _ResultOpaqueUint32 Function(
+          _ResultOpaqueInt32 Function(
               int, int, int, int, int, int, int)>(isLeaf: true);
 
   /// Creates a new [`ICU4XIsoDateTime`] from an [`ICU4XIsoDate`] and [`ICU4XTime`] object
@@ -7185,7 +7179,7 @@ class IsoDateTime implements ffi.Finalizable {
 
   // ignore: non_constant_identifier_names
   static final _ICU4XIsoDateTime_day_of_week =
-      _capi<ffi.NativeFunction<ffi.Uint32 Function(ffi.Pointer<ffi.Opaque>)>>(
+      _capi<ffi.NativeFunction<ffi.Int32 Function(ffi.Pointer<ffi.Opaque>)>>(
               'ICU4XIsoDateTime_day_of_week')
           .asFunction<int Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
 
@@ -7205,7 +7199,7 @@ class IsoDateTime implements ffi.Finalizable {
   static final _ICU4XIsoDateTime_week_of_month = _capi<
           ffi.NativeFunction<
               ffi.Uint32 Function(ffi.Pointer<ffi.Opaque>,
-                  ffi.Uint32)>>('ICU4XIsoDateTime_week_of_month')
+                  ffi.Int32)>>('ICU4XIsoDateTime_week_of_month')
       .asFunction<int Function(ffi.Pointer<ffi.Opaque>, int)>(isLeaf: true);
 
   /// Returns the week number in this year, using week data
@@ -7223,10 +7217,10 @@ class IsoDateTime implements ffi.Finalizable {
   // ignore: non_constant_identifier_names
   static final _ICU4XIsoDateTime_week_of_year = _capi<
           ffi.NativeFunction<
-              _ResultWeekOfFfiUint32 Function(ffi.Pointer<ffi.Opaque>,
+              _ResultWeekOfFfiInt32 Function(ffi.Pointer<ffi.Opaque>,
                   ffi.Pointer<ffi.Opaque>)>>('ICU4XIsoDateTime_week_of_year')
       .asFunction<
-          _ResultWeekOfFfiUint32 Function(
+          _ResultWeekOfFfiInt32 Function(
               ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
 
   /// Returns 1-indexed number of the month of this date in its year
@@ -7329,11 +7323,11 @@ enum IsoTimeZoneMinuteDisplay {
 }
 
 class _IsoTimeZoneOptionsFfi extends ffi.Struct {
-  @ffi.Uint32()
+  @ffi.Int32()
   external int format;
-  @ffi.Uint32()
+  @ffi.Int32()
   external int minutes;
-  @ffi.Uint32()
+  @ffi.Int32()
   external int seconds;
 }
 
@@ -7519,9 +7513,9 @@ class LineBreakIteratorUtf8 implements ffi.Finalizable {
 
 /// See the [Rust documentation for `LineBreakOptions`](https://docs.rs/icu/latest/icu/segmenter/struct.LineBreakOptions.html) for more information.
 class _LineBreakOptionsV1Ffi extends ffi.Struct {
-  @ffi.Uint32()
+  @ffi.Int32()
   external int strictness;
-  @ffi.Uint32()
+  @ffi.Int32()
   external int wordOption;
   @ffi.Bool()
   external bool jaZh;
@@ -7614,9 +7608,9 @@ class LineSegmenter implements ffi.Finalizable {
   // ignore: non_constant_identifier_names
   static final _ICU4XLineSegmenter_create_auto = _capi<
           ffi.NativeFunction<
-              _ResultOpaqueUint32 Function(
+              _ResultOpaqueInt32 Function(
                   ffi.Pointer<ffi.Opaque>)>>('ICU4XLineSegmenter_create_auto')
-      .asFunction<_ResultOpaqueUint32 Function(ffi.Pointer<ffi.Opaque>)>(
+      .asFunction<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(
           isLeaf: true);
 
   /// Construct a [`ICU4XLineSegmenter`] with default options and LSTM payload data for
@@ -7633,9 +7627,9 @@ class LineSegmenter implements ffi.Finalizable {
   // ignore: non_constant_identifier_names
   static final _ICU4XLineSegmenter_create_lstm = _capi<
           ffi.NativeFunction<
-              _ResultOpaqueUint32 Function(
+              _ResultOpaqueInt32 Function(
                   ffi.Pointer<ffi.Opaque>)>>('ICU4XLineSegmenter_create_lstm')
-      .asFunction<_ResultOpaqueUint32 Function(ffi.Pointer<ffi.Opaque>)>(
+      .asFunction<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(
           isLeaf: true);
 
   /// Construct a [`ICU4XLineSegmenter`] with default options and dictionary payload data for
@@ -7652,9 +7646,9 @@ class LineSegmenter implements ffi.Finalizable {
   // ignore: non_constant_identifier_names
   static final _ICU4XLineSegmenter_create_dictionary = _capi<
               ffi.NativeFunction<
-                  _ResultOpaqueUint32 Function(ffi.Pointer<ffi.Opaque>)>>(
+                  _ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>>(
           'ICU4XLineSegmenter_create_dictionary')
-      .asFunction<_ResultOpaqueUint32 Function(ffi.Pointer<ffi.Opaque>)>(
+      .asFunction<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(
           isLeaf: true);
 
   /// Construct a [`ICU4XLineSegmenter`] with custom options. It automatically loads the best
@@ -7673,11 +7667,11 @@ class LineSegmenter implements ffi.Finalizable {
   // ignore: non_constant_identifier_names
   static final _ICU4XLineSegmenter_create_auto_with_options_v1 = _capi<
               ffi.NativeFunction<
-                  _ResultOpaqueUint32 Function(
+                  _ResultOpaqueInt32 Function(
                       ffi.Pointer<ffi.Opaque>, _LineBreakOptionsV1Ffi)>>(
           'ICU4XLineSegmenter_create_auto_with_options_v1')
       .asFunction<
-          _ResultOpaqueUint32 Function(
+          _ResultOpaqueInt32 Function(
               ffi.Pointer<ffi.Opaque>, _LineBreakOptionsV1Ffi)>(isLeaf: true);
 
   /// Construct a [`ICU4XLineSegmenter`] with custom options and LSTM payload data for
@@ -7696,11 +7690,11 @@ class LineSegmenter implements ffi.Finalizable {
   // ignore: non_constant_identifier_names
   static final _ICU4XLineSegmenter_create_lstm_with_options_v1 = _capi<
               ffi.NativeFunction<
-                  _ResultOpaqueUint32 Function(
+                  _ResultOpaqueInt32 Function(
                       ffi.Pointer<ffi.Opaque>, _LineBreakOptionsV1Ffi)>>(
           'ICU4XLineSegmenter_create_lstm_with_options_v1')
       .asFunction<
-          _ResultOpaqueUint32 Function(
+          _ResultOpaqueInt32 Function(
               ffi.Pointer<ffi.Opaque>, _LineBreakOptionsV1Ffi)>(isLeaf: true);
 
   /// Construct a [`ICU4XLineSegmenter`] with custom options and dictionary payload data for
@@ -7719,11 +7713,11 @@ class LineSegmenter implements ffi.Finalizable {
   // ignore: non_constant_identifier_names
   static final _ICU4XLineSegmenter_create_dictionary_with_options_v1 = _capi<
               ffi.NativeFunction<
-                  _ResultOpaqueUint32 Function(
+                  _ResultOpaqueInt32 Function(
                       ffi.Pointer<ffi.Opaque>, _LineBreakOptionsV1Ffi)>>(
           'ICU4XLineSegmenter_create_dictionary_with_options_v1')
       .asFunction<
-          _ResultOpaqueUint32 Function(
+          _ResultOpaqueInt32 Function(
               ffi.Pointer<ffi.Opaque>, _LineBreakOptionsV1Ffi)>(isLeaf: true);
 
   /// Segments a (potentially ill-formed) UTF-8 string.
@@ -7892,12 +7886,12 @@ class ListFormatter implements ffi.Finalizable {
   // ignore: non_constant_identifier_names
   static final _ICU4XListFormatter_create_and_with_length = _capi<
           ffi.NativeFunction<
-              _ResultOpaqueUint32 Function(
+              _ResultOpaqueInt32 Function(
                   ffi.Pointer<ffi.Opaque>,
                   ffi.Pointer<ffi.Opaque>,
-                  ffi.Uint32)>>('ICU4XListFormatter_create_and_with_length')
+                  ffi.Int32)>>('ICU4XListFormatter_create_and_with_length')
       .asFunction<
-          _ResultOpaqueUint32 Function(ffi.Pointer<ffi.Opaque>,
+          _ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>,
               ffi.Pointer<ffi.Opaque>, int)>(isLeaf: true);
 
   /// Construct a new ICU4XListFormatter instance for And patterns
@@ -7915,12 +7909,12 @@ class ListFormatter implements ffi.Finalizable {
   // ignore: non_constant_identifier_names
   static final _ICU4XListFormatter_create_or_with_length = _capi<
           ffi.NativeFunction<
-              _ResultOpaqueUint32 Function(
+              _ResultOpaqueInt32 Function(
                   ffi.Pointer<ffi.Opaque>,
                   ffi.Pointer<ffi.Opaque>,
-                  ffi.Uint32)>>('ICU4XListFormatter_create_or_with_length')
+                  ffi.Int32)>>('ICU4XListFormatter_create_or_with_length')
       .asFunction<
-          _ResultOpaqueUint32 Function(ffi.Pointer<ffi.Opaque>,
+          _ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>,
               ffi.Pointer<ffi.Opaque>, int)>(isLeaf: true);
 
   /// Construct a new ICU4XListFormatter instance for And patterns
@@ -7938,12 +7932,12 @@ class ListFormatter implements ffi.Finalizable {
   // ignore: non_constant_identifier_names
   static final _ICU4XListFormatter_create_unit_with_length = _capi<
           ffi.NativeFunction<
-              _ResultOpaqueUint32 Function(
+              _ResultOpaqueInt32 Function(
                   ffi.Pointer<ffi.Opaque>,
                   ffi.Pointer<ffi.Opaque>,
-                  ffi.Uint32)>>('ICU4XListFormatter_create_unit_with_length')
+                  ffi.Int32)>>('ICU4XListFormatter_create_unit_with_length')
       .asFunction<
-          _ResultOpaqueUint32 Function(ffi.Pointer<ffi.Opaque>,
+          _ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>,
               ffi.Pointer<ffi.Opaque>, int)>(isLeaf: true);
 
   /// See the [Rust documentation for `format`](https://docs.rs/icu/latest/icu/list/struct.ListFormatter.html#method.format) for more information.
@@ -7960,12 +7954,12 @@ class ListFormatter implements ffi.Finalizable {
   // ignore: non_constant_identifier_names
   static final _ICU4XListFormatter_format = _capi<
           ffi.NativeFunction<
-              _ResultVoidUint32 Function(
+              _ResultVoidInt32 Function(
                   ffi.Pointer<ffi.Opaque>,
                   ffi.Pointer<ffi.Opaque>,
                   ffi.Pointer<ffi.Opaque>)>>('ICU4XListFormatter_format')
       .asFunction<
-          _ResultVoidUint32 Function(ffi.Pointer<ffi.Opaque>,
+          _ResultVoidInt32 Function(ffi.Pointer<ffi.Opaque>,
               ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
 }
 
@@ -8010,9 +8004,9 @@ class Locale implements ffi.Finalizable {
   // ignore: non_constant_identifier_names
   static final _ICU4XLocale_create_from_string = _capi<
           ffi.NativeFunction<
-              _ResultOpaqueUint32 Function(ffi.Pointer<ffi2.Utf8>,
+              _ResultOpaqueInt32 Function(ffi.Pointer<ffi2.Utf8>,
                   ffi.Size)>>('ICU4XLocale_create_from_string')
-      .asFunction<_ResultOpaqueUint32 Function(ffi.Pointer<ffi2.Utf8>, int)>(
+      .asFunction<_ResultOpaqueInt32 Function(ffi.Pointer<ffi2.Utf8>, int)>(
           isLeaf: true);
 
   /// Construct a default undefined [`ICU4XLocale`] "und".
@@ -8060,10 +8054,10 @@ class Locale implements ffi.Finalizable {
   // ignore: non_constant_identifier_names
   static final _ICU4XLocale_basename = _capi<
           ffi.NativeFunction<
-              _ResultVoidUint32 Function(ffi.Pointer<ffi.Opaque>,
+              _ResultVoidInt32 Function(ffi.Pointer<ffi.Opaque>,
                   ffi.Pointer<ffi.Opaque>)>>('ICU4XLocale_basename')
       .asFunction<
-          _ResultVoidUint32 Function(
+          _ResultVoidInt32 Function(
               ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
 
   /// Write a string representation of the unicode extension to `write`
@@ -8086,14 +8080,14 @@ class Locale implements ffi.Finalizable {
   // ignore: non_constant_identifier_names
   static final _ICU4XLocale_get_unicode_extension = _capi<
               ffi.NativeFunction<
-                  _ResultVoidUint32 Function(
+                  _ResultVoidInt32 Function(
                       ffi.Pointer<ffi.Opaque>,
                       ffi.Pointer<ffi2.Utf8>,
                       ffi.Size,
                       ffi.Pointer<ffi.Opaque>)>>(
           'ICU4XLocale_get_unicode_extension')
       .asFunction<
-          _ResultVoidUint32 Function(
+          _ResultVoidInt32 Function(
               ffi.Pointer<ffi.Opaque>,
               ffi.Pointer<ffi2.Utf8>,
               int,
@@ -8114,10 +8108,10 @@ class Locale implements ffi.Finalizable {
   // ignore: non_constant_identifier_names
   static final _ICU4XLocale_language = _capi<
           ffi.NativeFunction<
-              _ResultVoidUint32 Function(ffi.Pointer<ffi.Opaque>,
+              _ResultVoidInt32 Function(ffi.Pointer<ffi.Opaque>,
                   ffi.Pointer<ffi.Opaque>)>>('ICU4XLocale_language')
       .asFunction<
-          _ResultVoidUint32 Function(
+          _ResultVoidInt32 Function(
               ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
 
   /// Set the language part of the [`ICU4XLocale`].
@@ -8138,12 +8132,12 @@ class Locale implements ffi.Finalizable {
   // ignore: non_constant_identifier_names
   static final _ICU4XLocale_set_language = _capi<
           ffi.NativeFunction<
-              _ResultVoidUint32 Function(
+              _ResultVoidInt32 Function(
                   ffi.Pointer<ffi.Opaque>,
                   ffi.Pointer<ffi2.Utf8>,
                   ffi.Size)>>('ICU4XLocale_set_language')
       .asFunction<
-          _ResultVoidUint32 Function(ffi.Pointer<ffi.Opaque>,
+          _ResultVoidInt32 Function(ffi.Pointer<ffi.Opaque>,
               ffi.Pointer<ffi2.Utf8>, int)>(isLeaf: true);
 
   /// Write a string representation of [`ICU4XLocale`] region to `write`
@@ -8161,10 +8155,10 @@ class Locale implements ffi.Finalizable {
   // ignore: non_constant_identifier_names
   static final _ICU4XLocale_region = _capi<
           ffi.NativeFunction<
-              _ResultVoidUint32 Function(ffi.Pointer<ffi.Opaque>,
+              _ResultVoidInt32 Function(ffi.Pointer<ffi.Opaque>,
                   ffi.Pointer<ffi.Opaque>)>>('ICU4XLocale_region')
       .asFunction<
-          _ResultVoidUint32 Function(
+          _ResultVoidInt32 Function(
               ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
 
   /// Set the region part of the [`ICU4XLocale`].
@@ -8185,10 +8179,10 @@ class Locale implements ffi.Finalizable {
   // ignore: non_constant_identifier_names
   static final _ICU4XLocale_set_region = _capi<
           ffi.NativeFunction<
-              _ResultVoidUint32 Function(ffi.Pointer<ffi.Opaque>,
+              _ResultVoidInt32 Function(ffi.Pointer<ffi.Opaque>,
                   ffi.Pointer<ffi2.Utf8>, ffi.Size)>>('ICU4XLocale_set_region')
       .asFunction<
-          _ResultVoidUint32 Function(ffi.Pointer<ffi.Opaque>,
+          _ResultVoidInt32 Function(ffi.Pointer<ffi.Opaque>,
               ffi.Pointer<ffi2.Utf8>, int)>(isLeaf: true);
 
   /// Write a string representation of [`ICU4XLocale`] script to `write`
@@ -8206,10 +8200,10 @@ class Locale implements ffi.Finalizable {
   // ignore: non_constant_identifier_names
   static final _ICU4XLocale_script = _capi<
           ffi.NativeFunction<
-              _ResultVoidUint32 Function(ffi.Pointer<ffi.Opaque>,
+              _ResultVoidInt32 Function(ffi.Pointer<ffi.Opaque>,
                   ffi.Pointer<ffi.Opaque>)>>('ICU4XLocale_script')
       .asFunction<
-          _ResultVoidUint32 Function(
+          _ResultVoidInt32 Function(
               ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
 
   /// Set the script part of the [`ICU4XLocale`]. Pass an empty string to remove the script.
@@ -8230,10 +8224,10 @@ class Locale implements ffi.Finalizable {
   // ignore: non_constant_identifier_names
   static final _ICU4XLocale_set_script = _capi<
           ffi.NativeFunction<
-              _ResultVoidUint32 Function(ffi.Pointer<ffi.Opaque>,
+              _ResultVoidInt32 Function(ffi.Pointer<ffi.Opaque>,
                   ffi.Pointer<ffi2.Utf8>, ffi.Size)>>('ICU4XLocale_set_script')
       .asFunction<
-          _ResultVoidUint32 Function(ffi.Pointer<ffi.Opaque>,
+          _ResultVoidInt32 Function(ffi.Pointer<ffi.Opaque>,
               ffi.Pointer<ffi2.Utf8>, int)>(isLeaf: true);
 
   /// Best effort locale canonicalizer that doesn't need any data
@@ -8258,10 +8252,10 @@ class Locale implements ffi.Finalizable {
   // ignore: non_constant_identifier_names
   static final _ICU4XLocale_canonicalize = _capi<
           ffi.NativeFunction<
-              _ResultVoidUint32 Function(ffi.Pointer<ffi2.Utf8>, ffi.Size,
+              _ResultVoidInt32 Function(ffi.Pointer<ffi2.Utf8>, ffi.Size,
                   ffi.Pointer<ffi.Opaque>)>>('ICU4XLocale_canonicalize')
       .asFunction<
-          _ResultVoidUint32 Function(ffi.Pointer<ffi2.Utf8>, int,
+          _ResultVoidInt32 Function(ffi.Pointer<ffi2.Utf8>, int,
               ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
 
   /// Write a string representation of [`ICU4XLocale`] to `write`
@@ -8280,10 +8274,10 @@ class Locale implements ffi.Finalizable {
   // ignore: non_constant_identifier_names
   static final _ICU4XLocale_to_string = _capi<
           ffi.NativeFunction<
-              _ResultVoidUint32 Function(ffi.Pointer<ffi.Opaque>,
+              _ResultVoidInt32 Function(ffi.Pointer<ffi.Opaque>,
                   ffi.Pointer<ffi.Opaque>)>>('ICU4XLocale_to_string')
       .asFunction<
-          _ResultVoidUint32 Function(
+          _ResultVoidInt32 Function(
               ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
 
   /// See the [Rust documentation for `normalizing_eq`](https://docs.rs/icu/latest/icu/locid/struct.Locale.html#method.normalizing_eq) for more information.
@@ -8320,7 +8314,7 @@ class Locale implements ffi.Finalizable {
   // ignore: non_constant_identifier_names
   static final _ICU4XLocale_strict_cmp = _capi<
           ffi.NativeFunction<
-              ffi.Uint32 Function(ffi.Pointer<ffi.Opaque>,
+              ffi.Int32 Function(ffi.Pointer<ffi.Opaque>,
                   ffi.Pointer<ffi2.Utf8>, ffi.Size)>>('ICU4XLocale_strict_cmp')
       .asFunction<
           int Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi2.Utf8>,
@@ -8353,9 +8347,9 @@ class LocaleCanonicalizer implements ffi.Finalizable {
   // ignore: non_constant_identifier_names
   static final _ICU4XLocaleCanonicalizer_create = _capi<
           ffi.NativeFunction<
-              _ResultOpaqueUint32 Function(
+              _ResultOpaqueInt32 Function(
                   ffi.Pointer<ffi.Opaque>)>>('ICU4XLocaleCanonicalizer_create')
-      .asFunction<_ResultOpaqueUint32 Function(ffi.Pointer<ffi.Opaque>)>(
+      .asFunction<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(
           isLeaf: true);
 
   /// Create a new [`ICU4XLocaleCanonicalizer`] with extended data.
@@ -8372,9 +8366,9 @@ class LocaleCanonicalizer implements ffi.Finalizable {
   // ignore: non_constant_identifier_names
   static final _ICU4XLocaleCanonicalizer_create_extended = _capi<
               ffi.NativeFunction<
-                  _ResultOpaqueUint32 Function(ffi.Pointer<ffi.Opaque>)>>(
+                  _ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>>(
           'ICU4XLocaleCanonicalizer_create_extended')
-      .asFunction<_ResultOpaqueUint32 Function(ffi.Pointer<ffi.Opaque>)>(
+      .asFunction<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(
           isLeaf: true);
 
   /// FFI version of `LocaleCanonicalizer::canonicalize()`.
@@ -8389,7 +8383,7 @@ class LocaleCanonicalizer implements ffi.Finalizable {
   // ignore: non_constant_identifier_names
   static final _ICU4XLocaleCanonicalizer_canonicalize = _capi<
               ffi.NativeFunction<
-                  ffi.Uint32 Function(
+                  ffi.Int32 Function(
                       ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>>(
           'ICU4XLocaleCanonicalizer_canonicalize')
       .asFunction<
@@ -8428,9 +8422,9 @@ class LocaleDirectionality implements ffi.Finalizable {
   // ignore: non_constant_identifier_names
   static final _ICU4XLocaleDirectionality_create = _capi<
           ffi.NativeFunction<
-              _ResultOpaqueUint32 Function(
+              _ResultOpaqueInt32 Function(
                   ffi.Pointer<ffi.Opaque>)>>('ICU4XLocaleDirectionality_create')
-      .asFunction<_ResultOpaqueUint32 Function(ffi.Pointer<ffi.Opaque>)>(
+      .asFunction<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(
           isLeaf: true);
 
   /// Construct a new ICU4XLocaleDirectionality instance with a custom expander
@@ -8448,11 +8442,11 @@ class LocaleDirectionality implements ffi.Finalizable {
   // ignore: non_constant_identifier_names
   static final _ICU4XLocaleDirectionality_create_with_expander = _capi<
               ffi.NativeFunction<
-                  _ResultOpaqueUint32 Function(
+                  _ResultOpaqueInt32 Function(
                       ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>>(
           'ICU4XLocaleDirectionality_create_with_expander')
       .asFunction<
-          _ResultOpaqueUint32 Function(
+          _ResultOpaqueInt32 Function(
               ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
 
   /// See the [Rust documentation for `get`](https://docs.rs/icu/latest/icu/locid_transform/struct.LocaleDirectionality.html#method.get) for more information.
@@ -8465,7 +8459,7 @@ class LocaleDirectionality implements ffi.Finalizable {
   // ignore: non_constant_identifier_names
   static final _ICU4XLocaleDirectionality_get = _capi<
           ffi.NativeFunction<
-              ffi.Uint32 Function(ffi.Pointer<ffi.Opaque>,
+              ffi.Int32 Function(ffi.Pointer<ffi.Opaque>,
                   ffi.Pointer<ffi.Opaque>)>>('ICU4XLocaleDirectionality_get')
       .asFunction<
           int Function(
@@ -8532,11 +8526,11 @@ class LocaleDisplayNamesFormatter implements ffi.Finalizable {
   // ignore: non_constant_identifier_names
   static final _ICU4XLocaleDisplayNamesFormatter_create = _capi<
               ffi.NativeFunction<
-                  _ResultOpaqueUint32 Function(ffi.Pointer<ffi.Opaque>,
+                  _ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>,
                       ffi.Pointer<ffi.Opaque>, _DisplayNamesOptionsV1Ffi)>>(
           'ICU4XLocaleDisplayNamesFormatter_create')
       .asFunction<
-          _ResultOpaqueUint32 Function(
+          _ResultOpaqueInt32 Function(
               ffi.Pointer<ffi.Opaque>,
               ffi.Pointer<ffi.Opaque>,
               _DisplayNamesOptionsV1Ffi)>(isLeaf: true);
@@ -8557,11 +8551,11 @@ class LocaleDisplayNamesFormatter implements ffi.Finalizable {
   // ignore: non_constant_identifier_names
   static final _ICU4XLocaleDisplayNamesFormatter_of = _capi<
               ffi.NativeFunction<
-                  _ResultVoidUint32 Function(ffi.Pointer<ffi.Opaque>,
+                  _ResultVoidInt32 Function(ffi.Pointer<ffi.Opaque>,
                       ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>>(
           'ICU4XLocaleDisplayNamesFormatter_of')
       .asFunction<
-          _ResultVoidUint32 Function(ffi.Pointer<ffi.Opaque>,
+          _ResultVoidInt32 Function(ffi.Pointer<ffi.Opaque>,
               ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
 }
 
@@ -8591,9 +8585,9 @@ class LocaleExpander implements ffi.Finalizable {
   // ignore: non_constant_identifier_names
   static final _ICU4XLocaleExpander_create = _capi<
           ffi.NativeFunction<
-              _ResultOpaqueUint32 Function(
+              _ResultOpaqueInt32 Function(
                   ffi.Pointer<ffi.Opaque>)>>('ICU4XLocaleExpander_create')
-      .asFunction<_ResultOpaqueUint32 Function(ffi.Pointer<ffi.Opaque>)>(
+      .asFunction<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(
           isLeaf: true);
 
   /// Create a new [`ICU4XLocaleExpander`] with extended data.
@@ -8609,9 +8603,9 @@ class LocaleExpander implements ffi.Finalizable {
   // ignore: non_constant_identifier_names
   static final _ICU4XLocaleExpander_create_extended = _capi<
               ffi.NativeFunction<
-                  _ResultOpaqueUint32 Function(ffi.Pointer<ffi.Opaque>)>>(
+                  _ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>>(
           'ICU4XLocaleExpander_create_extended')
-      .asFunction<_ResultOpaqueUint32 Function(ffi.Pointer<ffi.Opaque>)>(
+      .asFunction<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(
           isLeaf: true);
 
   /// FFI version of `LocaleExpander::maximize()`.
@@ -8626,7 +8620,7 @@ class LocaleExpander implements ffi.Finalizable {
   // ignore: non_constant_identifier_names
   static final _ICU4XLocaleExpander_maximize = _capi<
           ffi.NativeFunction<
-              ffi.Uint32 Function(ffi.Pointer<ffi.Opaque>,
+              ffi.Int32 Function(ffi.Pointer<ffi.Opaque>,
                   ffi.Pointer<ffi.Opaque>)>>('ICU4XLocaleExpander_maximize')
       .asFunction<
           int Function(
@@ -8644,7 +8638,7 @@ class LocaleExpander implements ffi.Finalizable {
   // ignore: non_constant_identifier_names
   static final _ICU4XLocaleExpander_minimize = _capi<
           ffi.NativeFunction<
-              ffi.Uint32 Function(ffi.Pointer<ffi.Opaque>,
+              ffi.Int32 Function(ffi.Pointer<ffi.Opaque>,
                   ffi.Pointer<ffi.Opaque>)>>('ICU4XLocaleExpander_minimize')
       .asFunction<
           int Function(
@@ -8655,10 +8649,10 @@ class LocaleExpander implements ffi.Finalizable {
 ///
 /// See the [Rust documentation for `LocaleFallbackConfig`](https://docs.rs/icu/latest/icu/locid_transform/fallback/struct.LocaleFallbackConfig.html) for more information.
 class _LocaleFallbackConfigFfi extends ffi.Struct {
-  @ffi.Uint32()
+  @ffi.Int32()
   external int priority;
   external _SliceFfi2Utf8 extensionKey;
-  @ffi.Uint32()
+  @ffi.Int32()
   external int fallbackSupplement;
 }
 
@@ -8796,9 +8790,9 @@ class LocaleFallbacker implements ffi.Finalizable {
   // ignore: non_constant_identifier_names
   static final _ICU4XLocaleFallbacker_create = _capi<
           ffi.NativeFunction<
-              _ResultOpaqueUint32 Function(
+              _ResultOpaqueInt32 Function(
                   ffi.Pointer<ffi.Opaque>)>>('ICU4XLocaleFallbacker_create')
-      .asFunction<_ResultOpaqueUint32 Function(ffi.Pointer<ffi.Opaque>)>(
+      .asFunction<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(
           isLeaf: true);
 
   /// Creates a new `ICU4XLocaleFallbacker` without data for limited functionality.
@@ -8829,11 +8823,11 @@ class LocaleFallbacker implements ffi.Finalizable {
   // ignore: non_constant_identifier_names
   static final _ICU4XLocaleFallbacker_for_config = _capi<
               ffi.NativeFunction<
-                  _ResultOpaqueUint32 Function(
+                  _ResultOpaqueInt32 Function(
                       ffi.Pointer<ffi.Opaque>, _LocaleFallbackConfigFfi)>>(
           'ICU4XLocaleFallbacker_for_config')
       .asFunction<
-          _ResultOpaqueUint32 Function(
+          _ResultOpaqueInt32 Function(
               ffi.Pointer<ffi.Opaque>, _LocaleFallbackConfigFfi)>(isLeaf: true);
 }
 
@@ -8900,9 +8894,9 @@ class MetazoneCalculator implements ffi.Finalizable {
   // ignore: non_constant_identifier_names
   static final _ICU4XMetazoneCalculator_create = _capi<
           ffi.NativeFunction<
-              _ResultOpaqueUint32 Function(
+              _ResultOpaqueInt32 Function(
                   ffi.Pointer<ffi.Opaque>)>>('ICU4XMetazoneCalculator_create')
-      .asFunction<_ResultOpaqueUint32 Function(ffi.Pointer<ffi.Opaque>)>(
+      .asFunction<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(
           isLeaf: true);
 }
 
@@ -9035,9 +9029,9 @@ enum PluralCategory {
   // ignore: non_constant_identifier_names
   static final _ICU4XPluralCategory_get_for_cldr_string = _capi<
           ffi.NativeFunction<
-              _ResultUint32Void Function(ffi.Pointer<ffi2.Utf8>,
+              _ResultInt32Void Function(ffi.Pointer<ffi2.Utf8>,
                   ffi.Size)>>('ICU4XPluralCategory_get_for_cldr_string')
-      .asFunction<_ResultUint32Void Function(ffi.Pointer<ffi2.Utf8>, int)>(
+      .asFunction<_ResultInt32Void Function(ffi.Pointer<ffi2.Utf8>, int)>(
           isLeaf: true);
 }
 
@@ -9072,9 +9066,9 @@ class PluralOperands implements ffi.Finalizable {
   // ignore: non_constant_identifier_names
   static final _ICU4XPluralOperands_create_from_string = _capi<
           ffi.NativeFunction<
-              _ResultOpaqueUint32 Function(ffi.Pointer<ffi2.Utf8>,
+              _ResultOpaqueInt32 Function(ffi.Pointer<ffi2.Utf8>,
                   ffi.Size)>>('ICU4XPluralOperands_create_from_string')
-      .asFunction<_ResultOpaqueUint32 Function(ffi.Pointer<ffi2.Utf8>, int)>(
+      .asFunction<_ResultOpaqueInt32 Function(ffi.Pointer<ffi2.Utf8>, int)>(
           isLeaf: true);
 }
 
@@ -9105,10 +9099,10 @@ class PluralRules implements ffi.Finalizable {
   // ignore: non_constant_identifier_names
   static final _ICU4XPluralRules_create_cardinal = _capi<
           ffi.NativeFunction<
-              _ResultOpaqueUint32 Function(ffi.Pointer<ffi.Opaque>,
+              _ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>,
                   ffi.Pointer<ffi.Opaque>)>>('ICU4XPluralRules_create_cardinal')
       .asFunction<
-          _ResultOpaqueUint32 Function(
+          _ResultOpaqueInt32 Function(
               ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
 
   /// Construct an [`ICU4XPluralRules`] for the given locale, for ordinal numbers
@@ -9125,10 +9119,10 @@ class PluralRules implements ffi.Finalizable {
   // ignore: non_constant_identifier_names
   static final _ICU4XPluralRules_create_ordinal = _capi<
           ffi.NativeFunction<
-              _ResultOpaqueUint32 Function(ffi.Pointer<ffi.Opaque>,
+              _ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>,
                   ffi.Pointer<ffi.Opaque>)>>('ICU4XPluralRules_create_ordinal')
       .asFunction<
-          _ResultOpaqueUint32 Function(
+          _ResultOpaqueInt32 Function(
               ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
 
   /// Get the category for a given number represented as operands
@@ -9142,7 +9136,7 @@ class PluralRules implements ffi.Finalizable {
   // ignore: non_constant_identifier_names
   static final _ICU4XPluralRules_category_for = _capi<
           ffi.NativeFunction<
-              ffi.Uint32 Function(ffi.Pointer<ffi.Opaque>,
+              ffi.Int32 Function(ffi.Pointer<ffi.Opaque>,
                   ffi.Pointer<ffi.Opaque>)>>('ICU4XPluralRules_category_for')
       .asFunction<
           int Function(
@@ -9246,9 +9240,9 @@ class PropertyValueNameToEnumMapper implements ffi.Finalizable {
   static final _ICU4XPropertyValueNameToEnumMapper_load_general_category =
       _capi<
                   ffi.NativeFunction<
-                      _ResultOpaqueUint32 Function(ffi.Pointer<ffi.Opaque>)>>(
+                      _ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>>(
               'ICU4XPropertyValueNameToEnumMapper_load_general_category')
-          .asFunction<_ResultOpaqueUint32 Function(ffi.Pointer<ffi.Opaque>)>(
+          .asFunction<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(
               isLeaf: true);
 
   /// See the [Rust documentation for `name_to_enum_mapper`](https://docs.rs/icu/latest/icu/properties/struct.BidiClass.html#method.name_to_enum_mapper) for more information.
@@ -9263,9 +9257,9 @@ class PropertyValueNameToEnumMapper implements ffi.Finalizable {
   // ignore: non_constant_identifier_names
   static final _ICU4XPropertyValueNameToEnumMapper_load_bidi_class = _capi<
               ffi.NativeFunction<
-                  _ResultOpaqueUint32 Function(ffi.Pointer<ffi.Opaque>)>>(
+                  _ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>>(
           'ICU4XPropertyValueNameToEnumMapper_load_bidi_class')
-      .asFunction<_ResultOpaqueUint32 Function(ffi.Pointer<ffi.Opaque>)>(
+      .asFunction<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(
           isLeaf: true);
 
   /// See the [Rust documentation for `name_to_enum_mapper`](https://docs.rs/icu/latest/icu/properties/struct.EastAsianWidth.html#method.name_to_enum_mapper) for more information.
@@ -9282,9 +9276,9 @@ class PropertyValueNameToEnumMapper implements ffi.Finalizable {
   static final _ICU4XPropertyValueNameToEnumMapper_load_east_asian_width =
       _capi<
                   ffi.NativeFunction<
-                      _ResultOpaqueUint32 Function(ffi.Pointer<ffi.Opaque>)>>(
+                      _ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>>(
               'ICU4XPropertyValueNameToEnumMapper_load_east_asian_width')
-          .asFunction<_ResultOpaqueUint32 Function(ffi.Pointer<ffi.Opaque>)>(
+          .asFunction<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(
               isLeaf: true);
 
   /// See the [Rust documentation for `name_to_enum_mapper`](https://docs.rs/icu/latest/icu/properties/struct.IndicSyllabicCategory.html#method.name_to_enum_mapper) for more information.
@@ -9302,9 +9296,9 @@ class PropertyValueNameToEnumMapper implements ffi.Finalizable {
   static final _ICU4XPropertyValueNameToEnumMapper_load_indic_syllabic_category =
       _capi<
                   ffi.NativeFunction<
-                      _ResultOpaqueUint32 Function(ffi.Pointer<ffi.Opaque>)>>(
+                      _ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>>(
               'ICU4XPropertyValueNameToEnumMapper_load_indic_syllabic_category')
-          .asFunction<_ResultOpaqueUint32 Function(ffi.Pointer<ffi.Opaque>)>(
+          .asFunction<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(
               isLeaf: true);
 
   /// See the [Rust documentation for `name_to_enum_mapper`](https://docs.rs/icu/latest/icu/properties/struct.LineBreak.html#method.name_to_enum_mapper) for more information.
@@ -9319,9 +9313,9 @@ class PropertyValueNameToEnumMapper implements ffi.Finalizable {
   // ignore: non_constant_identifier_names
   static final _ICU4XPropertyValueNameToEnumMapper_load_line_break = _capi<
               ffi.NativeFunction<
-                  _ResultOpaqueUint32 Function(ffi.Pointer<ffi.Opaque>)>>(
+                  _ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>>(
           'ICU4XPropertyValueNameToEnumMapper_load_line_break')
-      .asFunction<_ResultOpaqueUint32 Function(ffi.Pointer<ffi.Opaque>)>(
+      .asFunction<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(
           isLeaf: true);
 
   /// See the [Rust documentation for `get_name_to_enum_mapper`](https://docs.rs/icu/latest/icu/properties/struct.GraphemeClusterBreak.html#method.get_name_to_enum_mapper) for more information.
@@ -9339,9 +9333,9 @@ class PropertyValueNameToEnumMapper implements ffi.Finalizable {
   static final _ICU4XPropertyValueNameToEnumMapper_load_grapheme_cluster_break =
       _capi<
                   ffi.NativeFunction<
-                      _ResultOpaqueUint32 Function(ffi.Pointer<ffi.Opaque>)>>(
+                      _ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>>(
               'ICU4XPropertyValueNameToEnumMapper_load_grapheme_cluster_break')
-          .asFunction<_ResultOpaqueUint32 Function(ffi.Pointer<ffi.Opaque>)>(
+          .asFunction<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(
               isLeaf: true);
 
   /// See the [Rust documentation for `name_to_enum_mapper`](https://docs.rs/icu/latest/icu/properties/struct.WordBreak.html#method.name_to_enum_mapper) for more information.
@@ -9356,9 +9350,9 @@ class PropertyValueNameToEnumMapper implements ffi.Finalizable {
   // ignore: non_constant_identifier_names
   static final _ICU4XPropertyValueNameToEnumMapper_load_word_break = _capi<
               ffi.NativeFunction<
-                  _ResultOpaqueUint32 Function(ffi.Pointer<ffi.Opaque>)>>(
+                  _ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>>(
           'ICU4XPropertyValueNameToEnumMapper_load_word_break')
-      .asFunction<_ResultOpaqueUint32 Function(ffi.Pointer<ffi.Opaque>)>(
+      .asFunction<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(
           isLeaf: true);
 
   /// See the [Rust documentation for `name_to_enum_mapper`](https://docs.rs/icu/latest/icu/properties/struct.SentenceBreak.html#method.name_to_enum_mapper) for more information.
@@ -9374,9 +9368,9 @@ class PropertyValueNameToEnumMapper implements ffi.Finalizable {
   // ignore: non_constant_identifier_names
   static final _ICU4XPropertyValueNameToEnumMapper_load_sentence_break = _capi<
               ffi.NativeFunction<
-                  _ResultOpaqueUint32 Function(ffi.Pointer<ffi.Opaque>)>>(
+                  _ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>>(
           'ICU4XPropertyValueNameToEnumMapper_load_sentence_break')
-      .asFunction<_ResultOpaqueUint32 Function(ffi.Pointer<ffi.Opaque>)>(
+      .asFunction<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(
           isLeaf: true);
 
   /// See the [Rust documentation for `name_to_enum_mapper`](https://docs.rs/icu/latest/icu/properties/struct.Script.html#method.name_to_enum_mapper) for more information.
@@ -9391,9 +9385,9 @@ class PropertyValueNameToEnumMapper implements ffi.Finalizable {
   // ignore: non_constant_identifier_names
   static final _ICU4XPropertyValueNameToEnumMapper_load_script = _capi<
               ffi.NativeFunction<
-                  _ResultOpaqueUint32 Function(ffi.Pointer<ffi.Opaque>)>>(
+                  _ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>>(
           'ICU4XPropertyValueNameToEnumMapper_load_script')
-      .asFunction<_ResultOpaqueUint32 Function(ffi.Pointer<ffi.Opaque>)>(
+      .asFunction<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(
           isLeaf: true);
 }
 
@@ -9422,10 +9416,10 @@ class RegionDisplayNames implements ffi.Finalizable {
   // ignore: non_constant_identifier_names
   static final _ICU4XRegionDisplayNames_create = _capi<
           ffi.NativeFunction<
-              _ResultOpaqueUint32 Function(ffi.Pointer<ffi.Opaque>,
+              _ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>,
                   ffi.Pointer<ffi.Opaque>)>>('ICU4XRegionDisplayNames_create')
       .asFunction<
-          _ResultOpaqueUint32 Function(
+          _ResultOpaqueInt32 Function(
               ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
 
   /// Returns the locale specific display name of a region.
@@ -9450,13 +9444,13 @@ class RegionDisplayNames implements ffi.Finalizable {
   // ignore: non_constant_identifier_names
   static final _ICU4XRegionDisplayNames_of = _capi<
           ffi.NativeFunction<
-              _ResultVoidUint32 Function(
+              _ResultVoidInt32 Function(
                   ffi.Pointer<ffi.Opaque>,
                   ffi.Pointer<ffi2.Utf8>,
                   ffi.Size,
                   ffi.Pointer<ffi.Opaque>)>>('ICU4XRegionDisplayNames_of')
       .asFunction<
-          _ResultVoidUint32 Function(
+          _ResultVoidInt32 Function(
               ffi.Pointer<ffi.Opaque>,
               ffi.Pointer<ffi2.Utf8>,
               int,
@@ -9611,9 +9605,9 @@ class ScriptWithExtensions implements ffi.Finalizable {
   // ignore: non_constant_identifier_names
   static final _ICU4XScriptWithExtensions_create = _capi<
           ffi.NativeFunction<
-              _ResultOpaqueUint32 Function(
+              _ResultOpaqueInt32 Function(
                   ffi.Pointer<ffi.Opaque>)>>('ICU4XScriptWithExtensions_create')
-      .asFunction<_ResultOpaqueUint32 Function(ffi.Pointer<ffi.Opaque>)>(
+      .asFunction<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(
           isLeaf: true);
 
   /// Get the Script property value for a code point
@@ -9726,10 +9720,12 @@ class ScriptWithExtensionsBorrowed implements ffi.Finalizable {
   // ignore: non_constant_identifier_names
   static final _ICU4XScriptWithExtensionsBorrowed_get_script_extensions_val =
       _capi<
-                  ffi.NativeFunction<
-                      ffi.Pointer<
-                              ffi.Opaque>
-                          Function(ffi.Pointer<ffi.Opaque>, ffi.Uint32)>>(
+                  ffi
+                  .NativeFunction<
+                      ffi.Pointer<ffi.Opaque> Function(
+                          ffi.Pointer<ffi.Opaque>,
+                          ffi
+                              .Uint32)>>(
               'ICU4XScriptWithExtensionsBorrowed_get_script_extensions_val')
           .asFunction<
               ffi.Pointer<ffi.Opaque> Function(
@@ -9765,10 +9761,12 @@ class ScriptWithExtensionsBorrowed implements ffi.Finalizable {
   // ignore: non_constant_identifier_names
   static final _ICU4XScriptWithExtensionsBorrowed_get_script_extensions_set =
       _capi<
-                  ffi.NativeFunction<
-                      ffi.Pointer<
-                              ffi.Opaque>
-                          Function(ffi.Pointer<ffi.Opaque>, ffi.Uint16)>>(
+                  ffi
+                  .NativeFunction<
+                      ffi.Pointer<ffi.Opaque> Function(
+                          ffi.Pointer<ffi.Opaque>,
+                          ffi
+                              .Uint16)>>(
               'ICU4XScriptWithExtensionsBorrowed_get_script_extensions_set')
           .asFunction<
               ffi.Pointer<ffi.Opaque> Function(
@@ -9889,9 +9887,9 @@ class SentenceSegmenter implements ffi.Finalizable {
   // ignore: non_constant_identifier_names
   static final _ICU4XSentenceSegmenter_create = _capi<
           ffi.NativeFunction<
-              _ResultOpaqueUint32 Function(
+              _ResultOpaqueInt32 Function(
                   ffi.Pointer<ffi.Opaque>)>>('ICU4XSentenceSegmenter_create')
-      .asFunction<_ResultOpaqueUint32 Function(ffi.Pointer<ffi.Opaque>)>(
+      .asFunction<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(
           isLeaf: true);
 
   /// Segments a (potentially ill-formed) UTF-8 string.
@@ -9992,9 +9990,9 @@ class Time implements ffi.Finalizable {
   // ignore: non_constant_identifier_names
   static final _ICU4XTime_create = _capi<
           ffi.NativeFunction<
-              _ResultOpaqueUint32 Function(ffi.Uint8, ffi.Uint8, ffi.Uint8,
+              _ResultOpaqueInt32 Function(ffi.Uint8, ffi.Uint8, ffi.Uint8,
                   ffi.Uint32)>>('ICU4XTime_create')
-      .asFunction<_ResultOpaqueUint32 Function(int, int, int, int)>(
+      .asFunction<_ResultOpaqueInt32 Function(int, int, int, int)>(
           isLeaf: true);
 
   /// Creates a new [`ICU4XTime`] representing midnight (00:00.000).
@@ -10009,9 +10007,9 @@ class Time implements ffi.Finalizable {
   }
   // ignore: non_constant_identifier_names
   static final _ICU4XTime_create_midnight =
-      _capi<ffi.NativeFunction<_ResultOpaqueUint32 Function()>>(
+      _capi<ffi.NativeFunction<_ResultOpaqueInt32 Function()>>(
               'ICU4XTime_create_midnight')
-          .asFunction<_ResultOpaqueUint32 Function()>(isLeaf: true);
+          .asFunction<_ResultOpaqueInt32 Function()>(isLeaf: true);
 
   /// Returns the hour in this time
   ///
@@ -10098,12 +10096,12 @@ class TimeFormatter implements ffi.Finalizable {
   // ignore: non_constant_identifier_names
   static final _ICU4XTimeFormatter_create_with_length = _capi<
           ffi.NativeFunction<
-              _ResultOpaqueUint32 Function(
+              _ResultOpaqueInt32 Function(
                   ffi.Pointer<ffi.Opaque>,
                   ffi.Pointer<ffi.Opaque>,
-                  ffi.Uint32)>>('ICU4XTimeFormatter_create_with_length')
+                  ffi.Int32)>>('ICU4XTimeFormatter_create_with_length')
       .asFunction<
-          _ResultOpaqueUint32 Function(ffi.Pointer<ffi.Opaque>,
+          _ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>,
               ffi.Pointer<ffi.Opaque>, int)>(isLeaf: true);
 
   /// Formats a [`ICU4XTime`] to a string.
@@ -10122,12 +10120,12 @@ class TimeFormatter implements ffi.Finalizable {
   // ignore: non_constant_identifier_names
   static final _ICU4XTimeFormatter_format_time = _capi<
           ffi.NativeFunction<
-              _ResultVoidUint32 Function(
+              _ResultVoidInt32 Function(
                   ffi.Pointer<ffi.Opaque>,
                   ffi.Pointer<ffi.Opaque>,
                   ffi.Pointer<ffi.Opaque>)>>('ICU4XTimeFormatter_format_time')
       .asFunction<
-          _ResultVoidUint32 Function(ffi.Pointer<ffi.Opaque>,
+          _ResultVoidInt32 Function(ffi.Pointer<ffi.Opaque>,
               ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
 
   /// Formats a [`ICU4XDateTime`] to a string.
@@ -10146,11 +10144,11 @@ class TimeFormatter implements ffi.Finalizable {
   // ignore: non_constant_identifier_names
   static final _ICU4XTimeFormatter_format_datetime = _capi<
               ffi.NativeFunction<
-                  _ResultVoidUint32 Function(ffi.Pointer<ffi.Opaque>,
+                  _ResultVoidInt32 Function(ffi.Pointer<ffi.Opaque>,
                       ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>>(
           'ICU4XTimeFormatter_format_datetime')
       .asFunction<
-          _ResultVoidUint32 Function(ffi.Pointer<ffi.Opaque>,
+          _ResultVoidInt32 Function(ffi.Pointer<ffi.Opaque>,
               ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
 
   /// Formats a [`ICU4XIsoDateTime`] to a string.
@@ -10169,11 +10167,11 @@ class TimeFormatter implements ffi.Finalizable {
   // ignore: non_constant_identifier_names
   static final _ICU4XTimeFormatter_format_iso_datetime = _capi<
               ffi.NativeFunction<
-                  _ResultVoidUint32 Function(ffi.Pointer<ffi.Opaque>,
+                  _ResultVoidInt32 Function(ffi.Pointer<ffi.Opaque>,
                       ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>>(
           'ICU4XTimeFormatter_format_iso_datetime')
       .asFunction<
-          _ResultVoidUint32 Function(ffi.Pointer<ffi.Opaque>,
+          _ResultVoidInt32 Function(ffi.Pointer<ffi.Opaque>,
               ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
 }
 
@@ -10218,11 +10216,11 @@ class TimeZoneFormatter implements ffi.Finalizable {
   static final _ICU4XTimeZoneFormatter_create_with_localized_gmt_fallback =
       _capi<
                   ffi.NativeFunction<
-                      _ResultOpaqueUint32 Function(
+                      _ResultOpaqueInt32 Function(
                           ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>>(
               'ICU4XTimeZoneFormatter_create_with_localized_gmt_fallback')
           .asFunction<
-              _ResultOpaqueUint32 Function(ffi.Pointer<ffi.Opaque>,
+              _ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>,
                   ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
 
   /// Creates a new [`ICU4XTimeZoneFormatter`] from locale data.
@@ -10244,11 +10242,11 @@ class TimeZoneFormatter implements ffi.Finalizable {
   // ignore: non_constant_identifier_names
   static final _ICU4XTimeZoneFormatter_create_with_iso_8601_fallback = _capi<
               ffi.NativeFunction<
-                  _ResultOpaqueUint32 Function(ffi.Pointer<ffi.Opaque>,
+                  _ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>,
                       ffi.Pointer<ffi.Opaque>, _IsoTimeZoneOptionsFfi)>>(
           'ICU4XTimeZoneFormatter_create_with_iso_8601_fallback')
       .asFunction<
-          _ResultOpaqueUint32 Function(ffi.Pointer<ffi.Opaque>,
+          _ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>,
               ffi.Pointer<ffi.Opaque>, _IsoTimeZoneOptionsFfi)>(isLeaf: true);
 
   /// Loads generic non-location long format. Example: "Pacific Time"
@@ -10265,11 +10263,11 @@ class TimeZoneFormatter implements ffi.Finalizable {
   // ignore: non_constant_identifier_names
   static final _ICU4XTimeZoneFormatter_load_generic_non_location_long = _capi<
               ffi.NativeFunction<
-                  _ResultVoidUint32 Function(
+                  _ResultVoidInt32 Function(
                       ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>>(
           'ICU4XTimeZoneFormatter_load_generic_non_location_long')
       .asFunction<
-          _ResultVoidUint32 Function(
+          _ResultVoidInt32 Function(
               ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
 
   /// Loads generic non-location short format. Example: "PT"
@@ -10286,11 +10284,11 @@ class TimeZoneFormatter implements ffi.Finalizable {
   // ignore: non_constant_identifier_names
   static final _ICU4XTimeZoneFormatter_load_generic_non_location_short = _capi<
               ffi.NativeFunction<
-                  _ResultVoidUint32 Function(
+                  _ResultVoidInt32 Function(
                       ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>>(
           'ICU4XTimeZoneFormatter_load_generic_non_location_short')
       .asFunction<
-          _ResultVoidUint32 Function(
+          _ResultVoidInt32 Function(
               ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
 
   /// Loads specific non-location long format. Example: "Pacific Standard Time"
@@ -10307,11 +10305,11 @@ class TimeZoneFormatter implements ffi.Finalizable {
   // ignore: non_constant_identifier_names
   static final _ICU4XTimeZoneFormatter_load_specific_non_location_long = _capi<
               ffi.NativeFunction<
-                  _ResultVoidUint32 Function(
+                  _ResultVoidInt32 Function(
                       ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>>(
           'ICU4XTimeZoneFormatter_load_specific_non_location_long')
       .asFunction<
-          _ResultVoidUint32 Function(
+          _ResultVoidInt32 Function(
               ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
 
   /// Loads specific non-location short format. Example: "PST"
@@ -10328,11 +10326,11 @@ class TimeZoneFormatter implements ffi.Finalizable {
   // ignore: non_constant_identifier_names
   static final _ICU4XTimeZoneFormatter_load_specific_non_location_short = _capi<
               ffi.NativeFunction<
-                  _ResultVoidUint32 Function(
+                  _ResultVoidInt32 Function(
                       ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>>(
           'ICU4XTimeZoneFormatter_load_specific_non_location_short')
       .asFunction<
-          _ResultVoidUint32 Function(
+          _ResultVoidInt32 Function(
               ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
 
   /// Loads generic location format. Example: "Los Angeles Time"
@@ -10349,11 +10347,11 @@ class TimeZoneFormatter implements ffi.Finalizable {
   // ignore: non_constant_identifier_names
   static final _ICU4XTimeZoneFormatter_load_generic_location_format = _capi<
               ffi.NativeFunction<
-                  _ResultVoidUint32 Function(
+                  _ResultVoidInt32 Function(
                       ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>>(
           'ICU4XTimeZoneFormatter_load_generic_location_format')
       .asFunction<
-          _ResultVoidUint32 Function(
+          _ResultVoidInt32 Function(
               ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
 
   /// Loads localized GMT format. Example: "GMT-07:00"
@@ -10370,9 +10368,9 @@ class TimeZoneFormatter implements ffi.Finalizable {
   // ignore: non_constant_identifier_names
   static final _ICU4XTimeZoneFormatter_include_localized_gmt_format = _capi<
               ffi.NativeFunction<
-                  _ResultVoidUint32 Function(ffi.Pointer<ffi.Opaque>)>>(
+                  _ResultVoidInt32 Function(ffi.Pointer<ffi.Opaque>)>>(
           'ICU4XTimeZoneFormatter_include_localized_gmt_format')
-      .asFunction<_ResultVoidUint32 Function(ffi.Pointer<ffi.Opaque>)>(
+      .asFunction<_ResultVoidInt32 Function(ffi.Pointer<ffi.Opaque>)>(
           isLeaf: true);
 
   /// Loads ISO-8601 format. Example: "-07:00"
@@ -10389,11 +10387,11 @@ class TimeZoneFormatter implements ffi.Finalizable {
   // ignore: non_constant_identifier_names
   static final _ICU4XTimeZoneFormatter_load_iso_8601_format = _capi<
               ffi.NativeFunction<
-                  _ResultVoidUint32 Function(
+                  _ResultVoidInt32 Function(
                       ffi.Pointer<ffi.Opaque>, _IsoTimeZoneOptionsFfi)>>(
           'ICU4XTimeZoneFormatter_load_iso_8601_format')
       .asFunction<
-          _ResultVoidUint32 Function(
+          _ResultVoidInt32 Function(
               ffi.Pointer<ffi.Opaque>, _IsoTimeZoneOptionsFfi)>(isLeaf: true);
 
   /// Formats a [`ICU4XCustomTimeZone`] to a string.
@@ -10414,11 +10412,11 @@ class TimeZoneFormatter implements ffi.Finalizable {
   // ignore: non_constant_identifier_names
   static final _ICU4XTimeZoneFormatter_format_custom_time_zone = _capi<
               ffi.NativeFunction<
-                  _ResultVoidUint32 Function(ffi.Pointer<ffi.Opaque>,
+                  _ResultVoidInt32 Function(ffi.Pointer<ffi.Opaque>,
                       ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>>(
           'ICU4XTimeZoneFormatter_format_custom_time_zone')
       .asFunction<
-          _ResultVoidUint32 Function(ffi.Pointer<ffi.Opaque>,
+          _ResultVoidInt32 Function(ffi.Pointer<ffi.Opaque>,
               ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
 }
 
@@ -10446,9 +10444,9 @@ class TitlecaseMapper implements ffi.Finalizable {
   // ignore: non_constant_identifier_names
   static final _ICU4XTitlecaseMapper_create = _capi<
           ffi.NativeFunction<
-              _ResultOpaqueUint32 Function(
+              _ResultOpaqueInt32 Function(
                   ffi.Pointer<ffi.Opaque>)>>('ICU4XTitlecaseMapper_create')
-      .asFunction<_ResultOpaqueUint32 Function(ffi.Pointer<ffi.Opaque>)>(
+      .asFunction<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(
           isLeaf: true);
 
   /// Returns the full titlecase mapping of the given string
@@ -10479,7 +10477,7 @@ class TitlecaseMapper implements ffi.Finalizable {
   // ignore: non_constant_identifier_names
   static final _ICU4XTitlecaseMapper_titlecase_segment_v1 = _capi<
               ffi.NativeFunction<
-                  _ResultVoidUint32 Function(
+                  _ResultVoidInt32 Function(
                       ffi.Pointer<ffi.Opaque>,
                       ffi.Pointer<ffi2.Utf8>,
                       ffi.Size,
@@ -10488,7 +10486,7 @@ class TitlecaseMapper implements ffi.Finalizable {
                       ffi.Pointer<ffi.Opaque>)>>(
           'ICU4XTitlecaseMapper_titlecase_segment_v1')
       .asFunction<
-          _ResultVoidUint32 Function(
+          _ResultVoidInt32 Function(
               ffi.Pointer<ffi.Opaque>,
               ffi.Pointer<ffi2.Utf8>,
               int,
@@ -10499,9 +10497,9 @@ class TitlecaseMapper implements ffi.Finalizable {
 
 /// See the [Rust documentation for `TitlecaseOptions`](https://docs.rs/icu/latest/icu/casemap/titlecase/struct.TitlecaseOptions.html) for more information.
 class _TitlecaseOptionsV1Ffi extends ffi.Struct {
-  @ffi.Uint32()
+  @ffi.Int32()
   external int leadingAdjustment;
-  @ffi.Uint32()
+  @ffi.Int32()
   external int trailingCase;
 }
 
@@ -10633,9 +10631,9 @@ class UnicodeSetData implements ffi.Finalizable {
   // ignore: non_constant_identifier_names
   static final _ICU4XUnicodeSetData_load_basic_emoji = _capi<
               ffi.NativeFunction<
-                  _ResultOpaqueUint32 Function(ffi.Pointer<ffi.Opaque>)>>(
+                  _ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>>(
           'ICU4XUnicodeSetData_load_basic_emoji')
-      .asFunction<_ResultOpaqueUint32 Function(ffi.Pointer<ffi.Opaque>)>(
+      .asFunction<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(
           isLeaf: true);
 
   /// See the [Rust documentation for `exemplars_main`](https://docs.rs/icu/latest/icu/properties/exemplar_chars/fn.exemplars_main.html) for more information.
@@ -10651,11 +10649,11 @@ class UnicodeSetData implements ffi.Finalizable {
   // ignore: non_constant_identifier_names
   static final _ICU4XUnicodeSetData_load_exemplars_main = _capi<
               ffi.NativeFunction<
-                  _ResultOpaqueUint32 Function(
+                  _ResultOpaqueInt32 Function(
                       ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>>(
           'ICU4XUnicodeSetData_load_exemplars_main')
       .asFunction<
-          _ResultOpaqueUint32 Function(
+          _ResultOpaqueInt32 Function(
               ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
 
   /// See the [Rust documentation for `exemplars_auxiliary`](https://docs.rs/icu/latest/icu/properties/exemplar_chars/fn.exemplars_auxiliary.html) for more information.
@@ -10671,11 +10669,11 @@ class UnicodeSetData implements ffi.Finalizable {
   // ignore: non_constant_identifier_names
   static final _ICU4XUnicodeSetData_load_exemplars_auxiliary = _capi<
               ffi.NativeFunction<
-                  _ResultOpaqueUint32 Function(
+                  _ResultOpaqueInt32 Function(
                       ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>>(
           'ICU4XUnicodeSetData_load_exemplars_auxiliary')
       .asFunction<
-          _ResultOpaqueUint32 Function(
+          _ResultOpaqueInt32 Function(
               ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
 
   /// See the [Rust documentation for `exemplars_punctuation`](https://docs.rs/icu/latest/icu/properties/exemplar_chars/fn.exemplars_punctuation.html) for more information.
@@ -10691,11 +10689,11 @@ class UnicodeSetData implements ffi.Finalizable {
   // ignore: non_constant_identifier_names
   static final _ICU4XUnicodeSetData_load_exemplars_punctuation = _capi<
               ffi.NativeFunction<
-                  _ResultOpaqueUint32 Function(
+                  _ResultOpaqueInt32 Function(
                       ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>>(
           'ICU4XUnicodeSetData_load_exemplars_punctuation')
       .asFunction<
-          _ResultOpaqueUint32 Function(
+          _ResultOpaqueInt32 Function(
               ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
 
   /// See the [Rust documentation for `exemplars_numbers`](https://docs.rs/icu/latest/icu/properties/exemplar_chars/fn.exemplars_numbers.html) for more information.
@@ -10711,11 +10709,11 @@ class UnicodeSetData implements ffi.Finalizable {
   // ignore: non_constant_identifier_names
   static final _ICU4XUnicodeSetData_load_exemplars_numbers = _capi<
               ffi.NativeFunction<
-                  _ResultOpaqueUint32 Function(
+                  _ResultOpaqueInt32 Function(
                       ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>>(
           'ICU4XUnicodeSetData_load_exemplars_numbers')
       .asFunction<
-          _ResultOpaqueUint32 Function(
+          _ResultOpaqueInt32 Function(
               ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
 
   /// See the [Rust documentation for `exemplars_index`](https://docs.rs/icu/latest/icu/properties/exemplar_chars/fn.exemplars_index.html) for more information.
@@ -10731,11 +10729,11 @@ class UnicodeSetData implements ffi.Finalizable {
   // ignore: non_constant_identifier_names
   static final _ICU4XUnicodeSetData_load_exemplars_index = _capi<
               ffi.NativeFunction<
-                  _ResultOpaqueUint32 Function(
+                  _ResultOpaqueInt32 Function(
                       ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>>(
           'ICU4XUnicodeSetData_load_exemplars_index')
       .asFunction<
-          _ResultOpaqueUint32 Function(
+          _ResultOpaqueInt32 Function(
               ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
 }
 
@@ -10766,10 +10764,10 @@ class WeekCalculator implements ffi.Finalizable {
   // ignore: non_constant_identifier_names
   static final _ICU4XWeekCalculator_create = _capi<
           ffi.NativeFunction<
-              _ResultOpaqueUint32 Function(ffi.Pointer<ffi.Opaque>,
+              _ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>,
                   ffi.Pointer<ffi.Opaque>)>>('ICU4XWeekCalculator_create')
       .asFunction<
-          _ResultOpaqueUint32 Function(
+          _ResultOpaqueInt32 Function(
               ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
 
   /// Additional information: [1](https://docs.rs/icu/latest/icu/calendar/week/struct.WeekCalculator.html#structfield.first_weekday), [2](https://docs.rs/icu/latest/icu/calendar/week/struct.WeekCalculator.html#structfield.min_week_days)
@@ -10784,7 +10782,7 @@ class WeekCalculator implements ffi.Finalizable {
   static final _ICU4XWeekCalculator_create_from_first_day_of_week_and_min_week_days =
       _capi<
                   ffi.NativeFunction<
-                      ffi.Pointer<ffi.Opaque> Function(ffi.Uint32, ffi.Uint8)>>(
+                      ffi.Pointer<ffi.Opaque> Function(ffi.Int32, ffi.Uint8)>>(
               'ICU4XWeekCalculator_create_from_first_day_of_week_and_min_week_days')
           .asFunction<ffi.Pointer<ffi.Opaque> Function(int, int)>(isLeaf: true);
 
@@ -10798,7 +10796,7 @@ class WeekCalculator implements ffi.Finalizable {
 
   // ignore: non_constant_identifier_names
   static final _ICU4XWeekCalculator_first_weekday =
-      _capi<ffi.NativeFunction<ffi.Uint32 Function(ffi.Pointer<ffi.Opaque>)>>(
+      _capi<ffi.NativeFunction<ffi.Int32 Function(ffi.Pointer<ffi.Opaque>)>>(
               'ICU4XWeekCalculator_first_weekday')
           .asFunction<int Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
 
@@ -10822,7 +10820,7 @@ class WeekCalculator implements ffi.Finalizable {
 class _WeekOfFfi extends ffi.Struct {
   @ffi.Uint16()
   external int week;
-  @ffi.Uint32()
+  @ffi.Int32()
   external int unit;
 }
 
@@ -10905,7 +10903,7 @@ class WordBreakIteratorLatin1 implements ffi.Finalizable {
 
   // ignore: non_constant_identifier_names
   static final _ICU4XWordBreakIteratorLatin1_word_type =
-      _capi<ffi.NativeFunction<ffi.Uint32 Function(ffi.Pointer<ffi.Opaque>)>>(
+      _capi<ffi.NativeFunction<ffi.Int32 Function(ffi.Pointer<ffi.Opaque>)>>(
               'ICU4XWordBreakIteratorLatin1_word_type')
           .asFunction<int Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
 
@@ -10960,7 +10958,7 @@ class WordBreakIteratorUtf16 implements ffi.Finalizable {
 
   // ignore: non_constant_identifier_names
   static final _ICU4XWordBreakIteratorUtf16_word_type =
-      _capi<ffi.NativeFunction<ffi.Uint32 Function(ffi.Pointer<ffi.Opaque>)>>(
+      _capi<ffi.NativeFunction<ffi.Int32 Function(ffi.Pointer<ffi.Opaque>)>>(
               'ICU4XWordBreakIteratorUtf16_word_type')
           .asFunction<int Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
 
@@ -11015,7 +11013,7 @@ class WordBreakIteratorUtf8 implements ffi.Finalizable {
 
   // ignore: non_constant_identifier_names
   static final _ICU4XWordBreakIteratorUtf8_word_type =
-      _capi<ffi.NativeFunction<ffi.Uint32 Function(ffi.Pointer<ffi.Opaque>)>>(
+      _capi<ffi.NativeFunction<ffi.Int32 Function(ffi.Pointer<ffi.Opaque>)>>(
               'ICU4XWordBreakIteratorUtf8_word_type')
           .asFunction<int Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
 
@@ -11064,9 +11062,9 @@ class WordSegmenter implements ffi.Finalizable {
   // ignore: non_constant_identifier_names
   static final _ICU4XWordSegmenter_create_auto = _capi<
           ffi.NativeFunction<
-              _ResultOpaqueUint32 Function(
+              _ResultOpaqueInt32 Function(
                   ffi.Pointer<ffi.Opaque>)>>('ICU4XWordSegmenter_create_auto')
-      .asFunction<_ResultOpaqueUint32 Function(ffi.Pointer<ffi.Opaque>)>(
+      .asFunction<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(
           isLeaf: true);
 
   /// Construct an [`ICU4XWordSegmenter`] with LSTM payload data for Burmese, Khmer, Lao, and
@@ -11086,9 +11084,9 @@ class WordSegmenter implements ffi.Finalizable {
   // ignore: non_constant_identifier_names
   static final _ICU4XWordSegmenter_create_lstm = _capi<
           ffi.NativeFunction<
-              _ResultOpaqueUint32 Function(
+              _ResultOpaqueInt32 Function(
                   ffi.Pointer<ffi.Opaque>)>>('ICU4XWordSegmenter_create_lstm')
-      .asFunction<_ResultOpaqueUint32 Function(ffi.Pointer<ffi.Opaque>)>(
+      .asFunction<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(
           isLeaf: true);
 
   /// Construct an [`ICU4XWordSegmenter`] with dictionary payload data for Chinese, Japanese,
@@ -11105,9 +11103,9 @@ class WordSegmenter implements ffi.Finalizable {
   // ignore: non_constant_identifier_names
   static final _ICU4XWordSegmenter_create_dictionary = _capi<
               ffi.NativeFunction<
-                  _ResultOpaqueUint32 Function(ffi.Pointer<ffi.Opaque>)>>(
+                  _ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>>(
           'ICU4XWordSegmenter_create_dictionary')
-      .asFunction<_ResultOpaqueUint32 Function(ffi.Pointer<ffi.Opaque>)>(
+      .asFunction<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(
           isLeaf: true);
 
   /// Segments a (potentially ill-formed) UTF-8 string.
@@ -11217,11 +11215,11 @@ class ZonedDateTimeFormatter implements ffi.Finalizable {
   // ignore: non_constant_identifier_names
   static final _ICU4XZonedDateTimeFormatter_create_with_lengths = _capi<
               ffi.NativeFunction<
-                  _ResultOpaqueUint32 Function(ffi.Pointer<ffi.Opaque>,
-                      ffi.Pointer<ffi.Opaque>, ffi.Uint32, ffi.Uint32)>>(
+                  _ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>,
+                      ffi.Pointer<ffi.Opaque>, ffi.Int32, ffi.Int32)>>(
           'ICU4XZonedDateTimeFormatter_create_with_lengths')
       .asFunction<
-          _ResultOpaqueUint32 Function(ffi.Pointer<ffi.Opaque>,
+          _ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>,
               ffi.Pointer<ffi.Opaque>, int, int)>(isLeaf: true);
 
   /// Creates a new [`ICU4XZonedDateTimeFormatter`] from locale data.
@@ -11252,15 +11250,15 @@ class ZonedDateTimeFormatter implements ffi.Finalizable {
   static final _ICU4XZonedDateTimeFormatter_create_with_lengths_and_iso_8601_time_zone_fallback =
       _capi<
                   ffi.NativeFunction<
-                      _ResultOpaqueUint32 Function(
+                      _ResultOpaqueInt32 Function(
                           ffi.Pointer<ffi.Opaque>,
                           ffi.Pointer<ffi.Opaque>,
-                          ffi.Uint32,
-                          ffi.Uint32,
+                          ffi.Int32,
+                          ffi.Int32,
                           _IsoTimeZoneOptionsFfi)>>(
               'ICU4XZonedDateTimeFormatter_create_with_lengths_and_iso_8601_time_zone_fallback')
           .asFunction<
-              _ResultOpaqueUint32 Function(
+              _ResultOpaqueInt32 Function(
                   ffi.Pointer<ffi.Opaque>,
                   ffi.Pointer<ffi.Opaque>,
                   int,
@@ -11289,14 +11287,14 @@ class ZonedDateTimeFormatter implements ffi.Finalizable {
   static final _ICU4XZonedDateTimeFormatter_format_datetime_with_custom_time_zone =
       _capi<
                   ffi.NativeFunction<
-                      _ResultVoidUint32 Function(
+                      _ResultVoidInt32 Function(
                           ffi.Pointer<ffi.Opaque>,
                           ffi.Pointer<ffi.Opaque>,
                           ffi.Pointer<ffi.Opaque>,
                           ffi.Pointer<ffi.Opaque>)>>(
               'ICU4XZonedDateTimeFormatter_format_datetime_with_custom_time_zone')
           .asFunction<
-              _ResultVoidUint32 Function(
+              _ResultVoidInt32 Function(
                   ffi.Pointer<ffi.Opaque>,
                   ffi.Pointer<ffi.Opaque>,
                   ffi.Pointer<ffi.Opaque>,
@@ -11324,14 +11322,14 @@ class ZonedDateTimeFormatter implements ffi.Finalizable {
   static final _ICU4XZonedDateTimeFormatter_format_iso_datetime_with_custom_time_zone =
       _capi<
                   ffi.NativeFunction<
-                      _ResultVoidUint32 Function(
+                      _ResultVoidInt32 Function(
                           ffi.Pointer<ffi.Opaque>,
                           ffi.Pointer<ffi.Opaque>,
                           ffi.Pointer<ffi.Opaque>,
                           ffi.Pointer<ffi.Opaque>)>>(
               'ICU4XZonedDateTimeFormatter_format_iso_datetime_with_custom_time_zone')
           .asFunction<
-              _ResultVoidUint32 Function(
+              _ResultVoidInt32 Function(
                   ffi.Pointer<ffi.Opaque>,
                   ffi.Pointer<ffi.Opaque>,
                   ffi.Pointer<ffi.Opaque>,
@@ -11367,45 +11365,57 @@ class SizeList extends ffi.Struct {
   int get hashCode => _length.hashCode;
 }
 
-class _ResultBoolUint32Union extends ffi.Union {
+class _ResultBoolInt32Union extends ffi.Union {
   @ffi.Bool()
   external bool ok;
 
-  @ffi.Uint32()
+  @ffi.Int32()
   external int err;
 }
 
-class _ResultBoolUint32 extends ffi.Struct {
-  external _ResultBoolUint32Union union;
+class _ResultBoolInt32 extends ffi.Struct {
+  external _ResultBoolInt32Union union;
 
   @ffi.Bool()
   external bool isOk;
 }
 
-class _ResultInt32Uint32Union extends ffi.Union {
+class _ResultInt32Int32Union extends ffi.Union {
   @ffi.Int32()
   external int ok;
 
-  @ffi.Uint32()
+  @ffi.Int32()
   external int err;
 }
 
-class _ResultInt32Uint32 extends ffi.Struct {
-  external _ResultInt32Uint32Union union;
+class _ResultInt32Int32 extends ffi.Struct {
+  external _ResultInt32Int32Union union;
 
   @ffi.Bool()
   external bool isOk;
 }
 
-class _ResultOpaqueUint32Union extends ffi.Union {
+class _ResultInt32VoidUnion extends ffi.Union {
+  @ffi.Int32()
+  external int ok;
+}
+
+class _ResultInt32Void extends ffi.Struct {
+  external _ResultInt32VoidUnion union;
+
+  @ffi.Bool()
+  external bool isOk;
+}
+
+class _ResultOpaqueInt32Union extends ffi.Union {
   external ffi.Pointer<ffi.Opaque> ok;
 
-  @ffi.Uint32()
+  @ffi.Int32()
   external int err;
 }
 
-class _ResultOpaqueUint32 extends ffi.Struct {
-  external _ResultOpaqueUint32Union union;
+class _ResultOpaqueInt32 extends ffi.Struct {
+  external _ResultOpaqueInt32Union union;
 
   @ffi.Bool()
   external bool isOk;
@@ -11423,25 +11433,13 @@ class _ResultUint16Void extends ffi.Struct {
   external bool isOk;
 }
 
-class _ResultUint32VoidUnion extends ffi.Union {
-  @ffi.Uint32()
-  external int ok;
-}
-
-class _ResultUint32Void extends ffi.Struct {
-  external _ResultUint32VoidUnion union;
-
-  @ffi.Bool()
-  external bool isOk;
-}
-
-class _ResultVoidUint32Union extends ffi.Union {
-  @ffi.Uint32()
+class _ResultVoidInt32Union extends ffi.Union {
+  @ffi.Int32()
   external int err;
 }
 
-class _ResultVoidUint32 extends ffi.Struct {
-  external _ResultVoidUint32Union union;
+class _ResultVoidInt32 extends ffi.Struct {
+  external _ResultVoidInt32Union union;
 
   @ffi.Bool()
   external bool isOk;
@@ -11452,15 +11450,15 @@ class _ResultVoidVoid extends ffi.Struct {
   external bool isOk;
 }
 
-class _ResultWeekOfFfiUint32Union extends ffi.Union {
+class _ResultWeekOfFfiInt32Union extends ffi.Union {
   external _WeekOfFfi ok;
 
-  @ffi.Uint32()
+  @ffi.Int32()
   external int err;
 }
 
-class _ResultWeekOfFfiUint32 extends ffi.Struct {
-  external _ResultWeekOfFfiUint32Union union;
+class _ResultWeekOfFfiInt32 extends ffi.Struct {
+  external _ResultWeekOfFfiInt32Union union;
 
   @ffi.Bool()
   external bool isOk;

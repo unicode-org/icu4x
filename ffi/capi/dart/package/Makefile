@@ -10,4 +10,5 @@ FORCE:
 test/libicu_capi_cdylib.so: ../../../../target/release/libicu_capi_cdylib.so
 	cp ../../../../target/release/libicu_capi_cdylib.so test/libicu_capi_cdylib.so
 
-test: test/libicu_capi_cdylib.so
+test: 
+	dart --enable-experiment=native-assets test
