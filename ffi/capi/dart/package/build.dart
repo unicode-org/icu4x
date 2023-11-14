@@ -15,7 +15,7 @@ void main(List<String> args) async {
   //   '/home/mosum/projects/icu4x_robert/ffi/capi/dart/package/test/libicu_capi_cdylib.so',
   //   file.path
   // ]);
-  await Process.run('make', ['test']);
+  await Process.run('make', ['test/libicu_capi_cdylib.so']);
 
   // final request = await HttpClient().getUrl(Uri.parse('http://github.com/unicode-org/icu4x/artifacts'));
   // final response = await request.close();
