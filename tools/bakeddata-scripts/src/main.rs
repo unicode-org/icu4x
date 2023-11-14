@@ -37,19 +37,7 @@ const COMPONENTS: &[(&str, &[DataKey], &str)] = &[
         REPO_VERSION,
     ),
     ("segmenter", icu::segmenter::provider::KEYS, REPO_VERSION),
-    // excluded from 1.4 release
-    // (
-    //     "singlenumberformatter",
-    //     icu_singlenumberformatter::provider::KEYS,
-    //     REPO_VERSION,
-    // ),
     ("timezone", icu::timezone::provider::KEYS, REPO_VERSION),
-    // excluded from 1.4 release
-    // (
-    //     "unitsconversion",
-    //     icu_unitsconversion::provider::KEYS,
-    //     REPO_VERSION,
-    // ),
 ];
 
 fn main() {

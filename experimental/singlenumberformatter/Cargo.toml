@@ -6,7 +6,7 @@
 name = "icu_singlenumberformatter"
 version = "0.0.0"
 license-file = "LICENSE"
-publish = false # excluded from 1.4 release
+publish = false # excluded from release until there are APIs consuming data
 
 authors.workspace = true
 categories.workspace = true
