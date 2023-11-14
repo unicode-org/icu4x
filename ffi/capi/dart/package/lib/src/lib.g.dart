@@ -3161,11 +3161,10 @@ class Collator implements ffi.Finalizable {
           _ResultOpaqueUint32 Function(ffi.Pointer<ffi.Opaque>,
               ffi.Pointer<ffi.Opaque>, _CollatorOptionsV1Ffi)>(
       symbol: 'ICU4XCollator_create_v1', isLeaf: true)
-  external static _ResultOpaqueUint32 Function(
-      ffi.Pointer<ffi.Opaque>,
-      // ignore: non_constant_identifier_names
-      ffi.Pointer<ffi.Opaque>,
-      _CollatorOptionsV1Ffi) _ICU4XCollator_create_v1;
+  external static _ResultOpaqueUint32 _ICU4XCollator_create_v1(
+      ffi.Pointer<ffi.Opaque> provider,
+      ffi.Pointer<ffi.Opaque> locale,
+      _CollatorOptionsV1Ffi options);
 
   /// Compare guaranteed well-formed UTF-8 strings.
   ///
@@ -3195,13 +3194,12 @@ class Collator implements ffi.Finalizable {
           ffi.Size,
           ffi.Pointer<ffi2.Utf8>,
           ffi.Size)>(symbol: 'ICU4XCollator_compare_valid_utf8', isLeaf: true)
-  external static ffi.Uint32 Function(
-      ffi.Pointer<ffi.Opaque>,
-      ffi.Pointer<ffi2.Utf8>,
-      int,
-      ffi.Pointer<ffi2.Utf8>,
-      // ignore: non_constant_identifier_names
-      int) _ICU4XCollator_compare_valid_utf8;
+  external static int _ICU4XCollator_compare_valid_utf8(
+      ffi.Pointer<ffi.Opaque> a,
+      ffi.Pointer<ffi2.Utf8> b,
+      int c,
+      ffi.Pointer<ffi2.Utf8> d,
+      int e);
 
   /// Compare potentially ill-formed UTF-16 strings, with unpaired surrogates
   /// compared as REPLACEMENT CHARACTER.
@@ -3225,13 +3223,8 @@ class Collator implements ffi.Finalizable {
           ffi.Size,
           ffi.Pointer<ffi.Uint16>,
           ffi.Size)>(symbol: 'ICU4XCollator_compare_utf16', isLeaf: true)
-  external static ffi.Uint32 Function(
-      ffi.Pointer<ffi.Opaque>,
-      ffi.Pointer<ffi.Uint16>,
-      int,
-      ffi.Pointer<ffi.Uint16>,
-      // ignore: non_constant_identifier_names
-      int) _ICU4XCollator_compare_utf16;
+  external static int _ICU4XCollator_compare_utf16(ffi.Pointer<ffi.Opaque> a,
+      ffi.Pointer<ffi.Uint16> b, int c, ffi.Pointer<ffi.Uint16> d, int e);
 }
 
 /// See the [Rust documentation for `AlternateHandling`](https://docs.rs/icu/latest/icu/collator/enum.AlternateHandling.html) for more information.
@@ -4061,15 +4054,20 @@ class DataProvider implements ffi.Finalizable {
   /// `enabled_fallback_with`, `fork_by_locale`, and `fork_by_key` will return `Err`s.
   factory DataProvider.compiled() {
     final result = _ICU4XDataProvider_create_compiled();
+    print(ffi.DynamicLibrary.executable()
+        .providesSymbol('ICU4XDataProvider_create_compiled'));
+    print(ffi.DynamicLibrary.open(
+            '/home/mosum/projects/icu4x/ffi/capi/dart/package/test/libicu_capi_cdylib.so')
+        .providesSymbol('ICU4XDataProvider_create_compiled'));
+    print(ffi.DynamicLibrary.process()
+        .providesSymbol('ICU4XDataProvider_create_compiled'));
     return DataProvider._(result);
   }
   // ignore: non_constant_identifier_names
 
   @ffi.Native<ffi.Pointer<ffi.Opaque> Function()>(
       symbol: 'ICU4XDataProvider_create_compiled', isLeaf: true)
-  external static ffi.Pointer<ffi.Opaque> Function()
-      // ignore: non_constant_identifier_names
-      _ICU4XDataProvider_create_compiled;
+  external static ffi.Pointer<ffi.Opaque> _ICU4XDataProvider_create_compiled();
 
   /// Constructs a `BlobDataProvider` and returns it as an [`ICU4XDataProvider`].
   ///
