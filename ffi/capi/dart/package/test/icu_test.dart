@@ -1,9 +1,11 @@
+import 'dart:ffi' as ffi;
 import 'package:icu/icu.dart';
 import 'package:path/path.dart' as path;
 import 'package:test/test.dart';
 
 void main() {
-  init(path.absolute('test/libicu_capi_cdylib.so'));
+  // TODO: remove this by embedding the dylib in the executable
+  capi = ffi.DynamicLibrary.open(path.absolute('test/libicu_capi_cdylib.so'));
 
   test('collation', () {
     var compare = Collator.v1(DataProvider.compiled(),
