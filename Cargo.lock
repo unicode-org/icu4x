@@ -199,8 +199,6 @@ dependencies = [
  "icu",
  "icu_compactdecimal",
  "icu_datagen",
- "icu_singlenumberformatter",
- "icu_unitsconversion",
  "log",
  "simple_logger",
 ]
