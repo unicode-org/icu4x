@@ -64,9 +64,7 @@ members = [
     "provider/baked/properties",
     "provider/baked/relativetime",
     "provider/baked/segmenter",
-    "provider/baked/singlenumberformatter",
     "provider/baked/timezone",
-    "provider/baked/unitsconversion",
 
     # Utils
     "utils/calendrical_calculations",

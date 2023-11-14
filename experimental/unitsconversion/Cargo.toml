@@ -27,10 +27,8 @@ icu_locid = { workspace = true }
 icu_provider = { workspace = true, features = ["macros"] }
 serde = { version = "1.0", default-features = false, features = ["derive", "alloc"], optional = true }
 zerovec = { workspace = true, features = ["yoke"] }
-icu_unitsconversion_data = { workspace = true, optional = true }
 
 [features]
-default = ["compiled_data"]
+default = []
 serde = ["dep:serde", "zerovec/serde", "icu_locid/serde", "icu_provider/serde"]
 datagen = ["serde", "zerovec/databake", "databake"]
-compiled_data = ["dep:icu_unitsconversion_data"]
