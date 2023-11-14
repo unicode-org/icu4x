@@ -602,9 +602,7 @@ jobs:
       - name: Download artifacts
         run: |
           gsutil -m cp -rn gs://${{ env.GCP_PR_BUCKET_ID }}/gha/${{ github.sha }}/docs tools/website-skeleton || true
-          mkdir -p tools/website-skeleton/docs/ffi
-          gsutil -m cp -r gs://${{ env.GCP_PR_BUCKET_ID }}/gha/${{ github.sha }}/ffi/cpp tools/website-skeleton/docs/ffi || true
-          gsutil -m cp -r gs://${{ env.GCP_PR_BUCKET_ID }}/gha/${{ github.sha }}/ffi/js tools/website-skeleton/docs/ffi || true
+          gsutil -m cp -r gs://${{ env.GCP_PR_BUCKET_ID }}/gha/${{ github.sha }}/ffi tools/website-skeleton/docs || true
 
           gsutil -m cp -r gs://${{ env.GCP_MAIN_BUCKET_ID }}/gha/benchmarks tools/website-skeleton/ || true
           gsutil -m cp -r gs://${{ env.GCP_MAIN_BUCKET_ID }}/gha/wasm-demo tools/website-skeleton/ || true

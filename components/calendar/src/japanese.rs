@@ -282,6 +282,10 @@ impl Calendar for Japanese {
         }
     }
 
+    fn year_is_leap(&self, date: &Self::DateInner) -> bool {
+        Iso.year_is_leap(&date.inner)
+    }
+
     /// The calendar-specific month represented by `date`
     fn month(&self, date: &Self::DateInner) -> types::FormattableMonth {
         Iso.month(&date.inner)
@@ -377,6 +381,10 @@ impl Calendar for JapaneseExtended {
     /// The calendar-specific year represented by `date`
     fn year(&self, date: &Self::DateInner) -> types::FormattableYear {
         Japanese::year(&self.0, date)
+    }
+
+    fn year_is_leap(&self, date: &Self::DateInner) -> bool {
+        Japanese::year_is_leap(&self.0, date)
     }
 
     /// The calendar-specific month represented by `date`

@@ -214,6 +214,12 @@ impl<A: AsCalendar> Date<A> {
         self.calendar.as_calendar().year(&self.inner)
     }
 
+    /// The calendar-specific year represented by `self` is a leap year
+    #[inline]
+    pub fn year_is_leap(&self) -> bool {
+        self.calendar.as_calendar().year_is_leap(&self.inner)
+    }
+
     /// The calendar-specific month represented by `self`
     #[inline]
     pub fn month(&self) -> types::FormattableMonth {
