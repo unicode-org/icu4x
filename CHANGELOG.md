@@ -14,14 +14,13 @@
     - `icu_segmenter`
         - Fix Unicode 15.0 sentence segmentation (https://github.com/unicode-org/icu4x/pull/4213)
     - `icu_unicodeset_parse`
-        - Add support to parse UAX#29 properties (https://github.com/unicode-org/icu4x/pull/44175)
+        - Add support to parse UAX#29 properties (https://github.com/unicode-org/icu4x/pull/4175)
 - Data model and providers
     - `icu_provider`
         - Implement Any/BufferProvider for some smart pointers (https://github.com/unicode-org/icu4x/pull/4255) 
     - `icu_provider_blob`
       - New V2 serialization schema (https://github.com/unicode-org/icu4x/pull/4207)
     - `icu_datagen`
-        - Fix datagen deduplication algorithm. Create and update tests. ([#4233](https://github.com/unicode-org/icu4x/commit/03cba376ca59c4354c11a744f761873239a0ebbc))
         - New CLI option `--format=blob2` (https://github.com/unicode-org/icu4x/pull/4207)
         - CLDR 44 compatibility fixes (https://github.com/unicode-org/icu4x/pull/4134, https://github.com/unicode-org/icu4x/pull/4156, https://github.com/unicode-org/icu4x/pull/4158)
         - Fix `supported_locales` for collator keys (https://github.com/unicode-org/icu4x/pull/4169)
