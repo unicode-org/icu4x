@@ -15,7 +15,6 @@ void main(List<String> args) async {
   //   '/home/mosum/projects/icu4x_robert/ffi/capi/dart/package/test/libicu_capi_cdylib.so',
   //   file.path
   // ]);
-
   await Process.run('make', ['test']);
 
   // final request = await HttpClient().getUrl(Uri.parse('http://github.com/unicode-org/icu4x/artifacts'));
@@ -26,7 +25,7 @@ void main(List<String> args) async {
     timestamp: DateTime.now(),
     assets: [
       Asset(
-        id: 'package:icu/lib.g.dart',
+        id: 'package:icu/src/lib.g.dart',
         linkMode: LinkMode.dynamic,
         target: buildConfig.target,
         path:

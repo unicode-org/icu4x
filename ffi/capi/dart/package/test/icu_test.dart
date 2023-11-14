@@ -5,6 +5,13 @@ import 'package:test/test.dart';
 void main() {
   init(path.absolute('test/libicu_capi_cdylib.so'));
 
+  test('collation', () {
+    var compare = Collator.v1(DataProvider.compiled(),
+            Locale.fromString('de-CH-u-ca-japanese'), CollatorOptionsV1())
+        .compare('a', 'b');
+    print(compare.name);
+  });
+
   test('FixedDecimal.toString', () {
     final x = FixedDecimal.fromDoubleWithLowerMagnitude(1.49403, -7);
     expect(x.toString(), '1.4940300');
