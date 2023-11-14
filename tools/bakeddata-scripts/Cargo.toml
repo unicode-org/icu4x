@@ -10,7 +10,6 @@ edition = "2021"
 
 [dependencies]
 icu = { workspace = true, features = ["experimental"] }
-icu_compactdecimal = { workspace = true } # not in meta crate
 
 icu_datagen = { workspace = true, default-features = false, features = ["baked_exporter", "networking", "experimental_components", "rayon", "use_wasm"] }
 log = "0.4"

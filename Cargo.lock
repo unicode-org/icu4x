@@ -197,7 +197,6 @@ name = "bakeddata-scripts"
 version = "1.3.2"
 dependencies = [
  "icu",
- "icu_compactdecimal",
  "icu_datagen",
  "log",
  "simple_logger",

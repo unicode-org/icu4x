@@ -16,7 +16,7 @@ const COMPONENTS: &[(&str, &[DataKey], &str)] = &[
     ("collator", icu::collator::provider::KEYS, "1.3.3"),
     (
         "compactdecimal",
-        icu_compactdecimal::provider::KEYS,
+        icu::compactdecimal::provider::KEYS,
         "1.3.4",
     ),
     ("datetime", icu::datetime::provider::KEYS, "1.3.4"),
