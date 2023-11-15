@@ -112,7 +112,7 @@ pub struct Dimension<'data> {
     pub quantity: Cow<'data, str>,
 
     /// Represents the simplicity of the quantity.
-    pub constant_exactness: DerivationSpecifier,
+    pub specifier: DerivationSpecifier,
 }
 
 /// Represents the conversion information for a unit.

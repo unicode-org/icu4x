@@ -48,7 +48,7 @@ impl DataProvider<UnitsInfoV1Marker> for crate::DatagenProvider {
             let quantity_index = quantity_vec.len();
             quantity_vec.push(Dimension {
                 quantity: Cow::Borrowed(quantity_value),
-                constant_exactness: quantity_simplicity,
+                specifier: quantity_simplicity,
             });
 
             let units_info_index = UnitsInfoIndex {

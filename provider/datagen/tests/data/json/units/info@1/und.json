@@ -748,191 +748,191 @@
   "unit_dimensions": [
     {
       "quantity": "electric-current",
-      "constant_exactness": "Base"
+      "specifier": "Base"
     },
     {
       "quantity": "magnetic-field-strength",
-      "constant_exactness": "Derived"
+      "specifier": "Derived"
     },
     {
       "quantity": "current-density",
-      "constant_exactness": "Derived"
+      "specifier": "Derived"
     },
     {
       "quantity": "digital",
-      "constant_exactness": "Base"
+      "specifier": "Base"
     },
     {
       "quantity": "luminous-intensity",
-      "constant_exactness": "Base"
+      "specifier": "Base"
     },
     {
       "quantity": "illuminance",
-      "constant_exactness": "Derived"
+      "specifier": "Derived"
     },
     {
       "quantity": "luminous-flux",
-      "constant_exactness": "Derived"
+      "specifier": "Derived"
     },
     {
       "quantity": "volume",
-      "constant_exactness": "Derived"
+      "specifier": "Derived"
     },
     {
       "quantity": "specific-volume",
-      "constant_exactness": "Derived"
+      "specifier": "Derived"
     },
     {
       "quantity": "consumption",
-      "constant_exactness": "Derived"
+      "specifier": "Derived"
     },
     {
       "quantity": "electric-conductance",
-      "constant_exactness": "Derived"
+      "specifier": "Derived"
     },
     {
       "quantity": "typewidth",
-      "constant_exactness": "Base"
+      "specifier": "Base"
     },
     {
       "quantity": "substance-amount",
-      "constant_exactness": "Base"
+      "specifier": "Base"
     },
     {
       "quantity": "concentration",
-      "constant_exactness": "Derived"
+      "specifier": "Derived"
     },
     {
       "quantity": "concentration-mass",
-      "constant_exactness": "Derived"
+      "specifier": "Derived"
     },
     {
       "quantity": "catalytic-activity",
-      "constant_exactness": "Derived"
+      "specifier": "Derived"
     },
     {
       "quantity": "temperature",
-      "constant_exactness": "Base"
+      "specifier": "Base"
     },
     {
       "quantity": "mass",
-      "constant_exactness": "Base"
+      "specifier": "Base"
     },
     {
       "quantity": "force",
-      "constant_exactness": "Derived"
+      "specifier": "Derived"
     },
     {
       "quantity": "mass-density",
-      "constant_exactness": "Derived"
+      "specifier": "Derived"
     },
     {
       "quantity": "mass-fraction",
-      "constant_exactness": "Derived"
+      "specifier": "Derived"
     },
     {
       "quantity": "pressure",
-      "constant_exactness": "Derived"
+      "specifier": "Derived"
     },
     {
       "quantity": "pressure-per-length",
-      "constant_exactness": "Derived"
+      "specifier": "Derived"
     },
     {
       "quantity": "magnetic-induction",
-      "constant_exactness": "Derived"
+      "specifier": "Derived"
     },
     {
       "quantity": "power",
-      "constant_exactness": "Derived"
+      "specifier": "Derived"
     },
     {
       "quantity": "voltage",
-      "constant_exactness": "Derived"
+      "specifier": "Derived"
     },
     {
       "quantity": "electric-resistance",
-      "constant_exactness": "Derived"
+      "specifier": "Derived"
     },
     {
       "quantity": "energy",
-      "constant_exactness": "Derived"
+      "specifier": "Derived"
     },
     {
       "quantity": "magnetic-flux",
-      "constant_exactness": "Derived"
+      "specifier": "Derived"
     },
     {
       "quantity": "electric-inductance",
-      "constant_exactness": "Derived"
+      "specifier": "Derived"
     },
     {
       "quantity": "length",
-      "constant_exactness": "Base"
+      "specifier": "Base"
     },
     {
       "quantity": "speed",
-      "constant_exactness": "Derived"
+      "specifier": "Derived"
     },
     {
       "quantity": "acceleration",
-      "constant_exactness": "Derived"
+      "specifier": "Derived"
     },
     {
       "quantity": "radioactivity",
-      "constant_exactness": "Derived"
+      "specifier": "Derived"
     },
     {
       "quantity": "graphics",
-      "constant_exactness": "Base"
+      "specifier": "Base"
     },
     {
       "quantity": "resolution",
-      "constant_exactness": "Derived"
+      "specifier": "Derived"
     },
     {
       "quantity": "portion",
-      "constant_exactness": "Base"
+      "specifier": "Base"
     },
     {
       "quantity": "electric-capacitance",
-      "constant_exactness": "Derived"
+      "specifier": "Derived"
     },
     {
       "quantity": "angle",
-      "constant_exactness": "Base"
+      "specifier": "Base"
     },
     {
       "quantity": "wave-number",
-      "constant_exactness": "Derived"
+      "specifier": "Derived"
     },
     {
       "quantity": "frequency",
-      "constant_exactness": "Derived"
+      "specifier": "Derived"
     },
     {
       "quantity": "duration",
-      "constant_exactness": "Base"
+      "specifier": "Base"
     },
     {
       "quantity": "electric-charge",
-      "constant_exactness": "Derived"
+      "specifier": "Derived"
     },
     {
       "quantity": "area",
-      "constant_exactness": "Derived"
+      "specifier": "Derived"
     },
     {
       "quantity": "ionizing-radiation",
-      "constant_exactness": "Derived"
+      "specifier": "Derived"
     },
     {
       "quantity": "solid-angle",
-      "constant_exactness": "Derived"
+      "specifier": "Derived"
     },
     {
       "quantity": "year-duration",
-      "constant_exactness": "Base"
+      "specifier": "Base"
     }
   ],
   "convert_infos": [
