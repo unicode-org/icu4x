@@ -10,12 +10,12 @@ use icu_provider_fs::FsDataProvider;
 use std::path::PathBuf;
 
 fn paths() -> [PathBuf; 3] {
-    let maybe_env = std::env::var("CARGO_MANIFEST_DIR").ok();
-    let dir = maybe_env
+    let maybe_root = std::env::var("CARGO_MANIFEST_DIR").ok();
+    let root = maybe_env
         .as_deref()
         .or(option_env!("CARGO_MANIFEST_DIR"))
         .expect("icu_provider_fs tests need CARGO_MANIFEST_DIR to run");
-    let base = PathBuf::from(dir);
+    let root = PathBuf::from(dir);
 
     [
         base.join("tests/data/json"),
