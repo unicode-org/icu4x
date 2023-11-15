@@ -1,0 +1,15 @@
+# A CI configuration to auto-publish pub packages.
+
+name: Publish
+
+on:
+  pull_request:
+    branches: [ main ]
+  push:
+    tags: [ '[0-9A-z]+-v[0-9]+.[0-9]+.[0-9]+' ]
+
+jobs:
+  publish:
+    uses: dart-lang/ecosystem/.github/workflows/publish.yaml@main
+    with:
+      write-comments: false
