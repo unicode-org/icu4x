@@ -440,10 +440,7 @@ impl DataLocale {
     ///     .parse::<DataLocale>()
     ///     .unwrap()
     ///     .is_langid_und());
-    /// assert!("und-x-aux"
-    ///     .parse::<DataLocale>()
-    ///     .unwrap()
-    ///     .is_langid_und());
+    /// assert!("und-x-aux".parse::<DataLocale>().unwrap().is_langid_und());
     /// assert!(!"ca-ES".parse::<DataLocale>().unwrap().is_langid_und());
     /// ```
     pub fn is_langid_und(&self) -> bool {
@@ -871,8 +868,8 @@ impl AuxiliaryKeys {
     /// # Examples
     ///
     /// ```
-    /// use icu_provider::prelude::*;
     /// use icu_locid::extensions::private::subtag;
+    /// use icu_provider::prelude::*;
     ///
     /// // Single auxiliary key:
     /// let a = AuxiliaryKeys::try_from_iter([subtag!("abc")]).unwrap();
@@ -880,7 +877,8 @@ impl AuxiliaryKeys {
     /// assert_eq!(a, b);
     ///
     /// // Multiple auxiliary keys:
-    /// let a = AuxiliaryKeys::try_from_iter([subtag!("abc"), subtag!("defg")]).unwrap();
+    /// let a = AuxiliaryKeys::try_from_iter([subtag!("abc"), subtag!("defg")])
+    ///     .unwrap();
     /// let b = "abc-defg".parse::<AuxiliaryKeys>().unwrap();
     /// assert_eq!(a, b);
     /// ```
@@ -921,8 +919,8 @@ impl AuxiliaryKeys {
     /// # Examples
     ///
     /// ```
-    /// use icu_provider::prelude::*;
     /// use icu_locid::extensions::private::subtag;
+    /// use icu_provider::prelude::*;
     ///
     /// // Single auxiliary key:
     /// let a = AuxiliaryKeys::from_subtag(subtag!("abc"));
@@ -968,11 +966,14 @@ impl AuxiliaryKeys {
     /// # Example
     ///
     /// ```
-    /// use icu_provider::AuxiliaryKeys;
     /// use icu_locid::extensions::private::subtag;
+    /// use icu_provider::AuxiliaryKeys;
     ///
     /// let aux: AuxiliaryKeys = "abc-defg".parse().unwrap();
-    /// assert_eq!(aux.iter().collect::<Vec<_>>(), vec![subtag!("abc"), subtag!("defg")]);
+    /// assert_eq!(
+    ///     aux.iter().collect::<Vec<_>>(),
+    ///     vec![subtag!("abc"), subtag!("defg")]
+    /// );
     /// ```
     pub fn iter(&self) -> impl Iterator<Item = Subtag> + '_ {
         self.value

@@ -29,7 +29,8 @@ use databake::*;
 /// litemap_alloc.insert(10usize, "ten".to_string());
 ///
 /// // Convert to a borrowed type for baking:
-/// let litemap_str: LiteMap<usize, &str, Vec<_>> = litemap_alloc.to_borrowed_values();
+/// let litemap_str: LiteMap<usize, &str, Vec<_>> =
+///     litemap_alloc.to_borrowed_values();
 /// let litemap_slice: LiteMap<usize, &str, &[_]> = litemap_str.as_sliced();
 ///
 /// // The bake will now work for const construction:
