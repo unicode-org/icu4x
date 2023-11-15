@@ -34,6 +34,7 @@ pub const KEYS: &[DataKey] = &[UnitsInfoV1Marker::KEY];
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[yoke(prove_covariance_manually)]
 pub struct UnitsInfoV1<'data> {
+    // TODO(#4313).
     /// Maps from unit name (e.g. foot) to the index of the unit in the `unit_quantity` vector.
     #[cfg_attr(feature = "serde", serde(borrow))]
     pub units_info: ZeroMap<'data, str, UnitsInfoIndex>,
@@ -58,12 +59,12 @@ pub struct UnitsInfoV1<'data> {
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 #[derive(Copy, Debug, Clone, Default, PartialEq, PartialOrd, Eq, Ord)]
 pub struct UnitsInfoIndex {
-    // TODO: use Option<Dimension> instead.
+    // TODO(#4313).
     /// Contains the index of the dimension in the `unit_dimensions` vector.
     /// If the unit does not have a quantity, this field is `None`.
     pub dimension: Option<u16>,
 
-    // TODO: use Option<ConversionInfo> instead.
+    // TODO(#4313).
     /// Contains the index of the conversion info in the `convert_infos` vector.
     /// If the unit does not have a convert unit, this field is `None`.
     pub convert_info: Option<u16>,
@@ -151,10 +152,12 @@ pub struct ConversionInfo<'data> {
     /// Represents the sign of the conversion factor.
     pub factor_sign: Sign,
 
+    // TODO(#4311).
     /// Represents the numerator of the offset.
     #[cfg_attr(feature = "serde", serde(borrow))]
     pub offset_num: ZeroVec<'data, u8>,
 
+    // TODO(#4311).
     /// Represents the denominator of the offset.
     #[cfg_attr(feature = "serde", serde(borrow))]
     pub offset_den: ZeroVec<'data, u8>,
