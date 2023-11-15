@@ -28,6 +28,7 @@
         - CLDR 44 compatibility fixes (https://github.com/unicode-org/icu4x/pull/4134, https://github.com/unicode-org/icu4x/pull/4156, https://github.com/unicode-org/icu4x/pull/4158)
         - Fix `supported_locales` for collator keys (https://github.com/unicode-org/icu4x/pull/4169)
         - CLI: Fix behavior of `--segmenter-lstm-root` such that it does not override `icuexportdata-root` (https://github.com/unicode-org/icu4x/pull/4277)
+        - Make datagen work without `CARGO_PKG_RUST_VERSION` environment variable (https://github.com/unicode-org/icu4x/pull/4292)
 - Utilities
     - `databake`
         - Add implementations for `HashSet`, `HashMap`, `BTreeSet`, `BTreeMap` (https://github.com/unicode-org/icu4x/pull/4268, https://github.com/unicode-org/icu4x/pull/4274, https://github.com/unicode-org/icu4x/pull/4295)  
