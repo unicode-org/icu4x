@@ -24,18 +24,6 @@ macro_rules! registry {
             ]
         }
 
-        /// Same as `all_keys`.
-        ///
-        /// Note that since v1.3, `all_keys` also contains experimental keys for which the
-        /// corresponding Cargo features has been enabled.
-        ///
-        /// ✨ *Enabled with the `legacy_api` Cargo feature.*
-        #[deprecated(since = "1.3.0", note = "use `all_keys` with the required cargo features")]
-        #[cfg(feature = "legacy_api")]
-        pub fn all_keys_with_experimental() -> Vec<DataKey> {
-            all_keys()
-        }
-
         /// Parses a human-readable key identifier into a [`DataKey`].
         //  Supports the hello world key
         /// # Example
@@ -490,6 +478,18 @@ registry!(
     #[cfg(feature = "icu_transliterate")]
     icu_transliterate::provider::TransliteratorRulesV1Marker = "transliterator/rules@1",
 );
+
+/// Same as `all_keys`.
+///
+/// Note that since v1.3, `all_keys` also contains experimental keys for which the
+/// corresponding Cargo features has been enabled.
+///
+/// ✨ *Enabled with the `legacy_api` Cargo feature.*
+#[deprecated(since = "1.3.0", note = "use `all_keys` with the required cargo features")]
+#[cfg(feature = "legacy_api")]
+pub fn all_keys_with_experimental() -> Vec<DataKey> {
+    all_keys()
+}
 
 #[test]
 fn no_key_collisions() {
