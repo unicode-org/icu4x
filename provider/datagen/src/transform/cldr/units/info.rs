@@ -115,6 +115,8 @@ impl IterableDataProvider<UnitsInfoV1Marker> for crate::DatagenProvider {
 fn test_basic() {
     use icu_locid::locale;
     use icu_provider::prelude::*;
+    use icu_unitsconversion::provider::Sign;
+    use num_bigint::BigUint;
     use zerovec::maps::ZeroVecLike;
 
     let provider = crate::DatagenProvider::new_testing();
@@ -140,10 +142,19 @@ fn test_basic() {
     // TODO: how to test this?
     // assert_eq!(meter_quantity.constant_exactness as u8, QuantitySimplicity::Simple as u8);
 
+    let big_one = BigUint::from(1u32);
+
     let meter_convert_index = meter.convert_info.get().unwrap().as_unsigned_int() as usize;
-    let meter_convert = convert_units.zvl_get(meter_convert_index).unwrap();
-    assert_eq!(meter_convert.base_unit(), "meter");
-    //assert_eq!(meter_convert.factor(), "1");
+    let meter_convert_ule = convert_units.zvl_get(meter_convert_index).unwrap();
+
+    assert_eq!(
+        meter_convert_ule.factor_den(),
+        big_one.to_bytes_le().to_vec().as_slice()
+    );
+    assert_eq!(
+        meter_convert_ule.factor_num(),
+        big_one.to_bytes_le().to_vec().as_slice()
+    );
 
     let foot = units_info_map.get("foot").unwrap();
     let foot_convert_index = foot.convert_info.get().unwrap().as_unsigned_int() as usize;
