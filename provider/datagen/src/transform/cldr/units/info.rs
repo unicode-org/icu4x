@@ -30,9 +30,7 @@ impl DataProvider<UnitsInfoV1Marker> for crate::DatagenProvider {
 
         let clean_constants_map = process_constants(constants)?;
 
-        /////////////////////
-        //////////
-        /////////////////////
+        // Get all the units and their conversion information.
         let quantities = &units_data.supplemental.unit_quantities.quantities;
         let convert_units = &units_data.supplemental.convert_units.convert_units;
 
