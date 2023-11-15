@@ -598,6 +598,8 @@ jobs:
 
     # Job-specific dependencies
     - uses: dart-lang/setup-dart@v1
+      with:
+        sdk: 3.1.5
 
     # Actual job
     - name: Run `cargo make ci-job-diplomat`
