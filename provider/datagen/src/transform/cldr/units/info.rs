@@ -14,9 +14,7 @@ use icu_unitsconversion::provider::{
 };
 use zerovec::{VarZeroVec, ZeroMap};
 
-use super::helpers::{
-    extract_conversion_info, process_constants, process_factor,
-};
+use super::helpers::{extract_conversion_info, process_constants, process_factor};
 
 impl DataProvider<UnitsInfoV1Marker> for crate::DatagenProvider {
     fn load(&self, _req: DataRequest) -> Result<DataResponse<UnitsInfoV1Marker>, DataError> {
