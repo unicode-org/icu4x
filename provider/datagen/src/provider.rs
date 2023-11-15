@@ -70,8 +70,7 @@ impl DatagenProvider {
             .get_or_init(|| {
                 let maybe_var = std::env::var("CARGO_MANIFEST_DIR").ok();
                 let root = maybe_var
-                    .as_ref()
-                    .map(|s| &**s)
+                    .as_deref()
                     .or(core::option_env!("CARGO_MANIFEST_DIR"))
                     .expect("CARGO_MANIFEST_DIR must be set to run datagen tests");
                 // This is equivalent for the files defined in `tools/testdata-scripts/globs.rs.data`.
