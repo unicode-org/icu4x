@@ -158,7 +158,6 @@ registry!(
     #[cfg(test)]
     icu_singlenumberformatter::provider::CurrencyEssentialsV1Marker = "currency/essentials@1",
     icu_unitsconversion::provider::UnitsConstantsV1Marker = "units/constants@1",
-
     #[cfg(any(all(), feature = "icu_calendar"))]
     icu_calendar::provider::JapaneseErasV1Marker = "calendar/japanese@1",
     icu_calendar::provider::JapaneseExtendedErasV1Marker = "calendar/japanext@1",
@@ -511,7 +510,10 @@ registry!(
 /// corresponding Cargo features has been enabled.
 ///
 /// ✨ *Enabled with the `legacy_api` Cargo feature.*
-#[deprecated(since = "1.3.0", note = "use `all_keys` with the required cargo features")]
+#[deprecated(
+    since = "1.3.0",
+    note = "use `all_keys` with the required cargo features"
+)]
 #[cfg(feature = "legacy_api")]
 pub fn all_keys_with_experimental() -> Vec<DataKey> {
     all_keys()
