@@ -107,11 +107,6 @@ pub fn process_factor<'a>(
     factor: &str,
     cons_map: &BTreeMap<&'a str, ScientificNumber>,
 ) -> Result<ScientificNumber, DataError> {
-    let mut factor_num = Vec::<String>::new();
-    let mut factor_den = Vec::<String>::new();
-    let mut factor_exactness = ConstantExactness::Exact;
-    let mut factor_sign = Sign::Positive;
-
     let mut factor_parts = factor.split('/');
     let factor_num_str = factor_parts.next().unwrap_or("0").trim();
     let factor_den_str = factor_parts.next().unwrap_or("1").trim();
