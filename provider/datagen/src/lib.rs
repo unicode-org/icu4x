@@ -680,10 +680,7 @@ fn test_keys() {
 fn test_keys_from_file() {
     #![allow(deprecated)]
 
-    const BYTES: &[u8] = include_bytes!(concat!(
-        core::env!("CARGO_MANIFEST_DIR"),
-        "/tests/data/tutorial_buffer+keys.txt"
-    ));
+    const BYTES: &[u8] = include_bytes!("../tests/data/tutorial_buffer+keys.txt");
 
     assert_eq!(
         keys_from_file_inner(BYTES).unwrap(),
@@ -702,10 +699,7 @@ fn test_keys_from_file() {
 fn test_keys_from_bin() {
     // File obtained by running
     // cargo +nightly --config docs/tutorials/testing/patch.toml build -p tutorial_buffer --target wasm32-unknown-unknown --release -Z build-std=std,panic_abort -Z build-std-features=panic_immediate_abort --manifest-path docs/tutorials/crates/buffer/Cargo.toml && cp docs/tutorials/target/wasm32-unknown-unknown/release/tutorial_buffer.wasm provider/datagen/tests/data/
-    const BYTES: &[u8] = include_bytes!(concat!(
-        core::env!("CARGO_MANIFEST_DIR"),
-        "/tests/data/tutorial_buffer.wasm"
-    ));
+    const BYTES: &[u8] = include_bytes!("../tests/data/tutorial_buffer.wasm");
 
     assert_eq!(
         keys_from_bin_inner(BYTES),

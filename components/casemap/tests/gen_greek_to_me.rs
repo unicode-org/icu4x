@@ -168,10 +168,7 @@ pub(crate) fn match_extras(ch: char) -> Option<u8> {{
         vec_1f00.len(),
     );
 
-    let local = include_str!(concat!(
-        std::env!("CARGO_MANIFEST_DIR"),
-        "/src/greek_to_me/data.rs"
-    ));
+    let local = include_str!("../src/greek_to_me/data.rs");
 
     // We cannot just check if the two are unequal because on Windows core.autocrlf
     // may have messed with the line endings on the file, or it may have not (either
