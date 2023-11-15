@@ -30,7 +30,7 @@
         - CLI: Fix behavior of `--segmenter-lstm-root` such that it does not override `icuexportdata-root` (https://github.com/unicode-org/icu4x/pull/4277)
 - Utilities
     - `databake`
-        - Add implementations for `BTreeSet`, `BTreeMap` (https://github.com/unicode-org/icu4x/pull/4268, https://github.com/unicode-org/icu4x/pull/4274)  
+        - Add implementations for `HashSet`, `HashMap`, `BTreeSet`, `BTreeMap` (https://github.com/unicode-org/icu4x/pull/4268, https://github.com/unicode-org/icu4x/pull/4274, https://github.com/unicode-org/icu4x/pull/4295)  
         - Improvements to `databake::test_bake!()` (https://github.com/unicode-org/icu4x/pull/4182)
     - `litemap`
         - Implement `databake::Bake` on `LiteMap` (https://github.com/unicode-org/icu4x/pull/4275)
