@@ -11,7 +11,7 @@
 
 use alloc::borrow::Cow;
 use icu_provider::prelude::*;
-use zerovec::{VarZeroVec, ZeroMap};
+use zerovec::{VarZeroVec, ZeroMap, ZeroVec};
 
 #[cfg(feature = "compiled_data")]
 #[derive(Debug)]
@@ -160,4 +160,83 @@ pub struct ConversionInfo<'data> {
     // TODO(#4172): Convert this field to a fraction form, for both the factor and offset.
     #[cfg_attr(feature = "serde", serde(borrow))]
     pub factor: Cow<'data, str>,
+}
+
+/// This enum is used to represent the sign of a constant value.
+#[zerovec::make_ule(SignULE)]
+#[cfg_attr(
+    feature = "datagen",
+    derive(serde::Serialize, databake::Bake),
+    databake(path = icu_unitsconversion::provider),
+)]
+#[cfg_attr(feature = "serde", derive(serde::Deserialize))]
+#[derive(Copy, Clone, Debug, PartialOrd, Ord, PartialEq, Eq, Default)]
+#[repr(u8)]
+pub enum Sign {
+    #[default]
+    Positive = 0,
+    Negative = 1,
+}
+
+/// This enum is used to represent the type of a constant value.
+/// It can be either `ConstantType::Actual` or `ConstantType::Approximate`.
+/// If the constant type is `ConstantType::Approximate`, it indicates that the value is not numerically accurate.
+#[zerovec::make_ule(ExactnessULE)]
+#[cfg_attr(
+    feature = "datagen",
+    derive(serde::Serialize, databake::Bake),
+    databake(path = icu_unitsconversion::provider),
+)]
+#[cfg_attr(feature = "serde", derive(serde::Deserialize))]
+#[derive(Copy, Clone, Debug, PartialOrd, Ord, PartialEq, Eq, Default)]
+#[repr(u8)]
+pub enum Exactness {
+    #[default]
+    Exact = 0,
+    Approximate = 1,
+}
+
+#[zerovec::make_varule(ConstantValueULE)]
+#[derive(Clone, Debug, PartialOrd, Ord, PartialEq, Eq, Default)]
+#[cfg_attr(
+    feature = "datagen",
+    derive(databake::Bake),
+    databake(path = icu_unitsconversion::provider),
+)]
+#[cfg_attr(
+    feature = "datagen",
+    derive(serde::Serialize),
+    zerovec::derive(Serialize)
+)]
+#[cfg_attr(
+    feature = "serde",
+    derive(serde::Deserialize),
+    zerovec::derive(Deserialize)
+)]
+#[zerovec::derive(Debug)]
+pub struct Factor<'data> {
+    /// Represents the numerator of the conversion factor.
+    #[cfg_attr(feature = "serde", serde(borrow))]
+    pub numerator: ZeroVec<'data, u8>,
+
+    /// Represents the denominator of the conversion factor.
+    #[cfg_attr(feature = "serde", serde(borrow))]
+    pub denominator: ZeroVec<'data, u8>,
+
+    /// Represents the sign of the conversion factor.
+    pub sign: Sign,
+
+    /// Represents the numerator of the offset.
+    #[cfg_attr(feature = "serde", serde(borrow))]
+    pub offset_num: ZeroVec<'data, u8>,
+
+    /// Represents the denominator of the offset.
+    #[cfg_attr(feature = "serde", serde(borrow))]
+    pub offset_den: ZeroVec<'data, u8>,
+
+    /// Represents the sign of the offset.
+    pub offset_sign: Sign,
+
+    /// Represents the exactness of the conversion factor.
+    pub exactness: Exactness,
 }

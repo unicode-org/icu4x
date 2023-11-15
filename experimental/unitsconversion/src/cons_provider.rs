@@ -80,22 +80,6 @@ pub enum ConstantExactness {
     Approximate = 1,
 }
 
-/// This enum is used to represent the sign of a constant value.
-#[zerovec::make_ule(SignULE)]
-#[cfg_attr(
-    feature = "datagen",
-    derive(serde::Serialize, databake::Bake),
-    databake(path = icu_unitsconversion::provider),
-)]
-#[cfg_attr(feature = "serde", derive(serde::Deserialize))]
-#[derive(Copy, Clone, Debug, PartialOrd, Ord, PartialEq, Eq, Default)]
-#[repr(u8)]
-pub enum Sign {
-    #[default]
-    Positive = 0,
-    Negative = 1,
-}
-
 // // TODO(#4098): Improve the ULE representation. Consider using a single byte for sign and type representation.
 // /// This struct encapsulates a constant value, comprising a numerator, denominator, sign, and type.
 // #[zerovec::make_varule(ConstantValueULE)]

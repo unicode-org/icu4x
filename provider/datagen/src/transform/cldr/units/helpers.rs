@@ -8,7 +8,8 @@ use std::collections::{BTreeMap, VecDeque};
 
 use fraction::GenericFraction;
 use icu_provider::DataError;
-use icu_unitsconversion::cons_provider::{ConstantExactness, Sign};
+use icu_unitsconversion::cons_provider::ConstantExactness;
+use icu_unitsconversion::provider::Sign;
 use num_bigint::BigUint;
 
 use crate::transform::cldr::cldr_serde::units::units_constants::Constant;
