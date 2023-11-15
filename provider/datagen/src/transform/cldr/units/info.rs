@@ -115,7 +115,6 @@ impl IterableDataProvider<UnitsInfoV1Marker> for crate::DatagenProvider {
 fn test_basic() {
     use icu_locid::locale;
     use icu_provider::prelude::*;
-    use icu_unitsconversion::provider::Sign;
     use num_bigint::BigUint;
     use zerovec::maps::ZeroVecLike;
 
