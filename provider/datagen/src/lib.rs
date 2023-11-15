@@ -25,7 +25,7 @@
 //!     .with_all_locales()
 //!     .export(
 //!         &DatagenProvider::new_latest_tested(),
-//!         BlobExporter::new_with_sink(Box::new(
+//!         BlobExporter::new_v2_with_sink(Box::new(
 //!             File::create("data.postcard").unwrap(),
 //!         )),
 //!     )
@@ -113,9 +113,7 @@
 //! * `icu_compactdecimal`
 //! * `icu_displaynames`
 //! * `icu_relativetime`
-//! * `icu_singlenumberformatter`
 //! * `icu_transliterate`
-//! * `icu_unitsconversion`
 //! * ...
 //!
 //! The meta-feature `experimental_components` is available to activate all experimental components.
@@ -140,6 +138,9 @@ mod provider;
 mod registry;
 mod source;
 mod transform;
+
+#[cfg(test)]
+mod tests;
 
 pub use driver::DatagenDriver;
 pub use provider::DatagenProvider;
@@ -468,6 +469,11 @@ pub enum Out {
         fingerprint: bool,
     },
     /// Output as a postcard blob to the given sink.
+    ///
+    /// This supports only version 1 of the blob format. Please use [`DatagenDriver`] with
+    /// [`BlobExporter`] to export to blob format version 2.
+    ///
+    /// [`BlobExporter`]: crate::blob_exporter::BlobExporter
     Blob(Box<dyn std::io::Write + Sync>),
     /// Output a module with baked data at the given location.
     Baked {
@@ -610,6 +616,7 @@ pub fn datagen(
                                 )?)
                             }
                             Out::Blob(write) => {
+                                // Note: no blob v2 support in legacy API
                                 Box::new(blob_exporter::BlobExporter::new_with_sink(write))
                             }
                             Out::Baked {

@@ -4,7 +4,33 @@
 
 use icu_provider::prelude::*;
 
+macro_rules! make_check_all_keys {
+    ($(#[cfg($feature:meta)] $($marker:path = $path:literal,)+)+) => {
+        fn check_all_keys() {
+            #[cfg(not(all($($feature,)+)))]
+            log::warn!("The icu_datagen crates has not been built with all components, so `all_keys` only returns a subset of keys");
+        }
+    };
+}
+
+/// This macro contains special handling for `#[cfg(test)]` because it is not
+/// a warning if that cfg is not enabled.
+///
+/// The first cfg should be `#[cfg(test)]`, followed by all test markers,
+/// followed by `#[cfg(feature = "...")]` and all remaining markers.
+///
+/// If there are no test markers, `#[cfg(test)]` should be replaced by
+/// `no_cfg_test,` followed by the first `#[cfg(feature = "...")]`.
 macro_rules! registry {
+    (#[cfg(test)] $($marker_test:path = $path_test:literal,)+ $(#[cfg($feature:meta)] $($marker:path = $path:literal,)+)+) => {
+        make_check_all_keys!($(#[cfg($feature)] $($marker = $path,)+)+);
+        // Call the macro again with #[cfg(any(test))] to get the normal code path
+        registry!(#[cfg(any(test))] $($marker_test = $path_test,)+ $(#[cfg($feature)] $($marker = $path,)+)+);
+    };
+    (no_cfg_test, $(#[cfg($feature:meta)] $($marker:path = $path:literal,)+)+) => {
+        make_check_all_keys!($(#[cfg($feature)] $($marker = $path,)+)+);
+        registry!($(#[cfg($feature)] $($marker = $path,)+)+);
+    };
     ($(#[cfg($feature:meta)] $($marker:path = $path:literal,)+)+) => {
         /// List of all keys that are available.
         ///
@@ -12,8 +38,7 @@ macro_rules! registry {
         /// corresponding Cargo features has been enabled.
         // Excludes the hello world key, as that generally should not be generated.
         pub fn all_keys() -> Vec<DataKey> {
-            #[cfg(not(all($($feature,)+)))]
-            log::warn!("The icu_datagen crates has not been built with all components, so `all_keys` only returns a subset of keys");
+            check_all_keys();
             vec![
                 $(
                     $(
@@ -22,18 +47,6 @@ macro_rules! registry {
                     )+
                 )+
             ]
-        }
-
-        /// Same as `all_keys`.
-        ///
-        /// Note that since v1.3, `all_keys` also contains experimental keys for which the
-        /// corresponding Cargo features has been enabled.
-        ///
-        /// ✨ *Enabled with the `legacy_api` Cargo feature.*
-        #[deprecated(since = "1.3.0", note = "use `all_keys` with the required cargo features")]
-        #[cfg(feature = "legacy_api")]
-        pub fn all_keys_with_experimental() -> Vec<DataKey> {
-            all_keys()
         }
 
         /// Parses a human-readable key identifier into a [`DataKey`].
@@ -120,7 +133,7 @@ macro_rules! registry {
             unreachable!("unregistered key {key:?}")
         }
 
-        #[doc(hidden)]
+        #[cfg(test)]
         pub fn deserialize_and_measure<Measurement>(key: DataKey, buf: DataPayload<BufferMarker>, measure: impl Fn() -> Measurement) -> Result<(Measurement, DataPayload<icu_provider::datagen::ExportMarker>), DataError> {
             if key.path() == icu_provider::hello_world::HelloWorldV1Marker::KEY.path() {
                 let deserialized: DataPayload<icu_provider::hello_world::HelloWorldV1Marker> = buf.into_deserialized(icu_provider::buf::BufferFormat::Postcard1)?;
@@ -140,7 +153,11 @@ macro_rules! registry {
     }
 }
 
+// If `#[cfg(test)]` becomes empty, replace it with `no_cfg_test,`
 registry!(
+    #[cfg(test)]
+    icu_singlenumberformatter::provider::CurrencyEssentialsV1Marker = "currency/essentials@1",
+    icu_unitsconversion::provider::UnitsConstantsV1Marker = "units/constants@1",
     #[cfg(any(all(), feature = "icu_calendar"))]
     icu_calendar::provider::JapaneseErasV1Marker = "calendar/japanese@1",
     icu_calendar::provider::JapaneseExtendedErasV1Marker = "calendar/japanext@1",
@@ -470,10 +487,6 @@ registry!(
         "relativetime/short/year@1",
     icu_relativetime::provider::NarrowYearRelativeTimeFormatDataV1Marker =
         "relativetime/narrow/year@1",
-    #[cfg(feature = "icu_singlenumberformatter")]
-    icu_singlenumberformatter::provider::CurrencyEssentialsV1Marker = "currency/essentials@1",
-    #[cfg(feature = "icu_unitsconversion")]
-    icu_unitsconversion::provider::UnitsInfoV1Marker = "units/info@1",
     #[cfg(any(all(), feature = "icu_segmenter"))]
     icu_segmenter::provider::DictionaryForWordLineExtendedV1Marker =
         "segmenter/dictionary/wl_ext@1",
@@ -490,6 +503,21 @@ registry!(
     #[cfg(feature = "icu_transliterate")]
     icu_transliterate::provider::TransliteratorRulesV1Marker = "transliterator/rules@1",
 );
+
+/// Same as `all_keys`.
+///
+/// Note that since v1.3, `all_keys` also contains experimental keys for which the
+/// corresponding Cargo features has been enabled.
+///
+/// ✨ *Enabled with the `legacy_api` Cargo feature.*
+#[deprecated(
+    since = "1.3.0",
+    note = "use `all_keys` with the required cargo features"
+)]
+#[cfg(feature = "legacy_api")]
+pub fn all_keys_with_experimental() -> Vec<DataKey> {
+    all_keys()
+}
 
 #[test]
 fn no_key_collisions() {

@@ -172,6 +172,12 @@ pub mod ffi {
             self.0.date.year().number
         }
 
+        /// Returns whether this date is in a leap year
+        #[diplomat::rust_link(icu::calendar::Date::is_in_leap_year, FnInStruct)]
+        pub fn is_in_leap_year(&self) -> bool {
+            self.0.date.is_in_leap_year()
+        }
+
         /// Returns the number of months in the year represented by this date
         #[diplomat::rust_link(icu::calendar::Date::months_in_year, FnInStruct)]
         pub fn months_in_year(&self) -> u8 {

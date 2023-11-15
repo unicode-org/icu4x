@@ -801,9 +801,8 @@ where
     /// use icu::locid::locale;
     /// use icu::plurals::{PluralCategory, PluralRulesWithRanges};
     ///
-    /// let ranges =
-    ///     PluralRulesWithRanges::try_new_cardinal(&locale!("en").into())
-    ///         .expect("locale should be present");
+    /// let ranges = PluralRulesWithRanges::try_new_cardinal(&locale!("en").into())
+    ///     .expect("locale should be present");
     ///
     /// let rules = ranges.rules();
     ///

@@ -169,6 +169,10 @@ impl Calendar for Julian {
         year_as_gregorian(date.0.year)
     }
 
+    fn is_in_leap_year(&self, date: &Self::DateInner) -> bool {
+        Self::is_leap_year(date.0.year)
+    }
+
     /// The calendar-specific month represented by `date`
     fn month(&self, date: &Self::DateInner) -> types::FormattableMonth {
         date.0.month()

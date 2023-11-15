@@ -7,27 +7,34 @@
  
 - Components
     - Compiled data updated to CLDR 44 and ICU 74 (https://github.com/unicode-org/icu4x/pull/4245)
+    - `icu_calendar`
+      - Expose if a date is in a leap year (https://github.com/unicode-org/icu4x/pull/4273)
     - `icu_locid`
       - Canonicalize transform extensions to lowercase (https://github.com/unicode-org/icu4x/pull/4134)
     - `icu_properties`
         - Support Indic_Syllabic_Category in icu_properties. (https://github.com/unicode-org/icu4x/pull/4176)
+        - Add enum constants for new Unicode 15.1 Line_Break properties. (https://github.com/unicode-org/icu4x/issues/4132)
     - `icu_segmenter`
         - Fix Unicode 15.0 sentence segmentation (https://github.com/unicode-org/icu4x/pull/4213)
     - `icu_unicodeset_parse`
-        - Add support to parse UAX#29 properties (https://github.com/unicode-org/icu4x/pull/44175)
+        - Add support to parse UAX#29 properties (https://github.com/unicode-org/icu4x/pull/4175)
 - Data model and providers
     - `icu_provider`
         - Implement Any/BufferProvider for some smart pointers (https://github.com/unicode-org/icu4x/pull/4255) 
     - `icu_provider_blob`
       - New V2 serialization schema (https://github.com/unicode-org/icu4x/pull/4207)
     - `icu_datagen`
-        - Fix datagen deduplication algorithm. Create and update tests. ([#4233](https://github.com/unicode-org/icu4x/commit/03cba376ca59c4354c11a744f761873239a0ebbc))
         - New CLI option `--format=blob2` (https://github.com/unicode-org/icu4x/pull/4207)
         - CLDR 44 compatibility fixes (https://github.com/unicode-org/icu4x/pull/4134, https://github.com/unicode-org/icu4x/pull/4156, https://github.com/unicode-org/icu4x/pull/4158)
         - Fix `supported_locales` for collator keys (https://github.com/unicode-org/icu4x/pull/4169)
+        - CLI: Fix behavior of `--segmenter-lstm-root` such that it does not override `icuexportdata-root` (https://github.com/unicode-org/icu4x/pull/4277)
+        - Make datagen work without `CARGO_PKG_RUST_VERSION` environment variable (https://github.com/unicode-org/icu4x/pull/4292)
 - Utilities
     - `databake`
-        - Improvements `databake::test_bake!()` (https://github.com/unicode-org/icu4x/pull/4182)
+        - Add implementations for `HashSet`, `HashMap`, `BTreeSet`, `BTreeMap` (https://github.com/unicode-org/icu4x/pull/4268, https://github.com/unicode-org/icu4x/pull/4274, https://github.com/unicode-org/icu4x/pull/4295)  
+        - Improvements to `databake::test_bake!()` (https://github.com/unicode-org/icu4x/pull/4182)
+    - `litemap`
+        - Implement `databake::Bake` on `LiteMap` (https://github.com/unicode-org/icu4x/pull/4275)
     - `tinystr`
         - Better Debug impl for UnvalidatedTinyAsciiStr (https://github.com/unicode-org/icu4x/pull/4189)
     - `zerovec`

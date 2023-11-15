@@ -64,9 +64,7 @@ members = [
     "provider/baked/properties",
     "provider/baked/relativetime",
     "provider/baked/segmenter",
-    "provider/baked/singlenumberformatter",
     "provider/baked/timezone",
-    "provider/baked/unitsconversion",
 
     # Utils
     "utils/calendrical_calculations",
@@ -198,9 +196,7 @@ icu_plurals_data = { version = "~1.3.2", path = "provider/baked/plurals", defaul
 icu_properties_data = { version = "~1.3.2", path = "provider/baked/properties", default-features = false }
 icu_relativetime_data = { version = "~1.3.2", path = "provider/baked/relativetime", default-features = false }
 icu_segmenter_data = { version = "~1.3.2", path = "provider/baked/segmenter", default-features = false }
-icu_singlenumberformatter_data = { version = "~1.3.2", path = "provider/baked/singlenumberformatter", default-features = false }
 icu_timezone_data = { version = "~1.3.2", path = "provider/baked/timezone", default-features = false }
-icu_unitsconversion_data = { version = "~1.3.2", path = "provider/baked/unitsconversion", default-features = false }
 
 # Utils
 calendrical_calculations = { version = "0.1.0", path = "utils/calendrical_calculations", default-features = false }

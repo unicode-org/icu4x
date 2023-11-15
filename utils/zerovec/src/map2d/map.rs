@@ -303,18 +303,9 @@ where
     /// use zerovec::ZeroMap2d;
     ///
     /// let mut map = ZeroMap2d::new();
-    /// assert_eq!(
-    ///     map.insert(&0, "zero", "foo"),
-    ///     None,
-    /// );
-    /// assert_eq!(
-    ///     map.insert(&1, "one", "bar"),
-    ///     None,
-    /// );
-    /// assert_eq!(
-    ///     map.insert(&1, "one", "baz").as_deref(),
-    ///     Some("bar"),
-    /// );
+    /// assert_eq!(map.insert(&0, "zero", "foo"), None,);
+    /// assert_eq!(map.insert(&1, "one", "bar"), None,);
+    /// assert_eq!(map.insert(&1, "one", "baz").as_deref(), Some("bar"),);
     /// assert_eq!(map.get_2d(&1, "one").as_deref(), Some("baz"));
     /// assert_eq!(map.len(), 2);
     /// ```

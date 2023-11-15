@@ -99,6 +99,14 @@ export class ICU4XIsoDate {
 
   /**
 
+   * Returns if the year is a leap year for this date
+
+   * See the {@link https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.is_in_leap_year Rust documentation for `is_in_leap_year`} for more information.
+   */
+  is_in_leap_year(): boolean;
+
+  /**
+
    * Returns the number of months in the year represented by this date
 
    * See the {@link https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.months_in_year Rust documentation for `months_in_year`} for more information.

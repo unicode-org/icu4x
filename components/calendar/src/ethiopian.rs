@@ -198,6 +198,10 @@ impl Calendar for Ethiopian {
         Self::year_as_ethiopian(date.0.year, self.0)
     }
 
+    fn is_in_leap_year(&self, date: &Self::DateInner) -> bool {
+        Self::is_leap_year(date.0.year)
+    }
+
     fn month(&self, date: &Self::DateInner) -> types::FormattableMonth {
         date.0.month()
     }

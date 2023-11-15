@@ -6887,6 +6887,20 @@ class IsoDate implements ffi.Finalizable {
               'ICU4XIsoDate_year')
           .asFunction<int Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
 
+  /// Returns if the year is a leap year for this date
+  ///
+  /// See the [Rust documentation for `is_in_leap_year`](https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.is_in_leap_year) for more information.
+  bool get isInLeapYear {
+    final result = _ICU4XIsoDate_is_in_leap_year(_underlying);
+    return result;
+  }
+
+  // ignore: non_constant_identifier_names
+  static final _ICU4XIsoDate_is_in_leap_year =
+      _capi<ffi.NativeFunction<ffi.Bool Function(ffi.Pointer<ffi.Opaque>)>>(
+              'ICU4XIsoDate_is_in_leap_year')
+          .asFunction<bool Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
+
   /// Returns the number of months in the year represented by this date
   ///
   /// See the [Rust documentation for `months_in_year`](https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.months_in_year) for more information.
@@ -7235,6 +7249,20 @@ class IsoDateTime implements ffi.Finalizable {
       _capi<ffi.NativeFunction<ffi.Int32 Function(ffi.Pointer<ffi.Opaque>)>>(
               'ICU4XIsoDateTime_year')
           .asFunction<int Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
+
+  /// Returns whether this date is in a leap year
+  ///
+  /// See the [Rust documentation for `is_in_leap_year`](https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.is_in_leap_year) for more information.
+  bool get isInLeapYear {
+    final result = _ICU4XIsoDateTime_is_in_leap_year(_underlying);
+    return result;
+  }
+
+  // ignore: non_constant_identifier_names
+  static final _ICU4XIsoDateTime_is_in_leap_year =
+      _capi<ffi.NativeFunction<ffi.Bool Function(ffi.Pointer<ffi.Opaque>)>>(
+              'ICU4XIsoDateTime_is_in_leap_year')
+          .asFunction<bool Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
 
   /// Returns the number of months in the year represented by this date
   ///
