@@ -20,6 +20,11 @@ pub enum ConstantExactness {
     Exact = 0,
     Approximate = 1,
 }
+
+/// Represents a scientific number that contains only clean numerator and denominator terms.
+/// NOTE:
+///   clean means that there is no constant in the numerator or denominator.
+///   For example, ["1.2"] is clean, but ["1.2", ft_to_m"] is not clean.
 pub struct ScientificNumber {
     /// Contains numerator terms that are represented as scientific numbers
     pub clean_num: Vec<String>,
@@ -109,6 +114,12 @@ pub fn process_factor_part(
     Ok(result)
 }
 
+/// Processes a factor in the form of a string and returns a ScientificNumber.
+/// Examples:
+///     "1" is converted to ScientificNumber { clean_num: ["1"], clean_den: ["1"], constant_exactness: Exact }
+///     "3 * ft_to_m" is converted to ScientificNumber { clean_num: ["3", "ft_to_m"], clean_den: ["1"], constant_exactness: Exact }
+/// NOTE:
+///    If one of the constants in the factor is approximate, the whole factor is approximate.
 pub fn process_factor(
     factor: &str,
     cons_map: &BTreeMap<&str, ScientificNumber>,
@@ -134,6 +145,7 @@ pub fn process_factor(
     Ok(result)
 }
 
+/// Extracts the conversion info from a base unit, factor and offset.
 pub fn extract_conversion_info(
     base_unit: &str,
     factor: ScientificNumber,
