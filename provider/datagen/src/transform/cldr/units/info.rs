@@ -12,11 +12,10 @@ use icu_provider::{
 use icu_unitsconversion::provider::{
     ConversionInfo, DerivationSpecifier, Dimension, UnitsInfoIndex, UnitsInfoV1, UnitsInfoV1Marker,
 };
-use zerovec::{VarZeroVec, ZeroMap, ZeroVec};
+use zerovec::{VarZeroVec, ZeroMap};
 
 use super::helpers::{
-    convert_slices_to_fraction, extract_conversion_info, process_constants, process_factor,
-    transform_fraction_to_constant_value,
+    extract_conversion_info, process_constants, process_factor,
 };
 
 impl DataProvider<UnitsInfoV1Marker> for crate::DatagenProvider {

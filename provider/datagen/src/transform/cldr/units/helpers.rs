@@ -73,11 +73,11 @@ impl GeneralNonScientificNumber {
     }
 }
 
-pub fn process_factor_part<'a>(
+pub fn process_factor_part(
     factor_part: &str,
-    cons_map: &BTreeMap<&'a str, ScientificNumber>,
+    cons_map: &BTreeMap<&str, ScientificNumber>,
 ) -> Result<ScientificNumber, DataError> {
-    if factor_part.contains("/") {
+    if factor_part.contains('/') {
         return Err(DataError::custom("the factor part is fractional number"));
     }
 
@@ -103,9 +103,9 @@ pub fn process_factor_part<'a>(
     Ok(result)
 }
 
-pub fn process_factor<'a>(
+pub fn process_factor(
     factor: &str,
-    cons_map: &BTreeMap<&'a str, ScientificNumber>,
+    cons_map: &BTreeMap<&str, ScientificNumber>,
 ) -> Result<ScientificNumber, DataError> {
     let mut factor_parts = factor.split('/');
     let factor_num_str = factor_parts.next().unwrap_or("0").trim();
