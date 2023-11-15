@@ -158,9 +158,7 @@ pub enum Sign {
     Negative = 1,
 }
 
-/// This enum is used to represent the type of a constant value.
-/// It can be either `ConstantType::Actual` or `ConstantType::Approximate`.
-/// If the constant type is `ConstantType::Approximate`, it indicates that the value is not numerically accurate.
+/// This enum is used to represent the exactness of a factor
 #[zerovec::make_ule(ExactnessULE)]
 #[cfg_attr(
     feature = "datagen",
