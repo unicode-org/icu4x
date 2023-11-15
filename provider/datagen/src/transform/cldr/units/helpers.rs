@@ -8,12 +8,18 @@ use std::collections::{BTreeMap, VecDeque};
 
 use fraction::GenericFraction;
 use icu_provider::DataError;
-use icu_unitsconversion::cons_provider::ConstantExactness;
 use icu_unitsconversion::provider::{ConversionInfo, Exactness, Sign};
 use num_bigint::BigUint;
 
 use crate::transform::cldr::cldr_serde::units::units_constants::Constant;
 
+#[derive(Copy, Clone, Debug, PartialOrd, Ord, PartialEq, Eq, Default)]
+#[repr(u8)]
+pub enum ConstantExactness {
+    #[default]
+    Exact = 0,
+    Approximate = 1,
+}
 pub struct ScientificNumber {
     /// Contains numerator terms that are represented as scientific numbers
     pub clean_num: Vec<String>,

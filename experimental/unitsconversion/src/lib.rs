@@ -6,5 +6,4 @@
 
 extern crate alloc;
 
-pub mod cons_provider;
 pub mod provider;

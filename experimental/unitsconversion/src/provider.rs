@@ -72,7 +72,7 @@ pub struct UnitsInfoIndex {
 /// Specifies if the unit is a base unit or a derived unit.
 /// If derived, this means each unit is derived from a base unit.
 /// For example: "foot-per-second" is derived from "meter" and "second".
-#[zerovec::make_ule(QuantitySimplicityULE)]
+#[zerovec::make_ule(DerivationSpecifierULE)]
 #[cfg_attr(
     feature = "datagen",
     derive(serde::Serialize, databake::Bake),
@@ -115,6 +115,8 @@ pub struct Dimension<'data> {
     pub constant_exactness: DerivationSpecifier,
 }
 
+/// Represents the conversion information for a unit.
+/// Which includes the base unit (the unit which the unit is converted to), the conversion factor, and the offset.
 #[zerovec::make_varule(ConversionInfoULE)]
 #[derive(Clone, Debug, PartialOrd, Ord, PartialEq, Eq, Default)]
 #[cfg_attr(
