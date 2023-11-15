@@ -352,6 +352,9 @@ impl FixedDecimal {
     /// Returns the relative ordering of the digits after `magnitude` with respect to 5.
     #[cfg(feature = "experimental")]
     fn half_at_next_magnitude(&self, magnitude: i16) -> Ordering {
+        #[cfg(debug_assertions)] // Depends on having no trailing zeroes.
+        self.check_invariants();
+
         match self.digit_at_next_position(magnitude).cmp(&5) {
             // If the next digit is equal to 5, we can know if we're at exactly 5
             // by comparing the next magnitude with the last nonzero magnitude of
@@ -386,6 +389,9 @@ impl FixedDecimal {
         magnitude: i16,
         increment: RoundingIncrement,
     ) -> Ordering {
+        #[cfg(debug_assertions)] // Depends on having no trailing zeroes.
+        self.check_invariants();
+
         match increment {
             RoundingIncrement::MultiplesOf1 => self.half_at_next_magnitude(magnitude),
             RoundingIncrement::MultiplesOf2 => {
@@ -1475,8 +1481,20 @@ impl FixedDecimal {
     /// dec.half_trunc(0);
     /// assert_eq!("4", dec.to_string());
     /// ```
-    #[cfg(not(feature = "experimental"))]
     pub fn half_trunc(&mut self, position: i16) {
+        #[cfg(feature = "experimental")]
+        {
+            self.half_trunc_to_increment(position, RoundingIncrement::MultiplesOf1);
+        }
+
+        #[cfg(not(feature = "experimental"))]
+        {
+            self.half_trunc_internal(position);
+        }
+    }
+
+    #[cfg(not(feature = "experimental"))]
+    fn half_trunc_internal(&mut self, position: i16) {
         let digit_after_position = self.digit_at_next_position(position);
         let should_expand = match digit_after_position.cmp(&5) {
             Ordering::Less => false,
@@ -1493,39 +1511,6 @@ impl FixedDecimal {
         } else {
             self.trunc(position);
         }
-    }
-
-    /// Half Truncates the number on the right to a particular position, deleting
-    /// digits if necessary.
-    ///
-    /// # Examples
-    ///
-    /// ```
-    /// use fixed_decimal::FixedDecimal;
-    /// # use std::str::FromStr;
-    ///
-    /// let mut dec = FixedDecimal::from_str("-1.5").unwrap();
-    /// dec.half_trunc(0);
-    /// assert_eq!("-1", dec.to_string());
-    /// let mut dec = FixedDecimal::from_str("0.4").unwrap();
-    /// dec.half_trunc(0);
-    /// assert_eq!("0", dec.to_string());
-    /// let mut dec = FixedDecimal::from_str("0.5").unwrap();
-    /// dec.half_trunc(0);
-    /// assert_eq!("0", dec.to_string());
-    /// let mut dec = FixedDecimal::from_str("0.6").unwrap();
-    /// dec.half_trunc(0);
-    /// assert_eq!("1", dec.to_string());
-    /// let mut dec = FixedDecimal::from_str("1.5").unwrap();
-    /// dec.half_trunc(0);
-    /// assert_eq!("1", dec.to_string());
-    /// let mut dec = FixedDecimal::from_str("3.954").unwrap();
-    /// dec.half_trunc(0);
-    /// assert_eq!("4", dec.to_string());
-    /// ```
-    #[cfg(feature = "experimental")]
-    pub fn half_trunc(&mut self, position: i16) {
-        self.half_trunc_to_increment(position, RoundingIncrement::MultiplesOf1);
     }
 
     /// Half Truncates the number on the right to a particular position and rounding increment,
@@ -2114,8 +2099,20 @@ impl FixedDecimal {
     /// dec.half_expand(0);
     /// assert_eq!("2", dec.to_string());
     /// ```
-    #[cfg(not(feature = "experimental"))]
     pub fn half_expand(&mut self, position: i16) {
+        #[cfg(feature = "experimental")]
+        {
+            self.half_expand_to_increment(position, RoundingIncrement::MultiplesOf1);
+        }
+
+        #[cfg(not(feature = "experimental"))]
+        {
+            self.half_expand_internal(position);
+        }
+    }
+
+    #[cfg(not(feature = "experimental"))]
+    pub fn half_expand_internal(&mut self, position: i16) {
         let digit_after_position = self.digit_at_next_position(position);
 
         if digit_after_position >= 5 {
@@ -2123,35 +2120,6 @@ impl FixedDecimal {
         } else {
             self.trunc(position);
         }
-    }
-
-    /// Take the half expand of the number at a particular position.
-    ///
-    /// # Examples
-    ///
-    /// ```
-    /// use fixed_decimal::FixedDecimal;
-    /// # use std::str::FromStr;
-    ///
-    /// let mut dec = FixedDecimal::from_str("-1.5").unwrap();
-    /// dec.half_expand(0);
-    /// assert_eq!("-2", dec.to_string());
-    /// let mut dec = FixedDecimal::from_str("0.4").unwrap();
-    /// dec.half_expand(0);
-    /// assert_eq!("0", dec.to_string());
-    /// let mut dec = FixedDecimal::from_str("0.5").unwrap();
-    /// dec.half_expand(0);
-    /// assert_eq!("1", dec.to_string());
-    /// let mut dec = FixedDecimal::from_str("0.6").unwrap();
-    /// dec.half_expand(0);
-    /// assert_eq!("1", dec.to_string());
-    /// let mut dec = FixedDecimal::from_str("1.5").unwrap();
-    /// dec.half_expand(0);
-    /// assert_eq!("2", dec.to_string());
-    /// ```
-    #[cfg(feature = "experimental")]
-    pub fn half_expand(&mut self, position: i16) {
-        self.half_expand_to_increment(position, RoundingIncrement::MultiplesOf1);
     }
 
     /// Take the half expand of the number at a particular position and rounding increment.
@@ -2300,43 +2268,26 @@ impl FixedDecimal {
     /// dec.ceil(0);
     /// assert_eq!("2", dec.to_string());
     /// ```
-    #[cfg(not(feature = "experimental"))]
     pub fn ceil(&mut self, position: i16) {
+        #[cfg(feature = "experimental")]
+        {
+            self.ceil_to_increment(position, RoundingIncrement::MultiplesOf1);
+        }
+
+        #[cfg(not(feature = "experimental"))]
+        {
+            self.ceil_internal(position);
+        }
+    }
+
+    #[cfg(not(feature = "experimental"))]
+    fn ceil_internal(&mut self, position: i16) {
         if self.sign == Sign::Negative {
             self.trunc(position);
             return;
         }
 
         self.expand(position);
-    }
-
-    /// Take the ceiling of the number at a particular position.
-    ///
-    /// # Examples
-    ///
-    /// ```
-    /// use fixed_decimal::FixedDecimal;
-    /// # use std::str::FromStr;
-    ///
-    /// let mut dec = FixedDecimal::from_str("-1.5").unwrap();
-    /// dec.ceil(0);
-    /// assert_eq!("-1", dec.to_string());
-    /// let mut dec = FixedDecimal::from_str("0.4").unwrap();
-    /// dec.ceil(0);
-    /// assert_eq!("1", dec.to_string());
-    /// let mut dec = FixedDecimal::from_str("0.5").unwrap();
-    /// dec.ceil(0);
-    /// assert_eq!("1", dec.to_string());
-    /// let mut dec = FixedDecimal::from_str("0.6").unwrap();
-    /// dec.ceil(0);
-    /// assert_eq!("1", dec.to_string());
-    /// let mut dec = FixedDecimal::from_str("1.5").unwrap();
-    /// dec.ceil(0);
-    /// assert_eq!("2", dec.to_string());
-    /// ```
-    #[cfg(feature = "experimental")]
-    pub fn ceil(&mut self, position: i16) {
-        self.ceil_to_increment(position, RoundingIncrement::MultiplesOf1);
     }
 
     /// Take the ceiling of the number at a particular position and rounding increment.
@@ -2478,43 +2429,26 @@ impl FixedDecimal {
     /// dec.half_ceil(0);
     /// assert_eq!("2", dec.to_string());
     /// ```
-    #[cfg(not(feature = "experimental"))]
     pub fn half_ceil(&mut self, position: i16) {
+        #[cfg(feature = "experimental")]
+        {
+            self.half_ceil_to_increment(position, RoundingIncrement::MultiplesOf1);
+        }
+
+        #[cfg(not(feature = "experimental"))]
+        {
+            self.half_ceil_internal(position);
+        }
+    }
+
+    #[cfg(not(feature = "experimental"))]
+    fn half_ceil_internal(&mut self, position: i16) {
         if self.sign == Sign::Negative {
             self.half_trunc(position);
             return;
         }
 
         self.half_expand(position);
-    }
-
-    /// Take the half ceiling of the number at a particular position.
-    ///
-    /// # Examples
-    ///
-    /// ```
-    /// use fixed_decimal::FixedDecimal;
-    /// # use std::str::FromStr;
-    ///
-    /// let mut dec = FixedDecimal::from_str("-1.5").unwrap();
-    /// dec.half_ceil(0);
-    /// assert_eq!("-1", dec.to_string());
-    /// let mut dec = FixedDecimal::from_str("0.4").unwrap();
-    /// dec.half_ceil(0);
-    /// assert_eq!("0", dec.to_string());
-    /// let mut dec = FixedDecimal::from_str("0.5").unwrap();
-    /// dec.half_ceil(0);
-    /// assert_eq!("1", dec.to_string());
-    /// let mut dec = FixedDecimal::from_str("0.6").unwrap();
-    /// dec.half_ceil(0);
-    /// assert_eq!("1", dec.to_string());
-    /// let mut dec = FixedDecimal::from_str("1.5").unwrap();
-    /// dec.half_ceil(0);
-    /// assert_eq!("2", dec.to_string());
-    /// ```
-    #[cfg(feature = "experimental")]
-    pub fn half_ceil(&mut self, position: i16) {
-        self.half_ceil_to_increment(position, RoundingIncrement::MultiplesOf1);
     }
 
     /// Take the half ceiling of the number at a particular position and rounding increment.
@@ -2656,43 +2590,26 @@ impl FixedDecimal {
     /// dec.floor(0);
     /// assert_eq!("1", dec.to_string());
     /// ```
-    #[cfg(not(feature = "experimental"))]
     pub fn floor(&mut self, position: i16) {
+        #[cfg(feature = "experimental")]
+        {
+            self.floor_to_increment(position, RoundingIncrement::MultiplesOf1);
+        }
+
+        #[cfg(not(feature = "experimental"))]
+        {
+            self.floor_internal(position);
+        }
+    }
+
+    #[cfg(not(feature = "experimental"))]
+    pub fn floor_internal(&mut self, position: i16) {
         if self.sign == Sign::Negative {
             self.expand(position);
             return;
         }
 
         self.trunc(position);
-    }
-
-    /// Take the floor of the number at a particular position.
-    ///
-    /// # Examples
-    ///
-    /// ```
-    /// use fixed_decimal::FixedDecimal;
-    /// # use std::str::FromStr;
-    ///
-    /// let mut dec = FixedDecimal::from_str("-1.5").unwrap();
-    /// dec.floor(0);
-    /// assert_eq!("-2", dec.to_string());
-    /// let mut dec = FixedDecimal::from_str("0.4").unwrap();
-    /// dec.floor(0);
-    /// assert_eq!("0", dec.to_string());
-    /// let mut dec = FixedDecimal::from_str("0.5").unwrap();
-    /// dec.floor(0);
-    /// assert_eq!("0", dec.to_string());
-    /// let mut dec = FixedDecimal::from_str("0.6").unwrap();
-    /// dec.floor(0);
-    /// assert_eq!("0", dec.to_string());
-    /// let mut dec = FixedDecimal::from_str("1.5").unwrap();
-    /// dec.floor(0);
-    /// assert_eq!("1", dec.to_string());
-    /// ```
-    #[cfg(feature = "experimental")]
-    pub fn floor(&mut self, position: i16) {
-        self.floor_to_increment(position, RoundingIncrement::MultiplesOf1);
     }
 
     /// Take the floor of the number at a particular position and rounding increment.
@@ -2834,43 +2751,26 @@ impl FixedDecimal {
     /// dec.half_floor(0);
     /// assert_eq!("1", dec.to_string());
     /// ```
-    #[cfg(not(feature = "experimental"))]
     pub fn half_floor(&mut self, position: i16) {
+        #[cfg(feature = "experimental")]
+        {
+            self.half_floor_to_increment(position, RoundingIncrement::MultiplesOf1);
+        }
+
+        #[cfg(not(feature = "experimental"))]
+        {
+            self.half_floor_internal(position);
+        }
+    }
+
+    #[cfg(not(feature = "experimental"))]
+    fn half_floor_internal(&mut self, position: i16) {
         if self.sign == Sign::Negative {
             self.half_expand(position);
             return;
         }
 
         self.half_trunc(position);
-    }
-
-    /// Take the half floor of the number at a particular position.
-    ///
-    /// # Examples
-    ///
-    /// ```
-    /// use fixed_decimal::FixedDecimal;
-    /// # use std::str::FromStr;
-    ///
-    /// let mut dec = FixedDecimal::from_str("-1.5").unwrap();
-    /// dec.half_floor(0);
-    /// assert_eq!("-2", dec.to_string());
-    /// let mut dec = FixedDecimal::from_str("0.4").unwrap();
-    /// dec.half_floor(0);
-    /// assert_eq!("0", dec.to_string());
-    /// let mut dec = FixedDecimal::from_str("0.5").unwrap();
-    /// dec.half_floor(0);
-    /// assert_eq!("0", dec.to_string());
-    /// let mut dec = FixedDecimal::from_str("0.6").unwrap();
-    /// dec.half_floor(0);
-    /// assert_eq!("1", dec.to_string());
-    /// let mut dec = FixedDecimal::from_str("1.5").unwrap();
-    /// dec.half_floor(0);
-    /// assert_eq!("1", dec.to_string());
-    /// ```
-    #[cfg(feature = "experimental")]
-    pub fn half_floor(&mut self, position: i16) {
-        self.half_floor_to_increment(position, RoundingIncrement::MultiplesOf1);
     }
 
     /// Take the half floor of the number at a particular position and rounding increment.
@@ -3016,8 +2916,20 @@ impl FixedDecimal {
     /// dec.half_even(0);
     /// assert_eq!("2", dec.to_string());
     /// ```
-    #[cfg(not(feature = "experimental"))]
     pub fn half_even(&mut self, position: i16) {
+        #[cfg(feature = "experimental")]
+        {
+            self.half_even_to_increment(position, RoundingIncrement::MultiplesOf1);
+        }
+
+        #[cfg(not(feature = "experimental"))]
+        {
+            self.half_even_internal(position);
+        }
+    }
+
+    #[cfg(not(feature = "experimental"))]
+    pub fn half_even_internal(&mut self, position: i16) {
         let digit_after_position = self.digit_at_next_position(position);
         let should_expand = match digit_after_position.cmp(&5) {
             Ordering::Less => false,
@@ -3037,35 +2949,6 @@ impl FixedDecimal {
         } else {
             self.trunc(position);
         }
-    }
-
-    /// Take the half even of the number at a particular position.
-    ///
-    /// # Examples
-    ///
-    /// ```
-    /// use fixed_decimal::FixedDecimal;
-    /// # use std::str::FromStr;
-    ///
-    /// let mut dec = FixedDecimal::from_str("-1.5").unwrap();
-    /// dec.half_even(0);
-    /// assert_eq!("-2", dec.to_string());
-    /// let mut dec = FixedDecimal::from_str("0.4").unwrap();
-    /// dec.half_even(0);
-    /// assert_eq!("0", dec.to_string());
-    /// let mut dec = FixedDecimal::from_str("0.5").unwrap();
-    /// dec.half_even(0);
-    /// assert_eq!("0", dec.to_string());
-    /// let mut dec = FixedDecimal::from_str("0.6").unwrap();
-    /// dec.half_even(0);
-    /// assert_eq!("1", dec.to_string());
-    /// let mut dec = FixedDecimal::from_str("1.5").unwrap();
-    /// dec.half_even(0);
-    /// assert_eq!("2", dec.to_string());
-    /// ```
-    #[cfg(feature = "experimental")]
-    pub fn half_even(&mut self, position: i16) {
-        self.half_even_to_increment(position, RoundingIncrement::MultiplesOf1);
     }
 
     /// Take the half even of the number at a particular position and rounding increment.
