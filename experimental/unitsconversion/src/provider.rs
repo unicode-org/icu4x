@@ -41,12 +41,12 @@ pub struct UnitsInfoV1<'data> {
     /// Contains the dimensions information for the units.
     /// For example, the dimension for the unit `foot` is `length`.
     #[cfg_attr(feature = "serde", serde(borrow))]
-    pub unit_dimensions: VarZeroVec<'data, UnitQuantityULE>,
+    pub unit_dimensions: VarZeroVec<'data, DimensionULE>,
 
     /// Contains the conversion information, such as the conversion rate and the base unit.
     /// For example, the conversion information for the unit `foot` is `1 foot = 0.3048 meter`.
     #[cfg_attr(feature = "serde", serde(borrow))]
-    pub convert_infos: VarZeroVec<'data, ConvertUnitsULE>,
+    pub convert_infos: VarZeroVec<'data, ConversionInfoULE>,
 }
 
 #[zerovec::make_ule(UnitsInfoIndexULE)]
@@ -58,10 +58,12 @@ pub struct UnitsInfoV1<'data> {
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 #[derive(Copy, Debug, Clone, Default, PartialEq, PartialOrd, Eq, Ord)]
 pub struct UnitsInfoIndex {
+    // TODO: use Option<Dimension> instead.
     /// Contains the index of the dimension in the `unit_dimensions` vector.
     /// If the unit does not have a quantity, this field is `None`.
     pub dimension: Option<u16>,
 
+    // TODO: use Option<ConversionInfo> instead.
     /// Contains the index of the conversion info in the `convert_infos` vector.
     /// If the unit does not have a convert unit, this field is `None`.
     pub convert_info: Option<u16>,
@@ -85,7 +87,7 @@ pub enum DerivationSpecifier {
     Derived = 1,
 }
 
-#[zerovec::make_varule(UnitQuantityULE)]
+#[zerovec::make_varule(DimensionULE)]
 #[derive(Clone, Debug, PartialOrd, Ord, PartialEq, Eq, Default)]
 #[cfg_attr(
     feature = "datagen",
@@ -113,7 +115,7 @@ pub struct Dimension<'data> {
     pub constant_exactness: DerivationSpecifier,
 }
 
-#[zerovec::make_varule(ConvertUnitsULE)]
+#[zerovec::make_varule(ConversionInfoULE)]
 #[derive(Clone, Debug, PartialOrd, Ord, PartialEq, Eq, Default)]
 #[cfg_attr(
     feature = "datagen",
