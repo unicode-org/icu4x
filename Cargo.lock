@@ -197,10 +197,7 @@ name = "bakeddata-scripts"
 version = "1.3.2"
 dependencies = [
  "icu",
- "icu_compactdecimal",
  "icu_datagen",
- "icu_singlenumberformatter",
- "icu_unitsconversion",
  "log",
  "simple_logger",
 ]
@@ -2021,17 +2018,11 @@ dependencies = [
  "databake",
  "displaydoc",
  "icu_locid",
- "icu_locid_transform",
  "icu_provider",
- "icu_singlenumberformatter_data",
  "serde",
  "tinystr",
  "zerovec",
 ]
-
-[[package]]
-name = "icu_singlenumberformatter_data"
-version = "1.3.2"
 
 [[package]]
 name = "icu_testdata_scripts"
@@ -2112,14 +2103,9 @@ dependencies = [
  "displaydoc",
  "icu_locid",
  "icu_provider",
- "icu_unitsconversion_data",
  "serde",
  "zerovec",
 ]
-
-[[package]]
-name = "icu_unitsconversion_data"
-version = "1.3.2"
 
 [[package]]
 name = "ident_case"

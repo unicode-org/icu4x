@@ -470,9 +470,9 @@ registry!(
         "relativetime/short/year@1",
     icu_relativetime::provider::NarrowYearRelativeTimeFormatDataV1Marker =
         "relativetime/narrow/year@1",
-    #[cfg(feature = "icu_singlenumberformatter")]
+    #[cfg(test)] // keep as test until baked data is needed
     icu_singlenumberformatter::provider::CurrencyEssentialsV1Marker = "currency/essentials@1",
-    #[cfg(feature = "icu_unitsconversion")]
+    #[cfg(test)] // keep as test until baked data is needed
     icu_unitsconversion::provider::UnitsConstantsV1Marker = "units/constants@1",
     #[cfg(any(all(), feature = "icu_segmenter"))]
     icu_segmenter::provider::DictionaryForWordLineExtendedV1Marker =

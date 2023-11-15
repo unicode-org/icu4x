@@ -49,9 +49,7 @@ icu_timezone = { workspace = true, features = ["datagen"] }
 icu_compactdecimal = { workspace = true, features = ["datagen"], optional = true }
 icu_displaynames = { workspace = true, features = ["datagen"], optional = true }
 icu_relativetime = { workspace = true, features = ["datagen"], optional = true }
-icu_singlenumberformatter = { workspace = true, features = ["datagen"], optional = true}
 icu_transliterate = { workspace = true, features = ["datagen"], optional = true }
-icu_unitsconversion = { workspace = true, features = ["datagen"], optional = true}
 
 # ICU infrastructure
 icu_codepointtrie_builder = { workspace = true }
@@ -105,6 +103,10 @@ icu = { path = "../../components/icu" }
 postcard = "1"
 simple_logger = { version = "4.1.0", default-features = false }
 
+# Pre-experimental components with limited data generation
+icu_singlenumberformatter = { workspace = true, features = ["datagen"] }
+icu_unitsconversion = { workspace = true, features = ["datagen"] }
+
 [features]
 default = ["bin", "use_wasm", "networking", "legacy_api", "rayon", "fs_exporter", "blob_exporter", "baked_exporter"]
 baked_exporter = ["dep:crlify", "dep:databake", "dep:proc-macro2"]
@@ -126,16 +128,12 @@ networking = ["dep:ureq"]
 icu_compactdecimal = ["dep:icu_compactdecimal"]
 icu_displaynames = ["dep:icu_displaynames"]
 icu_relativetime = ["dep:icu_relativetime"]
-icu_singlenumberformatter = ["dep:icu_singlenumberformatter"]
 icu_transliterate = ["dep:icu_transliterate"]
-icu_unitsconversion = ["dep:icu_unitsconversion"]
 experimental_components = [
     "icu_compactdecimal",
     "icu_displaynames",
     "icu_relativetime",
-    "icu_singlenumberformatter",
     "icu_transliterate",
-    "icu_unitsconversion"
 ]
 
 [[bin]]
@@ -149,6 +147,6 @@ skip_feature_sets = [["use_icu4c"], ["use_wasm"]]
 skip_optional_dependencies = true
 # Always the experimental deps because we want to all-or-nothing them
 # and the nothing case is already tested in regular check CI
-always_include_features = ["icu_compactdecimal", "icu_displaynames", "icu_relativetime", "icu_singlenumberformatter", "icu_transliterate", "icu_unitsconversion"]
+always_include_features = ["icu_compactdecimal", "icu_displaynames", "icu_relativetime", "icu_transliterate"]
 # We have a *lot* of features here
 max_combination_size = 2

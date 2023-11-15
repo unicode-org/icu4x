@@ -62,7 +62,6 @@ icu_plurals_data = { path = "../../provider/baked/plurals" }
 icu_properties_data = { path = "../../provider/baked/properties"}
 icu_relativetime_data = { path = "../../provider/baked/relativetime" }
 icu_segmenter_data = { path = "../../provider/baked/segmenter" }
-icu_singlenumberformatter_data = { path = "../../provider/baked/singlenumberformatter"}
 icu_timezone_data = { path = "../../provider/baked/timezone" }
 
 crlify = { path = "../../utils/crlify" }

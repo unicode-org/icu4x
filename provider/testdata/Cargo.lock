@@ -310,7 +310,7 @@ dependencies = [
 
 [[package]]
 name = "icu_collator"
-version = "1.3.2"
+version = "1.3.3"
 dependencies = [
  "displaydoc",
  "icu_collections",
@@ -496,6 +496,7 @@ dependencies = [
  "postcard",
  "serde",
  "writeable",
+ "zerotrie",
  "zerovec",
 ]
 
@@ -631,6 +632,9 @@ checksum = "f7012b1bbb0719e1097c47611d3898568c546d597c2e74d66f6087edd5233ff4"
 [[package]]
 name = "litemap"
 version = "0.7.1"
+dependencies = [
+ "serde",
+]
 
 [[package]]
 name = "log"
@@ -1099,8 +1103,11 @@ name = "zerotrie"
 version = "0.1.1"
 dependencies = [
  "displaydoc",
+ "litemap",
+ "serde",
  "yoke",
  "zerofrom",
+ "zerovec",
 ]
 
 [[package]]
