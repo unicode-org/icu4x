@@ -671,12 +671,13 @@ fn test_keys() {
 #[cfg(feature = "legacy_api")]
 fn test_keys_from_file() {
     #![allow(deprecated)]
+
+    let mut buffer = std::env::var("CARGO_MANIFEST_DIR")
+        .or(core::env!("CARGO_MANIFEST_DIR"))
+        .expect("CARGO_MANIFEST_DIR must be set to run datagen tests");
+    buffer.push_str("/tests/data/tutorial_buffer+keys.txt");
     assert_eq!(
-        keys_from_file(concat!(
-            env!("CARGO_MANIFEST_DIR"),
-            "/tests/data/tutorial_buffer+keys.txt"
-        ))
-        .unwrap(),
+        keys_from_file(&buffer).unwrap(),
         vec![
             icu_datetime::provider::calendar::GregorianDateLengthsV1Marker::KEY,
             icu_datetime::provider::calendar::GregorianDateSymbolsV1Marker::KEY,
@@ -691,6 +692,7 @@ fn test_keys_from_file() {
 #[test]
 fn test_keys_from_bin() {
     let mut buffer = std::env::var("CARGO_MANIFEST_DIR")
+        .or(core::env!("CARGO_MANIFEST_DIR"))
         .expect("CARGO_MANIFEST_DIR must be set to run datagen tests");
     buffer.push_str("/tests/data/tutorial_buffer.wasm");
     // File obtained by running

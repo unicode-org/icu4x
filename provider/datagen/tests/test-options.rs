@@ -61,6 +61,7 @@ fn test_fallback_options() {
         .unwrap();
 
     let root = std::env::var("CARGO_MANIFEST_DIR")
+        .or(core::env!("CARGO_MANIFEST_DIR"))
         .expect("CARGO_MANIFEST_DIR must be set to run datagen tests");
 
     let data_root = Path::new(&root).join("tests/data");
