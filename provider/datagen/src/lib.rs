@@ -382,13 +382,17 @@ pub fn keys<S: AsRef<str>>(strings: &[S]) -> Vec<DataKey> {
 #[deprecated(since = "1.3.0", note = "use Rust code")]
 #[cfg(feature = "legacy_api")]
 pub fn keys_from_file<P: AsRef<Path>>(path: P) -> std::io::Result<Vec<DataKey>> {
+    let file = std::fs::File::open(path.as_ref())?;
+    keys_from_file_inner(&file)
+}
+
+fn keys_from_file_inner<R: std::io::Read>(source: R) -> std::io::Result<Vec<DataKey>> {
     use std::io::{BufRead, BufReader};
-    BufReader::new(std::fs::File::open(path.as_ref())?)
+    BufReader::new(source)
         .lines()
         .filter_map(|k| k.map(crate::key).transpose())
         .collect()
 }
-
 /// Parses a compiled binary and returns a list of [`DataKey`]s that it uses *at runtime*.
 ///
 /// This function is intended to be used for binaries that use `AnyProvider` or `BufferProvider`,
@@ -415,19 +419,23 @@ pub fn keys_from_file<P: AsRef<Path>>(path: P) -> std::io::Result<Vec<DataKey>> 
 /// ```
 //  Supports the hello world key
 pub fn keys_from_bin<P: AsRef<Path>>(path: P) -> std::io::Result<Vec<DataKey>> {
-    use memchr::memmem::*;
-
     let file = std::fs::read(path.as_ref())?;
     let file = file.as_slice();
+
+    Ok(keys_from_bin_inner(file))
+}
+
+fn keys_from_bin_inner(bytes: &[u8]) -> Vec<DataKey> {
+    use memchr::memmem::*;
 
     const LEADING_TAG: &[u8] = icu_provider::leading_tag!().as_bytes();
     const TRAILING_TAG: &[u8] = icu_provider::trailing_tag!().as_bytes();
 
     let trailing_tag = Finder::new(TRAILING_TAG);
 
-    let mut result: Vec<DataKey> = find_iter(file, LEADING_TAG)
+    let mut result: Vec<DataKey> = find_iter(bytes, LEADING_TAG)
         .map(|tag_position| tag_position + LEADING_TAG.len())
-        .map(|key_start| &file[key_start..])
+        .map(|key_start| &bytes[key_start..])
         .filter_map(move |key_fragment| {
             trailing_tag
                 .find(key_fragment)
@@ -441,7 +449,7 @@ pub fn keys_from_bin<P: AsRef<Path>>(path: P) -> std::io::Result<Vec<DataKey>> {
     result.sort();
     result.dedup();
 
-    Ok(result)
+    result
 }
 
 #[deprecated(since = "1.3.0", note = "use `DatagenDriver`")]
@@ -672,12 +680,13 @@ fn test_keys() {
 fn test_keys_from_file() {
     #![allow(deprecated)]
 
-    let mut buffer = std::env::var("CARGO_MANIFEST_DIR")
-        .or(core::env!("CARGO_MANIFEST_DIR"))
-        .expect("CARGO_MANIFEST_DIR must be set to run datagen tests");
-    buffer.push_str("/tests/data/tutorial_buffer+keys.txt");
+    const BYTES: &[u8] = include_bytes!(concat!(
+        core::env!("CARGO_MANIFEST_DIR"),
+        "/tests/data/tutorial_buffer+keys.txt"
+    ));
+
     assert_eq!(
-        keys_from_file(&buffer).unwrap(),
+        keys_from_file_inner(BYTES).unwrap(),
         vec![
             icu_datetime::provider::calendar::GregorianDateLengthsV1Marker::KEY,
             icu_datetime::provider::calendar::GregorianDateSymbolsV1Marker::KEY,
@@ -691,14 +700,15 @@ fn test_keys_from_file() {
 
 #[test]
 fn test_keys_from_bin() {
-    let mut buffer = std::env::var("CARGO_MANIFEST_DIR")
-        .or(core::env!("CARGO_MANIFEST_DIR"))
-        .expect("CARGO_MANIFEST_DIR must be set to run datagen tests");
-    buffer.push_str("/tests/data/tutorial_buffer.wasm");
     // File obtained by running
     // cargo +nightly --config docs/tutorials/testing/patch.toml build -p tutorial_buffer --target wasm32-unknown-unknown --release -Z build-std=std,panic_abort -Z build-std-features=panic_immediate_abort --manifest-path docs/tutorials/crates/buffer/Cargo.toml && cp docs/tutorials/target/wasm32-unknown-unknown/release/tutorial_buffer.wasm provider/datagen/tests/data/
+    const BYTES: &[u8] = include_bytes!(concat!(
+        core::env!("CARGO_MANIFEST_DIR"),
+        "/tests/data/tutorial_buffer.wasm"
+    ));
+
     assert_eq!(
-        keys_from_bin(buffer).unwrap(),
+        keys_from_bin_inner(BYTES),
         vec![
             icu_datetime::provider::calendar::GregorianDateLengthsV1Marker::KEY,
             icu_datetime::provider::calendar::GregorianDateSymbolsV1Marker::KEY,

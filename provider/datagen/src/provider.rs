@@ -68,8 +68,11 @@ impl DatagenProvider {
             once_cell::sync::OnceCell::new();
         SINGLETON
             .get_or_init(|| {
-                let root = std::env::var("CARGO_MANIFEST_DIR")
-                    .or(core::env!("CARGO_MANIFEST_DIR"))
+                let maybe_var = std::env::var("CARGO_MANIFEST_DIR").ok();
+                let root = maybe_var
+                    .as_ref()
+                    .map(|s| &**s)
+                    .or(core::option_env!("CARGO_MANIFEST_DIR"))
                     .expect("CARGO_MANIFEST_DIR must be set to run datagen tests");
                 // This is equivalent for the files defined in `tools/testdata-scripts/globs.rs.data`.
                 let data_root = std::path::Path::new(&root).join("tests/data");
