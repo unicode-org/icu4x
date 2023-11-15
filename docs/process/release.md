@@ -25,9 +25,9 @@ This is a checklist of things that should be done in the weeks leading to the re
     * [ ] Ensure that the Cargo.toml file includes a set of fields consistent with other ICU4X packages.
         * These should mostly use workspace inheritance
 * [ ] Run `cargo +nightly fmt -- --config=format_code_in_doc_comments=true --config=doc_comment_code_block_width=80` to prettify our docs
+* [ ] Verify that `ffi/capi` depends on a released (not Git) version of Diplomat. Get it published (ask manishearth or sffc) otherwise.
 * [ ] Run `cargo update` for each `Cargo.lock` file to update our CI to freshest dependencies
 * [ ] Go through `ffi/capi/tests/missing_apis.txt` and verify that it is empty. If it is not, component owners should either add FFI APIs, add `rust_link` annotations, or allowlist the relevant APIs as having been punted to the future
-* [ ] Verify that `ffi/capi` depends on a released (not Git) version of Diplomat. Get it published (ask manishearth or sffc) otherwise.
 * [ ] Start work on a changelog (see below)
 * [ ] Draft the text for the GitHub release. This text will be sent to GitHub subscribers and can also be used for the mailing list email.
 * [ ] Prepare a PR to update tutorials using the upcoming release. The PR should pass `cargo make test-tutorials-local`, but can fail `cargo make test-tutorials-cratesio` prior to release
