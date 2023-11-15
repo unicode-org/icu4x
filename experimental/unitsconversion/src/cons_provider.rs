@@ -80,8 +80,8 @@ pub enum ConstantExactness {
     Approximate = 1,
 }
 
-// // TODO(#4098): Improve the ULE representation. Consider using a single byte for sign and type representation.
-// /// This struct encapsulates a constant value, comprising a numerator, denominator, sign, and type.
+// TODO(#4098): Improve the ULE representation. Consider using a single byte for sign and type representation.
+// / This struct encapsulates a constant value, comprising a numerator, denominator, sign, and type.
 // #[zerovec::make_varule(ConstantValueULE)]
 // #[derive(Clone, Debug, PartialOrd, Ord, PartialEq, Eq, Default)]
 // #[cfg_attr(

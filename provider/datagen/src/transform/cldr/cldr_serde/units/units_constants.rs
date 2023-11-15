@@ -41,6 +41,9 @@ pub struct ConvertUnit {
 
     #[serde(rename = "_factor")]
     pub factor: Option<String>,
+
+    #[serde(rename = "_offset")]
+    pub offset: Option<String>,
 }
 
 #[derive(PartialEq, Debug, Deserialize)]

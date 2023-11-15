@@ -9,7 +9,7 @@ use std::collections::{BTreeMap, VecDeque};
 use fraction::GenericFraction;
 use icu_provider::DataError;
 use icu_unitsconversion::cons_provider::ConstantExactness;
-use icu_unitsconversion::provider::Sign;
+use icu_unitsconversion::provider::{ConversionInfo, Exactness, Sign};
 use num_bigint::BigUint;
 
 use crate::transform::cldr::cldr_serde::units::units_constants::Constant;
@@ -71,6 +71,123 @@ impl GeneralNonScientificNumber {
     fn is_free_of_non_scientific(&self) -> bool {
         self.non_scientific_num.is_empty() && self.non_scientific_den.is_empty()
     }
+}
+
+pub fn process_factor_part<'a>(
+    factor_part: &str,
+    cons_map: &BTreeMap<&'a str, ScientificNumber>,
+) -> Result<ScientificNumber, DataError> {
+    if factor_part.contains("/") {
+        return Err(DataError::custom("the factor part is fractional number"));
+    }
+
+    let mut result = ScientificNumber {
+        clean_num: Vec::new(),
+        clean_den: Vec::new(),
+        constant_exactness: ConstantExactness::Exact,
+    };
+
+    let factor_parts = factor_part.split('*');
+    for factor in factor_parts {
+        if let Some(cons) = cons_map.get(factor.trim()) {
+            result.clean_num.extend(cons.clean_num.clone());
+            result.clean_den.extend(cons.clean_den.clone());
+            if cons.constant_exactness == ConstantExactness::Approximate {
+                result.constant_exactness = ConstantExactness::Approximate;
+            }
+        } else {
+            result.clean_num.push(factor.trim().to_string());
+        }
+    }
+
+    Ok(result)
+}
+
+pub fn process_factor<'a>(
+    factor: &str,
+    cons_map: &BTreeMap<&'a str, ScientificNumber>,
+) -> Result<ScientificNumber, DataError> {
+    let mut factor_num = Vec::<String>::new();
+    let mut factor_den = Vec::<String>::new();
+    let mut factor_exactness = ConstantExactness::Exact;
+    let mut factor_sign = Sign::Positive;
+
+    let mut factor_parts = factor.split('/');
+    let factor_num_str = factor_parts.next().unwrap_or("0").trim();
+    let factor_den_str = factor_parts.next().unwrap_or("1").trim();
+    if factor_parts.next().is_some() {
+        return Err(DataError::custom(
+            "the factor is not a valid scientific notation number",
+        ));
+    }
+
+    let mut result = process_factor_part(factor_num_str, cons_map)?;
+    let factor_den_scientific = process_factor_part(factor_den_str, cons_map)?;
+
+    result.clean_num.extend(factor_den_scientific.clean_den);
+    result.clean_den.extend(factor_den_scientific.clean_num);
+    if factor_den_scientific.constant_exactness == ConstantExactness::Approximate {
+        result.constant_exactness = ConstantExactness::Approximate;
+    }
+
+    Ok(result)
+}
+
+pub fn extract_conversion_info(
+    base_unit: &str,
+    factor: ScientificNumber,
+    offset: ScientificNumber,
+) -> Result<ConversionInfo, DataError> {
+    let factor_fraction = convert_slices_to_fraction(
+        &factor
+            .clean_num
+            .iter()
+            .map(AsRef::as_ref)
+            .collect::<Vec<&str>>(),
+        &factor
+            .clean_den
+            .iter()
+            .map(AsRef::as_ref)
+            .collect::<Vec<&str>>(),
+    )?;
+    let offset_fraction = convert_slices_to_fraction(
+        &offset
+            .clean_num
+            .iter()
+            .map(AsRef::as_ref)
+            .collect::<Vec<&str>>(),
+        &offset
+            .clean_den
+            .iter()
+            .map(AsRef::as_ref)
+            .collect::<Vec<&str>>(),
+    )?;
+
+    let (factor_num, factor_den, factor_sign, factor_exactness) =
+        transform_fraction_to_constant_value(factor_fraction, factor.constant_exactness)?;
+    let (offset_num, offset_den, offset_sign, offset_exactness) =
+        transform_fraction_to_constant_value(offset_fraction, offset.constant_exactness)?;
+
+    let exactness = if factor_exactness == ConstantExactness::Exact
+        && offset_exactness == ConstantExactness::Exact
+    {
+        Exactness::Exact
+    } else {
+        Exactness::Approximate
+    };
+
+    let result = ConversionInfo {
+        base_unit: base_unit.into(),
+        factor_num: factor_num.into(),
+        factor_den: factor_den.into(),
+        factor_sign,
+        offset_num: offset_num.into(),
+        offset_den: offset_den.into(),
+        offset_sign,
+        exactness,
+    };
+
+    Ok(result)
 }
 
 /// Processes the constants and return them in a numerator-denominator form.
