@@ -6,6 +6,8 @@ Experimental Dart bindings for ICU4X.
 Example:
 
 ```dart
+import `package:icu/icu.dart';
+
 main() {
   //TODO: Implement build.dart, `@Native` annotations, and compiled targets storage to remove this.
   init(path.absolute('path/to/dynamic/library'));
