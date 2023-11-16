@@ -5,6 +5,7 @@
 use std::{borrow::Cow, collections::BTreeMap};
 
 use crate::transform::cldr::cldr_serde::{self};
+use fraction::{GenericFraction, Zero};
 use icu_provider::{
     datagen::IterableDataProvider, DataError, DataLocale, DataPayload, DataProvider, DataRequest,
     DataResponse,
@@ -12,7 +13,7 @@ use icu_provider::{
 use icu_unitsconversion::provider::{
     ConversionInfo, DerivationSpecifier, Dimension, UnitsInfoIndex, UnitsInfoV1, UnitsInfoV1Marker,
 };
-use zerovec::{VarZeroVec, ZeroMap};
+use zerovec::{VarZeroVec, ZeroMap, ZeroVec};
 
 use super::helpers::{extract_conversion_info, process_constants, process_factor};
 
@@ -113,7 +114,9 @@ impl IterableDataProvider<UnitsInfoV1Marker> for crate::DatagenProvider {
 fn test_basic() {
     use icu_locid::locale;
     use icu_provider::prelude::*;
+    use icu_unitsconversion::provider::*;
     use num_bigint::BigUint;
+    use zerofrom::ZeroFrom;
     use zerovec::maps::ZeroVecLike;
 
     let provider = crate::DatagenProvider::new_testing();
@@ -143,21 +146,42 @@ fn test_basic() {
 
     let meter_convert_index = meter.convert_info.get().unwrap().as_unsigned_int() as usize;
     let meter_convert_ule = convert_units.zvl_get(meter_convert_index).unwrap();
+    let meter_convert: ConversionInfo = ZeroFrom::zero_from(meter_convert_ule);
 
+    assert_eq!(meter_convert.factor_sign, Sign::Positive);
     assert_eq!(
-        meter_convert_ule.factor_den(),
-        big_one.to_bytes_le().to_vec().as_slice()
-    );
-    assert_eq!(
-        meter_convert_ule.factor_num(),
-        big_one.to_bytes_le().to_vec().as_slice()
+        meter_convert,
+        ConversionInfo {
+            base_unit: Cow::Borrowed("meter"),
+            factor_sign: Sign::Positive,
+            factor_num: ZeroVec::from(big_one.to_bytes_le()),
+            factor_den: ZeroVec::from(big_one.to_bytes_le()),
+            offset_sign: Sign::Positive,
+            offset_num: ZeroVec::from(BigUint::zero().to_bytes_le()),
+            offset_den: ZeroVec::from(big_one.to_bytes_le()),
+            exactness: Exactness::Exact,
+        }
     );
 
     let foot = units_info_map.get("foot").unwrap();
     let foot_convert_index = foot.convert_info.get().unwrap().as_unsigned_int() as usize;
-    let foot_convert = convert_units.zvl_get(foot_convert_index).unwrap();
-    assert_eq!(foot_convert.base_unit(), "meter");
-    //assert_eq!(foot_convert.factor(), "ft_to_m");
+    let foot_convert_ule = convert_units.zvl_get(foot_convert_index).unwrap();
+    let foot_convert: ConversionInfo = ZeroFrom::zero_from(foot_convert_ule);
+    let ft_to_m = GenericFraction::<BigUint>::new(BigUint::from(3048u32), BigUint::from(10000u32));
+
+    assert_eq!(
+        foot_convert,
+        ConversionInfo {
+            base_unit: Cow::Borrowed("meter"),
+            factor_sign: Sign::Positive,
+            factor_num: ZeroVec::from(ft_to_m.numer().unwrap().to_bytes_le()),
+            factor_den: ZeroVec::from(ft_to_m.denom().unwrap().to_bytes_le()),
+            offset_sign: Sign::Positive,
+            offset_num: ZeroVec::from(BigUint::zero().to_bytes_le()),
+            offset_den: ZeroVec::from(big_one.to_bytes_le()),
+            exactness: Exactness::Exact,
+        }
+    );
 
     // TODO: add more tests
 }
