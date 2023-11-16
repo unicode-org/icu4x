@@ -13,7 +13,7 @@ use crate::input::ExtractedDateTimeInput;
 use crate::input::LocalizedDateTimeInput;
 use crate::pattern::runtime::Pattern;
 use crate::provider::calendar::months;
-use crate::provider::date_time::{DateSymbols, TimeSymbols};
+use crate::provider::date_time::{DateSymbols, MonthPlaceholderValue, TimeSymbols};
 use crate::provider::neo::*;
 use core::fmt;
 use icu_calendar::types::Era;
@@ -179,7 +179,7 @@ impl<'data> DateSymbols<'data> for ErasedDateTimePatternInterpolatorBorrowed<'da
         month: fields::Month,
         length: fields::FieldLength,
         code: MonthCode,
-    ) -> Result<(&str, bool), Error> {
+    ) -> Result<MonthPlaceholderValue, Error> {
         // TODO: This should be MissingMonthSymbols in neo
         let month_symbols = self.month_symbols.ok_or(Error::MissingDateSymbols)?;
         let Some((month_number, is_leap)) = code.parsed() else {
@@ -206,11 +206,14 @@ impl<'data> DateSymbols<'data> for ErasedDateTimePatternInterpolatorBorrowed<'da
                     None
                 }
             }
+            MonthSymbolsV1::LeapNumeric(leap_numeric) => {
+                return Ok(MonthPlaceholderValue::NumericPattern(leap_numeric))
+            }
         };
         // Note: Always return `false` for the second argument since neo MonthSymbols
         // knows how to handle leap months and we don't need the fallback logic
         symbol
-            .map(|s| (s, false))
+            .map(|s| MonthPlaceholderValue::PlainString(s))
             .ok_or_else(|| Error::MissingMonthSymbol(code))
     }
 

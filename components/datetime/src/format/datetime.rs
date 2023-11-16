@@ -13,6 +13,7 @@ use crate::pattern::{
 };
 use crate::provider;
 use crate::provider::calendar::patterns::PatternPluralsFromPatternsV1Marker;
+use crate::provider::date_time::MonthPlaceholderValue;
 use crate::provider::date_time::{DateSymbols, TimeSymbols};
 
 use core::fmt;
@@ -309,25 +310,40 @@ where
             )?,
             length => {
                 let datetime = datetime.datetime();
-                let code = datetime
+                let formattable_month = datetime
                     .month()
-                    .ok_or(Error::MissingInputField(Some("month")))?
-                    .code;
+                    .ok_or(Error::MissingInputField(Some("month")))?;
 
-                let (symbol, is_leap) = date_symbols
+                let month_placeholder_value = date_symbols
                     .ok_or(Error::MissingDateSymbols)?
-                    .get_symbol_for_month(month, length, code)?;
+                    .get_symbol_for_month(month, length, formattable_month.code)?;
 
-                // FIXME (#3766) this should be using actual data for leap months
-                if is_leap {
-                    let leap_str = match datetime.any_calendar_kind() {
-                        Some(AnyCalendarKind::Chinese) => CHINESE_LEAP_PREFIX,
-                        Some(AnyCalendarKind::Dangi) => DANGI_LEAP_PREFIX,
-                        _ => PLACEHOLDER_LEAP_PREFIX,
-                    };
-                    w.write_str(leap_str)?;
+                match month_placeholder_value {
+                    MonthPlaceholderValue::PlainString(symbol) => {
+                        w.write_str(symbol)?;
+                    }
+                    MonthPlaceholderValue::StringNeedingLeapPrefix(symbol) => {
+                        // FIXME (#3766) this should be using actual data for leap months
+                        let leap_str = match datetime.any_calendar_kind() {
+                            Some(AnyCalendarKind::Chinese) => CHINESE_LEAP_PREFIX,
+                            Some(AnyCalendarKind::Dangi) => DANGI_LEAP_PREFIX,
+                            _ => PLACEHOLDER_LEAP_PREFIX,
+                        };
+                        w.write_str(leap_str)?;
+                        w.write_str(symbol)?;
+                    }
+                    #[cfg(feature = "experimental")]
+                    MonthPlaceholderValue::NumericPattern(substitution_pattern) => {
+                        w.write_str(substitution_pattern.get_prefix())?;
+                        format_number(
+                            w,
+                            fixed_decimal_format,
+                            FixedDecimal::from(formattable_month.ordinal),
+                            field.length,
+                        )?;
+                        w.write_str(substitution_pattern.get_suffix())?;
+                    }
                 }
-                w.write_str(symbol)?;
             }
         },
         FieldSymbol::Week(week) => match week {

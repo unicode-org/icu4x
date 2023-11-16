@@ -17,6 +17,8 @@ use crate::provider::calendar::{
     ErasedDateLengthsV1Marker, TimeLengthsV1Marker,
 };
 #[cfg(feature = "experimental")]
+use crate::provider::neo::SimpleSubstitutionPattern;
+#[cfg(feature = "experimental")]
 use crate::{options::components, provider::calendar::DateSkeletonPatternsV1Marker};
 use icu_calendar::types::Era;
 use icu_calendar::types::MonthCode;
@@ -309,14 +311,21 @@ where
     }
 }
 
+/// Internal enum to represent the kinds of month symbols for interpolation
+pub enum MonthPlaceholderValue<'a> {
+    PlainString(&'a str),
+    StringNeedingLeapPrefix(&'a str),
+    #[cfg(feature = "experimental")]
+    NumericPattern(&'a SimpleSubstitutionPattern<'a>),
+}
+
 pub trait DateSymbols<'data> {
-    /// The bool is `true` if the return value is a leap month fallback needing a qualifier.
     fn get_symbol_for_month(
         &self,
         month: fields::Month,
         length: fields::FieldLength,
         code: MonthCode,
-    ) -> Result<(&str, bool)>;
+    ) -> Result<MonthPlaceholderValue>;
     fn get_symbol_for_weekday(
         &self,
         weekday: fields::Weekday,
@@ -414,7 +423,7 @@ impl<'data> DateSymbols<'data> for provider::calendar::DateSymbolsV1<'data> {
         month: fields::Month,
         length: fields::FieldLength,
         code: MonthCode,
-    ) -> Result<(&str, bool)> {
+    ) -> Result<MonthPlaceholderValue> {
         let symbols_map = self.get_symbols_map_for_month(month, length)?;
         let mut symbol_option = symbols_map.get(code);
         let mut fallback = false;
@@ -426,7 +435,11 @@ impl<'data> DateSymbols<'data> for provider::calendar::DateSymbolsV1<'data> {
             }
         }
         let symbol = symbol_option.ok_or(DateTimeError::MissingMonthSymbol(code))?;
-        Ok((symbol, fallback))
+        Ok(if fallback {
+            MonthPlaceholderValue::StringNeedingLeapPrefix(symbol)
+        } else {
+            MonthPlaceholderValue::PlainString(symbol)
+        })
     }
 
     /// Get the era symbol

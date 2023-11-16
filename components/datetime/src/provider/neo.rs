@@ -4,6 +4,8 @@
 
 mod adapter;
 
+use core::ops::Range;
+
 use crate::pattern::runtime;
 use alloc::borrow::Cow;
 use icu_provider::prelude::*;
@@ -232,6 +234,24 @@ pub struct SimpleSubstitutionPattern<'data> {
     pub pattern: Cow<'data, str>,
     /// The byte index in which to substitute stuff. Weak invariant: `subst_index <= pattern.len()`
     pub subst_index: usize,
+}
+
+impl SimpleSubstitutionPattern<'_> {
+    pub(crate) fn get_prefix(&self) -> &str {
+        self.debug_unwrap_range(0..self.subst_index)
+    }
+    pub(crate) fn get_suffix(&self) -> &str {
+        self.debug_unwrap_range(self.subst_index..self.pattern.len())
+    }
+    fn debug_unwrap_range(&self, range: Range<usize>) -> &str {
+        match self.pattern.get(range) {
+            Some(s) => s,
+            None => {
+                debug_assert!(false, "Invalid pattern: {self:?}");
+                ""
+            }
+        }
+    }
 }
 
 /// Symbols that can be stored as a simple linear array.
