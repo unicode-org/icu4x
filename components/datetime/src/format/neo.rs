@@ -28,13 +28,56 @@ use icu_provider::prelude::*;
 use icu_provider::prelude::*;
 use writeable::Writeable;
 
+/// This can be extended in the future to support multiple lengths.
+/// For now, this type wraps a symbols object tagged with a single length.
+#[derive(Debug, Copy, Clone)]
+enum OptionalSymbolsWithLength<T> {
+    None,
+    SingleLength(fields::FieldLength, T),
+}
+
+impl<T> OptionalSymbolsWithLength<T> {
+    pub fn is_some(&self) -> bool {
+        !matches!(self, Self::None)
+    }
+}
+
+impl<T> OptionalSymbolsWithLength<T>
+where
+    T: Copy,
+{
+    pub(crate) fn get_with_length(&self, length: fields::FieldLength) -> Option<T> {
+        match self {
+            Self::None => None,
+            Self::SingleLength(actual_length, t) if length == *actual_length => Some(*t),
+            _ => None,
+        }
+    }
+}
+
+impl<M> OptionalSymbolsWithLength<DataPayload<M>>
+where
+    M: KeyedDataMarker,
+{
+    pub(crate) fn as_borrowed(
+        &self,
+    ) -> OptionalSymbolsWithLength<&<M::Yokeable as icu_provider::yoke::Yokeable>::Output> {
+        match self {
+            Self::None => OptionalSymbolsWithLength::None,
+            Self::SingleLength(length, payload) => {
+                OptionalSymbolsWithLength::SingleLength(*length, payload.get())
+            }
+        }
+    }
+}
+
 /// A low-level type that formats datetime patterns with localized symbols.
 pub struct DateTimePatternInterpolator<C: CldrCalendar> {
     locale: DataLocale,
-    year_symbols: Option<DataPayload<C::YearSymbolsV1Marker>>,
-    month_symbols: Option<DataPayload<C::MonthSymbolsV1Marker>>,
-    weekday_symbols: Option<DataPayload<WeekdaySymbolsV1Marker>>,
-    dayperiod_symbols: Option<DataPayload<DayPeriodSymbolsV1Marker>>,
+    year_symbols: OptionalSymbolsWithLength<DataPayload<C::YearSymbolsV1Marker>>,
+    month_symbols: OptionalSymbolsWithLength<DataPayload<C::MonthSymbolsV1Marker>>,
+    weekday_symbols: OptionalSymbolsWithLength<DataPayload<WeekdaySymbolsV1Marker>>,
+    dayperiod_symbols: OptionalSymbolsWithLength<DataPayload<DayPeriodSymbolsV1Marker>>,
     // TODO: Make the FixedDecimalFormatter optional?
     fixed_decimal_formatter: FixedDecimalFormatter,
     week_calculator: Option<WeekCalculator>,
@@ -69,16 +112,16 @@ impl<C: CldrCalendar> DateTimePatternInterpolator<C> {
     fn new_internal(locale: DataLocale, fixed_decimal_formatter: FixedDecimalFormatter) -> Self {
         DateTimePatternInterpolator {
             locale,
-            year_symbols: None,
-            month_symbols: None,
-            weekday_symbols: None,
-            dayperiod_symbols: None,
+            year_symbols: OptionalSymbolsWithLength::None,
+            month_symbols: OptionalSymbolsWithLength::None,
+            weekday_symbols: OptionalSymbolsWithLength::None,
+            dayperiod_symbols: OptionalSymbolsWithLength::None,
             fixed_decimal_formatter,
             week_calculator: None,
         }
     }
 
-    pub fn load_month_symbols_short<P>(&mut self, provider: &P) -> Result<&mut Self, Error>
+    pub fn load_month_symbols_abbreviated<P>(&mut self, provider: &P) -> Result<&mut Self, Error>
     where
         P: DataProvider<C::MonthSymbolsV1Marker> + ?Sized,
     {
@@ -96,17 +139,18 @@ impl<C: CldrCalendar> DateTimePatternInterpolator<C> {
                 metadata: Default::default(),
             })?
             .take_payload()?;
-        self.month_symbols = Some(payload);
+        self.month_symbols =
+            OptionalSymbolsWithLength::SingleLength(fields::FieldLength::Abbreviated, payload);
         Ok(self)
     }
 }
 
 #[derive(Debug, Copy, Clone)]
 struct ErasedDateTimePatternInterpolatorBorrowed<'l> {
-    year_symbols: Option<&'l YearSymbolsV1<'l>>,
-    month_symbols: Option<&'l MonthSymbolsV1<'l>>,
-    weekday_symbols: Option<&'l LinearSymbolsV1<'l>>,
-    dayperiod_symbols: Option<&'l LinearSymbolsV1<'l>>,
+    year_symbols: OptionalSymbolsWithLength<&'l YearSymbolsV1<'l>>,
+    month_symbols: OptionalSymbolsWithLength<&'l MonthSymbolsV1<'l>>,
+    weekday_symbols: OptionalSymbolsWithLength<&'l LinearSymbolsV1<'l>>,
+    dayperiod_symbols: OptionalSymbolsWithLength<&'l LinearSymbolsV1<'l>>,
     fixed_decimal_formatter: &'l FixedDecimalFormatter,
     week_calculator: Option<&'l WeekCalculator>,
 }
@@ -114,10 +158,10 @@ struct ErasedDateTimePatternInterpolatorBorrowed<'l> {
 impl<C: CldrCalendar> DateTimePatternInterpolator<C> {
     fn as_borrowed(&self) -> ErasedDateTimePatternInterpolatorBorrowed {
         ErasedDateTimePatternInterpolatorBorrowed {
-            year_symbols: self.year_symbols.as_ref().map(DataPayload::get),
-            month_symbols: self.month_symbols.as_ref().map(DataPayload::get),
-            weekday_symbols: self.weekday_symbols.as_ref().map(DataPayload::get),
-            dayperiod_symbols: self.dayperiod_symbols.as_ref().map(DataPayload::get),
+            year_symbols: self.year_symbols.as_borrowed(),
+            month_symbols: self.month_symbols.as_borrowed(),
+            weekday_symbols: self.weekday_symbols.as_borrowed(),
+            dayperiod_symbols: self.dayperiod_symbols.as_borrowed(),
             fixed_decimal_formatter: &self.fixed_decimal_formatter,
             week_calculator: self.week_calculator.as_ref(),
         }
@@ -181,13 +225,17 @@ impl<'data> DateSymbols<'data> for ErasedDateTimePatternInterpolatorBorrowed<'da
         code: MonthCode,
     ) -> Result<MonthPlaceholderValue, Error> {
         // TODO: This should be MissingMonthSymbols in neo
-        let month_symbols = self.month_symbols.ok_or(Error::MissingDateSymbols)?;
+        let month_symbols = self
+            .month_symbols
+            .get_with_length(length)
+            .ok_or(Error::MissingDateSymbols)?;
         let Some((month_number, is_leap)) = code.parsed() else {
-            // TODO: What error to return here?
-            panic!()
+            return Err(Error::MissingMonthSymbol(code));
         };
-        // TODO: What error to return here?
-        let month_index = usize::from(month_number.checked_sub(1).unwrap());
+        let Some(month_index) = month_number.checked_sub(1) else {
+            return Err(Error::MissingMonthSymbol(code));
+        };
+        let month_index = usize::from(month_index);
         let symbol = match month_symbols {
             MonthSymbolsV1::Linear(linear) => {
                 if is_leap {
@@ -223,6 +271,11 @@ impl<'data> DateSymbols<'data> for ErasedDateTimePatternInterpolatorBorrowed<'da
         length: fields::FieldLength,
         day: input::IsoWeekday,
     ) -> Result<&str, Error> {
+        // TODO: This should be MissingWeekdaySymbols in neo
+        let weekday_symbols = self
+            .weekday_symbols
+            .get_with_length(length)
+            .ok_or(Error::MissingDateSymbols)?;
         todo!()
     }
 
@@ -257,7 +310,7 @@ mod tests {
         let mut interpolator: DateTimePatternInterpolator<Gregorian> =
             DateTimePatternInterpolator::try_new(&locale).unwrap();
         interpolator
-            .load_month_symbols_short(&crate::provider::Baked)
+            .load_month_symbols_abbreviated(&crate::provider::Baked)
             .unwrap();
         let reference_pattern: reference::Pattern =
             "'It is' MMM d, y 'at' HH:mm'!'".parse().unwrap();
