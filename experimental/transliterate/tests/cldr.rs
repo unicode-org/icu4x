@@ -12,7 +12,7 @@ include!("data/baked/mod.rs");
 
 #[test]
 fn test_all_cldr() {
-    let mut in_order = std::fs::read_dir("./tests/data/fixtures")
+    let mut in_order = std::fs::read_dir("tests/data/fixtures")
         .unwrap()
         .map(|x| x.unwrap().path())
         .collect::<Vec<_>>();

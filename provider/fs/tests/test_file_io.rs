@@ -7,20 +7,17 @@ use icu_provider::datagen::IterableDataProvider;
 use icu_provider::hello_world::{HelloWorldProvider, HelloWorldV1, HelloWorldV1Marker};
 use icu_provider::prelude::*;
 use icu_provider_fs::FsDataProvider;
-use std::path::PathBuf;
 
-fn paths() -> [PathBuf; 3] {
-    [
-        PathBuf::from("./tests/data/json"),
-        PathBuf::from("./tests/data/bincode"),
-        PathBuf::from("./tests/data/postcard"),
-    ]
-}
+const PATHS: &[&str] = &[
+    "tests/data/json",
+    "tests/data/bincode",
+    "tests/data/postcard",
+];
 
 #[test]
 fn test_provider() {
-    for path in paths() {
-        let provider = FsDataProvider::try_new(&path).unwrap();
+    for path in PATHS {
+        let provider = FsDataProvider::try_new(path).unwrap();
         for locale in HelloWorldProvider.supported_locales().unwrap() {
             let req = DataRequest {
                 locale: &locale,
@@ -29,14 +26,14 @@ fn test_provider() {
 
             let expected = HelloWorldProvider
                 .load(req)
-                .unwrap_or_else(|e| panic!("{e}: {req} ({path:?})"))
+                .unwrap_or_else(|e| panic!("{e}: {req} ({path})"))
                 .take_payload()
                 .unwrap();
 
             let actual: DataPayload<HelloWorldV1Marker> = provider
                 .as_deserializing()
                 .load(req)
-                .unwrap_or_else(|e| panic!("{e}: {req} ({path:?})"))
+                .unwrap_or_else(|e| panic!("{e}: {req} ({path})"))
                 .take_payload()
                 .unwrap();
             assert_eq!(actual.get(), expected.get());
@@ -44,7 +41,7 @@ fn test_provider() {
             let actual: DataPayload<HelloWorldV1Marker> = (&provider as &dyn BufferProvider)
                 .as_deserializing()
                 .load(req)
-                .unwrap_or_else(|e| panic!("{e}: {req} ({path:?})"))
+                .unwrap_or_else(|e| panic!("{e}: {req} ({path})"))
                 .take_payload()
                 .unwrap();
             assert_eq!(actual.get(), expected.get());
@@ -54,8 +51,8 @@ fn test_provider() {
 
 #[test]
 fn test_errors() {
-    for path in paths() {
-        let provider = FsDataProvider::try_new(&path).unwrap();
+    for path in PATHS {
+        let provider = FsDataProvider::try_new(path).unwrap();
 
         let err: Result<DataResponse<HelloWorldV1Marker>, DataError> =
             provider.as_deserializing().load(DataRequest {
