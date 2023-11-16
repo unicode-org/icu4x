@@ -49,7 +49,7 @@ impl GeneralNonScientificNumber {
             clean_den: Vec::new(),
             non_scientific_num: VecDeque::new(),
             non_scientific_den: VecDeque::new(),
-            exactness: exactness,
+            exactness,
         };
 
         for n in num {
