@@ -19,14 +19,14 @@ use core::fmt;
 use icu_calendar::types::Era;
 use icu_calendar::types::MonthCode;
 use icu_calendar::week::WeekCalculator;
+use icu_decimal::options::FixedDecimalFormatterOptions;
+use icu_decimal::options::GroupingStrategy;
 use icu_decimal::provider::DecimalSymbolsV1Marker;
 use icu_decimal::FixedDecimalFormatter;
 use icu_locid::extensions::private::subtag;
 use icu_provider::prelude::*;
 use icu_provider::prelude::*;
 use writeable::Writeable;
-use icu_decimal::options::FixedDecimalFormatterOptions;
-use icu_decimal::options::GroupingStrategy;
 
 /// A low-level type that formats datetime patterns with localized symbols.
 pub struct DateTimePatternInterpolator<C: CldrCalendar> {
@@ -47,7 +47,8 @@ impl<C: CldrCalendar> DateTimePatternInterpolator<C> {
     pub fn try_new(locale: &DataLocale) -> Result<Self, Error> {
         let mut fixed_decimal_format_options = FixedDecimalFormatterOptions::default();
         fixed_decimal_format_options.grouping_strategy = GroupingStrategy::Never;
-        let fixed_decimal_formatter = FixedDecimalFormatter::try_new(locale, fixed_decimal_format_options)?;
+        let fixed_decimal_formatter =
+            FixedDecimalFormatter::try_new(locale, fixed_decimal_format_options)?;
         Ok(Self::new_internal(locale.clone(), fixed_decimal_formatter))
     }
 
@@ -57,8 +58,11 @@ impl<C: CldrCalendar> DateTimePatternInterpolator<C> {
     {
         let mut fixed_decimal_format_options = FixedDecimalFormatterOptions::default();
         fixed_decimal_format_options.grouping_strategy = GroupingStrategy::Never;
-        let fixed_decimal_formatter =
-            FixedDecimalFormatter::try_new_unstable(provider, locale, fixed_decimal_format_options)?;
+        let fixed_decimal_formatter = FixedDecimalFormatter::try_new_unstable(
+            provider,
+            locale,
+            fixed_decimal_format_options,
+        )?;
         Ok(Self::new_internal(locale.clone(), fixed_decimal_formatter))
     }
 
@@ -205,7 +209,9 @@ impl<'data> DateSymbols<'data> for ErasedDateTimePatternInterpolatorBorrowed<'da
         };
         // Note: Always return `false` for the second argument since neo MonthSymbols
         // knows how to handle leap months and we don't need the fallback logic
-        symbol.map(|s| (s, false)).ok_or_else(|| Error::MissingMonthSymbol(code))
+        symbol
+            .map(|s| (s, false))
+            .ok_or_else(|| Error::MissingMonthSymbol(code))
     }
 
     fn get_symbol_for_weekday(
