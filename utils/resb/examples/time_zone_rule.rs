@@ -2,9 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use std::{
-    char::DecodeUtf16Error, collections::HashMap, fmt::Debug, marker::PhantomData, path::Path,
-};
+use std::{char::DecodeUtf16Error, collections::HashMap, fmt::Debug, marker::PhantomData};
 
 use serde::{
     de::{self, Visitor},
@@ -147,13 +145,9 @@ pub struct ZoneInfo64<'a> {
 }
 
 fn main() {
-    let in_bytes = std::fs::read(Path::new(concat!(
-        env!("CARGO_MANIFEST_DIR"),
-        "/examples/data/zoneinfo64.res"
-    )))
-    .expect("Unable to read resource bundle file");
+    let in_bytes = include_bytes!("data/zoneinfo64.res");
 
-    let out = resb::binary::from_bytes::<ZoneInfo64>(&in_bytes)
+    let out = resb::binary::from_bytes::<ZoneInfo64>(in_bytes)
         .expect("Error processing resource bundle file");
 
     println!("{:#?}", out);
