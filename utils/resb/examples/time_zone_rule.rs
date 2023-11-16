@@ -147,7 +147,7 @@ pub struct ZoneInfo64<'a> {
 fn main() {
     let in_bytes = include_bytes!("./data/zoneinfo64.res");
 
-    let out = resb::binary::from_bytes::<ZoneInfo64>(&*in_bytes)
+    let out = resb::binary::from_bytes::<ZoneInfo64>(&in_bytes)
         .expect("Error processing resource bundle file");
 
     println!("{:#?}", out);
