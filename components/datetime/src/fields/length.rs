@@ -116,7 +116,7 @@ impl FieldLength {
             FieldLength::Wide => 4,
             FieldLength::Narrow => 5,
             FieldLength::Six => 6,
-            FieldLength::NumericOverride(o) => 64 + o as usize,
+            FieldLength::NumericOverride(o) => FIRST_NUMERIC_OVERRIDE as usize + o as usize,
             FieldLength::Fixed(p) => p as usize,
         }
     }
