@@ -13,7 +13,6 @@ use std::cell::Cell;
 use std::collections::{BTreeMap, BTreeSet};
 use std::fs::File;
 use std::io::Write;
-use std::path::Path;
 use std::sync::Mutex;
 
 include!("../../tests/locales.rs.data");
@@ -27,12 +26,10 @@ fn generate_json_and_verify_postcard() {
         .init()
         .unwrap();
 
-    let data_root = Path::new(concat!(core::env!("CARGO_MANIFEST_DIR"), "/tests/data/"));
-
     let json_out = Box::new(
         FilesystemExporter::try_new(Box::new(Json::pretty()), {
             let mut options = ExporterOptions::default();
-            options.root = data_root.join("json");
+            options.root = "tests/data/json".into();
             options.overwrite = OverwriteOption::RemoveAndReplace;
             options
         })
@@ -45,7 +42,7 @@ fn generate_json_and_verify_postcard() {
         zero_copy_transient_violations: Default::default(),
         rountrip_errors: Default::default(),
         fingerprints: BufWriterWithLineEndingFix::new(
-            File::create(data_root.join("postcard/fingerprints.csv")).unwrap(),
+            File::create("tests/data/postcard/fingerprints.csv").unwrap(),
         ),
     });
 
