@@ -110,7 +110,7 @@ impl DataExporter for Box<dyn DataExporter> {
         key: DataKey,
         fallback_mode: BuiltInFallbackMode,
     ) -> Result<(), DataError> {
-       (**self).flush_with_built_in_fallback(key, fallback_mode)
+        (**self).flush_with_built_in_fallback(key, fallback_mode)
     }
 
     fn flush(&self, key: DataKey) -> Result<(), DataError> {
@@ -118,7 +118,7 @@ impl DataExporter for Box<dyn DataExporter> {
     }
 
     fn close(&mut self) -> Result<(), DataError> {
-       (**self).close()
+        (**self).close()
     }
 
     fn supports_built_in_fallback(&self) -> bool {
