@@ -230,6 +230,7 @@ impl<'a> ZeroMapKV<'a> for Index32U8 {
 }
 
 impl Index32U8 {
+    // Safety: Index32U8 is a transparent DST wrapper around `[u8]`, so a transmute is fine
     #[allow(dead_code)]
     pub(crate) const SENTINEL: &'static Self = unsafe { &*(&[] as *const [u8] as *const Self) };
 }

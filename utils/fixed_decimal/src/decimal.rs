@@ -1166,15 +1166,35 @@ impl FixedDecimal {
     /// # use std::str::FromStr;
     ///
     /// let mut dec = FixedDecimal::from_str("-3.5").unwrap();
-    /// assert_eq!("-2", dec.trunced_to_increment(0, RoundingIncrement::MultiplesOf2).to_string());
+    /// assert_eq!(
+    ///     "-2",
+    ///     dec.trunced_to_increment(0, RoundingIncrement::MultiplesOf2)
+    ///         .to_string()
+    /// );
     /// let mut dec = FixedDecimal::from_str("7.57").unwrap();
-    /// assert_eq!("7.5", dec.trunced_to_increment(-1, RoundingIncrement::MultiplesOf5).to_string());
+    /// assert_eq!(
+    ///     "7.5",
+    ///     dec.trunced_to_increment(-1, RoundingIncrement::MultiplesOf5)
+    ///         .to_string()
+    /// );
     /// let mut dec = FixedDecimal::from_str("5.45").unwrap();
-    /// assert_eq!("5.25", dec.trunced_to_increment(-2, RoundingIncrement::MultiplesOf25).to_string());
+    /// assert_eq!(
+    ///     "5.25",
+    ///     dec.trunced_to_increment(-2, RoundingIncrement::MultiplesOf25)
+    ///         .to_string()
+    /// );
     /// let mut dec = FixedDecimal::from_str("9.99").unwrap();
-    /// assert_eq!("7.5", dec.trunced_to_increment(-1, RoundingIncrement::MultiplesOf25).to_string());
+    /// assert_eq!(
+    ///     "7.5",
+    ///     dec.trunced_to_increment(-1, RoundingIncrement::MultiplesOf25)
+    ///         .to_string()
+    /// );
     /// let mut dec = FixedDecimal::from_str("9.99").unwrap();
-    /// assert_eq!("9.98", dec.trunced_to_increment(-2, RoundingIncrement::MultiplesOf2).to_string());
+    /// assert_eq!(
+    ///     "9.98",
+    ///     dec.trunced_to_increment(-2, RoundingIncrement::MultiplesOf2)
+    ///         .to_string()
+    /// );
     /// ```
     #[cfg(feature = "experimental")]
     pub fn trunced_to_increment(mut self, position: i16, increment: RoundingIncrement) -> Self {

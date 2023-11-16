@@ -22,12 +22,12 @@ command = "cargo"
 args = [
     "test",
     "-p=icu_datagen",
-    "--test=make-testdata",
     "--no-default-features",
     "--features=fs_exporter,use_wasm,rayon,experimental_components",
     "--",
     "--ignored",
     "--nocapture",
+    "generate_json_and_verify_postcard",
 ]
 
 [tasks.testdata-hello-world]

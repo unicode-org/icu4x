@@ -197,10 +197,7 @@ name = "bakeddata-scripts"
 version = "1.3.2"
 dependencies = [
  "icu",
- "icu_compactdecimal",
  "icu_datagen",
- "icu_singlenumberformatter",
- "icu_unitsconversion",
  "log",
  "simple_logger",
 ]
@@ -798,8 +795,9 @@ dependencies = [
 
 [[package]]
 name = "diplomat"
-version = "0.6.0"
-source = "git+https://github.com/rust-diplomat/diplomat?rev=39f9b250d637f346506afe12697d49a7183c69bc#39f9b250d637f346506afe12697d49a7183c69bc"
+version = "0.7.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "a31672b3ebc3c7866c3c98726f7a9a5ac8f13962e77d3c8225f6be49a7b8c5f2"
 dependencies = [
  "diplomat_core",
  "proc-macro2",
@@ -816,16 +814,18 @@ dependencies = [
 
 [[package]]
 name = "diplomat-runtime"
-version = "0.6.0"
-source = "git+https://github.com/rust-diplomat/diplomat?rev=39f9b250d637f346506afe12697d49a7183c69bc#39f9b250d637f346506afe12697d49a7183c69bc"
+version = "0.7.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "f7b0f23d549a46540e26e5490cd44c64ced0d762959f1ffdec6ab0399634cf3c"
 dependencies = [
  "log",
 ]
 
 [[package]]
 name = "diplomat-tool"
-version = "0.6.0"
-source = "git+https://github.com/rust-diplomat/diplomat?rev=39f9b250d637f346506afe12697d49a7183c69bc#39f9b250d637f346506afe12697d49a7183c69bc"
+version = "0.7.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "c62ab7c863bef0c72ffd4b86a36413980e5ee06f0455961a5d98ffd8567a5908"
 dependencies = [
  "askama",
  "clap 3.2.25",
@@ -844,8 +844,9 @@ dependencies = [
 
 [[package]]
 name = "diplomat_core"
-version = "0.6.0"
-source = "git+https://github.com/rust-diplomat/diplomat?rev=39f9b250d637f346506afe12697d49a7183c69bc#39f9b250d637f346506afe12697d49a7183c69bc"
+version = "0.7.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "bfaa5e13e8b8735d2338f2836c06cd8643902ab87dda1dd07dbb351998ddc127"
 dependencies = [
  "displaydoc",
  "lazy_static",
@@ -2021,17 +2022,11 @@ dependencies = [
  "databake",
  "displaydoc",
  "icu_locid",
- "icu_locid_transform",
  "icu_provider",
- "icu_singlenumberformatter_data",
  "serde",
  "tinystr",
  "zerovec",
 ]
-
-[[package]]
-name = "icu_singlenumberformatter_data"
-version = "1.3.2"
 
 [[package]]
 name = "icu_testdata_scripts"
@@ -2112,14 +2107,9 @@ dependencies = [
  "displaydoc",
  "icu_locid",
  "icu_provider",
- "icu_unitsconversion_data",
  "serde",
  "zerovec",
 ]
-
-[[package]]
-name = "icu_unitsconversion_data"
-version = "1.3.2"
 
 [[package]]
 name = "ident_case"

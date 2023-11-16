@@ -16,7 +16,7 @@ const COMPONENTS: &[(&str, &[DataKey], &str)] = &[
     ("collator", icu::collator::provider::KEYS, "1.3.3"),
     (
         "compactdecimal",
-        icu_compactdecimal::provider::KEYS,
+        icu::compactdecimal::provider::KEYS,
         "1.3.4",
     ),
     ("datetime", icu::datetime::provider::KEYS, "1.3.4"),
@@ -37,17 +37,7 @@ const COMPONENTS: &[(&str, &[DataKey], &str)] = &[
         REPO_VERSION,
     ),
     ("segmenter", icu::segmenter::provider::KEYS, REPO_VERSION),
-    (
-        "singlenumberformatter",
-        icu_singlenumberformatter::provider::KEYS,
-        REPO_VERSION,
-    ),
     ("timezone", icu::timezone::provider::KEYS, REPO_VERSION),
-    (
-        "unitsconversion",
-        icu_unitsconversion::provider::KEYS,
-        REPO_VERSION,
-    ),
 ];
 
 fn main() {
