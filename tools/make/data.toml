@@ -19,15 +19,15 @@ args = [
 description = "Run the testdata generation test in icu_datagen"
 category = "ICU4X Data"
 command = "cargo"
+env = { TESTDATA_OUT = "1" }
 args = [
     "test",
     "-p=icu_datagen",
     "--no-default-features",
     "--features=fs_exporter,use_wasm,rayon,experimental_components",
     "--",
-    "--ignored",
     "--nocapture",
-    "generate_json_and_verify_postcard",
+    "make_testdata",
 ]
 
 [tasks.testdata-hello-world]
