@@ -36,7 +36,10 @@ use yoke::*;
 /// use writeable::assert_writeable_eq;
 ///
 /// // Read an ICU4X data blob dynamically:
-/// let blob = std::fs::read("tests/data/v2.postcard")
+/// let blob = std::fs::read(concat!(
+///     env!("CARGO_MANIFEST_DIR"),
+///     "/tests/data/v2.postcard",
+/// ))
 /// .expect("Reading pre-computed postcard buffer");
 ///
 /// // Create a DataProvider from it:
@@ -64,7 +67,10 @@ use yoke::*;
 /// use writeable::assert_writeable_eq;
 ///
 /// // Read an ICU4X data blob statically:
-/// const HELLO_WORLD_BLOB: &[u8] = include_bytes!("../tests/data/v2.postcard");
+/// const HELLO_WORLD_BLOB: &[u8] = include_bytes!(concat!(
+///     env!("CARGO_MANIFEST_DIR"),
+///     "/tests/data/v2.postcard"
+/// ));
 ///
 /// // Create a DataProvider from it:
 /// let provider = BlobDataProvider::try_new_from_static_blob(HELLO_WORLD_BLOB)

@@ -10,6 +10,8 @@ use icu_normalizer::DecomposingNormalizer;
 use icu_properties::{maps, GeneralCategoryGroup, Script};
 use std::collections::BTreeMap;
 use std::fmt::Write;
+use std::fs;
+use std::path::Path;
 
 fn main() {
     let decomposer = DecomposingNormalizer::new_nfd();
@@ -168,7 +170,9 @@ pub(crate) fn match_extras(ch: char) -> Option<u8> {{
         vec_1f00.len(),
     );
 
-    let local = include_str!("../src/greek_to_me/data.rs");
+    let local = Path::new(std::env!("CARGO_MANIFEST_DIR")).join("src/greek_to_me/data.rs");
+
+    let local = fs::read_to_string(local).expect("src/greek_to_me/data.rs should be a UTF-8 file");
 
     // We cannot just check if the two are unequal because on Windows core.autocrlf
     // may have messed with the line endings on the file, or it may have not (either

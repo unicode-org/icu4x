@@ -62,19 +62,21 @@ impl DatagenProvider {
     }
 
     #[cfg(test)]
-    // This is equivalent for the files defined in `tools/testdata-scripts/globs.rs.data`.
     pub fn new_testing() -> Self {
         // Singleton so that all instantiations share the same cache.
         static SINGLETON: once_cell::sync::OnceCell<DatagenProvider> =
             once_cell::sync::OnceCell::new();
         SINGLETON
             .get_or_init(|| {
+                // This is equivalent for the files defined in `tools/testdata-scripts/globs.rs.data`.
+                let data_root =
+                    std::path::Path::new(core::env!("CARGO_MANIFEST_DIR")).join("tests/data");
                 Self::new_custom()
-                    .with_cldr("tests/data/cldr".into())
+                    .with_cldr(data_root.join("cldr"))
                     .unwrap()
-                    .with_icuexport("tests/data/icuexport".into())
+                    .with_icuexport(data_root.join("icuexport"))
                     .unwrap()
-                    .with_segmenter_lstm("tests/data/lstm".into())
+                    .with_segmenter_lstm(data_root.join("lstm"))
                     .unwrap()
             })
             .clone()

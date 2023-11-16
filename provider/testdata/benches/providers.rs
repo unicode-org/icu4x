@@ -11,12 +11,15 @@ use icu_provider::prelude::*;
 use icu_provider::AsDeserializingBufferProvider;
 use icu_provider_blob::BlobDataProvider;
 
-static POSTCARD_BYTES: &[u8] = include_bytes!("../data/testdata.postcard");
+static POSTCARD_BYTES: &[u8] = include_bytes!(concat!(
+    env!("CARGO_MANIFEST_DIR"),
+    "/data/testdata.postcard"
+));
 
 struct BakedDataProvider;
 
 mod baked {
-    include!("../data/baked/mod.rs");
+    include!(concat!(env!("CARGO_MANIFEST_DIR"), "/data/baked/mod.rs"));
     impl_data_provider!(super::BakedDataProvider);
     impl_any_provider!(super::BakedDataProvider);
 }
