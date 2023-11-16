@@ -24,14 +24,15 @@ use tinystr::tinystr;
 ///    if the pattern is ¤#,##0.00 and the symbol is EGP,
 ///    this means the return value will be PatternSelection::StandardAlphaNextToNumber
 ///    because the character closes to the number is a letter.
+/// NOTE:
+///   place_holder_value must not be empty.
 fn currency_pattern_selection(
     provider: &DatagenProvider,
     pattern: &str,
-    place_holder: &str,
+    place_holder_value: &str,
 ) -> Result<PatternSelection, DataError> {
-    // TODO(younies): what should we do when the place_holder is empty?
-    if place_holder.is_empty() {
-        todo!("Handle empty place holders")
+    if place_holder_value.is_empty() {
+        return Err(DataError::custom("Place holder value must not be empty"));
     }
 
     let currency_sign = '¤';
@@ -50,9 +51,9 @@ fn currency_pattern_selection(
 
     let char_closer_to_number = {
         if currency_sign_index < first_num_index {
-            place_holder.chars().next_back().unwrap()
+            place_holder_value.chars().next_back().unwrap()
         } else if currency_sign_index > last_num_index {
-            place_holder.chars().next().unwrap()
+            place_holder_value.chars().next().unwrap()
         } else {
             return Err(DataError::custom(
                 "Currency sign must be in the middle of the pattern",
@@ -177,10 +178,11 @@ fn extract_currency_essentials<'data>(
                     place_holders.get(index as usize).unwrap(),
                 )?,
                 Some(PlaceholderValue::ISO) => {
-                    currency_pattern_selection(provider, standard, &iso_string)?
+                    currency_pattern_selection(provider, standard, iso_string.as_str())?
                 }
-                // TODO(younies): double check this case
-                None => PatternSelection::Standard,
+                // Based on UTC-35: https://www.unicode.org/reports/tr35/tr35-numbers.html#Currencies
+                // If the place holder value is empty, then use the currency code (ISO code).
+                None => currency_pattern_selection(provider, standard, iso_string.as_str())?,
             }
         };
 
@@ -198,12 +200,13 @@ fn extract_currency_essentials<'data>(
                     currency_pattern_selection(provider, standard, &iso_string)?
                 }
 
-                // TODO(younies): double check this case
-                None => short_pattern_standard,
+                // Based on UTC-35: https://www.unicode.org/reports/tr35/tr35-numbers.html#Currencies
+                // If the place holder value is empty, then use the currency code (ISO code).
+                None => currency_pattern_selection(provider, standard, &iso_string)?,
             }
         };
 
-        // TODO(youneis): Check if we can remove also when the patterns equal to
+        // TODO(#4314): Check if we can remove also when the patterns equal to
         // PatternSelection::StandardNextToNumber.
         if short_pattern_standard == PatternSelection::Standard
             && narrow_pattern_standard == PatternSelection::Standard
