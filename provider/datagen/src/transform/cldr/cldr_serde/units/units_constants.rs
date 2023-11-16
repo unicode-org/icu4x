@@ -23,15 +23,57 @@ pub struct Constant {
 }
 
 #[derive(PartialEq, Debug, Deserialize)]
+pub struct Quantity {
+    #[serde(rename = "_quantity")]
+    pub quantity: String,
+
+    #[serde(rename = "_status")]
+    pub status: Option<String>,
+
+    #[serde(rename = "_description")]
+    pub description: Option<String>,
+}
+
+#[derive(PartialEq, Debug, Deserialize)]
+pub struct ConvertUnit {
+    #[serde(rename = "_baseUnit")]
+    pub base_unit: String,
+
+    #[serde(rename = "_factor")]
+    pub factor: Option<String>,
+
+    #[serde(rename = "_offset")]
+    pub offset: Option<String>,
+}
+
+#[derive(PartialEq, Debug, Deserialize)]
 pub struct UnitConstants {
     #[serde(flatten)]
     pub constants: BTreeMap<String, Constant>,
 }
 
 #[derive(PartialEq, Debug, Deserialize)]
+pub struct UnitQuantities {
+    #[serde(flatten)]
+    pub quantities: BTreeMap<String, Quantity>,
+}
+
+#[derive(PartialEq, Debug, Deserialize)]
+pub struct ConvertUnits {
+    #[serde(flatten)]
+    pub convert_units: BTreeMap<String, ConvertUnit>,
+}
+
+#[derive(PartialEq, Debug, Deserialize)]
 pub struct Supplemental {
     #[serde(rename = "unitConstants")]
     pub unit_constants: UnitConstants,
+
+    #[serde(rename = "unitQuantities")]
+    pub unit_quantities: UnitQuantities,
+
+    #[serde(rename = "convertUnits")]
+    pub convert_units: ConvertUnits,
 }
 
 #[derive(Deserialize)]

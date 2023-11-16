@@ -157,7 +157,7 @@ macro_rules! registry {
 registry!(
     #[cfg(test)]
     icu_singlenumberformatter::provider::CurrencyEssentialsV1Marker = "currency/essentials@1",
-    icu_unitsconversion::provider::UnitsConstantsV1Marker = "units/constants@1",
+    icu_unitsconversion::provider::UnitsInfoV1Marker = "units/info@1",
     #[cfg(any(all(), feature = "icu_calendar"))]
     icu_calendar::provider::JapaneseErasV1Marker = "calendar/japanese@1",
     icu_calendar::provider::JapaneseExtendedErasV1Marker = "calendar/japanext@1",
