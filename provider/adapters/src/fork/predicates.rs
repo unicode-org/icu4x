@@ -76,10 +76,8 @@ impl ForkByErrorPredicate for MissingDataKeyPredicate {
 /// use icu_locid::locale;
 ///
 /// // The `tests` directory contains two separate "language packs" for Hello World data.
-/// let base_dir = std::path::PathBuf::from(std::env!("CARGO_MANIFEST_DIR"))
-///     .join("tests/data/langtest");
-/// let provider_de = FsDataProvider::try_new(base_dir.join("de")).unwrap();
-/// let provider_ro = FsDataProvider::try_new(base_dir.join("ro")).unwrap();
+/// let provider_de = FsDataProvider::try_new("tests/data/langtest/de").unwrap();
+/// let provider_ro = FsDataProvider::try_new("tests/data/langtest/ro").unwrap();
 ///
 /// // Create the forking provider:
 /// let provider = ForkByErrorProvider::new_with_predicate(

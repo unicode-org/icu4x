@@ -387,6 +387,7 @@ pub fn keys_from_file<P: AsRef<Path>>(path: P) -> std::io::Result<Vec<DataKey>> 
     keys_from_file_inner(&file)
 }
 
+#[cfg(feature = "legacy_api")]
 fn keys_from_file_inner<R: std::io::Read>(source: R) -> std::io::Result<Vec<DataKey>> {
     use std::io::{BufRead, BufReader};
     BufReader::new(source)
