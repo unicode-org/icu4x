@@ -5,7 +5,7 @@
 [package]
 name = "icu_compactdecimal"
 description = "Compact decimal"
-version = "0.2.2"
+version = "0.2.3"
 license-file = "LICENSE"
 
 authors.workspace = true

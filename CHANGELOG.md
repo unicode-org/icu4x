@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+## icu4x 1.4 (Nov 16, 2023)
+
 - General
   - MSRV is now 1.67
  
