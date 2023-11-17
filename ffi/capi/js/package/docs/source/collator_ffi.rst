@@ -42,6 +42,13 @@
         - Note: ``right`` should be an ArrayBuffer or TypedArray corresponding to the slice type expected by Rust.
 
 
+    .. js:method:: resolved_options()
+
+        The resolved options showing how the default options, the requested options, and the options from locale data were combined. None of the struct fields will have ``Auto`` as the value.
+
+        See the `Rust documentation for resolved_options <https://docs.rs/icu/latest/icu/collator/struct.Collator.html#method.resolved_options>`__ for more information.
+
+
 .. js:class:: ICU4XCollatorAlternateHandling
 
     See the `Rust documentation for AlternateHandling <https://docs.rs/icu/latest/icu/collator/enum.AlternateHandling.html>`__ for more information.
@@ -75,6 +82,25 @@
 .. js:class:: ICU4XCollatorOptionsV1
 
     See the `Rust documentation for CollatorOptions <https://docs.rs/icu/latest/icu/collator/struct.CollatorOptions.html>`__ for more information.
+
+
+    .. js:attribute:: strength
+
+    .. js:attribute:: alternate_handling
+
+    .. js:attribute:: case_first
+
+    .. js:attribute:: max_variable
+
+    .. js:attribute:: case_level
+
+    .. js:attribute:: numeric
+
+    .. js:attribute:: backward_second_level
+
+.. js:class:: ICU4XCollatorResolvedOptionsV1
+
+    See the `Rust documentation for ResolvedCollatorOptions <https://docs.rs/icu/latest/icu/collator/struct.ResolvedCollatorOptions.html>`__ for more information.
 
 
     .. js:attribute:: strength

@@ -19,6 +19,7 @@ typedef struct ICU4XCollator ICU4XCollator;
 #include "ICU4XCollatorOptionsV1.h"
 #include "diplomat_result_box_ICU4XCollator_ICU4XError.h"
 #include "ICU4XOrdering.h"
+#include "ICU4XCollatorResolvedOptionsV1.h"
 #ifdef __cplusplus
 namespace capi {
 extern "C" {
@@ -31,6 +32,8 @@ ICU4XOrdering ICU4XCollator_compare(const ICU4XCollator* self, const char* left_
 ICU4XOrdering ICU4XCollator_compare_valid_utf8(const ICU4XCollator* self, const char* left_data, size_t left_len, const char* right_data, size_t right_len);
 
 ICU4XOrdering ICU4XCollator_compare_utf16(const ICU4XCollator* self, const uint16_t* left_data, size_t left_len, const uint16_t* right_data, size_t right_len);
+
+ICU4XCollatorResolvedOptionsV1 ICU4XCollator_resolved_options(const ICU4XCollator* self);
 void ICU4XCollator_destroy(ICU4XCollator* self);
 
 #ifdef __cplusplus

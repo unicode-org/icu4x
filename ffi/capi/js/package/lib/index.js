@@ -25,6 +25,7 @@ export { ICU4XCollatorCaseLevel } from './ICU4XCollatorCaseLevel.js';
 export { ICU4XCollatorMaxVariable } from './ICU4XCollatorMaxVariable.js';
 export { ICU4XCollatorNumeric } from './ICU4XCollatorNumeric.js';
 export { ICU4XCollatorOptionsV1 } from './ICU4XCollatorOptionsV1.js';
+export { ICU4XCollatorResolvedOptionsV1 } from './ICU4XCollatorResolvedOptionsV1.js';
 export { ICU4XCollatorStrength } from './ICU4XCollatorStrength.js';
 export { ICU4XComposingNormalizer } from './ICU4XComposingNormalizer.js';
 export { ICU4XCustomTimeZone } from './ICU4XCustomTimeZone.js';

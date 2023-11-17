@@ -6,6 +6,7 @@ import { ICU4XCollatorCaseFirst_js_to_rust, ICU4XCollatorCaseFirst_rust_to_js } 
 import { ICU4XCollatorCaseLevel_js_to_rust, ICU4XCollatorCaseLevel_rust_to_js } from "./ICU4XCollatorCaseLevel.js"
 import { ICU4XCollatorMaxVariable_js_to_rust, ICU4XCollatorMaxVariable_rust_to_js } from "./ICU4XCollatorMaxVariable.js"
 import { ICU4XCollatorNumeric_js_to_rust, ICU4XCollatorNumeric_rust_to_js } from "./ICU4XCollatorNumeric.js"
+import { ICU4XCollatorResolvedOptionsV1 } from "./ICU4XCollatorResolvedOptionsV1.js"
 import { ICU4XCollatorStrength_js_to_rust, ICU4XCollatorStrength_rust_to_js } from "./ICU4XCollatorStrength.js"
 import { ICU4XError_js_to_rust, ICU4XError_rust_to_js } from "./ICU4XError.js"
 import { ICU4XOrdering_js_to_rust, ICU4XOrdering_rust_to_js } from "./ICU4XOrdering.js"
@@ -73,5 +74,15 @@ export class ICU4XCollator {
     buf_arg_left.free();
     buf_arg_right.free();
     return diplomat_out;
+  }
+
+  resolved_options() {
+    return (() => {
+      const diplomat_receive_buffer = wasm.diplomat_alloc(28, 4);
+      wasm.ICU4XCollator_resolved_options(diplomat_receive_buffer, this.underlying);
+      const out = new ICU4XCollatorResolvedOptionsV1(diplomat_receive_buffer);
+      wasm.diplomat_free(diplomat_receive_buffer, 28, 4);
+      return out;
+    })();
   }
 }

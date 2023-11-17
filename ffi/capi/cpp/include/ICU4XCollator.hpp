@@ -17,6 +17,7 @@ struct ICU4XCollatorOptionsV1;
 class ICU4XCollator;
 #include "ICU4XError.hpp"
 #include "ICU4XOrdering.hpp"
+struct ICU4XCollatorResolvedOptionsV1;
 
 /**
  * A destruction policy for using ICU4XCollator with std::unique_ptr.
@@ -68,6 +69,15 @@ class ICU4XCollator {
    * See the [Rust documentation for `compare_utf16`](https://docs.rs/icu/latest/icu/collator/struct.Collator.html#method.compare_utf16) for more information.
    */
   ICU4XOrdering compare_utf16(const diplomat::span<const uint16_t> left, const diplomat::span<const uint16_t> right) const;
+
+  /**
+   * The resolved options showing how the default options, the requested options,
+   * and the options from locale data were combined. None of the struct fields
+   * will have `Auto` as the value.
+   * 
+   * See the [Rust documentation for `resolved_options`](https://docs.rs/icu/latest/icu/collator/struct.Collator.html#method.resolved_options) for more information.
+   */
+  ICU4XCollatorResolvedOptionsV1 resolved_options() const;
   inline const capi::ICU4XCollator* AsFFI() const { return this->inner.get(); }
   inline capi::ICU4XCollator* AsFFIMut() { return this->inner.get(); }
   inline ICU4XCollator(capi::ICU4XCollator* i) : inner(i) {}
@@ -81,6 +91,7 @@ class ICU4XCollator {
 #include "ICU4XDataProvider.hpp"
 #include "ICU4XLocale.hpp"
 #include "ICU4XCollatorOptionsV1.hpp"
+#include "ICU4XCollatorResolvedOptionsV1.hpp"
 
 inline diplomat::result<ICU4XCollator, ICU4XError> ICU4XCollator::create_v1(const ICU4XDataProvider& provider, const ICU4XLocale& locale, ICU4XCollatorOptionsV1 options) {
   ICU4XCollatorOptionsV1 diplomat_wrapped_struct_options = options;
@@ -101,5 +112,9 @@ inline ICU4XOrdering ICU4XCollator::compare_valid_utf8(const std::string_view le
 }
 inline ICU4XOrdering ICU4XCollator::compare_utf16(const diplomat::span<const uint16_t> left, const diplomat::span<const uint16_t> right) const {
   return static_cast<ICU4XOrdering>(capi::ICU4XCollator_compare_utf16(this->inner.get(), left.data(), left.size(), right.data(), right.size()));
+}
+inline ICU4XCollatorResolvedOptionsV1 ICU4XCollator::resolved_options() const {
+  capi::ICU4XCollatorResolvedOptionsV1 diplomat_raw_struct_out_value = capi::ICU4XCollator_resolved_options(this->inner.get());
+  return ICU4XCollatorResolvedOptionsV1{ .strength = std::move(static_cast<ICU4XCollatorStrength>(diplomat_raw_struct_out_value.strength)), .alternate_handling = std::move(static_cast<ICU4XCollatorAlternateHandling>(diplomat_raw_struct_out_value.alternate_handling)), .case_first = std::move(static_cast<ICU4XCollatorCaseFirst>(diplomat_raw_struct_out_value.case_first)), .max_variable = std::move(static_cast<ICU4XCollatorMaxVariable>(diplomat_raw_struct_out_value.max_variable)), .case_level = std::move(static_cast<ICU4XCollatorCaseLevel>(diplomat_raw_struct_out_value.case_level)), .numeric = std::move(static_cast<ICU4XCollatorNumeric>(diplomat_raw_struct_out_value.numeric)), .backward_second_level = std::move(static_cast<ICU4XCollatorBackwardSecondLevel>(diplomat_raw_struct_out_value.backward_second_level)) };
 }
 #endif

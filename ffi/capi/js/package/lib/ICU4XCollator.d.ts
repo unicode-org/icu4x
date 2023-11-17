@@ -1,5 +1,6 @@
 import { FFIError } from "./diplomat-runtime"
 import { ICU4XCollatorOptionsV1 } from "./ICU4XCollatorOptionsV1";
+import { ICU4XCollatorResolvedOptionsV1 } from "./ICU4XCollatorResolvedOptionsV1";
 import { ICU4XDataProvider } from "./ICU4XDataProvider";
 import { ICU4XError } from "./ICU4XError";
 import { ICU4XLocale } from "./ICU4XLocale";
@@ -47,4 +48,12 @@ export class ICU4XCollator {
    * See the {@link https://docs.rs/icu/latest/icu/collator/struct.Collator.html#method.compare_utf16 Rust documentation for `compare_utf16`} for more information.
    */
   compare_utf16(left: Uint16Array, right: Uint16Array): ICU4XOrdering;
+
+  /**
+
+   * The resolved options showing how the default options, the requested options, and the options from locale data were combined. None of the struct fields will have `Auto` as the value.
+
+   * See the {@link https://docs.rs/icu/latest/icu/collator/struct.Collator.html#method.resolved_options Rust documentation for `resolved_options`} for more information.
+   */
+  resolved_options(): ICU4XCollatorResolvedOptionsV1;
 }

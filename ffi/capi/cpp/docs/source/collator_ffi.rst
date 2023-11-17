@@ -38,6 +38,13 @@
         See the `Rust documentation for compare_utf16 <https://docs.rs/icu/latest/icu/collator/struct.Collator.html#method.compare_utf16>`__ for more information.
 
 
+    .. cpp:function:: ICU4XCollatorResolvedOptionsV1 resolved_options() const
+
+        The resolved options showing how the default options, the requested options, and the options from locale data were combined. None of the struct fields will have ``Auto`` as the value.
+
+        See the `Rust documentation for resolved_options <https://docs.rs/icu/latest/icu/collator/struct.Collator.html#method.resolved_options>`__ for more information.
+
+
 .. cpp:enum-struct:: ICU4XCollatorAlternateHandling
 
     See the `Rust documentation for AlternateHandling <https://docs.rs/icu/latest/icu/collator/enum.AlternateHandling.html>`__ for more information.
@@ -113,6 +120,25 @@
 .. cpp:struct:: ICU4XCollatorOptionsV1
 
     See the `Rust documentation for CollatorOptions <https://docs.rs/icu/latest/icu/collator/struct.CollatorOptions.html>`__ for more information.
+
+
+    .. cpp:member:: ICU4XCollatorStrength strength
+
+    .. cpp:member:: ICU4XCollatorAlternateHandling alternate_handling
+
+    .. cpp:member:: ICU4XCollatorCaseFirst case_first
+
+    .. cpp:member:: ICU4XCollatorMaxVariable max_variable
+
+    .. cpp:member:: ICU4XCollatorCaseLevel case_level
+
+    .. cpp:member:: ICU4XCollatorNumeric numeric
+
+    .. cpp:member:: ICU4XCollatorBackwardSecondLevel backward_second_level
+
+.. cpp:struct:: ICU4XCollatorResolvedOptionsV1
+
+    See the `Rust documentation for ResolvedCollatorOptions <https://docs.rs/icu/latest/icu/collator/struct.ResolvedCollatorOptions.html>`__ for more information.
 
 
     .. cpp:member:: ICU4XCollatorStrength strength
