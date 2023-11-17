@@ -146,10 +146,12 @@ impl<C: CldrCalendar> TypedDateTimePatternInterpolator<C> {
         }
     }
 
-    /// Loads formatting-style abbreviated month names: `MMM`
-    pub fn load_formatting_month_names_abbreviated<P>(
+    /// Loads month names for the specified symbol and length.
+    pub fn load_month_names<P>(
         &mut self,
         provider: &P,
+        field_symbol: fields::Month,
+        field_length: fields::FieldLength,
     ) -> Result<&mut Self, Error>
     where
         P: DataProvider<C::MonthSymbolsV1Marker> + ?Sized,
@@ -162,8 +164,17 @@ impl<C: CldrCalendar> TypedDateTimePatternInterpolator<C> {
         }
         let mut locale = self.locale.clone();
         locale.set_aux(AuxiliaryKeys::from_subtag(aux::subtag_for(
-            aux::Context::Format,
-            aux::Length::Abbr,
+            match field_symbol {
+                fields::Month::Format => aux::Context::Format,
+                fields::Month::StandAlone => aux::Context::Standalone,
+            },
+            match field_length {
+                fields::FieldLength::Abbreviated => aux::Length::Abbr,
+                fields::FieldLength::Narrow => aux::Length::Narrow,
+                fields::FieldLength::Wide => aux::Length::Wide,
+                // TODO: What error to return here?
+                _ => return Err(Error::MissingDateSymbols),
+            },
         )));
         let payload = provider
             .load(DataRequest {
@@ -171,11 +182,7 @@ impl<C: CldrCalendar> TypedDateTimePatternInterpolator<C> {
                 metadata: Default::default(),
             })?
             .take_payload()?;
-        self.month_symbols = OptionalSymbols::SingleLength(
-            fields::Month::Format,
-            fields::FieldLength::Abbreviated,
-            payload,
-        );
+        self.month_symbols = OptionalSymbols::SingleLength(field_symbol, field_length, payload);
         Ok(self)
     }
 }
@@ -392,7 +399,11 @@ mod tests {
         let mut interpolator: TypedDateTimePatternInterpolator<Gregorian> =
             TypedDateTimePatternInterpolator::try_new(&locale).unwrap();
         interpolator
-            .load_formatting_month_names_abbreviated(&crate::provider::Baked)
+            .load_month_names(
+                &crate::provider::Baked,
+                fields::Month::Format,
+                fields::FieldLength::Abbreviated,
+            )
             .unwrap();
         let reference_pattern: reference::Pattern =
             "'It is' MMM d, y 'at' HH:mm'!'".parse().unwrap();
@@ -401,5 +412,75 @@ mod tests {
         let formatted_pattern = interpolator.format(&pattern, &datetime);
 
         assert_writeable_eq!(formatted_pattern, "It is Oct 25, 2023 at 15:00!");
+    }
+
+    #[test]
+    fn test_month_coverage() {
+        // Ukrainian has different values for format and standalone
+        let locale = locale!("uk").into();
+        #[derive(Debug)]
+        struct TestCase {
+            pattern: &'static str,
+            field_symbol: fields::Month,
+            field_length: fields::FieldLength,
+            expected: &'static str,
+        }
+        let cases = [
+            TestCase {
+                pattern: "<MMM>",
+                field_symbol: fields::Month::Format,
+                field_length: fields::FieldLength::Abbreviated,
+                expected: "<лист.>",
+            },
+            TestCase {
+                pattern: "<MMMM>",
+                field_symbol: fields::Month::Format,
+                field_length: fields::FieldLength::Wide,
+                expected: "<листопада>",
+            },
+            TestCase {
+                pattern: "<MMMMM>",
+                field_symbol: fields::Month::Format,
+                field_length: fields::FieldLength::Narrow,
+                expected: "<л>",
+            },
+            TestCase {
+                pattern: "<LLL>",
+                field_symbol: fields::Month::StandAlone,
+                field_length: fields::FieldLength::Abbreviated,
+                expected: "<лист.>",
+            },
+            TestCase {
+                pattern: "<LLLL>",
+                field_symbol: fields::Month::StandAlone,
+                field_length: fields::FieldLength::Wide,
+                expected: "<листопад>",
+            },
+            TestCase {
+                pattern: "<LLLLL>",
+                field_symbol: fields::Month::StandAlone,
+                field_length: fields::FieldLength::Narrow,
+                expected: "<Л>",
+            },
+        ];
+        for cas in cases {
+            let TestCase {
+                pattern,
+                field_symbol,
+                field_length,
+                expected,
+            } = cas;
+            let mut interpolator: TypedDateTimePatternInterpolator<Gregorian> =
+                TypedDateTimePatternInterpolator::try_new(&locale).unwrap();
+            interpolator
+                .load_month_names(&crate::provider::Baked, field_symbol, field_length)
+                .unwrap();
+            let reference_pattern: reference::Pattern = pattern.parse().unwrap();
+            let pattern: Pattern = (&reference_pattern).into();
+            let datetime = DateTime::try_new_gregorian_datetime(2023, 11, 7, 13, 41, 28).unwrap();
+            let formatted_pattern = interpolator.format(&pattern, &datetime);
+
+            assert_writeable_eq!(formatted_pattern, expected, "{cas:?}");
+        }
     }
 }
