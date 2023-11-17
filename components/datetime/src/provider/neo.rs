@@ -109,6 +109,29 @@ pub mod aux {
             _ => None,
         }
     }
+
+    /// Creates an aux key from the enum values.
+    ///
+    /// <div class="stab unstable">
+    /// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
+    /// including in SemVer minor releases. While the serde representation of data structs is guaranteed
+    /// to be stable, their Rust representation might not be. Use with caution.
+    /// </div>
+    pub fn subtag_for(context: Context, length: Length) -> Subtag {
+        use {Context::*, Length::*};
+        match (context, length) {
+            (Format, Numeric) => NUMERIC,
+            (Format, Abbr) => ABBR,
+            (Format, Narrow) => NARROW,
+            (Format, Wide) => WIDE,
+            (Format, Short) => SHORT,
+            (Standalone, Numeric) => NUMERIC,
+            (Standalone, Abbr) => ABBR_STANDALONE,
+            (Standalone, Narrow) => NARROW_STANDALONE,
+            (Standalone, Wide) => WIDE_STANDALONE,
+            (Standalone, Short) => SHORT_STANDALONE,
+        }
+    }
 }
 
 /// Symbols used for representing the year name
