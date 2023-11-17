@@ -31,5 +31,5 @@ zerovec = { workspace = true, features = ["yoke"] }
 
 [features]
 default = []
-serde = ["dep:serde", "zerovec/serde", "icu_locid/serde", "icu_provider/serde"]
-datagen = ["serde", "zerovec/databake", "databake"]
+serde = ["dep:serde", "zerovec/serde", "icu_locid/serde", "icu_provider/serde", "zerotrie/serde"]
+datagen = ["serde", "zerovec/databake", "databake", "zerotrie/databake"]
