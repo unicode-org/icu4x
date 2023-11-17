@@ -22,6 +22,8 @@ class DateTimeFormatter implements ffi.Finalizable {
   /// Creates a new [`DateTimeFormatter`] from locale data.
   ///
   /// See the [Rust documentation for `try_new`](https://docs.rs/icu/latest/icu/datetime/struct.DateTimeFormatter.html#method.try_new) for more information.
+  ///
+  /// Throws [Error] on failure.
   factory DateTimeFormatter.withLengths(DataProvider provider, Locale locale,
       DateLength dateLength, TimeLength timeLength) {
     final result = _ICU4XDateTimeFormatter_create_with_lengths(
@@ -29,10 +31,10 @@ class DateTimeFormatter implements ffi.Finalizable {
         locale._underlying,
         dateLength.index,
         timeLength.index);
-    return result.isOk
-        ? DateTimeFormatter._(result.union.ok)
-        : throw Error.values
-            .firstWhere((v) => v._underlying == result.union.err);
+    if (!result.isOk) {
+      throw Error.values.firstWhere((v) => v._underlying == result.union.err);
+    }
+    return DateTimeFormatter._(result.union.ok);
   }
   // ignore: non_constant_identifier_names
   static final _ICU4XDateTimeFormatter_create_with_lengths = _capi<
@@ -49,14 +51,16 @@ class DateTimeFormatter implements ffi.Finalizable {
   /// Formats a [`DateTime`] to a string.
   ///
   /// See the [Rust documentation for `format`](https://docs.rs/icu/latest/icu/datetime/struct.DateTimeFormatter.html#method.format) for more information.
+  ///
+  /// Throws [Error] on failure.
   String formatDatetime(DateTime value) {
     final writeable = _Writeable();
     final result = _ICU4XDateTimeFormatter_format_datetime(
         _underlying, value._underlying, writeable._underlying);
-    return result.isOk
-        ? writeable.finalize()
-        : throw Error.values
-            .firstWhere((v) => v._underlying == result.union.err);
+    if (!result.isOk) {
+      throw Error.values.firstWhere((v) => v._underlying == result.union.err);
+    }
+    return writeable.finalize();
   }
 
   // ignore: non_constant_identifier_names
@@ -74,14 +78,16 @@ class DateTimeFormatter implements ffi.Finalizable {
   /// Will convert to this formatter's calendar first
   ///
   /// See the [Rust documentation for `format`](https://docs.rs/icu/latest/icu/datetime/struct.DateTimeFormatter.html#method.format) for more information.
+  ///
+  /// Throws [Error] on failure.
   String formatIsoDatetime(IsoDateTime value) {
     final writeable = _Writeable();
     final result = _ICU4XDateTimeFormatter_format_iso_datetime(
         _underlying, value._underlying, writeable._underlying);
-    return result.isOk
-        ? writeable.finalize()
-        : throw Error.values
-            .firstWhere((v) => v._underlying == result.union.err);
+    if (!result.isOk) {
+      throw Error.values.firstWhere((v) => v._underlying == result.union.err);
+    }
+    return writeable.finalize();
   }
 
   // ignore: non_constant_identifier_names

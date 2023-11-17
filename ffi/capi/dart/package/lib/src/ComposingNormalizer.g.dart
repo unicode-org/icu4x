@@ -19,12 +19,14 @@ class ComposingNormalizer implements ffi.Finalizable {
   /// Construct a new ICU4XComposingNormalizer instance for NFC
   ///
   /// See the [Rust documentation for `new_nfc`](https://docs.rs/icu/latest/icu/normalizer/struct.ComposingNormalizer.html#method.new_nfc) for more information.
+  ///
+  /// Throws [Error] on failure.
   factory ComposingNormalizer.nfc(DataProvider provider) {
     final result = _ICU4XComposingNormalizer_create_nfc(provider._underlying);
-    return result.isOk
-        ? ComposingNormalizer._(result.union.ok)
-        : throw Error.values
-            .firstWhere((v) => v._underlying == result.union.err);
+    if (!result.isOk) {
+      throw Error.values.firstWhere((v) => v._underlying == result.union.err);
+    }
+    return ComposingNormalizer._(result.union.ok);
   }
   // ignore: non_constant_identifier_names
   static final _ICU4XComposingNormalizer_create_nfc = _capi<
@@ -37,12 +39,14 @@ class ComposingNormalizer implements ffi.Finalizable {
   /// Construct a new ICU4XComposingNormalizer instance for NFKC
   ///
   /// See the [Rust documentation for `new_nfkc`](https://docs.rs/icu/latest/icu/normalizer/struct.ComposingNormalizer.html#method.new_nfkc) for more information.
+  ///
+  /// Throws [Error] on failure.
   factory ComposingNormalizer.nfkc(DataProvider provider) {
     final result = _ICU4XComposingNormalizer_create_nfkc(provider._underlying);
-    return result.isOk
-        ? ComposingNormalizer._(result.union.ok)
-        : throw Error.values
-            .firstWhere((v) => v._underlying == result.union.err);
+    if (!result.isOk) {
+      throw Error.values.firstWhere((v) => v._underlying == result.union.err);
+    }
+    return ComposingNormalizer._(result.union.ok);
   }
   // ignore: non_constant_identifier_names
   static final _ICU4XComposingNormalizer_create_nfkc = _capi<
@@ -57,6 +61,8 @@ class ComposingNormalizer implements ffi.Finalizable {
   /// Errors are mapped to REPLACEMENT CHARACTER
   ///
   /// See the [Rust documentation for `normalize_utf8`](https://docs.rs/icu/latest/icu/normalizer/struct.ComposingNormalizer.html#method.normalize_utf8) for more information.
+  ///
+  /// Throws [Error] on failure.
   String normalize(String s) {
     final alloc = ffi2.Arena();
     final sSlice = _SliceFfi2Utf8._fromDart(s, alloc);
@@ -65,10 +71,10 @@ class ComposingNormalizer implements ffi.Finalizable {
     final result = _ICU4XComposingNormalizer_normalize(
         _underlying, sSlice._bytes, sSlice._length, writeable._underlying);
     alloc.releaseAll();
-    return result.isOk
-        ? writeable.finalize()
-        : throw Error.values
-            .firstWhere((v) => v._underlying == result.union.err);
+    if (!result.isOk) {
+      throw Error.values.firstWhere((v) => v._underlying == result.union.err);
+    }
+    return writeable.finalize();
   }
 
   // ignore: non_constant_identifier_names

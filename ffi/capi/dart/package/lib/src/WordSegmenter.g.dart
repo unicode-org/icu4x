@@ -25,12 +25,14 @@ class WordSegmenter implements ffi.Finalizable {
   /// Khmer, Lao, and Thai.
   ///
   /// See the [Rust documentation for `new_auto`](https://docs.rs/icu/latest/icu/segmenter/struct.WordSegmenter.html#method.new_auto) for more information.
+  ///
+  /// Throws [Error] on failure.
   factory WordSegmenter.auto(DataProvider provider) {
     final result = _ICU4XWordSegmenter_create_auto(provider._underlying);
-    return result.isOk
-        ? WordSegmenter._(result.union.ok)
-        : throw Error.values
-            .firstWhere((v) => v._underlying == result.union.err);
+    if (!result.isOk) {
+      throw Error.values.firstWhere((v) => v._underlying == result.union.err);
+    }
+    return WordSegmenter._(result.union.ok);
   }
   // ignore: non_constant_identifier_names
   static final _ICU4XWordSegmenter_create_auto = _capi<
@@ -47,12 +49,14 @@ class WordSegmenter implements ffi.Finalizable {
   /// Japanese.
   ///
   /// See the [Rust documentation for `new_lstm`](https://docs.rs/icu/latest/icu/segmenter/struct.WordSegmenter.html#method.new_lstm) for more information.
+  ///
+  /// Throws [Error] on failure.
   factory WordSegmenter.lstm(DataProvider provider) {
     final result = _ICU4XWordSegmenter_create_lstm(provider._underlying);
-    return result.isOk
-        ? WordSegmenter._(result.union.ok)
-        : throw Error.values
-            .firstWhere((v) => v._underlying == result.union.err);
+    if (!result.isOk) {
+      throw Error.values.firstWhere((v) => v._underlying == result.union.err);
+    }
+    return WordSegmenter._(result.union.ok);
   }
   // ignore: non_constant_identifier_names
   static final _ICU4XWordSegmenter_create_lstm = _capi<
@@ -66,12 +70,14 @@ class WordSegmenter implements ffi.Finalizable {
   /// Burmese, Khmer, Lao, and Thai.
   ///
   /// See the [Rust documentation for `new_dictionary`](https://docs.rs/icu/latest/icu/segmenter/struct.WordSegmenter.html#method.new_dictionary) for more information.
+  ///
+  /// Throws [Error] on failure.
   factory WordSegmenter.dictionary(DataProvider provider) {
     final result = _ICU4XWordSegmenter_create_dictionary(provider._underlying);
-    return result.isOk
-        ? WordSegmenter._(result.union.ok)
-        : throw Error.values
-            .firstWhere((v) => v._underlying == result.union.err);
+    if (!result.isOk) {
+      throw Error.values.firstWhere((v) => v._underlying == result.union.err);
+    }
+    return WordSegmenter._(result.union.ok);
   }
   // ignore: non_constant_identifier_names
   static final _ICU4XWordSegmenter_create_dictionary = _capi<

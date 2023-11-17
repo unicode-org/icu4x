@@ -21,14 +21,16 @@ class TimeFormatter implements ffi.Finalizable {
   /// Creates a new [`TimeFormatter`] from locale data.
   ///
   /// See the [Rust documentation for `try_new_with_length`](https://docs.rs/icu/latest/icu/datetime/struct.TimeFormatter.html#method.try_new_with_length) for more information.
+  ///
+  /// Throws [Error] on failure.
   factory TimeFormatter.withLength(
       DataProvider provider, Locale locale, TimeLength length) {
     final result = _ICU4XTimeFormatter_create_with_length(
         provider._underlying, locale._underlying, length.index);
-    return result.isOk
-        ? TimeFormatter._(result.union.ok)
-        : throw Error.values
-            .firstWhere((v) => v._underlying == result.union.err);
+    if (!result.isOk) {
+      throw Error.values.firstWhere((v) => v._underlying == result.union.err);
+    }
+    return TimeFormatter._(result.union.ok);
   }
   // ignore: non_constant_identifier_names
   static final _ICU4XTimeFormatter_create_with_length = _capi<
@@ -44,14 +46,16 @@ class TimeFormatter implements ffi.Finalizable {
   /// Formats a [`Time`] to a string.
   ///
   /// See the [Rust documentation for `format`](https://docs.rs/icu/latest/icu/datetime/struct.TimeFormatter.html#method.format) for more information.
+  ///
+  /// Throws [Error] on failure.
   String formatTime(Time value) {
     final writeable = _Writeable();
     final result = _ICU4XTimeFormatter_format_time(
         _underlying, value._underlying, writeable._underlying);
-    return result.isOk
-        ? writeable.finalize()
-        : throw Error.values
-            .firstWhere((v) => v._underlying == result.union.err);
+    if (!result.isOk) {
+      throw Error.values.firstWhere((v) => v._underlying == result.union.err);
+    }
+    return writeable.finalize();
   }
 
   // ignore: non_constant_identifier_names
@@ -68,14 +72,16 @@ class TimeFormatter implements ffi.Finalizable {
   /// Formats a [`DateTime`] to a string.
   ///
   /// See the [Rust documentation for `format`](https://docs.rs/icu/latest/icu/datetime/struct.TimeFormatter.html#method.format) for more information.
+  ///
+  /// Throws [Error] on failure.
   String formatDatetime(DateTime value) {
     final writeable = _Writeable();
     final result = _ICU4XTimeFormatter_format_datetime(
         _underlying, value._underlying, writeable._underlying);
-    return result.isOk
-        ? writeable.finalize()
-        : throw Error.values
-            .firstWhere((v) => v._underlying == result.union.err);
+    if (!result.isOk) {
+      throw Error.values.firstWhere((v) => v._underlying == result.union.err);
+    }
+    return writeable.finalize();
   }
 
   // ignore: non_constant_identifier_names
@@ -91,14 +97,16 @@ class TimeFormatter implements ffi.Finalizable {
   /// Formats a [`IsoDateTime`] to a string.
   ///
   /// See the [Rust documentation for `format`](https://docs.rs/icu/latest/icu/datetime/struct.TimeFormatter.html#method.format) for more information.
+  ///
+  /// Throws [Error] on failure.
   String formatIsoDatetime(IsoDateTime value) {
     final writeable = _Writeable();
     final result = _ICU4XTimeFormatter_format_iso_datetime(
         _underlying, value._underlying, writeable._underlying);
-    return result.isOk
-        ? writeable.finalize()
-        : throw Error.values
-            .firstWhere((v) => v._underlying == result.union.err);
+    if (!result.isOk) {
+      throw Error.values.firstWhere((v) => v._underlying == result.union.err);
+    }
+    return writeable.finalize();
   }
 
   // ignore: non_constant_identifier_names

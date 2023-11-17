@@ -19,12 +19,14 @@ class Bcp47ToIanaMapper implements ffi.Finalizable {
       ffi.NativeFinalizer(_capi('ICU4XBcp47ToIanaMapper_destroy'));
 
   /// See the [Rust documentation for `new`](https://docs.rs/icu/latest/icu/timezone/struct.IanaBcp47RoundTripMapper.html#method.new) for more information.
+  ///
+  /// Throws [Error] on failure.
   factory Bcp47ToIanaMapper(DataProvider provider) {
     final result = _ICU4XBcp47ToIanaMapper_create(provider._underlying);
-    return result.isOk
-        ? Bcp47ToIanaMapper._(result.union.ok)
-        : throw Error.values
-            .firstWhere((v) => v._underlying == result.union.err);
+    if (!result.isOk) {
+      throw Error.values.firstWhere((v) => v._underlying == result.union.err);
+    }
+    return Bcp47ToIanaMapper._(result.union.ok);
   }
   // ignore: non_constant_identifier_names
   static final _ICU4XBcp47ToIanaMapper_create = _capi<
@@ -37,6 +39,8 @@ class Bcp47ToIanaMapper implements ffi.Finalizable {
   /// Writes out the canonical IANA time zone ID corresponding to the given BCP-47 ID.
   ///
   /// See the [Rust documentation for `bcp47_to_iana`](https://docs.rs/icu/latest/icu/datetime/time_zone/struct.IanaBcp47RoundTripMapper.html#method.bcp47_to_iana) for more information.
+  ///
+  /// Throws [Error] on failure.
   String operator [](String value) {
     final alloc = ffi2.Arena();
     final valueSlice = _SliceFfi2Utf8._fromDart(value, alloc);
@@ -45,10 +49,10 @@ class Bcp47ToIanaMapper implements ffi.Finalizable {
     final result = _ICU4XBcp47ToIanaMapper_get(_underlying, valueSlice._bytes,
         valueSlice._length, writeable._underlying);
     alloc.releaseAll();
-    return result.isOk
-        ? writeable.finalize()
-        : throw Error.values
-            .firstWhere((v) => v._underlying == result.union.err);
+    if (!result.isOk) {
+      throw Error.values.firstWhere((v) => v._underlying == result.union.err);
+    }
+    return writeable.finalize();
   }
 
   // ignore: non_constant_identifier_names

@@ -19,12 +19,14 @@ class TitlecaseMapper implements ffi.Finalizable {
   /// Construct a new `TitlecaseMapper` instance
   ///
   /// See the [Rust documentation for `new`](https://docs.rs/icu/latest/icu/casemap/struct.TitlecaseMapper.html#method.new) for more information.
+  ///
+  /// Throws [Error] on failure.
   factory TitlecaseMapper(DataProvider provider) {
     final result = _ICU4XTitlecaseMapper_create(provider._underlying);
-    return result.isOk
-        ? TitlecaseMapper._(result.union.ok)
-        : throw Error.values
-            .firstWhere((v) => v._underlying == result.union.err);
+    if (!result.isOk) {
+      throw Error.values.firstWhere((v) => v._underlying == result.union.err);
+    }
+    return TitlecaseMapper._(result.union.ok);
   }
   // ignore: non_constant_identifier_names
   static final _ICU4XTitlecaseMapper_create = _capi<
@@ -39,6 +41,8 @@ class TitlecaseMapper implements ffi.Finalizable {
   /// The `v1` refers to the version of the options struct, which may change as we add more options
   ///
   /// See the [Rust documentation for `titlecase_segment`](https://docs.rs/icu/latest/icu/casemap/struct.TitlecaseMapper.html#method.titlecase_segment) for more information.
+  ///
+  /// Throws [Error] on failure.
   String titlecaseSegmentV1(
       String s, Locale locale, TitlecaseOptionsV1 options) {
     final alloc = ffi2.Arena();
@@ -53,10 +57,10 @@ class TitlecaseMapper implements ffi.Finalizable {
         options._underlying,
         writeable._underlying);
     alloc.releaseAll();
-    return result.isOk
-        ? writeable.finalize()
-        : throw Error.values
-            .firstWhere((v) => v._underlying == result.union.err);
+    if (!result.isOk) {
+      throw Error.values.firstWhere((v) => v._underlying == result.union.err);
+    }
+    return writeable.finalize();
   }
 
   // ignore: non_constant_identifier_names

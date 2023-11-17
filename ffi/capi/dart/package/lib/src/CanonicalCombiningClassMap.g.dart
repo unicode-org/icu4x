@@ -21,13 +21,15 @@ class CanonicalCombiningClassMap implements ffi.Finalizable {
   /// Construct a new ICU4XCanonicalCombiningClassMap instance for NFC
   ///
   /// See the [Rust documentation for `new`](https://docs.rs/icu/latest/icu/normalizer/properties/struct.CanonicalCombiningClassMap.html#method.new) for more information.
+  ///
+  /// Throws [Error] on failure.
   factory CanonicalCombiningClassMap(DataProvider provider) {
     final result =
         _ICU4XCanonicalCombiningClassMap_create(provider._underlying);
-    return result.isOk
-        ? CanonicalCombiningClassMap._(result.union.ok)
-        : throw Error.values
-            .firstWhere((v) => v._underlying == result.union.err);
+    if (!result.isOk) {
+      throw Error.values.firstWhere((v) => v._underlying == result.union.err);
+    }
+    return CanonicalCombiningClassMap._(result.union.ok);
   }
   // ignore: non_constant_identifier_names
   static final _ICU4XCanonicalCombiningClassMap_create = _capi<

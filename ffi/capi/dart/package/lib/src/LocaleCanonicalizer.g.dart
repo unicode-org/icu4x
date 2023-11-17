@@ -21,12 +21,14 @@ class LocaleCanonicalizer implements ffi.Finalizable {
   /// Create a new [`LocaleCanonicalizer`].
   ///
   /// See the [Rust documentation for `new`](https://docs.rs/icu/latest/icu/locid_transform/struct.LocaleCanonicalizer.html#method.new) for more information.
+  ///
+  /// Throws [Error] on failure.
   factory LocaleCanonicalizer(DataProvider provider) {
     final result = _ICU4XLocaleCanonicalizer_create(provider._underlying);
-    return result.isOk
-        ? LocaleCanonicalizer._(result.union.ok)
-        : throw Error.values
-            .firstWhere((v) => v._underlying == result.union.err);
+    if (!result.isOk) {
+      throw Error.values.firstWhere((v) => v._underlying == result.union.err);
+    }
+    return LocaleCanonicalizer._(result.union.ok);
   }
   // ignore: non_constant_identifier_names
   static final _ICU4XLocaleCanonicalizer_create = _capi<
@@ -39,13 +41,15 @@ class LocaleCanonicalizer implements ffi.Finalizable {
   /// Create a new [`LocaleCanonicalizer`] with extended data.
   ///
   /// See the [Rust documentation for `new_with_expander`](https://docs.rs/icu/latest/icu/locid_transform/struct.LocaleCanonicalizer.html#method.new_with_expander) for more information.
+  ///
+  /// Throws [Error] on failure.
   factory LocaleCanonicalizer.extended(DataProvider provider) {
     final result =
         _ICU4XLocaleCanonicalizer_create_extended(provider._underlying);
-    return result.isOk
-        ? LocaleCanonicalizer._(result.union.ok)
-        : throw Error.values
-            .firstWhere((v) => v._underlying == result.union.err);
+    if (!result.isOk) {
+      throw Error.values.firstWhere((v) => v._underlying == result.union.err);
+    }
+    return LocaleCanonicalizer._(result.union.ok);
   }
   // ignore: non_constant_identifier_names
   static final _ICU4XLocaleCanonicalizer_create_extended = _capi<

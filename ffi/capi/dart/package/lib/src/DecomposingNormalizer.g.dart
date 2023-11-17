@@ -19,12 +19,14 @@ class DecomposingNormalizer implements ffi.Finalizable {
   /// Construct a new ICU4XDecomposingNormalizer instance for NFC
   ///
   /// See the [Rust documentation for `new_nfd`](https://docs.rs/icu/latest/icu/normalizer/struct.DecomposingNormalizer.html#method.new_nfd) for more information.
+  ///
+  /// Throws [Error] on failure.
   factory DecomposingNormalizer.nfd(DataProvider provider) {
     final result = _ICU4XDecomposingNormalizer_create_nfd(provider._underlying);
-    return result.isOk
-        ? DecomposingNormalizer._(result.union.ok)
-        : throw Error.values
-            .firstWhere((v) => v._underlying == result.union.err);
+    if (!result.isOk) {
+      throw Error.values.firstWhere((v) => v._underlying == result.union.err);
+    }
+    return DecomposingNormalizer._(result.union.ok);
   }
   // ignore: non_constant_identifier_names
   static final _ICU4XDecomposingNormalizer_create_nfd = _capi<
@@ -37,13 +39,15 @@ class DecomposingNormalizer implements ffi.Finalizable {
   /// Construct a new ICU4XDecomposingNormalizer instance for NFKC
   ///
   /// See the [Rust documentation for `new_nfkd`](https://docs.rs/icu/latest/icu/normalizer/struct.DecomposingNormalizer.html#method.new_nfkd) for more information.
+  ///
+  /// Throws [Error] on failure.
   factory DecomposingNormalizer.nfkd(DataProvider provider) {
     final result =
         _ICU4XDecomposingNormalizer_create_nfkd(provider._underlying);
-    return result.isOk
-        ? DecomposingNormalizer._(result.union.ok)
-        : throw Error.values
-            .firstWhere((v) => v._underlying == result.union.err);
+    if (!result.isOk) {
+      throw Error.values.firstWhere((v) => v._underlying == result.union.err);
+    }
+    return DecomposingNormalizer._(result.union.ok);
   }
   // ignore: non_constant_identifier_names
   static final _ICU4XDecomposingNormalizer_create_nfkd = _capi<
@@ -58,6 +62,8 @@ class DecomposingNormalizer implements ffi.Finalizable {
   /// Errors are mapped to REPLACEMENT CHARACTER
   ///
   /// See the [Rust documentation for `normalize_utf8`](https://docs.rs/icu/latest/icu/normalizer/struct.DecomposingNormalizer.html#method.normalize_utf8) for more information.
+  ///
+  /// Throws [Error] on failure.
   String normalize(String s) {
     final alloc = ffi2.Arena();
     final sSlice = _SliceFfi2Utf8._fromDart(s, alloc);
@@ -66,10 +72,10 @@ class DecomposingNormalizer implements ffi.Finalizable {
     final result = _ICU4XDecomposingNormalizer_normalize(
         _underlying, sSlice._bytes, sSlice._length, writeable._underlying);
     alloc.releaseAll();
-    return result.isOk
-        ? writeable.finalize()
-        : throw Error.values
-            .firstWhere((v) => v._underlying == result.union.err);
+    if (!result.isOk) {
+      throw Error.values.firstWhere((v) => v._underlying == result.union.err);
+    }
+    return writeable.finalize();
   }
 
   // ignore: non_constant_identifier_names

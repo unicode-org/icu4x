@@ -23,12 +23,14 @@ class CanonicalDecomposition implements ffi.Finalizable {
   /// Construct a new ICU4XCanonicalDecomposition instance for NFC
   ///
   /// See the [Rust documentation for `new`](https://docs.rs/icu/latest/icu/normalizer/properties/struct.CanonicalDecomposition.html#method.new) for more information.
+  ///
+  /// Throws [Error] on failure.
   factory CanonicalDecomposition(DataProvider provider) {
     final result = _ICU4XCanonicalDecomposition_create(provider._underlying);
-    return result.isOk
-        ? CanonicalDecomposition._(result.union.ok)
-        : throw Error.values
-            .firstWhere((v) => v._underlying == result.union.err);
+    if (!result.isOk) {
+      throw Error.values.firstWhere((v) => v._underlying == result.union.err);
+    }
+    return CanonicalDecomposition._(result.union.ok);
   }
   // ignore: non_constant_identifier_names
   static final _ICU4XCanonicalDecomposition_create = _capi<

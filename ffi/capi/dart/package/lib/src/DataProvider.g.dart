@@ -37,6 +37,8 @@ class DataProvider implements ffi.Finalizable {
   /// Constructs a `BlobDataProvider` and returns it as an [`DataProvider`].
   ///
   /// See the [Rust documentation for `BlobDataProvider`](https://docs.rs/icu_provider_blob/latest/icu_provider_blob/struct.BlobDataProvider.html) for more information.
+  ///
+  /// Throws [Error] on failure.
   factory DataProvider.fromByteSlice(Uint8List blob) {
     final alloc = ffi2.Arena();
     final blobSlice = _SliceFfiUint8._fromDart(blob, alloc);
@@ -44,10 +46,10 @@ class DataProvider implements ffi.Finalizable {
     final result = _ICU4XDataProvider_create_from_byte_slice(
         blobSlice._bytes, blobSlice._length);
     alloc.releaseAll();
-    return result.isOk
-        ? DataProvider._(result.union.ok)
-        : throw Error.values
-            .firstWhere((v) => v._underlying == result.union.err);
+    if (!result.isOk) {
+      throw Error.values.firstWhere((v) => v._underlying == result.union.err);
+    }
+    return DataProvider._(result.union.ok);
   }
   // ignore: non_constant_identifier_names
   static final _ICU4XDataProvider_create_from_byte_slice = _capi<
@@ -80,6 +82,8 @@ class DataProvider implements ffi.Finalizable {
   /// or `create_fs`. If the condition is not upheld, a runtime error occurs.
   ///
   /// See the [Rust documentation for `ForkByKeyProvider`](https://docs.rs/icu_provider_adapters/latest/icu_provider_adapters/fork/type.ForkByKeyProvider.html) for more information.
+  ///
+  /// Throws [Error] on failure.
   void forkByKey(DataProvider other) {
     final result =
         _ICU4XDataProvider_fork_by_key(_underlying, other._underlying);
@@ -100,6 +104,8 @@ class DataProvider implements ffi.Finalizable {
   /// Same as `fork_by_key` but forks by locale instead of key.
   ///
   /// See the [Rust documentation for `MissingLocalePredicate`](https://docs.rs/icu_provider_adapters/latest/icu_provider_adapters/fork/predicates/struct.MissingLocalePredicate.html) for more information.
+  ///
+  /// Throws [Error] on failure.
   void forkByLocale(DataProvider other) {
     final result =
         _ICU4XDataProvider_fork_by_locale(_underlying, other._underlying);
@@ -124,6 +130,8 @@ class DataProvider implements ffi.Finalizable {
   /// See the [Rust documentation for `try_new`](https://docs.rs/icu_provider_adapters/latest/icu_provider_adapters/fallback/struct.LocaleFallbackProvider.html#method.try_new) for more information.
   ///
   /// Additional information: [1](https://docs.rs/icu_provider_adapters/latest/icu_provider_adapters/fallback/struct.LocaleFallbackProvider.html)
+  ///
+  /// Throws [Error] on failure.
   void enableLocaleFallback() {
     final result = _ICU4XDataProvider_enable_locale_fallback(_underlying);
     if (!result.isOk) {
@@ -142,6 +150,8 @@ class DataProvider implements ffi.Finalizable {
   /// See the [Rust documentation for `new_with_fallbacker`](https://docs.rs/icu_provider_adapters/latest/icu_provider_adapters/fallback/struct.LocaleFallbackProvider.html#method.new_with_fallbacker) for more information.
   ///
   /// Additional information: [1](https://docs.rs/icu_provider_adapters/latest/icu_provider_adapters/fallback/struct.LocaleFallbackProvider.html)
+  ///
+  /// Throws [Error] on failure.
   void enableLocaleFallbackWith(LocaleFallbacker fallbacker) {
     final result = _ICU4XDataProvider_enable_locale_fallback_with(
         _underlying, fallbacker._underlying);

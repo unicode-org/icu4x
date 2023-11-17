@@ -150,13 +150,15 @@ class CodePointMapData8 implements ffi.Finalizable {
               ffi.Pointer<ffi.Opaque>, int)>(isLeaf: true);
 
   /// See the [Rust documentation for `general_category`](https://docs.rs/icu/latest/icu/properties/maps/fn.general_category.html) for more information.
+  ///
+  /// Throws [Error] on failure.
   factory CodePointMapData8.loadGeneralCategory(DataProvider provider) {
     final result =
         _ICU4XCodePointMapData8_load_general_category(provider._underlying);
-    return result.isOk
-        ? CodePointMapData8._(result.union.ok)
-        : throw Error.values
-            .firstWhere((v) => v._underlying == result.union.err);
+    if (!result.isOk) {
+      throw Error.values.firstWhere((v) => v._underlying == result.union.err);
+    }
+    return CodePointMapData8._(result.union.ok);
   }
   // ignore: non_constant_identifier_names
   static final _ICU4XCodePointMapData8_load_general_category = _capi<
@@ -167,13 +169,15 @@ class CodePointMapData8 implements ffi.Finalizable {
           isLeaf: true);
 
   /// See the [Rust documentation for `bidi_class`](https://docs.rs/icu/latest/icu/properties/maps/fn.bidi_class.html) for more information.
+  ///
+  /// Throws [Error] on failure.
   factory CodePointMapData8.loadBidiClass(DataProvider provider) {
     final result =
         _ICU4XCodePointMapData8_load_bidi_class(provider._underlying);
-    return result.isOk
-        ? CodePointMapData8._(result.union.ok)
-        : throw Error.values
-            .firstWhere((v) => v._underlying == result.union.err);
+    if (!result.isOk) {
+      throw Error.values.firstWhere((v) => v._underlying == result.union.err);
+    }
+    return CodePointMapData8._(result.union.ok);
   }
   // ignore: non_constant_identifier_names
   static final _ICU4XCodePointMapData8_load_bidi_class = _capi<
@@ -184,13 +188,15 @@ class CodePointMapData8 implements ffi.Finalizable {
           isLeaf: true);
 
   /// See the [Rust documentation for `east_asian_width`](https://docs.rs/icu/latest/icu/properties/maps/fn.east_asian_width.html) for more information.
+  ///
+  /// Throws [Error] on failure.
   factory CodePointMapData8.loadEastAsianWidth(DataProvider provider) {
     final result =
         _ICU4XCodePointMapData8_load_east_asian_width(provider._underlying);
-    return result.isOk
-        ? CodePointMapData8._(result.union.ok)
-        : throw Error.values
-            .firstWhere((v) => v._underlying == result.union.err);
+    if (!result.isOk) {
+      throw Error.values.firstWhere((v) => v._underlying == result.union.err);
+    }
+    return CodePointMapData8._(result.union.ok);
   }
   // ignore: non_constant_identifier_names
   static final _ICU4XCodePointMapData8_load_east_asian_width = _capi<
@@ -201,13 +207,15 @@ class CodePointMapData8 implements ffi.Finalizable {
           isLeaf: true);
 
   /// See the [Rust documentation for `indic_syllabic_category`](https://docs.rs/icu/latest/icu/properties/maps/fn.indic_syllabic_category.html) for more information.
+  ///
+  /// Throws [Error] on failure.
   factory CodePointMapData8.loadIndicSyllabicCategory(DataProvider provider) {
     final result = _ICU4XCodePointMapData8_load_indic_syllabic_category(
         provider._underlying);
-    return result.isOk
-        ? CodePointMapData8._(result.union.ok)
-        : throw Error.values
-            .firstWhere((v) => v._underlying == result.union.err);
+    if (!result.isOk) {
+      throw Error.values.firstWhere((v) => v._underlying == result.union.err);
+    }
+    return CodePointMapData8._(result.union.ok);
   }
   // ignore: non_constant_identifier_names
   static final _ICU4XCodePointMapData8_load_indic_syllabic_category = _capi<
@@ -218,13 +226,15 @@ class CodePointMapData8 implements ffi.Finalizable {
           isLeaf: true);
 
   /// See the [Rust documentation for `line_break`](https://docs.rs/icu/latest/icu/properties/maps/fn.line_break.html) for more information.
+  ///
+  /// Throws [Error] on failure.
   factory CodePointMapData8.loadLineBreak(DataProvider provider) {
     final result =
         _ICU4XCodePointMapData8_load_line_break(provider._underlying);
-    return result.isOk
-        ? CodePointMapData8._(result.union.ok)
-        : throw Error.values
-            .firstWhere((v) => v._underlying == result.union.err);
+    if (!result.isOk) {
+      throw Error.values.firstWhere((v) => v._underlying == result.union.err);
+    }
+    return CodePointMapData8._(result.union.ok);
   }
   // ignore: non_constant_identifier_names
   static final _ICU4XCodePointMapData8_load_line_break = _capi<
@@ -235,13 +245,15 @@ class CodePointMapData8 implements ffi.Finalizable {
           isLeaf: true);
 
   /// See the [Rust documentation for `grapheme_cluster_break`](https://docs.rs/icu/latest/icu/properties/maps/fn.grapheme_cluster_break.html) for more information.
+  ///
+  /// Throws [Error] on failure.
   factory CodePointMapData8.graphemeClusterBreak(DataProvider provider) {
     final result = _ICU4XCodePointMapData8_try_grapheme_cluster_break(
         provider._underlying);
-    return result.isOk
-        ? CodePointMapData8._(result.union.ok)
-        : throw Error.values
-            .firstWhere((v) => v._underlying == result.union.err);
+    if (!result.isOk) {
+      throw Error.values.firstWhere((v) => v._underlying == result.union.err);
+    }
+    return CodePointMapData8._(result.union.ok);
   }
   // ignore: non_constant_identifier_names
   static final _ICU4XCodePointMapData8_try_grapheme_cluster_break = _capi<
@@ -252,13 +264,15 @@ class CodePointMapData8 implements ffi.Finalizable {
           isLeaf: true);
 
   /// See the [Rust documentation for `word_break`](https://docs.rs/icu/latest/icu/properties/maps/fn.word_break.html) for more information.
+  ///
+  /// Throws [Error] on failure.
   factory CodePointMapData8.loadWordBreak(DataProvider provider) {
     final result =
         _ICU4XCodePointMapData8_load_word_break(provider._underlying);
-    return result.isOk
-        ? CodePointMapData8._(result.union.ok)
-        : throw Error.values
-            .firstWhere((v) => v._underlying == result.union.err);
+    if (!result.isOk) {
+      throw Error.values.firstWhere((v) => v._underlying == result.union.err);
+    }
+    return CodePointMapData8._(result.union.ok);
   }
   // ignore: non_constant_identifier_names
   static final _ICU4XCodePointMapData8_load_word_break = _capi<
@@ -269,13 +283,15 @@ class CodePointMapData8 implements ffi.Finalizable {
           isLeaf: true);
 
   /// See the [Rust documentation for `sentence_break`](https://docs.rs/icu/latest/icu/properties/maps/fn.sentence_break.html) for more information.
+  ///
+  /// Throws [Error] on failure.
   factory CodePointMapData8.loadSentenceBreak(DataProvider provider) {
     final result =
         _ICU4XCodePointMapData8_load_sentence_break(provider._underlying);
-    return result.isOk
-        ? CodePointMapData8._(result.union.ok)
-        : throw Error.values
-            .firstWhere((v) => v._underlying == result.union.err);
+    if (!result.isOk) {
+      throw Error.values.firstWhere((v) => v._underlying == result.union.err);
+    }
+    return CodePointMapData8._(result.union.ok);
   }
   // ignore: non_constant_identifier_names
   static final _ICU4XCodePointMapData8_load_sentence_break = _capi<

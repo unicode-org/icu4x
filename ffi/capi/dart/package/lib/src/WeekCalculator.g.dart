@@ -21,13 +21,15 @@ class WeekCalculator implements ffi.Finalizable {
   /// Creates a new [`WeekCalculator`] from locale data.
   ///
   /// See the [Rust documentation for `try_new`](https://docs.rs/icu/latest/icu/calendar/week/struct.WeekCalculator.html#method.try_new) for more information.
+  ///
+  /// Throws [Error] on failure.
   factory WeekCalculator(DataProvider provider, Locale locale) {
     final result =
         _ICU4XWeekCalculator_create(provider._underlying, locale._underlying);
-    return result.isOk
-        ? WeekCalculator._(result.union.ok)
-        : throw Error.values
-            .firstWhere((v) => v._underlying == result.union.err);
+    if (!result.isOk) {
+      throw Error.values.firstWhere((v) => v._underlying == result.union.err);
+    }
+    return WeekCalculator._(result.union.ok);
   }
   // ignore: non_constant_identifier_names
   static final _ICU4XWeekCalculator_create = _capi<

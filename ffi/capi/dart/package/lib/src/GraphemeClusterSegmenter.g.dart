@@ -22,12 +22,14 @@ class GraphemeClusterSegmenter implements ffi.Finalizable {
   /// Construct an [`GraphemeClusterSegmenter`].
   ///
   /// See the [Rust documentation for `new`](https://docs.rs/icu/latest/icu/segmenter/struct.GraphemeClusterSegmenter.html#method.new) for more information.
+  ///
+  /// Throws [Error] on failure.
   factory GraphemeClusterSegmenter(DataProvider provider) {
     final result = _ICU4XGraphemeClusterSegmenter_create(provider._underlying);
-    return result.isOk
-        ? GraphemeClusterSegmenter._(result.union.ok)
-        : throw Error.values
-            .firstWhere((v) => v._underlying == result.union.err);
+    if (!result.isOk) {
+      throw Error.values.firstWhere((v) => v._underlying == result.union.err);
+    }
+    return GraphemeClusterSegmenter._(result.union.ok);
   }
   // ignore: non_constant_identifier_names
   static final _ICU4XGraphemeClusterSegmenter_create = _capi<

@@ -19,12 +19,14 @@ class ScriptWithExtensions implements ffi.Finalizable {
       ffi.NativeFinalizer(_capi('ICU4XScriptWithExtensions_destroy'));
 
   /// See the [Rust documentation for `script_with_extensions`](https://docs.rs/icu/latest/icu/properties/script/fn.script_with_extensions.html) for more information.
+  ///
+  /// Throws [Error] on failure.
   factory ScriptWithExtensions(DataProvider provider) {
     final result = _ICU4XScriptWithExtensions_create(provider._underlying);
-    return result.isOk
-        ? ScriptWithExtensions._(result.union.ok)
-        : throw Error.values
-            .firstWhere((v) => v._underlying == result.union.err);
+    if (!result.isOk) {
+      throw Error.values.firstWhere((v) => v._underlying == result.union.err);
+    }
+    return ScriptWithExtensions._(result.union.ok);
   }
   // ignore: non_constant_identifier_names
   static final _ICU4XScriptWithExtensions_create = _capi<

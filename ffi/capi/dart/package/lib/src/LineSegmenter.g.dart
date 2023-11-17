@@ -22,12 +22,14 @@ class LineSegmenter implements ffi.Finalizable {
   /// available payload data for Burmese, Khmer, Lao, and Thai.
   ///
   /// See the [Rust documentation for `new_auto`](https://docs.rs/icu/latest/icu/segmenter/struct.LineSegmenter.html#method.new_auto) for more information.
+  ///
+  /// Throws [Error] on failure.
   factory LineSegmenter.auto(DataProvider provider) {
     final result = _ICU4XLineSegmenter_create_auto(provider._underlying);
-    return result.isOk
-        ? LineSegmenter._(result.union.ok)
-        : throw Error.values
-            .firstWhere((v) => v._underlying == result.union.err);
+    if (!result.isOk) {
+      throw Error.values.firstWhere((v) => v._underlying == result.union.err);
+    }
+    return LineSegmenter._(result.union.ok);
   }
   // ignore: non_constant_identifier_names
   static final _ICU4XLineSegmenter_create_auto = _capi<
@@ -41,12 +43,14 @@ class LineSegmenter implements ffi.Finalizable {
   /// Burmese, Khmer, Lao, and Thai.
   ///
   /// See the [Rust documentation for `new_lstm`](https://docs.rs/icu/latest/icu/segmenter/struct.LineSegmenter.html#method.new_lstm) for more information.
+  ///
+  /// Throws [Error] on failure.
   factory LineSegmenter.lstm(DataProvider provider) {
     final result = _ICU4XLineSegmenter_create_lstm(provider._underlying);
-    return result.isOk
-        ? LineSegmenter._(result.union.ok)
-        : throw Error.values
-            .firstWhere((v) => v._underlying == result.union.err);
+    if (!result.isOk) {
+      throw Error.values.firstWhere((v) => v._underlying == result.union.err);
+    }
+    return LineSegmenter._(result.union.ok);
   }
   // ignore: non_constant_identifier_names
   static final _ICU4XLineSegmenter_create_lstm = _capi<
@@ -60,12 +64,14 @@ class LineSegmenter implements ffi.Finalizable {
   /// Burmese, Khmer, Lao, and Thai..
   ///
   /// See the [Rust documentation for `new_dictionary`](https://docs.rs/icu/latest/icu/segmenter/struct.LineSegmenter.html#method.new_dictionary) for more information.
+  ///
+  /// Throws [Error] on failure.
   factory LineSegmenter.dictionary(DataProvider provider) {
     final result = _ICU4XLineSegmenter_create_dictionary(provider._underlying);
-    return result.isOk
-        ? LineSegmenter._(result.union.ok)
-        : throw Error.values
-            .firstWhere((v) => v._underlying == result.union.err);
+    if (!result.isOk) {
+      throw Error.values.firstWhere((v) => v._underlying == result.union.err);
+    }
+    return LineSegmenter._(result.union.ok);
   }
   // ignore: non_constant_identifier_names
   static final _ICU4XLineSegmenter_create_dictionary = _capi<
@@ -79,14 +85,16 @@ class LineSegmenter implements ffi.Finalizable {
   /// available payload data for Burmese, Khmer, Lao, and Thai.
   ///
   /// See the [Rust documentation for `new_auto_with_options`](https://docs.rs/icu/latest/icu/segmenter/struct.LineSegmenter.html#method.new_auto_with_options) for more information.
+  ///
+  /// Throws [Error] on failure.
   factory LineSegmenter.autoWithOptionsV1(
       DataProvider provider, LineBreakOptionsV1 options) {
     final result = _ICU4XLineSegmenter_create_auto_with_options_v1(
         provider._underlying, options._underlying);
-    return result.isOk
-        ? LineSegmenter._(result.union.ok)
-        : throw Error.values
-            .firstWhere((v) => v._underlying == result.union.err);
+    if (!result.isOk) {
+      throw Error.values.firstWhere((v) => v._underlying == result.union.err);
+    }
+    return LineSegmenter._(result.union.ok);
   }
   // ignore: non_constant_identifier_names
   static final _ICU4XLineSegmenter_create_auto_with_options_v1 = _capi<
@@ -102,14 +110,16 @@ class LineSegmenter implements ffi.Finalizable {
   /// Burmese, Khmer, Lao, and Thai.
   ///
   /// See the [Rust documentation for `new_lstm_with_options`](https://docs.rs/icu/latest/icu/segmenter/struct.LineSegmenter.html#method.new_lstm_with_options) for more information.
+  ///
+  /// Throws [Error] on failure.
   factory LineSegmenter.lstmWithOptionsV1(
       DataProvider provider, LineBreakOptionsV1 options) {
     final result = _ICU4XLineSegmenter_create_lstm_with_options_v1(
         provider._underlying, options._underlying);
-    return result.isOk
-        ? LineSegmenter._(result.union.ok)
-        : throw Error.values
-            .firstWhere((v) => v._underlying == result.union.err);
+    if (!result.isOk) {
+      throw Error.values.firstWhere((v) => v._underlying == result.union.err);
+    }
+    return LineSegmenter._(result.union.ok);
   }
   // ignore: non_constant_identifier_names
   static final _ICU4XLineSegmenter_create_lstm_with_options_v1 = _capi<
@@ -125,14 +135,16 @@ class LineSegmenter implements ffi.Finalizable {
   /// Burmese, Khmer, Lao, and Thai.
   ///
   /// See the [Rust documentation for `new_dictionary_with_options`](https://docs.rs/icu/latest/icu/segmenter/struct.LineSegmenter.html#method.new_dictionary_with_options) for more information.
+  ///
+  /// Throws [Error] on failure.
   factory LineSegmenter.dictionaryWithOptionsV1(
       DataProvider provider, LineBreakOptionsV1 options) {
     final result = _ICU4XLineSegmenter_create_dictionary_with_options_v1(
         provider._underlying, options._underlying);
-    return result.isOk
-        ? LineSegmenter._(result.union.ok)
-        : throw Error.values
-            .firstWhere((v) => v._underlying == result.union.err);
+    if (!result.isOk) {
+      throw Error.values.firstWhere((v) => v._underlying == result.union.err);
+    }
+    return LineSegmenter._(result.union.ok);
   }
   // ignore: non_constant_identifier_names
   static final _ICU4XLineSegmenter_create_dictionary_with_options_v1 = _capi<

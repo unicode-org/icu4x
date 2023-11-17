@@ -34,13 +34,15 @@ class FixedDecimal implements ffi.Finalizable {
   /// See the [Rust documentation for `try_from_f64`](https://docs.rs/fixed_decimal/latest/fixed_decimal/struct.FixedDecimal.html#method.try_from_f64) for more information.
   ///
   /// See the [Rust documentation for `FloatPrecision`](https://docs.rs/fixed_decimal/latest/fixed_decimal/enum.FloatPrecision.html) for more information.
+  ///
+  /// Throws [Error] on failure.
   factory FixedDecimal.fromDoubleWithLowerMagnitude(double f, int magnitude) {
     final result =
         _ICU4XFixedDecimal_create_from_f64_with_lower_magnitude(f, magnitude);
-    return result.isOk
-        ? FixedDecimal._(result.union.ok)
-        : throw Error.values
-            .firstWhere((v) => v._underlying == result.union.err);
+    if (!result.isOk) {
+      throw Error.values.firstWhere((v) => v._underlying == result.union.err);
+    }
+    return FixedDecimal._(result.union.ok);
   }
   // ignore: non_constant_identifier_names
   static final _ICU4XFixedDecimal_create_from_f64_with_lower_magnitude = _capi<
@@ -54,13 +56,15 @@ class FixedDecimal implements ffi.Finalizable {
   /// See the [Rust documentation for `try_from_f64`](https://docs.rs/fixed_decimal/latest/fixed_decimal/struct.FixedDecimal.html#method.try_from_f64) for more information.
   ///
   /// See the [Rust documentation for `FloatPrecision`](https://docs.rs/fixed_decimal/latest/fixed_decimal/enum.FloatPrecision.html) for more information.
+  ///
+  /// Throws [Error] on failure.
   factory FixedDecimal.fromDoubleWithSignificantDigits(double f, int digits) {
     final result =
         _ICU4XFixedDecimal_create_from_f64_with_significant_digits(f, digits);
-    return result.isOk
-        ? FixedDecimal._(result.union.ok)
-        : throw Error.values
-            .firstWhere((v) => v._underlying == result.union.err);
+    if (!result.isOk) {
+      throw Error.values.firstWhere((v) => v._underlying == result.union.err);
+    }
+    return FixedDecimal._(result.union.ok);
   }
   // ignore: non_constant_identifier_names
   static final _ICU4XFixedDecimal_create_from_f64_with_significant_digits =
@@ -76,13 +80,15 @@ class FixedDecimal implements ffi.Finalizable {
   /// See the [Rust documentation for `try_from_f64`](https://docs.rs/fixed_decimal/latest/fixed_decimal/struct.FixedDecimal.html#method.try_from_f64) for more information.
   ///
   /// See the [Rust documentation for `FloatPrecision`](https://docs.rs/fixed_decimal/latest/fixed_decimal/enum.FloatPrecision.html) for more information.
+  ///
+  /// Throws [Error] on failure.
   factory FixedDecimal.fromDoubleWithDoublePrecision(double f) {
     final result =
         _ICU4XFixedDecimal_create_from_f64_with_floating_precision(f);
-    return result.isOk
-        ? FixedDecimal._(result.union.ok)
-        : throw Error.values
-            .firstWhere((v) => v._underlying == result.union.err);
+    if (!result.isOk) {
+      throw Error.values.firstWhere((v) => v._underlying == result.union.err);
+    }
+    return FixedDecimal._(result.union.ok);
   }
   // ignore: non_constant_identifier_names
   static final _ICU4XFixedDecimal_create_from_f64_with_floating_precision =
@@ -93,6 +99,8 @@ class FixedDecimal implements ffi.Finalizable {
   /// Construct an [`FixedDecimal`] from a string.
   ///
   /// See the [Rust documentation for `from_str`](https://docs.rs/fixed_decimal/latest/fixed_decimal/struct.FixedDecimal.html#method.from_str) for more information.
+  ///
+  /// Throws [Error] on failure.
   factory FixedDecimal.fromString(String v) {
     final alloc = ffi2.Arena();
     final vSlice = _SliceFfi2Utf8._fromDart(v, alloc);
@@ -100,10 +108,10 @@ class FixedDecimal implements ffi.Finalizable {
     final result =
         _ICU4XFixedDecimal_create_from_string(vSlice._bytes, vSlice._length);
     alloc.releaseAll();
-    return result.isOk
-        ? FixedDecimal._(result.union.ok)
-        : throw Error.values
-            .firstWhere((v) => v._underlying == result.union.err);
+    if (!result.isOk) {
+      throw Error.values.firstWhere((v) => v._underlying == result.union.err);
+    }
+    return FixedDecimal._(result.union.ok);
   }
   // ignore: non_constant_identifier_names
   static final _ICU4XFixedDecimal_create_from_string = _capi<
@@ -418,6 +426,8 @@ class FixedDecimal implements ffi.Finalizable {
   /// If not successful, `other` will be unchanged and an error is returned.
   ///
   /// See the [Rust documentation for `concatenate_end`](https://docs.rs/fixed_decimal/latest/fixed_decimal/struct.FixedDecimal.html#method.concatenate_end) for more information.
+  ///
+  /// Throws [VoidError] on failure.
   void concatenateEnd(FixedDecimal other) {
     final result =
         _ICU4XFixedDecimal_concatenate_end(_underlying, other._underlying);

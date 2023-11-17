@@ -23,12 +23,14 @@ class MetazoneCalculator implements ffi.Finalizable {
       ffi.NativeFinalizer(_capi('ICU4XMetazoneCalculator_destroy'));
 
   /// See the [Rust documentation for `new`](https://docs.rs/icu/latest/icu/timezone/struct.MetazoneCalculator.html#method.new) for more information.
+  ///
+  /// Throws [Error] on failure.
   factory MetazoneCalculator(DataProvider provider) {
     final result = _ICU4XMetazoneCalculator_create(provider._underlying);
-    return result.isOk
-        ? MetazoneCalculator._(result.union.ok)
-        : throw Error.values
-            .firstWhere((v) => v._underlying == result.union.err);
+    if (!result.isOk) {
+      throw Error.values.firstWhere((v) => v._underlying == result.union.err);
+    }
+    return MetazoneCalculator._(result.union.ok);
   }
   // ignore: non_constant_identifier_names
   static final _ICU4XMetazoneCalculator_create = _capi<

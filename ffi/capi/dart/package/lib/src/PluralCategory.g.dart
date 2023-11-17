@@ -22,6 +22,8 @@ enum PluralCategory {
   /// See the [Rust documentation for `get_for_cldr_string`](https://docs.rs/icu/latest/icu/plurals/enum.PluralCategory.html#method.get_for_cldr_string) for more information.
   ///
   /// See the [Rust documentation for `get_for_cldr_bytes`](https://docs.rs/icu/latest/icu/plurals/enum.PluralCategory.html#method.get_for_cldr_bytes) for more information.
+  ///
+  /// Throws [VoidError] on failure.
   factory PluralCategory.forCldrString(String s) {
     final alloc = ffi2.Arena();
     final sSlice = _SliceFfi2Utf8._fromDart(s, alloc);
@@ -29,9 +31,10 @@ enum PluralCategory {
     final result =
         _ICU4XPluralCategory_get_for_cldr_string(sSlice._bytes, sSlice._length);
     alloc.releaseAll();
-    return result.isOk
-        ? PluralCategory.values[result.union.ok]
-        : throw VoidError();
+    if (!result.isOk) {
+      throw VoidError();
+    }
+    return PluralCategory.values[result.union.ok];
   }
   // ignore: non_constant_identifier_names
   static final _ICU4XPluralCategory_get_for_cldr_string = _capi<

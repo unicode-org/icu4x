@@ -21,12 +21,14 @@ class LocaleExpander implements ffi.Finalizable {
   /// Create a new [`LocaleExpander`].
   ///
   /// See the [Rust documentation for `new`](https://docs.rs/icu/latest/icu/locid_transform/struct.LocaleExpander.html#method.new) for more information.
+  ///
+  /// Throws [Error] on failure.
   factory LocaleExpander(DataProvider provider) {
     final result = _ICU4XLocaleExpander_create(provider._underlying);
-    return result.isOk
-        ? LocaleExpander._(result.union.ok)
-        : throw Error.values
-            .firstWhere((v) => v._underlying == result.union.err);
+    if (!result.isOk) {
+      throw Error.values.firstWhere((v) => v._underlying == result.union.err);
+    }
+    return LocaleExpander._(result.union.ok);
   }
   // ignore: non_constant_identifier_names
   static final _ICU4XLocaleExpander_create = _capi<
@@ -39,12 +41,14 @@ class LocaleExpander implements ffi.Finalizable {
   /// Create a new [`LocaleExpander`] with extended data.
   ///
   /// See the [Rust documentation for `new_extended`](https://docs.rs/icu/latest/icu/locid_transform/struct.LocaleExpander.html#method.new_extended) for more information.
+  ///
+  /// Throws [Error] on failure.
   factory LocaleExpander.extended(DataProvider provider) {
     final result = _ICU4XLocaleExpander_create_extended(provider._underlying);
-    return result.isOk
-        ? LocaleExpander._(result.union.ok)
-        : throw Error.values
-            .firstWhere((v) => v._underlying == result.union.err);
+    if (!result.isOk) {
+      throw Error.values.firstWhere((v) => v._underlying == result.union.err);
+    }
+    return LocaleExpander._(result.union.ok);
   }
   // ignore: non_constant_identifier_names
   static final _ICU4XLocaleExpander_create_extended = _capi<

@@ -21,14 +21,16 @@ class IsoDateTime implements ffi.Finalizable {
   /// Creates a new [`IsoDateTime`] from the specified date and time.
   ///
   /// See the [Rust documentation for `try_new_iso_datetime`](https://docs.rs/icu/latest/icu/calendar/struct.DateTime.html#method.try_new_iso_datetime) for more information.
+  ///
+  /// Throws [Error] on failure.
   factory IsoDateTime(int year, int month, int day, int hour, int minute,
       int second, int nanosecond) {
     final result = _ICU4XIsoDateTime_create(
         year, month, day, hour, minute, second, nanosecond);
-    return result.isOk
-        ? IsoDateTime._(result.union.ok)
-        : throw Error.values
-            .firstWhere((v) => v._underlying == result.union.err);
+    if (!result.isOk) {
+      throw Error.values.firstWhere((v) => v._underlying == result.union.err);
+    }
+    return IsoDateTime._(result.union.ok);
   }
   // ignore: non_constant_identifier_names
   static final _ICU4XIsoDateTime_create = _capi<
@@ -265,13 +267,15 @@ class IsoDateTime implements ffi.Finalizable {
   /// Returns the week number in this year, using week data
   ///
   /// See the [Rust documentation for `week_of_year`](https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.week_of_year) for more information.
+  ///
+  /// Throws [Error] on failure.
   WeekOf weekOfYear(WeekCalculator calculator) {
     final result =
         _ICU4XIsoDateTime_week_of_year(_underlying, calculator._underlying);
-    return result.isOk
-        ? WeekOf._(result.union.ok)
-        : throw Error.values
-            .firstWhere((v) => v._underlying == result.union.err);
+    if (!result.isOk) {
+      throw Error.values.firstWhere((v) => v._underlying == result.union.err);
+    }
+    return WeekOf._(result.union.ok);
   }
 
   // ignore: non_constant_identifier_names

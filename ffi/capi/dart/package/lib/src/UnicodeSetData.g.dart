@@ -60,12 +60,14 @@ class UnicodeSetData implements ffi.Finalizable {
       .asFunction<bool Function(ffi.Pointer<ffi.Opaque>, int)>(isLeaf: true);
 
   /// See the [Rust documentation for `basic_emoji`](https://docs.rs/icu/latest/icu/properties/sets/fn.basic_emoji.html) for more information.
+  ///
+  /// Throws [Error] on failure.
   factory UnicodeSetData.loadBasicEmoji(DataProvider provider) {
     final result = _ICU4XUnicodeSetData_load_basic_emoji(provider._underlying);
-    return result.isOk
-        ? UnicodeSetData._(result.union.ok)
-        : throw Error.values
-            .firstWhere((v) => v._underlying == result.union.err);
+    if (!result.isOk) {
+      throw Error.values.firstWhere((v) => v._underlying == result.union.err);
+    }
+    return UnicodeSetData._(result.union.ok);
   }
   // ignore: non_constant_identifier_names
   static final _ICU4XUnicodeSetData_load_basic_emoji = _capi<
@@ -76,14 +78,16 @@ class UnicodeSetData implements ffi.Finalizable {
           isLeaf: true);
 
   /// See the [Rust documentation for `exemplars_main`](https://docs.rs/icu/latest/icu/properties/exemplar_chars/fn.exemplars_main.html) for more information.
+  ///
+  /// Throws [Error] on failure.
   factory UnicodeSetData.loadExemplarsMain(
       DataProvider provider, Locale locale) {
     final result = _ICU4XUnicodeSetData_load_exemplars_main(
         provider._underlying, locale._underlying);
-    return result.isOk
-        ? UnicodeSetData._(result.union.ok)
-        : throw Error.values
-            .firstWhere((v) => v._underlying == result.union.err);
+    if (!result.isOk) {
+      throw Error.values.firstWhere((v) => v._underlying == result.union.err);
+    }
+    return UnicodeSetData._(result.union.ok);
   }
   // ignore: non_constant_identifier_names
   static final _ICU4XUnicodeSetData_load_exemplars_main = _capi<
@@ -96,14 +100,16 @@ class UnicodeSetData implements ffi.Finalizable {
               ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
 
   /// See the [Rust documentation for `exemplars_auxiliary`](https://docs.rs/icu/latest/icu/properties/exemplar_chars/fn.exemplars_auxiliary.html) for more information.
+  ///
+  /// Throws [Error] on failure.
   factory UnicodeSetData.loadExemplarsAuxiliary(
       DataProvider provider, Locale locale) {
     final result = _ICU4XUnicodeSetData_load_exemplars_auxiliary(
         provider._underlying, locale._underlying);
-    return result.isOk
-        ? UnicodeSetData._(result.union.ok)
-        : throw Error.values
-            .firstWhere((v) => v._underlying == result.union.err);
+    if (!result.isOk) {
+      throw Error.values.firstWhere((v) => v._underlying == result.union.err);
+    }
+    return UnicodeSetData._(result.union.ok);
   }
   // ignore: non_constant_identifier_names
   static final _ICU4XUnicodeSetData_load_exemplars_auxiliary = _capi<
@@ -116,14 +122,16 @@ class UnicodeSetData implements ffi.Finalizable {
               ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
 
   /// See the [Rust documentation for `exemplars_punctuation`](https://docs.rs/icu/latest/icu/properties/exemplar_chars/fn.exemplars_punctuation.html) for more information.
+  ///
+  /// Throws [Error] on failure.
   factory UnicodeSetData.loadExemplarsPunctuation(
       DataProvider provider, Locale locale) {
     final result = _ICU4XUnicodeSetData_load_exemplars_punctuation(
         provider._underlying, locale._underlying);
-    return result.isOk
-        ? UnicodeSetData._(result.union.ok)
-        : throw Error.values
-            .firstWhere((v) => v._underlying == result.union.err);
+    if (!result.isOk) {
+      throw Error.values.firstWhere((v) => v._underlying == result.union.err);
+    }
+    return UnicodeSetData._(result.union.ok);
   }
   // ignore: non_constant_identifier_names
   static final _ICU4XUnicodeSetData_load_exemplars_punctuation = _capi<
@@ -136,14 +144,16 @@ class UnicodeSetData implements ffi.Finalizable {
               ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
 
   /// See the [Rust documentation for `exemplars_numbers`](https://docs.rs/icu/latest/icu/properties/exemplar_chars/fn.exemplars_numbers.html) for more information.
+  ///
+  /// Throws [Error] on failure.
   factory UnicodeSetData.loadExemplarsNumbers(
       DataProvider provider, Locale locale) {
     final result = _ICU4XUnicodeSetData_load_exemplars_numbers(
         provider._underlying, locale._underlying);
-    return result.isOk
-        ? UnicodeSetData._(result.union.ok)
-        : throw Error.values
-            .firstWhere((v) => v._underlying == result.union.err);
+    if (!result.isOk) {
+      throw Error.values.firstWhere((v) => v._underlying == result.union.err);
+    }
+    return UnicodeSetData._(result.union.ok);
   }
   // ignore: non_constant_identifier_names
   static final _ICU4XUnicodeSetData_load_exemplars_numbers = _capi<
@@ -156,14 +166,16 @@ class UnicodeSetData implements ffi.Finalizable {
               ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
 
   /// See the [Rust documentation for `exemplars_index`](https://docs.rs/icu/latest/icu/properties/exemplar_chars/fn.exemplars_index.html) for more information.
+  ///
+  /// Throws [Error] on failure.
   factory UnicodeSetData.loadExemplarsIndex(
       DataProvider provider, Locale locale) {
     final result = _ICU4XUnicodeSetData_load_exemplars_index(
         provider._underlying, locale._underlying);
-    return result.isOk
-        ? UnicodeSetData._(result.union.ok)
-        : throw Error.values
-            .firstWhere((v) => v._underlying == result.union.err);
+    if (!result.isOk) {
+      throw Error.values.firstWhere((v) => v._underlying == result.union.err);
+    }
+    return UnicodeSetData._(result.union.ok);
   }
   // ignore: non_constant_identifier_names
   static final _ICU4XUnicodeSetData_load_exemplars_index = _capi<

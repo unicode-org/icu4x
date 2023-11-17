@@ -25,14 +25,16 @@ class TimeZoneFormatter implements ffi.Finalizable {
   /// See the [Rust documentation for `try_new`](https://docs.rs/icu/latest/icu/datetime/time_zone/struct.TimeZoneFormatter.html#method.try_new) for more information.
   ///
   /// Additional information: [1](https://docs.rs/icu/latest/icu/datetime/time_zone/enum.FallbackFormat.html)
+  ///
+  /// Throws [Error] on failure.
   factory TimeZoneFormatter.withLocalizedGmtFallback(
       DataProvider provider, Locale locale) {
     final result = _ICU4XTimeZoneFormatter_create_with_localized_gmt_fallback(
         provider._underlying, locale._underlying);
-    return result.isOk
-        ? TimeZoneFormatter._(result.union.ok)
-        : throw Error.values
-            .firstWhere((v) => v._underlying == result.union.err);
+    if (!result.isOk) {
+      throw Error.values.firstWhere((v) => v._underlying == result.union.err);
+    }
+    return TimeZoneFormatter._(result.union.ok);
   }
   // ignore: non_constant_identifier_names
   static final _ICU4XTimeZoneFormatter_create_with_localized_gmt_fallback =
@@ -52,14 +54,16 @@ class TimeZoneFormatter implements ffi.Finalizable {
   /// See the [Rust documentation for `try_new`](https://docs.rs/icu/latest/icu/datetime/time_zone/struct.TimeZoneFormatter.html#method.try_new) for more information.
   ///
   /// Additional information: [1](https://docs.rs/icu/latest/icu/datetime/time_zone/enum.FallbackFormat.html)
+  ///
+  /// Throws [Error] on failure.
   factory TimeZoneFormatter.withIso8601Fallback(
       DataProvider provider, Locale locale, IsoTimeZoneOptions options) {
     final result = _ICU4XTimeZoneFormatter_create_with_iso_8601_fallback(
         provider._underlying, locale._underlying, options._underlying);
-    return result.isOk
-        ? TimeZoneFormatter._(result.union.ok)
-        : throw Error.values
-            .firstWhere((v) => v._underlying == result.union.err);
+    if (!result.isOk) {
+      throw Error.values.firstWhere((v) => v._underlying == result.union.err);
+    }
+    return TimeZoneFormatter._(result.union.ok);
   }
   // ignore: non_constant_identifier_names
   static final _ICU4XTimeZoneFormatter_create_with_iso_8601_fallback = _capi<
@@ -74,6 +78,8 @@ class TimeZoneFormatter implements ffi.Finalizable {
   /// Loads generic non-location long format. Example: "Pacific Time"
   ///
   /// See the [Rust documentation for `include_generic_non_location_long`](https://docs.rs/icu/latest/icu/datetime/time_zone/struct.TimeZoneFormatter.html#method.include_generic_non_location_long) for more information.
+  ///
+  /// Throws [Error] on failure.
   void loadGenericNonLocationLong(DataProvider provider) {
     final result = _ICU4XTimeZoneFormatter_load_generic_non_location_long(
         _underlying, provider._underlying);
@@ -95,6 +101,8 @@ class TimeZoneFormatter implements ffi.Finalizable {
   /// Loads generic non-location short format. Example: "PT"
   ///
   /// See the [Rust documentation for `include_generic_non_location_short`](https://docs.rs/icu/latest/icu/datetime/time_zone/struct.TimeZoneFormatter.html#method.include_generic_non_location_short) for more information.
+  ///
+  /// Throws [Error] on failure.
   void loadGenericNonLocationShort(DataProvider provider) {
     final result = _ICU4XTimeZoneFormatter_load_generic_non_location_short(
         _underlying, provider._underlying);
@@ -116,6 +124,8 @@ class TimeZoneFormatter implements ffi.Finalizable {
   /// Loads specific non-location long format. Example: "Pacific Standard Time"
   ///
   /// See the [Rust documentation for `include_specific_non_location_long`](https://docs.rs/icu/latest/icu/datetime/time_zone/struct.TimeZoneFormatter.html#method.include_specific_non_location_long) for more information.
+  ///
+  /// Throws [Error] on failure.
   void loadSpecificNonLocationLong(DataProvider provider) {
     final result = _ICU4XTimeZoneFormatter_load_specific_non_location_long(
         _underlying, provider._underlying);
@@ -137,6 +147,8 @@ class TimeZoneFormatter implements ffi.Finalizable {
   /// Loads specific non-location short format. Example: "PST"
   ///
   /// See the [Rust documentation for `include_specific_non_location_short`](https://docs.rs/icu/latest/icu/datetime/time_zone/struct.TimeZoneFormatter.html#method.include_specific_non_location_short) for more information.
+  ///
+  /// Throws [Error] on failure.
   void loadSpecificNonLocationShort(DataProvider provider) {
     final result = _ICU4XTimeZoneFormatter_load_specific_non_location_short(
         _underlying, provider._underlying);
@@ -158,6 +170,8 @@ class TimeZoneFormatter implements ffi.Finalizable {
   /// Loads generic location format. Example: "Los Angeles Time"
   ///
   /// See the [Rust documentation for `include_generic_location_format`](https://docs.rs/icu/latest/icu/datetime/time_zone/struct.TimeZoneFormatter.html#method.include_generic_location_format) for more information.
+  ///
+  /// Throws [Error] on failure.
   void loadGenericLocationFormat(DataProvider provider) {
     final result = _ICU4XTimeZoneFormatter_load_generic_location_format(
         _underlying, provider._underlying);
@@ -179,6 +193,8 @@ class TimeZoneFormatter implements ffi.Finalizable {
   /// Loads localized GMT format. Example: "GMT-07:00"
   ///
   /// See the [Rust documentation for `include_localized_gmt_format`](https://docs.rs/icu/latest/icu/datetime/time_zone/struct.TimeZoneFormatter.html#method.include_localized_gmt_format) for more information.
+  ///
+  /// Throws [Error] on failure.
   void includeLocalizedGmtFormat() {
     final result =
         _ICU4XTimeZoneFormatter_include_localized_gmt_format(_underlying);
@@ -198,6 +214,8 @@ class TimeZoneFormatter implements ffi.Finalizable {
   /// Loads ISO-8601 format. Example: "-07:00"
   ///
   /// See the [Rust documentation for `include_iso_8601_format`](https://docs.rs/icu/latest/icu/datetime/time_zone/struct.TimeZoneFormatter.html#method.include_iso_8601_format) for more information.
+  ///
+  /// Throws [Error] on failure.
   void loadIso8601Format(IsoTimeZoneOptions options) {
     final result = _ICU4XTimeZoneFormatter_load_iso_8601_format(
         _underlying, options._underlying);
@@ -221,14 +239,16 @@ class TimeZoneFormatter implements ffi.Finalizable {
   /// See the [Rust documentation for `format`](https://docs.rs/icu/latest/icu/datetime/time_zone/struct.TimeZoneFormatter.html#method.format) for more information.
   ///
   /// See the [Rust documentation for `format_to_string`](https://docs.rs/icu/latest/icu/datetime/time_zone/struct.TimeZoneFormatter.html#method.format_to_string) for more information.
+  ///
+  /// Throws [Error] on failure.
   String formatCustomTimeZone(CustomTimeZone value) {
     final writeable = _Writeable();
     final result = _ICU4XTimeZoneFormatter_format_custom_time_zone(
         _underlying, value._underlying, writeable._underlying);
-    return result.isOk
-        ? writeable.finalize()
-        : throw Error.values
-            .firstWhere((v) => v._underlying == result.union.err);
+    if (!result.isOk) {
+      throw Error.values.firstWhere((v) => v._underlying == result.union.err);
+    }
+    return writeable.finalize();
   }
 
   // ignore: non_constant_identifier_names

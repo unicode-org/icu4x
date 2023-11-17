@@ -21,6 +21,8 @@ class PluralOperands implements ffi.Finalizable {
   /// Construct for a given string representing a number
   ///
   /// See the [Rust documentation for `from_str`](https://docs.rs/icu/latest/icu/plurals/struct.PluralOperands.html#method.from_str) for more information.
+  ///
+  /// Throws [Error] on failure.
   factory PluralOperands.fromString(String s) {
     final alloc = ffi2.Arena();
     final sSlice = _SliceFfi2Utf8._fromDart(s, alloc);
@@ -28,10 +30,10 @@ class PluralOperands implements ffi.Finalizable {
     final result =
         _ICU4XPluralOperands_create_from_string(sSlice._bytes, sSlice._length);
     alloc.releaseAll();
-    return result.isOk
-        ? PluralOperands._(result.union.ok)
-        : throw Error.values
-            .firstWhere((v) => v._underlying == result.union.err);
+    if (!result.isOk) {
+      throw Error.values.firstWhere((v) => v._underlying == result.union.err);
+    }
+    return PluralOperands._(result.union.ok);
   }
   // ignore: non_constant_identifier_names
   static final _ICU4XPluralOperands_create_from_string = _capi<

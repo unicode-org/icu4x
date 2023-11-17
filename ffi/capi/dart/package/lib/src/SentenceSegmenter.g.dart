@@ -21,12 +21,14 @@ class SentenceSegmenter implements ffi.Finalizable {
   /// Construct an [`SentenceSegmenter`].
   ///
   /// See the [Rust documentation for `new`](https://docs.rs/icu/latest/icu/segmenter/struct.SentenceSegmenter.html#method.new) for more information.
+  ///
+  /// Throws [Error] on failure.
   factory SentenceSegmenter(DataProvider provider) {
     final result = _ICU4XSentenceSegmenter_create(provider._underlying);
-    return result.isOk
-        ? SentenceSegmenter._(result.union.ok)
-        : throw Error.values
-            .firstWhere((v) => v._underlying == result.union.err);
+    if (!result.isOk) {
+      throw Error.values.firstWhere((v) => v._underlying == result.union.err);
+    }
+    return SentenceSegmenter._(result.union.ok);
   }
   // ignore: non_constant_identifier_names
   static final _ICU4XSentenceSegmenter_create = _capi<

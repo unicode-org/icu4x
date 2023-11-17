@@ -19,13 +19,15 @@ class RegionDisplayNames implements ffi.Finalizable {
   /// Creates a new `RegionDisplayNames` from locale data and an options bag.
   ///
   /// See the [Rust documentation for `try_new`](https://docs.rs/icu/latest/icu/displaynames/struct.RegionDisplayNames.html#method.try_new) for more information.
+  ///
+  /// Throws [Error] on failure.
   factory RegionDisplayNames(DataProvider provider, Locale locale) {
     final result = _ICU4XRegionDisplayNames_create(
         provider._underlying, locale._underlying);
-    return result.isOk
-        ? RegionDisplayNames._(result.union.ok)
-        : throw Error.values
-            .firstWhere((v) => v._underlying == result.union.err);
+    if (!result.isOk) {
+      throw Error.values.firstWhere((v) => v._underlying == result.union.err);
+    }
+    return RegionDisplayNames._(result.union.ok);
   }
   // ignore: non_constant_identifier_names
   static final _ICU4XRegionDisplayNames_create = _capi<
@@ -41,6 +43,8 @@ class RegionDisplayNames implements ffi.Finalizable {
   /// region code is not found.
   ///
   /// See the [Rust documentation for `of`](https://docs.rs/icu/latest/icu/displaynames/struct.RegionDisplayNames.html#method.of) for more information.
+  ///
+  /// Throws [Error] on failure.
   String of(String region) {
     final alloc = ffi2.Arena();
     final regionSlice = _SliceFfi2Utf8._fromDart(region, alloc);
@@ -49,10 +53,10 @@ class RegionDisplayNames implements ffi.Finalizable {
     final result = _ICU4XRegionDisplayNames_of(_underlying, regionSlice._bytes,
         regionSlice._length, writeable._underlying);
     alloc.releaseAll();
-    return result.isOk
-        ? writeable.finalize()
-        : throw Error.values
-            .firstWhere((v) => v._underlying == result.union.err);
+    if (!result.isOk) {
+      throw Error.values.firstWhere((v) => v._underlying == result.union.err);
+    }
+    return writeable.finalize();
   }
 
   // ignore: non_constant_identifier_names

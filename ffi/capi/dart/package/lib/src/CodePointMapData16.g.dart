@@ -109,12 +109,14 @@ class CodePointMapData16 implements ffi.Finalizable {
               ffi.Pointer<ffi.Opaque>, int)>(isLeaf: true);
 
   /// See the [Rust documentation for `script`](https://docs.rs/icu/latest/icu/properties/maps/fn.script.html) for more information.
+  ///
+  /// Throws [Error] on failure.
   factory CodePointMapData16.loadScript(DataProvider provider) {
     final result = _ICU4XCodePointMapData16_load_script(provider._underlying);
-    return result.isOk
-        ? CodePointMapData16._(result.union.ok)
-        : throw Error.values
-            .firstWhere((v) => v._underlying == result.union.err);
+    if (!result.isOk) {
+      throw Error.values.firstWhere((v) => v._underlying == result.union.err);
+    }
+    return CodePointMapData16._(result.union.ok);
   }
   // ignore: non_constant_identifier_names
   static final _ICU4XCodePointMapData16_load_script = _capi<

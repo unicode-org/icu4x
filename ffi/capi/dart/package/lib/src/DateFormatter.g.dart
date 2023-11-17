@@ -22,14 +22,16 @@ class DateFormatter implements ffi.Finalizable {
   /// Creates a new [`DateFormatter`] from locale data.
   ///
   /// See the [Rust documentation for `try_new_with_length`](https://docs.rs/icu/latest/icu/datetime/struct.DateFormatter.html#method.try_new_with_length) for more information.
+  ///
+  /// Throws [Error] on failure.
   factory DateFormatter.withLength(
       DataProvider provider, Locale locale, DateLength dateLength) {
     final result = _ICU4XDateFormatter_create_with_length(
         provider._underlying, locale._underlying, dateLength.index);
-    return result.isOk
-        ? DateFormatter._(result.union.ok)
-        : throw Error.values
-            .firstWhere((v) => v._underlying == result.union.err);
+    if (!result.isOk) {
+      throw Error.values.firstWhere((v) => v._underlying == result.union.err);
+    }
+    return DateFormatter._(result.union.ok);
   }
   // ignore: non_constant_identifier_names
   static final _ICU4XDateFormatter_create_with_length = _capi<
@@ -45,14 +47,16 @@ class DateFormatter implements ffi.Finalizable {
   /// Formats a [`Date`] to a string.
   ///
   /// See the [Rust documentation for `format`](https://docs.rs/icu/latest/icu/datetime/struct.DateFormatter.html#method.format) for more information.
+  ///
+  /// Throws [Error] on failure.
   String formatDate(Date value) {
     final writeable = _Writeable();
     final result = _ICU4XDateFormatter_format_date(
         _underlying, value._underlying, writeable._underlying);
-    return result.isOk
-        ? writeable.finalize()
-        : throw Error.values
-            .firstWhere((v) => v._underlying == result.union.err);
+    if (!result.isOk) {
+      throw Error.values.firstWhere((v) => v._underlying == result.union.err);
+    }
+    return writeable.finalize();
   }
 
   // ignore: non_constant_identifier_names
@@ -71,14 +75,16 @@ class DateFormatter implements ffi.Finalizable {
   /// Will convert to this formatter's calendar first
   ///
   /// See the [Rust documentation for `format`](https://docs.rs/icu/latest/icu/datetime/struct.DateFormatter.html#method.format) for more information.
+  ///
+  /// Throws [Error] on failure.
   String formatIsoDate(IsoDate value) {
     final writeable = _Writeable();
     final result = _ICU4XDateFormatter_format_iso_date(
         _underlying, value._underlying, writeable._underlying);
-    return result.isOk
-        ? writeable.finalize()
-        : throw Error.values
-            .firstWhere((v) => v._underlying == result.union.err);
+    if (!result.isOk) {
+      throw Error.values.firstWhere((v) => v._underlying == result.union.err);
+    }
+    return writeable.finalize();
   }
 
   // ignore: non_constant_identifier_names
@@ -94,14 +100,16 @@ class DateFormatter implements ffi.Finalizable {
   /// Formats a [`DateTime`] to a string.
   ///
   /// See the [Rust documentation for `format`](https://docs.rs/icu/latest/icu/datetime/struct.DateFormatter.html#method.format) for more information.
+  ///
+  /// Throws [Error] on failure.
   String formatDatetime(DateTime value) {
     final writeable = _Writeable();
     final result = _ICU4XDateFormatter_format_datetime(
         _underlying, value._underlying, writeable._underlying);
-    return result.isOk
-        ? writeable.finalize()
-        : throw Error.values
-            .firstWhere((v) => v._underlying == result.union.err);
+    if (!result.isOk) {
+      throw Error.values.firstWhere((v) => v._underlying == result.union.err);
+    }
+    return writeable.finalize();
   }
 
   // ignore: non_constant_identifier_names
@@ -119,14 +127,16 @@ class DateFormatter implements ffi.Finalizable {
   /// Will convert to this formatter's calendar first
   ///
   /// See the [Rust documentation for `format`](https://docs.rs/icu/latest/icu/datetime/struct.DateFormatter.html#method.format) for more information.
+  ///
+  /// Throws [Error] on failure.
   String formatIsoDatetime(IsoDateTime value) {
     final writeable = _Writeable();
     final result = _ICU4XDateFormatter_format_iso_datetime(
         _underlying, value._underlying, writeable._underlying);
-    return result.isOk
-        ? writeable.finalize()
-        : throw Error.values
-            .firstWhere((v) => v._underlying == result.union.err);
+    if (!result.isOk) {
+      throw Error.values.firstWhere((v) => v._underlying == result.union.err);
+    }
+    return writeable.finalize();
   }
 
   // ignore: non_constant_identifier_names

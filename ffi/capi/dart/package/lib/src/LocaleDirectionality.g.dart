@@ -19,12 +19,14 @@ class LocaleDirectionality implements ffi.Finalizable {
   /// Construct a new ICU4XLocaleDirectionality instance
   ///
   /// See the [Rust documentation for `new`](https://docs.rs/icu/latest/icu/locid_transform/struct.LocaleDirectionality.html#method.new) for more information.
+  ///
+  /// Throws [Error] on failure.
   factory LocaleDirectionality(DataProvider provider) {
     final result = _ICU4XLocaleDirectionality_create(provider._underlying);
-    return result.isOk
-        ? LocaleDirectionality._(result.union.ok)
-        : throw Error.values
-            .firstWhere((v) => v._underlying == result.union.err);
+    if (!result.isOk) {
+      throw Error.values.firstWhere((v) => v._underlying == result.union.err);
+    }
+    return LocaleDirectionality._(result.union.ok);
   }
   // ignore: non_constant_identifier_names
   static final _ICU4XLocaleDirectionality_create = _capi<
@@ -37,14 +39,16 @@ class LocaleDirectionality implements ffi.Finalizable {
   /// Construct a new ICU4XLocaleDirectionality instance with a custom expander
   ///
   /// See the [Rust documentation for `new_with_expander`](https://docs.rs/icu/latest/icu/locid_transform/struct.LocaleDirectionality.html#method.new_with_expander) for more information.
+  ///
+  /// Throws [Error] on failure.
   factory LocaleDirectionality.withExpander(
       DataProvider provider, LocaleExpander expander) {
     final result = _ICU4XLocaleDirectionality_create_with_expander(
         provider._underlying, expander._underlying);
-    return result.isOk
-        ? LocaleDirectionality._(result.union.ok)
-        : throw Error.values
-            .firstWhere((v) => v._underlying == result.union.err);
+    if (!result.isOk) {
+      throw Error.values.firstWhere((v) => v._underlying == result.union.err);
+    }
+    return LocaleDirectionality._(result.union.ok);
   }
   // ignore: non_constant_identifier_names
   static final _ICU4XLocaleDirectionality_create_with_expander = _capi<

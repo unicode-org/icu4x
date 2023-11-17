@@ -24,6 +24,8 @@ class Locale implements ffi.Finalizable {
   /// `aa-BB`) use `create_und`, `set_language`, `set_script`, and `set_region`.
   ///
   /// See the [Rust documentation for `try_from_bytes`](https://docs.rs/icu/latest/icu/locid/struct.Locale.html#method.try_from_bytes) for more information.
+  ///
+  /// Throws [Error] on failure.
   factory Locale.fromString(String name) {
     final alloc = ffi2.Arena();
     final nameSlice = _SliceFfi2Utf8._fromDart(name, alloc);
@@ -31,10 +33,10 @@ class Locale implements ffi.Finalizable {
     final result =
         _ICU4XLocale_create_from_string(nameSlice._bytes, nameSlice._length);
     alloc.releaseAll();
-    return result.isOk
-        ? Locale._(result.union.ok)
-        : throw Error.values
-            .firstWhere((v) => v._underlying == result.union.err);
+    if (!result.isOk) {
+      throw Error.values.firstWhere((v) => v._underlying == result.union.err);
+    }
+    return Locale._(result.union.ok);
   }
   // ignore: non_constant_identifier_names
   static final _ICU4XLocale_create_from_string = _capi<
@@ -77,13 +79,15 @@ class Locale implements ffi.Finalizable {
   /// [`Locale`] to `write`.
   ///
   /// See the [Rust documentation for `id`](https://docs.rs/icu/latest/icu/locid/struct.Locale.html#structfield.id) for more information.
+  ///
+  /// Throws [Error] on failure.
   String get basename {
     final writeable = _Writeable();
     final result = _ICU4XLocale_basename(_underlying, writeable._underlying);
-    return result.isOk
-        ? writeable.finalize()
-        : throw Error.values
-            .firstWhere((v) => v._underlying == result.union.err);
+    if (!result.isOk) {
+      throw Error.values.firstWhere((v) => v._underlying == result.union.err);
+    }
+    return writeable.finalize();
   }
 
   // ignore: non_constant_identifier_names
@@ -98,6 +102,8 @@ class Locale implements ffi.Finalizable {
   /// Write a string representation of the unicode extension to `write`
   ///
   /// See the [Rust documentation for `extensions`](https://docs.rs/icu/latest/icu/locid/struct.Locale.html#structfield.extensions) for more information.
+  ///
+  /// Throws [Error] on failure.
   String getUnicodeExtension(String bytes) {
     final alloc = ffi2.Arena();
     final bytesSlice = _SliceFfi2Utf8._fromDart(bytes, alloc);
@@ -106,10 +112,10 @@ class Locale implements ffi.Finalizable {
     final result = _ICU4XLocale_get_unicode_extension(_underlying,
         bytesSlice._bytes, bytesSlice._length, writeable._underlying);
     alloc.releaseAll();
-    return result.isOk
-        ? writeable.finalize()
-        : throw Error.values
-            .firstWhere((v) => v._underlying == result.union.err);
+    if (!result.isOk) {
+      throw Error.values.firstWhere((v) => v._underlying == result.union.err);
+    }
+    return writeable.finalize();
   }
 
   // ignore: non_constant_identifier_names
@@ -131,13 +137,15 @@ class Locale implements ffi.Finalizable {
   /// Write a string representation of [`Locale`] language to `write`
   ///
   /// See the [Rust documentation for `id`](https://docs.rs/icu/latest/icu/locid/struct.Locale.html#structfield.id) for more information.
+  ///
+  /// Throws [Error] on failure.
   String get language {
     final writeable = _Writeable();
     final result = _ICU4XLocale_language(_underlying, writeable._underlying);
-    return result.isOk
-        ? writeable.finalize()
-        : throw Error.values
-            .firstWhere((v) => v._underlying == result.union.err);
+    if (!result.isOk) {
+      throw Error.values.firstWhere((v) => v._underlying == result.union.err);
+    }
+    return writeable.finalize();
   }
 
   // ignore: non_constant_identifier_names
@@ -152,6 +160,8 @@ class Locale implements ffi.Finalizable {
   /// Set the language part of the [`Locale`].
   ///
   /// See the [Rust documentation for `try_from_bytes`](https://docs.rs/icu/latest/icu/locid/struct.Locale.html#method.try_from_bytes) for more information.
+  ///
+  /// Throws [Error] on failure.
   set language(String bytes) {
     final alloc = ffi2.Arena();
     final bytesSlice = _SliceFfi2Utf8._fromDart(bytes, alloc);
@@ -178,13 +188,15 @@ class Locale implements ffi.Finalizable {
   /// Write a string representation of [`Locale`] region to `write`
   ///
   /// See the [Rust documentation for `id`](https://docs.rs/icu/latest/icu/locid/struct.Locale.html#structfield.id) for more information.
+  ///
+  /// Throws [Error] on failure.
   String get region {
     final writeable = _Writeable();
     final result = _ICU4XLocale_region(_underlying, writeable._underlying);
-    return result.isOk
-        ? writeable.finalize()
-        : throw Error.values
-            .firstWhere((v) => v._underlying == result.union.err);
+    if (!result.isOk) {
+      throw Error.values.firstWhere((v) => v._underlying == result.union.err);
+    }
+    return writeable.finalize();
   }
 
   // ignore: non_constant_identifier_names
@@ -199,6 +211,8 @@ class Locale implements ffi.Finalizable {
   /// Set the region part of the [`Locale`].
   ///
   /// See the [Rust documentation for `try_from_bytes`](https://docs.rs/icu/latest/icu/locid/struct.Locale.html#method.try_from_bytes) for more information.
+  ///
+  /// Throws [Error] on failure.
   set region(String bytes) {
     final alloc = ffi2.Arena();
     final bytesSlice = _SliceFfi2Utf8._fromDart(bytes, alloc);
@@ -223,13 +237,15 @@ class Locale implements ffi.Finalizable {
   /// Write a string representation of [`Locale`] script to `write`
   ///
   /// See the [Rust documentation for `id`](https://docs.rs/icu/latest/icu/locid/struct.Locale.html#structfield.id) for more information.
+  ///
+  /// Throws [Error] on failure.
   String get script {
     final writeable = _Writeable();
     final result = _ICU4XLocale_script(_underlying, writeable._underlying);
-    return result.isOk
-        ? writeable.finalize()
-        : throw Error.values
-            .firstWhere((v) => v._underlying == result.union.err);
+    if (!result.isOk) {
+      throw Error.values.firstWhere((v) => v._underlying == result.union.err);
+    }
+    return writeable.finalize();
   }
 
   // ignore: non_constant_identifier_names
@@ -244,6 +260,8 @@ class Locale implements ffi.Finalizable {
   /// Set the script part of the [`Locale`]. Pass an empty string to remove the script.
   ///
   /// See the [Rust documentation for `try_from_bytes`](https://docs.rs/icu/latest/icu/locid/struct.Locale.html#method.try_from_bytes) for more information.
+  ///
+  /// Throws [Error] on failure.
   set script(String bytes) {
     final alloc = ffi2.Arena();
     final bytesSlice = _SliceFfi2Utf8._fromDart(bytes, alloc);
@@ -270,6 +288,8 @@ class Locale implements ffi.Finalizable {
   /// Use ICU4XLocaleCanonicalizer for better control and functionality
   ///
   /// See the [Rust documentation for `canonicalize`](https://docs.rs/icu/latest/icu/locid/struct.Locale.html#method.canonicalize) for more information.
+  ///
+  /// Throws [Error] on failure.
   static String canonicalize(String bytes) {
     final alloc = ffi2.Arena();
     final bytesSlice = _SliceFfi2Utf8._fromDart(bytes, alloc);
@@ -278,10 +298,10 @@ class Locale implements ffi.Finalizable {
     final result = _ICU4XLocale_canonicalize(
         bytesSlice._bytes, bytesSlice._length, writeable._underlying);
     alloc.releaseAll();
-    return result.isOk
-        ? writeable.finalize()
-        : throw Error.values
-            .firstWhere((v) => v._underlying == result.union.err);
+    if (!result.isOk) {
+      throw Error.values.firstWhere((v) => v._underlying == result.union.err);
+    }
+    return writeable.finalize();
   }
 
   // ignore: non_constant_identifier_names
@@ -296,14 +316,16 @@ class Locale implements ffi.Finalizable {
   /// Write a string representation of [`Locale`] to `write`
   ///
   /// See the [Rust documentation for `write_to`](https://docs.rs/icu/latest/icu/locid/struct.Locale.html#method.write_to) for more information.
+  ///
+  /// Throws [Error] on failure.
   @override
   String toString() {
     final writeable = _Writeable();
     final result = _ICU4XLocale_to_string(_underlying, writeable._underlying);
-    return result.isOk
-        ? writeable.finalize()
-        : throw Error.values
-            .firstWhere((v) => v._underlying == result.union.err);
+    if (!result.isOk) {
+      throw Error.values.firstWhere((v) => v._underlying == result.union.err);
+    }
+    return writeable.finalize();
   }
 
   // ignore: non_constant_identifier_names

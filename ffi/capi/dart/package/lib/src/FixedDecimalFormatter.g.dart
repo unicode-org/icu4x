@@ -21,14 +21,16 @@ class FixedDecimalFormatter implements ffi.Finalizable {
   /// Creates a new [`FixedDecimalFormatter`] from locale data.
   ///
   /// See the [Rust documentation for `try_new`](https://docs.rs/icu/latest/icu/decimal/struct.FixedDecimalFormatter.html#method.try_new) for more information.
+  ///
+  /// Throws [Error] on failure.
   factory FixedDecimalFormatter.withGroupingStrategy(DataProvider provider,
       Locale locale, FixedDecimalGroupingStrategy groupingStrategy) {
     final result = _ICU4XFixedDecimalFormatter_create_with_grouping_strategy(
         provider._underlying, locale._underlying, groupingStrategy.index);
-    return result.isOk
-        ? FixedDecimalFormatter._(result.union.ok)
-        : throw Error.values
-            .firstWhere((v) => v._underlying == result.union.err);
+    if (!result.isOk) {
+      throw Error.values.firstWhere((v) => v._underlying == result.union.err);
+    }
+    return FixedDecimalFormatter._(result.union.ok);
   }
   // ignore: non_constant_identifier_names
   static final _ICU4XFixedDecimalFormatter_create_with_grouping_strategy =
@@ -44,14 +46,16 @@ class FixedDecimalFormatter implements ffi.Finalizable {
   /// Formats a [`FixedDecimal`] to a string.
   ///
   /// See the [Rust documentation for `format`](https://docs.rs/icu/latest/icu/decimal/struct.FixedDecimalFormatter.html#method.format) for more information.
+  ///
+  /// Throws [Error] on failure.
   String format(FixedDecimal value) {
     final writeable = _Writeable();
     final result = _ICU4XFixedDecimalFormatter_format(
         _underlying, value._underlying, writeable._underlying);
-    return result.isOk
-        ? writeable.finalize()
-        : throw Error.values
-            .firstWhere((v) => v._underlying == result.union.err);
+    if (!result.isOk) {
+      throw Error.values.firstWhere((v) => v._underlying == result.union.err);
+    }
+    return writeable.finalize();
   }
 
   // ignore: non_constant_identifier_names

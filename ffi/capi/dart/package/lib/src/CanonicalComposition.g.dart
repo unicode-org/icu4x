@@ -23,12 +23,14 @@ class CanonicalComposition implements ffi.Finalizable {
   /// Construct a new ICU4XCanonicalComposition instance for NFC
   ///
   /// See the [Rust documentation for `new`](https://docs.rs/icu/latest/icu/normalizer/properties/struct.CanonicalComposition.html#method.new) for more information.
+  ///
+  /// Throws [Error] on failure.
   factory CanonicalComposition(DataProvider provider) {
     final result = _ICU4XCanonicalComposition_create(provider._underlying);
-    return result.isOk
-        ? CanonicalComposition._(result.union.ok)
-        : throw Error.values
-            .firstWhere((v) => v._underlying == result.union.err);
+    if (!result.isOk) {
+      throw Error.values.firstWhere((v) => v._underlying == result.union.err);
+    }
+    return CanonicalComposition._(result.union.ok);
   }
   // ignore: non_constant_identifier_names
   static final _ICU4XCanonicalComposition_create = _capi<

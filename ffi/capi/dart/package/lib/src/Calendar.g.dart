@@ -18,13 +18,15 @@ class Calendar implements ffi.Finalizable {
   /// Creates a new [`Calendar`] from the specified date and time.
   ///
   /// See the [Rust documentation for `new_for_locale`](https://docs.rs/icu/latest/icu/calendar/enum.AnyCalendar.html#method.new_for_locale) for more information.
+  ///
+  /// Throws [Error] on failure.
   factory Calendar.forLocale(DataProvider provider, Locale locale) {
     final result = _ICU4XCalendar_create_for_locale(
         provider._underlying, locale._underlying);
-    return result.isOk
-        ? Calendar._(result.union.ok)
-        : throw Error.values
-            .firstWhere((v) => v._underlying == result.union.err);
+    if (!result.isOk) {
+      throw Error.values.firstWhere((v) => v._underlying == result.union.err);
+    }
+    return Calendar._(result.union.ok);
   }
   // ignore: non_constant_identifier_names
   static final _ICU4XCalendar_create_for_locale = _capi<
@@ -38,13 +40,15 @@ class Calendar implements ffi.Finalizable {
   /// Creates a new [`Calendar`] from the specified date and time.
   ///
   /// See the [Rust documentation for `new`](https://docs.rs/icu/latest/icu/calendar/enum.AnyCalendar.html#method.new) for more information.
+  ///
+  /// Throws [Error] on failure.
   factory Calendar.forKind(DataProvider provider, AnyCalendarKind kind) {
     final result =
         _ICU4XCalendar_create_for_kind(provider._underlying, kind.index);
-    return result.isOk
-        ? Calendar._(result.union.ok)
-        : throw Error.values
-            .firstWhere((v) => v._underlying == result.union.err);
+    if (!result.isOk) {
+      throw Error.values.firstWhere((v) => v._underlying == result.union.err);
+    }
+    return Calendar._(result.union.ok);
   }
   // ignore: non_constant_identifier_names
   static final _ICU4XCalendar_create_for_kind = _capi<

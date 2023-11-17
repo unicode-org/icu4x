@@ -24,6 +24,8 @@ class ZonedDateTimeFormatter implements ffi.Finalizable {
   /// for the time zone.
   ///
   /// See the [Rust documentation for `try_new`](https://docs.rs/icu/latest/icu/datetime/struct.ZonedDateTimeFormatter.html#method.try_new) for more information.
+  ///
+  /// Throws [Error] on failure.
   factory ZonedDateTimeFormatter.withLengths(DataProvider provider,
       Locale locale, DateLength dateLength, TimeLength timeLength) {
     final result = _ICU4XZonedDateTimeFormatter_create_with_lengths(
@@ -31,10 +33,10 @@ class ZonedDateTimeFormatter implements ffi.Finalizable {
         locale._underlying,
         dateLength.index,
         timeLength.index);
-    return result.isOk
-        ? ZonedDateTimeFormatter._(result.union.ok)
-        : throw Error.values
-            .firstWhere((v) => v._underlying == result.union.err);
+    if (!result.isOk) {
+      throw Error.values.firstWhere((v) => v._underlying == result.union.err);
+    }
+    return ZonedDateTimeFormatter._(result.union.ok);
   }
   // ignore: non_constant_identifier_names
   static final _ICU4XZonedDateTimeFormatter_create_with_lengths = _capi<
@@ -52,6 +54,8 @@ class ZonedDateTimeFormatter implements ffi.Finalizable {
   /// fallback for the time zone with the given configurations.
   ///
   /// See the [Rust documentation for `try_new`](https://docs.rs/icu/latest/icu/datetime/struct.ZonedDateTimeFormatter.html#method.try_new) for more information.
+  ///
+  /// Throws [Error] on failure.
   factory ZonedDateTimeFormatter.withLengthsAndIso8601TimeZoneFallback(
       DataProvider provider,
       Locale locale,
@@ -65,10 +69,10 @@ class ZonedDateTimeFormatter implements ffi.Finalizable {
             dateLength.index,
             timeLength.index,
             zoneOptions._underlying);
-    return result.isOk
-        ? ZonedDateTimeFormatter._(result.union.ok)
-        : throw Error.values
-            .firstWhere((v) => v._underlying == result.union.err);
+    if (!result.isOk) {
+      throw Error.values.firstWhere((v) => v._underlying == result.union.err);
+    }
+    return ZonedDateTimeFormatter._(result.union.ok);
   }
   // ignore: non_constant_identifier_names
   static final _ICU4XZonedDateTimeFormatter_create_with_lengths_and_iso_8601_time_zone_fallback =
@@ -92,6 +96,8 @@ class ZonedDateTimeFormatter implements ffi.Finalizable {
   /// Formats a [`DateTime`] and [`CustomTimeZone`] to a string.
   ///
   /// See the [Rust documentation for `format`](https://docs.rs/icu/latest/icu/datetime/struct.ZonedDateTimeFormatter.html#method.format) for more information.
+  ///
+  /// Throws [Error] on failure.
   String formatDatetimeWithCustomTimeZone(
       DateTime datetime, CustomTimeZone timeZone) {
     final writeable = _Writeable();
@@ -101,10 +107,10 @@ class ZonedDateTimeFormatter implements ffi.Finalizable {
             datetime._underlying,
             timeZone._underlying,
             writeable._underlying);
-    return result.isOk
-        ? writeable.finalize()
-        : throw Error.values
-            .firstWhere((v) => v._underlying == result.union.err);
+    if (!result.isOk) {
+      throw Error.values.firstWhere((v) => v._underlying == result.union.err);
+    }
+    return writeable.finalize();
   }
 
   // ignore: non_constant_identifier_names
@@ -127,6 +133,8 @@ class ZonedDateTimeFormatter implements ffi.Finalizable {
   /// Formats a [`IsoDateTime`] and [`CustomTimeZone`] to a string.
   ///
   /// See the [Rust documentation for `format`](https://docs.rs/icu/latest/icu/datetime/struct.ZonedDateTimeFormatter.html#method.format) for more information.
+  ///
+  /// Throws [Error] on failure.
   String formatIsoDatetimeWithCustomTimeZone(
       IsoDateTime datetime, CustomTimeZone timeZone) {
     final writeable = _Writeable();
@@ -136,10 +144,10 @@ class ZonedDateTimeFormatter implements ffi.Finalizable {
             datetime._underlying,
             timeZone._underlying,
             writeable._underlying);
-    return result.isOk
-        ? writeable.finalize()
-        : throw Error.values
-            .firstWhere((v) => v._underlying == result.union.err);
+    if (!result.isOk) {
+      throw Error.values.firstWhere((v) => v._underlying == result.union.err);
+    }
+    return writeable.finalize();
   }
 
   // ignore: non_constant_identifier_names

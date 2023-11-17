@@ -20,12 +20,14 @@ class Time implements ffi.Finalizable {
   /// Creates a new [`Time`] given field values
   ///
   /// See the [Rust documentation for `Time`](https://docs.rs/icu/latest/icu/calendar/types/struct.Time.html) for more information.
+  ///
+  /// Throws [Error] on failure.
   factory Time(int hour, int minute, int second, int nanosecond) {
     final result = _ICU4XTime_create(hour, minute, second, nanosecond);
-    return result.isOk
-        ? Time._(result.union.ok)
-        : throw Error.values
-            .firstWhere((v) => v._underlying == result.union.err);
+    if (!result.isOk) {
+      throw Error.values.firstWhere((v) => v._underlying == result.union.err);
+    }
+    return Time._(result.union.ok);
   }
   // ignore: non_constant_identifier_names
   static final _ICU4XTime_create = _capi<
@@ -38,12 +40,14 @@ class Time implements ffi.Finalizable {
   /// Creates a new [`Time`] representing midnight (00:00.000).
   ///
   /// See the [Rust documentation for `Time`](https://docs.rs/icu/latest/icu/calendar/types/struct.Time.html) for more information.
+  ///
+  /// Throws [Error] on failure.
   factory Time.midnight() {
     final result = _ICU4XTime_create_midnight();
-    return result.isOk
-        ? Time._(result.union.ok)
-        : throw Error.values
-            .firstWhere((v) => v._underlying == result.union.err);
+    if (!result.isOk) {
+      throw Error.values.firstWhere((v) => v._underlying == result.union.err);
+    }
+    return Time._(result.union.ok);
   }
   // ignore: non_constant_identifier_names
   static final _ICU4XTime_create_midnight =

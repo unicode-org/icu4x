@@ -21,12 +21,14 @@ class LocaleFallbacker implements ffi.Finalizable {
   /// Creates a new `LocaleFallbacker` from a data provider.
   ///
   /// See the [Rust documentation for `new`](https://docs.rs/icu/latest/icu/locid_transform/fallback/struct.LocaleFallbacker.html#method.new) for more information.
+  ///
+  /// Throws [Error] on failure.
   factory LocaleFallbacker(DataProvider provider) {
     final result = _ICU4XLocaleFallbacker_create(provider._underlying);
-    return result.isOk
-        ? LocaleFallbacker._(result.union.ok)
-        : throw Error.values
-            .firstWhere((v) => v._underlying == result.union.err);
+    if (!result.isOk) {
+      throw Error.values.firstWhere((v) => v._underlying == result.union.err);
+    }
+    return LocaleFallbacker._(result.union.ok);
   }
   // ignore: non_constant_identifier_names
   static final _ICU4XLocaleFallbacker_create = _capi<
@@ -52,13 +54,15 @@ class LocaleFallbacker implements ffi.Finalizable {
   /// Associates this `LocaleFallbacker` with configuration options.
   ///
   /// See the [Rust documentation for `for_config`](https://docs.rs/icu/latest/icu/locid_transform/fallback/struct.LocaleFallbacker.html#method.for_config) for more information.
+  ///
+  /// Throws [Error] on failure.
   LocaleFallbackerWithConfig forConfig(LocaleFallbackConfig config) {
     final result =
         _ICU4XLocaleFallbacker_for_config(_underlying, config._underlying);
-    return result.isOk
-        ? LocaleFallbackerWithConfig._(result.union.ok)
-        : throw Error.values
-            .firstWhere((v) => v._underlying == result.union.err);
+    if (!result.isOk) {
+      throw Error.values.firstWhere((v) => v._underlying == result.union.err);
+    }
+    return LocaleFallbackerWithConfig._(result.union.ok);
   }
 
   // ignore: non_constant_identifier_names

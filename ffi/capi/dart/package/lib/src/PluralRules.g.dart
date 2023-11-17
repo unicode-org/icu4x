@@ -21,13 +21,15 @@ class PluralRules implements ffi.Finalizable {
   /// Construct an [`PluralRules`] for the given locale, for cardinal numbers
   ///
   /// See the [Rust documentation for `try_new_cardinal`](https://docs.rs/icu/latest/icu/plurals/struct.PluralRules.html#method.try_new_cardinal) for more information.
+  ///
+  /// Throws [Error] on failure.
   factory PluralRules.cardinal(DataProvider provider, Locale locale) {
     final result = _ICU4XPluralRules_create_cardinal(
         provider._underlying, locale._underlying);
-    return result.isOk
-        ? PluralRules._(result.union.ok)
-        : throw Error.values
-            .firstWhere((v) => v._underlying == result.union.err);
+    if (!result.isOk) {
+      throw Error.values.firstWhere((v) => v._underlying == result.union.err);
+    }
+    return PluralRules._(result.union.ok);
   }
   // ignore: non_constant_identifier_names
   static final _ICU4XPluralRules_create_cardinal = _capi<
@@ -41,13 +43,15 @@ class PluralRules implements ffi.Finalizable {
   /// Construct an [`PluralRules`] for the given locale, for ordinal numbers
   ///
   /// See the [Rust documentation for `try_new_ordinal`](https://docs.rs/icu/latest/icu/plurals/struct.PluralRules.html#method.try_new_ordinal) for more information.
+  ///
+  /// Throws [Error] on failure.
   factory PluralRules.ordinal(DataProvider provider, Locale locale) {
     final result = _ICU4XPluralRules_create_ordinal(
         provider._underlying, locale._underlying);
-    return result.isOk
-        ? PluralRules._(result.union.ok)
-        : throw Error.values
-            .firstWhere((v) => v._underlying == result.union.err);
+    if (!result.isOk) {
+      throw Error.values.firstWhere((v) => v._underlying == result.union.err);
+    }
+    return PluralRules._(result.union.ok);
   }
   // ignore: non_constant_identifier_names
   static final _ICU4XPluralRules_create_ordinal = _capi<

@@ -24,6 +24,8 @@ class GregorianZonedDateTimeFormatter implements ffi.Finalizable {
   /// for the time zone.
   ///
   /// See the [Rust documentation for `try_new`](https://docs.rs/icu/latest/icu/datetime/struct.TypedZonedDateTimeFormatter.html#method.try_new) for more information.
+  ///
+  /// Throws [Error] on failure.
   factory GregorianZonedDateTimeFormatter.withLengths(DataProvider provider,
       Locale locale, DateLength dateLength, TimeLength timeLength) {
     final result = _ICU4XGregorianZonedDateTimeFormatter_create_with_lengths(
@@ -31,10 +33,10 @@ class GregorianZonedDateTimeFormatter implements ffi.Finalizable {
         locale._underlying,
         dateLength.index,
         timeLength.index);
-    return result.isOk
-        ? GregorianZonedDateTimeFormatter._(result.union.ok)
-        : throw Error.values
-            .firstWhere((v) => v._underlying == result.union.err);
+    if (!result.isOk) {
+      throw Error.values.firstWhere((v) => v._underlying == result.union.err);
+    }
+    return GregorianZonedDateTimeFormatter._(result.union.ok);
   }
   // ignore: non_constant_identifier_names
   static final _ICU4XGregorianZonedDateTimeFormatter_create_with_lengths =
@@ -53,6 +55,8 @@ class GregorianZonedDateTimeFormatter implements ffi.Finalizable {
   /// fallback for the time zone with the given configurations.
   ///
   /// See the [Rust documentation for `try_new`](https://docs.rs/icu/latest/icu/datetime/struct.TypedZonedDateTimeFormatter.html#method.try_new) for more information.
+  ///
+  /// Throws [Error] on failure.
   factory GregorianZonedDateTimeFormatter.withLengthsAndIso8601TimeZoneFallback(
       DataProvider provider,
       Locale locale,
@@ -66,10 +70,10 @@ class GregorianZonedDateTimeFormatter implements ffi.Finalizable {
             dateLength.index,
             timeLength.index,
             zoneOptions._underlying);
-    return result.isOk
-        ? GregorianZonedDateTimeFormatter._(result.union.ok)
-        : throw Error.values
-            .firstWhere((v) => v._underlying == result.union.err);
+    if (!result.isOk) {
+      throw Error.values.firstWhere((v) => v._underlying == result.union.err);
+    }
+    return GregorianZonedDateTimeFormatter._(result.union.ok);
   }
   // ignore: non_constant_identifier_names
   static final _ICU4XGregorianZonedDateTimeFormatter_create_with_lengths_and_iso_8601_time_zone_fallback =
@@ -93,6 +97,8 @@ class GregorianZonedDateTimeFormatter implements ffi.Finalizable {
   /// Formats a [`IsoDateTime`] and [`CustomTimeZone`] to a string.
   ///
   /// See the [Rust documentation for `format`](https://docs.rs/icu/latest/icu/datetime/struct.TypedZonedDateTimeFormatter.html#method.format) for more information.
+  ///
+  /// Throws [Error] on failure.
   String formatIsoDatetimeWithCustomTimeZone(
       IsoDateTime datetime, CustomTimeZone timeZone) {
     final writeable = _Writeable();
@@ -102,10 +108,10 @@ class GregorianZonedDateTimeFormatter implements ffi.Finalizable {
             datetime._underlying,
             timeZone._underlying,
             writeable._underlying);
-    return result.isOk
-        ? writeable.finalize()
-        : throw Error.values
-            .firstWhere((v) => v._underlying == result.union.err);
+    if (!result.isOk) {
+      throw Error.values.firstWhere((v) => v._underlying == result.union.err);
+    }
+    return writeable.finalize();
   }
 
   // ignore: non_constant_identifier_names

@@ -19,12 +19,14 @@ class CaseMapper implements ffi.Finalizable {
   /// Construct a new ICU4XCaseMapper instance
   ///
   /// See the [Rust documentation for `new`](https://docs.rs/icu/latest/icu/casemap/struct.CaseMapper.html#method.new) for more information.
+  ///
+  /// Throws [Error] on failure.
   factory CaseMapper(DataProvider provider) {
     final result = _ICU4XCaseMapper_create(provider._underlying);
-    return result.isOk
-        ? CaseMapper._(result.union.ok)
-        : throw Error.values
-            .firstWhere((v) => v._underlying == result.union.err);
+    if (!result.isOk) {
+      throw Error.values.firstWhere((v) => v._underlying == result.union.err);
+    }
+    return CaseMapper._(result.union.ok);
   }
   // ignore: non_constant_identifier_names
   static final _ICU4XCaseMapper_create = _capi<
@@ -37,6 +39,8 @@ class CaseMapper implements ffi.Finalizable {
   /// Returns the full lowercase mapping of the given string
   ///
   /// See the [Rust documentation for `lowercase`](https://docs.rs/icu/latest/icu/casemap/struct.CaseMapper.html#method.lowercase) for more information.
+  ///
+  /// Throws [Error] on failure.
   String lowercase(String s, Locale locale) {
     final alloc = ffi2.Arena();
     final sSlice = _SliceFfi2Utf8._fromDart(s, alloc);
@@ -45,10 +49,10 @@ class CaseMapper implements ffi.Finalizable {
     final result = _ICU4XCaseMapper_lowercase(_underlying, sSlice._bytes,
         sSlice._length, locale._underlying, writeable._underlying);
     alloc.releaseAll();
-    return result.isOk
-        ? writeable.finalize()
-        : throw Error.values
-            .firstWhere((v) => v._underlying == result.union.err);
+    if (!result.isOk) {
+      throw Error.values.firstWhere((v) => v._underlying == result.union.err);
+    }
+    return writeable.finalize();
   }
 
   // ignore: non_constant_identifier_names
@@ -71,6 +75,8 @@ class CaseMapper implements ffi.Finalizable {
   /// Returns the full uppercase mapping of the given string
   ///
   /// See the [Rust documentation for `uppercase`](https://docs.rs/icu/latest/icu/casemap/struct.CaseMapper.html#method.uppercase) for more information.
+  ///
+  /// Throws [Error] on failure.
   String uppercase(String s, Locale locale) {
     final alloc = ffi2.Arena();
     final sSlice = _SliceFfi2Utf8._fromDart(s, alloc);
@@ -79,10 +85,10 @@ class CaseMapper implements ffi.Finalizable {
     final result = _ICU4XCaseMapper_uppercase(_underlying, sSlice._bytes,
         sSlice._length, locale._underlying, writeable._underlying);
     alloc.releaseAll();
-    return result.isOk
-        ? writeable.finalize()
-        : throw Error.values
-            .firstWhere((v) => v._underlying == result.union.err);
+    if (!result.isOk) {
+      throw Error.values.firstWhere((v) => v._underlying == result.union.err);
+    }
+    return writeable.finalize();
   }
 
   // ignore: non_constant_identifier_names
@@ -109,6 +115,8 @@ class CaseMapper implements ffi.Finalizable {
   /// The `v1` refers to the version of the options struct, which may change as we add more options
   ///
   /// See the [Rust documentation for `titlecase_segment_with_only_case_data`](https://docs.rs/icu/latest/icu/casemap/struct.CaseMapper.html#method.titlecase_segment_with_only_case_data) for more information.
+  ///
+  /// Throws [Error] on failure.
   String titlecaseSegmentWithOnlyCaseDataV1(
       String s, Locale locale, TitlecaseOptionsV1 options) {
     final alloc = ffi2.Arena();
@@ -123,10 +131,10 @@ class CaseMapper implements ffi.Finalizable {
         options._underlying,
         writeable._underlying);
     alloc.releaseAll();
-    return result.isOk
-        ? writeable.finalize()
-        : throw Error.values
-            .firstWhere((v) => v._underlying == result.union.err);
+    if (!result.isOk) {
+      throw Error.values.firstWhere((v) => v._underlying == result.union.err);
+    }
+    return writeable.finalize();
   }
 
   // ignore: non_constant_identifier_names
@@ -153,6 +161,8 @@ class CaseMapper implements ffi.Finalizable {
   /// Case-folds the characters in the given string
   ///
   /// See the [Rust documentation for `fold`](https://docs.rs/icu/latest/icu/casemap/struct.CaseMapper.html#method.fold) for more information.
+  ///
+  /// Throws [Error] on failure.
   String fold(String s) {
     final alloc = ffi2.Arena();
     final sSlice = _SliceFfi2Utf8._fromDart(s, alloc);
@@ -161,10 +171,10 @@ class CaseMapper implements ffi.Finalizable {
     final result = _ICU4XCaseMapper_fold(
         _underlying, sSlice._bytes, sSlice._length, writeable._underlying);
     alloc.releaseAll();
-    return result.isOk
-        ? writeable.finalize()
-        : throw Error.values
-            .firstWhere((v) => v._underlying == result.union.err);
+    if (!result.isOk) {
+      throw Error.values.firstWhere((v) => v._underlying == result.union.err);
+    }
+    return writeable.finalize();
   }
 
   // ignore: non_constant_identifier_names
@@ -186,6 +196,8 @@ class CaseMapper implements ffi.Finalizable {
   /// using Turkic (T) mappings for dotted/dotless I.
   ///
   /// See the [Rust documentation for `fold_turkic`](https://docs.rs/icu/latest/icu/casemap/struct.CaseMapper.html#method.fold_turkic) for more information.
+  ///
+  /// Throws [Error] on failure.
   String foldTurkic(String s) {
     final alloc = ffi2.Arena();
     final sSlice = _SliceFfi2Utf8._fromDart(s, alloc);
@@ -194,10 +206,10 @@ class CaseMapper implements ffi.Finalizable {
     final result = _ICU4XCaseMapper_fold_turkic(
         _underlying, sSlice._bytes, sSlice._length, writeable._underlying);
     alloc.releaseAll();
-    return result.isOk
-        ? writeable.finalize()
-        : throw Error.values
-            .firstWhere((v) => v._underlying == result.union.err);
+    if (!result.isOk) {
+      throw Error.values.firstWhere((v) => v._underlying == result.union.err);
+    }
+    return writeable.finalize();
   }
 
   // ignore: non_constant_identifier_names

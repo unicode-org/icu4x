@@ -21,6 +21,8 @@ class BidiParagraph implements ffi.Finalizable {
   ///
   /// This is equivalent to calling `paragraph_at()` on `BidiInfo` but doesn't
   /// create a new object
+  ///
+  /// Throws [Error] on failure.
   void setParagraphInText(int n) {
     final result = _ICU4XBidiParagraph_set_paragraph_in_text(_underlying, n);
     if (!result.isOk) {
@@ -92,14 +94,16 @@ class BidiParagraph implements ffi.Finalizable {
   /// within this paragraph's range.
   ///
   /// See the [Rust documentation for `level_at`](https://docs.rs/unicode_bidi/latest/unicode_bidi/struct.Paragraph.html#method.level_at) for more information.
+  ///
+  /// Throws [Error] on failure.
   String reorderLine(int rangeStart, int rangeEnd) {
     final writeable = _Writeable();
     final result = _ICU4XBidiParagraph_reorder_line(
         _underlying, rangeStart, rangeEnd, writeable._underlying);
-    return result.isOk
-        ? writeable.finalize()
-        : throw Error.values
-            .firstWhere((v) => v._underlying == result.union.err);
+    if (!result.isOk) {
+      throw Error.values.firstWhere((v) => v._underlying == result.union.err);
+    }
+    return writeable.finalize();
   }
 
   // ignore: non_constant_identifier_names

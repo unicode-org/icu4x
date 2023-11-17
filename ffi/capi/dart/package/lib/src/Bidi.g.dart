@@ -20,12 +20,14 @@ class Bidi implements ffi.Finalizable {
   /// Creates a new [`Bidi`] from locale data.
   ///
   /// See the [Rust documentation for `new`](https://docs.rs/icu/latest/icu/properties/bidi/struct.BidiClassAdapter.html#method.new) for more information.
+  ///
+  /// Throws [Error] on failure.
   factory Bidi(DataProvider provider) {
     final result = _ICU4XBidi_create(provider._underlying);
-    return result.isOk
-        ? Bidi._(result.union.ok)
-        : throw Error.values
-            .firstWhere((v) => v._underlying == result.union.err);
+    if (!result.isOk) {
+      throw Error.values.firstWhere((v) => v._underlying == result.union.err);
+    }
+    return Bidi._(result.union.ok);
   }
   // ignore: non_constant_identifier_names
   static final _ICU4XBidi_create = _capi<

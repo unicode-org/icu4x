@@ -73,14 +73,16 @@ class PropertyValueNameToEnumMapper implements ffi.Finalizable {
               int)>(isLeaf: true);
 
   /// See the [Rust documentation for `get_name_to_enum_mapper`](https://docs.rs/icu/latest/icu/properties/struct.GeneralCategory.html#method.get_name_to_enum_mapper) for more information.
+  ///
+  /// Throws [Error] on failure.
   factory PropertyValueNameToEnumMapper.loadGeneralCategory(
       DataProvider provider) {
     final result = _ICU4XPropertyValueNameToEnumMapper_load_general_category(
         provider._underlying);
-    return result.isOk
-        ? PropertyValueNameToEnumMapper._(result.union.ok)
-        : throw Error.values
-            .firstWhere((v) => v._underlying == result.union.err);
+    if (!result.isOk) {
+      throw Error.values.firstWhere((v) => v._underlying == result.union.err);
+    }
+    return PropertyValueNameToEnumMapper._(result.union.ok);
   }
   // ignore: non_constant_identifier_names
   static final _ICU4XPropertyValueNameToEnumMapper_load_general_category =
@@ -92,13 +94,15 @@ class PropertyValueNameToEnumMapper implements ffi.Finalizable {
               isLeaf: true);
 
   /// See the [Rust documentation for `name_to_enum_mapper`](https://docs.rs/icu/latest/icu/properties/struct.BidiClass.html#method.name_to_enum_mapper) for more information.
+  ///
+  /// Throws [Error] on failure.
   factory PropertyValueNameToEnumMapper.loadBidiClass(DataProvider provider) {
     final result = _ICU4XPropertyValueNameToEnumMapper_load_bidi_class(
         provider._underlying);
-    return result.isOk
-        ? PropertyValueNameToEnumMapper._(result.union.ok)
-        : throw Error.values
-            .firstWhere((v) => v._underlying == result.union.err);
+    if (!result.isOk) {
+      throw Error.values.firstWhere((v) => v._underlying == result.union.err);
+    }
+    return PropertyValueNameToEnumMapper._(result.union.ok);
   }
   // ignore: non_constant_identifier_names
   static final _ICU4XPropertyValueNameToEnumMapper_load_bidi_class = _capi<
@@ -109,14 +113,16 @@ class PropertyValueNameToEnumMapper implements ffi.Finalizable {
           isLeaf: true);
 
   /// See the [Rust documentation for `name_to_enum_mapper`](https://docs.rs/icu/latest/icu/properties/struct.EastAsianWidth.html#method.name_to_enum_mapper) for more information.
+  ///
+  /// Throws [Error] on failure.
   factory PropertyValueNameToEnumMapper.loadEastAsianWidth(
       DataProvider provider) {
     final result = _ICU4XPropertyValueNameToEnumMapper_load_east_asian_width(
         provider._underlying);
-    return result.isOk
-        ? PropertyValueNameToEnumMapper._(result.union.ok)
-        : throw Error.values
-            .firstWhere((v) => v._underlying == result.union.err);
+    if (!result.isOk) {
+      throw Error.values.firstWhere((v) => v._underlying == result.union.err);
+    }
+    return PropertyValueNameToEnumMapper._(result.union.ok);
   }
   // ignore: non_constant_identifier_names
   static final _ICU4XPropertyValueNameToEnumMapper_load_east_asian_width =
@@ -128,15 +134,17 @@ class PropertyValueNameToEnumMapper implements ffi.Finalizable {
               isLeaf: true);
 
   /// See the [Rust documentation for `name_to_enum_mapper`](https://docs.rs/icu/latest/icu/properties/struct.IndicSyllabicCategory.html#method.name_to_enum_mapper) for more information.
+  ///
+  /// Throws [Error] on failure.
   factory PropertyValueNameToEnumMapper.loadIndicSyllabicCategory(
       DataProvider provider) {
     final result =
         _ICU4XPropertyValueNameToEnumMapper_load_indic_syllabic_category(
             provider._underlying);
-    return result.isOk
-        ? PropertyValueNameToEnumMapper._(result.union.ok)
-        : throw Error.values
-            .firstWhere((v) => v._underlying == result.union.err);
+    if (!result.isOk) {
+      throw Error.values.firstWhere((v) => v._underlying == result.union.err);
+    }
+    return PropertyValueNameToEnumMapper._(result.union.ok);
   }
   // ignore: non_constant_identifier_names
   static final _ICU4XPropertyValueNameToEnumMapper_load_indic_syllabic_category =
@@ -148,13 +156,15 @@ class PropertyValueNameToEnumMapper implements ffi.Finalizable {
               isLeaf: true);
 
   /// See the [Rust documentation for `name_to_enum_mapper`](https://docs.rs/icu/latest/icu/properties/struct.LineBreak.html#method.name_to_enum_mapper) for more information.
+  ///
+  /// Throws [Error] on failure.
   factory PropertyValueNameToEnumMapper.loadLineBreak(DataProvider provider) {
     final result = _ICU4XPropertyValueNameToEnumMapper_load_line_break(
         provider._underlying);
-    return result.isOk
-        ? PropertyValueNameToEnumMapper._(result.union.ok)
-        : throw Error.values
-            .firstWhere((v) => v._underlying == result.union.err);
+    if (!result.isOk) {
+      throw Error.values.firstWhere((v) => v._underlying == result.union.err);
+    }
+    return PropertyValueNameToEnumMapper._(result.union.ok);
   }
   // ignore: non_constant_identifier_names
   static final _ICU4XPropertyValueNameToEnumMapper_load_line_break = _capi<
@@ -165,15 +175,17 @@ class PropertyValueNameToEnumMapper implements ffi.Finalizable {
           isLeaf: true);
 
   /// See the [Rust documentation for `get_name_to_enum_mapper`](https://docs.rs/icu/latest/icu/properties/struct.GraphemeClusterBreak.html#method.get_name_to_enum_mapper) for more information.
+  ///
+  /// Throws [Error] on failure.
   factory PropertyValueNameToEnumMapper.loadGraphemeClusterBreak(
       DataProvider provider) {
     final result =
         _ICU4XPropertyValueNameToEnumMapper_load_grapheme_cluster_break(
             provider._underlying);
-    return result.isOk
-        ? PropertyValueNameToEnumMapper._(result.union.ok)
-        : throw Error.values
-            .firstWhere((v) => v._underlying == result.union.err);
+    if (!result.isOk) {
+      throw Error.values.firstWhere((v) => v._underlying == result.union.err);
+    }
+    return PropertyValueNameToEnumMapper._(result.union.ok);
   }
   // ignore: non_constant_identifier_names
   static final _ICU4XPropertyValueNameToEnumMapper_load_grapheme_cluster_break =
@@ -185,13 +197,15 @@ class PropertyValueNameToEnumMapper implements ffi.Finalizable {
               isLeaf: true);
 
   /// See the [Rust documentation for `name_to_enum_mapper`](https://docs.rs/icu/latest/icu/properties/struct.WordBreak.html#method.name_to_enum_mapper) for more information.
+  ///
+  /// Throws [Error] on failure.
   factory PropertyValueNameToEnumMapper.loadWordBreak(DataProvider provider) {
     final result = _ICU4XPropertyValueNameToEnumMapper_load_word_break(
         provider._underlying);
-    return result.isOk
-        ? PropertyValueNameToEnumMapper._(result.union.ok)
-        : throw Error.values
-            .firstWhere((v) => v._underlying == result.union.err);
+    if (!result.isOk) {
+      throw Error.values.firstWhere((v) => v._underlying == result.union.err);
+    }
+    return PropertyValueNameToEnumMapper._(result.union.ok);
   }
   // ignore: non_constant_identifier_names
   static final _ICU4XPropertyValueNameToEnumMapper_load_word_break = _capi<
@@ -202,14 +216,16 @@ class PropertyValueNameToEnumMapper implements ffi.Finalizable {
           isLeaf: true);
 
   /// See the [Rust documentation for `name_to_enum_mapper`](https://docs.rs/icu/latest/icu/properties/struct.SentenceBreak.html#method.name_to_enum_mapper) for more information.
+  ///
+  /// Throws [Error] on failure.
   factory PropertyValueNameToEnumMapper.loadSentenceBreak(
       DataProvider provider) {
     final result = _ICU4XPropertyValueNameToEnumMapper_load_sentence_break(
         provider._underlying);
-    return result.isOk
-        ? PropertyValueNameToEnumMapper._(result.union.ok)
-        : throw Error.values
-            .firstWhere((v) => v._underlying == result.union.err);
+    if (!result.isOk) {
+      throw Error.values.firstWhere((v) => v._underlying == result.union.err);
+    }
+    return PropertyValueNameToEnumMapper._(result.union.ok);
   }
   // ignore: non_constant_identifier_names
   static final _ICU4XPropertyValueNameToEnumMapper_load_sentence_break = _capi<
@@ -220,13 +236,15 @@ class PropertyValueNameToEnumMapper implements ffi.Finalizable {
           isLeaf: true);
 
   /// See the [Rust documentation for `name_to_enum_mapper`](https://docs.rs/icu/latest/icu/properties/struct.Script.html#method.name_to_enum_mapper) for more information.
+  ///
+  /// Throws [Error] on failure.
   factory PropertyValueNameToEnumMapper.loadScript(DataProvider provider) {
     final result =
         _ICU4XPropertyValueNameToEnumMapper_load_script(provider._underlying);
-    return result.isOk
-        ? PropertyValueNameToEnumMapper._(result.union.ok)
-        : throw Error.values
-            .firstWhere((v) => v._underlying == result.union.err);
+    if (!result.isOk) {
+      throw Error.values.firstWhere((v) => v._underlying == result.union.err);
+    }
+    return PropertyValueNameToEnumMapper._(result.union.ok);
   }
   // ignore: non_constant_identifier_names
   static final _ICU4XPropertyValueNameToEnumMapper_load_script = _capi<

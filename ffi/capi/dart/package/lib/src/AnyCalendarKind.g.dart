@@ -69,11 +69,14 @@ enum AnyCalendarKind {
   /// is not known or supported.
   ///
   /// See the [Rust documentation for `get_for_locale`](https://docs.rs/icu/latest/icu/calendar/enum.AnyCalendarKind.html#method.get_for_locale) for more information.
+  ///
+  /// Throws [VoidError] on failure.
   factory AnyCalendarKind.forLocale(Locale locale) {
     final result = _ICU4XAnyCalendarKind_get_for_locale(locale._underlying);
-    return result.isOk
-        ? AnyCalendarKind.values[result.union.ok]
-        : throw VoidError();
+    if (!result.isOk) {
+      throw VoidError();
+    }
+    return AnyCalendarKind.values[result.union.ok];
   }
   // ignore: non_constant_identifier_names
   static final _ICU4XAnyCalendarKind_get_for_locale = _capi<
@@ -88,6 +91,8 @@ enum AnyCalendarKind {
   /// Errors if the calendar is not known or supported.
   ///
   /// See the [Rust documentation for `get_for_bcp47_value`](https://docs.rs/icu/latest/icu/calendar/enum.AnyCalendarKind.html#method.get_for_bcp47_value) for more information.
+  ///
+  /// Throws [VoidError] on failure.
   factory AnyCalendarKind.forBcp47(String s) {
     final alloc = ffi2.Arena();
     final sSlice = _SliceFfi2Utf8._fromDart(s, alloc);
@@ -95,9 +100,10 @@ enum AnyCalendarKind {
     final result =
         _ICU4XAnyCalendarKind_get_for_bcp47(sSlice._bytes, sSlice._length);
     alloc.releaseAll();
-    return result.isOk
-        ? AnyCalendarKind.values[result.union.ok]
-        : throw VoidError();
+    if (!result.isOk) {
+      throw VoidError();
+    }
+    return AnyCalendarKind.values[result.union.ok];
   }
   // ignore: non_constant_identifier_names
   static final _ICU4XAnyCalendarKind_get_for_bcp47 = _capi<
@@ -110,13 +116,15 @@ enum AnyCalendarKind {
   /// Obtain the string suitable for use in the -u-ca- extension in a BCP47 locale.
   ///
   /// See the [Rust documentation for `as_bcp47_string`](https://docs.rs/icu/latest/icu/calendar/enum.AnyCalendarKind.html#method.as_bcp47_string) for more information.
+  ///
+  /// Throws [Error] on failure.
   String get bcp47 {
     final writeable = _Writeable();
     final result = _ICU4XAnyCalendarKind_bcp47(index, writeable._underlying);
-    return result.isOk
-        ? writeable.finalize()
-        : throw Error.values
-            .firstWhere((v) => v._underlying == result.union.err);
+    if (!result.isOk) {
+      throw Error.values.firstWhere((v) => v._underlying == result.union.err);
+    }
+    return writeable.finalize();
   }
 
   // ignore: non_constant_identifier_names

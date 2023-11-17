@@ -21,14 +21,16 @@ class Date implements ffi.Finalizable {
   /// given but in a given calendar
   ///
   /// See the [Rust documentation for `new_from_iso`](https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.new_from_iso) for more information.
+  ///
+  /// Throws [Error] on failure.
   factory Date.fromIsoInCalendar(
       int year, int month, int day, Calendar calendar) {
     final result = _ICU4XDate_create_from_iso_in_calendar(
         year, month, day, calendar._underlying);
-    return result.isOk
-        ? Date._(result.union.ok)
-        : throw Error.values
-            .firstWhere((v) => v._underlying == result.union.err);
+    if (!result.isOk) {
+      throw Error.values.firstWhere((v) => v._underlying == result.union.err);
+    }
+    return Date._(result.union.ok);
   }
   // ignore: non_constant_identifier_names
   static final _ICU4XDate_create_from_iso_in_calendar = _capi<
@@ -43,6 +45,8 @@ class Date implements ffi.Finalizable {
   /// Creates a new [`Date`] from the given codes, which are interpreted in the given calendar system
   ///
   /// See the [Rust documentation for `try_new_from_codes`](https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.try_new_from_codes) for more information.
+  ///
+  /// Throws [Error] on failure.
   factory Date.fromCodesInCalendar(
       String eraCode, int year, String monthCode, int day, Calendar calendar) {
     final alloc = ffi2.Arena();
@@ -58,10 +62,10 @@ class Date implements ffi.Finalizable {
         day,
         calendar._underlying);
     alloc.releaseAll();
-    return result.isOk
-        ? Date._(result.union.ok)
-        : throw Error.values
-            .firstWhere((v) => v._underlying == result.union.err);
+    if (!result.isOk) {
+      throw Error.values.firstWhere((v) => v._underlying == result.union.err);
+    }
+    return Date._(result.union.ok);
   }
   // ignore: non_constant_identifier_names
   static final _ICU4XDate_create_from_codes_in_calendar = _capi<
@@ -168,12 +172,14 @@ class Date implements ffi.Finalizable {
   /// Returns the week number in this year, using week data
   ///
   /// See the [Rust documentation for `week_of_year`](https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.week_of_year) for more information.
+  ///
+  /// Throws [Error] on failure.
   WeekOf weekOfYear(WeekCalculator calculator) {
     final result = _ICU4XDate_week_of_year(_underlying, calculator._underlying);
-    return result.isOk
-        ? WeekOf._(result.union.ok)
-        : throw Error.values
-            .firstWhere((v) => v._underlying == result.union.err);
+    if (!result.isOk) {
+      throw Error.values.firstWhere((v) => v._underlying == result.union.err);
+    }
+    return WeekOf._(result.union.ok);
   }
 
   // ignore: non_constant_identifier_names
@@ -207,13 +213,15 @@ class Date implements ffi.Finalizable {
   /// like "M01", "M02", but can be more complicated for lunar calendars.
   ///
   /// See the [Rust documentation for `month`](https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.month) for more information.
+  ///
+  /// Throws [Error] on failure.
   String get monthCode {
     final writeable = _Writeable();
     final result = _ICU4XDate_month_code(_underlying, writeable._underlying);
-    return result.isOk
-        ? writeable.finalize()
-        : throw Error.values
-            .firstWhere((v) => v._underlying == result.union.err);
+    if (!result.isOk) {
+      throw Error.values.firstWhere((v) => v._underlying == result.union.err);
+    }
+    return writeable.finalize();
   }
 
   // ignore: non_constant_identifier_names
@@ -244,13 +252,15 @@ class Date implements ffi.Finalizable {
   /// See the [Rust documentation for `year`](https://docs.rs/icu/latest/icu/struct.Date.html#method.year) for more information.
   ///
   /// Additional information: [1](https://docs.rs/icu/latest/icu/types/struct.Era.html)
+  ///
+  /// Throws [Error] on failure.
   String get era {
     final writeable = _Writeable();
     final result = _ICU4XDate_era(_underlying, writeable._underlying);
-    return result.isOk
-        ? writeable.finalize()
-        : throw Error.values
-            .firstWhere((v) => v._underlying == result.union.err);
+    if (!result.isOk) {
+      throw Error.values.firstWhere((v) => v._underlying == result.union.err);
+    }
+    return writeable.finalize();
   }
 
   // ignore: non_constant_identifier_names

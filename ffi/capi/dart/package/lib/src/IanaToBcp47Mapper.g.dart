@@ -23,12 +23,14 @@ class IanaToBcp47Mapper implements ffi.Finalizable {
       ffi.NativeFinalizer(_capi('ICU4XIanaToBcp47Mapper_destroy'));
 
   /// See the [Rust documentation for `new`](https://docs.rs/icu/latest/icu/timezone/struct.IanaToBcp47Mapper.html#method.new) for more information.
+  ///
+  /// Throws [Error] on failure.
   factory IanaToBcp47Mapper(DataProvider provider) {
     final result = _ICU4XIanaToBcp47Mapper_create(provider._underlying);
-    return result.isOk
-        ? IanaToBcp47Mapper._(result.union.ok)
-        : throw Error.values
-            .firstWhere((v) => v._underlying == result.union.err);
+    if (!result.isOk) {
+      throw Error.values.firstWhere((v) => v._underlying == result.union.err);
+    }
+    return IanaToBcp47Mapper._(result.union.ok);
   }
   // ignore: non_constant_identifier_names
   static final _ICU4XIanaToBcp47Mapper_create = _capi<
