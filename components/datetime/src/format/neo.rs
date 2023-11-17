@@ -89,10 +89,11 @@ where
 #[derive(Debug)]
 pub struct TypedDateTimePatternInterpolator<C: CldrCalendar> {
     locale: DataLocale,
-    year_symbols: OptionalSymbols<fields::Year, DataPayload<C::YearSymbolsV1Marker>>,
+    /// `year_symbols` is different because it could be either era or cyclic year.
+    year_symbols: OptionalSymbols<(), DataPayload<C::YearSymbolsV1Marker>>,
     month_symbols: OptionalSymbols<fields::Month, DataPayload<C::MonthSymbolsV1Marker>>,
     weekday_symbols: OptionalSymbols<fields::Weekday, DataPayload<WeekdaySymbolsV1Marker>>,
-    dayperiod_symbols: OptionalSymbols<fields::DayPeriod, DataPayload<DayPeriodSymbolsV1Marker>>,
+    dayperiod_symbols: OptionalSymbols<(), DataPayload<DayPeriodSymbolsV1Marker>>,
     // TODO: Make the FixedDecimalFormatter optional?
     fixed_decimal_formatter: FixedDecimalFormatter,
     week_calculator: Option<WeekCalculator>,
@@ -146,7 +147,8 @@ impl<C: CldrCalendar> TypedDateTimePatternInterpolator<C> {
         }
     }
 
-    pub fn load_formatting_month_symbols_abbreviated<P>(
+    /// Loads formatting-style abbreviated month names: `MMM`
+    pub fn load_formatting_month_names_abbreviated<P>(
         &mut self,
         provider: &P,
     ) -> Result<&mut Self, Error>
@@ -178,10 +180,11 @@ impl<C: CldrCalendar> TypedDateTimePatternInterpolator<C> {
 
 #[derive(Debug, Copy, Clone)]
 struct RawDateTimePatternInterpolatorBorrowed<'l> {
-    year_symbols: OptionalSymbols<fields::Year, &'l YearSymbolsV1<'l>>,
+    /// `year_symbols` is different because it could be either era or cyclic year.
+    year_symbols: OptionalSymbols<(), &'l YearSymbolsV1<'l>>,
     month_symbols: OptionalSymbols<fields::Month, &'l MonthSymbolsV1<'l>>,
     weekday_symbols: OptionalSymbols<fields::Weekday, &'l LinearSymbolsV1<'l>>,
-    dayperiod_symbols: OptionalSymbols<fields::DayPeriod, &'l LinearSymbolsV1<'l>>,
+    dayperiod_symbols: OptionalSymbols<(), &'l LinearSymbolsV1<'l>>,
     fixed_decimal_formatter: &'l FixedDecimalFormatter,
     week_calculator: Option<&'l WeekCalculator>,
 }
@@ -198,7 +201,8 @@ impl<C: CldrCalendar> TypedDateTimePatternInterpolator<C> {
         }
     }
 
-    // TODO: Discuss the design of this API
+    /// TODO: Discuss the design of this API
+    /// TODO: Add docs and an example
     pub fn format<'l, T>(
         &'l self,
         pattern: &'l Pattern<'l>,
@@ -295,7 +299,11 @@ impl<'data> DateSymbols<'data> for RawDateTimePatternInterpolatorBorrowed<'data>
                 }
             }
             MonthSymbolsV1::LeapNumeric(leap_numeric) => {
-                return Ok(MonthPlaceholderValue::NumericPattern(leap_numeric))
+                if is_leap {
+                    return Ok(MonthPlaceholderValue::NumericPattern(leap_numeric));
+                } else {
+                    return Ok(MonthPlaceholderValue::Numeric);
+                }
             }
         };
         // Note: Always return `false` for the second argument since neo MonthSymbols
@@ -316,23 +324,55 @@ impl<'data> DateSymbols<'data> for RawDateTimePatternInterpolatorBorrowed<'data>
             .weekday_symbols
             .get_with_length(field_symbol, field_length)
             .ok_or(Error::MissingDateSymbols)?;
-        todo!()
+        let day_usize = day as usize;
+        weekday_symbols
+            .symbols
+            .get(day_usize)
+            .ok_or_else(|| Error::MissingWeekdaySymbol(day_usize))
     }
 
-    fn get_symbol_for_era<'a>(&'a self, length: fields::FieldLength, era_code: &'a Era) -> &str {
-        todo!()
+    fn get_symbol_for_era<'a>(
+        &'a self,
+        field_length: fields::FieldLength,
+        era_code: &'a Era,
+    ) -> Result<Option<&str>, Error> {
+        // TODO: This should be MissingEraSymbols or MissingYearSymbols in neo
+        let year_symbols = self
+            .year_symbols
+            .get_with_length((), field_length)
+            .ok_or(Error::MissingDateSymbols)?;
+        let YearSymbolsV1::Eras(era_symbols) = year_symbols else {
+            // TODO: This should be MissingEraSymbols or MissingYearSymbols in neo
+            return Err(Error::MissingDateSymbols);
+        };
+        Ok(era_symbols.get(era_code.0.as_str().into()))
     }
 }
 
 impl<'data> TimeSymbols for RawDateTimePatternInterpolatorBorrowed<'data> {
     fn get_symbol_for_day_period(
         &self,
-        day_period: fields::DayPeriod,
-        length: fields::FieldLength,
+        field_symbol: fields::DayPeriod,
+        field_length: fields::FieldLength,
         hour: input::IsoHour,
         is_top_of_hour: bool,
     ) -> Result<&str, Error> {
-        todo!()
+        use fields::DayPeriod::NoonMidnight;
+        // TODO: This should be MissingDayPeriodSymbols in neo
+        let dayperiod_symbols = self
+            .dayperiod_symbols
+            .get_with_length((), field_length)
+            .ok_or(Error::MissingTimeSymbols)?;
+        let option_value: Option<&str> = match (field_symbol, u8::from(hour), is_top_of_hour) {
+            (NoonMidnight, 00, true) => dayperiod_symbols
+                .midnight()
+                .or_else(|| dayperiod_symbols.am()),
+            (NoonMidnight, 12, true) => dayperiod_symbols.noon().or_else(|| dayperiod_symbols.pm()),
+            (_, hour, _) if hour < 12 => dayperiod_symbols.am(),
+            _ => dayperiod_symbols.pm(),
+        };
+        // TODO: This should be MissingDayPeriodSymbol
+        option_value.ok_or_else(|| Error::MissingTimeSymbols)
     }
 }
 
@@ -350,7 +390,7 @@ mod tests {
         let mut interpolator: TypedDateTimePatternInterpolator<Gregorian> =
             TypedDateTimePatternInterpolator::try_new(&locale).unwrap();
         interpolator
-            .load_formatting_month_symbols_abbreviated(&crate::provider::Baked)
+            .load_formatting_month_names_abbreviated(&crate::provider::Baked)
             .unwrap();
         let reference_pattern: reference::Pattern =
             "'It is' MMM d, y 'at' HH:mm'!'".parse().unwrap();

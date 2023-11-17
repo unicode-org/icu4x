@@ -237,7 +237,8 @@ where
                 .era;
             let symbol = date_symbols
                 .ok_or(Error::MissingDateSymbols)?
-                .get_symbol_for_era(field.length, &era);
+                .get_symbol_for_era(field.length, &era)?
+                .unwrap_or(&era.0);
             w.write_str(symbol)?
         }
         FieldSymbol::Year(year) => match year {
@@ -331,6 +332,15 @@ where
                         };
                         w.write_str(leap_str)?;
                         w.write_str(symbol)?;
+                    }
+                    #[cfg(feature = "experimental")]
+                    MonthPlaceholderValue::Numeric => {
+                        format_number(
+                            w,
+                            fixed_decimal_format,
+                            FixedDecimal::from(formattable_month.ordinal),
+                            field.length,
+                        )?;
                     }
                     #[cfg(feature = "experimental")]
                     MonthPlaceholderValue::NumericPattern(substitution_pattern) => {

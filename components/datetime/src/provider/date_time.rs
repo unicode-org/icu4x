@@ -316,6 +316,8 @@ pub enum MonthPlaceholderValue<'a> {
     PlainString(&'a str),
     StringNeedingLeapPrefix(&'a str),
     #[cfg(feature = "experimental")]
+    Numeric,
+    #[cfg(feature = "experimental")]
     NumericPattern(&'a SimpleSubstitutionPattern<'a>),
 }
 
@@ -332,7 +334,15 @@ pub trait DateSymbols<'data> {
         length: fields::FieldLength,
         day: input::IsoWeekday,
     ) -> Result<&str>;
-    fn get_symbol_for_era<'a>(&'a self, length: fields::FieldLength, era_code: &'a Era) -> &str;
+    /// Gets the era symbol, or `None` if data is loaded but symbol isn't found.
+    ///
+    /// `None` should fall back to the era code directly, if, for example,
+    /// a japanext datetime is formatted with a `DateTimeFormat<Japanese>`
+    fn get_symbol_for_era<'a>(
+        &'a self,
+        length: fields::FieldLength,
+        era_code: &'a Era,
+    ) -> Result<Option<&str>>;
 }
 
 impl<'data> provider::calendar::DateSymbolsV1<'data> {
@@ -442,23 +452,24 @@ impl<'data> DateSymbols<'data> for provider::calendar::DateSymbolsV1<'data> {
         })
     }
 
-    /// Get the era symbol
-    ///
-    /// This will fall back to the era code directly, if, for example,
-    /// a japanext datetime is formatted with a `DateTimeFormat<Japanese>`
-    fn get_symbol_for_era<'a>(&'a self, length: fields::FieldLength, era_code: &'a Era) -> &str {
+    fn get_symbol_for_era<'a>(
+        &'a self,
+        length: fields::FieldLength,
+        era_code: &'a Era,
+    ) -> Result<Option<&str>> {
         let symbols = match length {
             fields::FieldLength::Wide => &self.eras.names,
             fields::FieldLength::Narrow => &self.eras.narrow,
             _ => &self.eras.abbr,
         };
-        symbols
-            .get(era_code.0.as_str().into())
-            .unwrap_or(&era_code.0)
+        Ok(symbols.get(era_code.0.as_str().into()))
     }
 }
 
 pub trait TimeSymbols {
+    /// Gets the day period symbol.
+    ///
+    /// Internally, 'noon' and 'midnight' should fall back to 'am' and 'pm'.
     fn get_symbol_for_day_period(
         &self,
         day_period: fields::DayPeriod,

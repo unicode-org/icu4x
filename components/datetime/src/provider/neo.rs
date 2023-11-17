@@ -293,6 +293,27 @@ pub struct LinearSymbolsV1<'data> {
     pub symbols: VarZeroVec<'data, str>,
 }
 
+impl<'data> LinearSymbolsV1<'data> {
+    /// Gets the 'am' symbol assuming this struct contains day period data.
+    pub(crate) fn am(&self) -> Option<&str> {
+        self.symbols.get(0)
+    }
+    /// Gets the 'pm' symbol assuming this struct contains day period data.
+    pub(crate) fn pm(&self) -> Option<&str> {
+        self.symbols.get(1)
+    }
+    /// Gets the 'noon' symbol assuming this struct contains day period data.
+    pub(crate) fn noon(&self) -> Option<&str> {
+        self.symbols
+            .get(2)
+            .and_then(|s| if s.is_empty() { None } else { Some(s) })
+    }
+    /// Gets the 'midnight' symbol assuming this struct contains day period data.
+    pub(crate) fn midnight(&self) -> Option<&str> {
+        self.symbols.get(3)
+    }
+}
+
 /// The default per-length patterns associated with dates
 ///
 /// This uses an auxiliary subtag for length. The subtag can be "f", "l", "m", "s" for
