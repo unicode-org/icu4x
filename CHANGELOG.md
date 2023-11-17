@@ -1,7 +1,5 @@
 # Changelog
 
-## Unreleased
-
 ## icu4x 1.4 (Nov 16, 2023)
 
 - General
