@@ -5,7 +5,7 @@
 [package]
 name = "fixed_decimal"
 description = "An API for representing numbers in a human-readable form"
-version = "0.5.4"
+version = "0.5.5"
 license-file = "LICENSE"
 
 authors.workspace = true
@@ -41,6 +41,7 @@ criterion = "0.4"
 [features]
 std = []
 bench = []
+experimental = []
 ryu = ["dep:ryu"]
 
 [lib]

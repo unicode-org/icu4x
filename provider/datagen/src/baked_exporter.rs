@@ -109,7 +109,16 @@ macro_rules! move_out {
 // TokenStream isn't Send/Sync
 type SyncTokenStream = String;
 
-const MSRV: &str = std::env!("CARGO_PKG_RUST_VERSION");
+// Produces an MSRV clippy annotation if the `CARGO_PKG_RUST_VERSION` is set.
+fn maybe_msrv() -> TokenStream {
+    std::option_env!("CARGO_PKG_RUST_VERSION")
+        .map(|msrv| {
+            quote! {
+                #[clippy::msrv = #msrv]
+            }
+        })
+        .unwrap_or_default()
+}
 
 /// Options for configuring the output of [`BakedExporter`].
 #[non_exhaustive]
@@ -288,6 +297,8 @@ impl BakedExporter {
 
         let prefixed_macro_ident = format!("__impl_{ident}").parse::<TokenStream>().unwrap();
 
+        let maybe_msrv = maybe_msrv();
+
         self.write_to_file(
             PathBuf::from(format!("macros/{}.rs.data", ident)),
             quote! {
@@ -298,7 +309,7 @@ impl BakedExporter {
                 #[macro_export]
                 macro_rules! #prefixed_macro_ident {
                     ($provider:ty) => {
-                        #[clippy::msrv = #MSRV]
+                        #maybe_msrv
                         const _: () = <$provider>::MUST_USE_MAKE_PROVIDER_MACRO;
                         #body
                     }
@@ -355,15 +366,17 @@ impl DataExporter for BakedExporter {
 
         let bake = payload.tokenize(&self.dependencies);
 
+        let maybe_msrv = maybe_msrv();
+
         self.write_impl_macro(quote! {
-            #[clippy::msrv = #MSRV]
+            #maybe_msrv
             impl $provider {
                 // Exposing singleton structs as consts allows us to get rid of fallibility
                 #[doc(hidden)]
                 pub const #singleton_ident: &'static <#marker as icu_provider::DataMarker>::Yokeable = &#bake;
             }
 
-            #[clippy::msrv = #MSRV]
+            #maybe_msrv
             impl icu_provider::DataProvider<#marker> for $provider {
                 fn load(
                     &self,
@@ -449,6 +462,8 @@ impl BakedExporter {
             .expect("poison")
             .remove(&key)
             .unwrap_or_default();
+
+        let maybe_msrv = maybe_msrv();
 
         let body = if values.is_empty() {
             quote!(Err(icu_provider::DataErrorKind::MissingLocale.with_req(<#marker as icu_provider::KeyedDataMarker>::KEY, req)))
@@ -559,7 +574,7 @@ impl BakedExporter {
 
         self.write_impl_macro(
             quote! {
-                #[clippy::msrv = #MSRV]
+                #maybe_msrv
                 impl icu_provider::DataProvider<#marker> for $provider {
                     fn load(
                         &self,
@@ -590,6 +605,8 @@ impl BakedExporter {
                     || key.path().contains("datetime/symbols") || key.path().contains("datetime/patterns")
                 {
                     quote! { #[cfg(feature = "icu_datetime_experimental")] }
+                } else if *key == icu_plurals::provider::PluralRangesV1Marker::KEY {
+                    quote! { #[cfg(feature = "icu_plurals_experimental")] }
                 } else if *key == icu_provider::hello_world::HelloWorldV1Marker::KEY {
                     quote!()
                 } else {
@@ -622,6 +639,8 @@ impl BakedExporter {
             )
         }));
 
+        let maybe_msrv = maybe_msrv();
+
         // macros.rs is the interface for built-in data. It exposes one macro per data key.
         self.write_to_file(
             PathBuf::from("macros.rs"),
@@ -641,7 +660,7 @@ impl BakedExporter {
                 #[macro_export]
                 macro_rules! __make_provider {
                     ($name:ty) => {
-                        #[clippy::msrv = #MSRV]
+                        #maybe_msrv
                         impl $name {
                             #[doc(hidden)]
                             #[allow(dead_code)]
@@ -684,7 +703,7 @@ impl BakedExporter {
                 #[allow(unused_macros)]
                 macro_rules! impl_any_provider {
                     ($provider:ty) => {
-                        #[clippy::msrv = #MSRV]
+                        #maybe_msrv
                         impl icu_provider::AnyProvider for $provider {
                             fn load_any(&self, key: icu_provider::DataKey, req: icu_provider::DataRequest) -> Result<icu_provider::AnyResponse, icu_provider::DataError> {
                                 match key.hashed() {
@@ -701,7 +720,7 @@ impl BakedExporter {
                 }
 
                 // For backwards compatibility
-                #[clippy::msrv = #MSRV]
+                #maybe_msrv
                 pub struct BakedDataProvider;
                 impl_data_provider!(BakedDataProvider);
             },

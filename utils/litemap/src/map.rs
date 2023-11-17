@@ -107,7 +107,7 @@ where
     /// ```
     #[inline]
     pub fn first(&self) -> Option<(&K, &V)> {
-        self.values.lm_get(0).map(|(k, v)| (k, v))
+        self.values.lm_get(0)
     }
 
     /// Get the highest-rank key/value pair from the `LiteMap`, if it exists.
@@ -124,7 +124,7 @@ where
     /// ```
     #[inline]
     pub fn last(&self) -> Option<(&K, &V)> {
-        self.values.lm_get(self.len() - 1).map(|(k, v)| (k, v))
+        self.values.lm_get(self.len() - 1)
     }
 
     /// Returns a new [`LiteMap`] with owned keys and values.

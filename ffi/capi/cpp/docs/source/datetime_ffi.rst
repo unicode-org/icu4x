@@ -322,6 +322,13 @@
         See the `Rust documentation for year <https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.year>`__ for more information.
 
 
+    .. cpp:function:: bool is_in_leap_year() const
+
+        Returns whether this date is in a leap year
+
+        See the `Rust documentation for is_in_leap_year <https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.is_in_leap_year>`__ for more information.
+
+
     .. cpp:function:: uint8_t months_in_year() const
 
         Returns the number of months in the year represented by this date

@@ -1,5 +1,49 @@
 # Changelog
 
+## icu4x 1.4 (Nov 16, 2023)
+
+- General
+  - MSRV is now 1.67
+ 
+- Components
+    - Compiled data updated to CLDR 44 and ICU 74 (https://github.com/unicode-org/icu4x/pull/4245)
+    - `icu_calendar`
+      - Expose if a date is in a leap year (https://github.com/unicode-org/icu4x/pull/4273)
+    - `icu_locid`
+      - Canonicalize transform extensions to lowercase (https://github.com/unicode-org/icu4x/pull/4134)
+    - `icu_plurals`
+        - Experimental `PluralRulesWithRanges` for selecting the plural category for ranges (https://github.com/unicode-org/icu4x/issues/3012)
+    - `icu_properties`
+        - Support Indic_Syllabic_Category in icu_properties. (https://github.com/unicode-org/icu4x/pull/4176)
+        - Add enum constants for new Unicode 15.1 Line_Break properties. (https://github.com/unicode-org/icu4x/issues/4132)
+    - `icu_segmenter`
+        - Fix Unicode 15.0 sentence segmentation (https://github.com/unicode-org/icu4x/pull/4213)
+    - `icu_unicodeset_parse`
+        - Add support to parse UAX#29 properties (https://github.com/unicode-org/icu4x/pull/4175)
+- Data model and providers
+    - `icu_provider`
+        - Implement Any/BufferProvider for some smart pointers (https://github.com/unicode-org/icu4x/pull/4255) 
+    - `icu_provider_blob`
+      - New V2 serialization schema (https://github.com/unicode-org/icu4x/pull/4207)
+    - `icu_datagen`
+        - New CLI option `--format=blob2` (https://github.com/unicode-org/icu4x/pull/4207)
+        - CLDR 44 compatibility fixes (https://github.com/unicode-org/icu4x/pull/4134, https://github.com/unicode-org/icu4x/pull/4156, https://github.com/unicode-org/icu4x/pull/4158)
+        - Fix `supported_locales` for collator keys (https://github.com/unicode-org/icu4x/pull/4169)
+        - CLI: Fix behavior of `--segmenter-lstm-root` such that it does not override `icuexportdata-root` (https://github.com/unicode-org/icu4x/pull/4277)
+        - Make datagen work without `CARGO_PKG_RUST_VERSION` environment variable (https://github.com/unicode-org/icu4x/pull/4292)
+- Utilities
+    - `databake`
+        - Add implementations for `HashSet`, `HashMap`, `BTreeSet`, `BTreeMap` (https://github.com/unicode-org/icu4x/pull/4268, https://github.com/unicode-org/icu4x/pull/4274, https://github.com/unicode-org/icu4x/pull/4295)  
+        - Improvements to `databake::test_bake!()` (https://github.com/unicode-org/icu4x/pull/4182)
+    - `fixed_decimal`
+        - Experimental rounding increment support (https://github.com/unicode-org/icu4x/pull/4219, https://github.com/unicode-org/icu4x/pull/4246)
+    - `litemap`
+        - Implement `databake::Bake` on `LiteMap` (https://github.com/unicode-org/icu4x/pull/4275)
+    - `tinystr`
+        - Better Debug impl for UnvalidatedTinyAsciiStr (https://github.com/unicode-org/icu4x/pull/4189)
+    - `zerovec`
+        - Fix indexing bug in `ZeroMap2d::insert` (https://github.com/unicode-org/icu4x/pull/4160)
+
 ## icu4x 1.3.x
 
 Some crates received additional 1.3.x patch releases:

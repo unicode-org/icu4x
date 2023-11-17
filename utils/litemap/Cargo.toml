@@ -4,7 +4,7 @@
 
 [package]
 name = "litemap"
-version = "0.7.1"
+version = "0.7.2"
 keywords = ["sorted", "vec", "map", "hashmap", "btreemap"]
 description = "A key-value Map implementation based on a flat, sorted Vec."
 documentation = "https://docs.rs/litemap"
@@ -23,6 +23,7 @@ independent = true
 all-features = true
 
 [dependencies]
+databake = { workspace = true, default-features = false, optional = true }
 serde = {version = "1", optional = true, default-features = false, features = ["alloc"]}
 yoke = { workspace = true, features = ["derive"], optional = true }
 
@@ -43,6 +44,9 @@ criterion = "0.4"
 bench = ["serde"]
 default = ["alloc"]
 alloc = []
+databake = ["dep:databake"]
+serde = ["dep:serde"]
+yoke = ["dep:yoke"]
 
 # Enables the `testing` module with tools for testing custom stores.
 testing = ["alloc"]

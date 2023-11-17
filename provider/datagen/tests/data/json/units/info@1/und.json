@@ -1,0 +1,4150 @@
+{
+  "units_info": {
+    "100-kilometer": {
+      "dimension": null,
+      "convert_info": 0
+    },
+    "acre": {
+      "dimension": null,
+      "convert_info": 1
+    },
+    "ampere": {
+      "dimension": 0,
+      "convert_info": 2
+    },
+    "ampere-per-meter": {
+      "dimension": 1,
+      "convert_info": null
+    },
+    "ampere-per-square-meter": {
+      "dimension": 2,
+      "convert_info": null
+    },
+    "arc-minute": {
+      "dimension": null,
+      "convert_info": 3
+    },
+    "arc-second": {
+      "dimension": null,
+      "convert_info": 4
+    },
+    "astronomical-unit": {
+      "dimension": null,
+      "convert_info": 5
+    },
+    "atmosphere": {
+      "dimension": null,
+      "convert_info": 6
+    },
+    "bar": {
+      "dimension": null,
+      "convert_info": 7
+    },
+    "barrel": {
+      "dimension": null,
+      "convert_info": 8
+    },
+    "becquerel": {
+      "dimension": null,
+      "convert_info": 9
+    },
+    "bit": {
+      "dimension": 3,
+      "convert_info": 10
+    },
+    "british-thermal-unit": {
+      "dimension": null,
+      "convert_info": 11
+    },
+    "british-thermal-unit-it": {
+      "dimension": null,
+      "convert_info": 12
+    },
+    "bu-jp": {
+      "dimension": null,
+      "convert_info": 13
+    },
+    "bushel": {
+      "dimension": null,
+      "convert_info": 14
+    },
+    "byte": {
+      "dimension": null,
+      "convert_info": 15
+    },
+    "calorie": {
+      "dimension": null,
+      "convert_info": 16
+    },
+    "calorie-it": {
+      "dimension": null,
+      "convert_info": 17
+    },
+    "candela": {
+      "dimension": 4,
+      "convert_info": 18
+    },
+    "candela-per-square-meter": {
+      "dimension": 5,
+      "convert_info": null
+    },
+    "candela-square-meter-per-square-meter": {
+      "dimension": 6,
+      "convert_info": null
+    },
+    "carat": {
+      "dimension": null,
+      "convert_info": 19
+    },
+    "celsius": {
+      "dimension": null,
+      "convert_info": 20
+    },
+    "century": {
+      "dimension": null,
+      "convert_info": 21
+    },
+    "chain": {
+      "dimension": null,
+      "convert_info": 22
+    },
+    "cho": {
+      "dimension": null,
+      "convert_info": 23
+    },
+    "coulomb": {
+      "dimension": null,
+      "convert_info": 24
+    },
+    "cubic-meter": {
+      "dimension": 7,
+      "convert_info": null
+    },
+    "cubic-meter-per-kilogram": {
+      "dimension": 8,
+      "convert_info": null
+    },
+    "cubic-meter-per-meter": {
+      "dimension": 9,
+      "convert_info": null
+    },
+    "cubic-second-square-ampere-per-kilogram-square-meter": {
+      "dimension": 10,
+      "convert_info": null
+    },
+    "cup": {
+      "dimension": null,
+      "convert_info": 25
+    },
+    "cup-jp": {
+      "dimension": null,
+      "convert_info": 26
+    },
+    "cup-metric": {
+      "dimension": null,
+      "convert_info": 27
+    },
+    "dalton": {
+      "dimension": null,
+      "convert_info": 28
+    },
+    "day": {
+      "dimension": null,
+      "convert_info": 29
+    },
+    "day-person": {
+      "dimension": null,
+      "convert_info": 30
+    },
+    "decade": {
+      "dimension": null,
+      "convert_info": 31
+    },
+    "degree": {
+      "dimension": null,
+      "convert_info": 32
+    },
+    "dessert-spoon": {
+      "dimension": null,
+      "convert_info": 33
+    },
+    "dessert-spoon-imperial": {
+      "dimension": null,
+      "convert_info": 34
+    },
+    "dot": {
+      "dimension": null,
+      "convert_info": 35
+    },
+    "dram": {
+      "dimension": null,
+      "convert_info": 36
+    },
+    "drop": {
+      "dimension": null,
+      "convert_info": 37
+    },
+    "dunam": {
+      "dimension": null,
+      "convert_info": 38
+    },
+    "earth-mass": {
+      "dimension": null,
+      "convert_info": 39
+    },
+    "earth-radius": {
+      "dimension": null,
+      "convert_info": 40
+    },
+    "electronvolt": {
+      "dimension": null,
+      "convert_info": 41
+    },
+    "em": {
+      "dimension": 11,
+      "convert_info": 42
+    },
+    "fahrenheit": {
+      "dimension": null,
+      "convert_info": 43
+    },
+    "farad": {
+      "dimension": null,
+      "convert_info": 44
+    },
+    "fathom": {
+      "dimension": null,
+      "convert_info": 45
+    },
+    "fluid-ounce": {
+      "dimension": null,
+      "convert_info": 46
+    },
+    "fluid-ounce-imperial": {
+      "dimension": null,
+      "convert_info": 47
+    },
+    "foodcalorie": {
+      "dimension": null,
+      "convert_info": 48
+    },
+    "foot": {
+      "dimension": null,
+      "convert_info": 49
+    },
+    "fortnight": {
+      "dimension": null,
+      "convert_info": 50
+    },
+    "fun": {
+      "dimension": null,
+      "convert_info": 51
+    },
+    "furlong": {
+      "dimension": null,
+      "convert_info": 52
+    },
+    "g-force": {
+      "dimension": null,
+      "convert_info": 53
+    },
+    "gallon": {
+      "dimension": null,
+      "convert_info": 54
+    },
+    "gallon-imperial": {
+      "dimension": null,
+      "convert_info": 55
+    },
+    "gasoline-energy-density": {
+      "dimension": null,
+      "convert_info": 56
+    },
+    "grain": {
+      "dimension": null,
+      "convert_info": 57
+    },
+    "gram": {
+      "dimension": null,
+      "convert_info": 58
+    },
+    "gray": {
+      "dimension": null,
+      "convert_info": 59
+    },
+    "hectare": {
+      "dimension": null,
+      "convert_info": 60
+    },
+    "henry": {
+      "dimension": null,
+      "convert_info": 61
+    },
+    "hertz": {
+      "dimension": null,
+      "convert_info": 62
+    },
+    "horsepower": {
+      "dimension": null,
+      "convert_info": 63
+    },
+    "hour": {
+      "dimension": null,
+      "convert_info": 64
+    },
+    "inch": {
+      "dimension": null,
+      "convert_info": 65
+    },
+    "item": {
+      "dimension": 12,
+      "convert_info": 66
+    },
+    "item-per-cubic-meter": {
+      "dimension": 13,
+      "convert_info": null
+    },
+    "item-per-kilogram": {
+      "dimension": 14,
+      "convert_info": null
+    },
+    "item-per-second": {
+      "dimension": 15,
+      "convert_info": null
+    },
+    "jigger": {
+      "dimension": null,
+      "convert_info": 67
+    },
+    "jo-jp": {
+      "dimension": null,
+      "convert_info": 68
+    },
+    "joule": {
+      "dimension": null,
+      "convert_info": 69
+    },
+    "karat": {
+      "dimension": null,
+      "convert_info": 70
+    },
+    "katal": {
+      "dimension": null,
+      "convert_info": 71
+    },
+    "kelvin": {
+      "dimension": 16,
+      "convert_info": 72
+    },
+    "ken": {
+      "dimension": null,
+      "convert_info": 73
+    },
+    "kilogram": {
+      "dimension": 17,
+      "convert_info": 74
+    },
+    "kilogram-force": {
+      "dimension": null,
+      "convert_info": 75
+    },
+    "kilogram-meter-per-square-second": {
+      "dimension": 18,
+      "convert_info": null
+    },
+    "kilogram-per-cubic-meter": {
+      "dimension": 19,
+      "convert_info": null
+    },
+    "kilogram-per-kilogram": {
+      "dimension": 20,
+      "convert_info": null
+    },
+    "kilogram-per-meter-square-second": {
+      "dimension": 21,
+      "convert_info": null
+    },
+    "kilogram-per-square-meter-square-second": {
+      "dimension": 22,
+      "convert_info": null
+    },
+    "kilogram-per-square-second-ampere": {
+      "dimension": 23,
+      "convert_info": null
+    },
+    "kilogram-square-meter-per-cubic-second": {
+      "dimension": 24,
+      "convert_info": null
+    },
+    "kilogram-square-meter-per-cubic-second-ampere": {
+      "dimension": 25,
+      "convert_info": null
+    },
+    "kilogram-square-meter-per-cubic-second-square-ampere": {
+      "dimension": 26,
+      "convert_info": null
+    },
+    "kilogram-square-meter-per-square-second": {
+      "dimension": 27,
+      "convert_info": null
+    },
+    "kilogram-square-meter-per-square-second-ampere": {
+      "dimension": 28,
+      "convert_info": null
+    },
+    "kilogram-square-meter-per-square-second-square-ampere": {
+      "dimension": 29,
+      "convert_info": null
+    },
+    "knot": {
+      "dimension": null,
+      "convert_info": 76
+    },
+    "koku": {
+      "dimension": null,
+      "convert_info": 77
+    },
+    "kosaji": {
+      "dimension": null,
+      "convert_info": 78
+    },
+    "light-year": {
+      "dimension": null,
+      "convert_info": 79
+    },
+    "liter": {
+      "dimension": null,
+      "convert_info": 80
+    },
+    "lumen": {
+      "dimension": null,
+      "convert_info": 81
+    },
+    "lux": {
+      "dimension": null,
+      "convert_info": 82
+    },
+    "meter": {
+      "dimension": 30,
+      "convert_info": 83
+    },
+    "meter-per-second": {
+      "dimension": 31,
+      "convert_info": null
+    },
+    "meter-per-square-second": {
+      "dimension": 32,
+      "convert_info": null
+    },
+    "mile": {
+      "dimension": null,
+      "convert_info": 84
+    },
+    "mile-scandinavian": {
+      "dimension": null,
+      "convert_info": 85
+    },
+    "minute": {
+      "dimension": null,
+      "convert_info": 86
+    },
+    "mole": {
+      "dimension": null,
+      "convert_info": 87
+    },
+    "month": {
+      "dimension": null,
+      "convert_info": 88
+    },
+    "month-person": {
+      "dimension": null,
+      "convert_info": 89
+    },
+    "nautical-mile": {
+      "dimension": null,
+      "convert_info": 90
+    },
+    "newton": {
+      "dimension": null,
+      "convert_info": 91
+    },
+    "ofglucose": {
+      "dimension": null,
+      "convert_info": 92
+    },
+    "ofhg": {
+      "dimension": null,
+      "convert_info": 93
+    },
+    "ohm": {
+      "dimension": null,
+      "convert_info": 94
+    },
+    "osaji": {
+      "dimension": null,
+      "convert_info": 95
+    },
+    "ounce": {
+      "dimension": null,
+      "convert_info": 96
+    },
+    "ounce-troy": {
+      "dimension": null,
+      "convert_info": 97
+    },
+    "parsec": {
+      "dimension": null,
+      "convert_info": 98
+    },
+    "pascal": {
+      "dimension": null,
+      "convert_info": 99
+    },
+    "per-second": {
+      "dimension": 33,
+      "convert_info": null
+    },
+    "percent": {
+      "dimension": null,
+      "convert_info": 100
+    },
+    "permille": {
+      "dimension": null,
+      "convert_info": 101
+    },
+    "permillion": {
+      "dimension": null,
+      "convert_info": 102
+    },
+    "permyriad": {
+      "dimension": null,
+      "convert_info": 103
+    },
+    "pinch": {
+      "dimension": null,
+      "convert_info": 104
+    },
+    "pint": {
+      "dimension": null,
+      "convert_info": 105
+    },
+    "pint-imperial": {
+      "dimension": null,
+      "convert_info": 106
+    },
+    "pint-metric": {
+      "dimension": null,
+      "convert_info": 107
+    },
+    "pixel": {
+      "dimension": 34,
+      "convert_info": 108
+    },
+    "pixel-per-meter": {
+      "dimension": 35,
+      "convert_info": null
+    },
+    "point": {
+      "dimension": null,
+      "convert_info": 109
+    },
+    "portion": {
+      "dimension": 36,
+      "convert_info": 110
+    },
+    "pound": {
+      "dimension": null,
+      "convert_info": 111
+    },
+    "pound-force": {
+      "dimension": null,
+      "convert_info": 112
+    },
+    "pow4-second-square-ampere-per-kilogram-square-meter": {
+      "dimension": 37,
+      "convert_info": null
+    },
+    "quart": {
+      "dimension": null,
+      "convert_info": 113
+    },
+    "quart-imperial": {
+      "dimension": null,
+      "convert_info": 114
+    },
+    "quarter": {
+      "dimension": null,
+      "convert_info": 115
+    },
+    "radian": {
+      "dimension": null,
+      "convert_info": 116
+    },
+    "rankine": {
+      "dimension": null,
+      "convert_info": 117
+    },
+    "revolution": {
+      "dimension": 38,
+      "convert_info": 118
+    },
+    "revolution-per-meter": {
+      "dimension": 39,
+      "convert_info": null
+    },
+    "revolution-per-second": {
+      "dimension": 40,
+      "convert_info": null
+    },
+    "ri-jp": {
+      "dimension": null,
+      "convert_info": 119
+    },
+    "rin": {
+      "dimension": null,
+      "convert_info": 120
+    },
+    "rod": {
+      "dimension": null,
+      "convert_info": 121
+    },
+    "sai": {
+      "dimension": null,
+      "convert_info": 122
+    },
+    "se-jp": {
+      "dimension": null,
+      "convert_info": 123
+    },
+    "second": {
+      "dimension": 41,
+      "convert_info": 124
+    },
+    "second-ampere": {
+      "dimension": 42,
+      "convert_info": null
+    },
+    "shaku": {
+      "dimension": null,
+      "convert_info": 125
+    },
+    "shaku-cloth": {
+      "dimension": null,
+      "convert_info": 126
+    },
+    "shaku-length": {
+      "dimension": null,
+      "convert_info": 127
+    },
+    "siemens": {
+      "dimension": null,
+      "convert_info": 128
+    },
+    "sievert": {
+      "dimension": null,
+      "convert_info": 129
+    },
+    "slug": {
+      "dimension": null,
+      "convert_info": 130
+    },
+    "solar-luminosity": {
+      "dimension": null,
+      "convert_info": 131
+    },
+    "solar-mass": {
+      "dimension": null,
+      "convert_info": 132
+    },
+    "solar-radius": {
+      "dimension": null,
+      "convert_info": 133
+    },
+    "square-meter": {
+      "dimension": 43,
+      "convert_info": null
+    },
+    "square-meter-per-square-second": {
+      "dimension": 44,
+      "convert_info": null
+    },
+    "square-revolution": {
+      "dimension": 45,
+      "convert_info": null
+    },
+    "steradian": {
+      "dimension": null,
+      "convert_info": 134
+    },
+    "stone": {
+      "dimension": null,
+      "convert_info": 135
+    },
+    "sun": {
+      "dimension": null,
+      "convert_info": 136
+    },
+    "tablespoon": {
+      "dimension": null,
+      "convert_info": 137
+    },
+    "teaspoon": {
+      "dimension": null,
+      "convert_info": 138
+    },
+    "tesla": {
+      "dimension": null,
+      "convert_info": 139
+    },
+    "therm-us": {
+      "dimension": null,
+      "convert_info": 140
+    },
+    "to-jp": {
+      "dimension": null,
+      "convert_info": 141
+    },
+    "ton": {
+      "dimension": null,
+      "convert_info": 142
+    },
+    "tonne": {
+      "dimension": null,
+      "convert_info": 143
+    },
+    "volt": {
+      "dimension": null,
+      "convert_info": 144
+    },
+    "watt": {
+      "dimension": null,
+      "convert_info": 145
+    },
+    "weber": {
+      "dimension": null,
+      "convert_info": 146
+    },
+    "week": {
+      "dimension": null,
+      "convert_info": 147
+    },
+    "week-person": {
+      "dimension": null,
+      "convert_info": 148
+    },
+    "yard": {
+      "dimension": null,
+      "convert_info": 149
+    },
+    "year": {
+      "dimension": 46,
+      "convert_info": 150
+    },
+    "year-person": {
+      "dimension": null,
+      "convert_info": 151
+    }
+  },
+  "unit_dimensions": [
+    {
+      "quantity": "electric-current",
+      "specifier": "Base"
+    },
+    {
+      "quantity": "magnetic-field-strength",
+      "specifier": "Derived"
+    },
+    {
+      "quantity": "current-density",
+      "specifier": "Derived"
+    },
+    {
+      "quantity": "digital",
+      "specifier": "Base"
+    },
+    {
+      "quantity": "luminous-intensity",
+      "specifier": "Base"
+    },
+    {
+      "quantity": "illuminance",
+      "specifier": "Derived"
+    },
+    {
+      "quantity": "luminous-flux",
+      "specifier": "Derived"
+    },
+    {
+      "quantity": "volume",
+      "specifier": "Derived"
+    },
+    {
+      "quantity": "specific-volume",
+      "specifier": "Derived"
+    },
+    {
+      "quantity": "consumption",
+      "specifier": "Derived"
+    },
+    {
+      "quantity": "electric-conductance",
+      "specifier": "Derived"
+    },
+    {
+      "quantity": "typewidth",
+      "specifier": "Base"
+    },
+    {
+      "quantity": "substance-amount",
+      "specifier": "Base"
+    },
+    {
+      "quantity": "concentration",
+      "specifier": "Derived"
+    },
+    {
+      "quantity": "concentration-mass",
+      "specifier": "Derived"
+    },
+    {
+      "quantity": "catalytic-activity",
+      "specifier": "Derived"
+    },
+    {
+      "quantity": "temperature",
+      "specifier": "Base"
+    },
+    {
+      "quantity": "mass",
+      "specifier": "Base"
+    },
+    {
+      "quantity": "force",
+      "specifier": "Derived"
+    },
+    {
+      "quantity": "mass-density",
+      "specifier": "Derived"
+    },
+    {
+      "quantity": "mass-fraction",
+      "specifier": "Derived"
+    },
+    {
+      "quantity": "pressure",
+      "specifier": "Derived"
+    },
+    {
+      "quantity": "pressure-per-length",
+      "specifier": "Derived"
+    },
+    {
+      "quantity": "magnetic-induction",
+      "specifier": "Derived"
+    },
+    {
+      "quantity": "power",
+      "specifier": "Derived"
+    },
+    {
+      "quantity": "voltage",
+      "specifier": "Derived"
+    },
+    {
+      "quantity": "electric-resistance",
+      "specifier": "Derived"
+    },
+    {
+      "quantity": "energy",
+      "specifier": "Derived"
+    },
+    {
+      "quantity": "magnetic-flux",
+      "specifier": "Derived"
+    },
+    {
+      "quantity": "electric-inductance",
+      "specifier": "Derived"
+    },
+    {
+      "quantity": "length",
+      "specifier": "Base"
+    },
+    {
+      "quantity": "speed",
+      "specifier": "Derived"
+    },
+    {
+      "quantity": "acceleration",
+      "specifier": "Derived"
+    },
+    {
+      "quantity": "radioactivity",
+      "specifier": "Derived"
+    },
+    {
+      "quantity": "graphics",
+      "specifier": "Base"
+    },
+    {
+      "quantity": "resolution",
+      "specifier": "Derived"
+    },
+    {
+      "quantity": "portion",
+      "specifier": "Base"
+    },
+    {
+      "quantity": "electric-capacitance",
+      "specifier": "Derived"
+    },
+    {
+      "quantity": "angle",
+      "specifier": "Base"
+    },
+    {
+      "quantity": "wave-number",
+      "specifier": "Derived"
+    },
+    {
+      "quantity": "frequency",
+      "specifier": "Derived"
+    },
+    {
+      "quantity": "duration",
+      "specifier": "Base"
+    },
+    {
+      "quantity": "electric-charge",
+      "specifier": "Derived"
+    },
+    {
+      "quantity": "area",
+      "specifier": "Derived"
+    },
+    {
+      "quantity": "ionizing-radiation",
+      "specifier": "Derived"
+    },
+    {
+      "quantity": "solid-angle",
+      "specifier": "Derived"
+    },
+    {
+      "quantity": "year-duration",
+      "specifier": "Base"
+    }
+  ],
+  "convert_infos": [
+    {
+      "base_unit": "meter",
+      "factor_num": [
+        160,
+        134,
+        1
+      ],
+      "factor_den": [
+        1
+      ],
+      "factor_sign": "Positive",
+      "offset_num": [
+        0
+      ],
+      "offset_den": [
+        1
+      ],
+      "offset_sign": "Positive",
+      "exactness": "Exact"
+    },
+    {
+      "base_unit": "square-meter",
+      "factor_num": [
+        146,
+        58,
+        216,
+        18
+      ],
+      "factor_den": [
+        45,
+        49,
+        1
+      ],
+      "factor_sign": "Positive",
+      "offset_num": [
+        0
+      ],
+      "offset_den": [
+        1
+      ],
+      "offset_sign": "Positive",
+      "exactness": "Exact"
+    },
+    {
+      "base_unit": "ampere",
+      "factor_num": [
+        1
+      ],
+      "factor_den": [
+        1
+      ],
+      "factor_sign": "Positive",
+      "offset_num": [
+        0
+      ],
+      "offset_den": [
+        1
+      ],
+      "offset_sign": "Positive",
+      "exactness": "Exact"
+    },
+    {
+      "base_unit": "revolution",
+      "factor_num": [
+        1
+      ],
+      "factor_den": [
+        96,
+        84
+      ],
+      "factor_sign": "Positive",
+      "offset_num": [
+        0
+      ],
+      "offset_den": [
+        1
+      ],
+      "offset_sign": "Positive",
+      "exactness": "Exact"
+    },
+    {
+      "base_unit": "revolution",
+      "factor_num": [
+        1
+      ],
+      "factor_den": [
+        128,
+        198,
+        19
+      ],
+      "factor_sign": "Positive",
+      "offset_num": [
+        0
+      ],
+      "offset_den": [
+        1
+      ],
+      "offset_sign": "Positive",
+      "exactness": "Exact"
+    },
+    {
+      "base_unit": "meter",
+      "factor_num": [
+        108,
+        90,
+        186,
+        212,
+        34
+      ],
+      "factor_den": [
+        1
+      ],
+      "factor_sign": "Positive",
+      "offset_num": [
+        0
+      ],
+      "offset_den": [
+        1
+      ],
+      "offset_sign": "Positive",
+      "exactness": "Exact"
+    },
+    {
+      "base_unit": "kilogram-per-meter-square-second",
+      "factor_num": [
+        205,
+        139,
+        1
+      ],
+      "factor_den": [
+        1
+      ],
+      "factor_sign": "Positive",
+      "offset_num": [
+        0
+      ],
+      "offset_den": [
+        1
+      ],
+      "offset_sign": "Positive",
+      "exactness": "Exact"
+    },
+    {
+      "base_unit": "kilogram-per-meter-square-second",
+      "factor_num": [
+        160,
+        134,
+        1
+      ],
+      "factor_den": [
+        1
+      ],
+      "factor_sign": "Positive",
+      "offset_num": [
+        0
+      ],
+      "offset_den": [
+        1
+      ],
+      "offset_sign": "Positive",
+      "exactness": "Exact"
+    },
+    {
+      "base_unit": "cubic-meter",
+      "factor_num": [
+        141,
+        25,
+        70,
+        80,
+        2
+      ],
+      "factor_den": [
+        0,
+        81,
+        74,
+        141,
+        14
+      ],
+      "factor_sign": "Positive",
+      "offset_num": [
+        0
+      ],
+      "offset_den": [
+        1
+      ],
+      "offset_sign": "Positive",
+      "exactness": "Exact"
+    },
+    {
+      "base_unit": "per-second",
+      "factor_num": [
+        1
+      ],
+      "factor_den": [
+        1
+      ],
+      "factor_sign": "Positive",
+      "offset_num": [
+        0
+      ],
+      "offset_den": [
+        1
+      ],
+      "offset_sign": "Positive",
+      "exactness": "Exact"
+    },
+    {
+      "base_unit": "bit",
+      "factor_num": [
+        1
+      ],
+      "factor_den": [
+        1
+      ],
+      "factor_sign": "Positive",
+      "offset_num": [
+        0
+      ],
+      "offset_den": [
+        1
+      ],
+      "offset_sign": "Positive",
+      "exactness": "Exact"
+    },
+    {
+      "base_unit": "kilogram-square-meter-per-square-second",
+      "factor_num": [
+        183,
+        111,
+        254,
+        133,
+        5
+      ],
+      "factor_den": [
+        160,
+        82,
+        87,
+        1
+      ],
+      "factor_sign": "Positive",
+      "offset_num": [
+        0
+      ],
+      "offset_den": [
+        1
+      ],
+      "offset_sign": "Positive",
+      "exactness": "Exact"
+    },
+    {
+      "base_unit": "kilogram-square-meter-per-square-second",
+      "factor_num": [
+        55,
+        188,
+        79,
+        72,
+        12
+      ],
+      "factor_den": [
+        128,
+        240,
+        250,
+        2
+      ],
+      "factor_sign": "Positive",
+      "offset_num": [
+        0
+      ],
+      "offset_den": [
+        1
+      ],
+      "offset_sign": "Positive",
+      "exactness": "Exact"
+    },
+    {
+      "base_unit": "square-meter",
+      "factor_num": [
+        144,
+        1
+      ],
+      "factor_den": [
+        121
+      ],
+      "factor_sign": "Positive",
+      "offset_num": [
+        0
+      ],
+      "offset_den": [
+        1
+      ],
+      "offset_sign": "Positive",
+      "exactness": "Exact"
+    },
+    {
+      "base_unit": "cubic-meter",
+      "factor_num": [
+        127,
+        157,
+        147,
+        71,
+        51
+      ],
+      "factor_den": [
+        0,
+        164,
+        7,
+        49,
+        175,
+        5
+      ],
+      "factor_sign": "Positive",
+      "offset_num": [
+        0
+      ],
+      "offset_den": [
+        1
+      ],
+      "offset_sign": "Positive",
+      "exactness": "Exact"
+    },
+    {
+      "base_unit": "bit",
+      "factor_num": [
+        8
+      ],
+      "factor_den": [
+        1
+      ],
+      "factor_sign": "Positive",
+      "offset_num": [
+        0
+      ],
+      "offset_den": [
+        1
+      ],
+      "offset_sign": "Positive",
+      "exactness": "Exact"
+    },
+    {
+      "base_unit": "kilogram-square-meter-per-square-second",
+      "factor_num": [
+        11,
+        2
+      ],
+      "factor_den": [
+        125
+      ],
+      "factor_sign": "Positive",
+      "offset_num": [
+        0
+      ],
+      "offset_den": [
+        1
+      ],
+      "offset_sign": "Positive",
+      "exactness": "Exact"
+    },
+    {
+      "base_unit": "kilogram-square-meter-per-square-second",
+      "factor_num": [
+        227,
+        40
+      ],
+      "factor_den": [
+        196,
+        9
+      ],
+      "factor_sign": "Positive",
+      "offset_num": [
+        0
+      ],
+      "offset_den": [
+        1
+      ],
+      "offset_sign": "Positive",
+      "exactness": "Exact"
+    },
+    {
+      "base_unit": "candela",
+      "factor_num": [
+        1
+      ],
+      "factor_den": [
+        1
+      ],
+      "factor_sign": "Positive",
+      "offset_num": [
+        0
+      ],
+      "offset_den": [
+        1
+      ],
+      "offset_sign": "Positive",
+      "exactness": "Exact"
+    },
+    {
+      "base_unit": "kilogram",
+      "factor_num": [
+        1
+      ],
+      "factor_den": [
+        136,
+        19
+      ],
+      "factor_sign": "Positive",
+      "offset_num": [
+        0
+      ],
+      "offset_den": [
+        1
+      ],
+      "offset_sign": "Positive",
+      "exactness": "Exact"
+    },
+    {
+      "base_unit": "kelvin",
+      "factor_num": [
+        1
+      ],
+      "factor_den": [
+        1
+      ],
+      "factor_sign": "Positive",
+      "offset_num": [
+        87,
+        21
+      ],
+      "offset_den": [
+        20
+      ],
+      "offset_sign": "Positive",
+      "exactness": "Exact"
+    },
+    {
+      "base_unit": "year",
+      "factor_num": [
+        100
+      ],
+      "factor_den": [
+        1
+      ],
+      "factor_sign": "Positive",
+      "offset_num": [
+        0
+      ],
+      "offset_den": [
+        1
+      ],
+      "offset_sign": "Positive",
+      "exactness": "Exact"
+    },
+    {
+      "base_unit": "meter",
+      "factor_num": [
+        29,
+        49
+      ],
+      "factor_den": [
+        113,
+        2
+      ],
+      "factor_sign": "Positive",
+      "offset_num": [
+        0
+      ],
+      "offset_den": [
+        1
+      ],
+      "offset_sign": "Positive",
+      "exactness": "Exact"
+    },
+    {
+      "base_unit": "square-meter",
+      "factor_num": [
+        128,
+        79,
+        18
+      ],
+      "factor_den": [
+        121
+      ],
+      "factor_sign": "Positive",
+      "offset_num": [
+        0
+      ],
+      "offset_den": [
+        1
+      ],
+      "offset_sign": "Positive",
+      "exactness": "Exact"
+    },
+    {
+      "base_unit": "second-ampere",
+      "factor_num": [
+        1
+      ],
+      "factor_den": [
+        1
+      ],
+      "factor_sign": "Positive",
+      "offset_num": [
+        0
+      ],
+      "offset_den": [
+        1
+      ],
+      "offset_sign": "Positive",
+      "exactness": "Exact"
+    },
+    {
+      "base_unit": "cubic-meter",
+      "factor_num": [
+        153,
+        25,
+        52,
+        28
+      ],
+      "factor_den": [
+        0,
+        32,
+        74,
+        169,
+        209,
+        1
+      ],
+      "factor_sign": "Positive",
+      "offset_num": [
+        0
+      ],
+      "offset_den": [
+        1
+      ],
+      "offset_sign": "Positive",
+      "exactness": "Exact"
+    },
+    {
+      "base_unit": "cubic-meter",
+      "factor_num": [
+        1
+      ],
+      "factor_den": [
+        16,
+        39
+      ],
+      "factor_sign": "Positive",
+      "offset_num": [
+        0
+      ],
+      "offset_den": [
+        1
+      ],
+      "offset_sign": "Positive",
+      "exactness": "Exact"
+    },
+    {
+      "base_unit": "cubic-meter",
+      "factor_num": [
+        1
+      ],
+      "factor_den": [
+        160,
+        15
+      ],
+      "factor_sign": "Positive",
+      "offset_num": [
+        0
+      ],
+      "offset_den": [
+        1
+      ],
+      "offset_sign": "Positive",
+      "exactness": "Exact"
+    },
+    {
+      "base_unit": "kilogram",
+      "factor_num": [
+        11,
+        26,
+        149,
+        169,
+        38
+      ],
+      "factor_den": [
+        0,
+        0,
+        0,
+        0,
+        64,
+        34,
+        138,
+        9,
+        122,
+        196,
+        134,
+        90,
+        168,
+        76,
+        59,
+        75
+      ],
+      "factor_sign": "Positive",
+      "offset_num": [
+        0
+      ],
+      "offset_den": [
+        1
+      ],
+      "offset_sign": "Positive",
+      "exactness": "Approximate"
+    },
+    {
+      "base_unit": "second",
+      "factor_num": [
+        128,
+        81,
+        1
+      ],
+      "factor_den": [
+        1
+      ],
+      "factor_sign": "Positive",
+      "offset_num": [
+        0
+      ],
+      "offset_den": [
+        1
+      ],
+      "offset_sign": "Positive",
+      "exactness": "Exact"
+    },
+    {
+      "base_unit": "second",
+      "factor_num": [
+        128,
+        81,
+        1
+      ],
+      "factor_den": [
+        1
+      ],
+      "factor_sign": "Positive",
+      "offset_num": [
+        0
+      ],
+      "offset_den": [
+        1
+      ],
+      "offset_sign": "Positive",
+      "exactness": "Exact"
+    },
+    {
+      "base_unit": "year",
+      "factor_num": [
+        10
+      ],
+      "factor_den": [
+        1
+      ],
+      "factor_sign": "Positive",
+      "offset_num": [
+        0
+      ],
+      "offset_den": [
+        1
+      ],
+      "offset_sign": "Positive",
+      "exactness": "Exact"
+    },
+    {
+      "base_unit": "revolution",
+      "factor_num": [
+        1
+      ],
+      "factor_den": [
+        104,
+        1
+      ],
+      "factor_sign": "Positive",
+      "offset_num": [
+        0
+      ],
+      "offset_den": [
+        1
+      ],
+      "offset_sign": "Positive",
+      "exactness": "Exact"
+    },
+    {
+      "base_unit": "cubic-meter",
+      "factor_num": [
+        153,
+        25,
+        52,
+        28
+      ],
+      "factor_den": [
+        0,
+        0,
+        16,
+        165,
+        212,
+        232
+      ],
+      "factor_sign": "Positive",
+      "offset_num": [
+        0
+      ],
+      "offset_den": [
+        1
+      ],
+      "offset_sign": "Positive",
+      "exactness": "Exact"
+    },
+    {
+      "base_unit": "cubic-meter",
+      "factor_num": [
+        209,
+        239,
+        6
+      ],
+      "factor_den": [
+        0,
+        0,
+        8,
+        175,
+        47
+      ],
+      "factor_sign": "Positive",
+      "offset_num": [
+        0
+      ],
+      "offset_den": [
+        1
+      ],
+      "offset_sign": "Positive",
+      "exactness": "Exact"
+    },
+    {
+      "base_unit": "pixel",
+      "factor_num": [
+        1
+      ],
+      "factor_den": [
+        1
+      ],
+      "factor_sign": "Positive",
+      "offset_num": [
+        0
+      ],
+      "offset_den": [
+        1
+      ],
+      "offset_sign": "Positive",
+      "exactness": "Exact"
+    },
+    {
+      "base_unit": "cubic-meter",
+      "factor_num": [
+        153,
+        25,
+        52,
+        28
+      ],
+      "factor_den": [
+        0,
+        0,
+        136,
+        82,
+        106,
+        116
+      ],
+      "factor_sign": "Positive",
+      "offset_num": [
+        0
+      ],
+      "offset_den": [
+        1
+      ],
+      "offset_sign": "Positive",
+      "exactness": "Exact"
+    },
+    {
+      "base_unit": "cubic-meter",
+      "factor_num": [
+        51,
+        179,
+        102,
+        9
+      ],
+      "factor_den": [
+        0,
+        0,
+        192,
+        188,
+        247,
+        233,
+        10
+      ],
+      "factor_sign": "Positive",
+      "offset_num": [
+        0
+      ],
+      "offset_den": [
+        1
+      ],
+      "offset_sign": "Positive",
+      "exactness": "Exact"
+    },
+    {
+      "base_unit": "square-meter",
+      "factor_num": [
+        232,
+        3
+      ],
+      "factor_den": [
+        1
+      ],
+      "factor_sign": "Positive",
+      "offset_num": [
+        0
+      ],
+      "offset_den": [
+        1
+      ],
+      "offset_sign": "Positive",
+      "exactness": "Exact"
+    },
+    {
+      "base_unit": "kilogram",
+      "factor_num": [
+        0,
+        0,
+        160,
+        50,
+        72,
+        136,
+        88,
+        156,
+        169,
+        240,
+        4
+      ],
+      "factor_den": [
+        1
+      ],
+      "factor_sign": "Positive",
+      "offset_num": [
+        0
+      ],
+      "offset_den": [
+        1
+      ],
+      "offset_sign": "Positive",
+      "exactness": "Exact"
+    },
+    {
+      "base_unit": "meter",
+      "factor_num": [
+        116,
+        82,
+        97
+      ],
+      "factor_den": [
+        1
+      ],
+      "factor_sign": "Positive",
+      "offset_num": [
+        0
+      ],
+      "offset_den": [
+        1
+      ],
+      "offset_sign": "Positive",
+      "exactness": "Exact"
+    },
+    {
+      "base_unit": "kilogram-square-meter-per-square-second",
+      "factor_num": [
+        129,
+        114,
+        24
+      ],
+      "factor_den": [
+        0,
+        0,
+        0,
+        74,
+        72,
+        1,
+        20,
+        22,
+        149,
+        69,
+        8
+      ],
+      "factor_sign": "Positive",
+      "offset_num": [
+        0
+      ],
+      "offset_den": [
+        1
+      ],
+      "offset_sign": "Positive",
+      "exactness": "Exact"
+    },
+    {
+      "base_unit": "em",
+      "factor_num": [
+        1
+      ],
+      "factor_den": [
+        1
+      ],
+      "factor_sign": "Positive",
+      "offset_num": [
+        0
+      ],
+      "offset_den": [
+        1
+      ],
+      "offset_sign": "Positive",
+      "exactness": "Exact"
+    },
+    {
+      "base_unit": "kelvin",
+      "factor_num": [
+        5
+      ],
+      "factor_den": [
+        9
+      ],
+      "factor_sign": "Positive",
+      "offset_num": [
+        143,
+        179
+      ],
+      "offset_den": [
+        180
+      ],
+      "offset_sign": "Positive",
+      "exactness": "Exact"
+    },
+    {
+      "base_unit": "pow4-second-square-ampere-per-kilogram-square-meter",
+      "factor_num": [
+        1
+      ],
+      "factor_den": [
+        1
+      ],
+      "factor_sign": "Positive",
+      "offset_num": [
+        0
+      ],
+      "offset_den": [
+        1
+      ],
+      "offset_sign": "Positive",
+      "exactness": "Exact"
+    },
+    {
+      "base_unit": "meter",
+      "factor_num": [
+        119,
+        4
+      ],
+      "factor_den": [
+        113,
+        2
+      ],
+      "factor_sign": "Positive",
+      "offset_num": [
+        0
+      ],
+      "offset_den": [
+        1
+      ],
+      "offset_sign": "Positive",
+      "exactness": "Exact"
+    },
+    {
+      "base_unit": "cubic-meter",
+      "factor_num": [
+        153,
+        25,
+        52,
+        28
+      ],
+      "factor_den": [
+        0,
+        0,
+        81,
+        74,
+        141,
+        14
+      ],
+      "factor_sign": "Positive",
+      "offset_num": [
+        0
+      ],
+      "offset_den": [
+        1
+      ],
+      "offset_sign": "Positive",
+      "exactness": "Exact"
+    },
+    {
+      "base_unit": "cubic-meter",
+      "factor_num": [
+        209,
+        239,
+        6
+      ],
+      "factor_den": [
+        0,
+        160,
+        172,
+        185,
+        3
+      ],
+      "factor_sign": "Positive",
+      "offset_num": [
+        0
+      ],
+      "offset_den": [
+        1
+      ],
+      "offset_sign": "Positive",
+      "exactness": "Exact"
+    },
+    {
+      "base_unit": "kilogram-square-meter-per-square-second",
+      "factor_num": [
+        88,
+        16
+      ],
+      "factor_den": [
+        1
+      ],
+      "factor_sign": "Positive",
+      "offset_num": [
+        0
+      ],
+      "offset_den": [
+        1
+      ],
+      "offset_sign": "Positive",
+      "exactness": "Exact"
+    },
+    {
+      "base_unit": "meter",
+      "factor_num": [
+        125,
+        1
+      ],
+      "factor_den": [
+        226,
+        4
+      ],
+      "factor_sign": "Positive",
+      "offset_num": [
+        0
+      ],
+      "offset_den": [
+        1
+      ],
+      "offset_sign": "Positive",
+      "exactness": "Exact"
+    },
+    {
+      "base_unit": "second",
+      "factor_num": [
+        0,
+        117,
+        18
+      ],
+      "factor_den": [
+        1
+      ],
+      "factor_sign": "Positive",
+      "offset_num": [
+        0
+      ],
+      "offset_den": [
+        1
+      ],
+      "offset_sign": "Positive",
+      "exactness": "Exact"
+    },
+    {
+      "base_unit": "kilogram",
+      "factor_num": [
+        3
+      ],
+      "factor_den": [
+        64,
+        31
+      ],
+      "factor_sign": "Positive",
+      "offset_num": [
+        0
+      ],
+      "offset_den": [
+        1
+      ],
+      "offset_sign": "Positive",
+      "exactness": "Exact"
+    },
+    {
+      "base_unit": "meter",
+      "factor_num": [
+        58,
+        98
+      ],
+      "factor_den": [
+        125
+      ],
+      "factor_sign": "Positive",
+      "offset_num": [
+        0
+      ],
+      "offset_den": [
+        1
+      ],
+      "offset_sign": "Positive",
+      "exactness": "Exact"
+    },
+    {
+      "base_unit": "meter-per-square-second",
+      "factor_num": [
+        37,
+        254,
+        2
+      ],
+      "factor_den": [
+        32,
+        78
+      ],
+      "factor_sign": "Positive",
+      "offset_num": [
+        0
+      ],
+      "offset_den": [
+        1
+      ],
+      "offset_sign": "Positive",
+      "exactness": "Exact"
+    },
+    {
+      "base_unit": "cubic-meter",
+      "factor_num": [
+        153,
+        25,
+        52,
+        28
+      ],
+      "factor_den": [
+        0,
+        162,
+        148,
+        26,
+        29
+      ],
+      "factor_sign": "Positive",
+      "offset_num": [
+        0
+      ],
+      "offset_den": [
+        1
+      ],
+      "offset_sign": "Positive",
+      "exactness": "Exact"
+    },
+    {
+      "base_unit": "cubic-meter",
+      "factor_num": [
+        209,
+        239,
+        6
+      ],
+      "factor_den": [
+        0,
+        225,
+        245,
+        5
+      ],
+      "factor_sign": "Positive",
+      "offset_num": [
+        0
+      ],
+      "offset_den": [
+        1
+      ],
+      "offset_sign": "Positive",
+      "exactness": "Exact"
+    },
+    {
+      "base_unit": "kilogram-per-meter-square-second",
+      "factor_num": [
+        0,
+        160,
+        6,
+        97,
+        140,
+        242,
+        5,
+        10
+      ],
+      "factor_den": [
+        117,
+        208,
+        87,
+        1
+      ],
+      "factor_sign": "Positive",
+      "offset_num": [
+        0
+      ],
+      "offset_den": [
+        1
+      ],
+      "offset_sign": "Positive",
+      "exactness": "Exact"
+    },
+    {
+      "base_unit": "kilogram",
+      "factor_num": [
+        19,
+        224,
+        98
+      ],
+      "factor_den": [
+        0,
+        232,
+        118,
+        72,
+        23
+      ],
+      "factor_sign": "Positive",
+      "offset_num": [
+        0
+      ],
+      "offset_den": [
+        1
+      ],
+      "offset_sign": "Positive",
+      "exactness": "Exact"
+    },
+    {
+      "base_unit": "kilogram",
+      "factor_num": [
+        1
+      ],
+      "factor_den": [
+        232,
+        3
+      ],
+      "factor_sign": "Positive",
+      "offset_num": [
+        0
+      ],
+      "offset_den": [
+        1
+      ],
+      "offset_sign": "Positive",
+      "exactness": "Exact"
+    },
+    {
+      "base_unit": "square-meter-per-square-second",
+      "factor_num": [
+        1
+      ],
+      "factor_den": [
+        1
+      ],
+      "factor_sign": "Positive",
+      "offset_num": [
+        0
+      ],
+      "offset_den": [
+        1
+      ],
+      "offset_sign": "Positive",
+      "exactness": "Exact"
+    },
+    {
+      "base_unit": "square-meter",
+      "factor_num": [
+        16,
+        39
+      ],
+      "factor_den": [
+        1
+      ],
+      "factor_sign": "Positive",
+      "offset_num": [
+        0
+      ],
+      "offset_den": [
+        1
+      ],
+      "offset_sign": "Positive",
+      "exactness": "Exact"
+    },
+    {
+      "base_unit": "kilogram-square-meter-per-square-second-square-ampere",
+      "factor_num": [
+        1
+      ],
+      "factor_den": [
+        1
+      ],
+      "factor_sign": "Positive",
+      "offset_num": [
+        0
+      ],
+      "offset_den": [
+        1
+      ],
+      "offset_sign": "Positive",
+      "exactness": "Exact"
+    },
+    {
+      "base_unit": "revolution-per-second",
+      "factor_num": [
+        1
+      ],
+      "factor_den": [
+        1
+      ],
+      "factor_sign": "Positive",
+      "offset_num": [
+        0
+      ],
+      "offset_den": [
+        1
+      ],
+      "offset_sign": "Positive",
+      "exactness": "Exact"
+    },
+    {
+      "base_unit": "kilogram-square-meter-per-cubic-second",
+      "factor_num": [
+        39,
+        92,
+        188,
+        13,
+        129,
+        118,
+        132
+      ],
+      "factor_den": [
+        0,
+        32,
+        61,
+        136,
+        121,
+        45
+      ],
+      "factor_sign": "Positive",
+      "offset_num": [
+        0
+      ],
+      "offset_den": [
+        1
+      ],
+      "offset_sign": "Positive",
+      "exactness": "Exact"
+    },
+    {
+      "base_unit": "second",
+      "factor_num": [
+        16,
+        14
+      ],
+      "factor_den": [
+        1
+      ],
+      "factor_sign": "Positive",
+      "offset_num": [
+        0
+      ],
+      "offset_den": [
+        1
+      ],
+      "offset_sign": "Positive",
+      "exactness": "Exact"
+    },
+    {
+      "base_unit": "meter",
+      "factor_num": [
+        127
+      ],
+      "factor_den": [
+        136,
+        19
+      ],
+      "factor_sign": "Positive",
+      "offset_num": [
+        0
+      ],
+      "offset_den": [
+        1
+      ],
+      "offset_sign": "Positive",
+      "exactness": "Exact"
+    },
+    {
+      "base_unit": "item",
+      "factor_num": [
+        1
+      ],
+      "factor_den": [
+        1
+      ],
+      "factor_sign": "Positive",
+      "offset_num": [
+        0
+      ],
+      "offset_den": [
+        1
+      ],
+      "offset_sign": "Positive",
+      "exactness": "Exact"
+    },
+    {
+      "base_unit": "cubic-meter",
+      "factor_num": [
+        203,
+        76,
+        156,
+        84
+      ],
+      "factor_den": [
+        0,
+        0,
+        162,
+        148,
+        26,
+        29
+      ],
+      "factor_sign": "Positive",
+      "offset_num": [
+        0
+      ],
+      "offset_den": [
+        1
+      ],
+      "offset_sign": "Positive",
+      "exactness": "Exact"
+    },
+    {
+      "base_unit": "meter",
+      "factor_num": [
+        40
+      ],
+      "factor_den": [
+        121
+      ],
+      "factor_sign": "Positive",
+      "offset_num": [
+        0
+      ],
+      "offset_den": [
+        1
+      ],
+      "offset_sign": "Positive",
+      "exactness": "Exact"
+    },
+    {
+      "base_unit": "kilogram-square-meter-per-square-second",
+      "factor_num": [
+        1
+      ],
+      "factor_den": [
+        1
+      ],
+      "factor_sign": "Positive",
+      "offset_num": [
+        0
+      ],
+      "offset_den": [
+        1
+      ],
+      "offset_sign": "Positive",
+      "exactness": "Exact"
+    },
+    {
+      "base_unit": "portion",
+      "factor_num": [
+        1
+      ],
+      "factor_den": [
+        24
+      ],
+      "factor_sign": "Positive",
+      "offset_num": [
+        0
+      ],
+      "offset_den": [
+        1
+      ],
+      "offset_sign": "Positive",
+      "exactness": "Exact"
+    },
+    {
+      "base_unit": "item-per-second",
+      "factor_num": [
+        0,
+        0,
+        198,
+        92,
+        20,
+        95,
+        41,
+        23,
+        134,
+        127
+      ],
+      "factor_den": [
+        1
+      ],
+      "factor_sign": "Positive",
+      "offset_num": [
+        0
+      ],
+      "offset_den": [
+        1
+      ],
+      "offset_sign": "Positive",
+      "exactness": "Exact"
+    },
+    {
+      "base_unit": "kelvin",
+      "factor_num": [
+        1
+      ],
+      "factor_den": [
+        1
+      ],
+      "factor_sign": "Positive",
+      "offset_num": [
+        0
+      ],
+      "offset_den": [
+        1
+      ],
+      "offset_sign": "Positive",
+      "exactness": "Exact"
+    },
+    {
+      "base_unit": "meter",
+      "factor_num": [
+        24
+      ],
+      "factor_den": [
+        121
+      ],
+      "factor_sign": "Positive",
+      "offset_num": [
+        0
+      ],
+      "offset_den": [
+        1
+      ],
+      "offset_sign": "Positive",
+      "exactness": "Exact"
+    },
+    {
+      "base_unit": "kilogram",
+      "factor_num": [
+        1
+      ],
+      "factor_den": [
+        1
+      ],
+      "factor_sign": "Positive",
+      "offset_num": [
+        0
+      ],
+      "offset_den": [
+        1
+      ],
+      "offset_sign": "Positive",
+      "exactness": "Exact"
+    },
+    {
+      "base_unit": "kilogram-meter-per-square-second",
+      "factor_num": [
+        37,
+        254,
+        2
+      ],
+      "factor_den": [
+        32,
+        78
+      ],
+      "factor_sign": "Positive",
+      "offset_num": [
+        0
+      ],
+      "offset_den": [
+        1
+      ],
+      "offset_sign": "Positive",
+      "exactness": "Exact"
+    },
+    {
+      "base_unit": "meter-per-second",
+      "factor_num": [
+        207,
+        1
+      ],
+      "factor_den": [
+        132,
+        3
+      ],
+      "factor_sign": "Positive",
+      "offset_num": [
+        0
+      ],
+      "offset_den": [
+        1
+      ],
+      "offset_sign": "Positive",
+      "exactness": "Exact"
+    },
+    {
+      "base_unit": "cubic-meter",
+      "factor_num": [
+        97,
+        9
+      ],
+      "factor_den": [
+        254,
+        51
+      ],
+      "factor_sign": "Positive",
+      "offset_num": [
+        0
+      ],
+      "offset_den": [
+        1
+      ],
+      "offset_sign": "Positive",
+      "exactness": "Exact"
+    },
+    {
+      "base_unit": "cubic-meter",
+      "factor_num": [
+        1
+      ],
+      "factor_den": [
+        64,
+        13,
+        3
+      ],
+      "factor_sign": "Positive",
+      "offset_num": [
+        0
+      ],
+      "offset_den": [
+        1
+      ],
+      "offset_sign": "Positive",
+      "exactness": "Exact"
+    },
+    {
+      "base_unit": "meter",
+      "factor_num": [
+        192,
+        70,
+        34,
+        247,
+        123,
+        156,
+        33
+      ],
+      "factor_den": [
+        1
+      ],
+      "factor_sign": "Positive",
+      "offset_num": [
+        0
+      ],
+      "offset_den": [
+        1
+      ],
+      "offset_sign": "Positive",
+      "exactness": "Exact"
+    },
+    {
+      "base_unit": "cubic-meter",
+      "factor_num": [
+        1
+      ],
+      "factor_den": [
+        232,
+        3
+      ],
+      "factor_sign": "Positive",
+      "offset_num": [
+        0
+      ],
+      "offset_den": [
+        1
+      ],
+      "offset_sign": "Positive",
+      "exactness": "Exact"
+    },
+    {
+      "base_unit": "candela-square-meter-per-square-meter",
+      "factor_num": [
+        1
+      ],
+      "factor_den": [
+        1
+      ],
+      "factor_sign": "Positive",
+      "offset_num": [
+        0
+      ],
+      "offset_den": [
+        1
+      ],
+      "offset_sign": "Positive",
+      "exactness": "Exact"
+    },
+    {
+      "base_unit": "candela-per-square-meter",
+      "factor_num": [
+        1
+      ],
+      "factor_den": [
+        1
+      ],
+      "factor_sign": "Positive",
+      "offset_num": [
+        0
+      ],
+      "offset_den": [
+        1
+      ],
+      "offset_sign": "Positive",
+      "exactness": "Exact"
+    },
+    {
+      "base_unit": "meter",
+      "factor_num": [
+        1
+      ],
+      "factor_den": [
+        1
+      ],
+      "factor_sign": "Positive",
+      "offset_num": [
+        0
+      ],
+      "offset_den": [
+        1
+      ],
+      "offset_sign": "Positive",
+      "exactness": "Exact"
+    },
+    {
+      "base_unit": "meter",
+      "factor_num": [
+        208,
+        17,
+        3
+      ],
+      "factor_den": [
+        125
+      ],
+      "factor_sign": "Positive",
+      "offset_num": [
+        0
+      ],
+      "offset_den": [
+        1
+      ],
+      "offset_sign": "Positive",
+      "exactness": "Exact"
+    },
+    {
+      "base_unit": "meter",
+      "factor_num": [
+        16,
+        39
+      ],
+      "factor_den": [
+        1
+      ],
+      "factor_sign": "Positive",
+      "offset_num": [
+        0
+      ],
+      "offset_den": [
+        1
+      ],
+      "offset_sign": "Positive",
+      "exactness": "Exact"
+    },
+    {
+      "base_unit": "second",
+      "factor_num": [
+        60
+      ],
+      "factor_den": [
+        1
+      ],
+      "factor_sign": "Positive",
+      "offset_num": [
+        0
+      ],
+      "offset_den": [
+        1
+      ],
+      "offset_sign": "Positive",
+      "exactness": "Exact"
+    },
+    {
+      "base_unit": "item",
+      "factor_num": [
+        0,
+        0,
+        198,
+        92,
+        20,
+        95,
+        41,
+        23,
+        134,
+        127
+      ],
+      "factor_den": [
+        1
+      ],
+      "factor_sign": "Positive",
+      "offset_num": [
+        0
+      ],
+      "offset_den": [
+        1
+      ],
+      "offset_sign": "Positive",
+      "exactness": "Exact"
+    },
+    {
+      "base_unit": "year",
+      "factor_num": [
+        1
+      ],
+      "factor_den": [
+        12
+      ],
+      "factor_sign": "Positive",
+      "offset_num": [
+        0
+      ],
+      "offset_den": [
+        1
+      ],
+      "offset_sign": "Positive",
+      "exactness": "Exact"
+    },
+    {
+      "base_unit": "year",
+      "factor_num": [
+        1
+      ],
+      "factor_den": [
+        12
+      ],
+      "factor_sign": "Positive",
+      "offset_num": [
+        0
+      ],
+      "offset_den": [
+        1
+      ],
+      "offset_sign": "Positive",
+      "exactness": "Exact"
+    },
+    {
+      "base_unit": "meter",
+      "factor_num": [
+        60,
+        7
+      ],
+      "factor_den": [
+        1
+      ],
+      "factor_sign": "Positive",
+      "offset_num": [
+        0
+      ],
+      "offset_den": [
+        1
+      ],
+      "offset_sign": "Positive",
+      "exactness": "Exact"
+    },
+    {
+      "base_unit": "kilogram-meter-per-square-second",
+      "factor_num": [
+        1
+      ],
+      "factor_den": [
+        1
+      ],
+      "factor_sign": "Positive",
+      "offset_num": [
+        0
+      ],
+      "offset_den": [
+        1
+      ],
+      "offset_sign": "Positive",
+      "exactness": "Exact"
+    },
+    {
+      "base_unit": "item-per-kilogram",
+      "factor_num": [
+        0,
+        0,
+        0,
+        103,
+        26,
+        142,
+        124,
+        70,
+        46,
+        21,
+        150,
+        2,
+        76
+      ],
+      "factor_den": [
+        85,
+        125,
+        27
+      ],
+      "factor_sign": "Positive",
+      "offset_num": [
+        0
+      ],
+      "offset_den": [
+        1
+      ],
+      "offset_sign": "Positive",
+      "exactness": "Exact"
+    },
+    {
+      "base_unit": "kilogram-per-square-meter-square-second",
+      "factor_num": [
+        43,
+        163,
+        83,
+        53,
+        6
+      ],
+      "factor_den": [
+        64,
+        13,
+        3
+      ],
+      "factor_sign": "Positive",
+      "offset_num": [
+        0
+      ],
+      "offset_den": [
+        1
+      ],
+      "offset_sign": "Positive",
+      "exactness": "Exact"
+    },
+    {
+      "base_unit": "kilogram-square-meter-per-cubic-second-square-ampere",
+      "factor_num": [
+        1
+      ],
+      "factor_den": [
+        1
+      ],
+      "factor_sign": "Positive",
+      "offset_num": [
+        0
+      ],
+      "offset_den": [
+        1
+      ],
+      "offset_sign": "Positive",
+      "exactness": "Exact"
+    },
+    {
+      "base_unit": "cubic-meter",
+      "factor_num": [
+        3
+      ],
+      "factor_den": [
+        64,
+        13,
+        3
+      ],
+      "factor_sign": "Positive",
+      "offset_num": [
+        0
+      ],
+      "offset_den": [
+        1
+      ],
+      "offset_sign": "Positive",
+      "exactness": "Exact"
+    },
+    {
+      "base_unit": "kilogram",
+      "factor_num": [
+        133,
+        32,
+        180,
+        2
+      ],
+      "factor_den": [
+        0,
+        16,
+        94,
+        95
+      ],
+      "factor_sign": "Positive",
+      "offset_num": [
+        0
+      ],
+      "offset_den": [
+        1
+      ],
+      "offset_sign": "Positive",
+      "exactness": "Exact"
+    },
+    {
+      "base_unit": "kilogram",
+      "factor_num": [
+        115,
+        221,
+        11
+      ],
+      "factor_den": [
+        64,
+        120,
+        125,
+        1
+      ],
+      "factor_sign": "Positive",
+      "offset_num": [
+        0
+      ],
+      "offset_den": [
+        1
+      ],
+      "offset_sign": "Positive",
+      "exactness": "Exact"
+    },
+    {
+      "base_unit": "meter",
+      "factor_num": [
+        0,
+        160,
+        241,
+        225,
+        59,
+        176,
+        215,
+        71,
+        49,
+        129,
+        10
+      ],
+      "factor_den": [
+        99,
+        224,
+        135,
+        24
+      ],
+      "factor_sign": "Positive",
+      "offset_num": [
+        0
+      ],
+      "offset_den": [
+        1
+      ],
+      "offset_sign": "Positive",
+      "exactness": "Approximate"
+    },
+    {
+      "base_unit": "kilogram-per-meter-square-second",
+      "factor_num": [
+        1
+      ],
+      "factor_den": [
+        1
+      ],
+      "factor_sign": "Positive",
+      "offset_num": [
+        0
+      ],
+      "offset_den": [
+        1
+      ],
+      "offset_sign": "Positive",
+      "exactness": "Exact"
+    },
+    {
+      "base_unit": "portion",
+      "factor_num": [
+        1
+      ],
+      "factor_den": [
+        100
+      ],
+      "factor_sign": "Positive",
+      "offset_num": [
+        0
+      ],
+      "offset_den": [
+        1
+      ],
+      "offset_sign": "Positive",
+      "exactness": "Exact"
+    },
+    {
+      "base_unit": "portion",
+      "factor_num": [
+        1
+      ],
+      "factor_den": [
+        232,
+        3
+      ],
+      "factor_sign": "Positive",
+      "offset_num": [
+        0
+      ],
+      "offset_den": [
+        1
+      ],
+      "offset_sign": "Positive",
+      "exactness": "Exact"
+    },
+    {
+      "base_unit": "portion",
+      "factor_num": [
+        1
+      ],
+      "factor_den": [
+        64,
+        66,
+        15
+      ],
+      "factor_sign": "Positive",
+      "offset_num": [
+        0
+      ],
+      "offset_den": [
+        1
+      ],
+      "offset_sign": "Positive",
+      "exactness": "Exact"
+    },
+    {
+      "base_unit": "portion",
+      "factor_num": [
+        1
+      ],
+      "factor_den": [
+        16,
+        39
+      ],
+      "factor_sign": "Positive",
+      "offset_num": [
+        0
+      ],
+      "offset_den": [
+        1
+      ],
+      "offset_sign": "Positive",
+      "exactness": "Exact"
+    },
+    {
+      "base_unit": "cubic-meter",
+      "factor_num": [
+        153,
+        25,
+        52,
+        28
+      ],
+      "factor_den": [
+        0,
+        0,
+        128,
+        40,
+        165,
+        70,
+        7
+      ],
+      "factor_sign": "Positive",
+      "offset_num": [
+        0
+      ],
+      "offset_den": [
+        1
+      ],
+      "offset_sign": "Positive",
+      "exactness": "Exact"
+    },
+    {
+      "base_unit": "cubic-meter",
+      "factor_num": [
+        153,
+        25,
+        52,
+        28
+      ],
+      "factor_den": [
+        0,
+        16,
+        165,
+        212,
+        232
+      ],
+      "factor_sign": "Positive",
+      "offset_num": [
+        0
+      ],
+      "offset_den": [
+        1
+      ],
+      "offset_sign": "Positive",
+      "exactness": "Exact"
+    },
+    {
+      "base_unit": "cubic-meter",
+      "factor_num": [
+        209,
+        239,
+        6
+      ],
+      "factor_den": [
+        0,
+        8,
+        175,
+        47
+      ],
+      "factor_sign": "Positive",
+      "offset_num": [
+        0
+      ],
+      "offset_den": [
+        1
+      ],
+      "offset_sign": "Positive",
+      "exactness": "Exact"
+    },
+    {
+      "base_unit": "cubic-meter",
+      "factor_num": [
+        1
+      ],
+      "factor_den": [
+        208,
+        7
+      ],
+      "factor_sign": "Positive",
+      "offset_num": [
+        0
+      ],
+      "offset_den": [
+        1
+      ],
+      "offset_sign": "Positive",
+      "exactness": "Exact"
+    },
+    {
+      "base_unit": "pixel",
+      "factor_num": [
+        1
+      ],
+      "factor_den": [
+        1
+      ],
+      "factor_sign": "Positive",
+      "offset_num": [
+        0
+      ],
+      "offset_den": [
+        1
+      ],
+      "offset_sign": "Positive",
+      "exactness": "Exact"
+    },
+    {
+      "base_unit": "meter",
+      "factor_num": [
+        127
+      ],
+      "factor_den": [
+        64,
+        126,
+        5
+      ],
+      "factor_sign": "Positive",
+      "offset_num": [
+        0
+      ],
+      "offset_den": [
+        1
+      ],
+      "offset_sign": "Positive",
+      "exactness": "Exact"
+    },
+    {
+      "base_unit": "portion",
+      "factor_num": [
+        1
+      ],
+      "factor_den": [
+        1
+      ],
+      "factor_sign": "Positive",
+      "offset_num": [
+        0
+      ],
+      "offset_den": [
+        1
+      ],
+      "offset_sign": "Positive",
+      "exactness": "Exact"
+    },
+    {
+      "base_unit": "kilogram",
+      "factor_num": [
+        133,
+        32,
+        180,
+        2
+      ],
+      "factor_den": [
+        0,
+        225,
+        245,
+        5
+      ],
+      "factor_sign": "Positive",
+      "offset_num": [
+        0
+      ],
+      "offset_den": [
+        1
+      ],
+      "offset_sign": "Positive",
+      "exactness": "Exact"
+    },
+    {
+      "base_unit": "kilogram-meter-per-square-second",
+      "factor_num": [
+        57,
+        169,
+        86,
+        93,
+        23,
+        8
+      ],
+      "factor_den": [
+        0,
+        32,
+        74,
+        169,
+        209,
+        1
+      ],
+      "factor_sign": "Positive",
+      "offset_num": [
+        0
+      ],
+      "offset_den": [
+        1
+      ],
+      "offset_sign": "Positive",
+      "exactness": "Exact"
+    },
+    {
+      "base_unit": "cubic-meter",
+      "factor_num": [
+        153,
+        25,
+        52,
+        28
+      ],
+      "factor_den": [
+        0,
+        136,
+        82,
+        106,
+        116
+      ],
+      "factor_sign": "Positive",
+      "offset_num": [
+        0
+      ],
+      "offset_den": [
+        1
+      ],
+      "offset_sign": "Positive",
+      "exactness": "Exact"
+    },
+    {
+      "base_unit": "cubic-meter",
+      "factor_num": [
+        209,
+        239,
+        6
+      ],
+      "factor_den": [
+        0,
+        132,
+        215,
+        23
+      ],
+      "factor_sign": "Positive",
+      "offset_num": [
+        0
+      ],
+      "offset_den": [
+        1
+      ],
+      "offset_sign": "Positive",
+      "exactness": "Exact"
+    },
+    {
+      "base_unit": "year",
+      "factor_num": [
+        1
+      ],
+      "factor_den": [
+        4
+      ],
+      "factor_sign": "Positive",
+      "offset_num": [
+        0
+      ],
+      "offset_den": [
+        1
+      ],
+      "offset_sign": "Positive",
+      "exactness": "Exact"
+    },
+    {
+      "base_unit": "revolution",
+      "factor_num": [
+        48,
+        121,
+        231,
+        3
+      ],
+      "factor_den": [
+        99,
+        224,
+        135,
+        24
+      ],
+      "factor_sign": "Positive",
+      "offset_num": [
+        0
+      ],
+      "offset_den": [
+        1
+      ],
+      "offset_sign": "Positive",
+      "exactness": "Approximate"
+    },
+    {
+      "base_unit": "kelvin",
+      "factor_num": [
+        5
+      ],
+      "factor_den": [
+        9
+      ],
+      "factor_sign": "Positive",
+      "offset_num": [
+        0
+      ],
+      "offset_den": [
+        1
+      ],
+      "offset_sign": "Positive",
+      "exactness": "Exact"
+    },
+    {
+      "base_unit": "revolution",
+      "factor_num": [
+        1
+      ],
+      "factor_den": [
+        1
+      ],
+      "factor_sign": "Positive",
+      "offset_num": [
+        0
+      ],
+      "offset_den": [
+        1
+      ],
+      "offset_sign": "Positive",
+      "exactness": "Exact"
+    },
+    {
+      "base_unit": "meter",
+      "factor_num": [
+        128,
+        202
+      ],
+      "factor_den": [
+        121
+      ],
+      "factor_sign": "Positive",
+      "offset_num": [
+        0
+      ],
+      "offset_den": [
+        1
+      ],
+      "offset_sign": "Positive",
+      "exactness": "Exact"
+    },
+    {
+      "base_unit": "meter",
+      "factor_num": [
+        1
+      ],
+      "factor_den": [
+        42,
+        118
+      ],
+      "factor_sign": "Positive",
+      "offset_num": [
+        0
+      ],
+      "offset_den": [
+        1
+      ],
+      "offset_sign": "Positive",
+      "exactness": "Exact"
+    },
+    {
+      "base_unit": "meter",
+      "factor_num": [
+        29,
+        49
+      ],
+      "factor_den": [
+        196,
+        9
+      ],
+      "factor_sign": "Positive",
+      "offset_num": [
+        0
+      ],
+      "offset_den": [
+        1
+      ],
+      "offset_sign": "Positive",
+      "exactness": "Exact"
+    },
+    {
+      "base_unit": "cubic-meter",
+      "factor_num": [
+        97,
+        9
+      ],
+      "factor_den": [
+        192,
+        114,
+        85,
+        79
+      ],
+      "factor_sign": "Positive",
+      "offset_num": [
+        0
+      ],
+      "offset_den": [
+        1
+      ],
+      "offset_sign": "Positive",
+      "exactness": "Exact"
+    },
+    {
+      "base_unit": "square-meter",
+      "factor_num": [
+        224,
+        46
+      ],
+      "factor_den": [
+        121
+      ],
+      "factor_sign": "Positive",
+      "offset_num": [
+        0
+      ],
+      "offset_den": [
+        1
+      ],
+      "offset_sign": "Positive",
+      "exactness": "Exact"
+    },
+    {
+      "base_unit": "second",
+      "factor_num": [
+        1
+      ],
+      "factor_den": [
+        1
+      ],
+      "factor_sign": "Positive",
+      "offset_num": [
+        0
+      ],
+      "offset_den": [
+        1
+      ],
+      "offset_sign": "Positive",
+      "exactness": "Exact"
+    },
+    {
+      "base_unit": "cubic-meter",
+      "factor_num": [
+        97,
+        9
+      ],
+      "factor_den": [
+        224,
+        241,
+        238,
+        7
+      ],
+      "factor_sign": "Positive",
+      "offset_num": [
+        0
+      ],
+      "offset_den": [
+        1
+      ],
+      "offset_sign": "Positive",
+      "exactness": "Exact"
+    },
+    {
+      "base_unit": "meter",
+      "factor_num": [
+        5
+      ],
+      "factor_den": [
+        121
+      ],
+      "factor_sign": "Positive",
+      "offset_num": [
+        0
+      ],
+      "offset_den": [
+        1
+      ],
+      "offset_sign": "Positive",
+      "exactness": "Exact"
+    },
+    {
+      "base_unit": "meter",
+      "factor_num": [
+        4
+      ],
+      "factor_den": [
+        121
+      ],
+      "factor_sign": "Positive",
+      "offset_num": [
+        0
+      ],
+      "offset_den": [
+        1
+      ],
+      "offset_sign": "Positive",
+      "exactness": "Exact"
+    },
+    {
+      "base_unit": "cubic-second-square-ampere-per-kilogram-square-meter",
+      "factor_num": [
+        1
+      ],
+      "factor_den": [
+        1
+      ],
+      "factor_sign": "Positive",
+      "offset_num": [
+        0
+      ],
+      "offset_den": [
+        1
+      ],
+      "offset_sign": "Positive",
+      "exactness": "Exact"
+    },
+    {
+      "base_unit": "square-meter-per-square-second",
+      "factor_num": [
+        1
+      ],
+      "factor_den": [
+        1
+      ],
+      "factor_sign": "Positive",
+      "offset_num": [
+        0
+      ],
+      "offset_den": [
+        1
+      ],
+      "offset_sign": "Positive",
+      "exactness": "Exact"
+    },
+    {
+      "base_unit": "kilogram",
+      "factor_num": [
+        57,
+        169,
+        86,
+        93,
+        23,
+        8
+      ],
+      "factor_den": [
+        0,
+        208,
+        253,
+        238,
+        141
+      ],
+      "factor_sign": "Positive",
+      "offset_num": [
+        0
+      ],
+      "offset_den": [
+        1
+      ],
+      "offset_sign": "Positive",
+      "exactness": "Exact"
+    },
+    {
+      "base_unit": "kilogram-square-meter-per-cubic-second",
+      "factor_num": [
+        0,
+        0,
+        0,
+        242,
+        237,
+        212,
+        212,
+        148,
+        13,
+        165,
+        60,
+        1
+      ],
+      "factor_den": [
+        1
+      ],
+      "factor_sign": "Positive",
+      "offset_num": [
+        0
+      ],
+      "offset_den": [
+        1
+      ],
+      "offset_sign": "Positive",
+      "exactness": "Exact"
+    },
+    {
+      "base_unit": "kilogram",
+      "factor_num": [
+        0,
+        0,
+        0,
+        54,
+        63,
+        21,
+        208,
+        28,
+        40,
+        213,
+        23,
+        25,
+        25
+      ],
+      "factor_den": [
+        1
+      ],
+      "factor_sign": "Positive",
+      "offset_num": [
+        0
+      ],
+      "offset_den": [
+        1
+      ],
+      "offset_sign": "Positive",
+      "exactness": "Exact"
+    },
+    {
+      "base_unit": "meter",
+      "factor_num": [
+        32,
+        138,
+        119,
+        41
+      ],
+      "factor_den": [
+        1
+      ],
+      "factor_sign": "Positive",
+      "offset_num": [
+        0
+      ],
+      "offset_den": [
+        1
+      ],
+      "offset_sign": "Positive",
+      "exactness": "Exact"
+    },
+    {
+      "base_unit": "square-revolution",
+      "factor_num": [
+        0,
+        105,
+        254,
+        13,
+        35,
+        62,
+        15
+      ],
+      "factor_den": [
+        73,
+        102,
+        23,
+        253,
+        48,
+        194,
+        89,
+        2
+      ],
+      "factor_sign": "Positive",
+      "offset_num": [
+        0
+      ],
+      "offset_den": [
+        1
+      ],
+      "offset_sign": "Positive",
+      "exactness": "Approximate"
+    },
+    {
+      "base_unit": "kilogram",
+      "factor_num": [
+        163,
+        227,
+        236,
+        18
+      ],
+      "factor_den": [
+        128,
+        240,
+        250,
+        2
+      ],
+      "factor_sign": "Positive",
+      "offset_num": [
+        0
+      ],
+      "offset_den": [
+        1
+      ],
+      "offset_sign": "Positive",
+      "exactness": "Exact"
+    },
+    {
+      "base_unit": "meter",
+      "factor_num": [
+        2
+      ],
+      "factor_den": [
+        93,
+        2
+      ],
+      "factor_sign": "Positive",
+      "offset_num": [
+        0
+      ],
+      "offset_den": [
+        1
+      ],
+      "offset_sign": "Positive",
+      "exactness": "Exact"
+    },
+    {
+      "base_unit": "cubic-meter",
+      "factor_num": [
+        153,
+        25,
+        52,
+        28
+      ],
+      "factor_den": [
+        0,
+        0,
+        162,
+        148,
+        26,
+        29
+      ],
+      "factor_sign": "Positive",
+      "offset_num": [
+        0
+      ],
+      "offset_den": [
+        1
+      ],
+      "offset_sign": "Positive",
+      "exactness": "Exact"
+    },
+    {
+      "base_unit": "cubic-meter",
+      "factor_num": [
+        51,
+        179,
+        102,
+        9
+      ],
+      "factor_den": [
+        0,
+        0,
+        162,
+        148,
+        26,
+        29
+      ],
+      "factor_sign": "Positive",
+      "offset_num": [
+        0
+      ],
+      "offset_den": [
+        1
+      ],
+      "offset_sign": "Positive",
+      "exactness": "Exact"
+    },
+    {
+      "base_unit": "kilogram-per-square-second-ampere",
+      "factor_num": [
+        1
+      ],
+      "factor_den": [
+        1
+      ],
+      "factor_sign": "Positive",
+      "offset_num": [
+        0
+      ],
+      "offset_den": [
+        1
+      ],
+      "offset_sign": "Positive",
+      "exactness": "Exact"
+    },
+    {
+      "base_unit": "kilogram-square-meter-per-square-second",
+      "factor_num": [
+        208,
+        128,
+        73,
+        6
+      ],
+      "factor_den": [
+        1
+      ],
+      "factor_sign": "Positive",
+      "offset_num": [
+        0
+      ],
+      "offset_den": [
+        1
+      ],
+      "offset_sign": "Positive",
+      "exactness": "Exact"
+    },
+    {
+      "base_unit": "cubic-meter",
+      "factor_num": [
+        97,
+        9
+      ],
+      "factor_den": [
+        236,
+        7,
+        2
+      ],
+      "factor_sign": "Positive",
+      "offset_num": [
+        0
+      ],
+      "offset_den": [
+        1
+      ],
+      "offset_sign": "Positive",
+      "exactness": "Exact"
+    },
+    {
+      "base_unit": "kilogram",
+      "factor_num": [
+        133,
+        32,
+        180,
+        2
+      ],
+      "factor_den": [
+        80,
+        195
+      ],
+      "factor_sign": "Positive",
+      "offset_num": [
+        0
+      ],
+      "offset_den": [
+        1
+      ],
+      "offset_sign": "Positive",
+      "exactness": "Exact"
+    },
+    {
+      "base_unit": "kilogram",
+      "factor_num": [
+        232,
+        3
+      ],
+      "factor_den": [
+        1
+      ],
+      "factor_sign": "Positive",
+      "offset_num": [
+        0
+      ],
+      "offset_den": [
+        1
+      ],
+      "offset_sign": "Positive",
+      "exactness": "Exact"
+    },
+    {
+      "base_unit": "kilogram-square-meter-per-cubic-second-ampere",
+      "factor_num": [
+        1
+      ],
+      "factor_den": [
+        1
+      ],
+      "factor_sign": "Positive",
+      "offset_num": [
+        0
+      ],
+      "offset_den": [
+        1
+      ],
+      "offset_sign": "Positive",
+      "exactness": "Exact"
+    },
+    {
+      "base_unit": "kilogram-square-meter-per-cubic-second",
+      "factor_num": [
+        1
+      ],
+      "factor_den": [
+        1
+      ],
+      "factor_sign": "Positive",
+      "offset_num": [
+        0
+      ],
+      "offset_den": [
+        1
+      ],
+      "offset_sign": "Positive",
+      "exactness": "Exact"
+    },
+    {
+      "base_unit": "kilogram-square-meter-per-square-second-ampere",
+      "factor_num": [
+        1
+      ],
+      "factor_den": [
+        1
+      ],
+      "factor_sign": "Positive",
+      "offset_num": [
+        0
+      ],
+      "offset_den": [
+        1
+      ],
+      "offset_sign": "Positive",
+      "exactness": "Exact"
+    },
+    {
+      "base_unit": "second",
+      "factor_num": [
+        128,
+        58,
+        9
+      ],
+      "factor_den": [
+        1
+      ],
+      "factor_sign": "Positive",
+      "offset_num": [
+        0
+      ],
+      "offset_den": [
+        1
+      ],
+      "offset_sign": "Positive",
+      "exactness": "Exact"
+    },
+    {
+      "base_unit": "second",
+      "factor_num": [
+        128,
+        58,
+        9
+      ],
+      "factor_den": [
+        1
+      ],
+      "factor_sign": "Positive",
+      "offset_num": [
+        0
+      ],
+      "offset_den": [
+        1
+      ],
+      "offset_sign": "Positive",
+      "exactness": "Exact"
+    },
+    {
+      "base_unit": "meter",
+      "factor_num": [
+        119,
+        4
+      ],
+      "factor_den": [
+        226,
+        4
+      ],
+      "factor_sign": "Positive",
+      "offset_num": [
+        0
+      ],
+      "offset_den": [
+        1
+      ],
+      "offset_sign": "Positive",
+      "exactness": "Exact"
+    },
+    {
+      "base_unit": "year",
+      "factor_num": [
+        1
+      ],
+      "factor_den": [
+        1
+      ],
+      "factor_sign": "Positive",
+      "offset_num": [
+        0
+      ],
+      "offset_den": [
+        1
+      ],
+      "offset_sign": "Positive",
+      "exactness": "Exact"
+    },
+    {
+      "base_unit": "year",
+      "factor_num": [
+        1
+      ],
+      "factor_den": [
+        1
+      ],
+      "factor_sign": "Positive",
+      "offset_num": [
+        0
+      ],
+      "offset_den": [
+        1
+      ],
+      "offset_sign": "Positive",
+      "exactness": "Exact"
+    }
+  ]
+}

@@ -24,7 +24,7 @@ DatagenDriver::new()
     .with_all_locales()
     .export(
         &DatagenProvider::new_latest_tested(),
-        BlobExporter::new_with_sink(Box::new(
+        BlobExporter::new_v2_with_sink(Box::new(
             File::create("data.postcard").unwrap(),
         )),
     )
@@ -112,9 +112,7 @@ affect the behaviour of [`all_keys`]:
 * `icu_compactdecimal`
 * `icu_displaynames`
 * `icu_relativetime`
-* `icu_singlenumberformatter`
 * `icu_transliterate`
-* `icu_unitsconversion`
 * ...
 
 The meta-feature `experimental_components` is available to activate all experimental components.

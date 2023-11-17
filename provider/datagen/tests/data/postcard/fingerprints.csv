@@ -5515,10 +5515,10 @@ relativetime/short/year@1, tr, 107B, a182ac8d5087b3cb
 relativetime/short/year@1, und, 62B, 45e258268a1e1f9
 segmenter/dictionary/wl_ext@1, th, 224981B, f2d574736bb1a754
 segmenter/grapheme@1, und, 9078B, 521276f1d6a6e7fb
-segmenter/line@1, und, 18975B, 3ab728f2d21cd093
+segmenter/line@1, und, 18811B, 12f61c35e42a3bc4
 segmenter/lstm/wl_auto@1, th, 72034B, c46e2e0c098c1fc1
-segmenter/sentence@1, und, 14422B, cb9b72ee7305a6
-segmenter/word@1, und, 14645B, 8eeb80a978ebe4f6
+segmenter/sentence@1, und, 14402B, 7096b982eedd7655
+segmenter/word@1, und, 14641B, d91c662e2d94f17f
 time_zone/bcp47_to_iana@1, und, 7679B, 23e2467f999c5942
 time_zone/exemplar_cities@1, ar, 10095B, d10cbe1ac73b6c13
 time_zone/exemplar_cities@1, ar-EG, 10095B, d10cbe1ac73b6c13
@@ -5646,4 +5646,4 @@ transliterator/rules@1, und-x-und-t-und-d0-test-m0-niels-s0-test, 1769B, 4540044
 transliterator/rules@1, und-x-und-t-und-d0-test-m0-rectesta-s0-test, 369B, 69c41d4b5c828833
 transliterator/rules@1, und-x-und-t-und-d0-test-m0-rectestr-s0-test, 237B, 3345ed066cbb729f
 transliterator/rules@1, und-x-und-t-und-latn-d0-ascii, 27083B, bb4fc0b86c032865
-units/constants@1, und, 691B, 1dfe721c5582c8f
+units/info@1, und, 11898B, d12846e92c0c02c8

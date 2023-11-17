@@ -46,6 +46,7 @@ pub mod ffi {
 
         /// Creates a new [`ICU4XIsoDateTime`] from an [`ICU4XIsoDate`] and [`ICU4XTime`] object
         #[diplomat::rust_link(icu::calendar::DateTime::new, FnInStruct)]
+        #[diplomat::attr(dart, rename = "create_from_date_and_time")]
         pub fn crate_from_date_and_time(
             date: &ICU4XIsoDate,
             time: &ICU4XTime,
@@ -169,6 +170,12 @@ pub mod ffi {
         #[diplomat::rust_link(icu::calendar::Date::year, FnInStruct)]
         pub fn year(&self) -> i32 {
             self.0.date.year().number
+        }
+
+        /// Returns whether this date is in a leap year
+        #[diplomat::rust_link(icu::calendar::Date::is_in_leap_year, FnInStruct)]
+        pub fn is_in_leap_year(&self) -> bool {
+            self.0.date.is_in_leap_year()
         }
 
         /// Returns the number of months in the year represented by this date

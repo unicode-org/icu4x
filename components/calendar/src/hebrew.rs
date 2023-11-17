@@ -228,6 +228,10 @@ impl Calendar for Hebrew {
         Self::year_as_hebrew(date.0.year)
     }
 
+    fn is_in_leap_year(&self, date: &Self::DateInner) -> bool {
+        Self::is_leap_year(date.0.year)
+    }
+
     fn month(&self, date: &Self::DateInner) -> FormattableMonth {
         let mut ordinal = date.0.month;
         let is_leap_year = Self::is_leap_year(date.0.year);

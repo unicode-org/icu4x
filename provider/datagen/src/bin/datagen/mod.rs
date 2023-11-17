@@ -67,7 +67,7 @@ fn main() -> eyre::Result<()> {
     };
 
     provider = match config.segmenter_lstm {
-        config::PathOrTag::Path(path) => provider.with_icuexport(path)?,
+        config::PathOrTag::Path(path) => provider.with_segmenter_lstm(path)?,
         #[cfg(feature = "networking")]
         config::PathOrTag::Latest => {
             provider.with_segmenter_lstm_for_tag(DatagenProvider::LATEST_TESTED_SEGMENTER_LSTM_TAG)

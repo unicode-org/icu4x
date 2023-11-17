@@ -226,6 +226,10 @@ impl Calendar for Chinese {
         Self::format_chinese_year(date.0 .0.year, Some(date.0 .1))
     }
 
+    fn is_in_leap_year(&self, date: &Self::DateInner) -> bool {
+        Self::is_leap_year(date.0 .0.year)
+    }
+
     /// The calendar-specific month code represented by `date`;
     /// since the Chinese calendar has leap months, an "L" is appended to the month code for
     /// leap months. For example, in a year where an intercalary month is added after the second

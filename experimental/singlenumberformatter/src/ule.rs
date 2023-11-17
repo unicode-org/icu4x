@@ -7,7 +7,7 @@ use zerovec::{
     ule::{AsULE, ZeroVecError, ULE},
 };
 
-use crate::provider::{CurrencyPatterns, PatternSelection, PlaceHolder};
+use crate::provider::{CurrencyPatterns, PatternSelection, PlaceholderValue};
 
 const NO_PLACE_HOLDER: u16 = 0b0111_1111_1111; // decimal: 2047
 const USE_ISO_CODE: u16 = 0b0111_1111_1110; // decimal: 2046
@@ -73,8 +73,8 @@ impl AsULE for CurrencyPatterns {
         // For short_place_holder_index
         let [short_most_significant_byte, short_least_significant_byte_ule] =
             match self.short_place_holder_index {
-                Some(PlaceHolder::Index(index)) => index.to_be_bytes(),
-                Some(PlaceHolder::ISO) => USE_ISO_CODE.to_be_bytes(),
+                Some(PlaceholderValue::Index(index)) => index.to_be_bytes(),
+                Some(PlaceholderValue::ISO) => USE_ISO_CODE.to_be_bytes(),
                 None => NO_PLACE_HOLDER.to_be_bytes(),
             };
         if short_most_significant_byte & 0b1111_1000 != 0 {
@@ -88,8 +88,8 @@ impl AsULE for CurrencyPatterns {
         // For narrow_place_holder_index
         let [narrow_most_significant_byte, narrow_least_significant_byte_ule] =
             match self.narrow_place_holder_index {
-                Some(PlaceHolder::Index(index)) => index.to_be_bytes(),
-                Some(PlaceHolder::ISO) => USE_ISO_CODE.to_be_bytes(),
+                Some(PlaceholderValue::Index(index)) => index.to_be_bytes(),
+                Some(PlaceholderValue::ISO) => USE_ISO_CODE.to_be_bytes(),
                 None => NO_PLACE_HOLDER.to_be_bytes(),
             };
         if narrow_most_significant_byte & 0b1111_1000 != 0 {
@@ -132,19 +132,19 @@ impl AsULE for CurrencyPatterns {
 
         let short_place_holder_index = match short_place_holder_index {
             NO_PLACE_HOLDER => None,
-            USE_ISO_CODE => Some(PlaceHolder::ISO),
+            USE_ISO_CODE => Some(PlaceholderValue::ISO),
             index => {
                 debug_assert!(index <= MAX_PLACE_HOLDER_INDEX);
-                Some(PlaceHolder::Index(index))
+                Some(PlaceholderValue::Index(index))
             }
         };
 
         let narrow_place_holder_index = match narrow_place_holder_index {
             NO_PLACE_HOLDER => None,
-            USE_ISO_CODE => Some(PlaceHolder::ISO),
+            USE_ISO_CODE => Some(PlaceholderValue::ISO),
             index => {
                 debug_assert!(index <= MAX_PLACE_HOLDER_INDEX);
-                Some(PlaceHolder::Index(index))
+                Some(PlaceholderValue::Index(index))
             }
         };
 

@@ -131,6 +131,7 @@ pub mod ffi {
         /// as if errors had been replaced with REPLACEMENT CHARACTERs according
         /// to the WHATWG Encoding Standard.
         #[diplomat::rust_link(icu::collator::Collator::compare_utf8, FnInStruct)]
+        #[diplomat::attr(dart, disable)]
         pub fn compare(&self, left: &str, right: &str) -> ICU4XOrdering {
             let left = left.as_bytes(); // #2520
             let right = right.as_bytes(); // #2520
@@ -142,6 +143,7 @@ pub mod ffi {
         /// Note: In C++, passing ill-formed UTF-8 strings is undefined behavior
         /// (and may be memory-unsafe to do so, too).
         #[diplomat::rust_link(icu::collator::Collator::compare, FnInStruct)]
+        #[diplomat::attr(dart, rename = "compare")]
         pub fn compare_valid_utf8(&self, left: &str, right: &str) -> ICU4XOrdering {
             self.0.compare(left, right).into()
         }

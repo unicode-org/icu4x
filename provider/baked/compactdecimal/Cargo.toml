@@ -6,7 +6,7 @@
 name = "icu_compactdecimal_data"
 description = "Data for the icu_compactdecimal crate"
 license-file = "LICENSE"
-version = "1.3.4"
+version = "1.4.0"
 
 authors.workspace = true
 categories.workspace = true

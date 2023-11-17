@@ -108,6 +108,13 @@ class ICU4XIsoDate {
   int32_t year() const;
 
   /**
+   * Returns if the year is a leap year for this date
+   * 
+   * See the [Rust documentation for `is_in_leap_year`](https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.is_in_leap_year) for more information.
+   */
+  bool is_in_leap_year() const;
+
+  /**
    * Returns the number of months in the year represented by this date
    * 
    * See the [Rust documentation for `months_in_year`](https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.months_in_year) for more information.
@@ -186,6 +193,9 @@ inline uint32_t ICU4XIsoDate::month() const {
 }
 inline int32_t ICU4XIsoDate::year() const {
   return capi::ICU4XIsoDate_year(this->inner.get());
+}
+inline bool ICU4XIsoDate::is_in_leap_year() const {
+  return capi::ICU4XIsoDate_is_in_leap_year(this->inner.get());
 }
 inline uint8_t ICU4XIsoDate::months_in_year() const {
   return capi::ICU4XIsoDate_months_in_year(this->inner.get());

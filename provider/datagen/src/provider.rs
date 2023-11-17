@@ -62,21 +62,19 @@ impl DatagenProvider {
     }
 
     #[cfg(test)]
+    // This is equivalent for the files defined in `tools/testdata-scripts/globs.rs.data`.
     pub fn new_testing() -> Self {
         // Singleton so that all instantiations share the same cache.
         static SINGLETON: once_cell::sync::OnceCell<DatagenProvider> =
             once_cell::sync::OnceCell::new();
         SINGLETON
             .get_or_init(|| {
-                // This is equivalent for the files defined in `tools/testdata-scripts/globs.rs.data`.
-                let data_root =
-                    std::path::Path::new(core::env!("CARGO_MANIFEST_DIR")).join("tests/data");
                 Self::new_custom()
-                    .with_cldr(data_root.join("cldr"))
+                    .with_cldr("tests/data/cldr".into())
                     .unwrap()
-                    .with_icuexport(data_root.join("icuexport"))
+                    .with_icuexport("tests/data/icuexport".into())
                     .unwrap()
-                    .with_segmenter_lstm(data_root.join("lstm"))
+                    .with_segmenter_lstm("tests/data/lstm".into())
                     .unwrap()
             })
             .clone()
@@ -317,11 +315,11 @@ impl std::fmt::Display for TrieType {
 #[non_exhaustive]
 #[deprecated(since = "1.3.0", note = "use `DatagenProvider`")]
 pub struct SourceData {
-    cldr_paths: Option<Arc<CldrCache>>,
-    icuexport_paths: Option<Arc<SerdeCache>>,
-    segmenter_lstm_paths: Option<Arc<SerdeCache>>,
-    trie_type: TrieType,
-    collation_han_database: CollationHanDatabase,
+    pub(crate) cldr_paths: Option<Arc<CldrCache>>,
+    pub(crate) icuexport_paths: Option<Arc<SerdeCache>>,
+    pub(crate) segmenter_lstm_paths: Option<Arc<SerdeCache>>,
+    pub(crate) trie_type: TrieType,
+    pub(crate) collation_han_database: CollationHanDatabase,
     #[cfg(feature = "legacy_api")]
     // populated if constructed through `SourceData` constructor only
     pub(crate) icuexport_dictionary_fallback: Option<Arc<SerdeCache>>,

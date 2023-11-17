@@ -308,6 +308,13 @@
         See the `Rust documentation for year <https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.year>`__ for more information.
 
 
+    .. js:method:: is_in_leap_year()
+
+        Returns whether this date is in a leap year
+
+        See the `Rust documentation for is_in_leap_year <https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.is_in_leap_year>`__ for more information.
+
+
     .. js:method:: months_in_year()
 
         Returns the number of months in the year represented by this date
