@@ -11,7 +11,8 @@
 
 use alloc::borrow::Cow;
 use icu_provider::prelude::*;
-use zerovec::{VarZeroVec, ZeroMap, ZeroVec};
+use zerotrie::ZeroTrie;
+use zerovec::{VarZeroVec, ZeroVec};
 
 #[cfg(feature = "datagen")]
 /// The latest minimum set of keys required by this component.
@@ -34,15 +35,9 @@ pub const KEYS: &[DataKey] = &[UnitsInfoV1Marker::KEY];
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[yoke(prove_covariance_manually)]
 pub struct UnitsInfoV1<'data> {
-    // TODO(#4313).
-    /// Maps from unit name (e.g. foot) to the index of the unit in the `unit_quantity` vector.
+    /// Maps from unit name (e.g. foot) to it is conversion information.
     #[cfg_attr(feature = "serde", serde(borrow))]
-    pub units_info: ZeroMap<'data, str, UnitsInfoIndex>,
-
-    /// Contains the dimensions information for the units.
-    /// For example, the dimension for the unit `foot` is `length`.
-    #[cfg_attr(feature = "serde", serde(borrow))]
-    pub unit_dimensions: VarZeroVec<'data, DimensionULE>,
+    pub units_conversion_map: ZeroTrie<ZeroVec<'data, u8>>,
 
     /// Contains the conversion information, such as the conversion rate and the base unit.
     /// For example, the conversion information for the unit `foot` is `1 foot = 0.3048 meter`.
