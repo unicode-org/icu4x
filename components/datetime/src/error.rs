@@ -74,6 +74,9 @@ pub enum DateTimeError {
     /// ordinal_rules must be set for PatternPlurals::MultipleVariants
     #[displaydoc("ordinal_rules must be set for PatternPlurals::MultipleVariants")]
     MissingOrdinalRules,
+    /// The names for the given field are not loaded
+    #[displaydoc("Missing names for {0:?}")]
+    MissingNames(crate::fields::Field),
 }
 
 impl From<PatternError> for DateTimeError {

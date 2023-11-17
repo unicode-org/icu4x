@@ -169,7 +169,10 @@ impl<C: CldrCalendar> TypedDateTimePatternInterpolator<C> {
                 fields::Month::StandAlone => aux::Context::Standalone,
             },
             match field_length {
-                fields::FieldLength::Abbreviated => aux::Length::Abbr,
+                // UTS 35 says that "E..EEE" are all Abbreviated
+                fields::FieldLength::One
+                | fields::FieldLength::TwoDigit
+                | fields::FieldLength::Abbreviated => aux::Length::Abbr,
                 fields::FieldLength::Narrow => aux::Length::Narrow,
                 fields::FieldLength::Wide => aux::Length::Wide,
                 fields::FieldLength::Six => aux::Length::Short,
@@ -184,6 +187,45 @@ impl<C: CldrCalendar> TypedDateTimePatternInterpolator<C> {
             })?
             .take_payload()?;
         self.month_symbols = OptionalSymbols::SingleLength(field_symbol, field_length, payload);
+        Ok(self)
+    }
+
+    /// Loads day period names for the specified length.
+    pub fn load_day_period_names<P>(
+        &mut self,
+        provider: &P,
+        field_length: fields::FieldLength,
+    ) -> Result<&mut Self, Error>
+    where
+        P: DataProvider<DayPeriodSymbolsV1Marker> + ?Sized,
+    {
+        if self.dayperiod_symbols.is_some() {
+            // TODO: Discuss what do do here
+            return Err(Error::Data(DataError::custom(
+                "day period symbols already loaded",
+            )));
+        }
+        let mut locale = self.locale.clone();
+        locale.set_aux(AuxiliaryKeys::from_subtag(aux::subtag_for(
+            aux::Context::Format,
+            match field_length {
+                // UTS 35 says that "a..aaa" are all Abbreviated
+                fields::FieldLength::One
+                | fields::FieldLength::TwoDigit
+                | fields::FieldLength::Abbreviated => aux::Length::Abbr,
+                fields::FieldLength::Narrow => aux::Length::Narrow,
+                fields::FieldLength::Wide => aux::Length::Wide,
+                // TODO: What error to return here?
+                _ => return Err(Error::MissingDateSymbols),
+            },
+        )));
+        let payload = provider
+            .load(DataRequest {
+                locale: &locale,
+                metadata: Default::default(),
+            })?
+            .take_payload()?;
+        self.dayperiod_symbols = OptionalSymbols::SingleLength((), field_length, payload);
         Ok(self)
     }
 
@@ -369,6 +411,11 @@ impl<'data> DateSymbols<'data> for RawDateTimePatternInterpolatorBorrowed<'data>
         field_length: fields::FieldLength,
         day: input::IsoWeekday,
     ) -> Result<&str, Error> {
+        // UTS 35 says that "E..EEE" are all Abbreviated
+        let field_length = match field_length {
+            fields::FieldLength::One | fields::FieldLength::TwoDigit => fields::FieldLength::Abbreviated,
+            other => other
+        };
         // TODO: This should be MissingWeekdaySymbols in neo
         let weekday_symbols = self
             .weekday_symbols
@@ -408,11 +455,19 @@ impl<'data> TimeSymbols for RawDateTimePatternInterpolatorBorrowed<'data> {
         is_top_of_hour: bool,
     ) -> Result<&str, Error> {
         use fields::DayPeriod::NoonMidnight;
-        // TODO: This should be MissingDayPeriodSymbols in neo
+        let field = fields::Field {
+            symbol: fields::FieldSymbol::DayPeriod(field_symbol),
+            length: field_length,
+        };
+        // UTS 35 says that "a..aaa" are all Abbreviated
+        let field_length = match field_length {
+            fields::FieldLength::One | fields::FieldLength::TwoDigit => fields::FieldLength::Abbreviated,
+            other => other
+        };
         let dayperiod_symbols = self
             .dayperiod_symbols
             .get_with_length((), field_length)
-            .ok_or(Error::MissingTimeSymbols)?;
+            .ok_or_else(|| Error::MissingNames(field))?;
         let option_value: Option<&str> = match (field_symbol, u8::from(hour), is_top_of_hour) {
             (NoonMidnight, 00, true) => dayperiod_symbols
                 .midnight()
@@ -421,8 +476,7 @@ impl<'data> TimeSymbols for RawDateTimePatternInterpolatorBorrowed<'data> {
             (_, hour, _) if hour < 12 => dayperiod_symbols.am(),
             _ => dayperiod_symbols.pm(),
         };
-        // TODO: This should be MissingDayPeriodSymbol
-        option_value.ok_or_else(|| Error::MissingTimeSymbols)
+        option_value.ok_or_else(|| Error::MissingNames(field))
     }
 }
 
@@ -451,14 +505,19 @@ mod tests {
                 fields::Weekday::Format,
                 fields::FieldLength::Wide,
             )
+            .unwrap()
+            .load_day_period_names(&crate::provider::Baked, fields::FieldLength::Abbreviated)
             .unwrap();
         let reference_pattern: reference::Pattern =
-            "'It is' EEEE, MMM d, y 'at' HH:mm'!'".parse().unwrap();
+            "'It is' EEEE, MMM d, y 'at' hh:mm a'!'".parse().unwrap();
         let pattern: Pattern = (&reference_pattern).into();
         let datetime = DateTime::try_new_gregorian_datetime(2023, 10, 25, 15, 0, 55).unwrap();
         let formatted_pattern = interpolator.format(&pattern, &datetime);
 
-        assert_writeable_eq!(formatted_pattern, "It is Wednesday, Oct 25, 2023 at 15:00!");
+        assert_writeable_eq!(
+            formatted_pattern,
+            "It is Wednesday, Oct 25, 2023 at 03:00 PM!"
+        );
     }
 
     #[test]
