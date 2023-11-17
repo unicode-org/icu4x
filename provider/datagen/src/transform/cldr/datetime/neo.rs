@@ -170,7 +170,9 @@ impl DatagenProvider {
         Self: IterableDataProvider<M>,
     {
         self.load_neo_key(req, &calendar, |langid, data, aux| {
-            let (context, length) = aux::subtag_info(aux);
+            let Some((context, length)) = aux::subtag_info(aux) else {
+                panic!("Found unexpected auxiliary subtag {}", aux)
+            };
             conversion(self, langid, data, &calendar, context, length)
         })
     }

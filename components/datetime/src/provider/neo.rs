@@ -92,19 +92,19 @@ pub mod aux {
     /// including in SemVer minor releases. While the serde representation of data structs is guaranteed
     /// to be stable, their Rust representation might not be. Use with caution.
     /// </div>
-    pub fn subtag_info(subtag: Subtag) -> (Context, Length) {
+    pub fn subtag_info(subtag: Subtag) -> Option<(Context, Length)> {
         use {Context::*, Length::*};
         match subtag {
-            NUMERIC => (Format, Numeric),
-            ABBR => (Format, Abbr),
-            NARROW => (Format, Narrow),
-            WIDE => (Format, Wide),
-            SHORT => (Format, Short),
-            ABBR_STANDALONE => (Standalone, Abbr),
-            NARROW_STANDALONE => (Standalone, Narrow),
-            WIDE_STANDALONE => (Standalone, Wide),
-            SHORT_STANDALONE => (Standalone, Short),
-            _ => panic!("Found unexpected auxiliary subtag {}", subtag),
+            NUMERIC => Some((Format, Numeric)),
+            ABBR => Some((Format, Abbr)),
+            NARROW => Some((Format, Narrow)),
+            WIDE => Some((Format, Wide)),
+            SHORT => Some((Format, Short)),
+            ABBR_STANDALONE => Some((Standalone, Abbr)),
+            NARROW_STANDALONE => Some((Standalone, Narrow)),
+            WIDE_STANDALONE => Some((Standalone, Wide)),
+            SHORT_STANDALONE => Some((Standalone, Short)),
+            _ => None,
         }
     }
 }
