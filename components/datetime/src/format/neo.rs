@@ -172,6 +172,7 @@ impl<C: CldrCalendar> TypedDateTimePatternInterpolator<C> {
                 fields::FieldLength::Abbreviated => aux::Length::Abbr,
                 fields::FieldLength::Narrow => aux::Length::Narrow,
                 fields::FieldLength::Wide => aux::Length::Wide,
+                fields::FieldLength::Six => aux::Length::Short,
                 // TODO: What error to return here?
                 _ => return Err(Error::MissingDateSymbols),
             },
@@ -183,6 +184,46 @@ impl<C: CldrCalendar> TypedDateTimePatternInterpolator<C> {
             })?
             .take_payload()?;
         self.month_symbols = OptionalSymbols::SingleLength(field_symbol, field_length, payload);
+        Ok(self)
+    }
+
+    /// Loads weekday names for the specified symbol and length.
+    pub fn load_weekday_names<P>(
+        &mut self,
+        provider: &P,
+        field_symbol: fields::Weekday,
+        field_length: fields::FieldLength,
+    ) -> Result<&mut Self, Error>
+    where
+        P: DataProvider<WeekdaySymbolsV1Marker> + ?Sized,
+    {
+        if self.weekday_symbols.is_some() {
+            // TODO: Discuss what do do here
+            return Err(Error::Data(DataError::custom(
+                "weekday symbols already loaded",
+            )));
+        }
+        let mut locale = self.locale.clone();
+        locale.set_aux(AuxiliaryKeys::from_subtag(aux::subtag_for(
+            match field_symbol {
+                fields::Weekday::Format | fields::Weekday::Local => aux::Context::Format,
+                fields::Weekday::StandAlone => aux::Context::Standalone,
+            },
+            match field_length {
+                fields::FieldLength::Abbreviated => aux::Length::Abbr,
+                fields::FieldLength::Narrow => aux::Length::Narrow,
+                fields::FieldLength::Wide => aux::Length::Wide,
+                // TODO: What error to return here?
+                _ => return Err(Error::MissingDateSymbols),
+            },
+        )));
+        let payload = provider
+            .load(DataRequest {
+                locale: &locale,
+                metadata: Default::default(),
+            })?
+            .take_payload()?;
+        self.weekday_symbols = OptionalSymbols::SingleLength(field_symbol, field_length, payload);
         Ok(self)
     }
 }
@@ -404,14 +445,20 @@ mod tests {
                 fields::Month::Format,
                 fields::FieldLength::Abbreviated,
             )
+            .unwrap()
+            .load_weekday_names(
+                &crate::provider::Baked,
+                fields::Weekday::Format,
+                fields::FieldLength::Wide,
+            )
             .unwrap();
         let reference_pattern: reference::Pattern =
-            "'It is' MMM d, y 'at' HH:mm'!'".parse().unwrap();
+            "'It is' EEEE, MMM d, y 'at' HH:mm'!'".parse().unwrap();
         let pattern: Pattern = (&reference_pattern).into();
         let datetime = DateTime::try_new_gregorian_datetime(2023, 10, 25, 15, 0, 55).unwrap();
         let formatted_pattern = interpolator.format(&pattern, &datetime);
 
-        assert_writeable_eq!(formatted_pattern, "It is Oct 25, 2023 at 15:00!");
+        assert_writeable_eq!(formatted_pattern, "It is Wednesday, Oct 25, 2023 at 15:00!");
     }
 
     #[test]
