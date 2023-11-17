@@ -9,6 +9,7 @@
 //! Sample file:
 //! <https://github.com/unicode-org/cldr-json/blob/main/cldr-json/cldr-dates-full/main/en/ca-gregorian.json>
 
+use icu_datetime::provider::neo::aux::{Context, Length};
 use serde::Deserialize;
 use std::borrow::Cow;
 use std::collections::BTreeMap;
@@ -42,23 +43,6 @@ pub struct Contexts<Symbols> {
     pub stand_alone: Option<StandAloneWidths<Symbols>>,
     // currently only found on monthPatterns
     pub numeric: Option<Numeric<Symbols>>,
-}
-
-/// A length, for querying Contexts
-#[derive(Copy, Clone, Debug, PartialEq, Eq)]
-pub enum Length {
-    Abbr,
-    Narrow,
-    Wide,
-    Short,
-    Numeric,
-}
-
-/// A context, for querying Contexts
-#[derive(Copy, Clone, Debug, PartialEq, Eq)]
-pub enum Context {
-    Format,
-    Standalone,
 }
 
 impl<Symbols> Contexts<Symbols> {

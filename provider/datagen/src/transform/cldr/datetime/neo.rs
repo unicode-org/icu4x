@@ -3,14 +3,15 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use super::supported_cals;
-use crate::transform::cldr::cldr_serde::ca::{self, Context, Length, PatternLength};
+use crate::transform::cldr::cldr_serde::ca::{self, PatternLength};
 use crate::DatagenProvider;
 use icu_datetime::pattern::{self, CoarseHourCycle};
 
 use icu_datetime::provider::calendar::{patterns::GenericLengthPatternsV1, DateSkeletonPatternsV1};
+use icu_datetime::provider::neo::aux::{self, Context, Length};
 use icu_datetime::provider::neo::*;
 use icu_locid::{
-    extensions::private::{subtag, Subtag},
+    extensions::private::Subtag,
     extensions::unicode::{value, Value},
     LanguageIdentifier, Locale,
 };
@@ -21,49 +22,8 @@ use std::collections::BTreeMap;
 use tinystr::TinyAsciiStr;
 use zerovec::ule::UnvalidatedStr;
 
-const NUMERIC: Subtag = subtag!("1");
-const ABBR: Subtag = subtag!("3");
-const NARROW: Subtag = subtag!("4");
-const WIDE: Subtag = subtag!("5");
-const SHORT: Subtag = subtag!("6");
-const ABBR_STANDALONE: Subtag = subtag!("3s");
-const NARROW_STANDALONE: Subtag = subtag!("4s");
-const WIDE_STANDALONE: Subtag = subtag!("5s");
-const SHORT_STANDALONE: Subtag = subtag!("6s");
-
-const PATTERN_FULL: Subtag = subtag!("f");
-const PATTERN_LONG: Subtag = subtag!("l");
-const PATTERN_MEDIUM: Subtag = subtag!("m");
-const PATTERN_SHORT: Subtag = subtag!("s");
-
-const PATTERN_FULL12: Subtag = subtag!("f12");
-const PATTERN_LONG12: Subtag = subtag!("l12");
-const PATTERN_MEDIUM12: Subtag = subtag!("m12");
-const PATTERN_SHORT12: Subtag = subtag!("s12");
-
-const PATTERN_FULL24: Subtag = subtag!("f24");
-const PATTERN_LONG24: Subtag = subtag!("l24");
-const PATTERN_MEDIUM24: Subtag = subtag!("m24");
-const PATTERN_SHORT24: Subtag = subtag!("s24");
-
-fn aux_subtag_info(subtag: Subtag) -> (Context, Length) {
-    use {Context::*, Length::*};
-    match subtag {
-        NUMERIC => (Format, Numeric),
-        ABBR => (Format, Abbr),
-        NARROW => (Format, Narrow),
-        WIDE => (Format, Wide),
-        SHORT => (Format, Short),
-        ABBR_STANDALONE => (Standalone, Abbr),
-        NARROW_STANDALONE => (Standalone, Narrow),
-        WIDE_STANDALONE => (Standalone, Wide),
-        SHORT_STANDALONE => (Standalone, Short),
-        _ => panic!("Found unexpected auxiliary subtag {}", subtag),
-    }
-}
-
 fn aux_pattern_subtag_info(subtag: Subtag) -> (PatternLength, Option<CoarseHourCycle>) {
-    use {CoarseHourCycle::*, PatternLength::*};
+    use {aux::*, CoarseHourCycle::*, PatternLength::*};
     match subtag {
         PATTERN_FULL => (Full, None),
         PATTERN_LONG => (Long, None),
@@ -87,43 +47,47 @@ fn aux_pattern_subtag_info(subtag: Subtag) -> (PatternLength, Option<CoarseHourC
 ///
 /// We may further investigate and kick out standalone for some keys
 const NORMAL_KEY_LENGTHS: &[Subtag] = &[
-    ABBR,
-    NARROW,
-    WIDE,
-    ABBR_STANDALONE,
-    NARROW_STANDALONE,
-    WIDE_STANDALONE,
+    aux::ABBR,
+    aux::NARROW,
+    aux::WIDE,
+    aux::ABBR_STANDALONE,
+    aux::NARROW_STANDALONE,
+    aux::WIDE_STANDALONE,
 ];
 
 /// Lengths for month data (NORMAL_KEY_LENGTHS + numeric)
 const NUMERIC_MONTHS_KEY_LENGTHS: &[Subtag] = &[
-    ABBR,
-    NARROW,
-    WIDE,
-    ABBR_STANDALONE,
-    NARROW_STANDALONE,
-    WIDE_STANDALONE,
-    NUMERIC,
+    aux::ABBR,
+    aux::NARROW,
+    aux::WIDE,
+    aux::ABBR_STANDALONE,
+    aux::NARROW_STANDALONE,
+    aux::WIDE_STANDALONE,
+    aux::NUMERIC,
 ];
 
 /// Lengths for year data (does not do standalone formatting)
-const YEARS_KEY_LENGTHS: &[Subtag] = &[ABBR, NARROW, WIDE];
+const YEARS_KEY_LENGTHS: &[Subtag] = &[aux::ABBR, aux::NARROW, aux::WIDE];
 
 /// All possible non-numeric lengths
 const FULL_KEY_LENGTHS: &[Subtag] = &[
-    ABBR,
-    NARROW,
-    WIDE,
-    SHORT,
-    ABBR_STANDALONE,
-    NARROW_STANDALONE,
-    WIDE_STANDALONE,
-    SHORT_STANDALONE,
+    aux::ABBR,
+    aux::NARROW,
+    aux::WIDE,
+    aux::SHORT,
+    aux::ABBR_STANDALONE,
+    aux::NARROW_STANDALONE,
+    aux::WIDE_STANDALONE,
+    aux::SHORT_STANDALONE,
 ];
 
 /// Lengths for normal patterns (not counting hour cycle stuff)
-const NORMAL_PATTERN_KEY_LENGTHS: &[Subtag] =
-    &[PATTERN_FULL, PATTERN_LONG, PATTERN_MEDIUM, PATTERN_SHORT];
+const NORMAL_PATTERN_KEY_LENGTHS: &[Subtag] = &[
+    aux::PATTERN_FULL,
+    aux::PATTERN_LONG,
+    aux::PATTERN_MEDIUM,
+    aux::PATTERN_SHORT,
+];
 
 impl DatagenProvider {
     fn load_calendar_dates(
@@ -206,7 +170,7 @@ impl DatagenProvider {
         Self: IterableDataProvider<M>,
     {
         self.load_neo_key(req, &calendar, |langid, data, aux| {
-            let (context, length) = aux_subtag_info(aux);
+            let (context, length) = aux::subtag_info(aux);
             conversion(self, langid, data, &calendar, context, length)
         })
     }
@@ -749,14 +713,14 @@ impl IterableDataProvider<TimePatternV1Marker> for DatagenProvider {
             let tp = &data.time_formats;
 
             let keylengths = [
-                PATTERN_FULL,
-                PATTERN_LONG,
-                PATTERN_MEDIUM,
-                PATTERN_SHORT,
-                nondefault_subtag(&tp.full, PATTERN_FULL12, PATTERN_FULL24),
-                nondefault_subtag(&tp.long, PATTERN_LONG12, PATTERN_LONG24),
-                nondefault_subtag(&tp.medium, PATTERN_MEDIUM12, PATTERN_MEDIUM24),
-                nondefault_subtag(&tp.short, PATTERN_SHORT12, PATTERN_SHORT24),
+                aux::PATTERN_FULL,
+                aux::PATTERN_LONG,
+                aux::PATTERN_MEDIUM,
+                aux::PATTERN_SHORT,
+                nondefault_subtag(&tp.full, aux::PATTERN_FULL12, aux::PATTERN_FULL24),
+                nondefault_subtag(&tp.long, aux::PATTERN_LONG12, aux::PATTERN_LONG24),
+                nondefault_subtag(&tp.medium, aux::PATTERN_MEDIUM12, aux::PATTERN_MEDIUM24),
+                nondefault_subtag(&tp.short, aux::PATTERN_SHORT12, aux::PATTERN_SHORT24),
             ];
             keylengths.into_iter().map(move |length| {
                 let locale: Locale = lid.clone().into();
