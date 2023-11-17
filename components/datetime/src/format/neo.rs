@@ -21,7 +21,6 @@ use icu_decimal::options::FixedDecimalFormatterOptions;
 use icu_decimal::options::GroupingStrategy;
 use icu_decimal::provider::DecimalSymbolsV1Marker;
 use icu_decimal::FixedDecimalFormatter;
-use icu_locid::extensions::private::subtag;
 use icu_provider::prelude::*;
 use writeable::Writeable;
 
@@ -162,7 +161,10 @@ impl<C: CldrCalendar> TypedDateTimePatternInterpolator<C> {
             )));
         }
         let mut locale = self.locale.clone();
-        locale.set_aux(AuxiliaryKeys::from_subtag(subtag!("3")));
+        locale.set_aux(AuxiliaryKeys::from_subtag(aux::subtag_for(
+            aux::Context::Format,
+            aux::Length::Abbr,
+        )));
         let payload = provider
             .load(DataRequest {
                 locale: &locale,
