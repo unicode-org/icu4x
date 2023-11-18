@@ -213,7 +213,6 @@ impl<C: CldrCalendar> TypedDateTimePatternInterpolator<C> {
                 | fields::FieldLength::Abbreviated => aux::Length::Abbr,
                 fields::FieldLength::Narrow => aux::Length::Narrow,
                 fields::FieldLength::Wide => aux::Length::Wide,
-                fields::FieldLength::Six => aux::Length::Short,
                 // TODO: What error to return here?
                 _ => return Err(Error::MissingDateSymbols),
             },
@@ -293,6 +292,7 @@ impl<C: CldrCalendar> TypedDateTimePatternInterpolator<C> {
                 fields::FieldLength::Abbreviated => aux::Length::Abbr,
                 fields::FieldLength::Narrow => aux::Length::Narrow,
                 fields::FieldLength::Wide => aux::Length::Wide,
+                fields::FieldLength::Six => aux::Length::Short,
                 // TODO: What error to return here?
                 _ => return Err(Error::MissingDateSymbols),
             },
@@ -398,11 +398,14 @@ impl<'data> DateSymbols<'data> for RawDateTimePatternInterpolatorBorrowed<'data>
         field_length: fields::FieldLength,
         code: MonthCode,
     ) -> Result<MonthPlaceholderValue, Error> {
-        // TODO: This should be MissingMonthSymbols in neo
+        let field = fields::Field {
+            symbol: fields::FieldSymbol::Month(field_symbol),
+            length: field_length,
+        };
         let month_symbols = self
             .month_symbols
             .get_with_length(field_symbol, field_length)
-            .ok_or(Error::MissingDateSymbols)?;
+            .ok_or_else(|| Error::MissingNames(field))?;
         let Some((month_number, is_leap)) = code.parsed() else {
             return Err(Error::MissingMonthSymbol(code));
         };
@@ -449,16 +452,21 @@ impl<'data> DateSymbols<'data> for RawDateTimePatternInterpolatorBorrowed<'data>
         field_length: fields::FieldLength,
         day: input::IsoWeekday,
     ) -> Result<&str, Error> {
+        let field = fields::Field {
+            symbol: fields::FieldSymbol::Weekday(field_symbol),
+            length: field_length,
+        };
         // UTS 35 says that "E..EEE" are all Abbreviated
         let field_length = match field_length {
-            fields::FieldLength::One | fields::FieldLength::TwoDigit => fields::FieldLength::Abbreviated,
-            other => other
+            fields::FieldLength::One | fields::FieldLength::TwoDigit => {
+                fields::FieldLength::Abbreviated
+            }
+            other => other,
         };
-        // TODO: This should be MissingWeekdaySymbols in neo
         let weekday_symbols = self
             .weekday_symbols
             .get_with_length(field_symbol, field_length)
-            .ok_or(Error::MissingDateSymbols)?;
+            .ok_or_else(|| Error::MissingNames(field))?;
         let day_usize = day as usize;
         weekday_symbols
             .symbols
@@ -471,14 +479,16 @@ impl<'data> DateSymbols<'data> for RawDateTimePatternInterpolatorBorrowed<'data>
         field_length: fields::FieldLength,
         era_code: &'a Era,
     ) -> Result<Option<&str>, Error> {
-        // TODO: This should be MissingEraSymbols or MissingYearSymbols in neo
+        let field = fields::Field {
+            symbol: fields::FieldSymbol::Era,
+            length: field_length,
+        };
         let year_symbols = self
             .year_symbols
             .get_with_length((), field_length)
-            .ok_or(Error::MissingDateSymbols)?;
+            .ok_or_else(|| Error::MissingNames(field))?;
         let YearSymbolsV1::Eras(era_symbols) = year_symbols else {
-            // TODO: This should be MissingEraSymbols or MissingYearSymbols in neo
-            return Err(Error::MissingDateSymbols);
+            return Err(Error::MissingNames(field));
         };
         Ok(era_symbols.get(era_code.0.as_str().into()))
     }
@@ -499,8 +509,10 @@ impl<'data> TimeSymbols for RawDateTimePatternInterpolatorBorrowed<'data> {
         };
         // UTS 35 says that "a..aaa" are all Abbreviated
         let field_length = match field_length {
-            fields::FieldLength::One | fields::FieldLength::TwoDigit => fields::FieldLength::Abbreviated,
-            other => other
+            fields::FieldLength::One | fields::FieldLength::TwoDigit => {
+                fields::FieldLength::Abbreviated
+            }
+            other => other,
         };
         let dayperiod_symbols = self
             .dayperiod_symbols
@@ -544,15 +556,13 @@ mod tests {
                 fields::FieldLength::Wide,
             )
             .unwrap()
-            .load_year_names(
-                &crate::provider::Baked,
-                fields::FieldLength::Narrow,
-            )
+            .load_year_names(&crate::provider::Baked, fields::FieldLength::Narrow)
             .unwrap()
             .load_day_period_names(&crate::provider::Baked, fields::FieldLength::Abbreviated)
             .unwrap();
-        let reference_pattern: reference::Pattern =
-            "'It is' EEEE, MMM d, y GGGGG 'at' hh:mm a'!'".parse().unwrap();
+        let reference_pattern: reference::Pattern = "'It is' EEEE, MMM d, y GGGGG 'at' hh:mm a'!'"
+            .parse()
+            .unwrap();
         let pattern: Pattern = (&reference_pattern).into();
         let datetime = DateTime::try_new_gregorian_datetime(2023, 10, 25, 15, 0, 55).unwrap();
         let formatted_pattern = interpolator.format(&pattern, &datetime);
@@ -626,7 +636,89 @@ mod tests {
                 .unwrap();
             let reference_pattern: reference::Pattern = pattern.parse().unwrap();
             let pattern: Pattern = (&reference_pattern).into();
-            let datetime = DateTime::try_new_gregorian_datetime(2023, 11, 7, 13, 41, 28).unwrap();
+            let datetime = DateTime::try_new_gregorian_datetime(2023, 11, 17, 13, 41, 28).unwrap();
+            let formatted_pattern = interpolator.format(&pattern, &datetime);
+
+            assert_writeable_eq!(formatted_pattern, expected, "{cas:?}");
+        }
+    }
+
+    #[test]
+    fn test_weekday_coverage() {
+        // Ukrainian has different values for format and standalone
+        let locale = locale!("uk").into();
+        #[derive(Debug)]
+        struct TestCase {
+            pattern: &'static str,
+            field_symbol: fields::Weekday,
+            field_length: fields::FieldLength,
+            expected: &'static str,
+        }
+        let cases = [
+            TestCase {
+                pattern: "<EEE>",
+                field_symbol: fields::Weekday::Format,
+                field_length: fields::FieldLength::Abbreviated,
+                expected: "<пт>",
+            },
+            TestCase {
+                pattern: "<EEEE>",
+                field_symbol: fields::Weekday::Format,
+                field_length: fields::FieldLength::Wide,
+                expected: "<пʼятницю>",
+            },
+            TestCase {
+                pattern: "<EEEEE>",
+                field_symbol: fields::Weekday::Format,
+                field_length: fields::FieldLength::Narrow,
+                expected: "<П>",
+            },
+            TestCase {
+                pattern: "<EEEEEE>",
+                field_symbol: fields::Weekday::Format,
+                field_length: fields::FieldLength::Six,
+                expected: "<пт>",
+            },
+            TestCase {
+                pattern: "<ccc>",
+                field_symbol: fields::Weekday::StandAlone,
+                field_length: fields::FieldLength::Abbreviated,
+                expected: "<пт>",
+            },
+            TestCase {
+                pattern: "<cccc>",
+                field_symbol: fields::Weekday::StandAlone,
+                field_length: fields::FieldLength::Wide,
+                expected: "<пʼятниця>",
+            },
+            TestCase {
+                pattern: "<ccccc>",
+                field_symbol: fields::Weekday::StandAlone,
+                field_length: fields::FieldLength::Narrow,
+                expected: "<П>",
+            },
+            TestCase {
+                pattern: "<cccccc>",
+                field_symbol: fields::Weekday::StandAlone,
+                field_length: fields::FieldLength::Six,
+                expected: "<пт>",
+            },
+        ];
+        for cas in cases {
+            let TestCase {
+                pattern,
+                field_symbol,
+                field_length,
+                expected,
+            } = cas;
+            let mut interpolator: TypedDateTimePatternInterpolator<Gregorian> =
+                TypedDateTimePatternInterpolator::try_new(&locale).unwrap();
+            interpolator
+                .load_weekday_names(&crate::provider::Baked, field_symbol, field_length)
+                .unwrap();
+            let reference_pattern: reference::Pattern = pattern.parse().unwrap();
+            let pattern: Pattern = (&reference_pattern).into();
+            let datetime = DateTime::try_new_gregorian_datetime(2023, 11, 17, 13, 41, 28).unwrap();
             let formatted_pattern = interpolator.format(&pattern, &datetime);
 
             assert_writeable_eq!(formatted_pattern, expected, "{cas:?}");
