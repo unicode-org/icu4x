@@ -146,6 +146,44 @@ impl<C: CldrCalendar> TypedDateTimePatternInterpolator<C> {
         }
     }
 
+    /// Loads year (era or cycle) names for the specified length.
+    pub fn load_year_names<P>(
+        &mut self,
+        provider: &P,
+        field_length: fields::FieldLength,
+    ) -> Result<&mut Self, Error>
+    where
+        P: DataProvider<C::YearSymbolsV1Marker> + ?Sized,
+    {
+        if self.year_symbols.is_some() {
+            // TODO: Discuss what do do here
+            return Err(Error::Data(DataError::custom(
+                "year symbols already loaded",
+            )));
+        }
+        let mut locale = self.locale.clone();
+        locale.set_aux(AuxiliaryKeys::from_subtag(aux::subtag_for(
+            aux::Context::Format,
+            match field_length {
+                // UTS 35 says that "G..GGG" are all Abbreviated
+                fields::FieldLength::One
+                | fields::FieldLength::TwoDigit
+                | fields::FieldLength::Abbreviated => aux::Length::Abbr,
+                fields::FieldLength::Narrow => aux::Length::Narrow,
+                // TODO: What error to return here?
+                _ => return Err(Error::MissingDateSymbols),
+            },
+        )));
+        let payload = provider
+            .load(DataRequest {
+                locale: &locale,
+                metadata: Default::default(),
+            })?
+            .take_payload()?;
+        self.year_symbols = OptionalSymbols::SingleLength((), field_length, payload);
+        Ok(self)
+    }
+
     /// Loads month names for the specified symbol and length.
     pub fn load_month_names<P>(
         &mut self,
@@ -506,17 +544,22 @@ mod tests {
                 fields::FieldLength::Wide,
             )
             .unwrap()
+            .load_year_names(
+                &crate::provider::Baked,
+                fields::FieldLength::Narrow,
+            )
+            .unwrap()
             .load_day_period_names(&crate::provider::Baked, fields::FieldLength::Abbreviated)
             .unwrap();
         let reference_pattern: reference::Pattern =
-            "'It is' EEEE, MMM d, y 'at' hh:mm a'!'".parse().unwrap();
+            "'It is' EEEE, MMM d, y GGGGG 'at' hh:mm a'!'".parse().unwrap();
         let pattern: Pattern = (&reference_pattern).into();
         let datetime = DateTime::try_new_gregorian_datetime(2023, 10, 25, 15, 0, 55).unwrap();
         let formatted_pattern = interpolator.format(&pattern, &datetime);
 
         assert_writeable_eq!(
             formatted_pattern,
-            "It is Wednesday, Oct 25, 2023 at 03:00 PM!"
+            "It is Wednesday, Oct 25, 2023 A at 03:00 PM!"
         );
     }
 
