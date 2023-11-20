@@ -155,6 +155,12 @@ impl<C: CldrCalendar> TypedDateTimePatternInterpolator<C> {
     where
         P: DataProvider<C::YearSymbolsV1Marker> + ?Sized,
     {
+        let field = fields::Field {
+            symbol: fields::FieldSymbol::Era,
+            length: field_length,
+        };
+        // UTS 35 says that "G..GGG" are all Abbreviated
+        let field_length = field_length.numeric_to_abbr();
         if self.year_symbols.is_some() {
             // TODO: Discuss what do do here
             return Err(Error::Data(DataError::custom(
@@ -165,13 +171,10 @@ impl<C: CldrCalendar> TypedDateTimePatternInterpolator<C> {
         locale.set_aux(AuxiliaryKeys::from_subtag(aux::subtag_for(
             aux::Context::Format,
             match field_length {
-                // UTS 35 says that "G..GGG" are all Abbreviated
-                fields::FieldLength::One
-                | fields::FieldLength::TwoDigit
-                | fields::FieldLength::Abbreviated => aux::Length::Abbr,
+                fields::FieldLength::Abbreviated => aux::Length::Abbr,
                 fields::FieldLength::Narrow => aux::Length::Narrow,
-                // TODO: What error to return here?
-                _ => return Err(Error::MissingDateSymbols),
+                fields::FieldLength::Wide => aux::Length::Wide,
+                _ => return Err(Error::UnsupportedFormattingField(field)),
             },
         )));
         let payload = provider
@@ -194,6 +197,11 @@ impl<C: CldrCalendar> TypedDateTimePatternInterpolator<C> {
     where
         P: DataProvider<C::MonthSymbolsV1Marker> + ?Sized,
     {
+        let field = fields::Field {
+            symbol: fields::FieldSymbol::Month(field_symbol),
+            length: field_length,
+        };
+        // Note: UTS 35 says that "M..MM" and "L..LL" are numeric
         if self.month_symbols.is_some() {
             // TODO: Discuss what do do here
             return Err(Error::Data(DataError::custom(
@@ -207,14 +215,10 @@ impl<C: CldrCalendar> TypedDateTimePatternInterpolator<C> {
                 fields::Month::StandAlone => aux::Context::Standalone,
             },
             match field_length {
-                // UTS 35 says that "E..EEE" are all Abbreviated
-                fields::FieldLength::One
-                | fields::FieldLength::TwoDigit
-                | fields::FieldLength::Abbreviated => aux::Length::Abbr,
+                fields::FieldLength::Abbreviated => aux::Length::Abbr,
                 fields::FieldLength::Narrow => aux::Length::Narrow,
                 fields::FieldLength::Wide => aux::Length::Wide,
-                // TODO: What error to return here?
-                _ => return Err(Error::MissingDateSymbols),
+                _ => return Err(Error::UnsupportedFormattingField(field)),
             },
         )));
         let payload = provider
@@ -236,6 +240,13 @@ impl<C: CldrCalendar> TypedDateTimePatternInterpolator<C> {
     where
         P: DataProvider<DayPeriodSymbolsV1Marker> + ?Sized,
     {
+        let field = fields::Field {
+            // Names for 'a' and 'b' are stored in the same data key
+            symbol: fields::FieldSymbol::DayPeriod(fields::DayPeriod::NoonMidnight),
+            length: field_length,
+        };
+        // UTS 35 says that "a..aaa" are all Abbreviated
+        let field_length = field_length.numeric_to_abbr();
         if self.dayperiod_symbols.is_some() {
             // TODO: Discuss what do do here
             return Err(Error::Data(DataError::custom(
@@ -246,14 +257,10 @@ impl<C: CldrCalendar> TypedDateTimePatternInterpolator<C> {
         locale.set_aux(AuxiliaryKeys::from_subtag(aux::subtag_for(
             aux::Context::Format,
             match field_length {
-                // UTS 35 says that "a..aaa" are all Abbreviated
-                fields::FieldLength::One
-                | fields::FieldLength::TwoDigit
-                | fields::FieldLength::Abbreviated => aux::Length::Abbr,
+                fields::FieldLength::Abbreviated => aux::Length::Abbr,
                 fields::FieldLength::Narrow => aux::Length::Narrow,
                 fields::FieldLength::Wide => aux::Length::Wide,
-                // TODO: What error to return here?
-                _ => return Err(Error::MissingDateSymbols),
+                _ => return Err(Error::UnsupportedFormattingField(field)),
             },
         )));
         let payload = provider
@@ -276,6 +283,12 @@ impl<C: CldrCalendar> TypedDateTimePatternInterpolator<C> {
     where
         P: DataProvider<WeekdaySymbolsV1Marker> + ?Sized,
     {
+        let field = fields::Field {
+            symbol: fields::FieldSymbol::Weekday(field_symbol),
+            length: field_length,
+        };
+        // UTS 35 says that "E..EEE" are all Abbreviated
+        let field_length = field_length.numeric_to_abbr();
         if self.weekday_symbols.is_some() {
             // TODO: Discuss what do do here
             return Err(Error::Data(DataError::custom(
@@ -285,6 +298,7 @@ impl<C: CldrCalendar> TypedDateTimePatternInterpolator<C> {
         let mut locale = self.locale.clone();
         locale.set_aux(AuxiliaryKeys::from_subtag(aux::subtag_for(
             match field_symbol {
+                // UTS 35 says that "e" and "E" have the same non-numeric names
                 fields::Weekday::Format | fields::Weekday::Local => aux::Context::Format,
                 fields::Weekday::StandAlone => aux::Context::Standalone,
             },
@@ -293,8 +307,7 @@ impl<C: CldrCalendar> TypedDateTimePatternInterpolator<C> {
                 fields::FieldLength::Narrow => aux::Length::Narrow,
                 fields::FieldLength::Wide => aux::Length::Wide,
                 fields::FieldLength::Six => aux::Length::Short,
-                // TODO: What error to return here?
-                _ => return Err(Error::MissingDateSymbols),
+                _ => return Err(Error::UnsupportedFormattingField(field)),
             },
         )));
         let payload = provider
@@ -456,13 +469,10 @@ impl<'data> DateSymbols<'data> for RawDateTimePatternInterpolatorBorrowed<'data>
             symbol: fields::FieldSymbol::Weekday(field_symbol),
             length: field_length,
         };
+        // UTS 35 says that "e" and "E" have the same non-numeric names
+        let field_symbol = field_symbol.to_format_symbol();
         // UTS 35 says that "E..EEE" are all Abbreviated
-        let field_length = match field_length {
-            fields::FieldLength::One | fields::FieldLength::TwoDigit => {
-                fields::FieldLength::Abbreviated
-            }
-            other => other,
-        };
+        let field_length = field_length.numeric_to_abbr();
         let weekday_symbols = self
             .weekday_symbols
             .get_with_length(field_symbol, field_length)
@@ -483,6 +493,8 @@ impl<'data> DateSymbols<'data> for RawDateTimePatternInterpolatorBorrowed<'data>
             symbol: fields::FieldSymbol::Era,
             length: field_length,
         };
+        // UTS 35 says that "G..GGG" are all Abbreviated
+        let field_length = field_length.numeric_to_abbr();
         let year_symbols = self
             .year_symbols
             .get_with_length((), field_length)
@@ -508,12 +520,7 @@ impl<'data> TimeSymbols for RawDateTimePatternInterpolatorBorrowed<'data> {
             length: field_length,
         };
         // UTS 35 says that "a..aaa" are all Abbreviated
-        let field_length = match field_length {
-            fields::FieldLength::One | fields::FieldLength::TwoDigit => {
-                fields::FieldLength::Abbreviated
-            }
-            other => other,
-        };
+        let field_length = field_length.numeric_to_abbr();
         let dayperiod_symbols = self
             .dayperiod_symbols
             .get_with_length((), field_length)
@@ -574,6 +581,62 @@ mod tests {
     }
 
     #[test]
+    fn test_era_coverage() {
+        let locale = locale!("uk").into();
+        #[derive(Debug)]
+        struct TestCase {
+            pattern: &'static str,
+            field_length: fields::FieldLength,
+            expected: &'static str,
+        }
+        let cases = [
+            TestCase {
+                pattern: "<G>",
+                field_length: fields::FieldLength::Abbreviated,
+                expected: "<н. е.>",
+            },
+            TestCase {
+                pattern: "<GG>",
+                field_length: fields::FieldLength::Abbreviated,
+                expected: "<н. е.>",
+            },
+            TestCase {
+                pattern: "<GGG>",
+                field_length: fields::FieldLength::Abbreviated,
+                expected: "<н. е.>",
+            },
+            TestCase {
+                pattern: "<GGGG>",
+                field_length: fields::FieldLength::Wide,
+                expected: "<нашої ери>",
+            },
+            TestCase {
+                pattern: "<GGGGG>",
+                field_length: fields::FieldLength::Narrow,
+                expected: "<н.е.>",
+            },
+        ];
+        for cas in cases {
+            let TestCase {
+                pattern,
+                field_length,
+                expected,
+            } = cas;
+            let mut interpolator: TypedDateTimePatternInterpolator<Gregorian> =
+                TypedDateTimePatternInterpolator::try_new(&locale).unwrap();
+            interpolator
+                .load_year_names(&crate::provider::Baked, field_length)
+                .unwrap();
+            let reference_pattern: reference::Pattern = pattern.parse().unwrap();
+            let pattern: Pattern = (&reference_pattern).into();
+            let datetime = DateTime::try_new_gregorian_datetime(2023, 11, 17, 13, 41, 28).unwrap();
+            let formatted_pattern = interpolator.format(&pattern, &datetime);
+
+            assert_writeable_eq!(formatted_pattern, expected, "{cas:?}");
+        }
+    }
+
+    #[test]
     fn test_month_coverage() {
         // Ukrainian has different values for format and standalone
         let locale = locale!("uk").into();
@@ -585,6 +648,7 @@ mod tests {
             expected: &'static str,
         }
         let cases = [
+            // 'M' and 'MM' are numeric
             TestCase {
                 pattern: "<MMM>",
                 field_symbol: fields::Month::Format,
@@ -603,6 +667,7 @@ mod tests {
                 field_length: fields::FieldLength::Narrow,
                 expected: "<л>",
             },
+            // 'L' and 'LL' are numeric
             TestCase {
                 pattern: "<LLL>",
                 field_symbol: fields::Month::StandAlone,
@@ -645,7 +710,6 @@ mod tests {
 
     #[test]
     fn test_weekday_coverage() {
-        // Ukrainian has different values for format and standalone
         let locale = locale!("uk").into();
         #[derive(Debug)]
         struct TestCase {
@@ -655,6 +719,18 @@ mod tests {
             expected: &'static str,
         }
         let cases = [
+            TestCase {
+                pattern: "<E>",
+                field_symbol: fields::Weekday::Format,
+                field_length: fields::FieldLength::Abbreviated,
+                expected: "<пт>",
+            },
+            TestCase {
+                pattern: "<EE>",
+                field_symbol: fields::Weekday::Format,
+                field_length: fields::FieldLength::Abbreviated,
+                expected: "<пт>",
+            },
             TestCase {
                 pattern: "<EEE>",
                 field_symbol: fields::Weekday::Format,
@@ -679,6 +755,32 @@ mod tests {
                 field_length: fields::FieldLength::Six,
                 expected: "<пт>",
             },
+            // 'e' and 'ee' are numeric
+            TestCase {
+                pattern: "<eee>",
+                field_symbol: fields::Weekday::Format,
+                field_length: fields::FieldLength::Abbreviated,
+                expected: "<пт>",
+            },
+            TestCase {
+                pattern: "<eeee>",
+                field_symbol: fields::Weekday::Format,
+                field_length: fields::FieldLength::Wide,
+                expected: "<пʼятницю>",
+            },
+            TestCase {
+                pattern: "<eeeee>",
+                field_symbol: fields::Weekday::Format,
+                field_length: fields::FieldLength::Narrow,
+                expected: "<П>",
+            },
+            TestCase {
+                pattern: "<eeeeee>",
+                field_symbol: fields::Weekday::Format,
+                field_length: fields::FieldLength::Six,
+                expected: "<пт>",
+            },
+            // 'c' and 'cc' are numeric
             TestCase {
                 pattern: "<ccc>",
                 field_symbol: fields::Weekday::StandAlone,
@@ -715,6 +817,89 @@ mod tests {
                 TypedDateTimePatternInterpolator::try_new(&locale).unwrap();
             interpolator
                 .load_weekday_names(&crate::provider::Baked, field_symbol, field_length)
+                .unwrap();
+            let reference_pattern: reference::Pattern = pattern.parse().unwrap();
+            let pattern: Pattern = (&reference_pattern).into();
+            let datetime = DateTime::try_new_gregorian_datetime(2023, 11, 17, 13, 41, 28).unwrap();
+            let formatted_pattern = interpolator.format(&pattern, &datetime);
+
+            assert_writeable_eq!(formatted_pattern, expected, "{cas:?}");
+        }
+    }
+
+    #[test]
+    fn test_dayperiod_coverage() {
+        // Thai has different values for different lengths of day periods
+        // TODO(#487): Support flexible day periods, too
+        let locale = locale!("th").into();
+        #[derive(Debug)]
+        struct TestCase {
+            pattern: &'static str,
+            field_length: fields::FieldLength,
+            expected: &'static str,
+        }
+        let cases = [
+            TestCase {
+                pattern: "<a>",
+                field_length: fields::FieldLength::Abbreviated,
+                expected: "<PM>",
+            },
+            TestCase {
+                pattern: "<aa>",
+                field_length: fields::FieldLength::Abbreviated,
+                expected: "<PM>",
+            },
+            TestCase {
+                pattern: "<aaa>",
+                field_length: fields::FieldLength::Abbreviated,
+                expected: "<PM>",
+            },
+            TestCase {
+                pattern: "<aaaa>",
+                field_length: fields::FieldLength::Wide,
+                expected: "<หลังเที่ยง>",
+            },
+            TestCase {
+                pattern: "<aaaaa>",
+                field_length: fields::FieldLength::Narrow,
+                expected: "<p>",
+            },
+            TestCase {
+                pattern: "<b>",
+                field_length: fields::FieldLength::Abbreviated,
+                expected: "<PM>",
+            },
+            TestCase {
+                pattern: "<bb>",
+                field_length: fields::FieldLength::Abbreviated,
+                expected: "<PM>",
+            },
+            TestCase {
+                pattern: "<bbb>",
+                field_length: fields::FieldLength::Abbreviated,
+                expected: "<PM>",
+            },
+            TestCase {
+                pattern: "<bbbb>",
+                field_length: fields::FieldLength::Wide,
+                expected: "<หลังเที่ยง>",
+            },
+            TestCase {
+                pattern: "<bbbbb>",
+                field_length: fields::FieldLength::Narrow,
+                expected: "<p>",
+            },
+        ];
+        for cas in cases {
+            let TestCase {
+                pattern,
+                field_length,
+                expected,
+            } = cas;
+            let mut interpolator: TypedDateTimePatternInterpolator<Gregorian> =
+                TypedDateTimePatternInterpolator::try_new(&locale).unwrap();
+            interpolator
+                .load_day_period_names(&crate::provider::Baked, field_length)
                 .unwrap();
             let reference_pattern: reference::Pattern = pattern.parse().unwrap();
             let pattern: Pattern = (&reference_pattern).into();

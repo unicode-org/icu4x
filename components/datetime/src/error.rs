@@ -2,6 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+use crate::fields::Field;
 use crate::fields::FieldSymbol;
 use crate::input::CalendarError;
 use crate::pattern::PatternError;
@@ -41,6 +42,11 @@ pub enum DateTimeError {
     /// An error originating from an unsupported field in a datetime format.
     #[displaydoc("Unsupported field: {0:?}")]
     UnsupportedField(FieldSymbol),
+    /// An unsupported field with a field length.
+    // TODO(#2856): Consider renaming `UnsupportedField` to `UnsupportedFieldSymbol` so that
+    // this variant can be named `UnsupportedField`.
+    #[displaydoc("Unsupported field: {0:?}")]
+    UnsupportedFormattingField(Field),
     /// An error due to there being no patterns for the given options.
     #[displaydoc("Unsupported options")]
     UnsupportedOptions,
@@ -76,7 +82,7 @@ pub enum DateTimeError {
     MissingOrdinalRules,
     /// The names for the given field are not loaded
     #[displaydoc("Missing names for {0:?}")]
-    MissingNames(crate::fields::Field),
+    MissingNames(Field),
 }
 
 impl From<PatternError> for DateTimeError {

@@ -592,6 +592,18 @@ impl LengthType for Weekday {
     }
 }
 
+impl Weekday {
+    /// UTS 35 says that "e" (local weekday) and "E" (format weekday) have the same non-numeric names.
+    ///
+    /// This function normalizes "e" to "E".
+    pub(crate) fn to_format_symbol(self) -> Self {
+        match self {
+            Weekday::Local => Weekday::Format,
+            other => other
+        }
+    }
+}
+
 field_type!(
     /// An enum for the possible symbols of a day period field in a date pattern.
     DayPeriod; {
