@@ -116,4 +116,26 @@ class ComposingNormalizer implements ffi.Finalizable {
       .asFunction<
           bool Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi2.Utf8>,
               int)>(isLeaf: true);
+
+  /// Return the index a slice of potentially-invalid UTF-8 is normalized up to
+  ///
+  /// See the [Rust documentation for `is_normalized_utf8_up_to`](https://docs.rs/icu/latest/icu/normalizer/struct.ComposingNormalizer.html#method.is_normalized_utf8_up_to) for more information.
+  int isNormalizedUpTo(String s) {
+    final alloc = ffi2.Arena();
+    final sSlice = _SliceFfi2Utf8._fromDart(s, alloc);
+
+    final result = _ICU4XComposingNormalizer_is_normalized_up_to(
+        _underlying, sSlice._bytes, sSlice._length);
+    alloc.releaseAll();
+    return result;
+  }
+
+  // ignore: non_constant_identifier_names
+  static final _ICU4XComposingNormalizer_is_normalized_up_to = _capi<
+          ffi.NativeFunction<
+              ffi.Size Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi2.Utf8>,
+                  ffi.Size)>>('ICU4XComposingNormalizer_is_normalized_up_to')
+      .asFunction<
+          int Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi2.Utf8>,
+              int)>(isLeaf: true);
 }

@@ -74,6 +74,21 @@ pub mod ffi {
             let s = s.as_bytes(); // #2520
             self.0.is_normalized_utf8(s)
         }
+
+        /// Return the index a slice of potentially-invalid UTF-8 is normalized up to
+        #[diplomat::rust_link(
+            icu::normalizer::ComposingNormalizer::is_normalized_utf8_up_to,
+            FnInStruct
+        )]
+        #[diplomat::rust_link(
+            icu::normalizer::ComposingNormalizer::is_normalized_up_to,
+            FnInStruct,
+            hidden
+        )]
+        pub fn is_normalized_up_to(&self, s: &str) -> usize {
+            let s = s.as_bytes(); // #2520
+            self.0.is_normalized_utf8_up_to(s)
+        }
     }
 
     #[diplomat::opaque]
@@ -147,6 +162,21 @@ pub mod ffi {
         pub fn is_normalized(&self, s: &str) -> bool {
             let s = s.as_bytes(); // #2520
             self.0.is_normalized_utf8(s)
+        }
+
+        /// Return the index a slice of potentially-invalid UTF-8 is normalized up to
+        #[diplomat::rust_link(
+            icu::normalizer::DecomposingNormalizer::is_normalized_utf8_up_to,
+            FnInStruct
+        )]
+        #[diplomat::rust_link(
+            icu::normalizer::DecomposingNormalizer::is_normalized_up_to,
+            FnInStruct,
+            hidden
+        )]
+        pub fn is_normalized_up_to(&self, s: &str) -> usize {
+            let s = s.as_bytes(); // #2520
+            self.0.is_normalized_utf8_up_to(s)
         }
     }
 }
