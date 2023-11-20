@@ -278,12 +278,16 @@ impl<C: CldrCalendar> TypedDateTimePatternInterpolator<C> {
     ///
     /// ```
     /// use icu::calendar::Gregorian;
-    /// use icu::datetime::TypedDateTimePatternInterpolator;
     /// use icu::datetime::fields::FieldLength;
     /// use icu::datetime::DateTimeError;
+    /// use icu::datetime::TypedDateTimePatternInterpolator;
     /// use icu::locid::locale;
     ///
-    /// let mut interpolator = TypedDateTimePatternInterpolator::<Gregorian>::try_new(&locale!("und").into()).unwrap();
+    /// let mut interpolator =
+    ///     TypedDateTimePatternInterpolator::<Gregorian>::try_new(
+    ///         &locale!("und").into(),
+    ///     )
+    ///     .unwrap();
     ///
     /// // First length is successful:
     /// interpolator.include_year_names(FieldLength::Wide).unwrap();
@@ -292,7 +296,10 @@ impl<C: CldrCalendar> TypedDateTimePatternInterpolator<C> {
     /// interpolator.include_year_names(FieldLength::Wide).unwrap();
     ///
     /// // But loading a new length fails:
-    /// assert!(matches!(interpolator.include_year_names(FieldLength::Abbreviated), Err(DateTimeError::DuplicateField(_))));
+    /// assert!(matches!(
+    ///     interpolator.include_year_names(FieldLength::Abbreviated),
+    ///     Err(DateTimeError::DuplicateField(_))
+    /// ));
     /// ```
     #[cfg(feature = "compiled_data")]
     pub fn include_year_names(
@@ -362,24 +369,39 @@ impl<C: CldrCalendar> TypedDateTimePatternInterpolator<C> {
     ///
     /// ```
     /// use icu::calendar::Gregorian;
-    /// use icu::datetime::TypedDateTimePatternInterpolator;
     /// use icu::datetime::fields::FieldLength;
     /// use icu::datetime::DateTimeError;
+    /// use icu::datetime::TypedDateTimePatternInterpolator;
     /// use icu::locid::locale;
     ///
-    /// let mut interpolator = TypedDateTimePatternInterpolator::<Gregorian>::try_new(&locale!("und").into()).unwrap();
+    /// let mut interpolator =
+    ///     TypedDateTimePatternInterpolator::<Gregorian>::try_new(
+    ///         &locale!("und").into(),
+    ///     )
+    ///     .unwrap();
     /// let field_symbol = icu::datetime::fields::Month::Format;
     /// let alt_field_symbol = icu::datetime::fields::Month::StandAlone;
     ///
     /// // First length is successful:
-    /// interpolator.include_month_names(field_symbol, FieldLength::Wide).unwrap();
+    /// interpolator
+    ///     .include_month_names(field_symbol, FieldLength::Wide)
+    ///     .unwrap();
     ///
     /// // Attempting to load the first length a second time will succeed:
-    /// interpolator.include_month_names(field_symbol, FieldLength::Wide).unwrap();
+    /// interpolator
+    ///     .include_month_names(field_symbol, FieldLength::Wide)
+    ///     .unwrap();
     ///
     /// // But loading a new symbol or length fails:
-    /// assert!(matches!(interpolator.include_month_names(alt_field_symbol, FieldLength::Wide), Err(DateTimeError::DuplicateField(_))));
-    /// assert!(matches!(interpolator.include_month_names(field_symbol, FieldLength::Abbreviated), Err(DateTimeError::DuplicateField(_))));
+    /// assert!(matches!(
+    ///     interpolator.include_month_names(alt_field_symbol, FieldLength::Wide),
+    ///     Err(DateTimeError::DuplicateField(_))
+    /// ));
+    /// assert!(matches!(
+    ///     interpolator
+    ///         .include_month_names(field_symbol, FieldLength::Abbreviated),
+    ///     Err(DateTimeError::DuplicateField(_))
+    /// ));
     /// ```
     #[cfg(feature = "compiled_data")]
     pub fn include_month_names(
@@ -445,21 +467,32 @@ impl<C: CldrCalendar> TypedDateTimePatternInterpolator<C> {
     ///
     /// ```
     /// use icu::calendar::Gregorian;
-    /// use icu::datetime::TypedDateTimePatternInterpolator;
     /// use icu::datetime::fields::FieldLength;
     /// use icu::datetime::DateTimeError;
+    /// use icu::datetime::TypedDateTimePatternInterpolator;
     /// use icu::locid::locale;
     ///
-    /// let mut interpolator = TypedDateTimePatternInterpolator::<Gregorian>::try_new(&locale!("und").into()).unwrap();
+    /// let mut interpolator =
+    ///     TypedDateTimePatternInterpolator::<Gregorian>::try_new(
+    ///         &locale!("und").into(),
+    ///     )
+    ///     .unwrap();
     ///
     /// // First length is successful:
-    /// interpolator.include_day_period_names(FieldLength::Wide).unwrap();
+    /// interpolator
+    ///     .include_day_period_names(FieldLength::Wide)
+    ///     .unwrap();
     ///
     /// // Attempting to load the first length a second time will succeed:
-    /// interpolator.include_day_period_names(FieldLength::Wide).unwrap();
+    /// interpolator
+    ///     .include_day_period_names(FieldLength::Wide)
+    ///     .unwrap();
     ///
     /// // But loading a new length fails:
-    /// assert!(matches!(interpolator.include_day_period_names(FieldLength::Abbreviated), Err(DateTimeError::DuplicateField(_))));
+    /// assert!(matches!(
+    ///     interpolator.include_day_period_names(FieldLength::Abbreviated),
+    ///     Err(DateTimeError::DuplicateField(_))
+    /// ));
     /// ```
     #[cfg(feature = "compiled_data")]
     pub fn include_day_period_names(
@@ -531,24 +564,39 @@ impl<C: CldrCalendar> TypedDateTimePatternInterpolator<C> {
     ///
     /// ```
     /// use icu::calendar::Gregorian;
-    /// use icu::datetime::TypedDateTimePatternInterpolator;
     /// use icu::datetime::fields::FieldLength;
     /// use icu::datetime::DateTimeError;
+    /// use icu::datetime::TypedDateTimePatternInterpolator;
     /// use icu::locid::locale;
     ///
-    /// let mut interpolator = TypedDateTimePatternInterpolator::<Gregorian>::try_new(&locale!("und").into()).unwrap();
+    /// let mut interpolator =
+    ///     TypedDateTimePatternInterpolator::<Gregorian>::try_new(
+    ///         &locale!("und").into(),
+    ///     )
+    ///     .unwrap();
     /// let field_symbol = icu::datetime::fields::Weekday::Format;
     /// let alt_field_symbol = icu::datetime::fields::Weekday::StandAlone;
     ///
     /// // First length is successful:
-    /// interpolator.include_weekday_names(field_symbol, FieldLength::Wide).unwrap();
+    /// interpolator
+    ///     .include_weekday_names(field_symbol, FieldLength::Wide)
+    ///     .unwrap();
     ///
     /// // Attempting to load the first length a second time will succeed:
-    /// interpolator.include_weekday_names(field_symbol, FieldLength::Wide).unwrap();
+    /// interpolator
+    ///     .include_weekday_names(field_symbol, FieldLength::Wide)
+    ///     .unwrap();
     ///
     /// // But loading a new symbol or length fails:
-    /// assert!(matches!(interpolator.include_weekday_names(alt_field_symbol, FieldLength::Wide), Err(DateTimeError::DuplicateField(_))));
-    /// assert!(matches!(interpolator.include_weekday_names(field_symbol, FieldLength::Abbreviated), Err(DateTimeError::DuplicateField(_))));
+    /// assert!(matches!(
+    ///     interpolator.include_weekday_names(alt_field_symbol, FieldLength::Wide),
+    ///     Err(DateTimeError::DuplicateField(_))
+    /// ));
+    /// assert!(matches!(
+    ///     interpolator
+    ///         .include_weekday_names(field_symbol, FieldLength::Abbreviated),
+    ///     Err(DateTimeError::DuplicateField(_))
+    /// ));
     /// ```
     #[cfg(feature = "compiled_data")]
     pub fn include_weekday_names(
@@ -609,18 +657,19 @@ impl<C: CldrCalendar> TypedDateTimePatternInterpolator<C> {
     /// # Examples
     ///
     /// ```
-    /// use icu::calendar::Gregorian;
     /// use icu::calendar::Date;
-    /// use icu::datetime::TypedDateTimePatternInterpolator;
-    /// use icu::datetime::fields::FieldLength;
+    /// use icu::calendar::Gregorian;
     /// use icu::datetime::fields;
+    /// use icu::datetime::fields::FieldLength;
     /// use icu::datetime::pattern;
+    /// use icu::datetime::TypedDateTimePatternInterpolator;
     /// use icu::locid::locale;
     /// use writeable::assert_writeable_eq;
     ///
     /// // Create an interpolator that can format wide month and era names:
     /// let mut interpolator: TypedDateTimePatternInterpolator<Gregorian> =
-    ///     TypedDateTimePatternInterpolator::try_new(&locale!("en-GB").into()).unwrap();
+    ///     TypedDateTimePatternInterpolator::try_new(&locale!("en-GB").into())
+    ///         .unwrap();
     /// interpolator
     ///     .include_month_names(fields::Month::Format, FieldLength::Wide)
     ///     .unwrap()
@@ -629,15 +678,22 @@ impl<C: CldrCalendar> TypedDateTimePatternInterpolator<C> {
     ///
     /// // Create a pattern from a pattern string:
     /// let pattern_str = "'The date is:' MMMM d, y GGGG";
-    /// let reference_pattern: pattern::reference::Pattern = pattern_str.parse().unwrap();
+    /// let reference_pattern: pattern::reference::Pattern =
+    ///     pattern_str.parse().unwrap();
     /// let pattern: pattern::runtime::Pattern = (&reference_pattern).into();
     ///
     /// // Test it with some different dates:
     /// // Note: extended year -50 is year 51 BCE
     /// let date_bce = Date::try_new_gregorian_date(-50, 3, 15).unwrap();
     /// let date_ce = Date::try_new_gregorian_date(1700, 11, 20).unwrap();
-    /// assert_writeable_eq!(interpolator.format_date(&pattern, &date_bce), "The date is: March 15, 51 Before Christ");
-    /// assert_writeable_eq!(interpolator.format_date(&pattern, &date_ce), "The date is: November 20, 1700 Anno Domini");
+    /// assert_writeable_eq!(
+    ///     interpolator.format_date(&pattern, &date_bce),
+    ///     "The date is: March 15, 51 Before Christ"
+    /// );
+    /// assert_writeable_eq!(
+    ///     interpolator.format_date(&pattern, &date_ce),
+    ///     "The date is: November 20, 1700 Anno Domini"
+    /// );
     /// ```
     pub fn format_date<'l, T>(
         &'l self,
@@ -659,24 +715,26 @@ impl<C: CldrCalendar> TypedDateTimePatternInterpolator<C> {
     /// # Examples
     ///
     /// ```
-    /// use icu::calendar::Gregorian;
     /// use icu::calendar::types::Time;
-    /// use icu::datetime::TypedDateTimePatternInterpolator;
+    /// use icu::calendar::Gregorian;
     /// use icu::datetime::fields::FieldLength;
     /// use icu::datetime::pattern;
+    /// use icu::datetime::TypedDateTimePatternInterpolator;
     /// use icu::locid::locale;
     /// use writeable::assert_writeable_eq;
     ///
     /// // Create an interpolator that can format abbreviated day periods:
     /// let mut interpolator: TypedDateTimePatternInterpolator<Gregorian> =
-    ///     TypedDateTimePatternInterpolator::try_new(&locale!("en-US").into()).unwrap();
+    ///     TypedDateTimePatternInterpolator::try_new(&locale!("en-US").into())
+    ///         .unwrap();
     /// interpolator
     ///     .include_day_period_names(FieldLength::Abbreviated)
     ///     .unwrap();
     ///
     /// // Create a pattern from a pattern string:
     /// let pattern_str = "'The time is:' h:mm b";
-    /// let reference_pattern: pattern::reference::Pattern = pattern_str.parse().unwrap();
+    /// let reference_pattern: pattern::reference::Pattern =
+    ///     pattern_str.parse().unwrap();
     /// let pattern: pattern::runtime::Pattern = (&reference_pattern).into();
     ///
     /// // Test it with different times of day:
@@ -684,10 +742,22 @@ impl<C: CldrCalendar> TypedDateTimePatternInterpolator<C> {
     /// let time_pm = Time::try_new(13, 41, 28, 0).unwrap();
     /// let time_noon = Time::try_new(12, 0, 0, 0).unwrap();
     /// let time_midnight = Time::try_new(0, 0, 0, 0).unwrap();
-    /// assert_writeable_eq!(interpolator.format_time(&pattern, &time_am), "The time is: 11:04 AM");
-    /// assert_writeable_eq!(interpolator.format_time(&pattern, &time_pm), "The time is: 1:41 PM");
-    /// assert_writeable_eq!(interpolator.format_time(&pattern, &time_noon), "The time is: 12:00 noon");
-    /// assert_writeable_eq!(interpolator.format_time(&pattern, &time_midnight), "The time is: 12:00 midnight");
+    /// assert_writeable_eq!(
+    ///     interpolator.format_time(&pattern, &time_am),
+    ///     "The time is: 11:04 AM"
+    /// );
+    /// assert_writeable_eq!(
+    ///     interpolator.format_time(&pattern, &time_pm),
+    ///     "The time is: 1:41 PM"
+    /// );
+    /// assert_writeable_eq!(
+    ///     interpolator.format_time(&pattern, &time_noon),
+    ///     "The time is: 12:00 noon"
+    /// );
+    /// assert_writeable_eq!(
+    ///     interpolator.format_time(&pattern, &time_midnight),
+    ///     "The time is: 12:00 midnight"
+    /// );
     /// ```
     pub fn format_time<'l, T>(
         &'l self,
