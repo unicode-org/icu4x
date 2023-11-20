@@ -142,8 +142,6 @@ fn extract_currency_essentials<'data>(
                 PlaceholderValue::ISO
             } else {
                 let index = place_holders.len() as u16;
-                //TODO(#3900): remove this assert and return an error instead.
-                assert!(index <= MAX_PLACE_HOLDER_INDEX);
                 place_holders.push(short_place_holder.as_str());
                 place_holders_checker_map.insert(short_place_holder.as_str(), index);
                 PlaceholderValue::Index(index)
@@ -158,13 +156,27 @@ fn extract_currency_essentials<'data>(
                     PlaceholderValue::ISO
                 } else {
                     let index = place_holders.len() as u16;
-                    //TODO(#3900): remove this assert and return an error instead.
-                    assert!(index <= MAX_PLACE_HOLDER_INDEX);
                     place_holders.push(narrow_place_holder.as_ref());
                     place_holders_checker_map.insert(narrow_place_holder.as_str(), index);
                     PlaceholderValue::Index(index)
                 }
             });
+
+        // Ensure that short_place_holder_index and narrow_place_holder_index do not exceed MAX_PLACE_HOLDER_INDEX.
+        if let Some(PlaceholderValue::Index(index)) = short_place_holder_index {
+            if index > MAX_PLACE_HOLDER_INDEX {
+                return Err(DataError::custom(
+                    "short_place_holder_index exceeded MAX_PLACE_HOLDER_INDEX",
+                ));
+            }
+        }
+        if let Some(PlaceholderValue::Index(index)) = narrow_place_holder_index {
+            if index > MAX_PLACE_HOLDER_INDEX {
+                return Err(DataError::custom(
+                    "narrow_place_holder_index exceeded MAX_PLACE_HOLDER_INDEX",
+                ));
+            }
+        }
 
         let iso_string = iso.try_into_tinystr().unwrap().to_string();
 

@@ -3,7 +3,6 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use std::collections::{BTreeMap, HashSet};
-use std::path::Path;
 
 use elsa::sync::FrozenMap;
 use icu_datagen::prelude::*;
@@ -60,12 +59,10 @@ fn test_fallback_options() {
         .init()
         .unwrap();
 
-    let data_root = Path::new(concat!(core::env!("CARGO_MANIFEST_DIR"), "/tests/data/"));
-
     let provider = DatagenProvider::new_custom()
-        .with_cldr(data_root.join("cldr"))
+        .with_cldr("tests/data/cldr".into())
         .unwrap()
-        .with_icuexport(data_root.join("icuexport"))
+        .with_icuexport("tests/data/icuexport".into())
         .unwrap();
 
     let mut testing_exporter = TestingExporter::default();

@@ -317,6 +317,20 @@ lazy_static::lazy_static! {
         "fixed_decimal::FixedDecimal::expanded_to_increment",
         "fixed_decimal::FixedDecimal::trunc_to_increment",
         "fixed_decimal::FixedDecimal::trunced_to_increment",
+        "fixed_decimal::FixedDecimal::ceil_to_increment",
+        "fixed_decimal::FixedDecimal::ceiled_to_increment",
+        "fixed_decimal::FixedDecimal::floor_to_increment",
+        "fixed_decimal::FixedDecimal::floored_to_increment",
+        "fixed_decimal::FixedDecimal::half_ceil_to_increment",
+        "fixed_decimal::FixedDecimal::half_ceiled_to_increment",
+        "fixed_decimal::FixedDecimal::half_even_to_increment",
+        "fixed_decimal::FixedDecimal::half_evened_to_increment",
+        "fixed_decimal::FixedDecimal::half_expand_to_increment",
+        "fixed_decimal::FixedDecimal::half_expanded_to_increment",
+        "fixed_decimal::FixedDecimal::half_floor_to_increment",
+        "fixed_decimal::FixedDecimal::half_floored_to_increment",
+        "fixed_decimal::FixedDecimal::half_trunc_to_increment",
+        "fixed_decimal::FixedDecimal::half_trunced_to_increment",
 
         // Stuff that does not need to be exposed over FFI
         // Especially for stuff that are Rust specific like conversion traits
