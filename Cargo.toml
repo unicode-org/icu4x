@@ -252,8 +252,3 @@ codegen-units = 1
 lto = true
 debug = true
 debug-assertions = false
-
-[profile.windows-test-ci]
-inherits = "dev"
-debug-assertions = true
-debug = false
