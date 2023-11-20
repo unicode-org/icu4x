@@ -15,8 +15,7 @@ final class Bcp47ToIanaMapper implements ffi.Finalizable {
     _finalizer.attach(this, _underlying.cast());
   }
 
-  static final _finalizer =
-      ffi.NativeFinalizer(_capi('ICU4XBcp47ToIanaMapper_destroy'));
+  static final _finalizer = ffi.NativeFinalizer(_capi('ICU4XBcp47ToIanaMapper_destroy'));
 
   /// See the [Rust documentation for `new`](https://docs.rs/icu/latest/icu/timezone/struct.IanaBcp47RoundTripMapper.html#method.new) for more information.
   ///
@@ -28,13 +27,11 @@ final class Bcp47ToIanaMapper implements ffi.Finalizable {
     }
     return Bcp47ToIanaMapper._(result.union.ok);
   }
+
   // ignore: non_constant_identifier_names
-  static final _ICU4XBcp47ToIanaMapper_create = _capi<
-          ffi.NativeFunction<
-              _ResultOpaqueInt32 Function(
-                  ffi.Pointer<ffi.Opaque>)>>('ICU4XBcp47ToIanaMapper_create')
-      .asFunction<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(
-          isLeaf: true);
+  static final _ICU4XBcp47ToIanaMapper_create =
+    _capi<ffi.NativeFunction<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>>('ICU4XBcp47ToIanaMapper_create')
+      .asFunction<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
 
   /// Writes out the canonical IANA time zone ID corresponding to the given BCP-47 ID.
   ///
@@ -44,10 +41,8 @@ final class Bcp47ToIanaMapper implements ffi.Finalizable {
   String operator [](String value) {
     final alloc = ffi2.Arena();
     final valueSlice = _SliceFfi2Utf8._fromDart(value, alloc);
-
     final writeable = _Writeable();
-    final result = _ICU4XBcp47ToIanaMapper_get(_underlying, valueSlice._bytes,
-        valueSlice._length, writeable._underlying);
+    final result = _ICU4XBcp47ToIanaMapper_get(_underlying, valueSlice._bytes, valueSlice._length, writeable._underlying);
     alloc.releaseAll();
     if (!result.isOk) {
       throw Error.values.firstWhere((v) => v._underlying == result.union.err);
@@ -56,17 +51,7 @@ final class Bcp47ToIanaMapper implements ffi.Finalizable {
   }
 
   // ignore: non_constant_identifier_names
-  static final _ICU4XBcp47ToIanaMapper_get = _capi<
-          ffi.NativeFunction<
-              _ResultVoidInt32 Function(
-                  ffi.Pointer<ffi.Opaque>,
-                  ffi.Pointer<ffi2.Utf8>,
-                  ffi.Size,
-                  ffi.Pointer<ffi.Opaque>)>>('ICU4XBcp47ToIanaMapper_get')
-      .asFunction<
-          _ResultVoidInt32 Function(
-              ffi.Pointer<ffi.Opaque>,
-              ffi.Pointer<ffi2.Utf8>,
-              int,
-              ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
+  static final _ICU4XBcp47ToIanaMapper_get =
+    _capi<ffi.NativeFunction<_ResultVoidInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi2.Utf8>, ffi.Size, ffi.Pointer<ffi.Opaque>)>>('ICU4XBcp47ToIanaMapper_get')
+      .asFunction<_ResultVoidInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi2.Utf8>, int, ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
 }

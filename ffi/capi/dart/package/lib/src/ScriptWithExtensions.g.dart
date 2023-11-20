@@ -15,8 +15,7 @@ final class ScriptWithExtensions implements ffi.Finalizable {
     _finalizer.attach(this, _underlying.cast());
   }
 
-  static final _finalizer =
-      ffi.NativeFinalizer(_capi('ICU4XScriptWithExtensions_destroy'));
+  static final _finalizer = ffi.NativeFinalizer(_capi('ICU4XScriptWithExtensions_destroy'));
 
   /// See the [Rust documentation for `script_with_extensions`](https://docs.rs/icu/latest/icu/properties/script/fn.script_with_extensions.html) for more information.
   ///
@@ -28,46 +27,37 @@ final class ScriptWithExtensions implements ffi.Finalizable {
     }
     return ScriptWithExtensions._(result.union.ok);
   }
+
   // ignore: non_constant_identifier_names
-  static final _ICU4XScriptWithExtensions_create = _capi<
-          ffi.NativeFunction<
-              _ResultOpaqueInt32 Function(
-                  ffi.Pointer<ffi.Opaque>)>>('ICU4XScriptWithExtensions_create')
-      .asFunction<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(
-          isLeaf: true);
+  static final _ICU4XScriptWithExtensions_create =
+    _capi<ffi.NativeFunction<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>>('ICU4XScriptWithExtensions_create')
+      .asFunction<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
 
   /// Get the Script property value for a code point
   ///
   /// See the [Rust documentation for `get_script_val`](https://docs.rs/icu/latest/icu/properties/script/struct.ScriptWithExtensionsBorrowed.html#method.get_script_val) for more information.
   int getScriptVal(int codePoint) {
-    final result =
-        _ICU4XScriptWithExtensions_get_script_val(_underlying, codePoint);
+    final result = _ICU4XScriptWithExtensions_get_script_val(_underlying, codePoint);
     return result;
   }
 
   // ignore: non_constant_identifier_names
-  static final _ICU4XScriptWithExtensions_get_script_val = _capi<
-          ffi.NativeFunction<
-              ffi.Uint16 Function(ffi.Pointer<ffi.Opaque>,
-                  ffi.Uint32)>>('ICU4XScriptWithExtensions_get_script_val')
+  static final _ICU4XScriptWithExtensions_get_script_val =
+    _capi<ffi.NativeFunction<ffi.Uint16 Function(ffi.Pointer<ffi.Opaque>, ffi.Uint32)>>('ICU4XScriptWithExtensions_get_script_val')
       .asFunction<int Function(ffi.Pointer<ffi.Opaque>, int)>(isLeaf: true);
 
   /// Check if the Script_Extensions property of the given code point covers the given script
   ///
   /// See the [Rust documentation for `has_script`](https://docs.rs/icu/latest/icu/properties/script/struct.ScriptWithExtensionsBorrowed.html#method.has_script) for more information.
   bool hasScript(int codePoint, int script) {
-    final result =
-        _ICU4XScriptWithExtensions_has_script(_underlying, codePoint, script);
+    final result = _ICU4XScriptWithExtensions_has_script(_underlying, codePoint, script);
     return result;
   }
 
   // ignore: non_constant_identifier_names
-  static final _ICU4XScriptWithExtensions_has_script = _capi<
-          ffi.NativeFunction<
-              ffi.Bool Function(ffi.Pointer<ffi.Opaque>, ffi.Uint32,
-                  ffi.Uint16)>>('ICU4XScriptWithExtensions_has_script')
-      .asFunction<bool Function(ffi.Pointer<ffi.Opaque>, int, int)>(
-          isLeaf: true);
+  static final _ICU4XScriptWithExtensions_has_script =
+    _capi<ffi.NativeFunction<ffi.Bool Function(ffi.Pointer<ffi.Opaque>, ffi.Uint32, ffi.Uint16)>>('ICU4XScriptWithExtensions_has_script')
+      .asFunction<bool Function(ffi.Pointer<ffi.Opaque>, int, int)>(isLeaf: true);
 
   /// Borrow this object for a slightly faster variant with more operations
   ///
@@ -78,29 +68,20 @@ final class ScriptWithExtensions implements ffi.Finalizable {
   }
 
   // ignore: non_constant_identifier_names
-  static final _ICU4XScriptWithExtensions_as_borrowed = _capi<
-              ffi.NativeFunction<
-                  ffi.Pointer<ffi.Opaque> Function(ffi.Pointer<ffi.Opaque>)>>(
-          'ICU4XScriptWithExtensions_as_borrowed')
-      .asFunction<ffi.Pointer<ffi.Opaque> Function(ffi.Pointer<ffi.Opaque>)>(
-          isLeaf: true);
+  static final _ICU4XScriptWithExtensions_as_borrowed =
+    _capi<ffi.NativeFunction<ffi.Pointer<ffi.Opaque> Function(ffi.Pointer<ffi.Opaque>)>>('ICU4XScriptWithExtensions_as_borrowed')
+      .asFunction<ffi.Pointer<ffi.Opaque> Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
 
   /// Get a list of ranges of code points that contain this script in their Script_Extensions values
   ///
   /// See the [Rust documentation for `get_script_extensions_ranges`](https://docs.rs/icu/latest/icu/properties/script/struct.ScriptWithExtensionsBorrowed.html#method.get_script_extensions_ranges) for more information.
   CodePointRangeIterator iterRangesForScript(int script) {
-    final result =
-        _ICU4XScriptWithExtensions_iter_ranges_for_script(_underlying, script);
+    final result = _ICU4XScriptWithExtensions_iter_ranges_for_script(_underlying, script);
     return CodePointRangeIterator._(result);
   }
 
   // ignore: non_constant_identifier_names
-  static final _ICU4XScriptWithExtensions_iter_ranges_for_script = _capi<
-              ffi.NativeFunction<
-                  ffi.Pointer<ffi.Opaque> Function(
-                      ffi.Pointer<ffi.Opaque>, ffi.Uint16)>>(
-          'ICU4XScriptWithExtensions_iter_ranges_for_script')
-      .asFunction<
-          ffi.Pointer<ffi.Opaque> Function(
-              ffi.Pointer<ffi.Opaque>, int)>(isLeaf: true);
+  static final _ICU4XScriptWithExtensions_iter_ranges_for_script =
+    _capi<ffi.NativeFunction<ffi.Pointer<ffi.Opaque> Function(ffi.Pointer<ffi.Opaque>, ffi.Uint16)>>('ICU4XScriptWithExtensions_iter_ranges_for_script')
+      .asFunction<ffi.Pointer<ffi.Opaque> Function(ffi.Pointer<ffi.Opaque>, int)>(isLeaf: true);
 }

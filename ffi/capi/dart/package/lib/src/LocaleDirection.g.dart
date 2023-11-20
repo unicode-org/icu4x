@@ -8,6 +8,8 @@ part of 'lib.g.dart';
 /// See the [Rust documentation for `Direction`](https://docs.rs/icu/latest/icu/locid_transform/enum.Direction.html) for more information.
 enum LocaleDirection {
   leftToRight,
+
   rightToLeft,
+
   unknown;
 }

@@ -15,8 +15,7 @@ final class LocaleFallbackIterator implements ffi.Finalizable {
     _finalizer.attach(this, _underlying.cast());
   }
 
-  static final _finalizer =
-      ffi.NativeFinalizer(_capi('ICU4XLocaleFallbackIterator_destroy'));
+  static final _finalizer = ffi.NativeFinalizer(_capi('ICU4XLocaleFallbackIterator_destroy'));
 
   /// Gets a snapshot of the current state of the locale.
   ///
@@ -27,12 +26,9 @@ final class LocaleFallbackIterator implements ffi.Finalizable {
   }
 
   // ignore: non_constant_identifier_names
-  static final _ICU4XLocaleFallbackIterator_get = _capi<
-          ffi.NativeFunction<
-              ffi.Pointer<ffi.Opaque> Function(
-                  ffi.Pointer<ffi.Opaque>)>>('ICU4XLocaleFallbackIterator_get')
-      .asFunction<ffi.Pointer<ffi.Opaque> Function(ffi.Pointer<ffi.Opaque>)>(
-          isLeaf: true);
+  static final _ICU4XLocaleFallbackIterator_get =
+    _capi<ffi.NativeFunction<ffi.Pointer<ffi.Opaque> Function(ffi.Pointer<ffi.Opaque>)>>('ICU4XLocaleFallbackIterator_get')
+      .asFunction<ffi.Pointer<ffi.Opaque> Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
 
   /// Performs one step of the fallback algorithm, mutating the locale.
   ///
@@ -43,7 +39,6 @@ final class LocaleFallbackIterator implements ffi.Finalizable {
 
   // ignore: non_constant_identifier_names
   static final _ICU4XLocaleFallbackIterator_step =
-      _capi<ffi.NativeFunction<ffi.Void Function(ffi.Pointer<ffi.Opaque>)>>(
-              'ICU4XLocaleFallbackIterator_step')
-          .asFunction<void Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
+    _capi<ffi.NativeFunction<ffi.Void Function(ffi.Pointer<ffi.Opaque>)>>('ICU4XLocaleFallbackIterator_step')
+      .asFunction<void Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
 }

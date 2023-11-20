@@ -15,8 +15,7 @@ final class TimeZoneFormatter implements ffi.Finalizable {
     _finalizer.attach(this, _underlying.cast());
   }
 
-  static final _finalizer =
-      ffi.NativeFinalizer(_capi('ICU4XTimeZoneFormatter_destroy'));
+  static final _finalizer = ffi.NativeFinalizer(_capi('ICU4XTimeZoneFormatter_destroy'));
 
   /// Creates a new [`TimeZoneFormatter`] from locale data.
   ///
@@ -27,25 +26,18 @@ final class TimeZoneFormatter implements ffi.Finalizable {
   /// Additional information: [1](https://docs.rs/icu/latest/icu/datetime/time_zone/enum.FallbackFormat.html)
   ///
   /// Throws [Error] on failure.
-  factory TimeZoneFormatter.withLocalizedGmtFallback(
-      DataProvider provider, Locale locale) {
-    final result = _ICU4XTimeZoneFormatter_create_with_localized_gmt_fallback(
-        provider._underlying, locale._underlying);
+  factory TimeZoneFormatter.withLocalizedGmtFallback(DataProvider provider, Locale locale) {
+    final result = _ICU4XTimeZoneFormatter_create_with_localized_gmt_fallback(provider._underlying, locale._underlying);
     if (!result.isOk) {
       throw Error.values.firstWhere((v) => v._underlying == result.union.err);
     }
     return TimeZoneFormatter._(result.union.ok);
   }
+
   // ignore: non_constant_identifier_names
   static final _ICU4XTimeZoneFormatter_create_with_localized_gmt_fallback =
-      _capi<
-                  ffi.NativeFunction<
-                      _ResultOpaqueInt32 Function(
-                          ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>>(
-              'ICU4XTimeZoneFormatter_create_with_localized_gmt_fallback')
-          .asFunction<
-              _ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>,
-                  ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
+    _capi<ffi.NativeFunction<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>>('ICU4XTimeZoneFormatter_create_with_localized_gmt_fallback')
+      .asFunction<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
 
   /// Creates a new [`TimeZoneFormatter`] from locale data.
   ///
@@ -56,24 +48,18 @@ final class TimeZoneFormatter implements ffi.Finalizable {
   /// Additional information: [1](https://docs.rs/icu/latest/icu/datetime/time_zone/enum.FallbackFormat.html)
   ///
   /// Throws [Error] on failure.
-  factory TimeZoneFormatter.withIso8601Fallback(
-      DataProvider provider, Locale locale, IsoTimeZoneOptions options) {
-    final result = _ICU4XTimeZoneFormatter_create_with_iso_8601_fallback(
-        provider._underlying, locale._underlying, options._underlying);
+  factory TimeZoneFormatter.withIso8601Fallback(DataProvider provider, Locale locale, IsoTimeZoneOptions options) {
+    final result = _ICU4XTimeZoneFormatter_create_with_iso_8601_fallback(provider._underlying, locale._underlying, options._underlying);
     if (!result.isOk) {
       throw Error.values.firstWhere((v) => v._underlying == result.union.err);
     }
     return TimeZoneFormatter._(result.union.ok);
   }
+
   // ignore: non_constant_identifier_names
-  static final _ICU4XTimeZoneFormatter_create_with_iso_8601_fallback = _capi<
-              ffi.NativeFunction<
-                  _ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>,
-                      ffi.Pointer<ffi.Opaque>, _IsoTimeZoneOptionsFfi)>>(
-          'ICU4XTimeZoneFormatter_create_with_iso_8601_fallback')
-      .asFunction<
-          _ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>,
-              ffi.Pointer<ffi.Opaque>, _IsoTimeZoneOptionsFfi)>(isLeaf: true);
+  static final _ICU4XTimeZoneFormatter_create_with_iso_8601_fallback =
+    _capi<ffi.NativeFunction<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>, _IsoTimeZoneOptionsFfi)>>('ICU4XTimeZoneFormatter_create_with_iso_8601_fallback')
+      .asFunction<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>, _IsoTimeZoneOptionsFfi)>(isLeaf: true);
 
   /// Loads generic non-location long format. Example: "Pacific Time"
   ///
@@ -81,22 +67,16 @@ final class TimeZoneFormatter implements ffi.Finalizable {
   ///
   /// Throws [Error] on failure.
   void loadGenericNonLocationLong(DataProvider provider) {
-    final result = _ICU4XTimeZoneFormatter_load_generic_non_location_long(
-        _underlying, provider._underlying);
+    final result = _ICU4XTimeZoneFormatter_load_generic_non_location_long(_underlying, provider._underlying);
     if (!result.isOk) {
       throw Error.values.firstWhere((v) => v._underlying == result.union.err);
     }
   }
 
   // ignore: non_constant_identifier_names
-  static final _ICU4XTimeZoneFormatter_load_generic_non_location_long = _capi<
-              ffi.NativeFunction<
-                  _ResultVoidInt32 Function(
-                      ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>>(
-          'ICU4XTimeZoneFormatter_load_generic_non_location_long')
-      .asFunction<
-          _ResultVoidInt32 Function(
-              ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
+  static final _ICU4XTimeZoneFormatter_load_generic_non_location_long =
+    _capi<ffi.NativeFunction<_ResultVoidInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>>('ICU4XTimeZoneFormatter_load_generic_non_location_long')
+      .asFunction<_ResultVoidInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
 
   /// Loads generic non-location short format. Example: "PT"
   ///
@@ -104,22 +84,16 @@ final class TimeZoneFormatter implements ffi.Finalizable {
   ///
   /// Throws [Error] on failure.
   void loadGenericNonLocationShort(DataProvider provider) {
-    final result = _ICU4XTimeZoneFormatter_load_generic_non_location_short(
-        _underlying, provider._underlying);
+    final result = _ICU4XTimeZoneFormatter_load_generic_non_location_short(_underlying, provider._underlying);
     if (!result.isOk) {
       throw Error.values.firstWhere((v) => v._underlying == result.union.err);
     }
   }
 
   // ignore: non_constant_identifier_names
-  static final _ICU4XTimeZoneFormatter_load_generic_non_location_short = _capi<
-              ffi.NativeFunction<
-                  _ResultVoidInt32 Function(
-                      ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>>(
-          'ICU4XTimeZoneFormatter_load_generic_non_location_short')
-      .asFunction<
-          _ResultVoidInt32 Function(
-              ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
+  static final _ICU4XTimeZoneFormatter_load_generic_non_location_short =
+    _capi<ffi.NativeFunction<_ResultVoidInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>>('ICU4XTimeZoneFormatter_load_generic_non_location_short')
+      .asFunction<_ResultVoidInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
 
   /// Loads specific non-location long format. Example: "Pacific Standard Time"
   ///
@@ -127,22 +101,16 @@ final class TimeZoneFormatter implements ffi.Finalizable {
   ///
   /// Throws [Error] on failure.
   void loadSpecificNonLocationLong(DataProvider provider) {
-    final result = _ICU4XTimeZoneFormatter_load_specific_non_location_long(
-        _underlying, provider._underlying);
+    final result = _ICU4XTimeZoneFormatter_load_specific_non_location_long(_underlying, provider._underlying);
     if (!result.isOk) {
       throw Error.values.firstWhere((v) => v._underlying == result.union.err);
     }
   }
 
   // ignore: non_constant_identifier_names
-  static final _ICU4XTimeZoneFormatter_load_specific_non_location_long = _capi<
-              ffi.NativeFunction<
-                  _ResultVoidInt32 Function(
-                      ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>>(
-          'ICU4XTimeZoneFormatter_load_specific_non_location_long')
-      .asFunction<
-          _ResultVoidInt32 Function(
-              ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
+  static final _ICU4XTimeZoneFormatter_load_specific_non_location_long =
+    _capi<ffi.NativeFunction<_ResultVoidInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>>('ICU4XTimeZoneFormatter_load_specific_non_location_long')
+      .asFunction<_ResultVoidInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
 
   /// Loads specific non-location short format. Example: "PST"
   ///
@@ -150,22 +118,16 @@ final class TimeZoneFormatter implements ffi.Finalizable {
   ///
   /// Throws [Error] on failure.
   void loadSpecificNonLocationShort(DataProvider provider) {
-    final result = _ICU4XTimeZoneFormatter_load_specific_non_location_short(
-        _underlying, provider._underlying);
+    final result = _ICU4XTimeZoneFormatter_load_specific_non_location_short(_underlying, provider._underlying);
     if (!result.isOk) {
       throw Error.values.firstWhere((v) => v._underlying == result.union.err);
     }
   }
 
   // ignore: non_constant_identifier_names
-  static final _ICU4XTimeZoneFormatter_load_specific_non_location_short = _capi<
-              ffi.NativeFunction<
-                  _ResultVoidInt32 Function(
-                      ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>>(
-          'ICU4XTimeZoneFormatter_load_specific_non_location_short')
-      .asFunction<
-          _ResultVoidInt32 Function(
-              ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
+  static final _ICU4XTimeZoneFormatter_load_specific_non_location_short =
+    _capi<ffi.NativeFunction<_ResultVoidInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>>('ICU4XTimeZoneFormatter_load_specific_non_location_short')
+      .asFunction<_ResultVoidInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
 
   /// Loads generic location format. Example: "Los Angeles Time"
   ///
@@ -173,22 +135,16 @@ final class TimeZoneFormatter implements ffi.Finalizable {
   ///
   /// Throws [Error] on failure.
   void loadGenericLocationFormat(DataProvider provider) {
-    final result = _ICU4XTimeZoneFormatter_load_generic_location_format(
-        _underlying, provider._underlying);
+    final result = _ICU4XTimeZoneFormatter_load_generic_location_format(_underlying, provider._underlying);
     if (!result.isOk) {
       throw Error.values.firstWhere((v) => v._underlying == result.union.err);
     }
   }
 
   // ignore: non_constant_identifier_names
-  static final _ICU4XTimeZoneFormatter_load_generic_location_format = _capi<
-              ffi.NativeFunction<
-                  _ResultVoidInt32 Function(
-                      ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>>(
-          'ICU4XTimeZoneFormatter_load_generic_location_format')
-      .asFunction<
-          _ResultVoidInt32 Function(
-              ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
+  static final _ICU4XTimeZoneFormatter_load_generic_location_format =
+    _capi<ffi.NativeFunction<_ResultVoidInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>>('ICU4XTimeZoneFormatter_load_generic_location_format')
+      .asFunction<_ResultVoidInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
 
   /// Loads localized GMT format. Example: "GMT-07:00"
   ///
@@ -196,20 +152,16 @@ final class TimeZoneFormatter implements ffi.Finalizable {
   ///
   /// Throws [Error] on failure.
   void includeLocalizedGmtFormat() {
-    final result =
-        _ICU4XTimeZoneFormatter_include_localized_gmt_format(_underlying);
+    final result = _ICU4XTimeZoneFormatter_include_localized_gmt_format(_underlying);
     if (!result.isOk) {
       throw Error.values.firstWhere((v) => v._underlying == result.union.err);
     }
   }
 
   // ignore: non_constant_identifier_names
-  static final _ICU4XTimeZoneFormatter_include_localized_gmt_format = _capi<
-              ffi.NativeFunction<
-                  _ResultVoidInt32 Function(ffi.Pointer<ffi.Opaque>)>>(
-          'ICU4XTimeZoneFormatter_include_localized_gmt_format')
-      .asFunction<_ResultVoidInt32 Function(ffi.Pointer<ffi.Opaque>)>(
-          isLeaf: true);
+  static final _ICU4XTimeZoneFormatter_include_localized_gmt_format =
+    _capi<ffi.NativeFunction<_ResultVoidInt32 Function(ffi.Pointer<ffi.Opaque>)>>('ICU4XTimeZoneFormatter_include_localized_gmt_format')
+      .asFunction<_ResultVoidInt32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
 
   /// Loads ISO-8601 format. Example: "-07:00"
   ///
@@ -217,22 +169,16 @@ final class TimeZoneFormatter implements ffi.Finalizable {
   ///
   /// Throws [Error] on failure.
   void loadIso8601Format(IsoTimeZoneOptions options) {
-    final result = _ICU4XTimeZoneFormatter_load_iso_8601_format(
-        _underlying, options._underlying);
+    final result = _ICU4XTimeZoneFormatter_load_iso_8601_format(_underlying, options._underlying);
     if (!result.isOk) {
       throw Error.values.firstWhere((v) => v._underlying == result.union.err);
     }
   }
 
   // ignore: non_constant_identifier_names
-  static final _ICU4XTimeZoneFormatter_load_iso_8601_format = _capi<
-              ffi.NativeFunction<
-                  _ResultVoidInt32 Function(
-                      ffi.Pointer<ffi.Opaque>, _IsoTimeZoneOptionsFfi)>>(
-          'ICU4XTimeZoneFormatter_load_iso_8601_format')
-      .asFunction<
-          _ResultVoidInt32 Function(
-              ffi.Pointer<ffi.Opaque>, _IsoTimeZoneOptionsFfi)>(isLeaf: true);
+  static final _ICU4XTimeZoneFormatter_load_iso_8601_format =
+    _capi<ffi.NativeFunction<_ResultVoidInt32 Function(ffi.Pointer<ffi.Opaque>, _IsoTimeZoneOptionsFfi)>>('ICU4XTimeZoneFormatter_load_iso_8601_format')
+      .asFunction<_ResultVoidInt32 Function(ffi.Pointer<ffi.Opaque>, _IsoTimeZoneOptionsFfi)>(isLeaf: true);
 
   /// Formats a [`CustomTimeZone`] to a string.
   ///
@@ -243,8 +189,7 @@ final class TimeZoneFormatter implements ffi.Finalizable {
   /// Throws [Error] on failure.
   String formatCustomTimeZone(CustomTimeZone value) {
     final writeable = _Writeable();
-    final result = _ICU4XTimeZoneFormatter_format_custom_time_zone(
-        _underlying, value._underlying, writeable._underlying);
+    final result = _ICU4XTimeZoneFormatter_format_custom_time_zone(_underlying, value._underlying, writeable._underlying);
     if (!result.isOk) {
       throw Error.values.firstWhere((v) => v._underlying == result.union.err);
     }
@@ -252,12 +197,7 @@ final class TimeZoneFormatter implements ffi.Finalizable {
   }
 
   // ignore: non_constant_identifier_names
-  static final _ICU4XTimeZoneFormatter_format_custom_time_zone = _capi<
-              ffi.NativeFunction<
-                  _ResultVoidInt32 Function(ffi.Pointer<ffi.Opaque>,
-                      ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>>(
-          'ICU4XTimeZoneFormatter_format_custom_time_zone')
-      .asFunction<
-          _ResultVoidInt32 Function(ffi.Pointer<ffi.Opaque>,
-              ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
+  static final _ICU4XTimeZoneFormatter_format_custom_time_zone =
+    _capi<ffi.NativeFunction<_ResultVoidInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>>('ICU4XTimeZoneFormatter_format_custom_time_zone')
+      .asFunction<_ResultVoidInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
 }

@@ -29,13 +29,11 @@ final class Bidi implements ffi.Finalizable {
     }
     return Bidi._(result.union.ok);
   }
+
   // ignore: non_constant_identifier_names
-  static final _ICU4XBidi_create = _capi<
-          ffi.NativeFunction<
-              _ResultOpaqueInt32 Function(
-                  ffi.Pointer<ffi.Opaque>)>>('ICU4XBidi_create')
-      .asFunction<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(
-          isLeaf: true);
+  static final _ICU4XBidi_create =
+    _capi<ffi.NativeFunction<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>>('ICU4XBidi_create')
+      .asFunction<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
 
   /// Use the data loaded in this object to process a string and calculate bidi information
   ///
@@ -45,24 +43,15 @@ final class Bidi implements ffi.Finalizable {
   BidiInfo forText(String text, int defaultLevel) {
     final alloc = ffi2.Arena();
     final textSlice = _SliceFfi2Utf8._fromDart(text, alloc);
-
-    final result = _ICU4XBidi_for_text(
-        _underlying, textSlice._bytes, textSlice._length, defaultLevel);
+    final result = _ICU4XBidi_for_text(_underlying, textSlice._bytes, textSlice._length, defaultLevel);
     alloc.releaseAll();
     return BidiInfo._(result);
   }
 
   // ignore: non_constant_identifier_names
-  static final _ICU4XBidi_for_text = _capi<
-          ffi.NativeFunction<
-              ffi.Pointer<ffi.Opaque> Function(
-                  ffi.Pointer<ffi.Opaque>,
-                  ffi.Pointer<ffi2.Utf8>,
-                  ffi.Size,
-                  ffi.Uint8)>>('ICU4XBidi_for_text')
-      .asFunction<
-          ffi.Pointer<ffi.Opaque> Function(ffi.Pointer<ffi.Opaque>,
-              ffi.Pointer<ffi2.Utf8>, int, int)>(isLeaf: true);
+  static final _ICU4XBidi_for_text =
+    _capi<ffi.NativeFunction<ffi.Pointer<ffi.Opaque> Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi2.Utf8>, ffi.Size, ffi.Uint8)>>('ICU4XBidi_for_text')
+      .asFunction<ffi.Pointer<ffi.Opaque> Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi2.Utf8>, int, int)>(isLeaf: true);
 
   /// Utility function for producing reorderings given a list of levels
   ///
@@ -77,23 +66,15 @@ final class Bidi implements ffi.Finalizable {
   ReorderedIndexMap reorderVisual(Uint8List levels) {
     final alloc = ffi2.Arena();
     final levelsSlice = _SliceFfiUint8._fromDart(levels, alloc);
-
-    final result = _ICU4XBidi_reorder_visual(
-        _underlying, levelsSlice._bytes, levelsSlice._length);
+    final result = _ICU4XBidi_reorder_visual(_underlying, levelsSlice._bytes, levelsSlice._length);
     alloc.releaseAll();
     return ReorderedIndexMap._(result);
   }
 
   // ignore: non_constant_identifier_names
-  static final _ICU4XBidi_reorder_visual = _capi<
-          ffi.NativeFunction<
-              ffi.Pointer<ffi.Opaque> Function(
-                  ffi.Pointer<ffi.Opaque>,
-                  ffi.Pointer<ffi.Uint8>,
-                  ffi.Size)>>('ICU4XBidi_reorder_visual')
-      .asFunction<
-          ffi.Pointer<ffi.Opaque> Function(ffi.Pointer<ffi.Opaque>,
-              ffi.Pointer<ffi.Uint8>, int)>(isLeaf: true);
+  static final _ICU4XBidi_reorder_visual =
+    _capi<ffi.NativeFunction<ffi.Pointer<ffi.Opaque> Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Uint8>, ffi.Size)>>('ICU4XBidi_reorder_visual')
+      .asFunction<ffi.Pointer<ffi.Opaque> Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Uint8>, int)>(isLeaf: true);
 
   /// Check if a Level returned by level_at is an RTL level.
   ///
@@ -107,9 +88,8 @@ final class Bidi implements ffi.Finalizable {
 
   // ignore: non_constant_identifier_names
   static final _ICU4XBidi_level_is_rtl =
-      _capi<ffi.NativeFunction<ffi.Bool Function(ffi.Uint8)>>(
-              'ICU4XBidi_level_is_rtl')
-          .asFunction<bool Function(int)>(isLeaf: true);
+    _capi<ffi.NativeFunction<ffi.Bool Function(ffi.Uint8)>>('ICU4XBidi_level_is_rtl')
+      .asFunction<bool Function(int)>(isLeaf: true);
 
   /// Check if a Level returned by level_at is an LTR level.
   ///
@@ -123,21 +103,16 @@ final class Bidi implements ffi.Finalizable {
 
   // ignore: non_constant_identifier_names
   static final _ICU4XBidi_level_is_ltr =
-      _capi<ffi.NativeFunction<ffi.Bool Function(ffi.Uint8)>>(
-              'ICU4XBidi_level_is_ltr')
-          .asFunction<bool Function(int)>(isLeaf: true);
+    _capi<ffi.NativeFunction<ffi.Bool Function(ffi.Uint8)>>('ICU4XBidi_level_is_ltr')
+      .asFunction<bool Function(int)>(isLeaf: true);
 
   /// Get a basic RTL Level value
   ///
   /// See the [Rust documentation for `rtl`](https://docs.rs/unicode_bidi/latest/unicode_bidi/struct.Level.html#method.rtl) for more information.
-  static final int levelRtl =
-      _capi<ffi.NativeFunction<ffi.Uint8 Function()>>('ICU4XBidi_level_rtl')
-          .asFunction<int Function()>(isLeaf: true)();
+  static final int levelRtl = _capi<ffi.NativeFunction<ffi.Uint8 Function()>>('ICU4XBidi_level_rtl').asFunction<int Function()>(isLeaf: true)();
 
   /// Get a simple LTR Level value
   ///
   /// See the [Rust documentation for `ltr`](https://docs.rs/unicode_bidi/latest/unicode_bidi/struct.Level.html#method.ltr) for more information.
-  static final int levelLtr =
-      _capi<ffi.NativeFunction<ffi.Uint8 Function()>>('ICU4XBidi_level_ltr')
-          .asFunction<int Function()>(isLeaf: true)();
+  static final int levelLtr = _capi<ffi.NativeFunction<ffi.Uint8 Function()>>('ICU4XBidi_level_ltr').asFunction<int Function()>(isLeaf: true)();
 }

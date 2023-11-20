@@ -23,71 +23,40 @@ final class Date implements ffi.Finalizable {
   /// See the [Rust documentation for `new_from_iso`](https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.new_from_iso) for more information.
   ///
   /// Throws [Error] on failure.
-  factory Date.fromIsoInCalendar(
-      int year, int month, int day, Calendar calendar) {
-    final result = _ICU4XDate_create_from_iso_in_calendar(
-        year, month, day, calendar._underlying);
+  factory Date.fromIsoInCalendar(int year, int month, int day, Calendar calendar) {
+    final result = _ICU4XDate_create_from_iso_in_calendar(year, month, day, calendar._underlying);
     if (!result.isOk) {
       throw Error.values.firstWhere((v) => v._underlying == result.union.err);
     }
     return Date._(result.union.ok);
   }
+
   // ignore: non_constant_identifier_names
-  static final _ICU4XDate_create_from_iso_in_calendar = _capi<
-              ffi.NativeFunction<
-                  _ResultOpaqueInt32 Function(ffi.Int32, ffi.Uint8, ffi.Uint8,
-                      ffi.Pointer<ffi.Opaque>)>>(
-          'ICU4XDate_create_from_iso_in_calendar')
-      .asFunction<
-          _ResultOpaqueInt32 Function(
-              int, int, int, ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
+  static final _ICU4XDate_create_from_iso_in_calendar =
+    _capi<ffi.NativeFunction<_ResultOpaqueInt32 Function(ffi.Int32, ffi.Uint8, ffi.Uint8, ffi.Pointer<ffi.Opaque>)>>('ICU4XDate_create_from_iso_in_calendar')
+      .asFunction<_ResultOpaqueInt32 Function(int, int, int, ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
 
   /// Creates a new [`Date`] from the given codes, which are interpreted in the given calendar system
   ///
   /// See the [Rust documentation for `try_new_from_codes`](https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.try_new_from_codes) for more information.
   ///
   /// Throws [Error] on failure.
-  factory Date.fromCodesInCalendar(
-      String eraCode, int year, String monthCode, int day, Calendar calendar) {
+  factory Date.fromCodesInCalendar(String eraCode, int year, String monthCode, int day, Calendar calendar) {
     final alloc = ffi2.Arena();
     final eraCodeSlice = _SliceFfi2Utf8._fromDart(eraCode, alloc);
     final monthCodeSlice = _SliceFfi2Utf8._fromDart(monthCode, alloc);
-
-    final result = _ICU4XDate_create_from_codes_in_calendar(
-        eraCodeSlice._bytes,
-        eraCodeSlice._length,
-        year,
-        monthCodeSlice._bytes,
-        monthCodeSlice._length,
-        day,
-        calendar._underlying);
+    final result = _ICU4XDate_create_from_codes_in_calendar(eraCodeSlice._bytes, eraCodeSlice._length, year, monthCodeSlice._bytes, monthCodeSlice._length, day, calendar._underlying);
     alloc.releaseAll();
     if (!result.isOk) {
       throw Error.values.firstWhere((v) => v._underlying == result.union.err);
     }
     return Date._(result.union.ok);
   }
+
   // ignore: non_constant_identifier_names
-  static final _ICU4XDate_create_from_codes_in_calendar = _capi<
-              ffi.NativeFunction<
-                  _ResultOpaqueInt32 Function(
-                      ffi.Pointer<ffi2.Utf8>,
-                      ffi.Size,
-                      ffi.Int32,
-                      ffi.Pointer<ffi2.Utf8>,
-                      ffi.Size,
-                      ffi.Uint8,
-                      ffi.Pointer<ffi.Opaque>)>>(
-          'ICU4XDate_create_from_codes_in_calendar')
-      .asFunction<
-          _ResultOpaqueInt32 Function(
-              ffi.Pointer<ffi2.Utf8>,
-              int,
-              int,
-              ffi.Pointer<ffi2.Utf8>,
-              int,
-              int,
-              ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
+  static final _ICU4XDate_create_from_codes_in_calendar =
+    _capi<ffi.NativeFunction<_ResultOpaqueInt32 Function(ffi.Pointer<ffi2.Utf8>, ffi.Size, ffi.Int32, ffi.Pointer<ffi2.Utf8>, ffi.Size, ffi.Uint8, ffi.Pointer<ffi.Opaque>)>>('ICU4XDate_create_from_codes_in_calendar')
+      .asFunction<_ResultOpaqueInt32 Function(ffi.Pointer<ffi2.Utf8>, int, int, ffi.Pointer<ffi2.Utf8>, int, int, ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
 
   /// Convert this date to one in a different calendar
   ///
@@ -98,13 +67,9 @@ final class Date implements ffi.Finalizable {
   }
 
   // ignore: non_constant_identifier_names
-  static final _ICU4XDate_to_calendar = _capi<
-          ffi.NativeFunction<
-              ffi.Pointer<ffi.Opaque> Function(ffi.Pointer<ffi.Opaque>,
-                  ffi.Pointer<ffi.Opaque>)>>('ICU4XDate_to_calendar')
-      .asFunction<
-          ffi.Pointer<ffi.Opaque> Function(
-              ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
+  static final _ICU4XDate_to_calendar =
+    _capi<ffi.NativeFunction<ffi.Pointer<ffi.Opaque> Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>>('ICU4XDate_to_calendar')
+      .asFunction<ffi.Pointer<ffi.Opaque> Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
 
   /// Converts this date to ISO
   ///
@@ -115,12 +80,9 @@ final class Date implements ffi.Finalizable {
   }
 
   // ignore: non_constant_identifier_names
-  static final _ICU4XDate_to_iso = _capi<
-          ffi.NativeFunction<
-              ffi.Pointer<ffi.Opaque> Function(
-                  ffi.Pointer<ffi.Opaque>)>>('ICU4XDate_to_iso')
-      .asFunction<ffi.Pointer<ffi.Opaque> Function(ffi.Pointer<ffi.Opaque>)>(
-          isLeaf: true);
+  static final _ICU4XDate_to_iso =
+    _capi<ffi.NativeFunction<ffi.Pointer<ffi.Opaque> Function(ffi.Pointer<ffi.Opaque>)>>('ICU4XDate_to_iso')
+      .asFunction<ffi.Pointer<ffi.Opaque> Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
 
   /// Returns the 1-indexed day in the month for this date
   ///
@@ -132,9 +94,8 @@ final class Date implements ffi.Finalizable {
 
   // ignore: non_constant_identifier_names
   static final _ICU4XDate_day_of_month =
-      _capi<ffi.NativeFunction<ffi.Uint32 Function(ffi.Pointer<ffi.Opaque>)>>(
-              'ICU4XDate_day_of_month')
-          .asFunction<int Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
+    _capi<ffi.NativeFunction<ffi.Uint32 Function(ffi.Pointer<ffi.Opaque>)>>('ICU4XDate_day_of_month')
+      .asFunction<int Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
 
   /// Returns the day in the week for this day
   ///
@@ -146,9 +107,8 @@ final class Date implements ffi.Finalizable {
 
   // ignore: non_constant_identifier_names
   static final _ICU4XDate_day_of_week =
-      _capi<ffi.NativeFunction<ffi.Int32 Function(ffi.Pointer<ffi.Opaque>)>>(
-              'ICU4XDate_day_of_week')
-          .asFunction<int Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
+    _capi<ffi.NativeFunction<ffi.Int32 Function(ffi.Pointer<ffi.Opaque>)>>('ICU4XDate_day_of_week')
+      .asFunction<int Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
 
   /// Returns the week number in this month, 1-indexed, based on what
   /// is considered the first day of the week (often a locale preference).
@@ -157,16 +117,13 @@ final class Date implements ffi.Finalizable {
   ///
   /// See the [Rust documentation for `week_of_month`](https://docs.rs/icu/latest/icu/calendar/struct.Date.html#method.week_of_month) for more information.
   int weekOfMonth(IsoWeekday firstWeekday) {
-    final result =
-        _ICU4XDate_week_of_month(_underlying, firstWeekday._underlying);
+    final result = _ICU4XDate_week_of_month(_underlying, firstWeekday._underlying);
     return result;
   }
 
   // ignore: non_constant_identifier_names
-  static final _ICU4XDate_week_of_month = _capi<
-          ffi.NativeFunction<
-              ffi.Uint32 Function(ffi.Pointer<ffi.Opaque>,
-                  ffi.Int32)>>('ICU4XDate_week_of_month')
+  static final _ICU4XDate_week_of_month =
+    _capi<ffi.NativeFunction<ffi.Uint32 Function(ffi.Pointer<ffi.Opaque>, ffi.Int32)>>('ICU4XDate_week_of_month')
       .asFunction<int Function(ffi.Pointer<ffi.Opaque>, int)>(isLeaf: true);
 
   /// Returns the week number in this year, using week data
@@ -183,13 +140,9 @@ final class Date implements ffi.Finalizable {
   }
 
   // ignore: non_constant_identifier_names
-  static final _ICU4XDate_week_of_year = _capi<
-          ffi.NativeFunction<
-              _ResultWeekOfFfiInt32 Function(ffi.Pointer<ffi.Opaque>,
-                  ffi.Pointer<ffi.Opaque>)>>('ICU4XDate_week_of_year')
-      .asFunction<
-          _ResultWeekOfFfiInt32 Function(
-              ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
+  static final _ICU4XDate_week_of_year =
+    _capi<ffi.NativeFunction<_ResultWeekOfFfiInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>>('ICU4XDate_week_of_year')
+      .asFunction<_ResultWeekOfFfiInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
 
   /// Returns 1-indexed number of the month of this date in its year
   ///
@@ -205,9 +158,8 @@ final class Date implements ffi.Finalizable {
 
   // ignore: non_constant_identifier_names
   static final _ICU4XDate_ordinal_month =
-      _capi<ffi.NativeFunction<ffi.Uint32 Function(ffi.Pointer<ffi.Opaque>)>>(
-              'ICU4XDate_ordinal_month')
-          .asFunction<int Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
+    _capi<ffi.NativeFunction<ffi.Uint32 Function(ffi.Pointer<ffi.Opaque>)>>('ICU4XDate_ordinal_month')
+      .asFunction<int Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
 
   /// Returns the month code for this date. Typically something
   /// like "M01", "M02", but can be more complicated for lunar calendars.
@@ -225,13 +177,9 @@ final class Date implements ffi.Finalizable {
   }
 
   // ignore: non_constant_identifier_names
-  static final _ICU4XDate_month_code = _capi<
-          ffi.NativeFunction<
-              _ResultVoidInt32 Function(ffi.Pointer<ffi.Opaque>,
-                  ffi.Pointer<ffi.Opaque>)>>('ICU4XDate_month_code')
-      .asFunction<
-          _ResultVoidInt32 Function(
-              ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
+  static final _ICU4XDate_month_code =
+    _capi<ffi.NativeFunction<_ResultVoidInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>>('ICU4XDate_month_code')
+      .asFunction<_ResultVoidInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
 
   /// Returns the year number in the current era for this date
   ///
@@ -243,9 +191,8 @@ final class Date implements ffi.Finalizable {
 
   // ignore: non_constant_identifier_names
   static final _ICU4XDate_year_in_era =
-      _capi<ffi.NativeFunction<ffi.Int32 Function(ffi.Pointer<ffi.Opaque>)>>(
-              'ICU4XDate_year_in_era')
-          .asFunction<int Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
+    _capi<ffi.NativeFunction<ffi.Int32 Function(ffi.Pointer<ffi.Opaque>)>>('ICU4XDate_year_in_era')
+      .asFunction<int Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
 
   /// Returns the era for this date,
   ///
@@ -264,13 +211,9 @@ final class Date implements ffi.Finalizable {
   }
 
   // ignore: non_constant_identifier_names
-  static final _ICU4XDate_era = _capi<
-          ffi.NativeFunction<
-              _ResultVoidInt32 Function(ffi.Pointer<ffi.Opaque>,
-                  ffi.Pointer<ffi.Opaque>)>>('ICU4XDate_era')
-      .asFunction<
-          _ResultVoidInt32 Function(
-              ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
+  static final _ICU4XDate_era =
+    _capi<ffi.NativeFunction<_ResultVoidInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>>('ICU4XDate_era')
+      .asFunction<_ResultVoidInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
 
   /// Returns the number of months in the year represented by this date
   ///
@@ -282,9 +225,8 @@ final class Date implements ffi.Finalizable {
 
   // ignore: non_constant_identifier_names
   static final _ICU4XDate_months_in_year =
-      _capi<ffi.NativeFunction<ffi.Uint8 Function(ffi.Pointer<ffi.Opaque>)>>(
-              'ICU4XDate_months_in_year')
-          .asFunction<int Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
+    _capi<ffi.NativeFunction<ffi.Uint8 Function(ffi.Pointer<ffi.Opaque>)>>('ICU4XDate_months_in_year')
+      .asFunction<int Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
 
   /// Returns the number of days in the month represented by this date
   ///
@@ -296,9 +238,8 @@ final class Date implements ffi.Finalizable {
 
   // ignore: non_constant_identifier_names
   static final _ICU4XDate_days_in_month =
-      _capi<ffi.NativeFunction<ffi.Uint8 Function(ffi.Pointer<ffi.Opaque>)>>(
-              'ICU4XDate_days_in_month')
-          .asFunction<int Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
+    _capi<ffi.NativeFunction<ffi.Uint8 Function(ffi.Pointer<ffi.Opaque>)>>('ICU4XDate_days_in_month')
+      .asFunction<int Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
 
   /// Returns the number of days in the year represented by this date
   ///
@@ -310,9 +251,8 @@ final class Date implements ffi.Finalizable {
 
   // ignore: non_constant_identifier_names
   static final _ICU4XDate_days_in_year =
-      _capi<ffi.NativeFunction<ffi.Uint16 Function(ffi.Pointer<ffi.Opaque>)>>(
-              'ICU4XDate_days_in_year')
-          .asFunction<int Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
+    _capi<ffi.NativeFunction<ffi.Uint16 Function(ffi.Pointer<ffi.Opaque>)>>('ICU4XDate_days_in_year')
+      .asFunction<int Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
 
   /// Returns the [`Calendar`] object backing this date
   ///
@@ -323,10 +263,7 @@ final class Date implements ffi.Finalizable {
   }
 
   // ignore: non_constant_identifier_names
-  static final _ICU4XDate_calendar = _capi<
-          ffi.NativeFunction<
-              ffi.Pointer<ffi.Opaque> Function(
-                  ffi.Pointer<ffi.Opaque>)>>('ICU4XDate_calendar')
-      .asFunction<ffi.Pointer<ffi.Opaque> Function(ffi.Pointer<ffi.Opaque>)>(
-          isLeaf: true);
+  static final _ICU4XDate_calendar =
+    _capi<ffi.NativeFunction<ffi.Pointer<ffi.Opaque> Function(ffi.Pointer<ffi.Opaque>)>>('ICU4XDate_calendar')
+      .asFunction<ffi.Pointer<ffi.Opaque> Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
 }

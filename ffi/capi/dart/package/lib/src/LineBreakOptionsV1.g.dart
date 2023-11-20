@@ -28,14 +28,12 @@ final class LineBreakOptionsV1 {
     return result;
   }
 
-  LineBreakStrictness get strictness =>
-      LineBreakStrictness.values[_underlying.strictness];
+  LineBreakStrictness get strictness => LineBreakStrictness.values[_underlying.strictness];
   set strictness(LineBreakStrictness strictness) {
     _underlying.strictness = strictness.index;
   }
 
-  LineBreakWordOption get wordOption =>
-      LineBreakWordOption.values[_underlying.wordOption];
+  LineBreakWordOption get wordOption => LineBreakWordOption.values[_underlying.wordOption];
   set wordOption(LineBreakWordOption wordOption) {
     _underlying.wordOption = wordOption.index;
   }

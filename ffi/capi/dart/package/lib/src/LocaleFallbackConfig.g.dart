@@ -29,8 +29,7 @@ final class LocaleFallbackConfig {
     return result;
   }
 
-  LocaleFallbackPriority get priority =>
-      LocaleFallbackPriority.values[_underlying.priority];
+  LocaleFallbackPriority get priority => LocaleFallbackPriority.values[_underlying.priority];
   set priority(LocaleFallbackPriority priority) {
     _underlying.priority = priority.index;
   }
@@ -43,8 +42,7 @@ final class LocaleFallbackConfig {
     _underlying.extensionKey = extensionKeySlice;
   }
 
-  LocaleFallbackSupplement get fallbackSupplement =>
-      LocaleFallbackSupplement.values[_underlying.fallbackSupplement];
+  LocaleFallbackSupplement get fallbackSupplement => LocaleFallbackSupplement.values[_underlying.fallbackSupplement];
   set fallbackSupplement(LocaleFallbackSupplement fallbackSupplement) {
     _underlying.fallbackSupplement = fallbackSupplement.index;
   }

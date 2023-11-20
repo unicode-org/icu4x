@@ -36,32 +36,27 @@ final class CollatorOptionsV1 {
     return result;
   }
 
-  CollatorStrength get strength =>
-      CollatorStrength.values[_underlying.strength];
+  CollatorStrength get strength => CollatorStrength.values[_underlying.strength];
   set strength(CollatorStrength strength) {
     _underlying.strength = strength.index;
   }
 
-  CollatorAlternateHandling get alternateHandling =>
-      CollatorAlternateHandling.values[_underlying.alternateHandling];
+  CollatorAlternateHandling get alternateHandling => CollatorAlternateHandling.values[_underlying.alternateHandling];
   set alternateHandling(CollatorAlternateHandling alternateHandling) {
     _underlying.alternateHandling = alternateHandling.index;
   }
 
-  CollatorCaseFirst get caseFirst =>
-      CollatorCaseFirst.values[_underlying.caseFirst];
+  CollatorCaseFirst get caseFirst => CollatorCaseFirst.values[_underlying.caseFirst];
   set caseFirst(CollatorCaseFirst caseFirst) {
     _underlying.caseFirst = caseFirst.index;
   }
 
-  CollatorMaxVariable get maxVariable =>
-      CollatorMaxVariable.values[_underlying.maxVariable];
+  CollatorMaxVariable get maxVariable => CollatorMaxVariable.values[_underlying.maxVariable];
   set maxVariable(CollatorMaxVariable maxVariable) {
     _underlying.maxVariable = maxVariable.index;
   }
 
-  CollatorCaseLevel get caseLevel =>
-      CollatorCaseLevel.values[_underlying.caseLevel];
+  CollatorCaseLevel get caseLevel => CollatorCaseLevel.values[_underlying.caseLevel];
   set caseLevel(CollatorCaseLevel caseLevel) {
     _underlying.caseLevel = caseLevel.index;
   }
@@ -71,8 +66,7 @@ final class CollatorOptionsV1 {
     _underlying.numeric = numeric.index;
   }
 
-  CollatorBackwardSecondLevel get backwardSecondLevel =>
-      CollatorBackwardSecondLevel.values[_underlying.backwardSecondLevel];
+  CollatorBackwardSecondLevel get backwardSecondLevel => CollatorBackwardSecondLevel.values[_underlying.backwardSecondLevel];
   set backwardSecondLevel(CollatorBackwardSecondLevel backwardSecondLevel) {
     _underlying.backwardSecondLevel = backwardSecondLevel.index;
   }

@@ -7,11 +7,17 @@ part of 'lib.g.dart';
 
 enum IsoWeekday {
   monday,
+
   tuesday,
+
   wednesday,
+
   thursday,
+
   friday,
+
   saturday,
+
   sunday;
 
   int get _underlying {

@@ -16,8 +16,7 @@ final class GraphemeClusterSegmenter implements ffi.Finalizable {
     _finalizer.attach(this, _underlying.cast());
   }
 
-  static final _finalizer =
-      ffi.NativeFinalizer(_capi('ICU4XGraphemeClusterSegmenter_destroy'));
+  static final _finalizer = ffi.NativeFinalizer(_capi('ICU4XGraphemeClusterSegmenter_destroy'));
 
   /// Construct an [`GraphemeClusterSegmenter`].
   ///
@@ -31,13 +30,11 @@ final class GraphemeClusterSegmenter implements ffi.Finalizable {
     }
     return GraphemeClusterSegmenter._(result.union.ok);
   }
+
   // ignore: non_constant_identifier_names
-  static final _ICU4XGraphemeClusterSegmenter_create = _capi<
-              ffi.NativeFunction<
-                  _ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>>(
-          'ICU4XGraphemeClusterSegmenter_create')
-      .asFunction<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(
-          isLeaf: true);
+  static final _ICU4XGraphemeClusterSegmenter_create =
+    _capi<ffi.NativeFunction<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>>('ICU4XGraphemeClusterSegmenter_create')
+      .asFunction<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
 
   /// Segments a (potentially ill-formed) UTF-8 string.
   ///
@@ -45,23 +42,15 @@ final class GraphemeClusterSegmenter implements ffi.Finalizable {
   GraphemeClusterBreakIteratorUtf8 segmentUtf8(String input) {
     final alloc = ffi2.Arena();
     final inputSlice = _SliceFfi2Utf8._fromDart(input, alloc);
-
-    final result = _ICU4XGraphemeClusterSegmenter_segment_utf8(
-        _underlying, inputSlice._bytes, inputSlice._length);
+    final result = _ICU4XGraphemeClusterSegmenter_segment_utf8(_underlying, inputSlice._bytes, inputSlice._length);
     alloc.releaseAll();
     return GraphemeClusterBreakIteratorUtf8._(result);
   }
 
   // ignore: non_constant_identifier_names
-  static final _ICU4XGraphemeClusterSegmenter_segment_utf8 = _capi<
-          ffi.NativeFunction<
-              ffi.Pointer<ffi.Opaque> Function(
-                  ffi.Pointer<ffi.Opaque>,
-                  ffi.Pointer<ffi2.Utf8>,
-                  ffi.Size)>>('ICU4XGraphemeClusterSegmenter_segment_utf8')
-      .asFunction<
-          ffi.Pointer<ffi.Opaque> Function(ffi.Pointer<ffi.Opaque>,
-              ffi.Pointer<ffi2.Utf8>, int)>(isLeaf: true);
+  static final _ICU4XGraphemeClusterSegmenter_segment_utf8 =
+    _capi<ffi.NativeFunction<ffi.Pointer<ffi.Opaque> Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi2.Utf8>, ffi.Size)>>('ICU4XGraphemeClusterSegmenter_segment_utf8')
+      .asFunction<ffi.Pointer<ffi.Opaque> Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi2.Utf8>, int)>(isLeaf: true);
 
   /// Segments a UTF-16 string.
   ///
@@ -69,23 +58,15 @@ final class GraphemeClusterSegmenter implements ffi.Finalizable {
   GraphemeClusterBreakIteratorUtf16 segmentUtf16(Uint16List input) {
     final alloc = ffi2.Arena();
     final inputSlice = _SliceFfiUint16._fromDart(input, alloc);
-
-    final result = _ICU4XGraphemeClusterSegmenter_segment_utf16(
-        _underlying, inputSlice._bytes, inputSlice._length);
+    final result = _ICU4XGraphemeClusterSegmenter_segment_utf16(_underlying, inputSlice._bytes, inputSlice._length);
     alloc.releaseAll();
     return GraphemeClusterBreakIteratorUtf16._(result);
   }
 
   // ignore: non_constant_identifier_names
-  static final _ICU4XGraphemeClusterSegmenter_segment_utf16 = _capi<
-          ffi.NativeFunction<
-              ffi.Pointer<ffi.Opaque> Function(
-                  ffi.Pointer<ffi.Opaque>,
-                  ffi.Pointer<ffi.Uint16>,
-                  ffi.Size)>>('ICU4XGraphemeClusterSegmenter_segment_utf16')
-      .asFunction<
-          ffi.Pointer<ffi.Opaque> Function(ffi.Pointer<ffi.Opaque>,
-              ffi.Pointer<ffi.Uint16>, int)>(isLeaf: true);
+  static final _ICU4XGraphemeClusterSegmenter_segment_utf16 =
+    _capi<ffi.NativeFunction<ffi.Pointer<ffi.Opaque> Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Uint16>, ffi.Size)>>('ICU4XGraphemeClusterSegmenter_segment_utf16')
+      .asFunction<ffi.Pointer<ffi.Opaque> Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Uint16>, int)>(isLeaf: true);
 
   /// Segments a Latin-1 string.
   ///
@@ -93,21 +74,13 @@ final class GraphemeClusterSegmenter implements ffi.Finalizable {
   GraphemeClusterBreakIteratorLatin1 segmentLatin1(Uint8List input) {
     final alloc = ffi2.Arena();
     final inputSlice = _SliceFfiUint8._fromDart(input, alloc);
-
-    final result = _ICU4XGraphemeClusterSegmenter_segment_latin1(
-        _underlying, inputSlice._bytes, inputSlice._length);
+    final result = _ICU4XGraphemeClusterSegmenter_segment_latin1(_underlying, inputSlice._bytes, inputSlice._length);
     alloc.releaseAll();
     return GraphemeClusterBreakIteratorLatin1._(result);
   }
 
   // ignore: non_constant_identifier_names
-  static final _ICU4XGraphemeClusterSegmenter_segment_latin1 = _capi<
-          ffi.NativeFunction<
-              ffi.Pointer<ffi.Opaque> Function(
-                  ffi.Pointer<ffi.Opaque>,
-                  ffi.Pointer<ffi.Uint8>,
-                  ffi.Size)>>('ICU4XGraphemeClusterSegmenter_segment_latin1')
-      .asFunction<
-          ffi.Pointer<ffi.Opaque> Function(ffi.Pointer<ffi.Opaque>,
-              ffi.Pointer<ffi.Uint8>, int)>(isLeaf: true);
+  static final _ICU4XGraphemeClusterSegmenter_segment_latin1 =
+    _capi<ffi.NativeFunction<ffi.Pointer<ffi.Opaque> Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Uint8>, ffi.Size)>>('ICU4XGraphemeClusterSegmenter_segment_latin1')
+      .asFunction<ffi.Pointer<ffi.Opaque> Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Uint8>, int)>(isLeaf: true);
 }

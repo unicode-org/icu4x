@@ -32,14 +32,12 @@ final class IsoTimeZoneOptions {
     _underlying.format = format.index;
   }
 
-  IsoTimeZoneMinuteDisplay get minutes =>
-      IsoTimeZoneMinuteDisplay.values[_underlying.minutes];
+  IsoTimeZoneMinuteDisplay get minutes => IsoTimeZoneMinuteDisplay.values[_underlying.minutes];
   set minutes(IsoTimeZoneMinuteDisplay minutes) {
     _underlying.minutes = minutes.index;
   }
 
-  IsoTimeZoneSecondDisplay get seconds =>
-      IsoTimeZoneSecondDisplay.values[_underlying.seconds];
+  IsoTimeZoneSecondDisplay get seconds => IsoTimeZoneSecondDisplay.values[_underlying.seconds];
   set seconds(IsoTimeZoneSecondDisplay seconds) {
     _underlying.seconds = seconds.index;
   }

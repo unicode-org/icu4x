@@ -14,8 +14,7 @@ final class CodePointRangeIterator implements ffi.Finalizable {
     _finalizer.attach(this, _underlying.cast());
   }
 
-  static final _finalizer =
-      ffi.NativeFinalizer(_capi('CodePointRangeIterator_destroy'));
+  static final _finalizer = ffi.NativeFinalizer(_capi('CodePointRangeIterator_destroy'));
 
   /// Advance the iterator by one and return the next range.
   ///
@@ -26,11 +25,7 @@ final class CodePointRangeIterator implements ffi.Finalizable {
   }
 
   // ignore: non_constant_identifier_names
-  static final _CodePointRangeIterator_next = _capi<
-          ffi.NativeFunction<
-              _CodePointRangeIteratorResultFfi Function(
-                  ffi.Pointer<ffi.Opaque>)>>('CodePointRangeIterator_next')
-      .asFunction<
-          _CodePointRangeIteratorResultFfi Function(
-              ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
+  static final _CodePointRangeIterator_next =
+    _capi<ffi.NativeFunction<_CodePointRangeIteratorResultFfi Function(ffi.Pointer<ffi.Opaque>)>>('CodePointRangeIterator_next')
+      .asFunction<_CodePointRangeIteratorResultFfi Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
 }

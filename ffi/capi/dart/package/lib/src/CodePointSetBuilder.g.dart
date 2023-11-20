@@ -13,8 +13,7 @@ final class CodePointSetBuilder implements ffi.Finalizable {
     _finalizer.attach(this, _underlying.cast());
   }
 
-  static final _finalizer =
-      ffi.NativeFinalizer(_capi('ICU4XCodePointSetBuilder_destroy'));
+  static final _finalizer = ffi.NativeFinalizer(_capi('ICU4XCodePointSetBuilder_destroy'));
 
   /// Make a new set builder containing nothing
   ///
@@ -23,11 +22,11 @@ final class CodePointSetBuilder implements ffi.Finalizable {
     final result = _ICU4XCodePointSetBuilder_create();
     return CodePointSetBuilder._(result);
   }
+
   // ignore: non_constant_identifier_names
   static final _ICU4XCodePointSetBuilder_create =
-      _capi<ffi.NativeFunction<ffi.Pointer<ffi.Opaque> Function()>>(
-              'ICU4XCodePointSetBuilder_create')
-          .asFunction<ffi.Pointer<ffi.Opaque> Function()>(isLeaf: true);
+    _capi<ffi.NativeFunction<ffi.Pointer<ffi.Opaque> Function()>>('ICU4XCodePointSetBuilder_create')
+      .asFunction<ffi.Pointer<ffi.Opaque> Function()>(isLeaf: true);
 
   /// Build this into a set
   ///
@@ -40,12 +39,9 @@ final class CodePointSetBuilder implements ffi.Finalizable {
   }
 
   // ignore: non_constant_identifier_names
-  static final _ICU4XCodePointSetBuilder_build = _capi<
-          ffi.NativeFunction<
-              ffi.Pointer<ffi.Opaque> Function(
-                  ffi.Pointer<ffi.Opaque>)>>('ICU4XCodePointSetBuilder_build')
-      .asFunction<ffi.Pointer<ffi.Opaque> Function(ffi.Pointer<ffi.Opaque>)>(
-          isLeaf: true);
+  static final _ICU4XCodePointSetBuilder_build =
+    _capi<ffi.NativeFunction<ffi.Pointer<ffi.Opaque> Function(ffi.Pointer<ffi.Opaque>)>>('ICU4XCodePointSetBuilder_build')
+      .asFunction<ffi.Pointer<ffi.Opaque> Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
 
   /// Complements this set
   ///
@@ -58,9 +54,8 @@ final class CodePointSetBuilder implements ffi.Finalizable {
 
   // ignore: non_constant_identifier_names
   static final _ICU4XCodePointSetBuilder_complement =
-      _capi<ffi.NativeFunction<ffi.Void Function(ffi.Pointer<ffi.Opaque>)>>(
-              'ICU4XCodePointSetBuilder_complement')
-          .asFunction<void Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
+    _capi<ffi.NativeFunction<ffi.Void Function(ffi.Pointer<ffi.Opaque>)>>('ICU4XCodePointSetBuilder_complement')
+      .asFunction<void Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
 
   /// Returns whether this set is empty
   ///
@@ -72,9 +67,8 @@ final class CodePointSetBuilder implements ffi.Finalizable {
 
   // ignore: non_constant_identifier_names
   static final _ICU4XCodePointSetBuilder_is_empty =
-      _capi<ffi.NativeFunction<ffi.Bool Function(ffi.Pointer<ffi.Opaque>)>>(
-              'ICU4XCodePointSetBuilder_is_empty')
-          .asFunction<bool Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
+    _capi<ffi.NativeFunction<ffi.Bool Function(ffi.Pointer<ffi.Opaque>)>>('ICU4XCodePointSetBuilder_is_empty')
+      .asFunction<bool Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
 
   /// Add a single character to the set
   ///
@@ -84,10 +78,8 @@ final class CodePointSetBuilder implements ffi.Finalizable {
   }
 
   // ignore: non_constant_identifier_names
-  static final _ICU4XCodePointSetBuilder_add_char = _capi<
-          ffi.NativeFunction<
-              ffi.Void Function(ffi.Pointer<ffi.Opaque>,
-                  ffi.Uint32)>>('ICU4XCodePointSetBuilder_add_char')
+  static final _ICU4XCodePointSetBuilder_add_char =
+    _capi<ffi.NativeFunction<ffi.Void Function(ffi.Pointer<ffi.Opaque>, ffi.Uint32)>>('ICU4XCodePointSetBuilder_add_char')
       .asFunction<void Function(ffi.Pointer<ffi.Opaque>, int)>(isLeaf: true);
 
   /// Add an inclusive range of characters to the set
@@ -98,12 +90,9 @@ final class CodePointSetBuilder implements ffi.Finalizable {
   }
 
   // ignore: non_constant_identifier_names
-  static final _ICU4XCodePointSetBuilder_add_inclusive_range = _capi<
-          ffi.NativeFunction<
-              ffi.Void Function(ffi.Pointer<ffi.Opaque>, ffi.Uint32,
-                  ffi.Uint32)>>('ICU4XCodePointSetBuilder_add_inclusive_range')
-      .asFunction<void Function(ffi.Pointer<ffi.Opaque>, int, int)>(
-          isLeaf: true);
+  static final _ICU4XCodePointSetBuilder_add_inclusive_range =
+    _capi<ffi.NativeFunction<ffi.Void Function(ffi.Pointer<ffi.Opaque>, ffi.Uint32, ffi.Uint32)>>('ICU4XCodePointSetBuilder_add_inclusive_range')
+      .asFunction<void Function(ffi.Pointer<ffi.Opaque>, int, int)>(isLeaf: true);
 
   /// Add all elements that belong to the provided set to the set
   ///
@@ -113,13 +102,9 @@ final class CodePointSetBuilder implements ffi.Finalizable {
   }
 
   // ignore: non_constant_identifier_names
-  static final _ICU4XCodePointSetBuilder_add_set = _capi<
-          ffi.NativeFunction<
-              ffi.Void Function(ffi.Pointer<ffi.Opaque>,
-                  ffi.Pointer<ffi.Opaque>)>>('ICU4XCodePointSetBuilder_add_set')
-      .asFunction<
-          void Function(
-              ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
+  static final _ICU4XCodePointSetBuilder_add_set =
+    _capi<ffi.NativeFunction<ffi.Void Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>>('ICU4XCodePointSetBuilder_add_set')
+      .asFunction<void Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
 
   /// Remove a single character to the set
   ///
@@ -129,10 +114,8 @@ final class CodePointSetBuilder implements ffi.Finalizable {
   }
 
   // ignore: non_constant_identifier_names
-  static final _ICU4XCodePointSetBuilder_remove_char = _capi<
-          ffi.NativeFunction<
-              ffi.Void Function(ffi.Pointer<ffi.Opaque>,
-                  ffi.Uint32)>>('ICU4XCodePointSetBuilder_remove_char')
+  static final _ICU4XCodePointSetBuilder_remove_char =
+    _capi<ffi.NativeFunction<ffi.Void Function(ffi.Pointer<ffi.Opaque>, ffi.Uint32)>>('ICU4XCodePointSetBuilder_remove_char')
       .asFunction<void Function(ffi.Pointer<ffi.Opaque>, int)>(isLeaf: true);
 
   /// Remove an inclusive range of characters from the set
@@ -143,13 +126,9 @@ final class CodePointSetBuilder implements ffi.Finalizable {
   }
 
   // ignore: non_constant_identifier_names
-  static final _ICU4XCodePointSetBuilder_remove_inclusive_range = _capi<
-              ffi.NativeFunction<
-                  ffi.Void Function(
-                      ffi.Pointer<ffi.Opaque>, ffi.Uint32, ffi.Uint32)>>(
-          'ICU4XCodePointSetBuilder_remove_inclusive_range')
-      .asFunction<void Function(ffi.Pointer<ffi.Opaque>, int, int)>(
-          isLeaf: true);
+  static final _ICU4XCodePointSetBuilder_remove_inclusive_range =
+    _capi<ffi.NativeFunction<ffi.Void Function(ffi.Pointer<ffi.Opaque>, ffi.Uint32, ffi.Uint32)>>('ICU4XCodePointSetBuilder_remove_inclusive_range')
+      .asFunction<void Function(ffi.Pointer<ffi.Opaque>, int, int)>(isLeaf: true);
 
   /// Remove all elements that belong to the provided set from the set
   ///
@@ -159,14 +138,9 @@ final class CodePointSetBuilder implements ffi.Finalizable {
   }
 
   // ignore: non_constant_identifier_names
-  static final _ICU4XCodePointSetBuilder_remove_set = _capi<
-              ffi.NativeFunction<
-                  ffi.Void Function(
-                      ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>>(
-          'ICU4XCodePointSetBuilder_remove_set')
-      .asFunction<
-          void Function(
-              ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
+  static final _ICU4XCodePointSetBuilder_remove_set =
+    _capi<ffi.NativeFunction<ffi.Void Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>>('ICU4XCodePointSetBuilder_remove_set')
+      .asFunction<void Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
 
   /// Removes all elements from the set except a single character
   ///
@@ -176,10 +150,8 @@ final class CodePointSetBuilder implements ffi.Finalizable {
   }
 
   // ignore: non_constant_identifier_names
-  static final _ICU4XCodePointSetBuilder_retain_char = _capi<
-          ffi.NativeFunction<
-              ffi.Void Function(ffi.Pointer<ffi.Opaque>,
-                  ffi.Uint32)>>('ICU4XCodePointSetBuilder_retain_char')
+  static final _ICU4XCodePointSetBuilder_retain_char =
+    _capi<ffi.NativeFunction<ffi.Void Function(ffi.Pointer<ffi.Opaque>, ffi.Uint32)>>('ICU4XCodePointSetBuilder_retain_char')
       .asFunction<void Function(ffi.Pointer<ffi.Opaque>, int)>(isLeaf: true);
 
   /// Removes all elements from the set except an inclusive range of characters f
@@ -190,13 +162,9 @@ final class CodePointSetBuilder implements ffi.Finalizable {
   }
 
   // ignore: non_constant_identifier_names
-  static final _ICU4XCodePointSetBuilder_retain_inclusive_range = _capi<
-              ffi.NativeFunction<
-                  ffi.Void Function(
-                      ffi.Pointer<ffi.Opaque>, ffi.Uint32, ffi.Uint32)>>(
-          'ICU4XCodePointSetBuilder_retain_inclusive_range')
-      .asFunction<void Function(ffi.Pointer<ffi.Opaque>, int, int)>(
-          isLeaf: true);
+  static final _ICU4XCodePointSetBuilder_retain_inclusive_range =
+    _capi<ffi.NativeFunction<ffi.Void Function(ffi.Pointer<ffi.Opaque>, ffi.Uint32, ffi.Uint32)>>('ICU4XCodePointSetBuilder_retain_inclusive_range')
+      .asFunction<void Function(ffi.Pointer<ffi.Opaque>, int, int)>(isLeaf: true);
 
   /// Removes all elements from the set except all elements in the provided set
   ///
@@ -206,14 +174,9 @@ final class CodePointSetBuilder implements ffi.Finalizable {
   }
 
   // ignore: non_constant_identifier_names
-  static final _ICU4XCodePointSetBuilder_retain_set = _capi<
-              ffi.NativeFunction<
-                  ffi.Void Function(
-                      ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>>(
-          'ICU4XCodePointSetBuilder_retain_set')
-      .asFunction<
-          void Function(
-              ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
+  static final _ICU4XCodePointSetBuilder_retain_set =
+    _capi<ffi.NativeFunction<ffi.Void Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>>('ICU4XCodePointSetBuilder_retain_set')
+      .asFunction<void Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
 
   /// Complement a single character to the set
   ///
@@ -225,10 +188,8 @@ final class CodePointSetBuilder implements ffi.Finalizable {
   }
 
   // ignore: non_constant_identifier_names
-  static final _ICU4XCodePointSetBuilder_complement_char = _capi<
-          ffi.NativeFunction<
-              ffi.Void Function(ffi.Pointer<ffi.Opaque>,
-                  ffi.Uint32)>>('ICU4XCodePointSetBuilder_complement_char')
+  static final _ICU4XCodePointSetBuilder_complement_char =
+    _capi<ffi.NativeFunction<ffi.Void Function(ffi.Pointer<ffi.Opaque>, ffi.Uint32)>>('ICU4XCodePointSetBuilder_complement_char')
       .asFunction<void Function(ffi.Pointer<ffi.Opaque>, int)>(isLeaf: true);
 
   /// Complement an inclusive range of characters from the set
@@ -237,18 +198,13 @@ final class CodePointSetBuilder implements ffi.Finalizable {
   ///
   /// See the [Rust documentation for `complement_range`](https://docs.rs/icu/latest/icu/collections/codepointinvlist/struct.CodePointInversionListBuilder.html#method.complement_range) for more information.
   void complementInclusiveRange(int start, int end) {
-    _ICU4XCodePointSetBuilder_complement_inclusive_range(
-        _underlying, start, end);
+    _ICU4XCodePointSetBuilder_complement_inclusive_range(_underlying, start, end);
   }
 
   // ignore: non_constant_identifier_names
-  static final _ICU4XCodePointSetBuilder_complement_inclusive_range = _capi<
-              ffi.NativeFunction<
-                  ffi.Void Function(
-                      ffi.Pointer<ffi.Opaque>, ffi.Uint32, ffi.Uint32)>>(
-          'ICU4XCodePointSetBuilder_complement_inclusive_range')
-      .asFunction<void Function(ffi.Pointer<ffi.Opaque>, int, int)>(
-          isLeaf: true);
+  static final _ICU4XCodePointSetBuilder_complement_inclusive_range =
+    _capi<ffi.NativeFunction<ffi.Void Function(ffi.Pointer<ffi.Opaque>, ffi.Uint32, ffi.Uint32)>>('ICU4XCodePointSetBuilder_complement_inclusive_range')
+      .asFunction<void Function(ffi.Pointer<ffi.Opaque>, int, int)>(isLeaf: true);
 
   /// Complement all elements that belong to the provided set from the set
   ///
@@ -260,12 +216,7 @@ final class CodePointSetBuilder implements ffi.Finalizable {
   }
 
   // ignore: non_constant_identifier_names
-  static final _ICU4XCodePointSetBuilder_complement_set = _capi<
-              ffi.NativeFunction<
-                  ffi.Void Function(
-                      ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>>(
-          'ICU4XCodePointSetBuilder_complement_set')
-      .asFunction<
-          void Function(
-              ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
+  static final _ICU4XCodePointSetBuilder_complement_set =
+    _capi<ffi.NativeFunction<ffi.Void Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>>('ICU4XCodePointSetBuilder_complement_set')
+      .asFunction<void Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
 }

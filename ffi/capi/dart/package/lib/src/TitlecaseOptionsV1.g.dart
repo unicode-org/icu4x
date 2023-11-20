@@ -26,14 +26,12 @@ final class TitlecaseOptionsV1 {
     return result;
   }
 
-  LeadingAdjustment get leadingAdjustment =>
-      LeadingAdjustment.values[_underlying.leadingAdjustment];
+  LeadingAdjustment get leadingAdjustment => LeadingAdjustment.values[_underlying.leadingAdjustment];
   set leadingAdjustment(LeadingAdjustment leadingAdjustment) {
     _underlying.leadingAdjustment = leadingAdjustment.index;
   }
 
-  TrailingCase get trailingCase =>
-      TrailingCase.values[_underlying.trailingCase];
+  TrailingCase get trailingCase => TrailingCase.values[_underlying.trailingCase];
   set trailingCase(TrailingCase trailingCase) {
     _underlying.trailingCase = trailingCase.index;
   }
@@ -43,11 +41,11 @@ final class TitlecaseOptionsV1 {
     final result = _ICU4XTitlecaseOptionsV1_default_options();
     return TitlecaseOptionsV1._(result);
   }
+
   // ignore: non_constant_identifier_names
   static final _ICU4XTitlecaseOptionsV1_default_options =
-      _capi<ffi.NativeFunction<_TitlecaseOptionsV1Ffi Function()>>(
-              'ICU4XTitlecaseOptionsV1_default_options')
-          .asFunction<_TitlecaseOptionsV1Ffi Function()>(isLeaf: true);
+    _capi<ffi.NativeFunction<_TitlecaseOptionsV1Ffi Function()>>('ICU4XTitlecaseOptionsV1_default_options')
+      .asFunction<_TitlecaseOptionsV1Ffi Function()>(isLeaf: true);
 
   @override
   bool operator ==(Object other) =>

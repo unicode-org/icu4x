@@ -15,8 +15,7 @@ final class CanonicalCombiningClassMap implements ffi.Finalizable {
     _finalizer.attach(this, _underlying.cast());
   }
 
-  static final _finalizer =
-      ffi.NativeFinalizer(_capi('ICU4XCanonicalCombiningClassMap_destroy'));
+  static final _finalizer = ffi.NativeFinalizer(_capi('ICU4XCanonicalCombiningClassMap_destroy'));
 
   /// Construct a new ICU4XCanonicalCombiningClassMap instance for NFC
   ///
@@ -24,20 +23,17 @@ final class CanonicalCombiningClassMap implements ffi.Finalizable {
   ///
   /// Throws [Error] on failure.
   factory CanonicalCombiningClassMap(DataProvider provider) {
-    final result =
-        _ICU4XCanonicalCombiningClassMap_create(provider._underlying);
+    final result = _ICU4XCanonicalCombiningClassMap_create(provider._underlying);
     if (!result.isOk) {
       throw Error.values.firstWhere((v) => v._underlying == result.union.err);
     }
     return CanonicalCombiningClassMap._(result.union.ok);
   }
+
   // ignore: non_constant_identifier_names
-  static final _ICU4XCanonicalCombiningClassMap_create = _capi<
-              ffi.NativeFunction<
-                  _ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>>(
-          'ICU4XCanonicalCombiningClassMap_create')
-      .asFunction<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(
-          isLeaf: true);
+  static final _ICU4XCanonicalCombiningClassMap_create =
+    _capi<ffi.NativeFunction<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>>('ICU4XCanonicalCombiningClassMap_create')
+      .asFunction<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
 
   /// See the [Rust documentation for `get`](https://docs.rs/icu/latest/icu/normalizer/properties/struct.CanonicalCombiningClassMap.html#method.get) for more information.
   ///
@@ -48,10 +44,8 @@ final class CanonicalCombiningClassMap implements ffi.Finalizable {
   }
 
   // ignore: non_constant_identifier_names
-  static final _ICU4XCanonicalCombiningClassMap_get = _capi<
-          ffi.NativeFunction<
-              ffi.Uint8 Function(ffi.Pointer<ffi.Opaque>,
-                  ffi.Uint32)>>('ICU4XCanonicalCombiningClassMap_get')
+  static final _ICU4XCanonicalCombiningClassMap_get =
+    _capi<ffi.NativeFunction<ffi.Uint8 Function(ffi.Pointer<ffi.Opaque>, ffi.Uint32)>>('ICU4XCanonicalCombiningClassMap_get')
       .asFunction<int Function(ffi.Pointer<ffi.Opaque>, int)>(isLeaf: true);
 
   /// See the [Rust documentation for `get32`](https://docs.rs/icu/latest/icu/normalizer/properties/struct.CanonicalCombiningClassMap.html#method.get32) for more information.
@@ -63,9 +57,7 @@ final class CanonicalCombiningClassMap implements ffi.Finalizable {
   }
 
   // ignore: non_constant_identifier_names
-  static final _ICU4XCanonicalCombiningClassMap_get32 = _capi<
-          ffi.NativeFunction<
-              ffi.Uint8 Function(ffi.Pointer<ffi.Opaque>,
-                  ffi.Uint32)>>('ICU4XCanonicalCombiningClassMap_get32')
+  static final _ICU4XCanonicalCombiningClassMap_get32 =
+    _capi<ffi.NativeFunction<ffi.Uint8 Function(ffi.Pointer<ffi.Opaque>, ffi.Uint32)>>('ICU4XCanonicalCombiningClassMap_get32')
       .asFunction<int Function(ffi.Pointer<ffi.Opaque>, int)>(isLeaf: true);
 }

@@ -13,8 +13,7 @@ final class RegionDisplayNames implements ffi.Finalizable {
     _finalizer.attach(this, _underlying.cast());
   }
 
-  static final _finalizer =
-      ffi.NativeFinalizer(_capi('ICU4XRegionDisplayNames_destroy'));
+  static final _finalizer = ffi.NativeFinalizer(_capi('ICU4XRegionDisplayNames_destroy'));
 
   /// Creates a new `RegionDisplayNames` from locale data and an options bag.
   ///
@@ -22,21 +21,17 @@ final class RegionDisplayNames implements ffi.Finalizable {
   ///
   /// Throws [Error] on failure.
   factory RegionDisplayNames(DataProvider provider, Locale locale) {
-    final result = _ICU4XRegionDisplayNames_create(
-        provider._underlying, locale._underlying);
+    final result = _ICU4XRegionDisplayNames_create(provider._underlying, locale._underlying);
     if (!result.isOk) {
       throw Error.values.firstWhere((v) => v._underlying == result.union.err);
     }
     return RegionDisplayNames._(result.union.ok);
   }
+
   // ignore: non_constant_identifier_names
-  static final _ICU4XRegionDisplayNames_create = _capi<
-          ffi.NativeFunction<
-              _ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>,
-                  ffi.Pointer<ffi.Opaque>)>>('ICU4XRegionDisplayNames_create')
-      .asFunction<
-          _ResultOpaqueInt32 Function(
-              ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
+  static final _ICU4XRegionDisplayNames_create =
+    _capi<ffi.NativeFunction<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>>('ICU4XRegionDisplayNames_create')
+      .asFunction<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
 
   /// Returns the locale specific display name of a region.
   /// Note that the funtion returns an empty string in case the display name for a given
@@ -48,10 +43,8 @@ final class RegionDisplayNames implements ffi.Finalizable {
   String of(String region) {
     final alloc = ffi2.Arena();
     final regionSlice = _SliceFfi2Utf8._fromDart(region, alloc);
-
     final writeable = _Writeable();
-    final result = _ICU4XRegionDisplayNames_of(_underlying, regionSlice._bytes,
-        regionSlice._length, writeable._underlying);
+    final result = _ICU4XRegionDisplayNames_of(_underlying, regionSlice._bytes, regionSlice._length, writeable._underlying);
     alloc.releaseAll();
     if (!result.isOk) {
       throw Error.values.firstWhere((v) => v._underlying == result.union.err);
@@ -60,17 +53,7 @@ final class RegionDisplayNames implements ffi.Finalizable {
   }
 
   // ignore: non_constant_identifier_names
-  static final _ICU4XRegionDisplayNames_of = _capi<
-          ffi.NativeFunction<
-              _ResultVoidInt32 Function(
-                  ffi.Pointer<ffi.Opaque>,
-                  ffi.Pointer<ffi2.Utf8>,
-                  ffi.Size,
-                  ffi.Pointer<ffi.Opaque>)>>('ICU4XRegionDisplayNames_of')
-      .asFunction<
-          _ResultVoidInt32 Function(
-              ffi.Pointer<ffi.Opaque>,
-              ffi.Pointer<ffi2.Utf8>,
-              int,
-              ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
+  static final _ICU4XRegionDisplayNames_of =
+    _capi<ffi.NativeFunction<_ResultVoidInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi2.Utf8>, ffi.Size, ffi.Pointer<ffi.Opaque>)>>('ICU4XRegionDisplayNames_of')
+      .asFunction<_ResultVoidInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi2.Utf8>, int, ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
 }

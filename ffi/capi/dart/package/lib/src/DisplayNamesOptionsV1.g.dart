@@ -33,14 +33,12 @@ final class DisplayNamesOptionsV1 {
     _underlying.style = style.index;
   }
 
-  DisplayNamesFallback get fallback =>
-      DisplayNamesFallback.values[_underlying.fallback];
+  DisplayNamesFallback get fallback => DisplayNamesFallback.values[_underlying.fallback];
   set fallback(DisplayNamesFallback fallback) {
     _underlying.fallback = fallback.index;
   }
 
-  LanguageDisplay get languageDisplay =>
-      LanguageDisplay.values[_underlying.languageDisplay];
+  LanguageDisplay get languageDisplay => LanguageDisplay.values[_underlying.languageDisplay];
   set languageDisplay(LanguageDisplay languageDisplay) {
     _underlying.languageDisplay = languageDisplay.index;
   }

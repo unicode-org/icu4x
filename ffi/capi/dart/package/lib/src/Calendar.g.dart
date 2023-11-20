@@ -21,21 +21,17 @@ final class Calendar implements ffi.Finalizable {
   ///
   /// Throws [Error] on failure.
   factory Calendar.forLocale(DataProvider provider, Locale locale) {
-    final result = _ICU4XCalendar_create_for_locale(
-        provider._underlying, locale._underlying);
+    final result = _ICU4XCalendar_create_for_locale(provider._underlying, locale._underlying);
     if (!result.isOk) {
       throw Error.values.firstWhere((v) => v._underlying == result.union.err);
     }
     return Calendar._(result.union.ok);
   }
+
   // ignore: non_constant_identifier_names
-  static final _ICU4XCalendar_create_for_locale = _capi<
-          ffi.NativeFunction<
-              _ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>,
-                  ffi.Pointer<ffi.Opaque>)>>('ICU4XCalendar_create_for_locale')
-      .asFunction<
-          _ResultOpaqueInt32 Function(
-              ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
+  static final _ICU4XCalendar_create_for_locale =
+    _capi<ffi.NativeFunction<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>>('ICU4XCalendar_create_for_locale')
+      .asFunction<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
 
   /// Creates a new [`Calendar`] from the specified date and time.
   ///
@@ -43,20 +39,17 @@ final class Calendar implements ffi.Finalizable {
   ///
   /// Throws [Error] on failure.
   factory Calendar.forKind(DataProvider provider, AnyCalendarKind kind) {
-    final result =
-        _ICU4XCalendar_create_for_kind(provider._underlying, kind.index);
+    final result = _ICU4XCalendar_create_for_kind(provider._underlying, kind.index);
     if (!result.isOk) {
       throw Error.values.firstWhere((v) => v._underlying == result.union.err);
     }
     return Calendar._(result.union.ok);
   }
+
   // ignore: non_constant_identifier_names
-  static final _ICU4XCalendar_create_for_kind = _capi<
-          ffi.NativeFunction<
-              _ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>,
-                  ffi.Int32)>>('ICU4XCalendar_create_for_kind')
-      .asFunction<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>, int)>(
-          isLeaf: true);
+  static final _ICU4XCalendar_create_for_kind =
+    _capi<ffi.NativeFunction<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Int32)>>('ICU4XCalendar_create_for_kind')
+      .asFunction<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>, int)>(isLeaf: true);
 
   /// Returns the kind of this calendar
   ///
@@ -68,7 +61,6 @@ final class Calendar implements ffi.Finalizable {
 
   // ignore: non_constant_identifier_names
   static final _ICU4XCalendar_kind =
-      _capi<ffi.NativeFunction<ffi.Int32 Function(ffi.Pointer<ffi.Opaque>)>>(
-              'ICU4XCalendar_kind')
-          .asFunction<int Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
+    _capi<ffi.NativeFunction<ffi.Int32 Function(ffi.Pointer<ffi.Opaque>)>>('ICU4XCalendar_kind')
+      .asFunction<int Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
 }

@@ -17,8 +17,7 @@ final class ReorderedIndexMap implements ffi.Finalizable {
     _finalizer.attach(this, _underlying.cast());
   }
 
-  static final _finalizer =
-      ffi.NativeFinalizer(_capi('ICU4XReorderedIndexMap_destroy'));
+  static final _finalizer = ffi.NativeFinalizer(_capi('ICU4XReorderedIndexMap_destroy'));
 
   /// Get this as a slice/array of indices
   SizeList get asSlice {
@@ -28,9 +27,8 @@ final class ReorderedIndexMap implements ffi.Finalizable {
 
   // ignore: non_constant_identifier_names
   static final _ICU4XReorderedIndexMap_as_slice =
-      _capi<ffi.NativeFunction<SizeList Function(ffi.Pointer<ffi.Opaque>)>>(
-              'ICU4XReorderedIndexMap_as_slice')
-          .asFunction<SizeList Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
+    _capi<ffi.NativeFunction<SizeList Function(ffi.Pointer<ffi.Opaque>)>>('ICU4XReorderedIndexMap_as_slice')
+      .asFunction<SizeList Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
 
   /// The length of this map
   int get length {
@@ -40,9 +38,8 @@ final class ReorderedIndexMap implements ffi.Finalizable {
 
   // ignore: non_constant_identifier_names
   static final _ICU4XReorderedIndexMap_len =
-      _capi<ffi.NativeFunction<ffi.Size Function(ffi.Pointer<ffi.Opaque>)>>(
-              'ICU4XReorderedIndexMap_len')
-          .asFunction<int Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
+    _capi<ffi.NativeFunction<ffi.Size Function(ffi.Pointer<ffi.Opaque>)>>('ICU4XReorderedIndexMap_len')
+      .asFunction<int Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
 
   /// Get element at `index`. Returns 0 when out of bounds
   /// (note that 0 is also a valid in-bounds value, please use `len()`
@@ -53,9 +50,7 @@ final class ReorderedIndexMap implements ffi.Finalizable {
   }
 
   // ignore: non_constant_identifier_names
-  static final _ICU4XReorderedIndexMap_get = _capi<
-          ffi.NativeFunction<
-              ffi.Size Function(ffi.Pointer<ffi.Opaque>,
-                  ffi.Size)>>('ICU4XReorderedIndexMap_get')
+  static final _ICU4XReorderedIndexMap_get =
+    _capi<ffi.NativeFunction<ffi.Size Function(ffi.Pointer<ffi.Opaque>, ffi.Size)>>('ICU4XReorderedIndexMap_get')
       .asFunction<int Function(ffi.Pointer<ffi.Opaque>, int)>(isLeaf: true);
 }

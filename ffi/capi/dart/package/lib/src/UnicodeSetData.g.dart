@@ -19,8 +19,7 @@ final class UnicodeSetData implements ffi.Finalizable {
     _finalizer.attach(this, _underlying.cast());
   }
 
-  static final _finalizer =
-      ffi.NativeFinalizer(_capi('ICU4XUnicodeSetData_destroy'));
+  static final _finalizer = ffi.NativeFinalizer(_capi('ICU4XUnicodeSetData_destroy'));
 
   /// Checks whether the string is in the set.
   ///
@@ -28,21 +27,15 @@ final class UnicodeSetData implements ffi.Finalizable {
   bool contains(String s) {
     final alloc = ffi2.Arena();
     final sSlice = _SliceFfi2Utf8._fromDart(s, alloc);
-
-    final result = _ICU4XUnicodeSetData_contains(
-        _underlying, sSlice._bytes, sSlice._length);
+    final result = _ICU4XUnicodeSetData_contains(_underlying, sSlice._bytes, sSlice._length);
     alloc.releaseAll();
     return result;
   }
 
   // ignore: non_constant_identifier_names
-  static final _ICU4XUnicodeSetData_contains = _capi<
-          ffi.NativeFunction<
-              ffi.Bool Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi2.Utf8>,
-                  ffi.Size)>>('ICU4XUnicodeSetData_contains')
-      .asFunction<
-          bool Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi2.Utf8>,
-              int)>(isLeaf: true);
+  static final _ICU4XUnicodeSetData_contains =
+    _capi<ffi.NativeFunction<ffi.Bool Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi2.Utf8>, ffi.Size)>>('ICU4XUnicodeSetData_contains')
+      .asFunction<bool Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi2.Utf8>, int)>(isLeaf: true);
 
   /// Checks whether the code point is in the set.
   ///
@@ -53,10 +46,8 @@ final class UnicodeSetData implements ffi.Finalizable {
   }
 
   // ignore: non_constant_identifier_names
-  static final _ICU4XUnicodeSetData_contains_char = _capi<
-          ffi.NativeFunction<
-              ffi.Bool Function(ffi.Pointer<ffi.Opaque>,
-                  ffi.Uint32)>>('ICU4XUnicodeSetData_contains_char')
+  static final _ICU4XUnicodeSetData_contains_char =
+    _capi<ffi.NativeFunction<ffi.Bool Function(ffi.Pointer<ffi.Opaque>, ffi.Uint32)>>('ICU4XUnicodeSetData_contains_char')
       .asFunction<bool Function(ffi.Pointer<ffi.Opaque>, int)>(isLeaf: true);
 
   /// See the [Rust documentation for `basic_emoji`](https://docs.rs/icu/latest/icu/properties/sets/fn.basic_emoji.html) for more information.
@@ -69,121 +60,89 @@ final class UnicodeSetData implements ffi.Finalizable {
     }
     return UnicodeSetData._(result.union.ok);
   }
+
   // ignore: non_constant_identifier_names
-  static final _ICU4XUnicodeSetData_load_basic_emoji = _capi<
-              ffi.NativeFunction<
-                  _ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>>(
-          'ICU4XUnicodeSetData_load_basic_emoji')
-      .asFunction<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(
-          isLeaf: true);
+  static final _ICU4XUnicodeSetData_load_basic_emoji =
+    _capi<ffi.NativeFunction<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>>('ICU4XUnicodeSetData_load_basic_emoji')
+      .asFunction<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
 
   /// See the [Rust documentation for `exemplars_main`](https://docs.rs/icu/latest/icu/properties/exemplar_chars/fn.exemplars_main.html) for more information.
   ///
   /// Throws [Error] on failure.
-  factory UnicodeSetData.loadExemplarsMain(
-      DataProvider provider, Locale locale) {
-    final result = _ICU4XUnicodeSetData_load_exemplars_main(
-        provider._underlying, locale._underlying);
+  factory UnicodeSetData.loadExemplarsMain(DataProvider provider, Locale locale) {
+    final result = _ICU4XUnicodeSetData_load_exemplars_main(provider._underlying, locale._underlying);
     if (!result.isOk) {
       throw Error.values.firstWhere((v) => v._underlying == result.union.err);
     }
     return UnicodeSetData._(result.union.ok);
   }
+
   // ignore: non_constant_identifier_names
-  static final _ICU4XUnicodeSetData_load_exemplars_main = _capi<
-              ffi.NativeFunction<
-                  _ResultOpaqueInt32 Function(
-                      ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>>(
-          'ICU4XUnicodeSetData_load_exemplars_main')
-      .asFunction<
-          _ResultOpaqueInt32 Function(
-              ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
+  static final _ICU4XUnicodeSetData_load_exemplars_main =
+    _capi<ffi.NativeFunction<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>>('ICU4XUnicodeSetData_load_exemplars_main')
+      .asFunction<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
 
   /// See the [Rust documentation for `exemplars_auxiliary`](https://docs.rs/icu/latest/icu/properties/exemplar_chars/fn.exemplars_auxiliary.html) for more information.
   ///
   /// Throws [Error] on failure.
-  factory UnicodeSetData.loadExemplarsAuxiliary(
-      DataProvider provider, Locale locale) {
-    final result = _ICU4XUnicodeSetData_load_exemplars_auxiliary(
-        provider._underlying, locale._underlying);
+  factory UnicodeSetData.loadExemplarsAuxiliary(DataProvider provider, Locale locale) {
+    final result = _ICU4XUnicodeSetData_load_exemplars_auxiliary(provider._underlying, locale._underlying);
     if (!result.isOk) {
       throw Error.values.firstWhere((v) => v._underlying == result.union.err);
     }
     return UnicodeSetData._(result.union.ok);
   }
+
   // ignore: non_constant_identifier_names
-  static final _ICU4XUnicodeSetData_load_exemplars_auxiliary = _capi<
-              ffi.NativeFunction<
-                  _ResultOpaqueInt32 Function(
-                      ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>>(
-          'ICU4XUnicodeSetData_load_exemplars_auxiliary')
-      .asFunction<
-          _ResultOpaqueInt32 Function(
-              ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
+  static final _ICU4XUnicodeSetData_load_exemplars_auxiliary =
+    _capi<ffi.NativeFunction<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>>('ICU4XUnicodeSetData_load_exemplars_auxiliary')
+      .asFunction<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
 
   /// See the [Rust documentation for `exemplars_punctuation`](https://docs.rs/icu/latest/icu/properties/exemplar_chars/fn.exemplars_punctuation.html) for more information.
   ///
   /// Throws [Error] on failure.
-  factory UnicodeSetData.loadExemplarsPunctuation(
-      DataProvider provider, Locale locale) {
-    final result = _ICU4XUnicodeSetData_load_exemplars_punctuation(
-        provider._underlying, locale._underlying);
+  factory UnicodeSetData.loadExemplarsPunctuation(DataProvider provider, Locale locale) {
+    final result = _ICU4XUnicodeSetData_load_exemplars_punctuation(provider._underlying, locale._underlying);
     if (!result.isOk) {
       throw Error.values.firstWhere((v) => v._underlying == result.union.err);
     }
     return UnicodeSetData._(result.union.ok);
   }
+
   // ignore: non_constant_identifier_names
-  static final _ICU4XUnicodeSetData_load_exemplars_punctuation = _capi<
-              ffi.NativeFunction<
-                  _ResultOpaqueInt32 Function(
-                      ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>>(
-          'ICU4XUnicodeSetData_load_exemplars_punctuation')
-      .asFunction<
-          _ResultOpaqueInt32 Function(
-              ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
+  static final _ICU4XUnicodeSetData_load_exemplars_punctuation =
+    _capi<ffi.NativeFunction<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>>('ICU4XUnicodeSetData_load_exemplars_punctuation')
+      .asFunction<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
 
   /// See the [Rust documentation for `exemplars_numbers`](https://docs.rs/icu/latest/icu/properties/exemplar_chars/fn.exemplars_numbers.html) for more information.
   ///
   /// Throws [Error] on failure.
-  factory UnicodeSetData.loadExemplarsNumbers(
-      DataProvider provider, Locale locale) {
-    final result = _ICU4XUnicodeSetData_load_exemplars_numbers(
-        provider._underlying, locale._underlying);
+  factory UnicodeSetData.loadExemplarsNumbers(DataProvider provider, Locale locale) {
+    final result = _ICU4XUnicodeSetData_load_exemplars_numbers(provider._underlying, locale._underlying);
     if (!result.isOk) {
       throw Error.values.firstWhere((v) => v._underlying == result.union.err);
     }
     return UnicodeSetData._(result.union.ok);
   }
+
   // ignore: non_constant_identifier_names
-  static final _ICU4XUnicodeSetData_load_exemplars_numbers = _capi<
-              ffi.NativeFunction<
-                  _ResultOpaqueInt32 Function(
-                      ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>>(
-          'ICU4XUnicodeSetData_load_exemplars_numbers')
-      .asFunction<
-          _ResultOpaqueInt32 Function(
-              ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
+  static final _ICU4XUnicodeSetData_load_exemplars_numbers =
+    _capi<ffi.NativeFunction<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>>('ICU4XUnicodeSetData_load_exemplars_numbers')
+      .asFunction<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
 
   /// See the [Rust documentation for `exemplars_index`](https://docs.rs/icu/latest/icu/properties/exemplar_chars/fn.exemplars_index.html) for more information.
   ///
   /// Throws [Error] on failure.
-  factory UnicodeSetData.loadExemplarsIndex(
-      DataProvider provider, Locale locale) {
-    final result = _ICU4XUnicodeSetData_load_exemplars_index(
-        provider._underlying, locale._underlying);
+  factory UnicodeSetData.loadExemplarsIndex(DataProvider provider, Locale locale) {
+    final result = _ICU4XUnicodeSetData_load_exemplars_index(provider._underlying, locale._underlying);
     if (!result.isOk) {
       throw Error.values.firstWhere((v) => v._underlying == result.union.err);
     }
     return UnicodeSetData._(result.union.ok);
   }
+
   // ignore: non_constant_identifier_names
-  static final _ICU4XUnicodeSetData_load_exemplars_index = _capi<
-              ffi.NativeFunction<
-                  _ResultOpaqueInt32 Function(
-                      ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>>(
-          'ICU4XUnicodeSetData_load_exemplars_index')
-      .asFunction<
-          _ResultOpaqueInt32 Function(
-              ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
+  static final _ICU4XUnicodeSetData_load_exemplars_index =
+    _capi<ffi.NativeFunction<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>>('ICU4XUnicodeSetData_load_exemplars_index')
+      .asFunction<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
 }

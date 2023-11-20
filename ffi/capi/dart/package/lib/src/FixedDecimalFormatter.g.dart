@@ -15,33 +15,25 @@ final class FixedDecimalFormatter implements ffi.Finalizable {
     _finalizer.attach(this, _underlying.cast());
   }
 
-  static final _finalizer =
-      ffi.NativeFinalizer(_capi('ICU4XFixedDecimalFormatter_destroy'));
+  static final _finalizer = ffi.NativeFinalizer(_capi('ICU4XFixedDecimalFormatter_destroy'));
 
   /// Creates a new [`FixedDecimalFormatter`] from locale data.
   ///
   /// See the [Rust documentation for `try_new`](https://docs.rs/icu/latest/icu/decimal/struct.FixedDecimalFormatter.html#method.try_new) for more information.
   ///
   /// Throws [Error] on failure.
-  factory FixedDecimalFormatter.withGroupingStrategy(DataProvider provider,
-      Locale locale, FixedDecimalGroupingStrategy groupingStrategy) {
-    final result = _ICU4XFixedDecimalFormatter_create_with_grouping_strategy(
-        provider._underlying, locale._underlying, groupingStrategy.index);
+  factory FixedDecimalFormatter.withGroupingStrategy(DataProvider provider, Locale locale, FixedDecimalGroupingStrategy groupingStrategy) {
+    final result = _ICU4XFixedDecimalFormatter_create_with_grouping_strategy(provider._underlying, locale._underlying, groupingStrategy.index);
     if (!result.isOk) {
       throw Error.values.firstWhere((v) => v._underlying == result.union.err);
     }
     return FixedDecimalFormatter._(result.union.ok);
   }
+
   // ignore: non_constant_identifier_names
   static final _ICU4XFixedDecimalFormatter_create_with_grouping_strategy =
-      _capi<
-                  ffi.NativeFunction<
-                      _ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>,
-                          ffi.Pointer<ffi.Opaque>, ffi.Int32)>>(
-              'ICU4XFixedDecimalFormatter_create_with_grouping_strategy')
-          .asFunction<
-              _ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>,
-                  ffi.Pointer<ffi.Opaque>, int)>(isLeaf: true);
+    _capi<ffi.NativeFunction<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>, ffi.Int32)>>('ICU4XFixedDecimalFormatter_create_with_grouping_strategy')
+      .asFunction<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>, int)>(isLeaf: true);
 
   /// Formats a [`FixedDecimal`] to a string.
   ///
@@ -50,8 +42,7 @@ final class FixedDecimalFormatter implements ffi.Finalizable {
   /// Throws [Error] on failure.
   String format(FixedDecimal value) {
     final writeable = _Writeable();
-    final result = _ICU4XFixedDecimalFormatter_format(
-        _underlying, value._underlying, writeable._underlying);
+    final result = _ICU4XFixedDecimalFormatter_format(_underlying, value._underlying, writeable._underlying);
     if (!result.isOk) {
       throw Error.values.firstWhere((v) => v._underlying == result.union.err);
     }
@@ -59,12 +50,7 @@ final class FixedDecimalFormatter implements ffi.Finalizable {
   }
 
   // ignore: non_constant_identifier_names
-  static final _ICU4XFixedDecimalFormatter_format = _capi<
-              ffi.NativeFunction<
-                  _ResultVoidInt32 Function(ffi.Pointer<ffi.Opaque>,
-                      ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>>(
-          'ICU4XFixedDecimalFormatter_format')
-      .asFunction<
-          _ResultVoidInt32 Function(ffi.Pointer<ffi.Opaque>,
-              ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
+  static final _ICU4XFixedDecimalFormatter_format =
+    _capi<ffi.NativeFunction<_ResultVoidInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>>('ICU4XFixedDecimalFormatter_format')
+      .asFunction<_ResultVoidInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
 }
