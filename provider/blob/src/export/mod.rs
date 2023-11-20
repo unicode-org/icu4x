@@ -27,8 +27,7 @@
 //!     .unwrap();
 //!
 //! // communicate the blob to the client application (network, disk, etc.)
-//! # let golden_blob = std::fs::read(concat!(env!("CARGO_MANIFEST_DIR"), "/tests/data/v2.postcard")).unwrap();
-//! # assert_eq!(blob, golden_blob);
+//! # assert_eq!(blob, include_bytes!("../../tests/data/v2.postcard"));
 //! ```
 //!
 //! The resulting blob can now be used like this:
@@ -40,15 +39,18 @@
 //! use icu_provider_blob::BlobDataProvider;
 //!
 //! // obtain the data blob
-//! # let blob = std::fs::read(concat!(env!("CARGO_MANIFEST_DIR"), "/tests/data/v2.postcard")).unwrap();
+//! # let blob = include_bytes!("../../tests/data/v2.postcard").to_vec();
 //!
 //! // Create a provider reading from the blob
-//! let provider =
-//!     BlobDataProvider::try_new_from_blob(blob.into_boxed_slice())
-//!         .expect("Should successfully read from blob");
+//! let provider = BlobDataProvider::try_new_from_blob(blob.into_boxed_slice())
+//!     .expect("Should successfully read from blob");
 //!
 //! // Use the provider as a `BufferProvider`
-//! let formatter = HelloWorldFormatter::try_new_with_buffer_provider(&provider, &langid!("en").into()).unwrap();
+//! let formatter = HelloWorldFormatter::try_new_with_buffer_provider(
+//!     &provider,
+//!     &langid!("en").into(),
+//! )
+//! .unwrap();
 //!
 //! assert_eq!(formatter.format_to_string(), "Hello World");
 //! ```

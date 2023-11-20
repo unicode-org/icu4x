@@ -13,15 +13,19 @@ const REPO_VERSION: &str = env!("CARGO_PKG_VERSION");
 const COMPONENTS: &[(&str, &[DataKey], &str)] = &[
     ("calendar", icu::calendar::provider::KEYS, REPO_VERSION),
     ("casemap", icu::casemap::provider::KEYS, REPO_VERSION),
-    ("collator", icu::collator::provider::KEYS, "1.3.3"),
+    ("collator", icu::collator::provider::KEYS, REPO_VERSION),
     (
         "compactdecimal",
         icu::compactdecimal::provider::KEYS,
-        "1.3.4",
+        REPO_VERSION,
     ),
-    ("datetime", icu::datetime::provider::KEYS, "1.3.4"),
-    ("decimal", icu::decimal::provider::KEYS, "1.3.4"),
-    ("displaynames", icu::displaynames::provider::KEYS, "1.3.4"),
+    ("datetime", icu::datetime::provider::KEYS, REPO_VERSION),
+    ("decimal", icu::decimal::provider::KEYS, REPO_VERSION),
+    (
+        "displaynames",
+        icu::displaynames::provider::KEYS,
+        REPO_VERSION,
+    ),
     ("list", icu::list::provider::KEYS, REPO_VERSION),
     (
         "locid_transform",
@@ -30,7 +34,7 @@ const COMPONENTS: &[(&str, &[DataKey], &str)] = &[
     ),
     ("normalizer", icu::normalizer::provider::KEYS, REPO_VERSION),
     ("plurals", icu::plurals::provider::KEYS, REPO_VERSION),
-    ("properties", icu::properties::provider::KEYS, "1.3.4"),
+    ("properties", icu::properties::provider::KEYS, REPO_VERSION),
     (
         "relativetime",
         icu::relativetime::provider::KEYS,

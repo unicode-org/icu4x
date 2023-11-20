@@ -116,6 +116,19 @@ fn generate_rule_break_data(
     let data = sets::load_extended_pictographic(provider).expect("The data should be valid!");
     let extended_pictographic = data.as_borrowed();
 
+    let data =
+        GraphemeClusterBreak::get_name_to_enum_mapper(provider).expect("The data should be vaild!");
+    let gcb_name_to_enum = data.as_borrowed();
+
+    let data = LineBreak::get_name_to_enum_mapper(provider).expect("The data should be vaild!");
+    let lb_name_to_enum = data.as_borrowed();
+
+    let data = SentenceBreak::get_name_to_enum_mapper(provider).expect("The data should be vaild!");
+    let sb_name_to_enum = data.as_borrowed();
+
+    let data = WordBreak::get_name_to_enum_mapper(provider).expect("The data should be vaild!");
+    let wb_name_to_enum = data.as_borrowed();
+
     fn set_break_state(
         break_state_table: &mut [i8],
         property_length: usize,
@@ -131,126 +144,6 @@ fn generate_rule_break_data(
 
     fn get_index_from_name(properties_names: &[String], s: &str) -> Option<usize> {
         properties_names.iter().position(|n| n.eq(s))
-    }
-
-    fn get_word_segmenter_value_from_name(name: &str) -> WordBreak {
-        match name {
-            "ALetter" => WordBreak::ALetter,
-            "CR" => WordBreak::CR,
-            "Double_Quote" => WordBreak::DoubleQuote,
-            "Extend" => WordBreak::Extend,
-            "ExtendNumLet" => WordBreak::ExtendNumLet,
-            "Format" => WordBreak::Format,
-            "Katakana" => WordBreak::Katakana,
-            "Hebrew_Letter" => WordBreak::HebrewLetter,
-            "LF" => WordBreak::LF,
-            "MidLetter" => WordBreak::MidLetter,
-            "MidNum" => WordBreak::MidNum,
-            "MidNumLet" => WordBreak::MidNumLet,
-            "Newline" => WordBreak::Newline,
-            "Numeric" => WordBreak::Numeric,
-            "Regional_Indicator" => WordBreak::RegionalIndicator,
-            "Single_Quote" => WordBreak::SingleQuote,
-            "WSegSpace" => WordBreak::WSegSpace,
-            "ZWJ" => WordBreak::ZWJ,
-            _ => {
-                panic!("Invalid property name")
-            }
-        }
-    }
-
-    fn get_grapheme_segmenter_value_from_name(name: &str) -> GraphemeClusterBreak {
-        match name {
-            "Control" => GraphemeClusterBreak::Control,
-            "CR" => GraphemeClusterBreak::CR,
-            "Extend" => GraphemeClusterBreak::Extend,
-            "L" => GraphemeClusterBreak::L,
-            "LF" => GraphemeClusterBreak::LF,
-            "LV" => GraphemeClusterBreak::LV,
-            "LVT" => GraphemeClusterBreak::LVT,
-            "Prepend" => GraphemeClusterBreak::Prepend,
-            "Regional_Indicator" => GraphemeClusterBreak::RegionalIndicator,
-            "SpacingMark" => GraphemeClusterBreak::SpacingMark,
-            "T" => GraphemeClusterBreak::T,
-            "V" => GraphemeClusterBreak::V,
-            "ZWJ" => GraphemeClusterBreak::ZWJ,
-            _ => {
-                panic!("Invalid property name")
-            }
-        }
-    }
-
-    fn get_sentence_segmenter_value_from_name(name: &str) -> SentenceBreak {
-        match name {
-            "ATerm" => SentenceBreak::ATerm,
-            "Close" => SentenceBreak::Close,
-            "CR" => SentenceBreak::CR,
-            "Extend" => SentenceBreak::Extend,
-            "Format" => SentenceBreak::Format,
-            "LF" => SentenceBreak::LF,
-            "Lower" => SentenceBreak::Lower,
-            "Numeric" => SentenceBreak::Numeric,
-            "OLetter" => SentenceBreak::OLetter,
-            "SContinue" => SentenceBreak::SContinue,
-            "Sep" => SentenceBreak::Sep,
-            "Sp" => SentenceBreak::Sp,
-            "STerm" => SentenceBreak::STerm,
-            "Upper" => SentenceBreak::Upper,
-            _ => {
-                panic!("Invalid property name")
-            }
-        }
-    }
-
-    fn get_line_segmenter_value_from_name(name: &str) -> LineBreak {
-        match name {
-            "AI" => LineBreak::Ambiguous,
-            "AL" => LineBreak::Alphabetic,
-            "B2" => LineBreak::BreakBoth,
-            "BA" => LineBreak::BreakAfter,
-            "BB" => LineBreak::BreakBefore,
-            "BK" => LineBreak::MandatoryBreak,
-            "CB" => LineBreak::ContingentBreak,
-            "CJ" => LineBreak::ConditionalJapaneseStarter,
-            "CL" => LineBreak::ClosePunctuation,
-            "CM" => LineBreak::CombiningMark,
-            "CP" => LineBreak::CloseParenthesis,
-            "CR" => LineBreak::CarriageReturn,
-            "EB" => LineBreak::EBase,
-            "EM" => LineBreak::EModifier,
-            "EX" => LineBreak::Exclamation,
-            "GL" => LineBreak::Glue,
-            "H2" => LineBreak::H2,
-            "H3" => LineBreak::H3,
-            "HL" => LineBreak::HebrewLetter,
-            "HY" => LineBreak::Hyphen,
-            "ID" => LineBreak::Ideographic,
-            "IN" => LineBreak::Inseparable,
-            "IS" => LineBreak::InfixNumeric,
-            "JL" => LineBreak::JL,
-            "JT" => LineBreak::JT,
-            "JV" => LineBreak::JV,
-            "LF" => LineBreak::LineFeed,
-            "NL" => LineBreak::NextLine,
-            "NS" => LineBreak::Nonstarter,
-            "NU" => LineBreak::Numeric,
-            "OP" => LineBreak::OpenPunctuation,
-            "PO" => LineBreak::PostfixNumeric,
-            "PR" => LineBreak::PrefixNumeric,
-            "QU" => LineBreak::Quotation,
-            "RI" => LineBreak::RegionalIndicator,
-            "SA" => LineBreak::ComplexContext,
-            "SG" => LineBreak::Surrogate,
-            "SP" => LineBreak::Space,
-            "SY" => LineBreak::BreakSymbols,
-            "WJ" => LineBreak::WordJoiner,
-            "XX" => LineBreak::Unknown,
-            "ZW" => LineBreak::ZWSpace,
-            "ZWJ" => LineBreak::ZWJ,
-            _ => {
-                panic!("Invalid property name: {name}")
-            }
-        }
     }
 
     fn is_cjk_fullwidth(
@@ -323,11 +216,11 @@ fn generate_rule_break_data(
                                     Script::Han | Script::Hiragana => {
                                         properties_map[c as usize] = property_index;
                                     }
+
                                     _ => {}
                                 }
                             }
                         }
-
                         continue;
                     }
 
@@ -335,7 +228,9 @@ fn generate_rule_break_data(
                     // How to handle Katakana in UAX29? UAX29 defines Katakana rule, but CJ dictionary has another rules.
                     // Katakana will use UAX#29 rules instead of dictionary.
 
-                    let prop = get_word_segmenter_value_from_name(&p.name);
+                    let prop = wb_name_to_enum
+                        .get_loose(&p.name)
+                        .expect("property name should be valid!");
                     for c in 0..(CODEPOINT_TABLE_LEN as u32) {
                         if wb.get32(c) == prop {
                             properties_map[c as usize] = property_index;
@@ -358,7 +253,9 @@ fn generate_rule_break_data(
                         continue;
                     }
 
-                    let prop = get_grapheme_segmenter_value_from_name(&p.name);
+                    let prop = gcb_name_to_enum
+                        .get_loose(&p.name)
+                        .expect("property name should be valid!");
                     for c in 0..(CODEPOINT_TABLE_LEN as u32) {
                         if gb.get32(c) == prop {
                             properties_map[c as usize] = property_index;
@@ -368,7 +265,9 @@ fn generate_rule_break_data(
                 }
 
                 "sentence" => {
-                    let prop = get_sentence_segmenter_value_from_name(&p.name);
+                    let prop = sb_name_to_enum
+                        .get_loose(&p.name)
+                        .expect("property name should be valid!");
                     for c in 0..(CODEPOINT_TABLE_LEN as u32) {
                         if sb.get32(c) == prop {
                             properties_map[c as usize] = property_index;
@@ -442,7 +341,9 @@ fn generate_rule_break_data(
                         continue;
                     }
 
-                    let prop = get_line_segmenter_value_from_name(&p.name);
+                    let prop = lb_name_to_enum
+                        .get_loose(&p.name)
+                        .expect("property name should be valid!");
                     for c in 0..(CODEPOINT_TABLE_LEN as u32) {
                         if lb.get32(c) == prop {
                             properties_map[c as usize] = property_index;
@@ -633,7 +534,7 @@ macro_rules! implement {
                 return {
                     self.check_req::<$marker>(req)?;
                     let data = generate_rule_break_data(
-                        &Self::new_hardcoded_segmenter_data(),
+                        &hardcoded_segmenter_provider(),
                         $rules,
                         self.trie_type(),
                     );
@@ -652,6 +553,85 @@ macro_rules! implement {
             }
         }
     }
+}
+
+fn hardcoded_segmenter_provider() -> crate::DatagenProvider {
+    #![allow(deprecated)]
+    use crate::{
+        source::{AbstractFs, SerdeCache},
+        DatagenProvider, TrieType,
+    };
+    // Singleton so that all instantiations share the same cache.
+    static SINGLETON: once_cell::sync::OnceCell<DatagenProvider> = once_cell::sync::OnceCell::new();
+    SINGLETON
+        .get_or_init(|| {
+            let mut provider = DatagenProvider::new_custom();
+            provider.source.icuexport_paths =
+                Some(std::sync::Arc::new(SerdeCache::new(AbstractFs::Memory(
+                    [
+                        (
+                            "uprops/small/ea.toml",
+                            include_bytes!("../../../data/segmenter/uprops/small/ea.toml")
+                                .as_slice(),
+                        ),
+                        (
+                            "uprops/small/ExtPict.toml",
+                            include_bytes!("../../../data/segmenter/uprops/small/ExtPict.toml")
+                                .as_slice(),
+                        ),
+                        (
+                            "uprops/small/gc.toml",
+                            include_bytes!("../../../data/segmenter/uprops/small/gc.toml")
+                                .as_slice(),
+                        ),
+                        (
+                            "uprops/small/GCB.toml",
+                            include_bytes!("../../../data/segmenter/uprops/small/GCB.toml")
+                                .as_slice(),
+                        ),
+                        (
+                            "uprops/small/lb.toml",
+                            include_bytes!("../../../data/segmenter/uprops/small/lb.toml")
+                                .as_slice(),
+                        ),
+                        (
+                            "uprops/small/SB.toml",
+                            include_bytes!("../../../data/segmenter/uprops/small/SB.toml")
+                                .as_slice(),
+                        ),
+                        (
+                            "uprops/small/sc.toml",
+                            include_bytes!("../../../data/segmenter/uprops/small/sc.toml")
+                                .as_slice(),
+                        ),
+                        (
+                            "uprops/small/WB.toml",
+                            include_bytes!("../../../data/segmenter/uprops/small/WB.toml")
+                                .as_slice(),
+                        ),
+                        (
+                            "segmenter/grapheme.toml",
+                            include_bytes!("../../../data/segmenter/grapheme.toml").as_slice(),
+                        ),
+                        (
+                            "segmenter/line.toml",
+                            include_bytes!("../../../data/segmenter/line.toml").as_slice(),
+                        ),
+                        (
+                            "segmenter/sentence.toml",
+                            include_bytes!("../../../data/segmenter/sentence.toml").as_slice(),
+                        ),
+                        (
+                            "segmenter/word.toml",
+                            include_bytes!("../../../data/segmenter/word.toml").as_slice(),
+                        ),
+                    ]
+                    .into_iter()
+                    .collect(),
+                ))));
+            provider
+        })
+        .clone()
 }
 
 implement!(LineBreakDataV1Marker, "segmenter/line.toml");

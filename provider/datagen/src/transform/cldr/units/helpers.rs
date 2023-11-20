@@ -4,11 +4,265 @@
 
 use core::ops::{Div, Mul};
 use core::str::FromStr;
+use std::collections::{BTreeMap, VecDeque};
 
 use fraction::GenericFraction;
 use icu_provider::DataError;
-use icu_unitsconversion::provider::{ConstantExactness, Sign};
+use icu_unitsconversion::provider::{ConversionInfo, Exactness, Sign};
 use num_bigint::BigUint;
+
+use crate::transform::cldr::cldr_serde::units::units_constants::Constant;
+
+/// Represents a scientific number that contains only clean numerator and denominator terms.
+/// NOTE:
+///   clean means that there is no constant in the numerator or denominator.
+///   For example, ["1.2"] is clean, but ["1.2", ft_to_m"] is not clean.
+pub struct ScientificNumber {
+    /// Contains numerator terms that are represented as scientific numbers
+    pub clean_num: Vec<String>,
+    /// Contains denominator terms that are represented as scientific numbers
+    pub clean_den: Vec<String>,
+
+    /// Indicates if the constant is exact or approximate
+    pub exactness: Exactness,
+}
+
+/// Represents a general constant which contains scientific and non scientific numbers.
+#[derive(Debug)]
+struct GeneralNonScientificNumber {
+    /// Contains numerator terms that are represented as scientific numbers
+    clean_num: Vec<String>,
+    /// Contains denominator terms that are represented as scientific numbers
+    clean_den: Vec<String>,
+    /// Contains numerator terms that are not represented as scientific numbers
+    non_scientific_num: VecDeque<String>,
+    /// Contains denominator terms that are not represented as scientific numbers
+    non_scientific_den: VecDeque<String>,
+    /// Indicates if the constant is exact or approximate
+    exactness: Exactness,
+}
+
+impl GeneralNonScientificNumber {
+    fn new(num: &[String], den: &[String], exactness: Exactness) -> Self {
+        let mut constant = GeneralNonScientificNumber {
+            clean_num: Vec::new(),
+            clean_den: Vec::new(),
+            non_scientific_num: VecDeque::new(),
+            non_scientific_den: VecDeque::new(),
+            exactness,
+        };
+
+        for n in num {
+            if is_scientific_number(n) {
+                constant.clean_num.push(n.clone());
+            } else {
+                constant.non_scientific_num.push_back(n.clone());
+            }
+        }
+
+        for d in den {
+            if is_scientific_number(d) {
+                constant.clean_den.push(d.clone());
+            } else {
+                constant.non_scientific_den.push_back(d.clone());
+            }
+        }
+        constant
+    }
+
+    /// Determines if the constant is free of any non_scientific elements.
+    fn is_free_of_non_scientific(&self) -> bool {
+        self.non_scientific_num.is_empty() && self.non_scientific_den.is_empty()
+    }
+}
+
+pub fn process_factor_part(
+    factor_part: &str,
+    cons_map: &BTreeMap<&str, ScientificNumber>,
+) -> Result<ScientificNumber, DataError> {
+    if factor_part.contains('/') {
+        return Err(DataError::custom("the factor part is fractional number"));
+    }
+
+    let mut result = ScientificNumber {
+        clean_num: Vec::new(),
+        clean_den: Vec::new(),
+        exactness: Exactness::Exact,
+    };
+
+    let factor_parts = factor_part.split('*');
+    for factor in factor_parts {
+        if let Some(cons) = cons_map.get(factor.trim()) {
+            result.clean_num.extend(cons.clean_num.clone());
+            result.clean_den.extend(cons.clean_den.clone());
+            if cons.exactness == Exactness::Approximate {
+                result.exactness = Exactness::Approximate;
+            }
+        } else {
+            result.clean_num.push(factor.trim().to_string());
+        }
+    }
+
+    Ok(result)
+}
+
+/// Processes a factor in the form of a string and returns a ScientificNumber.
+/// Examples:
+///     "1" is converted to ScientificNumber { clean_num: ["1"], clean_den: ["1"], exactness: Exact }
+///     "3 * ft_to_m" is converted to ScientificNumber { clean_num: ["3", "ft_to_m"], clean_den: ["1"], exactness: Exact }
+/// NOTE:
+///    If one of the constants in the factor is approximate, the whole factor is approximate.
+pub fn process_factor(
+    factor: &str,
+    cons_map: &BTreeMap<&str, ScientificNumber>,
+) -> Result<ScientificNumber, DataError> {
+    let mut factor_parts = factor.split('/');
+    let factor_num_str = factor_parts.next().unwrap_or("0").trim();
+    let factor_den_str = factor_parts.next().unwrap_or("1").trim();
+    if factor_parts.next().is_some() {
+        return Err(DataError::custom(
+            "the factor is not a valid scientific notation number",
+        ));
+    }
+
+    let mut result = process_factor_part(factor_num_str, cons_map)?;
+    let factor_den_scientific = process_factor_part(factor_den_str, cons_map)?;
+
+    result.clean_num.extend(factor_den_scientific.clean_den);
+    result.clean_den.extend(factor_den_scientific.clean_num);
+    if factor_den_scientific.exactness == Exactness::Approximate {
+        result.exactness = Exactness::Approximate;
+    }
+
+    Ok(result)
+}
+
+/// Converts a vector of strings to a vector of string slices.
+fn to_str_vec(string_vec: &[String]) -> Vec<&str> {
+    string_vec.iter().map(|s| s.as_str()).collect()
+}
+
+/// Extracts the conversion info from a base unit, factor and offset.
+pub fn extract_conversion_info(
+    base_unit: &str,
+    factor: ScientificNumber,
+    offset: ScientificNumber,
+) -> Result<ConversionInfo, DataError> {
+    let factor_fraction = convert_slices_to_fraction(
+        &to_str_vec(&factor.clean_num),
+        &to_str_vec(&factor.clean_den),
+    )?;
+    let offset_fraction = convert_slices_to_fraction(
+        &to_str_vec(&offset.clean_num),
+        &to_str_vec(&offset.clean_den),
+    )?;
+
+    let (factor_num, factor_den, factor_sign) = flatten_fraction(factor_fraction)?;
+    let (offset_num, offset_den, offset_sign) = flatten_fraction(offset_fraction)?;
+
+    let exactness = if factor.exactness == Exactness::Exact && offset.exactness == Exactness::Exact
+    {
+        Exactness::Exact
+    } else {
+        Exactness::Approximate
+    };
+
+    Ok(ConversionInfo {
+        base_unit: base_unit.into(),
+        factor_num: factor_num.into(),
+        factor_den: factor_den.into(),
+        factor_sign,
+        offset_num: offset_num.into(),
+        offset_den: offset_den.into(),
+        offset_sign,
+        exactness,
+    })
+}
+
+/// Processes the constants and return them in a numerator-denominator form.
+pub fn process_constants<'a>(
+    constants: &'a BTreeMap<String, Constant>,
+) -> Result<BTreeMap<&'a str, ScientificNumber>, DataError> {
+    let mut constants_with_non_scientific =
+        VecDeque::<(&'a str, GeneralNonScientificNumber)>::new();
+    let mut clean_constants_map = BTreeMap::<&str, GeneralNonScientificNumber>::new();
+    for (cons_name, cons_value) in constants {
+        let (num, den) = split_unit_term(&cons_value.value)?;
+        let exactness = match cons_value.status.as_deref() {
+            Some("approximate") => Exactness::Approximate,
+            _ => Exactness::Exact,
+        };
+        let constant = GeneralNonScientificNumber::new(&num, &den, exactness);
+        if constant.is_free_of_non_scientific() {
+            clean_constants_map.insert(cons_name, constant);
+        } else {
+            constants_with_non_scientific.push_back((&cons_name, constant));
+        }
+    }
+    let mut no_update_count = 0;
+    while !constants_with_non_scientific.is_empty() {
+        let mut updated = false;
+        let (constant_key, mut non_scientific_constant) = constants_with_non_scientific
+            .pop_front()
+            .ok_or(DataError::custom(
+                "non scientific queue error: an element must exist",
+            ))?;
+        for _ in 0..non_scientific_constant.non_scientific_num.len() {
+            if let Some(num) = non_scientific_constant.non_scientific_num.pop_front() {
+                if let Some(clean_constant) = clean_constants_map.get(num.as_str()) {
+                    non_scientific_constant
+                        .clean_num
+                        .extend(clean_constant.clean_num.clone());
+                    non_scientific_constant
+                        .clean_den
+                        .extend(clean_constant.clean_den.clone());
+                    updated = true;
+                } else {
+                    non_scientific_constant.non_scientific_num.push_back(num);
+                }
+            }
+        }
+        for _ in 0..non_scientific_constant.non_scientific_den.len() {
+            if let Some(den) = non_scientific_constant.non_scientific_den.pop_front() {
+                if let Some(clean_constant) = clean_constants_map.get(den.as_str()) {
+                    non_scientific_constant
+                        .clean_num
+                        .extend(clean_constant.clean_den.clone());
+                    non_scientific_constant
+                        .clean_den
+                        .extend(clean_constant.clean_num.clone());
+                    updated = true;
+                } else {
+                    non_scientific_constant.non_scientific_den.push_back(den);
+                }
+            }
+        }
+        if non_scientific_constant.is_free_of_non_scientific() {
+            clean_constants_map.insert(constant_key, non_scientific_constant);
+        } else {
+            constants_with_non_scientific.push_back((constant_key, non_scientific_constant));
+        }
+        no_update_count = if !updated { no_update_count + 1 } else { 0 };
+        if no_update_count > constants_with_non_scientific.len() {
+            return Err(DataError::custom(
+                "A loop was detected in the CLDR constants data!",
+            ));
+        }
+    }
+
+    Ok(clean_constants_map
+        .into_iter()
+        .map(|(k, v)| {
+            (k, {
+                ScientificNumber {
+                    clean_num: v.clean_num,
+                    clean_den: v.clean_den,
+                    exactness: v.exactness,
+                }
+            })
+        })
+        .collect())
+}
 
 /// Converts a scientific notation number represented as a string to a fraction.
 /// Examples:
@@ -135,11 +389,10 @@ pub fn is_scientific_number(s: &str) -> bool {
     !contains_alphabetic_chars(base) && !contains_alphabetic_chars(exponent)
 }
 
-/// Transforms a fractional number into a constant value.
-pub fn transform_fraction_to_constant_value(
+/// Transforms a fractional number into byte numerators, byte denominators, and a sign.
+pub fn flatten_fraction(
     fraction: GenericFraction<BigUint>,
-    constant_exactness: ConstantExactness,
-) -> Result<(Vec<u8>, Vec<u8>, Sign, ConstantExactness), DataError> {
+) -> Result<(Vec<u8>, Vec<u8>, Sign), DataError> {
     let numerator = match fraction.numer() {
         Some(numerator) => numerator.to_bytes_le(),
         None => return Err(DataError::custom("the numerator is too large")),
@@ -158,7 +411,7 @@ pub fn transform_fraction_to_constant_value(
         }
     };
 
-    Ok((numerator, denominator, sign, constant_exactness))
+    Ok((numerator, denominator, sign))
 }
 
 /// Converts slices of numerator and denominator strings to a fraction.
@@ -237,9 +490,7 @@ fn test_convert_array_of_strings_to_fraction() {
 /// - "2/" is split into (["2"], ["1"])
 /// - "1E2" is split into (["1E2"], ["1"])
 /// - "1 2 * 3" is an invalid constant string
-pub fn convert_constant_to_num_denom_strings(
-    constant_string: &str,
-) -> Result<(Vec<String>, Vec<String>), DataError> {
+pub fn split_unit_term(constant_string: &str) -> Result<(Vec<String>, Vec<String>), DataError> {
     let split: Vec<&str> = constant_string.split('/').collect();
     if split.len() > 2 {
         return Err(DataError::custom("Invalid constant string"));
@@ -278,7 +529,7 @@ pub fn convert_constant_to_num_denom_strings(
 fn test_convert_constant_to_num_denom_strings() {
     let input = "1/2";
     let expected = (vec!["1".to_string()], vec!["2".to_string()]);
-    let actual = convert_constant_to_num_denom_strings(input).unwrap();
+    let actual = split_unit_term(input).unwrap();
     assert_eq!(expected, actual);
 
     let input = "1 * 2 / 3 * ft_to_m";
@@ -286,30 +537,30 @@ fn test_convert_constant_to_num_denom_strings() {
         vec!["1".to_string(), "2".to_string()],
         vec!["3".to_string(), "ft_to_m".to_string()],
     );
-    let actual = convert_constant_to_num_denom_strings(input).unwrap();
+    let actual = split_unit_term(input).unwrap();
     assert_eq!(expected, actual);
 
     let input = "/2";
     let expected = (vec!["1".to_string()], vec!["2".to_string()]);
-    let actual = convert_constant_to_num_denom_strings(input).unwrap();
+    let actual = split_unit_term(input).unwrap();
     assert_eq!(expected, actual);
 
     let input = "2";
     let expected = (vec!["2".to_string()], vec!["1".to_string()]);
-    let actual = convert_constant_to_num_denom_strings(input).unwrap();
+    let actual = split_unit_term(input).unwrap();
     assert_eq!(expected, actual);
 
     let input = "2/";
     let expected = (vec!["2".to_string()], vec!["1".to_string()]);
-    let actual = convert_constant_to_num_denom_strings(input).unwrap();
+    let actual = split_unit_term(input).unwrap();
     assert_eq!(expected, actual);
 
     let input = "1E2";
     let expected = (vec!["1E2".to_string()], vec!["1".to_string()]);
-    let actual = convert_constant_to_num_denom_strings(input).unwrap();
+    let actual = split_unit_term(input).unwrap();
     assert_eq!(expected, actual);
 
     let input = "1 2 * 3";
-    let actual = convert_constant_to_num_denom_strings(input);
+    let actual = split_unit_term(input);
     assert!(actual.is_err());
 }

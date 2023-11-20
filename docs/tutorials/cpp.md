@@ -29,7 +29,7 @@ _We are still working on improving the user experience of using ICU4X from other
     - If you cannot find the crate, download it from crates.io
     - Make sure to use the same version as above
         - While we selected a version for `icu_capi_staticlib` before, and here we're looking at `icu_capi`, those versions will always be in sync. You can sanity check this by running `cargo pkgid -p icu_capi`.
- - Compile with `g++ -std=c++17 icu/target/releaselibicu_capi_staticlib.a -ldl -lpthread -lm`. C++ versions beyond C++17 are supported, as are other C++ compilers.
+ - Compile with `g++ -std=c++17 icu/target/release/libicu_capi_staticlib.a -ldl -lpthread -lm`. C++ versions beyond C++17 are supported, as are other C++ compilers.
 
 ## Using ICU4X from C++
 Here's an annotated, shorter version of the fixed decimal example, that can be built using the steps above:

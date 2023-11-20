@@ -362,6 +362,7 @@ impl From<ParserError> for ICU4XError {
             ParserError::InvalidLanguage => ICU4XError::LocaleParserLanguageError,
             ParserError::InvalidSubtag => ICU4XError::LocaleParserSubtagError,
             ParserError::InvalidExtension => ICU4XError::LocaleParserExtensionError,
+            ParserError::DuplicatedExtension => ICU4XError::LocaleParserExtensionError,
             _ => ICU4XError::UnknownError,
         }
         .log_original(&e)

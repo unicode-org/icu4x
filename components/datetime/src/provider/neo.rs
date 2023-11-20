@@ -10,6 +10,105 @@ use icu_provider::prelude::*;
 use zerovec::ule::UnvalidatedStr;
 use zerovec::{VarZeroVec, ZeroMap};
 
+/// Helpers involving the auxiliary subtags used for date symbols.
+///
+/// <div class="stab unstable">
+/// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
+/// including in SemVer minor releases. While the serde representation of data structs is guaranteed
+/// to be stable, their Rust representation might not be. Use with caution.
+/// </div>
+#[allow(missing_docs)]
+pub mod aux {
+    use icu_locid::extensions::private::{subtag, Subtag};
+
+    pub const NUMERIC: Subtag = subtag!("1");
+    pub const ABBR: Subtag = subtag!("3");
+    pub const NARROW: Subtag = subtag!("4");
+    pub const WIDE: Subtag = subtag!("5");
+    pub const SHORT: Subtag = subtag!("6");
+    pub const ABBR_STANDALONE: Subtag = subtag!("3s");
+    pub const NARROW_STANDALONE: Subtag = subtag!("4s");
+    pub const WIDE_STANDALONE: Subtag = subtag!("5s");
+    pub const SHORT_STANDALONE: Subtag = subtag!("6s");
+
+    pub const PATTERN_FULL: Subtag = subtag!("f");
+    pub const PATTERN_LONG: Subtag = subtag!("l");
+    pub const PATTERN_MEDIUM: Subtag = subtag!("m");
+    pub const PATTERN_SHORT: Subtag = subtag!("s");
+
+    pub const PATTERN_FULL12: Subtag = subtag!("f12");
+    pub const PATTERN_LONG12: Subtag = subtag!("l12");
+    pub const PATTERN_MEDIUM12: Subtag = subtag!("m12");
+    pub const PATTERN_SHORT12: Subtag = subtag!("s12");
+
+    pub const PATTERN_FULL24: Subtag = subtag!("f24");
+    pub const PATTERN_LONG24: Subtag = subtag!("l24");
+    pub const PATTERN_MEDIUM24: Subtag = subtag!("m24");
+    pub const PATTERN_SHORT24: Subtag = subtag!("s24");
+
+    /// Field lengths supported in auxiliary subtags.
+    ///
+    /// For a stable version of this enum, use [`FieldLength`].
+    ///
+    /// <div class="stab unstable">
+    /// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
+    /// including in SemVer minor releases. While the serde representation of data structs is guaranteed
+    /// to be stable, their Rust representation might not be. Use with caution.
+    /// </div>
+    ///
+    /// [`FieldLength`]: crate::fields::FieldLength
+    #[derive(Copy, Clone, Debug, PartialEq, Eq)]
+    #[allow(clippy::exhaustive_enums)] // documented as unstable
+    pub enum Length {
+        Abbr,
+        Narrow,
+        Wide,
+        Short,
+        Numeric,
+    }
+
+    /// Field contexts supported in auxiliary subtags.
+    ///
+    /// For a stable version of this enum, use one of the specific field symbol enums in [`fields`].
+    ///
+    /// <div class="stab unstable">
+    /// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
+    /// including in SemVer minor releases. While the serde representation of data structs is guaranteed
+    /// to be stable, their Rust representation might not be. Use with caution.
+    /// </div>
+    ///
+    /// [`fields`]: crate::fields
+    #[derive(Copy, Clone, Debug, PartialEq, Eq)]
+    #[allow(clippy::exhaustive_enums)] // documented as unstable
+    pub enum Context {
+        Format,
+        Standalone,
+    }
+
+    /// Parses an aux key subtag to enum values.
+    ///
+    /// <div class="stab unstable">
+    /// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
+    /// including in SemVer minor releases. While the serde representation of data structs is guaranteed
+    /// to be stable, their Rust representation might not be. Use with caution.
+    /// </div>
+    pub fn subtag_info(subtag: Subtag) -> Option<(Context, Length)> {
+        use {Context::*, Length::*};
+        match subtag {
+            NUMERIC => Some((Format, Numeric)),
+            ABBR => Some((Format, Abbr)),
+            NARROW => Some((Format, Narrow)),
+            WIDE => Some((Format, Wide)),
+            SHORT => Some((Format, Short)),
+            ABBR_STANDALONE => Some((Standalone, Abbr)),
+            NARROW_STANDALONE => Some((Standalone, Narrow)),
+            WIDE_STANDALONE => Some((Standalone, Wide)),
+            SHORT_STANDALONE => Some((Standalone, Short)),
+            _ => None,
+        }
+    }
+}
+
 /// Symbols used for representing the year name
 ///
 /// This uses an auxiliary subtag for length. The subtag is simply the number of

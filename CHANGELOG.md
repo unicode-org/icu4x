@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## icu4x 1.4 (Nov 16, 2023)
 
 - General
   - MSRV is now 1.67
@@ -11,6 +11,8 @@
       - Expose if a date is in a leap year (https://github.com/unicode-org/icu4x/pull/4273)
     - `icu_locid`
       - Canonicalize transform extensions to lowercase (https://github.com/unicode-org/icu4x/pull/4134)
+    - `icu_plurals`
+        - Experimental `PluralRulesWithRanges` for selecting the plural category for ranges (https://github.com/unicode-org/icu4x/issues/3012)
     - `icu_properties`
         - Support Indic_Syllabic_Category in icu_properties. (https://github.com/unicode-org/icu4x/pull/4176)
         - Add enum constants for new Unicode 15.1 Line_Break properties. (https://github.com/unicode-org/icu4x/issues/4132)
@@ -33,6 +35,8 @@
     - `databake`
         - Add implementations for `HashSet`, `HashMap`, `BTreeSet`, `BTreeMap` (https://github.com/unicode-org/icu4x/pull/4268, https://github.com/unicode-org/icu4x/pull/4274, https://github.com/unicode-org/icu4x/pull/4295)  
         - Improvements to `databake::test_bake!()` (https://github.com/unicode-org/icu4x/pull/4182)
+    - `fixed_decimal`
+        - Experimental rounding increment support (https://github.com/unicode-org/icu4x/pull/4219, https://github.com/unicode-org/icu4x/pull/4246)
     - `litemap`
         - Implement `databake::Bake` on `LiteMap` (https://github.com/unicode-org/icu4x/pull/4275)
     - `tinystr`
