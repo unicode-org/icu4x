@@ -599,7 +599,7 @@ impl Weekday {
     pub(crate) fn to_format_symbol(self) -> Self {
         match self {
             Weekday::Local => Weekday::Format,
-            other => other
+            other => other,
         }
     }
 }

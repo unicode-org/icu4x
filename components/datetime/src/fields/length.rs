@@ -127,9 +127,7 @@ impl FieldLength {
     /// This function maps field lengths 1 and 2 to field length 3.
     pub(crate) fn numeric_to_abbr(self) -> Self {
         match self {
-            FieldLength::One | FieldLength::TwoDigit => {
-                FieldLength::Abbreviated
-            }
+            FieldLength::One | FieldLength::TwoDigit => FieldLength::Abbreviated,
             other => other,
         }
     }

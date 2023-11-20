@@ -43,20 +43,23 @@ enum NamePresence {
     Mismatched,
 }
 
-impl<S, T> OptionalSymbols<S, T> where S: Copy + PartialEq {
-    pub(crate) fn check_with_length(&self, field_symbol: S, field_length: fields::FieldLength) -> NamePresence {
+impl<S, T> OptionalSymbols<S, T>
+where
+    S: Copy + PartialEq,
+{
+    pub(crate) fn check_with_length(
+        &self,
+        field_symbol: S,
+        field_length: fields::FieldLength,
+    ) -> NamePresence {
         match self {
             Self::SingleLength(actual_field_symbol, actual_length, _)
                 if field_symbol == *actual_field_symbol && field_length == *actual_length =>
             {
                 NamePresence::Loaded
             }
-            OptionalSymbols::SingleLength(_, _, _) => {
-                NamePresence::Mismatched
-            },
-            OptionalSymbols::None => {
-                NamePresence::NotLoaded
-            }
+            OptionalSymbols::SingleLength(_, _, _) => NamePresence::Mismatched,
+            OptionalSymbols::None => NamePresence::NotLoaded,
         }
     }
 }
@@ -108,7 +111,7 @@ where
 /// of the icu meta-crate. Use with caution.
 /// <a href="https://github.com/unicode-org/icu4x/issues/1317">#1317</a>
 /// </div>
-/// 
+///
 /// # Examples
 ///
 /// ```
@@ -125,11 +128,11 @@ where
 /// let mut interpolator: TypedDateTimePatternInterpolator<Gregorian> =
 ///     TypedDateTimePatternInterpolator::try_new(&locale!("uk").into()).unwrap();
 /// interpolator
-///     .load_month_names(&icu::datetime::provider::Baked, fields::Month::Format, FieldLength::Abbreviated)
+///     .include_month_names(fields::Month::Format, FieldLength::Abbreviated)
 ///     .unwrap()
-///     .load_weekday_names(&icu::datetime::provider::Baked, fields::Weekday::Format, FieldLength::Abbreviated)
+///     .include_weekday_names(fields::Weekday::Format, FieldLength::Abbreviated)
 ///     .unwrap()
-///     .load_day_period_names(&icu::datetime::provider::Baked, FieldLength::Abbreviated)
+///     .include_day_period_names(FieldLength::Abbreviated)
 ///     .unwrap();
 ///
 /// // Create a pattern from a pattern string:
@@ -141,9 +144,9 @@ where
 /// let datetime = DateTime::try_new_gregorian_datetime(2023, 11, 20, 11, 35, 3).unwrap();
 /// assert_writeable_eq!(interpolator.format(&pattern, &datetime), "пн лист. 20 2023 -- 11:35 дп");
 /// ```
-/// 
+///
 /// If the correct data is not loaded, and error will occur:
-/// 
+///
 /// ```
 /// use icu::calendar::Gregorian;
 /// use icu::calendar::DateTime;
@@ -245,7 +248,7 @@ impl<C: CldrCalendar> TypedDateTimePatternInterpolator<C> {
         match self.year_symbols.check_with_length((), field_length) {
             NamePresence::Loaded => return Ok(self),
             NamePresence::NotLoaded => (),
-            NamePresence::Mismatched => return Err(Error::DuplicateField(field))
+            NamePresence::Mismatched => return Err(Error::DuplicateField(field)),
         };
         let mut locale = self.locale.clone();
         locale.set_aux(AuxiliaryKeys::from_subtag(aux::subtag_for(
@@ -267,6 +270,42 @@ impl<C: CldrCalendar> TypedDateTimePatternInterpolator<C> {
         Ok(self)
     }
 
+    /// Includes year (era or cycle) names for the specified length.
+    ///
+    /// Does not support multiple field symbols or lengths. See #4337
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use icu::calendar::Gregorian;
+    /// use icu::datetime::TypedDateTimePatternInterpolator;
+    /// use icu::datetime::fields::FieldLength;
+    /// use icu::datetime::DateTimeError;
+    /// use icu::locid::locale;
+    ///
+    /// let mut interpolator = TypedDateTimePatternInterpolator::<Gregorian>::try_new(&locale!("und").into()).unwrap();
+    ///
+    /// // First length is successful:
+    /// interpolator.include_year_names(FieldLength::Wide).unwrap();
+    ///
+    /// // Attempting to load the first length a second time will succeed:
+    /// interpolator.include_year_names(FieldLength::Wide).unwrap();
+    ///
+    /// // But loading a new length fails:
+    /// assert!(matches!(interpolator.include_year_names(FieldLength::Abbreviated), Err(DateTimeError::DuplicateField(_))));
+    /// ```
+    #[cfg(feature = "compiled_data")]
+    pub fn include_year_names(
+        &mut self,
+        field_length: fields::FieldLength,
+    ) -> Result<&mut Self, Error>
+    where
+        crate::provider::Baked:
+            icu_provider::DataProvider<<C as CldrCalendar>::YearSymbolsV1Marker>,
+    {
+        self.load_year_names(&crate::provider::Baked, field_length)
+    }
+
     /// Loads month names for the specified symbol and length.
     ///
     /// Does not support multiple field symbols or lengths. See #4337
@@ -284,10 +323,13 @@ impl<C: CldrCalendar> TypedDateTimePatternInterpolator<C> {
             length: field_length,
         };
         // Note: UTS 35 says that "M..MM" and "L..LL" are numeric
-        match self.month_symbols.check_with_length(field_symbol, field_length) {
+        match self
+            .month_symbols
+            .check_with_length(field_symbol, field_length)
+        {
             NamePresence::Loaded => return Ok(self),
             NamePresence::NotLoaded => (),
-            NamePresence::Mismatched => return Err(Error::DuplicateField(field))
+            NamePresence::Mismatched => return Err(Error::DuplicateField(field)),
         };
         let mut locale = self.locale.clone();
         locale.set_aux(AuxiliaryKeys::from_subtag(aux::subtag_for(
@@ -312,6 +354,46 @@ impl<C: CldrCalendar> TypedDateTimePatternInterpolator<C> {
         Ok(self)
     }
 
+    /// Includes month names for the specified symbol and length.
+    ///
+    /// Does not support multiple field symbols or lengths. See #4337
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use icu::calendar::Gregorian;
+    /// use icu::datetime::TypedDateTimePatternInterpolator;
+    /// use icu::datetime::fields::FieldLength;
+    /// use icu::datetime::DateTimeError;
+    /// use icu::locid::locale;
+    ///
+    /// let mut interpolator = TypedDateTimePatternInterpolator::<Gregorian>::try_new(&locale!("und").into()).unwrap();
+    /// let field_symbol = icu::datetime::fields::Month::Format;
+    /// let alt_field_symbol = icu::datetime::fields::Month::StandAlone;
+    ///
+    /// // First length is successful:
+    /// interpolator.include_month_names(field_symbol, FieldLength::Wide).unwrap();
+    ///
+    /// // Attempting to load the first length a second time will succeed:
+    /// interpolator.include_month_names(field_symbol, FieldLength::Wide).unwrap();
+    ///
+    /// // But loading a new symbol or length fails:
+    /// assert!(matches!(interpolator.include_month_names(alt_field_symbol, FieldLength::Wide), Err(DateTimeError::DuplicateField(_))));
+    /// assert!(matches!(interpolator.include_month_names(field_symbol, FieldLength::Abbreviated), Err(DateTimeError::DuplicateField(_))));
+    /// ```
+    #[cfg(feature = "compiled_data")]
+    pub fn include_month_names(
+        &mut self,
+        field_symbol: fields::Month,
+        field_length: fields::FieldLength,
+    ) -> Result<&mut Self, Error>
+    where
+        crate::provider::Baked:
+            icu_provider::DataProvider<<C as CldrCalendar>::MonthSymbolsV1Marker>,
+    {
+        self.load_month_names(&crate::provider::Baked, field_symbol, field_length)
+    }
+
     /// Loads day period names for the specified length.
     ///
     /// Does not support multiple field symbols or lengths. See #4337
@@ -333,7 +415,7 @@ impl<C: CldrCalendar> TypedDateTimePatternInterpolator<C> {
         match self.dayperiod_symbols.check_with_length((), field_length) {
             NamePresence::Loaded => return Ok(self),
             NamePresence::NotLoaded => (),
-            NamePresence::Mismatched => return Err(Error::DuplicateField(field))
+            NamePresence::Mismatched => return Err(Error::DuplicateField(field)),
         };
         let mut locale = self.locale.clone();
         locale.set_aux(AuxiliaryKeys::from_subtag(aux::subtag_for(
@@ -355,6 +437,41 @@ impl<C: CldrCalendar> TypedDateTimePatternInterpolator<C> {
         Ok(self)
     }
 
+    /// Includes day period names for the specified length.
+    ///
+    /// Does not support multiple field symbols or lengths. See #4337
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use icu::calendar::Gregorian;
+    /// use icu::datetime::TypedDateTimePatternInterpolator;
+    /// use icu::datetime::fields::FieldLength;
+    /// use icu::datetime::DateTimeError;
+    /// use icu::locid::locale;
+    ///
+    /// let mut interpolator = TypedDateTimePatternInterpolator::<Gregorian>::try_new(&locale!("und").into()).unwrap();
+    ///
+    /// // First length is successful:
+    /// interpolator.include_day_period_names(FieldLength::Wide).unwrap();
+    ///
+    /// // Attempting to load the first length a second time will succeed:
+    /// interpolator.include_day_period_names(FieldLength::Wide).unwrap();
+    ///
+    /// // But loading a new length fails:
+    /// assert!(matches!(interpolator.include_day_period_names(FieldLength::Abbreviated), Err(DateTimeError::DuplicateField(_))));
+    /// ```
+    #[cfg(feature = "compiled_data")]
+    pub fn include_day_period_names(
+        &mut self,
+        field_length: fields::FieldLength,
+    ) -> Result<&mut Self, Error>
+    where
+        crate::provider::Baked: icu_provider::DataProvider<DayPeriodSymbolsV1Marker>,
+    {
+        self.load_day_period_names(&crate::provider::Baked, field_length)
+    }
+
     /// Loads weekday names for the specified symbol and length.
     ///
     /// Does not support multiple field symbols or lengths. See #4337
@@ -373,10 +490,13 @@ impl<C: CldrCalendar> TypedDateTimePatternInterpolator<C> {
         };
         // UTS 35 says that "E..EEE" are all Abbreviated
         let field_length = field_length.numeric_to_abbr();
-        match self.weekday_symbols.check_with_length(field_symbol, field_length) {
+        match self
+            .weekday_symbols
+            .check_with_length(field_symbol, field_length)
+        {
             NamePresence::Loaded => return Ok(self),
             NamePresence::NotLoaded => (),
-            NamePresence::Mismatched => return Err(Error::DuplicateField(field))
+            NamePresence::Mismatched => return Err(Error::DuplicateField(field)),
         };
         let mut locale = self.locale.clone();
         locale.set_aux(AuxiliaryKeys::from_subtag(aux::subtag_for(
@@ -401,6 +521,45 @@ impl<C: CldrCalendar> TypedDateTimePatternInterpolator<C> {
             .take_payload()?;
         self.weekday_symbols = OptionalSymbols::SingleLength(field_symbol, field_length, payload);
         Ok(self)
+    }
+
+    /// Includes weekday names for the specified symbol and length.
+    ///
+    /// Does not support multiple field symbols or lengths. See #4337
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use icu::calendar::Gregorian;
+    /// use icu::datetime::TypedDateTimePatternInterpolator;
+    /// use icu::datetime::fields::FieldLength;
+    /// use icu::datetime::DateTimeError;
+    /// use icu::locid::locale;
+    ///
+    /// let mut interpolator = TypedDateTimePatternInterpolator::<Gregorian>::try_new(&locale!("und").into()).unwrap();
+    /// let field_symbol = icu::datetime::fields::Weekday::Format;
+    /// let alt_field_symbol = icu::datetime::fields::Weekday::StandAlone;
+    ///
+    /// // First length is successful:
+    /// interpolator.include_weekday_names(field_symbol, FieldLength::Wide).unwrap();
+    ///
+    /// // Attempting to load the first length a second time will succeed:
+    /// interpolator.include_weekday_names(field_symbol, FieldLength::Wide).unwrap();
+    ///
+    /// // But loading a new symbol or length fails:
+    /// assert!(matches!(interpolator.include_weekday_names(alt_field_symbol, FieldLength::Wide), Err(DateTimeError::DuplicateField(_))));
+    /// assert!(matches!(interpolator.include_weekday_names(field_symbol, FieldLength::Abbreviated), Err(DateTimeError::DuplicateField(_))));
+    /// ```
+    #[cfg(feature = "compiled_data")]
+    pub fn include_weekday_names(
+        &mut self,
+        field_symbol: fields::Weekday,
+        field_length: fields::FieldLength,
+    ) -> Result<&mut Self, Error>
+    where
+        crate::provider::Baked: icu_provider::DataProvider<WeekdaySymbolsV1Marker>,
+    {
+        self.load_weekday_names(&crate::provider::Baked, field_symbol, field_length)
     }
 }
 
@@ -446,7 +605,7 @@ impl<C: CldrCalendar> TypedDateTimePatternInterpolator<C> {
     }
 
     /// Formats a date without a time of day.
-    /// 
+    ///
     /// # Examples
     ///
     /// ```
@@ -463,9 +622,9 @@ impl<C: CldrCalendar> TypedDateTimePatternInterpolator<C> {
     /// let mut interpolator: TypedDateTimePatternInterpolator<Gregorian> =
     ///     TypedDateTimePatternInterpolator::try_new(&locale!("en-GB").into()).unwrap();
     /// interpolator
-    ///     .load_month_names(&icu::datetime::provider::Baked, fields::Month::Format, FieldLength::Wide)
+    ///     .include_month_names(fields::Month::Format, FieldLength::Wide)
     ///     .unwrap()
-    ///     .load_year_names(&icu::datetime::provider::Baked, FieldLength::Wide)
+    ///     .include_year_names(FieldLength::Wide)
     ///     .unwrap();
     ///
     /// // Create a pattern from a pattern string:
@@ -512,7 +671,7 @@ impl<C: CldrCalendar> TypedDateTimePatternInterpolator<C> {
     /// let mut interpolator: TypedDateTimePatternInterpolator<Gregorian> =
     ///     TypedDateTimePatternInterpolator::try_new(&locale!("en-US").into()).unwrap();
     /// interpolator
-    ///     .load_day_period_names(&icu::datetime::provider::Baked, FieldLength::Abbreviated)
+    ///     .include_day_period_names(FieldLength::Abbreviated)
     ///     .unwrap();
     ///
     /// // Create a pattern from a pattern string:
