@@ -7,9 +7,11 @@ use crate::calendar::CldrCalendar;
 use crate::error::DateTimeError as Error;
 use crate::fields;
 use crate::input;
+use crate::input::DateInput;
 use crate::input::DateTimeInput;
 use crate::input::DateTimeInputWithWeekConfig;
 use crate::input::ExtractedDateTimeInput;
+use crate::input::IsoTimeInput;
 use crate::pattern::runtime::Pattern;
 use crate::provider::date_time::{DateSymbols, MonthPlaceholderValue, TimeSymbols};
 use crate::provider::neo::*;
@@ -85,6 +87,66 @@ where
 /// of the icu meta-crate. Use with caution.
 /// <a href="https://github.com/unicode-org/icu4x/issues/1317">#1317</a>
 /// </div>
+/// 
+/// # Examples
+///
+/// ```
+/// use icu::calendar::Gregorian;
+/// use icu::calendar::DateTime;
+/// use icu::datetime::TypedDateTimePatternInterpolator;
+/// use icu::datetime::fields::FieldLength;
+/// use icu::datetime::fields;
+/// use icu::datetime::pattern;
+/// use icu::locid::locale;
+/// use writeable::assert_writeable_eq;
+///
+/// // Create an interpolator that can format abbreviated month, weekday, and day period names:
+/// let mut interpolator: TypedDateTimePatternInterpolator<Gregorian> =
+///     TypedDateTimePatternInterpolator::try_new(&locale!("uk").into()).unwrap();
+/// interpolator
+///     .load_month_names(&icu::datetime::provider::Baked, fields::Month::Format, FieldLength::Abbreviated)
+///     .unwrap()
+///     .load_weekday_names(&icu::datetime::provider::Baked, fields::Weekday::Format, FieldLength::Abbreviated)
+///     .unwrap()
+///     .load_day_period_names(&icu::datetime::provider::Baked, FieldLength::Abbreviated)
+///     .unwrap();
+///
+/// // Create a pattern from a pattern string:
+/// let pattern_str = "E MMM d y -- h:mm a";
+/// let reference_pattern: pattern::reference::Pattern = pattern_str.parse().unwrap();
+/// let pattern: pattern::runtime::Pattern = (&reference_pattern).into();
+///
+/// // Test it:
+/// let datetime = DateTime::try_new_gregorian_datetime(2023, 11, 20, 11, 35, 3).unwrap();
+/// assert_writeable_eq!(interpolator.format(&pattern, &datetime), "пн лист. 20 2023 -- 11:35 дп");
+/// ```
+/// 
+/// If the correct data is not loaded, and error will occur:
+/// 
+/// ```
+/// use icu::calendar::Gregorian;
+/// use icu::calendar::DateTime;
+/// use icu::datetime::TypedDateTimePatternInterpolator;
+/// use icu::datetime::fields::FieldLength;
+/// use icu::datetime::fields;
+/// use icu::datetime::pattern;
+/// use icu::locid::locale;
+/// use writeable::Writeable;
+///
+/// // Create an interpolator that can format abbreviated month, weekday, and day period names:
+/// let mut interpolator: TypedDateTimePatternInterpolator<Gregorian> =
+///     TypedDateTimePatternInterpolator::try_new(&locale!("en").into()).unwrap();
+///
+/// // Create a pattern from a pattern string:
+/// let pattern_str = "'It is:' E MMM d y 'at' h:mm a";
+/// let reference_pattern: pattern::reference::Pattern = pattern_str.parse().unwrap();
+/// let pattern: pattern::runtime::Pattern = (&reference_pattern).into();
+///
+/// // The pattern string contains lots of symbols including "E", "MMM", and "a", but we did not load any data!
+/// let datetime = DateTime::try_new_gregorian_datetime(2023, 11, 20, 11, 35, 3).unwrap();
+/// let mut buffer = String::new();
+/// assert!(interpolator.format(&pattern, &datetime).write_to(&mut buffer).is_err());
+/// ```
 #[derive(Debug)]
 pub struct TypedDateTimePatternInterpolator<C: CldrCalendar> {
     locale: DataLocale,
@@ -96,20 +158,16 @@ pub struct TypedDateTimePatternInterpolator<C: CldrCalendar> {
     // TODO: Make the FixedDecimalFormatter optional?
     fixed_decimal_formatter: FixedDecimalFormatter,
     week_calculator: Option<WeekCalculator>,
-    // To add later:
-    // ordinal_rules: Option<PluralRules>,
 }
 
 impl<C: CldrCalendar> TypedDateTimePatternInterpolator<C> {
     /// Constructor that takes a selected locale and creates an empty pattern interpolator.
     ///
+    /// For an example, see [`TypedDateTimePatternInterpolator`].
+    ///
     /// ✨ *Enabled with the `compiled_data` Cargo feature.*
     ///
     /// [📚 Help choosing a constructor](icu_provider::constructors)
-    ///
-    /// # Examples
-    ///
-    /// TODO: Add example
     #[cfg(feature = "compiled_data")]
     pub fn try_new(locale: &DataLocale) -> Result<Self, Error> {
         let mut fixed_decimal_format_options = FixedDecimalFormatterOptions::default();
@@ -344,8 +402,9 @@ impl<C: CldrCalendar> TypedDateTimePatternInterpolator<C> {
         }
     }
 
-    /// TODO: Discuss the design of this API
-    /// TODO: Add docs and an example
+    /// Formats a date and time of day.
+    ///
+    /// For an example, see [`TypedDateTimePatternInterpolator`].
     pub fn format<'l, T>(
         &'l self,
         pattern: &'l Pattern<'l>,
@@ -357,6 +416,106 @@ impl<C: CldrCalendar> TypedDateTimePatternInterpolator<C> {
         FormattedDateTimePattern {
             pattern,
             datetime: ExtractedDateTimeInput::extract_from(datetime),
+            interpolator: self.as_borrowed(),
+        }
+    }
+
+    /// Formats a date without a time of day.
+    /// 
+    /// # Examples
+    ///
+    /// ```
+    /// use icu::calendar::Gregorian;
+    /// use icu::calendar::Date;
+    /// use icu::datetime::TypedDateTimePatternInterpolator;
+    /// use icu::datetime::fields::FieldLength;
+    /// use icu::datetime::fields;
+    /// use icu::datetime::pattern;
+    /// use icu::locid::locale;
+    /// use writeable::assert_writeable_eq;
+    ///
+    /// // Create an interpolator that can format wide month and era names:
+    /// let mut interpolator: TypedDateTimePatternInterpolator<Gregorian> =
+    ///     TypedDateTimePatternInterpolator::try_new(&locale!("en-GB").into()).unwrap();
+    /// interpolator
+    ///     .load_month_names(&icu::datetime::provider::Baked, fields::Month::Format, FieldLength::Wide)
+    ///     .unwrap()
+    ///     .load_year_names(&icu::datetime::provider::Baked, FieldLength::Wide)
+    ///     .unwrap();
+    ///
+    /// // Create a pattern from a pattern string:
+    /// let pattern_str = "'The date is:' MMMM d, y GGGG";
+    /// let reference_pattern: pattern::reference::Pattern = pattern_str.parse().unwrap();
+    /// let pattern: pattern::runtime::Pattern = (&reference_pattern).into();
+    ///
+    /// // Test it with some different dates:
+    /// // Note: extended year -50 is year 51 BCE
+    /// let date_bce = Date::try_new_gregorian_date(-50, 3, 15).unwrap();
+    /// let date_ce = Date::try_new_gregorian_date(1700, 11, 20).unwrap();
+    /// assert_writeable_eq!(interpolator.format_date(&pattern, &date_bce), "The date is: March 15, 51 Before Christ");
+    /// assert_writeable_eq!(interpolator.format_date(&pattern, &date_ce), "The date is: November 20, 1700 Anno Domini");
+    /// ```
+    pub fn format_date<'l, T>(
+        &'l self,
+        pattern: &'l Pattern<'l>,
+        datetime: &T,
+    ) -> FormattedDateTimePattern<'l>
+    where
+        T: DateInput<Calendar = C>,
+    {
+        FormattedDateTimePattern {
+            pattern,
+            datetime: ExtractedDateTimeInput::extract_from_date(datetime),
+            interpolator: self.as_borrowed(),
+        }
+    }
+
+    /// Formats a time of day without a date.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use icu::calendar::Gregorian;
+    /// use icu::calendar::types::Time;
+    /// use icu::datetime::TypedDateTimePatternInterpolator;
+    /// use icu::datetime::fields::FieldLength;
+    /// use icu::datetime::pattern;
+    /// use icu::locid::locale;
+    /// use writeable::assert_writeable_eq;
+    ///
+    /// // Create an interpolator that can format abbreviated day periods:
+    /// let mut interpolator: TypedDateTimePatternInterpolator<Gregorian> =
+    ///     TypedDateTimePatternInterpolator::try_new(&locale!("en-US").into()).unwrap();
+    /// interpolator
+    ///     .load_day_period_names(&icu::datetime::provider::Baked, FieldLength::Abbreviated)
+    ///     .unwrap();
+    ///
+    /// // Create a pattern from a pattern string:
+    /// let pattern_str = "'The time is:' h:mm b";
+    /// let reference_pattern: pattern::reference::Pattern = pattern_str.parse().unwrap();
+    /// let pattern: pattern::runtime::Pattern = (&reference_pattern).into();
+    ///
+    /// // Test it with different times of day:
+    /// let time_am = Time::try_new(11, 4, 14, 0).unwrap();
+    /// let time_pm = Time::try_new(13, 41, 28, 0).unwrap();
+    /// let time_noon = Time::try_new(12, 0, 0, 0).unwrap();
+    /// let time_midnight = Time::try_new(0, 0, 0, 0).unwrap();
+    /// assert_writeable_eq!(interpolator.format_time(&pattern, &time_am), "The time is: 11:04 AM");
+    /// assert_writeable_eq!(interpolator.format_time(&pattern, &time_pm), "The time is: 1:41 PM");
+    /// assert_writeable_eq!(interpolator.format_time(&pattern, &time_noon), "The time is: 12:00 noon");
+    /// assert_writeable_eq!(interpolator.format_time(&pattern, &time_midnight), "The time is: 12:00 midnight");
+    /// ```
+    pub fn format_time<'l, T>(
+        &'l self,
+        pattern: &'l Pattern<'l>,
+        datetime: &T,
+    ) -> FormattedDateTimePattern<'l>
+    where
+        T: IsoTimeInput,
+    {
+        FormattedDateTimePattern {
+            pattern,
+            datetime: ExtractedDateTimeInput::extract_from_time(datetime),
             interpolator: self.as_borrowed(),
         }
     }
