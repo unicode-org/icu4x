@@ -312,7 +312,7 @@ where
 }
 
 /// Internal enum to represent the kinds of month symbols for interpolation
-pub enum MonthPlaceholderValue<'a> {
+pub(crate) enum MonthPlaceholderValue<'a> {
     PlainString(&'a str),
     StringNeedingLeapPrefix(&'a str),
     #[cfg(feature = "experimental")]
@@ -321,7 +321,7 @@ pub enum MonthPlaceholderValue<'a> {
     NumericPattern(&'a SimpleSubstitutionPattern<'a>),
 }
 
-pub trait DateSymbols<'data> {
+pub(crate) trait DateSymbols<'data> {
     fn get_symbol_for_month(
         &self,
         month: fields::Month,
@@ -466,7 +466,7 @@ impl<'data> DateSymbols<'data> for provider::calendar::DateSymbolsV1<'data> {
     }
 }
 
-pub trait TimeSymbols {
+pub(crate) trait TimeSymbols {
     /// Gets the day period symbol.
     ///
     /// Internally, 'noon' and 'midnight' should fall back to 'am' and 'pm'.
