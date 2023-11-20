@@ -73,6 +73,13 @@ class ICU4XComposingNormalizer {
    * See the [Rust documentation for `is_normalized_utf8`](https://docs.rs/icu/latest/icu/normalizer/struct.ComposingNormalizer.html#method.is_normalized_utf8) for more information.
    */
   bool is_normalized(const std::string_view s) const;
+
+  /**
+   * Return the index a slice of potentially-invalid UTF-8 is normalized up to
+   * 
+   * See the [Rust documentation for `is_normalized_utf8_up_to`](https://docs.rs/icu/latest/icu/normalizer/struct.ComposingNormalizer.html#method.is_normalized_utf8_up_to) for more information.
+   */
+  size_t is_normalized_up_to(const std::string_view s) const;
   inline const capi::ICU4XComposingNormalizer* AsFFI() const { return this->inner.get(); }
   inline capi::ICU4XComposingNormalizer* AsFFIMut() { return this->inner.get(); }
   inline explicit ICU4XComposingNormalizer(capi::ICU4XComposingNormalizer* i) : inner(i) {}
@@ -130,5 +137,8 @@ inline diplomat::result<std::string, ICU4XError> ICU4XComposingNormalizer::norma
 }
 inline bool ICU4XComposingNormalizer::is_normalized(const std::string_view s) const {
   return capi::ICU4XComposingNormalizer_is_normalized(this->inner.get(), s.data(), s.size());
+}
+inline size_t ICU4XComposingNormalizer::is_normalized_up_to(const std::string_view s) const {
+  return capi::ICU4XComposingNormalizer_is_normalized_up_to(this->inner.get(), s.data(), s.size());
 }
 #endif

@@ -81,6 +81,17 @@ final class DecomposingNormalizer implements ffi.Finalizable {
     temp.releaseAll();
     return result;
   }
+
+  /// Return the index a slice of potentially-invalid UTF-8 is normalized up to
+  ///
+  /// See the [Rust documentation for `is_normalized_utf8_up_to`](https://docs.rs/icu/latest/icu/normalizer/struct.DecomposingNormalizer.html#method.is_normalized_utf8_up_to) for more information.
+  int isNormalizedUpTo(String s) {
+    final temp = ffi2.Arena();
+    final sView = s.utf8View;
+    final result = _ICU4XDecomposingNormalizer_is_normalized_up_to(_ffi, sView.allocIn(temp), sView.length);
+    temp.releaseAll();
+    return result;
+  }
 }
 
 @meta.ResourceIdentifier('ICU4XDecomposingNormalizer_destroy')
@@ -107,3 +118,8 @@ external _ResultVoidInt32 _ICU4XDecomposingNormalizer_normalize(ffi.Pointer<ffi.
 @ffi.Native<ffi.Bool Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Uint8>, ffi.Size)>(isLeaf: true, symbol: 'ICU4XDecomposingNormalizer_is_normalized')
 // ignore: non_constant_identifier_names
 external bool _ICU4XDecomposingNormalizer_is_normalized(ffi.Pointer<ffi.Opaque> self, ffi.Pointer<ffi.Uint8> sData, int sLength);
+
+@meta.ResourceIdentifier('ICU4XDecomposingNormalizer_is_normalized_up_to')
+@ffi.Native<ffi.Size Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Uint8>, ffi.Size)>(isLeaf: true, symbol: 'ICU4XDecomposingNormalizer_is_normalized_up_to')
+// ignore: non_constant_identifier_names
+external int _ICU4XDecomposingNormalizer_is_normalized_up_to(ffi.Pointer<ffi.Opaque> self, ffi.Pointer<ffi.Uint8> sData, int sLength);
