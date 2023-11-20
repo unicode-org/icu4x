@@ -596,6 +596,7 @@ impl Weekday {
     /// UTS 35 says that "e" (local weekday) and "E" (format weekday) have the same non-numeric names.
     ///
     /// This function normalizes "e" to "E".
+    #[cfg(feature = "experimental")]
     pub(crate) fn to_format_symbol(self) -> Self {
         match self {
             Weekday::Local => Weekday::Format,

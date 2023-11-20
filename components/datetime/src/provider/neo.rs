@@ -4,13 +4,14 @@
 
 mod adapter;
 
-use core::ops::Range;
-
 use crate::pattern::runtime;
 use alloc::borrow::Cow;
 use icu_provider::prelude::*;
 use zerovec::ule::UnvalidatedStr;
 use zerovec::{VarZeroVec, ZeroMap};
+
+#[cfg(feature = "experimental")]
+use core::ops::Range;
 
 /// Helpers involving the auxiliary subtags used for date symbols.
 ///
@@ -260,12 +261,15 @@ pub struct SimpleSubstitutionPattern<'data> {
 }
 
 impl SimpleSubstitutionPattern<'_> {
+    #[cfg(feature = "experimental")]
     pub(crate) fn get_prefix(&self) -> &str {
         self.debug_unwrap_range(0..self.subst_index)
     }
+    #[cfg(feature = "experimental")]
     pub(crate) fn get_suffix(&self) -> &str {
         self.debug_unwrap_range(self.subst_index..self.pattern.len())
     }
+    #[cfg(feature = "experimental")]
     fn debug_unwrap_range(&self, range: Range<usize>) -> &str {
         match self.pattern.get(range) {
             Some(s) => s,
@@ -318,20 +322,24 @@ pub struct LinearSymbolsV1<'data> {
 
 impl<'data> LinearSymbolsV1<'data> {
     /// Gets the 'am' symbol assuming this struct contains day period data.
+    #[cfg(feature = "experimental")]
     pub(crate) fn am(&self) -> Option<&str> {
         self.symbols.get(0)
     }
     /// Gets the 'pm' symbol assuming this struct contains day period data.
+    #[cfg(feature = "experimental")]
     pub(crate) fn pm(&self) -> Option<&str> {
         self.symbols.get(1)
     }
     /// Gets the 'noon' symbol assuming this struct contains day period data.
+    #[cfg(feature = "experimental")]
     pub(crate) fn noon(&self) -> Option<&str> {
         self.symbols
             .get(2)
             .and_then(|s| if s.is_empty() { None } else { Some(s) })
     }
     /// Gets the 'midnight' symbol assuming this struct contains day period data.
+    #[cfg(feature = "experimental")]
     pub(crate) fn midnight(&self) -> Option<&str> {
         self.symbols.get(3)
     }

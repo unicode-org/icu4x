@@ -125,6 +125,7 @@ impl FieldLength {
     /// For example, 'a' represents an abbreviated day period, the same as 'aaa'.
     ///
     /// This function maps field lengths 1 and 2 to field length 3.
+    #[cfg(feature = "experimental")]
     pub(crate) fn numeric_to_abbr(self) -> Self {
         match self {
             FieldLength::One | FieldLength::TwoDigit => FieldLength::Abbreviated,
