@@ -8,7 +8,7 @@ part of 'lib.g.dart';
 /// A locale canonicalizer.
 ///
 /// See the [Rust documentation for `LocaleCanonicalizer`](https://docs.rs/icu/latest/icu/locid_transform/struct.LocaleCanonicalizer.html) for more information.
-class LocaleCanonicalizer implements ffi.Finalizable {
+final class LocaleCanonicalizer implements ffi.Finalizable {
   final ffi.Pointer<ffi.Opaque> _underlying;
 
   LocaleCanonicalizer._(this._underlying) {

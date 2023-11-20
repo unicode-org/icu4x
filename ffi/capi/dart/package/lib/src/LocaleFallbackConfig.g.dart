@@ -8,7 +8,7 @@ part of 'lib.g.dart';
 /// Collection of configurations for the ICU4X fallback algorithm.
 ///
 /// See the [Rust documentation for `LocaleFallbackConfig`](https://docs.rs/icu/latest/icu/locid_transform/fallback/struct.LocaleFallbackConfig.html) for more information.
-class _LocaleFallbackConfigFfi extends ffi.Struct {
+final class _LocaleFallbackConfigFfi extends ffi.Struct {
   @ffi.Int32()
   external int priority;
   external _SliceFfi2Utf8 extensionKey;
@@ -16,7 +16,7 @@ class _LocaleFallbackConfigFfi extends ffi.Struct {
   external int fallbackSupplement;
 }
 
-class LocaleFallbackConfig {
+final class LocaleFallbackConfig {
   final _LocaleFallbackConfigFfi _underlying;
 
   // ignore: unused_element

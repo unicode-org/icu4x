@@ -6,7 +6,7 @@
 part of 'lib.g.dart';
 
 /// See the [Rust documentation for `RegionDisplayNames`](https://docs.rs/icu/latest/icu/displaynames/struct.RegionDisplayNames.html) for more information.
-class RegionDisplayNames implements ffi.Finalizable {
+final class RegionDisplayNames implements ffi.Finalizable {
   final ffi.Pointer<ffi.Opaque> _underlying;
 
   RegionDisplayNames._(this._underlying) {

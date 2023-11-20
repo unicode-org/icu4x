@@ -6,7 +6,7 @@
 part of 'lib.g.dart';
 
 /// See the [Rust documentation for `GraphemeClusterBreakIterator`](https://docs.rs/icu/latest/icu/segmenter/struct.GraphemeClusterBreakIterator.html) for more information.
-class GraphemeClusterBreakIteratorLatin1 implements ffi.Finalizable {
+final class GraphemeClusterBreakIteratorLatin1 implements ffi.Finalizable {
   final ffi.Pointer<ffi.Opaque> _underlying;
 
   GraphemeClusterBreakIteratorLatin1._(this._underlying) {

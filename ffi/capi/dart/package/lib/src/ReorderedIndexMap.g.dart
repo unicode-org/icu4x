@@ -10,7 +10,7 @@ part of 'lib.g.dart';
 /// `map[visualIndex] = sourceIndex`
 ///
 /// Produced by `reorder_visual()` on [`Bidi`].
-class ReorderedIndexMap implements ffi.Finalizable {
+final class ReorderedIndexMap implements ffi.Finalizable {
   final ffi.Pointer<ffi.Opaque> _underlying;
 
   ReorderedIndexMap._(this._underlying) {

@@ -6,14 +6,14 @@
 part of 'lib.g.dart';
 
 /// See the [Rust documentation for `WeekOf`](https://docs.rs/icu/latest/icu/calendar/week/struct.WeekOf.html) for more information.
-class _WeekOfFfi extends ffi.Struct {
+final class _WeekOfFfi extends ffi.Struct {
   @ffi.Uint16()
   external int week;
   @ffi.Int32()
   external int unit;
 }
 
-class WeekOf {
+final class WeekOf {
   final _WeekOfFfi _underlying;
 
   // ignore: unused_element

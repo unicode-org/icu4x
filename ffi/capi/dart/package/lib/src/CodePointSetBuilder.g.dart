@@ -6,7 +6,7 @@
 part of 'lib.g.dart';
 
 /// See the [Rust documentation for `CodePointInversionListBuilder`](https://docs.rs/icu/latest/icu/collections/codepointinvlist/struct.CodePointInversionListBuilder.html) for more information.
-class CodePointSetBuilder implements ffi.Finalizable {
+final class CodePointSetBuilder implements ffi.Finalizable {
   final ffi.Pointer<ffi.Opaque> _underlying;
 
   CodePointSetBuilder._(this._underlying) {

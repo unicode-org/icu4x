@@ -6,7 +6,7 @@
 part of 'lib.g.dart';
 
 /// See the [Rust documentation for `ComposingNormalizer`](https://docs.rs/icu/latest/icu/normalizer/struct.ComposingNormalizer.html) for more information.
-class ComposingNormalizer implements ffi.Finalizable {
+final class ComposingNormalizer implements ffi.Finalizable {
   final ffi.Pointer<ffi.Opaque> _underlying;
 
   ComposingNormalizer._(this._underlying) {

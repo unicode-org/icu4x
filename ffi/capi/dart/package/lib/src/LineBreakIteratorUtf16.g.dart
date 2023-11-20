@@ -8,7 +8,7 @@ part of 'lib.g.dart';
 /// See the [Rust documentation for `LineBreakIterator`](https://docs.rs/icu/latest/icu/segmenter/struct.LineBreakIterator.html) for more information.
 ///
 /// Additional information: [1](https://docs.rs/icu/latest/icu/segmenter/type.LineBreakIteratorUtf16.html)
-class LineBreakIteratorUtf16 implements ffi.Finalizable {
+final class LineBreakIteratorUtf16 implements ffi.Finalizable {
   final ffi.Pointer<ffi.Opaque> _underlying;
 
   LineBreakIteratorUtf16._(this._underlying) {

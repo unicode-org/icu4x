@@ -8,7 +8,7 @@ part of 'lib.g.dart';
 /// An object that represents the Script_Extensions property for a single character
 ///
 /// See the [Rust documentation for `ScriptExtensionsSet`](https://docs.rs/icu/latest/icu/properties/script/struct.ScriptExtensionsSet.html) for more information.
-class ScriptExtensionsSet implements ffi.Finalizable {
+final class ScriptExtensionsSet implements ffi.Finalizable {
   final ffi.Pointer<ffi.Opaque> _underlying;
 
   ScriptExtensionsSet._(this._underlying) {

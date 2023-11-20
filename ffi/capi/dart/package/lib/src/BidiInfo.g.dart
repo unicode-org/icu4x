@@ -8,7 +8,7 @@ part of 'lib.g.dart';
 /// An object containing bidi information for a given string, produced by `for_text()` on `Bidi`
 ///
 /// See the [Rust documentation for `BidiInfo`](https://docs.rs/unicode_bidi/latest/unicode_bidi/struct.BidiInfo.html) for more information.
-class BidiInfo implements ffi.Finalizable {
+final class BidiInfo implements ffi.Finalizable {
   final ffi.Pointer<ffi.Opaque> _underlying;
 
   BidiInfo._(this._underlying) {

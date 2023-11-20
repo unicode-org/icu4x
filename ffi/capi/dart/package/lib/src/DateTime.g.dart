@@ -8,7 +8,7 @@ part of 'lib.g.dart';
 /// An ICU4X DateTime object capable of containing a date and time for any calendar.
 ///
 /// See the [Rust documentation for `DateTime`](https://docs.rs/icu/latest/icu/calendar/struct.DateTime.html) for more information.
-class DateTime implements ffi.Finalizable {
+final class DateTime implements ffi.Finalizable {
   final ffi.Pointer<ffi.Opaque> _underlying;
 
   DateTime._(this._underlying) {

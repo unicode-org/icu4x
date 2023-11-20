@@ -8,7 +8,7 @@ part of 'lib.g.dart';
 /// An object capable of formatting a date time with time zone to a string.
 ///
 /// See the [Rust documentation for `ZonedDateTimeFormatter`](https://docs.rs/icu/latest/icu/datetime/struct.ZonedDateTimeFormatter.html) for more information.
-class ZonedDateTimeFormatter implements ffi.Finalizable {
+final class ZonedDateTimeFormatter implements ffi.Finalizable {
   final ffi.Pointer<ffi.Opaque> _underlying;
 
   ZonedDateTimeFormatter._(this._underlying) {

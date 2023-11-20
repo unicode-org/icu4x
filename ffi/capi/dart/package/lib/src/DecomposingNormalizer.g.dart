@@ -6,7 +6,7 @@
 part of 'lib.g.dart';
 
 /// See the [Rust documentation for `DecomposingNormalizer`](https://docs.rs/icu/latest/icu/normalizer/struct.DecomposingNormalizer.html) for more information.
-class DecomposingNormalizer implements ffi.Finalizable {
+final class DecomposingNormalizer implements ffi.Finalizable {
   final ffi.Pointer<ffi.Opaque> _underlying;
 
   DecomposingNormalizer._(this._underlying) {

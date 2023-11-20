@@ -9,7 +9,7 @@ part of 'lib.g.dart';
 /// in strings.
 ///
 /// See the [Rust documentation for `GraphemeClusterSegmenter`](https://docs.rs/icu/latest/icu/segmenter/struct.GraphemeClusterSegmenter.html) for more information.
-class GraphemeClusterSegmenter implements ffi.Finalizable {
+final class GraphemeClusterSegmenter implements ffi.Finalizable {
   final ffi.Pointer<ffi.Opaque> _underlying;
 
   GraphemeClusterSegmenter._(this._underlying) {

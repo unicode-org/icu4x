@@ -8,7 +8,7 @@ part of 'lib.g.dart';
 /// An ICU4X word-break segmenter, capable of finding word breakpoints in strings.
 ///
 /// See the [Rust documentation for `WordSegmenter`](https://docs.rs/icu/latest/icu/segmenter/struct.WordSegmenter.html) for more information.
-class WordSegmenter implements ffi.Finalizable {
+final class WordSegmenter implements ffi.Finalizable {
   final ffi.Pointer<ffi.Opaque> _underlying;
 
   WordSegmenter._(this._underlying) {

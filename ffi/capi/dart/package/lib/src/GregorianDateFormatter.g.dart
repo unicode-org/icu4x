@@ -9,7 +9,7 @@ part of 'lib.g.dart';
 /// using the Gregorian Calendar.
 ///
 /// See the [Rust documentation for `TypedDateFormatter`](https://docs.rs/icu/latest/icu/datetime/struct.TypedDateFormatter.html) for more information.
-class GregorianDateFormatter implements ffi.Finalizable {
+final class GregorianDateFormatter implements ffi.Finalizable {
   final ffi.Pointer<ffi.Opaque> _underlying;
 
   GregorianDateFormatter._(this._underlying) {

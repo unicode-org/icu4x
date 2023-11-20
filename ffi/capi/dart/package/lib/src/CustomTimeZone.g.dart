@@ -6,7 +6,7 @@
 part of 'lib.g.dart';
 
 /// See the [Rust documentation for `CustomTimeZone`](https://docs.rs/icu/latest/icu/timezone/struct.CustomTimeZone.html) for more information.
-class CustomTimeZone implements ffi.Finalizable {
+final class CustomTimeZone implements ffi.Finalizable {
   final ffi.Pointer<ffi.Opaque> _underlying;
 
   CustomTimeZone._(this._underlying) {

@@ -10,7 +10,7 @@ part of 'lib.g.dart';
 /// Callers should generally use ICU4XComposingNormalizer unless they specifically need raw composition operations
 ///
 /// See the [Rust documentation for `CanonicalComposition`](https://docs.rs/icu/latest/icu/normalizer/properties/struct.CanonicalComposition.html) for more information.
-class CanonicalComposition implements ffi.Finalizable {
+final class CanonicalComposition implements ffi.Finalizable {
   final ffi.Pointer<ffi.Opaque> _underlying;
 
   CanonicalComposition._(this._underlying) {

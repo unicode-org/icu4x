@@ -10,7 +10,7 @@ part of 'lib.g.dart';
 /// See the [Rust documentation for `LocaleFallbacker`](https://docs.rs/icu/latest/icu/locid_transform/fallback/struct.LocaleFallbacker.html) for more information.
 ///
 /// See the [Rust documentation for `LocaleFallbackerWithConfig`](https://docs.rs/icu/latest/icu/locid_transform/fallback/struct.LocaleFallbackerWithConfig.html) for more information.
-class LocaleFallbackerWithConfig implements ffi.Finalizable {
+final class LocaleFallbackerWithConfig implements ffi.Finalizable {
   final ffi.Pointer<ffi.Opaque> _underlying;
 
   LocaleFallbackerWithConfig._(this._underlying) {

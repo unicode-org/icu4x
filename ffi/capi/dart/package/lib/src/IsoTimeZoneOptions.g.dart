@@ -5,7 +5,7 @@
 
 part of 'lib.g.dart';
 
-class _IsoTimeZoneOptionsFfi extends ffi.Struct {
+final class _IsoTimeZoneOptionsFfi extends ffi.Struct {
   @ffi.Int32()
   external int format;
   @ffi.Int32()
@@ -14,7 +14,7 @@ class _IsoTimeZoneOptionsFfi extends ffi.Struct {
   external int seconds;
 }
 
-class IsoTimeZoneOptions {
+final class IsoTimeZoneOptions {
   final _IsoTimeZoneOptionsFfi _underlying;
 
   // ignore: unused_element

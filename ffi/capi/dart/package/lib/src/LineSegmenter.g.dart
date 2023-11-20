@@ -8,7 +8,7 @@ part of 'lib.g.dart';
 /// An ICU4X line-break segmenter, capable of finding breakpoints in strings.
 ///
 /// See the [Rust documentation for `LineSegmenter`](https://docs.rs/icu/latest/icu/segmenter/struct.LineSegmenter.html) for more information.
-class LineSegmenter implements ffi.Finalizable {
+final class LineSegmenter implements ffi.Finalizable {
   final ffi.Pointer<ffi.Opaque> _underlying;
 
   LineSegmenter._(this._underlying) {

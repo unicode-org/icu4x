@@ -6,7 +6,7 @@
 part of 'lib.g.dart';
 
 /// See the [Rust documentation for `CaseMapCloser`](https://docs.rs/icu/latest/icu/casemap/struct.CaseMapCloser.html) for more information.
-class CaseMapCloser implements ffi.Finalizable {
+final class CaseMapCloser implements ffi.Finalizable {
   final ffi.Pointer<ffi.Opaque> _underlying;
 
   CaseMapCloser._(this._underlying) {

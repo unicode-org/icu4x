@@ -6,7 +6,7 @@
 part of 'lib.g.dart';
 
 /// See the [Rust documentation for `WordBreakIterator`](https://docs.rs/icu/latest/icu/segmenter/struct.WordBreakIterator.html) for more information.
-class WordBreakIteratorUtf16 implements ffi.Finalizable {
+final class WordBreakIteratorUtf16 implements ffi.Finalizable {
   final ffi.Pointer<ffi.Opaque> _underlying;
 
   WordBreakIteratorUtf16._(this._underlying) {

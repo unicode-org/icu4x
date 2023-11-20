@@ -8,7 +8,7 @@ part of 'lib.g.dart';
 /// An ICU4X Time object representing a time in terms of hour, minute, second, nanosecond
 ///
 /// See the [Rust documentation for `Time`](https://docs.rs/icu/latest/icu/calendar/types/struct.Time.html) for more information.
-class Time implements ffi.Finalizable {
+final class Time implements ffi.Finalizable {
   final ffi.Pointer<ffi.Opaque> _underlying;
 
   Time._(this._underlying) {

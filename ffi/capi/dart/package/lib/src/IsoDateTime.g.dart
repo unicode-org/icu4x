@@ -8,7 +8,7 @@ part of 'lib.g.dart';
 /// An ICU4X DateTime object capable of containing a ISO-8601 date and time.
 ///
 /// See the [Rust documentation for `DateTime`](https://docs.rs/icu/latest/icu/calendar/struct.DateTime.html) for more information.
-class IsoDateTime implements ffi.Finalizable {
+final class IsoDateTime implements ffi.Finalizable {
   final ffi.Pointer<ffi.Opaque> _underlying;
 
   IsoDateTime._(this._underlying) {

@@ -6,7 +6,7 @@
 part of 'lib.g.dart';
 
 /// See the [Rust documentation for `TitlecaseMapper`](https://docs.rs/icu/latest/icu/casemap/struct.TitlecaseMapper.html) for more information.
-class TitlecaseMapper implements ffi.Finalizable {
+final class TitlecaseMapper implements ffi.Finalizable {
   final ffi.Pointer<ffi.Opaque> _underlying;
 
   TitlecaseMapper._(this._underlying) {

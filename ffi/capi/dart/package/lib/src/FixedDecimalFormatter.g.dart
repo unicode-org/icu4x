@@ -8,7 +8,7 @@ part of 'lib.g.dart';
 /// An ICU4X Fixed Decimal Format object, capable of formatting a [`FixedDecimal`] as a string.
 ///
 /// See the [Rust documentation for `FixedDecimalFormatter`](https://docs.rs/icu/latest/icu/decimal/struct.FixedDecimalFormatter.html) for more information.
-class FixedDecimalFormatter implements ffi.Finalizable {
+final class FixedDecimalFormatter implements ffi.Finalizable {
   final ffi.Pointer<ffi.Opaque> _underlying;
 
   FixedDecimalFormatter._(this._underlying) {

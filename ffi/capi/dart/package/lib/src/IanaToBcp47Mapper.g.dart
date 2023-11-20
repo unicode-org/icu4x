@@ -12,7 +12,7 @@ part of 'lib.g.dart';
 /// [`CustomTimeZone`]: crate::timezone::ffi::ICU4XCustomTimeZone
 ///
 /// See the [Rust documentation for `IanaToBcp47Mapper`](https://docs.rs/icu/latest/icu/timezone/struct.IanaToBcp47Mapper.html) for more information.
-class IanaToBcp47Mapper implements ffi.Finalizable {
+final class IanaToBcp47Mapper implements ffi.Finalizable {
   final ffi.Pointer<ffi.Opaque> _underlying;
 
   IanaToBcp47Mapper._(this._underlying) {

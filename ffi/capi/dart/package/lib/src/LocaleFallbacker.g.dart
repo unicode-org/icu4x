@@ -8,7 +8,7 @@ part of 'lib.g.dart';
 /// An object that runs the ICU4X locale fallback algorithm.
 ///
 /// See the [Rust documentation for `LocaleFallbacker`](https://docs.rs/icu/latest/icu/locid_transform/fallback/struct.LocaleFallbacker.html) for more information.
-class LocaleFallbacker implements ffi.Finalizable {
+final class LocaleFallbacker implements ffi.Finalizable {
   final ffi.Pointer<ffi.Opaque> _underlying;
 
   LocaleFallbacker._(this._underlying) {

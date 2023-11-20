@@ -10,14 +10,14 @@ part of 'lib.g.dart';
 /// (which may or may not be the original one)
 ///
 /// See the [Rust documentation for `Decomposed`](https://docs.rs/icu/latest/icu/normalizer/properties/enum.Decomposed.html) for more information.
-class _DecomposedFfi extends ffi.Struct {
+final class _DecomposedFfi extends ffi.Struct {
   @ffi.Uint32()
   external int first;
   @ffi.Uint32()
   external int second;
 }
 
-class Decomposed {
+final class Decomposed {
   final _DecomposedFfi _underlying;
 
   // ignore: unused_element

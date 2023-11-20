@@ -7,7 +7,7 @@ part of 'lib.g.dart';
 
 /// An iterator over code point ranges, produced by `CodePointSetData` or
 /// one of the `CodePointMapData` types
-class CodePointRangeIterator implements ffi.Finalizable {
+final class CodePointRangeIterator implements ffi.Finalizable {
   final ffi.Pointer<ffi.Opaque> _underlying;
 
   CodePointRangeIterator._(this._underlying) {

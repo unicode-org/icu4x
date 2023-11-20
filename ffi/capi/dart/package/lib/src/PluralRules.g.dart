@@ -8,7 +8,7 @@ part of 'lib.g.dart';
 /// FFI version of `PluralRules`.
 ///
 /// See the [Rust documentation for `PluralRules`](https://docs.rs/icu/latest/icu/plurals/struct.PluralRules.html) for more information.
-class PluralRules implements ffi.Finalizable {
+final class PluralRules implements ffi.Finalizable {
   final ffi.Pointer<ffi.Opaque> _underlying;
 
   PluralRules._(this._underlying) {

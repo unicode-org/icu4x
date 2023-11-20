@@ -12,7 +12,7 @@ part of 'lib.g.dart';
 /// See the [Rust documentation for `CodePointSetData`](https://docs.rs/icu/latest/icu/properties/sets/struct.CodePointSetData.html) for more information.
 ///
 /// See the [Rust documentation for `CodePointSetDataBorrowed`](https://docs.rs/icu/latest/icu/properties/sets/struct.CodePointSetDataBorrowed.html) for more information.
-class CodePointSetData implements ffi.Finalizable {
+final class CodePointSetData implements ffi.Finalizable {
   final ffi.Pointer<ffi.Opaque> _underlying;
 
   CodePointSetData._(this._underlying) {

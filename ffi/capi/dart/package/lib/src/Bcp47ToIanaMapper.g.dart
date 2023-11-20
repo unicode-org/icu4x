@@ -8,7 +8,7 @@ part of 'lib.g.dart';
 /// An object capable of mapping from a BCP-47 time zone ID to an IANA ID.
 ///
 /// See the [Rust documentation for `IanaBcp47RoundTripMapper`](https://docs.rs/icu/latest/icu/timezone/struct.IanaBcp47RoundTripMapper.html) for more information.
-class Bcp47ToIanaMapper implements ffi.Finalizable {
+final class Bcp47ToIanaMapper implements ffi.Finalizable {
   final ffi.Pointer<ffi.Opaque> _underlying;
 
   Bcp47ToIanaMapper._(this._underlying) {

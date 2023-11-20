@@ -6,7 +6,7 @@
 part of 'lib.g.dart';
 
 /// See the [Rust documentation for `AnyCalendar`](https://docs.rs/icu/latest/icu/calendar/enum.AnyCalendar.html) for more information.
-class Calendar implements ffi.Finalizable {
+final class Calendar implements ffi.Finalizable {
   final ffi.Pointer<ffi.Opaque> _underlying;
 
   Calendar._(this._underlying) {

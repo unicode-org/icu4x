@@ -6,14 +6,14 @@
 part of 'lib.g.dart';
 
 /// See the [Rust documentation for `TitlecaseOptions`](https://docs.rs/icu/latest/icu/casemap/titlecase/struct.TitlecaseOptions.html) for more information.
-class _TitlecaseOptionsV1Ffi extends ffi.Struct {
+final class _TitlecaseOptionsV1Ffi extends ffi.Struct {
   @ffi.Int32()
   external int leadingAdjustment;
   @ffi.Int32()
   external int trailingCase;
 }
 
-class TitlecaseOptionsV1 {
+final class TitlecaseOptionsV1 {
   final _TitlecaseOptionsV1Ffi _underlying;
 
   // ignore: unused_element

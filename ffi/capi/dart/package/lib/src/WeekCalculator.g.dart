@@ -8,7 +8,7 @@ part of 'lib.g.dart';
 /// A Week calculator, useful to be passed in to `week_of_year()` on Date and DateTime types
 ///
 /// See the [Rust documentation for `WeekCalculator`](https://docs.rs/icu/latest/icu/calendar/week/struct.WeekCalculator.html) for more information.
-class WeekCalculator implements ffi.Finalizable {
+final class WeekCalculator implements ffi.Finalizable {
   final ffi.Pointer<ffi.Opaque> _underlying;
 
   WeekCalculator._(this._underlying) {

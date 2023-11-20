@@ -6,7 +6,7 @@
 part of 'lib.g.dart';
 
 /// FFI version of `PluralRules::categories()` data.
-class _PluralCategoriesFfi extends ffi.Struct {
+final class _PluralCategoriesFfi extends ffi.Struct {
   @ffi.Bool()
   external bool zero;
   @ffi.Bool()
@@ -21,7 +21,7 @@ class _PluralCategoriesFfi extends ffi.Struct {
   external bool other;
 }
 
-class PluralCategories {
+final class PluralCategories {
   final _PluralCategoriesFfi _underlying;
 
   // ignore: unused_element

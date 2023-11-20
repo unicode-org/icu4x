@@ -6,7 +6,7 @@
 part of 'lib.g.dart';
 
 /// See the [Rust documentation for `SentenceBreakIterator`](https://docs.rs/icu/latest/icu/segmenter/struct.SentenceBreakIterator.html) for more information.
-class SentenceBreakIteratorUtf8 implements ffi.Finalizable {
+final class SentenceBreakIteratorUtf8 implements ffi.Finalizable {
   final ffi.Pointer<ffi.Opaque> _underlying;
 
   SentenceBreakIteratorUtf8._(this._underlying) {

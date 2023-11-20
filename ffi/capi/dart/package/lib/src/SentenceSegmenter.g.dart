@@ -8,7 +8,7 @@ part of 'lib.g.dart';
 /// An ICU4X sentence-break segmenter, capable of finding sentence breakpoints in strings.
 ///
 /// See the [Rust documentation for `SentenceSegmenter`](https://docs.rs/icu/latest/icu/segmenter/struct.SentenceSegmenter.html) for more information.
-class SentenceSegmenter implements ffi.Finalizable {
+final class SentenceSegmenter implements ffi.Finalizable {
   final ffi.Pointer<ffi.Opaque> _underlying;
 
   SentenceSegmenter._(this._underlying) {

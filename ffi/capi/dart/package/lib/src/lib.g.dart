@@ -134,7 +134,7 @@ void init(String path) => _capi = ffi.DynamicLibrary.open(path).lookup;
 
 final _callocFree = Finalizer(ffi2.calloc.free);
 
-class SizeList extends ffi.Struct {
+final class SizeList extends ffi.Struct {
   external ffi.Pointer<ffi.Size> _bytes;
 
   @ffi.Size()
@@ -163,7 +163,7 @@ class SizeList extends ffi.Struct {
   int get hashCode => _length.hashCode;
 }
 
-class _ResultBoolInt32Union extends ffi.Union {
+final class _ResultBoolInt32Union extends ffi.Union {
   @ffi.Bool()
   external bool ok;
 
@@ -171,14 +171,14 @@ class _ResultBoolInt32Union extends ffi.Union {
   external int err;
 }
 
-class _ResultBoolInt32 extends ffi.Struct {
+final class _ResultBoolInt32 extends ffi.Struct {
   external _ResultBoolInt32Union union;
 
   @ffi.Bool()
   external bool isOk;
 }
 
-class _ResultInt32Int32Union extends ffi.Union {
+final class _ResultInt32Int32Union extends ffi.Union {
   @ffi.Int32()
   external int ok;
 
@@ -186,83 +186,83 @@ class _ResultInt32Int32Union extends ffi.Union {
   external int err;
 }
 
-class _ResultInt32Int32 extends ffi.Struct {
+final class _ResultInt32Int32 extends ffi.Struct {
   external _ResultInt32Int32Union union;
 
   @ffi.Bool()
   external bool isOk;
 }
 
-class _ResultInt32VoidUnion extends ffi.Union {
+final class _ResultInt32VoidUnion extends ffi.Union {
   @ffi.Int32()
   external int ok;
 }
 
-class _ResultInt32Void extends ffi.Struct {
+final class _ResultInt32Void extends ffi.Struct {
   external _ResultInt32VoidUnion union;
 
   @ffi.Bool()
   external bool isOk;
 }
 
-class _ResultOpaqueInt32Union extends ffi.Union {
+final class _ResultOpaqueInt32Union extends ffi.Union {
   external ffi.Pointer<ffi.Opaque> ok;
 
   @ffi.Int32()
   external int err;
 }
 
-class _ResultOpaqueInt32 extends ffi.Struct {
+final class _ResultOpaqueInt32 extends ffi.Struct {
   external _ResultOpaqueInt32Union union;
 
   @ffi.Bool()
   external bool isOk;
 }
 
-class _ResultUint16VoidUnion extends ffi.Union {
+final class _ResultUint16VoidUnion extends ffi.Union {
   @ffi.Uint16()
   external int ok;
 }
 
-class _ResultUint16Void extends ffi.Struct {
+final class _ResultUint16Void extends ffi.Struct {
   external _ResultUint16VoidUnion union;
 
   @ffi.Bool()
   external bool isOk;
 }
 
-class _ResultVoidInt32Union extends ffi.Union {
+final class _ResultVoidInt32Union extends ffi.Union {
   @ffi.Int32()
   external int err;
 }
 
-class _ResultVoidInt32 extends ffi.Struct {
+final class _ResultVoidInt32 extends ffi.Struct {
   external _ResultVoidInt32Union union;
 
   @ffi.Bool()
   external bool isOk;
 }
 
-class _ResultVoidVoid extends ffi.Struct {
+final class _ResultVoidVoid extends ffi.Struct {
   @ffi.Bool()
   external bool isOk;
 }
 
-class _ResultWeekOfFfiInt32Union extends ffi.Union {
+final class _ResultWeekOfFfiInt32Union extends ffi.Union {
   external _WeekOfFfi ok;
 
   @ffi.Int32()
   external int err;
 }
 
-class _ResultWeekOfFfiInt32 extends ffi.Struct {
+final class _ResultWeekOfFfiInt32 extends ffi.Struct {
   external _ResultWeekOfFfiInt32Union union;
 
   @ffi.Bool()
   external bool isOk;
 }
 
-class _SliceFfi2Utf8 extends ffi.Struct {
+final class _SliceFfi2Utf8 extends ffi.Struct {
   external ffi.Pointer<ffi2.Utf8> _bytes;
 
   @ffi.Size()
@@ -306,7 +306,7 @@ class _SliceFfi2Utf8 extends ffi.Struct {
   int get hashCode => _length.hashCode;
 }
 
-class _SliceFfiUint16 extends ffi.Struct {
+final class _SliceFfiUint16 extends ffi.Struct {
   external ffi.Pointer<ffi.Uint16> _bytes;
 
   @ffi.Size()
@@ -348,7 +348,7 @@ class _SliceFfiUint16 extends ffi.Struct {
   int get hashCode => _length.hashCode;
 }
 
-class _SliceFfiUint8 extends ffi.Struct {
+final class _SliceFfiUint8 extends ffi.Struct {
   external ffi.Pointer<ffi.Uint8> _bytes;
 
   @ffi.Size()
@@ -393,7 +393,7 @@ class _SliceFfiUint8 extends ffi.Struct {
 /// An unspecified error value
 class VoidError {}
 
-class _Writeable {
+final class _Writeable {
   final ffi.Pointer<ffi.Opaque> _underlying;
 
   _Writeable() : _underlying = _create(0);

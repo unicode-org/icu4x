@@ -10,7 +10,7 @@ part of 'lib.g.dart';
 /// Callers should generally use ICU4XDecomposingNormalizer unless they specifically need raw composition operations
 ///
 /// See the [Rust documentation for `CanonicalDecomposition`](https://docs.rs/icu/latest/icu/normalizer/properties/struct.CanonicalDecomposition.html) for more information.
-class CanonicalDecomposition implements ffi.Finalizable {
+final class CanonicalDecomposition implements ffi.Finalizable {
   final ffi.Pointer<ffi.Opaque> _underlying;
 
   CanonicalDecomposition._(this._underlying) {

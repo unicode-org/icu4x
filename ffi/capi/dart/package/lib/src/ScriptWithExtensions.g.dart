@@ -8,7 +8,7 @@ part of 'lib.g.dart';
 /// An ICU4X ScriptWithExtensions map object, capable of holding a map of codepoints to scriptextensions values
 ///
 /// See the [Rust documentation for `ScriptWithExtensions`](https://docs.rs/icu/latest/icu/properties/script/struct.ScriptWithExtensions.html) for more information.
-class ScriptWithExtensions implements ffi.Finalizable {
+final class ScriptWithExtensions implements ffi.Finalizable {
   final ffi.Pointer<ffi.Opaque> _underlying;
 
   ScriptWithExtensions._(this._underlying) {

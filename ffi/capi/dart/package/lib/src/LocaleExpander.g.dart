@@ -8,7 +8,7 @@ part of 'lib.g.dart';
 /// A locale expander.
 ///
 /// See the [Rust documentation for `LocaleExpander`](https://docs.rs/icu/latest/icu/locid_transform/struct.LocaleExpander.html) for more information.
-class LocaleExpander implements ffi.Finalizable {
+final class LocaleExpander implements ffi.Finalizable {
   final ffi.Pointer<ffi.Opaque> _underlying;
 
   LocaleExpander._(this._underlying) {

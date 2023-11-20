@@ -9,7 +9,7 @@ part of 'lib.g.dart';
 /// using some calendar specified at runtime in the locale.
 ///
 /// See the [Rust documentation for `DateFormatter`](https://docs.rs/icu/latest/icu/datetime/struct.DateFormatter.html) for more information.
-class DateFormatter implements ffi.Finalizable {
+final class DateFormatter implements ffi.Finalizable {
   final ffi.Pointer<ffi.Opaque> _underlying;
 
   DateFormatter._(this._underlying) {

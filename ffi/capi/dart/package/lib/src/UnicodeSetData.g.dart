@@ -12,7 +12,7 @@ part of 'lib.g.dart';
 /// See the [Rust documentation for `UnicodeSetData`](https://docs.rs/icu/latest/icu/properties/sets/struct.UnicodeSetData.html) for more information.
 ///
 /// See the [Rust documentation for `UnicodeSetDataBorrowed`](https://docs.rs/icu/latest/icu/properties/sets/struct.UnicodeSetDataBorrowed.html) for more information.
-class UnicodeSetData implements ffi.Finalizable {
+final class UnicodeSetData implements ffi.Finalizable {
   final ffi.Pointer<ffi.Opaque> _underlying;
 
   UnicodeSetData._(this._underlying) {

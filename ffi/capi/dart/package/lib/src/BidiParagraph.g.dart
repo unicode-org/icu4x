@@ -6,7 +6,7 @@
 part of 'lib.g.dart';
 
 /// Bidi information for a single processed paragraph
-class BidiParagraph implements ffi.Finalizable {
+final class BidiParagraph implements ffi.Finalizable {
   final ffi.Pointer<ffi.Opaque> _underlying;
 
   BidiParagraph._(this._underlying) {

@@ -10,7 +10,7 @@ part of 'lib.g.dart';
 /// See the [Rust documentation for `PropertyValueNameToEnumMapper`](https://docs.rs/icu/latest/icu/properties/names/struct.PropertyValueNameToEnumMapper.html) for more information.
 ///
 /// See the [Rust documentation for `PropertyValueNameToEnumMapperBorrowed`](https://docs.rs/icu/latest/icu/properties/names/struct.PropertyValueNameToEnumMapperBorrowed.html) for more information.
-class PropertyValueNameToEnumMapper implements ffi.Finalizable {
+final class PropertyValueNameToEnumMapper implements ffi.Finalizable {
   final ffi.Pointer<ffi.Opaque> _underlying;
 
   PropertyValueNameToEnumMapper._(this._underlying) {

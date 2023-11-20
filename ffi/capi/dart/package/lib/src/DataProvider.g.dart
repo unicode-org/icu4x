@@ -8,7 +8,7 @@ part of 'lib.g.dart';
 /// An ICU4X data provider, capable of loading ICU4X data keys from some source.
 ///
 /// See the [Rust documentation for `icu_provider`](https://docs.rs/icu_provider/latest/icu_provider/index.html) for more information.
-class DataProvider implements ffi.Finalizable {
+final class DataProvider implements ffi.Finalizable {
   final ffi.Pointer<ffi.Opaque> _underlying;
 
   DataProvider._(this._underlying) {

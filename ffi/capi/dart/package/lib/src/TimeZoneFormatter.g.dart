@@ -8,7 +8,7 @@ part of 'lib.g.dart';
 /// An ICU4X TimeZoneFormatter object capable of formatting an [`CustomTimeZone`] type (and others) as a string
 ///
 /// See the [Rust documentation for `TimeZoneFormatter`](https://docs.rs/icu/latest/icu/datetime/time_zone/struct.TimeZoneFormatter.html) for more information.
-class TimeZoneFormatter implements ffi.Finalizable {
+final class TimeZoneFormatter implements ffi.Finalizable {
   final ffi.Pointer<ffi.Opaque> _underlying;
 
   TimeZoneFormatter._(this._underlying) {

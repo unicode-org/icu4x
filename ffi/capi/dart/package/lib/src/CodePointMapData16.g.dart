@@ -14,7 +14,7 @@ part of 'lib.g.dart';
 /// See the [Rust documentation for `CodePointMapData`](https://docs.rs/icu/latest/icu/properties/maps/struct.CodePointMapData.html) for more information.
 ///
 /// See the [Rust documentation for `CodePointMapDataBorrowed`](https://docs.rs/icu/latest/icu/properties/maps/struct.CodePointMapDataBorrowed.html) for more information.
-class CodePointMapData16 implements ffi.Finalizable {
+final class CodePointMapData16 implements ffi.Finalizable {
   final ffi.Pointer<ffi.Opaque> _underlying;
 
   CodePointMapData16._(this._underlying) {

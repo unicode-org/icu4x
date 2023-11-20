@@ -8,7 +8,7 @@ part of 'lib.g.dart';
 /// An ICU4X Bidi object, containing loaded bidi data
 ///
 /// See the [Rust documentation for `BidiClassAdapter`](https://docs.rs/icu/latest/icu/properties/bidi/struct.BidiClassAdapter.html) for more information.
-class Bidi implements ffi.Finalizable {
+final class Bidi implements ffi.Finalizable {
   final ffi.Pointer<ffi.Opaque> _underlying;
 
   Bidi._(this._underlying) {

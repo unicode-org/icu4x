@@ -12,7 +12,7 @@ part of 'lib.g.dart';
 /// and `done` will be true if the iterator has already finished. The last contentful
 /// iteration will NOT produce a range done=true, in other words `start` and `end` are useful
 /// values if and only if `done=false`.
-class _CodePointRangeIteratorResultFfi extends ffi.Struct {
+final class _CodePointRangeIteratorResultFfi extends ffi.Struct {
   @ffi.Uint32()
   external int start;
   @ffi.Uint32()
@@ -21,7 +21,7 @@ class _CodePointRangeIteratorResultFfi extends ffi.Struct {
   external bool done;
 }
 
-class CodePointRangeIteratorResult {
+final class CodePointRangeIteratorResult {
   final _CodePointRangeIteratorResultFfi _underlying;
 
   // ignore: unused_element

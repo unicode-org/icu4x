@@ -6,7 +6,7 @@
 part of 'lib.g.dart';
 
 /// See the [Rust documentation for `LineBreakOptions`](https://docs.rs/icu/latest/icu/segmenter/struct.LineBreakOptions.html) for more information.
-class _LineBreakOptionsV1Ffi extends ffi.Struct {
+final class _LineBreakOptionsV1Ffi extends ffi.Struct {
   @ffi.Int32()
   external int strictness;
   @ffi.Int32()
@@ -15,7 +15,7 @@ class _LineBreakOptionsV1Ffi extends ffi.Struct {
   external bool jaZh;
 }
 
-class LineBreakOptionsV1 {
+final class LineBreakOptionsV1 {
   final _LineBreakOptionsV1Ffi _underlying;
 
   // ignore: unused_element

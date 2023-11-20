@@ -8,7 +8,7 @@ part of 'lib.g.dart';
 /// A slightly faster ICU4XScriptWithExtensions object
 ///
 /// See the [Rust documentation for `ScriptWithExtensionsBorrowed`](https://docs.rs/icu/latest/icu/properties/script/struct.ScriptWithExtensionsBorrowed.html) for more information.
-class ScriptWithExtensionsBorrowed implements ffi.Finalizable {
+final class ScriptWithExtensionsBorrowed implements ffi.Finalizable {
   final ffi.Pointer<ffi.Opaque> _underlying;
 
   ScriptWithExtensionsBorrowed._(this._underlying) {

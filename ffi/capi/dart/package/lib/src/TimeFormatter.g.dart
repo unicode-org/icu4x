@@ -8,7 +8,7 @@ part of 'lib.g.dart';
 /// An ICU4X TimeFormatter object capable of formatting an [`Time`] type (and others) as a string
 ///
 /// See the [Rust documentation for `TimeFormatter`](https://docs.rs/icu/latest/icu/datetime/struct.TimeFormatter.html) for more information.
-class TimeFormatter implements ffi.Finalizable {
+final class TimeFormatter implements ffi.Finalizable {
   final ffi.Pointer<ffi.Opaque> _underlying;
 
   TimeFormatter._(this._underlying) {

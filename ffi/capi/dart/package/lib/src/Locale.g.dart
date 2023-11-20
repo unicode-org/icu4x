@@ -8,7 +8,7 @@ part of 'lib.g.dart';
 /// An ICU4X Locale, capable of representing strings like `"en-US"`.
 ///
 /// See the [Rust documentation for `Locale`](https://docs.rs/icu/latest/icu/locid/struct.Locale.html) for more information.
-class Locale implements ffi.Finalizable {
+final class Locale implements ffi.Finalizable {
   final ffi.Pointer<ffi.Opaque> _underlying;
 
   Locale._(this._underlying) {

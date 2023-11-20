@@ -6,7 +6,7 @@
 part of 'lib.g.dart';
 
 /// See the [Rust documentation for `Collator`](https://docs.rs/icu/latest/icu/collator/struct.Collator.html) for more information.
-class Collator implements ffi.Finalizable {
+final class Collator implements ffi.Finalizable {
   final ffi.Pointer<ffi.Opaque> _underlying;
 
   Collator._(this._underlying) {

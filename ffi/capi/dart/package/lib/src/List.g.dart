@@ -6,7 +6,7 @@
 part of 'lib.g.dart';
 
 /// A list of strings
-class List implements ffi.Finalizable {
+final class List implements ffi.Finalizable {
   final ffi.Pointer<ffi.Opaque> _underlying;
 
   List._(this._underlying) {

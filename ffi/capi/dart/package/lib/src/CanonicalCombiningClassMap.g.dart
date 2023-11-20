@@ -8,7 +8,7 @@ part of 'lib.g.dart';
 /// Lookup of the Canonical_Combining_Class Unicode property
 ///
 /// See the [Rust documentation for `CanonicalCombiningClassMap`](https://docs.rs/icu/latest/icu/normalizer/properties/struct.CanonicalCombiningClassMap.html) for more information.
-class CanonicalCombiningClassMap implements ffi.Finalizable {
+final class CanonicalCombiningClassMap implements ffi.Finalizable {
   final ffi.Pointer<ffi.Opaque> _underlying;
 
   CanonicalCombiningClassMap._(this._underlying) {

@@ -10,7 +10,7 @@ part of 'lib.g.dart';
 /// See the [Rust documentation for `get_name_to_enum_mapper`](https://docs.rs/icu/latest/icu/properties/struct.GeneralCategoryGroup.html#method.get_name_to_enum_mapper) for more information.
 ///
 /// See the [Rust documentation for `PropertyValueNameToEnumMapper`](https://docs.rs/icu/latest/icu/properties/names/struct.PropertyValueNameToEnumMapper.html) for more information.
-class GeneralCategoryNameToMaskMapper implements ffi.Finalizable {
+final class GeneralCategoryNameToMaskMapper implements ffi.Finalizable {
   final ffi.Pointer<ffi.Opaque> _underlying;
 
   GeneralCategoryNameToMaskMapper._(this._underlying) {
