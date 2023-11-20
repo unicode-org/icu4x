@@ -27,16 +27,37 @@ use icu_provider::prelude::*;
 use writeable::Writeable;
 
 /// This can be extended in the future to support multiple lengths.
-/// For now, this type wraps a symbols object tagged with a single length.
+/// For now, this type wraps a symbols object tagged with a single length. See #4337
 #[derive(Debug, Copy, Clone)]
 enum OptionalSymbols<S, T> {
     None,
     SingleLength(S, fields::FieldLength, T),
 }
 
-impl<S, T> OptionalSymbols<S, T> {
-    pub fn is_some(&self) -> bool {
-        !matches!(self, Self::None)
+enum NamePresence {
+    /// The data is not loaded
+    NotLoaded,
+    /// The data matches and is already loaded
+    Loaded,
+    /// There is data loaded which does not match
+    Mismatched,
+}
+
+impl<S, T> OptionalSymbols<S, T> where S: Copy + PartialEq {
+    pub(crate) fn check_with_length(&self, field_symbol: S, field_length: fields::FieldLength) -> NamePresence {
+        match self {
+            Self::SingleLength(actual_field_symbol, actual_length, _)
+                if field_symbol == *actual_field_symbol && field_length == *actual_length =>
+            {
+                NamePresence::Loaded
+            }
+            OptionalSymbols::SingleLength(_, _, _) => {
+                NamePresence::Mismatched
+            },
+            OptionalSymbols::None => {
+                NamePresence::NotLoaded
+            }
+        }
     }
 }
 
@@ -205,6 +226,8 @@ impl<C: CldrCalendar> TypedDateTimePatternInterpolator<C> {
     }
 
     /// Loads year (era or cycle) names for the specified length.
+    ///
+    /// Does not support multiple field symbols or lengths. See #4337
     pub fn load_year_names<P>(
         &mut self,
         provider: &P,
@@ -219,12 +242,11 @@ impl<C: CldrCalendar> TypedDateTimePatternInterpolator<C> {
         };
         // UTS 35 says that "G..GGG" are all Abbreviated
         let field_length = field_length.numeric_to_abbr();
-        if self.year_symbols.is_some() {
-            // TODO: Discuss what do do here
-            return Err(Error::Data(DataError::custom(
-                "year symbols already loaded",
-            )));
-        }
+        match self.year_symbols.check_with_length((), field_length) {
+            NamePresence::Loaded => return Ok(self),
+            NamePresence::NotLoaded => (),
+            NamePresence::Mismatched => return Err(Error::DuplicateField(field))
+        };
         let mut locale = self.locale.clone();
         locale.set_aux(AuxiliaryKeys::from_subtag(aux::subtag_for(
             aux::Context::Format,
@@ -246,6 +268,8 @@ impl<C: CldrCalendar> TypedDateTimePatternInterpolator<C> {
     }
 
     /// Loads month names for the specified symbol and length.
+    ///
+    /// Does not support multiple field symbols or lengths. See #4337
     pub fn load_month_names<P>(
         &mut self,
         provider: &P,
@@ -260,12 +284,11 @@ impl<C: CldrCalendar> TypedDateTimePatternInterpolator<C> {
             length: field_length,
         };
         // Note: UTS 35 says that "M..MM" and "L..LL" are numeric
-        if self.month_symbols.is_some() {
-            // TODO: Discuss what do do here
-            return Err(Error::Data(DataError::custom(
-                "month symbols already loaded",
-            )));
-        }
+        match self.month_symbols.check_with_length(field_symbol, field_length) {
+            NamePresence::Loaded => return Ok(self),
+            NamePresence::NotLoaded => (),
+            NamePresence::Mismatched => return Err(Error::DuplicateField(field))
+        };
         let mut locale = self.locale.clone();
         locale.set_aux(AuxiliaryKeys::from_subtag(aux::subtag_for(
             match field_symbol {
@@ -290,6 +313,8 @@ impl<C: CldrCalendar> TypedDateTimePatternInterpolator<C> {
     }
 
     /// Loads day period names for the specified length.
+    ///
+    /// Does not support multiple field symbols or lengths. See #4337
     pub fn load_day_period_names<P>(
         &mut self,
         provider: &P,
@@ -305,12 +330,11 @@ impl<C: CldrCalendar> TypedDateTimePatternInterpolator<C> {
         };
         // UTS 35 says that "a..aaa" are all Abbreviated
         let field_length = field_length.numeric_to_abbr();
-        if self.dayperiod_symbols.is_some() {
-            // TODO: Discuss what do do here
-            return Err(Error::Data(DataError::custom(
-                "day period symbols already loaded",
-            )));
-        }
+        match self.dayperiod_symbols.check_with_length((), field_length) {
+            NamePresence::Loaded => return Ok(self),
+            NamePresence::NotLoaded => (),
+            NamePresence::Mismatched => return Err(Error::DuplicateField(field))
+        };
         let mut locale = self.locale.clone();
         locale.set_aux(AuxiliaryKeys::from_subtag(aux::subtag_for(
             aux::Context::Format,
@@ -332,6 +356,8 @@ impl<C: CldrCalendar> TypedDateTimePatternInterpolator<C> {
     }
 
     /// Loads weekday names for the specified symbol and length.
+    ///
+    /// Does not support multiple field symbols or lengths. See #4337
     pub fn load_weekday_names<P>(
         &mut self,
         provider: &P,
@@ -347,12 +373,11 @@ impl<C: CldrCalendar> TypedDateTimePatternInterpolator<C> {
         };
         // UTS 35 says that "E..EEE" are all Abbreviated
         let field_length = field_length.numeric_to_abbr();
-        if self.weekday_symbols.is_some() {
-            // TODO: Discuss what do do here
-            return Err(Error::Data(DataError::custom(
-                "weekday symbols already loaded",
-            )));
-        }
+        match self.weekday_symbols.check_with_length(field_symbol, field_length) {
+            NamePresence::Loaded => return Ok(self),
+            NamePresence::NotLoaded => (),
+            NamePresence::Mismatched => return Err(Error::DuplicateField(field))
+        };
         let mut locale = self.locale.clone();
         locale.set_aux(AuxiliaryKeys::from_subtag(aux::subtag_for(
             match field_symbol {

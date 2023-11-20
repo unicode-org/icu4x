@@ -83,6 +83,9 @@ pub enum DateTimeError {
     /// The names for the given field are not loaded
     #[displaydoc("Missing names for {0:?}")]
     MissingNames(Field),
+    /// The same field occurs multiple times in a pattern or was loaded multiple times
+    #[displaydoc("Duplicate field: {0:?}")]
+    DuplicateField(Field),
 }
 
 impl From<PatternError> for DateTimeError {
