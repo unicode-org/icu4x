@@ -73,7 +73,10 @@ impl<'l> Writeable for FormattedDateTime<'l> {
             self.fixed_decimal_format,
             sink,
         )
-        .map_err(|_| core::fmt::Error)
+        .map_err(|_e| {
+            icu_provider::_internal::log::warn!("{_e:?}");
+            core::fmt::Error
+        })
     }
 
     // TODO(#489): Implement writeable_length_hint
