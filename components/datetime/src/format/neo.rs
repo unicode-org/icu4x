@@ -29,7 +29,7 @@ use writeable::Writeable;
 /// This can be extended in the future to support multiple lengths.
 /// For now, this type wraps a symbols object tagged with a single length. See #4337
 #[derive(Debug, Copy, Clone)]
-enum OptionalSymbols<S, T> {
+enum OptionalNames<S, T> {
     None,
     SingleLength(S, fields::FieldLength, T),
 }
@@ -43,7 +43,7 @@ enum NamePresence {
     Mismatched,
 }
 
-impl<S, T> OptionalSymbols<S, T>
+impl<S, T> OptionalNames<S, T>
 where
     S: Copy + PartialEq,
 {
@@ -58,13 +58,13 @@ where
             {
                 NamePresence::Loaded
             }
-            OptionalSymbols::SingleLength(_, _, _) => NamePresence::Mismatched,
-            OptionalSymbols::None => NamePresence::NotLoaded,
+            OptionalNames::SingleLength(_, _, _) => NamePresence::Mismatched,
+            OptionalNames::None => NamePresence::NotLoaded,
         }
     }
 }
 
-impl<S, T> OptionalSymbols<S, T>
+impl<S, T> OptionalNames<S, T>
 where
     S: Copy + PartialEq,
     T: Copy,
@@ -86,18 +86,18 @@ where
     }
 }
 
-impl<S, M> OptionalSymbols<S, DataPayload<M>>
+impl<S, M> OptionalNames<S, DataPayload<M>>
 where
     S: Copy,
     M: KeyedDataMarker,
 {
     pub(crate) fn as_borrowed(
         &self,
-    ) -> OptionalSymbols<S, &<M::Yokeable as icu_provider::yoke::Yokeable>::Output> {
+    ) -> OptionalNames<S, &<M::Yokeable as icu_provider::yoke::Yokeable>::Output> {
         match self {
-            Self::None => OptionalSymbols::None,
+            Self::None => OptionalNames::None,
             Self::SingleLength(field_symbol, field_length, payload) => {
-                OptionalSymbols::SingleLength(*field_symbol, *field_length, payload.get())
+                OptionalNames::SingleLength(*field_symbol, *field_length, payload.get())
             }
         }
     }
@@ -175,10 +175,10 @@ where
 pub struct TypedDateTimePatternInterpolator<C: CldrCalendar> {
     locale: DataLocale,
     /// `year_symbols` is different because it could be either era or cyclic year.
-    year_symbols: OptionalSymbols<(), DataPayload<C::YearSymbolsV1Marker>>,
-    month_symbols: OptionalSymbols<fields::Month, DataPayload<C::MonthSymbolsV1Marker>>,
-    weekday_symbols: OptionalSymbols<fields::Weekday, DataPayload<WeekdaySymbolsV1Marker>>,
-    dayperiod_symbols: OptionalSymbols<(), DataPayload<DayPeriodSymbolsV1Marker>>,
+    year_symbols: OptionalNames<(), DataPayload<C::YearSymbolsV1Marker>>,
+    month_symbols: OptionalNames<fields::Month, DataPayload<C::MonthSymbolsV1Marker>>,
+    weekday_symbols: OptionalNames<fields::Weekday, DataPayload<WeekdaySymbolsV1Marker>>,
+    dayperiod_symbols: OptionalNames<(), DataPayload<DayPeriodSymbolsV1Marker>>,
     // TODO: Make the FixedDecimalFormatter optional?
     fixed_decimal_formatter: FixedDecimalFormatter,
     week_calculator: Option<WeekCalculator>,
@@ -219,10 +219,10 @@ impl<C: CldrCalendar> TypedDateTimePatternInterpolator<C> {
     fn new_internal(locale: DataLocale, fixed_decimal_formatter: FixedDecimalFormatter) -> Self {
         TypedDateTimePatternInterpolator {
             locale,
-            year_symbols: OptionalSymbols::None,
-            month_symbols: OptionalSymbols::None,
-            weekday_symbols: OptionalSymbols::None,
-            dayperiod_symbols: OptionalSymbols::None,
+            year_symbols: OptionalNames::None,
+            month_symbols: OptionalNames::None,
+            weekday_symbols: OptionalNames::None,
+            dayperiod_symbols: OptionalNames::None,
             fixed_decimal_formatter,
             week_calculator: None,
         }
@@ -266,7 +266,7 @@ impl<C: CldrCalendar> TypedDateTimePatternInterpolator<C> {
                 metadata: Default::default(),
             })?
             .take_payload()?;
-        self.year_symbols = OptionalSymbols::SingleLength((), field_length, payload);
+        self.year_symbols = OptionalNames::SingleLength((), field_length, payload);
         Ok(self)
     }
 
@@ -357,7 +357,7 @@ impl<C: CldrCalendar> TypedDateTimePatternInterpolator<C> {
                 metadata: Default::default(),
             })?
             .take_payload()?;
-        self.month_symbols = OptionalSymbols::SingleLength(field_symbol, field_length, payload);
+        self.month_symbols = OptionalNames::SingleLength(field_symbol, field_length, payload);
         Ok(self)
     }
 
@@ -455,7 +455,7 @@ impl<C: CldrCalendar> TypedDateTimePatternInterpolator<C> {
                 metadata: Default::default(),
             })?
             .take_payload()?;
-        self.dayperiod_symbols = OptionalSymbols::SingleLength((), field_length, payload);
+        self.dayperiod_symbols = OptionalNames::SingleLength((), field_length, payload);
         Ok(self)
     }
 
@@ -552,7 +552,7 @@ impl<C: CldrCalendar> TypedDateTimePatternInterpolator<C> {
                 metadata: Default::default(),
             })?
             .take_payload()?;
-        self.weekday_symbols = OptionalSymbols::SingleLength(field_symbol, field_length, payload);
+        self.weekday_symbols = OptionalNames::SingleLength(field_symbol, field_length, payload);
         Ok(self)
     }
 
@@ -614,10 +614,10 @@ impl<C: CldrCalendar> TypedDateTimePatternInterpolator<C> {
 #[derive(Debug, Copy, Clone)]
 struct RawDateTimePatternInterpolatorBorrowed<'l> {
     /// `year_symbols` is different because it could be either era or cyclic year.
-    year_symbols: OptionalSymbols<(), &'l YearSymbolsV1<'l>>,
-    month_symbols: OptionalSymbols<fields::Month, &'l MonthSymbolsV1<'l>>,
-    weekday_symbols: OptionalSymbols<fields::Weekday, &'l LinearSymbolsV1<'l>>,
-    dayperiod_symbols: OptionalSymbols<(), &'l LinearSymbolsV1<'l>>,
+    year_symbols: OptionalNames<(), &'l YearSymbolsV1<'l>>,
+    month_symbols: OptionalNames<fields::Month, &'l MonthSymbolsV1<'l>>,
+    weekday_symbols: OptionalNames<fields::Weekday, &'l LinearSymbolsV1<'l>>,
+    dayperiod_symbols: OptionalNames<(), &'l LinearSymbolsV1<'l>>,
     fixed_decimal_formatter: &'l FixedDecimalFormatter,
     week_calculator: Option<&'l WeekCalculator>,
 }
