@@ -200,3 +200,8 @@ pub enum Exactness {
     Exact = 0,
     Approximate = 1,
 }
+
+pub struct SIPrefix {
+    pub base: u8,
+    pub power: i8,
+}
