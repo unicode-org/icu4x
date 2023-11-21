@@ -129,11 +129,7 @@ jobs:
 
     # Actual job
     - name: Run `cargo make ci-job-test`
-      if: matrix.os != 'windows-latest'
       run: cargo make ci-job-test
-    - name: Run `cargo make ci-job-test-windows`
-      if: matrix.os == 'windows-latest'
-      run: cargo make ci-job-test-windows
 
   # ci-job-test-docs
   test-docs:
