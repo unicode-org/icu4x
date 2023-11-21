@@ -8,6 +8,7 @@ use crate::source::*;
 use crate::transform::cldr::source::CldrCache;
 use crate::{CollationHanDatabase, CoverageLevel};
 use icu_provider::prelude::*;
+use icu_provider::datagen::*;
 use std::fmt::Debug;
 use std::path::PathBuf;
 use std::sync::Arc;
@@ -28,6 +29,8 @@ pub struct DatagenProvider {
     #[doc(hidden)] // semver
     pub source: SourceData,
 }
+
+crate::registry::make_exportable_provider!(DatagenProvider);
 
 impl DatagenProvider {
     /// The latest CLDR JSON tag that has been verified to work with this version of `icu_datagen`.

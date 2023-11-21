@@ -81,7 +81,7 @@ use yoke::*;
 /// ```
 #[derive(Clone)]
 pub struct BlobDataProvider {
-    data: Yoke<BlobSchema<'static>, Option<Cart>>,
+    pub(crate) data: Yoke<BlobSchema<'static>, Option<Cart>>,
 }
 
 impl core::fmt::Debug for BlobDataProvider {

@@ -39,6 +39,14 @@ impl<'data> BlobSchema<'data> {
         }
     }
 
+    #[cfg(feature = "export")]
+    pub fn list_locales(&self, key: DataKey) -> Result<Vec<DataLocale>, DataError> {
+        match self {
+            BlobSchema::V001(s) => s.list_locales(key),
+            BlobSchema::V002(s) => s.list_locales(key),
+        }
+    }
+
     #[cfg(debug_assertions)]
     fn check_invariants(&self) {
         match self {
@@ -90,6 +98,17 @@ impl<'data> BlobSchemaV1<'data> {
         self.buffers
             .get(idx)
             .ok_or_else(|| DataError::custom("Invalid blob bytes").with_req(key, req))
+    }
+
+    #[cfg(feature = "export")]
+    pub fn list_locales(&self, key: DataKey) -> Result<Vec<DataLocale>, DataError> {
+        Ok(self
+            .keys
+            .get0(&key.hashed())
+            .ok_or_else(|| DataErrorKind::MissingDataKey.with_key(key))?
+            .iter1_copied()
+            .filter_map(|(s, _)| std::str::from_utf8(&s.0).ok()?.parse().ok())
+            .collect())
     }
 
     /// Verifies the weak invariants using debug assertions
@@ -173,6 +192,23 @@ impl<'data> BlobSchemaV2<'data> {
             .get(blob_index)
             .ok_or_else(|| DataError::custom("Invalid blob bytes").with_req(key, req))?;
         Ok(buffer)
+    }
+
+    #[cfg(feature = "export")]
+    pub fn list_locales(&self, key: DataKey) -> Result<Vec<DataLocale>, DataError> {
+        let key_index = self
+            .keys
+            .binary_search(&key.hashed())
+            .ok()
+            .ok_or_else(|| DataErrorKind::MissingDataKey.with_key(key))?;
+        let zerotrie = self
+            .locales
+            .get(key_index)
+            .ok_or_else(|| DataError::custom("Invalid blob bytes").with_key(key))?;
+        Ok(ZeroTrieSimpleAscii::from_store(zerotrie)
+            .iter()
+            .filter_map(|(s, _)| s.parse().ok())
+            .collect())
     }
 
     /// Verifies the weak invariants using debug assertions

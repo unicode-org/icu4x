@@ -101,18 +101,26 @@ macro_rules! registry {
             )+
         }
 
-        icu_provider::make_exportable_provider!(
-            crate::DatagenProvider,
-            [
-                icu_provider::hello_world::HelloWorldV1Marker,
-                $(
-                    $(
-                        #[cfg($feature)]
-                        $marker,
-                    )+
-                )+
-            ]
-        );
+        #[macro_export]
+        #[doc(hidden)]
+        macro_rules! make_exportable_provider {
+            ($ty:ty) => {
+                icu_provider::make_exportable_provider!(
+                    $ty,
+                    [
+                        icu_provider::hello_world::HelloWorldV1Marker,
+                        $(
+                            $(
+                                #[cfg($feature)]
+                                $marker,
+                            )+
+                        )+
+                    ]
+                );
+            }
+        }
+        pub(crate) use make_exportable_provider;
+
 
         #[cfg(feature = "baked_exporter")]
         pub(crate) fn key_to_marker_bake(key: DataKey, env: &databake::CrateEnv) -> databake::TokenStream {
