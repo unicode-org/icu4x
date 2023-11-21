@@ -7,8 +7,8 @@
 use crate::source::*;
 use crate::transform::cldr::source::CldrCache;
 use crate::{CollationHanDatabase, CoverageLevel};
-use icu_provider::prelude::*;
 use icu_provider::datagen::*;
+use icu_provider::prelude::*;
 use std::fmt::Debug;
 use std::path::PathBuf;
 use std::sync::Arc;
