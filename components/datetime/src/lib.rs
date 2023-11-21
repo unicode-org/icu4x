@@ -130,6 +130,7 @@
 
 extern crate alloc;
 
+mod any;
 mod calendar;
 mod datetime;
 mod error;
@@ -148,13 +149,13 @@ pub mod skeleton;
 pub mod time_zone;
 mod zoned_datetime;
 
-mod any;
-
 pub use any::{DateFormatter, DateTimeFormatter, ZonedDateTimeFormatter};
 pub use calendar::CldrCalendar;
 pub use datetime::{TimeFormatter, TypedDateFormatter, TypedDateTimeFormatter};
 pub use error::DateTimeError;
 pub use format::datetime::FormattedDateTime;
+#[cfg(feature = "experimental")]
+pub use format::neo::{FormattedDateTimePattern, TypedDateTimePatternInterpolator};
 pub use format::time_zone::FormattedTimeZone;
 pub use format::zoned_datetime::FormattedZonedDateTime;
 pub use options::DateTimeFormatterOptions;
