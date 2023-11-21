@@ -13,6 +13,7 @@ use crate::pattern::{
 };
 use crate::provider;
 use crate::provider::calendar::patterns::PatternPluralsFromPatternsV1Marker;
+use crate::provider::date_time::MonthPlaceholderValue;
 use crate::provider::date_time::{DateSymbols, TimeSymbols};
 
 use core::fmt;
@@ -73,7 +74,10 @@ impl<'l> Writeable for FormattedDateTime<'l> {
             self.fixed_decimal_format,
             sink,
         )
-        .map_err(|_| core::fmt::Error)
+        .map_err(|_e| {
+            icu_provider::_internal::log::warn!("{_e:?}");
+            core::fmt::Error
+        })
     }
 
     // TODO(#489): Implement writeable_length_hint
@@ -123,10 +127,10 @@ where
     formatted.write_to(result)
 }
 
-fn write_pattern<T, W>(
+pub(crate) fn write_pattern<'data, T, W, DS, TS>(
     pattern: &crate::pattern::runtime::Pattern,
-    date_symbols: Option<&provider::calendar::DateSymbolsV1>,
-    time_symbols: Option<&provider::calendar::TimeSymbolsV1>,
+    date_symbols: Option<&DS>,
+    time_symbols: Option<&TS>,
     loc_datetime: &impl LocalizedDateTimeInput<T>,
     fixed_decimal_format: &FixedDecimalFormatter,
     w: &mut W,
@@ -134,6 +138,8 @@ fn write_pattern<T, W>(
 where
     T: DateTimeInput,
     W: fmt::Write + ?Sized,
+    DS: DateSymbols<'data>,
+    TS: TimeSymbols,
 {
     let mut iter = pattern.items.iter().peekable();
     loop {
@@ -206,12 +212,12 @@ const PLACEHOLDER_LEAP_PREFIX: &str = "(leap)";
 // When modifying the list of fields using symbols,
 // update the matching query in `analyze_pattern` function.
 #[allow(clippy::too_many_arguments)]
-pub(super) fn write_field<T, W>(
+pub(super) fn write_field<'data, T, W, DS, TS>(
     pattern: &crate::pattern::runtime::Pattern,
     field: fields::Field,
     next_item: Option<&PatternItem>,
-    date_symbols: Option<&crate::provider::calendar::DateSymbolsV1>,
-    time_symbols: Option<&crate::provider::calendar::TimeSymbolsV1>,
+    date_symbols: Option<&DS>,
+    time_symbols: Option<&TS>,
     datetime: &impl LocalizedDateTimeInput<T>,
     fixed_decimal_format: &FixedDecimalFormatter,
     w: &mut W,
@@ -219,6 +225,8 @@ pub(super) fn write_field<T, W>(
 where
     T: DateTimeInput,
     W: fmt::Write + ?Sized,
+    DS: DateSymbols<'data>,
+    TS: TimeSymbols,
 {
     match field.symbol {
         FieldSymbol::Era => {
@@ -229,7 +237,8 @@ where
                 .era;
             let symbol = date_symbols
                 .ok_or(Error::MissingDateSymbols)?
-                .get_symbol_for_era(field.length, &era);
+                .get_symbol_for_era(field.length, &era)?
+                .unwrap_or(&era.0);
             w.write_str(symbol)?
         }
         FieldSymbol::Year(year) => match year {
@@ -302,25 +311,49 @@ where
             )?,
             length => {
                 let datetime = datetime.datetime();
-                let code = datetime
+                let formattable_month = datetime
                     .month()
-                    .ok_or(Error::MissingInputField(Some("month")))?
-                    .code;
+                    .ok_or(Error::MissingInputField(Some("month")))?;
 
-                let (symbol, is_leap) = date_symbols
+                let month_placeholder_value = date_symbols
                     .ok_or(Error::MissingDateSymbols)?
-                    .get_symbol_for_month(month, length, code)?;
+                    .get_symbol_for_month(month, length, formattable_month.code)?;
 
-                // FIXME (#3766) this should be using actual data for leap months
-                if is_leap {
-                    let leap_str = match datetime.any_calendar_kind() {
-                        Some(AnyCalendarKind::Chinese) => CHINESE_LEAP_PREFIX,
-                        Some(AnyCalendarKind::Dangi) => DANGI_LEAP_PREFIX,
-                        _ => PLACEHOLDER_LEAP_PREFIX,
-                    };
-                    w.write_str(leap_str)?;
+                match month_placeholder_value {
+                    MonthPlaceholderValue::PlainString(symbol) => {
+                        w.write_str(symbol)?;
+                    }
+                    MonthPlaceholderValue::StringNeedingLeapPrefix(symbol) => {
+                        // FIXME (#3766) this should be using actual data for leap months
+                        let leap_str = match datetime.any_calendar_kind() {
+                            Some(AnyCalendarKind::Chinese) => CHINESE_LEAP_PREFIX,
+                            Some(AnyCalendarKind::Dangi) => DANGI_LEAP_PREFIX,
+                            _ => PLACEHOLDER_LEAP_PREFIX,
+                        };
+                        w.write_str(leap_str)?;
+                        w.write_str(symbol)?;
+                    }
+                    #[cfg(feature = "experimental")]
+                    MonthPlaceholderValue::Numeric => {
+                        format_number(
+                            w,
+                            fixed_decimal_format,
+                            FixedDecimal::from(formattable_month.ordinal),
+                            field.length,
+                        )?;
+                    }
+                    #[cfg(feature = "experimental")]
+                    MonthPlaceholderValue::NumericPattern(substitution_pattern) => {
+                        w.write_str(substitution_pattern.get_prefix())?;
+                        format_number(
+                            w,
+                            fixed_decimal_format,
+                            FixedDecimal::from(formattable_month.ordinal),
+                            field.length,
+                        )?;
+                        w.write_str(substitution_pattern.get_suffix())?;
+                    }
                 }
-                w.write_str(symbol)?;
             }
         },
         FieldSymbol::Week(week) => match week {

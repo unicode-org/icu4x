@@ -10,6 +10,9 @@ use icu_provider::prelude::*;
 use zerovec::ule::UnvalidatedStr;
 use zerovec::{VarZeroVec, ZeroMap};
 
+#[cfg(feature = "experimental")]
+use core::ops::Range;
+
 /// Helpers involving the auxiliary subtags used for date symbols.
 ///
 /// <div class="stab unstable">
@@ -105,6 +108,29 @@ pub mod aux {
             WIDE_STANDALONE => Some((Standalone, Wide)),
             SHORT_STANDALONE => Some((Standalone, Short)),
             _ => None,
+        }
+    }
+
+    /// Creates an aux key from the enum values.
+    ///
+    /// <div class="stab unstable">
+    /// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
+    /// including in SemVer minor releases. While the serde representation of data structs is guaranteed
+    /// to be stable, their Rust representation might not be. Use with caution.
+    /// </div>
+    pub fn subtag_for(context: Context, length: Length) -> Subtag {
+        use {Context::*, Length::*};
+        match (context, length) {
+            (Format, Numeric) => NUMERIC,
+            (Format, Abbr) => ABBR,
+            (Format, Narrow) => NARROW,
+            (Format, Wide) => WIDE,
+            (Format, Short) => SHORT,
+            (Standalone, Numeric) => NUMERIC,
+            (Standalone, Abbr) => ABBR_STANDALONE,
+            (Standalone, Narrow) => NARROW_STANDALONE,
+            (Standalone, Wide) => WIDE_STANDALONE,
+            (Standalone, Short) => SHORT_STANDALONE,
         }
     }
 }
@@ -234,6 +260,27 @@ pub struct SimpleSubstitutionPattern<'data> {
     pub subst_index: usize,
 }
 
+impl SimpleSubstitutionPattern<'_> {
+    #[cfg(feature = "experimental")]
+    pub(crate) fn get_prefix(&self) -> &str {
+        self.debug_unwrap_range(0..self.subst_index)
+    }
+    #[cfg(feature = "experimental")]
+    pub(crate) fn get_suffix(&self) -> &str {
+        self.debug_unwrap_range(self.subst_index..self.pattern.len())
+    }
+    #[cfg(feature = "experimental")]
+    fn debug_unwrap_range(&self, range: Range<usize>) -> &str {
+        match self.pattern.get(range) {
+            Some(s) => s,
+            None => {
+                debug_assert!(false, "Invalid pattern: {self:?}");
+                ""
+            }
+        }
+    }
+}
+
 /// Symbols that can be stored as a simple linear array.
 ///
 /// - For weekdays, element 0 is Sunday
@@ -271,6 +318,31 @@ pub struct LinearSymbolsV1<'data> {
     /// The symbols, in order. Order specified on the struct docs.
     // This uses a VarZeroVec rather than a fixed-size array for weekdays to save stack space
     pub symbols: VarZeroVec<'data, str>,
+}
+
+impl<'data> LinearSymbolsV1<'data> {
+    /// Gets the 'am' symbol assuming this struct contains day period data.
+    #[cfg(feature = "experimental")]
+    pub(crate) fn am(&self) -> Option<&str> {
+        self.symbols.get(0)
+    }
+    /// Gets the 'pm' symbol assuming this struct contains day period data.
+    #[cfg(feature = "experimental")]
+    pub(crate) fn pm(&self) -> Option<&str> {
+        self.symbols.get(1)
+    }
+    /// Gets the 'noon' symbol assuming this struct contains day period data.
+    #[cfg(feature = "experimental")]
+    pub(crate) fn noon(&self) -> Option<&str> {
+        self.symbols
+            .get(2)
+            .and_then(|s| if s.is_empty() { None } else { Some(s) })
+    }
+    /// Gets the 'midnight' symbol assuming this struct contains day period data.
+    #[cfg(feature = "experimental")]
+    pub(crate) fn midnight(&self) -> Option<&str> {
+        self.symbols.get(3)
+    }
 }
 
 /// The default per-length patterns associated with dates
@@ -365,3 +437,13 @@ pub struct DateTimePatternV1<'data> {
     #[cfg_attr(feature = "serde", serde(borrow))]
     pub pattern: runtime::GenericPattern<'data>,
 }
+
+// pub(crate) struct ErasedYearSymbolsV1Marker;
+// impl DataMarker for ErasedYearSymbolsV1Marker {
+//     type Yokeable = YearSymbolsV1<'static>;
+// }
+
+// pub(crate) struct ErasedMonthSymbolsV1Marker;
+// impl DataMarker for ErasedMonthSymbolsV1Marker {
+//     type Yokeable = MonthSymbolsV1<'static>;
+// }
