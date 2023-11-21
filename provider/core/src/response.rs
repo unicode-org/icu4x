@@ -206,6 +206,7 @@ where
 
     /// Convert a DataPayload that was created via [`DataPayload::from_owned()`] back into the
     /// concrete type used to construct it.
+    #[inline]
     pub fn try_unwrap_owned(self) -> Result<M::Yokeable, DataError> {
         match self.0 {
             DataPayloadInner::Yoke(yoke) => yoke.try_into_yokeable().ok(),

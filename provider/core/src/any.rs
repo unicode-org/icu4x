@@ -189,6 +189,7 @@ where
     ///     any_payload.downcast().expect("TypeId matches");
     /// assert_eq!("Custom Hello World", payload.get().message);
     /// ```
+    #[inline]
     pub fn wrap_into_any_payload(self) -> AnyPayload {
         AnyPayload {
             inner: match self.0 {
@@ -290,6 +291,7 @@ where
 {
     /// Moves the inner DataPayload to the heap (requiring an allocation) and returns it as an
     /// erased `AnyResponse`.
+    #[inline]
     pub fn wrap_into_any_response(self) -> AnyResponse {
         AnyResponse {
             metadata: self.metadata,

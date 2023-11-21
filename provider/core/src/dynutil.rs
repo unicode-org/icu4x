@@ -223,7 +223,7 @@ macro_rules! impl_dynamic_data_provider {
         }
 
     };
-    ($provider:ty, [ $($(#[$cfg:meta])? $struct_m:ty),+, ], $dyn_m:path) => {
+    ($provider:ty, [ $($(#[$cfg:meta])? $struct_m:ty),+ $(,)? ], $dyn_m:path) => {
         impl $crate::DynamicDataProvider<$dyn_m> for $provider
         {
             fn load_data(
@@ -237,14 +237,14 @@ macro_rules! impl_dynamic_data_provider {
                 match key.hashed() {
                     $(
                         $(#[$cfg])?
-                        h if h == <$struct_m>::KEY.hashed() => {
-                            let result: $crate::DataResponse<$struct_m> =
-                                $crate::DataProvider::load(self, req)?;
-                            Ok($crate::DataResponse {
-                                metadata: result.metadata,
-                                payload: result.payload.map(|p| {
-                                    $crate::dynutil::UpcastDataPayload::<$struct_m>::upcast(p)
-                                }),
+                        h if h == <$struct_m as $crate::KeyedDataMarker>::KEY.hashed() => {
+                            $crate::DataProvider::load(self, req).map(|r| {
+                                $crate::DataResponse {
+                                    metadata: r.metadata,
+                                    payload: r.payload.map(|p| {
+                                        $crate::dynutil::UpcastDataPayload::<$struct_m>::upcast(p)
+                                    })
+                                }
                             })
                         }
                     )+,

@@ -698,24 +698,12 @@ impl BakedExporter {
                     };
                 }
 
-                // Not public because `impl_data_provider` isn't. Users can implement `DynamicDataProvider<AnyMarker>`
-                // using `impl_dynamic_data_provider!`.
+                // Not public because `impl_data_provider` isn't.
                 #[allow(unused_macros)]
                 macro_rules! impl_any_provider {
                     ($provider:ty) => {
                         #maybe_msrv
-                        impl icu_provider::AnyProvider for $provider {
-                            fn load_any(&self, key: icu_provider::DataKey, req: icu_provider::DataRequest) -> Result<icu_provider::AnyResponse, icu_provider::DataError> {
-                                match key.hashed() {
-                                    #(
-                                        #features
-                                        h if h == <#markers as icu_provider::KeyedDataMarker>::KEY.hashed() =>
-                                            icu_provider::DataProvider::<#markers>::load(self, req).map(icu_provider::DataResponse::wrap_into_any_response),
-                                    )*
-                                    _ => Err(icu_provider::DataErrorKind::MissingDataKey.with_req(key, req)),
-                                }
-                            }
-                        }
+                        icu_provider::impl_dynamic_data_provider!($provider, [#(#features #markers),*], icu_provider::AnyMarker);
                     }
                 }
 

@@ -496,6 +496,7 @@ impl<Y: for<'a> Yokeable<'a>, C: StableDeref> Yoke<Y, Option<C>> {
     ///
     /// If the cart is `None`, this returns `Some`, but if the cart is `Some`,
     /// this returns `self` as an error.
+    #[inline]
     pub fn try_into_yokeable(self) -> Result<Y, Self> {
         match self.cart {
             Some(_) => Err(self),
