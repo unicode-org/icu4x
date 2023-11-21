@@ -40,7 +40,7 @@ final class CanonicalDecomposition implements ffi.Finalizable {
   /// Performs non-recursive canonical decomposition (including for Hangul).
   ///
   /// See the [Rust documentation for `decompose`](https://docs.rs/icu/latest/icu/normalizer/properties/struct.CanonicalDecomposition.html#method.decompose) for more information.
-  Decomposed decompose(int c) {
+  Decomposed decompose(Rune c) {
     final result = _ICU4XCanonicalDecomposition_decompose(_underlying, c);
     return Decomposed._(result);
   }
@@ -48,5 +48,5 @@ final class CanonicalDecomposition implements ffi.Finalizable {
   // ignore: non_constant_identifier_names
   static final _ICU4XCanonicalDecomposition_decompose =
     _capi<ffi.NativeFunction<_DecomposedFfi Function(ffi.Pointer<ffi.Opaque>, ffi.Uint32)>>('ICU4XCanonicalDecomposition_decompose')
-      .asFunction<_DecomposedFfi Function(ffi.Pointer<ffi.Opaque>, int)>(isLeaf: true);
+      .asFunction<_DecomposedFfi Function(ffi.Pointer<ffi.Opaque>, Rune)>(isLeaf: true);
 }

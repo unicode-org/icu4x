@@ -37,14 +37,14 @@ final class CaseMapCloser implements ffi.Finalizable {
   /// Also adds special case closure mappings.
   ///
   /// See the [Rust documentation for `add_case_closure_to`](https://docs.rs/icu/latest/icu/casemap/struct.CaseMapCloser.html#method.add_case_closure_to) for more information.
-  void addCaseClosureTo(int c, CodePointSetBuilder builder) {
+  void addCaseClosureTo(Rune c, CodePointSetBuilder builder) {
     _ICU4XCaseMapCloser_add_case_closure_to(_underlying, c, builder._underlying);
   }
 
   // ignore: non_constant_identifier_names
   static final _ICU4XCaseMapCloser_add_case_closure_to =
     _capi<ffi.NativeFunction<ffi.Void Function(ffi.Pointer<ffi.Opaque>, ffi.Uint32, ffi.Pointer<ffi.Opaque>)>>('ICU4XCaseMapCloser_add_case_closure_to')
-      .asFunction<void Function(ffi.Pointer<ffi.Opaque>, int, ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
+      .asFunction<void Function(ffi.Pointer<ffi.Opaque>, Rune, ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
 
   /// Finds all characters and strings which may casemap to `s` as their full case folding string
   /// and adds them to the set.

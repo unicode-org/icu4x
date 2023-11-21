@@ -161,14 +161,14 @@ final class CaseMapper implements ffi.Finalizable {
   /// plan on using string case closure mappings too.
   ///
   /// See the [Rust documentation for `add_case_closure_to`](https://docs.rs/icu/latest/icu/casemap/struct.CaseMapper.html#method.add_case_closure_to) for more information.
-  void addCaseClosureTo(int c, CodePointSetBuilder builder) {
+  void addCaseClosureTo(Rune c, CodePointSetBuilder builder) {
     _ICU4XCaseMapper_add_case_closure_to(_underlying, c, builder._underlying);
   }
 
   // ignore: non_constant_identifier_names
   static final _ICU4XCaseMapper_add_case_closure_to =
     _capi<ffi.NativeFunction<ffi.Void Function(ffi.Pointer<ffi.Opaque>, ffi.Uint32, ffi.Pointer<ffi.Opaque>)>>('ICU4XCaseMapper_add_case_closure_to')
-      .asFunction<void Function(ffi.Pointer<ffi.Opaque>, int, ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
+      .asFunction<void Function(ffi.Pointer<ffi.Opaque>, Rune, ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
 
   /// Returns the simple lowercase mapping of the given character.
   ///
@@ -177,7 +177,7 @@ final class CaseMapper implements ffi.Finalizable {
   /// For full mappings, use `CaseMapper::lowercase`.
   ///
   /// See the [Rust documentation for `simple_lowercase`](https://docs.rs/icu/latest/icu/casemap/struct.CaseMapper.html#method.simple_lowercase) for more information.
-  int simpleLowercase(int ch) {
+  Rune simpleLowercase(Rune ch) {
     final result = _ICU4XCaseMapper_simple_lowercase(_underlying, ch);
     return result;
   }
@@ -185,7 +185,7 @@ final class CaseMapper implements ffi.Finalizable {
   // ignore: non_constant_identifier_names
   static final _ICU4XCaseMapper_simple_lowercase =
     _capi<ffi.NativeFunction<ffi.Uint32 Function(ffi.Pointer<ffi.Opaque>, ffi.Uint32)>>('ICU4XCaseMapper_simple_lowercase')
-      .asFunction<int Function(ffi.Pointer<ffi.Opaque>, int)>(isLeaf: true);
+      .asFunction<Rune Function(ffi.Pointer<ffi.Opaque>, Rune)>(isLeaf: true);
 
   /// Returns the simple uppercase mapping of the given character.
   ///
@@ -194,7 +194,7 @@ final class CaseMapper implements ffi.Finalizable {
   /// For full mappings, use `CaseMapper::uppercase`.
   ///
   /// See the [Rust documentation for `simple_uppercase`](https://docs.rs/icu/latest/icu/casemap/struct.CaseMapper.html#method.simple_uppercase) for more information.
-  int simpleUppercase(int ch) {
+  Rune simpleUppercase(Rune ch) {
     final result = _ICU4XCaseMapper_simple_uppercase(_underlying, ch);
     return result;
   }
@@ -202,7 +202,7 @@ final class CaseMapper implements ffi.Finalizable {
   // ignore: non_constant_identifier_names
   static final _ICU4XCaseMapper_simple_uppercase =
     _capi<ffi.NativeFunction<ffi.Uint32 Function(ffi.Pointer<ffi.Opaque>, ffi.Uint32)>>('ICU4XCaseMapper_simple_uppercase')
-      .asFunction<int Function(ffi.Pointer<ffi.Opaque>, int)>(isLeaf: true);
+      .asFunction<Rune Function(ffi.Pointer<ffi.Opaque>, Rune)>(isLeaf: true);
 
   /// Returns the simple titlecase mapping of the given character.
   ///
@@ -211,7 +211,7 @@ final class CaseMapper implements ffi.Finalizable {
   /// For full mappings, use `CaseMapper::titlecase_segment`.
   ///
   /// See the [Rust documentation for `simple_titlecase`](https://docs.rs/icu/latest/icu/casemap/struct.CaseMapper.html#method.simple_titlecase) for more information.
-  int simpleTitlecase(int ch) {
+  Rune simpleTitlecase(Rune ch) {
     final result = _ICU4XCaseMapper_simple_titlecase(_underlying, ch);
     return result;
   }
@@ -219,7 +219,7 @@ final class CaseMapper implements ffi.Finalizable {
   // ignore: non_constant_identifier_names
   static final _ICU4XCaseMapper_simple_titlecase =
     _capi<ffi.NativeFunction<ffi.Uint32 Function(ffi.Pointer<ffi.Opaque>, ffi.Uint32)>>('ICU4XCaseMapper_simple_titlecase')
-      .asFunction<int Function(ffi.Pointer<ffi.Opaque>, int)>(isLeaf: true);
+      .asFunction<Rune Function(ffi.Pointer<ffi.Opaque>, Rune)>(isLeaf: true);
 
   /// Returns the simple casefolding of the given character.
   ///
@@ -227,7 +227,7 @@ final class CaseMapper implements ffi.Finalizable {
   /// For full folding, use `CaseMapper::fold`.
   ///
   /// See the [Rust documentation for `simple_fold`](https://docs.rs/icu/latest/icu/casemap/struct.CaseMapper.html#method.simple_fold) for more information.
-  int simpleFold(int ch) {
+  Rune simpleFold(Rune ch) {
     final result = _ICU4XCaseMapper_simple_fold(_underlying, ch);
     return result;
   }
@@ -235,7 +235,7 @@ final class CaseMapper implements ffi.Finalizable {
   // ignore: non_constant_identifier_names
   static final _ICU4XCaseMapper_simple_fold =
     _capi<ffi.NativeFunction<ffi.Uint32 Function(ffi.Pointer<ffi.Opaque>, ffi.Uint32)>>('ICU4XCaseMapper_simple_fold')
-      .asFunction<int Function(ffi.Pointer<ffi.Opaque>, int)>(isLeaf: true);
+      .asFunction<Rune Function(ffi.Pointer<ffi.Opaque>, Rune)>(isLeaf: true);
 
   /// Returns the simple casefolding of the given character in the Turkic locale
   ///
@@ -243,7 +243,7 @@ final class CaseMapper implements ffi.Finalizable {
   /// For full folding, use `CaseMapper::fold_turkic`.
   ///
   /// See the [Rust documentation for `simple_fold_turkic`](https://docs.rs/icu/latest/icu/casemap/struct.CaseMapper.html#method.simple_fold_turkic) for more information.
-  int simpleFoldTurkic(int ch) {
+  Rune simpleFoldTurkic(Rune ch) {
     final result = _ICU4XCaseMapper_simple_fold_turkic(_underlying, ch);
     return result;
   }
@@ -251,5 +251,5 @@ final class CaseMapper implements ffi.Finalizable {
   // ignore: non_constant_identifier_names
   static final _ICU4XCaseMapper_simple_fold_turkic =
     _capi<ffi.NativeFunction<ffi.Uint32 Function(ffi.Pointer<ffi.Opaque>, ffi.Uint32)>>('ICU4XCaseMapper_simple_fold_turkic')
-      .asFunction<int Function(ffi.Pointer<ffi.Opaque>, int)>(isLeaf: true);
+      .asFunction<Rune Function(ffi.Pointer<ffi.Opaque>, Rune)>(isLeaf: true);
 }

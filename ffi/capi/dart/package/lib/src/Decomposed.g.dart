@@ -12,9 +12,9 @@ part of 'lib.g.dart';
 /// See the [Rust documentation for `Decomposed`](https://docs.rs/icu/latest/icu/normalizer/properties/enum.Decomposed.html) for more information.
 final class _DecomposedFfi extends ffi.Struct {
   @ffi.Uint32()
-  external int first;
+  external Rune first;
   @ffi.Uint32()
-  external int second;
+  external Rune second;
 }
 
 final class Decomposed {
@@ -30,13 +30,13 @@ final class Decomposed {
     return result;
   }
 
-  int get first => _underlying.first;
-  set first(int first) {
+  Rune get first => _underlying.first;
+  set first(Rune first) {
     _underlying.first = first;
   }
 
-  int get second => _underlying.second;
-  set second(int second) {
+  Rune get second => _underlying.second;
+  set second(Rune second) {
     _underlying.second = second;
   }
 

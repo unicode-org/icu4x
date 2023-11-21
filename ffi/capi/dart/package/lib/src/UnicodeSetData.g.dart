@@ -40,7 +40,7 @@ final class UnicodeSetData implements ffi.Finalizable {
   /// Checks whether the code point is in the set.
   ///
   /// See the [Rust documentation for `contains_char`](https://docs.rs/icu/latest/icu/properties/sets/struct.UnicodeSetDataBorrowed.html#method.contains_char) for more information.
-  bool containsChar(int cp) {
+  bool containsChar(Rune cp) {
     final result = _ICU4XUnicodeSetData_contains_char(_underlying, cp);
     return result;
   }
@@ -48,7 +48,7 @@ final class UnicodeSetData implements ffi.Finalizable {
   // ignore: non_constant_identifier_names
   static final _ICU4XUnicodeSetData_contains_char =
     _capi<ffi.NativeFunction<ffi.Bool Function(ffi.Pointer<ffi.Opaque>, ffi.Uint32)>>('ICU4XUnicodeSetData_contains_char')
-      .asFunction<bool Function(ffi.Pointer<ffi.Opaque>, int)>(isLeaf: true);
+      .asFunction<bool Function(ffi.Pointer<ffi.Opaque>, Rune)>(isLeaf: true);
 
   /// See the [Rust documentation for `basic_emoji`](https://docs.rs/icu/latest/icu/properties/sets/fn.basic_emoji.html) for more information.
   ///

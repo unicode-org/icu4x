@@ -38,7 +38,7 @@ final class CanonicalCombiningClassMap implements ffi.Finalizable {
   /// See the [Rust documentation for `get`](https://docs.rs/icu/latest/icu/normalizer/properties/struct.CanonicalCombiningClassMap.html#method.get) for more information.
   ///
   /// Additional information: [1](https://docs.rs/icu/latest/icu/properties/properties/struct.CanonicalCombiningClass.html)
-  int operator [](int ch) {
+  int operator [](Rune ch) {
     final result = _ICU4XCanonicalCombiningClassMap_get(_underlying, ch);
     return result;
   }
@@ -46,7 +46,7 @@ final class CanonicalCombiningClassMap implements ffi.Finalizable {
   // ignore: non_constant_identifier_names
   static final _ICU4XCanonicalCombiningClassMap_get =
     _capi<ffi.NativeFunction<ffi.Uint8 Function(ffi.Pointer<ffi.Opaque>, ffi.Uint32)>>('ICU4XCanonicalCombiningClassMap_get')
-      .asFunction<int Function(ffi.Pointer<ffi.Opaque>, int)>(isLeaf: true);
+      .asFunction<int Function(ffi.Pointer<ffi.Opaque>, Rune)>(isLeaf: true);
 
   /// See the [Rust documentation for `get32`](https://docs.rs/icu/latest/icu/normalizer/properties/struct.CanonicalCombiningClassMap.html#method.get32) for more information.
   ///

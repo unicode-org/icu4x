@@ -41,7 +41,7 @@ final class CanonicalComposition implements ffi.Finalizable {
   /// or returns NUL if these characters don’t compose. Composition exclusions are taken into account.
   ///
   /// See the [Rust documentation for `compose`](https://docs.rs/icu/latest/icu/normalizer/properties/struct.CanonicalComposition.html#method.compose) for more information.
-  int compose(int starter, int second) {
+  Rune compose(Rune starter, Rune second) {
     final result = _ICU4XCanonicalComposition_compose(_underlying, starter, second);
     return result;
   }
@@ -49,5 +49,5 @@ final class CanonicalComposition implements ffi.Finalizable {
   // ignore: non_constant_identifier_names
   static final _ICU4XCanonicalComposition_compose =
     _capi<ffi.NativeFunction<ffi.Uint32 Function(ffi.Pointer<ffi.Opaque>, ffi.Uint32, ffi.Uint32)>>('ICU4XCanonicalComposition_compose')
-      .asFunction<int Function(ffi.Pointer<ffi.Opaque>, int, int)>(isLeaf: true);
+      .asFunction<Rune Function(ffi.Pointer<ffi.Opaque>, Rune, Rune)>(isLeaf: true);
 }

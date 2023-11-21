@@ -73,26 +73,26 @@ final class CodePointSetBuilder implements ffi.Finalizable {
   /// Add a single character to the set
   ///
   /// See the [Rust documentation for `add_char`](https://docs.rs/icu/latest/icu/collections/codepointinvlist/struct.CodePointInversionListBuilder.html#method.add_char) for more information.
-  void addChar(int ch) {
+  void addChar(Rune ch) {
     _ICU4XCodePointSetBuilder_add_char(_underlying, ch);
   }
 
   // ignore: non_constant_identifier_names
   static final _ICU4XCodePointSetBuilder_add_char =
     _capi<ffi.NativeFunction<ffi.Void Function(ffi.Pointer<ffi.Opaque>, ffi.Uint32)>>('ICU4XCodePointSetBuilder_add_char')
-      .asFunction<void Function(ffi.Pointer<ffi.Opaque>, int)>(isLeaf: true);
+      .asFunction<void Function(ffi.Pointer<ffi.Opaque>, Rune)>(isLeaf: true);
 
   /// Add an inclusive range of characters to the set
   ///
   /// See the [Rust documentation for `add_range`](https://docs.rs/icu/latest/icu/collections/codepointinvlist/struct.CodePointInversionListBuilder.html#method.add_range) for more information.
-  void addInclusiveRange(int start, int end) {
+  void addInclusiveRange(Rune start, Rune end) {
     _ICU4XCodePointSetBuilder_add_inclusive_range(_underlying, start, end);
   }
 
   // ignore: non_constant_identifier_names
   static final _ICU4XCodePointSetBuilder_add_inclusive_range =
     _capi<ffi.NativeFunction<ffi.Void Function(ffi.Pointer<ffi.Opaque>, ffi.Uint32, ffi.Uint32)>>('ICU4XCodePointSetBuilder_add_inclusive_range')
-      .asFunction<void Function(ffi.Pointer<ffi.Opaque>, int, int)>(isLeaf: true);
+      .asFunction<void Function(ffi.Pointer<ffi.Opaque>, Rune, Rune)>(isLeaf: true);
 
   /// Add all elements that belong to the provided set to the set
   ///
@@ -109,26 +109,26 @@ final class CodePointSetBuilder implements ffi.Finalizable {
   /// Remove a single character to the set
   ///
   /// See the [Rust documentation for `remove_char`](https://docs.rs/icu/latest/icu/collections/codepointinvlist/struct.CodePointInversionListBuilder.html#method.remove_char) for more information.
-  void removeChar(int ch) {
+  void removeChar(Rune ch) {
     _ICU4XCodePointSetBuilder_remove_char(_underlying, ch);
   }
 
   // ignore: non_constant_identifier_names
   static final _ICU4XCodePointSetBuilder_remove_char =
     _capi<ffi.NativeFunction<ffi.Void Function(ffi.Pointer<ffi.Opaque>, ffi.Uint32)>>('ICU4XCodePointSetBuilder_remove_char')
-      .asFunction<void Function(ffi.Pointer<ffi.Opaque>, int)>(isLeaf: true);
+      .asFunction<void Function(ffi.Pointer<ffi.Opaque>, Rune)>(isLeaf: true);
 
   /// Remove an inclusive range of characters from the set
   ///
   /// See the [Rust documentation for `remove_range`](https://docs.rs/icu/latest/icu/collections/codepointinvlist/struct.CodePointInversionListBuilder.html#method.remove_range) for more information.
-  void removeInclusiveRange(int start, int end) {
+  void removeInclusiveRange(Rune start, Rune end) {
     _ICU4XCodePointSetBuilder_remove_inclusive_range(_underlying, start, end);
   }
 
   // ignore: non_constant_identifier_names
   static final _ICU4XCodePointSetBuilder_remove_inclusive_range =
     _capi<ffi.NativeFunction<ffi.Void Function(ffi.Pointer<ffi.Opaque>, ffi.Uint32, ffi.Uint32)>>('ICU4XCodePointSetBuilder_remove_inclusive_range')
-      .asFunction<void Function(ffi.Pointer<ffi.Opaque>, int, int)>(isLeaf: true);
+      .asFunction<void Function(ffi.Pointer<ffi.Opaque>, Rune, Rune)>(isLeaf: true);
 
   /// Remove all elements that belong to the provided set from the set
   ///
@@ -145,26 +145,26 @@ final class CodePointSetBuilder implements ffi.Finalizable {
   /// Removes all elements from the set except a single character
   ///
   /// See the [Rust documentation for `retain_char`](https://docs.rs/icu/latest/icu/collections/codepointinvlist/struct.CodePointInversionListBuilder.html#method.retain_char) for more information.
-  void retainChar(int ch) {
+  void retainChar(Rune ch) {
     _ICU4XCodePointSetBuilder_retain_char(_underlying, ch);
   }
 
   // ignore: non_constant_identifier_names
   static final _ICU4XCodePointSetBuilder_retain_char =
     _capi<ffi.NativeFunction<ffi.Void Function(ffi.Pointer<ffi.Opaque>, ffi.Uint32)>>('ICU4XCodePointSetBuilder_retain_char')
-      .asFunction<void Function(ffi.Pointer<ffi.Opaque>, int)>(isLeaf: true);
+      .asFunction<void Function(ffi.Pointer<ffi.Opaque>, Rune)>(isLeaf: true);
 
   /// Removes all elements from the set except an inclusive range of characters f
   ///
   /// See the [Rust documentation for `retain_range`](https://docs.rs/icu/latest/icu/collections/codepointinvlist/struct.CodePointInversionListBuilder.html#method.retain_range) for more information.
-  void retainInclusiveRange(int start, int end) {
+  void retainInclusiveRange(Rune start, Rune end) {
     _ICU4XCodePointSetBuilder_retain_inclusive_range(_underlying, start, end);
   }
 
   // ignore: non_constant_identifier_names
   static final _ICU4XCodePointSetBuilder_retain_inclusive_range =
     _capi<ffi.NativeFunction<ffi.Void Function(ffi.Pointer<ffi.Opaque>, ffi.Uint32, ffi.Uint32)>>('ICU4XCodePointSetBuilder_retain_inclusive_range')
-      .asFunction<void Function(ffi.Pointer<ffi.Opaque>, int, int)>(isLeaf: true);
+      .asFunction<void Function(ffi.Pointer<ffi.Opaque>, Rune, Rune)>(isLeaf: true);
 
   /// Removes all elements from the set except all elements in the provided set
   ///
@@ -183,28 +183,28 @@ final class CodePointSetBuilder implements ffi.Finalizable {
   /// (Characters which are in this set are removed and vice versa)
   ///
   /// See the [Rust documentation for `complement_char`](https://docs.rs/icu/latest/icu/collections/codepointinvlist/struct.CodePointInversionListBuilder.html#method.complement_char) for more information.
-  void complementChar(int ch) {
+  void complementChar(Rune ch) {
     _ICU4XCodePointSetBuilder_complement_char(_underlying, ch);
   }
 
   // ignore: non_constant_identifier_names
   static final _ICU4XCodePointSetBuilder_complement_char =
     _capi<ffi.NativeFunction<ffi.Void Function(ffi.Pointer<ffi.Opaque>, ffi.Uint32)>>('ICU4XCodePointSetBuilder_complement_char')
-      .asFunction<void Function(ffi.Pointer<ffi.Opaque>, int)>(isLeaf: true);
+      .asFunction<void Function(ffi.Pointer<ffi.Opaque>, Rune)>(isLeaf: true);
 
   /// Complement an inclusive range of characters from the set
   ///
   /// (Characters which are in this set are removed and vice versa)
   ///
   /// See the [Rust documentation for `complement_range`](https://docs.rs/icu/latest/icu/collections/codepointinvlist/struct.CodePointInversionListBuilder.html#method.complement_range) for more information.
-  void complementInclusiveRange(int start, int end) {
+  void complementInclusiveRange(Rune start, Rune end) {
     _ICU4XCodePointSetBuilder_complement_inclusive_range(_underlying, start, end);
   }
 
   // ignore: non_constant_identifier_names
   static final _ICU4XCodePointSetBuilder_complement_inclusive_range =
     _capi<ffi.NativeFunction<ffi.Void Function(ffi.Pointer<ffi.Opaque>, ffi.Uint32, ffi.Uint32)>>('ICU4XCodePointSetBuilder_complement_inclusive_range')
-      .asFunction<void Function(ffi.Pointer<ffi.Opaque>, int, int)>(isLeaf: true);
+      .asFunction<void Function(ffi.Pointer<ffi.Opaque>, Rune, Rune)>(isLeaf: true);
 
   /// Complement all elements that belong to the provided set from the set
   ///

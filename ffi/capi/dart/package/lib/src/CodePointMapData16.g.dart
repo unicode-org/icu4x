@@ -26,7 +26,7 @@ final class CodePointMapData16 implements ffi.Finalizable {
   /// Gets the value for a code point.
   ///
   /// See the [Rust documentation for `get`](https://docs.rs/icu/latest/icu/properties/maps/struct.CodePointMapDataBorrowed.html#method.get) for more information.
-  int operator [](int cp) {
+  int operator [](Rune cp) {
     final result = _ICU4XCodePointMapData16_get(_underlying, cp);
     return result;
   }
@@ -34,7 +34,7 @@ final class CodePointMapData16 implements ffi.Finalizable {
   // ignore: non_constant_identifier_names
   static final _ICU4XCodePointMapData16_get =
     _capi<ffi.NativeFunction<ffi.Uint16 Function(ffi.Pointer<ffi.Opaque>, ffi.Uint32)>>('ICU4XCodePointMapData16_get')
-      .asFunction<int Function(ffi.Pointer<ffi.Opaque>, int)>(isLeaf: true);
+      .asFunction<int Function(ffi.Pointer<ffi.Opaque>, Rune)>(isLeaf: true);
 
   /// Gets the value for a code point (specified as a 32 bit integer, in UTF-32)
   int get32(int cp) {

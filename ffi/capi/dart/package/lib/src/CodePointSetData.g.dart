@@ -24,7 +24,7 @@ final class CodePointSetData implements ffi.Finalizable {
   /// Checks whether the code point is in the set.
   ///
   /// See the [Rust documentation for `contains`](https://docs.rs/icu/latest/icu/properties/sets/struct.CodePointSetDataBorrowed.html#method.contains) for more information.
-  bool contains(int cp) {
+  bool contains(Rune cp) {
     final result = _ICU4XCodePointSetData_contains(_underlying, cp);
     return result;
   }
@@ -32,7 +32,7 @@ final class CodePointSetData implements ffi.Finalizable {
   // ignore: non_constant_identifier_names
   static final _ICU4XCodePointSetData_contains =
     _capi<ffi.NativeFunction<ffi.Bool Function(ffi.Pointer<ffi.Opaque>, ffi.Uint32)>>('ICU4XCodePointSetData_contains')
-      .asFunction<bool Function(ffi.Pointer<ffi.Opaque>, int)>(isLeaf: true);
+      .asFunction<bool Function(ffi.Pointer<ffi.Opaque>, Rune)>(isLeaf: true);
 
   /// Produces an iterator over ranges of code points contained in this set
   ///
