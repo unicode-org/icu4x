@@ -322,7 +322,19 @@ An "error type" is an enum or struct that is usually returned in the `Err` varia
 
 In ICU4X, we have a convention of making error types implement `Copy`. This is primarily because highly complex error types carry a code size burden: the `Drop` impls of such types are complex and significantly impact on binary size.
 
-To associate additional metadata with errors, such as file paths, use the `log!` macro.
+To associate additional metadata with errors, such as file paths, use a logging macro. In binaries, including the `log` dependency directly and gate logs with a `"logging"` feature. In component library code, utilize the macros exported by the `icu_provider` crate, as shown below. For more discussion, see [#2648](https://github.com/unicode-org/icu4x/issues/2648).
+
+```rust
+icu_provider::_internal::log::warn!("This is a warning");
+```
+
+The logs are forwarded to one of three places:
+
+1. If `feature = "icu_provider/logging"` is enabled: to the `log` crate.
+2. Else, if both `debug_assertions` and `feature = "std"` are enabled: to stderr.
+3. Else, they compile away completely.
+
+In most cases, when running `cargo test --all-features` inside of a component crate (but not at the repository root), case 2 is triggered and the logs are printed to stderr.
 
 ### Implement Eq / PartialEq, Ord / PartialOrd only as needed :: suggested
 
