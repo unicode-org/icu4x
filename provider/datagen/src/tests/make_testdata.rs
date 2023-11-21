@@ -19,7 +19,7 @@ include!("../../tests/locales.rs.data");
 #[cfg(feature = "use_wasm")]
 fn make_testdata() {
     // Only produce output if the variable is set. Test is hermetic otherwise.
-    let exporter: Box<dyn DataExporter> = if std::option_env!("TESTDATA_OUT").is_none() {
+    let exporter: Box<dyn DataExporter> = if std::option_env!("ICU4X_WRITE_TESTDATA").is_none() {
         Box::new(PostcardTestingExporter {
             size_hash: Default::default(),
             zero_copy_violations: Default::default(),

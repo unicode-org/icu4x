@@ -19,7 +19,7 @@ args = [
 description = "Run the testdata generation test in icu_datagen"
 category = "ICU4X Data"
 command = "cargo"
-env = { TESTDATA_OUT = "1" }
+env = { ICU4X_WRITE_TESTDATA = "1" }
 args = [
     "test",
     "-p=icu_datagen",
