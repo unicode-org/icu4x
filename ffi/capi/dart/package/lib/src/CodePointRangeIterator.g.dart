@@ -7,15 +7,14 @@ part of 'lib.g.dart';
 
 /// An iterator over code point ranges, produced by `CodePointSetData` or
 /// one of the `CodePointMapData` types
-class CodePointRangeIterator implements ffi.Finalizable {
+final class CodePointRangeIterator implements ffi.Finalizable {
   final ffi.Pointer<ffi.Opaque> _underlying;
 
   CodePointRangeIterator._(this._underlying) {
     _finalizer.attach(this, _underlying.cast());
   }
 
-  static final _finalizer =
-      ffi.NativeFinalizer(_capi('CodePointRangeIterator_destroy'));
+  static final _finalizer = ffi.NativeFinalizer(_capi('CodePointRangeIterator_destroy'));
 
   /// Advance the iterator by one and return the next range.
   ///
@@ -26,11 +25,7 @@ class CodePointRangeIterator implements ffi.Finalizable {
   }
 
   // ignore: non_constant_identifier_names
-  static final _CodePointRangeIterator_next = _capi<
-          ffi.NativeFunction<
-              _CodePointRangeIteratorResultFfi Function(
-                  ffi.Pointer<ffi.Opaque>)>>('CodePointRangeIterator_next')
-      .asFunction<
-          _CodePointRangeIteratorResultFfi Function(
-              ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
+  static final _CodePointRangeIterator_next =
+    _capi<ffi.NativeFunction<_CodePointRangeIteratorResultFfi Function(ffi.Pointer<ffi.Opaque>)>>('CodePointRangeIterator_next')
+      .asFunction<_CodePointRangeIteratorResultFfi Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
 }

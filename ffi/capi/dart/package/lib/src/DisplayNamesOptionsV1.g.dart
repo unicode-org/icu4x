@@ -6,7 +6,7 @@
 part of 'lib.g.dart';
 
 /// See the [Rust documentation for `DisplayNamesOptions`](https://docs.rs/icu/latest/icu/displaynames/options/struct.DisplayNamesOptions.html) for more information.
-class _DisplayNamesOptionsV1Ffi extends ffi.Struct {
+final class _DisplayNamesOptionsV1Ffi extends ffi.Struct {
   @ffi.Int32()
   external int style;
   @ffi.Int32()
@@ -15,7 +15,7 @@ class _DisplayNamesOptionsV1Ffi extends ffi.Struct {
   external int languageDisplay;
 }
 
-class DisplayNamesOptionsV1 {
+final class DisplayNamesOptionsV1 {
   final _DisplayNamesOptionsV1Ffi _underlying;
 
   // ignore: unused_element
@@ -33,14 +33,12 @@ class DisplayNamesOptionsV1 {
     _underlying.style = style.index;
   }
 
-  DisplayNamesFallback get fallback =>
-      DisplayNamesFallback.values[_underlying.fallback];
+  DisplayNamesFallback get fallback => DisplayNamesFallback.values[_underlying.fallback];
   set fallback(DisplayNamesFallback fallback) {
     _underlying.fallback = fallback.index;
   }
 
-  LanguageDisplay get languageDisplay =>
-      LanguageDisplay.values[_underlying.languageDisplay];
+  LanguageDisplay get languageDisplay => LanguageDisplay.values[_underlying.languageDisplay];
   set languageDisplay(LanguageDisplay languageDisplay) {
     _underlying.languageDisplay = languageDisplay.index;
   }

@@ -8,15 +8,14 @@ part of 'lib.g.dart';
 /// FFI version of `PluralOperands`.
 ///
 /// See the [Rust documentation for `PluralOperands`](https://docs.rs/icu/latest/icu/plurals/struct.PluralOperands.html) for more information.
-class PluralOperands implements ffi.Finalizable {
+final class PluralOperands implements ffi.Finalizable {
   final ffi.Pointer<ffi.Opaque> _underlying;
 
   PluralOperands._(this._underlying) {
     _finalizer.attach(this, _underlying.cast());
   }
 
-  static final _finalizer =
-      ffi.NativeFinalizer(_capi('ICU4XPluralOperands_destroy'));
+  static final _finalizer = ffi.NativeFinalizer(_capi('ICU4XPluralOperands_destroy'));
 
   /// Construct for a given string representing a number
   ///
@@ -26,20 +25,16 @@ class PluralOperands implements ffi.Finalizable {
   factory PluralOperands.fromString(String s) {
     final alloc = ffi2.Arena();
     final sSlice = _SliceFfi2Utf8._fromDart(s, alloc);
-
-    final result =
-        _ICU4XPluralOperands_create_from_string(sSlice._bytes, sSlice._length);
+    final result = _ICU4XPluralOperands_create_from_string(sSlice._bytes, sSlice._length);
     alloc.releaseAll();
     if (!result.isOk) {
       throw Error.values.firstWhere((v) => v._underlying == result.union.err);
     }
     return PluralOperands._(result.union.ok);
   }
+
   // ignore: non_constant_identifier_names
-  static final _ICU4XPluralOperands_create_from_string = _capi<
-          ffi.NativeFunction<
-              _ResultOpaqueInt32 Function(ffi.Pointer<ffi2.Utf8>,
-                  ffi.Size)>>('ICU4XPluralOperands_create_from_string')
-      .asFunction<_ResultOpaqueInt32 Function(ffi.Pointer<ffi2.Utf8>, int)>(
-          isLeaf: true);
+  static final _ICU4XPluralOperands_create_from_string =
+    _capi<ffi.NativeFunction<_ResultOpaqueInt32 Function(ffi.Pointer<ffi2.Utf8>, ffi.Size)>>('ICU4XPluralOperands_create_from_string')
+      .asFunction<_ResultOpaqueInt32 Function(ffi.Pointer<ffi2.Utf8>, int)>(isLeaf: true);
 }

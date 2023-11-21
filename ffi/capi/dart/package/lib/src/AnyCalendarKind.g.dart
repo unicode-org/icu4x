@@ -78,13 +78,11 @@ enum AnyCalendarKind {
     }
     return AnyCalendarKind.values[result.union.ok];
   }
+
   // ignore: non_constant_identifier_names
-  static final _ICU4XAnyCalendarKind_get_for_locale = _capi<
-              ffi.NativeFunction<
-                  _ResultInt32Void Function(ffi.Pointer<ffi.Opaque>)>>(
-          'ICU4XAnyCalendarKind_get_for_locale')
-      .asFunction<_ResultInt32Void Function(ffi.Pointer<ffi.Opaque>)>(
-          isLeaf: true);
+  static final _ICU4XAnyCalendarKind_get_for_locale =
+    _capi<ffi.NativeFunction<_ResultInt32Void Function(ffi.Pointer<ffi.Opaque>)>>('ICU4XAnyCalendarKind_get_for_locale')
+      .asFunction<_ResultInt32Void Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
 
   /// Obtain the calendar type given a BCP-47 -u-ca- extension string.
   ///
@@ -96,22 +94,18 @@ enum AnyCalendarKind {
   factory AnyCalendarKind.forBcp47(String s) {
     final alloc = ffi2.Arena();
     final sSlice = _SliceFfi2Utf8._fromDart(s, alloc);
-
-    final result =
-        _ICU4XAnyCalendarKind_get_for_bcp47(sSlice._bytes, sSlice._length);
+    final result = _ICU4XAnyCalendarKind_get_for_bcp47(sSlice._bytes, sSlice._length);
     alloc.releaseAll();
     if (!result.isOk) {
       throw VoidError();
     }
     return AnyCalendarKind.values[result.union.ok];
   }
+
   // ignore: non_constant_identifier_names
-  static final _ICU4XAnyCalendarKind_get_for_bcp47 = _capi<
-          ffi.NativeFunction<
-              _ResultInt32Void Function(ffi.Pointer<ffi2.Utf8>,
-                  ffi.Size)>>('ICU4XAnyCalendarKind_get_for_bcp47')
-      .asFunction<_ResultInt32Void Function(ffi.Pointer<ffi2.Utf8>, int)>(
-          isLeaf: true);
+  static final _ICU4XAnyCalendarKind_get_for_bcp47 =
+    _capi<ffi.NativeFunction<_ResultInt32Void Function(ffi.Pointer<ffi2.Utf8>, ffi.Size)>>('ICU4XAnyCalendarKind_get_for_bcp47')
+      .asFunction<_ResultInt32Void Function(ffi.Pointer<ffi2.Utf8>, int)>(isLeaf: true);
 
   /// Obtain the string suitable for use in the -u-ca- extension in a BCP47 locale.
   ///
@@ -128,10 +122,7 @@ enum AnyCalendarKind {
   }
 
   // ignore: non_constant_identifier_names
-  static final _ICU4XAnyCalendarKind_bcp47 = _capi<
-          ffi.NativeFunction<
-              _ResultVoidInt32 Function(ffi.Int32,
-                  ffi.Pointer<ffi.Opaque>)>>('ICU4XAnyCalendarKind_bcp47')
-      .asFunction<_ResultVoidInt32 Function(int, ffi.Pointer<ffi.Opaque>)>(
-          isLeaf: true);
+  static final _ICU4XAnyCalendarKind_bcp47 =
+    _capi<ffi.NativeFunction<_ResultVoidInt32 Function(ffi.Int32, ffi.Pointer<ffi.Opaque>)>>('ICU4XAnyCalendarKind_bcp47')
+      .asFunction<_ResultVoidInt32 Function(int, ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
 }

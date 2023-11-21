@@ -6,41 +6,32 @@
 part of 'lib.g.dart';
 
 /// See the [Rust documentation for `LocaleDisplayNamesFormatter`](https://docs.rs/icu/latest/icu/displaynames/struct.LocaleDisplayNamesFormatter.html) for more information.
-class LocaleDisplayNamesFormatter implements ffi.Finalizable {
+final class LocaleDisplayNamesFormatter implements ffi.Finalizable {
   final ffi.Pointer<ffi.Opaque> _underlying;
 
   LocaleDisplayNamesFormatter._(this._underlying) {
     _finalizer.attach(this, _underlying.cast());
   }
 
-  static final _finalizer =
-      ffi.NativeFinalizer(_capi('ICU4XLocaleDisplayNamesFormatter_destroy'));
+  static final _finalizer = ffi.NativeFinalizer(_capi('ICU4XLocaleDisplayNamesFormatter_destroy'));
 
   /// Creates a new `LocaleDisplayNamesFormatter` from locale data and an options bag.
   ///
   /// See the [Rust documentation for `try_new`](https://docs.rs/icu/latest/icu/displaynames/struct.LocaleDisplayNamesFormatter.html#method.try_new) for more information.
   ///
   /// Throws [Error] on failure.
-  factory LocaleDisplayNamesFormatter(
-      DataProvider provider, Locale locale, DisplayNamesOptionsV1 options) {
-    final result = _ICU4XLocaleDisplayNamesFormatter_create(
-        provider._underlying, locale._underlying, options._underlying);
+  factory LocaleDisplayNamesFormatter(DataProvider provider, Locale locale, DisplayNamesOptionsV1 options) {
+    final result = _ICU4XLocaleDisplayNamesFormatter_create(provider._underlying, locale._underlying, options._underlying);
     if (!result.isOk) {
       throw Error.values.firstWhere((v) => v._underlying == result.union.err);
     }
     return LocaleDisplayNamesFormatter._(result.union.ok);
   }
+
   // ignore: non_constant_identifier_names
-  static final _ICU4XLocaleDisplayNamesFormatter_create = _capi<
-              ffi.NativeFunction<
-                  _ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>,
-                      ffi.Pointer<ffi.Opaque>, _DisplayNamesOptionsV1Ffi)>>(
-          'ICU4XLocaleDisplayNamesFormatter_create')
-      .asFunction<
-          _ResultOpaqueInt32 Function(
-              ffi.Pointer<ffi.Opaque>,
-              ffi.Pointer<ffi.Opaque>,
-              _DisplayNamesOptionsV1Ffi)>(isLeaf: true);
+  static final _ICU4XLocaleDisplayNamesFormatter_create =
+    _capi<ffi.NativeFunction<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>, _DisplayNamesOptionsV1Ffi)>>('ICU4XLocaleDisplayNamesFormatter_create')
+      .asFunction<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>, _DisplayNamesOptionsV1Ffi)>(isLeaf: true);
 
   /// Returns the locale-specific display name of a locale.
   ///
@@ -49,8 +40,7 @@ class LocaleDisplayNamesFormatter implements ffi.Finalizable {
   /// Throws [Error] on failure.
   String of(Locale locale) {
     final writeable = _Writeable();
-    final result = _ICU4XLocaleDisplayNamesFormatter_of(
-        _underlying, locale._underlying, writeable._underlying);
+    final result = _ICU4XLocaleDisplayNamesFormatter_of(_underlying, locale._underlying, writeable._underlying);
     if (!result.isOk) {
       throw Error.values.firstWhere((v) => v._underlying == result.union.err);
     }
@@ -58,12 +48,7 @@ class LocaleDisplayNamesFormatter implements ffi.Finalizable {
   }
 
   // ignore: non_constant_identifier_names
-  static final _ICU4XLocaleDisplayNamesFormatter_of = _capi<
-              ffi.NativeFunction<
-                  _ResultVoidInt32 Function(ffi.Pointer<ffi.Opaque>,
-                      ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>>(
-          'ICU4XLocaleDisplayNamesFormatter_of')
-      .asFunction<
-          _ResultVoidInt32 Function(ffi.Pointer<ffi.Opaque>,
-              ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
+  static final _ICU4XLocaleDisplayNamesFormatter_of =
+    _capi<ffi.NativeFunction<_ResultVoidInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>>('ICU4XLocaleDisplayNamesFormatter_of')
+      .asFunction<_ResultVoidInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
 }

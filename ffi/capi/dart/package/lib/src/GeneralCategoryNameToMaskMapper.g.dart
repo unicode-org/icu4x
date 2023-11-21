@@ -10,15 +10,14 @@ part of 'lib.g.dart';
 /// See the [Rust documentation for `get_name_to_enum_mapper`](https://docs.rs/icu/latest/icu/properties/struct.GeneralCategoryGroup.html#method.get_name_to_enum_mapper) for more information.
 ///
 /// See the [Rust documentation for `PropertyValueNameToEnumMapper`](https://docs.rs/icu/latest/icu/properties/names/struct.PropertyValueNameToEnumMapper.html) for more information.
-class GeneralCategoryNameToMaskMapper implements ffi.Finalizable {
+final class GeneralCategoryNameToMaskMapper implements ffi.Finalizable {
   final ffi.Pointer<ffi.Opaque> _underlying;
 
   GeneralCategoryNameToMaskMapper._(this._underlying) {
     _finalizer.attach(this, _underlying.cast());
   }
 
-  static final _finalizer = ffi.NativeFinalizer(
-      _capi('ICU4XGeneralCategoryNameToMaskMapper_destroy'));
+  static final _finalizer = ffi.NativeFinalizer(_capi('ICU4XGeneralCategoryNameToMaskMapper_destroy'));
 
   /// Get the mask value matching the given name, using strict matching
   ///
@@ -26,23 +25,15 @@ class GeneralCategoryNameToMaskMapper implements ffi.Finalizable {
   int getStrict(String name) {
     final alloc = ffi2.Arena();
     final nameSlice = _SliceFfi2Utf8._fromDart(name, alloc);
-
-    final result = _ICU4XGeneralCategoryNameToMaskMapper_get_strict(
-        _underlying, nameSlice._bytes, nameSlice._length);
+    final result = _ICU4XGeneralCategoryNameToMaskMapper_get_strict(_underlying, nameSlice._bytes, nameSlice._length);
     alloc.releaseAll();
     return result;
   }
 
   // ignore: non_constant_identifier_names
-  static final _ICU4XGeneralCategoryNameToMaskMapper_get_strict = _capi<
-          ffi.NativeFunction<
-              ffi.Uint32 Function(
-                  ffi.Pointer<ffi.Opaque>,
-                  ffi.Pointer<ffi2.Utf8>,
-                  ffi.Size)>>('ICU4XGeneralCategoryNameToMaskMapper_get_strict')
-      .asFunction<
-          int Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi2.Utf8>,
-              int)>(isLeaf: true);
+  static final _ICU4XGeneralCategoryNameToMaskMapper_get_strict =
+    _capi<ffi.NativeFunction<ffi.Uint32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi2.Utf8>, ffi.Size)>>('ICU4XGeneralCategoryNameToMaskMapper_get_strict')
+      .asFunction<int Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi2.Utf8>, int)>(isLeaf: true);
 
   /// Get the mask value matching the given name, using loose matching
   ///
@@ -50,40 +41,29 @@ class GeneralCategoryNameToMaskMapper implements ffi.Finalizable {
   int getLoose(String name) {
     final alloc = ffi2.Arena();
     final nameSlice = _SliceFfi2Utf8._fromDart(name, alloc);
-
-    final result = _ICU4XGeneralCategoryNameToMaskMapper_get_loose(
-        _underlying, nameSlice._bytes, nameSlice._length);
+    final result = _ICU4XGeneralCategoryNameToMaskMapper_get_loose(_underlying, nameSlice._bytes, nameSlice._length);
     alloc.releaseAll();
     return result;
   }
 
   // ignore: non_constant_identifier_names
-  static final _ICU4XGeneralCategoryNameToMaskMapper_get_loose = _capi<
-          ffi.NativeFunction<
-              ffi.Uint32 Function(
-                  ffi.Pointer<ffi.Opaque>,
-                  ffi.Pointer<ffi2.Utf8>,
-                  ffi.Size)>>('ICU4XGeneralCategoryNameToMaskMapper_get_loose')
-      .asFunction<
-          int Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi2.Utf8>,
-              int)>(isLeaf: true);
+  static final _ICU4XGeneralCategoryNameToMaskMapper_get_loose =
+    _capi<ffi.NativeFunction<ffi.Uint32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi2.Utf8>, ffi.Size)>>('ICU4XGeneralCategoryNameToMaskMapper_get_loose')
+      .asFunction<int Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi2.Utf8>, int)>(isLeaf: true);
 
   /// See the [Rust documentation for `get_name_to_enum_mapper`](https://docs.rs/icu/latest/icu/properties/struct.GeneralCategoryGroup.html#method.get_name_to_enum_mapper) for more information.
   ///
   /// Throws [Error] on failure.
   factory GeneralCategoryNameToMaskMapper.load(DataProvider provider) {
-    final result =
-        _ICU4XGeneralCategoryNameToMaskMapper_load(provider._underlying);
+    final result = _ICU4XGeneralCategoryNameToMaskMapper_load(provider._underlying);
     if (!result.isOk) {
       throw Error.values.firstWhere((v) => v._underlying == result.union.err);
     }
     return GeneralCategoryNameToMaskMapper._(result.union.ok);
   }
+
   // ignore: non_constant_identifier_names
-  static final _ICU4XGeneralCategoryNameToMaskMapper_load = _capi<
-              ffi.NativeFunction<
-                  _ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>>(
-          'ICU4XGeneralCategoryNameToMaskMapper_load')
-      .asFunction<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(
-          isLeaf: true);
+  static final _ICU4XGeneralCategoryNameToMaskMapper_load =
+    _capi<ffi.NativeFunction<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>>('ICU4XGeneralCategoryNameToMaskMapper_load')
+      .asFunction<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
 }

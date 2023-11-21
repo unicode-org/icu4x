@@ -8,7 +8,7 @@ part of 'lib.g.dart';
 /// An ICU4X Time object representing a time in terms of hour, minute, second, nanosecond
 ///
 /// See the [Rust documentation for `Time`](https://docs.rs/icu/latest/icu/calendar/types/struct.Time.html) for more information.
-class Time implements ffi.Finalizable {
+final class Time implements ffi.Finalizable {
   final ffi.Pointer<ffi.Opaque> _underlying;
 
   Time._(this._underlying) {
@@ -29,13 +29,11 @@ class Time implements ffi.Finalizable {
     }
     return Time._(result.union.ok);
   }
+
   // ignore: non_constant_identifier_names
-  static final _ICU4XTime_create = _capi<
-          ffi.NativeFunction<
-              _ResultOpaqueInt32 Function(ffi.Uint8, ffi.Uint8, ffi.Uint8,
-                  ffi.Uint32)>>('ICU4XTime_create')
-      .asFunction<_ResultOpaqueInt32 Function(int, int, int, int)>(
-          isLeaf: true);
+  static final _ICU4XTime_create =
+    _capi<ffi.NativeFunction<_ResultOpaqueInt32 Function(ffi.Uint8, ffi.Uint8, ffi.Uint8, ffi.Uint32)>>('ICU4XTime_create')
+      .asFunction<_ResultOpaqueInt32 Function(int, int, int, int)>(isLeaf: true);
 
   /// Creates a new [`Time`] representing midnight (00:00.000).
   ///
@@ -49,11 +47,11 @@ class Time implements ffi.Finalizable {
     }
     return Time._(result.union.ok);
   }
+
   // ignore: non_constant_identifier_names
   static final _ICU4XTime_create_midnight =
-      _capi<ffi.NativeFunction<_ResultOpaqueInt32 Function()>>(
-              'ICU4XTime_create_midnight')
-          .asFunction<_ResultOpaqueInt32 Function()>(isLeaf: true);
+    _capi<ffi.NativeFunction<_ResultOpaqueInt32 Function()>>('ICU4XTime_create_midnight')
+      .asFunction<_ResultOpaqueInt32 Function()>(isLeaf: true);
 
   /// Returns the hour in this time
   ///
@@ -65,9 +63,8 @@ class Time implements ffi.Finalizable {
 
   // ignore: non_constant_identifier_names
   static final _ICU4XTime_hour =
-      _capi<ffi.NativeFunction<ffi.Uint8 Function(ffi.Pointer<ffi.Opaque>)>>(
-              'ICU4XTime_hour')
-          .asFunction<int Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
+    _capi<ffi.NativeFunction<ffi.Uint8 Function(ffi.Pointer<ffi.Opaque>)>>('ICU4XTime_hour')
+      .asFunction<int Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
 
   /// Returns the minute in this time
   ///
@@ -79,9 +76,8 @@ class Time implements ffi.Finalizable {
 
   // ignore: non_constant_identifier_names
   static final _ICU4XTime_minute =
-      _capi<ffi.NativeFunction<ffi.Uint8 Function(ffi.Pointer<ffi.Opaque>)>>(
-              'ICU4XTime_minute')
-          .asFunction<int Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
+    _capi<ffi.NativeFunction<ffi.Uint8 Function(ffi.Pointer<ffi.Opaque>)>>('ICU4XTime_minute')
+      .asFunction<int Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
 
   /// Returns the second in this time
   ///
@@ -93,9 +89,8 @@ class Time implements ffi.Finalizable {
 
   // ignore: non_constant_identifier_names
   static final _ICU4XTime_second =
-      _capi<ffi.NativeFunction<ffi.Uint8 Function(ffi.Pointer<ffi.Opaque>)>>(
-              'ICU4XTime_second')
-          .asFunction<int Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
+    _capi<ffi.NativeFunction<ffi.Uint8 Function(ffi.Pointer<ffi.Opaque>)>>('ICU4XTime_second')
+      .asFunction<int Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
 
   /// Returns the nanosecond in this time
   ///
@@ -107,7 +102,6 @@ class Time implements ffi.Finalizable {
 
   // ignore: non_constant_identifier_names
   static final _ICU4XTime_nanosecond =
-      _capi<ffi.NativeFunction<ffi.Uint32 Function(ffi.Pointer<ffi.Opaque>)>>(
-              'ICU4XTime_nanosecond')
-          .asFunction<int Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
+    _capi<ffi.NativeFunction<ffi.Uint32 Function(ffi.Pointer<ffi.Opaque>)>>('ICU4XTime_nanosecond')
+      .asFunction<int Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
 }

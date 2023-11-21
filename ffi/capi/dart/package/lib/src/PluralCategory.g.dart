@@ -10,10 +10,15 @@ part of 'lib.g.dart';
 /// See the [Rust documentation for `PluralCategory`](https://docs.rs/icu/latest/icu/plurals/enum.PluralCategory.html) for more information.
 enum PluralCategory {
   zero,
+
   one,
+
   two,
+
   few,
+
   many,
+
   other;
 
   /// Construct from a string in the format
@@ -27,20 +32,16 @@ enum PluralCategory {
   factory PluralCategory.forCldrString(String s) {
     final alloc = ffi2.Arena();
     final sSlice = _SliceFfi2Utf8._fromDart(s, alloc);
-
-    final result =
-        _ICU4XPluralCategory_get_for_cldr_string(sSlice._bytes, sSlice._length);
+    final result = _ICU4XPluralCategory_get_for_cldr_string(sSlice._bytes, sSlice._length);
     alloc.releaseAll();
     if (!result.isOk) {
       throw VoidError();
     }
     return PluralCategory.values[result.union.ok];
   }
+
   // ignore: non_constant_identifier_names
-  static final _ICU4XPluralCategory_get_for_cldr_string = _capi<
-          ffi.NativeFunction<
-              _ResultInt32Void Function(ffi.Pointer<ffi2.Utf8>,
-                  ffi.Size)>>('ICU4XPluralCategory_get_for_cldr_string')
-      .asFunction<_ResultInt32Void Function(ffi.Pointer<ffi2.Utf8>, int)>(
-          isLeaf: true);
+  static final _ICU4XPluralCategory_get_for_cldr_string =
+    _capi<ffi.NativeFunction<_ResultInt32Void Function(ffi.Pointer<ffi2.Utf8>, ffi.Size)>>('ICU4XPluralCategory_get_for_cldr_string')
+      .asFunction<_ResultInt32Void Function(ffi.Pointer<ffi2.Utf8>, int)>(isLeaf: true);
 }

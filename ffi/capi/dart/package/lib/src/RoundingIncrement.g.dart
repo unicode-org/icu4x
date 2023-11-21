@@ -10,7 +10,10 @@ part of 'lib.g.dart';
 /// See the [Rust documentation for `RoundingIncrement`](https://docs.rs/fixed_decimal/latest/fixed_decimal/enum.RoundingIncrement.html) for more information.
 enum RoundingIncrement {
   multiplesOf1,
+
   multiplesOf2,
+
   multiplesOf5,
+
   multiplesOf25;
 }

@@ -8,15 +8,14 @@ part of 'lib.g.dart';
 /// A locale expander.
 ///
 /// See the [Rust documentation for `LocaleExpander`](https://docs.rs/icu/latest/icu/locid_transform/struct.LocaleExpander.html) for more information.
-class LocaleExpander implements ffi.Finalizable {
+final class LocaleExpander implements ffi.Finalizable {
   final ffi.Pointer<ffi.Opaque> _underlying;
 
   LocaleExpander._(this._underlying) {
     _finalizer.attach(this, _underlying.cast());
   }
 
-  static final _finalizer =
-      ffi.NativeFinalizer(_capi('ICU4XLocaleExpander_destroy'));
+  static final _finalizer = ffi.NativeFinalizer(_capi('ICU4XLocaleExpander_destroy'));
 
   /// Create a new [`LocaleExpander`].
   ///
@@ -30,13 +29,11 @@ class LocaleExpander implements ffi.Finalizable {
     }
     return LocaleExpander._(result.union.ok);
   }
+
   // ignore: non_constant_identifier_names
-  static final _ICU4XLocaleExpander_create = _capi<
-          ffi.NativeFunction<
-              _ResultOpaqueInt32 Function(
-                  ffi.Pointer<ffi.Opaque>)>>('ICU4XLocaleExpander_create')
-      .asFunction<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(
-          isLeaf: true);
+  static final _ICU4XLocaleExpander_create =
+    _capi<ffi.NativeFunction<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>>('ICU4XLocaleExpander_create')
+      .asFunction<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
 
   /// Create a new [`LocaleExpander`] with extended data.
   ///
@@ -50,47 +47,35 @@ class LocaleExpander implements ffi.Finalizable {
     }
     return LocaleExpander._(result.union.ok);
   }
+
   // ignore: non_constant_identifier_names
-  static final _ICU4XLocaleExpander_create_extended = _capi<
-              ffi.NativeFunction<
-                  _ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>>(
-          'ICU4XLocaleExpander_create_extended')
-      .asFunction<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(
-          isLeaf: true);
+  static final _ICU4XLocaleExpander_create_extended =
+    _capi<ffi.NativeFunction<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>>('ICU4XLocaleExpander_create_extended')
+      .asFunction<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
 
   /// FFI version of `LocaleExpander::maximize()`.
   ///
   /// See the [Rust documentation for `maximize`](https://docs.rs/icu/latest/icu/locid_transform/struct.LocaleExpander.html#method.maximize) for more information.
   TransformResult maximize(Locale locale) {
-    final result =
-        _ICU4XLocaleExpander_maximize(_underlying, locale._underlying);
+    final result = _ICU4XLocaleExpander_maximize(_underlying, locale._underlying);
     return TransformResult.values[result];
   }
 
   // ignore: non_constant_identifier_names
-  static final _ICU4XLocaleExpander_maximize = _capi<
-          ffi.NativeFunction<
-              ffi.Int32 Function(ffi.Pointer<ffi.Opaque>,
-                  ffi.Pointer<ffi.Opaque>)>>('ICU4XLocaleExpander_maximize')
-      .asFunction<
-          int Function(
-              ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
+  static final _ICU4XLocaleExpander_maximize =
+    _capi<ffi.NativeFunction<ffi.Int32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>>('ICU4XLocaleExpander_maximize')
+      .asFunction<int Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
 
   /// FFI version of `LocaleExpander::minimize()`.
   ///
   /// See the [Rust documentation for `minimize`](https://docs.rs/icu/latest/icu/locid_transform/struct.LocaleExpander.html#method.minimize) for more information.
   TransformResult minimize(Locale locale) {
-    final result =
-        _ICU4XLocaleExpander_minimize(_underlying, locale._underlying);
+    final result = _ICU4XLocaleExpander_minimize(_underlying, locale._underlying);
     return TransformResult.values[result];
   }
 
   // ignore: non_constant_identifier_names
-  static final _ICU4XLocaleExpander_minimize = _capi<
-          ffi.NativeFunction<
-              ffi.Int32 Function(ffi.Pointer<ffi.Opaque>,
-                  ffi.Pointer<ffi.Opaque>)>>('ICU4XLocaleExpander_minimize')
-      .asFunction<
-          int Function(
-              ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
+  static final _ICU4XLocaleExpander_minimize =
+    _capi<ffi.NativeFunction<ffi.Int32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>>('ICU4XLocaleExpander_minimize')
+      .asFunction<int Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
 }
