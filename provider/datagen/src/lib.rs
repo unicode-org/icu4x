@@ -156,7 +156,7 @@ pub use icu_provider_blob::export as blob_exporter;
 #[cfg(feature = "fs_exporter")]
 pub use icu_provider_fs::export as fs_exporter;
 
-#[cfg(none)]
+#[cfg(tbd)]
 mod precomputed {
     use icu_provider::datagen::*;
     use icu_provider::prelude::*;
