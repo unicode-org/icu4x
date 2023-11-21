@@ -10,7 +10,7 @@ use tinystr::tinystr;
 // Note: The Ord/PartialOrd impls can be derived because the fields are in the correct order.
 #[derive(Debug, Hash, Eq, PartialEq, Ord, PartialOrd)]
 #[allow(clippy::exhaustive_structs)] // this type is stable
-pub struct ArithmeticDate<C> {
+pub(crate) struct ArithmeticDate<C> {
     pub year: i32,
     /// 1-based month of year
     pub month: u8,
@@ -30,7 +30,7 @@ impl<C> Clone for ArithmeticDate<C> {
 #[allow(dead_code)] // TODO: Remove dead code tag after use
 pub(crate) const MAX_ITERS_FOR_DAYS_OF_MONTH: u8 = 33;
 
-pub trait CalendarArithmetic: Calendar {
+pub(crate) trait CalendarArithmetic: Calendar {
     fn month_days(year: i32, month: u8) -> u8;
     fn months_for_every_year(year: i32) -> u8;
     fn is_leap_year(year: i32) -> bool;
