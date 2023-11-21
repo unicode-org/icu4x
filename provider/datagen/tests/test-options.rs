@@ -270,9 +270,9 @@ fn test_fallback_options() {
         "ar-EG",           // explicit locale
         "ar-EG-u-nu-latn", // descendant of ar-EG
         // "ar-u-nu-latn", // ??? should this be included?
-        "arc",    // Aramaic, inheriting from und
-        "en",     // ancestor of en-GB
-        "en-GB",  // explicit locale not in supported locales
+        "arc",   // Aramaic, inheriting from und
+        "en",    // ancestor of en-GB
+        "en-GB", // explicit locale not in supported locales
         // "en-ZA", // not reachable
         // "sr", // not reachable from sr-ME
         "sr-Latn", // ancestor of sr-ME
