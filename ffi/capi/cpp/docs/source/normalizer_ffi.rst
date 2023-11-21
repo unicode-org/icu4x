@@ -47,6 +47,13 @@
         See the `Rust documentation for is_normalized_utf8 <https://docs.rs/icu/latest/icu/normalizer/struct.ComposingNormalizer.html#method.is_normalized_utf8>`__ for more information.
 
 
+    .. cpp:function:: size_t is_normalized_up_to(const std::string_view s) const
+
+        Return the index a slice of potentially-invalid UTF-8 is normalized up to
+
+        See the `Rust documentation for is_normalized_utf8_up_to <https://docs.rs/icu/latest/icu/normalizer/struct.ComposingNormalizer.html#method.is_normalized_utf8_up_to>`__ for more information.
+
+
 .. cpp:class:: ICU4XDecomposingNormalizer
 
     See the `Rust documentation for DecomposingNormalizer <https://docs.rs/icu/latest/icu/normalizer/struct.DecomposingNormalizer.html>`__ for more information.
@@ -91,4 +98,11 @@
         Errors are mapped to REPLACEMENT CHARACTER
 
         See the `Rust documentation for is_normalized_utf8 <https://docs.rs/icu/latest/icu/normalizer/struct.DecomposingNormalizer.html#method.is_normalized_utf8>`__ for more information.
+
+
+    .. cpp:function:: size_t is_normalized_up_to(const std::string_view s) const
+
+        Return the index a slice of potentially-invalid UTF-8 is normalized up to
+
+        See the `Rust documentation for is_normalized_utf8_up_to <https://docs.rs/icu/latest/icu/normalizer/struct.DecomposingNormalizer.html#method.is_normalized_utf8_up_to>`__ for more information.
 
