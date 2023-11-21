@@ -143,6 +143,7 @@ part 'ZonedDateTimeFormatter.g.dart';
 ///
 /// A [String] can be constructed from a [Rune] using [String.fromCharCode]. 
 typedef Rune = int;
+/// A list of [Rune]s.
 typedef RuneList = Uint32List;
 
 late final ffi.Pointer<T> Function<T extends ffi.NativeType>(String) _capi;
