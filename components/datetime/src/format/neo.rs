@@ -831,7 +831,7 @@ impl<'data> DateSymbols<'data> for RawDateTimePatternInterpolatorBorrowed<'data>
         let month_symbols = self
             .month_symbols
             .get_with_length(field_symbol, field_length)
-            .ok_or_else(|| Error::MissingNames(field))?;
+            .ok_or(Error::MissingNames(field))?;
         let Some((month_number, is_leap)) = code.parsed() else {
             return Err(Error::MissingMonthSymbol(code));
         };
@@ -868,8 +868,8 @@ impl<'data> DateSymbols<'data> for RawDateTimePatternInterpolatorBorrowed<'data>
         // Note: Always return `false` for the second argument since neo MonthSymbols
         // knows how to handle leap months and we don't need the fallback logic
         symbol
-            .map(|s| MonthPlaceholderValue::PlainString(s))
-            .ok_or_else(|| Error::MissingMonthSymbol(code))
+            .map(MonthPlaceholderValue::PlainString)
+            .ok_or(Error::MissingMonthSymbol(code))
     }
 
     fn get_symbol_for_weekday(
@@ -889,12 +889,12 @@ impl<'data> DateSymbols<'data> for RawDateTimePatternInterpolatorBorrowed<'data>
         let weekday_symbols = self
             .weekday_symbols
             .get_with_length(field_symbol, field_length)
-            .ok_or_else(|| Error::MissingNames(field))?;
+            .ok_or(Error::MissingNames(field))?;
         let day_usize = day as usize;
         weekday_symbols
             .symbols
             .get(day_usize)
-            .ok_or_else(|| Error::MissingWeekdaySymbol(day_usize))
+            .ok_or(Error::MissingWeekdaySymbol(day_usize))
     }
 
     fn get_symbol_for_era<'a>(
@@ -911,7 +911,7 @@ impl<'data> DateSymbols<'data> for RawDateTimePatternInterpolatorBorrowed<'data>
         let year_symbols = self
             .year_symbols
             .get_with_length((), field_length)
-            .ok_or_else(|| Error::MissingNames(field))?;
+            .ok_or(Error::MissingNames(field))?;
         let YearSymbolsV1::Eras(era_symbols) = year_symbols else {
             return Err(Error::MissingNames(field));
         };
@@ -937,7 +937,7 @@ impl<'data> TimeSymbols for RawDateTimePatternInterpolatorBorrowed<'data> {
         let dayperiod_symbols = self
             .dayperiod_symbols
             .get_with_length((), field_length)
-            .ok_or_else(|| Error::MissingNames(field))?;
+            .ok_or(Error::MissingNames(field))?;
         let option_value: Option<&str> = match (field_symbol, u8::from(hour), is_top_of_hour) {
             (NoonMidnight, 00, true) => dayperiod_symbols
                 .midnight()
@@ -946,7 +946,7 @@ impl<'data> TimeSymbols for RawDateTimePatternInterpolatorBorrowed<'data> {
             (_, hour, _) if hour < 12 => dayperiod_symbols.am(),
             _ => dayperiod_symbols.pm(),
         };
-        option_value.ok_or_else(|| Error::MissingNames(field))
+        option_value.ok_or(Error::MissingNames(field))
     }
 }
 
