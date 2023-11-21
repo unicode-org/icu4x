@@ -6,9 +6,9 @@
 [source.crates-io]
 replace-with = "vendored-sources"
 
-[source."git+https://github.com/rust-diplomat/diplomat.git?rev=fa3747fbc9d41248d8d0c034c3e462a71e8ab6bf"]
+[source."git+https://github.com/rust-diplomat/diplomat.git?rev=7e0482c03ad2406e49bcc77795622c632d4cfed6"]
 git = "https://github.com/rust-diplomat/diplomat.git"
-rev = "fa3747fbc9d41248d8d0c034c3e462a71e8ab6bf"
+rev = "7e0482c03ad2406e49bcc77795622c632d4cfed6"
 replace-with = "vendored-sources"
 
 [source.vendored-sources]
