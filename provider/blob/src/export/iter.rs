@@ -18,9 +18,6 @@ impl DynamicDataProvider<BufferMarker> for BlobDataProvider {
 
 impl IterableDynamicDataProvider<BufferMarker> for BlobDataProvider {
     fn supported_locales_for_key(&self, key: DataKey) -> Result<Vec<DataLocale>, DataError> {
-        let result: yoke::Yoke<Vec<DataLocale>, _> = self
-            .data
-            .try_map_project_cloned(|blob, _| blob.list_locales(key))?;
-        Ok(result.get().clone())
+        self.data.get().list_locales(key)
     }
 }
