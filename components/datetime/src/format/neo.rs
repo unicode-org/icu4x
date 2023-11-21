@@ -522,7 +522,12 @@ impl<C: CldrCalendar> TypedDateTimePatternInterpolator<C> {
             length: field_length,
         };
         // UTS 35 says that "E..EEE" are all Abbreviated
-        let field_length = field_length.numeric_to_abbr();
+        // However, this doesn't apply to "e" and "c".
+        let field_length = if matches!(field_symbol, fields::Weekday::Format) {
+            field_length.numeric_to_abbr()
+        } else {
+            field_length
+        };
         match self
             .weekday_symbols
             .check_with_length(field_symbol, field_length)
@@ -885,7 +890,12 @@ impl<'data> DateSymbols<'data> for RawDateTimePatternInterpolatorBorrowed<'data>
         // UTS 35 says that "e" and "E" have the same non-numeric names
         let field_symbol = field_symbol.to_format_symbol();
         // UTS 35 says that "E..EEE" are all Abbreviated
-        let field_length = field_length.numeric_to_abbr();
+        // However, this doesn't apply to "e" and "c".
+        let field_length = if matches!(field_symbol, fields::Weekday::Format) {
+            field_length.numeric_to_abbr()
+        } else {
+            field_length
+        };
         let weekday_symbols = self
             .weekday_symbols
             .get_with_length(field_symbol, field_length)
