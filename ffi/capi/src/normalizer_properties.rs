@@ -134,23 +134,24 @@ pub mod ffi {
         )]
         pub fn decompose(&self, c: DiplomatChar) -> ICU4XDecomposed {
             match char::from_u32(c) {
-                Some(c) => {
-                    match self.0.decompose(c) {
-                        Decomposed::Default => ICU4XDecomposed {
-                            first: c as DiplomatChar,
-                            second: '\0' as DiplomatChar,
-                        },
-                        Decomposed::Singleton(s) => ICU4XDecomposed {
-                            first: s as DiplomatChar,
-                            second: '\0' as DiplomatChar,
-                        },
-                        Decomposed::Expansion(first, second) => ICU4XDecomposed { first: first as DiplomatChar, second: second as DiplomatChar },
-                    }
+                Some(c) => match self.0.decompose(c) {
+                    Decomposed::Default => ICU4XDecomposed {
+                        first: c as DiplomatChar,
+                        second: '\0' as DiplomatChar,
+                    },
+                    Decomposed::Singleton(s) => ICU4XDecomposed {
+                        first: s as DiplomatChar,
+                        second: '\0' as DiplomatChar,
+                    },
+                    Decomposed::Expansion(first, second) => ICU4XDecomposed {
+                        first: first as DiplomatChar,
+                        second: second as DiplomatChar,
+                    },
                 },
                 _ => ICU4XDecomposed {
                     first: c,
                     second: '\0' as DiplomatChar,
-                }
+                },
             }
         }
     }

@@ -179,7 +179,8 @@ pub mod ffi {
             builder: &mut crate::collections_sets::ffi::ICU4XCodePointSetBuilder,
         ) {
             #![allow(clippy::unwrap_used)] // #2520
-            self.0.add_case_closure_to(char::from_u32(c).unwrap(), &mut builder.0)
+            self.0
+                .add_case_closure_to(char::from_u32(c).unwrap(), &mut builder.0)
         }
 
         /// Returns the simple lowercase mapping of the given character.
@@ -262,7 +263,8 @@ pub mod ffi {
             builder: &mut crate::collections_sets::ffi::ICU4XCodePointSetBuilder,
         ) {
             #![allow(clippy::unwrap_used)] // #2520
-            self.0.add_case_closure_to(char::from_u32(c).unwrap(), &mut builder.0)
+            self.0
+                .add_case_closure_to(char::from_u32(c).unwrap(), &mut builder.0)
         }
 
         /// Finds all characters and strings which may casemap to `s` as their full case folding string

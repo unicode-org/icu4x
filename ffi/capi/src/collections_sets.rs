@@ -144,7 +144,8 @@ pub mod ffi {
         )]
         pub fn remove_inclusive_range(&mut self, start: DiplomatChar, end: DiplomatChar) {
             #![allow(clippy::unwrap_used)] // #2520
-            self.0.remove_range(&(char::from_u32(start).unwrap()..=char::from_u32(end).unwrap()))
+            self.0
+                .remove_range(&(char::from_u32(start).unwrap()..=char::from_u32(end).unwrap()))
         }
 
         /// Remove all elements that belong to the provided set from the set
@@ -175,7 +176,8 @@ pub mod ffi {
         )]
         pub fn retain_inclusive_range(&mut self, start: DiplomatChar, end: DiplomatChar) {
             #![allow(clippy::unwrap_used)] // #2520
-            self.0.retain_range(&(char::from_u32(start).unwrap()..=char::from_u32(end).unwrap()))
+            self.0
+                .retain_range(&(char::from_u32(start).unwrap()..=char::from_u32(end).unwrap()))
         }
 
         /// Removes all elements from the set except all elements in the provided set
@@ -210,7 +212,8 @@ pub mod ffi {
         )]
         pub fn complement_inclusive_range(&mut self, start: DiplomatChar, end: DiplomatChar) {
             #![allow(clippy::unwrap_used)] // #2520
-            self.0.complement_range(&(char::from_u32(start).unwrap()..=char::from_u32(end).unwrap()))
+            self.0
+                .complement_range(&(char::from_u32(start).unwrap()..=char::from_u32(end).unwrap()))
         }
 
         /// Complement all elements that belong to the provided set from the set
