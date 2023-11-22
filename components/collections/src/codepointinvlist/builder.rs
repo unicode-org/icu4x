@@ -221,11 +221,11 @@ impl CodePointInversionListBuilder {
     /// let check = builder.build();
     /// assert_eq!(check.iter_chars().next(), Some('B'));
     pub fn remove_char(&mut self, c: char) {
-        self.remove_u32(c as u32)
+        self.remove32(c as u32)
     }
 
     /// See [`Self::remove_char`]
-    pub fn remove_u32(&mut self, c: u32) {
+    pub fn remove32(&mut self, c: u32) {
         self.remove(c, c + 1);
     }
 
@@ -246,7 +246,7 @@ impl CodePointInversionListBuilder {
     }
 
     /// See [`Self::remove_range`]
-    pub fn remove_range_u32(&mut self, range: &impl RangeBounds<u32>) {
+    pub fn remove_range32(&mut self, range: &impl RangeBounds<u32>) {
         let (start, end) = deconstruct_range(range);
         self.remove(start, end);
     }
@@ -291,11 +291,11 @@ impl CodePointInversionListBuilder {
     /// assert_eq!(check.next(), None);
     /// ```
     pub fn retain_char(&mut self, c: char) {
-        self.retain_u32(c as u32)
+        self.retain32(c as u32)
     }
 
     /// See [`Self::retain_char`]
-    pub fn retain_u32(&mut self, c: u32) {
+    pub fn retain32(&mut self, c: u32) {
         self.remove(0, c);
         self.remove(c + 1, (char::MAX as u32) + 1);
     }
@@ -322,7 +322,7 @@ impl CodePointInversionListBuilder {
     }
 
     /// See [`Self::retain_range`]
-    pub fn retain_range_u32(&mut self, range: &impl RangeBounds<u32>) {
+    pub fn retain_range32(&mut self, range: &impl RangeBounds<u32>) {
         let (start, end) = deconstruct_range(range);
         self.remove(0, start);
         self.remove(end, (char::MAX as u32) + 1);
@@ -451,11 +451,11 @@ impl CodePointInversionListBuilder {
     /// assert!(!check.contains('A'));
     /// ```
     pub fn complement_char(&mut self, c: char) {
-        self.complement_u32(c as u32);
+        self.complement32(c as u32);
     }
 
     /// See [`Self::complement_char`]
-    pub fn complement_u32(&mut self, c: u32) {
+    pub fn complement32(&mut self, c: u32) {
         self.complement_list([c, c + 1].into_iter());
     }
 
@@ -480,7 +480,7 @@ impl CodePointInversionListBuilder {
     }
 
     /// See [`Self::complement_range`]
-    pub fn complement_range_u32(&mut self, range: &impl RangeBounds<u32>) {
+    pub fn complement_range32(&mut self, range: &impl RangeBounds<u32>) {
         let (start, end) = deconstruct_range(range);
         let to_complement = [start, end];
         self.complement_list(to_complement.iter().copied());

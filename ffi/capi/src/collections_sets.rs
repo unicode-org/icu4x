@@ -133,12 +133,12 @@ pub mod ffi {
             FnInStruct
         )]
         #[diplomat::rust_link(
-            icu::collections::codepointinvlist::CodePointInversionListBuilder::remove_u32,
+            icu::collections::codepointinvlist::CodePointInversionListBuilder::remove32,
             FnInStruct,
             hidden
         )]
         pub fn remove_char(&mut self, ch: DiplomatChar) {
-            self.0.remove_u32(ch)
+            self.0.remove32(ch)
         }
 
         /// Remove an inclusive range of characters from the set
@@ -147,12 +147,12 @@ pub mod ffi {
             FnInStruct
         )]
         #[diplomat::rust_link(
-            icu::collections::codepointinvlist::CodePointInversionListBuilder::remove_range_u32,
+            icu::collections::codepointinvlist::CodePointInversionListBuilder::remove_range32,
             FnInStruct,
             hidden
         )]
         pub fn remove_inclusive_range(&mut self, start: DiplomatChar, end: DiplomatChar) {
-            self.0.remove_range_u32(&(start..=end))
+            self.0.remove_range32(&(start..=end))
         }
 
         /// Remove all elements that belong to the provided set from the set
@@ -172,12 +172,12 @@ pub mod ffi {
             FnInStruct
         )]
         #[diplomat::rust_link(
-            icu::collections::codepointinvlist::CodePointInversionListBuilder::retain_u32,
+            icu::collections::codepointinvlist::CodePointInversionListBuilder::retain32,
             FnInStruct,
             hidden
         )]
         pub fn retain_char(&mut self, ch: DiplomatChar) {
-            self.0.retain_u32(ch)
+            self.0.retain32(ch)
         }
 
         /// Removes all elements from the set except an inclusive range of characters f
@@ -186,12 +186,12 @@ pub mod ffi {
             FnInStruct
         )]
         #[diplomat::rust_link(
-            icu::collections::codepointinvlist::CodePointInversionListBuilder::retain_range_u32,
+            icu::collections::codepointinvlist::CodePointInversionListBuilder::retain_range32,
             FnInStruct,
             hidden
         )]
         pub fn retain_inclusive_range(&mut self, start: DiplomatChar, end: DiplomatChar) {
-            self.0.retain_range_u32(&(start..=end))
+            self.0.retain_range32(&(start..=end))
         }
 
         /// Removes all elements from the set except all elements in the provided set
@@ -213,12 +213,12 @@ pub mod ffi {
             FnInStruct
         )]
         #[diplomat::rust_link(
-            icu::collections::codepointinvlist::CodePointInversionListBuilder::complement_u32,
+            icu::collections::codepointinvlist::CodePointInversionListBuilder::complement32,
             FnInStruct,
             hidden
         )]
         pub fn complement_char(&mut self, ch: DiplomatChar) {
-            self.0.complement_u32(ch)
+            self.0.complement32(ch)
         }
 
         /// Complement an inclusive range of characters from the set
@@ -229,12 +229,12 @@ pub mod ffi {
             FnInStruct
         )]
         #[diplomat::rust_link(
-            icu::collections::codepointinvlist::CodePointInversionListBuilder::complement_range_u32,
+            icu::collections::codepointinvlist::CodePointInversionListBuilder::complement_range32,
             FnInStruct,
             hidden
         )]
         pub fn complement_inclusive_range(&mut self, start: DiplomatChar, end: DiplomatChar) {
-            self.0.complement_range_u32(&(start..=end))
+            self.0.complement_range32(&(start..=end))
         }
 
         /// Complement all elements that belong to the provided set from the set
