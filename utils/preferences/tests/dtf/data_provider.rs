@@ -11,7 +11,7 @@ struct DefaultPrefs {
 const DEFAULT_PREFS: DefaultPrefs = DefaultPrefs {
     und: DateTimeFormatResolvedPreferences {
         lid: LanguageIdentifier::UND,
-        hour_cycle: HourCycle::H12,
+        hour_cycle: HourCycle::H23,
         calendar: Calendar::Gregory,
         numbering_system: NumberingSystem(tinystr!(8, "latn")),
     },
@@ -24,12 +24,13 @@ const DEFAULT_PREFS: DefaultPrefs = DefaultPrefs {
 };
 
 pub fn get_defaults(lid: &Option<LanguageIdentifier>) -> DateTimeFormatResolvedPreferences {
-    if let Some(lid) = lid {
-        for v in DEFAULT_PREFS.list {
-            if v.lid.language == lid.language {
-                return v.clone();
-            }
-        }
-    }
-    (LanguageIdentifier::UND, &DEFAULT_PREFS.und).into()
+    lid.as_ref()
+        .and_then(|lid| {
+            DEFAULT_PREFS
+                .list
+                .iter()
+                .find(|dtfrp| dtfrp.lid.language == lid.language)
+        })
+        .cloned()
+        .unwrap_or(DEFAULT_PREFS.und)
 }
