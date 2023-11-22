@@ -63,6 +63,7 @@ impl DateTimeFormat {
         "Monday, June 23rd 2022".to_string()
     }
 
+    #[allow(dead_code)]
     pub fn format(&self, _input: u64) -> String {
         match (self.options.date_length, self.options.time_length) {
             (Some(_), None) => {

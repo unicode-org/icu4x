@@ -106,14 +106,8 @@ impl<'a, K: 'a, V: 'a> StoreIterable<'a, K, V> for VecWithDefaults<(K, V)> {
     }
 }
 
-impl<'a, K: 'a, V: 'a> StoreIterableMut<'a, K, V> for VecWithDefaults<(K, V)> {
-    type KeyValueIterMut = core::iter::Map<core::slice::IterMut<'a, (K, V)>, MapFMut<K, V>>;
+impl<K, V> StoreIntoIter<K, V> for VecWithDefaults<(K, V)> {
     type KeyValueIntoIter = std::vec::IntoIter<(K, V)>;
-
-    #[inline]
-    fn lm_iter_mut(&'a mut self) -> Self::KeyValueIterMut {
-        self.0.as_mut_slice().iter_mut().map(map_f_mut)
-    }
 
     #[inline]
     fn lm_into_iter(self) -> Self::KeyValueIntoIter {
@@ -123,6 +117,15 @@ impl<'a, K: 'a, V: 'a> StoreIterableMut<'a, K, V> for VecWithDefaults<(K, V)> {
     // leave lm_extend_end as default
 
     // leave lm_extend_start as default
+}
+
+impl<'a, K: 'a, V: 'a> StoreIterableMut<'a, K, V> for VecWithDefaults<(K, V)> {
+    type KeyValueIterMut = core::iter::Map<core::slice::IterMut<'a, (K, V)>, MapFMut<K, V>>;
+
+    #[inline]
+    fn lm_iter_mut(&'a mut self) -> Self::KeyValueIterMut {
+        self.0.as_mut_slice().iter_mut().map(map_f_mut)
+    }
 }
 
 impl<A> std::iter::FromIterator<A> for VecWithDefaults<A> {

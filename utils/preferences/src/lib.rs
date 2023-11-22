@@ -49,5 +49,7 @@
 //! }
 //! ```
 //!
+//! [`ICU4X`]: ../icu/index.html
+//! [`Locale`]: icu_locid::Locale
 #[macro_use]
 mod macros;
