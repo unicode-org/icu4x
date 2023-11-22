@@ -396,102 +396,6 @@ right = "CM"
 
 [[tables]]
 # LB9
-name = "AI"
-left = "AI"
-right = "ZWJ"
-
-[[tables]]
-# LB9
-name = "AL"
-left = "AL"
-right = "ZWJ"
-
-[[tables]]
-# LB9
-name = "B2"
-left = "B2"
-right = "ZWJ"
-
-[[tables]]
-# LB9
-name = "BA"
-left = "BA"
-right = "ZWJ"
-
-[[tables]]
-# LB9
-name = "BB"
-left = "BB"
-right = "ZWJ"
-
-[[tables]]
-# LB9
-name = "CB"
-left = "CB"
-right = "ZWJ"
-
-[[tables]]
-# LB9
-name = "ZWJ"
-left = "CJ"
-right = "ZWJ"
-
-[[tables]]
-# LB9
-name = "CL"
-left = "CL"
-right = "ZWJ"
-
-[[tables]]
-# LB9
-name = "CM"
-left = "CM"
-right = "ZWJ"
-
-[[tables]]
-# LB9
-name = "CP"
-left = "CP"
-right = "ZWJ"
-
-[[tables]]
-# LB9
-name = "EB"
-left = "EB"
-right = "ZWJ"
-
-[[tables]]
-# LB9
-name = "EM"
-left = "EM"
-right = "ZWJ"
-
-[[tables]]
-# LB9
-name = "EX"
-left = "EX"
-right = "ZWJ"
-
-[[tables]]
-# LB9
-name = "GL"
-left = "GL"
-right = "ZWJ"
-
-[[tables]]
-# LB9
-name = "H2"
-left = "H2"
-right = "ZWJ"
-
-[[tables]]
-# LB9
-name = "H3"
-left = "H3"
-right = "ZWJ"
-
-[[tables]]
-# LB9
 name = "HL_ZWJ"
 left = "HL"
 right = "ZWJ"
@@ -500,150 +404,6 @@ right = "ZWJ"
 # LB9
 name = "HL_ZWJ"
 left = "HL_ZWJ"
-right = "ZWJ"
-
-[[tables]]
-# LB9
-name = "HY"
-left = "HY"
-right = "ZWJ"
-
-[[tables]]
-# LB9
-name = "ID"
-left = "ID"
-right = "ZWJ"
-
-[[tables]]
-# LB9
-name = "ID_CN"
-left = "ID_CN"
-right = "ZWJ"
-
-[[tables]]
-# LB9
-name = "IN"
-left = "IN"
-right = "ZWJ"
-
-[[tables]]
-# LB9
-name = "IS"
-left = "IS"
-right = "ZWJ"
-
-[[tables]]
-# LB9
-name = "JL"
-left = "JL"
-right = "ZWJ"
-
-[[tables]]
-# LB9
-name = "JT"
-left = "JT"
-right = "ZWJ"
-
-[[tables]]
-# LB9
-name = "JV"
-left = "JV"
-right = "ZWJ"
-
-[[tables]]
-# LB9
-name = "NS"
-left = "NS"
-right = "ZWJ"
-
-[[tables]]
-# LB9
-name = "NU"
-left = "NU"
-right = "ZWJ"
-
-[[tables]]
-# LB9
-name = "OP_EA"
-left = "OP_EA"
-right = "ZWJ"
-
-[[tables]]
-# LB9
-name = "OP_OP30"
-left = "OP_OP30"
-right = "ZWJ"
-
-[[tables]]
-# LB9
-name = "PO"
-left = "PO"
-right = "ZWJ"
-
-[[tables]]
-# LB9
-name = "PO_EAW"
-left = "PO_EAW"
-right = "ZWJ"
-
-[[tables]]
-# LB9
-name = "QU"
-left = "QU"
-right = "ZWJ"
-
-[[tables]]
-# LB9
-name = "RI"
-left = "RI"
-right = "ZWJ"
-
-[[tables]]
-# LB9
-name = "PR"
-left = "PR"
-right = "ZWJ"
-
-[[tables]]
-# LB9
-name = "PR_EAW"
-left = "PR_EAW"
-right = "ZWJ"
-
-[[tables]]
-# LB9
-name = "SA"
-left = "SA"
-right = "ZWJ"
-
-[[tables]]
-# LB9
-name = "SY"
-left = "SY"
-right = "ZWJ"
-
-[[tables]]
-# LB9
-name = "WJ"
-left = "WJ"
-right = "ZWJ"
-
-[[tables]]
-# LB9
-name = "XX"
-left = "XX"
-right = "ZWJ"
-
-[[tables]]
-# LB9
-name = "OP_OP30"
-left = "OP_OP30"
-right = "ZWJ"
-
-[[tables]]
-# LB9
-name = "OP_EA"
-left = "OP_EA"
 right = "ZWJ"
 
 [[tables]]
@@ -723,30 +483,6 @@ right = "BA"
 name = "HL_HY"
 left = "HL_ZWJ"
 right = "BA"
-
-[[tables]]
-# LB25
-name = "LB25_HY"
-left = "PR"
-right = "HY"
-
-[[tables]]
-# LB25
-name = "LB25_HY"
-left = "PR_EAW"
-right = "HY"
-
-[[tables]]
-# LB25
-name = "LB25_HY"
-left = "PO"
-right = "HY"
-
-[[tables]]
-# LB25
-name = "LB25_HY"
-left = "PO_EAW"
-right = "HY"
 
 [[tables]]
 # LB25
@@ -882,7 +618,7 @@ break_state = true
 
 [[rules]]
 # LB3
-left = [ "B2_SP", "CL_CP_SP", "HL_HY", "LB25_HY", "LB25_NU_IS", "LB25_NU_SY", "LB25_NU_CL", "LB25_NU_CP", "OP_SP", "QU_SP", "RI_RI" ]
+left = [ "B2_SP", "CL_CP_SP", "HL_HY", "LB25_NU_IS", "LB25_NU_SY", "LB25_NU_CL", "LB25_NU_CP", "OP_SP", "QU_SP", "RI_RI" ]
 right = [ "eot" ]
 break_state = true
 
@@ -912,7 +648,7 @@ break_state = false
 
 [[rules]]
 # LB6
-left = [ "B2_SP", "CL_CP_SP", "HL_HY", "LB25_HY", "LB25_OP", "LB25_NU_IS", "LB25_NU_SY", "LB25_NU_CL", "LB25_NU_CP", "OP_SP", "QU_SP", "RI_RI" ]
+left = [ "B2_SP", "CL_CP_SP", "HL_HY", "LB25_OP", "LB25_NU_IS", "LB25_NU_SY", "LB25_NU_CL", "LB25_NU_CP", "OP_SP", "QU_SP", "RI_RI" ]
 right = [ "BK", "CR", "LF", "NL" ]
 break_state = false
 
@@ -944,6 +680,12 @@ break_state = true
 # LB8a
 left = [ "ZWJ", "HL_ZWJ" ]
 right = [ "Any" ]
+break_state = false
+
+[[rules]]
+# LB9
+left = [ "Any" ]
+right = [ "ZWJ" ]
 break_state = false
 
 [[rules]]
@@ -1141,7 +883,7 @@ break_state = false
 
 [[rules]]
 # LB25
-left = [ "PR", "PO", "OP_OP30", "OP_EA", "HY", "LB25_OP", "LB25_HY", "PR_EAW", "PO_EAW" ]
+left = [ "PR", "PO", "OP_OP30", "OP_EA", "HY", "LB25_OP", "PR_EAW", "PO_EAW" ]
 right = [ "NU" ]
 break_state = false
 

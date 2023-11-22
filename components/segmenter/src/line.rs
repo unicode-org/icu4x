@@ -929,7 +929,7 @@ impl<'l, 's, Y: LineBreakType<'l, 's>> Iterator for LineBreakIterator<'l, 's, Y>
                 // I may have to fetch text until non-SA character?.
             }
 
-            let STATE_NAMES = ["Unknown", "AI", "AL", "B2", "BA", "BB", "BK", "CB", "CJ", "CL", "CM", "CP", "CR", "EB", "EM", "EX", "GL", "H2", "H3", "HL", "HY", "ID", "ID_CN", "IN", "IS", "JL", "JT", "JV", "LF", "NL", "NS", "NU", "OP_EA", "OP_OP30", "PO", "PO_EAW", "PR", "PR_EAW", "QU", "RI", "SA", "SG", "SP", "SY", "WJ", "XX", "ZW", "ZWJ", "HL_ZWJ", "OP_SP", "QU_SP", "CL_CP_SP", "B2_SP", "HL_HY", "LB25_HY", "LB25_OP", "LB25_NU_IS", "LB25_NU_SY", "LB25_NU_CL", "LB25_NU_CP", "RI_RI", "sot", "eot"];
+            let STATE_NAMES = ["Unknown", "AI", "AL", "B2", "BA", "BB", "BK", "CB", "CJ", "CL", "CM", "CP", "CR", "EB", "EM", "EX", "GL", "H2", "H3", "HL", "HY", "ID", "ID_CN", "IN", "IS", "JL", "JT", "JV", "LF", "NL", "NS", "NU", "OP_EA", "OP_OP30", "PO", "PO_EAW", "PR", "PR_EAW", "QU", "RI", "SA", "SG", "SP", "SY", "WJ", "XX", "ZW", "ZWJ", "HL_ZWJ", "OP_SP", "QU_SP", "CL_CP_SP", "B2_SP", "HL_HY", "LB25_OP", "LB25_NU_IS", "LB25_NU_SY", "LB25_NU_CL", "LB25_NU_CP", "RI_RI", "sot", "eot"];
             // If break_state is equals or grater than 0, it is alias of property.
             let mut break_state = self.get_break_state_from_table(left_prop, right_prop);
             if break_state > 0 {
