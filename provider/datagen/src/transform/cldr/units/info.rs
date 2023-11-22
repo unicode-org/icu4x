@@ -11,7 +11,7 @@ use icu_provider::{
     DataResponse,
 };
 use icu_unitsconversion::provider::{ConversionInfo, UnitsInfoV1, UnitsInfoV1Marker};
-use zerotrie::ZeroTriePerfectHash;
+use zerotrie::ZeroTrieSimpleAscii;
 use zerovec::{VarZeroVec, ZeroVec};
 
 use super::helpers::{extract_conversion_info, process_constants, process_factor};
@@ -60,7 +60,7 @@ impl DataProvider<UnitsInfoV1Marker> for crate::DatagenProvider {
         }
 
         let result = UnitsInfoV1 {
-            units_conversion_map: ZeroTriePerfectHash::try_from(&conversion_info_map)
+            units_conversion_map: ZeroTrieSimpleAscii::try_from(&conversion_info_map)
                 .map_err(|e| {
                     DataError::custom("Could not create ZeroTrie from units.json data")
                         .with_display_context(&e)
