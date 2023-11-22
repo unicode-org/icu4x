@@ -33,8 +33,7 @@ pub mod ffi {
         ///
         /// For C++ users, potentially invalid UTF8 will be handled via
         /// REPLACEMENT CHARACTERs
-        pub fn push(&mut self, val: &str) {
-            let val = val.as_bytes(); // #2520
+        pub fn push(&mut self, val: &DiplomatStr) {
             self.0.push(String::from_utf8_lossy(val).into_owned());
         }
 

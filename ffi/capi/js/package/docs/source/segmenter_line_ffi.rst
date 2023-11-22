@@ -126,8 +126,6 @@
 
         See the `Rust documentation for segment_utf16 <https://docs.rs/icu/latest/icu/segmenter/struct.LineSegmenter.html#method.segment_utf16>`__ for more information.
 
-        - Note: ``input`` should be an ArrayBuffer or TypedArray corresponding to the slice type expected by Rust.
-
 
     .. js:method:: segment_latin1(input)
 

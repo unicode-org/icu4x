@@ -17,14 +17,14 @@ export class ICU4XPropertyValueNameToEnumMapper {
   }
 
   get_strict(arg_name) {
-    const buf_arg_name = diplomatRuntime.DiplomatBuf.str(wasm, arg_name);
+    const buf_arg_name = diplomatRuntime.DiplomatBuf.str8(wasm, arg_name);
     const diplomat_out = wasm.ICU4XPropertyValueNameToEnumMapper_get_strict(this.underlying, buf_arg_name.ptr, buf_arg_name.size);
     buf_arg_name.free();
     return diplomat_out;
   }
 
   get_loose(arg_name) {
-    const buf_arg_name = diplomatRuntime.DiplomatBuf.str(wasm, arg_name);
+    const buf_arg_name = diplomatRuntime.DiplomatBuf.str8(wasm, arg_name);
     const diplomat_out = wasm.ICU4XPropertyValueNameToEnumMapper_get_loose(this.underlying, buf_arg_name.ptr, buf_arg_name.size);
     buf_arg_name.free();
     return diplomat_out;

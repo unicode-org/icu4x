@@ -131,28 +131,12 @@ final class LineSegmenter implements ffi.Finalizable {
     _capi<ffi.NativeFunction<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>, _LineBreakOptionsV1Ffi)>>('ICU4XLineSegmenter_create_dictionary_with_options_v1')
       .asFunction<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>, _LineBreakOptionsV1Ffi)>(isLeaf: true);
 
-  /// Segments a (potentially ill-formed) UTF-8 string.
-  ///
-  /// See the [Rust documentation for `segment_utf8`](https://docs.rs/icu/latest/icu/segmenter/struct.LineSegmenter.html#method.segment_utf8) for more information.
-  LineBreakIteratorUtf8 segmentUtf8(String input) {
-    final alloc = ffi2.Arena();
-    final inputSlice = _SliceFfi2Utf8._fromDart(input, alloc);
-    final result = _ICU4XLineSegmenter_segment_utf8(_underlying, inputSlice._bytes, inputSlice._length);
-    alloc.releaseAll();
-    return LineBreakIteratorUtf8._(result);
-  }
-
-  // ignore: non_constant_identifier_names
-  static final _ICU4XLineSegmenter_segment_utf8 =
-    _capi<ffi.NativeFunction<ffi.Pointer<ffi.Opaque> Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi2.Utf8>, ffi.Size)>>('ICU4XLineSegmenter_segment_utf8')
-      .asFunction<ffi.Pointer<ffi.Opaque> Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi2.Utf8>, int)>(isLeaf: true);
-
   /// Segments a UTF-16 string.
   ///
   /// See the [Rust documentation for `segment_utf16`](https://docs.rs/icu/latest/icu/segmenter/struct.LineSegmenter.html#method.segment_utf16) for more information.
-  LineBreakIteratorUtf16 segmentUtf16(Uint16List input) {
+  LineBreakIteratorUtf16 segment(String input) {
     final alloc = ffi2.Arena();
-    final inputSlice = _SliceFfiUint16._fromDart(input, alloc);
+    final inputSlice = _SliceFfiUtf16._fromDart(input, alloc);
     final result = _ICU4XLineSegmenter_segment_utf16(_underlying, inputSlice._bytes, inputSlice._length);
     alloc.releaseAll();
     return LineBreakIteratorUtf16._(result);
@@ -160,22 +144,6 @@ final class LineSegmenter implements ffi.Finalizable {
 
   // ignore: non_constant_identifier_names
   static final _ICU4XLineSegmenter_segment_utf16 =
-    _capi<ffi.NativeFunction<ffi.Pointer<ffi.Opaque> Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Uint16>, ffi.Size)>>('ICU4XLineSegmenter_segment_utf16')
-      .asFunction<ffi.Pointer<ffi.Opaque> Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Uint16>, int)>(isLeaf: true);
-
-  /// Segments a Latin-1 string.
-  ///
-  /// See the [Rust documentation for `segment_latin1`](https://docs.rs/icu/latest/icu/segmenter/struct.LineSegmenter.html#method.segment_latin1) for more information.
-  LineBreakIteratorLatin1 segmentLatin1(Uint8List input) {
-    final alloc = ffi2.Arena();
-    final inputSlice = _SliceFfiUint8._fromDart(input, alloc);
-    final result = _ICU4XLineSegmenter_segment_latin1(_underlying, inputSlice._bytes, inputSlice._length);
-    alloc.releaseAll();
-    return LineBreakIteratorLatin1._(result);
-  }
-
-  // ignore: non_constant_identifier_names
-  static final _ICU4XLineSegmenter_segment_latin1 =
-    _capi<ffi.NativeFunction<ffi.Pointer<ffi.Opaque> Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Uint8>, ffi.Size)>>('ICU4XLineSegmenter_segment_latin1')
-      .asFunction<ffi.Pointer<ffi.Opaque> Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Uint8>, int)>(isLeaf: true);
+    _capi<ffi.NativeFunction<ffi.Pointer<ffi.Opaque> Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi2.Utf16>, ffi.Size)>>('ICU4XLineSegmenter_segment_utf16')
+      .asFunction<ffi.Pointer<ffi.Opaque> Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi2.Utf16>, int)>(isLeaf: true);
 }

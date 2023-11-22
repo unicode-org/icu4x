@@ -1,6 +1,11 @@
-export function readString(wasm, ptr, len) {
+export function readString8(wasm, ptr, len) {
   const buf = new Uint8Array(wasm.memory.buffer, ptr, len);
   return (new TextDecoder("utf-8")).decode(buf)
+}
+
+export function readString16(wasm, ptr, len) {
+  const buf = new Uint16Array(wasm.memory.buffer, ptr, len);
+  return String.fromCharCode(buf)
 }
 
 export function withWriteable(wasm, callback) {
@@ -9,7 +14,7 @@ export function withWriteable(wasm, callback) {
     callback(writeable);
     const outStringPtr = wasm.diplomat_buffer_writeable_get_bytes(writeable);
     const outStringLen = wasm.diplomat_buffer_writeable_len(writeable);
-    return readString(wasm, outStringPtr, outStringLen);
+    return readString8(wasm, outStringPtr, outStringLen);
   } finally {
     wasm.diplomat_buffer_writeable_destroy(writeable);
   }
@@ -61,7 +66,7 @@ export function enumDiscriminant(wasm, ptr) {
 // they can create an edge to this object if they borrow from the str/slice,
 // or we can manually free the WASM memory if they don't.
 export class DiplomatBuf {
-  static str = (wasm, string) => {
+  static str8 = (wasm, string) => {
     var utf8_len = 0;
     for (const codepoint_string of string) {
       let codepoint = codepoint_string.codePointAt(0);
@@ -78,8 +83,16 @@ export class DiplomatBuf {
     return new DiplomatBuf(wasm, utf8_len, 1, buf => {
       const result = (new TextEncoder()).encodeInto(string, buf);
       console.assert(string.length == result.read && utf8_len == result.written, "UTF-8 write error");
-  })
-}
+    })
+  }
+
+  static str16 = (wasm, string) => {
+    return new DiplomatBuf(wasm, string.length, 2, buf => {
+      for (var i; i < string.length; i++) {
+        buf[i] = string.codePointAt(i);
+      }
+    })
+  }
 
   static slice = (wasm, slice, align) => {
     // If the slice is not a Uint8Array, we have to convert to one, as that's the only

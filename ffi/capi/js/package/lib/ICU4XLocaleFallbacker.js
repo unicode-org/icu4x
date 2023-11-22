@@ -43,7 +43,7 @@ export class ICU4XLocaleFallbacker {
   for_config(arg_config) {
     const field_priority_arg_config = arg_config["priority"];
     const field_extension_key_arg_config = arg_config["extension_key"];
-    const buf_field_extension_key_arg_config = diplomatRuntime.DiplomatBuf.str(wasm, field_extension_key_arg_config);
+    const buf_field_extension_key_arg_config = diplomatRuntime.DiplomatBuf.str8(wasm, field_extension_key_arg_config);
     const field_fallback_supplement_arg_config = arg_config["fallback_supplement"];
     const diplomat_out = (() => {
       const diplomat_receive_buffer = wasm.diplomat_alloc(5, 4);

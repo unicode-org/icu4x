@@ -36,7 +36,7 @@ export class ICU4XCaseMapper {
   }
 
   lowercase(arg_s, arg_locale) {
-    const buf_arg_s = diplomatRuntime.DiplomatBuf.str(wasm, arg_s);
+    const buf_arg_s = diplomatRuntime.DiplomatBuf.str8(wasm, arg_s);
     const diplomat_out = diplomatRuntime.withWriteable(wasm, (writeable) => {
       return (() => {
         const diplomat_receive_buffer = wasm.diplomat_alloc(5, 4);
@@ -58,7 +58,7 @@ export class ICU4XCaseMapper {
   }
 
   uppercase(arg_s, arg_locale) {
-    const buf_arg_s = diplomatRuntime.DiplomatBuf.str(wasm, arg_s);
+    const buf_arg_s = diplomatRuntime.DiplomatBuf.str8(wasm, arg_s);
     const diplomat_out = diplomatRuntime.withWriteable(wasm, (writeable) => {
       return (() => {
         const diplomat_receive_buffer = wasm.diplomat_alloc(5, 4);
@@ -80,7 +80,7 @@ export class ICU4XCaseMapper {
   }
 
   titlecase_segment_with_only_case_data_v1(arg_s, arg_locale, arg_options) {
-    const buf_arg_s = diplomatRuntime.DiplomatBuf.str(wasm, arg_s);
+    const buf_arg_s = diplomatRuntime.DiplomatBuf.str8(wasm, arg_s);
     const field_leading_adjustment_arg_options = arg_options["leading_adjustment"];
     const field_trailing_case_arg_options = arg_options["trailing_case"];
     const diplomat_out = diplomatRuntime.withWriteable(wasm, (writeable) => {
@@ -104,7 +104,7 @@ export class ICU4XCaseMapper {
   }
 
   fold(arg_s) {
-    const buf_arg_s = diplomatRuntime.DiplomatBuf.str(wasm, arg_s);
+    const buf_arg_s = diplomatRuntime.DiplomatBuf.str8(wasm, arg_s);
     const diplomat_out = diplomatRuntime.withWriteable(wasm, (writeable) => {
       return (() => {
         const diplomat_receive_buffer = wasm.diplomat_alloc(5, 4);
@@ -126,7 +126,7 @@ export class ICU4XCaseMapper {
   }
 
   fold_turkic(arg_s) {
-    const buf_arg_s = diplomatRuntime.DiplomatBuf.str(wasm, arg_s);
+    const buf_arg_s = diplomatRuntime.DiplomatBuf.str8(wasm, arg_s);
     const diplomat_out = diplomatRuntime.withWriteable(wasm, (writeable) => {
       return (() => {
         const diplomat_receive_buffer = wasm.diplomat_alloc(5, 4);

@@ -51,7 +51,7 @@ export class ICU4XDecomposingNormalizer {
   }
 
   normalize(arg_s) {
-    const buf_arg_s = diplomatRuntime.DiplomatBuf.str(wasm, arg_s);
+    const buf_arg_s = diplomatRuntime.DiplomatBuf.str8(wasm, arg_s);
     const diplomat_out = diplomatRuntime.withWriteable(wasm, (writeable) => {
       return (() => {
         const diplomat_receive_buffer = wasm.diplomat_alloc(5, 4);
@@ -73,7 +73,7 @@ export class ICU4XDecomposingNormalizer {
   }
 
   is_normalized(arg_s) {
-    const buf_arg_s = diplomatRuntime.DiplomatBuf.str(wasm, arg_s);
+    const buf_arg_s = diplomatRuntime.DiplomatBuf.str8(wasm, arg_s);
     const diplomat_out = wasm.ICU4XDecomposingNormalizer_is_normalized(this.underlying, buf_arg_s.ptr, buf_arg_s.size);
     buf_arg_s.free();
     return diplomat_out;
