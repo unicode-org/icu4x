@@ -43,8 +43,8 @@ pub mod ffi {
             Struct,
             compact
         )]
-        pub fn get(&self, ch: char) -> u8 {
-            self.0.get(ch).0
+        pub fn get(&self, ch: DiplomatChar) -> u8 {
+            self.0.get32(ch).0
         }
         #[diplomat::rust_link(
             icu::normalizer::properties::CanonicalCombiningClassMap::get32,
@@ -55,6 +55,7 @@ pub mod ffi {
             Struct,
             compact
         )]
+        #[diplomat::attr(dart, disable)]
         pub fn get32(&self, ch: u32) -> u8 {
             self.0.get32(ch).0
         }
@@ -87,8 +88,12 @@ pub mod ffi {
             icu::normalizer::properties::CanonicalComposition::compose,
             FnInStruct
         )]
-        pub fn compose(&self, starter: char, second: char) -> char {
-            self.0.compose(starter, second).unwrap_or('\0')
+        pub fn compose(&self, starter: DiplomatChar, second: DiplomatChar) -> DiplomatChar {
+            match (char::from_u32(starter), char::from_u32(second)) {
+                (Some(starter), Some(second)) => self.0.compose(starter, second),
+                _ => None,
+            }
+            .unwrap_or('\0') as DiplomatChar
         }
     }
 
@@ -97,8 +102,8 @@ pub mod ffi {
     /// (which may or may not be the original one)
     #[diplomat::rust_link(icu::normalizer::properties::Decomposed, Enum)]
     pub struct ICU4XDecomposed {
-        first: char,
-        second: char,
+        first: DiplomatChar,
+        second: DiplomatChar,
     }
 
     /// The raw (non-recursive) canonical decomposition operation.
@@ -127,17 +132,25 @@ pub mod ffi {
             icu::normalizer::properties::CanonicalDecomposition::decompose,
             FnInStruct
         )]
-        pub fn decompose(&self, c: char) -> ICU4XDecomposed {
-            match self.0.decompose(c) {
-                Decomposed::Default => ICU4XDecomposed {
+        pub fn decompose(&self, c: DiplomatChar) -> ICU4XDecomposed {
+            match char::from_u32(c) {
+                Some(c) => {
+                    match self.0.decompose(c) {
+                        Decomposed::Default => ICU4XDecomposed {
+                            first: c as DiplomatChar,
+                            second: '\0' as DiplomatChar,
+                        },
+                        Decomposed::Singleton(s) => ICU4XDecomposed {
+                            first: s as DiplomatChar,
+                            second: '\0' as DiplomatChar,
+                        },
+                        Decomposed::Expansion(first, second) => ICU4XDecomposed { first: first as DiplomatChar, second: second as DiplomatChar },
+                    }
+                },
+                _ => ICU4XDecomposed {
                     first: c,
-                    second: '\0',
-                },
-                Decomposed::Singleton(s) => ICU4XDecomposed {
-                    first: s,
-                    second: '\0',
-                },
-                Decomposed::Expansion(first, second) => ICU4XDecomposed { first, second },
+                    second: '\0' as DiplomatChar,
+                }
             }
         }
     }

@@ -36,17 +36,6 @@ final class CodePointMapData8 implements ffi.Finalizable {
     _capi<ffi.NativeFunction<ffi.Uint8 Function(ffi.Pointer<ffi.Opaque>, ffi.Uint32)>>('ICU4XCodePointMapData8_get')
       .asFunction<int Function(ffi.Pointer<ffi.Opaque>, Rune)>(isLeaf: true);
 
-  /// Gets the value for a code point (specified as a 32 bit integer, in UTF-32)
-  int get32(int cp) {
-    final result = _ICU4XCodePointMapData8_get32(_underlying, cp);
-    return result;
-  }
-
-  // ignore: non_constant_identifier_names
-  static final _ICU4XCodePointMapData8_get32 =
-    _capi<ffi.NativeFunction<ffi.Uint8 Function(ffi.Pointer<ffi.Opaque>, ffi.Uint32)>>('ICU4XCodePointMapData8_get32')
-      .asFunction<int Function(ffi.Pointer<ffi.Opaque>, int)>(isLeaf: true);
-
   /// Converts a general category to its corresponding mask value
   ///
   /// Nonexistant general categories will map to the empty mask
