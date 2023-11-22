@@ -929,15 +929,21 @@ impl<'l, 's, Y: LineBreakType<'l, 's>> Iterator for LineBreakIterator<'l, 's, Y>
                 // I may have to fetch text until non-SA character?.
             }
 
+            let STATE_NAMES = ["Unknown", "AI", "AL", "B2", "BA", "BB", "BK", "CB", "CJ", "CL", "CM", "CP", "CR", "EB", "EM", "EX", "GL", "H2", "H3", "HL", "HY", "ID", "ID_CN", "IN", "IS", "JL", "JT", "JV", "LF", "NL", "NS", "NU", "OP_EA", "OP_OP30", "PO", "PO_EAW", "PR", "PR_EAW", "QU", "RI", "SA", "SG", "SP", "SY", "WJ", "XX", "ZW", "ZWJ", "HL_ZWJ", "OP_SP", "QU_SP", "CL_CP_SP", "B2_SP", "HL_HY", "LB25_HY", "LB25_OP", "LB25_NU_IS", "LB25_NU_SY", "LB25_NU_CL", "LB25_NU_CP", "RI_RI", "sot", "eot"];
             // If break_state is equals or grater than 0, it is alias of property.
             let mut break_state = self.get_break_state_from_table(left_prop, right_prop);
+            if break_state > 0 {
+                println!("{}, {}: {}", STATE_NAMES[left_prop as usize], STATE_NAMES[right_prop as usize], STATE_NAMES[break_state as usize]);
+            } else {
+                println!("{}, {}: {}", STATE_NAMES[left_prop as usize], STATE_NAMES[right_prop as usize], break_state);
+            }
             if break_state >= 0_i8 {
                 let mut previous_iter = self.iter.clone();
                 let mut previous_pos_data = self.current_pos_data;
 
+                println!("Inner loop");
                 loop {
                     self.advance_iter();
-
                     let Some(prop) = self.get_current_linebreak_property() else {
                         // Reached EOF. But we are analyzing multiple characters now, so next break may be previous point.
                         let break_state = self
@@ -952,6 +958,11 @@ impl<'l, 's, Y: LineBreakType<'l, 's>> Iterator for LineBreakIterator<'l, 's, Y>
                     };
 
                     break_state = self.get_break_state_from_table(break_state as u8, prop);
+                    if break_state > 0 {
+                        println!("-, {}: {}", STATE_NAMES[right_prop as usize], STATE_NAMES[break_state as usize]);
+                    } else {
+                        println!("-, {}: {}", STATE_NAMES[right_prop as usize], break_state);
+                    }
                     if break_state < 0 {
                         break;
                     }

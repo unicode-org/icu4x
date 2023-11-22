@@ -121,7 +121,6 @@ fn line_break_test(filename: &str) {
             let mut iter = segmenter.segment_str(&s);
             // TODO(egg): It would be really nice to have Name here.
             println!("  | A | E | Code pt. | Line_Break     | State | Literal");
-            let STATE_NAMES = ["Unknown", "CR", "LF", "Extend", "Sep", "Format", "Sp", "Lower", "Upper", "OLetter", "Numeric", "ATerm", "SContinue", "STerm", "Close", "ATerm_Close", "ATerm_Close_Sp", "STerm_Close", "STerm_Close_Sp", "Upper_ATerm", "Lower_ATerm", "ATerm_Close_Sp_SB8", "ATerm_Close_Sp_ParaSep", "ATerm_Close_Sp_CR", "STerm_Close_Sp_ParaSep", "STerm_Close_Sp_CR", "sot", "eot"];
             for (i, c) in s.char_indices() {
                 let expected_break = test.break_result_utf8.contains(&i);
                 let actual_break = result.contains(&i);
