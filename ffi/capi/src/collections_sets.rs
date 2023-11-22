@@ -133,8 +133,7 @@ pub mod ffi {
             FnInStruct
         )]
         pub fn remove_char(&mut self, ch: DiplomatChar) {
-            #![allow(clippy::unwrap_used)] // #2520
-            self.0.remove_char(char::from_u32(ch).unwrap())
+            self.0.remove_u32(ch)
         }
 
         /// Remove an inclusive range of characters from the set
@@ -143,9 +142,7 @@ pub mod ffi {
             FnInStruct
         )]
         pub fn remove_inclusive_range(&mut self, start: DiplomatChar, end: DiplomatChar) {
-            #![allow(clippy::unwrap_used)] // #2520
-            self.0
-                .remove_range(&(char::from_u32(start).unwrap()..=char::from_u32(end).unwrap()))
+            self.0.remove_range_u32(&(start..=end))
         }
 
         /// Remove all elements that belong to the provided set from the set
@@ -165,8 +162,7 @@ pub mod ffi {
             FnInStruct
         )]
         pub fn retain_char(&mut self, ch: DiplomatChar) {
-            #![allow(clippy::unwrap_used)] // #2520
-            self.0.retain_char(char::from_u32(ch).unwrap())
+            self.0.retain_u32(ch)
         }
 
         /// Removes all elements from the set except an inclusive range of characters f
@@ -175,9 +171,7 @@ pub mod ffi {
             FnInStruct
         )]
         pub fn retain_inclusive_range(&mut self, start: DiplomatChar, end: DiplomatChar) {
-            #![allow(clippy::unwrap_used)] // #2520
-            self.0
-                .retain_range(&(char::from_u32(start).unwrap()..=char::from_u32(end).unwrap()))
+            self.0.retain_range_u32(&(start..=end))
         }
 
         /// Removes all elements from the set except all elements in the provided set
@@ -199,8 +193,7 @@ pub mod ffi {
             FnInStruct
         )]
         pub fn complement_char(&mut self, ch: DiplomatChar) {
-            #![allow(clippy::unwrap_used)] // #2520
-            self.0.complement_char(char::from_u32(ch).unwrap())
+            self.0.complement_u32(ch)
         }
 
         /// Complement an inclusive range of characters from the set
@@ -211,9 +204,7 @@ pub mod ffi {
             FnInStruct
         )]
         pub fn complement_inclusive_range(&mut self, start: DiplomatChar, end: DiplomatChar) {
-            #![allow(clippy::unwrap_used)] // #2520
-            self.0
-                .complement_range(&(char::from_u32(start).unwrap()..=char::from_u32(end).unwrap()))
+            self.0.complement_range_u32(&(start..=end))
         }
 
         /// Complement all elements that belong to the provided set from the set

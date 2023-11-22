@@ -178,9 +178,9 @@ pub mod ffi {
             c: DiplomatChar,
             builder: &mut crate::collections_sets::ffi::ICU4XCodePointSetBuilder,
         ) {
-            #![allow(clippy::unwrap_used)] // #2520
-            self.0
-                .add_case_closure_to(char::from_u32(c).unwrap(), &mut builder.0)
+            if let Some(ch) = char::from_u32(c) {
+                self.0.add_case_closure_to(ch, &mut builder.0)
+            }
         }
 
         /// Returns the simple lowercase mapping of the given character.
@@ -190,8 +190,9 @@ pub mod ffi {
         /// For full mappings, use `ICU4XCaseMapper::lowercase`.
         #[diplomat::rust_link(icu::casemap::CaseMapper::simple_lowercase, FnInStruct)]
         pub fn simple_lowercase(&self, ch: DiplomatChar) -> DiplomatChar {
-            #![allow(clippy::unwrap_used)] // #2520
-            self.0.simple_lowercase(char::from_u32(ch).unwrap()) as DiplomatChar
+            char::from_u32(ch)
+                .map(|ch| self.0.simple_lowercase(ch) as DiplomatChar)
+                .unwrap_or(ch)
         }
 
         /// Returns the simple uppercase mapping of the given character.
@@ -201,8 +202,9 @@ pub mod ffi {
         /// For full mappings, use `ICU4XCaseMapper::uppercase`.
         #[diplomat::rust_link(icu::casemap::CaseMapper::simple_uppercase, FnInStruct)]
         pub fn simple_uppercase(&self, ch: DiplomatChar) -> DiplomatChar {
-            #![allow(clippy::unwrap_used)] // #2520
-            self.0.simple_uppercase(char::from_u32(ch).unwrap()) as DiplomatChar
+            char::from_u32(ch)
+                .map(|ch| self.0.simple_uppercase(ch) as DiplomatChar)
+                .unwrap_or(ch)
         }
 
         /// Returns the simple titlecase mapping of the given character.
@@ -212,8 +214,9 @@ pub mod ffi {
         /// For full mappings, use `ICU4XCaseMapper::titlecase_segment`.
         #[diplomat::rust_link(icu::casemap::CaseMapper::simple_titlecase, FnInStruct)]
         pub fn simple_titlecase(&self, ch: DiplomatChar) -> DiplomatChar {
-            #![allow(clippy::unwrap_used)] // #2520
-            self.0.simple_titlecase(char::from_u32(ch).unwrap()) as DiplomatChar
+            char::from_u32(ch)
+                .map(|ch| self.0.simple_titlecase(ch) as DiplomatChar)
+                .unwrap_or(ch)
         }
 
         /// Returns the simple casefolding of the given character.
@@ -222,8 +225,9 @@ pub mod ffi {
         /// For full folding, use `ICU4XCaseMapper::fold`.
         #[diplomat::rust_link(icu::casemap::CaseMapper::simple_fold, FnInStruct)]
         pub fn simple_fold(&self, ch: DiplomatChar) -> DiplomatChar {
-            #![allow(clippy::unwrap_used)] // #2520
-            self.0.simple_fold(char::from_u32(ch).unwrap()) as DiplomatChar
+            char::from_u32(ch)
+                .map(|ch| self.0.simple_fold(ch) as DiplomatChar)
+                .unwrap_or(ch)
         }
         /// Returns the simple casefolding of the given character in the Turkic locale
         ///
@@ -231,8 +235,9 @@ pub mod ffi {
         /// For full folding, use `ICU4XCaseMapper::fold_turkic`.
         #[diplomat::rust_link(icu::casemap::CaseMapper::simple_fold_turkic, FnInStruct)]
         pub fn simple_fold_turkic(&self, ch: DiplomatChar) -> DiplomatChar {
-            #![allow(clippy::unwrap_used)] // #2520
-            self.0.simple_fold_turkic(char::from_u32(ch).unwrap()) as DiplomatChar
+            char::from_u32(ch)
+                .map(|ch| self.0.simple_fold_turkic(ch) as DiplomatChar)
+                .unwrap_or(ch)
         }
     }
 
@@ -262,9 +267,9 @@ pub mod ffi {
             c: DiplomatChar,
             builder: &mut crate::collections_sets::ffi::ICU4XCodePointSetBuilder,
         ) {
-            #![allow(clippy::unwrap_used)] // #2520
-            self.0
-                .add_case_closure_to(char::from_u32(c).unwrap(), &mut builder.0)
+            if let Some(ch) = char::from_u32(c) {
+                self.0.add_case_closure_to(ch, &mut builder.0)
+            }
         }
 
         /// Finds all characters and strings which may casemap to `s` as their full case folding string
