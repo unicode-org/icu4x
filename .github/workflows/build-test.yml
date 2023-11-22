@@ -129,11 +129,7 @@ jobs:
 
     # Actual job
     - name: Run `cargo make ci-job-test`
-      if: matrix.os != 'windows-latest'
       run: cargo make ci-job-test
-    - name: Run `cargo make ci-job-test-windows`
-      if: matrix.os == 'windows-latest'
-      run: cargo make ci-job-test-windows
 
   # ci-job-test-docs
   test-docs:
@@ -595,11 +591,6 @@ jobs:
       run: cargo make set-nightly-version-for-ci
     - name: Show the selected Rust toolchain
       run: rustup show
-
-    # Job-specific dependencies
-    - uses: dart-lang/setup-dart@v1
-      with:
-        sdk: 3.1.5
 
     # Actual job
     - name: Run `cargo make ci-job-diplomat`

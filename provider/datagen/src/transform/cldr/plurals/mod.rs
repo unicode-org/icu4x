@@ -9,6 +9,7 @@ use icu_plurals::rules::runtime::ast::Rule;
 use icu_plurals::{provider::*, PluralCategory};
 use icu_provider::datagen::IterableDataProvider;
 use icu_provider::prelude::*;
+use zerovec::ZeroMap;
 
 impl crate::DatagenProvider {
     fn get_rules_for(&self, key: DataKey) -> Result<&cldr_serde::plurals::Rules, DataError> {
@@ -99,15 +100,24 @@ impl From<&cldr_serde::plurals::LocalePluralRules> for PluralRulesV1<'static> {
 impl DataProvider<PluralRangesV1Marker> for crate::DatagenProvider {
     fn load(&self, req: DataRequest) -> Result<DataResponse<PluralRangesV1Marker>, DataError> {
         self.check_req::<PluralRangesV1Marker>(req)?;
-        Ok(DataResponse {
-            metadata: Default::default(),
-            payload: Some(DataPayload::from_owned(PluralRangesV1::from(
-                self.get_plural_ranges()?
-                    .0
-                    .get(&req.locale.get_langid())
-                    .ok_or(DataErrorKind::MissingLocale.into_error())?,
-            ))),
-        })
+        if req.locale.is_und() {
+            Ok(DataResponse {
+                metadata: Default::default(),
+                payload: Some(DataPayload::from_owned(PluralRangesV1 {
+                    ranges: ZeroMap::default(),
+                })),
+            })
+        } else {
+            Ok(DataResponse {
+                metadata: Default::default(),
+                payload: Some(DataPayload::from_owned(PluralRangesV1::from(
+                    self.get_plural_ranges()?
+                        .0
+                        .get(&req.locale.get_langid())
+                        .ok_or(DataErrorKind::MissingLocale.into_error())?,
+                ))),
+            })
+        }
     }
 }
 
@@ -120,6 +130,7 @@ impl IterableDataProvider<PluralRangesV1Marker> for crate::DatagenProvider {
             // TODO(#568): Avoid the clone
             .cloned()
             .map(DataLocale::from)
+            .chain([DataLocale::default()]) // `und` is not included in the locales of plural ranges.
             .collect())
     }
 }

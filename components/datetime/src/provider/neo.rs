@@ -10,6 +10,131 @@ use icu_provider::prelude::*;
 use zerovec::ule::UnvalidatedStr;
 use zerovec::{VarZeroVec, ZeroMap};
 
+#[cfg(feature = "experimental")]
+use core::ops::Range;
+
+/// Helpers involving the auxiliary subtags used for date symbols.
+///
+/// <div class="stab unstable">
+/// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
+/// including in SemVer minor releases. While the serde representation of data structs is guaranteed
+/// to be stable, their Rust representation might not be. Use with caution.
+/// </div>
+#[allow(missing_docs)]
+pub mod aux {
+    use icu_locid::extensions::private::{subtag, Subtag};
+
+    pub const NUMERIC: Subtag = subtag!("1");
+    pub const ABBR: Subtag = subtag!("3");
+    pub const NARROW: Subtag = subtag!("4");
+    pub const WIDE: Subtag = subtag!("5");
+    pub const SHORT: Subtag = subtag!("6");
+    pub const ABBR_STANDALONE: Subtag = subtag!("3s");
+    pub const NARROW_STANDALONE: Subtag = subtag!("4s");
+    pub const WIDE_STANDALONE: Subtag = subtag!("5s");
+    pub const SHORT_STANDALONE: Subtag = subtag!("6s");
+
+    pub const PATTERN_FULL: Subtag = subtag!("f");
+    pub const PATTERN_LONG: Subtag = subtag!("l");
+    pub const PATTERN_MEDIUM: Subtag = subtag!("m");
+    pub const PATTERN_SHORT: Subtag = subtag!("s");
+
+    pub const PATTERN_FULL12: Subtag = subtag!("f12");
+    pub const PATTERN_LONG12: Subtag = subtag!("l12");
+    pub const PATTERN_MEDIUM12: Subtag = subtag!("m12");
+    pub const PATTERN_SHORT12: Subtag = subtag!("s12");
+
+    pub const PATTERN_FULL24: Subtag = subtag!("f24");
+    pub const PATTERN_LONG24: Subtag = subtag!("l24");
+    pub const PATTERN_MEDIUM24: Subtag = subtag!("m24");
+    pub const PATTERN_SHORT24: Subtag = subtag!("s24");
+
+    /// Field lengths supported in auxiliary subtags.
+    ///
+    /// For a stable version of this enum, use [`FieldLength`].
+    ///
+    /// <div class="stab unstable">
+    /// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
+    /// including in SemVer minor releases. While the serde representation of data structs is guaranteed
+    /// to be stable, their Rust representation might not be. Use with caution.
+    /// </div>
+    ///
+    /// [`FieldLength`]: crate::fields::FieldLength
+    #[derive(Copy, Clone, Debug, PartialEq, Eq)]
+    #[allow(clippy::exhaustive_enums)] // documented as unstable
+    pub enum Length {
+        Abbr,
+        Narrow,
+        Wide,
+        Short,
+        Numeric,
+    }
+
+    /// Field contexts supported in auxiliary subtags.
+    ///
+    /// For a stable version of this enum, use one of the specific field symbol enums in [`fields`].
+    ///
+    /// <div class="stab unstable">
+    /// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
+    /// including in SemVer minor releases. While the serde representation of data structs is guaranteed
+    /// to be stable, their Rust representation might not be. Use with caution.
+    /// </div>
+    ///
+    /// [`fields`]: crate::fields
+    #[derive(Copy, Clone, Debug, PartialEq, Eq)]
+    #[allow(clippy::exhaustive_enums)] // documented as unstable
+    pub enum Context {
+        Format,
+        Standalone,
+    }
+
+    /// Parses an aux key subtag to enum values.
+    ///
+    /// <div class="stab unstable">
+    /// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
+    /// including in SemVer minor releases. While the serde representation of data structs is guaranteed
+    /// to be stable, their Rust representation might not be. Use with caution.
+    /// </div>
+    pub fn subtag_info(subtag: Subtag) -> Option<(Context, Length)> {
+        use {Context::*, Length::*};
+        match subtag {
+            NUMERIC => Some((Format, Numeric)),
+            ABBR => Some((Format, Abbr)),
+            NARROW => Some((Format, Narrow)),
+            WIDE => Some((Format, Wide)),
+            SHORT => Some((Format, Short)),
+            ABBR_STANDALONE => Some((Standalone, Abbr)),
+            NARROW_STANDALONE => Some((Standalone, Narrow)),
+            WIDE_STANDALONE => Some((Standalone, Wide)),
+            SHORT_STANDALONE => Some((Standalone, Short)),
+            _ => None,
+        }
+    }
+
+    /// Creates an aux key from the enum values.
+    ///
+    /// <div class="stab unstable">
+    /// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
+    /// including in SemVer minor releases. While the serde representation of data structs is guaranteed
+    /// to be stable, their Rust representation might not be. Use with caution.
+    /// </div>
+    pub fn subtag_for(context: Context, length: Length) -> Subtag {
+        use {Context::*, Length::*};
+        match (context, length) {
+            (Format, Numeric) => NUMERIC,
+            (Format, Abbr) => ABBR,
+            (Format, Narrow) => NARROW,
+            (Format, Wide) => WIDE,
+            (Format, Short) => SHORT,
+            (Standalone, Numeric) => NUMERIC,
+            (Standalone, Abbr) => ABBR_STANDALONE,
+            (Standalone, Narrow) => NARROW_STANDALONE,
+            (Standalone, Wide) => WIDE_STANDALONE,
+            (Standalone, Short) => SHORT_STANDALONE,
+        }
+    }
+}
+
 /// Symbols used for representing the year name
 ///
 /// This uses an auxiliary subtag for length. The subtag is simply the number of
@@ -135,6 +260,27 @@ pub struct SimpleSubstitutionPattern<'data> {
     pub subst_index: usize,
 }
 
+impl SimpleSubstitutionPattern<'_> {
+    #[cfg(feature = "experimental")]
+    pub(crate) fn get_prefix(&self) -> &str {
+        self.debug_unwrap_range(0..self.subst_index)
+    }
+    #[cfg(feature = "experimental")]
+    pub(crate) fn get_suffix(&self) -> &str {
+        self.debug_unwrap_range(self.subst_index..self.pattern.len())
+    }
+    #[cfg(feature = "experimental")]
+    fn debug_unwrap_range(&self, range: Range<usize>) -> &str {
+        match self.pattern.get(range) {
+            Some(s) => s,
+            None => {
+                debug_assert!(false, "Invalid pattern: {self:?}");
+                ""
+            }
+        }
+    }
+}
+
 /// Symbols that can be stored as a simple linear array.
 ///
 /// - For weekdays, element 0 is Sunday
@@ -172,6 +318,31 @@ pub struct LinearSymbolsV1<'data> {
     /// The symbols, in order. Order specified on the struct docs.
     // This uses a VarZeroVec rather than a fixed-size array for weekdays to save stack space
     pub symbols: VarZeroVec<'data, str>,
+}
+
+impl<'data> LinearSymbolsV1<'data> {
+    /// Gets the 'am' symbol assuming this struct contains day period data.
+    #[cfg(feature = "experimental")]
+    pub(crate) fn am(&self) -> Option<&str> {
+        self.symbols.get(0)
+    }
+    /// Gets the 'pm' symbol assuming this struct contains day period data.
+    #[cfg(feature = "experimental")]
+    pub(crate) fn pm(&self) -> Option<&str> {
+        self.symbols.get(1)
+    }
+    /// Gets the 'noon' symbol assuming this struct contains day period data.
+    #[cfg(feature = "experimental")]
+    pub(crate) fn noon(&self) -> Option<&str> {
+        self.symbols
+            .get(2)
+            .and_then(|s| if s.is_empty() { None } else { Some(s) })
+    }
+    /// Gets the 'midnight' symbol assuming this struct contains day period data.
+    #[cfg(feature = "experimental")]
+    pub(crate) fn midnight(&self) -> Option<&str> {
+        self.symbols.get(3)
+    }
 }
 
 /// The default per-length patterns associated with dates
@@ -266,3 +437,13 @@ pub struct DateTimePatternV1<'data> {
     #[cfg_attr(feature = "serde", serde(borrow))]
     pub pattern: runtime::GenericPattern<'data>,
 }
+
+// pub(crate) struct ErasedYearSymbolsV1Marker;
+// impl DataMarker for ErasedYearSymbolsV1Marker {
+//     type Yokeable = YearSymbolsV1<'static>;
+// }
+
+// pub(crate) struct ErasedMonthSymbolsV1Marker;
+// impl DataMarker for ErasedMonthSymbolsV1Marker {
+//     type Yokeable = MonthSymbolsV1<'static>;
+// }
