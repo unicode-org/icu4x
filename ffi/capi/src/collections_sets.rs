@@ -133,6 +133,7 @@ pub mod ffi {
             FnInStruct
         )]
         pub fn remove_char(&mut self, ch: DiplomatChar) {
+            #![allow(clippy::unwrap_used)] // #2520
             self.0.remove_char(char::from_u32(ch).unwrap())
         }
 
@@ -142,6 +143,7 @@ pub mod ffi {
             FnInStruct
         )]
         pub fn remove_inclusive_range(&mut self, start: DiplomatChar, end: DiplomatChar) {
+            #![allow(clippy::unwrap_used)] // #2520
             self.0.remove_range(&(char::from_u32(start).unwrap()..=char::from_u32(end).unwrap()))
         }
 
@@ -162,6 +164,7 @@ pub mod ffi {
             FnInStruct
         )]
         pub fn retain_char(&mut self, ch: DiplomatChar) {
+            #![allow(clippy::unwrap_used)] // #2520
             self.0.retain_char(char::from_u32(ch).unwrap())
         }
 
@@ -171,6 +174,7 @@ pub mod ffi {
             FnInStruct
         )]
         pub fn retain_inclusive_range(&mut self, start: DiplomatChar, end: DiplomatChar) {
+            #![allow(clippy::unwrap_used)] // #2520
             self.0.retain_range(&(char::from_u32(start).unwrap()..=char::from_u32(end).unwrap()))
         }
 
@@ -193,6 +197,7 @@ pub mod ffi {
             FnInStruct
         )]
         pub fn complement_char(&mut self, ch: DiplomatChar) {
+            #![allow(clippy::unwrap_used)] // #2520
             self.0.complement_char(char::from_u32(ch).unwrap())
         }
 
@@ -204,6 +209,7 @@ pub mod ffi {
             FnInStruct
         )]
         pub fn complement_inclusive_range(&mut self, start: DiplomatChar, end: DiplomatChar) {
+            #![allow(clippy::unwrap_used)] // #2520
             self.0.complement_range(&(char::from_u32(start).unwrap()..=char::from_u32(end).unwrap()))
         }
 

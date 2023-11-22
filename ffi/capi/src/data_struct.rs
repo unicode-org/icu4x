@@ -47,8 +47,8 @@ pub mod ffi {
             };
             let digits = if digits.len() == 10 {
                 let mut new_digits = ['\0'; 10];
-                for (i, d) in digits.iter().enumerate() {
-                    new_digits[i] = char::from_u32(*d).ok_or(ICU4XError::DataStructValidityError)?;
+                for (old, new) in digits.iter().zip(new_digits.iter_mut()) {
+                    *new = char::from_u32(*old).ok_or(ICU4XError::DataStructValidityError)?;
                 }
                 new_digits
             } else {
