@@ -36,17 +36,6 @@ final class CodePointMapData16 implements ffi.Finalizable {
     _capi<ffi.NativeFunction<ffi.Uint16 Function(ffi.Pointer<ffi.Opaque>, ffi.Uint32)>>('ICU4XCodePointMapData16_get')
       .asFunction<int Function(ffi.Pointer<ffi.Opaque>, Rune)>(isLeaf: true);
 
-  /// Gets the value for a code point (specified as a 32 bit integer, in UTF-32)
-  int get32(int cp) {
-    final result = _ICU4XCodePointMapData16_get32(_underlying, cp);
-    return result;
-  }
-
-  // ignore: non_constant_identifier_names
-  static final _ICU4XCodePointMapData16_get32 =
-    _capi<ffi.NativeFunction<ffi.Uint16 Function(ffi.Pointer<ffi.Opaque>, ffi.Uint32)>>('ICU4XCodePointMapData16_get32')
-      .asFunction<int Function(ffi.Pointer<ffi.Opaque>, int)>(isLeaf: true);
-
   /// Produces an iterator over ranges of code points that map to `value`
   ///
   /// See the [Rust documentation for `iter_ranges_for_value`](https://docs.rs/icu/latest/icu/properties/maps/struct.CodePointMapDataBorrowed.html#method.iter_ranges_for_value) for more information.
