@@ -132,6 +132,11 @@ pub mod ffi {
             icu::collections::codepointinvlist::CodePointInversionListBuilder::remove_char,
             FnInStruct
         )]
+        #[diplomat::rust_link(
+            icu::collections::codepointinvlist::CodePointInversionListBuilder::remove_u32,
+            FnInStruct,
+            hidden
+        )]
         pub fn remove_char(&mut self, ch: DiplomatChar) {
             self.0.remove_u32(ch)
         }
@@ -140,6 +145,11 @@ pub mod ffi {
         #[diplomat::rust_link(
             icu::collections::codepointinvlist::CodePointInversionListBuilder::remove_range,
             FnInStruct
+        )]
+        #[diplomat::rust_link(
+            icu::collections::codepointinvlist::CodePointInversionListBuilder::remove_range_u32,
+            FnInStruct,
+            hidden
         )]
         pub fn remove_inclusive_range(&mut self, start: DiplomatChar, end: DiplomatChar) {
             self.0.remove_range_u32(&(start..=end))
@@ -161,6 +171,11 @@ pub mod ffi {
             icu::collections::codepointinvlist::CodePointInversionListBuilder::retain_char,
             FnInStruct
         )]
+        #[diplomat::rust_link(
+            icu::collections::codepointinvlist::CodePointInversionListBuilder::retain_u32,
+            FnInStruct,
+            hidden
+        )]
         pub fn retain_char(&mut self, ch: DiplomatChar) {
             self.0.retain_u32(ch)
         }
@@ -169,6 +184,11 @@ pub mod ffi {
         #[diplomat::rust_link(
             icu::collections::codepointinvlist::CodePointInversionListBuilder::retain_range,
             FnInStruct
+        )]
+        #[diplomat::rust_link(
+            icu::collections::codepointinvlist::CodePointInversionListBuilder::retain_range_u32,
+            FnInStruct,
+            hidden
         )]
         pub fn retain_inclusive_range(&mut self, start: DiplomatChar, end: DiplomatChar) {
             self.0.retain_range_u32(&(start..=end))
@@ -192,6 +212,11 @@ pub mod ffi {
             icu::collections::codepointinvlist::CodePointInversionListBuilder::complement_char,
             FnInStruct
         )]
+        #[diplomat::rust_link(
+            icu::collections::codepointinvlist::CodePointInversionListBuilder::complement_u32,
+            FnInStruct,
+            hidden
+        )]
         pub fn complement_char(&mut self, ch: DiplomatChar) {
             self.0.complement_u32(ch)
         }
@@ -202,6 +227,11 @@ pub mod ffi {
         #[diplomat::rust_link(
             icu::collections::codepointinvlist::CodePointInversionListBuilder::complement_range,
             FnInStruct
+        )]
+        #[diplomat::rust_link(
+            icu::collections::codepointinvlist::CodePointInversionListBuilder::complement_range_u32,
+            FnInStruct,
+            hidden
         )]
         pub fn complement_inclusive_range(&mut self, start: DiplomatChar, end: DiplomatChar) {
             self.0.complement_range_u32(&(start..=end))
