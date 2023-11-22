@@ -959,9 +959,9 @@ impl<'l, 's, Y: LineBreakType<'l, 's>> Iterator for LineBreakIterator<'l, 's, Y>
 
                     break_state = self.get_break_state_from_table(break_state as u8, prop);
                     if break_state > 0 {
-                        println!("-, {}: {}", STATE_NAMES[right_prop as usize], STATE_NAMES[break_state as usize]);
+                        println!("-, {}: {}", STATE_NAMES[prop as usize], STATE_NAMES[break_state as usize]);
                     } else {
-                        println!("-, {}: {}", STATE_NAMES[right_prop as usize], break_state);
+                        println!("-, {}: {}", STATE_NAMES[prop as usize], break_state);
                     }
                     if break_state < 0 {
                         break;
