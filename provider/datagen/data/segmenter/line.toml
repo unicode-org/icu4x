@@ -432,7 +432,7 @@ right = "ZWJ"
 
 [[tables]]
 # LB9
-name = "CJ"
+name = "ZWJ"
 left = "CJ"
 right = "ZWJ"
 
@@ -492,8 +492,14 @@ right = "ZWJ"
 
 [[tables]]
 # LB9
-name = "HL"
+name = "HL_ZWJ"
 left = "HL"
+right = "ZWJ"
+
+[[tables]]
+# LB9
+name = "HL_ZWJ"
+left = "HL_ZWJ"
 right = "ZWJ"
 
 [[tables]]
@@ -710,6 +716,12 @@ right = "HY"
 # LB21
 name = "HL_HY"
 left = "HL"
+right = "BA"
+
+[[tables]]
+# LB21
+name = "HL_HY"
+left = "HL_ZWJ"
 right = "BA"
 
 [[tables]]
@@ -930,7 +942,7 @@ break_state = true
 
 [[rules]]
 # LB8a
-left = [ "ZWJ" ]
+left = [ "ZWJ", "HL_ZWJ" ]
 right = [ "Any" ]
 break_state = false
 
