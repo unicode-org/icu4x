@@ -122,10 +122,14 @@ pub mod ffi {
         }
 
         /// The length of this map
-        #[allow(clippy::len_without_is_empty)]
         #[diplomat::attr(dart, rename = "length")]
         pub fn len(&self) -> usize {
             self.0.len()
+        }
+
+        /// Whether this map is empty
+        pub fn is_empty(&self) -> bool {
+            self.0.is_empty()
         }
 
         /// Get element at `index`. Returns 0 when out of bounds
