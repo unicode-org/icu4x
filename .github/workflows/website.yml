@@ -33,13 +33,13 @@ jobs:
         with:
           hugo-version: '0.119.0'
           extended: true  # need this for the Docsy theme
-      - uses: actions/cache@v3
-        with:
-          path: /home/runner/.cache/hugo_cache    # <-- with hugo version v0.116.0 and above
-          # path: /tmp/hugo_cache                 # <-- with hugo version < v0.116.0
-          key: ${{ runner.os }}-hugomod-${{ hashFiles('**/go.sum') }}
-          restore-keys: |
-            ${{ runner.os }}-hugomod-
+      # - uses: actions/cache@v3
+      #   with:
+      #     path: /home/runner/.cache/hugo_cache    # <-- with hugo version v0.116.0 and above
+      #     # path: /tmp/hugo_cache                 # <-- with hugo version < v0.116.0
+      #     key: ${{ runner.os }}-hugomod-${{ hashFiles('**/go.sum') }}
+      #     restore-keys: |
+      #       ${{ runner.os }}-hugomod-
 
       - name: Install theme dependencies
         run: |
