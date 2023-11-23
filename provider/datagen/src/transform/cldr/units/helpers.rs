@@ -8,6 +8,7 @@ use std::collections::{BTreeMap, VecDeque};
 
 use fraction::GenericFraction;
 use icu_provider::DataError;
+use icu_unitsconversion::measureunit::MeasureUnit;
 use icu_unitsconversion::provider::{ConversionInfo, Exactness, Sign};
 use num_bigint::BigUint;
 

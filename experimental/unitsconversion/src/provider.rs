@@ -68,6 +68,7 @@ pub struct UnitsInfoV1<'data> {
 pub struct ConversionInfo<'data> {
     /// Contains the base unit which the unit is converted to.
     #[cfg_attr(feature = "serde", serde(borrow))]
+    //pub base_unit: ZeroVec<'data, MeasureUnitItem>,
     pub base_unit: Cow<'data, str>,
 
     /// Represents the numerator of the conversion factor.
@@ -128,29 +129,6 @@ pub enum Exactness {
     #[default]
     Exact = 0,
     Approximate = 1,
-}
-
-#[zerovec::make_varule(MeasureUnitULE)]
-#[derive(Clone, Debug, PartialOrd, Ord, PartialEq, Eq, Default)]
-#[cfg_attr(
-    feature = "datagen",
-    derive(databake::Bake),
-    databake(path = icu_unitsconversion::provider),
-)]
-#[cfg_attr(
-    feature = "datagen",
-    derive(serde::Serialize),
-    zerovec::derive(Serialize)
-)]
-#[cfg_attr(
-    feature = "serde",
-    derive(serde::Deserialize),
-    zerovec::derive(Deserialize)
-)]
-#[zerovec::derive(Debug)]
-pub struct MeasureUnit<'data> {
-    #[cfg_attr(feature = "serde", serde(borrow))]
-    pub contained_units: ZeroVec<'data, MeasureUnitItem>,
 }
 
 #[zerovec::make_ule(BaseULE)]
