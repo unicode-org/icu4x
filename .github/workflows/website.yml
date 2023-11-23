@@ -19,7 +19,7 @@ jobs:
         uses: peaceiris/actions-hugo@v2
         with:
           hugo-version: '0.119.0'
-          # extended: true
+          extended: true  # need this for the Docsy theme
       - uses: actions/cache@v3
         with:
           path: /home/runner/.cache/hugo_cache    # <-- with hugo version v0.116.0 and above
