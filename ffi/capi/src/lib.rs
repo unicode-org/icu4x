@@ -14,12 +14,11 @@
         // Exhaustiveness and Debug is not required for Diplomat types
     )
 )]
-
 // Diplomat limitations
 #![allow(
     clippy::needless_lifetimes,
     clippy::result_unit_err,
-    clippy::should_implement_trait,
+    clippy::should_implement_trait
 )]
 
 //! This crate contains the source of truth for the [Diplomat](https://github.com/rust-diplomat/diplomat)-generated
