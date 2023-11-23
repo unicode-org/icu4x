@@ -36,4 +36,11 @@ gha-creds-*.json
 
 .venv
 
+# Website (Hugo)
+docs/**/public
+docs/**/resources/
+node_modules/
+package-lock.json
+.hugo_build.lock
+
 *~
