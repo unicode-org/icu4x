@@ -2,6 +2,8 @@
 
 <!-- cargo-rdme start -->
 
+## `icu_preferences`
+
 `icu_preferences` is a utility crate of the [`ICU4X`] project.
 
 This API provides necessary functionality for building user preferences structs with ability
@@ -11,9 +13,9 @@ attributes against default values.
 The crate is intended primarily to be used by components constructors to normalize the format
 of ingesting preferences across all of [`ICU4X`].
 
-# Examples:
+## Examples:
 
-```
+```rust
 use icu_preferences::preferences;
 use icu_datetime::options::preferences::HourCycle;
 use icu_locid::{LanguageIdentifier, extensions_unicode_key, Locale};
@@ -40,7 +42,7 @@ impl ExampleComponent {
         let mut resolved_prefs = get_defaults(&prefs.lid);
 
         // Resolve them against provided preferences.
-        resolved_prefs.resolve(&prefs);
+        resolved_prefs.extend(&prefs);
 
         Self { resolved_prefs }
     }
