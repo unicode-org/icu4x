@@ -150,7 +150,7 @@ pub enum Exactness {
 #[zerovec::derive(Debug)]
 pub struct MeasureUnit<'data> {
     #[cfg_attr(feature = "serde", serde(borrow))]
-    pub contained_units: VarZeroVec<'data, MeasureUnitItemULE>,
+    pub contained_units: ZeroVec<'data, MeasureUnitItem>,
 }
 
 #[zerovec::make_ule(BaseULE)]
