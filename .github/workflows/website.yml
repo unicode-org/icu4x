@@ -28,6 +28,12 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-hugomod-
 
+      - name: Install theme dependencies
+        run: |
+          npm install -D autoprefixer
+          npm install -D postcss-cli
+          npm install -D postcss        
+
       - name: Build
         run: |
           cd docs/www
