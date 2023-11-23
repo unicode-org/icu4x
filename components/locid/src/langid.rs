@@ -314,41 +314,6 @@ impl LanguageIdentifier {
         iter.next().is_none()
     }
 
-    /// Merge an instance of [`LanguageIdentifier`] into this one.
-    ///
-    /// Does not override existing subtags or keys.
-    ///
-    /// # Examples
-    ///
-    /// ```
-    /// use icu::locid::langid;
-    ///
-    /// let mut lid = langid!("und-US");
-    /// let lid2 = langid!("en-Latn-GB");
-    ///
-    /// lid.merge(lid2);
-    /// assert_eq!(lid, langid!("en-Latn-US"));
-    /// ```
-    pub fn merge(&mut self, other: Self) -> bool {
-        let mut modified = false;
-        if !other.language.is_empty() && self.language.is_empty() {
-            self.language = other.language;
-            modified = true;
-        }
-        if other.script.is_some() && self.script.is_none() {
-            self.script = other.script;
-            modified = true;
-        }
-        if other.region.is_some() && self.region.is_none() {
-            self.region = other.region;
-            modified = true;
-        }
-        if !other.variants.is_empty() {
-            modified |= self.variants.merge(&other.variants);
-        }
-        modified
-    }
-
     pub(crate) fn for_each_subtag_str<E, F>(&self, f: &mut F) -> Result<(), E>
     where
         F: FnMut(&str) -> Result<(), E>,

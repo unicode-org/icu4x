@@ -23,7 +23,7 @@ impl TryFrom<&unicode::Value> for Calendar {
     }
 }
 
-#[derive(Clone, Copy)]
+#[derive(Clone, Copy, Debug)]
 pub struct NumberingSystem(pub TinyStr8);
 
 impl TryFrom<&unicode::Value> for NumberingSystem {

@@ -35,53 +35,19 @@ pub struct DateTimeFormatOptions {
 
 pub struct DateTimeFormat {
     prefs: DateTimeFormatResolvedPreferences,
-    #[allow(dead_code)]
-    options: DateTimeFormatOptions,
+    _options: DateTimeFormatOptions,
 }
 
 impl DateTimeFormat {
     pub fn new(prefs: DateTimeFormatPreferences, options: DateTimeFormatOptions) -> Self {
         let mut resolved = get_defaults(&prefs.lid);
 
-        resolved.resolve(&prefs);
+        resolved.extend(&prefs);
 
         Self {
             prefs: resolved,
-            options,
+            _options: options,
         }
-    }
-
-    #[allow(dead_code)]
-    fn get_time(&self) -> String {
-        match self.prefs.hour_cycle {
-            HourCycle::H11 => "00:13 am",
-            HourCycle::H12 => "12:13 am",
-            HourCycle::H23 => "00:13",
-            HourCycle::H24 => "24:13",
-        }
-        .to_string()
-    }
-
-    #[allow(dead_code)]
-    fn get_date(&self) -> String {
-        "Monday, June 23rd 2022".to_string()
-    }
-
-    #[allow(dead_code)]
-    pub fn format(&self, _input: u64) -> String {
-        match (self.options.date_length, self.options.time_length) {
-            (Some(_), None) => {
-                return self.get_date();
-            }
-            (None, Some(_)) => {
-                return self.get_time();
-            }
-            (Some(_), Some(_)) => {
-                return format!("{}{}{}", self.get_date(), ", ", self.get_time(),);
-            }
-            _ => {}
-        }
-        format!("{}{}{}", self.get_date(), ", ", self.get_time(),)
     }
 
     pub fn resolved_options(&self) -> &DateTimeFormatResolvedPreferences {

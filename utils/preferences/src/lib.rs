@@ -42,7 +42,7 @@
 //!         let mut resolved_prefs = get_defaults(&prefs.lid);
 //!
 //!         // Resolve them against provided preferences.
-//!         resolved_prefs.resolve(&prefs);
+//!         resolved_prefs.extend(&prefs);
 //!
 //!         Self { resolved_prefs }
 //!     }

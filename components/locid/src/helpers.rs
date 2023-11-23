@@ -235,16 +235,6 @@ impl<K: Ord, V> StoreFromIterable<K, V> for ShortSlice<(K, V)> {
     }
 }
 
-// Todo: Can we avoid Vec here?
-impl<K: Ord + Clone, V: Clone> StoreIntoIter<K, V> for ShortSlice<(K, V)> {
-    type KeyValueIntoIter = alloc::vec::IntoIter<(K, V)>;
-
-    fn lm_into_iter(self) -> Self::KeyValueIntoIter {
-        let v: Vec<(K, V)> = self.to_vec();
-        v.into_iter()
-    }
-}
-
 impl<K, V> StoreMut<K, V> for ShortSlice<(K, V)> {
     fn lm_with_capacity(_capacity: usize) -> Self {
         ShortSlice::ZeroOne(None)

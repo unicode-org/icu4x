@@ -8,7 +8,7 @@ macro_rules! preferences {
      $resolved_name:ident,
      {$($key:ident => $pref:ty, $resolved:ty, $ue:expr),*}
      ) => (
-        #[derive(Default)]
+        #[derive(Default, Debug)]
         #[non_exhaustive]
         pub struct $name {
             pub lid: Option<icu_locid::LanguageIdentifier>,
@@ -18,7 +18,7 @@ macro_rules! preferences {
         }
 
         #[non_exhaustive]
-        #[derive(Clone)]
+        #[derive(Clone, Debug)]
         pub struct $resolved_name {
             pub lid: icu_locid::LanguageIdentifier,
 
@@ -68,43 +68,18 @@ macro_rules! preferences {
         }
 
         impl $name {
-            #[allow(clippy::result_unit_err)]
-            pub fn merge_locale(&mut self, locale: Locale) {
-                if let Some(lid) = &mut self.lid {
-                    lid.merge(locale.id);
-                } else {
-                    self.lid = Some(locale.id.clone());
-                }
-
-                for (k, v) in locale.extensions.unicode.keywords.iter() {
-                    $(
-                      if self.$key.is_none() {
-                          if let Some(ue) = &$ue {
-                              if k == ue {
-                                  if let Ok(r) = TryInto::try_into(v) {
-                                      self.$key = Some(r);
-                                  }
-                              }
-                          }
-                      }
-                    )*
-                }
-            }
-
-            pub fn merge(&mut self, other: $name) -> &mut Self {
+            pub fn extend<T: Into<$name>>(&mut self, other: T) {
+                let other = other.into();
                 $(
-                  if let Some(value) = other.$key {
-                      if self.$key.is_none() {
-                          self.$key = Some(value);
-                      }
-                  }
+                    if let Some(value) = other.$key {
+                        self.$key = Some(value);
+                    }
                 )*
-                self
             }
         }
 
         impl $resolved_name {
-            pub fn resolve(&mut self, prefs: &$name) {
+            pub fn extend(&mut self, prefs: &$name) {
                 $(
                     if let Some(v) = prefs.$key {
                         self.$key = v;

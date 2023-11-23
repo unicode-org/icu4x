@@ -364,52 +364,6 @@ impl Keywords {
         }
     }
 
-    /// Merge an instance of [`Keywords`] into this one.
-    ///
-    /// Does not override existing keys.
-    ///
-    /// # Examples
-    ///
-    /// ```
-    /// use icu::locid::extensions::unicode::Keywords;
-    /// use icu::locid::{
-    ///     extensions_unicode_key as key,
-    ///     extensions_unicode_value as value,
-    /// };
-    ///
-    /// let mut kw: Keywords = vec![
-    ///     (
-    ///         key!("ca"),
-    ///         value!("latn"),
-    ///     ),
-    /// ].into_iter().collect();
-    ///
-    /// let kw2: Keywords = vec![
-    ///     (
-    ///         key!("ca"),
-    ///         value!("arab"),
-    ///     ),
-    ///     (
-    ///         key!("hc"),
-    ///         value!("h24"),
-    ///     ),
-    /// ].into_iter().collect();
-    ///
-    /// kw.merge(kw2);
-    ///
-    /// assert_eq!(kw.get(&key!("hc")), Some(&value!("h24")));
-    /// assert_eq!(kw.get(&key!("ca")), Some(&value!("latn")));
-    /// ```
-    pub fn merge(&mut self, other: Self) -> bool {
-        let mut modified = false;
-        for (k, v) in other.0 {
-            if self.0.try_insert(k, v).is_none() {
-                modified = true;
-            }
-        }
-        modified
-    }
-
     /// Produce an ordered iterator over key-value pairs
     pub fn iter(&self) -> impl Iterator<Item = (&Key, &Value)> {
         self.0.iter()
