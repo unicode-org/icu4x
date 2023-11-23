@@ -394,6 +394,122 @@ name = "XX"
 left = "XX"
 right = "CM"
 
+# X ZWJ is treated as X, but only after the rule ZWJ × has been applied,
+# so we cannot just do the same thing we do for CM.
+# The direct way to implement that would be to split each state s into s and
+# s_ZWJ, to not break after s_ZWJ, and to have both s and s_ZWJ on the left-hand
+# side of all rules that would have s.
+# This would be a bit of a mess, so we have an X_ZWJ state that covers most,
+# cases and only introduce new states where that makes a difference, that is,
+# where the ZWJed character lies in extended context for another rule.
+# We need to differentiate X_ZWJ from ZWJ because the latter state (a ZWJ that
+# did not combine with anything in LB9) is not preserved by a subsequent CM:
+# SP ÷ ZWJ × CB but SP ÷ ZWJ × CM ÷ CB, whereas in the X_ZWJ case,
+# AL × ZWJ × CB and AL × ZWJ × CM × CB.
+# TODO(egg): This still does not work. X ZWJ CM really needs to put you back to state X.
+
+[[tables]]
+# LB9
+name = "X_ZWJ"
+left = "X_ZWJ"
+right = "CM"
+
+[[tables]]
+# LB9
+name = "X_ZWJ"
+left = "AI"
+right = "ZWJ"
+
+[[tables]]
+# LB9
+name = "X_ZWJ"
+left = "AL"
+right = "ZWJ"
+
+[[tables]]
+# LB9
+name = "X_ZWJ"
+left = "B2"
+right = "ZWJ"
+
+[[tables]]
+# LB9
+name = "X_ZWJ"
+left = "BA"
+right = "ZWJ"
+
+[[tables]]
+# LB9
+name = "X_ZWJ"
+left = "BB"
+right = "ZWJ"
+
+[[tables]]
+# LB9
+name = "X_ZWJ"
+left = "CB"
+right = "ZWJ"
+
+[[tables]]
+# LB9
+name = "X_ZWJ"
+left = "CJ"
+right = "ZWJ"
+
+[[tables]]
+# LB9
+name = "X_ZWJ"
+left = "CL"
+right = "ZWJ"
+
+[[tables]]
+# LB9
+name = "X_ZWJ"
+left = "CM"
+right = "ZWJ"
+
+[[tables]]
+# LB9
+name = "X_ZWJ"
+left = "CP"
+right = "ZWJ"
+
+[[tables]]
+# LB9
+name = "X_ZWJ"
+left = "EB"
+right = "ZWJ"
+
+[[tables]]
+# LB9
+name = "X_ZWJ"
+left = "EM"
+right = "ZWJ"
+
+[[tables]]
+# LB9
+name = "X_ZWJ"
+left = "EX"
+right = "ZWJ"
+
+[[tables]]
+# LB9
+name = "X_ZWJ"
+left = "GL"
+right = "ZWJ"
+
+[[tables]]
+# LB9
+name = "X_ZWJ"
+left = "H2"
+right = "ZWJ"
+
+[[tables]]
+# LB9
+name = "X_ZWJ"
+left = "H3"
+right = "ZWJ"
+
 [[tables]]
 # LB9
 name = "HL_ZWJ"
@@ -404,6 +520,144 @@ right = "ZWJ"
 # LB9
 name = "HL_ZWJ"
 left = "HL_ZWJ"
+right = "ZWJ"
+
+[[tables]]
+# LB9
+name = "X_ZWJ"
+left = "HY"
+right = "ZWJ"
+
+[[tables]]
+# LB9
+name = "X_ZWJ"
+left = "ID"
+right = "ZWJ"
+
+[[tables]]
+# LB9
+name = "X_ZWJ"
+left = "ID_CN"
+right = "ZWJ"
+
+[[tables]]
+# LB9
+name = "X_ZWJ"
+left = "IN"
+right = "ZWJ"
+
+[[tables]]
+# LB9
+name = "X_ZWJ"
+left = "IS"
+right = "ZWJ"
+
+[[tables]]
+# LB9
+name = "X_ZWJ"
+left = "JL"
+right = "ZWJ"
+
+[[tables]]
+# LB9
+name = "X_ZWJ"
+left = "JT"
+right = "ZWJ"
+
+[[tables]]
+# LB9
+name = "X_ZWJ"
+left = "JV"
+right = "ZWJ"
+
+[[tables]]
+# LB9
+name = "X_ZWJ"
+left = "NS"
+right = "ZWJ"
+
+[[tables]]
+# LB9
+name = "X_ZWJ"
+left = "NU"
+right = "ZWJ"
+
+[[tables]]
+# LB9
+name = "X_ZWJ"
+left = "OP_EA"
+right = "ZWJ"
+
+[[tables]]
+# LB9
+name = "X_ZWJ"
+left = "OP_OP30"
+right = "ZWJ"
+
+[[tables]]
+# LB9
+name = "X_ZWJ"
+left = "PO"
+right = "ZWJ"
+
+[[tables]]
+# LB9
+name = "X_ZWJ"
+left = "PO_EAW"
+right = "ZWJ"
+
+[[tables]]
+# LB9
+name = "X_ZWJ"
+left = "QU"
+right = "ZWJ"
+
+[[tables]]
+# LB9
+name = "X_ZWJ"
+left = "RI"
+right = "ZWJ"
+
+[[tables]]
+# LB9
+name = "X_ZWJ"
+left = "PR"
+right = "ZWJ"
+
+[[tables]]
+# LB9
+name = "X_ZWJ"
+left = "PR_EAW"
+right = "ZWJ"
+
+[[tables]]
+# LB9
+name = "X_ZWJ"
+left = "SA"
+right = "ZWJ"
+
+[[tables]]
+# LB9
+name = "X_ZWJ"
+left = "SY"
+right = "ZWJ"
+
+[[tables]]
+# LB9
+name = "X_ZWJ"
+left = "WJ"
+right = "ZWJ"
+
+[[tables]]
+# LB9
+name = "X_ZWJ"
+left = "XX"
+right = "ZWJ"
+
+[[tables]]
+# LB9
+name = "LB25_NU_CL"
+left = "LB25_NU_CL"
 right = "ZWJ"
 
 [[tables]]
@@ -678,14 +932,8 @@ break_state = true
 
 [[rules]]
 # LB8a
-left = [ "ZWJ", "HL_ZWJ" ]
+left = [ "ZWJ", "HL_ZWJ", "X_ZWJ" ]
 right = [ "Any" ]
-break_state = false
-
-[[rules]]
-# LB9
-left = [ "Any" ]
-right = [ "ZWJ" ]
 break_state = false
 
 [[rules]]
@@ -744,7 +992,7 @@ right = [ "CL", "CP", "EX", "IS", "SY" ]
 
 [[rules]]
 # LB13
-left = [ "B2_SP", "CL_CP_SP", "QU_SP", "LB25_NU_CP" ]
+left = [ "B2_SP", "CL_CP_SP", "QU_SP", "LB25_NU_CP", "LB25_NU_CL" ]
 right = [ "CL", "CP", "EX", "IS", "SY" ]
 break_state = false
 
@@ -786,7 +1034,7 @@ break_state = true
 
 [[rules]]
 # LB19
-left = [ "Any" ]
+left = [ "Any", "LB25_NU_IS" ]
 right = [ "QU" ]
 break_state = false
 
