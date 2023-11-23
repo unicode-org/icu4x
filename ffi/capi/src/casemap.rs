@@ -10,7 +10,6 @@ pub mod ffi {
         errors::ffi::ICU4XError, locale::ffi::ICU4XLocale, provider::ffi::ICU4XDataProvider,
     };
     use alloc::boxed::Box;
-    use diplomat_runtime::DiplomatWriteable;
     use icu_casemap::titlecase::{LeadingAdjustment, TrailingCase};
     use icu_casemap::{CaseMapCloser, CaseMapper, TitlecaseMapper};
     use writeable::Writeable;
@@ -176,10 +175,12 @@ pub mod ffi {
         #[diplomat::rust_link(icu::casemap::CaseMapper::add_case_closure_to, FnInStruct)]
         pub fn add_case_closure_to(
             &self,
-            c: char,
+            c: DiplomatChar,
             builder: &mut crate::collections_sets::ffi::ICU4XCodePointSetBuilder,
         ) {
-            self.0.add_case_closure_to(c, &mut builder.0)
+            if let Some(ch) = char::from_u32(c) {
+                self.0.add_case_closure_to(ch, &mut builder.0)
+            }
         }
 
         /// Returns the simple lowercase mapping of the given character.
@@ -188,8 +189,10 @@ pub mod ffi {
         /// Full mappings, which can map one char to a string, are not included.
         /// For full mappings, use `ICU4XCaseMapper::lowercase`.
         #[diplomat::rust_link(icu::casemap::CaseMapper::simple_lowercase, FnInStruct)]
-        pub fn simple_lowercase(&self, ch: char) -> char {
-            self.0.simple_lowercase(ch)
+        pub fn simple_lowercase(&self, ch: DiplomatChar) -> DiplomatChar {
+            char::from_u32(ch)
+                .map(|ch| self.0.simple_lowercase(ch) as DiplomatChar)
+                .unwrap_or(ch)
         }
 
         /// Returns the simple uppercase mapping of the given character.
@@ -198,8 +201,10 @@ pub mod ffi {
         /// Full mappings, which can map one char to a string, are not included.
         /// For full mappings, use `ICU4XCaseMapper::uppercase`.
         #[diplomat::rust_link(icu::casemap::CaseMapper::simple_uppercase, FnInStruct)]
-        pub fn simple_uppercase(&self, ch: char) -> char {
-            self.0.simple_uppercase(ch)
+        pub fn simple_uppercase(&self, ch: DiplomatChar) -> DiplomatChar {
+            char::from_u32(ch)
+                .map(|ch| self.0.simple_uppercase(ch) as DiplomatChar)
+                .unwrap_or(ch)
         }
 
         /// Returns the simple titlecase mapping of the given character.
@@ -208,8 +213,10 @@ pub mod ffi {
         /// Full mappings, which can map one char to a string, are not included.
         /// For full mappings, use `ICU4XCaseMapper::titlecase_segment`.
         #[diplomat::rust_link(icu::casemap::CaseMapper::simple_titlecase, FnInStruct)]
-        pub fn simple_titlecase(&self, ch: char) -> char {
-            self.0.simple_titlecase(ch)
+        pub fn simple_titlecase(&self, ch: DiplomatChar) -> DiplomatChar {
+            char::from_u32(ch)
+                .map(|ch| self.0.simple_titlecase(ch) as DiplomatChar)
+                .unwrap_or(ch)
         }
 
         /// Returns the simple casefolding of the given character.
@@ -217,16 +224,20 @@ pub mod ffi {
         /// This function only implements simple folding.
         /// For full folding, use `ICU4XCaseMapper::fold`.
         #[diplomat::rust_link(icu::casemap::CaseMapper::simple_fold, FnInStruct)]
-        pub fn simple_fold(&self, ch: char) -> char {
-            self.0.simple_fold(ch)
+        pub fn simple_fold(&self, ch: DiplomatChar) -> DiplomatChar {
+            char::from_u32(ch)
+                .map(|ch| self.0.simple_fold(ch) as DiplomatChar)
+                .unwrap_or(ch)
         }
         /// Returns the simple casefolding of the given character in the Turkic locale
         ///
         /// This function only implements simple folding.
         /// For full folding, use `ICU4XCaseMapper::fold_turkic`.
         #[diplomat::rust_link(icu::casemap::CaseMapper::simple_fold_turkic, FnInStruct)]
-        pub fn simple_fold_turkic(&self, ch: char) -> char {
-            self.0.simple_fold_turkic(ch)
+        pub fn simple_fold_turkic(&self, ch: DiplomatChar) -> DiplomatChar {
+            char::from_u32(ch)
+                .map(|ch| self.0.simple_fold_turkic(ch) as DiplomatChar)
+                .unwrap_or(ch)
         }
     }
 
@@ -253,10 +264,12 @@ pub mod ffi {
         #[diplomat::rust_link(icu::casemap::CaseMapCloser::add_case_closure_to, FnInStruct)]
         pub fn add_case_closure_to(
             &self,
-            c: char,
+            c: DiplomatChar,
             builder: &mut crate::collections_sets::ffi::ICU4XCodePointSetBuilder,
         ) {
-            self.0.add_case_closure_to(c, &mut builder.0)
+            if let Some(ch) = char::from_u32(c) {
+                self.0.add_case_closure_to(ch, &mut builder.0)
+            }
         }
 
         /// Finds all characters and strings which may casemap to `s` as their full case folding string

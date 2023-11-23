@@ -39,7 +39,7 @@ pub mod ffi {
             primary_group_size: u8,
             secondary_group_size: u8,
             min_group_size: u8,
-            digits: &[char],
+            digits: &[DiplomatChar],
         ) -> Result<Box<ICU4XDataStruct>, ICU4XError> {
             use super::str_to_cow;
             use icu_decimal::provider::{
@@ -47,7 +47,9 @@ pub mod ffi {
             };
             let digits = if digits.len() == 10 {
                 let mut new_digits = ['\0'; 10];
-                new_digits.copy_from_slice(digits);
+                for (old, new) in digits.iter().zip(new_digits.iter_mut()) {
+                    *new = char::from_u32(*old).ok_or(ICU4XError::DataStructValidityError)?;
+                }
                 new_digits
             } else {
                 return Err(ICU4XError::DataStructValidityError);
