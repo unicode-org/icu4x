@@ -28,6 +28,11 @@
         The number of elements in this list
 
 
+    .. js:method:: is_empty()
+
+        Whether this list is empty
+
+
 .. js:class:: ICU4XListFormatter
 
     See the `Rust documentation for ListFormatter <https://docs.rs/icu/latest/icu/list/struct.ListFormatter.html>`__ for more information.
