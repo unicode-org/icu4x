@@ -316,19 +316,23 @@ impl<'a, K: 'a, V: 'a> StoreIterableMut<'a, K, V> for ShortSlice<(K, V)> {
         for<'r> fn(&'r mut (K, V)) -> (&'r K, &'r mut V),
     >;
 
-    type KeyValueIntoIter = ShortSliceIntoIter<(K, V)>;
-
     fn lm_iter_mut(
         &'a mut self,
     ) -> <Self as litemap::store::StoreIterableMut<'a, K, V>>::KeyValueIterMut {
         self.iter_mut().map(|elt| (&elt.0, &mut elt.1))
     }
+}
 
-    fn lm_into_iter(
-        self,
-    ) -> <Self as litemap::store::StoreIterableMut<'a, K, V>>::KeyValueIntoIter {
+impl<K, V> StoreIntoIterator<K, V> for ShortSlice<(K, V)> {
+    type KeyValueIntoIter = ShortSliceIntoIter<(K, V)>;
+
+    fn lm_into_iter(self) -> Self::KeyValueIntoIter {
         self.into_iter()
     }
+
+    // leave lm_extend_end as default
+
+    // leave lm_extend_start as default
 }
 
 impl<K, V> StoreFromIterator<K, V> for ShortSlice<(K, V)> {}

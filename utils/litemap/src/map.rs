@@ -747,7 +747,7 @@ where
 impl<'a, K: 'a, V: 'a, S> LiteMap<K, V, S>
 where
     K: Ord,
-    S: StoreIterableMut<'a, K, V> + StoreFromIterator<K, V>,
+    S: StoreIntoIterator<K, V> + StoreFromIterator<K, V>,
 {
     /// Insert all elements from `other` into this `LiteMap`.
     ///
@@ -895,6 +895,18 @@ where
     /// Produce an ordered mutable iterator over key-value pairs
     pub fn iter_mut(&'a mut self) -> impl DoubleEndedIterator<Item = (&'a K, &'a mut V)> {
         self.values.lm_iter_mut()
+    }
+}
+
+impl<K, V, S> IntoIterator for LiteMap<K, V, S>
+where
+    S: StoreIntoIterator<K, V>,
+{
+    type Item = (K, V);
+    type IntoIter = S::KeyValueIntoIter;
+
+    fn into_iter(self) -> Self::IntoIter {
+        self.values.lm_into_iter()
     }
 }
 
@@ -1244,5 +1256,19 @@ mod test {
                 assert_eq!(a.cmp(b), const_cmp_bytes(a, b));
             }
         }
+    }
+
+    #[test]
+    fn into_iterator() {
+        let mut map = LiteMap::<_, _, Vec<(_, _)>>::new();
+        map.insert(4, "four");
+        map.insert(6, "six");
+        let mut reference = vec![(6, "six"), (4, "four")];
+
+        for i in map {
+            let r = reference.pop().unwrap();
+            assert_eq!(r, i);
+        }
+        assert!(reference.is_empty());
     }
 }
