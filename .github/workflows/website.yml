@@ -30,9 +30,13 @@ jobs:
 
       - name: Install theme dependencies
         run: |
+          cd docs/www
           npm install -D autoprefixer
           npm install -D postcss-cli
-          npm install -D postcss        
+          npm install -D postcss
+
+          # fix from https://github.com/google/docsy/issues/464
+          git submodule update --init --recursive
 
       - name: Build
         run: |
