@@ -152,13 +152,12 @@ fn test_basic() {
         meter_convert,
         ConversionInfo {
             base_unit: {
-                let mut base_unit = Vec::<MeasureUnitItem>::new();
-                base_unit.push(MeasureUnitItem {
+                let base_unit = vec![MeasureUnitItem {
                     power: 1,
                     si_base: Base::NotExist,
                     si_prefix: 0,
                     unit_id: meter_index as u16,
-                });
+                }];
                 ZeroVec::from_iter(base_unit.into_iter())
             },
             factor_sign: Sign::Positive,
@@ -180,13 +179,12 @@ fn test_basic() {
         foot_convert,
         ConversionInfo {
             base_unit: {
-                let mut base_unit = Vec::<MeasureUnitItem>::new();
-                base_unit.push(MeasureUnitItem {
+                let base_unit = vec![MeasureUnitItem {
                     power: 1,
                     si_base: Base::NotExist,
                     si_prefix: 0,
                     unit_id: meter_index as u16,
-                });
+                }];
                 ZeroVec::from_iter(base_unit.into_iter())
             },
             factor_sign: Sign::Positive,
