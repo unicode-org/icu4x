@@ -396,17 +396,8 @@ right = "CM"
 
 # X ZWJ is treated as X, but only after the rule ZWJ × has been applied,
 # so we cannot just do the same thing we do for CM.
-# The direct way to implement that would be to split each state s into s and
-# s_ZWJ, to not break after s_ZWJ, and to have both s and s_ZWJ on the left-hand
-# side of all rules that would have s.
-# This would be a bit of a mess, so we have an X_ZWJ state that covers most,
-# cases and only introduce new states where that makes a difference, that is,
-# where the ZWJed character lies in extended context for another rule.
-# We need to differentiate X_ZWJ from ZWJ because the latter state (a ZWJ that
-# did not combine with anything in LB9) is not preserved by a subsequent CM:
-# SP ÷ ZWJ × CB but SP ÷ ZWJ × CM ÷ CB, whereas in the X_ZWJ case,
-# AL × ZWJ × CB and AL × ZWJ × CM × CB.
-# TODO(egg): This still does not work. X ZWJ CM really needs to put you back to state X.
+# Instead we split each state X into X and X_ZWJ, and forbid a break after X_ZWJ.
+# State X_ZWJ is otherwise treated as X.
 
 [[tables]]
 # LB9
@@ -654,6 +645,249 @@ right = "ZWJ"
 name = "LB25_NU_CL"
 left = "LB25_NU_CL"
 right = "ZWJ"
+
+# X ZWJ CM brings us back to state X,
+# as the ZWJ does not act through CMs, LB8a being before LB9.
+
+[[tables]]
+# LB9
+name = "AI"
+left = "AI_ZWJ"
+right = "CM"
+
+[[tables]]
+# LB9
+name = "AL"
+left = "AL_ZWJ"
+right = "CM"
+
+[[tables]]
+# LB9
+name = "B2"
+left = "B2_ZWJ"
+right = "CM"
+
+[[tables]]
+# LB9
+name = "BA"
+left = "BA_ZWJ"
+right = "CM"
+
+[[tables]]
+# LB9
+name = "BB"
+left = "BB_ZWJ"
+right = "CM"
+
+[[tables]]
+# LB9
+name = "CB"
+left = "CB_ZWJ"
+right = "CM"
+
+[[tables]]
+# LB9
+name = "CJ"
+left = "CJ_ZWJ"
+right = "CM"
+
+[[tables]]
+# LB9
+name = "CL"
+left = "CL_ZWJ"
+right = "CM"
+
+[[tables]]
+# LB9
+name = "AL"
+left = "AL_ZWJ"
+right = "CM"
+
+[[tables]]
+# LB9
+name = "CP"
+left = "CP_ZWJ"
+right = "CM"
+
+[[tables]]
+# LB9
+name = "EB"
+left = "EB_ZWJ"
+right = "CM"
+
+[[tables]]
+# LB9
+name = "EM"
+left = "EM_ZWJ"
+right = "CM"
+
+[[tables]]
+# LB9
+name = "EX"
+left = "EX_ZWJ"
+right = "CM"
+
+[[tables]]
+# LB9
+name = "GL"
+left = "GL_ZWJ"
+right = "CM"
+
+[[tables]]
+# LB9
+name = "H2"
+left = "H2_ZWJ"
+right = "CM"
+
+[[tables]]
+# LB9
+name = "H3"
+left = "H3_ZWJ"
+right = "CM"
+
+[[tables]]
+# LB9
+name = "HL"
+left = "HL_ZWJ"
+right = "CM"
+
+[[tables]]
+# LB9
+name = "HL"
+left = "HL_ZWJ"
+right = "CM"
+
+[[tables]]
+# LB9
+name = "HY"
+left = "HY_ZWJ"
+right = "CM"
+
+[[tables]]
+# LB9
+name = "ID"
+left = "ID_ZWJ"
+right = "CM"
+
+[[tables]]
+# LB9
+name = "ID"
+left = "ID_ZWJ"
+right = "CM"
+
+[[tables]]
+# LB9
+name = "IN"
+left = "IN_ZWJ"
+right = "CM"
+
+[[tables]]
+# LB9
+name = "IS"
+left = "IS_ZWJ"
+right = "CM"
+
+[[tables]]
+# LB9
+name = "JL"
+left = "JL_ZWJ"
+right = "CM"
+
+[[tables]]
+# LB9
+name = "JT"
+left = "JT_ZWJ"
+right = "CM"
+
+[[tables]]
+# LB9
+name = "JV"
+left = "JV_ZWJ"
+right = "CM"
+
+[[tables]]
+# LB9
+name = "NS"
+left = "NS_ZWJ"
+right = "CM"
+
+[[tables]]
+# LB9
+name = "NU"
+left = "NU_ZWJ"
+right = "CM"
+
+[[tables]]
+# LB9
+name = "OP_EA"
+left = "OP_EA_ZWJ"
+right = "CM"
+
+[[tables]]
+# LB9
+name = "OP_OP30"
+left = "OP_OP30_ZWJ"
+right = "CM"
+
+[[tables]]
+# LB9
+name = "PO"
+left = "PO_ZWJ"
+right = "CM"
+
+[[tables]]
+# LB9
+name = "PO_EAW"
+left = "PO_EAW_ZWJ"
+right = "CM"
+
+[[tables]]
+# LB9
+name = "QU"
+left = "QU_ZWJ"
+right = "CM"
+
+[[tables]]
+# LB9
+name = "RI"
+left = "RI_ZWJ"
+right = "CM"
+
+[[tables]]
+# LB9
+name = "PR"
+left = "PR_ZWJ"
+right = "CM"
+
+[[tables]]
+# LB9
+name = "PR_EAW"
+left = "PR_EAW_ZWJ"
+right = "CM"
+
+[[tables]]
+# LB9
+name = "SA"
+left = "SA_ZWJ"
+right = "CM"
+
+[[tables]]
+# LB9
+name = "SY"
+left = "SY_ZWJ"
+right = "CM"
+
+[[tables]]
+# LB9
+name = "WJ"
+left = "WJ_ZWJ"
+right = "CM"
+
+[[tables]]
+# LB9
+name = "XX"
+left = "XX_ZWJ"
+right = "CM"
 
 [[tables]]
 # LB14
