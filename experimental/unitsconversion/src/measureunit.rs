@@ -163,7 +163,13 @@ impl MeasureUnit<'_> {
         };
 
         let num_part = per_split.next().unwrap_or("");
+
+        println!("num_part: {}", num_part);
+
         let den_part = per_split.next().unwrap_or("");
+
+        println!("den_part: {}", den_part);
+        
         if per_split.next().is_some() {
             return None;
         }
