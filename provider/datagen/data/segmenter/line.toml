@@ -410,103 +410,98 @@ right = "CM"
 
 [[tables]]
 # LB9
-name = "X_ZWJ"
-left = "X_ZWJ"
-right = "CM"
-
-[[tables]]
-# LB9
-name = "X_ZWJ"
+name = "AI_ZWJ"
 left = "AI"
 right = "ZWJ"
 
 [[tables]]
 # LB9
-name = "X_ZWJ"
+name = "AL_ZWJ"
 left = "AL"
 right = "ZWJ"
 
 [[tables]]
 # LB9
-name = "X_ZWJ"
+name = "B2_ZWJ"
 left = "B2"
 right = "ZWJ"
 
 [[tables]]
 # LB9
-name = "X_ZWJ"
+name = "BA_ZWJ"
 left = "BA"
 right = "ZWJ"
 
 [[tables]]
 # LB9
-name = "X_ZWJ"
+name = "BB_ZWJ"
 left = "BB"
 right = "ZWJ"
 
 [[tables]]
 # LB9
-name = "X_ZWJ"
+name = "CB_ZWJ"
 left = "CB"
 right = "ZWJ"
 
 [[tables]]
 # LB9
-name = "X_ZWJ"
+name = "CJ_ZWJ"
 left = "CJ"
 right = "ZWJ"
 
 [[tables]]
 # LB9
-name = "X_ZWJ"
+name = "CL_ZWJ"
 left = "CL"
 right = "ZWJ"
 
 [[tables]]
-# LB9
-name = "X_ZWJ"
+# LB10: State CM is a CM that has failed to combine in LB9, which we treat as
+# AL; we treat the subsequent ZWJ as AL too, so no need for a CM_ZWJ state.
+name = "AL_ZWJ"
 left = "CM"
 right = "ZWJ"
 
 [[tables]]
 # LB9
-name = "X_ZWJ"
+name = "CP_ZWJ"
 left = "CP"
 right = "ZWJ"
 
 [[tables]]
 # LB9
-name = "X_ZWJ"
+name = "EB_ZWJ"
 left = "EB"
 right = "ZWJ"
 
 [[tables]]
 # LB9
-name = "X_ZWJ"
+name = "EM_ZWJ"
 left = "EM"
 right = "ZWJ"
 
 [[tables]]
 # LB9
-name = "X_ZWJ"
+name = "EX_ZWJ"
 left = "EX"
 right = "ZWJ"
 
 [[tables]]
 # LB9
-name = "X_ZWJ"
+name = "GL_ZWJ"
 left = "GL"
 right = "ZWJ"
 
 [[tables]]
 # LB9
-name = "X_ZWJ"
+name = "H2_ZWJ"
 left = "H2"
 right = "ZWJ"
 
 [[tables]]
 # LB9
-name = "X_ZWJ"
+name = "H3_ZWJ"
 left = "H3"
 right = "ZWJ"
 
@@ -524,133 +519,133 @@ right = "ZWJ"
 
 [[tables]]
 # LB9
-name = "X_ZWJ"
+name = "HY_ZWJ"
 left = "HY"
 right = "ZWJ"
 
 [[tables]]
 # LB9
-name = "X_ZWJ"
+name = "ID_ZWJ"
 left = "ID"
 right = "ZWJ"
 
 [[tables]]
 # LB9
-name = "X_ZWJ"
+name = "ID_ZWJ"
 left = "ID_CN"
 right = "ZWJ"
 
 [[tables]]
 # LB9
-name = "X_ZWJ"
+name = "IN_ZWJ"
 left = "IN"
 right = "ZWJ"
 
 [[tables]]
 # LB9
-name = "X_ZWJ"
+name = "IS_ZWJ"
 left = "IS"
 right = "ZWJ"
 
 [[tables]]
 # LB9
-name = "X_ZWJ"
+name = "JL_ZWJ"
 left = "JL"
 right = "ZWJ"
 
 [[tables]]
 # LB9
-name = "X_ZWJ"
+name = "JT_ZWJ"
 left = "JT"
 right = "ZWJ"
 
 [[tables]]
 # LB9
-name = "X_ZWJ"
+name = "JV_ZWJ"
 left = "JV"
 right = "ZWJ"
 
 [[tables]]
 # LB9
-name = "X_ZWJ"
+name = "NS_ZWJ"
 left = "NS"
 right = "ZWJ"
 
 [[tables]]
 # LB9
-name = "X_ZWJ"
+name = "NU_ZWJ"
 left = "NU"
 right = "ZWJ"
 
 [[tables]]
 # LB9
-name = "X_ZWJ"
+name = "OP_EA_ZWJ"
 left = "OP_EA"
 right = "ZWJ"
 
 [[tables]]
 # LB9
-name = "X_ZWJ"
+name = "OP_OP30_ZWJ"
 left = "OP_OP30"
 right = "ZWJ"
 
 [[tables]]
 # LB9
-name = "X_ZWJ"
+name = "PO_ZWJ"
 left = "PO"
 right = "ZWJ"
 
 [[tables]]
 # LB9
-name = "X_ZWJ"
+name = "PO_EAW_ZWJ"
 left = "PO_EAW"
 right = "ZWJ"
 
 [[tables]]
 # LB9
-name = "X_ZWJ"
+name = "QU_ZWJ"
 left = "QU"
 right = "ZWJ"
 
 [[tables]]
 # LB9
-name = "X_ZWJ"
+name = "RI_ZWJ"
 left = "RI"
 right = "ZWJ"
 
 [[tables]]
 # LB9
-name = "X_ZWJ"
+name = "PR_ZWJ"
 left = "PR"
 right = "ZWJ"
 
 [[tables]]
 # LB9
-name = "X_ZWJ"
+name = "PR_EAW_ZWJ"
 left = "PR_EAW"
 right = "ZWJ"
 
 [[tables]]
 # LB9
-name = "X_ZWJ"
+name = "SA_ZWJ"
 left = "SA"
 right = "ZWJ"
 
 [[tables]]
 # LB9
-name = "X_ZWJ"
+name = "SY_ZWJ"
 left = "SY"
 right = "ZWJ"
 
 [[tables]]
 # LB9
-name = "X_ZWJ"
+name = "WJ_ZWJ"
 left = "WJ"
 right = "ZWJ"
 
 [[tables]]
 # LB9
-name = "X_ZWJ"
+name = "XX_ZWJ"
 left = "XX"
 right = "ZWJ"
 
