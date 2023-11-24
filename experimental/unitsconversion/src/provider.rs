@@ -139,12 +139,21 @@ pub enum Exactness {
 #[derive(Copy, Clone, Debug, PartialOrd, Ord, PartialEq, Eq, Default)]
 #[repr(u8)]
 pub enum Base {
+    /// There is no si prefix.
     #[default]
     NotExist = 0,
+
+    /// The base of the si prefix is 2.
     Binary = 1,
+
+    /// The base of the si prefix is 10.
     Decimal = 2,
 }
 
+/// Represents an Item of a MeasureUnit.
+/// For example, the MeasureUnit `kilometer-per-square-second` contains two items:
+///    1. `kilometer` with power 1 and prefix 3 with base 10.
+///    2. `second` with power -2 and prefix `NotExist`.
 #[zerovec::make_ule(MeasureUnitItemULE)]
 #[derive(Copy, Clone, Debug, PartialOrd, Ord, PartialEq, Eq, Default)]
 #[cfg_attr(
@@ -154,8 +163,15 @@ pub enum Base {
 )]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 pub struct MeasureUnitItem {
+    /// The power of the unit.
     pub power: i8,
+
+    /// The base of the si prefix.
     pub si_base: Base,
+
+    /// The power of the si prefix.
     pub si_prefix: i8,
+
+    /// The id of the unit.
     pub unit_id: u16,
 }

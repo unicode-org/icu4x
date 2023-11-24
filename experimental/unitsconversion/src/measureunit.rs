@@ -26,6 +26,7 @@ use crate::provider::{Base, MeasureUnitItem};
 )]
 #[zerovec::derive(Debug)]
 pub struct MeasureUnit<'data> {
+    /// Contains the processed units.
     #[cfg_attr(feature = "serde", serde(borrow))]
     pub contained_units: ZeroVec<'data, MeasureUnitItem>,
 }
