@@ -175,7 +175,7 @@ pub fn extract_conversion_info<'data>(
         .ok_or(DataError::custom("the base unit is not valid"))?;
 
     Ok(ConversionInfo {
-        base_unit: ZeroVec::from_iter(base_unit.into_iter()),
+        base_unit: ZeroVec::from_iter(base_unit),
         factor_num: factor_num.into(),
         factor_den: factor_den.into(),
         factor_sign,

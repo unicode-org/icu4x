@@ -33,7 +33,7 @@ pub struct MeasureUnit<'data> {
 impl MeasureUnit<'_> {
     fn get_power(part: &str) -> (u8, &str) {
         if part.starts_with("square-") {
-            return (2, &part[7..]);
+            (2, &part[7..])
         } else if part.starts_with("cubic-") {
             return (3, &part[6..]);
         } else if part.starts_with("pow4-") {
@@ -59,7 +59,7 @@ impl MeasureUnit<'_> {
 
     fn get_si_prefix_base_10(part: &str) -> (i8, &str) {
         if part.starts_with("kilo") {
-            return (3, &part[4..]);
+            (3, &part[4..])
         } else if part.starts_with("hecto") {
             return (2, &part[5..]);
         } else if part.starts_with("deca") {
@@ -91,7 +91,7 @@ impl MeasureUnit<'_> {
 
     fn get_si_prefix_base_two(part: &str) -> (i8, &str) {
         if part.starts_with("kibi") {
-            return (10, &part[4..]);
+            (10, &part[4..])
         } else if part.starts_with("mebi") {
             return (20, &part[4..]);
         } else if part.starts_with("gibi") {
@@ -120,17 +120,17 @@ impl MeasureUnit<'_> {
         for i in 1..part.len() + 1 {
             let sub_part = &part[..i];
             if let Some(value) = trie.get(sub_part.as_bytes()) {
-                return Some((value as usize, &part[i..]));
+                return Some((value, &part[i..]));
             }
         }
 
         None
     }
 
-    fn analyze_identifier_part<'data>(
+    fn analyze_identifier_part(
         identifier: &str,
         sign: i8,
-        trie: &ZeroTrie<ZeroVec<'data, u8>>,
+        trie: &ZeroTrie<ZeroVec<'_, u8>>,
     ) -> Option<Vec<MeasureUnitItem>> {
         let mut identifier = identifier;
         let mut measure_unit_items = Vec::<MeasureUnitItem>::new();
@@ -142,7 +142,7 @@ impl MeasureUnit<'_> {
             measure_unit_items.push(MeasureUnitItem {
                 power: power as i8 * sign,
                 si_base: base,
-                si_prefix: si_prefix as i8 * sign,
+                si_prefix: si_prefix * sign,
                 unit_id: unit_id as u16,
             });
 
