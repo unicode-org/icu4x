@@ -32,14 +32,14 @@ pub struct MeasureUnit<'data> {
 
 impl MeasureUnit<'_> {
     fn get_power(part: &str) -> (u8, &str) {
-        if part.starts_with("square-") {
-            (2, &part[7..])
-        } else if part.starts_with("cubic-") {
-            return (3, &part[6..]);
-        } else if part.starts_with("pow4-") {
-            return (4, &part[5..]);
+        if let Some(part) = part.strip_prefix("square-") {
+            (2, part)
+        } else if let Some(part) = part.strip_prefix("cubic-") {
+            (3, part)
+        } else if let Some(part) = part.strip_prefix("pow4-") {
+            (4, part)
         } else {
-            return (1, part);
+            (1, part)
         }
     }
 
@@ -58,56 +58,56 @@ impl MeasureUnit<'_> {
     }
 
     fn get_si_prefix_base_10(part: &str) -> (i8, &str) {
-        if part.starts_with("kilo") {
-            (3, &part[4..])
-        } else if part.starts_with("hecto") {
-            return (2, &part[5..]);
-        } else if part.starts_with("deca") {
-            return (1, &part[4..]);
-        } else if part.starts_with("deci") {
-            return (-1, &part[4..]);
-        } else if part.starts_with("centi") {
-            return (-2, &part[5..]);
-        } else if part.starts_with("milli") {
-            return (-3, &part[5..]);
-        } else if part.starts_with("micro") {
-            return (-6, &part[5..]);
-        } else if part.starts_with("nano") {
-            return (-9, &part[4..]);
-        } else if part.starts_with("pico") {
-            return (-12, &part[4..]);
-        } else if part.starts_with("femto") {
-            return (-15, &part[5..]);
-        } else if part.starts_with("atto") {
-            return (-18, &part[4..]);
-        } else if part.starts_with("zepto") {
-            return (-21, &part[5..]);
-        } else if part.starts_with("yocto") {
-            return (-24, &part[5..]);
+        if let Some(part) = part.strip_prefix("kilo") {
+            (3, part)
+        } else if let Some(part) = part.strip_prefix("hecto") {
+            (2, part)
+        } else if let Some(part) = part.strip_prefix("deca") {
+            (1, part)
+        } else if let Some(part) = part.strip_prefix("deci") {
+            (-1, part)
+        } else if let Some(part) = part.strip_prefix("centi") {
+            (-2, part)
+        } else if let Some(part) = part.strip_prefix("milli") {
+            (-3, part)
+        } else if let Some(part) = part.strip_prefix("micro") {
+            (-6, part)
+        } else if let Some(part) = part.strip_prefix("nano") {
+            (-9, part)
+        } else if let Some(part) = part.strip_prefix("pico") {
+            (-12, part)
+        } else if let Some(part) = part.strip_prefix("femto") {
+            (-15, part)
+        } else if let Some(part) = part.strip_prefix("atto") {
+            (-18, part)
+        } else if let Some(part) = part.strip_prefix("zepto") {
+            (-21, part)
+        } else if let Some(part) = part.strip_prefix("yocto") {
+            (-24, part)
         } else {
-            return (0, part);
+            (0, part)
         }
     }
 
     fn get_si_prefix_base_two(part: &str) -> (i8, &str) {
-        if part.starts_with("kibi") {
-            (10, &part[4..])
-        } else if part.starts_with("mebi") {
-            return (20, &part[4..]);
-        } else if part.starts_with("gibi") {
-            return (30, &part[4..]);
-        } else if part.starts_with("tebi") {
-            return (40, &part[4..]);
-        } else if part.starts_with("pebi") {
-            return (50, &part[4..]);
-        } else if part.starts_with("exbi") {
-            return (60, &part[4..]);
-        } else if part.starts_with("zebi") {
-            return (70, &part[4..]);
-        } else if part.starts_with("yobi") {
-            return (80, &part[4..]);
+        if let Some(part) = part.strip_prefix("kibi") {
+            (10, part)
+        } else if let Some(part) = part.strip_prefix("mebi") {
+            (20, part)
+        } else if let Some(part) = part.strip_prefix("gibi") {
+            (30, part)
+        } else if let Some(part) = part.strip_prefix("tebi") {
+            (40, part)
+        } else if let Some(part) = part.strip_prefix("pebi") {
+            (50, part)
+        } else if let Some(part) = part.strip_prefix("exbi") {
+            (60, part)
+        } else if let Some(part) = part.strip_prefix("zebi") {
+            (70, part)
+        } else if let Some(part) = part.strip_prefix("yobi") {
+            (80, part)
         } else {
-            return (0, part);
+            (0, part)
         }
     }
 
