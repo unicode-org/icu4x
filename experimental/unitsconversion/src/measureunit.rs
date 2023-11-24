@@ -128,29 +128,30 @@ impl MeasureUnit<'_> {
     }
 
     fn analyze_identifier_part<'data>(
-        part: &str,
+        identifier: &str,
         sign: i8,
         trie: &ZeroTrie<ZeroVec<'data, u8>>,
     ) -> Option<Vec<MeasureUnitItem>> {
-        let mut result = Vec::<MeasureUnitItem>::new();
-        while !part.is_empty() {
-            let (power, part) = Self::get_power(part);
-            let (si_prefix, base, part) = Self::get_si_prefix(part);
-            let (unit_id, part) = match Self::get_unit_id(part, trie) {
-                Some((id, remaining_part)) => (id, remaining_part),
-                None => return None,
-            };
+        let mut identifier = identifier;
+        let mut measure_unit_items = Vec::<MeasureUnitItem>::new();
+        while !identifier.is_empty() {
+            let (power, identifier_power) = Self::get_power(identifier);
+            let (si_prefix, base, identifier_si) = Self::get_si_prefix(identifier_power);
+            let (unit_id, identifier_unit) = Self::get_unit_id(identifier_si, trie)?;
 
-            result.push(MeasureUnitItem {
+            measure_unit_items.push(MeasureUnitItem {
                 power: power as i8 * sign,
                 si_base: base,
-                si_prefix,
+                si_prefix: si_prefix as i8 * sign,
                 unit_id: unit_id as u16,
             });
+
+            identifier = identifier_unit;
         }
 
-        Some(result)
+        Some(measure_unit_items)
     }
+
     pub fn try_from_identifier<'data>(
         identifier: &'data str,
         trie: &ZeroTrie<ZeroVec<'data, u8>>,
