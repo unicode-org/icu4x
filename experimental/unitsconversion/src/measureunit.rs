@@ -117,10 +117,10 @@ impl MeasureUnit<'_> {
     ) -> Option<(usize, &'data str)> {
         // TODO: this is inefficient way to search for an item in a trie.
         // we must implement a way to search for a prefix in a trie.
-        for i in 1..part.len() + 1 {
-            let sub_part = &part[..i];
-            if let Some(value) = trie.get(sub_part.as_bytes()) {
-                return Some((value, &part[i..]));
+        for (index, _) in part.char_indices() {
+            let identifier = &part[..=index];
+            if let Some(value) = trie.get(identifier.as_bytes()) {
+                return Some((value, &part[identifier.len()..]));
             }
         }
 
