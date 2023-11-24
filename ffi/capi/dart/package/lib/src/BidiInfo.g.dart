@@ -8,7 +8,7 @@ part of 'lib.g.dart';
 /// An object containing bidi information for a given string, produced by `for_text()` on `Bidi`
 ///
 /// See the [Rust documentation for `BidiInfo`](https://docs.rs/unicode_bidi/latest/unicode_bidi/struct.BidiInfo.html) for more information.
-class BidiInfo implements ffi.Finalizable {
+final class BidiInfo implements ffi.Finalizable {
   final ffi.Pointer<ffi.Opaque> _underlying;
 
   BidiInfo._(this._underlying) {
@@ -25,9 +25,8 @@ class BidiInfo implements ffi.Finalizable {
 
   // ignore: non_constant_identifier_names
   static final _ICU4XBidiInfo_paragraph_count =
-      _capi<ffi.NativeFunction<ffi.Size Function(ffi.Pointer<ffi.Opaque>)>>(
-              'ICU4XBidiInfo_paragraph_count')
-          .asFunction<int Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
+    _capi<ffi.NativeFunction<ffi.Size Function(ffi.Pointer<ffi.Opaque>)>>('ICU4XBidiInfo_paragraph_count')
+      .asFunction<int Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
 
   /// Get the nth paragraph, returning `None` if out of bounds
   BidiParagraph? paragraphAt(int n) {
@@ -36,13 +35,9 @@ class BidiInfo implements ffi.Finalizable {
   }
 
   // ignore: non_constant_identifier_names
-  static final _ICU4XBidiInfo_paragraph_at = _capi<
-          ffi.NativeFunction<
-              ffi.Pointer<ffi.Opaque> Function(ffi.Pointer<ffi.Opaque>,
-                  ffi.Size)>>('ICU4XBidiInfo_paragraph_at')
-      .asFunction<
-          ffi.Pointer<ffi.Opaque> Function(
-              ffi.Pointer<ffi.Opaque>, int)>(isLeaf: true);
+  static final _ICU4XBidiInfo_paragraph_at =
+    _capi<ffi.NativeFunction<ffi.Pointer<ffi.Opaque> Function(ffi.Pointer<ffi.Opaque>, ffi.Size)>>('ICU4XBidiInfo_paragraph_at')
+      .asFunction<ffi.Pointer<ffi.Opaque> Function(ffi.Pointer<ffi.Opaque>, int)>(isLeaf: true);
 
   /// The number of bytes in this full text
   int get size {
@@ -52,9 +47,8 @@ class BidiInfo implements ffi.Finalizable {
 
   // ignore: non_constant_identifier_names
   static final _ICU4XBidiInfo_size =
-      _capi<ffi.NativeFunction<ffi.Size Function(ffi.Pointer<ffi.Opaque>)>>(
-              'ICU4XBidiInfo_size')
-          .asFunction<int Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
+    _capi<ffi.NativeFunction<ffi.Size Function(ffi.Pointer<ffi.Opaque>)>>('ICU4XBidiInfo_size')
+      .asFunction<int Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
 
   /// Get the BIDI level at a particular byte index in the full text.
   /// This integer is conceptually a `unicode_bidi::Level`,
@@ -67,9 +61,7 @@ class BidiInfo implements ffi.Finalizable {
   }
 
   // ignore: non_constant_identifier_names
-  static final _ICU4XBidiInfo_level_at = _capi<
-          ffi.NativeFunction<
-              ffi.Uint8 Function(
-                  ffi.Pointer<ffi.Opaque>, ffi.Size)>>('ICU4XBidiInfo_level_at')
+  static final _ICU4XBidiInfo_level_at =
+    _capi<ffi.NativeFunction<ffi.Uint8 Function(ffi.Pointer<ffi.Opaque>, ffi.Size)>>('ICU4XBidiInfo_level_at')
       .asFunction<int Function(ffi.Pointer<ffi.Opaque>, int)>(isLeaf: true);
 }

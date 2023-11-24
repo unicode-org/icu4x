@@ -8,6 +8,8 @@ part of 'lib.g.dart';
 /// See the [Rust documentation for `ListLength`](https://docs.rs/icu/latest/icu/list/enum.ListLength.html) for more information.
 enum ListLength {
   wide,
+
   short,
+
   narrow;
 }

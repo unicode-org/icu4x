@@ -6,7 +6,7 @@
 part of 'lib.g.dart';
 
 /// See the [Rust documentation for `LineBreakOptions`](https://docs.rs/icu/latest/icu/segmenter/struct.LineBreakOptions.html) for more information.
-class _LineBreakOptionsV1Ffi extends ffi.Struct {
+final class _LineBreakOptionsV1Ffi extends ffi.Struct {
   @ffi.Int32()
   external int strictness;
   @ffi.Int32()
@@ -15,7 +15,7 @@ class _LineBreakOptionsV1Ffi extends ffi.Struct {
   external bool jaZh;
 }
 
-class LineBreakOptionsV1 {
+final class LineBreakOptionsV1 {
   final _LineBreakOptionsV1Ffi _underlying;
 
   // ignore: unused_element
@@ -28,14 +28,12 @@ class LineBreakOptionsV1 {
     return result;
   }
 
-  LineBreakStrictness get strictness =>
-      LineBreakStrictness.values[_underlying.strictness];
+  LineBreakStrictness get strictness => LineBreakStrictness.values[_underlying.strictness];
   set strictness(LineBreakStrictness strictness) {
     _underlying.strictness = strictness.index;
   }
 
-  LineBreakWordOption get wordOption =>
-      LineBreakWordOption.values[_underlying.wordOption];
+  LineBreakWordOption get wordOption => LineBreakWordOption.values[_underlying.wordOption];
   set wordOption(LineBreakWordOption wordOption) {
     _underlying.wordOption = wordOption.index;
   }

@@ -6,7 +6,6 @@
 pub mod ffi {
     use crate::{errors::ffi::ICU4XError, provider::ffi::ICU4XDataProvider};
     use alloc::boxed::Box;
-    use diplomat_runtime::DiplomatWriteable;
     use icu_normalizer::{ComposingNormalizer, DecomposingNormalizer};
 
     #[diplomat::opaque]

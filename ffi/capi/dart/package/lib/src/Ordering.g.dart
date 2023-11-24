@@ -8,7 +8,9 @@ part of 'lib.g.dart';
 /// See the [Rust documentation for `Ordering`](https://docs.rs/core/latest/core/cmp/enum.Ordering.html) for more information.
 enum Ordering {
   less,
+
   equal,
+
   greater;
 
   int get _underlying {

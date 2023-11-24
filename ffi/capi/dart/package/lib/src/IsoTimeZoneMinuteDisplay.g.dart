@@ -8,5 +8,6 @@ part of 'lib.g.dart';
 /// See the [Rust documentation for `IsoMinutes`](https://docs.rs/icu/latest/icu/datetime/time_zone/enum.IsoMinutes.html) for more information.
 enum IsoTimeZoneMinuteDisplay {
   required,
+
   optional;
 }

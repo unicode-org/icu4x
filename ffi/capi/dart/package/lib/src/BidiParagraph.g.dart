@@ -6,15 +6,14 @@
 part of 'lib.g.dart';
 
 /// Bidi information for a single processed paragraph
-class BidiParagraph implements ffi.Finalizable {
+final class BidiParagraph implements ffi.Finalizable {
   final ffi.Pointer<ffi.Opaque> _underlying;
 
   BidiParagraph._(this._underlying) {
     _finalizer.attach(this, _underlying.cast());
   }
 
-  static final _finalizer =
-      ffi.NativeFinalizer(_capi('ICU4XBidiParagraph_destroy'));
+  static final _finalizer = ffi.NativeFinalizer(_capi('ICU4XBidiParagraph_destroy'));
 
   /// Given a paragraph index `n` within the surrounding text, this sets this
   /// object to the paragraph at that index. Returns `Error::OutOfBoundsError` when out of bounds.
@@ -31,12 +30,9 @@ class BidiParagraph implements ffi.Finalizable {
   }
 
   // ignore: non_constant_identifier_names
-  static final _ICU4XBidiParagraph_set_paragraph_in_text = _capi<
-          ffi.NativeFunction<
-              _ResultVoidInt32 Function(ffi.Pointer<ffi.Opaque>,
-                  ffi.Size)>>('ICU4XBidiParagraph_set_paragraph_in_text')
-      .asFunction<_ResultVoidInt32 Function(ffi.Pointer<ffi.Opaque>, int)>(
-          isLeaf: true);
+  static final _ICU4XBidiParagraph_set_paragraph_in_text =
+    _capi<ffi.NativeFunction<_ResultVoidInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Size)>>('ICU4XBidiParagraph_set_paragraph_in_text')
+      .asFunction<_ResultVoidInt32 Function(ffi.Pointer<ffi.Opaque>, int)>(isLeaf: true);
 
   /// The primary direction of this paragraph
   ///
@@ -48,9 +44,8 @@ class BidiParagraph implements ffi.Finalizable {
 
   // ignore: non_constant_identifier_names
   static final _ICU4XBidiParagraph_direction =
-      _capi<ffi.NativeFunction<ffi.Int32 Function(ffi.Pointer<ffi.Opaque>)>>(
-              'ICU4XBidiParagraph_direction')
-          .asFunction<int Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
+    _capi<ffi.NativeFunction<ffi.Int32 Function(ffi.Pointer<ffi.Opaque>)>>('ICU4XBidiParagraph_direction')
+      .asFunction<int Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
 
   /// The number of bytes in this paragraph
   ///
@@ -62,9 +57,8 @@ class BidiParagraph implements ffi.Finalizable {
 
   // ignore: non_constant_identifier_names
   static final _ICU4XBidiParagraph_size =
-      _capi<ffi.NativeFunction<ffi.Size Function(ffi.Pointer<ffi.Opaque>)>>(
-              'ICU4XBidiParagraph_size')
-          .asFunction<int Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
+    _capi<ffi.NativeFunction<ffi.Size Function(ffi.Pointer<ffi.Opaque>)>>('ICU4XBidiParagraph_size')
+      .asFunction<int Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
 
   /// The start index of this paragraph within the source text
   int get rangeStart {
@@ -74,9 +68,8 @@ class BidiParagraph implements ffi.Finalizable {
 
   // ignore: non_constant_identifier_names
   static final _ICU4XBidiParagraph_range_start =
-      _capi<ffi.NativeFunction<ffi.Size Function(ffi.Pointer<ffi.Opaque>)>>(
-              'ICU4XBidiParagraph_range_start')
-          .asFunction<int Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
+    _capi<ffi.NativeFunction<ffi.Size Function(ffi.Pointer<ffi.Opaque>)>>('ICU4XBidiParagraph_range_start')
+      .asFunction<int Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
 
   /// The end index of this paragraph within the source text
   int get rangeEnd {
@@ -86,9 +79,8 @@ class BidiParagraph implements ffi.Finalizable {
 
   // ignore: non_constant_identifier_names
   static final _ICU4XBidiParagraph_range_end =
-      _capi<ffi.NativeFunction<ffi.Size Function(ffi.Pointer<ffi.Opaque>)>>(
-              'ICU4XBidiParagraph_range_end')
-          .asFunction<int Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
+    _capi<ffi.NativeFunction<ffi.Size Function(ffi.Pointer<ffi.Opaque>)>>('ICU4XBidiParagraph_range_end')
+      .asFunction<int Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
 
   /// Reorder a line based on display order. The ranges are specified relative to the source text and must be contained
   /// within this paragraph's range.
@@ -98,8 +90,7 @@ class BidiParagraph implements ffi.Finalizable {
   /// Throws [Error] on failure.
   String reorderLine(int rangeStart, int rangeEnd) {
     final writeable = _Writeable();
-    final result = _ICU4XBidiParagraph_reorder_line(
-        _underlying, rangeStart, rangeEnd, writeable._underlying);
+    final result = _ICU4XBidiParagraph_reorder_line(_underlying, rangeStart, rangeEnd, writeable._underlying);
     if (!result.isOk) {
       throw Error.values.firstWhere((v) => v._underlying == result.union.err);
     }
@@ -107,16 +98,9 @@ class BidiParagraph implements ffi.Finalizable {
   }
 
   // ignore: non_constant_identifier_names
-  static final _ICU4XBidiParagraph_reorder_line = _capi<
-          ffi.NativeFunction<
-              _ResultVoidInt32 Function(
-                  ffi.Pointer<ffi.Opaque>,
-                  ffi.Size,
-                  ffi.Size,
-                  ffi.Pointer<ffi.Opaque>)>>('ICU4XBidiParagraph_reorder_line')
-      .asFunction<
-          _ResultVoidInt32 Function(ffi.Pointer<ffi.Opaque>, int, int,
-              ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
+  static final _ICU4XBidiParagraph_reorder_line =
+    _capi<ffi.NativeFunction<_ResultVoidInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Size, ffi.Size, ffi.Pointer<ffi.Opaque>)>>('ICU4XBidiParagraph_reorder_line')
+      .asFunction<_ResultVoidInt32 Function(ffi.Pointer<ffi.Opaque>, int, int, ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
 
   /// Get the BIDI level at a particular byte index in this paragraph.
   /// This integer is conceptually a `unicode_bidi::Level`,
@@ -131,9 +115,7 @@ class BidiParagraph implements ffi.Finalizable {
   }
 
   // ignore: non_constant_identifier_names
-  static final _ICU4XBidiParagraph_level_at = _capi<
-          ffi.NativeFunction<
-              ffi.Uint8 Function(ffi.Pointer<ffi.Opaque>,
-                  ffi.Size)>>('ICU4XBidiParagraph_level_at')
+  static final _ICU4XBidiParagraph_level_at =
+    _capi<ffi.NativeFunction<ffi.Uint8 Function(ffi.Pointer<ffi.Opaque>, ffi.Size)>>('ICU4XBidiParagraph_level_at')
       .asFunction<int Function(ffi.Pointer<ffi.Opaque>, int)>(isLeaf: true);
 }

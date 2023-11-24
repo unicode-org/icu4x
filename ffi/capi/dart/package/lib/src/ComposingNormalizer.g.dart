@@ -6,15 +6,14 @@
 part of 'lib.g.dart';
 
 /// See the [Rust documentation for `ComposingNormalizer`](https://docs.rs/icu/latest/icu/normalizer/struct.ComposingNormalizer.html) for more information.
-class ComposingNormalizer implements ffi.Finalizable {
+final class ComposingNormalizer implements ffi.Finalizable {
   final ffi.Pointer<ffi.Opaque> _underlying;
 
   ComposingNormalizer._(this._underlying) {
     _finalizer.attach(this, _underlying.cast());
   }
 
-  static final _finalizer =
-      ffi.NativeFinalizer(_capi('ICU4XComposingNormalizer_destroy'));
+  static final _finalizer = ffi.NativeFinalizer(_capi('ICU4XComposingNormalizer_destroy'));
 
   /// Construct a new ICU4XComposingNormalizer instance for NFC
   ///
@@ -28,13 +27,11 @@ class ComposingNormalizer implements ffi.Finalizable {
     }
     return ComposingNormalizer._(result.union.ok);
   }
+
   // ignore: non_constant_identifier_names
-  static final _ICU4XComposingNormalizer_create_nfc = _capi<
-              ffi.NativeFunction<
-                  _ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>>(
-          'ICU4XComposingNormalizer_create_nfc')
-      .asFunction<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(
-          isLeaf: true);
+  static final _ICU4XComposingNormalizer_create_nfc =
+    _capi<ffi.NativeFunction<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>>('ICU4XComposingNormalizer_create_nfc')
+      .asFunction<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
 
   /// Construct a new ICU4XComposingNormalizer instance for NFKC
   ///
@@ -48,13 +45,11 @@ class ComposingNormalizer implements ffi.Finalizable {
     }
     return ComposingNormalizer._(result.union.ok);
   }
+
   // ignore: non_constant_identifier_names
-  static final _ICU4XComposingNormalizer_create_nfkc = _capi<
-              ffi.NativeFunction<
-                  _ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>>(
-          'ICU4XComposingNormalizer_create_nfkc')
-      .asFunction<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(
-          isLeaf: true);
+  static final _ICU4XComposingNormalizer_create_nfkc =
+    _capi<ffi.NativeFunction<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>>('ICU4XComposingNormalizer_create_nfkc')
+      .asFunction<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
 
   /// Normalize a (potentially ill-formed) UTF8 string
   ///
@@ -66,10 +61,8 @@ class ComposingNormalizer implements ffi.Finalizable {
   String normalize(String s) {
     final alloc = ffi2.Arena();
     final sSlice = _SliceFfi2Utf8._fromDart(s, alloc);
-
     final writeable = _Writeable();
-    final result = _ICU4XComposingNormalizer_normalize(
-        _underlying, sSlice._bytes, sSlice._length, writeable._underlying);
+    final result = _ICU4XComposingNormalizer_normalize(_underlying, sSlice._bytes, sSlice._length, writeable._underlying);
     alloc.releaseAll();
     if (!result.isOk) {
       throw Error.values.firstWhere((v) => v._underlying == result.union.err);
@@ -78,20 +71,9 @@ class ComposingNormalizer implements ffi.Finalizable {
   }
 
   // ignore: non_constant_identifier_names
-  static final _ICU4XComposingNormalizer_normalize = _capi<
-              ffi.NativeFunction<
-                  _ResultVoidInt32 Function(
-                      ffi.Pointer<ffi.Opaque>,
-                      ffi.Pointer<ffi2.Utf8>,
-                      ffi.Size,
-                      ffi.Pointer<ffi.Opaque>)>>(
-          'ICU4XComposingNormalizer_normalize')
-      .asFunction<
-          _ResultVoidInt32 Function(
-              ffi.Pointer<ffi.Opaque>,
-              ffi.Pointer<ffi2.Utf8>,
-              int,
-              ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
+  static final _ICU4XComposingNormalizer_normalize =
+    _capi<ffi.NativeFunction<_ResultVoidInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi2.Utf8>, ffi.Size, ffi.Pointer<ffi.Opaque>)>>('ICU4XComposingNormalizer_normalize')
+      .asFunction<_ResultVoidInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi2.Utf8>, int, ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
 
   /// Check if a (potentially ill-formed) UTF8 string is normalized
   ///
@@ -101,19 +83,13 @@ class ComposingNormalizer implements ffi.Finalizable {
   bool isNormalized(String s) {
     final alloc = ffi2.Arena();
     final sSlice = _SliceFfi2Utf8._fromDart(s, alloc);
-
-    final result = _ICU4XComposingNormalizer_is_normalized(
-        _underlying, sSlice._bytes, sSlice._length);
+    final result = _ICU4XComposingNormalizer_is_normalized(_underlying, sSlice._bytes, sSlice._length);
     alloc.releaseAll();
     return result;
   }
 
   // ignore: non_constant_identifier_names
-  static final _ICU4XComposingNormalizer_is_normalized = _capi<
-          ffi.NativeFunction<
-              ffi.Bool Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi2.Utf8>,
-                  ffi.Size)>>('ICU4XComposingNormalizer_is_normalized')
-      .asFunction<
-          bool Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi2.Utf8>,
-              int)>(isLeaf: true);
+  static final _ICU4XComposingNormalizer_is_normalized =
+    _capi<ffi.NativeFunction<ffi.Bool Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi2.Utf8>, ffi.Size)>>('ICU4XComposingNormalizer_is_normalized')
+      .asFunction<bool Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi2.Utf8>, int)>(isLeaf: true);
 }

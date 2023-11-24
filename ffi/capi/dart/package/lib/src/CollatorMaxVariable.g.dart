@@ -8,8 +8,12 @@ part of 'lib.g.dart';
 /// See the [Rust documentation for `MaxVariable`](https://docs.rs/icu/latest/icu/collator/enum.MaxVariable.html) for more information.
 enum CollatorMaxVariable {
   auto,
+
   space,
+
   punctuation,
+
   symbol,
+
   currency;
 }

@@ -10,15 +10,14 @@ part of 'lib.g.dart';
 /// Callers should generally use ICU4XDecomposingNormalizer unless they specifically need raw composition operations
 ///
 /// See the [Rust documentation for `CanonicalDecomposition`](https://docs.rs/icu/latest/icu/normalizer/properties/struct.CanonicalDecomposition.html) for more information.
-class CanonicalDecomposition implements ffi.Finalizable {
+final class CanonicalDecomposition implements ffi.Finalizable {
   final ffi.Pointer<ffi.Opaque> _underlying;
 
   CanonicalDecomposition._(this._underlying) {
     _finalizer.attach(this, _underlying.cast());
   }
 
-  static final _finalizer =
-      ffi.NativeFinalizer(_capi('ICU4XCanonicalDecomposition_destroy'));
+  static final _finalizer = ffi.NativeFinalizer(_capi('ICU4XCanonicalDecomposition_destroy'));
 
   /// Construct a new ICU4XCanonicalDecomposition instance for NFC
   ///
@@ -32,27 +31,22 @@ class CanonicalDecomposition implements ffi.Finalizable {
     }
     return CanonicalDecomposition._(result.union.ok);
   }
+
   // ignore: non_constant_identifier_names
-  static final _ICU4XCanonicalDecomposition_create = _capi<
-              ffi.NativeFunction<
-                  _ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>>(
-          'ICU4XCanonicalDecomposition_create')
-      .asFunction<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(
-          isLeaf: true);
+  static final _ICU4XCanonicalDecomposition_create =
+    _capi<ffi.NativeFunction<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>>('ICU4XCanonicalDecomposition_create')
+      .asFunction<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
 
   /// Performs non-recursive canonical decomposition (including for Hangul).
   ///
   /// See the [Rust documentation for `decompose`](https://docs.rs/icu/latest/icu/normalizer/properties/struct.CanonicalDecomposition.html#method.decompose) for more information.
-  Decomposed decompose(int c) {
+  Decomposed decompose(Rune c) {
     final result = _ICU4XCanonicalDecomposition_decompose(_underlying, c);
     return Decomposed._(result);
   }
 
   // ignore: non_constant_identifier_names
-  static final _ICU4XCanonicalDecomposition_decompose = _capi<
-          ffi.NativeFunction<
-              _DecomposedFfi Function(ffi.Pointer<ffi.Opaque>,
-                  ffi.Uint32)>>('ICU4XCanonicalDecomposition_decompose')
-      .asFunction<_DecomposedFfi Function(ffi.Pointer<ffi.Opaque>, int)>(
-          isLeaf: true);
+  static final _ICU4XCanonicalDecomposition_decompose =
+    _capi<ffi.NativeFunction<_DecomposedFfi Function(ffi.Pointer<ffi.Opaque>, ffi.Uint32)>>('ICU4XCanonicalDecomposition_decompose')
+      .asFunction<_DecomposedFfi Function(ffi.Pointer<ffi.Opaque>, Rune)>(isLeaf: true);
 }

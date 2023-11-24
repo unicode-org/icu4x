@@ -6,7 +6,6 @@
 pub mod ffi {
     use alloc::boxed::Box;
     use alloc::vec::Vec;
-    use diplomat_runtime::DiplomatWriteable;
 
     use core::fmt::Write;
     use icu_properties::bidi::BidiClassAdapter;

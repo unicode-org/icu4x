@@ -129,12 +129,29 @@ part 'WordBreakIteratorUtf8.g.dart';
 part 'WordSegmenter.g.dart';
 part 'ZonedDateTimeFormatter.g.dart';
 
+/// A [Rune] is a Unicode code point, such as `a`, or `💡`.
+/// 
+/// The recommended way to obtain a [Rune] is to create it from a 
+/// [String], which is conceptually a list of [Runes]. For example,
+/// `'a'.runes.first` is equal to the [Rune] `a`.
+/// 
+/// Dart does not have a character/rune literal, so integer literals
+/// need to be used. For example the Unicode code point U+1F4A1, `💡`,
+/// can be represented by `0x1F4A1`. Note that only values in the ranges
+/// `0x0..0xD7FF` and `0xE000..0x10FFFF` (both inclusive) are Unicode
+/// code points, and hence valid [Rune]s.
+///
+/// A [String] can be constructed from a [Rune] using [String.fromCharCode]. 
+typedef Rune = int;
+/// A list of [Rune]s.
+typedef RuneList = Uint32List;
+
 late final ffi.Pointer<T> Function<T extends ffi.NativeType>(String) _capi;
 void init(String path) => _capi = ffi.DynamicLibrary.open(path).lookup;
 
 final _callocFree = Finalizer(ffi2.calloc.free);
 
-class SizeList extends ffi.Struct {
+final class SizeList extends ffi.Struct {
   external ffi.Pointer<ffi.Size> _bytes;
 
   @ffi.Size()
@@ -163,7 +180,7 @@ class SizeList extends ffi.Struct {
   int get hashCode => _length.hashCode;
 }
 
-class _ResultBoolInt32Union extends ffi.Union {
+final class _ResultBoolInt32Union extends ffi.Union {
   @ffi.Bool()
   external bool ok;
 
@@ -171,14 +188,14 @@ class _ResultBoolInt32Union extends ffi.Union {
   external int err;
 }
 
-class _ResultBoolInt32 extends ffi.Struct {
+final class _ResultBoolInt32 extends ffi.Struct {
   external _ResultBoolInt32Union union;
 
   @ffi.Bool()
   external bool isOk;
 }
 
-class _ResultInt32Int32Union extends ffi.Union {
+final class _ResultInt32Int32Union extends ffi.Union {
   @ffi.Int32()
   external int ok;
 
@@ -186,83 +203,85 @@ class _ResultInt32Int32Union extends ffi.Union {
   external int err;
 }
 
-class _ResultInt32Int32 extends ffi.Struct {
+final class _ResultInt32Int32 extends ffi.Struct {
   external _ResultInt32Int32Union union;
 
   @ffi.Bool()
   external bool isOk;
 }
 
-class _ResultInt32VoidUnion extends ffi.Union {
+final class _ResultInt32VoidUnion extends ffi.Union {
   @ffi.Int32()
   external int ok;
 }
 
-class _ResultInt32Void extends ffi.Struct {
+final class _ResultInt32Void extends ffi.Struct {
   external _ResultInt32VoidUnion union;
 
   @ffi.Bool()
   external bool isOk;
 }
 
-class _ResultOpaqueInt32Union extends ffi.Union {
+final class _ResultOpaqueInt32Union extends ffi.Union {
   external ffi.Pointer<ffi.Opaque> ok;
 
   @ffi.Int32()
   external int err;
 }
 
-class _ResultOpaqueInt32 extends ffi.Struct {
+final class _ResultOpaqueInt32 extends ffi.Struct {
   external _ResultOpaqueInt32Union union;
 
   @ffi.Bool()
   external bool isOk;
 }
 
-class _ResultUint16VoidUnion extends ffi.Union {
+final class _ResultUint16VoidUnion extends ffi.Union {
   @ffi.Uint16()
   external int ok;
 }
 
-class _ResultUint16Void extends ffi.Struct {
+final class _ResultUint16Void extends ffi.Struct {
   external _ResultUint16VoidUnion union;
 
   @ffi.Bool()
   external bool isOk;
 }
 
-class _ResultVoidInt32Union extends ffi.Union {
+final class _ResultVoidInt32Union extends ffi.Union {
   @ffi.Int32()
   external int err;
 }
 
-class _ResultVoidInt32 extends ffi.Struct {
+final class _ResultVoidInt32 extends ffi.Struct {
   external _ResultVoidInt32Union union;
 
   @ffi.Bool()
   external bool isOk;
 }
 
-class _ResultVoidVoid extends ffi.Struct {
+final class _ResultVoidVoid extends ffi.Struct {
+  
+
   @ffi.Bool()
   external bool isOk;
 }
 
-class _ResultWeekOfFfiInt32Union extends ffi.Union {
+final class _ResultWeekOfFfiInt32Union extends ffi.Union {
   external _WeekOfFfi ok;
 
   @ffi.Int32()
   external int err;
 }
 
-class _ResultWeekOfFfiInt32 extends ffi.Struct {
+final class _ResultWeekOfFfiInt32 extends ffi.Struct {
   external _ResultWeekOfFfiInt32Union union;
 
   @ffi.Bool()
   external bool isOk;
 }
 
-class _SliceFfi2Utf8 extends ffi.Struct {
+final class _SliceFfi2Utf8 extends ffi.Struct {
   external ffi.Pointer<ffi2.Utf8> _bytes;
 
   @ffi.Size()
@@ -278,13 +297,11 @@ class _SliceFfi2Utf8 extends ffi.Struct {
     slice._length = units.length;
     slice._bytes = allocator<ffi.Uint8>(slice._length).cast();
     slice._bytes.cast<ffi.Uint8>().asTypedList(slice._length).setAll(0, units);
-
     return slice;
   }
 
   // ignore: unused_element
-  String get _asDart =>
-      Utf8Decoder().convert(_bytes.cast<ffi.Uint8>().asTypedList(_length));
+  String get _asDart => Utf8Decoder().convert(_bytes.cast<ffi.Uint8>().asTypedList(_length));
 
   // This is expensive
   @override
@@ -306,7 +323,7 @@ class _SliceFfi2Utf8 extends ffi.Struct {
   int get hashCode => _length.hashCode;
 }
 
-class _SliceFfiUint16 extends ffi.Struct {
+final class _SliceFfiUint16 extends ffi.Struct {
   external ffi.Pointer<ffi.Uint16> _bytes;
 
   @ffi.Size()
@@ -321,7 +338,6 @@ class _SliceFfiUint16 extends ffi.Struct {
     slice._length = value.length;
     slice._bytes = allocator(slice._length);
     slice._bytes.asTypedList(slice._length).setAll(0, value);
-
     return slice;
   }
 
@@ -348,7 +364,7 @@ class _SliceFfiUint16 extends ffi.Struct {
   int get hashCode => _length.hashCode;
 }
 
-class _SliceFfiUint8 extends ffi.Struct {
+final class _SliceFfiUint8 extends ffi.Struct {
   external ffi.Pointer<ffi.Uint8> _bytes;
 
   @ffi.Size()
@@ -363,7 +379,6 @@ class _SliceFfiUint8 extends ffi.Struct {
     slice._length = value.length;
     slice._bytes = allocator(slice._length);
     slice._bytes.asTypedList(slice._length).setAll(0, value);
-
     return slice;
   }
 
@@ -393,34 +408,27 @@ class _SliceFfiUint8 extends ffi.Struct {
 /// An unspecified error value
 class VoidError {}
 
-class _Writeable {
+final class _Writeable {
   final ffi.Pointer<ffi.Opaque> _underlying;
 
   _Writeable() : _underlying = _create(0);
   static final _create =
-      _capi<ffi.NativeFunction<ffi.Pointer<ffi.Opaque> Function(ffi.Size)>>(
-              'diplomat_buffer_writeable_create')
-          .asFunction<ffi.Pointer<ffi.Opaque> Function(int)>();
+    _capi<ffi.NativeFunction<ffi.Pointer<ffi.Opaque> Function(ffi.Size)>>('diplomat_buffer_writeable_create')
+    .asFunction<ffi.Pointer<ffi.Opaque> Function(int)>();
 
   String finalize() {
-    final string =
-        _getBytes(_underlying).toDartString(length: _len(_underlying));
+    final string = _getBytes(_underlying).toDartString(length: _len(_underlying));
     _destroy(_underlying);
     return string;
   }
+  static final _len = 
+    _capi<ffi.NativeFunction<ffi.Size Function(ffi.Pointer<ffi.Opaque>)>>('diplomat_buffer_writeable_len')
+    .asFunction<int Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
 
-  static final _len =
-      _capi<ffi.NativeFunction<ffi.Size Function(ffi.Pointer<ffi.Opaque>)>>(
-              'diplomat_buffer_writeable_len')
-          .asFunction<int Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
-  static final _getBytes = _capi<
-              ffi.NativeFunction<
-                  ffi.Pointer<ffi2.Utf8> Function(ffi.Pointer<ffi.Opaque>)>>(
-          'diplomat_buffer_writeable_get_bytes')
-      .asFunction<ffi.Pointer<ffi2.Utf8> Function(ffi.Pointer<ffi.Opaque>)>(
-          isLeaf: true);
+  static final _getBytes = 
+    _capi<ffi.NativeFunction<ffi.Pointer<ffi2.Utf8> Function(ffi.Pointer<ffi.Opaque>)>>('diplomat_buffer_writeable_get_bytes')
+    .asFunction<ffi.Pointer<ffi2.Utf8> Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
   static final _destroy =
-      _capi<ffi.NativeFunction<ffi.Void Function(ffi.Pointer<ffi.Opaque>)>>(
-              'diplomat_buffer_writeable_destroy')
-          .asFunction<void Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
+    _capi<ffi.NativeFunction<ffi.Void Function(ffi.Pointer<ffi.Opaque>)>>('diplomat_buffer_writeable_destroy')
+    .asFunction<void Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
 }

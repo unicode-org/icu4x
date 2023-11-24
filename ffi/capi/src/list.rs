@@ -10,7 +10,6 @@ pub mod ffi {
     use alloc::boxed::Box;
     use alloc::string::String;
     use alloc::vec::Vec;
-    use diplomat_runtime::DiplomatWriteable;
     use icu_list::{ListFormatter, ListLength};
     use writeable::Writeable;
 
