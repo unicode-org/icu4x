@@ -230,10 +230,10 @@ icu_benchmark_macros = { path = "tools/benchmark/macros" }
 
 # The version here can either be a `version = ".."` spec or `git = "https://github.com/rust-diplomat/diplomat", rev = ".."`
 # Diplomat must be published preceding a new ICU4X release but may use git versions in between
-diplomat = "0.7"
-diplomat-runtime = "0.7"
-diplomat_core = "0.7"
-diplomat-tool = "0.7"
+diplomat = { git = "https://github.com/rust-diplomat/diplomat.git", rev = "f545acf50629b6f2135adca374507b717a821cd8" }
+diplomat-runtime = { git = "https://github.com/rust-diplomat/diplomat.git", rev = "f545acf50629b6f2135adca374507b717a821cd8" }
+diplomat_core = { git = "https://github.com/rust-diplomat/diplomat.git", rev = "f545acf50629b6f2135adca374507b717a821cd8" }
+diplomat-tool = { git = "https://github.com/rust-diplomat/diplomat.git", rev = "f545acf50629b6f2135adca374507b717a821cd8" }
 
 # Size optimized builds
 [profile.release-opt-size]
@@ -252,8 +252,3 @@ codegen-units = 1
 lto = true
 debug = true
 debug-assertions = false
-
-[profile.windows-test-ci]
-inherits = "dev"
-debug-assertions = true
-debug = false

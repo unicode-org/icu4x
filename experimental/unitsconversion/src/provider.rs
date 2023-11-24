@@ -11,7 +11,8 @@
 
 use alloc::borrow::Cow;
 use icu_provider::prelude::*;
-use zerovec::{VarZeroVec, ZeroMap, ZeroVec};
+use zerotrie::ZeroTrie;
+use zerovec::{VarZeroVec, ZeroVec};
 
 #[cfg(feature = "datagen")]
 /// The latest minimum set of keys required by this component.
@@ -34,86 +35,14 @@ pub const KEYS: &[DataKey] = &[UnitsInfoV1Marker::KEY];
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[yoke(prove_covariance_manually)]
 pub struct UnitsInfoV1<'data> {
-    // TODO(#4313).
-    /// Maps from unit name (e.g. foot) to the index of the unit in the `unit_quantity` vector.
+    /// Maps from unit name (e.g. foot) to it is conversion information.
     #[cfg_attr(feature = "serde", serde(borrow))]
-    pub units_info: ZeroMap<'data, str, UnitsInfoIndex>,
-
-    /// Contains the dimensions information for the units.
-    /// For example, the dimension for the unit `foot` is `length`.
-    #[cfg_attr(feature = "serde", serde(borrow))]
-    pub unit_dimensions: VarZeroVec<'data, DimensionULE>,
+    pub units_conversion_map: ZeroTrie<ZeroVec<'data, u8>>,
 
     /// Contains the conversion information, such as the conversion rate and the base unit.
     /// For example, the conversion information for the unit `foot` is `1 foot = 0.3048 meter`.
     #[cfg_attr(feature = "serde", serde(borrow))]
     pub convert_infos: VarZeroVec<'data, ConversionInfoULE>,
-}
-
-#[zerovec::make_ule(UnitsInfoIndexULE)]
-#[cfg_attr(
-    feature = "datagen",
-    derive(databake::Bake),
-    databake(path = icu_unitsconversion::provider),
-)]
-#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
-#[derive(Copy, Debug, Clone, Default, PartialEq, PartialOrd, Eq, Ord)]
-pub struct UnitsInfoIndex {
-    // TODO(#4313).
-    /// Contains the index of the dimension in the `unit_dimensions` vector.
-    /// If the unit does not have a quantity, this field is `None`.
-    pub dimension: Option<u16>,
-
-    // TODO(#4313).
-    /// Contains the index of the conversion info in the `convert_infos` vector.
-    /// If the unit does not have a convert unit, this field is `None`.
-    pub convert_info: Option<u16>,
-}
-
-/// Specifies if the unit is a base unit or a derived unit.
-/// If derived, this means each unit is derived from a base unit.
-/// For example: "foot-per-second" is derived from "meter" and "second".
-#[zerovec::make_ule(DerivationSpecifierULE)]
-#[cfg_attr(
-    feature = "datagen",
-    derive(serde::Serialize, databake::Bake),
-    databake(path = icu_unitsconversion::provider),
-)]
-#[cfg_attr(feature = "serde", derive(serde::Deserialize))]
-#[derive(Copy, Clone, Debug, PartialOrd, Ord, PartialEq, Eq, Default)]
-#[repr(u8)]
-pub enum DerivationSpecifier {
-    #[default]
-    Base = 0,
-    Derived = 1,
-}
-
-#[zerovec::make_varule(DimensionULE)]
-#[derive(Clone, Debug, PartialOrd, Ord, PartialEq, Eq, Default)]
-#[cfg_attr(
-    feature = "datagen",
-    derive(databake::Bake),
-    databake(path = icu_unitsconversion::provider),
-)]
-#[cfg_attr(
-    feature = "datagen",
-    derive(serde::Serialize),
-    zerovec::derive(Serialize)
-)]
-#[cfg_attr(
-    feature = "serde",
-    derive(serde::Deserialize),
-    zerovec::derive(Deserialize)
-)]
-#[zerovec::derive(Debug)]
-pub struct Dimension<'data> {
-    /// Contains the quantity name.
-    // TODO(#4173): Consider using an enum for the quantity name.
-    #[cfg_attr(feature = "serde", serde(borrow))]
-    pub quantity: Cow<'data, str>,
-
-    /// Represents the simplicity of the quantity.
-    pub specifier: DerivationSpecifier,
 }
 
 /// Represents the conversion information for a unit.

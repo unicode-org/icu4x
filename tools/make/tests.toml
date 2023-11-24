@@ -31,15 +31,10 @@ args = ["build-all-features"]
 [tasks.test-all-features]
 description = "Run all Rust tests with all features and targets"
 category = "ICU4X Development"
+# This might be required if Windows runs out of disk again
+# env = { RUSTFLAGS = "-Cdebuginfo=none -Cdebug-assertions=true", condition = { platforms = ["windows"] } }
 command = "cargo"
 args = ["test", "--all-features", "--all-targets", "--no-fail-fast"]
-
-[tasks.test-all-features-windows]
-description = "Run all Rust tests with all features and targets (with special changes to reduce Windows disk space)"
-category = "ICU4X Development"
-command = "cargo"
-args = ["test", "--all-features", "--all-targets", "--no-fail-fast", "--profile", "windows-test-ci"]
-
 
 [tasks.test-docs]
 description = "Run all Rust doctests with all features"

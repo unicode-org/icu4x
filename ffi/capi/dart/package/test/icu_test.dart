@@ -43,4 +43,16 @@ void main() {
           ..extensionKey = 'ca'
           ..priority = LocaleFallbackPriority.region));
   });
+
+  test('Runes', () {
+    Rune a = 'a'.runes.first;
+    Rune emoji = '💡'.runes.first;
+
+    final emojiSet = CodePointSetData.loadEmoji(DataProvider.compiled());
+    expect(emojiSet.contains(a), false);
+    expect(emojiSet.contains(emoji), true);
+
+    Rune upperA = CaseMapper(DataProvider.compiled()).simpleUppercase(a);
+    expect(String.fromCharCode(upperA), 'A');
+  });
 }

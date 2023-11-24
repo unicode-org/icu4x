@@ -8,7 +8,6 @@ pub mod ffi {
     use crate::locale::ffi::ICU4XLocale;
     use crate::provider::ffi::ICU4XDataProvider;
     use alloc::boxed::Box;
-    use diplomat_runtime::DiplomatWriteable;
     #[allow(unused_imports)] // feature-specific
     use icu_displaynames::{DisplayNamesOptions, Fallback, LanguageDisplay};
     use icu_displaynames::{LocaleDisplayNamesFormatter, RegionDisplayNames};
