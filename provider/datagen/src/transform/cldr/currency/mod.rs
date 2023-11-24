@@ -192,7 +192,7 @@ fn extract_currency_essentials<'data>(
                 Some(PlaceholderValue::ISO) => {
                     currency_pattern_selection(provider, standard, iso_string.as_str())?
                 }
-                // Based on UTC-35: https://www.unicode.org/reports/tr35/tr35-numbers.html#Currencies
+                // Based on UTS-35: https://www.unicode.org/reports/tr35/tr35-numbers.html#Currencies
                 // If the place holder value is empty, then use the currency code (ISO code).
                 None => currency_pattern_selection(provider, standard, iso_string.as_str())?,
             }
