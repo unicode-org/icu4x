@@ -35,15 +35,12 @@
 //! ```
 use crate::fields;
 use core::convert::TryFrom;
-use icu_locid::{extensions::unicode, extensions_unicode_value};
 
 #[cfg(feature = "serde")]
 use serde::{Deserialize, Serialize};
 
-use icu_locid::extensions::unicode::key;
+use icu_locid::extensions::unicode::{key, value, Key, Value};
 use icu_provider::DataLocale;
-use tinystr::tinystr;
-use tinystr::TinyAsciiStr;
 
 /// Stores user preferences which may affect the result of date and time formatting.
 ///
@@ -72,6 +69,12 @@ pub struct Bag {
     pub hour_cycle: Option<HourCycle>,
 }
 
+const HC_KEY: Key = key!("hc");
+const H11: Value = value!("h11");
+const H12: Value = value!("h12");
+const H23: Value = value!("h23");
+const H24: Value = value!("h24");
+
 impl Bag {
     /// Construct a [`Bag`] with a given [`HourCycle`]
     #[cfg(feature = "experimental")]
@@ -83,20 +86,9 @@ impl Bag {
 
     /// Construct a [`Bag`] from a given [`DataLocale`]
     pub(crate) fn from_data_locale(data_locale: &DataLocale) -> Self {
-        const H11: TinyAsciiStr<8> = tinystr!(8, "h11");
-        const H12: TinyAsciiStr<8> = tinystr!(8, "h12");
-        const H23: TinyAsciiStr<8> = tinystr!(8, "h23");
-        const H24: TinyAsciiStr<8> = tinystr!(8, "h24");
-        let hour_cycle = match data_locale
-            .get_unicode_ext(&key!("hc"))
-            .and_then(|v| v.as_single_subtag().copied())
-        {
-            Some(H11) => Some(HourCycle::H11),
-            Some(H12) => Some(HourCycle::H12),
-            Some(H23) => Some(HourCycle::H23),
-            Some(H24) => Some(HourCycle::H24),
-            _ => None,
-        };
+        let hour_cycle = data_locale
+            .get_unicode_ext(&HC_KEY)
+            .and_then(|value| (&value).try_into().ok());
         Self { hour_cycle }
     }
 }
@@ -175,15 +167,10 @@ impl HourCycle {
     }
 }
 
-const H11: unicode::Value = extensions_unicode_value!("h11");
-const H12: unicode::Value = extensions_unicode_value!("h12");
-const H23: unicode::Value = extensions_unicode_value!("h23");
-const H24: unicode::Value = extensions_unicode_value!("h24");
-
-impl TryFrom<&unicode::Value> for HourCycle {
+impl TryFrom<&Value> for HourCycle {
     type Error = ();
 
-    fn try_from(value: &unicode::Value) -> Result<Self, Self::Error> {
+    fn try_from(value: &Value) -> Result<Self, Self::Error> {
         match value {
             _ if value == &H11 => Ok(Self::H11),
             _ if value == &H12 => Ok(Self::H12),

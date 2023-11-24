@@ -75,7 +75,6 @@ members = [
     "utils/litemap",
     "utils/pattern",
     "utils/resb",
-    "utils/preferences",
     "utils/tinystr",
     "utils/tzif",
     "utils/writeable",
@@ -88,6 +87,7 @@ members = [
     "experimental/bies",
     "experimental/ixdtf",
     "experimental/zerotrie",
+    "experimental/preferences",
 
     # Tools
     "tools/bakeddata-scripts",

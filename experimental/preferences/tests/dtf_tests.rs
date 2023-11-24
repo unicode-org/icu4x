@@ -5,7 +5,11 @@
 mod dtf;
 
 use icu_datetime::options::preferences::HourCycle;
-use icu_locid::{locale, subtags::{language, region}, Locale};
+use icu_locid::{
+    locale,
+    subtags::{language, region},
+    Locale,
+};
 
 use dtf::*;
 
@@ -81,9 +85,6 @@ fn dtf_prefs_default_region() {
     let loc: Locale = "en-u-hc-h12".parse().unwrap();
     let dtf = DateTimeFormat::new(loc.into(), Default::default());
     assert_eq!(dtf.resolved_options().lid.language, language!("en"));
-    assert_eq!(
-        dtf.resolved_options().lid.region,
-        Some(region!("US"))
-    );
+    assert_eq!(dtf.resolved_options().lid.region, Some(region!("US")));
     assert_eq!(dtf.resolved_options().hour_cycle, HourCycle::H12);
 }
