@@ -1,5 +1,5 @@
 {
-  "units_conversion_map": {
+  "units_conversion_trie": {
     "100-kilometer": 0,
     "acre": 1,
     "ampere": 2,
@@ -155,7 +155,14 @@
   },
   "convert_infos": [
     {
-      "base_unit": "meter",
+      "base_unit": [
+        {
+          "power": 1,
+          "si_base": "NotExist",
+          "si_prefix": 0,
+          "unit_id": 83
+        }
+      ],
       "factor_num": [
         160,
         134,
@@ -175,7 +182,14 @@
       "exactness": "Exact"
     },
     {
-      "base_unit": "square-meter",
+      "base_unit": [
+        {
+          "power": 2,
+          "si_base": "NotExist",
+          "si_prefix": 0,
+          "unit_id": 83
+        }
+      ],
       "factor_num": [
         146,
         58,
@@ -198,7 +212,14 @@
       "exactness": "Exact"
     },
     {
-      "base_unit": "ampere",
+      "base_unit": [
+        {
+          "power": 1,
+          "si_base": "NotExist",
+          "si_prefix": 0,
+          "unit_id": 2
+        }
+      ],
       "factor_num": [
         1
       ],
@@ -216,7 +237,14 @@
       "exactness": "Exact"
     },
     {
-      "base_unit": "revolution",
+      "base_unit": [
+        {
+          "power": 1,
+          "si_base": "NotExist",
+          "si_prefix": 0,
+          "unit_id": 118
+        }
+      ],
       "factor_num": [
         1
       ],
@@ -235,7 +263,14 @@
       "exactness": "Exact"
     },
     {
-      "base_unit": "revolution",
+      "base_unit": [
+        {
+          "power": 1,
+          "si_base": "NotExist",
+          "si_prefix": 0,
+          "unit_id": 118
+        }
+      ],
       "factor_num": [
         1
       ],
@@ -255,7 +290,14 @@
       "exactness": "Exact"
     },
     {
-      "base_unit": "meter",
+      "base_unit": [
+        {
+          "power": 1,
+          "si_base": "NotExist",
+          "si_prefix": 0,
+          "unit_id": 83
+        }
+      ],
       "factor_num": [
         108,
         90,
@@ -277,7 +319,26 @@
       "exactness": "Exact"
     },
     {
-      "base_unit": "kilogram-per-meter-square-second",
+      "base_unit": [
+        {
+          "power": 1,
+          "si_base": "Decimal",
+          "si_prefix": 3,
+          "unit_id": 58
+        },
+        {
+          "power": -1,
+          "si_base": "NotExist",
+          "si_prefix": 0,
+          "unit_id": 83
+        },
+        {
+          "power": -2,
+          "si_base": "NotExist",
+          "si_prefix": 0,
+          "unit_id": 124
+        }
+      ],
       "factor_num": [
         205,
         139,
@@ -297,7 +358,26 @@
       "exactness": "Exact"
     },
     {
-      "base_unit": "kilogram-per-meter-square-second",
+      "base_unit": [
+        {
+          "power": 1,
+          "si_base": "Decimal",
+          "si_prefix": 3,
+          "unit_id": 58
+        },
+        {
+          "power": -1,
+          "si_base": "NotExist",
+          "si_prefix": 0,
+          "unit_id": 83
+        },
+        {
+          "power": -2,
+          "si_base": "NotExist",
+          "si_prefix": 0,
+          "unit_id": 124
+        }
+      ],
       "factor_num": [
         160,
         134,
@@ -317,7 +397,14 @@
       "exactness": "Exact"
     },
     {
-      "base_unit": "cubic-meter",
+      "base_unit": [
+        {
+          "power": 3,
+          "si_base": "NotExist",
+          "si_prefix": 0,
+          "unit_id": 83
+        }
+      ],
       "factor_num": [
         141,
         25,
@@ -343,7 +430,14 @@
       "exactness": "Exact"
     },
     {
-      "base_unit": "per-second",
+      "base_unit": [
+        {
+          "power": -1,
+          "si_base": "NotExist",
+          "si_prefix": 0,
+          "unit_id": 124
+        }
+      ],
       "factor_num": [
         1
       ],
@@ -361,7 +455,14 @@
       "exactness": "Exact"
     },
     {
-      "base_unit": "bit",
+      "base_unit": [
+        {
+          "power": 1,
+          "si_base": "NotExist",
+          "si_prefix": 0,
+          "unit_id": 10
+        }
+      ],
       "factor_num": [
         1
       ],
@@ -379,7 +480,26 @@
       "exactness": "Exact"
     },
     {
-      "base_unit": "kilogram-square-meter-per-square-second",
+      "base_unit": [
+        {
+          "power": 1,
+          "si_base": "Decimal",
+          "si_prefix": 3,
+          "unit_id": 58
+        },
+        {
+          "power": 2,
+          "si_base": "NotExist",
+          "si_prefix": 0,
+          "unit_id": 83
+        },
+        {
+          "power": -2,
+          "si_base": "NotExist",
+          "si_prefix": 0,
+          "unit_id": 124
+        }
+      ],
       "factor_num": [
         183,
         111,
@@ -404,7 +524,26 @@
       "exactness": "Exact"
     },
     {
-      "base_unit": "kilogram-square-meter-per-square-second",
+      "base_unit": [
+        {
+          "power": 1,
+          "si_base": "Decimal",
+          "si_prefix": 3,
+          "unit_id": 58
+        },
+        {
+          "power": 2,
+          "si_base": "NotExist",
+          "si_prefix": 0,
+          "unit_id": 83
+        },
+        {
+          "power": -2,
+          "si_base": "NotExist",
+          "si_prefix": 0,
+          "unit_id": 124
+        }
+      ],
       "factor_num": [
         55,
         188,
@@ -429,7 +568,14 @@
       "exactness": "Exact"
     },
     {
-      "base_unit": "square-meter",
+      "base_unit": [
+        {
+          "power": 2,
+          "si_base": "NotExist",
+          "si_prefix": 0,
+          "unit_id": 83
+        }
+      ],
       "factor_num": [
         144,
         1
@@ -448,7 +594,14 @@
       "exactness": "Exact"
     },
     {
-      "base_unit": "cubic-meter",
+      "base_unit": [
+        {
+          "power": 3,
+          "si_base": "NotExist",
+          "si_prefix": 0,
+          "unit_id": 83
+        }
+      ],
       "factor_num": [
         127,
         157,
@@ -475,7 +628,14 @@
       "exactness": "Exact"
     },
     {
-      "base_unit": "bit",
+      "base_unit": [
+        {
+          "power": 1,
+          "si_base": "NotExist",
+          "si_prefix": 0,
+          "unit_id": 10
+        }
+      ],
       "factor_num": [
         8
       ],
@@ -493,7 +653,26 @@
       "exactness": "Exact"
     },
     {
-      "base_unit": "kilogram-square-meter-per-square-second",
+      "base_unit": [
+        {
+          "power": 1,
+          "si_base": "Decimal",
+          "si_prefix": 3,
+          "unit_id": 58
+        },
+        {
+          "power": 2,
+          "si_base": "NotExist",
+          "si_prefix": 0,
+          "unit_id": 83
+        },
+        {
+          "power": -2,
+          "si_base": "NotExist",
+          "si_prefix": 0,
+          "unit_id": 124
+        }
+      ],
       "factor_num": [
         11,
         2
@@ -512,7 +691,26 @@
       "exactness": "Exact"
     },
     {
-      "base_unit": "kilogram-square-meter-per-square-second",
+      "base_unit": [
+        {
+          "power": 1,
+          "si_base": "Decimal",
+          "si_prefix": 3,
+          "unit_id": 58
+        },
+        {
+          "power": 2,
+          "si_base": "NotExist",
+          "si_prefix": 0,
+          "unit_id": 83
+        },
+        {
+          "power": -2,
+          "si_base": "NotExist",
+          "si_prefix": 0,
+          "unit_id": 124
+        }
+      ],
       "factor_num": [
         227,
         40
@@ -532,7 +730,14 @@
       "exactness": "Exact"
     },
     {
-      "base_unit": "candela",
+      "base_unit": [
+        {
+          "power": 1,
+          "si_base": "NotExist",
+          "si_prefix": 0,
+          "unit_id": 18
+        }
+      ],
       "factor_num": [
         1
       ],
@@ -550,7 +755,14 @@
       "exactness": "Exact"
     },
     {
-      "base_unit": "kilogram",
+      "base_unit": [
+        {
+          "power": 1,
+          "si_base": "Decimal",
+          "si_prefix": 3,
+          "unit_id": 58
+        }
+      ],
       "factor_num": [
         1
       ],
@@ -569,7 +781,14 @@
       "exactness": "Exact"
     },
     {
-      "base_unit": "kelvin",
+      "base_unit": [
+        {
+          "power": 1,
+          "si_base": "NotExist",
+          "si_prefix": 0,
+          "unit_id": 72
+        }
+      ],
       "factor_num": [
         1
       ],
@@ -588,7 +807,14 @@
       "exactness": "Exact"
     },
     {
-      "base_unit": "year",
+      "base_unit": [
+        {
+          "power": 1,
+          "si_base": "NotExist",
+          "si_prefix": 0,
+          "unit_id": 150
+        }
+      ],
       "factor_num": [
         100
       ],
@@ -606,7 +832,14 @@
       "exactness": "Exact"
     },
     {
-      "base_unit": "meter",
+      "base_unit": [
+        {
+          "power": 1,
+          "si_base": "NotExist",
+          "si_prefix": 0,
+          "unit_id": 83
+        }
+      ],
       "factor_num": [
         29,
         49
@@ -626,7 +859,14 @@
       "exactness": "Exact"
     },
     {
-      "base_unit": "square-meter",
+      "base_unit": [
+        {
+          "power": 2,
+          "si_base": "NotExist",
+          "si_prefix": 0,
+          "unit_id": 83
+        }
+      ],
       "factor_num": [
         128,
         79,
@@ -646,7 +886,20 @@
       "exactness": "Exact"
     },
     {
-      "base_unit": "second-ampere",
+      "base_unit": [
+        {
+          "power": 1,
+          "si_base": "NotExist",
+          "si_prefix": 0,
+          "unit_id": 124
+        },
+        {
+          "power": 1,
+          "si_base": "NotExist",
+          "si_prefix": 0,
+          "unit_id": 2
+        }
+      ],
       "factor_num": [
         1
       ],
@@ -664,7 +917,14 @@
       "exactness": "Exact"
     },
     {
-      "base_unit": "cubic-meter",
+      "base_unit": [
+        {
+          "power": 3,
+          "si_base": "NotExist",
+          "si_prefix": 0,
+          "unit_id": 83
+        }
+      ],
       "factor_num": [
         153,
         25,
@@ -690,7 +950,14 @@
       "exactness": "Exact"
     },
     {
-      "base_unit": "cubic-meter",
+      "base_unit": [
+        {
+          "power": 3,
+          "si_base": "NotExist",
+          "si_prefix": 0,
+          "unit_id": 83
+        }
+      ],
       "factor_num": [
         1
       ],
@@ -709,7 +976,14 @@
       "exactness": "Exact"
     },
     {
-      "base_unit": "cubic-meter",
+      "base_unit": [
+        {
+          "power": 3,
+          "si_base": "NotExist",
+          "si_prefix": 0,
+          "unit_id": 83
+        }
+      ],
       "factor_num": [
         1
       ],
@@ -728,7 +1002,14 @@
       "exactness": "Exact"
     },
     {
-      "base_unit": "kilogram",
+      "base_unit": [
+        {
+          "power": 1,
+          "si_base": "Decimal",
+          "si_prefix": 3,
+          "unit_id": 58
+        }
+      ],
       "factor_num": [
         11,
         26,
@@ -765,7 +1046,14 @@
       "exactness": "Approximate"
     },
     {
-      "base_unit": "second",
+      "base_unit": [
+        {
+          "power": 1,
+          "si_base": "NotExist",
+          "si_prefix": 0,
+          "unit_id": 124
+        }
+      ],
       "factor_num": [
         128,
         81,
@@ -785,7 +1073,14 @@
       "exactness": "Exact"
     },
     {
-      "base_unit": "second",
+      "base_unit": [
+        {
+          "power": 1,
+          "si_base": "NotExist",
+          "si_prefix": 0,
+          "unit_id": 124
+        }
+      ],
       "factor_num": [
         128,
         81,
@@ -805,7 +1100,14 @@
       "exactness": "Exact"
     },
     {
-      "base_unit": "year",
+      "base_unit": [
+        {
+          "power": 1,
+          "si_base": "NotExist",
+          "si_prefix": 0,
+          "unit_id": 150
+        }
+      ],
       "factor_num": [
         10
       ],
@@ -823,7 +1125,14 @@
       "exactness": "Exact"
     },
     {
-      "base_unit": "revolution",
+      "base_unit": [
+        {
+          "power": 1,
+          "si_base": "NotExist",
+          "si_prefix": 0,
+          "unit_id": 118
+        }
+      ],
       "factor_num": [
         1
       ],
@@ -842,7 +1151,14 @@
       "exactness": "Exact"
     },
     {
-      "base_unit": "cubic-meter",
+      "base_unit": [
+        {
+          "power": 3,
+          "si_base": "NotExist",
+          "si_prefix": 0,
+          "unit_id": 83
+        }
+      ],
       "factor_num": [
         153,
         25,
@@ -868,7 +1184,14 @@
       "exactness": "Exact"
     },
     {
-      "base_unit": "cubic-meter",
+      "base_unit": [
+        {
+          "power": 3,
+          "si_base": "NotExist",
+          "si_prefix": 0,
+          "unit_id": 83
+        }
+      ],
       "factor_num": [
         209,
         239,
@@ -892,7 +1215,14 @@
       "exactness": "Exact"
     },
     {
-      "base_unit": "pixel",
+      "base_unit": [
+        {
+          "power": 1,
+          "si_base": "NotExist",
+          "si_prefix": 0,
+          "unit_id": 108
+        }
+      ],
       "factor_num": [
         1
       ],
@@ -910,7 +1240,14 @@
       "exactness": "Exact"
     },
     {
-      "base_unit": "cubic-meter",
+      "base_unit": [
+        {
+          "power": 3,
+          "si_base": "NotExist",
+          "si_prefix": 0,
+          "unit_id": 83
+        }
+      ],
       "factor_num": [
         153,
         25,
@@ -936,7 +1273,14 @@
       "exactness": "Exact"
     },
     {
-      "base_unit": "cubic-meter",
+      "base_unit": [
+        {
+          "power": 3,
+          "si_base": "NotExist",
+          "si_prefix": 0,
+          "unit_id": 83
+        }
+      ],
       "factor_num": [
         51,
         179,
@@ -963,7 +1307,14 @@
       "exactness": "Exact"
     },
     {
-      "base_unit": "square-meter",
+      "base_unit": [
+        {
+          "power": 2,
+          "si_base": "NotExist",
+          "si_prefix": 0,
+          "unit_id": 83
+        }
+      ],
       "factor_num": [
         232,
         3
@@ -982,7 +1333,14 @@
       "exactness": "Exact"
     },
     {
-      "base_unit": "kilogram",
+      "base_unit": [
+        {
+          "power": 1,
+          "si_base": "Decimal",
+          "si_prefix": 3,
+          "unit_id": 58
+        }
+      ],
       "factor_num": [
         0,
         0,
@@ -1010,7 +1368,14 @@
       "exactness": "Exact"
     },
     {
-      "base_unit": "meter",
+      "base_unit": [
+        {
+          "power": 1,
+          "si_base": "NotExist",
+          "si_prefix": 0,
+          "unit_id": 83
+        }
+      ],
       "factor_num": [
         116,
         82,
@@ -1030,7 +1395,26 @@
       "exactness": "Exact"
     },
     {
-      "base_unit": "kilogram-square-meter-per-square-second",
+      "base_unit": [
+        {
+          "power": 1,
+          "si_base": "Decimal",
+          "si_prefix": 3,
+          "unit_id": 58
+        },
+        {
+          "power": 2,
+          "si_base": "NotExist",
+          "si_prefix": 0,
+          "unit_id": 83
+        },
+        {
+          "power": -2,
+          "si_base": "NotExist",
+          "si_prefix": 0,
+          "unit_id": 124
+        }
+      ],
       "factor_num": [
         129,
         114,
@@ -1060,7 +1444,14 @@
       "exactness": "Exact"
     },
     {
-      "base_unit": "em",
+      "base_unit": [
+        {
+          "power": 1,
+          "si_base": "NotExist",
+          "si_prefix": 0,
+          "unit_id": 42
+        }
+      ],
       "factor_num": [
         1
       ],
@@ -1078,7 +1469,14 @@
       "exactness": "Exact"
     },
     {
-      "base_unit": "kelvin",
+      "base_unit": [
+        {
+          "power": 1,
+          "si_base": "NotExist",
+          "si_prefix": 0,
+          "unit_id": 72
+        }
+      ],
       "factor_num": [
         5
       ],
@@ -1097,7 +1495,32 @@
       "exactness": "Exact"
     },
     {
-      "base_unit": "pow4-second-square-ampere-per-kilogram-square-meter",
+      "base_unit": [
+        {
+          "power": 4,
+          "si_base": "NotExist",
+          "si_prefix": 0,
+          "unit_id": 124
+        },
+        {
+          "power": 2,
+          "si_base": "NotExist",
+          "si_prefix": 0,
+          "unit_id": 2
+        },
+        {
+          "power": -1,
+          "si_base": "Decimal",
+          "si_prefix": -3,
+          "unit_id": 58
+        },
+        {
+          "power": -2,
+          "si_base": "NotExist",
+          "si_prefix": 0,
+          "unit_id": 83
+        }
+      ],
       "factor_num": [
         1
       ],
@@ -1115,7 +1538,14 @@
       "exactness": "Exact"
     },
     {
-      "base_unit": "meter",
+      "base_unit": [
+        {
+          "power": 1,
+          "si_base": "NotExist",
+          "si_prefix": 0,
+          "unit_id": 83
+        }
+      ],
       "factor_num": [
         119,
         4
@@ -1135,7 +1565,14 @@
       "exactness": "Exact"
     },
     {
-      "base_unit": "cubic-meter",
+      "base_unit": [
+        {
+          "power": 3,
+          "si_base": "NotExist",
+          "si_prefix": 0,
+          "unit_id": 83
+        }
+      ],
       "factor_num": [
         153,
         25,
@@ -1161,7 +1598,14 @@
       "exactness": "Exact"
     },
     {
-      "base_unit": "cubic-meter",
+      "base_unit": [
+        {
+          "power": 3,
+          "si_base": "NotExist",
+          "si_prefix": 0,
+          "unit_id": 83
+        }
+      ],
       "factor_num": [
         209,
         239,
@@ -1185,7 +1629,26 @@
       "exactness": "Exact"
     },
     {
-      "base_unit": "kilogram-square-meter-per-square-second",
+      "base_unit": [
+        {
+          "power": 1,
+          "si_base": "Decimal",
+          "si_prefix": 3,
+          "unit_id": 58
+        },
+        {
+          "power": 2,
+          "si_base": "NotExist",
+          "si_prefix": 0,
+          "unit_id": 83
+        },
+        {
+          "power": -2,
+          "si_base": "NotExist",
+          "si_prefix": 0,
+          "unit_id": 124
+        }
+      ],
       "factor_num": [
         88,
         16
@@ -1204,7 +1667,14 @@
       "exactness": "Exact"
     },
     {
-      "base_unit": "meter",
+      "base_unit": [
+        {
+          "power": 1,
+          "si_base": "NotExist",
+          "si_prefix": 0,
+          "unit_id": 83
+        }
+      ],
       "factor_num": [
         125,
         1
@@ -1224,7 +1694,14 @@
       "exactness": "Exact"
     },
     {
-      "base_unit": "second",
+      "base_unit": [
+        {
+          "power": 1,
+          "si_base": "NotExist",
+          "si_prefix": 0,
+          "unit_id": 124
+        }
+      ],
       "factor_num": [
         0,
         117,
@@ -1244,7 +1721,14 @@
       "exactness": "Exact"
     },
     {
-      "base_unit": "kilogram",
+      "base_unit": [
+        {
+          "power": 1,
+          "si_base": "Decimal",
+          "si_prefix": 3,
+          "unit_id": 58
+        }
+      ],
       "factor_num": [
         3
       ],
@@ -1263,7 +1747,14 @@
       "exactness": "Exact"
     },
     {
-      "base_unit": "meter",
+      "base_unit": [
+        {
+          "power": 1,
+          "si_base": "NotExist",
+          "si_prefix": 0,
+          "unit_id": 83
+        }
+      ],
       "factor_num": [
         58,
         98
@@ -1282,7 +1773,20 @@
       "exactness": "Exact"
     },
     {
-      "base_unit": "meter-per-square-second",
+      "base_unit": [
+        {
+          "power": 1,
+          "si_base": "NotExist",
+          "si_prefix": 0,
+          "unit_id": 83
+        },
+        {
+          "power": -2,
+          "si_base": "NotExist",
+          "si_prefix": 0,
+          "unit_id": 124
+        }
+      ],
       "factor_num": [
         37,
         254,
@@ -1303,7 +1807,14 @@
       "exactness": "Exact"
     },
     {
-      "base_unit": "cubic-meter",
+      "base_unit": [
+        {
+          "power": 3,
+          "si_base": "NotExist",
+          "si_prefix": 0,
+          "unit_id": 83
+        }
+      ],
       "factor_num": [
         153,
         25,
@@ -1328,7 +1839,14 @@
       "exactness": "Exact"
     },
     {
-      "base_unit": "cubic-meter",
+      "base_unit": [
+        {
+          "power": 3,
+          "si_base": "NotExist",
+          "si_prefix": 0,
+          "unit_id": 83
+        }
+      ],
       "factor_num": [
         209,
         239,
@@ -1351,7 +1869,26 @@
       "exactness": "Exact"
     },
     {
-      "base_unit": "kilogram-per-meter-square-second",
+      "base_unit": [
+        {
+          "power": 1,
+          "si_base": "Decimal",
+          "si_prefix": 3,
+          "unit_id": 58
+        },
+        {
+          "power": -1,
+          "si_base": "NotExist",
+          "si_prefix": 0,
+          "unit_id": 83
+        },
+        {
+          "power": -2,
+          "si_base": "NotExist",
+          "si_prefix": 0,
+          "unit_id": 124
+        }
+      ],
       "factor_num": [
         0,
         160,
@@ -1379,7 +1916,14 @@
       "exactness": "Exact"
     },
     {
-      "base_unit": "kilogram",
+      "base_unit": [
+        {
+          "power": 1,
+          "si_base": "Decimal",
+          "si_prefix": 3,
+          "unit_id": 58
+        }
+      ],
       "factor_num": [
         19,
         224,
@@ -1403,7 +1947,14 @@
       "exactness": "Exact"
     },
     {
-      "base_unit": "kilogram",
+      "base_unit": [
+        {
+          "power": 1,
+          "si_base": "Decimal",
+          "si_prefix": 3,
+          "unit_id": 58
+        }
+      ],
       "factor_num": [
         1
       ],
@@ -1422,7 +1973,20 @@
       "exactness": "Exact"
     },
     {
-      "base_unit": "square-meter-per-square-second",
+      "base_unit": [
+        {
+          "power": 2,
+          "si_base": "NotExist",
+          "si_prefix": 0,
+          "unit_id": 83
+        },
+        {
+          "power": -2,
+          "si_base": "NotExist",
+          "si_prefix": 0,
+          "unit_id": 124
+        }
+      ],
       "factor_num": [
         1
       ],
@@ -1440,7 +2004,14 @@
       "exactness": "Exact"
     },
     {
-      "base_unit": "square-meter",
+      "base_unit": [
+        {
+          "power": 2,
+          "si_base": "NotExist",
+          "si_prefix": 0,
+          "unit_id": 83
+        }
+      ],
       "factor_num": [
         16,
         39
@@ -1459,7 +2030,32 @@
       "exactness": "Exact"
     },
     {
-      "base_unit": "kilogram-square-meter-per-square-second-square-ampere",
+      "base_unit": [
+        {
+          "power": 1,
+          "si_base": "Decimal",
+          "si_prefix": 3,
+          "unit_id": 58
+        },
+        {
+          "power": 2,
+          "si_base": "NotExist",
+          "si_prefix": 0,
+          "unit_id": 83
+        },
+        {
+          "power": -2,
+          "si_base": "NotExist",
+          "si_prefix": 0,
+          "unit_id": 124
+        },
+        {
+          "power": -2,
+          "si_base": "NotExist",
+          "si_prefix": 0,
+          "unit_id": 2
+        }
+      ],
       "factor_num": [
         1
       ],
@@ -1477,7 +2073,20 @@
       "exactness": "Exact"
     },
     {
-      "base_unit": "revolution-per-second",
+      "base_unit": [
+        {
+          "power": 1,
+          "si_base": "NotExist",
+          "si_prefix": 0,
+          "unit_id": 118
+        },
+        {
+          "power": -1,
+          "si_base": "NotExist",
+          "si_prefix": 0,
+          "unit_id": 124
+        }
+      ],
       "factor_num": [
         1
       ],
@@ -1495,7 +2104,26 @@
       "exactness": "Exact"
     },
     {
-      "base_unit": "kilogram-square-meter-per-cubic-second",
+      "base_unit": [
+        {
+          "power": 1,
+          "si_base": "Decimal",
+          "si_prefix": 3,
+          "unit_id": 58
+        },
+        {
+          "power": 2,
+          "si_base": "NotExist",
+          "si_prefix": 0,
+          "unit_id": 83
+        },
+        {
+          "power": -3,
+          "si_base": "NotExist",
+          "si_prefix": 0,
+          "unit_id": 124
+        }
+      ],
       "factor_num": [
         39,
         92,
@@ -1524,7 +2152,14 @@
       "exactness": "Exact"
     },
     {
-      "base_unit": "second",
+      "base_unit": [
+        {
+          "power": 1,
+          "si_base": "NotExist",
+          "si_prefix": 0,
+          "unit_id": 124
+        }
+      ],
       "factor_num": [
         16,
         14
@@ -1543,7 +2178,14 @@
       "exactness": "Exact"
     },
     {
-      "base_unit": "meter",
+      "base_unit": [
+        {
+          "power": 1,
+          "si_base": "NotExist",
+          "si_prefix": 0,
+          "unit_id": 83
+        }
+      ],
       "factor_num": [
         127
       ],
@@ -1562,7 +2204,14 @@
       "exactness": "Exact"
     },
     {
-      "base_unit": "item",
+      "base_unit": [
+        {
+          "power": 1,
+          "si_base": "NotExist",
+          "si_prefix": 0,
+          "unit_id": 66
+        }
+      ],
       "factor_num": [
         1
       ],
@@ -1580,7 +2229,14 @@
       "exactness": "Exact"
     },
     {
-      "base_unit": "cubic-meter",
+      "base_unit": [
+        {
+          "power": 3,
+          "si_base": "NotExist",
+          "si_prefix": 0,
+          "unit_id": 83
+        }
+      ],
       "factor_num": [
         203,
         76,
@@ -1606,7 +2262,14 @@
       "exactness": "Exact"
     },
     {
-      "base_unit": "meter",
+      "base_unit": [
+        {
+          "power": 1,
+          "si_base": "NotExist",
+          "si_prefix": 0,
+          "unit_id": 83
+        }
+      ],
       "factor_num": [
         40
       ],
@@ -1624,7 +2287,26 @@
       "exactness": "Exact"
     },
     {
-      "base_unit": "kilogram-square-meter-per-square-second",
+      "base_unit": [
+        {
+          "power": 1,
+          "si_base": "Decimal",
+          "si_prefix": 3,
+          "unit_id": 58
+        },
+        {
+          "power": 2,
+          "si_base": "NotExist",
+          "si_prefix": 0,
+          "unit_id": 83
+        },
+        {
+          "power": -2,
+          "si_base": "NotExist",
+          "si_prefix": 0,
+          "unit_id": 124
+        }
+      ],
       "factor_num": [
         1
       ],
@@ -1642,7 +2324,14 @@
       "exactness": "Exact"
     },
     {
-      "base_unit": "portion",
+      "base_unit": [
+        {
+          "power": 1,
+          "si_base": "NotExist",
+          "si_prefix": 0,
+          "unit_id": 110
+        }
+      ],
       "factor_num": [
         1
       ],
@@ -1660,7 +2349,20 @@
       "exactness": "Exact"
     },
     {
-      "base_unit": "item-per-second",
+      "base_unit": [
+        {
+          "power": 1,
+          "si_base": "NotExist",
+          "si_prefix": 0,
+          "unit_id": 66
+        },
+        {
+          "power": -1,
+          "si_base": "NotExist",
+          "si_prefix": 0,
+          "unit_id": 124
+        }
+      ],
       "factor_num": [
         0,
         0,
@@ -1687,7 +2389,14 @@
       "exactness": "Exact"
     },
     {
-      "base_unit": "kelvin",
+      "base_unit": [
+        {
+          "power": 1,
+          "si_base": "NotExist",
+          "si_prefix": 0,
+          "unit_id": 72
+        }
+      ],
       "factor_num": [
         1
       ],
@@ -1705,7 +2414,14 @@
       "exactness": "Exact"
     },
     {
-      "base_unit": "meter",
+      "base_unit": [
+        {
+          "power": 1,
+          "si_base": "NotExist",
+          "si_prefix": 0,
+          "unit_id": 83
+        }
+      ],
       "factor_num": [
         24
       ],
@@ -1723,7 +2439,14 @@
       "exactness": "Exact"
     },
     {
-      "base_unit": "kilogram",
+      "base_unit": [
+        {
+          "power": 1,
+          "si_base": "Decimal",
+          "si_prefix": 3,
+          "unit_id": 58
+        }
+      ],
       "factor_num": [
         1
       ],
@@ -1741,7 +2464,26 @@
       "exactness": "Exact"
     },
     {
-      "base_unit": "kilogram-meter-per-square-second",
+      "base_unit": [
+        {
+          "power": 1,
+          "si_base": "Decimal",
+          "si_prefix": 3,
+          "unit_id": 58
+        },
+        {
+          "power": 1,
+          "si_base": "NotExist",
+          "si_prefix": 0,
+          "unit_id": 83
+        },
+        {
+          "power": -2,
+          "si_base": "NotExist",
+          "si_prefix": 0,
+          "unit_id": 124
+        }
+      ],
       "factor_num": [
         37,
         254,
@@ -1762,7 +2504,20 @@
       "exactness": "Exact"
     },
     {
-      "base_unit": "meter-per-second",
+      "base_unit": [
+        {
+          "power": 1,
+          "si_base": "NotExist",
+          "si_prefix": 0,
+          "unit_id": 83
+        },
+        {
+          "power": -1,
+          "si_base": "NotExist",
+          "si_prefix": 0,
+          "unit_id": 124
+        }
+      ],
       "factor_num": [
         207,
         1
@@ -1782,7 +2537,14 @@
       "exactness": "Exact"
     },
     {
-      "base_unit": "cubic-meter",
+      "base_unit": [
+        {
+          "power": 3,
+          "si_base": "NotExist",
+          "si_prefix": 0,
+          "unit_id": 83
+        }
+      ],
       "factor_num": [
         97,
         9
@@ -1802,7 +2564,14 @@
       "exactness": "Exact"
     },
     {
-      "base_unit": "cubic-meter",
+      "base_unit": [
+        {
+          "power": 3,
+          "si_base": "NotExist",
+          "si_prefix": 0,
+          "unit_id": 83
+        }
+      ],
       "factor_num": [
         1
       ],
@@ -1822,7 +2591,14 @@
       "exactness": "Exact"
     },
     {
-      "base_unit": "meter",
+      "base_unit": [
+        {
+          "power": 1,
+          "si_base": "NotExist",
+          "si_prefix": 0,
+          "unit_id": 83
+        }
+      ],
       "factor_num": [
         192,
         70,
@@ -1846,7 +2622,14 @@
       "exactness": "Exact"
     },
     {
-      "base_unit": "cubic-meter",
+      "base_unit": [
+        {
+          "power": 3,
+          "si_base": "NotExist",
+          "si_prefix": 0,
+          "unit_id": 83
+        }
+      ],
       "factor_num": [
         1
       ],
@@ -1865,7 +2648,26 @@
       "exactness": "Exact"
     },
     {
-      "base_unit": "candela-square-meter-per-square-meter",
+      "base_unit": [
+        {
+          "power": 1,
+          "si_base": "NotExist",
+          "si_prefix": 0,
+          "unit_id": 18
+        },
+        {
+          "power": 2,
+          "si_base": "NotExist",
+          "si_prefix": 0,
+          "unit_id": 83
+        },
+        {
+          "power": -2,
+          "si_base": "NotExist",
+          "si_prefix": 0,
+          "unit_id": 83
+        }
+      ],
       "factor_num": [
         1
       ],
@@ -1883,7 +2685,20 @@
       "exactness": "Exact"
     },
     {
-      "base_unit": "candela-per-square-meter",
+      "base_unit": [
+        {
+          "power": 1,
+          "si_base": "NotExist",
+          "si_prefix": 0,
+          "unit_id": 18
+        },
+        {
+          "power": -2,
+          "si_base": "NotExist",
+          "si_prefix": 0,
+          "unit_id": 83
+        }
+      ],
       "factor_num": [
         1
       ],
@@ -1901,7 +2716,14 @@
       "exactness": "Exact"
     },
     {
-      "base_unit": "meter",
+      "base_unit": [
+        {
+          "power": 1,
+          "si_base": "NotExist",
+          "si_prefix": 0,
+          "unit_id": 83
+        }
+      ],
       "factor_num": [
         1
       ],
@@ -1919,7 +2741,14 @@
       "exactness": "Exact"
     },
     {
-      "base_unit": "meter",
+      "base_unit": [
+        {
+          "power": 1,
+          "si_base": "NotExist",
+          "si_prefix": 0,
+          "unit_id": 83
+        }
+      ],
       "factor_num": [
         208,
         17,
@@ -1939,7 +2768,14 @@
       "exactness": "Exact"
     },
     {
-      "base_unit": "meter",
+      "base_unit": [
+        {
+          "power": 1,
+          "si_base": "NotExist",
+          "si_prefix": 0,
+          "unit_id": 83
+        }
+      ],
       "factor_num": [
         16,
         39
@@ -1958,7 +2794,14 @@
       "exactness": "Exact"
     },
     {
-      "base_unit": "second",
+      "base_unit": [
+        {
+          "power": 1,
+          "si_base": "NotExist",
+          "si_prefix": 0,
+          "unit_id": 124
+        }
+      ],
       "factor_num": [
         60
       ],
@@ -1976,7 +2819,14 @@
       "exactness": "Exact"
     },
     {
-      "base_unit": "item",
+      "base_unit": [
+        {
+          "power": 1,
+          "si_base": "NotExist",
+          "si_prefix": 0,
+          "unit_id": 66
+        }
+      ],
       "factor_num": [
         0,
         0,
@@ -2003,7 +2853,14 @@
       "exactness": "Exact"
     },
     {
-      "base_unit": "year",
+      "base_unit": [
+        {
+          "power": 1,
+          "si_base": "NotExist",
+          "si_prefix": 0,
+          "unit_id": 150
+        }
+      ],
       "factor_num": [
         1
       ],
@@ -2021,7 +2878,14 @@
       "exactness": "Exact"
     },
     {
-      "base_unit": "year",
+      "base_unit": [
+        {
+          "power": 1,
+          "si_base": "NotExist",
+          "si_prefix": 0,
+          "unit_id": 150
+        }
+      ],
       "factor_num": [
         1
       ],
@@ -2039,7 +2903,14 @@
       "exactness": "Exact"
     },
     {
-      "base_unit": "meter",
+      "base_unit": [
+        {
+          "power": 1,
+          "si_base": "NotExist",
+          "si_prefix": 0,
+          "unit_id": 83
+        }
+      ],
       "factor_num": [
         60,
         7
@@ -2058,7 +2929,26 @@
       "exactness": "Exact"
     },
     {
-      "base_unit": "kilogram-meter-per-square-second",
+      "base_unit": [
+        {
+          "power": 1,
+          "si_base": "Decimal",
+          "si_prefix": 3,
+          "unit_id": 58
+        },
+        {
+          "power": 1,
+          "si_base": "NotExist",
+          "si_prefix": 0,
+          "unit_id": 83
+        },
+        {
+          "power": -2,
+          "si_base": "NotExist",
+          "si_prefix": 0,
+          "unit_id": 124
+        }
+      ],
       "factor_num": [
         1
       ],
@@ -2076,7 +2966,20 @@
       "exactness": "Exact"
     },
     {
-      "base_unit": "item-per-kilogram",
+      "base_unit": [
+        {
+          "power": 1,
+          "si_base": "NotExist",
+          "si_prefix": 0,
+          "unit_id": 66
+        },
+        {
+          "power": -1,
+          "si_base": "Decimal",
+          "si_prefix": -3,
+          "unit_id": 58
+        }
+      ],
       "factor_num": [
         0,
         0,
@@ -2108,7 +3011,26 @@
       "exactness": "Exact"
     },
     {
-      "base_unit": "kilogram-per-square-meter-square-second",
+      "base_unit": [
+        {
+          "power": 1,
+          "si_base": "Decimal",
+          "si_prefix": 3,
+          "unit_id": 58
+        },
+        {
+          "power": -2,
+          "si_base": "NotExist",
+          "si_prefix": 0,
+          "unit_id": 83
+        },
+        {
+          "power": -2,
+          "si_base": "NotExist",
+          "si_prefix": 0,
+          "unit_id": 124
+        }
+      ],
       "factor_num": [
         43,
         163,
@@ -2132,7 +3054,32 @@
       "exactness": "Exact"
     },
     {
-      "base_unit": "kilogram-square-meter-per-cubic-second-square-ampere",
+      "base_unit": [
+        {
+          "power": 1,
+          "si_base": "Decimal",
+          "si_prefix": 3,
+          "unit_id": 58
+        },
+        {
+          "power": 2,
+          "si_base": "NotExist",
+          "si_prefix": 0,
+          "unit_id": 83
+        },
+        {
+          "power": -3,
+          "si_base": "NotExist",
+          "si_prefix": 0,
+          "unit_id": 124
+        },
+        {
+          "power": -2,
+          "si_base": "NotExist",
+          "si_prefix": 0,
+          "unit_id": 2
+        }
+      ],
       "factor_num": [
         1
       ],
@@ -2150,7 +3097,14 @@
       "exactness": "Exact"
     },
     {
-      "base_unit": "cubic-meter",
+      "base_unit": [
+        {
+          "power": 3,
+          "si_base": "NotExist",
+          "si_prefix": 0,
+          "unit_id": 83
+        }
+      ],
       "factor_num": [
         3
       ],
@@ -2170,7 +3124,14 @@
       "exactness": "Exact"
     },
     {
-      "base_unit": "kilogram",
+      "base_unit": [
+        {
+          "power": 1,
+          "si_base": "Decimal",
+          "si_prefix": 3,
+          "unit_id": 58
+        }
+      ],
       "factor_num": [
         133,
         32,
@@ -2194,7 +3155,14 @@
       "exactness": "Exact"
     },
     {
-      "base_unit": "kilogram",
+      "base_unit": [
+        {
+          "power": 1,
+          "si_base": "Decimal",
+          "si_prefix": 3,
+          "unit_id": 58
+        }
+      ],
       "factor_num": [
         115,
         221,
@@ -2217,7 +3185,14 @@
       "exactness": "Exact"
     },
     {
-      "base_unit": "meter",
+      "base_unit": [
+        {
+          "power": 1,
+          "si_base": "NotExist",
+          "si_prefix": 0,
+          "unit_id": 83
+        }
+      ],
       "factor_num": [
         0,
         160,
@@ -2248,7 +3223,26 @@
       "exactness": "Approximate"
     },
     {
-      "base_unit": "kilogram-per-meter-square-second",
+      "base_unit": [
+        {
+          "power": 1,
+          "si_base": "Decimal",
+          "si_prefix": 3,
+          "unit_id": 58
+        },
+        {
+          "power": -1,
+          "si_base": "NotExist",
+          "si_prefix": 0,
+          "unit_id": 83
+        },
+        {
+          "power": -2,
+          "si_base": "NotExist",
+          "si_prefix": 0,
+          "unit_id": 124
+        }
+      ],
       "factor_num": [
         1
       ],
@@ -2266,7 +3260,14 @@
       "exactness": "Exact"
     },
     {
-      "base_unit": "portion",
+      "base_unit": [
+        {
+          "power": 1,
+          "si_base": "NotExist",
+          "si_prefix": 0,
+          "unit_id": 110
+        }
+      ],
       "factor_num": [
         1
       ],
@@ -2284,7 +3285,14 @@
       "exactness": "Exact"
     },
     {
-      "base_unit": "portion",
+      "base_unit": [
+        {
+          "power": 1,
+          "si_base": "NotExist",
+          "si_prefix": 0,
+          "unit_id": 110
+        }
+      ],
       "factor_num": [
         1
       ],
@@ -2303,7 +3311,14 @@
       "exactness": "Exact"
     },
     {
-      "base_unit": "portion",
+      "base_unit": [
+        {
+          "power": 1,
+          "si_base": "NotExist",
+          "si_prefix": 0,
+          "unit_id": 110
+        }
+      ],
       "factor_num": [
         1
       ],
@@ -2323,7 +3338,14 @@
       "exactness": "Exact"
     },
     {
-      "base_unit": "portion",
+      "base_unit": [
+        {
+          "power": 1,
+          "si_base": "NotExist",
+          "si_prefix": 0,
+          "unit_id": 110
+        }
+      ],
       "factor_num": [
         1
       ],
@@ -2342,7 +3364,14 @@
       "exactness": "Exact"
     },
     {
-      "base_unit": "cubic-meter",
+      "base_unit": [
+        {
+          "power": 3,
+          "si_base": "NotExist",
+          "si_prefix": 0,
+          "unit_id": 83
+        }
+      ],
       "factor_num": [
         153,
         25,
@@ -2369,7 +3398,14 @@
       "exactness": "Exact"
     },
     {
-      "base_unit": "cubic-meter",
+      "base_unit": [
+        {
+          "power": 3,
+          "si_base": "NotExist",
+          "si_prefix": 0,
+          "unit_id": 83
+        }
+      ],
       "factor_num": [
         153,
         25,
@@ -2394,7 +3430,14 @@
       "exactness": "Exact"
     },
     {
-      "base_unit": "cubic-meter",
+      "base_unit": [
+        {
+          "power": 3,
+          "si_base": "NotExist",
+          "si_prefix": 0,
+          "unit_id": 83
+        }
+      ],
       "factor_num": [
         209,
         239,
@@ -2417,7 +3460,14 @@
       "exactness": "Exact"
     },
     {
-      "base_unit": "cubic-meter",
+      "base_unit": [
+        {
+          "power": 3,
+          "si_base": "NotExist",
+          "si_prefix": 0,
+          "unit_id": 83
+        }
+      ],
       "factor_num": [
         1
       ],
@@ -2436,7 +3486,14 @@
       "exactness": "Exact"
     },
     {
-      "base_unit": "pixel",
+      "base_unit": [
+        {
+          "power": 1,
+          "si_base": "NotExist",
+          "si_prefix": 0,
+          "unit_id": 108
+        }
+      ],
       "factor_num": [
         1
       ],
@@ -2454,7 +3511,14 @@
       "exactness": "Exact"
     },
     {
-      "base_unit": "meter",
+      "base_unit": [
+        {
+          "power": 1,
+          "si_base": "NotExist",
+          "si_prefix": 0,
+          "unit_id": 83
+        }
+      ],
       "factor_num": [
         127
       ],
@@ -2474,7 +3538,14 @@
       "exactness": "Exact"
     },
     {
-      "base_unit": "portion",
+      "base_unit": [
+        {
+          "power": 1,
+          "si_base": "NotExist",
+          "si_prefix": 0,
+          "unit_id": 110
+        }
+      ],
       "factor_num": [
         1
       ],
@@ -2492,7 +3563,14 @@
       "exactness": "Exact"
     },
     {
-      "base_unit": "kilogram",
+      "base_unit": [
+        {
+          "power": 1,
+          "si_base": "Decimal",
+          "si_prefix": 3,
+          "unit_id": 58
+        }
+      ],
       "factor_num": [
         133,
         32,
@@ -2516,7 +3594,26 @@
       "exactness": "Exact"
     },
     {
-      "base_unit": "kilogram-meter-per-square-second",
+      "base_unit": [
+        {
+          "power": 1,
+          "si_base": "Decimal",
+          "si_prefix": 3,
+          "unit_id": 58
+        },
+        {
+          "power": 1,
+          "si_base": "NotExist",
+          "si_prefix": 0,
+          "unit_id": 83
+        },
+        {
+          "power": -2,
+          "si_base": "NotExist",
+          "si_prefix": 0,
+          "unit_id": 124
+        }
+      ],
       "factor_num": [
         57,
         169,
@@ -2544,7 +3641,14 @@
       "exactness": "Exact"
     },
     {
-      "base_unit": "cubic-meter",
+      "base_unit": [
+        {
+          "power": 3,
+          "si_base": "NotExist",
+          "si_prefix": 0,
+          "unit_id": 83
+        }
+      ],
       "factor_num": [
         153,
         25,
@@ -2569,7 +3673,14 @@
       "exactness": "Exact"
     },
     {
-      "base_unit": "cubic-meter",
+      "base_unit": [
+        {
+          "power": 3,
+          "si_base": "NotExist",
+          "si_prefix": 0,
+          "unit_id": 83
+        }
+      ],
       "factor_num": [
         209,
         239,
@@ -2592,7 +3703,14 @@
       "exactness": "Exact"
     },
     {
-      "base_unit": "year",
+      "base_unit": [
+        {
+          "power": 1,
+          "si_base": "NotExist",
+          "si_prefix": 0,
+          "unit_id": 150
+        }
+      ],
       "factor_num": [
         1
       ],
@@ -2610,7 +3728,14 @@
       "exactness": "Exact"
     },
     {
-      "base_unit": "revolution",
+      "base_unit": [
+        {
+          "power": 1,
+          "si_base": "NotExist",
+          "si_prefix": 0,
+          "unit_id": 118
+        }
+      ],
       "factor_num": [
         48,
         121,
@@ -2634,7 +3759,14 @@
       "exactness": "Approximate"
     },
     {
-      "base_unit": "kelvin",
+      "base_unit": [
+        {
+          "power": 1,
+          "si_base": "NotExist",
+          "si_prefix": 0,
+          "unit_id": 72
+        }
+      ],
       "factor_num": [
         5
       ],
@@ -2652,7 +3784,14 @@
       "exactness": "Exact"
     },
     {
-      "base_unit": "revolution",
+      "base_unit": [
+        {
+          "power": 1,
+          "si_base": "NotExist",
+          "si_prefix": 0,
+          "unit_id": 118
+        }
+      ],
       "factor_num": [
         1
       ],
@@ -2670,7 +3809,14 @@
       "exactness": "Exact"
     },
     {
-      "base_unit": "meter",
+      "base_unit": [
+        {
+          "power": 1,
+          "si_base": "NotExist",
+          "si_prefix": 0,
+          "unit_id": 83
+        }
+      ],
       "factor_num": [
         128,
         202
@@ -2689,7 +3835,14 @@
       "exactness": "Exact"
     },
     {
-      "base_unit": "meter",
+      "base_unit": [
+        {
+          "power": 1,
+          "si_base": "NotExist",
+          "si_prefix": 0,
+          "unit_id": 83
+        }
+      ],
       "factor_num": [
         1
       ],
@@ -2708,7 +3861,14 @@
       "exactness": "Exact"
     },
     {
-      "base_unit": "meter",
+      "base_unit": [
+        {
+          "power": 1,
+          "si_base": "NotExist",
+          "si_prefix": 0,
+          "unit_id": 83
+        }
+      ],
       "factor_num": [
         29,
         49
@@ -2728,7 +3888,14 @@
       "exactness": "Exact"
     },
     {
-      "base_unit": "cubic-meter",
+      "base_unit": [
+        {
+          "power": 3,
+          "si_base": "NotExist",
+          "si_prefix": 0,
+          "unit_id": 83
+        }
+      ],
       "factor_num": [
         97,
         9
@@ -2750,7 +3917,14 @@
       "exactness": "Exact"
     },
     {
-      "base_unit": "square-meter",
+      "base_unit": [
+        {
+          "power": 2,
+          "si_base": "NotExist",
+          "si_prefix": 0,
+          "unit_id": 83
+        }
+      ],
       "factor_num": [
         224,
         46
@@ -2769,7 +3943,14 @@
       "exactness": "Exact"
     },
     {
-      "base_unit": "second",
+      "base_unit": [
+        {
+          "power": 1,
+          "si_base": "NotExist",
+          "si_prefix": 0,
+          "unit_id": 124
+        }
+      ],
       "factor_num": [
         1
       ],
@@ -2787,7 +3968,14 @@
       "exactness": "Exact"
     },
     {
-      "base_unit": "cubic-meter",
+      "base_unit": [
+        {
+          "power": 3,
+          "si_base": "NotExist",
+          "si_prefix": 0,
+          "unit_id": 83
+        }
+      ],
       "factor_num": [
         97,
         9
@@ -2809,7 +3997,14 @@
       "exactness": "Exact"
     },
     {
-      "base_unit": "meter",
+      "base_unit": [
+        {
+          "power": 1,
+          "si_base": "NotExist",
+          "si_prefix": 0,
+          "unit_id": 83
+        }
+      ],
       "factor_num": [
         5
       ],
@@ -2827,7 +4022,14 @@
       "exactness": "Exact"
     },
     {
-      "base_unit": "meter",
+      "base_unit": [
+        {
+          "power": 1,
+          "si_base": "NotExist",
+          "si_prefix": 0,
+          "unit_id": 83
+        }
+      ],
       "factor_num": [
         4
       ],
@@ -2845,7 +4047,32 @@
       "exactness": "Exact"
     },
     {
-      "base_unit": "cubic-second-square-ampere-per-kilogram-square-meter",
+      "base_unit": [
+        {
+          "power": 3,
+          "si_base": "NotExist",
+          "si_prefix": 0,
+          "unit_id": 124
+        },
+        {
+          "power": 2,
+          "si_base": "NotExist",
+          "si_prefix": 0,
+          "unit_id": 2
+        },
+        {
+          "power": -1,
+          "si_base": "Decimal",
+          "si_prefix": -3,
+          "unit_id": 58
+        },
+        {
+          "power": -2,
+          "si_base": "NotExist",
+          "si_prefix": 0,
+          "unit_id": 83
+        }
+      ],
       "factor_num": [
         1
       ],
@@ -2863,7 +4090,20 @@
       "exactness": "Exact"
     },
     {
-      "base_unit": "square-meter-per-square-second",
+      "base_unit": [
+        {
+          "power": 2,
+          "si_base": "NotExist",
+          "si_prefix": 0,
+          "unit_id": 83
+        },
+        {
+          "power": -2,
+          "si_base": "NotExist",
+          "si_prefix": 0,
+          "unit_id": 124
+        }
+      ],
       "factor_num": [
         1
       ],
@@ -2881,7 +4121,14 @@
       "exactness": "Exact"
     },
     {
-      "base_unit": "kilogram",
+      "base_unit": [
+        {
+          "power": 1,
+          "si_base": "Decimal",
+          "si_prefix": 3,
+          "unit_id": 58
+        }
+      ],
       "factor_num": [
         57,
         169,
@@ -2908,7 +4155,26 @@
       "exactness": "Exact"
     },
     {
-      "base_unit": "kilogram-square-meter-per-cubic-second",
+      "base_unit": [
+        {
+          "power": 1,
+          "si_base": "Decimal",
+          "si_prefix": 3,
+          "unit_id": 58
+        },
+        {
+          "power": 2,
+          "si_base": "NotExist",
+          "si_prefix": 0,
+          "unit_id": 83
+        },
+        {
+          "power": -3,
+          "si_base": "NotExist",
+          "si_prefix": 0,
+          "unit_id": 124
+        }
+      ],
       "factor_num": [
         0,
         0,
@@ -2937,7 +4203,14 @@
       "exactness": "Exact"
     },
     {
-      "base_unit": "kilogram",
+      "base_unit": [
+        {
+          "power": 1,
+          "si_base": "Decimal",
+          "si_prefix": 3,
+          "unit_id": 58
+        }
+      ],
       "factor_num": [
         0,
         0,
@@ -2967,7 +4240,14 @@
       "exactness": "Exact"
     },
     {
-      "base_unit": "meter",
+      "base_unit": [
+        {
+          "power": 1,
+          "si_base": "NotExist",
+          "si_prefix": 0,
+          "unit_id": 83
+        }
+      ],
       "factor_num": [
         32,
         138,
@@ -2988,7 +4268,14 @@
       "exactness": "Exact"
     },
     {
-      "base_unit": "square-revolution",
+      "base_unit": [
+        {
+          "power": 2,
+          "si_base": "NotExist",
+          "si_prefix": 0,
+          "unit_id": 118
+        }
+      ],
       "factor_num": [
         0,
         105,
@@ -3019,7 +4306,14 @@
       "exactness": "Approximate"
     },
     {
-      "base_unit": "kilogram",
+      "base_unit": [
+        {
+          "power": 1,
+          "si_base": "Decimal",
+          "si_prefix": 3,
+          "unit_id": 58
+        }
+      ],
       "factor_num": [
         163,
         227,
@@ -3043,7 +4337,14 @@
       "exactness": "Exact"
     },
     {
-      "base_unit": "meter",
+      "base_unit": [
+        {
+          "power": 1,
+          "si_base": "NotExist",
+          "si_prefix": 0,
+          "unit_id": 83
+        }
+      ],
       "factor_num": [
         2
       ],
@@ -3062,7 +4363,14 @@
       "exactness": "Exact"
     },
     {
-      "base_unit": "cubic-meter",
+      "base_unit": [
+        {
+          "power": 3,
+          "si_base": "NotExist",
+          "si_prefix": 0,
+          "unit_id": 83
+        }
+      ],
       "factor_num": [
         153,
         25,
@@ -3088,7 +4396,14 @@
       "exactness": "Exact"
     },
     {
-      "base_unit": "cubic-meter",
+      "base_unit": [
+        {
+          "power": 3,
+          "si_base": "NotExist",
+          "si_prefix": 0,
+          "unit_id": 83
+        }
+      ],
       "factor_num": [
         51,
         179,
@@ -3114,7 +4429,26 @@
       "exactness": "Exact"
     },
     {
-      "base_unit": "kilogram-per-square-second-ampere",
+      "base_unit": [
+        {
+          "power": 1,
+          "si_base": "Decimal",
+          "si_prefix": 3,
+          "unit_id": 58
+        },
+        {
+          "power": -2,
+          "si_base": "NotExist",
+          "si_prefix": 0,
+          "unit_id": 124
+        },
+        {
+          "power": -1,
+          "si_base": "NotExist",
+          "si_prefix": 0,
+          "unit_id": 2
+        }
+      ],
       "factor_num": [
         1
       ],
@@ -3132,7 +4466,26 @@
       "exactness": "Exact"
     },
     {
-      "base_unit": "kilogram-square-meter-per-square-second",
+      "base_unit": [
+        {
+          "power": 1,
+          "si_base": "Decimal",
+          "si_prefix": 3,
+          "unit_id": 58
+        },
+        {
+          "power": 2,
+          "si_base": "NotExist",
+          "si_prefix": 0,
+          "unit_id": 83
+        },
+        {
+          "power": -2,
+          "si_base": "NotExist",
+          "si_prefix": 0,
+          "unit_id": 124
+        }
+      ],
       "factor_num": [
         208,
         128,
@@ -3153,7 +4506,14 @@
       "exactness": "Exact"
     },
     {
-      "base_unit": "cubic-meter",
+      "base_unit": [
+        {
+          "power": 3,
+          "si_base": "NotExist",
+          "si_prefix": 0,
+          "unit_id": 83
+        }
+      ],
       "factor_num": [
         97,
         9
@@ -3174,7 +4534,14 @@
       "exactness": "Exact"
     },
     {
-      "base_unit": "kilogram",
+      "base_unit": [
+        {
+          "power": 1,
+          "si_base": "Decimal",
+          "si_prefix": 3,
+          "unit_id": 58
+        }
+      ],
       "factor_num": [
         133,
         32,
@@ -3196,7 +4563,14 @@
       "exactness": "Exact"
     },
     {
-      "base_unit": "kilogram",
+      "base_unit": [
+        {
+          "power": 1,
+          "si_base": "Decimal",
+          "si_prefix": 3,
+          "unit_id": 58
+        }
+      ],
       "factor_num": [
         232,
         3
@@ -3215,7 +4589,32 @@
       "exactness": "Exact"
     },
     {
-      "base_unit": "kilogram-square-meter-per-cubic-second-ampere",
+      "base_unit": [
+        {
+          "power": 1,
+          "si_base": "Decimal",
+          "si_prefix": 3,
+          "unit_id": 58
+        },
+        {
+          "power": 2,
+          "si_base": "NotExist",
+          "si_prefix": 0,
+          "unit_id": 83
+        },
+        {
+          "power": -3,
+          "si_base": "NotExist",
+          "si_prefix": 0,
+          "unit_id": 124
+        },
+        {
+          "power": -1,
+          "si_base": "NotExist",
+          "si_prefix": 0,
+          "unit_id": 2
+        }
+      ],
       "factor_num": [
         1
       ],
@@ -3233,7 +4632,26 @@
       "exactness": "Exact"
     },
     {
-      "base_unit": "kilogram-square-meter-per-cubic-second",
+      "base_unit": [
+        {
+          "power": 1,
+          "si_base": "Decimal",
+          "si_prefix": 3,
+          "unit_id": 58
+        },
+        {
+          "power": 2,
+          "si_base": "NotExist",
+          "si_prefix": 0,
+          "unit_id": 83
+        },
+        {
+          "power": -3,
+          "si_base": "NotExist",
+          "si_prefix": 0,
+          "unit_id": 124
+        }
+      ],
       "factor_num": [
         1
       ],
@@ -3251,7 +4669,32 @@
       "exactness": "Exact"
     },
     {
-      "base_unit": "kilogram-square-meter-per-square-second-ampere",
+      "base_unit": [
+        {
+          "power": 1,
+          "si_base": "Decimal",
+          "si_prefix": 3,
+          "unit_id": 58
+        },
+        {
+          "power": 2,
+          "si_base": "NotExist",
+          "si_prefix": 0,
+          "unit_id": 83
+        },
+        {
+          "power": -2,
+          "si_base": "NotExist",
+          "si_prefix": 0,
+          "unit_id": 124
+        },
+        {
+          "power": -1,
+          "si_base": "NotExist",
+          "si_prefix": 0,
+          "unit_id": 2
+        }
+      ],
       "factor_num": [
         1
       ],
@@ -3269,7 +4712,14 @@
       "exactness": "Exact"
     },
     {
-      "base_unit": "second",
+      "base_unit": [
+        {
+          "power": 1,
+          "si_base": "NotExist",
+          "si_prefix": 0,
+          "unit_id": 124
+        }
+      ],
       "factor_num": [
         128,
         58,
@@ -3289,7 +4739,14 @@
       "exactness": "Exact"
     },
     {
-      "base_unit": "second",
+      "base_unit": [
+        {
+          "power": 1,
+          "si_base": "NotExist",
+          "si_prefix": 0,
+          "unit_id": 124
+        }
+      ],
       "factor_num": [
         128,
         58,
@@ -3309,7 +4766,14 @@
       "exactness": "Exact"
     },
     {
-      "base_unit": "meter",
+      "base_unit": [
+        {
+          "power": 1,
+          "si_base": "NotExist",
+          "si_prefix": 0,
+          "unit_id": 83
+        }
+      ],
       "factor_num": [
         119,
         4
@@ -3329,7 +4793,14 @@
       "exactness": "Exact"
     },
     {
-      "base_unit": "year",
+      "base_unit": [
+        {
+          "power": 1,
+          "si_base": "NotExist",
+          "si_prefix": 0,
+          "unit_id": 150
+        }
+      ],
       "factor_num": [
         1
       ],
@@ -3347,7 +4818,14 @@
       "exactness": "Exact"
     },
     {
-      "base_unit": "year",
+      "base_unit": [
+        {
+          "power": 1,
+          "si_base": "NotExist",
+          "si_prefix": 0,
+          "unit_id": 150
+        }
+      ],
       "factor_num": [
         1
       ],

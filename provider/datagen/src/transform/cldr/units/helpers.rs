@@ -171,8 +171,6 @@ pub fn extract_conversion_info<'data>(
         Exactness::Approximate
     };
 
-    println!("base unit fuck {}", base_unit);
-
     let base_unit = MeasureUnit::try_from_identifier(base_unit, trie)
         .ok_or(DataError::custom("the base unit is not valid"))?;
 

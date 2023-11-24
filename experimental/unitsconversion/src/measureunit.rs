@@ -38,6 +38,8 @@ impl MeasureUnit<'_> {
             return (2, &part[7..]);
         } else if part.starts_with("cubic-") {
             return (3, &part[6..]);
+        } else if part.starts_with("pow4-") {
+            return (4, &part[5..]);
         } else {
             return (1, part);
         }
@@ -146,7 +148,9 @@ impl MeasureUnit<'_> {
                 unit_id: unit_id as u16,
             });
 
-            identifier = identifier_unit;
+
+            identifier = identifier_unit.get(1..).unwrap_or("");
+
         }
 
         Some(measure_unit_items)
@@ -163,13 +167,7 @@ impl MeasureUnit<'_> {
         };
 
         let num_part = per_split.next().unwrap_or("");
-
-        println!("num_part: {}", num_part);
-
         let den_part = per_split.next().unwrap_or("");
-
-        println!("den_part: {}", den_part);
-        
         if per_split.next().is_some() {
             return None;
         }
