@@ -34,7 +34,8 @@
 )]
 #![warn(missing_docs)]
 
-mod astronomy;
+/// Structs and functions relating to location, time, and astronomy
+pub mod astronomy;
 /// Chinese-like lunar calendars (Chinese, Dangi)
 pub mod chinese_based;
 /// The Coptic calendar
