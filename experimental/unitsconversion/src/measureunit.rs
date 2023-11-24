@@ -31,6 +31,13 @@ pub struct MeasureUnit<'data> {
 }
 
 impl MeasureUnit<'_> {
+    // TODO: consider returning Option<(u8, &str)> instead of (1, part) for the case when the power is not found.
+    // TODO: complete all the cases for the powers.
+    // TODO: consider using a trie for the powers.
+    /// Get the power of the unit.
+    /// NOTE:
+    ///    if the power is found, the function will return (power, part without the power).
+    ///    if the power is not found, the function will return (1, part).
     fn get_power(part: &str) -> (u8, &str) {
         if let Some(part) = part.strip_prefix("square-") {
             (2, part)
@@ -43,6 +50,13 @@ impl MeasureUnit<'_> {
         }
     }
 
+    // TODO: consider returning Option<(i8, Base, &str)> instead of (0, Base::NotExist, part) for the case when the prefix is not found.
+    // TODO: complete all the cases for the prefixes.
+    // TODO: consider using a trie for the prefixes.
+    /// Get the SI prefix.
+    /// NOTE:
+    ///    if the prefix is found, the function will return (power, base, part without the prefix).
+    ///    if the prefix is not found, the function will return (0, Base::NotExist, part).
     fn get_si_prefix(part: &str) -> (i8, Base, &str) {
         let (si_prefix_base_10, part) = Self::get_si_prefix_base_10(part);
         if si_prefix_base_10 != 0 {
@@ -57,6 +71,13 @@ impl MeasureUnit<'_> {
         (0, Base::NotExist, part)
     }
 
+    // TODO: consider returning Option<(i8, &str)> instead of (0, part) for the case when the prefix is not found.
+    // TODO: consider using a trie for the prefixes.
+    // TODO: complete all the cases for the prefixes.
+    /// Get the SI prefix for base 10.
+    /// NOTE:
+    ///    if the prefix is found, the function will return (power, part without the prefix).
+    ///   if the prefix is not found, the function will return (0, part).
     fn get_si_prefix_base_10(part: &str) -> (i8, &str) {
         if let Some(part) = part.strip_prefix("kilo") {
             (3, part)
@@ -89,6 +110,13 @@ impl MeasureUnit<'_> {
         }
     }
 
+    // TODO: consider returning Option<(i8, &str)> instead of (0, part) for the case when the prefix is not found.
+    // TODO: consider using a trie for the prefixes.
+    // TODO: complete all the cases for the prefixes.
+    /// Get the SI prefix for base 2.
+    /// NOTE:
+    ///     if the prefix is found, the function will return (power, part without the prefix).
+    ///     if the prefix is not found, the function will return (0, part).
     fn get_si_prefix_base_two(part: &str) -> (i8, &str) {
         if let Some(part) = part.strip_prefix("kibi") {
             (10, part)
@@ -111,6 +139,11 @@ impl MeasureUnit<'_> {
         }
     }
 
+    // TODO: consider using a sufficient trie search for finding the unit id.
+    /// Get the unit id.
+    /// NOTE:
+    ///    if the unit id is found, the function will return (unit id, part without the unit id and without `-` at the beginning of the remaining part if it exists).
+    ///    if the unit id is not found, the function will return None.
     fn get_unit_id<'data>(
         part: &'data str,
         trie: &ZeroTrie<ZeroVec<'data, u8>>,
@@ -127,12 +160,15 @@ impl MeasureUnit<'_> {
         None
     }
 
+    /// Process a part of an identifier.
+    /// For example, if the whole identifier is: "square-kilometer-per-second",
+    /// this function will be called for "square-kilometer" with sign (1) and "second" with sign (-1).
     fn analyze_identifier_part(
-        identifier: &str,
+        identifier_part: &str,
         sign: i8,
         trie: &ZeroTrie<ZeroVec<'_, u8>>,
     ) -> Option<Vec<MeasureUnitItem>> {
-        let mut identifier = identifier;
+        let mut identifier = identifier_part;
         let mut measure_unit_items = Vec::<MeasureUnitItem>::new();
         while !identifier.is_empty() {
             let (power, identifier_power) = Self::get_power(identifier);
@@ -152,6 +188,8 @@ impl MeasureUnit<'_> {
         Some(measure_unit_items)
     }
 
+    // TODO: add test cases for this function.
+    /// Process an identifier.
     pub fn try_from_identifier<'data>(
         identifier: &'data str,
         trie: &ZeroTrie<ZeroVec<'data, u8>>,
