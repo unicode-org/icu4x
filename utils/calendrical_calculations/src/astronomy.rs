@@ -38,10 +38,14 @@ fn div_euclid_f64(n: f64, d: f64) -> f64 {
 /// elevation in meters, and zone as a UTC offset in fractional days (ex. UTC+1 would have zone = 1.0 / 24.0)
 #[allow(clippy::exhaustive_structs)] // This is all that is needed by the book algorithms
 pub struct Location {
-    pub latitude: f64,  // latitude from -90 to 90
-    pub longitude: f64, // longitude from -180 to 180
-    pub elevation: f64, // elevation in meters
-    pub zone: f64,      // UTC timezone offset in fractional days (1 hr = 1.0 / 24.0 day)
+    /// latitude from -90 to 90
+    pub latitude: f64,
+    /// longitude from -180 to 180
+    pub longitude: f64,
+    /// elevation in meters
+    pub elevation: f64,
+    /// UTC timezone offset in fractional days (1 hr = 1.0 / 24.0 day)
+    pub zone: f64,
 }
 
 /// The location of Mecca; used for Islamic calendar calculations.
@@ -1217,6 +1221,10 @@ impl Astronomical {
         next_moment(Moment::new(tau), location, Self::visible_crescent)
     }
 
+    /// Moment UT of the last time at or before `date` when the lunar-phase was 0 degrees.
+    ///
+    /// Based on functions from _Calendrical Calculations_ by Reingold & Dershowitz.
+    /// Reference lisp code: <https://github.com/EdReingold/calendar-code2/blob/9afc1f3/calendar.l#L4416-L4427>
     pub fn calculate_lunar_phase_at_or_before(date: RataDie) -> f64 {
         Self::lunar_phase_at_or_before(0.0, date.as_moment())
             .inner()
