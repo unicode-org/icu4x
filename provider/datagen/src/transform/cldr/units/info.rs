@@ -4,7 +4,10 @@
 
 use std::{borrow::Cow, collections::BTreeMap};
 
-use crate::transform::cldr::cldr_serde::{self};
+use crate::transform::cldr::{
+    cldr_serde::{self},
+    units::helpers::ScientificNumber,
+};
 use fraction::{GenericFraction, Zero};
 use icu_provider::{
     datagen::IterableDataProvider, DataError, DataLocale, DataPayload, DataProvider, DataRequest,
@@ -34,7 +37,13 @@ impl DataProvider<UnitsInfoV1Marker> for crate::DatagenProvider {
         let convert_units = &units_data.supplemental.convert_units.convert_units;
         let mut conversion_info_map = BTreeMap::<Vec<u8>, usize>::new();
 
-        let mut convert_units_vec = Vec::<ConversionInfo>::new();
+        struct ConversionInfoPreProcessing<'a> {
+            base_unit: &'a str,
+            factor_scientific: ScientificNumber,
+            offset_scientific: ScientificNumber,
+        }
+
+        let mut convert_units_vec = Vec::<ConversionInfoPreProcessing>::new();
         for (unit_name, convert_unit) in convert_units {
             let base_unit = convert_unit.base_unit.as_str();
             let factor = match convert_unit.factor {
@@ -46,28 +55,39 @@ impl DataProvider<UnitsInfoV1Marker> for crate::DatagenProvider {
                 None => "0",
             };
 
-            let factor_scientific = process_factor(factor, &clean_constants_map)?;
-            let offset_scientific = process_factor(offset, &clean_constants_map)?;
-
             let convert_unit_index = convert_units_vec.len();
-            convert_units_vec.push(extract_conversion_info(
+            convert_units_vec.push(ConversionInfoPreProcessing {
                 base_unit,
-                factor_scientific,
-                offset_scientific,
-            )?);
+                factor_scientific: process_factor(factor, &clean_constants_map)?,
+                offset_scientific: process_factor(offset, &clean_constants_map)?,
+            });
 
             conversion_info_map.insert(unit_name.as_bytes().to_vec(), convert_unit_index);
         }
 
+        let units_conversion_trie = ZeroTrieSimpleAscii::try_from(&conversion_info_map)
+            .map_err(|e| {
+                DataError::custom("Could not create ZeroTrie from units.json data")
+                    .with_display_context(&e)
+            })?
+            .convert_store()
+            .into_zerotrie();
+
+        let convert_infos = convert_units_vec
+            .iter()
+            .map(|convert_unit| {
+                extract_conversion_info(
+                    convert_unit.base_unit,
+                    &convert_unit.factor_scientific,
+                    &convert_unit.offset_scientific,
+                    &units_conversion_trie,
+                )
+            })
+            .collect::<Result<Vec<ConversionInfo>, DataError>>()?;
+
         let result = UnitsInfoV1 {
-            units_conversion_map: ZeroTrieSimpleAscii::try_from(&conversion_info_map)
-                .map_err(|e| {
-                    DataError::custom("Could not create ZeroTrie from units.json data")
-                        .with_display_context(&e)
-                })?
-                .convert_store()
-                .into_zerotrie(),
-            convert_infos: VarZeroVec::from(&convert_units_vec),
+            units_conversion_trie,
+            convert_infos: VarZeroVec::from(&convert_infos),
         };
 
         Ok(DataResponse {
@@ -104,7 +124,7 @@ fn test_basic() {
         .unwrap();
 
     let units_info = und.get().to_owned();
-    let units_info_map = &units_info.units_conversion_map;
+    let units_info_map = &units_info.units_conversion_trie;
     let convert_units = &units_info.convert_infos;
 
     let meter_index = units_info_map.get("meter").unwrap();

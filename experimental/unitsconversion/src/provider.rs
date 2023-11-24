@@ -37,7 +37,7 @@ pub const KEYS: &[DataKey] = &[UnitsInfoV1Marker::KEY];
 pub struct UnitsInfoV1<'data> {
     /// Maps from unit name (e.g. foot) to it is conversion information.
     #[cfg_attr(feature = "serde", serde(borrow))]
-    pub units_conversion_map: ZeroTrie<ZeroVec<'data, u8>>,
+    pub units_conversion_trie: ZeroTrie<ZeroVec<'data, u8>>,
 
     /// Contains the conversion information, such as the conversion rate and the base unit.
     /// For example, the conversion information for the unit `foot` is `1 foot = 0.3048 meter`.
@@ -68,8 +68,7 @@ pub struct UnitsInfoV1<'data> {
 pub struct ConversionInfo<'data> {
     /// Contains the base unit which the unit is converted to.
     #[cfg_attr(feature = "serde", serde(borrow))]
-    //pub base_unit: ZeroVec<'data, MeasureUnitItem>,
-    pub base_unit: Cow<'data, str>,
+    pub base_unit: ZeroVec<'data, MeasureUnitItem>,
 
     /// Represents the numerator of the conversion factor.
     #[cfg_attr(feature = "serde", serde(borrow))]
