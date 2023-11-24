@@ -2,8 +2,6 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use std::ops::DerefMut;
-
 use zerotrie::ZeroTrie;
 use zerovec::ZeroVec;
 
@@ -148,9 +146,7 @@ impl MeasureUnit<'_> {
                 unit_id: unit_id as u16,
             });
 
-
             identifier = identifier_unit.get(1..).unwrap_or("");
-
         }
 
         Some(measure_unit_items)

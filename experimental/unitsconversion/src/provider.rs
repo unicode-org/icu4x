@@ -9,7 +9,6 @@
 //!
 //! Read more about data providers: [`icu_provider`]
 
-use alloc::borrow::Cow;
 use icu_provider::prelude::*;
 use zerotrie::ZeroTrie;
 use zerovec::{VarZeroVec, ZeroVec};
