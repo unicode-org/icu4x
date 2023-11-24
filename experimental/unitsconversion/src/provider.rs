@@ -142,8 +142,9 @@ pub enum Exactness {
 #[repr(u8)]
 pub enum Base {
     #[default]
-    Binary = 0,
-    Decimal = 1,
+    NotExist = 0,
+    Binary = 1,
+    Decimal = 2,
 }
 
 #[zerovec::make_ule(MeasureUnitItemULE)]
@@ -157,5 +158,6 @@ pub enum Base {
 pub struct MeasureUnitItem {
     pub power: i8,
     pub si_base: Base,
+    pub si_prefix: i8,
     pub unit_id: u16,
 }

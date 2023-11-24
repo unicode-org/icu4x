@@ -43,6 +43,20 @@ impl MeasureUnit<'_> {
         }
     }
 
+    fn get_si_prefix(part: &str) -> (i8, Base, &str) {
+        let (si_prefix_base_10, part) = Self::get_si_prefix_base_10(part);
+        if si_prefix_base_10 != 0 {
+            return (si_prefix_base_10, Base::Decimal, part);
+        }
+
+        let (si_prefix_base_2, part) = Self::get_si_prefix_base_two(part);
+        if si_prefix_base_2 != 0 {
+            return (si_prefix_base_2, Base::Binary, part);
+        }
+
+        (0, Base::NotExist, part)
+    }
+
     fn get_si_prefix_base_10(part: &str) -> (i8, &str) {
         if part.starts_with("kilo") {
             return (3, &part[4..]);
@@ -121,29 +135,16 @@ impl MeasureUnit<'_> {
         let mut result = Vec::<MeasureUnitItem>::new();
         while !part.is_empty() {
             let (power, part) = Self::get_power(part);
-            let (si_prefix, base, part) = {
-                let (si_prefix_base_10, part) = Self::get_si_prefix_base_10(part);
-                if si_prefix_base_10 != 0 {
-                    (si_prefix_base_10, 10, part)
-                } else {
-                    let (si_prefix_base_2, part) = Self::get_si_prefix_base_two(part);
-                    (si_prefix_base_2, 2, part)
-                }
-            };
+            let (si_prefix, base, part) = Self::get_si_prefix(part);
             let (unit_id, part) = match Self::get_unit_id(part, trie) {
                 Some((id, remaining_part)) => (id, remaining_part),
                 None => return None,
             };
 
-            let base = if base == 2 {
-                Base::Binary
-            } else {
-                Base::Decimal
-            };
-
             result.push(MeasureUnitItem {
                 power: power as i8 * sign,
                 si_base: base,
+                si_prefix,
                 unit_id: unit_id as u16,
             });
         }
