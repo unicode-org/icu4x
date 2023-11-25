@@ -118,6 +118,8 @@ impl TryFrom<String> for U8 {
 pub struct WeekData {
     pub min_days: BTreeMap<Territory, U8>,
     pub first_day: BTreeMap<Territory, Weekday>,
+    pub weekend_start: BTreeMap<Territory, Weekday>,
+    pub weekend_end: BTreeMap<Territory, Weekday>,
 }
 
 #[derive(Deserialize)]
