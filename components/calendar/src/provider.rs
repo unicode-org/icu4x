@@ -151,3 +151,44 @@ pub struct WeekDataV1 {
     /// For a given week, the minimum number of that week's days present in a given month or year for the week to be considered part of that month or year.
     pub min_week_days: u8,
 }
+
+/// Bitset representing weekdays that are part of the 'weekend'.
+#[derive(Clone, Copy, Debug, PartialEq)]
+#[cfg_attr(
+    feature = "datagen",
+    derive(serde::Serialize, databake::Bake),
+    databake(path = icu_calendar::provider),
+)]
+#[cfg_attr(feature = "serde", derive(serde::Deserialize))]
+pub struct WeekendSet(pub u8);
+
+/// An ICU4X mapping to a subset of CLDR weekData.
+/// See CLDR-JSON's weekData.json for more context.
+///
+/// <div class="stab unstable">
+/// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
+/// including in SemVer minor releases. While the serde representation of data structs is guaranteed
+/// to be stable, their Rust representation might not be. Use with caution.
+/// </div>
+#[icu_provider::data_struct(marker(
+    WeekDataV2Marker,
+    "datetime/week_data@2",
+    fallback_by = "region"
+))]
+#[derive(Clone, Copy, Debug, PartialEq)]
+#[cfg_attr(
+    feature = "datagen",
+    derive(serde::Serialize, databake::Bake),
+    databake(path = icu_calendar::provider),
+)]
+#[cfg_attr(feature = "serde", derive(serde::Deserialize))]
+#[allow(clippy::exhaustive_structs)] // used in data provider
+pub struct WeekDataV2 {
+    /// The first day of a week.
+    pub first_weekday: IsoWeekday,
+    /// For a given week, the minimum number of that week's days present in a given month or year for the week to be considered part of that month or year.
+    pub min_week_days: u8,
+    /// Bitset representing weekdays that are part of the 'weekend', for calendar purposes.
+    /// The number of days can be different between locales, and may not be contiguous.
+    pub weekend: WeekendSet,
+}
