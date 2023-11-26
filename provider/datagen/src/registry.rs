@@ -162,6 +162,7 @@ registry!(
     icu_calendar::provider::JapaneseErasV1Marker = "calendar/japanese@1",
     icu_calendar::provider::JapaneseExtendedErasV1Marker = "calendar/japanext@1",
     icu_calendar::provider::WeekDataV1Marker = "datetime/week_data@1",
+    icu_calendar::provider::WeekDataV2Marker = "datetime/week_data@2",
     #[cfg(any(all(), feature = "icu_casemap"))]
     icu_casemap::provider::CaseMapV1Marker = "props/casemap@1",
     icu_casemap::provider::CaseMapUnfoldV1Marker = "props/casemap_unfold@1",
