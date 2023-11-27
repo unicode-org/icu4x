@@ -14,9 +14,12 @@
         // Exhaustiveness and Debug is not required for Diplomat types
     )
 )]
-#![allow(clippy::upper_case_acronyms)]
-#![allow(clippy::needless_lifetimes)]
-#![allow(clippy::result_unit_err)]
+// Diplomat limitations
+#![allow(
+    clippy::needless_lifetimes,
+    clippy::result_unit_err,
+    clippy::should_implement_trait
+)]
 
 //! This crate contains the source of truth for the [Diplomat](https://github.com/rust-diplomat/diplomat)-generated
 //! FFI bindings. This generates the C, C++, JavaScript, and TypeScript bindings. This crate also contains the `extern "C"`

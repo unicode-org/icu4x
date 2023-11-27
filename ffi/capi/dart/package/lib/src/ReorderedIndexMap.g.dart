@@ -41,6 +41,17 @@ final class ReorderedIndexMap implements ffi.Finalizable {
     _capi<ffi.NativeFunction<ffi.Size Function(ffi.Pointer<ffi.Opaque>)>>('ICU4XReorderedIndexMap_len')
       .asFunction<int Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
 
+  /// Whether this map is empty
+  bool get isEmpty {
+    final result = _ICU4XReorderedIndexMap_is_empty(_underlying);
+    return result;
+  }
+
+  // ignore: non_constant_identifier_names
+  static final _ICU4XReorderedIndexMap_is_empty =
+    _capi<ffi.NativeFunction<ffi.Bool Function(ffi.Pointer<ffi.Opaque>)>>('ICU4XReorderedIndexMap_is_empty')
+      .asFunction<bool Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
+
   /// Get element at `index`. Returns 0 when out of bounds
   /// (note that 0 is also a valid in-bounds value, please use `len()`
   /// to avoid out-of-bounds)

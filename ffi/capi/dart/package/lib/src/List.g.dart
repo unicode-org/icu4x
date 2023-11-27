@@ -64,4 +64,15 @@ final class List implements ffi.Finalizable {
   static final _ICU4XList_len =
     _capi<ffi.NativeFunction<ffi.Size Function(ffi.Pointer<ffi.Opaque>)>>('ICU4XList_len')
       .asFunction<int Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
+
+  /// Whether this list is empty
+  bool get isEmpty {
+    final result = _ICU4XList_is_empty(_underlying);
+    return result;
+  }
+
+  // ignore: non_constant_identifier_names
+  static final _ICU4XList_is_empty =
+    _capi<ffi.NativeFunction<ffi.Bool Function(ffi.Pointer<ffi.Opaque>)>>('ICU4XList_is_empty')
+      .asFunction<bool Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
 }

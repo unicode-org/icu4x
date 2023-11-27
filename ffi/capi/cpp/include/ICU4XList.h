@@ -26,6 +26,8 @@ ICU4XList* ICU4XList_create_with_capacity(size_t capacity);
 void ICU4XList_push(ICU4XList* self, const char* val_data, size_t val_len);
 
 size_t ICU4XList_len(const ICU4XList* self);
+
+bool ICU4XList_is_empty(const ICU4XList* self);
 void ICU4XList_destroy(ICU4XList* self);
 
 #ifdef __cplusplus
