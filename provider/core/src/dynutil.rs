@@ -223,8 +223,8 @@ macro_rules! impl_dynamic_data_provider {
         }
 
     };
-    ($provider:ty, [ $($(#[$cfg:meta])? $struct_m:ty),+, ], $dyn_m:path) => {
-        impl $crate::DynamicDataProvider<$dyn_m> for $provider
+    ($provider:ty, [ $($(#[$cfg:meta])? $struct_m:ty),+, ], $dyn_m:path $(, $bounds:tt)?) => {
+        impl$(<$bounds>)? $crate::DynamicDataProvider<$dyn_m> for $provider
         {
             fn load_data(
                 &self,

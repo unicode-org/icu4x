@@ -2,7 +2,25 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+use icu_provider::datagen::*;
 use icu_provider::prelude::*;
+
+#[derive(Debug)]
+#[allow(clippy::exhaustive_structs)] // stable newtype wrapper
+/// TODO
+pub struct RegistryWrapper<P>(pub P);
+
+impl<P: DataProvider<M>, M: KeyedDataMarker>  DataProvider<M> for RegistryWrapper<P> {
+    fn load(&self, req: DataRequest) -> Result<DataResponse<M>, DataError> {
+        self.0.load(req)
+    }
+}
+
+impl<P: IterableDataProvider<M>, M: KeyedDataMarker> IterableDataProvider<M> for RegistryWrapper<P> {
+    fn supported_locales(&self) -> Result<Vec<DataLocale>, DataError> {
+        self.0.supported_locales()
+    }
+}
 
 macro_rules! make_check_all_keys {
     ($(#[cfg($feature:meta)] $($marker:path = $path:literal,)+)+) => {
@@ -101,26 +119,111 @@ macro_rules! registry {
             )+
         }
 
-        #[macro_export]
-        #[doc(hidden)]
-        macro_rules! make_exportable_provider {
-            ($ty:ty) => {
-                icu_provider::make_exportable_provider!(
-                    $ty,
-                    [
-                        icu_provider::hello_world::HelloWorldV1Marker,
-                        $(
-                            $(
-                                #[cfg($feature)]
-                                $marker,
-                            )+
-                        )+
-                    ]
-                );
+        impl<P> DynamicDataProvider<ExportMarker> for RegistryWrapper<P>
+            where
+            $($(P: DataProvider<$marker>),+),+
+        {
+            fn load_data(
+                &self,
+                key: DataKey,
+                req: DataRequest,
+            ) -> Result<
+                DataResponse<ExportMarker>,
+                DataError,
+            > {
+                match key.hashed() {
+                    h if h == icu_provider::hello_world::HelloWorldV1Marker::KEY.hashed() => {
+                        let result: DataResponse<icu_provider::hello_world::HelloWorldV1Marker> = DataProvider::load(&self.0, req)?;
+                        Ok(DataResponse {
+                            metadata: result.metadata,
+                            payload: result.payload.map(|p| icu_provider::dynutil::UpcastDataPayload::<icu_provider::hello_world::HelloWorldV1Marker>::upcast(p)),
+                        })
+                    },
+                    $($(
+                        #[cfg($feature)]
+                        h if h == <$marker>::KEY.hashed() => {
+                            let result: DataResponse<$marker> = DataProvider::load(&self.0, req)?;
+                            Ok(DataResponse {
+                                metadata: result.metadata,
+                                payload: result.payload.map(|p| icu_provider::dynutil::UpcastDataPayload::<$marker>::upcast(p)),
+                            })
+                        }
+                    )+)+,
+                    _ => Err(DataErrorKind::MissingDataKey.with_req(key, req))
+                }
             }
         }
-        pub(crate) use make_exportable_provider;
 
+        impl<P> DynamicDataProvider<AnyMarker> for RegistryWrapper<P>
+            where
+            P: DataProvider<HelloWorldV1Marker>
+            $($(P: DataProvider<$marker>),+),+
+        {
+            fn load_data(
+                &self,
+                key: DataKey,
+                req: DataRequest,
+            ) -> Result<
+                DataResponse<AnyMarker>,
+                DataError,
+            > {
+                match key.hashed() {
+                    h if h == icu_provider::hello_world::HelloWorldV1Marker::KEY.hashed() => {
+                        let result: DataResponse<icu_provider::hello_world::HelloWorldV1Marker> = DataProvider::load(&self.0, req)?;
+                        Ok(DataResponse {
+                            metadata: result.metadata,
+                            payload: result.payload.map(|p| icu_provider::dynutil::UpcastDataPayload::<icu_provider::hello_world::HelloWorldV1Marker>::upcast(p)),
+                        })
+                    },
+                    $($(
+                        #[cfg($feature)]
+                        h if h == <$marker>::KEY.hashed() => {
+                            let result: DataResponse<$marker> = DataProvider::load(&self.0, req)?;
+                            Ok(DataResponse {
+                                metadata: result.metadata,
+                                payload: result.payload.map(|p| icu_provider::dynutil::UpcastDataPayload::<$marker>::upcast(p)),
+                            })
+                        }
+                    )+)+,
+                    _ => Err(DataErrorKind::MissingDataKey.with_req(key, req))
+                }
+            }
+        }
+
+        impl<P> IterableDynamicDataProvider<AnyMarker> for RegistryWrapper<P>
+            where
+            $($(P: IterableDataProvider<$marker>),+),+
+        {
+            fn supported_locales_for_key(
+                &self,
+                key: DataKey,
+            ) -> Result<
+                Vec<DataLocale>,
+                DataError,
+            > {
+                match key.hashed() {
+                    h if h == icu_provider::hello_world::HelloWorldV1Marker::KEY.hashed() => IterableDataProvider::icu_provider::hello_world::HelloWorldV1Marker::supported_locales(&self.0),
+                    $($(
+                        #[cfg($feature)]
+                        h if h == <$marker>::KEY.hashed() => IterableDataProvider::<$marker>::supported_locales(&self.0),
+                    )+)+
+                    _ => Err(DataErrorKind::MissingDataKey.with_key(key))
+                }
+            }
+        }
+
+        icu_provider::make_exportable_provider!(
+            crate::DatagenProvider,
+            [
+                icu_provider::hello_world::HelloWorldV1Marker,
+                $(
+                    $(
+                        #[cfg($feature)]
+                        $marker,
+                    )+
+                )+
+            ]
+        );
 
         #[cfg(feature = "baked_exporter")]
         pub(crate) fn key_to_marker_bake(key: DataKey, env: &databake::CrateEnv) -> databake::TokenStream {
