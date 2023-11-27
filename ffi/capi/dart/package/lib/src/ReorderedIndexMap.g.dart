@@ -20,15 +20,15 @@ final class ReorderedIndexMap implements ffi.Finalizable {
   static final _finalizer = ffi.NativeFinalizer(_capi('ICU4XReorderedIndexMap_destroy'));
 
   /// Get this as a slice/array of indices
-  SizeList get asSlice {
+  core.List<int> get asSlice {
     final result = _ICU4XReorderedIndexMap_as_slice(_underlying);
-    return result._asDart;
+    return core.Iterable.generate(result._length).map((i) => result._pointer[i]).toList(growable: false);
   }
 
   // ignore: non_constant_identifier_names
   static final _ICU4XReorderedIndexMap_as_slice =
-    _capi<ffi.NativeFunction<SizeList Function(ffi.Pointer<ffi.Opaque>)>>('ICU4XReorderedIndexMap_as_slice')
-      .asFunction<SizeList Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
+    _capi<ffi.NativeFunction<_SliceSize Function(ffi.Pointer<ffi.Opaque>)>>('ICU4XReorderedIndexMap_as_slice')
+      .asFunction<_SliceSize Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
 
   /// The length of this map
   int get length {

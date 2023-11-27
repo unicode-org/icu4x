@@ -59,11 +59,11 @@ final class DecomposingNormalizer implements ffi.Finalizable {
   ///
   /// Throws [Error] on failure.
   String normalize(String s) {
-    final alloc = ffi2.Arena();
-    final sSlice = _SliceFfi2Utf8._fromDart(s, alloc);
+    final temp = ffi2.Arena();
+    final sLength = s.utf8Length;
     final writeable = _Writeable();
-    final result = _ICU4XDecomposingNormalizer_normalize(_underlying, sSlice._bytes, sSlice._length, writeable._underlying);
-    alloc.releaseAll();
+    final result = _ICU4XDecomposingNormalizer_normalize(_underlying, Utf8Encoder().allocConvert(temp, s, length: sLength), sLength, writeable._underlying);
+    temp.releaseAll();
     if (!result.isOk) {
       throw Error.values.firstWhere((v) => v._underlying == result.union.err);
     }
@@ -72,8 +72,8 @@ final class DecomposingNormalizer implements ffi.Finalizable {
 
   // ignore: non_constant_identifier_names
   static final _ICU4XDecomposingNormalizer_normalize =
-    _capi<ffi.NativeFunction<_ResultVoidInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi2.Utf8>, ffi.Size, ffi.Pointer<ffi.Opaque>)>>('ICU4XDecomposingNormalizer_normalize')
-      .asFunction<_ResultVoidInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi2.Utf8>, int, ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
+    _capi<ffi.NativeFunction<_ResultVoidInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Uint8>, ffi.Size, ffi.Pointer<ffi.Opaque>)>>('ICU4XDecomposingNormalizer_normalize')
+      .asFunction<_ResultVoidInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Uint8>, int, ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
 
   /// Check if a (potentially ill-formed) UTF8 string is normalized
   ///
@@ -81,15 +81,15 @@ final class DecomposingNormalizer implements ffi.Finalizable {
   ///
   /// See the [Rust documentation for `is_normalized_utf8`](https://docs.rs/icu/latest/icu/normalizer/struct.DecomposingNormalizer.html#method.is_normalized_utf8) for more information.
   bool isNormalized(String s) {
-    final alloc = ffi2.Arena();
-    final sSlice = _SliceFfi2Utf8._fromDart(s, alloc);
-    final result = _ICU4XDecomposingNormalizer_is_normalized(_underlying, sSlice._bytes, sSlice._length);
-    alloc.releaseAll();
+    final temp = ffi2.Arena();
+    final sLength = s.utf8Length;
+    final result = _ICU4XDecomposingNormalizer_is_normalized(_underlying, Utf8Encoder().allocConvert(temp, s, length: sLength), sLength);
+    temp.releaseAll();
     return result;
   }
 
   // ignore: non_constant_identifier_names
   static final _ICU4XDecomposingNormalizer_is_normalized =
-    _capi<ffi.NativeFunction<ffi.Bool Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi2.Utf8>, ffi.Size)>>('ICU4XDecomposingNormalizer_is_normalized')
-      .asFunction<bool Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi2.Utf8>, int)>(isLeaf: true);
+    _capi<ffi.NativeFunction<ffi.Bool Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Uint8>, ffi.Size)>>('ICU4XDecomposingNormalizer_is_normalized')
+      .asFunction<bool Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Uint8>, int)>(isLeaf: true);
 }

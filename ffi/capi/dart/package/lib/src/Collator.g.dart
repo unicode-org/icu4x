@@ -38,16 +38,14 @@ final class Collator implements ffi.Finalizable {
   ///
   /// See the [Rust documentation for `compare_utf16`](https://docs.rs/icu/latest/icu/collator/struct.Collator.html#method.compare_utf16) for more information.
   Ordering compare(String left, String right) {
-    final alloc = ffi2.Arena();
-    final leftSlice = _SliceFfiUtf16._fromDart(left, alloc);
-    final rightSlice = _SliceFfiUtf16._fromDart(right, alloc);
-    final result = _ICU4XCollator_compare_utf16(_underlying, leftSlice._bytes, leftSlice._length, rightSlice._bytes, rightSlice._length);
-    alloc.releaseAll();
+    final temp = ffi2.Arena();
+    final result = _ICU4XCollator_compare_utf16(_underlying, left.copy(temp), left.length, right.copy(temp), right.length);
+    temp.releaseAll();
     return Ordering.values.firstWhere((v) => v._underlying == result);
   }
 
   // ignore: non_constant_identifier_names
   static final _ICU4XCollator_compare_utf16 =
-    _capi<ffi.NativeFunction<ffi.Int32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi2.Utf16>, ffi.Size, ffi.Pointer<ffi2.Utf16>, ffi.Size)>>('ICU4XCollator_compare_utf16')
-      .asFunction<int Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi2.Utf16>, int, ffi.Pointer<ffi2.Utf16>, int)>(isLeaf: true);
+    _capi<ffi.NativeFunction<ffi.Int32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Uint16>, ffi.Size, ffi.Pointer<ffi.Uint16>, ffi.Size)>>('ICU4XCollator_compare_utf16')
+      .asFunction<int Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Uint16>, int, ffi.Pointer<ffi.Uint16>, int)>(isLeaf: true);
 }

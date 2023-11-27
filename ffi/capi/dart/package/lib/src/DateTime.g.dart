@@ -42,11 +42,11 @@ final class DateTime implements ffi.Finalizable {
   ///
   /// Throws [Error] on failure.
   factory DateTime.fromCodesInCalendar(String eraCode, int year, String monthCode, int day, int hour, int minute, int second, int nanosecond, Calendar calendar) {
-    final alloc = ffi2.Arena();
-    final eraCodeSlice = _SliceFfi2Utf8._fromDart(eraCode, alloc);
-    final monthCodeSlice = _SliceFfi2Utf8._fromDart(monthCode, alloc);
-    final result = _ICU4XDateTime_create_from_codes_in_calendar(eraCodeSlice._bytes, eraCodeSlice._length, year, monthCodeSlice._bytes, monthCodeSlice._length, day, hour, minute, second, nanosecond, calendar._underlying);
-    alloc.releaseAll();
+    final temp = ffi2.Arena();
+    final eraCodeLength = eraCode.utf8Length;
+    final monthCodeLength = monthCode.utf8Length;
+    final result = _ICU4XDateTime_create_from_codes_in_calendar(Utf8Encoder().allocConvert(temp, eraCode, length: eraCodeLength), eraCodeLength, year, Utf8Encoder().allocConvert(temp, monthCode, length: monthCodeLength), monthCodeLength, day, hour, minute, second, nanosecond, calendar._underlying);
+    temp.releaseAll();
     if (!result.isOk) {
       throw Error.values.firstWhere((v) => v._underlying == result.union.err);
     }
@@ -55,8 +55,8 @@ final class DateTime implements ffi.Finalizable {
 
   // ignore: non_constant_identifier_names
   static final _ICU4XDateTime_create_from_codes_in_calendar =
-    _capi<ffi.NativeFunction<_ResultOpaqueInt32 Function(ffi.Pointer<ffi2.Utf8>, ffi.Size, ffi.Int32, ffi.Pointer<ffi2.Utf8>, ffi.Size, ffi.Uint8, ffi.Uint8, ffi.Uint8, ffi.Uint8, ffi.Uint32, ffi.Pointer<ffi.Opaque>)>>('ICU4XDateTime_create_from_codes_in_calendar')
-      .asFunction<_ResultOpaqueInt32 Function(ffi.Pointer<ffi2.Utf8>, int, int, ffi.Pointer<ffi2.Utf8>, int, int, int, int, int, int, ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
+    _capi<ffi.NativeFunction<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Uint8>, ffi.Size, ffi.Int32, ffi.Pointer<ffi.Uint8>, ffi.Size, ffi.Uint8, ffi.Uint8, ffi.Uint8, ffi.Uint8, ffi.Uint32, ffi.Pointer<ffi.Opaque>)>>('ICU4XDateTime_create_from_codes_in_calendar')
+      .asFunction<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Uint8>, int, int, ffi.Pointer<ffi.Uint8>, int, int, int, int, int, int, ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
 
   /// Creates a new [`DateTime`] from an [`Date`] and [`Time`] object
   ///

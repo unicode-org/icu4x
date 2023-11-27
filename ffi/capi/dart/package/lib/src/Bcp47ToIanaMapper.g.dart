@@ -39,11 +39,11 @@ final class Bcp47ToIanaMapper implements ffi.Finalizable {
   ///
   /// Throws [Error] on failure.
   String operator [](String value) {
-    final alloc = ffi2.Arena();
-    final valueSlice = _SliceFfi2Utf8._fromDart(value, alloc);
+    final temp = ffi2.Arena();
+    final valueLength = value.utf8Length;
     final writeable = _Writeable();
-    final result = _ICU4XBcp47ToIanaMapper_get(_underlying, valueSlice._bytes, valueSlice._length, writeable._underlying);
-    alloc.releaseAll();
+    final result = _ICU4XBcp47ToIanaMapper_get(_underlying, Utf8Encoder().allocConvert(temp, value, length: valueLength), valueLength, writeable._underlying);
+    temp.releaseAll();
     if (!result.isOk) {
       throw Error.values.firstWhere((v) => v._underlying == result.union.err);
     }
@@ -52,6 +52,6 @@ final class Bcp47ToIanaMapper implements ffi.Finalizable {
 
   // ignore: non_constant_identifier_names
   static final _ICU4XBcp47ToIanaMapper_get =
-    _capi<ffi.NativeFunction<_ResultVoidInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi2.Utf8>, ffi.Size, ffi.Pointer<ffi.Opaque>)>>('ICU4XBcp47ToIanaMapper_get')
-      .asFunction<_ResultVoidInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi2.Utf8>, int, ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
+    _capi<ffi.NativeFunction<_ResultVoidInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Uint8>, ffi.Size, ffi.Pointer<ffi.Opaque>)>>('ICU4XBcp47ToIanaMapper_get')
+      .asFunction<_ResultVoidInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Uint8>, int, ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
 }

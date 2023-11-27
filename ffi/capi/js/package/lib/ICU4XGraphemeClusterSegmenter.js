@@ -38,22 +38,16 @@ export class ICU4XGraphemeClusterSegmenter {
 
   segment_utf8(arg_input) {
     const buf_arg_input = diplomatRuntime.DiplomatBuf.str8(wasm, arg_input);
-    const diplomat_out = new ICU4XGraphemeClusterBreakIteratorUtf8(wasm.ICU4XGraphemeClusterSegmenter_segment_utf8(this.underlying, buf_arg_input.ptr, buf_arg_input.size), true, [this, buf_arg_input]);
-    buf_arg_input.garbageCollect();
-    return diplomat_out;
+    return new ICU4XGraphemeClusterBreakIteratorUtf8(wasm.ICU4XGraphemeClusterSegmenter_segment_utf8(this.underlying, buf_arg_input.ptr, buf_arg_input.size), true, [this, buf_arg_input]);
   }
 
   segment_utf16(arg_input) {
-    const buf_arg_input = diplomatRuntime.DiplomatBuf.str16(wasm, arg_input);
-    const diplomat_out = new ICU4XGraphemeClusterBreakIteratorUtf16(wasm.ICU4XGraphemeClusterSegmenter_segment_utf16(this.underlying, buf_arg_input.ptr, buf_arg_input.size), true, [this, buf_arg_input]);
-    buf_arg_input.garbageCollect();
-    return diplomat_out;
+    const buf_arg_input = diplomatRuntime.DiplomatBuf.str16(wasm, arg_input, 2);
+    return new ICU4XGraphemeClusterBreakIteratorUtf16(wasm.ICU4XGraphemeClusterSegmenter_segment_utf16(this.underlying, buf_arg_input.ptr, buf_arg_input.size), true, [this, buf_arg_input]);
   }
 
   segment_latin1(arg_input) {
-    const buf_arg_input = diplomatRuntime.DiplomatBuf.slice(wasm, arg_input, "u8");
-    const diplomat_out = new ICU4XGraphemeClusterBreakIteratorLatin1(wasm.ICU4XGraphemeClusterSegmenter_segment_latin1(this.underlying, buf_arg_input.ptr, buf_arg_input.size), true, [this, buf_arg_input]);
-    buf_arg_input.garbageCollect();
-    return diplomat_out;
+    const buf_arg_input = diplomatRuntime.DiplomatBuf.slice(wasm, arg_input, 1);
+    return new ICU4XGraphemeClusterBreakIteratorLatin1(wasm.ICU4XGraphemeClusterSegmenter_segment_latin1(this.underlying, buf_arg_input.ptr, buf_arg_input.size), true, [this, buf_arg_input]);
   }
 }
