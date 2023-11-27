@@ -51,6 +51,11 @@ class ICU4XList {
    * The number of elements in this list
    */
   size_t len() const;
+
+  /**
+   * Whether this list is empty
+   */
+  bool is_empty() const;
   inline const capi::ICU4XList* AsFFI() const { return this->inner.get(); }
   inline capi::ICU4XList* AsFFIMut() { return this->inner.get(); }
   inline ICU4XList(capi::ICU4XList* i) : inner(i) {}
@@ -73,5 +78,8 @@ inline void ICU4XList::push(const std::string_view val) {
 }
 inline size_t ICU4XList::len() const {
   return capi::ICU4XList_len(this->inner.get());
+}
+inline bool ICU4XList::is_empty() const {
+  return capi::ICU4XList_is_empty(this->inner.get());
 }
 #endif

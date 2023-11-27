@@ -32,4 +32,8 @@ export class ICU4XList {
   len() {
     return wasm.ICU4XList_len(this.underlying);
   }
+
+  is_empty() {
+    return wasm.ICU4XList_is_empty(this.underlying);
+  }
 }

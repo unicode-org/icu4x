@@ -90,7 +90,6 @@ pub mod ffi {
     impl<'a> ICU4XSentenceBreakIteratorUtf8<'a> {
         /// Finds the next breakpoint. Returns -1 if at the end of the string or if the index is
         /// out of range of a 32-bit signed integer.
-        #[allow(clippy::should_implement_trait)]
         #[diplomat::rust_link(icu::segmenter::SentenceBreakIterator::next, FnInStruct)]
         #[diplomat::rust_link(
             icu::segmenter::SentenceBreakIterator::Item,
@@ -108,7 +107,6 @@ pub mod ffi {
     impl<'a> ICU4XSentenceBreakIteratorUtf16<'a> {
         /// Finds the next breakpoint. Returns -1 if at the end of the string or if the index is
         /// out of range of a 32-bit signed integer.
-        #[allow(clippy::should_implement_trait)]
         #[diplomat::rust_link(icu::segmenter::SentenceBreakIterator::next, FnInStruct)]
         #[diplomat::rust_link(
             icu::segmenter::SentenceBreakIterator::Item,
@@ -126,7 +124,6 @@ pub mod ffi {
     impl<'a> ICU4XSentenceBreakIteratorLatin1<'a> {
         /// Finds the next breakpoint. Returns -1 if at the end of the string or if the index is
         /// out of range of a 32-bit signed integer.
-        #[allow(clippy::should_implement_trait)]
         #[diplomat::rust_link(icu::segmenter::SentenceBreakIterator::next, FnInStruct)]
         #[diplomat::rust_link(
             icu::segmenter::SentenceBreakIterator::Item,

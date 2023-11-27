@@ -39,7 +39,6 @@ pub mod ffi {
 
         /// Clones the [`ICU4XLocale`].
         #[diplomat::rust_link(icu::locid::Locale, Struct)]
-        #[allow(clippy::should_implement_trait)]
         pub fn clone(&self) -> Box<ICU4XLocale> {
             Box::new(ICU4XLocale(self.0.clone()))
         }
