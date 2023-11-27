@@ -188,6 +188,11 @@
         The length of this map
 
 
+    .. cpp:function:: bool is_empty() const
+
+        Whether this map is empty
+
+
     .. cpp:function:: size_t get(size_t index) const
 
         Get element at ``index``. Returns 0 when out of bounds (note that 0 is also a valid in-bounds value, please use ``len()`` to avoid out-of-bounds)

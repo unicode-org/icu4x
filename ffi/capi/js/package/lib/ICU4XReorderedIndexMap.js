@@ -29,6 +29,10 @@ export class ICU4XReorderedIndexMap {
     return wasm.ICU4XReorderedIndexMap_len(this.underlying);
   }
 
+  is_empty() {
+    return wasm.ICU4XReorderedIndexMap_is_empty(this.underlying);
+  }
+
   get(arg_index) {
     return wasm.ICU4XReorderedIndexMap_get(this.underlying, arg_index);
   }
