@@ -1,1286 +1,1644 @@
 {
   "currency_patterns_map": {
     "AED": {
-      "short_pattern_standard": "StandardAlphaNextToNumber",
-      "narrow_pattern_standard": "StandardAlphaNextToNumber",
-      "short_place_holder_index": null,
-      "narrow_place_holder_index": null
+      "currency_pattern": null,
+      "standard": false,
+      "standard_alpha_next_to_number": true
     },
     "AFN": {
-      "short_pattern_standard": "StandardAlphaNextToNumber",
-      "narrow_pattern_standard": "Standard",
-      "short_place_holder_index": null,
-      "narrow_place_holder_index": {
-        "Index": 0
-      }
+      "currency_pattern": {
+        "short_pattern_standard": "StandardAlphaNextToNumber",
+        "narrow_pattern_standard": "Standard",
+        "short_place_holder_index": null,
+        "narrow_place_holder_index": {
+          "Index": 0
+        }
+      },
+      "standard": false,
+      "standard_alpha_next_to_number": false
     },
     "ALL": {
-      "short_pattern_standard": "StandardAlphaNextToNumber",
-      "narrow_pattern_standard": "StandardAlphaNextToNumber",
-      "short_place_holder_index": null,
-      "narrow_place_holder_index": null
+      "currency_pattern": null,
+      "standard": false,
+      "standard_alpha_next_to_number": true
     },
     "AMD": {
-      "short_pattern_standard": "StandardAlphaNextToNumber",
-      "narrow_pattern_standard": "Standard",
-      "short_place_holder_index": null,
-      "narrow_place_holder_index": {
-        "Index": 1
-      }
+      "currency_pattern": {
+        "short_pattern_standard": "StandardAlphaNextToNumber",
+        "narrow_pattern_standard": "Standard",
+        "short_place_holder_index": null,
+        "narrow_place_holder_index": {
+          "Index": 1
+        }
+      },
+      "standard": false,
+      "standard_alpha_next_to_number": false
     },
     "ANG": {
-      "short_pattern_standard": "StandardAlphaNextToNumber",
-      "narrow_pattern_standard": "StandardAlphaNextToNumber",
-      "short_place_holder_index": null,
-      "narrow_place_holder_index": null
+      "currency_pattern": null,
+      "standard": false,
+      "standard_alpha_next_to_number": true
     },
     "AOA": {
-      "short_pattern_standard": "StandardAlphaNextToNumber",
-      "narrow_pattern_standard": "StandardAlphaNextToNumber",
-      "short_place_holder_index": null,
-      "narrow_place_holder_index": {
-        "Index": 2
-      }
+      "currency_pattern": {
+        "short_pattern_standard": "StandardAlphaNextToNumber",
+        "narrow_pattern_standard": "StandardAlphaNextToNumber",
+        "short_place_holder_index": null,
+        "narrow_place_holder_index": {
+          "Index": 2
+        }
+      },
+      "standard": false,
+      "standard_alpha_next_to_number": false
     },
     "ARS": {
-      "short_pattern_standard": "StandardAlphaNextToNumber",
-      "narrow_pattern_standard": "Standard",
-      "short_place_holder_index": null,
-      "narrow_place_holder_index": {
-        "Index": 3
-      }
+      "currency_pattern": {
+        "short_pattern_standard": "StandardAlphaNextToNumber",
+        "narrow_pattern_standard": "Standard",
+        "short_place_holder_index": null,
+        "narrow_place_holder_index": {
+          "Index": 3
+        }
+      },
+      "standard": false,
+      "standard_alpha_next_to_number": false
     },
     "AUD": {
-      "short_pattern_standard": "Standard",
-      "narrow_pattern_standard": "Standard",
-      "short_place_holder_index": {
-        "Index": 4
+      "currency_pattern": {
+        "short_pattern_standard": "Standard",
+        "narrow_pattern_standard": "Standard",
+        "short_place_holder_index": {
+          "Index": 4
+        },
+        "narrow_place_holder_index": {
+          "Index": 3
+        }
       },
-      "narrow_place_holder_index": {
-        "Index": 3
-      }
+      "standard": false,
+      "standard_alpha_next_to_number": false
     },
     "AWG": {
-      "short_pattern_standard": "StandardAlphaNextToNumber",
-      "narrow_pattern_standard": "StandardAlphaNextToNumber",
-      "short_place_holder_index": null,
-      "narrow_place_holder_index": null
+      "currency_pattern": null,
+      "standard": false,
+      "standard_alpha_next_to_number": true
     },
     "AZN": {
-      "short_pattern_standard": "StandardAlphaNextToNumber",
-      "narrow_pattern_standard": "Standard",
-      "short_place_holder_index": null,
-      "narrow_place_holder_index": {
-        "Index": 5
-      }
+      "currency_pattern": {
+        "short_pattern_standard": "StandardAlphaNextToNumber",
+        "narrow_pattern_standard": "Standard",
+        "short_place_holder_index": null,
+        "narrow_place_holder_index": {
+          "Index": 5
+        }
+      },
+      "standard": false,
+      "standard_alpha_next_to_number": false
     },
     "BAM": {
-      "short_pattern_standard": "StandardAlphaNextToNumber",
-      "narrow_pattern_standard": "StandardAlphaNextToNumber",
-      "short_place_holder_index": null,
-      "narrow_place_holder_index": {
-        "Index": 6
-      }
+      "currency_pattern": {
+        "short_pattern_standard": "StandardAlphaNextToNumber",
+        "narrow_pattern_standard": "StandardAlphaNextToNumber",
+        "short_place_holder_index": null,
+        "narrow_place_holder_index": {
+          "Index": 6
+        }
+      },
+      "standard": false,
+      "standard_alpha_next_to_number": false
     },
     "BBD": {
-      "short_pattern_standard": "StandardAlphaNextToNumber",
-      "narrow_pattern_standard": "Standard",
-      "short_place_holder_index": null,
-      "narrow_place_holder_index": {
-        "Index": 3
-      }
+      "currency_pattern": {
+        "short_pattern_standard": "StandardAlphaNextToNumber",
+        "narrow_pattern_standard": "Standard",
+        "short_place_holder_index": null,
+        "narrow_place_holder_index": {
+          "Index": 3
+        }
+      },
+      "standard": false,
+      "standard_alpha_next_to_number": false
     },
     "BDT": {
-      "short_pattern_standard": "StandardAlphaNextToNumber",
-      "narrow_pattern_standard": "Standard",
-      "short_place_holder_index": null,
-      "narrow_place_holder_index": {
-        "Index": 7
-      }
+      "currency_pattern": {
+        "short_pattern_standard": "StandardAlphaNextToNumber",
+        "narrow_pattern_standard": "Standard",
+        "short_place_holder_index": null,
+        "narrow_place_holder_index": {
+          "Index": 7
+        }
+      },
+      "standard": false,
+      "standard_alpha_next_to_number": false
     },
     "BGN": {
-      "short_pattern_standard": "StandardAlphaNextToNumber",
-      "narrow_pattern_standard": "StandardAlphaNextToNumber",
-      "short_place_holder_index": null,
-      "narrow_place_holder_index": null
+      "currency_pattern": null,
+      "standard": false,
+      "standard_alpha_next_to_number": true
     },
     "BHD": {
-      "short_pattern_standard": "StandardAlphaNextToNumber",
-      "narrow_pattern_standard": "StandardAlphaNextToNumber",
-      "short_place_holder_index": null,
-      "narrow_place_holder_index": null
+      "currency_pattern": null,
+      "standard": false,
+      "standard_alpha_next_to_number": true
     },
     "BIF": {
-      "short_pattern_standard": "StandardAlphaNextToNumber",
-      "narrow_pattern_standard": "StandardAlphaNextToNumber",
-      "short_place_holder_index": null,
-      "narrow_place_holder_index": null
+      "currency_pattern": null,
+      "standard": false,
+      "standard_alpha_next_to_number": true
     },
     "BMD": {
-      "short_pattern_standard": "StandardAlphaNextToNumber",
-      "narrow_pattern_standard": "Standard",
-      "short_place_holder_index": null,
-      "narrow_place_holder_index": {
-        "Index": 3
-      }
+      "currency_pattern": {
+        "short_pattern_standard": "StandardAlphaNextToNumber",
+        "narrow_pattern_standard": "Standard",
+        "short_place_holder_index": null,
+        "narrow_place_holder_index": {
+          "Index": 3
+        }
+      },
+      "standard": false,
+      "standard_alpha_next_to_number": false
     },
     "BND": {
-      "short_pattern_standard": "StandardAlphaNextToNumber",
-      "narrow_pattern_standard": "Standard",
-      "short_place_holder_index": null,
-      "narrow_place_holder_index": {
-        "Index": 3
-      }
+      "currency_pattern": {
+        "short_pattern_standard": "StandardAlphaNextToNumber",
+        "narrow_pattern_standard": "Standard",
+        "short_place_holder_index": null,
+        "narrow_place_holder_index": {
+          "Index": 3
+        }
+      },
+      "standard": false,
+      "standard_alpha_next_to_number": false
     },
     "BOB": {
-      "short_pattern_standard": "StandardAlphaNextToNumber",
-      "narrow_pattern_standard": "StandardAlphaNextToNumber",
-      "short_place_holder_index": null,
-      "narrow_place_holder_index": {
-        "Index": 8
-      }
+      "currency_pattern": {
+        "short_pattern_standard": "StandardAlphaNextToNumber",
+        "narrow_pattern_standard": "StandardAlphaNextToNumber",
+        "short_place_holder_index": null,
+        "narrow_place_holder_index": {
+          "Index": 8
+        }
+      },
+      "standard": false,
+      "standard_alpha_next_to_number": false
     },
     "BRL": {
-      "short_pattern_standard": "Standard",
-      "narrow_pattern_standard": "Standard",
-      "short_place_holder_index": {
-        "Index": 9
+      "currency_pattern": {
+        "short_pattern_standard": "Standard",
+        "narrow_pattern_standard": "Standard",
+        "short_place_holder_index": {
+          "Index": 9
+        },
+        "narrow_place_holder_index": {
+          "Index": 9
+        }
       },
-      "narrow_place_holder_index": {
-        "Index": 9
-      }
+      "standard": false,
+      "standard_alpha_next_to_number": false
     },
     "BSD": {
-      "short_pattern_standard": "StandardAlphaNextToNumber",
-      "narrow_pattern_standard": "Standard",
-      "short_place_holder_index": null,
-      "narrow_place_holder_index": {
-        "Index": 3
-      }
+      "currency_pattern": {
+        "short_pattern_standard": "StandardAlphaNextToNumber",
+        "narrow_pattern_standard": "Standard",
+        "short_place_holder_index": null,
+        "narrow_place_holder_index": {
+          "Index": 3
+        }
+      },
+      "standard": false,
+      "standard_alpha_next_to_number": false
     },
     "BTN": {
-      "short_pattern_standard": "StandardAlphaNextToNumber",
-      "narrow_pattern_standard": "StandardAlphaNextToNumber",
-      "short_place_holder_index": null,
-      "narrow_place_holder_index": null
+      "currency_pattern": null,
+      "standard": false,
+      "standard_alpha_next_to_number": true
     },
     "BWP": {
-      "short_pattern_standard": "StandardAlphaNextToNumber",
-      "narrow_pattern_standard": "StandardAlphaNextToNumber",
-      "short_place_holder_index": null,
-      "narrow_place_holder_index": {
-        "Index": 10
-      }
+      "currency_pattern": {
+        "short_pattern_standard": "StandardAlphaNextToNumber",
+        "narrow_pattern_standard": "StandardAlphaNextToNumber",
+        "short_place_holder_index": null,
+        "narrow_place_holder_index": {
+          "Index": 10
+        }
+      },
+      "standard": false,
+      "standard_alpha_next_to_number": false
     },
     "BYN": {
-      "short_pattern_standard": "StandardAlphaNextToNumber",
-      "narrow_pattern_standard": "Standard",
-      "short_place_holder_index": null,
-      "narrow_place_holder_index": {
-        "Index": 11
-      }
+      "currency_pattern": {
+        "short_pattern_standard": "StandardAlphaNextToNumber",
+        "narrow_pattern_standard": "Standard",
+        "short_place_holder_index": null,
+        "narrow_place_holder_index": {
+          "Index": 11
+        }
+      },
+      "standard": false,
+      "standard_alpha_next_to_number": false
     },
     "BYR": {
-      "short_pattern_standard": "StandardAlphaNextToNumber",
-      "narrow_pattern_standard": "StandardAlphaNextToNumber",
-      "short_place_holder_index": null,
-      "narrow_place_holder_index": null
+      "currency_pattern": null,
+      "standard": false,
+      "standard_alpha_next_to_number": true
     },
     "BZD": {
-      "short_pattern_standard": "StandardAlphaNextToNumber",
-      "narrow_pattern_standard": "Standard",
-      "short_place_holder_index": null,
-      "narrow_place_holder_index": {
-        "Index": 3
-      }
+      "currency_pattern": {
+        "short_pattern_standard": "StandardAlphaNextToNumber",
+        "narrow_pattern_standard": "Standard",
+        "short_place_holder_index": null,
+        "narrow_place_holder_index": {
+          "Index": 3
+        }
+      },
+      "standard": false,
+      "standard_alpha_next_to_number": false
     },
     "CAD": {
-      "short_pattern_standard": "Standard",
-      "narrow_pattern_standard": "Standard",
-      "short_place_holder_index": {
-        "Index": 12
+      "currency_pattern": {
+        "short_pattern_standard": "Standard",
+        "narrow_pattern_standard": "Standard",
+        "short_place_holder_index": {
+          "Index": 12
+        },
+        "narrow_place_holder_index": {
+          "Index": 3
+        }
       },
-      "narrow_place_holder_index": {
-        "Index": 3
-      }
+      "standard": false,
+      "standard_alpha_next_to_number": false
     },
     "CDF": {
-      "short_pattern_standard": "StandardAlphaNextToNumber",
-      "narrow_pattern_standard": "StandardAlphaNextToNumber",
-      "short_place_holder_index": null,
-      "narrow_place_holder_index": null
+      "currency_pattern": null,
+      "standard": false,
+      "standard_alpha_next_to_number": true
     },
     "CHF": {
-      "short_pattern_standard": "StandardAlphaNextToNumber",
-      "narrow_pattern_standard": "StandardAlphaNextToNumber",
-      "short_place_holder_index": null,
-      "narrow_place_holder_index": null
+      "currency_pattern": null,
+      "standard": false,
+      "standard_alpha_next_to_number": true
     },
     "CLP": {
-      "short_pattern_standard": "StandardAlphaNextToNumber",
-      "narrow_pattern_standard": "Standard",
-      "short_place_holder_index": null,
-      "narrow_place_holder_index": {
-        "Index": 3
-      }
+      "currency_pattern": {
+        "short_pattern_standard": "StandardAlphaNextToNumber",
+        "narrow_pattern_standard": "Standard",
+        "short_place_holder_index": null,
+        "narrow_place_holder_index": {
+          "Index": 3
+        }
+      },
+      "standard": false,
+      "standard_alpha_next_to_number": false
     },
     "CNH": {
-      "short_pattern_standard": "StandardAlphaNextToNumber",
-      "narrow_pattern_standard": "StandardAlphaNextToNumber",
-      "short_place_holder_index": null,
-      "narrow_place_holder_index": null
+      "currency_pattern": null,
+      "standard": false,
+      "standard_alpha_next_to_number": true
     },
     "CNY": {
-      "short_pattern_standard": "Standard",
-      "narrow_pattern_standard": "Standard",
-      "short_place_holder_index": {
-        "Index": 13
+      "currency_pattern": {
+        "short_pattern_standard": "Standard",
+        "narrow_pattern_standard": "Standard",
+        "short_place_holder_index": {
+          "Index": 13
+        },
+        "narrow_place_holder_index": {
+          "Index": 14
+        }
       },
-      "narrow_place_holder_index": {
-        "Index": 14
-      }
+      "standard": false,
+      "standard_alpha_next_to_number": false
     },
     "COP": {
-      "short_pattern_standard": "StandardAlphaNextToNumber",
-      "narrow_pattern_standard": "Standard",
-      "short_place_holder_index": null,
-      "narrow_place_holder_index": {
-        "Index": 3
-      }
+      "currency_pattern": {
+        "short_pattern_standard": "StandardAlphaNextToNumber",
+        "narrow_pattern_standard": "Standard",
+        "short_place_holder_index": null,
+        "narrow_place_holder_index": {
+          "Index": 3
+        }
+      },
+      "standard": false,
+      "standard_alpha_next_to_number": false
     },
     "CRC": {
-      "short_pattern_standard": "StandardAlphaNextToNumber",
-      "narrow_pattern_standard": "Standard",
-      "short_place_holder_index": null,
-      "narrow_place_holder_index": {
-        "Index": 15
-      }
+      "currency_pattern": {
+        "short_pattern_standard": "StandardAlphaNextToNumber",
+        "narrow_pattern_standard": "Standard",
+        "short_place_holder_index": null,
+        "narrow_place_holder_index": {
+          "Index": 15
+        }
+      },
+      "standard": false,
+      "standard_alpha_next_to_number": false
     },
     "CUC": {
-      "short_pattern_standard": "StandardAlphaNextToNumber",
-      "narrow_pattern_standard": "Standard",
-      "short_place_holder_index": null,
-      "narrow_place_holder_index": {
-        "Index": 3
-      }
+      "currency_pattern": {
+        "short_pattern_standard": "StandardAlphaNextToNumber",
+        "narrow_pattern_standard": "Standard",
+        "short_place_holder_index": null,
+        "narrow_place_holder_index": {
+          "Index": 3
+        }
+      },
+      "standard": false,
+      "standard_alpha_next_to_number": false
     },
     "CUP": {
-      "short_pattern_standard": "StandardAlphaNextToNumber",
-      "narrow_pattern_standard": "Standard",
-      "short_place_holder_index": null,
-      "narrow_place_holder_index": {
-        "Index": 3
-      }
+      "currency_pattern": {
+        "short_pattern_standard": "StandardAlphaNextToNumber",
+        "narrow_pattern_standard": "Standard",
+        "short_place_holder_index": null,
+        "narrow_place_holder_index": {
+          "Index": 3
+        }
+      },
+      "standard": false,
+      "standard_alpha_next_to_number": false
     },
     "CVE": {
-      "short_pattern_standard": "StandardAlphaNextToNumber",
-      "narrow_pattern_standard": "StandardAlphaNextToNumber",
-      "short_place_holder_index": null,
-      "narrow_place_holder_index": null
+      "currency_pattern": null,
+      "standard": false,
+      "standard_alpha_next_to_number": true
     },
     "CZK": {
-      "short_pattern_standard": "StandardAlphaNextToNumber",
-      "narrow_pattern_standard": "StandardAlphaNextToNumber",
-      "short_place_holder_index": null,
-      "narrow_place_holder_index": {
-        "Index": 16
-      }
+      "currency_pattern": {
+        "short_pattern_standard": "StandardAlphaNextToNumber",
+        "narrow_pattern_standard": "StandardAlphaNextToNumber",
+        "short_place_holder_index": null,
+        "narrow_place_holder_index": {
+          "Index": 16
+        }
+      },
+      "standard": false,
+      "standard_alpha_next_to_number": false
     },
     "DEM": {
-      "short_pattern_standard": "StandardAlphaNextToNumber",
-      "narrow_pattern_standard": "StandardAlphaNextToNumber",
-      "short_place_holder_index": null,
-      "narrow_place_holder_index": null
+      "currency_pattern": null,
+      "standard": false,
+      "standard_alpha_next_to_number": true
     },
     "DJF": {
-      "short_pattern_standard": "StandardAlphaNextToNumber",
-      "narrow_pattern_standard": "StandardAlphaNextToNumber",
-      "short_place_holder_index": null,
-      "narrow_place_holder_index": null
+      "currency_pattern": null,
+      "standard": false,
+      "standard_alpha_next_to_number": true
     },
     "DKK": {
-      "short_pattern_standard": "StandardAlphaNextToNumber",
-      "narrow_pattern_standard": "StandardAlphaNextToNumber",
-      "short_place_holder_index": null,
-      "narrow_place_holder_index": {
-        "Index": 17
-      }
+      "currency_pattern": {
+        "short_pattern_standard": "StandardAlphaNextToNumber",
+        "narrow_pattern_standard": "StandardAlphaNextToNumber",
+        "short_place_holder_index": null,
+        "narrow_place_holder_index": {
+          "Index": 17
+        }
+      },
+      "standard": false,
+      "standard_alpha_next_to_number": false
     },
     "DOP": {
-      "short_pattern_standard": "StandardAlphaNextToNumber",
-      "narrow_pattern_standard": "Standard",
-      "short_place_holder_index": null,
-      "narrow_place_holder_index": {
-        "Index": 3
-      }
+      "currency_pattern": {
+        "short_pattern_standard": "StandardAlphaNextToNumber",
+        "narrow_pattern_standard": "Standard",
+        "short_place_holder_index": null,
+        "narrow_place_holder_index": {
+          "Index": 3
+        }
+      },
+      "standard": false,
+      "standard_alpha_next_to_number": false
     },
     "DZD": {
-      "short_pattern_standard": "StandardAlphaNextToNumber",
-      "narrow_pattern_standard": "StandardAlphaNextToNumber",
-      "short_place_holder_index": null,
-      "narrow_place_holder_index": null
+      "currency_pattern": null,
+      "standard": false,
+      "standard_alpha_next_to_number": true
     },
     "EEK": {
-      "short_pattern_standard": "StandardAlphaNextToNumber",
-      "narrow_pattern_standard": "StandardAlphaNextToNumber",
-      "short_place_holder_index": null,
-      "narrow_place_holder_index": null
+      "currency_pattern": null,
+      "standard": false,
+      "standard_alpha_next_to_number": true
     },
     "EGP": {
-      "short_pattern_standard": "StandardAlphaNextToNumber",
-      "narrow_pattern_standard": "Standard",
-      "short_place_holder_index": null,
-      "narrow_place_holder_index": {
-        "Index": 18
-      }
+      "currency_pattern": {
+        "short_pattern_standard": "StandardAlphaNextToNumber",
+        "narrow_pattern_standard": "Standard",
+        "short_place_holder_index": null,
+        "narrow_place_holder_index": {
+          "Index": 18
+        }
+      },
+      "standard": false,
+      "standard_alpha_next_to_number": false
     },
     "ERN": {
-      "short_pattern_standard": "StandardAlphaNextToNumber",
-      "narrow_pattern_standard": "StandardAlphaNextToNumber",
-      "short_place_holder_index": null,
-      "narrow_place_holder_index": null
+      "currency_pattern": null,
+      "standard": false,
+      "standard_alpha_next_to_number": true
     },
     "ESP": {
-      "short_pattern_standard": "StandardAlphaNextToNumber",
-      "narrow_pattern_standard": "Standard",
-      "short_place_holder_index": null,
-      "narrow_place_holder_index": {
-        "Index": 19
-      }
+      "currency_pattern": {
+        "short_pattern_standard": "StandardAlphaNextToNumber",
+        "narrow_pattern_standard": "Standard",
+        "short_place_holder_index": null,
+        "narrow_place_holder_index": {
+          "Index": 19
+        }
+      },
+      "standard": false,
+      "standard_alpha_next_to_number": false
     },
     "ETB": {
-      "short_pattern_standard": "StandardAlphaNextToNumber",
-      "narrow_pattern_standard": "StandardAlphaNextToNumber",
-      "short_place_holder_index": null,
-      "narrow_place_holder_index": null
+      "currency_pattern": null,
+      "standard": false,
+      "standard_alpha_next_to_number": true
     },
     "EUR": {
-      "short_pattern_standard": "Standard",
-      "narrow_pattern_standard": "Standard",
-      "short_place_holder_index": {
-        "Index": 20
+      "currency_pattern": {
+        "short_pattern_standard": "Standard",
+        "narrow_pattern_standard": "Standard",
+        "short_place_holder_index": {
+          "Index": 20
+        },
+        "narrow_place_holder_index": {
+          "Index": 20
+        }
       },
-      "narrow_place_holder_index": {
-        "Index": 20
-      }
+      "standard": false,
+      "standard_alpha_next_to_number": false
     },
     "FJD": {
-      "short_pattern_standard": "StandardAlphaNextToNumber",
-      "narrow_pattern_standard": "Standard",
-      "short_place_holder_index": null,
-      "narrow_place_holder_index": {
-        "Index": 3
-      }
+      "currency_pattern": {
+        "short_pattern_standard": "StandardAlphaNextToNumber",
+        "narrow_pattern_standard": "Standard",
+        "short_place_holder_index": null,
+        "narrow_place_holder_index": {
+          "Index": 3
+        }
+      },
+      "standard": false,
+      "standard_alpha_next_to_number": false
     },
     "FKP": {
-      "short_pattern_standard": "StandardAlphaNextToNumber",
-      "narrow_pattern_standard": "Standard",
-      "short_place_holder_index": null,
-      "narrow_place_holder_index": {
-        "Index": 21
-      }
+      "currency_pattern": {
+        "short_pattern_standard": "StandardAlphaNextToNumber",
+        "narrow_pattern_standard": "Standard",
+        "short_place_holder_index": null,
+        "narrow_place_holder_index": {
+          "Index": 21
+        }
+      },
+      "standard": false,
+      "standard_alpha_next_to_number": false
     },
     "FRF": {
-      "short_pattern_standard": "StandardAlphaNextToNumber",
-      "narrow_pattern_standard": "StandardAlphaNextToNumber",
-      "short_place_holder_index": null,
-      "narrow_place_holder_index": null
+      "currency_pattern": null,
+      "standard": false,
+      "standard_alpha_next_to_number": true
     },
     "GBP": {
-      "short_pattern_standard": "Standard",
-      "narrow_pattern_standard": "Standard",
-      "short_place_holder_index": {
-        "Index": 21
+      "currency_pattern": {
+        "short_pattern_standard": "Standard",
+        "narrow_pattern_standard": "Standard",
+        "short_place_holder_index": {
+          "Index": 21
+        },
+        "narrow_place_holder_index": {
+          "Index": 21
+        }
       },
-      "narrow_place_holder_index": {
-        "Index": 21
-      }
+      "standard": false,
+      "standard_alpha_next_to_number": false
     },
     "GEL": {
-      "short_pattern_standard": "StandardAlphaNextToNumber",
-      "narrow_pattern_standard": "Standard",
-      "short_place_holder_index": null,
-      "narrow_place_holder_index": {
-        "Index": 22
-      }
+      "currency_pattern": {
+        "short_pattern_standard": "StandardAlphaNextToNumber",
+        "narrow_pattern_standard": "Standard",
+        "short_place_holder_index": null,
+        "narrow_place_holder_index": {
+          "Index": 22
+        }
+      },
+      "standard": false,
+      "standard_alpha_next_to_number": false
     },
     "GHS": {
-      "short_pattern_standard": "StandardAlphaNextToNumber",
-      "narrow_pattern_standard": "Standard",
-      "short_place_holder_index": null,
-      "narrow_place_holder_index": {
-        "Index": 23
-      }
+      "currency_pattern": {
+        "short_pattern_standard": "StandardAlphaNextToNumber",
+        "narrow_pattern_standard": "Standard",
+        "short_place_holder_index": null,
+        "narrow_place_holder_index": {
+          "Index": 23
+        }
+      },
+      "standard": false,
+      "standard_alpha_next_to_number": false
     },
     "GIP": {
-      "short_pattern_standard": "StandardAlphaNextToNumber",
-      "narrow_pattern_standard": "Standard",
-      "short_place_holder_index": null,
-      "narrow_place_holder_index": {
-        "Index": 21
-      }
+      "currency_pattern": {
+        "short_pattern_standard": "StandardAlphaNextToNumber",
+        "narrow_pattern_standard": "Standard",
+        "short_place_holder_index": null,
+        "narrow_place_holder_index": {
+          "Index": 21
+        }
+      },
+      "standard": false,
+      "standard_alpha_next_to_number": false
     },
     "GMD": {
-      "short_pattern_standard": "StandardAlphaNextToNumber",
-      "narrow_pattern_standard": "StandardAlphaNextToNumber",
-      "short_place_holder_index": null,
-      "narrow_place_holder_index": null
+      "currency_pattern": null,
+      "standard": false,
+      "standard_alpha_next_to_number": true
     },
     "GNF": {
-      "short_pattern_standard": "StandardAlphaNextToNumber",
-      "narrow_pattern_standard": "StandardAlphaNextToNumber",
-      "short_place_holder_index": null,
-      "narrow_place_holder_index": {
-        "Index": 24
-      }
+      "currency_pattern": {
+        "short_pattern_standard": "StandardAlphaNextToNumber",
+        "narrow_pattern_standard": "StandardAlphaNextToNumber",
+        "short_place_holder_index": null,
+        "narrow_place_holder_index": {
+          "Index": 24
+        }
+      },
+      "standard": false,
+      "standard_alpha_next_to_number": false
     },
     "GTQ": {
-      "short_pattern_standard": "StandardAlphaNextToNumber",
-      "narrow_pattern_standard": "StandardAlphaNextToNumber",
-      "short_place_holder_index": null,
-      "narrow_place_holder_index": {
-        "Index": 25
-      }
+      "currency_pattern": {
+        "short_pattern_standard": "StandardAlphaNextToNumber",
+        "narrow_pattern_standard": "StandardAlphaNextToNumber",
+        "short_place_holder_index": null,
+        "narrow_place_holder_index": {
+          "Index": 25
+        }
+      },
+      "standard": false,
+      "standard_alpha_next_to_number": false
     },
     "GYD": {
-      "short_pattern_standard": "StandardAlphaNextToNumber",
-      "narrow_pattern_standard": "Standard",
-      "short_place_holder_index": null,
-      "narrow_place_holder_index": {
-        "Index": 3
-      }
+      "currency_pattern": {
+        "short_pattern_standard": "StandardAlphaNextToNumber",
+        "narrow_pattern_standard": "Standard",
+        "short_place_holder_index": null,
+        "narrow_place_holder_index": {
+          "Index": 3
+        }
+      },
+      "standard": false,
+      "standard_alpha_next_to_number": false
     },
     "HKD": {
-      "short_pattern_standard": "Standard",
-      "narrow_pattern_standard": "Standard",
-      "short_place_holder_index": {
-        "Index": 26
+      "currency_pattern": {
+        "short_pattern_standard": "Standard",
+        "narrow_pattern_standard": "Standard",
+        "short_place_holder_index": {
+          "Index": 26
+        },
+        "narrow_place_holder_index": {
+          "Index": 3
+        }
       },
-      "narrow_place_holder_index": {
-        "Index": 3
-      }
+      "standard": false,
+      "standard_alpha_next_to_number": false
     },
     "HNL": {
-      "short_pattern_standard": "StandardAlphaNextToNumber",
-      "narrow_pattern_standard": "StandardAlphaNextToNumber",
-      "short_place_holder_index": null,
-      "narrow_place_holder_index": {
-        "Index": 27
-      }
+      "currency_pattern": {
+        "short_pattern_standard": "StandardAlphaNextToNumber",
+        "narrow_pattern_standard": "StandardAlphaNextToNumber",
+        "short_place_holder_index": null,
+        "narrow_place_holder_index": {
+          "Index": 27
+        }
+      },
+      "standard": false,
+      "standard_alpha_next_to_number": false
     },
     "HRK": {
-      "short_pattern_standard": "StandardAlphaNextToNumber",
-      "narrow_pattern_standard": "StandardAlphaNextToNumber",
-      "short_place_holder_index": null,
-      "narrow_place_holder_index": {
-        "Index": 28
-      }
+      "currency_pattern": {
+        "short_pattern_standard": "StandardAlphaNextToNumber",
+        "narrow_pattern_standard": "StandardAlphaNextToNumber",
+        "short_place_holder_index": null,
+        "narrow_place_holder_index": {
+          "Index": 28
+        }
+      },
+      "standard": false,
+      "standard_alpha_next_to_number": false
     },
     "HTG": {
-      "short_pattern_standard": "StandardAlphaNextToNumber",
-      "narrow_pattern_standard": "StandardAlphaNextToNumber",
-      "short_place_holder_index": null,
-      "narrow_place_holder_index": null
+      "currency_pattern": null,
+      "standard": false,
+      "standard_alpha_next_to_number": true
     },
     "HUF": {
-      "short_pattern_standard": "StandardAlphaNextToNumber",
-      "narrow_pattern_standard": "StandardAlphaNextToNumber",
-      "short_place_holder_index": null,
-      "narrow_place_holder_index": {
-        "Index": 29
-      }
+      "currency_pattern": {
+        "short_pattern_standard": "StandardAlphaNextToNumber",
+        "narrow_pattern_standard": "StandardAlphaNextToNumber",
+        "short_place_holder_index": null,
+        "narrow_place_holder_index": {
+          "Index": 29
+        }
+      },
+      "standard": false,
+      "standard_alpha_next_to_number": false
     },
     "IDR": {
-      "short_pattern_standard": "StandardAlphaNextToNumber",
-      "narrow_pattern_standard": "StandardAlphaNextToNumber",
-      "short_place_holder_index": null,
-      "narrow_place_holder_index": {
-        "Index": 30
-      }
+      "currency_pattern": {
+        "short_pattern_standard": "StandardAlphaNextToNumber",
+        "narrow_pattern_standard": "StandardAlphaNextToNumber",
+        "short_place_holder_index": null,
+        "narrow_place_holder_index": {
+          "Index": 30
+        }
+      },
+      "standard": false,
+      "standard_alpha_next_to_number": false
     },
     "ILS": {
-      "short_pattern_standard": "Standard",
-      "narrow_pattern_standard": "Standard",
-      "short_place_holder_index": {
-        "Index": 31
+      "currency_pattern": {
+        "short_pattern_standard": "Standard",
+        "narrow_pattern_standard": "Standard",
+        "short_place_holder_index": {
+          "Index": 31
+        },
+        "narrow_place_holder_index": {
+          "Index": 31
+        }
       },
-      "narrow_place_holder_index": {
-        "Index": 31
-      }
+      "standard": false,
+      "standard_alpha_next_to_number": false
     },
     "INR": {
-      "short_pattern_standard": "Standard",
-      "narrow_pattern_standard": "Standard",
-      "short_place_holder_index": {
-        "Index": 32
+      "currency_pattern": {
+        "short_pattern_standard": "Standard",
+        "narrow_pattern_standard": "Standard",
+        "short_place_holder_index": {
+          "Index": 32
+        },
+        "narrow_place_holder_index": {
+          "Index": 32
+        }
       },
-      "narrow_place_holder_index": {
-        "Index": 32
-      }
+      "standard": false,
+      "standard_alpha_next_to_number": false
     },
     "IQD": {
-      "short_pattern_standard": "StandardAlphaNextToNumber",
-      "narrow_pattern_standard": "StandardAlphaNextToNumber",
-      "short_place_holder_index": null,
-      "narrow_place_holder_index": null
+      "currency_pattern": null,
+      "standard": false,
+      "standard_alpha_next_to_number": true
     },
     "IRR": {
-      "short_pattern_standard": "StandardAlphaNextToNumber",
-      "narrow_pattern_standard": "StandardAlphaNextToNumber",
-      "short_place_holder_index": null,
-      "narrow_place_holder_index": null
+      "currency_pattern": null,
+      "standard": false,
+      "standard_alpha_next_to_number": true
     },
     "ISK": {
-      "short_pattern_standard": "StandardAlphaNextToNumber",
-      "narrow_pattern_standard": "StandardAlphaNextToNumber",
-      "short_place_holder_index": null,
-      "narrow_place_holder_index": {
-        "Index": 17
-      }
+      "currency_pattern": {
+        "short_pattern_standard": "StandardAlphaNextToNumber",
+        "narrow_pattern_standard": "StandardAlphaNextToNumber",
+        "short_place_holder_index": null,
+        "narrow_place_holder_index": {
+          "Index": 17
+        }
+      },
+      "standard": false,
+      "standard_alpha_next_to_number": false
     },
     "JMD": {
-      "short_pattern_standard": "StandardAlphaNextToNumber",
-      "narrow_pattern_standard": "Standard",
-      "short_place_holder_index": null,
-      "narrow_place_holder_index": {
-        "Index": 3
-      }
+      "currency_pattern": {
+        "short_pattern_standard": "StandardAlphaNextToNumber",
+        "narrow_pattern_standard": "Standard",
+        "short_place_holder_index": null,
+        "narrow_place_holder_index": {
+          "Index": 3
+        }
+      },
+      "standard": false,
+      "standard_alpha_next_to_number": false
     },
     "JOD": {
-      "short_pattern_standard": "StandardAlphaNextToNumber",
-      "narrow_pattern_standard": "StandardAlphaNextToNumber",
-      "short_place_holder_index": null,
-      "narrow_place_holder_index": null
+      "currency_pattern": null,
+      "standard": false,
+      "standard_alpha_next_to_number": true
     },
     "JPY": {
-      "short_pattern_standard": "Standard",
-      "narrow_pattern_standard": "Standard",
-      "short_place_holder_index": {
-        "Index": 14
+      "currency_pattern": {
+        "short_pattern_standard": "Standard",
+        "narrow_pattern_standard": "Standard",
+        "short_place_holder_index": {
+          "Index": 14
+        },
+        "narrow_place_holder_index": {
+          "Index": 14
+        }
       },
-      "narrow_place_holder_index": {
-        "Index": 14
-      }
+      "standard": false,
+      "standard_alpha_next_to_number": false
     },
     "KES": {
-      "short_pattern_standard": "StandardAlphaNextToNumber",
-      "narrow_pattern_standard": "StandardAlphaNextToNumber",
-      "short_place_holder_index": null,
-      "narrow_place_holder_index": null
+      "currency_pattern": null,
+      "standard": false,
+      "standard_alpha_next_to_number": true
     },
     "KGS": {
-      "short_pattern_standard": "StandardAlphaNextToNumber",
-      "narrow_pattern_standard": "Standard",
-      "short_place_holder_index": null,
-      "narrow_place_holder_index": {
-        "Index": 33
-      }
+      "currency_pattern": {
+        "short_pattern_standard": "StandardAlphaNextToNumber",
+        "narrow_pattern_standard": "Standard",
+        "short_place_holder_index": null,
+        "narrow_place_holder_index": {
+          "Index": 33
+        }
+      },
+      "standard": false,
+      "standard_alpha_next_to_number": false
     },
     "KHR": {
-      "short_pattern_standard": "StandardAlphaNextToNumber",
-      "narrow_pattern_standard": "Standard",
-      "short_place_holder_index": null,
-      "narrow_place_holder_index": {
-        "Index": 34
-      }
+      "currency_pattern": {
+        "short_pattern_standard": "StandardAlphaNextToNumber",
+        "narrow_pattern_standard": "Standard",
+        "short_place_holder_index": null,
+        "narrow_place_holder_index": {
+          "Index": 34
+        }
+      },
+      "standard": false,
+      "standard_alpha_next_to_number": false
     },
     "KMF": {
-      "short_pattern_standard": "StandardAlphaNextToNumber",
-      "narrow_pattern_standard": "StandardAlphaNextToNumber",
-      "short_place_holder_index": null,
-      "narrow_place_holder_index": {
-        "Index": 35
-      }
+      "currency_pattern": {
+        "short_pattern_standard": "StandardAlphaNextToNumber",
+        "narrow_pattern_standard": "StandardAlphaNextToNumber",
+        "short_place_holder_index": null,
+        "narrow_place_holder_index": {
+          "Index": 35
+        }
+      },
+      "standard": false,
+      "standard_alpha_next_to_number": false
     },
     "KPW": {
-      "short_pattern_standard": "StandardAlphaNextToNumber",
-      "narrow_pattern_standard": "Standard",
-      "short_place_holder_index": null,
-      "narrow_place_holder_index": {
-        "Index": 36
-      }
+      "currency_pattern": {
+        "short_pattern_standard": "StandardAlphaNextToNumber",
+        "narrow_pattern_standard": "Standard",
+        "short_place_holder_index": null,
+        "narrow_place_holder_index": {
+          "Index": 36
+        }
+      },
+      "standard": false,
+      "standard_alpha_next_to_number": false
     },
     "KRW": {
-      "short_pattern_standard": "Standard",
-      "narrow_pattern_standard": "Standard",
-      "short_place_holder_index": {
-        "Index": 36
+      "currency_pattern": {
+        "short_pattern_standard": "Standard",
+        "narrow_pattern_standard": "Standard",
+        "short_place_holder_index": {
+          "Index": 36
+        },
+        "narrow_place_holder_index": {
+          "Index": 36
+        }
       },
-      "narrow_place_holder_index": {
-        "Index": 36
-      }
+      "standard": false,
+      "standard_alpha_next_to_number": false
     },
     "KWD": {
-      "short_pattern_standard": "StandardAlphaNextToNumber",
-      "narrow_pattern_standard": "StandardAlphaNextToNumber",
-      "short_place_holder_index": null,
-      "narrow_place_holder_index": null
+      "currency_pattern": null,
+      "standard": false,
+      "standard_alpha_next_to_number": true
     },
     "KYD": {
-      "short_pattern_standard": "StandardAlphaNextToNumber",
-      "narrow_pattern_standard": "Standard",
-      "short_place_holder_index": null,
-      "narrow_place_holder_index": {
-        "Index": 3
-      }
+      "currency_pattern": {
+        "short_pattern_standard": "StandardAlphaNextToNumber",
+        "narrow_pattern_standard": "Standard",
+        "short_place_holder_index": null,
+        "narrow_place_holder_index": {
+          "Index": 3
+        }
+      },
+      "standard": false,
+      "standard_alpha_next_to_number": false
     },
     "KZT": {
-      "short_pattern_standard": "StandardAlphaNextToNumber",
-      "narrow_pattern_standard": "Standard",
-      "short_place_holder_index": null,
-      "narrow_place_holder_index": {
-        "Index": 37
-      }
+      "currency_pattern": {
+        "short_pattern_standard": "StandardAlphaNextToNumber",
+        "narrow_pattern_standard": "Standard",
+        "short_place_holder_index": null,
+        "narrow_place_holder_index": {
+          "Index": 37
+        }
+      },
+      "standard": false,
+      "standard_alpha_next_to_number": false
     },
     "LAK": {
-      "short_pattern_standard": "StandardAlphaNextToNumber",
-      "narrow_pattern_standard": "Standard",
-      "short_place_holder_index": null,
-      "narrow_place_holder_index": {
-        "Index": 38
-      }
+      "currency_pattern": {
+        "short_pattern_standard": "StandardAlphaNextToNumber",
+        "narrow_pattern_standard": "Standard",
+        "short_place_holder_index": null,
+        "narrow_place_holder_index": {
+          "Index": 38
+        }
+      },
+      "standard": false,
+      "standard_alpha_next_to_number": false
     },
     "LBP": {
-      "short_pattern_standard": "StandardAlphaNextToNumber",
-      "narrow_pattern_standard": "Standard",
-      "short_place_holder_index": null,
-      "narrow_place_holder_index": {
-        "Index": 39
-      }
+      "currency_pattern": {
+        "short_pattern_standard": "StandardAlphaNextToNumber",
+        "narrow_pattern_standard": "Standard",
+        "short_place_holder_index": null,
+        "narrow_place_holder_index": {
+          "Index": 39
+        }
+      },
+      "standard": false,
+      "standard_alpha_next_to_number": false
     },
     "LKR": {
-      "short_pattern_standard": "StandardAlphaNextToNumber",
-      "narrow_pattern_standard": "StandardAlphaNextToNumber",
-      "short_place_holder_index": null,
-      "narrow_place_holder_index": {
-        "Index": 40
-      }
+      "currency_pattern": {
+        "short_pattern_standard": "StandardAlphaNextToNumber",
+        "narrow_pattern_standard": "StandardAlphaNextToNumber",
+        "short_place_holder_index": null,
+        "narrow_place_holder_index": {
+          "Index": 40
+        }
+      },
+      "standard": false,
+      "standard_alpha_next_to_number": false
     },
     "LRD": {
-      "short_pattern_standard": "StandardAlphaNextToNumber",
-      "narrow_pattern_standard": "Standard",
-      "short_place_holder_index": null,
-      "narrow_place_holder_index": {
-        "Index": 3
-      }
+      "currency_pattern": {
+        "short_pattern_standard": "StandardAlphaNextToNumber",
+        "narrow_pattern_standard": "Standard",
+        "short_place_holder_index": null,
+        "narrow_place_holder_index": {
+          "Index": 3
+        }
+      },
+      "standard": false,
+      "standard_alpha_next_to_number": false
     },
     "LSL": {
-      "short_pattern_standard": "StandardAlphaNextToNumber",
-      "narrow_pattern_standard": "StandardAlphaNextToNumber",
-      "short_place_holder_index": null,
-      "narrow_place_holder_index": null
+      "currency_pattern": null,
+      "standard": false,
+      "standard_alpha_next_to_number": true
     },
     "LTL": {
-      "short_pattern_standard": "StandardAlphaNextToNumber",
-      "narrow_pattern_standard": "StandardAlphaNextToNumber",
-      "short_place_holder_index": null,
-      "narrow_place_holder_index": {
-        "Index": 41
-      }
+      "currency_pattern": {
+        "short_pattern_standard": "StandardAlphaNextToNumber",
+        "narrow_pattern_standard": "StandardAlphaNextToNumber",
+        "short_place_holder_index": null,
+        "narrow_place_holder_index": {
+          "Index": 41
+        }
+      },
+      "standard": false,
+      "standard_alpha_next_to_number": false
     },
     "LVL": {
-      "short_pattern_standard": "StandardAlphaNextToNumber",
-      "narrow_pattern_standard": "StandardAlphaNextToNumber",
-      "short_place_holder_index": null,
-      "narrow_place_holder_index": {
-        "Index": 42
-      }
+      "currency_pattern": {
+        "short_pattern_standard": "StandardAlphaNextToNumber",
+        "narrow_pattern_standard": "StandardAlphaNextToNumber",
+        "short_place_holder_index": null,
+        "narrow_place_holder_index": {
+          "Index": 42
+        }
+      },
+      "standard": false,
+      "standard_alpha_next_to_number": false
     },
     "LYD": {
-      "short_pattern_standard": "StandardAlphaNextToNumber",
-      "narrow_pattern_standard": "StandardAlphaNextToNumber",
-      "short_place_holder_index": null,
-      "narrow_place_holder_index": null
+      "currency_pattern": null,
+      "standard": false,
+      "standard_alpha_next_to_number": true
     },
     "MAD": {
-      "short_pattern_standard": "StandardAlphaNextToNumber",
-      "narrow_pattern_standard": "StandardAlphaNextToNumber",
-      "short_place_holder_index": null,
-      "narrow_place_holder_index": null
+      "currency_pattern": null,
+      "standard": false,
+      "standard_alpha_next_to_number": true
     },
     "MDL": {
-      "short_pattern_standard": "StandardAlphaNextToNumber",
-      "narrow_pattern_standard": "StandardAlphaNextToNumber",
-      "short_place_holder_index": null,
-      "narrow_place_holder_index": null
+      "currency_pattern": null,
+      "standard": false,
+      "standard_alpha_next_to_number": true
     },
     "MGA": {
-      "short_pattern_standard": "StandardAlphaNextToNumber",
-      "narrow_pattern_standard": "StandardAlphaNextToNumber",
-      "short_place_holder_index": null,
-      "narrow_place_holder_index": {
-        "Index": 43
-      }
+      "currency_pattern": {
+        "short_pattern_standard": "StandardAlphaNextToNumber",
+        "narrow_pattern_standard": "StandardAlphaNextToNumber",
+        "short_place_holder_index": null,
+        "narrow_place_holder_index": {
+          "Index": 43
+        }
+      },
+      "standard": false,
+      "standard_alpha_next_to_number": false
     },
     "MKD": {
-      "short_pattern_standard": "StandardAlphaNextToNumber",
-      "narrow_pattern_standard": "StandardAlphaNextToNumber",
-      "short_place_holder_index": null,
-      "narrow_place_holder_index": null
+      "currency_pattern": null,
+      "standard": false,
+      "standard_alpha_next_to_number": true
     },
     "MMK": {
-      "short_pattern_standard": "StandardAlphaNextToNumber",
-      "narrow_pattern_standard": "StandardAlphaNextToNumber",
-      "short_place_holder_index": null,
-      "narrow_place_holder_index": {
-        "Index": 44
-      }
+      "currency_pattern": {
+        "short_pattern_standard": "StandardAlphaNextToNumber",
+        "narrow_pattern_standard": "StandardAlphaNextToNumber",
+        "short_place_holder_index": null,
+        "narrow_place_holder_index": {
+          "Index": 44
+        }
+      },
+      "standard": false,
+      "standard_alpha_next_to_number": false
     },
     "MNT": {
-      "short_pattern_standard": "StandardAlphaNextToNumber",
-      "narrow_pattern_standard": "Standard",
-      "short_place_holder_index": null,
-      "narrow_place_holder_index": {
-        "Index": 45
-      }
+      "currency_pattern": {
+        "short_pattern_standard": "StandardAlphaNextToNumber",
+        "narrow_pattern_standard": "Standard",
+        "short_place_holder_index": null,
+        "narrow_place_holder_index": {
+          "Index": 45
+        }
+      },
+      "standard": false,
+      "standard_alpha_next_to_number": false
     },
     "MOP": {
-      "short_pattern_standard": "StandardAlphaNextToNumber",
-      "narrow_pattern_standard": "StandardAlphaNextToNumber",
-      "short_place_holder_index": null,
-      "narrow_place_holder_index": null
+      "currency_pattern": null,
+      "standard": false,
+      "standard_alpha_next_to_number": true
     },
     "MRO": {
-      "short_pattern_standard": "StandardAlphaNextToNumber",
-      "narrow_pattern_standard": "StandardAlphaNextToNumber",
-      "short_place_holder_index": null,
-      "narrow_place_holder_index": null
+      "currency_pattern": null,
+      "standard": false,
+      "standard_alpha_next_to_number": true
     },
     "MRU": {
-      "short_pattern_standard": "StandardAlphaNextToNumber",
-      "narrow_pattern_standard": "StandardAlphaNextToNumber",
-      "short_place_holder_index": null,
-      "narrow_place_holder_index": null
+      "currency_pattern": null,
+      "standard": false,
+      "standard_alpha_next_to_number": true
     },
     "MUR": {
-      "short_pattern_standard": "StandardAlphaNextToNumber",
-      "narrow_pattern_standard": "StandardAlphaNextToNumber",
-      "short_place_holder_index": null,
-      "narrow_place_holder_index": {
-        "Index": 40
-      }
+      "currency_pattern": {
+        "short_pattern_standard": "StandardAlphaNextToNumber",
+        "narrow_pattern_standard": "StandardAlphaNextToNumber",
+        "short_place_holder_index": null,
+        "narrow_place_holder_index": {
+          "Index": 40
+        }
+      },
+      "standard": false,
+      "standard_alpha_next_to_number": false
     },
     "MVR": {
-      "short_pattern_standard": "StandardAlphaNextToNumber",
-      "narrow_pattern_standard": "StandardAlphaNextToNumber",
-      "short_place_holder_index": null,
-      "narrow_place_holder_index": null
+      "currency_pattern": null,
+      "standard": false,
+      "standard_alpha_next_to_number": true
     },
     "MWK": {
-      "short_pattern_standard": "StandardAlphaNextToNumber",
-      "narrow_pattern_standard": "StandardAlphaNextToNumber",
-      "short_place_holder_index": null,
-      "narrow_place_holder_index": null
+      "currency_pattern": null,
+      "standard": false,
+      "standard_alpha_next_to_number": true
     },
     "MXN": {
-      "short_pattern_standard": "Standard",
-      "narrow_pattern_standard": "Standard",
-      "short_place_holder_index": {
-        "Index": 46
+      "currency_pattern": {
+        "short_pattern_standard": "Standard",
+        "narrow_pattern_standard": "Standard",
+        "short_place_holder_index": {
+          "Index": 46
+        },
+        "narrow_place_holder_index": {
+          "Index": 3
+        }
       },
-      "narrow_place_holder_index": {
-        "Index": 3
-      }
+      "standard": false,
+      "standard_alpha_next_to_number": false
     },
     "MYR": {
-      "short_pattern_standard": "StandardAlphaNextToNumber",
-      "narrow_pattern_standard": "StandardAlphaNextToNumber",
-      "short_place_holder_index": null,
-      "narrow_place_holder_index": {
-        "Index": 47
-      }
+      "currency_pattern": {
+        "short_pattern_standard": "StandardAlphaNextToNumber",
+        "narrow_pattern_standard": "StandardAlphaNextToNumber",
+        "short_place_holder_index": null,
+        "narrow_place_holder_index": {
+          "Index": 47
+        }
+      },
+      "standard": false,
+      "standard_alpha_next_to_number": false
     },
     "MZN": {
-      "short_pattern_standard": "StandardAlphaNextToNumber",
-      "narrow_pattern_standard": "StandardAlphaNextToNumber",
-      "short_place_holder_index": null,
-      "narrow_place_holder_index": null
+      "currency_pattern": null,
+      "standard": false,
+      "standard_alpha_next_to_number": true
     },
     "NAD": {
-      "short_pattern_standard": "StandardAlphaNextToNumber",
-      "narrow_pattern_standard": "Standard",
-      "short_place_holder_index": null,
-      "narrow_place_holder_index": {
-        "Index": 3
-      }
+      "currency_pattern": {
+        "short_pattern_standard": "StandardAlphaNextToNumber",
+        "narrow_pattern_standard": "Standard",
+        "short_place_holder_index": null,
+        "narrow_place_holder_index": {
+          "Index": 3
+        }
+      },
+      "standard": false,
+      "standard_alpha_next_to_number": false
     },
     "NGN": {
-      "short_pattern_standard": "StandardAlphaNextToNumber",
-      "narrow_pattern_standard": "Standard",
-      "short_place_holder_index": null,
-      "narrow_place_holder_index": {
-        "Index": 48
-      }
+      "currency_pattern": {
+        "short_pattern_standard": "StandardAlphaNextToNumber",
+        "narrow_pattern_standard": "Standard",
+        "short_place_holder_index": null,
+        "narrow_place_holder_index": {
+          "Index": 48
+        }
+      },
+      "standard": false,
+      "standard_alpha_next_to_number": false
     },
     "NIO": {
-      "short_pattern_standard": "StandardAlphaNextToNumber",
-      "narrow_pattern_standard": "Standard",
-      "short_place_holder_index": null,
-      "narrow_place_holder_index": {
-        "Index": 49
-      }
+      "currency_pattern": {
+        "short_pattern_standard": "StandardAlphaNextToNumber",
+        "narrow_pattern_standard": "Standard",
+        "short_place_holder_index": null,
+        "narrow_place_holder_index": {
+          "Index": 49
+        }
+      },
+      "standard": false,
+      "standard_alpha_next_to_number": false
     },
     "NOK": {
-      "short_pattern_standard": "StandardAlphaNextToNumber",
-      "narrow_pattern_standard": "StandardAlphaNextToNumber",
-      "short_place_holder_index": null,
-      "narrow_place_holder_index": {
-        "Index": 17
-      }
+      "currency_pattern": {
+        "short_pattern_standard": "StandardAlphaNextToNumber",
+        "narrow_pattern_standard": "StandardAlphaNextToNumber",
+        "short_place_holder_index": null,
+        "narrow_place_holder_index": {
+          "Index": 17
+        }
+      },
+      "standard": false,
+      "standard_alpha_next_to_number": false
     },
     "NPR": {
-      "short_pattern_standard": "StandardAlphaNextToNumber",
-      "narrow_pattern_standard": "StandardAlphaNextToNumber",
-      "short_place_holder_index": null,
-      "narrow_place_holder_index": {
-        "Index": 40
-      }
+      "currency_pattern": {
+        "short_pattern_standard": "StandardAlphaNextToNumber",
+        "narrow_pattern_standard": "StandardAlphaNextToNumber",
+        "short_place_holder_index": null,
+        "narrow_place_holder_index": {
+          "Index": 40
+        }
+      },
+      "standard": false,
+      "standard_alpha_next_to_number": false
     },
     "NZD": {
-      "short_pattern_standard": "Standard",
-      "narrow_pattern_standard": "Standard",
-      "short_place_holder_index": {
-        "Index": 50
+      "currency_pattern": {
+        "short_pattern_standard": "Standard",
+        "narrow_pattern_standard": "Standard",
+        "short_place_holder_index": {
+          "Index": 50
+        },
+        "narrow_place_holder_index": {
+          "Index": 3
+        }
       },
-      "narrow_place_holder_index": {
-        "Index": 3
-      }
+      "standard": false,
+      "standard_alpha_next_to_number": false
     },
     "OMR": {
-      "short_pattern_standard": "StandardAlphaNextToNumber",
-      "narrow_pattern_standard": "StandardAlphaNextToNumber",
-      "short_place_holder_index": null,
-      "narrow_place_holder_index": null
+      "currency_pattern": null,
+      "standard": false,
+      "standard_alpha_next_to_number": true
     },
     "PAB": {
-      "short_pattern_standard": "StandardAlphaNextToNumber",
-      "narrow_pattern_standard": "StandardAlphaNextToNumber",
-      "short_place_holder_index": null,
-      "narrow_place_holder_index": null
+      "currency_pattern": null,
+      "standard": false,
+      "standard_alpha_next_to_number": true
     },
     "PEN": {
-      "short_pattern_standard": "StandardAlphaNextToNumber",
-      "narrow_pattern_standard": "StandardAlphaNextToNumber",
-      "short_place_holder_index": null,
-      "narrow_place_holder_index": null
+      "currency_pattern": null,
+      "standard": false,
+      "standard_alpha_next_to_number": true
     },
     "PGK": {
-      "short_pattern_standard": "StandardAlphaNextToNumber",
-      "narrow_pattern_standard": "StandardAlphaNextToNumber",
-      "short_place_holder_index": null,
-      "narrow_place_holder_index": null
+      "currency_pattern": null,
+      "standard": false,
+      "standard_alpha_next_to_number": true
     },
     "PHP": {
-      "short_pattern_standard": "Standard",
-      "narrow_pattern_standard": "Standard",
-      "short_place_holder_index": {
-        "Index": 51
+      "currency_pattern": {
+        "short_pattern_standard": "Standard",
+        "narrow_pattern_standard": "Standard",
+        "short_place_holder_index": {
+          "Index": 51
+        },
+        "narrow_place_holder_index": {
+          "Index": 51
+        }
       },
-      "narrow_place_holder_index": {
-        "Index": 51
-      }
+      "standard": false,
+      "standard_alpha_next_to_number": false
     },
     "PKR": {
-      "short_pattern_standard": "StandardAlphaNextToNumber",
-      "narrow_pattern_standard": "StandardAlphaNextToNumber",
-      "short_place_holder_index": null,
-      "narrow_place_holder_index": {
-        "Index": 40
-      }
+      "currency_pattern": {
+        "short_pattern_standard": "StandardAlphaNextToNumber",
+        "narrow_pattern_standard": "StandardAlphaNextToNumber",
+        "short_place_holder_index": null,
+        "narrow_place_holder_index": {
+          "Index": 40
+        }
+      },
+      "standard": false,
+      "standard_alpha_next_to_number": false
     },
     "PLN": {
-      "short_pattern_standard": "StandardAlphaNextToNumber",
-      "narrow_pattern_standard": "StandardAlphaNextToNumber",
-      "short_place_holder_index": null,
-      "narrow_place_holder_index": {
-        "Index": 52
-      }
+      "currency_pattern": {
+        "short_pattern_standard": "StandardAlphaNextToNumber",
+        "narrow_pattern_standard": "StandardAlphaNextToNumber",
+        "short_place_holder_index": null,
+        "narrow_place_holder_index": {
+          "Index": 52
+        }
+      },
+      "standard": false,
+      "standard_alpha_next_to_number": false
     },
     "PYG": {
-      "short_pattern_standard": "StandardAlphaNextToNumber",
-      "narrow_pattern_standard": "Standard",
-      "short_place_holder_index": null,
-      "narrow_place_holder_index": {
-        "Index": 53
-      }
+      "currency_pattern": {
+        "short_pattern_standard": "StandardAlphaNextToNumber",
+        "narrow_pattern_standard": "Standard",
+        "short_place_holder_index": null,
+        "narrow_place_holder_index": {
+          "Index": 53
+        }
+      },
+      "standard": false,
+      "standard_alpha_next_to_number": false
     },
     "QAR": {
-      "short_pattern_standard": "StandardAlphaNextToNumber",
-      "narrow_pattern_standard": "StandardAlphaNextToNumber",
-      "short_place_holder_index": null,
-      "narrow_place_holder_index": null
+      "currency_pattern": null,
+      "standard": false,
+      "standard_alpha_next_to_number": true
     },
     "RON": {
-      "short_pattern_standard": "StandardAlphaNextToNumber",
-      "narrow_pattern_standard": "StandardAlphaNextToNumber",
-      "short_place_holder_index": null,
-      "narrow_place_holder_index": {
-        "Index": 54
-      }
+      "currency_pattern": {
+        "short_pattern_standard": "StandardAlphaNextToNumber",
+        "narrow_pattern_standard": "StandardAlphaNextToNumber",
+        "short_place_holder_index": null,
+        "narrow_place_holder_index": {
+          "Index": 54
+        }
+      },
+      "standard": false,
+      "standard_alpha_next_to_number": false
     },
     "RSD": {
-      "short_pattern_standard": "StandardAlphaNextToNumber",
-      "narrow_pattern_standard": "StandardAlphaNextToNumber",
-      "short_place_holder_index": null,
-      "narrow_place_holder_index": null
+      "currency_pattern": null,
+      "standard": false,
+      "standard_alpha_next_to_number": true
     },
     "RUB": {
-      "short_pattern_standard": "StandardAlphaNextToNumber",
-      "narrow_pattern_standard": "Standard",
-      "short_place_holder_index": null,
-      "narrow_place_holder_index": {
-        "Index": 55
-      }
+      "currency_pattern": {
+        "short_pattern_standard": "StandardAlphaNextToNumber",
+        "narrow_pattern_standard": "Standard",
+        "short_place_holder_index": null,
+        "narrow_place_holder_index": {
+          "Index": 55
+        }
+      },
+      "standard": false,
+      "standard_alpha_next_to_number": false
     },
     "RWF": {
-      "short_pattern_standard": "StandardAlphaNextToNumber",
-      "narrow_pattern_standard": "StandardAlphaNextToNumber",
-      "short_place_holder_index": null,
-      "narrow_place_holder_index": {
-        "Index": 56
-      }
+      "currency_pattern": {
+        "short_pattern_standard": "StandardAlphaNextToNumber",
+        "narrow_pattern_standard": "StandardAlphaNextToNumber",
+        "short_place_holder_index": null,
+        "narrow_place_holder_index": {
+          "Index": 56
+        }
+      },
+      "standard": false,
+      "standard_alpha_next_to_number": false
     },
     "SAR": {
-      "short_pattern_standard": "StandardAlphaNextToNumber",
-      "narrow_pattern_standard": "StandardAlphaNextToNumber",
-      "short_place_holder_index": null,
-      "narrow_place_holder_index": null
+      "currency_pattern": null,
+      "standard": false,
+      "standard_alpha_next_to_number": true
     },
     "SBD": {
-      "short_pattern_standard": "StandardAlphaNextToNumber",
-      "narrow_pattern_standard": "Standard",
-      "short_place_holder_index": null,
-      "narrow_place_holder_index": {
-        "Index": 3
-      }
+      "currency_pattern": {
+        "short_pattern_standard": "StandardAlphaNextToNumber",
+        "narrow_pattern_standard": "Standard",
+        "short_place_holder_index": null,
+        "narrow_place_holder_index": {
+          "Index": 3
+        }
+      },
+      "standard": false,
+      "standard_alpha_next_to_number": false
     },
     "SCR": {
-      "short_pattern_standard": "StandardAlphaNextToNumber",
-      "narrow_pattern_standard": "StandardAlphaNextToNumber",
-      "short_place_holder_index": null,
-      "narrow_place_holder_index": null
+      "currency_pattern": null,
+      "standard": false,
+      "standard_alpha_next_to_number": true
     },
     "SDG": {
-      "short_pattern_standard": "StandardAlphaNextToNumber",
-      "narrow_pattern_standard": "StandardAlphaNextToNumber",
-      "short_place_holder_index": null,
-      "narrow_place_holder_index": null
+      "currency_pattern": null,
+      "standard": false,
+      "standard_alpha_next_to_number": true
     },
     "SEK": {
-      "short_pattern_standard": "StandardAlphaNextToNumber",
-      "narrow_pattern_standard": "StandardAlphaNextToNumber",
-      "short_place_holder_index": null,
-      "narrow_place_holder_index": {
-        "Index": 17
-      }
+      "currency_pattern": {
+        "short_pattern_standard": "StandardAlphaNextToNumber",
+        "narrow_pattern_standard": "StandardAlphaNextToNumber",
+        "short_place_holder_index": null,
+        "narrow_place_holder_index": {
+          "Index": 17
+        }
+      },
+      "standard": false,
+      "standard_alpha_next_to_number": false
     },
     "SGD": {
-      "short_pattern_standard": "StandardAlphaNextToNumber",
-      "narrow_pattern_standard": "Standard",
-      "short_place_holder_index": null,
-      "narrow_place_holder_index": {
-        "Index": 3
-      }
+      "currency_pattern": {
+        "short_pattern_standard": "StandardAlphaNextToNumber",
+        "narrow_pattern_standard": "Standard",
+        "short_place_holder_index": null,
+        "narrow_place_holder_index": {
+          "Index": 3
+        }
+      },
+      "standard": false,
+      "standard_alpha_next_to_number": false
     },
     "SHP": {
-      "short_pattern_standard": "StandardAlphaNextToNumber",
-      "narrow_pattern_standard": "Standard",
-      "short_place_holder_index": null,
-      "narrow_place_holder_index": {
-        "Index": 21
-      }
+      "currency_pattern": {
+        "short_pattern_standard": "StandardAlphaNextToNumber",
+        "narrow_pattern_standard": "Standard",
+        "short_place_holder_index": null,
+        "narrow_place_holder_index": {
+          "Index": 21
+        }
+      },
+      "standard": false,
+      "standard_alpha_next_to_number": false
     },
     "SIT": {
-      "short_pattern_standard": "StandardAlphaNextToNumber",
-      "narrow_pattern_standard": "StandardAlphaNextToNumber",
-      "short_place_holder_index": null,
-      "narrow_place_holder_index": null
+      "currency_pattern": null,
+      "standard": false,
+      "standard_alpha_next_to_number": true
     },
     "SKK": {
-      "short_pattern_standard": "StandardAlphaNextToNumber",
-      "narrow_pattern_standard": "StandardAlphaNextToNumber",
-      "short_place_holder_index": null,
-      "narrow_place_holder_index": null
+      "currency_pattern": null,
+      "standard": false,
+      "standard_alpha_next_to_number": true
     },
     "SLE": {
-      "short_pattern_standard": "StandardAlphaNextToNumber",
-      "narrow_pattern_standard": "StandardAlphaNextToNumber",
-      "short_place_holder_index": null,
-      "narrow_place_holder_index": null
+      "currency_pattern": null,
+      "standard": false,
+      "standard_alpha_next_to_number": true
     },
     "SLL": {
-      "short_pattern_standard": "StandardAlphaNextToNumber",
-      "narrow_pattern_standard": "StandardAlphaNextToNumber",
-      "short_place_holder_index": null,
-      "narrow_place_holder_index": null
+      "currency_pattern": null,
+      "standard": false,
+      "standard_alpha_next_to_number": true
     },
     "SOS": {
-      "short_pattern_standard": "StandardAlphaNextToNumber",
-      "narrow_pattern_standard": "StandardAlphaNextToNumber",
-      "short_place_holder_index": null,
-      "narrow_place_holder_index": null
+      "currency_pattern": null,
+      "standard": false,
+      "standard_alpha_next_to_number": true
     },
     "SRD": {
-      "short_pattern_standard": "StandardAlphaNextToNumber",
-      "narrow_pattern_standard": "Standard",
-      "short_place_holder_index": null,
-      "narrow_place_holder_index": {
-        "Index": 3
-      }
+      "currency_pattern": {
+        "short_pattern_standard": "StandardAlphaNextToNumber",
+        "narrow_pattern_standard": "Standard",
+        "short_place_holder_index": null,
+        "narrow_place_holder_index": {
+          "Index": 3
+        }
+      },
+      "standard": false,
+      "standard_alpha_next_to_number": false
     },
     "SSP": {
-      "short_pattern_standard": "StandardAlphaNextToNumber",
-      "narrow_pattern_standard": "Standard",
-      "short_place_holder_index": null,
-      "narrow_place_holder_index": {
-        "Index": 21
-      }
+      "currency_pattern": {
+        "short_pattern_standard": "StandardAlphaNextToNumber",
+        "narrow_pattern_standard": "Standard",
+        "short_place_holder_index": null,
+        "narrow_place_holder_index": {
+          "Index": 21
+        }
+      },
+      "standard": false,
+      "standard_alpha_next_to_number": false
     },
     "STD": {
-      "short_pattern_standard": "StandardAlphaNextToNumber",
-      "narrow_pattern_standard": "StandardAlphaNextToNumber",
-      "short_place_holder_index": null,
-      "narrow_place_holder_index": null
+      "currency_pattern": null,
+      "standard": false,
+      "standard_alpha_next_to_number": true
     },
     "STN": {
-      "short_pattern_standard": "StandardAlphaNextToNumber",
-      "narrow_pattern_standard": "StandardAlphaNextToNumber",
-      "short_place_holder_index": null,
-      "narrow_place_holder_index": {
-        "Index": 57
-      }
+      "currency_pattern": {
+        "short_pattern_standard": "StandardAlphaNextToNumber",
+        "narrow_pattern_standard": "StandardAlphaNextToNumber",
+        "short_place_holder_index": null,
+        "narrow_place_holder_index": {
+          "Index": 57
+        }
+      },
+      "standard": false,
+      "standard_alpha_next_to_number": false
     },
     "SYP": {
-      "short_pattern_standard": "StandardAlphaNextToNumber",
-      "narrow_pattern_standard": "Standard",
-      "short_place_holder_index": null,
-      "narrow_place_holder_index": {
-        "Index": 21
-      }
+      "currency_pattern": {
+        "short_pattern_standard": "StandardAlphaNextToNumber",
+        "narrow_pattern_standard": "Standard",
+        "short_place_holder_index": null,
+        "narrow_place_holder_index": {
+          "Index": 21
+        }
+      },
+      "standard": false,
+      "standard_alpha_next_to_number": false
     },
     "SZL": {
-      "short_pattern_standard": "StandardAlphaNextToNumber",
-      "narrow_pattern_standard": "StandardAlphaNextToNumber",
-      "short_place_holder_index": null,
-      "narrow_place_holder_index": null
+      "currency_pattern": null,
+      "standard": false,
+      "standard_alpha_next_to_number": true
     },
     "THB": {
-      "short_pattern_standard": "Standard",
-      "narrow_pattern_standard": "Standard",
-      "short_place_holder_index": {
-        "Index": 58
+      "currency_pattern": {
+        "short_pattern_standard": "Standard",
+        "narrow_pattern_standard": "Standard",
+        "short_place_holder_index": {
+          "Index": 58
+        },
+        "narrow_place_holder_index": {
+          "Index": 58
+        }
       },
-      "narrow_place_holder_index": {
-        "Index": 58
-      }
+      "standard": false,
+      "standard_alpha_next_to_number": false
     },
     "TJS": {
-      "short_pattern_standard": "StandardAlphaNextToNumber",
-      "narrow_pattern_standard": "StandardAlphaNextToNumber",
-      "short_place_holder_index": null,
-      "narrow_place_holder_index": null
+      "currency_pattern": null,
+      "standard": false,
+      "standard_alpha_next_to_number": true
     },
     "TMT": {
-      "short_pattern_standard": "StandardAlphaNextToNumber",
-      "narrow_pattern_standard": "StandardAlphaNextToNumber",
-      "short_place_holder_index": null,
-      "narrow_place_holder_index": null
+      "currency_pattern": null,
+      "standard": false,
+      "standard_alpha_next_to_number": true
     },
     "TND": {
-      "short_pattern_standard": "StandardAlphaNextToNumber",
-      "narrow_pattern_standard": "StandardAlphaNextToNumber",
-      "short_place_holder_index": null,
-      "narrow_place_holder_index": null
+      "currency_pattern": null,
+      "standard": false,
+      "standard_alpha_next_to_number": true
     },
     "TOP": {
-      "short_pattern_standard": "StandardAlphaNextToNumber",
-      "narrow_pattern_standard": "Standard",
-      "short_place_holder_index": null,
-      "narrow_place_holder_index": {
-        "Index": 59
-      }
+      "currency_pattern": {
+        "short_pattern_standard": "StandardAlphaNextToNumber",
+        "narrow_pattern_standard": "Standard",
+        "short_place_holder_index": null,
+        "narrow_place_holder_index": {
+          "Index": 59
+        }
+      },
+      "standard": false,
+      "standard_alpha_next_to_number": false
     },
     "TRY": {
-      "short_pattern_standard": "StandardAlphaNextToNumber",
-      "narrow_pattern_standard": "Standard",
-      "short_place_holder_index": null,
-      "narrow_place_holder_index": {
-        "Index": 60
-      }
+      "currency_pattern": {
+        "short_pattern_standard": "StandardAlphaNextToNumber",
+        "narrow_pattern_standard": "Standard",
+        "short_place_holder_index": null,
+        "narrow_place_holder_index": {
+          "Index": 60
+        }
+      },
+      "standard": false,
+      "standard_alpha_next_to_number": false
     },
     "TTD": {
-      "short_pattern_standard": "StandardAlphaNextToNumber",
-      "narrow_pattern_standard": "Standard",
-      "short_place_holder_index": null,
-      "narrow_place_holder_index": {
-        "Index": 3
-      }
+      "currency_pattern": {
+        "short_pattern_standard": "StandardAlphaNextToNumber",
+        "narrow_pattern_standard": "Standard",
+        "short_place_holder_index": null,
+        "narrow_place_holder_index": {
+          "Index": 3
+        }
+      },
+      "standard": false,
+      "standard_alpha_next_to_number": false
     },
     "TWD": {
-      "short_pattern_standard": "Standard",
-      "narrow_pattern_standard": "Standard",
-      "short_place_holder_index": {
-        "Index": 61
+      "currency_pattern": {
+        "short_pattern_standard": "Standard",
+        "narrow_pattern_standard": "Standard",
+        "short_place_holder_index": {
+          "Index": 61
+        },
+        "narrow_place_holder_index": {
+          "Index": 61
+        }
       },
-      "narrow_place_holder_index": {
-        "Index": 61
-      }
+      "standard": false,
+      "standard_alpha_next_to_number": false
     },
     "TZS": {
-      "short_pattern_standard": "StandardAlphaNextToNumber",
-      "narrow_pattern_standard": "StandardAlphaNextToNumber",
-      "short_place_holder_index": null,
-      "narrow_place_holder_index": null
+      "currency_pattern": null,
+      "standard": false,
+      "standard_alpha_next_to_number": true
     },
     "UAH": {
-      "short_pattern_standard": "StandardAlphaNextToNumber",
-      "narrow_pattern_standard": "Standard",
-      "short_place_holder_index": null,
-      "narrow_place_holder_index": {
-        "Index": 62
-      }
+      "currency_pattern": {
+        "short_pattern_standard": "StandardAlphaNextToNumber",
+        "narrow_pattern_standard": "Standard",
+        "short_place_holder_index": null,
+        "narrow_place_holder_index": {
+          "Index": 62
+        }
+      },
+      "standard": false,
+      "standard_alpha_next_to_number": false
     },
     "UGX": {
-      "short_pattern_standard": "StandardAlphaNextToNumber",
-      "narrow_pattern_standard": "StandardAlphaNextToNumber",
-      "short_place_holder_index": null,
-      "narrow_place_holder_index": null
+      "currency_pattern": null,
+      "standard": false,
+      "standard_alpha_next_to_number": true
     },
     "USD": {
-      "short_pattern_standard": "Standard",
-      "narrow_pattern_standard": "Standard",
-      "short_place_holder_index": {
-        "Index": 3
+      "currency_pattern": {
+        "short_pattern_standard": "Standard",
+        "narrow_pattern_standard": "Standard",
+        "short_place_holder_index": {
+          "Index": 3
+        },
+        "narrow_place_holder_index": {
+          "Index": 3
+        }
       },
-      "narrow_place_holder_index": {
-        "Index": 3
-      }
+      "standard": false,
+      "standard_alpha_next_to_number": false
     },
     "UYU": {
-      "short_pattern_standard": "StandardAlphaNextToNumber",
-      "narrow_pattern_standard": "Standard",
-      "short_place_holder_index": null,
-      "narrow_place_holder_index": {
-        "Index": 3
-      }
+      "currency_pattern": {
+        "short_pattern_standard": "StandardAlphaNextToNumber",
+        "narrow_pattern_standard": "Standard",
+        "short_place_holder_index": null,
+        "narrow_place_holder_index": {
+          "Index": 3
+        }
+      },
+      "standard": false,
+      "standard_alpha_next_to_number": false
     },
     "UZS": {
-      "short_pattern_standard": "StandardAlphaNextToNumber",
-      "narrow_pattern_standard": "StandardAlphaNextToNumber",
-      "short_place_holder_index": null,
-      "narrow_place_holder_index": null
+      "currency_pattern": null,
+      "standard": false,
+      "standard_alpha_next_to_number": true
     },
     "VEB": {
-      "short_pattern_standard": "StandardAlphaNextToNumber",
-      "narrow_pattern_standard": "StandardAlphaNextToNumber",
-      "short_place_holder_index": null,
-      "narrow_place_holder_index": null
+      "currency_pattern": null,
+      "standard": false,
+      "standard_alpha_next_to_number": true
     },
     "VEF": {
-      "short_pattern_standard": "StandardAlphaNextToNumber",
-      "narrow_pattern_standard": "StandardAlphaNextToNumber",
-      "short_place_holder_index": null,
-      "narrow_place_holder_index": {
-        "Index": 8
-      }
+      "currency_pattern": {
+        "short_pattern_standard": "StandardAlphaNextToNumber",
+        "narrow_pattern_standard": "StandardAlphaNextToNumber",
+        "short_place_holder_index": null,
+        "narrow_place_holder_index": {
+          "Index": 8
+        }
+      },
+      "standard": false,
+      "standard_alpha_next_to_number": false
     },
     "VES": {
-      "short_pattern_standard": "StandardAlphaNextToNumber",
-      "narrow_pattern_standard": "StandardAlphaNextToNumber",
-      "short_place_holder_index": null,
-      "narrow_place_holder_index": null
+      "currency_pattern": null,
+      "standard": false,
+      "standard_alpha_next_to_number": true
     },
     "VND": {
-      "short_pattern_standard": "Standard",
-      "narrow_pattern_standard": "Standard",
-      "short_place_holder_index": {
-        "Index": 63
+      "currency_pattern": {
+        "short_pattern_standard": "Standard",
+        "narrow_pattern_standard": "Standard",
+        "short_place_holder_index": {
+          "Index": 63
+        },
+        "narrow_place_holder_index": {
+          "Index": 63
+        }
       },
-      "narrow_place_holder_index": {
-        "Index": 63
-      }
+      "standard": false,
+      "standard_alpha_next_to_number": false
     },
     "VUV": {
-      "short_pattern_standard": "StandardAlphaNextToNumber",
-      "narrow_pattern_standard": "StandardAlphaNextToNumber",
-      "short_place_holder_index": null,
-      "narrow_place_holder_index": null
+      "currency_pattern": null,
+      "standard": false,
+      "standard_alpha_next_to_number": true
     },
     "WST": {
-      "short_pattern_standard": "StandardAlphaNextToNumber",
-      "narrow_pattern_standard": "StandardAlphaNextToNumber",
-      "short_place_holder_index": null,
-      "narrow_place_holder_index": null
+      "currency_pattern": null,
+      "standard": false,
+      "standard_alpha_next_to_number": true
     },
     "XAF": {
-      "short_pattern_standard": "StandardAlphaNextToNumber",
-      "narrow_pattern_standard": "StandardAlphaNextToNumber",
-      "short_place_holder_index": {
-        "Index": 64
+      "currency_pattern": {
+        "short_pattern_standard": "StandardAlphaNextToNumber",
+        "narrow_pattern_standard": "StandardAlphaNextToNumber",
+        "short_place_holder_index": {
+          "Index": 64
+        },
+        "narrow_place_holder_index": null
       },
-      "narrow_place_holder_index": null
+      "standard": false,
+      "standard_alpha_next_to_number": false
     },
     "XCD": {
-      "short_pattern_standard": "Standard",
-      "narrow_pattern_standard": "Standard",
-      "short_place_holder_index": {
-        "Index": 65
+      "currency_pattern": {
+        "short_pattern_standard": "Standard",
+        "narrow_pattern_standard": "Standard",
+        "short_place_holder_index": {
+          "Index": 65
+        },
+        "narrow_place_holder_index": {
+          "Index": 3
+        }
       },
-      "narrow_place_holder_index": {
-        "Index": 3
-      }
+      "standard": false,
+      "standard_alpha_next_to_number": false
     },
     "XOF": {
-      "short_pattern_standard": "StandardAlphaNextToNumber",
-      "narrow_pattern_standard": "StandardAlphaNextToNumber",
-      "short_place_holder_index": {
-        "Index": 66
+      "currency_pattern": {
+        "short_pattern_standard": "StandardAlphaNextToNumber",
+        "narrow_pattern_standard": "StandardAlphaNextToNumber",
+        "short_place_holder_index": {
+          "Index": 66
+        },
+        "narrow_place_holder_index": null
       },
-      "narrow_place_holder_index": null
+      "standard": false,
+      "standard_alpha_next_to_number": false
     },
     "XPF": {
-      "short_pattern_standard": "StandardAlphaNextToNumber",
-      "narrow_pattern_standard": "StandardAlphaNextToNumber",
-      "short_place_holder_index": {
-        "Index": 67
+      "currency_pattern": {
+        "short_pattern_standard": "StandardAlphaNextToNumber",
+        "narrow_pattern_standard": "StandardAlphaNextToNumber",
+        "short_place_holder_index": {
+          "Index": 67
+        },
+        "narrow_place_holder_index": null
       },
-      "narrow_place_holder_index": null
+      "standard": false,
+      "standard_alpha_next_to_number": false
     },
     "XXX": {
-      "short_pattern_standard": "Standard",
-      "narrow_pattern_standard": "StandardAlphaNextToNumber",
-      "short_place_holder_index": {
-        "Index": 68
+      "currency_pattern": {
+        "short_pattern_standard": "Standard",
+        "narrow_pattern_standard": "StandardAlphaNextToNumber",
+        "short_place_holder_index": {
+          "Index": 68
+        },
+        "narrow_place_holder_index": null
       },
-      "narrow_place_holder_index": null
+      "standard": false,
+      "standard_alpha_next_to_number": false
     },
     "YER": {
-      "short_pattern_standard": "StandardAlphaNextToNumber",
-      "narrow_pattern_standard": "StandardAlphaNextToNumber",
-      "short_place_holder_index": null,
-      "narrow_place_holder_index": null
+      "currency_pattern": null,
+      "standard": false,
+      "standard_alpha_next_to_number": true
     },
     "ZAR": {
-      "short_pattern_standard": "StandardAlphaNextToNumber",
-      "narrow_pattern_standard": "StandardAlphaNextToNumber",
-      "short_place_holder_index": null,
-      "narrow_place_holder_index": {
-        "Index": 69
-      }
+      "currency_pattern": {
+        "short_pattern_standard": "StandardAlphaNextToNumber",
+        "narrow_pattern_standard": "StandardAlphaNextToNumber",
+        "short_place_holder_index": null,
+        "narrow_place_holder_index": {
+          "Index": 69
+        }
+      },
+      "standard": false,
+      "standard_alpha_next_to_number": false
     },
     "ZMK": {
-      "short_pattern_standard": "StandardAlphaNextToNumber",
-      "narrow_pattern_standard": "StandardAlphaNextToNumber",
-      "short_place_holder_index": null,
-      "narrow_place_holder_index": null
+      "currency_pattern": null,
+      "standard": false,
+      "standard_alpha_next_to_number": true
     },
     "ZMW": {
-      "short_pattern_standard": "StandardAlphaNextToNumber",
-      "narrow_pattern_standard": "StandardAlphaNextToNumber",
-      "short_place_holder_index": null,
-      "narrow_place_holder_index": {
-        "Index": 70
-      }
+      "currency_pattern": {
+        "short_pattern_standard": "StandardAlphaNextToNumber",
+        "narrow_pattern_standard": "StandardAlphaNextToNumber",
+        "short_place_holder_index": null,
+        "narrow_place_holder_index": {
+          "Index": 70
+        }
+      },
+      "standard": false,
+      "standard_alpha_next_to_number": false
     }
   },
   "standard": "¤#,##0.00",

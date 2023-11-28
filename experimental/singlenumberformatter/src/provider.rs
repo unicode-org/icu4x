@@ -38,7 +38,7 @@ pub struct CurrencyEssentialsV1<'data> {
     /// Maps from currency iso code to currency patterns
     /// which points to which pattern to use and the place holder index.
     #[cfg_attr(feature = "serde", serde(borrow))]
-    pub currency_patterns_map: ZeroMap<'data, UnvalidatedTinyAsciiStr<3>, CurrencyPattern>,
+    pub currency_patterns_map: ZeroMap<'data, UnvalidatedTinyAsciiStr<3>, CurrencyPatternSelector>,
 
     /// Represents the standard pattern.
     #[cfg_attr(feature = "serde", serde(borrow))]
@@ -53,25 +53,25 @@ pub struct CurrencyEssentialsV1<'data> {
     pub place_holders: VarZeroVec<'data, str>,
 }
 
+#[zerovec::make_ule(CurrencyPatternSelectorULE)]
 #[cfg_attr(
     feature = "datagen",
     derive(serde::Serialize, databake::Bake),
     databake(path = icu_singlenumberformatter::provider),
 )]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
-#[derive(Copy, Debug, Clone, PartialEq, PartialOrd, Eq, Ord)]
-#[repr(u16)]
-pub enum CurrencyPatternSelector {
+#[derive(Copy, Debug, Clone, Default, PartialEq, PartialOrd, Eq, Ord)]
+pub struct CurrencyPatternSelector {
     /// Contains the currency pattern.
-    CurrencyPattern(CurrencyPattern),
+    pub currency_pattern: Option<CurrencyPattern>,
 
     /// This means that the short_pattern_standard and narrow_pattern_standard are Standard.
     /// Also, the short_place_holder_index and narrow_place_holder_index are None.
-    Standard,
+    pub standard: bool,
 
     /// This means that the short_pattern_standard and narrow_pattern_standard are StandardAlphaNextToNumber.
     /// Also, the short_place_holder_index and narrow_place_holder_index are None.
-    StandardAlphaNextToNumber,
+    pub standard_alpha_next_to_number: bool,
 }
 
 #[zerovec::make_ule(PatternSelectionULE)]

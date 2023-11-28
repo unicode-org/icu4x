@@ -15,8 +15,8 @@ const USE_ISO_CODE: u16 = 0b0111_1111_1110; // decimal: 2046
 // TODO(#4013): Remove this constant once we have an invariant that the injecting text index is always less than 2046.
 pub const MAX_PLACE_HOLDER_INDEX: u16 = 0b0111_1111_1101; // decimal: 2045
 
-/// `CurrencyPatternsULE` is a type optimized for efficient storing and
-/// deserialization of `CurrencyPatterns` using the `ZeroVec` model.
+/// `CurrencyPatternULE` is a type optimized for efficient storing and
+/// deserialization of `CurrencyPattern` using the `ZeroVec` model.
 ///
 /// The serialization model packages the pattern item in three bytes.
 ///
@@ -30,18 +30,20 @@ pub const MAX_PLACE_HOLDER_INDEX: u16 = 0b0111_1111_1101; // decimal: 2045
 /// The next three bits (b2, b1 & b0) with the third byte is used to determine the narrow_place_holder_index.
 #[derive(Copy, Clone, Debug, PartialEq)]
 #[repr(transparent)]
-pub struct CurrencyPatternsULE([u8; 3]);
+pub struct CurrencyPatternULE([u8; 3]);
+
+impl Eq for CurrencyPatternULE {}
 
 // Safety (based on the safety checklist on the ULE trait):
-//  1. CurrencyPatternsULE does not include any uninitialized or padding bytes.
+//  1. CurrencyPatternULE does not include any uninitialized or padding bytes.
 //     (achieved by `#[repr(transparent)]` on a ULE type)
-//  2. CurrencyPatternsULE is aligned to 1 byte.
+//  2. CurrencyPatternULE is aligned to 1 byte.
 //     (achieved by `#[repr(transparent)]` on a ULE type)
 //  3. The impl of validate_byte_slice() returns an error if any byte is not valid.
 //  4. The impl of validate_byte_slice() returns an error if there are extra bytes.
 //  5. The other ULE methods use the default impl.
-//  6. CurrencyPatternsULE byte equality is semantic equality.
-unsafe impl ULE for CurrencyPatternsULE {
+//  6. CurrencyPatternULE byte equality is semantic equality.
+unsafe impl ULE for CurrencyPatternULE {
     fn validate_byte_slice(bytes: &[u8]) -> Result<(), ZeroVecError> {
         if bytes.len() % 3 != 0 {
             return Err(ZeroVecError::length::<Self>(bytes.len()));
@@ -57,7 +59,7 @@ const INDEX_SHORT_SHIFT: u8 = 3;
 const INDEX_NARROW_SHIFT: u8 = 0;
 
 impl AsULE for CurrencyPattern {
-    type ULE = CurrencyPatternsULE;
+    type ULE = CurrencyPatternULE;
 
     #[inline]
     fn to_unaligned(self) -> Self::ULE {
@@ -100,7 +102,7 @@ impl AsULE for CurrencyPattern {
         }
         first_byte_ule |= narrow_most_significant_byte << INDEX_NARROW_SHIFT;
 
-        CurrencyPatternsULE([
+        CurrencyPatternULE([
             first_byte_ule,
             short_least_significant_byte_ule,
             narrow_least_significant_byte_ule,

@@ -129,7 +129,8 @@ fn extract_currency_essentials<'data>(
         None => "",
     };
 
-    let mut currency_patterns_map = BTreeMap::<UnvalidatedTinyAsciiStr<3>, CurrencyPattern>::new();
+    let mut currency_patterns_map =
+        BTreeMap::<UnvalidatedTinyAsciiStr<3>, CurrencyPatternSelector>::new();
     let mut place_holders = Vec::<&str>::new();
     // A map to check if the place holder is already in the place_holders vector.
     let mut place_holders_checker_map = HashMap::<&str, u16>::new();
@@ -220,23 +221,42 @@ fn extract_currency_essentials<'data>(
 
         // TODO(#4314): Check if we can remove also when the patterns equal to
         // PatternSelection::StandardNextToNumber.
-        if short_pattern_standard == PatternSelection::Standard
-            && narrow_pattern_standard == PatternSelection::Standard
-            && short_place_holder_index.is_none()
-            && narrow_place_holder_index.is_none()
-        {
-            continue;
-        }
+        let currency_pattern_selector = {
+            if short_pattern_standard == PatternSelection::Standard
+                && narrow_pattern_standard == PatternSelection::Standard
+                && short_place_holder_index.is_none()
+                && narrow_place_holder_index.is_none()
+            {
+                CurrencyPatternSelector {
+                    currency_pattern: None,
+                    standard: true,
+                    standard_alpha_next_to_number: false,
+                }
+            } else if short_pattern_standard == PatternSelection::StandardAlphaNextToNumber
+                && narrow_pattern_standard == PatternSelection::StandardAlphaNextToNumber
+                && short_place_holder_index.is_none()
+                && narrow_place_holder_index.is_none()
+            {
+                CurrencyPatternSelector {
+                    currency_pattern: None,
+                    standard: false,
+                    standard_alpha_next_to_number: true,
+                }
+            } else {
+                CurrencyPatternSelector {
+                    currency_pattern: Some(CurrencyPattern {
+                        short_pattern_standard,
+                        narrow_pattern_standard,
+                        short_place_holder_index,
+                        narrow_place_holder_index,
+                    }),
+                    standard: false,
+                    standard_alpha_next_to_number: false,
+                }
+            }
+        };
 
-        currency_patterns_map.insert(
-            *iso,
-            CurrencyPattern {
-                short_pattern_standard,
-                narrow_pattern_standard,
-                short_place_holder_index,
-                narrow_place_holder_index,
-            },
-        );
+        currency_patterns_map.insert(*iso, currency_pattern_selector);
     }
 
     Ok(CurrencyEssentialsV1 {
@@ -264,6 +284,8 @@ fn test_basic() {
         let currency_pattern: CurrencyPattern = owned
             .currency_patterns_map
             .get_copied(&iso_code)
+            .unwrap()
+            .currency_pattern
             .unwrap_or(default);
 
         let short_place_holder = match currency_pattern.short_place_holder_index {
