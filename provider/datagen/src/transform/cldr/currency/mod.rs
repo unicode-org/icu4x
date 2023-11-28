@@ -227,11 +227,7 @@ fn extract_currency_essentials<'data>(
                 && short_place_holder_index.is_none()
                 && narrow_place_holder_index.is_none()
             {
-                CurrencyPatternSelector {
-                    currency_pattern: None,
-                    standard: true,
-                    standard_alpha_next_to_number: false,
-                }
+                continue;
             } else if short_pattern_standard == PatternSelection::StandardAlphaNextToNumber
                 && narrow_pattern_standard == PatternSelection::StandardAlphaNextToNumber
                 && short_place_holder_index.is_none()
@@ -239,7 +235,6 @@ fn extract_currency_essentials<'data>(
             {
                 CurrencyPatternSelector {
                     currency_pattern: None,
-                    standard: false,
                     standard_alpha_next_to_number: true,
                 }
             } else {
@@ -250,7 +245,6 @@ fn extract_currency_essentials<'data>(
                         short_place_holder_index,
                         narrow_place_holder_index,
                     }),
-                    standard: false,
                     standard_alpha_next_to_number: false,
                 }
             }

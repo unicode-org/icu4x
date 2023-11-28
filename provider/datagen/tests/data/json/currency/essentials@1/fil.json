@@ -2,7 +2,6 @@
   "currency_patterns_map": {
     "AED": {
       "currency_pattern": null,
-      "standard": false,
       "standard_alpha_next_to_number": true
     },
     "AFN": {
@@ -14,12 +13,10 @@
           "Index": 0
         }
       },
-      "standard": false,
       "standard_alpha_next_to_number": false
     },
     "ALL": {
       "currency_pattern": null,
-      "standard": false,
       "standard_alpha_next_to_number": true
     },
     "AMD": {
@@ -31,12 +28,10 @@
           "Index": 1
         }
       },
-      "standard": false,
       "standard_alpha_next_to_number": false
     },
     "ANG": {
       "currency_pattern": null,
-      "standard": false,
       "standard_alpha_next_to_number": true
     },
     "AOA": {
@@ -48,7 +43,6 @@
           "Index": 2
         }
       },
-      "standard": false,
       "standard_alpha_next_to_number": false
     },
     "ARS": {
@@ -60,7 +54,6 @@
           "Index": 3
         }
       },
-      "standard": false,
       "standard_alpha_next_to_number": false
     },
     "AUD": {
@@ -74,12 +67,10 @@
           "Index": 3
         }
       },
-      "standard": false,
       "standard_alpha_next_to_number": false
     },
     "AWG": {
       "currency_pattern": null,
-      "standard": false,
       "standard_alpha_next_to_number": true
     },
     "AZN": {
@@ -91,7 +82,6 @@
           "Index": 5
         }
       },
-      "standard": false,
       "standard_alpha_next_to_number": false
     },
     "BAM": {
@@ -103,7 +93,6 @@
           "Index": 6
         }
       },
-      "standard": false,
       "standard_alpha_next_to_number": false
     },
     "BBD": {
@@ -115,7 +104,6 @@
           "Index": 3
         }
       },
-      "standard": false,
       "standard_alpha_next_to_number": false
     },
     "BDT": {
@@ -127,22 +115,18 @@
           "Index": 7
         }
       },
-      "standard": false,
       "standard_alpha_next_to_number": false
     },
     "BGN": {
       "currency_pattern": null,
-      "standard": false,
       "standard_alpha_next_to_number": true
     },
     "BHD": {
       "currency_pattern": null,
-      "standard": false,
       "standard_alpha_next_to_number": true
     },
     "BIF": {
       "currency_pattern": null,
-      "standard": false,
       "standard_alpha_next_to_number": true
     },
     "BMD": {
@@ -154,7 +138,6 @@
           "Index": 3
         }
       },
-      "standard": false,
       "standard_alpha_next_to_number": false
     },
     "BND": {
@@ -166,7 +149,6 @@
           "Index": 3
         }
       },
-      "standard": false,
       "standard_alpha_next_to_number": false
     },
     "BOB": {
@@ -178,7 +160,6 @@
           "Index": 8
         }
       },
-      "standard": false,
       "standard_alpha_next_to_number": false
     },
     "BRL": {
@@ -192,7 +173,6 @@
           "Index": 9
         }
       },
-      "standard": false,
       "standard_alpha_next_to_number": false
     },
     "BSD": {
@@ -204,12 +184,10 @@
           "Index": 3
         }
       },
-      "standard": false,
       "standard_alpha_next_to_number": false
     },
     "BTN": {
       "currency_pattern": null,
-      "standard": false,
       "standard_alpha_next_to_number": true
     },
     "BWP": {
@@ -221,7 +199,6 @@
           "Index": 10
         }
       },
-      "standard": false,
       "standard_alpha_next_to_number": false
     },
     "BYN": {
@@ -233,12 +210,10 @@
           "Index": 11
         }
       },
-      "standard": false,
       "standard_alpha_next_to_number": false
     },
     "BYR": {
       "currency_pattern": null,
-      "standard": false,
       "standard_alpha_next_to_number": true
     },
     "BZD": {
@@ -250,7 +225,6 @@
           "Index": 3
         }
       },
-      "standard": false,
       "standard_alpha_next_to_number": false
     },
     "CAD": {
@@ -264,17 +238,14 @@
           "Index": 3
         }
       },
-      "standard": false,
       "standard_alpha_next_to_number": false
     },
     "CDF": {
       "currency_pattern": null,
-      "standard": false,
       "standard_alpha_next_to_number": true
     },
     "CHF": {
       "currency_pattern": null,
-      "standard": false,
       "standard_alpha_next_to_number": true
     },
     "CLP": {
@@ -286,12 +257,10 @@
           "Index": 3
         }
       },
-      "standard": false,
       "standard_alpha_next_to_number": false
     },
     "CNH": {
       "currency_pattern": null,
-      "standard": false,
       "standard_alpha_next_to_number": true
     },
     "CNY": {
@@ -305,7 +274,6 @@
           "Index": 14
         }
       },
-      "standard": false,
       "standard_alpha_next_to_number": false
     },
     "COP": {
@@ -317,7 +285,6 @@
           "Index": 3
         }
       },
-      "standard": false,
       "standard_alpha_next_to_number": false
     },
     "CRC": {
@@ -329,7 +296,6 @@
           "Index": 15
         }
       },
-      "standard": false,
       "standard_alpha_next_to_number": false
     },
     "CUC": {
@@ -341,7 +307,6 @@
           "Index": 3
         }
       },
-      "standard": false,
       "standard_alpha_next_to_number": false
     },
     "CUP": {
@@ -353,12 +318,10 @@
           "Index": 3
         }
       },
-      "standard": false,
       "standard_alpha_next_to_number": false
     },
     "CVE": {
       "currency_pattern": null,
-      "standard": false,
       "standard_alpha_next_to_number": true
     },
     "CZK": {
@@ -370,17 +333,14 @@
           "Index": 16
         }
       },
-      "standard": false,
       "standard_alpha_next_to_number": false
     },
     "DEM": {
       "currency_pattern": null,
-      "standard": false,
       "standard_alpha_next_to_number": true
     },
     "DJF": {
       "currency_pattern": null,
-      "standard": false,
       "standard_alpha_next_to_number": true
     },
     "DKK": {
@@ -392,7 +352,6 @@
           "Index": 17
         }
       },
-      "standard": false,
       "standard_alpha_next_to_number": false
     },
     "DOP": {
@@ -404,17 +363,14 @@
           "Index": 3
         }
       },
-      "standard": false,
       "standard_alpha_next_to_number": false
     },
     "DZD": {
       "currency_pattern": null,
-      "standard": false,
       "standard_alpha_next_to_number": true
     },
     "EEK": {
       "currency_pattern": null,
-      "standard": false,
       "standard_alpha_next_to_number": true
     },
     "EGP": {
@@ -426,12 +382,10 @@
           "Index": 18
         }
       },
-      "standard": false,
       "standard_alpha_next_to_number": false
     },
     "ERN": {
       "currency_pattern": null,
-      "standard": false,
       "standard_alpha_next_to_number": true
     },
     "ESP": {
@@ -443,12 +397,10 @@
           "Index": 19
         }
       },
-      "standard": false,
       "standard_alpha_next_to_number": false
     },
     "ETB": {
       "currency_pattern": null,
-      "standard": false,
       "standard_alpha_next_to_number": true
     },
     "EUR": {
@@ -462,7 +414,6 @@
           "Index": 20
         }
       },
-      "standard": false,
       "standard_alpha_next_to_number": false
     },
     "FJD": {
@@ -474,7 +425,6 @@
           "Index": 3
         }
       },
-      "standard": false,
       "standard_alpha_next_to_number": false
     },
     "FKP": {
@@ -486,12 +436,10 @@
           "Index": 21
         }
       },
-      "standard": false,
       "standard_alpha_next_to_number": false
     },
     "FRF": {
       "currency_pattern": null,
-      "standard": false,
       "standard_alpha_next_to_number": true
     },
     "GBP": {
@@ -505,7 +453,6 @@
           "Index": 21
         }
       },
-      "standard": false,
       "standard_alpha_next_to_number": false
     },
     "GEL": {
@@ -517,7 +464,6 @@
           "Index": 22
         }
       },
-      "standard": false,
       "standard_alpha_next_to_number": false
     },
     "GHS": {
@@ -529,7 +475,6 @@
           "Index": 23
         }
       },
-      "standard": false,
       "standard_alpha_next_to_number": false
     },
     "GIP": {
@@ -541,12 +486,10 @@
           "Index": 21
         }
       },
-      "standard": false,
       "standard_alpha_next_to_number": false
     },
     "GMD": {
       "currency_pattern": null,
-      "standard": false,
       "standard_alpha_next_to_number": true
     },
     "GNF": {
@@ -558,7 +501,6 @@
           "Index": 24
         }
       },
-      "standard": false,
       "standard_alpha_next_to_number": false
     },
     "GTQ": {
@@ -570,7 +512,6 @@
           "Index": 25
         }
       },
-      "standard": false,
       "standard_alpha_next_to_number": false
     },
     "GYD": {
@@ -582,7 +523,6 @@
           "Index": 3
         }
       },
-      "standard": false,
       "standard_alpha_next_to_number": false
     },
     "HKD": {
@@ -596,7 +536,6 @@
           "Index": 3
         }
       },
-      "standard": false,
       "standard_alpha_next_to_number": false
     },
     "HNL": {
@@ -608,7 +547,6 @@
           "Index": 27
         }
       },
-      "standard": false,
       "standard_alpha_next_to_number": false
     },
     "HRK": {
@@ -620,12 +558,10 @@
           "Index": 28
         }
       },
-      "standard": false,
       "standard_alpha_next_to_number": false
     },
     "HTG": {
       "currency_pattern": null,
-      "standard": false,
       "standard_alpha_next_to_number": true
     },
     "HUF": {
@@ -637,7 +573,6 @@
           "Index": 29
         }
       },
-      "standard": false,
       "standard_alpha_next_to_number": false
     },
     "IDR": {
@@ -649,7 +584,6 @@
           "Index": 30
         }
       },
-      "standard": false,
       "standard_alpha_next_to_number": false
     },
     "ILS": {
@@ -663,7 +597,6 @@
           "Index": 31
         }
       },
-      "standard": false,
       "standard_alpha_next_to_number": false
     },
     "INR": {
@@ -677,17 +610,14 @@
           "Index": 32
         }
       },
-      "standard": false,
       "standard_alpha_next_to_number": false
     },
     "IQD": {
       "currency_pattern": null,
-      "standard": false,
       "standard_alpha_next_to_number": true
     },
     "IRR": {
       "currency_pattern": null,
-      "standard": false,
       "standard_alpha_next_to_number": true
     },
     "ISK": {
@@ -699,7 +629,6 @@
           "Index": 17
         }
       },
-      "standard": false,
       "standard_alpha_next_to_number": false
     },
     "JMD": {
@@ -711,12 +640,10 @@
           "Index": 3
         }
       },
-      "standard": false,
       "standard_alpha_next_to_number": false
     },
     "JOD": {
       "currency_pattern": null,
-      "standard": false,
       "standard_alpha_next_to_number": true
     },
     "JPY": {
@@ -730,12 +657,10 @@
           "Index": 14
         }
       },
-      "standard": false,
       "standard_alpha_next_to_number": false
     },
     "KES": {
       "currency_pattern": null,
-      "standard": false,
       "standard_alpha_next_to_number": true
     },
     "KGS": {
@@ -747,7 +672,6 @@
           "Index": 33
         }
       },
-      "standard": false,
       "standard_alpha_next_to_number": false
     },
     "KHR": {
@@ -759,7 +683,6 @@
           "Index": 34
         }
       },
-      "standard": false,
       "standard_alpha_next_to_number": false
     },
     "KMF": {
@@ -771,7 +694,6 @@
           "Index": 35
         }
       },
-      "standard": false,
       "standard_alpha_next_to_number": false
     },
     "KPW": {
@@ -783,7 +705,6 @@
           "Index": 36
         }
       },
-      "standard": false,
       "standard_alpha_next_to_number": false
     },
     "KRW": {
@@ -797,12 +718,10 @@
           "Index": 36
         }
       },
-      "standard": false,
       "standard_alpha_next_to_number": false
     },
     "KWD": {
       "currency_pattern": null,
-      "standard": false,
       "standard_alpha_next_to_number": true
     },
     "KYD": {
@@ -814,7 +733,6 @@
           "Index": 3
         }
       },
-      "standard": false,
       "standard_alpha_next_to_number": false
     },
     "KZT": {
@@ -826,7 +744,6 @@
           "Index": 37
         }
       },
-      "standard": false,
       "standard_alpha_next_to_number": false
     },
     "LAK": {
@@ -838,7 +755,6 @@
           "Index": 38
         }
       },
-      "standard": false,
       "standard_alpha_next_to_number": false
     },
     "LBP": {
@@ -850,7 +766,6 @@
           "Index": 39
         }
       },
-      "standard": false,
       "standard_alpha_next_to_number": false
     },
     "LKR": {
@@ -862,7 +777,6 @@
           "Index": 40
         }
       },
-      "standard": false,
       "standard_alpha_next_to_number": false
     },
     "LRD": {
@@ -874,12 +788,10 @@
           "Index": 3
         }
       },
-      "standard": false,
       "standard_alpha_next_to_number": false
     },
     "LSL": {
       "currency_pattern": null,
-      "standard": false,
       "standard_alpha_next_to_number": true
     },
     "LTL": {
@@ -891,7 +803,6 @@
           "Index": 41
         }
       },
-      "standard": false,
       "standard_alpha_next_to_number": false
     },
     "LVL": {
@@ -903,22 +814,18 @@
           "Index": 42
         }
       },
-      "standard": false,
       "standard_alpha_next_to_number": false
     },
     "LYD": {
       "currency_pattern": null,
-      "standard": false,
       "standard_alpha_next_to_number": true
     },
     "MAD": {
       "currency_pattern": null,
-      "standard": false,
       "standard_alpha_next_to_number": true
     },
     "MDL": {
       "currency_pattern": null,
-      "standard": false,
       "standard_alpha_next_to_number": true
     },
     "MGA": {
@@ -930,12 +837,10 @@
           "Index": 43
         }
       },
-      "standard": false,
       "standard_alpha_next_to_number": false
     },
     "MKD": {
       "currency_pattern": null,
-      "standard": false,
       "standard_alpha_next_to_number": true
     },
     "MMK": {
@@ -947,7 +852,6 @@
           "Index": 44
         }
       },
-      "standard": false,
       "standard_alpha_next_to_number": false
     },
     "MNT": {
@@ -959,22 +863,18 @@
           "Index": 45
         }
       },
-      "standard": false,
       "standard_alpha_next_to_number": false
     },
     "MOP": {
       "currency_pattern": null,
-      "standard": false,
       "standard_alpha_next_to_number": true
     },
     "MRO": {
       "currency_pattern": null,
-      "standard": false,
       "standard_alpha_next_to_number": true
     },
     "MRU": {
       "currency_pattern": null,
-      "standard": false,
       "standard_alpha_next_to_number": true
     },
     "MUR": {
@@ -986,17 +886,14 @@
           "Index": 40
         }
       },
-      "standard": false,
       "standard_alpha_next_to_number": false
     },
     "MVR": {
       "currency_pattern": null,
-      "standard": false,
       "standard_alpha_next_to_number": true
     },
     "MWK": {
       "currency_pattern": null,
-      "standard": false,
       "standard_alpha_next_to_number": true
     },
     "MXN": {
@@ -1010,7 +907,6 @@
           "Index": 3
         }
       },
-      "standard": false,
       "standard_alpha_next_to_number": false
     },
     "MYR": {
@@ -1022,12 +918,10 @@
           "Index": 47
         }
       },
-      "standard": false,
       "standard_alpha_next_to_number": false
     },
     "MZN": {
       "currency_pattern": null,
-      "standard": false,
       "standard_alpha_next_to_number": true
     },
     "NAD": {
@@ -1039,7 +933,6 @@
           "Index": 3
         }
       },
-      "standard": false,
       "standard_alpha_next_to_number": false
     },
     "NGN": {
@@ -1051,7 +944,6 @@
           "Index": 48
         }
       },
-      "standard": false,
       "standard_alpha_next_to_number": false
     },
     "NIO": {
@@ -1063,7 +955,6 @@
           "Index": 49
         }
       },
-      "standard": false,
       "standard_alpha_next_to_number": false
     },
     "NOK": {
@@ -1075,7 +966,6 @@
           "Index": 17
         }
       },
-      "standard": false,
       "standard_alpha_next_to_number": false
     },
     "NPR": {
@@ -1087,7 +977,6 @@
           "Index": 40
         }
       },
-      "standard": false,
       "standard_alpha_next_to_number": false
     },
     "NZD": {
@@ -1101,27 +990,22 @@
           "Index": 3
         }
       },
-      "standard": false,
       "standard_alpha_next_to_number": false
     },
     "OMR": {
       "currency_pattern": null,
-      "standard": false,
       "standard_alpha_next_to_number": true
     },
     "PAB": {
       "currency_pattern": null,
-      "standard": false,
       "standard_alpha_next_to_number": true
     },
     "PEN": {
       "currency_pattern": null,
-      "standard": false,
       "standard_alpha_next_to_number": true
     },
     "PGK": {
       "currency_pattern": null,
-      "standard": false,
       "standard_alpha_next_to_number": true
     },
     "PHP": {
@@ -1135,7 +1019,6 @@
           "Index": 51
         }
       },
-      "standard": false,
       "standard_alpha_next_to_number": false
     },
     "PKR": {
@@ -1147,7 +1030,6 @@
           "Index": 40
         }
       },
-      "standard": false,
       "standard_alpha_next_to_number": false
     },
     "PLN": {
@@ -1159,7 +1041,6 @@
           "Index": 52
         }
       },
-      "standard": false,
       "standard_alpha_next_to_number": false
     },
     "PYG": {
@@ -1171,12 +1052,10 @@
           "Index": 53
         }
       },
-      "standard": false,
       "standard_alpha_next_to_number": false
     },
     "QAR": {
       "currency_pattern": null,
-      "standard": false,
       "standard_alpha_next_to_number": true
     },
     "RON": {
@@ -1188,12 +1067,10 @@
           "Index": 54
         }
       },
-      "standard": false,
       "standard_alpha_next_to_number": false
     },
     "RSD": {
       "currency_pattern": null,
-      "standard": false,
       "standard_alpha_next_to_number": true
     },
     "RUB": {
@@ -1205,7 +1082,6 @@
           "Index": 55
         }
       },
-      "standard": false,
       "standard_alpha_next_to_number": false
     },
     "RWF": {
@@ -1217,12 +1093,10 @@
           "Index": 56
         }
       },
-      "standard": false,
       "standard_alpha_next_to_number": false
     },
     "SAR": {
       "currency_pattern": null,
-      "standard": false,
       "standard_alpha_next_to_number": true
     },
     "SBD": {
@@ -1234,17 +1108,14 @@
           "Index": 3
         }
       },
-      "standard": false,
       "standard_alpha_next_to_number": false
     },
     "SCR": {
       "currency_pattern": null,
-      "standard": false,
       "standard_alpha_next_to_number": true
     },
     "SDG": {
       "currency_pattern": null,
-      "standard": false,
       "standard_alpha_next_to_number": true
     },
     "SEK": {
@@ -1256,7 +1127,6 @@
           "Index": 17
         }
       },
-      "standard": false,
       "standard_alpha_next_to_number": false
     },
     "SGD": {
@@ -1268,7 +1138,6 @@
           "Index": 3
         }
       },
-      "standard": false,
       "standard_alpha_next_to_number": false
     },
     "SHP": {
@@ -1280,32 +1149,26 @@
           "Index": 21
         }
       },
-      "standard": false,
       "standard_alpha_next_to_number": false
     },
     "SIT": {
       "currency_pattern": null,
-      "standard": false,
       "standard_alpha_next_to_number": true
     },
     "SKK": {
       "currency_pattern": null,
-      "standard": false,
       "standard_alpha_next_to_number": true
     },
     "SLE": {
       "currency_pattern": null,
-      "standard": false,
       "standard_alpha_next_to_number": true
     },
     "SLL": {
       "currency_pattern": null,
-      "standard": false,
       "standard_alpha_next_to_number": true
     },
     "SOS": {
       "currency_pattern": null,
-      "standard": false,
       "standard_alpha_next_to_number": true
     },
     "SRD": {
@@ -1317,7 +1180,6 @@
           "Index": 3
         }
       },
-      "standard": false,
       "standard_alpha_next_to_number": false
     },
     "SSP": {
@@ -1329,12 +1191,10 @@
           "Index": 21
         }
       },
-      "standard": false,
       "standard_alpha_next_to_number": false
     },
     "STD": {
       "currency_pattern": null,
-      "standard": false,
       "standard_alpha_next_to_number": true
     },
     "STN": {
@@ -1346,7 +1206,6 @@
           "Index": 57
         }
       },
-      "standard": false,
       "standard_alpha_next_to_number": false
     },
     "SYP": {
@@ -1358,12 +1217,10 @@
           "Index": 21
         }
       },
-      "standard": false,
       "standard_alpha_next_to_number": false
     },
     "SZL": {
       "currency_pattern": null,
-      "standard": false,
       "standard_alpha_next_to_number": true
     },
     "THB": {
@@ -1377,22 +1234,18 @@
           "Index": 58
         }
       },
-      "standard": false,
       "standard_alpha_next_to_number": false
     },
     "TJS": {
       "currency_pattern": null,
-      "standard": false,
       "standard_alpha_next_to_number": true
     },
     "TMT": {
       "currency_pattern": null,
-      "standard": false,
       "standard_alpha_next_to_number": true
     },
     "TND": {
       "currency_pattern": null,
-      "standard": false,
       "standard_alpha_next_to_number": true
     },
     "TOP": {
@@ -1404,7 +1257,6 @@
           "Index": 59
         }
       },
-      "standard": false,
       "standard_alpha_next_to_number": false
     },
     "TRY": {
@@ -1416,7 +1268,6 @@
           "Index": 60
         }
       },
-      "standard": false,
       "standard_alpha_next_to_number": false
     },
     "TTD": {
@@ -1428,7 +1279,6 @@
           "Index": 3
         }
       },
-      "standard": false,
       "standard_alpha_next_to_number": false
     },
     "TWD": {
@@ -1442,12 +1292,10 @@
           "Index": 61
         }
       },
-      "standard": false,
       "standard_alpha_next_to_number": false
     },
     "TZS": {
       "currency_pattern": null,
-      "standard": false,
       "standard_alpha_next_to_number": true
     },
     "UAH": {
@@ -1459,12 +1307,10 @@
           "Index": 62
         }
       },
-      "standard": false,
       "standard_alpha_next_to_number": false
     },
     "UGX": {
       "currency_pattern": null,
-      "standard": false,
       "standard_alpha_next_to_number": true
     },
     "USD": {
@@ -1478,7 +1324,6 @@
           "Index": 3
         }
       },
-      "standard": false,
       "standard_alpha_next_to_number": false
     },
     "UYU": {
@@ -1490,17 +1335,14 @@
           "Index": 3
         }
       },
-      "standard": false,
       "standard_alpha_next_to_number": false
     },
     "UZS": {
       "currency_pattern": null,
-      "standard": false,
       "standard_alpha_next_to_number": true
     },
     "VEB": {
       "currency_pattern": null,
-      "standard": false,
       "standard_alpha_next_to_number": true
     },
     "VEF": {
@@ -1512,12 +1354,10 @@
           "Index": 8
         }
       },
-      "standard": false,
       "standard_alpha_next_to_number": false
     },
     "VES": {
       "currency_pattern": null,
-      "standard": false,
       "standard_alpha_next_to_number": true
     },
     "VND": {
@@ -1531,17 +1371,14 @@
           "Index": 63
         }
       },
-      "standard": false,
       "standard_alpha_next_to_number": false
     },
     "VUV": {
       "currency_pattern": null,
-      "standard": false,
       "standard_alpha_next_to_number": true
     },
     "WST": {
       "currency_pattern": null,
-      "standard": false,
       "standard_alpha_next_to_number": true
     },
     "XAF": {
@@ -1553,7 +1390,6 @@
         },
         "narrow_place_holder_index": null
       },
-      "standard": false,
       "standard_alpha_next_to_number": false
     },
     "XCD": {
@@ -1567,7 +1403,6 @@
           "Index": 3
         }
       },
-      "standard": false,
       "standard_alpha_next_to_number": false
     },
     "XOF": {
@@ -1579,7 +1414,6 @@
         },
         "narrow_place_holder_index": null
       },
-      "standard": false,
       "standard_alpha_next_to_number": false
     },
     "XPF": {
@@ -1591,7 +1425,6 @@
         },
         "narrow_place_holder_index": null
       },
-      "standard": false,
       "standard_alpha_next_to_number": false
     },
     "XXX": {
@@ -1603,12 +1436,10 @@
         },
         "narrow_place_holder_index": null
       },
-      "standard": false,
       "standard_alpha_next_to_number": false
     },
     "YER": {
       "currency_pattern": null,
-      "standard": false,
       "standard_alpha_next_to_number": true
     },
     "ZAR": {
@@ -1620,12 +1451,10 @@
           "Index": 69
         }
       },
-      "standard": false,
       "standard_alpha_next_to_number": false
     },
     "ZMK": {
       "currency_pattern": null,
-      "standard": false,
       "standard_alpha_next_to_number": true
     },
     "ZMW": {
@@ -1637,7 +1466,6 @@
           "Index": 70
         }
       },
-      "standard": false,
       "standard_alpha_next_to_number": false
     }
   },

@@ -65,10 +65,6 @@ pub struct CurrencyPatternSelector {
     /// Contains the currency pattern.
     pub currency_pattern: Option<CurrencyPattern>,
 
-    /// This means that the short_pattern_standard and narrow_pattern_standard are Standard.
-    /// Also, the short_place_holder_index and narrow_place_holder_index are None.
-    pub standard: bool,
-
     /// This means that the short_pattern_standard and narrow_pattern_standard are StandardAlphaNextToNumber.
     /// Also, the short_place_holder_index and narrow_place_holder_index are None.
     pub standard_alpha_next_to_number: bool,
