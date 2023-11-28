@@ -60,9 +60,9 @@ final class ComposingNormalizer implements ffi.Finalizable {
   /// Throws [Error] on failure.
   String normalize(String s) {
     final temp = ffi2.Arena();
-    final sLength = s.utf8Length;
+    final sView = s.utf8View;;
     final writeable = _Writeable();
-    final result = _ICU4XComposingNormalizer_normalize(_underlying, Utf8Encoder().allocConvert(temp, s, length: sLength), sLength, writeable._underlying);
+    final result = _ICU4XComposingNormalizer_normalize(_underlying, sView.pointer(temp), sView.length, writeable._underlying);
     temp.releaseAll();
     if (!result.isOk) {
       throw Error.values.firstWhere((v) => v._underlying == result.union.err);
@@ -82,8 +82,8 @@ final class ComposingNormalizer implements ffi.Finalizable {
   /// See the [Rust documentation for `is_normalized_utf8`](https://docs.rs/icu/latest/icu/normalizer/struct.ComposingNormalizer.html#method.is_normalized_utf8) for more information.
   bool isNormalized(String s) {
     final temp = ffi2.Arena();
-    final sLength = s.utf8Length;
-    final result = _ICU4XComposingNormalizer_is_normalized(_underlying, Utf8Encoder().allocConvert(temp, s, length: sLength), sLength);
+    final sView = s.utf8View;;
+    final result = _ICU4XComposingNormalizer_is_normalized(_underlying, sView.pointer(temp), sView.length);
     temp.releaseAll();
     return result;
   }

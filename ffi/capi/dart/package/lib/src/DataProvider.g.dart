@@ -40,7 +40,8 @@ final class DataProvider implements ffi.Finalizable {
   /// Throws [Error] on failure.
   factory DataProvider.fromByteSlice(Uint8List blob) {
     final temp = ffi2.Arena();
-    final result = _ICU4XDataProvider_create_from_byte_slice(blob.copy(temp), blob.length);
+    final blobView = blob;
+    final result = _ICU4XDataProvider_create_from_byte_slice(blobView.pointer(temp), blobView.length);
     temp.releaseAll();
     if (!result.isOk) {
       throw Error.values.firstWhere((v) => v._underlying == result.union.err);
