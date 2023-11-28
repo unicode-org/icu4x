@@ -31,8 +31,8 @@ jobs:
         echo "📖 CPP Docs Preview"
         echo "http://${{ env.GCP_PR_BUCKET_ID }}.storage.googleapis.com/gha/${{ github.event.pull_request.head.sha }}/ffi/cpp/index.html"
         echo
-        echo "📖 JS Docs Preview"
-        echo "http://${{ env.GCP_PR_BUCKET_ID }}.storage.googleapis.com/gha/${{ github.event.pull_request.head.sha }}/ffi/js/index.html"
+        echo "📖 TS Docs Preview"
+        echo "http://${{ env.GCP_PR_BUCKET_ID }}.storage.googleapis.com/gha/${{ github.event.pull_request.head.sha }}/ffi/ts/index.html"
         echo
         echo "📖 Dart Docs Preview"
         echo "http://${{ env.GCP_PR_BUCKET_ID }}.storage.googleapis.com/gha/${{ github.event.pull_request.head.sha }}/ffi/dart/index.html"
