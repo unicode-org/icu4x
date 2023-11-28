@@ -163,14 +163,12 @@ pub mod ffi {
         /// Creates a new [`ICU4XDate`] from the given codes, which are interpreted in the given calendar system
         #[diplomat::rust_link(icu::calendar::Date::try_new_from_codes, FnInStruct)]
         pub fn create_from_codes_in_calendar(
-            era_code: &str,
+            era_code: &DiplomatStr,
             year: i32,
-            month_code: &str,
+            month_code: &DiplomatStr,
             day: u8,
             calendar: &ICU4XCalendar,
         ) -> Result<Box<ICU4XDate>, ICU4XError> {
-            let era_code = era_code.as_bytes(); // #2520
-            let month_code = month_code.as_bytes(); // #2520
             let era = TinyAsciiStr::from_bytes(era_code)?.into();
             let month = TinyAsciiStr::from_bytes(month_code)?.into();
             let cal = calendar.0.clone();

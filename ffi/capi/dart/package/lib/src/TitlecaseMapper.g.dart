@@ -41,11 +41,11 @@ final class TitlecaseMapper implements ffi.Finalizable {
   ///
   /// Throws [Error] on failure.
   String titlecaseSegmentV1(String s, Locale locale, TitlecaseOptionsV1 options) {
-    final alloc = ffi2.Arena();
-    final sSlice = _SliceFfi2Utf8._fromDart(s, alloc);
+    final temp = ffi2.Arena();
+    final sLength = s.utf8Length;
     final writeable = _Writeable();
-    final result = _ICU4XTitlecaseMapper_titlecase_segment_v1(_underlying, sSlice._bytes, sSlice._length, locale._underlying, options._underlying, writeable._underlying);
-    alloc.releaseAll();
+    final result = _ICU4XTitlecaseMapper_titlecase_segment_v1(_underlying, Utf8Encoder().allocConvert(temp, s, length: sLength), sLength, locale._underlying, options._underlying, writeable._underlying);
+    temp.releaseAll();
     if (!result.isOk) {
       throw Error.values.firstWhere((v) => v._underlying == result.union.err);
     }
@@ -54,6 +54,6 @@ final class TitlecaseMapper implements ffi.Finalizable {
 
   // ignore: non_constant_identifier_names
   static final _ICU4XTitlecaseMapper_titlecase_segment_v1 =
-    _capi<ffi.NativeFunction<_ResultVoidInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi2.Utf8>, ffi.Size, ffi.Pointer<ffi.Opaque>, _TitlecaseOptionsV1Ffi, ffi.Pointer<ffi.Opaque>)>>('ICU4XTitlecaseMapper_titlecase_segment_v1')
-      .asFunction<_ResultVoidInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi2.Utf8>, int, ffi.Pointer<ffi.Opaque>, _TitlecaseOptionsV1Ffi, ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
+    _capi<ffi.NativeFunction<_ResultVoidInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Uint8>, ffi.Size, ffi.Pointer<ffi.Opaque>, _TitlecaseOptionsV1Ffi, ffi.Pointer<ffi.Opaque>)>>('ICU4XTitlecaseMapper_titlecase_segment_v1')
+      .asFunction<_ResultVoidInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Uint8>, int, ffi.Pointer<ffi.Opaque>, _TitlecaseOptionsV1Ffi, ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
 }

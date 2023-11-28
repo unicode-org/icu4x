@@ -36,30 +36,13 @@ final class GraphemeClusterSegmenter implements ffi.Finalizable {
     _capi<ffi.NativeFunction<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>>('ICU4XGraphemeClusterSegmenter_create')
       .asFunction<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
 
-  /// Segments a (potentially ill-formed) UTF-8 string.
-  ///
-  /// See the [Rust documentation for `segment_utf8`](https://docs.rs/icu/latest/icu/segmenter/struct.GraphemeClusterSegmenter.html#method.segment_utf8) for more information.
-  GraphemeClusterBreakIteratorUtf8 segmentUtf8(String input) {
-    final alloc = ffi2.Arena();
-    final inputSlice = _SliceFfi2Utf8._fromDart(input, alloc);
-    final result = _ICU4XGraphemeClusterSegmenter_segment_utf8(_underlying, inputSlice._bytes, inputSlice._length);
-    alloc.releaseAll();
-    return GraphemeClusterBreakIteratorUtf8._(result);
-  }
-
-  // ignore: non_constant_identifier_names
-  static final _ICU4XGraphemeClusterSegmenter_segment_utf8 =
-    _capi<ffi.NativeFunction<ffi.Pointer<ffi.Opaque> Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi2.Utf8>, ffi.Size)>>('ICU4XGraphemeClusterSegmenter_segment_utf8')
-      .asFunction<ffi.Pointer<ffi.Opaque> Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi2.Utf8>, int)>(isLeaf: true);
-
   /// Segments a UTF-16 string.
   ///
   /// See the [Rust documentation for `segment_utf16`](https://docs.rs/icu/latest/icu/segmenter/struct.GraphemeClusterSegmenter.html#method.segment_utf16) for more information.
-  GraphemeClusterBreakIteratorUtf16 segmentUtf16(Uint16List input) {
-    final alloc = ffi2.Arena();
-    final inputSlice = _SliceFfiUint16._fromDart(input, alloc);
-    final result = _ICU4XGraphemeClusterSegmenter_segment_utf16(_underlying, inputSlice._bytes, inputSlice._length);
-    alloc.releaseAll();
+  GraphemeClusterBreakIteratorUtf16 segment(String input) {
+    final temp = ffi2.Arena();
+    final result = _ICU4XGraphemeClusterSegmenter_segment_utf16(_underlying, input.copy(temp), input.length);
+    temp.releaseAll();
     return GraphemeClusterBreakIteratorUtf16._(result);
   }
 
@@ -67,20 +50,4 @@ final class GraphemeClusterSegmenter implements ffi.Finalizable {
   static final _ICU4XGraphemeClusterSegmenter_segment_utf16 =
     _capi<ffi.NativeFunction<ffi.Pointer<ffi.Opaque> Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Uint16>, ffi.Size)>>('ICU4XGraphemeClusterSegmenter_segment_utf16')
       .asFunction<ffi.Pointer<ffi.Opaque> Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Uint16>, int)>(isLeaf: true);
-
-  /// Segments a Latin-1 string.
-  ///
-  /// See the [Rust documentation for `segment_latin1`](https://docs.rs/icu/latest/icu/segmenter/struct.GraphemeClusterSegmenter.html#method.segment_latin1) for more information.
-  GraphemeClusterBreakIteratorLatin1 segmentLatin1(Uint8List input) {
-    final alloc = ffi2.Arena();
-    final inputSlice = _SliceFfiUint8._fromDart(input, alloc);
-    final result = _ICU4XGraphemeClusterSegmenter_segment_latin1(_underlying, inputSlice._bytes, inputSlice._length);
-    alloc.releaseAll();
-    return GraphemeClusterBreakIteratorLatin1._(result);
-  }
-
-  // ignore: non_constant_identifier_names
-  static final _ICU4XGraphemeClusterSegmenter_segment_latin1 =
-    _capi<ffi.NativeFunction<ffi.Pointer<ffi.Opaque> Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Uint8>, ffi.Size)>>('ICU4XGraphemeClusterSegmenter_segment_latin1')
-      .asFunction<ffi.Pointer<ffi.Opaque> Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Uint8>, int)>(isLeaf: true);
 }

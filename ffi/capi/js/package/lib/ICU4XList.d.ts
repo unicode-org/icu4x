@@ -31,4 +31,10 @@ export class ICU4XList {
    * The number of elements in this list
    */
   len(): usize;
+
+  /**
+
+   * Whether this list is empty
+   */
+  is_empty(): boolean;
 }

@@ -1156,7 +1156,7 @@ export class ICU4XCodePointSetData {
   }
 
   static load_for_ecma262(arg_provider, arg_property_name) {
-    const buf_arg_property_name = diplomatRuntime.DiplomatBuf.str(wasm, arg_property_name);
+    const buf_arg_property_name = diplomatRuntime.DiplomatBuf.str8(wasm, arg_property_name);
     const diplomat_out = (() => {
       const diplomat_receive_buffer = wasm.diplomat_alloc(5, 4);
       wasm.ICU4XCodePointSetData_load_for_ecma262(diplomat_receive_buffer, arg_provider.underlying, buf_arg_property_name.ptr, buf_arg_property_name.size);

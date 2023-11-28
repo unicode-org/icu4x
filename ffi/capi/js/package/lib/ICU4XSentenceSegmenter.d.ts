@@ -36,7 +36,7 @@ export class ICU4XSentenceSegmenter {
 
    * See the {@link https://docs.rs/icu/latest/icu/segmenter/struct.SentenceSegmenter.html#method.segment_utf16 Rust documentation for `segment_utf16`} for more information.
    */
-  segment_utf16(input: Uint16Array): ICU4XSentenceBreakIteratorUtf16;
+  segment_utf16(input: string): ICU4XSentenceBreakIteratorUtf16;
 
   /**
 

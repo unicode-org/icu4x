@@ -37,10 +37,6 @@
 
         See the `Rust documentation for compare_utf16 <https://docs.rs/icu/latest/icu/collator/struct.Collator.html#method.compare_utf16>`__ for more information.
 
-        - Note: ``left`` should be an ArrayBuffer or TypedArray corresponding to the slice type expected by Rust.
-
-        - Note: ``right`` should be an ArrayBuffer or TypedArray corresponding to the slice type expected by Rust.
-
 
 .. js:class:: ICU4XCollatorAlternateHandling
 

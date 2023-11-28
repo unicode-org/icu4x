@@ -21,7 +21,7 @@ export class ICU4XDataProvider {
   }
 
   static create_fs(arg_path) {
-    const buf_arg_path = diplomatRuntime.DiplomatBuf.str(wasm, arg_path);
+    const buf_arg_path = diplomatRuntime.DiplomatBuf.str8(wasm, arg_path);
     const diplomat_out = (() => {
       const diplomat_receive_buffer = wasm.diplomat_alloc(5, 4);
       wasm.ICU4XDataProvider_create_fs(diplomat_receive_buffer, buf_arg_path.ptr, buf_arg_path.size);

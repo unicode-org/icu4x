@@ -24,7 +24,6 @@ final class _CodePointRangeIteratorResultFfi extends ffi.Struct {
 final class CodePointRangeIteratorResult {
   final _CodePointRangeIteratorResultFfi _underlying;
 
-  // ignore: unused_element
   CodePointRangeIteratorResult._(this._underlying);
 
   factory CodePointRangeIteratorResult() {

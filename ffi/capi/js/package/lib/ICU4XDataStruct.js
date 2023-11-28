@@ -17,12 +17,12 @@ export class ICU4XDataStruct {
   }
 
   static create_decimal_symbols_v1(arg_plus_sign_prefix, arg_plus_sign_suffix, arg_minus_sign_prefix, arg_minus_sign_suffix, arg_decimal_separator, arg_grouping_separator, arg_primary_group_size, arg_secondary_group_size, arg_min_group_size, arg_digits) {
-    const buf_arg_plus_sign_prefix = diplomatRuntime.DiplomatBuf.str(wasm, arg_plus_sign_prefix);
-    const buf_arg_plus_sign_suffix = diplomatRuntime.DiplomatBuf.str(wasm, arg_plus_sign_suffix);
-    const buf_arg_minus_sign_prefix = diplomatRuntime.DiplomatBuf.str(wasm, arg_minus_sign_prefix);
-    const buf_arg_minus_sign_suffix = diplomatRuntime.DiplomatBuf.str(wasm, arg_minus_sign_suffix);
-    const buf_arg_decimal_separator = diplomatRuntime.DiplomatBuf.str(wasm, arg_decimal_separator);
-    const buf_arg_grouping_separator = diplomatRuntime.DiplomatBuf.str(wasm, arg_grouping_separator);
+    const buf_arg_plus_sign_prefix = diplomatRuntime.DiplomatBuf.str8(wasm, arg_plus_sign_prefix);
+    const buf_arg_plus_sign_suffix = diplomatRuntime.DiplomatBuf.str8(wasm, arg_plus_sign_suffix);
+    const buf_arg_minus_sign_prefix = diplomatRuntime.DiplomatBuf.str8(wasm, arg_minus_sign_prefix);
+    const buf_arg_minus_sign_suffix = diplomatRuntime.DiplomatBuf.str8(wasm, arg_minus_sign_suffix);
+    const buf_arg_decimal_separator = diplomatRuntime.DiplomatBuf.str8(wasm, arg_decimal_separator);
+    const buf_arg_grouping_separator = diplomatRuntime.DiplomatBuf.str8(wasm, arg_grouping_separator);
     const buf_arg_digits = diplomatRuntime.DiplomatBuf.slice(wasm, arg_digits, 4);
     const diplomat_out = (() => {
       const diplomat_receive_buffer = wasm.diplomat_alloc(5, 4);
