@@ -26,8 +26,8 @@ final class PropertyValueNameToEnumMapper implements ffi.Finalizable {
   /// See the [Rust documentation for `get_strict`](https://docs.rs/icu/latest/icu/properties/names/struct.PropertyValueNameToEnumMapperBorrowed.html#method.get_strict) for more information.
   int getStrict(String name) {
     final temp = ffi2.Arena();
-    final nameLength = name.utf8Length;
-    final result = _ICU4XPropertyValueNameToEnumMapper_get_strict(_underlying, Utf8Encoder().allocConvert(temp, name, length: nameLength), nameLength);
+    final nameView = name.utf8View;;
+    final result = _ICU4XPropertyValueNameToEnumMapper_get_strict(_underlying, nameView.pointer(temp), nameView.length);
     temp.releaseAll();
     return result;
   }
@@ -44,8 +44,8 @@ final class PropertyValueNameToEnumMapper implements ffi.Finalizable {
   /// See the [Rust documentation for `get_loose`](https://docs.rs/icu/latest/icu/properties/names/struct.PropertyValueNameToEnumMapperBorrowed.html#method.get_loose) for more information.
   int getLoose(String name) {
     final temp = ffi2.Arena();
-    final nameLength = name.utf8Length;
-    final result = _ICU4XPropertyValueNameToEnumMapper_get_loose(_underlying, Utf8Encoder().allocConvert(temp, name, length: nameLength), nameLength);
+    final nameView = name.utf8View;;
+    final result = _ICU4XPropertyValueNameToEnumMapper_get_loose(_underlying, nameView.pointer(temp), nameView.length);
     temp.releaseAll();
     return result;
   }

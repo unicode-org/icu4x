@@ -40,9 +40,9 @@ final class CaseMapper implements ffi.Finalizable {
   /// Throws [Error] on failure.
   String lowercase(String s, Locale locale) {
     final temp = ffi2.Arena();
-    final sLength = s.utf8Length;
+    final sView = s.utf8View;;
     final writeable = _Writeable();
-    final result = _ICU4XCaseMapper_lowercase(_underlying, Utf8Encoder().allocConvert(temp, s, length: sLength), sLength, locale._underlying, writeable._underlying);
+    final result = _ICU4XCaseMapper_lowercase(_underlying, sView.pointer(temp), sView.length, locale._underlying, writeable._underlying);
     temp.releaseAll();
     if (!result.isOk) {
       throw Error.values.firstWhere((v) => v._underlying == result.union.err);
@@ -62,9 +62,9 @@ final class CaseMapper implements ffi.Finalizable {
   /// Throws [Error] on failure.
   String uppercase(String s, Locale locale) {
     final temp = ffi2.Arena();
-    final sLength = s.utf8Length;
+    final sView = s.utf8View;;
     final writeable = _Writeable();
-    final result = _ICU4XCaseMapper_uppercase(_underlying, Utf8Encoder().allocConvert(temp, s, length: sLength), sLength, locale._underlying, writeable._underlying);
+    final result = _ICU4XCaseMapper_uppercase(_underlying, sView.pointer(temp), sView.length, locale._underlying, writeable._underlying);
     temp.releaseAll();
     if (!result.isOk) {
       throw Error.values.firstWhere((v) => v._underlying == result.union.err);
@@ -88,9 +88,9 @@ final class CaseMapper implements ffi.Finalizable {
   /// Throws [Error] on failure.
   String titlecaseSegmentWithOnlyCaseDataV1(String s, Locale locale, TitlecaseOptionsV1 options) {
     final temp = ffi2.Arena();
-    final sLength = s.utf8Length;
+    final sView = s.utf8View;;
     final writeable = _Writeable();
-    final result = _ICU4XCaseMapper_titlecase_segment_with_only_case_data_v1(_underlying, Utf8Encoder().allocConvert(temp, s, length: sLength), sLength, locale._underlying, options._underlying, writeable._underlying);
+    final result = _ICU4XCaseMapper_titlecase_segment_with_only_case_data_v1(_underlying, sView.pointer(temp), sView.length, locale._underlying, options._underlying, writeable._underlying);
     temp.releaseAll();
     if (!result.isOk) {
       throw Error.values.firstWhere((v) => v._underlying == result.union.err);
@@ -110,9 +110,9 @@ final class CaseMapper implements ffi.Finalizable {
   /// Throws [Error] on failure.
   String fold(String s) {
     final temp = ffi2.Arena();
-    final sLength = s.utf8Length;
+    final sView = s.utf8View;;
     final writeable = _Writeable();
-    final result = _ICU4XCaseMapper_fold(_underlying, Utf8Encoder().allocConvert(temp, s, length: sLength), sLength, writeable._underlying);
+    final result = _ICU4XCaseMapper_fold(_underlying, sView.pointer(temp), sView.length, writeable._underlying);
     temp.releaseAll();
     if (!result.isOk) {
       throw Error.values.firstWhere((v) => v._underlying == result.union.err);
@@ -133,9 +133,9 @@ final class CaseMapper implements ffi.Finalizable {
   /// Throws [Error] on failure.
   String foldTurkic(String s) {
     final temp = ffi2.Arena();
-    final sLength = s.utf8Length;
+    final sView = s.utf8View;;
     final writeable = _Writeable();
-    final result = _ICU4XCaseMapper_fold_turkic(_underlying, Utf8Encoder().allocConvert(temp, s, length: sLength), sLength, writeable._underlying);
+    final result = _ICU4XCaseMapper_fold_turkic(_underlying, sView.pointer(temp), sView.length, writeable._underlying);
     temp.releaseAll();
     if (!result.isOk) {
       throw Error.values.firstWhere((v) => v._underlying == result.union.err);

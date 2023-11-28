@@ -1131,8 +1131,8 @@ final class CodePointSetData implements ffi.Finalizable {
   /// Throws [Error] on failure.
   factory CodePointSetData.loadForEcma262(DataProvider provider, String propertyName) {
     final temp = ffi2.Arena();
-    final propertyNameLength = propertyName.utf8Length;
-    final result = _ICU4XCodePointSetData_load_for_ecma262(provider._underlying, Utf8Encoder().allocConvert(temp, propertyName, length: propertyNameLength), propertyNameLength);
+    final propertyNameView = propertyName.utf8View;;
+    final result = _ICU4XCodePointSetData_load_for_ecma262(provider._underlying, propertyNameView.pointer(temp), propertyNameView.length);
     temp.releaseAll();
     if (!result.isOk) {
       throw Error.values.firstWhere((v) => v._underlying == result.union.err);
