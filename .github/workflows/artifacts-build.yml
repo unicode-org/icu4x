@@ -119,7 +119,7 @@ jobs:
     - name: Install doxygen-awesome
       run: |
         cd ffi/capi/cpp/docs
-        git clone https://github.com/jothepro/doxygen-awesome-css.git
+        git clone --depth 1 https://github.com/jothepro/doxygen-awesome-css.git
         cd ../../../..
 
     - name: Build CPP docs
