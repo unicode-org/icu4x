@@ -108,16 +108,6 @@ jobs:
     - name: "Set up Google Cloud SDK"
       uses: google-github-actions/setup-gcloud@v1
 
-    - name: Install Python
-      uses: actions/setup-python@v4
-      with:
-        python-version: '3.x'
-    - name: Install Sphinx
-      uses: BSFishy/pip-action@v1
-      with:
-        packages: |
-          sphinx
-          sphinx-rtd-theme
     - name: Install Dart
       uses: dart-lang/setup-dart@v1
     - name: Install Node.js v16.18.0
@@ -126,12 +116,17 @@ jobs:
         node-version: 16.18.0
         cache: 'npm'
         cache-dependency-path: '**/package-lock.json'
-
-    - name: Build CPP docs
+    - name: Install doxygen-awesome
       run: |
         cd ffi/capi/cpp/docs
-        make html
+        git clone https://github.com/jothepro/doxygen-awesome-css.git
         cd ../../../..
+
+    - name: Build CPP docs
+      uses: mattnotmitt/doxygen-action@v1.9.5
+      with:
+          working-directory: 'ffi/capi/cpp/docs'
+          doxyfile-path: 'config.doxy'
         
     - name: Build JS docs
       run: |
@@ -148,7 +143,7 @@ jobs:
 
     - name: Upload docs to Google Cloud Storage
       run: |
-        gsutil -m cp -r ffi/capi/cpp/docs/build/html gs://${{ env.GCP_PR_BUCKET_ID }}/gha/${{ github.sha }}/ffi/cpp
+        gsutil -m cp -r ffi/capi/cpp/docs/html gs://${{ env.GCP_PR_BUCKET_ID }}/gha/${{ github.sha }}/ffi/cpp
         gsutil -m cp -r ffi/capi/js/package/docs gs://${{ env.GCP_PR_BUCKET_ID }}/gha/${{ github.sha }}/ffi/ts
         gsutil -m cp -r ffi/capi/dart/package/doc/api gs://${{ env.GCP_PR_BUCKET_ID }}/gha/${{ github.sha }}/ffi/dart
     - name: "⭐⭐⭐ Links to Uploaded Artifacts ⭐⭐⭐"
