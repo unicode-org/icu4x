@@ -467,14 +467,14 @@ impl<C: ChineseBasedWithDataLoading> ChineseBasedDateInner<C> {
 }
 
 impl<C: ChineseBasedWithDataLoading> CalendarArithmetic for C {
-    type Cache = ();
-    fn month_days(year: i32, month: u8, cache: &()) -> u8 {
+    type PrecomputedData = ();
+    fn month_days(year: i32, month: u8, _data: &Self::PrecomputedData) -> u8 {
         chinese_based::month_days::<C::CB>(year, month)
     }
 
     /// Returns the number of months in a given year, which is 13 in a leap year, and 12 in a common year.
-    fn months_for_every_year(year: i32, cache: &()) -> u8 {
-        if Self::is_leap_year(year) {
+    fn months_for_every_year(year: i32, data: &Self::PrecomputedData) -> u8 {
+        if Self::is_leap_year(year, data) {
             13
         } else {
             12
@@ -482,7 +482,7 @@ impl<C: ChineseBasedWithDataLoading> CalendarArithmetic for C {
     }
 
     /// Returns true if the given year is a leap year, and false if not.
-    fn is_leap_year(year: i32, cache: &()) -> bool {
+    fn is_leap_year(year: i32, _data: &Self::PrecomputedData) -> bool {
         if let Some(data) = C::get_compiled_data_for_year(year) {
             data.leap_month.is_some()
         } else {
@@ -494,7 +494,7 @@ impl<C: ChineseBasedWithDataLoading> CalendarArithmetic for C {
     /// The last month in a year will always be 12 in a common year or 13 in a leap year. The day is
     /// determined by finding the day immediately before the next new year and calculating the number
     /// of days since the last new moon (beginning of the last month in the year).
-    fn last_month_day_in_year(year: i32, cache: &()) -> (u8, u8) {
+    fn last_month_day_in_year(year: i32, _data: &Self::PrecomputedData) -> (u8, u8) {
         if let Some(data) = C::get_compiled_data_for_year(year) {
             if data.leap_month.is_some() {
                 (13, data.days_in_month(13))
@@ -506,7 +506,7 @@ impl<C: ChineseBasedWithDataLoading> CalendarArithmetic for C {
         }
     }
 
-    fn days_in_provided_year(year: i32, cache: &()) -> u16 {
+    fn days_in_provided_year(year: i32, _data: &Self::PrecomputedData) -> u16 {
         if let Some(data) = C::get_compiled_data_for_year(year) {
             data.last_day_of_month(13)
         } else {

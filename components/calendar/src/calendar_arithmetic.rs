@@ -44,10 +44,10 @@ pub trait CalendarArithmetic: Calendar {
     ///
     /// The name has `provided` in it to avoid clashes with Calendar
     fn days_in_provided_year(year: i32, data: &Self::PrecomputedData) -> u16 {
-        let months_in_year = Self::months_for_every_year(year);
+        let months_in_year = Self::months_for_every_year(year, data);
         let mut days: u16 = 0;
         for month in 1..=months_in_year {
-            days += Self::month_days(year, month) as u16;
+            days += Self::month_days(year, month, data) as u16;
         }
         days
     }
@@ -174,7 +174,11 @@ impl<C: CalendarArithmetic> ArithmeticDate<C> {
     }
 
     #[inline]
-    pub fn date_from_year_day_with_data(year: i32, year_day: u32, data: &C::PrecomputedData) -> ArithmeticDate<C> {
+    pub fn date_from_year_day_with_data(
+        year: i32,
+        year_day: u32,
+        data: &C::PrecomputedData,
+    ) -> ArithmeticDate<C> {
         let mut month = 1;
         let mut day = year_day as i32;
         while month <= C::months_for_every_year(year, data) {
@@ -310,10 +314,9 @@ impl<C: CalendarArithmetic> ArithmeticDate<C> {
         day: u8,
         data: &C::PrecomputedData,
     ) -> Result<Self, CalendarError> {
-        Self::new_from_ordinals(year, month, day, data)
+        Self::new_from_ordinals_with_data(year, month, day, data)
     }
 }
-
 
 /// Convenience methods for dataless calendars (the majority)
 ///
@@ -321,7 +324,7 @@ impl<C: CalendarArithmetic> ArithmeticDate<C> {
 impl<C: CalendarArithmetic<PrecomputedData = ()>> ArithmeticDate<C> {
     #[inline]
     pub fn max_date() -> Self {
-        self.max_date_with_data(&())
+        Self::max_date_with_data(&())
     }
 
     #[inline]
@@ -391,21 +394,13 @@ impl<C: CalendarArithmetic<PrecomputedData = ()>> ArithmeticDate<C> {
     /// Construct a new arithmetic date from a year, month ordinal, and day, bounds checking
     /// the month and day
     /// Originally (new_from_solar_ordinals) but renamed because it works for some lunar calendars
-    pub fn new_from_ordinals(
-        year: i32,
-        month: u8,
-        day: u8,
-    ) -> Result<Self, CalendarError> {
+    pub fn new_from_ordinals(year: i32, month: u8, day: u8) -> Result<Self, CalendarError> {
         Self::new_from_ordinals_with_data(year, month, day, &())
     }
 
     /// This fn currently just calls [`new_from_ordinals`], but exists separately for
     /// lunar calendars in case different logic needs to be implemented later.
-    pub fn new_from_lunar_ordinals(
-        year: i32,
-        month: u8,
-        day: u8,
-    ) -> Result<Self, CalendarError> {
+    pub fn new_from_lunar_ordinals(year: i32, month: u8, day: u8) -> Result<Self, CalendarError> {
         Self::new_from_lunar_ordinals_with_data(year, month, day, &())
     }
 }

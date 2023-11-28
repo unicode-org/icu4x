@@ -66,11 +66,12 @@ pub struct Coptic;
 pub struct CopticDateInner(pub(crate) ArithmeticDate<Coptic>);
 
 impl CalendarArithmetic for Coptic {
-    fn month_days(year: i32, month: u8) -> u8 {
+    type PrecomputedData = ();
+    fn month_days(year: i32, month: u8, _data: &()) -> u8 {
         if (1..=12).contains(&month) {
             30
         } else if month == 13 {
-            if Self::is_leap_year(year) {
+            if Self::is_leap_year(year, &()) {
                 6
             } else {
                 5
@@ -80,24 +81,24 @@ impl CalendarArithmetic for Coptic {
         }
     }
 
-    fn months_for_every_year(_: i32) -> u8 {
+    fn months_for_every_year(_: i32, _data: &()) -> u8 {
         13
     }
 
-    fn is_leap_year(year: i32) -> bool {
+    fn is_leap_year(year: i32, _data: &()) -> bool {
         year % 4 == 3
     }
 
-    fn last_month_day_in_year(year: i32) -> (u8, u8) {
-        if Self::is_leap_year(year) {
+    fn last_month_day_in_year(year: i32, _data: &()) -> (u8, u8) {
+        if Self::is_leap_year(year, &()) {
             (13, 6)
         } else {
             (13, 5)
         }
     }
 
-    fn days_in_provided_year(year: i32) -> u16 {
-        if Self::is_leap_year(year) {
+    fn days_in_provided_year(year: i32, _data: &()) -> u16 {
+        if Self::is_leap_year(year, &()) {
             366
         } else {
             365
@@ -177,7 +178,7 @@ impl Calendar for Coptic {
     }
 
     fn is_in_leap_year(&self, date: &Self::DateInner) -> bool {
-        Self::is_leap_year(date.0.year)
+        Self::is_leap_year(date.0.year, &())
     }
 
     fn month(&self, date: &Self::DateInner) -> types::FormattableMonth {
@@ -225,7 +226,7 @@ impl Coptic {
     }
 
     fn days_in_year_direct(year: i32) -> u16 {
-        if Coptic::is_leap_year(year) {
+        if Coptic::is_leap_year(year, &()) {
             366
         } else {
             365

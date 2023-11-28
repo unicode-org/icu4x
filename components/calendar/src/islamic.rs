@@ -146,27 +146,28 @@ impl IslamicTabular {
 pub struct IslamicDateInner(ArithmeticDate<IslamicObservational>);
 
 impl CalendarArithmetic for IslamicObservational {
-    fn month_days(year: i32, month: u8) -> u8 {
+    type PrecomputedData = ();
+    fn month_days(year: i32, month: u8, _data: &()) -> u8 {
         calendrical_calculations::islamic::observational_islamic_month_days(year, month)
     }
 
-    fn months_for_every_year(_year: i32) -> u8 {
+    fn months_for_every_year(_year: i32, _data: &()) -> u8 {
         12
     }
 
-    fn days_in_provided_year(year: i32) -> u16 {
+    fn days_in_provided_year(year: i32, _data: &()) -> u16 {
         (1..=12)
-            .map(|month| IslamicObservational::month_days(year, month) as u16)
+            .map(|month| IslamicObservational::month_days(year, month, &()) as u16)
             .sum()
     }
 
     // As an observational-lunar calendar, it does not have leap years.
-    fn is_leap_year(_year: i32) -> bool {
+    fn is_leap_year(_year: i32, _data: &()) -> bool {
         false
     }
 
-    fn last_month_day_in_year(year: i32) -> (u8, u8) {
-        let days = Self::month_days(year, 12);
+    fn last_month_day_in_year(year: i32, _data: &()) -> (u8, u8) {
+        let days = Self::month_days(year, 12, &());
 
         (12, days)
     }
@@ -240,7 +241,7 @@ impl Calendar for IslamicObservational {
     }
 
     fn is_in_leap_year(&self, date: &Self::DateInner) -> bool {
-        Self::is_leap_year(date.0.year)
+        Self::is_leap_year(date.0.year, &())
     }
 
     fn month(&self, date: &Self::DateInner) -> types::FormattableMonth {
@@ -258,7 +259,7 @@ impl Calendar for IslamicObservational {
             day_of_year: date.0.day_of_year(),
             days_in_year: date.0.days_in_year(),
             prev_year: Self::year_as_islamic(prev_year),
-            days_in_prev_year: Self::days_in_provided_year(prev_year),
+            days_in_prev_year: Self::days_in_provided_year(prev_year, &()),
             next_year: Self::year_as_islamic(next_year),
         }
     }
@@ -376,27 +377,28 @@ impl<A: AsCalendar<Calendar = IslamicObservational>> DateTime<A> {
 pub struct IslamicUmmAlQuraDateInner(ArithmeticDate<IslamicUmmAlQura>);
 
 impl CalendarArithmetic for IslamicUmmAlQura {
-    fn month_days(year: i32, month: u8) -> u8 {
+    type PrecomputedData = ();
+    fn month_days(year: i32, month: u8, _data: &()) -> u8 {
         calendrical_calculations::islamic::saudi_islamic_month_days(year, month)
     }
 
-    fn months_for_every_year(_year: i32) -> u8 {
+    fn months_for_every_year(_year: i32, _data: &()) -> u8 {
         12
     }
 
-    fn days_in_provided_year(year: i32) -> u16 {
+    fn days_in_provided_year(year: i32, _data: &()) -> u16 {
         (1..=12)
-            .map(|month| IslamicUmmAlQura::month_days(year, month) as u16)
+            .map(|month| IslamicUmmAlQura::month_days(year, month, &()) as u16)
             .sum()
     }
 
     // As an observational-lunar calendar, it does not have leap years.
-    fn is_leap_year(_year: i32) -> bool {
+    fn is_leap_year(_year: i32, _data: &()) -> bool {
         false
     }
 
-    fn last_month_day_in_year(year: i32) -> (u8, u8) {
-        let days = Self::month_days(year, 12);
+    fn last_month_day_in_year(year: i32, _data: &()) -> (u8, u8) {
+        let days = Self::month_days(year, 12, &());
 
         (12, days)
     }
@@ -469,7 +471,7 @@ impl Calendar for IslamicUmmAlQura {
     }
 
     fn is_in_leap_year(&self, date: &Self::DateInner) -> bool {
-        Self::is_leap_year(date.0.year)
+        Self::is_leap_year(date.0.year, &())
     }
 
     fn month(&self, date: &Self::DateInner) -> types::FormattableMonth {
@@ -487,7 +489,7 @@ impl Calendar for IslamicUmmAlQura {
             day_of_year: date.0.day_of_year(),
             days_in_year: date.0.days_in_year(),
             prev_year: Self::year_as_islamic(prev_year),
-            days_in_prev_year: Self::days_in_provided_year(prev_year),
+            days_in_prev_year: Self::days_in_provided_year(prev_year, &()),
             next_year: Self::year_as_islamic(next_year),
         }
     }
@@ -604,34 +606,35 @@ impl IslamicUmmAlQura {
 pub struct IslamicCivilDateInner(ArithmeticDate<IslamicCivil>);
 
 impl CalendarArithmetic for IslamicCivil {
-    fn month_days(year: i32, month: u8) -> u8 {
+    type PrecomputedData = ();
+    fn month_days(year: i32, month: u8, _data: &()) -> u8 {
         match month {
             1 | 3 | 5 | 7 | 9 | 11 => 30,
             2 | 4 | 6 | 8 | 10 => 29,
-            12 if Self::is_leap_year(year) => 30,
+            12 if Self::is_leap_year(year, &()) => 30,
             12 => 29,
             _ => 0,
         }
     }
 
-    fn months_for_every_year(_year: i32) -> u8 {
+    fn months_for_every_year(_year: i32, _data: &()) -> u8 {
         12
     }
 
-    fn days_in_provided_year(year: i32) -> u16 {
-        if Self::is_leap_year(year) {
+    fn days_in_provided_year(year: i32, _data: &()) -> u16 {
+        if Self::is_leap_year(year, &()) {
             355
         } else {
             354
         }
     }
 
-    fn is_leap_year(year: i32) -> bool {
+    fn is_leap_year(year: i32, _data: &()) -> bool {
         (14 + 11 * year).rem_euclid(30) < 11
     }
 
-    fn last_month_day_in_year(year: i32) -> (u8, u8) {
-        if Self::is_leap_year(year) {
+    fn last_month_day_in_year(year: i32, _data: &()) -> (u8, u8) {
+        if Self::is_leap_year(year, &()) {
             (12, 30)
         } else {
             (12, 29)
@@ -713,7 +716,7 @@ impl Calendar for IslamicCivil {
     }
 
     fn is_in_leap_year(&self, date: &Self::DateInner) -> bool {
-        Self::is_leap_year(date.0.year)
+        Self::is_leap_year(date.0.year, &())
     }
 
     fn month(&self, date: &Self::DateInner) -> types::FormattableMonth {
@@ -731,7 +734,7 @@ impl Calendar for IslamicCivil {
             day_of_year: date.0.day_of_year(),
             days_in_year: date.0.days_in_year(),
             prev_year: Self::year_as_islamic(prev_year),
-            days_in_prev_year: Self::days_in_provided_year(prev_year),
+            days_in_prev_year: Self::days_in_provided_year(prev_year, &()),
             next_year: Self::year_as_islamic(next_year),
         }
     }
@@ -850,34 +853,35 @@ impl<A: AsCalendar<Calendar = IslamicCivil>> DateTime<A> {
 pub struct IslamicTabularDateInner(ArithmeticDate<IslamicTabular>);
 
 impl CalendarArithmetic for IslamicTabular {
-    fn month_days(year: i32, month: u8) -> u8 {
+    type PrecomputedData = ();
+    fn month_days(year: i32, month: u8, _data: &()) -> u8 {
         match month {
             1 | 3 | 5 | 7 | 9 | 11 => 30,
             2 | 4 | 6 | 8 | 10 => 29,
-            12 if Self::is_leap_year(year) => 30,
+            12 if Self::is_leap_year(year, &()) => 30,
             12 => 29,
             _ => 0,
         }
     }
 
-    fn months_for_every_year(_year: i32) -> u8 {
+    fn months_for_every_year(_year: i32, _data: &()) -> u8 {
         12
     }
 
-    fn days_in_provided_year(year: i32) -> u16 {
-        if Self::is_leap_year(year) {
+    fn days_in_provided_year(year: i32, _data: &()) -> u16 {
+        if Self::is_leap_year(year, &()) {
             355
         } else {
             354
         }
     }
 
-    fn is_leap_year(year: i32) -> bool {
+    fn is_leap_year(year: i32, _data: &()) -> bool {
         (14 + 11 * year).rem_euclid(30) < 11
     }
 
-    fn last_month_day_in_year(year: i32) -> (u8, u8) {
-        if Self::is_leap_year(year) {
+    fn last_month_day_in_year(year: i32, _data: &()) -> (u8, u8) {
+        if Self::is_leap_year(year, &()) {
             (12, 30)
         } else {
             (12, 29)
@@ -957,7 +961,7 @@ impl Calendar for IslamicTabular {
     }
 
     fn is_in_leap_year(&self, date: &Self::DateInner) -> bool {
-        Self::is_leap_year(date.0.year)
+        Self::is_leap_year(date.0.year, &())
     }
 
     fn month(&self, date: &Self::DateInner) -> types::FormattableMonth {
@@ -975,7 +979,7 @@ impl Calendar for IslamicTabular {
             day_of_year: date.0.day_of_year(),
             days_in_year: date.0.days_in_year(),
             prev_year: Self::year_as_islamic(prev_year),
-            days_in_prev_year: Self::days_in_provided_year(prev_year),
+            days_in_prev_year: Self::days_in_provided_year(prev_year, &()),
             next_year: Self::year_as_islamic(next_year),
         }
     }

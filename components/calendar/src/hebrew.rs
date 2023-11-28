@@ -90,24 +90,25 @@ impl Hebrew {
 //  HEBREW CALENDAR
 
 impl CalendarArithmetic for Hebrew {
-    fn month_days(civil_year: i32, civil_month: u8) -> u8 {
+    type PrecomputedData = ();
+    fn month_days(civil_year: i32, civil_month: u8, _data: &()) -> u8 {
         Self::last_day_of_civil_hebrew_month(civil_year, civil_month)
     }
 
-    fn months_for_every_year(civil_year: i32) -> u8 {
+    fn months_for_every_year(civil_year: i32, _data: &()) -> u8 {
         Self::last_month_of_civil_hebrew_year(civil_year)
     }
 
-    fn days_in_provided_year(civil_year: i32) -> u16 {
+    fn days_in_provided_year(civil_year: i32, _data: &()) -> u16 {
         BookHebrew::days_in_book_hebrew_year(civil_year) // number of days don't change between BookHebrew and Civil Hebrew
     }
 
-    fn is_leap_year(civil_year: i32) -> bool {
+    fn is_leap_year(civil_year: i32, _data: &()) -> bool {
         // civil and book years are the same
         BookHebrew::is_hebrew_leap_year(civil_year)
     }
 
-    fn last_month_day_in_year(civil_year: i32) -> (u8, u8) {
+    fn last_month_day_in_year(civil_year: i32, _data: &()) -> (u8, u8) {
         let civil_month = Self::last_month_of_civil_hebrew_year(civil_year);
         let civil_day = Self::last_day_of_civil_hebrew_month(civil_year, civil_month);
 
@@ -125,7 +126,7 @@ impl Calendar for Hebrew {
         month_code: types::MonthCode,
         day: u8,
     ) -> Result<Self::DateInner, CalendarError> {
-        let is_leap_year = Self::is_leap_year(year);
+        let is_leap_year = Self::is_leap_year(year, &());
         let year = if era.0 == tinystr!(16, "hebrew") || era.0 == tinystr!(16, "am") {
             year
         } else {
@@ -229,12 +230,12 @@ impl Calendar for Hebrew {
     }
 
     fn is_in_leap_year(&self, date: &Self::DateInner) -> bool {
-        Self::is_leap_year(date.0.year)
+        Self::is_leap_year(date.0.year, &())
     }
 
     fn month(&self, date: &Self::DateInner) -> FormattableMonth {
         let mut ordinal = date.0.month;
-        let is_leap_year = Self::is_leap_year(date.0.year);
+        let is_leap_year = Self::is_leap_year(date.0.year, &());
 
         if is_leap_year {
             if ordinal == 6 {
@@ -287,7 +288,7 @@ impl Calendar for Hebrew {
             day_of_year: date.0.day_of_year(),
             days_in_year: date.0.days_in_year(),
             prev_year: Self::year_as_hebrew(prev_year),
-            days_in_prev_year: Self::days_in_provided_year(prev_year),
+            days_in_prev_year: Self::days_in_provided_year(prev_year, &()),
             next_year: Self::year_as_hebrew(next_year),
         }
     }
@@ -311,7 +312,7 @@ impl Hebrew {
     }
 
     fn last_month_of_civil_hebrew_year(civil_year: i32) -> u8 {
-        if Self::is_leap_year(civil_year) {
+        if Self::is_leap_year(civil_year, &()) {
             13 // there are 13 months in a leap year
         } else {
             12
