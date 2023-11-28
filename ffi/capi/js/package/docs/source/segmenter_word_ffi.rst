@@ -136,5 +136,3 @@
 
         See the `Rust documentation for segment_latin1 <https://docs.rs/icu/latest/icu/segmenter/struct.WordSegmenter.html#method.segment_latin1>`__ for more information.
 
-        - Note: ``input`` should be an ArrayBuffer or TypedArray corresponding to the slice type expected by Rust.
-

@@ -34,8 +34,6 @@
 
         See the `Rust documentation for reorder_visual <https://docs.rs/unicode_bidi/latest/unicode_bidi/struct.BidiInfo.html#method.reorder_visual>`__ for more information.
 
-        - Note: ``levels`` should be an ArrayBuffer or TypedArray corresponding to the slice type expected by Rust.
-
 
     .. js:function:: level_is_rtl(level)
 
