@@ -31,10 +31,11 @@ impl<C> Clone for ArithmeticDate<C> {
 pub(crate) const MAX_ITERS_FOR_DAYS_OF_MONTH: u8 = 33;
 
 pub trait CalendarArithmetic: Calendar {
-    fn month_days(year: i32, month: u8) -> u8;
-    fn months_for_every_year(year: i32) -> u8;
-    fn is_leap_year(year: i32) -> bool;
-    fn last_month_day_in_year(year: i32) -> (u8, u8);
+    type PrecomputedData;
+    fn month_days(year: i32, month: u8, data: &Self::PrecomputedData) -> u8;
+    fn months_for_every_year(year: i32, data: &Self::PrecomputedData) -> u8;
+    fn is_leap_year(year: i32, data: &Self::PrecomputedData) -> bool;
+    fn last_month_day_in_year(year: i32, data: &Self::PrecomputedData) -> (u8, u8);
 
     /// Calculate the days in a given year
     /// Can be overridden with simpler implementations for solar calendars
@@ -42,7 +43,7 @@ pub trait CalendarArithmetic: Calendar {
     /// for lunar calendars
     ///
     /// The name has `provided` in it to avoid clashes with Calendar
-    fn days_in_provided_year(year: i32) -> u16 {
+    fn days_in_provided_year(year: i32, data: &Self::PrecomputedData) -> u16 {
         let months_in_year = Self::months_for_every_year(year);
         let mut days: u16 = 0;
         for month in 1..=months_in_year {
@@ -75,9 +76,9 @@ impl<C: CalendarArithmetic> ArithmeticDate<C> {
     }
 
     #[inline]
-    pub fn max_date() -> Self {
+    pub fn max_date_with_data(data: &C::PrecomputedData) -> Self {
         let year = i32::MAX;
-        let (month, day) = C::last_month_day_in_year(year);
+        let (month, day) = C::last_month_day_in_year(year, data);
         ArithmeticDate {
             year: i32::MAX,
             month,
@@ -87,15 +88,15 @@ impl<C: CalendarArithmetic> ArithmeticDate<C> {
     }
 
     #[inline]
-    fn offset_days(&mut self, mut day_offset: i32) {
+    fn offset_days(&mut self, mut day_offset: i32, data: &C::PrecomputedData) {
         while day_offset != 0 {
-            let month_days = C::month_days(self.year, self.month);
+            let month_days = C::month_days(self.year, self.month, data);
             if self.day as i32 + day_offset > month_days as i32 {
-                self.offset_months(1);
+                self.offset_months(1, data);
                 day_offset -= month_days as i32;
             } else if self.day as i32 + day_offset < 1 {
-                self.offset_months(-1);
-                day_offset += C::month_days(self.year, self.month) as i32;
+                self.offset_months(-1, data);
+                day_offset += C::month_days(self.year, self.month, data) as i32;
             } else {
                 self.day = (self.day as i32 + day_offset) as u8;
                 day_offset = 0;
@@ -104,15 +105,15 @@ impl<C: CalendarArithmetic> ArithmeticDate<C> {
     }
 
     #[inline]
-    fn offset_months(&mut self, mut month_offset: i32) {
+    fn offset_months(&mut self, mut month_offset: i32, data: &C::PrecomputedData) {
         while month_offset != 0 {
-            let year_months = C::months_for_every_year(self.year);
+            let year_months = C::months_for_every_year(self.year, data);
             if self.month as i32 + month_offset > year_months as i32 {
                 self.year += 1;
                 month_offset -= year_months as i32;
             } else if self.month as i32 + month_offset < 1 {
                 self.year -= 1;
-                month_offset += C::months_for_every_year(self.year) as i32;
+                month_offset += C::months_for_every_year(self.year, data) as i32;
             } else {
                 self.month = (self.month as i32 + month_offset) as u8;
                 month_offset = 0
@@ -121,23 +122,24 @@ impl<C: CalendarArithmetic> ArithmeticDate<C> {
     }
 
     #[inline]
-    pub fn offset_date(&mut self, offset: DateDuration<C>) {
+    pub fn offset_date_with_data(&mut self, offset: DateDuration<C>, data: &C::PrecomputedData) {
         // For offset_date to work with lunar calendars, need to handle an edge case where the original month is not valid in the future year.
         self.year += offset.years;
 
-        self.offset_months(offset.months);
+        self.offset_months(offset.months, data);
 
         let day_offset = offset.days + offset.weeks * 7 + self.day as i32 - 1;
         self.day = 1;
-        self.offset_days(day_offset);
+        self.offset_days(day_offset, data);
     }
 
     #[inline]
-    pub fn until(
+    pub fn until_with_data(
         &self,
         date2: ArithmeticDate<C>,
         _largest_unit: DateDurationUnit,
         _smaller_unit: DateDurationUnit,
+        _data: &C::PrecomputedData,
     ) -> DateDuration<C> {
         DateDuration::new(
             self.year - date2.year,
@@ -148,35 +150,35 @@ impl<C: CalendarArithmetic> ArithmeticDate<C> {
     }
 
     #[inline]
-    pub fn days_in_year(&self) -> u16 {
-        C::days_in_provided_year(self.year)
+    pub fn days_in_year_with_data(&self, data: &C::PrecomputedData) -> u16 {
+        C::days_in_provided_year(self.year, data)
     }
 
     #[inline]
-    pub fn months_in_year(&self) -> u8 {
-        C::months_for_every_year(self.year)
+    pub fn months_in_year_with_data(&self, data: &C::PrecomputedData) -> u8 {
+        C::months_for_every_year(self.year, data)
     }
 
     #[inline]
-    pub fn days_in_month(&self) -> u8 {
-        C::month_days(self.year, self.month)
+    pub fn days_in_month_with_data(&self, data: &C::PrecomputedData) -> u8 {
+        C::month_days(self.year, self.month, data)
     }
 
     #[inline]
-    pub fn day_of_year(&self) -> u16 {
+    pub fn day_of_year_with_data(&self, data: &C::PrecomputedData) -> u16 {
         let mut day_of_year = 0;
         for month in 1..self.month {
-            day_of_year += C::month_days(self.year, month) as u16;
+            day_of_year += C::month_days(self.year, month, data) as u16;
         }
         day_of_year + (self.day as u16)
     }
 
     #[inline]
-    pub fn date_from_year_day(year: i32, year_day: u32) -> ArithmeticDate<C> {
+    pub fn date_from_year_day_with_data(year: i32, year_day: u32, data: &C::PrecomputedData) -> ArithmeticDate<C> {
         let mut month = 1;
         let mut day = year_day as i32;
-        while month <= C::months_for_every_year(year) {
-            let month_days = C::month_days(year, month) as i32;
+        while month <= C::months_for_every_year(year, data) {
+            let month_days = C::month_days(year, month, data) as i32;
             if day <= month_days {
                 break;
             } else {
@@ -185,7 +187,7 @@ impl<C: CalendarArithmetic> ArithmeticDate<C> {
             }
         }
 
-        debug_assert!(day <= C::month_days(year, month) as i32);
+        debug_assert!(day <= C::month_days(year, month, data) as i32);
         #[allow(clippy::unwrap_used)]
         // The day is expected to be within the range of month_days of C
         ArithmeticDate {
@@ -209,9 +211,10 @@ impl<C: CalendarArithmetic> ArithmeticDate<C> {
     /// Returns "und" if run with months that are out of bounds for the current
     /// calendar.
     #[inline]
-    pub fn month(&self) -> types::FormattableMonth {
+    pub fn month_with_data(&self, data: &C::PrecomputedData) -> types::FormattableMonth {
         let code = match self.month {
-            a if a > C::months_for_every_year(self.year) => tinystr!(4, "und"),
+            // todo: check if we're actually calling this in a situation where this matters
+            a if a > C::months_for_every_year(self.year, data) => tinystr!(4, "und"),
             1 => tinystr!(4, "M01"),
             2 => tinystr!(4, "M02"),
             3 => tinystr!(4, "M03"),
@@ -236,13 +239,14 @@ impl<C: CalendarArithmetic> ArithmeticDate<C> {
     /// Construct a new arithmetic date from a year, month code, and day, bounds checking
     /// the month and day
     /// Originally (new_from_solar_codes) but renamed because it works for some lunar calendars
-    pub fn new_from_codes<C2: Calendar>(
+    pub fn new_from_codes_with_data<C2: Calendar>(
         // Separate type since the debug_name() impl may differ when DateInner types
         // are nested (e.g. in GregorianDateInner)
         cal: &C2,
         year: i32,
         month_code: types::MonthCode,
         day: u8,
+        data: &C::PrecomputedData,
     ) -> Result<Self, CalendarError> {
         let month = if let Some((ordinal, false)) = month_code.parsed() {
             ordinal
@@ -253,14 +257,14 @@ impl<C: CalendarArithmetic> ArithmeticDate<C> {
             ));
         };
 
-        if month > C::months_for_every_year(year) {
+        if month > C::months_for_every_year(year, data) {
             return Err(CalendarError::UnknownMonthCode(
                 month_code.0,
                 cal.debug_name(),
             ));
         }
 
-        let max_day = C::month_days(year, month);
+        let max_day = C::month_days(year, month, data);
         if day > max_day {
             return Err(CalendarError::Overflow {
                 field: "day",
@@ -274,15 +278,20 @@ impl<C: CalendarArithmetic> ArithmeticDate<C> {
     /// Construct a new arithmetic date from a year, month ordinal, and day, bounds checking
     /// the month and day
     /// Originally (new_from_solar_ordinals) but renamed because it works for some lunar calendars
-    pub fn new_from_ordinals(year: i32, month: u8, day: u8) -> Result<Self, CalendarError> {
-        let max_month = C::months_for_every_year(year);
+    pub fn new_from_ordinals_with_data(
+        year: i32,
+        month: u8,
+        day: u8,
+        data: &C::PrecomputedData,
+    ) -> Result<Self, CalendarError> {
+        let max_month = C::months_for_every_year(year, data);
         if month > max_month {
             return Err(CalendarError::Overflow {
                 field: "month",
                 max: max_month as usize,
             });
         }
-        let max_day = C::month_days(year, month);
+        let max_day = C::month_days(year, month, data);
         if day > max_day {
             return Err(CalendarError::Overflow {
                 field: "day",
@@ -295,11 +304,111 @@ impl<C: CalendarArithmetic> ArithmeticDate<C> {
 
     /// This fn currently just calls [`new_from_ordinals`], but exists separately for
     /// lunar calendars in case different logic needs to be implemented later.
-    pub fn new_from_lunar_ordinals(year: i32, month: u8, day: u8) -> Result<Self, CalendarError> {
-        Self::new_from_ordinals(year, month, day)
+    pub fn new_from_lunar_ordinals_with_data(
+        year: i32,
+        month: u8,
+        day: u8,
+        data: &C::PrecomputedData,
+    ) -> Result<Self, CalendarError> {
+        Self::new_from_ordinals(year, month, day, data)
     }
 }
 
+
+/// Convenience methods for dataless calendars (the majority)
+///
+/// May be removed in the long run
+impl<C: CalendarArithmetic<PrecomputedData = ()>> ArithmeticDate<C> {
+    #[inline]
+    pub fn max_date() -> Self {
+        self.max_date_with_data(&())
+    }
+
+    #[inline]
+    pub fn offset_date(&mut self, offset: DateDuration<C>) {
+        self.offset_date_with_data(offset, &())
+    }
+
+    #[inline]
+    pub fn until(
+        &self,
+        date2: ArithmeticDate<C>,
+        largest_unit: DateDurationUnit,
+        smaller_unit: DateDurationUnit,
+    ) -> DateDuration<C> {
+        self.until_with_data(date2, largest_unit, smaller_unit, &())
+    }
+
+    #[inline]
+    pub fn days_in_year(&self) -> u16 {
+        self.days_in_year_with_data(&())
+    }
+
+    #[inline]
+    pub fn months_in_year(&self) -> u8 {
+        self.months_in_year_with_data(&())
+    }
+
+    #[inline]
+    pub fn days_in_month(&self) -> u8 {
+        self.days_in_month_with_data(&())
+    }
+
+    #[inline]
+    pub fn day_of_year(&self) -> u16 {
+        self.day_of_year_with_data(&())
+    }
+
+    #[inline]
+    pub fn date_from_year_day(year: i32, year_day: u32) -> ArithmeticDate<C> {
+        Self::date_from_year_day_with_data(year, year_day, &())
+    }
+
+    /// The [`types::FormattableMonth`] for the current month (with month code) for a solar calendar
+    /// Lunar calendars should not use this method and instead manually implement a month code
+    /// resolver.
+    /// Originally "solar_month" but renamed because it can be used for some lunar calendars
+    ///
+    /// Returns "und" if run with months that are out of bounds for the current
+    /// calendar.
+    #[inline]
+    pub fn month(&self) -> types::FormattableMonth {
+        self.month_with_data(&())
+    }
+
+    /// Construct a new arithmetic date from a year, month code, and day, bounds checking
+    /// the month and day
+    /// Originally (new_from_solar_codes) but renamed because it works for some lunar calendars
+    pub fn new_from_codes<C2: Calendar>(
+        cal: &C2,
+        year: i32,
+        month_code: types::MonthCode,
+        day: u8,
+    ) -> Result<Self, CalendarError> {
+        Self::new_from_codes_with_data(cal, year, month_code, day, &())
+    }
+
+    /// Construct a new arithmetic date from a year, month ordinal, and day, bounds checking
+    /// the month and day
+    /// Originally (new_from_solar_ordinals) but renamed because it works for some lunar calendars
+    pub fn new_from_ordinals(
+        year: i32,
+        month: u8,
+        day: u8,
+    ) -> Result<Self, CalendarError> {
+        Self::new_from_ordinals_with_data(year, month, day, &())
+    }
+
+    /// This fn currently just calls [`new_from_ordinals`], but exists separately for
+    /// lunar calendars in case different logic needs to be implemented later.
+    pub fn new_from_lunar_ordinals(
+        year: i32,
+        month: u8,
+        day: u8,
+    ) -> Result<Self, CalendarError> {
+        Self::new_from_lunar_ordinals_with_data(year, month, day, &())
+    }
+}
 #[cfg(test)]
 mod tests {
     use super::*;
