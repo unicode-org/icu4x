@@ -135,8 +135,10 @@ jobs:
         
     - name: Build JS docs
       run: |
-        npm -C ffi/capi/js/package ci
-        npm -C ffi/capi/js/package run doc
+        cd ffi/capi/js/package
+        npm install typedoc
+        node_modules/typedoc/bin/typedoc lib/index.d.ts --out docs --readme none --basePath lib
+        cd ../../../..
         
     - name: Build Dart docs
       run: |

@@ -17,8 +17,7 @@
   "scripts": {
     "test": "ava",
     "bench": "node bench/all.mjs",
-    "prepare": "make",
-    "doc": "typedoc lib/index.d.ts --out docs --readme none --basePath lib"
+    "prepare": "make"
   },
   "repository": {
     "type": "git",
@@ -35,7 +34,6 @@
   "license": "Apache-2.0",
   "devDependencies": {
     "ava": "^5.3.1",
-    "benchmark": "^2.1.4",
-    "typedoc": "*"
+    "benchmark": "^2.1.4"
   }
 }
