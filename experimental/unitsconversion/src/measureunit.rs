@@ -135,6 +135,10 @@ impl MeasureUnit<'_> {
             (-21, part)
         } else if let Some(part) = part.strip_prefix("yocto") {
             (-24, part)
+        } else if let Some(part) = part.strip_prefix("ronto") {
+            (-27, part)
+        } else if let Some(part) = part.strip_prefix("quecto") {
+            (-30, part)
         } else {
             (0, part)
         }
