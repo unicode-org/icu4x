@@ -62,7 +62,7 @@ impl MeasureUnit<'_> {
         if si_prefix_base_10 != 0 {
             return (
                 Some(SiPrefix {
-                    power: si_prefix_base_10.abs() as u8,
+                    power: si_prefix_base_10.unsigned_abs(),
                     base: Base::Decimal,
                     sign: if si_prefix_base_10 >= 0 {
                         Sign::Positive
@@ -78,7 +78,7 @@ impl MeasureUnit<'_> {
         if si_prefix_base_2 != 0 {
             return (
                 Some(SiPrefix {
-                    power: si_prefix_base_2.abs() as u8,
+                    power: si_prefix_base_2.unsigned_abs(),
                     base: Base::Binary,
                     sign: if si_prefix_base_2 >= 0 {
                         Sign::Positive
