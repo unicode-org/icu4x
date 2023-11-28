@@ -1,7 +1,2 @@
 */**/README.md linguist-generated=false
-c/include/** linguist-generated=true
-cpp/docs/** linguist-generated=true
-cpp/include/** linguist-generated=true
-dart/package/lib/src/** linguist-generated=true
-js/package/docs/** linguist-generated=true
-js/package/lib/** linguist-generated=true
+bindings/** linguist-generated=true
