@@ -193,7 +193,7 @@ final class CodePointMapData8 implements ffi.Finalizable {
   /// See the [Rust documentation for `grapheme_cluster_break`](https://docs.rs/icu/latest/icu/properties/maps/fn.grapheme_cluster_break.html) for more information.
   ///
   /// Throws [Error] on failure.
-  factory CodePointMapData8.graphemeClusterBreak(DataProvider provider) {
+  factory CodePointMapData8.grapheme_cluster_break(DataProvider provider) {
     final result = _ICU4XCodePointMapData8_try_grapheme_cluster_break(provider._underlying);
     if (!result.isOk) {
       throw Error.values.firstWhere((v) => v._underlying == result.union.err);

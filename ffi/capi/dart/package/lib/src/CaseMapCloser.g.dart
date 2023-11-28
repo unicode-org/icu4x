@@ -54,8 +54,8 @@ final class CaseMapCloser implements ffi.Finalizable {
   /// See the [Rust documentation for `add_string_case_closure_to`](https://docs.rs/icu/latest/icu/casemap/struct.CaseMapCloser.html#method.add_string_case_closure_to) for more information.
   bool addStringCaseClosureTo(String s, CodePointSetBuilder builder) {
     final temp = ffi2.Arena();
-    final sLength = s.utf8Length;
-    final result = _ICU4XCaseMapCloser_add_string_case_closure_to(_underlying, Utf8Encoder().allocConvert(temp, s, length: sLength), sLength, builder._underlying);
+    final sView = s.utf8View;;
+    final result = _ICU4XCaseMapCloser_add_string_case_closure_to(_underlying, sView.pointer(temp), sView.length, builder._underlying);
     temp.releaseAll();
     return result;
   }

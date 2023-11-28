@@ -40,9 +40,9 @@ final class Bcp47ToIanaMapper implements ffi.Finalizable {
   /// Throws [Error] on failure.
   String operator [](String value) {
     final temp = ffi2.Arena();
-    final valueLength = value.utf8Length;
+    final valueView = value.utf8View;;
     final writeable = _Writeable();
-    final result = _ICU4XBcp47ToIanaMapper_get(_underlying, Utf8Encoder().allocConvert(temp, value, length: valueLength), valueLength, writeable._underlying);
+    final result = _ICU4XBcp47ToIanaMapper_get(_underlying, valueView.pointer(temp), valueView.length, writeable._underlying);
     temp.releaseAll();
     if (!result.isOk) {
       throw Error.values.firstWhere((v) => v._underlying == result.union.err);
