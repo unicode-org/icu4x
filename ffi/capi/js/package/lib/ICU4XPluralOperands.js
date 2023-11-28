@@ -17,7 +17,7 @@ export class ICU4XPluralOperands {
   }
 
   static create_from_string(arg_s) {
-    const buf_arg_s = diplomatRuntime.DiplomatBuf.str(wasm, arg_s);
+    const buf_arg_s = diplomatRuntime.DiplomatBuf.str8(wasm, arg_s);
     const diplomat_out = (() => {
       const diplomat_receive_buffer = wasm.diplomat_alloc(5, 4);
       wasm.ICU4XPluralOperands_create_from_string(diplomat_receive_buffer, buf_arg_s.ptr, buf_arg_s.size);

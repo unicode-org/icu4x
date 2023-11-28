@@ -24,12 +24,16 @@ export class ICU4XList {
   }
 
   push(arg_val) {
-    const buf_arg_val = diplomatRuntime.DiplomatBuf.str(wasm, arg_val);
+    const buf_arg_val = diplomatRuntime.DiplomatBuf.str8(wasm, arg_val);
     wasm.ICU4XList_push(this.underlying, buf_arg_val.ptr, buf_arg_val.size);
     buf_arg_val.free();
   }
 
   len() {
     return wasm.ICU4XList_len(this.underlying);
+  }
+
+  is_empty() {
+    return wasm.ICU4XList_is_empty(this.underlying);
   }
 }

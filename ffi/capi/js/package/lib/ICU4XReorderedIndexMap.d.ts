@@ -24,6 +24,12 @@ export class ICU4XReorderedIndexMap {
 
   /**
 
+   * Whether this map is empty
+   */
+  is_empty(): boolean;
+
+  /**
+
    * Get element at `index`. Returns 0 when out of bounds (note that 0 is also a valid in-bounds value, please use `len()` to avoid out-of-bounds)
    */
   get(index: usize): usize;

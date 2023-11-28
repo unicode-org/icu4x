@@ -92,10 +92,10 @@ enum AnyCalendarKind {
   ///
   /// Throws [VoidError] on failure.
   factory AnyCalendarKind.forBcp47(String s) {
-    final alloc = ffi2.Arena();
-    final sSlice = _SliceFfi2Utf8._fromDart(s, alloc);
-    final result = _ICU4XAnyCalendarKind_get_for_bcp47(sSlice._bytes, sSlice._length);
-    alloc.releaseAll();
+    final temp = ffi2.Arena();
+    final sLength = s.utf8Length;
+    final result = _ICU4XAnyCalendarKind_get_for_bcp47(Utf8Encoder().allocConvert(temp, s, length: sLength), sLength);
+    temp.releaseAll();
     if (!result.isOk) {
       throw VoidError();
     }
@@ -104,8 +104,8 @@ enum AnyCalendarKind {
 
   // ignore: non_constant_identifier_names
   static final _ICU4XAnyCalendarKind_get_for_bcp47 =
-    _capi<ffi.NativeFunction<_ResultInt32Void Function(ffi.Pointer<ffi2.Utf8>, ffi.Size)>>('ICU4XAnyCalendarKind_get_for_bcp47')
-      .asFunction<_ResultInt32Void Function(ffi.Pointer<ffi2.Utf8>, int)>(isLeaf: true);
+    _capi<ffi.NativeFunction<_ResultInt32Void Function(ffi.Pointer<ffi.Uint8>, ffi.Size)>>('ICU4XAnyCalendarKind_get_for_bcp47')
+      .asFunction<_ResultInt32Void Function(ffi.Pointer<ffi.Uint8>, int)>(isLeaf: true);
 
   /// Obtain the string suitable for use in the -u-ca- extension in a BCP47 locale.
   ///

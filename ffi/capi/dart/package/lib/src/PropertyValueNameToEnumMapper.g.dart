@@ -25,17 +25,17 @@ final class PropertyValueNameToEnumMapper implements ffi.Finalizable {
   ///
   /// See the [Rust documentation for `get_strict`](https://docs.rs/icu/latest/icu/properties/names/struct.PropertyValueNameToEnumMapperBorrowed.html#method.get_strict) for more information.
   int getStrict(String name) {
-    final alloc = ffi2.Arena();
-    final nameSlice = _SliceFfi2Utf8._fromDart(name, alloc);
-    final result = _ICU4XPropertyValueNameToEnumMapper_get_strict(_underlying, nameSlice._bytes, nameSlice._length);
-    alloc.releaseAll();
+    final temp = ffi2.Arena();
+    final nameLength = name.utf8Length;
+    final result = _ICU4XPropertyValueNameToEnumMapper_get_strict(_underlying, Utf8Encoder().allocConvert(temp, name, length: nameLength), nameLength);
+    temp.releaseAll();
     return result;
   }
 
   // ignore: non_constant_identifier_names
   static final _ICU4XPropertyValueNameToEnumMapper_get_strict =
-    _capi<ffi.NativeFunction<ffi.Int16 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi2.Utf8>, ffi.Size)>>('ICU4XPropertyValueNameToEnumMapper_get_strict')
-      .asFunction<int Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi2.Utf8>, int)>(isLeaf: true);
+    _capi<ffi.NativeFunction<ffi.Int16 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Uint8>, ffi.Size)>>('ICU4XPropertyValueNameToEnumMapper_get_strict')
+      .asFunction<int Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Uint8>, int)>(isLeaf: true);
 
   /// Get the property value matching the given name, using loose matching
   ///
@@ -43,17 +43,17 @@ final class PropertyValueNameToEnumMapper implements ffi.Finalizable {
   ///
   /// See the [Rust documentation for `get_loose`](https://docs.rs/icu/latest/icu/properties/names/struct.PropertyValueNameToEnumMapperBorrowed.html#method.get_loose) for more information.
   int getLoose(String name) {
-    final alloc = ffi2.Arena();
-    final nameSlice = _SliceFfi2Utf8._fromDart(name, alloc);
-    final result = _ICU4XPropertyValueNameToEnumMapper_get_loose(_underlying, nameSlice._bytes, nameSlice._length);
-    alloc.releaseAll();
+    final temp = ffi2.Arena();
+    final nameLength = name.utf8Length;
+    final result = _ICU4XPropertyValueNameToEnumMapper_get_loose(_underlying, Utf8Encoder().allocConvert(temp, name, length: nameLength), nameLength);
+    temp.releaseAll();
     return result;
   }
 
   // ignore: non_constant_identifier_names
   static final _ICU4XPropertyValueNameToEnumMapper_get_loose =
-    _capi<ffi.NativeFunction<ffi.Int16 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi2.Utf8>, ffi.Size)>>('ICU4XPropertyValueNameToEnumMapper_get_loose')
-      .asFunction<int Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi2.Utf8>, int)>(isLeaf: true);
+    _capi<ffi.NativeFunction<ffi.Int16 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Uint8>, ffi.Size)>>('ICU4XPropertyValueNameToEnumMapper_get_loose')
+      .asFunction<int Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Uint8>, int)>(isLeaf: true);
 
   /// See the [Rust documentation for `get_name_to_enum_mapper`](https://docs.rs/icu/latest/icu/properties/struct.GeneralCategory.html#method.get_name_to_enum_mapper) for more information.
   ///

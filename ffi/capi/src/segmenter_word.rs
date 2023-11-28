@@ -97,22 +97,27 @@ pub mod ffi {
         /// Segments a (potentially ill-formed) UTF-8 string.
         #[diplomat::rust_link(icu::segmenter::WordSegmenter::segment_utf8, FnInStruct)]
         #[diplomat::rust_link(icu::segmenter::WordSegmenter::segment_str, FnInStruct, hidden)]
-        pub fn segment_utf8<'a>(&'a self, input: &'a str) -> Box<ICU4XWordBreakIteratorUtf8<'a>> {
-            let input = input.as_bytes(); // #2520
+        #[diplomat::attr(dart, disable)]
+        pub fn segment_utf8<'a>(
+            &'a self,
+            input: &'a DiplomatStr,
+        ) -> Box<ICU4XWordBreakIteratorUtf8<'a>> {
             Box::new(ICU4XWordBreakIteratorUtf8(self.0.segment_utf8(input)))
         }
 
         /// Segments a UTF-16 string.
         #[diplomat::rust_link(icu::segmenter::WordSegmenter::segment_utf16, FnInStruct)]
+        #[diplomat::attr(dart, rename = "segment")]
         pub fn segment_utf16<'a>(
             &'a self,
-            input: &'a [u16],
+            input: &'a DiplomatStr16,
         ) -> Box<ICU4XWordBreakIteratorUtf16<'a>> {
             Box::new(ICU4XWordBreakIteratorUtf16(self.0.segment_utf16(input)))
         }
 
         /// Segments a Latin-1 string.
         #[diplomat::rust_link(icu::segmenter::WordSegmenter::segment_latin1, FnInStruct)]
+        #[diplomat::attr(dart, disable)]
         pub fn segment_latin1<'a>(
             &'a self,
             input: &'a [u8],
@@ -124,7 +129,6 @@ pub mod ffi {
     impl<'a> ICU4XWordBreakIteratorUtf8<'a> {
         /// Finds the next breakpoint. Returns -1 if at the end of the string or if the index is
         /// out of range of a 32-bit signed integer.
-        #[allow(clippy::should_implement_trait)]
         #[diplomat::rust_link(icu::segmenter::WordBreakIterator::next, FnInStruct)]
         #[diplomat::rust_link(
             icu::segmenter::WordBreakIterator::Item,
@@ -154,7 +158,6 @@ pub mod ffi {
     impl<'a> ICU4XWordBreakIteratorUtf16<'a> {
         /// Finds the next breakpoint. Returns -1 if at the end of the string or if the index is
         /// out of range of a 32-bit signed integer.
-        #[allow(clippy::should_implement_trait)]
         #[diplomat::rust_link(icu::segmenter::WordBreakIterator::next, FnInStruct)]
         #[diplomat::rust_link(
             icu::segmenter::WordBreakIterator::Item,
@@ -184,7 +187,6 @@ pub mod ffi {
     impl<'a> ICU4XWordBreakIteratorLatin1<'a> {
         /// Finds the next breakpoint. Returns -1 if at the end of the string or if the index is
         /// out of range of a 32-bit signed integer.
-        #[allow(clippy::should_implement_trait)]
         #[diplomat::rust_link(icu::segmenter::WordBreakIterator::next, FnInStruct)]
         #[diplomat::rust_link(
             icu::segmenter::WordBreakIterator::Item,

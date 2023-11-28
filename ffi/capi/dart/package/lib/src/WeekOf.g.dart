@@ -16,7 +16,6 @@ final class _WeekOfFfi extends ffi.Struct {
 final class WeekOf {
   final _WeekOfFfi _underlying;
 
-  // ignore: unused_element
   WeekOf._(this._underlying);
 
   factory WeekOf() {

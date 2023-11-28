@@ -16,7 +16,6 @@ final class _TitlecaseOptionsV1Ffi extends ffi.Struct {
 final class TitlecaseOptionsV1 {
   final _TitlecaseOptionsV1Ffi _underlying;
 
-  // ignore: unused_element
   TitlecaseOptionsV1._(this._underlying);
 
   factory TitlecaseOptionsV1() {

@@ -28,6 +28,11 @@
         The number of elements in this list
 
 
+    .. cpp:function:: bool is_empty() const
+
+        Whether this list is empty
+
+
 .. cpp:class:: ICU4XListFormatter
 
     See the `Rust documentation for ListFormatter <https://docs.rs/icu/latest/icu/list/struct.ListFormatter.html>`__ for more information.

@@ -18,7 +18,6 @@ final class _DisplayNamesOptionsV1Ffi extends ffi.Struct {
 final class DisplayNamesOptionsV1 {
   final _DisplayNamesOptionsV1Ffi _underlying;
 
-  // ignore: unused_element
   DisplayNamesOptionsV1._(this._underlying);
 
   factory DisplayNamesOptionsV1() {

@@ -171,6 +171,11 @@
         The length of this map
 
 
+    .. js:method:: is_empty()
+
+        Whether this map is empty
+
+
     .. js:method:: get(index)
 
         Get element at ``index``. Returns 0 when out of bounds (note that 0 is also a valid in-bounds value, please use ``len()`` to avoid out-of-bounds)
