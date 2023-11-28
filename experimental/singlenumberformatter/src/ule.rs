@@ -7,7 +7,7 @@ use zerovec::{
     ule::{AsULE, ZeroVecError, ULE},
 };
 
-use crate::provider::{CurrencyPatterns, PatternSelection, PlaceholderValue};
+use crate::provider::{CurrencyPattern, PatternSelection, PlaceholderValue};
 
 const NO_PLACE_HOLDER: u16 = 0b0111_1111_1111; // decimal: 2047
 const USE_ISO_CODE: u16 = 0b0111_1111_1110; // decimal: 2046
@@ -56,7 +56,7 @@ const PATTERN_NARROW_SHIFT: u8 = 6;
 const INDEX_SHORT_SHIFT: u8 = 3;
 const INDEX_NARROW_SHIFT: u8 = 0;
 
-impl AsULE for CurrencyPatterns {
+impl AsULE for CurrencyPattern {
     type ULE = CurrencyPatternsULE;
 
     #[inline]
@@ -148,7 +148,7 @@ impl AsULE for CurrencyPatterns {
             }
         };
 
-        CurrencyPatterns {
+        CurrencyPattern {
             short_pattern_standard,
             narrow_pattern_standard,
             short_place_holder_index,
@@ -157,9 +157,9 @@ impl AsULE for CurrencyPatterns {
     }
 }
 
-impl<'a> ZeroMapKV<'a> for CurrencyPatterns {
-    type Container = zerovec::ZeroVec<'a, CurrencyPatterns>;
-    type Slice = zerovec::ZeroSlice<CurrencyPatterns>;
-    type GetType = <CurrencyPatterns as AsULE>::ULE;
-    type OwnedType = CurrencyPatterns;
+impl<'a> ZeroMapKV<'a> for CurrencyPattern {
+    type Container = zerovec::ZeroVec<'a, CurrencyPattern>;
+    type Slice = zerovec::ZeroSlice<CurrencyPattern>;
+    type GetType = <CurrencyPattern as AsULE>::ULE;
+    type OwnedType = CurrencyPattern;
 }

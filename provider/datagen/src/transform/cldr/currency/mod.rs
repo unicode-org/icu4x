@@ -129,7 +129,7 @@ fn extract_currency_essentials<'data>(
         None => "",
     };
 
-    let mut currency_patterns_map = BTreeMap::<UnvalidatedTinyAsciiStr<3>, CurrencyPatterns>::new();
+    let mut currency_patterns_map = BTreeMap::<UnvalidatedTinyAsciiStr<3>, CurrencyPattern>::new();
     let mut place_holders = Vec::<&str>::new();
     // A map to check if the place holder is already in the place_holders vector.
     let mut place_holders_checker_map = HashMap::<&str, u16>::new();
@@ -230,7 +230,7 @@ fn extract_currency_essentials<'data>(
 
         currency_patterns_map.insert(
             *iso,
-            CurrencyPatterns {
+            CurrencyPattern {
                 short_pattern_standard,
                 narrow_pattern_standard,
                 short_place_holder_index,
@@ -254,14 +254,14 @@ fn test_basic() {
         locale: &DataPayload<CurrencyEssentialsV1Marker>,
         place_holders: &VarZeroVec<'_, str>,
     ) -> (String, String) {
-        let default = CurrencyPatterns {
+        let default = CurrencyPattern {
             short_pattern_standard: PatternSelection::Standard,
             narrow_pattern_standard: PatternSelection::Standard,
             short_place_holder_index: None,
             narrow_place_holder_index: None,
         };
         let owned = locale.get().to_owned();
-        let currency_pattern: CurrencyPatterns = owned
+        let currency_pattern: CurrencyPattern = owned
             .currency_patterns_map
             .get_copied(&iso_code)
             .unwrap_or(default);

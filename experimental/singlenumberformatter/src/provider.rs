@@ -38,7 +38,7 @@ pub struct CurrencyEssentialsV1<'data> {
     /// Maps from currency iso code to currency patterns
     /// which points to which pattern to use and the place holder index.
     #[cfg_attr(feature = "serde", serde(borrow))]
-    pub currency_patterns_map: ZeroMap<'data, UnvalidatedTinyAsciiStr<3>, CurrencyPatterns>,
+    pub currency_patterns_map: ZeroMap<'data, UnvalidatedTinyAsciiStr<3>, CurrencyPattern>,
 
     /// Represents the standard pattern.
     #[cfg_attr(feature = "serde", serde(borrow))]
@@ -51,6 +51,27 @@ pub struct CurrencyEssentialsV1<'data> {
     /// Contains all the place holders.
     #[cfg_attr(feature = "serde", serde(borrow))]
     pub place_holders: VarZeroVec<'data, str>,
+}
+
+#[cfg_attr(
+    feature = "datagen",
+    derive(serde::Serialize, databake::Bake),
+    databake(path = icu_singlenumberformatter::provider),
+)]
+#[cfg_attr(feature = "serde", derive(serde::Deserialize))]
+#[derive(Copy, Debug, Clone, PartialEq, PartialOrd, Eq, Ord)]
+#[repr(u16)]
+pub enum CurrencyPatternSelector {
+    /// Contains the currency pattern.
+    CurrencyPattern(CurrencyPattern),
+
+    /// This means that the short_pattern_standard and narrow_pattern_standard are Standard.
+    /// Also, the short_place_holder_index and narrow_place_holder_index are None.
+    Standard,
+
+    /// This means that the short_pattern_standard and narrow_pattern_standard are StandardAlphaNextToNumber.
+    /// Also, the short_place_holder_index and narrow_place_holder_index are None.
+    StandardAlphaNextToNumber,
 }
 
 #[zerovec::make_ule(PatternSelectionULE)]
@@ -87,6 +108,7 @@ pub enum PlaceholderValue {
     /// The place holder is the iso code.
     ISO,
 }
+
 #[cfg_attr(
     feature = "datagen",
     derive(serde::Serialize, databake::Bake),
@@ -94,7 +116,7 @@ pub enum PlaceholderValue {
 )]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[derive(Copy, Debug, Clone, Default, PartialEq, PartialOrd, Eq, Ord)]
-pub struct CurrencyPatterns {
+pub struct CurrencyPattern {
     /// If it is true, then use the standard pattern.
     /// Otherwise, use the standard_alpha_next_to_number pattern.
     pub short_pattern_standard: PatternSelection,
