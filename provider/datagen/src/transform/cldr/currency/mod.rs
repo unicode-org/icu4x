@@ -220,8 +220,8 @@ fn extract_currency_essentials<'data>(
 
         // TODO(#4314): Check if we can remove also when the patterns equal to
         // PatternSelection::StandardNextToNumber.
-        if short_pattern_standard == PatternSelection::Standard
-            && narrow_pattern_standard == PatternSelection::Standard
+        if short_pattern_standard == PatternSelection::StandardAlphaNextToNumber
+            && narrow_pattern_standard == PatternSelection::StandardAlphaNextToNumber
             && short_place_holder_index.is_none()
             && narrow_place_holder_index.is_none()
         {
