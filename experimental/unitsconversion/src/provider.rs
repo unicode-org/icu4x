@@ -141,7 +141,7 @@ pub enum Exactness {
 pub enum Base {
     /// There is no si prefix.
     #[default]
-    NotExist = 0,
+    Zero = 0,
 
     /// The base of the si prefix is 2.
     Binary = 1,
@@ -166,12 +166,30 @@ pub struct MeasureUnitItem {
     /// The power of the unit.
     pub power: i8,
 
-    /// The base of the si prefix.
-    pub si_base: Base,
-
-    /// The power of the si prefix.
-    pub si_prefix: i8,
+    /// The si base of the unit.
+    pub si_prefix: SiPrefix,
 
     /// The id of the unit.
     pub unit_id: u16,
+}
+
+// TODO: Consider reducing the size of this struct while implementing the ULE.
+/// Represents the SI prefix.
+#[zerovec::make_ule(SiPrefixULE)]
+#[derive(Copy, Clone, Debug, PartialOrd, Ord, PartialEq, Eq, Default)]
+#[cfg_attr(
+    feature = "datagen",
+    derive(serde::Serialize, databake::Bake),
+    databake(path = icu_unitsconversion::provider),
+)]
+#[cfg_attr(feature = "serde", derive(serde::Deserialize))]
+pub struct SiPrefix {
+    /// The absolute value of the power of the si prefix.
+    pub power: u8,
+
+    /// The base of the si prefix.
+    pub base: Base,
+
+    /// The id of the si prefix.
+    pub sign: Sign,
 }
