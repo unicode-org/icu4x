@@ -25,17 +25,17 @@ final class UnicodeSetData implements ffi.Finalizable {
   ///
   /// See the [Rust documentation for `contains`](https://docs.rs/icu/latest/icu/properties/sets/struct.UnicodeSetDataBorrowed.html#method.contains) for more information.
   bool contains(String s) {
-    final alloc = ffi2.Arena();
-    final sSlice = _SliceFfi2Utf8._fromDart(s, alloc);
-    final result = _ICU4XUnicodeSetData_contains(_underlying, sSlice._bytes, sSlice._length);
-    alloc.releaseAll();
+    final temp = ffi2.Arena();
+    final sLength = s.utf8Length;
+    final result = _ICU4XUnicodeSetData_contains(_underlying, Utf8Encoder().allocConvert(temp, s, length: sLength), sLength);
+    temp.releaseAll();
     return result;
   }
 
   // ignore: non_constant_identifier_names
   static final _ICU4XUnicodeSetData_contains =
-    _capi<ffi.NativeFunction<ffi.Bool Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi2.Utf8>, ffi.Size)>>('ICU4XUnicodeSetData_contains')
-      .asFunction<bool Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi2.Utf8>, int)>(isLeaf: true);
+    _capi<ffi.NativeFunction<ffi.Bool Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Uint8>, ffi.Size)>>('ICU4XUnicodeSetData_contains')
+      .asFunction<bool Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Uint8>, int)>(isLeaf: true);
 
   /// Checks whether the code point is in the set.
   ///

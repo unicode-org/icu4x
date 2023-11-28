@@ -21,10 +21,10 @@ final class CustomTimeZone implements ffi.Finalizable {
   ///
   /// Throws [Error] on failure.
   factory CustomTimeZone.fromString(String s) {
-    final alloc = ffi2.Arena();
-    final sSlice = _SliceFfi2Utf8._fromDart(s, alloc);
-    final result = _ICU4XCustomTimeZone_create_from_string(sSlice._bytes, sSlice._length);
-    alloc.releaseAll();
+    final temp = ffi2.Arena();
+    final sLength = s.utf8Length;
+    final result = _ICU4XCustomTimeZone_create_from_string(Utf8Encoder().allocConvert(temp, s, length: sLength), sLength);
+    temp.releaseAll();
     if (!result.isOk) {
       throw Error.values.firstWhere((v) => v._underlying == result.union.err);
     }
@@ -33,8 +33,8 @@ final class CustomTimeZone implements ffi.Finalizable {
 
   // ignore: non_constant_identifier_names
   static final _ICU4XCustomTimeZone_create_from_string =
-    _capi<ffi.NativeFunction<_ResultOpaqueInt32 Function(ffi.Pointer<ffi2.Utf8>, ffi.Size)>>('ICU4XCustomTimeZone_create_from_string')
-      .asFunction<_ResultOpaqueInt32 Function(ffi.Pointer<ffi2.Utf8>, int)>(isLeaf: true);
+    _capi<ffi.NativeFunction<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Uint8>, ffi.Size)>>('ICU4XCustomTimeZone_create_from_string')
+      .asFunction<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Uint8>, int)>(isLeaf: true);
 
   /// Creates a time zone with no information.
   ///
@@ -209,10 +209,10 @@ final class CustomTimeZone implements ffi.Finalizable {
   ///
   /// Throws [Error] on failure.
   void trySetTimeZoneId(String id) {
-    final alloc = ffi2.Arena();
-    final idSlice = _SliceFfi2Utf8._fromDart(id, alloc);
-    final result = _ICU4XCustomTimeZone_try_set_time_zone_id(_underlying, idSlice._bytes, idSlice._length);
-    alloc.releaseAll();
+    final temp = ffi2.Arena();
+    final idLength = id.utf8Length;
+    final result = _ICU4XCustomTimeZone_try_set_time_zone_id(_underlying, Utf8Encoder().allocConvert(temp, id, length: idLength), idLength);
+    temp.releaseAll();
     if (!result.isOk) {
       throw Error.values.firstWhere((v) => v._underlying == result.union.err);
     }
@@ -220,8 +220,8 @@ final class CustomTimeZone implements ffi.Finalizable {
 
   // ignore: non_constant_identifier_names
   static final _ICU4XCustomTimeZone_try_set_time_zone_id =
-    _capi<ffi.NativeFunction<_ResultVoidInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi2.Utf8>, ffi.Size)>>('ICU4XCustomTimeZone_try_set_time_zone_id')
-      .asFunction<_ResultVoidInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi2.Utf8>, int)>(isLeaf: true);
+    _capi<ffi.NativeFunction<_ResultVoidInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Uint8>, ffi.Size)>>('ICU4XCustomTimeZone_try_set_time_zone_id')
+      .asFunction<_ResultVoidInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Uint8>, int)>(isLeaf: true);
 
   /// Sets the `time_zone_id` field from an IANA string by looking up
   /// the corresponding BCP-47 string.
@@ -232,10 +232,10 @@ final class CustomTimeZone implements ffi.Finalizable {
   ///
   /// Throws [Error] on failure.
   void trySetIanaTimeZoneId(IanaToBcp47Mapper mapper, String id) {
-    final alloc = ffi2.Arena();
-    final idSlice = _SliceFfi2Utf8._fromDart(id, alloc);
-    final result = _ICU4XCustomTimeZone_try_set_iana_time_zone_id(_underlying, mapper._underlying, idSlice._bytes, idSlice._length);
-    alloc.releaseAll();
+    final temp = ffi2.Arena();
+    final idLength = id.utf8Length;
+    final result = _ICU4XCustomTimeZone_try_set_iana_time_zone_id(_underlying, mapper._underlying, Utf8Encoder().allocConvert(temp, id, length: idLength), idLength);
+    temp.releaseAll();
     if (!result.isOk) {
       throw Error.values.firstWhere((v) => v._underlying == result.union.err);
     }
@@ -243,8 +243,8 @@ final class CustomTimeZone implements ffi.Finalizable {
 
   // ignore: non_constant_identifier_names
   static final _ICU4XCustomTimeZone_try_set_iana_time_zone_id =
-    _capi<ffi.NativeFunction<_ResultVoidInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi2.Utf8>, ffi.Size)>>('ICU4XCustomTimeZone_try_set_iana_time_zone_id')
-      .asFunction<_ResultVoidInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi2.Utf8>, int)>(isLeaf: true);
+    _capi<ffi.NativeFunction<_ResultVoidInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Uint8>, ffi.Size)>>('ICU4XCustomTimeZone_try_set_iana_time_zone_id')
+      .asFunction<_ResultVoidInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Uint8>, int)>(isLeaf: true);
 
   /// Clears the `time_zone_id` field.
   ///
@@ -293,10 +293,10 @@ final class CustomTimeZone implements ffi.Finalizable {
   ///
   /// Throws [Error] on failure.
   void trySetMetazoneId(String id) {
-    final alloc = ffi2.Arena();
-    final idSlice = _SliceFfi2Utf8._fromDart(id, alloc);
-    final result = _ICU4XCustomTimeZone_try_set_metazone_id(_underlying, idSlice._bytes, idSlice._length);
-    alloc.releaseAll();
+    final temp = ffi2.Arena();
+    final idLength = id.utf8Length;
+    final result = _ICU4XCustomTimeZone_try_set_metazone_id(_underlying, Utf8Encoder().allocConvert(temp, id, length: idLength), idLength);
+    temp.releaseAll();
     if (!result.isOk) {
       throw Error.values.firstWhere((v) => v._underlying == result.union.err);
     }
@@ -304,8 +304,8 @@ final class CustomTimeZone implements ffi.Finalizable {
 
   // ignore: non_constant_identifier_names
   static final _ICU4XCustomTimeZone_try_set_metazone_id =
-    _capi<ffi.NativeFunction<_ResultVoidInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi2.Utf8>, ffi.Size)>>('ICU4XCustomTimeZone_try_set_metazone_id')
-      .asFunction<_ResultVoidInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi2.Utf8>, int)>(isLeaf: true);
+    _capi<ffi.NativeFunction<_ResultVoidInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Uint8>, ffi.Size)>>('ICU4XCustomTimeZone_try_set_metazone_id')
+      .asFunction<_ResultVoidInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Uint8>, int)>(isLeaf: true);
 
   /// Clears the `metazone_id` field.
   ///
@@ -354,10 +354,10 @@ final class CustomTimeZone implements ffi.Finalizable {
   ///
   /// Throws [Error] on failure.
   void trySetZoneVariant(String id) {
-    final alloc = ffi2.Arena();
-    final idSlice = _SliceFfi2Utf8._fromDart(id, alloc);
-    final result = _ICU4XCustomTimeZone_try_set_zone_variant(_underlying, idSlice._bytes, idSlice._length);
-    alloc.releaseAll();
+    final temp = ffi2.Arena();
+    final idLength = id.utf8Length;
+    final result = _ICU4XCustomTimeZone_try_set_zone_variant(_underlying, Utf8Encoder().allocConvert(temp, id, length: idLength), idLength);
+    temp.releaseAll();
     if (!result.isOk) {
       throw Error.values.firstWhere((v) => v._underlying == result.union.err);
     }
@@ -365,8 +365,8 @@ final class CustomTimeZone implements ffi.Finalizable {
 
   // ignore: non_constant_identifier_names
   static final _ICU4XCustomTimeZone_try_set_zone_variant =
-    _capi<ffi.NativeFunction<_ResultVoidInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi2.Utf8>, ffi.Size)>>('ICU4XCustomTimeZone_try_set_zone_variant')
-      .asFunction<_ResultVoidInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi2.Utf8>, int)>(isLeaf: true);
+    _capi<ffi.NativeFunction<_ResultVoidInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Uint8>, ffi.Size)>>('ICU4XCustomTimeZone_try_set_zone_variant')
+      .asFunction<_ResultVoidInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Uint8>, int)>(isLeaf: true);
 
   /// Clears the `zone_variant` field.
   ///

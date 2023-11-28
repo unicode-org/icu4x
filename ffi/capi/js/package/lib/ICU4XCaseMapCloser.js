@@ -38,7 +38,7 @@ export class ICU4XCaseMapCloser {
   }
 
   add_string_case_closure_to(arg_s, arg_builder) {
-    const buf_arg_s = diplomatRuntime.DiplomatBuf.str(wasm, arg_s);
+    const buf_arg_s = diplomatRuntime.DiplomatBuf.str8(wasm, arg_s);
     const diplomat_out = wasm.ICU4XCaseMapCloser_add_string_case_closure_to(this.underlying, buf_arg_s.ptr, buf_arg_s.size, arg_builder.underlying);
     buf_arg_s.free();
     return diplomat_out;

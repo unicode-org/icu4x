@@ -11,7 +11,7 @@ part of 'lib.g.dart';
 final class _LocaleFallbackConfigFfi extends ffi.Struct {
   @ffi.Int32()
   external int priority;
-  external _SliceFfi2Utf8 extensionKey;
+  external _SliceUtf8 extensionKey;
   @ffi.Int32()
   external int fallbackSupplement;
 }
@@ -19,7 +19,6 @@ final class _LocaleFallbackConfigFfi extends ffi.Struct {
 final class LocaleFallbackConfig {
   final _LocaleFallbackConfigFfi _underlying;
 
-  // ignore: unused_element
   LocaleFallbackConfig._(this._underlying);
 
   factory LocaleFallbackConfig() {
@@ -34,12 +33,11 @@ final class LocaleFallbackConfig {
     _underlying.priority = priority.index;
   }
 
-  String get extensionKey => _underlying.extensionKey._asDart;
+  String get extensionKey => Utf8Decoder().convert(_underlying.extensionKey._pointer.asTypedList(_underlying.extensionKey._length));
   set extensionKey(String extensionKey) {
-    final alloc = ffi2.calloc;
-    alloc.free(_underlying.extensionKey._bytes);
-    final extensionKeySlice = _SliceFfi2Utf8._fromDart(extensionKey, alloc);
-    _underlying.extensionKey = extensionKeySlice;
+    ffi2.calloc.free(_underlying.extensionKey._pointer);
+    _underlying.extensionKey._length = extensionKey.utf8Length;
+    _underlying.extensionKey._pointer = Utf8Encoder().allocConvert(ffi2.calloc, extensionKey, length: _underlying.extensionKey._length);
   }
 
   LocaleFallbackSupplement get fallbackSupplement => LocaleFallbackSupplement.values[_underlying.fallbackSupplement];

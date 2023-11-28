@@ -53,15 +53,15 @@ final class CaseMapCloser implements ffi.Finalizable {
   ///
   /// See the [Rust documentation for `add_string_case_closure_to`](https://docs.rs/icu/latest/icu/casemap/struct.CaseMapCloser.html#method.add_string_case_closure_to) for more information.
   bool addStringCaseClosureTo(String s, CodePointSetBuilder builder) {
-    final alloc = ffi2.Arena();
-    final sSlice = _SliceFfi2Utf8._fromDart(s, alloc);
-    final result = _ICU4XCaseMapCloser_add_string_case_closure_to(_underlying, sSlice._bytes, sSlice._length, builder._underlying);
-    alloc.releaseAll();
+    final temp = ffi2.Arena();
+    final sLength = s.utf8Length;
+    final result = _ICU4XCaseMapCloser_add_string_case_closure_to(_underlying, Utf8Encoder().allocConvert(temp, s, length: sLength), sLength, builder._underlying);
+    temp.releaseAll();
     return result;
   }
 
   // ignore: non_constant_identifier_names
   static final _ICU4XCaseMapCloser_add_string_case_closure_to =
-    _capi<ffi.NativeFunction<ffi.Bool Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi2.Utf8>, ffi.Size, ffi.Pointer<ffi.Opaque>)>>('ICU4XCaseMapCloser_add_string_case_closure_to')
-      .asFunction<bool Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi2.Utf8>, int, ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
+    _capi<ffi.NativeFunction<ffi.Bool Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Uint8>, ffi.Size, ffi.Pointer<ffi.Opaque>)>>('ICU4XCaseMapCloser_add_string_case_closure_to')
+      .asFunction<bool Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Uint8>, int, ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
 }

@@ -65,14 +65,14 @@ pub mod ffi {
         )]
         pub fn get(
             &self,
-            value: &str,
+            value: &DiplomatStr,
             write: &mut diplomat_runtime::DiplomatWriteable,
         ) -> Result<(), ICU4XError> {
-            use core::str::FromStr;
             use writeable::Writeable;
             let handle = self.0.as_borrowed();
-            TimeZoneBcp47Id::from_str(value)
+            tinystr::TinyAsciiStr::from_bytes(value)
                 .ok()
+                .map(TimeZoneBcp47Id)
                 .and_then(|bcp47_id| handle.bcp47_to_iana(bcp47_id))
                 .ok_or(ICU4XError::TimeZoneInvalidIdError)?
                 .write_to(write)?;

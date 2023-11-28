@@ -20,7 +20,6 @@ final class _DecomposedFfi extends ffi.Struct {
 final class Decomposed {
   final _DecomposedFfi _underlying;
 
-  // ignore: unused_element
   Decomposed._(this._underlying);
 
   factory Decomposed() {

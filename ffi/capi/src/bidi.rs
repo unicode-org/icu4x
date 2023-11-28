@@ -52,9 +52,11 @@ pub mod ffi {
         )]
         pub fn for_text<'text>(
             &self,
-            text: &'text str,
+            text: &'text DiplomatStr,
             default_level: u8,
         ) -> Box<ICU4XBidiInfo<'text>> {
+            #[allow(clippy::unwrap_used)] // #2520
+            let text = core::str::from_utf8(text).unwrap();
             let data = self.0.as_borrowed();
             let adapter = BidiClassAdapter::new(data);
 

@@ -18,7 +18,6 @@ final class _LineBreakOptionsV1Ffi extends ffi.Struct {
 final class LineBreakOptionsV1 {
   final _LineBreakOptionsV1Ffi _underlying;
 
-  // ignore: unused_element
   LineBreakOptionsV1._(this._underlying);
 
   factory LineBreakOptionsV1() {

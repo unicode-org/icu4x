@@ -17,7 +17,7 @@ export class ICU4XCustomTimeZone {
   }
 
   static create_from_string(arg_s) {
-    const buf_arg_s = diplomatRuntime.DiplomatBuf.str(wasm, arg_s);
+    const buf_arg_s = diplomatRuntime.DiplomatBuf.str8(wasm, arg_s);
     const diplomat_out = (() => {
       const diplomat_receive_buffer = wasm.diplomat_alloc(5, 4);
       wasm.ICU4XCustomTimeZone_create_from_string(diplomat_receive_buffer, buf_arg_s.ptr, buf_arg_s.size);
@@ -151,7 +151,7 @@ export class ICU4XCustomTimeZone {
   }
 
   try_set_time_zone_id(arg_id) {
-    const buf_arg_id = diplomatRuntime.DiplomatBuf.str(wasm, arg_id);
+    const buf_arg_id = diplomatRuntime.DiplomatBuf.str8(wasm, arg_id);
     const diplomat_out = (() => {
       const diplomat_receive_buffer = wasm.diplomat_alloc(5, 4);
       wasm.ICU4XCustomTimeZone_try_set_time_zone_id(diplomat_receive_buffer, this.underlying, buf_arg_id.ptr, buf_arg_id.size);
@@ -171,7 +171,7 @@ export class ICU4XCustomTimeZone {
   }
 
   try_set_iana_time_zone_id(arg_mapper, arg_id) {
-    const buf_arg_id = diplomatRuntime.DiplomatBuf.str(wasm, arg_id);
+    const buf_arg_id = diplomatRuntime.DiplomatBuf.str8(wasm, arg_id);
     const diplomat_out = (() => {
       const diplomat_receive_buffer = wasm.diplomat_alloc(5, 4);
       wasm.ICU4XCustomTimeZone_try_set_iana_time_zone_id(diplomat_receive_buffer, this.underlying, arg_mapper.underlying, buf_arg_id.ptr, buf_arg_id.size);
@@ -214,7 +214,7 @@ export class ICU4XCustomTimeZone {
   }
 
   try_set_metazone_id(arg_id) {
-    const buf_arg_id = diplomatRuntime.DiplomatBuf.str(wasm, arg_id);
+    const buf_arg_id = diplomatRuntime.DiplomatBuf.str8(wasm, arg_id);
     const diplomat_out = (() => {
       const diplomat_receive_buffer = wasm.diplomat_alloc(5, 4);
       wasm.ICU4XCustomTimeZone_try_set_metazone_id(diplomat_receive_buffer, this.underlying, buf_arg_id.ptr, buf_arg_id.size);
@@ -257,7 +257,7 @@ export class ICU4XCustomTimeZone {
   }
 
   try_set_zone_variant(arg_id) {
-    const buf_arg_id = diplomatRuntime.DiplomatBuf.str(wasm, arg_id);
+    const buf_arg_id = diplomatRuntime.DiplomatBuf.str8(wasm, arg_id);
     const diplomat_out = (() => {
       const diplomat_receive_buffer = wasm.diplomat_alloc(5, 4);
       wasm.ICU4XCustomTimeZone_try_set_zone_variant(diplomat_receive_buffer, this.underlying, buf_arg_id.ptr, buf_arg_id.size);
