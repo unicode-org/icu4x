@@ -51,18 +51,17 @@ impl MeasureUnit<'_> {
         }
     }
 
-    // TODO: consider returning Option<(i8, Base, &str)> instead of (0, Base::NotExist, part) for the case when the prefix is not found.
     // TODO: complete all the cases for the prefixes.
     // TODO: consider using a trie for the prefixes.
     /// Get the SI prefix.
     /// NOTE:
     ///    if the prefix is found, the function will return (power, base, part without the prefix).
     ///    if the prefix is not found, the function will return (0, Base::NotExist, part).
-    fn get_si_prefix(part: &str) -> (SiPrefix, &str) {
+    fn get_si_prefix(part: &str) -> (Option<SiPrefix>, &str) {
         let (si_prefix_base_10, part) = Self::get_si_prefix_base_10(part);
         if si_prefix_base_10 != 0 {
             return (
-                SiPrefix {
+                Some(SiPrefix {
                     power: si_prefix_base_10.abs() as u8,
                     base: Base::Decimal,
                     sign: if si_prefix_base_10 >= 0 {
@@ -70,7 +69,7 @@ impl MeasureUnit<'_> {
                     } else {
                         Sign::Negative
                     },
-                },
+                }),
                 part,
             );
         }
@@ -78,7 +77,7 @@ impl MeasureUnit<'_> {
         let (si_prefix_base_2, part) = Self::get_si_prefix_base_two(part);
         if si_prefix_base_2 != 0 {
             return (
-                SiPrefix {
+                Some(SiPrefix {
                     power: si_prefix_base_2.abs() as u8,
                     base: Base::Binary,
                     sign: if si_prefix_base_2 >= 0 {
@@ -86,19 +85,12 @@ impl MeasureUnit<'_> {
                     } else {
                         Sign::Negative
                     },
-                },
+                }),
                 part,
             );
         }
 
-        (
-            SiPrefix {
-                power: 0,
-                base: Base::Zero,
-                sign: Sign::Positive,
-            },
-            part,
-        )
+        (None, part)
     }
 
     // TODO: consider returning Option<(i8, &str)> instead of (0, part) for the case when the prefix is not found.
@@ -211,11 +203,7 @@ impl MeasureUnit<'_> {
 
             measure_unit_items.push(MeasureUnitItem {
                 power: power as i8 * sign,
-                si_prefix: if si_prefix.base == Base::Zero {
-                    None
-                } else {
-                    Some(si_prefix)
-                },
+                si_prefix,
                 unit_id: unit_id as u16,
             });
 
