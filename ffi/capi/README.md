@@ -12,7 +12,7 @@ by this crate, while not directly documented, are stable within the same major s
 the `cpp/` and `js/` folders.
 
 This crate may still be explored for documentation on docs.rs, and there are language-specific docs available as well.
-C++, Dart, and TypeScript headers contain inline documentation, which is available pre-rendered: [C++], [Dart], [TypeScript].
+C++, Dart, and TypeScript headers contain inline documentation, which is available pre-rendered: [C++], [TypeScript].
 
 This crate is `no_std` and will not typically build as a staticlib on its own. If you wish to link to it you should prefer
 using `icu_capi_staticlib`, or for more esoteric platforms you may write a shim crate depending on this crate that hooks in
@@ -21,9 +21,8 @@ an allocator and panic hook.
 More information on using ICU4X from C++ can be found in [our tutorial].
 
 [our tutorial]: https://github.com/unicode-org/icu4x/blob/main/docs/tutorials/cpp.md
-[TypeScript](https://unicode-org.github.io/icu4x/docs/ffi/ts/)
-[C++](https://unicode-org.github.io/icu4x/docs/ffi/cpp/)
-[Dart](https://unicode-org.github.io/icu4x/docs/ffi/dart/)
+[TypeScript]: https://unicode-org.github.io/icu4x/docs/ffi/ts/
+[C++]: https://unicode-org.github.io/icu4x/docs/ffi/cpp/
 
 <!-- cargo-rdme end -->
 
