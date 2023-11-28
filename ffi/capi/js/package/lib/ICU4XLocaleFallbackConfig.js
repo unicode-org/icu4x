@@ -8,7 +8,7 @@ export class ICU4XLocaleFallbackConfig {
     this.priority = ICU4XLocaleFallbackPriority_rust_to_js[diplomatRuntime.enumDiscriminant(wasm, underlying)];
     this.extension_key = (() => {
       const [ptr, size] = new Uint32Array(wasm.memory.buffer, underlying + 4, 2);
-      return diplomatRuntime.readString(wasm, ptr, size);
+      return diplomatRuntime.readString8(wasm, ptr, size);
     })();
     this.fallback_supplement = ICU4XLocaleFallbackSupplement_rust_to_js[diplomatRuntime.enumDiscriminant(wasm, underlying + 12)];
   }

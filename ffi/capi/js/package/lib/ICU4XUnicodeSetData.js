@@ -17,7 +17,7 @@ export class ICU4XUnicodeSetData {
   }
 
   contains(arg_s) {
-    const buf_arg_s = diplomatRuntime.DiplomatBuf.str(wasm, arg_s);
+    const buf_arg_s = diplomatRuntime.DiplomatBuf.str8(wasm, arg_s);
     const diplomat_out = wasm.ICU4XUnicodeSetData_contains(this.underlying, buf_arg_s.ptr, buf_arg_s.size);
     buf_arg_s.free();
     return diplomat_out;

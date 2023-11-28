@@ -26,7 +26,6 @@ final class _CollatorResolvedOptionsV1Ffi extends ffi.Struct {
 final class CollatorResolvedOptionsV1 {
   final _CollatorResolvedOptionsV1Ffi _underlying;
 
-  // ignore: unused_element
   CollatorResolvedOptionsV1._(this._underlying);
 
   factory CollatorResolvedOptionsV1() {

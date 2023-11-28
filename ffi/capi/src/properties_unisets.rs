@@ -23,8 +23,7 @@ pub mod ffi {
     impl ICU4XUnicodeSetData {
         /// Checks whether the string is in the set.
         #[diplomat::rust_link(icu::properties::sets::UnicodeSetDataBorrowed::contains, FnInStruct)]
-        pub fn contains(&self, s: &str) -> bool {
-            let s = s.as_bytes(); // #2520
+        pub fn contains(&self, s: &DiplomatStr) -> bool {
             let s = if let Ok(s) = str::from_utf8(s) {
                 s
             } else {

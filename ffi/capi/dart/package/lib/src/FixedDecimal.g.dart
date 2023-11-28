@@ -95,10 +95,10 @@ final class FixedDecimal implements ffi.Finalizable {
   ///
   /// Throws [Error] on failure.
   factory FixedDecimal.fromString(String v) {
-    final alloc = ffi2.Arena();
-    final vSlice = _SliceFfi2Utf8._fromDart(v, alloc);
-    final result = _ICU4XFixedDecimal_create_from_string(vSlice._bytes, vSlice._length);
-    alloc.releaseAll();
+    final temp = ffi2.Arena();
+    final vLength = v.utf8Length;
+    final result = _ICU4XFixedDecimal_create_from_string(Utf8Encoder().allocConvert(temp, v, length: vLength), vLength);
+    temp.releaseAll();
     if (!result.isOk) {
       throw Error.values.firstWhere((v) => v._underlying == result.union.err);
     }
@@ -107,8 +107,8 @@ final class FixedDecimal implements ffi.Finalizable {
 
   // ignore: non_constant_identifier_names
   static final _ICU4XFixedDecimal_create_from_string =
-    _capi<ffi.NativeFunction<_ResultOpaqueInt32 Function(ffi.Pointer<ffi2.Utf8>, ffi.Size)>>('ICU4XFixedDecimal_create_from_string')
-      .asFunction<_ResultOpaqueInt32 Function(ffi.Pointer<ffi2.Utf8>, int)>(isLeaf: true);
+    _capi<ffi.NativeFunction<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Uint8>, ffi.Size)>>('ICU4XFixedDecimal_create_from_string')
+      .asFunction<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Uint8>, int)>(isLeaf: true);
 
   /// See the [Rust documentation for `digit_at`](https://docs.rs/fixed_decimal/latest/fixed_decimal/struct.FixedDecimal.html#method.digit_at) for more information.
   int digitAt(int magnitude) {

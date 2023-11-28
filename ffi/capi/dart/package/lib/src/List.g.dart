@@ -43,16 +43,16 @@ final class List implements ffi.Finalizable {
   /// For C++ users, potentially invalid UTF8 will be handled via
   /// REPLACEMENT CHARACTERs
   void push(String val) {
-    final alloc = ffi2.Arena();
-    final valSlice = _SliceFfi2Utf8._fromDart(val, alloc);
-    _ICU4XList_push(_underlying, valSlice._bytes, valSlice._length);
-    alloc.releaseAll();
+    final temp = ffi2.Arena();
+    final valLength = val.utf8Length;
+    _ICU4XList_push(_underlying, Utf8Encoder().allocConvert(temp, val, length: valLength), valLength);
+    temp.releaseAll();
   }
 
   // ignore: non_constant_identifier_names
   static final _ICU4XList_push =
-    _capi<ffi.NativeFunction<ffi.Void Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi2.Utf8>, ffi.Size)>>('ICU4XList_push')
-      .asFunction<void Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi2.Utf8>, int)>(isLeaf: true);
+    _capi<ffi.NativeFunction<ffi.Void Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Uint8>, ffi.Size)>>('ICU4XList_push')
+      .asFunction<void Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Uint8>, int)>(isLeaf: true);
 
   /// The number of elements in this list
   int get length {

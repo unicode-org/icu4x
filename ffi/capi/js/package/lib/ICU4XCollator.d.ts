@@ -47,7 +47,7 @@ export class ICU4XCollator {
 
    * See the {@link https://docs.rs/icu/latest/icu/collator/struct.Collator.html#method.compare_utf16 Rust documentation for `compare_utf16`} for more information.
    */
-  compare_utf16(left: Uint16Array, right: Uint16Array): ICU4XOrdering;
+  compare_utf16(left: string, right: string): ICU4XOrdering;
 
   /**
 

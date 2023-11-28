@@ -18,7 +18,7 @@ export class ICU4XLocale {
   }
 
   static create_from_string(arg_name) {
-    const buf_arg_name = diplomatRuntime.DiplomatBuf.str(wasm, arg_name);
+    const buf_arg_name = diplomatRuntime.DiplomatBuf.str8(wasm, arg_name);
     const diplomat_out = (() => {
       const diplomat_receive_buffer = wasm.diplomat_alloc(5, 4);
       wasm.ICU4XLocale_create_from_string(diplomat_receive_buffer, buf_arg_name.ptr, buf_arg_name.size);
@@ -65,7 +65,7 @@ export class ICU4XLocale {
   }
 
   get_unicode_extension(arg_bytes) {
-    const buf_arg_bytes = diplomatRuntime.DiplomatBuf.str(wasm, arg_bytes);
+    const buf_arg_bytes = diplomatRuntime.DiplomatBuf.str8(wasm, arg_bytes);
     const diplomat_out = diplomatRuntime.withWriteable(wasm, (writeable) => {
       return (() => {
         const diplomat_receive_buffer = wasm.diplomat_alloc(5, 4);
@@ -106,7 +106,7 @@ export class ICU4XLocale {
   }
 
   set_language(arg_bytes) {
-    const buf_arg_bytes = diplomatRuntime.DiplomatBuf.str(wasm, arg_bytes);
+    const buf_arg_bytes = diplomatRuntime.DiplomatBuf.str8(wasm, arg_bytes);
     const diplomat_out = (() => {
       const diplomat_receive_buffer = wasm.diplomat_alloc(5, 4);
       wasm.ICU4XLocale_set_language(diplomat_receive_buffer, this.underlying, buf_arg_bytes.ptr, buf_arg_bytes.size);
@@ -145,7 +145,7 @@ export class ICU4XLocale {
   }
 
   set_region(arg_bytes) {
-    const buf_arg_bytes = diplomatRuntime.DiplomatBuf.str(wasm, arg_bytes);
+    const buf_arg_bytes = diplomatRuntime.DiplomatBuf.str8(wasm, arg_bytes);
     const diplomat_out = (() => {
       const diplomat_receive_buffer = wasm.diplomat_alloc(5, 4);
       wasm.ICU4XLocale_set_region(diplomat_receive_buffer, this.underlying, buf_arg_bytes.ptr, buf_arg_bytes.size);
@@ -184,7 +184,7 @@ export class ICU4XLocale {
   }
 
   set_script(arg_bytes) {
-    const buf_arg_bytes = diplomatRuntime.DiplomatBuf.str(wasm, arg_bytes);
+    const buf_arg_bytes = diplomatRuntime.DiplomatBuf.str8(wasm, arg_bytes);
     const diplomat_out = (() => {
       const diplomat_receive_buffer = wasm.diplomat_alloc(5, 4);
       wasm.ICU4XLocale_set_script(diplomat_receive_buffer, this.underlying, buf_arg_bytes.ptr, buf_arg_bytes.size);
@@ -204,7 +204,7 @@ export class ICU4XLocale {
   }
 
   static canonicalize(arg_bytes) {
-    const buf_arg_bytes = diplomatRuntime.DiplomatBuf.str(wasm, arg_bytes);
+    const buf_arg_bytes = diplomatRuntime.DiplomatBuf.str8(wasm, arg_bytes);
     const diplomat_out = diplomatRuntime.withWriteable(wasm, (writeable) => {
       return (() => {
         const diplomat_receive_buffer = wasm.diplomat_alloc(5, 4);
@@ -245,14 +245,14 @@ export class ICU4XLocale {
   }
 
   normalizing_eq(arg_other) {
-    const buf_arg_other = diplomatRuntime.DiplomatBuf.str(wasm, arg_other);
+    const buf_arg_other = diplomatRuntime.DiplomatBuf.str8(wasm, arg_other);
     const diplomat_out = wasm.ICU4XLocale_normalizing_eq(this.underlying, buf_arg_other.ptr, buf_arg_other.size);
     buf_arg_other.free();
     return diplomat_out;
   }
 
   strict_cmp(arg_other) {
-    const buf_arg_other = diplomatRuntime.DiplomatBuf.str(wasm, arg_other);
+    const buf_arg_other = diplomatRuntime.DiplomatBuf.str8(wasm, arg_other);
     const diplomat_out = ICU4XOrdering_rust_to_js[wasm.ICU4XLocale_strict_cmp(this.underlying, buf_arg_other.ptr, buf_arg_other.size)];
     buf_arg_other.free();
     return diplomat_out;

@@ -82,7 +82,7 @@ export class ICU4XLineSegmenter {
 
    * See the {@link https://docs.rs/icu/latest/icu/segmenter/struct.LineSegmenter.html#method.segment_utf16 Rust documentation for `segment_utf16`} for more information.
    */
-  segment_utf16(input: Uint16Array): ICU4XLineBreakIteratorUtf16;
+  segment_utf16(input: string): ICU4XLineBreakIteratorUtf16;
 
   /**
 

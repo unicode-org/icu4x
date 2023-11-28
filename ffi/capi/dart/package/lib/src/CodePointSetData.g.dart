@@ -1130,10 +1130,10 @@ final class CodePointSetData implements ffi.Finalizable {
   ///
   /// Throws [Error] on failure.
   factory CodePointSetData.loadForEcma262(DataProvider provider, String propertyName) {
-    final alloc = ffi2.Arena();
-    final propertyNameSlice = _SliceFfi2Utf8._fromDart(propertyName, alloc);
-    final result = _ICU4XCodePointSetData_load_for_ecma262(provider._underlying, propertyNameSlice._bytes, propertyNameSlice._length);
-    alloc.releaseAll();
+    final temp = ffi2.Arena();
+    final propertyNameLength = propertyName.utf8Length;
+    final result = _ICU4XCodePointSetData_load_for_ecma262(provider._underlying, Utf8Encoder().allocConvert(temp, propertyName, length: propertyNameLength), propertyNameLength);
+    temp.releaseAll();
     if (!result.isOk) {
       throw Error.values.firstWhere((v) => v._underlying == result.union.err);
     }
@@ -1142,6 +1142,6 @@ final class CodePointSetData implements ffi.Finalizable {
 
   // ignore: non_constant_identifier_names
   static final _ICU4XCodePointSetData_load_for_ecma262 =
-    _capi<ffi.NativeFunction<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi2.Utf8>, ffi.Size)>>('ICU4XCodePointSetData_load_for_ecma262')
-      .asFunction<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi2.Utf8>, int)>(isLeaf: true);
+    _capi<ffi.NativeFunction<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Uint8>, ffi.Size)>>('ICU4XCodePointSetData_load_for_ecma262')
+      .asFunction<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Uint8>, int)>(isLeaf: true);
 }

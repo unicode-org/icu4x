@@ -17,7 +17,6 @@ final class _IsoTimeZoneOptionsFfi extends ffi.Struct {
 final class IsoTimeZoneOptions {
   final _IsoTimeZoneOptionsFfi _underlying;
 
-  // ignore: unused_element
   IsoTimeZoneOptions._(this._underlying);
 
   factory IsoTimeZoneOptions() {

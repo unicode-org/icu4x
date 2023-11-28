@@ -24,7 +24,6 @@ final class _PluralCategoriesFfi extends ffi.Struct {
 final class PluralCategories {
   final _PluralCategoriesFfi _underlying;
 
-  // ignore: unused_element
   PluralCategories._(this._underlying);
 
   factory PluralCategories() {

@@ -23,10 +23,10 @@ final class PluralOperands implements ffi.Finalizable {
   ///
   /// Throws [Error] on failure.
   factory PluralOperands.fromString(String s) {
-    final alloc = ffi2.Arena();
-    final sSlice = _SliceFfi2Utf8._fromDart(s, alloc);
-    final result = _ICU4XPluralOperands_create_from_string(sSlice._bytes, sSlice._length);
-    alloc.releaseAll();
+    final temp = ffi2.Arena();
+    final sLength = s.utf8Length;
+    final result = _ICU4XPluralOperands_create_from_string(Utf8Encoder().allocConvert(temp, s, length: sLength), sLength);
+    temp.releaseAll();
     if (!result.isOk) {
       throw Error.values.firstWhere((v) => v._underlying == result.union.err);
     }
@@ -35,6 +35,6 @@ final class PluralOperands implements ffi.Finalizable {
 
   // ignore: non_constant_identifier_names
   static final _ICU4XPluralOperands_create_from_string =
-    _capi<ffi.NativeFunction<_ResultOpaqueInt32 Function(ffi.Pointer<ffi2.Utf8>, ffi.Size)>>('ICU4XPluralOperands_create_from_string')
-      .asFunction<_ResultOpaqueInt32 Function(ffi.Pointer<ffi2.Utf8>, int)>(isLeaf: true);
+    _capi<ffi.NativeFunction<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Uint8>, ffi.Size)>>('ICU4XPluralOperands_create_from_string')
+      .asFunction<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Uint8>, int)>(isLeaf: true);
 }

@@ -27,10 +27,10 @@ final class Locale implements ffi.Finalizable {
   ///
   /// Throws [Error] on failure.
   factory Locale.fromString(String name) {
-    final alloc = ffi2.Arena();
-    final nameSlice = _SliceFfi2Utf8._fromDart(name, alloc);
-    final result = _ICU4XLocale_create_from_string(nameSlice._bytes, nameSlice._length);
-    alloc.releaseAll();
+    final temp = ffi2.Arena();
+    final nameLength = name.utf8Length;
+    final result = _ICU4XLocale_create_from_string(Utf8Encoder().allocConvert(temp, name, length: nameLength), nameLength);
+    temp.releaseAll();
     if (!result.isOk) {
       throw Error.values.firstWhere((v) => v._underlying == result.union.err);
     }
@@ -39,8 +39,8 @@ final class Locale implements ffi.Finalizable {
 
   // ignore: non_constant_identifier_names
   static final _ICU4XLocale_create_from_string =
-    _capi<ffi.NativeFunction<_ResultOpaqueInt32 Function(ffi.Pointer<ffi2.Utf8>, ffi.Size)>>('ICU4XLocale_create_from_string')
-      .asFunction<_ResultOpaqueInt32 Function(ffi.Pointer<ffi2.Utf8>, int)>(isLeaf: true);
+    _capi<ffi.NativeFunction<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Uint8>, ffi.Size)>>('ICU4XLocale_create_from_string')
+      .asFunction<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Uint8>, int)>(isLeaf: true);
 
   /// Construct a default undefined [`Locale`] "und".
   ///
@@ -94,11 +94,11 @@ final class Locale implements ffi.Finalizable {
   ///
   /// Throws [Error] on failure.
   String getUnicodeExtension(String bytes) {
-    final alloc = ffi2.Arena();
-    final bytesSlice = _SliceFfi2Utf8._fromDart(bytes, alloc);
+    final temp = ffi2.Arena();
+    final bytesLength = bytes.utf8Length;
     final writeable = _Writeable();
-    final result = _ICU4XLocale_get_unicode_extension(_underlying, bytesSlice._bytes, bytesSlice._length, writeable._underlying);
-    alloc.releaseAll();
+    final result = _ICU4XLocale_get_unicode_extension(_underlying, Utf8Encoder().allocConvert(temp, bytes, length: bytesLength), bytesLength, writeable._underlying);
+    temp.releaseAll();
     if (!result.isOk) {
       throw Error.values.firstWhere((v) => v._underlying == result.union.err);
     }
@@ -107,8 +107,8 @@ final class Locale implements ffi.Finalizable {
 
   // ignore: non_constant_identifier_names
   static final _ICU4XLocale_get_unicode_extension =
-    _capi<ffi.NativeFunction<_ResultVoidInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi2.Utf8>, ffi.Size, ffi.Pointer<ffi.Opaque>)>>('ICU4XLocale_get_unicode_extension')
-      .asFunction<_ResultVoidInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi2.Utf8>, int, ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
+    _capi<ffi.NativeFunction<_ResultVoidInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Uint8>, ffi.Size, ffi.Pointer<ffi.Opaque>)>>('ICU4XLocale_get_unicode_extension')
+      .asFunction<_ResultVoidInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Uint8>, int, ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
 
   /// Write a string representation of [`Locale`] language to `write`
   ///
@@ -135,10 +135,10 @@ final class Locale implements ffi.Finalizable {
   ///
   /// Throws [Error] on failure.
   set language(String bytes) {
-    final alloc = ffi2.Arena();
-    final bytesSlice = _SliceFfi2Utf8._fromDart(bytes, alloc);
-    final result = _ICU4XLocale_set_language(_underlying, bytesSlice._bytes, bytesSlice._length);
-    alloc.releaseAll();
+    final temp = ffi2.Arena();
+    final bytesLength = bytes.utf8Length;
+    final result = _ICU4XLocale_set_language(_underlying, Utf8Encoder().allocConvert(temp, bytes, length: bytesLength), bytesLength);
+    temp.releaseAll();
     if (!result.isOk) {
       throw Error.values.firstWhere((v) => v._underlying == result.union.err);
     }
@@ -146,8 +146,8 @@ final class Locale implements ffi.Finalizable {
 
   // ignore: non_constant_identifier_names
   static final _ICU4XLocale_set_language =
-    _capi<ffi.NativeFunction<_ResultVoidInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi2.Utf8>, ffi.Size)>>('ICU4XLocale_set_language')
-      .asFunction<_ResultVoidInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi2.Utf8>, int)>(isLeaf: true);
+    _capi<ffi.NativeFunction<_ResultVoidInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Uint8>, ffi.Size)>>('ICU4XLocale_set_language')
+      .asFunction<_ResultVoidInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Uint8>, int)>(isLeaf: true);
 
   /// Write a string representation of [`Locale`] region to `write`
   ///
@@ -174,10 +174,10 @@ final class Locale implements ffi.Finalizable {
   ///
   /// Throws [Error] on failure.
   set region(String bytes) {
-    final alloc = ffi2.Arena();
-    final bytesSlice = _SliceFfi2Utf8._fromDart(bytes, alloc);
-    final result = _ICU4XLocale_set_region(_underlying, bytesSlice._bytes, bytesSlice._length);
-    alloc.releaseAll();
+    final temp = ffi2.Arena();
+    final bytesLength = bytes.utf8Length;
+    final result = _ICU4XLocale_set_region(_underlying, Utf8Encoder().allocConvert(temp, bytes, length: bytesLength), bytesLength);
+    temp.releaseAll();
     if (!result.isOk) {
       throw Error.values.firstWhere((v) => v._underlying == result.union.err);
     }
@@ -185,8 +185,8 @@ final class Locale implements ffi.Finalizable {
 
   // ignore: non_constant_identifier_names
   static final _ICU4XLocale_set_region =
-    _capi<ffi.NativeFunction<_ResultVoidInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi2.Utf8>, ffi.Size)>>('ICU4XLocale_set_region')
-      .asFunction<_ResultVoidInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi2.Utf8>, int)>(isLeaf: true);
+    _capi<ffi.NativeFunction<_ResultVoidInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Uint8>, ffi.Size)>>('ICU4XLocale_set_region')
+      .asFunction<_ResultVoidInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Uint8>, int)>(isLeaf: true);
 
   /// Write a string representation of [`Locale`] script to `write`
   ///
@@ -213,10 +213,10 @@ final class Locale implements ffi.Finalizable {
   ///
   /// Throws [Error] on failure.
   set script(String bytes) {
-    final alloc = ffi2.Arena();
-    final bytesSlice = _SliceFfi2Utf8._fromDart(bytes, alloc);
-    final result = _ICU4XLocale_set_script(_underlying, bytesSlice._bytes, bytesSlice._length);
-    alloc.releaseAll();
+    final temp = ffi2.Arena();
+    final bytesLength = bytes.utf8Length;
+    final result = _ICU4XLocale_set_script(_underlying, Utf8Encoder().allocConvert(temp, bytes, length: bytesLength), bytesLength);
+    temp.releaseAll();
     if (!result.isOk) {
       throw Error.values.firstWhere((v) => v._underlying == result.union.err);
     }
@@ -224,8 +224,8 @@ final class Locale implements ffi.Finalizable {
 
   // ignore: non_constant_identifier_names
   static final _ICU4XLocale_set_script =
-    _capi<ffi.NativeFunction<_ResultVoidInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi2.Utf8>, ffi.Size)>>('ICU4XLocale_set_script')
-      .asFunction<_ResultVoidInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi2.Utf8>, int)>(isLeaf: true);
+    _capi<ffi.NativeFunction<_ResultVoidInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Uint8>, ffi.Size)>>('ICU4XLocale_set_script')
+      .asFunction<_ResultVoidInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Uint8>, int)>(isLeaf: true);
 
   /// Best effort locale canonicalizer that doesn't need any data
   ///
@@ -235,11 +235,11 @@ final class Locale implements ffi.Finalizable {
   ///
   /// Throws [Error] on failure.
   static String canonicalize(String bytes) {
-    final alloc = ffi2.Arena();
-    final bytesSlice = _SliceFfi2Utf8._fromDart(bytes, alloc);
+    final temp = ffi2.Arena();
+    final bytesLength = bytes.utf8Length;
     final writeable = _Writeable();
-    final result = _ICU4XLocale_canonicalize(bytesSlice._bytes, bytesSlice._length, writeable._underlying);
-    alloc.releaseAll();
+    final result = _ICU4XLocale_canonicalize(Utf8Encoder().allocConvert(temp, bytes, length: bytesLength), bytesLength, writeable._underlying);
+    temp.releaseAll();
     if (!result.isOk) {
       throw Error.values.firstWhere((v) => v._underlying == result.union.err);
     }
@@ -248,8 +248,8 @@ final class Locale implements ffi.Finalizable {
 
   // ignore: non_constant_identifier_names
   static final _ICU4XLocale_canonicalize =
-    _capi<ffi.NativeFunction<_ResultVoidInt32 Function(ffi.Pointer<ffi2.Utf8>, ffi.Size, ffi.Pointer<ffi.Opaque>)>>('ICU4XLocale_canonicalize')
-      .asFunction<_ResultVoidInt32 Function(ffi.Pointer<ffi2.Utf8>, int, ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
+    _capi<ffi.NativeFunction<_ResultVoidInt32 Function(ffi.Pointer<ffi.Uint8>, ffi.Size, ffi.Pointer<ffi.Opaque>)>>('ICU4XLocale_canonicalize')
+      .asFunction<_ResultVoidInt32 Function(ffi.Pointer<ffi.Uint8>, int, ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
 
   /// Write a string representation of [`Locale`] to `write`
   ///
@@ -273,29 +273,29 @@ final class Locale implements ffi.Finalizable {
 
   /// See the [Rust documentation for `normalizing_eq`](https://docs.rs/icu/latest/icu/locid/struct.Locale.html#method.normalizing_eq) for more information.
   bool normalizingEq(String other) {
-    final alloc = ffi2.Arena();
-    final otherSlice = _SliceFfi2Utf8._fromDart(other, alloc);
-    final result = _ICU4XLocale_normalizing_eq(_underlying, otherSlice._bytes, otherSlice._length);
-    alloc.releaseAll();
+    final temp = ffi2.Arena();
+    final otherLength = other.utf8Length;
+    final result = _ICU4XLocale_normalizing_eq(_underlying, Utf8Encoder().allocConvert(temp, other, length: otherLength), otherLength);
+    temp.releaseAll();
     return result;
   }
 
   // ignore: non_constant_identifier_names
   static final _ICU4XLocale_normalizing_eq =
-    _capi<ffi.NativeFunction<ffi.Bool Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi2.Utf8>, ffi.Size)>>('ICU4XLocale_normalizing_eq')
-      .asFunction<bool Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi2.Utf8>, int)>(isLeaf: true);
+    _capi<ffi.NativeFunction<ffi.Bool Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Uint8>, ffi.Size)>>('ICU4XLocale_normalizing_eq')
+      .asFunction<bool Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Uint8>, int)>(isLeaf: true);
 
   /// See the [Rust documentation for `strict_cmp`](https://docs.rs/icu/latest/icu/locid/struct.Locale.html#method.strict_cmp) for more information.
   Ordering strictCmp(String other) {
-    final alloc = ffi2.Arena();
-    final otherSlice = _SliceFfi2Utf8._fromDart(other, alloc);
-    final result = _ICU4XLocale_strict_cmp(_underlying, otherSlice._bytes, otherSlice._length);
-    alloc.releaseAll();
+    final temp = ffi2.Arena();
+    final otherLength = other.utf8Length;
+    final result = _ICU4XLocale_strict_cmp(_underlying, Utf8Encoder().allocConvert(temp, other, length: otherLength), otherLength);
+    temp.releaseAll();
     return Ordering.values.firstWhere((v) => v._underlying == result);
   }
 
   // ignore: non_constant_identifier_names
   static final _ICU4XLocale_strict_cmp =
-    _capi<ffi.NativeFunction<ffi.Int32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi2.Utf8>, ffi.Size)>>('ICU4XLocale_strict_cmp')
-      .asFunction<int Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi2.Utf8>, int)>(isLeaf: true);
+    _capi<ffi.NativeFunction<ffi.Int32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Uint8>, ffi.Size)>>('ICU4XLocale_strict_cmp')
+      .asFunction<int Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Uint8>, int)>(isLeaf: true);
 }
