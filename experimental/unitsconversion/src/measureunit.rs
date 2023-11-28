@@ -207,7 +207,11 @@ impl MeasureUnit<'_> {
 
             measure_unit_items.push(MeasureUnitItem {
                 power: power as i8 * sign,
-                si_prefix,
+                si_prefix: if si_prefix.base == Base::Zero {
+                    None
+                } else {
+                    Some(si_prefix)
+                },
                 unit_id: unit_id as u16,
             });
 

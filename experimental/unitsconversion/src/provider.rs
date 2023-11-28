@@ -167,7 +167,7 @@ pub struct MeasureUnitItem {
     pub power: i8,
 
     /// The si base of the unit.
-    pub si_prefix: SiPrefix,
+    pub si_prefix: Option<SiPrefix>,
 
     /// The id of the unit.
     pub unit_id: u16,

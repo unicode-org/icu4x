@@ -158,11 +158,7 @@
       "base_unit": [
         {
           "power": 1,
-          "si_prefix": {
-            "power": 0,
-            "base": "Zero",
-            "sign": "Positive"
-          },
+          "si_prefix": null,
           "unit_id": 83
         }
       ],
@@ -188,11 +184,7 @@
       "base_unit": [
         {
           "power": 2,
-          "si_prefix": {
-            "power": 0,
-            "base": "Zero",
-            "sign": "Positive"
-          },
+          "si_prefix": null,
           "unit_id": 83
         }
       ],
@@ -221,11 +213,7 @@
       "base_unit": [
         {
           "power": 1,
-          "si_prefix": {
-            "power": 0,
-            "base": "Zero",
-            "sign": "Positive"
-          },
+          "si_prefix": null,
           "unit_id": 2
         }
       ],
@@ -249,11 +237,7 @@
       "base_unit": [
         {
           "power": 1,
-          "si_prefix": {
-            "power": 0,
-            "base": "Zero",
-            "sign": "Positive"
-          },
+          "si_prefix": null,
           "unit_id": 118
         }
       ],
@@ -278,11 +262,7 @@
       "base_unit": [
         {
           "power": 1,
-          "si_prefix": {
-            "power": 0,
-            "base": "Zero",
-            "sign": "Positive"
-          },
+          "si_prefix": null,
           "unit_id": 118
         }
       ],
@@ -308,11 +288,7 @@
       "base_unit": [
         {
           "power": 1,
-          "si_prefix": {
-            "power": 0,
-            "base": "Zero",
-            "sign": "Positive"
-          },
+          "si_prefix": null,
           "unit_id": 83
         }
       ],
@@ -349,20 +325,12 @@
         },
         {
           "power": -1,
-          "si_prefix": {
-            "power": 0,
-            "base": "Zero",
-            "sign": "Positive"
-          },
+          "si_prefix": null,
           "unit_id": 83
         },
         {
           "power": -2,
-          "si_prefix": {
-            "power": 0,
-            "base": "Zero",
-            "sign": "Positive"
-          },
+          "si_prefix": null,
           "unit_id": 124
         }
       ],
@@ -397,20 +365,12 @@
         },
         {
           "power": -1,
-          "si_prefix": {
-            "power": 0,
-            "base": "Zero",
-            "sign": "Positive"
-          },
+          "si_prefix": null,
           "unit_id": 83
         },
         {
           "power": -2,
-          "si_prefix": {
-            "power": 0,
-            "base": "Zero",
-            "sign": "Positive"
-          },
+          "si_prefix": null,
           "unit_id": 124
         }
       ],
@@ -436,11 +396,7 @@
       "base_unit": [
         {
           "power": 3,
-          "si_prefix": {
-            "power": 0,
-            "base": "Zero",
-            "sign": "Positive"
-          },
+          "si_prefix": null,
           "unit_id": 83
         }
       ],
@@ -472,11 +428,7 @@
       "base_unit": [
         {
           "power": -1,
-          "si_prefix": {
-            "power": 0,
-            "base": "Zero",
-            "sign": "Positive"
-          },
+          "si_prefix": null,
           "unit_id": 124
         }
       ],
@@ -500,11 +452,7 @@
       "base_unit": [
         {
           "power": 1,
-          "si_prefix": {
-            "power": 0,
-            "base": "Zero",
-            "sign": "Positive"
-          },
+          "si_prefix": null,
           "unit_id": 10
         }
       ],
@@ -537,20 +485,12 @@
         },
         {
           "power": 2,
-          "si_prefix": {
-            "power": 0,
-            "base": "Zero",
-            "sign": "Positive"
-          },
+          "si_prefix": null,
           "unit_id": 83
         },
         {
           "power": -2,
-          "si_prefix": {
-            "power": 0,
-            "base": "Zero",
-            "sign": "Positive"
-          },
+          "si_prefix": null,
           "unit_id": 124
         }
       ],
@@ -590,20 +530,12 @@
         },
         {
           "power": 2,
-          "si_prefix": {
-            "power": 0,
-            "base": "Zero",
-            "sign": "Positive"
-          },
+          "si_prefix": null,
           "unit_id": 83
         },
         {
           "power": -2,
-          "si_prefix": {
-            "power": 0,
-            "base": "Zero",
-            "sign": "Positive"
-          },
+          "si_prefix": null,
           "unit_id": 124
         }
       ],
@@ -634,11 +566,7 @@
       "base_unit": [
         {
           "power": 2,
-          "si_prefix": {
-            "power": 0,
-            "base": "Zero",
-            "sign": "Positive"
-          },
+          "si_prefix": null,
           "unit_id": 83
         }
       ],
@@ -663,11 +591,7 @@
       "base_unit": [
         {
           "power": 3,
-          "si_prefix": {
-            "power": 0,
-            "base": "Zero",
-            "sign": "Positive"
-          },
+          "si_prefix": null,
           "unit_id": 83
         }
       ],
@@ -700,11 +624,7 @@
       "base_unit": [
         {
           "power": 1,
-          "si_prefix": {
-            "power": 0,
-            "base": "Zero",
-            "sign": "Positive"
-          },
+          "si_prefix": null,
           "unit_id": 10
         }
       ],
@@ -737,20 +657,12 @@
         },
         {
           "power": 2,
-          "si_prefix": {
-            "power": 0,
-            "base": "Zero",
-            "sign": "Positive"
-          },
+          "si_prefix": null,
           "unit_id": 83
         },
         {
           "power": -2,
-          "si_prefix": {
-            "power": 0,
-            "base": "Zero",
-            "sign": "Positive"
-          },
+          "si_prefix": null,
           "unit_id": 124
         }
       ],
@@ -784,20 +696,12 @@
         },
         {
           "power": 2,
-          "si_prefix": {
-            "power": 0,
-            "base": "Zero",
-            "sign": "Positive"
-          },
+          "si_prefix": null,
           "unit_id": 83
         },
         {
           "power": -2,
-          "si_prefix": {
-            "power": 0,
-            "base": "Zero",
-            "sign": "Positive"
-          },
+          "si_prefix": null,
           "unit_id": 124
         }
       ],
@@ -823,11 +727,7 @@
       "base_unit": [
         {
           "power": 1,
-          "si_prefix": {
-            "power": 0,
-            "base": "Zero",
-            "sign": "Positive"
-          },
+          "si_prefix": null,
           "unit_id": 18
         }
       ],
@@ -880,11 +780,7 @@
       "base_unit": [
         {
           "power": 1,
-          "si_prefix": {
-            "power": 0,
-            "base": "Zero",
-            "sign": "Positive"
-          },
+          "si_prefix": null,
           "unit_id": 72
         }
       ],
@@ -909,11 +805,7 @@
       "base_unit": [
         {
           "power": 1,
-          "si_prefix": {
-            "power": 0,
-            "base": "Zero",
-            "sign": "Positive"
-          },
+          "si_prefix": null,
           "unit_id": 150
         }
       ],
@@ -937,11 +829,7 @@
       "base_unit": [
         {
           "power": 1,
-          "si_prefix": {
-            "power": 0,
-            "base": "Zero",
-            "sign": "Positive"
-          },
+          "si_prefix": null,
           "unit_id": 83
         }
       ],
@@ -967,11 +855,7 @@
       "base_unit": [
         {
           "power": 2,
-          "si_prefix": {
-            "power": 0,
-            "base": "Zero",
-            "sign": "Positive"
-          },
+          "si_prefix": null,
           "unit_id": 83
         }
       ],
@@ -997,20 +881,12 @@
       "base_unit": [
         {
           "power": 1,
-          "si_prefix": {
-            "power": 0,
-            "base": "Zero",
-            "sign": "Positive"
-          },
+          "si_prefix": null,
           "unit_id": 124
         },
         {
           "power": 1,
-          "si_prefix": {
-            "power": 0,
-            "base": "Zero",
-            "sign": "Positive"
-          },
+          "si_prefix": null,
           "unit_id": 2
         }
       ],
@@ -1034,11 +910,7 @@
       "base_unit": [
         {
           "power": 3,
-          "si_prefix": {
-            "power": 0,
-            "base": "Zero",
-            "sign": "Positive"
-          },
+          "si_prefix": null,
           "unit_id": 83
         }
       ],
@@ -1070,11 +942,7 @@
       "base_unit": [
         {
           "power": 3,
-          "si_prefix": {
-            "power": 0,
-            "base": "Zero",
-            "sign": "Positive"
-          },
+          "si_prefix": null,
           "unit_id": 83
         }
       ],
@@ -1099,11 +967,7 @@
       "base_unit": [
         {
           "power": 3,
-          "si_prefix": {
-            "power": 0,
-            "base": "Zero",
-            "sign": "Positive"
-          },
+          "si_prefix": null,
           "unit_id": 83
         }
       ],
@@ -1175,11 +1039,7 @@
       "base_unit": [
         {
           "power": 1,
-          "si_prefix": {
-            "power": 0,
-            "base": "Zero",
-            "sign": "Positive"
-          },
+          "si_prefix": null,
           "unit_id": 124
         }
       ],
@@ -1205,11 +1065,7 @@
       "base_unit": [
         {
           "power": 1,
-          "si_prefix": {
-            "power": 0,
-            "base": "Zero",
-            "sign": "Positive"
-          },
+          "si_prefix": null,
           "unit_id": 124
         }
       ],
@@ -1235,11 +1091,7 @@
       "base_unit": [
         {
           "power": 1,
-          "si_prefix": {
-            "power": 0,
-            "base": "Zero",
-            "sign": "Positive"
-          },
+          "si_prefix": null,
           "unit_id": 150
         }
       ],
@@ -1263,11 +1115,7 @@
       "base_unit": [
         {
           "power": 1,
-          "si_prefix": {
-            "power": 0,
-            "base": "Zero",
-            "sign": "Positive"
-          },
+          "si_prefix": null,
           "unit_id": 118
         }
       ],
@@ -1292,11 +1140,7 @@
       "base_unit": [
         {
           "power": 3,
-          "si_prefix": {
-            "power": 0,
-            "base": "Zero",
-            "sign": "Positive"
-          },
+          "si_prefix": null,
           "unit_id": 83
         }
       ],
@@ -1328,11 +1172,7 @@
       "base_unit": [
         {
           "power": 3,
-          "si_prefix": {
-            "power": 0,
-            "base": "Zero",
-            "sign": "Positive"
-          },
+          "si_prefix": null,
           "unit_id": 83
         }
       ],
@@ -1362,11 +1202,7 @@
       "base_unit": [
         {
           "power": 1,
-          "si_prefix": {
-            "power": 0,
-            "base": "Zero",
-            "sign": "Positive"
-          },
+          "si_prefix": null,
           "unit_id": 108
         }
       ],
@@ -1390,11 +1226,7 @@
       "base_unit": [
         {
           "power": 3,
-          "si_prefix": {
-            "power": 0,
-            "base": "Zero",
-            "sign": "Positive"
-          },
+          "si_prefix": null,
           "unit_id": 83
         }
       ],
@@ -1426,11 +1258,7 @@
       "base_unit": [
         {
           "power": 3,
-          "si_prefix": {
-            "power": 0,
-            "base": "Zero",
-            "sign": "Positive"
-          },
+          "si_prefix": null,
           "unit_id": 83
         }
       ],
@@ -1463,11 +1291,7 @@
       "base_unit": [
         {
           "power": 2,
-          "si_prefix": {
-            "power": 0,
-            "base": "Zero",
-            "sign": "Positive"
-          },
+          "si_prefix": null,
           "unit_id": 83
         }
       ],
@@ -1530,11 +1354,7 @@
       "base_unit": [
         {
           "power": 1,
-          "si_prefix": {
-            "power": 0,
-            "base": "Zero",
-            "sign": "Positive"
-          },
+          "si_prefix": null,
           "unit_id": 83
         }
       ],
@@ -1569,20 +1389,12 @@
         },
         {
           "power": 2,
-          "si_prefix": {
-            "power": 0,
-            "base": "Zero",
-            "sign": "Positive"
-          },
+          "si_prefix": null,
           "unit_id": 83
         },
         {
           "power": -2,
-          "si_prefix": {
-            "power": 0,
-            "base": "Zero",
-            "sign": "Positive"
-          },
+          "si_prefix": null,
           "unit_id": 124
         }
       ],
@@ -1618,11 +1430,7 @@
       "base_unit": [
         {
           "power": 1,
-          "si_prefix": {
-            "power": 0,
-            "base": "Zero",
-            "sign": "Positive"
-          },
+          "si_prefix": null,
           "unit_id": 42
         }
       ],
@@ -1646,11 +1454,7 @@
       "base_unit": [
         {
           "power": 1,
-          "si_prefix": {
-            "power": 0,
-            "base": "Zero",
-            "sign": "Positive"
-          },
+          "si_prefix": null,
           "unit_id": 72
         }
       ],
@@ -1675,20 +1479,12 @@
       "base_unit": [
         {
           "power": 4,
-          "si_prefix": {
-            "power": 0,
-            "base": "Zero",
-            "sign": "Positive"
-          },
+          "si_prefix": null,
           "unit_id": 124
         },
         {
           "power": 2,
-          "si_prefix": {
-            "power": 0,
-            "base": "Zero",
-            "sign": "Positive"
-          },
+          "si_prefix": null,
           "unit_id": 2
         },
         {
@@ -1702,11 +1498,7 @@
         },
         {
           "power": -2,
-          "si_prefix": {
-            "power": 0,
-            "base": "Zero",
-            "sign": "Positive"
-          },
+          "si_prefix": null,
           "unit_id": 83
         }
       ],
@@ -1730,11 +1522,7 @@
       "base_unit": [
         {
           "power": 1,
-          "si_prefix": {
-            "power": 0,
-            "base": "Zero",
-            "sign": "Positive"
-          },
+          "si_prefix": null,
           "unit_id": 83
         }
       ],
@@ -1760,11 +1548,7 @@
       "base_unit": [
         {
           "power": 3,
-          "si_prefix": {
-            "power": 0,
-            "base": "Zero",
-            "sign": "Positive"
-          },
+          "si_prefix": null,
           "unit_id": 83
         }
       ],
@@ -1796,11 +1580,7 @@
       "base_unit": [
         {
           "power": 3,
-          "si_prefix": {
-            "power": 0,
-            "base": "Zero",
-            "sign": "Positive"
-          },
+          "si_prefix": null,
           "unit_id": 83
         }
       ],
@@ -1839,20 +1619,12 @@
         },
         {
           "power": 2,
-          "si_prefix": {
-            "power": 0,
-            "base": "Zero",
-            "sign": "Positive"
-          },
+          "si_prefix": null,
           "unit_id": 83
         },
         {
           "power": -2,
-          "si_prefix": {
-            "power": 0,
-            "base": "Zero",
-            "sign": "Positive"
-          },
+          "si_prefix": null,
           "unit_id": 124
         }
       ],
@@ -1877,11 +1649,7 @@
       "base_unit": [
         {
           "power": 1,
-          "si_prefix": {
-            "power": 0,
-            "base": "Zero",
-            "sign": "Positive"
-          },
+          "si_prefix": null,
           "unit_id": 83
         }
       ],
@@ -1907,11 +1675,7 @@
       "base_unit": [
         {
           "power": 1,
-          "si_prefix": {
-            "power": 0,
-            "base": "Zero",
-            "sign": "Positive"
-          },
+          "si_prefix": null,
           "unit_id": 124
         }
       ],
@@ -1966,11 +1730,7 @@
       "base_unit": [
         {
           "power": 1,
-          "si_prefix": {
-            "power": 0,
-            "base": "Zero",
-            "sign": "Positive"
-          },
+          "si_prefix": null,
           "unit_id": 83
         }
       ],
@@ -1995,20 +1755,12 @@
       "base_unit": [
         {
           "power": 1,
-          "si_prefix": {
-            "power": 0,
-            "base": "Zero",
-            "sign": "Positive"
-          },
+          "si_prefix": null,
           "unit_id": 83
         },
         {
           "power": -2,
-          "si_prefix": {
-            "power": 0,
-            "base": "Zero",
-            "sign": "Positive"
-          },
+          "si_prefix": null,
           "unit_id": 124
         }
       ],
@@ -2035,11 +1787,7 @@
       "base_unit": [
         {
           "power": 3,
-          "si_prefix": {
-            "power": 0,
-            "base": "Zero",
-            "sign": "Positive"
-          },
+          "si_prefix": null,
           "unit_id": 83
         }
       ],
@@ -2070,11 +1818,7 @@
       "base_unit": [
         {
           "power": 3,
-          "si_prefix": {
-            "power": 0,
-            "base": "Zero",
-            "sign": "Positive"
-          },
+          "si_prefix": null,
           "unit_id": 83
         }
       ],
@@ -2112,20 +1856,12 @@
         },
         {
           "power": -1,
-          "si_prefix": {
-            "power": 0,
-            "base": "Zero",
-            "sign": "Positive"
-          },
+          "si_prefix": null,
           "unit_id": 83
         },
         {
           "power": -2,
-          "si_prefix": {
-            "power": 0,
-            "base": "Zero",
-            "sign": "Positive"
-          },
+          "si_prefix": null,
           "unit_id": 124
         }
       ],
@@ -2222,20 +1958,12 @@
       "base_unit": [
         {
           "power": 2,
-          "si_prefix": {
-            "power": 0,
-            "base": "Zero",
-            "sign": "Positive"
-          },
+          "si_prefix": null,
           "unit_id": 83
         },
         {
           "power": -2,
-          "si_prefix": {
-            "power": 0,
-            "base": "Zero",
-            "sign": "Positive"
-          },
+          "si_prefix": null,
           "unit_id": 124
         }
       ],
@@ -2259,11 +1987,7 @@
       "base_unit": [
         {
           "power": 2,
-          "si_prefix": {
-            "power": 0,
-            "base": "Zero",
-            "sign": "Positive"
-          },
+          "si_prefix": null,
           "unit_id": 83
         }
       ],
@@ -2297,29 +2021,17 @@
         },
         {
           "power": 2,
-          "si_prefix": {
-            "power": 0,
-            "base": "Zero",
-            "sign": "Positive"
-          },
+          "si_prefix": null,
           "unit_id": 83
         },
         {
           "power": -2,
-          "si_prefix": {
-            "power": 0,
-            "base": "Zero",
-            "sign": "Positive"
-          },
+          "si_prefix": null,
           "unit_id": 124
         },
         {
           "power": -2,
-          "si_prefix": {
-            "power": 0,
-            "base": "Zero",
-            "sign": "Positive"
-          },
+          "si_prefix": null,
           "unit_id": 2
         }
       ],
@@ -2343,20 +2055,12 @@
       "base_unit": [
         {
           "power": 1,
-          "si_prefix": {
-            "power": 0,
-            "base": "Zero",
-            "sign": "Positive"
-          },
+          "si_prefix": null,
           "unit_id": 118
         },
         {
           "power": -1,
-          "si_prefix": {
-            "power": 0,
-            "base": "Zero",
-            "sign": "Positive"
-          },
+          "si_prefix": null,
           "unit_id": 124
         }
       ],
@@ -2389,20 +2093,12 @@
         },
         {
           "power": 2,
-          "si_prefix": {
-            "power": 0,
-            "base": "Zero",
-            "sign": "Positive"
-          },
+          "si_prefix": null,
           "unit_id": 83
         },
         {
           "power": -3,
-          "si_prefix": {
-            "power": 0,
-            "base": "Zero",
-            "sign": "Positive"
-          },
+          "si_prefix": null,
           "unit_id": 124
         }
       ],
@@ -2437,11 +2133,7 @@
       "base_unit": [
         {
           "power": 1,
-          "si_prefix": {
-            "power": 0,
-            "base": "Zero",
-            "sign": "Positive"
-          },
+          "si_prefix": null,
           "unit_id": 124
         }
       ],
@@ -2466,11 +2158,7 @@
       "base_unit": [
         {
           "power": 1,
-          "si_prefix": {
-            "power": 0,
-            "base": "Zero",
-            "sign": "Positive"
-          },
+          "si_prefix": null,
           "unit_id": 83
         }
       ],
@@ -2495,11 +2183,7 @@
       "base_unit": [
         {
           "power": 1,
-          "si_prefix": {
-            "power": 0,
-            "base": "Zero",
-            "sign": "Positive"
-          },
+          "si_prefix": null,
           "unit_id": 66
         }
       ],
@@ -2523,11 +2207,7 @@
       "base_unit": [
         {
           "power": 3,
-          "si_prefix": {
-            "power": 0,
-            "base": "Zero",
-            "sign": "Positive"
-          },
+          "si_prefix": null,
           "unit_id": 83
         }
       ],
@@ -2559,11 +2239,7 @@
       "base_unit": [
         {
           "power": 1,
-          "si_prefix": {
-            "power": 0,
-            "base": "Zero",
-            "sign": "Positive"
-          },
+          "si_prefix": null,
           "unit_id": 83
         }
       ],
@@ -2596,20 +2272,12 @@
         },
         {
           "power": 2,
-          "si_prefix": {
-            "power": 0,
-            "base": "Zero",
-            "sign": "Positive"
-          },
+          "si_prefix": null,
           "unit_id": 83
         },
         {
           "power": -2,
-          "si_prefix": {
-            "power": 0,
-            "base": "Zero",
-            "sign": "Positive"
-          },
+          "si_prefix": null,
           "unit_id": 124
         }
       ],
@@ -2633,11 +2301,7 @@
       "base_unit": [
         {
           "power": 1,
-          "si_prefix": {
-            "power": 0,
-            "base": "Zero",
-            "sign": "Positive"
-          },
+          "si_prefix": null,
           "unit_id": 110
         }
       ],
@@ -2661,20 +2325,12 @@
       "base_unit": [
         {
           "power": 1,
-          "si_prefix": {
-            "power": 0,
-            "base": "Zero",
-            "sign": "Positive"
-          },
+          "si_prefix": null,
           "unit_id": 66
         },
         {
           "power": -1,
-          "si_prefix": {
-            "power": 0,
-            "base": "Zero",
-            "sign": "Positive"
-          },
+          "si_prefix": null,
           "unit_id": 124
         }
       ],
@@ -2707,11 +2363,7 @@
       "base_unit": [
         {
           "power": 1,
-          "si_prefix": {
-            "power": 0,
-            "base": "Zero",
-            "sign": "Positive"
-          },
+          "si_prefix": null,
           "unit_id": 72
         }
       ],
@@ -2735,11 +2387,7 @@
       "base_unit": [
         {
           "power": 1,
-          "si_prefix": {
-            "power": 0,
-            "base": "Zero",
-            "sign": "Positive"
-          },
+          "si_prefix": null,
           "unit_id": 83
         }
       ],
@@ -2800,20 +2448,12 @@
         },
         {
           "power": 1,
-          "si_prefix": {
-            "power": 0,
-            "base": "Zero",
-            "sign": "Positive"
-          },
+          "si_prefix": null,
           "unit_id": 83
         },
         {
           "power": -2,
-          "si_prefix": {
-            "power": 0,
-            "base": "Zero",
-            "sign": "Positive"
-          },
+          "si_prefix": null,
           "unit_id": 124
         }
       ],
@@ -2840,20 +2480,12 @@
       "base_unit": [
         {
           "power": 1,
-          "si_prefix": {
-            "power": 0,
-            "base": "Zero",
-            "sign": "Positive"
-          },
+          "si_prefix": null,
           "unit_id": 83
         },
         {
           "power": -1,
-          "si_prefix": {
-            "power": 0,
-            "base": "Zero",
-            "sign": "Positive"
-          },
+          "si_prefix": null,
           "unit_id": 124
         }
       ],
@@ -2879,11 +2511,7 @@
       "base_unit": [
         {
           "power": 3,
-          "si_prefix": {
-            "power": 0,
-            "base": "Zero",
-            "sign": "Positive"
-          },
+          "si_prefix": null,
           "unit_id": 83
         }
       ],
@@ -2909,11 +2537,7 @@
       "base_unit": [
         {
           "power": 3,
-          "si_prefix": {
-            "power": 0,
-            "base": "Zero",
-            "sign": "Positive"
-          },
+          "si_prefix": null,
           "unit_id": 83
         }
       ],
@@ -2939,11 +2563,7 @@
       "base_unit": [
         {
           "power": 1,
-          "si_prefix": {
-            "power": 0,
-            "base": "Zero",
-            "sign": "Positive"
-          },
+          "si_prefix": null,
           "unit_id": 83
         }
       ],
@@ -2973,11 +2593,7 @@
       "base_unit": [
         {
           "power": 3,
-          "si_prefix": {
-            "power": 0,
-            "base": "Zero",
-            "sign": "Positive"
-          },
+          "si_prefix": null,
           "unit_id": 83
         }
       ],
@@ -3002,29 +2618,17 @@
       "base_unit": [
         {
           "power": 1,
-          "si_prefix": {
-            "power": 0,
-            "base": "Zero",
-            "sign": "Positive"
-          },
+          "si_prefix": null,
           "unit_id": 18
         },
         {
           "power": 2,
-          "si_prefix": {
-            "power": 0,
-            "base": "Zero",
-            "sign": "Positive"
-          },
+          "si_prefix": null,
           "unit_id": 83
         },
         {
           "power": -2,
-          "si_prefix": {
-            "power": 0,
-            "base": "Zero",
-            "sign": "Positive"
-          },
+          "si_prefix": null,
           "unit_id": 83
         }
       ],
@@ -3048,20 +2652,12 @@
       "base_unit": [
         {
           "power": 1,
-          "si_prefix": {
-            "power": 0,
-            "base": "Zero",
-            "sign": "Positive"
-          },
+          "si_prefix": null,
           "unit_id": 18
         },
         {
           "power": -2,
-          "si_prefix": {
-            "power": 0,
-            "base": "Zero",
-            "sign": "Positive"
-          },
+          "si_prefix": null,
           "unit_id": 83
         }
       ],
@@ -3085,11 +2681,7 @@
       "base_unit": [
         {
           "power": 1,
-          "si_prefix": {
-            "power": 0,
-            "base": "Zero",
-            "sign": "Positive"
-          },
+          "si_prefix": null,
           "unit_id": 83
         }
       ],
@@ -3113,11 +2705,7 @@
       "base_unit": [
         {
           "power": 1,
-          "si_prefix": {
-            "power": 0,
-            "base": "Zero",
-            "sign": "Positive"
-          },
+          "si_prefix": null,
           "unit_id": 83
         }
       ],
@@ -3143,11 +2731,7 @@
       "base_unit": [
         {
           "power": 1,
-          "si_prefix": {
-            "power": 0,
-            "base": "Zero",
-            "sign": "Positive"
-          },
+          "si_prefix": null,
           "unit_id": 83
         }
       ],
@@ -3172,11 +2756,7 @@
       "base_unit": [
         {
           "power": 1,
-          "si_prefix": {
-            "power": 0,
-            "base": "Zero",
-            "sign": "Positive"
-          },
+          "si_prefix": null,
           "unit_id": 124
         }
       ],
@@ -3200,11 +2780,7 @@
       "base_unit": [
         {
           "power": 1,
-          "si_prefix": {
-            "power": 0,
-            "base": "Zero",
-            "sign": "Positive"
-          },
+          "si_prefix": null,
           "unit_id": 66
         }
       ],
@@ -3237,11 +2813,7 @@
       "base_unit": [
         {
           "power": 1,
-          "si_prefix": {
-            "power": 0,
-            "base": "Zero",
-            "sign": "Positive"
-          },
+          "si_prefix": null,
           "unit_id": 150
         }
       ],
@@ -3265,11 +2837,7 @@
       "base_unit": [
         {
           "power": 1,
-          "si_prefix": {
-            "power": 0,
-            "base": "Zero",
-            "sign": "Positive"
-          },
+          "si_prefix": null,
           "unit_id": 150
         }
       ],
@@ -3293,11 +2861,7 @@
       "base_unit": [
         {
           "power": 1,
-          "si_prefix": {
-            "power": 0,
-            "base": "Zero",
-            "sign": "Positive"
-          },
+          "si_prefix": null,
           "unit_id": 83
         }
       ],
@@ -3331,20 +2895,12 @@
         },
         {
           "power": 1,
-          "si_prefix": {
-            "power": 0,
-            "base": "Zero",
-            "sign": "Positive"
-          },
+          "si_prefix": null,
           "unit_id": 83
         },
         {
           "power": -2,
-          "si_prefix": {
-            "power": 0,
-            "base": "Zero",
-            "sign": "Positive"
-          },
+          "si_prefix": null,
           "unit_id": 124
         }
       ],
@@ -3368,11 +2924,7 @@
       "base_unit": [
         {
           "power": 1,
-          "si_prefix": {
-            "power": 0,
-            "base": "Zero",
-            "sign": "Positive"
-          },
+          "si_prefix": null,
           "unit_id": 66
         },
         {
@@ -3428,20 +2980,12 @@
         },
         {
           "power": -2,
-          "si_prefix": {
-            "power": 0,
-            "base": "Zero",
-            "sign": "Positive"
-          },
+          "si_prefix": null,
           "unit_id": 83
         },
         {
           "power": -2,
-          "si_prefix": {
-            "power": 0,
-            "base": "Zero",
-            "sign": "Positive"
-          },
+          "si_prefix": null,
           "unit_id": 124
         }
       ],
@@ -3480,29 +3024,17 @@
         },
         {
           "power": 2,
-          "si_prefix": {
-            "power": 0,
-            "base": "Zero",
-            "sign": "Positive"
-          },
+          "si_prefix": null,
           "unit_id": 83
         },
         {
           "power": -3,
-          "si_prefix": {
-            "power": 0,
-            "base": "Zero",
-            "sign": "Positive"
-          },
+          "si_prefix": null,
           "unit_id": 124
         },
         {
           "power": -2,
-          "si_prefix": {
-            "power": 0,
-            "base": "Zero",
-            "sign": "Positive"
-          },
+          "si_prefix": null,
           "unit_id": 2
         }
       ],
@@ -3526,11 +3058,7 @@
       "base_unit": [
         {
           "power": 3,
-          "si_prefix": {
-            "power": 0,
-            "base": "Zero",
-            "sign": "Positive"
-          },
+          "si_prefix": null,
           "unit_id": 83
         }
       ],
@@ -3623,11 +3151,7 @@
       "base_unit": [
         {
           "power": 1,
-          "si_prefix": {
-            "power": 0,
-            "base": "Zero",
-            "sign": "Positive"
-          },
+          "si_prefix": null,
           "unit_id": 83
         }
       ],
@@ -3673,20 +3197,12 @@
         },
         {
           "power": -1,
-          "si_prefix": {
-            "power": 0,
-            "base": "Zero",
-            "sign": "Positive"
-          },
+          "si_prefix": null,
           "unit_id": 83
         },
         {
           "power": -2,
-          "si_prefix": {
-            "power": 0,
-            "base": "Zero",
-            "sign": "Positive"
-          },
+          "si_prefix": null,
           "unit_id": 124
         }
       ],
@@ -3710,11 +3226,7 @@
       "base_unit": [
         {
           "power": 1,
-          "si_prefix": {
-            "power": 0,
-            "base": "Zero",
-            "sign": "Positive"
-          },
+          "si_prefix": null,
           "unit_id": 110
         }
       ],
@@ -3738,11 +3250,7 @@
       "base_unit": [
         {
           "power": 1,
-          "si_prefix": {
-            "power": 0,
-            "base": "Zero",
-            "sign": "Positive"
-          },
+          "si_prefix": null,
           "unit_id": 110
         }
       ],
@@ -3767,11 +3275,7 @@
       "base_unit": [
         {
           "power": 1,
-          "si_prefix": {
-            "power": 0,
-            "base": "Zero",
-            "sign": "Positive"
-          },
+          "si_prefix": null,
           "unit_id": 110
         }
       ],
@@ -3797,11 +3301,7 @@
       "base_unit": [
         {
           "power": 1,
-          "si_prefix": {
-            "power": 0,
-            "base": "Zero",
-            "sign": "Positive"
-          },
+          "si_prefix": null,
           "unit_id": 110
         }
       ],
@@ -3826,11 +3326,7 @@
       "base_unit": [
         {
           "power": 3,
-          "si_prefix": {
-            "power": 0,
-            "base": "Zero",
-            "sign": "Positive"
-          },
+          "si_prefix": null,
           "unit_id": 83
         }
       ],
@@ -3863,11 +3359,7 @@
       "base_unit": [
         {
           "power": 3,
-          "si_prefix": {
-            "power": 0,
-            "base": "Zero",
-            "sign": "Positive"
-          },
+          "si_prefix": null,
           "unit_id": 83
         }
       ],
@@ -3898,11 +3390,7 @@
       "base_unit": [
         {
           "power": 3,
-          "si_prefix": {
-            "power": 0,
-            "base": "Zero",
-            "sign": "Positive"
-          },
+          "si_prefix": null,
           "unit_id": 83
         }
       ],
@@ -3931,11 +3419,7 @@
       "base_unit": [
         {
           "power": 3,
-          "si_prefix": {
-            "power": 0,
-            "base": "Zero",
-            "sign": "Positive"
-          },
+          "si_prefix": null,
           "unit_id": 83
         }
       ],
@@ -3960,11 +3444,7 @@
       "base_unit": [
         {
           "power": 1,
-          "si_prefix": {
-            "power": 0,
-            "base": "Zero",
-            "sign": "Positive"
-          },
+          "si_prefix": null,
           "unit_id": 108
         }
       ],
@@ -3988,11 +3468,7 @@
       "base_unit": [
         {
           "power": 1,
-          "si_prefix": {
-            "power": 0,
-            "base": "Zero",
-            "sign": "Positive"
-          },
+          "si_prefix": null,
           "unit_id": 83
         }
       ],
@@ -4018,11 +3494,7 @@
       "base_unit": [
         {
           "power": 1,
-          "si_prefix": {
-            "power": 0,
-            "base": "Zero",
-            "sign": "Positive"
-          },
+          "si_prefix": null,
           "unit_id": 110
         }
       ],
@@ -4089,20 +3561,12 @@
         },
         {
           "power": 1,
-          "si_prefix": {
-            "power": 0,
-            "base": "Zero",
-            "sign": "Positive"
-          },
+          "si_prefix": null,
           "unit_id": 83
         },
         {
           "power": -2,
-          "si_prefix": {
-            "power": 0,
-            "base": "Zero",
-            "sign": "Positive"
-          },
+          "si_prefix": null,
           "unit_id": 124
         }
       ],
@@ -4136,11 +3600,7 @@
       "base_unit": [
         {
           "power": 3,
-          "si_prefix": {
-            "power": 0,
-            "base": "Zero",
-            "sign": "Positive"
-          },
+          "si_prefix": null,
           "unit_id": 83
         }
       ],
@@ -4171,11 +3631,7 @@
       "base_unit": [
         {
           "power": 3,
-          "si_prefix": {
-            "power": 0,
-            "base": "Zero",
-            "sign": "Positive"
-          },
+          "si_prefix": null,
           "unit_id": 83
         }
       ],
@@ -4204,11 +3660,7 @@
       "base_unit": [
         {
           "power": 1,
-          "si_prefix": {
-            "power": 0,
-            "base": "Zero",
-            "sign": "Positive"
-          },
+          "si_prefix": null,
           "unit_id": 150
         }
       ],
@@ -4232,11 +3684,7 @@
       "base_unit": [
         {
           "power": 1,
-          "si_prefix": {
-            "power": 0,
-            "base": "Zero",
-            "sign": "Positive"
-          },
+          "si_prefix": null,
           "unit_id": 118
         }
       ],
@@ -4266,11 +3714,7 @@
       "base_unit": [
         {
           "power": 1,
-          "si_prefix": {
-            "power": 0,
-            "base": "Zero",
-            "sign": "Positive"
-          },
+          "si_prefix": null,
           "unit_id": 72
         }
       ],
@@ -4294,11 +3738,7 @@
       "base_unit": [
         {
           "power": 1,
-          "si_prefix": {
-            "power": 0,
-            "base": "Zero",
-            "sign": "Positive"
-          },
+          "si_prefix": null,
           "unit_id": 118
         }
       ],
@@ -4322,11 +3762,7 @@
       "base_unit": [
         {
           "power": 1,
-          "si_prefix": {
-            "power": 0,
-            "base": "Zero",
-            "sign": "Positive"
-          },
+          "si_prefix": null,
           "unit_id": 83
         }
       ],
@@ -4351,11 +3787,7 @@
       "base_unit": [
         {
           "power": 1,
-          "si_prefix": {
-            "power": 0,
-            "base": "Zero",
-            "sign": "Positive"
-          },
+          "si_prefix": null,
           "unit_id": 83
         }
       ],
@@ -4380,11 +3812,7 @@
       "base_unit": [
         {
           "power": 1,
-          "si_prefix": {
-            "power": 0,
-            "base": "Zero",
-            "sign": "Positive"
-          },
+          "si_prefix": null,
           "unit_id": 83
         }
       ],
@@ -4410,11 +3838,7 @@
       "base_unit": [
         {
           "power": 3,
-          "si_prefix": {
-            "power": 0,
-            "base": "Zero",
-            "sign": "Positive"
-          },
+          "si_prefix": null,
           "unit_id": 83
         }
       ],
@@ -4442,11 +3866,7 @@
       "base_unit": [
         {
           "power": 2,
-          "si_prefix": {
-            "power": 0,
-            "base": "Zero",
-            "sign": "Positive"
-          },
+          "si_prefix": null,
           "unit_id": 83
         }
       ],
@@ -4471,11 +3891,7 @@
       "base_unit": [
         {
           "power": 1,
-          "si_prefix": {
-            "power": 0,
-            "base": "Zero",
-            "sign": "Positive"
-          },
+          "si_prefix": null,
           "unit_id": 124
         }
       ],
@@ -4499,11 +3915,7 @@
       "base_unit": [
         {
           "power": 3,
-          "si_prefix": {
-            "power": 0,
-            "base": "Zero",
-            "sign": "Positive"
-          },
+          "si_prefix": null,
           "unit_id": 83
         }
       ],
@@ -4531,11 +3943,7 @@
       "base_unit": [
         {
           "power": 1,
-          "si_prefix": {
-            "power": 0,
-            "base": "Zero",
-            "sign": "Positive"
-          },
+          "si_prefix": null,
           "unit_id": 83
         }
       ],
@@ -4559,11 +3967,7 @@
       "base_unit": [
         {
           "power": 1,
-          "si_prefix": {
-            "power": 0,
-            "base": "Zero",
-            "sign": "Positive"
-          },
+          "si_prefix": null,
           "unit_id": 83
         }
       ],
@@ -4587,20 +3991,12 @@
       "base_unit": [
         {
           "power": 3,
-          "si_prefix": {
-            "power": 0,
-            "base": "Zero",
-            "sign": "Positive"
-          },
+          "si_prefix": null,
           "unit_id": 124
         },
         {
           "power": 2,
-          "si_prefix": {
-            "power": 0,
-            "base": "Zero",
-            "sign": "Positive"
-          },
+          "si_prefix": null,
           "unit_id": 2
         },
         {
@@ -4614,11 +4010,7 @@
         },
         {
           "power": -2,
-          "si_prefix": {
-            "power": 0,
-            "base": "Zero",
-            "sign": "Positive"
-          },
+          "si_prefix": null,
           "unit_id": 83
         }
       ],
@@ -4642,20 +4034,12 @@
       "base_unit": [
         {
           "power": 2,
-          "si_prefix": {
-            "power": 0,
-            "base": "Zero",
-            "sign": "Positive"
-          },
+          "si_prefix": null,
           "unit_id": 83
         },
         {
           "power": -2,
-          "si_prefix": {
-            "power": 0,
-            "base": "Zero",
-            "sign": "Positive"
-          },
+          "si_prefix": null,
           "unit_id": 124
         }
       ],
@@ -4725,20 +4109,12 @@
         },
         {
           "power": 2,
-          "si_prefix": {
-            "power": 0,
-            "base": "Zero",
-            "sign": "Positive"
-          },
+          "si_prefix": null,
           "unit_id": 83
         },
         {
           "power": -3,
-          "si_prefix": {
-            "power": 0,
-            "base": "Zero",
-            "sign": "Positive"
-          },
+          "si_prefix": null,
           "unit_id": 124
         }
       ],
@@ -4813,11 +4189,7 @@
       "base_unit": [
         {
           "power": 1,
-          "si_prefix": {
-            "power": 0,
-            "base": "Zero",
-            "sign": "Positive"
-          },
+          "si_prefix": null,
           "unit_id": 83
         }
       ],
@@ -4844,11 +4216,7 @@
       "base_unit": [
         {
           "power": 2,
-          "si_prefix": {
-            "power": 0,
-            "base": "Zero",
-            "sign": "Positive"
-          },
+          "si_prefix": null,
           "unit_id": 118
         }
       ],
@@ -4919,11 +4287,7 @@
       "base_unit": [
         {
           "power": 1,
-          "si_prefix": {
-            "power": 0,
-            "base": "Zero",
-            "sign": "Positive"
-          },
+          "si_prefix": null,
           "unit_id": 83
         }
       ],
@@ -4948,11 +4312,7 @@
       "base_unit": [
         {
           "power": 3,
-          "si_prefix": {
-            "power": 0,
-            "base": "Zero",
-            "sign": "Positive"
-          },
+          "si_prefix": null,
           "unit_id": 83
         }
       ],
@@ -4984,11 +4344,7 @@
       "base_unit": [
         {
           "power": 3,
-          "si_prefix": {
-            "power": 0,
-            "base": "Zero",
-            "sign": "Positive"
-          },
+          "si_prefix": null,
           "unit_id": 83
         }
       ],
@@ -5029,20 +4385,12 @@
         },
         {
           "power": -2,
-          "si_prefix": {
-            "power": 0,
-            "base": "Zero",
-            "sign": "Positive"
-          },
+          "si_prefix": null,
           "unit_id": 124
         },
         {
           "power": -1,
-          "si_prefix": {
-            "power": 0,
-            "base": "Zero",
-            "sign": "Positive"
-          },
+          "si_prefix": null,
           "unit_id": 2
         }
       ],
@@ -5075,20 +4423,12 @@
         },
         {
           "power": 2,
-          "si_prefix": {
-            "power": 0,
-            "base": "Zero",
-            "sign": "Positive"
-          },
+          "si_prefix": null,
           "unit_id": 83
         },
         {
           "power": -2,
-          "si_prefix": {
-            "power": 0,
-            "base": "Zero",
-            "sign": "Positive"
-          },
+          "si_prefix": null,
           "unit_id": 124
         }
       ],
@@ -5115,11 +4455,7 @@
       "base_unit": [
         {
           "power": 3,
-          "si_prefix": {
-            "power": 0,
-            "base": "Zero",
-            "sign": "Positive"
-          },
+          "si_prefix": null,
           "unit_id": 83
         }
       ],
@@ -5216,29 +4552,17 @@
         },
         {
           "power": 2,
-          "si_prefix": {
-            "power": 0,
-            "base": "Zero",
-            "sign": "Positive"
-          },
+          "si_prefix": null,
           "unit_id": 83
         },
         {
           "power": -3,
-          "si_prefix": {
-            "power": 0,
-            "base": "Zero",
-            "sign": "Positive"
-          },
+          "si_prefix": null,
           "unit_id": 124
         },
         {
           "power": -1,
-          "si_prefix": {
-            "power": 0,
-            "base": "Zero",
-            "sign": "Positive"
-          },
+          "si_prefix": null,
           "unit_id": 2
         }
       ],
@@ -5271,20 +4595,12 @@
         },
         {
           "power": 2,
-          "si_prefix": {
-            "power": 0,
-            "base": "Zero",
-            "sign": "Positive"
-          },
+          "si_prefix": null,
           "unit_id": 83
         },
         {
           "power": -3,
-          "si_prefix": {
-            "power": 0,
-            "base": "Zero",
-            "sign": "Positive"
-          },
+          "si_prefix": null,
           "unit_id": 124
         }
       ],
@@ -5317,29 +4633,17 @@
         },
         {
           "power": 2,
-          "si_prefix": {
-            "power": 0,
-            "base": "Zero",
-            "sign": "Positive"
-          },
+          "si_prefix": null,
           "unit_id": 83
         },
         {
           "power": -2,
-          "si_prefix": {
-            "power": 0,
-            "base": "Zero",
-            "sign": "Positive"
-          },
+          "si_prefix": null,
           "unit_id": 124
         },
         {
           "power": -1,
-          "si_prefix": {
-            "power": 0,
-            "base": "Zero",
-            "sign": "Positive"
-          },
+          "si_prefix": null,
           "unit_id": 2
         }
       ],
@@ -5363,11 +4667,7 @@
       "base_unit": [
         {
           "power": 1,
-          "si_prefix": {
-            "power": 0,
-            "base": "Zero",
-            "sign": "Positive"
-          },
+          "si_prefix": null,
           "unit_id": 124
         }
       ],
@@ -5393,11 +4693,7 @@
       "base_unit": [
         {
           "power": 1,
-          "si_prefix": {
-            "power": 0,
-            "base": "Zero",
-            "sign": "Positive"
-          },
+          "si_prefix": null,
           "unit_id": 124
         }
       ],
@@ -5423,11 +4719,7 @@
       "base_unit": [
         {
           "power": 1,
-          "si_prefix": {
-            "power": 0,
-            "base": "Zero",
-            "sign": "Positive"
-          },
+          "si_prefix": null,
           "unit_id": 83
         }
       ],
@@ -5453,11 +4745,7 @@
       "base_unit": [
         {
           "power": 1,
-          "si_prefix": {
-            "power": 0,
-            "base": "Zero",
-            "sign": "Positive"
-          },
+          "si_prefix": null,
           "unit_id": 150
         }
       ],
@@ -5481,11 +4769,7 @@
       "base_unit": [
         {
           "power": 1,
-          "si_prefix": {
-            "power": 0,
-            "base": "Zero",
-            "sign": "Positive"
-          },
+          "si_prefix": null,
           "unit_id": 150
         }
       ],
