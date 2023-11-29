@@ -902,7 +902,19 @@ right = "SP"
 [[tables]]
 # LB14
 name = "OP_SP"
+left = "OP_OP30_ZWJ"
+right = "SP"
+
+[[tables]]
+# LB14
+name = "OP_SP"
 left = "OP_EA"
+right = "SP"
+
+[[tables]]
+# LB14
+name = "OP_SP"
+left = "OP_EA_ZWJ"
 right = "SP"
 
 [[tables]]
