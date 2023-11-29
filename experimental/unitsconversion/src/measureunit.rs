@@ -7,6 +7,7 @@ use zerovec::ZeroVec;
 
 use crate::provider::{Base, MeasureUnitItem, SiPrefix, Sign};
 
+// TODO(#4369): split this struct to two structs: MeasureUnitParser for parsing the identifier and MeasureUnit to represent the unit.
 #[zerovec::make_varule(MeasureUnitULE)]
 #[derive(Clone, Debug, PartialOrd, Ord, PartialEq, Eq, Default)]
 #[cfg_attr(
@@ -202,16 +203,17 @@ impl MeasureUnit<'_> {
         part: &'data str,
         trie: &ZeroTrie<ZeroVec<'data, u8>>,
     ) -> Option<(usize, &'data str)> {
-        // TODO: this is inefficient way to search for an item in a trie.
+        // TODO(#4379): this is inefficient way to search for an item in a trie.
         // we must implement a way to search for a prefix in a trie.
+        let mut result = None;
         for (index, _) in part.char_indices() {
             let identifier = &part[..=index];
             if let Some(value) = trie.get(identifier.as_bytes()) {
-                return Some((value, &part[identifier.len()..]));
+                result = Some((value, &part[identifier.len()..]));
             }
         }
 
-        None
+        result
     }
 
     /// Process a part of an identifier.
