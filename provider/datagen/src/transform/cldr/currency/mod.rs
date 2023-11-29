@@ -130,6 +130,10 @@ fn extract_currency_essentials<'data>(
     };
 
     let mut currency_patterns_map = BTreeMap::<UnvalidatedTinyAsciiStr<3>, CurrencyPatterns>::new();
+    let mut currency_patterns_standard_none =
+        BTreeMap::<UnvalidatedTinyAsciiStr<3>, CurrencyPatterns>::new();
+    let mut currency_patterns_standard_next_to_num =
+        BTreeMap::<UnvalidatedTinyAsciiStr<3>, CurrencyPatterns>::new();
     let mut place_holders = Vec::<&str>::new();
     // A map to check if the place holder is already in the place_holders vector.
     let mut place_holders_checker_map = HashMap::<&str, u16>::new();
@@ -220,30 +224,46 @@ fn extract_currency_essentials<'data>(
 
         // TODO(#4314): Check if we can remove also when the patterns equal to
         // PatternSelection::StandardNextToNumber.
-        if short_pattern_standard == PatternSelection::Standard
-            && narrow_pattern_standard == PatternSelection::Standard
-            && short_place_holder_index.is_none()
-            && narrow_place_holder_index.is_none()
-        {
-            continue;
-        }
+        let currency_patterns = CurrencyPatterns {
+            short_pattern_standard,
+            narrow_pattern_standard,
+            short_place_holder_index,
+            narrow_place_holder_index,
+        };
 
-        currency_patterns_map.insert(
-            *iso,
-            CurrencyPatterns {
-                short_pattern_standard,
-                narrow_pattern_standard,
-                short_place_holder_index,
-                narrow_place_holder_index,
-            },
-        );
+        match (short_pattern_standard, narrow_pattern_standard) {
+            (PatternSelection::Standard, PatternSelection::Standard)
+                if short_place_holder_index.is_none() && narrow_place_holder_index.is_none() =>
+            {
+                currency_patterns_standard_none.insert(*iso, currency_patterns);
+            }
+            (
+                PatternSelection::StandardAlphaNextToNumber,
+                PatternSelection::StandardAlphaNextToNumber,
+            ) if short_place_holder_index.is_none() && narrow_place_holder_index.is_none() => {
+                currency_patterns_standard_next_to_num.insert(*iso, currency_patterns);
+            }
+            _ => {
+                currency_patterns_map.insert(*iso, currency_patterns);
+            }
+        }
     }
+
+    let default_pattern =
+        if currency_patterns_standard_none.len() <= currency_patterns_standard_next_to_num.len() {
+            currency_patterns_map.extend(currency_patterns_standard_none);
+            DefaultPattern::StandardAndNone
+        } else {
+            currency_patterns_map.extend(currency_patterns_standard_next_to_num);
+            DefaultPattern::StandardAlphaNextToNumberAndNone
+        };
 
     Ok(CurrencyEssentialsV1 {
         currency_patterns_map: ZeroMap::from_iter(currency_patterns_map.iter()),
         standard: standard.to_owned().into(),
         standard_alpha_next_to_number: standard_alpha_next_to_number.to_owned().into(),
         place_holders: VarZeroVec::from(&place_holders),
+        default_pattern,
     })
 }
 

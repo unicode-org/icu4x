@@ -952,5 +952,6 @@
     "¤",
     "R",
     "ZK"
-  ]
+  ],
+  "default_pattern": "StandardAndNone"
 }

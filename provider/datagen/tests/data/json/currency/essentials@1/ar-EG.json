@@ -1142,5 +1142,6 @@
     "ر.ي.‏",
     "R",
     "ZK"
-  ]
+  ],
+  "default_pattern": "StandardAlphaNextToNumberAndNone"
 }

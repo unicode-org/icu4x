@@ -920,5 +920,6 @@
     "¤",
     "R",
     "ZK"
-  ]
+  ],
+  "default_pattern": "StandardAlphaNextToNumberAndNone"
 }
