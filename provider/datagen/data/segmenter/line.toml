@@ -715,12 +715,6 @@ right = "CM"
 
 [[tables]]
 # LB9
-name = "AL"
-left = "AL_ZWJ"
-right = "CM"
-
-[[tables]]
-# LB9
 name = "CP"
 left = "CP_ZWJ"
 right = "CM"
@@ -910,6 +904,246 @@ right = "CM"
 name = "RI_RI"
 left = "RI_RI_ZWJ"
 right = "CM"
+
+[[tables]]
+# LB9
+name = "AI_ZWJ"
+left = "AI_ZWJ"
+right = "ZWJ"
+
+[[tables]]
+# LB9
+name = "AL_ZWJ"
+left = "AL_ZWJ"
+right = "ZWJ"
+
+[[tables]]
+# LB9
+name = "B2_ZWJ"
+left = "B2_ZWJ"
+right = "ZWJ"
+
+[[tables]]
+# LB9
+name = "BA_ZWJ"
+left = "BA_ZWJ"
+right = "ZWJ"
+
+[[tables]]
+# LB9
+name = "BB_ZWJ"
+left = "BB_ZWJ"
+right = "ZWJ"
+
+[[tables]]
+# LB9
+name = "CB_ZWJ"
+left = "CB_ZWJ"
+right = "ZWJ"
+
+[[tables]]
+# LB9
+name = "CJ_ZWJ"
+left = "CJ_ZWJ"
+right = "ZWJ"
+
+[[tables]]
+# LB9
+name = "CL_ZWJ"
+left = "CL_ZWJ"
+right = "ZWJ"
+
+[[tables]]
+# LB9
+name = "CP_ZWJ"
+left = "CP_ZWJ"
+right = "ZWJ"
+
+[[tables]]
+# LB9
+name = "EB_ZWJ"
+left = "EB_ZWJ"
+right = "ZWJ"
+
+[[tables]]
+# LB9
+name = "EM_ZWJ"
+left = "EM_ZWJ"
+right = "ZWJ"
+
+[[tables]]
+# LB9
+name = "EX_ZWJ"
+left = "EX_ZWJ"
+right = "ZWJ"
+
+[[tables]]
+# LB9
+name = "GL_ZWJ"
+left = "GL_ZWJ"
+right = "ZWJ"
+
+[[tables]]
+# LB9
+name = "H2_ZWJ"
+left = "H2_ZWJ"
+right = "ZWJ"
+
+[[tables]]
+# LB9
+name = "H3_ZWJ"
+left = "H3_ZWJ"
+right = "ZWJ"
+
+[[tables]]
+# LB9
+name = "HL_ZWJ"
+left = "HL_ZWJ"
+right = "ZWJ"
+
+[[tables]]
+# LB9
+name = "HL_ZWJ"
+left = "HL_ZWJ"
+right = "ZWJ"
+
+[[tables]]
+# LB9
+name = "HY_ZWJ"
+left = "HY_ZWJ"
+right = "ZWJ"
+
+[[tables]]
+# LB9
+name = "ID_ZWJ"
+left = "ID_ZWJ"
+right = "ZWJ"
+
+[[tables]]
+# LB9
+name = "ID_CN_ZWJ"
+left = "ID_CN_ZWJ"
+right = "ZWJ"
+
+[[tables]]
+# LB9
+name = "IN_ZWJ"
+left = "IN_ZWJ"
+right = "ZWJ"
+
+[[tables]]
+# LB9
+name = "IS_ZWJ"
+left = "IS_ZWJ"
+right = "ZWJ"
+
+[[tables]]
+# LB9
+name = "JL_ZWJ"
+left = "JL_ZWJ"
+right = "ZWJ"
+
+[[tables]]
+# LB9
+name = "JT_ZWJ"
+left = "JT_ZWJ"
+right = "ZWJ"
+
+[[tables]]
+# LB9
+name = "JV_ZWJ"
+left = "JV_ZWJ"
+right = "ZWJ"
+
+[[tables]]
+# LB9
+name = "NS_ZWJ"
+left = "NS_ZWJ"
+right = "ZWJ"
+
+[[tables]]
+# LB9
+name = "NU_ZWJ"
+left = "NU_ZWJ"
+right = "ZWJ"
+
+[[tables]]
+# LB9
+name = "OP_EA_ZWJ"
+left = "OP_EA_ZWJ"
+right = "ZWJ"
+
+[[tables]]
+# LB9
+name = "OP_OP30_ZWJ"
+left = "OP_OP30_ZWJ"
+right = "ZWJ"
+
+[[tables]]
+# LB9
+name = "PO_ZWJ"
+left = "PO_ZWJ"
+right = "ZWJ"
+
+[[tables]]
+# LB9
+name = "PO_EAW_ZWJ"
+left = "PO_EAW_ZWJ"
+right = "ZWJ"
+
+[[tables]]
+# LB9
+name = "QU_ZWJ"
+left = "QU_ZWJ"
+right = "ZWJ"
+
+[[tables]]
+# LB9
+name = "RI_ZWJ"
+left = "RI_ZWJ"
+right = "ZWJ"
+
+[[tables]]
+# LB9
+name = "PR_ZWJ"
+left = "PR_ZWJ"
+right = "ZWJ"
+
+[[tables]]
+# LB9
+name = "PR_EAW_ZWJ"
+left = "PR_EAW_ZWJ"
+right = "ZWJ"
+
+[[tables]]
+# LB9
+name = "SA_ZWJ"
+left = "SA_ZWJ"
+right = "ZWJ"
+
+[[tables]]
+# LB9
+name = "SY_ZWJ"
+left = "SY_ZWJ"
+right = "ZWJ"
+
+[[tables]]
+# LB9
+name = "WJ_ZWJ"
+left = "WJ_ZWJ"
+right = "ZWJ"
+
+[[tables]]
+# LB9
+name = "XX_ZWJ"
+left = "XX_ZWJ"
+right = "ZWJ"
+
+[[tables]]
+# LB9
+name = "RI_RI_ZWJ"
+left = "RI_RI_ZWJ"
+right = "ZWJ"
 
 [[tables]]
 # LB14
