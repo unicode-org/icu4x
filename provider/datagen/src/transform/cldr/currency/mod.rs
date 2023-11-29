@@ -222,8 +222,6 @@ fn extract_currency_essentials<'data>(
             }
         };
 
-        // TODO(#4314): Check if we can remove also when the patterns equal to
-        // PatternSelection::StandardNextToNumber.
         let currency_patterns = CurrencyPatterns {
             short_pattern_standard,
             narrow_pattern_standard,
