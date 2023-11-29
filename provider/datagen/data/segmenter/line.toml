@@ -402,8 +402,12 @@ right = "CM"
 
 # X ZWJ is treated as X, but only after the rule ZWJ × has been applied,
 # so we cannot just do the same thing we do for CM.
-# Instead we split each state X into X and X_ZWJ, and forbid a break after X_ZWJ.
-# State X_ZWJ is otherwise treated as X.
+# Instead we split each state X into X and X_ZWJ, and forbid a break after
+# X_ZWJ.
+# State X_ZWJ should otherwise be treated as X; we need only care about that
+# where it lies in extended context to the left of a no-break rule, which is why
+# we do not have X_ZWJ for every X on the left of rules and transitions in this
+# file. 
 
 [[tables]]
 # LB9
@@ -1155,7 +1159,7 @@ break_state = true
 
 [[rules]]
 # LB20
-left = [ "Any" ]
+left = [ "Any", "HL_HY" ]
 right = [ "CB" ]
 break_state = true
 
@@ -1185,7 +1189,7 @@ break_state = false
 
 [[rules]]
 # LB22
-left = [ "Any" ]
+left = [ "Any", "RI_RI" ]
 right = [ "IN" ]
 break_state = false
 
