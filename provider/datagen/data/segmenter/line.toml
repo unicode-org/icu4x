@@ -650,6 +650,12 @@ name = "XX_ZWJ"
 left = "XX"
 right = "ZWJ"
 
+[[tables]]
+# LB9
+name = "RI_RI_ZWJ"
+left = "RI_RI"
+right = "ZWJ"
+
 # X ZWJ CM brings us back to state X,
 # as the ZWJ does not act through CMs, LB8a being before LB9.
 
@@ -894,6 +900,12 @@ left = "XX_ZWJ"
 right = "CM"
 
 [[tables]]
+# LB9
+name = "RI_RI"
+left = "RI_RI_ZWJ"
+right = "CM"
+
+[[tables]]
 # LB14
 name = "OP_SP"
 left = "OP_OP30"
@@ -1057,7 +1069,7 @@ break_state = true
 
 [[rules]]
 # LB8a
-left = [ "ZWJ", "AI_ZWJ", "AL_ZWJ", "B2_ZWJ", "BA_ZWJ", "BB_ZWJ", "CB_ZWJ", "CJ_ZWJ", "CL_ZWJ", "AL_ZWJ", "CP_ZWJ", "EB_ZWJ", "EM_ZWJ", "EX_ZWJ", "GL_ZWJ", "H2_ZWJ", "H3_ZWJ", "HL_ZWJ", "HL_ZWJ", "HY_ZWJ", "ID_ZWJ", "ID_ZWJ", "IN_ZWJ", "IS_ZWJ", "JL_ZWJ", "JT_ZWJ", "JV_ZWJ", "NS_ZWJ", "NU_ZWJ", "OP_EA_ZWJ", "OP_OP30_ZWJ", "PO_ZWJ", "PO_EAW_ZWJ", "QU_ZWJ", "RI_ZWJ", "PR_ZWJ", "PR_EAW_ZWJ", "SA_ZWJ", "SY_ZWJ", "WJ_ZWJ", "XX_ZWJ" ]
+left = [ "ZWJ", "AI_ZWJ", "AL_ZWJ", "B2_ZWJ", "BA_ZWJ", "BB_ZWJ", "CB_ZWJ", "CJ_ZWJ", "CL_ZWJ", "AL_ZWJ", "CP_ZWJ", "EB_ZWJ", "EM_ZWJ", "EX_ZWJ", "GL_ZWJ", "H2_ZWJ", "H3_ZWJ", "HL_ZWJ", "HL_ZWJ", "HY_ZWJ", "ID_ZWJ", "ID_ZWJ", "IN_ZWJ", "IS_ZWJ", "JL_ZWJ", "JT_ZWJ", "JV_ZWJ", "NS_ZWJ", "NU_ZWJ", "OP_EA_ZWJ", "OP_OP30_ZWJ", "PO_ZWJ", "PO_EAW_ZWJ", "QU_ZWJ", "RI_ZWJ", "PR_ZWJ", "PR_EAW_ZWJ", "SA_ZWJ", "SY_ZWJ", "WJ_ZWJ", "XX_ZWJ", "RI_RI_ZWJ" ]
 right = [ "Any" ]
 break_state = false
 
