@@ -986,6 +986,12 @@ right = "HY"
 [[tables]]
 # LB21
 name = "HL_HY"
+left = "HL_ZWJ"
+right = "HY"
+
+[[tables]]
+# LB21
+name = "HL_HY"
 left = "HL"
 right = "BA"
 
