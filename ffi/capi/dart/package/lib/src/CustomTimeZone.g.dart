@@ -22,8 +22,8 @@ final class CustomTimeZone implements ffi.Finalizable {
   /// Throws [Error] on failure.
   factory CustomTimeZone.fromString(String s) {
     final temp = ffi2.Arena();
-    final sLength = s.utf8Length;
-    final result = _ICU4XCustomTimeZone_create_from_string(Utf8Encoder().allocConvert(temp, s, length: sLength), sLength);
+    final sView = s.utf8View;;
+    final result = _ICU4XCustomTimeZone_create_from_string(sView.pointer(temp), sView.length);
     temp.releaseAll();
     if (!result.isOk) {
       throw Error.values.firstWhere((v) => v._underlying == result.union.err);
@@ -210,8 +210,8 @@ final class CustomTimeZone implements ffi.Finalizable {
   /// Throws [Error] on failure.
   void trySetTimeZoneId(String id) {
     final temp = ffi2.Arena();
-    final idLength = id.utf8Length;
-    final result = _ICU4XCustomTimeZone_try_set_time_zone_id(_underlying, Utf8Encoder().allocConvert(temp, id, length: idLength), idLength);
+    final idView = id.utf8View;;
+    final result = _ICU4XCustomTimeZone_try_set_time_zone_id(_underlying, idView.pointer(temp), idView.length);
     temp.releaseAll();
     if (!result.isOk) {
       throw Error.values.firstWhere((v) => v._underlying == result.union.err);
@@ -233,8 +233,8 @@ final class CustomTimeZone implements ffi.Finalizable {
   /// Throws [Error] on failure.
   void trySetIanaTimeZoneId(IanaToBcp47Mapper mapper, String id) {
     final temp = ffi2.Arena();
-    final idLength = id.utf8Length;
-    final result = _ICU4XCustomTimeZone_try_set_iana_time_zone_id(_underlying, mapper._underlying, Utf8Encoder().allocConvert(temp, id, length: idLength), idLength);
+    final idView = id.utf8View;;
+    final result = _ICU4XCustomTimeZone_try_set_iana_time_zone_id(_underlying, mapper._underlying, idView.pointer(temp), idView.length);
     temp.releaseAll();
     if (!result.isOk) {
       throw Error.values.firstWhere((v) => v._underlying == result.union.err);
@@ -294,8 +294,8 @@ final class CustomTimeZone implements ffi.Finalizable {
   /// Throws [Error] on failure.
   void trySetMetazoneId(String id) {
     final temp = ffi2.Arena();
-    final idLength = id.utf8Length;
-    final result = _ICU4XCustomTimeZone_try_set_metazone_id(_underlying, Utf8Encoder().allocConvert(temp, id, length: idLength), idLength);
+    final idView = id.utf8View;;
+    final result = _ICU4XCustomTimeZone_try_set_metazone_id(_underlying, idView.pointer(temp), idView.length);
     temp.releaseAll();
     if (!result.isOk) {
       throw Error.values.firstWhere((v) => v._underlying == result.union.err);
@@ -355,8 +355,8 @@ final class CustomTimeZone implements ffi.Finalizable {
   /// Throws [Error] on failure.
   void trySetZoneVariant(String id) {
     final temp = ffi2.Arena();
-    final idLength = id.utf8Length;
-    final result = _ICU4XCustomTimeZone_try_set_zone_variant(_underlying, Utf8Encoder().allocConvert(temp, id, length: idLength), idLength);
+    final idView = id.utf8View;;
+    final result = _ICU4XCustomTimeZone_try_set_zone_variant(_underlying, idView.pointer(temp), idView.length);
     temp.releaseAll();
     if (!result.isOk) {
       throw Error.values.firstWhere((v) => v._underlying == result.union.err);

@@ -26,8 +26,8 @@ final class UnicodeSetData implements ffi.Finalizable {
   /// See the [Rust documentation for `contains`](https://docs.rs/icu/latest/icu/properties/sets/struct.UnicodeSetDataBorrowed.html#method.contains) for more information.
   bool contains(String s) {
     final temp = ffi2.Arena();
-    final sLength = s.utf8Length;
-    final result = _ICU4XUnicodeSetData_contains(_underlying, Utf8Encoder().allocConvert(temp, s, length: sLength), sLength);
+    final sView = s.utf8View;;
+    final result = _ICU4XUnicodeSetData_contains(_underlying, sView.pointer(temp), sView.length);
     temp.releaseAll();
     return result;
   }

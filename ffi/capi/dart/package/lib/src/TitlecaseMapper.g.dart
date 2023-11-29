@@ -42,9 +42,9 @@ final class TitlecaseMapper implements ffi.Finalizable {
   /// Throws [Error] on failure.
   String titlecaseSegmentV1(String s, Locale locale, TitlecaseOptionsV1 options) {
     final temp = ffi2.Arena();
-    final sLength = s.utf8Length;
+    final sView = s.utf8View;;
     final writeable = _Writeable();
-    final result = _ICU4XTitlecaseMapper_titlecase_segment_v1(_underlying, Utf8Encoder().allocConvert(temp, s, length: sLength), sLength, locale._underlying, options._underlying, writeable._underlying);
+    final result = _ICU4XTitlecaseMapper_titlecase_segment_v1(_underlying, sView.pointer(temp), sView.length, locale._underlying, options._underlying, writeable._underlying);
     temp.releaseAll();
     if (!result.isOk) {
       throw Error.values.firstWhere((v) => v._underlying == result.union.err);

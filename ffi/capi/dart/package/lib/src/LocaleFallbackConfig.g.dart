@@ -36,8 +36,9 @@ final class LocaleFallbackConfig {
   String get extensionKey => Utf8Decoder().convert(_underlying.extensionKey._pointer.asTypedList(_underlying.extensionKey._length));
   set extensionKey(String extensionKey) {
     ffi2.calloc.free(_underlying.extensionKey._pointer);
-    _underlying.extensionKey._length = extensionKey.utf8Length;
-    _underlying.extensionKey._pointer = Utf8Encoder().allocConvert(ffi2.calloc, extensionKey, length: _underlying.extensionKey._length);
+    final extensionKeyView = extensionKey.utf8View;
+    _underlying.extensionKey._pointer = extensionKeyView.pointer(ffi2.calloc);
+    _underlying.extensionKey._length = extensionKeyView.length;
   }
 
   LocaleFallbackSupplement get fallbackSupplement => LocaleFallbackSupplement.values[_underlying.fallbackSupplement];
