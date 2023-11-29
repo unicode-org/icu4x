@@ -42,10 +42,24 @@ impl MeasureUnit<'_> {
     fn get_power(part: &str) -> (u8, &str) {
         if let Some(part) = part.strip_prefix("square-") {
             (2, part)
+        } else if let Some(part) = part.strip_prefix("pow2-") {
+            (2, part)
         } else if let Some(part) = part.strip_prefix("cubic-") {
+            (3, part)
+        } else if let Some(part) = part.strip_prefix("pow3-") {
             (3, part)
         } else if let Some(part) = part.strip_prefix("pow4-") {
             (4, part)
+        } else if let Some(part) = part.strip_prefix("pow5-") {
+            (5, part)
+        } else if let Some(part) = part.strip_prefix("pow6-") {
+            (6, part)
+        } else if let Some(part) = part.strip_prefix("pow7-") {
+            (7, part)
+        } else if let Some(part) = part.strip_prefix("pow8-") {
+            (8, part)
+        } else if let Some(part) = part.strip_prefix("pow9-") {
+            (9, part)
         } else {
             (1, part)
         }
@@ -101,7 +115,21 @@ impl MeasureUnit<'_> {
     ///    if the prefix is found, the function will return (power, part without the prefix).
     ///   if the prefix is not found, the function will return (0, part).
     fn get_si_prefix_base_10(part: &str) -> (i8, &str) {
-        if let Some(part) = part.strip_prefix("kilo") {
+        if let Some(part) = part.strip_prefix("yotta") {
+            (24, part)
+        } else if let Some(part) = part.strip_prefix("zetta") {
+            (21, part)
+        } else if let Some(part) = part.strip_prefix("exa") {
+            (18, part)
+        } else if let Some(part) = part.strip_prefix("peta") {
+            (15, part)
+        } else if let Some(part) = part.strip_prefix("tera") {
+            (12, part)
+        } else if let Some(part) = part.strip_prefix("giga") {
+            (9, part)
+        } else if let Some(part) = part.strip_prefix("mega") {
+            (6, part)
+        } else if let Some(part) = part.strip_prefix("kilo") {
             (3, part)
         } else if let Some(part) = part.strip_prefix("hecto") {
             (2, part)
