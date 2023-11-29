@@ -400,6 +400,12 @@ name = "RI_RI"
 left = "RI_RI"
 right = "CM"
 
+[[tables]]
+# LB9
+name = "HL_HY"
+left = "HL_HY"
+right = "CM"
+
 # X ZWJ is treated as X, but only after the rule ZWJ × has been applied,
 # so we cannot just do the same thing we do for CM.
 # Instead we split each state X into X and X_ZWJ, and forbid a break after
@@ -1171,7 +1177,7 @@ break_state = true
 
 [[rules]]
 # LB19
-left = [ "Any" ]
+left = [ "Any", "RI_RI" ]
 right = [ "QU" ]
 break_state = false
 
