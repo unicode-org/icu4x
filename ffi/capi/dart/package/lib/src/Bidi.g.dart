@@ -42,8 +42,8 @@ final class Bidi implements ffi.Finalizable {
   /// See the [Rust documentation for `new_with_data_source`](https://docs.rs/unicode_bidi/latest/unicode_bidi/struct.BidiInfo.html#method.new_with_data_source) for more information.
   BidiInfo forText(String text, int defaultLevel) {
     final temp = ffi2.Arena();
-    final textLength = text.utf8Length;
-    final result = _ICU4XBidi_for_text(_underlying, Utf8Encoder().allocConvert(temp, text, length: textLength), textLength, defaultLevel);
+    final textView = text.utf8View;;
+    final result = _ICU4XBidi_for_text(_underlying, textView.pointer(temp), textView.length, defaultLevel);
     temp.releaseAll();
     return BidiInfo._(result);
   }
@@ -65,7 +65,8 @@ final class Bidi implements ffi.Finalizable {
   /// See the [Rust documentation for `reorder_visual`](https://docs.rs/unicode_bidi/latest/unicode_bidi/struct.BidiInfo.html#method.reorder_visual) for more information.
   ReorderedIndexMap reorderVisual(Uint8List levels) {
     final temp = ffi2.Arena();
-    final result = _ICU4XBidi_reorder_visual(_underlying, levels.copy(temp), levels.length);
+    final levelsView = levels;
+    final result = _ICU4XBidi_reorder_visual(_underlying, levelsView.pointer(temp), levelsView.length);
     temp.releaseAll();
     return ReorderedIndexMap._(result);
   }

@@ -96,8 +96,8 @@ final class FixedDecimal implements ffi.Finalizable {
   /// Throws [Error] on failure.
   factory FixedDecimal.fromString(String v) {
     final temp = ffi2.Arena();
-    final vLength = v.utf8Length;
-    final result = _ICU4XFixedDecimal_create_from_string(Utf8Encoder().allocConvert(temp, v, length: vLength), vLength);
+    final vView = v.utf8View;;
+    final result = _ICU4XFixedDecimal_create_from_string(vView.pointer(temp), vView.length);
     temp.releaseAll();
     if (!result.isOk) {
       throw Error.values.firstWhere((v) => v._underlying == result.union.err);

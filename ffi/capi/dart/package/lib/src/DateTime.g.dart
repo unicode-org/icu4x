@@ -43,9 +43,9 @@ final class DateTime implements ffi.Finalizable {
   /// Throws [Error] on failure.
   factory DateTime.fromCodesInCalendar(String eraCode, int year, String monthCode, int day, int hour, int minute, int second, int nanosecond, Calendar calendar) {
     final temp = ffi2.Arena();
-    final eraCodeLength = eraCode.utf8Length;
-    final monthCodeLength = monthCode.utf8Length;
-    final result = _ICU4XDateTime_create_from_codes_in_calendar(Utf8Encoder().allocConvert(temp, eraCode, length: eraCodeLength), eraCodeLength, year, Utf8Encoder().allocConvert(temp, monthCode, length: monthCodeLength), monthCodeLength, day, hour, minute, second, nanosecond, calendar._underlying);
+    final eraCodeView = eraCode.utf8View;;
+    final monthCodeView = monthCode.utf8View;;
+    final result = _ICU4XDateTime_create_from_codes_in_calendar(eraCodeView.pointer(temp), eraCodeView.length, year, monthCodeView.pointer(temp), monthCodeView.length, day, hour, minute, second, nanosecond, calendar._underlying);
     temp.releaseAll();
     if (!result.isOk) {
       throw Error.values.firstWhere((v) => v._underlying == result.union.err);

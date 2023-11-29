@@ -24,21 +24,7 @@ fn main() -> std::io::Result<()> {
             std::fs::create_dir(&include)?;
             include
         },
-        if lang == "cpp" || lang == "js" {
-            let docs = capi.join(&lang).join(if lang == "cpp" {
-                "docs/source"
-            } else {
-                "package/docs/source"
-            });
-            let conf = std::fs::read_to_string(docs.join("conf.py"))?;
-            std::fs::remove_dir_all(&docs)?;
-            std::fs::create_dir(&docs)?;
-            std::fs::write(docs.join("conf.py"), conf)?;
-            Some(docs)
-        } else {
-            None
-        }
-        .as_deref(),
+        None,
         &Default::default(),
         None,
         false,
