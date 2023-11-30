@@ -42,7 +42,7 @@ final class Bidi implements ffi.Finalizable {
   /// See the [Rust documentation for `new_with_data_source`](https://docs.rs/unicode_bidi/latest/unicode_bidi/struct.BidiInfo.html#method.new_with_data_source) for more information.
   BidiInfo forText(String text, int defaultLevel) {
     final temp = ffi2.Arena();
-    final textView = text.utf8View;;
+    final textView = text.utf8View;
     final result = _ICU4XBidi_for_text(_underlying, textView.pointer(temp), textView.length, defaultLevel);
     temp.releaseAll();
     return BidiInfo._(result);

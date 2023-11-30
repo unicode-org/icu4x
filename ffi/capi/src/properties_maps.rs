@@ -192,7 +192,6 @@ pub mod ffi {
 
         #[diplomat::rust_link(icu::properties::maps::grapheme_cluster_break, Fn)]
         #[diplomat::rust_link(icu::properties::maps::load_grapheme_cluster_break, Fn, hidden)]
-        #[diplomat::attr(dart, rename = "grapheme_cluster_break")]
         pub fn try_grapheme_cluster_break(
             provider: &ICU4XDataProvider,
         ) -> Result<Box<ICU4XCodePointMapData8>, ICU4XError> {

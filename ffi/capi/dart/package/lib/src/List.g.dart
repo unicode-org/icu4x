@@ -44,7 +44,7 @@ final class List implements ffi.Finalizable {
   /// REPLACEMENT CHARACTERs
   void push(String val) {
     final temp = ffi2.Arena();
-    final valView = val.utf8View;;
+    final valView = val.utf8View;
     _ICU4XList_push(_underlying, valView.pointer(temp), valView.length);
     temp.releaseAll();
   }
