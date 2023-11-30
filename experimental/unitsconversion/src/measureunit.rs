@@ -210,31 +210,23 @@ impl MeasureUnit<'_> {
             return Ok(());
         }
         let mut identifier_split = identifier_part.split('-');
-        loop {
-            let mut part = match identifier_split.next() {
-                Some(part) => part,
-                None => break,
+        while let Some(mut part) = identifier_split.next() {
+            let power = match Self::get_power(part) {
+                Some(power) => {
+                    part = identifier_split
+                        .next()
+                        .ok_or(ConversionError::InvalidUnit)?;
+                    power
+                }
+                None => 1,
             };
-
-            let mut power = Self::get_power(part);
-            if power.is_none() {
-                power = Some(1);
-            } else {
-                power = Some(power.unwrap());
-                part = match identifier_split.next() {
-                    Some(part) => part,
-                    None => return Err(ConversionError::InvalidUnit),
-                };
-            }
 
             let (si_prefix, identifier_after_si) = Self::get_si_prefix(part);
-            let unit_id = match Self::get_unit_id(identifier_after_si, trie) {
-                Some(unit_id) => unit_id,
-                None => return Err(ConversionError::InvalidUnit),
-            };
+            let unit_id =
+                Self::get_unit_id(identifier_after_si, trie).ok_or(ConversionError::InvalidUnit)?;
 
             result.push(MeasureUnitItem {
-                power: sign * power.unwrap(),
+                power: sign * power,
                 si_prefix,
                 unit_id: unit_id as u16,
             });
