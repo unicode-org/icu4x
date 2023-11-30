@@ -1,0 +1,43 @@
+# This file is part of ICU4X. For terms of use, please see the file
+# called LICENSE at the top level of the ICU4X source tree
+# (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
+
+[package]
+name = "shortvec"
+description = "Const-constructible data structures with heap overflow"
+version = "0.0.0"
+license-file = "LICENSE"
+
+rust-version.workspace = true
+authors.workspace = true
+edition.workspace = true
+repository.workspace = true
+homepage.workspace = true
+categories.workspace = true
+include.workspace = true
+
+[package.metadata.docs.rs]
+all-features = true
+
+[package.metadata.cargo-all-features]
+# Bench feature gets tested separately and is only relevant for CI
+denylist = ["bench"]
+
+[dependencies]
+litemap = { workspace = true, features = ["alloc", "testing"], optional = true }
+
+[dev-dependencies]
+smallvec = "1.9"
+heapless = "0.7.0"
+tinyvec = { version = "1.6.0", features = ["alloc"] }
+
+[target.'cfg(not(target_arch = "wasm32"))'.dev-dependencies]
+criterion = "0.4"
+
+[lib]
+bench = false  # This option is required for Benchmark CI
+
+[features]
+default = []
+bench = []
+litemap = ["dep:litemap"]

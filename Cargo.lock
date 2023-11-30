@@ -3145,6 +3145,17 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "ae1a47186c03a32177042e55dbc5fd5aee900b8e0069a8d70fba96a9375cd012"
 
 [[package]]
+name = "shortvec"
+version = "0.0.0"
+dependencies = [
+ "criterion",
+ "heapless",
+ "litemap",
+ "smallvec",
+ "tinyvec",
+]
+
+[[package]]
 name = "simdutf8"
 version = "0.1.4"
 source = "registry+https://github.com/rust-lang/crates.io-index"

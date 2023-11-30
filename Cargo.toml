@@ -28,6 +28,7 @@ members = [
     "experimental/displaynames",
     "experimental/personnames",
     "experimental/relativetime",
+    "experimental/shortvec",
     "experimental/singlenumberformatter",
     "experimental/transliterate",
     "experimental/unicodeset_parse",
