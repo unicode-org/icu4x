@@ -72,14 +72,14 @@ impl MeasureUnit<'_> {
     /// NOTE:
     ///    if the prefix is found, the function will return (power, base, part without the prefix).
     ///    if the prefix is not found, the function will return (0, Base::NotExist, part).
-    fn get_si_prefix(part: &str) -> (Option<SiPrefix>, &str) {
+    fn get_si_prefix(part: &str) -> (SiPrefix, &str) {
         let (si_prefix_base_10, part) = Self::get_si_prefix_base_10(part);
         if si_prefix_base_10 != 0 {
             return (
-                Some(SiPrefix {
+                SiPrefix {
                     power: si_prefix_base_10,
                     base: Base::Decimal,
-                }),
+                },
                 part,
             );
         }
@@ -87,15 +87,21 @@ impl MeasureUnit<'_> {
         let (si_prefix_base_2, part) = Self::get_si_prefix_base_two(part);
         if si_prefix_base_2 != 0 {
             return (
-                Some(SiPrefix {
+                SiPrefix {
                     power: si_prefix_base_2,
                     base: Base::Binary,
-                }),
+                },
                 part,
             );
         }
 
-        (None, part)
+        (
+            SiPrefix {
+                power: 0,
+                base: Base::Decimal,
+            },
+            part,
+        )
     }
 
     // TODO: consider returning Option<(i8, &str)> instead of (0, part) for the case when the prefix is not found.

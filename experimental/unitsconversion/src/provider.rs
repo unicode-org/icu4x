@@ -139,15 +139,12 @@ pub enum Exactness {
 #[derive(Copy, Clone, Debug, PartialOrd, Ord, PartialEq, Eq, Default)]
 #[repr(u8)]
 pub enum Base {
-    /// There is no si prefix.
+    /// The base of the si prefix is 10.
     #[default]
-    Zero = 0,
+    Decimal = 0,
 
     /// The base of the si prefix is 2.
     Binary = 1,
-
-    /// The base of the si prefix is 10.
-    Decimal = 2,
 }
 
 /// Represents an Item of a MeasureUnit.
@@ -167,7 +164,7 @@ pub struct MeasureUnitItem {
     pub power: i8,
 
     /// The si base of the unit.
-    pub si_prefix: Option<SiPrefix>,
+    pub si_prefix: SiPrefix,
 
     /// The id of the unit.
     pub unit_id: u16,

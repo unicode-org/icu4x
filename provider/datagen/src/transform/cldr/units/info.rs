@@ -154,7 +154,10 @@ fn test_basic() {
             base_unit: {
                 let base_unit = vec![MeasureUnitItem {
                     power: 1,
-                    si_prefix: None,
+                    si_prefix: SiPrefix {
+                        power: 0,
+                        base: Base::Decimal,
+                    },
                     unit_id: meter_index as u16,
                 }];
                 ZeroVec::from_iter(base_unit.into_iter())
@@ -180,7 +183,10 @@ fn test_basic() {
             base_unit: {
                 let base_unit = vec![MeasureUnitItem {
                     power: 1,
-                    si_prefix: None,
+                    si_prefix: SiPrefix {
+                        power: 0,
+                        base: Base::Decimal,
+                    },
                     unit_id: meter_index as u16,
                 }];
                 ZeroVec::from_iter(base_unit.into_iter())
