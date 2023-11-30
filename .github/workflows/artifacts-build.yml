@@ -66,6 +66,13 @@ jobs:
       uses: google-github-actions/auth@v1
       with:
         credentials_json: '${{ secrets.ICU4X_GCP_SA_KEY }}'
+    - id: gcp-auth-main
+      if: github.ref == 'refs/heads/main' && github.repository == 'unicode-org/icu4x'
+      name: "Authenticate to Google Cloud with Workload Identity Provider"
+      uses: google-github-actions/auth@v1
+      with:
+        workload_identity_provider: "projects/66042061814/locations/global/workloadIdentityPools/icu4x-gha-pool1/providers/icu4x-gha-provider1"
+        service_account: "icu4x-main@dev-infra-273822.iam.gserviceaccount.com"
     - name: "Set up Google Cloud SDK"
       uses: google-github-actions/setup-gcloud@v1
 
@@ -111,6 +118,13 @@ jobs:
       uses: google-github-actions/auth@v1
       with:
         credentials_json: '${{ secrets.ICU4X_GCP_SA_KEY }}'
+    - id: gcp-auth-main
+      if: github.ref == 'refs/heads/main' && github.repository == 'unicode-org/icu4x'
+      name: "Authenticate to Google Cloud with Workload Identity Provider"
+      uses: google-github-actions/auth@v1
+      with:
+        workload_identity_provider: "projects/66042061814/locations/global/workloadIdentityPools/icu4x-gha-pool1/providers/icu4x-gha-provider1"
+        service_account: "icu4x-main@dev-infra-273822.iam.gserviceaccount.com"
     - name: "Set up Google Cloud SDK"
       uses: google-github-actions/setup-gcloud@v1
 
