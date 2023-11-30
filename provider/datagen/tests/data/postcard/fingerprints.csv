@@ -5515,7 +5515,7 @@ relativetime/short/year@1, tr, 107B, a182ac8d5087b3cb
 relativetime/short/year@1, und, 62B, 45e258268a1e1f9
 segmenter/dictionary/wl_ext@1, th, 224981B, f2d574736bb1a754
 segmenter/grapheme@1, und, 9078B, 521276f1d6a6e7fb
-segmenter/line@1, und, 18811B, 12f61c35e42a3bc4
+segmenter/line@1, und, 24183B, 817be8a85b29478d
 segmenter/lstm/wl_auto@1, th, 72034B, c46e2e0c098c1fc1
 segmenter/sentence@1, und, 14402B, 7096b982eedd7655
 segmenter/word@1, und, 14641B, d91c662e2d94f17f
