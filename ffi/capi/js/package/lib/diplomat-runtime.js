@@ -135,7 +135,7 @@ export class DiplomatBuf {
     // register the buffer with the garbage collector (to create a &'a).
     this.free = free;
     this.leak = () => { };
-    this.garbageCollect = () => DiplomatBufferFinalizer(this, this.free);
+    this.garbageCollect = () => DiplomatBufferFinalizer.register(this, this.free);
   }
 }
 

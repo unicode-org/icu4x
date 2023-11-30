@@ -39,7 +39,7 @@ diplomat_result_box_ICU4XLineSegmenter_ICU4XError ICU4XLineSegmenter_create_dict
 
 ICU4XLineBreakIteratorUtf8* ICU4XLineSegmenter_segment_utf8(const ICU4XLineSegmenter* self, const char* input_data, size_t input_len);
 
-ICU4XLineBreakIteratorUtf16* ICU4XLineSegmenter_segment_utf16(const ICU4XLineSegmenter* self, const uint16_t* input_data, size_t input_len);
+ICU4XLineBreakIteratorUtf16* ICU4XLineSegmenter_segment_utf16(const ICU4XLineSegmenter* self, const char16_t* input_data, size_t input_len);
 
 ICU4XLineBreakIteratorLatin1* ICU4XLineSegmenter_segment_latin1(const ICU4XLineSegmenter* self, const uint8_t* input_data, size_t input_len);
 void ICU4XLineSegmenter_destroy(ICU4XLineSegmenter* self);

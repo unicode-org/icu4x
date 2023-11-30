@@ -81,7 +81,7 @@ class ICU4XWordSegmenter {
    * 
    * Lifetimes: `this`, `input` must live at least as long as the output.
    */
-  ICU4XWordBreakIteratorUtf16 segment_utf16(const diplomat::span<const uint16_t> input) const;
+  ICU4XWordBreakIteratorUtf16 segment_utf16(const std::u16string_view input) const;
 
   /**
    * Segments a Latin-1 string.
@@ -139,7 +139,7 @@ inline diplomat::result<ICU4XWordSegmenter, ICU4XError> ICU4XWordSegmenter::crea
 inline ICU4XWordBreakIteratorUtf8 ICU4XWordSegmenter::segment_utf8(const std::string_view input) const {
   return ICU4XWordBreakIteratorUtf8(capi::ICU4XWordSegmenter_segment_utf8(this->inner.get(), input.data(), input.size()));
 }
-inline ICU4XWordBreakIteratorUtf16 ICU4XWordSegmenter::segment_utf16(const diplomat::span<const uint16_t> input) const {
+inline ICU4XWordBreakIteratorUtf16 ICU4XWordSegmenter::segment_utf16(const std::u16string_view input) const {
   return ICU4XWordBreakIteratorUtf16(capi::ICU4XWordSegmenter_segment_utf16(this->inner.get(), input.data(), input.size()));
 }
 inline ICU4XWordBreakIteratorLatin1 ICU4XWordSegmenter::segment_latin1(const diplomat::span<const uint8_t> input) const {
