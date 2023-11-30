@@ -241,9 +241,13 @@ impl MeasureUnit<'_> {
         identifier: &'data str,
         trie: &ZeroTrie<ZeroVec<'data, u8>>,
     ) -> Result<Vec<MeasureUnitItem>, ConversionError> {
+        if identifier.starts_with('-') {
+            return Err(ConversionError::InvalidUnit);
+        }
+
         let (num_part, den_part) = identifier
-            .split_once("-per-")
-            .or_else(|| identifier.split_once("per-"))
+            .split_once("per-")
+            .map(|(num_part, den_part)| (num_part.strip_suffix("-").unwrap_or(num_part), den_part))
             .unwrap_or((identifier, ""));
 
         let mut measure_unit_items = Vec::<MeasureUnitItem>::new();
