@@ -43,29 +43,17 @@ impl MeasureUnit<'_> {
     /// NOTE:
     ///    if the power is found, the function will return (power, part without the power).
     ///    if the power is not found, the function will return (1, part).
-    fn get_power(part: &str) -> (u8, &str) {
-        if let Some(part) = part.strip_prefix("square-") {
-            (2, part)
-        } else if let Some(part) = part.strip_prefix("pow2-") {
-            (2, part)
-        } else if let Some(part) = part.strip_prefix("cubic-") {
-            (3, part)
-        } else if let Some(part) = part.strip_prefix("pow3-") {
-            (3, part)
-        } else if let Some(part) = part.strip_prefix("pow4-") {
-            (4, part)
-        } else if let Some(part) = part.strip_prefix("pow5-") {
-            (5, part)
-        } else if let Some(part) = part.strip_prefix("pow6-") {
-            (6, part)
-        } else if let Some(part) = part.strip_prefix("pow7-") {
-            (7, part)
-        } else if let Some(part) = part.strip_prefix("pow8-") {
-            (8, part)
-        } else if let Some(part) = part.strip_prefix("pow9-") {
-            (9, part)
-        } else {
-            (1, part)
+    fn get_power(part: &str) -> Option<i8> {
+        match part {
+            "square" | "pow2" => Some(2),
+            "cubic" | "pow3" => Some(3),
+            "pow4" => Some(4),
+            "pow5" => Some(5),
+            "pow6" => Some(6),
+            "pow7" => Some(7),
+            "pow8" => Some(8),
+            "pow9" => Some(9),
+            _ => None,
         }
     }
 
@@ -197,26 +185,16 @@ impl MeasureUnit<'_> {
         }
     }
 
-    // TODO: consider using a sufficient trie search for finding the unit id.
     /// Get the unit id.
     /// NOTE:
     ///    if the unit id is found, the function will return (unit id, part without the unit id and without `-` at the beginning of the remaining part if it exists).
     ///    if the unit id is not found, the function will return None.
-    fn get_unit_id<'data>(
-        part: &'data str,
-        trie: &ZeroTrie<ZeroVec<'data, u8>>,
-    ) -> Option<(usize, &'data str)> {
-        // TODO(#4379): this is inefficient way to search for an item in a trie.
-        // we must implement a way to search for a prefix in a trie.
-        let mut result = None;
-        for (index, _) in part.char_indices() {
-            let identifier = &part[..=index];
-            if let Some(value) = trie.get(identifier.as_bytes()) {
-                result = Some((value, &part[identifier.len()..]));
-            }
+    fn get_unit_id<'data>(part: &'data str, trie: &ZeroTrie<ZeroVec<'data, u8>>) -> Option<usize> {
+        if let Some(unit_id) = trie.get(part.as_bytes()) {
+            Some(unit_id)
+        } else {
+            None
         }
-
-        result
     }
 
     /// Process a part of an identifier.
@@ -228,23 +206,38 @@ impl MeasureUnit<'_> {
         result: &mut Vec<MeasureUnitItem>,
         trie: &ZeroTrie<ZeroVec<'_, u8>>,
     ) -> Result<(), ConversionError> {
-        let mut identifier = identifier_part;
-        while !identifier.is_empty() {
-            let (power, identifier_after_power) = Self::get_power(identifier);
-            let (si_prefix, identifier_after_si) = Self::get_si_prefix(identifier_after_power);
-            let (unit_id, identifier_after_unit) =
-                match Self::get_unit_id(identifier_after_si, trie) {
-                    Some((unit_id, identifier_after_unit)) => (unit_id, identifier_after_unit),
+        if identifier_part.is_empty() {
+            return Ok(());
+        }
+        let mut identifier_split = identifier_part.split('-');
+        loop {
+            let mut part = match identifier_split.next() {
+                Some(part) => part,
+                None => break,
+            };
+
+            let mut power = Self::get_power(part);
+            if power.is_none() {
+                power = Some(1);
+            } else {
+                power = Some(power.unwrap());
+                part = match identifier_split.next() {
+                    Some(part) => part,
                     None => return Err(ConversionError::InvalidUnit),
                 };
+            }
+
+            let (si_prefix, identifier_after_si) = Self::get_si_prefix(part);
+            let unit_id = match Self::get_unit_id(identifier_after_si, trie) {
+                Some(unit_id) => unit_id,
+                None => return Err(ConversionError::InvalidUnit),
+            };
 
             result.push(MeasureUnitItem {
-                power: power as i8 * sign,
+                power: sign * power.unwrap(),
                 si_prefix,
                 unit_id: unit_id as u16,
             });
-
-            identifier = identifier_after_unit.get(1..).unwrap_or("");
         }
 
         Ok(())
@@ -262,6 +255,7 @@ impl MeasureUnit<'_> {
             .unwrap_or((identifier, ""));
 
         let mut measure_unit_items = Vec::<MeasureUnitItem>::new();
+
         Self::analyze_identifier_part(num_part, 1, &mut measure_unit_items, trie)?;
         Self::analyze_identifier_part(den_part, -1, &mut measure_unit_items, trie)?;
         Ok(measure_unit_items)
