@@ -3,6 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use alloc::boxed::Box;
+use core::fmt;
 use icu_provider::prelude::*;
 use serde::Deserialize;
 use writeable::Writeable;
@@ -149,6 +150,28 @@ impl Default for BlobSchemaV2<'_> {
     }
 }
 
+/// A struct that steps through a ZeroTrie when fed data from fmt::Write
+struct ZeroTrieStepWrite<'a> {
+    trie: ZeroTrieSimpleAscii<&'a [u8]>,
+}
+
+impl<'a> fmt::Write for ZeroTrieStepWrite<'a> {
+    fn write_str(&mut self, s: &str) -> fmt::Result {
+        for b in s.bytes() {
+            self.trie.step(b);
+        }
+        Ok(())
+    }
+    fn write_char(&mut self, c: char) -> fmt::Result {
+        debug_assert!(c.is_ascii());
+        self.trie.step(c as u8);
+        Ok(())
+    }
+    fn write_fmt(&mut self, _: fmt::Arguments<'_>) -> fmt::Result {
+        unreachable!()
+    }
+}
+
 impl<'data> BlobSchemaV2<'data> {
     pub fn load(&self, key: DataKey, req: DataRequest) -> Result<&'data [u8], DataError> {
         let key_index = self
@@ -163,10 +186,16 @@ impl<'data> BlobSchemaV2<'data> {
             .locales
             .get(key_index)
             .ok_or_else(|| DataError::custom("Invalid blob bytes").with_req(key, req))?;
-        // TODO(#4249): Add a lookup function to zerotrie so we don't need to stringify
-        let locale_str = req.locale.write_to_string();
-        let blob_index = ZeroTrieSimpleAscii::from_store(zerotrie)
-            .get(locale_str.as_bytes())
+        let mut trie_write = ZeroTrieStepWrite {
+            trie: ZeroTrieSimpleAscii::from_store(zerotrie),
+        };
+        #[allow(clippy::unwrap_used)] // infallible impl
+        req.locale
+            .write_to(&mut trie_write)
+            .unwrap();
+        let blob_index = trie_write
+            .trie
+            .head_value()
             .ok_or_else(|| DataErrorKind::MissingLocale.with_req(key, req))?;
         let buffer = self
             .buffers
