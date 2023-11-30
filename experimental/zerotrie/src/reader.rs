@@ -504,6 +504,77 @@ pub fn get_phf_extended(mut trie: &[u8], mut ascii: &[u8]) -> Option<usize> {
     }
 }
 
+pub(crate) fn step_bsearch_only(trie: &mut &[u8], c: u8)  {
+    let (mut b, x, search);
+    loop {
+        (b, *trie) = match trie.split_first() {
+            Some(v) => v,
+            None => {
+                // Empty trie or only a value node
+                return
+            }
+        };
+        match byte_type(*b) {
+            NodeType::Ascii if *b == c => {
+                // Matched a byte
+                return;
+            }
+            NodeType::Ascii => {
+                // Byte that doesn't match
+                *trie = &[];
+                return;
+            }
+            NodeType::Branch => {
+                // Proceed to the branch node logic below
+                (x, *trie) = read_varint_meta2(*b, trie);
+                break;
+            }
+            NodeType::Span => {
+                // Question: Should we put the trie back into a valid state?
+                // Currently this code is unreachable so let's not worry about it.
+                debug_assert!(false, "span nodes not supported in stepping");
+                return;
+            }
+            NodeType::Value => {
+                // Skip the value node and go to the next node
+                (_, *trie) = read_varint_meta3(*b, trie);
+                continue;
+            }
+        };
+    }
+    // Branch node
+    let (x, w) = if x >= 256 { (x & 0xff, x >> 8) } else { (x, 0) };
+    // See comment above regarding this assertion
+    debug_assert!(w <= 3, "get: w > 3 but we assume w <= 3");
+    let w = w & 0x3;
+    let x = if x == 0 { 256 } else { x };
+    // Always use binary search
+    (search, *trie) = trie.debug_split_at(x);
+    match search.binary_search(&c) {
+        Ok(i) => {
+            // Matched a byte
+            *trie = if w == 0 {
+                get_branch_w0(trie, i, x)
+            } else {
+                get_branch(trie, i, x, w)
+            };
+        },
+        Err(_) => {
+            // Byte that doesn't match
+            *trie = &[]
+        }
+    };
+}
+
+pub(crate) fn peek_value(mut trie: &[u8]) -> Option<usize>  {
+    let b;
+    (b, trie) = trie.split_first()?;
+    match byte_type(*b) {
+        NodeType::Ascii | NodeType::Span | NodeType::Branch => None,
+        NodeType::Value => Some(read_varint_meta3(*b, trie).0),
+    }
+}
+
 #[cfg(feature = "alloc")]
 use alloc::vec::Vec;
 

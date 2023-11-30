@@ -204,6 +204,24 @@ macro_rules! impl_zerotrie_subtype {
             pub fn is_empty(&self) -> bool {
                 self.store.as_ref().is_empty()
             }
+            /// Gets the value at the head of the trie. This is equivalent to
+            /// calling `get` with the empty string.
+            ///
+            /// # Examples
+            ///
+            /// ```
+            #[doc = concat!("use zerotrie::", stringify!($name), ";")]
+            ///
+            /// // A trie with two values: "" and "abc"
+            #[doc = concat!("let trie: &", stringify!($name), "<[u8]> = ", stringify!($name), "::from_bytes(b\"\\x80abc\\x81\");")]
+            ///
+            /// assert_eq!(Some(0), trie.head_value());
+            /// assert_eq!(Some(0), trie.get(""));
+            /// ```
+            #[inline]
+            pub fn head_value(&self) -> Option<usize> {
+                peek_value(self.store.as_ref())
+            }
             /// Returns the size of the trie in number of bytes.
             ///
             /// To get the number of keys in the trie, use `.iter().count()`:
@@ -564,6 +582,66 @@ impl_zerotrie_subtype!(
     get_iter_phf,
     Vec::into_boxed_slice
 );
+
+impl ZeroTrieSimpleAscii<&[u8]> {
+    /// Steps one node into the trie, mutating self.
+    ///
+    /// Useful to query a trie with data that is not a slice. Use
+    /// [`Self::head_value()`] to check for the presence of a string
+    /// in the trie.
+    ///
+    /// This is only supported on `ZeroTrieSimpleAscii` because other trie
+    /// types may contain span nodes, which cannot be split.
+    ///
+    /// # Examples
+    ///
+    /// Get a value out of a trie by manually iterating over the bytes:
+    ///
+    /// ```
+    /// use zerotrie::ZeroTrieSimpleAscii;
+    ///
+    /// // A trie with two values: "abc" and "abcdef"
+    /// let trie = ZeroTrieSimpleAscii::from_bytes(b"abc\x80def\x81");
+    ///
+    /// // Get out the value for "abc"
+    /// let mut it = trie.as_borrowed_slice();
+    /// for c in b"abc".iter() {
+    ///     it.step(*c);
+    /// }
+    /// assert_eq!(it.head_value(), Some(0));
+    /// ```
+    ///
+    /// Unrolled loop checking for string presence at every step:
+    ///
+    /// ```
+    /// use zerotrie::ZeroTrieSimpleAscii;
+    ///
+    /// // A trie with two values: "abc" and "abcdef"
+    /// let trie = ZeroTrieSimpleAscii::from_bytes(b"abc\x80def\x81");
+    ///
+    /// // Search the trie for the string "abcdxy"
+    /// let mut it = trie.as_borrowed_slice();
+    /// assert_eq!(it.head_value(), None); // ""
+    /// it.step(b'a');
+    /// assert_eq!(it.head_value(), None); // "a"
+    /// it.step(b'b');
+    /// assert_eq!(it.head_value(), None); // "ab"
+    /// it.step(b'c');
+    /// assert_eq!(it.head_value(), Some(0)); // "abc"
+    /// it.step(b'd');
+    /// assert_eq!(it.head_value(), None); // "abcd"
+    /// assert!(!it.is_empty());
+    /// it.step(b'x'); // no strings have the prefix "abcdx"
+    /// assert!(it.is_empty());
+    /// assert_eq!(it.head_value(), None); // "abcdx"
+    /// it.step(b'y');
+    /// assert_eq!(it.head_value(), None); // "abcdxy"
+    /// ```
+    #[inline]
+    pub fn step(&mut self, byte: u8) {
+        step_bsearch_only(&mut self.store, byte)
+    }
+}
 
 macro_rules! impl_dispatch {
     ($self:ident, $inner_fn:ident()) => {
