@@ -1075,5 +1075,10 @@
     "R",
     "Kw"
   ],
-  "default_pattern": "StandardAndNone"
+  "default_pattern": {
+    "short_pattern_standard": "Standard",
+    "narrow_pattern_standard": "Standard",
+    "short_place_holder_index": null,
+    "narrow_place_holder_index": null
+  }
 }
