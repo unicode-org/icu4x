@@ -52,8 +52,8 @@ pub struct CurrencyEssentialsV1<'data> {
     #[cfg_attr(feature = "serde", serde(borrow))]
     pub place_holders: VarZeroVec<'data, str>,
 
-    /// The default pattern.
-    pub default_pattern: DefaultPattern,
+    /// Represents the currency patten in case the currency patterns map does not contain the currency.
+    pub default_pattern: CurrencyPatterns,
 }
 
 #[zerovec::make_ule(PatternSelectionULE)]
@@ -72,26 +72,6 @@ pub enum PatternSelection {
 
     /// Use the standard_alpha_next_to_number pattern.
     StandardAlphaNextToNumber = 1,
-}
-
-#[zerovec::make_ule(DefaultPatternULE)]
-#[cfg_attr(
-    feature = "datagen",
-    derive(serde::Serialize, databake::Bake),
-    databake(path = icu_singlenumberformatter::provider),
-)]
-#[cfg_attr(feature = "serde", derive(serde::Deserialize))]
-#[derive(Copy, Clone, Debug, PartialOrd, Ord, PartialEq, Eq, Default)]
-#[repr(u8)]
-pub enum DefaultPattern {
-    /// This means if the pattern is not exist, the short_pattern_standard and narrow_pattern_standard are Standard.
-    /// Also, the short_place_holder_index and narrow_place_holder_index are None.
-    #[default]
-    StandardAndNone = 0,
-
-    /// This means if the pattern is not exist, the short_pattern_standard and narrow_pattern_standard are StandardAlphaNextToNumber.
-    /// Also, the short_place_holder_index and narrow_place_holder_index are None.
-    StandardAlphaNextToNumberAndNone = 1,
 }
 
 #[cfg_attr(

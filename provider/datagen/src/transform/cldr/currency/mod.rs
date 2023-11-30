@@ -250,10 +250,20 @@ fn extract_currency_essentials<'data>(
     let default_pattern =
         if currency_patterns_standard_none.len() <= currency_patterns_standard_next_to_num.len() {
             currency_patterns_map.extend(currency_patterns_standard_none);
-            DefaultPattern::StandardAlphaNextToNumberAndNone
+            CurrencyPatterns {
+                short_pattern_standard: PatternSelection::StandardAlphaNextToNumber,
+                narrow_pattern_standard: PatternSelection::StandardAlphaNextToNumber,
+                short_place_holder_index: None,
+                narrow_place_holder_index: None,
+            }
         } else {
             currency_patterns_map.extend(currency_patterns_standard_next_to_num);
-            DefaultPattern::StandardAndNone
+            CurrencyPatterns {
+                short_pattern_standard: PatternSelection::Standard,
+                narrow_pattern_standard: PatternSelection::Standard,
+                short_place_holder_index: None,
+                narrow_place_holder_index: None,
+            }
         };
 
     Ok(CurrencyEssentialsV1 {
