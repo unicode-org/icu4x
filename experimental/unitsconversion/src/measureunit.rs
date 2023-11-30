@@ -231,7 +231,7 @@ impl MeasureUnit {
 
         let (num_part, den_part) = identifier
             .split_once("per-")
-            .map(|(num_part, den_part)| (num_part.strip_suffix("-").unwrap_or(num_part), den_part))
+            .map(|(num_part, den_part)| (num_part.strip_suffix('-').unwrap_or(num_part), den_part))
             .unwrap_or((identifier, ""));
 
         let mut measure_unit_items = Vec::<MeasureUnitItem>::new();
