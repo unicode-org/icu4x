@@ -30,7 +30,7 @@ ICU4XOrdering ICU4XCollator_compare(const ICU4XCollator* self, const char* left_
 
 ICU4XOrdering ICU4XCollator_compare_valid_utf8(const ICU4XCollator* self, const char* left_data, size_t left_len, const char* right_data, size_t right_len);
 
-ICU4XOrdering ICU4XCollator_compare_utf16(const ICU4XCollator* self, const uint16_t* left_data, size_t left_len, const uint16_t* right_data, size_t right_len);
+ICU4XOrdering ICU4XCollator_compare_utf16(const ICU4XCollator* self, const char16_t* left_data, size_t left_len, const char16_t* right_data, size_t right_len);
 void ICU4XCollator_destroy(ICU4XCollator* self);
 
 #ifdef __cplusplus

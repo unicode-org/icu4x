@@ -28,7 +28,7 @@ diplomat_result_box_ICU4XSentenceSegmenter_ICU4XError ICU4XSentenceSegmenter_cre
 
 ICU4XSentenceBreakIteratorUtf8* ICU4XSentenceSegmenter_segment_utf8(const ICU4XSentenceSegmenter* self, const char* input_data, size_t input_len);
 
-ICU4XSentenceBreakIteratorUtf16* ICU4XSentenceSegmenter_segment_utf16(const ICU4XSentenceSegmenter* self, const uint16_t* input_data, size_t input_len);
+ICU4XSentenceBreakIteratorUtf16* ICU4XSentenceSegmenter_segment_utf16(const ICU4XSentenceSegmenter* self, const char16_t* input_data, size_t input_len);
 
 ICU4XSentenceBreakIteratorLatin1* ICU4XSentenceSegmenter_segment_latin1(const ICU4XSentenceSegmenter* self, const uint8_t* input_data, size_t input_len);
 void ICU4XSentenceSegmenter_destroy(ICU4XSentenceSegmenter* self);

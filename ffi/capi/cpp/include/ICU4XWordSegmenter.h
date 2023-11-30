@@ -32,7 +32,7 @@ diplomat_result_box_ICU4XWordSegmenter_ICU4XError ICU4XWordSegmenter_create_dict
 
 ICU4XWordBreakIteratorUtf8* ICU4XWordSegmenter_segment_utf8(const ICU4XWordSegmenter* self, const char* input_data, size_t input_len);
 
-ICU4XWordBreakIteratorUtf16* ICU4XWordSegmenter_segment_utf16(const ICU4XWordSegmenter* self, const uint16_t* input_data, size_t input_len);
+ICU4XWordBreakIteratorUtf16* ICU4XWordSegmenter_segment_utf16(const ICU4XWordSegmenter* self, const char16_t* input_data, size_t input_len);
 
 ICU4XWordBreakIteratorLatin1* ICU4XWordSegmenter_segment_latin1(const ICU4XWordSegmenter* self, const uint8_t* input_data, size_t input_len);
 void ICU4XWordSegmenter_destroy(ICU4XWordSegmenter* self);
