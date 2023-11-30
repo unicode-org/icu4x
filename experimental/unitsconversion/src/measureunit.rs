@@ -5,7 +5,7 @@
 use zerotrie::ZeroTrie;
 use zerovec::ZeroVec;
 
-use crate::provider::{Base, MeasureUnitItem, SiPrefix, Sign};
+use crate::provider::{Base, MeasureUnitItem, SiPrefix};
 
 // TODO(#4369): split this struct to two structs: MeasureUnitParser for parsing the identifier and MeasureUnit to represent the unit.
 #[zerovec::make_varule(MeasureUnitULE)]
@@ -77,13 +77,8 @@ impl MeasureUnit<'_> {
         if si_prefix_base_10 != 0 {
             return (
                 Some(SiPrefix {
-                    power: si_prefix_base_10.unsigned_abs(),
+                    power: si_prefix_base_10,
                     base: Base::Decimal,
-                    sign: if si_prefix_base_10 >= 0 {
-                        Sign::Positive
-                    } else {
-                        Sign::Negative
-                    },
                 }),
                 part,
             );
@@ -93,13 +88,8 @@ impl MeasureUnit<'_> {
         if si_prefix_base_2 != 0 {
             return (
                 Some(SiPrefix {
-                    power: si_prefix_base_2.unsigned_abs(),
+                    power: si_prefix_base_2,
                     base: Base::Binary,
-                    sign: if si_prefix_base_2 >= 0 {
-                        Sign::Positive
-                    } else {
-                        Sign::Negative
-                    },
                 }),
                 part,
             );

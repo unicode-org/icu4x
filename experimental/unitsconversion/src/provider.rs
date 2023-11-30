@@ -185,11 +185,8 @@ pub struct MeasureUnitItem {
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 pub struct SiPrefix {
     /// The absolute value of the power of the si prefix.
-    pub power: u8,
+    pub power: i8,
 
     /// The base of the si prefix.
     pub base: Base,
-
-    /// The id of the si prefix.
-    pub sign: Sign,
 }
