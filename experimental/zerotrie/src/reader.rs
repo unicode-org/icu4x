@@ -311,8 +311,8 @@ pub fn get_bsearch_only(mut trie: &[u8], mut ascii: &[u8]) -> Option<usize> {
         let byte_type = byte_type(*b);
         (x, trie) = match byte_type {
             NodeType::Ascii => (0, trie),
-            NodeType::Span | NodeType::Value => read_varint_meta3(*b, trie)?,
-            NodeType::Branch => read_varint_meta2(*b, trie)?,
+            NodeType::Span | NodeType::Value => read_varint_meta3(*b, trie),
+            NodeType::Branch => read_varint_meta2(*b, trie),
         };
         if let Some((c, temp)) = ascii.split_first() {
             if matches!(byte_type, NodeType::Ascii) {
@@ -375,8 +375,8 @@ pub fn get_phf_limited(mut trie: &[u8], mut ascii: &[u8]) -> Option<usize> {
         let byte_type = byte_type(*b);
         (x, trie) = match byte_type {
             NodeType::Ascii => (0, trie),
-            NodeType::Span | NodeType::Value => read_varint_meta3(*b, trie)?,
-            NodeType::Branch => read_varint_meta2(*b, trie)?,
+            NodeType::Span | NodeType::Value => read_varint_meta3(*b, trie),
+            NodeType::Branch => read_varint_meta2(*b, trie),
         };
         if let Some((c, temp)) = ascii.split_first() {
             if matches!(byte_type, NodeType::Ascii) {
@@ -445,8 +445,8 @@ pub fn get_phf_extended(mut trie: &[u8], mut ascii: &[u8]) -> Option<usize> {
         let byte_type = byte_type(*b);
         (x, trie) = match byte_type {
             NodeType::Ascii => (0, trie),
-            NodeType::Span | NodeType::Value => read_varint_meta3(*b, trie)?,
-            NodeType::Branch => read_varint_meta2(*b, trie)?,
+            NodeType::Span | NodeType::Value => read_varint_meta3(*b, trie),
+            NodeType::Branch => read_varint_meta2(*b, trie),
         };
         if let Some((c, temp)) = ascii.split_first() {
             if matches!(byte_type, NodeType::Ascii) {
@@ -554,8 +554,8 @@ impl<'a> Iterator for ZeroTrieIterator<'a> {
             }
             (x, trie) = match byte_type {
                 NodeType::Ascii => (0, trie),
-                NodeType::Span | NodeType::Value => read_varint_meta3(*b, trie)?,
-                NodeType::Branch => read_varint_meta2(*b, trie)?,
+                NodeType::Span | NodeType::Value => read_varint_meta3(*b, trie),
+                NodeType::Branch => read_varint_meta2(*b, trie),
             };
             if matches!(byte_type, NodeType::Span) {
                 (span, trie) = debug_split_at(trie, x)?;

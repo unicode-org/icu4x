@@ -68,6 +68,18 @@ macro_rules! debug_unwrap {
     ($expr:expr, return $retval:expr) => {
         debug_unwrap!($expr, return $retval, "invalid trie")
     };
+    ($expr:expr, break, $($arg:tt)+) => {
+        match $expr {
+            Some(x) => x,
+            None => {
+                debug_assert!(false, $($arg)*);
+                break;
+            }
+        }
+    };
+    ($expr:expr, break) => {
+        debug_unwrap!($expr, break, "invalid trie")
+    };
     ($expr:expr, $($arg:tt)+) => {
         debug_unwrap!($expr, return (), $($arg)*)
     };

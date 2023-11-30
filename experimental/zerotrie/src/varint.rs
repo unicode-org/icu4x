@@ -47,13 +47,16 @@ use crate::builder::nonconst::TrieBuilderStore;
 /// Reads a varint with 2 bits of metadata in the lead byte.
 ///
 /// Returns the varint value and a subslice of `remainder` with the varint bytes removed.
-pub const fn read_varint_meta2(start: u8, remainder: &[u8]) -> Option<(usize, &[u8])> {
+///
+/// If the varint spills off the end of the slice, a debug assertion will fail,
+/// and the function will return the value up to that point.
+pub const fn read_varint_meta2(start: u8, remainder: &[u8]) -> (usize, &[u8]) {
     let mut value = (start & 0b00011111) as usize;
     let mut remainder = remainder;
     if (start & 0b00100000) != 0 {
         loop {
             let next;
-            (next, remainder) = debug_unwrap!(remainder.split_first(), return None);
+            (next, remainder) = debug_unwrap!(remainder.split_first(), break, "invalid varint");
             // Note: value << 7 could drop high bits. The first addition can't overflow.
             // The second addition could overflow; in such a case we just inform the
             // developer via the debug assertion.
@@ -63,19 +66,22 @@ pub const fn read_varint_meta2(start: u8, remainder: &[u8]) -> Option<(usize, &[
             }
         }
     }
-    Some((value, remainder))
+    (value, remainder)
 }
 
 /// Reads a varint with 3 bits of metadata in the lead byte.
 ///
 /// Returns the varint value and a subslice of `remainder` with the varint bytes removed.
-pub const fn read_varint_meta3(start: u8, remainder: &[u8]) -> Option<(usize, &[u8])> {
+///
+/// If the varint spills off the end of the slice, a debug assertion will fail,
+/// and the function will return the value up to that point.
+pub const fn read_varint_meta3(start: u8, remainder: &[u8]) -> (usize, &[u8]) {
     let mut value = (start & 0b00001111) as usize;
     let mut remainder = remainder;
     if (start & 0b00010000) != 0 {
         loop {
             let next;
-            (next, remainder) = debug_unwrap!(remainder.split_first(), return None);
+            (next, remainder) = debug_unwrap!(remainder.split_first(), break, "invalid varint");
             // Note: value << 7 could drop high bits. The first addition can't overflow.
             // The second addition could overflow; in such a case we just inform the
             // developer via the debug assertion.
@@ -85,7 +91,7 @@ pub const fn read_varint_meta3(start: u8, remainder: &[u8]) -> Option<(usize, &[
             }
         }
     }
-    Some((value, remainder))
+    (value, remainder)
 }
 
 /// Reads and removes a varint with 3 bits of metadata from a [`TrieBuilderStore`].
@@ -356,7 +362,7 @@ mod tests {
     #[test]
     fn test_read() {
         for cas in CASES {
-            let recovered = read_varint_meta2(cas.bytes[0], &cas.bytes[1..]).unwrap();
+            let recovered = read_varint_meta2(cas.bytes[0], &cas.bytes[1..]);
             assert_eq!(recovered, (cas.value, cas.remainder), "{:?}", cas);
         }
     }
@@ -377,7 +383,7 @@ mod tests {
                 "{:?}",
                 cas
             );
-            let recovered = read_varint_meta2(cas.bytes[0], &cas.bytes[1..]).unwrap();
+            let recovered = read_varint_meta2(cas.bytes[0], &cas.bytes[1..]);
             assert_eq!(recovered, (cas.value, cas.remainder), "{:?}", cas);
             let write_bytes = write_varint_meta2(cas.value);
             assert_eq!(
@@ -395,8 +401,7 @@ mod tests {
         while i < MAX_VARINT {
             let bytes = write_varint_meta2(i);
             let recovered = read_varint_meta2(bytes.as_slice()[0], &bytes.as_slice()[1..]);
-            assert!(recovered.is_some(), "{:?}", i);
-            assert_eq!(i, recovered.unwrap().0, "{:?}", bytes.as_slice());
+            assert_eq!(i, recovered.0, "{:?}", bytes.as_slice());
             i <<= 1;
             i += 1;
         }
@@ -408,8 +413,7 @@ mod tests {
         while i < MAX_VARINT {
             let bytes = write_varint_meta3(i);
             let recovered = read_varint_meta3(bytes.as_slice()[0], &bytes.as_slice()[1..]);
-            assert!(recovered.is_some(), "{:?}", i);
-            assert_eq!(i, recovered.unwrap().0, "{:?}", bytes.as_slice());
+            assert_eq!(i, recovered.0, "{:?}", bytes.as_slice());
             i <<= 1;
             i += 1;
         }
@@ -427,8 +431,7 @@ mod tests {
         let (recovered_value, remainder) = read_varint_meta2(
             *write_bytes.as_const_slice().first().unwrap(),
             subarray.as_slice(),
-        )
-        .unwrap();
+        );
         assert!(remainder.is_empty());
         assert_eq!(recovered_value, MAX_VARINT);
         assert_eq!(
@@ -453,7 +456,7 @@ mod tests {
         let write_bytes = write_varint_meta3(MAX_VARINT);
         assert_eq!(write_bytes.len(), MAX_VARINT_LENGTH);
         let (lead, trailing) = write_bytes.as_slice().split_first().unwrap();
-        let (recovered_value, remainder) = read_varint_meta3(*lead, trailing).unwrap();
+        let (recovered_value, remainder) = read_varint_meta3(*lead, trailing);
         assert!(remainder.is_empty());
         assert_eq!(recovered_value, MAX_VARINT);
         assert_eq!(
@@ -477,18 +480,18 @@ mod tests {
     fn test_latent_values() {
         // Same values documented in the module docs: M=2
         let m2 = read_varint_meta2;
-        assert_eq!(m2(0, &[]).unwrap().0, 0);
-        assert_eq!(m2(0x20, &[0x00]).unwrap().0, 32);
-        assert_eq!(m2(0x20, &[0x80, 0x00]).unwrap().0, 4128);
-        assert_eq!(m2(0x20, &[0x80, 0x80, 0x00]).unwrap().0, 528416);
-        assert_eq!(m2(0x20, &[0x80, 0x80, 0x80, 0x00]).unwrap().0, 67637280);
+        assert_eq!(m2(0, &[]).0, 0);
+        assert_eq!(m2(0x20, &[0x00]).0, 32);
+        assert_eq!(m2(0x20, &[0x80, 0x00]).0, 4128);
+        assert_eq!(m2(0x20, &[0x80, 0x80, 0x00]).0, 528416);
+        assert_eq!(m2(0x20, &[0x80, 0x80, 0x80, 0x00]).0, 67637280);
 
         // Same values documented in the module docs: M=3
         let m3 = read_varint_meta3;
-        assert_eq!(m3(0, &[]).unwrap().0, 0);
-        assert_eq!(m3(0x10, &[0x00]).unwrap().0, 16);
-        assert_eq!(m3(0x10, &[0x80, 0x00]).unwrap().0, 2064);
-        assert_eq!(m3(0x10, &[0x80, 0x80, 0x00]).unwrap().0, 264208);
-        assert_eq!(m3(0x10, &[0x80, 0x80, 0x80, 0x00]).unwrap().0, 33818640);
+        assert_eq!(m3(0, &[]).0, 0);
+        assert_eq!(m3(0x10, &[0x00]).0, 16);
+        assert_eq!(m3(0x10, &[0x80, 0x00]).0, 2064);
+        assert_eq!(m3(0x10, &[0x80, 0x80, 0x00]).0, 264208);
+        assert_eq!(m3(0x10, &[0x80, 0x80, 0x80, 0x00]).0, 33818640);
     }
 }
