@@ -1238,6 +1238,12 @@ right = "SP"
 [[tables]]
 # LB17
 name = "B2_SP"
+left = "B2_ZWJ"
+right = "SP"
+
+[[tables]]
+# LB17
+name = "B2_SP"
 left = "B2_SP"
 right = "SP"
 

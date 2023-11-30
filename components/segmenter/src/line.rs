@@ -929,19 +929,19 @@ impl<'l, 's, Y: LineBreakType<'l, 's>> Iterator for LineBreakIterator<'l, 's, Y>
                 // I may have to fetch text until non-SA character?.
             }
 
-            let STATE_NAMES = ["Unknown", "AI", "AL", "B2", "BA", "BB", "BK", "CB", "CJ", "CL", "CM", "CP", "CR", "EB", "EM", "EX", "GL", "H2", "H3", "HL", "HY", "ID", "ID_CN", "IN", "IS", "JL", "JT", "JV", "LF", "NL", "NS", "NU", "OP_EA", "OP_OP30", "PO", "PO_EAW", "PR", "PR_EAW", "QU", "RI", "SA", "SG", "SP", "SY", "WJ", "XX", "ZW", "ZWJ", "RI_RI", "AI_ZWJ", "AL_ZWJ", "B2_ZWJ", "BA_ZWJ", "BB_ZWJ", "CB_ZWJ", "CJ_ZWJ", "CL_ZWJ", "CP_ZWJ", "EB_ZWJ", "EM_ZWJ", "EX_ZWJ", "GL_ZWJ", "H2_ZWJ", "H3_ZWJ", "HL_ZWJ", "HY_ZWJ", "ID_ZWJ", "IN_ZWJ", "IS_ZWJ", "JL_ZWJ", "JT_ZWJ", "JV_ZWJ", "NS_ZWJ", "NU_ZWJ", "OP_EA_ZWJ", "OP_OP30_ZWJ", "PO_ZWJ", "PO_EAW_ZWJ", "QU_ZWJ", "RI_ZWJ", "PR_ZWJ", "PR_EAW_ZWJ", "SA_ZWJ", "SY_ZWJ", "WJ_ZWJ", "XX_ZWJ", "RI_RI_ZWJ", "OP_SP", "QU_SP", "CL_CP_SP", "B2_SP", "HL_HY", "sot", "eot"];
+            let STATE_NAMES = ["Unknown", "AI", "AL", "B2", "BA", "BB", "BK", "CB", "CJ", "CL", "CM", "CP", "CR", "EB", "EM", "EX", "GL", "H2", "H3", "HL", "HY", "ID", "ID_CN", "IN", "IS", "JL", "JT", "JV", "LF", "NL", "NS", "NU", "OP_EA", "OP_OP30", "PO", "PO_EAW", "PR", "PR_EAW", "QU", "RI", "SA", "SG", "SP", "SY", "WJ", "XX", "ZW", "ZWJ", "RI_RI", "HL_HY", "AI_ZWJ", "AL_ZWJ", "B2_ZWJ", "BA_ZWJ", "BB_ZWJ", "CB_ZWJ", "CJ_ZWJ", "CL_ZWJ", "CP_ZWJ", "EB_ZWJ", "EM_ZWJ", "EX_ZWJ", "GL_ZWJ", "H2_ZWJ", "H3_ZWJ", "HL_ZWJ", "HY_ZWJ", "ID_ZWJ", "ID_CN_ZWJ", "IN_ZWJ", "IS_ZWJ", "JL_ZWJ", "JT_ZWJ", "JV_ZWJ", "NS_ZWJ", "NU_ZWJ", "OP_EA_ZWJ", "OP_OP30_ZWJ", "PO_ZWJ", "PO_EAW_ZWJ", "QU_ZWJ", "RI_ZWJ", "PR_ZWJ", "PR_EAW_ZWJ", "SA_ZWJ", "SY_ZWJ", "WJ_ZWJ", "XX_ZWJ", "RI_RI_ZWJ", "HL_HY_ZWJ", "OP_SP", "QU_SP", "CL_CP_SP", "B2_SP", "sot", "eot"];
             // If break_state is equals or grater than 0, it is alias of property.
             let mut break_state = self.get_break_state_from_table(left_prop, right_prop);
             if break_state > 0 {
-                println!("{}, {}: {}", STATE_NAMES[left_prop as usize], STATE_NAMES[right_prop as usize], STATE_NAMES[break_state as usize]);
+                println!("  {}, {}: {}", STATE_NAMES[left_prop as usize], STATE_NAMES[right_prop as usize], STATE_NAMES[break_state as usize]);
             } else {
-                println!("{}, {}: {}", STATE_NAMES[left_prop as usize], STATE_NAMES[right_prop as usize], break_state);
+                println!("  {}, {}: {}", STATE_NAMES[left_prop as usize], STATE_NAMES[right_prop as usize], break_state);
             }
             if break_state >= 0_i8 {
                 let mut previous_iter = self.iter.clone();
                 let mut previous_pos_data = self.current_pos_data;
 
-                println!("Inner loop");
+                println!("  Inner loop");
                 loop {
                     self.advance_iter();
                     let Some(prop) = self.get_current_linebreak_property() else {
@@ -959,9 +959,9 @@ impl<'l, 's, Y: LineBreakType<'l, 's>> Iterator for LineBreakIterator<'l, 's, Y>
 
                     break_state = self.get_break_state_from_table(break_state as u8, prop);
                     if break_state > 0 {
-                        println!("-, {}: {}", STATE_NAMES[prop as usize], STATE_NAMES[break_state as usize]);
+                        println!("  -, {}: {}", STATE_NAMES[prop as usize], STATE_NAMES[break_state as usize]);
                     } else {
-                        println!("-, {}: {}", STATE_NAMES[prop as usize], break_state);
+                        println!("  -, {}: {}", STATE_NAMES[prop as usize], break_state);
                     }
                     if break_state < 0 {
                         break;
