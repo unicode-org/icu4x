@@ -54,3 +54,24 @@ pub(crate) fn debug_get_range(slice: &[u8], range: Range<usize>) -> Option<&[u8]
         }
     }
 }
+
+macro_rules! debug_unwrap {
+    ($expr:expr, return $retval:expr, $($arg:tt)+) => {
+        match $expr {
+            Some(x) => x,
+            None => {
+                debug_assert!(false, $($arg)*);
+                return $retval;
+            }
+        }
+    };
+    ($expr:expr, return $retval:expr) => {
+        debug_unwrap!($expr, return $retval, "invalid trie")
+    };
+    ($expr:expr, $($arg:tt)+) => {
+        debug_unwrap!($expr, return (), $($arg)*)
+    };
+    ($expr:expr) => {
+        debug_unwrap!($expr, return ())
+    };
+}

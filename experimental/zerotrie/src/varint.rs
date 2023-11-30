@@ -53,10 +53,7 @@ pub const fn read_varint_meta2(start: u8, remainder: &[u8]) -> Option<(usize, &[
     if (start & 0b00100000) != 0 {
         loop {
             let next;
-            (next, remainder) = match remainder.split_first() {
-                Some(t) => t,
-                None => return None,
-            };
+            (next, remainder) = debug_unwrap!(remainder.split_first(), return None);
             // Note: value << 7 could drop high bits. The first addition can't overflow.
             // The second addition could overflow; in such a case we just inform the
             // developer via the debug assertion.
@@ -78,10 +75,7 @@ pub const fn read_varint_meta3(start: u8, remainder: &[u8]) -> Option<(usize, &[
     if (start & 0b00010000) != 0 {
         loop {
             let next;
-            (next, remainder) = match remainder.split_first() {
-                Some(t) => t,
-                None => return None,
-            };
+            (next, remainder) = debug_unwrap!(remainder.split_first(), return None);
             // Note: value << 7 could drop high bits. The first addition can't overflow.
             // The second addition could overflow; in such a case we just inform the
             // developer via the debug assertion.

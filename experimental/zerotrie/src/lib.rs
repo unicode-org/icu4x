@@ -57,6 +57,7 @@ extern crate alloc;
 mod builder;
 mod byte_phf;
 mod error;
+#[macro_use]
 mod helpers;
 mod reader;
 #[cfg(feature = "serde")]
