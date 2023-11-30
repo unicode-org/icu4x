@@ -213,7 +213,7 @@ where
         if n == 0 {
             return None;
         }
-        let (qq, eks) = debug_split_at(buffer, n)?;
+        let (qq, eks) = debug_split_at(buffer, n);
         debug_assert_eq!(qq.len(), eks.len());
         let q = debug_get(qq, f1(key, *p, n))?;
         let l2 = f2(key, q, n);
@@ -232,9 +232,7 @@ where
     /// Get an iterator over the keys in the order in which they are stored in the map.
     pub fn keys(&self) -> &[u8] {
         let n = self.num_items();
-        debug_split_at(self.0.as_ref(), 1 + n)
-            .map(|s| s.1)
-            .unwrap_or(&[])
+        debug_split_at(self.0.as_ref(), 1 + n).1
     }
     /// Diagnostic function that returns `p` and the maximum value of `q`
     #[cfg(test)]
@@ -244,7 +242,7 @@ where
         if n == 0 {
             return None;
         }
-        let (qq, _) = debug_split_at(buffer, n)?;
+        let (qq, _) = debug_split_at(buffer, n);
         Some((*p, *qq.iter().max().unwrap()))
     }
     /// Returns the map as bytes. The map can be recovered with [`Self::from_store`]

@@ -224,7 +224,7 @@ fn get_branch(mut trie: &[u8], i: usize, n: usize, mut w: usize) -> Option<&[u8]
     let mut q = 0usize;
     loop {
         let indices;
-        (indices, trie) = debug_split_at(trie, n - 1)?;
+        (indices, trie) = debug_split_at(trie, n - 1);
         p = (p << 8)
             + if i == 0 {
                 0
@@ -247,7 +247,7 @@ fn get_branch(mut trie: &[u8], i: usize, n: usize, mut w: usize) -> Option<&[u8]
 #[inline]
 fn get_branch_w0(mut trie: &[u8], i: usize, n: usize) -> Option<&[u8]> {
     let indices;
-    (indices, trie) = debug_split_at(trie, n - 1)?;
+    (indices, trie) = debug_split_at(trie, n - 1);
     let p = if i == 0 {
         0
     } else {
@@ -331,7 +331,7 @@ pub fn get_bsearch_only(mut trie: &[u8], mut ascii: &[u8]) -> Option<usize> {
             }
             if matches!(byte_type, NodeType::Span) {
                 let (trie_span, ascii_span);
-                (trie_span, trie) = debug_split_at(trie, x)?;
+                (trie_span, trie) = debug_split_at(trie, x);
                 (ascii_span, ascii) = maybe_split_at(ascii, x)?;
                 if trie_span == ascii_span {
                     // Matched a byte span
@@ -348,7 +348,7 @@ pub fn get_bsearch_only(mut trie: &[u8], mut ascii: &[u8]) -> Option<usize> {
             let w = w & 0x3;
             let x = if x == 0 { 256 } else { x };
             // Always use binary search
-            (search, trie) = debug_split_at(trie, x)?;
+            (search, trie) = debug_split_at(trie, x);
             i = search.binary_search(c).ok()?;
             trie = if w == 0 {
                 get_branch_w0(trie, i, x)
@@ -395,7 +395,7 @@ pub fn get_phf_limited(mut trie: &[u8], mut ascii: &[u8]) -> Option<usize> {
             }
             if matches!(byte_type, NodeType::Span) {
                 let (trie_span, ascii_span);
-                (trie_span, trie) = debug_split_at(trie, x)?;
+                (trie_span, trie) = debug_split_at(trie, x);
                 (ascii_span, ascii) = maybe_split_at(ascii, x)?;
                 if trie_span == ascii_span {
                     // Matched a byte span
@@ -413,11 +413,11 @@ pub fn get_phf_limited(mut trie: &[u8], mut ascii: &[u8]) -> Option<usize> {
             let x = if x == 0 { 256 } else { x };
             if x < 16 {
                 // binary search
-                (search, trie) = debug_split_at(trie, x)?;
+                (search, trie) = debug_split_at(trie, x);
                 i = search.binary_search(c).ok()?;
             } else {
                 // phf
-                (search, trie) = debug_split_at(trie, x * 2 + 1)?;
+                (search, trie) = debug_split_at(trie, x * 2 + 1);
                 i = PerfectByteHashMap::from_store(search).get(*c)?;
             }
             trie = if w == 0 {
@@ -465,7 +465,7 @@ pub fn get_phf_extended(mut trie: &[u8], mut ascii: &[u8]) -> Option<usize> {
             }
             if matches!(byte_type, NodeType::Span) {
                 let (trie_span, ascii_span);
-                (trie_span, trie) = debug_split_at(trie, x)?;
+                (trie_span, trie) = debug_split_at(trie, x);
                 (ascii_span, ascii) = maybe_split_at(ascii, x)?;
                 if trie_span == ascii_span {
                     // Matched a byte span
@@ -480,11 +480,11 @@ pub fn get_phf_extended(mut trie: &[u8], mut ascii: &[u8]) -> Option<usize> {
             let x = if x == 0 { 256 } else { x };
             if x < 16 {
                 // binary search
-                (search, trie) = debug_split_at(trie, x)?;
+                (search, trie) = debug_split_at(trie, x);
                 i = search.binary_search(c).ok()?;
             } else {
                 // phf
-                (search, trie) = debug_split_at(trie, x * 2 + 1)?;
+                (search, trie) = debug_split_at(trie, x * 2 + 1);
                 i = PerfectByteHashMap::from_store(search).get(*c)?;
             }
             trie = if w == 0 {
@@ -558,7 +558,7 @@ impl<'a> Iterator for ZeroTrieIterator<'a> {
                 NodeType::Branch => read_varint_meta2(*b, trie),
             };
             if matches!(byte_type, NodeType::Span) {
-                (span, trie) = debug_split_at(trie, x)?;
+                (span, trie) = debug_split_at(trie, x);
                 string.extend(span);
                 continue;
             }
@@ -578,11 +578,11 @@ impl<'a> Iterator for ZeroTrieIterator<'a> {
             }
             let byte = if x < 16 || !self.use_phf {
                 // binary search
-                (search, trie) = debug_split_at(trie, x)?;
+                (search, trie) = debug_split_at(trie, x);
                 debug_get(search, branch_idx)?
             } else {
                 // phf
-                (search, trie) = debug_split_at(trie, x * 2 + 1)?;
+                (search, trie) = debug_split_at(trie, x * 2 + 1);
                 debug_get(search, branch_idx + x + 1)?
             };
             string.push(byte);

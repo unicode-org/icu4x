@@ -4,18 +4,17 @@
 
 use core::ops::Range;
 
-/// Like slice::split_at but returns an Option instead of panicking.
-///
-/// Debug-panics if `mid` is out of range.
+/// Like slice::split_at but debug-panics and returns an empty second slice
+/// if the index is out of range.
 #[inline]
-pub(crate) fn debug_split_at(slice: &[u8], mid: usize) -> Option<(&[u8], &[u8])> {
+pub(crate) fn debug_split_at(slice: &[u8], mid: usize) -> (&[u8], &[u8]) {
     if mid > slice.len() {
         debug_assert!(false, "debug_split_at: index expected to be in range");
-        None
+        (slice, &[])
     } else {
         // Note: We're trusting the compiler to inline this and remove the assertion
         // hiding on the top of slice::split_at: `assert(mid <= self.len())`
-        Some(slice.split_at(mid))
+        slice.split_at(mid)
     }
 }
 
