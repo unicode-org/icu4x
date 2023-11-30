@@ -10,11 +10,32 @@ use crate::{
     ConversionError,
 };
 
+pub enum Convertibility {
+    Convertible,
+    Reciprocal,
+    NotConvertible,
+}
+
 // TODO(#4369): split this struct to two structs: MeasureUnitParser for parsing the identifier and MeasureUnit to represent the unit.
 pub struct MeasureUnit {
     /// Contains the processed units.
     pub contained_units: Vec<MeasureUnitItem>,
 }
+
+
+/// A factory for creating a converter.
+pub struct ConverterFactory {
+}
+
+impl ConverterFactory {
+    /// Extract the convertibility from the given units in the form of CLDR identifiers.
+    pub fn extract_convertibility(
+        unit1: &str,
+        unit2: &str,
+        trie: &ZeroTrie<ZeroVec<'_, u8>>,
+    ) -> Result<Convertibility, ConversionError> {
+
+    }
 
 impl MeasureUnit {
     // TODO: consider returning Option<(u8, &str)> instead of (1, part) for the case when the power is not found.
