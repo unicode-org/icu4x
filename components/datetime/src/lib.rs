@@ -150,9 +150,9 @@ pub mod time_zone;
 mod zoned_datetime;
 
 pub use any::{DateFormatter, DateTimeFormatter, ZonedDateTimeFormatter};
+pub use calendar::CldrCalendar;
 #[cfg(feature = "experimental")]
 pub use calendar::UnstableCldrCalendar;
-pub use calendar::CldrCalendar;
 pub use datetime::{TimeFormatter, TypedDateFormatter, TypedDateTimeFormatter};
 pub use error::DateTimeError;
 pub use format::datetime::FormattedDateTime;
