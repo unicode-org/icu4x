@@ -171,8 +171,10 @@ pub fn extract_conversion_info<'data>(
         Exactness::Approximate
     };
 
-    let base_unit = MeasureUnit::try_from_identifier(base_unit, trie)
-        .ok_or(DataError::custom("the base unit is not valid"))?;
+    let base_unit = match MeasureUnit::try_from_identifier(base_unit, trie) {
+        Ok(base_unit) => base_unit,
+        Err(_) => return Err(DataError::custom("the base unit is not valid")),
+    };
 
     Ok(ConversionInfo {
         base_unit: ZeroVec::from_iter(base_unit),

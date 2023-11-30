@@ -5,7 +5,10 @@
 use zerotrie::ZeroTrie;
 use zerovec::ZeroVec;
 
-use crate::provider::{Base, MeasureUnitItem, SiPrefix};
+use crate::{
+    provider::{Base, MeasureUnitItem, SiPrefix},
+    ConversionError,
+};
 
 // TODO(#4369): split this struct to two structs: MeasureUnitParser for parsing the identifier and MeasureUnit to represent the unit.
 #[zerovec::make_varule(MeasureUnitULE)]
@@ -222,25 +225,29 @@ impl MeasureUnit<'_> {
     fn analyze_identifier_part(
         identifier_part: &str,
         sign: i8,
+        result: &mut Vec<MeasureUnitItem>,
         trie: &ZeroTrie<ZeroVec<'_, u8>>,
-    ) -> Option<Vec<MeasureUnitItem>> {
+    ) -> Result<(), ConversionError> {
         let mut identifier = identifier_part;
-        let mut measure_unit_items = Vec::<MeasureUnitItem>::new();
         while !identifier.is_empty() {
-            let (power, identifier_power) = Self::get_power(identifier);
-            let (si_prefix, identifier_si) = Self::get_si_prefix(identifier_power);
-            let (unit_id, identifier_unit) = Self::get_unit_id(identifier_si, trie)?;
+            let (power, identifier_after_power) = Self::get_power(identifier);
+            let (si_prefix, identifier_after_si) = Self::get_si_prefix(identifier_after_power);
+            let (unit_id, identifier_after_unit) =
+                match Self::get_unit_id(identifier_after_si, trie) {
+                    Some((unit_id, identifier_after_unit)) => (unit_id, identifier_after_unit),
+                    None => return Err(ConversionError::InvalidUnit),
+                };
 
-            measure_unit_items.push(MeasureUnitItem {
+            result.push(MeasureUnitItem {
                 power: power as i8 * sign,
                 si_prefix,
                 unit_id: unit_id as u16,
             });
 
-            identifier = identifier_unit.get(1..).unwrap_or("");
+            identifier = identifier_after_unit.get(1..).unwrap_or("");
         }
 
-        Some(measure_unit_items)
+        Ok(())
     }
 
     // TODO: add test cases for this function.
@@ -248,17 +255,15 @@ impl MeasureUnit<'_> {
     pub fn try_from_identifier<'data>(
         identifier: &'data str,
         trie: &ZeroTrie<ZeroVec<'data, u8>>,
-    ) -> Option<Vec<MeasureUnitItem>> {
+    ) -> Result<Vec<MeasureUnitItem>, ConversionError> {
         let (num_part, den_part) = identifier
             .split_once("-per-")
             .or_else(|| identifier.split_once("per-"))
             .unwrap_or((identifier, ""));
 
-        let measure_unit_items = [
-            Self::analyze_identifier_part(num_part, 1, trie)?,
-            Self::analyze_identifier_part(den_part, -1, trie)?,
-        ]
-        .concat();
-        Some(measure_unit_items)
+        let mut measure_unit_items = Vec::<MeasureUnitItem>::new();
+        Self::analyze_identifier_part(num_part, 1, &mut measure_unit_items, trie)?;
+        Self::analyze_identifier_part(den_part, -1, &mut measure_unit_items, trie)?;
+        Ok(measure_unit_items)
     }
 }
