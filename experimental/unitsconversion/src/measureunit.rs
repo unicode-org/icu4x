@@ -112,7 +112,11 @@ impl MeasureUnit<'_> {
     ///    if the prefix is found, the function will return (power, part without the prefix).
     ///   if the prefix is not found, the function will return (0, part).
     fn get_si_prefix_base_10(part: &str) -> (i8, &str) {
-        if let Some(part) = part.strip_prefix("yotta") {
+        if let Some(part) = part.strip_prefix("quetta") {
+            (30, part)
+        } else if let Some(part) = part.strip_prefix("ronna") {
+            (27, part)
+        } else if let Some(part) = part.strip_prefix("yotta") {
             (24, part)
         } else if let Some(part) = part.strip_prefix("zetta") {
             (21, part)
