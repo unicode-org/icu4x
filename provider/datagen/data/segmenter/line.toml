@@ -1289,6 +1289,12 @@ name = "RI_RI"
 left = "RI"
 right = "RI"
 
+[[tables]]
+# LB30a
+name = "RI_RI"
+left = "RI_ZWJ"
+right = "RI"
+
 [[rules]]
 # LB3
 left = [ "Any" ]
