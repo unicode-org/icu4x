@@ -249,7 +249,10 @@ impl MeasureUnit<'_> {
         identifier: &'data str,
         trie: &ZeroTrie<ZeroVec<'data, u8>>,
     ) -> Option<Vec<MeasureUnitItem>> {
-        let (num_part, den_part) = identifier.split_once("-per-").or_else(|| identifier.split_once("per-")).unwrap_or((identifier, "")
+        let (num_part, den_part) = identifier
+            .split_once("-per-")
+            .or_else(|| identifier.split_once("per-"))
+            .unwrap_or((identifier, ""));
 
         let measure_unit_items = [
             Self::analyze_identifier_part(num_part, 1, trie)?,
