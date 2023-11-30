@@ -178,11 +178,7 @@ impl MeasureUnit {
     ///    if the unit id is found, the function will return (unit id, part without the unit id and without `-` at the beginning of the remaining part if it exists).
     ///    if the unit id is not found, the function will return None.
     fn get_unit_id<'data>(part: &'data str, trie: &ZeroTrie<ZeroVec<'data, u8>>) -> Option<usize> {
-        if let Some(unit_id) = trie.get(part.as_bytes()) {
-            Some(unit_id)
-        } else {
-            None
-        }
+        trie.get(part.as_bytes())
     }
 
     /// Process a part of an identifier.
