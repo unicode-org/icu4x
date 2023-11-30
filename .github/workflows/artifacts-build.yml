@@ -138,6 +138,7 @@ jobs:
     - name: Build Dart docs
       run: |
         cd ffi/capi/dart/package
+        dart pub get
         dart doc
         cd ../../../..
 
