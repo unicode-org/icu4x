@@ -676,35 +676,3 @@ jobs:
       run: |
           git checkout empty
           gsutil -m cp -r benchmarks/datasize/* gs://${{ env.GCP_MAIN_BUCKET_ID }}/gha/benchmarks/datasize
-
-  gh-pages:
-    name: "Deploy to GitHub Pages"
-    needs: [rust-docs, cpp-docs, ts-docs, dart-docs, wasm-demo, bench-perf, bench-memory, bench-datasize] # bench-binsize
-    # Run this even when one of the above jobs failed. This is so we can at least push the other artifacts.
-    if: (success() || failure()) && (github.ref == 'refs/heads/main' && github.repository == 'unicode-org/icu4x')
-    runs-on: 'ubuntu-latest'
-    concurrency:
-      group: "pages"
-      cancel-in-progress: true
-    steps:
-      - uses: actions/checkout@v4
-      # GCP Boilerplate for jobs in main repository
-      - id: gcp-auth
-        name: "Authenticate to Google Cloud with Workload Identity Provider"
-        uses: google-github-actions/auth@v1
-        with:
-          workload_identity_provider: "projects/66042061814/locations/global/workloadIdentityPools/icu4x-gha-pool1/providers/icu4x-gha-provider1"
-          service_account: "icu4x-main@dev-infra-273822.iam.gserviceaccount.com"
-      - name: "Set up Google Cloud SDK"
-        uses: google-github-actions/setup-gcloud@v1
-      - name: Download artifacts
-        run: |
-          mkdir website
-          gsutil -m cp -rn gs://${{ env.GCP_MAIN_BUCKET_ID }}/gha/* website || true
-      - name: Upload artifact
-        uses: actions/upload-pages-artifact@v1
-        with:
-          path: 'website'
-      - name: Deploy to GitHub Pages
-        id: deployment
-        uses: actions/deploy-pages@v1
