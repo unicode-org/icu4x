@@ -11,31 +11,12 @@ use crate::{
 };
 
 // TODO(#4369): split this struct to two structs: MeasureUnitParser for parsing the identifier and MeasureUnit to represent the unit.
-#[zerovec::make_varule(MeasureUnitULE)]
-#[derive(Clone, Debug, PartialOrd, Ord, PartialEq, Eq, Default)]
-#[cfg_attr(
-    feature = "datagen",
-    derive(databake::Bake),
-    databake(path = icu_unitsconversion::provider),
-)]
-#[cfg_attr(
-    feature = "datagen",
-    derive(serde::Serialize),
-    zerovec::derive(Serialize)
-)]
-#[cfg_attr(
-    feature = "serde",
-    derive(serde::Deserialize),
-    zerovec::derive(Deserialize)
-)]
-#[zerovec::derive(Debug)]
-pub struct MeasureUnit<'data> {
+pub struct MeasureUnit {
     /// Contains the processed units.
-    #[cfg_attr(feature = "serde", serde(borrow))]
-    pub contained_units: ZeroVec<'data, MeasureUnitItem>,
+    pub contained_units: Vec<MeasureUnitItem>,
 }
 
-impl MeasureUnit<'_> {
+impl MeasureUnit {
     // TODO: consider returning Option<(u8, &str)> instead of (1, part) for the case when the power is not found.
     // TODO: complete all the cases for the powers.
     // TODO: consider using a trie for the powers.
@@ -45,6 +26,7 @@ impl MeasureUnit<'_> {
     ///    if the power is not found, the function will return (1, part).
     fn get_power(part: &str) -> Option<i8> {
         match part {
+            "pow1" => Some(1),
             "square" | "pow2" => Some(2),
             "cubic" | "pow3" => Some(3),
             "pow4" => Some(4),
@@ -53,6 +35,12 @@ impl MeasureUnit<'_> {
             "pow7" => Some(7),
             "pow8" => Some(8),
             "pow9" => Some(9),
+            "pow10" => Some(10),
+            "pow11" => Some(11),
+            "pow12" => Some(12),
+            "pow13" => Some(13),
+            "pow14" => Some(14),
+            "pow15" => Some(15),
             _ => None,
         }
     }
