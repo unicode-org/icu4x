@@ -135,7 +135,7 @@ fn test_basic() {
     let meter_convert: ConversionInfo = ZeroFrom::zero_from(meter_convert_ule);
 
     assert_eq!(meter_convert.factor_sign, Sign::Positive);
-    let meter_convert_base_unit = meter_convert.base_unit.to_owned();
+    let meter_convert_base_unit = meter_convert.basic_units.to_owned();
     assert_eq!(
         meter_convert_base_unit.get(0).unwrap().unit_id,
         meter_index as u16
@@ -151,7 +151,7 @@ fn test_basic() {
     assert_eq!(
         meter_convert,
         ConversionInfo {
-            base_unit: {
+            basic_units: {
                 let base_unit = vec![MeasureUnitItem {
                     power: 1,
                     si_prefix: SiPrefix {
@@ -180,7 +180,7 @@ fn test_basic() {
     assert_eq!(
         foot_convert,
         ConversionInfo {
-            base_unit: {
+            basic_units: {
                 let base_unit = vec![MeasureUnitItem {
                     power: 1,
                     si_prefix: SiPrefix {

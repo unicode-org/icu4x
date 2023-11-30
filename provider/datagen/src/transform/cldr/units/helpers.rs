@@ -177,7 +177,7 @@ pub fn extract_conversion_info<'data>(
     };
 
     Ok(ConversionInfo {
-        base_unit: ZeroVec::from_iter(base_unit),
+        basic_units: ZeroVec::from_iter(base_unit),
         factor_num: factor_num.into(),
         factor_den: factor_den.into(),
         factor_sign,

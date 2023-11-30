@@ -65,9 +65,9 @@ pub struct UnitsInfoV1<'data> {
 )]
 #[zerovec::derive(Debug)]
 pub struct ConversionInfo<'data> {
-    /// Contains the base unit which the unit is converted to.
+    /// Contains the base unit (after parsing) which what the unit is converted to.
     #[cfg_attr(feature = "serde", serde(borrow))]
-    pub base_unit: ZeroVec<'data, MeasureUnitItem>,
+    pub basic_units: ZeroVec<'data, MeasureUnitItem>,
 
     /// Represents the numerator of the conversion factor.
     #[cfg_attr(feature = "serde", serde(borrow))]
