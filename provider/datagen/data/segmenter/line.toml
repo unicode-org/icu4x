@@ -1220,7 +1220,19 @@ right = "SP"
 [[tables]]
 # LB16
 name = "CL_CP_SP"
+left = "CL_ZWJ"
+right = "SP"
+
+[[tables]]
+# LB16
+name = "CL_CP_SP"
 left = "CP"
+right = "SP"
+
+[[tables]]
+# LB16
+name = "CL_CP_SP"
+left = "CP_ZWJ"
 right = "SP"
 
 [[tables]]

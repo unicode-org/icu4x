@@ -15,6 +15,8 @@ use core::str::CharIndices;
 use icu_provider::prelude::*;
 use utf8_iter::Utf8CharIndices;
 
+static mut LOG: bool = false;
+
 /// An enum specifies the strictness of line-breaking rules. It can be passed as
 /// an argument when creating a line segmenter.
 ///
@@ -247,6 +249,10 @@ impl LineSegmenter {
     #[cfg(feature = "auto")]
     pub fn new_auto() -> Self {
         Self::new_auto_with_options(Default::default())
+    }
+
+    pub fn start_logging() {
+        unsafe {LOG = true;}
     }
 
     #[cfg(feature = "auto")]
@@ -933,15 +939,21 @@ impl<'l, 's, Y: LineBreakType<'l, 's>> Iterator for LineBreakIterator<'l, 's, Y>
             // If break_state is equals or grater than 0, it is alias of property.
             let mut break_state = self.get_break_state_from_table(left_prop, right_prop);
             if break_state > 0 {
+                unsafe { if LOG {
                 println!("  {}, {}: {}", STATE_NAMES[left_prop as usize], STATE_NAMES[right_prop as usize], STATE_NAMES[break_state as usize]);
+                }}
             } else {
+                unsafe { if LOG {
                 println!("  {}, {}: {}", STATE_NAMES[left_prop as usize], STATE_NAMES[right_prop as usize], break_state);
+                }}
             }
             if break_state >= 0_i8 {
                 let mut previous_iter = self.iter.clone();
                 let mut previous_pos_data = self.current_pos_data;
 
+                unsafe { if LOG {
                 println!("  Inner loop");
+                }}
                 loop {
                     self.advance_iter();
                     let Some(prop) = self.get_current_linebreak_property() else {
@@ -959,9 +971,13 @@ impl<'l, 's, Y: LineBreakType<'l, 's>> Iterator for LineBreakIterator<'l, 's, Y>
 
                     break_state = self.get_break_state_from_table(break_state as u8, prop);
                     if break_state > 0 {
+                        unsafe { if LOG {
                         println!("  -, {}: {}", STATE_NAMES[prop as usize], STATE_NAMES[break_state as usize]);
+                        }}
                     } else {
+                        unsafe { if LOG {
                         println!("  -, {}: {}", STATE_NAMES[prop as usize], break_state);
+                        }}
                     }
                     if break_state < 0 {
                         break;

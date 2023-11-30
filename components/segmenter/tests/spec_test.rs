@@ -116,6 +116,7 @@ fn line_break_test(filename: &str) {
             test.break_result_utf8.insert(0, 0);
         }
         if result != test.break_result_utf8 {
+            LineSegmenter::start_logging();
             let lb = icu::properties::maps::line_break();
             let lb_name = icu::properties::LineBreak::enum_to_long_name_mapper();
             let mut iter = segmenter.segment_str(&s);
