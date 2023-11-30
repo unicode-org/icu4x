@@ -116,12 +116,11 @@ fn line_break_test(filename: &str) {
             test.break_result_utf8.insert(0, 0);
         }
         if result != test.break_result_utf8 {
-            LineSegmenter::start_logging();
             let lb = icu::properties::maps::line_break();
             let lb_name = icu::properties::LineBreak::enum_to_long_name_mapper();
             let mut iter = segmenter.segment_str(&s);
             // TODO(egg): It would be really nice to have Name here.
-            println!("  | A | E | Code pt. | Line_Break     | State | Literal");
+            println!("  | A | E | Code pt. | Line_Break     | Literal");
             for (i, c) in s.char_indices() {
                 let expected_break = test.break_result_utf8.contains(&i);
                 let actual_break = result.contains(&i);
@@ -129,7 +128,7 @@ fn line_break_test(filename: &str) {
                     iter.next();
                 }
                 println!(
-                    "{}| {} | {} | {:>8} | {:>18} | {} | {}",
+                    "{}| {} | {} | {:>8} | {:>18} | {}",
                     if actual_break != expected_break {
                         "😭"
                     } else {
@@ -141,9 +140,6 @@ fn line_break_test(filename: &str) {
                     lb_name
                         .get(lb.get(c))
                         .unwrap_or(&format!("{:?}", lb.get(c))),
-                    // Placeholder for logging the state if exposed.
-                    // Not "?????" to hide from clippy.
-                    "?".repeat(5),
                     c
                 )
             }
@@ -231,6 +227,11 @@ fn run_grapheme_break_test() {
 
         let iter = segmenter.segment_utf16(&test.utf16_vec);
         let result: Vec<usize> = iter.collect();
+        assert_eq!(
+            result, test.break_result_utf16,
+            "UTF16: {}",
+            test.original_line
+        );
 
         // Test data is Latin-1 character only, it can run for Latin-1 segmenter test.
         if let Some(break_result_latin1) = test.break_result_latin1 {
@@ -258,7 +259,6 @@ fn sentence_break_test(filename: &str) {
             let mut iter = segmenter.segment_str(&s);
             // TODO(egg): It would be really nice to have Name here.
             println!("  | A | E | Code pt. | Sentence_Break | State | Literal");
-            let STATE_NAMES = ["Unknown", "CR", "LF", "Extend", "Sep", "Format", "Sp", "Lower", "Upper", "OLetter", "Numeric", "ATerm", "SContinue", "STerm", "Close", "ATerm_Close", "ATerm_Close_Sp", "STerm_Close", "STerm_Close_Sp", "Upper_ATerm", "Lower_ATerm", "ATerm_Close_Sp_SB8", "ATerm_Close_Sp_ParaSep", "ATerm_Close_Sp_CR", "STerm_Close_Sp_ParaSep", "STerm_Close_Sp_CR", "sot", "eot"];
             for (i, c) in s.char_indices() {
                 let expected_break = test.break_result_utf8.contains(&i);
                 let actual_break = result.contains(&i);
@@ -280,7 +280,7 @@ fn sentence_break_test(filename: &str) {
                         .unwrap_or(&format!("{:?}", sb.get(c))),
                     // Placeholder for logging the state if exposed.
                     // Not "?????" to hide from clippy.
-                    if actual_break { format!("{:02X} {}", iter.state(), STATE_NAMES[iter.state() as usize]) } else {"?".repeat(5)},
+                    "?".repeat(5),
                     c
                 )
             }
