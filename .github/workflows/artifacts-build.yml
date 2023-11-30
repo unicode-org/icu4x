@@ -84,9 +84,15 @@ jobs:
           --exclude zerofrom-derive
           --exclude zerovec-derive
 
-    - name: Upload docs to Google Cloud Storage
+    - name: Upload docs to Google Cloud Storage (non-main)
       run: |
         gsutil -m cp -r target/doc gs://${{ env.GCP_PR_BUCKET_ID }}/gha/${{ github.sha }}/docs
+    
+    - name: Upload docs to Google Cloud Storage (main)
+      if: github.ref == 'refs/heads/main' && github.repository == 'unicode-org/icu4x'
+      run: |
+        gsutil -m cp -r target/doc gs://${{ env.GCP_MAIN_BUCKET_ID }}/gha/rustdoc
+
     - name: "⭐⭐⭐ Links to Uploaded Artifacts ⭐⭐⭐"
       run: |
         echo "📖 Docs Preview"
@@ -141,11 +147,19 @@ jobs:
         dart doc
         cd ../../../..
 
-    - name: Upload docs to Google Cloud Storage
+    - name: Upload docs to Google Cloud Storage (non-main)
       run: |
         gsutil -m cp -r ffi/capi/cpp/docs/html gs://${{ env.GCP_PR_BUCKET_ID }}/gha/${{ github.sha }}/ffi/cpp
         gsutil -m cp -r ffi/capi/js/package/docs gs://${{ env.GCP_PR_BUCKET_ID }}/gha/${{ github.sha }}/ffi/ts
         gsutil -m cp -r ffi/capi/dart/package/doc/api gs://${{ env.GCP_PR_BUCKET_ID }}/gha/${{ github.sha }}/ffi/dart
+    
+    - name: Upload docs to Google Cloud Storage (main)
+      if: github.ref == 'refs/heads/main' && github.repository == 'unicode-org/icu4x'
+      run: |
+        gsutil -m cp -r ffi/capi/cpp/docs/html gs://${{ env.GCP_MAIN_BUCKET_ID }}/gha/cppdoc
+        gsutil -m cp -r ffi/capi/js/package/docs gs://${{ env.GCP_MAIN_BUCKET_ID }}/gha/tsdoc
+        gsutil -m cp -r ffi/capi/dart/package/doc/api gs://${{ env.GCP_MAIN_BUCKET_ID }}/gha/dartdoc
+
     - name: "⭐⭐⭐ Links to Uploaded Artifacts ⭐⭐⭐"
       run: |
         echo "📖 CPP Docs Preview"
