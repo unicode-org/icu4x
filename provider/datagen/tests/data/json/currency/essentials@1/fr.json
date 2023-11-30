@@ -1075,5 +1075,5 @@
     "R",
     "Kw"
   ],
-  "default_pattern": "StandardAlphaNextToNumberAndNone"
+  "default_pattern": "StandardAndNone"
 }

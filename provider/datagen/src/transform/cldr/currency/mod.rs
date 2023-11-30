@@ -250,10 +250,10 @@ fn extract_currency_essentials<'data>(
     let default_pattern =
         if currency_patterns_standard_none.len() <= currency_patterns_standard_next_to_num.len() {
             currency_patterns_map.extend(currency_patterns_standard_none);
-            DefaultPattern::StandardAndNone
+            DefaultPattern::StandardAlphaNextToNumberAndNone
         } else {
             currency_patterns_map.extend(currency_patterns_standard_next_to_num);
-            DefaultPattern::StandardAlphaNextToNumberAndNone
+            DefaultPattern::StandardAndNone
         };
 
     Ok(CurrencyEssentialsV1 {

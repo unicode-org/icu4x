@@ -955,5 +955,5 @@
     "R",
     "ZK"
   ],
-  "default_pattern": "StandardAlphaNextToNumberAndNone"
+  "default_pattern": "StandardAndNone"
 }
