@@ -1074,5 +1074,6 @@
     "¤",
     "R",
     "Kw"
-  ]
+  ],
+  "default_pattern": "StandardAndNone"
 }
