@@ -67,7 +67,7 @@ class ICU4XCollator {
    * 
    * See the [Rust documentation for `compare_utf16`](https://docs.rs/icu/latest/icu/collator/struct.Collator.html#method.compare_utf16) for more information.
    */
-  ICU4XOrdering compare_utf16(const diplomat::span<const uint16_t> left, const diplomat::span<const uint16_t> right) const;
+  ICU4XOrdering compare_utf16(const std::u16string_view left, const std::u16string_view right) const;
   inline const capi::ICU4XCollator* AsFFI() const { return this->inner.get(); }
   inline capi::ICU4XCollator* AsFFIMut() { return this->inner.get(); }
   inline ICU4XCollator(capi::ICU4XCollator* i) : inner(i) {}
@@ -99,7 +99,7 @@ inline ICU4XOrdering ICU4XCollator::compare(const std::string_view left, const s
 inline ICU4XOrdering ICU4XCollator::compare_valid_utf8(const std::string_view left, const std::string_view right) const {
   return static_cast<ICU4XOrdering>(capi::ICU4XCollator_compare_valid_utf8(this->inner.get(), left.data(), left.size(), right.data(), right.size()));
 }
-inline ICU4XOrdering ICU4XCollator::compare_utf16(const diplomat::span<const uint16_t> left, const diplomat::span<const uint16_t> right) const {
+inline ICU4XOrdering ICU4XCollator::compare_utf16(const std::u16string_view left, const std::u16string_view right) const {
   return static_cast<ICU4XOrdering>(capi::ICU4XCollator_compare_utf16(this->inner.get(), left.data(), left.size(), right.data(), right.size()));
 }
 #endif

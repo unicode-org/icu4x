@@ -66,6 +66,13 @@ jobs:
       uses: google-github-actions/auth@v1
       with:
         credentials_json: '${{ secrets.ICU4X_GCP_SA_KEY }}'
+    - id: gcp-auth-main
+      if: github.ref == 'refs/heads/main' && github.repository == 'unicode-org/icu4x'
+      name: "Authenticate to Google Cloud with Workload Identity Provider"
+      uses: google-github-actions/auth@v1
+      with:
+        workload_identity_provider: "projects/66042061814/locations/global/workloadIdentityPools/icu4x-gha-pool1/providers/icu4x-gha-provider1"
+        service_account: "icu4x-main@dev-infra-273822.iam.gserviceaccount.com"
     - name: "Set up Google Cloud SDK"
       uses: google-github-actions/setup-gcloud@v1
 
@@ -84,9 +91,15 @@ jobs:
           --exclude zerofrom-derive
           --exclude zerovec-derive
 
-    - name: Upload docs to Google Cloud Storage
+    - name: Upload docs to Google Cloud Storage (non-main)
       run: |
         gsutil -m cp -r target/doc gs://${{ env.GCP_PR_BUCKET_ID }}/gha/${{ github.sha }}/docs
+    
+    - name: Upload docs to Google Cloud Storage (main)
+      if: github.ref == 'refs/heads/main' && github.repository == 'unicode-org/icu4x'
+      run: |
+        gsutil -m cp -r target/doc gs://${{ env.GCP_MAIN_BUCKET_ID }}/gha/rustdoc
+
     - name: "⭐⭐⭐ Links to Uploaded Artifacts ⭐⭐⭐"
       run: |
         echo "📖 Docs Preview"
@@ -105,6 +118,13 @@ jobs:
       uses: google-github-actions/auth@v1
       with:
         credentials_json: '${{ secrets.ICU4X_GCP_SA_KEY }}'
+    - id: gcp-auth-main
+      if: github.ref == 'refs/heads/main' && github.repository == 'unicode-org/icu4x'
+      name: "Authenticate to Google Cloud with Workload Identity Provider"
+      uses: google-github-actions/auth@v1
+      with:
+        workload_identity_provider: "projects/66042061814/locations/global/workloadIdentityPools/icu4x-gha-pool1/providers/icu4x-gha-provider1"
+        service_account: "icu4x-main@dev-infra-273822.iam.gserviceaccount.com"
     - name: "Set up Google Cloud SDK"
       uses: google-github-actions/setup-gcloud@v1
 
@@ -141,11 +161,19 @@ jobs:
         dart doc
         cd ../../../..
 
-    - name: Upload docs to Google Cloud Storage
+    - name: Upload docs to Google Cloud Storage (non-main)
       run: |
         gsutil -m cp -r ffi/capi/cpp/docs/html gs://${{ env.GCP_PR_BUCKET_ID }}/gha/${{ github.sha }}/ffi/cpp
         gsutil -m cp -r ffi/capi/js/package/docs gs://${{ env.GCP_PR_BUCKET_ID }}/gha/${{ github.sha }}/ffi/ts
         gsutil -m cp -r ffi/capi/dart/package/doc/api gs://${{ env.GCP_PR_BUCKET_ID }}/gha/${{ github.sha }}/ffi/dart
+    
+    - name: Upload docs to Google Cloud Storage (main)
+      if: github.ref == 'refs/heads/main' && github.repository == 'unicode-org/icu4x'
+      run: |
+        gsutil -m cp -r ffi/capi/cpp/docs/html gs://${{ env.GCP_MAIN_BUCKET_ID }}/gha/cppdoc
+        gsutil -m cp -r ffi/capi/js/package/docs gs://${{ env.GCP_MAIN_BUCKET_ID }}/gha/tsdoc
+        gsutil -m cp -r ffi/capi/dart/package/doc/api gs://${{ env.GCP_MAIN_BUCKET_ID }}/gha/dartdoc
+
     - name: "⭐⭐⭐ Links to Uploaded Artifacts ⭐⭐⭐"
       run: |
         echo "📖 CPP Docs Preview"

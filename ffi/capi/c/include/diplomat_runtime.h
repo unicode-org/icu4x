@@ -35,11 +35,6 @@ typedef struct DiplomatWriteable {
 
 DiplomatWriteable diplomat_simple_writeable(char* buf, size_t buf_size);
 
-typedef struct DiplomatStringView {
-    const char* data;
-    size_t len;
-} DiplomatStringView;
-
 #define MAKE_SLICE_VIEW(name, c_ty) \
     typedef struct Diplomat##name##View { \
         const c_ty* data; \
@@ -60,6 +55,8 @@ MAKE_SLICE_VIEW(F32, float)
 MAKE_SLICE_VIEW(F64, double)
 MAKE_SLICE_VIEW(Bool, bool)
 MAKE_SLICE_VIEW(Char, char32_t)
+MAKE_SLICE_VIEW(String, char)
+MAKE_SLICE_VIEW(U16String, char16_t)
 
 
 #ifdef __cplusplus
