@@ -164,7 +164,7 @@ impl<'data> BlobSchemaV2<'data> {
             .get(key_index)
             .ok_or_else(|| DataError::custom("Invalid blob bytes").with_req(key, req))?;
         let mut cursor = ZeroTrieSimpleAscii::from_store(zerotrie).into_cursor();
-        #[allow(clippy::unwrap_used)] // infallible impl
+        #[allow(clippy::unwrap_used)] // DataLocale::write_to produces ASCII only
         req.locale.write_to(&mut cursor).unwrap();
         let blob_index = cursor
             .value()
