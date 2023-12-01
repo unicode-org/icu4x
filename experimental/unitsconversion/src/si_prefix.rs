@@ -9,7 +9,7 @@
 /// NOTE:
 ///    if the prefix is found, the function will return (power, part without the prefix).
 ///    if the prefix is not found, the function will return (0, part).
-pub fn get_si_prefix_base_10(part: &str) -> (i8, &str) {
+pub fn get_si_prefix_base_ten(part: &str) -> (i8, &str) {
     if let Some(part) = part.strip_prefix("quetta") {
         (30, part)
     } else if let Some(part) = part.strip_prefix("ronna") {

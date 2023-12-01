@@ -8,7 +8,7 @@ use zerovec::ZeroVec;
 use crate::{
     power::get_power,
     provider::{Base, MeasureUnitItem, SiPrefix},
-    si_prefix::{get_si_prefix_base_10, get_si_prefix_base_two},
+    si_prefix::{get_si_prefix_base_ten, get_si_prefix_base_two},
     ConversionError,
 };
 
@@ -26,7 +26,7 @@ impl MeasureUnit {
     ///    if the prefix is found, the function will return (power, base, part without the prefix).
     ///    if the prefix is not found, the function will return (0, Base::NotExist, part).
     fn get_si_prefix(part: &str) -> (SiPrefix, &str) {
-        let (si_prefix_base_10, part) = get_si_prefix_base_10(part);
+        let (si_prefix_base_10, part) = get_si_prefix_base_ten(part);
         if si_prefix_base_10 != 0 {
             return (
                 SiPrefix {
