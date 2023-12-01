@@ -20,10 +20,7 @@ impl MeasureUnit {
     // TODO: consider returning Option<(u8, &str)> instead of (1, part) for the case when the power is not found.
     // TODO: complete all the cases for the powers.
     // TODO: consider using a trie for the powers.
-    /// Get the power of the unit.
-    /// NOTE:
-    ///    if the power is found, the function will return (power, part without the power).
-    ///    if the power is not found, the function will return (1, part).
+    /// Converts a power string to a power.
     fn get_power(part: &str) -> Option<i8> {
         match part {
             "pow1" => Some(1),
@@ -47,7 +44,7 @@ impl MeasureUnit {
 
     // TODO: complete all the cases for the prefixes.
     // TODO: consider using a trie for the prefixes.
-    /// Get the SI prefix.
+    /// Extracts the SI prefix.
     /// NOTE:
     ///    if the prefix is found, the function will return (power, base, part without the prefix).
     ///    if the prefix is not found, the function will return (0, Base::NotExist, part).
@@ -86,10 +83,10 @@ impl MeasureUnit {
     // TODO: consider returning Option<(i8, &str)> instead of (0, part) for the case when the prefix is not found.
     // TODO: consider using a trie for the prefixes.
     // TODO: complete all the cases for the prefixes.
-    /// Get the SI prefix for base 10.
+    /// Extracts the SI prefix of base 10.
     /// NOTE:
     ///    if the prefix is found, the function will return (power, part without the prefix).
-    ///   if the prefix is not found, the function will return (0, part).
+    ///    if the prefix is not found, the function will return (0, part).
     fn get_si_prefix_base_10(part: &str) -> (i8, &str) {
         if let Some(part) = part.strip_prefix("quetta") {
             (30, part)
@@ -147,7 +144,7 @@ impl MeasureUnit {
     // TODO: consider returning Option<(i8, &str)> instead of (0, part) for the case when the prefix is not found.
     // TODO: consider using a trie for the prefixes.
     // TODO: complete all the cases for the prefixes.
-    /// Get the SI prefix for base 2.
+    /// Extracts the SI prefix of base 2.
     /// NOTE:
     ///     if the prefix is found, the function will return (power, part without the prefix).
     ///     if the prefix is not found, the function will return (0, part).
