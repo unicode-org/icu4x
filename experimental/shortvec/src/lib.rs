@@ -10,11 +10,11 @@
 //! This crate is far from the first stack-or-heap vector in the Rust ecosystem. It was created
 //! with the following value proposition:
 //!
-//! 1. Const construction is powerful but can currently only work with stack types.
-//! 2. This crate seeks to avoid stack size penalties when putting elements on the stack.
+//! 1. Enable safe const construction of stack collections.
+//! 2. Avoid stack size penalties common with stack-or-heap collections.
 //!
-//! As of this writing, [`heapless`] and [`tinyvec`] don't support const construction except
-//! for empty vectors, and [`smallvec`] supports it on unstable.
+//! As of this writing, `heapless` and `tinyvec` don't support const construction except
+//! for empty vectors, and `smallvec` supports it on unstable.
 //!
 //! Additionally, [`ShortBoxSlice`] has a smaller stack size than any of these:
 //!
