@@ -56,6 +56,7 @@ extern crate alloc;
 
 mod builder;
 mod byte_phf;
+mod cursor;
 mod error;
 #[macro_use]
 mod helpers;
@@ -65,11 +66,11 @@ mod serde;
 mod varint;
 mod zerotrie;
 
+pub use crate::cursor::ZeroTrieSimpleAsciiCursor;
 pub use crate::zerotrie::ZeroTrie;
 pub use crate::zerotrie::ZeroTrieExtendedCapacity;
 pub use crate::zerotrie::ZeroTriePerfectHash;
 pub use crate::zerotrie::ZeroTrieSimpleAscii;
-pub use crate::zerotrie::ZeroTrieSimpleAsciiCursor;
 pub use error::Error as ZeroTrieError;
 
 #[doc(hidden)]
