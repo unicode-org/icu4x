@@ -5,7 +5,7 @@
 pub use super::errors::ParserError;
 use crate::extensions::unicode::{Attribute, Key, Value};
 use crate::extensions::ExtensionType;
-use crate::helpers::ShortSlice;
+use shortvec::ShortBoxSlice;
 use crate::parser::SubtagIterator;
 use crate::LanguageIdentifier;
 use crate::{extensions, subtags};
@@ -31,7 +31,7 @@ pub fn parse_language_identifier_from_iter(
 ) -> Result<LanguageIdentifier, ParserError> {
     let mut script = None;
     let mut region = None;
-    let mut variants = ShortSlice::new();
+    let mut variants = ShortBoxSlice::new();
 
     let language = if let Some(subtag) = iter.next() {
         subtags::Language::try_from_bytes(subtag)?

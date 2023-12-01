@@ -39,7 +39,7 @@ pub use fields::Fields;
 pub use key::{key, Key};
 pub use value::Value;
 
-use crate::helpers::ShortSlice;
+use shortvec::ShortBoxSlice;
 use crate::parser::SubtagIterator;
 use crate::parser::{parse_language_identifier_from_iter, ParserError, ParserMode};
 use crate::subtags::Language;
@@ -145,7 +145,7 @@ impl Transform {
         }
 
         let mut current_tkey = None;
-        let mut current_tvalue = ShortSlice::new();
+        let mut current_tvalue = ShortBoxSlice::new();
         let mut has_current_tvalue = false;
 
         while let Some(subtag) = iter.peek() {
@@ -161,7 +161,7 @@ impl Transform {
                     }
                     tfields.try_insert(tkey, Value::from_short_slice_unchecked(current_tvalue));
                     current_tkey = None;
-                    current_tvalue = ShortSlice::new();
+                    current_tvalue = ShortBoxSlice::new();
                     has_current_tvalue = false;
                     continue;
                 }

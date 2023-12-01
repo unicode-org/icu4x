@@ -219,6 +219,7 @@ zerovec = { version = "0.10.1", path = "utils/zerovec", default-features = false
 zerovec-derive = { version = "0.10.1", path = "utils/zerovec/derive", default-features = false }
 bies = { version = "0.2.2", path = "experimental/bies", default-features = false }
 ixdtf = { version = "0.1.1", path = "experimental/ixdtf", default-features = false }
+shortvec = { version = "0.0.0", path = "experimental/shortvec", default-features = false }
 zerotrie = { version = "0.1.2", path = "experimental/zerotrie", default-features = false }
 
 # Tools
