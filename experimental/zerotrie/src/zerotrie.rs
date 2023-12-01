@@ -596,9 +596,10 @@ where
     ///
     /// # Examples
     ///
-    /// Get a value out of a trie by manually iterating over the bytes:
+    /// Get a value out of a trie by [writing](fmt::Write) it to the cursor:
     ///
     /// ```
+    /// use core::fmt::Write;
     /// use zerotrie::ZeroTrieSimpleAscii;
     ///
     /// // A trie with two values: "abc" and "abcdef"
@@ -606,14 +607,7 @@ where
     ///
     /// // Get out the value for "abc"
     /// let mut cursor = trie.cursor();
-    /// for b in b"abc".iter() {
-    ///     // Checking is_empty() is not required, but it is
-    ///     // good for efficiency
-    ///     if cursor.is_empty() {
-    ///         break;
-    ///     }
-    ///     cursor.step(*b);
-    /// }
+    /// write!(&mut cursor, "abc");
     /// assert_eq!(cursor.value(), Some(0));
     /// ```
     ///
@@ -630,6 +624,8 @@ where
     /// let mut longest_prefix = 0;
     /// let mut cursor = trie.cursor();
     /// for (i, b) in query.iter().enumerate() {
+    ///     // Checking is_empty() is not required, but it is
+    ///     // good for efficiency
     ///     if cursor.is_empty() {
     ///         break;
     ///     }
@@ -736,6 +732,23 @@ impl<'a> ZeroTrieSimpleAsciiCursor<'a> {
 }
 
 impl<'a> fmt::Write for ZeroTrieSimpleAsciiCursor<'a> {
+    /// Steps the cursor through each ASCII byte of the string.
+    ///
+    /// If the string contains non-ASCII chars, an error is returned.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use core::fmt::Write;
+    /// use zerotrie::ZeroTrieSimpleAscii;
+    ///
+    /// // A trie with two values: "abc" and "abcdef"
+    /// let trie = ZeroTrieSimpleAscii::from_bytes(b"abc\x80def\x81");
+    ///
+    /// let mut cursor = trie.cursor();
+    /// cursor.write_str("abcdxy").expect("all ASCII");
+    /// cursor.write_str("🚂").expect_err("non-ASCII");
+    /// ```
     fn write_str(&mut self, s: &str) -> fmt::Result {
         for b in s.bytes() {
             if !b.is_ascii() {
@@ -745,6 +758,23 @@ impl<'a> fmt::Write for ZeroTrieSimpleAsciiCursor<'a> {
         }
         Ok(())
     }
+    /// Equivalent to [`ZeroTrieSimpleAsciiCursor::step()`], except returns
+    /// an error if the char is non-ASCII.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use core::fmt::Write;
+    /// use zerotrie::ZeroTrieSimpleAscii;
+    ///
+    /// // A trie with two values: "abc" and "abcdef"
+    /// let trie = ZeroTrieSimpleAscii::from_bytes(b"abc\x80def\x81");
+    ///
+    /// let mut cursor = trie.cursor();
+    /// cursor.write_char('a').expect("ASCII");
+    /// cursor.write_char('x').expect("ASCII");
+    /// cursor.write_char('🚂').expect_err("non-ASCII");
+    /// ```
     fn write_char(&mut self, c: char) -> fmt::Result {
         if !c.is_ascii() {
             return Err(fmt::Error);
