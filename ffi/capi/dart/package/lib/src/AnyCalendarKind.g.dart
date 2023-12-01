@@ -93,7 +93,7 @@ enum AnyCalendarKind {
   /// Throws [VoidError] on failure.
   factory AnyCalendarKind.forBcp47(String s) {
     final temp = ffi2.Arena();
-    final sView = s.utf8View;;
+    final sView = s.utf8View;
     final result = _ICU4XAnyCalendarKind_get_for_bcp47(sView.pointer(temp), sView.length);
     temp.releaseAll();
     if (!result.isOk) {
