@@ -699,7 +699,7 @@ jobs:
         uses: google-github-actions/setup-gcloud@v1
       - name: Download artifacts
         run: |
-          gsutil -m cp -rn gs://icu4x-main/gha/* tools/website-skeleton || true
+          gsutil -m cp -rn gs://${{ env.GCP_MAIN_BUCKET_ID }}/gha/* tools/website-skeleton || true
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v1
         with:
