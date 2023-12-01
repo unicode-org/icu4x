@@ -2,8 +2,8 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use crate::ZeroTrieSimpleAscii;
 use crate::reader::*;
+use crate::ZeroTrieSimpleAscii;
 
 use core::fmt;
 
@@ -74,9 +74,7 @@ impl<'a> ZeroTrieSimpleAscii<&'a [u8]> {
     /// having to doubly anchor the trie to the stack.
     #[inline]
     pub fn into_cursor(self) -> ZeroTrieSimpleAsciiCursor<'a> {
-        ZeroTrieSimpleAsciiCursor {
-            trie: self
-        }
+        ZeroTrieSimpleAsciiCursor { trie: self }
     }
 }
 
@@ -142,7 +140,7 @@ impl<'a> ZeroTrieSimpleAsciiCursor<'a> {
     /// ```
     #[inline]
     pub fn value(&self) -> Option<usize> {
-        peek_value(self.trie.store.as_ref())
+        peek_value(self.trie.store)
     }
 
     /// Checks whether the cursor points to an empty trie.
