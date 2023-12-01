@@ -7,7 +7,9 @@
 extern crate alloc;
 
 pub mod measureunit;
+pub mod power;
 pub mod provider;
+pub mod si_prefix;
 
 /// Represents the possible errors that can occur during the measurement unit operations.
 pub enum ConversionError {
