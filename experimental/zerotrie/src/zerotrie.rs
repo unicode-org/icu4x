@@ -752,9 +752,6 @@ impl<'a> fmt::Write for ZeroTrieSimpleAsciiCursor<'a> {
         self.step(c as u8);
         Ok(())
     }
-    fn write_fmt(&mut self, _: fmt::Arguments<'_>) -> fmt::Result {
-        unreachable!()
-    }
 }
 
 macro_rules! impl_dispatch {
