@@ -4,6 +4,12 @@
 # Unicode and the Unicode Logo are registered trademarks of Unicode, Inc. in the U.S. and other countries.
 # For terms of use, see https://www.unicode.org/terms_of_use.html
 #
+# Generated from unicodetools after resetting the UCD to 15.0 and removing the
+# tailoring of LB25 from SegmenterDefault.txt.
+# See https://github.com/eggrobin/unicodetools/tree/15.0-no-lb-tailoring,
+# specifically
+# https://github.com/eggrobin/unicodetools/tree/e9f1e57ed97ce585c03228df860224918271921f.
+#
 # Default Line_Break Test
 #
 # Format:
