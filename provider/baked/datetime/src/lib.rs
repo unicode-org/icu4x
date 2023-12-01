@@ -6,6 +6,9 @@
 
 #![no_std]
 
+// The source is not readable and is massive as HTML.
+#![doc(html_no_source)]
+
 #[cfg(icu4x_custom_data)]
 include!(concat!(core::env!("ICU4X_DATA_DIR"), "/macros.rs"));
 #[cfg(not(icu4x_custom_data))]
