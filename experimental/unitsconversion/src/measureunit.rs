@@ -23,8 +23,8 @@ impl MeasureUnit {
     // TODO: consider using a trie for the prefixes.
     /// Extracts the SI prefix.
     /// NOTE:
-    ///    if the prefix is found, the function will return (power, base, part without the prefix).
-    ///    if the prefix is not found, the function will return (0, Base::NotExist, part).
+    ///    if the prefix is found, the function will return (SiPrefix, part without the prefix string).
+    ///    if the prefix is not found, the function will return (SiPrefix { power: 0, base: Base::Decimal }, part).
     fn get_si_prefix(part: &str) -> (SiPrefix, &str) {
         let (si_prefix_base_10, part) = get_si_prefix_base_ten(part);
         if si_prefix_base_10 != 0 {
