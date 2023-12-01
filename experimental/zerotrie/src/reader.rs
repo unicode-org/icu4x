@@ -504,14 +504,14 @@ pub fn get_phf_extended(mut trie: &[u8], mut ascii: &[u8]) -> Option<usize> {
     }
 }
 
-pub(crate) fn step_bsearch_only(trie: &mut &[u8], c: u8)  {
+pub(crate) fn step_bsearch_only(trie: &mut &[u8], c: u8) {
     let (mut b, x, search);
     loop {
         (b, *trie) = match trie.split_first() {
             Some(v) => v,
             None => {
                 // Empty trie or only a value node
-                return
+                return;
             }
         };
         match byte_type(*b) {
@@ -558,7 +558,7 @@ pub(crate) fn step_bsearch_only(trie: &mut &[u8], c: u8)  {
             } else {
                 get_branch(trie, i, x, w)
             };
-        },
+        }
         Err(_) => {
             // Byte that doesn't match
             *trie = &[]
@@ -566,7 +566,7 @@ pub(crate) fn step_bsearch_only(trie: &mut &[u8], c: u8)  {
     };
 }
 
-pub(crate) fn peek_value(mut trie: &[u8]) -> Option<usize>  {
+pub(crate) fn peek_value(mut trie: &[u8]) -> Option<usize> {
     let b;
     (b, trie) = trie.split_first()?;
     match byte_type(*b) {

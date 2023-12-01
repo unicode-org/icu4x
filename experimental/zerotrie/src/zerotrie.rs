@@ -587,11 +587,9 @@ impl<Store> ZeroTrieSimpleAscii<Store>
 where
     Store: AsRef<[u8]> + ?Sized,
 {
-    /// Steps one node into the trie, mutating self.
+    /// Gets a cursor into the current trie.
     ///
-    /// Useful to query a trie with data that is not a slice. Use
-    /// [`Self::head_value()`] to check for the presence of a string
-    /// in the trie.
+    /// Useful to query a trie with data that is not a slice.
     ///
     /// This is currently supported only on `ZeroTrieSimpleAscii`.
     ///
@@ -606,19 +604,19 @@ where
     /// let trie = ZeroTrieSimpleAscii::from_bytes(b"abc\x80def\x81");
     ///
     /// // Get out the value for "abc"
-    /// let mut it = trie.cursor();
-    /// for c in b"abc".iter() {
+    /// let mut cursor = trie.cursor();
+    /// for b in b"abc".iter() {
     ///     // Checking is_empty() is not required, but it is
     ///     // good for efficiency
-    ///     if it.is_empty() {
+    ///     if cursor.is_empty() {
     ///         break;
     ///     }
-    ///     it.step(*c);
+    ///     cursor.step(*b);
     /// }
-    /// assert_eq!(it.value(), Some(0));
+    /// assert_eq!(cursor.value(), Some(0));
     /// ```
     ///
-    /// Unrolled loop checking for string presence at every step:
+    /// Find the longest prefix match:
     ///
     /// ```
     /// use zerotrie::ZeroTrieSimpleAscii;
@@ -626,23 +624,22 @@ where
     /// // A trie with two values: "abc" and "abcdef"
     /// let trie = ZeroTrieSimpleAscii::from_bytes(b"abc\x80def\x81");
     ///
-    /// // Search the trie for the string "abcdxy"
-    /// let mut it = trie.cursor();
-    /// assert_eq!(it.value(), None); // ""
-    /// it.step(b'a');
-    /// assert_eq!(it.value(), None); // "a"
-    /// it.step(b'b');
-    /// assert_eq!(it.value(), None); // "ab"
-    /// it.step(b'c');
-    /// assert_eq!(it.value(), Some(0)); // "abc"
-    /// it.step(b'd');
-    /// assert_eq!(it.value(), None); // "abcd"
-    /// assert!(!it.is_empty());
-    /// it.step(b'x'); // no strings have the prefix "abcdx"
-    /// assert!(it.is_empty());
-    /// assert_eq!(it.value(), None); // "abcdx"
-    /// it.step(b'y');
-    /// assert_eq!(it.value(), None); // "abcdxy"
+    /// // Find the longest prefix of the string "abcdxy":
+    /// let query = b"abcdxy";
+    /// let mut longest_prefix = 0;
+    /// let mut cursor = trie.cursor();
+    /// for (i, b) in query.iter().enumerate() {
+    ///     if cursor.is_empty() {
+    ///         break;
+    ///     }
+    ///     if cursor.value().is_some() {
+    ///         longest_prefix = i;
+    ///     }
+    ///     cursor.step(*b);
+    /// }
+    ///
+    /// // The longest prefix is "abc" which is length 3:
+    /// assert_eq!(longest_prefix, 3);
     /// ```
     #[inline]
     pub fn cursor(&self) -> ZeroTrieSimpleAsciiCursor {
@@ -673,6 +670,35 @@ pub struct ZeroTrieSimpleAsciiCursor<'a> {
 
 impl<'a> ZeroTrieSimpleAsciiCursor<'a> {
     /// Steps the cursor one byte into the trie.
+    ///
+    /// # Examples
+    ///
+    /// Unrolled loop checking for string presence at every step:
+    ///
+    /// ```
+    /// use zerotrie::ZeroTrieSimpleAscii;
+    ///
+    /// // A trie with two values: "abc" and "abcdef"
+    /// let trie = ZeroTrieSimpleAscii::from_bytes(b"abc\x80def\x81");
+    ///
+    /// // Search the trie for the string "abcdxy"
+    /// let mut cursor = trie.cursor();
+    /// assert_eq!(cursor.value(), None); // ""
+    /// cursor.step(b'a');
+    /// assert_eq!(cursor.value(), None); // "a"
+    /// cursor.step(b'b');
+    /// assert_eq!(cursor.value(), None); // "ab"
+    /// cursor.step(b'c');
+    /// assert_eq!(cursor.value(), Some(0)); // "abc"
+    /// cursor.step(b'd');
+    /// assert_eq!(cursor.value(), None); // "abcd"
+    /// assert!(!cursor.is_empty());
+    /// cursor.step(b'x'); // no strings have the prefix "abcdx"
+    /// assert!(cursor.is_empty());
+    /// assert_eq!(cursor.value(), None); // "abcdx"
+    /// cursor.step(b'y');
+    /// assert_eq!(cursor.value(), None); // "abcdxy"
+    /// ```
     #[inline]
     pub fn step(&mut self, byte: u8) {
         step_bsearch_only(&mut self.trie.store, byte)
