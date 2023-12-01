@@ -583,15 +583,17 @@ impl_zerotrie_subtype!(
     Vec::into_boxed_slice
 );
 
-impl ZeroTrieSimpleAscii<&[u8]> {
+impl<Store> ZeroTrieSimpleAscii<Store>
+where
+    Store: AsRef<[u8]> + ?Sized,
+{
     /// Steps one node into the trie, mutating self.
     ///
     /// Useful to query a trie with data that is not a slice. Use
     /// [`Self::head_value()`] to check for the presence of a string
     /// in the trie.
     ///
-    /// This is only supported on `ZeroTrieSimpleAscii` because other trie
-    /// types may contain span nodes, which cannot be split.
+    /// This is currently supported only on `ZeroTrieSimpleAscii`.
     ///
     /// # Examples
     ///
@@ -604,11 +606,16 @@ impl ZeroTrieSimpleAscii<&[u8]> {
     /// let trie = ZeroTrieSimpleAscii::from_bytes(b"abc\x80def\x81");
     ///
     /// // Get out the value for "abc"
-    /// let mut it = trie.as_borrowed_slice();
+    /// let mut it = trie.cursor();
     /// for c in b"abc".iter() {
+    ///     // Checking is_empty() is not required, but it is
+    ///     // good for efficiency
+    ///     if it.is_empty() {
+    ///         break;
+    ///     }
     ///     it.step(*c);
     /// }
-    /// assert_eq!(it.head_value(), Some(0));
+    /// assert_eq!(it.value(), Some(0));
     /// ```
     ///
     /// Unrolled loop checking for string presence at every step:
@@ -620,26 +627,84 @@ impl ZeroTrieSimpleAscii<&[u8]> {
     /// let trie = ZeroTrieSimpleAscii::from_bytes(b"abc\x80def\x81");
     ///
     /// // Search the trie for the string "abcdxy"
-    /// let mut it = trie.as_borrowed_slice();
-    /// assert_eq!(it.head_value(), None); // ""
+    /// let mut it = trie.cursor();
+    /// assert_eq!(it.value(), None); // ""
     /// it.step(b'a');
-    /// assert_eq!(it.head_value(), None); // "a"
+    /// assert_eq!(it.value(), None); // "a"
     /// it.step(b'b');
-    /// assert_eq!(it.head_value(), None); // "ab"
+    /// assert_eq!(it.value(), None); // "ab"
     /// it.step(b'c');
-    /// assert_eq!(it.head_value(), Some(0)); // "abc"
+    /// assert_eq!(it.value(), Some(0)); // "abc"
     /// it.step(b'd');
-    /// assert_eq!(it.head_value(), None); // "abcd"
+    /// assert_eq!(it.value(), None); // "abcd"
     /// assert!(!it.is_empty());
     /// it.step(b'x'); // no strings have the prefix "abcdx"
     /// assert!(it.is_empty());
-    /// assert_eq!(it.head_value(), None); // "abcdx"
+    /// assert_eq!(it.value(), None); // "abcdx"
     /// it.step(b'y');
-    /// assert_eq!(it.head_value(), None); // "abcdxy"
+    /// assert_eq!(it.value(), None); // "abcdxy"
     /// ```
     #[inline]
+    pub fn cursor(&self) -> ZeroTrieSimpleAsciiCursor {
+        ZeroTrieSimpleAsciiCursor {
+            trie: self.as_borrowed_slice(),
+        }
+    }
+}
+
+impl<'a> ZeroTrieSimpleAscii<&'a [u8]> {
+    /// Same as [`ZeroTrieSimpleAscii::cursor()`] but moves self to avoid
+    /// having to doubly anchor the trie to the stack.
+    #[inline]
+    pub fn into_cursor(self) -> ZeroTrieSimpleAsciiCursor<'a> {
+        ZeroTrieSimpleAsciiCursor {
+            trie: self
+        }
+    }
+}
+
+/// A cursor into a [`ZeroTrieSimpleAscii`], useful for stepwise lookup.
+///
+/// For examples, see [`ZeroTrieSimpleAscii::cursor()`].
+#[derive(Debug)]
+pub struct ZeroTrieSimpleAsciiCursor<'a> {
+    trie: ZeroTrieSimpleAscii<&'a [u8]>,
+}
+
+impl<'a> ZeroTrieSimpleAsciiCursor<'a> {
+    /// Steps the cursor one byte into the trie.
+    #[inline]
     pub fn step(&mut self, byte: u8) {
-        step_bsearch_only(&mut self.store, byte)
+        step_bsearch_only(&mut self.trie.store, byte)
+    }
+
+    /// Gets the value at the current position in the trie.
+    ///
+    /// Calling this function on a new cursor is equivalent to calling `.get()`
+    /// with the empty string.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use zerotrie::ZeroTrieSimpleAscii;
+    ///
+    /// // A trie with two values: "" and "abc"
+    /// let trie = ZeroTrieSimpleAscii::from_bytes(b"\x80abc\x81");
+    ///
+    /// assert_eq!(Some(0), trie.get(""));
+    /// assert_eq!(Some(0), trie.cursor().value());
+    /// ```
+    #[inline]
+    pub fn value(&self) -> Option<usize> {
+        peek_value(self.trie.store.as_ref())
+    }
+
+    /// Checks whether the cursor points to an empty trie.
+    ///
+    /// Use this to determine when to stop iterating.
+    #[inline]
+    pub fn is_empty(&self) -> bool {
+        self.trie.is_empty()
     }
 }
 

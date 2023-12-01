@@ -7,7 +7,7 @@ use core::fmt;
 use icu_provider::prelude::*;
 use serde::Deserialize;
 use writeable::Writeable;
-use zerotrie::ZeroTrieSimpleAscii;
+use zerotrie::{ZeroTrieSimpleAscii, ZeroTrieSimpleAsciiCursor};
 use zerovec::maps::{ZeroMap2dBorrowed, ZeroMapKV};
 use zerovec::vecs::{Index32, VarZeroSlice, VarZeroVec, ZeroSlice};
 
@@ -152,19 +152,19 @@ impl Default for BlobSchemaV2<'_> {
 
 /// A struct that steps through a ZeroTrie when fed data from fmt::Write
 struct ZeroTrieStepWrite<'a> {
-    trie: ZeroTrieSimpleAscii<&'a [u8]>,
+    cursor: ZeroTrieSimpleAsciiCursor<'a>,
 }
 
 impl<'a> fmt::Write for ZeroTrieStepWrite<'a> {
     fn write_str(&mut self, s: &str) -> fmt::Result {
         for b in s.bytes() {
-            self.trie.step(b);
+            self.cursor.step(b);
         }
         Ok(())
     }
     fn write_char(&mut self, c: char) -> fmt::Result {
         debug_assert!(c.is_ascii());
-        self.trie.step(c as u8);
+        self.cursor.step(c as u8);
         Ok(())
     }
     fn write_fmt(&mut self, _: fmt::Arguments<'_>) -> fmt::Result {
@@ -187,15 +187,15 @@ impl<'data> BlobSchemaV2<'data> {
             .get(key_index)
             .ok_or_else(|| DataError::custom("Invalid blob bytes").with_req(key, req))?;
         let mut trie_write = ZeroTrieStepWrite {
-            trie: ZeroTrieSimpleAscii::from_store(zerotrie),
+            cursor: ZeroTrieSimpleAscii::from_store(zerotrie).into_cursor(),
         };
         #[allow(clippy::unwrap_used)] // infallible impl
         req.locale
             .write_to(&mut trie_write)
             .unwrap();
         let blob_index = trie_write
-            .trie
-            .head_value()
+            .cursor
+            .value()
             .ok_or_else(|| DataErrorKind::MissingLocale.with_req(key, req))?;
         let buffer = self
             .buffers
