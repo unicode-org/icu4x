@@ -2,6 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+use smallvec::SmallVec;
 use zerotrie::ZeroTrie;
 use zerovec::ZeroVec;
 
@@ -16,7 +17,7 @@ use crate::{
 // TODO NOTE: the MeasureUnitParser takes the trie and the ConverterFactory takes the full payload and an instance of MeasureUnitParser.
 pub struct MeasureUnit {
     /// Contains the processed units.
-    pub contained_units: Vec<MeasureUnitItem>,
+    pub contained_units: SmallVec<[MeasureUnitItem; 8]>,
 }
 
 impl MeasureUnit {
