@@ -95,6 +95,7 @@ part 'LocaleFallbackPriority.g.dart';
 part 'LocaleFallbackSupplement.g.dart';
 part 'LocaleFallbacker.g.dart';
 part 'LocaleFallbackerWithConfig.g.dart';
+part 'Logger.g.dart';
 part 'MetazoneCalculator.g.dart';
 part 'Ordering.g.dart';
 part 'PluralCategories.g.dart';
@@ -154,9 +155,10 @@ void init(String path) => _capi = ffi.DynamicLibrary.open(path).lookup;
 // ignore: unused_element
 final _callocFree = core.Finalizer(ffi2.calloc.free);
 
-// ignore: unused_element
 extension _UtfViews on String {
+  // ignore: unused_element
   _Utf8View get utf8View => _Utf8View(this);
+  // ignore: unused_element
   _Utf16View get utf16View => _Utf16View(this);
 }
 
@@ -175,7 +177,7 @@ class _Utf8View {
   final Uint8List _codeUnits;
 
   // Copies
-  _Utf8View(String string) : this._codeUnits = Utf8Encoder().convert(string);
+  _Utf8View(String string) : _codeUnits = Utf8Encoder().convert(string);
 
   ffi.Pointer<ffi.Uint8> pointer(ffi.Allocator alloc) {
     // Copies
@@ -189,7 +191,7 @@ class _Utf8View {
 class _Utf16View {
   final core.List<int> _codeUnits;
 
-  _Utf16View(String string) : this._codeUnits = string.codeUnits;
+  _Utf16View(String string) : _codeUnits = string.codeUnits;
 
   ffi.Pointer<ffi.Uint16> pointer(ffi.Allocator alloc) {
     // Copies
@@ -217,71 +219,71 @@ class _SizeListView {
   int get length => _values.length;
 }
 
-// ignore: unused_element
 extension _Int8ListFfi on Int8List {
+  // ignore: unused_element
   ffi.Pointer<ffi.Int8> pointer(ffi.Allocator alloc) {
     return alloc<ffi.Int8>(length)..asTypedList(length).setAll(0, this);
   }
 }
 
-// ignore: unused_element
 extension _Int16ListFfi on Int16List {
+  // ignore: unused_element
   ffi.Pointer<ffi.Int16> pointer(ffi.Allocator alloc) {
     return alloc<ffi.Int16>(length)..asTypedList(length).setAll(0, this);
   }
 }
 
-// ignore: unused_element
 extension _Int32ListFfi on Int32List {
+  // ignore: unused_element
   ffi.Pointer<ffi.Int32> pointer(ffi.Allocator alloc) {
     return alloc<ffi.Int32>(length)..asTypedList(length).setAll(0, this);
   }
 }
 
-// ignore: unused_element
 extension _Int64ListFfi on Int64List {
+  // ignore: unused_element
   ffi.Pointer<ffi.Int64> pointer(ffi.Allocator alloc) {
     return alloc<ffi.Int64>(length)..asTypedList(length).setAll(0, this);
   }
 }
 
-// ignore: unused_element
 extension _Uint8ListFfi on Uint8List {
+  // ignore: unused_element
   ffi.Pointer<ffi.Uint8> pointer(ffi.Allocator alloc) {
     return alloc<ffi.Uint8>(length)..asTypedList(length).setAll(0, this);
   }
 }
 
-// ignore: unused_element
 extension _Uint16ListFfi on Uint16List {
+  // ignore: unused_element
   ffi.Pointer<ffi.Uint16> pointer(ffi.Allocator alloc) {
     return alloc<ffi.Uint16>(length)..asTypedList(length).setAll(0, this);
   }
 }
 
-// ignore: unused_element
 extension _Uint32ListFfi on Uint32List {
+  // ignore: unused_element
   ffi.Pointer<ffi.Uint32> pointer(ffi.Allocator alloc) {
     return alloc<ffi.Uint32>(length)..asTypedList(length).setAll(0, this);
   }
 }
 
-// ignore: unused_element
 extension _Uint64ListFfi on Uint64List {
+  // ignore: unused_element
   ffi.Pointer<ffi.Uint64> pointer(ffi.Allocator alloc) {
     return alloc<ffi.Uint64>(length)..asTypedList(length).setAll(0, this);
   }
 }
 
-// ignore: unused_element
 extension _Float32ListFfi on Float32List {
+  // ignore: unused_element
   ffi.Pointer<ffi.Float> pointer(ffi.Allocator alloc) {
     return alloc<ffi.Float>(length)..asTypedList(length).setAll(0, this);
   }
 }
 
-// ignore: unused_element
 extension _Float64ListFfi on Float64List {
+  // ignore: unused_element
   ffi.Pointer<ffi.Double> pointer(ffi.Allocator alloc) {
     return alloc<ffi.Double>(length)..asTypedList(length).setAll(0, this);
   }

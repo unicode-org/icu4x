@@ -136,7 +136,7 @@ final class LineSegmenter implements ffi.Finalizable {
   /// See the [Rust documentation for `segment_utf16`](https://docs.rs/icu/latest/icu/segmenter/struct.LineSegmenter.html#method.segment_utf16) for more information.
   LineBreakIteratorUtf16 segment(String input) {
     final temp = ffi2.Arena();
-    final inputView = input.utf16View;;
+    final inputView = input.utf16View;
     final result = _ICU4XLineSegmenter_segment_utf16(_underlying, inputView.pointer(temp), inputView.length);
     temp.releaseAll();
     return LineBreakIteratorUtf16._(result);

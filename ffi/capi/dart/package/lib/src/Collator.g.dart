@@ -39,8 +39,8 @@ final class Collator implements ffi.Finalizable {
   /// See the [Rust documentation for `compare_utf16`](https://docs.rs/icu/latest/icu/collator/struct.Collator.html#method.compare_utf16) for more information.
   Ordering compare(String left, String right) {
     final temp = ffi2.Arena();
-    final leftView = left.utf16View;;
-    final rightView = right.utf16View;;
+    final leftView = left.utf16View;
+    final rightView = right.utf16View;
     final result = _ICU4XCollator_compare_utf16(_underlying, leftView.pointer(temp), leftView.length, rightView.pointer(temp), rightView.length);
     temp.releaseAll();
     return Ordering.values.firstWhere((v) => v._underlying == result);
