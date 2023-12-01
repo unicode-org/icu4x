@@ -4,6 +4,7 @@
 
 use crate::reader::*;
 
+use core::fmt;
 use core::borrow::Borrow;
 
 #[cfg(feature = "alloc")]
@@ -731,6 +732,28 @@ impl<'a> ZeroTrieSimpleAsciiCursor<'a> {
     #[inline]
     pub fn is_empty(&self) -> bool {
         self.trie.is_empty()
+    }
+}
+
+impl<'a> fmt::Write for ZeroTrieSimpleAsciiCursor<'a> {
+    fn write_str(&mut self, s: &str) -> fmt::Result {
+        for b in s.bytes() {
+            if !b.is_ascii() {
+                return Err(fmt::Error);
+            }
+            self.step(b);
+        }
+        Ok(())
+    }
+    fn write_char(&mut self, c: char) -> fmt::Result {
+        if !c.is_ascii() {
+            return Err(fmt::Error);
+        }
+        self.step(c as u8);
+        Ok(())
+    }
+    fn write_fmt(&mut self, _: fmt::Arguments<'_>) -> fmt::Result {
+        unreachable!()
     }
 }
 
