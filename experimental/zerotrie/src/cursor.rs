@@ -81,7 +81,8 @@ impl<'a> ZeroTrieSimpleAscii<&'a [u8]> {
 /// A cursor into a [`ZeroTrieSimpleAscii`], useful for stepwise lookup.
 ///
 /// For examples, see [`ZeroTrieSimpleAscii::cursor()`].
-#[derive(Debug)]
+// Clone but not Copy: <https://stackoverflow.com/q/32324251/1407170>
+#[derive(Debug, Clone)]
 pub struct ZeroTrieSimpleAsciiCursor<'a> {
     trie: ZeroTrieSimpleAscii<&'a [u8]>,
 }
@@ -122,13 +123,10 @@ impl<'a> ZeroTrieSimpleAsciiCursor<'a> {
         step_bsearch_only(&mut self.trie.store, byte)
     }
 
-    /// Takes the value at the current position and moves the cursor.
+    /// Takes the value at the current position.
     ///
     /// Calling this function on a new cursor is equivalent to calling `.get()`
-    /// with the empty string.
-    ///
-    /// This is slightly more efficient than [`Self::peek_value()`] if you
-    /// check the value at each step.
+    /// with the empty string (except that it can only be called once).
     ///
     /// # Examples
     ///
@@ -146,30 +144,6 @@ impl<'a> ZeroTrieSimpleAsciiCursor<'a> {
     #[inline]
     pub fn value(&mut self) -> Option<usize> {
         take_value(&mut self.trie.store)
-    }
-
-    /// Gets the value at the current position without moving the cursor.
-    ///
-    /// Calling this function on a new cursor is equivalent to calling `.get()`
-    /// with the empty string.
-    ///
-    /// # Examples
-    ///
-    /// ```
-    /// use zerotrie::ZeroTrieSimpleAscii;
-    ///
-    /// // A trie with two values: "" and "abc"
-    /// let trie = ZeroTrieSimpleAscii::from_bytes(b"\x80abc\x81");
-    ///
-    /// assert_eq!(Some(0), trie.get(""));
-    /// let cursor = trie.cursor();
-    /// assert_eq!(Some(0), cursor.peek_value());
-    /// assert_eq!(Some(0), cursor.peek_value());
-    /// ```
-    #[inline]
-    pub fn peek_value(&self) -> Option<usize> {
-        let mut temp = self.trie.store;
-        take_value(&mut temp)
     }
 
     /// Checks whether the cursor points to an empty trie.
