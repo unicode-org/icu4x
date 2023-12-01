@@ -396,248 +396,771 @@ right = "CM"
 
 [[tables]]
 # LB9
-name = "AI"
+name = "RI_RI"
+left = "RI_RI"
+right = "CM"
+
+[[tables]]
+# LB9
+name = "HL_HY"
+left = "HL_HY"
+right = "CM"
+
+# X ZWJ is treated as X, but only after the rule ZWJ × has been applied,
+# so we cannot just do the same thing we do for CM.
+# Instead we split each state X into X and X_ZWJ, and forbid a break after
+# X_ZWJ.
+# State X_ZWJ should otherwise be treated as X; we need only care about that
+# where it lies in extended context to the left of a no-break rule, which is why
+# we do not have X_ZWJ for every X on the left of rules and transitions in this
+# file. 
+
+[[tables]]
+# LB9
+name = "AI_ZWJ"
 left = "AI"
 right = "ZWJ"
 
 [[tables]]
 # LB9
-name = "AL"
+name = "AL_ZWJ"
 left = "AL"
 right = "ZWJ"
 
 [[tables]]
 # LB9
-name = "B2"
+name = "B2_ZWJ"
 left = "B2"
 right = "ZWJ"
 
 [[tables]]
 # LB9
-name = "BA"
+name = "BA_ZWJ"
 left = "BA"
 right = "ZWJ"
 
 [[tables]]
 # LB9
-name = "BB"
+name = "BB_ZWJ"
 left = "BB"
 right = "ZWJ"
 
 [[tables]]
 # LB9
-name = "CB"
+name = "CB_ZWJ"
 left = "CB"
 right = "ZWJ"
 
 [[tables]]
 # LB9
-name = "CJ"
+name = "CJ_ZWJ"
 left = "CJ"
 right = "ZWJ"
 
 [[tables]]
 # LB9
-name = "CL"
+name = "CL_ZWJ"
 left = "CL"
 right = "ZWJ"
 
 [[tables]]
-# LB9
-name = "CM"
+# LB10: State CM is a CM that has failed to combine in LB9, which we treat as
+# AL; we treat the subsequent ZWJ as AL too, so no need for a CM_ZWJ state.
+name = "AL_ZWJ"
 left = "CM"
 right = "ZWJ"
 
 [[tables]]
 # LB9
-name = "CP"
+name = "CP_ZWJ"
 left = "CP"
 right = "ZWJ"
 
 [[tables]]
 # LB9
-name = "EB"
+name = "EB_ZWJ"
 left = "EB"
 right = "ZWJ"
 
 [[tables]]
 # LB9
-name = "EM"
+name = "EM_ZWJ"
 left = "EM"
 right = "ZWJ"
 
 [[tables]]
 # LB9
-name = "EX"
+name = "EX_ZWJ"
 left = "EX"
 right = "ZWJ"
 
 [[tables]]
 # LB9
-name = "GL"
+name = "GL_ZWJ"
 left = "GL"
 right = "ZWJ"
 
 [[tables]]
 # LB9
-name = "H2"
+name = "H2_ZWJ"
 left = "H2"
 right = "ZWJ"
 
 [[tables]]
 # LB9
-name = "H3"
+name = "H3_ZWJ"
 left = "H3"
 right = "ZWJ"
 
 [[tables]]
 # LB9
-name = "HL"
+name = "HL_ZWJ"
 left = "HL"
 right = "ZWJ"
 
 [[tables]]
 # LB9
-name = "HY"
+name = "HL_ZWJ"
+left = "HL_ZWJ"
+right = "ZWJ"
+
+[[tables]]
+# LB9
+name = "HY_ZWJ"
 left = "HY"
 right = "ZWJ"
 
 [[tables]]
 # LB9
-name = "ID"
+name = "ID_ZWJ"
 left = "ID"
 right = "ZWJ"
 
 [[tables]]
 # LB9
-name = "ID_CN"
+name = "ID_CN_ZWJ"
 left = "ID_CN"
 right = "ZWJ"
 
 [[tables]]
 # LB9
-name = "IN"
+name = "IN_ZWJ"
 left = "IN"
 right = "ZWJ"
 
 [[tables]]
 # LB9
-name = "IS"
+name = "IS_ZWJ"
 left = "IS"
 right = "ZWJ"
 
 [[tables]]
 # LB9
-name = "JL"
+name = "JL_ZWJ"
 left = "JL"
 right = "ZWJ"
 
 [[tables]]
 # LB9
-name = "JT"
+name = "JT_ZWJ"
 left = "JT"
 right = "ZWJ"
 
 [[tables]]
 # LB9
-name = "JV"
+name = "JV_ZWJ"
 left = "JV"
 right = "ZWJ"
 
 [[tables]]
 # LB9
-name = "NS"
+name = "NS_ZWJ"
 left = "NS"
 right = "ZWJ"
 
 [[tables]]
 # LB9
-name = "NU"
+name = "NU_ZWJ"
 left = "NU"
 right = "ZWJ"
 
 [[tables]]
 # LB9
-name = "OP_EA"
+name = "OP_EA_ZWJ"
 left = "OP_EA"
 right = "ZWJ"
 
 [[tables]]
 # LB9
-name = "OP_OP30"
+name = "OP_OP30_ZWJ"
 left = "OP_OP30"
 right = "ZWJ"
 
 [[tables]]
 # LB9
-name = "PO"
+name = "PO_ZWJ"
 left = "PO"
 right = "ZWJ"
 
 [[tables]]
 # LB9
-name = "PO_EAW"
+name = "PO_EAW_ZWJ"
 left = "PO_EAW"
 right = "ZWJ"
 
 [[tables]]
 # LB9
-name = "QU"
+name = "QU_ZWJ"
 left = "QU"
 right = "ZWJ"
 
 [[tables]]
 # LB9
-name = "RI"
+name = "RI_ZWJ"
 left = "RI"
 right = "ZWJ"
 
 [[tables]]
 # LB9
-name = "PR"
+name = "PR_ZWJ"
 left = "PR"
 right = "ZWJ"
 
 [[tables]]
 # LB9
-name = "PR_EAW"
+name = "PR_EAW_ZWJ"
 left = "PR_EAW"
 right = "ZWJ"
 
 [[tables]]
 # LB9
-name = "SA"
+name = "SA_ZWJ"
 left = "SA"
 right = "ZWJ"
 
 [[tables]]
 # LB9
-name = "SY"
+name = "SY_ZWJ"
 left = "SY"
 right = "ZWJ"
 
 [[tables]]
 # LB9
-name = "WJ"
+name = "WJ_ZWJ"
 left = "WJ"
 right = "ZWJ"
 
 [[tables]]
 # LB9
-name = "XX"
+name = "XX_ZWJ"
 left = "XX"
 right = "ZWJ"
 
 [[tables]]
 # LB9
-name = "OP_OP30"
-left = "OP_OP30"
+name = "RI_RI_ZWJ"
+left = "RI_RI"
 right = "ZWJ"
 
 [[tables]]
 # LB9
+name = "HL_HY_ZWJ"
+left = "HL_HY"
+right = "ZWJ"
+
+# X ZWJ CM brings us back to state X,
+# as the ZWJ does not act through CMs, LB8a being before LB9.
+
+[[tables]]
+# LB9
+name = "AI"
+left = "AI_ZWJ"
+right = "CM"
+
+[[tables]]
+# LB9
+name = "AL"
+left = "AL_ZWJ"
+right = "CM"
+
+[[tables]]
+# LB9
+name = "B2"
+left = "B2_ZWJ"
+right = "CM"
+
+[[tables]]
+# LB9
+name = "BA"
+left = "BA_ZWJ"
+right = "CM"
+
+[[tables]]
+# LB9
+name = "BB"
+left = "BB_ZWJ"
+right = "CM"
+
+[[tables]]
+# LB9
+name = "CB"
+left = "CB_ZWJ"
+right = "CM"
+
+[[tables]]
+# LB9
+name = "CJ"
+left = "CJ_ZWJ"
+right = "CM"
+
+[[tables]]
+# LB9
+name = "CL"
+left = "CL_ZWJ"
+right = "CM"
+
+[[tables]]
+# LB9
+name = "CP"
+left = "CP_ZWJ"
+right = "CM"
+
+[[tables]]
+# LB9
+name = "EB"
+left = "EB_ZWJ"
+right = "CM"
+
+[[tables]]
+# LB9
+name = "EM"
+left = "EM_ZWJ"
+right = "CM"
+
+[[tables]]
+# LB9
+name = "EX"
+left = "EX_ZWJ"
+right = "CM"
+
+[[tables]]
+# LB9
+name = "GL"
+left = "GL_ZWJ"
+right = "CM"
+
+[[tables]]
+# LB9
+name = "H2"
+left = "H2_ZWJ"
+right = "CM"
+
+[[tables]]
+# LB9
+name = "H3"
+left = "H3_ZWJ"
+right = "CM"
+
+[[tables]]
+# LB9
+name = "HL"
+left = "HL_ZWJ"
+right = "CM"
+
+[[tables]]
+# LB9
+name = "HL"
+left = "HL_ZWJ"
+right = "CM"
+
+[[tables]]
+# LB9
+name = "HY"
+left = "HY_ZWJ"
+right = "CM"
+
+[[tables]]
+# LB9
+name = "ID"
+left = "ID_ZWJ"
+right = "CM"
+
+[[tables]]
+# LB9
+name = "ID_CN"
+left = "ID_CN_ZWJ"
+right = "CM"
+
+[[tables]]
+# LB9
+name = "IN"
+left = "IN_ZWJ"
+right = "CM"
+
+[[tables]]
+# LB9
+name = "IS"
+left = "IS_ZWJ"
+right = "CM"
+
+[[tables]]
+# LB9
+name = "JL"
+left = "JL_ZWJ"
+right = "CM"
+
+[[tables]]
+# LB9
+name = "JT"
+left = "JT_ZWJ"
+right = "CM"
+
+[[tables]]
+# LB9
+name = "JV"
+left = "JV_ZWJ"
+right = "CM"
+
+[[tables]]
+# LB9
+name = "NS"
+left = "NS_ZWJ"
+right = "CM"
+
+[[tables]]
+# LB9
+name = "NU"
+left = "NU_ZWJ"
+right = "CM"
+
+[[tables]]
+# LB9
 name = "OP_EA"
-left = "OP_EA"
+left = "OP_EA_ZWJ"
+right = "CM"
+
+[[tables]]
+# LB9
+name = "OP_OP30"
+left = "OP_OP30_ZWJ"
+right = "CM"
+
+[[tables]]
+# LB9
+name = "PO"
+left = "PO_ZWJ"
+right = "CM"
+
+[[tables]]
+# LB9
+name = "PO_EAW"
+left = "PO_EAW_ZWJ"
+right = "CM"
+
+[[tables]]
+# LB9
+name = "QU"
+left = "QU_ZWJ"
+right = "CM"
+
+[[tables]]
+# LB9
+name = "RI"
+left = "RI_ZWJ"
+right = "CM"
+
+[[tables]]
+# LB9
+name = "PR"
+left = "PR_ZWJ"
+right = "CM"
+
+[[tables]]
+# LB9
+name = "PR_EAW"
+left = "PR_EAW_ZWJ"
+right = "CM"
+
+[[tables]]
+# LB9
+name = "SA"
+left = "SA_ZWJ"
+right = "CM"
+
+[[tables]]
+# LB9
+name = "SY"
+left = "SY_ZWJ"
+right = "CM"
+
+[[tables]]
+# LB9
+name = "WJ"
+left = "WJ_ZWJ"
+right = "CM"
+
+[[tables]]
+# LB9
+name = "XX"
+left = "XX_ZWJ"
+right = "CM"
+
+[[tables]]
+# LB9
+name = "RI_RI"
+left = "RI_RI_ZWJ"
+right = "CM"
+
+[[tables]]
+# LB9
+name = "HL_HY"
+left = "HL_HY_ZWJ"
+right = "CM"
+
+[[tables]]
+# LB9
+name = "AI_ZWJ"
+left = "AI_ZWJ"
+right = "ZWJ"
+
+[[tables]]
+# LB9
+name = "AL_ZWJ"
+left = "AL_ZWJ"
+right = "ZWJ"
+
+[[tables]]
+# LB9
+name = "B2_ZWJ"
+left = "B2_ZWJ"
+right = "ZWJ"
+
+[[tables]]
+# LB9
+name = "BA_ZWJ"
+left = "BA_ZWJ"
+right = "ZWJ"
+
+[[tables]]
+# LB9
+name = "BB_ZWJ"
+left = "BB_ZWJ"
+right = "ZWJ"
+
+[[tables]]
+# LB9
+name = "CB_ZWJ"
+left = "CB_ZWJ"
+right = "ZWJ"
+
+[[tables]]
+# LB9
+name = "CJ_ZWJ"
+left = "CJ_ZWJ"
+right = "ZWJ"
+
+[[tables]]
+# LB9
+name = "CL_ZWJ"
+left = "CL_ZWJ"
+right = "ZWJ"
+
+[[tables]]
+# LB9
+name = "CP_ZWJ"
+left = "CP_ZWJ"
+right = "ZWJ"
+
+[[tables]]
+# LB9
+name = "EB_ZWJ"
+left = "EB_ZWJ"
+right = "ZWJ"
+
+[[tables]]
+# LB9
+name = "EM_ZWJ"
+left = "EM_ZWJ"
+right = "ZWJ"
+
+[[tables]]
+# LB9
+name = "EX_ZWJ"
+left = "EX_ZWJ"
+right = "ZWJ"
+
+[[tables]]
+# LB9
+name = "GL_ZWJ"
+left = "GL_ZWJ"
+right = "ZWJ"
+
+[[tables]]
+# LB9
+name = "H2_ZWJ"
+left = "H2_ZWJ"
+right = "ZWJ"
+
+[[tables]]
+# LB9
+name = "H3_ZWJ"
+left = "H3_ZWJ"
+right = "ZWJ"
+
+[[tables]]
+# LB9
+name = "HL_ZWJ"
+left = "HL_ZWJ"
+right = "ZWJ"
+
+[[tables]]
+# LB9
+name = "HL_ZWJ"
+left = "HL_ZWJ"
+right = "ZWJ"
+
+[[tables]]
+# LB9
+name = "HY_ZWJ"
+left = "HY_ZWJ"
+right = "ZWJ"
+
+[[tables]]
+# LB9
+name = "ID_ZWJ"
+left = "ID_ZWJ"
+right = "ZWJ"
+
+[[tables]]
+# LB9
+name = "ID_CN_ZWJ"
+left = "ID_CN_ZWJ"
+right = "ZWJ"
+
+[[tables]]
+# LB9
+name = "IN_ZWJ"
+left = "IN_ZWJ"
+right = "ZWJ"
+
+[[tables]]
+# LB9
+name = "IS_ZWJ"
+left = "IS_ZWJ"
+right = "ZWJ"
+
+[[tables]]
+# LB9
+name = "JL_ZWJ"
+left = "JL_ZWJ"
+right = "ZWJ"
+
+[[tables]]
+# LB9
+name = "JT_ZWJ"
+left = "JT_ZWJ"
+right = "ZWJ"
+
+[[tables]]
+# LB9
+name = "JV_ZWJ"
+left = "JV_ZWJ"
+right = "ZWJ"
+
+[[tables]]
+# LB9
+name = "NS_ZWJ"
+left = "NS_ZWJ"
+right = "ZWJ"
+
+[[tables]]
+# LB9
+name = "NU_ZWJ"
+left = "NU_ZWJ"
+right = "ZWJ"
+
+[[tables]]
+# LB9
+name = "OP_EA_ZWJ"
+left = "OP_EA_ZWJ"
+right = "ZWJ"
+
+[[tables]]
+# LB9
+name = "OP_OP30_ZWJ"
+left = "OP_OP30_ZWJ"
+right = "ZWJ"
+
+[[tables]]
+# LB9
+name = "PO_ZWJ"
+left = "PO_ZWJ"
+right = "ZWJ"
+
+[[tables]]
+# LB9
+name = "PO_EAW_ZWJ"
+left = "PO_EAW_ZWJ"
+right = "ZWJ"
+
+[[tables]]
+# LB9
+name = "QU_ZWJ"
+left = "QU_ZWJ"
+right = "ZWJ"
+
+[[tables]]
+# LB9
+name = "RI_ZWJ"
+left = "RI_ZWJ"
+right = "ZWJ"
+
+[[tables]]
+# LB9
+name = "PR_ZWJ"
+left = "PR_ZWJ"
+right = "ZWJ"
+
+[[tables]]
+# LB9
+name = "PR_EAW_ZWJ"
+left = "PR_EAW_ZWJ"
+right = "ZWJ"
+
+[[tables]]
+# LB9
+name = "SA_ZWJ"
+left = "SA_ZWJ"
+right = "ZWJ"
+
+[[tables]]
+# LB9
+name = "SY_ZWJ"
+left = "SY_ZWJ"
+right = "ZWJ"
+
+[[tables]]
+# LB9
+name = "WJ_ZWJ"
+left = "WJ_ZWJ"
+right = "ZWJ"
+
+[[tables]]
+# LB9
+name = "XX_ZWJ"
+left = "XX_ZWJ"
+right = "ZWJ"
+
+[[tables]]
+# LB9
+name = "RI_RI_ZWJ"
+left = "RI_RI_ZWJ"
+right = "ZWJ"
+
+[[tables]]
+# LB9
+name = "HL_HY_ZWJ"
+left = "HL_HY_ZWJ"
 right = "ZWJ"
 
 [[tables]]
@@ -649,7 +1172,19 @@ right = "SP"
 [[tables]]
 # LB14
 name = "OP_SP"
+left = "OP_OP30_ZWJ"
+right = "SP"
+
+[[tables]]
+# LB14
+name = "OP_SP"
 left = "OP_EA"
+right = "SP"
+
+[[tables]]
+# LB14
+name = "OP_SP"
+left = "OP_EA_ZWJ"
 right = "SP"
 
 [[tables]]
@@ -667,6 +1202,12 @@ right = "SP"
 [[tables]]
 # LB15
 name = "QU_SP"
+left = "QU_ZWJ"
+right = "SP"
+
+[[tables]]
+# LB15
+name = "QU_SP"
 left = "QU_SP"
 right = "SP"
 
@@ -679,7 +1220,19 @@ right = "SP"
 [[tables]]
 # LB16
 name = "CL_CP_SP"
+left = "CL_ZWJ"
+right = "SP"
+
+[[tables]]
+# LB16
+name = "CL_CP_SP"
 left = "CP"
+right = "SP"
+
+[[tables]]
+# LB16
+name = "CL_CP_SP"
+left = "CP_ZWJ"
 right = "SP"
 
 [[tables]]
@@ -697,6 +1250,12 @@ right = "SP"
 [[tables]]
 # LB17
 name = "B2_SP"
+left = "B2_ZWJ"
+right = "SP"
+
+[[tables]]
+# LB17
+name = "B2_SP"
 left = "B2_SP"
 right = "SP"
 
@@ -709,146 +1268,20 @@ right = "HY"
 [[tables]]
 # LB21
 name = "HL_HY"
+left = "HL_ZWJ"
+right = "HY"
+
+[[tables]]
+# LB21
+name = "HL_HY"
 left = "HL"
 right = "BA"
 
 [[tables]]
-# LB25
-name = "LB25_HY"
-left = "PR"
-right = "HY"
-
-[[tables]]
-# LB25
-name = "LB25_HY"
-left = "PR_EAW"
-right = "HY"
-
-[[tables]]
-# LB25
-name = "LB25_HY"
-left = "PO"
-right = "HY"
-
-[[tables]]
-# LB25
-name = "LB25_HY"
-left = "PO_EAW"
-right = "HY"
-
-[[tables]]
-# LB25
-name = "LB25_OP"
-left = "PR"
-right = "OP_OP30"
-
-[[tables]]
-# LB25
-name = "LB25_OP"
-left = "PR_EAW"
-right = "OP_OP30"
-
-[[tables]]
-# LB25
-name = "LB25_OP"
-left = "PR"
-right = "OP_EA"
-
-[[tables]]
-# LB25
-name = "LB25_OP"
-left = "PR_EAW"
-right = "OP_EA"
-
-[[tables]]
-# LB25
-name = "LB25_OP"
-left = "PO"
-right = "OP_OP30"
-
-[[tables]]
-# LB25
-name = "LB25_OP"
-left = "PO_EAW"
-right = "OP_OP30"
-
-[[tables]]
-# LB25
-name = "LB25_OP"
-left = "PO"
-right = "OP_EA"
-
-[[tables]]
-# LB25
-name = "LB25_OP"
-left = "PO_EAW"
-right = "OP_EA"
-
-[[tables]]
-# LB25
-name = "NU"
-left = "NU"
-right = "NU"
-
-[[tables]]
-# LB25
-name = "LB25_NU_IS"
-left = "NU"
-right = "IS"
-
-[[tables]]
-# LB25
-name = "LB25_NU_SY"
-left = "NU"
-right = "SY"
-
-[[tables]]
-# LB25
-name = "NU"
-left = "LB25_NU_IS"
-right = "NU"
-
-[[tables]]
-# LB25
-name = "NU"
-left = "LB25_NU_SY"
-right = "NU"
-
-[[tables]]
-# LB25
-name = "LB25_NU_CL"
-left = "NU"
-right = "CL"
-
-[[tables]]
-# LB25
-name = "LB25_NU_CL"
-left = "LB25_NU_IS"
-right = "CL"
-
-[[tables]]
-# LB25
-name = "LB25_NU_CL"
-left = "LB25_NU_SY"
-right = "CL"
-
-[[tables]]
-# LB25
-name = "LB25_NU_CP"
-left = "NU"
-right = "CP"
-
-[[tables]]
-# LB25
-name = "LB25_NU_CP"
-left = "LB25_NU_IS"
-right = "CP"
-
-[[tables]]
-# LB25
-name = "LB25_NU_CP"
-left = "LB25_NU_SY"
-right = "CP"
+# LB21
+name = "HL_HY"
+left = "HL_ZWJ"
+right = "BA"
 
 [[tables]]
 # LB30a
@@ -856,11 +1289,11 @@ name = "RI_RI"
 left = "RI"
 right = "RI"
 
-[[rules]]
-# LB3
-left = [ "LB25_OP" ]
-right = [ "eot" ]
-# not matched
+[[tables]]
+# LB30a
+name = "RI_RI"
+left = "RI_ZWJ"
+right = "RI"
 
 [[rules]]
 # LB3
@@ -870,7 +1303,7 @@ break_state = true
 
 [[rules]]
 # LB3
-left = [ "B2_SP", "CL_CP_SP", "HL_HY", "LB25_HY", "LB25_NU_IS", "LB25_NU_SY", "LB25_NU_CL", "LB25_NU_CP", "OP_SP", "QU_SP", "RI_RI" ]
+left = [ "B2_SP", "CL_CP_SP", "HL_HY", "OP_SP", "QU_SP", "RI_RI" ]
 right = [ "eot" ]
 break_state = true
 
@@ -900,7 +1333,7 @@ break_state = false
 
 [[rules]]
 # LB6
-left = [ "B2_SP", "CL_CP_SP", "HL_HY", "LB25_HY", "LB25_OP", "LB25_NU_IS", "LB25_NU_SY", "LB25_NU_CL", "LB25_NU_CP", "OP_SP", "QU_SP", "RI_RI" ]
+left = [ "B2_SP", "CL_CP_SP", "HL_HY", "OP_SP", "QU_SP", "RI_RI" ]
 right = [ "BK", "CR", "LF", "NL" ]
 break_state = false
 
@@ -912,13 +1345,13 @@ break_state = false
 
 [[rules]]
 # LB7
-left = [ "HL_HY", "LB25_NU_CL", "LB25_NU_CP", "LB25_NU_IS", "LB25_NU_SY", "RI_RI" ]
+left = [ "HL_HY", "RI_RI" ]
 right = [ "SP" ]
 break_state = false
 
 [[rules]]
 # LB7
-left = [ "B2_SP", "CL_CP_SP", "HL_HY", "LB25_NU_IS", "LB25_NU_SY", "LB25_NU_CL", "LB25_NU_CP", "OP_SP", "QU_SP", "RI_RI" ]
+left = [ "B2_SP", "CL_CP_SP", "HL_HY", "OP_SP", "QU_SP", "RI_RI" ]
 right = [ "ZW" ]
 break_state = false
 
@@ -930,7 +1363,7 @@ break_state = true
 
 [[rules]]
 # LB8a
-left = [ "ZWJ" ]
+left = [ "ZWJ", "AI_ZWJ", "AL_ZWJ", "B2_ZWJ", "BA_ZWJ", "BB_ZWJ", "CB_ZWJ", "CJ_ZWJ", "CL_ZWJ", "AL_ZWJ", "CP_ZWJ", "EB_ZWJ", "EM_ZWJ", "EX_ZWJ", "GL_ZWJ", "H2_ZWJ", "H3_ZWJ", "HL_ZWJ", "HL_ZWJ", "HY_ZWJ", "ID_ZWJ", "ID_CN_ZWJ", "IN_ZWJ", "IS_ZWJ", "JL_ZWJ", "JT_ZWJ", "JV_ZWJ", "NS_ZWJ", "NU_ZWJ", "OP_EA_ZWJ", "OP_OP30_ZWJ", "PO_ZWJ", "PO_EAW_ZWJ", "QU_ZWJ", "RI_ZWJ", "PR_ZWJ", "PR_EAW_ZWJ", "SA_ZWJ", "SY_ZWJ", "WJ_ZWJ", "XX_ZWJ", "RI_RI_ZWJ", "HL_HY_ZWJ" ]
 right = [ "Any" ]
 break_state = false
 
@@ -948,7 +1381,7 @@ break_state = false
 
 [[rules]]
 # LB11
-left = [ "B2_SP", "CL_CP_SP", "HL_HY", "LB25_NU_IS", "LB25_NU_SY", "LB25_NU_CL", "LB25_NU_CP", "OP_SP", "QU_SP", "RI_RI" ]
+left = [ "B2_SP", "CL_CP_SP", "HL_HY", "OP_SP", "QU_SP", "RI_RI" ]
 right = [ "WJ" ]
 break_state = false
 
@@ -960,7 +1393,7 @@ break_state = false
 
 [[rules]]
 # LB12a
-left = [ "HL_HY", "LB25_NU_IS", "LB25_NU_SY", "LB25_NU_CL", "LB25_NU_CP", "OP_SP", "RI_RI" ]
+left = [ "HL_HY", "OP_SP", "RI_RI" ]
 right = [ "GL" ]
 break_state = false
 
@@ -978,19 +1411,13 @@ break_state = false
 
 [[rules]]
 # LB13
-left = [ "Any" ]
+left = [ "Any", "RI_RI" ]
 right = [ "CL", "CP", "EX", "IS", "SY" ]
 break_state = false
 
 [[rules]]
 # LB13
-left = [ "NU" ]
-right = [ "CL", "CP", "EX", "IS", "SY" ]
-# clear for LB25
-
-[[rules]]
-# LB13
-left = [ "B2_SP", "CL_CP_SP", "QU_SP", "LB25_NU_CP" ]
+left = [ "B2_SP", "CL_CP_SP", "QU_SP" ]
 right = [ "CL", "CP", "EX", "IS", "SY" ]
 break_state = false
 
@@ -1008,7 +1435,7 @@ break_state = false
 
 [[rules]]
 # LB16
-left = [ "CL", "CP", "CL_CP_SP", "LB25_NU_CL", "LB25_NU_CP" ]
+left = [ "CL", "CP", "CL_CP_SP" ]
 right = [ "CJ", "NS" ] # NS = CJ or NS
 break_state = false
 
@@ -1032,7 +1459,7 @@ break_state = true
 
 [[rules]]
 # LB19
-left = [ "Any" ]
+left = [ "Any", "RI_RI" ]
 right = [ "QU" ]
 break_state = false
 
@@ -1050,13 +1477,13 @@ break_state = true
 
 [[rules]]
 # LB20
-left = [ "Any" ]
+left = [ "Any", "HL_HY" ]
 right = [ "CB" ]
 break_state = true
 
 [[rules]]
 # LB21
-left = [ "Any" ]
+left = [ "Any", "RI_RI" ]
 right = [ "BA", "HY", "CJ", "NS" ] # NS = CJ or NS
 break_state = false
 
@@ -1080,7 +1507,7 @@ break_state = false
 
 [[rules]]
 # LB22
-left = [ "Any" ]
+left = [ "Any", "RI_RI" ]
 right = [ "IN" ]
 break_state = false
 
@@ -1129,27 +1556,21 @@ break_state = false
 
 [[rules]]
 # LB25
-left = [ "PR", "PO", "OP_OP30", "OP_EA", "HY", "LB25_OP", "LB25_HY", "PR_EAW", "PO_EAW" ]
-right = [ "NU" ]
-break_state = false
-
-[[rules]]
-# LB25
-left = [ "NU", "LB25_NU_IS", "LB25_NU_SY", "LB25_NU_CL", "LB25_NU_CP" ]
+left = [ "CL", "CP", "NU" ]
 right = [ "PR", "PO", "PR_EAW", "PO_EAW" ]
 break_state = false
 
 [[rules]]
 # LB25
-left = [ "LB25_NU_CL" ]
-right = [ "Any" ]
-break_state = true
+left = [ "PO", "PR", "PR_EAW", "PO_EAW" ]
+right = [ "OP_EA", "OP_OP30", "NU" ]
+break_state = false
 
 [[rules]]
 # LB25
-left = [ "LB25_NU_SY" ]
-right = [ "Any" ]
-break_state = true
+left = [ "HY", "IS", "NU", "SY" ]
+right = [ "NU" ]
+break_state = false
 
 [[rules]]
 # LB26
@@ -1192,7 +1613,7 @@ break_state = false
 [[rules]]
 # LB29
 # (LB1 AL = AI, AL, SA or XX)
-left = [ "IS", "LB25_NU_IS" ]
+left = [ "IS" ]
 right = [ "AL", "HL", "AI", "SA", "XX" ]
 break_state = false
 
@@ -1207,7 +1628,7 @@ break_state = false
 [[rules]]
 # LB30
 # (LB1 AL = AI, AL, SA or XX)
-left = [ "CP", "LB25_NU_CP" ]
+left = [ "CP" ]
 right = [ "AL", "HL", "NU", "AI", "XX", "SA" ]
 break_state = false
 
@@ -1228,12 +1649,6 @@ break_state = true
 left = [ "EB", "ID_CN" ]
 right = [ "EM" ]
 break_state = false
-
-[[rules]]
-# (LB25)
-left = [ "LB25_NU_CP", "LB25_NU_IS" ]
-right = [ "Any" ]
-break_state = true
 
 [[rules]]
 # LB31
