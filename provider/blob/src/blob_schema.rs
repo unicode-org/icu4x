@@ -158,12 +158,17 @@ struct ZeroTrieStepWrite<'a> {
 impl<'a> fmt::Write for ZeroTrieStepWrite<'a> {
     fn write_str(&mut self, s: &str) -> fmt::Result {
         for b in s.bytes() {
+            if !b.is_ascii() {
+                return Err(fmt::Error);
+            }
             self.cursor.step(b);
         }
         Ok(())
     }
     fn write_char(&mut self, c: char) -> fmt::Result {
-        debug_assert!(c.is_ascii());
+        if !c.is_ascii() {
+            return Err(fmt::Error);
+        }
         self.cursor.step(c as u8);
         Ok(())
     }
