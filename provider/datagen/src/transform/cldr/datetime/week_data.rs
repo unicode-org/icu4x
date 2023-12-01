@@ -140,8 +140,7 @@ impl DataProvider<WeekDataV2Marker> for crate::DatagenProvider {
         let territory = req
             .locale
             .region()
-            .map(|v| -> Result<Territory, DataError> { Ok(Territory::Region(v)) })
-            .transpose()?
+            .map(Territory::Region)
             .unwrap_or_else(|| DEFAULT_TERRITORY.clone());
 
         let week_data: &cldr_serde::week_data::Resource = self
