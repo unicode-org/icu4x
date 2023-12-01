@@ -122,7 +122,33 @@ impl<'a> ZeroTrieSimpleAsciiCursor<'a> {
         step_bsearch_only(&mut self.trie.store, byte)
     }
 
-    /// Gets the value at the current position in the trie.
+    /// Takes the value at the current position and moves the cursor.
+    ///
+    /// Calling this function on a new cursor is equivalent to calling `.get()`
+    /// with the empty string.
+    ///
+    /// This is slightly more efficient than [`Self::peek_value()`] if you
+    /// check the value at each step.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use zerotrie::ZeroTrieSimpleAscii;
+    ///
+    /// // A trie with two values: "" and "abc"
+    /// let trie = ZeroTrieSimpleAscii::from_bytes(b"\x80abc\x81");
+    ///
+    /// assert_eq!(Some(0), trie.get(""));
+    /// let mut cursor = trie.cursor();
+    /// assert_eq!(Some(0), cursor.value());
+    /// assert_eq!(None, cursor.value());
+    /// ```
+    #[inline]
+    pub fn value(&mut self) -> Option<usize> {
+        take_value(&mut self.trie.store)
+    }
+
+    /// Gets the value at the current position without moving the cursor.
     ///
     /// Calling this function on a new cursor is equivalent to calling `.get()`
     /// with the empty string.
@@ -136,11 +162,14 @@ impl<'a> ZeroTrieSimpleAsciiCursor<'a> {
     /// let trie = ZeroTrieSimpleAscii::from_bytes(b"\x80abc\x81");
     ///
     /// assert_eq!(Some(0), trie.get(""));
-    /// assert_eq!(Some(0), trie.cursor().value());
+    /// let cursor = trie.cursor();
+    /// assert_eq!(Some(0), cursor.peek_value());
+    /// assert_eq!(Some(0), cursor.peek_value());
     /// ```
     #[inline]
-    pub fn value(&self) -> Option<usize> {
-        peek_value(self.trie.store)
+    pub fn peek_value(&self) -> Option<usize> {
+        let mut temp = self.trie.store;
+        take_value(&mut temp)
     }
 
     /// Checks whether the cursor points to an empty trie.
@@ -179,6 +208,7 @@ impl<'a> fmt::Write for ZeroTrieSimpleAsciiCursor<'a> {
         }
         Ok(())
     }
+
     /// Equivalent to [`ZeroTrieSimpleAsciiCursor::step()`], except returns
     /// an error if the char is non-ASCII.
     ///

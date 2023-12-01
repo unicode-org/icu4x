@@ -566,12 +566,15 @@ pub(crate) fn step_bsearch_only(trie: &mut &[u8], c: u8) {
     };
 }
 
-pub(crate) fn peek_value(mut trie: &[u8]) -> Option<usize> {
-    let b;
-    (b, trie) = trie.split_first()?;
+pub(crate) fn take_value(trie: &mut &[u8]) -> Option<usize> {
+    let (b, new_trie) = trie.split_first()?;
     match byte_type(*b) {
         NodeType::Ascii | NodeType::Span | NodeType::Branch => None,
-        NodeType::Value => Some(read_varint_meta3(*b, trie).0),
+        NodeType::Value => {
+            let x;
+            (x, *trie) = read_varint_meta3(*b, new_trie);
+            Some(x)
+        }
     }
 }
 
