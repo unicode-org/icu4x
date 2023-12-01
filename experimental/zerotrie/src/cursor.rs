@@ -31,7 +31,7 @@ where
     /// // Get out the value for "abc"
     /// let mut cursor = trie.cursor();
     /// write!(&mut cursor, "abc");
-    /// assert_eq!(cursor.value(), Some(0));
+    /// assert_eq!(cursor.take_value(), Some(0));
     /// ```
     ///
     /// Find the longest prefix match:
@@ -52,7 +52,7 @@ where
     ///     if cursor.is_empty() {
     ///         break;
     ///     }
-    ///     if cursor.value().is_some() {
+    ///     if cursor.take_value().is_some() {
     ///         longest_prefix = i;
     ///     }
     ///     cursor.step(*b);
@@ -102,21 +102,21 @@ impl<'a> ZeroTrieSimpleAsciiCursor<'a> {
     ///
     /// // Search the trie for the string "abcdxy"
     /// let mut cursor = trie.cursor();
-    /// assert_eq!(cursor.value(), None); // ""
+    /// assert_eq!(cursor.take_value(), None); // ""
     /// cursor.step(b'a');
-    /// assert_eq!(cursor.value(), None); // "a"
+    /// assert_eq!(cursor.take_value(), None); // "a"
     /// cursor.step(b'b');
-    /// assert_eq!(cursor.value(), None); // "ab"
+    /// assert_eq!(cursor.take_value(), None); // "ab"
     /// cursor.step(b'c');
-    /// assert_eq!(cursor.value(), Some(0)); // "abc"
+    /// assert_eq!(cursor.take_value(), Some(0)); // "abc"
     /// cursor.step(b'd');
-    /// assert_eq!(cursor.value(), None); // "abcd"
+    /// assert_eq!(cursor.take_value(), None); // "abcd"
     /// assert!(!cursor.is_empty());
     /// cursor.step(b'x'); // no strings have the prefix "abcdx"
     /// assert!(cursor.is_empty());
-    /// assert_eq!(cursor.value(), None); // "abcdx"
+    /// assert_eq!(cursor.take_value(), None); // "abcdx"
     /// cursor.step(b'y');
-    /// assert_eq!(cursor.value(), None); // "abcdxy"
+    /// assert_eq!(cursor.take_value(), None); // "abcdxy"
     /// ```
     #[inline]
     pub fn step(&mut self, byte: u8) {
@@ -138,11 +138,11 @@ impl<'a> ZeroTrieSimpleAsciiCursor<'a> {
     ///
     /// assert_eq!(Some(0), trie.get(""));
     /// let mut cursor = trie.cursor();
-    /// assert_eq!(Some(0), cursor.value());
-    /// assert_eq!(None, cursor.value());
+    /// assert_eq!(Some(0), cursor.take_value());
+    /// assert_eq!(None, cursor.take_value());
     /// ```
     #[inline]
-    pub fn value(&mut self) -> Option<usize> {
+    pub fn take_value(&mut self) -> Option<usize> {
         take_value(&mut self.trie.store)
     }
 

@@ -167,7 +167,7 @@ impl<'data> BlobSchemaV2<'data> {
         #[allow(clippy::unwrap_used)] // DataLocale::write_to produces ASCII only
         req.locale.write_to(&mut cursor).unwrap();
         let blob_index = cursor
-            .value()
+            .take_value()
             .ok_or_else(|| DataErrorKind::MissingLocale.with_req(key, req))?;
         let buffer = self
             .buffers
