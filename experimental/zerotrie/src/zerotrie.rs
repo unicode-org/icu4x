@@ -204,24 +204,6 @@ macro_rules! impl_zerotrie_subtype {
             pub fn is_empty(&self) -> bool {
                 self.store.as_ref().is_empty()
             }
-            /// Gets the value at the head of the trie. This is equivalent to
-            /// calling `get` with the empty string.
-            ///
-            /// # Examples
-            ///
-            /// ```
-            #[doc = concat!("use zerotrie::", stringify!($name), ";")]
-            ///
-            /// // A trie with two values: "" and "abc"
-            #[doc = concat!("let trie: &", stringify!($name), "<[u8]> = ", stringify!($name), "::from_bytes(b\"\\x80abc\\x81\");")]
-            ///
-            /// assert_eq!(Some(0), trie.head_value());
-            /// assert_eq!(Some(0), trie.get(""));
-            /// ```
-            #[inline]
-            pub fn head_value(&self) -> Option<usize> {
-                peek_value(self.store.as_ref())
-            }
             /// Returns the size of the trie in number of bytes.
             ///
             /// To get the number of keys in the trie, use `.iter().count()`:
