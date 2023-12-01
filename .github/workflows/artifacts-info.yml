@@ -26,7 +26,7 @@ jobs:
         echo "The following artifacts are built and uploaded in forks containing the ICU4X service account key. If you are a frequent contributor, see 'artifacts-build.yml' for instructions on setting up the key."
         echo
         echo "📖 Rust docs"
-        echo "http://${{ env.GCP_PR_BUCKET_ID }}.storage.googleapis.com/gha/${{ github.event.pull_request.head.sha }}/rustdoc/index.html"
+        echo "http://${{ env.GCP_PR_BUCKET_ID }}.storage.googleapis.com/gha/${{ github.event.pull_request.head.sha }}/rustdoc/icu/index.html"
         echo
         echo "📖 C++ docs"
         echo "http://${{ env.GCP_PR_BUCKET_ID }}.storage.googleapis.com/gha/${{ github.event.pull_request.head.sha }}/cppdoc/index.html"
