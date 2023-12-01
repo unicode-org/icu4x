@@ -22,7 +22,7 @@ final class CustomTimeZone implements ffi.Finalizable {
   /// Throws [Error] on failure.
   factory CustomTimeZone.fromString(String s) {
     final temp = ffi2.Arena();
-    final sView = s.utf8View;;
+    final sView = s.utf8View;
     final result = _ICU4XCustomTimeZone_create_from_string(sView.pointer(temp), sView.length);
     temp.releaseAll();
     if (!result.isOk) {
@@ -210,7 +210,7 @@ final class CustomTimeZone implements ffi.Finalizable {
   /// Throws [Error] on failure.
   void trySetTimeZoneId(String id) {
     final temp = ffi2.Arena();
-    final idView = id.utf8View;;
+    final idView = id.utf8View;
     final result = _ICU4XCustomTimeZone_try_set_time_zone_id(_underlying, idView.pointer(temp), idView.length);
     temp.releaseAll();
     if (!result.isOk) {
@@ -233,7 +233,7 @@ final class CustomTimeZone implements ffi.Finalizable {
   /// Throws [Error] on failure.
   void trySetIanaTimeZoneId(IanaToBcp47Mapper mapper, String id) {
     final temp = ffi2.Arena();
-    final idView = id.utf8View;;
+    final idView = id.utf8View;
     final result = _ICU4XCustomTimeZone_try_set_iana_time_zone_id(_underlying, mapper._underlying, idView.pointer(temp), idView.length);
     temp.releaseAll();
     if (!result.isOk) {
@@ -294,7 +294,7 @@ final class CustomTimeZone implements ffi.Finalizable {
   /// Throws [Error] on failure.
   void trySetMetazoneId(String id) {
     final temp = ffi2.Arena();
-    final idView = id.utf8View;;
+    final idView = id.utf8View;
     final result = _ICU4XCustomTimeZone_try_set_metazone_id(_underlying, idView.pointer(temp), idView.length);
     temp.releaseAll();
     if (!result.isOk) {
@@ -355,7 +355,7 @@ final class CustomTimeZone implements ffi.Finalizable {
   /// Throws [Error] on failure.
   void trySetZoneVariant(String id) {
     final temp = ffi2.Arena();
-    final idView = id.utf8View;;
+    final idView = id.utf8View;
     final result = _ICU4XCustomTimeZone_try_set_zone_variant(_underlying, idView.pointer(temp), idView.length);
     temp.releaseAll();
     if (!result.isOk) {

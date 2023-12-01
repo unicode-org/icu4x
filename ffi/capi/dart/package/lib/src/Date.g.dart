@@ -43,8 +43,8 @@ final class Date implements ffi.Finalizable {
   /// Throws [Error] on failure.
   factory Date.fromCodesInCalendar(String eraCode, int year, String monthCode, int day, Calendar calendar) {
     final temp = ffi2.Arena();
-    final eraCodeView = eraCode.utf8View;;
-    final monthCodeView = monthCode.utf8View;;
+    final eraCodeView = eraCode.utf8View;
+    final monthCodeView = monthCode.utf8View;
     final result = _ICU4XDate_create_from_codes_in_calendar(eraCodeView.pointer(temp), eraCodeView.length, year, monthCodeView.pointer(temp), monthCodeView.length, day, calendar._underlying);
     temp.releaseAll();
     if (!result.isOk) {
