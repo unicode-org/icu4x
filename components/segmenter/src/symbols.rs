@@ -102,34 +102,6 @@ pub const XX: u8 = 45;
 pub const ZW: u8 = 46;
 #[allow(dead_code)]
 pub const ZWJ: u8 = 47;
-#[allow(dead_code)]
-pub const OP_SP: u8 = 48;
-#[allow(dead_code)]
-pub const QU_SP: u8 = 49;
-#[allow(dead_code)]
-pub const CL_CP_SP: u8 = 50;
-#[allow(dead_code)]
-pub const B2_SP: u8 = 51;
-#[allow(dead_code)]
-pub const HL_HY: u8 = 52;
-#[allow(dead_code)]
-pub const LB25_HY: u8 = 53;
-#[allow(dead_code)]
-pub const LB25_OP: u8 = 54;
-#[allow(dead_code)]
-pub const LB25_NU_IS: u8 = 55;
-#[allow(dead_code)]
-pub const LB25_NU_SY: u8 = 56;
-#[allow(dead_code)]
-pub const LB25_NU_CL: u8 = 57;
-#[allow(dead_code)]
-pub const LB25_NU_CP: u8 = 58;
-#[allow(dead_code)]
-pub const RI_RI: u8 = 59;
-#[allow(dead_code)]
-pub const SOT: u8 = 60;
-#[allow(dead_code)]
-pub const EOT: u8 = 61;
 
 // Used by all segmenters.
 pub const BREAK_RULE: i8 = -128;
