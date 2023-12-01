@@ -84,8 +84,14 @@ impl<T> Default for ShortBoxSliceInner<T> {
 /// A boxed slice that supports no-allocation, constant values if length 0 or 1.
 ///
 /// Supports mutation but always reallocs when mutated.
-#[derive(Debug, Clone, PartialEq, Eq, Hash, PartialOrd, Ord, Default)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
 pub struct ShortBoxSlice<T>(ShortBoxSliceInner<T>);
+
+impl<T> Default for ShortBoxSlice<T> {
+    fn default() -> Self {
+        Self(Default::default())
+    }
+}
 
 impl<T> ShortBoxSlice<T> {
     /// Creates a new, empty [`ShortBoxSlice`].
