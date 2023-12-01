@@ -104,6 +104,7 @@ pub struct RuleBreakDataV1<'data> {
 
     /// The index of the last simple state for [`Self::break_state_table`]. (A simple state has no
     /// `left` nor `right` in SegmenterProperty).
+    // This should *really* be u8, because it's the length of something
     pub last_codepoint_property: i8,
 
     /// The index of SOT (start of text) state for [`Self::break_state_table`].
@@ -150,7 +151,7 @@ pub struct RuleBreakPropertyTable<'data>(
 )]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 pub struct RuleBreakStateTable<'data>(
-    #[cfg_attr(feature = "serde", serde(borrow))] pub ZeroVec<'data, i8>,
+    #[cfg_attr(feature = "serde", serde(borrow))] pub ZeroVec<'data, BreakState>,
 );
 
 /// Rules status data for rule_status and is_word_like of word segmenter.
@@ -199,4 +200,69 @@ pub(crate) struct UCharDictionaryBreakDataV1Marker;
 
 impl DataMarker for UCharDictionaryBreakDataV1Marker {
     type Yokeable = UCharDictionaryBreakDataV1<'static>;
+}
+
+#[derive(Clone, Copy, PartialEq, Debug)]
+#[cfg_attr(
+    feature = "datagen",
+    derive(databake::Bake),
+    databake(path = icu_segmenter::provider),
+)]
+/// Break state
+pub enum BreakState {
+    /// Break
+    Break,
+    /// Keep rule
+    Keep,
+    /// Non-matching rule
+    NoMatch,
+    /// We have to look ahead one more character.
+    Intermediate(u8),
+    /// Index of a property.
+    Index(u8),
+}
+
+#[cfg(feature = "datagen")]
+impl serde::Serialize for BreakState {
+    fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
+    where
+        S: serde::Serializer,
+    {
+        // would be nice to use the derive serde for JSON, but can't break serialization
+        zerovec::ule::AsULE::to_unaligned(*self).serialize(serializer)
+    }
+}
+
+#[cfg(feature = "serde")]
+impl<'de> serde::Deserialize<'de> for BreakState {
+    fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
+    where
+        D: serde::Deserializer<'de>,
+    {
+        i8::deserialize(deserializer).map(zerovec::ule::AsULE::from_unaligned)
+    }
+}
+
+impl zerovec::ule::AsULE for BreakState {
+    type ULE = i8;
+
+    fn to_unaligned(self) -> Self::ULE {
+        match self {
+            BreakState::Break => -128,
+            BreakState::Keep => -1,
+            BreakState::NoMatch => -2,
+            BreakState::Intermediate(i) => i as i8 | 64,
+            BreakState::Index(i) => i as i8,
+        }
+    }
+
+    fn from_unaligned(unaligned: Self::ULE) -> Self {
+        match unaligned {
+            -128 => BreakState::Break,
+            -1 => BreakState::Keep,
+            -2 => BreakState::NoMatch,
+            i if i & 64 != 0 => BreakState::Intermediate(i as u8 & !64),
+            i => BreakState::Index(i as u8),
+        }
+    }
 }
