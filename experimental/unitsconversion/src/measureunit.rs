@@ -13,6 +13,7 @@ use crate::{
 };
 
 // TODO(#4369): split this struct to two structs: MeasureUnitParser for parsing the identifier and MeasureUnit to represent the unit.
+// TODO NOTE: the MeasureUnitParser takes the trie and the ConverterFactory takes the full payload and an instance of MeasureUnitParser.
 pub struct MeasureUnit {
     /// Contains the processed units.
     pub contained_units: Vec<MeasureUnitItem>,
