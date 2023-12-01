@@ -41,10 +41,10 @@ pub use keywords::Keywords;
 #[doc(inline)]
 pub use value::{value, Value};
 
-use shortvec::ShortBoxSlice;
 use crate::parser::ParserError;
 use crate::parser::SubtagIterator;
 use litemap::LiteMap;
+use shortvec::ShortBoxSlice;
 
 /// Unicode Extensions provide information about user preferences in a given locale.
 ///

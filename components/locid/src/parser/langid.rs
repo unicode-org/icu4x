@@ -5,10 +5,10 @@
 pub use super::errors::ParserError;
 use crate::extensions::unicode::{Attribute, Key, Value};
 use crate::extensions::ExtensionType;
-use shortvec::ShortBoxSlice;
 use crate::parser::SubtagIterator;
 use crate::LanguageIdentifier;
 use crate::{extensions, subtags};
+use shortvec::ShortBoxSlice;
 use tinystr::TinyAsciiStr;
 
 #[derive(PartialEq, Clone, Copy)]

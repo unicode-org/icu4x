@@ -35,9 +35,9 @@ use core::ops::Deref;
 #[doc(inline)]
 pub use other::{subtag, Subtag};
 
-use shortvec::ShortBoxSlice;
 use crate::parser::ParserError;
 use crate::parser::SubtagIterator;
+use shortvec::ShortBoxSlice;
 
 /// A list of [`Private Use Extensions`] as defined in [`Unicode Locale
 /// Identifier`] specification.

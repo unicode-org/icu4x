@@ -9,8 +9,8 @@ use litemap::LiteMap;
 
 use super::Key;
 use super::Value;
-use shortvec::ShortBoxSlice;
 use crate::ordering::SubtagOrderingResult;
+use shortvec::ShortBoxSlice;
 
 /// A list of [`Key`]-[`Value`] pairs representing functional information
 /// about locale's internationalization preferences.

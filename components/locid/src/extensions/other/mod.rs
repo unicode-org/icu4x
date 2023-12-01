@@ -21,10 +21,10 @@
 
 mod subtag;
 
-use shortvec::ShortBoxSlice;
 use crate::parser::ParserError;
 use crate::parser::SubtagIterator;
 use alloc::vec::Vec;
+use shortvec::ShortBoxSlice;
 #[doc(inline)]
 pub use subtag::{subtag, Subtag};
 

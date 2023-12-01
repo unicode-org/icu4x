@@ -2,10 +2,10 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use shortvec::ShortBoxSlice;
 use crate::parser::{ParserError, SubtagIterator};
 use core::ops::RangeInclusive;
 use core::str::FromStr;
+use shortvec::ShortBoxSlice;
 use tinystr::TinyAsciiStr;
 
 /// A value used in a list of [`Keywords`](super::Keywords).
