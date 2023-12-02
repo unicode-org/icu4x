@@ -5,7 +5,6 @@
 //! Data for the icu__component_ crate
 
 #![no_std]
-
 // The source is not readable and is massive as HTML.
 #![doc(html_no_source)]
 
