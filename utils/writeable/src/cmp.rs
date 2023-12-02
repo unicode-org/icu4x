@@ -6,48 +6,30 @@ use core::cmp::Ordering;
 use core::fmt;
 
 pub(crate) struct WriteComparator<'a> {
-    string: &'a str,
+    string: &'a [u8],
     result: Ordering,
 }
 
 /// This is an infallible impl. Functions always return Ok, not Err.
 impl<'a> fmt::Write for WriteComparator<'a> {
-    fn write_char(&mut self, other: char) -> fmt::Result {
-        if self.result != Ordering::Equal {
-            return Ok(());
-        }
-        let Some(this) = self.pop_front() else {
-            // Self is shorter than Other
-            self.result = Ordering::Less;
-            return Ok(());
-        };
-        self.result = this.cmp(&other);
-        Ok(())
-    }
-
+    #[inline]
     fn write_str(&mut self, other: &str) -> fmt::Result {
         if self.result != Ordering::Equal {
             return Ok(());
         }
-        let this = if self.string.is_char_boundary(other.len()) {
-            let (this, remainder) = self.string.split_at(other.len());
-            self.string = remainder;
-            this
-        } else {
-            let tmp = self.string;
-            self.string = "";
-            tmp
-        };
-        self.result = this.cmp(other);
+        let cmp_len = core::cmp::min(other.len(), self.string.len());
+        let (this, remainder) = self.string.split_at(cmp_len);
+        self.string = remainder;
+        self.result = this.cmp(other.as_bytes());
         Ok(())
     }
 }
 
 impl<'a> WriteComparator<'a> {
     #[inline]
-    pub fn new(string: &'a str) -> Self {
+    pub fn new(string: &'a (impl AsRef<[u8]> + ?Sized)) -> Self {
         Self {
-            string,
+            string: string.as_ref(),
             result: Ordering::Equal,
         }
     }
@@ -61,14 +43,6 @@ impl<'a> WriteComparator<'a> {
             self.result
         }
     }
-
-    #[inline]
-    pub(crate) fn pop_front(&mut self) -> Option<char> {
-        let mut chars = self.string.chars();
-        let option_this = chars.next();
-        self.string = chars.as_str();
-        option_this
-    }
 }
 
 #[cfg(test)]
@@ -78,19 +52,6 @@ mod tests {
 
     mod data {
         include!("../tests/data/data.rs");
-    }
-
-    #[test]
-    fn test_pop_front() {
-        let s = "aéi🧺øü";
-        let mut wc = WriteComparator::new(s);
-        assert_eq!(wc.pop_front(), Some('a'));
-        assert_eq!(wc.pop_front(), Some('é'));
-        assert_eq!(wc.pop_front(), Some('i'));
-        assert_eq!(wc.pop_front(), Some('🧺'));
-        assert_eq!(wc.pop_front(), Some('ø'));
-        assert_eq!(wc.pop_front(), Some('ü'));
-        assert_eq!(wc.pop_front(), None);
     }
 
     #[test]

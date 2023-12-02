@@ -272,7 +272,7 @@ pub trait Writeable {
         Cow::Owned(output)
     }
 
-    /// Compares the contents of this `Writeable` to the given string
+    /// Compares the contents of this `Writeable` to the given bytes
     /// without allocating a String to hold the `Writeable` contents.
     ///
     /// This returns a lexicographical comparison, the same as if the Writeable
@@ -303,15 +303,15 @@ pub trait Writeable {
     /// let message = WelcomeMessage { name: "Alice" };
     /// let message_str = message.write_to_string();
     ///
-    /// assert_eq!(Ordering::Equal, message.write_cmp("Hello, Alice!"));
+    /// assert_eq!(Ordering::Equal, message.write_cmp_bytes(b"Hello, Alice!"));
     ///
-    /// assert_eq!(Ordering::Greater, message.write_cmp("Alice!"));
+    /// assert_eq!(Ordering::Greater, message.write_cmp_bytes(b"Alice!"));
     /// assert_eq!(Ordering::Greater, (*message_str).cmp("Alice!"));
     ///
-    /// assert_eq!(Ordering::Less, message.write_cmp("Hello, Bob!"));
+    /// assert_eq!(Ordering::Less, message.write_cmp_bytes(b"Hello, Bob!"));
     /// assert_eq!(Ordering::Less, (*message_str).cmp("Hello, Bob!"));
     /// ```
-    fn write_cmp(&self, other: &str) -> core::cmp::Ordering {
+    fn write_cmp_bytes(&self, other: &[u8]) -> core::cmp::Ordering {
         let mut wc = cmp::WriteComparator::new(other);
         #[allow(clippy::unwrap_used)] // infallible impl
         self.write_to(&mut wc).unwrap();

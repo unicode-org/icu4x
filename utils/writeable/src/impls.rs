@@ -118,8 +118,8 @@ impl Writeable for str {
     }
 
     #[inline]
-    fn write_cmp(&self, other: &str) -> core::cmp::Ordering {
-        self.cmp(other)
+    fn write_cmp_bytes(&self, other: &[u8]) -> core::cmp::Ordering {
+        self.as_bytes().cmp(other)
     }
 }
 
@@ -140,8 +140,8 @@ impl Writeable for String {
     }
 
     #[inline]
-    fn write_cmp(&self, other: &str) -> core::cmp::Ordering {
-        self.as_str().cmp(other)
+    fn write_cmp_bytes(&self, other: &[u8]) -> core::cmp::Ordering {
+        self.as_bytes().cmp(other)
     }
 }
 
@@ -167,8 +167,8 @@ impl<T: Writeable + ?Sized> Writeable for &T {
     }
 
     #[inline]
-    fn write_cmp(&self, other: &str) -> core::cmp::Ordering {
-        (*self).write_cmp(other)
+    fn write_cmp_bytes(&self, other: &[u8]) -> core::cmp::Ordering {
+        (*self).write_cmp_bytes(other)
     }
 }
 
