@@ -699,11 +699,12 @@ jobs:
         uses: google-github-actions/setup-gcloud@v1
       - name: Download artifacts
         run: |
-          gsutil -m cp -rn gs://${{ env.GCP_MAIN_BUCKET_ID }}/gha/* tools/website-skeleton || true
+          mkdir website
+          gsutil -m cp -rn gs://${{ env.GCP_MAIN_BUCKET_ID }}/gha/* website || true
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v1
         with:
-          path: 'tools/website-skeleton'
+          path: 'website'
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v1
