@@ -986,9 +986,7 @@ impl<'l, 's, Y: LineBreakType<'l, 's>> Iterator for LineBreakIterator<'l, 's, Y>
                             self.current_pos_data = previous_pos_data;
                             return self.get_current_position();
                         }
-                        BreakState::Break => {
-                            return self.get_current_position()
-                        }
+                        BreakState::Break => return self.get_current_position(),
                         BreakState::Index(i) | BreakState::Intermediate(i) => {
                             index = i;
                             previous_iter = self.iter.clone();

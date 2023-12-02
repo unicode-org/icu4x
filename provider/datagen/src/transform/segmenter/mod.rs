@@ -136,8 +136,7 @@ fn generate_rule_break_data(
         break_state: BreakState,
     ) {
         let index = left_index * property_length + right_index;
-        if break_state_table[index] == None
-            || break_state_table[index] == Some(BreakState::NoMatch)
+        if break_state_table[index].is_none() || break_state_table[index] == Some(BreakState::NoMatch)
         {
             break_state_table[index] = Some(break_state);
         }
@@ -396,7 +395,7 @@ fn generate_rule_break_data(
                     if r == "Any" {
                         // Fill all unknown state.
                         for item in break_state_table.iter_mut().take(rule_size) {
-                            if *item == None {
+                            if item.is_none() {
                                 *item = Some(break_state);
                             }
                         }

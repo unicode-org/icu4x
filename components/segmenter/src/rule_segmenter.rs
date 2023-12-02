@@ -150,7 +150,8 @@ impl<'l, 's, Y: RuleBreakType<'l, 's> + ?Sized> Iterator for RuleBreakIterator<'
                         return Some(self.len);
                     };
 
-                    let previous_break_state_is_cp_prop = index <= self.data.last_codepoint_property as u8;
+                    let previous_break_state_is_cp_prop =
+                        index <= self.data.last_codepoint_property as u8;
 
                     match self.get_break_state_from_table(index, prop) {
                         BreakState::Keep => continue 'a,
@@ -160,9 +161,7 @@ impl<'l, 's, Y: RuleBreakType<'l, 's> + ?Sized> Iterator for RuleBreakIterator<'
                             self.current_pos_data = previous_pos_data;
                             return self.get_current_position();
                         }
-                        BreakState::Break => {
-                            return self.get_current_position()
-                        }
+                        BreakState::Break => return self.get_current_position(),
                         BreakState::Intermediate(i) => {
                             index = i;
                             if previous_break_state_is_cp_prop {
