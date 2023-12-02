@@ -116,6 +116,11 @@ impl Writeable for str {
     fn write_to_string(&self) -> Cow<str> {
         Cow::Borrowed(self)
     }
+
+    #[inline]
+    fn write_cmp(&self, other: &str) -> core::cmp::Ordering {
+        self.cmp(other)
+    }
 }
 
 impl Writeable for String {
@@ -132,6 +137,11 @@ impl Writeable for String {
     #[inline]
     fn write_to_string(&self) -> Cow<str> {
         Cow::Borrowed(self)
+    }
+
+    #[inline]
+    fn write_cmp(&self, other: &str) -> core::cmp::Ordering {
+        self.as_str().cmp(other)
     }
 }
 
@@ -154,6 +164,11 @@ impl<T: Writeable + ?Sized> Writeable for &T {
     #[inline]
     fn write_to_string(&self) -> Cow<str> {
         (*self).write_to_string()
+    }
+
+    #[inline]
+    fn write_cmp(&self, other: &str) -> core::cmp::Ordering {
+        (*self).write_cmp(other)
     }
 }
 
