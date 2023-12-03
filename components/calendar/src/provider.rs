@@ -179,10 +179,9 @@ pub struct WeekDataV1 {
 #[derive(Clone, Copy, Debug, PartialEq)]
 #[cfg_attr(
     feature = "datagen",
-    derive(serde::Serialize, databake::Bake),
+    derive(databake::Bake),
     databake(path = icu_calendar::provider),
 )]
-#[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 pub struct WeekendSet(u8);
 
 impl WeekendSet {
@@ -216,6 +215,87 @@ impl IsoWeekday {
             IsoWeekday::Saturday => 1 << 1,
             IsoWeekday::Sunday => 1 << 0,
         }
+    }
+
+    /// Returns weekday based off the bit position used in [WeekendSet]. 
+    fn from_bit_position(index: u8) -> Option<Self> {
+        match index {
+            6 => Some(IsoWeekday::Monday),
+            5 => Some(IsoWeekday::Tuesday),
+            4 => Some(IsoWeekday::Wednesday),
+            3 => Some(IsoWeekday::Thursday),
+            2 => Some(IsoWeekday::Friday),
+            1 => Some(IsoWeekday::Saturday),
+            0 => Some(IsoWeekday::Sunday),
+            _ => None,
+        }
+    }
+}
+
+impl serde::Serialize for WeekendSet {
+    fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
+    where
+        S: serde::Serializer,
+    {
+        if serializer.is_human_readable() {
+            use serde::ser::SerializeSeq;
+
+            let mut sequence = serializer.serialize_seq(None)?;
+            let mut index = 7;
+            while index > 0 {
+                if let Some(weekday) = IsoWeekday::from_bit_position(index - 1) {
+                    if self.0 & weekday.bit_value() != 0 {
+                        sequence.serialize_element(&weekday)?;
+                    }
+                }
+                index -= 1;
+            }
+            sequence.end()
+        } else {
+            serializer.serialize_u8(self.0)
+        }
+    }
+}
+
+#[cfg(feature = "serde")]
+impl<'de> serde::Deserialize<'de> for WeekendSet {
+    fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
+    where
+        D: serde::Deserializer<'de>,
+    {
+        if deserializer.is_human_readable() {
+            deserializer.deserialize_seq(WeekendSetVisitor)
+        } else {
+            deserializer.deserialize_u8(WeekendSetVisitor)
+        }
+    }
+}
+
+struct WeekendSetVisitor;
+
+impl<'de> serde::de::Visitor<'de> for WeekendSetVisitor {
+    type Value = WeekendSet;
+
+    fn expecting(&self, formatter: &mut alloc::fmt::Formatter) -> alloc::fmt::Result {
+        write!(formatter, "a valid WeekendSet")
+    }
+
+    fn visit_u8<E>(self, v: u8) -> Result<Self::Value, E>
+    where
+        E: serde::de::Error,
+    {
+        Ok(WeekendSet(v))
+    }
+
+    fn visit_seq<A>(self, mut seq: A) -> Result<Self::Value, A::Error>
+    where
+        A: serde::de::SeqAccess<'de>,
+    {
+        let mut bitset: u8 = 0;
+        while let Some(day) = seq.next_element::<IsoWeekday>()? {
+            bitset |= day.bit_value()
+        }
+        Ok(WeekendSet(bitset))
     }
 }
 

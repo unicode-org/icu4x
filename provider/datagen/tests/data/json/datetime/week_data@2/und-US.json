@@ -1,5 +1,8 @@
 {
   "first_weekday": "Sunday",
   "min_week_days": 1,
-  "weekend": 3
+  "weekend_set": [
+    "Saturday",
+    "Sunday"
+  ]
 }
