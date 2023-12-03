@@ -151,6 +151,21 @@ pub type LineBreakIteratorUtf16<'l, 's> = LineBreakIterator<'l, 's, LineBreakTyp
 /// let breakpoints: Vec<usize> = segmenter.segment_str(text).collect();
 /// // 9 and 22 are mandatory breaks, 14 is a line break opportunity.
 /// assert_eq!(&breakpoints, &[0, 9, 14, 22]);
+///
+/// // There is a break opportunity between emoji, but not within the ZWJ sequence 🏳️‍🌈.
+/// let flag_equation = "🏳️➕🌈🟰🏳️\u{200D}🌈";
+/// let possible_first_lines: Vec<&str> =
+///     segmenter.segment_str(flag_equation).skip(1).map(|i| &flag_equation[..i]).collect();
+/// assert_eq!(
+///     &possible_first_lines,
+///     &[
+///         "🏳️",
+///         "🏳️➕",
+///         "🏳️➕🌈",
+///         "🏳️➕🌈🟰",
+///         "🏳️➕🌈🟰🏳️‍🌈"
+///     ]
+/// );
 /// ```
 ///
 /// # Examples

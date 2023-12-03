@@ -31,7 +31,7 @@ enum PluralCategory {
   /// Throws [VoidError] on failure.
   factory PluralCategory.forCldrString(String s) {
     final temp = ffi2.Arena();
-    final sView = s.utf8View;;
+    final sView = s.utf8View;
     final result = _ICU4XPluralCategory_get_for_cldr_string(sView.pointer(temp), sView.length);
     temp.releaseAll();
     if (!result.isOk) {

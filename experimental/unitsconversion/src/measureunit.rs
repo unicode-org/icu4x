@@ -2,11 +2,14 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+use smallvec::SmallVec;
 use zerotrie::ZeroTrie;
 use zerovec::ZeroVec;
 
 use crate::{
+    power::get_power,
     provider::{Base, MeasureUnitItem, SiPrefix},
+    si_prefix::{get_si_prefix_base_ten, get_si_prefix_base_two},
     ConversionError,
 };
 
@@ -17,9 +20,10 @@ pub enum Convertibility {
 }
 
 // TODO(#4369): split this struct to two structs: MeasureUnitParser for parsing the identifier and MeasureUnit to represent the unit.
+// TODO NOTE: the MeasureUnitParser takes the trie and the ConverterFactory takes the full payload and an instance of MeasureUnitParser.
 pub struct MeasureUnit {
     /// Contains the processed units.
-    pub contained_units: Vec<MeasureUnitItem>,
+    pub contained_units: SmallVec<[MeasureUnitItem; 8]>,
 }
 
 
@@ -38,42 +42,14 @@ impl ConverterFactory {
     }
 
 impl MeasureUnit {
-    // TODO: consider returning Option<(u8, &str)> instead of (1, part) for the case when the power is not found.
-    // TODO: complete all the cases for the powers.
-    // TODO: consider using a trie for the powers.
-    /// Get the power of the unit.
-    /// NOTE:
-    ///    if the power is found, the function will return (power, part without the power).
-    ///    if the power is not found, the function will return (1, part).
-    fn get_power(part: &str) -> Option<i8> {
-        match part {
-            "pow1" => Some(1),
-            "square" | "pow2" => Some(2),
-            "cubic" | "pow3" => Some(3),
-            "pow4" => Some(4),
-            "pow5" => Some(5),
-            "pow6" => Some(6),
-            "pow7" => Some(7),
-            "pow8" => Some(8),
-            "pow9" => Some(9),
-            "pow10" => Some(10),
-            "pow11" => Some(11),
-            "pow12" => Some(12),
-            "pow13" => Some(13),
-            "pow14" => Some(14),
-            "pow15" => Some(15),
-            _ => None,
-        }
-    }
-
     // TODO: complete all the cases for the prefixes.
     // TODO: consider using a trie for the prefixes.
-    /// Get the SI prefix.
+    /// Extracts the SI prefix.
     /// NOTE:
-    ///    if the prefix is found, the function will return (power, base, part without the prefix).
-    ///    if the prefix is not found, the function will return (0, Base::NotExist, part).
+    ///    if the prefix is found, the function will return (SiPrefix, part without the prefix string).
+    ///    if the prefix is not found, the function will return (SiPrefix { power: 0, base: Base::Decimal }, part).
     fn get_si_prefix(part: &str) -> (SiPrefix, &str) {
-        let (si_prefix_base_10, part) = Self::get_si_prefix_base_10(part);
+        let (si_prefix_base_10, part) = get_si_prefix_base_ten(part);
         if si_prefix_base_10 != 0 {
             return (
                 SiPrefix {
@@ -84,7 +60,7 @@ impl MeasureUnit {
             );
         }
 
-        let (si_prefix_base_2, part) = Self::get_si_prefix_base_two(part);
+        let (si_prefix_base_2, part) = get_si_prefix_base_two(part);
         if si_prefix_base_2 != 0 {
             return (
                 SiPrefix {
@@ -102,96 +78,6 @@ impl MeasureUnit {
             },
             part,
         )
-    }
-
-    // TODO: consider returning Option<(i8, &str)> instead of (0, part) for the case when the prefix is not found.
-    // TODO: consider using a trie for the prefixes.
-    // TODO: complete all the cases for the prefixes.
-    /// Get the SI prefix for base 10.
-    /// NOTE:
-    ///    if the prefix is found, the function will return (power, part without the prefix).
-    ///   if the prefix is not found, the function will return (0, part).
-    fn get_si_prefix_base_10(part: &str) -> (i8, &str) {
-        if let Some(part) = part.strip_prefix("quetta") {
-            (30, part)
-        } else if let Some(part) = part.strip_prefix("ronna") {
-            (27, part)
-        } else if let Some(part) = part.strip_prefix("yotta") {
-            (24, part)
-        } else if let Some(part) = part.strip_prefix("zetta") {
-            (21, part)
-        } else if let Some(part) = part.strip_prefix("exa") {
-            (18, part)
-        } else if let Some(part) = part.strip_prefix("peta") {
-            (15, part)
-        } else if let Some(part) = part.strip_prefix("tera") {
-            (12, part)
-        } else if let Some(part) = part.strip_prefix("giga") {
-            (9, part)
-        } else if let Some(part) = part.strip_prefix("mega") {
-            (6, part)
-        } else if let Some(part) = part.strip_prefix("kilo") {
-            (3, part)
-        } else if let Some(part) = part.strip_prefix("hecto") {
-            (2, part)
-        } else if let Some(part) = part.strip_prefix("deca") {
-            (1, part)
-        } else if let Some(part) = part.strip_prefix("deci") {
-            (-1, part)
-        } else if let Some(part) = part.strip_prefix("centi") {
-            (-2, part)
-        } else if let Some(part) = part.strip_prefix("milli") {
-            (-3, part)
-        } else if let Some(part) = part.strip_prefix("micro") {
-            (-6, part)
-        } else if let Some(part) = part.strip_prefix("nano") {
-            (-9, part)
-        } else if let Some(part) = part.strip_prefix("pico") {
-            (-12, part)
-        } else if let Some(part) = part.strip_prefix("femto") {
-            (-15, part)
-        } else if let Some(part) = part.strip_prefix("atto") {
-            (-18, part)
-        } else if let Some(part) = part.strip_prefix("zepto") {
-            (-21, part)
-        } else if let Some(part) = part.strip_prefix("yocto") {
-            (-24, part)
-        } else if let Some(part) = part.strip_prefix("ronto") {
-            (-27, part)
-        } else if let Some(part) = part.strip_prefix("quecto") {
-            (-30, part)
-        } else {
-            (0, part)
-        }
-    }
-
-    // TODO: consider returning Option<(i8, &str)> instead of (0, part) for the case when the prefix is not found.
-    // TODO: consider using a trie for the prefixes.
-    // TODO: complete all the cases for the prefixes.
-    /// Get the SI prefix for base 2.
-    /// NOTE:
-    ///     if the prefix is found, the function will return (power, part without the prefix).
-    ///     if the prefix is not found, the function will return (0, part).
-    fn get_si_prefix_base_two(part: &str) -> (i8, &str) {
-        if let Some(part) = part.strip_prefix("kibi") {
-            (10, part)
-        } else if let Some(part) = part.strip_prefix("mebi") {
-            (20, part)
-        } else if let Some(part) = part.strip_prefix("gibi") {
-            (30, part)
-        } else if let Some(part) = part.strip_prefix("tebi") {
-            (40, part)
-        } else if let Some(part) = part.strip_prefix("pebi") {
-            (50, part)
-        } else if let Some(part) = part.strip_prefix("exbi") {
-            (60, part)
-        } else if let Some(part) = part.strip_prefix("zebi") {
-            (70, part)
-        } else if let Some(part) = part.strip_prefix("yobi") {
-            (80, part)
-        } else {
-            (0, part)
-        }
     }
 
     /// Get the unit id.
@@ -216,7 +102,7 @@ impl MeasureUnit {
         }
         let mut identifier_split = identifier_part.split('-');
         while let Some(mut part) = identifier_split.next() {
-            let power = match Self::get_power(part) {
+            let power = match get_power(part) {
                 Some(power) => {
                     part = identifier_split
                         .next()
@@ -252,7 +138,7 @@ impl MeasureUnit {
 
         let (num_part, den_part) = identifier
             .split_once("per-")
-            .map(|(num_part, den_part)| (num_part.strip_suffix("-").unwrap_or(num_part), den_part))
+            .map(|(num_part, den_part)| (num_part.strip_suffix('-').unwrap_or(num_part), den_part))
             .unwrap_or((identifier, ""));
 
         let mut measure_unit_items = Vec::<MeasureUnitItem>::new();

@@ -60,7 +60,7 @@ final class DecomposingNormalizer implements ffi.Finalizable {
   /// Throws [Error] on failure.
   String normalize(String s) {
     final temp = ffi2.Arena();
-    final sView = s.utf8View;;
+    final sView = s.utf8View;
     final writeable = _Writeable();
     final result = _ICU4XDecomposingNormalizer_normalize(_underlying, sView.pointer(temp), sView.length, writeable._underlying);
     temp.releaseAll();
@@ -82,7 +82,7 @@ final class DecomposingNormalizer implements ffi.Finalizable {
   /// See the [Rust documentation for `is_normalized_utf8`](https://docs.rs/icu/latest/icu/normalizer/struct.DecomposingNormalizer.html#method.is_normalized_utf8) for more information.
   bool isNormalized(String s) {
     final temp = ffi2.Arena();
-    final sView = s.utf8View;;
+    final sView = s.utf8View;
     final result = _ICU4XDecomposingNormalizer_is_normalized(_underlying, sView.pointer(temp), sView.length);
     temp.releaseAll();
     return result;

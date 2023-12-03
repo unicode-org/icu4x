@@ -231,6 +231,20 @@ macro_rules! impl_zerotrie_subtype {
             pub fn as_borrowed(&self) -> &$name<[u8]> {
                 $name::from_bytes(self.store.as_ref())
             }
+            /// Returns a trie with a store borrowing from this trie.
+            #[inline]
+            pub fn as_borrowed_slice(&self) -> $name<&[u8]> {
+                $name::from_store(self.store.as_ref())
+            }
+        }
+        impl<Store> AsRef<$name<[u8]>> for $name<Store>
+        where
+        Store: AsRef<[u8]> + ?Sized,
+        {
+            #[inline]
+            fn as_ref(&self) -> &$name<[u8]> {
+                self.as_borrowed()
+            }
         }
         #[cfg(feature = "alloc")]
         impl<Store> $name<Store>

@@ -40,7 +40,7 @@ final class SentenceSegmenter implements ffi.Finalizable {
   /// See the [Rust documentation for `segment_utf16`](https://docs.rs/icu/latest/icu/segmenter/struct.SentenceSegmenter.html#method.segment_utf16) for more information.
   SentenceBreakIteratorUtf16 segment(String input) {
     final temp = ffi2.Arena();
-    final inputView = input.utf16View;;
+    final inputView = input.utf16View;
     final result = _ICU4XSentenceSegmenter_segment_utf16(_underlying, inputView.pointer(temp), inputView.length);
     temp.releaseAll();
     return SentenceBreakIteratorUtf16._(result);

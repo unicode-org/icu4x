@@ -962,5 +962,10 @@
     "R",
     "ZK"
   ],
-  "default_pattern": "StandardAlphaNextToNumberAndNone"
+  "default_pattern": {
+    "short_pattern_standard": "StandardAlphaNextToNumber",
+    "narrow_pattern_standard": "StandardAlphaNextToNumber",
+    "short_place_holder_index": null,
+    "narrow_place_holder_index": null
+  }
 }

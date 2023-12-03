@@ -796,7 +796,7 @@ dependencies = [
 [[package]]
 name = "diplomat"
 version = "0.7.0"
-source = "git+https://github.com/rust-diplomat/diplomat.git?rev=9dbc3eefd86843fee8b75d20cb9391167af9db84#9dbc3eefd86843fee8b75d20cb9391167af9db84"
+source = "git+https://github.com/rust-diplomat/diplomat.git?rev=2d40c417b4e70dd7d3d53e8191f02bd16fdf43a3#2d40c417b4e70dd7d3d53e8191f02bd16fdf43a3"
 dependencies = [
  "diplomat_core",
  "proc-macro2",
@@ -814,7 +814,7 @@ dependencies = [
 [[package]]
 name = "diplomat-runtime"
 version = "0.7.0"
-source = "git+https://github.com/rust-diplomat/diplomat.git?rev=9dbc3eefd86843fee8b75d20cb9391167af9db84#9dbc3eefd86843fee8b75d20cb9391167af9db84"
+source = "git+https://github.com/rust-diplomat/diplomat.git?rev=2d40c417b4e70dd7d3d53e8191f02bd16fdf43a3#2d40c417b4e70dd7d3d53e8191f02bd16fdf43a3"
 dependencies = [
  "log",
 ]
@@ -822,7 +822,7 @@ dependencies = [
 [[package]]
 name = "diplomat-tool"
 version = "0.7.0"
-source = "git+https://github.com/rust-diplomat/diplomat.git?rev=9dbc3eefd86843fee8b75d20cb9391167af9db84#9dbc3eefd86843fee8b75d20cb9391167af9db84"
+source = "git+https://github.com/rust-diplomat/diplomat.git?rev=2d40c417b4e70dd7d3d53e8191f02bd16fdf43a3#2d40c417b4e70dd7d3d53e8191f02bd16fdf43a3"
 dependencies = [
  "askama",
  "clap 3.2.25",
@@ -842,7 +842,7 @@ dependencies = [
 [[package]]
 name = "diplomat_core"
 version = "0.7.0"
-source = "git+https://github.com/rust-diplomat/diplomat.git?rev=9dbc3eefd86843fee8b75d20cb9391167af9db84#9dbc3eefd86843fee8b75d20cb9391167af9db84"
+source = "git+https://github.com/rust-diplomat/diplomat.git?rev=2d40c417b4e70dd7d3d53e8191f02bd16fdf43a3#2d40c417b4e70dd7d3d53e8191f02bd16fdf43a3"
 dependencies = [
  "displaydoc",
  "lazy_static",
@@ -2104,6 +2104,7 @@ dependencies = [
  "icu_locid",
  "icu_provider",
  "serde",
+ "smallvec",
  "zerotrie",
  "zerovec",
 ]
@@ -3173,9 +3174,9 @@ dependencies = [
 
 [[package]]
 name = "smallvec"
-version = "1.11.1"
+version = "1.11.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "942b4a808e05215192e39f4ab80813e599068285906cc91aa64f923db842bd5a"
+checksum = "4dccd0940a2dcdf68d092b8cbab7dc0ad8fa938bf95787e1b916b0e3d0e8e970"
 dependencies = [
  "serde",
 ]
