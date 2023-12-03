@@ -6,6 +6,7 @@
 
 extern crate alloc;
 
+pub mod converter;
 pub mod measureunit;
 pub mod power;
 pub mod provider;

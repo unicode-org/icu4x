@@ -13,12 +13,6 @@ use crate::{
     ConversionError,
 };
 
-pub enum Convertibility {
-    Convertible,
-    Reciprocal,
-    NotConvertible,
-}
-
 /// A parser for the CLDR unit identifier (e.g. `meter-per-square-second`)
 pub struct MeasureUnitParser<'data> {
     /// Contains the zero-trie payload.
@@ -145,17 +139,3 @@ pub struct MeasureUnit {
     /// Contains the processed units.
     pub contained_units: SmallVec<[MeasureUnitItem; 8]>,
 }
-
-/// A factory for creating a converter.
-pub struct ConverterFactory {}
-
-// impl ConverterFactory {
-//     /// Extract the convertibility from the given units in the form of CLDR identifiers.
-//     pub fn extract_convertibility(
-//         unit1: &str,
-//         unit2: &str,
-//         trie: &ZeroTrie<ZeroVec<'_, u8>>,
-//     ) -> Result<Convertibility, ConversionError> {
-
-//     }
-// }
