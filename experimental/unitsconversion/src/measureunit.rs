@@ -19,29 +19,18 @@ pub enum Convertibility {
     NotConvertible,
 }
 
-// TODO(#4369): split this struct to two structs: MeasureUnitParser for parsing the identifier and MeasureUnit to represent the unit.
-// TODO NOTE: the MeasureUnitParser takes the trie and the ConverterFactory takes the full payload and an instance of MeasureUnitParser.
-pub struct MeasureUnit {
-    /// Contains the processed units.
-    pub contained_units: SmallVec<[MeasureUnitItem; 8]>,
+/// A parser for the CLDR unit identifier (e.g. `meter-per-square-second`)
+pub struct MeasureUnitParser<'data> {
+    /// Contains the zero-trie payload.
+    zerotrie_payload: &'data ZeroTrie<ZeroVec<'data, u8>>,
 }
 
-
-/// A factory for creating a converter.
-pub struct ConverterFactory {
-}
-
-impl ConverterFactory {
-    /// Extract the convertibility from the given units in the form of CLDR identifiers.
-    pub fn extract_convertibility(
-        unit1: &str,
-        unit2: &str,
-        trie: &ZeroTrie<ZeroVec<'_, u8>>,
-    ) -> Result<Convertibility, ConversionError> {
-
+impl<'data> MeasureUnitParser<'data> {
+    /// Creates a new MeasureUnitParser from a ZeroTrie payload.
+    pub fn new(zerotrie_payload: &'data ZeroTrie<ZeroVec<'data, u8>>) -> Self {
+        Self { zerotrie_payload }
     }
 
-impl MeasureUnit {
     // TODO: complete all the cases for the prefixes.
     // TODO: consider using a trie for the prefixes.
     /// Extracts the SI prefix.
@@ -84,18 +73,18 @@ impl MeasureUnit {
     /// NOTE:
     ///    if the unit id is found, the function will return (unit id, part without the unit id and without `-` at the beginning of the remaining part if it exists).
     ///    if the unit id is not found, the function will return None.
-    fn get_unit_id<'data>(part: &'data str, trie: &ZeroTrie<ZeroVec<'data, u8>>) -> Option<usize> {
-        trie.get(part.as_bytes())
+    fn get_unit_id(&self, part: &'data str) -> Option<usize> {
+        self.zerotrie_payload.get(part.as_bytes())
     }
 
     /// Process a part of an identifier.
     /// For example, if the whole identifier is: "square-kilometer-per-second",
     /// this function will be called for "square-kilometer" with sign (1) and "second" with sign (-1).
     fn analyze_identifier_part(
+        &self,
         identifier_part: &str,
         sign: i8,
         result: &mut Vec<MeasureUnitItem>,
-        trie: &ZeroTrie<ZeroVec<'_, u8>>,
     ) -> Result<(), ConversionError> {
         if identifier_part.is_empty() {
             return Ok(());
@@ -113,8 +102,9 @@ impl MeasureUnit {
             };
 
             let (si_prefix, identifier_after_si) = Self::get_si_prefix(part);
-            let unit_id =
-                Self::get_unit_id(identifier_after_si, trie).ok_or(ConversionError::InvalidUnit)?;
+            let unit_id = self
+                .get_unit_id(identifier_after_si)
+                .ok_or(ConversionError::InvalidUnit)?;
 
             result.push(MeasureUnitItem {
                 power: sign * power,
@@ -128,9 +118,9 @@ impl MeasureUnit {
 
     // TODO: add test cases for this function.
     /// Process an identifier.
-    pub fn try_from_identifier<'data>(
+    pub fn try_from_identifier(
+        &self,
         identifier: &'data str,
-        trie: &ZeroTrie<ZeroVec<'data, u8>>,
     ) -> Result<Vec<MeasureUnitItem>, ConversionError> {
         if identifier.starts_with('-') {
             return Err(ConversionError::InvalidUnit);
@@ -143,8 +133,29 @@ impl MeasureUnit {
 
         let mut measure_unit_items = Vec::<MeasureUnitItem>::new();
 
-        Self::analyze_identifier_part(num_part, 1, &mut measure_unit_items, trie)?;
-        Self::analyze_identifier_part(den_part, -1, &mut measure_unit_items, trie)?;
+        self.analyze_identifier_part(num_part, 1, &mut measure_unit_items)?;
+        self.analyze_identifier_part(den_part, -1, &mut measure_unit_items)?;
         Ok(measure_unit_items)
     }
 }
+
+// TODO(#4369): split this struct to two structs: MeasureUnitParser for parsing the identifier and MeasureUnit to represent the unit.
+// TODO NOTE: the MeasureUnitParser takes the trie and the ConverterFactory takes the full payload and an instance of MeasureUnitParser.
+pub struct MeasureUnit {
+    /// Contains the processed units.
+    pub contained_units: SmallVec<[MeasureUnitItem; 8]>,
+}
+
+/// A factory for creating a converter.
+pub struct ConverterFactory {}
+
+// impl ConverterFactory {
+//     /// Extract the convertibility from the given units in the form of CLDR identifiers.
+//     pub fn extract_convertibility(
+//         unit1: &str,
+//         unit2: &str,
+//         trie: &ZeroTrie<ZeroVec<'_, u8>>,
+//     ) -> Result<Convertibility, ConversionError> {
+
+//     }
+// }

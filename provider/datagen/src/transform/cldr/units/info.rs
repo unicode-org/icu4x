@@ -13,7 +13,10 @@ use icu_provider::{
     datagen::IterableDataProvider, DataError, DataLocale, DataPayload, DataProvider, DataRequest,
     DataResponse,
 };
-use icu_unitsconversion::provider::{ConversionInfo, UnitsInfoV1, UnitsInfoV1Marker};
+use icu_unitsconversion::{
+    measureunit::MeasureUnitParser,
+    provider::{ConversionInfo, UnitsInfoV1, UnitsInfoV1Marker},
+};
 use zerotrie::ZeroTrieSimpleAscii;
 use zerovec::{VarZeroVec, ZeroVec};
 
@@ -73,6 +76,8 @@ impl DataProvider<UnitsInfoV1Marker> for crate::DatagenProvider {
             .convert_store()
             .into_zerotrie();
 
+        let parser = MeasureUnitParser::new(&units_conversion_trie);
+
         let convert_infos = convert_units_vec
             .iter()
             .map(|convert_unit| {
@@ -80,7 +85,7 @@ impl DataProvider<UnitsInfoV1Marker> for crate::DatagenProvider {
                     convert_unit.base_unit,
                     &convert_unit.factor_scientific,
                     &convert_unit.offset_scientific,
-                    &units_conversion_trie,
+                    &parser,
                 )
             })
             .collect::<Result<Vec<ConversionInfo>, DataError>>()?;
