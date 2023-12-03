@@ -4,7 +4,7 @@
 
 use crate::transform::cldr::cldr_serde::{
     self,
-    week_data::{Territory, Weekday, DEFAULT_TERRITORY},
+    week_data::{Territory, DEFAULT_TERRITORY},
 };
 use icu_calendar::provider::{
     WeekDataV1, WeekDataV1Marker, WeekDataV2, WeekDataV2Marker, WeekendSet,
@@ -167,7 +167,7 @@ impl DataProvider<WeekDataV2Marker> for crate::DatagenProvider {
             ))?
             .0;
 
-        let weekend: WeekendSet = {
+        let weekend_set: WeekendSet = {
             let weekend_start = week_data
                 .weekend_start
                 .get(&territory)
@@ -183,17 +183,16 @@ impl DataProvider<WeekDataV2Marker> for crate::DatagenProvider {
                 .ok_or(DataError::custom(
                     "Missing default entry for weekendEnd in weekData.json",
                 ))?;
-
-            WeekendSet(weekend_start.bit_value() | weekend_end.bit_value())
+            WeekendSet::new(weekend_start.into(), weekend_end.into())
         };
 
         Ok(DataResponse {
             metadata: Default::default(),
-            payload: Some(DataPayload::from_owned(WeekDataV2 {
+            payload: Some(DataPayload::from_owned(WeekDataV2::new(
                 first_weekday,
                 min_week_days,
-                weekend,
-            })),
+                weekend_set,
+            ))),
         })
     }
 }
@@ -221,20 +220,6 @@ impl IterableDataProvider<WeekDataV2Marker> for crate::DatagenProvider {
     }
 }
 
-impl Weekday {
-    fn bit_value(&self) -> u8 {
-        match self {
-            Weekday::Mon => 1 << 6,
-            Weekday::Tue => 1 << 5,
-            Weekday::Wed => 1 << 4,
-            Weekday::Thu => 1 << 3,
-            Weekday::Fri => 1 << 2,
-            Weekday::Sat => 1 << 1,
-            Weekday::Sun => 1 << 0,
-        }
-    }
-}
-
 #[test]
 fn basic_cldr_week_data_v2() {
     use icu_calendar::types::IsoWeekday;
@@ -250,8 +235,8 @@ fn basic_cldr_week_data_v2() {
     assert_eq!(1, default_week_data.get().min_week_days);
     assert_eq!(IsoWeekday::Monday, default_week_data.get().first_weekday);
     assert_eq!(
-        Weekday::Sat.bit_value() | Weekday::Sun.bit_value(),
-        default_week_data.get().weekend.0
+        vec![IsoWeekday::Saturday, IsoWeekday::Sunday],
+        default_week_data.get().weekend().collect::<Vec<_>>()
     );
 
     let fr_week_data: DataPayload<WeekDataV2Marker> = provider
@@ -265,8 +250,8 @@ fn basic_cldr_week_data_v2() {
     assert_eq!(4, fr_week_data.get().min_week_days);
     assert_eq!(IsoWeekday::Monday, fr_week_data.get().first_weekday);
     assert_eq!(
-        Weekday::Sat.bit_value() | Weekday::Sun.bit_value(),
-        fr_week_data.get().weekend.0
+        vec![IsoWeekday::Saturday, IsoWeekday::Sunday],
+        fr_week_data.get().weekend().collect::<Vec<_>>()
     );
 
     let iq_week_data: DataPayload<WeekDataV2Marker> = provider
@@ -284,8 +269,8 @@ fn basic_cldr_week_data_v2() {
     );
     assert_eq!(IsoWeekday::Saturday, iq_week_data.get().first_weekday);
     assert_eq!(
-        Weekday::Fri.bit_value() | Weekday::Sat.bit_value(),
-        iq_week_data.get().weekend.0
+        vec![IsoWeekday::Friday, IsoWeekday::Saturday],
+        iq_week_data.get().weekend().collect::<Vec<_>>()
     );
 
     let gg_week_data: DataPayload<WeekDataV2Marker> = provider
@@ -303,8 +288,8 @@ fn basic_cldr_week_data_v2() {
         gg_week_data.get().first_weekday
     );
     assert_eq!(
-        Weekday::Sat.bit_value() | Weekday::Sun.bit_value(),
-        gg_week_data.get().weekend.0
+        vec![IsoWeekday::Saturday, IsoWeekday::Sunday],
+        gg_week_data.get().weekend().collect::<Vec<_>>()
     );
 
     let ir_week_data: DataPayload<WeekDataV2Marker> = provider
@@ -320,5 +305,8 @@ fn basic_cldr_week_data_v2() {
         ir_week_data.get().min_week_days
     );
     assert_eq!(IsoWeekday::Saturday, ir_week_data.get().first_weekday);
-    assert_eq!(Weekday::Fri.bit_value(), ir_week_data.get().weekend.0);
+    assert_eq!(
+        vec![IsoWeekday::Friday],
+        ir_week_data.get().weekend().collect::<Vec<_>>()
+    );
 }

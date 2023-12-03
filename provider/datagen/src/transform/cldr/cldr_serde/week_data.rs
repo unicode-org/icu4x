@@ -41,6 +41,12 @@ impl From<&Weekday> for icu_calendar::types::IsoWeekday {
     }
 }
 
+impl From<Weekday> for icu_calendar::types::IsoWeekday {
+    fn from(day: Weekday) -> Self {
+        (&day).into()
+    }
+}
+
 /// The territory that data is keyed by.
 ///
 /// For example the "AD" in "weekData": { "minDays": { "AD": 4, } }

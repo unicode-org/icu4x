@@ -153,6 +153,29 @@ pub struct WeekDataV1 {
 }
 
 /// Bitset representing weekdays that are part of the 'weekend'.
+///
+/// Returns days via [`Self::days()`] method which returns [WeekendDays], an [Iterator].
+/// Users of this data do not need to interact with this Bitset,
+/// you can access [WeekendDays] using [`WeekDataV2::weekend()`].
+///
+/// # Internal representation
+///
+/// This Bitset uses an [u8] to represent the weekend, thus leaving one bit free.
+/// Each bit represents a day in the following order:
+///
+///   ┌▷Mon
+///   │┌▷Tue
+///   ││┌▷Wed
+///   │││┌▷Thu
+///   ││││ ┌▷Fri
+///   ││││ │┌▷Sat
+///   ││││ ││┌▷Sun
+///   ││││ │││
+/// 0b0000_1010
+///
+/// Please note that this is not a range, this are the discrete days representing a weekend. Other examples:
+/// 0b0101_1000 -> Tue, Thu, Fri
+/// 0b0000_0110 -> Sat, Sun
 #[derive(Clone, Copy, Debug, PartialEq)]
 #[cfg_attr(
     feature = "datagen",
@@ -160,7 +183,90 @@ pub struct WeekDataV1 {
     databake(path = icu_calendar::provider),
 )]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
-pub struct WeekendSet(pub u8);
+pub struct WeekendSet(u8);
+
+impl WeekendSet {
+    /// Creates a new [WeekendSet] using the two provided days.
+    ///
+    /// Because of the current [CLDR spec](https://www.unicode.org/reports/tr35/tr35-dates.html#Date_Patterns_Week_Elements),
+    /// these are not a range, these are the two days representing a weekend.
+    /// If days are equal, weekend only has one day.
+    pub fn new(start_day: IsoWeekday, end_day: IsoWeekday) -> Self {
+        WeekendSet(start_day.bit_value() | end_day.bit_value())
+    }
+
+    /// Returns an [Iterator] that yields the weekdays that are part of the weekend.
+    ///
+    /// `first_weekday` parameter is used to determine the order to follow when yielding the elements.
+    /// Assumes a Week and Weekend cannot have the same start day, although they can have the same end day.
+    pub fn days(self, first_weekday: IsoWeekday) -> WeekendDays {
+        WeekendDays::new(first_weekday, self)
+    }
+}
+
+impl IsoWeekday {
+    /// Defines the bit order used for encoding and reading weekend days.
+    fn bit_value(&self) -> u8 {
+        match self {
+            IsoWeekday::Monday => 1 << 6,
+            IsoWeekday::Tuesday => 1 << 5,
+            IsoWeekday::Wednesday => 1 << 4,
+            IsoWeekday::Thursday => 1 << 3,
+            IsoWeekday::Friday => 1 << 2,
+            IsoWeekday::Saturday => 1 << 1,
+            IsoWeekday::Sunday => 1 << 0,
+        }
+    }
+}
+
+/// [Iterator] that yields weekdays found in [WeekendSet].
+#[derive(Clone, Copy, Debug, PartialEq)]
+pub struct WeekendDays {
+    /// Determines the order in which we should start reading values from `weekend`.
+    first_weekday: IsoWeekday,
+    /// Day being evaluated. Because we are assuming a Week and Weekend cannot have the same start day,
+    /// should start the day after `first_weekday`.
+    current_day: IsoWeekday,
+    /// Bitset to read weekdays from.
+    weekend: WeekendSet,
+}
+
+impl WeekendDays {
+    /// Creates the Iterator. Sets `current_day` to the day after `first_weekday`.
+    pub fn new(first_weekday: IsoWeekday, weekend: WeekendSet) -> Self {
+        WeekendDays {
+            first_weekday,
+            current_day: first_weekday.next_day(),
+            weekend,
+        }
+    }
+}
+
+impl Iterator for WeekendDays {
+    type Item = IsoWeekday;
+
+    fn next(&mut self) -> Option<Self::Item> {
+        // Check each bit until we find one that is ON or until we are back to the start of the week.
+        while self.current_day != self.first_weekday {
+            if self.weekend.0 & self.current_day.bit_value() != 0 {
+                let result = self.current_day;
+                self.current_day = self.current_day.next_day();
+                return Some(result);
+            } else {
+                self.current_day = self.current_day.next_day();
+            }
+        }
+
+        if self.weekend.0 & self.current_day.bit_value() != 0 {
+            // Clear weekend, we've seen all bits.
+            // Breaks the loop next time `next()` is called
+            self.weekend = WeekendSet(0);
+            return Some(self.current_day);
+        }
+
+        Option::None
+    }
+}
 
 /// An ICU4X mapping to a subset of CLDR weekData.
 /// See CLDR-JSON's weekData.json for more context.
@@ -190,5 +296,104 @@ pub struct WeekDataV2 {
     pub min_week_days: u8,
     /// Bitset representing weekdays that are part of the 'weekend', for calendar purposes.
     /// The number of days can be different between locales, and may not be contiguous.
-    pub weekend: WeekendSet,
+    weekend_set: WeekendSet,
+}
+
+impl WeekDataV2 {
+    /// Constructs Week Data, including an internal representation of the weekend.
+    pub fn new(first_weekday: IsoWeekday, min_week_days: u8, weekend_set: WeekendSet) -> Self {
+        WeekDataV2 {
+            first_weekday,
+            min_week_days,
+            weekend_set,
+        }
+    }
+
+    /// Weekdays that are part of the 'weekend', for calendar purposes.
+    /// Days may not be contiguous, and order is based off the first weekday.
+    pub fn weekend(self) -> WeekendDays {
+        self.weekend_set.days(self.first_weekday)
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::IsoWeekday::*;
+    use super::WeekendDays;
+    use super::WeekendSet;
+
+    #[test]
+    fn test_weekend_set_initializer() {
+        let sat_sun_bitmap = Saturday.bit_value() | Sunday.bit_value();
+        let sat_sun_weekend = WeekendSet::new(Saturday, Sunday);
+        assert_eq!(sat_sun_bitmap, sat_sun_weekend.0);
+
+        let fri_sat_bitmap = Friday.bit_value() | Saturday.bit_value();
+        let fri_sat_weekend = WeekendSet::new(Friday, Saturday);
+        assert_eq!(fri_sat_bitmap, fri_sat_weekend.0);
+
+        let fri_sun_bitmap = Friday.bit_value() | Sunday.bit_value();
+        let fri_sun_weekend = WeekendSet::new(Friday, Sunday);
+        assert_eq!(fri_sun_bitmap, fri_sun_weekend.0);
+
+        let fri_bitmap = Friday.bit_value();
+        let fri_weekend = WeekendSet::new(Friday, Friday);
+        assert_eq!(fri_bitmap, fri_weekend.0);
+
+        let sun_mon_bitmap = Sunday.bit_value() | Monday.bit_value();
+        let sun_mon_weekend = WeekendSet::new(Sunday, Monday);
+        assert_eq!(sun_mon_bitmap, sun_mon_weekend.0);
+
+        let mon_sun_bitmap = Monday.bit_value() | Sunday.bit_value();
+        let mon_sun_weekend = WeekendSet::new(Monday, Sunday);
+        assert_eq!(mon_sun_bitmap, mon_sun_weekend.0);
+    }
+
+    #[test]
+    fn test_weekdays_iter() {
+        // Weekend ends same day as week starts
+        let fri_sat_weekend = WeekendDays::new(Saturday, WeekendSet::new(Friday, Saturday));
+        assert_eq!(vec![Friday, Saturday], fri_sat_weekend.collect::<Vec<_>>());
+
+        let sat_sun_weekend = WeekendDays::new(Sunday, WeekendSet::new(Saturday, Sunday));
+        assert_eq!(vec![Saturday, Sunday], sat_sun_weekend.collect::<Vec<_>>());
+
+        // Weekend ends one day before week starts
+        let default_weekend = WeekendDays::new(Monday, WeekendSet::new(Saturday, Sunday));
+        assert_eq!(vec![Saturday, Sunday], default_weekend.collect::<Vec<_>>());
+
+        // Non-contiguous weekend
+        let fri_sun_weekend = WeekendDays::new(Monday, WeekendSet::new(Friday, Sunday));
+        assert_eq!(vec![Friday, Sunday], fri_sun_weekend.collect::<Vec<_>>());
+
+        // Manually constructing WeekendSet because our data (CLDR) doesn't support ranges yet, but the Iterator does.
+        let multiple_contiguous_days = WeekendDays::new(
+            Monday,
+            WeekendSet(
+                Tuesday.bit_value()
+                    | Wednesday.bit_value()
+                    | Thursday.bit_value()
+                    | Friday.bit_value(),
+            ),
+        );
+        assert_eq!(
+            vec![Tuesday, Wednesday, Thursday, Friday],
+            multiple_contiguous_days.collect::<Vec<_>>()
+        );
+
+        // Non-contiguous days and iterator yielding elements based off first_weekday
+        let multiple_non_contiguous_days = WeekendDays::new(
+            Wednesday,
+            WeekendSet(
+                Tuesday.bit_value()
+                    | Thursday.bit_value()
+                    | Friday.bit_value()
+                    | Sunday.bit_value(),
+            ),
+        );
+        assert_eq!(
+            vec![Thursday, Friday, Sunday, Tuesday],
+            multiple_non_contiguous_days.collect::<Vec<_>>()
+        );
+    }
 }
