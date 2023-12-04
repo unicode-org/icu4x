@@ -504,6 +504,11 @@ pub fn get_phf_extended(mut trie: &[u8], mut ascii: &[u8]) -> Option<usize> {
     }
 }
 
+/// Steps one node into the trie assuming all branch nodes are binary search and that
+/// there are no span nodes.
+///
+/// The input-output argument `trie` starts at the original trie and ends pointing to
+/// the sub-trie reachable by `c`.
 pub(crate) fn step_bsearch_only(trie: &mut &[u8], c: u8) {
     let (mut b, x, search);
     loop {
@@ -566,6 +571,11 @@ pub(crate) fn step_bsearch_only(trie: &mut &[u8], c: u8) {
     };
 }
 
+/// Steps one node into the trie if the head node is a value node, returning the value.
+/// If the head node is not a value node, no change is made.
+///
+/// The input-output argument `trie` starts at the original trie and ends pointing to
+/// the sub-trie with the value node removed.
 pub(crate) fn take_value(trie: &mut &[u8]) -> Option<usize> {
     let (b, new_trie) = trie.split_first()?;
     match byte_type(*b) {
