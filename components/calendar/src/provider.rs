@@ -50,6 +50,7 @@ pub const KEYS: &[DataKey] = &[
     JapaneseErasV1Marker::KEY,
     JapaneseExtendedErasV1Marker::KEY,
     WeekDataV1Marker::KEY,
+    WeekDataV2Marker::KEY,
 ];
 
 /// The date at which an era started

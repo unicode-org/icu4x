@@ -1,0 +1,44 @@
+// @generated
+/// Implement `DataProvider<WeekDataV2Marker>` on the given struct using the data
+/// hardcoded in this file. This allows the struct to be used with
+/// `icu`'s `_unstable` constructors.
+#[doc(hidden)]
+#[macro_export]
+macro_rules! __impl_datetime_week_data_v2 {
+    ($ provider : ty) => {
+        #[clippy::msrv = "1.67"]
+        const _: () = <$provider>::MUST_USE_MAKE_PROVIDER_MACRO;
+        #[clippy::msrv = "1.67"]
+        impl icu_provider::DataProvider<icu::calendar::provider::WeekDataV2Marker> for $provider {
+            fn load(&self, req: icu_provider::DataRequest) -> Result<icu_provider::DataResponse<icu::calendar::provider::WeekDataV2Marker>, icu_provider::DataError> {
+                static UND_UG: <icu::calendar::provider::WeekDataV2Marker as icu_provider::DataMarker>::Yokeable = icu::calendar::provider::WeekDataV2::from_baked(1u8, 1u8, icu::calendar::provider::WeekendSet::from_unvalidated_bitset(1u8));
+                static UND: <icu::calendar::provider::WeekDataV2Marker as icu_provider::DataMarker>::Yokeable = icu::calendar::provider::WeekDataV2::from_baked(1u8, 1u8, icu::calendar::provider::WeekendSet::from_unvalidated_bitset(3u8));
+                static UND_AD: <icu::calendar::provider::WeekDataV2Marker as icu_provider::DataMarker>::Yokeable = icu::calendar::provider::WeekDataV2::from_baked(1u8, 4u8, icu::calendar::provider::WeekendSet::from_unvalidated_bitset(3u8));
+                static UND_AF: <icu::calendar::provider::WeekDataV2Marker as icu_provider::DataMarker>::Yokeable = icu::calendar::provider::WeekDataV2::from_baked(6u8, 1u8, icu::calendar::provider::WeekendSet::from_unvalidated_bitset(12u8));
+                static UND_IR: <icu::calendar::provider::WeekDataV2Marker as icu_provider::DataMarker>::Yokeable = icu::calendar::provider::WeekDataV2::from_baked(6u8, 1u8, icu::calendar::provider::WeekendSet::from_unvalidated_bitset(4u8));
+                static UND_BH: <icu::calendar::provider::WeekDataV2Marker as icu_provider::DataMarker>::Yokeable = icu::calendar::provider::WeekDataV2::from_baked(6u8, 1u8, icu::calendar::provider::WeekendSet::from_unvalidated_bitset(6u8));
+                static UND_IN: <icu::calendar::provider::WeekDataV2Marker as icu_provider::DataMarker>::Yokeable = icu::calendar::provider::WeekDataV2::from_baked(7u8, 1u8, icu::calendar::provider::WeekendSet::from_unvalidated_bitset(1u8));
+                static UND_GU: <icu::calendar::provider::WeekDataV2Marker as icu_provider::DataMarker>::Yokeable = icu::calendar::provider::WeekDataV2::from_baked(7u8, 1u8, icu::calendar::provider::WeekendSet::from_unvalidated_bitset(3u8));
+                static UND_IL: <icu::calendar::provider::WeekDataV2Marker as icu_provider::DataMarker>::Yokeable = icu::calendar::provider::WeekDataV2::from_baked(7u8, 1u8, icu::calendar::provider::WeekendSet::from_unvalidated_bitset(6u8));
+                static UND_PT: <icu::calendar::provider::WeekDataV2Marker as icu_provider::DataMarker>::Yokeable = icu::calendar::provider::WeekDataV2::from_baked(7u8, 4u8, icu::calendar::provider::WeekendSet::from_unvalidated_bitset(3u8));
+                static VALUES: [&<icu::calendar::provider::WeekDataV2Marker as icu_provider::DataMarker>::Yokeable; 67usize] = [&UND, &UND_AD, &UND_AF, &UND_AD, &UND_AD, &UND_AD, &UND_AD, &UND_AD, &UND_BH, &UND_AD, &UND_AD, &UND_AD, &UND_AD, &UND_BH, &UND_AD, &UND_BH, &UND_AD, &UND_AD, &UND_AD, &UND_AD, &UND_AD, &UND_AD, &UND_AD, &UND_AD, &UND_AD, &UND_AD, &UND_AD, &UND_GU, &UND_AD, &UND_AD, &UND_IL, &UND_AD, &UND_IN, &UND_BH, &UND_IR, &UND_AD, &UND_AD, &UND_AD, &UND_BH, &UND_BH, &UND_AD, &UND_AD, &UND_AD, &UND_BH, &UND_AD, &UND_AD, &UND_AD, &UND_AD, &UND_BH, &UND_AD, &UND_PT, &UND_BH, &UND_AD, &UND_AD, &UND_IL, &UND_BH, &UND_AD, &UND_AD, &UND_AD, &UND_AD, &UND_BH, &UND_UG, &UND_GU, &UND_GU, &UND_AD, &UND_GU, &UND_IL];
+                static KEYS: [&str; 67usize] = ["und", "und-AD", "und-AF", "und-AN", "und-AT", "und-AX", "und-BE", "und-BG", "und-BH", "und-CH", "und-CZ", "und-DE", "und-DK", "und-DZ", "und-EE", "und-EG", "und-ES", "und-FI", "und-FJ", "und-FO", "und-FR", "und-GB", "und-GF", "und-GG", "und-GI", "und-GP", "und-GR", "und-GU", "und-HU", "und-IE", "und-IL", "und-IM", "und-IN", "und-IQ", "und-IR", "und-IS", "und-IT", "und-JE", "und-JO", "und-KW", "und-LI", "und-LT", "und-LU", "und-LY", "und-MC", "und-MQ", "und-NL", "und-NO", "und-OM", "und-PL", "und-PT", "und-QA", "und-RE", "und-RU", "und-SA", "und-SD", "und-SE", "und-SJ", "und-SK", "und-SM", "und-SY", "und-UG", "und-UM", "und-US", "und-VA", "und-VI", "und-YE"];
+                let mut metadata = icu_provider::DataResponseMetadata::default();
+                let payload = if let Ok(payload) = KEYS.binary_search_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse()).map(|i| *unsafe { VALUES.get_unchecked(i) }) {
+                    payload
+                } else {
+                    const FALLBACKER: icu::locid_transform::fallback::LocaleFallbackerWithConfig<'static> = icu::locid_transform::fallback::LocaleFallbacker::new().for_config(<icu::calendar::provider::WeekDataV2Marker as icu_provider::KeyedDataMarker>::KEY.fallback_config());
+                    let mut fallback_iterator = FALLBACKER.fallback_for(req.locale.clone());
+                    loop {
+                        if let Ok(payload) = KEYS.binary_search_by(|k| fallback_iterator.get().strict_cmp(k.as_bytes()).reverse()).map(|i| *unsafe { VALUES.get_unchecked(i) }) {
+                            metadata.locale = Some(fallback_iterator.take());
+                            break payload;
+                        }
+                        fallback_iterator.step();
+                    }
+                };
+                Ok(icu_provider::DataResponse { payload: Some(icu_provider::DataPayload::from_static_ref(payload)), metadata })
+            }
+        }
+    };
+}
