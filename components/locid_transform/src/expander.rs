@@ -5,7 +5,7 @@
 use crate::{provider::*, LocaleTransformError};
 
 use core::mem;
-use icu_locid::subtags::{Language, Region, Script, language, script, region};
+use icu_locid::subtags::{language, region, script, Language, Region, Script};
 use icu_locid::LanguageIdentifier;
 use icu_provider::prelude::*;
 
@@ -400,10 +400,22 @@ impl LocaleExpander {
             if let Some((language, region)) = data.get_s(script) {
                 return update_langid(language, None, Some(region), langid);
             }
+            return update_langid(
+                data.get_und().0,
+                Some(data.get_und().1),
+                Some(data.get_und().2),
+                langid,
+            );
         } else if let Some(region) = langid.region {
             if let Some((language, script)) = data.get_r(region) {
                 return update_langid(language, Some(script), None, langid);
             }
+            return update_langid(
+                data.get_und().0,
+                Some(data.get_und().1),
+                Some(data.get_und().2),
+                langid,
+            );
         } else {
             // Input does not have language, script, or region
             debug_assert!(*langid == LanguageIdentifier::UND || !langid.variants.is_empty());
