@@ -38,6 +38,7 @@ derive_usize_iterator_with_type!(WordBreakIterator);
 #[non_exhaustive]
 #[derive(Copy, Clone, PartialEq, Debug)]
 #[repr(u8)]
+#[zerovec::make_ule(WordTypeULE)]
 pub enum WordType {
     /// No category tag.
     None = 0,

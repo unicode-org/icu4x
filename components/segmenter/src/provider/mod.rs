@@ -18,6 +18,7 @@
 mod lstm;
 pub use lstm::*;
 
+use crate::WordType;
 use icu_collections::codepointtrie::CodePointTrie;
 use icu_provider::prelude::*;
 use zerovec::ZeroVec;
@@ -165,7 +166,7 @@ pub struct RuleBreakStateTable<'data>(
 )]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 pub struct RuleStatusTable<'data>(
-    #[cfg_attr(feature = "serde", serde(borrow))] pub ZeroVec<'data, u8>,
+    #[cfg_attr(feature = "serde", serde(borrow))] pub ZeroVec<'data, WordType>,
 );
 
 /// char16trie data for dictionary break
@@ -275,6 +276,48 @@ impl zerovec::ule::AsULE for BreakState {
             254 => BreakState::NoMatch,
             i if i & 64 != 0 => BreakState::Intermediate(i & !64),
             i => BreakState::Index(i),
+        }
+    }
+}
+
+#[cfg(feature = "datagen")]
+impl serde::Serialize for WordType {
+    fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
+    where
+        S: serde::Serializer,
+    {
+        if serializer.is_human_readable() {
+            (*self as u8).serialize(serializer)
+        } else {
+            unreachable!("only used as ULE")
+        }
+    }
+}
+
+#[cfg(feature = "datagen")]
+impl databake::Bake for WordType {
+    fn bake(&self, _crate_env: &databake::CrateEnv) -> databake::TokenStream {
+        unreachable!("only used as ULE")
+    }
+}
+
+#[cfg(feature = "serde")]
+impl<'de> serde::Deserialize<'de> for WordType {
+    fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
+    where
+        D: serde::Deserializer<'de>,
+    {
+        if deserializer.is_human_readable() {
+            use serde::de::Error;
+            match u8::deserialize(deserializer) {
+                Ok(0) => Ok(WordType::None),
+                Ok(1) => Ok(WordType::Number),
+                Ok(2) => Ok(WordType::Letter),
+                Ok(_) => Err(D::Error::custom("invalid value")),
+                Err(e) => Err(e),
+            }
+        } else {
+            unreachable!("only used as ULE")
         }
     }
 }

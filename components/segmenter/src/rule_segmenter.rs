@@ -229,16 +229,11 @@ impl<'l, 's, Y: RuleBreakType<'l, 's> + ?Sized> RuleBreakIterator<'l, 's, Y> {
             // break position is SOT / Any
             return WordType::None;
         }
-        match self
-            .data
+        self.data
             .rule_status_table
             .0
             .get((self.boundary_property - 1) as usize)
-        {
-            Some(1) => WordType::Number,
-            Some(2) => WordType::Letter,
-            _ => WordType::None,
-        }
+            .unwrap_or(WordType::None)
     }
 
     /// Return true when break boundary is word-like such as letter/number/CJK

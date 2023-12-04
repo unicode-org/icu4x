@@ -483,14 +483,12 @@ fn generate_rule_break_data(
         segmenter
             .tables
             .iter()
-            .map(|p| {
-                (match &*p.name {
-                    "Numeric" => WordType::Number,
-                    "ALetter" | "Hebrew_Letter" | "ExtendNumLet" | "Katakana" | "SA" => {
-                        WordType::Letter
-                    }
-                    _ => WordType::None,
-                }) as u8
+            .map(|p| match &*p.name {
+                "Numeric" => WordType::Number,
+                "ALetter" | "Hebrew_Letter" | "ExtendNumLet" | "Katakana" | "SA" => {
+                    WordType::Letter
+                }
+                _ => WordType::None,
             })
             .collect()
     } else {
@@ -518,7 +516,7 @@ fn generate_rule_break_data(
                 .map(zerovec::ule::AsULE::to_unaligned)
                 .collect(),
         )),
-        rule_status_table: RuleStatusTable(ZeroVec::new_owned(rule_status_table)),
+        rule_status_table: RuleStatusTable(rule_status_table),
         property_count: properties_names.len().try_into().unwrap(),
         last_codepoint_property: (simple_properties_count - 1).try_into().unwrap(),
         sot_property: (properties_names.len() - 2).try_into().unwrap(),
