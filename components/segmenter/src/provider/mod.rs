@@ -18,10 +18,6 @@
 mod lstm;
 pub use lstm::*;
 
-// Re-export this from the provider module because it is needed by datagen
-#[cfg(feature = "datagen")]
-pub use crate::rule_segmenter::RuleStatusType;
-
 use icu_collections::codepointtrie::CodePointTrie;
 use icu_provider::prelude::*;
 use zerovec::ZeroVec;

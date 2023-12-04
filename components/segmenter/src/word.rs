@@ -51,11 +51,7 @@ impl<'l, 's, Y: RuleBreakType<'l, 's> + ?Sized> WordBreakIterator<'l, 's, Y> {
     /// Returns the word type of the segment preceding the current boundary.
     #[inline]
     pub fn word_type(&self) -> WordType {
-        match self.0.rule_status() {
-            RuleStatusType::None => WordType::None,
-            RuleStatusType::Number => WordType::Number,
-            RuleStatusType::Letter => WordType::Letter,
-        }
+        self.0.word_type()
     }
     /// Returns `true` when the segment preceding the current boundary is word-like,
     /// such as letter, number, or CJK.

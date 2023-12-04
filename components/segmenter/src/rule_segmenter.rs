@@ -5,22 +5,9 @@
 use crate::complex::ComplexPayloads;
 use crate::indices::{Latin1Indices, Utf16Indices};
 use crate::provider::*;
+use crate::WordType;
 use core::str::CharIndices;
 use utf8_iter::Utf8CharIndices;
-
-/// The category tag that is returned by
-/// [`WordBreakIterator::word_type()`][crate::WordBreakIterator::word_type()].
-#[non_exhaustive]
-#[derive(Copy, Clone, PartialEq, Debug)]
-#[repr(u8)]
-pub enum RuleStatusType {
-    /// No category tag
-    None = 0,
-    /// Number category tag
-    Number = 1,
-    /// Letter category tag, including CJK.
-    Letter = 2,
-}
 
 /// A trait allowing for RuleBreakIterator to be generalized to multiple string
 /// encoding methods and granularity such as grapheme cluster, word, etc.
@@ -232,15 +219,15 @@ impl<'l, 's, Y: RuleBreakType<'l, 's> + ?Sized> RuleBreakIterator<'l, 's, Y> {
     }
 
     /// Return the status value of break boundary.
-    /// If segmenter isn't word, always return RuleStatusType::None
-    pub fn rule_status(&self) -> RuleStatusType {
+    /// If segmenter isn't word, always return WordType::None
+    pub fn word_type(&self) -> WordType {
         if self.result_cache.first().is_some() {
             // Dictionary type (CJ and East Asian) is letter.
-            return RuleStatusType::Letter;
+            return WordType::Letter;
         }
         if self.boundary_property == 0 {
             // break position is SOT / Any
-            return RuleStatusType::None;
+            return WordType::None;
         }
         match self
             .data
@@ -248,16 +235,16 @@ impl<'l, 's, Y: RuleBreakType<'l, 's> + ?Sized> RuleBreakIterator<'l, 's, Y> {
             .0
             .get((self.boundary_property - 1) as usize)
         {
-            Some(1) => RuleStatusType::Number,
-            Some(2) => RuleStatusType::Letter,
-            _ => RuleStatusType::None,
+            Some(1) => WordType::Number,
+            Some(2) => WordType::Letter,
+            _ => WordType::None,
         }
     }
 
     /// Return true when break boundary is word-like such as letter/number/CJK
     /// If segmenter isn't word, return false
     pub fn is_word_like(&self) -> bool {
-        self.rule_status() != RuleStatusType::None
+        self.word_type() != WordType::None
     }
 }
 

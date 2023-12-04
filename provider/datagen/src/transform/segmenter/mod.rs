@@ -16,6 +16,7 @@ use icu_properties::{
 use icu_provider::datagen::IterableDataProvider;
 use icu_provider::prelude::*;
 use icu_segmenter::provider::*;
+use icu_segmenter::WordType;
 use std::fmt::Debug;
 use zerovec::ZeroVec;
 
@@ -484,11 +485,11 @@ fn generate_rule_break_data(
             .iter()
             .map(|p| {
                 (match &*p.name {
-                    "Numeric" => RuleStatusType::Number,
+                    "Numeric" => WordType::Number,
                     "ALetter" | "Hebrew_Letter" | "ExtendNumLet" | "Katakana" | "SA" => {
-                        RuleStatusType::Letter
+                        WordType::Letter
                     }
-                    _ => RuleStatusType::None,
+                    _ => WordType::None,
                 }) as u8
             })
             .collect()
