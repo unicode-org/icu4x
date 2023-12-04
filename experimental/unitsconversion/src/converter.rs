@@ -5,6 +5,8 @@
 // TODO: we do not want to use `std`
 use std::collections::HashMap;
 
+use num::BigRational;
+
 use crate::{
     measureunit::MeasureUnitParser,
     provider::{MeasureUnitItem, UnitsInfoV1},
@@ -31,6 +33,14 @@ pub enum Convertibility {
 pub struct ConverterFactory<'data> {
     /// Contains the necessary data for the conversion factory.
     payload: UnitsInfoV1<'data>,
+}
+
+/// A converter for converting between two units.
+/// For example, converting between `meter` and `foot`.
+pub struct Converter {
+    conversion_rate: BigRational,
+    offset: BigRational,
+    convertibility: Convertibility,
 }
 
 impl ConverterFactory<'_> {
@@ -95,5 +105,25 @@ impl ConverterFactory<'_> {
         } else {
             Ok(Convertibility::NotConvertible)
         }
+    }
+
+    /// Creates a converter for converting between two units in the form of CLDR identifiers.
+    pub fn converter(
+        &self,
+        input_unit: &str,
+        output_unit: &str,
+    ) -> Result<Converter, ConversionError> {
+        todo!("Implement ConverterFactory::converter")
+    }
+}
+
+impl Converter {
+    pub fn convert(&self, value: &BigRational) -> BigRational {
+        let mut result: BigRational = value * &self.conversion_rate + &self.offset;
+        if let Convertibility::Reciprocal = self.convertibility {
+            result = result.recip();
+        }
+
+        result
     }
 }

@@ -29,6 +29,7 @@ serde = { version = "1.0", default-features = false, features = ["derive", "allo
 smallvec = "1.11.2"
 zerotrie = { workspace = true, features = ["yoke", "zerofrom"] }
 zerovec = { workspace = true, features = ["yoke"] }
+num = "0.4.1"
 
 [features]
 default = []
