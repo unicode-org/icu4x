@@ -239,30 +239,30 @@ impl<'de> serde::Deserialize<'de> for BreakState {
     where
         D: serde::Deserializer<'de>,
     {
-        i8::deserialize(deserializer).map(zerovec::ule::AsULE::from_unaligned)
+        u8::deserialize(deserializer).map(zerovec::ule::AsULE::from_unaligned)
     }
 }
 
 impl zerovec::ule::AsULE for BreakState {
-    type ULE = i8;
+    type ULE = u8;
 
     fn to_unaligned(self) -> Self::ULE {
         match self {
-            BreakState::Break => -128,
-            BreakState::Keep => -1,
-            BreakState::NoMatch => -2,
-            BreakState::Intermediate(i) => i as i8 | 64,
-            BreakState::Index(i) => i as i8,
+            BreakState::Break => 128,
+            BreakState::Keep => 255,
+            BreakState::NoMatch => 254,
+            BreakState::Intermediate(i) => i | 64,
+            BreakState::Index(i) => i,
         }
     }
 
     fn from_unaligned(unaligned: Self::ULE) -> Self {
         match unaligned {
-            -128 => BreakState::Break,
-            -1 => BreakState::Keep,
-            -2 => BreakState::NoMatch,
-            i if i & 64 != 0 => BreakState::Intermediate(i as u8 & !64),
-            i => BreakState::Index(i as u8),
+            128 => BreakState::Break,
+            255 => BreakState::Keep,
+            254 => BreakState::NoMatch,
+            i if i & 64 != 0 => BreakState::Intermediate(i & !64),
+            i => BreakState::Index(i),
         }
     }
 }
