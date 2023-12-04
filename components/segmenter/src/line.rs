@@ -958,7 +958,7 @@ impl<'l, 's, Y: LineBreakType<'l, 's>> Iterator for LineBreakIterator<'l, 's, Y>
             // If break_state is equals or grater than 0, it is alias of property.
             let mut index = match self.data.get_break_state_from_table(left_prop, right_prop) {
                 BreakState::Index(index) => index,
-                // Line break uses more that 64 states, so they spill over into the itermediate range,
+                // Line break uses more that 64 states, so they spill over into the intermediate range,
                 // and we cannot change that at the moment
                 BreakState::Intermediate(index) => index + 64,
                 BreakState::Break | BreakState::NoMatch => return self.get_current_position(),
