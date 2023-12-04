@@ -92,7 +92,10 @@ impl<'l, 's, Y: RuleBreakType<'l, 's> + ?Sized> Iterator for RuleBreakIterator<'
             }
             // SOT x anything
             let right_prop = self.get_current_break_property()?;
-            if self.is_break_from_table(self.data.sot_property, right_prop) {
+            if matches!(
+                self.get_break_state_from_table(self.data.sot_property, right_prop),
+                BreakState::Break | BreakState::NoMatch
+            ) {
                 self.boundary_property = 0; // SOT is special type
                 return self.get_current_position();
             }
@@ -123,70 +126,69 @@ impl<'l, 's, Y: RuleBreakType<'l, 's> + ?Sized> Iterator for RuleBreakIterator<'
                 }
             }
 
-            // If break_state is alias of property
-            if let BreakState::Index(mut index) | BreakState::Intermediate(mut index) =
-                self.get_break_state_from_table(left_prop, right_prop)
-            {
-                // This isn't simple rule set. We need marker to restore iterator to previous position.
-                let mut previous_iter = self.iter.clone();
-                let mut previous_pos_data = self.current_pos_data;
-                let mut previous_left_prop = left_prop;
+            match self.get_break_state_from_table(left_prop, right_prop) {
+                BreakState::Keep => continue,
+                BreakState::Break | BreakState::NoMatch => {
+                    self.boundary_property = left_prop;
+                    return self.get_current_position();
+                }
+                BreakState::Index(mut index) | BreakState::Intermediate(mut index) => {
+                    // This isn't simple rule set. We need marker to restore iterator to previous position.
+                    let mut previous_iter = self.iter.clone();
+                    let mut previous_pos_data = self.current_pos_data;
+                    let mut previous_left_prop = left_prop;
 
-                loop {
-                    self.advance_iter();
+                    loop {
+                        self.advance_iter();
 
-                    let Some(prop) = self.get_current_break_property() else {
-                        // Reached EOF. But we are analyzing multiple characters now, so next break may be previous point.
-                        self.boundary_property = index;
-                        if self.get_break_state_from_table(index, self.data.eot_property)
-                            == BreakState::NoMatch
-                        {
-                            self.boundary_property = previous_left_prop;
-                            self.iter = previous_iter;
-                            self.current_pos_data = previous_pos_data;
-                            return self.get_current_position();
-                        }
-                        // EOF
-                        return Some(self.len);
-                    };
-
-                    let previous_break_state_is_cp_prop =
-                        index <= self.data.last_codepoint_property as u8;
-
-                    match self.get_break_state_from_table(index, prop) {
-                        BreakState::Keep => continue 'a,
-                        BreakState::NoMatch => {
-                            self.boundary_property = previous_left_prop;
-                            self.iter = previous_iter;
-                            self.current_pos_data = previous_pos_data;
-                            return self.get_current_position();
-                        }
-                        BreakState::Break => return self.get_current_position(),
-                        BreakState::Intermediate(i) => {
-                            index = i;
-                            if previous_break_state_is_cp_prop {
-                                // Move marker
-                                previous_left_prop = index;
+                        let Some(prop) = self.get_current_break_property() else {
+                            // Reached EOF. But we are analyzing multiple characters now, so next break may be previous point.
+                            self.boundary_property = index;
+                            if self.get_break_state_from_table(index, self.data.eot_property)
+                                == BreakState::NoMatch
+                            {
+                                self.boundary_property = previous_left_prop;
+                                self.iter = previous_iter;
+                                self.current_pos_data = previous_pos_data;
+                                return self.get_current_position();
                             }
-                            previous_iter = self.iter.clone();
-                            previous_pos_data = self.current_pos_data;
-                        }
-                        BreakState::Index(i) => {
-                            index = i;
-                            if previous_break_state_is_cp_prop {
-                                // Move marker
+                            // EOF
+                            return Some(self.len);
+                        };
+
+                        let previous_break_state_is_cp_prop =
+                            index <= self.data.last_codepoint_property as u8;
+
+                        match self.get_break_state_from_table(index, prop) {
+                            BreakState::Keep => continue 'a,
+                            BreakState::NoMatch => {
+                                self.boundary_property = previous_left_prop;
+                                self.iter = previous_iter;
+                                self.current_pos_data = previous_pos_data;
+                                return self.get_current_position();
+                            }
+                            BreakState::Break => return self.get_current_position(),
+                            BreakState::Intermediate(i) => {
+                                index = i;
+                                if previous_break_state_is_cp_prop {
+                                    // Move marker
+                                    previous_left_prop = index;
+                                }
                                 previous_iter = self.iter.clone();
                                 previous_pos_data = self.current_pos_data;
-                                previous_left_prop = index;
+                            }
+                            BreakState::Index(i) => {
+                                index = i;
+                                if previous_break_state_is_cp_prop {
+                                    // Move marker
+                                    previous_iter = self.iter.clone();
+                                    previous_pos_data = self.current_pos_data;
+                                    previous_left_prop = index;
+                                }
                             }
                         }
                     }
                 }
-            }
-
-            if self.is_break_from_table(left_prop, right_prop) {
-                self.boundary_property = left_prop;
-                return self.get_current_position();
             }
         }
     }
@@ -227,13 +229,6 @@ impl<'l, 's, Y: RuleBreakType<'l, 's> + ?Sized> RuleBreakIterator<'l, 's, Y> {
             .0
             .get(idx)
             .unwrap_or(BreakState::Keep)
-    }
-
-    fn is_break_from_table(&self, left: u8, right: u8) -> bool {
-        !matches!(
-            self.get_break_state_from_table(left, right),
-            BreakState::Keep | BreakState::Index(_) | BreakState::Intermediate(_)
-        )
     }
 
     /// Return the status value of break boundary.
