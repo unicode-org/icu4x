@@ -956,51 +956,54 @@ impl<'l, 's, Y: LineBreakType<'l, 's>> Iterator for LineBreakIterator<'l, 's, Y>
             }
 
             // If break_state is equals or grater than 0, it is alias of property.
-            if let BreakState::Index(mut index) | BreakState::Intermediate(mut index) =
-                self.data.get_break_state_from_table(left_prop, right_prop)
-            {
-                let mut previous_iter = self.iter.clone();
-                let mut previous_pos_data = self.current_pos_data;
+            let mut index = match self.data.get_break_state_from_table(left_prop, right_prop) {
+                BreakState::Index(index) => index,
+                // Line break uses more that 64 states, so they spill over into the itermediate range,
+                // and we cannot change that at the moment
+                BreakState::Intermediate(index) => index + 64,
+                BreakState::Break | BreakState::NoMatch => return self.get_current_position(),
+                BreakState::Keep => continue,
+            };
 
-                loop {
-                    self.advance_iter();
+            let mut previous_iter = self.iter.clone();
+            let mut previous_pos_data = self.current_pos_data;
 
-                    let Some(prop) = self.get_current_linebreak_property() else {
-                        // Reached EOF. But we are analyzing multiple characters now, so next break may be previous point.
-                        let break_state = self
-                            .data
-                            .get_break_state_from_table(index, self.data.eot_property);
-                        if break_state == BreakState::NoMatch {
-                            self.iter = previous_iter;
-                            self.current_pos_data = previous_pos_data;
-                            return self.get_current_position();
-                        }
-                        // EOF
-                        return Some(self.len);
-                    };
+            loop {
+                self.advance_iter();
 
-                    match self.data.get_break_state_from_table(index, prop) {
-                        BreakState::Keep => continue 'a,
-                        BreakState::NoMatch => {
-                            self.iter = previous_iter;
-                            self.current_pos_data = previous_pos_data;
-                            return self.get_current_position();
-                        }
-                        BreakState::Break => return self.get_current_position(),
-                        BreakState::Index(i) | BreakState::Intermediate(i) => {
-                            index = i;
-                            previous_iter = self.iter.clone();
-                            previous_pos_data = self.current_pos_data;
-                        }
+                let Some(prop) = self.get_current_linebreak_property() else {
+                    // Reached EOF. But we are analyzing multiple characters now, so next break may be previous point.
+                    let break_state = self
+                        .data
+                        .get_break_state_from_table(index, self.data.eot_property);
+                    if break_state == BreakState::NoMatch {
+                        self.iter = previous_iter;
+                        self.current_pos_data = previous_pos_data;
+                        return self.get_current_position();
+                    }
+                    // EOF
+                    return Some(self.len);
+                };
+
+                match self.data.get_break_state_from_table(index, prop) {
+                    BreakState::Keep => continue 'a,
+                    BreakState::NoMatch => {
+                        self.iter = previous_iter;
+                        self.current_pos_data = previous_pos_data;
+                        return self.get_current_position();
+                    }
+                    BreakState::Break => return self.get_current_position(),
+                    BreakState::Index(i) => {
+                        index = i;
+                        previous_iter = self.iter.clone();
+                        previous_pos_data = self.current_pos_data;
+                    }
+                    BreakState::Intermediate(i) => {
+                        index = i + 64;
+                        previous_iter = self.iter.clone();
+                        previous_pos_data = self.current_pos_data;
                     }
                 }
-            }
-
-            if matches!(
-                self.data.get_break_state_from_table(left_prop, right_prop),
-                BreakState::Break | BreakState::NoMatch
-            ) {
-                return self.get_current_position();
             }
         }
     }

@@ -218,7 +218,7 @@ pub enum BreakState {
     NoMatch,
     /// We have to look ahead one more character.
     Intermediate(u8),
-    /// Index of a property.
+    /// Index of a state.
     Index(u8),
 }
 

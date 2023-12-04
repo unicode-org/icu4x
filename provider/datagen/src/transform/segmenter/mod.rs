@@ -136,7 +136,8 @@ fn generate_rule_break_data(
         break_state: BreakState,
     ) {
         let index = left_index * property_length + right_index;
-        if break_state_table[index].is_none() || break_state_table[index] == Some(BreakState::NoMatch)
+        if break_state_table[index].is_none()
+            || break_state_table[index] == Some(BreakState::NoMatch)
         {
             break_state_table[index] = Some(break_state);
         }
