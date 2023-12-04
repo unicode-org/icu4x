@@ -110,8 +110,8 @@ impl ConverterFactory<'_> {
     /// Creates a converter for converting between two units in the form of CLDR identifiers.
     pub fn converter(
         &self,
-        input_unit: &str,
-        output_unit: &str,
+        _input_unit: &str,
+        _output_unit: &str,
     ) -> Result<Converter, ConversionError> {
         todo!("Implement ConverterFactory::converter")
     }
