@@ -4,6 +4,8 @@
 
 #[doc = include_str!("../../intro.md")]
 mod intro {}
+#[doc = include_str!("../../intro_interactive.md")]
+mod intro_interactive {}
 #[doc = include_str!("../../data_provider.md")]
 mod data_provider {}
 #[doc = include_str!("../../writing_a_new_data_struct.md")]

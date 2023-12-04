@@ -53,12 +53,12 @@ jobs:
           exit 1;
         fi
 
-  docs:
-    name: "Docs Preview"
+  rust-docs:
+    name: "Rust docs"
     needs: credentials
     runs-on: "ubuntu-latest"
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
 
     # GCP Boilerplate for jobs in main or forked repository (needs credentials)
     - id: gcp-auth
@@ -66,6 +66,13 @@ jobs:
       uses: google-github-actions/auth@v1
       with:
         credentials_json: '${{ secrets.ICU4X_GCP_SA_KEY }}'
+    - id: gcp-auth-main
+      if: github.ref == 'refs/heads/main' && github.repository == 'unicode-org/icu4x'
+      name: "Authenticate to Google Cloud with Workload Identity Provider"
+      uses: google-github-actions/auth@v1
+      with:
+        workload_identity_provider: "projects/66042061814/locations/global/workloadIdentityPools/icu4x-gha-pool1/providers/icu4x-gha-provider1"
+        service_account: "icu4x-main@dev-infra-273822.iam.gserviceaccount.com"
     - name: "Set up Google Cloud SDK"
       uses: google-github-actions/setup-gcloud@v1
 
@@ -84,21 +91,26 @@ jobs:
           --exclude zerofrom-derive
           --exclude zerovec-derive
 
-    - name: Upload docs to Google Cloud Storage
+    - name: Upload docs to Google Cloud Storage (non-main)
       run: |
-        gsutil -m cp -r target/doc gs://${{ env.GCP_PR_BUCKET_ID }}/gha/${{ github.sha }}/docs
+        gsutil -m cp -r target/doc gs://${{ env.GCP_PR_BUCKET_ID }}/gha/${{ github.sha }}/rustdoc
+    
+    - name: Upload docs to Google Cloud Storage (main)
+      if: github.ref == 'refs/heads/main' && github.repository == 'unicode-org/icu4x'
+      run: |
+        gsutil -m cp -r target/doc/* gs://${{ env.GCP_MAIN_BUCKET_ID }}/gha/rustdoc
+
     - name: "⭐⭐⭐ Links to Uploaded Artifacts ⭐⭐⭐"
       run: |
-        echo "::group::📖 Docs Preview"
-        echo "http://${{ env.GCP_PR_BUCKET_ID }}.storage.googleapis.com/gha/${{ github.sha }}/docs/icu/index.html"
-        echo "::endgroup::"
+        echo "📖 Rust docs"
+        echo "http://${{ env.GCP_PR_BUCKET_ID }}.storage.googleapis.com/gha/${{ github.sha }}/rustdoc/icu/index.html"
 
-  ffi-docs:
-    name: "FFI Preview"
+  cpp-docs:
+    name: "C++ docs"
     needs: credentials
     runs-on: "ubuntu-latest"
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
 
     # GCP Boilerplate for jobs in main or forked repository (needs credentials)
     - id: gcp-auth
@@ -106,44 +118,140 @@ jobs:
       uses: google-github-actions/auth@v1
       with:
         credentials_json: '${{ secrets.ICU4X_GCP_SA_KEY }}'
+    - id: gcp-auth-main
+      if: github.ref == 'refs/heads/main' && github.repository == 'unicode-org/icu4x'
+      name: "Authenticate to Google Cloud with Workload Identity Provider"
+      uses: google-github-actions/auth@v1
+      with:
+        workload_identity_provider: "projects/66042061814/locations/global/workloadIdentityPools/icu4x-gha-pool1/providers/icu4x-gha-provider1"
+        service_account: "icu4x-main@dev-infra-273822.iam.gserviceaccount.com"
     - name: "Set up Google Cloud SDK"
       uses: google-github-actions/setup-gcloud@v1
 
-    - name: Install Python
-      uses: actions/setup-python@v4
-      with:
-        python-version: '3.x'
-    - name: Install Sphinx
-      uses: BSFishy/pip-action@v1
-      with:
-        packages: |
-          sphinx
-          sphinx-rtd-theme
-
-    - name: Build CPP docs
+    - name: Install doxygen-awesome
       run: |
-        cd ffi/diplomat/cpp/docs
-        make html
-        cd ../../../..
-    - name: Build JS docs
-      run: |
-        cd ffi/diplomat/js/docs
-        make html
+        cd ffi/capi/cpp/docs
+        git clone --depth 1 https://github.com/jothepro/doxygen-awesome-css.git
         cd ../../../..
 
-    - name: Upload docs to Google Cloud Storage
+    - name: Build docs
+      uses: mattnotmitt/doxygen-action@v1.9.5
+      with:
+          working-directory: 'ffi/capi/cpp/docs'
+          doxyfile-path: 'config.doxy'
+        
+    - name: Upload docs to Google Cloud Storage (non-main)
       run: |
-        gsutil -m cp -r ffi/diplomat/cpp/docs/build/html gs://${{ env.GCP_PR_BUCKET_ID }}/gha/${{ github.sha }}/ffi/cpp
-        gsutil -m cp -r ffi/diplomat/js/docs/build/html gs://${{ env.GCP_PR_BUCKET_ID }}/gha/${{ github.sha }}/ffi/js
+        gsutil -m cp -r ffi/capi/cpp/docs/html gs://${{ env.GCP_PR_BUCKET_ID }}/gha/${{ github.sha }}/cppdoc
+    
+    - name: Upload docs to Google Cloud Storage (main)
+      if: github.ref == 'refs/heads/main' && github.repository == 'unicode-org/icu4x'
+      run: |
+        gsutil -m cp -r ffi/capi/cpp/docs/html/* gs://${{ env.GCP_MAIN_BUCKET_ID }}/gha/cppdoc
+
     - name: "⭐⭐⭐ Links to Uploaded Artifacts ⭐⭐⭐"
       run: |
-        echo "::group::📖 CPP Docs Preview"
-        echo "http://${{ env.GCP_PR_BUCKET_ID }}.storage.googleapis.com/gha/${{ github.sha }}/ffi/cpp/index.html"
-        echo "::endgroup::"
+        echo "📖 C++ docs"
+        echo "http://${{ env.GCP_PR_BUCKET_ID }}.storage.googleapis.com/gha/${{ github.sha }}/cppdoc/index.html"
 
-        echo "::group::📖 JS Docs Preview"
-        echo "http://${{ env.GCP_PR_BUCKET_ID }}.storage.googleapis.com/gha/${{ github.sha }}/ffi/js/index.html"
-        echo "::endgroup::"
+  ts-docs:
+    name: "TypeScript docs"
+    needs: credentials
+    runs-on: "ubuntu-latest"
+    steps:
+    - uses: actions/checkout@v4
+
+    # GCP Boilerplate for jobs in main or forked repository (needs credentials)
+    - id: gcp-auth
+      name: "Authenticate to Google Cloud with JSON Credentials"
+      uses: google-github-actions/auth@v1
+      with:
+        credentials_json: '${{ secrets.ICU4X_GCP_SA_KEY }}'
+    - id: gcp-auth-main
+      if: github.ref == 'refs/heads/main' && github.repository == 'unicode-org/icu4x'
+      name: "Authenticate to Google Cloud with Workload Identity Provider"
+      uses: google-github-actions/auth@v1
+      with:
+        workload_identity_provider: "projects/66042061814/locations/global/workloadIdentityPools/icu4x-gha-pool1/providers/icu4x-gha-provider1"
+        service_account: "icu4x-main@dev-infra-273822.iam.gserviceaccount.com"
+    - name: "Set up Google Cloud SDK"
+      uses: google-github-actions/setup-gcloud@v1
+
+    - name: Install Node.js v16.18.0
+      uses: actions/setup-node@v3
+      with:
+        node-version: 16.18.0
+        cache: 'npm'
+        cache-dependency-path: '**/package-lock.json'
+        
+    - name: Build docs
+      run: |
+        cd ffi/capi/js/package
+        npm install typedoc
+        node_modules/typedoc/bin/typedoc lib/index.d.ts --out docs --readme ../../../../docs/tutorials/js.md --basePath lib
+        cd ../../../..
+        
+    - name: Upload docs to Google Cloud Storage (non-main)
+      run: |
+        gsutil -m cp -r ffi/capi/js/package/docs gs://${{ env.GCP_PR_BUCKET_ID }}/gha/${{ github.sha }}/tsdoc
+    
+    - name: Upload docs to Google Cloud Storage (main)
+      if: github.ref == 'refs/heads/main' && github.repository == 'unicode-org/icu4x'
+      run: |
+        gsutil -m cp -r ffi/capi/js/package/docs/* gs://${{ env.GCP_MAIN_BUCKET_ID }}/gha/tsdoc
+
+    - name: "⭐⭐⭐ Links to Uploaded Artifacts ⭐⭐⭐"
+      run: |
+        echo "📖 TypeScript docs"
+        echo "http://${{ env.GCP_PR_BUCKET_ID }}.storage.googleapis.com/gha/${{ github.sha }}/tsdoc/index.html"
+
+  dart-docs:
+    name: "Dart docs"
+    needs: credentials
+    runs-on: "ubuntu-latest"
+    steps:
+    - uses: actions/checkout@v4
+
+    # GCP Boilerplate for jobs in main or forked repository (needs credentials)
+    - id: gcp-auth
+      name: "Authenticate to Google Cloud with JSON Credentials"
+      uses: google-github-actions/auth@v1
+      with:
+        credentials_json: '${{ secrets.ICU4X_GCP_SA_KEY }}'
+    - id: gcp-auth-main
+      if: github.ref == 'refs/heads/main' && github.repository == 'unicode-org/icu4x'
+      name: "Authenticate to Google Cloud with Workload Identity Provider"
+      uses: google-github-actions/auth@v1
+      with:
+        workload_identity_provider: "projects/66042061814/locations/global/workloadIdentityPools/icu4x-gha-pool1/providers/icu4x-gha-provider1"
+        service_account: "icu4x-main@dev-infra-273822.iam.gserviceaccount.com"
+    - name: "Set up Google Cloud SDK"
+      uses: google-github-actions/setup-gcloud@v1
+
+    - name: Install Dart
+      uses: dart-lang/setup-dart@v1
+        
+    - name: Build docs
+      run: |
+        cd ffi/capi/dart/package
+        # https://github.com/dart-lang/dartdoc/issues/3590
+        dart pub get
+        dart doc
+        cd ../../../..
+
+    - name: Upload docs to Google Cloud Storage (non-main)
+      run: |
+        gsutil -m cp -r ffi/capi/dart/package/doc/api gs://${{ env.GCP_PR_BUCKET_ID }}/gha/${{ github.sha }}/dartdoc
+    
+    - name: Upload docs to Google Cloud Storage (main)
+      if: github.ref == 'refs/heads/main' && github.repository == 'unicode-org/icu4x'
+      run: |
+        gsutil -m cp -r ffi/capi/dart/package/doc/api/* gs://${{ env.GCP_MAIN_BUCKET_ID }}/gha/dartdoc
+
+    - name: "⭐⭐⭐ Links to Uploaded Artifacts ⭐⭐⭐"
+      run: |
+        echo "📖 Dart docs"
+        echo "http://${{ env.GCP_PR_BUCKET_ID }}.storage.googleapis.com/gha/${{ github.sha }}/dartdoc/index.html"
 
   wasm-demo:
     # This is too expensive to run on every push, so only run it on main.
@@ -151,7 +259,7 @@ jobs:
     name: WASM Demo
     runs-on: "ubuntu-latest"
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
 
     # GCP Boilerplate for jobs in main repository
     - id: gcp-auth
@@ -170,32 +278,27 @@ jobs:
         cache: 'npm'
         cache-dependency-path: '**/package-lock.json'
 
-    - name: Init node package
+    - name: Init packages
       run: |
-        cd ffi/diplomat/js/examples/node
-        make
-        cd ../wasm-demo
-        npm ci
+        npm -C ffi/capi/js/package ci
+        npm -C ffi/capi/js/examples/wasm-demo ci
 
     - name: Run Webpack
-      run: |
-        cd ffi/diplomat/js/examples/wasm-demo
-        npm run build
+      run: npm -C ffi/capi/js/examples/wasm-demo run build
 
     - name: Put index.html in dist for temp URL
       run: |
-        cp ffi/diplomat/js/examples/wasm-demo/index.html ffi/diplomat/js/examples/wasm-demo/dist/index.html
-        printf "const gcs=document.createElement('script');gcs.setAttribute('src','./bundle.js');document.body.appendChild(gcs);" > ffi/diplomat/js/examples/wasm-demo/dist/index.js
+        cp ffi/capi/js/examples/wasm-demo/index.html ffi/capi/js/examples/wasm-demo/dist/index.html
+        printf "const gcs=document.createElement('script');gcs.setAttribute('src','./bundle.js');document.body.appendChild(gcs);" > ffi/capi/js/examples/wasm-demo/dist/index.js
 
     - name: Upload wasm-demo bundle to Google Cloud Storage
       run: |
-        gsutil -m cp -r ffi/diplomat/js/examples/wasm-demo/dist/ gs://${{ env.GCP_MAIN_BUCKET_ID }}/gha/wasm-demo
+        gsutil -m cp -r ffi/capi/js/examples/wasm-demo/dist/* gs://${{ env.GCP_MAIN_BUCKET_ID }}/gha/wasm-demo
 
     - name: "⭐⭐⭐ Links to Uploaded Artifacts ⭐⭐⭐"
       run: |
-        echo "::group::Wasm Demo Preview"
+        echo "Wasm Demo Preview"
         echo "https://storage.googleapis.com/${{ env.GCP_MAIN_BUCKET_ID }}/gha/wasm-demo/index.html"
-        echo "::endgroup::"
 
   bench-perf:
     # This is too expensive to run on every push, so only run it on main.
@@ -206,11 +309,20 @@ jobs:
       fail-fast: false
       matrix:
         component:
-          - components/locid
-          - components/plurals
-          - components/datetime
           - components/collections
+          - components/datetime
+          - components/locid
+          - components/locid_transform
+          - components/plurals
+          - components/segmenter
+          - experimental/transliterate
+          - experimental/zerotrie
+          - provider/blob
           - utils/fixed_decimal
+          - utils/litemap
+          - utils/tinystr
+          - utils/writeable
+          - utils/zerovec
     concurrency:
       # Allow one run at a time to include the previous run's results
       group: bench-perf-${{ matrix.component }}
@@ -220,7 +332,7 @@ jobs:
     # Example "debugging" workflow: https://github.com/echeran/icu4x/actions/runs/296714990
 
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
 
     # GCP Boilerplate for jobs in main repository
     - id: gcp-auth
@@ -283,7 +395,7 @@ jobs:
       if: success() || failure()
       run: |
           git checkout empty
-          gsutil -m cp -r benchmarks/perf/${{ matrix.component }} gs://${{ env.GCP_MAIN_BUCKET_ID }}/gha/benchmarks/perf
+          gsutil -m cp -r benchmarks/perf/${{ matrix.component }}/* gs://${{ env.GCP_MAIN_BUCKET_ID }}/gha/benchmarks/perf/${{ matrix.component }}
 
   # Run examples with dhat-rs in order to collect memory heap size metrics. These
   # metrics will then be charted over time. See tools/benchmark/memory/README.md for
@@ -310,34 +422,13 @@ jobs:
       # examples folder.
       matrix:
         os: [ ubuntu-latest, macos-latest, windows-latest ]
-        # The list of examples to run, with the form {package}/{example}.
-        #
-        # n.b. Don't get tripped up by the yml syntax here. This is a list with a single string
-        # entry. It is using the block chomping indicator ">-", which means the multiline string
-        # will be joined together into one line using a single space between each line. This
-        # will place all of the examples on the same line so they can get passed to the
-        # icu_benchmark_memory cli.
-        examples:
-          - >-
-              icu_calendar/iso_date_manipulations
-              icu_calendar/iso_datetime_manipulations
-              icu_datetime/work_log
-              icu_list/and_list
-              icu_locid/syntatically_canonicalize_locales
-              icu_locid/filter_langids
-              icu_plurals/unread_emails
-              icu_plurals/elevator_floors
-              icu_collections/unicode_bmp_blocks_selector
-              fixed_decimal/permyriad
-              writeable/writeable_message
-              litemap/language_names_lite_map
     runs-on: ${{ matrix.os }}
     concurrency:
       # Allow one run at a time to include the previous run's results
       group: bench-memory-${{ matrix.os }}
 
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
 
     # GCP Boilerplate for jobs in main repository
     - id: gcp-auth
@@ -371,11 +462,11 @@ jobs:
 
     - name: Run the example with dhat-rs to collect memory information
       run: |
-        cargo run --package icu_benchmark_memory -- --os ${{ matrix.os }} ${{ matrix.examples }}
+        cargo run --package icu_benchmark_memory -- --os ${{ matrix.os }}
 
     - name:  Download previous benchmark data
       run: |
-        gsutil -m cp -rn gs://${{ env.GCP_MAIN_BUCKET_ID }}/gha/benchmarks/memory/${{ matrix.os }} benchmarks/memory
+        gsutil -m cp -rn gs://${{ env.GCP_MAIN_BUCKET_ID }}/gha/benchmarks/memory/${{ matrix.os }}/* benchmarks/memory/${{ matrix.os }}
 
     - name: Store benchmark result & create dashboard
       # The gregtatum fork of rhysd/github-action-benchmark contains support for ndjson.
@@ -399,7 +490,9 @@ jobs:
       if: success() || failure()
       run: |
           git checkout empty
-          gsutil -m cp -r benchmarks/memory/${{ matrix.os }} gs://${{ env.GCP_MAIN_BUCKET_ID }}/gha/benchmarks/memory
+          # Delete intermediate files
+          rm benchmarks/memory/${{ matrix.os }}/*-dhat-heap.json
+          gsutil -m cp -r benchmarks/memory/${{ matrix.os }}/* gs://${{ env.GCP_MAIN_BUCKET_ID }}/gha/benchmarks/memory/${{ matrix.os }}
 
   # Binary size benchmark: build and size wasm binaries; creates ndjson output data format
   bench-binsize:
@@ -412,7 +505,7 @@ jobs:
       group: bench-binsize
 
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
 
     # GCP Boilerplate for jobs in main repository
     - id: gcp-auth
@@ -480,8 +573,8 @@ jobs:
     - name:  Download previous benchmark data
       run: |
         mkdir -p benchmarks/binsize
-        gsutil -m cp -rn gs://${{ env.GCP_MAIN_BUCKET_ID }}/gha/benchmarks/binsize benchmarks/binsize
-
+        gsutil -m cp -rn gs://${{ env.GCP_MAIN_BUCKET_ID }}/gha/benchmarks/binsize/* benchmarks/binsize
+ 
     - name: Store benchmark result & create dashboard (wasm)
       # Use gregtatum special feature to process ndjson-formatted benchmark data
       uses: gregtatum/github-action-benchmark@d3f06f738e9612988d575db23fae5ca0008d3d12
@@ -518,7 +611,7 @@ jobs:
       if: success() || failure()
       run: |
           git checkout empty
-          gsutil -m cp -r benchmarks/binsize gs://${{ env.GCP_MAIN_BUCKET_ID }}/gha/benchmarks
+          gsutil -m cp -r benchmarks/binsize/* gs://${{ env.GCP_MAIN_BUCKET_ID }}/gha/benchmarks/binsize
 
   # Data size benchmark: track size of provider/datagen/tests/data/testdata.postcard (total data size).
   bench-datasize:
@@ -530,7 +623,7 @@ jobs:
       group: bench-datasize
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
 
     # GCP Boilerplate for jobs in main repository
     - id: gcp-auth
@@ -552,7 +645,7 @@ jobs:
 
     - name: Generate testdata
       run: |
-        cargo run --bin make-testdata-legacy
+        cargo run --bin make-testdata-legacy --manifest-path tools/testdata-scripts/Cargo.toml
 
     - name: Measure size of selected data package provider/testdata/data/testdata.postcard
       run: |
@@ -561,7 +654,7 @@ jobs:
     - name:  Download previous benchmark data
       run: |
         mkdir -p benchmarks
-        gsutil -m cp -rn gs://${{ env.GCP_MAIN_BUCKET_ID }}/gha/benchmarks/datasize benchmarks
+        gsutil -m cp -rn gs://${{ env.GCP_MAIN_BUCKET_ID }}/gha/benchmarks/datasize/* benchmarks/datasize
 
     - name: Store benchmark result & create dashboard
       # Use gregtatum special feature to process ndjson-formatted benchmark data
@@ -572,7 +665,7 @@ jobs:
         benchmark-data-dir-path: ./benchmarks/datasize
         # Tentative setting, optimized value to be determined
         alert-threshold: '100%'
-        fail-on-alert: true
+        fail-on-alert: false
         # comment-on-alert: true
         github-token: ${{ secrets.GITHUB_TOKEN }}
         gh-pages-branch: empty
@@ -582,11 +675,11 @@ jobs:
       if: success() || failure()
       run: |
           git checkout empty
-          gsutil -m cp -r benchmarks/datasize gs://${{ env.GCP_MAIN_BUCKET_ID }}/gha/benchmarks
+          gsutil -m cp -r benchmarks/datasize/* gs://${{ env.GCP_MAIN_BUCKET_ID }}/gha/benchmarks/datasize
 
   gh-pages:
     name: "Deploy to GitHub Pages"
-    needs: [docs, ffi-docs, wasm-demo, bench-perf, bench-memory, bench-datasize] # bench-binsize
+    needs: [rust-docs, cpp-docs, ts-docs, dart-docs, wasm-demo, bench-perf, bench-memory, bench-datasize] # bench-binsize
     # Run this even when one of the above jobs failed. This is so we can at least push the other artifacts.
     if: (success() || failure()) && (github.ref == 'refs/heads/main' && github.repository == 'unicode-org/icu4x')
     runs-on: 'ubuntu-latest'
@@ -594,7 +687,7 @@ jobs:
       group: "pages"
       cancel-in-progress: true
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       # GCP Boilerplate for jobs in main repository
       - id: gcp-auth
         name: "Authenticate to Google Cloud with Workload Identity Provider"
@@ -606,17 +699,12 @@ jobs:
         uses: google-github-actions/setup-gcloud@v1
       - name: Download artifacts
         run: |
-          gsutil -m cp -rn gs://${{ env.GCP_PR_BUCKET_ID }}/gha/${{ github.sha }}/docs tools/website-skeleton || true
-          mkdir -p tools/website-skeleton/docs/ffi
-          gsutil -m cp -r gs://${{ env.GCP_PR_BUCKET_ID }}/gha/${{ github.sha }}/ffi/cpp tools/website-skeleton/docs/ffi || true
-          gsutil -m cp -r gs://${{ env.GCP_PR_BUCKET_ID }}/gha/${{ github.sha }}/ffi/js tools/website-skeleton/docs/ffi || true
-
-          gsutil -m cp -r gs://${{ env.GCP_MAIN_BUCKET_ID }}/gha/benchmarks tools/website-skeleton/ || true
-          gsutil -m cp -r gs://${{ env.GCP_MAIN_BUCKET_ID }}/gha/wasm-demo tools/website-skeleton/ || true
+          mkdir website
+          gsutil -m cp -rn gs://${{ env.GCP_MAIN_BUCKET_ID }}/gha/* website || true
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v1
         with:
-          path: 'tools/website-skeleton'
+          path: 'website'
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v1

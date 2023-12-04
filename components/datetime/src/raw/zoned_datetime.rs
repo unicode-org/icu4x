@@ -54,7 +54,7 @@ impl ZonedDateTimeFormatter {
         };
 
         let week_data = if required.week_data {
-            Some(icu_calendar::provider::Baked.load(req)?.take_payload()?)
+            Some(icu_calendar::week::WeekCalculator::try_new(locale)?)
         } else {
             None
         };
@@ -81,8 +81,7 @@ impl ZonedDateTimeFormatter {
         fixed_decimal_format_options.grouping_strategy = GroupingStrategy::Never;
 
         let fixed_decimal_format =
-            FixedDecimalFormatter::try_new(locale, fixed_decimal_format_options)
-                .map_err(DateTimeError::FixedDecimalFormatter)?;
+            FixedDecimalFormatter::try_new(locale, fixed_decimal_format_options)?;
 
         let datetime_format = raw::DateTimeFormatter::new(
             patterns,
@@ -140,7 +139,9 @@ impl ZonedDateTimeFormatter {
         };
 
         let week_data = if required.week_data {
-            Some(provider.load(req)?.take_payload()?)
+            Some(icu_calendar::week::WeekCalculator::try_new_unstable(
+                provider, locale,
+            )?)
         } else {
             None
         };
@@ -166,9 +167,11 @@ impl ZonedDateTimeFormatter {
         let mut fixed_decimal_format_options = FixedDecimalFormatterOptions::default();
         fixed_decimal_format_options.grouping_strategy = GroupingStrategy::Never;
 
-        let fixed_decimal_format =
-            FixedDecimalFormatter::try_new_unstable(provider, locale, fixed_decimal_format_options)
-                .map_err(DateTimeError::FixedDecimalFormatter)?;
+        let fixed_decimal_format = FixedDecimalFormatter::try_new_unstable(
+            provider,
+            locale,
+            fixed_decimal_format_options,
+        )?;
 
         let datetime_format = raw::DateTimeFormatter::new(
             patterns,

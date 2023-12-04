@@ -87,7 +87,7 @@ pub enum BestSkeleton<T> {
     NoMatch,
 }
 
-/// This function swaps out the the time zone name field for the appropriate one. Skeleton matching
+/// This function swaps out the time zone name field for the appropriate one. Skeleton matching
 /// only needs to find a single "v" field, and then the time zone name can expand from there.
 fn naively_apply_time_zone_name(
     pattern: &mut runtime::Pattern,

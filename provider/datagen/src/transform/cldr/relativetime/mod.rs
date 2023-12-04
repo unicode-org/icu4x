@@ -70,22 +70,14 @@ macro_rules! make_data_provider {
     ($($marker: ident),+ $(,)?) => {
         $(
             impl DataProvider<$marker> for crate::DatagenProvider {
-                fn load(
-                    &self,
-                    req: DataRequest,
-                ) -> Result<DataResponse<$marker>, DataError> {
+                fn load(&self, req: DataRequest) -> Result<DataResponse<$marker>, DataError> {
                     self.check_req::<$marker>(req)?;
                     let langid = req.locale.get_langid();
                     let resource: &cldr_serde::date_fields::Resource = self
-                        .source
                         .cldr()?
                         .dates("gregorian")
                         .read_and_parse(&langid, "dateFields.json")?;
-                    let fields = &resource
-                        .main
-                        .value
-                        .dates
-                        .fields;
+                    let fields = &resource.main.value.dates.fields;
 
                     let field = datakey_filters()
                         .get(&$marker::KEY)
@@ -105,7 +97,6 @@ macro_rules! make_data_provider {
             impl IterableDataProvider<$marker> for crate::DatagenProvider {
                 fn supported_locales(&self) -> Result<Vec<DataLocale>, DataError> {
                     Ok(self
-                        .source
                         .cldr()?
                         .dates("gregorian")
                         .list_langs()?
@@ -113,7 +104,6 @@ macro_rules! make_data_provider {
                         .collect())
                 }
             }
-
         )+
     };
 }
@@ -197,7 +187,7 @@ mod tests {
 
     #[test]
     fn test_basic() {
-        let provider = crate::DatagenProvider::for_test();
+        let provider = crate::DatagenProvider::new_testing();
         let data: DataPayload<ShortQuarterRelativeTimeFormatDataV1Marker> = provider
             .load(DataRequest {
                 locale: &locale!("en").into(),
@@ -217,7 +207,7 @@ mod tests {
 
     #[test]
     fn test_singular_sub_pattern() {
-        let provider = crate::DatagenProvider::for_test();
+        let provider = crate::DatagenProvider::new_testing();
         let data: DataPayload<LongYearRelativeTimeFormatDataV1Marker> = provider
             .load(DataRequest {
                 locale: &locale!("ar").into(),

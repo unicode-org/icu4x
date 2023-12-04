@@ -85,133 +85,6 @@ impl<C: CldrCalendar> TypedZonedDateTimeFormatter<C> {
     ///
     /// [📚 Help choosing a constructor](icu_provider::constructors)
     ///
-    /// <div class="stab unstable">
-    /// 🚧 This code is experimental; it may change at any time, in breaking or non-breaking ways,
-    /// including in SemVer minor releases. It can be enabled with the "experimental" Cargo feature
-    /// of the icu meta-crate. Use with caution.
-    /// <a href="https://github.com/unicode-org/icu4x/issues/1317">#1317</a>
-    /// </div>
-    ///
-    /// # Examples
-    ///
-    /// ```
-    /// use icu::calendar::{Gregorian, DateTime};
-    /// use icu::datetime::{options::components, TypedZonedDateTimeFormatter};
-    /// use icu::locid::locale;
-    /// use icu::datetime::time_zone::TimeZoneFormatterOptions;
-    /// use icu::timezone::CustomTimeZone;
-    /// use icu_provider::AsDeserializingBufferProvider;
-    /// use writeable::assert_writeable_eq;
-    ///
-    /// let mut options = components::Bag::default();
-    /// options.year = Some(components::Year::Numeric);
-    /// options.month = Some(components::Month::Long);
-    /// options.hour = Some(components::Numeric::Numeric);
-    /// options.minute = Some(components::Numeric::Numeric);
-    /// options.time_zone_name = Some(components::TimeZoneName::GmtOffset);
-    ///
-    /// let zdtf = TypedZonedDateTimeFormatter::<Gregorian>::try_new_experimental(
-    ///     &locale!("en").into(),
-    ///     options.into(),
-    ///     TimeZoneFormatterOptions::default(),
-    /// ).unwrap();
-    ///
-    /// let datetime = DateTime::try_new_gregorian_datetime(2022, 8, 31, 1, 2, 3).unwrap();
-    ///
-    /// assert_writeable_eq!(
-    ///     zdtf.format(&datetime, &CustomTimeZone::utc()),
-    ///     "August 2022, 01:02 GMT",
-    /// );
-    /// ```
-    ///
-    /// [data provider]: icu_provider
-    #[cfg(feature = "experimental")]
-    #[cfg(feature = "compiled_data")]
-    #[inline]
-    pub fn try_new_experimental(
-        locale: &DataLocale,
-        date_time_format_options: DateTimeFormatterOptions,
-        time_zone_format_options: TimeZoneFormatterOptions,
-    ) -> Result<Self, DateTimeError>
-    where
-        crate::provider::Baked:
-            DataProvider<C::DateLengthsV1Marker> + DataProvider<C::DateSymbolsV1Marker>,
-    {
-        let patterns = PatternSelector::for_options_experimental(
-            &crate::provider::Baked,
-            calendar::load_lengths_for_cldr_calendar::<C, _>(&crate::provider::Baked, locale)?,
-            locale,
-            &C::DEFAULT_BCP_47_IDENTIFIER,
-            &date_time_format_options,
-        )?;
-        Ok(Self(
-            raw::ZonedDateTimeFormatter::try_new(
-                patterns,
-                || {
-                    calendar::load_symbols_for_cldr_calendar::<C, _>(
-                        &crate::provider::Baked,
-                        locale,
-                    )
-                },
-                locale,
-                time_zone_format_options,
-            )?,
-            PhantomData,
-        ))
-    }
-
-    #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::try_new_experimental)]
-    #[cfg(feature = "experimental")]
-    #[inline]
-    pub fn try_new_experimental_unstable<P>(
-        provider: &P,
-        locale: &DataLocale,
-        date_time_format_options: DateTimeFormatterOptions,
-        time_zone_format_options: TimeZoneFormatterOptions,
-    ) -> Result<Self, DateTimeError>
-    where
-        P: DataProvider<<C as CldrCalendar>::DateSymbolsV1Marker>
-            + DataProvider<<C as CldrCalendar>::DateLengthsV1Marker>
-            + DataProvider<TimeSymbolsV1Marker>
-            + DataProvider<TimeLengthsV1Marker>
-            + DataProvider<crate::provider::calendar::DateSkeletonPatternsV1Marker>
-            + DataProvider<WeekDataV1Marker>
-            + DataProvider<provider::time_zones::TimeZoneFormatsV1Marker>
-            + DataProvider<provider::time_zones::ExemplarCitiesV1Marker>
-            + DataProvider<provider::time_zones::MetazoneGenericNamesLongV1Marker>
-            + DataProvider<provider::time_zones::MetazoneGenericNamesShortV1Marker>
-            + DataProvider<provider::time_zones::MetazoneSpecificNamesLongV1Marker>
-            + DataProvider<provider::time_zones::MetazoneSpecificNamesShortV1Marker>
-            + DataProvider<OrdinalV1Marker>
-            + DataProvider<DecimalSymbolsV1Marker>
-            + ?Sized,
-    {
-        let patterns = PatternSelector::for_options_experimental(
-            provider,
-            calendar::load_lengths_for_cldr_calendar::<C, _>(provider, locale)?,
-            locale,
-            &C::DEFAULT_BCP_47_IDENTIFIER,
-            &date_time_format_options,
-        )?;
-        Ok(Self(
-            raw::ZonedDateTimeFormatter::try_new_unstable(
-                provider,
-                patterns,
-                || calendar::load_symbols_for_cldr_calendar::<C, _>(provider, locale),
-                locale,
-                time_zone_format_options,
-            )?,
-            PhantomData,
-        ))
-    }
-
-    /// Constructor that takes a selected locale and a list of [`DateTimeFormatterOptions`].
-    /// It collects all data necessary to format zoned datetime values into the given locale.
-    ///
-    /// ✨ *Enabled with the `compiled_data` Cargo feature.*
-    ///
-    /// [📚 Help choosing a constructor](icu_provider::constructors)
-    ///
     /// # Examples
     ///
     /// ```
@@ -313,6 +186,135 @@ impl<C: CldrCalendar> TypedZonedDateTimeFormatter<C> {
             provider,
             calendar::load_lengths_for_cldr_calendar::<C, _>(provider, locale)?,
             locale,
+            &date_time_format_options,
+        )?;
+        Ok(Self(
+            raw::ZonedDateTimeFormatter::try_new_unstable(
+                provider,
+                patterns,
+                || calendar::load_symbols_for_cldr_calendar::<C, _>(provider, locale),
+                locale,
+                time_zone_format_options,
+            )?,
+            PhantomData,
+        ))
+    }
+
+    /// Constructor that takes a selected locale and a list of [`DateTimeFormatterOptions`].
+    /// It collects all data necessary to format zoned datetime values into the given locale.
+    ///
+    /// ✨ *Enabled with the `compiled_data` and `experimental` Cargo features.*
+    ///
+    /// [📚 Help choosing a constructor](icu_provider::constructors)
+    ///
+    /// <div class="stab unstable">
+    /// 🚧 This code is experimental; it may change at any time, in breaking or non-breaking ways,
+    /// including in SemVer minor releases. It can be enabled with the "experimental" Cargo feature
+    /// of the icu meta-crate. Use with caution.
+    /// <a href="https://github.com/unicode-org/icu4x/issues/1317">#1317</a>
+    /// </div>
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use icu::calendar::{DateTime, Gregorian};
+    /// use icu::datetime::time_zone::TimeZoneFormatterOptions;
+    /// use icu::datetime::{options::components, TypedZonedDateTimeFormatter};
+    /// use icu::locid::locale;
+    /// use icu::timezone::CustomTimeZone;
+    /// use icu_provider::AsDeserializingBufferProvider;
+    /// use writeable::assert_writeable_eq;
+    ///
+    /// let mut options = components::Bag::default();
+    /// options.year = Some(components::Year::Numeric);
+    /// options.month = Some(components::Month::Long);
+    /// options.hour = Some(components::Numeric::Numeric);
+    /// options.minute = Some(components::Numeric::Numeric);
+    /// options.time_zone_name = Some(components::TimeZoneName::GmtOffset);
+    ///
+    /// let zdtf = TypedZonedDateTimeFormatter::<Gregorian>::try_new_experimental(
+    ///     &locale!("en").into(),
+    ///     options.into(),
+    ///     TimeZoneFormatterOptions::default(),
+    /// )
+    /// .unwrap();
+    ///
+    /// let datetime =
+    ///     DateTime::try_new_gregorian_datetime(2022, 8, 31, 1, 2, 3).unwrap();
+    ///
+    /// assert_writeable_eq!(
+    ///     zdtf.format(&datetime, &CustomTimeZone::utc()),
+    ///     "August 2022, 01:02 GMT",
+    /// );
+    /// ```
+    ///
+    /// [data provider]: icu_provider
+    #[cfg(feature = "experimental")]
+    #[cfg(feature = "compiled_data")]
+    #[inline]
+    pub fn try_new_experimental(
+        locale: &DataLocale,
+        date_time_format_options: DateTimeFormatterOptions,
+        time_zone_format_options: TimeZoneFormatterOptions,
+    ) -> Result<Self, DateTimeError>
+    where
+        crate::provider::Baked:
+            DataProvider<C::DateLengthsV1Marker> + DataProvider<C::DateSymbolsV1Marker>,
+    {
+        let patterns = PatternSelector::for_options_experimental(
+            &crate::provider::Baked,
+            calendar::load_lengths_for_cldr_calendar::<C, _>(&crate::provider::Baked, locale)?,
+            locale,
+            &C::DEFAULT_BCP_47_IDENTIFIER,
+            &date_time_format_options,
+        )?;
+        Ok(Self(
+            raw::ZonedDateTimeFormatter::try_new(
+                patterns,
+                || {
+                    calendar::load_symbols_for_cldr_calendar::<C, _>(
+                        &crate::provider::Baked,
+                        locale,
+                    )
+                },
+                locale,
+                time_zone_format_options,
+            )?,
+            PhantomData,
+        ))
+    }
+
+    #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::try_new_experimental)]
+    #[cfg(feature = "experimental")]
+    #[inline]
+    pub fn try_new_experimental_unstable<P>(
+        provider: &P,
+        locale: &DataLocale,
+        date_time_format_options: DateTimeFormatterOptions,
+        time_zone_format_options: TimeZoneFormatterOptions,
+    ) -> Result<Self, DateTimeError>
+    where
+        P: DataProvider<<C as CldrCalendar>::DateSymbolsV1Marker>
+            + DataProvider<<C as CldrCalendar>::DateLengthsV1Marker>
+            + DataProvider<TimeSymbolsV1Marker>
+            + DataProvider<TimeLengthsV1Marker>
+            + DataProvider<crate::provider::calendar::DateSkeletonPatternsV1Marker>
+            + DataProvider<WeekDataV1Marker>
+            + DataProvider<provider::time_zones::TimeZoneFormatsV1Marker>
+            + DataProvider<provider::time_zones::ExemplarCitiesV1Marker>
+            + DataProvider<provider::time_zones::MetazoneGenericNamesLongV1Marker>
+            + DataProvider<provider::time_zones::MetazoneGenericNamesShortV1Marker>
+            + DataProvider<provider::time_zones::MetazoneSpecificNamesLongV1Marker>
+            + DataProvider<provider::time_zones::MetazoneSpecificNamesShortV1Marker>
+            + DataProvider<OrdinalV1Marker>
+            + DataProvider<DecimalSymbolsV1Marker>
+            + ?Sized,
+    {
+        let patterns = PatternSelector::for_options_experimental(
+            provider,
+            calendar::load_lengths_for_cldr_calendar::<C, _>(provider, locale)?,
+            locale,
+            &C::DEFAULT_BCP_47_IDENTIFIER,
             &date_time_format_options,
         )?;
         Ok(Self(

@@ -2,6 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+use crate::_internal::log;
 use crate::buf::BufferFormat;
 use crate::prelude::*;
 use core::fmt;
@@ -46,6 +47,10 @@ pub enum DataErrorKind {
     /// A data provider object was given to an operation in an invalid state.
     #[displaydoc("Invalid state")]
     InvalidState,
+
+    /// The syntax of the [`DataKey`] or [`DataLocale`] was invalid.
+    #[displaydoc("Parse error for data key or data locale")]
+    KeyLocaleSyntax,
 
     /// An unspecified error occurred, such as a Serde error.
     ///
@@ -198,7 +203,6 @@ impl DataError {
     /// Sets the string context of a DataError to the given type name, returning a modified error.
     #[inline]
     pub fn with_type_context<T>(self) -> Self {
-        #[cfg(feature = "logging")]
         if !self.silent {
             log::warn!("{self}: Type context: {}", core::any::type_name::<T>());
         }
@@ -209,13 +213,11 @@ impl DataError {
     ///
     /// If the "logging" Cargo feature is enabled, this logs the whole request. Either way,
     /// it returns an error with the resource key portion of the request as context.
-    #[cfg_attr(not(feature = "logging"), allow(unused_variables))]
     pub fn with_req(mut self, key: DataKey, req: DataRequest) -> Self {
         if req.metadata.silent {
             self.silent = true;
         }
         // Don't write out a log for MissingDataKey since there is no context to add
-        #[cfg(feature = "logging")]
         if !self.silent && self.kind != DataErrorKind::MissingDataKey {
             log::warn!("{} (key: {}, request: {})", self, key, req);
         }
@@ -227,9 +229,7 @@ impl DataError {
     /// This does not modify the error, but if the "logging" Cargo feature is enabled,
     /// it will print out the context.
     #[cfg(feature = "std")]
-    #[cfg_attr(not(feature = "logging"), allow(unused_variables))]
     pub fn with_path_context<P: AsRef<std::path::Path> + ?Sized>(self, path: &P) -> Self {
-        #[cfg(feature = "logging")]
         if !self.silent {
             log::warn!("{} (path: {:?})", self, path.as_ref());
         }
@@ -243,7 +243,6 @@ impl DataError {
     #[cfg_attr(not(feature = "logging"), allow(unused_variables))]
     #[inline]
     pub fn with_display_context<D: fmt::Display + ?Sized>(self, context: &D) -> Self {
-        #[cfg(feature = "logging")]
         if !self.silent {
             log::warn!("{}: {}", self, context);
         }
@@ -257,7 +256,6 @@ impl DataError {
     #[cfg_attr(not(feature = "logging"), allow(unused_variables))]
     #[inline]
     pub fn with_debug_context<D: fmt::Debug + ?Sized>(self, context: &D) -> Self {
-        #[cfg(feature = "logging")]
         if !self.silent {
             log::warn!("{}: {:?}", self, context);
         }
@@ -281,7 +279,6 @@ impl std::error::Error for DataError {}
 #[cfg(feature = "std")]
 impl From<std::io::Error> for DataError {
     fn from(e: std::io::Error) -> Self {
-        #[cfg(feature = "logging")]
         log::warn!("I/O error: {}", e);
         DataErrorKind::Io(e.kind()).into_error()
     }

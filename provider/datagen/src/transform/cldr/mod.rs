@@ -7,7 +7,7 @@
 pub mod calendar;
 pub mod characters;
 pub mod cldr_serde;
-#[cfg(feature = "icu_singlenumberformatter")]
+#[cfg(test)] // keep as test until bakeddata is needed
 pub mod currency;
 pub mod datetime;
 pub mod decimal;
@@ -21,3 +21,7 @@ pub mod plurals;
 pub mod relativetime;
 pub mod source;
 pub mod time_zones;
+#[cfg(feature = "icu_transliterate")]
+pub mod transforms;
+#[cfg(test)] // keep as test until bakeddata is needed
+pub mod units;

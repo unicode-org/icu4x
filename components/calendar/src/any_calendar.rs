@@ -35,7 +35,7 @@ use core::fmt;
 /// This can be constructed by calling `.into()` on a concrete calendar type if the calendar type is known at
 /// compile time. When the type is known at runtime, the [`AnyCalendar::new()`] and sibling methods may be used.
 ///
-/// [`Date`](crate::Date) can also be converted to [`AnyCalendar`]-compatible ones
+/// [`Date`] can also be converted to [`AnyCalendar`]-compatible ones
 /// via [`Date::to_any()`](crate::Date::to_any()).
 ///
 /// There are many ways of constructing an AnyCalendar'd date:
@@ -515,6 +515,11 @@ impl Calendar for AnyCalendar {
         match_cal_and_date!(match (self, date): (c, d) => c.year(d))
     }
 
+    /// The calendar-specific check if `date` is in a leap year
+    fn is_in_leap_year(&self, date: &Self::DateInner) -> bool {
+        match_cal_and_date!(match (self, date): (c, d) => c.is_in_leap_year(d))
+    }
+
     /// The calendar-specific month represented by `date`
     fn month(&self, date: &Self::DateInner) -> types::FormattableMonth {
         match_cal_and_date!(match (self, date): (c, d) => c.month(d))
@@ -546,7 +551,7 @@ impl Calendar for AnyCalendar {
             Self::IslamicUmmAlQura(_) => "AnyCalendar (Islamic, Umm al-Qura)",
             Self::Iso(_) => "AnyCalendar (Iso)",
             Self::Japanese(_) => "AnyCalendar (Japanese)",
-            Self::JapaneseExtended(_) => "AnyCalendar (Japanese, histocial era data)",
+            Self::JapaneseExtended(_) => "AnyCalendar (Japanese, historical era data)",
             Self::Persian(_) => "AnyCalendar (Persian)",
             Self::Roc(_) => "AnyCalendar (Roc)",
         }
@@ -884,14 +889,14 @@ pub enum AnyCalendarKind {
 impl AnyCalendarKind {
     /// Construct from a BCP-47 string
     ///
-    /// Returns None if the calendar is unknown. If you prefer an error, use
+    /// Returns `None` if the calendar is unknown. If you prefer an error, use
     /// [`CalendarError::unknown_any_calendar_kind`].
     pub fn get_for_bcp47_string(x: &str) -> Option<Self> {
         Self::get_for_bcp47_bytes(x.as_bytes())
     }
     /// Construct from a BCP-47 byte string
     ///
-    /// Returns None if the calendar is unknown. If you prefer an error, use
+    /// Returns `None` if the calendar is unknown. If you prefer an error, use
     /// [`CalendarError::unknown_any_calendar_kind`].
     pub fn get_for_bcp47_bytes(x: &[u8]) -> Option<Self> {
         Some(match x {
@@ -904,9 +909,9 @@ impl AnyCalendarKind {
             b"gregory" => AnyCalendarKind::Gregorian,
             b"hebrew" => AnyCalendarKind::Hebrew,
             b"indian" => AnyCalendarKind::Indian,
-            b"islamic_civil" => AnyCalendarKind::IslamicCivil,
-            b"islamic_tbla" => AnyCalendarKind::IslamicTabular,
-            b"islamic_umalqura" => AnyCalendarKind::IslamicUmmAlQura,
+            b"islamic-civil" | b"islamicc" => AnyCalendarKind::IslamicCivil,
+            b"islamic-tbla" => AnyCalendarKind::IslamicTabular,
+            b"islamic-umalqura" => AnyCalendarKind::IslamicUmmAlQura,
             b"islamic" => AnyCalendarKind::IslamicObservational,
             b"iso" => AnyCalendarKind::Iso,
             b"japanese" => AnyCalendarKind::Japanese,
@@ -922,50 +927,49 @@ impl AnyCalendarKind {
     }
     /// Construct from a BCP-47 [`Value`]
     ///
-    /// Returns None if the calendar is unknown. If you prefer an error, use
+    /// Returns `None` if the calendar is unknown. If you prefer an error, use
     /// [`CalendarError::unknown_any_calendar_kind`].
     pub fn get_for_bcp47_value(x: &Value) -> Option<Self> {
-        Some(if *x == value!("buddhist") {
-            AnyCalendarKind::Buddhist
-        } else if *x == value!("chinese") {
-            AnyCalendarKind::Chinese
-        } else if *x == value!("coptic") {
-            AnyCalendarKind::Coptic
-        } else if *x == value!("dangi") {
-            AnyCalendarKind::Dangi
-        } else if *x == value!("ethioaa") {
-            AnyCalendarKind::EthiopianAmeteAlem
-        } else if *x == value!("ethiopic") {
-            AnyCalendarKind::Ethiopian
-        } else if *x == value!("gregory") {
-            AnyCalendarKind::Gregorian
-        } else if *x == value!("hebrew") {
-            AnyCalendarKind::Hebrew
-        } else if *x == value!("indian") {
-            AnyCalendarKind::Indian
-        } else if *x == value!("islamic") {
-            AnyCalendarKind::IslamicObservational
-        } else if *x == value!("islamicc") {
-            AnyCalendarKind::IslamicCivil
-        } else if *x == value!("iso") {
-            AnyCalendarKind::Iso
-        } else if *x == value!("japanese") {
-            AnyCalendarKind::Japanese
-        } else if *x == value!("japanext") {
-            AnyCalendarKind::JapaneseExtended
-        } else if *x == value!("persian") {
-            AnyCalendarKind::Persian
-        } else if *x == value!("roc") {
-            AnyCalendarKind::Roc
-        } else if *x == value!("tbla") {
-            AnyCalendarKind::IslamicTabular
-        } else if *x == value!("umalqura") {
-            AnyCalendarKind::IslamicUmmAlQura
-        } else {
-            // Log a warning when a calendar value is passed in but doesn't match any calendars
-            DataError::custom("bcp47_value did not match any calendars").with_display_context(x);
-            return None;
-        })
+        let slice = x.as_tinystr_slice();
+
+        if slice.len() <= 2 {
+            if let Some(first) = slice.get(0) {
+                if let Some(second) = slice.get(1) {
+                    if first == "islamic" {
+                        match second.as_str() {
+                            "civil" => return Some(AnyCalendarKind::IslamicCivil),
+                            "tbla" => return Some(AnyCalendarKind::IslamicTabular),
+                            "umalqura" => return Some(AnyCalendarKind::IslamicUmmAlQura),
+                            _ => (),
+                        }
+                    }
+                } else {
+                    match first.as_str() {
+                        "buddhist" => return Some(AnyCalendarKind::Buddhist),
+                        "chinese" => return Some(AnyCalendarKind::Chinese),
+                        "coptic" => return Some(AnyCalendarKind::Coptic),
+                        "dangi" => return Some(AnyCalendarKind::Dangi),
+                        "ethioaa" => return Some(AnyCalendarKind::EthiopianAmeteAlem),
+                        "ethiopic" => return Some(AnyCalendarKind::Ethiopian),
+                        "gregory" => return Some(AnyCalendarKind::Gregorian),
+                        "hebrew" => return Some(AnyCalendarKind::Hebrew),
+                        "indian" => return Some(AnyCalendarKind::Indian),
+                        "islamic" => return Some(AnyCalendarKind::IslamicObservational),
+                        "islamicc" => return Some(AnyCalendarKind::IslamicCivil),
+                        "iso" => return Some(AnyCalendarKind::Iso),
+                        "japanese" => return Some(AnyCalendarKind::Japanese),
+                        "japanext" => return Some(AnyCalendarKind::JapaneseExtended),
+                        "persian" => return Some(AnyCalendarKind::Persian),
+                        "roc" => return Some(AnyCalendarKind::Roc),
+                        _ => (),
+                    }
+                }
+            }
+        }
+
+        // Log a warning when a calendar value is passed in but doesn't match any calendars
+        DataError::custom("bcp47_value did not match any calendars").with_display_context(x);
+        None
     }
 
     /// Convert to a BCP-47 string
@@ -980,10 +984,10 @@ impl AnyCalendarKind {
             AnyCalendarKind::Gregorian => "gregory",
             AnyCalendarKind::Hebrew => "hebrew",
             AnyCalendarKind::Indian => "indian",
-            AnyCalendarKind::IslamicCivil => "islamicc",
+            AnyCalendarKind::IslamicCivil => "islamic-civil",
             AnyCalendarKind::IslamicObservational => "islamic",
-            AnyCalendarKind::IslamicTabular => "tbla",
-            AnyCalendarKind::IslamicUmmAlQura => "umalqura",
+            AnyCalendarKind::IslamicTabular => "islamic-tbla",
+            AnyCalendarKind::IslamicUmmAlQura => "islamic-umalqura",
             AnyCalendarKind::Iso => "iso",
             AnyCalendarKind::Japanese => "japanese",
             AnyCalendarKind::JapaneseExtended => "japanext",
@@ -993,6 +997,7 @@ impl AnyCalendarKind {
     }
 
     /// Convert to a BCP-47 `Value`
+    #[allow(clippy::unwrap_used)] // these are known-good BCP47 unicode extension values
     pub fn as_bcp47_value(self) -> Value {
         match self {
             AnyCalendarKind::Buddhist => value!("buddhist"),
@@ -1004,10 +1009,12 @@ impl AnyCalendarKind {
             AnyCalendarKind::Gregorian => value!("gregory"),
             AnyCalendarKind::Hebrew => value!("hebrew"),
             AnyCalendarKind::Indian => value!("indian"),
-            AnyCalendarKind::IslamicCivil => value!("islamicc"),
+            AnyCalendarKind::IslamicCivil => Value::try_from_bytes(b"islamic-civil").unwrap(),
             AnyCalendarKind::IslamicObservational => value!("islamic"),
-            AnyCalendarKind::IslamicTabular => value!("tbla"),
-            AnyCalendarKind::IslamicUmmAlQura => value!("umalqura"),
+            AnyCalendarKind::IslamicTabular => Value::try_from_bytes(b"islamic-tbla").unwrap(),
+            AnyCalendarKind::IslamicUmmAlQura => {
+                Value::try_from_bytes(b"islamic-umalqura").unwrap()
+            }
             AnyCalendarKind::Iso => value!("iso"),
             AnyCalendarKind::Japanese => value!("japanese"),
             AnyCalendarKind::JapaneseExtended => value!("japanext"),
@@ -1041,7 +1048,7 @@ impl AnyCalendarKind {
 
     /// Extract the calendar component from a [`Locale`]
     ///
-    /// Returns None if the calendar is not specified or unknown. If you prefer an error, use
+    /// Returns `None` if the calendar is not specified or unknown. If you prefer an error, use
     /// [`CalendarError::unknown_any_calendar_kind`].
     pub fn get_for_locale(l: &Locale) -> Option<Self> {
         l.extensions
@@ -1053,7 +1060,7 @@ impl AnyCalendarKind {
 
     /// Extract the calendar component from a [`DataLocale`]
     ///
-    /// Returns None if the calendar is not specified or unknown. If you prefer an error, use
+    /// Returns `None` if the calendar is not specified or unknown. If you prefer an error, use
     /// [`CalendarError::unknown_any_calendar_kind`].
     fn get_for_data_locale(l: &DataLocale) -> Option<Self> {
         l.get_unicode_ext(&key!("ca"))

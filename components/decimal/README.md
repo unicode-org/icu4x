@@ -1,5 +1,7 @@
 # icu_decimal [![crates.io](https://img.shields.io/crates/v/icu_decimal)](https://crates.io/crates/icu_decimal)
 
+<!-- cargo-rdme start -->
+
 Formatting basic decimal numbers.
 
 This module is published as its own crate ([`icu_decimal`](https://docs.rs/icu_decimal/latest/icu_decimal/))
@@ -37,11 +39,9 @@ use icu::decimal::FixedDecimalFormatter;
 use icu::locid::Locale;
 use writeable::assert_writeable_eq;
 
-let fdf = FixedDecimalFormatter::try_new(
-    &Locale::UND.into(),
-    Default::default(),
-)
-.expect("locale should be present");
+let fdf =
+    FixedDecimalFormatter::try_new(&Locale::UND.into(), Default::default())
+        .expect("locale should be present");
 
 let fixed_decimal = FixedDecimal::from(200050).multiplied_pow10(-2);
 
@@ -71,6 +71,8 @@ assert_writeable_eq!(fdf.format(&fixed_decimal), "๑,๐๐๐,๐๐๗");
 ```
 
 [`FixedDecimalFormatter`]: FixedDecimalFormatter
+
+<!-- cargo-rdme end -->
 
 ## More Information
 

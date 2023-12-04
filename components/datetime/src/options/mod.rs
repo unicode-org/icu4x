@@ -62,6 +62,8 @@ pub enum DateTimeFormatterOptions {
     Length(length::Bag),
     /// Bag of components describing which fields and how should be displayed.
     ///
+    /// ✨ *Enabled with the `experimental` Cargo feature.*
+    ///
     /// <div class="stab unstable">
     /// 🚧 This code is experimental; it may change at any time, in breaking or non-breaking ways,
     /// including in SemVer minor releases. It can be enabled with the "experimental" Cargo feature

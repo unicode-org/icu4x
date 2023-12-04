@@ -16,7 +16,7 @@ To build ICU4X, you will need the following dependencies:
 
  - Rust (and Cargo) installed [via `rustup`](https://doc.rust-lang.org/book/ch01-01-installation.html)
  - `cargo-make` installed via `cargo install cargo-make`
- - `cargo-readme` installed via `cargo install cargo-readme`
+ - `cargo-rdme` installed via `cargo install cargo-rdme`
 
 Certain tests may need further dependencies, these are documented below in the [Testing](#testing) section.
 
@@ -36,6 +36,8 @@ If working on a new component, consider starting it in the `experimental/` direc
 
 If working on an improvement to an existing component that you wish to split into multiple smaller pieces, consider hiding it under the `"experimental"` feature in the crate. Doing so gives a signal to users and tooling that the code is not yet production-ready. Once finished, the `"experimental"` feature can be removed from the crate.
 
+When adding non-experimental code to main, also update the "unreleased" section of the changelog. This simplifies releases and gives us a better overview of what unreleased features we have.
+
 Note that the actual Cargo.toml version bumps will be done at release time, and crates under `utils/` may follow a different release cadence than those under other directory trees.
 
 ### Checklist
@@ -54,31 +56,45 @@ need to run in order to recreate them.  These files may be run in more comprehen
 
 - `cargo make testdata` - regenerates all test data in the `provider/testdata` directory.
 - `cargo make generate-readmes` - generates README files according to Rust docs. Output files must be committed in git for check to pass.
-- `cargo make diplomat-gen` - recreates the Diplomat generated files in the `ffi/diplomat` directory.
+- `cargo make diplomat-gen` - recreates the Diplomat generated files in the `ffi/capi` directory.
 
 ### Testing
 
 It's recommended to run `cargo test --all-features` in crates you're modifying to ensure that nothing is breaking, and `cargo quick` to get a reasonable check that everything still builds and lint checks pass.
 
-Our wider testsuite is organized as `ci-job-foo` make tasks corresponding to each GitHub Actions CI job, and you can run any testsuites you consider relevant:
+Our wider testsuite is organized as `ci-job-foo` make tasks corresponding to each GitHub Actions CI job, and you can run any suite you consider relevant as `cargo make ci-job-foo`, or everything with `ci-all` (this takes quite a while and is better left to CI to run in parallel).
+ 
+ - `ci-job-fmt`: Runs `cargo fmt`
+ - `ci-job-tidy`: Checks that code has the appropriate license headers and files and that READMEs are in sync.
+     + `ci-job-fmt` and `ci-job-tidy` can be run together as `cargo tidy`.
+ - `ci-job-clippy`: Runs `cargo clippy --all-targets --all-features` on all the crates.
+ <br/>
 
- - `cargo make ci-job-check`: Runs `cargo check` on all the crates. It's usually better to just use `cargo quick`.
- - `cargo make tidy`: A quick test that ensures that `cargo fmt` has been run, that code has the appropriate license headers and files and that READMEs are in sync. This is run as two separate tasks on CI (`ci-job-fmt` and `ci-job-tidy`) to ensure early results.
- - `cargo make ci-job-test`: Runs `cargo test` on all the crates. This takes a while but is the main way of ensuring that nothing has been broken.
- - `cargo make ci-job-clippy`: Runs `cargo clippy` on all the crates.
- - `cargo doc --no-deps --all-features`: Recreates API docs locally; any warning should be fixed since it will be treated as an error in CI.
- - `cargo make ci-job-ffi`: Runs all of the FFI tests; mostly important if you're changing the FFI interface. This has several additional dependencies:
-     + [`Diplomat`](https://github.com/rust-diplomat/diplomat) installed at the appropriate version: `cargo make diplomat-install`
-     + `clang-15` and `lld-15` with the `gold` plugin (APT packages `llvm-15` and `lld-15`)
- - `cargo make ci-job-wasm`: Runs Rust-to-WASM tests. This also has a couple additional dependencies:
-     + Node.js version 16.18.0. This may not the one offered by the package manager; get it from the NodeJS website or `nvm`.
-     + [`Twiggy`](https://github.com/rustwasm/twiggy) (at least 0.7.0: `cargo install twiggy`
-     + [`emsdk`](https://github.com/emscripten-core/emsdk): Make sure to `./emsdk activate latest` it into your shell
- - `cargo make ci-job-features`: This is a pretty slow test that tries to build all ICU4X crates with all feature combinations. It has an additional dependency:
-     + `cargo-all-features`: `cargo install cargo-all-features`
- - `cargo make ci-all`: This runs all of the tests above, and takes quite a while. It is usually preferred to run specific tests you think are relevant and let GitHub Actions run the full suite to uncover additional failures.
+ - `ci-job-msrv-check`: Runs `cargo check` on all the crates at our minimum supported Rust version (MSRV).
+ - `ci-job-msrv-features`: Runs `cargo check-all-features` on all the crates at our MSRV. This checks all features combinations, which is fairly slow.
+     + Requires `cargo-all-features` to be installed: `cargo install cargo-all-features`.
+ - `ci-job-test`: Runs `cargo test` on all the crates. This takes a while but is the main way of ensuring that nothing has been broken.
+<br/>
 
-
+ - `ci-job-doc`: Builds all Rustdoc; any warning is treated as an error.
+ - `ci-job-test-docs`: Runs `cargo test --doc` on all the crates. This takes a while but is the main way of ensuring that nothing has been broken.
+ - `ci-job-test-tutorials`: Builds all our tutorials against both local code (`locale`), and released ICU4X (`cratesio`).
+<br/>
+ 
+ - `ci-job-testdata`: Runs an `icu_datagen` integration test with a subset of CLDR, ICU, and LSTM source data.
+ - `ci-job-testdata-legacy`: Generates data for the deprecated `icu_testdata` crate.
+ - `ci-job-full-datagen`: Generates compiled data for all crates.
+<br/>
+ 
+ - `ci-job-test-c`: Runs all C/C++ FFI tests; mostly important if you're changing the FFI interface.
+     + Requires `clang-15` and `lld-15` with the `gold` plugin (APT packages `llvm-15` and `lld-15`).
+ - `ci-job-test-js`: Runs all JS/WASM/Node FFI tests; mostly important if you're changing the FFI interface.
+     + Requires Node.js version 16.18.0. This may not the one offered by the package manager; get it from the NodeJS website or `nvm`.
+ - `ci-job-nostd`: Builds ICU4X for a `#[no_std]` target to verify that it's compatible.
+ - `ci-job-diplomat`: Verifies that diplomat-generated bindings are up to date.
+ - `ci-job-gn`: Verifies that the GN wrapper is up to date.
+     + Requires GN to be installed: `cargo make gn-install`.
+ 
 ### Structure of commits in a Pull Request
 
 Pull Request lifecycle is divided into two phases.
@@ -89,7 +105,7 @@ The other is the review cycle.
 #### Draft Phase
 
 If the pull request is simple and short lived, it can be initialized with review request.
-If the pull request is more complex and is being developed over time, it may be benefitial to start it in a `Draft` state.
+If the pull request is more complex and is being developed over time, it may be beneficial to start it in a `Draft` state.
 This allows other contributors to monitor the progress and volunteer feedback while annotating that the pull request is not yet ready for review.
 
 If a pull request is particularly large in scope and not release-ready, consider either (1) reducing the scope of the pull request, (2) moving work to the `experimental/` directory, or (3) hiding the work behind the `"experimental"` feature flag. See the section above, "Release Readiness", for more details.
@@ -175,10 +191,10 @@ In such cases, *mentorship model* should be used where a more senior engineer ta
 When the PR author creates a new PR, they should consider three sources of reviewers and informed stakeholders:
 
 * Owners and peers of the component they work with
-* People involved in the preceeding conversation
+* People involved in the preceding conversation
 * Recognized experts in the domain the PR operates in
 
-The goal of the PR author is to find the subset of stakeholders that represent those three groups well. Depending on the scope and priority of the PR, the reviewers group size can be adjusted, with small PRs being sufficent for review by just one stakeholder, and larger PRs, or first-of-a-kind using a larger pool of reviewers.
+The goal of the PR author is to find the subset of stakeholders that represent those three groups well. Depending on the scope and priority of the PR, the reviewers group size can be adjusted, with small PRs being sufficient for review by just one stakeholder, and larger PRs, or first-of-a-kind using a larger pool of reviewers.
 
 ### PR author and reviewers workflow
 
@@ -213,8 +229,6 @@ In order to contribute to this project, the Unicode Consortium must have on file
 - **Corporate CLA**: If you have determined that a Corporate CLA is appropriate, please check the [public list of Corporate CLAs][unicode-corporate-clas] that the Consortium has on file. If your employer has already signed a CLA, then just open a Pull Request and you will have the opportunity to click that your employer has already signed a CLA. If your employer has not already signed a CLA, you will need to arrange for your employer to sign the Corporate CLA, as described in [How to Sign a Unicode CLA][signing].
 
 Unless otherwise noted in the [LICENSE](./LICENSE) file, this project is released under the free and open-source [Unicode License][unicode-license], also known as Unicode, Inc. License Agreement - Data Files and Software.
-
-SPDX-License-Identifier: Unicode-DFS-2016
 
 ### New files
 

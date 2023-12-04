@@ -13,7 +13,7 @@ use crate::helpers::ShortSlice;
 use crate::ordering::SubtagOrderingResult;
 
 /// A list of [`Key`]-[`Value`] pairs representing functional information
-/// about locale's internationnalization preferences.
+/// about locale's internationalization preferences.
 ///
 /// Here are examples of fields used in Unicode:
 /// - `hc` - Hour Cycle (`h11`, `h12`, `h23`, `h24`)
@@ -30,10 +30,11 @@ use crate::ordering::SubtagOrderingResult;
 ///
 /// ```
 /// use icu::locid::{
-///     extensions::unicode::{Keywords, key, value}, locale,
+///     extensions::unicode::{key, value, Keywords},
+///     locale,
 /// };
 ///
-/// let keywords = vec![(key!("hc"), value!("h23"))]
+/// let keywords = [(key!("hc"), value!("h23"))]
 ///     .into_iter()
 ///     .collect::<Keywords>();
 ///
@@ -115,9 +116,9 @@ impl Keywords {
     /// # Examples
     ///
     /// ```
-    /// use icu::locid::extensions::unicode::{Keywords, key, value};
+    /// use icu::locid::extensions::unicode::{key, value, Keywords};
     ///
-    /// let keywords = vec![(key!("ca"), value!("gregory"))]
+    /// let keywords = [(key!("ca"), value!("gregory"))]
     ///     .into_iter()
     ///     .collect::<Keywords>();
     ///
@@ -137,9 +138,9 @@ impl Keywords {
     /// # Examples
     ///
     /// ```
-    /// use icu::locid::extensions::unicode::{Keywords, key, value};
+    /// use icu::locid::extensions::unicode::{key, value, Keywords};
     ///
-    /// let keywords = vec![(key!("ca"), value!("buddhist"))]
+    /// let keywords = [(key!("ca"), value!("buddhist"))]
     ///     .into_iter()
     ///     .collect::<Keywords>();
     ///
@@ -160,9 +161,9 @@ impl Keywords {
     /// # Examples
     ///
     /// ```
-    /// use icu::locid::extensions::unicode::{Keywords, key, value};
+    /// use icu::locid::extensions::unicode::{key, value, Keywords};
     ///
-    /// let mut keywords = vec![(key!("ca"), value!("buddhist"))]
+    /// let mut keywords = [(key!("ca"), value!("buddhist"))]
     ///     .into_iter()
     ///     .collect::<Keywords>();
     ///
@@ -186,10 +187,8 @@ impl Keywords {
     /// ```
     /// use icu::locid::extensions::unicode::Key;
     /// use icu::locid::extensions::unicode::Value;
+    /// use icu::locid::extensions::unicode::{key, value};
     /// use icu::locid::Locale;
-    /// use icu::locid::{
-    ///     extensions::unicode::{key, value},
-    /// };
     ///
     /// let mut loc: Locale = "und-u-hello-ca-buddhist-hc-h12"
     ///     .parse()
@@ -212,7 +211,7 @@ impl Keywords {
     /// # Examples
     ///
     /// ```
-    /// use icu::locid::extensions::unicode::{Key, key};
+    /// use icu::locid::extensions::unicode::{key, Key};
     /// use icu::locid::Locale;
     ///
     /// let mut loc: Locale = "und-u-hello-ca-buddhist-hc-h12"

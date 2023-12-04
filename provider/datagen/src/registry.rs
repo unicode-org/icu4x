@@ -4,17 +4,41 @@
 
 use icu_provider::prelude::*;
 
-macro_rules! registry {
+macro_rules! make_check_all_keys {
     ($(#[cfg($feature:meta)] $($marker:path = $path:literal,)+)+) => {
-        /// List of all keys that are available. A key will not be available if the corresponding
-        /// Cargo feature has not been enabled.
-        ///
-        /// Note that pre-1.3, `all_keys` and `all_keys_with_experimental` behaved differently,
-        /// they now behave the same and depend on which features are enabled.
-        // Excludes the hello world key, as that generally should not be generated.
-        pub fn all_keys() -> Vec<DataKey> {
+        fn check_all_keys() {
             #[cfg(not(all($($feature,)+)))]
             log::warn!("The icu_datagen crates has not been built with all components, so `all_keys` only returns a subset of keys");
+        }
+    };
+}
+
+/// This macro contains special handling for `#[cfg(test)]` because it is not
+/// a warning if that cfg is not enabled.
+///
+/// The first cfg should be `#[cfg(test)]`, followed by all test markers,
+/// followed by `#[cfg(feature = "...")]` and all remaining markers.
+///
+/// If there are no test markers, `#[cfg(test)]` should be replaced by
+/// `no_cfg_test,` followed by the first `#[cfg(feature = "...")]`.
+macro_rules! registry {
+    (#[cfg(test)] $($marker_test:path = $path_test:literal,)+ $(#[cfg($feature:meta)] $($marker:path = $path:literal,)+)+) => {
+        make_check_all_keys!($(#[cfg($feature)] $($marker = $path,)+)+);
+        // Call the macro again with #[cfg(any(test))] to get the normal code path
+        registry!(#[cfg(any(test))] $($marker_test = $path_test,)+ $(#[cfg($feature)] $($marker = $path,)+)+);
+    };
+    (no_cfg_test, $(#[cfg($feature:meta)] $($marker:path = $path:literal,)+)+) => {
+        make_check_all_keys!($(#[cfg($feature)] $($marker = $path,)+)+);
+        registry!($(#[cfg($feature)] $($marker = $path,)+)+);
+    };
+    ($(#[cfg($feature:meta)] $($marker:path = $path:literal,)+)+) => {
+        /// List of all keys that are available.
+        ///
+        /// Note that since v1.3, `all_keys` also contains experimental keys for which the
+        /// corresponding Cargo features has been enabled.
+        // Excludes the hello world key, as that generally should not be generated.
+        pub fn all_keys() -> Vec<DataKey> {
+            check_all_keys();
             vec![
                 $(
                     $(
@@ -23,12 +47,6 @@ macro_rules! registry {
                     )+
                 )+
             ]
-        }
-
-        /// Same as `all_keys`.
-        #[deprecated(since = "1.3.0", note = "use `all_keys` with the required cargo features")]
-        pub fn all_keys_with_experimental() -> Vec<DataKey> {
-            all_keys()
         }
 
         /// Parses a human-readable key identifier into a [`DataKey`].
@@ -77,6 +95,7 @@ macro_rules! registry {
         fn test_paths_correct() {
             $(
                 $(
+                    #[cfg($feature)]
                     assert_eq!(<$marker>::KEY.path().get(), $path);
                 )+
             )+
@@ -95,7 +114,7 @@ macro_rules! registry {
             ]
         );
 
-        #[cfg(feature = "provider_baked")]
+        #[cfg(feature = "baked_exporter")]
         pub(crate) fn key_to_marker_bake(key: DataKey, env: &databake::CrateEnv) -> databake::TokenStream {
             use databake::Bake;
             // This is a bit naughty, we need the marker's type, but we're actually
@@ -114,7 +133,7 @@ macro_rules! registry {
             unreachable!("unregistered key {key:?}")
         }
 
-        #[doc(hidden)]
+        #[cfg(test)]
         pub fn deserialize_and_measure<Measurement>(key: DataKey, buf: DataPayload<BufferMarker>, measure: impl Fn() -> Measurement) -> Result<(Measurement, DataPayload<icu_provider::datagen::ExportMarker>), DataError> {
             if key.path() == icu_provider::hello_world::HelloWorldV1Marker::KEY.path() {
                 let deserialized: DataPayload<icu_provider::hello_world::HelloWorldV1Marker> = buf.into_deserialized(icu_provider::buf::BufferFormat::Postcard1)?;
@@ -134,7 +153,11 @@ macro_rules! registry {
     }
 }
 
+// If `#[cfg(test)]` becomes empty, replace it with `no_cfg_test,`
 registry!(
+    #[cfg(test)]
+    icu_singlenumberformatter::provider::CurrencyEssentialsV1Marker = "currency/essentials@1",
+    icu_unitsconversion::provider::UnitsInfoV1Marker = "units/info@1",
     #[cfg(any(all(), feature = "icu_calendar"))]
     icu_calendar::provider::JapaneseErasV1Marker = "calendar/japanese@1",
     icu_calendar::provider::JapaneseExtendedErasV1Marker = "calendar/japanext@1",
@@ -192,6 +215,57 @@ registry!(
     icu_datetime::provider::calendar::RocDateSymbolsV1Marker = "datetime/roc/datesymbols@1",
     icu_datetime::provider::calendar::TimeLengthsV1Marker = "datetime/timelengths@1",
     icu_datetime::provider::calendar::TimeSymbolsV1Marker = "datetime/timesymbols@1",
+    // new datetime symbols stuff (unused so far)
+    icu_datetime::provider::neo::WeekdaySymbolsV1Marker = "datetime/symbols/weekdays@1",
+    icu_datetime::provider::neo::DayPeriodSymbolsV1Marker = "datetime/symbols/dayperiods@1",
+    icu_datetime::provider::neo::TimePatternV1Marker = "datetime/patterns/time@1",
+    icu_datetime::provider::neo::DateTimePatternV1Marker = "datetime/patterns/datetime@1",
+    icu_datetime::provider::neo::BuddhistYearSymbolsV1Marker = "datetime/symbols/buddhist/years@1",
+    icu_datetime::provider::neo::ChineseYearSymbolsV1Marker = "datetime/symbols/chinese/years@1",
+    icu_datetime::provider::neo::CopticYearSymbolsV1Marker = "datetime/symbols/coptic/years@1",
+    icu_datetime::provider::neo::DangiYearSymbolsV1Marker = "datetime/symbols/dangi/years@1",
+    icu_datetime::provider::neo::EthiopianYearSymbolsV1Marker = "datetime/symbols/ethiopic/years@1",
+    icu_datetime::provider::neo::GregorianYearSymbolsV1Marker = "datetime/symbols/gregory/years@1",
+    icu_datetime::provider::neo::HebrewYearSymbolsV1Marker = "datetime/symbols/hebrew/years@1",
+    icu_datetime::provider::neo::IndianYearSymbolsV1Marker = "datetime/symbols/indian/years@1",
+    icu_datetime::provider::neo::IslamicYearSymbolsV1Marker = "datetime/symbols/islamic/years@1",
+    icu_datetime::provider::neo::JapaneseYearSymbolsV1Marker = "datetime/symbols/japanese/years@1",
+    icu_datetime::provider::neo::JapaneseExtendedYearSymbolsV1Marker =
+        "datetime/symbols/japanext/years@1",
+    icu_datetime::provider::neo::PersianYearSymbolsV1Marker = "datetime/symbols/persian/years@1",
+    icu_datetime::provider::neo::RocYearSymbolsV1Marker = "datetime/symbols/roc/years@1",
+    icu_datetime::provider::neo::BuddhistMonthSymbolsV1Marker =
+        "datetime/symbols/buddhist/months@1",
+    icu_datetime::provider::neo::ChineseMonthSymbolsV1Marker = "datetime/symbols/chinese/months@1",
+    icu_datetime::provider::neo::CopticMonthSymbolsV1Marker = "datetime/symbols/coptic/months@1",
+    icu_datetime::provider::neo::DangiMonthSymbolsV1Marker = "datetime/symbols/dangi/months@1",
+    icu_datetime::provider::neo::EthiopianMonthSymbolsV1Marker =
+        "datetime/symbols/ethiopic/months@1",
+    icu_datetime::provider::neo::GregorianMonthSymbolsV1Marker =
+        "datetime/symbols/gregory/months@1",
+    icu_datetime::provider::neo::HebrewMonthSymbolsV1Marker = "datetime/symbols/hebrew/months@1",
+    icu_datetime::provider::neo::IndianMonthSymbolsV1Marker = "datetime/symbols/indian/months@1",
+    icu_datetime::provider::neo::IslamicMonthSymbolsV1Marker = "datetime/symbols/islamic/months@1",
+    icu_datetime::provider::neo::JapaneseMonthSymbolsV1Marker =
+        "datetime/symbols/japanese/months@1",
+    icu_datetime::provider::neo::JapaneseExtendedMonthSymbolsV1Marker =
+        "datetime/symbols/japanext/months@1",
+    icu_datetime::provider::neo::PersianMonthSymbolsV1Marker = "datetime/symbols/persian/months@1",
+    icu_datetime::provider::neo::RocMonthSymbolsV1Marker = "datetime/symbols/roc/months@1",
+    icu_datetime::provider::neo::BuddhistDatePatternV1Marker = "datetime/patterns/buddhist/date@1",
+    icu_datetime::provider::neo::ChineseDatePatternV1Marker = "datetime/patterns/chinese/date@1",
+    icu_datetime::provider::neo::CopticDatePatternV1Marker = "datetime/patterns/coptic/date@1",
+    icu_datetime::provider::neo::DangiDatePatternV1Marker = "datetime/patterns/dangi/date@1",
+    icu_datetime::provider::neo::EthiopianDatePatternV1Marker = "datetime/patterns/ethiopic/date@1",
+    icu_datetime::provider::neo::GregorianDatePatternV1Marker = "datetime/patterns/gregory/date@1",
+    icu_datetime::provider::neo::HebrewDatePatternV1Marker = "datetime/patterns/hebrew/date@1",
+    icu_datetime::provider::neo::IndianDatePatternV1Marker = "datetime/patterns/indian/date@1",
+    icu_datetime::provider::neo::IslamicDatePatternV1Marker = "datetime/patterns/islamic/date@1",
+    icu_datetime::provider::neo::JapaneseDatePatternV1Marker = "datetime/patterns/japanese/date@1",
+    icu_datetime::provider::neo::JapaneseExtendedDatePatternV1Marker =
+        "datetime/patterns/japanext/date@1",
+    icu_datetime::provider::neo::PersianDatePatternV1Marker = "datetime/patterns/persian/date@1",
+    icu_datetime::provider::neo::RocDatePatternV1Marker = "datetime/patterns/roc/date@1",
     icu_datetime::provider::time_zones::MetazoneGenericNamesLongV1Marker =
         "time_zone/generic_long@1",
     icu_datetime::provider::time_zones::MetazoneGenericNamesShortV1Marker =
@@ -238,6 +312,7 @@ registry!(
     #[cfg(any(all(), feature = "icu_plurals"))]
     icu_plurals::provider::CardinalV1Marker = "plurals/cardinal@1",
     icu_plurals::provider::OrdinalV1Marker = "plurals/ordinal@1",
+    icu_plurals::provider::PluralRangesV1Marker = "plurals/ranges@1",
     #[cfg(any(all(), feature = "icu_properties"))]
     icu_properties::provider::AlnumV1Marker = "props/alnum@1",
     icu_properties::provider::AlphabeticV1Marker = "props/Alpha@1",
@@ -315,6 +390,12 @@ registry!(
     icu_properties::provider::IdsBinaryOperatorV1Marker = "props/IDSB@1",
     icu_properties::provider::IdStartV1Marker = "props/IDS@1",
     icu_properties::provider::IdsTrinaryOperatorV1Marker = "props/IDST@1",
+    icu_properties::provider::IndicSyllabicCategoryV1Marker = "props/InSC@1",
+    icu_properties::provider::IndicSyllabicCategoryNameToValueV1Marker = "propnames/from/InSC@1",
+    icu_properties::provider::IndicSyllabicCategoryValueToLongNameV1Marker =
+        "propnames/to/long/linear/InSC@1",
+    icu_properties::provider::IndicSyllabicCategoryValueToShortNameV1Marker =
+        "propnames/to/short/linear/InSC@1",
     icu_properties::provider::GraphV1Marker = "props/graph@1",
     icu_properties::provider::JoinControlV1Marker = "props/Join_C@1",
     icu_properties::provider::LineBreakV1Marker = "props/lb@1",
@@ -406,8 +487,6 @@ registry!(
         "relativetime/short/year@1",
     icu_relativetime::provider::NarrowYearRelativeTimeFormatDataV1Marker =
         "relativetime/narrow/year@1",
-    #[cfg(feature = "icu_singlenumberformatter")]
-    icu_singlenumberformatter::provider::CurrencyEssentialsV1Marker = "currency/essentials@1",
     #[cfg(any(all(), feature = "icu_segmenter"))]
     icu_segmenter::provider::DictionaryForWordLineExtendedV1Marker =
         "segmenter/dictionary/wl_ext@1",
@@ -419,7 +498,26 @@ registry!(
     icu_segmenter::provider::WordBreakDataV1Marker = "segmenter/word@1",
     #[cfg(any(all(), feature = "icu_timezone"))]
     icu_timezone::provider::MetazonePeriodV1Marker = "time_zone/metazone_period@1",
+    icu_timezone::provider::names::Bcp47ToIanaMapV1Marker = "time_zone/bcp47_to_iana@1",
+    icu_timezone::provider::names::IanaToBcp47MapV1Marker = "time_zone/iana_to_bcp47@1",
+    #[cfg(feature = "icu_transliterate")]
+    icu_transliterate::provider::TransliteratorRulesV1Marker = "transliterator/rules@1",
 );
+
+/// Same as `all_keys`.
+///
+/// Note that since v1.3, `all_keys` also contains experimental keys for which the
+/// corresponding Cargo features has been enabled.
+///
+/// ✨ *Enabled with the `legacy_api` Cargo feature.*
+#[deprecated(
+    since = "1.3.0",
+    note = "use `all_keys` with the required cargo features"
+)]
+#[cfg(feature = "legacy_api")]
+pub fn all_keys_with_experimental() -> Vec<DataKey> {
+    all_keys()
+}
 
 #[test]
 fn no_key_collisions() {

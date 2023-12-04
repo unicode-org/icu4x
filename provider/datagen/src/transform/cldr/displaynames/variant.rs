@@ -20,7 +20,6 @@ impl DataProvider<VariantDisplayNamesV1Marker> for crate::DatagenProvider {
         let langid = req.locale.get_langid();
 
         let data: &cldr_serde::displaynames::variant::Resource = self
-            .source
             .cldr()?
             .displaynames()
             .read_and_parse(&langid, "variants.json")?;
@@ -39,14 +38,12 @@ impl DataProvider<VariantDisplayNamesV1Marker> for crate::DatagenProvider {
 impl IterableDataProvider<VariantDisplayNamesV1Marker> for crate::DatagenProvider {
     fn supported_locales(&self) -> Result<Vec<DataLocale>, DataError> {
         Ok(self
-            .source
             .cldr()?
             .displaynames()
             .list_langs()?
             .filter(|langid| {
                 // The directory might exist without variants.json
-                self.source
-                    .cldr()
+                self.cldr()
                     .unwrap()
                     .displaynames()
                     .file_exists(langid, "variants.json")
@@ -89,7 +86,7 @@ mod tests {
 
     #[test]
     fn test_basic_variant_display_names() {
-        let provider = crate::DatagenProvider::for_test();
+        let provider = crate::DatagenProvider::new_testing();
 
         let data: DataPayload<VariantDisplayNamesV1Marker> = provider
             .load(DataRequest {

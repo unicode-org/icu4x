@@ -4,26 +4,17 @@
 
 [package]
 name = "litemap"
-version = "0.7.0"
-rust-version = "1.65.0"
-authors = ["The ICU4X Project Developers"]
-repository = "https://github.com/unicode-org/icu4x"
-edition = "2021"
-license = "Unicode-DFS-2016"
+version = "0.7.2"
 keywords = ["sorted", "vec", "map", "hashmap", "btreemap"]
 description = "A key-value Map implementation based on a flat, sorted Vec."
 documentation = "https://docs.rs/litemap"
-readme = "./README.md"
-# Keep this in sync with other crates unless there are exceptions
-include = [
-    "src/**/*",
-    "examples/**/*",
-    "benches/**/*",
-    "tests/**/*",
-    "Cargo.toml",
-    "LICENSE",
-    "README.md"
-]
+license-file = "LICENSE"
+
+authors.workspace = true
+edition.workspace = true
+include.workspace = true
+repository.workspace = true
+rust-version.workspace = true
 
 [package.metadata.workspaces]
 independent = true
@@ -32,8 +23,9 @@ independent = true
 all-features = true
 
 [dependencies]
+databake = { workspace = true, default-features = false, optional = true }
 serde = {version = "1", optional = true, default-features = false, features = ["alloc"]}
-yoke = { version = "0.7.1", path = "../yoke", features = ["derive"], optional = true }
+yoke = { workspace = true, features = ["derive"], optional = true }
 
 [dev-dependencies]
 bincode = "1"
@@ -49,9 +41,12 @@ serde_json = "1"
 criterion = "0.4"
 
 [features]
-bench = []
+bench = ["serde"]
 default = ["alloc"]
 alloc = []
+databake = ["dep:databake"]
+serde = ["dep:serde"]
+yoke = ["dep:yoke"]
 
 # Enables the `testing` module with tools for testing custom stores.
 testing = ["alloc"]
@@ -59,6 +54,9 @@ testing = ["alloc"]
 [package.metadata.cargo-all-features]
 # Bench feature gets tested separately and is only relevant for CI
 denylist = ["bench"]
+
+[lib]
+bench = false  # This option is required for Benchmark CI
 
 [[test]]
 name = "serde"
@@ -70,12 +68,12 @@ required-features = ["testing"]
 
 [[example]]
 name = "litemap_bincode"
-path = "benches/bin/litemap_bincode.rs"
+path = "examples/litemap_bincode.rs"
 required-features = ["serde"]
 
 [[example]]
 name = "litemap_postcard"
-path = "benches/bin/litemap_postcard.rs"
+path = "examples/litemap_postcard.rs"
 required-features = ["serde"]
 
 [[bench]]

@@ -3,14 +3,11 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use std::collections::{BTreeMap, HashSet};
-use std::path::Path;
 
 use elsa::sync::FrozenMap;
-use icu_datagen::options::{FallbackMode, LocaleInclude, Options};
-use icu_datagen::{DatagenProvider, SourceData};
+use icu_datagen::prelude::*;
 use icu_decimal::provider::DecimalSymbolsV1Marker;
-use icu_locid::{langid, LanguageIdentifier};
-use icu_provider::datagen::{DataExporter, ExportMarker};
+use icu_provider::datagen::ExportMarker;
 use icu_provider::prelude::*;
 use postcard::ser_flavors::{AllocVec, Flavor};
 use writeable::Writeable;
@@ -62,20 +59,15 @@ fn test_fallback_options() {
         .init()
         .unwrap();
 
-    let data_root = Path::new(concat!(core::env!("CARGO_MANIFEST_DIR"), "/tests/data/"));
-
-    let source = SourceData::offline()
-        .with_cldr(data_root.join("cldr"), Default::default())
+    let provider = DatagenProvider::new_custom()
+        .with_cldr("tests/data/cldr".into())
         .unwrap()
-        .with_icuexport(data_root.join("icuexport"))
+        .with_icuexport("tests/data/icuexport".into())
         .unwrap();
-
-    let decimal_symbols_key: HashSet<DataKey> = [DecimalSymbolsV1Marker::KEY].into_iter().collect();
 
     let mut testing_exporter = TestingExporter::default();
 
-    let mut options = Options::default();
-    options.keys = decimal_symbols_key.clone();
+    let driver = DatagenDriver::new().with_keys([DecimalSymbolsV1Marker::KEY]);
 
     let explicit_locales: HashSet<LanguageIdentifier> = [
         langid!("arc"), // Aramaic, not in CLDR
@@ -91,15 +83,16 @@ fn test_fallback_options() {
     //
     // All+Hybrid
     //
-    options.locales = LocaleInclude::All;
-    options.fallback = FallbackMode::Hybrid;
-    DatagenProvider::new(source.clone())
-        .export(options.clone(), &mut testing_exporter)
+    driver
+        .clone()
+        .with_all_locales()
+        .with_fallback_mode(FallbackMode::Hybrid)
+        .export(&provider, &mut testing_exporter)
         .unwrap();
     let data_all_hybrid = testing_exporter.take_map_and_reset();
 
     // These are all of the supported locales for DecimalSymbolsV1 in tests/data.
-    let all_locales: Vec<&str> = vec![
+    let all_locales = [
         "ar",
         "ar-EG",
         "ar-EG-u-nu-latn",
@@ -133,17 +126,19 @@ fn test_fallback_options() {
     // All+Runtime
     //
 
-    options.fallback = FallbackMode::RuntimeManual;
-    DatagenProvider::new(source.clone())
-        .export(options.clone(), &mut testing_exporter)
+    driver
+        .clone()
+        .with_all_locales()
+        .with_fallback_mode(FallbackMode::RuntimeManual)
+        .export(&provider, &mut testing_exporter)
         .unwrap();
     let data_all_runtime = testing_exporter.take_map_and_reset();
 
     // These are all of the supported locales with deduplication applied.
-    let all_locales_dedup: Vec<&str> = vec![
+    let all_locales_dedup = [
         "ar",
         // "ar-EG", (same as 'ar')
-        // "ar-EG-u-nu-latn", (same as 'ar-u-nu-latn')
+        "ar-EG-u-nu-latn", // (same as 'ar-u-nu-latn' but DIFFERENT than 'ar-EG')
         "ar-u-nu-latn",
         "bn",
         "bn-u-nu-latn",
@@ -207,15 +202,16 @@ fn test_fallback_options() {
     // Explicit+Hybrid
     //
 
-    options.locales = LocaleInclude::Explicit(explicit_locales.clone());
-    options.fallback = FallbackMode::Hybrid;
-    DatagenProvider::new(source.clone())
-        .export(options.clone(), &mut testing_exporter)
+    driver
+        .clone()
+        .with_locales(explicit_locales.clone())
+        .with_fallback_mode(FallbackMode::Hybrid)
+        .export(&provider, &mut testing_exporter)
         .unwrap();
     let data_explicit_hybrid = testing_exporter.take_map_and_reset();
 
     // Explicit locales are "arc", "ar-EG", "en-GB", "es", "sr-ME", "ru-Cyrl-RU"
-    let explicit_hybrid_locales: Vec<&str> = vec![
+    let explicit_hybrid_locales = [
         "ar",              // ancestor of ar-EG
         "ar-EG",           // explicit locale
         "ar-EG-u-nu-latn", // descendant of ar-EG
@@ -242,15 +238,16 @@ fn test_fallback_options() {
     // Explicit+Runtime
     //
 
-    options.locales = LocaleInclude::Explicit(explicit_locales.clone());
-    options.fallback = FallbackMode::RuntimeManual;
-    DatagenProvider::new(source.clone())
-        .export(options.clone(), &mut testing_exporter)
+    driver
+        .clone()
+        .with_locales(explicit_locales.clone())
+        .with_fallback_mode(FallbackMode::RuntimeManual)
+        .export(&provider, &mut testing_exporter)
         .unwrap();
     let data_explicit_runtime = testing_exporter.take_map_and_reset();
 
     // Explicit locales are "arc", "ar-EG", "en-GB", "es", "sr-ME", "ru-Cyrl-RU"
-    let explicit_hybrid_locales_dedup: Vec<&str> = vec![
+    let explicit_hybrid_locales_dedup = [
         "ar",
         // "ar-Arab-EG", (same as 'ar')
         // "ar-EG", (same as 'ar')
@@ -278,15 +275,16 @@ fn test_fallback_options() {
     // Explicit+Preresolved
     //
 
-    options.locales = LocaleInclude::Explicit(explicit_locales.clone());
-    options.fallback = FallbackMode::Preresolved;
-    DatagenProvider { source }
-        .export(options, &mut testing_exporter)
+    driver
+        .clone()
+        .with_locales(explicit_locales.clone())
+        .with_fallback_mode(FallbackMode::Preresolved)
+        .export(&provider, &mut testing_exporter)
         .unwrap();
     let data_explicit_preresolved = testing_exporter.take_map_and_reset();
 
     // Explicit locales are "arc", "ar-EG", "en-GB", "es", "sr-ME", "ru-Cyrl-RU"
-    let explicit_preresolved_locales: Vec<&str> = vec![
+    let explicit_preresolved_locales = [
         "ar-EG",
         "ar-EG-u-nu-latn", // extensions included even in preresolved mode
         "arc",

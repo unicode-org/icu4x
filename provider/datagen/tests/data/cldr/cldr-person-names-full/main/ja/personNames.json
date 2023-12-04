@@ -3,7 +3,7 @@
     "ja": {
       "identity": {
         "version": {
-          "_cldrVersion": "43"
+          "_cldrVersion": "44"
         },
         "language": "ja"
       },
@@ -21,6 +21,9 @@
           "yue",
           "zh"
         ],
+        "formality": "formal",
+        "length": "medium",
+        "nativeSpaceReplacement": "",
         "foreignSpaceReplacement": "・",
         "initial": "{0}.",
         "initialSequence": "{0} {1}",
@@ -72,12 +75,12 @@
           "surnameFirst": {
             "long": {
               "referring": {
-                "formal": "{surname}{given2}{given}{title}",
-                "informal": "{surname}{given-informal}{title}"
+                "formal": "{surname} {given2} {given}{title}",
+                "informal": "{surname} {given-informal}{title}"
               },
               "addressing": {
-                "formal": "{surname}{given}{title}",
-                "informal": "{surname}{given-informal}{title}"
+                "formal": "{surname} {given}{title}",
+                "informal": "{surname} {given-informal}{title}"
               },
               "monogram": {
                 "formal": "{given-monogram-allCaps}",
@@ -86,12 +89,12 @@
             },
             "medium": {
               "referring": {
-                "formal": "{surname}{given}{title}",
-                "informal": "{surname}{given-informal}{title}"
+                "formal": "{surname} {given}{title}",
+                "informal": "{surname} {given-informal}{title}"
               },
               "addressing": {
-                "formal": "{surname}{given}{title}",
-                "informal": "{surname}{given-informal}{title}"
+                "formal": "{surname} {given}{title}",
+                "informal": "{surname} {given-informal}{title}"
               },
               "monogram": {
                 "formal": "{given-monogram-allCaps}",
@@ -100,8 +103,8 @@
             },
             "short": {
               "referring": {
-                "formal": "{surname}{given}{title}",
-                "informal": "{surname}{given-informal}{title}"
+                "formal": "{surname} {given}{title}",
+                "informal": "{surname} {given-informal}{title}"
               },
               "addressing": {
                 "formal": "{surname}{title}",

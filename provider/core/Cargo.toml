@@ -5,40 +5,32 @@
 [package]
 name = "icu_provider"
 description = "Trait and struct definitions for the ICU data provider"
-version = "1.2.0"
-rust-version = "1.65.0"
-authors = ["The ICU4X Project Developers"]
-edition = "2021"
-readme = "README.md"
-repository = "https://github.com/unicode-org/icu4x"
-homepage = "https://icu4x.unicode.org"
-license = "Unicode-DFS-2016"
-categories = ["internationalization"]
-# Keep this in sync with other crates unless there are exceptions
-include = [
-    "src/**/*",
-    "examples/**/*",
-    "benches/**/*",
-    "tests/**/*",
-    "Cargo.toml",
-    "LICENSE",
-    "README.md"
-]
+license-file = "LICENSE"
+
+authors.workspace = true
+categories.workspace = true
+edition.workspace = true
+homepage.workspace = true
+include.workspace = true
+repository.workspace = true
+rust-version.workspace = true
+version.workspace = true
 
 [package.metadata.docs.rs]
 all-features = true
 
 [dependencies]
 displaydoc = { version = "0.2.3", default-features = false }
-icu_locid = { version = "1.2.0", path = "../../components/locid" }
+icu_locid = { workspace = true }
 stable_deref_trait = { version = "1.2.0", default-features = false }
-writeable = { version = "0.5.1", path = "../../utils/writeable" }
-yoke = { version = "0.7.1", path = "../../utils/yoke", features = ["derive"] }
-zerofrom = { version = "0.1.1", path = "../../utils/zerofrom", features = ["derive"] }
-zerovec = { version = "0.9.4", path = "../../utils/zerovec", features = ["derive"]}
+writeable = { workspace = true }
+tinystr = { workspace = true }
+yoke = { workspace = true, features = ["alloc", "derive"] }
+zerofrom = { workspace = true, features = ["alloc", "derive"] }
+zerovec = { workspace = true, features = ["derive"]}
 
 # macros
-icu_provider_macros = { version = "1.2.0", path = "../macros", optional = true }
+icu_provider_macros = { workspace = true, optional = true }
 
 # log
 log = { version = "0.4", optional = true }
@@ -51,7 +43,7 @@ serde_json = { version = "1.0", default-features = false, features = ["alloc"], 
 
 # datagen
 erased-serde = { version = "0.3", optional = true, default-features = false, features = ["alloc"] }
-databake = { version = "0.1.3", path = "../../utils/databake", optional = true, features = ["derive"] }
+databake = { workspace = true, optional = true, features = ["derive"] }
 
 [dev-dependencies]
 serde_json = "1.0"
@@ -61,6 +53,7 @@ icu_locid_transform = { path = "../../components/locid_transform" }
 [features]
 std = ["icu_locid/std"]
 sync = []
+experimental = []
 macros = ["dep:icu_provider_macros"]
 # Enable logging of additional context of data errors
 logging = ["dep:log"]

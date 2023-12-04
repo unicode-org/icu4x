@@ -75437,8 +75437,8 @@
           "has_conditional_special": false,
           "has_conditional_fold": false
         },
-        "slot_presence": 192,
-        "data": "\u0002ΐ\u0000\u0006\fΐΪ́Ϊ́"
+        "slot_presence": 130,
+        "data": "ΐ\u0000\u0006\fΐΪ́Ϊ́"
       },
       {
         "bits": {
@@ -75489,8 +75489,8 @@
           "has_conditional_special": false,
           "has_conditional_fold": false
         },
-        "slot_presence": 192,
-        "data": "\u0002ΰ\u0000\u0006\fΰΫ́Ϋ́"
+        "slot_presence": 130,
+        "data": "ΰ\u0000\u0006\fΰΫ́Ϋ́"
       },
       {
         "bits": {
@@ -77101,8 +77101,8 @@
           "has_conditional_special": false,
           "has_conditional_fold": false
         },
-        "slot_presence": 192,
-        "data": "\u0003ﬆ\u0000\u0002\u0004stSTSt"
+        "slot_presence": 130,
+        "data": "ﬆ\u0000\u0002\u0004stSTSt"
       },
       {
         "bits": {

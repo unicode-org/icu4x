@@ -3,14 +3,14 @@
     "es-AR": {
       "identity": {
         "version": {
-          "_cldrVersion": "43"
+          "_cldrVersion": "44"
         },
         "language": "es",
         "territory": "AR"
       },
       "localeDisplayNames": {
         "territories": {
-          "001": "Mundo",
+          "001": "mundo",
           "002": "África",
           "003": "América del Norte",
           "005": "Sudamérica",
@@ -142,7 +142,7 @@
           "GP": "Guadalupe",
           "GQ": "Guinea Ecuatorial",
           "GR": "Grecia",
-          "GS": "Islas Georgia del Sur y Sandwich del Sur",
+          "GS": "Islas Georgia del Sur y Sándwich del Sur",
           "GT": "Guatemala",
           "GU": "Guam",
           "GW": "Guinea-Bisáu",
@@ -161,6 +161,8 @@
           "IM": "Isla de Man",
           "IN": "India",
           "IO": "Territorio Británico del Océano Índico",
+          "IO-alt-biot": "Territorio Británico del Océano Índico",
+          "IO-alt-chagos": "Archipiélago de Chagos",
           "IQ": "Irak",
           "IR": "Irán",
           "IS": "Islandia",
@@ -247,11 +249,11 @@
           "QA": "Catar",
           "QO": "Islas Ultramarinas",
           "RE": "Reunión",
-          "RO": "Rumanía",
+          "RO": "Rumania",
           "RS": "Serbia",
           "RU": "Rusia",
           "RW": "Ruanda",
-          "SA": "Arabia Saudí",
+          "SA": "Arabia Saudita",
           "SB": "Islas Salomón",
           "SC": "Seychelles",
           "SD": "Sudán",

@@ -76,6 +76,25 @@ impl KeyedDataMarker for HelloWorldV1Marker {
 ///
 /// assert_eq!("Hallo Welt", german_hello_world.get().message);
 /// ```
+///
+/// Load the reverse string using an auxiliary key:
+///
+/// ```
+/// use icu_provider::hello_world::*;
+/// use icu_provider::prelude::*;
+///
+/// let reverse_hello_world: DataPayload<HelloWorldV1Marker> =
+///     HelloWorldProvider
+///         .load(DataRequest {
+///             locale: &"en-x-reverse".parse().unwrap(),
+///             metadata: Default::default(),
+///         })
+///         .expect("Loading should succeed")
+///         .take_payload()
+///         .expect("Data should be present");
+///
+/// assert_eq!("Olleh Dlrow", reverse_hello_world.get().message);
+/// ```
 #[derive(Debug, PartialEq, Default)]
 pub struct HelloWorldProvider;
 
@@ -86,17 +105,28 @@ impl HelloWorldProvider {
         ("bn", "ওহে বিশ্ব"),
         ("cs", "Ahoj světe"),
         ("de", "Hallo Welt"),
+        ("de-AT", "Servus Welt"),
         ("el", "Καλημέρα κόσμε"),
         ("en", "Hello World"),
+        ("en-001", "Hello from 🗺️"),            // WORLD
+        ("en-002", "Hello from 🌍"),           // AFRICA
+        ("en-019", "Hello from 🌎"),           // AMERICAS
+        ("en-142", "Hello from 🌏"),           // ASIA
+        ("en-GB", "Hello from 🇬🇧"),            // GREAT BRITAIN
+        ("en-GB-u-sd-gbeng", "Hello from 🏴󠁧󠁢󠁥󠁮󠁧󠁿"), // ENGLAND
+        ("en-x-reverse", "Olleh Dlrow"),
         ("eo", "Saluton, Mondo"),
         ("fa", "سلام دنیا‎"),
         ("fi", "hei maailma"),
         ("is", "Halló, heimur"),
         ("ja", "こんにちは世界"),
+        ("ja-x-reverse", "界世はちにんこ"),
         ("la", "Ave, munde"),
         ("pt", "Olá, mundo"),
         ("ro", "Salut, lume"),
         ("ru", "Привет, мир"),
+        ("sr", "Поздрав свете"),
+        ("sr-Latn", "Pozdrav svete"),
         ("vi", "Xin chào thế giới"),
         ("zh", "你好世界"),
     ];
@@ -190,11 +220,7 @@ impl BufferProvider for HelloWorldJsonProvider {
 impl icu_provider::datagen::IterableDataProvider<HelloWorldV1Marker> for HelloWorldProvider {
     fn supported_locales(&self) -> Result<Vec<DataLocale>, DataError> {
         #[allow(clippy::unwrap_used)] // datagen
-        Ok(Self::DATA
-            .iter()
-            .map(|(s, _)| s.parse::<icu_locid::LanguageIdentifier>().unwrap())
-            .map(DataLocale::from)
-            .collect())
+        Ok(Self::DATA.iter().map(|(s, _)| s.parse().unwrap()).collect())
     }
 }
 
@@ -307,17 +333,28 @@ fn test_iter() {
             locale!("bn").into(),
             locale!("cs").into(),
             locale!("de").into(),
+            locale!("de-AT").into(),
             locale!("el").into(),
             locale!("en").into(),
+            locale!("en-001").into(),
+            locale!("en-002").into(),
+            locale!("en-019").into(),
+            locale!("en-142").into(),
+            locale!("en-GB").into(),
+            locale!("en-GB-u-sd-gbeng").into(),
+            "en-x-reverse".parse().unwrap(),
             locale!("eo").into(),
             locale!("fa").into(),
             locale!("fi").into(),
             locale!("is").into(),
             locale!("ja").into(),
+            "ja-x-reverse".parse().unwrap(),
             locale!("la").into(),
             locale!("pt").into(),
             locale!("ro").into(),
             locale!("ru").into(),
+            locale!("sr").into(),
+            locale!("sr-Latn").into(),
             locale!("vi").into(),
             locale!("zh").into()
         ]

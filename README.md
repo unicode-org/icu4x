@@ -30,31 +30,29 @@ An example `ICU4X` powered application in Rust may look like below...
 
 ```toml
 [dependencies]
-icu = "1.0.0"
-icu_testdata = "1.0.0"
+icu = "1.3.0"
 ```
 
 `src/main.rs`:
 
 ```rust
-use icu::calendar::{DateTime, indian::Indian};
-use icu::datetime::{options::length, TypedDateTimeFormatter};
+use icu::calendar::DateTime;
+use icu::datetime::{options::length, DateTimeFormatter};
 use icu::locid::locale;
 
 let options =
     length::Bag::from_date_time_style(length::Date::Long, length::Time::Medium).into();
 
-let dtf = TypedDateTimeFormatter::<Indian>::try_new_unstable(&icu_testdata::unstable(), &locale!("es").into(), options)
-    .expect("Failed to create DateTimeFormatter instance.");
+let dtf = DateTimeFormatter::try_new(&locale!("es").into(), options)
+    .expect("locale should be present in compiled data");
 
-let date = DateTime::try_new_iso_datetime(2020, 9, 12, 12, 35, 0)
-    .expect("Failed to parse date.")
-    .to_calendar(Indian);
+let date = DateTime::try_new_iso_datetime(2020, 9, 12, 12, 35, 0).expect("datetime should be valid");
+let date = date.to_any();
 
-let formatted_date = dtf.format(&date);
+let formatted_date = dtf.format_to_string(&date).expect("formatting should succeed");
 assert_eq!(
-    formatted_date.to_string(),
-    "21 de bhadra de 1942 saka, 12:35:00"
+    formatted_date,
+    "12 de septiembre de 2020, 12:35:00"
 );
 ```
 
@@ -78,3 +76,11 @@ ICU4X, or "ICU for X", will be built from the start with several key design cons
 4. Written by internationalization experts to encourage best practices.
 
 ICU4X will provide an ECMA-402-compatible API surface in the target client-side platforms, including the web platform, iOS, Android, WearOS, WatchOS, Flutter, and Fuchsia, supported in programming languages including Rust, JavaScript, Objective-C, Java, Dart, and C++.
+
+## Licensing and Copyright
+
+Copyright © 2020-2023 Unicode, Inc. Unicode and the Unicode Logo are registered trademarks of Unicode, Inc. in the United States and other countries.
+
+The project is released under [LICENSE](./LICENSE), the free and open-source [Unicode License](https://www.unicode.org/license.txt), which is based on the well-known MIT license, with the primary difference being that the Unicode License expressly covers data and data files, as well as code. For further information please see [The Unicode Consortium Intellectual Property, Licensing, and Technical Contribution Policies](https://www.unicode.org/policies/licensing_policy.html). 
+
+A CLA is required to contribute to this project - please refer to the [CONTRIBUTING.md](./CONTRIBUTING.md) file (or start a Pull Request) for more information.

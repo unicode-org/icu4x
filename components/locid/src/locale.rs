@@ -30,7 +30,7 @@ use writeable::Writeable;
 /// use icu_locid::{
 ///     extensions::unicode::{key, value},
 ///     locale,
-///     subtags::{region, language}
+///     subtags::{language, region},
 /// };
 ///
 /// let loc = locale!("en-US-u-ca-buddhist");
@@ -252,7 +252,7 @@ impl Locale {
     /// Compare this `Locale` with a potentially unnormalized BCP-47 string.
     ///
     /// The return value is equivalent to what would happen if you first parsed the
-    /// BCP-47 string to a `Locale` and then performed a structucal comparison.
+    /// BCP-47 string to a `Locale` and then performed a structural comparison.
     ///
     /// # Examples
     ///
@@ -476,7 +476,8 @@ impl From<Option<subtags::Region>> for Locale {
 /// ```
 /// use icu::locid::Locale;
 /// use icu::locid::{
-///     locale, subtags::{language, region, script}
+///     locale,
+///     subtags::{language, region, script},
 /// };
 ///
 /// assert_eq!(

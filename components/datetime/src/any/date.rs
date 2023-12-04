@@ -85,11 +85,8 @@ impl DateFormatter {
     /// let length = length::Date::Medium;
     /// let locale = locale!("en-u-ca-gregory");
     ///
-    /// let df = DateFormatter::try_new_with_length(
-    ///     &locale.into(),
-    ///     length,
-    /// )
-    /// .expect("Failed to create TypedDateFormatter instance.");
+    /// let df = DateFormatter::try_new_with_length(&locale.into(), length)
+    ///     .expect("Failed to create TypedDateFormatter instance.");
     ///
     /// let datetime =
     ///     Date::try_new_iso_date(2020, 9, 1).expect("Failed to construct Date.");
@@ -244,7 +241,7 @@ impl DateFormatter {
 
     /// Converts a date to the correct calendar if necessary
     ///
-    /// Returns Err if the date is not ISO or compatible with the current calendar, returns Ok(None)
+    /// Returns `Err` if the date is not ISO or compatible with the current calendar, returns `Ok(None)`
     /// if the date is compatible with the current calendar and doesn't need conversion
     fn convert_if_necessary<'a>(
         &'a self,

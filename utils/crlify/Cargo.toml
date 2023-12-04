@@ -4,23 +4,17 @@
 
 [package]
 name = "crlify"
-version = "1.0.2"
-rust-version = "1.65.0"
-authors = ["The ICU4X Project Developers"]
-repository = "https://github.com/unicode-org/icu4x"
-edition = "2021"
-license = "Unicode-DFS-2016"
+version = "1.0.3"
 keywords = ["io", "crlf", "windows", "line", "ending"]
 description = "A std::io::Write wrapper that replaces \n with \r\n on Windows."
 documentation = "https://docs.rs/litemap"
-readme = "./README.md"
-# Keep this in sync with other crates unless there are exceptions
-include = [
-    "src/**/*",
-    "Cargo.toml",
-    "LICENSE",
-    "README.md"
-]
+license-file = "LICENSE"
+
+authors.workspace = true
+edition.workspace = true
+include.workspace = true
+repository.workspace = true
+rust-version.workspace = true
 
 [package.metadata.workspaces]
 independent = true

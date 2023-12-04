@@ -92,6 +92,7 @@ icu4x_root = pwd
 cd ffi/gn
 
 exec --fail-on-error ./third_party_tools/bin/gnaw --manifest-path "${icu4x_root}/ffi/gn/Cargo.toml" --project-root ${icu4x_root} --output ${icu4x_root}/ffi/gn/icu4x/BUILD.gn --skip-root --gn-bin ${icu4x_root}/ffi/gn/third_party_tools/bin/gn
+exec --fail-on-error cargo rdme --force
 '''
 
 [tasks.verify-gn-gen]

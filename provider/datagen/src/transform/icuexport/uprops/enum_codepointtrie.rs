@@ -3,7 +3,6 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::transform::icuexport::uprops::uprops_serde::enumerated::EnumeratedPropertyMap;
-use crate::SourceData;
 use icu_collections::codepointtrie::CodePointTrie;
 use icu_properties::provider::{names::*, *};
 use icu_provider::datagen::*;
@@ -12,19 +11,38 @@ use std::collections::BTreeMap;
 use std::convert::TryFrom;
 use tinystr::TinyStr4;
 
-pub(crate) fn get_enumerated_prop<'a>(
-    source: &'a SourceData,
-    key: &str,
-) -> Result<&'a super::uprops_serde::enumerated::EnumeratedPropertyMap, DataError> {
-    source
-        .icuexport()?
-        .read_and_parse_toml::<super::uprops_serde::enumerated::Main>(&format!(
-            "uprops/{}/{}.toml",
-            source.trie_type, key
-        ))?
-        .enum_property
-        .get(0)
-        .ok_or_else(|| DataErrorKind::MissingDataKey.into_error())
+impl crate::DatagenProvider {
+    pub(crate) fn get_enumerated_prop<'a>(
+        &'a self,
+        key: &str,
+    ) -> Result<&'a super::uprops_serde::enumerated::EnumeratedPropertyMap, DataError> {
+        self.icuexport()?
+            .read_and_parse_toml::<super::uprops_serde::enumerated::Main>(&format!(
+                "uprops/{}/{}.toml",
+                self.trie_type(),
+                key
+            ))?
+            .enum_property
+            .get(0)
+            .ok_or_else(|| DataErrorKind::MissingDataKey.into_error())
+    }
+    fn get_mask_prop<'a>(
+        &'a self,
+        key: &str,
+    ) -> Result<&'a super::uprops_serde::mask::MaskPropertyMap, DataError> {
+        self.icuexport()?
+            .read_and_parse_toml::<super::uprops_serde::mask::Main>(&format!(
+                "uprops/{}/{}.toml",
+                self.trie_type(),
+                key
+            ))?
+            .mask_property
+            .get(0)
+            .ok_or(DataError::custom(
+                "Loading icuexport property data failed: \
+                 Are you using a sufficiently recent icuexport? (Must be ⪈ 72.1)",
+            ))
+    }
 }
 
 fn get_prop_values_map<F>(
@@ -95,7 +113,7 @@ fn map_to_vec<'a>(
     };
 
     let mut v = Vec::new();
-    for i in 0..last {
+    for i in 0..=last {
         if let Some(&val) = map.get(&i) {
             v.push(val)
         } else {
@@ -136,7 +154,7 @@ fn load_values_to_names_sparse<M>(
 where
     M: DataMarker<Yokeable = PropertyEnumToValueNameSparseMapV1<'static>>,
 {
-    let data = get_enumerated_prop(&p.source, prop_name)
+    let data = p.get_enumerated_prop(prop_name)
         .map_err(|_| DataError::custom("Loading icuexport property data failed: \
                                         Are you using a sufficiently recent icuexport? (Must be ⪈ 72.1)"))?;
     let map = load_values_to_names(data, is_short)?;
@@ -157,7 +175,7 @@ fn load_values_to_names_linear<M>(
 where
     M: DataMarker<Yokeable = PropertyEnumToValueNameLinearMapV1<'static>>,
 {
-    let data = get_enumerated_prop(&p.source, prop_name)
+    let data = p.get_enumerated_prop(prop_name)
         .map_err(|_| DataError::custom("Loading icuexport property data failed: \
                                         Are you using a sufficiently recent icuexport? (Must be ⪈ 72.1)"))?;
     let map = load_values_to_names(data, is_short)?;
@@ -179,7 +197,7 @@ fn load_values_to_names_linear4<M>(
 where
     M: DataMarker<Yokeable = PropertyEnumToValueNameLinearTiny4MapV1<'static>>,
 {
-    let data = get_enumerated_prop(&p.source, prop_name)
+    let data = p.get_enumerated_prop(prop_name)
         .map_err(|_| DataError::custom("Loading icuexport property data failed: \
                                         Are you using a sufficiently recent icuexport? (Must be ⪈ 72.1)"))?;
     let map = load_values_to_names(data, is_short)?;
@@ -212,7 +230,7 @@ macro_rules! expand {
             {
                 fn load(&self, req: DataRequest) -> Result<DataResponse<$marker>, DataError> {
                     self.check_req::<$marker>(req)?;
-                    let source_cpt_data = &get_enumerated_prop(&self.source, $prop_name)?.code_point_trie;
+                    let source_cpt_data = &self.get_enumerated_prop($prop_name)?.code_point_trie;
 
                     let code_point_trie = CodePointTrie::try_from(source_cpt_data).map_err(|e| {
                         DataError::custom("Could not parse CodePointTrie TOML").with_display_context(&e)
@@ -229,7 +247,7 @@ macro_rules! expand {
                 fn supported_locales(
                     &self,
                 ) -> Result<Vec<DataLocale>, DataError> {
-                    get_enumerated_prop(&self.source, $prop_name)?;
+                    self.get_enumerated_prop($prop_name)?;
                     Ok(vec![Default::default()])
                 }
             }
@@ -238,7 +256,7 @@ macro_rules! expand {
             {
                 fn load(&self, req: DataRequest) -> Result<DataResponse<$marker_n2e>, DataError> {
                     self.check_req::<$marker_n2e>(req)?;
-                    let data = get_enumerated_prop(&self.source, $prop_name)
+                    let data = self.get_enumerated_prop($prop_name)
                         .map_err(|_| DataError::custom("Loading icuexport property data failed: \
                                                         Are you using a sufficiently recent icuexport? (Must be ⪈ 72.1)"))?;
 
@@ -254,7 +272,7 @@ macro_rules! expand {
                 fn supported_locales(
                     &self,
                 ) -> Result<Vec<DataLocale>, DataError> {
-                    get_enumerated_prop(&self.source, $prop_name)?;
+                    self.get_enumerated_prop($prop_name)?;
                     Ok(vec![Default::default()])
                 }
             }
@@ -272,7 +290,7 @@ macro_rules! expand {
                     fn supported_locales(
                         &self,
                     ) -> Result<Vec<DataLocale>, DataError> {
-                        get_enumerated_prop(&self.source, $prop_name)?;
+                        self.get_enumerated_prop($prop_name)?;
                         Ok(vec![Default::default()])
                     }
                 }
@@ -289,7 +307,7 @@ macro_rules! expand {
                     fn supported_locales(
                         &self,
                     ) -> Result<Vec<DataLocale>, DataError> {
-                        get_enumerated_prop(&self.source, $prop_name)?;
+                        self.get_enumerated_prop($prop_name)?;
                         Ok(vec![Default::default()])
                     }
                 }
@@ -308,7 +326,7 @@ macro_rules! expand {
                     fn supported_locales(
                         &self,
                     ) -> Result<Vec<DataLocale>, DataError> {
-                        get_enumerated_prop(&self.source, $prop_name)?;
+                        self.get_enumerated_prop($prop_name)?;
                         Ok(vec![Default::default()])
                     }
                 }
@@ -325,7 +343,7 @@ macro_rules! expand {
                     fn supported_locales(
                         &self,
                     ) -> Result<Vec<DataLocale>, DataError> {
-                        get_enumerated_prop(&self.source, $prop_name)?;
+                        self.get_enumerated_prop($prop_name)?;
                         Ok(vec![Default::default()])
                     }
                 }
@@ -344,7 +362,7 @@ macro_rules! expand {
                     fn supported_locales(
                         &self,
                     ) -> Result<Vec<DataLocale>, DataError> {
-                        get_enumerated_prop(&self.source, $prop_name)?;
+                        self.get_enumerated_prop($prop_name)?;
                         Ok(vec![Default::default()])
                     }
                 }
@@ -362,7 +380,7 @@ macro_rules! expand {
                     fn supported_locales(
                         &self,
                     ) -> Result<Vec<DataLocale>, DataError> {
-                        get_enumerated_prop(&self.source, $prop_name)?;
+                        self.get_enumerated_prop($prop_name)?;
                         Ok(vec![Default::default()])
                     }
                 }
@@ -371,22 +389,6 @@ macro_rules! expand {
     };
 }
 
-fn get_mask_prop<'a>(
-    source: &'a SourceData,
-    key: &str,
-) -> Result<&'a super::uprops_serde::mask::MaskPropertyMap, DataError> {
-    source
-        .icuexport()?
-        .read_and_parse_toml::<super::uprops_serde::mask::Main>(&format!(
-            "uprops/{}/{}.toml",
-            source.trie_type,
-            key
-        ))?
-        .mask_property
-        .get(0)
-        .ok_or(DataError::custom("Loading icuexport property data failed: \
-                                                        Are you using a sufficiently recent icuexport? (Must be ⪈ 72.1)"))
-}
 // Special handling for GeneralCategoryMask
 impl DataProvider<GeneralCategoryMaskNameToValueV1Marker> for crate::DatagenProvider {
     fn load(
@@ -398,7 +400,7 @@ impl DataProvider<GeneralCategoryMaskNameToValueV1Marker> for crate::DatagenProv
 
         self.check_req::<GeneralCategoryMaskNameToValueV1Marker>(req)?;
 
-        let data = get_mask_prop(&self.source, "gcm")?;
+        let data = self.get_mask_prop("gcm")?;
         let data_struct = get_prop_values_map(&data.values, |v| {
             let value: GeneralCategoryGroup = v.into();
             let ule = value.to_unaligned();
@@ -419,7 +421,7 @@ impl DataProvider<GeneralCategoryMaskNameToValueV1Marker> for crate::DatagenProv
 
 impl IterableDataProvider<GeneralCategoryMaskNameToValueV1Marker> for crate::DatagenProvider {
     fn supported_locales(&self) -> Result<Vec<DataLocale>, DataError> {
-        get_mask_prop(&self.source, "gcm")?;
+        self.get_mask_prop("gcm")?;
         Ok(vec![Default::default()])
     }
 }
@@ -469,6 +471,15 @@ expand!(
             EastAsianWidthValueToLongNameV1Marker
         ),
         "ea"
+    ),
+    (
+        IndicSyllabicCategoryV1Marker,
+        IndicSyllabicCategoryNameToValueV1Marker,
+        (
+            linear: IndicSyllabicCategoryValueToShortNameV1Marker,
+            IndicSyllabicCategoryValueToLongNameV1Marker
+        ),
+        "InSC"
     ),
     (
         LineBreakV1Marker,
@@ -523,7 +534,7 @@ mod tests {
     // the ICU CodePointTrie that ICU4X is reading from.
     #[test]
     fn test_general_category() {
-        let provider = crate::DatagenProvider::for_test();
+        let provider = crate::DatagenProvider::new_testing();
 
         let payload: DataPayload<GeneralCategoryV1Marker> = provider
             .load(Default::default())
@@ -541,7 +552,7 @@ mod tests {
 
     #[test]
     fn test_script() {
-        let provider = crate::DatagenProvider::for_test();
+        let provider = crate::DatagenProvider::new_testing();
 
         let payload: DataPayload<ScriptV1Marker> = provider
             .load(Default::default())

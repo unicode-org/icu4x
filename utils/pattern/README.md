@@ -1,5 +1,7 @@
 # icu_pattern [![crates.io](https://img.shields.io/crates/v/icu_pattern)](https://crates.io/crates/icu_pattern)
 
+<!-- cargo-rdme start -->
+
 `icu_pattern` is a utility crate of the [`ICU4X`] project.
 
 It includes a [`Pattern`] struct which wraps a paid of [`Parser`] and [`Interpolator`] allowing for parsing and interpolation of ICU placeholder patterns, like "{0} days" or
@@ -99,6 +101,8 @@ pattern to be used.
 
 [`ICU4X`]: ../icu/index.html
 [`FromStr`]: std::str::FromStr
+
+<!-- cargo-rdme end -->
 
 ## More Information
 

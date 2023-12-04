@@ -5,7 +5,7 @@
 use crate::map::{MutableZeroVecLike, ZeroMapKV, ZeroVecLike};
 use crate::ZeroVec;
 use alloc::borrow::Borrow;
-use alloc::vec;
+use alloc::vec::Vec;
 use core::hash::Hash;
 
 pub mod algorithms;
@@ -20,8 +20,8 @@ mod serde;
 /// ```
 /// use zerovec::ZeroHashMap;
 ///
-/// let kv = vec![(0, "a"), (1, "b"), (2, "c")];
-/// let hashmap: ZeroHashMap<i32, str> = ZeroHashMap::from_iter(kv.into_iter());
+/// let hashmap =
+///     ZeroHashMap::<i32, str>::from_iter([(0, "a"), (1, "b"), (2, "c")]);
 /// assert_eq!(hashmap.get(&0), Some("a"));
 /// assert_eq!(hashmap.get(&2), Some("c"));
 /// assert_eq!(hashmap.get(&4), None);
@@ -91,8 +91,7 @@ where
     /// ```
     /// use zerovec::ZeroHashMap;
     ///
-    /// let hashmap: ZeroHashMap<str, str> =
-    ///     ZeroHashMap::from_iter(vec![("a", "A"), ("z", "Z")].into_iter());
+    /// let hashmap = ZeroHashMap::<str, str>::from_iter([("a", "A"), ("z", "Z")]);
     ///
     /// assert_eq!(hashmap.get("a"), Some("A"));
     /// assert_eq!(hashmap.get("z"), Some("Z"));
@@ -111,8 +110,7 @@ where
     /// ```rust
     /// use zerovec::ZeroHashMap;
     ///
-    /// let hashmap: ZeroHashMap<str, str> =
-    ///     ZeroHashMap::from_iter(vec![("a", "A"), ("z", "Z")].into_iter());
+    /// let hashmap = ZeroHashMap::<str, str>::from_iter([("a", "A"), ("z", "Z")]);
     ///
     /// assert!(hashmap.contains_key("a"));
     /// assert!(!hashmap.contains_key("p"));
@@ -176,8 +174,12 @@ where
     /// ```
     /// use zerovec::ZeroHashMap;
     ///
-    /// let kv: Vec<(i32, &str)> = vec![(1, "a"), (2, "b"), (3, "c"), (4, "d")];
-    /// let hashmap: ZeroHashMap<i32, str> = ZeroHashMap::from_iter(kv.into_iter());
+    /// let hashmap = ZeroHashMap::<i32, str>::from_iter([
+    ///     (1, "a"),
+    ///     (2, "b"),
+    ///     (3, "c"),
+    ///     (4, "d"),
+    /// ]);
     /// assert_eq!(hashmap.get(&1), Some("a"));
     /// assert_eq!(hashmap.get(&2), Some("b"));
     /// assert_eq!(hashmap.get(&3), Some("c"));
@@ -190,8 +192,7 @@ where
             (lower, None) => lower,
         };
 
-        let mut key_hashes = vec![];
-        key_hashes.reserve(size_hint);
+        let mut key_hashes = Vec::with_capacity(size_hint);
         let mut keys = K::Container::zvl_with_capacity(size_hint);
         let mut values = V::Container::zvl_with_capacity(size_hint);
         for (k, v) in iter {

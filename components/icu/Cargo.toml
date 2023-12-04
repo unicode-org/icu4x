@@ -5,55 +5,47 @@
 [package]
 name = "icu"
 description = "International Components for Unicode"
-version = "1.2.0"
-rust-version = "1.65.0"
-authors = ["The ICU4X Project Developers"]
-edition = "2021"
-readme = "README.md"
-repository = "https://github.com/unicode-org/icu4x"
-homepage = "https://icu4x.unicode.org"
-license = "Unicode-DFS-2016"
-categories = ["internationalization"]
-# Keep this in sync with other crates unless there are exceptions
-include = [
-    "src/**/*",
-    "examples/**/*",
-    "benches/**/*",
-    "tests/**/*",
-    "Cargo.toml",
-    "LICENSE",
-    "README.md"
-]
+license-file = "LICENSE"
+
+authors.workspace = true
+categories.workspace = true
+edition.workspace = true
+homepage.workspace = true
+include.workspace = true
+repository.workspace = true
+rust-version.workspace = true
+version.workspace = true
 
 [package.metadata.docs.rs]
 all-features = true
 
 [dependencies]
-icu_calendar = { version = "1.2.0", path = "../calendar", default-features = false }
-icu_casemap = { version = "1.2.0", path = "../../components/casemap", default-features = false }
-icu_collator = { version = "1.2.0", path = "../collator", default-features = false }
-icu_collections = { version = "1.2.0", path = "../collections", default-features = false }
-icu_datetime = { version = "1.2.0", path = "../datetime", default-features = false }
-icu_decimal = { version = "1.2.0", path = "../decimal", default-features = false }
-icu_list = { version = "1.2.0", path = "../list", default-features = false }
-icu_locid = { version = "1.2.0", path = "../locid", default-features = false }
-icu_locid_transform = { version = "1.2.0", path = "../locid_transform", default-features = false }
-icu_normalizer = { version = "1.2.0", path = "../normalizer", default-features = false }
-icu_plurals = { version = "1.2.0", path = "../plurals", default-features = false }
-icu_properties = { version = "1.2.0", path = "../properties", default-features = false }
-icu_segmenter = { version = "1.2.0", path = "../segmenter", default-features = false }
-icu_timezone = { version = "1.2.0", path = "../timezone", default-features = false }
+icu_calendar = { workspace = true }
+icu_casemap = { workspace = true }
+icu_collator = { workspace = true }
+icu_collections = { workspace = true }
+icu_datetime = { workspace = true }
+icu_decimal = { workspace = true }
+icu_list = { workspace = true }
+icu_locid = { workspace = true }
+icu_locid_transform = { workspace = true }
+icu_normalizer = { workspace = true }
+icu_plurals = { workspace = true }
+icu_properties = { workspace = true }
+icu_segmenter = { workspace = true }
+icu_timezone = { workspace = true }
 
 # Experimental components
-icu_compactdecimal = { version = "0.2.0", path = "../../experimental/compactdecimal", default-features = false, optional = true }
-icu_displaynames = { version = "0.10.0", path = "../../experimental/displaynames", default-features = false, optional = true }
-icu_relativetime = { version = "0.1.0", path = "../../experimental/relativetime", default-features = false, optional = true }
+icu_compactdecimal = { workspace = true, optional = true }
+icu_displaynames = { workspace = true, optional = true }
+icu_relativetime = { workspace = true, optional = true }
+icu_transliterate = { workspace = true, features = ["compile"], optional = true } # currently only usable with the compile feature
 
 # For docs links and features
-icu_provider = { version = "1.2.0", path = "../../provider/core", default-features = false }
+icu_provider = { workspace = true }
 
 [dev-dependencies]
-icu_datetime = { version = "1.2.0", path = "../datetime", features = ["serde"] }
+icu_datetime = { path = "../../components/datetime", features = ["serde"] }
 icu_provider_adapters = { path = "../../provider/adapters", features = ["serde"] }
 icu_provider_blob = { path = "../../provider/blob" }
 writeable = { path = "../../utils/writeable" }
@@ -93,6 +85,7 @@ std = [
     "icu_relativetime?/std",
     "icu_segmenter/std",
     "icu_timezone/std",
+    "icu_transliterate?/std",
 ]
 serde = [
     "icu_calendar/serde",
@@ -111,6 +104,7 @@ serde = [
     "icu_relativetime?/serde",
     "icu_segmenter/serde",
     "icu_timezone/serde",
+    "icu_transliterate?/serde",
 ]
 compiled_data = [
     "icu_calendar/compiled_data",
@@ -128,6 +122,7 @@ compiled_data = [
     "icu_relativetime?/compiled_data",
     "icu_segmenter/compiled_data",
     "icu_timezone/compiled_data",
+    "icu_transliterate?/compiled_data",
 ]
 serde_human = [
     "icu_list/serde_human"
@@ -135,13 +130,16 @@ serde_human = [
 icu_datetime_experimental = [
     "icu_datetime/experimental",
 ]
+icu_plurals_experimental = [
+    "icu_plurals/experimental"
+]
 experimental = [
     "icu_compactdecimal",
     "icu_datetime_experimental",
     "icu_displaynames",
-    "icu_locid_transform/experimental",
-    "icu_plurals/experimental",
+    "icu_plurals_experimental",
     "icu_relativetime",
+    "icu_transliterate",
 ]
 sync = ["icu_provider/sync"]
 logging = ["icu_provider/logging"]

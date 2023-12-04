@@ -48,11 +48,8 @@
 //!
 //! // You can work with a formatter that can select the calendar at runtime:
 //! let locale = Locale::from_str("en-u-ca-gregory").unwrap();
-//! let dtf = DateTimeFormatter::try_new(
-//!     &locale.into(),
-//!     options.clone(),
-//! )
-//! .expect("Failed to create DateTimeFormatter instance.");
+//! let dtf = DateTimeFormatter::try_new(&locale.into(), options.clone())
+//!     .expect("Failed to create DateTimeFormatter instance.");
 //!
 //! // Or one that selects a calendar at compile time:
 //! let typed_dtf = TypedDateTimeFormatter::<Gregorian>::try_new(
@@ -133,6 +130,7 @@
 
 extern crate alloc;
 
+mod any;
 mod calendar;
 mod datetime;
 mod error;
@@ -151,13 +149,13 @@ pub mod skeleton;
 pub mod time_zone;
 mod zoned_datetime;
 
-mod any;
-
 pub use any::{DateFormatter, DateTimeFormatter, ZonedDateTimeFormatter};
 pub use calendar::CldrCalendar;
 pub use datetime::{TimeFormatter, TypedDateFormatter, TypedDateTimeFormatter};
 pub use error::DateTimeError;
 pub use format::datetime::FormattedDateTime;
+#[cfg(feature = "experimental")]
+pub use format::neo::{FormattedDateTimePattern, TypedDateTimePatternInterpolator};
 pub use format::time_zone::FormattedTimeZone;
 pub use format::zoned_datetime::FormattedZonedDateTime;
 pub use options::DateTimeFormatterOptions;
@@ -170,7 +168,7 @@ pub use DateTimeError as Error;
 mod tests {
     use super::*;
     use core::mem::size_of;
-    use icu_calendar::provider::WeekDataV1Marker;
+    use icu_calendar::week::WeekCalculator;
     use icu_calendar::Gregorian;
     use icu_decimal::FixedDecimalFormatter;
     use icu_plurals::PluralRules;
@@ -203,19 +201,21 @@ mod tests {
     }
 
     #[test]
+    // TODO(#3413): Delete this test when no longer needed.
+    #[ignore] // Changes too much across nightlies.
     fn check_sizes() {
-        check_size_of!(5800 | 4632, DateFormatter);
-        check_size_of!(6792 | 5504, DateTimeFormatter);
-        check_size_of!(7904 | 6528, ZonedDateTimeFormatter);
-        check_size_of!(1496 | 1344, TimeFormatter);
-        check_size_of!(1112 | 1024, TimeZoneFormatter);
-        check_size_of!(5752 | 4584, TypedDateFormatter::<Gregorian>);
-        check_size_of!(6744 | 5456, TypedDateTimeFormatter::<Gregorian>);
+        check_size_of!(4616, DateFormatter);
+        check_size_of!(5488, DateTimeFormatter);
+        check_size_of!(6536, ZonedDateTimeFormatter);
+        check_size_of!(1344, TimeFormatter);
+        check_size_of!(1048, TimeZoneFormatter);
+        check_size_of!(4568, TypedDateFormatter::<Gregorian>);
+        check_size_of!(5440, TypedDateTimeFormatter::<Gregorian>);
 
         check_size_of!(88, DateTimeError);
-        check_size_of!(200, FormattedDateTime);
+        check_size_of!(184, FormattedDateTime);
         check_size_of!(16, FormattedTimeZone::<CustomTimeZone>);
-        check_size_of!(184, FormattedZonedDateTime);
+        check_size_of!(168, FormattedZonedDateTime);
 
         if cfg!(feature = "experimental") {
             check_size_of!(13, DateTimeFormatterOptions);
@@ -227,13 +227,13 @@ mod tests {
         check_size_of!(40, DP::<GenericPatternV1Marker>);
         check_size_of!(216, DP::<PatternPluralsFromPatternsV1Marker>);
         check_size_of!(5064 | 3912, DP::<ErasedDateSymbolsV1Marker>);
-        check_size_of!(24, DP::<WeekDataV1Marker>);
         check_size_of!(232 | 240, DP::<TimeZoneFormatsV1Marker>);
         check_size_of!(64, DP::<ExemplarCitiesV1Marker>);
         check_size_of!(120 | 112, DP::<MetazoneGenericNamesLongV1Marker>);
         check_size_of!(120 | 112, DP::<MetazoneGenericNamesShortV1Marker>);
         check_size_of!(216 | 208, DP::<MetazoneSpecificNamesLongV1Marker>);
         check_size_of!(216 | 208, DP::<MetazoneSpecificNamesShortV1Marker>);
+        check_size_of!(2, WeekCalculator);
         check_size_of!(176, PluralRules);
         check_size_of!(256 | 216, FixedDecimalFormatter);
         check_size_of!(1024 | 936, TimeZoneDataPayloads);

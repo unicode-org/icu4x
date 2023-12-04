@@ -3,7 +3,7 @@
     "fil": {
       "identity": {
         "version": {
-          "_cldrVersion": "43"
+          "_cldrVersion": "44"
         },
         "language": "fil"
       },
@@ -46,6 +46,7 @@
           "bem": "Bemba",
           "bez": "Bena",
           "bg": "Bulgarian",
+          "bgc": "Haryanvi",
           "bgn": "Kanlurang Balochi",
           "bho": "Bhojpuri",
           "bi": "Bislama",
@@ -110,9 +111,8 @@
           "eka": "Ekajuk",
           "el": "Greek",
           "en": "Ingles",
-          "en-GB": "Ingles na British",
           "en-GB-alt-short": "Ingles sa UK",
-          "en-US": "Ingles na American",
+          "en-US": "Ingles (American)",
           "en-US-alt-short": "Ingles sa US",
           "eo": "Esperanto",
           "es": "Spanish",
@@ -156,6 +156,7 @@
           "hax": "Katimugang Haida",
           "he": "Hebrew",
           "hi": "Hindi",
+          "hi-Latn-alt-variant": "Hinglish",
           "hil": "Hiligaynon",
           "hmn": "Hmong",
           "hr": "Croatian",
@@ -335,6 +336,7 @@
           "pt-PT": "European Portuguese",
           "qu": "Quechua",
           "quc": "Kʼicheʼ",
+          "raj": "Rajasthani",
           "rap": "Rapanui",
           "rar": "Rarotongan",
           "rhg": "Rohingya",

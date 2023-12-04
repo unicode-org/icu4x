@@ -1429,7 +1429,7 @@ macro_rules! decomposing_normalize_to {
                 } else {
                     return Ok(());
                 };
-                // Allowing indexed slicing, because the a failure would be a code bug and
+                // Allowing indexed slicing, because a failure would be a code bug and
                 // not a data issue.
                 #[allow(clippy::indexing_slicing)]
                 if $undecomposed_starter.starter_and_decomposes_to_self() {
@@ -1802,7 +1802,7 @@ impl DecomposingNormalizer {
     /// that no character in Unicode exhibits in NFD, NFKD, NFC, or NFKC: Case folding turns
     /// U+0345 from a reordered character into a non-reordered character before reordering happens.
     /// Therefore, the output of this normalization may differ for different inputs that are
-    /// canonically equivant with each other if they differ by how U+0345 is ordered relative
+    /// canonically equivalent with each other if they differ by how U+0345 is ordered relative
     /// to other reorderable characters.
     ///
     /// Public for testing only.
@@ -2271,7 +2271,7 @@ impl ComposingNormalizer {
     /// that no character in Unicode exhibits in NFD, NFKD, NFC, or NFKC: Case folding turns
     /// U+0345 from a reordered character into a non-reordered character before reordering happens.
     /// Therefore, the output of this normalization may differ for different inputs that are
-    /// canonically equivant with each other if they differ by how U+0345 is ordered relative
+    /// canonically equivalents with each other if they differ by how U+0345 is ordered relative
     /// to other reorderable characters.
     ///
     /// NOTE: This method remains experimental until suitability of this feature as part of

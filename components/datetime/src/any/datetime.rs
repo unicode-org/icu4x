@@ -2,8 +2,6 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-#[cfg(feature = "experimental")]
-use crate::options::components;
 use crate::provider::{calendar::*, date_time::PatternSelector};
 use crate::{calendar, options::DateTimeFormatterOptions, raw, DateFormatter, TimeFormatter};
 use crate::{input::DateTimeInput, DateTimeError, FormattedDateTime};
@@ -138,11 +136,8 @@ impl DateTimeFormatter {
     /// );
     /// let locale = locale!("en-u-ca-gregory");
     ///
-    /// let dtf = DateTimeFormatter::try_new(
-    ///     &locale.into(),
-    ///     options.into(),
-    /// )
-    /// .expect("Failed to create TypedDateTimeFormatter instance.");
+    /// let dtf = DateTimeFormatter::try_new(&locale.into(), options.into())
+    ///     .expect("Failed to create TypedDateTimeFormatter instance.");
     ///
     /// let datetime = DateTime::try_new_iso_datetime(2020, 9, 1, 12, 34, 28)
     ///     .expect("Failed to construct DateTime.");
@@ -280,7 +275,7 @@ impl DateTimeFormatter {
 
     /// Constructor that supports experimental options with compiled data.
     ///
-    /// ✨ *Enabled with the `compiled_data` Cargo feature.*
+    /// ✨ *Enabled with the `compiled_data` and `experimental` Cargo features.*
     ///
     /// [📚 Help choosing a constructor](icu_provider::constructors)
     ///
@@ -437,11 +432,8 @@ impl DateTimeFormatter {
     /// let length = length::Date::Medium;
     /// let locale = locale!("en-u-ca-gregory");
     ///
-    /// let df = DateFormatter::try_new_with_length(
-    ///     &locale.into(),
-    ///     length,
-    /// )
-    /// .expect("Failed to create TypedDateFormatter instance.");
+    /// let df = DateFormatter::try_new_with_length(&locale.into(), length)
+    ///     .expect("Failed to create TypedDateFormatter instance.");
     ///
     /// let tf = TimeFormatter::try_new_with_length(
     ///     &locale!("en").into(),
@@ -505,10 +497,19 @@ where {
         Ok(self.format(value)?.write_to_string().into_owned())
     }
 
-    /// Returns a [`components::Bag`] that represents the resolved components for the
+    /// Returns a [`components::Bag`](crate::options::components::Bag) that represents the resolved components for the
     /// options that were provided to the [`DateTimeFormatter`]. The developer may request
     /// a certain set of options for a [`DateTimeFormatter`] but the locale and resolution
     /// algorithm may change certain details of what actually gets resolved.
+    ///
+    /// ✨ *Enabled with the `experimental` Cargo feature.*
+    ///
+    /// <div class="stab unstable">
+    /// 🚧 This code is experimental; it may change at any time, in breaking or non-breaking ways,
+    /// including in SemVer minor releases. It can be enabled with the "experimental" Cargo feature
+    /// of the icu meta-crate. Use with caution.
+    /// <a href="https://github.com/unicode-org/icu4x/issues/1317">#1317</a>
+    /// </div>
     ///
     /// # Examples
     ///
@@ -523,11 +524,9 @@ where {
     ///
     /// let options = length::Bag::from_date_style(length::Date::Medium).into();
     ///
-    /// let dtf = DateTimeFormatter::try_new(
-    ///     &locale!("en-u-ca-gregory").into(),
-    ///     options,
-    /// )
-    /// .expect("Failed to create TypedDateTimeFormatter instance.");
+    /// let dtf =
+    ///     DateTimeFormatter::try_new(&locale!("en-u-ca-gregory").into(), options)
+    ///         .expect("Failed to create TypedDateTimeFormatter instance.");
     ///
     /// let mut expected_components_bag = components::Bag::default();
     /// expected_components_bag.year = Some(components::Year::Numeric);
@@ -537,13 +536,13 @@ where {
     /// assert_eq!(dtf.resolve_components(), expected_components_bag);
     /// ```
     #[cfg(feature = "experimental")]
-    pub fn resolve_components(&self) -> components::Bag {
+    pub fn resolve_components(&self) -> crate::options::components::Bag {
         self.0.resolve_components()
     }
 
     /// Converts a date to the correct calendar if necessary
     ///
-    /// Returns Err if the date is not ISO or compatible with the current calendar, returns Ok(None)
+    /// Returns `Err` if the date is not ISO or compatible with the current calendar, returns `Ok(None)`
     /// if the date is compatible with the current calendar and doesn't need conversion
     fn convert_if_necessary<'a>(
         &'a self,

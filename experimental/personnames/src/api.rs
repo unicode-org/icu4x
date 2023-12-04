@@ -27,7 +27,6 @@ pub trait PersonName {
 
 ///
 /// Error handling for the person name formatter.
-///
 #[derive(Clone, Eq, PartialEq, Debug)]
 pub enum PersonNamesFormatterError {
     ParseError(String),
@@ -36,7 +35,7 @@ pub enum PersonNamesFormatterError {
 
 /// Field Modifiers.
 ///
-/// https://www.unicode.org/reports/tr35/tr35-personNames.html#modifiers
+/// <https://www.unicode.org/reports/tr35/tr35-personNames.html#modifiers>
 #[derive(Copy, Clone, Eq, PartialEq, Debug)]
 enum FieldModifier {
     None,
@@ -165,7 +164,7 @@ impl Default for FieldModifierSet {
 
 /// Name Fields defined by Unicode specifications.
 ///
-/// https://www.unicode.org/reports/tr35/tr35-personNames.html#fields
+/// <https://www.unicode.org/reports/tr35/tr35-personNames.html#fields>
 #[derive(Eq, Ord, PartialOrd, PartialEq, Hash, Debug)]
 pub struct NameField {
     pub kind: NameFieldKind,
@@ -185,7 +184,7 @@ pub enum NameFieldKind {
 
 /// An enum to specify the preferred field order for the name.
 ///
-/// https://www.unicode.org/reports/tr35/tr35-personNames.html#person-name-object
+/// <https://www.unicode.org/reports/tr35/tr35-personNames.html#person-name-object>
 #[derive(Copy, Clone, Eq, PartialEq, Debug)]
 pub enum PreferredOrder {
     Default,

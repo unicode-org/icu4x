@@ -5,41 +5,33 @@
 [package]
 name = "icu_timezone"
 description = "API for resolving and manipulating time zone information"
-version = "1.2.0"
-rust-version = "1.65.0"
-authors = ["The ICU4X Project Developers"]
-edition = "2021"
-readme = "README.md"
-repository = "https://github.com/unicode-org/icu4x"
-homepage = "https://icu4x.unicode.org"
-license = "Unicode-DFS-2016"
-categories = ["internationalization"]
-# Keep this in sync with other crates unless there are exceptions
-include = [
-    "src/**/*",
-    "examples/**/*",
-    "benches/**/*",
-    "tests/**/*",
-    "Cargo.toml",
-    "LICENSE",
-    "README.md"
-]
+license-file = "LICENSE"
+
+authors.workspace = true
+categories.workspace = true
+edition.workspace = true
+homepage.workspace = true
+include.workspace = true
+repository.workspace = true
+rust-version.workspace = true
+version.workspace = true
 
 [package.metadata.docs.rs]
 all-features = true
 
 [dependencies]
 displaydoc = { version = "0.2.3", default-features = false }
-icu_calendar = { version = "1.2.0", path = "../../components/calendar", default-features = false }
-icu_locid = { version = "1.2.0", path = "../../components/locid" }
-icu_provider = { version = "1.2.0", path = "../../provider/core", features = ["macros"] }
-tinystr = { version = "0.7.1", path = "../../utils/tinystr", default-features = false, features = ["alloc", "zerovec"] }
-zerovec = { version = "0.9.4", path = "../../utils/zerovec", default-features = false, features = ["derive", "yoke"] }
+icu_calendar = { workspace = true }
+icu_locid = { workspace = true }
+icu_provider = { workspace = true, features = ["macros"] }
+tinystr = { workspace = true, features = ["alloc", "zerovec"] }
+zerotrie = { workspace = true, features = ["yoke", "zerofrom"] }
+zerovec = { workspace = true, features = ["derive", "yoke"] }
 
-databake = { version = "0.1.3", path = "../../utils/databake", optional = true, features = ["derive"] }
+databake = { workspace = true, optional = true, features = ["derive"] }
 serde = { version = "1.0", default-features = false, features = ["derive", "alloc"], optional = true }
 
-icu_timezone_data = { version = "~1.3.0", path = "data", optional = true }
+icu_timezone_data = { workspace = true, optional = true }
 
 [dev-dependencies]
 icu = { path = "../../components/icu", default-features = false }
@@ -47,6 +39,6 @@ icu = { path = "../../components/icu", default-features = false }
 [features]
 default = ["compiled_data"]
 std = ["icu_calendar/std", "icu_locid/std", "icu_provider/std"]
-serde = ["dep:serde", "zerovec/serde", "tinystr/serde", "icu_provider/serde"]
-datagen = ["serde", "dep:databake", "zerovec/databake", "tinystr/databake"]
+serde = ["dep:serde", "zerovec/serde", "zerotrie/serde", "tinystr/serde", "icu_provider/serde"]
+datagen = ["serde", "dep:databake", "zerovec/databake", "zerotrie/databake", "tinystr/databake"]
 compiled_data = ["dep:icu_timezone_data"]

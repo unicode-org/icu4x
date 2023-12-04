@@ -28,7 +28,8 @@
 //!
 //! // An individual enumerated property value as a `CodePointSetData`
 //!
-//! let line_sep_data = maps::general_category().get_set_for_value(GeneralCategory::LineSeparator);
+//! let line_sep_data = maps::general_category()
+//!     .get_set_for_value(GeneralCategory::LineSeparator);
 //! let line_sep = line_sep_data.as_borrowed();
 //!
 //! assert!(line_sep.contains32(0x2028));
@@ -91,7 +92,7 @@ mod trievalue;
 
 pub use props::{
     BidiClass, CanonicalCombiningClass, EastAsianWidth, GeneralCategory, GeneralCategoryGroup,
-    GraphemeClusterBreak, LineBreak, Script, SentenceBreak, WordBreak,
+    GraphemeClusterBreak, IndicSyllabicCategory, LineBreak, Script, SentenceBreak, WordBreak,
 };
 
 /// Module for working with the names of property values

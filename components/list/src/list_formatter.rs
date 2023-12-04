@@ -429,7 +429,7 @@ mod tests {
             "he",
             try_new_and_with_length,
             (["x", "יפו"], "x ויפו"),
-            (["x", "Ibiza"], "x ו-Ibiza"),
+            (["x", "Ibiza"], "x ו‑Ibiza"),
         );
     }
 }

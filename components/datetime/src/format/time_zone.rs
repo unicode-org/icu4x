@@ -85,11 +85,9 @@ where
     /// use icu::timezone::CustomTimeZone;
     /// use tinystr::tinystr;
     ///
-    /// let mut tzf = TimeZoneFormatter::try_new(
-    ///     &locale!("en").into(),
-    ///     Default::default(),
-    /// )
-    /// .unwrap();
+    /// let mut tzf =
+    ///     TimeZoneFormatter::try_new(&locale!("en").into(), Default::default())
+    ///         .unwrap();
     /// let mut buf = String::new();
     ///
     /// let mut time_zone = "Z".parse::<CustomTimeZone>().unwrap();

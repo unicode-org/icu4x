@@ -1,0 +1,57 @@
+# This file is part of ICU4X. For terms of use, please see the file
+# called LICENSE at the top level of the ICU4X source tree
+# (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
+
+[package]
+name = "icu_transliterate"
+description = "API for Transliteration"
+version = "0.1.2"
+license-file = "LICENSE"
+
+authors.workspace = true
+categories.workspace = true
+edition.workspace = true
+homepage.workspace = true
+include.workspace = true
+repository.workspace = true
+rust-version.workspace = true
+
+[package.metadata.docs.rs]
+all-features = true
+
+[dependencies]
+icu_provider = { workspace = true, features = ["macros", "experimental"] }
+icu_locid = { workspace = true }
+icu_collections = { workspace = true }
+icu_normalizer = { workspace = true }
+writeable = { workspace = true }
+
+icu_properties = { workspace = true, optional = true }
+icu_unicodeset_parse = { workspace = true, optional = true }
+
+zerovec = { workspace = true, features = ["derive"] }
+databake = { workspace = true, optional = true, features = ["derive"] }
+litemap = { workspace = true }
+log = { version = "0.4", optional = true }
+
+serde = { version = "1.0", features = ["derive"], optional = true, default-features = false }
+displaydoc = { version = "0.2.3", default-features = false }
+
+[target.'cfg(not(target_arch = "wasm32"))'.dev-dependencies]
+criterion = "0.4.0"
+
+[lib]
+bench = false
+
+[features]
+default = ["compiled_data"]
+std = []
+serde = ["dep:serde", "zerovec/serde", "icu_collections/serde"]
+compile = ["icu_properties", "icu_unicodeset_parse"]
+datagen = ["compile", "serde", "dep:databake", "zerovec/databake", "icu_collections/databake", "std", "log", "icu_provider/datagen"]
+compiled_data = ["icu_normalizer/compiled_data", "icu_properties/compiled_data"]
+bench = []
+
+[[bench]]
+name = "bench"
+harness = false

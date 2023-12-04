@@ -8,9 +8,9 @@ use core::marker::PhantomData;
 use tinystr::tinystr;
 
 // Note: The Ord/PartialOrd impls can be derived because the fields are in the correct order.
-#[derive(Copy, Clone, Debug, Hash, Eq, PartialEq, Ord, PartialOrd)]
+#[derive(Debug, Hash, Eq, PartialEq, Ord, PartialOrd)]
 #[allow(clippy::exhaustive_structs)] // this type is stable
-pub struct ArithmeticDate<C: CalendarArithmetic> {
+pub struct ArithmeticDate<C> {
     pub year: i32,
     /// 1-based month of year
     pub month: u8,
@@ -19,15 +19,16 @@ pub struct ArithmeticDate<C: CalendarArithmetic> {
     marker: PhantomData<C>,
 }
 
+impl<C> Copy for ArithmeticDate<C> {}
+impl<C> Clone for ArithmeticDate<C> {
+    fn clone(&self) -> Self {
+        *self
+    }
+}
+
 /// Maximum number of iterations when iterating through the days of a month; can be increased if necessary
 #[allow(dead_code)] // TODO: Remove dead code tag after use
 pub(crate) const MAX_ITERS_FOR_DAYS_OF_MONTH: u8 = 33;
-
-/// Maximum number of iterations when iterating through the days of a year; can be increased if necessary
-pub(crate) const MAX_ITERS_FOR_DAYS_OF_YEAR: u16 = 370;
-
-/// Maximum number of iterations when iterating through months of a year; can be increased if necessary
-pub(crate) const MAX_ITERS_FOR_MONTHS_OF_YEAR: u8 = 14;
 
 pub trait CalendarArithmetic: Calendar {
     fn month_days(year: i32, month: u8) -> u8;
@@ -243,7 +244,7 @@ impl<C: CalendarArithmetic> ArithmeticDate<C> {
         month_code: types::MonthCode,
         day: u8,
     ) -> Result<Self, CalendarError> {
-        let month = if let Some(ordinal) = ordinal_month_from_code(month_code) {
+        let month = if let Some((ordinal, false)) = month_code.parsed() {
             ordinal
         } else {
             return Err(CalendarError::UnknownMonthCode(
@@ -297,27 +298,6 @@ impl<C: CalendarArithmetic> ArithmeticDate<C> {
     pub fn new_from_lunar_ordinals(year: i32, month: u8, day: u8) -> Result<Self, CalendarError> {
         Self::new_from_ordinals(year, month, day)
     }
-}
-
-/// For solar calendars, get the month number from the month code
-pub fn ordinal_month_from_code(code: types::MonthCode) -> Option<u8> {
-    // Match statements on tinystrs are annoying so instead
-    // we calculate it from the bytes directly
-    if code.0.len() != 3 {
-        return None;
-    }
-    let bytes = code.0.all_bytes();
-    if bytes[0] != b'M' {
-        return None;
-    }
-    if bytes[1] == b'0' {
-        if bytes[2] >= b'1' && bytes[2] <= b'9' {
-            return Some(bytes[2] - b'0');
-        }
-    } else if bytes[1] == b'1' && bytes[2] >= b'0' && bytes[2] <= b'3' {
-        return Some(10 + bytes[2] - b'0');
-    }
-    None
 }
 
 #[cfg(test)]

@@ -1,5 +1,7 @@
 # icu_capi_gn [![crates.io](https://img.shields.io/crates/v/icu_capi_gn)](https://crates.io/crates/icu_capi_gn)
 
+<!-- cargo-rdme start -->
+
 This directory contains ICU4X build rules for the
 [GN meta-build system](https://gn.googlesource.com/gn/).
 
@@ -13,6 +15,8 @@ commands having the "gn" prefix from the top level, including:
 - `cargo make gn-run`: Runs ICU4X from the binaries built with `gn` and `ninja`.
 
 This actual Rust crate is only a placeholder for input to Cargo GNaw.
+
+<!-- cargo-rdme end -->
 
 ## More Information
 

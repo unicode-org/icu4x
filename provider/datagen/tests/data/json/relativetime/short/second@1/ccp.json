@@ -4,10 +4,7 @@
   },
   "past": {
     "zero": null,
-    "one": {
-      "pattern": " 𑄥𑄬𑄉𑄬𑄚𑄴 𑄃𑄉𑄬",
-      "index": 0
-    },
+    "one": null,
     "two": null,
     "few": null,
     "many": null,
@@ -18,10 +15,7 @@
   },
   "future": {
     "zero": null,
-    "one": {
-      "pattern": " 𑄥𑄬𑄉𑄬𑄚𑄴𑄘𑄬",
-      "index": 0
-    },
+    "one": null,
     "two": null,
     "few": null,
     "many": null,

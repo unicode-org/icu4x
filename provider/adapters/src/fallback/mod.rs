@@ -126,9 +126,9 @@ impl<P> LocaleFallbackProvider<P> {
     ///
     /// ```
     /// use icu_locid::locale;
+    /// use icu_locid_transform::LocaleFallbacker;
     /// use icu_provider::hello_world::*;
     /// use icu_provider::prelude::*;
-    /// use icu_locid_transform::fallback::LocaleFallbacker;
     /// use icu_provider_adapters::fallback::LocaleFallbackProvider;
     ///
     /// let provider = HelloWorldProvider;
@@ -145,8 +145,10 @@ impl<P> LocaleFallbackProvider<P> {
     /// // `HelloWorldProvider` does not contain fallback data,
     /// // but we can construct a fallbacker with `icu_locid_transform`'s
     /// // compiled data.
-    /// let provider =
-    ///     LocaleFallbackProvider::new_with_fallbacker(provider, LocaleFallbacker::new().static_to_owned());
+    /// let provider = LocaleFallbackProvider::new_with_fallbacker(
+    ///     provider,
+    ///     LocaleFallbacker::new().static_to_owned(),
+    /// );
     ///
     /// // Now we can load the "de-CH" data via fallback to "de".
     /// let german_hello_world: DataPayload<HelloWorldV1Marker> = provider
@@ -223,7 +225,7 @@ impl<P> LocaleFallbackProvider<P> {
                     });
             }
             // If we just checked und, break out of the loop.
-            if fallback_iterator.get().is_empty() {
+            if fallback_iterator.get().is_und() {
                 break;
             }
             fallback_iterator.step();

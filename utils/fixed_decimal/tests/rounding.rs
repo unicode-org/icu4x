@@ -11,15 +11,7 @@ use writeable::Writeable;
 pub fn test_ecma402_table() {
     // Source: <https://tc39.es/ecma402/#table-intl-rounding-modes>
     #[allow(clippy::type_complexity)] // best way to make it render like a table
-    let cases: [(
-        &'static str,
-        fn(&mut FixedDecimal, i16),
-        i32,
-        i32,
-        i32,
-        i32,
-        i32,
-    ); 9] = [
+    let cases: [(_, fn(&mut FixedDecimal, i16), _, _, _, _, _); 9] = [
         ("ceil", FixedDecimal::ceil, -1, 1, 1, 1, 2),
         ("floor", FixedDecimal::floor, -2, 0, 0, 0, 1),
         ("expand", FixedDecimal::expand, -2, 1, 1, 1, 2),
@@ -30,7 +22,7 @@ pub fn test_ecma402_table() {
         ("half_trunc", FixedDecimal::half_trunc, -1, 0, 0, 1, 1),
         ("half_even", FixedDecimal::half_even, -2, 0, 0, 1, 2),
     ];
-    for (rounding_mode, f, e1, e2, e3, e4, e5) in cases.into_iter() {
+    for (rounding_mode, f, e1, e2, e3, e4, e5) in cases {
         let mut fd1: FixedDecimal = "-1.5".parse().unwrap();
         let mut fd2: FixedDecimal = "0.4".parse().unwrap();
         let mut fd3: FixedDecimal = "0.5".parse().unwrap();
@@ -341,6 +333,93 @@ pub fn extra_rounding_mode_cases() {
                 *expected,
                 "{input}: {rounding_mode} @ {position}"
             )
+        }
+    }
+}
+
+#[test]
+#[cfg(feature = "experimental")]
+pub fn test_ecma402_table_with_increments() {
+    use fixed_decimal::RoundingIncrement;
+
+    #[rustfmt::skip] // Don't split everything on its own line. Makes it look a lot nicer.
+    #[allow(clippy::type_complexity)]
+    let cases: [(_, _, [(_, fn(&mut FixedDecimal, i16, RoundingIncrement), _, _, _, _, _); 9]); 3] = [
+        ("two", RoundingIncrement::MultiplesOf2, [
+            ("ceil", FixedDecimal::ceil_to_increment, "-1.4", "0.4", "0.6", "0.6", "1.6"),
+            ("floor", FixedDecimal::floor_to_increment, "-1.6", "0.4", "0.4", "0.6", "1.4"),
+            ("expand", FixedDecimal::expand_to_increment, "-1.6", "0.4", "0.6", "0.6", "1.6"),
+            ("trunc", FixedDecimal::trunc_to_increment, "-1.4", "0.4", "0.4", "0.6", "1.4"),
+            ("half_ceil", FixedDecimal::half_ceil_to_increment, "-1.4", "0.4", "0.6", "0.6", "1.6"),
+            ("half_floor", FixedDecimal::half_floor_to_increment, "-1.6", "0.4", "0.4", "0.6", "1.4"),
+            ("half_expand", FixedDecimal::half_expand_to_increment, "-1.6", "0.4", "0.6", "0.6", "1.6"),
+            ("half_trunc", FixedDecimal::half_trunc_to_increment, "-1.4", "0.4", "0.4", "0.6", "1.4"),
+            ("half_even", FixedDecimal::half_even_to_increment, "-1.6", "0.4", "0.4", "0.6", "1.6"),
+        ]),
+        ("five", RoundingIncrement::MultiplesOf5, [
+            ("ceil", FixedDecimal::ceil_to_increment, "-1.5", "0.5", "0.5", "1.0", "1.5"),
+            ("floor", FixedDecimal::floor_to_increment, "-1.5", "0.0", "0.5", "0.5", "1.5"),
+            ("expand", FixedDecimal::expand_to_increment, "-1.5", "0.5", "0.5", "1.0", "1.5"),
+            ("trunc", FixedDecimal::trunc_to_increment, "-1.5", "0.0", "0.5", "0.5", "1.5"),
+            ("half_ceil", FixedDecimal::half_ceil_to_increment, "-1.5", "0.5", "0.5", "0.5", "1.5"),
+            ("half_floor", FixedDecimal::half_floor_to_increment, "-1.5", "0.5", "0.5", "0.5", "1.5"),
+            ("half_expand", FixedDecimal::half_expand_to_increment, "-1.5", "0.5", "0.5", "0.5", "1.5"),
+            ("half_trunc", FixedDecimal::half_trunc_to_increment, "-1.5", "0.5", "0.5", "0.5", "1.5"),
+            ("half_even", FixedDecimal::half_even_to_increment, "-1.5", "0.5", "0.5", "0.5", "1.5"),
+        ]),
+        ("twenty-five", RoundingIncrement::MultiplesOf25, [
+            ("ceil", FixedDecimal::ceil_to_increment, "-0.0", "2.5", "2.5", "2.5", "2.5"),
+            ("floor", FixedDecimal::floor_to_increment, "-2.5", "0.0", "0.0", "0.0", "0.0"),
+            ("expand", FixedDecimal::expand_to_increment, "-2.5", "2.5", "2.5", "2.5", "2.5"),
+            ("trunc", FixedDecimal::trunc_to_increment, "-0.0", "0.0", "0.0", "0.0", "0.0"),
+            ("half_ceil", FixedDecimal::half_ceil_to_increment, "-2.5", "0.0", "0.0", "0.0", "2.5"),
+            ("half_floor", FixedDecimal::half_floor_to_increment, "-2.5", "0.0", "0.0", "0.0", "2.5"),
+            ("half_expand", FixedDecimal::half_expand_to_increment, "-2.5", "0.0", "0.0", "0.0", "2.5"),
+            ("half_trunc", FixedDecimal::half_trunc_to_increment, "-2.5", "0.0", "0.0", "0.0", "2.5"),
+            ("half_even", FixedDecimal::half_even_to_increment, "-2.5", "0.0", "0.0", "0.0", "2.5"),
+        ]),
+    ];
+
+    for (increment_str, increment, cases) in cases {
+        for (rounding_mode, f, e1, e2, e3, e4, e5) in cases {
+            let mut fd1: FixedDecimal = "-1.5".parse().unwrap();
+            let mut fd2: FixedDecimal = "0.4".parse().unwrap();
+            let mut fd3: FixedDecimal = "0.5".parse().unwrap();
+            let mut fd4: FixedDecimal = "0.6".parse().unwrap();
+            let mut fd5: FixedDecimal = "1.5".parse().unwrap();
+            // The original ECMA-402 table tests rounding at magnitude 0.
+            // However, testing rounding at magnitude -1 gives more
+            // interesting test cases for increments.
+            f(&mut fd1, -1, increment);
+            f(&mut fd2, -1, increment);
+            f(&mut fd3, -1, increment);
+            f(&mut fd4, -1, increment);
+            f(&mut fd5, -1, increment);
+            assert_eq!(
+                fd1.write_to_string(),
+                e1,
+                "-1.5 failed for {rounding_mode} with increments of {increment_str}"
+            );
+            assert_eq!(
+                fd2.write_to_string(),
+                e2,
+                "0.4 failed for {rounding_mode} with increments of {increment_str}"
+            );
+            assert_eq!(
+                fd3.write_to_string(),
+                e3,
+                "0.5 failed for {rounding_mode} with increments of {increment_str}"
+            );
+            assert_eq!(
+                fd4.write_to_string(),
+                e4,
+                "0.6 failed for {rounding_mode} with increments of {increment_str}"
+            );
+            assert_eq!(
+                fd5.write_to_string(),
+                e5,
+                "1.5 failed for {rounding_mode} with increments of {increment_str}"
+            );
         }
     }
 }

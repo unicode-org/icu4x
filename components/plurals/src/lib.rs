@@ -27,11 +27,9 @@
 //! use icu::locid::locale;
 //! use icu::plurals::{PluralCategory, PluralRuleType, PluralRules};
 //!
-//! let pr = PluralRules::try_new(
-//!     &locale!("en").into(),
-//!     PluralRuleType::Cardinal,
-//! )
-//! .expect("locale should be present");
+//! let pr =
+//!     PluralRules::try_new(&locale!("en").into(), PluralRuleType::Cardinal)
+//!         .expect("locale should be present");
 //!
 //! assert_eq!(pr.category_for(5_usize), PluralCategory::Other);
 //! ```
@@ -92,6 +90,11 @@ use provider::ErasedPluralRulesV1Marker;
 use provider::OrdinalV1Marker;
 use rules::runtime::test_rule;
 
+#[cfg(feature = "experimental")]
+use provider::PluralRangesV1Marker;
+#[cfg(feature = "experimental")]
+use provider::UnvalidatedPluralRange;
+
 #[doc(no_inline)]
 pub use PluralsError as Error;
 
@@ -139,11 +142,9 @@ pub enum PluralRuleType {
 /// use icu::locid::locale;
 /// use icu::plurals::{PluralCategory, PluralRuleType, PluralRules};
 ///
-/// let pr = PluralRules::try_new(
-///     &locale!("en").into(),
-///     PluralRuleType::Cardinal,
-/// )
-/// .expect("locale should be present");
+/// let pr =
+///     PluralRules::try_new(&locale!("en").into(), PluralRuleType::Cardinal)
+///         .expect("locale should be present");
 ///
 /// assert_eq!(pr.category_for(5_usize), PluralCategory::Other);
 /// ```
@@ -270,11 +271,9 @@ impl PluralCategory {
 /// use icu::locid::locale;
 /// use icu::plurals::{PluralCategory, PluralRuleType, PluralRules};
 ///
-/// let pr = PluralRules::try_new(
-///     &locale!("en").into(),
-///     PluralRuleType::Cardinal,
-/// )
-/// .expect("locale should be present");
+/// let pr =
+///     PluralRules::try_new(&locale!("en").into(), PluralRuleType::Cardinal)
+///         .expect("locale should be present");
 ///
 /// assert_eq!(pr.category_for(5_usize), PluralCategory::Other);
 /// ```
@@ -284,6 +283,12 @@ impl PluralCategory {
 /// [`Plural Category`]: PluralCategory
 #[derive(Debug)]
 pub struct PluralRules(DataPayload<ErasedPluralRulesV1Marker>);
+
+impl AsRef<PluralRules> for PluralRules {
+    fn as_ref(&self) -> &PluralRules {
+        self
+    }
+}
 
 impl PluralRules {
     icu_provider::gen_any_buffer_data_constructors!(
@@ -450,11 +455,9 @@ impl PluralRules {
     /// use icu::locid::locale;
     /// use icu::plurals::{PluralCategory, PluralRuleType, PluralRules};
     ///
-    /// let pr = PluralRules::try_new(
-    ///     &locale!("en").into(),
-    ///     PluralRuleType::Cardinal,
-    /// )
-    /// .expect("locale should be present");
+    /// let pr =
+    ///     PluralRules::try_new(&locale!("en").into(), PluralRuleType::Cardinal)
+    ///         .expect("locale should be present");
     ///
     /// match pr.category_for(1_usize) {
     ///     PluralCategory::One => "One item",
@@ -467,7 +470,7 @@ impl PluralRules {
     /// All unsigned primitive number types can infallibly be converted so they can be
     /// used as an input.
     ///
-    /// For signed numbers and strings, [`Plural Operands`] implement [`TryFrom`](std::convert::TryFrom)
+    /// For signed numbers and strings, [`Plural Operands`] implement [`TryFrom`]
     /// and [`FromStr`](std::str::FromStr), which should be used before passing the result to
     /// [`category_for()`](PluralRules::category_for()).
     ///
@@ -525,11 +528,9 @@ impl PluralRules {
     /// use icu::locid::locale;
     /// use icu::plurals::{PluralCategory, PluralRuleType, PluralRules};
     ///
-    /// let pr = PluralRules::try_new(
-    ///     &locale!("fr").into(),
-    ///     PluralRuleType::Cardinal,
-    /// )
-    /// .expect("locale should be present");
+    /// let pr =
+    ///     PluralRules::try_new(&locale!("fr").into(), PluralRuleType::Cardinal)
+    ///         .expect("locale should be present");
     ///
     /// let mut categories = pr.categories();
     /// assert_eq!(categories.next(), Some(PluralCategory::One));
@@ -557,6 +558,337 @@ impl PluralRules {
             .chain(test_rule!(two, Two))
             .chain(test_rule!(few, Few))
             .chain(test_rule!(many, Many))
-            .chain(Some(PluralCategory::Other).into_iter())
+            .chain(Some(PluralCategory::Other))
+    }
+}
+
+/// A [`PluralRules`] that also has the ability to retrieve an appropriate [`Plural Category`] for a
+/// range.
+///
+/// ✨ *Enabled with the `experimental` Cargo feature.*
+///
+/// <div class="stab unstable">
+/// 🚧 This code is experimental; it may change at any time, in breaking or non-breaking ways,
+/// including in SemVer minor releases. Use with caution.
+/// <a href="https://github.com/unicode-org/icu4x/issues/4140">#4140</a>
+/// </div>
+///
+/// # Examples
+///
+/// ```
+/// use icu::locid::locale;
+/// use icu::plurals::{PluralCategory, PluralOperands};
+/// use icu::plurals::{PluralRuleType, PluralRulesWithRanges};
+/// use std::convert::TryFrom;
+///
+/// let ranges = PluralRulesWithRanges::try_new(
+///     &locale!("ar").into(),
+///     PluralRuleType::Cardinal,
+/// )
+/// .expect("locale should be present");
+///
+/// let operands = PluralOperands::from(1_usize);
+/// let operands2: PluralOperands =
+///     "2.0".parse().expect("parsing to operands should succeed");
+///
+/// assert_eq!(
+///     ranges.category_for_range(operands, operands2),
+///     PluralCategory::Other
+/// );
+/// ```
+///
+/// [`Plural Category`]: PluralCategory
+#[cfg(feature = "experimental")]
+#[derive(Debug)]
+pub struct PluralRulesWithRanges<R> {
+    rules: R,
+    ranges: DataPayload<PluralRangesV1Marker>,
+}
+
+#[cfg(feature = "experimental")]
+impl PluralRulesWithRanges<PluralRules> {
+    icu_provider::gen_any_buffer_data_constructors!(
+        locale: include,
+        rule_type: PluralRuleType,
+        error: PluralsError,
+        /// Constructs a new `PluralRulesWithRanges` for a given locale using compiled data.
+        ///
+        /// ✨ *Enabled with the `compiled_data` Cargo feature.*
+        ///
+        /// [📚 Help choosing a constructor](icu_provider::constructors)
+        ///
+        /// # Examples
+        ///
+        /// ```
+        /// use icu::locid::locale;
+        /// use icu::plurals::{PluralRuleType, PluralRulesWithRanges};
+        ///
+        /// let _ = PluralRulesWithRanges::try_new(
+        ///     &locale!("en").into(),
+        ///     PluralRuleType::Cardinal,
+        /// ).expect("locale should be present");
+        /// ```
+    );
+
+    #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::try_new)]
+    pub fn try_new_unstable(
+        provider: &(impl DataProvider<PluralRangesV1Marker>
+              + DataProvider<CardinalV1Marker>
+              + DataProvider<OrdinalV1Marker>
+              + ?Sized),
+        locale: &DataLocale,
+        rule_type: PluralRuleType,
+    ) -> Result<Self, PluralsError> {
+        match rule_type {
+            PluralRuleType::Cardinal => Self::try_new_cardinal_unstable(provider, locale),
+            PluralRuleType::Ordinal => Self::try_new_ordinal_unstable(provider, locale),
+        }
+    }
+
+    icu_provider::gen_any_buffer_data_constructors!(
+        locale: include,
+        options: skip,
+        error: PluralsError,
+        /// Constructs a new `PluralRulesWithRanges` for a given locale for cardinal numbers using
+        /// compiled data.
+        ///
+        /// See [`PluralRules::try_new_cardinal`] for more information.
+        ///
+        /// ✨ *Enabled with the `compiled_data` Cargo feature.*
+        ///
+        /// [📚 Help choosing a constructor](icu_provider::constructors)
+        ///
+        /// # Examples
+        ///
+        /// ```
+        /// use icu::locid::locale;
+        /// use icu::plurals::{PluralCategory, PluralRulesWithRanges};
+        ///
+        /// let rules = PluralRulesWithRanges::try_new_cardinal(&locale!("ru").into())
+        ///     .expect("locale should be present");
+        ///
+        /// assert_eq!(rules.category_for_range(0_usize, 2_usize), PluralCategory::Few);
+        /// ```
+        functions: [
+            try_new_cardinal,
+            try_new_cardinal_with_any_provider,
+            try_new_cardinal_with_buffer_provider,
+            try_new_cardinal_unstable,
+            Self,
+        ]
+    );
+
+    #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::try_new_cardinal)]
+    pub fn try_new_cardinal_unstable(
+        provider: &(impl DataProvider<CardinalV1Marker> + DataProvider<PluralRangesV1Marker> + ?Sized),
+        locale: &DataLocale,
+    ) -> Result<Self, PluralsError> {
+        let rules = PluralRules::try_new_cardinal_unstable(provider, locale)?;
+
+        PluralRulesWithRanges::try_new_with_rules_unstable(provider, locale, rules)
+    }
+
+    icu_provider::gen_any_buffer_data_constructors!(
+        locale: include,
+        options: skip,
+        error: PluralsError,
+        /// Constructs a new `PluralRulesWithRanges` for a given locale for ordinal numbers using
+        /// compiled data.
+        ///
+        /// See [`PluralRules::try_new_ordinal`] for more information.
+        ///
+        /// ✨ *Enabled with the `compiled_data` Cargo feature.*
+        ///
+        /// [📚 Help choosing a constructor](icu_provider::constructors)
+        ///
+        /// # Examples
+        ///
+        /// ```
+        /// use icu::locid::locale;
+        /// use icu::plurals::{PluralCategory, PluralRulesWithRanges};
+        ///
+        /// let rules = PluralRulesWithRanges::try_new_ordinal(
+        ///     &locale!("ru").into(),
+        /// )
+        /// .expect("locale should be present");
+        ///
+        /// assert_eq!(rules.category_for_range(0_usize, 2_usize), PluralCategory::Other);
+        /// ```
+        functions: [
+            try_new_ordinal,
+            try_new_ordinal_with_any_provider,
+            try_new_ordinal_with_buffer_provider,
+            try_new_ordinal_unstable,
+            Self,
+        ]
+    );
+
+    #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::try_new_ordinal)]
+    pub fn try_new_ordinal_unstable(
+        provider: &(impl DataProvider<OrdinalV1Marker> + DataProvider<PluralRangesV1Marker> + ?Sized),
+        locale: &DataLocale,
+    ) -> Result<Self, PluralsError> {
+        let rules = PluralRules::try_new_ordinal_unstable(provider, locale)?;
+
+        PluralRulesWithRanges::try_new_with_rules_unstable(provider, locale, rules)
+    }
+}
+
+#[cfg(feature = "experimental")]
+impl<R> PluralRulesWithRanges<R>
+where
+    R: AsRef<PluralRules>,
+{
+    icu_provider::gen_any_buffer_data_constructors!(
+        locale: include,
+        rules: R,
+        error: PluralsError,
+        /// Constructs a new `PluralRulesWithRanges` for a given locale from an existing
+        /// `PluralRules` (either owned or as a reference) and compiled data.
+        ///
+        /// # ⚠️ Warning
+        ///
+        /// The provided `locale` **MUST** be the same as the locale provided to the constructor
+        /// of `rules`. Otherwise, [`Self::category_for_range`] will return incorrect results.
+        ///
+        /// ✨ *Enabled with the `compiled_data` Cargo feature.*
+        ///
+        /// [📚 Help choosing a constructor](icu_provider::constructors)
+        ///
+        /// # Examples
+        ///
+        /// ```
+        /// use icu::locid::locale;
+        /// use icu::plurals::{PluralRuleType, PluralRulesWithRanges, PluralRules};
+        ///
+        /// let rules = PluralRules::try_new(&locale!("en").into(), PluralRuleType::Cardinal)
+        ///     .expect("locale should be present");
+        ///
+        /// let _ =
+        ///     PluralRulesWithRanges::try_new_with_rules(&locale!("en").into(), rules)
+        ///         .expect("locale should be present");
+        /// ```
+        functions: [
+            try_new_with_rules,
+            try_new_with_rules_with_any_provider,
+            try_new_with_rules_with_buffer_provider,
+            try_new_with_rules_unstable,
+            Self,
+        ]
+    );
+
+    #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::try_new_with_rules)]
+    pub fn try_new_with_rules_unstable(
+        provider: &(impl DataProvider<PluralRangesV1Marker> + ?Sized),
+        locale: &DataLocale,
+        rules: R,
+    ) -> Result<Self, PluralsError> {
+        let ranges = provider
+            .load(DataRequest {
+                locale,
+                metadata: Default::default(),
+            })?
+            .take_payload()?;
+
+        Ok(Self { rules, ranges })
+    }
+
+    /// Gets a reference to the inner `PluralRules`.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use icu::locid::locale;
+    /// use icu::plurals::{PluralCategory, PluralRulesWithRanges};
+    ///
+    /// let ranges = PluralRulesWithRanges::try_new_cardinal(&locale!("en").into())
+    ///     .expect("locale should be present");
+    ///
+    /// let rules = ranges.rules();
+    ///
+    /// assert_eq!(rules.category_for(1u8), PluralCategory::One);
+    /// ```
+    pub fn rules(&self) -> &PluralRules {
+        self.rules.as_ref()
+    }
+
+    /// Returns the [`Plural Category`] appropriate for a range.
+    ///
+    /// Note that the returned category is correct only if the range fulfills the following requirements:
+    /// - The start value is strictly less than the end value.
+    /// - Both values are positive.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use icu::locid::locale;
+    /// use icu::plurals::{
+    ///     PluralCategory, PluralOperands, PluralRuleType, PluralRulesWithRanges,
+    /// };
+    ///
+    /// let ranges = PluralRulesWithRanges::try_new(
+    ///     &locale!("ro").into(),
+    ///     PluralRuleType::Cardinal,
+    /// )
+    /// .expect("locale should be present");
+    /// let operands: PluralOperands =
+    ///     "0.5".parse().expect("parsing to operands should succeed");
+    /// let operands2 = PluralOperands::from(1_usize);
+    ///
+    /// assert_eq!(
+    ///     ranges.category_for_range(operands, operands2),
+    ///     PluralCategory::Few
+    /// );
+    /// ```
+    ///
+    /// [`Plural Category`]: PluralCategory
+    pub fn category_for_range<S: Into<PluralOperands>, E: Into<PluralOperands>>(
+        &self,
+        start: S,
+        end: E,
+    ) -> PluralCategory {
+        let rules = self.rules.as_ref();
+        let start = rules.category_for(start);
+        let end = rules.category_for(end);
+
+        self.resolve_range(start, end)
+    }
+
+    /// Returns the [`Plural Category`] appropriate for a range from the categories of its endpoints.
+    ///
+    /// Note that the returned category is correct only if the original numeric range fulfills the
+    /// following requirements:
+    /// - The start value is strictly less than the end value.
+    /// - Both values are positive.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use icu::locid::locale;
+    /// use icu::plurals::{PluralCategory, PluralRuleType, PluralRulesWithRanges};
+    ///
+    /// let ranges = PluralRulesWithRanges::try_new(
+    ///     &locale!("sl").into(),
+    ///     PluralRuleType::Ordinal,
+    /// )
+    /// .expect("locale should be present");
+    ///
+    /// assert_eq!(
+    ///     ranges.resolve_range(PluralCategory::Other, PluralCategory::One),
+    ///     PluralCategory::Few
+    /// );
+    /// ```
+    ///
+    /// [`Plural Category`]: PluralCategory
+    pub fn resolve_range(&self, start: PluralCategory, end: PluralCategory) -> PluralCategory {
+        self.ranges
+            .get()
+            .ranges
+            .get_copied(&UnvalidatedPluralRange::from_range(
+                start.into(),
+                end.into(),
+            ))
+            .map(PluralCategory::from)
+            .unwrap_or(end)
     }
 }

@@ -211,7 +211,7 @@ impl<'l> BiesIterator<'l> {
             }
             #[allow(clippy::unwrap_used)]
             compute_hc(
-                segmenter.embedding.submatrix::<1>(g_id as usize).unwrap(), // shape (dict.len() + 1, hunit), g_id is at most dict.len()
+                segmenter.embedding.submatrix::<1>(g_id as usize).unwrap(), /* shape (dict.len() + 1, hunit), g_id is at most dict.len() */
                 h_bw.submatrix_mut(i).unwrap(), // shape (input_seq.len(), hunits)
                 c_bw.as_mut(),
                 segmenter.bw_w,

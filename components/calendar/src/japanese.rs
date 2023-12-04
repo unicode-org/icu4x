@@ -72,6 +72,10 @@ use tinystr::{tinystr, TinyStr16};
 ///
 /// These eras are loaded from data, requiring a data provider capable of providing [`JapaneseErasV1Marker`]
 /// data (`calendar/japanese@1`).
+///
+/// # Month codes
+///
+/// This calendar supports 12 solar month codes (`"M01" - "M12"`)
 #[derive(Clone, Debug, Default)]
 pub struct Japanese {
     eras: DataPayload<JapaneseErasV1Marker>,
@@ -151,8 +155,8 @@ impl Japanese {
         day: u8,
         debug_name: &'static str,
     ) -> Result<JapaneseDateInner, CalendarError> {
-        let month = crate::calendar_arithmetic::ordinal_month_from_code(month_code);
-        let month = if let Some(month) = month {
+        let month = month_code.parsed();
+        let month = if let Some((month, false)) = month {
             month
         } else {
             return Err(CalendarError::UnknownMonthCode(month_code.0, debug_name));
@@ -165,7 +169,7 @@ impl Japanese {
         self.new_japanese_date_inner(era, year, month, day)
     }
 
-    pub(crate) const DEBUG_NAME: &str = "Japanese";
+    pub(crate) const DEBUG_NAME: &'static str = "Japanese";
 }
 
 impl JapaneseExtended {
@@ -202,7 +206,7 @@ impl JapaneseExtended {
         }))
     }
 
-    pub(crate) const DEBUG_NAME: &str = "Japanese (histocial era data)";
+    pub(crate) const DEBUG_NAME: &'static str = "Japanese (historical era data)";
 }
 
 impl Calendar for Japanese {
@@ -276,6 +280,10 @@ impl Calendar for Japanese {
             cyclic: None,
             related_iso: None,
         }
+    }
+
+    fn is_in_leap_year(&self, date: &Self::DateInner) -> bool {
+        Iso.is_in_leap_year(&date.inner)
     }
 
     /// The calendar-specific month represented by `date`
@@ -373,6 +381,10 @@ impl Calendar for JapaneseExtended {
     /// The calendar-specific year represented by `date`
     fn year(&self, date: &Self::DateInner) -> types::FormattableYear {
         Japanese::year(&self.0, date)
+    }
+
+    fn is_in_leap_year(&self, date: &Self::DateInner) -> bool {
+        Japanese::is_in_leap_year(&self.0, date)
     }
 
     /// The calendar-specific month represented by `date`

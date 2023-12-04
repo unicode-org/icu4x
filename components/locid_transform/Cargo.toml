@@ -5,24 +5,16 @@
 [package]
 name = "icu_locid_transform"
 description = "API for Unicode Language and Locale Identifiers canonicalization"
-version = "1.2.1"
-rust-version = "1.65.0"
-authors = ["The ICU4X Project Developers"]
-edition = "2021"
-repository = "https://github.com/unicode-org/icu4x"
-homepage = "https://icu4x.unicode.org"
-license = "Unicode-DFS-2016"
-categories = ["internationalization"]
-# Keep this in sync with other crates unless there are exceptions
-include = [
-    "src/**/*",
-    "examples/**/*",
-    "benches/**/*",
-    "tests/**/*",
-    "Cargo.toml",
-    "LICENSE",
-    "README.md"
-]
+license-file = "LICENSE"
+
+authors.workspace = true
+categories.workspace = true
+edition.workspace = true
+homepage.workspace = true
+include.workspace = true
+repository.workspace = true
+rust-version.workspace = true
+version.workspace = true
 
 [package.metadata.cargo-all-features]
 skip_optional_dependencies = true
@@ -33,20 +25,20 @@ denylist = ["bench"]
 all-features = true
 
 [dependencies]
-icu_locid = { version = "1.2.0", path = "../locid", features = ["zerovec"] }
-icu_provider = { version = "1.2.0", path = "../../provider/core", features = ["macros"] }
+icu_locid = { workspace = true, features = ["zerovec"] }
+icu_provider = { workspace = true, features = ["macros"] }
 serde = { version = "1.0", features = ["derive", "alloc"], optional = true, default-features = false }
-tinystr = { version = "0.7.1", path = "../../utils/tinystr", default-features = false, features = ["alloc", "zerovec"] }
-zerovec = { version = "0.9.4", path = "../../utils/zerovec",  features = ["yoke"] }
-databake = { version = "0.1.3", path = "../../utils/databake", optional = true, features = ["derive"] }
+tinystr = { workspace = true, features = ["alloc", "zerovec"] }
+zerovec = { workspace = true,  features = ["yoke"] }
+databake = { workspace = true, optional = true, features = ["derive"] }
 displaydoc = { version = "0.2.3", default-features = false }
 
-icu_locid_transform_data = { version = "~1.3.0", path = "data", optional = true }
+icu_locid_transform_data = { workspace = true, optional = true }
 
 [dev-dependencies]
 serde = { version = "1.0", features = ["derive"] }
 serde_json = "1.0"
-icu = { path = "../icu" }
+icu = { path = "../../components/icu", default-features = false }
 writeable = { path = "../../utils/writeable" }
 
 [target.'cfg(not(target_arch = "wasm32"))'.dev-dependencies]
@@ -54,7 +46,6 @@ criterion = "0.4"
 
 [lib]
 bench = false  # This option is required for Benchmark CI
-path = "src/lib.rs"
 
 [features]
 default = ["compiled_data"]
@@ -62,7 +53,6 @@ std = []
 bench = ["serde"]
 serde = ["dep:serde", "icu_locid/serde", "tinystr/serde", "zerovec/serde", "icu_provider/serde"]
 datagen = ["serde", "dep:databake", "zerovec/databake", "icu_locid/databake", "tinystr/databake"]
-experimental = []
 compiled_data = ["dep:icu_locid_transform_data"]
 
 [[bench]]

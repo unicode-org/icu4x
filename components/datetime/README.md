@@ -1,5 +1,7 @@
 # icu_datetime [![crates.io](https://img.shields.io/crates/v/icu_datetime)](https://crates.io/crates/icu_datetime)
 
+<!-- cargo-rdme start -->
+
 Formatting date and time.
 
 This module is published as its own crate ([`icu_datetime`](https://docs.rs/icu_datetime/latest/icu_datetime/))
@@ -46,11 +48,8 @@ let options =
 
 // You can work with a formatter that can select the calendar at runtime:
 let locale = Locale::from_str("en-u-ca-gregory").unwrap();
-let dtf = DateTimeFormatter::try_new(
-    &locale.into(),
-    options.clone(),
-)
-.expect("Failed to create DateTimeFormatter instance.");
+let dtf = DateTimeFormatter::try_new(&locale.into(), options.clone())
+    .expect("Failed to create DateTimeFormatter instance.");
 
 // Or one that selects a calendar at compile time:
 let typed_dtf = TypedDateTimeFormatter::<Gregorian>::try_new(
@@ -112,6 +111,8 @@ we expect to add more ways to customize the output, like skeletons, and componen
 [`AnyCalendar`]: calendar::any_calendar::{AnyCalendar}
 [`timezone::CustomTimeZone`]: icu::timezone::{CustomTimeZone}
 [`TimeZoneFormatter`]: time_zone::TimeZoneFormatter
+
+<!-- cargo-rdme end -->
 
 ## More Information
 

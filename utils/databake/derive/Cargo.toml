@@ -5,24 +5,16 @@
 [package]
 name = "databake-derive"
 description = "Custom derive for the databake crate"
-version = "0.1.5"
-rust-version = "1.65.0"
-authors = ["The ICU4X Project Developers"]
-edition = "2021"
-readme = "README.md"
-repository = "https://github.com/unicode-org/icu4x"
-license = "Unicode-DFS-2016"
-categories = ["internationalization"]
-# Keep this in sync with other crates unless there are exceptions
-include = [
-    "src/**/*",
-    "examples/**/*",
-    "benches/**/*",
-    "tests/**/*",
-    "Cargo.toml",
-    "LICENSE",
-    "README.md"
-]
+version = "0.1.7"
+categories = ["rust-patterns", "memory-management", "development-tools::procedural-macro-helpers", "development-tools::build-utils"]
+keywords = ["zerocopy", "serialization", "const", "proc"]
+license-file = "LICENSE"
+
+authors.workspace = true
+edition.workspace = true
+include.workspace = true
+repository.workspace = true
+rust-version.workspace = true
 
 [package.metadata.workspaces]
 independent = true

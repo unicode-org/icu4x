@@ -2,7 +2,6 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use crate::options;
 use icu_locid::{langid, locale};
 use icu_provider::datagen::IterableDataProvider;
 use icu_provider::prelude::*;
@@ -38,23 +37,6 @@ pub(crate) fn data_locale_to_model_name(locale: &DataLocale) -> Option<&'static 
     }
 }
 
-pub(crate) fn filter_data_locales(
-    locales: HashSet<DataLocale>,
-    segmenter_models: &options::SegmenterModelInclude,
-) -> HashSet<DataLocale> {
-    match segmenter_models {
-        options::SegmenterModelInclude::Recommended => locales,
-        options::SegmenterModelInclude::None => Default::default(),
-        options::SegmenterModelInclude::Explicit(list) => locales
-            .into_iter()
-            .filter(|locale| {
-                list.iter()
-                    .any(|x| Some(x.as_str()) == data_locale_to_model_name(locale))
-            })
-            .collect(),
-    }
-}
-
 impl crate::DatagenProvider {
     fn load_dictionary_data(
         &self,
@@ -65,19 +47,22 @@ impl crate::DatagenProvider {
 
         let filename = format!("segmenter/dictionary/{model}.toml");
 
-        let toml_data: &SegmenterDictionaryData = self
-            .source
+        let toml_data = self
             .icuexport()
-            .and_then(|e| e.read_and_parse_toml(&filename))
-            .or_else(|e| {
-                self.source
-                    .icuexport_fallback()
-                    .read_and_parse_toml(&filename)
-                    .map_err(|_| e)
-            })?;
+            .and_then(|e| e.read_and_parse_toml::<SegmenterDictionaryData>(&filename));
+
+        #[cfg(feature = "legacy_api")]
+        #[allow(deprecated)]
+        let toml_data = toml_data.or_else(|e| {
+            self.source
+                .icuexport_dictionary_fallback
+                .as_ref()
+                .ok_or(e)?
+                .read_and_parse_toml(&filename)
+        });
 
         Ok(UCharDictionaryBreakDataV1 {
-            trie_data: ZeroVec::alloc_from_slice(&toml_data.trie_data),
+            trie_data: ZeroVec::alloc_from_slice(&toml_data?.trie_data),
         })
     }
 }

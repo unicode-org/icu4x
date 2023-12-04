@@ -1,5 +1,7 @@
 # icu [![crates.io](https://img.shields.io/crates/v/icu)](https://crates.io/crates/icu)
 
+<!-- cargo-rdme start -->
+
 `icu` is the main meta-crate of the `ICU4X` project.
 
 It provides a comprehensive selection of functionality found in
@@ -56,9 +58,12 @@ use icu_provider_blob::BlobDataProvider;
 
 let data: Box<[u8]> = todo!();
 
-let provider = BlobDataProvider::try_new_from_blob(data).expect("data should be valid");
+let provider = BlobDataProvider::try_new_from_blob(data)
+    .expect("data should be valid");
 
-let provider = LocaleFallbackProvider::try_new_with_buffer_provider(provider).expect("provider should include fallback data");
+let provider =
+    LocaleFallbackProvider::try_new_with_buffer_provider(provider)
+        .expect("provider should include fallback data");
 
 let dtf = DateTimeFormatter::try_new_with_buffer_provider(
     &provider,
@@ -98,7 +103,7 @@ functionality are compiled. These features are:
 - `std`: Whether to include `std` support. Without this Cargo feature, `icu` is `#[no_std]`-compatible.
 - `sync`: makes most ICU4X objects implement `Send + Sync`. Has a small performance impact when used with non-static data.
 - `logging`: Enables logging through the `log` crate.
-- `serde`: Activates `serde` implementations for core library types, such as [`Locale`], as well
+- `serde`: Activates `serde` implementations for core library types, such as `Locale`, as well
    as `*_with_buffer_provider` constructors for explicit data management.
 - `experimental`: Whether to enable experimental preview features. Modules enabled with
   this feature may not be production-ready and could change at any time.
@@ -116,10 +121,10 @@ The following Cargo features are only available on the individual crates, but no
 [`BlobDataProvider`]: https://docs.rs/icu_provider_blob/latest/icu_provider_blob/struct.BlobDataProvider.html
 [`icu_provider_adapters`]: https://docs.rs/icu_provider_adapters/latest/icu_provider_adapters/
 [`icu_datagen`]: https://docs.rs/icu_datagen/latest/icu_datagen/
-[`Locale`]: crate::locid::Locale
-[`SymbolsV1`]: crate::decimal::provider::DecimalSymbolsV1
 [`icu4x-datagen`]: https://docs.rs/icu_datagen/latest/icu_datagen/
 [data management tutorial]: https://github.com/unicode-org/icu4x/blob/main/docs/tutorials/data_provider.md#loading-additional-data-at-runtime
+
+<!-- cargo-rdme end -->
 
 ## More Information
 

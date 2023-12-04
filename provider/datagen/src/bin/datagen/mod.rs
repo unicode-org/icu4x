@@ -35,75 +35,99 @@ fn main() -> eyre::Result<()> {
 
     let config = matches.as_config()?;
 
-    let mut options = options::Options::default();
-    options.keys = match config.keys {
-        config::KeyInclude::None => Default::default(),
-        config::KeyInclude::All => icu_datagen::all_keys().into_iter().collect(),
-        config::KeyInclude::Explicit(set) => set,
-        config::KeyInclude::ForBinary(path) => {
-            icu_datagen::keys_from_bin(path)?.into_iter().collect()
-        }
-    };
-    options.locales = config.locales;
-    options.collations = config.collations;
-    options.segmenter_models = config.segmenter_models;
-    options.fallback = config.fallback;
-
-    let mut source_data = SourceData::offline();
-    source_data = source_data.with_collation_han_database(config.collation_han_database);
+    let mut provider = DatagenProvider::new_custom();
+    provider = provider.with_collation_han_database(config.collation_han_database);
     if config.trie_type == crate::config::TrieType::Fast {
-        source_data = source_data.with_fast_tries();
+        provider = provider.with_fast_tries();
     }
-    source_data = match config.cldr {
-        config::PathOrTag::Path(path) => source_data.with_cldr(path, Default::default())?,
+    provider = match config.cldr {
+        config::PathOrTag::Path(path) => provider.with_cldr(path)?,
         #[cfg(feature = "networking")]
         config::PathOrTag::Latest => {
-            source_data.with_cldr_for_tag(SourceData::LATEST_TESTED_CLDR_TAG, Default::default())?
+            provider.with_cldr_for_tag(DatagenProvider::LATEST_TESTED_CLDR_TAG)
         }
         #[cfg(feature = "networking")]
-        config::PathOrTag::Tag(tag) => source_data.with_cldr_for_tag(&tag, Default::default())?,
-        config::PathOrTag::None => source_data,
+        config::PathOrTag::Tag(tag) => provider.with_cldr_for_tag(&tag),
+        config::PathOrTag::None => provider,
         #[cfg(not(feature = "networking"))]
-        _ => eyre::bail!("Download data from tags requires the `networking` Cargo feature"),
+        _ => eyre::bail!("Downloading data from tags requires the `networking` Cargo feature"),
     };
 
-    source_data = match config.icu_export {
-        config::PathOrTag::Path(path) => source_data.with_icuexport(path)?,
+    provider = match config.icu_export {
+        config::PathOrTag::Path(path) => provider.with_icuexport(path)?,
         #[cfg(feature = "networking")]
         config::PathOrTag::Latest => {
-            source_data.with_icuexport_for_tag(SourceData::LATEST_TESTED_ICUEXPORT_TAG)?
+            provider.with_icuexport_for_tag(DatagenProvider::LATEST_TESTED_ICUEXPORT_TAG)
         }
         #[cfg(feature = "networking")]
-        config::PathOrTag::Tag(tag) => source_data.with_icuexport_for_tag(&tag)?,
-        config::PathOrTag::None => source_data,
+        config::PathOrTag::Tag(tag) => provider.with_icuexport_for_tag(&tag),
+        config::PathOrTag::None => provider,
         #[cfg(not(feature = "networking"))]
-        _ => eyre::bail!("Download data from tags requires the `networking` Cargo feature"),
+        _ => eyre::bail!("Downloading data from tags requires the `networking` Cargo feature"),
     };
 
-    source_data = match config.segmenter_lstm {
-        config::PathOrTag::Path(path) => source_data.with_icuexport(path)?,
+    provider = match config.segmenter_lstm {
+        config::PathOrTag::Path(path) => provider.with_segmenter_lstm(path)?,
         #[cfg(feature = "networking")]
         config::PathOrTag::Latest => {
-            source_data.with_segmenter_lstm_for_tag(SourceData::LATEST_TESTED_SEGMENTER_LSTM_TAG)?
+            provider.with_segmenter_lstm_for_tag(DatagenProvider::LATEST_TESTED_SEGMENTER_LSTM_TAG)
         }
         #[cfg(feature = "networking")]
-        config::PathOrTag::Tag(tag) => source_data.with_segmenter_lstm_for_tag(&tag)?,
-        config::PathOrTag::None => source_data,
+        config::PathOrTag::Tag(tag) => provider.with_segmenter_lstm_for_tag(&tag),
+        config::PathOrTag::None => provider,
         #[cfg(not(feature = "networking"))]
-        _ => eyre::bail!("Download data from tags requires the `networking` Cargo feature"),
+        _ => eyre::bail!("Downloading data from tags requires the `networking` Cargo feature"),
     };
 
-    let provider = DatagenProvider::new(source_data);
+    let mut driver = DatagenDriver::new();
+    driver = match config.keys {
+        config::KeyInclude::None => driver.with_keys([]),
+        config::KeyInclude::All => driver.with_keys(icu_datagen::all_keys()),
+        config::KeyInclude::Explicit(set) => driver.with_keys(set),
+        config::KeyInclude::ForBinary(path) => driver.with_keys(icu_datagen::keys_from_bin(path)?),
+    };
+    driver = driver.with_fallback_mode(config.fallback);
+    driver = driver.with_additional_collations(config.additional_collations);
+    driver = match config.locales {
+        config::LocaleInclude::All => driver.with_all_locales(),
+        config::LocaleInclude::None => driver.with_locales([]),
+        config::LocaleInclude::Explicit(set) => driver.with_locales(set),
+        config::LocaleInclude::CldrSet(levels) => {
+            driver.with_locales(provider.locales_for_coverage_levels(levels.iter().copied())?)
+        }
+        config::LocaleInclude::Recommended => {
+            driver.with_locales(provider.locales_for_coverage_levels([
+                CoverageLevel::Modern,
+                CoverageLevel::Moderate,
+                CoverageLevel::Basic,
+            ])?)
+        }
+    };
+    driver = match config.segmenter_models {
+        config::SegmenterModelInclude::None => driver.with_segmenter_models([]),
+        config::SegmenterModelInclude::Recommended => driver.with_segmenter_models([
+            "Burmese_codepoints_exclusive_model4_heavy".into(),
+            "burmesedict".into(),
+            "cjdict".into(),
+            "Khmer_codepoints_exclusive_model4_heavy".into(),
+            "khmerdict".into(),
+            "Lao_codepoints_exclusive_model4_heavy".into(),
+            "laodict".into(),
+            "Thai_codepoints_exclusive_model4_heavy".into(),
+            "thaidict".into(),
+        ]),
+        config::SegmenterModelInclude::Explicit(models) => driver.with_segmenter_models(models),
+    };
 
     match config.export {
-        config::Export::Fs {
+        config::Export::FileSystem {
             path,
             syntax,
             fingerprint,
         } => {
-            #[cfg(not(feature = "provider_fs"))]
-            eyre::bail!("Exporting to an FsProvider requires the `provider_fs` Cargo feature");
-            #[cfg(feature = "provider_fs")]
+            #[cfg(not(feature = "fs_exporter"))]
+            eyre::bail!("Exporting to an FsProvider requires the `fs_exporter` Cargo feature");
+            #[cfg(feature = "fs_exporter")]
             {
                 use icu_provider_fs::export::{serializers::*, *};
                 let exporter = FilesystemExporter::try_new(
@@ -126,15 +150,15 @@ fn main() -> eyre::Result<()> {
                         options
                     },
                 )?;
-                Ok(provider.export(options, exporter)?)
+                Ok(driver.export(&provider, exporter)?)
             }
         }
-        config::Export::Blob { ref path } => {
-            #[cfg(not(feature = "provider_blob"))]
-            eyre::bail!("Exporting to a BlobProvider requires the `provider_blob` Cargo feature");
-            #[cfg(feature = "provider_blob")]
+        config::Export::Blob { ref path } | config::Export::Blob2 { ref path } => {
+            #[cfg(not(feature = "blob_exporter"))]
+            eyre::bail!("Exporting to a BlobProvider requires the `blob_exporter` Cargo feature");
+            #[cfg(feature = "blob_exporter")]
             {
-                let exporter = icu_provider_blob::export::BlobExporter::new_with_sink(
+                let sink: Box<dyn std::io::Write + Sync> =
                     if path == std::path::Path::new("/stdout") {
                         Box::new(std::io::stdout())
                     } else if !config.overwrite && path.exists() {
@@ -144,9 +168,13 @@ fn main() -> eyre::Result<()> {
                             std::fs::File::create(path)
                                 .with_context(|| path.to_string_lossy().to_string())?,
                         )
-                    },
-                );
-                Ok(provider.export(options, exporter)?)
+                    };
+                let exporter = if matches!(config.export, config::Export::Blob { .. }) {
+                    icu_provider_blob::export::BlobExporter::new_with_sink(sink)
+                } else {
+                    icu_provider_blob::export::BlobExporter::new_v2_with_sink(sink)
+                };
+                Ok(driver.export(&provider, exporter)?)
             }
         }
         config::Export::Baked {
@@ -155,11 +183,11 @@ fn main() -> eyre::Result<()> {
             insert_feature_gates,
             use_separate_crates,
         } => {
-            #[cfg(not(feature = "provider_baked"))]
+            #[cfg(not(feature = "baked_exporter"))]
             eyre::bail!(
-                "Exporting to a baked provider requires the `provider_baked` Cargo feature"
+                "Exporting to a baked provider requires the `baked_exporter` Cargo feature"
             );
-            #[cfg(feature = "provider_baked")]
+            #[cfg(feature = "baked_exporter")]
             {
                 use icu_datagen::baked_exporter::*;
 
@@ -172,7 +200,7 @@ fn main() -> eyre::Result<()> {
                     options
                 })?;
 
-                Ok(provider.export(options, exporter)?)
+                Ok(driver.export(&provider, exporter)?)
             }
         }
     }

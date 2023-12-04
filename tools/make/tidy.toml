@@ -28,7 +28,7 @@ exit_on_error true
 glob_pattern_array = array "./**/*.rs" "./**/*.yml" "./**/*.toml" "./**/*.rst" "./**/*.bat" "./**/*.c" "./**/*.cpp"
 
 # Skip the files matching these patterns.
-glob_skip_pattern_array = array "**/target/**/*" "ffi/diplomat/*/docs/**/*" "**/node_modules/**/*" "**/data/**/*" "ffi/gn/vendor/**/*" "ffi/gn/third_party_tools/**/*" "ffi/diplomat/c/examples/fixeddecimal_tiny/baked_data/**/*"
+glob_skip_pattern_array = array "**/target/**/*" "ffi/capi/**/docs/**/*" "**/node_modules/**/*" "**/data/**/*" "ffi/gn/vendor/**/*" "ffi/gn/third_party_tools/**/*" "ffi/capi/c/examples/fixeddecimal_tiny/baked_data/**/*"
 
 blank_line = set ""
 
@@ -62,6 +62,24 @@ license_unicode_hash_line_2 = set "# License & terms of use: http://www.unicode.
 license_unicode_hash_array = array ${license_unicode_hash_line_1} ${license_unicode_hash_line_2}
 license_unicode_hash_str = array_join ${license_unicode_hash_array} "\n"
 
+license_apache_hash_line_1 = set "# This file is part of ICU4X."
+license_apache_hash_line_2 = set "#"
+license_apache_hash_line_3 = set "# This file is licensed under the Apache License, Version 2.0,"
+license_apache_hash_line_4 = set "# which can be found in the LICENSE file in the"
+license_apache_hash_line_5 = set "# calendrical_calculations package root or online at"
+license_apache_hash_line_6 = set "# <https://www.apache.org/licenses/LICENSE-2.0>."
+license_apache_hash_array = array ${license_apache_hash_line_1} ${license_apache_hash_line_2} ${license_apache_hash_line_3} ${license_apache_hash_line_4} ${license_apache_hash_line_5} ${license_apache_hash_line_6}
+license_apache_hash-str = array_join ${license_apache_hash_array} "\n"
+
+license_apache_slash_line_1 = set "// This file is part of ICU4X."
+license_apache_slash_line_2 = set "//"
+license_apache_slash_line_3 = set "// This file is licensed under the Apache License, Version 2.0,"
+license_apache_slash_line_4 = set "// which can be found in the LICENSE file in the"
+license_apache_slash_line_5 = set "// calendrical_calculations package root or online at"
+license_apache_slash_line_6 = set "// <https://www.apache.org/licenses/LICENSE-2.0>."
+license_apache_slash_array = array ${license_apache_slash_line_1} ${license_apache_slash_line_2} ${license_apache_slash_line_3} ${license_apache_slash_line_4} ${license_apache_slash_line_5} ${license_apache_slash_line_6}
+license_apache_hash_str = array_join ${license_apache_slash_array} "\n"
+
 skip_paths = set_new
 for skip_pattern in ${glob_skip_pattern_array}
     echo "License header check skipped in files match ${skip_pattern}"
@@ -78,19 +96,30 @@ for pattern in ${glob_pattern_array}
         should_check_header = eq ${should_skip} false
         if ${should_check_header}
             text = readfile ${path}
-            result_hash = starts_with ${text} ${license_hash_str}
-            result_slash = starts_with ${text} ${license_slash_str}
-            result_rst = starts_with ${text} ${license_rst_str}
-            result_rem = starts_with ${text} ${license_rem_str}
-            result_unicode_hash = starts_with ${text} ${license_unicode_hash_str}
-            not_result_hash = not ${result_hash}
-            not_result_slash = not ${result_slash}
-            not_result_rst = not ${result_rst}
-            not_result_rem = not ${result_rem}
-            not_result_unicode_hash = not ${result_unicode_hash}
-            if ${not_result_hash} and ${not_result_slash} and ${not_result_rst} and ${not_result_rem} and ${not_result_unicode_hash}
-              echo "License header missing in ${path}"
-              trigger_error "License header missing or misformatted in ${path}."
+            if starts_with ${path} "utils/calendrical_calculations"
+                result_hash = starts_with ${text} ${license_apache_hash_str}
+                result_slash = starts_with ${text} ${license_apache_slash_str}
+                not_hash = not ${result_hash}
+                not_slash = not ${result_slash}
+                if ${not_hash} and ${not_slash}
+                      echo "Special calendrical license header missing in ${path}"
+                      trigger_error "Special calendrical license header missing or misformatted in ${path}."
+                end
+            else
+                result_hash = starts_with ${text} ${license_hash_str}
+                result_slash = starts_with ${text} ${license_slash_str}
+                result_rst = starts_with ${text} ${license_rst_str}
+                result_rem = starts_with ${text} ${license_rem_str}
+                result_unicode_hash = starts_with ${text} ${license_unicode_hash_str}
+                not_result_hash = not ${result_hash}
+                not_result_slash = not ${result_slash}
+                not_result_rst = not ${result_rst}
+                not_result_rem = not ${result_rem}
+                not_result_unicode_hash = not ${result_unicode_hash}
+                if ${not_result_hash} and ${not_result_slash} and ${not_result_rst} and ${not_result_rem} and ${not_result_unicode_hash}
+                  echo "License header missing in ${path}"
+                  trigger_error "License header missing or misformatted in ${path}."
+                end
             end
         end
     end
@@ -107,13 +136,11 @@ script = '''
 exit_on_error true
 
 glob_pattern = set "./**/Cargo.toml"
-glob_skip_pattern = array "ffi/gn/vendor/**/*" "ffi/gn/third_party_tools/**/*" "ffi/diplomat/*/examples/**/*" "tools/**/*" "**/fuzz/*" "**/target/**/*" "docs/**/*"
-
-template = canonicalize README.tpl
+glob_skip_pattern = array "ffi/gn/**/*" "ffi/capi/*/examples/**/*" "tools/**/*" "**/fuzz/*" "**/target/**/*" "docs/**/*" "provider/baked/_template_/Cargo.toml"
 
 cargo_list = exec cargo --list
-if not contains ${cargo_list.stdout} "readme"
-    trigger_error "Please run 'cargo install cargo-readme' to support generating README.md files"
+if not contains ${cargo_list.stdout} "rdme"
+    trigger_error "Please run 'cargo install cargo-rdme' to support generating README.md files"
 end
 
 skip_paths = set_new
@@ -124,6 +151,8 @@ for skip_pattern in ${glob_skip_pattern}
     end
 end
 
+project_dir = pwd
+
 handle = glob_array ${glob_pattern}
 for path in ${handle}
     root_dir = dirname ${path}
@@ -133,7 +162,9 @@ for path in ${handle}
     end
     if not ${skip_this}
         echo "Automatically generating ${root_dir}/README.md"
-        exec --fail-on-error cargo readme -r ${root_dir} -o README.md -t ${template}
+        cd ${root_dir}
+        exec --fail-on-error cargo rdme --force
+        cd ${project_dir}
     end
 end
 '''
@@ -175,7 +206,7 @@ exit_on_error true
 
 glob_pattern = set "./**/Cargo.toml"
 license = canonicalize LICENSE
-skip_path_prefixes = array "ffi/gn/vendor/" "ffi/gn/third_party_tools/" "ffi/diplomat/c/examples" "docs/"
+skip_path_prefixes = array "ffi/gn/vendor/" "ffi/gn/third_party_tools/" "ffi/capi/c/examples" "docs/" "utils/calendrical_calculations"
 
 handle = glob_array ${glob_pattern}
 for path in ${handle}
@@ -203,7 +234,7 @@ exit_on_error true
 glob_pattern = set "./**/Cargo.toml"
 license = canonicalize LICENSE
 license_text = readfile ${license}
-skip_path_prefixes = array "ffi/gn/vendor/" "ffi/gn/third_party_tools/" "ffi/diplomat/c/examples" "docs/"
+skip_path_prefixes = array "ffi/gn/vendor/" "ffi/gn/third_party_tools/" "ffi/capi/c/examples" "docs/" "utils/calendrical_calculations"
 
 handle = glob_array ${glob_pattern}
 for path in ${handle}

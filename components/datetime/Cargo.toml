@@ -5,26 +5,16 @@
 [package]
 name = "icu_datetime"
 description = "API for formatting date and time to user readable textual representation"
-version = "1.2.1"
-rust-version = "1.65.0"
-authors = ["The ICU4X Project Developers"]
-edition = "2021"
-readme = "README.md"
-repository = "https://github.com/unicode-org/icu4x"
-homepage = "https://icu4x.unicode.org"
-license = "Unicode-DFS-2016"
-categories = ["internationalization"]
-# Keep this in sync with other crates unless there are exceptions
-include = [
-    "src/**/*",
-    "data/*",
-    "examples/**/*",
-    "benches/**/*",
-    "tests/**/*",
-    "Cargo.toml",
-    "LICENSE",
-    "README.md"
-]
+license-file = "LICENSE"
+
+authors.workspace = true
+categories.workspace = true
+edition.workspace = true
+homepage.workspace = true
+include.workspace = true
+repository.workspace = true
+rust-version.workspace = true
+version.workspace = true
 
 [package.metadata.docs.rs]
 all-features = true
@@ -32,29 +22,29 @@ all-features = true
 [dependencies]
 displaydoc = { version = "0.2.3", default-features = false }
 either = { version = "1.6.1", default-features = false }
-fixed_decimal = { version = "0.5.2", path = "../../utils/fixed_decimal" }
-icu_calendar = { version = "1.2.0", path = "../calendar", default-features = false }
-icu_decimal = { version = "1.2.0", path = "../decimal", default-features = false }
-icu_locid = { version = "1.2.0", path = "../locid" }
-icu_plurals = { version = "1.2.0", path = "../plurals", default-features = false }
-icu_provider = { version = "1.2.0", path = "../../provider/core", features = ["macros"] }
-icu_timezone = { version = "1.2.0", path = "../timezone", default-features = false }
+fixed_decimal = { workspace = true }
+icu_calendar = { workspace = true }
+icu_decimal = { workspace = true }
+icu_locid = { workspace = true }
+icu_plurals = { workspace = true }
+icu_provider = { workspace = true, features = ["macros", "experimental"] }
+icu_timezone = { workspace = true }
 smallvec = "1.6"
-tinystr = { version = "0.7.1", path = "../../utils/tinystr", default-features = false, features = ["alloc", "zerovec"] }
-writeable = { version = "0.5.1", path = "../../utils/writeable" }
-zerovec = { version = "0.9.4", path = "../../utils/zerovec", features = ["yoke"] }
+tinystr = { workspace = true, features = ["alloc", "zerovec"] }
+writeable = { workspace = true }
+zerovec = { workspace = true, features = ["yoke"] }
 
 serde = { version = "1.0", default-features = false, features = ["derive", "alloc"], optional = true }
-databake = { version = "0.1.3", path = "../../utils/databake", features = ["derive"], optional = true}
+databake = { workspace = true, features = ["derive"], optional = true}
 
-icu_datetime_data = { version = "~1.3.0", path = "data", optional = true }
-icu_locid_transform = { version = "1.2.0", path = "../../components/locid_transform", optional = true }
+icu_datetime_data = { workspace = true, optional = true }
+icu_locid_transform = { workspace = true, optional = true, features = ["compiled_data"] }
 
 # Experimental
-litemap = { version = "0.7.0", path = "../../utils/litemap", optional = true }
+litemap = { workspace = true, optional = true }
 
 [dev-dependencies]
-icu = { path = "../icu", default-features = false }
+icu = { path = "../../components/icu", default-features = false }
 icu_benchmark_macros = { path = "../../tools/benchmark/macros" }
 icu_provider_adapters = { path = "../../provider/adapters" }
 icu_provider_blob = { path = "../../provider/blob" }
@@ -103,7 +93,6 @@ bench = ["serde"]
 compiled_data = ["dep:icu_datetime_data", "dep:icu_locid_transform", "icu_calendar/compiled_data", "icu_decimal/compiled_data", "icu_plurals/compiled_data", "icu_timezone/compiled_data"]
 
 [lib]
-path = "src/lib.rs"
 bench = false  # This option is required for Benchmark CI
 
 [package.metadata.cargo-all-features]

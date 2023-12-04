@@ -24,6 +24,7 @@ pub const BASIC_RUNTIME_DEPS: &[&str] = &[
     "icu_segmenter",
     "icu_timezone",
     // ICU4X utils
+    "calendrical_calculations",
     "fixed_decimal",
     "icu_provider_adapters", // not included in icu, but needed generally
     "icu_provider",
@@ -32,8 +33,10 @@ pub const BASIC_RUNTIME_DEPS: &[&str] = &[
     "writeable",
     "yoke",
     "zerofrom",
+    "zerotrie",
     "zerovec",
     // 3P dependencies
+    "core_maths",
     "either",
     "libm",
     "memchr",
@@ -89,7 +92,8 @@ pub const EXTRA_EXPERIMENTAL_DEPS: &[&str] = &[
     "icu_personnames",
     "icu_relativetime",
     "icu_compactdecimal",
-    "icu_unicodeset_parser",
+    "icu_transliterate",
+    "icu_unicodeset_parse",
 ];
 
 /// Dependencies allowed when opting in to compiled data
@@ -101,7 +105,7 @@ pub const EXTRA_EXPERIMENTAL_DATA_DEPS: &[&str] = &[
 ];
 
 /// Dependencies allowed when opting in to LSTM segmenter
-pub const EXTRA_LSTM_DEPS: &[&str] = &["libm"];
+pub const EXTRA_LSTM_DEPS: &[&str] = &[];
 
 /// Dependencies allowed when opting in to fixed_decimal's `ryu` backend
 /// This should never change
@@ -138,13 +142,18 @@ pub const EXTRA_DATAGEN_DEPS: &[&str] = &[
     "databake-derive",
     "elsa",
     "erased-serde",
+    "fraction",
     "icu_codepointtrie_builder",
     "itertools",
     "itoa",
     "matrixmultiply",
     "ndarray",
+    "num",
+    "num-bigint",
     "num-complex",
     "num-integer",
+    "num-iter",
+    "num-rational",
     "num-traits",
     "once_cell",
     "rawpointer",
@@ -152,7 +161,9 @@ pub const EXTRA_DATAGEN_DEPS: &[&str] = &[
     "ryu",
     "serde-aux",
     "serde_json",
+    "static_assertions",
     "toml",
+    "twox-hash",
 ];
 
 /// Dependencies needed by the `log` crate

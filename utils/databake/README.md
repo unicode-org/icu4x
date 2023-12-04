@@ -1,5 +1,7 @@
 # databake [![crates.io](https://img.shields.io/crates/v/databake)](https://crates.io/crates/databake)
 
+<!-- cargo-rdme start -->
+
 This crate allows data to write itself into Rust code (bake itself in).
 
 Types that implement the `Bake` trait can be written into Rust expressions,
@@ -13,7 +15,7 @@ use alloc::borrow::Cow;
 let data = [Some((18, Cow::Borrowed("hi")))];
 assert_eq!(
     data.bake(&Default::default()).to_string(),
-    r#"[Some ((18i32 , alloc :: borrow :: Cow :: Borrowed ("hi") ,)) ,]"#,
+    r#"[Some ((18i32 , alloc :: borrow :: Cow :: Borrowed ("hi")))]"#,
 );
 ```
 
@@ -38,7 +40,7 @@ struct AnotherOne(MyStruct, char);
 ```
 
 ## Testing
-The [`test_bake`] macro can be uses to assert that a particular expression is a `Bake` fixed point.
+The [`test_bake`] macro can be used to assert that a particular expression is a `Bake` fixed point.
 
 ```rust
 test_bake!(
@@ -54,6 +56,8 @@ test_bake!(
     my_crate,
 );
 ```
+
+<!-- cargo-rdme end -->
 
 ## More Information
 

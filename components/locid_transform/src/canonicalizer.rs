@@ -20,11 +20,7 @@ use icu_locid::{
 use icu_provider::prelude::*;
 use tinystr::TinyAsciiStr;
 
-/// The LocaleCanonicalizer provides methods to canonicalize Locales and
-/// LanguageIdentifiers based upon [`CLDR`] data.
-///
-/// It currently supports locale canonicalization based upon the canonicalization
-/// algorithm from [`UTS #35: Unicode LDML 3. LocaleId Canonicalization`].
+/// Implements the algorithm defined in *[UTS #35: Annex C, LocaleId Canonicalization]*.
 ///
 /// # Examples
 ///
@@ -39,9 +35,7 @@ use tinystr::TinyAsciiStr;
 /// assert_eq!(locale, "ja-Latn-alalc97-fonipa".parse().unwrap());
 /// ```
 ///
-/// [`ICU4X`]: ../icu/index.html
-/// [`CLDR`]: http://cldr.unicode.org/
-/// [`UTS #35: Unicode LDML 3. LocaleId Canonicalization`]: http://unicode.org/reports/tr35/#LocaleId_Canonicalization,
+/// [UTS #35: Annex C, LocaleId Canonicalization]: http://unicode.org/reports/tr35/#LocaleId_Canonicalization
 #[derive(Debug)]
 pub struct LocaleCanonicalizer {
     /// Data to support canonicalization.

@@ -10,10 +10,13 @@
 pub mod aliases;
 pub mod ca;
 pub mod coverage_levels;
+#[cfg(test)] // keep as test until baked data is needed
 pub mod currencies;
 pub mod currency_data;
+#[cfg(feature = "icu_relativetime")]
 pub mod date_fields;
 pub mod directionality;
+#[cfg(feature = "icu_displaynames")]
 pub mod displaynames;
 pub mod exemplar_chars;
 pub mod japanese;
@@ -23,8 +26,13 @@ pub mod locale_resource;
 pub mod numbering_systems;
 pub mod numbers;
 pub mod parent_locales;
+pub mod plural_ranges;
 pub mod plurals;
 pub mod time_zones;
+#[cfg(feature = "icu_transliterate")]
+pub mod transforms;
+#[cfg(test)] // keep as test until baked data is needed
+pub mod units;
 pub mod week_data;
 
 use locale_resource::LocaleResource;

@@ -453,9 +453,18 @@ field_type! (
         /// Field symbol for related ISO; some calendars which use different year numbering than ISO, or no year numbering, may express years in an ISO year corresponding to a calendar year.
         'r' => RelatedIso = 3,
     };
-    Numeric;
     YearULE
 );
+
+impl LengthType for Year {
+    fn get_length_type(&self, _length: FieldLength) -> TextOrNumeric {
+        // https://unicode.org/reports/tr35/tr35-dates.html#dfst-year
+        match *self {
+            Year::Cyclic => TextOrNumeric::Text,
+            _ => TextOrNumeric::Numeric,
+        }
+    }
+}
 
 field_type!(
     /// An enum for the possible symbols of a month field in a date pattern.
@@ -472,6 +481,7 @@ impl LengthType for Month {
     fn get_length_type(&self, length: FieldLength) -> TextOrNumeric {
         match length {
             FieldLength::One => TextOrNumeric::Numeric,
+            FieldLength::NumericOverride(_) => TextOrNumeric::Numeric,
             FieldLength::TwoDigit => TextOrNumeric::Numeric,
             FieldLength::Abbreviated => TextOrNumeric::Text,
             FieldLength::Wide => TextOrNumeric::Text,
@@ -578,6 +588,19 @@ impl LengthType for Weekday {
                 FieldLength::One | FieldLength::TwoDigit => TextOrNumeric::Text,
                 _ => TextOrNumeric::Numeric,
             },
+        }
+    }
+}
+
+impl Weekday {
+    /// UTS 35 says that "e" (local weekday) and "E" (format weekday) have the same non-numeric names.
+    ///
+    /// This function normalizes "e" to "E".
+    #[cfg(feature = "experimental")]
+    pub(crate) fn to_format_symbol(self) -> Self {
+        match self {
+            Weekday::Local => Weekday::Format,
+            other => other,
         }
     }
 }

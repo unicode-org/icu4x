@@ -4,8 +4,9 @@
 
 #![allow(dead_code)] // features
 
-use super::locale_canonicalizer::likely_subtags::LikelySubtagsResources;
 use crate::source::SerdeCache;
+use crate::CoverageLevel;
+use icu_calendar::provider::EraStartDate;
 use icu_locid::LanguageIdentifier;
 use icu_locid_transform::provider::LikelySubtagsForLanguageV1Marker;
 use icu_locid_transform::provider::LikelySubtagsForScriptRegionV1Marker;
@@ -15,35 +16,20 @@ use icu_provider::DataError;
 use icu_provider_adapters::any_payload::AnyPayloadProvider;
 use icu_provider_adapters::fork::ForkByKeyProvider;
 use once_cell::sync::OnceCell;
+use std::collections::BTreeSet;
+use std::collections::HashSet;
 use std::fmt::Debug;
 use std::str::FromStr;
 
-/// A language's CLDR coverage level.
-#[derive(Debug, Copy, Clone, PartialEq, Eq, serde::Deserialize, serde::Serialize, Hash)]
-#[non_exhaustive]
-pub enum CoverageLevel {
-    /// Locales listed as modern coverage targets by the CLDR subcomittee.
-    ///
-    /// This is the highest level of coverage.
-    #[serde(rename = "modern")]
-    Modern,
-    /// Locales listed as moderate coverage targets by the CLDR subcomittee.
-    ///
-    /// This is a medium level of coverage.
-    #[serde(rename = "moderate")]
-    Moderate,
-    /// Locales listed as basic coverage targets by the CLDR subcomittee.
-    ///
-    /// This is the lowest level of coverage.
-    #[serde(rename = "basic")]
-    Basic,
-}
-
 #[derive(Debug)]
 pub(crate) struct CldrCache {
-    serde_cache: SerdeCache,
+    pub(super) serde_cache: SerdeCache,
     dir_suffix: OnceCell<&'static str>,
     locale_expander: OnceCell<LocaleExpander>,
+    modern_japanese_eras: OnceCell<BTreeSet<String>>,
+    #[cfg(feature = "icu_transliterate")]
+    // used by transforms/mod.rs
+    pub(super) transforms: OnceCell<std::sync::Mutex<icu_transliterate::RuleCollection>>,
 }
 
 impl CldrCache {
@@ -52,6 +38,9 @@ impl CldrCache {
             serde_cache,
             dir_suffix: Default::default(),
             locale_expander: Default::default(),
+            modern_japanese_eras: Default::default(),
+            #[cfg(feature = "icu_transliterate")]
+            transforms: Default::default(),
         }
     }
 
@@ -88,8 +77,9 @@ impl CldrCache {
 
     pub fn locales(
         &self,
-        levels: &[CoverageLevel],
+        levels: impl IntoIterator<Item = CoverageLevel>,
     ) -> Result<Vec<icu_locid::LanguageIdentifier>, DataError> {
+        let levels = levels.into_iter().collect::<HashSet<_>>();
         Ok(self
             .serde_cache
             .read_and_parse_json::<crate::transform::cldr::cldr_serde::coverage_levels::Resource>(
@@ -99,10 +89,12 @@ impl CldrCache {
             .iter()
             .filter_map(|(locale, c)| levels.contains(c).then_some(locale))
             .cloned()
+            // `und` needs to be part of every set
+            .chain([Default::default()])
             .collect())
     }
 
-    fn dir_suffix(&self) -> Result<&'static str, DataError> {
+    pub(super) fn dir_suffix(&self) -> Result<&'static str, DataError> {
         self.dir_suffix
             .get_or_try_init(|| {
                 if self.serde_cache.list("cldr-misc-full")?.next().is_some() {
@@ -115,15 +107,9 @@ impl CldrCache {
     }
 
     fn locale_expander(&self) -> Result<&LocaleExpander, DataError> {
+        use super::locale_canonicalizer::likely_subtags::*;
         self.locale_expander.get_or_try_init(|| {
-            let resources = LikelySubtagsResources::from_resources(
-                self.serde_cache
-                    .read_and_parse_json("cldr-core/supplemental/likelySubtags.json")?,
-                self.serde_cache
-                    .read_and_parse_json("cldr-core/coverageLevels.json")?,
-            );
-            let data =
-                super::locale_canonicalizer::likely_subtags::transform(resources.get_common());
+            let data = transform(LikelySubtagsResources::try_from_cldr_cache(self)?.get_common());
             let provider = ForkByKeyProvider::new(
                 AnyPayloadProvider::from_owned::<LikelySubtagsForLanguageV1Marker>(
                     data.clone().into(),
@@ -133,6 +119,37 @@ impl CldrCache {
             LocaleExpander::try_new_with_any_provider(&provider).map_err(|e| {
                 DataError::custom("creating LocaleExpander in CldrCache").with_display_context(&e)
             })
+        })
+    }
+
+    /// Get the list of eras in the japanese calendar considered "modern" (post-Meiji, inclusive)
+    ///
+    /// These will be in CLDR era index form; these are usually numbers
+    pub(super) fn modern_japanese_eras(&self) -> Result<&BTreeSet<String>, DataError> {
+        self.modern_japanese_eras.get_or_try_init(|| {
+            let era_dates: &super::cldr_serde::japanese::Resource = self
+                .core()
+                .read_and_parse("supplemental/calendarData.json")?;
+            let mut set = BTreeSet::<String>::new();
+            for (era_index, date) in era_dates.supplemental.calendar_data.japanese.eras.iter() {
+                let start_date =
+                    EraStartDate::from_str(if let Some(start_date) = date.start.as_ref() {
+                        start_date
+                    } else {
+                        continue;
+                    })
+                    .map_err(|_| {
+                        DataError::custom(
+                            "calendarData.json contains unparseable data for a japanese era",
+                        )
+                        .with_display_context(&format!("era index {}", era_index))
+                    })?;
+
+                if start_date.year >= 1868 {
+                    set.insert(era_index.into());
+                }
+            }
+            Ok(set)
         })
     }
 

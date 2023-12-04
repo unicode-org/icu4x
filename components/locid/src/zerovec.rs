@@ -60,7 +60,8 @@
 //! use icu_locid::subtags::{Language, Region, Script};
 //! use icu_locid::LanguageIdentifier;
 //! use icu_locid::{
-//!     langid, subtags::{language, region, script},
+//!     langid,
+//!     subtags::{language, region, script},
 //! };
 //! use zerovec::ZeroMap;
 //!

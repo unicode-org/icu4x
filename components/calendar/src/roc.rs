@@ -32,12 +32,10 @@
 //! ```
 
 use crate::{
-    calendar_arithmetic::ArithmeticDate,
-    helpers::{i64_to_i32, I32Result},
-    iso::IsoDateInner,
-    types::{self, Era},
-    Calendar, CalendarError, Date, DateTime, Iso,
+    calendar_arithmetic::ArithmeticDate, iso::IsoDateInner, types, AnyCalendarKind, Calendar,
+    CalendarError, Date, DateTime, Iso,
 };
+use calendrical_calculations::helpers::i64_to_saturated_i32;
 use tinystr::tinystr;
 
 /// Year of the beginning of the Taiwanese (ROC/Minguo) calendar.
@@ -59,6 +57,11 @@ const ROC_ERA_OFFSET: i32 = 1911;
 ///
 /// This calendar supports two era codes: `"roc"`, corresponding to years in the 民國 (minguo) era (CE year 1912 and
 /// after), and `"roc-inverse"`, corresponding to years before the 民國 (minguo) era (CE year 1911 and before).
+///
+///
+/// # Month codes
+///
+/// This calendar supports 12 solar month codes (`"M01" - "M12"`)
 ///
 /// [`Chinese`]: crate::chinese::Chinese
 /// [`Gregorian`]: crate::Gregorian
@@ -143,6 +146,10 @@ impl Calendar for Roc {
         year_as_roc(date.0 .0.year as i64)
     }
 
+    fn is_in_leap_year(&self, date: &Self::DateInner) -> bool {
+        Iso.is_in_leap_year(&date.0)
+    }
+
     fn month(&self, date: &Self::DateInner) -> crate::types::FormattableMonth {
         Iso.month(&date.0)
     }
@@ -162,21 +169,27 @@ impl Calendar for Roc {
             next_year: year_as_roc(next_year as i64),
         }
     }
+
+    /// The [`AnyCalendarKind`] corresponding to this calendar
+    fn any_calendar_kind(&self) -> Option<AnyCalendarKind> {
+        Some(AnyCalendarKind::Roc)
+    }
 }
 
 impl Date<Roc> {
     /// Construct a new Republic of China calendar Date.
     ///
-    /// Years are specified in either the "roc" or "roc-inverse" eras
+    /// Years are specified in the "roc" era. This function accepts an extended year in that era, so dates
+    /// before Minguo are negative and year 0 is 1 Before Minguo. To specify dates using explicit era
+    /// codes, use [`Roc::date_from_codes()`].
     ///
     /// ```rust
     /// use icu::calendar::Date;
-    /// use icu::calendar::types::Era;
     /// use icu::calendar::gregorian::Gregorian;
     /// use tinystr::tinystr;
     ///
     /// // Create a new ROC Date
-    /// let date_roc = Date::try_new_roc_date(Era(tinystr!(16, "roc")), 1, 2, 3)
+    /// let date_roc = Date::try_new_roc_date(1, 2, 3)
     ///     .expect("Failed to initialize ROC Date instance.");
     ///
     /// assert_eq!(date_roc.year().era.0, tinystr!(16, "roc"));
@@ -190,48 +203,43 @@ impl Date<Roc> {
     /// assert_eq!(date_gregorian.year().number, 1912, "Gregorian from ROC year check failed!");
     /// assert_eq!(date_gregorian.month().ordinal, 2, "Gregorian from ROC month check failed!");
     /// assert_eq!(date_gregorian.day_of_month().0, 3, "Gregorian from ROC day of month check failed!");
-    pub fn try_new_roc_date(
-        era: Era,
-        year: i32,
-        month: u8,
-        day: u8,
-    ) -> Result<Date<Roc>, CalendarError> {
-        let roc_year = if era.0 == tinystr!(16, "roc") {
-            year.saturating_add(ROC_ERA_OFFSET)
-        } else if era.0 == tinystr!(16, "roc-inverse") {
-            (ROC_ERA_OFFSET + 1).saturating_sub(year)
-        } else {
-            return Err(CalendarError::UnknownEra(era.0, "ROC"));
-        };
-        Date::try_new_iso_date(roc_year, month, day).map(|d| Date::new_from_iso(d, Roc))
+    pub fn try_new_roc_date(year: i32, month: u8, day: u8) -> Result<Date<Roc>, CalendarError> {
+        let iso_year = year.saturating_add(ROC_ERA_OFFSET);
+        Date::try_new_iso_date(iso_year, month, day).map(|d| Date::new_from_iso(d, Roc))
     }
 }
 
 impl DateTime<Roc> {
     /// Construct a new Republic of China calendar datetime from integers.
     ///
-    /// Years are specified in either the "roc" or "roc-inverse" eras (see [`Roc`] for more info).
+    /// Years are specified in the "roc" era, Before Minguo dates are negative (year 0 is 1 Before Minguo)
     ///
     /// ```rust
-    /// use icu::calendar::DateTime;
-    /// use icu::calendar::types::Era;
     /// use icu::calendar::gregorian::Gregorian;
+    /// use icu::calendar::DateTime;
     /// use tinystr::tinystr;
     ///
     /// // Create a new ROC DateTime
-    /// let datetime_roc = DateTime::try_new_roc_datetime(Era(tinystr!(16, "roc")), 1, 2, 3, 13, 1, 0)
+    /// let datetime_roc = DateTime::try_new_roc_datetime(1, 2, 3, 13, 1, 0)
     ///     .expect("Failed to initialize ROC DateTime instance.");
     ///
     /// assert_eq!(datetime_roc.date.year().era.0, tinystr!(16, "roc"));
     /// assert_eq!(datetime_roc.date.year().number, 1, "ROC year check failed!");
-    /// assert_eq!(datetime_roc.date.month().ordinal, 2, "ROC month check failed!");
-    /// assert_eq!(datetime_roc.date.day_of_month().0, 3, "ROC day of month check failed!");
+    /// assert_eq!(
+    ///     datetime_roc.date.month().ordinal,
+    ///     2,
+    ///     "ROC month check failed!"
+    /// );
+    /// assert_eq!(
+    ///     datetime_roc.date.day_of_month().0,
+    ///     3,
+    ///     "ROC day of month check failed!"
+    /// );
     /// assert_eq!(datetime_roc.time.hour.number(), 13);
     /// assert_eq!(datetime_roc.time.minute.number(), 1);
     /// assert_eq!(datetime_roc.time.second.number(), 0);
     /// ```
     pub fn try_new_roc_datetime(
-        era: Era,
         year: i32,
         month: u8,
         day: u8,
@@ -240,18 +248,14 @@ impl DateTime<Roc> {
         second: u8,
     ) -> Result<DateTime<Roc>, CalendarError> {
         Ok(DateTime {
-            date: Date::try_new_roc_date(era, year, month, day)?,
+            date: Date::try_new_roc_date(year, month, day)?,
             time: types::Time::try_new(hour, minute, second, 0)?,
         })
     }
 }
 
 pub(crate) fn year_as_roc(year: i64) -> types::FormattableYear {
-    let year_i32 = match i64_to_i32(year) {
-        I32Result::BelowMin(_) => i32::MIN,
-        I32Result::AboveMax(_) => i32::MAX,
-        I32Result::WithinRange(y) => y,
-    };
+    let year_i32 = i64_to_saturated_i32(year);
     let offset_i64 = ROC_ERA_OFFSET as i64;
     if year > offset_i64 {
         types::FormattableYear {
@@ -274,7 +278,8 @@ pub(crate) fn year_as_roc(year: i64) -> types::FormattableYear {
 mod test {
 
     use super::*;
-    use crate::rata_die::RataDie;
+    use crate::types::Era;
+    use calendrical_calculations::rata_die::RataDie;
 
     #[derive(Debug)]
     struct TestCase {
@@ -455,7 +460,7 @@ mod test {
                 assert_eq!(
                     i.cmp(&j),
                     iso_i.cmp(&iso_j),
-                    "ISO directionality inconcistent with directionality for i: {i}, j: {j}"
+                    "ISO directionality inconsistent with directionality for i: {i}, j: {j}"
                 );
                 assert_eq!(
                     i.cmp(&j),
@@ -480,7 +485,7 @@ mod test {
                 assert_eq!(
                     i.cmp(&j),
                     iso_i.cmp(&iso_j),
-                    "ISO directionality inconcistent with directionality for i: {i}, j: {j}"
+                    "ISO directionality inconsistent with directionality for i: {i}, j: {j}"
                 );
                 assert_eq!(
                     i.cmp(&j),

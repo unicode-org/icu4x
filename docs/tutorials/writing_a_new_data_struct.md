@@ -111,6 +111,7 @@ as well as to the list of keys
 ```rust
 
 use std::borrow::Cow;
+use icu_provider::prelude::*;
 
 #[derive(Debug, PartialEq, Clone)]
 #[icu_provider::data_struct(marker(FooV1Marker, "foo/bar@1"))]

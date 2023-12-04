@@ -74,7 +74,7 @@ use serde::{Deserialize, Serialize};
 ///
 /// [`UTS #35: Unicode LDML 4. Dates`]: https://unicode.org/reports/tr35/tr35-dates.html
 /// [`Element dateFormats`]: https://unicode.org/reports/tr35/tr35-dates.html#dateFormats
-#[derive(Debug, Clone, PartialEq, Copy)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 #[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
 #[non_exhaustive]
 pub struct Bag {
@@ -95,7 +95,7 @@ impl Default for Bag {
 }
 
 impl Bag {
-    /// Constructs a Bag with all fields set to None
+    /// Constructs a `Bag` with all fields set to `None`.
     ///
     /// Note that the [`Default`] implementation returns medium date and time options
     pub fn empty() -> Self {
@@ -113,7 +113,7 @@ impl Bag {
         }
     }
 
-    /// Constructs a Bag given a date field (time set to None)
+    /// Constructs a `Bag` given a `date` field (`time` set to `None`)
     pub fn from_date_style(date: Date) -> Self {
         Self {
             date: Some(date),
@@ -121,7 +121,7 @@ impl Bag {
         }
     }
 
-    /// Constructs a Bag given a time field (date set to None)
+    /// Constructs a `Bag` given a `time` field (`date` set to `None`)
     pub fn from_time_style(time: Time) -> Self {
         Self {
             date: None,
@@ -151,7 +151,7 @@ impl Bag {
 /// [`UTS #35: Unicode LDML 4. Dates`]: https://unicode.org/reports/tr35/tr35-dates.html
 /// [`Element dateFormats`]: https://unicode.org/reports/tr35/tr35-dates.html#dateFormats
 /// [`TypedDateTimeFormatter`]: super::super::TypedDateTimeFormatter
-#[derive(Debug, Clone, Copy, PartialEq)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 #[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
 #[non_exhaustive]
 pub enum Date {
@@ -223,7 +223,7 @@ pub enum Date {
 /// [`UTS #35: Unicode LDML 4. Dates`]: https://unicode.org/reports/tr35/tr35-dates.html
 /// [`Element dateFormats`]: https://unicode.org/reports/tr35/tr35-dates.html#timeFormats
 /// [`TypedDateTimeFormatter`]: super::super::TypedDateTimeFormatter
-#[derive(Debug, Clone, Copy, PartialEq)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 #[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
 #[non_exhaustive]
 pub enum Time {

@@ -390,7 +390,9 @@ where
             DataPayloadInner::StaticRef(r) => {
                 let output: <M2::Yokeable as Yokeable<'static>>::Output =
                     f(Yokeable::transform(*r), PhantomData);
-                // Safety: <M2::Yokeable as Yokeable<'static>>::Output is the same type as M2::Yokeable
+                // Safety: <M2::Yokeable as Yokeable<'static>>::Output is the same type as M2::Yokeable;
+                // we're going from 'static to 'static, however in a generic context it's not
+                // clear to the compiler that that is the case. We have to use the unsafe make API to do this.
                 let yokeable: M2::Yokeable = unsafe { M2::Yokeable::make(output) };
                 Yoke::new_owned(yokeable)
             }
@@ -511,12 +513,15 @@ where
         })))
     }
 
-    /// Convert between two [`DataMarker`] types that are compatible with each other.
+    /// Convert between two [`DataMarker`] types that are compatible with each other
+    /// with compile-time type checking.
     ///
     /// This happens if they both have the same [`DataMarker::Yokeable`] type.
     ///
     /// Can be used to erase the key of a data payload in cases where multiple keys correspond
     /// to the same data struct.
+    ///
+    /// For runtime dynamic casting, use [`DataPayload::dynamic_cast_mut()`].
     ///
     /// # Examples
     ///
@@ -542,6 +547,72 @@ where
             DataPayloadInner::Yoke(yoke) => DataPayloadInner::Yoke(yoke),
             DataPayloadInner::StaticRef(r) => DataPayloadInner::StaticRef(r),
         })
+    }
+
+    /// Convert a mutable reference of a [`DataPayload`] to another mutable reference
+    /// of the same type with runtime type checking.
+    ///
+    /// Primarily useful to convert from a generic to a concrete marker type.
+    ///
+    /// If the `M2` type argument does not match the true marker type, a `DataError` is returned.
+    ///
+    /// For compile-time static casting, use [`DataPayload::cast()`].
+    ///
+    /// # Examples
+    ///
+    /// Change the results of a particular request based on key:
+    ///
+    /// ```
+    /// use icu_locid::locale;
+    /// use icu_provider::hello_world::*;
+    /// use icu_provider::prelude::*;
+    ///
+    /// struct MyWrapper<P> {
+    ///     inner: P,
+    /// }
+    ///
+    /// impl<M, P> DataProvider<M> for MyWrapper<P>
+    /// where
+    ///     M: KeyedDataMarker,
+    ///     P: DataProvider<M>,
+    /// {
+    ///     #[inline]
+    ///     fn load(&self, req: DataRequest) -> Result<DataResponse<M>, DataError> {
+    ///         let mut res = self.inner.load(req)?;
+    ///         if let Some(ref mut generic_payload) = res.payload {
+    ///             let mut cast_result =
+    ///                 generic_payload.dynamic_cast_mut::<HelloWorldV1Marker>();
+    ///             if let Ok(ref mut concrete_payload) = cast_result {
+    ///                 // Add an emoji to the hello world message
+    ///                 concrete_payload.with_mut(|data| {
+    ///                     data.message.to_mut().insert_str(0, "✨ ");
+    ///                 });
+    ///             }
+    ///         }
+    ///         Ok(res)
+    ///     }
+    /// }
+    ///
+    /// let provider = MyWrapper {
+    ///     inner: HelloWorldProvider,
+    /// };
+    /// let formatter =
+    ///     HelloWorldFormatter::try_new_unstable(&provider, &locale!("de").into())
+    ///         .unwrap();
+    ///
+    /// assert_eq!(formatter.format_to_string(), "✨ Hallo Welt");
+    /// ```
+    #[inline]
+    pub fn dynamic_cast_mut<M2>(&mut self) -> Result<&mut DataPayload<M2>, DataError>
+    where
+        M2: DataMarker,
+    {
+        let this: &mut dyn core::any::Any = self;
+        if let Some(this) = this.downcast_mut() {
+            Ok(this)
+        } else {
+            Err(DataError::for_type::<M2>().with_str_context(core::any::type_name::<M>()))
+        }
     }
 }
 
@@ -584,7 +655,7 @@ where
     /// Metadata about the returned object.
     pub metadata: DataResponseMetadata,
 
-    /// The object itself; None if it was not loaded.
+    /// The object itself; `None` if it was not loaded.
     pub payload: Option<DataPayload<M>>,
 }
 

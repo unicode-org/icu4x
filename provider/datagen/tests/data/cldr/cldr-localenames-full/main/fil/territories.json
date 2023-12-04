@@ -3,7 +3,7 @@
     "fil": {
       "identity": {
         "version": {
-          "_cldrVersion": "43"
+          "_cldrVersion": "44"
         },
         "language": "fil"
       },
@@ -159,7 +159,9 @@
           "IL": "Israel",
           "IM": "Isle of Man",
           "IN": "India",
-          "IO": "British Indian Ocean Territory",
+          "IO": "Teritoryo sa Karagatan ng British Indian",
+          "IO-alt-biot": "Teritoryo sa Karagatan ng British Indian",
+          "IO-alt-chagos": "Chagos Archipelago",
           "IQ": "Iraq",
           "IR": "Iran",
           "IS": "Iceland",

@@ -55,8 +55,11 @@ const BUDDHIST_ERA_OFFSET: i32 = 543;
 ///
 /// # Era codes
 ///
-/// This calendar supports one era, `"be"`, with 1 B.E. being 543 BCE
-
+/// This calendar supports one era, `"be"`, with 1 B.E. being 543 BCE.
+///
+/// # Month codes
+///
+/// This calendar supports 12 solar month codes (`"M01" - "M12"`)
 #[allow(clippy::exhaustive_structs)] // this type is stable
 pub struct Buddhist;
 
@@ -117,6 +120,10 @@ impl Calendar for Buddhist {
     /// The calendar-specific year represented by `date`
     fn year(&self, date: &Self::DateInner) -> types::FormattableYear {
         iso_year_as_buddhist(date.0.year)
+    }
+
+    fn is_in_leap_year(&self, date: &Self::DateInner) -> bool {
+        Iso.is_in_leap_year(date)
     }
 
     /// The calendar-specific month represented by `date`
@@ -223,7 +230,7 @@ fn iso_year_as_buddhist(year: i32) -> types::FormattableYear {
 
 #[cfg(test)]
 mod test {
-    use crate::rata_die::RataDie;
+    use calendrical_calculations::rata_die::RataDie;
 
     use super::*;
 

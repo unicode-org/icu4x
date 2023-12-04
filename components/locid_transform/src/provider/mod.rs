@@ -27,6 +27,12 @@ pub use fallback::*;
 #[cfg(feature = "compiled_data")]
 #[derive(Debug)]
 /// Baked data
+///
+/// <div class="stab unstable">
+/// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
+/// including in SemVer minor releases. In particular, the `DataProvider` implementations are only
+/// guaranteed to match with this version's `*_unstable` providers. Use with caution.
+/// </div>
 pub struct Baked;
 
 #[cfg(feature = "compiled_data")]
@@ -35,6 +41,7 @@ const _: () = {
         pub use crate as locid_transform;
         pub use icu_locid as locid;
     }
+    icu_locid_transform_data::make_provider!(Baked);
     icu_locid_transform_data::impl_fallback_likelysubtags_v1!(Baked);
     icu_locid_transform_data::impl_fallback_parents_v1!(Baked);
     icu_locid_transform_data::impl_fallback_supplement_co_v1!(Baked);
@@ -42,9 +49,24 @@ const _: () = {
     icu_locid_transform_data::impl_locid_transform_likelysubtags_ext_v1!(Baked);
     icu_locid_transform_data::impl_locid_transform_likelysubtags_l_v1!(Baked);
     icu_locid_transform_data::impl_locid_transform_likelysubtags_sr_v1!(Baked);
-    #[cfg(feature = "experimental")]
     icu_locid_transform_data::impl_locid_transform_script_dir_v1!(Baked);
 };
+
+#[cfg(feature = "datagen")]
+use icu_provider::prelude::*;
+
+#[cfg(feature = "datagen")]
+/// The latest minimum set of keys required by this component.
+pub const KEYS: &[DataKey] = &[
+    AliasesV1Marker::KEY,
+    CollationFallbackSupplementV1Marker::KEY,
+    LikelySubtagsExtendedV1Marker::KEY,
+    LikelySubtagsForLanguageV1Marker::KEY,
+    LikelySubtagsForScriptRegionV1Marker::KEY,
+    LocaleFallbackLikelySubtagsV1Marker::KEY,
+    LocaleFallbackParentsV1Marker::KEY,
+    ScriptDirectionV1Marker::KEY,
+];
 
 use alloc::borrow::Cow;
 use tinystr::{TinyAsciiStr, UnvalidatedTinyAsciiStr};

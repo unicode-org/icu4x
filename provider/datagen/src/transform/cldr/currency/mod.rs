@@ -5,6 +5,7 @@
 use icu_properties::sets::load_for_general_category_group;
 use icu_properties::GeneralCategoryGroup;
 use icu_provider::DataProvider;
+use icu_singlenumberformatter::ule::MAX_PLACE_HOLDER_INDEX;
 use tinystr::UnvalidatedTinyAsciiStr;
 use zerovec::VarZeroVec;
 use zerovec::ZeroMap;
@@ -23,14 +24,15 @@ use tinystr::tinystr;
 ///    if the pattern is ¤#,##0.00 and the symbol is EGP,
 ///    this means the return value will be PatternSelection::StandardAlphaNextToNumber
 ///    because the character closes to the number is a letter.
+/// NOTE:
+///   place_holder_value must not be empty.
 fn currency_pattern_selection(
     provider: &DatagenProvider,
-    pattern: String,
-    place_holder: String,
+    pattern: &str,
+    place_holder_value: &str,
 ) -> Result<PatternSelection, DataError> {
-    // TODO(younies): what should we do when the place_holder is empty?
-    if place_holder.is_empty() {
-        todo!("Handle empty place holders")
+    if place_holder_value.is_empty() {
+        return Err(DataError::custom("Place holder value must not be empty"));
     }
 
     let currency_sign = '¤';
@@ -49,9 +51,9 @@ fn currency_pattern_selection(
 
     let char_closer_to_number = {
         if currency_sign_index < first_num_index {
-            place_holder.chars().next_back().unwrap()
+            place_holder_value.chars().next_back().unwrap()
         } else if currency_sign_index > last_num_index {
-            place_holder.chars().next().unwrap()
+            place_holder_value.chars().next().unwrap()
         } else {
             return Err(DataError::custom(
                 "Currency sign must be in the middle of the pattern",
@@ -75,13 +77,11 @@ impl DataProvider<CurrencyEssentialsV1Marker> for crate::DatagenProvider {
         let langid = req.locale.get_langid();
 
         let currencies_resource: &cldr_serde::currencies::Resource = self
-            .source
             .cldr()?
             .numbers()
             .read_and_parse(&langid, "currencies.json")?;
 
         let numbers_resource: &cldr_serde::numbers::Resource = self
-            .source
             .cldr()?
             .numbers()
             .read_and_parse(&langid, "numbers.json")?;
@@ -98,7 +98,6 @@ impl DataProvider<CurrencyEssentialsV1Marker> for crate::DatagenProvider {
 impl IterableDataProvider<CurrencyEssentialsV1Marker> for crate::DatagenProvider {
     fn supported_locales(&self) -> Result<Vec<DataLocale>, DataError> {
         Ok(self
-            .source
             .cldr()?
             .numbers()
             .list_langs()?
@@ -131,116 +130,148 @@ fn extract_currency_essentials<'data>(
     };
 
     let mut currency_patterns_map = BTreeMap::<UnvalidatedTinyAsciiStr<3>, CurrencyPatterns>::new();
+    let mut currency_patterns_standard_none =
+        BTreeMap::<UnvalidatedTinyAsciiStr<3>, CurrencyPatterns>::new();
+    let mut currency_patterns_standard_next_to_num =
+        BTreeMap::<UnvalidatedTinyAsciiStr<3>, CurrencyPatterns>::new();
     let mut place_holders = Vec::<&str>::new();
-    let mut place_holders_map = HashMap::<&str, u16>::new();
+    // A map to check if the place holder is already in the place_holders vector.
+    let mut place_holders_checker_map = HashMap::<&str, u16>::new();
+
     for (iso, currency_pattern) in currencies {
-        let short_place_holder_index: u16;
-        let narrow_place_holder_index: u16;
-
-        let short_option = &currency_pattern.short;
-        match short_option {
-            Some(short_place_holder) => match place_holders_map.get(short_place_holder.as_str()) {
-                Some(index) => short_place_holder_index = *index,
-                None => {
-                    if short_place_holder == iso.try_into_tinystr().unwrap().as_str() {
-                        short_place_holder_index = USE_ISO_CODE;
-                    } else {
-                        short_place_holder_index = place_holders.len() as u16;
-                        place_holders.push(short_place_holder);
-                    }
-                    place_holders_map.insert(short_place_holder, short_place_holder_index);
-                }
-            },
-            None => short_place_holder_index = NO_PLACE_HOLDER,
-        }
-
-        let narrow_option = &currency_pattern.narrow;
-        match narrow_option {
-            Some(narrow_place_holder) => {
-                match place_holders_map.get(narrow_place_holder.as_str()) {
-                    Some(index) => narrow_place_holder_index = *index,
-                    None => {
-                        if narrow_place_holder == iso.try_into_tinystr().unwrap().as_str() {
-                            narrow_place_holder_index = USE_ISO_CODE;
-                        } else {
-                            narrow_place_holder_index = place_holders.len() as u16;
-                            place_holders.push(narrow_place_holder);
-                        }
-                        place_holders_map.insert(narrow_place_holder, narrow_place_holder_index);
-                    }
-                }
+        let short_place_holder_index = currency_pattern.short.as_ref().map(|short_place_holder| {
+            if let Some(&index) = place_holders_checker_map.get(short_place_holder.as_str()) {
+                PlaceholderValue::Index(index)
+            } else if short_place_holder == iso.try_into_tinystr().unwrap().as_str() {
+                PlaceholderValue::ISO
+            } else {
+                let index = place_holders.len() as u16;
+                place_holders.push(short_place_holder.as_str());
+                place_holders_checker_map.insert(short_place_holder.as_str(), index);
+                PlaceholderValue::Index(index)
             }
-            None => narrow_place_holder_index = NO_PLACE_HOLDER,
+        });
+
+        let narrow_place_holder_index =
+            currency_pattern.narrow.as_ref().map(|narrow_place_holder| {
+                if let Some(&index) = place_holders_checker_map.get(narrow_place_holder.as_str()) {
+                    PlaceholderValue::Index(index)
+                } else if narrow_place_holder == iso.try_into_tinystr().unwrap().as_str() {
+                    PlaceholderValue::ISO
+                } else {
+                    let index = place_holders.len() as u16;
+                    place_holders.push(narrow_place_holder.as_ref());
+                    place_holders_checker_map.insert(narrow_place_holder.as_str(), index);
+                    PlaceholderValue::Index(index)
+                }
+            });
+
+        // Ensure that short_place_holder_index and narrow_place_holder_index do not exceed MAX_PLACE_HOLDER_INDEX.
+        if let Some(PlaceholderValue::Index(index)) = short_place_holder_index {
+            if index > MAX_PLACE_HOLDER_INDEX {
+                return Err(DataError::custom(
+                    "short_place_holder_index exceeded MAX_PLACE_HOLDER_INDEX",
+                ));
+            }
+        }
+        if let Some(PlaceholderValue::Index(index)) = narrow_place_holder_index {
+            if index > MAX_PLACE_HOLDER_INDEX {
+                return Err(DataError::custom(
+                    "narrow_place_holder_index exceeded MAX_PLACE_HOLDER_INDEX",
+                ));
+            }
         }
 
         let iso_string = iso.try_into_tinystr().unwrap().to_string();
 
-        let short_pattern_standard: PatternSelection = {
-            if standard_alpha_next_to_number.is_empty() {
-                PatternSelection::Standard
-            } else if short_place_holder_index != USE_ISO_CODE
-                && short_place_holder_index < NO_PLACE_HOLDER
-            {
-                currency_pattern_selection(
+        let short_pattern_standard: PatternSelection = if standard_alpha_next_to_number.is_empty() {
+            PatternSelection::Standard
+        } else {
+            match short_place_holder_index {
+                Some(PlaceholderValue::Index(index)) => currency_pattern_selection(
                     provider,
-                    standard.clone(),
-                    place_holders
-                        .get(short_place_holder_index as usize)
-                        .unwrap()
-                        .to_string(),
-                )?
-            } else {
-                // TODO(younies): double check this case
-                currency_pattern_selection(provider, standard.clone(), iso_string)?
+                    standard,
+                    place_holders.get(index as usize).unwrap(),
+                )?,
+                Some(PlaceholderValue::ISO) => {
+                    currency_pattern_selection(provider, standard, iso_string.as_str())?
+                }
+                // Based on UTS-35: https://www.unicode.org/reports/tr35/tr35-numbers.html#Currencies
+                // If the place holder value is empty, then use the currency code (ISO code).
+                None => currency_pattern_selection(provider, standard, iso_string.as_str())?,
             }
         };
 
-        let narrow_pattern_standard: PatternSelection = {
-            if standard_alpha_next_to_number.is_empty() {
-                PatternSelection::Standard
-            } else if narrow_place_holder_index != USE_ISO_CODE
-                && narrow_place_holder_index != NO_PLACE_HOLDER
-            {
-                currency_pattern_selection(
-                    provider,
-                    standard.clone(),
-                    place_holders
-                        .get(narrow_place_holder_index as usize)
-                        .unwrap()
-                        .to_string(),
-                )?
-            } else {
-                // TODO(younies): double check this case
-                short_pattern_standard
-            }
-        };
-
-        // TODO(youneis): Check if we can remove also when the patterns equal to
-        // PatternSelection::StandardNextToNumber.
-        if short_pattern_standard == PatternSelection::Standard
-            && narrow_pattern_standard == PatternSelection::Standard
-            && short_place_holder_index == NO_PLACE_HOLDER
-            && narrow_place_holder_index == NO_PLACE_HOLDER
+        let narrow_pattern_standard: PatternSelection = if standard_alpha_next_to_number.is_empty()
         {
-            continue;
-        }
+            PatternSelection::Standard
+        } else {
+            match narrow_place_holder_index {
+                Some(PlaceholderValue::Index(index)) => currency_pattern_selection(
+                    provider,
+                    standard,
+                    place_holders.get(index as usize).unwrap(),
+                )?,
+                Some(PlaceholderValue::ISO) => {
+                    currency_pattern_selection(provider, standard, &iso_string)?
+                }
 
-        currency_patterns_map.insert(
-            *iso,
-            CurrencyPatterns {
-                short_pattern_standard,
-                narrow_pattern_standard,
-                short_place_holder_index,
-                narrow_place_holder_index,
-            },
-        );
+                // Based on UTS-35: https://www.unicode.org/reports/tr35/tr35-numbers.html#Currencies
+                // If the place holder value is empty, then use the currency code (ISO code).
+                None => currency_pattern_selection(provider, standard, &iso_string)?,
+            }
+        };
+
+        let currency_patterns = CurrencyPatterns {
+            short_pattern_standard,
+            narrow_pattern_standard,
+            short_place_holder_index,
+            narrow_place_holder_index,
+        };
+
+        match (short_pattern_standard, narrow_pattern_standard) {
+            (PatternSelection::Standard, PatternSelection::Standard)
+                if short_place_holder_index.is_none() && narrow_place_holder_index.is_none() =>
+            {
+                currency_patterns_standard_none.insert(*iso, currency_patterns);
+            }
+            (
+                PatternSelection::StandardAlphaNextToNumber,
+                PatternSelection::StandardAlphaNextToNumber,
+            ) if short_place_holder_index.is_none() && narrow_place_holder_index.is_none() => {
+                currency_patterns_standard_next_to_num.insert(*iso, currency_patterns);
+            }
+            _ => {
+                currency_patterns_map.insert(*iso, currency_patterns);
+            }
+        }
     }
+
+    let default_pattern =
+        if currency_patterns_standard_none.len() <= currency_patterns_standard_next_to_num.len() {
+            currency_patterns_map.extend(currency_patterns_standard_none);
+            CurrencyPatterns {
+                short_pattern_standard: PatternSelection::StandardAlphaNextToNumber,
+                narrow_pattern_standard: PatternSelection::StandardAlphaNextToNumber,
+                short_place_holder_index: None,
+                narrow_place_holder_index: None,
+            }
+        } else {
+            currency_patterns_map.extend(currency_patterns_standard_next_to_num);
+            CurrencyPatterns {
+                short_pattern_standard: PatternSelection::Standard,
+                narrow_pattern_standard: PatternSelection::Standard,
+                short_place_holder_index: None,
+                narrow_place_holder_index: None,
+            }
+        };
 
     Ok(CurrencyEssentialsV1 {
         currency_patterns_map: ZeroMap::from_iter(currency_patterns_map.iter()),
         standard: standard.to_owned().into(),
         standard_alpha_next_to_number: standard_alpha_next_to_number.to_owned().into(),
         place_holders: VarZeroVec::from(&place_holders),
+        default_pattern,
     })
 }
 
@@ -254,8 +285,8 @@ fn test_basic() {
         let default = CurrencyPatterns {
             short_pattern_standard: PatternSelection::Standard,
             narrow_pattern_standard: PatternSelection::Standard,
-            short_place_holder_index: NO_PLACE_HOLDER,
-            narrow_place_holder_index: NO_PLACE_HOLDER,
+            short_place_holder_index: None,
+            narrow_place_holder_index: None,
         };
         let owned = locale.get().to_owned();
         let currency_pattern: CurrencyPatterns = owned
@@ -263,26 +294,22 @@ fn test_basic() {
             .get_copied(&iso_code)
             .unwrap_or(default);
 
-        let short_place_holder = if currency_pattern.short_place_holder_index == NO_PLACE_HOLDER {
-            "".to_string()
-        } else if currency_pattern.short_place_holder_index == USE_ISO_CODE {
-            iso_code.try_into_tinystr().unwrap().to_string()
-        } else {
-            place_holders
-                .get(currency_pattern.short_place_holder_index as usize)
-                .unwrap()
-                .to_string()
+        let short_place_holder = match currency_pattern.short_place_holder_index {
+            Some(PlaceholderValue::Index(index)) => place_holders
+                .get(index as usize)
+                .unwrap_or(&iso_code.try_into_tinystr().unwrap())
+                .to_string(),
+            Some(PlaceholderValue::ISO) => iso_code.try_into_tinystr().unwrap().to_string(),
+            None => "".to_string(),
         };
 
-        let narrow_place_holder = if currency_pattern.narrow_place_holder_index == NO_PLACE_HOLDER {
-            "".to_string()
-        } else if currency_pattern.short_place_holder_index == USE_ISO_CODE {
-            iso_code.try_into_tinystr().unwrap().to_string()
-        } else {
-            place_holders
-                .get(currency_pattern.narrow_place_holder_index as usize)
-                .unwrap()
-                .to_string()
+        let narrow_place_holder = match currency_pattern.narrow_place_holder_index {
+            Some(PlaceholderValue::Index(index)) => place_holders
+                .get(index as usize)
+                .unwrap_or(&iso_code.try_into_tinystr().unwrap())
+                .to_string(),
+            Some(PlaceholderValue::ISO) => iso_code.try_into_tinystr().unwrap().to_string(),
+            None => "".to_string(),
         };
 
         (short_place_holder, narrow_place_holder)
@@ -291,7 +318,7 @@ fn test_basic() {
     use icu_locid::locale;
     use icu_singlenumberformatter::provider::*;
 
-    let provider = crate::DatagenProvider::for_test();
+    let provider = crate::DatagenProvider::new_testing();
 
     let en: DataPayload<CurrencyEssentialsV1Marker> = provider
         .load(DataRequest {

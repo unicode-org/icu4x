@@ -1,5 +1,7 @@
 # icu_segmenter [![crates.io](https://img.shields.io/crates/v/icu_segmenter)](https://crates.io/crates/icu_segmenter)
 
+<!-- cargo-rdme start -->
+
 Segment strings by lines, graphemes, words, and sentences.
 
 This module is published as its own crate ([`icu_segmenter`](https://docs.rs/icu_segmenter/latest/icu_segmenter/))
@@ -27,8 +29,7 @@ Find line break opportunities:
 ```rust
 use icu::segmenter::LineSegmenter;
 
-let segmenter =
-    LineSegmenter::new_auto();
+let segmenter = LineSegmenter::new_auto();
 
 let breakpoints: Vec<usize> = segmenter
     .segment_str("Hello World. Xin chào thế giới!")
@@ -45,8 +46,7 @@ Find all grapheme cluster boundaries:
 ```rust
 use icu::segmenter::GraphemeClusterSegmenter;
 
-let segmenter =
-    GraphemeClusterSegmenter::new();
+let segmenter = GraphemeClusterSegmenter::new();
 
 let breakpoints: Vec<usize> = segmenter
     .segment_str("Hello World. Xin chào thế giới!")
@@ -69,8 +69,7 @@ Find all word boundaries:
 ```rust
 use icu::segmenter::WordSegmenter;
 
-let segmenter =
-    WordSegmenter::new_auto();
+let segmenter = WordSegmenter::new_auto();
 
 let breakpoints: Vec<usize> = segmenter
     .segment_str("Hello World. Xin chào thế giới!")
@@ -90,8 +89,7 @@ Segment the string into sentences:
 ```rust
 use icu::segmenter::SentenceSegmenter;
 
-let segmenter =
-    SentenceSegmenter::new();
+let segmenter = SentenceSegmenter::new();
 
 let breakpoints: Vec<usize> = segmenter
     .segment_str("Hello World. Xin chào thế giới!")
@@ -100,6 +98,8 @@ assert_eq!(&breakpoints, &[0, 13, 36]);
 ```
 
 See [`SentenceSegmenter`] for more examples.
+
+<!-- cargo-rdme end -->
 
 ## More Information
 

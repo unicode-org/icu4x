@@ -6,18 +6,19 @@ export CARGO_TARGET_DIR ?= target
 
 all: clean buffer_data.postcard
 
-bin/icu4x-datagen:
+../bin/icu4x-datagen:
 	echo "Target dir: $(CARGO_TARGET_DIR)"
-	cargo install icu_datagen --root .
+	cargo install icu_datagen --root ..
 
 bin/tutorial_buffer:
 	echo "Target dir: $(CARGO_TARGET_DIR)"
 	cargo build --release
+	mkdir -p bin
 	cp -p "$(CARGO_TARGET_DIR)"/release/tutorial_buffer bin/tutorial_buffer
 
-buffer_data.postcard: bin/icu4x-datagen bin/tutorial_buffer
-	./bin/icu4x-datagen \
-		--format blob \
+buffer_data.postcard: ../bin/icu4x-datagen bin/tutorial_buffer
+	../bin/icu4x-datagen \
+		--format blob2 \
 		--keys-for-bin bin/tutorial_buffer \
 		--locales my en-ZA \
 		--cldr-tag latest \

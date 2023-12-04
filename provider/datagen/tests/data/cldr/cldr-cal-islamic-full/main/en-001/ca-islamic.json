@@ -3,7 +3,7 @@
     "en-001": {
       "identity": {
         "version": {
-          "_cldrVersion": "43"
+          "_cldrVersion": "44"
         },
         "language": "en",
         "territory": "001"
@@ -275,7 +275,7 @@
                 },
                 "narrow": {
                   "midnight": "midnight",
-                  "am": "am",
+                  "am": "AM",
                   "am-alt-variant": "am",
                   "noon": "noon",
                   "pm": "pm",
@@ -351,7 +351,7 @@
                 "E": "ccc",
                 "EBhm": "E h:mm B",
                 "EBhms": "E h:mm:ss B",
-                "Ed": "E d",
+                "Ed": "d E",
                 "Ehm": "E h:mm a",
                 "Ehm-alt-ascii": "E h:mm a",
                 "EHm": "E HH:mm",
@@ -372,7 +372,7 @@
                 "hms": "h:mm:ss a",
                 "hms-alt-ascii": "h:mm:ss a",
                 "Hms": "HH:mm:ss",
-                "M": "LL",
+                "M": "L",
                 "Md": "dd/MM",
                 "MEd": "E dd/MM",
                 "MMM": "LLL",
@@ -382,7 +382,7 @@
                 "ms": "mm:ss",
                 "y": "y G",
                 "yyyy": "y G",
-                "yyyyM": "MM/y GGGGG",
+                "yyyyM": "M/y GGGGG",
                 "yyyyMd": "dd/MM/y GGGGG",
                 "yyyyMEd": "E, dd/MM/y GGGGG",
                 "yyyyMMM": "MMM y G",

@@ -5,26 +5,16 @@
 [package]
 name = "icu_capi_staticlib"
 description = "C interface to ICU4X"
-version = "1.2.0"
-rust-version = "1.65.0"
-authors = ["The ICU4X Project Developers"]
-edition = "2021"
-resolver = "2"
-repository = "https://github.com/unicode-org/icu4x"
-homepage = "https://icu4x.unicode.org"
-license = "Unicode-DFS-2016"
-categories = ["internationalization"]
-# Keep this in sync with other crates unless there are exceptions
-include = [
-    "src/**/*",
-    "examples/**/*",
-    "benches/**/*",
-    "tests/**/*",
-    "include/**/*",
-    "Cargo.toml",
-    "LICENSE",
-    "README.md"
-]
+license-file = "LICENSE"
+
+authors.workspace = true
+categories.workspace = true
+edition.workspace = true
+homepage.workspace = true
+include.workspace = true
+repository.workspace = true
+rust-version.workspace = true
+version.workspace = true
 
 [package.metadata.docs.rs]
 all-features = true
@@ -34,9 +24,9 @@ crate-type = ["staticlib"]
 path = "src/lib.rs"
 
 [dependencies]
-icu_capi = { version = "1.2.0", path = "../diplomat", default-features = false }
+icu_capi = { workspace = true }
 # Included to allow syntax selection
-icu_provider = { version = "1.2.0", path = "../../provider/core", default-features = false }
+icu_provider = { workspace = true }
 
 # Please keep features/cargo-all-features lists in sync with the icu_capi crate
 [features]

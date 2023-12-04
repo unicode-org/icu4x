@@ -20,7 +20,6 @@ impl DataProvider<LanguageDisplayNamesV1Marker> for crate::DatagenProvider {
         let langid = req.locale.get_langid();
 
         let data: &cldr_serde::displaynames::language::Resource = self
-            .source
             .cldr()?
             .displaynames()
             .read_and_parse(&langid, "languages.json")?;
@@ -44,7 +43,6 @@ impl DataProvider<LocaleDisplayNamesV1Marker> for crate::DatagenProvider {
         let langid = req.locale.get_langid();
 
         let data: &cldr_serde::displaynames::language::Resource = self
-            .source
             .cldr()?
             .displaynames()
             .read_and_parse(&langid, "languages.json")?;
@@ -63,14 +61,12 @@ impl DataProvider<LocaleDisplayNamesV1Marker> for crate::DatagenProvider {
 impl IterableDataProvider<LanguageDisplayNamesV1Marker> for crate::DatagenProvider {
     fn supported_locales(&self) -> Result<Vec<DataLocale>, DataError> {
         Ok(self
-            .source
             .cldr()?
             .displaynames()
             .list_langs()?
             .filter(|langid| {
                 // The directory might exist without languages.json
-                self.source
-                    .cldr()
+                self.cldr()
                     .unwrap()
                     .displaynames()
                     .file_exists(langid, "languages.json")
@@ -84,14 +80,12 @@ impl IterableDataProvider<LanguageDisplayNamesV1Marker> for crate::DatagenProvid
 impl IterableDataProvider<LocaleDisplayNamesV1Marker> for crate::DatagenProvider {
     fn supported_locales(&self) -> Result<Vec<DataLocale>, DataError> {
         Ok(self
-            .source
             .cldr()?
             .displaynames()
             .list_langs()?
             .filter(|langid| {
                 // The directory might exist without languages.json
-                self.source
-                    .cldr()
+                self.cldr()
                     .unwrap()
                     .displaynames()
                     .file_exists(langid, "languages.json")
@@ -218,7 +212,7 @@ mod tests {
 
     #[test]
     fn test_basic_lang_display_names() {
-        let provider = crate::DatagenProvider::for_test();
+        let provider = crate::DatagenProvider::new_testing();
 
         let data: DataPayload<LanguageDisplayNamesV1Marker> = provider
             .load(DataRequest {
@@ -240,7 +234,7 @@ mod tests {
 
     #[test]
     fn test_basic_lang_short_display_names() {
-        let provider = crate::DatagenProvider::for_test();
+        let provider = crate::DatagenProvider::new_testing();
 
         let data: DataPayload<LanguageDisplayNamesV1Marker> = provider
             .load(DataRequest {
@@ -262,7 +256,7 @@ mod tests {
 
     #[test]
     fn test_basic_lang_long_display_names() {
-        let provider = crate::DatagenProvider::for_test();
+        let provider = crate::DatagenProvider::new_testing();
 
         let data: DataPayload<LanguageDisplayNamesV1Marker> = provider
             .load(DataRequest {
@@ -284,7 +278,7 @@ mod tests {
 
     #[test]
     fn test_basic_lang_menu_display_names() {
-        let provider = crate::DatagenProvider::for_test();
+        let provider = crate::DatagenProvider::new_testing();
 
         let data: DataPayload<LanguageDisplayNamesV1Marker> = provider
             .load(DataRequest {
@@ -306,7 +300,7 @@ mod tests {
 
     #[test]
     fn test_basic_locale_display_names() {
-        let provider = crate::DatagenProvider::for_test();
+        let provider = crate::DatagenProvider::new_testing();
 
         let data: DataPayload<LocaleDisplayNamesV1Marker> = provider
             .load(DataRequest {

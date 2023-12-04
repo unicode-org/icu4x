@@ -31,13 +31,10 @@
 
 use crate::any_calendar::AnyCalendarKind;
 use crate::calendar_arithmetic::{ArithmeticDate, CalendarArithmetic};
-use crate::helpers::{div_rem_euclid64, i64_to_i32, i64_to_saturated_i32, quotient64, I32Result};
-use crate::rata_die::RataDie;
 use crate::{types, Calendar, CalendarError, Date, DateDuration, DateDurationUnit, DateTime};
+use calendrical_calculations::helpers::{i64_to_saturated_i32, I32CastError};
+use calendrical_calculations::rata_die::RataDie;
 use tinystr::tinystr;
-
-// The georgian epoch is equivalent to first day in fixed day measurement
-const EPOCH: RataDie = RataDie::new(1);
 
 /// The [ISO Calendar]
 ///
@@ -77,7 +74,7 @@ impl CalendarArithmetic for Iso {
     }
 
     fn is_leap_year(year: i32) -> bool {
-        year % 4 == 0 && (year % 400 == 0 || year % 100 != 0)
+        calendrical_calculations::iso::is_leap_year(year)
     }
 
     fn last_month_day_in_year(_year: i32) -> (u8, u8) {
@@ -195,6 +192,10 @@ impl Calendar for Iso {
     /// The calendar-specific year represented by `date`
     fn year(&self, date: &Self::DateInner) -> types::FormattableYear {
         Self::year_as_iso(date.0.year)
+    }
+
+    fn is_in_leap_year(&self, date: &Self::DateInner) -> bool {
+        Self::is_leap_year(date.0.year)
     }
 
     /// The calendar-specific month represented by `date`
@@ -378,37 +379,8 @@ impl Iso {
 
     // Fixed is day count representation of calendars starting from Jan 1st of year 1.
     // The fixed calculations algorithms are from the Calendrical Calculations book.
-    //
-    // Lisp code reference: https://github.com/EdReingold/calendar-code2/blob/1ee51ecfaae6f856b0d7de3e36e9042100b4f424/calendar.l#L1167-L1189
     pub(crate) fn fixed_from_iso(date: IsoDateInner) -> RataDie {
-        let prev_year = (date.0.year as i64) - 1;
-        // Calculate days per year
-        let mut fixed: i64 = (EPOCH.to_i64_date() - 1) + 365 * prev_year;
-        // Calculate leap year offset
-        let offset =
-            quotient64(prev_year, 4) - quotient64(prev_year, 100) + quotient64(prev_year, 400);
-        // Adjust for leap year logic
-        fixed += offset;
-        // Days of current year
-        fixed += quotient64(367 * (date.0.month as i64) - 362, 12);
-        // Leap year adjustment for the current year
-        fixed += if date.0.month <= 2 {
-            0
-        } else if Self::is_leap_year(date.0.year) {
-            -1
-        } else {
-            -2
-        };
-        // Days passed in current month
-        fixed += date.0.day as i64;
-        RataDie::new(fixed)
-    }
-
-    fn fixed_from_iso_integers(year: i32, month: u8, day: u8) -> Option<RataDie> {
-        Date::try_new_iso_date(year, month, day)
-            .ok()
-            .map(|d| *d.inner())
-            .map(Self::fixed_from_iso)
+        calendrical_calculations::iso::fixed_from_iso(date.0.year, date.0.month, date.0.day)
     }
 
     pub(crate) fn iso_from_year_day(year: i32, year_day: u16) -> Date<Iso> {
@@ -429,62 +401,16 @@ impl Iso {
         #[allow(clippy::unwrap_used)] // month in 1..=12, day <= month_days
         Date::try_new_iso_date(year, month, day).unwrap()
     }
-
-    // Lisp code reference: https://github.com/EdReingold/calendar-code2/blob/1ee51ecfaae6f856b0d7de3e36e9042100b4f424/calendar.l#L1191-L1217
-    fn iso_year_from_fixed(date: RataDie) -> i64 {
-        // Shouldn't overflow because it's not possbile to construct extreme values of RataDie
-        let date = date - EPOCH;
-
-        // 400 year cycles have 146097 days
-        let (n_400, date) = div_rem_euclid64(date, 146097);
-
-        // 100 year cycles have 36524 days
-        let (n_100, date) = div_rem_euclid64(date, 36524);
-
-        // 4 year cycles have 1461 days
-        let (n_4, date) = div_rem_euclid64(date, 1461);
-
-        let n_1 = quotient64(date, 365);
-
-        let year = 400 * n_400 + 100 * n_100 + 4 * n_4 + n_1;
-
-        if n_100 == 4 || n_1 == 4 {
-            year
-        } else {
-            year + 1
-        }
-    }
-
-    fn iso_new_year(year: i32) -> RataDie {
-        #[allow(clippy::unwrap_used)] // valid day and month
-        Self::fixed_from_iso_integers(year, 1, 1).unwrap()
-    }
-
-    // Lisp code reference: https://github.com/EdReingold/calendar-code2/blob/1ee51ecfaae6f856b0d7de3e36e9042100b4f424/calendar.l#L1237-L1258
     pub(crate) fn iso_from_fixed(date: RataDie) -> Date<Iso> {
-        let year = Self::iso_year_from_fixed(date);
-        let year = match i64_to_i32(year) {
-            I32Result::BelowMin(_) => {
+        let (year, month, day) = match calendrical_calculations::iso::iso_from_fixed(date) {
+            Err(I32CastError::BelowMin) => {
                 return Date::from_raw(IsoDateInner(ArithmeticDate::min_date()), Iso)
             }
-            I32Result::AboveMax(_) => {
+            Err(I32CastError::AboveMax) => {
                 return Date::from_raw(IsoDateInner(ArithmeticDate::max_date()), Iso)
             }
-            I32Result::WithinRange(y) => y,
+            Ok(ymd) => ymd,
         };
-        // Calculates the prior days of the adjusted year, then applies a correction based on leap year conditions for the correct ISO date conversion.
-        let prior_days = date - Self::iso_new_year(year);
-        #[allow(clippy::unwrap_used)] // valid day and month
-        let correction = if date < Self::fixed_from_iso_integers(year, 3, 1).unwrap() {
-            0
-        } else if Self::is_leap_year(year) {
-            1
-        } else {
-            2
-        };
-        let month = quotient64(12 * (prior_days + correction) + 373, 367) as u8; // in 1..12 < u8::MAX
-        #[allow(clippy::unwrap_used)] // valid day and month
-        let day = (date - Self::fixed_from_iso_integers(year, month, 1).unwrap() + 1) as u8; // <= days_in_month < u8::MAX
         #[allow(clippy::unwrap_used)] // valid day and month
         Date::try_new_iso_date(year, month, day).unwrap()
     }
@@ -845,19 +771,10 @@ mod test {
         // Year 0 is a leap year due to the 400-year rule.
         fn check(fixed: i64, year: i32, month: u8, day: u8) {
             let fixed = RataDie::new(fixed);
-            assert_eq!(
-                Iso::iso_year_from_fixed(fixed),
-                year as i64,
-                "fixed: {fixed:?}"
-            );
+
             assert_eq!(
                 Iso::iso_from_fixed(fixed),
                 Date::try_new_iso_date(year, month, day).unwrap(),
-                "fixed: {fixed:?}"
-            );
-            assert_eq!(
-                Iso::fixed_from_iso_integers(year, month, day),
-                Some(fixed),
                 "fixed: {fixed:?}"
             );
         }

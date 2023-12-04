@@ -3,7 +3,6 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::transform::cldr::cldr_serde;
-use icu_calendar::provider::EraStartDate;
 use icu_datetime::provider::calendar::*;
 use icu_locid::{
     extensions::unicode::{key, value},
@@ -13,9 +12,8 @@ use icu_provider::datagen::IterableDataProvider;
 use icu_provider::prelude::*;
 use once_cell::sync::OnceCell;
 use std::collections::HashMap;
-use std::collections::HashSet;
-use std::str::FromStr;
 
+mod neo;
 mod patterns;
 mod skeletons;
 mod symbols;
@@ -70,7 +68,6 @@ macro_rules! impl_data_provider {
                     .ok_or_else(|| DataErrorKind::MissingLocale.into_error())?;
 
                 let resource: &cldr_serde::ca::Resource = self
-                    .source
                     .cldr()?
                     .dates(cldr_cal)
                     .read_and_parse(&langid, &format!("ca-{}.json", cldr_cal))?;
@@ -89,7 +86,6 @@ macro_rules! impl_data_provider {
                 // ethiopian.
                 if calendar == value!("ethiopic") {
                     let ethioaa: &cldr_serde::ca::Resource = self
-                        .source
                         .cldr()?
                         .dates("ethiopic")
                         .read_and_parse(&langid, "ca-ethiopic-amete-alem.json")?;
@@ -103,62 +99,38 @@ macro_rules! impl_data_provider {
                         .expect("CLDR ca-ethiopic-amete-alem.json contains the expected calendar")
                         .clone();
 
-                    let mundi_name = ethioaa_data
-                        .eras
+                    let ethioaa_eras = ethioaa_data.eras.as_ref().expect("ethioaa must have eras");
+                    let mundi_name = ethioaa_eras
                         .names
                         .get("0")
                         .expect("ethiopic-amete-alem calendar must have 0 era");
-                    let mundi_abbr = ethioaa_data
-                        .eras
+                    let mundi_abbr = ethioaa_eras
                         .abbr
                         .get("0")
                         .expect("ethiopic-amete-alem calendar must have 0 era");
-                    let mundi_narrow = ethioaa_data
-                        .eras
+                    let mundi_narrow = ethioaa_eras
                         .narrow
                         .get("0")
                         .expect("ethiopic-amete-alem calendar must have 0 era");
 
-                    data.eras.names.insert("2".to_string(), mundi_name.clone());
-                    data.eras.abbr.insert("2".to_string(), mundi_abbr.clone());
-                    data.eras
-                        .narrow
-                        .insert("2".to_string(), mundi_narrow.clone());
+                    let eras = data.eras.as_mut().expect("ethiopic must have eras");
+                    eras.names.insert("2".to_string(), mundi_name.clone());
+                    eras.abbr.insert("2".to_string(), mundi_abbr.clone());
+                    eras.narrow.insert("2".to_string(), mundi_narrow.clone());
                 }
 
                 if calendar == value!("japanese") || calendar == value!("japanext") {
+                    let eras = data.eras.as_mut().expect("japanese must have eras");
                     // Filter out non-modern eras
                     if calendar != value!("japanext") {
-                        let era_dates: &cldr_serde::japanese::Resource = self
-                            .source
-                            .cldr()?
-                            .core()
-                            .read_and_parse("supplemental/calendarData.json")?;
-                        let mut set = HashSet::<String>::new();
-                        for (era_index, date) in
-                            era_dates.supplemental.calendar_data.japanese.eras.iter()
-                        {
-                            let start_date =
-                                EraStartDate::from_str(if let Some(start_date) = date.start.as_ref() { start_date } else { continue }).map_err(|_| {
-                                    DataError::custom(
-                                        "calendarData.json contains unparseable data for a japanese era",
-                                    )
-                                    .with_display_context(&format!("era index {}", era_index))
-                                })?;
-
-                            if start_date.year >= 1868 {
-                                set.insert(era_index.into());
-                            }
-                        }
-
-                        data.eras.names.retain(|e, _| set.contains(e));
-                        data.eras.abbr.retain(|e, _| set.contains(e));
-                        data.eras.narrow.retain(|e, _| set.contains(e));
+                        let modern_japanese_eras = self.cldr()?.modern_japanese_eras()?;
+                        eras.names.retain(|e, _| modern_japanese_eras.contains(e));
+                        eras.abbr.retain(|e, _| modern_japanese_eras.contains(e));
+                        eras.narrow.retain(|e, _| modern_japanese_eras.contains(e));
                     }
 
                     // Splice in gregorian data for pre-meiji
                     let greg_resource: &cldr_serde::ca::Resource = self
-                        .source
                         .cldr()?
                         .dates("gregorian")
                         .read_and_parse(&langid, "ca-gregorian.json")?;
@@ -172,49 +144,51 @@ macro_rules! impl_data_provider {
                         .expect("CLDR file contains a gregorian calendar")
                         .clone();
 
-                    data.eras.names.insert(
+                    let greg_eras = greg.eras.as_ref().expect("gregorian must have eras");
+
+                    eras.names.insert(
                         "-2".into(),
-                        greg.eras
+                        greg_eras
                             .names
                             .get("0")
                             .expect("Gregorian calendar must have data for BC")
                             .into(),
                     );
-                    data.eras.names.insert(
+                    eras.names.insert(
                         "-1".into(),
-                        greg.eras
+                        greg_eras
                             .names
                             .get("1")
                             .expect("Gregorian calendar must have data for AD")
                             .into(),
                     );
-                    data.eras.abbr.insert(
+                    eras.abbr.insert(
                         "-2".into(),
-                        greg.eras
+                        greg_eras
                             .abbr
                             .get("0")
                             .expect("Gregorian calendar must have data for BC")
                             .into(),
                     );
-                    data.eras.abbr.insert(
+                    eras.abbr.insert(
                         "-1".into(),
-                        greg.eras
+                        greg_eras
                             .abbr
                             .get("1")
                             .expect("Gregorian calendar must have data for AD")
                             .into(),
                     );
-                    data.eras.narrow.insert(
+                    eras.narrow.insert(
                         "-2".into(),
-                        greg.eras
+                        greg_eras
                             .narrow
                             .get("0")
                             .expect("Gregorian calendar must have data for BC")
                             .into(),
                     );
-                    data.eras.narrow.insert(
+                    eras.narrow.insert(
                         "-1".into(),
-                        greg.eras
+                        greg_eras
                             .narrow
                             .get("1")
                             .expect("Gregorian calendar must have data for AD")
@@ -222,9 +196,9 @@ macro_rules! impl_data_provider {
                     );
                 }
 
+                #[allow(clippy::redundant_closure_call)]
                 Ok(DataResponse {
                     metadata: Default::default(),
-                    #[allow(clippy::redundant_closure_call)]
                     payload: Some(DataPayload::from_owned(($expr)(
                         &data,
                         &calendar.to_string(),
@@ -238,41 +212,32 @@ macro_rules! impl_data_provider {
                 let mut r = Vec::new();
                 if DateSkeletonPatternsV1Marker::KEY == $marker::KEY {
                     for (cal_value, cldr_cal) in supported_cals() {
-                        r.extend(
-                            self.source
-                                .cldr()?
-                                .dates(cldr_cal)
-                                .list_langs()?
-                                .map(|lid| {
-                                    let mut locale: Locale = lid.into();
-                                    locale
-                                        .extensions
-                                        .unicode
-                                        .keywords
-                                        .set(key!("ca"), cal_value.clone());
-                                    DataLocale::from(locale)
-                                }),
-                        );
+                        r.extend(self.cldr()?.dates(cldr_cal).list_langs()?.map(|lid| {
+                            let mut locale: Locale = lid.into();
+                            locale
+                                .extensions
+                                .unicode
+                                .keywords
+                                .set(key!("ca"), cal_value.clone());
+                            DataLocale::from(locale)
+                        }));
                     }
                 } else {
                     let cldr_cal = supported_cals()
                         .get(&value!($calendar))
                         .ok_or_else(|| DataErrorKind::MissingLocale.into_error())?;
-                    r.extend(
-                        self.source
-                            .cldr()?
-                            .dates(cldr_cal)
-                            .list_langs()?
-                            .map(|lid| {
-                                let locale: Locale = lid.into();
-                                DataLocale::from(locale)
-                            }),
-                    );
+                    r.extend(self.cldr()?.dates(cldr_cal).list_langs()?.map(|lid| {
+                        let locale: Locale = lid.into();
+                        DataLocale::from(locale)
+                    }));
                 }
 
                 // TODO(#3212): Remove
                 if $marker::KEY == TimeLengthsV1Marker::KEY {
-                    r.retain(|l| l.get_langid() != icu_locid::langid!("byn") && l.get_langid() != icu_locid::langid!("ssy"));
+                    r.retain(|l| {
+                        l.get_langid() != icu_locid::langid!("byn")
+                            && l.get_langid() != icu_locid::langid!("ssy")
+                    });
                 }
 
                 Ok(r)
@@ -416,7 +381,7 @@ mod test {
 
     #[test]
     fn test_basic_patterns() {
-        let provider = crate::DatagenProvider::for_test();
+        let provider = crate::DatagenProvider::new_testing();
 
         let locale: Locale = locale!("cs");
         let cs_dates: DataPayload<GregorianDateLengthsV1Marker> = provider
@@ -433,7 +398,7 @@ mod test {
 
     #[test]
     fn test_with_numbering_system() {
-        let provider = crate::DatagenProvider::for_test();
+        let provider = crate::DatagenProvider::new_testing();
 
         let locale: Locale = locale!("haw");
         let cs_dates: DataPayload<GregorianDateLengthsV1Marker> = provider
@@ -456,7 +421,7 @@ mod test {
         use icu_plurals::PluralCategory;
         use std::convert::TryFrom;
 
-        let provider = crate::DatagenProvider::for_test();
+        let provider = crate::DatagenProvider::new_testing();
 
         let locale: Locale = "fil-u-ca-gregory".parse().unwrap();
         let skeletons: DataPayload<DateSkeletonPatternsV1Marker> = provider
@@ -500,7 +465,7 @@ mod test {
     fn test_basic_symbols() {
         use icu_calendar::types::MonthCode;
         use tinystr::tinystr;
-        let provider = crate::DatagenProvider::for_test();
+        let provider = crate::DatagenProvider::new_testing();
 
         let locale: Locale = locale!("cs");
         let cs_dates: DataPayload<GregorianDateSymbolsV1Marker> = provider
@@ -531,7 +496,7 @@ mod test {
 
     #[test]
     fn unalias_contexts() {
-        let provider = crate::DatagenProvider::for_test();
+        let provider = crate::DatagenProvider::new_testing();
 
         let locale: Locale = locale!("cs");
         let cs_dates: DataPayload<GregorianDateSymbolsV1Marker> = provider

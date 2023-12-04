@@ -48,6 +48,10 @@ use tinystr::tinystr;
 /// # Era codes
 ///
 /// This calendar has a single era: `"saka"`, with Saka 0 being 78 CE. Dates before this era use negative years.
+///
+/// # Month codes
+///
+/// This calendar supports 12 solar month codes (`"M01" - "M12"`)
 #[derive(Copy, Clone, Debug, Hash, Default, Eq, PartialEq, PartialOrd, Ord)]
 #[allow(clippy::exhaustive_structs)] // this type is stable
 pub struct Indian;
@@ -109,14 +113,14 @@ impl Calendar for Indian {
         month_code: types::MonthCode,
         day: u8,
     ) -> Result<Self::DateInner, CalendarError> {
-        if era.0 != tinystr!(16, "saka") {
+        if era.0 != tinystr!(16, "saka") && era.0 != tinystr!(16, "indian") {
             return Err(CalendarError::UnknownEra(era.0, self.debug_name()));
         }
 
         ArithmeticDate::new_from_codes(self, year, month_code, day).map(IndianDateInner)
     }
 
-    //
+    // Algorithms directly implemented in icu_calendar since they're not from the book
     fn date_from_iso(&self, iso: Date<Iso>) -> IndianDateInner {
         // Get day number in year (1 indexed)
         let day_of_year_iso = Iso::day_of_year(*iso.inner());
@@ -138,6 +142,7 @@ impl Calendar for Indian {
         ))
     }
 
+    // Algorithms directly implemented in icu_calendar since they're not from the book
     fn date_to_iso(&self, date: &Self::DateInner) -> Date<Iso> {
         let day_of_year_indian = date.0.day_of_year();
         let days_in_year = date.0.days_in_year();
@@ -193,6 +198,10 @@ impl Calendar for Indian {
             cyclic: None,
             related_iso: None,
         }
+    }
+
+    fn is_in_leap_year(&self, date: &Self::DateInner) -> bool {
+        Self::is_leap_year(date.0.year)
     }
 
     fn month(&self, date: &Self::DateInner) -> types::FormattableMonth {
@@ -308,7 +317,7 @@ impl DateTime<Indian> {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::rata_die::RataDie;
+    use calendrical_calculations::rata_die::RataDie;
     fn assert_roundtrip(y: i32, m: u8, d: u8, iso_y: i32, iso_m: u8, iso_d: u8) {
         let indian =
             Date::try_new_indian_date(y, m, d).expect("Indian date should construct successfully");

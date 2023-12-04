@@ -21,9 +21,17 @@ use tinystr::TinyAsciiStr;
 use zerovec::ule::{AsULE, ULE};
 use zerovec::{ZeroMap2d, ZeroSlice, ZeroVec};
 
+pub mod names;
+
 #[cfg(feature = "compiled_data")]
 #[derive(Debug)]
 /// Baked data
+///
+/// <div class="stab unstable">
+/// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
+/// including in SemVer minor releases. In particular, the `DataProvider` implementations are only
+/// guaranteed to match with this version's `*_unstable` providers. Use with caution.
+/// </div>
 pub struct Baked;
 
 #[cfg(feature = "compiled_data")]
@@ -31,8 +39,19 @@ const _: () = {
     pub mod icu {
         pub use crate as timezone;
     }
+    icu_timezone_data::make_provider!(Baked);
+    icu_timezone_data::impl_time_zone_bcp47_to_iana_v1!(Baked);
+    icu_timezone_data::impl_time_zone_iana_to_bcp47_v1!(Baked);
     icu_timezone_data::impl_time_zone_metazone_period_v1!(Baked);
 };
+
+#[cfg(feature = "datagen")]
+/// The latest minimum set of keys required by this component.
+pub const KEYS: &[DataKey] = &[
+    MetazonePeriodV1Marker::KEY,
+    names::Bcp47ToIanaMapV1Marker::KEY,
+    names::IanaToBcp47MapV1Marker::KEY,
+];
 
 /// TimeZone ID in BCP47 format
 ///
