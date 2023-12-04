@@ -469,6 +469,7 @@ rust_library("icu_locid-v1_4_0") {
   deps = []
   deps += [ ":displaydoc-v0_2_4($host_toolchain)" ]
   deps += [ ":litemap-v0_7_2" ]
+  deps += [ ":shortvec-v0_0_0" ]
   deps += [ ":tinystr-v0_7_5" ]
   deps += [ ":writeable-v0_5_4" ]
   deps += [ ":zerovec-v0_10_1" ]
@@ -772,6 +773,7 @@ rust_library("litemap-v0_7_2") {
     "-Cmetadata=bfec654902fabd76",
     "-Cextra-filename=-bfec654902fabd76",
     "--cfg=feature=\"alloc\"",
+    "--cfg=feature=\"testing\"",
   ]
 
   visibility = [ ":*" ]
@@ -926,6 +928,27 @@ rust_proc_macro("serde_derive-v1_0_160") {
     "-Cmetadata=afd7d039ab171d16",
     "-Cextra-filename=-afd7d039ab171d16",
     "--cfg=feature=\"default\"",
+  ]
+
+  visibility = [ ":*" ]
+}
+
+rust_library("shortvec-v0_0_0") {
+  crate_name = "shortvec"
+  crate_root = "//experimental/shortvec/src/lib.rs"
+  output_name = "shortvec-5f1160777af6454"
+
+  deps = []
+  deps += [ ":litemap-v0_7_2" ]
+
+  rustenv = []
+
+  rustflags = [
+    "--cap-lints=allow",
+    "--edition=2021",
+    "-Cmetadata=5f1160777af6454",
+    "-Cextra-filename=-5f1160777af6454",
+    "--cfg=feature=\"litemap\"",
   ]
 
   visibility = [ ":*" ]

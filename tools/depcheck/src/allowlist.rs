@@ -29,6 +29,7 @@ pub const BASIC_RUNTIME_DEPS: &[&str] = &[
     "icu_provider_adapters", // not included in icu, but needed generally
     "icu_provider",
     "litemap",
+    "shortvec",
     "tinystr",
     "writeable",
     "yoke",

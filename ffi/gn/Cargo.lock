@@ -382,6 +382,7 @@ version = "1.4.0"
 dependencies = [
  "displaydoc",
  "litemap",
+ "shortvec",
  "tinystr",
  "writeable",
  "zerovec",
@@ -661,6 +662,13 @@ dependencies = [
  "itoa",
  "ryu",
  "serde",
+]
+
+[[package]]
+name = "shortvec"
+version = "0.0.0"
+dependencies = [
+ "litemap",
 ]
 
 [[package]]
