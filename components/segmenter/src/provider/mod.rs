@@ -209,6 +209,12 @@ impl DataMarker for UCharDictionaryBreakDataV1Marker {
     databake(path = icu_segmenter::provider),
 )]
 /// Break state
+///
+/// <div class="stab unstable">
+/// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
+/// including in SemVer minor releases. In particular, the `DataProvider` implementations are only
+/// guaranteed to match with this version's `*_unstable` providers. Use with caution.
+/// </div>
 pub enum BreakState {
     /// Break
     Break,

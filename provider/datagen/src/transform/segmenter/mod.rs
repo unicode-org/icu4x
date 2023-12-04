@@ -182,7 +182,7 @@ fn generate_rule_break_data(
     for p in &segmenter.tables {
         let property_index = if !properties_names.contains(&p.name) {
             properties_names.push(p.name.clone());
-            (properties_names.len() - 1) as u8
+            (properties_names.len() - 1).try_into().unwrap()
         } else {
             continue;
         };
@@ -470,9 +470,9 @@ fn generate_rule_break_data(
                 let index = properties_names.iter().position(|n| n.eq(&p.name)).unwrap();
                 break_state_table[left_index * properties_names.len() + right_index] =
                     Some(if p.interm_break_state.is_some() {
-                        BreakState::Intermediate(index as u8)
+                        BreakState::Intermediate(index.try_into().unwrap())
                     } else {
-                        BreakState::Index(index as u8)
+                        BreakState::Index(index.try_into().unwrap())
                     })
             }
         }
@@ -518,12 +518,15 @@ fn generate_rule_break_data(
                 .collect(),
         )),
         rule_status_table: RuleStatusTable(ZeroVec::new_owned(rule_status_table)),
-        property_count: properties_names.len() as u8,
-        last_codepoint_property: (simple_properties_count - 1) as u8 as i8,
-        sot_property: (properties_names.len() - 2) as u8,
-        eot_property: (properties_names.len() - 1) as u8,
+        property_count: properties_names.len().try_into().unwrap(),
+        last_codepoint_property: (simple_properties_count - 1).try_into().unwrap(),
+        sot_property: (properties_names.len() - 2).try_into().unwrap(),
+        eot_property: (properties_names.len() - 1).try_into().unwrap(),
         // Return 127 if the complex language isn't handled.
-        complex_property: get_index_from_name(&properties_names, "SA").unwrap_or(127) as u8,
+        complex_property: get_index_from_name(&properties_names, "SA")
+            .unwrap_or(127)
+            .try_into()
+            .unwrap(),
     }
 }
 
