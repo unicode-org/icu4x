@@ -190,8 +190,8 @@ impl WeekendSet {
     /// Because of the current [CLDR spec](https://www.unicode.org/reports/tr35/tr35-dates.html#Date_Patterns_Week_Elements),
     /// these are not a range, these are the two days representing a weekend.
     /// If days are equal, weekend only has one day.
-    pub fn new(start_day: IsoWeekday, end_day: IsoWeekday) -> Self {
-        WeekendSet(start_day.bit_value() | end_day.bit_value())
+    pub fn new(first_day: IsoWeekday, second_day: IsoWeekday) -> Self {
+        WeekendSet(first_day.bit_value() | second_day.bit_value())
     }
 
     /// Returns an [Iterator] that yields the weekdays that are part of the weekend.
