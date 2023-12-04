@@ -235,7 +235,11 @@ impl serde::Serialize for BreakState {
         S: serde::Serializer,
     {
         // would be nice to use the derive serde for JSON, but can't break serialization
-        zerovec::ule::AsULE::to_unaligned(*self).serialize(serializer)
+        if serializer.is_human_readable() {
+            i8::from_le_bytes([zerovec::ule::AsULE::to_unaligned(*self)]).serialize(serializer)
+        } else {
+            zerovec::ule::AsULE::to_unaligned(*self).serialize(serializer)
+        }
     }
 }
 
@@ -245,7 +249,13 @@ impl<'de> serde::Deserialize<'de> for BreakState {
     where
         D: serde::Deserializer<'de>,
     {
-        u8::deserialize(deserializer).map(zerovec::ule::AsULE::from_unaligned)
+        if deserializer.is_human_readable() {
+            Ok(zerovec::ule::AsULE::from_unaligned(
+                i8::deserialize(deserializer)?.to_le_bytes()[0],
+            ))
+        } else {
+            u8::deserialize(deserializer).map(zerovec::ule::AsULE::from_unaligned)
+        }
     }
 }
 
