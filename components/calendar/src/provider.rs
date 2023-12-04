@@ -177,12 +177,18 @@ pub struct WeekDataV1 {
 /// 0b0101_1000 -> Tue, Thu, Fri
 /// 0b0000_0110 -> Sat, Sun
 #[derive(Clone, Copy, Debug, PartialEq)]
-#[cfg_attr(
-    feature = "datagen",
-    derive(databake::Bake),
-    databake(path = icu_calendar::provider),
-)]
 pub struct WeekendSet(u8);
+
+#[cfg(feature = "datagen")]
+impl databake::Bake for WeekendSet {
+    fn bake(&self, ctx: &databake::CrateEnv) -> databake::TokenStream {
+        ctx.insert("icu_calendar");
+        let bitset = self.0.bake(ctx);
+        databake::quote! {
+            icu_calendar::provider::WeekendSet::from_unvalidated_bitset(#bitset)
+        }
+    }
+}
 
 impl WeekendSet {
     /// Creates a new [WeekendSet] using the two provided days.
@@ -192,6 +198,11 @@ impl WeekendSet {
     /// If days are equal, weekend only has one day.
     pub fn new(first_day: IsoWeekday, second_day: IsoWeekday) -> Self {
         WeekendSet(first_day.bit_value() | second_day.bit_value())
+    }
+
+    /// Creates a new [WeekendSet] from an unvalidated bitset. Used from compiled data.
+    pub const fn from_unvalidated_bitset(bitset: u8) -> Self {
+        WeekendSet(bitset)
     }
 
     /// Returns an [Iterator] that yields the weekdays that are part of the weekend.
@@ -217,7 +228,7 @@ impl IsoWeekday {
         }
     }
 
-    /// Returns weekday based off the bit position used in [WeekendSet]. 
+    /// Returns weekday based off the bit position used in [WeekendSet].
     fn from_bit_position(index: u8) -> Option<Self> {
         match index {
             6 => Some(IsoWeekday::Monday),
@@ -362,11 +373,7 @@ impl Iterator for WeekendDays {
     fallback_by = "region"
 ))]
 #[derive(Clone, Copy, Debug, PartialEq)]
-#[cfg_attr(
-    feature = "datagen",
-    derive(serde::Serialize, databake::Bake),
-    databake(path = icu_calendar::provider),
-)]
+#[cfg_attr(feature = "datagen", derive(serde::Serialize))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[allow(clippy::exhaustive_structs)] // used in data provider
 pub struct WeekDataV2 {
@@ -389,18 +396,71 @@ impl WeekDataV2 {
         }
     }
 
+    /// Constructs Week Data, including an internal representation of the weekend. Used from compiled data.
+    pub const fn from_baked(first_weekday: u8, min_week_days: u8, weekend_set: WeekendSet) -> Self {
+        WeekDataV2 {
+            first_weekday: IsoWeekday::from_usize(first_weekday as usize),
+            min_week_days,
+            weekend_set,
+        }
+    }
+
     /// Weekdays that are part of the 'weekend', for calendar purposes.
     /// Days may not be contiguous, and order is based off the first weekday.
     pub fn weekend(self) -> WeekendDays {
         self.weekend_set.days(self.first_weekday)
     }
 }
+#[cfg(feature = "datagen")]
+impl databake::Bake for WeekDataV2Marker {
+    fn bake(&self, ctx: &databake::CrateEnv) -> databake::TokenStream {
+        ctx.insert("icu_calendar");
+        databake::quote! {
+            icu_calendar::provider::WeekDataV2Marker
+        }
+    }
+}
+
+#[cfg(feature = "datagen")]
+impl databake::Bake for WeekDataV2 {
+    fn bake(&self, ctx: &databake::CrateEnv) -> databake::TokenStream {
+        ctx.insert("icu_calendar");
+
+        let first_weekday = (self.first_weekday as u8).bake(ctx);
+        let min_week_days = self.min_week_days.bake(ctx);
+        let weekend_set = self.weekend_set.bake(ctx);
+        databake::quote! {
+            icu_calendar::provider::WeekDataV2::from_baked(#first_weekday, #min_week_days, #weekend_set)
+        }
+    }
+}
 
 #[cfg(test)]
 mod tests {
     use super::IsoWeekday::*;
+    use super::WeekDataV2;
     use super::WeekendDays;
     use super::WeekendSet;
+
+    #[cfg(all(test, feature = "datagen"))]
+    #[test]
+    fn test_weekend_set_databake() {
+        databake::test_bake!(
+            WeekendSet,
+            const: crate::provider::WeekendSet::from_unvalidated_bitset(10u8),
+            icu_calendar
+        );
+    }
+
+    #[cfg(all(test, feature = "datagen"))]
+    #[test]
+    fn test_week_data_v2_databake() {
+        databake::test_bake!(
+            WeekDataV2,
+            const: crate::provider::WeekDataV2::from_baked(1u8, 1u8, crate::provider::WeekendSet::from_unvalidated_bitset(10u8)),
+            icu_calendar
+        );
+    }
 
     #[test]
     fn test_weekend_set_initializer() {

@@ -772,15 +772,20 @@ impl From<usize> for IsoWeekday {
     /// assert_eq!(IsoWeekday::Monday, IsoWeekday::from(8));
     /// ```
     fn from(input: usize) -> Self {
+        IsoWeekday::from_usize(input)
+    }
+}
+
+impl IsoWeekday {
+    /// Const implementation of [From<usize>]. Used from compiled data.
+    pub const fn from_usize(input: usize) -> Self {
         let mut ordinal = (input % 7) as i8;
         if ordinal == 0 {
             ordinal = 7;
         }
         unsafe { core::mem::transmute(ordinal) }
     }
-}
 
-impl IsoWeekday {
     /// Returns the day after the current day.
     pub fn next_day(self) -> IsoWeekday {
         self.add_to_weekday(1)
