@@ -64,6 +64,8 @@ pub struct Persian;
 pub struct PersianDateInner(ArithmeticDate<Persian>);
 
 impl CalendarArithmetic for Persian {
+    type YearInfo = ();
+    type PrecomputedDataSource = ();
     fn month_days(year: i32, month: u8) -> u8 {
         match month {
             1..=6 => 31,

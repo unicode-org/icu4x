@@ -22,7 +22,7 @@
 use crate::{
     calendar_arithmetic::{ArithmeticDate, CalendarArithmetic},
     types::MonthCode,
-    CalendarError, Iso,
+    Calendar, CalendarError, Iso,
 };
 
 use calendrical_calculations::chinese_based::{self, ChineseBased, YearBounds};
@@ -32,7 +32,7 @@ use core::num::NonZeroU8;
 /// The trait ChineseBased is used by Chinese-based calendars to perform computations shared by such calendar.
 ///
 /// For an example of how to use this trait, see `impl ChineseBasedWithDataLoading for Chinese` in [`Chinese`].
-pub(crate) trait ChineseBasedWithDataLoading: CalendarArithmetic {
+pub(crate) trait ChineseBasedWithDataLoading: Calendar {
     type CB: ChineseBased;
     /// Get the compiled const data for a ChineseBased calendar; can return `None` if the given year
     /// does not correspond to any compiled data.
@@ -467,6 +467,8 @@ impl<C: ChineseBasedWithDataLoading> ChineseBasedDateInner<C> {
 }
 
 impl<C: ChineseBasedWithDataLoading> CalendarArithmetic for C {
+    type YearInfo = ();
+    type PrecomputedDataSource = ();
     fn month_days(year: i32, month: u8) -> u8 {
         chinese_based::month_days::<C::CB>(year, month)
     }

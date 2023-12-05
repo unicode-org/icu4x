@@ -66,6 +66,8 @@ pub struct Coptic;
 pub struct CopticDateInner(pub(crate) ArithmeticDate<Coptic>);
 
 impl CalendarArithmetic for Coptic {
+    type YearInfo = ();
+    type PrecomputedDataSource = ();
     fn month_days(year: i32, month: u8) -> u8 {
         if (1..=12).contains(&month) {
             30

@@ -90,6 +90,8 @@ impl Hebrew {
 //  HEBREW CALENDAR
 
 impl CalendarArithmetic for Hebrew {
+    type YearInfo = ();
+    type PrecomputedDataSource = ();
     fn month_days(civil_year: i32, civil_month: u8) -> u8 {
         Self::last_day_of_civil_hebrew_month(civil_year, civil_month)
     }

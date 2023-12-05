@@ -31,6 +31,15 @@ impl<C> Clone for ArithmeticDate<C> {
 pub(crate) const MAX_ITERS_FOR_DAYS_OF_MONTH: u8 = 33;
 
 pub trait CalendarArithmetic: Calendar {
+    /// In case we plan to cache per-year data, this stores
+    /// useful computational information for the current year
+    /// as a field on ArithmeticDate
+    type YearInfo;
+    /// A data source from which YearInfo may be computed,
+    /// used whenever `year` is set or updated
+    ///
+    /// Default to () if we're not using YearInfo.
+    type PrecomputedDataSource: PrecomputedDataSource<Self::YearInfo>;
     fn month_days(year: i32, month: u8) -> u8;
     fn months_for_every_year(year: i32) -> u8;
     fn is_leap_year(year: i32) -> bool;
@@ -49,6 +58,17 @@ pub trait CalendarArithmetic: Calendar {
             days += Self::month_days(year, month) as u16;
         }
         days
+    }
+}
+
+pub(crate) trait PrecomputedDataSource<YearInfo> {
+    /// Given a calendar year, load (or compute) the YearInfo for it
+    fn load_or_compute_info(&self, year: i32) -> YearInfo;
+}
+
+impl PrecomputedDataSource<()> for () {
+    fn load_or_compute_info(&self, _year: i32) -> () {
+        ()
     }
 }
 

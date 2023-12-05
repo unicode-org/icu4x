@@ -61,6 +61,8 @@ pub struct Indian;
 pub struct IndianDateInner(ArithmeticDate<Indian>);
 
 impl CalendarArithmetic for Indian {
+    type YearInfo = ();
+    type PrecomputedDataSource = ();
     fn month_days(year: i32, month: u8) -> u8 {
         if month == 1 {
             if Self::is_leap_year(year) {
