@@ -377,15 +377,6 @@ impl<C: CalendarArithmetic> ArithmeticDate<C> {
 
         Ok(Self::new_unchecked(year, month, day))
     }
-
-    /// This fn currently just calls [`new_from_ordinals`], but exists separately for
-    /// lunar calendars in case different logic needs to be implemented later.
-    pub fn new_from_lunar_ordinals(year: i32, month: u8, day: u8) -> Result<Self, CalendarError>
-    where
-        C: CalendarArithmetic<YearInfo = ()>,
-    {
-        Self::new_from_ordinals(year, month, day)
-    }
 }
 
 #[cfg(test)]

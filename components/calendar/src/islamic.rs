@@ -330,7 +330,7 @@ impl<A: AsCalendar<Calendar = IslamicObservational>> Date<A> {
         day: u8,
         calendar: A,
     ) -> Result<Date<A>, CalendarError> {
-        ArithmeticDate::new_from_lunar_ordinals(year, month, day)
+        ArithmeticDate::new_from_ordinals(year, month, day)
             .map(IslamicDateInner)
             .map(|inner| Date::from_raw(inner, calendar))
     }
@@ -525,7 +525,7 @@ impl<A: AsCalendar<Calendar = IslamicUmmAlQura>> Date<A> {
         day: u8,
         calendar: A,
     ) -> Result<Date<A>, CalendarError> {
-        ArithmeticDate::new_from_lunar_ordinals(year, month, day)
+        ArithmeticDate::new_from_ordinals(year, month, day)
             .map(IslamicUmmAlQuraDateInner)
             .map(|inner| Date::from_raw(inner, calendar))
     }
@@ -806,7 +806,7 @@ impl<A: AsCalendar<Calendar = IslamicCivil>> Date<A> {
         day: u8,
         calendar: A,
     ) -> Result<Date<A>, CalendarError> {
-        ArithmeticDate::new_from_lunar_ordinals(year, month, day)
+        ArithmeticDate::new_from_ordinals(year, month, day)
             .map(IslamicCivilDateInner)
             .map(|inner| Date::from_raw(inner, calendar))
     }
@@ -1052,7 +1052,7 @@ impl<A: AsCalendar<Calendar = IslamicTabular>> Date<A> {
         day: u8,
         calendar: A,
     ) -> Result<Date<A>, CalendarError> {
-        ArithmeticDate::new_from_lunar_ordinals(year, month, day)
+        ArithmeticDate::new_from_ordinals(year, month, day)
             .map(IslamicTabularDateInner)
             .map(|inner| Date::from_raw(inner, calendar))
     }
@@ -1927,9 +1927,9 @@ mod test {
             .map(|year| IslamicObservational::days_in_provided_year(year) as i64)
             .sum();
         let expected_number_of_days = IslamicObservational::fixed_from_islamic(IslamicDateInner(
-            ArithmeticDate::new_from_lunar_ordinals(END_YEAR, 1, 1).unwrap(),
+            ArithmeticDate::new_from_ordinals(END_YEAR, 1, 1).unwrap(),
         )) - IslamicObservational::fixed_from_islamic(
-            IslamicDateInner(ArithmeticDate::new_from_lunar_ordinals(START_YEAR, 1, 1).unwrap()),
+            IslamicDateInner(ArithmeticDate::new_from_ordinals(START_YEAR, 1, 1).unwrap()),
         ); // The number of days between Islamic years -1245 and 1518
         let tolerance = 1; // One day tolerance (See Astronomical::month_length for more context)
 
@@ -1948,12 +1948,11 @@ mod test {
             .map(|year| IslamicUmmAlQura::days_in_provided_year(year) as i64)
             .sum();
 
-        let expected_number_of_days =
-            IslamicUmmAlQura::fixed_from_saudi_islamic(IslamicUmmAlQuraDateInner(
-                ArithmeticDate::new_from_lunar_ordinals(END_YEAR, 1, 1).unwrap(),
-            )) - IslamicUmmAlQura::fixed_from_saudi_islamic(IslamicUmmAlQuraDateInner(
-                ArithmeticDate::new_from_lunar_ordinals(START_YEAR, 1, 1).unwrap(),
-            )); // The number of days between Umm al-Qura Islamic years -1245 and 1518
+        let expected_number_of_days = IslamicUmmAlQura::fixed_from_saudi_islamic(
+            IslamicUmmAlQuraDateInner(ArithmeticDate::new_from_ordinals(END_YEAR, 1, 1).unwrap()),
+        ) - IslamicUmmAlQura::fixed_from_saudi_islamic(
+            IslamicUmmAlQuraDateInner(ArithmeticDate::new_from_ordinals(START_YEAR, 1, 1).unwrap()),
+        ); // The number of days between Umm al-Qura Islamic years -1245 and 1518
 
         assert_eq!(sum_days_in_year, expected_number_of_days);
     }
