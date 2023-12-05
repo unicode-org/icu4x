@@ -103,9 +103,7 @@ pub(crate) trait PrecomputedDataSource<YearInfo> {
 }
 
 impl PrecomputedDataSource<()> for () {
-    fn load_or_compute_info(&self, _year: i32) -> () {
-        ()
-    }
+    fn load_or_compute_info(&self, _year: i32) {}
 }
 
 impl<C: CalendarArithmetic> ArithmeticDate<C> {
