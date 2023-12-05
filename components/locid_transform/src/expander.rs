@@ -391,7 +391,15 @@ impl LocaleExpander {
             if let Some((script, region)) = data.get_l(langid.language) {
                 return update_langid(Language::UND, Some(script), Some(region), langid);
             }
-        } else if let Some(script) = langid.script {
+            // Language not found: error case
+            return update_langid(
+                language!("und"),
+                Some(script!("Zzzz")),
+                Some(region!("ZZ")),
+                langid,
+            );
+        }
+        if let Some(script) = langid.script {
             if let Some(region) = langid.region {
                 if let Some(language) = data.get_sr(script, region) {
                     return update_langid(language, None, None, langid);
@@ -400,39 +408,22 @@ impl LocaleExpander {
             if let Some((language, region)) = data.get_s(script) {
                 return update_langid(language, None, Some(region), langid);
             }
-            return update_langid(
-                data.get_und().0,
-                Some(data.get_und().1),
-                Some(data.get_und().2),
-                langid,
-            );
-        } else if let Some(region) = langid.region {
+        }
+        if let Some(region) = langid.region {
             if let Some((language, script)) = data.get_r(region) {
                 return update_langid(language, Some(script), None, langid);
             }
-            return update_langid(
-                data.get_und().0,
-                Some(data.get_und().1),
-                Some(data.get_und().2),
-                langid,
-            );
-        } else {
-            // Input does not have language, script, or region
-            debug_assert!(*langid == LanguageIdentifier::UND || !langid.variants.is_empty());
-            let (l, s, r) = data.get_und();
-            langid.language = l;
-            langid.script = Some(s);
-            langid.region = Some(r);
-            return TransformResult::Modified;
         }
 
-        // Last resort fallback / error case
-        update_langid(
-            language!("und"),
-            Some(script!("Zzzz")),
-            Some(region!("ZZ")),
+        // We failed to find anything in the und-SR, und-S, or und-R tables,
+        // to fall back to bare "und"
+        debug_assert!(langid.language.is_empty());
+        return update_langid(
+            data.get_und().0,
+            Some(data.get_und().1),
+            Some(data.get_und().2),
             langid,
-        )
+        );
     }
 
     /// This returns a new Locale that is the result of running the
