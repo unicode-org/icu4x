@@ -8,13 +8,16 @@ use crate::source::SerdeCache;
 use crate::CoverageLevel;
 use icu_calendar::provider::EraStartDate;
 use icu_locid::LanguageIdentifier;
-use icu_locid_transform::provider::LikelySubtagsForLanguageV1Marker;
-use icu_locid_transform::provider::LikelySubtagsForScriptRegionV1Marker;
+use icu_locid_transform::provider::{
+    LikelySubtagsExtendedV1Marker, LikelySubtagsForLanguageV1Marker,
+    LikelySubtagsForScriptRegionV1Marker,
+};
 use icu_locid_transform::LocaleExpander;
 use icu_provider::prelude::*;
 use icu_provider::DataError;
 use icu_provider_adapters::any_payload::AnyPayloadProvider;
 use icu_provider_adapters::fork::ForkByKeyProvider;
+use icu_provider_adapters::make_forking_provider;
 use once_cell::sync::OnceCell;
 use std::collections::BTreeSet;
 use std::collections::HashSet;
@@ -109,14 +112,25 @@ impl CldrCache {
     fn locale_expander(&self) -> Result<&LocaleExpander, DataError> {
         use super::locale_canonicalizer::likely_subtags::*;
         self.locale_expander.get_or_try_init(|| {
-            let data = transform(LikelySubtagsResources::try_from_cldr_cache(self)?.get_common());
-            let provider = ForkByKeyProvider::new(
-                AnyPayloadProvider::from_owned::<LikelySubtagsForLanguageV1Marker>(
-                    data.clone().into(),
-                ),
-                AnyPayloadProvider::from_owned::<LikelySubtagsForScriptRegionV1Marker>(data.into()),
+            let common_data =
+                transform(LikelySubtagsResources::try_from_cldr_cache(self)?.get_common());
+            let extended_data =
+                transform(LikelySubtagsResources::try_from_cldr_cache(self)?.get_extended());
+            let provider = make_forking_provider!(
+                ForkByKeyProvider::new,
+                [
+                    AnyPayloadProvider::from_owned::<LikelySubtagsForLanguageV1Marker>(
+                        common_data.clone().into(),
+                    ),
+                    AnyPayloadProvider::from_owned::<LikelySubtagsForScriptRegionV1Marker>(
+                        common_data.into(),
+                    ),
+                    AnyPayloadProvider::from_owned::<LikelySubtagsExtendedV1Marker>(
+                        extended_data.into()
+                    ),
+                ]
             );
-            LocaleExpander::try_new_with_any_provider(&provider).map_err(|e| {
+            LocaleExpander::try_new_extended_unstable(&provider.as_downcasting()).map_err(|e| {
                 DataError::custom("creating LocaleExpander in CldrCache").with_display_context(&e)
             })
         })
@@ -164,7 +178,10 @@ impl CldrCache {
         }
         let mut new_langid = langid.clone();
         self.locale_expander()?.maximize(&mut new_langid);
-        debug_assert!(new_langid.script.is_some());
+        debug_assert!(
+            new_langid.script.is_some(),
+            "Script not found for: {new_langid:?}"
+        );
         if langid.region.is_none() {
             new_langid.region = None;
         }
