@@ -87,7 +87,7 @@ pub struct EthiopianDateInner(ArithmeticDate<Ethiopian>);
 
 impl CalendarArithmetic for Ethiopian {
     type YearInfo = ();
-    type PrecomputedDataSource = ();
+
     fn month_days(year: i32, month: u8) -> u8 {
         if (1..=12).contains(&month) {
             30

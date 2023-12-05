@@ -39,11 +39,6 @@ pub trait CalendarArithmetic: Calendar {
     /// as a field on ArithmeticDate
     // TODO remove Eq/PE/Ord/PO bounds
     type YearInfo: Copy + Debug + Eq + PartialEq + Ord + PartialOrd;
-    /// A data source from which YearInfo may be computed,
-    /// used whenever `year` is set or updated
-    ///
-    /// Default to () if we're not using YearInfo.
-    type PrecomputedDataSource: PrecomputedDataSource<Self::YearInfo>;
     fn month_days(year: i32, month: u8) -> u8;
     fn months_for_every_year(year: i32) -> u8;
     fn is_leap_year(year: i32) -> bool;
@@ -157,7 +152,11 @@ impl<C: CalendarArithmetic> ArithmeticDate<C> {
     }
 
     #[inline]
-    pub fn offset_date(&mut self, offset: DateDuration<C>, data: &C::PrecomputedDataSource) {
+    pub fn offset_date(
+        &mut self,
+        offset: DateDuration<C>,
+        data: &impl PrecomputedDataSource<C::YearInfo>,
+    ) {
         // For offset_date to work with lunar calendars, need to handle an edge case where the original month is not valid in the future year.
         self.year += offset.years;
         self.year_info = data.load_or_compute_info(self.year);

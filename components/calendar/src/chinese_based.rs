@@ -468,7 +468,7 @@ impl<C: ChineseBasedWithDataLoading + CalendarArithmetic<YearInfo = ()>> Chinese
 
 impl<C: ChineseBasedWithDataLoading> CalendarArithmetic for C {
     type YearInfo = ();
-    type PrecomputedDataSource = ();
+
     fn month_days(year: i32, month: u8) -> u8 {
         chinese_based::month_days::<C::CB>(year, month)
     }

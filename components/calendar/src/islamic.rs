@@ -147,7 +147,7 @@ pub struct IslamicDateInner(ArithmeticDate<IslamicObservational>);
 
 impl CalendarArithmetic for IslamicObservational {
     type YearInfo = ();
-    type PrecomputedDataSource = ();
+
     fn month_days(year: i32, month: u8) -> u8 {
         calendrical_calculations::islamic::observational_islamic_month_days(year, month)
     }
@@ -379,7 +379,7 @@ pub struct IslamicUmmAlQuraDateInner(ArithmeticDate<IslamicUmmAlQura>);
 
 impl CalendarArithmetic for IslamicUmmAlQura {
     type YearInfo = ();
-    type PrecomputedDataSource = ();
+
     fn month_days(year: i32, month: u8) -> u8 {
         calendrical_calculations::islamic::saudi_islamic_month_days(year, month)
     }
@@ -609,7 +609,7 @@ pub struct IslamicCivilDateInner(ArithmeticDate<IslamicCivil>);
 
 impl CalendarArithmetic for IslamicCivil {
     type YearInfo = ();
-    type PrecomputedDataSource = ();
+
     fn month_days(year: i32, month: u8) -> u8 {
         match month {
             1 | 3 | 5 | 7 | 9 | 11 => 30,
@@ -857,7 +857,7 @@ pub struct IslamicTabularDateInner(ArithmeticDate<IslamicTabular>);
 
 impl CalendarArithmetic for IslamicTabular {
     type YearInfo = ();
-    type PrecomputedDataSource = ();
+
     fn month_days(year: i32, month: u8) -> u8 {
         match month {
             1 | 3 | 5 | 7 | 9 | 11 => 30,

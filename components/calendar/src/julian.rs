@@ -66,7 +66,7 @@ pub struct JulianDateInner(pub(crate) ArithmeticDate<Julian>);
 
 impl CalendarArithmetic for Julian {
     type YearInfo = ();
-    type PrecomputedDataSource = ();
+
     fn month_days(year: i32, month: u8) -> u8 {
         match month {
             4 | 6 | 9 | 11 => 30,
