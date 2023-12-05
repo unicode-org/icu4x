@@ -157,9 +157,10 @@ impl<C: CalendarArithmetic> ArithmeticDate<C> {
     }
 
     #[inline]
-    pub fn offset_date(&mut self, offset: DateDuration<C>) {
+    pub fn offset_date(&mut self, offset: DateDuration<C>, data: &C::PrecomputedDataSource) {
         // For offset_date to work with lunar calendars, need to handle an edge case where the original month is not valid in the future year.
         self.year += offset.years;
+        self.year_info = data.load_or_compute_info(self.year);
 
         self.offset_months(offset.months);
 
@@ -175,6 +176,8 @@ impl<C: CalendarArithmetic> ArithmeticDate<C> {
         _largest_unit: DateDurationUnit,
         _smaller_unit: DateDurationUnit,
     ) -> DateDuration<C> {
+        // This simple implementation does not need C::PrecomputedDataSource right now, but it
+        // likely will once we've written a proper implementation
         DateDuration::new(
             self.year - date2.year,
             self.month as i32 - date2.month as i32,
