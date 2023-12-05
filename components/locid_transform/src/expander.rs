@@ -418,12 +418,12 @@ impl LocaleExpander {
         // We failed to find anything in the und-SR, und-S, or und-R tables,
         // to fall back to bare "und"
         debug_assert!(langid.language.is_empty());
-        return update_langid(
+        update_langid(
             data.get_und().0,
             Some(data.get_und().1),
             Some(data.get_und().2),
             langid,
-        );
+        )
     }
 
     /// This returns a new Locale that is the result of running the
