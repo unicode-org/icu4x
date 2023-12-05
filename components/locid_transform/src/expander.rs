@@ -5,7 +5,7 @@
 use crate::{provider::*, LocaleTransformError};
 
 use core::mem;
-use icu_locid::subtags::{language, region, script, Language, Region, Script};
+use icu_locid::subtags::{Language, Region, Script};
 use icu_locid::LanguageIdentifier;
 use icu_provider::prelude::*;
 
@@ -392,12 +392,8 @@ impl LocaleExpander {
                 return update_langid(Language::UND, Some(script), Some(region), langid);
             }
             // Language not found: error case
-            return update_langid(
-                language!("und"),
-                Some(script!("Zzzz")),
-                Some(region!("ZZ")),
-                langid,
-            );
+            // TODO(#4409): Return the error case.
+            return TransformResult::Unmodified;
         }
         if let Some(script) = langid.script {
             if let Some(region) = langid.region {

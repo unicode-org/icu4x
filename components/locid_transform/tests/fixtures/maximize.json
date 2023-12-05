@@ -197,15 +197,15 @@
   },
   {
     "input": "qaa",
-    "output": "qaa-Zzzz-ZZ"
+    "output": "qaa"
   },
   {
     "input": "qaa-CH",
-    "output": "qaa-Zzzz-CH"
+    "output": "qaa-CH"
   },
   {
     "input": "qaa-Cyrl",
-    "output": "qaa-Cyrl-ZZ"
+    "output": "qaa-Cyrl"
   },
   {
     "input": "qaa-Cyrl-CH",

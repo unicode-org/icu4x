@@ -104,7 +104,8 @@ pub use fallback::LocaleFallbacker;
 
 /// Used to track the result of a transformation operation that potentially modifies its argument in place.
 #[derive(Debug, PartialEq)]
-#[allow(clippy::exhaustive_enums)] // this enum is stable
+// TODO(#4409): In 2.0 make this enum contain an additional variant for the error case
+#[allow(clippy::exhaustive_enums)]
 pub enum TransformResult {
     /// The canonicalization operation modified the locale.
     Modified,
