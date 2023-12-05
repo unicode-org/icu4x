@@ -783,12 +783,16 @@ impl From<usize> for IsoWeekday {
 impl IsoWeekday {
     /// Returns the day after the current day.
     pub(crate) fn next_day(self) -> IsoWeekday {
-        self.add_to_weekday(1)
-    }
-
-    /// Returns the weekday that's `num_days` after `weekday`.
-    pub(crate) fn add_to_weekday(self, num_days: i32) -> IsoWeekday {
-        let new_weekday = (7 + (self as i32) + (num_days % 7)) % 7;
-        IsoWeekday::from(new_weekday as usize)
+        use IsoWeekday::*;
+        match self {
+            Monday => Tuesday,
+            Tuesday => Wednesday,
+            Wednesday => Thursday,
+            Thursday => Friday,
+            Friday => Saturday,
+            Saturday => Sunday,
+            Sunday => Monday,
+        }
+        
     }
 }
