@@ -353,6 +353,9 @@ impl LocaleExpander {
     /// returns [`TransformResult::Unmodified`] and the locale argument is
     /// unchanged.
     ///
+    /// This function does not guarantee that any particular set of subtags
+    /// will be present in the resulting locale.
+    ///
     /// # Examples
     ///
     /// ```
@@ -368,6 +371,33 @@ impl LocaleExpander {
     /// let mut locale = locale!("zh-Hant-TW");
     /// assert_eq!(lc.maximize(&mut locale), TransformResult::Unmodified);
     /// assert_eq!(locale, locale!("zh-Hant-TW"));
+    /// ```
+    ///
+    /// If there is no data for a particular language, the result is not
+    /// modified. Note that [`LocaleExpander::new_extended`] supports
+    /// more languages.
+    ///
+    /// ```
+    /// use icu_locid::locale;
+    /// use icu_locid_transform::{LocaleExpander, TransformResult};
+    ///
+    /// let lc = LocaleExpander::new();
+    ///
+    /// // No subtags data for ccp in the default set:
+    /// let mut locale = locale!("ccp");
+    /// assert_eq!(lc.maximize(&mut locale), TransformResult::Unmodified);
+    /// assert_eq!(locale, locale!("ccp"));
+    ///
+    /// // The extended set supports it:
+    /// let lc = LocaleExpander::new_extended();
+    /// let mut locale = locale!("ccp");
+    /// assert_eq!(lc.maximize(&mut locale), TransformResult::Modified);
+    /// assert_eq!(locale, locale!("ccp-Cakm-BD"));
+    ///
+    /// // But even the extended set does not support all language subtags:
+    /// let mut locale = locale!("mul");
+    /// assert_eq!(lc.maximize(&mut locale), TransformResult::Unmodified);
+    /// assert_eq!(locale, locale!("mul"));
     /// ```
     pub fn maximize<T: AsMut<LanguageIdentifier>>(&self, mut langid: T) -> TransformResult {
         let langid = langid.as_mut();
@@ -391,8 +421,7 @@ impl LocaleExpander {
             if let Some((script, region)) = data.get_l(langid.language) {
                 return update_langid(Language::UND, Some(script), Some(region), langid);
             }
-            // Language not found: error case
-            // TODO(#4409): Return the error case.
+            // Language not found: return unmodified.
             return TransformResult::Unmodified;
         }
         if let Some(script) = langid.script {
