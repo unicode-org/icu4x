@@ -3,13 +3,15 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::{types, Calendar, CalendarError, DateDuration, DateDurationUnit};
+use core::cmp::Ordering;
 use core::convert::TryInto;
 use core::fmt::Debug;
+use core::hash::{Hash, Hasher};
 use core::marker::PhantomData;
 use tinystr::tinystr;
 
 // Note: The Ord/PartialOrd impls can be derived because the fields are in the correct order.
-#[derive(Debug, Hash, Eq, PartialEq, Ord, PartialOrd)]
+#[derive(Debug)]
 #[allow(clippy::exhaustive_structs)] // this type is stable
 pub struct ArithmeticDate<C: CalendarArithmetic> {
     pub year: i32,
@@ -22,10 +24,46 @@ pub struct ArithmeticDate<C: CalendarArithmetic> {
     marker: PhantomData<C>,
 }
 
+// Manual impls since the derive will introduce a C: Trait bound
+// and many of these impls can ignore the year_info field
 impl<C: CalendarArithmetic> Copy for ArithmeticDate<C> {}
 impl<C: CalendarArithmetic> Clone for ArithmeticDate<C> {
     fn clone(&self) -> Self {
         *self
+    }
+}
+
+impl<C: CalendarArithmetic> PartialEq for ArithmeticDate<C> {
+    fn eq(&self, other: &Self) -> bool {
+        self.year == other.year && self.month == other.month && self.day == other.day
+    }
+}
+
+impl<C: CalendarArithmetic> Eq for ArithmeticDate<C> {}
+
+impl<C: CalendarArithmetic> Ord for ArithmeticDate<C> {
+    fn cmp(&self, other: &Self) -> Ordering {
+        self.year
+            .cmp(&other.year)
+            .then(self.month.cmp(&other.month))
+            .then(self.day.cmp(&other.day))
+    }
+}
+
+impl<C: CalendarArithmetic> PartialOrd for ArithmeticDate<C> {
+    fn partial_cmp(&self, other: &Self) -> Option<Ordering> {
+        Some(self.cmp(other))
+    }
+}
+
+impl<C: CalendarArithmetic> Hash for ArithmeticDate<C> {
+    fn hash<H>(&self, state: &mut H)
+    where
+        H: Hasher,
+    {
+        self.year.hash(state);
+        self.month.hash(state);
+        self.day.hash(state);
     }
 }
 
@@ -37,8 +75,7 @@ pub trait CalendarArithmetic: Calendar {
     /// In case we plan to cache per-year data, this stores
     /// useful computational information for the current year
     /// as a field on ArithmeticDate
-    // TODO remove Eq/PE/Ord/PO bounds
-    type YearInfo: Copy + Debug + Eq + PartialEq + Ord + PartialOrd;
+    type YearInfo: Copy + Debug;
     fn month_days(year: i32, month: u8) -> u8;
     fn months_for_every_year(year: i32) -> u8;
     fn is_leap_year(year: i32) -> bool;
