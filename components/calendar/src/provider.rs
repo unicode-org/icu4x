@@ -271,7 +271,7 @@ impl<'de> serde::Deserialize<'de> for WeekdaySet {
         D: serde::Deserializer<'de>,
     {
         if deserializer.is_human_readable() {
-            Vec::<IsoWeekday>::deserialize(deserializer).map(|s| Self::new(&s))
+            alloc::vec::Vec::<IsoWeekday>::deserialize(deserializer).map(|s| Self::new(&s))
         } else {
             u8::deserialize(deserializer).map(Self)
         }
