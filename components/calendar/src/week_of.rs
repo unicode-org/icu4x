@@ -45,26 +45,6 @@ impl From<&WeekDataV1> for WeekCalculator {
     }
 }
 
-impl From<WeekDataV2> for WeekCalculator {
-    fn from(other: WeekDataV2) -> Self {
-        Self {
-            first_weekday: other.first_weekday,
-            min_week_days: other.min_week_days,
-            weekend: Some(other.weekend),
-        }
-    }
-}
-
-impl From<&WeekDataV2> for WeekCalculator {
-    fn from(other: &WeekDataV2) -> Self {
-        Self {
-            first_weekday: other.first_weekday,
-            min_week_days: other.min_week_days,
-            weekend: Some(other.weekend),
-        }
-    }
-}
-
 impl WeekCalculator {
     /// Creates a new [`WeekCalculator`] from compiled locale data.
     ///
@@ -126,7 +106,11 @@ impl WeekCalculator {
                 metadata: Default::default(),
             })
             .and_then(DataResponse::take_payload)
-            .map(|payload| payload.get().into())
+            .map(|payload| WeekCalculator {
+                first_weekday: payload.get().first_weekday,
+                min_week_days: payload.get().min_week_days,
+                weekend: Some(payload.get().weekend),
+            })
             .map_err(Into::into)
     }
 
