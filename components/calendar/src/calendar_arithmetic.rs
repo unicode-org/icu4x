@@ -13,7 +13,7 @@ use tinystr::tinystr;
 // Note: The Ord/PartialOrd impls can be derived because the fields are in the correct order.
 #[derive(Debug)]
 #[allow(clippy::exhaustive_structs)] // this type is stable
-pub struct ArithmeticDate<C: CalendarArithmetic> {
+pub(crate) struct ArithmeticDate<C: CalendarArithmetic> {
     pub year: i32,
     /// 1-based month of year
     pub month: u8,
@@ -71,7 +71,7 @@ impl<C: CalendarArithmetic> Hash for ArithmeticDate<C> {
 #[allow(dead_code)] // TODO: Remove dead code tag after use
 pub(crate) const MAX_ITERS_FOR_DAYS_OF_MONTH: u8 = 33;
 
-pub trait CalendarArithmetic: Calendar {
+pub(crate) trait CalendarArithmetic: Calendar {
     /// In case we plan to cache per-year data, this stores
     /// useful computational information for the current year
     /// as a field on ArithmeticDate
