@@ -213,6 +213,7 @@ impl WeekdaySet {
         let mut i = 0;
         let mut w = 0;
         while i < days.len() {
+            #![allow(clippy::indexing_slicing)]
             w |= days[i].bit_value();
             i += 1;
         }
@@ -247,6 +248,7 @@ impl databake::Bake for WeekdaySet {
     }
 }
 
+#[cfg(feature = "datagen")]
 impl serde::Serialize for WeekdaySet {
     fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
     where
@@ -254,7 +256,7 @@ impl serde::Serialize for WeekdaySet {
     {
         if serializer.is_human_readable() {
             crate::week_of::WeekdaySetIterator::new(IsoWeekday::Monday, *self)
-                .collect::<Vec<_>>()
+                .collect::<alloc::vec::Vec<_>>()
                 .serialize(serializer)
         } else {
             self.0.serialize(serializer)
