@@ -41,14 +41,14 @@ pub(crate) trait ChineseBasedWithDataLoading: Calendar {
 
 /// Chinese-based calendars define DateInner as a calendar-specific struct wrapping ChineseBasedDateInner.
 #[derive(Debug, Eq, PartialEq, PartialOrd, Ord)]
-pub(crate) struct ChineseBasedDateInner<C>(
+pub(crate) struct ChineseBasedDateInner<C: CalendarArithmetic>(
     pub(crate) ArithmeticDate<C>,
     pub(crate) ChineseBasedYearInfo,
 );
 
 // we want these impls without the `C: Copy/Clone` bounds
-impl<C> Copy for ChineseBasedDateInner<C> {}
-impl<C> Clone for ChineseBasedDateInner<C> {
+impl<C: CalendarArithmetic> Copy for ChineseBasedDateInner<C> {}
+impl<C: CalendarArithmetic> Clone for ChineseBasedDateInner<C> {
     fn clone(&self) -> Self {
         *self
     }
@@ -240,7 +240,7 @@ impl ChineseBasedCompiledData {
     }
 }
 
-impl<C: ChineseBasedWithDataLoading> ChineseBasedDateInner<C> {
+impl<C: ChineseBasedWithDataLoading + CalendarArithmetic<YearInfo = ()>> ChineseBasedDateInner<C> {
     /// Given a 1-indexed chinese extended year, fetch its data from the cache.
     ///
     /// If the actual year data that was fetched is for a different year, update the getter year

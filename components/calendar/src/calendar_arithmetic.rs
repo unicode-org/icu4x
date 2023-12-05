@@ -4,23 +4,26 @@
 
 use crate::{types, Calendar, CalendarError, DateDuration, DateDurationUnit};
 use core::convert::TryInto;
+use core::fmt::Debug;
 use core::marker::PhantomData;
 use tinystr::tinystr;
 
 // Note: The Ord/PartialOrd impls can be derived because the fields are in the correct order.
 #[derive(Debug, Hash, Eq, PartialEq, Ord, PartialOrd)]
 #[allow(clippy::exhaustive_structs)] // this type is stable
-pub struct ArithmeticDate<C> {
+pub struct ArithmeticDate<C: CalendarArithmetic> {
     pub year: i32,
     /// 1-based month of year
     pub month: u8,
     /// 1-based day of month
     pub day: u8,
+    /// Invariant: MUST be updated to match the info for `year` whenever `year` is updated or set.
+    pub year_info: C::YearInfo,
     marker: PhantomData<C>,
 }
 
-impl<C> Copy for ArithmeticDate<C> {}
-impl<C> Clone for ArithmeticDate<C> {
+impl<C: CalendarArithmetic> Copy for ArithmeticDate<C> {}
+impl<C: CalendarArithmetic> Clone for ArithmeticDate<C> {
     fn clone(&self) -> Self {
         *self
     }
@@ -34,7 +37,8 @@ pub trait CalendarArithmetic: Calendar {
     /// In case we plan to cache per-year data, this stores
     /// useful computational information for the current year
     /// as a field on ArithmeticDate
-    type YearInfo;
+    // TODO remove Eq/PE/Ord/PO bounds
+    type YearInfo: Copy + Debug + Eq + PartialEq + Ord + PartialOrd;
     /// A data source from which YearInfo may be computed,
     /// used whenever `year` is set or updated
     ///
@@ -75,33 +79,45 @@ impl PrecomputedDataSource<()> for () {
 impl<C: CalendarArithmetic> ArithmeticDate<C> {
     /// Create a new `ArithmeticDate` without checking that `month` and `day` are in bounds.
     #[inline]
-    pub const fn new_unchecked(year: i32, month: u8, day: u8) -> Self {
+    pub const fn new_unchecked(year: i32, month: u8, day: u8) -> Self
+    where
+        C: CalendarArithmetic<YearInfo = ()>,
+    {
         ArithmeticDate {
             year,
             month,
             day,
+            year_info: (),
             marker: PhantomData,
         }
     }
 
     #[inline]
-    pub fn min_date() -> Self {
+    pub fn min_date() -> Self
+    where
+        C: CalendarArithmetic<YearInfo = ()>,
+    {
         ArithmeticDate {
             year: i32::MIN,
             month: 1,
             day: 1,
+            year_info: (),
             marker: PhantomData,
         }
     }
 
     #[inline]
-    pub fn max_date() -> Self {
+    pub fn max_date() -> Self
+    where
+        C: CalendarArithmetic<YearInfo = ()>,
+    {
         let year = i32::MAX;
         let (month, day) = C::last_month_day_in_year(year);
         ArithmeticDate {
             year: i32::MAX,
             month,
             day,
+            year_info: (),
             marker: PhantomData,
         }
     }
@@ -192,7 +208,10 @@ impl<C: CalendarArithmetic> ArithmeticDate<C> {
     }
 
     #[inline]
-    pub fn date_from_year_day(year: i32, year_day: u32) -> ArithmeticDate<C> {
+    pub fn date_from_year_day(year: i32, year_day: u32) -> ArithmeticDate<C>
+    where
+        C: CalendarArithmetic<YearInfo = ()>,
+    {
         let mut month = 1;
         let mut day = year_day as i32;
         while month <= C::months_for_every_year(year) {
@@ -212,6 +231,7 @@ impl<C: CalendarArithmetic> ArithmeticDate<C> {
             year,
             month,
             day: day.try_into().unwrap_or(0),
+            year_info: (),
             marker: PhantomData,
         }
     }
@@ -263,7 +283,10 @@ impl<C: CalendarArithmetic> ArithmeticDate<C> {
         year: i32,
         month_code: types::MonthCode,
         day: u8,
-    ) -> Result<Self, CalendarError> {
+    ) -> Result<Self, CalendarError>
+    where
+        C: CalendarArithmetic<YearInfo = ()>,
+    {
         let month = if let Some((ordinal, false)) = month_code.parsed() {
             ordinal
         } else {
@@ -294,7 +317,10 @@ impl<C: CalendarArithmetic> ArithmeticDate<C> {
     /// Construct a new arithmetic date from a year, month ordinal, and day, bounds checking
     /// the month and day
     /// Originally (new_from_solar_ordinals) but renamed because it works for some lunar calendars
-    pub fn new_from_ordinals(year: i32, month: u8, day: u8) -> Result<Self, CalendarError> {
+    pub fn new_from_ordinals(year: i32, month: u8, day: u8) -> Result<Self, CalendarError>
+    where
+        C: CalendarArithmetic<YearInfo = ()>,
+    {
         let max_month = C::months_for_every_year(year);
         if month > max_month {
             return Err(CalendarError::Overflow {
@@ -315,7 +341,10 @@ impl<C: CalendarArithmetic> ArithmeticDate<C> {
 
     /// This fn currently just calls [`new_from_ordinals`], but exists separately for
     /// lunar calendars in case different logic needs to be implemented later.
-    pub fn new_from_lunar_ordinals(year: i32, month: u8, day: u8) -> Result<Self, CalendarError> {
+    pub fn new_from_lunar_ordinals(year: i32, month: u8, day: u8) -> Result<Self, CalendarError>
+    where
+        C: CalendarArithmetic<YearInfo = ()>,
+    {
         Self::new_from_ordinals(year, month, day)
     }
 }
