@@ -24,7 +24,7 @@ final class PluralOperands implements ffi.Finalizable {
   /// Throws [Error] on failure.
   factory PluralOperands.fromString(String s) {
     final temp = ffi2.Arena();
-    final sView = s.utf8View;;
+    final sView = s.utf8View;
     final result = _ICU4XPluralOperands_create_from_string(sView.pointer(temp), sView.length);
     temp.releaseAll();
     if (!result.isOk) {

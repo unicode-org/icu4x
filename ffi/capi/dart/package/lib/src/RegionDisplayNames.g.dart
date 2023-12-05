@@ -42,7 +42,7 @@ final class RegionDisplayNames implements ffi.Finalizable {
   /// Throws [Error] on failure.
   String of(String region) {
     final temp = ffi2.Arena();
-    final regionView = region.utf8View;;
+    final regionView = region.utf8View;
     final writeable = _Writeable();
     final result = _ICU4XRegionDisplayNames_of(_underlying, regionView.pointer(temp), regionView.length, writeable._underlying);
     temp.releaseAll();

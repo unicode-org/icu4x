@@ -28,7 +28,7 @@ final class Locale implements ffi.Finalizable {
   /// Throws [Error] on failure.
   factory Locale.fromString(String name) {
     final temp = ffi2.Arena();
-    final nameView = name.utf8View;;
+    final nameView = name.utf8View;
     final result = _ICU4XLocale_create_from_string(nameView.pointer(temp), nameView.length);
     temp.releaseAll();
     if (!result.isOk) {
@@ -95,7 +95,7 @@ final class Locale implements ffi.Finalizable {
   /// Throws [Error] on failure.
   String getUnicodeExtension(String bytes) {
     final temp = ffi2.Arena();
-    final bytesView = bytes.utf8View;;
+    final bytesView = bytes.utf8View;
     final writeable = _Writeable();
     final result = _ICU4XLocale_get_unicode_extension(_underlying, bytesView.pointer(temp), bytesView.length, writeable._underlying);
     temp.releaseAll();
@@ -136,7 +136,7 @@ final class Locale implements ffi.Finalizable {
   /// Throws [Error] on failure.
   set language(String bytes) {
     final temp = ffi2.Arena();
-    final bytesView = bytes.utf8View;;
+    final bytesView = bytes.utf8View;
     final result = _ICU4XLocale_set_language(_underlying, bytesView.pointer(temp), bytesView.length);
     temp.releaseAll();
     if (!result.isOk) {
@@ -175,7 +175,7 @@ final class Locale implements ffi.Finalizable {
   /// Throws [Error] on failure.
   set region(String bytes) {
     final temp = ffi2.Arena();
-    final bytesView = bytes.utf8View;;
+    final bytesView = bytes.utf8View;
     final result = _ICU4XLocale_set_region(_underlying, bytesView.pointer(temp), bytesView.length);
     temp.releaseAll();
     if (!result.isOk) {
@@ -214,7 +214,7 @@ final class Locale implements ffi.Finalizable {
   /// Throws [Error] on failure.
   set script(String bytes) {
     final temp = ffi2.Arena();
-    final bytesView = bytes.utf8View;;
+    final bytesView = bytes.utf8View;
     final result = _ICU4XLocale_set_script(_underlying, bytesView.pointer(temp), bytesView.length);
     temp.releaseAll();
     if (!result.isOk) {
@@ -236,7 +236,7 @@ final class Locale implements ffi.Finalizable {
   /// Throws [Error] on failure.
   static String canonicalize(String bytes) {
     final temp = ffi2.Arena();
-    final bytesView = bytes.utf8View;;
+    final bytesView = bytes.utf8View;
     final writeable = _Writeable();
     final result = _ICU4XLocale_canonicalize(bytesView.pointer(temp), bytesView.length, writeable._underlying);
     temp.releaseAll();
@@ -274,7 +274,7 @@ final class Locale implements ffi.Finalizable {
   /// See the [Rust documentation for `normalizing_eq`](https://docs.rs/icu/latest/icu/locid/struct.Locale.html#method.normalizing_eq) for more information.
   bool normalizingEq(String other) {
     final temp = ffi2.Arena();
-    final otherView = other.utf8View;;
+    final otherView = other.utf8View;
     final result = _ICU4XLocale_normalizing_eq(_underlying, otherView.pointer(temp), otherView.length);
     temp.releaseAll();
     return result;
@@ -288,7 +288,7 @@ final class Locale implements ffi.Finalizable {
   /// See the [Rust documentation for `strict_cmp`](https://docs.rs/icu/latest/icu/locid/struct.Locale.html#method.strict_cmp) for more information.
   Ordering strictCmp(String other) {
     final temp = ffi2.Arena();
-    final otherView = other.utf8View;;
+    final otherView = other.utf8View;
     final result = _ICU4XLocale_strict_cmp(_underlying, otherView.pointer(temp), otherView.length);
     temp.releaseAll();
     return Ordering.values.firstWhere((v) => v._underlying == result);

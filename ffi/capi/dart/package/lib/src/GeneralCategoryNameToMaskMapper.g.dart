@@ -24,7 +24,7 @@ final class GeneralCategoryNameToMaskMapper implements ffi.Finalizable {
   /// Returns 0 if the name is unknown for this property
   int getStrict(String name) {
     final temp = ffi2.Arena();
-    final nameView = name.utf8View;;
+    final nameView = name.utf8View;
     final result = _ICU4XGeneralCategoryNameToMaskMapper_get_strict(_underlying, nameView.pointer(temp), nameView.length);
     temp.releaseAll();
     return result;
@@ -40,7 +40,7 @@ final class GeneralCategoryNameToMaskMapper implements ffi.Finalizable {
   /// Returns 0 if the name is unknown for this property
   int getLoose(String name) {
     final temp = ffi2.Arena();
-    final nameView = name.utf8View;;
+    final nameView = name.utf8View;
     final result = _ICU4XGeneralCategoryNameToMaskMapper_get_loose(_underlying, nameView.pointer(temp), nameView.length);
     temp.releaseAll();
     return result;

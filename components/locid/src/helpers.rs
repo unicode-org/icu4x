@@ -279,11 +279,68 @@ impl<'a, K: 'a, V: 'a> StoreIterable<'a, K, V> for ShortSlice<(K, V)> {
     }
 }
 
+pub(crate) enum ShortSliceIntoIter<T> {
+    ZeroOne(Option<T>),
+    Multi(alloc::vec::IntoIter<T>),
+}
+
+impl<T> Iterator for ShortSliceIntoIter<T> {
+    type Item = T;
+    fn next(&mut self) -> Option<T> {
+        match self {
+            Self::ZeroOne(option) => option.take(),
+            Self::Multi(into_iter) => into_iter.next(),
+        }
+    }
+}
+
+impl<T> IntoIterator for ShortSlice<T> {
+    type Item = T;
+    type IntoIter = ShortSliceIntoIter<T>;
+
+    fn into_iter(self) -> Self::IntoIter {
+        match self {
+            ShortSlice::ZeroOne(option) => ShortSliceIntoIter::ZeroOne(option),
+            // TODO: Use a boxed slice IntoIter impl when available:
+            // <https://github.com/rust-lang/rust/issues/59878>
+            ShortSlice::Multi(boxed_slice) => {
+                ShortSliceIntoIter::Multi(boxed_slice.into_vec().into_iter())
+            }
+        }
+    }
+}
+
+impl<'a, K: 'a, V: 'a> StoreIterableMut<'a, K, V> for ShortSlice<(K, V)> {
+    type KeyValueIterMut = core::iter::Map<
+        core::slice::IterMut<'a, (K, V)>,
+        for<'r> fn(&'r mut (K, V)) -> (&'r K, &'r mut V),
+    >;
+
+    type KeyValueIntoIter = ShortSliceIntoIter<(K, V)>;
+
+    fn lm_iter_mut(
+        &'a mut self,
+    ) -> <Self as litemap::store::StoreIterableMut<'a, K, V>>::KeyValueIterMut {
+        self.iter_mut().map(|elt| (&elt.0, &mut elt.1))
+    }
+
+    fn lm_into_iter(
+        self,
+    ) -> <Self as litemap::store::StoreIterableMut<'a, K, V>>::KeyValueIntoIter {
+        self.into_iter()
+    }
+}
+
 impl<K, V> StoreFromIterator<K, V> for ShortSlice<(K, V)> {}
 
 #[test]
 fn test_short_slice_impl() {
     litemap::testing::check_store::<ShortSlice<(u32, u64)>>();
+}
+
+#[test]
+fn test_short_slice_impl_full() {
+    litemap::testing::check_store_full::<ShortSlice<(u32, u64)>>();
 }
 
 macro_rules! impl_tinystr_subtag {
