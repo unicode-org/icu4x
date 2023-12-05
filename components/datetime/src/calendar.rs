@@ -29,7 +29,7 @@ use crate::provider::neo::*;
 /// </div>
 // Exported as `#[cfg(feature = "experimental")]` in lib.rs
 // TODO(#4338): Decide what to do with this when we retire this crate's "experimental" feature.
-pub trait UnstableCldrCalendar {}
+pub trait InternalCldrCalendar {}
 
 /// A calendar that can be found in CLDR
 ///
@@ -40,7 +40,7 @@ pub trait UnstableCldrCalendar {}
 /// 🚧 This trait is considered unstable; it may change at any time, in breaking or non-breaking ways,
 /// including in SemVer minor releases. Do not implement this trait in userland.
 /// </div>
-pub trait CldrCalendar: UnstableCldrCalendar {
+pub trait CldrCalendar: InternalCldrCalendar {
     /// The Unicode BCP 47 identifier for the calendar's skeleton
     /// If multiple BCP 47 identifiers work, this should be
     /// the default one when no others are provided
@@ -264,22 +264,22 @@ impl CldrCalendar for Roc {
     type MonthSymbolsV1Marker = RocMonthSymbolsV1Marker;
 }
 
-impl UnstableCldrCalendar for Buddhist {}
-impl UnstableCldrCalendar for Chinese {}
-impl UnstableCldrCalendar for Coptic {}
-impl UnstableCldrCalendar for Dangi {}
-impl UnstableCldrCalendar for Ethiopian {}
-impl UnstableCldrCalendar for Gregorian {}
-impl UnstableCldrCalendar for Hebrew {}
-impl UnstableCldrCalendar for Indian {}
-impl UnstableCldrCalendar for IslamicCivil {}
-impl UnstableCldrCalendar for IslamicObservational {}
-impl UnstableCldrCalendar for IslamicTabular {}
-impl UnstableCldrCalendar for IslamicUmmAlQura {}
-impl UnstableCldrCalendar for Japanese {}
-impl UnstableCldrCalendar for JapaneseExtended {}
-impl UnstableCldrCalendar for Persian {}
-impl UnstableCldrCalendar for Roc {}
+impl InternalCldrCalendar for Buddhist {}
+impl InternalCldrCalendar for Chinese {}
+impl InternalCldrCalendar for Coptic {}
+impl InternalCldrCalendar for Dangi {}
+impl InternalCldrCalendar for Ethiopian {}
+impl InternalCldrCalendar for Gregorian {}
+impl InternalCldrCalendar for Hebrew {}
+impl InternalCldrCalendar for Indian {}
+impl InternalCldrCalendar for IslamicCivil {}
+impl InternalCldrCalendar for IslamicObservational {}
+impl InternalCldrCalendar for IslamicTabular {}
+impl InternalCldrCalendar for IslamicUmmAlQura {}
+impl InternalCldrCalendar for Japanese {}
+impl InternalCldrCalendar for JapaneseExtended {}
+impl InternalCldrCalendar for Persian {}
+impl InternalCldrCalendar for Roc {}
 
 pub(crate) fn load_lengths_for_cldr_calendar<C, P>(
     provider: &P,
