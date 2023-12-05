@@ -772,11 +772,17 @@ impl From<usize> for IsoWeekday {
     /// assert_eq!(IsoWeekday::Monday, IsoWeekday::from(8));
     /// ```
     fn from(input: usize) -> Self {
-        let mut ordinal = (input % 7) as i8;
-        if ordinal == 0 {
-            ordinal = 7;
+        use IsoWeekday::*;
+        match input % 7 {
+            0 => Sunday,
+            1 => Monday,
+            2 => Tuesday,
+            3 => Wednesday,
+            4 => Thursday,
+            5 => Friday,
+            6 => Saturday,
+            _ => unreachable!(),
         }
-        unsafe { core::mem::transmute(ordinal) }
     }
 }
 
@@ -793,6 +799,5 @@ impl IsoWeekday {
             Saturday => Sunday,
             Sunday => Monday,
         }
-        
     }
 }
