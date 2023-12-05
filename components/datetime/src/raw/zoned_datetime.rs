@@ -2,7 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use icu_calendar::provider::WeekDataV1Marker;
+use icu_calendar::provider::WeekDataV2Marker;
 use icu_decimal::{
     options::{FixedDecimalFormatterOptions, GroupingStrategy},
     provider::DecimalSymbolsV1Marker,
@@ -119,7 +119,7 @@ impl ZonedDateTimeFormatter {
     where
         P: DataProvider<TimeSymbolsV1Marker>
             + DataProvider<TimeLengthsV1Marker>
-            + DataProvider<WeekDataV1Marker>
+            + DataProvider<WeekDataV2Marker>
             + DataProvider<provider::time_zones::TimeZoneFormatsV1Marker>
             + DataProvider<provider::time_zones::ExemplarCitiesV1Marker>
             + DataProvider<provider::time_zones::MetazoneGenericNamesLongV1Marker>

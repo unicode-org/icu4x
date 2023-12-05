@@ -21,7 +21,7 @@ use crate::{
     DateTimeError, FormattedDateTime,
 };
 
-use icu_calendar::provider::WeekDataV1Marker;
+use icu_calendar::provider::WeekDataV2Marker;
 use icu_calendar::week::WeekCalculator;
 use icu_decimal::{
     options::{FixedDecimalFormatterOptions, GroupingStrategy},
@@ -226,7 +226,7 @@ impl DateFormatter {
     where
         D: DataProvider<DecimalSymbolsV1Marker>
             + DataProvider<OrdinalV1Marker>
-            + DataProvider<WeekDataV1Marker>
+            + DataProvider<WeekDataV2Marker>
             + ?Sized,
     {
         let patterns = provider::date_time::pattern_for_date_length(length, patterns_data.clone());
@@ -433,7 +433,7 @@ impl DateTimeFormatter {
             + DataProvider<TimeLengthsV1Marker>
             + DataProvider<DecimalSymbolsV1Marker>
             + DataProvider<OrdinalV1Marker>
-            + DataProvider<WeekDataV1Marker>
+            + DataProvider<WeekDataV2Marker>
             + ?Sized,
     {
         let required = datetime::analyze_patterns(&patterns.get().0, false)
