@@ -582,7 +582,7 @@ impl<C: CldrCalendar> TypedDateTimeNames<C> {
     /// Associates this [`TypedDateTimeNames`] with a pattern
     /// and includes all data required for that pattern.
     ///
-    /// Does not duplicate textual field symbols. See #4337
+    /// Does not support duplicate textual field symbols. See #4337
     ///
     /// # Examples
     ///
