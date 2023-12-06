@@ -730,7 +730,7 @@ impl<C: CldrCalendar> TypedDateTimePatternInterpolator<C> {
     ///     .unwrap();
     ///
     /// // Create a pattern from a pattern string:
-    /// let pattern_str = "E 'on week' w 'of' Y G (MMM d) 'at' h:mm a";
+    /// let pattern_str = "EEEE 'on week' w 'of' Y G (MMM d) 'at' h:mm a";
     /// let reference_pattern: pattern::reference::Pattern =
     ///     pattern_str.parse().unwrap();
     /// let pattern: pattern::runtime::Pattern = (&reference_pattern).into();
@@ -739,7 +739,7 @@ impl<C: CldrCalendar> TypedDateTimePatternInterpolator<C> {
     /// let datetime = DateTime::try_new_gregorian_datetime(2023, 12, 5, 17, 43, 12).unwrap();
     /// assert_writeable_eq!(
     ///     interpolator.include_for_pattern(&pattern).unwrap().format(&datetime),
-    ///     "Tuesday on week 49 of 2023 AD (Dec 5) at 5:43 pm"
+    ///     "Tuesday on week 49 of 2023 AD (Dec 5) at 5:43 PM"
     /// );
     /// ```
     #[cfg(feature = "compiled_data")]
@@ -783,7 +783,7 @@ impl<C: CldrCalendar> TypedDateTimePatternInterpolator<C> {
         let mut has_weeks = false;
         for field in fields {
             match field.symbol {
-                /** Textual symbols **/
+                ///// Textual symbols /////
                 FieldSymbol::Era => {
                     self.load_year_names(provider, field.length)?;
                 }
@@ -810,7 +810,7 @@ impl<C: CldrCalendar> TypedDateTimePatternInterpolator<C> {
                     self.load_day_period_names(provider, field.length)?;
                 }
 
-                /** Numeric symbols **/
+                ///// Numeric symbols /////
                 FieldSymbol::Year(fields::Year::WeekOf) => has_weeks = true,
                 FieldSymbol::Year(_) => has_numeric = true,
                 FieldSymbol::Week(_) => has_weeks = true,
