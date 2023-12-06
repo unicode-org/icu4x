@@ -5,7 +5,7 @@
 use super::datetime::write_pattern;
 use crate::calendar::CldrCalendar;
 use crate::error::DateTimeError as Error;
-use crate::fields;
+use crate::fields::{self, FieldLength, FieldSymbol};
 use crate::input;
 use crate::input::DateInput;
 use crate::input::DateTimeInput;
@@ -13,9 +13,12 @@ use crate::input::DateTimeInputWithWeekConfig;
 use crate::input::ExtractedDateTimeInput;
 use crate::input::IsoTimeInput;
 use crate::pattern::runtime::Pattern;
+use crate::pattern::PatternItem;
 use crate::provider::date_time::{DateSymbols, MonthPlaceholderValue, TimeSymbols};
 use crate::provider::neo::*;
 use core::fmt;
+use core::marker::PhantomData;
+use icu_calendar::provider::WeekDataV1Marker;
 use icu_calendar::types::Era;
 use icu_calendar::types::MonthCode;
 use icu_calendar::week::WeekCalculator;
@@ -31,7 +34,7 @@ use writeable::Writeable;
 #[derive(Debug, Copy, Clone)]
 enum OptionalNames<S, T> {
     None,
-    SingleLength(S, fields::FieldLength, T),
+    SingleLength(S, FieldLength, T),
 }
 
 enum NamePresence {
@@ -50,7 +53,7 @@ where
     pub(crate) fn check_with_length(
         &self,
         field_symbol: S,
-        field_length: fields::FieldLength,
+        field_length: FieldLength,
     ) -> NamePresence {
         match self {
             Self::SingleLength(actual_field_symbol, actual_length, _)
@@ -69,11 +72,7 @@ where
     S: Copy + PartialEq,
     T: Copy,
 {
-    pub(crate) fn get_with_length(
-        &self,
-        field_symbol: S,
-        field_length: fields::FieldLength,
-    ) -> Option<T> {
+    pub(crate) fn get_with_length(&self, field_symbol: S, field_length: FieldLength) -> Option<T> {
         match self {
             Self::None => None,
             Self::SingleLength(actual_field_symbol, actual_length, t)
@@ -142,7 +141,7 @@ where
 ///
 /// // Test it:
 /// let datetime = DateTime::try_new_gregorian_datetime(2023, 11, 20, 11, 35, 3).unwrap();
-/// assert_writeable_eq!(interpolator.format(&pattern, &datetime), "пн лист. 20 2023 -- 11:35 дп");
+/// assert_writeable_eq!(interpolator.with_pattern(&pattern).format(&datetime), "пн лист. 20 2023 -- 11:35 дп");
 /// ```
 ///
 /// If the correct data is not loaded, and error will occur:
@@ -169,7 +168,7 @@ where
 /// // The pattern string contains lots of symbols including "E", "MMM", and "a", but we did not load any data!
 /// let datetime = DateTime::try_new_gregorian_datetime(2023, 11, 20, 11, 35, 3).unwrap();
 /// let mut buffer = String::new();
-/// assert!(interpolator.format(&pattern, &datetime).write_to(&mut buffer).is_err());
+/// assert!(interpolator.with_pattern(&pattern).format(&datetime).write_to(&mut buffer).is_err());
 /// ```
 #[derive(Debug)]
 pub struct TypedDateTimePatternInterpolator<C: CldrCalendar> {
@@ -182,6 +181,17 @@ pub struct TypedDateTimePatternInterpolator<C: CldrCalendar> {
     // TODO: Make the FixedDecimalFormatter optional?
     fixed_decimal_formatter: FixedDecimalFormatter,
     week_calculator: Option<WeekCalculator>,
+}
+
+#[derive(Debug, Copy, Clone)]
+struct RawDateTimePatternInterpolatorBorrowed<'l> {
+    /// `year_symbols` is different because it could be either era or cyclic year.
+    year_symbols: OptionalNames<(), &'l YearSymbolsV1<'l>>,
+    month_symbols: OptionalNames<fields::Month, &'l MonthSymbolsV1<'l>>,
+    weekday_symbols: OptionalNames<fields::Weekday, &'l LinearSymbolsV1<'l>>,
+    dayperiod_symbols: OptionalNames<(), &'l LinearSymbolsV1<'l>>,
+    fixed_decimal_formatter: &'l FixedDecimalFormatter,
+    week_calculator: Option<&'l WeekCalculator>,
 }
 
 impl<C: CldrCalendar> TypedDateTimePatternInterpolator<C> {
@@ -228,19 +238,30 @@ impl<C: CldrCalendar> TypedDateTimePatternInterpolator<C> {
         }
     }
 
+    fn as_borrowed(&self) -> RawDateTimePatternInterpolatorBorrowed {
+        RawDateTimePatternInterpolatorBorrowed {
+            year_symbols: self.year_symbols.as_borrowed(),
+            month_symbols: self.month_symbols.as_borrowed(),
+            weekday_symbols: self.weekday_symbols.as_borrowed(),
+            dayperiod_symbols: self.dayperiod_symbols.as_borrowed(),
+            fixed_decimal_formatter: &self.fixed_decimal_formatter,
+            week_calculator: self.week_calculator.as_ref(),
+        }
+    }
+
     /// Loads year (era or cycle) names for the specified length.
     ///
     /// Does not support multiple field symbols or lengths. See #4337
     pub fn load_year_names<P>(
         &mut self,
         provider: &P,
-        field_length: fields::FieldLength,
+        field_length: FieldLength,
     ) -> Result<&mut Self, Error>
     where
         P: DataProvider<C::YearSymbolsV1Marker> + ?Sized,
     {
         let field = fields::Field {
-            symbol: fields::FieldSymbol::Era,
+            symbol: FieldSymbol::Era,
             length: field_length,
         };
         // UTS 35 says that "G..GGG" are all Abbreviated
@@ -254,9 +275,9 @@ impl<C: CldrCalendar> TypedDateTimePatternInterpolator<C> {
         locale.set_aux(AuxiliaryKeys::from_subtag(aux::subtag_for(
             aux::Context::Format,
             match field_length {
-                fields::FieldLength::Abbreviated => aux::Length::Abbr,
-                fields::FieldLength::Narrow => aux::Length::Narrow,
-                fields::FieldLength::Wide => aux::Length::Wide,
+                FieldLength::Abbreviated => aux::Length::Abbr,
+                FieldLength::Narrow => aux::Length::Narrow,
+                FieldLength::Wide => aux::Length::Wide,
                 _ => return Err(Error::UnsupportedFormattingField(field)),
             },
         )));
@@ -302,10 +323,7 @@ impl<C: CldrCalendar> TypedDateTimePatternInterpolator<C> {
     /// ));
     /// ```
     #[cfg(feature = "compiled_data")]
-    pub fn include_year_names(
-        &mut self,
-        field_length: fields::FieldLength,
-    ) -> Result<&mut Self, Error>
+    pub fn include_year_names(&mut self, field_length: FieldLength) -> Result<&mut Self, Error>
     where
         crate::provider::Baked:
             icu_provider::DataProvider<<C as CldrCalendar>::YearSymbolsV1Marker>,
@@ -320,13 +338,13 @@ impl<C: CldrCalendar> TypedDateTimePatternInterpolator<C> {
         &mut self,
         provider: &P,
         field_symbol: fields::Month,
-        field_length: fields::FieldLength,
+        field_length: FieldLength,
     ) -> Result<&mut Self, Error>
     where
         P: DataProvider<C::MonthSymbolsV1Marker> + ?Sized,
     {
         let field = fields::Field {
-            symbol: fields::FieldSymbol::Month(field_symbol),
+            symbol: FieldSymbol::Month(field_symbol),
             length: field_length,
         };
         // Note: UTS 35 says that "M..MM" and "L..LL" are numeric
@@ -345,9 +363,9 @@ impl<C: CldrCalendar> TypedDateTimePatternInterpolator<C> {
                 fields::Month::StandAlone => aux::Context::Standalone,
             },
             match field_length {
-                fields::FieldLength::Abbreviated => aux::Length::Abbr,
-                fields::FieldLength::Narrow => aux::Length::Narrow,
-                fields::FieldLength::Wide => aux::Length::Wide,
+                FieldLength::Abbreviated => aux::Length::Abbr,
+                FieldLength::Narrow => aux::Length::Narrow,
+                FieldLength::Wide => aux::Length::Wide,
                 _ => return Err(Error::UnsupportedFormattingField(field)),
             },
         )));
@@ -407,7 +425,7 @@ impl<C: CldrCalendar> TypedDateTimePatternInterpolator<C> {
     pub fn include_month_names(
         &mut self,
         field_symbol: fields::Month,
-        field_length: fields::FieldLength,
+        field_length: FieldLength,
     ) -> Result<&mut Self, Error>
     where
         crate::provider::Baked:
@@ -422,14 +440,14 @@ impl<C: CldrCalendar> TypedDateTimePatternInterpolator<C> {
     pub fn load_day_period_names<P>(
         &mut self,
         provider: &P,
-        field_length: fields::FieldLength,
+        field_length: FieldLength,
     ) -> Result<&mut Self, Error>
     where
         P: DataProvider<DayPeriodSymbolsV1Marker> + ?Sized,
     {
         let field = fields::Field {
             // Names for 'a' and 'b' are stored in the same data key
-            symbol: fields::FieldSymbol::DayPeriod(fields::DayPeriod::NoonMidnight),
+            symbol: FieldSymbol::DayPeriod(fields::DayPeriod::NoonMidnight),
             length: field_length,
         };
         // UTS 35 says that "a..aaa" are all Abbreviated
@@ -443,9 +461,9 @@ impl<C: CldrCalendar> TypedDateTimePatternInterpolator<C> {
         locale.set_aux(AuxiliaryKeys::from_subtag(aux::subtag_for(
             aux::Context::Format,
             match field_length {
-                fields::FieldLength::Abbreviated => aux::Length::Abbr,
-                fields::FieldLength::Narrow => aux::Length::Narrow,
-                fields::FieldLength::Wide => aux::Length::Wide,
+                FieldLength::Abbreviated => aux::Length::Abbr,
+                FieldLength::Narrow => aux::Length::Narrow,
+                FieldLength::Wide => aux::Length::Wide,
                 _ => return Err(Error::UnsupportedFormattingField(field)),
             },
         )));
@@ -497,7 +515,7 @@ impl<C: CldrCalendar> TypedDateTimePatternInterpolator<C> {
     #[cfg(feature = "compiled_data")]
     pub fn include_day_period_names(
         &mut self,
-        field_length: fields::FieldLength,
+        field_length: FieldLength,
     ) -> Result<&mut Self, Error>
     where
         crate::provider::Baked: icu_provider::DataProvider<DayPeriodSymbolsV1Marker>,
@@ -512,13 +530,13 @@ impl<C: CldrCalendar> TypedDateTimePatternInterpolator<C> {
         &mut self,
         provider: &P,
         field_symbol: fields::Weekday,
-        field_length: fields::FieldLength,
+        field_length: FieldLength,
     ) -> Result<&mut Self, Error>
     where
         P: DataProvider<WeekdaySymbolsV1Marker> + ?Sized,
     {
         let field = fields::Field {
-            symbol: fields::FieldSymbol::Weekday(field_symbol),
+            symbol: FieldSymbol::Weekday(field_symbol),
             length: field_length,
         };
         // UTS 35 says that "E..EEE" are all Abbreviated
@@ -544,10 +562,10 @@ impl<C: CldrCalendar> TypedDateTimePatternInterpolator<C> {
                 fields::Weekday::StandAlone => aux::Context::Standalone,
             },
             match field_length {
-                fields::FieldLength::Abbreviated => aux::Length::Abbr,
-                fields::FieldLength::Narrow => aux::Length::Narrow,
-                fields::FieldLength::Wide => aux::Length::Wide,
-                fields::FieldLength::Six => aux::Length::Short,
+                FieldLength::Abbreviated => aux::Length::Abbr,
+                FieldLength::Narrow => aux::Length::Narrow,
+                FieldLength::Wide => aux::Length::Wide,
+                FieldLength::Six => aux::Length::Short,
                 _ => return Err(Error::UnsupportedFormattingField(field)),
             },
         )));
@@ -607,53 +625,240 @@ impl<C: CldrCalendar> TypedDateTimePatternInterpolator<C> {
     pub fn include_weekday_names(
         &mut self,
         field_symbol: fields::Weekday,
-        field_length: fields::FieldLength,
+        field_length: FieldLength,
     ) -> Result<&mut Self, Error>
     where
         crate::provider::Baked: icu_provider::DataProvider<WeekdaySymbolsV1Marker>,
     {
         self.load_weekday_names(&crate::provider::Baked, field_symbol, field_length)
     }
-}
 
-#[derive(Debug, Copy, Clone)]
-struct RawDateTimePatternInterpolatorBorrowed<'l> {
-    /// `year_symbols` is different because it could be either era or cyclic year.
-    year_symbols: OptionalNames<(), &'l YearSymbolsV1<'l>>,
-    month_symbols: OptionalNames<fields::Month, &'l MonthSymbolsV1<'l>>,
-    weekday_symbols: OptionalNames<fields::Weekday, &'l LinearSymbolsV1<'l>>,
-    dayperiod_symbols: OptionalNames<(), &'l LinearSymbolsV1<'l>>,
-    fixed_decimal_formatter: &'l FixedDecimalFormatter,
-    week_calculator: Option<&'l WeekCalculator>,
-}
+    /// Sets the week calculator to use with patterns requiring week numbering.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use icu::calendar::Date;
+    /// use icu::calendar::Gregorian;
+    /// use icu::calendar::week::WeekCalculator;
+    /// use icu::datetime::pattern;
+    /// use icu::datetime::TypedDateTimePatternInterpolator;
+    /// use icu::locid::locale;
+    /// use writeable::assert_writeable_eq;
+    ///
+    /// let mut interpolator =
+    ///     TypedDateTimePatternInterpolator::<Gregorian>::try_new(
+    ///         &locale!("en").into(),
+    ///     )
+    ///     .unwrap();
+    ///
+    /// // Load the week calculator and set it here:
+    /// let mut week_calculator = WeekCalculator::try_new(
+    ///     &locale!("en").into()
+    /// ).unwrap();
+    /// interpolator.set_week_calculator(week_calculator);
+    ///
+    /// // Format a pattern needing week data:
+    /// let pattern_str = "'Week' w 'of' Y";
+    /// let reference_pattern: pattern::reference::Pattern =
+    ///     pattern_str.parse().unwrap();
+    /// let pattern: pattern::runtime::Pattern = (&reference_pattern).into();
+    /// let date = Date::try_new_gregorian_date(2023, 12, 5).unwrap();
+    /// assert_writeable_eq!(
+    ///     interpolator.with_pattern(&pattern).format_date(&date),
+    ///     "Week 49 of 2023"
+    /// );
+    /// ```
+    #[inline]
+    pub fn set_week_calculator(&mut self, week_calculator: WeekCalculator) -> &mut Self {
+        self.week_calculator = Some(week_calculator);
+        self
+    }
 
-impl<C: CldrCalendar> TypedDateTimePatternInterpolator<C> {
-    fn as_borrowed(&self) -> RawDateTimePatternInterpolatorBorrowed {
-        RawDateTimePatternInterpolatorBorrowed {
-            year_symbols: self.year_symbols.as_borrowed(),
-            month_symbols: self.month_symbols.as_borrowed(),
-            weekday_symbols: self.weekday_symbols.as_borrowed(),
-            dayperiod_symbols: self.dayperiod_symbols.as_borrowed(),
-            fixed_decimal_formatter: &self.fixed_decimal_formatter,
-            week_calculator: self.week_calculator.as_ref(),
+    /// Associates this [`TypedDateTimePatternInterpolator`] with a pattern
+    /// without loading additional data for that pattern.
+    #[inline]
+    pub fn with_pattern<'l>(&'l self, pattern: &'l Pattern) -> DateTimePatternFormatter<'l, C> {
+        DateTimePatternFormatter {
+            pattern,
+            interpolator: self.as_borrowed(),
+            _calendar: PhantomData,
         }
     }
 
+    /// Associates this [`TypedDateTimePatternInterpolator`] with a pattern
+    /// and loads all data required for that pattern.
+    ///
+    /// Does not duplicate textual field symbols. See #4337
+    pub fn load_for_pattern<'l, P>(
+        &'l mut self,
+        provider: &P,
+        pattern: &'l Pattern,
+    ) -> Result<DateTimePatternFormatter<'l, C>, Error>
+    where
+        P: DataProvider<C::YearSymbolsV1Marker>
+            + DataProvider<C::MonthSymbolsV1Marker>
+            + DataProvider<WeekdaySymbolsV1Marker>
+            + DataProvider<DayPeriodSymbolsV1Marker>
+            + DataProvider<WeekDataV1Marker>
+            + ?Sized,
+    {
+        self.load_for_pattern_internal(provider, pattern, |locale| {
+            WeekCalculator::try_new_unstable(provider, locale)
+        })
+    }
+
+    /// Associates this [`TypedDateTimePatternInterpolator`] with a pattern
+    /// and includes all data required for that pattern.
+    ///
+    /// Does not duplicate textual field symbols. See #4337
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use icu::calendar::DateTime;
+    /// use icu::calendar::Gregorian;
+    /// use icu::datetime::pattern;
+    /// use icu::datetime::TypedDateTimePatternInterpolator;
+    /// use icu::locid::locale;
+    /// use writeable::assert_writeable_eq;
+    ///
+    /// let mut interpolator =
+    ///     TypedDateTimePatternInterpolator::<Gregorian>::try_new(
+    ///         &locale!("en").into(),
+    ///     )
+    ///     .unwrap();
+    ///
+    /// // Create a pattern from a pattern string:
+    /// let pattern_str = "EEEE 'on week' w 'of' Y G (MMM d) 'at' h:mm a";
+    /// let reference_pattern: pattern::reference::Pattern =
+    ///     pattern_str.parse().unwrap();
+    /// let pattern: pattern::runtime::Pattern = (&reference_pattern).into();
+    ///
+    /// // Load data for the pattern and format:
+    /// let datetime = DateTime::try_new_gregorian_datetime(2023, 12, 5, 17, 43, 12).unwrap();
+    /// assert_writeable_eq!(
+    ///     interpolator.include_for_pattern(&pattern).unwrap().format(&datetime),
+    ///     "Tuesday on week 49 of 2023 AD (Dec 5) at 5:43 PM"
+    /// );
+    /// ```
+    #[cfg(feature = "compiled_data")]
+    pub fn include_for_pattern<'l>(
+        &'l mut self,
+        pattern: &'l Pattern,
+    ) -> Result<DateTimePatternFormatter<'l, C>, Error>
+    where
+        crate::provider::Baked: DataProvider<C::YearSymbolsV1Marker>
+            + DataProvider<C::MonthSymbolsV1Marker>
+            + DataProvider<WeekdaySymbolsV1Marker>
+            + DataProvider<DayPeriodSymbolsV1Marker>,
+    {
+        self.load_for_pattern_internal(&crate::provider::Baked, pattern, |locale| {
+            WeekCalculator::try_new(locale)
+        })
+    }
+
+    fn load_for_pattern_internal<'l, P>(
+        &'l mut self,
+        provider: &P,
+        pattern: &'l Pattern,
+        week_calculator_loader: impl FnOnce(
+            &DataLocale,
+        )
+            -> Result<WeekCalculator, icu_calendar::CalendarError>,
+    ) -> Result<DateTimePatternFormatter<'l, C>, Error>
+    where
+        P: DataProvider<C::YearSymbolsV1Marker>
+            + DataProvider<C::MonthSymbolsV1Marker>
+            + DataProvider<WeekdaySymbolsV1Marker>
+            + DataProvider<DayPeriodSymbolsV1Marker>
+            + ?Sized,
+    {
+        let fields = pattern.items.iter().filter_map(|p| match p {
+            PatternItem::Field(field) => Some(field),
+            _ => None,
+        });
+
+        let mut has_numeric = false;
+        let mut has_weeks = false;
+        for field in fields {
+            match field.symbol {
+                ///// Textual symbols /////
+                FieldSymbol::Era => {
+                    self.load_year_names(provider, field.length)?;
+                }
+                FieldSymbol::Month(symbol) => match field.length {
+                    FieldLength::One => has_numeric = true,
+                    FieldLength::TwoDigit => has_numeric = true,
+                    _ => {
+                        self.load_month_names(provider, symbol, field.length)?;
+                    }
+                },
+                // 'E' is always text
+                // 'e' and 'c' are either numeric or text
+                FieldSymbol::Weekday(symbol) => match field.length {
+                    FieldLength::One | FieldLength::TwoDigit
+                        if !matches!(symbol, fields::Weekday::Format) =>
+                    {
+                        has_numeric = true
+                    }
+                    _ => {
+                        self.load_weekday_names(provider, symbol, field.length)?;
+                    }
+                },
+                FieldSymbol::DayPeriod(_) => {
+                    self.load_day_period_names(provider, field.length)?;
+                }
+
+                ///// Numeric symbols /////
+                FieldSymbol::Year(fields::Year::WeekOf) => has_weeks = true,
+                FieldSymbol::Year(_) => has_numeric = true,
+                FieldSymbol::Week(_) => has_weeks = true,
+                FieldSymbol::Day(_) => has_numeric = true,
+                FieldSymbol::Hour(_) => has_numeric = true,
+                FieldSymbol::Minute => has_numeric = true,
+                FieldSymbol::Second(_) => has_numeric = true,
+                FieldSymbol::TimeZone(_) => {
+                    // TODO: Consider whether time zones are supported here.
+                    return Err(Error::UnsupportedField(field.symbol));
+                }
+            };
+        }
+
+        if has_weeks {
+            self.set_week_calculator(week_calculator_loader(&self.locale)?);
+        }
+
+        if has_numeric || has_weeks {
+            // TODO(#4340): Load the FixedDecimalFormatter
+        }
+
+        Ok(self.with_pattern(pattern))
+    }
+}
+
+#[derive(Debug, Copy, Clone)]
+pub struct DateTimePatternFormatter<'a, C: CldrCalendar> {
+    pattern: &'a Pattern<'a>,
+    interpolator: RawDateTimePatternInterpolatorBorrowed<'a>,
+    _calendar: PhantomData<C>,
+}
+
+impl<'a, C: CldrCalendar> DateTimePatternFormatter<'a, C> {
     /// Formats a date and time of day.
     ///
     /// For an example, see [`TypedDateTimePatternInterpolator`].
-    pub fn format<'l, T>(
-        &'l self,
-        pattern: &'l Pattern<'l>,
-        datetime: &T,
-    ) -> FormattedDateTimePattern<'l>
+    pub fn format<T>(&self, datetime: &'a T) -> FormattedDateTimePattern<'a>
     where
         T: DateTimeInput<Calendar = C>,
     {
+        // DISCUSS: Should this return `'a` or a new lifetime `'l: 'a`?
+        // When returning `'l`, the intermediate type needs to be anchored,
+        // so for now I made it return `'a`.
         FormattedDateTimePattern {
-            pattern,
+            pattern: self.pattern,
             datetime: ExtractedDateTimeInput::extract_from(datetime),
-            interpolator: self.as_borrowed(),
+            interpolator: self.interpolator,
         }
     }
 
@@ -692,26 +897,22 @@ impl<C: CldrCalendar> TypedDateTimePatternInterpolator<C> {
     /// let date_bce = Date::try_new_gregorian_date(-50, 3, 15).unwrap();
     /// let date_ce = Date::try_new_gregorian_date(1700, 11, 20).unwrap();
     /// assert_writeable_eq!(
-    ///     interpolator.format_date(&pattern, &date_bce),
+    ///     interpolator.with_pattern(&pattern).format_date(&date_bce),
     ///     "The date is: March 15, 51 Before Christ"
     /// );
     /// assert_writeable_eq!(
-    ///     interpolator.format_date(&pattern, &date_ce),
+    ///     interpolator.with_pattern(&pattern).format_date(&date_ce),
     ///     "The date is: November 20, 1700 Anno Domini"
     /// );
     /// ```
-    pub fn format_date<'l, T>(
-        &'l self,
-        pattern: &'l Pattern<'l>,
-        datetime: &T,
-    ) -> FormattedDateTimePattern<'l>
+    pub fn format_date<T>(&self, datetime: &'a T) -> FormattedDateTimePattern<'a>
     where
         T: DateInput<Calendar = C>,
     {
         FormattedDateTimePattern {
-            pattern,
+            pattern: self.pattern,
             datetime: ExtractedDateTimeInput::extract_from_date(datetime),
-            interpolator: self.as_borrowed(),
+            interpolator: self.interpolator,
         }
     }
 
@@ -748,34 +949,30 @@ impl<C: CldrCalendar> TypedDateTimePatternInterpolator<C> {
     /// let time_noon = Time::try_new(12, 0, 0, 0).unwrap();
     /// let time_midnight = Time::try_new(0, 0, 0, 0).unwrap();
     /// assert_writeable_eq!(
-    ///     interpolator.format_time(&pattern, &time_am),
+    ///     interpolator.with_pattern(&pattern).format_time(&time_am),
     ///     "The time is: 11:04 AM"
     /// );
     /// assert_writeable_eq!(
-    ///     interpolator.format_time(&pattern, &time_pm),
+    ///     interpolator.with_pattern(&pattern).format_time(&time_pm),
     ///     "The time is: 1:41 PM"
     /// );
     /// assert_writeable_eq!(
-    ///     interpolator.format_time(&pattern, &time_noon),
+    ///     interpolator.with_pattern(&pattern).format_time(&time_noon),
     ///     "The time is: 12:00 noon"
     /// );
     /// assert_writeable_eq!(
-    ///     interpolator.format_time(&pattern, &time_midnight),
+    ///     interpolator.with_pattern(&pattern).format_time(&time_midnight),
     ///     "The time is: 12:00 midnight"
     /// );
     /// ```
-    pub fn format_time<'l, T>(
-        &'l self,
-        pattern: &'l Pattern<'l>,
-        datetime: &T,
-    ) -> FormattedDateTimePattern<'l>
+    pub fn format_time<T>(&self, datetime: &'a T) -> FormattedDateTimePattern<'a>
     where
         T: IsoTimeInput,
     {
         FormattedDateTimePattern {
-            pattern,
+            pattern: self.pattern,
             datetime: ExtractedDateTimeInput::extract_from_time(datetime),
-            interpolator: self.as_borrowed(),
+            interpolator: self.interpolator,
         }
     }
 }
@@ -826,11 +1023,11 @@ impl<'data> DateSymbols<'data> for RawDateTimePatternInterpolatorBorrowed<'data>
     fn get_symbol_for_month(
         &self,
         field_symbol: fields::Month,
-        field_length: fields::FieldLength,
+        field_length: FieldLength,
         code: MonthCode,
     ) -> Result<MonthPlaceholderValue, Error> {
         let field = fields::Field {
-            symbol: fields::FieldSymbol::Month(field_symbol),
+            symbol: FieldSymbol::Month(field_symbol),
             length: field_length,
         };
         let month_symbols = self
@@ -880,11 +1077,11 @@ impl<'data> DateSymbols<'data> for RawDateTimePatternInterpolatorBorrowed<'data>
     fn get_symbol_for_weekday(
         &self,
         field_symbol: fields::Weekday,
-        field_length: fields::FieldLength,
+        field_length: FieldLength,
         day: input::IsoWeekday,
     ) -> Result<&str, Error> {
         let field = fields::Field {
-            symbol: fields::FieldSymbol::Weekday(field_symbol),
+            symbol: FieldSymbol::Weekday(field_symbol),
             length: field_length,
         };
         // UTS 35 says that "e" and "E" have the same non-numeric names
@@ -909,11 +1106,11 @@ impl<'data> DateSymbols<'data> for RawDateTimePatternInterpolatorBorrowed<'data>
 
     fn get_symbol_for_era<'a>(
         &'a self,
-        field_length: fields::FieldLength,
+        field_length: FieldLength,
         era_code: &'a Era,
     ) -> Result<Option<&str>, Error> {
         let field = fields::Field {
-            symbol: fields::FieldSymbol::Era,
+            symbol: FieldSymbol::Era,
             length: field_length,
         };
         // UTS 35 says that "G..GGG" are all Abbreviated
@@ -933,13 +1130,13 @@ impl<'data> TimeSymbols for RawDateTimePatternInterpolatorBorrowed<'data> {
     fn get_symbol_for_day_period(
         &self,
         field_symbol: fields::DayPeriod,
-        field_length: fields::FieldLength,
+        field_length: FieldLength,
         hour: input::IsoHour,
         is_top_of_hour: bool,
     ) -> Result<&str, Error> {
         use fields::DayPeriod::NoonMidnight;
         let field = fields::Field {
-            symbol: fields::FieldSymbol::DayPeriod(field_symbol),
+            symbol: FieldSymbol::DayPeriod(field_symbol),
             length: field_length,
         };
         // UTS 35 says that "a..aaa" are all Abbreviated
@@ -977,25 +1174,25 @@ mod tests {
             .load_month_names(
                 &crate::provider::Baked,
                 fields::Month::Format,
-                fields::FieldLength::Abbreviated,
+                FieldLength::Abbreviated,
             )
             .unwrap()
             .load_weekday_names(
                 &crate::provider::Baked,
                 fields::Weekday::Format,
-                fields::FieldLength::Wide,
+                FieldLength::Wide,
             )
             .unwrap()
-            .load_year_names(&crate::provider::Baked, fields::FieldLength::Narrow)
+            .load_year_names(&crate::provider::Baked, FieldLength::Narrow)
             .unwrap()
-            .load_day_period_names(&crate::provider::Baked, fields::FieldLength::Abbreviated)
+            .load_day_period_names(&crate::provider::Baked, FieldLength::Abbreviated)
             .unwrap();
         let reference_pattern: reference::Pattern = "'It is' EEEE, MMM d, y GGGGG 'at' hh:mm a'!'"
             .parse()
             .unwrap();
         let pattern: Pattern = (&reference_pattern).into();
         let datetime = DateTime::try_new_gregorian_datetime(2023, 10, 25, 15, 0, 55).unwrap();
-        let formatted_pattern = interpolator.format(&pattern, &datetime);
+        let formatted_pattern = interpolator.with_pattern(&pattern).format(&datetime);
 
         assert_writeable_eq!(
             formatted_pattern,
@@ -1009,33 +1206,33 @@ mod tests {
         #[derive(Debug)]
         struct TestCase {
             pattern: &'static str,
-            field_length: fields::FieldLength,
+            field_length: FieldLength,
             expected: &'static str,
         }
         let cases = [
             TestCase {
                 pattern: "<G>",
-                field_length: fields::FieldLength::Abbreviated,
+                field_length: FieldLength::Abbreviated,
                 expected: "<н. е.>",
             },
             TestCase {
                 pattern: "<GG>",
-                field_length: fields::FieldLength::Abbreviated,
+                field_length: FieldLength::Abbreviated,
                 expected: "<н. е.>",
             },
             TestCase {
                 pattern: "<GGG>",
-                field_length: fields::FieldLength::Abbreviated,
+                field_length: FieldLength::Abbreviated,
                 expected: "<н. е.>",
             },
             TestCase {
                 pattern: "<GGGG>",
-                field_length: fields::FieldLength::Wide,
+                field_length: FieldLength::Wide,
                 expected: "<нашої ери>",
             },
             TestCase {
                 pattern: "<GGGGG>",
-                field_length: fields::FieldLength::Narrow,
+                field_length: FieldLength::Narrow,
                 expected: "<н.е.>",
             },
         ];
@@ -1053,7 +1250,7 @@ mod tests {
             let reference_pattern: reference::Pattern = pattern.parse().unwrap();
             let pattern: Pattern = (&reference_pattern).into();
             let datetime = DateTime::try_new_gregorian_datetime(2023, 11, 17, 13, 41, 28).unwrap();
-            let formatted_pattern = interpolator.format(&pattern, &datetime);
+            let formatted_pattern = interpolator.with_pattern(&pattern).format(&datetime);
 
             assert_writeable_eq!(formatted_pattern, expected, "{cas:?}");
         }
@@ -1067,7 +1264,7 @@ mod tests {
         struct TestCase {
             pattern: &'static str,
             field_symbol: fields::Month,
-            field_length: fields::FieldLength,
+            field_length: FieldLength,
             expected: &'static str,
         }
         let cases = [
@@ -1075,38 +1272,38 @@ mod tests {
             TestCase {
                 pattern: "<MMM>",
                 field_symbol: fields::Month::Format,
-                field_length: fields::FieldLength::Abbreviated,
+                field_length: FieldLength::Abbreviated,
                 expected: "<лист.>",
             },
             TestCase {
                 pattern: "<MMMM>",
                 field_symbol: fields::Month::Format,
-                field_length: fields::FieldLength::Wide,
+                field_length: FieldLength::Wide,
                 expected: "<листопада>",
             },
             TestCase {
                 pattern: "<MMMMM>",
                 field_symbol: fields::Month::Format,
-                field_length: fields::FieldLength::Narrow,
+                field_length: FieldLength::Narrow,
                 expected: "<л>",
             },
             // 'L' and 'LL' are numeric
             TestCase {
                 pattern: "<LLL>",
                 field_symbol: fields::Month::StandAlone,
-                field_length: fields::FieldLength::Abbreviated,
+                field_length: FieldLength::Abbreviated,
                 expected: "<лист.>",
             },
             TestCase {
                 pattern: "<LLLL>",
                 field_symbol: fields::Month::StandAlone,
-                field_length: fields::FieldLength::Wide,
+                field_length: FieldLength::Wide,
                 expected: "<листопад>",
             },
             TestCase {
                 pattern: "<LLLLL>",
                 field_symbol: fields::Month::StandAlone,
-                field_length: fields::FieldLength::Narrow,
+                field_length: FieldLength::Narrow,
                 expected: "<Л>",
             },
         ];
@@ -1125,7 +1322,7 @@ mod tests {
             let reference_pattern: reference::Pattern = pattern.parse().unwrap();
             let pattern: Pattern = (&reference_pattern).into();
             let datetime = DateTime::try_new_gregorian_datetime(2023, 11, 17, 13, 41, 28).unwrap();
-            let formatted_pattern = interpolator.format(&pattern, &datetime);
+            let formatted_pattern = interpolator.with_pattern(&pattern).format(&datetime);
 
             assert_writeable_eq!(formatted_pattern, expected, "{cas:?}");
         }
@@ -1138,94 +1335,94 @@ mod tests {
         struct TestCase {
             pattern: &'static str,
             field_symbol: fields::Weekday,
-            field_length: fields::FieldLength,
+            field_length: FieldLength,
             expected: &'static str,
         }
         let cases = [
             TestCase {
                 pattern: "<E>",
                 field_symbol: fields::Weekday::Format,
-                field_length: fields::FieldLength::Abbreviated,
+                field_length: FieldLength::Abbreviated,
                 expected: "<пт>",
             },
             TestCase {
                 pattern: "<EE>",
                 field_symbol: fields::Weekday::Format,
-                field_length: fields::FieldLength::Abbreviated,
+                field_length: FieldLength::Abbreviated,
                 expected: "<пт>",
             },
             TestCase {
                 pattern: "<EEE>",
                 field_symbol: fields::Weekday::Format,
-                field_length: fields::FieldLength::Abbreviated,
+                field_length: FieldLength::Abbreviated,
                 expected: "<пт>",
             },
             TestCase {
                 pattern: "<EEEE>",
                 field_symbol: fields::Weekday::Format,
-                field_length: fields::FieldLength::Wide,
+                field_length: FieldLength::Wide,
                 expected: "<пʼятницю>",
             },
             TestCase {
                 pattern: "<EEEEE>",
                 field_symbol: fields::Weekday::Format,
-                field_length: fields::FieldLength::Narrow,
+                field_length: FieldLength::Narrow,
                 expected: "<П>",
             },
             TestCase {
                 pattern: "<EEEEEE>",
                 field_symbol: fields::Weekday::Format,
-                field_length: fields::FieldLength::Six,
+                field_length: FieldLength::Six,
                 expected: "<пт>",
             },
             // 'e' and 'ee' are numeric
             TestCase {
                 pattern: "<eee>",
                 field_symbol: fields::Weekday::Format,
-                field_length: fields::FieldLength::Abbreviated,
+                field_length: FieldLength::Abbreviated,
                 expected: "<пт>",
             },
             TestCase {
                 pattern: "<eeee>",
                 field_symbol: fields::Weekday::Format,
-                field_length: fields::FieldLength::Wide,
+                field_length: FieldLength::Wide,
                 expected: "<пʼятницю>",
             },
             TestCase {
                 pattern: "<eeeee>",
                 field_symbol: fields::Weekday::Format,
-                field_length: fields::FieldLength::Narrow,
+                field_length: FieldLength::Narrow,
                 expected: "<П>",
             },
             TestCase {
                 pattern: "<eeeeee>",
                 field_symbol: fields::Weekday::Format,
-                field_length: fields::FieldLength::Six,
+                field_length: FieldLength::Six,
                 expected: "<пт>",
             },
             // 'c' and 'cc' are numeric
             TestCase {
                 pattern: "<ccc>",
                 field_symbol: fields::Weekday::StandAlone,
-                field_length: fields::FieldLength::Abbreviated,
+                field_length: FieldLength::Abbreviated,
                 expected: "<пт>",
             },
             TestCase {
                 pattern: "<cccc>",
                 field_symbol: fields::Weekday::StandAlone,
-                field_length: fields::FieldLength::Wide,
+                field_length: FieldLength::Wide,
                 expected: "<пʼятниця>",
             },
             TestCase {
                 pattern: "<ccccc>",
                 field_symbol: fields::Weekday::StandAlone,
-                field_length: fields::FieldLength::Narrow,
+                field_length: FieldLength::Narrow,
                 expected: "<П>",
             },
             TestCase {
                 pattern: "<cccccc>",
                 field_symbol: fields::Weekday::StandAlone,
-                field_length: fields::FieldLength::Six,
+                field_length: FieldLength::Six,
                 expected: "<пт>",
             },
         ];
@@ -1244,7 +1441,7 @@ mod tests {
             let reference_pattern: reference::Pattern = pattern.parse().unwrap();
             let pattern: Pattern = (&reference_pattern).into();
             let datetime = DateTime::try_new_gregorian_datetime(2023, 11, 17, 13, 41, 28).unwrap();
-            let formatted_pattern = interpolator.format(&pattern, &datetime);
+            let formatted_pattern = interpolator.with_pattern(&pattern).format(&datetime);
 
             assert_writeable_eq!(formatted_pattern, expected, "{cas:?}");
         }
@@ -1258,58 +1455,58 @@ mod tests {
         #[derive(Debug)]
         struct TestCase {
             pattern: &'static str,
-            field_length: fields::FieldLength,
+            field_length: FieldLength,
             expected: &'static str,
         }
         let cases = [
             TestCase {
                 pattern: "<a>",
-                field_length: fields::FieldLength::Abbreviated,
+                field_length: FieldLength::Abbreviated,
                 expected: "<PM>",
             },
             TestCase {
                 pattern: "<aa>",
-                field_length: fields::FieldLength::Abbreviated,
+                field_length: FieldLength::Abbreviated,
                 expected: "<PM>",
             },
             TestCase {
                 pattern: "<aaa>",
-                field_length: fields::FieldLength::Abbreviated,
+                field_length: FieldLength::Abbreviated,
                 expected: "<PM>",
             },
             TestCase {
                 pattern: "<aaaa>",
-                field_length: fields::FieldLength::Wide,
+                field_length: FieldLength::Wide,
                 expected: "<หลังเที่ยง>",
             },
             TestCase {
                 pattern: "<aaaaa>",
-                field_length: fields::FieldLength::Narrow,
+                field_length: FieldLength::Narrow,
                 expected: "<p>",
             },
             TestCase {
                 pattern: "<b>",
-                field_length: fields::FieldLength::Abbreviated,
+                field_length: FieldLength::Abbreviated,
                 expected: "<PM>",
             },
             TestCase {
                 pattern: "<bb>",
-                field_length: fields::FieldLength::Abbreviated,
+                field_length: FieldLength::Abbreviated,
                 expected: "<PM>",
             },
             TestCase {
                 pattern: "<bbb>",
-                field_length: fields::FieldLength::Abbreviated,
+                field_length: FieldLength::Abbreviated,
                 expected: "<PM>",
             },
             TestCase {
                 pattern: "<bbbb>",
-                field_length: fields::FieldLength::Wide,
+                field_length: FieldLength::Wide,
                 expected: "<หลังเที่ยง>",
             },
             TestCase {
                 pattern: "<bbbbb>",
-                field_length: fields::FieldLength::Narrow,
+                field_length: FieldLength::Narrow,
                 expected: "<p>",
             },
         ];
@@ -1327,7 +1524,7 @@ mod tests {
             let reference_pattern: reference::Pattern = pattern.parse().unwrap();
             let pattern: Pattern = (&reference_pattern).into();
             let datetime = DateTime::try_new_gregorian_datetime(2023, 11, 17, 13, 41, 28).unwrap();
-            let formatted_pattern = interpolator.format(&pattern, &datetime);
+            let formatted_pattern = interpolator.with_pattern(&pattern).format(&datetime);
 
             assert_writeable_eq!(formatted_pattern, expected, "{cas:?}");
         }
