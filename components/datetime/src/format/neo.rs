@@ -272,7 +272,7 @@ impl<C: CldrCalendar> TypedDateTimePatternInterpolator<C> {
             NamePresence::Mismatched => return Err(Error::DuplicateField(field)),
         };
         let mut locale = self.locale.clone();
-        locale.set_aux(AuxiliaryKeys::from_subtag(aux::subtag_for(
+        locale.set_aux(AuxiliaryKeys::from_subtag(aux::symbol_subtag_for(
             aux::Context::Format,
             match field_length {
                 FieldLength::Abbreviated => aux::Length::Abbr,
@@ -357,7 +357,7 @@ impl<C: CldrCalendar> TypedDateTimePatternInterpolator<C> {
             NamePresence::Mismatched => return Err(Error::DuplicateField(field)),
         };
         let mut locale = self.locale.clone();
-        locale.set_aux(AuxiliaryKeys::from_subtag(aux::subtag_for(
+        locale.set_aux(AuxiliaryKeys::from_subtag(aux::symbol_subtag_for(
             match field_symbol {
                 fields::Month::Format => aux::Context::Format,
                 fields::Month::StandAlone => aux::Context::Standalone,
@@ -458,7 +458,7 @@ impl<C: CldrCalendar> TypedDateTimePatternInterpolator<C> {
             NamePresence::Mismatched => return Err(Error::DuplicateField(field)),
         };
         let mut locale = self.locale.clone();
-        locale.set_aux(AuxiliaryKeys::from_subtag(aux::subtag_for(
+        locale.set_aux(AuxiliaryKeys::from_subtag(aux::symbol_subtag_for(
             aux::Context::Format,
             match field_length {
                 FieldLength::Abbreviated => aux::Length::Abbr,
@@ -555,7 +555,7 @@ impl<C: CldrCalendar> TypedDateTimePatternInterpolator<C> {
             NamePresence::Mismatched => return Err(Error::DuplicateField(field)),
         };
         let mut locale = self.locale.clone();
-        locale.set_aux(AuxiliaryKeys::from_subtag(aux::subtag_for(
+        locale.set_aux(AuxiliaryKeys::from_subtag(aux::symbol_subtag_for(
             match field_symbol {
                 // UTS 35 says that "e" and "E" have the same non-numeric names
                 fields::Weekday::Format | fields::Weekday::Local => aux::Context::Format,

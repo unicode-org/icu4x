@@ -3,12 +3,12 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use super::supported_cals;
-use crate::transform::cldr::cldr_serde::ca::{self, PatternLength};
+use crate::transform::cldr::cldr_serde::ca;
 use crate::DatagenProvider;
 use icu_datetime::pattern::{self, CoarseHourCycle};
 
 use icu_datetime::provider::calendar::{patterns::GenericLengthPatternsV1, DateSkeletonPatternsV1};
-use icu_datetime::provider::neo::aux::{self, Context, Length};
+use icu_datetime::provider::neo::aux::{self, Context, Length, PatternLength};
 use icu_datetime::provider::neo::*;
 use icu_locid::{
     extensions::private::Subtag,
@@ -21,27 +21,6 @@ use std::borrow::Cow;
 use std::collections::BTreeMap;
 use tinystr::TinyAsciiStr;
 use zerovec::ule::UnvalidatedStr;
-
-fn aux_pattern_subtag_info(subtag: Subtag) -> (PatternLength, Option<CoarseHourCycle>) {
-    use {aux::*, CoarseHourCycle::*, PatternLength::*};
-    match subtag {
-        PATTERN_FULL => (Full, None),
-        PATTERN_LONG => (Long, None),
-        PATTERN_MEDIUM => (Medium, None),
-        PATTERN_SHORT => (Short, None),
-
-        PATTERN_FULL12 => (Full, Some(H11H12)),
-        PATTERN_LONG12 => (Long, Some(H11H12)),
-        PATTERN_MEDIUM12 => (Medium, Some(H11H12)),
-        PATTERN_SHORT12 => (Short, Some(H11H12)),
-
-        PATTERN_FULL24 => (Full, Some(H23H24)),
-        PATTERN_LONG24 => (Long, Some(H23H24)),
-        PATTERN_MEDIUM24 => (Medium, Some(H23H24)),
-        PATTERN_SHORT24 => (Short, Some(H23H24)),
-        _ => panic!("Found unexpected auxiliary subtag {}", subtag),
-    }
-}
 
 /// Most keys don't have short symbols (except weekdays)
 ///
@@ -170,7 +149,7 @@ impl DatagenProvider {
         Self: IterableDataProvider<M>,
     {
         self.load_neo_key(req, &calendar, |langid, data, aux| {
-            let Some((context, length)) = aux::subtag_info(aux) else {
+            let Some((context, length)) = aux::symbol_subtag_info(aux) else {
                 panic!("Found unexpected auxiliary subtag {}", aux)
             };
             conversion(self, langid, data, &calendar, context, length)
@@ -191,7 +170,9 @@ impl DatagenProvider {
         Self: IterableDataProvider<M>,
     {
         self.load_neo_key(req, &calendar, |_langid, data, aux| {
-            let (length, hc) = aux_pattern_subtag_info(aux);
+            let Some((length, hc)) = aux::pattern_subtag_info(aux) else {
+                panic!("Found unexpected auxiliary subtag {}", aux)
+            };
             conversion(data, length, hc)
         })
     }
