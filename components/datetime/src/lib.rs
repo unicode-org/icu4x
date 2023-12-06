@@ -151,6 +151,8 @@ mod zoned_datetime;
 
 pub use any::{DateFormatter, DateTimeFormatter, ZonedDateTimeFormatter};
 pub use calendar::CldrCalendar;
+#[cfg(feature = "experimental")]
+pub use calendar::InternalCldrCalendar;
 pub use datetime::{TimeFormatter, TypedDateFormatter, TypedDateTimeFormatter};
 pub use error::DateTimeError;
 pub use format::datetime::FormattedDateTime;
