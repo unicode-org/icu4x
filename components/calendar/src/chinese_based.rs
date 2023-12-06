@@ -395,17 +395,16 @@ impl<C: ChineseBasedWithDataLoading + CalendarArithmetic<YearInfo = ChineseBased
     }
 }
 
-// TODO(#3933): pass around YearInfo in CalendarArithmetic (oops)
 impl<C: ChineseBasedWithDataLoading> CalendarArithmetic for C {
     type YearInfo = ChineseBasedYearInfo;
 
-    fn month_days(year: i32, month: u8, year_info: ChineseBasedYearInfo) -> u8 {
-        chinese_based::month_days::<C::CB>(year, month)
+    fn month_days(_year: i32, month: u8, year_info: ChineseBasedYearInfo) -> u8 {
+        year_info.days_in_month(month)
     }
 
     /// Returns the number of months in a given year, which is 13 in a leap year, and 12 in a common year.
-    fn months_for_every_year(year: i32, year_info: ChineseBasedYearInfo) -> u8 {
-        if Self::is_leap_year(year, year_info) {
+    fn months_for_every_year(_year: i32, year_info: ChineseBasedYearInfo) -> u8 {
+        if year_info.leap_month.is_some() {
             13
         } else {
             12
@@ -413,20 +412,24 @@ impl<C: ChineseBasedWithDataLoading> CalendarArithmetic for C {
     }
 
     /// Returns true if the given year is a leap year, and false if not.
-    fn is_leap_year(year: i32, year_info: ChineseBasedYearInfo) -> bool {
-        chinese_based::is_leap_year::<C::CB>(year)
+    fn is_leap_year(_year: i32, year_info: ChineseBasedYearInfo) -> bool {
+        year_info.leap_month.is_some()
     }
 
     /// Returns the (month, day) of the last day in a Chinese year (the day before Chinese New Year).
     /// The last month in a year will always be 12 in a common year or 13 in a leap year. The day is
     /// determined by finding the day immediately before the next new year and calculating the number
     /// of days since the last new moon (beginning of the last month in the year).
-    fn last_month_day_in_year(year: i32, year_info: ChineseBasedYearInfo) -> (u8, u8) {
-        chinese_based::last_month_day_in_year::<C::CB>(year)
+    fn last_month_day_in_year(_year: i32, year_info: ChineseBasedYearInfo) -> (u8, u8) {
+        if year_info.leap_month.is_some() {
+            (13, year_info.days_in_month(13))
+        } else {
+            (12, year_info.days_in_month(12))
+        }
     }
 
-    fn days_in_provided_year(year: i32, year_info: ChineseBasedYearInfo) -> u16 {
-        chinese_based::days_in_provided_year::<C::CB>(year)
+    fn days_in_provided_year(_year: i32, year_info: ChineseBasedYearInfo) -> u16 {
+        year_info.last_day_of_month(13)
     }
 }
 
