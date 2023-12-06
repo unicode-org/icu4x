@@ -113,11 +113,21 @@ impl<C: CalendarArithmetic> ArithmeticDate<C> {
     where
         C: CalendarArithmetic<YearInfo = ()>,
     {
+        Self::new_unchecked_with_info(year, month, day, ())
+    }
+    /// Create a new `ArithmeticDate` without checking that `month` and `day` are in bounds.
+    #[inline]
+    pub const fn new_unchecked_with_info(
+        year: i32,
+        month: u8,
+        day: u8,
+        year_info: C::YearInfo,
+    ) -> Self {
         ArithmeticDate {
             year,
             month,
             day,
-            year_info: (),
+            year_info,
             marker: PhantomData,
         }
     }

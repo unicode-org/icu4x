@@ -229,7 +229,9 @@ impl ChineseBasedYearInfo {
     }
 }
 
-impl<C: ChineseBasedWithDataLoading + CalendarArithmetic<YearInfo = ()>> ChineseBasedDateInner<C> {
+impl<C: ChineseBasedWithDataLoading + CalendarArithmetic<YearInfo = ChineseBasedYearInfo>>
+    ChineseBasedDateInner<C>
+{
     /// Given a 1-indexed chinese extended year, fetch its data from the cache.
     ///
     /// If the actual year data that was fetched is for a different year, update the getter year
@@ -291,7 +293,7 @@ impl<C: ChineseBasedWithDataLoading + CalendarArithmetic<YearInfo = ()>> Chinese
         // creating this ArithmeticDate would fail, since the same algorithms used to generate the ymd
         // are also used to check for valid ymd.
         ChineseBasedDateInner(
-            ArithmeticDate::new_unchecked(extended_year, month, day_of_month),
+            ArithmeticDate::new_unchecked_with_info(extended_year, month, day_of_month, year_info),
             year_info,
         )
     }
@@ -346,8 +348,9 @@ impl<C: ChineseBasedWithDataLoading + CalendarArithmetic<YearInfo = ()>> Chinese
         }
 
         // Unchecked can be used because month and day are already checked in this fn
-        // TODO pass in year_info
-        Ok(ArithmeticDate::<C>::new_unchecked(year, month, day))
+        Ok(ArithmeticDate::<C>::new_unchecked_with_info(
+            year, month, day, year_info,
+        ))
     }
 
     /// Call `months_in_year_with_info` on a `ChineseBasedDateInner`
@@ -397,7 +400,7 @@ impl<C: ChineseBasedWithDataLoading + CalendarArithmetic<YearInfo = ()>> Chinese
 }
 
 impl<C: ChineseBasedWithDataLoading> CalendarArithmetic for C {
-    type YearInfo = ();
+    type YearInfo = ChineseBasedYearInfo;
 
     fn month_days(year: i32, month: u8) -> u8 {
         chinese_based::month_days::<C::CB>(year, month)
