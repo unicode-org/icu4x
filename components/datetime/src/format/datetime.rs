@@ -3,7 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::error::DateTimeError as Error;
-use crate::fields::{self, Field, FieldLength, FieldSymbol, Second, Week, Year};
+use crate::fields::{self, Field, FieldLength, FieldSymbol, Second, Week, Weekday, Year};
 use crate::input::{
     DateTimeInput, DateTimeInputWithWeekConfig, ExtractedDateTimeInput, LocalizedDateTimeInput,
 };
@@ -566,6 +566,112 @@ impl RequiredData {
                 // If we don't support time zones, and encountered a time zone
                 // field, error out.
                 return Err(field);
+            }
+        }
+
+        Ok(false)
+    }
+}
+
+/// What data is required to format a given pattern.
+#[derive(Default)]
+pub(crate) struct RequiredDataNeo {
+    // C::YearSymbolsV1Marker is required.
+    pub year_symbols: Option<Field>,
+    // C::MonthSymbolsV1Marker is required.
+    pub month_symbols: Option<Field>,
+    // WeekdaySymbolsV1Marker is required.
+    pub weekday_symbols: Option<Field>,
+    // DayPeriodSymbolsV1Marker is required.
+    pub dayperiod_symbols: Option<Field>,
+    // FixedDecimalFormatter is required.
+    pub fixed_decimal_formatter: bool,
+    // WeekDataV1 is required.
+    pub week_data: bool,
+}
+
+impl RequiredDataNeo {
+    #[inline]
+    pub(crate) fn needs_everything(&self) -> bool {
+        self.year_symbols.is_some()
+            && self.month_symbols.is_some()
+            && self.weekday_symbols.is_some()
+            && self.dayperiod_symbols.is_some()
+            && self.fixed_decimal_formatter
+            && self.week_data
+    }
+
+    /// Checks if formatting `pattern` would require us to load data & if so adds
+    /// them to this struct.
+    /// Keep it in sync with the `write_field` use of symbols.
+    pub(crate) fn add_requirements_from_pattern(
+        &mut self,
+        pattern: &Pattern,
+        supports_time_zones: bool,
+    ) -> Result<bool, Field> {
+        let fields = pattern.items.iter().filter_map(|p| match p {
+            PatternItem::Field(field) => Some(field),
+            _ => None,
+        });
+
+        enum NeedsWhat<'a> {
+            Nothing,
+            Symbols(&'a mut Option<Field>),
+            FixedDecimalFormatter,
+            WeekDataAndFixedDecimalFormatter,
+        }
+        use NeedsWhat::*;
+
+        for field in fields {
+            let needs_what = match field.symbol {
+                FieldSymbol::Era => Symbols(&mut self.year_symbols),
+                FieldSymbol::Year(Year::WeekOf) => WeekDataAndFixedDecimalFormatter,
+                FieldSymbol::Year(_) => FixedDecimalFormatter,
+                FieldSymbol::Month(_) => match field.length {
+                    FieldLength::One => FixedDecimalFormatter,
+                    FieldLength::TwoDigit => FixedDecimalFormatter,
+                    _ => Symbols(&mut self.month_symbols),
+                },
+                FieldSymbol::Week(_) => WeekDataAndFixedDecimalFormatter,
+                FieldSymbol::Day(_) => FixedDecimalFormatter,
+                // 'E' is always text
+                FieldSymbol::Weekday(Weekday::Format) => Symbols(&mut self.weekday_symbols),
+                // 'e' and 'c' are either numeric or text
+                FieldSymbol::Weekday(_) => match field.length {
+                    FieldLength::One => FixedDecimalFormatter,
+                    FieldLength::TwoDigit => FixedDecimalFormatter,
+                    _ => Symbols(&mut self.weekday_symbols),
+                },
+                FieldSymbol::DayPeriod(_) => Symbols(&mut self.dayperiod_symbols),
+                FieldSymbol::Hour(_) => FixedDecimalFormatter,
+                FieldSymbol::Minute => FixedDecimalFormatter,
+                FieldSymbol::Second(_) => FixedDecimalFormatter,
+                FieldSymbol::TimeZone(_) => {
+                    if !supports_time_zones {
+                        // If we don't support time zones, and encountered a time zone
+                        // field, error out.
+                        return Err(field);
+                    }
+                    Nothing
+                }
+            };
+
+            match needs_what {
+                Nothing => (),
+                Symbols(option) => {
+                    if option.replace(field).is_some() {
+                        // TODO(#4337): Handle this properly
+                        debug_assert!(false, "already loaded data for symbol: {field:?}");
+                        return Err(field);
+                    }
+                }
+                FixedDecimalFormatter => {
+                    self.fixed_decimal_formatter = true;
+                }
+                WeekDataAndFixedDecimalFormatter => {
+                    self.fixed_decimal_formatter = true;
+                    self.week_data = true;
+                }
             }
         }
 

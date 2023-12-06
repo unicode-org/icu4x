@@ -3,9 +3,10 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use super::datetime::write_pattern;
+use super::datetime::RequiredDataNeo;
 use crate::calendar::CldrCalendar;
 use crate::error::DateTimeError as Error;
-use crate::fields;
+use crate::fields::{self, FieldSymbol};
 use crate::input;
 use crate::input::DateInput;
 use crate::input::DateTimeInput;
@@ -17,6 +18,7 @@ use crate::provider::date_time::{DateSymbols, MonthPlaceholderValue, TimeSymbols
 use crate::provider::neo::*;
 use core::fmt;
 use core::marker::PhantomData;
+use icu_calendar::provider::WeekDataV1Marker;
 use icu_calendar::types::Era;
 use icu_calendar::types::MonthCode;
 use icu_calendar::week::WeekCalculator;
@@ -638,6 +640,11 @@ impl<C: CldrCalendar> TypedDateTimePatternInterpolator<C> {
         self.load_weekday_names(&crate::provider::Baked, field_symbol, field_length)
     }
 
+    pub fn set_week_calculator(&mut self, week_calculator: WeekCalculator) -> &mut Self {
+        self.week_calculator = Some(week_calculator);
+        self
+    }
+
     /// Associates this [`TypedDateTimePatternInterpolator`] with a pattern
     /// without loading additional data for that pattern.
     #[inline]
@@ -647,6 +654,47 @@ impl<C: CldrCalendar> TypedDateTimePatternInterpolator<C> {
             interpolator: self.as_borrowed(),
             _calendar: PhantomData::default(),
         }
+    }
+
+    pub fn load_for_pattern<'l, P>(
+        &'l mut self,
+        provider: &P,
+        pattern: &'l Pattern,
+    ) -> Result<DateTimePatternFormatter<'l, C>, Error>
+    where
+        P: DataProvider<C::YearSymbolsV1Marker>
+            + DataProvider<C::MonthSymbolsV1Marker>
+            + DataProvider<WeekdaySymbolsV1Marker>
+            + DataProvider<DayPeriodSymbolsV1Marker>
+            + DataProvider<WeekDataV1Marker>
+            + ?Sized,
+    {
+        let mut required_data = RequiredDataNeo::default();
+        // TODO: Consider support for time zones here
+        required_data.add_requirements_from_pattern(pattern, false);
+        if let Some(field) = required_data.year_symbols {
+            self.load_year_names(provider, field.length)?;
+        }
+        if let Some(field) = required_data.month_symbols {
+            let FieldSymbol::Month(month) = field.symbol else {
+                unreachable!()
+            };
+            self.load_month_names(provider, month, field.length)?;
+        }
+        if let Some(field) = required_data.weekday_symbols {
+            let FieldSymbol::Weekday(weekday) = field.symbol else {
+                unreachable!()
+            };
+            self.load_weekday_names(provider, weekday, field.length)?;
+        }
+        if let Some(field) = required_data.dayperiod_symbols {
+            self.load_day_period_names(provider, field.length)?;
+        }
+        // TODO(#4340): Load the FixedDecimalFormatter
+        if required_data.week_data {
+            self.set_week_calculator(WeekCalculator::try_new_unstable(provider, &self.locale)?);
+        }
+        Ok(self.with_pattern(pattern))
     }
 }
 
@@ -661,10 +709,7 @@ impl<'a, C: CldrCalendar> DateTimePatternFormatter<'a, C> {
     /// Formats a date and time of day.
     ///
     /// For an example, see [`TypedDateTimePatternInterpolator`].
-    pub fn format<T>(
-        &self,
-        datetime: &'a T,
-    ) -> FormattedDateTimePattern<'a>
+    pub fn format<T>(&self, datetime: &'a T) -> FormattedDateTimePattern<'a>
     where
         T: DateTimeInput<Calendar = C>,
     {
@@ -721,10 +766,7 @@ impl<'a, C: CldrCalendar> DateTimePatternFormatter<'a, C> {
     ///     "The date is: November 20, 1700 Anno Domini"
     /// );
     /// ```
-    pub fn format_date<T>(
-        &self,
-        datetime: &'a T,
-    ) -> FormattedDateTimePattern<'a>
+    pub fn format_date<T>(&self, datetime: &'a T) -> FormattedDateTimePattern<'a>
     where
         T: DateInput<Calendar = C>,
     {
@@ -784,10 +826,7 @@ impl<'a, C: CldrCalendar> DateTimePatternFormatter<'a, C> {
     ///     "The time is: 12:00 midnight"
     /// );
     /// ```
-    pub fn format_time<T>(
-        &self,
-        datetime: &'a T,
-    ) -> FormattedDateTimePattern<'a>
+    pub fn format_time<T>(&self, datetime: &'a T) -> FormattedDateTimePattern<'a>
     where
         T: IsoTimeInput,
     {
