@@ -829,7 +829,7 @@ impl<C: CldrCalendar> TypedDateTimePatternInterpolator<C> {
             self.set_week_calculator(week_calculator_loader(&self.locale)?);
         }
 
-        if has_numeric {
+        if has_numeric || has_weeks {
             // TODO(#4340): Load the FixedDecimalFormatter
         }
 
