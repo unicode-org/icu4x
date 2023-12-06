@@ -3,7 +3,6 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use super::datetime::write_pattern;
-use super::datetime::RequiredDataNeo;
 use crate::calendar::CldrCalendar;
 use crate::error::DateTimeError as Error;
 use crate::fields::{self, FieldLength, FieldSymbol};
@@ -14,6 +13,7 @@ use crate::input::DateTimeInputWithWeekConfig;
 use crate::input::ExtractedDateTimeInput;
 use crate::input::IsoTimeInput;
 use crate::pattern::runtime::Pattern;
+use crate::pattern::PatternItem;
 use crate::provider::date_time::{DateSymbols, MonthPlaceholderValue, TimeSymbols};
 use crate::provider::neo::*;
 use core::fmt;
@@ -774,33 +774,65 @@ impl<C: CldrCalendar> TypedDateTimePatternInterpolator<C> {
             + DataProvider<DayPeriodSymbolsV1Marker>
             + ?Sized,
     {
-        let mut required_data = RequiredDataNeo::default();
-        // TODO: Consider support for time zones here
-        required_data
-            .add_requirements_from_pattern(pattern, false)
-            .map_err(|field| Error::UnsupportedField(field.symbol))?;
-        if let Some(field) = required_data.year_symbols {
-            self.load_year_names(provider, field.length)?;
-        }
-        if let Some(field) = required_data.month_symbols {
-            let FieldSymbol::Month(month) = field.symbol else {
-                unreachable!()
+        let fields = pattern.items.iter().filter_map(|p| match p {
+            PatternItem::Field(field) => Some(field),
+            _ => None,
+        });
+
+        let mut has_numeric = false;
+        let mut has_weeks = false;
+        for field in fields {
+            match field.symbol {
+                /** Textual symbols **/
+                FieldSymbol::Era => {
+                    self.load_year_names(provider, field.length)?;
+                }
+                FieldSymbol::Month(symbol) => match field.length {
+                    FieldLength::One => has_numeric = true,
+                    FieldLength::TwoDigit => has_numeric = true,
+                    _ => {
+                        self.load_month_names(provider, symbol, field.length)?;
+                    }
+                },
+                // 'E' is always text
+                // 'e' and 'c' are either numeric or text
+                FieldSymbol::Weekday(symbol) => match field.length {
+                    FieldLength::One | FieldLength::TwoDigit
+                        if !matches!(symbol, fields::Weekday::Format) =>
+                    {
+                        has_numeric = true
+                    }
+                    _ => {
+                        self.load_weekday_names(provider, symbol, field.length)?;
+                    }
+                },
+                FieldSymbol::DayPeriod(_) => {
+                    self.load_day_period_names(provider, field.length)?;
+                }
+
+                /** Numeric symbols **/
+                FieldSymbol::Year(fields::Year::WeekOf) => has_weeks = true,
+                FieldSymbol::Year(_) => has_numeric = true,
+                FieldSymbol::Week(_) => has_weeks = true,
+                FieldSymbol::Day(_) => has_numeric = true,
+                FieldSymbol::Hour(_) => has_numeric = true,
+                FieldSymbol::Minute => has_numeric = true,
+                FieldSymbol::Second(_) => has_numeric = true,
+                FieldSymbol::TimeZone(_) => {
+                    // TODO: Consider whether time zones are supported here.
+                    return Err(Error::UnsupportedField(field.symbol));
+                }
             };
-            self.load_month_names(provider, month, field.length)?;
         }
-        if let Some(field) = required_data.weekday_symbols {
-            let FieldSymbol::Weekday(weekday) = field.symbol else {
-                unreachable!()
-            };
-            self.load_weekday_names(provider, weekday, field.length)?;
-        }
-        if let Some(field) = required_data.dayperiod_symbols {
-            self.load_day_period_names(provider, field.length)?;
-        }
-        // TODO(#4340): Load the FixedDecimalFormatter
-        if required_data.week_data {
+
+        if has_weeks {
             self.set_week_calculator(week_calculator_loader(&self.locale)?);
         }
+
+        if has_numeric {
+            // TODO(#4340): Load the FixedDecimalFormatter
+        }
+
         Ok(self.with_pattern(pattern))
     }
 }
