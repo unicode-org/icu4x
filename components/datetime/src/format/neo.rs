@@ -6,7 +6,7 @@ use super::datetime::write_pattern;
 use super::datetime::RequiredDataNeo;
 use crate::calendar::CldrCalendar;
 use crate::error::DateTimeError as Error;
-use crate::fields::{self, FieldSymbol};
+use crate::fields::{self, FieldLength, FieldSymbol};
 use crate::input;
 use crate::input::DateInput;
 use crate::input::DateTimeInput;
@@ -34,7 +34,7 @@ use writeable::Writeable;
 #[derive(Debug, Copy, Clone)]
 enum OptionalNames<S, T> {
     None,
-    SingleLength(S, fields::FieldLength, T),
+    SingleLength(S, FieldLength, T),
 }
 
 enum NamePresence {
@@ -53,7 +53,7 @@ where
     pub(crate) fn check_with_length(
         &self,
         field_symbol: S,
-        field_length: fields::FieldLength,
+        field_length: FieldLength,
     ) -> NamePresence {
         match self {
             Self::SingleLength(actual_field_symbol, actual_length, _)
@@ -72,11 +72,7 @@ where
     S: Copy + PartialEq,
     T: Copy,
 {
-    pub(crate) fn get_with_length(
-        &self,
-        field_symbol: S,
-        field_length: fields::FieldLength,
-    ) -> Option<T> {
+    pub(crate) fn get_with_length(&self, field_symbol: S, field_length: FieldLength) -> Option<T> {
         match self {
             Self::None => None,
             Self::SingleLength(actual_field_symbol, actual_length, t)
@@ -259,13 +255,13 @@ impl<C: CldrCalendar> TypedDateTimePatternInterpolator<C> {
     pub fn load_year_names<P>(
         &mut self,
         provider: &P,
-        field_length: fields::FieldLength,
+        field_length: FieldLength,
     ) -> Result<&mut Self, Error>
     where
         P: DataProvider<C::YearSymbolsV1Marker> + ?Sized,
     {
         let field = fields::Field {
-            symbol: fields::FieldSymbol::Era,
+            symbol: FieldSymbol::Era,
             length: field_length,
         };
         // UTS 35 says that "G..GGG" are all Abbreviated
@@ -279,9 +275,9 @@ impl<C: CldrCalendar> TypedDateTimePatternInterpolator<C> {
         locale.set_aux(AuxiliaryKeys::from_subtag(aux::subtag_for(
             aux::Context::Format,
             match field_length {
-                fields::FieldLength::Abbreviated => aux::Length::Abbr,
-                fields::FieldLength::Narrow => aux::Length::Narrow,
-                fields::FieldLength::Wide => aux::Length::Wide,
+                FieldLength::Abbreviated => aux::Length::Abbr,
+                FieldLength::Narrow => aux::Length::Narrow,
+                FieldLength::Wide => aux::Length::Wide,
                 _ => return Err(Error::UnsupportedFormattingField(field)),
             },
         )));
@@ -327,10 +323,7 @@ impl<C: CldrCalendar> TypedDateTimePatternInterpolator<C> {
     /// ));
     /// ```
     #[cfg(feature = "compiled_data")]
-    pub fn include_year_names(
-        &mut self,
-        field_length: fields::FieldLength,
-    ) -> Result<&mut Self, Error>
+    pub fn include_year_names(&mut self, field_length: FieldLength) -> Result<&mut Self, Error>
     where
         crate::provider::Baked:
             icu_provider::DataProvider<<C as CldrCalendar>::YearSymbolsV1Marker>,
@@ -345,13 +338,13 @@ impl<C: CldrCalendar> TypedDateTimePatternInterpolator<C> {
         &mut self,
         provider: &P,
         field_symbol: fields::Month,
-        field_length: fields::FieldLength,
+        field_length: FieldLength,
     ) -> Result<&mut Self, Error>
     where
         P: DataProvider<C::MonthSymbolsV1Marker> + ?Sized,
     {
         let field = fields::Field {
-            symbol: fields::FieldSymbol::Month(field_symbol),
+            symbol: FieldSymbol::Month(field_symbol),
             length: field_length,
         };
         // Note: UTS 35 says that "M..MM" and "L..LL" are numeric
@@ -370,9 +363,9 @@ impl<C: CldrCalendar> TypedDateTimePatternInterpolator<C> {
                 fields::Month::StandAlone => aux::Context::Standalone,
             },
             match field_length {
-                fields::FieldLength::Abbreviated => aux::Length::Abbr,
-                fields::FieldLength::Narrow => aux::Length::Narrow,
-                fields::FieldLength::Wide => aux::Length::Wide,
+                FieldLength::Abbreviated => aux::Length::Abbr,
+                FieldLength::Narrow => aux::Length::Narrow,
+                FieldLength::Wide => aux::Length::Wide,
                 _ => return Err(Error::UnsupportedFormattingField(field)),
             },
         )));
@@ -432,7 +425,7 @@ impl<C: CldrCalendar> TypedDateTimePatternInterpolator<C> {
     pub fn include_month_names(
         &mut self,
         field_symbol: fields::Month,
-        field_length: fields::FieldLength,
+        field_length: FieldLength,
     ) -> Result<&mut Self, Error>
     where
         crate::provider::Baked:
@@ -447,14 +440,14 @@ impl<C: CldrCalendar> TypedDateTimePatternInterpolator<C> {
     pub fn load_day_period_names<P>(
         &mut self,
         provider: &P,
-        field_length: fields::FieldLength,
+        field_length: FieldLength,
     ) -> Result<&mut Self, Error>
     where
         P: DataProvider<DayPeriodSymbolsV1Marker> + ?Sized,
     {
         let field = fields::Field {
             // Names for 'a' and 'b' are stored in the same data key
-            symbol: fields::FieldSymbol::DayPeriod(fields::DayPeriod::NoonMidnight),
+            symbol: FieldSymbol::DayPeriod(fields::DayPeriod::NoonMidnight),
             length: field_length,
         };
         // UTS 35 says that "a..aaa" are all Abbreviated
@@ -468,9 +461,9 @@ impl<C: CldrCalendar> TypedDateTimePatternInterpolator<C> {
         locale.set_aux(AuxiliaryKeys::from_subtag(aux::subtag_for(
             aux::Context::Format,
             match field_length {
-                fields::FieldLength::Abbreviated => aux::Length::Abbr,
-                fields::FieldLength::Narrow => aux::Length::Narrow,
-                fields::FieldLength::Wide => aux::Length::Wide,
+                FieldLength::Abbreviated => aux::Length::Abbr,
+                FieldLength::Narrow => aux::Length::Narrow,
+                FieldLength::Wide => aux::Length::Wide,
                 _ => return Err(Error::UnsupportedFormattingField(field)),
             },
         )));
@@ -522,7 +515,7 @@ impl<C: CldrCalendar> TypedDateTimePatternInterpolator<C> {
     #[cfg(feature = "compiled_data")]
     pub fn include_day_period_names(
         &mut self,
-        field_length: fields::FieldLength,
+        field_length: FieldLength,
     ) -> Result<&mut Self, Error>
     where
         crate::provider::Baked: icu_provider::DataProvider<DayPeriodSymbolsV1Marker>,
@@ -537,13 +530,13 @@ impl<C: CldrCalendar> TypedDateTimePatternInterpolator<C> {
         &mut self,
         provider: &P,
         field_symbol: fields::Weekday,
-        field_length: fields::FieldLength,
+        field_length: FieldLength,
     ) -> Result<&mut Self, Error>
     where
         P: DataProvider<WeekdaySymbolsV1Marker> + ?Sized,
     {
         let field = fields::Field {
-            symbol: fields::FieldSymbol::Weekday(field_symbol),
+            symbol: FieldSymbol::Weekday(field_symbol),
             length: field_length,
         };
         // UTS 35 says that "E..EEE" are all Abbreviated
@@ -569,10 +562,10 @@ impl<C: CldrCalendar> TypedDateTimePatternInterpolator<C> {
                 fields::Weekday::StandAlone => aux::Context::Standalone,
             },
             match field_length {
-                fields::FieldLength::Abbreviated => aux::Length::Abbr,
-                fields::FieldLength::Narrow => aux::Length::Narrow,
-                fields::FieldLength::Wide => aux::Length::Wide,
-                fields::FieldLength::Six => aux::Length::Short,
+                FieldLength::Abbreviated => aux::Length::Abbr,
+                FieldLength::Narrow => aux::Length::Narrow,
+                FieldLength::Wide => aux::Length::Wide,
+                FieldLength::Six => aux::Length::Short,
                 _ => return Err(Error::UnsupportedFormattingField(field)),
             },
         )));
@@ -632,7 +625,7 @@ impl<C: CldrCalendar> TypedDateTimePatternInterpolator<C> {
     pub fn include_weekday_names(
         &mut self,
         field_symbol: fields::Weekday,
-        field_length: fields::FieldLength,
+        field_length: FieldLength,
     ) -> Result<&mut Self, Error>
     where
         crate::provider::Baked: icu_provider::DataProvider<WeekdaySymbolsV1Marker>,
@@ -884,11 +877,11 @@ impl<'data> DateSymbols<'data> for RawDateTimePatternInterpolatorBorrowed<'data>
     fn get_symbol_for_month(
         &self,
         field_symbol: fields::Month,
-        field_length: fields::FieldLength,
+        field_length: FieldLength,
         code: MonthCode,
     ) -> Result<MonthPlaceholderValue, Error> {
         let field = fields::Field {
-            symbol: fields::FieldSymbol::Month(field_symbol),
+            symbol: FieldSymbol::Month(field_symbol),
             length: field_length,
         };
         let month_symbols = self
@@ -938,11 +931,11 @@ impl<'data> DateSymbols<'data> for RawDateTimePatternInterpolatorBorrowed<'data>
     fn get_symbol_for_weekday(
         &self,
         field_symbol: fields::Weekday,
-        field_length: fields::FieldLength,
+        field_length: FieldLength,
         day: input::IsoWeekday,
     ) -> Result<&str, Error> {
         let field = fields::Field {
-            symbol: fields::FieldSymbol::Weekday(field_symbol),
+            symbol: FieldSymbol::Weekday(field_symbol),
             length: field_length,
         };
         // UTS 35 says that "e" and "E" have the same non-numeric names
@@ -967,11 +960,11 @@ impl<'data> DateSymbols<'data> for RawDateTimePatternInterpolatorBorrowed<'data>
 
     fn get_symbol_for_era<'a>(
         &'a self,
-        field_length: fields::FieldLength,
+        field_length: FieldLength,
         era_code: &'a Era,
     ) -> Result<Option<&str>, Error> {
         let field = fields::Field {
-            symbol: fields::FieldSymbol::Era,
+            symbol: FieldSymbol::Era,
             length: field_length,
         };
         // UTS 35 says that "G..GGG" are all Abbreviated
@@ -991,13 +984,13 @@ impl<'data> TimeSymbols for RawDateTimePatternInterpolatorBorrowed<'data> {
     fn get_symbol_for_day_period(
         &self,
         field_symbol: fields::DayPeriod,
-        field_length: fields::FieldLength,
+        field_length: FieldLength,
         hour: input::IsoHour,
         is_top_of_hour: bool,
     ) -> Result<&str, Error> {
         use fields::DayPeriod::NoonMidnight;
         let field = fields::Field {
-            symbol: fields::FieldSymbol::DayPeriod(field_symbol),
+            symbol: FieldSymbol::DayPeriod(field_symbol),
             length: field_length,
         };
         // UTS 35 says that "a..aaa" are all Abbreviated
@@ -1035,18 +1028,18 @@ mod tests {
             .load_month_names(
                 &crate::provider::Baked,
                 fields::Month::Format,
-                fields::FieldLength::Abbreviated,
+                FieldLength::Abbreviated,
             )
             .unwrap()
             .load_weekday_names(
                 &crate::provider::Baked,
                 fields::Weekday::Format,
-                fields::FieldLength::Wide,
+                FieldLength::Wide,
             )
             .unwrap()
-            .load_year_names(&crate::provider::Baked, fields::FieldLength::Narrow)
+            .load_year_names(&crate::provider::Baked, FieldLength::Narrow)
             .unwrap()
-            .load_day_period_names(&crate::provider::Baked, fields::FieldLength::Abbreviated)
+            .load_day_period_names(&crate::provider::Baked, FieldLength::Abbreviated)
             .unwrap();
         let reference_pattern: reference::Pattern = "'It is' EEEE, MMM d, y GGGGG 'at' hh:mm a'!'"
             .parse()
@@ -1067,33 +1060,33 @@ mod tests {
         #[derive(Debug)]
         struct TestCase {
             pattern: &'static str,
-            field_length: fields::FieldLength,
+            field_length: FieldLength,
             expected: &'static str,
         }
         let cases = [
             TestCase {
                 pattern: "<G>",
-                field_length: fields::FieldLength::Abbreviated,
+                field_length: FieldLength::Abbreviated,
                 expected: "<н. е.>",
             },
             TestCase {
                 pattern: "<GG>",
-                field_length: fields::FieldLength::Abbreviated,
+                field_length: FieldLength::Abbreviated,
                 expected: "<н. е.>",
             },
             TestCase {
                 pattern: "<GGG>",
-                field_length: fields::FieldLength::Abbreviated,
+                field_length: FieldLength::Abbreviated,
                 expected: "<н. е.>",
             },
             TestCase {
                 pattern: "<GGGG>",
-                field_length: fields::FieldLength::Wide,
+                field_length: FieldLength::Wide,
                 expected: "<нашої ери>",
             },
             TestCase {
                 pattern: "<GGGGG>",
-                field_length: fields::FieldLength::Narrow,
+                field_length: FieldLength::Narrow,
                 expected: "<н.е.>",
             },
         ];
@@ -1125,7 +1118,7 @@ mod tests {
         struct TestCase {
             pattern: &'static str,
             field_symbol: fields::Month,
-            field_length: fields::FieldLength,
+            field_length: FieldLength,
             expected: &'static str,
         }
         let cases = [
@@ -1133,38 +1126,38 @@ mod tests {
             TestCase {
                 pattern: "<MMM>",
                 field_symbol: fields::Month::Format,
-                field_length: fields::FieldLength::Abbreviated,
+                field_length: FieldLength::Abbreviated,
                 expected: "<лист.>",
             },
             TestCase {
                 pattern: "<MMMM>",
                 field_symbol: fields::Month::Format,
-                field_length: fields::FieldLength::Wide,
+                field_length: FieldLength::Wide,
                 expected: "<листопада>",
             },
             TestCase {
                 pattern: "<MMMMM>",
                 field_symbol: fields::Month::Format,
-                field_length: fields::FieldLength::Narrow,
+                field_length: FieldLength::Narrow,
                 expected: "<л>",
             },
             // 'L' and 'LL' are numeric
             TestCase {
                 pattern: "<LLL>",
                 field_symbol: fields::Month::StandAlone,
-                field_length: fields::FieldLength::Abbreviated,
+                field_length: FieldLength::Abbreviated,
                 expected: "<лист.>",
             },
             TestCase {
                 pattern: "<LLLL>",
                 field_symbol: fields::Month::StandAlone,
-                field_length: fields::FieldLength::Wide,
+                field_length: FieldLength::Wide,
                 expected: "<листопад>",
             },
             TestCase {
                 pattern: "<LLLLL>",
                 field_symbol: fields::Month::StandAlone,
-                field_length: fields::FieldLength::Narrow,
+                field_length: FieldLength::Narrow,
                 expected: "<Л>",
             },
         ];
@@ -1196,94 +1189,94 @@ mod tests {
         struct TestCase {
             pattern: &'static str,
             field_symbol: fields::Weekday,
-            field_length: fields::FieldLength,
+            field_length: FieldLength,
             expected: &'static str,
         }
         let cases = [
             TestCase {
                 pattern: "<E>",
                 field_symbol: fields::Weekday::Format,
-                field_length: fields::FieldLength::Abbreviated,
+                field_length: FieldLength::Abbreviated,
                 expected: "<пт>",
             },
             TestCase {
                 pattern: "<EE>",
                 field_symbol: fields::Weekday::Format,
-                field_length: fields::FieldLength::Abbreviated,
+                field_length: FieldLength::Abbreviated,
                 expected: "<пт>",
             },
             TestCase {
                 pattern: "<EEE>",
                 field_symbol: fields::Weekday::Format,
-                field_length: fields::FieldLength::Abbreviated,
+                field_length: FieldLength::Abbreviated,
                 expected: "<пт>",
             },
             TestCase {
                 pattern: "<EEEE>",
                 field_symbol: fields::Weekday::Format,
-                field_length: fields::FieldLength::Wide,
+                field_length: FieldLength::Wide,
                 expected: "<пʼятницю>",
             },
             TestCase {
                 pattern: "<EEEEE>",
                 field_symbol: fields::Weekday::Format,
-                field_length: fields::FieldLength::Narrow,
+                field_length: FieldLength::Narrow,
                 expected: "<П>",
             },
             TestCase {
                 pattern: "<EEEEEE>",
                 field_symbol: fields::Weekday::Format,
-                field_length: fields::FieldLength::Six,
+                field_length: FieldLength::Six,
                 expected: "<пт>",
             },
             // 'e' and 'ee' are numeric
             TestCase {
                 pattern: "<eee>",
                 field_symbol: fields::Weekday::Format,
-                field_length: fields::FieldLength::Abbreviated,
+                field_length: FieldLength::Abbreviated,
                 expected: "<пт>",
             },
             TestCase {
                 pattern: "<eeee>",
                 field_symbol: fields::Weekday::Format,
-                field_length: fields::FieldLength::Wide,
+                field_length: FieldLength::Wide,
                 expected: "<пʼятницю>",
             },
             TestCase {
                 pattern: "<eeeee>",
                 field_symbol: fields::Weekday::Format,
-                field_length: fields::FieldLength::Narrow,
+                field_length: FieldLength::Narrow,
                 expected: "<П>",
             },
             TestCase {
                 pattern: "<eeeeee>",
                 field_symbol: fields::Weekday::Format,
-                field_length: fields::FieldLength::Six,
+                field_length: FieldLength::Six,
                 expected: "<пт>",
             },
             // 'c' and 'cc' are numeric
             TestCase {
                 pattern: "<ccc>",
                 field_symbol: fields::Weekday::StandAlone,
-                field_length: fields::FieldLength::Abbreviated,
+                field_length: FieldLength::Abbreviated,
                 expected: "<пт>",
             },
             TestCase {
                 pattern: "<cccc>",
                 field_symbol: fields::Weekday::StandAlone,
-                field_length: fields::FieldLength::Wide,
+                field_length: FieldLength::Wide,
                 expected: "<пʼятниця>",
             },
             TestCase {
                 pattern: "<ccccc>",
                 field_symbol: fields::Weekday::StandAlone,
-                field_length: fields::FieldLength::Narrow,
+                field_length: FieldLength::Narrow,
                 expected: "<П>",
             },
             TestCase {
                 pattern: "<cccccc>",
                 field_symbol: fields::Weekday::StandAlone,
-                field_length: fields::FieldLength::Six,
+                field_length: FieldLength::Six,
                 expected: "<пт>",
             },
         ];
@@ -1316,58 +1309,58 @@ mod tests {
         #[derive(Debug)]
         struct TestCase {
             pattern: &'static str,
-            field_length: fields::FieldLength,
+            field_length: FieldLength,
             expected: &'static str,
         }
         let cases = [
             TestCase {
                 pattern: "<a>",
-                field_length: fields::FieldLength::Abbreviated,
+                field_length: FieldLength::Abbreviated,
                 expected: "<PM>",
             },
             TestCase {
                 pattern: "<aa>",
-                field_length: fields::FieldLength::Abbreviated,
+                field_length: FieldLength::Abbreviated,
                 expected: "<PM>",
             },
             TestCase {
                 pattern: "<aaa>",
-                field_length: fields::FieldLength::Abbreviated,
+                field_length: FieldLength::Abbreviated,
                 expected: "<PM>",
             },
             TestCase {
                 pattern: "<aaaa>",
-                field_length: fields::FieldLength::Wide,
+                field_length: FieldLength::Wide,
                 expected: "<หลังเที่ยง>",
             },
             TestCase {
                 pattern: "<aaaaa>",
-                field_length: fields::FieldLength::Narrow,
+                field_length: FieldLength::Narrow,
                 expected: "<p>",
             },
             TestCase {
                 pattern: "<b>",
-                field_length: fields::FieldLength::Abbreviated,
+                field_length: FieldLength::Abbreviated,
                 expected: "<PM>",
             },
             TestCase {
                 pattern: "<bb>",
-                field_length: fields::FieldLength::Abbreviated,
+                field_length: FieldLength::Abbreviated,
                 expected: "<PM>",
             },
             TestCase {
                 pattern: "<bbb>",
-                field_length: fields::FieldLength::Abbreviated,
+                field_length: FieldLength::Abbreviated,
                 expected: "<PM>",
             },
             TestCase {
                 pattern: "<bbbb>",
-                field_length: fields::FieldLength::Wide,
+                field_length: FieldLength::Wide,
                 expected: "<หลังเที่ยง>",
             },
             TestCase {
                 pattern: "<bbbbb>",
-                field_length: fields::FieldLength::Narrow,
+                field_length: FieldLength::Narrow,
                 expected: "<p>",
             },
         ];
