@@ -633,6 +633,43 @@ impl<C: CldrCalendar> TypedDateTimePatternInterpolator<C> {
         self.load_weekday_names(&crate::provider::Baked, field_symbol, field_length)
     }
 
+    /// Sets the week calculator to use with patterns requiring week numbering.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use icu::calendar::Date;
+    /// use icu::calendar::Gregorian;
+    /// use icu::calendar::week::WeekCalculator;
+    /// use icu::datetime::pattern;
+    /// use icu::datetime::TypedDateTimePatternInterpolator;
+    /// use icu::locid::locale;
+    /// use writeable::assert_writeable_eq;
+    ///
+    /// let mut interpolator =
+    ///     TypedDateTimePatternInterpolator::<Gregorian>::try_new(
+    ///         &locale!("en").into(),
+    ///     )
+    ///     .unwrap();
+    ///
+    /// // Load the week calculator and set it here:
+    /// let mut week_calculator = WeekCalculator::try_new(
+    ///     &locale!("en").into()
+    /// ).unwrap();
+    /// interpolator.set_week_calculator(week_calculator);
+    ///
+    /// // Format a pattern needing week data:
+    /// let pattern_str = "'Week' w 'of' Y";
+    /// let reference_pattern: pattern::reference::Pattern =
+    ///     pattern_str.parse().unwrap();
+    /// let pattern: pattern::runtime::Pattern = (&reference_pattern).into();
+    /// let date = Date::try_new_gregorian_date(2023, 12, 5).unwrap();
+    /// assert_writeable_eq!(
+    ///     interpolator.with_pattern(&pattern).format_date(&date),
+    ///     "Week 49 of 2023"
+    /// );
+    /// ```
+    #[inline]
     pub fn set_week_calculator(&mut self, week_calculator: WeekCalculator) -> &mut Self {
         self.week_calculator = Some(week_calculator);
         self
@@ -649,6 +686,10 @@ impl<C: CldrCalendar> TypedDateTimePatternInterpolator<C> {
         }
     }
 
+    /// Associates this [`TypedDateTimePatternInterpolator`] with a pattern
+    /// and loads all data required for that pattern.
+    ///
+    /// Does not duplicate textual field symbols. See #4337
     pub fn load_for_pattern<'l, P>(
         &'l mut self,
         provider: &P,
@@ -662,9 +703,82 @@ impl<C: CldrCalendar> TypedDateTimePatternInterpolator<C> {
             + DataProvider<WeekDataV1Marker>
             + ?Sized,
     {
+        self.load_for_pattern_internal(provider, pattern, |locale| {
+            WeekCalculator::try_new_unstable(provider, locale)
+        })
+    }
+
+    /// Associates this [`TypedDateTimePatternInterpolator`] with a pattern
+    /// and includes all data required for that pattern.
+    ///
+    /// Does not duplicate textual field symbols. See #4337
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use icu::calendar::DateTime;
+    /// use icu::calendar::Gregorian;
+    /// use icu::datetime::pattern;
+    /// use icu::datetime::TypedDateTimePatternInterpolator;
+    /// use icu::locid::locale;
+    /// use writeable::assert_writeable_eq;
+    ///
+    /// let mut interpolator =
+    ///     TypedDateTimePatternInterpolator::<Gregorian>::try_new(
+    ///         &locale!("en").into(),
+    ///     )
+    ///     .unwrap();
+    ///
+    /// // Create a pattern from a pattern string:
+    /// let pattern_str = "E 'on week' w 'of' Y G (MMM d) 'at' h:mm a";
+    /// let reference_pattern: pattern::reference::Pattern =
+    ///     pattern_str.parse().unwrap();
+    /// let pattern: pattern::runtime::Pattern = (&reference_pattern).into();
+    ///
+    /// // Load data for the pattern and format:
+    /// let datetime = DateTime::try_new_gregorian_datetime(2023, 12, 5, 17, 43, 12).unwrap();
+    /// assert_writeable_eq!(
+    ///     interpolator.include_for_pattern(&pattern).unwrap().format(&datetime),
+    ///     "Tuesday on week 49 of 2023 AD (Dec 5) at 5:43 pm"
+    /// );
+    /// ```
+    #[cfg(feature = "compiled_data")]
+    pub fn include_for_pattern<'l>(
+        &'l mut self,
+        pattern: &'l Pattern,
+    ) -> Result<DateTimePatternFormatter<'l, C>, Error>
+    where
+        crate::provider::Baked: DataProvider<C::YearSymbolsV1Marker>
+            + DataProvider<C::MonthSymbolsV1Marker>
+            + DataProvider<WeekdaySymbolsV1Marker>
+            + DataProvider<DayPeriodSymbolsV1Marker>,
+    {
+        self.load_for_pattern_internal(&crate::provider::Baked, pattern, |locale| {
+            WeekCalculator::try_new(locale)
+        })
+    }
+
+    fn load_for_pattern_internal<'l, P>(
+        &'l mut self,
+        provider: &P,
+        pattern: &'l Pattern,
+        week_calculator_loader: impl FnOnce(
+            &DataLocale,
+        )
+            -> Result<WeekCalculator, icu_calendar::CalendarError>,
+    ) -> Result<DateTimePatternFormatter<'l, C>, Error>
+    where
+        P: DataProvider<C::YearSymbolsV1Marker>
+            + DataProvider<C::MonthSymbolsV1Marker>
+            + DataProvider<WeekdaySymbolsV1Marker>
+            + DataProvider<DayPeriodSymbolsV1Marker>
+            + ?Sized,
+    {
         let mut required_data = RequiredDataNeo::default();
         // TODO: Consider support for time zones here
-        required_data.add_requirements_from_pattern(pattern, false);
+        required_data
+            .add_requirements_from_pattern(pattern, false)
+            .map_err(|field| Error::UnsupportedField(field.symbol))?;
         if let Some(field) = required_data.year_symbols {
             self.load_year_names(provider, field.length)?;
         }
@@ -685,7 +799,7 @@ impl<C: CldrCalendar> TypedDateTimePatternInterpolator<C> {
         }
         // TODO(#4340): Load the FixedDecimalFormatter
         if required_data.week_data {
-            self.set_week_calculator(WeekCalculator::try_new_unstable(provider, &self.locale)?);
+            self.set_week_calculator(week_calculator_loader(&self.locale)?);
         }
         Ok(self.with_pattern(pattern))
     }

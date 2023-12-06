@@ -591,16 +591,6 @@ pub(crate) struct RequiredDataNeo {
 }
 
 impl RequiredDataNeo {
-    #[inline]
-    pub(crate) fn needs_everything(&self) -> bool {
-        self.year_symbols.is_some()
-            && self.month_symbols.is_some()
-            && self.weekday_symbols.is_some()
-            && self.dayperiod_symbols.is_some()
-            && self.fixed_decimal_formatter
-            && self.week_data
-    }
-
     /// Checks if formatting `pattern` would require us to load data & if so adds
     /// them to this struct.
     /// Keep it in sync with the `write_field` use of symbols.
