@@ -53,7 +53,7 @@ impl<C: CalendarArithmetic> Clone for ChineseBasedDateInner<C> {
 
 #[derive(Default)]
 pub(crate) struct ChineseBasedPrecomputedData<CB: ChineseBased> {
-    // todo
+    // TODO(#3933)
     // this should have the ability to be empty
     _cb: CB, // this is zero-sized
 }
@@ -71,7 +71,7 @@ fn compute_cache<CB: ChineseBased>(extended_year: i32) -> ChineseBasedYearInfo {
 
     ChineseBasedYearInfo {
         new_year,
-        // todo: switch ChineseBasedYearInfo to packed info so we don't need to store as bloaty u16s
+        // TODO(#3933): switch ChineseBasedYearInfo to packed info so we don't need to store as bloaty u16s
         last_day_of_month: last_day_of_month
             .map(|rd| (rd.to_i64_date() - new_year.to_i64_date()) as u16),
         leap_month,
@@ -82,7 +82,7 @@ impl<CB: ChineseBased> PrecomputedDataSource<ChineseBasedYearInfo>
     for ChineseBasedPrecomputedData<CB>
 {
     fn load_or_compute_info(&self, extended_year: i32) -> ChineseBasedYearInfo {
-        // todo: load based on year
+        // TODO(#3933): load based on year
 
         compute_cache::<CB>(extended_year)
     }
@@ -105,6 +105,7 @@ impl<CB: ChineseBased> PrecomputedDataSource<ChineseBasedYearInfo>
 pub(crate) struct PackedChineseBasedYearInfo(pub(crate) u8, pub(crate) u8, pub(crate) u8);
 
 impl PackedChineseBasedYearInfo {
+    #[allow(unused)] // TODO(#3933)
     pub(crate) fn unpack(self, related_iso: i32) -> ChineseBasedYearInfo {
         fn month_length(is_long: bool) -> u16 {
             if is_long {
@@ -166,7 +167,7 @@ impl PackedChineseBasedYearInfo {
 }
 /// A data struct used to load and use information for a set of ChineseBasedDates
 #[derive(Copy, Clone, Debug, Eq, PartialEq, PartialOrd, Ord)]
-// todo: potentially make this smaller
+// TODO(#3933): potentially make this smaller
 pub(crate) struct ChineseBasedYearInfo {
     pub(crate) new_year: RataDie,
     /// last_day_of_month[12] = last_day_of_month[11] in non-leap years
@@ -265,7 +266,7 @@ impl<C: ChineseBasedWithDataLoading + CalendarArithmetic<YearInfo = ChineseBased
         debug_assert!(day_of_year.is_ok(), "Somehow got a very large year in data");
         let day_of_year = day_of_year.unwrap_or(1);
         let mut month = 1;
-        // todo perhaps use a binary search
+        // TODO(#3933) perhaps use a binary search
         for iter_month in 1..=13 {
             month = iter_month;
             if year_info.last_day_of_month(iter_month) >= day_of_year {
@@ -394,7 +395,7 @@ impl<C: ChineseBasedWithDataLoading + CalendarArithmetic<YearInfo = ChineseBased
     }
 }
 
-// todo: pass around YearInfo in CalendarArithmetic (oops)
+// TODO(#3933): pass around YearInfo in CalendarArithmetic (oops)
 impl<C: ChineseBasedWithDataLoading> CalendarArithmetic for C {
     type YearInfo = ChineseBasedYearInfo;
 
