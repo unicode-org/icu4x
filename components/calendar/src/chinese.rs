@@ -220,7 +220,7 @@ impl Calendar for Chinese {
     }
 
     fn is_in_leap_year(&self, date: &Self::DateInner) -> bool {
-        Self::is_leap_year(date.0 .0.year, ())
+        Self::is_leap_year(date.0 .0.year, date.0 .0.year_info)
     }
 
     /// The calendar-specific month code represented by `date`;
@@ -297,11 +297,13 @@ impl Calendar for Chinese {
     fn day_of_year_info(&self, date: &Self::DateInner) -> types::DayOfYearInfo {
         let prev_year = date.0 .0.year.saturating_sub(1);
         let next_year = date.0 .0.year.saturating_add(1);
+        // TODO(#3933): we should maybe have this cached already
+        let prev_info = self.get_precomputed_data().load_or_compute_info(prev_year);
         types::DayOfYearInfo {
             day_of_year: date.0.day_of_year(),
             days_in_year: date.0.days_in_year_inner(),
             prev_year: Self::format_chinese_year(prev_year, None),
-            days_in_prev_year: Self::days_in_provided_year(prev_year, ()),
+            days_in_prev_year: Self::days_in_provided_year(prev_year, prev_info),
             next_year: Self::format_chinese_year(next_year, None),
         }
     }
