@@ -16,6 +16,7 @@ use crate::pattern::runtime::Pattern;
 use crate::provider::date_time::{DateSymbols, MonthPlaceholderValue, TimeSymbols};
 use crate::provider::neo::*;
 use core::fmt;
+use core::marker::PhantomData;
 use icu_calendar::types::Era;
 use icu_calendar::types::MonthCode;
 use icu_calendar::week::WeekCalculator;
@@ -142,7 +143,7 @@ where
 ///
 /// // Test it:
 /// let datetime = DateTime::try_new_gregorian_datetime(2023, 11, 20, 11, 35, 3).unwrap();
-/// assert_writeable_eq!(interpolator.format(&pattern, &datetime), "пн лист. 20 2023 -- 11:35 дп");
+/// assert_writeable_eq!(interpolator.with_pattern(&pattern).format(&datetime), "пн лист. 20 2023 -- 11:35 дп");
 /// ```
 ///
 /// If the correct data is not loaded, and error will occur:
@@ -169,7 +170,7 @@ where
 /// // The pattern string contains lots of symbols including "E", "MMM", and "a", but we did not load any data!
 /// let datetime = DateTime::try_new_gregorian_datetime(2023, 11, 20, 11, 35, 3).unwrap();
 /// let mut buffer = String::new();
-/// assert!(interpolator.format(&pattern, &datetime).write_to(&mut buffer).is_err());
+/// assert!(interpolator.with_pattern(&pattern).format(&datetime).write_to(&mut buffer).is_err());
 /// ```
 #[derive(Debug)]
 pub struct TypedDateTimePatternInterpolator<C: CldrCalendar> {
@@ -182,6 +183,17 @@ pub struct TypedDateTimePatternInterpolator<C: CldrCalendar> {
     // TODO: Make the FixedDecimalFormatter optional?
     fixed_decimal_formatter: FixedDecimalFormatter,
     week_calculator: Option<WeekCalculator>,
+}
+
+#[derive(Debug, Copy, Clone)]
+struct RawDateTimePatternInterpolatorBorrowed<'l> {
+    /// `year_symbols` is different because it could be either era or cyclic year.
+    year_symbols: OptionalNames<(), &'l YearSymbolsV1<'l>>,
+    month_symbols: OptionalNames<fields::Month, &'l MonthSymbolsV1<'l>>,
+    weekday_symbols: OptionalNames<fields::Weekday, &'l LinearSymbolsV1<'l>>,
+    dayperiod_symbols: OptionalNames<(), &'l LinearSymbolsV1<'l>>,
+    fixed_decimal_formatter: &'l FixedDecimalFormatter,
+    week_calculator: Option<&'l WeekCalculator>,
 }
 
 impl<C: CldrCalendar> TypedDateTimePatternInterpolator<C> {
@@ -225,6 +237,17 @@ impl<C: CldrCalendar> TypedDateTimePatternInterpolator<C> {
             dayperiod_symbols: OptionalNames::None,
             fixed_decimal_formatter,
             week_calculator: None,
+        }
+    }
+
+    fn as_borrowed(&self) -> RawDateTimePatternInterpolatorBorrowed {
+        RawDateTimePatternInterpolatorBorrowed {
+            year_symbols: self.year_symbols.as_borrowed(),
+            month_symbols: self.month_symbols.as_borrowed(),
+            weekday_symbols: self.weekday_symbols.as_borrowed(),
+            dayperiod_symbols: self.dayperiod_symbols.as_borrowed(),
+            fixed_decimal_formatter: &self.fixed_decimal_formatter,
+            week_calculator: self.week_calculator.as_ref(),
         }
     }
 
@@ -614,46 +637,44 @@ impl<C: CldrCalendar> TypedDateTimePatternInterpolator<C> {
     {
         self.load_weekday_names(&crate::provider::Baked, field_symbol, field_length)
     }
+
+    /// Associates this [`TypedDateTimePatternInterpolator`] with a pattern
+    /// without loading additional data for that pattern.
+    #[inline]
+    pub fn with_pattern<'l>(&'l self, pattern: &'l Pattern) -> DateTimePatternFormatter<'l, C> {
+        DateTimePatternFormatter {
+            pattern,
+            interpolator: self.as_borrowed(),
+            _calendar: PhantomData::default(),
+        }
+    }
 }
 
 #[derive(Debug, Copy, Clone)]
-struct RawDateTimePatternInterpolatorBorrowed<'l> {
-    /// `year_symbols` is different because it could be either era or cyclic year.
-    year_symbols: OptionalNames<(), &'l YearSymbolsV1<'l>>,
-    month_symbols: OptionalNames<fields::Month, &'l MonthSymbolsV1<'l>>,
-    weekday_symbols: OptionalNames<fields::Weekday, &'l LinearSymbolsV1<'l>>,
-    dayperiod_symbols: OptionalNames<(), &'l LinearSymbolsV1<'l>>,
-    fixed_decimal_formatter: &'l FixedDecimalFormatter,
-    week_calculator: Option<&'l WeekCalculator>,
+pub struct DateTimePatternFormatter<'a, C: CldrCalendar> {
+    pattern: &'a Pattern<'a>,
+    interpolator: RawDateTimePatternInterpolatorBorrowed<'a>,
+    _calendar: PhantomData<C>,
 }
 
-impl<C: CldrCalendar> TypedDateTimePatternInterpolator<C> {
-    fn as_borrowed(&self) -> RawDateTimePatternInterpolatorBorrowed {
-        RawDateTimePatternInterpolatorBorrowed {
-            year_symbols: self.year_symbols.as_borrowed(),
-            month_symbols: self.month_symbols.as_borrowed(),
-            weekday_symbols: self.weekday_symbols.as_borrowed(),
-            dayperiod_symbols: self.dayperiod_symbols.as_borrowed(),
-            fixed_decimal_formatter: &self.fixed_decimal_formatter,
-            week_calculator: self.week_calculator.as_ref(),
-        }
-    }
-
+impl<'a, C: CldrCalendar> DateTimePatternFormatter<'a, C> {
     /// Formats a date and time of day.
     ///
     /// For an example, see [`TypedDateTimePatternInterpolator`].
-    pub fn format<'l, T>(
-        &'l self,
-        pattern: &'l Pattern<'l>,
-        datetime: &T,
-    ) -> FormattedDateTimePattern<'l>
+    pub fn format<T>(
+        &self,
+        datetime: &'a T,
+    ) -> FormattedDateTimePattern<'a>
     where
         T: DateTimeInput<Calendar = C>,
     {
+        // DISCUSS: Should this return `'a` or a new lifetime `'l: 'a`?
+        // When returning `'l`, the intermediate type needs to be anchored,
+        // so for now I made it return `'a`.
         FormattedDateTimePattern {
-            pattern,
+            pattern: self.pattern,
             datetime: ExtractedDateTimeInput::extract_from(datetime),
-            interpolator: self.as_borrowed(),
+            interpolator: self.interpolator,
         }
     }
 
@@ -692,26 +713,25 @@ impl<C: CldrCalendar> TypedDateTimePatternInterpolator<C> {
     /// let date_bce = Date::try_new_gregorian_date(-50, 3, 15).unwrap();
     /// let date_ce = Date::try_new_gregorian_date(1700, 11, 20).unwrap();
     /// assert_writeable_eq!(
-    ///     interpolator.format_date(&pattern, &date_bce),
+    ///     interpolator.with_pattern(&pattern).format_date(&date_bce),
     ///     "The date is: March 15, 51 Before Christ"
     /// );
     /// assert_writeable_eq!(
-    ///     interpolator.format_date(&pattern, &date_ce),
+    ///     interpolator.with_pattern(&pattern).format_date(&date_ce),
     ///     "The date is: November 20, 1700 Anno Domini"
     /// );
     /// ```
-    pub fn format_date<'l, T>(
-        &'l self,
-        pattern: &'l Pattern<'l>,
-        datetime: &T,
-    ) -> FormattedDateTimePattern<'l>
+    pub fn format_date<T>(
+        &self,
+        datetime: &'a T,
+    ) -> FormattedDateTimePattern<'a>
     where
         T: DateInput<Calendar = C>,
     {
         FormattedDateTimePattern {
-            pattern,
+            pattern: &self.pattern,
             datetime: ExtractedDateTimeInput::extract_from_date(datetime),
-            interpolator: self.as_borrowed(),
+            interpolator: self.interpolator,
         }
     }
 
@@ -748,34 +768,33 @@ impl<C: CldrCalendar> TypedDateTimePatternInterpolator<C> {
     /// let time_noon = Time::try_new(12, 0, 0, 0).unwrap();
     /// let time_midnight = Time::try_new(0, 0, 0, 0).unwrap();
     /// assert_writeable_eq!(
-    ///     interpolator.format_time(&pattern, &time_am),
+    ///     interpolator.with_pattern(&pattern).format_time(&time_am),
     ///     "The time is: 11:04 AM"
     /// );
     /// assert_writeable_eq!(
-    ///     interpolator.format_time(&pattern, &time_pm),
+    ///     interpolator.with_pattern(&pattern).format_time(&time_pm),
     ///     "The time is: 1:41 PM"
     /// );
     /// assert_writeable_eq!(
-    ///     interpolator.format_time(&pattern, &time_noon),
+    ///     interpolator.with_pattern(&pattern).format_time(&time_noon),
     ///     "The time is: 12:00 noon"
     /// );
     /// assert_writeable_eq!(
-    ///     interpolator.format_time(&pattern, &time_midnight),
+    ///     interpolator.with_pattern(&pattern).format_time(&time_midnight),
     ///     "The time is: 12:00 midnight"
     /// );
     /// ```
-    pub fn format_time<'l, T>(
-        &'l self,
-        pattern: &'l Pattern<'l>,
-        datetime: &T,
-    ) -> FormattedDateTimePattern<'l>
+    pub fn format_time<T>(
+        &self,
+        datetime: &'a T,
+    ) -> FormattedDateTimePattern<'a>
     where
         T: IsoTimeInput,
     {
         FormattedDateTimePattern {
-            pattern,
+            pattern: &self.pattern,
             datetime: ExtractedDateTimeInput::extract_from_time(datetime),
-            interpolator: self.as_borrowed(),
+            interpolator: self.interpolator,
         }
     }
 }
@@ -995,7 +1014,7 @@ mod tests {
             .unwrap();
         let pattern: Pattern = (&reference_pattern).into();
         let datetime = DateTime::try_new_gregorian_datetime(2023, 10, 25, 15, 0, 55).unwrap();
-        let formatted_pattern = interpolator.format(&pattern, &datetime);
+        let formatted_pattern = interpolator.with_pattern(&pattern).format(&datetime);
 
         assert_writeable_eq!(
             formatted_pattern,
@@ -1053,7 +1072,7 @@ mod tests {
             let reference_pattern: reference::Pattern = pattern.parse().unwrap();
             let pattern: Pattern = (&reference_pattern).into();
             let datetime = DateTime::try_new_gregorian_datetime(2023, 11, 17, 13, 41, 28).unwrap();
-            let formatted_pattern = interpolator.format(&pattern, &datetime);
+            let formatted_pattern = interpolator.with_pattern(&pattern).format(&datetime);
 
             assert_writeable_eq!(formatted_pattern, expected, "{cas:?}");
         }
@@ -1125,7 +1144,7 @@ mod tests {
             let reference_pattern: reference::Pattern = pattern.parse().unwrap();
             let pattern: Pattern = (&reference_pattern).into();
             let datetime = DateTime::try_new_gregorian_datetime(2023, 11, 17, 13, 41, 28).unwrap();
-            let formatted_pattern = interpolator.format(&pattern, &datetime);
+            let formatted_pattern = interpolator.with_pattern(&pattern).format(&datetime);
 
             assert_writeable_eq!(formatted_pattern, expected, "{cas:?}");
         }
@@ -1244,7 +1263,7 @@ mod tests {
             let reference_pattern: reference::Pattern = pattern.parse().unwrap();
             let pattern: Pattern = (&reference_pattern).into();
             let datetime = DateTime::try_new_gregorian_datetime(2023, 11, 17, 13, 41, 28).unwrap();
-            let formatted_pattern = interpolator.format(&pattern, &datetime);
+            let formatted_pattern = interpolator.with_pattern(&pattern).format(&datetime);
 
             assert_writeable_eq!(formatted_pattern, expected, "{cas:?}");
         }
@@ -1327,7 +1346,7 @@ mod tests {
             let reference_pattern: reference::Pattern = pattern.parse().unwrap();
             let pattern: Pattern = (&reference_pattern).into();
             let datetime = DateTime::try_new_gregorian_datetime(2023, 11, 17, 13, 41, 28).unwrap();
-            let formatted_pattern = interpolator.format(&pattern, &datetime);
+            let formatted_pattern = interpolator.with_pattern(&pattern).format(&datetime);
 
             assert_writeable_eq!(formatted_pattern, expected, "{cas:?}");
         }
