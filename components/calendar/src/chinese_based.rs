@@ -75,7 +75,8 @@ fn compute_cache<CB: ChineseBased>(extended_year: i32) -> ChineseBasedYearInfo {
         new_year,
         // TODO(#3933): switch ChineseBasedYearInfo to packed info so we don't need to store as bloaty u16s
         last_day_of_month: last_day_of_month
-            .map(|rd| (rd.to_i64_date() - new_year.to_i64_date()) as u16),
+            // +1 since new_year is in the current month
+            .map(|rd| (rd.to_i64_date() - new_year.to_i64_date() + 1) as u16),
         leap_month,
     }
 }
@@ -393,7 +394,7 @@ impl<C: ChineseBasedWithDataLoading + CalendarArithmetic<YearInfo = ChineseBased
     /// Calculate the number of days in the year so far for a ChineseBasedDate;
     /// similar to `CalendarArithmetic::day_of_year`
     pub(crate) fn day_of_year(&self) -> u16 {
-        self.0.year_info.last_day_of_previous_month(self.0.month)
+        self.0.year_info.last_day_of_previous_month(self.0.month) + u16::from(self.0.day)
     }
 }
 

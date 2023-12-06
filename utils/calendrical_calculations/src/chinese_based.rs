@@ -503,6 +503,9 @@ pub fn month_structure_for_year<C: ChineseBased>(
         current_month_major_solar_term = next_month_major_solar_term;
     }
 
+    let first_month_diff = ret[0] - new_year + 1; // +1 since new_year is in the current month
+    debug_assert!(first_month_diff == 29 || first_month_diff == 30);
+
     if ret[11] == ret[12] {
         // not all months without solar terms are leap months; they are only leap months if
         // the year can admit them
