@@ -682,7 +682,7 @@ impl<C: CldrCalendar> TypedDateTimePatternInterpolator<C> {
         DateTimePatternFormatter {
             pattern,
             interpolator: self.as_borrowed(),
-            _calendar: PhantomData::default(),
+            _calendar: PhantomData,
         }
     }
 
@@ -910,7 +910,7 @@ impl<'a, C: CldrCalendar> DateTimePatternFormatter<'a, C> {
         T: DateInput<Calendar = C>,
     {
         FormattedDateTimePattern {
-            pattern: &self.pattern,
+            pattern: self.pattern,
             datetime: ExtractedDateTimeInput::extract_from_date(datetime),
             interpolator: self.interpolator,
         }
@@ -970,7 +970,7 @@ impl<'a, C: CldrCalendar> DateTimePatternFormatter<'a, C> {
         T: IsoTimeInput,
     {
         FormattedDateTimePattern {
-            pattern: &self.pattern,
+            pattern: self.pattern,
             datetime: ExtractedDateTimeInput::extract_from_time(datetime),
             interpolator: self.interpolator,
         }
