@@ -202,7 +202,7 @@ impl Calendar for Dangi {
     }
 
     fn is_in_leap_year(&self, date: &Self::DateInner) -> bool {
-        Self::is_leap_year(date.0 .0.year)
+        Self::is_leap_year(date.0 .0.year, ())
     }
 
     fn month(&self, date: &Self::DateInner) -> crate::types::FormattableMonth {
@@ -277,7 +277,7 @@ impl Calendar for Dangi {
             day_of_year: date.0 .0.day_of_year(),
             days_in_year: date.0.days_in_year_inner(),
             prev_year: Self::format_dangi_year(prev_year, None),
-            days_in_prev_year: Self::days_in_provided_year(prev_year),
+            days_in_prev_year: Self::days_in_provided_year(prev_year, ()),
             next_year: Self::format_dangi_year(next_year, None),
         }
     }

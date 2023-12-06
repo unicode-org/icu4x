@@ -220,7 +220,7 @@ impl Calendar for Chinese {
     }
 
     fn is_in_leap_year(&self, date: &Self::DateInner) -> bool {
-        Self::is_leap_year(date.0 .0.year)
+        Self::is_leap_year(date.0 .0.year, ())
     }
 
     /// The calendar-specific month code represented by `date`;
@@ -301,7 +301,7 @@ impl Calendar for Chinese {
             day_of_year: date.0.day_of_year(),
             days_in_year: date.0.days_in_year_inner(),
             prev_year: Self::format_chinese_year(prev_year, None),
-            days_in_prev_year: Self::days_in_provided_year(prev_year),
+            days_in_prev_year: Self::days_in_provided_year(prev_year, ()),
             next_year: Self::format_chinese_year(next_year, None),
         }
     }
@@ -685,7 +685,7 @@ mod test {
             let iso = Date::try_new_iso_date(year, 6, 1).unwrap();
             let chinese_year = iso.to_calendar(Chinese).year().number;
             let cache = Inner::compute_cache(chinese_year);
-            assert!(Chinese::is_leap_year(chinese_year));
+            assert!(Chinese::is_leap_year(chinese_year, ()));
             assert_eq!(
                 expected_month,
                 calendrical_calculations::chinese_based::get_leap_month_from_new_year::<
@@ -714,7 +714,7 @@ mod test {
             (13, 30),
         ];
         for case in cases {
-            let days_in_month = Chinese::month_days(year, case.0);
+            let days_in_month = Chinese::month_days(year, case.0, ());
             assert_eq!(
                 case.1, days_in_month,
                 "month_days test failed for case: {case:?}"

@@ -76,10 +76,10 @@ pub(crate) trait CalendarArithmetic: Calendar {
     /// useful computational information for the current year
     /// as a field on ArithmeticDate
     type YearInfo: Copy + Debug;
-    fn month_days(year: i32, month: u8) -> u8;
-    fn months_for_every_year(year: i32) -> u8;
-    fn is_leap_year(year: i32) -> bool;
-    fn last_month_day_in_year(year: i32) -> (u8, u8);
+    fn month_days(year: i32, month: u8, _data: ()) -> u8;
+    fn months_for_every_year(year: i32, _data: ()) -> u8;
+    fn is_leap_year(year: i32, _data: ()) -> bool;
+    fn last_month_day_in_year(year: i32, _data: ()) -> (u8, u8);
 
     /// Calculate the days in a given year
     /// Can be overridden with simpler implementations for solar calendars
@@ -87,11 +87,11 @@ pub(crate) trait CalendarArithmetic: Calendar {
     /// for lunar calendars
     ///
     /// The name has `provided` in it to avoid clashes with Calendar
-    fn days_in_provided_year(year: i32) -> u16 {
-        let months_in_year = Self::months_for_every_year(year);
+    fn days_in_provided_year(year: i32, _data: ()) -> u16 {
+        let months_in_year = Self::months_for_every_year(year, ());
         let mut days: u16 = 0;
         for month in 1..=months_in_year {
-            days += Self::month_days(year, month) as u16;
+            days += Self::month_days(year, month, ()) as u16;
         }
         days
     }
@@ -152,7 +152,7 @@ impl<C: CalendarArithmetic> ArithmeticDate<C> {
         C: CalendarArithmetic<YearInfo = ()>,
     {
         let year = i32::MAX;
-        let (month, day) = C::last_month_day_in_year(year);
+        let (month, day) = C::last_month_day_in_year(year, ());
         ArithmeticDate {
             year: i32::MAX,
             month,
@@ -165,13 +165,13 @@ impl<C: CalendarArithmetic> ArithmeticDate<C> {
     #[inline]
     fn offset_days(&mut self, mut day_offset: i32) {
         while day_offset != 0 {
-            let month_days = C::month_days(self.year, self.month);
+            let month_days = C::month_days(self.year, self.month, ());
             if self.day as i32 + day_offset > month_days as i32 {
                 self.offset_months(1);
                 day_offset -= month_days as i32;
             } else if self.day as i32 + day_offset < 1 {
                 self.offset_months(-1);
-                day_offset += C::month_days(self.year, self.month) as i32;
+                day_offset += C::month_days(self.year, self.month, ()) as i32;
             } else {
                 self.day = (self.day as i32 + day_offset) as u8;
                 day_offset = 0;
@@ -182,13 +182,13 @@ impl<C: CalendarArithmetic> ArithmeticDate<C> {
     #[inline]
     fn offset_months(&mut self, mut month_offset: i32) {
         while month_offset != 0 {
-            let year_months = C::months_for_every_year(self.year);
+            let year_months = C::months_for_every_year(self.year, ());
             if self.month as i32 + month_offset > year_months as i32 {
                 self.year += 1;
                 month_offset -= year_months as i32;
             } else if self.month as i32 + month_offset < 1 {
                 self.year -= 1;
-                month_offset += C::months_for_every_year(self.year) as i32;
+                month_offset += C::months_for_every_year(self.year, ()) as i32;
             } else {
                 self.month = (self.month as i32 + month_offset) as u8;
                 month_offset = 0
@@ -232,24 +232,24 @@ impl<C: CalendarArithmetic> ArithmeticDate<C> {
 
     #[inline]
     pub fn days_in_year(&self) -> u16 {
-        C::days_in_provided_year(self.year)
+        C::days_in_provided_year(self.year, ())
     }
 
     #[inline]
     pub fn months_in_year(&self) -> u8 {
-        C::months_for_every_year(self.year)
+        C::months_for_every_year(self.year, ())
     }
 
     #[inline]
     pub fn days_in_month(&self) -> u8 {
-        C::month_days(self.year, self.month)
+        C::month_days(self.year, self.month, ())
     }
 
     #[inline]
     pub fn day_of_year(&self) -> u16 {
         let mut day_of_year = 0;
         for month in 1..self.month {
-            day_of_year += C::month_days(self.year, month) as u16;
+            day_of_year += C::month_days(self.year, month, ()) as u16;
         }
         day_of_year + (self.day as u16)
     }
@@ -261,8 +261,8 @@ impl<C: CalendarArithmetic> ArithmeticDate<C> {
     {
         let mut month = 1;
         let mut day = year_day as i32;
-        while month <= C::months_for_every_year(year) {
-            let month_days = C::month_days(year, month) as i32;
+        while month <= C::months_for_every_year(year, ()) {
+            let month_days = C::month_days(year, month, ()) as i32;
             if day <= month_days {
                 break;
             } else {
@@ -271,7 +271,7 @@ impl<C: CalendarArithmetic> ArithmeticDate<C> {
             }
         }
 
-        debug_assert!(day <= C::month_days(year, month) as i32);
+        debug_assert!(day <= C::month_days(year, month, ()) as i32);
         #[allow(clippy::unwrap_used)]
         // The day is expected to be within the range of month_days of C
         ArithmeticDate {
@@ -298,7 +298,7 @@ impl<C: CalendarArithmetic> ArithmeticDate<C> {
     #[inline]
     pub fn month(&self) -> types::FormattableMonth {
         let code = match self.month {
-            a if a > C::months_for_every_year(self.year) => tinystr!(4, "und"),
+            a if a > C::months_for_every_year(self.year, ()) => tinystr!(4, "und"),
             1 => tinystr!(4, "M01"),
             2 => tinystr!(4, "M02"),
             3 => tinystr!(4, "M03"),
@@ -343,14 +343,14 @@ impl<C: CalendarArithmetic> ArithmeticDate<C> {
             ));
         };
 
-        if month > C::months_for_every_year(year) {
+        if month > C::months_for_every_year(year, ()) {
             return Err(CalendarError::UnknownMonthCode(
                 month_code.0,
                 cal.debug_name(),
             ));
         }
 
-        let max_day = C::month_days(year, month);
+        let max_day = C::month_days(year, month, ());
         if day > max_day {
             return Err(CalendarError::Overflow {
                 field: "day",
@@ -368,14 +368,14 @@ impl<C: CalendarArithmetic> ArithmeticDate<C> {
     where
         C: CalendarArithmetic<YearInfo = ()>,
     {
-        let max_month = C::months_for_every_year(year);
+        let max_month = C::months_for_every_year(year, ());
         if month > max_month {
             return Err(CalendarError::Overflow {
                 field: "month",
                 max: max_month as usize,
             });
         }
-        let max_day = C::month_days(year, month);
+        let max_day = C::month_days(year, month, ());
         if day > max_day {
             return Err(CalendarError::Overflow {
                 field: "day",
