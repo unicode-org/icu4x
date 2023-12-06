@@ -51,6 +51,8 @@ impl<C: CalendarArithmetic> Clone for ChineseBasedDateInner<C> {
     }
 }
 
+/// Contains any loaded precomputed data. If constructed with Default, will
+/// *not* contain any extra data and will always compute stuff from scratch
 #[derive(Default)]
 pub(crate) struct ChineseBasedPrecomputedData<CB: ChineseBased> {
     // TODO(#3933)

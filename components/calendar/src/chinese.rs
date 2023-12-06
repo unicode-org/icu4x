@@ -533,10 +533,12 @@ mod test {
             },
         ];
 
+        let chinese = Chinese;
         for case in cases {
             let rata_die = RataDie::new(case.fixed);
             let iso = Iso::iso_from_fixed(rata_die);
-            let chinese = Inner::chinese_based_date_from_fixed(rata_die, iso.year().number);
+            let chinese =
+                Inner::chinese_based_date_from_fixed(&chinese, rata_die, iso.year().number);
             assert_eq!(
                 case.expected_year, chinese.0.year,
                 "Chinese from fixed failed for case: {case:?}"
@@ -595,10 +597,12 @@ mod test {
         let max_fixed = 1963020;
         let mut iters = 0;
         let max_iters = 560;
+        let chinese = Chinese;
         while fixed < max_fixed && iters < max_iters {
             let rata_die = RataDie::new(fixed);
             let iso = Iso::iso_from_fixed(rata_die);
-            let chinese = Inner::chinese_based_date_from_fixed(rata_die, iso.year().number);
+            let chinese =
+                Inner::chinese_based_date_from_fixed(&chinese, rata_die, iso.year().number);
             let result = Inner::fixed_from_chinese_based_date_inner(chinese);
             let result_debug = result.to_i64_date();
             assert_eq!(result, rata_die, "Failed roundtrip fixed -> Chinese -> fixed for fixed: {fixed}, with calculated: {result_debug} from Chinese date:\n{chinese:?}");
@@ -685,14 +689,14 @@ mod test {
             let year = case.0;
             let expected_month = case.1;
             let iso = Date::try_new_iso_date(year, 6, 1).unwrap();
-            let chinese_year = iso.to_calendar(Chinese).year().number;
-            let cache = Inner::compute_cache(chinese_year);
-            assert!(Chinese::is_leap_year(chinese_year, ()));
+            let chinese_date = iso.to_calendar(Chinese);
+            assert!(chinese_date.is_in_leap_year());
+            let new_year = chinese_date.inner.0 .0.year_info.new_year;
             assert_eq!(
                 expected_month,
                 calendrical_calculations::chinese_based::get_leap_month_from_new_year::<
                     calendrical_calculations::chinese_based::Chinese,
-                >(cache.new_year)
+                >(new_year)
             );
         }
     }
@@ -700,6 +704,9 @@ mod test {
     #[test]
     fn test_month_days() {
         let year = 4660;
+        let year_info =
+            ChineseBasedPrecomputedData::<<Chinese as ChineseBasedWithDataLoading>::CB>::default()
+                .load_or_compute_info(year);
         let cases = [
             (1, 29),
             (2, 30),
@@ -716,7 +723,7 @@ mod test {
             (13, 30),
         ];
         for case in cases {
-            let days_in_month = Chinese::month_days(year, case.0, ());
+            let days_in_month = Chinese::month_days(year, case.0, year_info);
             assert_eq!(
                 case.1, days_in_month,
                 "month_days test failed for case: {case:?}"
@@ -842,7 +849,10 @@ mod test {
     #[test]
     fn test_month_code_to_ordinal() {
         let year = 4660;
-        let cache = Inner::compute_cache(year);
+        // construct using ::default() to force recomputation
+        let year_info =
+            ChineseBasedPrecomputedData::<<Chinese as ChineseBasedWithDataLoading>::CB>::default()
+                .load_or_compute_info(year);
         let codes = [
             (1, tinystr!(4, "M01")),
             (2, tinystr!(4, "M02")),
@@ -860,10 +870,7 @@ mod test {
         ];
         for ordinal_code_pair in codes {
             let code = MonthCode(ordinal_code_pair.1);
-            let ordinal = chinese_based_ordinal_lunar_month_from_code(
-                code,
-                ChineseBasedYearInfo::Cache(cache),
-            );
+            let ordinal = chinese_based_ordinal_lunar_month_from_code(code, year_info);
             assert_eq!(
                 ordinal,
                 Some(ordinal_code_pair.0),
@@ -888,12 +895,13 @@ mod test {
         ];
         for year_code_pair in invalid_codes {
             let year = year_code_pair.0;
-            let cache = Inner::compute_cache(year);
+            // construct using ::default() to force recomputation
+            let year_info = ChineseBasedPrecomputedData::<
+                <Chinese as ChineseBasedWithDataLoading>::CB,
+            >::default()
+            .load_or_compute_info(year);
             let code = MonthCode(year_code_pair.1);
-            let ordinal = chinese_based_ordinal_lunar_month_from_code(
-                code,
-                ChineseBasedYearInfo::Cache(cache),
-            );
+            let ordinal = chinese_based_ordinal_lunar_month_from_code(code, year_info);
             assert_eq!(
                 ordinal, None,
                 "Invalid month code failed for year: {year}, code: {code}"
