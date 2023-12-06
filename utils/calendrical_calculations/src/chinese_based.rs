@@ -490,7 +490,10 @@ pub fn month_structure_for_year<C: ChineseBased>(
         let next_month_start = new_moon_on_or_after::<C>((current_month_start + 28).as_moment());
         let next_month_major_solar_term = major_solar_term_from_fixed::<C>(next_month_start);
 
-        ret[usize::from(i)] = next_month_start - 1;
+        #[allow(clippy::indexing_slicing)] // array is of length 13, we iterate till i=11
+        {
+            ret[usize::from(i)] = next_month_start - 1;
+        }
 
         if next_month_major_solar_term == current_month_major_solar_term {
             leap_month_index = NonZeroU8::new(i + 1);

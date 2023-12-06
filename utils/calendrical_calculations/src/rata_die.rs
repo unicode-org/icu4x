@@ -7,8 +7,8 @@
 // the Apache License, Version 2.0 which can be found at the calendrical_calculations
 // package root or at http://www.apache.org/licenses/LICENSE-2.0.
 
-use core::ops::{Add, AddAssign, Sub, SubAssign};
 use core::fmt;
+use core::ops::{Add, AddAssign, Sub, SubAssign};
 #[allow(unused_imports)]
 use core_maths::*;
 
@@ -78,8 +78,7 @@ impl RataDie {
 
 impl fmt::Debug for RataDie {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-
-            let rd = self.0;
+        let rd = self.0;
         if let Ok((y, m, d)) = crate::iso::iso_from_fixed(*self) {
             write!(f, "{rd} R.D. ({y}-{m:02}-{d:02})")
         } else {
