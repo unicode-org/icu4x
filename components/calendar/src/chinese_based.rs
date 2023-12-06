@@ -41,10 +41,7 @@ pub(crate) trait ChineseBasedWithDataLoading: Calendar {
 
 /// Chinese-based calendars define DateInner as a calendar-specific struct wrapping ChineseBasedDateInner.
 #[derive(Debug, Eq, PartialEq, PartialOrd, Ord)]
-pub(crate) struct ChineseBasedDateInner<C: CalendarArithmetic>(
-    pub(crate) ArithmeticDate<C>,
-    pub(crate) ChineseBasedYearInfo,
-);
+pub(crate) struct ChineseBasedDateInner<C: CalendarArithmetic>(pub(crate) ArithmeticDate<C>);
 
 // we want these impls without the `C: Copy/Clone` bounds
 impl<C: CalendarArithmetic> Copy for ChineseBasedDateInner<C> {}
@@ -292,10 +289,12 @@ impl<C: ChineseBasedWithDataLoading + CalendarArithmetic<YearInfo = ChineseBased
         // generate the year, month, and day; therefore, there should never be a situation where
         // creating this ArithmeticDate would fail, since the same algorithms used to generate the ymd
         // are also used to check for valid ymd.
-        ChineseBasedDateInner(
-            ArithmeticDate::new_unchecked_with_info(extended_year, month, day_of_month, year_info),
+        ChineseBasedDateInner(ArithmeticDate::new_unchecked_with_info(
+            extended_year,
+            month,
+            day_of_month,
             year_info,
-        )
+        ))
     }
 
     /// Get a ChineseBasedDateInner from a fixed date, with the related ISO year
@@ -317,7 +316,7 @@ impl<C: ChineseBasedWithDataLoading + CalendarArithmetic<YearInfo = ChineseBased
     /// This finds the RataDie of the new year of the year given, then finds the RataDie of the new moon
     /// (beginning of the month) of the month given, then adds the necessary number of days.
     pub(crate) fn fixed_from_chinese_based_date_inner(date: ChineseBasedDateInner<C>) -> RataDie {
-        let first_day_of_year = date.1.new_year;
+        let first_day_of_year = date.0.year_info.new_year;
         let day_of_year = date.day_of_year(); // 1 indexed
         first_day_of_year + i64::from(day_of_year) - 1
     }
@@ -355,7 +354,7 @@ impl<C: ChineseBasedWithDataLoading + CalendarArithmetic<YearInfo = ChineseBased
 
     /// Call `months_in_year_with_info` on a `ChineseBasedDateInner`
     pub(crate) fn months_in_year_inner(&self) -> u8 {
-        Self::months_in_year_with_info(self.1)
+        Self::months_in_year_with_info(self.0.year_info)
     }
 
     /// Return the number of months in a given year, which is 13 in a leap year, and 12 in a common year.
@@ -370,8 +369,7 @@ impl<C: ChineseBasedWithDataLoading + CalendarArithmetic<YearInfo = ChineseBased
 
     /// Calls `days_in_month` on an instance of ChineseBasedDateInner
     pub(crate) fn days_in_month_inner(&self) -> u8 {
-        // TODO use year_info.days_in_month(self.0.month)
-        chinese_based::days_in_month::<C::CB>(self.0.month, self.1.new_year, None).0
+        self.0.year_info.days_in_month(self.0.month)
     }
 
     pub(crate) fn fixed_mid_year_from_year(year: i32) -> RataDie {
@@ -380,8 +378,8 @@ impl<C: ChineseBasedWithDataLoading + CalendarArithmetic<YearInfo = ChineseBased
 
     /// Calls days_in_year on an instance of ChineseBasedDateInner
     pub(crate) fn days_in_year_inner(&self) -> u16 {
-        let next_new_year = self.1.next_new_year();
-        let new_year = self.1.new_year;
+        let next_new_year = self.0.year_info.next_new_year();
+        let new_year = self.0.year_info.new_year;
         YearBounds {
             new_year,
             next_new_year,
@@ -392,13 +390,11 @@ impl<C: ChineseBasedWithDataLoading + CalendarArithmetic<YearInfo = ChineseBased
     /// Calculate the number of days in the year so far for a ChineseBasedDate;
     /// similar to `CalendarArithmetic::day_of_year`
     pub(crate) fn day_of_year(&self) -> u16 {
-        // TODO use year_info.last_day_of_previous_month(self.0.month)
-        let new_year = self.1.new_year;
-        let days_until_month = chinese_based::days_until_month::<C::CB>(new_year, self.0.month);
-        days_until_month + u16::from(self.0.day)
+        self.0.year_info.last_day_of_previous_month(self.0.month)
     }
 }
 
+// todo: pass around YearInfo in CalendarArithmetic (oops)
 impl<C: ChineseBasedWithDataLoading> CalendarArithmetic for C {
     type YearInfo = ChineseBasedYearInfo;
 

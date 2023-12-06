@@ -149,10 +149,7 @@ impl Calendar for Dangi {
         }
 
         let arithmetic = Inner::new_from_ordinals(year, month, day, year_info);
-        Ok(DangiDateInner(ChineseBasedDateInner(
-            arithmetic?,
-            year_info,
-        )))
+        Ok(DangiDateInner(ChineseBasedDateInner(arithmetic?)))
     }
 
     fn date_from_iso(&self, iso: Date<crate::Iso>) -> Self::DateInner {
@@ -201,7 +198,7 @@ impl Calendar for Dangi {
     }
 
     fn year(&self, date: &Self::DateInner) -> crate::types::FormattableYear {
-        Self::format_dangi_year(date.0 .0.year, Some(date.0 .1))
+        Self::format_dangi_year(date.0 .0.year, Some(date.0 .0.year_info))
     }
 
     fn is_in_leap_year(&self, date: &Self::DateInner) -> bool {
@@ -210,7 +207,7 @@ impl Calendar for Dangi {
 
     fn month(&self, date: &Self::DateInner) -> crate::types::FormattableMonth {
         let ordinal = date.0 .0.month;
-        let leap_month_option = date.0 .1.leap_month;
+        let leap_month_option = date.0 .0.year_info.leap_month;
         let leap_month = if let Some(leap) = leap_month_option {
             leap.get()
         } else {
@@ -330,7 +327,7 @@ impl<A: AsCalendar<Calendar = Dangi>> Date<A> {
             .load_or_compute_info(year);
         let arithmetic = Inner::new_from_ordinals(year, month, day, year_info);
         Ok(Date::from_raw(
-            DangiDateInner(ChineseBasedDateInner(arithmetic?, year_info)),
+            DangiDateInner(ChineseBasedDateInner(arithmetic?)),
             calendar,
         ))
     }

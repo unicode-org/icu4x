@@ -158,10 +158,7 @@ impl Calendar for Chinese {
         }
 
         let arithmetic = Inner::new_from_ordinals(year, month, day, year_info);
-        Ok(ChineseDateInner(ChineseBasedDateInner(
-            arithmetic?,
-            year_info,
-        )))
+        Ok(ChineseDateInner(ChineseBasedDateInner(arithmetic?)))
     }
 
     // Construct the date from an ISO date
@@ -219,7 +216,7 @@ impl Calendar for Chinese {
 
     /// The calendar-specific year represented by `date`
     fn year(&self, date: &Self::DateInner) -> types::FormattableYear {
-        Self::format_chinese_year(date.0 .0.year, Some(date.0 .1))
+        Self::format_chinese_year(date.0 .0.year, Some(date.0 .0.year_info))
     }
 
     fn is_in_leap_year(&self, date: &Self::DateInner) -> bool {
@@ -232,7 +229,7 @@ impl Calendar for Chinese {
     /// month, the month codes for ordinal months 1, 2, 3, 4, 5 would be "M01", "M02", "M02L", "M03", "M04".
     fn month(&self, date: &Self::DateInner) -> types::FormattableMonth {
         let ordinal = date.0 .0.month;
-        let leap_month_option = date.0 .1.leap_month;
+        let leap_month_option = date.0 .0.year_info.leap_month;
         let leap_month = if let Some(leap) = leap_month_option {
             leap.get()
         } else {
@@ -355,7 +352,7 @@ impl<A: AsCalendar<Calendar = Chinese>> Date<A> {
             .load_or_compute_info(year);
         let arithmetic = Inner::new_from_ordinals(year, month, day, year_info);
         Ok(Date::from_raw(
-            ChineseDateInner(ChineseBasedDateInner(arithmetic?, year_info)),
+            ChineseDateInner(ChineseBasedDateInner(arithmetic?)),
             calendar,
         ))
     }
