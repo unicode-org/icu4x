@@ -538,7 +538,6 @@ impl BakedExporter {
                                     .for_config(<#marker as icu_provider::KeyedDataMarker>::KEY.fallback_config());
                             let mut fallback_iterator = FALLBACKER.fallback_for(req.locale.clone());
                             loop {
-                                fallback_iterator.step();
                                 if let Ok(payload) = #search_iterator {
                                     metadata.locale = Some(fallback_iterator.take());
                                     break payload;
@@ -546,6 +545,7 @@ impl BakedExporter {
                                 if fallback_iterator.get().is_und() {
                                     return Err(icu_provider::DataErrorKind::MissingLocale.with_req(<#marker as icu_provider::KeyedDataMarker>::KEY, req));
                                 }
+                                fallback_iterator.step();
                             }
                         };
 
