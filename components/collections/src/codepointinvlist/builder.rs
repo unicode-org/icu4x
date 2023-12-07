@@ -114,15 +114,21 @@ impl CodePointInversionListBuilder {
     /// ```
     /// use icu_collections::codepointinvlist::CodePointInversionListBuilder;
     /// let mut builder = CodePointInversionListBuilder::new();
-    /// builder.add_u32(0x41);
+    /// builder.add32(0x41);
     /// let check = builder.build();
     /// assert!(check.contains32(0x41));
     /// ```
-    pub fn add_u32(&mut self, c: u32) {
+    pub fn add32(&mut self, c: u32) {
         if c <= char::MAX as u32 {
             // we already know 0 <= c  because c: u32
             self.add(c, c + 1);
         }
+    }
+
+    /// Same as [`add32`].
+    #[deprecated(since = "1.5.0", note = "Use `add32`")]
+    pub fn add_u32(&mut self, c: u32) {
+        self.add32(c)
     }
 
     /// Add the range of characters to the [`CodePointInversionListBuilder`]
@@ -148,16 +154,22 @@ impl CodePointInversionListBuilder {
     /// ```
     /// use icu_collections::codepointinvlist::CodePointInversionListBuilder;
     /// let mut builder = CodePointInversionListBuilder::new();
-    /// builder.add_range_u32(&(0xd800..=0xdfff));
+    /// builder.add_range32(&(0xd800..=0xdfff));
     /// let check = builder.build();
     /// assert!(check.contains32(0xd900));
     /// ```
-    pub fn add_range_u32(&mut self, range: &impl RangeBounds<u32>) {
+    pub fn add_range32(&mut self, range: &impl RangeBounds<u32>) {
         let (start, end) = deconstruct_range(range);
         // Sets that include char::MAX need to allow an end value of MAX + 1
         if start <= end && end <= char::MAX as u32 + 1 {
             self.add(start, end);
         }
+    }
+
+    /// Same as [`add_range32`].
+    #[deprecated(since = "1.5.0", note = "Use `add_range32`")]
+    pub fn add_range_u32(&mut self, range: &impl RangeBounds<u32>) {
+        self.add_range32(range)
     }
 
     /// Add the [`CodePointInversionList`] reference to the [`CodePointInversionListBuilder`]
@@ -744,9 +756,9 @@ mod tests {
     }
 
     #[test]
-    fn test_add_range_u32() {
+    fn test_add_range32() {
         let mut builder = CodePointInversionListBuilder::new();
-        builder.add_range_u32(&(0xd800..=0xdfff));
+        builder.add_range32(&(0xd800..=0xdfff));
         let expected = [0xd800, 0xe000];
         assert_eq!(builder.intervals, expected);
     }
