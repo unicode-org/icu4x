@@ -12,7 +12,7 @@ use core::str::FromStr;
 use icu_provider::prelude::*;
 use zerovec::ZeroVec;
 
-#[derive(Debug, PartialEq, Clone, yoke::Yokeable, zerofrom::ZeroFrom)]
+#[derive(Debug, PartialEq, Eq, Clone, yoke::Yokeable, zerofrom::ZeroFrom)]
 #[allow(clippy::exhaustive_structs)] // this type is stable
 #[cfg_attr(
     feature = "datagen",
