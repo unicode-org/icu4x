@@ -10,7 +10,6 @@ pub mod ffi {
     use alloc::boxed::Box;
     use alloc::string::String;
     use alloc::vec::Vec;
-    use diplomat_runtime::DiplomatWriteable;
     use icu_list::{ListFormatter, ListLength};
     use writeable::Writeable;
 
@@ -34,16 +33,19 @@ pub mod ffi {
         ///
         /// For C++ users, potentially invalid UTF8 will be handled via
         /// REPLACEMENT CHARACTERs
-        pub fn push(&mut self, val: &str) {
-            let val = val.as_bytes(); // #2520
+        pub fn push(&mut self, val: &DiplomatStr) {
             self.0.push(String::from_utf8_lossy(val).into_owned());
         }
 
         /// The number of elements in this list
-        #[allow(clippy::len_without_is_empty)] // don't need to follow Rust conventions over FFI
         #[diplomat::attr(dart, rename = "length")]
         pub fn len(&self) -> usize {
             self.0.len()
+        }
+
+        /// Whether this list is empty
+        pub fn is_empty(&self) -> bool {
+            self.0.is_empty()
         }
     }
 

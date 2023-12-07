@@ -8,15 +8,14 @@ part of 'lib.g.dart';
 /// FFI version of `PluralRules`.
 ///
 /// See the [Rust documentation for `PluralRules`](https://docs.rs/icu/latest/icu/plurals/struct.PluralRules.html) for more information.
-class PluralRules implements ffi.Finalizable {
+final class PluralRules implements ffi.Finalizable {
   final ffi.Pointer<ffi.Opaque> _underlying;
 
   PluralRules._(this._underlying) {
     _finalizer.attach(this, _underlying.cast());
   }
 
-  static final _finalizer =
-      ffi.NativeFinalizer(_capi('ICU4XPluralRules_destroy'));
+  static final _finalizer = ffi.NativeFinalizer(_capi('ICU4XPluralRules_destroy'));
 
   /// Construct an [`PluralRules`] for the given locale, for cardinal numbers
   ///
@@ -24,21 +23,17 @@ class PluralRules implements ffi.Finalizable {
   ///
   /// Throws [Error] on failure.
   factory PluralRules.cardinal(DataProvider provider, Locale locale) {
-    final result = _ICU4XPluralRules_create_cardinal(
-        provider._underlying, locale._underlying);
+    final result = _ICU4XPluralRules_create_cardinal(provider._underlying, locale._underlying);
     if (!result.isOk) {
       throw Error.values.firstWhere((v) => v._underlying == result.union.err);
     }
     return PluralRules._(result.union.ok);
   }
+
   // ignore: non_constant_identifier_names
-  static final _ICU4XPluralRules_create_cardinal = _capi<
-          ffi.NativeFunction<
-              _ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>,
-                  ffi.Pointer<ffi.Opaque>)>>('ICU4XPluralRules_create_cardinal')
-      .asFunction<
-          _ResultOpaqueInt32 Function(
-              ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
+  static final _ICU4XPluralRules_create_cardinal =
+    _capi<ffi.NativeFunction<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>>('ICU4XPluralRules_create_cardinal')
+      .asFunction<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
 
   /// Construct an [`PluralRules`] for the given locale, for ordinal numbers
   ///
@@ -46,21 +41,17 @@ class PluralRules implements ffi.Finalizable {
   ///
   /// Throws [Error] on failure.
   factory PluralRules.ordinal(DataProvider provider, Locale locale) {
-    final result = _ICU4XPluralRules_create_ordinal(
-        provider._underlying, locale._underlying);
+    final result = _ICU4XPluralRules_create_ordinal(provider._underlying, locale._underlying);
     if (!result.isOk) {
       throw Error.values.firstWhere((v) => v._underlying == result.union.err);
     }
     return PluralRules._(result.union.ok);
   }
+
   // ignore: non_constant_identifier_names
-  static final _ICU4XPluralRules_create_ordinal = _capi<
-          ffi.NativeFunction<
-              _ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>,
-                  ffi.Pointer<ffi.Opaque>)>>('ICU4XPluralRules_create_ordinal')
-      .asFunction<
-          _ResultOpaqueInt32 Function(
-              ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
+  static final _ICU4XPluralRules_create_ordinal =
+    _capi<ffi.NativeFunction<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>>('ICU4XPluralRules_create_ordinal')
+      .asFunction<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
 
   /// Get the category for a given number represented as operands
   ///
@@ -71,13 +62,9 @@ class PluralRules implements ffi.Finalizable {
   }
 
   // ignore: non_constant_identifier_names
-  static final _ICU4XPluralRules_category_for = _capi<
-          ffi.NativeFunction<
-              ffi.Int32 Function(ffi.Pointer<ffi.Opaque>,
-                  ffi.Pointer<ffi.Opaque>)>>('ICU4XPluralRules_category_for')
-      .asFunction<
-          int Function(
-              ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
+  static final _ICU4XPluralRules_category_for =
+    _capi<ffi.NativeFunction<ffi.Int32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>>('ICU4XPluralRules_category_for')
+      .asFunction<int Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
 
   /// Get all of the categories needed in the current locale
   ///
@@ -88,10 +75,7 @@ class PluralRules implements ffi.Finalizable {
   }
 
   // ignore: non_constant_identifier_names
-  static final _ICU4XPluralRules_categories = _capi<
-          ffi.NativeFunction<
-              _PluralCategoriesFfi Function(
-                  ffi.Pointer<ffi.Opaque>)>>('ICU4XPluralRules_categories')
-      .asFunction<_PluralCategoriesFfi Function(ffi.Pointer<ffi.Opaque>)>(
-          isLeaf: true);
+  static final _ICU4XPluralRules_categories =
+    _capi<ffi.NativeFunction<_PluralCategoriesFfi Function(ffi.Pointer<ffi.Opaque>)>>('ICU4XPluralRules_categories')
+      .asFunction<_PluralCategoriesFfi Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
 }

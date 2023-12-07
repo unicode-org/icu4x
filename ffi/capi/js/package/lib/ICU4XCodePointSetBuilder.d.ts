@@ -53,7 +53,7 @@ export class ICU4XCodePointSetBuilder {
 
   /**
 
-   * Add a single u32 value to the set
+   * Deprecated, use `add_char`.
 
    * See the {@link https://docs.rs/icu/latest/icu/collections/codepointinvlist/struct.CodePointInversionListBuilder.html#method.add_u32 Rust documentation for `add_u32`} for more information.
    */
@@ -69,7 +69,7 @@ export class ICU4XCodePointSetBuilder {
 
   /**
 
-   * Add an inclusive range of u32s to the set
+   * Deprecated, use `add_inclusive_range`.
 
    * See the {@link https://docs.rs/icu/latest/icu/collections/codepointinvlist/struct.CodePointInversionListBuilder.html#method.add_range_u32 Rust documentation for `add_range_u32`} for more information.
    */

@@ -36,12 +36,14 @@ export class ICU4XBidi {
   }
 
   for_text(arg_text, arg_default_level) {
-    const buf_arg_text = diplomatRuntime.DiplomatBuf.str(wasm, arg_text);
-    return new ICU4XBidiInfo(wasm.ICU4XBidi_for_text(this.underlying, buf_arg_text.ptr, buf_arg_text.size, arg_default_level), true, [buf_arg_text]);
+    const buf_arg_text = diplomatRuntime.DiplomatBuf.str8(wasm, arg_text);
+    const diplomat_out = new ICU4XBidiInfo(wasm.ICU4XBidi_for_text(this.underlying, buf_arg_text.ptr, buf_arg_text.size, arg_default_level), true, [buf_arg_text]);
+    buf_arg_text.garbageCollect();
+    return diplomat_out;
   }
 
   reorder_visual(arg_levels) {
-    const buf_arg_levels = diplomatRuntime.DiplomatBuf.slice(wasm, arg_levels, 1);
+    const buf_arg_levels = diplomatRuntime.DiplomatBuf.slice(wasm, arg_levels, "u8");
     const diplomat_out = new ICU4XReorderedIndexMap(wasm.ICU4XBidi_reorder_visual(this.underlying, buf_arg_levels.ptr, buf_arg_levels.size), true, []);
     buf_arg_levels.free();
     return diplomat_out;

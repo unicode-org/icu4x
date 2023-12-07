@@ -41,8 +41,8 @@ export class ICU4XDateTime {
   }
 
   static create_from_codes_in_calendar(arg_era_code, arg_year, arg_month_code, arg_day, arg_hour, arg_minute, arg_second, arg_nanosecond, arg_calendar) {
-    const buf_arg_era_code = diplomatRuntime.DiplomatBuf.str(wasm, arg_era_code);
-    const buf_arg_month_code = diplomatRuntime.DiplomatBuf.str(wasm, arg_month_code);
+    const buf_arg_era_code = diplomatRuntime.DiplomatBuf.str8(wasm, arg_era_code);
+    const buf_arg_month_code = diplomatRuntime.DiplomatBuf.str8(wasm, arg_month_code);
     const diplomat_out = (() => {
       const diplomat_receive_buffer = wasm.diplomat_alloc(5, 4);
       wasm.ICU4XDateTime_create_from_codes_in_calendar(diplomat_receive_buffer, buf_arg_era_code.ptr, buf_arg_era_code.size, arg_year, buf_arg_month_code.ptr, buf_arg_month_code.size, arg_day, arg_hour, arg_minute, arg_second, arg_nanosecond, arg_calendar.underlying);

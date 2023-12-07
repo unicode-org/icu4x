@@ -5,7 +5,7 @@
 
 part of 'lib.g.dart';
 
-class _IsoTimeZoneOptionsFfi extends ffi.Struct {
+final class _IsoTimeZoneOptionsFfi extends ffi.Struct {
   @ffi.Int32()
   external int format;
   @ffi.Int32()
@@ -14,10 +14,9 @@ class _IsoTimeZoneOptionsFfi extends ffi.Struct {
   external int seconds;
 }
 
-class IsoTimeZoneOptions {
+final class IsoTimeZoneOptions {
   final _IsoTimeZoneOptionsFfi _underlying;
 
-  // ignore: unused_element
   IsoTimeZoneOptions._(this._underlying);
 
   factory IsoTimeZoneOptions() {
@@ -32,14 +31,12 @@ class IsoTimeZoneOptions {
     _underlying.format = format.index;
   }
 
-  IsoTimeZoneMinuteDisplay get minutes =>
-      IsoTimeZoneMinuteDisplay.values[_underlying.minutes];
+  IsoTimeZoneMinuteDisplay get minutes => IsoTimeZoneMinuteDisplay.values[_underlying.minutes];
   set minutes(IsoTimeZoneMinuteDisplay minutes) {
     _underlying.minutes = minutes.index;
   }
 
-  IsoTimeZoneSecondDisplay get seconds =>
-      IsoTimeZoneSecondDisplay.values[_underlying.seconds];
+  IsoTimeZoneSecondDisplay get seconds => IsoTimeZoneSecondDisplay.values[_underlying.seconds];
   set seconds(IsoTimeZoneSecondDisplay seconds) {
     _underlying.seconds = seconds.index;
   }

@@ -14,9 +14,12 @@
         // Exhaustiveness and Debug is not required for Diplomat types
     )
 )]
-#![allow(clippy::upper_case_acronyms)]
-#![allow(clippy::needless_lifetimes)]
-#![allow(clippy::result_unit_err)]
+// Diplomat limitations
+#![allow(
+    clippy::needless_lifetimes,
+    clippy::result_unit_err,
+    clippy::should_implement_trait
+)]
 
 //! This crate contains the source of truth for the [Diplomat](https://github.com/rust-diplomat/diplomat)-generated
 //! FFI bindings. This generates the C, C++, JavaScript, and TypeScript bindings. This crate also contains the `extern "C"`
@@ -27,9 +30,8 @@
 //! by this crate, while not directly documented, are stable within the same major semver version, as are the bindings exposed under
 //! the `cpp/` and `js/` folders.
 //!
-//! This crate may still be explored for documentation on docs.rs, and there are generated language-specific docs available as well.
-//! C++ has sphinx docs in `cpp/docs/`, and the header files also contain documentation comments. The JS version has sphinx docs under
-//! `js/docs`, and the TypeScript sources in `js/include` are compatible with `tsdoc`.
+//! This crate may still be explored for documentation on docs.rs, and there are language-specific docs available as well.
+//! C++, Dart, and TypeScript headers contain inline documentation, which is available pre-rendered: [C++], [TypeScript].
 //!
 //! This crate is `no_std` and will not typically build as a staticlib on its own. If you wish to link to it you should prefer
 //! using `icu_capi_staticlib`, or for more esoteric platforms you may write a shim crate depending on this crate that hooks in
@@ -38,6 +40,8 @@
 //! More information on using ICU4X from C++ can be found in [our tutorial].
 //!
 //! [our tutorial]: https://github.com/unicode-org/icu4x/blob/main/docs/tutorials/cpp.md
+//! [TypeScript]: https://unicode-org.github.io/icu4x/docs/ffi/ts/
+//! [C++]: https://unicode-org.github.io/icu4x/docs/ffi/cpp/
 // Renamed so you can't accidentally use it
 #[cfg(target_arch = "wasm32")]
 extern crate std as rust_std;

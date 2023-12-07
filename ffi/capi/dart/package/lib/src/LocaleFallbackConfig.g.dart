@@ -8,18 +8,17 @@ part of 'lib.g.dart';
 /// Collection of configurations for the ICU4X fallback algorithm.
 ///
 /// See the [Rust documentation for `LocaleFallbackConfig`](https://docs.rs/icu/latest/icu/locid_transform/fallback/struct.LocaleFallbackConfig.html) for more information.
-class _LocaleFallbackConfigFfi extends ffi.Struct {
+final class _LocaleFallbackConfigFfi extends ffi.Struct {
   @ffi.Int32()
   external int priority;
-  external _SliceFfi2Utf8 extensionKey;
+  external _SliceUtf8 extensionKey;
   @ffi.Int32()
   external int fallbackSupplement;
 }
 
-class LocaleFallbackConfig {
+final class LocaleFallbackConfig {
   final _LocaleFallbackConfigFfi _underlying;
 
-  // ignore: unused_element
   LocaleFallbackConfig._(this._underlying);
 
   factory LocaleFallbackConfig() {
@@ -29,22 +28,20 @@ class LocaleFallbackConfig {
     return result;
   }
 
-  LocaleFallbackPriority get priority =>
-      LocaleFallbackPriority.values[_underlying.priority];
+  LocaleFallbackPriority get priority => LocaleFallbackPriority.values[_underlying.priority];
   set priority(LocaleFallbackPriority priority) {
     _underlying.priority = priority.index;
   }
 
-  String get extensionKey => _underlying.extensionKey._asDart;
+  String get extensionKey => Utf8Decoder().convert(_underlying.extensionKey._pointer.asTypedList(_underlying.extensionKey._length));
   set extensionKey(String extensionKey) {
-    final alloc = ffi2.calloc;
-    alloc.free(_underlying.extensionKey._bytes);
-    final extensionKeySlice = _SliceFfi2Utf8._fromDart(extensionKey, alloc);
-    _underlying.extensionKey = extensionKeySlice;
+    ffi2.calloc.free(_underlying.extensionKey._pointer);
+    final extensionKeyView = extensionKey.utf8View;
+    _underlying.extensionKey._pointer = extensionKeyView.pointer(ffi2.calloc);
+    _underlying.extensionKey._length = extensionKeyView.length;
   }
 
-  LocaleFallbackSupplement get fallbackSupplement =>
-      LocaleFallbackSupplement.values[_underlying.fallbackSupplement];
+  LocaleFallbackSupplement get fallbackSupplement => LocaleFallbackSupplement.values[_underlying.fallbackSupplement];
   set fallbackSupplement(LocaleFallbackSupplement fallbackSupplement) {
     _underlying.fallbackSupplement = fallbackSupplement.index;
   }

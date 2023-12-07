@@ -44,6 +44,11 @@ class ICU4XReorderedIndexMap {
   size_t len() const;
 
   /**
+   * Whether this map is empty
+   */
+  bool is_empty() const;
+
+  /**
    * Get element at `index`. Returns 0 when out of bounds
    * (note that 0 is also a valid in-bounds value, please use `len()`
    * to avoid out-of-bounds)
@@ -67,6 +72,9 @@ inline const diplomat::span<const size_t> ICU4XReorderedIndexMap::as_slice() con
 }
 inline size_t ICU4XReorderedIndexMap::len() const {
   return capi::ICU4XReorderedIndexMap_len(this->inner.get());
+}
+inline bool ICU4XReorderedIndexMap::is_empty() const {
+  return capi::ICU4XReorderedIndexMap_is_empty(this->inner.get());
 }
 inline size_t ICU4XReorderedIndexMap::get(size_t index) const {
   return capi::ICU4XReorderedIndexMap_get(this->inner.get(), index);

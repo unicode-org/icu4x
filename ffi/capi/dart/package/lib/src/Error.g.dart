@@ -19,20 +19,35 @@ enum Error {
   /// Typically found when not enough space is allocated
   /// Most APIs that return a string may return this error
   writeableError,
+
   outOfBoundsError,
+
   dataMissingDataKeyError,
+
   dataMissingVariantError,
+
   dataMissingLocaleError,
+
   dataNeedsVariantError,
+
   dataNeedsLocaleError,
+
   dataExtraneousLocaleError,
+
   dataFilteredResourceError,
+
   dataMismatchedTypeError,
+
   dataMissingPayloadError,
+
   dataInvalidStateError,
+
   dataCustomError,
+
   dataIoError,
+
   dataUnavailableBufferFormatError,
+
   dataMismatchedAnyBufferError,
 
   /// The subtag being requested was not set
@@ -40,43 +55,78 @@ enum Error {
 
   /// The locale or subtag string failed to parse
   localeParserLanguageError,
+
   localeParserSubtagError,
+
   localeParserExtensionError,
 
   /// Attempted to construct an invalid data struct
   dataStructValidityError,
+
   propertyUnknownScriptIdError,
+
   propertyUnknownGeneralCategoryGroupError,
+
   propertyUnexpectedPropertyNameError,
+
   fixedDecimalLimitError,
+
   fixedDecimalSyntaxError,
+
   pluralsParserError,
+
   calendarParseError,
+
   calendarOverflowError,
+
   calendarUnderflowError,
+
   calendarOutOfRangeError,
+
   calendarUnknownEraError,
+
   calendarUnknownMonthCodeError,
+
   calendarMissingInputError,
+
   calendarUnknownKindError,
+
   calendarMissingError,
+
   dateTimePatternError,
+
   dateTimeMissingInputFieldError,
+
   dateTimeSkeletonError,
+
   dateTimeUnsupportedFieldError,
+
   dateTimeUnsupportedOptionsError,
+
   dateTimeMissingWeekdaySymbolError,
+
   dateTimeMissingMonthSymbolError,
+
   dateTimeFixedDecimalError,
+
   dateTimeMismatchedCalendarError,
+
   tinyStrTooLargeError,
+
   tinyStrContainsNullError,
+
   tinyStrNonAsciiError,
+
   timeZoneOffsetOutOfBoundsError,
+
   timeZoneInvalidOffsetError,
+
   timeZoneMissingInputError,
+
   timeZoneInvalidIdError,
+
   normalizerFutureExtensionError,
+
   normalizerValidationError;
 
   int get _underlying {

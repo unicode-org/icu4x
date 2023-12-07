@@ -100,7 +100,7 @@ class ICU4XLineSegmenter {
    * 
    * Lifetimes: `this`, `input` must live at least as long as the output.
    */
-  ICU4XLineBreakIteratorUtf16 segment_utf16(const diplomat::span<const uint16_t> input) const;
+  ICU4XLineBreakIteratorUtf16 segment_utf16(const std::u16string_view input) const;
 
   /**
    * Segments a Latin-1 string.
@@ -192,7 +192,7 @@ inline diplomat::result<ICU4XLineSegmenter, ICU4XError> ICU4XLineSegmenter::crea
 inline ICU4XLineBreakIteratorUtf8 ICU4XLineSegmenter::segment_utf8(const std::string_view input) const {
   return ICU4XLineBreakIteratorUtf8(capi::ICU4XLineSegmenter_segment_utf8(this->inner.get(), input.data(), input.size()));
 }
-inline ICU4XLineBreakIteratorUtf16 ICU4XLineSegmenter::segment_utf16(const diplomat::span<const uint16_t> input) const {
+inline ICU4XLineBreakIteratorUtf16 ICU4XLineSegmenter::segment_utf16(const std::u16string_view input) const {
   return ICU4XLineBreakIteratorUtf16(capi::ICU4XLineSegmenter_segment_utf16(this->inner.get(), input.data(), input.size()));
 }
 inline ICU4XLineBreakIteratorLatin1 ICU4XLineSegmenter::segment_latin1(const diplomat::span<const uint8_t> input) const {

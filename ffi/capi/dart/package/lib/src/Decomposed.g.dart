@@ -10,17 +10,16 @@ part of 'lib.g.dart';
 /// (which may or may not be the original one)
 ///
 /// See the [Rust documentation for `Decomposed`](https://docs.rs/icu/latest/icu/normalizer/properties/enum.Decomposed.html) for more information.
-class _DecomposedFfi extends ffi.Struct {
+final class _DecomposedFfi extends ffi.Struct {
   @ffi.Uint32()
-  external int first;
+  external Rune first;
   @ffi.Uint32()
-  external int second;
+  external Rune second;
 }
 
-class Decomposed {
+final class Decomposed {
   final _DecomposedFfi _underlying;
 
-  // ignore: unused_element
   Decomposed._(this._underlying);
 
   factory Decomposed() {
@@ -30,13 +29,13 @@ class Decomposed {
     return result;
   }
 
-  int get first => _underlying.first;
-  set first(int first) {
+  Rune get first => _underlying.first;
+  set first(Rune first) {
     _underlying.first = first;
   }
 
-  int get second => _underlying.second;
-  set second(int second) {
+  Rune get second => _underlying.second;
+  set second(Rune second) {
     _underlying.second = second;
   }
 

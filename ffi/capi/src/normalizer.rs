@@ -6,7 +6,6 @@
 pub mod ffi {
     use crate::{errors::ffi::ICU4XError, provider::ffi::ICU4XDataProvider};
     use alloc::boxed::Box;
-    use diplomat_runtime::DiplomatWriteable;
     use icu_normalizer::{ComposingNormalizer, DecomposingNormalizer};
 
     #[diplomat::opaque]
@@ -55,8 +54,11 @@ pub mod ffi {
             FnInStruct,
             hidden
         )]
-        pub fn normalize(&self, s: &str, write: &mut DiplomatWriteable) -> Result<(), ICU4XError> {
-            let s = s.as_bytes(); // #2520
+        pub fn normalize(
+            &self,
+            s: &DiplomatStr,
+            write: &mut DiplomatWriteable,
+        ) -> Result<(), ICU4XError> {
             self.0.normalize_utf8_to(s, write)?;
             Ok(())
         }
@@ -70,8 +72,7 @@ pub mod ffi {
             FnInStruct,
             hidden
         )]
-        pub fn is_normalized(&self, s: &str) -> bool {
-            let s = s.as_bytes(); // #2520
+        pub fn is_normalized(&self, s: &DiplomatStr) -> bool {
             self.0.is_normalized_utf8(s)
         }
     }
@@ -126,8 +127,11 @@ pub mod ffi {
             FnInStruct,
             hidden
         )]
-        pub fn normalize(&self, s: &str, write: &mut DiplomatWriteable) -> Result<(), ICU4XError> {
-            let s = s.as_bytes(); // #2520
+        pub fn normalize(
+            &self,
+            s: &DiplomatStr,
+            write: &mut DiplomatWriteable,
+        ) -> Result<(), ICU4XError> {
             self.0.normalize_utf8_to(s, write)?;
             Ok(())
         }
@@ -144,8 +148,7 @@ pub mod ffi {
             FnInStruct,
             hidden
         )]
-        pub fn is_normalized(&self, s: &str) -> bool {
-            let s = s.as_bytes(); // #2520
+        pub fn is_normalized(&self, s: &DiplomatStr) -> bool {
             self.0.is_normalized_utf8(s)
         }
     }

@@ -8,7 +8,7 @@ use core::str::FromStr;
 use icu_provider::prelude::*;
 use zerovec::ZeroVec;
 
-#[derive(Debug, PartialEq, Clone, yoke::Yokeable, zerofrom::ZeroFrom)]
+#[derive(Debug, PartialEq, Eq, Clone, yoke::Yokeable, zerofrom::ZeroFrom)]
 #[cfg_attr(
     feature = "datagen",
     derive(databake::Bake),

@@ -8,15 +8,14 @@ part of 'lib.g.dart';
 /// A locale canonicalizer.
 ///
 /// See the [Rust documentation for `LocaleCanonicalizer`](https://docs.rs/icu/latest/icu/locid_transform/struct.LocaleCanonicalizer.html) for more information.
-class LocaleCanonicalizer implements ffi.Finalizable {
+final class LocaleCanonicalizer implements ffi.Finalizable {
   final ffi.Pointer<ffi.Opaque> _underlying;
 
   LocaleCanonicalizer._(this._underlying) {
     _finalizer.attach(this, _underlying.cast());
   }
 
-  static final _finalizer =
-      ffi.NativeFinalizer(_capi('ICU4XLocaleCanonicalizer_destroy'));
+  static final _finalizer = ffi.NativeFinalizer(_capi('ICU4XLocaleCanonicalizer_destroy'));
 
   /// Create a new [`LocaleCanonicalizer`].
   ///
@@ -30,13 +29,11 @@ class LocaleCanonicalizer implements ffi.Finalizable {
     }
     return LocaleCanonicalizer._(result.union.ok);
   }
+
   // ignore: non_constant_identifier_names
-  static final _ICU4XLocaleCanonicalizer_create = _capi<
-          ffi.NativeFunction<
-              _ResultOpaqueInt32 Function(
-                  ffi.Pointer<ffi.Opaque>)>>('ICU4XLocaleCanonicalizer_create')
-      .asFunction<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(
-          isLeaf: true);
+  static final _ICU4XLocaleCanonicalizer_create =
+    _capi<ffi.NativeFunction<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>>('ICU4XLocaleCanonicalizer_create')
+      .asFunction<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
 
   /// Create a new [`LocaleCanonicalizer`] with extended data.
   ///
@@ -44,37 +41,28 @@ class LocaleCanonicalizer implements ffi.Finalizable {
   ///
   /// Throws [Error] on failure.
   factory LocaleCanonicalizer.extended(DataProvider provider) {
-    final result =
-        _ICU4XLocaleCanonicalizer_create_extended(provider._underlying);
+    final result = _ICU4XLocaleCanonicalizer_create_extended(provider._underlying);
     if (!result.isOk) {
       throw Error.values.firstWhere((v) => v._underlying == result.union.err);
     }
     return LocaleCanonicalizer._(result.union.ok);
   }
+
   // ignore: non_constant_identifier_names
-  static final _ICU4XLocaleCanonicalizer_create_extended = _capi<
-              ffi.NativeFunction<
-                  _ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>>(
-          'ICU4XLocaleCanonicalizer_create_extended')
-      .asFunction<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(
-          isLeaf: true);
+  static final _ICU4XLocaleCanonicalizer_create_extended =
+    _capi<ffi.NativeFunction<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>>('ICU4XLocaleCanonicalizer_create_extended')
+      .asFunction<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
 
   /// FFI version of `LocaleCanonicalizer::canonicalize()`.
   ///
   /// See the [Rust documentation for `canonicalize`](https://docs.rs/icu/latest/icu/locid_transform/struct.LocaleCanonicalizer.html#method.canonicalize) for more information.
   TransformResult canonicalize(Locale locale) {
-    final result =
-        _ICU4XLocaleCanonicalizer_canonicalize(_underlying, locale._underlying);
+    final result = _ICU4XLocaleCanonicalizer_canonicalize(_underlying, locale._underlying);
     return TransformResult.values[result];
   }
 
   // ignore: non_constant_identifier_names
-  static final _ICU4XLocaleCanonicalizer_canonicalize = _capi<
-              ffi.NativeFunction<
-                  ffi.Int32 Function(
-                      ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>>(
-          'ICU4XLocaleCanonicalizer_canonicalize')
-      .asFunction<
-          int Function(
-              ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
+  static final _ICU4XLocaleCanonicalizer_canonicalize =
+    _capi<ffi.NativeFunction<ffi.Int32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>>('ICU4XLocaleCanonicalizer_canonicalize')
+      .asFunction<int Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
 }

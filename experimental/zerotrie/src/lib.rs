@@ -56,7 +56,9 @@ extern crate alloc;
 
 mod builder;
 mod byte_phf;
+mod cursor;
 mod error;
+#[macro_use]
 mod helpers;
 mod reader;
 #[cfg(feature = "serde")]
@@ -64,6 +66,7 @@ mod serde;
 mod varint;
 mod zerotrie;
 
+pub use crate::cursor::ZeroTrieSimpleAsciiCursor;
 pub use crate::zerotrie::ZeroTrie;
 pub use crate::zerotrie::ZeroTrieExtendedCapacity;
 pub use crate::zerotrie::ZeroTriePerfectHash;

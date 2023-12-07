@@ -1,6 +1,11 @@
-export function readString(wasm, ptr, len) {
+export function readString8(wasm, ptr, len) {
   const buf = new Uint8Array(wasm.memory.buffer, ptr, len);
   return (new TextDecoder("utf-8")).decode(buf)
+}
+
+export function readString16(wasm, ptr, len) {
+  const buf = new Uint16Array(wasm.memory.buffer, ptr, len);
+  return String.fromCharCode.apply(null, buf)
 }
 
 export function withWriteable(wasm, callback) {
@@ -9,7 +14,7 @@ export function withWriteable(wasm, callback) {
     callback(writeable);
     const outStringPtr = wasm.diplomat_buffer_writeable_get_bytes(writeable);
     const outStringLen = wasm.diplomat_buffer_writeable_len(writeable);
-    return readString(wasm, outStringPtr, outStringLen);
+    return readString8(wasm, outStringPtr, outStringLen);
   } finally {
     wasm.diplomat_buffer_writeable_destroy(writeable);
   }
@@ -61,61 +66,77 @@ export function enumDiscriminant(wasm, ptr) {
 // they can create an edge to this object if they borrow from the str/slice,
 // or we can manually free the WASM memory if they don't.
 export class DiplomatBuf {
-  static str = (wasm, string) => {
-    var utf8_len = 0;
-    for (const codepoint_string of string) {
-      let codepoint = codepoint_string.codePointAt(0);
+  static str8 = (wasm, string) => {
+    var utf8Length = 0;
+    for (const codepointString of string) {
+      let codepoint = codepointString.codePointAt(0);
       if (codepoint < 0x80) {
-        utf8_len += 1
+        utf8Length += 1
       } else if (codepoint < 0x800) {
-        utf8_len += 2
+        utf8Length += 2
       } else if (codepoint < 0x10000) {
-        utf8_len += 3
+        utf8Length += 3
       } else {
-        utf8_len += 4
+        utf8Length += 4
       }
     }
-    return new DiplomatBuf(wasm, utf8_len, 1, buf => {
-      const result = (new TextEncoder()).encodeInto(string, buf);
-      console.assert(string.length == result.read && utf8_len == result.written, "UTF-8 write error");
-  })
-}
 
-  static slice = (wasm, slice, align) => {
-    // If the slice is not a Uint8Array, we have to convert to one, as that's the only
-    // thing we can write into the wasm buffer.
-    const bytes = slice.constructor.name == "Uint8Array" ? slice : new Uint8Array(slice);
-    return new DiplomatBuf(wasm, bytes.length, align, buf => buf.set(bytes));
+    const ptr = wasm.diplomat_alloc(utf8Length, 1);
+
+    const result = (new TextEncoder()).encodeInto(string, new Uint8Array(wasm.memory.buffer, ptr, utf8Length));
+    console.assert(string.length == result.read && utf8Length == result.written, "UTF-8 write error");
+
+    return new DiplomatBuf(ptr, utf8Length, () => wasm.diplomat_free(ptr, utf8Length, 1));
   }
 
-  constructor(wasm, size, align, encodeCallback) {
-    const ptr = wasm.diplomat_alloc(size, align);
-    encodeCallback(new Uint8Array(wasm.memory.buffer, ptr, size));
+  static str16 = (wasm, string) => {
+    const byteLength = string.length * 2;
+    const ptr = wasm.diplomat_alloc(byteLength, 2);
 
+    const destination = new Uint16Array(wasm.memory.buffer, ptr, byteLength);
+    for (var i; i < string.length; i++) {
+      destination[i] = string.charCodeAt(i);
+    }
+
+    return new DiplomatBuf(ptr, string.length, () => wasm.diplomat_free(ptr, byteLength, 2));
+  }
+
+  static slice = (wasm, list, rustType) => {
+    const elementSize = rustType == "u8" || rustType == "i8" || rustType == "bool" ? 1 :
+      rustType == "u16" || rustType == "i16" ? 2 :
+        rustType == "u64" || rustType == "i64" || rustType == "f64" ? 8 :
+          4;
+
+    const byteLength = list.length * elementSize;
+    const ptr = wasm.diplomat_alloc(byteLength, elementSize);
+
+    // Create an array view of the buffer. This gives us the `set` method which correctly handles untyped values
+    const destination =
+      rustType == "u8" || rustType == "bool" ? new Uint8Array(wasm.memory.buffer, ptr, byteLength) :
+        rustType == "i8" ? new Int8Array(wasm.memory.buffer, ptr, byteLength) :
+          rustType == "u16" ? new Uint16Array(wasm.memory.buffer, ptr, byteLength) :
+            rustType == "i16" ? new Int16Array(wasm.memory.buffer, ptr, byteLength) :
+              rustType == "i32" || rustType == "isize" ? new Int32Array(wasm.memory.buffer, ptr, byteLength) :
+                rustType == "u64" ? new BigUint64Array(wasm.memory.buffer, ptr, byteLength) :
+                  rustType == "i64" ? new BigInt64Array(wasm.memory.buffer, ptr, byteLength) :
+                    rustType == "f32" ? new Float32Array(wasm.memory.buffer, ptr, byteLength) :
+                      rustType == "f64" ? new Float64Array(wasm.memory.buffer, ptr, byteLength) :
+                        new Uint32Array(wasm.memory.buffer, ptr, byteLength);
+    destination.set(list);
+
+    return new DiplomatBuf(ptr, list.length, () => wasm.diplomat_free(ptr, byteLength, elementSize));
+  }
+
+  constructor(ptr, size, free) {
     this.ptr = ptr;
     this.size = size;
-    this.free = () => {
-      const successfully_unregistered = DiplomatBuf_finalizer.unregister(this);
-      if (successfully_unregistered) {
-        wasm.diplomat_free(this.ptr, this.size, align);
-      } else {
-        console.error(`Failed to unregister DiplomatBuf at ${ptr}, this is a bug. Either it was never registered (leak), it was already unregistered (failed attempt to double free), or the unregister token was unrecognized (fallback to GC).`);
-      }
-    }
-
-    DiplomatBuf_finalizer.register(this, { wasm, ptr, size, align }, this);
-  }
-
-  leak = () => {
-    const successfully_unregistered = DiplomatBuf_finalizer.unregister(this);
-      if (successfully_unregistered) {
-        // leak
-      } else {
-        console.error(`Failed to unregister DiplomatBuf at ${this.ptr}, this is a bug. Either it was never registered (leak), it was already unregistered (failed attempt to double free), or the unregister token was unrecognized (fallback to GC).`);
-      }
+    // Generated code calls one of methods these for each allocation, to either
+    // free directly after the FFI call, to leak (to create a &'static), or to
+    // register the buffer with the garbage collector (to create a &'a).
+    this.free = free;
+    this.leak = () => { };
+    this.garbageCollect = () => DiplomatBufferFinalizer.register(this, this.free);
   }
 }
 
-const DiplomatBuf_finalizer = new FinalizationRegistry(({ wasm, ptr, size, align }) => {
-  wasm.diplomat_free(ptr, size, align);
-});
+const DiplomatBufferFinalizer = new FinalizationRegistry(free => free());

@@ -8,93 +8,65 @@ part of 'lib.g.dart';
 /// A slightly faster ICU4XScriptWithExtensions object
 ///
 /// See the [Rust documentation for `ScriptWithExtensionsBorrowed`](https://docs.rs/icu/latest/icu/properties/script/struct.ScriptWithExtensionsBorrowed.html) for more information.
-class ScriptWithExtensionsBorrowed implements ffi.Finalizable {
+final class ScriptWithExtensionsBorrowed implements ffi.Finalizable {
   final ffi.Pointer<ffi.Opaque> _underlying;
 
   ScriptWithExtensionsBorrowed._(this._underlying) {
     _finalizer.attach(this, _underlying.cast());
   }
 
-  static final _finalizer =
-      ffi.NativeFinalizer(_capi('ICU4XScriptWithExtensionsBorrowed_destroy'));
+  static final _finalizer = ffi.NativeFinalizer(_capi('ICU4XScriptWithExtensionsBorrowed_destroy'));
 
   /// Get the Script property value for a code point
   ///
   /// See the [Rust documentation for `get_script_val`](https://docs.rs/icu/latest/icu/properties/script/struct.ScriptWithExtensionsBorrowed.html#method.get_script_val) for more information.
   int getScriptVal(int codePoint) {
-    final result = _ICU4XScriptWithExtensionsBorrowed_get_script_val(
-        _underlying, codePoint);
+    final result = _ICU4XScriptWithExtensionsBorrowed_get_script_val(_underlying, codePoint);
     return result;
   }
 
   // ignore: non_constant_identifier_names
-  static final _ICU4XScriptWithExtensionsBorrowed_get_script_val = _capi<
-              ffi.NativeFunction<
-                  ffi.Uint16 Function(ffi.Pointer<ffi.Opaque>, ffi.Uint32)>>(
-          'ICU4XScriptWithExtensionsBorrowed_get_script_val')
+  static final _ICU4XScriptWithExtensionsBorrowed_get_script_val =
+    _capi<ffi.NativeFunction<ffi.Uint16 Function(ffi.Pointer<ffi.Opaque>, ffi.Uint32)>>('ICU4XScriptWithExtensionsBorrowed_get_script_val')
       .asFunction<int Function(ffi.Pointer<ffi.Opaque>, int)>(isLeaf: true);
 
   /// Get the Script property value for a code point
   ///
   /// See the [Rust documentation for `get_script_extensions_val`](https://docs.rs/icu/latest/icu/properties/script/struct.ScriptWithExtensionsBorrowed.html#method.get_script_extensions_val) for more information.
   ScriptExtensionsSet getScriptExtensionsVal(int codePoint) {
-    final result = _ICU4XScriptWithExtensionsBorrowed_get_script_extensions_val(
-        _underlying, codePoint);
+    final result = _ICU4XScriptWithExtensionsBorrowed_get_script_extensions_val(_underlying, codePoint);
     return ScriptExtensionsSet._(result);
   }
 
   // ignore: non_constant_identifier_names
   static final _ICU4XScriptWithExtensionsBorrowed_get_script_extensions_val =
-      _capi<
-                  ffi
-                  .NativeFunction<
-                      ffi.Pointer<ffi.Opaque> Function(
-                          ffi.Pointer<ffi.Opaque>,
-                          ffi
-                              .Uint32)>>(
-              'ICU4XScriptWithExtensionsBorrowed_get_script_extensions_val')
-          .asFunction<
-              ffi.Pointer<ffi.Opaque> Function(
-                  ffi.Pointer<ffi.Opaque>, int)>(isLeaf: true);
+    _capi<ffi.NativeFunction<ffi.Pointer<ffi.Opaque> Function(ffi.Pointer<ffi.Opaque>, ffi.Uint32)>>('ICU4XScriptWithExtensionsBorrowed_get_script_extensions_val')
+      .asFunction<ffi.Pointer<ffi.Opaque> Function(ffi.Pointer<ffi.Opaque>, int)>(isLeaf: true);
 
   /// Check if the Script_Extensions property of the given code point covers the given script
   ///
   /// See the [Rust documentation for `has_script`](https://docs.rs/icu/latest/icu/properties/script/struct.ScriptWithExtensionsBorrowed.html#method.has_script) for more information.
   bool hasScript(int codePoint, int script) {
-    final result = _ICU4XScriptWithExtensionsBorrowed_has_script(
-        _underlying, codePoint, script);
+    final result = _ICU4XScriptWithExtensionsBorrowed_has_script(_underlying, codePoint, script);
     return result;
   }
 
   // ignore: non_constant_identifier_names
-  static final _ICU4XScriptWithExtensionsBorrowed_has_script = _capi<
-          ffi.NativeFunction<
-              ffi.Bool Function(ffi.Pointer<ffi.Opaque>, ffi.Uint32,
-                  ffi.Uint16)>>('ICU4XScriptWithExtensionsBorrowed_has_script')
-      .asFunction<bool Function(ffi.Pointer<ffi.Opaque>, int, int)>(
-          isLeaf: true);
+  static final _ICU4XScriptWithExtensionsBorrowed_has_script =
+    _capi<ffi.NativeFunction<ffi.Bool Function(ffi.Pointer<ffi.Opaque>, ffi.Uint32, ffi.Uint16)>>('ICU4XScriptWithExtensionsBorrowed_has_script')
+      .asFunction<bool Function(ffi.Pointer<ffi.Opaque>, int, int)>(isLeaf: true);
 
   /// Build the CodePointSetData corresponding to a codepoints matching a particular script
   /// in their Script_Extensions
   ///
   /// See the [Rust documentation for `get_script_extensions_set`](https://docs.rs/icu/latest/icu/properties/script/struct.ScriptWithExtensionsBorrowed.html#method.get_script_extensions_set) for more information.
   CodePointSetData getScriptExtensionsSet(int script) {
-    final result = _ICU4XScriptWithExtensionsBorrowed_get_script_extensions_set(
-        _underlying, script);
+    final result = _ICU4XScriptWithExtensionsBorrowed_get_script_extensions_set(_underlying, script);
     return CodePointSetData._(result);
   }
 
   // ignore: non_constant_identifier_names
   static final _ICU4XScriptWithExtensionsBorrowed_get_script_extensions_set =
-      _capi<
-                  ffi
-                  .NativeFunction<
-                      ffi.Pointer<ffi.Opaque> Function(
-                          ffi.Pointer<ffi.Opaque>,
-                          ffi
-                              .Uint16)>>(
-              'ICU4XScriptWithExtensionsBorrowed_get_script_extensions_set')
-          .asFunction<
-              ffi.Pointer<ffi.Opaque> Function(
-                  ffi.Pointer<ffi.Opaque>, int)>(isLeaf: true);
+    _capi<ffi.NativeFunction<ffi.Pointer<ffi.Opaque> Function(ffi.Pointer<ffi.Opaque>, ffi.Uint16)>>('ICU4XScriptWithExtensionsBorrowed_get_script_extensions_set')
+      .asFunction<ffi.Pointer<ffi.Opaque> Function(ffi.Pointer<ffi.Opaque>, int)>(isLeaf: true);
 }

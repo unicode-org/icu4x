@@ -8,7 +8,6 @@ pub mod ffi {
     use crate::locale::ffi::ICU4XLocale;
     use crate::provider::ffi::ICU4XDataProvider;
     use alloc::boxed::Box;
-    use diplomat_runtime::DiplomatWriteable;
     #[allow(unused_imports)] // feature-specific
     use icu_displaynames::{DisplayNamesOptions, Fallback, LanguageDisplay};
     use icu_displaynames::{LocaleDisplayNamesFormatter, RegionDisplayNames};
@@ -120,9 +119,13 @@ pub mod ffi {
         /// Note that the funtion returns an empty string in case the display name for a given
         /// region code is not found.
         #[diplomat::rust_link(icu::displaynames::RegionDisplayNames::of, FnInStruct)]
-        pub fn of(&self, region: &str, write: &mut DiplomatWriteable) -> Result<(), ICU4XError> {
+        pub fn of(
+            &self,
+            region: &DiplomatStr,
+            write: &mut DiplomatWriteable,
+        ) -> Result<(), ICU4XError> {
             self.0
-                .of(region.parse::<Region>()?)
+                .of(Region::try_from_bytes(region)?)
                 .unwrap_or("")
                 .write_to(write)?;
             Ok(())

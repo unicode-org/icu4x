@@ -6,7 +6,7 @@
 part of 'lib.g.dart';
 
 /// See the [Rust documentation for `Collator`](https://docs.rs/icu/latest/icu/collator/struct.Collator.html) for more information.
-class Collator implements ffi.Finalizable {
+final class Collator implements ffi.Finalizable {
   final ffi.Pointer<ffi.Opaque> _underlying;
 
   Collator._(this._underlying) {
@@ -20,85 +20,34 @@ class Collator implements ffi.Finalizable {
   /// See the [Rust documentation for `try_new`](https://docs.rs/icu/latest/icu/collator/struct.Collator.html#method.try_new) for more information.
   ///
   /// Throws [Error] on failure.
-  factory Collator.v1(
-      DataProvider provider, Locale locale, CollatorOptionsV1 options) {
-    final result = _ICU4XCollator_create_v1(
-        provider._underlying, locale._underlying, options._underlying);
+  factory Collator.v1(DataProvider provider, Locale locale, CollatorOptionsV1 options) {
+    final result = _ICU4XCollator_create_v1(provider._underlying, locale._underlying, options._underlying);
     if (!result.isOk) {
       throw Error.values.firstWhere((v) => v._underlying == result.union.err);
     }
     return Collator._(result.union.ok);
   }
-  // ignore: non_constant_identifier_names
-  static final _ICU4XCollator_create_v1 = _capi<
-          ffi.NativeFunction<
-              _ResultOpaqueInt32 Function(
-                  ffi.Pointer<ffi.Opaque>,
-                  ffi.Pointer<ffi.Opaque>,
-                  _CollatorOptionsV1Ffi)>>('ICU4XCollator_create_v1')
-      .asFunction<
-          _ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>,
-              ffi.Pointer<ffi.Opaque>, _CollatorOptionsV1Ffi)>(isLeaf: true);
-
-  /// Compare guaranteed well-formed UTF-8 strings.
-  ///
-  /// Note: In C++, passing ill-formed UTF-8 strings is undefined behavior
-  /// (and may be memory-unsafe to do so, too).
-  ///
-  /// See the [Rust documentation for `compare`](https://docs.rs/icu/latest/icu/collator/struct.Collator.html#method.compare) for more information.
-  Ordering compare(String left, String right) {
-    final alloc = ffi2.Arena();
-    final leftSlice = _SliceFfi2Utf8._fromDart(left, alloc);
-    final rightSlice = _SliceFfi2Utf8._fromDart(right, alloc);
-
-    final result = _ICU4XCollator_compare_valid_utf8(
-        _underlying,
-        leftSlice._bytes,
-        leftSlice._length,
-        rightSlice._bytes,
-        rightSlice._length);
-    alloc.releaseAll();
-    return Ordering.values.firstWhere((v) => v._underlying == result);
-  }
 
   // ignore: non_constant_identifier_names
-  static final _ICU4XCollator_compare_valid_utf8 = _capi<
-          ffi.NativeFunction<
-              ffi.Int32 Function(
-                  ffi.Pointer<ffi.Opaque>,
-                  ffi.Pointer<ffi2.Utf8>,
-                  ffi.Size,
-                  ffi.Pointer<ffi2.Utf8>,
-                  ffi.Size)>>('ICU4XCollator_compare_valid_utf8')
-      .asFunction<
-          int Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi2.Utf8>, int,
-              ffi.Pointer<ffi2.Utf8>, int)>(isLeaf: true);
+  static final _ICU4XCollator_create_v1 =
+    _capi<ffi.NativeFunction<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>, _CollatorOptionsV1Ffi)>>('ICU4XCollator_create_v1')
+      .asFunction<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>, _CollatorOptionsV1Ffi)>(isLeaf: true);
 
   /// Compare potentially ill-formed UTF-16 strings, with unpaired surrogates
   /// compared as REPLACEMENT CHARACTER.
   ///
   /// See the [Rust documentation for `compare_utf16`](https://docs.rs/icu/latest/icu/collator/struct.Collator.html#method.compare_utf16) for more information.
-  Ordering compareUtf16(Uint16List left, Uint16List right) {
-    final alloc = ffi2.Arena();
-    final leftSlice = _SliceFfiUint16._fromDart(left, alloc);
-    final rightSlice = _SliceFfiUint16._fromDart(right, alloc);
-
-    final result = _ICU4XCollator_compare_utf16(_underlying, leftSlice._bytes,
-        leftSlice._length, rightSlice._bytes, rightSlice._length);
-    alloc.releaseAll();
+  Ordering compare(String left, String right) {
+    final temp = ffi2.Arena();
+    final leftView = left.utf16View;
+    final rightView = right.utf16View;
+    final result = _ICU4XCollator_compare_utf16(_underlying, leftView.pointer(temp), leftView.length, rightView.pointer(temp), rightView.length);
+    temp.releaseAll();
     return Ordering.values.firstWhere((v) => v._underlying == result);
   }
 
   // ignore: non_constant_identifier_names
-  static final _ICU4XCollator_compare_utf16 = _capi<
-          ffi.NativeFunction<
-              ffi.Int32 Function(
-                  ffi.Pointer<ffi.Opaque>,
-                  ffi.Pointer<ffi.Uint16>,
-                  ffi.Size,
-                  ffi.Pointer<ffi.Uint16>,
-                  ffi.Size)>>('ICU4XCollator_compare_utf16')
-      .asFunction<
-          int Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Uint16>, int,
-              ffi.Pointer<ffi.Uint16>, int)>(isLeaf: true);
+  static final _ICU4XCollator_compare_utf16 =
+    _capi<ffi.NativeFunction<ffi.Int32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Uint16>, ffi.Size, ffi.Pointer<ffi.Uint16>, ffi.Size)>>('ICU4XCollator_compare_utf16')
+      .asFunction<int Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Uint16>, int, ffi.Pointer<ffi.Uint16>, int)>(isLeaf: true);
 }

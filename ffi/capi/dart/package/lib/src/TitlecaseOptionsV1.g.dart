@@ -6,17 +6,16 @@
 part of 'lib.g.dart';
 
 /// See the [Rust documentation for `TitlecaseOptions`](https://docs.rs/icu/latest/icu/casemap/titlecase/struct.TitlecaseOptions.html) for more information.
-class _TitlecaseOptionsV1Ffi extends ffi.Struct {
+final class _TitlecaseOptionsV1Ffi extends ffi.Struct {
   @ffi.Int32()
   external int leadingAdjustment;
   @ffi.Int32()
   external int trailingCase;
 }
 
-class TitlecaseOptionsV1 {
+final class TitlecaseOptionsV1 {
   final _TitlecaseOptionsV1Ffi _underlying;
 
-  // ignore: unused_element
   TitlecaseOptionsV1._(this._underlying);
 
   factory TitlecaseOptionsV1() {
@@ -26,14 +25,12 @@ class TitlecaseOptionsV1 {
     return result;
   }
 
-  LeadingAdjustment get leadingAdjustment =>
-      LeadingAdjustment.values[_underlying.leadingAdjustment];
+  LeadingAdjustment get leadingAdjustment => LeadingAdjustment.values[_underlying.leadingAdjustment];
   set leadingAdjustment(LeadingAdjustment leadingAdjustment) {
     _underlying.leadingAdjustment = leadingAdjustment.index;
   }
 
-  TrailingCase get trailingCase =>
-      TrailingCase.values[_underlying.trailingCase];
+  TrailingCase get trailingCase => TrailingCase.values[_underlying.trailingCase];
   set trailingCase(TrailingCase trailingCase) {
     _underlying.trailingCase = trailingCase.index;
   }
@@ -43,11 +40,11 @@ class TitlecaseOptionsV1 {
     final result = _ICU4XTitlecaseOptionsV1_default_options();
     return TitlecaseOptionsV1._(result);
   }
+
   // ignore: non_constant_identifier_names
   static final _ICU4XTitlecaseOptionsV1_default_options =
-      _capi<ffi.NativeFunction<_TitlecaseOptionsV1Ffi Function()>>(
-              'ICU4XTitlecaseOptionsV1_default_options')
-          .asFunction<_TitlecaseOptionsV1Ffi Function()>(isLeaf: true);
+    _capi<ffi.NativeFunction<_TitlecaseOptionsV1Ffi Function()>>('ICU4XTitlecaseOptionsV1_default_options')
+      .asFunction<_TitlecaseOptionsV1Ffi Function()>(isLeaf: true);
 
   @override
   bool operator ==(Object other) =>

@@ -193,7 +193,7 @@ impl Calendar for Chinese {
     #[doc(hidden)] // unstable
     fn offset_date(&self, date: &mut Self::DateInner, offset: DateDuration<Self>) {
         let year = date.0 .0.year;
-        date.0 .0.offset_date(offset);
+        date.0 .0.offset_date(offset, &());
         if date.0 .0.year != year {
             date.0 .1 = ChineseBasedYearInfo::get_year_info::<Chinese>(year);
         }

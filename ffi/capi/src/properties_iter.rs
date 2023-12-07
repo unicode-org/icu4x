@@ -29,7 +29,6 @@ pub mod ffi {
         /// Advance the iterator by one and return the next range.
         ///
         /// If the iterator is out of items, `done` will be true
-        #[allow(clippy::should_implement_trait)] // Rust isn't calling this code
         pub fn next(&mut self) -> CodePointRangeIteratorResult {
             self.0
                 .next()

@@ -72,13 +72,6 @@ dependencies = [
     "test-all-features",
 ]
 
-[tasks.ci-job-test-windows]
-description = "Run all tests for the CI 'test' job (with special changes to reduce Windows disk space)"
-category = "CI"
-dependencies = [
-    "test-all-features-windows",
-]
-
 [tasks.ci-job-test-tutorials-local]
 description = "Run all checks for the CI 'test-tutorials' job"
 category = "CI"

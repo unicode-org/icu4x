@@ -51,6 +51,9 @@ pub struct CurrencyEssentialsV1<'data> {
     /// Contains all the place holders.
     #[cfg_attr(feature = "serde", serde(borrow))]
     pub place_holders: VarZeroVec<'data, str>,
+
+    /// Represents the currency patten in case the currency patterns map does not contain the currency.
+    pub default_pattern: CurrencyPatterns,
 }
 
 #[zerovec::make_ule(PatternSelectionULE)]

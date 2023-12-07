@@ -8,15 +8,14 @@ part of 'lib.g.dart';
 /// An ICU4X sentence-break segmenter, capable of finding sentence breakpoints in strings.
 ///
 /// See the [Rust documentation for `SentenceSegmenter`](https://docs.rs/icu/latest/icu/segmenter/struct.SentenceSegmenter.html) for more information.
-class SentenceSegmenter implements ffi.Finalizable {
+final class SentenceSegmenter implements ffi.Finalizable {
   final ffi.Pointer<ffi.Opaque> _underlying;
 
   SentenceSegmenter._(this._underlying) {
     _finalizer.attach(this, _underlying.cast());
   }
 
-  static final _finalizer =
-      ffi.NativeFinalizer(_capi('ICU4XSentenceSegmenter_destroy'));
+  static final _finalizer = ffi.NativeFinalizer(_capi('ICU4XSentenceSegmenter_destroy'));
 
   /// Construct an [`SentenceSegmenter`].
   ///
@@ -30,83 +29,25 @@ class SentenceSegmenter implements ffi.Finalizable {
     }
     return SentenceSegmenter._(result.union.ok);
   }
-  // ignore: non_constant_identifier_names
-  static final _ICU4XSentenceSegmenter_create = _capi<
-          ffi.NativeFunction<
-              _ResultOpaqueInt32 Function(
-                  ffi.Pointer<ffi.Opaque>)>>('ICU4XSentenceSegmenter_create')
-      .asFunction<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(
-          isLeaf: true);
-
-  /// Segments a (potentially ill-formed) UTF-8 string.
-  ///
-  /// See the [Rust documentation for `segment_utf8`](https://docs.rs/icu/latest/icu/segmenter/struct.SentenceSegmenter.html#method.segment_utf8) for more information.
-  SentenceBreakIteratorUtf8 segmentUtf8(String input) {
-    final alloc = ffi2.Arena();
-    final inputSlice = _SliceFfi2Utf8._fromDart(input, alloc);
-
-    final result = _ICU4XSentenceSegmenter_segment_utf8(
-        _underlying, inputSlice._bytes, inputSlice._length);
-    alloc.releaseAll();
-    return SentenceBreakIteratorUtf8._(result);
-  }
 
   // ignore: non_constant_identifier_names
-  static final _ICU4XSentenceSegmenter_segment_utf8 = _capi<
-          ffi.NativeFunction<
-              ffi.Pointer<ffi.Opaque> Function(
-                  ffi.Pointer<ffi.Opaque>,
-                  ffi.Pointer<ffi2.Utf8>,
-                  ffi.Size)>>('ICU4XSentenceSegmenter_segment_utf8')
-      .asFunction<
-          ffi.Pointer<ffi.Opaque> Function(ffi.Pointer<ffi.Opaque>,
-              ffi.Pointer<ffi2.Utf8>, int)>(isLeaf: true);
+  static final _ICU4XSentenceSegmenter_create =
+    _capi<ffi.NativeFunction<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>>('ICU4XSentenceSegmenter_create')
+      .asFunction<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
 
   /// Segments a UTF-16 string.
   ///
   /// See the [Rust documentation for `segment_utf16`](https://docs.rs/icu/latest/icu/segmenter/struct.SentenceSegmenter.html#method.segment_utf16) for more information.
-  SentenceBreakIteratorUtf16 segmentUtf16(Uint16List input) {
-    final alloc = ffi2.Arena();
-    final inputSlice = _SliceFfiUint16._fromDart(input, alloc);
-
-    final result = _ICU4XSentenceSegmenter_segment_utf16(
-        _underlying, inputSlice._bytes, inputSlice._length);
-    alloc.releaseAll();
+  SentenceBreakIteratorUtf16 segment(String input) {
+    final temp = ffi2.Arena();
+    final inputView = input.utf16View;
+    final result = _ICU4XSentenceSegmenter_segment_utf16(_underlying, inputView.pointer(temp), inputView.length);
+    temp.releaseAll();
     return SentenceBreakIteratorUtf16._(result);
   }
 
   // ignore: non_constant_identifier_names
-  static final _ICU4XSentenceSegmenter_segment_utf16 = _capi<
-          ffi.NativeFunction<
-              ffi.Pointer<ffi.Opaque> Function(
-                  ffi.Pointer<ffi.Opaque>,
-                  ffi.Pointer<ffi.Uint16>,
-                  ffi.Size)>>('ICU4XSentenceSegmenter_segment_utf16')
-      .asFunction<
-          ffi.Pointer<ffi.Opaque> Function(ffi.Pointer<ffi.Opaque>,
-              ffi.Pointer<ffi.Uint16>, int)>(isLeaf: true);
-
-  /// Segments a Latin-1 string.
-  ///
-  /// See the [Rust documentation for `segment_latin1`](https://docs.rs/icu/latest/icu/segmenter/struct.SentenceSegmenter.html#method.segment_latin1) for more information.
-  SentenceBreakIteratorLatin1 segmentLatin1(Uint8List input) {
-    final alloc = ffi2.Arena();
-    final inputSlice = _SliceFfiUint8._fromDart(input, alloc);
-
-    final result = _ICU4XSentenceSegmenter_segment_latin1(
-        _underlying, inputSlice._bytes, inputSlice._length);
-    alloc.releaseAll();
-    return SentenceBreakIteratorLatin1._(result);
-  }
-
-  // ignore: non_constant_identifier_names
-  static final _ICU4XSentenceSegmenter_segment_latin1 = _capi<
-          ffi.NativeFunction<
-              ffi.Pointer<ffi.Opaque> Function(
-                  ffi.Pointer<ffi.Opaque>,
-                  ffi.Pointer<ffi.Uint8>,
-                  ffi.Size)>>('ICU4XSentenceSegmenter_segment_latin1')
-      .asFunction<
-          ffi.Pointer<ffi.Opaque> Function(ffi.Pointer<ffi.Opaque>,
-              ffi.Pointer<ffi.Uint8>, int)>(isLeaf: true);
+  static final _ICU4XSentenceSegmenter_segment_utf16 =
+    _capi<ffi.NativeFunction<ffi.Pointer<ffi.Opaque> Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Uint16>, ffi.Size)>>('ICU4XSentenceSegmenter_segment_utf16')
+      .asFunction<ffi.Pointer<ffi.Opaque> Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Uint16>, int)>(isLeaf: true);
 }

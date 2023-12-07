@@ -34,7 +34,7 @@ export class ICU4XBcp47ToIanaMapper {
   }
 
   get(arg_value) {
-    const buf_arg_value = diplomatRuntime.DiplomatBuf.str(wasm, arg_value);
+    const buf_arg_value = diplomatRuntime.DiplomatBuf.str8(wasm, arg_value);
     const diplomat_out = diplomatRuntime.withWriteable(wasm, (writeable) => {
       return (() => {
         const diplomat_receive_buffer = wasm.diplomat_alloc(5, 4);
