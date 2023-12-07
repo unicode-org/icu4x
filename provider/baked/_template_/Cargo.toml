@@ -15,3 +15,8 @@ homepage.workspace = true
 include.workspace = true
 repository.workspace = true
 rust-version.workspace = true
+
+[metadata.sources]
+cldr = { tagged = "_cldr_tag_" }
+icuexport = { tagged = "_icuexport_tag_" }
+segmenter_lstm = { tagged = "_segmenter_lstm_tag_" }
