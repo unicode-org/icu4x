@@ -2,8 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-// TODO: we do not want to use `std`
-use std::collections::HashMap;
+use litemap::LiteMap;
 
 use crate::{
     measureunit::MeasureUnitParser,
@@ -56,7 +55,7 @@ impl ConverterFactory<'_> {
         fn insert_units_powers(
             unit_items: &Vec<MeasureUnitItem>,
             sign: i8,
-            map: &mut HashMap<u16, DetermineConvertibility>,
+            map: &mut LiteMap<u16, DetermineConvertibility>,
         ) {
             for item in unit_items {
                 if let Some(determine_convertibility) = map.get_mut(&item.unit_id) {
@@ -74,11 +73,11 @@ impl ConverterFactory<'_> {
             }
         }
 
-        let mut map = HashMap::<u16, DetermineConvertibility>::new();
+        let mut map = LiteMap::<u16, DetermineConvertibility>::new();
         insert_units_powers(&unit1, 1, &mut map);
         insert_units_powers(&unit2, -1, &mut map);
 
-        let (convertible_sum, reciprocal_sum) = map.values().fold(
+        let (convertible_sum, reciprocal_sum) = map.iter_values().fold(
             (0, 0),
             |(convertible_sum, reciprocal_sum), determine_convertibility| {
                 (
