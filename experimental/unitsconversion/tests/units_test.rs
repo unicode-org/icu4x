@@ -61,7 +61,7 @@ mod tests {
             result: BigRational,
         }
 
-        let data = std::fs::read_to_string("tests/unitsTest.txt").unwrap();
+        let data = std::fs::read_to_string("tests/data/unitsTest.txt").unwrap();
         let tests: Vec<UnitsTest> = data
             .lines()
             .filter(|line| !line.starts_with('#') && !line.is_empty())
