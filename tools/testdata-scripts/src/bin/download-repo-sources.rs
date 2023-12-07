@@ -149,9 +149,19 @@ fn main() -> eyre::Result<()> {
         out_root.join("tests/data/cldr-transforms-full"),
         out_root.join("tests/data/cldr/cldr-transforms-full"),
     )?;
-    for entry in std::fs::read_dir(out_root.join("tests/data/cldr/cldr-transforms-full/main")).unwrap() {
+    for entry in
+        std::fs::read_dir(out_root.join("tests/data/cldr/cldr-transforms-full/main")).unwrap()
+    {
         for entry in std::fs::read_dir(entry.unwrap().path()).unwrap() {
-            cldr_data.push(entry.unwrap().path().strip_prefix(out_root.join("tests/data/cldr")).unwrap().to_string_lossy().into_owned());
+            cldr_data.push(
+                entry
+                    .unwrap()
+                    .path()
+                    .strip_prefix(out_root.join("tests/data/cldr"))
+                    .unwrap()
+                    .to_string_lossy()
+                    .into_owned(),
+            );
         }
     }
 
@@ -244,7 +254,7 @@ impl DatagenProvider {{
             .clone()
     }}
 }}
-        "
+"
     ).unwrap();
 
     Ok(())
