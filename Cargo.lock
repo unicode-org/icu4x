@@ -2110,6 +2110,10 @@ dependencies = [
 ]
 
 [[package]]
+name = "icu_unitsconversion_data"
+version = "1.4.0"
+
+[[package]]
 name = "ident_case"
 version = "1.0.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
