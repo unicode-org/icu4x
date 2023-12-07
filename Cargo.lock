@@ -2105,6 +2105,7 @@ dependencies = [
  "icu_normalizer",
  "icu_properties",
  "icu_provider",
+ "icu_relativetime_data",
  "serde",
  "smallvec",
  "zerotrie",
