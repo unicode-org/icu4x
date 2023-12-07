@@ -18,7 +18,7 @@ use crate::provider::date_time::{DateSymbols, MonthPlaceholderValue, TimeSymbols
 use crate::provider::neo::*;
 use core::fmt;
 use core::marker::PhantomData;
-use icu_calendar::provider::WeekDataV1Marker;
+use icu_calendar::provider::WeekDataV2Marker;
 use icu_calendar::types::Era;
 use icu_calendar::types::MonthCode;
 use icu_calendar::week::WeekCalculator;
@@ -700,7 +700,7 @@ impl<C: CldrCalendar> TypedDateTimePatternInterpolator<C> {
             + DataProvider<C::MonthSymbolsV1Marker>
             + DataProvider<WeekdaySymbolsV1Marker>
             + DataProvider<DayPeriodSymbolsV1Marker>
-            + DataProvider<WeekDataV1Marker>
+            + DataProvider<WeekDataV2Marker>
             + ?Sized,
     {
         self.load_for_pattern_internal(provider, pattern, |locale| {
