@@ -125,7 +125,7 @@ impl CodePointInversionListBuilder {
         }
     }
 
-    /// Same as [`add32`].
+    /// Same as [`Self::add32`].
     #[deprecated(since = "1.5.0", note = "Use `add32`")]
     pub fn add_u32(&mut self, c: u32) {
         self.add32(c)
@@ -166,7 +166,7 @@ impl CodePointInversionListBuilder {
         }
     }
 
-    /// Same as [`add_range32`].
+    /// Same as [`Self::add_range32`].
     #[deprecated(since = "1.5.0", note = "Use `add_range32`")]
     pub fn add_range_u32(&mut self, range: &impl RangeBounds<u32>) {
         self.add_range32(range)
