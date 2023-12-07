@@ -69,7 +69,7 @@ class ICU4XCodePointSetBuilder {
   void add_char(char32_t ch);
 
   /**
-   * Add a single u32 value to the set
+   * Deprecated, use `add_char`.
    * 
    * See the [Rust documentation for `add_u32`](https://docs.rs/icu/latest/icu/collections/codepointinvlist/struct.CodePointInversionListBuilder.html#method.add_u32) for more information.
    */
@@ -83,7 +83,7 @@ class ICU4XCodePointSetBuilder {
   void add_inclusive_range(char32_t start, char32_t end);
 
   /**
-   * Add an inclusive range of u32s to the set
+   * Deprecated, use `add_inclusive_range`.
    * 
    * See the [Rust documentation for `add_range_u32`](https://docs.rs/icu/latest/icu/collections/codepointinvlist/struct.CodePointInversionListBuilder.html#method.add_range_u32) for more information.
    */
