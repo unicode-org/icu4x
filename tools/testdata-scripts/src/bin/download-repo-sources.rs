@@ -184,6 +184,7 @@ fn main() -> eyre::Result<()> {
     let cldr_data = cldr_data
         .iter()
         .map(|path| {
+            let path = path.replace('\\', "/");
             format!(r#"("{path}", include_bytes!("../../tests/data/cldr/{path}").as_slice())"#)
         })
         .collect::<Vec<_>>()
@@ -191,6 +192,7 @@ fn main() -> eyre::Result<()> {
     let icuexport_data = icuexport_data
         .iter()
         .map(|path| {
+            let path = path.replace('\\', "/");
             format!(r#"("{path}", include_bytes!("../../tests/data/icuexport/{path}").as_slice())"#)
         })
         .collect::<Vec<_>>()
@@ -198,6 +200,7 @@ fn main() -> eyre::Result<()> {
     let lstm_data = LSTM_GLOB
         .iter()
         .map(|path| {
+            let path = path.replace('\\', "/");
             format!(r#"("{path}", include_bytes!("../../tests/data/lstm/{path}").as_slice())"#)
         })
         .collect::<Vec<_>>()
