@@ -3,7 +3,6 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 mod fixtures;
-mod helpers;
 
 use criterion::{black_box, criterion_group, criterion_main, Criterion};
 use fixed_decimal::FixedDecimal;
@@ -11,7 +10,9 @@ use icu_plurals::PluralOperands;
 use std::convert::TryInto;
 
 fn operands(c: &mut Criterion) {
-    let data = helpers::get_numbers_data();
+    let data =
+        serde_json::from_str::<fixtures::NumbersFixture>(include_str!("fixtures/numbers.json"))
+            .expect("Failed to read a fixture");
 
     c.bench_function("plurals/operands/overview", |b| {
         b.iter(|| {

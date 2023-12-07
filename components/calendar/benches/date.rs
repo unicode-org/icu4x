@@ -4,10 +4,10 @@
 
 mod fixtures;
 
-use crate::fixtures::structs::DateFixture;
 use criterion::{
     black_box, criterion_group, criterion_main, measurement::WallTime, BenchmarkGroup, Criterion,
 };
+use fixtures::DateFixture;
 use icu_calendar::{AsCalendar, Calendar, Date, DateDuration};
 
 fn bench_date<A: AsCalendar>(date: &mut Date<A>) {
@@ -55,7 +55,7 @@ fn bench_calendar<C: Clone + Calendar>(
 
 fn date_benches(c: &mut Criterion) {
     let mut group = c.benchmark_group("date");
-    let fxs = fixtures::get_dates_fixture().unwrap();
+    let fxs = serde_json::from_str::<DateFixture>(include_str!("fixtures/datetimes.json")).unwrap();
 
     bench_calendar(
         &mut group,
