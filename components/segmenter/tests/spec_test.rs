@@ -33,7 +33,7 @@ impl Iterator for TestContentIterator {
     fn next(&mut self) -> Option<Self::Item> {
         loop {
             let line = self.0.next()?;
-            if line.len() == 0 {
+            if line.is_empty() {
                 // EOF
                 return None;
             }
