@@ -63,8 +63,28 @@ impl MeasureUnit {
     /// NOTE:
     ///    if the unit id is found, the function will return (unit id, part without the unit id and without `-` at the beginning of the remaining part if it exists).
     ///    if the unit id is not found, the function will return None.
-    fn get_unit_id<'data>(part: &'data str, trie: &ZeroTrie<ZeroVec<'data, u8>>) -> Option<usize> {
-        trie.get(part.as_bytes())
+    fn get_unit_id<'data>(
+        part: &'data str,
+        identifier_split: &mut std::str::Split<'data, char>,
+        trie: &ZeroTrie<ZeroVec<'data, u8>>,
+    ) -> Option<usize> {
+        let mut part = part.to_string();
+
+        loop {
+            if let Some(unit_id) = trie.get(&part) {
+                return Some(unit_id);
+            }
+
+            match identifier_split.next() {
+                Some(next_part) => {
+                    if !part.is_empty() {
+                        part.push('-');
+                    }
+                    part.push_str(next_part);
+                }
+                None => return None,
+            }
+        }
     }
 
     /// Process a part of an identifier.
@@ -92,8 +112,8 @@ impl MeasureUnit {
             };
 
             let (si_prefix, identifier_after_si) = Self::get_si_prefix(part);
-            let unit_id =
-                Self::get_unit_id(identifier_after_si, trie).ok_or(ConversionError::InvalidUnit)?;
+            let unit_id = Self::get_unit_id(identifier_after_si, &mut identifier_split, trie)
+                .ok_or(ConversionError::InvalidUnit)?;
 
             result.push(MeasureUnitItem {
                 power: sign * power,
