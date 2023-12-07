@@ -714,7 +714,7 @@ impl RuleBreakDataV1<'_> {
         word_option: LineBreakWordOption,
     ) -> u8 {
         // Note: Default value is 0 == UNKNOWN
-        let prop = self.property_table.0.get32(codepoint);
+        let prop = self.property_table.get32(codepoint);
 
         if word_option == LineBreakWordOption::BreakAll
             || strictness == LineBreakStrictness::Loose
@@ -735,10 +735,7 @@ impl RuleBreakDataV1<'_> {
     fn get_break_state_from_table(&self, left: u8, right: u8) -> BreakState {
         let idx = (left as usize) * (self.property_count as usize) + (right as usize);
         // We use unwrap_or to fall back to the base case and prevent panics on bad data.
-        self.break_state_table
-            .0
-            .get(idx)
-            .unwrap_or(BreakState::Keep)
+        self.break_state_table.get(idx).unwrap_or(BreakState::Keep)
     }
 
     #[inline]
@@ -1198,7 +1195,7 @@ impl<'l, 's> LineBreakType<'l, 's> for LineBreakTypeLatin1 {
     fn get_linebreak_property_with_rule(iterator: &LineBreakIterator<Self>, c: u8) -> u8 {
         // No CJ on Latin1
         // Note: Default value is 0 == UNKNOWN
-        iterator.data.property_table.0.get32(c as u32)
+        iterator.data.property_table.get32(c as u32)
     }
 
     #[inline]
