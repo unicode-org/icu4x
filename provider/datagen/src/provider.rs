@@ -89,7 +89,7 @@ impl DatagenProvider {
         Ok(Self {
             source: SourceData {
                 cldr_paths: Some(Arc::new(CldrCache::from_serde_cache(SerdeCache::new(
-                    AbstractFs::new(root)?,
+                    AbstractFs::new_from_fs(root)?,
                 )))),
                 ..self.source
             },
@@ -102,7 +102,7 @@ impl DatagenProvider {
     pub fn with_icuexport(self, root: PathBuf) -> Result<Self, DataError> {
         Ok(Self {
             source: SourceData {
-                icuexport_paths: Some(Arc::new(SerdeCache::new(AbstractFs::new(root)?))),
+                icuexport_paths: Some(Arc::new(SerdeCache::new(AbstractFs::new_from_fs(root)?))),
                 ..self.source
             },
         })
@@ -114,7 +114,9 @@ impl DatagenProvider {
     pub fn with_segmenter_lstm(self, root: PathBuf) -> Result<Self, DataError> {
         Ok(Self {
             source: SourceData {
-                segmenter_lstm_paths: Some(Arc::new(SerdeCache::new(AbstractFs::new(root)?))),
+                segmenter_lstm_paths: Some(Arc::new(SerdeCache::new(AbstractFs::new_from_fs(
+                    root,
+                )?))),
                 ..self.source
             },
         })
@@ -312,71 +314,76 @@ pub struct SourceData {
 impl Default for SourceData {
     fn default() -> Self {
         Self {
-            icuexport_dictionary_fallback: Some(Arc::new(SerdeCache::new(AbstractFs::Memory(
+            icuexport_dictionary_fallback: Some(Arc::new(SerdeCache::new(AbstractFs::new_memory(
                 [
                     (
                         "segmenter/dictionary/cjdict.toml",
-                        include_bytes!("../tests/data/icuexport/segmenter/dictionary/cjdict.toml").as_slice(),
+                        include_bytes!("../tests/data/icuexport/segmenter/dictionary/cjdict.toml")
+                            .as_slice(),
                     ),
                     (
                         "segmenter/dictionary/khmerdict.toml",
-                        include_bytes!("../tests/data/icuexport/segmenter/dictionary/khmerdict.toml").as_slice(),
+                        include_bytes!(
+                            "../tests/data/icuexport/segmenter/dictionary/khmerdict.toml"
+                        )
+                        .as_slice(),
                     ),
                     (
                         "segmenter/dictionary/laodict.toml",
-                        include_bytes!("../tests/data/icuexport/segmenter/dictionary/laodict.toml").as_slice(),
+                        include_bytes!("../tests/data/icuexport/segmenter/dictionary/laodict.toml")
+                            .as_slice(),
                     ),
                     (
                         "segmenter/dictionary/burmesedict.toml",
-                        include_bytes!("../tests/data/icuexport/segmenter/dictionary/burmesedict.toml").as_slice(),
+                        include_bytes!(
+                            "../tests/data/icuexport/segmenter/dictionary/burmesedict.toml"
+                        )
+                        .as_slice(),
                     ),
                     (
                         "segmenter/dictionary/thaidict.toml",
-                        include_bytes!("../tests/data/icuexport/segmenter/dictionary/thaidict.toml").as_slice(),
+                        include_bytes!(
+                            "../tests/data/icuexport/segmenter/dictionary/thaidict.toml"
+                        )
+                        .as_slice(),
                     ),
-                ]
-                .into_iter()
-                .collect(),
+                ],
             )))),
-            segmenter_lstm_paths: Some(Arc::new(SerdeCache::new(AbstractFs::Memory(
-                [
-                    (
-                        "Khmer_codepoints_exclusive_model4_heavy/weights.json",
-                        include_bytes!(
-                            "../tests/data/lstm/Khmer_codepoints_exclusive_model4_heavy/weights.json"
-                        )
+            segmenter_lstm_paths: Some(Arc::new(SerdeCache::new(AbstractFs::new_memory([
+                (
+                    "Khmer_codepoints_exclusive_model4_heavy/weights.json",
+                    include_bytes!(
+                        "../tests/data/lstm/Khmer_codepoints_exclusive_model4_heavy/weights.json"
+                    )
+                    .as_slice(),
+                ),
+                (
+                    "Lao_codepoints_exclusive_model4_heavy/weights.json",
+                    include_bytes!(
+                        "../tests/data/lstm/Lao_codepoints_exclusive_model4_heavy/weights.json"
+                    )
+                    .as_slice(),
+                ),
+                (
+                    "Burmese_codepoints_exclusive_model4_heavy/weights.json",
+                    include_bytes!(
+                        "../tests/data/lstm/Burmese_codepoints_exclusive_model4_heavy/weights.json"
+                    )
+                    .as_slice(),
+                ),
+                (
+                    "Thai_codepoints_exclusive_model4_heavy/weights.json",
+                    include_bytes!(
+                        "../tests/data/lstm/Thai_codepoints_exclusive_model4_heavy/weights.json"
+                    )
+                    .as_slice(),
+                ),
+                (
+                    "Thai_graphclust_model4_heavy/weights.json",
+                    include_bytes!("../tests/data/lstm/Thai_graphclust_model4_heavy/weights.json")
                         .as_slice(),
-                    ),
-                    (
-                        "Lao_codepoints_exclusive_model4_heavy/weights.json",
-                        include_bytes!(
-                            "../tests/data/lstm/Lao_codepoints_exclusive_model4_heavy/weights.json"
-                        )
-                        .as_slice(),
-                    ),
-                    (
-                        "Burmese_codepoints_exclusive_model4_heavy/weights.json",
-                        include_bytes!(
-                            "../tests/data/lstm/Burmese_codepoints_exclusive_model4_heavy/weights.json"
-                        )
-                        .as_slice(),
-                    ),
-                    (
-                        "Thai_codepoints_exclusive_model4_heavy/weights.json",
-                        include_bytes!(
-                            "../tests/data/lstm/Thai_codepoints_exclusive_model4_heavy/weights.json"
-                        )
-                        .as_slice(),
-                    ),
-                    (
-                        "Thai_graphclust_model4_heavy/weights.json",
-                        include_bytes!("../tests/data/lstm/Thai_graphclust_model4_heavy/weights.json")
-                            .as_slice(),
-                    ),
-                ]
-                .into_iter()
-                .collect(),
-            )))),
+                ),
+            ])))),
             ..DatagenProvider::new_custom().source
         }
     }

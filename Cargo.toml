@@ -67,6 +67,7 @@ members = [
     "provider/baked/timezone",
 
     # Utils
+    "utils/abstract_fs",
     "utils/calendrical_calculations",
     "utils/crlify",
     "utils/databake",
@@ -199,6 +200,7 @@ icu_segmenter_data = { version = "~1.4.0", path = "provider/baked/segmenter", de
 icu_timezone_data = { version = "~1.4.0", path = "provider/baked/timezone", default-features = false }
 
 # Utils
+abstract_fs = { version = "0.0.0", path = "utils/abstract_fs", default-features = false }
 calendrical_calculations = { version = "0.1.0", path = "utils/calendrical_calculations", default-features = false }
 crlify = { version = "1.0.3", path = "utils/crlify", default-features = false }
 databake = { version = "0.1.7", path = "utils/databake", default-features = false }

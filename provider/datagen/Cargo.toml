@@ -70,6 +70,7 @@ databake = { workspace = true, optional = true}
 proc-macro2 = {version = "1", optional = true }
 
 # Other external dependencies
+abstract_fs = { workspace = true }
 displaydoc = { version = "0.2.3", default-features = false }
 elsa = "1.9"
 itertools = "0.10"
@@ -82,10 +83,8 @@ serde_json = { version = "1.0", default-features = false, features = ["alloc"] }
 serde-aux = { version = "4.1.2", default-features = false }
 toml = "0.5"
 twox-hash = { version = "1.6", default-features = false }
-zip = { version = ">=0.5, <0.7", default-features = false, features = ["deflate"] }
 
 rayon = { version = "1.5", optional = true }
-ureq = { version = "2", optional = true }
 
 fraction = {version = "0.14.0", default-features = false }
 num-bigint = { version = "0.4.4", default-features = false }
@@ -122,7 +121,7 @@ use_wasm = ["icu_codepointtrie_builder/wasm"]
 # If neither `use_wasm` nor `use_icu4c` are enabled,
 # rule based segmenter data will not be generated.
 use_icu4c = ["icu_codepointtrie_builder/icu4c"]
-networking = ["dep:ureq"]
+networking = ["abstract_fs/networking"]
 
 # experimental deps
 icu_compactdecimal = ["dep:icu_compactdecimal"]

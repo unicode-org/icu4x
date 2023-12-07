@@ -3,6 +3,15 @@
 version = 3
 
 [[package]]
+name = "abstract_fs"
+version = "0.0.0"
+dependencies = [
+ "log",
+ "ureq",
+ "zip",
+]
+
+[[package]]
 name = "addr2line"
 version = "0.21.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1545,6 +1554,7 @@ version = "1.4.0"
 name = "icu_datagen"
 version = "1.4.0"
 dependencies = [
+ "abstract_fs",
  "clap 4.2.1",
  "crlify",
  "databake",
@@ -1595,11 +1605,9 @@ dependencies = [
  "tinystr",
  "toml",
  "twox-hash",
- "ureq",
  "writeable",
  "zerotrie",
  "zerovec",
- "zip",
 ]
 
 [[package]]
