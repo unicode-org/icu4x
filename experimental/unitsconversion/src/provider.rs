@@ -13,6 +13,16 @@ use icu_provider::prelude::*;
 use zerotrie::ZeroTrie;
 use zerovec::{VarZeroVec, ZeroVec};
 
+pub struct Baked;
+
+#[cfg(feature = "compiled_data")]
+const _: () = {
+    pub mod icu {
+        pub use crate as unitsconversion;
+    }
+    icu_unitsconversion_data::make_provider!(Baked);
+};
+
 #[cfg(feature = "datagen")]
 /// The latest minimum set of keys required by this component.
 pub const KEYS: &[DataKey] = &[UnitsInfoV1Marker::KEY];

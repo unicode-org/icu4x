@@ -2102,6 +2102,8 @@ dependencies = [
  "databake",
  "displaydoc",
  "icu_locid",
+ "icu_normalizer",
+ "icu_properties",
  "icu_provider",
  "serde",
  "smallvec",
