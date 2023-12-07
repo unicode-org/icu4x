@@ -90,6 +90,8 @@ impl Hebrew {
 //  HEBREW CALENDAR
 
 impl CalendarArithmetic for Hebrew {
+    type YearInfo = ();
+
     fn month_days(civil_year: i32, civil_month: u8) -> u8 {
         Self::last_day_of_civil_hebrew_month(civil_year, civil_month)
     }
@@ -180,7 +182,7 @@ impl Calendar for Hebrew {
             }
         };
 
-        ArithmeticDate::new_from_lunar_ordinals(year, month_ordinal, day).map(HebrewDateInner)
+        ArithmeticDate::new_from_ordinals(year, month_ordinal, day).map(HebrewDateInner)
     }
 
     fn date_from_iso(&self, iso: Date<Iso>) -> Self::DateInner {
@@ -206,7 +208,7 @@ impl Calendar for Hebrew {
     }
 
     fn offset_date(&self, date: &mut Self::DateInner, offset: DateDuration<Self>) {
-        date.0.offset_date(offset)
+        date.0.offset_date(offset, &())
     }
 
     fn until(
@@ -301,7 +303,7 @@ impl Hebrew {
     fn biblical_to_civil_date(biblical_date: BookHebrew) -> HebrewDateInner {
         let (y, m, d) = biblical_date.to_civil_date();
 
-        debug_assert!(ArithmeticDate::<Hebrew>::new_from_lunar_ordinals(y, m, d,).is_ok());
+        debug_assert!(ArithmeticDate::<Hebrew>::new_from_ordinals(y, m, d,).is_ok());
         HebrewDateInner(ArithmeticDate::new_unchecked(y, m, d))
     }
 
@@ -373,7 +375,7 @@ impl<A: AsCalendar<Calendar = Hebrew>> Date<A> {
         day: u8,
         calendar: A,
     ) -> Result<Date<A>, CalendarError> {
-        ArithmeticDate::new_from_lunar_ordinals(year, month, day)
+        ArithmeticDate::new_from_ordinals(year, month, day)
             .map(HebrewDateInner)
             .map(|inner| Date::from_raw(inner, calendar))
     }

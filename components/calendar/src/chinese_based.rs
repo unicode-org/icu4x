@@ -22,7 +22,7 @@
 use crate::{
     calendar_arithmetic::{ArithmeticDate, CalendarArithmetic},
     types::MonthCode,
-    CalendarError, Iso,
+    Calendar, CalendarError, Iso,
 };
 
 use calendrical_calculations::chinese_based::{self, ChineseBased, YearBounds};
@@ -32,7 +32,7 @@ use core::num::NonZeroU8;
 /// The trait ChineseBased is used by Chinese-based calendars to perform computations shared by such calendar.
 ///
 /// For an example of how to use this trait, see `impl ChineseBasedWithDataLoading for Chinese` in [`Chinese`].
-pub(crate) trait ChineseBasedWithDataLoading: CalendarArithmetic {
+pub(crate) trait ChineseBasedWithDataLoading: Calendar {
     type CB: ChineseBased;
     /// Get the compiled const data for a ChineseBased calendar; can return `None` if the given year
     /// does not correspond to any compiled data.
@@ -41,14 +41,14 @@ pub(crate) trait ChineseBasedWithDataLoading: CalendarArithmetic {
 
 /// Chinese-based calendars define DateInner as a calendar-specific struct wrapping ChineseBasedDateInner.
 #[derive(Debug, Eq, PartialEq, PartialOrd, Ord)]
-pub(crate) struct ChineseBasedDateInner<C>(
+pub(crate) struct ChineseBasedDateInner<C: CalendarArithmetic>(
     pub(crate) ArithmeticDate<C>,
     pub(crate) ChineseBasedYearInfo,
 );
 
 // we want these impls without the `C: Copy/Clone` bounds
-impl<C> Copy for ChineseBasedDateInner<C> {}
-impl<C> Clone for ChineseBasedDateInner<C> {
+impl<C: CalendarArithmetic> Copy for ChineseBasedDateInner<C> {}
+impl<C: CalendarArithmetic> Clone for ChineseBasedDateInner<C> {
     fn clone(&self) -> Self {
         *self
     }
@@ -240,7 +240,7 @@ impl ChineseBasedCompiledData {
     }
 }
 
-impl<C: ChineseBasedWithDataLoading> ChineseBasedDateInner<C> {
+impl<C: ChineseBasedWithDataLoading + CalendarArithmetic<YearInfo = ()>> ChineseBasedDateInner<C> {
     /// Given a 1-indexed chinese extended year, fetch its data from the cache.
     ///
     /// If the actual year data that was fetched is for a different year, update the getter year
@@ -467,6 +467,8 @@ impl<C: ChineseBasedWithDataLoading> ChineseBasedDateInner<C> {
 }
 
 impl<C: ChineseBasedWithDataLoading> CalendarArithmetic for C {
+    type YearInfo = ();
+
     fn month_days(year: i32, month: u8) -> u8 {
         chinese_based::month_days::<C::CB>(year, month)
     }
