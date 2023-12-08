@@ -198,6 +198,7 @@ version = "1.4.0"
 dependencies = [
  "icu",
  "icu_datagen",
+ "icu_unitsconversion",
  "log",
  "simple_logger",
 ]
@@ -2102,10 +2103,8 @@ dependencies = [
  "databake",
  "displaydoc",
  "icu_locid",
- "icu_normalizer",
- "icu_properties",
  "icu_provider",
- "icu_relativetime_data",
+ "icu_unitsconversion_data",
  "serde",
  "smallvec",
  "zerotrie",

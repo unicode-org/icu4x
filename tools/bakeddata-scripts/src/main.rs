@@ -44,7 +44,7 @@ const COMPONENTS: &[(&str, &[DataKey], &str)] = &[
     ("timezone", icu::timezone::provider::KEYS, REPO_VERSION),
     (
         "unirsconversion",
-        icu::unitsconversion::provider::KEYS,
+        icu_unitsconversion::provider::KEYS,
         REPO_VERSION,
     ),
 ];

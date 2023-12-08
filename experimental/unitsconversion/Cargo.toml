@@ -21,9 +21,8 @@ include.workspace = true
 all-features = true
 
 [dependencies]
-icu_normalizer = { workspace = true }
-icu_properties = { workspace = true }
-icu_relativetime_data = { workspace = true, optional = true }
+
+icu_unitsconversion_data = { workspace = true, optional = true }
 
 databake = { workspace = true, optional = true, features = ["derive"]}
 displaydoc = { version = "0.2.3", default-features = false }
@@ -40,5 +39,5 @@ zerovec = { workspace = true, features = ["yoke"] }
 default = ["compiled_data"]
 serde = ["dep:serde", "zerovec/serde", "icu_locid/serde", "icu_provider/serde", "zerotrie/serde"]
 datagen = [ "serde", "zerovec/databake", "dep:databake","zerovec/databake",  "zerotrie/databake", "icu_provider/datagen"]
-compiled_data = ["icu_normalizer/compiled_data", "icu_properties/compiled_data"]
+compiled_data = []
 

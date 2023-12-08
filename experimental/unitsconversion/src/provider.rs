@@ -13,14 +13,24 @@ use icu_provider::prelude::*;
 use zerotrie::ZeroTrie;
 use zerovec::{VarZeroVec, ZeroVec};
 
+#[cfg(feature = "compiled_data")]
+#[derive(Debug)]
+/// Baked data
+///
+/// <div class="stab unstable">
+/// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
+/// including in SemVer minor releases. In particular, the `DataProvider` implementations are only
+/// guaranteed to match with this version's `*_unstable` providers. Use with caution.
+/// </div>
 pub struct Baked;
 
 #[cfg(feature = "compiled_data")]
 const _: () = {
     pub mod icu {
-        pub use crate as unitsconversion;
+        pub use crate as icu_unitsconversion;
     }
     icu_unitsconversion_data::make_provider!(Baked);
+    icu_unitsconversion_data::impl_units_info_v1!(Baked);
 };
 
 #[cfg(feature = "datagen")]
