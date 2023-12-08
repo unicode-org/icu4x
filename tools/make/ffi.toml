@@ -10,7 +10,7 @@
 description = "Run C API tests"
 category = "ICU4X Development"
 command = "make"
-args = ["-C", "ffi/capi/tests/c", "test"]
+args = ["-C", "docs/tutorials/c", "test"]
 
 [tasks.test-c-tiny]
 description = "Run C API tests for tiny targets"
@@ -20,15 +20,15 @@ dependencies = ["install-nightly", "install-unknown-linux"]
 script_runner = "@duckscript"
 script = '''
 exit_on_error true
-exec --fail-on-error make -C ffi/capi/tests/tinyc/fixeddecimal
-exec --fail-on-error make -C ffi/capi/tests/tinyc/segmenter
+exec --fail-on-error make -C docs/tutorials/c-tiny/fixeddecimal
+exec --fail-on-error make -C docs/tutorials/c-tiny/segmenter
 '''
 
 [tasks.test-cpp]
 description = "Run CPP tests"
 category = "ICU4X Development"
 command = "make"
-args = ["-C", "ffi/capi/tests/cpp", "test"]
+args = ["-C", "docs/tutorials/cpp", "test"]
 
 
 # JS/WASM tasks
@@ -46,7 +46,7 @@ category = "ICU4X Development"
 condition = { env_not_set = ["ICU4X_BUILDING_WITH_FORCED_NIGHTLY"] }
 dependencies = ["install-nightly", "install-wasm"]
 command = "make"
-args = ["-C", "ffi/capi/tests/tinywasm", "build", "test"]
+args = ["-C", "docs/tutorials/js-tiny", "test"]
 
 
 # Dart tasks
@@ -179,12 +179,3 @@ dependencies = ["install-nightly"]
 toolchain = "${ICU4X_NIGHTLY_TOOLCHAIN}"
 command = "rustup"
 args = ["target", "add", "thumbv8m.main-none-eabihf"]
-
-# Unused tasks
-
-[tasks.test-cpp-emscripten]
-description = "Run the C++-emscripten test (needs emsdk)"
-category = "ICU4X Development"
-dependencies = ["install-nightly", "install-emscripten"]
-command = "make"
-args = ["-C", "ffi/capi/tests/emscripten", "test"]

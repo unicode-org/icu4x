@@ -4,7 +4,7 @@ ICU4X's core functionality is completely available from C++, with headers genera
 
 Typically C++ users can build ICU4X by building the `icu_capi` Rust crate, and linking the resultant static library to their C++ application. This crate contains all of the relevant [Diplomat]-generated `extern "C"` declarations, as well as an idiomatic C++ wrapper using these functions.
 
-Using ICU4X in C++ is best demonstrated via the [examples] present in the codebase. For example, [here's an example showing off decimal formatting in ICU4X][decimal-example-code], built with [this Makefile][decimal-example-makefile].
+Using ICU4X in C++ is best demonstrated via the [examples](cpp). For example, [here's an example showing off decimal formatting in ICU4X](cpp/fixeddecimal.cpp), built with [this Makefile](cpp/Makefile).
 
 _We are still working on improving the user experience of using ICU4X from other languages. As such, this tutorial may be a bit sparse, but we are happy to answer questions on our [discussions forum] and help you out_
 
@@ -142,9 +142,6 @@ These bindings may be customized by running `diplomat-tool` directly (including 
  [staticlib-crates]: https://crates.io/crates/icu_capi_staticlib
  [staticlib-source]: https://github.com/unicode-org/icu4x/tree/main/ffi/capi_staticlib
  [freertos port]: https://github.com/unicode-org/icu4x/blob/main/ffi/freertos/src/lib.rs
- [examples]: https://github.com/unicode-org/icu4x/blob/main/tests/tinycpp/examples/
- [decimal-example-code]: https://github.com/unicode-org/icu4x/blob/main/ffi/capi/tests/cpp/fixeddecimal.cpp
- [decimal-example-makefile]: https://github.com/unicode-org/icu4x/blob/main/ffi/capi/tests/cpp/Makefile
  [`ffi/capi/bindings/cpp`]: https://github.com/unicode-org/icu4x/tree/main/ffi/capi/bindings/cpp
  [`tests/tinycpp/docs`]: https://github.com/unicode-org/icu4x/tree/main/tests/tinycpp/docs
  [rust-docs]: https://docs.rs/icu_capi/latest/icu_capi/

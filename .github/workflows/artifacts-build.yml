@@ -184,7 +184,7 @@ jobs:
     - name: Build docs
       run: |
         cd ffi/npm
-        make lib/index.js
+        make lib/index.mjs
         npm install typedoc
         node_modules/typedoc/bin/typedoc lib/index.d.ts --out docs --readme ../../docs/tutorials/js.md --basePath lib
         cd ../..
@@ -280,19 +280,19 @@ jobs:
     - name: Init packages
       run: |
         npm -C ffi/npm ci
-        npm -C ffi/npm/examples/wasm-demo ci
+        npm -C docs/tutorials/npm ci
 
     - name: Run Webpack
-      run: npm -C ffi/npm/examples/wasm-demo run build
+      run: npm -C docs/tutorials/npm run build
 
     - name: Put index.html in dist for temp URL
       run: |
-        cp ffi/npm/examples/wasm-demo/index.html ffi/npm/examples/wasm-demo/dist/index.html
-        printf "const gcs=document.createElement('script');gcs.setAttribute('src','./bundle.js');document.body.appendChild(gcs);" > ffi/npm/examples/wasm-demo/dist/index.js
+        cp docs/tutorials/npm/index.html docs/tutorials/npm/dist/index.html
+        printf "const gcs=document.createElement('script');gcs.setAttribute('src','./bundle.js');document.body.appendChild(gcs);" > docs/tutorials/npm/dist/index.js
 
     - name: Upload wasm-demo bundle to Google Cloud Storage
       run: |
-        gsutil -m cp -r ffi/npm/examples/wasm-demo/dist/* gs://${{ env.GCP_MAIN_BUCKET_ID }}/gha/wasm-demo
+        gsutil -m cp -r docs/tutorials/npm/dist/* gs://${{ env.GCP_MAIN_BUCKET_ID }}/gha/wasm-demo
 
     - name: "⭐⭐⭐ Links to Uploaded Artifacts ⭐⭐⭐"
       run: |

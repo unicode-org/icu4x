@@ -98,6 +98,7 @@ members = [
     "tools/diplomat-gen",
     "tools/ffi_coverage",
     "tools/testdata-scripts",
+    "tools/md-tests",
 ]
 # Note: Workspaces in subdirectories, such as docs/tutorials/crates, are
 # implicitly excluded from the main workspace.
@@ -109,8 +110,7 @@ exclude = [
     # in the repo it doesn't build without running `cargo make testdata-legacy`
     # first.
     "provider/testdata",
-    # Tutorials are tested in their own cargo workspace against released and
-    # local crates
+    # Tutorials are tested outside the workspace to simulate external users
     "docs",
     # Not a functioning crate
     "provider/baked/_template_",
