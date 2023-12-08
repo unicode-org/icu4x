@@ -93,7 +93,7 @@ int main() {
 
 The header files are shipped inside the crate, which Cargo has put somewhere on your system. You can find its location with
 ```shell
-HEADERS=$(cargo metadata --format-version 1 | jq '.packages[] | select(.name == "icu_capi").manifest_path' | xargs dirname)
+HEADERS=$(cargo metadata --format-version 1 | jq '.packages[] | select(.name == "icu_capi").manifest_path' | xargs dirname)/bindings/cpp
 ```
 
 Then you can build with
