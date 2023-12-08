@@ -2,6 +2,15 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+//! Provides [`AbstractFs`], which abstracts over on-disk, in-memory, and ZIP file systems.
+
+#![deny(
+    clippy::exhaustive_structs,
+    clippy::exhaustive_enums,
+    missing_debug_implementations
+)]
+#![warn(missing_docs)]
+
 use std::collections::BTreeMap;
 use std::collections::HashSet;
 use std::fmt::Debug;
@@ -12,6 +21,8 @@ use std::sync::RwLock;
 use zip::ZipArchive;
 
 #[derive(Debug)]
+/// An [`AbstractFs`] is backed by either the file system, a ZIP file,
+/// or an in-memory file system.
 pub struct AbstractFs(AbstractFsInner);
 
 #[derive(Debug)]
@@ -28,6 +39,9 @@ struct ZipData {
 }
 
 impl AbstractFs {
+    /// Create an [`AbstractFs`] that reads from disk using [`std::fs`].
+    ///
+    /// `root` can be either a directory, or a ZIP file.
     pub fn new_from_fs<P: AsRef<Path>>(root: P) -> Result<Self, Error> {
         if std::fs::metadata(root.as_ref())?.is_dir() {
             Ok(Self(AbstractFsInner::Fs(root.as_ref().to_path_buf())))
@@ -42,13 +56,19 @@ impl AbstractFs {
         }
     }
 
+    /// Create an in-memory [`AbstractFs`] from the given pairs of (path, bytes).
+    ///
+    /// This is usually used with `include_bytes!`.
     pub fn new_memory(data: impl IntoIterator<Item = (&'static str, &'static [u8])>) -> Self {
         Self(AbstractFsInner::Memory(data.into_iter().collect()))
     }
 
+    /// Create an [`AbstractFs`] backed by a ZIP file that will be lazily fetched over the network.
+    ///
+    /// Requires the `networking` Cargo feature.
     #[cfg(feature = "networking")]
-    pub fn new_from_url(path: String) -> Self {
-        Self(AbstractFsInner::Zip(RwLock::new(Err(path))))
+    pub fn new_from_url(url: String) -> Self {
+        Self(AbstractFsInner::Zip(RwLock::new(Err(url))))
     }
 
     fn init(&self) -> Result<(), Error> {
@@ -91,6 +111,7 @@ impl AbstractFs {
         Ok(())
     }
 
+    /// Returns the content of the file at `path` as raw bytes.
     pub fn read_to_buf(&self, path: &str) -> Result<Vec<u8>, Error> {
         self.init()?;
         match &self.0 {
@@ -116,12 +137,15 @@ impl AbstractFs {
         }
     }
 
+    /// Returns the content of the text file at `path` as a [`String`].
     pub fn read_to_string(&self, path: &str) -> Result<String, Error> {
         let vec = self.read_to_buf(path)?;
         let s = String::from_utf8(vec).map_err(|e| Error::new(ErrorKind::InvalidData, e))?;
         Ok(s)
     }
 
+    /// Lists all files in the directory `path`, or, in the general sense, all files that
+    /// start with `path/`.
     pub fn list(&self, path: &str) -> Result<impl Iterator<Item = String>, Error> {
         self.init()?;
         Ok(match &self.0 {
@@ -153,6 +177,7 @@ impl AbstractFs {
         })
     }
 
+    /// Returns whether the file at `path` exists.
     pub fn file_exists(&self, path: &str) -> Result<bool, Error> {
         self.init()?;
         Ok(match &self.0 {
