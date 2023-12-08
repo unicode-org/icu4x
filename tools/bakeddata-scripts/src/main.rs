@@ -43,7 +43,7 @@ const COMPONENTS: &[(&str, &[DataKey], &str)] = &[
     ("segmenter", icu::segmenter::provider::KEYS, REPO_VERSION),
     ("timezone", icu::timezone::provider::KEYS, REPO_VERSION),
     (
-        "unirsconversion",
+        "unitsconversion",
         icu_unitsconversion::provider::KEYS,
         REPO_VERSION,
     ),
