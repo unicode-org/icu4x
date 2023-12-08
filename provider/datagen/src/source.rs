@@ -9,7 +9,7 @@ use std::any::Any;
 use std::fmt::Debug;
 
 pub(crate) struct SerdeCache {
-    pub(crate) root: AbstractFs,
+    root: AbstractFs,
     cache: FrozenMap<String, Box<dyn Any + Send + Sync>>,
 }
 
@@ -74,11 +74,15 @@ impl SerdeCache {
         })
     }
 
-    pub fn list(&self, path: &str) -> Result<impl Iterator<Item = String>, DataError> {
+    pub fn list(&self, path: &str) -> Result<impl Iterator<Item = String>, std::io::Error> {
         Ok(self.root.list(path)?)
     }
 
-    pub fn file_exists(&self, path: &str) -> Result<bool, DataError> {
+    pub fn read_to_string(&self, path: &str) -> Result<String, std::io::Error> {
+        Ok(self.root.read_to_string(path)?)
+    }
+
+    pub fn file_exists(&self, path: &str) -> Result<bool, std::io::Error> {
         Ok(self.root.file_exists(path)?)
     }
 }

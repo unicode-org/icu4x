@@ -37,7 +37,6 @@ impl CldrCache {
                     ))?;
                 let source = self
                     .serde_cache
-                    .root
                     .read_to_string(&format!("{transforms}/{transform}/source.txt",))?;
 
                 if matches!(

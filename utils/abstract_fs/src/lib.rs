@@ -5,7 +5,7 @@
 use std::collections::BTreeMap;
 use std::collections::HashSet;
 use std::fmt::Debug;
-use std::io::{Cursor, Read, Error, ErrorKind};
+use std::io::{Cursor, Error, ErrorKind, Read};
 use std::path::Path;
 use std::path::PathBuf;
 use std::sync::RwLock;
@@ -51,7 +51,6 @@ impl AbstractFs {
         Self(AbstractFsInner::Zip(RwLock::new(Err(path))))
     }
 
-    
     fn init(&self) -> Result<(), Error> {
         #[cfg(feature = "networking")]
         if let AbstractFsInner::Zip(lock) = &self.0 {

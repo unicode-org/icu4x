@@ -25,12 +25,11 @@ impl crate::DatagenProvider {
     /// Backward compatibility for https://unicode-org.atlassian.net/browse/CLDR-15603
     fn has_legacy_swedish_variants(&self) -> bool {
         self.icuexport()
-            .and_then(|i| {
-                i.file_exists(&format!(
-                    "collation/{}/sv_reformed_meta.toml",
-                    self.collation_han_database(),
-                ))
-            })
+            .unwrap()
+            .file_exists(&format!(
+                "collation/{}/sv_reformed_meta.toml",
+                self.collation_han_database(),
+            ))
             .unwrap_or(false)
     }
 }

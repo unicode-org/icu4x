@@ -239,15 +239,9 @@ impl DatagenProvider {{
         SINGLETON
             .get_or_init(|| Self {{
                 source: SourceData {{
-                    cldr_paths: Some(Arc::new(CldrCache::from_serde_cache(SerdeCache::new(AbstractFs::Memory(
-                        [{cldr_data}].into_iter().collect(),
-                    ))))),
-                    icuexport_paths: Some(Arc::new(SerdeCache::new(AbstractFs::Memory(
-                        [{icuexport_data}].into_iter().collect(),
-                    )))),
-                    segmenter_lstm_paths: Some(Arc::new(SerdeCache::new(AbstractFs::Memory(
-                        [{lstm_data}].into_iter().collect(),
-                    )))),
+                    cldr_paths: Some(Arc::new(CldrCache::from_serde_cache(SerdeCache::new(AbstractFs::new_memory([{cldr_data}]))))),
+                    icuexport_paths: Some(Arc::new(SerdeCache::new(AbstractFs::new_memory([{icuexport_data}])))),
+                    segmenter_lstm_paths: Some(Arc::new(SerdeCache::new(AbstractFs::new_memory([{lstm_data}])))),
                     ..DatagenProvider::new_custom().source
                 }},
             }})
