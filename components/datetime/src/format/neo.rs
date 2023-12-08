@@ -634,7 +634,7 @@ impl<C: CldrCalendar> TypedDateTimePatternInterpolator<C> {
                 &crate::provider::Baked,
                 &crate::provider::Baked,
                 pattern,
-                |locale| WeekCalculator::try_new(locale),
+                WeekCalculator::try_new,
             )?;
         Ok(DateTimePatternFormatter {
             inner,
