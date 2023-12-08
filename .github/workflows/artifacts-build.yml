@@ -184,6 +184,7 @@ jobs:
     - name: Build docs
       run: |
         cd ffi/npm
+        make lib/index.js
         npm install typedoc
         node_modules/typedoc/bin/typedoc lib/index.d.ts --out docs --readme ../../../../docs/tutorials/js.md --basePath lib
         cd ../..
@@ -231,6 +232,7 @@ jobs:
     - name: Build docs
       run: |
         cd ffi/dart
+        make lib/src/lib.g.dart
         # https://github.com/dart-lang/dartdoc/issues/3590
         dart pub get
         dart doc
