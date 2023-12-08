@@ -5,11 +5,7 @@
 use std::collections::BTreeMap;
 use std::collections::HashSet;
 use std::fmt::Debug;
-use std::fs::File;
-use std::io::BufWriter;
-use std::io::Cursor;
-use std::io::Read;
-use std::io::{Error, ErrorKind};
+use std::io::{Cursor, Read, Error, ErrorKind};
 use std::path::Path;
 use std::path::PathBuf;
 use std::sync::RwLock;
@@ -55,8 +51,9 @@ impl AbstractFs {
         Self(AbstractFsInner::Zip(RwLock::new(Err(path))))
     }
 
-    #[cfg(feature = "networking")]
+    
     fn init(&self) -> Result<(), Error> {
+        #[cfg(feature = "networking")]
         if let AbstractFsInner::Zip(lock) = &self.0 {
             if lock.read().expect("poison").is_ok() {
                 return Ok(());
@@ -81,7 +78,7 @@ impl AbstractFs {
                         .call()
                         .map_err(|e| Error::new(ErrorKind::Other, e))?
                         .into_reader(),
-                    &mut BufWriter::new(File::create(&root)?),
+                    &mut std::io::BufWriter::new(std::fs::File::create(&root)?),
                 )?;
             }
 
