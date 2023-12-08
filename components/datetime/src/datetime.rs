@@ -20,7 +20,7 @@ use icu_provider::prelude::*;
 use writeable::Writeable;
 
 use crate::{
-    calendar, input::DateInput, input::DateTimeInput, input::IsoTimeInput, CldrCalendar,
+    calendar, calendar::CldrCalendar, input::DateInput, input::DateTimeInput, input::IsoTimeInput,
     DateTimeError, FormattedDateTime,
 };
 
