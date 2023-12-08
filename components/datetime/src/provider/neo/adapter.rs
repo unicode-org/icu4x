@@ -47,7 +47,7 @@ fn month_symbols_map_project_cloned<M, P>(
 ) -> Result<DataResponse<P>, DataError>
 where
     M: KeyedDataMarker<Yokeable = DateSymbolsV1<'static>>,
-    P: KeyedDataMarker<Yokeable = MonthSymbolsV1<'static>>,
+    P: KeyedDataMarker<Yokeable = MonthNamesV1<'static>>,
 {
     let subtag = single_aux_subtag::<M>(req.locale)?;
     let new_payload = payload.try_map_project_cloned(|payload, _| {
@@ -85,7 +85,7 @@ fn weekday_symbols_map_project_cloned<M, P>(
 ) -> Result<DataResponse<P>, DataError>
 where
     M: KeyedDataMarker<Yokeable = DateSymbolsV1<'static>>,
-    P: KeyedDataMarker<Yokeable = LinearSymbolsV1<'static>>,
+    P: KeyedDataMarker<Yokeable = LinearNamesV1<'static>>,
 {
     let subtag = single_aux_subtag::<M>(req.locale)?;
     let new_payload = payload.try_map_project_cloned(|payload, _| {
@@ -133,7 +133,7 @@ fn era_symbols_map_project_cloned<M, P>(
 ) -> Result<DataResponse<P>, DataError>
 where
     M: KeyedDataMarker<Yokeable = DateSymbolsV1<'static>>,
-    P: KeyedDataMarker<Yokeable = YearSymbolsV1<'static>>,
+    P: KeyedDataMarker<Yokeable = YearNamesV1<'static>>,
 {
     let subtag = single_aux_subtag::<M>(req.locale)?;
     let new_payload = payload.try_map_project_cloned(|payload, _| {
@@ -148,7 +148,7 @@ where
                     .with_display_context(&subtag))
             }
         };
-        Ok(YearSymbolsV1::Eras(result.clone()))
+        Ok(YearNamesV1::Eras(result.clone()))
     })?;
     Ok(DataResponse {
         payload: Some(new_payload),
@@ -162,7 +162,7 @@ fn dayperiod_symbols_map_project_cloned<M, P>(
 ) -> Result<DataResponse<P>, DataError>
 where
     M: KeyedDataMarker<Yokeable = TimeSymbolsV1<'static>>,
-    P: KeyedDataMarker<Yokeable = LinearSymbolsV1<'static>>,
+    P: KeyedDataMarker<Yokeable = LinearNamesV1<'static>>,
 {
     let subtag = single_aux_subtag::<M>(req.locale)?;
     let new_payload = payload.try_map_project_cloned(|payload, _| {
@@ -194,7 +194,7 @@ where
     })
 }
 
-impl<'a> From<&months::SymbolsV1<'a>> for MonthSymbolsV1<'a> {
+impl<'a> From<&months::SymbolsV1<'a>> for MonthNamesV1<'a> {
     fn from(other: &months::SymbolsV1<'a>) -> Self {
         match other {
             months::SymbolsV1::SolarTwelve(cow_list) => {
@@ -202,7 +202,7 @@ impl<'a> From<&months::SymbolsV1<'a>> for MonthSymbolsV1<'a> {
                 // a new VarZeroVec. Since VarZeroVec does not implement `from_iter`, first we
                 // make a Vec of string references.
                 let vec: alloc::vec::Vec<&str> = cow_list.iter().map(|x| &**x).collect();
-                MonthSymbolsV1::Linear((&vec).into())
+                MonthNamesV1::Linear((&vec).into())
             }
             months::SymbolsV1::Other(zero_map) => {
                 // Only calendar that uses this is hebrew, we can assume it is 12-month
@@ -220,23 +220,23 @@ impl<'a> From<&months::SymbolsV1<'a>> for MonthSymbolsV1<'a> {
                         debug_assert!(false, "Found out of bounds hebrew month code {k}")
                     }
                 }
-                MonthSymbolsV1::LeapLinear((&vec).into())
+                MonthNamesV1::LeapLinear((&vec).into())
             }
         }
     }
 }
 
-impl<'a> From<&weekdays::SymbolsV1<'a>> for LinearSymbolsV1<'a> {
+impl<'a> From<&weekdays::SymbolsV1<'a>> for LinearNamesV1<'a> {
     fn from(other: &weekdays::SymbolsV1<'a>) -> Self {
         // Input is a cow array of length 7. Need to make it a VarZeroVec.
         let vec: alloc::vec::Vec<&str> = other.0.iter().map(|x| &**x).collect();
-        LinearSymbolsV1 {
+        LinearNamesV1 {
             symbols: (&vec).into(),
         }
     }
 }
 
-impl<'a> From<&day_periods::SymbolsV1<'a>> for LinearSymbolsV1<'a> {
+impl<'a> From<&day_periods::SymbolsV1<'a>> for LinearNamesV1<'a> {
     fn from(other: &day_periods::SymbolsV1<'a>) -> Self {
         // Input is a struct with four fields. Need to make it a VarZeroVec.
         let vec: alloc::vec::Vec<&str> = match (other.noon.as_ref(), other.midnight.as_ref()) {
@@ -245,7 +245,7 @@ impl<'a> From<&day_periods::SymbolsV1<'a>> for LinearSymbolsV1<'a> {
             (None, Some(midnight)) => vec![&other.am, &other.pm, "", &midnight],
             (None, None) => vec![&other.am, &other.pm],
         };
-        LinearSymbolsV1 {
+        LinearNamesV1 {
             symbols: (&vec).into(),
         }
     }
@@ -329,67 +329,67 @@ impl_data_provider_adapter!(
 
 impl_data_provider_adapter!(
     BuddhistDateSymbolsV1Marker,
-    WeekdaySymbolsV1Marker,
+    WeekdayNamesV1Marker,
     weekday_symbols_map_project_cloned
 );
 impl_data_provider_adapter!(
     ChineseDateSymbolsV1Marker,
-    WeekdaySymbolsV1Marker,
+    WeekdayNamesV1Marker,
     weekday_symbols_map_project_cloned
 );
 impl_data_provider_adapter!(
     CopticDateSymbolsV1Marker,
-    WeekdaySymbolsV1Marker,
+    WeekdayNamesV1Marker,
     weekday_symbols_map_project_cloned
 );
 impl_data_provider_adapter!(
     DangiDateSymbolsV1Marker,
-    WeekdaySymbolsV1Marker,
+    WeekdayNamesV1Marker,
     weekday_symbols_map_project_cloned
 );
 impl_data_provider_adapter!(
     EthiopianDateSymbolsV1Marker,
-    WeekdaySymbolsV1Marker,
+    WeekdayNamesV1Marker,
     weekday_symbols_map_project_cloned
 );
 impl_data_provider_adapter!(
     GregorianDateSymbolsV1Marker,
-    WeekdaySymbolsV1Marker,
+    WeekdayNamesV1Marker,
     weekday_symbols_map_project_cloned
 );
 impl_data_provider_adapter!(
     HebrewDateSymbolsV1Marker,
-    WeekdaySymbolsV1Marker,
+    WeekdayNamesV1Marker,
     weekday_symbols_map_project_cloned
 );
 impl_data_provider_adapter!(
     IndianDateSymbolsV1Marker,
-    WeekdaySymbolsV1Marker,
+    WeekdayNamesV1Marker,
     weekday_symbols_map_project_cloned
 );
 impl_data_provider_adapter!(
     IslamicDateSymbolsV1Marker,
-    WeekdaySymbolsV1Marker,
+    WeekdayNamesV1Marker,
     weekday_symbols_map_project_cloned
 );
 impl_data_provider_adapter!(
     JapaneseDateSymbolsV1Marker,
-    WeekdaySymbolsV1Marker,
+    WeekdayNamesV1Marker,
     weekday_symbols_map_project_cloned
 );
 impl_data_provider_adapter!(
     JapaneseExtendedDateSymbolsV1Marker,
-    WeekdaySymbolsV1Marker,
+    WeekdayNamesV1Marker,
     weekday_symbols_map_project_cloned
 );
 impl_data_provider_adapter!(
     PersianDateSymbolsV1Marker,
-    WeekdaySymbolsV1Marker,
+    WeekdayNamesV1Marker,
     weekday_symbols_map_project_cloned
 );
 impl_data_provider_adapter!(
     RocDateSymbolsV1Marker,
-    WeekdaySymbolsV1Marker,
+    WeekdayNamesV1Marker,
     weekday_symbols_map_project_cloned
 );
 
@@ -461,7 +461,7 @@ impl_data_provider_adapter!(
 
 impl_data_provider_adapter!(
     TimeSymbolsV1Marker,
-    DayPeriodSymbolsV1Marker,
+    DayPeriodNamesV1Marker,
     dayperiod_symbols_map_project_cloned
 );
 
@@ -530,7 +530,7 @@ mod tests {
             .unwrap()
             .take_payload()
             .unwrap();
-        let neo_weekdays_abbreviated: DataPayload<WeekdaySymbolsV1Marker> = symbols
+        let neo_weekdays_abbreviated: DataPayload<WeekdayNamesV1Marker> = symbols
             .load(DataRequest {
                 locale: &"en-x-3".parse().unwrap(),
                 metadata: Default::default(),
@@ -555,7 +555,7 @@ mod tests {
             .unwrap()
             .take_payload()
             .unwrap();
-        let neo_weekdays_short: DataPayload<WeekdaySymbolsV1Marker> = symbols
+        let neo_weekdays_short: DataPayload<WeekdayNamesV1Marker> = symbols
             .load(DataRequest {
                 locale: &"en-x-6s".parse().unwrap(),
                 metadata: Default::default(),
@@ -605,7 +605,7 @@ mod tests {
             .unwrap()
             .take_payload()
             .unwrap();
-        let neo_dayperiods_abbreviated: DataPayload<DayPeriodSymbolsV1Marker> = symbols
+        let neo_dayperiods_abbreviated: DataPayload<DayPeriodNamesV1Marker> = symbols
             .load(DataRequest {
                 locale: &"en-x-3s".parse().unwrap(),
                 metadata: Default::default(),

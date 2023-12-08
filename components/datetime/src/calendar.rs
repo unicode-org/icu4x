@@ -56,11 +56,11 @@ pub trait CldrCalendar: InternalCldrCalendar {
 
     #[cfg(feature = "experimental")]
     /// The data marker for loading year symbols for this calendar.
-    type YearSymbolsV1Marker: KeyedDataMarker<Yokeable = YearSymbolsV1<'static>>;
+    type YearNamesV1Marker: KeyedDataMarker<Yokeable = YearNamesV1<'static>>;
 
     #[cfg(feature = "experimental")]
     /// The data marker for loading month symbols for this calendar.
-    type MonthSymbolsV1Marker: KeyedDataMarker<Yokeable = MonthSymbolsV1<'static>>;
+    type MonthNamesV1Marker: KeyedDataMarker<Yokeable = MonthNamesV1<'static>>;
 
     /// Checks if a given BCP 47 identifier is allowed to be used with this calendar
     ///
@@ -88,9 +88,9 @@ impl CldrCalendar for Buddhist {
     type DateSymbolsV1Marker = BuddhistDateSymbolsV1Marker;
     type DateLengthsV1Marker = BuddhistDateLengthsV1Marker;
     #[cfg(feature = "experimental")]
-    type YearSymbolsV1Marker = BuddhistYearSymbolsV1Marker;
+    type YearNamesV1Marker = BuddhistYearSymbolsV1Marker;
     #[cfg(feature = "experimental")]
-    type MonthSymbolsV1Marker = BuddhistMonthSymbolsV1Marker;
+    type MonthNamesV1Marker = BuddhistMonthSymbolsV1Marker;
 }
 
 impl CldrCalendar for Chinese {
@@ -98,9 +98,9 @@ impl CldrCalendar for Chinese {
     type DateSymbolsV1Marker = ChineseDateSymbolsV1Marker;
     type DateLengthsV1Marker = ChineseDateLengthsV1Marker;
     #[cfg(feature = "experimental")]
-    type YearSymbolsV1Marker = ChineseYearSymbolsV1Marker;
+    type YearNamesV1Marker = ChineseYearSymbolsV1Marker;
     #[cfg(feature = "experimental")]
-    type MonthSymbolsV1Marker = ChineseMonthSymbolsV1Marker;
+    type MonthNamesV1Marker = ChineseMonthSymbolsV1Marker;
 }
 
 impl CldrCalendar for Coptic {
@@ -108,9 +108,9 @@ impl CldrCalendar for Coptic {
     type DateSymbolsV1Marker = CopticDateSymbolsV1Marker;
     type DateLengthsV1Marker = CopticDateLengthsV1Marker;
     #[cfg(feature = "experimental")]
-    type YearSymbolsV1Marker = CopticYearSymbolsV1Marker;
+    type YearNamesV1Marker = CopticYearSymbolsV1Marker;
     #[cfg(feature = "experimental")]
-    type MonthSymbolsV1Marker = CopticMonthSymbolsV1Marker;
+    type MonthNamesV1Marker = CopticMonthSymbolsV1Marker;
 }
 
 impl CldrCalendar for Dangi {
@@ -118,9 +118,9 @@ impl CldrCalendar for Dangi {
     type DateSymbolsV1Marker = DangiDateSymbolsV1Marker;
     type DateLengthsV1Marker = DangiDateLengthsV1Marker;
     #[cfg(feature = "experimental")]
-    type YearSymbolsV1Marker = DangiYearSymbolsV1Marker;
+    type YearNamesV1Marker = DangiYearSymbolsV1Marker;
     #[cfg(feature = "experimental")]
-    type MonthSymbolsV1Marker = DangiMonthSymbolsV1Marker;
+    type MonthNamesV1Marker = DangiMonthSymbolsV1Marker;
 }
 
 impl CldrCalendar for Ethiopian {
@@ -128,9 +128,9 @@ impl CldrCalendar for Ethiopian {
     type DateSymbolsV1Marker = EthiopianDateSymbolsV1Marker;
     type DateLengthsV1Marker = EthiopianDateLengthsV1Marker;
     #[cfg(feature = "experimental")]
-    type YearSymbolsV1Marker = EthiopianYearSymbolsV1Marker;
+    type YearNamesV1Marker = EthiopianYearSymbolsV1Marker;
     #[cfg(feature = "experimental")]
-    type MonthSymbolsV1Marker = EthiopianMonthSymbolsV1Marker;
+    type MonthNamesV1Marker = EthiopianMonthSymbolsV1Marker;
     fn is_identifier_allowed_for_calendar(value: &Value) -> bool {
         *value == value!("ethiopic") || *value == value!("ethioaa")
     }
@@ -141,9 +141,9 @@ impl CldrCalendar for Gregorian {
     type DateSymbolsV1Marker = GregorianDateSymbolsV1Marker;
     type DateLengthsV1Marker = GregorianDateLengthsV1Marker;
     #[cfg(feature = "experimental")]
-    type YearSymbolsV1Marker = GregorianYearSymbolsV1Marker;
+    type YearNamesV1Marker = GregorianYearSymbolsV1Marker;
     #[cfg(feature = "experimental")]
-    type MonthSymbolsV1Marker = GregorianMonthSymbolsV1Marker;
+    type MonthNamesV1Marker = GregorianMonthSymbolsV1Marker;
 }
 
 impl CldrCalendar for Hebrew {
@@ -151,9 +151,9 @@ impl CldrCalendar for Hebrew {
     type DateSymbolsV1Marker = HebrewDateSymbolsV1Marker;
     type DateLengthsV1Marker = HebrewDateLengthsV1Marker;
     #[cfg(feature = "experimental")]
-    type YearSymbolsV1Marker = HebrewYearSymbolsV1Marker;
+    type YearNamesV1Marker = HebrewYearSymbolsV1Marker;
     #[cfg(feature = "experimental")]
-    type MonthSymbolsV1Marker = HebrewMonthSymbolsV1Marker;
+    type MonthNamesV1Marker = HebrewMonthSymbolsV1Marker;
 }
 
 impl CldrCalendar for Indian {
@@ -161,9 +161,9 @@ impl CldrCalendar for Indian {
     type DateSymbolsV1Marker = IndianDateSymbolsV1Marker;
     type DateLengthsV1Marker = IndianDateLengthsV1Marker;
     #[cfg(feature = "experimental")]
-    type YearSymbolsV1Marker = IndianYearSymbolsV1Marker;
+    type YearNamesV1Marker = IndianYearSymbolsV1Marker;
     #[cfg(feature = "experimental")]
-    type MonthSymbolsV1Marker = IndianMonthSymbolsV1Marker;
+    type MonthNamesV1Marker = IndianMonthSymbolsV1Marker;
 }
 
 impl CldrCalendar for IslamicCivil {
@@ -174,9 +174,9 @@ impl CldrCalendar for IslamicCivil {
     type DateSymbolsV1Marker = IslamicDateSymbolsV1Marker;
     type DateLengthsV1Marker = IslamicDateLengthsV1Marker;
     #[cfg(feature = "experimental")]
-    type YearSymbolsV1Marker = IslamicYearSymbolsV1Marker;
+    type YearNamesV1Marker = IslamicYearSymbolsV1Marker;
     #[cfg(feature = "experimental")]
-    type MonthSymbolsV1Marker = IslamicMonthSymbolsV1Marker;
+    type MonthNamesV1Marker = IslamicMonthSymbolsV1Marker;
     fn is_identifier_allowed_for_calendar(value: &Value) -> bool {
         *value == value!("islamicc") || is_islamic_subcal(value, tinystr!(8, "civil"))
     }
@@ -187,9 +187,9 @@ impl CldrCalendar for IslamicObservational {
     type DateSymbolsV1Marker = IslamicDateSymbolsV1Marker;
     type DateLengthsV1Marker = IslamicDateLengthsV1Marker;
     #[cfg(feature = "experimental")]
-    type YearSymbolsV1Marker = IslamicYearSymbolsV1Marker;
+    type YearNamesV1Marker = IslamicYearSymbolsV1Marker;
     #[cfg(feature = "experimental")]
-    type MonthSymbolsV1Marker = IslamicMonthSymbolsV1Marker;
+    type MonthNamesV1Marker = IslamicMonthSymbolsV1Marker;
 }
 
 impl CldrCalendar for IslamicTabular {
@@ -200,9 +200,9 @@ impl CldrCalendar for IslamicTabular {
     type DateSymbolsV1Marker = IslamicDateSymbolsV1Marker;
     type DateLengthsV1Marker = IslamicDateLengthsV1Marker;
     #[cfg(feature = "experimental")]
-    type YearSymbolsV1Marker = IslamicYearSymbolsV1Marker;
+    type YearNamesV1Marker = IslamicYearSymbolsV1Marker;
     #[cfg(feature = "experimental")]
-    type MonthSymbolsV1Marker = IslamicMonthSymbolsV1Marker;
+    type MonthNamesV1Marker = IslamicMonthSymbolsV1Marker;
     fn is_identifier_allowed_for_calendar(value: &Value) -> bool {
         is_islamic_subcal(value, tinystr!(8, "tbla"))
     }
@@ -216,9 +216,9 @@ impl CldrCalendar for IslamicUmmAlQura {
     type DateSymbolsV1Marker = IslamicDateSymbolsV1Marker;
     type DateLengthsV1Marker = IslamicDateLengthsV1Marker;
     #[cfg(feature = "experimental")]
-    type YearSymbolsV1Marker = IslamicYearSymbolsV1Marker;
+    type YearNamesV1Marker = IslamicYearSymbolsV1Marker;
     #[cfg(feature = "experimental")]
-    type MonthSymbolsV1Marker = IslamicMonthSymbolsV1Marker;
+    type MonthNamesV1Marker = IslamicMonthSymbolsV1Marker;
     fn is_identifier_allowed_for_calendar(value: &Value) -> bool {
         is_islamic_subcal(value, tinystr!(8, "umalqura"))
     }
@@ -229,9 +229,9 @@ impl CldrCalendar for Japanese {
     type DateSymbolsV1Marker = JapaneseDateSymbolsV1Marker;
     type DateLengthsV1Marker = JapaneseDateLengthsV1Marker;
     #[cfg(feature = "experimental")]
-    type YearSymbolsV1Marker = JapaneseYearSymbolsV1Marker;
+    type YearNamesV1Marker = JapaneseYearSymbolsV1Marker;
     #[cfg(feature = "experimental")]
-    type MonthSymbolsV1Marker = JapaneseMonthSymbolsV1Marker;
+    type MonthNamesV1Marker = JapaneseMonthSymbolsV1Marker;
 }
 
 impl CldrCalendar for JapaneseExtended {
@@ -239,9 +239,9 @@ impl CldrCalendar for JapaneseExtended {
     type DateSymbolsV1Marker = JapaneseExtendedDateSymbolsV1Marker;
     type DateLengthsV1Marker = JapaneseExtendedDateLengthsV1Marker;
     #[cfg(feature = "experimental")]
-    type YearSymbolsV1Marker = JapaneseExtendedYearSymbolsV1Marker;
+    type YearNamesV1Marker = JapaneseExtendedYearSymbolsV1Marker;
     #[cfg(feature = "experimental")]
-    type MonthSymbolsV1Marker = JapaneseExtendedMonthSymbolsV1Marker;
+    type MonthNamesV1Marker = JapaneseExtendedMonthSymbolsV1Marker;
 }
 
 impl CldrCalendar for Persian {
@@ -249,9 +249,9 @@ impl CldrCalendar for Persian {
     type DateSymbolsV1Marker = PersianDateSymbolsV1Marker;
     type DateLengthsV1Marker = PersianDateLengthsV1Marker;
     #[cfg(feature = "experimental")]
-    type YearSymbolsV1Marker = PersianYearSymbolsV1Marker;
+    type YearNamesV1Marker = PersianYearSymbolsV1Marker;
     #[cfg(feature = "experimental")]
-    type MonthSymbolsV1Marker = PersianMonthSymbolsV1Marker;
+    type MonthNamesV1Marker = PersianMonthSymbolsV1Marker;
 }
 
 impl CldrCalendar for Roc {
@@ -259,9 +259,9 @@ impl CldrCalendar for Roc {
     type DateSymbolsV1Marker = RocDateSymbolsV1Marker;
     type DateLengthsV1Marker = RocDateLengthsV1Marker;
     #[cfg(feature = "experimental")]
-    type YearSymbolsV1Marker = RocYearSymbolsV1Marker;
+    type YearNamesV1Marker = RocYearSymbolsV1Marker;
     #[cfg(feature = "experimental")]
-    type MonthSymbolsV1Marker = RocMonthSymbolsV1Marker;
+    type MonthNamesV1Marker = RocMonthSymbolsV1Marker;
 }
 
 impl InternalCldrCalendar for Buddhist {}

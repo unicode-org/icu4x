@@ -258,7 +258,7 @@ pub mod aux {
 )]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[yoke(prove_covariance_manually)]
-pub enum YearSymbolsV1<'data> {
+pub enum YearNamesV1<'data> {
     /// This calendar uses eras with numeric years, this stores the era names mapped from
     /// era code to the name
     Eras(#[cfg_attr(feature = "serde", serde(borrow))] ZeroMap<'data, UnvalidatedStr, str>),
@@ -302,7 +302,7 @@ pub enum YearSymbolsV1<'data> {
 )]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[yoke(prove_covariance_manually)]
-pub enum MonthSymbolsV1<'data> {
+pub enum MonthNamesV1<'data> {
     /// Month codes M01, M02, M03, .. (can allow for M13 onwards)
     ///
     /// Found for solar and pure lunar calendars
@@ -375,8 +375,8 @@ impl SimpleSubstitutionPattern<'_> {
 /// to be stable, their Rust representation might not be. Use with caution.
 /// </div>
 #[icu_provider::data_struct(
-    marker(WeekdaySymbolsV1Marker, "datetime/symbols/weekdays@1"),
-    marker(DayPeriodSymbolsV1Marker, "datetime/symbols/dayperiods@1"),
+    marker(WeekdayNamesV1Marker, "datetime/symbols/weekdays@1"),
+    marker(DayPeriodNamesV1Marker, "datetime/symbols/dayperiods@1"),
 
     // We're not producing or using day symbols yet, but this is where they would go
     marker(ChineseDaySymbolsV1Marker, "datetime/symbols/chinese/days@1"),
@@ -392,14 +392,14 @@ impl SimpleSubstitutionPattern<'_> {
 )]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[yoke(prove_covariance_manually)]
-pub struct LinearSymbolsV1<'data> {
+pub struct LinearNamesV1<'data> {
     #[cfg_attr(feature = "serde", serde(borrow))]
     /// The symbols, in order. Order specified on the struct docs.
     // This uses a VarZeroVec rather than a fixed-size array for weekdays to save stack space
     pub symbols: VarZeroVec<'data, str>,
 }
 
-impl<'data> LinearSymbolsV1<'data> {
+impl<'data> LinearNamesV1<'data> {
     /// Gets the 'am' symbol assuming this struct contains day period data.
     #[cfg(feature = "experimental")]
     pub(crate) fn am(&self) -> Option<&str> {
@@ -519,12 +519,12 @@ pub struct DateTimePatternV1<'data> {
 
 pub(crate) struct ErasedYearSymbolsV1Marker;
 impl DataMarker for ErasedYearSymbolsV1Marker {
-    type Yokeable = YearSymbolsV1<'static>;
+    type Yokeable = YearNamesV1<'static>;
 }
 
 pub(crate) struct ErasedMonthSymbolsV1Marker;
 impl DataMarker for ErasedMonthSymbolsV1Marker {
-    type Yokeable = MonthSymbolsV1<'static>;
+    type Yokeable = MonthNamesV1<'static>;
 }
 
 pub(crate) struct ErasedDatePatternV1Marker;

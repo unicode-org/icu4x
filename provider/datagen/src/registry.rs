@@ -216,8 +216,8 @@ registry!(
     icu_datetime::provider::calendar::TimeLengthsV1Marker = "datetime/timelengths@1",
     icu_datetime::provider::calendar::TimeSymbolsV1Marker = "datetime/timesymbols@1",
     // new datetime symbols stuff (unused so far)
-    icu_datetime::provider::neo::WeekdaySymbolsV1Marker = "datetime/symbols/weekdays@1",
-    icu_datetime::provider::neo::DayPeriodSymbolsV1Marker = "datetime/symbols/dayperiods@1",
+    icu_datetime::provider::neo::WeekdayNamesV1Marker = "datetime/symbols/weekdays@1",
+    icu_datetime::provider::neo::DayPeriodNamesV1Marker = "datetime/symbols/dayperiods@1",
     icu_datetime::provider::neo::TimePatternV1Marker = "datetime/patterns/time@1",
     icu_datetime::provider::neo::DateTimePatternV1Marker = "datetime/patterns/datetime@1",
     icu_datetime::provider::neo::BuddhistYearSymbolsV1Marker = "datetime/symbols/buddhist/years@1",

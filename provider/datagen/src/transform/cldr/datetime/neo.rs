@@ -209,7 +209,7 @@ fn weekday_convert(
     _calendar: &Value,
     context: Context,
     length: Length,
-) -> Result<LinearSymbolsV1<'static>, DataError> {
+) -> Result<LinearNamesV1<'static>, DataError> {
     let day_symbols = data.days.get_symbols(context, length);
 
     let days = [
@@ -222,7 +222,7 @@ fn weekday_convert(
         &*day_symbols.sat,
     ];
 
-    Ok(LinearSymbolsV1 {
+    Ok(LinearNamesV1 {
         symbols: (&days).into(),
     })
 }
@@ -234,7 +234,7 @@ fn dayperiods_convert(
     _calendar: &Value,
     context: Context,
     length: Length,
-) -> Result<LinearSymbolsV1<'static>, DataError> {
+) -> Result<LinearNamesV1<'static>, DataError> {
     let day_periods = data.day_periods.get_symbols(context, length);
 
     let mut periods = vec![&*day_periods.am, &*day_periods.pm];
@@ -249,7 +249,7 @@ fn dayperiods_convert(
         periods.push(midnight)
     }
 
-    Ok(LinearSymbolsV1 {
+    Ok(LinearNamesV1 {
         symbols: (&periods).into(),
     })
 }
@@ -260,7 +260,7 @@ fn eras_convert(
     eras: &ca::Eras,
     calendar: &Value,
     length: Length,
-) -> Result<YearSymbolsV1<'static>, DataError> {
+) -> Result<YearNamesV1<'static>, DataError> {
     let eras = eras.load(length);
     // Tostring can be removed when we delete symbols.rs, or we can perhaps refactor it to use Value
     let calendar_str = calendar.to_string();
@@ -359,7 +359,7 @@ fn eras_convert(
         }
     }
 
-    Ok(YearSymbolsV1::Eras(
+    Ok(YearNamesV1::Eras(
         out_eras
             .iter()
             .map(|(k, v)| (UnvalidatedStr::from_str(k), &**v))
@@ -373,7 +373,7 @@ fn years_convert(
     calendar: &Value,
     context: Context,
     length: Length,
-) -> Result<YearSymbolsV1<'static>, DataError> {
+) -> Result<YearNamesV1<'static>, DataError> {
     assert_eq!(
         context,
         Context::Format,
@@ -395,7 +395,7 @@ fn years_convert(
             }
             &**value
         }).collect();
-        Ok(YearSymbolsV1::Cyclic((&years).into()))
+        Ok(YearNamesV1::Cyclic((&years).into()))
     } else {
         panic!(
             "Calendar {calendar} in locale {langid} has neither eras nor cyclicNameSets for years"
@@ -435,7 +435,7 @@ fn months_convert(
     calendar: &Value,
     context: Context,
     length: Length,
-) -> Result<MonthSymbolsV1<'static>, DataError> {
+) -> Result<MonthNamesV1<'static>, DataError> {
     if length == Length::Numeric {
         assert_eq!(
             context,
@@ -455,7 +455,7 @@ fn months_convert(
             pattern: string.into(),
             subst_index: index,
         };
-        return Ok(MonthSymbolsV1::LeapNumeric(pattern));
+        return Ok(MonthNamesV1::LeapNumeric(pattern));
     }
 
     let months = data.months.get_symbols(context, length);
@@ -490,7 +490,7 @@ fn months_convert(
 
             symbols[index] = (&**v).into();
         }
-        Ok(MonthSymbolsV1::LeapLinear((&symbols).into()))
+        Ok(MonthNamesV1::LeapLinear((&symbols).into()))
     } else {
         for (k, v) in months.0.iter() {
             let index: usize = k
@@ -535,9 +535,9 @@ fn months_convert(
                 let replaced = leap.replace("{0}", &symbols[i]);
                 symbols[nonleap + i] = replaced.into();
             }
-            Ok(MonthSymbolsV1::LeapLinear((&symbols).into()))
+            Ok(MonthNamesV1::LeapLinear((&symbols).into()))
         } else {
-            Ok(MonthSymbolsV1::Linear((&symbols).into()))
+            Ok(MonthNamesV1::Linear((&symbols).into()))
         }
     }
 }
@@ -753,7 +753,7 @@ macro_rules! impl_pattern_datagen {
 
 // Weekdays
 impl_symbols_datagen!(
-    WeekdaySymbolsV1Marker,
+    WeekdayNamesV1Marker,
     "gregory",
     FULL_KEY_LENGTHS,
     weekday_convert
@@ -761,7 +761,7 @@ impl_symbols_datagen!(
 
 // Dayperiods
 impl_symbols_datagen!(
-    DayPeriodSymbolsV1Marker,
+    DayPeriodNamesV1Marker,
     "gregory",
     NORMAL_KEY_LENGTHS,
     dayperiods_convert

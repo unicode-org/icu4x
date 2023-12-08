@@ -221,9 +221,9 @@ pub const KEYS: &[DataKey] = &[
     #[cfg(feature = "experimental")]
     calendar::DateSkeletonPatternsV1Marker::KEY,
     #[cfg(feature = "experimental")]
-    neo::WeekdaySymbolsV1Marker::KEY,
+    neo::WeekdayNamesV1Marker::KEY,
     #[cfg(feature = "experimental")]
-    neo::DayPeriodSymbolsV1Marker::KEY,
+    neo::DayPeriodNamesV1Marker::KEY,
     #[cfg(feature = "experimental")]
     neo::DateTimePatternV1Marker::KEY,
     #[cfg(feature = "experimental")]
