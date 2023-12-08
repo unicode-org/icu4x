@@ -4,7 +4,7 @@
 
 import test from 'ava';
 
-import { ICU4XFixedDecimal, ICU4XLocale, ICU4XDataProvider, ICU4XFixedDecimalFormatter } from "../index.js"
+import { ICU4XFixedDecimal, ICU4XLocale, ICU4XDataProvider, ICU4XFixedDecimalFormatter } from "icu4x"
 
 test("use create_compiled to format a simple decimal", async t => {
   const locale = ICU4XLocale.create_from_string("bn");

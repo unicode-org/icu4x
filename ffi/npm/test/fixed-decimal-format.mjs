@@ -4,7 +4,7 @@
 
 import test from 'ava';
 
-import { ICU4XFixedDecimal, ICU4XLocale, ICU4XDataProvider, ICU4XFixedDecimalFormatter } from "../index.js"
+import { ICU4XFixedDecimal, ICU4XLocale, ICU4XDataProvider, ICU4XFixedDecimalFormatter } from "icu4x"
 
 const locale = ICU4XLocale.create_from_string("bn");
 const provider = ICU4XDataProvider.create_compiled();

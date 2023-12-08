@@ -4,7 +4,7 @@
 
 import test from 'ava';
 
-import { ICU4XFixedDecimal } from "../lib/index.js"
+import { ICU4XFixedDecimal } from "icu4x"
 
 test("convert a simple decimal to a string", t => {
   const decimal = ICU4XFixedDecimal.create_from_i64(1234n);
