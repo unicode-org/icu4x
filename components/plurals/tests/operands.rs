@@ -3,7 +3,6 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 mod fixtures;
-mod helpers;
 
 use std::convert::TryInto;
 
@@ -14,9 +13,9 @@ use icu_plurals::PluralOperands;
 
 #[test]
 fn test_parsing_operands() {
-    let path = "./tests/fixtures/operands.json";
     let test_set: fixtures::OperandsTestSet =
-        helpers::read_fixture(path).expect("Failed to read a fixture");
+        serde_json::from_str(include_str!("fixtures/operands.json"))
+            .expect("Failed to read a fixture");
 
     for test in test_set.string {
         let operands: PluralOperands = test.input.parse().expect("Failed to parse to operands.");
@@ -60,9 +59,9 @@ fn test_parsing_operand_errors() {
 
 #[test]
 fn test_from_fixed_decimals() {
-    let path = "./tests/fixtures/operands.json";
     let test_set: fixtures::OperandsTestSet =
-        helpers::read_fixture(path).expect("Failed to read a fixture");
+        serde_json::from_str(include_str!("fixtures/operands.json"))
+            .expect("Failed to read a fixture");
     for test in test_set.from_test {
         let input: FixedDecimal = FixedDecimal::from(&test.input);
         let actual: PluralOperands = PluralOperands::from(&input);
