@@ -19,8 +19,8 @@ mod mock;
 fn datetime_benches(c: &mut Criterion) {
     let mut group = c.benchmark_group("datetime");
 
-    let mut bench_datetime_with_fixture = |name| {
-        let fxs = fixtures::get_fixture(name).expect("Failed to get fixture.");
+    let mut bench_datetime_with_fixture = |name, file| {
+        let fxs = serde_json::from_str::<fixtures::Fixture>(file).unwrap();
         group.bench_function(&format!("datetime_{name}"), |b| {
             b.iter(|| {
                 for fx in &fxs.0 {
@@ -64,12 +64,15 @@ fn datetime_benches(c: &mut Criterion) {
         });
     };
 
-    bench_datetime_with_fixture("lengths");
+    bench_datetime_with_fixture("lengths", include_str!("fixtures/tests/lengths.json"));
 
     #[cfg(feature = "experimental")]
-    bench_datetime_with_fixture("components");
+    bench_datetime_with_fixture("components", include_str!("fixtures/tests/components.json"));
 
-    let fxs = fixtures::get_fixture("lengths_with_zones").unwrap();
+    let fxs = serde_json::from_str::<fixtures::Fixture>(include_str!(
+        "fixtures/tests/lengths_with_zones.json"
+    ))
+    .unwrap();
     group.bench_function("zoned_datetime_overview", |b| {
         b.iter(|| {
             for fx in &fxs.0 {
@@ -108,7 +111,9 @@ fn datetime_benches(c: &mut Criterion) {
 
         let mut group = c.benchmark_group("datetime");
 
-        let fxs = fixtures::get_fixture("lengths").unwrap();
+        let fxs =
+            serde_json::from_str::<fixtures::Fixture>(include_str!("fixtures/tests/lengths.json"))
+                .unwrap();
         group.bench_function("TypedDateTimeFormatter/format_to_write", |b| {
             b.iter(|| {
                 for fx in &fxs.0 {
@@ -238,7 +243,10 @@ fn datetime_benches(c: &mut Criterion) {
             })
         });
 
-        let fxs = fixtures::get_fixture("lengths_with_zones").unwrap();
+        let fxs = serde_json::from_str::<fixtures::Fixture>(include_str!(
+            "fixtures/tests/lengths_with_zones.json"
+        ))
+        .unwrap();
         group.bench_function("TypedZonedDateTimeFormatter/format_to_write", |b| {
             b.iter(|| {
                 for fx in &fxs.0 {

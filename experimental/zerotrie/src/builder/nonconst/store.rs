@@ -10,7 +10,7 @@ use alloc::collections::VecDeque;
 use alloc::vec::Vec;
 
 /// A trait applied to a data structure for building a ZeroTrie.
-pub trait TrieBuilderStore {
+pub(crate) trait TrieBuilderStore {
     /// Create a new empty store.
     fn atbs_new_empty() -> Self;
 

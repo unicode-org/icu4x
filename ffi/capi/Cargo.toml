@@ -7,9 +7,8 @@ name = "icu_capi"
 description = "C interface to ICU4X"
 license-file = "LICENSE"
 include = [
-    "js/**/*",
-    "c/**/*",
-    "cpp/**/*",
+    "bindings/**/*",
+    "!bindings/dart/**/*", # not yet stable
     "src/**/*",
     "tests/**/*",
     "Cargo.toml",

@@ -64,6 +64,8 @@ pub struct Persian;
 pub struct PersianDateInner(ArithmeticDate<Persian>);
 
 impl CalendarArithmetic for Persian {
+    type YearInfo = ();
+
     fn month_days(year: i32, month: u8) -> u8 {
         match month {
             1..=6 => 31,
@@ -152,7 +154,7 @@ impl Calendar for Persian {
     }
 
     fn offset_date(&self, date: &mut Self::DateInner, offset: DateDuration<Self>) {
-        date.0.offset_date(offset)
+        date.0.offset_date(offset, &())
     }
 
     #[allow(clippy::field_reassign_with_default)]

@@ -26,6 +26,7 @@ displaydoc = { version = "0.2.3", default-features = false }
 icu_locid = { workspace = true }
 icu_provider = { workspace = true, features = ["macros"] }
 serde = { version = "1.0", default-features = false, features = ["derive", "alloc"], optional = true }
+smallvec = "1.11.2"
 zerotrie = { workspace = true, features = ["yoke", "zerofrom"] }
 zerovec = { workspace = true, features = ["yoke"] }
 

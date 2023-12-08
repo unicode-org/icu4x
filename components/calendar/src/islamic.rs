@@ -146,6 +146,8 @@ impl IslamicTabular {
 pub struct IslamicDateInner(ArithmeticDate<IslamicObservational>);
 
 impl CalendarArithmetic for IslamicObservational {
+    type YearInfo = ();
+
     fn month_days(year: i32, month: u8) -> u8 {
         calendrical_calculations::islamic::observational_islamic_month_days(year, month)
     }
@@ -217,7 +219,7 @@ impl Calendar for IslamicObservational {
     }
 
     fn offset_date(&self, date: &mut Self::DateInner, offset: DateDuration<Self>) {
-        date.0.offset_date(offset)
+        date.0.offset_date(offset, &())
     }
 
     fn until(
@@ -328,7 +330,7 @@ impl<A: AsCalendar<Calendar = IslamicObservational>> Date<A> {
         day: u8,
         calendar: A,
     ) -> Result<Date<A>, CalendarError> {
-        ArithmeticDate::new_from_lunar_ordinals(year, month, day)
+        ArithmeticDate::new_from_ordinals(year, month, day)
             .map(IslamicDateInner)
             .map(|inner| Date::from_raw(inner, calendar))
     }
@@ -376,6 +378,8 @@ impl<A: AsCalendar<Calendar = IslamicObservational>> DateTime<A> {
 pub struct IslamicUmmAlQuraDateInner(ArithmeticDate<IslamicUmmAlQura>);
 
 impl CalendarArithmetic for IslamicUmmAlQura {
+    type YearInfo = ();
+
     fn month_days(year: i32, month: u8) -> u8 {
         calendrical_calculations::islamic::saudi_islamic_month_days(year, month)
     }
@@ -446,7 +450,7 @@ impl Calendar for IslamicUmmAlQura {
     }
 
     fn offset_date(&self, date: &mut Self::DateInner, offset: DateDuration<Self>) {
-        date.0.offset_date(offset)
+        date.0.offset_date(offset, &())
     }
 
     fn until(
@@ -521,7 +525,7 @@ impl<A: AsCalendar<Calendar = IslamicUmmAlQura>> Date<A> {
         day: u8,
         calendar: A,
     ) -> Result<Date<A>, CalendarError> {
-        ArithmeticDate::new_from_lunar_ordinals(year, month, day)
+        ArithmeticDate::new_from_ordinals(year, month, day)
             .map(IslamicUmmAlQuraDateInner)
             .map(|inner| Date::from_raw(inner, calendar))
     }
@@ -604,6 +608,8 @@ impl IslamicUmmAlQura {
 pub struct IslamicCivilDateInner(ArithmeticDate<IslamicCivil>);
 
 impl CalendarArithmetic for IslamicCivil {
+    type YearInfo = ();
+
     fn month_days(year: i32, month: u8) -> u8 {
         match month {
             1 | 3 | 5 | 7 | 9 | 11 => 30,
@@ -690,7 +696,7 @@ impl Calendar for IslamicCivil {
     }
 
     fn offset_date(&self, date: &mut Self::DateInner, offset: DateDuration<Self>) {
-        date.0.offset_date(offset)
+        date.0.offset_date(offset, &())
     }
 
     fn until(
@@ -800,7 +806,7 @@ impl<A: AsCalendar<Calendar = IslamicCivil>> Date<A> {
         day: u8,
         calendar: A,
     ) -> Result<Date<A>, CalendarError> {
-        ArithmeticDate::new_from_lunar_ordinals(year, month, day)
+        ArithmeticDate::new_from_ordinals(year, month, day)
             .map(IslamicCivilDateInner)
             .map(|inner| Date::from_raw(inner, calendar))
     }
@@ -850,6 +856,8 @@ impl<A: AsCalendar<Calendar = IslamicCivil>> DateTime<A> {
 pub struct IslamicTabularDateInner(ArithmeticDate<IslamicTabular>);
 
 impl CalendarArithmetic for IslamicTabular {
+    type YearInfo = ();
+
     fn month_days(year: i32, month: u8) -> u8 {
         match month {
             1 | 3 | 5 | 7 | 9 | 11 => 30,
@@ -934,7 +942,7 @@ impl Calendar for IslamicTabular {
     }
 
     fn offset_date(&self, date: &mut Self::DateInner, offset: DateDuration<Self>) {
-        date.0.offset_date(offset)
+        date.0.offset_date(offset, &())
     }
 
     fn until(
@@ -1044,7 +1052,7 @@ impl<A: AsCalendar<Calendar = IslamicTabular>> Date<A> {
         day: u8,
         calendar: A,
     ) -> Result<Date<A>, CalendarError> {
-        ArithmeticDate::new_from_lunar_ordinals(year, month, day)
+        ArithmeticDate::new_from_ordinals(year, month, day)
             .map(IslamicTabularDateInner)
             .map(|inner| Date::from_raw(inner, calendar))
     }
@@ -1919,9 +1927,9 @@ mod test {
             .map(|year| IslamicObservational::days_in_provided_year(year) as i64)
             .sum();
         let expected_number_of_days = IslamicObservational::fixed_from_islamic(IslamicDateInner(
-            ArithmeticDate::new_from_lunar_ordinals(END_YEAR, 1, 1).unwrap(),
+            ArithmeticDate::new_from_ordinals(END_YEAR, 1, 1).unwrap(),
         )) - IslamicObservational::fixed_from_islamic(
-            IslamicDateInner(ArithmeticDate::new_from_lunar_ordinals(START_YEAR, 1, 1).unwrap()),
+            IslamicDateInner(ArithmeticDate::new_from_ordinals(START_YEAR, 1, 1).unwrap()),
         ); // The number of days between Islamic years -1245 and 1518
         let tolerance = 1; // One day tolerance (See Astronomical::month_length for more context)
 
@@ -1940,12 +1948,11 @@ mod test {
             .map(|year| IslamicUmmAlQura::days_in_provided_year(year) as i64)
             .sum();
 
-        let expected_number_of_days =
-            IslamicUmmAlQura::fixed_from_saudi_islamic(IslamicUmmAlQuraDateInner(
-                ArithmeticDate::new_from_lunar_ordinals(END_YEAR, 1, 1).unwrap(),
-            )) - IslamicUmmAlQura::fixed_from_saudi_islamic(IslamicUmmAlQuraDateInner(
-                ArithmeticDate::new_from_lunar_ordinals(START_YEAR, 1, 1).unwrap(),
-            )); // The number of days between Umm al-Qura Islamic years -1245 and 1518
+        let expected_number_of_days = IslamicUmmAlQura::fixed_from_saudi_islamic(
+            IslamicUmmAlQuraDateInner(ArithmeticDate::new_from_ordinals(END_YEAR, 1, 1).unwrap()),
+        ) - IslamicUmmAlQura::fixed_from_saudi_islamic(
+            IslamicUmmAlQuraDateInner(ArithmeticDate::new_from_ordinals(START_YEAR, 1, 1).unwrap()),
+        ); // The number of days between Umm al-Qura Islamic years -1245 and 1518
 
         assert_eq!(sum_days_in_year, expected_number_of_days);
     }
