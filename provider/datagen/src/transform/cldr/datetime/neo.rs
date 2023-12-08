@@ -769,79 +769,79 @@ impl_symbols_datagen!(
 
 // Years
 impl_symbols_datagen!(
-    BuddhistYearSymbolsV1Marker,
+    BuddhistYearNamesV1Marker,
     "buddhist",
     YEARS_KEY_LENGTHS,
     years_convert
 );
 impl_symbols_datagen!(
-    ChineseYearSymbolsV1Marker,
+    ChineseYearNamesV1Marker,
     "chinese",
     YEARS_KEY_LENGTHS,
     years_convert
 );
 impl_symbols_datagen!(
-    CopticYearSymbolsV1Marker,
+    CopticYearNamesV1Marker,
     "coptic",
     YEARS_KEY_LENGTHS,
     years_convert
 );
 impl_symbols_datagen!(
-    DangiYearSymbolsV1Marker,
+    DangiYearNamesV1Marker,
     "dangi",
     YEARS_KEY_LENGTHS,
     years_convert
 );
 impl_symbols_datagen!(
-    EthiopianYearSymbolsV1Marker,
+    EthiopianYearNamesV1Marker,
     "ethiopic",
     YEARS_KEY_LENGTHS,
     years_convert
 );
 impl_symbols_datagen!(
-    GregorianYearSymbolsV1Marker,
+    GregorianYearNamesV1Marker,
     "gregory",
     YEARS_KEY_LENGTHS,
     years_convert
 );
 impl_symbols_datagen!(
-    HebrewYearSymbolsV1Marker,
+    HebrewYearNamesV1Marker,
     "hebrew",
     YEARS_KEY_LENGTHS,
     years_convert
 );
 impl_symbols_datagen!(
-    IndianYearSymbolsV1Marker,
+    IndianYearNamesV1Marker,
     "indian",
     YEARS_KEY_LENGTHS,
     years_convert
 );
 impl_symbols_datagen!(
-    IslamicYearSymbolsV1Marker,
+    IslamicYearNamesV1Marker,
     "islamic",
     YEARS_KEY_LENGTHS,
     years_convert
 );
 impl_symbols_datagen!(
-    JapaneseYearSymbolsV1Marker,
+    JapaneseYearNamesV1Marker,
     "japanese",
     YEARS_KEY_LENGTHS,
     years_convert
 );
 impl_symbols_datagen!(
-    JapaneseExtendedYearSymbolsV1Marker,
+    JapaneseExtendedYearNamesV1Marker,
     "japanext",
     YEARS_KEY_LENGTHS,
     years_convert
 );
 impl_symbols_datagen!(
-    PersianYearSymbolsV1Marker,
+    PersianYearNamesV1Marker,
     "persian",
     YEARS_KEY_LENGTHS,
     years_convert
 );
 impl_symbols_datagen!(
-    RocYearSymbolsV1Marker,
+    RocYearNamesV1Marker,
     "roc",
     YEARS_KEY_LENGTHS,
     years_convert
@@ -849,79 +849,79 @@ impl_symbols_datagen!(
 
 // Months
 impl_symbols_datagen!(
-    BuddhistMonthSymbolsV1Marker,
+    BuddhistMonthNamesV1Marker,
     "buddhist",
     NORMAL_KEY_LENGTHS,
     months_convert
 );
 impl_symbols_datagen!(
-    ChineseMonthSymbolsV1Marker,
+    ChineseMonthNamesV1Marker,
     "chinese",
     NUMERIC_MONTHS_KEY_LENGTHS, // has leap month patterns
     months_convert
 );
 impl_symbols_datagen!(
-    CopticMonthSymbolsV1Marker,
+    CopticMonthNamesV1Marker,
     "coptic",
     NORMAL_KEY_LENGTHS,
     months_convert
 );
 impl_symbols_datagen!(
-    DangiMonthSymbolsV1Marker,
+    DangiMonthNamesV1Marker,
     "dangi",
     NUMERIC_MONTHS_KEY_LENGTHS, // has leap month patterns
     months_convert
 );
 impl_symbols_datagen!(
-    EthiopianMonthSymbolsV1Marker,
+    EthiopianMonthNamesV1Marker,
     "ethiopic",
     NORMAL_KEY_LENGTHS,
     months_convert
 );
 impl_symbols_datagen!(
-    GregorianMonthSymbolsV1Marker,
+    GregorianMonthNamesV1Marker,
     "gregory",
     NORMAL_KEY_LENGTHS,
     months_convert
 );
 impl_symbols_datagen!(
-    HebrewMonthSymbolsV1Marker,
+    HebrewMonthNamesV1Marker,
     "hebrew",
     NORMAL_KEY_LENGTHS,
     months_convert
 );
 impl_symbols_datagen!(
-    IndianMonthSymbolsV1Marker,
+    IndianMonthNamesV1Marker,
     "indian",
     NORMAL_KEY_LENGTHS,
     months_convert
 );
 impl_symbols_datagen!(
-    IslamicMonthSymbolsV1Marker,
+    IslamicMonthNamesV1Marker,
     "islamic",
     NORMAL_KEY_LENGTHS,
     months_convert
 );
 impl_symbols_datagen!(
-    JapaneseMonthSymbolsV1Marker,
+    JapaneseMonthNamesV1Marker,
     "japanese",
     NORMAL_KEY_LENGTHS,
     months_convert
 );
 impl_symbols_datagen!(
-    JapaneseExtendedMonthSymbolsV1Marker,
+    JapaneseExtendedMonthNamesV1Marker,
     "japanext",
     NORMAL_KEY_LENGTHS,
     months_convert
 );
 impl_symbols_datagen!(
-    PersianMonthSymbolsV1Marker,
+    PersianMonthNamesV1Marker,
     "persian",
     NORMAL_KEY_LENGTHS,
     months_convert
 );
 impl_symbols_datagen!(
-    RocMonthSymbolsV1Marker,
+    RocMonthNamesV1Marker,
     "roc",
     NORMAL_KEY_LENGTHS,
     months_convert

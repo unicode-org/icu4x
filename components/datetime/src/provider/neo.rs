@@ -233,22 +233,22 @@ pub mod aux {
 /// to be stable, their Rust representation might not be. Use with caution.
 /// </div>
 #[icu_provider::data_struct(
-    marker(BuddhistYearSymbolsV1Marker, "datetime/symbols/buddhist/years@1"),
-    marker(ChineseYearSymbolsV1Marker, "datetime/symbols/chinese/years@1"),
-    marker(CopticYearSymbolsV1Marker, "datetime/symbols/coptic/years@1"),
-    marker(DangiYearSymbolsV1Marker, "datetime/symbols/dangi/years@1"),
-    marker(EthiopianYearSymbolsV1Marker, "datetime/symbols/ethiopic/years@1"),
-    marker(GregorianYearSymbolsV1Marker, "datetime/symbols/gregory/years@1"),
-    marker(HebrewYearSymbolsV1Marker, "datetime/symbols/hebrew/years@1"),
-    marker(IndianYearSymbolsV1Marker, "datetime/symbols/indian/years@1"),
-    marker(IslamicYearSymbolsV1Marker, "datetime/symbols/islamic/years@1"),
-    marker(JapaneseYearSymbolsV1Marker, "datetime/symbols/japanese/years@1"),
+    marker(BuddhistYearNamesV1Marker, "datetime/symbols/buddhist/years@1"),
+    marker(ChineseYearNamesV1Marker, "datetime/symbols/chinese/years@1"),
+    marker(CopticYearNamesV1Marker, "datetime/symbols/coptic/years@1"),
+    marker(DangiYearNamesV1Marker, "datetime/symbols/dangi/years@1"),
+    marker(EthiopianYearNamesV1Marker, "datetime/symbols/ethiopic/years@1"),
+    marker(GregorianYearNamesV1Marker, "datetime/symbols/gregory/years@1"),
+    marker(HebrewYearNamesV1Marker, "datetime/symbols/hebrew/years@1"),
+    marker(IndianYearNamesV1Marker, "datetime/symbols/indian/years@1"),
+    marker(IslamicYearNamesV1Marker, "datetime/symbols/islamic/years@1"),
+    marker(JapaneseYearNamesV1Marker, "datetime/symbols/japanese/years@1"),
     marker(
-        JapaneseExtendedYearSymbolsV1Marker,
+        JapaneseExtendedYearNamesV1Marker,
         "datetime/symbols/japanext/years@1"
     ),
-    marker(PersianYearSymbolsV1Marker, "datetime/symbols/persian/years@1"),
-    marker(RocYearSymbolsV1Marker, "datetime/symbols/roc/years@1")
+    marker(PersianYearNamesV1Marker, "datetime/symbols/persian/years@1"),
+    marker(RocYearNamesV1Marker, "datetime/symbols/roc/years@1")
 )]
 #[derive(Debug, PartialEq, Clone)]
 #[cfg_attr(
@@ -268,7 +268,7 @@ pub enum YearNamesV1<'data> {
 
 /// Symbols used for representing the month name
 ///
-/// This uses an auxiliary subtag for length. See [`YearSymbolsV1`] for more information on the scheme. This
+/// This uses an auxiliary subtag for length. See [`YearNamesV1`] for more information on the scheme. This
 /// has an additional `-x-1` subtag value used for numeric symbols, only found for calendars with leap months.
 ///
 /// <div class="stab unstable">
@@ -277,22 +277,22 @@ pub enum YearNamesV1<'data> {
 /// to be stable, their Rust representation might not be. Use with caution.
 /// </div>
 #[icu_provider::data_struct(
-    marker(BuddhistMonthSymbolsV1Marker, "datetime/symbols/buddhist/months@1"),
-    marker(ChineseMonthSymbolsV1Marker, "datetime/symbols/chinese/months@1"),
-    marker(CopticMonthSymbolsV1Marker, "datetime/symbols/coptic/months@1"),
-    marker(DangiMonthSymbolsV1Marker, "datetime/symbols/dangi/months@1"),
-    marker(EthiopianMonthSymbolsV1Marker, "datetime/symbols/ethiopic/months@1"),
-    marker(GregorianMonthSymbolsV1Marker, "datetime/symbols/gregory/months@1"),
-    marker(HebrewMonthSymbolsV1Marker, "datetime/symbols/hebrew/months@1"),
-    marker(IndianMonthSymbolsV1Marker, "datetime/symbols/indian/months@1"),
-    marker(IslamicMonthSymbolsV1Marker, "datetime/symbols/islamic/months@1"),
-    marker(JapaneseMonthSymbolsV1Marker, "datetime/symbols/japanese/months@1"),
+    marker(BuddhistMonthNamesV1Marker, "datetime/symbols/buddhist/months@1"),
+    marker(ChineseMonthNamesV1Marker, "datetime/symbols/chinese/months@1"),
+    marker(CopticMonthNamesV1Marker, "datetime/symbols/coptic/months@1"),
+    marker(DangiMonthNamesV1Marker, "datetime/symbols/dangi/months@1"),
+    marker(EthiopianMonthNamesV1Marker, "datetime/symbols/ethiopic/months@1"),
+    marker(GregorianMonthNamesV1Marker, "datetime/symbols/gregory/months@1"),
+    marker(HebrewMonthNamesV1Marker, "datetime/symbols/hebrew/months@1"),
+    marker(IndianMonthNamesV1Marker, "datetime/symbols/indian/months@1"),
+    marker(IslamicMonthNamesV1Marker, "datetime/symbols/islamic/months@1"),
+    marker(JapaneseMonthNamesV1Marker, "datetime/symbols/japanese/months@1"),
     marker(
-        JapaneseExtendedMonthSymbolsV1Marker,
+        JapaneseExtendedMonthNamesV1Marker,
         "datetime/symbols/japanext/months@1"
     ),
-    marker(PersianMonthSymbolsV1Marker, "datetime/symbols/persian/months@1"),
-    marker(RocMonthSymbolsV1Marker, "datetime/symbols/roc/months@1")
+    marker(PersianMonthNamesV1Marker, "datetime/symbols/persian/months@1"),
+    marker(RocMonthNamesV1Marker, "datetime/symbols/roc/months@1")
 )]
 #[derive(Debug, PartialEq, Clone)]
 #[cfg_attr(
@@ -367,7 +367,7 @@ impl SimpleSubstitutionPattern<'_> {
 ///   In the case noon is missing but midnight is present, the noon value can be the empty string. This is unlikely.
 /// - For day names element 0 is the first day of the month
 ///
-/// This uses an auxiliary subtag for length. See [`YearSymbolsV1`] for more information on the scheme.
+/// This uses an auxiliary subtag for length. See [`YearNamesV1`] for more information on the scheme.
 ///
 /// <div class="stab unstable">
 /// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
@@ -517,13 +517,13 @@ pub struct DateTimePatternV1<'data> {
     pub pattern: runtime::GenericPattern<'data>,
 }
 
-pub(crate) struct ErasedYearSymbolsV1Marker;
-impl DataMarker for ErasedYearSymbolsV1Marker {
+pub(crate) struct ErasedYearNamesV1Marker;
+impl DataMarker for ErasedYearNamesV1Marker {
     type Yokeable = YearNamesV1<'static>;
 }
 
-pub(crate) struct ErasedMonthSymbolsV1Marker;
-impl DataMarker for ErasedMonthSymbolsV1Marker {
+pub(crate) struct ErasedMonthNamesV1Marker;
+impl DataMarker for ErasedMonthNamesV1Marker {
     type Yokeable = MonthNamesV1<'static>;
 }
 

@@ -179,8 +179,8 @@ pub struct TypedDateTimeNames<C: CldrCalendar> {
 #[derive(Debug)]
 pub(crate) struct RawDateTimeNames {
     locale: DataLocale,
-    year_symbols: OptionalNames<(), DataPayload<ErasedYearSymbolsV1Marker>>,
-    month_symbols: OptionalNames<fields::Month, DataPayload<ErasedMonthSymbolsV1Marker>>,
+    year_symbols: OptionalNames<(), DataPayload<ErasedYearNamesV1Marker>>,
+    month_symbols: OptionalNames<fields::Month, DataPayload<ErasedMonthNamesV1Marker>>,
     weekday_symbols: OptionalNames<fields::Weekday, DataPayload<WeekdayNamesV1Marker>>,
     dayperiod_symbols: OptionalNames<(), DataPayload<DayPeriodNamesV1Marker>>,
     // TODO(#4340): Make the FixedDecimalFormatter optional

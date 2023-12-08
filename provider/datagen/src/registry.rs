@@ -220,38 +220,38 @@ registry!(
     icu_datetime::provider::neo::DayPeriodNamesV1Marker = "datetime/symbols/dayperiods@1",
     icu_datetime::provider::neo::TimePatternV1Marker = "datetime/patterns/time@1",
     icu_datetime::provider::neo::DateTimePatternV1Marker = "datetime/patterns/datetime@1",
-    icu_datetime::provider::neo::BuddhistYearSymbolsV1Marker = "datetime/symbols/buddhist/years@1",
-    icu_datetime::provider::neo::ChineseYearSymbolsV1Marker = "datetime/symbols/chinese/years@1",
-    icu_datetime::provider::neo::CopticYearSymbolsV1Marker = "datetime/symbols/coptic/years@1",
-    icu_datetime::provider::neo::DangiYearSymbolsV1Marker = "datetime/symbols/dangi/years@1",
-    icu_datetime::provider::neo::EthiopianYearSymbolsV1Marker = "datetime/symbols/ethiopic/years@1",
-    icu_datetime::provider::neo::GregorianYearSymbolsV1Marker = "datetime/symbols/gregory/years@1",
-    icu_datetime::provider::neo::HebrewYearSymbolsV1Marker = "datetime/symbols/hebrew/years@1",
-    icu_datetime::provider::neo::IndianYearSymbolsV1Marker = "datetime/symbols/indian/years@1",
-    icu_datetime::provider::neo::IslamicYearSymbolsV1Marker = "datetime/symbols/islamic/years@1",
-    icu_datetime::provider::neo::JapaneseYearSymbolsV1Marker = "datetime/symbols/japanese/years@1",
-    icu_datetime::provider::neo::JapaneseExtendedYearSymbolsV1Marker =
+    icu_datetime::provider::neo::BuddhistYearNamesV1Marker = "datetime/symbols/buddhist/years@1",
+    icu_datetime::provider::neo::ChineseYearNamesV1Marker = "datetime/symbols/chinese/years@1",
+    icu_datetime::provider::neo::CopticYearNamesV1Marker = "datetime/symbols/coptic/years@1",
+    icu_datetime::provider::neo::DangiYearNamesV1Marker = "datetime/symbols/dangi/years@1",
+    icu_datetime::provider::neo::EthiopianYearNamesV1Marker = "datetime/symbols/ethiopic/years@1",
+    icu_datetime::provider::neo::GregorianYearNamesV1Marker = "datetime/symbols/gregory/years@1",
+    icu_datetime::provider::neo::HebrewYearNamesV1Marker = "datetime/symbols/hebrew/years@1",
+    icu_datetime::provider::neo::IndianYearNamesV1Marker = "datetime/symbols/indian/years@1",
+    icu_datetime::provider::neo::IslamicYearNamesV1Marker = "datetime/symbols/islamic/years@1",
+    icu_datetime::provider::neo::JapaneseYearNamesV1Marker = "datetime/symbols/japanese/years@1",
+    icu_datetime::provider::neo::JapaneseExtendedYearNamesV1Marker =
         "datetime/symbols/japanext/years@1",
-    icu_datetime::provider::neo::PersianYearSymbolsV1Marker = "datetime/symbols/persian/years@1",
-    icu_datetime::provider::neo::RocYearSymbolsV1Marker = "datetime/symbols/roc/years@1",
-    icu_datetime::provider::neo::BuddhistMonthSymbolsV1Marker =
+    icu_datetime::provider::neo::PersianYearNamesV1Marker = "datetime/symbols/persian/years@1",
+    icu_datetime::provider::neo::RocYearNamesV1Marker = "datetime/symbols/roc/years@1",
+    icu_datetime::provider::neo::BuddhistMonthNamesV1Marker =
         "datetime/symbols/buddhist/months@1",
-    icu_datetime::provider::neo::ChineseMonthSymbolsV1Marker = "datetime/symbols/chinese/months@1",
-    icu_datetime::provider::neo::CopticMonthSymbolsV1Marker = "datetime/symbols/coptic/months@1",
-    icu_datetime::provider::neo::DangiMonthSymbolsV1Marker = "datetime/symbols/dangi/months@1",
-    icu_datetime::provider::neo::EthiopianMonthSymbolsV1Marker =
+    icu_datetime::provider::neo::ChineseMonthNamesV1Marker = "datetime/symbols/chinese/months@1",
+    icu_datetime::provider::neo::CopticMonthNamesV1Marker = "datetime/symbols/coptic/months@1",
+    icu_datetime::provider::neo::DangiMonthNamesV1Marker = "datetime/symbols/dangi/months@1",
+    icu_datetime::provider::neo::EthiopianMonthNamesV1Marker =
         "datetime/symbols/ethiopic/months@1",
-    icu_datetime::provider::neo::GregorianMonthSymbolsV1Marker =
+    icu_datetime::provider::neo::GregorianMonthNamesV1Marker =
         "datetime/symbols/gregory/months@1",
-    icu_datetime::provider::neo::HebrewMonthSymbolsV1Marker = "datetime/symbols/hebrew/months@1",
-    icu_datetime::provider::neo::IndianMonthSymbolsV1Marker = "datetime/symbols/indian/months@1",
-    icu_datetime::provider::neo::IslamicMonthSymbolsV1Marker = "datetime/symbols/islamic/months@1",
-    icu_datetime::provider::neo::JapaneseMonthSymbolsV1Marker =
+    icu_datetime::provider::neo::HebrewMonthNamesV1Marker = "datetime/symbols/hebrew/months@1",
+    icu_datetime::provider::neo::IndianMonthNamesV1Marker = "datetime/symbols/indian/months@1",
+    icu_datetime::provider::neo::IslamicMonthNamesV1Marker = "datetime/symbols/islamic/months@1",
+    icu_datetime::provider::neo::JapaneseMonthNamesV1Marker =
         "datetime/symbols/japanese/months@1",
-    icu_datetime::provider::neo::JapaneseExtendedMonthSymbolsV1Marker =
+    icu_datetime::provider::neo::JapaneseExtendedMonthNamesV1Marker =
         "datetime/symbols/japanext/months@1",
-    icu_datetime::provider::neo::PersianMonthSymbolsV1Marker = "datetime/symbols/persian/months@1",
-    icu_datetime::provider::neo::RocMonthSymbolsV1Marker = "datetime/symbols/roc/months@1",
+    icu_datetime::provider::neo::PersianMonthNamesV1Marker = "datetime/symbols/persian/months@1",
+    icu_datetime::provider::neo::RocMonthNamesV1Marker = "datetime/symbols/roc/months@1",
     icu_datetime::provider::neo::BuddhistDatePatternV1Marker = "datetime/patterns/buddhist/date@1",
     icu_datetime::provider::neo::ChineseDatePatternV1Marker = "datetime/patterns/chinese/date@1",
     icu_datetime::provider::neo::CopticDatePatternV1Marker = "datetime/patterns/coptic/date@1",
