@@ -3,8 +3,8 @@
 # (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 [package]
-name = "icu_unitsconversion_data"
-description = "Data for the icu_unitsconversion crate"
+name = "icu_icu_unitsconversion_data"
+description = "Data for the icu_icu_unitsconversion crate"
 license-file = "LICENSE"
 version = "1.4.0"
 
