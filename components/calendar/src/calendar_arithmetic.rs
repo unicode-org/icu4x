@@ -102,6 +102,9 @@ pub(crate) trait CalendarArithmetic: Calendar {
 
 pub(crate) trait PrecomputedDataSource<YearInfo> {
     /// Given a calendar year, load (or compute) the YearInfo for it
+    ///
+    /// In the future we may pass in an optional previous YearInfo alongside the year
+    /// it matches to allow code to take shortcuts.
     fn load_or_compute_info(&self, year: i32) -> YearInfo;
 }
 
