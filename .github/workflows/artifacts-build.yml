@@ -186,7 +186,7 @@ jobs:
         cd ffi/npm
         make lib/index.js
         npm install typedoc
-        node_modules/typedoc/bin/typedoc lib/index.d.ts --out docs --readme ../../../../docs/tutorials/js.md --basePath lib
+        node_modules/typedoc/bin/typedoc lib/index.d.ts --out docs --readme ../../docs/tutorials/js.md --basePath lib
         cd ../..
         
     - name: Upload docs to Google Cloud Storage (non-main)
