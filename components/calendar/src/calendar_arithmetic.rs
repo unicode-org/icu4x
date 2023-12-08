@@ -169,14 +169,14 @@ impl<C: CalendarArithmetic> ArithmeticDate<C> {
     }
 
     #[inline]
-    fn offset_days(&mut self, mut day_offset: i32) {
+    fn offset_days(&mut self, mut day_offset: i32, data: &impl PrecomputedDataSource<C::YearInfo>) {
         while day_offset != 0 {
             let month_days = C::month_days(self.year, self.month, self.year_info);
             if self.day as i32 + day_offset > month_days as i32 {
-                self.offset_months(1);
+                self.offset_months(1, data);
                 day_offset -= month_days as i32;
             } else if self.day as i32 + day_offset < 1 {
-                self.offset_months(-1);
+                self.offset_months(-1, data);
                 day_offset += C::month_days(self.year, self.month, self.year_info) as i32;
             } else {
                 self.day = (self.day as i32 + day_offset) as u8;
@@ -186,14 +186,20 @@ impl<C: CalendarArithmetic> ArithmeticDate<C> {
     }
 
     #[inline]
-    fn offset_months(&mut self, mut month_offset: i32) {
+    fn offset_months(
+        &mut self,
+        mut month_offset: i32,
+        data: &impl PrecomputedDataSource<C::YearInfo>,
+    ) {
         while month_offset != 0 {
             let year_months = C::months_for_every_year(self.year, self.year_info);
             if self.month as i32 + month_offset > year_months as i32 {
                 self.year += 1;
+                self.year_info = data.load_or_compute_info(self.year);
                 month_offset -= year_months as i32;
             } else if self.month as i32 + month_offset < 1 {
                 self.year -= 1;
+                self.year_info = data.load_or_compute_info(self.year);
                 month_offset += C::months_for_every_year(self.year, self.year_info) as i32;
             } else {
                 self.month = (self.month as i32 + month_offset) as u8;
@@ -208,15 +214,17 @@ impl<C: CalendarArithmetic> ArithmeticDate<C> {
         offset: DateDuration<C>,
         data: &impl PrecomputedDataSource<C::YearInfo>,
     ) {
-        // For offset_date to work with lunar calendars, need to handle an edge case where the original month is not valid in the future year.
-        self.year += offset.years;
-        self.year_info = data.load_or_compute_info(self.year);
+        if offset.years != 0 {
+            // For offset_date to work with lunar calendars, need to handle an edge case where the original month is not valid in the future year.
+            self.year += offset.years;
+            self.year_info = data.load_or_compute_info(self.year);
+        }
 
-        self.offset_months(offset.months);
+        self.offset_months(offset.months, data);
 
         let day_offset = offset.days + offset.weeks * 7 + self.day as i32 - 1;
         self.day = 1;
-        self.offset_days(day_offset);
+        self.offset_days(day_offset, data);
     }
 
     #[inline]
