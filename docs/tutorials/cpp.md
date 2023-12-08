@@ -98,7 +98,7 @@ HEADERS=$(cargo metadata --format-version 1 | jq '.packages[] | select(.name == 
 
 Then you can build with
 ```shell
-g++ -Ltarget/release -I$HEADERS main.cpp -licu_capi
+g++ -Ltarget/release -I"$HEADERS" main.cpp -licu_capi
 ```
 
 C++ versions beyond C++17 are supported, as are other C++ compilers.
