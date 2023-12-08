@@ -517,12 +517,22 @@ pub struct DateTimePatternV1<'data> {
     pub pattern: runtime::GenericPattern<'data>,
 }
 
-// pub(crate) struct ErasedYearSymbolsV1Marker;
-// impl DataMarker for ErasedYearSymbolsV1Marker {
-//     type Yokeable = YearSymbolsV1<'static>;
-// }
+pub(crate) struct ErasedYearSymbolsV1Marker;
+impl DataMarker for ErasedYearSymbolsV1Marker {
+    type Yokeable = YearSymbolsV1<'static>;
+}
 
-// pub(crate) struct ErasedMonthSymbolsV1Marker;
-// impl DataMarker for ErasedMonthSymbolsV1Marker {
-//     type Yokeable = MonthSymbolsV1<'static>;
-// }
+pub(crate) struct ErasedMonthSymbolsV1Marker;
+impl DataMarker for ErasedMonthSymbolsV1Marker {
+    type Yokeable = MonthSymbolsV1<'static>;
+}
+
+pub(crate) struct ErasedDatePatternV1Marker;
+impl DataMarker for ErasedDatePatternV1Marker {
+    type Yokeable = DatePatternV1<'static>;
+}
+
+pub(crate) struct ErasedTimePatternV1Marker;
+impl DataMarker for ErasedTimePatternV1Marker {
+    type Yokeable = TimePatternV1<'static>;
+}
