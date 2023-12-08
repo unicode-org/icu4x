@@ -61,25 +61,6 @@ impl DatagenProvider {
             .clone()
     }
 
-    #[cfg(test)]
-    // This is equivalent for the files defined in `tools/testdata-scripts/globs.rs.data`.
-    pub fn new_testing() -> Self {
-        // Singleton so that all instantiations share the same cache.
-        static SINGLETON: once_cell::sync::OnceCell<DatagenProvider> =
-            once_cell::sync::OnceCell::new();
-        SINGLETON
-            .get_or_init(|| {
-                Self::new_custom()
-                    .with_cldr("tests/data/cldr".into())
-                    .unwrap()
-                    .with_icuexport("tests/data/icuexport".into())
-                    .unwrap()
-                    .with_segmenter_lstm("tests/data/lstm".into())
-                    .unwrap()
-            })
-            .clone()
-    }
-
     /// A provider with no source data. Without adding more sources, most `load` methods
     /// will return errors.
     ///
