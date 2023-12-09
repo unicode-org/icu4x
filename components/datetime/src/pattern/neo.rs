@@ -16,10 +16,10 @@ use icu_provider::prelude::*;
 enum DateTimePatternInner {
     Custom(runtime::Pattern<'static>),
     Date(DataPayload<ErasedDatePatternV1Marker>),
-    Time(DataPayload<ErasedTimePatternV1Marker>),
+    Time(DataPayload<TimePatternV1Marker>),
     DateTime {
         date_pattern: DataPayload<ErasedDatePatternV1Marker>,
-        time_pattern: DataPayload<ErasedTimePatternV1Marker>,
+        time_pattern: DataPayload<TimePatternV1Marker>,
         glue_pattern: DataPayload<DateTimePatternV1Marker>,
     },
 }
