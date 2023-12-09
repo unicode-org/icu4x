@@ -68,7 +68,7 @@ impl TimeGranularity {
     }
 
     #[inline]
-    pub(crate) fn ordinal(self) -> u8 {
+    pub(crate) const fn ordinal(self) -> u8 {
         use TimeGranularity::*;
         match self {
             None => 0,

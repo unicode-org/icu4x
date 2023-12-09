@@ -119,7 +119,7 @@ mod reference {
 
 mod runtime {
     use super::*;
-    use crate::pattern::{runtime::Pattern, PatternItem};
+    use crate::pattern::{runtime::Pattern, PatternItem, runtime::PatternMetadata};
     use zerovec::ZeroVec;
 
     /// A helper struct that is shaped exactly like `runtime::Pattern`
@@ -136,7 +136,7 @@ mod runtime {
         fn from(pfs: PatternForSerde<'data>) -> Self {
             Self {
                 items: pfs.items,
-                time_granularity: pfs.time_granularity,
+                metadata: PatternMetadata::from_time_granularity(pfs.time_granularity),
             }
         }
     }
@@ -188,7 +188,7 @@ mod runtime {
             } else {
                 let pfs = PatternForSerde {
                     items: self.items.clone(),
-                    time_granularity: self.time_granularity,
+                    time_granularity: self.metadata.time_granularity(),
                 };
                 pfs.serialize(serializer)
             }

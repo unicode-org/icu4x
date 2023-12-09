@@ -41,7 +41,7 @@ impl PatternMetadata {
     }
 
     #[inline]
-    pub(crate) fn from_time_granularity(time_granularity: TimeGranularity) -> Self {
+    pub(crate) const fn from_time_granularity(time_granularity: TimeGranularity) -> Self {
         Self(time_granularity.ordinal())
     }
 
@@ -117,4 +117,27 @@ impl core::fmt::Display for Pattern<'_> {
         let reference = crate::pattern::reference::Pattern::from(self);
         reference.fmt(formatter)
     }
+}
+
+#[cfg(feature = "datagen")]
+impl databake::Bake for PatternMetadata {
+    fn bake(&self, ctx: &databake::CrateEnv) -> databake::TokenStream {
+        ctx.insert("icu_datetime");
+        let time_granularity = databake::Bake::bake(&self.time_granularity(), ctx);
+        databake::quote! {
+            icu_datetime::pattern::runtime::PatternMetadata::from_time_granularity(#time_granularity)
+        }
+    }
+}
+
+#[test]
+#[cfg(feature = "datagen")]
+fn databake() {
+    databake::test_bake!(
+        PatternMetadata,
+        const: crate::pattern::runtime::PatternMetadata::from_time_granularity(
+            crate::pattern::TimeGranularity::Hours
+        ),
+        icu_datetime,
+    );
 }
