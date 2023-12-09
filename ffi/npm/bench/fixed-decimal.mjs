@@ -1,6 +1,6 @@
 import Benchmark from 'benchmark';
 
-import { ICU4XFixedDecimal } from "../index.js"
+import { ICU4XFixedDecimal } from "icu4x"
 
 let suite = new Benchmark.Suite();
 

@@ -3,10 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 import "./delete_fetch.mjs";
-import { ICU4XLocale } from "./lib/ICU4XLocale.js";
-import { ICU4XDataProvider } from "./lib/ICU4XDataProvider.js";
-import { ICU4XFixedDecimalFormatter } from "./lib/ICU4XFixedDecimalFormatter.js";
-import { ICU4XFixedDecimal } from "./lib/ICU4XFixedDecimal.js";
+import { ICU4XLocale, ICU4XDataProvider, ICU4XFixedDecimalFormatter, ICU4XFixedDecimal } from "./lib/index.mjs";
 
 async function main() {
     const locale = ICU4XLocale.create_from_string("bn");
