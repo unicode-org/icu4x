@@ -584,6 +584,30 @@ mod test {
                 chinese_year.year_bounds.new_year,
                 chinese_year.year_bounds.next_new_year,
             );
+            let chinese_ny = chinese_year.year_bounds.new_year;
+            assert_eq!(
+                month_ends[12] - chinese_ny + 1,
+                i64::from(days_in_provided_year::<Chinese>(chinese_year.year)),
+                "Year length must be the same"
+            );
+            let mut month_start = chinese_ny;
+            for i in 0..13 {
+                let next_month_start = month_ends[i] + 1;
+                let month_len = next_month_start - month_start;
+                if month_len == 0 && i == 12 {
+                    // month_days has no defined behavior for month 13 on non-leap-years
+                    continue;
+                }
+                let month_days = month_days::<Chinese>(chinese_year.year, i as u8 + 1);
+                assert_eq!(
+                    month_len,
+                    i64::from(month_days),
+                    "Month length for month {} must be the same",
+                    i + 1
+                );
+
+                month_start = next_month_start;
+            }
             println!(
                 "{year} (chinese {}): {month_ends:?} {leap:?}",
                 chinese_year.year
