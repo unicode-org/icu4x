@@ -243,10 +243,7 @@ pub mod aux {
     marker(IndianYearNamesV1Marker, "datetime/symbols/indian/years@1"),
     marker(IslamicYearNamesV1Marker, "datetime/symbols/islamic/years@1"),
     marker(JapaneseYearNamesV1Marker, "datetime/symbols/japanese/years@1"),
-    marker(
-        JapaneseExtendedYearNamesV1Marker,
-        "datetime/symbols/japanext/years@1"
-    ),
+    marker(JapaneseExtendedYearNamesV1Marker, "datetime/symbols/japanext/years@1"),
     marker(PersianYearNamesV1Marker, "datetime/symbols/persian/years@1"),
     marker(RocYearNamesV1Marker, "datetime/symbols/roc/years@1")
 )]

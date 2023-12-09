@@ -286,8 +286,7 @@ impl<C: CldrCalendar> TypedDateTimeNames<C> {
     #[cfg(feature = "compiled_data")]
     pub fn include_year_names(&mut self, field_length: FieldLength) -> Result<&mut Self, Error>
     where
-        crate::provider::Baked:
-            icu_provider::DataProvider<<C as CldrCalendar>::YearNamesV1Marker>,
+        crate::provider::Baked: icu_provider::DataProvider<<C as CldrCalendar>::YearNamesV1Marker>,
     {
         self.load_year_names(&crate::provider::Baked, field_length)
     }
@@ -358,8 +357,7 @@ impl<C: CldrCalendar> TypedDateTimeNames<C> {
         field_length: FieldLength,
     ) -> Result<&mut Self, Error>
     where
-        crate::provider::Baked:
-            icu_provider::DataProvider<<C as CldrCalendar>::MonthNamesV1Marker>,
+        crate::provider::Baked: icu_provider::DataProvider<<C as CldrCalendar>::MonthNamesV1Marker>,
     {
         self.load_month_names(&crate::provider::Baked, field_symbol, field_length)
     }
