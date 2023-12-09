@@ -54,6 +54,30 @@ impl TimeGranularity {
             Self::Nanoseconds => minute as u32 + second as u32 + nanosecond == 0,
         }
     }
+
+    #[inline]
+    pub(crate) fn from_ordinal(ordinal: u8) -> TimeGranularity {
+        use TimeGranularity::*;
+        match ordinal {
+            1 => Hours,
+            2 => Minutes,
+            3 => Seconds,
+            4 => Nanoseconds,
+            _ => None,
+        }
+    }
+
+    #[inline]
+    pub(crate) fn ordinal(self) -> u8 {
+        use TimeGranularity::*;
+        match self {
+            None => 0,
+            Hours => 1,
+            Minutes => 2,
+            Seconds => 3,
+            Nanoseconds => 4,
+        }
+    }
 }
 
 impl From<&PatternItem> for TimeGranularity {
