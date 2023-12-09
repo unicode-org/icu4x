@@ -209,7 +209,7 @@ fn weekday_convert(
     _calendar: &Value,
     context: Context,
     length: Length,
-) -> Result<LinearSymbolsV1<'static>, DataError> {
+) -> Result<LinearNamesV1<'static>, DataError> {
     let day_symbols = data.days.get_symbols(context, length);
 
     let days = [
@@ -222,7 +222,7 @@ fn weekday_convert(
         &*day_symbols.sat,
     ];
 
-    Ok(LinearSymbolsV1 {
+    Ok(LinearNamesV1 {
         symbols: (&days).into(),
     })
 }
@@ -234,7 +234,7 @@ fn dayperiods_convert(
     _calendar: &Value,
     context: Context,
     length: Length,
-) -> Result<LinearSymbolsV1<'static>, DataError> {
+) -> Result<LinearNamesV1<'static>, DataError> {
     let day_periods = data.day_periods.get_symbols(context, length);
 
     let mut periods = vec![&*day_periods.am, &*day_periods.pm];
@@ -249,7 +249,7 @@ fn dayperiods_convert(
         periods.push(midnight)
     }
 
-    Ok(LinearSymbolsV1 {
+    Ok(LinearNamesV1 {
         symbols: (&periods).into(),
     })
 }
@@ -260,7 +260,7 @@ fn eras_convert(
     eras: &ca::Eras,
     calendar: &Value,
     length: Length,
-) -> Result<YearSymbolsV1<'static>, DataError> {
+) -> Result<YearNamesV1<'static>, DataError> {
     let eras = eras.load(length);
     // Tostring can be removed when we delete symbols.rs, or we can perhaps refactor it to use Value
     let calendar_str = calendar.to_string();
@@ -359,7 +359,7 @@ fn eras_convert(
         }
     }
 
-    Ok(YearSymbolsV1::Eras(
+    Ok(YearNamesV1::Eras(
         out_eras
             .iter()
             .map(|(k, v)| (UnvalidatedStr::from_str(k), &**v))
@@ -373,7 +373,7 @@ fn years_convert(
     calendar: &Value,
     context: Context,
     length: Length,
-) -> Result<YearSymbolsV1<'static>, DataError> {
+) -> Result<YearNamesV1<'static>, DataError> {
     assert_eq!(
         context,
         Context::Format,
@@ -395,7 +395,7 @@ fn years_convert(
             }
             &**value
         }).collect();
-        Ok(YearSymbolsV1::Cyclic((&years).into()))
+        Ok(YearNamesV1::Cyclic((&years).into()))
     } else {
         panic!(
             "Calendar {calendar} in locale {langid} has neither eras nor cyclicNameSets for years"
@@ -435,7 +435,7 @@ fn months_convert(
     calendar: &Value,
     context: Context,
     length: Length,
-) -> Result<MonthSymbolsV1<'static>, DataError> {
+) -> Result<MonthNamesV1<'static>, DataError> {
     if length == Length::Numeric {
         assert_eq!(
             context,
@@ -455,7 +455,7 @@ fn months_convert(
             pattern: string.into(),
             subst_index: index,
         };
-        return Ok(MonthSymbolsV1::LeapNumeric(pattern));
+        return Ok(MonthNamesV1::LeapNumeric(pattern));
     }
 
     let months = data.months.get_symbols(context, length);
@@ -490,7 +490,7 @@ fn months_convert(
 
             symbols[index] = (&**v).into();
         }
-        Ok(MonthSymbolsV1::LeapLinear((&symbols).into()))
+        Ok(MonthNamesV1::LeapLinear((&symbols).into()))
     } else {
         for (k, v) in months.0.iter() {
             let index: usize = k
@@ -535,9 +535,9 @@ fn months_convert(
                 let replaced = leap.replace("{0}", &symbols[i]);
                 symbols[nonleap + i] = replaced.into();
             }
-            Ok(MonthSymbolsV1::LeapLinear((&symbols).into()))
+            Ok(MonthNamesV1::LeapLinear((&symbols).into()))
         } else {
-            Ok(MonthSymbolsV1::Linear((&symbols).into()))
+            Ok(MonthNamesV1::Linear((&symbols).into()))
         }
     }
 }
@@ -753,7 +753,7 @@ macro_rules! impl_pattern_datagen {
 
 // Weekdays
 impl_symbols_datagen!(
-    WeekdaySymbolsV1Marker,
+    WeekdayNamesV1Marker,
     "gregory",
     FULL_KEY_LENGTHS,
     weekday_convert
@@ -761,7 +761,7 @@ impl_symbols_datagen!(
 
 // Dayperiods
 impl_symbols_datagen!(
-    DayPeriodSymbolsV1Marker,
+    DayPeriodNamesV1Marker,
     "gregory",
     NORMAL_KEY_LENGTHS,
     dayperiods_convert
@@ -769,79 +769,79 @@ impl_symbols_datagen!(
 
 // Years
 impl_symbols_datagen!(
-    BuddhistYearSymbolsV1Marker,
+    BuddhistYearNamesV1Marker,
     "buddhist",
     YEARS_KEY_LENGTHS,
     years_convert
 );
 impl_symbols_datagen!(
-    ChineseYearSymbolsV1Marker,
+    ChineseYearNamesV1Marker,
     "chinese",
     YEARS_KEY_LENGTHS,
     years_convert
 );
 impl_symbols_datagen!(
-    CopticYearSymbolsV1Marker,
+    CopticYearNamesV1Marker,
     "coptic",
     YEARS_KEY_LENGTHS,
     years_convert
 );
 impl_symbols_datagen!(
-    DangiYearSymbolsV1Marker,
+    DangiYearNamesV1Marker,
     "dangi",
     YEARS_KEY_LENGTHS,
     years_convert
 );
 impl_symbols_datagen!(
-    EthiopianYearSymbolsV1Marker,
+    EthiopianYearNamesV1Marker,
     "ethiopic",
     YEARS_KEY_LENGTHS,
     years_convert
 );
 impl_symbols_datagen!(
-    GregorianYearSymbolsV1Marker,
+    GregorianYearNamesV1Marker,
     "gregory",
     YEARS_KEY_LENGTHS,
     years_convert
 );
 impl_symbols_datagen!(
-    HebrewYearSymbolsV1Marker,
+    HebrewYearNamesV1Marker,
     "hebrew",
     YEARS_KEY_LENGTHS,
     years_convert
 );
 impl_symbols_datagen!(
-    IndianYearSymbolsV1Marker,
+    IndianYearNamesV1Marker,
     "indian",
     YEARS_KEY_LENGTHS,
     years_convert
 );
 impl_symbols_datagen!(
-    IslamicYearSymbolsV1Marker,
+    IslamicYearNamesV1Marker,
     "islamic",
     YEARS_KEY_LENGTHS,
     years_convert
 );
 impl_symbols_datagen!(
-    JapaneseYearSymbolsV1Marker,
+    JapaneseYearNamesV1Marker,
     "japanese",
     YEARS_KEY_LENGTHS,
     years_convert
 );
 impl_symbols_datagen!(
-    JapaneseExtendedYearSymbolsV1Marker,
+    JapaneseExtendedYearNamesV1Marker,
     "japanext",
     YEARS_KEY_LENGTHS,
     years_convert
 );
 impl_symbols_datagen!(
-    PersianYearSymbolsV1Marker,
+    PersianYearNamesV1Marker,
     "persian",
     YEARS_KEY_LENGTHS,
     years_convert
 );
 impl_symbols_datagen!(
-    RocYearSymbolsV1Marker,
+    RocYearNamesV1Marker,
     "roc",
     YEARS_KEY_LENGTHS,
     years_convert
@@ -849,79 +849,79 @@ impl_symbols_datagen!(
 
 // Months
 impl_symbols_datagen!(
-    BuddhistMonthSymbolsV1Marker,
+    BuddhistMonthNamesV1Marker,
     "buddhist",
     NORMAL_KEY_LENGTHS,
     months_convert
 );
 impl_symbols_datagen!(
-    ChineseMonthSymbolsV1Marker,
+    ChineseMonthNamesV1Marker,
     "chinese",
     NUMERIC_MONTHS_KEY_LENGTHS, // has leap month patterns
     months_convert
 );
 impl_symbols_datagen!(
-    CopticMonthSymbolsV1Marker,
+    CopticMonthNamesV1Marker,
     "coptic",
     NORMAL_KEY_LENGTHS,
     months_convert
 );
 impl_symbols_datagen!(
-    DangiMonthSymbolsV1Marker,
+    DangiMonthNamesV1Marker,
     "dangi",
     NUMERIC_MONTHS_KEY_LENGTHS, // has leap month patterns
     months_convert
 );
 impl_symbols_datagen!(
-    EthiopianMonthSymbolsV1Marker,
+    EthiopianMonthNamesV1Marker,
     "ethiopic",
     NORMAL_KEY_LENGTHS,
     months_convert
 );
 impl_symbols_datagen!(
-    GregorianMonthSymbolsV1Marker,
+    GregorianMonthNamesV1Marker,
     "gregory",
     NORMAL_KEY_LENGTHS,
     months_convert
 );
 impl_symbols_datagen!(
-    HebrewMonthSymbolsV1Marker,
+    HebrewMonthNamesV1Marker,
     "hebrew",
     NORMAL_KEY_LENGTHS,
     months_convert
 );
 impl_symbols_datagen!(
-    IndianMonthSymbolsV1Marker,
+    IndianMonthNamesV1Marker,
     "indian",
     NORMAL_KEY_LENGTHS,
     months_convert
 );
 impl_symbols_datagen!(
-    IslamicMonthSymbolsV1Marker,
+    IslamicMonthNamesV1Marker,
     "islamic",
     NORMAL_KEY_LENGTHS,
     months_convert
 );
 impl_symbols_datagen!(
-    JapaneseMonthSymbolsV1Marker,
+    JapaneseMonthNamesV1Marker,
     "japanese",
     NORMAL_KEY_LENGTHS,
     months_convert
 );
 impl_symbols_datagen!(
-    JapaneseExtendedMonthSymbolsV1Marker,
+    JapaneseExtendedMonthNamesV1Marker,
     "japanext",
     NORMAL_KEY_LENGTHS,
     months_convert
 );
 impl_symbols_datagen!(
-    PersianMonthSymbolsV1Marker,
+    PersianMonthNamesV1Marker,
     "persian",
     NORMAL_KEY_LENGTHS,
     months_convert
 );
 impl_symbols_datagen!(
-    RocMonthSymbolsV1Marker,
+    RocMonthNamesV1Marker,
     "roc",
     NORMAL_KEY_LENGTHS,
     months_convert
