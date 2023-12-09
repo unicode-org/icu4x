@@ -14,6 +14,7 @@ pub use error::*;
 pub use helpers::*;
 
 #[cfg(all(test, feature = "datagen", feature = "experimental"))]
+#[cfg(feature = "compiled_data")]
 mod test {
     use super::reference::Skeleton;
     use super::*;
