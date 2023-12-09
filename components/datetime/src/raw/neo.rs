@@ -3,7 +3,10 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::calendar::CldrCalendar;
+use crate::pattern::runtime;
+use icu_plurals::PluralCategory;
 use icu_provider::prelude::*;
+use zerovec::ZeroMap;
 use crate::provider::neo::*;
 use crate::format::neo::*;
 
@@ -13,6 +16,15 @@ pub(crate) enum DatePatternSelectionData {
         with_era: DataPayload<ErasedDatePatternV1Marker>,
         without_era: DataPayload<ErasedDatePatternV1Marker>,
     },
+}
+
+pub(crate) enum Foo1<'data> {
+    SingleDate(runtime::Pattern<'data>),
+    WeekPlurals(ZeroMap<'data, PluralCategory, runtime::PatternULE>),
+}
+
+pub(crate) struct Foo2<'data> {
+    map: ZeroMap<'data, PluralCategory, runtime::PatternULE>,
 }
 
 pub(crate) enum TimePatternData {
@@ -52,5 +64,9 @@ mod tests {
         assert_eq!(40, core::mem::size_of::<DataPayload<WeekdayNamesV1Marker>>());
         assert_eq!(40, core::mem::size_of::<DataPayload<DayPeriodNamesV1Marker>>());
         assert_eq!(640, core::mem::size_of::<RawNeoDateTimeFormatter>());
+
+        assert_eq!(32, core::mem::size_of::<DatePatternV1>());
+        assert_eq!(56, core::mem::size_of::<Foo1>());
+        assert_eq!(48, core::mem::size_of::<Foo2>());
     }
 }

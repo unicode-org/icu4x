@@ -15,6 +15,5 @@ mod pattern;
 mod plural;
 
 pub use generic::GenericPattern;
-pub use pattern::Pattern;
-pub use pattern::PatternMetadata;
+pub use pattern::{Pattern, PatternMetadata, PatternULE};
 pub use plural::{PatternPlurals, PluralPattern};
