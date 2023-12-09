@@ -346,7 +346,9 @@ fn append_fractional_seconds(pattern: &mut runtime::Pattern, fields: &[Field]) {
             }
         }
         *pattern = runtime::Pattern::from(items);
-        pattern.metadata.set_time_granularity(TimeGranularity::Nanoseconds);
+        pattern
+            .metadata
+            .set_time_granularity(TimeGranularity::Nanoseconds);
     }
 }
 

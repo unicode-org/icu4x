@@ -119,7 +119,7 @@ mod reference {
 
 mod runtime {
     use super::*;
-    use crate::pattern::{runtime::Pattern, PatternItem, runtime::PatternMetadata};
+    use crate::pattern::{runtime::Pattern, runtime::PatternMetadata, PatternItem};
     use zerovec::ZeroVec;
 
     /// A helper struct that is shaped exactly like `runtime::Pattern`

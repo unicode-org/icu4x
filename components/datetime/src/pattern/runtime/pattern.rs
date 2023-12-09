@@ -36,7 +36,8 @@ impl PatternMetadata {
     }
 
     pub(crate) fn from_items(items: &[PatternItem]) -> Self {
-        let time_granularity: TimeGranularity = items.iter().map(Into::into).max().unwrap_or_default();
+        let time_granularity: TimeGranularity =
+            items.iter().map(Into::into).max().unwrap_or_default();
         Self::from_time_granularity(time_granularity)
     }
 
