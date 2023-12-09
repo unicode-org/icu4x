@@ -15,6 +15,8 @@ use zerovec::ZeroVec;
     databake(path = icu_datetime::pattern::runtime),
 )]
 #[allow(clippy::exhaustive_structs)] // part of data struct
+#[zerovec::make_varule(PatternULE)]
+#[zerovec::skip_derive(Ord)]
 pub struct Pattern<'data> {
     pub items: ZeroVec<'data, PatternItem>,
     /// This field should contain the smallest time unit from the `items` vec.
@@ -23,6 +25,8 @@ pub struct Pattern<'data> {
 }
 
 #[derive(Debug, Copy, Clone, PartialEq, Eq)]
+#[zerovec::make_ule(PatternMetadataULE)]
+#[zerovec::skip_derive(Ord)]
 pub struct PatternMetadata(u8);
 
 impl PatternMetadata {
