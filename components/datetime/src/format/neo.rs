@@ -1273,6 +1273,7 @@ impl<'data> TimeSymbols for RawDateTimeNamesBorrowed<'data> {
 }
 
 #[cfg(test)]
+#[cfg(feature = "compiled_data")]
 mod tests {
     use super::*;
     use crate::pattern::reference;
