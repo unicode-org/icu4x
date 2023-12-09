@@ -22,6 +22,7 @@ use core::ops::Range;
 /// </div>
 #[allow(missing_docs)]
 pub mod aux {
+    use crate::pattern::CoarseHourCycle;
     use icu_locid::extensions::private::{subtag, Subtag};
 
     pub const NUMERIC: Subtag = subtag!("1");
@@ -70,6 +71,26 @@ pub mod aux {
         Numeric,
     }
 
+    /// Pattern lengths supported in auxiliary subtags.
+    ///
+    /// For a stable version of this enum, use [`length::Date`] or [`length::Time`].
+    ///
+    /// <div class="stab unstable">
+    /// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
+    /// including in SemVer minor releases. While the serde representation of data structs is guaranteed
+    /// to be stable, their Rust representation might not be. Use with caution.
+    /// </div>
+    ///
+    /// [`length::Date`]: crate::options::length::Date
+    /// [`length::Time`]: crate::options::length::Time
+    #[derive(Copy, Clone, Debug, PartialEq, Eq)]
+    pub enum PatternLength {
+        Full,
+        Long,
+        Medium,
+        Short,
+    }
+
     /// Field contexts supported in auxiliary subtags.
     ///
     /// For a stable version of this enum, use one of the specific field symbol enums in [`fields`].
@@ -88,14 +109,14 @@ pub mod aux {
         Standalone,
     }
 
-    /// Parses an aux key subtag to enum values.
+    /// Parses a symbol aux key subtag to enum values.
     ///
     /// <div class="stab unstable">
     /// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
     /// including in SemVer minor releases. While the serde representation of data structs is guaranteed
     /// to be stable, their Rust representation might not be. Use with caution.
     /// </div>
-    pub fn subtag_info(subtag: Subtag) -> Option<(Context, Length)> {
+    pub fn symbol_subtag_info(subtag: Subtag) -> Option<(Context, Length)> {
         use {Context::*, Length::*};
         match subtag {
             NUMERIC => Some((Format, Numeric)),
@@ -111,14 +132,42 @@ pub mod aux {
         }
     }
 
-    /// Creates an aux key from the enum values.
+    /// Parses a pattern aux key subtag to enum values.
     ///
     /// <div class="stab unstable">
     /// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
     /// including in SemVer minor releases. While the serde representation of data structs is guaranteed
     /// to be stable, their Rust representation might not be. Use with caution.
     /// </div>
-    pub fn subtag_for(context: Context, length: Length) -> Subtag {
+    pub fn pattern_subtag_info(subtag: Subtag) -> Option<(PatternLength, Option<CoarseHourCycle>)> {
+        use {CoarseHourCycle::*, PatternLength::*};
+        match subtag {
+            PATTERN_FULL => Some((Full, None)),
+            PATTERN_LONG => Some((Long, None)),
+            PATTERN_MEDIUM => Some((Medium, None)),
+            PATTERN_SHORT => Some((Short, None)),
+
+            PATTERN_FULL12 => Some((Full, Some(H11H12))),
+            PATTERN_LONG12 => Some((Long, Some(H11H12))),
+            PATTERN_MEDIUM12 => Some((Medium, Some(H11H12))),
+            PATTERN_SHORT12 => Some((Short, Some(H11H12))),
+
+            PATTERN_FULL24 => Some((Full, Some(H23H24))),
+            PATTERN_LONG24 => Some((Long, Some(H23H24))),
+            PATTERN_MEDIUM24 => Some((Medium, Some(H23H24))),
+            PATTERN_SHORT24 => Some((Short, Some(H23H24))),
+            _ => None,
+        }
+    }
+
+    /// Creates a symbol aux key from the enum values.
+    ///
+    /// <div class="stab unstable">
+    /// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
+    /// including in SemVer minor releases. While the serde representation of data structs is guaranteed
+    /// to be stable, their Rust representation might not be. Use with caution.
+    /// </div>
+    pub fn symbol_subtag_for(context: Context, length: Length) -> Subtag {
         use {Context::*, Length::*};
         match (context, length) {
             (Format, Numeric) => NUMERIC,
@@ -131,6 +180,36 @@ pub mod aux {
             (Standalone, Narrow) => NARROW_STANDALONE,
             (Standalone, Wide) => WIDE_STANDALONE,
             (Standalone, Short) => SHORT_STANDALONE,
+        }
+    }
+
+    /// Creates a pattern aux key from the enum values.
+    ///
+    /// <div class="stab unstable">
+    /// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
+    /// including in SemVer minor releases. While the serde representation of data structs is guaranteed
+    /// to be stable, their Rust representation might not be. Use with caution.
+    /// </div>
+    pub fn pattern_subtag_for(
+        length: PatternLength,
+        hour_cycle: Option<CoarseHourCycle>,
+    ) -> Subtag {
+        use {CoarseHourCycle::*, PatternLength::*};
+        match (length, hour_cycle) {
+            (Full, None) => PATTERN_FULL,
+            (Long, None) => PATTERN_LONG,
+            (Medium, None) => PATTERN_MEDIUM,
+            (Short, None) => PATTERN_SHORT,
+
+            (Full, Some(H11H12)) => PATTERN_FULL12,
+            (Long, Some(H11H12)) => PATTERN_LONG12,
+            (Medium, Some(H11H12)) => PATTERN_MEDIUM12,
+            (Short, Some(H11H12)) => PATTERN_SHORT12,
+
+            (Full, Some(H23H24)) => PATTERN_FULL24,
+            (Long, Some(H23H24)) => PATTERN_LONG24,
+            (Medium, Some(H23H24)) => PATTERN_MEDIUM24,
+            (Short, Some(H23H24)) => PATTERN_SHORT24,
         }
     }
 }
@@ -438,12 +517,22 @@ pub struct DateTimePatternV1<'data> {
     pub pattern: runtime::GenericPattern<'data>,
 }
 
-// pub(crate) struct ErasedYearSymbolsV1Marker;
-// impl DataMarker for ErasedYearSymbolsV1Marker {
-//     type Yokeable = YearSymbolsV1<'static>;
-// }
+pub(crate) struct ErasedYearSymbolsV1Marker;
+impl DataMarker for ErasedYearSymbolsV1Marker {
+    type Yokeable = YearSymbolsV1<'static>;
+}
 
-// pub(crate) struct ErasedMonthSymbolsV1Marker;
-// impl DataMarker for ErasedMonthSymbolsV1Marker {
-//     type Yokeable = MonthSymbolsV1<'static>;
-// }
+pub(crate) struct ErasedMonthSymbolsV1Marker;
+impl DataMarker for ErasedMonthSymbolsV1Marker {
+    type Yokeable = MonthSymbolsV1<'static>;
+}
+
+pub(crate) struct ErasedDatePatternV1Marker;
+impl DataMarker for ErasedDatePatternV1Marker {
+    type Yokeable = DatePatternV1<'static>;
+}
+
+pub(crate) struct ErasedTimePatternV1Marker;
+impl DataMarker for ErasedTimePatternV1Marker {
+    type Yokeable = TimePatternV1<'static>;
+}

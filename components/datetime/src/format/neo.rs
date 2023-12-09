@@ -88,7 +88,7 @@ where
 impl<S, M> OptionalNames<S, DataPayload<M>>
 where
     S: Copy,
-    M: KeyedDataMarker,
+    M: DataMarker,
 {
     pub(crate) fn as_borrowed(
         &self,
@@ -172,24 +172,29 @@ where
 /// ```
 #[derive(Debug)]
 pub struct TypedDateTimePatternInterpolator<C: CldrCalendar> {
+    inner: RawDateTimePatternInterpolator,
+    _calendar: PhantomData<C>,
+}
+
+#[derive(Debug)]
+pub(crate) struct RawDateTimePatternInterpolator {
     locale: DataLocale,
-    /// `year_symbols` is different because it could be either era or cyclic year.
-    year_symbols: OptionalNames<(), DataPayload<C::YearSymbolsV1Marker>>,
-    month_symbols: OptionalNames<fields::Month, DataPayload<C::MonthSymbolsV1Marker>>,
+    year_symbols: OptionalNames<(), DataPayload<ErasedYearSymbolsV1Marker>>,
+    month_symbols: OptionalNames<fields::Month, DataPayload<ErasedMonthSymbolsV1Marker>>,
     weekday_symbols: OptionalNames<fields::Weekday, DataPayload<WeekdaySymbolsV1Marker>>,
     dayperiod_symbols: OptionalNames<(), DataPayload<DayPeriodSymbolsV1Marker>>,
-    // TODO: Make the FixedDecimalFormatter optional?
+    // TODO(#4340): Make the FixedDecimalFormatter optional
     fixed_decimal_formatter: FixedDecimalFormatter,
     week_calculator: Option<WeekCalculator>,
 }
 
 #[derive(Debug, Copy, Clone)]
 struct RawDateTimePatternInterpolatorBorrowed<'l> {
-    /// `year_symbols` is different because it could be either era or cyclic year.
     year_symbols: OptionalNames<(), &'l YearSymbolsV1<'l>>,
     month_symbols: OptionalNames<fields::Month, &'l MonthSymbolsV1<'l>>,
     weekday_symbols: OptionalNames<fields::Weekday, &'l LinearSymbolsV1<'l>>,
     dayperiod_symbols: OptionalNames<(), &'l LinearSymbolsV1<'l>>,
+    // TODO(#4340): Make the FixedDecimalFormatter optional
     fixed_decimal_formatter: &'l FixedDecimalFormatter,
     week_calculator: Option<&'l WeekCalculator>,
 }
@@ -208,7 +213,10 @@ impl<C: CldrCalendar> TypedDateTimePatternInterpolator<C> {
         fixed_decimal_format_options.grouping_strategy = GroupingStrategy::Never;
         let fixed_decimal_formatter =
             FixedDecimalFormatter::try_new(locale, fixed_decimal_format_options)?;
-        Ok(Self::new_internal(locale.clone(), fixed_decimal_formatter))
+        Ok(Self {
+            inner: RawDateTimePatternInterpolator::new(locale.clone(), fixed_decimal_formatter),
+            _calendar: PhantomData,
+        })
     }
 
     #[doc = icu_provider::gen_any_buffer_unstable_docs!(UNSTABLE, Self::try_new)]
@@ -223,30 +231,10 @@ impl<C: CldrCalendar> TypedDateTimePatternInterpolator<C> {
             locale,
             fixed_decimal_format_options,
         )?;
-        Ok(Self::new_internal(locale.clone(), fixed_decimal_formatter))
-    }
-
-    fn new_internal(locale: DataLocale, fixed_decimal_formatter: FixedDecimalFormatter) -> Self {
-        TypedDateTimePatternInterpolator {
-            locale,
-            year_symbols: OptionalNames::None,
-            month_symbols: OptionalNames::None,
-            weekday_symbols: OptionalNames::None,
-            dayperiod_symbols: OptionalNames::None,
-            fixed_decimal_formatter,
-            week_calculator: None,
-        }
-    }
-
-    fn as_borrowed(&self) -> RawDateTimePatternInterpolatorBorrowed {
-        RawDateTimePatternInterpolatorBorrowed {
-            year_symbols: self.year_symbols.as_borrowed(),
-            month_symbols: self.month_symbols.as_borrowed(),
-            weekday_symbols: self.weekday_symbols.as_borrowed(),
-            dayperiod_symbols: self.dayperiod_symbols.as_borrowed(),
-            fixed_decimal_formatter: &self.fixed_decimal_formatter,
-            week_calculator: self.week_calculator.as_ref(),
-        }
+        Ok(Self {
+            inner: RawDateTimePatternInterpolator::new(locale.clone(), fixed_decimal_formatter),
+            _calendar: PhantomData,
+        })
     }
 
     /// Loads year (era or cycle) names for the specified length.
@@ -260,34 +248,7 @@ impl<C: CldrCalendar> TypedDateTimePatternInterpolator<C> {
     where
         P: DataProvider<C::YearSymbolsV1Marker> + ?Sized,
     {
-        let field = fields::Field {
-            symbol: FieldSymbol::Era,
-            length: field_length,
-        };
-        // UTS 35 says that "G..GGG" are all Abbreviated
-        let field_length = field_length.numeric_to_abbr();
-        match self.year_symbols.check_with_length((), field_length) {
-            NamePresence::Loaded => return Ok(self),
-            NamePresence::NotLoaded => (),
-            NamePresence::Mismatched => return Err(Error::DuplicateField(field)),
-        };
-        let mut locale = self.locale.clone();
-        locale.set_aux(AuxiliaryKeys::from_subtag(aux::subtag_for(
-            aux::Context::Format,
-            match field_length {
-                FieldLength::Abbreviated => aux::Length::Abbr,
-                FieldLength::Narrow => aux::Length::Narrow,
-                FieldLength::Wide => aux::Length::Wide,
-                _ => return Err(Error::UnsupportedFormattingField(field)),
-            },
-        )));
-        let payload = provider
-            .load(DataRequest {
-                locale: &locale,
-                metadata: Default::default(),
-            })?
-            .take_payload()?;
-        self.year_symbols = OptionalNames::SingleLength((), field_length, payload);
+        self.inner.load_year_names(provider, field_length)?;
         Ok(self)
     }
 
@@ -343,39 +304,8 @@ impl<C: CldrCalendar> TypedDateTimePatternInterpolator<C> {
     where
         P: DataProvider<C::MonthSymbolsV1Marker> + ?Sized,
     {
-        let field = fields::Field {
-            symbol: FieldSymbol::Month(field_symbol),
-            length: field_length,
-        };
-        // Note: UTS 35 says that "M..MM" and "L..LL" are numeric
-        match self
-            .month_symbols
-            .check_with_length(field_symbol, field_length)
-        {
-            NamePresence::Loaded => return Ok(self),
-            NamePresence::NotLoaded => (),
-            NamePresence::Mismatched => return Err(Error::DuplicateField(field)),
-        };
-        let mut locale = self.locale.clone();
-        locale.set_aux(AuxiliaryKeys::from_subtag(aux::subtag_for(
-            match field_symbol {
-                fields::Month::Format => aux::Context::Format,
-                fields::Month::StandAlone => aux::Context::Standalone,
-            },
-            match field_length {
-                FieldLength::Abbreviated => aux::Length::Abbr,
-                FieldLength::Narrow => aux::Length::Narrow,
-                FieldLength::Wide => aux::Length::Wide,
-                _ => return Err(Error::UnsupportedFormattingField(field)),
-            },
-        )));
-        let payload = provider
-            .load(DataRequest {
-                locale: &locale,
-                metadata: Default::default(),
-            })?
-            .take_payload()?;
-        self.month_symbols = OptionalNames::SingleLength(field_symbol, field_length, payload);
+        self.inner
+            .load_month_names(provider, field_symbol, field_length)?;
         Ok(self)
     }
 
@@ -445,35 +375,7 @@ impl<C: CldrCalendar> TypedDateTimePatternInterpolator<C> {
     where
         P: DataProvider<DayPeriodSymbolsV1Marker> + ?Sized,
     {
-        let field = fields::Field {
-            // Names for 'a' and 'b' are stored in the same data key
-            symbol: FieldSymbol::DayPeriod(fields::DayPeriod::NoonMidnight),
-            length: field_length,
-        };
-        // UTS 35 says that "a..aaa" are all Abbreviated
-        let field_length = field_length.numeric_to_abbr();
-        match self.dayperiod_symbols.check_with_length((), field_length) {
-            NamePresence::Loaded => return Ok(self),
-            NamePresence::NotLoaded => (),
-            NamePresence::Mismatched => return Err(Error::DuplicateField(field)),
-        };
-        let mut locale = self.locale.clone();
-        locale.set_aux(AuxiliaryKeys::from_subtag(aux::subtag_for(
-            aux::Context::Format,
-            match field_length {
-                FieldLength::Abbreviated => aux::Length::Abbr,
-                FieldLength::Narrow => aux::Length::Narrow,
-                FieldLength::Wide => aux::Length::Wide,
-                _ => return Err(Error::UnsupportedFormattingField(field)),
-            },
-        )));
-        let payload = provider
-            .load(DataRequest {
-                locale: &locale,
-                metadata: Default::default(),
-            })?
-            .take_payload()?;
-        self.dayperiod_symbols = OptionalNames::SingleLength((), field_length, payload);
+        self.inner.load_day_period_names(provider, field_length)?;
         Ok(self)
     }
 
@@ -535,47 +437,8 @@ impl<C: CldrCalendar> TypedDateTimePatternInterpolator<C> {
     where
         P: DataProvider<WeekdaySymbolsV1Marker> + ?Sized,
     {
-        let field = fields::Field {
-            symbol: FieldSymbol::Weekday(field_symbol),
-            length: field_length,
-        };
-        // UTS 35 says that "E..EEE" are all Abbreviated
-        // However, this doesn't apply to "e" and "c".
-        let field_length = if matches!(field_symbol, fields::Weekday::Format) {
-            field_length.numeric_to_abbr()
-        } else {
-            field_length
-        };
-        match self
-            .weekday_symbols
-            .check_with_length(field_symbol, field_length)
-        {
-            NamePresence::Loaded => return Ok(self),
-            NamePresence::NotLoaded => (),
-            NamePresence::Mismatched => return Err(Error::DuplicateField(field)),
-        };
-        let mut locale = self.locale.clone();
-        locale.set_aux(AuxiliaryKeys::from_subtag(aux::subtag_for(
-            match field_symbol {
-                // UTS 35 says that "e" and "E" have the same non-numeric names
-                fields::Weekday::Format | fields::Weekday::Local => aux::Context::Format,
-                fields::Weekday::StandAlone => aux::Context::Standalone,
-            },
-            match field_length {
-                FieldLength::Abbreviated => aux::Length::Abbr,
-                FieldLength::Narrow => aux::Length::Narrow,
-                FieldLength::Wide => aux::Length::Wide,
-                FieldLength::Six => aux::Length::Short,
-                _ => return Err(Error::UnsupportedFormattingField(field)),
-            },
-        )));
-        let payload = provider
-            .load(DataRequest {
-                locale: &locale,
-                metadata: Default::default(),
-            })?
-            .take_payload()?;
-        self.weekday_symbols = OptionalNames::SingleLength(field_symbol, field_length, payload);
+        self.inner
+            .load_weekday_names(provider, field_symbol, field_length)?;
         Ok(self)
     }
 
@@ -671,7 +534,7 @@ impl<C: CldrCalendar> TypedDateTimePatternInterpolator<C> {
     /// ```
     #[inline]
     pub fn set_week_calculator(&mut self, week_calculator: WeekCalculator) -> &mut Self {
-        self.week_calculator = Some(week_calculator);
+        self.inner.set_week_calculator(week_calculator);
         self
     }
 
@@ -680,8 +543,7 @@ impl<C: CldrCalendar> TypedDateTimePatternInterpolator<C> {
     #[inline]
     pub fn with_pattern<'l>(&'l self, pattern: &'l Pattern) -> DateTimePatternFormatter<'l, C> {
         DateTimePatternFormatter {
-            pattern,
-            interpolator: self.as_borrowed(),
+            inner: self.inner.with_pattern(pattern),
             _calendar: PhantomData,
         }
     }
@@ -703,8 +565,19 @@ impl<C: CldrCalendar> TypedDateTimePatternInterpolator<C> {
             + DataProvider<WeekDataV1Marker>
             + ?Sized,
     {
-        self.load_for_pattern_internal(provider, pattern, |locale| {
-            WeekCalculator::try_new_unstable(provider, locale)
+        let inner = self
+            .inner
+            .load_for_pattern::<C::YearSymbolsV1Marker, C::MonthSymbolsV1Marker>(
+                provider,
+                provider,
+                provider,
+                provider,
+                pattern,
+                |locale| WeekCalculator::try_new_unstable(provider, locale),
+            )?;
+        Ok(DateTimePatternFormatter {
+            inner,
+            _calendar: PhantomData,
         })
     }
 
@@ -753,26 +626,265 @@ impl<C: CldrCalendar> TypedDateTimePatternInterpolator<C> {
             + DataProvider<WeekdaySymbolsV1Marker>
             + DataProvider<DayPeriodSymbolsV1Marker>,
     {
-        self.load_for_pattern_internal(&crate::provider::Baked, pattern, |locale| {
-            WeekCalculator::try_new(locale)
+        let inner = self
+            .inner
+            .load_for_pattern::<C::YearSymbolsV1Marker, C::MonthSymbolsV1Marker>(
+                &crate::provider::Baked,
+                &crate::provider::Baked,
+                &crate::provider::Baked,
+                &crate::provider::Baked,
+                pattern,
+                WeekCalculator::try_new,
+            )?;
+        Ok(DateTimePatternFormatter {
+            inner,
+            _calendar: PhantomData,
         })
     }
+}
 
-    fn load_for_pattern_internal<'l, P>(
-        &'l mut self,
+impl RawDateTimePatternInterpolator {
+    pub(crate) fn new(locale: DataLocale, fixed_decimal_formatter: FixedDecimalFormatter) -> Self {
+        Self {
+            locale,
+            year_symbols: OptionalNames::None,
+            month_symbols: OptionalNames::None,
+            weekday_symbols: OptionalNames::None,
+            dayperiod_symbols: OptionalNames::None,
+            fixed_decimal_formatter,
+            week_calculator: None,
+        }
+    }
+
+    fn as_borrowed(&self) -> RawDateTimePatternInterpolatorBorrowed {
+        RawDateTimePatternInterpolatorBorrowed {
+            year_symbols: self.year_symbols.as_borrowed(),
+            month_symbols: self.month_symbols.as_borrowed(),
+            weekday_symbols: self.weekday_symbols.as_borrowed(),
+            dayperiod_symbols: self.dayperiod_symbols.as_borrowed(),
+            fixed_decimal_formatter: &self.fixed_decimal_formatter,
+            week_calculator: self.week_calculator.as_ref(),
+        }
+    }
+
+    pub(crate) fn load_year_names<P, M>(
+        &mut self,
         provider: &P,
+        field_length: FieldLength,
+    ) -> Result<(), Error>
+    where
+        P: DataProvider<M> + ?Sized,
+        M: KeyedDataMarker<Yokeable = YearSymbolsV1<'static>>,
+    {
+        let field = fields::Field {
+            symbol: FieldSymbol::Era,
+            length: field_length,
+        };
+        // UTS 35 says that "G..GGG" are all Abbreviated
+        let field_length = field_length.numeric_to_abbr();
+        match self.year_symbols.check_with_length((), field_length) {
+            NamePresence::Loaded => return Ok(()),
+            NamePresence::NotLoaded => (),
+            NamePresence::Mismatched => return Err(Error::DuplicateField(field)),
+        };
+        let mut locale = self.locale.clone();
+        locale.set_aux(AuxiliaryKeys::from_subtag(aux::symbol_subtag_for(
+            aux::Context::Format,
+            match field_length {
+                FieldLength::Abbreviated => aux::Length::Abbr,
+                FieldLength::Narrow => aux::Length::Narrow,
+                FieldLength::Wide => aux::Length::Wide,
+                _ => return Err(Error::UnsupportedFormattingField(field)),
+            },
+        )));
+        let payload = provider
+            .load(DataRequest {
+                locale: &locale,
+                metadata: Default::default(),
+            })?
+            .take_payload()?
+            .cast();
+        self.year_symbols = OptionalNames::SingleLength((), field_length, payload);
+        Ok(())
+    }
+
+    pub(crate) fn load_month_names<P, M>(
+        &mut self,
+        provider: &P,
+        field_symbol: fields::Month,
+        field_length: FieldLength,
+    ) -> Result<(), Error>
+    where
+        P: DataProvider<M> + ?Sized,
+        M: KeyedDataMarker<Yokeable = MonthSymbolsV1<'static>>,
+    {
+        let field = fields::Field {
+            symbol: FieldSymbol::Month(field_symbol),
+            length: field_length,
+        };
+        // Note: UTS 35 says that "M..MM" and "L..LL" are numeric
+        match self
+            .month_symbols
+            .check_with_length(field_symbol, field_length)
+        {
+            NamePresence::Loaded => return Ok(()),
+            NamePresence::NotLoaded => (),
+            NamePresence::Mismatched => return Err(Error::DuplicateField(field)),
+        };
+        let mut locale = self.locale.clone();
+        locale.set_aux(AuxiliaryKeys::from_subtag(aux::symbol_subtag_for(
+            match field_symbol {
+                fields::Month::Format => aux::Context::Format,
+                fields::Month::StandAlone => aux::Context::Standalone,
+            },
+            match field_length {
+                FieldLength::Abbreviated => aux::Length::Abbr,
+                FieldLength::Narrow => aux::Length::Narrow,
+                FieldLength::Wide => aux::Length::Wide,
+                _ => return Err(Error::UnsupportedFormattingField(field)),
+            },
+        )));
+        let payload = provider
+            .load(DataRequest {
+                locale: &locale,
+                metadata: Default::default(),
+            })?
+            .take_payload()?
+            .cast();
+        self.month_symbols = OptionalNames::SingleLength(field_symbol, field_length, payload);
+        Ok(())
+    }
+
+    pub(crate) fn load_day_period_names<P, M>(
+        &mut self,
+        provider: &P,
+        field_length: FieldLength,
+    ) -> Result<(), Error>
+    where
+        P: DataProvider<M> + ?Sized,
+        M: KeyedDataMarker<Yokeable = LinearSymbolsV1<'static>>,
+    {
+        let field = fields::Field {
+            // Names for 'a' and 'b' are stored in the same data key
+            symbol: FieldSymbol::DayPeriod(fields::DayPeriod::NoonMidnight),
+            length: field_length,
+        };
+        // UTS 35 says that "a..aaa" are all Abbreviated
+        let field_length = field_length.numeric_to_abbr();
+        match self.dayperiod_symbols.check_with_length((), field_length) {
+            NamePresence::Loaded => return Ok(()),
+            NamePresence::NotLoaded => (),
+            NamePresence::Mismatched => return Err(Error::DuplicateField(field)),
+        };
+        let mut locale = self.locale.clone();
+        locale.set_aux(AuxiliaryKeys::from_subtag(aux::symbol_subtag_for(
+            aux::Context::Format,
+            match field_length {
+                FieldLength::Abbreviated => aux::Length::Abbr,
+                FieldLength::Narrow => aux::Length::Narrow,
+                FieldLength::Wide => aux::Length::Wide,
+                _ => return Err(Error::UnsupportedFormattingField(field)),
+            },
+        )));
+        let payload = provider
+            .load(DataRequest {
+                locale: &locale,
+                metadata: Default::default(),
+            })?
+            .take_payload()?
+            .cast();
+        self.dayperiod_symbols = OptionalNames::SingleLength((), field_length, payload);
+        Ok(())
+    }
+
+    pub(crate) fn load_weekday_names<P, M>(
+        &mut self,
+        provider: &P,
+        field_symbol: fields::Weekday,
+        field_length: FieldLength,
+    ) -> Result<(), Error>
+    where
+        P: DataProvider<M> + ?Sized,
+        M: KeyedDataMarker<Yokeable = LinearSymbolsV1<'static>>,
+    {
+        let field = fields::Field {
+            symbol: FieldSymbol::Weekday(field_symbol),
+            length: field_length,
+        };
+        // UTS 35 says that "E..EEE" are all Abbreviated
+        // However, this doesn't apply to "e" and "c".
+        let field_length = if matches!(field_symbol, fields::Weekday::Format) {
+            field_length.numeric_to_abbr()
+        } else {
+            field_length
+        };
+        match self
+            .weekday_symbols
+            .check_with_length(field_symbol, field_length)
+        {
+            NamePresence::Loaded => return Ok(()),
+            NamePresence::NotLoaded => (),
+            NamePresence::Mismatched => return Err(Error::DuplicateField(field)),
+        };
+        let mut locale = self.locale.clone();
+        locale.set_aux(AuxiliaryKeys::from_subtag(aux::symbol_subtag_for(
+            match field_symbol {
+                // UTS 35 says that "e" and "E" have the same non-numeric names
+                fields::Weekday::Format | fields::Weekday::Local => aux::Context::Format,
+                fields::Weekday::StandAlone => aux::Context::Standalone,
+            },
+            match field_length {
+                FieldLength::Abbreviated => aux::Length::Abbr,
+                FieldLength::Narrow => aux::Length::Narrow,
+                FieldLength::Wide => aux::Length::Wide,
+                FieldLength::Six => aux::Length::Short,
+                _ => return Err(Error::UnsupportedFormattingField(field)),
+            },
+        )));
+        let payload = provider
+            .load(DataRequest {
+                locale: &locale,
+                metadata: Default::default(),
+            })?
+            .take_payload()?
+            .cast();
+        self.weekday_symbols = OptionalNames::SingleLength(field_symbol, field_length, payload);
+        Ok(())
+    }
+
+    #[inline]
+    pub(crate) fn set_week_calculator(&mut self, week_calculator: WeekCalculator) {
+        self.week_calculator = Some(week_calculator);
+    }
+
+    /// Associates this [`TypedDateTimePatternInterpolator`] with a pattern
+    /// without loading additional data for that pattern.
+    #[inline]
+    pub(crate) fn with_pattern<'l>(
+        &'l self,
+        pattern: &'l Pattern,
+    ) -> RawDateTimePatternFormatter<'l> {
+        RawDateTimePatternFormatter {
+            pattern,
+            interpolator: self.as_borrowed(),
+        }
+    }
+
+    pub(crate) fn load_for_pattern<'l, YearMarker, MonthMarker>(
+        &'l mut self,
+        year_provider: &(impl DataProvider<YearMarker> + ?Sized),
+        month_provider: &(impl DataProvider<MonthMarker> + ?Sized),
+        weekday_provider: &(impl DataProvider<WeekdaySymbolsV1Marker> + ?Sized),
+        dayperiod_provider: &(impl DataProvider<DayPeriodSymbolsV1Marker> + ?Sized),
         pattern: &'l Pattern,
         week_calculator_loader: impl FnOnce(
             &DataLocale,
         )
             -> Result<WeekCalculator, icu_calendar::CalendarError>,
-    ) -> Result<DateTimePatternFormatter<'l, C>, Error>
+    ) -> Result<RawDateTimePatternFormatter<'l>, Error>
     where
-        P: DataProvider<C::YearSymbolsV1Marker>
-            + DataProvider<C::MonthSymbolsV1Marker>
-            + DataProvider<WeekdaySymbolsV1Marker>
-            + DataProvider<DayPeriodSymbolsV1Marker>
-            + ?Sized,
+        YearMarker: KeyedDataMarker<Yokeable = YearSymbolsV1<'static>>,
+        MonthMarker: KeyedDataMarker<Yokeable = MonthSymbolsV1<'static>>,
     {
         let fields = pattern.items.iter().filter_map(|p| match p {
             PatternItem::Field(field) => Some(field),
@@ -785,13 +897,13 @@ impl<C: CldrCalendar> TypedDateTimePatternInterpolator<C> {
             match field.symbol {
                 ///// Textual symbols /////
                 FieldSymbol::Era => {
-                    self.load_year_names(provider, field.length)?;
+                    self.load_year_names(year_provider, field.length)?;
                 }
                 FieldSymbol::Month(symbol) => match field.length {
                     FieldLength::One => has_numeric = true,
                     FieldLength::TwoDigit => has_numeric = true,
                     _ => {
-                        self.load_month_names(provider, symbol, field.length)?;
+                        self.load_month_names(month_provider, symbol, field.length)?;
                     }
                 },
                 // 'E' is always text
@@ -803,11 +915,11 @@ impl<C: CldrCalendar> TypedDateTimePatternInterpolator<C> {
                         has_numeric = true
                     }
                     _ => {
-                        self.load_weekday_names(provider, symbol, field.length)?;
+                        self.load_weekday_names(weekday_provider, symbol, field.length)?;
                     }
                 },
                 FieldSymbol::DayPeriod(_) => {
-                    self.load_day_period_names(provider, field.length)?;
+                    self.load_day_period_names(dayperiod_provider, field.length)?;
                 }
 
                 ///// Numeric symbols /////
@@ -839,9 +951,14 @@ impl<C: CldrCalendar> TypedDateTimePatternInterpolator<C> {
 
 #[derive(Debug, Copy, Clone)]
 pub struct DateTimePatternFormatter<'a, C: CldrCalendar> {
+    inner: RawDateTimePatternFormatter<'a>,
+    _calendar: PhantomData<C>,
+}
+
+#[derive(Debug, Copy, Clone)]
+pub(crate) struct RawDateTimePatternFormatter<'a> {
     pattern: &'a Pattern<'a>,
     interpolator: RawDateTimePatternInterpolatorBorrowed<'a>,
-    _calendar: PhantomData<C>,
 }
 
 impl<'a, C: CldrCalendar> DateTimePatternFormatter<'a, C> {
@@ -856,9 +973,9 @@ impl<'a, C: CldrCalendar> DateTimePatternFormatter<'a, C> {
         // When returning `'l`, the intermediate type needs to be anchored,
         // so for now I made it return `'a`.
         FormattedDateTimePattern {
-            pattern: self.pattern,
+            pattern: self.inner.pattern,
             datetime: ExtractedDateTimeInput::extract_from(datetime),
-            interpolator: self.interpolator,
+            interpolator: self.inner.interpolator,
         }
     }
 
@@ -910,9 +1027,9 @@ impl<'a, C: CldrCalendar> DateTimePatternFormatter<'a, C> {
         T: DateInput<Calendar = C>,
     {
         FormattedDateTimePattern {
-            pattern: self.pattern,
+            pattern: self.inner.pattern,
             datetime: ExtractedDateTimeInput::extract_from_date(datetime),
-            interpolator: self.interpolator,
+            interpolator: self.inner.interpolator,
         }
     }
 
@@ -970,9 +1087,9 @@ impl<'a, C: CldrCalendar> DateTimePatternFormatter<'a, C> {
         T: IsoTimeInput,
     {
         FormattedDateTimePattern {
-            pattern: self.pattern,
+            pattern: self.inner.pattern,
             datetime: ExtractedDateTimeInput::extract_from_time(datetime),
-            interpolator: self.interpolator,
+            interpolator: self.inner.interpolator,
         }
     }
 }
