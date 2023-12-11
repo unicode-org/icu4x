@@ -30,7 +30,7 @@ pub const KEYS: &[DataKey] = &[CurrencyEssentialsV1Marker::KEY];
 #[cfg_attr(
     feature = "datagen",
     derive(serde::Serialize, databake::Bake),
-    databake(path = icu_singlenumberformatter::provider),
+    databake(path = icu_dimension::provider),
 )]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[yoke(prove_covariance_manually)]
@@ -60,7 +60,7 @@ pub struct CurrencyEssentialsV1<'data> {
 #[cfg_attr(
     feature = "datagen",
     derive(serde::Serialize, databake::Bake),
-    databake(path = icu_singlenumberformatter::provider),
+    databake(path = icu_dimension::provider),
 )]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[derive(Copy, Clone, Debug, PartialOrd, Ord, PartialEq, Eq, Default)]
@@ -77,7 +77,7 @@ pub enum PatternSelection {
 #[cfg_attr(
     feature = "datagen",
     derive(serde::Serialize, databake::Bake),
-    databake(path = icu_singlenumberformatter::provider),
+    databake(path = icu_dimension::provider),
 )]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[derive(Copy, Debug, Clone, PartialEq, PartialOrd, Eq, Ord)]
@@ -93,7 +93,7 @@ pub enum PlaceholderValue {
 #[cfg_attr(
     feature = "datagen",
     derive(serde::Serialize, databake::Bake),
-    databake(path = icu_singlenumberformatter::provider),
+    databake(path = icu_dimension::provider),
 )]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[derive(Copy, Debug, Clone, Default, PartialEq, PartialOrd, Eq, Ord)]
