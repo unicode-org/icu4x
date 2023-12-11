@@ -242,6 +242,25 @@ impl<Y: for<'a> Yokeable<'a>, C> Yoke<Y, C> {
         &self.cart
     }
 
+    /// Constructs a [`Yoke`] containing a cart from which the yokeable doesn't borrow.
+    ///
+    /// Can be useful to yoke a static object to a sentinel cart.
+    pub const fn new_owned_with_cart(yokeable: Y, cart: C) -> Self {
+        Self {
+            yokeable: KindaSortaDangling::new(yokeable),
+            cart,
+        }
+    }
+
+    /// Obtains the yokeable out of a `Yoke<Y, C>`.
+    ///
+    /// # Safety
+    ///
+    /// The yokeable must not borrow any data from the cart.
+    pub unsafe fn into_yokeable_unsafe(self) -> Y {
+        self.yokeable.into_inner()
+    }
+
     /// Get the backing cart by value, dropping the yokeable object.
     ///
     /// **Caution:** Calling this method could cause information saved in the yokeable object but
@@ -489,6 +508,21 @@ impl<Y: for<'a> Yokeable<'a>, C: StableDeref> Yoke<Y, Option<C>> {
         Self {
             yokeable: KindaSortaDangling::new(yokeable),
             cart: None,
+        }
+    }
+
+    /// Converts `Yoke<Y, Option<C>>` to `Yoke<Y, C>`, replacing the `None`
+    /// cart with the value returned by the given function (a sentinel).
+    pub fn unwrap_cart_or_else(self, f: impl FnOnce() -> C) -> Yoke<Y, C> {
+        match self.cart {
+            Some(cart) => Yoke {
+                yokeable: self.yokeable,
+                cart,
+            },
+            None => Yoke {
+                yokeable: self.yokeable,
+                cart: f(),
+            },
         }
     }
 

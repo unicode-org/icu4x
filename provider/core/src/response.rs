@@ -19,6 +19,13 @@ use alloc::rc::Rc as SelectedRc;
 #[cfg(feature = "sync")]
 use alloc::sync::Arc as SelectedRc;
 
+#[cfg(all(feature = "sync", not(feature = "std")))]
+use once_cell::race::OnceCell;
+#[cfg(all(feature = "sync", feature = "std"))]
+use once_cell::sync::OnceCell;
+#[cfg(not(feature = "sync"))]
+use once_cell::unsync::OnceCell;
+
 /// A response object containing metadata about the returned data.
 #[derive(Debug, Clone, PartialEq, Default)]
 #[non_exhaustive]
@@ -74,7 +81,7 @@ pub struct DataResponseMetadata {
 pub struct DataPayload<M: DataMarker>(pub(crate) DataPayloadInner<M>);
 
 pub(crate) enum DataPayloadInner<M: DataMarker> {
-    Yoke(Yoke<M::Yokeable, Option<Cart>>),
+    Yoke(Yoke<M::Yokeable, Cart>),
     StaticRef(&'static M::Yokeable),
 }
 
@@ -106,6 +113,19 @@ impl Cart {
             .map(|yoke| unsafe { yoke.replace_cart(Cart) })
             .map(Yoke::wrap_cart_in_option)
     }
+}
+
+/// An empty cart sentinel value for the DataPayload. Better for memory
+/// layout than Option<Cart> in the DataPayload; see #4438.
+///
+/// Get one with the [`empty_cart()`] function.
+static EMPTY_CART: OnceCell<Cart> = OnceCell::new();
+
+/// Gets a cart that can serve as the empty cart in DataPayload.
+fn empty_cart() -> Cart {
+    EMPTY_CART
+        .get_or_init(|| Cart(SelectedRc::new(Vec::new().into_boxed_slice())))
+        .clone()
 }
 
 impl<M> Debug for DataPayload<M>
@@ -194,8 +214,12 @@ where
     /// assert_eq!(payload.get(), &local_struct);
     /// ```
     #[inline]
-    pub const fn from_owned(data: M::Yokeable) -> Self {
-        Self(DataPayloadInner::Yoke(Yoke::new_owned(data)))
+    pub fn from_owned(data: M::Yokeable) -> Self {
+        // HELP: This function was previously const but now it isn't
+        Self(DataPayloadInner::Yoke(Yoke::new_owned_with_cart(
+            data,
+            empty_cart(),
+        )))
     }
 
     #[doc(hidden)]
@@ -208,7 +232,14 @@ where
     /// concrete type used to construct it.
     pub fn try_unwrap_owned(self) -> Result<M::Yokeable, DataError> {
         match self.0 {
-            DataPayloadInner::Yoke(yoke) => yoke.try_into_yokeable().ok(),
+            DataPayloadInner::Yoke(yoke) => {
+                if yoke.backing_cart().is_empty() {
+                    // Safety: the cart is empty so it's not possible to borrow from it
+                    Some(unsafe { yoke.into_yokeable_unsafe() })
+                } else {
+                    None
+                }
+            }
             DataPayloadInner::StaticRef(_) => None,
         }
         .ok_or(DataErrorKind::InvalidState.with_str_context("try_unwrap_owned"))
@@ -255,7 +286,10 @@ where
         M::Yokeable: zerofrom::ZeroFrom<'static, M::Yokeable>,
     {
         if let DataPayloadInner::StaticRef(r) = self.0 {
-            self.0 = DataPayloadInner::Yoke(Yoke::new_owned(zerofrom::ZeroFrom::zero_from(r)));
+            self.0 = DataPayloadInner::Yoke(Yoke::new_owned_with_cart(
+                zerofrom::ZeroFrom::zero_from(r),
+                empty_cart(),
+            ));
         }
         match &mut self.0 {
             DataPayloadInner::Yoke(yoke) => yoke.with_mut(f),
@@ -341,7 +375,9 @@ where
         DataPayload(DataPayloadInner::Yoke(
             match self.0 {
                 DataPayloadInner::Yoke(yoke) => yoke,
-                DataPayloadInner::StaticRef(r) => Yoke::new_owned(zerofrom::ZeroFrom::zero_from(r)),
+                DataPayloadInner::StaticRef(r) => {
+                    Yoke::new_owned_with_cart(zerofrom::ZeroFrom::zero_from(r), empty_cart())
+                }
             }
             .map_project(f),
         ))
@@ -394,7 +430,7 @@ where
                 // we're going from 'static to 'static, however in a generic context it's not
                 // clear to the compiler that that is the case. We have to use the unsafe make API to do this.
                 let yokeable: M2::Yokeable = unsafe { M2::Yokeable::make(output) };
-                Yoke::new_owned(yokeable)
+                Yoke::new_owned_with_cart(yokeable, empty_cart())
             }
         }))
     }
@@ -448,7 +484,9 @@ where
         Ok(DataPayload(DataPayloadInner::Yoke(
             match self.0 {
                 DataPayloadInner::Yoke(yoke) => yoke,
-                DataPayloadInner::StaticRef(r) => Yoke::new_owned(zerofrom::ZeroFrom::zero_from(r)),
+                DataPayloadInner::StaticRef(r) => {
+                    Yoke::new_owned_with_cart(zerofrom::ZeroFrom::zero_from(r), empty_cart())
+                }
             }
             .try_map_project(f)?,
         )))
@@ -508,7 +546,7 @@ where
                 let output: <M2::Yokeable as Yokeable<'static>>::Output =
                     f(Yokeable::transform(*r), PhantomData)?;
                 // Safety: <M2::Yokeable as Yokeable<'static>>::Output is the same type as M2::Yokeable
-                Yoke::new_owned(unsafe { M2::Yokeable::make(output) })
+                Yoke::new_owned_with_cart(unsafe { M2::Yokeable::make(output) }, empty_cart())
             }
         })))
     }
@@ -619,20 +657,21 @@ where
 impl DataPayload<BufferMarker> {
     /// Converts an owned byte buffer into a `DataPayload<BufferMarker>`.
     pub fn from_owned_buffer(buffer: Box<[u8]>) -> Self {
-        let yoke = Yoke::attach_to_cart(SelectedRc::new(buffer), |b| &**b);
-        // Safe because cart is wrapped
-        let yoke = unsafe { yoke.replace_cart(|b| Some(Cart(b))) };
+        let yoke = Yoke::attach_to_cart(Cart(SelectedRc::new(buffer)), |b| &**b);
         Self(DataPayloadInner::Yoke(yoke))
     }
 
     /// Converts a yoked byte buffer into a `DataPayload<BufferMarker>`.
     pub fn from_yoked_buffer(yoke: Yoke<&'static [u8], Option<Cart>>) -> Self {
-        Self(DataPayloadInner::Yoke(yoke))
+        Self(DataPayloadInner::Yoke(yoke.unwrap_cart_or_else(empty_cart)))
     }
 
     /// Converts a static byte buffer into a `DataPayload<BufferMarker>`.
     pub fn from_static_buffer(buffer: &'static [u8]) -> Self {
-        Self(DataPayloadInner::Yoke(Yoke::new_owned(buffer)))
+        Self(DataPayloadInner::Yoke(Yoke::new_owned_with_cart(
+            buffer,
+            empty_cart(),
+        )))
     }
 }
 
@@ -734,15 +773,29 @@ where
     }
 }
 
-#[test]
-fn test_debug() {
+#[cfg(test)]
+mod tests {
+    use super::*;
     use crate::hello_world::*;
-    use alloc::borrow::Cow;
-    let resp = DataResponse::<HelloWorldV1Marker> {
-        metadata: Default::default(),
-        payload: Some(DataPayload::from_owned(HelloWorldV1 {
-            message: Cow::Borrowed("foo"),
-        })),
-    };
-    assert_eq!("DataResponse { metadata: DataResponseMetadata { locale: None, buffer_format: None }, payload: Some(HelloWorldV1 { message: \"foo\" }) }", format!("{resp:?}"));
+    use core::mem::size_of;
+
+    #[test]
+    fn test_debug() {
+        use crate::hello_world::*;
+        use alloc::borrow::Cow;
+        let resp = DataResponse::<HelloWorldV1Marker> {
+            metadata: Default::default(),
+            payload: Some(DataPayload::from_owned(HelloWorldV1 {
+                message: Cow::Borrowed("foo"),
+            })),
+        };
+        assert_eq!("DataResponse { metadata: DataResponseMetadata { locale: None, buffer_format: None }, payload: Some(HelloWorldV1 { message: \"foo\" }) }", format!("{resp:?}"));
+    }
+
+    #[test]
+    fn test_sizes() {
+        const W: usize = size_of::<usize>();
+        assert_eq!(3 * W, size_of::<HelloWorldV1>());
+        assert_eq!(4 * W, size_of::<DataPayload<HelloWorldV1Marker>>());
+    }
 }
