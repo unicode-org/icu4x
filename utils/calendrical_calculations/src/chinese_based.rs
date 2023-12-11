@@ -591,8 +591,8 @@ mod test {
                 "Year length must be the same"
             );
             let mut month_start = chinese_ny;
-            for i in 0..13 {
-                let next_month_start = month_ends[i] + 1;
+            for (i, month_end) in month_ends.into_iter().enumerate() {
+                let next_month_start = month_end + 1;
                 let month_len = next_month_start - month_start;
                 if month_len == 0 && i == 12 {
                     // month_days has no defined behavior for month 13 on non-leap-years
