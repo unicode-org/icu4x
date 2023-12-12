@@ -2,6 +2,9 @@
 
 ## Unreleased
 
+- Components
+  - `icu_provider`
+    - Add `Aran` script code (https://github.com/unicode-org/icu4x/pull/4426)
 - FFI:
     - All languages
       - Correctly handle invalid UTF8 (https://github.com/unicode-org/icu4x/pull/4353)
