@@ -31,7 +31,8 @@ pub struct PatternMetadata(u8);
 
 impl PatternMetadata {
     #[inline]
-    pub(crate) fn time_granularity(self) -> TimeGranularity {
+    #[doc(hidden)] // databake
+    pub fn time_granularity(self) -> TimeGranularity {
         TimeGranularity::from_ordinal(self.0)
     }
 
