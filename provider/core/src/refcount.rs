@@ -4,7 +4,8 @@
 
 use core::ffi::c_void;
 use core::fmt::Debug;
-use core::mem::size_of;
+use core::mem::{size_of, MaybeUninit, align_of};
+use core::ptr::{addr_of, addr_of_mut};
 use core::{mem::ManuallyDrop, ptr::NonNull};
 use alloc::sync::Arc;
 use alloc::{string::String, rc::Rc};
@@ -12,83 +13,88 @@ use alloc::boxed::Box;
 use stable_deref_trait::{StableDeref, CloneStableDeref};
 use yoke::CloneableCart;
 
-type WrappedType = Option<Box<[u8]>>;
+type WrappedType = Box<[u8]>;
 
-// Safe as a sentinel because 0x1 is not a valid usize address
-const SENTINEL: *const WrappedType = 1usize as *const WrappedType;
+const SENTINEL_PTR: *mut WrappedType = align_of::<WrappedType>() as *mut WrappedType;
 
 /// A thin wrapper over [`NonNull`] that works with `*const T`
 #[derive(Debug)]
 #[repr(transparent)]
-pub(crate) struct NonNullConst<T>(NonNull<T>);
+pub(crate) struct NonNullWrappedPtr(NonNull<WrappedType>);
 
-impl<T> NonNullConst<T> {
+impl NonNullWrappedPtr {
     #[inline]
     pub const fn new_sentinel() -> Self {
         // Safety: `SENTINEL` is non-null
-        Self(unsafe { NonNull::new_unchecked(SENTINEL as *mut T) })
+        Self(unsafe { NonNull::new_unchecked(SENTINEL_PTR) })
     }
     #[inline]
-    pub fn new_from_rc(rc: Rc<T>) -> Self {
-        // Safety: `Rc::into_raw` returns a non-null pointer
-        Self(unsafe { NonNull::new_unchecked(Rc::into_raw(rc) as *mut T) })
+    pub fn new_from_rc(rc: Rc<WrappedType>) -> Self {
+        Self::new_raw(Rc::into_raw(rc))
     }
     #[inline]
-    pub fn new_from_arc(rc: Arc<T>) -> Self {
-        // Safety: `Arc::into_raw` returns a non-null pointer
-        Self(unsafe { NonNull::new_unchecked(Arc::into_raw(rc) as *mut T) })
+    pub fn new_from_arc(rc: Arc<WrappedType>) -> Self {
+        Self::new_raw(Arc::into_raw(rc))
     }
     #[inline]
-    fn into_raw(&mut self) -> Option<*const T> {
-        let ptr = self.0.as_ptr() as *const T;
-        if ptr == SENTINEL as *const T {
+    fn new_raw(ptr: *const WrappedType) -> Self {
+        debug_assert_ne!(ptr, SENTINEL_PTR, "Creating from [A]Rc should never be the sentinel ptr");
+        debug_assert_ne!(ptr, 0 as *const WrappedType, "Creating from [A]Rc should never be the null ptr");
+        // Safety: ptr is non-null
+        Self(unsafe { NonNull::new_unchecked(ptr as *mut WrappedType) })
+    }
+
+    /// Safety: this `NonNullWrappedPtr` must have been created with
+    /// `new_from_rc` or `new_sentinel`
+    #[inline]
+    pub unsafe fn take_assume_rc(&mut self) -> Option<Rc<WrappedType>> {
+        self.take_raw().map(|ptr| Rc::from_raw(ptr))
+    }
+    /// Safety: this `NonNullWrappedPtr` must have been created with
+    /// `new_from_arc` or `new_sentinel`
+    #[inline]
+    pub unsafe fn take_assume_arc(&mut self) -> Option<Arc<WrappedType>> {
+        self.take_raw().map(|ptr| Arc::from_raw(ptr))
+    }
+    #[inline]
+    fn take_raw(&mut self) -> Option<*const WrappedType> {
+        let ptr = self.0.as_ptr() as *const WrappedType;
+        *self = Self::new_sentinel();
+        if ptr == SENTINEL_PTR {
             None
         } else {
             Some(ptr)
         }
-    }
-    /// Safety: this `NonNullConst` must have been created with
-    /// `new_from_rc` or `new_sentinel`
-    #[inline]
-    pub unsafe fn into_assume_rc(&mut self) -> Option<Rc<T>> {
-        self.into_raw().map(|ptr| Rc::from_raw(ptr))
-    }
-    /// Safety: this `NonNullConst` must have been created with
-    /// `new_from_arc` or `new_sentinel`
-    #[inline]
-    pub unsafe fn into_assume_arc(&mut self) -> Option<Arc<T>> {
-        self.into_raw().map(|ptr| Arc::from_raw(ptr))
     }
 }
 
 /// An `Option<Rc>` with a niche, using a sentinel pointer for `None`.
 #[derive(Debug)]
 #[repr(transparent)]
-pub(crate) struct OptionRcBytes(NonNullConst<WrappedType>);
+pub(crate) struct OptionRcBytes(NonNullWrappedPtr);
 
 impl OptionRcBytes {
     pub const fn new_none() -> Self {
-        Self(NonNullConst::new_sentinel())
+        Self(NonNullWrappedPtr::new_sentinel())
     }
     pub fn new(boxed: Box<[u8]>) -> Self {
-        Self::from_rc(Rc::new(Some(boxed)))
+        Self::from_rc(Rc::new(boxed))
     }
     pub fn from_rc(rc: Rc<WrappedType>) -> Self {
-        Self(NonNullConst::new_from_rc(rc))
+        Self(NonNullWrappedPtr::new_from_rc(rc))
     }
-    pub fn into_rc(mut self) -> Option<Rc<WrappedType>> {
+    pub fn take_rc(&mut self) -> Option<Rc<WrappedType>> {
         // Safety: this was created from `new_from_rc` or `new_sentinel`
-        unsafe { self.0.into_assume_rc() }
+        unsafe { self.0.take_assume_rc() }
     }
-    pub fn as_rc(&self) -> Option<&Rc<WrappedType>> {
+    pub fn as_bytes(&self) -> Option<&WrappedType> {
         todo!()
     }
 }
 
 impl Drop for OptionRcBytes {
     fn drop(&mut self) {
-        let old_self = core::mem::replace(self, Self::new_none());
-        old_self.into_rc();
+        self.take_rc();
     }
 }
 
@@ -103,22 +109,22 @@ unsafe impl CloneableCart for OptionRcBytes {}
 /// An `Option<Arc>` with a niche, using a sentinel pointer for `None`.
 #[derive(Debug)]
 #[repr(transparent)]
-pub(crate) struct OptionArcBytes(NonNullConst<WrappedType>);
+pub(crate) struct OptionArcBytes(NonNullWrappedPtr);
 
 impl OptionArcBytes {
     pub const fn new_none() -> Self {
         // Safety: SENTINEL is not zero
-        Self(NonNullConst::new_sentinel())
+        Self(NonNullWrappedPtr::new_sentinel())
     }
     pub fn new(boxed: Box<[u8]>) -> Self {
-        Self::from_rc(Arc::new(Some(boxed)))
+        Self::from_rc(Arc::new(boxed))
     }
     pub fn from_rc(rc: Arc<WrappedType>) -> Self {
-        Self(NonNullConst::new_from_arc(rc))
+        Self(NonNullWrappedPtr::new_from_arc(rc))
     }
-    pub fn into_rc(mut self) -> Option<Arc<WrappedType>> {
+    pub fn take_rc(&mut self) -> Option<Rc<WrappedType>> {
         // Safety: this was created from `new_from_arc` or `new_sentinel`
-        unsafe { self.0.into_assume_arc() }
+        unsafe { self.0.take_assume_arc() }
     }
     pub fn as_rc(&self) -> Option<&Arc<WrappedType>> {
         todo!()
@@ -139,3 +145,10 @@ impl Clone for OptionArcBytes {
 }
 
 unsafe impl CloneableCart for OptionArcBytes {}
+
+unsafe impl Send for OptionArcBytes {}
+
+unsafe impl Sync for OptionArcBytes {}
+
+// unsafe impl<T: ?Sized + Sync + Send> Send for Arc<T, A> {}
+// unsafe impl<T: ?Sized + Sync + Send> Sync for Arc<T, A> {}
