@@ -58,7 +58,10 @@ pub mod ffi {
             )?)))
         }
 
-        /// Segments a (potentially ill-formed) UTF-8 string.
+        /// Segments a string.
+        ///
+        /// Ill-formed input is treated as if errors had been replaced with REPLACEMENT CHARACTERs according
+        /// to the WHATWG Encoding Standard.
         #[diplomat::rust_link(
             icu::segmenter::GraphemeClusterSegmenter::segment_str,
             FnInStruct,
@@ -75,7 +78,10 @@ pub mod ffi {
             ))
         }
 
-        /// Segments a UTF-16 string.
+        /// Segments a string.
+        ///
+        /// Ill-formed input is treated as if errors had been replaced with REPLACEMENT CHARACTERs according
+        /// to the WHATWG Encoding Standard.
         #[diplomat::rust_link(icu::segmenter::GraphemeClusterSegmenter::segment_utf16, FnInStruct)]
         #[diplomat::attr(dart, rename = "segment")]
         pub fn segment_utf16<'a>(

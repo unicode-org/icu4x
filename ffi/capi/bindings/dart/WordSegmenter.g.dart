@@ -80,7 +80,10 @@ final class WordSegmenter implements ffi.Finalizable {
     _capi<ffi.NativeFunction<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>>('ICU4XWordSegmenter_create_dictionary')
       .asFunction<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
 
-  /// Segments a UTF-16 string.
+  /// Segments a string.
+  ///
+  /// Ill-formed input is treated as if errors had been replaced with REPLACEMENT CHARACTERs according
+  /// to the WHATWG Encoding Standard.
   ///
   /// See the [Rust documentation for `segment_utf16`](https://docs.rs/icu/latest/icu/segmenter/struct.WordSegmenter.html#method.segment_utf16) for more information.
   WordBreakIteratorUtf16 segment(String input) {

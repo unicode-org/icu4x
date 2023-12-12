@@ -131,7 +131,10 @@ final class LineSegmenter implements ffi.Finalizable {
     _capi<ffi.NativeFunction<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>, _LineBreakOptionsV1Ffi)>>('ICU4XLineSegmenter_create_dictionary_with_options_v1')
       .asFunction<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>, _LineBreakOptionsV1Ffi)>(isLeaf: true);
 
-  /// Segments a UTF-16 string.
+  /// Segments a string.
+  ///
+  /// Ill-formed input is treated as if errors had been replaced with REPLACEMENT CHARACTERs according
+  /// to the WHATWG Encoding Standard.
   ///
   /// See the [Rust documentation for `segment_utf16`](https://docs.rs/icu/latest/icu/segmenter/struct.LineSegmenter.html#method.segment_utf16) for more information.
   LineBreakIteratorUtf16 segment(String input) {

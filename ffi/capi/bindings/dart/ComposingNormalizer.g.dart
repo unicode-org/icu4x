@@ -51,9 +51,10 @@ final class ComposingNormalizer implements ffi.Finalizable {
     _capi<ffi.NativeFunction<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>>('ICU4XComposingNormalizer_create_nfkc')
       .asFunction<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
 
-  /// Normalize a (potentially ill-formed) UTF8 string
+  /// Normalize a string
   ///
-  /// Errors are mapped to REPLACEMENT CHARACTER
+  /// Ill-formed input is treated as if errors had been replaced with REPLACEMENT CHARACTERs according
+  /// to the WHATWG Encoding Standard.
   ///
   /// See the [Rust documentation for `normalize_utf8`](https://docs.rs/icu/latest/icu/normalizer/struct.ComposingNormalizer.html#method.normalize_utf8) for more information.
   ///
@@ -75,9 +76,10 @@ final class ComposingNormalizer implements ffi.Finalizable {
     _capi<ffi.NativeFunction<_ResultVoidInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Uint8>, ffi.Size, ffi.Pointer<ffi.Opaque>)>>('ICU4XComposingNormalizer_normalize')
       .asFunction<_ResultVoidInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Uint8>, int, ffi.Pointer<ffi.Opaque>)>(isLeaf: true);
 
-  /// Check if a (potentially ill-formed) UTF8 string is normalized
+  /// Check if a string is normalized
   ///
-  /// Errors are mapped to REPLACEMENT CHARACTER
+  /// Ill-formed input is treated as if errors had been replaced with REPLACEMENT CHARACTERs according
+  /// to the WHATWG Encoding Standard.
   ///
   /// See the [Rust documentation for `is_normalized_utf8`](https://docs.rs/icu/latest/icu/normalizer/struct.ComposingNormalizer.html#method.is_normalized_utf8) for more information.
   bool isNormalized(String s) {

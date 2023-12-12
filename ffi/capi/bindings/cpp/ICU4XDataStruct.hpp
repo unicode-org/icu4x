@@ -34,7 +34,8 @@ class ICU4XDataStruct {
   /**
    * Construct a new DecimalSymbolsV1 data struct.
    * 
-   * C++ users: All string arguments must be valid UTF8
+   * Ill-formed input is treated as if errors had been replaced with REPLACEMENT CHARACTERs according
+   * to the WHATWG Encoding Standard.
    * 
    * See the [Rust documentation for `DecimalSymbolsV1`](https://docs.rs/icu/latest/icu/decimal/provider/struct.DecimalSymbolsV1.html) for more information.
    */
