@@ -62,6 +62,7 @@ use icu_provider_blob::BlobDataProvider;
 // Just below the imports (fill in the path):
 const CCP_BLOB_PATH: &str = "<absolute path to ccp.blob>";
 
+// In the main() function:
 let datetime_formatter = if locale == locale!("ccp") {
     println!("Using buffer provider");
 
