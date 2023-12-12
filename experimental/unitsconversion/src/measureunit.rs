@@ -17,15 +17,15 @@ use crate::{
 /// A parser for the CLDR unit identifier (e.g. `meter-per-square-second`)
 pub struct MeasureUnitParser<'data> {
     /// Contains the payload.
-    zerotrie_payload: &'data ZeroTrie<ZeroVec<'data, u8>>,
+    payload: &'data ZeroTrie<ZeroVec<'data, u8>>,
 }
 
 impl<'data> MeasureUnitParser<'data> {
     // TODO: revisit the public nature of the API. Maybe we should make it private and add a function to create it from a ConverterFactory.
     /// Creates a new MeasureUnitParser from a ZeroTrie payload.
     #[cfg(feature = "datagen")]
-    pub fn from_payload(zerotrie_payload: &'data ZeroTrie<ZeroVec<'data, u8>>) -> Self {
-        Self { zerotrie_payload }
+    pub fn from_payload(payload: &'data ZeroTrie<ZeroVec<'data, u8>>) -> Self {
+        Self { payload }
     }
 
     // TODO: complete all the cases for the prefixes.
@@ -71,7 +71,7 @@ impl<'data> MeasureUnitParser<'data> {
     ///    if the unit id is found, the function will return (unit id, part without the unit id and without `-` at the beginning of the remaining part if it exists).
     ///    if the unit id is not found, the function will return None.
     fn get_unit_id(&self, part: &'data str) -> Option<usize> {
-        self.zerotrie_payload.get(part.as_bytes())
+        self.payload.get(part.as_bytes())
     }
 
     /// Process a part of an identifier.
