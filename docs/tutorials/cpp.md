@@ -105,7 +105,7 @@ C++ versions beyond C++17 are supported, as are other C++ compilers.
 
 ## Embedded platforms (`no_std`)
 
-Users wishing to use ICU4X on a `no_std` platform will need to write their own crate depending on `icu_capi` that fills in an allocator and a panic hook, similar to what we do in our [example](https://github.com/unicode-org/icu4x/blob/main/ffi/capi/tests/tinyc/fixeddecimal/icu_capi_staticlib_tiny/src/lib.rs):
+Users wishing to use ICU4X on a `no_std` platform will need to write their own crate depending on `icu_capi` that fills in an allocator and a panic hook, similar to what we do in our [example](c-tiny/fixeddecimal/crate/src/lib.rs):
 
 ```rust
 #![no_std]
@@ -139,10 +139,4 @@ These bindings may be customized by running `diplomat-tool` directly (including 
 
  [discussions forum]: https://github.com/unicode-org/icu4x/discussions
  [Diplomat]: https://github.com/rust-diplomat/diplomat
- [staticlib-crates]: https://crates.io/crates/icu_capi_staticlib
- [staticlib-source]: https://github.com/unicode-org/icu4x/tree/main/ffi/capi_staticlib
- [freertos port]: https://github.com/unicode-org/icu4x/blob/main/ffi/freertos/src/lib.rs
- [`ffi/capi/bindings/cpp`]: https://github.com/unicode-org/icu4x/tree/main/ffi/capi/bindings/cpp
- [`tests/tinycpp/docs`]: https://github.com/unicode-org/icu4x/tree/main/tests/tinycpp/docs
- [rust-docs]: https://docs.rs/icu_capi/latest/icu_capi/
  [cargo-profiles]: https://doc.rust-lang.org/cargo/reference/profiles.html
