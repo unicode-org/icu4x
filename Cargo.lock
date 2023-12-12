@@ -1736,10 +1736,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "icu_icu_unitsconversion_data"
-version = "1.4.0"
-
-[[package]]
 name = "icu_list"
 version = "1.4.0"
 dependencies = [
