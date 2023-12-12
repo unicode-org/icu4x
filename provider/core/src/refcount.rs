@@ -10,6 +10,7 @@ use alloc::sync::Arc;
 use alloc::{string::String, rc::Rc};
 use alloc::boxed::Box;
 use stable_deref_trait::{StableDeref, CloneStableDeref};
+use yoke::CloneableCart;
 
 type WrappedType = Option<Box<[u8]>>;
 
@@ -97,9 +98,7 @@ impl Clone for OptionRcBytes {
     }
 }
 
-// unsafe impl StableDeref for OptionRcBytes {}
-
-// unsafe impl CloneStableDeref for OptionRcBytes {}
+unsafe impl CloneableCart for OptionRcBytes {}
 
 /// An `Option<Arc>` with a niche, using a sentinel pointer for `None`.
 #[derive(Debug)]
@@ -139,6 +138,4 @@ impl Clone for OptionArcBytes {
     }
 }
 
-// unsafe impl StableDeref for OptionArcBytes {}
-
-// unsafe impl CloneStableDeref for OptionArcBytes {}
+unsafe impl CloneableCart for OptionArcBytes {}
