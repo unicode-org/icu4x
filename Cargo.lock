@@ -1562,6 +1562,7 @@ dependencies = [
  "icu_compactdecimal",
  "icu_datetime",
  "icu_decimal",
+ "icu_dimension",
  "icu_displaynames",
  "icu_list",
  "icu_locid",
@@ -1575,7 +1576,6 @@ dependencies = [
  "icu_provider_fs",
  "icu_relativetime",
  "icu_segmenter",
- "icu_singlenumberformatter",
  "icu_timezone",
  "icu_transliterate",
  "icu_unitsconversion",
@@ -1667,6 +1667,19 @@ version = "1.4.0"
 [[package]]
 name = "icu_depcheck"
 version = "0.1.0"
+
+[[package]]
+name = "icu_dimension"
+version = "0.0.0"
+dependencies = [
+ "databake",
+ "displaydoc",
+ "icu_locid",
+ "icu_provider",
+ "serde",
+ "tinystr",
+ "zerovec",
+]
 
 [[package]]
 name = "icu_displaynames"
@@ -2010,19 +2023,6 @@ dependencies = [
 [[package]]
 name = "icu_segmenter_data"
 version = "1.4.0"
-
-[[package]]
-name = "icu_singlenumberformatter"
-version = "0.0.0"
-dependencies = [
- "databake",
- "displaydoc",
- "icu_locid",
- "icu_provider",
- "serde",
- "tinystr",
- "zerovec",
-]
 
 [[package]]
 name = "icu_testdata_scripts"

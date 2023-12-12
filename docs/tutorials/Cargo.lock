@@ -3059,10 +3059,6 @@ name = "icu_personnames"
 version = "0.0.0"
 
 [[patch.unused]]
-name = "icu_singlenumberformatter"
-version = "0.0.0"
-
-[[patch.unused]]
 name = "icu_unitsconversion"
 version = "0.0.0"
 

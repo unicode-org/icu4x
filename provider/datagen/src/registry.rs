@@ -156,7 +156,7 @@ macro_rules! registry {
 // If `#[cfg(test)]` becomes empty, replace it with `no_cfg_test,`
 registry!(
     #[cfg(test)]
-    icu_singlenumberformatter::provider::CurrencyEssentialsV1Marker = "currency/essentials@1",
+    icu_dimension::provider::CurrencyEssentialsV1Marker = "currency/essentials@1",
     icu_unitsconversion::provider::UnitsInfoV1Marker = "units/info@1",
     #[cfg(any(all(), feature = "icu_calendar"))]
     icu_calendar::provider::JapaneseErasV1Marker = "calendar/japanese@1",
