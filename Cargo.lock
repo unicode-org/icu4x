@@ -1890,7 +1890,6 @@ dependencies = [
  "icu_provider_adapters",
  "icu_provider_macros",
  "log",
- "once_cell",
  "postcard",
  "serde",
  "serde_json",

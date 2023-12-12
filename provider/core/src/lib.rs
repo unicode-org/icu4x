@@ -138,6 +138,7 @@ mod error;
 #[doc(hidden)]
 pub mod fallback;
 mod key;
+mod refcount;
 mod request;
 mod response;
 
