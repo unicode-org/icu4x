@@ -5,7 +5,7 @@
 [workspace]
 resolver = "2"
 members = [
-    # KEEP IN SYNC WITH workspace.dependencies and docs/tutorials/testing/patch.toml
+    # KEEP IN SYNC WITH workspace.dependencies and docs/tutorials/.cargo/config.toml
 
     # Components
     "components/calendar",
@@ -137,7 +137,7 @@ include = [
 ]
 
 [workspace.dependencies]
-# KEEP IN SYNC WITH workspace.members and docs/tutorials/testing/patch.toml
+# KEEP IN SYNC WITH workspace.members and docs/tutorials/.cargo/config.toml
 
 # Components
 icu = { version = "~1.4.0", path = "components/icu", default-features = false }
