@@ -3,7 +3,7 @@
 ## Unreleased
 
 - Components
-  - `icu_provider`
+  - `icu_properties`
     - Add `Aran` script code (https://github.com/unicode-org/icu4x/pull/4426)
 - FFI:
     - All languages
