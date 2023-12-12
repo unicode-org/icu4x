@@ -39,9 +39,10 @@ pub mod ffi {
             )?)))
         }
 
-        /// Normalize a (potentially ill-formed) UTF8 string
+        /// Normalize a string
         ///
-        /// Errors are mapped to REPLACEMENT CHARACTER
+        /// Ill-formed input is treated as if errors had been replaced with REPLACEMENT CHARACTERs according
+        /// to the WHATWG Encoding Standard.
         #[diplomat::rust_link(icu::normalizer::ComposingNormalizer::normalize_utf8, FnInStruct)]
         #[diplomat::rust_link(icu::normalizer::ComposingNormalizer::normalize, FnInStruct, hidden)]
         #[diplomat::rust_link(
@@ -63,9 +64,10 @@ pub mod ffi {
             Ok(())
         }
 
-        /// Check if a (potentially ill-formed) UTF8 string is normalized
+        /// Check if a string is normalized
         ///
-        /// Errors are mapped to REPLACEMENT CHARACTER
+        /// Ill-formed input is treated as if errors had been replaced with REPLACEMENT CHARACTERs according
+        /// to the WHATWG Encoding Standard.
         #[diplomat::rust_link(icu::normalizer::ComposingNormalizer::is_normalized_utf8, FnInStruct)]
         #[diplomat::rust_link(
             icu::normalizer::ComposingNormalizer::is_normalized,
@@ -108,9 +110,10 @@ pub mod ffi {
             )?)))
         }
 
-        /// Normalize a (potentially ill-formed) UTF8 string
+        /// Normalize a string
         ///
-        /// Errors are mapped to REPLACEMENT CHARACTER
+        /// Ill-formed input is treated as if errors had been replaced with REPLACEMENT CHARACTERs according
+        /// to the WHATWG Encoding Standard.
         #[diplomat::rust_link(icu::normalizer::DecomposingNormalizer::normalize_utf8, FnInStruct)]
         #[diplomat::rust_link(
             icu::normalizer::DecomposingNormalizer::normalize,
@@ -136,9 +139,10 @@ pub mod ffi {
             Ok(())
         }
 
-        /// Check if a (potentially ill-formed) UTF8 string is normalized
+        /// Check if a string is normalized
         ///
-        /// Errors are mapped to REPLACEMENT CHARACTER
+        /// Ill-formed input is treated as if errors had been replaced with REPLACEMENT CHARACTERs according
+        /// to the WHATWG Encoding Standard.
         #[diplomat::rust_link(
             icu::normalizer::DecomposingNormalizer::is_normalized_utf8,
             FnInStruct
