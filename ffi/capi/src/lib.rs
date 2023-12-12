@@ -42,7 +42,6 @@
 //! [TypeScript]: https://unicode-org.github.io/icu4x/tsdoc
 //! [C++]: https://unicode-org.github.io/icu4x/cppdoc
 
-
 // Renamed so you can't accidentally use it
 #[cfg(target_arch = "wasm32")]
 extern crate std as rust_std;
