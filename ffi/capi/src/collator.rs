@@ -104,10 +104,9 @@ pub mod ffi {
             )?)))
         }
 
-        /// Compare potentially ill-formed UTF-8 strings.
+        /// Compare two strings.
         ///
-        /// Ill-formed input is compared
-        /// as if errors had been replaced with REPLACEMENT CHARACTERs according
+        /// Ill-formed input is treated as if errors had been replaced with REPLACEMENT CHARACTERs according
         /// to the WHATWG Encoding Standard.
         #[diplomat::rust_link(icu::collator::Collator::compare_utf8, FnInStruct)]
         #[diplomat::attr(dart, disable)]
@@ -115,22 +114,17 @@ pub mod ffi {
             self.0.compare_utf8(left, right).into()
         }
 
-        /// Compare guaranteed well-formed UTF-8 strings.
-        ///
-        /// Note: In C++, passing ill-formed UTF-8 strings is undefined behavior
-        /// (and may be memory-unsafe to do so, too).
+        /// Compare two strings.
         #[diplomat::rust_link(icu::collator::Collator::compare, FnInStruct)]
         #[diplomat::attr(dart, disable)]
-        pub fn compare_valid_utf8(&self, left: &DiplomatStr, right: &DiplomatStr) -> ICU4XOrdering {
-            self.0
-                .compare(unsafe { core::str::from_utf8_unchecked(left) }, unsafe {
-                    core::str::from_utf8_unchecked(right)
-                })
-                .into()
+        pub fn compare_valid_utf8(&self, left: &str, right: &str) -> ICU4XOrdering {
+            self.0.compare(left, right).into()
         }
 
-        /// Compare potentially ill-formed UTF-16 strings, with unpaired surrogates
-        /// compared as REPLACEMENT CHARACTER.
+        /// Compare two strings.
+        ///
+        /// Ill-formed input is treated as if errors had been replaced with REPLACEMENT CHARACTERs according
+        /// to the WHATWG Encoding Standard.
         #[diplomat::rust_link(icu::collator::Collator::compare_utf16, FnInStruct)]
         #[diplomat::attr(dart, rename = "compare")]
         pub fn compare_utf16(&self, left: &DiplomatStr16, right: &DiplomatStr16) -> ICU4XOrdering {
