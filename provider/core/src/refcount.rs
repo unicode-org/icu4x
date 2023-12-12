@@ -13,8 +13,8 @@ use stable_deref_trait::{StableDeref, CloneStableDeref};
 
 type WrappedType = Option<Box<[u8]>>;
 
-// TODO: Const or static?
-const NONE_VALUE: WrappedType = None;
+// Safe as a sentinel because 0x1 is not a valid usize address
+const SENTINEL: *const WrappedType = 1usize as *const WrappedType;
 
 /// A thin wrapper over [`NonNull`] that works with `*const T`
 #[derive(Debug)]
@@ -23,10 +23,9 @@ pub(crate) struct NonNullConst<T>(NonNull<T>);
 
 impl<T> NonNullConst<T> {
     #[inline]
-    pub const fn new_from_reference(reference: &T) -> Self {
-        // Safety: references are non-null
-        // Note: There is `From<&T> for NonNull<T>` but it isn't const
-        Self(unsafe { NonNull::new_unchecked(reference as *const T as *mut T) })
+    pub const fn new_sentinel() -> Self {
+        // Safety: `SENTINEL` is non-null
+        Self(unsafe { NonNull::new_unchecked(SENTINEL as *mut T) })
     }
     #[inline]
     pub fn new_from_rc(rc: Rc<T>) -> Self {
@@ -39,8 +38,25 @@ impl<T> NonNullConst<T> {
         Self(unsafe { NonNull::new_unchecked(Arc::into_raw(rc) as *mut T) })
     }
     #[inline]
-    pub const fn as_ptr(&self) -> *const T {
-        self.0.as_ptr().cast_const()
+    fn into_raw(&mut self) -> Option<*const T> {
+        let ptr = self.0.as_ptr() as *const T;
+        if ptr == SENTINEL as *const T {
+            None
+        } else {
+            Some(ptr)
+        }
+    }
+    /// Safety: this `NonNullConst` must have been created with
+    /// `new_from_rc` or `new_sentinel`
+    #[inline]
+    pub unsafe fn into_assume_rc(&mut self) -> Option<Rc<T>> {
+        self.into_raw().map(|ptr| Rc::from_raw(ptr))
+    }
+    /// Safety: this `NonNullConst` must have been created with
+    /// `new_from_arc` or `new_sentinel`
+    #[inline]
+    pub unsafe fn into_assume_arc(&mut self) -> Option<Arc<T>> {
+        self.into_raw().map(|ptr| Arc::from_raw(ptr))
     }
 }
 
@@ -51,7 +67,7 @@ pub(crate) struct OptionRcBytes(NonNullConst<WrappedType>);
 
 impl OptionRcBytes {
     pub const fn new_none() -> Self {
-        Self(NonNullConst::new_from_reference(&NONE_VALUE))
+        Self(NonNullConst::new_sentinel())
     }
     pub fn new(boxed: Box<[u8]>) -> Self {
         Self::from_rc(Rc::new(Some(boxed)))
@@ -59,16 +75,9 @@ impl OptionRcBytes {
     pub fn from_rc(rc: Rc<WrappedType>) -> Self {
         Self(NonNullConst::new_from_rc(rc))
     }
-    pub fn into_rc(self) -> Option<Rc<WrappedType>> {
-        if self.0.as_ptr() == &NONE_VALUE {
-            None
-        } else {
-            // Safety: this type has only 2 constructors. One of them saves
-            // a sentinel pointer, and the other was created from an Rc.
-            // We already checked for the sentinel, so this must be an Rc.
-            let rc = unsafe { Rc::from_raw(self.0.as_ptr()) };
-            Some(rc)
-        }
+    pub fn into_rc(mut self) -> Option<Rc<WrappedType>> {
+        // Safety: this was created from `new_from_rc` or `new_sentinel`
+        unsafe { self.0.into_assume_rc() }
     }
     pub fn as_rc(&self) -> Option<&Rc<WrappedType>> {
         todo!()
@@ -99,7 +108,8 @@ pub(crate) struct OptionArcBytes(NonNullConst<WrappedType>);
 
 impl OptionArcBytes {
     pub const fn new_none() -> Self {
-        Self(NonNullConst::new_from_reference(&NONE_VALUE))
+        // Safety: SENTINEL is not zero
+        Self(NonNullConst::new_sentinel())
     }
     pub fn new(boxed: Box<[u8]>) -> Self {
         Self::from_rc(Arc::new(Some(boxed)))
@@ -107,16 +117,9 @@ impl OptionArcBytes {
     pub fn from_rc(rc: Arc<WrappedType>) -> Self {
         Self(NonNullConst::new_from_arc(rc))
     }
-    pub fn into_rc(self) -> Option<Arc<WrappedType>> {
-        if self.0.as_ptr() == &NONE_VALUE {
-            None
-        } else {
-            // Safety: this type has only 2 constructors. One of them saves
-            // a sentinel pointer, and the other was created from an Rc.
-            // We already checked for the sentinel, so this must be an Rc.
-            let rc = unsafe { Arc::from_raw(self.0.as_ptr()) };
-            Some(rc)
-        }
+    pub fn into_rc(mut self) -> Option<Arc<WrappedType>> {
+        // Safety: this was created from `new_from_arc` or `new_sentinel`
+        unsafe { self.0.into_assume_arc() }
     }
     pub fn as_rc(&self) -> Option<&Arc<WrappedType>> {
         todo!()
