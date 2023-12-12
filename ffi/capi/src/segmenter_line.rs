@@ -157,7 +157,10 @@ pub mod ffi {
             )?)))
         }
 
-        /// Segments a (potentially ill-formed) UTF-8 string.
+        /// Segments a string.
+        ///
+        /// Ill-formed input is treated as if errors had been replaced with REPLACEMENT CHARACTERs according
+        /// to the WHATWG Encoding Standard.
         #[diplomat::rust_link(icu::segmenter::LineSegmenter::segment_utf8, FnInStruct)]
         #[diplomat::rust_link(icu::segmenter::LineSegmenter::segment_str, FnInStruct, hidden)]
         #[diplomat::attr(dart, disable)]
@@ -168,7 +171,10 @@ pub mod ffi {
             Box::new(ICU4XLineBreakIteratorUtf8(self.0.segment_utf8(input)))
         }
 
-        /// Segments a UTF-16 string.
+        /// Segments a string.
+        ///
+        /// Ill-formed input is treated as if errors had been replaced with REPLACEMENT CHARACTERs according
+        /// to the WHATWG Encoding Standard.
         #[diplomat::rust_link(icu::segmenter::LineSegmenter::segment_utf16, FnInStruct)]
         #[diplomat::attr(dart, rename = "segment")]
         pub fn segment_utf16<'a>(

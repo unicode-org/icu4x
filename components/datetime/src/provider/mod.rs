@@ -221,65 +221,65 @@ pub const KEYS: &[DataKey] = &[
     #[cfg(feature = "experimental")]
     calendar::DateSkeletonPatternsV1Marker::KEY,
     #[cfg(feature = "experimental")]
-    neo::WeekdaySymbolsV1Marker::KEY,
+    neo::WeekdayNamesV1Marker::KEY,
     #[cfg(feature = "experimental")]
-    neo::DayPeriodSymbolsV1Marker::KEY,
+    neo::DayPeriodNamesV1Marker::KEY,
     #[cfg(feature = "experimental")]
     neo::DateTimePatternV1Marker::KEY,
     #[cfg(feature = "experimental")]
     neo::TimePatternV1Marker::KEY,
     #[cfg(feature = "experimental")]
-    neo::BuddhistYearSymbolsV1Marker::KEY,
+    neo::BuddhistYearNamesV1Marker::KEY,
     #[cfg(feature = "experimental")]
-    neo::ChineseYearSymbolsV1Marker::KEY,
+    neo::ChineseYearNamesV1Marker::KEY,
     #[cfg(feature = "experimental")]
-    neo::CopticYearSymbolsV1Marker::KEY,
+    neo::CopticYearNamesV1Marker::KEY,
     #[cfg(feature = "experimental")]
-    neo::DangiYearSymbolsV1Marker::KEY,
+    neo::DangiYearNamesV1Marker::KEY,
     #[cfg(feature = "experimental")]
-    neo::EthiopianYearSymbolsV1Marker::KEY,
+    neo::EthiopianYearNamesV1Marker::KEY,
     #[cfg(feature = "experimental")]
-    neo::GregorianYearSymbolsV1Marker::KEY,
+    neo::GregorianYearNamesV1Marker::KEY,
     #[cfg(feature = "experimental")]
-    neo::HebrewYearSymbolsV1Marker::KEY,
+    neo::HebrewYearNamesV1Marker::KEY,
     #[cfg(feature = "experimental")]
-    neo::IndianYearSymbolsV1Marker::KEY,
+    neo::IndianYearNamesV1Marker::KEY,
     #[cfg(feature = "experimental")]
-    neo::IslamicYearSymbolsV1Marker::KEY,
+    neo::IslamicYearNamesV1Marker::KEY,
     #[cfg(feature = "experimental")]
-    neo::JapaneseYearSymbolsV1Marker::KEY,
+    neo::JapaneseYearNamesV1Marker::KEY,
     #[cfg(feature = "experimental")]
-    neo::JapaneseExtendedYearSymbolsV1Marker::KEY,
+    neo::JapaneseExtendedYearNamesV1Marker::KEY,
     #[cfg(feature = "experimental")]
-    neo::PersianYearSymbolsV1Marker::KEY,
+    neo::PersianYearNamesV1Marker::KEY,
     #[cfg(feature = "experimental")]
-    neo::RocYearSymbolsV1Marker::KEY,
+    neo::RocYearNamesV1Marker::KEY,
     #[cfg(feature = "experimental")]
-    neo::BuddhistMonthSymbolsV1Marker::KEY,
+    neo::BuddhistMonthNamesV1Marker::KEY,
     #[cfg(feature = "experimental")]
-    neo::ChineseMonthSymbolsV1Marker::KEY,
+    neo::ChineseMonthNamesV1Marker::KEY,
     #[cfg(feature = "experimental")]
-    neo::CopticMonthSymbolsV1Marker::KEY,
+    neo::CopticMonthNamesV1Marker::KEY,
     #[cfg(feature = "experimental")]
-    neo::DangiMonthSymbolsV1Marker::KEY,
+    neo::DangiMonthNamesV1Marker::KEY,
     #[cfg(feature = "experimental")]
-    neo::EthiopianMonthSymbolsV1Marker::KEY,
+    neo::EthiopianMonthNamesV1Marker::KEY,
     #[cfg(feature = "experimental")]
-    neo::GregorianMonthSymbolsV1Marker::KEY,
+    neo::GregorianMonthNamesV1Marker::KEY,
     #[cfg(feature = "experimental")]
-    neo::HebrewMonthSymbolsV1Marker::KEY,
+    neo::HebrewMonthNamesV1Marker::KEY,
     #[cfg(feature = "experimental")]
-    neo::IndianMonthSymbolsV1Marker::KEY,
+    neo::IndianMonthNamesV1Marker::KEY,
     #[cfg(feature = "experimental")]
-    neo::IslamicMonthSymbolsV1Marker::KEY,
+    neo::IslamicMonthNamesV1Marker::KEY,
     #[cfg(feature = "experimental")]
-    neo::JapaneseMonthSymbolsV1Marker::KEY,
+    neo::JapaneseMonthNamesV1Marker::KEY,
     #[cfg(feature = "experimental")]
-    neo::JapaneseExtendedMonthSymbolsV1Marker::KEY,
+    neo::JapaneseExtendedMonthNamesV1Marker::KEY,
     #[cfg(feature = "experimental")]
-    neo::PersianMonthSymbolsV1Marker::KEY,
+    neo::PersianMonthNamesV1Marker::KEY,
     #[cfg(feature = "experimental")]
-    neo::RocMonthSymbolsV1Marker::KEY,
+    neo::RocMonthNamesV1Marker::KEY,
     #[cfg(feature = "experimental")]
     neo::BuddhistDatePatternV1Marker::KEY,
     #[cfg(feature = "experimental")]

@@ -84,25 +84,24 @@ pub const KEYS: &[DataKey] = &[
 )]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 pub struct RuleBreakDataV1<'data> {
-    /// Property table for rule-based breaking.
+    /// Property table.
     #[cfg_attr(feature = "serde", serde(borrow))]
-    pub property_table: RuleBreakPropertyTable<'data>,
+    pub property_table: CodePointTrie<'data, u8>,
 
-    /// Break state table for rule-based breaking.
+    /// Break state table.
     #[cfg_attr(feature = "serde", serde(borrow))]
-    pub break_state_table: RuleBreakStateTable<'data>,
+    pub break_state_table: ZeroVec<'data, BreakState>,
 
-    /// Rule status table for rule-based breaking.
-    #[cfg_attr(feature = "serde", serde(borrow))]
-    pub rule_status_table: RuleStatusTable<'data>,
+    /// Word type table. Only used for word segmenter.
+    #[cfg_attr(feature = "serde", serde(borrow, rename = "rule_status_table"))]
+    pub word_type_table: ZeroVec<'data, WordType>,
 
     /// Number of properties; should be the square root of the length of [`Self::break_state_table`].
     pub property_count: u8,
 
     /// The index of the last simple state for [`Self::break_state_table`]. (A simple state has no
     /// `left` nor `right` in SegmenterProperty).
-    // This should *really* be u8, because it's the length of something
-    pub last_codepoint_property: i8,
+    pub last_codepoint_property: u8,
 
     /// The index of SOT (start of text) state for [`Self::break_state_table`].
     pub sot_property: u8,
@@ -114,60 +113,6 @@ pub struct RuleBreakDataV1<'data> {
     /// [`Self::break_state_table`].
     pub complex_property: u8,
 }
-
-/// Property table for rule-based breaking.
-///
-/// <div class="stab unstable">
-/// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
-/// including in SemVer minor releases. While the serde representation of data structs is guaranteed
-/// to be stable, their Rust representation might not be. Use with caution.
-/// </div>
-#[derive(Debug, PartialEq, Clone, yoke::Yokeable, zerofrom::ZeroFrom)]
-#[cfg_attr(
-    feature = "datagen",
-    derive(serde::Serialize,databake::Bake),
-    databake(path = icu_segmenter::provider),
-)]
-#[cfg_attr(feature = "serde", derive(serde::Deserialize))]
-pub struct RuleBreakPropertyTable<'data>(
-    #[cfg_attr(feature = "serde", serde(borrow))] pub CodePointTrie<'data, u8>,
-);
-
-/// Break state table for rule-based breaking.
-///
-/// <div class="stab unstable">
-/// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
-/// including in SemVer minor releases. While the serde representation of data structs is guaranteed
-/// to be stable, their Rust representation might not be. Use with caution.
-/// </div>
-#[derive(Debug, PartialEq, Clone, yoke::Yokeable, zerofrom::ZeroFrom)]
-#[cfg_attr(
-    feature = "datagen",
-    derive(serde::Serialize,databake::Bake),
-    databake(path = icu_segmenter::provider),
-)]
-#[cfg_attr(feature = "serde", derive(serde::Deserialize))]
-pub struct RuleBreakStateTable<'data>(
-    #[cfg_attr(feature = "serde", serde(borrow))] pub ZeroVec<'data, BreakState>,
-);
-
-/// Rules status data for rule_status and is_word_like of word segmenter.
-///
-/// <div class="stab unstable">
-/// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
-/// including in SemVer minor releases. While the serde representation of data structs is guaranteed
-/// to be stable, their Rust representation might not be. Use with caution.
-/// </div>
-#[derive(Debug, PartialEq, Clone, yoke::Yokeable, zerofrom::ZeroFrom)]
-#[cfg_attr(
-    feature = "datagen",
-    derive(serde::Serialize,databake::Bake),
-    databake(path = icu_segmenter::provider),
-)]
-#[cfg_attr(feature = "serde", derive(serde::Deserialize))]
-pub struct RuleStatusTable<'data>(
-    #[cfg_attr(feature = "serde", serde(borrow))] pub ZeroVec<'data, WordType>,
-);
 
 /// char16trie data for dictionary break
 ///

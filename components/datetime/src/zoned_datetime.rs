@@ -12,6 +12,7 @@ use writeable::Writeable;
 
 use crate::{
     calendar,
+    calendar::CldrCalendar,
     format::zoned_datetime::FormattedZonedDateTime,
     input::{DateTimeInput, TimeZoneInput},
     options::DateTimeFormatterOptions,
@@ -22,7 +23,7 @@ use crate::{
     },
     raw,
     time_zone::TimeZoneFormatterOptions,
-    CldrCalendar, DateTimeError,
+    DateTimeError,
 };
 
 /// The composition of [`TypedDateTimeFormatter`](crate::TypedDateTimeFormatter) and [`TimeZoneFormatter`].

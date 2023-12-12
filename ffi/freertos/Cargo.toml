@@ -9,10 +9,6 @@ license-file = "LICENSE"
 include = [
     "build.rs",
     "src/**/*",
-    "examples/**/*",
-    "benches/**/*",
-    "tests/**/*",
-    "include/**/*",
     "Cargo.toml",
     "LICENSE",
     "README.md"

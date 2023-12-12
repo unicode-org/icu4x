@@ -3,7 +3,6 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 mod fixtures;
-mod helpers;
 
 use criterion::{black_box, criterion_group, criterion_main, Criterion};
 
@@ -12,7 +11,9 @@ use icu_provider::prelude::*;
 fn parser(c: &mut Criterion) {
     use icu_plurals::rules::reference::parse_condition;
 
-    let fixture_data = helpers::get_plurals_data();
+    let fixture_data =
+        serde_json::from_str::<fixtures::PluralsFixture>(include_str!("fixtures/plurals.json"))
+            .expect("Failed to read a fixture");
 
     let mut rules = vec![];
 
