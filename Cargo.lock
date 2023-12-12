@@ -38,21 +38,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "android-tzdata"
-version = "0.1.1"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "e999941b234f3131b00bc13c22d06e8c5ff726d1b6318ac7eb276997bbb4fef0"
-
-[[package]]
-name = "android_system_properties"
-version = "0.1.5"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "819e7219dbd41043ac279b19830f2efc897156490d7fd6ea916720117ee66311"
-dependencies = [
- "libc",
-]
-
-[[package]]
 name = "anes"
 version = "0.1.6"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -374,18 +359,6 @@ name = "cfg-if"
 version = "1.0.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "baf1de4339761588bc0619e3cbc0120ee582ebb74b53b4efbf79117bd2da40fd"
-
-[[package]]
-name = "chrono"
-version = "0.4.31"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "7f2c685bad3eb3d45a01354cedb7d5faa66194d1d58ba6e267a8de788f79db38"
-dependencies = [
- "android-tzdata",
- "iana-time-zone",
- "num-traits",
- "windows-targets 0.48.5",
-]
 
 [[package]]
 name = "ciborium"
@@ -1328,29 +1301,6 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "71a816c97c42258aa5834d07590b718b4c9a598944cd39a52dc25b351185d678"
 
 [[package]]
-name = "iana-time-zone"
-version = "0.1.58"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "8326b86b6cff230b97d0d312a6c40a60726df3332e721f72a1b035f451663b20"
-dependencies = [
- "android_system_properties",
- "core-foundation-sys",
- "iana-time-zone-haiku",
- "js-sys",
- "wasm-bindgen",
- "windows-core",
-]
-
-[[package]]
-name = "iana-time-zone-haiku"
-version = "0.1.2"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "f31827a206f56af32e590ba56d5d2d085f558508192593743f16b2306495269f"
-dependencies = [
- "cc",
-]
-
-[[package]]
 name = "icu"
 version = "1.4.0"
 dependencies = [
@@ -1674,7 +1624,7 @@ dependencies = [
  "icu_provider_adapters",
  "icu_provider_blob",
  "icu_timezone",
- "litemap 0.7.2",
+ "litemap",
  "serde",
  "serde_json",
  "smallvec",
@@ -1817,7 +1767,7 @@ dependencies = [
  "iai",
  "icu",
  "icu_benchmark_macros",
- "litemap 0.7.2",
+ "litemap",
  "postcard",
  "serde",
  "serde_json",
@@ -1891,7 +1841,7 @@ dependencies = [
  "databake",
  "icu_locid",
  "icu_provider",
- "litemap 0.7.2",
+ "litemap",
  "serde",
  "zerovec",
 ]
@@ -2127,7 +2077,7 @@ dependencies = [
  "icu_properties",
  "icu_provider",
  "icu_unicodeset_parse",
- "litemap 0.7.2",
+ "litemap",
  "log",
  "serde",
  "writeable",
@@ -2294,12 +2244,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "litemap"
-version = "0.7.2"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "f9d642685b028806386b2b6e75685faadd3eb65a85fff7df711ce18446a422da"
-
-[[package]]
 name = "lock_api"
 version = "0.4.10"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -2377,7 +2321,7 @@ dependencies = [
  "icu_provider_blob",
  "icu_provider_fs",
  "itertools",
- "litemap 0.7.2 (registry+https://github.com/rust-lang/crates.io-index)",
+ "litemap",
  "lru",
  "serde",
  "serde-aux",
@@ -3172,7 +3116,6 @@ version = "4.2.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "c3dfe1b7eb6f9dcf011bd6fad169cdeaae75eda0d61b1a99a3f015b41b0cae39"
 dependencies = [
- "chrono",
  "serde",
  "serde_json",
 ]
@@ -4244,15 +4187,6 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "712e227841d057c1ee1cd2fb22fa7e5a5461ae8e48fa2ca79ec42cfc1931183f"
 
 [[package]]
-name = "windows-core"
-version = "0.51.1"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "f1f8cf84f35d2db49a46868f947758c7a1138116f7fac3bc844f43ade1292e64"
-dependencies = [
- "windows-targets 0.48.5",
-]
-
-[[package]]
 name = "windows-sys"
 version = "0.33.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -4521,7 +4455,7 @@ dependencies = [
  "displaydoc",
  "icu_benchmark_macros",
  "icu_locid",
- "litemap 0.7.2",
+ "litemap",
  "postcard",
  "rand",
  "rand_pcg",

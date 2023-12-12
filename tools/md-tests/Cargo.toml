@@ -17,13 +17,13 @@ icu_provider_blob = { workspace = true }
 icu_provider_fs = { workspace = true }
 
 databake = { workspace = true, features = ["derive"] }
+litemap = { workspace = true }
 tinystr = { workspace = true, features = ["alloc"] }
 writeable = { workspace = true }
 
 displaydoc = "0.2.3"
 itertools = "0.10"
-litemap = "0.7"
 lru = "0.8.1"
 serde = { version = "1.0", features = ["derive", "alloc", "std"] }
-serde-aux = "4.1.2"
+serde-aux = { version = "4.1.2", default-features = false }
 time = { version = "0.3", features = ["local-offset"] }
