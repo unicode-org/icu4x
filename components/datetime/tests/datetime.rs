@@ -20,7 +20,7 @@ use icu_calendar::{
     islamic::IslamicUmmAlQura,
     japanese::{Japanese, JapaneseExtended},
     persian::Persian,
-    provider::WeekDataV2Marker,
+    provider::WeekDataV1Marker,
     roc::Roc,
     AsCalendar, Calendar, DateTime, Gregorian, Iso,
 };
@@ -440,7 +440,7 @@ fn test_dayperiod_patterns() {
                 .unwrap()
                 .take_payload()
                 .unwrap();
-        let week_data: DataPayload<WeekDataV2Marker> = icu_calendar::provider::Baked
+        let week_data: DataPayload<WeekDataV1Marker> = icu_calendar::provider::Baked
             .load(req)
             .unwrap()
             .take_payload()
@@ -482,7 +482,7 @@ fn test_dayperiod_patterns() {
                             AnyPayloadProvider::from_payload::<TimeLengthsV1Marker>(
                                 time_patterns_data.clone(), //
                             ),
-                            AnyPayloadProvider::from_payload::<WeekDataV2Marker>(
+                            AnyPayloadProvider::from_payload::<WeekDataV1Marker>(
                                 week_data.clone(), //
                             ),
                             AnyPayloadProvider::from_payload::<DecimalSymbolsV1Marker>(
@@ -626,7 +626,7 @@ fn test_time_zone_patterns() {
             .unwrap()
             .take_payload()
             .unwrap();
-        let week_data: DataPayload<WeekDataV2Marker> = icu_calendar::provider::Baked
+        let week_data: DataPayload<WeekDataV1Marker> = icu_calendar::provider::Baked
             .load(req)
             .unwrap()
             .take_payload()
@@ -705,7 +705,7 @@ fn test_time_zone_patterns() {
                     AnyPayloadProvider::from_payload::<TimeLengthsV1Marker>(
                         time_patterns_data.clone(), //
                     ),
-                    AnyPayloadProvider::from_payload::<WeekDataV2Marker>(
+                    AnyPayloadProvider::from_payload::<WeekDataV1Marker>(
                         week_data.clone(), //
                     ),
                     AnyPayloadProvider::from_payload::<DecimalSymbolsV1Marker>(

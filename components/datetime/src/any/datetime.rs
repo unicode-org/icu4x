@@ -8,7 +8,7 @@ use crate::{input::DateTimeInput, DateTimeError, FormattedDateTime};
 use alloc::string::String;
 use icu_calendar::any_calendar::{AnyCalendar, AnyCalendarKind};
 use icu_calendar::provider::{
-    JapaneseErasV1Marker, JapaneseExtendedErasV1Marker, WeekDataV2Marker,
+    JapaneseErasV1Marker, JapaneseExtendedErasV1Marker, WeekDataV1Marker,
 };
 use icu_calendar::{types::Time, DateTime};
 use icu_decimal::provider::DecimalSymbolsV1Marker;
@@ -219,7 +219,7 @@ impl DateTimeFormatter {
             + DataProvider<TimeLengthsV1Marker>
             + DataProvider<crate::provider::calendar::DateSkeletonPatternsV1Marker>
             + DataProvider<OrdinalV1Marker>
-            + DataProvider<WeekDataV2Marker>
+            + DataProvider<WeekDataV1Marker>
             + DataProvider<DecimalSymbolsV1Marker>
             + DataProvider<BuddhistDateLengthsV1Marker>
             + DataProvider<BuddhistDateSymbolsV1Marker>
@@ -361,7 +361,7 @@ impl DateTimeFormatter {
         P: DataProvider<TimeSymbolsV1Marker>
             + DataProvider<TimeLengthsV1Marker>
             + DataProvider<OrdinalV1Marker>
-            + DataProvider<WeekDataV2Marker>
+            + DataProvider<WeekDataV1Marker>
             + DataProvider<DecimalSymbolsV1Marker>
             + DataProvider<BuddhistDateLengthsV1Marker>
             + DataProvider<BuddhistDateSymbolsV1Marker>

@@ -515,7 +515,7 @@ pub struct RequiredData {
     pub date_symbols_data: bool,
     // TimeSymbolsV1 is required.
     pub time_symbols_data: bool,
-    // WeekDataV2 is required.
+    // WeekDataV1 is required.
     pub week_data: bool,
 }
 

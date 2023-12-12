@@ -41,6 +41,7 @@ const _: () = {
     icu_calendar_data::make_provider!(Baked);
     icu_calendar_data::impl_calendar_japanese_v1!(Baked);
     icu_calendar_data::impl_calendar_japanext_v1!(Baked);
+    icu_calendar_data::impl_datetime_week_data_v1!(Baked);
     icu_calendar_data::impl_datetime_week_data_v2!(Baked);
 };
 
@@ -50,6 +51,9 @@ pub const KEYS: &[DataKey] = &[
     JapaneseErasV1Marker::KEY,
     JapaneseExtendedErasV1Marker::KEY,
     WeekDataV2Marker::KEY,
+    // We include the duplicate data for now, as icu_datetime loads it directly
+    // https://github.com/unicode-org/icu4x/pull/4364#discussion_r1419877997
+    WeekDataV1Marker::KEY,
 ];
 
 /// The date at which an era started

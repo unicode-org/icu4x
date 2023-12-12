@@ -13,7 +13,7 @@ use crate::time_zone::TimeZoneFormatterOptions;
 use crate::{DateTimeError, FormattedZonedDateTime};
 use icu_calendar::any_calendar::{AnyCalendar, AnyCalendarKind};
 use icu_calendar::provider::{
-    JapaneseErasV1Marker, JapaneseExtendedErasV1Marker, WeekDataV2Marker,
+    JapaneseErasV1Marker, JapaneseExtendedErasV1Marker, WeekDataV1Marker,
 };
 use icu_calendar::{types::Time, DateTime};
 use icu_decimal::provider::DecimalSymbolsV1Marker;
@@ -223,7 +223,7 @@ impl ZonedDateTimeFormatter {
         P: DataProvider<TimeSymbolsV1Marker>
             + DataProvider<TimeLengthsV1Marker>
             + DataProvider<crate::provider::calendar::DateSkeletonPatternsV1Marker>
-            + DataProvider<WeekDataV2Marker>
+            + DataProvider<WeekDataV1Marker>
             + DataProvider<provider::time_zones::TimeZoneFormatsV1Marker>
             + DataProvider<provider::time_zones::ExemplarCitiesV1Marker>
             + DataProvider<provider::time_zones::MetazoneGenericNamesLongV1Marker>
@@ -375,7 +375,7 @@ impl ZonedDateTimeFormatter {
     where
         P: DataProvider<TimeSymbolsV1Marker>
             + DataProvider<TimeLengthsV1Marker>
-            + DataProvider<WeekDataV2Marker>
+            + DataProvider<WeekDataV1Marker>
             + DataProvider<provider::time_zones::TimeZoneFormatsV1Marker>
             + DataProvider<provider::time_zones::ExemplarCitiesV1Marker>
             + DataProvider<provider::time_zones::MetazoneGenericNamesLongV1Marker>

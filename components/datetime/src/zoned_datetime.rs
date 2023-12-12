@@ -4,7 +4,7 @@
 
 use alloc::string::String;
 use core::marker::PhantomData;
-use icu_calendar::provider::WeekDataV2Marker;
+use icu_calendar::provider::WeekDataV1Marker;
 use icu_decimal::provider::DecimalSymbolsV1Marker;
 use icu_plurals::provider::OrdinalV1Marker;
 use icu_provider::prelude::*;
@@ -171,7 +171,7 @@ impl<C: CldrCalendar> TypedZonedDateTimeFormatter<C> {
             + DataProvider<<C as CldrCalendar>::DateLengthsV1Marker>
             + DataProvider<TimeSymbolsV1Marker>
             + DataProvider<TimeLengthsV1Marker>
-            + DataProvider<WeekDataV2Marker>
+            + DataProvider<WeekDataV1Marker>
             + DataProvider<provider::time_zones::TimeZoneFormatsV1Marker>
             + DataProvider<provider::time_zones::ExemplarCitiesV1Marker>
             + DataProvider<provider::time_zones::MetazoneGenericNamesLongV1Marker>
@@ -299,7 +299,7 @@ impl<C: CldrCalendar> TypedZonedDateTimeFormatter<C> {
             + DataProvider<TimeSymbolsV1Marker>
             + DataProvider<TimeLengthsV1Marker>
             + DataProvider<crate::provider::calendar::DateSkeletonPatternsV1Marker>
-            + DataProvider<WeekDataV2Marker>
+            + DataProvider<WeekDataV1Marker>
             + DataProvider<provider::time_zones::TimeZoneFormatsV1Marker>
             + DataProvider<provider::time_zones::ExemplarCitiesV1Marker>
             + DataProvider<provider::time_zones::MetazoneGenericNamesLongV1Marker>

@@ -21,7 +21,7 @@ use crate::{
     DateTimeError, FormattedDateTime,
 };
 
-use icu_calendar::provider::WeekDataV2Marker;
+use icu_calendar::provider::WeekDataV1Marker;
 use icu_calendar::week::WeekCalculator;
 use icu_decimal::{
     options::{FixedDecimalFormatterOptions, GroupingStrategy},
@@ -182,7 +182,7 @@ impl DateFormatter {
             .map_err(|field| DateTimeError::UnsupportedField(field.symbol))?;
 
         let week_data = if required.week_data {
-            Some(icu_calendar::week::WeekCalculator::try_new(locale)?)
+            Some(WeekCalculator::try_new(locale)?)
         } else {
             None
         };
@@ -226,7 +226,7 @@ impl DateFormatter {
     where
         D: DataProvider<DecimalSymbolsV1Marker>
             + DataProvider<OrdinalV1Marker>
-            + DataProvider<WeekDataV2Marker>
+            + DataProvider<WeekDataV1Marker>
             + ?Sized,
     {
         let patterns = provider::date_time::pattern_for_date_length(length, patterns_data.clone());
@@ -238,9 +238,19 @@ impl DateFormatter {
             .map_err(|field| DateTimeError::UnsupportedField(field.symbol))?;
 
         let week_data = if required.week_data {
-            Some(icu_calendar::week::WeekCalculator::try_new_unstable(
-                provider, locale,
-            )?)
+            Some(
+                DataProvider::<WeekDataV1Marker>::load(
+                    provider,
+                    DataRequest {
+                        locale,
+                        metadata: Default::default(),
+                    },
+                )?
+                .take_payload()?
+                .get()
+                .clone()
+                .into(),
+            )
         } else {
             None
         };
@@ -382,7 +392,7 @@ impl DateTimeFormatter {
         };
 
         let week_data = if required.week_data {
-            Some(icu_calendar::week::WeekCalculator::try_new(locale)?)
+            Some(WeekCalculator::try_new(locale)?)
         } else {
             None
         };
@@ -433,7 +443,7 @@ impl DateTimeFormatter {
             + DataProvider<TimeLengthsV1Marker>
             + DataProvider<DecimalSymbolsV1Marker>
             + DataProvider<OrdinalV1Marker>
-            + DataProvider<WeekDataV2Marker>
+            + DataProvider<WeekDataV1Marker>
             + ?Sized,
     {
         let required = datetime::analyze_patterns(&patterns.get().0, false)
@@ -445,9 +455,17 @@ impl DateTimeFormatter {
         };
 
         let week_data = if required.week_data {
-            Some(icu_calendar::week::WeekCalculator::try_new_unstable(
-                provider, locale,
-            )?)
+            Some(DataProvider::<WeekDataV1Marker>::load(
+                provider,
+                DataRequest {
+                    locale,
+                    metadata: Default::default(),
+                },
+            )?
+            .take_payload()?
+            .get()
+            .clone()
+            .into())
         } else {
             None
         };

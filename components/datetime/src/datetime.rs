@@ -13,7 +13,7 @@ use crate::{
 };
 use alloc::string::String;
 use core::marker::PhantomData;
-use icu_calendar::provider::WeekDataV2Marker;
+use icu_calendar::provider::WeekDataV1Marker;
 use icu_decimal::provider::DecimalSymbolsV1Marker;
 use icu_plurals::provider::OrdinalV1Marker;
 use icu_provider::prelude::*;
@@ -321,7 +321,7 @@ impl<C: CldrCalendar> TypedDateFormatter<C> {
             + DataProvider<<C as CldrCalendar>::DateLengthsV1Marker>
             + DataProvider<DecimalSymbolsV1Marker>
             + DataProvider<OrdinalV1Marker>
-            + DataProvider<WeekDataV2Marker>
+            + DataProvider<WeekDataV1Marker>
             + ?Sized,
     {
         Ok(Self(
@@ -566,7 +566,7 @@ where {
             + DataProvider<TimeLengthsV1Marker>
             + DataProvider<DecimalSymbolsV1Marker>
             + DataProvider<OrdinalV1Marker>
-            + DataProvider<WeekDataV2Marker>
+            + DataProvider<WeekDataV1Marker>
             + ?Sized,
     {
         let patterns = PatternSelector::for_options(
@@ -674,7 +674,7 @@ where {
             + DataProvider<crate::provider::calendar::DateSkeletonPatternsV1Marker>
             + DataProvider<DecimalSymbolsV1Marker>
             + DataProvider<OrdinalV1Marker>
-            + DataProvider<WeekDataV2Marker>
+            + DataProvider<WeekDataV1Marker>
             + ?Sized,
     {
         let patterns = PatternSelector::for_options_experimental(
