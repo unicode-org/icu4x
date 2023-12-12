@@ -66,6 +66,8 @@ pub struct Coptic;
 pub struct CopticDateInner(pub(crate) ArithmeticDate<Coptic>);
 
 impl CalendarArithmetic for Coptic {
+    type YearInfo = ();
+
     fn month_days(year: i32, month: u8) -> u8 {
         if (1..=12).contains(&month) {
             30
@@ -157,7 +159,7 @@ impl Calendar for Coptic {
     }
 
     fn offset_date(&self, date: &mut Self::DateInner, offset: DateDuration<Self>) {
-        date.0.offset_date(offset);
+        date.0.offset_date(offset, &());
     }
 
     #[allow(clippy::field_reassign_with_default)]

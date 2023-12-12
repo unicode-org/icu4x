@@ -130,24 +130,21 @@ jobs:
 
     - name: Install doxygen-awesome
       run: |
-        cd ffi/capi/cpp/docs
         git clone --depth 1 https://github.com/jothepro/doxygen-awesome-css.git
-        cd ../../../..
 
     - name: Build docs
       uses: mattnotmitt/doxygen-action@v1.9.5
       with:
-          working-directory: 'ffi/capi/cpp/docs'
-          doxyfile-path: 'config.doxy'
+          doxyfile-path: 'tools/config.doxy'
         
     - name: Upload docs to Google Cloud Storage (non-main)
       run: |
-        gsutil -m cp -r ffi/capi/cpp/docs/html gs://${{ env.GCP_PR_BUCKET_ID }}/gha/${{ github.sha }}/cppdoc
+        gsutil -m cp -r html gs://${{ env.GCP_PR_BUCKET_ID }}/gha/${{ github.sha }}/cppdoc
     
     - name: Upload docs to Google Cloud Storage (main)
       if: github.ref == 'refs/heads/main' && github.repository == 'unicode-org/icu4x'
       run: |
-        gsutil -m cp -r ffi/capi/cpp/docs/html/* gs://${{ env.GCP_MAIN_BUCKET_ID }}/gha/cppdoc
+        gsutil -m cp -r html/* gs://${{ env.GCP_MAIN_BUCKET_ID }}/gha/cppdoc
 
     - name: "⭐⭐⭐ Links to Uploaded Artifacts ⭐⭐⭐"
       run: |
@@ -186,19 +183,20 @@ jobs:
         
     - name: Build docs
       run: |
-        cd ffi/capi/js/package
+        cd ffi/npm
+        make lib/index.js
         npm install typedoc
-        node_modules/typedoc/bin/typedoc lib/index.d.ts --out docs --readme ../../../../docs/tutorials/js.md --basePath lib
-        cd ../../../..
+        node_modules/typedoc/bin/typedoc lib/index.d.ts --out docs --readme ../../docs/tutorials/js.md --basePath lib
+        cd ../..
         
     - name: Upload docs to Google Cloud Storage (non-main)
       run: |
-        gsutil -m cp -r ffi/capi/js/package/docs gs://${{ env.GCP_PR_BUCKET_ID }}/gha/${{ github.sha }}/tsdoc
+        gsutil -m cp -r ffi/npm/docs gs://${{ env.GCP_PR_BUCKET_ID }}/gha/${{ github.sha }}/tsdoc
     
     - name: Upload docs to Google Cloud Storage (main)
       if: github.ref == 'refs/heads/main' && github.repository == 'unicode-org/icu4x'
       run: |
-        gsutil -m cp -r ffi/capi/js/package/docs/* gs://${{ env.GCP_MAIN_BUCKET_ID }}/gha/tsdoc
+        gsutil -m cp -r ffi/npm/docs/* gs://${{ env.GCP_MAIN_BUCKET_ID }}/gha/tsdoc
 
     - name: "⭐⭐⭐ Links to Uploaded Artifacts ⭐⭐⭐"
       run: |
@@ -233,20 +231,21 @@ jobs:
         
     - name: Build docs
       run: |
-        cd ffi/capi/dart/package
+        cd ffi/dart
+        make lib/src/lib.g.dart
         # https://github.com/dart-lang/dartdoc/issues/3590
         dart pub get
         dart doc
-        cd ../../../..
+        cd ../..
 
     - name: Upload docs to Google Cloud Storage (non-main)
       run: |
-        gsutil -m cp -r ffi/capi/dart/package/doc/api gs://${{ env.GCP_PR_BUCKET_ID }}/gha/${{ github.sha }}/dartdoc
+        gsutil -m cp -r ffi/dart/doc/api gs://${{ env.GCP_PR_BUCKET_ID }}/gha/${{ github.sha }}/dartdoc
     
     - name: Upload docs to Google Cloud Storage (main)
       if: github.ref == 'refs/heads/main' && github.repository == 'unicode-org/icu4x'
       run: |
-        gsutil -m cp -r ffi/capi/dart/package/doc/api/* gs://${{ env.GCP_MAIN_BUCKET_ID }}/gha/dartdoc
+        gsutil -m cp -r ffi/dart/doc/api/* gs://${{ env.GCP_MAIN_BUCKET_ID }}/gha/dartdoc
 
     - name: "⭐⭐⭐ Links to Uploaded Artifacts ⭐⭐⭐"
       run: |
@@ -280,20 +279,20 @@ jobs:
 
     - name: Init packages
       run: |
-        npm -C ffi/capi/js/package ci
-        npm -C ffi/capi/js/examples/wasm-demo ci
+        npm -C ffi/npm ci
+        npm -C ffi/npm/examples/wasm-demo ci
 
     - name: Run Webpack
-      run: npm -C ffi/capi/js/examples/wasm-demo run build
+      run: npm -C ffi/npm/examples/wasm-demo run build
 
     - name: Put index.html in dist for temp URL
       run: |
-        cp ffi/capi/js/examples/wasm-demo/index.html ffi/capi/js/examples/wasm-demo/dist/index.html
-        printf "const gcs=document.createElement('script');gcs.setAttribute('src','./bundle.js');document.body.appendChild(gcs);" > ffi/capi/js/examples/wasm-demo/dist/index.js
+        cp ffi/npm/examples/wasm-demo/index.html ffi/npm/examples/wasm-demo/dist/index.html
+        printf "const gcs=document.createElement('script');gcs.setAttribute('src','./bundle.js');document.body.appendChild(gcs);" > ffi/npm/examples/wasm-demo/dist/index.js
 
     - name: Upload wasm-demo bundle to Google Cloud Storage
       run: |
-        gsutil -m cp -r ffi/capi/js/examples/wasm-demo/dist/* gs://${{ env.GCP_MAIN_BUCKET_ID }}/gha/wasm-demo
+        gsutil -m cp -r ffi/npm/examples/wasm-demo/dist/* gs://${{ env.GCP_MAIN_BUCKET_ID }}/gha/wasm-demo
 
     - name: "⭐⭐⭐ Links to Uploaded Artifacts ⭐⭐⭐"
       run: |
