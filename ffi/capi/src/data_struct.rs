@@ -25,7 +25,8 @@ pub mod ffi {
     impl ICU4XDataStruct {
         /// Construct a new DecimalSymbolsV1 data struct.
         ///
-        /// C++ users: All string arguments must be valid UTF8
+        /// Ill-formed input is treated as if errors had been replaced with REPLACEMENT CHARACTERs according
+        /// to the WHATWG Encoding Standard.
         #[diplomat::rust_link(icu::decimal::provider::DecimalSymbolsV1, Struct)]
         #[allow(clippy::too_many_arguments)]
         #[cfg(feature = "icu_decimal")]
