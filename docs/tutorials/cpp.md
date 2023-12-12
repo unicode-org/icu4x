@@ -126,7 +126,7 @@ This can then be compiled with `cargo +nightly build --release -Z build-std=std,
 
 ## Tips
 
-Documentation can be found [here](https://unicode-org.github.io/icu4x/docs/ffi/cpp/). These docs mirror the Rust code in the `icu_capi` crate, which can be explored on [docs.rs][rust-docs], though the precise types used may be different.
+Documentation can be found [here](https://unicode-org.github.io/icu4x/cppdoc/). These docs mirror the Rust code in the `icu_capi` crate, which can be explored on [docs.rs][rust-docs], though the precise types used may be different.
 
 Fallible methods return `diplomat::result`, a Result type that can most commonly be converted to a `std::optional` over its Ok/Err types by calling `.ok()` or `.err()`. Most methods either use `ICU4XError` (an enum of error codes) as their error type, or `std::monostate`. Further error details can be logged by enabling a logger via `ICU4XLogger`, further loggers may be added on request.
 

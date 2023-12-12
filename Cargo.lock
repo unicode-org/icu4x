@@ -823,7 +823,7 @@ dependencies = [
 [[package]]
 name = "diplomat"
 version = "0.7.0"
-source = "git+https://github.com/rust-diplomat/diplomat.git?rev=32513d05b0fb845dc0382e93ee69d4044091d6cf#32513d05b0fb845dc0382e93ee69d4044091d6cf"
+source = "git+https://github.com/rust-diplomat/diplomat.git?rev=60851360a4b6f163fe493ca117d0552905c54a38#60851360a4b6f163fe493ca117d0552905c54a38"
 dependencies = [
  "diplomat_core",
  "proc-macro2",
@@ -841,7 +841,7 @@ dependencies = [
 [[package]]
 name = "diplomat-runtime"
 version = "0.7.0"
-source = "git+https://github.com/rust-diplomat/diplomat.git?rev=32513d05b0fb845dc0382e93ee69d4044091d6cf#32513d05b0fb845dc0382e93ee69d4044091d6cf"
+source = "git+https://github.com/rust-diplomat/diplomat.git?rev=60851360a4b6f163fe493ca117d0552905c54a38#60851360a4b6f163fe493ca117d0552905c54a38"
 dependencies = [
  "log",
 ]
@@ -849,7 +849,7 @@ dependencies = [
 [[package]]
 name = "diplomat-tool"
 version = "0.7.0"
-source = "git+https://github.com/rust-diplomat/diplomat.git?rev=32513d05b0fb845dc0382e93ee69d4044091d6cf#32513d05b0fb845dc0382e93ee69d4044091d6cf"
+source = "git+https://github.com/rust-diplomat/diplomat.git?rev=60851360a4b6f163fe493ca117d0552905c54a38#60851360a4b6f163fe493ca117d0552905c54a38"
 dependencies = [
  "askama",
  "clap 3.2.25",
@@ -869,7 +869,7 @@ dependencies = [
 [[package]]
 name = "diplomat_core"
 version = "0.7.0"
-source = "git+https://github.com/rust-diplomat/diplomat.git?rev=32513d05b0fb845dc0382e93ee69d4044091d6cf#32513d05b0fb845dc0382e93ee69d4044091d6cf"
+source = "git+https://github.com/rust-diplomat/diplomat.git?rev=60851360a4b6f163fe493ca117d0552905c54a38#60851360a4b6f163fe493ca117d0552905c54a38"
 dependencies = [
  "displaydoc",
  "lazy_static",
@@ -1612,6 +1612,7 @@ dependencies = [
  "icu_compactdecimal",
  "icu_datetime",
  "icu_decimal",
+ "icu_dimension",
  "icu_displaynames",
  "icu_list",
  "icu_locid",
@@ -1625,7 +1626,6 @@ dependencies = [
  "icu_provider_fs",
  "icu_relativetime",
  "icu_segmenter",
- "icu_singlenumberformatter",
  "icu_timezone",
  "icu_transliterate",
  "icu_unitsconversion",
@@ -1717,6 +1717,19 @@ version = "1.4.0"
 [[package]]
 name = "icu_depcheck"
 version = "0.1.0"
+
+[[package]]
+name = "icu_dimension"
+version = "0.0.0"
+dependencies = [
+ "databake",
+ "displaydoc",
+ "icu_locid",
+ "icu_provider",
+ "serde",
+ "tinystr",
+ "zerovec",
+]
 
 [[package]]
 name = "icu_displaynames"
@@ -1932,6 +1945,7 @@ name = "icu_provider"
 version = "1.4.0"
 dependencies = [
  "bincode",
+ "criterion",
  "databake",
  "displaydoc",
  "erased-serde",
@@ -2060,19 +2074,6 @@ dependencies = [
 [[package]]
 name = "icu_segmenter_data"
 version = "1.4.0"
-
-[[package]]
-name = "icu_singlenumberformatter"
-version = "0.0.0"
-dependencies = [
- "databake",
- "displaydoc",
- "icu_locid",
- "icu_provider",
- "serde",
- "tinystr",
- "zerovec",
-]
 
 [[package]]
 name = "icu_testdata_scripts"

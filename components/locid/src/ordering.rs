@@ -36,13 +36,17 @@ use core::cmp::Ordering;
 /// [`Locale::strict_cmp_iter`]: crate::Locale::strict_cmp_iter
 #[allow(clippy::exhaustive_enums)] // well-defined exhaustive enum semantics
 #[derive(Debug)]
+#[deprecated(since = "1.5.0", note = "if you need this, please file an issue")]
 pub enum SubtagOrderingResult<I> {
     /// Potentially remaining subtags after the comparison operation.
+    #[deprecated(since = "1.5.0", note = "if you need this, please file an issue")]
     Subtags(I),
     /// Resolved ordering between the locale object and the subtags.
+    #[deprecated(since = "1.5.0", note = "if you need this, please file an issue")]
     Ordering(Ordering),
 }
 
+#[allow(deprecated)]
 impl<I> SubtagOrderingResult<I>
 where
     I: Iterator,
