@@ -22,9 +22,9 @@ export class ICU4XCollator {
 
   /**
 
-   * Compare potentially ill-formed UTF-8 strings.
+   * Compare two strings.
 
-   * Ill-formed input is compared as if errors had been replaced with REPLACEMENT CHARACTERs according to the WHATWG Encoding Standard.
+   * Ill-formed input is treated as if errors had been replaced with REPLACEMENT CHARACTERs according to the WHATWG Encoding Standard.
 
    * See the {@link https://docs.rs/icu/latest/icu/collator/struct.Collator.html#method.compare_utf8 Rust documentation for `compare_utf8`} for more information.
    */
@@ -32,9 +32,7 @@ export class ICU4XCollator {
 
   /**
 
-   * Compare guaranteed well-formed UTF-8 strings.
-
-   * Note: In C++, passing ill-formed UTF-8 strings is undefined behavior (and may be memory-unsafe to do so, too).
+   * Compare two strings.
 
    * See the {@link https://docs.rs/icu/latest/icu/collator/struct.Collator.html#method.compare Rust documentation for `compare`} for more information.
    */
@@ -42,7 +40,9 @@ export class ICU4XCollator {
 
   /**
 
-   * Compare potentially ill-formed UTF-16 strings, with unpaired surrogates compared as REPLACEMENT CHARACTER.
+   * Compare two strings.
+
+   * Ill-formed input is treated as if errors had been replaced with REPLACEMENT CHARACTERs according to the WHATWG Encoding Standard.
 
    * See the {@link https://docs.rs/icu/latest/icu/collator/struct.Collator.html#method.compare_utf16 Rust documentation for `compare_utf16`} for more information.
    */

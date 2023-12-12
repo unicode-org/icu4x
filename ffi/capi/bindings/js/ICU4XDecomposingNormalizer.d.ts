@@ -28,9 +28,9 @@ export class ICU4XDecomposingNormalizer {
 
   /**
 
-   * Normalize a (potentially ill-formed) UTF8 string
+   * Normalize a string
 
-   * Errors are mapped to REPLACEMENT CHARACTER
+   * Ill-formed input is treated as if errors had been replaced with REPLACEMENT CHARACTERs according to the WHATWG Encoding Standard.
 
    * See the {@link https://docs.rs/icu/latest/icu/normalizer/struct.DecomposingNormalizer.html#method.normalize_utf8 Rust documentation for `normalize_utf8`} for more information.
    * @throws {@link FFIError}<{@link ICU4XError}>
@@ -39,9 +39,9 @@ export class ICU4XDecomposingNormalizer {
 
   /**
 
-   * Check if a (potentially ill-formed) UTF8 string is normalized
+   * Check if a string is normalized
 
-   * Errors are mapped to REPLACEMENT CHARACTER
+   * Ill-formed input is treated as if errors had been replaced with REPLACEMENT CHARACTERs according to the WHATWG Encoding Standard.
 
    * See the {@link https://docs.rs/icu/latest/icu/normalizer/struct.DecomposingNormalizer.html#method.is_normalized_utf8 Rust documentation for `is_normalized_utf8`} for more information.
    */

@@ -24,7 +24,9 @@ export class ICU4XGraphemeClusterSegmenter {
 
   /**
 
-   * Segments a (potentially ill-formed) UTF-8 string.
+   * Segments a string.
+
+   * Ill-formed input is treated as if errors had been replaced with REPLACEMENT CHARACTERs according to the WHATWG Encoding Standard.
 
    * See the {@link https://docs.rs/icu/latest/icu/segmenter/struct.GraphemeClusterSegmenter.html#method.segment_utf8 Rust documentation for `segment_utf8`} for more information.
    */
@@ -32,7 +34,9 @@ export class ICU4XGraphemeClusterSegmenter {
 
   /**
 
-   * Segments a UTF-16 string.
+   * Segments a string.
+
+   * Ill-formed input is treated as if errors had been replaced with REPLACEMENT CHARACTERs according to the WHATWG Encoding Standard.
 
    * See the {@link https://docs.rs/icu/latest/icu/segmenter/struct.GraphemeClusterSegmenter.html#method.segment_utf16 Rust documentation for `segment_utf16`} for more information.
    */
