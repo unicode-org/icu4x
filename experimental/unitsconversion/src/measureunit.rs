@@ -13,9 +13,10 @@ use crate::{
     ConversionError,
 };
 
+// TODO: add test cases for this parser after adding UnitsTest.txt to the test data.
 /// A parser for the CLDR unit identifier (e.g. `meter-per-square-second`)
 pub struct MeasureUnitParser<'data> {
-    /// Contains the zero-trie payload.
+    /// Contains the payload.
     zerotrie_payload: &'data ZeroTrie<ZeroVec<'data, u8>>,
 }
 
@@ -133,7 +134,6 @@ impl<'data> MeasureUnitParser<'data> {
     }
 }
 
-// TODO(#4369): split this struct to two structs: MeasureUnitParser for parsing the identifier and MeasureUnit to represent the unit.
 // TODO NOTE: the MeasureUnitParser takes the trie and the ConverterFactory takes the full payload and an instance of MeasureUnitParser.
 pub struct MeasureUnit {
     /// Contains the processed units.
