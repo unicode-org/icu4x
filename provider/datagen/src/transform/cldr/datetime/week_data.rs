@@ -199,24 +199,7 @@ impl DataProvider<WeekDataV2Marker> for crate::DatagenProvider {
 
 impl IterableDataProvider<WeekDataV2Marker> for crate::DatagenProvider {
     fn supported_locales(&self) -> Result<Vec<DataLocale>, DataError> {
-        let week_data: &cldr_serde::week_data::Resource = self
-            .cldr()?
-            .core()
-            .read_and_parse("supplemental/weekData.json")?;
-        let week_data = &week_data.supplemental.week_data;
-        let regions: HashSet<DataLocale> = week_data
-            .min_days
-            .keys()
-            .chain(week_data.weekend_start.keys())
-            .filter_map(|t| match t {
-                &DEFAULT_TERRITORY => Some(None),
-                Territory::Region(r) => Some(Some(*r)),
-                _ => None,
-            })
-            .map(LanguageIdentifier::from)
-            .map(DataLocale::from)
-            .collect();
-        Ok(regions.into_iter().collect())
+        IterableDataProvider::<WeekDataV1Marker>::supported_locales(self)
     }
 }
 
