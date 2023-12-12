@@ -239,7 +239,7 @@ impl DateFormatter {
 
         let week_data = if required.week_data {
             Some(
-                DataProvider::<WeekDataV1Marker>::load(
+                (*DataProvider::<WeekDataV1Marker>::load(
                     provider,
                     DataRequest {
                         locale,
@@ -247,8 +247,7 @@ impl DateFormatter {
                     },
                 )?
                 .take_payload()?
-                .get()
-                .clone()
+                .get())
                 .into(),
             )
         } else {
