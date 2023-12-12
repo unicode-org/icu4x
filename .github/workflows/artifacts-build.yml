@@ -184,18 +184,19 @@ jobs:
     - name: Build docs
       run: |
         cd ffi/npm
+        make lib/index.js
         npm install typedoc
-        node_modules/typedoc/bin/typedoc lib/index.d.ts --out docs --readme ../../../../docs/tutorials/js.md --basePath lib
+        node_modules/typedoc/bin/typedoc lib/index.d.ts --out docs --readme ../../docs/tutorials/js.md --basePath lib
         cd ../..
         
     - name: Upload docs to Google Cloud Storage (non-main)
       run: |
-        gsutil -m cp -r ffi/capi/js/package/docs gs://${{ env.GCP_PR_BUCKET_ID }}/gha/${{ github.sha }}/tsdoc
+        gsutil -m cp -r ffi/npm/docs gs://${{ env.GCP_PR_BUCKET_ID }}/gha/${{ github.sha }}/tsdoc
     
     - name: Upload docs to Google Cloud Storage (main)
       if: github.ref == 'refs/heads/main' && github.repository == 'unicode-org/icu4x'
       run: |
-        gsutil -m cp -r ffi/capi/js/package/docs/* gs://${{ env.GCP_MAIN_BUCKET_ID }}/gha/tsdoc
+        gsutil -m cp -r ffi/npm/docs/* gs://${{ env.GCP_MAIN_BUCKET_ID }}/gha/tsdoc
 
     - name: "⭐⭐⭐ Links to Uploaded Artifacts ⭐⭐⭐"
       run: |
@@ -231,6 +232,7 @@ jobs:
     - name: Build docs
       run: |
         cd ffi/dart
+        make lib/src/lib.g.dart
         # https://github.com/dart-lang/dartdoc/issues/3590
         dart pub get
         dart doc
@@ -238,7 +240,7 @@ jobs:
 
     - name: Upload docs to Google Cloud Storage (non-main)
       run: |
-        gsutil -m cp -r ffi/capi/dart/package/doc/api gs://${{ env.GCP_PR_BUCKET_ID }}/gha/${{ github.sha }}/dartdoc
+        gsutil -m cp -r ffi/dart/doc/api gs://${{ env.GCP_PR_BUCKET_ID }}/gha/${{ github.sha }}/dartdoc
     
     - name: Upload docs to Google Cloud Storage (main)
       if: github.ref == 'refs/heads/main' && github.repository == 'unicode-org/icu4x'

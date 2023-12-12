@@ -4,6 +4,9 @@
 
 Data for the icu__component_ crate
 
+This data was generated with CLDR version _cldr_tag_, ICU version _icuexport_tag_, and
+LSTM segmenter version _segmenter_lstm_tag_.
+
 <!-- cargo-rdme end -->
 
 ## More Information

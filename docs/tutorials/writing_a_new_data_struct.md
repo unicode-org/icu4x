@@ -58,15 +58,15 @@ Although they may share common code, source data providers are implemented speci
 
 Examples of source data providers include:
 
-- [`NumbersProvider`](https://unicode-org.github.io/icu4x/docs/icu_datagen/transform/cldr/struct.NumbersProvider.html)
-- [`BinaryPropertyCodePointSetDataProvider`](https://unicode-org.github.io/icu4x/docs/icu_datagen/transform/uprops/struct.BinaryPropertyCodePointSetDataProvider.html)
-- [&hellip; more examples](https://unicode-org.github.io/icu4x/docs/icu_datagen/transform/index.html)
+- [`NumbersProvider`](https://unicode-org.github.io/icu4x/rustdoc/icu_datagen/transform/cldr/struct.NumbersProvider.html)
+- [`BinaryPropertyCodePointSetDataProvider`](https://unicode-org.github.io/icu4x/rustdoc/icu_datagen/transform/uprops/struct.BinaryPropertyCodePointSetDataProvider.html)
+- [&hellip; more examples](https://unicode-org.github.io/icu4x/rustdoc/icu_datagen/transform/index.html)
 
 Source data providers must implement the following traits:
 
 - `DataProvider<M>` or `DynamicDataProvider<M>` for one or more data markers `M`; this impl is the main step where data transformation takes place
 - `IterableDataProvider<M>`, required for the data exporter (see below)
-- `DynamicDataProvider<SerializeMarker>` and `IterableDynamicDataProvider<SerializeMarker>`, usually implemented with the macro [`impl_dynamic_data_provider!`](https://unicode-org.github.io/icu4x/docs/icu_provider/macro.impl_dynamic_data_provider.html) after the above traits have been implemented
+- `DynamicDataProvider<SerializeMarker>` and `IterableDynamicDataProvider<SerializeMarker>`, usually implemented with the macro [`impl_dynamic_data_provider!`](https://unicode-org.github.io/icu4x/rustdoc/icu_provider/macro.impl_dynamic_data_provider.html) after the above traits have been implemented
 
 Source data providers are often complex to write. Rules of thumb:
 
@@ -80,21 +80,21 @@ Source data providers are often complex to write. Rules of thumb:
 
 Examples of data exporters include:
 
-- [`FilesystemExporter`](https://unicode-org.github.io/icu4x/docs/icu_provider_fs/export/fs_exporter/struct.FilesystemExporter.html)
-- [`BlobExporter`](https://unicode-org.github.io/icu4x/docs/icu_provider_blob/export/struct.BlobExporter.html)
+- [`FilesystemExporter`](https://unicode-org.github.io/icu4x/rustdoc/icu_provider_fs/export/fs_exporter/struct.FilesystemExporter.html)
+- [`BlobExporter`](https://unicode-org.github.io/icu4x/rustdoc/icu_provider_blob/export/struct.BlobExporter.html)
 
 "Runtime data providers" are ones that read serialized ICU4X data structs and deserialize them for use at runtime. These are the providers where performance is the key driving factor.
 
 Examples of runtime data providers include:
 
-- [`FsDataProvider`](https://unicode-org.github.io/icu4x/docs/icu_provider_fs/struct.FsDataProvider.html)
-- [`BlobDataProvider`](https://unicode-org.github.io/icu4x/docs/icu_provider_blob/struct.BlobDataProvider.html)
+- [`FsDataProvider`](https://unicode-org.github.io/icu4x/rustdoc/icu_provider_fs/struct.FsDataProvider.html)
+- [`BlobDataProvider`](https://unicode-org.github.io/icu4x/rustdoc/icu_provider_blob/struct.BlobDataProvider.html)
 
 **Most ICU4X contributors will not need to touch the data exporters or runtime data providers.** New implementations are only necessary when adding a new ICU4X data struct storage mechanism.
 
 ### Data Generation Tool (`icu4x-datagen`)
 
-The [data generation tool, i.e., `icu4x-datagen`](https://unicode-org.github.io/icu4x/docs/icu_datagen/index.html), ties together the source data providers with a data exporter.
+The [data generation tool, i.e., `icu4x-datagen`](https://unicode-org.github.io/icu4x/rustdoc/icu_datagen/index.html), ties together the source data providers with a data exporter.
 
 When adding new data structs, it is necessary to make `icu4x-datagen` aware of your source data provider. To do this, edit 
 [*provider/datagen/src/registry.rs*](https://github.com/unicode-org/icu4x/blob/main/provider/datagen/src/registry.rs) and add your data provider to the macro

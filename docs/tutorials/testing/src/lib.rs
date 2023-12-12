@@ -10,8 +10,6 @@ mod intro_interactive {}
 mod data_provider {}
 #[doc = include_str!("../../writing_a_new_data_struct.md")]
 mod writing_a_new_data_struct {}
-#[doc = include_str!("../../cpp.md")]
-mod cpp {}
 #[doc = include_str!("../../data_management.md")]
 mod data_management {}
 #[doc = include_str!("../../js.md")]

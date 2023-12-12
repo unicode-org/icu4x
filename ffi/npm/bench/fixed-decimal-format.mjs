@@ -1,6 +1,6 @@
 import Benchmark from 'benchmark';
 
-import { ICU4XFixedDecimal, ICU4XLocale, ICU4XFixedDecimalFormatter, ICU4XDataProvider, ICU4XFixedDecimalGroupingStrategy } from "../index.js"
+import { ICU4XFixedDecimal, ICU4XLocale, ICU4XFixedDecimalFormatter, ICU4XDataProvider, ICU4XFixedDecimalGroupingStrategy } from "icu4x"
 
 const locale = ICU4XLocale.create_from_string("bn");
 const dataProvider = ICU4XDataProvider.create_compiled();

@@ -105,7 +105,8 @@ postcard = "1"
 simple_logger = { version = "4.1.0", default-features = false }
 
 # Pre-experimental components with limited data generation
-icu_singlenumberformatter = { path = "../../experimental/singlenumberformatter", features = ["datagen"] }
+icu_dimension = { path = "../../experimental/dimension", features = ["datagen"] }
+icu_unitsconversion = { path = "../../experimental/unitsconversion", features = ["datagen"] }
 
 [features]
 default = ["bin", "use_wasm", "networking", "legacy_api", "rayon", "fs_exporter", "blob_exporter", "baked_exporter"]
