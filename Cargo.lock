@@ -198,6 +198,7 @@ version = "1.4.0"
 dependencies = [
  "icu",
  "icu_datagen",
+ "icu_unitsconversion",
  "log",
  "simple_logger",
 ]
@@ -2104,11 +2105,16 @@ dependencies = [
  "displaydoc",
  "icu_locid",
  "icu_provider",
+ "icu_unitsconversion_data",
  "serde",
  "smallvec",
  "zerotrie",
  "zerovec",
 ]
+
+[[package]]
+name = "icu_unitsconversion_data"
+version = "1.4.0"
 
 [[package]]
 name = "ident_case"
