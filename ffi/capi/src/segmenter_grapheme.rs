@@ -59,7 +59,7 @@ pub mod ffi {
         }
 
         /// Segments a string.
-        /// 
+        ///
         /// Ill-formed input is treated as if errors had been replaced with REPLACEMENT CHARACTERs according
         /// to the WHATWG Encoding Standard.
         #[diplomat::rust_link(
