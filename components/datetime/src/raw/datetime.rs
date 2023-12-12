@@ -455,17 +455,19 @@ impl DateTimeFormatter {
         };
 
         let week_data = if required.week_data {
-            Some(DataProvider::<WeekDataV1Marker>::load(
-                provider,
-                DataRequest {
-                    locale,
-                    metadata: Default::default(),
-                },
-            )?
-            .take_payload()?
-            .get()
-            .clone()
-            .into())
+            Some(
+                DataProvider::<WeekDataV1Marker>::load(
+                    provider,
+                    DataRequest {
+                        locale,
+                        metadata: Default::default(),
+                    },
+                )?
+                .take_payload()?
+                .get()
+                .clone()
+                .into(),
+            )
         } else {
             None
         };

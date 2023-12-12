@@ -148,7 +148,8 @@ impl ZonedDateTimeFormatter {
                     },
                 )?
                 .take_payload()?
-                .get().clone()
+                .get()
+                .clone()
                 .into(),
             )
         } else {
