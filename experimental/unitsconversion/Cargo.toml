@@ -38,5 +38,5 @@ icu_unitsconversion_data = { workspace = true, optional = true }
 default = ["compiled_data"]
 serde = ["dep:serde", "zerovec/serde", "icu_locid/serde", "icu_provider/serde", "zerotrie/serde"]
 datagen = [ "serde", "zerovec/databake", "dep:databake","zerovec/databake",  "zerotrie/databake", "icu_provider/datagen"]
-compiled_data = []
+compiled_data = ["dep:icu_unitsconversion_data" ]
 

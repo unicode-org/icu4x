@@ -35,10 +35,7 @@ const _: () = {
 
 #[cfg(feature = "datagen")]
 /// The latest minimum set of keys required by this component.
-pub const KEYS: &[DataKey] = &[
-    #[cfg(feature = "experimental")]
-    UnitsInfoV1Marker::KEY,
-];
+pub const KEYS: &[DataKey] = &[UnitsInfoV1Marker::KEY];
 
 /// This type encapsulates all the constant data required for unit conversions.
 ///

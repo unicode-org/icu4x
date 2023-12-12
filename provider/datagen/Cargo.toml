@@ -50,6 +50,7 @@ icu_compactdecimal = { workspace = true, features = ["datagen"], optional = true
 icu_displaynames = { workspace = true, features = ["datagen"], optional = true }
 icu_relativetime = { workspace = true, features = ["datagen"], optional = true }
 icu_transliterate = { workspace = true, features = ["datagen"], optional = true }
+icu_unitsconversion = { workspace = true, features = ["datagen"], optional = true }
 
 # ICU infrastructure
 icu_codepointtrie_builder = { workspace = true }
@@ -105,7 +106,6 @@ simple_logger = { version = "4.1.0", default-features = false }
 
 # Pre-experimental components with limited data generation
 icu_singlenumberformatter = { path = "../../experimental/singlenumberformatter", features = ["datagen"] }
-icu_unitsconversion = { path = "../../experimental/unitsconversion", features = ["datagen"] }
 
 [features]
 default = ["bin", "use_wasm", "networking", "legacy_api", "rayon", "fs_exporter", "blob_exporter", "baked_exporter"]
@@ -129,11 +129,13 @@ icu_compactdecimal = ["dep:icu_compactdecimal"]
 icu_displaynames = ["dep:icu_displaynames"]
 icu_relativetime = ["dep:icu_relativetime"]
 icu_transliterate = ["dep:icu_transliterate"]
+icu_unitsconversion = ["dep:icu_unitsconversion"]
 experimental_components = [
     "icu_compactdecimal",
     "icu_displaynames",
     "icu_relativetime",
     "icu_transliterate",
+    "icu_unitsconversion",
 ]
 
 [[bin]]
