@@ -15,9 +15,16 @@ use yoke::trait_hack::YokeTraitHack;
 use yoke::*;
 
 #[cfg(not(feature = "sync"))]
-use crate::refcount::OptionRcBytes as SelectedRc;
+use alloc::rc::Rc as SelectedRc;
 #[cfg(feature = "sync")]
-use crate::refcount::OptionArcBytes as SelectedRc;
+use alloc::sync::Arc as SelectedRc;
+
+#[cfg(all(feature = "sync", not(feature = "std")))]
+use once_cell::race::OnceCell;
+#[cfg(all(feature = "sync", feature = "std"))]
+use once_cell::sync::OnceCell;
+#[cfg(not(feature = "sync"))]
+use once_cell::unsync::OnceCell;
 
 /// A response object containing metadata about the returned data.
 #[derive(Debug, Clone, PartialEq, Default)]
@@ -81,12 +88,12 @@ pub(crate) enum DataPayloadInner<M: DataMarker> {
 /// The type of the "cart" that is used by `DataPayload`.
 #[derive(Clone, Debug)]
 #[allow(clippy::redundant_allocation)] // false positive, it's cheaper to wrap an existing Box in an Rc than to reallocate a huge Rc
-pub struct Cart(SelectedRc);
+pub struct Cart(SelectedRc<Box<[u8]>>);
 
 impl Deref for Cart {
     type Target = Box<[u8]>;
     fn deref(&self) -> &Self::Target {
-        todo!()
+        &self.0
     }
 }
 // Safe because both Rc and Arc are StableDeref, and our impl delegates.
@@ -108,9 +115,17 @@ impl Cart {
     }
 }
 
+/// An empty cart sentinel value for the DataPayload. Better for memory
+/// layout than Option<Cart> in the DataPayload; see #4438.
+///
+/// Get one with the [`empty_cart()`] function.
+static EMPTY_CART: OnceCell<Cart> = OnceCell::new();
+
 /// Gets a cart that can serve as the empty cart in DataPayload.
 fn empty_cart() -> Cart {
-    Cart(SelectedRc::new_none())
+    EMPTY_CART
+        .get_or_init(|| Cart(SelectedRc::new(Vec::new().into_boxed_slice())))
+        .clone()
 }
 
 impl<M> Debug for DataPayload<M>
