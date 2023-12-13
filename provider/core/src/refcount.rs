@@ -9,9 +9,9 @@ use core::ptr::NonNull;
 use yoke::CloneableCart;
 
 #[cfg(not(feature = "sync"))]
-use alloc::rc::Rc as SelectedRc;
+pub(crate) use alloc::rc::Rc as SelectedRc;
 #[cfg(feature = "sync")]
-use alloc::sync::Arc as SelectedRc;
+pub(crate) use alloc::sync::Arc as SelectedRc;
 
 type WrappedType = Box<[u8]>;
 
