@@ -33,12 +33,15 @@ thread_local! {
     static DROP_INVOCATIONS: Cell<usize> = const { Cell::new(0) };
 }
 
+trait Sealed {}
+
 /// An object fully representable by a non-null pointer.
 ///
 /// # Safety
 ///
 /// 1. `into_raw` must not change the address of any referenced data.
-pub unsafe trait CartablePointerLike {
+#[allow(private_bounds)] // sealed trait
+pub unsafe trait CartablePointerLike: Sealed {
     type Ptr;
 
     /// Converts this pointer-like into a pointer.
@@ -69,6 +72,8 @@ pub unsafe trait CloneableCartablePointerLike: CartablePointerLike {
     unsafe fn clone_raw(pointer: NonNull<Self::Ptr>);
 }
 
+impl<'a, T> Sealed for &'a T {}
+
 unsafe impl<'a, T> CartablePointerLike for &'a T {
     type Ptr = T;
 
@@ -87,6 +92,9 @@ unsafe impl<'a, T> CloneableCartablePointerLike for &'a T {
 }
 
 #[cfg(feature = "alloc")]
+impl<'a, T> Sealed for Box<T> {}
+
+#[cfg(feature = "alloc")]
 unsafe impl<T> CartablePointerLike for Box<T> {
     type Ptr = T;
 
@@ -102,6 +110,9 @@ unsafe impl<T> CartablePointerLike for Box<T> {
         DROP_INVOCATIONS.with(|x| x.set(x.get() + 1))
     }
 }
+
+#[cfg(feature = "alloc")]
+impl<'a, T> Sealed for Rc<T> {}
 
 #[cfg(feature = "alloc")]
 unsafe impl<T> CartablePointerLike for Rc<T> {
@@ -130,6 +141,9 @@ unsafe impl<'a, T> CloneableCartablePointerLike for Rc<T> {
         let _ = ManuallyDrop::new(rc);
     }
 }
+
+#[cfg(feature = "alloc")]
+impl<'a, T> Sealed for Arc<T> {}
 
 #[cfg(feature = "alloc")]
 unsafe impl<T> CartablePointerLike for Arc<T> {
