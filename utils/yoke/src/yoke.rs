@@ -511,21 +511,6 @@ impl<Y: for<'a> Yokeable<'a>, C: StableDeref> Yoke<Y, Option<C>> {
         }
     }
 
-    /// Converts `Yoke<Y, Option<C>>` to `Yoke<Y, C>`, replacing the `None`
-    /// cart with the value returned by the given function (a sentinel).
-    pub fn unwrap_cart_or_else(self, f: impl FnOnce() -> C) -> Yoke<Y, C> {
-        match self.cart {
-            Some(cart) => Yoke {
-                yokeable: self.yokeable,
-                cart,
-            },
-            None => Yoke {
-                yokeable: self.yokeable,
-                cart: f(),
-            },
-        }
-    }
-
     /// Obtain the yokeable out of a `Yoke<Y, Option<C>>` if possible.
     ///
     /// If the cart is `None`, this returns `Some`, but if the cart is `Some`,

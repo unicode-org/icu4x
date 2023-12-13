@@ -89,7 +89,14 @@ impl Cart {
         for<'a> Y: Yokeable<'a>,
         F: FnOnce(&[u8]) -> Result<<Y as Yokeable>::Output, E>,
     {
-        todo!()
+        Yoke::try_attach_to_cart(SelectedRc::new(cart), |b| f(b))
+            // Safe because the cart is only wrapped
+            .map(|yoke| unsafe {
+                yoke.replace_cart(|selected_rc| {
+                    Cart(OptionSelectedRcBytes::from_selected_rc(selected_rc))
+                })
+            })
+            .map(Yoke::wrap_cart_in_option)
     }
 
     /// Creates a `Yoke<Y, Cart>` from an infallible fn.
@@ -111,7 +118,13 @@ impl Cart {
     where
         for<'a> Y: Yokeable<'a>,
     {
-        todo!()
+        // Safe because the cart is only unwrapped
+        unsafe {
+            yoke.replace_cart(|option_cart| match option_cart {
+                Some(cart) => cart,
+                None => empty_cart(),
+            })
+        }
     }
 }
 
