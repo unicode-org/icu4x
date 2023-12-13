@@ -28,7 +28,11 @@ thread_local! {
     static DROP_INVOCATIONS: Cell<usize> = const { Cell::new(0) };
 }
 
-trait Sealed {}
+mod private {
+    pub trait Sealed {}
+}
+
+use private::Sealed;
 
 /// An object fully representable by a non-null pointer.
 ///
@@ -44,7 +48,6 @@ trait Sealed {}
 ///
 /// Note: the pointer `NonNull<Self::Raw>` may or may not be aligned and it should never
 /// be dereferenced. Rust allows unaligned pointers; see [`std::ptr::read_unaligned`].
-#[allow(private_bounds)] // sealed trait
 pub unsafe trait CartablePointerLike: StableDeref + Sealed {
     /// The raw type used for [`Self::into_raw`] and [`Self::drop_raw`].
     type Raw;
