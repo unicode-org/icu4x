@@ -2287,6 +2287,15 @@ dependencies = [
 ]
 
 [[package]]
+name = "lru"
+version = "0.8.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "b6e8aaa3f231bb4bd57b84b2d5dc3ae7f350265df8aa96492e0bc394a1571909"
+dependencies = [
+ "hashbrown 0.12.3",
+]
+
+[[package]]
 name = "mach"
 version = "0.3.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -2303,6 +2312,28 @@ checksum = "7574c1cf36da4798ab73da5b215bbf444f50718207754cb522201d78d1cd0ff2"
 dependencies = [
  "autocfg",
  "rawpointer",
+]
+
+[[package]]
+name = "md-tests"
+version = "0.0.0"
+dependencies = [
+ "databake",
+ "displaydoc",
+ "icu",
+ "icu_datagen",
+ "icu_provider",
+ "icu_provider_adapters",
+ "icu_provider_blob",
+ "icu_provider_fs",
+ "itertools",
+ "litemap",
+ "lru",
+ "serde",
+ "serde-aux",
+ "time 0.3.17",
+ "tinystr",
+ "writeable",
 ]
 
 [[package]]
