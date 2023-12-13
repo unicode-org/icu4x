@@ -509,8 +509,6 @@ impl<Y: for<'a> Yokeable<'a>, C: CartablePointerLike> Yoke<Y, Option<C>> {
     /// Converts a `Yoke<Y, Option<C>>` to `Yoke<Y, CartableOptionPointer<C>>`
     /// for better niche optimization when stored as a field.
     ///
-    /// Panics on types with alignment 1.
-    ///
     /// # Examples
     ///
     /// ```
@@ -520,21 +518,6 @@ impl<Y: for<'a> Yokeable<'a>, C: CartablePointerLike> Yoke<Y, Option<C>> {
     /// let yoke: Yoke<Cow<[u8]>, Box<Vec<u8>>> = Yoke::attach_to_cart(
     ///     vec![10, 20, 30].into(),
     ///     |c| c.into(),
-    /// );
-    ///
-    /// let yoke_option = yoke.wrap_cart_in_option();
-    /// let yoke_option_pointer = yoke_option.convert_cart_into_option_pointer();
-    /// ```
-    ///
-    /// Panics if the type has alignment 1:
-    ///
-    /// ```should_panic
-    /// use yoke::Yoke;
-    /// use std::borrow::Cow;
-    ///
-    /// let yoke: Yoke<Cow<[u8]>, Box<[u8; 3]>> = Yoke::attach_to_cart(
-    ///     [10, 20, 30].into(),
-    ///     |c| c.as_slice().into(),
     /// );
     ///
     /// let yoke_option = yoke.wrap_cart_in_option();

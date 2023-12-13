@@ -14,13 +14,12 @@ use alloc::sync::Arc;
 #[cfg(test)]
 use core::cell::Cell;
 use core::marker::PhantomData;
-use core::mem::align_of;
 use core::ptr::NonNull;
 use stable_deref_trait::StableDeref;
 
-const fn sentinel_for<T>() -> NonNull<T> {
-    // Safety: 1 is non-zero
-    unsafe { NonNull::new_unchecked(1 as *mut T) }
+fn sentinel_for<T>() -> NonNull<T> {
+    static SENTINEL: &u8 = &0x1a; // SUB
+    unsafe { NonNull::new_unchecked(SENTINEL as *const u8 as *mut T) }
 }
 
 #[cfg(test)]
@@ -43,8 +42,7 @@ use private::Sealed;
 /// 1. `into_raw` transfers ownership of the values referenced by StableDeref to the caller,
 ///    if there is ownership to transfer
 /// 2. `drop_raw` returns ownership back to the impl, if there is ownership to transfer
-/// 3. `type Raw` should not be align 1 because that is the sentinel value. This can be an
-///    assertion inside the `into_raw` implementation.
+/// 3. `into_raw` must not return the sentinel pointer
 ///
 /// Note: the pointer `NonNull<Self::Raw>` may or may not be aligned and it should never
 /// be dereferenced. Rust allows unaligned pointers; see [`std::ptr::read_unaligned`].
@@ -96,12 +94,11 @@ impl<'a, T> Sealed for &'a T {}
 // Safety:
 // 1. There is no ownership to transfer
 // 2. There is no ownership to transfer
-// 3. `into_raw` asserts that `T` is not align 1
+// 3. External clients do not have the sentinel address so it won't be used in this reference.
 unsafe impl<'a, T> CartablePointerLike for &'a T {
     type Raw = T;
 
     fn into_raw(self) -> NonNull<T> {
-        assert_ne!(1, align_of::<T>());
         self.into()
     }
     unsafe fn drop_raw(_pointer: NonNull<T>) {
@@ -126,13 +123,12 @@ impl<T> Sealed for Box<T> {}
 //    memory previously managed by the Box."
 // 2. `Box::from_raw` says: "After calling this function, the raw pointer is owned by the
 //    resulting Box."
-// 3. `into_raw` asserts that `T` is not align 1
+// 3. The pointer comes from the Box so it won't be the sentinel pointer.
 #[cfg(feature = "alloc")]
 unsafe impl<T> CartablePointerLike for Box<T> {
     type Raw = T;
 
     fn into_raw(self) -> NonNull<T> {
-        assert_ne!(1, align_of::<T>());
         // Safety: `Box::into_raw` says: "The pointer will be properly aligned and non-null."
         unsafe { NonNull::new_unchecked(Box::into_raw(self)) }
     }
@@ -152,13 +148,12 @@ impl<T> Sealed for Rc<T> {}
 // 1. `Rc::into_raw` says: "Consumes the Rc, returning the wrapped pointer. To avoid a memory
 //    leak the pointer must be converted back to an Rc using Rc::from_raw."
 // 2. See 1.
-// 3. `into_raw` asserts that `T` is not align 1
+// 3. The pointer comes from the Rc so it won't be the sentinel pointer.
 #[cfg(feature = "alloc")]
 unsafe impl<T> CartablePointerLike for Rc<T> {
     type Raw = T;
 
     fn into_raw(self) -> NonNull<T> {
-        assert_ne!(1, align_of::<T>());
         // Safety: Rcs must contain data (and not be null)
         unsafe { NonNull::new_unchecked(Rc::into_raw(self) as *mut T) }
     }
@@ -194,13 +189,12 @@ impl<T> Sealed for Arc<T> {}
 // 1. `Rc::into_raw` says: "Consumes the Arc, returning the wrapped pointer. To avoid a memory
 //    leak the pointer must be converted back to an Arc using Arc::from_raw."
 // 2. See 1.
-// 3. `into_raw` asserts that `T` is not align 1
+// 3. The pointer comes from the Arc so it won't be the sentinel pointer.
 #[cfg(feature = "alloc")]
 unsafe impl<T> CartablePointerLike for Arc<T> {
     type Raw = T;
 
     fn into_raw(self) -> NonNull<T> {
-        assert_ne!(1, align_of::<T>());
         // Safety: Arcs must contain data (and not be null)
         unsafe { NonNull::new_unchecked(Arc::into_raw(self) as *mut T) }
     }
@@ -253,7 +247,7 @@ where
 {
     /// Creates a new instance corresponding to a `None` value.
     #[inline]
-    pub(crate) const fn none() -> Self {
+    pub(crate) fn none() -> Self {
         Self {
             inner: sentinel_for::<C::Raw>(),
             _cartable: PhantomData,
@@ -263,16 +257,8 @@ where
     /// Creates a new instance corresponding to a `Some` value.
     #[inline]
     pub(crate) fn from_cartable(cartable: C) -> Self {
-        let ptr = cartable.into_raw();
-        debug_assert_ne!(
-            ptr,
-            sentinel_for::<C::Raw>(),
-            "Creating from [A]Rc is not expected to be the sentinel ptr"
-        );
-        // Safety: ptr is non-null because ptr is from SelectedRc::into_raw.
-        // SelectedRc can't return a null ptr because it implements Deref.
         Self {
-            inner: ptr,
+            inner: cartable.into_raw(),
             _cartable: PhantomData,
         }
     }
