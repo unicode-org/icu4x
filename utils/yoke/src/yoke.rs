@@ -79,6 +79,11 @@ pub struct Yoke<Y: for<'a> Yokeable<'a>, C> {
     // must be the first field for drop order
     // this will have a 'static lifetime parameter, that parameter is a lie
     yokeable: KindaSortaDangling<Y>,
+    // Safety invariant: this type can be anything, but `yokeable` may only contain references to
+    // StableDeref parts of this cart, and those references must be valid for the lifetime of
+    // this cart (it must own or borrow them). It's ok for this cart to contain stack data as long as it
+    // is not referenced by `yokeable` during construction. `attach_to_cart`, the typical constructor
+    // of this type, upholds this invariant, but other constructors like `replace_cart` need to uphold it.
     cart: C,
 }
 
@@ -468,7 +473,9 @@ impl<Y: for<'a> Yokeable<'a>> Yoke<Y, ()> {
     }
 }
 
-impl<Y: for<'a> Yokeable<'a>, C: StableDeref> Yoke<Y, Option<C>> {
+// C does not need to be StableDeref here, if the yoke was constructed it's valid,
+// and new_owned() doesn't construct a yokeable that uses references,
+impl<Y: for<'a> Yokeable<'a>, C> Yoke<Y, Option<C>> {
     /// Construct a new [`Yoke`] from static data. There will be no
     /// references to `cart` here since [`Yokeable`]s are `'static`,
     /// this is good for e.g. constructing fully owned
@@ -505,6 +512,8 @@ impl<Y: for<'a> Yokeable<'a>, C: StableDeref> Yoke<Y, Option<C>> {
     /// If the cart is `None`, this returns `Some`, but if the cart is `Some`,
     /// this returns `self` as an error.
     pub fn try_into_yokeable(self) -> Result<Y, Self> {
+        // Safety: if the cart is None there is no way for the yokeable to
+        // have references into it because of the cart invariant.
         match self.cart {
             Some(_) => Err(self),
             None => Ok(self.yokeable.into_inner()),
