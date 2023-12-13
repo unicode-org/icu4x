@@ -66,21 +66,21 @@ pub struct PersianDateInner(ArithmeticDate<Persian>);
 impl CalendarArithmetic for Persian {
     type YearInfo = ();
 
-    fn month_days(year: i32, month: u8) -> u8 {
+    fn month_days(year: i32, month: u8, _data: ()) -> u8 {
         match month {
             1..=6 => 31,
             7..=11 => 30,
-            12 if Self::is_leap_year(year) => 30,
+            12 if Self::is_leap_year(year, ()) => 30,
             12 => 29,
             _ => 0,
         }
     }
 
-    fn months_for_every_year(_: i32) -> u8 {
+    fn months_for_every_year(_: i32, _data: ()) -> u8 {
         12
     }
     // Lisp code reference: https://github.com/EdReingold/calendar-code2/blob/main/calendar.l#L4789
-    fn is_leap_year(p_year: i32) -> bool {
+    fn is_leap_year(p_year: i32, _data: ()) -> bool {
         let mut p_year = p_year as i64;
         if 0 < p_year {
             p_year -= 474;
@@ -92,16 +92,16 @@ impl CalendarArithmetic for Persian {
         ((year + 38) * 31).rem_euclid(128) < 31
     }
 
-    fn days_in_provided_year(year: i32) -> u16 {
-        if Self::is_leap_year(year) {
+    fn days_in_provided_year(year: i32, _data: ()) -> u16 {
+        if Self::is_leap_year(year, ()) {
             366
         } else {
             365
         }
     }
 
-    fn last_month_day_in_year(year: i32) -> (u8, u8) {
-        if Self::is_leap_year(year) {
+    fn last_month_day_in_year(year: i32, _data: ()) -> (u8, u8) {
+        if Self::is_leap_year(year, ()) {
             (12, 30)
         } else {
             (12, 29)
@@ -174,7 +174,7 @@ impl Calendar for Persian {
     }
 
     fn is_in_leap_year(&self, date: &Self::DateInner) -> bool {
-        Self::is_leap_year(date.0.year)
+        Self::is_leap_year(date.0.year, ())
     }
 
     fn month(&self, date: &Self::DateInner) -> types::FormattableMonth {
@@ -192,7 +192,7 @@ impl Calendar for Persian {
             day_of_year: date.0.day_of_year(),
             days_in_year: date.0.days_in_year(),
             prev_year: Persian::year_as_persian(prev_year),
-            days_in_prev_year: Persian::days_in_provided_year(prev_year),
+            days_in_prev_year: Persian::days_in_provided_year(prev_year, ()),
             next_year: Persian::year_as_persian(next_year),
         }
     }
@@ -507,7 +507,7 @@ mod tests {
         let canonical_leap_year_cycle_start = 474;
         let canonical_leap_year_cycle_end = 3293;
         for year in canonical_leap_year_cycle_start..=canonical_leap_year_cycle_end {
-            let r = Persian::is_leap_year(year);
+            let r = Persian::is_leap_year(year, ());
             if r {
                 leap_year_results.push(r);
             }
@@ -519,7 +519,7 @@ mod tests {
             leap_years[index] = case.year;
         }
         for (year, bool) in leap_years.iter().zip(expected_values.iter()) {
-            assert_eq!(Persian::is_leap_year(*year), *bool);
+            assert_eq!(Persian::is_leap_year(*year, ()), *bool);
         }
     }
 
@@ -528,7 +528,7 @@ mod tests {
         for case in CASES.iter() {
             assert_eq!(
                 days_in_provided_year_core(case.year),
-                Persian::days_in_provided_year(case.year)
+                Persian::days_in_provided_year(case.year, ())
             );
         }
     }
