@@ -15,6 +15,8 @@ use core::marker::PhantomData;
 #[cfg(feature = "alloc")]
 use core::mem::ManuallyDrop;
 use core::ptr::NonNull;
+#[cfg(test)]
+use core::cell::Cell;
 
 const fn sentinel_for<T>() -> NonNull<T> {
     // Safety: align_of anything is always at least 1
@@ -24,6 +26,11 @@ const fn sentinel_for<T>() -> NonNull<T> {
 #[test]
 fn test_min_alignment() {
     assert_eq!(1, core::mem::align_of::<()>());
+}
+
+#[cfg(test)]
+thread_local! {
+    static DROP_INVOCATIONS: Cell<usize> = const { Cell::new(0) };
 }
 
 /// An object fully representable by a non-null pointer.
@@ -88,7 +95,11 @@ unsafe impl<T> CartablePointerLike for Box<T> {
         unsafe { NonNull::new_unchecked(Box::into_raw(self)) }
     }
     unsafe fn drop_raw(pointer: NonNull<T>) {
-        let _ = Box::from_raw(pointer.as_ptr());
+        let _box = Box::from_raw(pointer.as_ptr());
+
+        // Boxes are always dropped
+        #[cfg(test)]
+        DROP_INVOCATIONS.with(|x| x.set(x.get() + 1))
     }
 }
 
@@ -101,7 +112,13 @@ unsafe impl<T> CartablePointerLike for Rc<T> {
         unsafe { NonNull::new_unchecked(Rc::into_raw(self) as *mut T) }
     }
     unsafe fn drop_raw(pointer: NonNull<T>) {
-        let _ = Rc::from_raw(pointer.as_ptr());
+        let _rc = Rc::from_raw(pointer.as_ptr());
+
+        // Rc is dropped if refcount is 1
+        #[cfg(test)]
+        if Rc::strong_count(&_rc) == 1 {
+            DROP_INVOCATIONS.with(|x| x.set(x.get() + 1))
+        }
     }
 }
 
@@ -123,16 +140,22 @@ unsafe impl<T> CartablePointerLike for Arc<T> {
         unsafe { NonNull::new_unchecked(Arc::into_raw(self) as *mut T) }
     }
     unsafe fn drop_raw(pointer: NonNull<T>) {
-        let _ = Arc::from_raw(pointer.as_ptr());
+        let _arc = Arc::from_raw(pointer.as_ptr());
+
+        // Arc is dropped if refcount is 1
+        #[cfg(test)]
+        if Arc::strong_count(&_arc) == 1 {
+            DROP_INVOCATIONS.with(|x| x.set(x.get() + 1))
+        }
     }
 }
 
 #[cfg(feature = "alloc")]
 unsafe impl<'a, T> CloneableCartablePointerLike for Arc<T> {
     unsafe fn clone_raw(pointer: NonNull<T>) {
-        let rc = Rc::from_raw(pointer.as_ptr());
-        let _ = ManuallyDrop::new(rc.clone());
-        let _ = ManuallyDrop::new(rc);
+        let arc = Arc::from_raw(pointer.as_ptr());
+        let _ = ManuallyDrop::new(arc.clone());
+        let _ = ManuallyDrop::new(arc);
     }
 }
 
@@ -240,3 +263,71 @@ unsafe impl<C> Send for CartableOptionPointer<C> where C: Sync + Send + Cartable
 
 // Safety: same bounds as Arc
 unsafe impl<C> Sync for CartableOptionPointer<C> where C: Sync + Send + CartablePointerLike {}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use crate::Yoke;
+    use alloc::borrow::Cow;
+    use core::mem::size_of;
+
+    const SAMPLE_BYTES: &[u8] = b"abCDEfg";
+    const W: usize = size_of::<usize>();
+
+    #[test]
+    fn test_sizes() {
+        assert_eq!(W * 4, size_of::<Yoke<Cow<'static, str>, &&[u8]>>());
+        assert_eq!(W * 4, size_of::<Yoke<Cow<'static, str>, Option<&&[u8]>>>());
+        assert_eq!(W * 4, size_of::<Yoke<Cow<'static, str>, CartableOptionPointer<&&[u8]>>>());
+
+        assert_eq!(W * 4, size_of::<Option<Yoke<Cow<'static, str>, &&[u8]>>>());
+        assert_eq!(W * 5, size_of::<Option<Yoke<Cow<'static, str>, Option<&&[u8]>>>>());
+        assert_eq!(W * 4, size_of::<Option<Yoke<Cow<'static, str>, CartableOptionPointer<&&[u8]>>>>());
+    }
+
+    #[test]
+    fn test_new_sentinel() {
+        let start = DROP_INVOCATIONS.get();
+        {
+            let _ = CartableOptionPointer::<Rc<&[u8]>>::none();
+        }
+        assert_eq!(start, DROP_INVOCATIONS.get());
+        {
+            let _ = CartableOptionPointer::<Rc<&[u8]>>::none();
+        }
+        assert_eq!(start, DROP_INVOCATIONS.get());
+    }
+
+    #[test]
+    fn test_new_rc() {
+        let start = DROP_INVOCATIONS.get();
+        {
+            let _ = CartableOptionPointer::<Rc<&[u8]>>::from_cartable(
+                SAMPLE_BYTES.into(),
+            );
+        }
+        assert_eq!(start + 1, DROP_INVOCATIONS.get());
+    }
+
+    #[test]
+    fn test_rc_clone() {
+        let start = DROP_INVOCATIONS.get();
+        {
+            let x = CartableOptionPointer::<Rc<&[u8]>>::from_cartable(
+                SAMPLE_BYTES.into(),
+            );
+            assert_eq!(start, DROP_INVOCATIONS.get());
+            {
+                let _ = x.clone();
+            }
+            assert_eq!(start, DROP_INVOCATIONS.get());
+            {
+                let _ = x.clone();
+                let _ = x.clone();
+                let _ = x.clone();
+            }
+            assert_eq!(start, DROP_INVOCATIONS.get());
+        }
+        assert_eq!(start + 1, DROP_INVOCATIONS.get());
+    }
+}
