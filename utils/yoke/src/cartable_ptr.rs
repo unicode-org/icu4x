@@ -4,6 +4,7 @@
 
 //! Types for optional pointers that may be dropped with niche optimization.
 
+use crate::CloneableCart;
 #[cfg(feature = "alloc")]
 use alloc::boxed::Box;
 #[cfg(feature = "alloc")]
@@ -11,6 +12,7 @@ use alloc::rc::Rc;
 #[cfg(feature = "alloc")]
 use alloc::sync::Arc;
 use core::marker::PhantomData;
+#[cfg(feature = "alloc")]
 use core::mem::ManuallyDrop;
 use core::ptr::NonNull;
 
@@ -225,3 +227,16 @@ where
         }
     }
 }
+
+// Safety: type has the same semantics as Option<C>
+// which implements CloneableCart
+unsafe impl<C> CloneableCart for CartableOptionPointer<C> where
+    C: CloneableCartablePointerLike + CloneableCart
+{
+}
+
+// Safety: same bounds as Arc
+unsafe impl<C> Send for CartableOptionPointer<C> where C: Sync + Send + CartablePointerLike {}
+
+// Safety: same bounds as Arc
+unsafe impl<C> Sync for CartableOptionPointer<C> where C: Sync + Send + CartablePointerLike {}
