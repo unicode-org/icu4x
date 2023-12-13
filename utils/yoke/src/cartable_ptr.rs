@@ -227,6 +227,8 @@ unsafe impl<T> CloneableCartablePointerLike for Arc<T> {
 }
 
 /// A type with similar semantics as `Option<C<T>>` but with a niche.
+///
+/// Will panic on types with alignment 1.
 #[derive(Debug)]
 pub struct CartableOptionPointer<C>
 where
