@@ -88,8 +88,8 @@ zip = { version = ">=0.5, <0.7", default-features = false, features = ["deflate"
 rayon = { version = "1.5", optional = true }
 ureq = { version = "2", optional = true }
 
-fraction = {version = "0.14.0", default-features = false }
-num-bigint = { version = "0.4.4", default-features = false }
+fraction = { version = "0.14.0", default-features = false, optional = true }
+num-bigint = { version = "0.4.4", default-features = false, optional = true }
 
 
 # Dependencies for "bin" feature
@@ -130,7 +130,7 @@ icu_compactdecimal = ["dep:icu_compactdecimal"]
 icu_displaynames = ["dep:icu_displaynames"]
 icu_relativetime = ["dep:icu_relativetime"]
 icu_transliterate = ["dep:icu_transliterate"]
-icu_unitsconversion = ["dep:icu_unitsconversion"]
+icu_unitsconversion = ["dep:icu_unitsconversion", "dep:fraction", "dep:num-bigint"]
 experimental_components = [
     "icu_compactdecimal",
     "icu_displaynames",
