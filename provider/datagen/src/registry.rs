@@ -157,8 +157,6 @@ macro_rules! registry {
 registry!(
     #[cfg(test)]
     icu_dimension::provider::CurrencyEssentialsV1Marker = "currency/essentials@1",
-    #[cfg(feature = "icu_unitsconversion")]
-    icu_unitsconversion::provider::UnitsInfoV1Marker = "units/info@1",
     #[cfg(any(all(), feature = "icu_calendar"))]
     icu_calendar::provider::JapaneseErasV1Marker = "calendar/japanese@1",
     icu_calendar::provider::JapaneseExtendedErasV1Marker = "calendar/japanext@1",
@@ -499,6 +497,8 @@ registry!(
     icu_timezone::provider::names::IanaToBcp47MapV1Marker = "time_zone/iana_to_bcp47@1",
     #[cfg(feature = "icu_transliterate")]
     icu_transliterate::provider::TransliteratorRulesV1Marker = "transliterator/rules@1",
+    #[cfg(feature = "icu_unitsconversion")]
+    icu_unitsconversion::provider::UnitsInfoV1Marker = "units/info@1",
 );
 
 /// Same as `all_keys`.
