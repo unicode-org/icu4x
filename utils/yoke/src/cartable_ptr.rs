@@ -353,43 +353,43 @@ mod tests {
 
     #[test]
     fn test_new_sentinel() {
-        let start = DROP_INVOCATIONS.get();
+        let start = DROP_INVOCATIONS.with(Cell::get);
         {
             let _ = CartableOptionPointer::<Rc<&[u8]>>::none();
         }
-        assert_eq!(start, DROP_INVOCATIONS.get());
+        assert_eq!(start, DROP_INVOCATIONS.with(Cell::get));
         {
             let _ = CartableOptionPointer::<Rc<&[u8]>>::none();
         }
-        assert_eq!(start, DROP_INVOCATIONS.get());
+        assert_eq!(start, DROP_INVOCATIONS.with(Cell::get));
     }
 
     #[test]
     fn test_new_rc() {
-        let start = DROP_INVOCATIONS.get();
+        let start = DROP_INVOCATIONS.with(Cell::get);
         {
             let _ = CartableOptionPointer::<Rc<&[u8]>>::from_cartable(SAMPLE_BYTES.into());
         }
-        assert_eq!(start + 1, DROP_INVOCATIONS.get());
+        assert_eq!(start + 1, DROP_INVOCATIONS.with(Cell::get));
     }
 
     #[test]
     fn test_rc_clone() {
-        let start = DROP_INVOCATIONS.get();
+        let start = DROP_INVOCATIONS.with(Cell::get);
         {
             let x = CartableOptionPointer::<Rc<&[u8]>>::from_cartable(SAMPLE_BYTES.into());
-            assert_eq!(start, DROP_INVOCATIONS.get());
+            assert_eq!(start, DROP_INVOCATIONS.with(Cell::get));
             {
                 let _ = x.clone();
             }
-            assert_eq!(start, DROP_INVOCATIONS.get());
+            assert_eq!(start, DROP_INVOCATIONS.with(Cell::get));
             {
                 let _ = x.clone();
                 let _ = x.clone();
                 let _ = x.clone();
             }
-            assert_eq!(start, DROP_INVOCATIONS.get());
+            assert_eq!(start, DROP_INVOCATIONS.with(Cell::get));
         }
-        assert_eq!(start + 1, DROP_INVOCATIONS.get());
+        assert_eq!(start + 1, DROP_INVOCATIONS.with(Cell::get));
     }
 }
