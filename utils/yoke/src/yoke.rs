@@ -2,6 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+use crate::cartable_ptr::{CartableOptionPointer, CartablePointerLike};
 use crate::either::EitherCart;
 #[cfg(feature = "alloc")]
 use crate::erased::{ErasedArcCart, ErasedBoxCart, ErasedRcCart};
@@ -494,12 +495,45 @@ impl<Y: for<'a> Yokeable<'a>, C: StableDeref> Yoke<Y, Option<C>> {
 
     /// Obtain the yokeable out of a `Yoke<Y, Option<C>>` if possible.
     ///
-    /// If the cart is `None`, this returns `Some`, but if the cart is `Some`,
+    /// If the cart is `None`, this returns `Ok`, but if the cart is `Some`,
     /// this returns `self` as an error.
     pub fn try_into_yokeable(self) -> Result<Y, Self> {
         match self.cart {
             Some(_) => Err(self),
             None => Ok(self.yokeable.into_inner()),
+        }
+    }
+}
+
+impl<Y: for<'a> Yokeable<'a>, C: CartablePointerLike> Yoke<Y, Option<C>> {
+    /// Converts a `Yoke<Y, Option<C>>` to `Yoke<Y, CartableOptionPointer<C>>`
+    /// for better niche optimization when stored as a field.
+    #[inline]
+    pub fn convert_cart_into_option_pointer(self) -> Yoke<Y, CartableOptionPointer<C>> {
+        match self.cart {
+            Some(cart) => Yoke {
+                yokeable: self.yokeable,
+                cart: CartableOptionPointer::from_cartable(cart),
+            },
+            None => Yoke {
+                yokeable: self.yokeable,
+                cart: CartableOptionPointer::none(),
+            },
+        }
+    }
+}
+
+impl<Y: for<'a> Yokeable<'a>, C: CartablePointerLike> Yoke<Y, CartableOptionPointer<C>> {
+    /// Obtain the yokeable out of a `Yoke<Y, CartableOptionPointer<C>>` if possible.
+    ///
+    /// If the cart is `None`, this returns `Ok`, but if the cart is `Some`,
+    /// this returns `self` as an error.
+    #[inline]
+    pub fn try_into_yokeable(self) -> Result<Y, Self> {
+        if self.cart.is_none() {
+            Ok(self.yokeable.into_inner())
+        } else {
+            Err(self)
         }
     }
 }
