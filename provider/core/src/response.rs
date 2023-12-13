@@ -5,8 +5,8 @@
 use crate::buf::BufferMarker;
 use crate::error::{DataError, DataErrorKind};
 use crate::marker::DataMarker;
+use crate::refcount::{OptionSelectedRcBytes, SelectedRc};
 use crate::request::DataLocale;
-use crate::refcount::{SelectedRc, OptionSelectedRcBytes};
 use alloc::boxed::Box;
 use core::convert::TryFrom;
 use core::fmt::Debug;
@@ -82,31 +82,41 @@ pub struct Cart(OptionSelectedRcBytes);
 unsafe impl yoke::CloneableCart for Cart {}
 
 impl Cart {
-    /// Creates a `Yoke<Y, Cart>` from owned bytes by applying `f`.
-    pub fn try_make_yoke<Y, F, E>(cart: Box<[u8]>, f: F) -> Result<Yoke<Y, Self>, E>
+    /// Creates a `Yoke<Y, Option<Cart>>` from owned bytes by applying `f`.
+    #[deprecated]
+    pub fn try_make_yoke<Y, F, E>(cart: Box<[u8]>, f: F) -> Result<Yoke<Y, Option<Self>>, E>
     where
         for<'a> Y: Yokeable<'a>,
         F: FnOnce(&[u8]) -> Result<<Y as Yokeable>::Output, E>,
     {
-        Yoke::try_attach_to_cart(SelectedRc::new(cart), |b| f(b))
-            // Safe because the cart is only wrapped
-            .map(|yoke| unsafe { yoke.replace_cart(|selected_rc| Cart(OptionSelectedRcBytes::from_selected_rc(selected_rc))) })
+        todo!()
     }
 
     /// Creates a `Yoke<Y, Cart>` from an infallible fn.
-    pub fn make_yoke<Y, F>(cart: Box<[u8]>, f: F) -> Yoke<Y, Self>
+    pub(crate) fn make_yoke<Y, F>(cart: Box<[u8]>, f: F) -> Yoke<Y, Self>
     where
         for<'a> Y: Yokeable<'a>,
-        F: FnOnce(&[u8]) -> <Y as Yokeable>::Output
+        F: FnOnce(&[u8]) -> <Y as Yokeable>::Output,
     {
         let yoke = Yoke::attach_to_cart(SelectedRc::new(cart), |b| f(b));
         // Safe because the cart is only wrapped
-        unsafe { yoke.replace_cart(|selected_rc| Cart(OptionSelectedRcBytes::from_selected_rc(selected_rc))) }
+        unsafe {
+            yoke.replace_cart(|selected_rc| {
+                Cart(OptionSelectedRcBytes::from_selected_rc(selected_rc))
+            })
+        }
+    }
+
+    pub(crate) fn unwrap_yoke<Y>(yoke: Yoke<Y, Option<Self>>) -> Yoke<Y, Self>
+    where
+        for<'a> Y: Yokeable<'a>,
+    {
+        todo!()
     }
 }
 
 /// Gets a cart that can serve as the empty cart in DataPayload.
-fn empty_cart() -> Cart {
+const fn empty_cart() -> Cart {
     Cart(OptionSelectedRcBytes::new_sentinel())
 }
 
@@ -196,7 +206,7 @@ where
     /// assert_eq!(payload.get(), &local_struct);
     /// ```
     #[inline]
-    pub fn from_owned(data: M::Yokeable) -> Self {
+    pub const fn from_owned(data: M::Yokeable) -> Self {
         // HELP: This function was previously const but now it isn't
         Self(DataPayloadInner::Yoke(Yoke::new_owned_with_cart(
             data,
@@ -645,8 +655,7 @@ impl DataPayload<BufferMarker> {
 
     /// Converts a yoked byte buffer into a `DataPayload<BufferMarker>`.
     pub fn from_yoked_buffer(yoke: Yoke<&'static [u8], Option<Cart>>) -> Self {
-        todo!()
-        // Self(DataPayloadInner::Yoke(yoke.unwrap_cart_or_else(empty_cart)))
+        Self(DataPayloadInner::Yoke(Cart::unwrap_yoke(yoke)))
     }
 
     /// Converts a static byte buffer into a `DataPayload<BufferMarker>`.
