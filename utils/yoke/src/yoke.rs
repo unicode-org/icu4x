@@ -304,6 +304,14 @@ impl<Y: for<'a> Yokeable<'a>, C> Yoke<Y, C> {
     /// - `f()` must not panic
     /// - References from the yokeable `Y` should still be valid for the lifetime of the
     ///   returned cart type `C`.
+    ///
+    ///   For the purpose of determining this, `Yoke` guarantees that references from the Yokeable
+    ///   `Y` into the cart `C` will never be references into its stack data, only heap data protected
+    ///   by `StableDeref`. This does not necessarily mean that `C` implements `StableDeref`, rather that
+    ///   any data referenced by `Y` must be accessed through a `StableDeref` impl on something `C` owns.
+    ///
+    ///   Concretely, this means that if `C = Option<Rc<T>>`, `Y` may contain references to the `T` but not
+    ///   anything else.
     /// - Lifetimes inside C must not be lengthened, even if they are themselves contravariant.
     ///   I.e., if C contains an `fn(&'a u8)`, it cannot be replaced with `fn(&'static u8),
     ///   even though that is typically safe.
@@ -513,10 +521,12 @@ impl<Y: for<'a> Yokeable<'a>, C: StableDeref> Yoke<Y, Option<C>> {
 /// handle to the same data".
 ///
 /// # Safety
-/// This trait is safe to implement `StableDeref` types which, once `Clone`d, point to the same underlying data.
+/// This trait is safe to implement on `StableDeref` types which, once `Clone`d, point to the same underlying data and retain ownership.
 ///
-/// (This trait is also implemented on `Option<T>` and `()`, which are the two non-`StableDeref` cart types that
-/// Yokes can be constructed for)
+/// This trait can also be implemented on aggregates of such types like `Option<T: CloneableCart>` and `(T: CloneableCart, U: CloneableCart)`.
+///
+/// Essentially, all data that could be referenced by a Yokeable (i.e. data that is referenced via a StableDeref) must retain the same
+/// pointer and ownership semantics once cloned.
 pub unsafe trait CloneableCart: Clone {}
 
 #[cfg(feature = "alloc")]
