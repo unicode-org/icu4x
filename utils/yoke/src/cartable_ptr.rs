@@ -11,12 +11,12 @@ use alloc::boxed::Box;
 use alloc::rc::Rc;
 #[cfg(feature = "alloc")]
 use alloc::sync::Arc;
-use stable_deref_trait::StableDeref;
+#[cfg(test)]
+use core::cell::Cell;
 use core::marker::PhantomData;
 use core::mem::align_of;
 use core::ptr::NonNull;
-#[cfg(test)]
-use core::cell::Cell;
+use stable_deref_trait::StableDeref;
 
 const fn sentinel_for<T>() -> NonNull<T> {
     // Safety: 1 is non-zero
@@ -336,11 +336,20 @@ mod tests {
     fn test_sizes() {
         assert_eq!(W * 4, size_of::<Yoke<Cow<'static, str>, &&[u8]>>());
         assert_eq!(W * 4, size_of::<Yoke<Cow<'static, str>, Option<&&[u8]>>>());
-        assert_eq!(W * 4, size_of::<Yoke<Cow<'static, str>, CartableOptionPointer<&&[u8]>>>());
+        assert_eq!(
+            W * 4,
+            size_of::<Yoke<Cow<'static, str>, CartableOptionPointer<&&[u8]>>>()
+        );
 
         assert_eq!(W * 4, size_of::<Option<Yoke<Cow<'static, str>, &&[u8]>>>());
-        assert_eq!(W * 5, size_of::<Option<Yoke<Cow<'static, str>, Option<&&[u8]>>>>());
-        assert_eq!(W * 4, size_of::<Option<Yoke<Cow<'static, str>, CartableOptionPointer<&&[u8]>>>>());
+        assert_eq!(
+            W * 5,
+            size_of::<Option<Yoke<Cow<'static, str>, Option<&&[u8]>>>>()
+        );
+        assert_eq!(
+            W * 4,
+            size_of::<Option<Yoke<Cow<'static, str>, CartableOptionPointer<&&[u8]>>>>()
+        );
     }
 
     #[test]
@@ -360,9 +369,7 @@ mod tests {
     fn test_new_rc() {
         let start = DROP_INVOCATIONS.get();
         {
-            let _ = CartableOptionPointer::<Rc<&[u8]>>::from_cartable(
-                SAMPLE_BYTES.into(),
-            );
+            let _ = CartableOptionPointer::<Rc<&[u8]>>::from_cartable(SAMPLE_BYTES.into());
         }
         assert_eq!(start + 1, DROP_INVOCATIONS.get());
     }
@@ -371,9 +378,7 @@ mod tests {
     fn test_rc_clone() {
         let start = DROP_INVOCATIONS.get();
         {
-            let x = CartableOptionPointer::<Rc<&[u8]>>::from_cartable(
-                SAMPLE_BYTES.into(),
-            );
+            let x = CartableOptionPointer::<Rc<&[u8]>>::from_cartable(SAMPLE_BYTES.into());
             assert_eq!(start, DROP_INVOCATIONS.get());
             {
                 let _ = x.clone();
