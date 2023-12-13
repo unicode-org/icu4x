@@ -61,6 +61,8 @@ pub struct Indian;
 pub struct IndianDateInner(ArithmeticDate<Indian>);
 
 impl CalendarArithmetic for Indian {
+    type YearInfo = ();
+
     fn month_days(year: i32, month: u8) -> u8 {
         if month == 1 {
             if Self::is_leap_year(year) {
@@ -176,7 +178,7 @@ impl Calendar for Indian {
     }
 
     fn offset_date(&self, date: &mut Self::DateInner, offset: DateDuration<Self>) {
-        date.0.offset_date(offset);
+        date.0.offset_date(offset, &());
     }
 
     #[allow(clippy::field_reassign_with_default)]

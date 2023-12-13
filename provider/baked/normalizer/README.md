@@ -4,6 +4,9 @@
 
 Data for the icu_normalizer crate
 
+This data was generated with CLDR version 44.0.0, ICU version release-74-1, and
+LSTM segmenter version v0.1.0.
+
 <!-- cargo-rdme end -->
 
 ## More Information

@@ -11,9 +11,8 @@ and as such this crate may unpredictably change its Rust API across compatible s
 by this crate, while not directly documented, are stable within the same major semver version, as are the bindings exposed under
 the `cpp/` and `js/` folders.
 
-This crate may still be explored for documentation on docs.rs, and there are generated language-specific docs available as well.
-C++ has sphinx docs in `cpp/docs/`, and the header files also contain documentation comments. The JS version has sphinx docs under
-`js/docs`, and the TypeScript sources in `js/include` are compatible with `tsdoc`.
+This crate may still be explored for documentation on docs.rs, and there are language-specific docs available as well.
+C++, Dart, and TypeScript headers contain inline documentation, which is available pre-rendered: [C++], [TypeScript].
 
 This crate is `no_std` and will not typically build as a staticlib on its own. If you wish to link to it you should prefer
 using `icu_capi_staticlib`, or for more esoteric platforms you may write a shim crate depending on this crate that hooks in
@@ -22,6 +21,8 @@ an allocator and panic hook.
 More information on using ICU4X from C++ can be found in [our tutorial].
 
 [our tutorial]: https://github.com/unicode-org/icu4x/blob/main/docs/tutorials/cpp.md
+[TypeScript]: https://unicode-org.github.io/icu4x/tsdoc
+[C++]: https://unicode-org.github.io/icu4x/cppdoc
 
 <!-- cargo-rdme end -->
 

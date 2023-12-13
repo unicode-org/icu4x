@@ -128,7 +128,7 @@ dependencies = [
 description = "Run all tests for the CI 'test-js' job"
 category = "CI"
 dependencies = [
-    "test-js",
+    "test-npm",
     "test-tinywasm",
 ]
 

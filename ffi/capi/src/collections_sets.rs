@@ -71,18 +71,23 @@ pub mod ffi {
             icu::collections::codepointinvlist::CodePointInversionListBuilder::add_char,
             FnInStruct
         )]
+        #[diplomat::rust_link(
+            icu::collections::codepointinvlist::CodePointInversionListBuilder::add32,
+            FnInStruct,
+            hidden
+        )]
         pub fn add_char(&mut self, ch: DiplomatChar) {
-            self.0.add_u32(ch)
+            self.0.add32(ch)
         }
 
-        /// Add a single u32 value to the set
+        /// Deprecated, use `add_char`.
         #[diplomat::rust_link(
             icu::collections::codepointinvlist::CodePointInversionListBuilder::add_u32,
             FnInStruct
         )]
         #[diplomat::attr(dart, disable)]
         pub fn add_u32(&mut self, ch: u32) {
-            self.0.add_u32(ch)
+            self.add_char(ch)
         }
 
         /// Add an inclusive range of characters to the set
@@ -90,18 +95,23 @@ pub mod ffi {
             icu::collections::codepointinvlist::CodePointInversionListBuilder::add_range,
             FnInStruct
         )]
+        #[diplomat::rust_link(
+            icu::collections::codepointinvlist::CodePointInversionListBuilder::add_range32,
+            FnInStruct,
+            hidden
+        )]
         pub fn add_inclusive_range(&mut self, start: DiplomatChar, end: DiplomatChar) {
-            self.0.add_range_u32(&(start..=end))
+            self.0.add_range32(&(start..=end))
         }
 
-        /// Add an inclusive range of u32s to the set
+        /// Deprecated, use `add_inclusive_range`.
         #[diplomat::rust_link(
             icu::collections::codepointinvlist::CodePointInversionListBuilder::add_range_u32,
             FnInStruct
         )]
         #[diplomat::attr(dart, disable)]
         pub fn add_inclusive_range_u32(&mut self, start: u32, end: u32) {
-            self.0.add_range_u32(&(start..=end))
+            self.add_inclusive_range(start, end)
         }
 
         /// Add all elements that belong to the provided set to the set
