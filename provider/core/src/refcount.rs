@@ -121,15 +121,15 @@ mod tests {
         // We need to track allocations on each thread independently
         thread_local! {
             static ACTIVE: Cell<bool> = Cell::new(false);
-            static TOTAL_ALLOCATED: Cell<u64> = Cell::new(0);
-            static TOTAL_DEALLOCATED: Cell<u64> = Cell::new(0);
+            static TOTAL_ALLOCATED: Cell<usize> = Cell::new(0);
+            static TOTAL_DEALLOCATED: Cell<usize> = Cell::new(0);
         }
 
         pub fn start_measure() {
             Self::ACTIVE.with(|c| c.set(true));
         }
 
-        pub fn end_measure() -> (u64, u64) {
+        pub fn end_measure() -> (usize, usize) {
             Self::ACTIVE.with(|c| c.set(false));
             (
                 Self::TOTAL_ALLOCATED.with(|c| c.take()),
@@ -141,18 +141,22 @@ mod tests {
     unsafe impl GlobalAlloc for MeasuringAllocator {
         unsafe fn alloc(&self, layout: Layout) -> *mut u8 {
             if Self::ACTIVE.with(|f| f.get()) {
-                Self::TOTAL_ALLOCATED.with(|c| c.set(c.get() + layout.size() as u64));
+                Self::TOTAL_ALLOCATED.with(|c| c.set(c.get() + layout.size()));
             }
             System.alloc(layout)
         }
 
         unsafe fn dealloc(&self, ptr: *mut u8, layout: Layout) {
             if Self::ACTIVE.with(|f| f.get()) {
-                Self::TOTAL_DEALLOCATED.with(|c| c.set(c.get() + layout.size() as u64));
+                Self::TOTAL_DEALLOCATED.with(|c| c.set(c.get() + layout.size()));
             }
             System.dealloc(ptr, layout)
         }
     }
+
+    const SAMPLE_BYTES: &[u8] = b"abCDEfg";
+
+    const W: usize = core::mem::size_of::<usize>();
 
     #[test]
     fn test_new_sentinel() {
@@ -160,38 +164,59 @@ mod tests {
         {
             OptionSelectedRcBytes::new_sentinel();
         }
-        let (allocated, deallocated) = MeasuringAllocator::end_measure();
-        assert_eq!(allocated, deallocated);
-        assert_eq!(allocated, 0);
+        assert_eq!((0, 0), MeasuringAllocator::end_measure());
+        MeasuringAllocator::start_measure();
+        {
+            let mut x = OptionSelectedRcBytes::new_sentinel();
+            assert!(matches!(x.take(), None));
+        }
+        assert_eq!((0, 0), MeasuringAllocator::end_measure());
     }
 
     #[test]
     fn test_new_rc() {
         MeasuringAllocator::start_measure();
         {
-            OptionSelectedRcBytes::from_selected_rc(Default::default());
+            let x = OptionSelectedRcBytes::from_selected_rc(
+                SAMPLE_BYTES.to_vec().into_boxed_slice().into(),
+            );
+            assert_eq!(Some(SAMPLE_BYTES), x.as_bytes());
         }
         let (allocated, deallocated) = MeasuringAllocator::end_measure();
         assert_eq!(allocated, deallocated);
-        assert_eq!(allocated, 32);
+        assert_eq!(allocated, 4 * W + SAMPLE_BYTES.len());
     }
 
     #[test]
     fn test_rc_clone() {
         MeasuringAllocator::start_measure();
         {
-            let x = OptionSelectedRcBytes::from_selected_rc(Default::default());
+            let x = OptionSelectedRcBytes::from_selected_rc(
+                SAMPLE_BYTES.to_vec().into_boxed_slice().into(),
+            );
+            assert_eq!(Some(SAMPLE_BYTES), x.as_bytes());
+            let (allocated, deallocated) = MeasuringAllocator::end_measure();
+            assert_eq!(allocated, 4 * W + SAMPLE_BYTES.len());
+            assert_eq!(deallocated, 0);
+            MeasuringAllocator::start_measure();
             {
                 let y = x.clone();
+                assert_eq!(Some(SAMPLE_BYTES), x.as_bytes());
+                assert_eq!(Some(SAMPLE_BYTES), y.as_bytes());
                 assert_eq!(x.as_bytes(), y.as_bytes());
             }
-            let (allocated, deallocated) = MeasuringAllocator::end_measure();
-            assert_eq!(allocated, 32);
-            assert_eq!(deallocated, 0);
+            assert_eq!((0, 0), MeasuringAllocator::end_measure());
+            {
+                let mut y = x.clone();
+                let rc = y.take().unwrap();
+                assert_eq!(SelectedRc::strong_count(&rc), 2);
+                assert!(matches!(y.take(), None));
+            }
+            assert_eq!((0, 0), MeasuringAllocator::end_measure());
             MeasuringAllocator::start_measure();
         }
         let (allocated, deallocated) = MeasuringAllocator::end_measure();
         assert_eq!(allocated, 0);
-        assert_eq!(deallocated, 32);
+        assert_eq!(deallocated, 4 * W + SAMPLE_BYTES.len());
     }
 }
