@@ -4,7 +4,18 @@
 
 //! Experimental.
 
+use icu_provider::DataPayload;
+use options::CurrencyFormatterOptions;
+
 extern crate alloc;
 
+pub mod format;
+pub mod options;
 pub mod provider;
 pub mod ule;
+
+/// A formatter for currencies.
+pub struct CurrencyFormatter {
+    options: CurrencyFormatterOptions,
+    essential: DataPayload<provider::CurrencyEssentialsV1Marker>,
+}
