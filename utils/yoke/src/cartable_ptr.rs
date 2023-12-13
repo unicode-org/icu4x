@@ -11,6 +11,7 @@ use alloc::boxed::Box;
 use alloc::rc::Rc;
 #[cfg(feature = "alloc")]
 use alloc::sync::Arc;
+use stable_deref_trait::StableDeref;
 use core::marker::PhantomData;
 #[cfg(feature = "alloc")]
 use core::mem::ManuallyDrop;
@@ -37,45 +38,51 @@ trait Sealed {}
 
 /// An object fully representable by a non-null pointer.
 ///
-/// # Safety
+/// # Implementer Safety
 ///
-/// 1. `into_raw` must not change the address of any referenced data.
+/// 1. `into_raw` transfers ownership of the values referenced by StableDeref to the caller,
+///    if there is ownership to transfer
+/// 2. `drop_raw` returns ownership back to the impl, if there is ownership to transfer
 #[allow(private_bounds)] // sealed trait
-pub unsafe trait CartablePointerLike: Sealed {
-    type Ptr;
+pub unsafe trait CartablePointerLike: StableDeref + Sealed {
+    /// The raw type used for [`Self::into_raw`] and [`Self::drop_raw`].
+    type Raw;
 
     /// Converts this pointer-like into a pointer.
-    fn into_raw(self) -> NonNull<Self::Ptr>;
+    #[doc(hidden)]
+    fn into_raw(self) -> NonNull<Self::Raw>;
 
     /// Drops any memory associated with this pointer-like.
     ///
-    /// # Safety
+    /// # Caller Safety
     ///
     /// 1. The pointer MUST have been returned by this impl's `into_raw`.
     /// 2. The pointer MUST NOT be dangling.
-    unsafe fn drop_raw(pointer: NonNull<Self::Ptr>);
+    #[doc(hidden)]
+    unsafe fn drop_raw(pointer: NonNull<Self::Raw>);
 }
 
 /// An object that implements [`CartablePointerLike`] that also
 /// supports cloning without changing the address of referenced data.
 ///
-/// # Safety
+/// # Implementer Safety
 ///
 /// 1. `clone_raw` must not change the address of any referenced data.
 pub unsafe trait CloneableCartablePointerLike: CartablePointerLike {
     /// Clones this pointer-like.
     ///
-    /// # Safety
+    /// # Caller Safety
     ///
     /// 1. The pointer MUST have been returned by this impl's `into_raw`.
     /// 2. The pointer MUST NOT be dangling.
-    unsafe fn clone_raw(pointer: NonNull<Self::Ptr>);
+    #[doc(hidden)]
+    unsafe fn clone_raw(pointer: NonNull<Self::Raw>);
 }
 
 impl<'a, T> Sealed for &'a T {}
 
 unsafe impl<'a, T> CartablePointerLike for &'a T {
-    type Ptr = T;
+    type Raw = T;
 
     fn into_raw(self) -> NonNull<T> {
         self.into()
@@ -96,7 +103,7 @@ impl<'a, T> Sealed for Box<T> {}
 
 #[cfg(feature = "alloc")]
 unsafe impl<T> CartablePointerLike for Box<T> {
-    type Ptr = T;
+    type Raw = T;
 
     fn into_raw(self) -> NonNull<T> {
         // Safety: Boxes must contain data (and not be null)
@@ -116,7 +123,7 @@ impl<'a, T> Sealed for Rc<T> {}
 
 #[cfg(feature = "alloc")]
 unsafe impl<T> CartablePointerLike for Rc<T> {
-    type Ptr = T;
+    type Raw = T;
 
     fn into_raw(self) -> NonNull<T> {
         // Safety: Rcs must contain data (and not be null)
@@ -147,7 +154,7 @@ impl<'a, T> Sealed for Arc<T> {}
 
 #[cfg(feature = "alloc")]
 unsafe impl<T> CartablePointerLike for Arc<T> {
-    type Ptr = T;
+    type Raw = T;
 
     fn into_raw(self) -> NonNull<T> {
         // Safety: Arcs must contain data (and not be null)
@@ -185,7 +192,7 @@ where
     ///
     /// 1. Must be either `SENTINEL_PTR` or created from `CartablePointerLike::into_raw`
     /// 2. If non-sentinel, must _always_ be for a valid SelectedRc
-    inner: NonNull<C::Ptr>,
+    inner: NonNull<C::Raw>,
     _cartable: PhantomData<C>,
 }
 
@@ -197,7 +204,7 @@ where
     #[inline]
     pub(crate) const fn none() -> Self {
         Self {
-            inner: sentinel_for::<C::Ptr>(),
+            inner: sentinel_for::<C::Raw>(),
             _cartable: PhantomData,
         }
     }
@@ -208,7 +215,7 @@ where
         let ptr = cartable.into_raw();
         debug_assert_ne!(
             ptr,
-            sentinel_for::<C::Ptr>(),
+            sentinel_for::<C::Raw>(),
             "Creating from [A]Rc is not expected to be the sentinel ptr"
         );
         // Safety: ptr is non-null because ptr is from SelectedRc::into_raw.
@@ -225,7 +232,7 @@ where
     /// - If `false`, the instance is a valid `SelectedRc`
     #[inline]
     pub fn is_none(&self) -> bool {
-        self.inner == sentinel_for::<C::Ptr>()
+        self.inner == sentinel_for::<C::Raw>()
     }
 }
 
@@ -235,11 +242,11 @@ where
 {
     fn drop(&mut self) {
         let ptr = self.inner;
-        if ptr != sentinel_for::<C::Ptr>() {
+        if ptr != sentinel_for::<C::Raw>() {
             // By the invariants, `ptr` is a valid raw value since it's
             // either that or sentinel, and we just checked for sentinel.
             // We will replace it with the sentinel and then drop `ptr`.
-            self.inner = sentinel_for::<C::Ptr>();
+            self.inner = sentinel_for::<C::Raw>();
             // Safety: by the invariants, `ptr` is a valid raw value.
             unsafe { C::drop_raw(ptr) }
         }
@@ -252,7 +259,7 @@ where
 {
     fn clone(&self) -> Self {
         let ptr = self.inner;
-        if ptr != sentinel_for::<C::Ptr>() {
+        if ptr != sentinel_for::<C::Raw>() {
             // By the invariants, `ptr` is a valid raw value since it's
             // either that or sentinel, and we just checked for sentinel.
             // Safety: by the invariants, `ptr` is a valid raw value.
@@ -265,18 +272,17 @@ where
     }
 }
 
-// Safety: type has the same semantics as Option<C>
-// which implements CloneableCart
+// Safety: logically an Option<C>. Has same bounds as Option<C>
 unsafe impl<C> CloneableCart for CartableOptionPointer<C> where
     C: CloneableCartablePointerLike + CloneableCart
 {
 }
 
-// Safety: same bounds as Arc
-unsafe impl<C> Send for CartableOptionPointer<C> where C: Sync + Send + CartablePointerLike {}
+// Safety: logically an Option<C>. Has same bounds as Option<C>
+unsafe impl<C> Send for CartableOptionPointer<C> where C: Sync + CartablePointerLike {}
 
-// Safety: same bounds as Arc
-unsafe impl<C> Sync for CartableOptionPointer<C> where C: Sync + Send + CartablePointerLike {}
+// Safety: logically an Option<C>. Has same bounds as Option<C>
+unsafe impl<C> Sync for CartableOptionPointer<C> where C: Send + CartablePointerLike {}
 
 #[cfg(test)]
 mod tests {
