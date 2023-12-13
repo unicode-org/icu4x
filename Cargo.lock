@@ -1420,22 +1420,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "icu_capi_cdylib"
-version = "1.4.0"
-dependencies = [
- "icu_capi",
- "icu_provider",
-]
-
-[[package]]
-name = "icu_capi_staticlib"
-version = "1.4.0"
-dependencies = [
- "icu_capi",
- "icu_provider",
-]
-
-[[package]]
 name = "icu_casemap"
 version = "1.4.0"
 dependencies = [
