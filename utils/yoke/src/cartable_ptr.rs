@@ -13,8 +13,6 @@ use alloc::rc::Rc;
 use alloc::sync::Arc;
 use stable_deref_trait::StableDeref;
 use core::marker::PhantomData;
-#[cfg(feature = "alloc")]
-use core::mem::ManuallyDrop;
 use core::mem::align_of;
 use core::ptr::NonNull;
 #[cfg(test)]
@@ -170,9 +168,11 @@ unsafe impl<T> CartablePointerLike for Rc<T> {
 #[cfg(feature = "alloc")]
 unsafe impl<'a, T> CloneableCartablePointerLike for Rc<T> {
     unsafe fn clone_raw(pointer: NonNull<T>) {
-        let rc = Rc::from_raw(pointer.as_ptr());
-        let _ = ManuallyDrop::new(rc.clone());
-        let _ = ManuallyDrop::new(rc);
+        // Safety: The caller safety of this function says that:
+        // 1. The pointer was obtained through Rc::into_raw
+        // 2. The associated Rc instance is valid
+        // Further, this impl is not defined for anything but the global allocator.
+        Rc::increment_strong_count(pointer.as_ptr());
     }
 }
 
@@ -210,9 +210,11 @@ unsafe impl<T> CartablePointerLike for Arc<T> {
 #[cfg(feature = "alloc")]
 unsafe impl<'a, T> CloneableCartablePointerLike for Arc<T> {
     unsafe fn clone_raw(pointer: NonNull<T>) {
-        let arc = Arc::from_raw(pointer.as_ptr());
-        let _ = ManuallyDrop::new(arc.clone());
-        let _ = ManuallyDrop::new(arc);
+        // Safety: The caller safety of this function says that:
+        // 1. The pointer was obtained through Arc::into_raw
+        // 2. The associated Arc instance is valid
+        // Further, this impl is not defined for anything but the global allocator.
+        Arc::increment_strong_count(pointer.as_ptr());
     }
 }
 
