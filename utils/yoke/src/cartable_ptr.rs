@@ -15,18 +15,14 @@ use stable_deref_trait::StableDeref;
 use core::marker::PhantomData;
 #[cfg(feature = "alloc")]
 use core::mem::ManuallyDrop;
+use core::mem::align_of;
 use core::ptr::NonNull;
 #[cfg(test)]
 use core::cell::Cell;
 
 const fn sentinel_for<T>() -> NonNull<T> {
-    // Safety: align_of anything is always at least 1
-    unsafe { NonNull::new_unchecked(core::mem::align_of::<T>() as *mut T) }
-}
-
-#[test]
-fn test_min_alignment() {
-    assert_eq!(1, core::mem::align_of::<()>());
+    // Safety: 1 is non-zero
+    unsafe { NonNull::new_unchecked(1 as *mut T) }
 }
 
 #[cfg(test)]
@@ -43,6 +39,11 @@ trait Sealed {}
 /// 1. `into_raw` transfers ownership of the values referenced by StableDeref to the caller,
 ///    if there is ownership to transfer
 /// 2. `drop_raw` returns ownership back to the impl, if there is ownership to transfer
+/// 3. `type Raw` should not be align 1 because that is the sentinel value. This can be an
+///    assertion inside the `into_raw` implementation.
+///
+/// Note: the pointer `NonNull<Self::Raw>` may or may not be aligned and it should never
+/// be dereferenced. Rust allows unaligned pointers; see [`std::ptr::read_unaligned`].
 #[allow(private_bounds)] // sealed trait
 pub unsafe trait CartablePointerLike: StableDeref + Sealed {
     /// The raw type used for [`Self::into_raw`] and [`Self::drop_raw`].
@@ -67,7 +68,9 @@ pub unsafe trait CartablePointerLike: StableDeref + Sealed {
 ///
 /// # Implementer Safety
 ///
-/// 1. `clone_raw` must not change the address of any referenced data.
+/// 1. `clone_raw` must create a new owner such that an additoinal call to
+///    `drop_raw` does not create a dangling pointer
+/// 2. `clone_raw` must not change the address of any referenced data.
 pub unsafe trait CloneableCartablePointerLike: CartablePointerLike {
     /// Clones this pointer-like.
     ///
@@ -81,10 +84,15 @@ pub unsafe trait CloneableCartablePointerLike: CartablePointerLike {
 
 impl<'a, T> Sealed for &'a T {}
 
+// Safety:
+// 1. There is no ownership to transfer
+// 2. There is no ownership to transfer
+// 3. `into_raw` asserts that `T` is not align 1
 unsafe impl<'a, T> CartablePointerLike for &'a T {
     type Raw = T;
 
     fn into_raw(self) -> NonNull<T> {
+        assert_ne!(1, align_of::<T>());
         self.into()
     }
     unsafe fn drop_raw(_pointer: NonNull<T>) {
@@ -92,6 +100,9 @@ unsafe impl<'a, T> CartablePointerLike for &'a T {
     }
 }
 
+// Safety:
+// 1. There is no ownership
+// 2. The impl is a no-op so no addresses are changed.
 unsafe impl<'a, T> CloneableCartablePointerLike for &'a T {
     unsafe fn clone_raw(_pointer: NonNull<T>) {
         // No-op: references are borrowed from elsewhere
@@ -101,12 +112,19 @@ unsafe impl<'a, T> CloneableCartablePointerLike for &'a T {
 #[cfg(feature = "alloc")]
 impl<'a, T> Sealed for Box<T> {}
 
+// Safety:
+// 1. `Box::into_raw` says: "After calling this function, the caller is responsible for the
+//    memory previously managed by the Box."
+// 2. `Box::from_raw` says: "After calling this function, the raw pointer is owned by the
+//    resulting Box."
+// 3. `into_raw` asserts that `T` is not align 1
 #[cfg(feature = "alloc")]
 unsafe impl<T> CartablePointerLike for Box<T> {
     type Raw = T;
 
     fn into_raw(self) -> NonNull<T> {
-        // Safety: Boxes must contain data (and not be null)
+        assert_ne!(1, align_of::<T>());
+        // Safety: `Box::into_raw` says: "The pointer will be properly aligned and non-null."
         unsafe { NonNull::new_unchecked(Box::into_raw(self)) }
     }
     unsafe fn drop_raw(pointer: NonNull<T>) {
@@ -121,11 +139,17 @@ unsafe impl<T> CartablePointerLike for Box<T> {
 #[cfg(feature = "alloc")]
 impl<'a, T> Sealed for Rc<T> {}
 
+// Safety:
+// 1. `Rc::into_raw` says: "Consumes the Rc, returning the wrapped pointer. To avoid a memory
+//    leak the pointer must be converted back to an Rc using Rc::from_raw."
+// 2. See 1.
+// 3. `into_raw` asserts that `T` is not align 1
 #[cfg(feature = "alloc")]
 unsafe impl<T> CartablePointerLike for Rc<T> {
     type Raw = T;
 
     fn into_raw(self) -> NonNull<T> {
+        assert_ne!(1, align_of::<T>());
         // Safety: Rcs must contain data (and not be null)
         unsafe { NonNull::new_unchecked(Rc::into_raw(self) as *mut T) }
     }
@@ -140,6 +164,9 @@ unsafe impl<T> CartablePointerLike for Rc<T> {
     }
 }
 
+// Safety:
+// 1. The impl increases the refcount such that `Drop` will decrease it.
+// 2. The impl increases refcount without changing the address of data.
 #[cfg(feature = "alloc")]
 unsafe impl<'a, T> CloneableCartablePointerLike for Rc<T> {
     unsafe fn clone_raw(pointer: NonNull<T>) {
@@ -152,11 +179,17 @@ unsafe impl<'a, T> CloneableCartablePointerLike for Rc<T> {
 #[cfg(feature = "alloc")]
 impl<'a, T> Sealed for Arc<T> {}
 
+// Safety:
+// 1. `Rc::into_raw` says: "Consumes the Arc, returning the wrapped pointer. To avoid a memory
+//    leak the pointer must be converted back to an Arc using Arc::from_raw."
+// 2. See 1.
+// 3. `into_raw` asserts that `T` is not align 1
 #[cfg(feature = "alloc")]
 unsafe impl<T> CartablePointerLike for Arc<T> {
     type Raw = T;
 
     fn into_raw(self) -> NonNull<T> {
+        assert_ne!(1, align_of::<T>());
         // Safety: Arcs must contain data (and not be null)
         unsafe { NonNull::new_unchecked(Arc::into_raw(self) as *mut T) }
     }
@@ -171,6 +204,9 @@ unsafe impl<T> CartablePointerLike for Arc<T> {
     }
 }
 
+// Safety:
+// 1. The impl increases the refcount such that `Drop` will decrease it.
+// 2. The impl increases refcount without changing the address of data.
 #[cfg(feature = "alloc")]
 unsafe impl<'a, T> CloneableCartablePointerLike for Arc<T> {
     unsafe fn clone_raw(pointer: NonNull<T>) {
