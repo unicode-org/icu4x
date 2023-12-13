@@ -575,6 +575,7 @@ where {
 }
 
 #[cfg(test)]
+#[cfg(feature = "compiled_data")]
 mod tests {
     use icu::calendar::{AnyCalendar, DateTime};
     use icu::datetime::{options::length, DateTimeFormatter};

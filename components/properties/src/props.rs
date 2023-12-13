@@ -1396,6 +1396,7 @@ impl Script {
     pub const Nabataean: Script = Script(143);
     pub const NagMundari: Script = Script(199);
     pub const Nandinagari: Script = Script(187);
+    pub const Nastaliq: Script = Script(200);
     pub const NewTaiLue: Script = Script(59);
     pub const Newa: Script = Script(170);
     pub const Nko: Script = Script(87);

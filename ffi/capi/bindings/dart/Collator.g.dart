@@ -33,8 +33,10 @@ final class Collator implements ffi.Finalizable {
     _capi<ffi.NativeFunction<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>, _CollatorOptionsV1Ffi)>>('ICU4XCollator_create_v1')
       .asFunction<_ResultOpaqueInt32 Function(ffi.Pointer<ffi.Opaque>, ffi.Pointer<ffi.Opaque>, _CollatorOptionsV1Ffi)>(isLeaf: true);
 
-  /// Compare potentially ill-formed UTF-16 strings, with unpaired surrogates
-  /// compared as REPLACEMENT CHARACTER.
+  /// Compare two strings.
+  ///
+  /// Ill-formed input is treated as if errors had been replaced with REPLACEMENT CHARACTERs according
+  /// to the WHATWG Encoding Standard.
   ///
   /// See the [Rust documentation for `compare_utf16`](https://docs.rs/icu/latest/icu/collator/struct.Collator.html#method.compare_utf16) for more information.
   Ordering compare(String left, String right) {

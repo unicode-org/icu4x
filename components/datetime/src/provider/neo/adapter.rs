@@ -466,6 +466,7 @@ impl_data_provider_adapter!(
 );
 
 #[cfg(test)]
+#[cfg(feature = "compiled_data")]
 mod tests {
     use super::*;
     use icu_locid::locale;
