@@ -32,7 +32,9 @@ trait Sealed {}
 
 /// An object fully representable by a non-null pointer.
 ///
-/// # Implementer Safety
+/// # Safety
+///
+/// Implementer safety:
 ///
 /// 1. `into_raw` transfers ownership of the values referenced by StableDeref to the caller,
 ///    if there is ownership to transfer
@@ -53,7 +55,9 @@ pub unsafe trait CartablePointerLike: StableDeref + Sealed {
 
     /// Drops any memory associated with this pointer-like.
     ///
-    /// # Caller Safety
+    /// # Safety
+    ///
+    /// Caller safety:
     ///
     /// 1. The pointer MUST have been returned by this impl's `into_raw`.
     /// 2. The pointer MUST NOT be dangling.
@@ -64,7 +68,9 @@ pub unsafe trait CartablePointerLike: StableDeref + Sealed {
 /// An object that implements [`CartablePointerLike`] that also
 /// supports cloning without changing the address of referenced data.
 ///
-/// # Implementer Safety
+/// # Safety
+///
+/// Implementer safety:
 ///
 /// 1. `clone_raw` must create a new owner such that an additoinal call to
 ///    `drop_raw` does not create a dangling pointer
@@ -72,7 +78,9 @@ pub unsafe trait CartablePointerLike: StableDeref + Sealed {
 pub unsafe trait CloneableCartablePointerLike: CartablePointerLike {
     /// Clones this pointer-like.
     ///
-    /// # Caller Safety
+    /// # Safety
+    ///
+    /// Caller safety:
     ///
     /// 1. The pointer MUST have been returned by this impl's `into_raw`.
     /// 2. The pointer MUST NOT be dangling.
@@ -108,7 +116,7 @@ unsafe impl<'a, T> CloneableCartablePointerLike for &'a T {
 }
 
 #[cfg(feature = "alloc")]
-impl<'a, T> Sealed for Box<T> {}
+impl<T> Sealed for Box<T> {}
 
 // Safety:
 // 1. `Box::into_raw` says: "After calling this function, the caller is responsible for the
@@ -135,7 +143,7 @@ unsafe impl<T> CartablePointerLike for Box<T> {
 }
 
 #[cfg(feature = "alloc")]
-impl<'a, T> Sealed for Rc<T> {}
+impl<T> Sealed for Rc<T> {}
 
 // Safety:
 // 1. `Rc::into_raw` says: "Consumes the Rc, returning the wrapped pointer. To avoid a memory
@@ -166,7 +174,7 @@ unsafe impl<T> CartablePointerLike for Rc<T> {
 // 1. The impl increases the refcount such that `Drop` will decrease it.
 // 2. The impl increases refcount without changing the address of data.
 #[cfg(feature = "alloc")]
-unsafe impl<'a, T> CloneableCartablePointerLike for Rc<T> {
+unsafe impl<T> CloneableCartablePointerLike for Rc<T> {
     unsafe fn clone_raw(pointer: NonNull<T>) {
         // Safety: The caller safety of this function says that:
         // 1. The pointer was obtained through Rc::into_raw
@@ -177,7 +185,7 @@ unsafe impl<'a, T> CloneableCartablePointerLike for Rc<T> {
 }
 
 #[cfg(feature = "alloc")]
-impl<'a, T> Sealed for Arc<T> {}
+impl<T> Sealed for Arc<T> {}
 
 // Safety:
 // 1. `Rc::into_raw` says: "Consumes the Arc, returning the wrapped pointer. To avoid a memory
@@ -208,7 +216,7 @@ unsafe impl<T> CartablePointerLike for Arc<T> {
 // 1. The impl increases the refcount such that `Drop` will decrease it.
 // 2. The impl increases refcount without changing the address of data.
 #[cfg(feature = "alloc")]
-unsafe impl<'a, T> CloneableCartablePointerLike for Arc<T> {
+unsafe impl<T> CloneableCartablePointerLike for Arc<T> {
     unsafe fn clone_raw(pointer: NonNull<T>) {
         // Safety: The caller safety of this function says that:
         // 1. The pointer was obtained through Arc::into_raw
