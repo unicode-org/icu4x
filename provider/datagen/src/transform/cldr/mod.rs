@@ -23,5 +23,5 @@ pub mod source;
 pub mod time_zones;
 #[cfg(feature = "icu_transliterate")]
 pub mod transforms;
-#[cfg(test)] // keep as test until bakeddata is needed
+#[cfg(feature = "icu_unitsconversion")]
 pub mod units;

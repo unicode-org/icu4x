@@ -1,0 +1,5 @@
+.dart_tool/
+doc
+lib/src
+pubspec.lock
+libicu_capi.so

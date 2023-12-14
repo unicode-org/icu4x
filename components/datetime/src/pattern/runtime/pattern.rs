@@ -8,25 +8,62 @@ use core::str::FromStr;
 use icu_provider::prelude::*;
 use zerovec::ZeroVec;
 
-#[derive(Debug, PartialEq, Clone, yoke::Yokeable, zerofrom::ZeroFrom)]
+#[derive(Debug, PartialEq, Eq, Clone, yoke::Yokeable, zerofrom::ZeroFrom)]
 #[cfg_attr(
     feature = "datagen",
     derive(databake::Bake),
     databake(path = icu_datetime::pattern::runtime),
 )]
 #[allow(clippy::exhaustive_structs)] // part of data struct
+#[zerovec::make_varule(PatternULE)]
+#[zerovec::skip_derive(Ord)]
 pub struct Pattern<'data> {
     pub items: ZeroVec<'data, PatternItem>,
     /// This field should contain the smallest time unit from the `items` vec.
     /// If it doesn't, unexpected results for day periods may be encountered.
-    pub time_granularity: TimeGranularity,
+    pub metadata: PatternMetadata,
+}
+
+#[derive(Debug, Copy, Clone, PartialEq, Eq)]
+#[zerovec::make_ule(PatternMetadataULE)]
+#[zerovec::skip_derive(Ord)]
+pub struct PatternMetadata(u8);
+
+impl PatternMetadata {
+    #[inline]
+    pub(crate) fn time_granularity(self) -> TimeGranularity {
+        TimeGranularity::from_ordinal(self.0)
+    }
+
+    pub(crate) fn from_items(items: &[PatternItem]) -> Self {
+        let time_granularity: TimeGranularity =
+            items.iter().map(Into::into).max().unwrap_or_default();
+        Self::from_time_granularity(time_granularity)
+    }
+
+    #[inline]
+    #[doc(hidden)] // databake
+    pub const fn from_time_granularity(time_granularity: TimeGranularity) -> Self {
+        Self(time_granularity.ordinal())
+    }
+
+    pub(crate) fn set_time_granularity(&mut self, time_granularity: TimeGranularity) {
+        self.0 = time_granularity.ordinal();
+    }
+}
+
+impl Default for PatternMetadata {
+    #[inline]
+    fn default() -> Self {
+        Self::from_time_granularity(TimeGranularity::None)
+    }
 }
 
 impl<'data> Pattern<'data> {
     pub fn into_owned(self) -> Pattern<'static> {
         Pattern {
             items: self.items.into_owned(),
-            time_granularity: self.time_granularity,
+            metadata: self.metadata,
         }
     }
 }
@@ -34,7 +71,7 @@ impl<'data> Pattern<'data> {
 impl From<Vec<PatternItem>> for Pattern<'_> {
     fn from(items: Vec<PatternItem>) -> Self {
         Self {
-            time_granularity: items.iter().map(Into::into).max().unwrap_or_default(),
+            metadata: PatternMetadata::from_items(&items),
             items: ZeroVec::alloc_from_slice(&items),
         }
     }
@@ -44,7 +81,7 @@ impl From<&reference::Pattern> for Pattern<'_> {
     fn from(input: &reference::Pattern) -> Self {
         Self {
             items: ZeroVec::alloc_from_slice(&input.items),
-            time_granularity: input.time_granularity,
+            metadata: PatternMetadata::from_time_granularity(input.time_granularity),
         }
     }
 }
@@ -53,7 +90,7 @@ impl From<&Pattern<'_>> for reference::Pattern {
     fn from(input: &Pattern<'_>) -> Self {
         Self {
             items: input.items.to_vec(),
-            time_granularity: input.time_granularity,
+            time_granularity: input.metadata.time_granularity(),
         }
     }
 }
@@ -71,7 +108,7 @@ impl Default for Pattern<'_> {
     fn default() -> Self {
         Self {
             items: ZeroVec::new(),
-            time_granularity: TimeGranularity::default(),
+            metadata: PatternMetadata::default(),
         }
     }
 }
@@ -82,4 +119,27 @@ impl core::fmt::Display for Pattern<'_> {
         let reference = crate::pattern::reference::Pattern::from(self);
         reference.fmt(formatter)
     }
+}
+
+#[cfg(feature = "datagen")]
+impl databake::Bake for PatternMetadata {
+    fn bake(&self, ctx: &databake::CrateEnv) -> databake::TokenStream {
+        ctx.insert("icu_datetime");
+        let time_granularity = databake::Bake::bake(&self.time_granularity(), ctx);
+        databake::quote! {
+            icu_datetime::pattern::runtime::PatternMetadata::from_time_granularity(#time_granularity)
+        }
+    }
+}
+
+#[test]
+#[cfg(feature = "datagen")]
+fn databake() {
+    databake::test_bake!(
+        PatternMetadata,
+        const: crate::pattern::runtime::PatternMetadata::from_time_granularity(
+            crate::pattern::TimeGranularity::Hours
+        ),
+        icu_datetime,
+    );
 }

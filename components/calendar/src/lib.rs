@@ -121,7 +121,6 @@ mod calendar;
 mod calendar_arithmetic;
 pub mod chinese;
 mod chinese_based;
-mod chinese_data;
 pub mod coptic;
 pub mod dangi;
 mod duration;

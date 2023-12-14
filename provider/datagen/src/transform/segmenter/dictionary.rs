@@ -2,11 +2,10 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use icu_locid::{langid, locale};
+use icu_locid::langid;
 use icu_provider::datagen::IterableDataProvider;
 use icu_provider::prelude::*;
 use icu_segmenter::provider::*;
-use std::collections::HashSet;
 use std::fmt::Debug;
 use zerovec::ZeroVec;
 

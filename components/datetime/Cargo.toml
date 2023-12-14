@@ -116,7 +116,7 @@ required-features = ["compiled_data"]
 
 [[test]]
 name = "resolved_components"
-required-features = ["experimental"]
+required-features = ["experimental", "compiled_data"]
 
 [[test]]
 name = "skeleton_serialization"

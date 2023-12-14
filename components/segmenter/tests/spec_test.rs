@@ -7,17 +7,12 @@ use icu_segmenter::LineSegmenter;
 use icu_segmenter::SentenceSegmenter;
 use icu_segmenter::WordSegmenter;
 use std::char;
-use std::fs::File;
-use std::io::prelude::*;
-use std::io::BufReader;
 use std::u32;
 
-struct TestContentIterator {
-    reader: std::io::BufReader<File>,
-}
+struct TestContentIterator(core::str::Split<'static, char>);
 
 struct TestData {
-    original_line: String,
+    original_line: &'static str,
     utf8_vec: Vec<char>,
     utf16_vec: Vec<u16>,
     latin1_vec: Vec<u8>,
@@ -27,11 +22,8 @@ struct TestData {
 }
 
 impl TestContentIterator {
-    pub fn new(filename: &str) -> Self {
-        let f = File::open(filename);
-        Self {
-            reader: BufReader::new(f.unwrap()),
-        }
+    pub fn new(file: &'static str) -> Self {
+        Self(file.split('\n'))
     }
 }
 
@@ -40,9 +32,8 @@ impl Iterator for TestContentIterator {
 
     fn next(&mut self) -> Option<Self::Item> {
         loop {
-            let mut line = String::new();
-            let len = self.reader.read_line(&mut line).ok()?;
-            if len == 0 {
+            let line = self.0.next()?;
+            if line.is_empty() {
                 // EOF
                 return None;
             }
@@ -103,8 +94,8 @@ impl Iterator for TestContentIterator {
     }
 }
 
-fn line_break_test(filename: &str) {
-    let test_iter = TestContentIterator::new(filename);
+fn line_break_test(file: &'static str) {
+    let test_iter = TestContentIterator::new(file);
     let segmenter = LineSegmenter::new_dictionary();
     for (i, mut test) in test_iter.enumerate() {
         let s: String = test.utf8_vec.into_iter().collect();
@@ -176,17 +167,17 @@ fn line_break_test(filename: &str) {
 
 #[test]
 fn run_line_break_test() {
-    line_break_test("./tests/testdata/LineBreakTest.txt");
+    line_break_test(include_str!("testdata/LineBreakTest.txt"));
 }
 
 #[test]
 fn run_line_break_extra_test() {
-    line_break_test("./tests/testdata/LineBreakExtraTest.txt");
+    line_break_test(include_str!("testdata/LineBreakExtraTest.txt"));
 }
 
 #[test]
 fn run_word_break_test() {
-    let test_iter = TestContentIterator::new("./tests/testdata/WordBreakTest.txt");
+    let test_iter = TestContentIterator::new(include_str!("testdata/WordBreakTest.txt"));
     let segmenter = WordSegmenter::new_dictionary();
     for test in test_iter {
         let s: String = test.utf8_vec.into_iter().collect();
@@ -217,7 +208,7 @@ fn run_word_break_test() {
 
 #[test]
 fn run_grapheme_break_test() {
-    let test_iter = TestContentIterator::new("./tests/testdata/GraphemeBreakTest.txt");
+    let test_iter = TestContentIterator::new(include_str!("testdata/GraphemeBreakTest.txt"));
     let segmenter = GraphemeClusterSegmenter::new();
     for test in test_iter {
         let s: String = test.utf8_vec.into_iter().collect();
@@ -246,8 +237,8 @@ fn run_grapheme_break_test() {
     }
 }
 
-fn sentence_break_test(filename: &str) {
-    let test_iter = TestContentIterator::new(filename);
+fn sentence_break_test(file: &'static str) {
+    let test_iter = TestContentIterator::new(file);
     let segmenter = SentenceSegmenter::new();
     for (i, test) in test_iter.enumerate() {
         let s: String = test.utf8_vec.into_iter().collect();
@@ -311,10 +302,10 @@ fn sentence_break_test(filename: &str) {
 
 #[test]
 fn run_sentence_break_test() {
-    sentence_break_test("./tests/testdata/SentenceBreakTest.txt");
+    sentence_break_test(include_str!("testdata/SentenceBreakTest.txt"));
 }
 
 #[test]
 fn run_sentence_break_extra_test() {
-    sentence_break_test("./tests/testdata/SentenceBreakExtraTest.txt");
+    sentence_break_test(include_str!("testdata/SentenceBreakExtraTest.txt"));
 }
