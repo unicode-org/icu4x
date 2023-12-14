@@ -5,6 +5,7 @@
 #[cfg(test)]
 mod tests {
     use core::str::FromStr;
+    use icu_unitsconversion::measureunit::MeasureUnitParser;
     use num::BigRational;
 
     /// Convert a decimal number to a BigRational.
@@ -78,5 +79,7 @@ mod tests {
 
         // TODO: remove this assert and assert that all the input and the output is valid CLDR identifiers as a first step.
         assert_eq!(tests.len(), 229);
+
+        // let parser = MeasureUnitParser::from_payload(&BakedDataProvider);
     }
 }
