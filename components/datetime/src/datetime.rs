@@ -781,6 +781,7 @@ where {
 
 #[cfg(test)]
 #[cfg(feature = "serde")]
+#[cfg(feature = "compiled_data")]
 mod tests {
     use super::*;
     use icu_calendar::DateTime;

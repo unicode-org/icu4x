@@ -3,7 +3,7 @@ import 'package:path/path.dart' as path;
 import 'package:test/test.dart';
 
 void main() {
-  init(path.absolute('test/libicu_capi_cdylib.so'));
+  init(path.absolute('test/libicu_capi.so'));
 
   test('FixedDecimal.toString', () {
     final x = FixedDecimal.fromDoubleWithLowerMagnitude(1.49403, -7);

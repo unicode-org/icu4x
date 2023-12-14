@@ -2,12 +2,18 @@
 
 ## Unreleased
 
+- Components
+  - `icu_properties`
+    - Add `Aran` script code (https://github.com/unicode-org/icu4x/pull/4426)
 - FFI:
     - All languages
       - Correctly handle invalid UTF8 (https://github.com/unicode-org/icu4x/pull/4353)
       - Correctly handle chars (https://github.com/unicode-org/icu4x/pull/4349)
     - JS
       - Fixed a bug where slice length is computed incorrectly (https://github.com/rust-diplomat/diplomat/pull/372)
+- Utilities
+    - `yoke`
+        - Remove `StableDeref` bound from `Yoke<Y, Option<C>>` methods (https://github.com/unicode-org/icu4x/pull/4457)
 
 ## icu4x 1.4 (Nov 16, 2023)
 

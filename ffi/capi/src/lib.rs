@@ -33,9 +33,8 @@
 //! This crate may still be explored for documentation on docs.rs, and there are language-specific docs available as well.
 //! C++, Dart, and TypeScript headers contain inline documentation, which is available pre-rendered: [C++], [TypeScript].
 //!
-//! This crate is `no_std` and will not typically build as a staticlib on its own. If you wish to link to it you should prefer
-//! using `icu_capi_staticlib`, or for more esoteric platforms you may write a shim crate depending on this crate that hooks in
-//! an allocator and panic hook.
+//! This crate is `no_std`-compatible. If you wish to use it in `no_std` mode, you must write a wrapper crate that defines an allocator
+//! and a panic hook in order to compile as a C library.
 //!
 //! More information on using ICU4X from C++ can be found in [our tutorial].
 //!

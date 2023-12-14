@@ -5,7 +5,7 @@
 [workspace]
 resolver = "2"
 members = [
-    # KEEP IN SYNC WITH workspace.dependencies and docs/tutorials/testing/patch.toml
+    # KEEP IN SYNC WITH workspace.dependencies and docs/tutorials/.cargo/config.toml
 
     # Components
     "components/calendar",
@@ -35,10 +35,8 @@ members = [
 
     # FFI
     "ffi/capi",
-    "ffi/capi_cdylib",
-    "ffi/capi_staticlib",
-    "experimental/ecma402",
     "ffi/freertos",
+    "experimental/ecma402",
     "experimental/harfbuzz",
 
     # Provider
@@ -65,6 +63,7 @@ members = [
     "provider/baked/relativetime",
     "provider/baked/segmenter",
     "provider/baked/timezone",
+    "provider/baked/unitsconversion",
 
     # Utils
     "utils/calendrical_calculations",
@@ -98,6 +97,7 @@ members = [
     "tools/diplomat-gen",
     "tools/ffi_coverage",
     "tools/testdata-scripts",
+    "tools/md-tests",
 ]
 # Note: Workspaces in subdirectories, such as docs/tutorials/crates, are
 # implicitly excluded from the main workspace.
@@ -109,8 +109,7 @@ exclude = [
     # in the repo it doesn't build without running `cargo make testdata-legacy`
     # first.
     "provider/testdata",
-    # Tutorials are tested in their own cargo workspace against released and
-    # local crates
+    # Tutorials are tested outside the workspace to simulate external users
     "docs",
     # Not a functioning crate
     "provider/baked/_template_",
@@ -137,7 +136,7 @@ include = [
 ]
 
 [workspace.dependencies]
-# KEEP IN SYNC WITH workspace.members and docs/tutorials/testing/patch.toml
+# KEEP IN SYNC WITH workspace.members and docs/tutorials/.cargo/config.toml
 
 # Components
 icu = { version = "~1.4.0", path = "components/icu", default-features = false }
@@ -167,10 +166,8 @@ icu_unitsconversion = { version = "0.0.0", path = "experimental/unitsconversion"
 
 # FFI
 icu_capi = { version = "~1.4.0", path = "ffi/capi", default-features = false }
-icu_capi_cdylib = { version = "~1.4.0", path = "ffi/capi_cdylib", default-features = false }
-icu_capi_staticlib = { version = "~1.4.0", path = "ffi/capi_staticlib", default-features = false }
-icu4x_ecma402 = { version = "0.8.1", path = "experimental/ecma402", default-features = false }
 icu_freertos = { version = "~1.4.0", path = "ffi/freertos", default-features = false }
+icu4x_ecma402 = { version = "0.8.1", path = "experimental/ecma402", default-features = false }
 icu_harfbuzz = { version = "~0.1.1", path = "experimental/harfbuzz", default-features = false }
 
 # Provider
@@ -197,6 +194,7 @@ icu_properties_data = { version = "~1.4.0", path = "provider/baked/properties", 
 icu_relativetime_data = { version = "~1.4.0", path = "provider/baked/relativetime", default-features = false }
 icu_segmenter_data = { version = "~1.4.0", path = "provider/baked/segmenter", default-features = false }
 icu_timezone_data = { version = "~1.4.0", path = "provider/baked/timezone", default-features = false }
+icu_unitsconversion_data = { version = "~1.4.0", path = "provider/baked/unitsconversion", default-features = false }
 
 # Utils
 calendrical_calculations = { version = "0.1.0", path = "utils/calendrical_calculations", default-features = false }

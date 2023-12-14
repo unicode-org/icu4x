@@ -2,4 +2,4 @@
 doc
 lib/src
 pubspec.lock
-libicu_capi_cdylib.so
+libicu_capi.so
