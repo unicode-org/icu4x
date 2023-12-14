@@ -7,6 +7,7 @@ mod tests {
     use core::str::FromStr;
     use icu_unitsconversion::measureunit::MeasureUnitParser;
     use num::BigRational;
+    use std::collections::HashSet;
 
     /// Convert a decimal number to a BigRational.
     fn convert_decimal_to_rational(decimal: &str) -> Option<BigRational> {
@@ -77,8 +78,77 @@ mod tests {
             })
             .collect();
 
-        // TODO: remove this assert and assert that all the input and the output is valid CLDR identifiers as a first step.
-        assert_eq!(tests.len(), 229);
+        let parser = MeasureUnitParser::from_payload(
+            &icu_unitsconversion::provider::Baked::SINGLETON_UNITS_INFO_V1.units_conversion_trie,
+        );
+
+        // TODO: Those units must be parsable.
+        let non_parsable_units: HashSet<&str> = [
+            "g-force",
+            "arc-second",
+            "arc-minute",
+            "bu-jp",
+            "se-jp",
+            "liter-per-100-kilometer",
+            "mile-per-gallon-imperial",
+            "day-person",
+            "week-person",
+            "pound-force-foot",
+            "calorie-it",
+            "british-thermal-unit",
+            "british-thermal-unit-it",
+            "therm-us",
+            "pound-force",
+            "kilogram-force",
+            "kilowatt-hour-per-100-kilometer",
+            "shaku-length",
+            "shaku-cloth",
+            "jo-jp",
+            "ri-jp",
+            "nautical-mile",
+            "mile-scandinavian",
+            "100-kilometer",
+            "earth-radius",
+            "solar-radius",
+            "astronomical-unit",
+            "light-year",
+            "ounce-troy",
+            "earth-mass",
+            "solar-mass",
+            "solar-luminosity",
+            "pound-force-per-square-inch",
+            "gasoline-energy-density",
+            "dessert-spoon",
+            "dessert-spoon-imperial",
+            "fluid-ounce-imperial",
+            "fluid-ounce",
+            "cup-jp",
+            "cup-metric",
+            "pint-metric",
+            "pint-imperial",
+            "quart-imperial",
+            "gallon-imperial",
+            "to-jp",
+            "month-person",
+            "year-person",
+            "decade",
+        ]
+        .iter()
+        .cloned()
+        .collect();
+        for test in tests {
+            // TODO: remove this line after fixing the parser.
+            if non_parsable_units.contains(test.input_unit.as_str())
+                || non_parsable_units.contains(test.output_unit.as_str())
+            {
+                continue;
+            }
+            let input_unit = parser.try_from_identifier(test.input_unit.as_str());
+            let output_unit = parser.try_from_identifier(test.output_unit.as_str());
+
+            assert!(input_unit.is_ok());
+            assert!(output_unit.is_ok());
+        }
 
         // let parser = MeasureUnitParser::from_payload(&BakedDataProvider);
     }
