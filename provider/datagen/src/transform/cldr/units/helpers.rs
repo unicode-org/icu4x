@@ -6,11 +6,11 @@ use core::ops::{Div, Mul};
 use core::str::FromStr;
 use std::collections::{BTreeMap, VecDeque};
 
-use fraction::GenericFraction;
 use icu_provider::DataError;
 use icu_unitsconversion::measureunit::MeasureUnitParser;
 use icu_unitsconversion::provider::{ConversionInfo, Exactness, Sign};
-use num_bigint::BigUint;
+use num_bigint::BigInt;
+use num_rational::Ratio;
 use zerovec::ZeroVec;
 
 use crate::transform::cldr::cldr_serde::units::units_constants::Constant;
@@ -281,9 +281,7 @@ pub fn process_constants<'a>(
 /// - " 1.5 E -2 " is converted to 15/1000
 /// - " 1.5 E - 2" is an invalid scientific notation number
 /// - "1.5E-2.5" is an invalid scientific notation number
-pub fn convert_scientific_notation_to_fraction(
-    number: &str,
-) -> Result<GenericFraction<BigUint>, DataError> {
+pub fn convert_scientific_notation_to_fraction(number: &str) -> Result<Ratio<BigInt>, DataError> {
     let mut parts = number.split('E');
     let base = parts.next().unwrap_or("1").trim();
     let exponent = parts.next().unwrap_or("0").trim();
@@ -293,23 +291,42 @@ pub fn convert_scientific_notation_to_fraction(
         ));
     }
 
-    let base = GenericFraction::<BigUint>::from_str(base)
-        .map_err(|_| DataError::custom("the base is not a valid decimal number"))?;
+    let mut split = base.split('.');
+    let base_whole = split.next().ok_or(DataError::custom("the base is empty"))?;
+    let base_whole = if base_whole.is_empty() {
+        BigInt::from(0)
+    } else {
+        BigInt::from_str(base_whole).map_err(|_| {
+            DataError::custom("the whole part of the base is not a valid whole number")
+        })?
+    };
+
+    let base_dec = if let Some(dec_str) = split.next() {
+        let dec = BigInt::from_str(dec_str).map_err(|_| {
+            DataError::custom("the decimal part of the base is not a valid whole number")
+        })?;
+        let exp = dec_str.chars().filter(char::is_ascii_digit).count();
+        Ratio::new(dec, BigInt::from(10u32).pow(exp as u32))
+    } else {
+        Ratio::new(BigInt::from(0), BigInt::from(1))
+    };
+
+    let base = base_dec + base_whole;
+
     let exponent = i32::from_str(exponent)
         .map_err(|_| DataError::custom("the exponent is not a valid integer"))?;
 
     let result = if exponent >= 0 {
-        base.mul(GenericFraction::new(
-            BigUint::from(10u32).pow(exponent as u32),
-            BigUint::from(1u32),
+        base.mul(Ratio::new(
+            BigInt::from(10u32).pow(exponent as u32),
+            BigInt::from(1u32),
         ))
     } else {
-        base.div(GenericFraction::new(
-            BigUint::from(10u32).pow((-exponent) as u32),
-            BigUint::from(1u32),
+        base.div(Ratio::new(
+            BigInt::from(10u32).pow((-exponent) as u32),
+            BigInt::from(1u32),
         ))
     };
-
     Ok(result)
 }
 
@@ -317,27 +334,27 @@ pub fn convert_scientific_notation_to_fraction(
 #[test]
 fn test_convert_scientific_notation_to_fraction() {
     let input = "1E2";
-    let expected = GenericFraction::<BigUint>::new(BigUint::from(100u32), BigUint::from(1u32));
+    let expected = Ratio::<BigInt>::new(BigInt::from(100u32), BigInt::from(1u32));
     let actual = convert_scientific_notation_to_fraction(input).unwrap();
     assert_eq!(expected, actual);
 
     let input = "1E-2";
-    let expected = GenericFraction::<BigUint>::new(BigUint::from(1u32), BigUint::from(100u32));
+    let expected = Ratio::<BigInt>::new(BigInt::from(1u32), BigInt::from(100u32));
     let actual = convert_scientific_notation_to_fraction(input).unwrap();
     assert_eq!(expected, actual);
 
     let input = "1.5E2";
-    let expected = GenericFraction::<BigUint>::new(BigUint::from(150u32), BigUint::from(1u32));
+    let expected = Ratio::<BigInt>::new(BigInt::from(150u32), BigInt::from(1u32));
     let actual = convert_scientific_notation_to_fraction(input).unwrap();
     assert_eq!(expected, actual);
 
     let input = "1.5E-2";
-    let expected = GenericFraction::<BigUint>::new(BigUint::from(15u32), BigUint::from(1000u32));
+    let expected = Ratio::<BigInt>::new(BigInt::from(15u32), BigInt::from(1000u32));
     let actual = convert_scientific_notation_to_fraction(input).unwrap();
     assert_eq!(expected, actual);
 
     let input = " 1.5 E -2 ";
-    let expected = GenericFraction::<BigUint>::new(BigUint::from(15u32), BigUint::from(1000u32));
+    let expected = Ratio::<BigInt>::new(BigInt::from(15u32), BigInt::from(1000u32));
     let actual = convert_scientific_notation_to_fraction(input).unwrap();
     assert_eq!(expected, actual);
 
@@ -348,6 +365,11 @@ fn test_convert_scientific_notation_to_fraction() {
     let input = "1.5E-2.5";
     let actual = convert_scientific_notation_to_fraction(input);
     assert!(actual.is_err());
+
+    let input = "0.308";
+    let expected = Ratio::<BigInt>::new(BigInt::from(308), BigInt::from(1000u32));
+    let actual = convert_scientific_notation_to_fraction(input).unwrap();
+    assert_eq!(expected, actual);
 }
 
 /// Determines if a string contains any alphabetic characters.
@@ -398,28 +420,19 @@ pub fn is_scientific_number(s: &str) -> bool {
 }
 
 /// Transforms a fractional number into byte numerators, byte denominators, and a sign.
-pub fn flatten_fraction(
-    fraction: GenericFraction<BigUint>,
-) -> Result<(Vec<u8>, Vec<u8>, Sign), DataError> {
-    let numerator = match fraction.numer() {
-        Some(numerator) => numerator.to_bytes_le(),
-        None => return Err(DataError::custom("the numerator is too large")),
+pub fn flatten_fraction(fraction: Ratio<BigInt>) -> Result<(Vec<u8>, Vec<u8>, Sign), DataError> {
+    let (n_sign, numer) = fraction.numer().to_bytes_le();
+    let (d_sign, denom) = fraction.denom().to_bytes_le();
+
+    // Ratio's constructor sets denom > 0 but it's worth
+    // checking in case we decide to switch to new_raw() to avoid reducing
+    let sign = if n_sign * d_sign == num_bigint::Sign::Minus {
+        Sign::Negative
+    } else {
+        Sign::Positive
     };
 
-    let denominator = match fraction.denom() {
-        Some(denominator) => denominator.to_bytes_le(),
-        None => return Err(DataError::custom("the denominator is too large")),
-    };
-
-    let sign = match fraction.sign() {
-        Some(fraction::Sign::Plus) => Sign::Positive,
-        Some(fraction::Sign::Minus) => Sign::Negative,
-        None => {
-            return Err(DataError::custom("the sign is not defined"));
-        }
-    };
-
-    Ok((numerator, denominator, sign))
+    Ok((numer, denom, sign))
 }
 
 /// Converts slices of numerator and denominator strings to a fraction.
@@ -433,8 +446,8 @@ pub fn flatten_fraction(
 pub fn convert_slices_to_fraction(
     numerator_strings: &[&str],
     denominator_strings: &[&str],
-) -> Result<GenericFraction<BigUint>, DataError> {
-    let mut fraction = GenericFraction::new(BigUint::from(1u32), BigUint::from(1u32));
+) -> Result<Ratio<BigInt>, DataError> {
+    let mut fraction = Ratio::new(BigInt::from(1u32), BigInt::from(1u32));
 
     for numerator in numerator_strings {
         let num_fraction = convert_scientific_notation_to_fraction(numerator)?;
@@ -454,19 +467,19 @@ pub fn convert_slices_to_fraction(
 fn test_convert_array_of_strings_to_fraction() {
     let numerator: Vec<&str> = vec!["1"];
     let denominator: Vec<&str> = vec!["2"];
-    let expected = GenericFraction::new(BigUint::from(1u32), BigUint::from(2u32));
+    let expected = Ratio::new(BigInt::from(1i32), BigInt::from(2i32));
     let actual = convert_slices_to_fraction(&numerator, &denominator).unwrap();
     assert_eq!(expected, actual);
 
     let numerator = vec!["1", "2"];
     let denominator = vec!["3", "1E2"];
-    let expected = GenericFraction::new(BigUint::from(2u32), BigUint::from(300u32));
+    let expected = Ratio::new(BigInt::from(2i32), BigInt::from(300i32));
     let actual = convert_slices_to_fraction(&numerator, &denominator).unwrap();
     assert_eq!(expected, actual);
 
     let numerator = vec!["1", "2"];
     let denominator = vec!["3", "1E-2"];
-    let expected = GenericFraction::new(BigUint::from(200u32), BigUint::from(3u32));
+    let expected = Ratio::new(BigInt::from(200i32), BigInt::from(3i32));
     let actual = convert_slices_to_fraction(&numerator, &denominator).unwrap();
     assert_eq!(expected, actual);
 
@@ -477,13 +490,13 @@ fn test_convert_array_of_strings_to_fraction() {
 
     let numerator = vec!["1E2"];
     let denominator = vec!["2"];
-    let expected = GenericFraction::new(BigUint::from(50u32), BigUint::from(1u32));
+    let expected = Ratio::new(BigInt::from(50i32), BigInt::from(1i32));
     let actual = convert_slices_to_fraction(&numerator, &denominator).unwrap();
     assert_eq!(expected, actual);
 
     let numerator = vec!["1E2", "2"];
     let denominator = vec!["3", "1E2"];
-    let expected = GenericFraction::new(BigUint::from(2u32), BigUint::from(3u32));
+    let expected = Ratio::new(BigInt::from(2i32), BigInt::from(3i32));
     let actual = convert_slices_to_fraction(&numerator, &denominator).unwrap();
     assert_eq!(expected, actual);
 }
