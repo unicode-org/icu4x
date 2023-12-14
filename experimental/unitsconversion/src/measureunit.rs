@@ -70,8 +70,9 @@ impl<'data> MeasureUnitParser<'data> {
     /// NOTE:
     ///    if the unit id is found, the function will return (unit id, part without the unit id and without `-` at the beginning of the remaining part if it exists).
     ///    if the unit id is not found, the function will return None.
-    fn get_unit_id<'data>(
-        part: &'data str,
+    fn get_unit_id(
+        &self,
+        part: &str,
         identifier_split: &mut std::str::Split<'data, char>,
     ) -> Option<usize> {
         let mut part = part.to_string();
@@ -119,7 +120,7 @@ impl<'data> MeasureUnitParser<'data> {
 
             let (si_prefix, identifier_after_si) = Self::get_si_prefix(part);
             let unit_id = self
-                .get_unit_id(identifier_after_si)
+                .get_unit_id(identifier_after_si, &mut identifier_split)
                 .ok_or(ConversionError::InvalidUnit)?;
 
             result.push(MeasureUnitItem {
