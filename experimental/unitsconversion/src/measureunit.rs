@@ -76,7 +76,6 @@ impl<'data> MeasureUnitParser<'data> {
         identifier_split: &mut std::str::Split<'data, char>,
     ) -> Option<usize> {
         let mut part = part.to_string();
-
         loop {
             if let Some(unit_id) = self.payload.get(&part) {
                 return Some(unit_id);
