@@ -26,13 +26,13 @@ mod tests {
         let ten = BigRational::from_integer(10.into());
         let decimal_component = decimal_component / ten.pow(decimal_length);
         integer_component += decimal_component;
-        return Some(integer_component);
+        Some(integer_component)
     }
 
     /// Convert a scientific notation string to a BigRational.
     pub fn get_rational(rational: &str) -> Option<BigRational> {
         // remove all the commas
-        let rational = rational.replace(",", "");
+        let rational = rational.replace(',', "");
 
         let mut parts = rational.split('E');
         let rational_part = parts.next().unwrap_or("1");
@@ -47,7 +47,7 @@ mod tests {
         let ten = BigRational::from_integer(10.into());
         let exponent_part = ten.pow(exponent_part);
         rational_part *= exponent_part;
-        return Some(rational_part);
+        Some(rational_part)
     }
 
     #[test]
@@ -57,10 +57,10 @@ mod tests {
         /// Represents a test case for units conversion.
         #[derive(Debug)]
         struct UnitsTest {
-            category: String,
+            _category: String,
             input_unit: String,
             output_unit: String,
-            result: BigRational,
+            _result: BigRational,
         }
 
         let data = std::fs::read_to_string("tests/data/unitsTest.txt").unwrap();
@@ -70,10 +70,10 @@ mod tests {
             .map(|line| {
                 let parts: Vec<&str> = line.split(';').map(|s| s.trim()).collect();
                 UnitsTest {
-                    category: parts[0].to_string(),
+                    _category: parts[0].to_string(),
                     input_unit: parts[1].to_string(),
                     output_unit: parts[2].to_string(),
-                    result: get_rational(parts[4]).unwrap(),
+                    _result: get_rational(parts[4]).unwrap(),
                 }
             })
             .collect();
