@@ -5,7 +5,7 @@
 [workspace]
 resolver = "2"
 members = [
-    # KEEP IN SYNC WITH workspace.dependencies and docs/tutorials/testing/patch.toml
+    # KEEP IN SYNC WITH workspace.dependencies and docs/tutorials/.cargo/config.toml
 
     # Components
     "components/calendar",
@@ -28,17 +28,15 @@ members = [
     "experimental/displaynames",
     "experimental/personnames",
     "experimental/relativetime",
-    "experimental/singlenumberformatter",
+    "experimental/dimension",
     "experimental/transliterate",
     "experimental/unicodeset_parse",
     "experimental/unitsconversion",
 
     # FFI
     "ffi/capi",
-    "ffi/capi_cdylib",
-    "ffi/capi_staticlib",
-    "experimental/ecma402",
     "ffi/freertos",
+    "experimental/ecma402",
     "experimental/harfbuzz",
 
     # Provider
@@ -65,6 +63,7 @@ members = [
     "provider/baked/relativetime",
     "provider/baked/segmenter",
     "provider/baked/timezone",
+    "provider/baked/unitsconversion",
 
     # Utils
     "utils/calendrical_calculations",
@@ -98,6 +97,7 @@ members = [
     "tools/diplomat-gen",
     "tools/ffi_coverage",
     "tools/testdata-scripts",
+    "tools/md-tests",
 ]
 # Note: Workspaces in subdirectories, such as docs/tutorials/crates, are
 # implicitly excluded from the main workspace.
@@ -109,8 +109,7 @@ exclude = [
     # in the repo it doesn't build without running `cargo make testdata-legacy`
     # first.
     "provider/testdata",
-    # Tutorials are tested in their own cargo workspace against released and
-    # local crates
+    # Tutorials are tested outside the workspace to simulate external users
     "docs",
     # Not a functioning crate
     "provider/baked/_template_",
@@ -137,7 +136,7 @@ include = [
 ]
 
 [workspace.dependencies]
-# KEEP IN SYNC WITH workspace.members and docs/tutorials/testing/patch.toml
+# KEEP IN SYNC WITH workspace.members and docs/tutorials/.cargo/config.toml
 
 # Components
 icu = { version = "~1.4.0", path = "components/icu", default-features = false }
@@ -160,17 +159,15 @@ icu_compactdecimal = { version = "0.2.3", path = "experimental/compactdecimal", 
 icu_displaynames = { version = "0.11.2", path = "experimental/displaynames", default-features = false }
 icu_personnames = { version = "0.0.0", path = "experimental/personnames", default-features = false }
 icu_relativetime = { version = "0.1.4", path = "experimental/relativetime", default-features = false }
-icu_singlenumberformatter = { version = "0.0.0", path = "experimental/singlenumberformatter", default-features = false }
+icu_dimension = { version = "0.0.0", path = "experimental/dimension", default-features = false }
 icu_transliterate = { version = "0.1.2", path = "experimental/transliterate", default-features = false }
 icu_unicodeset_parse = { version = "0.1.2", path = "experimental/unicodeset_parse", default-features = false }
 icu_unitsconversion = { version = "0.0.0", path = "experimental/unitsconversion", default-features = false }
 
 # FFI
 icu_capi = { version = "~1.4.0", path = "ffi/capi", default-features = false }
-icu_capi_cdylib = { version = "~1.4.0", path = "ffi/capi_cdylib", default-features = false }
-icu_capi_staticlib = { version = "~1.4.0", path = "ffi/capi_staticlib", default-features = false }
-icu4x_ecma402 = { version = "0.8.1", path = "experimental/ecma402", default-features = false }
 icu_freertos = { version = "~1.4.0", path = "ffi/freertos", default-features = false }
+icu4x_ecma402 = { version = "0.8.1", path = "experimental/ecma402", default-features = false }
 icu_harfbuzz = { version = "~0.1.1", path = "experimental/harfbuzz", default-features = false }
 
 # Provider
@@ -197,6 +194,7 @@ icu_properties_data = { version = "~1.4.0", path = "provider/baked/properties", 
 icu_relativetime_data = { version = "~1.4.0", path = "provider/baked/relativetime", default-features = false }
 icu_segmenter_data = { version = "~1.4.0", path = "provider/baked/segmenter", default-features = false }
 icu_timezone_data = { version = "~1.4.0", path = "provider/baked/timezone", default-features = false }
+icu_unitsconversion_data = { version = "~1.4.0", path = "provider/baked/unitsconversion", default-features = false }
 
 # Utils
 calendrical_calculations = { version = "0.1.0", path = "utils/calendrical_calculations", default-features = false }
@@ -230,10 +228,10 @@ icu_benchmark_macros = { path = "tools/benchmark/macros" }
 
 # The version here can either be a `version = ".."` spec or `git = "https://github.com/rust-diplomat/diplomat", rev = ".."`
 # Diplomat must be published preceding a new ICU4X release but may use git versions in between
-diplomat = { git = "https://github.com/rust-diplomat/diplomat.git", rev = "2d40c417b4e70dd7d3d53e8191f02bd16fdf43a3" }
-diplomat-runtime = { git = "https://github.com/rust-diplomat/diplomat.git", rev = "2d40c417b4e70dd7d3d53e8191f02bd16fdf43a3" }
-diplomat_core = { git = "https://github.com/rust-diplomat/diplomat.git", rev = "2d40c417b4e70dd7d3d53e8191f02bd16fdf43a3" }
-diplomat-tool = { git = "https://github.com/rust-diplomat/diplomat.git", rev = "2d40c417b4e70dd7d3d53e8191f02bd16fdf43a3" }
+diplomat = { git = "https://github.com/rust-diplomat/diplomat.git", rev = "60851360a4b6f163fe493ca117d0552905c54a38" }
+diplomat-runtime = { git = "https://github.com/rust-diplomat/diplomat.git", rev = "60851360a4b6f163fe493ca117d0552905c54a38" }
+diplomat_core = { git = "https://github.com/rust-diplomat/diplomat.git", rev = "60851360a4b6f163fe493ca117d0552905c54a38" }
+diplomat-tool = { git = "https://github.com/rust-diplomat/diplomat.git", rev = "60851360a4b6f163fe493ca117d0552905c54a38" }
 
 # Size optimized builds
 [profile.release-opt-size]

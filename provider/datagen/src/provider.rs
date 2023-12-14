@@ -31,10 +31,10 @@ pub struct DatagenProvider {
 
 impl DatagenProvider {
     /// The latest CLDR JSON tag that has been verified to work with this version of `icu_datagen`.
-    pub const LATEST_TESTED_CLDR_TAG: &'static str = "44.0.0";
+    pub const LATEST_TESTED_CLDR_TAG: &'static str = "44.1.0";
 
     /// The latest ICU export tag that has been verified to work with this version of `icu_datagen`.
-    pub const LATEST_TESTED_ICUEXPORT_TAG: &'static str = "release-74-1";
+    pub const LATEST_TESTED_ICUEXPORT_TAG: &'static str = "release-74-2";
 
     /// The latest segmentation LSTM model tag that has been verified to work with this version of `icu_datagen`.
     pub const LATEST_TESTED_SEGMENTER_LSTM_TAG: &'static str = "v0.1.0";
@@ -57,25 +57,6 @@ impl DatagenProvider {
                     .with_cldr_for_tag(Self::LATEST_TESTED_CLDR_TAG)
                     .with_icuexport_for_tag(Self::LATEST_TESTED_ICUEXPORT_TAG)
                     .with_segmenter_lstm_for_tag(Self::LATEST_TESTED_SEGMENTER_LSTM_TAG)
-            })
-            .clone()
-    }
-
-    #[cfg(test)]
-    // This is equivalent for the files defined in `tools/testdata-scripts/globs.rs.data`.
-    pub fn new_testing() -> Self {
-        // Singleton so that all instantiations share the same cache.
-        static SINGLETON: once_cell::sync::OnceCell<DatagenProvider> =
-            once_cell::sync::OnceCell::new();
-        SINGLETON
-            .get_or_init(|| {
-                Self::new_custom()
-                    .with_cldr("tests/data/cldr".into())
-                    .unwrap()
-                    .with_icuexport("tests/data/icuexport".into())
-                    .unwrap()
-                    .with_segmenter_lstm("tests/data/lstm".into())
-                    .unwrap()
             })
             .clone()
     }

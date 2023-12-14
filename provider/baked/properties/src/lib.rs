@@ -3,6 +3,9 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 //! Data for the icu_properties crate
+//!
+//! This data was generated with CLDR version 44.1.0, ICU version release-74-2, and
+//! LSTM segmenter version v0.1.0.
 
 #![no_std]
 // The source is not readable and is massive as HTML.

@@ -8,14 +8,16 @@ use crate::transform::cldr::{
     cldr_serde::{self},
     units::helpers::ScientificNumber,
 };
-use fraction::{GenericFraction, Zero};
 use icu_provider::{
     datagen::IterableDataProvider, DataError, DataLocale, DataPayload, DataProvider, DataRequest,
     DataResponse,
 };
-use icu_unitsconversion::provider::{ConversionInfo, UnitsInfoV1, UnitsInfoV1Marker};
+use icu_unitsconversion::{
+    measureunit::MeasureUnitParser,
+    provider::{ConversionInfo, UnitsInfoV1, UnitsInfoV1Marker},
+};
 use zerotrie::ZeroTrieSimpleAscii;
-use zerovec::{VarZeroVec, ZeroVec};
+use zerovec::VarZeroVec;
 
 use super::helpers::{extract_conversion_info, process_constants, process_factor};
 
@@ -73,6 +75,8 @@ impl DataProvider<UnitsInfoV1Marker> for crate::DatagenProvider {
             .convert_store()
             .into_zerotrie();
 
+        let parser = MeasureUnitParser::from_payload(&units_conversion_trie);
+
         let convert_infos = convert_units_vec
             .iter()
             .map(|convert_unit| {
@@ -80,7 +84,7 @@ impl DataProvider<UnitsInfoV1Marker> for crate::DatagenProvider {
                     convert_unit.base_unit,
                     &convert_unit.factor_scientific,
                     &convert_unit.offset_scientific,
-                    &units_conversion_trie,
+                    &parser,
                 )
             })
             .collect::<Result<Vec<ConversionInfo>, DataError>>()?;
@@ -105,12 +109,15 @@ impl IterableDataProvider<UnitsInfoV1Marker> for crate::DatagenProvider {
 
 #[test]
 fn test_basic() {
+    use fraction::GenericFraction;
+    use fraction::Zero;
     use icu_locid::locale;
     use icu_provider::prelude::*;
     use icu_unitsconversion::provider::*;
     use num_bigint::BigUint;
     use zerofrom::ZeroFrom;
     use zerovec::maps::ZeroVecLike;
+    use zerovec::ZeroVec;
 
     let provider = crate::DatagenProvider::new_testing();
 

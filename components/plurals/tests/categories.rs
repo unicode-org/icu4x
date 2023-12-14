@@ -3,7 +3,6 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 mod fixtures;
-mod helpers;
 
 use icu_locid::LanguageIdentifier;
 use icu_plurals::{PluralCategory, PluralRules};
@@ -11,9 +10,9 @@ use std::str::FromStr;
 
 #[test]
 fn test_categories() {
-    let path = "./tests/fixtures/categories.json";
     let test_set: Vec<fixtures::CategoriesTest> =
-        helpers::read_fixture(path).expect("Failed to read a fixture");
+        serde_json::from_str(include_str!("fixtures/categories.json"))
+            .expect("Failed to read a fixture");
 
     for test in test_set {
         let pr = PluralRules::try_new(

@@ -22,6 +22,7 @@ use core::ops::Range;
 /// </div>
 #[allow(missing_docs)]
 pub mod aux {
+    use crate::pattern::CoarseHourCycle;
     use icu_locid::extensions::private::{subtag, Subtag};
 
     pub const NUMERIC: Subtag = subtag!("1");
@@ -70,6 +71,26 @@ pub mod aux {
         Numeric,
     }
 
+    /// Pattern lengths supported in auxiliary subtags.
+    ///
+    /// For a stable version of this enum, use [`length::Date`] or [`length::Time`].
+    ///
+    /// <div class="stab unstable">
+    /// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
+    /// including in SemVer minor releases. While the serde representation of data structs is guaranteed
+    /// to be stable, their Rust representation might not be. Use with caution.
+    /// </div>
+    ///
+    /// [`length::Date`]: crate::options::length::Date
+    /// [`length::Time`]: crate::options::length::Time
+    #[derive(Copy, Clone, Debug, PartialEq, Eq)]
+    pub enum PatternLength {
+        Full,
+        Long,
+        Medium,
+        Short,
+    }
+
     /// Field contexts supported in auxiliary subtags.
     ///
     /// For a stable version of this enum, use one of the specific field symbol enums in [`fields`].
@@ -88,14 +109,14 @@ pub mod aux {
         Standalone,
     }
 
-    /// Parses an aux key subtag to enum values.
+    /// Parses a symbol aux key subtag to enum values.
     ///
     /// <div class="stab unstable">
     /// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
     /// including in SemVer minor releases. While the serde representation of data structs is guaranteed
     /// to be stable, their Rust representation might not be. Use with caution.
     /// </div>
-    pub fn subtag_info(subtag: Subtag) -> Option<(Context, Length)> {
+    pub fn symbol_subtag_info(subtag: Subtag) -> Option<(Context, Length)> {
         use {Context::*, Length::*};
         match subtag {
             NUMERIC => Some((Format, Numeric)),
@@ -111,14 +132,42 @@ pub mod aux {
         }
     }
 
-    /// Creates an aux key from the enum values.
+    /// Parses a pattern aux key subtag to enum values.
     ///
     /// <div class="stab unstable">
     /// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
     /// including in SemVer minor releases. While the serde representation of data structs is guaranteed
     /// to be stable, their Rust representation might not be. Use with caution.
     /// </div>
-    pub fn subtag_for(context: Context, length: Length) -> Subtag {
+    pub fn pattern_subtag_info(subtag: Subtag) -> Option<(PatternLength, Option<CoarseHourCycle>)> {
+        use {CoarseHourCycle::*, PatternLength::*};
+        match subtag {
+            PATTERN_FULL => Some((Full, None)),
+            PATTERN_LONG => Some((Long, None)),
+            PATTERN_MEDIUM => Some((Medium, None)),
+            PATTERN_SHORT => Some((Short, None)),
+
+            PATTERN_FULL12 => Some((Full, Some(H11H12))),
+            PATTERN_LONG12 => Some((Long, Some(H11H12))),
+            PATTERN_MEDIUM12 => Some((Medium, Some(H11H12))),
+            PATTERN_SHORT12 => Some((Short, Some(H11H12))),
+
+            PATTERN_FULL24 => Some((Full, Some(H23H24))),
+            PATTERN_LONG24 => Some((Long, Some(H23H24))),
+            PATTERN_MEDIUM24 => Some((Medium, Some(H23H24))),
+            PATTERN_SHORT24 => Some((Short, Some(H23H24))),
+            _ => None,
+        }
+    }
+
+    /// Creates a symbol aux key from the enum values.
+    ///
+    /// <div class="stab unstable">
+    /// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
+    /// including in SemVer minor releases. While the serde representation of data structs is guaranteed
+    /// to be stable, their Rust representation might not be. Use with caution.
+    /// </div>
+    pub fn symbol_subtag_for(context: Context, length: Length) -> Subtag {
         use {Context::*, Length::*};
         match (context, length) {
             (Format, Numeric) => NUMERIC,
@@ -131,6 +180,36 @@ pub mod aux {
             (Standalone, Narrow) => NARROW_STANDALONE,
             (Standalone, Wide) => WIDE_STANDALONE,
             (Standalone, Short) => SHORT_STANDALONE,
+        }
+    }
+
+    /// Creates a pattern aux key from the enum values.
+    ///
+    /// <div class="stab unstable">
+    /// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
+    /// including in SemVer minor releases. While the serde representation of data structs is guaranteed
+    /// to be stable, their Rust representation might not be. Use with caution.
+    /// </div>
+    pub fn pattern_subtag_for(
+        length: PatternLength,
+        hour_cycle: Option<CoarseHourCycle>,
+    ) -> Subtag {
+        use {CoarseHourCycle::*, PatternLength::*};
+        match (length, hour_cycle) {
+            (Full, None) => PATTERN_FULL,
+            (Long, None) => PATTERN_LONG,
+            (Medium, None) => PATTERN_MEDIUM,
+            (Short, None) => PATTERN_SHORT,
+
+            (Full, Some(H11H12)) => PATTERN_FULL12,
+            (Long, Some(H11H12)) => PATTERN_LONG12,
+            (Medium, Some(H11H12)) => PATTERN_MEDIUM12,
+            (Short, Some(H11H12)) => PATTERN_SHORT12,
+
+            (Full, Some(H23H24)) => PATTERN_FULL24,
+            (Long, Some(H23H24)) => PATTERN_LONG24,
+            (Medium, Some(H23H24)) => PATTERN_MEDIUM24,
+            (Short, Some(H23H24)) => PATTERN_SHORT24,
         }
     }
 }
@@ -154,22 +233,19 @@ pub mod aux {
 /// to be stable, their Rust representation might not be. Use with caution.
 /// </div>
 #[icu_provider::data_struct(
-    marker(BuddhistYearSymbolsV1Marker, "datetime/symbols/buddhist/years@1"),
-    marker(ChineseYearSymbolsV1Marker, "datetime/symbols/chinese/years@1"),
-    marker(CopticYearSymbolsV1Marker, "datetime/symbols/coptic/years@1"),
-    marker(DangiYearSymbolsV1Marker, "datetime/symbols/dangi/years@1"),
-    marker(EthiopianYearSymbolsV1Marker, "datetime/symbols/ethiopic/years@1"),
-    marker(GregorianYearSymbolsV1Marker, "datetime/symbols/gregory/years@1"),
-    marker(HebrewYearSymbolsV1Marker, "datetime/symbols/hebrew/years@1"),
-    marker(IndianYearSymbolsV1Marker, "datetime/symbols/indian/years@1"),
-    marker(IslamicYearSymbolsV1Marker, "datetime/symbols/islamic/years@1"),
-    marker(JapaneseYearSymbolsV1Marker, "datetime/symbols/japanese/years@1"),
-    marker(
-        JapaneseExtendedYearSymbolsV1Marker,
-        "datetime/symbols/japanext/years@1"
-    ),
-    marker(PersianYearSymbolsV1Marker, "datetime/symbols/persian/years@1"),
-    marker(RocYearSymbolsV1Marker, "datetime/symbols/roc/years@1")
+    marker(BuddhistYearNamesV1Marker, "datetime/symbols/buddhist/years@1"),
+    marker(ChineseYearNamesV1Marker, "datetime/symbols/chinese/years@1"),
+    marker(CopticYearNamesV1Marker, "datetime/symbols/coptic/years@1"),
+    marker(DangiYearNamesV1Marker, "datetime/symbols/dangi/years@1"),
+    marker(EthiopianYearNamesV1Marker, "datetime/symbols/ethiopic/years@1"),
+    marker(GregorianYearNamesV1Marker, "datetime/symbols/gregory/years@1"),
+    marker(HebrewYearNamesV1Marker, "datetime/symbols/hebrew/years@1"),
+    marker(IndianYearNamesV1Marker, "datetime/symbols/indian/years@1"),
+    marker(IslamicYearNamesV1Marker, "datetime/symbols/islamic/years@1"),
+    marker(JapaneseYearNamesV1Marker, "datetime/symbols/japanese/years@1"),
+    marker(JapaneseExtendedYearNamesV1Marker, "datetime/symbols/japanext/years@1"),
+    marker(PersianYearNamesV1Marker, "datetime/symbols/persian/years@1"),
+    marker(RocYearNamesV1Marker, "datetime/symbols/roc/years@1")
 )]
 #[derive(Debug, PartialEq, Clone)]
 #[cfg_attr(
@@ -179,7 +255,7 @@ pub mod aux {
 )]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[yoke(prove_covariance_manually)]
-pub enum YearSymbolsV1<'data> {
+pub enum YearNamesV1<'data> {
     /// This calendar uses eras with numeric years, this stores the era names mapped from
     /// era code to the name
     Eras(#[cfg_attr(feature = "serde", serde(borrow))] ZeroMap<'data, UnvalidatedStr, str>),
@@ -189,7 +265,7 @@ pub enum YearSymbolsV1<'data> {
 
 /// Symbols used for representing the month name
 ///
-/// This uses an auxiliary subtag for length. See [`YearSymbolsV1`] for more information on the scheme. This
+/// This uses an auxiliary subtag for length. See [`YearNamesV1`] for more information on the scheme. This
 /// has an additional `-x-1` subtag value used for numeric symbols, only found for calendars with leap months.
 ///
 /// <div class="stab unstable">
@@ -198,22 +274,22 @@ pub enum YearSymbolsV1<'data> {
 /// to be stable, their Rust representation might not be. Use with caution.
 /// </div>
 #[icu_provider::data_struct(
-    marker(BuddhistMonthSymbolsV1Marker, "datetime/symbols/buddhist/months@1"),
-    marker(ChineseMonthSymbolsV1Marker, "datetime/symbols/chinese/months@1"),
-    marker(CopticMonthSymbolsV1Marker, "datetime/symbols/coptic/months@1"),
-    marker(DangiMonthSymbolsV1Marker, "datetime/symbols/dangi/months@1"),
-    marker(EthiopianMonthSymbolsV1Marker, "datetime/symbols/ethiopic/months@1"),
-    marker(GregorianMonthSymbolsV1Marker, "datetime/symbols/gregory/months@1"),
-    marker(HebrewMonthSymbolsV1Marker, "datetime/symbols/hebrew/months@1"),
-    marker(IndianMonthSymbolsV1Marker, "datetime/symbols/indian/months@1"),
-    marker(IslamicMonthSymbolsV1Marker, "datetime/symbols/islamic/months@1"),
-    marker(JapaneseMonthSymbolsV1Marker, "datetime/symbols/japanese/months@1"),
+    marker(BuddhistMonthNamesV1Marker, "datetime/symbols/buddhist/months@1"),
+    marker(ChineseMonthNamesV1Marker, "datetime/symbols/chinese/months@1"),
+    marker(CopticMonthNamesV1Marker, "datetime/symbols/coptic/months@1"),
+    marker(DangiMonthNamesV1Marker, "datetime/symbols/dangi/months@1"),
+    marker(EthiopianMonthNamesV1Marker, "datetime/symbols/ethiopic/months@1"),
+    marker(GregorianMonthNamesV1Marker, "datetime/symbols/gregory/months@1"),
+    marker(HebrewMonthNamesV1Marker, "datetime/symbols/hebrew/months@1"),
+    marker(IndianMonthNamesV1Marker, "datetime/symbols/indian/months@1"),
+    marker(IslamicMonthNamesV1Marker, "datetime/symbols/islamic/months@1"),
+    marker(JapaneseMonthNamesV1Marker, "datetime/symbols/japanese/months@1"),
     marker(
-        JapaneseExtendedMonthSymbolsV1Marker,
+        JapaneseExtendedMonthNamesV1Marker,
         "datetime/symbols/japanext/months@1"
     ),
-    marker(PersianMonthSymbolsV1Marker, "datetime/symbols/persian/months@1"),
-    marker(RocMonthSymbolsV1Marker, "datetime/symbols/roc/months@1")
+    marker(PersianMonthNamesV1Marker, "datetime/symbols/persian/months@1"),
+    marker(RocMonthNamesV1Marker, "datetime/symbols/roc/months@1")
 )]
 #[derive(Debug, PartialEq, Clone)]
 #[cfg_attr(
@@ -223,7 +299,7 @@ pub enum YearSymbolsV1<'data> {
 )]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[yoke(prove_covariance_manually)]
-pub enum MonthSymbolsV1<'data> {
+pub enum MonthNamesV1<'data> {
     /// Month codes M01, M02, M03, .. (can allow for M13 onwards)
     ///
     /// Found for solar and pure lunar calendars
@@ -288,7 +364,7 @@ impl SimpleSubstitutionPattern<'_> {
 ///   In the case noon is missing but midnight is present, the noon value can be the empty string. This is unlikely.
 /// - For day names element 0 is the first day of the month
 ///
-/// This uses an auxiliary subtag for length. See [`YearSymbolsV1`] for more information on the scheme.
+/// This uses an auxiliary subtag for length. See [`YearNamesV1`] for more information on the scheme.
 ///
 /// <div class="stab unstable">
 /// 🚧 This code is considered unstable; it may change at any time, in breaking or non-breaking ways,
@@ -296,8 +372,8 @@ impl SimpleSubstitutionPattern<'_> {
 /// to be stable, their Rust representation might not be. Use with caution.
 /// </div>
 #[icu_provider::data_struct(
-    marker(WeekdaySymbolsV1Marker, "datetime/symbols/weekdays@1"),
-    marker(DayPeriodSymbolsV1Marker, "datetime/symbols/dayperiods@1"),
+    marker(WeekdayNamesV1Marker, "datetime/symbols/weekdays@1"),
+    marker(DayPeriodNamesV1Marker, "datetime/symbols/dayperiods@1"),
 
     // We're not producing or using day symbols yet, but this is where they would go
     marker(ChineseDaySymbolsV1Marker, "datetime/symbols/chinese/days@1"),
@@ -313,14 +389,14 @@ impl SimpleSubstitutionPattern<'_> {
 )]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[yoke(prove_covariance_manually)]
-pub struct LinearSymbolsV1<'data> {
+pub struct LinearNamesV1<'data> {
     #[cfg_attr(feature = "serde", serde(borrow))]
     /// The symbols, in order. Order specified on the struct docs.
     // This uses a VarZeroVec rather than a fixed-size array for weekdays to save stack space
     pub symbols: VarZeroVec<'data, str>,
 }
 
-impl<'data> LinearSymbolsV1<'data> {
+impl<'data> LinearNamesV1<'data> {
     /// Gets the 'am' symbol assuming this struct contains day period data.
     #[cfg(feature = "experimental")]
     pub(crate) fn am(&self) -> Option<&str> {
@@ -438,12 +514,22 @@ pub struct DateTimePatternV1<'data> {
     pub pattern: runtime::GenericPattern<'data>,
 }
 
-// pub(crate) struct ErasedYearSymbolsV1Marker;
-// impl DataMarker for ErasedYearSymbolsV1Marker {
-//     type Yokeable = YearSymbolsV1<'static>;
-// }
+pub(crate) struct ErasedYearNamesV1Marker;
+impl DataMarker for ErasedYearNamesV1Marker {
+    type Yokeable = YearNamesV1<'static>;
+}
 
-// pub(crate) struct ErasedMonthSymbolsV1Marker;
-// impl DataMarker for ErasedMonthSymbolsV1Marker {
-//     type Yokeable = MonthSymbolsV1<'static>;
-// }
+pub(crate) struct ErasedMonthNamesV1Marker;
+impl DataMarker for ErasedMonthNamesV1Marker {
+    type Yokeable = MonthNamesV1<'static>;
+}
+
+pub(crate) struct ErasedDatePatternV1Marker;
+impl DataMarker for ErasedDatePatternV1Marker {
+    type Yokeable = DatePatternV1<'static>;
+}
+
+pub(crate) struct ErasedTimePatternV1Marker;
+impl DataMarker for ErasedTimePatternV1Marker {
+    type Yokeable = TimePatternV1<'static>;
+}

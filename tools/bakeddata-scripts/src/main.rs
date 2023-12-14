@@ -42,6 +42,11 @@ const COMPONENTS: &[(&str, &[DataKey], &str)] = &[
     ),
     ("segmenter", icu::segmenter::provider::KEYS, REPO_VERSION),
     ("timezone", icu::timezone::provider::KEYS, REPO_VERSION),
+    (
+        "unitsconversion",
+        icu_unitsconversion::provider::KEYS,
+        REPO_VERSION,
+    ),
 ];
 
 fn main() {
@@ -112,7 +117,16 @@ fn main() {
                 &std::fs::read_to_string(template.join(file))
                     .unwrap()
                     .replace("_component_", component)
-                    .replace("_version_", version),
+                    .replace("_version_", version)
+                    .replace("_cldr_tag_", DatagenProvider::LATEST_TESTED_CLDR_TAG)
+                    .replace(
+                        "_icuexport_tag_",
+                        DatagenProvider::LATEST_TESTED_ICUEXPORT_TAG,
+                    )
+                    .replace(
+                        "_segmenter_lstm_tag_",
+                        DatagenProvider::LATEST_TESTED_SEGMENTER_LSTM_TAG,
+                    ),
             )
             .unwrap();
         }

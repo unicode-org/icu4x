@@ -7,9 +7,8 @@ name = "icu_capi"
 description = "C interface to ICU4X"
 license-file = "LICENSE"
 include = [
-    "js/**/*",
-    "c/**/*",
-    "cpp/**/*",
+    "bindings/**/*",
+    "!bindings/dart/**/*", # not yet stable
     "src/**/*",
     "tests/**/*",
     "Cargo.toml",
@@ -35,7 +34,6 @@ denylist = ["bench", "cpp_default", "wasm_default", "provider_test"]
 # This has a lot of features, run a reduced test that is likely to catch 99% of bugs
 max_combination_size = 2
 
-# Please keep the features list in sync with the icu_capi_staticlib/icu_capi_cdylib crates (except for components features)
 [features]
 default = ["compiled_data", "default_components", "logging", "simple_logger"]
 any_provider = []
