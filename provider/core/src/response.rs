@@ -77,7 +77,8 @@ pub struct DataPayload<M: DataMarker>(pub(crate) DataPayloadInner<M>);
 /// A container for data payloads with storage for something else.
 ///
 /// The type parameter `O` is stored as part of the interior enum, leading to
-/// better stack size optimization.
+/// better stack size optimization. `O` can be as large as the [`DataPayload`]
+/// minus two words without impacting stack size.
 ///
 /// # Examples
 ///
@@ -131,6 +132,11 @@ pub struct DataPayload<M: DataMarker>(pub(crate) DataPayloadInner<M>);
 ///
 /// // But, using DataPayloadOr is the same size as DataPayload:
 /// assert_eq!(W * 4, size_of::<DataPayloadOr<HelloWorldV1Marker, ()>>());
+///
+/// // The largest optimized Other type is two words smaller than the DataPayload:
+/// assert_eq!(W * 4, size_of::<DataPayloadOr<HelloWorldV1Marker, [usize; 1]>>());
+/// assert_eq!(W * 4, size_of::<DataPayloadOr<HelloWorldV1Marker, [usize; 2]>>());
+/// assert_eq!(W * 5, size_of::<DataPayloadOr<HelloWorldV1Marker, [usize; 3]>>());
 /// ```
 pub struct DataPayloadOr<M: DataMarker, O>(pub(crate) DataPayloadOrInner<M, O>);
 
