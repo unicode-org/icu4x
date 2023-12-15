@@ -80,7 +80,7 @@ fn test_conversion() {
         &icu_unitsconversion::provider::Baked::SINGLETON_UNITS_INFO_V1.units_conversion_trie,
     );
 
-    // TODO: Those units must be parsable.
+    // TODO(#4461): Those units must be parsable.
     let non_parsable_units: HashSet<&str> = [
         "g-force",
         "arc-second",
@@ -135,7 +135,7 @@ fn test_conversion() {
     .cloned()
     .collect();
     for test in tests {
-        // TODO: remove this line after fixing the parser.
+        // TODO(#4461): remove this line after fixing the parser.
         if non_parsable_units.contains(test.input_unit.as_str())
             || non_parsable_units.contains(test.output_unit.as_str())
         {
