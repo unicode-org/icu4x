@@ -523,6 +523,39 @@ impl<Y: for<'a> Yokeable<'a>, C: CartablePointerLike> Yoke<Y, Option<C>> {
     /// let yoke_option = yoke.wrap_cart_in_option();
     /// let yoke_option_pointer = yoke_option.convert_cart_into_option_pointer();
     /// ```
+    ///
+    /// The niche improves stack sizes:
+    ///
+    /// ```
+    /// use yoke::Yoke;
+    /// use yoke::cartable_ptr::CartableOptionPointer;
+    /// use std::borrow::Cow;
+    /// use std::mem::size_of;
+    /// use std::rc::Rc;
+    ///
+    /// // The data struct is 6 words:
+    /// # #[derive(yoke::Yokeable)]
+    /// # struct MyDataStruct<'a> {
+    /// #     s1: Cow<'a, str>,
+    /// #     s2: Cow<'a, str>,
+    /// # }
+    /// const W: usize = core::mem::size_of::<usize>();
+    /// assert_eq!(W * 6, size_of::<MyDataStruct>());
+    ///
+    /// // An enum containing the data struct with an `Option<Rc>` cart is 8 words:
+    /// enum StaticOrYoke1 {
+    ///     Static(&'static MyDataStruct<'static>),
+    ///     Yoke(Yoke<MyDataStruct<'static>, Option<Rc<String>>>),
+    /// }
+    /// assert_eq!(W * 8, size_of::<StaticOrYoke1>());
+    ///
+    /// // When using `CartableOptionPointer``, we need only 7 words for the same behavior:
+    /// enum StaticOrYoke2 {
+    ///     Static(&'static MyDataStruct<'static>),
+    ///     Yoke(Yoke<MyDataStruct<'static>, CartableOptionPointer<Rc<String>>>),
+    /// }
+    /// assert_eq!(W * 7, size_of::<StaticOrYoke2>());
+    /// ```
     #[inline]
     pub fn convert_cart_into_option_pointer(self) -> Yoke<Y, CartableOptionPointer<C>> {
         match self.cart {

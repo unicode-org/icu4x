@@ -2,7 +2,20 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-//! Types for optional pointers that may be dropped with niche optimization.
+//! Types for optional pointers with niche optimization.
+//!
+//! The main type is [`CartableOptionPointer`], which is like `Option<Rc>` but
+//! with a niche so that the resulting `Yoke` has a niche. The following four
+//! types can be stored in the `CartableOptionPointer`:
+//!
+//! 1. `&T`
+//! 2. `Box<T>`
+//! 3. `Rc<T>`
+//! 4. `Arc<T>`
+//!
+//! These four types implement the sealed unsafe trait [`CartablePointerLike`].
+//! In addition, all except `Box<T>` impl [`CloneableCartablePointerLike`],
+//! which allows [`CartableOptionPointer`] to implement `Clone`.
 
 use crate::CloneableCart;
 #[cfg(feature = "alloc")]
@@ -73,9 +86,9 @@ pub unsafe trait CartablePointerLike: StableDeref + Sealed {
 ///
 /// Implementer safety:
 ///
-/// 1. `clone_raw` must create a new owner such that an additoinal call to
+/// 1. `addref_raw` must create a new owner such that an additional call to
 ///    `drop_raw` does not create a dangling pointer
-/// 2. `clone_raw` must not change the address of any referenced data.
+/// 2. `addref_raw` must not change the address of any referenced data.
 pub unsafe trait CloneableCartablePointerLike: CartablePointerLike {
     /// Clones this pointer-like.
     ///
@@ -86,7 +99,7 @@ pub unsafe trait CloneableCartablePointerLike: CartablePointerLike {
     /// 1. The pointer MUST have been returned by this impl's `into_raw`.
     /// 2. The pointer MUST NOT be dangling.
     #[doc(hidden)]
-    unsafe fn clone_raw(pointer: NonNull<Self::Raw>);
+    unsafe fn addref_raw(pointer: NonNull<Self::Raw>);
 }
 
 impl<'a, T> Sealed for &'a T {}
@@ -110,7 +123,7 @@ unsafe impl<'a, T> CartablePointerLike for &'a T {
 // 1. There is no ownership
 // 2. The impl is a no-op so no addresses are changed.
 unsafe impl<'a, T> CloneableCartablePointerLike for &'a T {
-    unsafe fn clone_raw(_pointer: NonNull<T>) {
+    unsafe fn addref_raw(_pointer: NonNull<T>) {
         // No-op: references are borrowed from elsewhere
     }
 }
@@ -173,7 +186,7 @@ unsafe impl<T> CartablePointerLike for Rc<T> {
 // 2. The impl increases refcount without changing the address of data.
 #[cfg(feature = "alloc")]
 unsafe impl<T> CloneableCartablePointerLike for Rc<T> {
-    unsafe fn clone_raw(pointer: NonNull<T>) {
+    unsafe fn addref_raw(pointer: NonNull<T>) {
         // Safety: The caller safety of this function says that:
         // 1. The pointer was obtained through Rc::into_raw
         // 2. The associated Rc instance is valid
@@ -214,7 +227,7 @@ unsafe impl<T> CartablePointerLike for Arc<T> {
 // 2. The impl increases refcount without changing the address of data.
 #[cfg(feature = "alloc")]
 unsafe impl<T> CloneableCartablePointerLike for Arc<T> {
-    unsafe fn clone_raw(pointer: NonNull<T>) {
+    unsafe fn addref_raw(pointer: NonNull<T>) {
         // Safety: The caller safety of this function says that:
         // 1. The pointer was obtained through Arc::into_raw
         // 2. The associated Arc instance is valid
@@ -225,7 +238,10 @@ unsafe impl<T> CloneableCartablePointerLike for Arc<T> {
 
 /// A type with similar semantics as `Option<C<T>>` but with a niche.
 ///
-/// Will panic on types with alignment 1.
+/// This type cannot be publicly constructed. To use this in a `Yoke`, see
+/// [`Yoke::convert_cart_into_option_pointer`].
+///
+/// [`Yoke::convert_cart_into_option_pointer`]: crate::Yoke::convert_cart_into_option_pointer
 #[derive(Debug)]
 pub struct CartableOptionPointer<C>
 where
@@ -300,7 +316,7 @@ where
             // By the invariants, `ptr` is a valid raw value since it's
             // either that or sentinel, and we just checked for sentinel.
             // Safety: by the invariants, `ptr` is a valid raw value.
-            unsafe { C::clone_raw(ptr) }
+            unsafe { C::addref_raw(ptr) }
         }
         Self {
             inner: self.inner,
@@ -309,7 +325,8 @@ where
     }
 }
 
-// Safety: logically an Option<C>. Has same bounds as Option<C>
+// Safety: logically an Option<C>. Has same bounds as Option<C>.
+// The `StableDeref` parts of `C` continue to be `StableDeref`.
 unsafe impl<C> CloneableCart for CartableOptionPointer<C> where
     C: CloneableCartablePointerLike + CloneableCart
 {
