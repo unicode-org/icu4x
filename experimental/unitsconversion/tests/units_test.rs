@@ -147,6 +147,4 @@ fn test_conversion() {
         assert!(input_unit.is_ok());
         assert!(output_unit.is_ok());
     }
-
-    // let parser = MeasureUnitParser::from_payload(&BakedDataProvider);
 }
