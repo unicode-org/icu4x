@@ -2,6 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+use crate::cartable_ptr::{CartableOptionPointer, CartablePointerLike};
 use crate::either::EitherCart;
 #[cfg(feature = "alloc")]
 use crate::erased::{ErasedArcCart, ErasedBoxCart, ErasedRcCart};
@@ -509,7 +510,7 @@ impl<Y: for<'a> Yokeable<'a>, C> Yoke<Y, Option<C>> {
 
     /// Obtain the yokeable out of a `Yoke<Y, Option<C>>` if possible.
     ///
-    /// If the cart is `None`, this returns `Some`, but if the cart is `Some`,
+    /// If the cart is `None`, this returns `Ok`, but if the cart is `Some`,
     /// this returns `self` as an error.
     pub fn try_into_yokeable(self) -> Result<Y, Self> {
         // Safety: if the cart is None there is no way for the yokeable to
@@ -517,6 +518,87 @@ impl<Y: for<'a> Yokeable<'a>, C> Yoke<Y, Option<C>> {
         match self.cart {
             Some(_) => Err(self),
             None => Ok(self.yokeable.into_inner()),
+        }
+    }
+}
+
+impl<Y: for<'a> Yokeable<'a>, C: CartablePointerLike> Yoke<Y, Option<C>> {
+    /// Converts a `Yoke<Y, Option<C>>` to `Yoke<Y, CartableOptionPointer<C>>`
+    /// for better niche optimization when stored as a field.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use yoke::Yoke;
+    /// use std::borrow::Cow;
+    ///
+    /// let yoke: Yoke<Cow<[u8]>, Box<Vec<u8>>> = Yoke::attach_to_cart(
+    ///     vec![10, 20, 30].into(),
+    ///     |c| c.into(),
+    /// );
+    ///
+    /// let yoke_option = yoke.wrap_cart_in_option();
+    /// let yoke_option_pointer = yoke_option.convert_cart_into_option_pointer();
+    /// ```
+    ///
+    /// The niche improves stack sizes:
+    ///
+    /// ```
+    /// use yoke::Yoke;
+    /// use yoke::cartable_ptr::CartableOptionPointer;
+    /// use std::borrow::Cow;
+    /// use std::mem::size_of;
+    /// use std::rc::Rc;
+    ///
+    /// // The data struct is 6 words:
+    /// # #[derive(yoke::Yokeable)]
+    /// # struct MyDataStruct<'a> {
+    /// #     s1: Cow<'a, str>,
+    /// #     s2: Cow<'a, str>,
+    /// # }
+    /// const W: usize = core::mem::size_of::<usize>();
+    /// assert_eq!(W * 6, size_of::<MyDataStruct>());
+    ///
+    /// // An enum containing the data struct with an `Option<Rc>` cart is 8 words:
+    /// enum StaticOrYoke1 {
+    ///     Static(&'static MyDataStruct<'static>),
+    ///     Yoke(Yoke<MyDataStruct<'static>, Option<Rc<String>>>),
+    /// }
+    /// assert_eq!(W * 8, size_of::<StaticOrYoke1>());
+    ///
+    /// // When using `CartableOptionPointer``, we need only 7 words for the same behavior:
+    /// enum StaticOrYoke2 {
+    ///     Static(&'static MyDataStruct<'static>),
+    ///     Yoke(Yoke<MyDataStruct<'static>, CartableOptionPointer<Rc<String>>>),
+    /// }
+    /// assert_eq!(W * 7, size_of::<StaticOrYoke2>());
+    /// ```
+    #[inline]
+    pub fn convert_cart_into_option_pointer(self) -> Yoke<Y, CartableOptionPointer<C>> {
+        match self.cart {
+            Some(cart) => Yoke {
+                yokeable: self.yokeable,
+                cart: CartableOptionPointer::from_cartable(cart),
+            },
+            None => Yoke {
+                yokeable: self.yokeable,
+                cart: CartableOptionPointer::none(),
+            },
+        }
+    }
+}
+
+impl<Y: for<'a> Yokeable<'a>, C: CartablePointerLike> Yoke<Y, CartableOptionPointer<C>> {
+    /// Obtain the yokeable out of a `Yoke<Y, CartableOptionPointer<C>>` if possible.
+    ///
+    /// If the cart is `None`, this returns `Ok`, but if the cart is `Some`,
+    /// this returns `self` as an error.
+    #[inline]
+    pub fn try_into_yokeable(self) -> Result<Y, Self> {
+        if self.cart.is_none() {
+            Ok(self.yokeable.into_inner())
+        } else {
+            Err(self)
         }
     }
 }
